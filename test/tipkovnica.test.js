@@ -226,3 +226,13 @@ test("telefonova tipkovnica samo za prijavne podatke; povezave in ostala e-pošt
   assert.deepEqual(applyTemplate("ana", 3, 3, "@gmail.com", -1, true), { value: "ana@gmail.com", caret: 13, text: "@gmail.com" });
   assert.equal(applyTemplate("", 0, 0, "https://expo.dev/@j/a", -1, true).value, "https://expo.dev/@j/a");
 });
+
+test("tablica: tipkovnica čez celo širino, ⌄ v vrstici zavihkov (j, 2. 11.)", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const css = await readFile(new URL("../public/tipkovnica.css", import.meta.url), "utf8");
+  const i = css.indexOf("@media (pointer: coarse) and (min-width: 700px)");
+  assert.ok(i > css.indexOf(".tk-in {"), "pravilo za tablico mora biti za osnovnimi pravili, sicer ga ta povozijo");
+  const blk = css.slice(i, css.indexOf("\n}\n", i));
+  assert.match(blk, /\.tk-in \{[^}]*max-width: none/);
+  assert.match(blk, /\.tk-hide \{[^}]*position: static/);
+});

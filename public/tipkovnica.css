@@ -111,3 +111,18 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
 }
 .tk-say { inset-inline: 8px; bottom: calc(100% + 6px); padding: 8px 12px; font-size: 0.86rem; color: var(--text); }
 .tk-chip.paste { font-weight: 800; color: var(--accent); }
+/* tablica (j, 2. 11.: »Tipkovnica je v obliki za telefon«): čez celo širino kot tipkovnica iPada,
+   višje in širše tipke; ⌄ ostane v vrstici zavihkov, zato spodaj ni praznega pasu */
+@media (pointer: coarse) and (min-width: 700px) {
+  .tk { --tk-dvig: max(12px, calc(20px - env(safe-area-inset-bottom))); }
+  .tk:has(.tk-rows[data-layer="abc"]) { --tk-dvig: max(12px, calc(20px - env(safe-area-inset-bottom))); }
+  .tk-in { max-width: none; margin: 0; padding-inline: 8px; gap: 8px; }
+  .tk-row, .tk-grid { gap: 8px; }
+  .tk-k { height: 56px; min-height: 56px; font-size: 1.25rem; border-radius: 10px; }
+  .tk-rows[data-layer="abc"] { gap: 10px; min-height: calc(4 * 64px + 3 * 10px); }
+  .tk-rows[data-layer="abc"] .tk-row { gap: 8px; }
+  .tk-rows[data-layer="abc"] .tk-k { height: 64px; min-height: 64px; }
+  .tk-rows[data-layer="abc"] .tk-k:not(.fn):not(.go):not(.space) { font-size: 1.5rem; }
+  .tk:has(.tk-rows[data-layer="abc"]) .tk-hide { position: static; min-height: 44px; }
+  .tk-tab { font-size: 1rem; }
+}
