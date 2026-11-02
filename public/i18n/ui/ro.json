@@ -118,6 +118,8 @@
   "path.next": "Tema următoare",
   "path.allDone": "Toate temele de pe acest traseu sunt stăpânite!",
   "path.allDoneToast": "Toate temele de pe acest traseu sunt stăpânite. Alege alt traseu sau recapitulează.",
+  "path.allDoneSchool": "Toate temele de pe acest traseu sunt stăpânite. Recapitulează sau citește mai departe în Manual.",
+  "path.lowerInTextbook": "Materia claselor și anilor mai mici o găsești în Manual.",
   "path.levelNow": "Traseul de învățare este acum pentru {level}.",
   "stats.week": "XP săptămâna asta",
   "stats.streak": {

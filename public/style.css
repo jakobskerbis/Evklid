@@ -460,6 +460,13 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 
 /* ---------- učna pot ---------- */
 .path-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+/* Šola: učna pot je le za razred/letnik iz profila, zato namesto menija samo napis. */
+.path-level { display: none; margin: 0; font-size: 1.15rem; font-weight: 800; }
+.path-head.fixed .path-level { display: block; }
+.path-head.fixed .dd, .path-head.fixed > select { display: none; }
+.path-lower { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; min-height: 40px; margin-top: 0; padding: 4px 0; text-align: start; }
+.path-lower[hidden] { display: none; }
+.path-lower svg { width: 18px; height: 18px; flex: none; }
 .field-label { font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .path-note { font-size: .9rem; margin: -8px 0 16px; }
 .card.xp-card { padding: 0; overflow: hidden; }

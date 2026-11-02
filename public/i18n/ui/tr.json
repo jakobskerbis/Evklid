@@ -116,6 +116,8 @@
   "path.next": "Sonraki konu",
   "path.allDone": "Bu yoldaki tüm konular öğrenildi!",
   "path.allDoneToast": "Bu yoldaki tüm konular öğrenildi. Başka bir yol seç ya da tekrar yap.",
+  "path.allDoneSchool": "Bu yoldaki tüm konular öğrenildi. Tekrar yap ya da Ders kitabında okumaya devam et.",
+  "path.lowerInTextbook": "Alt sınıfların konularını Ders kitabında bulabilirsin.",
   "path.levelNow": "Öğrenme yolun artık şuna göre: {level}.",
   "stats.week": "Bu hafta XP",
   "stats.streak": {

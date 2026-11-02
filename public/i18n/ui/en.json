@@ -116,6 +116,8 @@
   "path.next": "Next topic",
   "path.allDone": "All topics on this path are mastered!",
   "path.allDoneToast": "All topics on this path are mastered. Pick another path or review.",
+  "path.allDoneSchool": "All topics on this path are mastered. Review or keep reading in the Textbook.",
+  "path.lowerInTextbook": "Material from lower grades and years is in the Textbook.",
   "path.levelNow": "Your learning path is now set to {level}.",
   "stats.week": "XP this week",
   "stats.streak": {

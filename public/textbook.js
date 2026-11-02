@@ -170,6 +170,12 @@ export function textbookBack() {
   return true;
 }
 
+// Z Učne poti (»Nižji razredi so v Učbeniku«): odpre izbiro vseh učbenikov in razredov.
+export function openTextbookLower() {
+  syncProfile();
+  Object.assign(tb, { browse: true, topicId: null });
+}
+
 export async function showTextbook() {
   const box = $("#view-textbook");
   if (!box) return;

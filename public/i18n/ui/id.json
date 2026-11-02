@@ -114,6 +114,8 @@
   "path.next": "Topik berikutnya",
   "path.allDone": "Semua topik di jalur ini sudah dikuasai!",
   "path.allDoneToast": "Semua topik di jalur ini sudah dikuasai. Pilih jalur lain atau ulangi materi.",
+  "path.allDoneSchool": "Semua topik di jalur ini sudah dikuasai. Ulangi materi atau lanjut membaca di Buku pelajaran.",
+  "path.lowerInTextbook": "Materi kelas dan tahun yang lebih rendah ada di Buku pelajaran.",
   "path.levelNow": "Jalur belajarmu sekarang untuk {level}.",
   "stats.week": "XP minggu ini",
   "stats.streak": {

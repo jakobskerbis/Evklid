@@ -116,6 +116,8 @@
   "path.next": "Mada inayofuata",
   "path.allDone": "Mada zote za njia hii zimemudu!",
   "path.allDoneToast": "Umemudu mada zote za njia hii. Chagua njia nyingine au rudia.",
+  "path.allDoneSchool": "Umemudu mada zote za njia hii. Rudia au endelea kusoma kwenye Kitabu cha kiada.",
+  "path.lowerInTextbook": "Maudhui ya madarasa na miaka ya chini yako kwenye Kitabu cha kiada.",
   "path.levelNow": "Njia ya kujifunza sasa ni ya {level}.",
   "stats.week": "XP wiki hii",
   "stats.streak": {

@@ -114,6 +114,8 @@
   "path.next": "Chủ đề tiếp theo",
   "path.allDone": "Đã thành thạo mọi chủ đề trên lộ trình này!",
   "path.allDoneToast": "Đã thành thạo mọi chủ đề trên lộ trình này. Hãy chọn lộ trình khác hoặc ôn tập.",
+  "path.allDoneSchool": "Đã thành thạo mọi chủ đề trên lộ trình này. Hãy ôn tập hoặc đọc tiếp trong Sách giáo khoa.",
+  "path.lowerInTextbook": "Nội dung các lớp và năm thấp hơn có trong Sách giáo khoa.",
   "path.levelNow": "Lộ trình học giờ dành cho {level}.",
   "stats.week": "XP tuần này",
   "stats.streak": {

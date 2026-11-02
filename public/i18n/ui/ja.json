@@ -114,6 +114,8 @@
   "path.next": "次のテーマ",
   "path.allDone": "このパスのテーマをすべてマスターしました！",
   "path.allDoneToast": "このパスのテーマをすべてマスターしました。別のパスを選ぶか、復習しましょう。",
+  "path.allDoneSchool": "このパスのテーマをすべてマスターしました。復習するか、教科書で続きを読みましょう。",
+  "path.lowerInTextbook": "下の学年の内容は教科書にあります。",
   "path.levelNow": "学習パスを {level} に設定しました。",
   "stats.week": "今週の XP",
   "stats.streak": {

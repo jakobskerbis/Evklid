@@ -116,6 +116,8 @@
   "path.next": "Thème suivant",
   "path.allDone": "Tous les thèmes de ce parcours sont maîtrisés !",
   "path.allDoneToast": "Tous les thèmes de ce parcours sont maîtrisés. Choisis un autre parcours ou révise.",
+  "path.allDoneSchool": "Tous les thèmes de ce parcours sont maîtrisés. Révise ou continue dans le Manuel.",
+  "path.lowerInTextbook": "Le contenu des classes inférieures se trouve dans le Manuel.",
   "path.levelNow": "Ton parcours est maintenant réglé sur {level}.",
   "stats.week": "XP cette semaine",
   "stats.streak": {

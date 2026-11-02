@@ -120,6 +120,8 @@
   "path.next": "Ďalšia téma",
   "path.allDone": "Všetky témy na tejto ceste sú zvládnuté!",
   "path.allDoneToast": "Všetky témy na tejto ceste sú zvládnuté. Vyber si inú cestu alebo opakuj.",
+  "path.allDoneSchool": "Všetky témy na tejto ceste sú zvládnuté. Opakuj alebo čítaj ďalej v Učebnici.",
+  "path.lowerInTextbook": "Učivo nižších ročníkov nájdeš v Učebnici.",
   "path.levelNow": "Vzdelávacia cesta je teraz pre: {level}.",
   "stats.week": "XP tento týždeň",
   "stats.streak": {

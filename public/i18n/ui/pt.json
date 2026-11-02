@@ -116,6 +116,8 @@
   "path.next": "Próximo tema",
   "path.allDone": "Todos os temas deste percurso estão dominados!",
   "path.allDoneToast": "Todos os temas deste percurso estão dominados. Escolhe outro percurso ou faz revisão.",
+  "path.allDoneSchool": "Todos os temas deste percurso estão dominados. Faz revisão ou continua a ler no Manual.",
+  "path.lowerInTextbook": "A matéria dos anos anteriores está no Manual.",
   "path.levelNow": "O teu percurso agora é para {level}.",
   "stats.week": "XP esta semana",
   "stats.streak": {

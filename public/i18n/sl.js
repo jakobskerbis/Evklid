@@ -239,6 +239,8 @@ export default {
   "path.allDone": "Vse teme te poti so osvojene!",
   "path.levelNow": "Učna pot je zdaj za {level}.",
   "path.allDoneToast": "Vse teme te poti so osvojene. Izberi drugo pot ali ponavljaj.",
+  "path.allDoneSchool": "Vse teme te poti so osvojene. Ponavljaj ali beri naprej v Učbeniku.",
+  "path.lowerInTextbook": "Snov nižjih razredov in letnikov najdeš v Učbeniku.",
   "stats.week": "XP ta teden",
   "stats.streak": { one: "dan zapored", two: "dneva zapored", few: "dni zapored", other: "dni zapored" },
   "node.due": "za ponovitev",

@@ -118,6 +118,8 @@
   "path.next": "Sljedeća tema",
   "path.allDone": "Sve teme ovog puta su savladane!",
   "path.allDoneToast": "Sve teme ovog puta su savladane. Odaberi drugi put ili ponavljaj.",
+  "path.allDoneSchool": "Sve teme ovog puta su savladane. Ponavljaj ili čitaj dalje u Udžbeniku.",
+  "path.lowerInTextbook": "Gradivo nižih razreda i godina naći ćeš u Udžbeniku.",
   "path.levelNow": "Put učenja sada je za {level}.",
   "stats.week": "XP ovaj tjedan",
   "stats.streak": {

@@ -116,6 +116,8 @@
   "path.next": "Nächstes Thema",
   "path.allDone": "Alle Themen dieses Pfads sind gemeistert!",
   "path.allDoneToast": "Alle Themen dieses Pfads sind gemeistert. Wähle einen anderen Pfad oder wiederhole.",
+  "path.allDoneSchool": "Alle Themen dieses Pfads sind gemeistert. Wiederhole oder lies im Lehrbuch weiter.",
+  "path.lowerInTextbook": "Den Stoff niedrigerer Klassen und Jahrgänge findest du im Lehrbuch.",
   "path.levelNow": "Dein Lernpfad ist jetzt auf {level} eingestellt.",
   "stats.week": "XP diese Woche",
   "stats.streak": {

@@ -116,6 +116,8 @@
   "path.next": "Következő téma",
   "path.allDone": "Az út minden témáját elsajátítottad!",
   "path.allDoneToast": "Az út minden témáját elsajátítottad. Válassz másik utat, vagy ismételj.",
+  "path.allDoneSchool": "Az út minden témáját elsajátítottad. Ismételj, vagy olvass tovább a Tankönyvben.",
+  "path.lowerInTextbook": "Az alacsonyabb évfolyamok anyagát a Tankönyvben találod.",
   "path.levelNow": "A tanulási út most erre van beállítva: {level}.",
   "stats.week": "XP ezen a héten",
   "stats.streak": {

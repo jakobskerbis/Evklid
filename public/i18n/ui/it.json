@@ -116,6 +116,8 @@
   "path.next": "Prossimo argomento",
   "path.allDone": "Tutti gli argomenti di questo percorso sono padroneggiati!",
   "path.allDoneToast": "Tutti gli argomenti di questo percorso sono padroneggiati. Scegli un altro percorso o ripassa.",
+  "path.allDoneSchool": "Tutti gli argomenti di questo percorso sono padroneggiati. Ripassa o continua a leggere nel Manuale.",
+  "path.lowerInTextbook": "Il materiale delle classi inferiori è nel Manuale.",
   "path.levelNow": "Il percorso ora è impostato su {level}.",
   "stats.week": "XP questa settimana",
   "stats.streak": {

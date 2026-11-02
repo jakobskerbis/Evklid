@@ -120,6 +120,8 @@
   "path.next": "Następny temat",
   "path.allDone": "Wszystkie tematy tej ścieżki opanowane!",
   "path.allDoneToast": "Wszystkie tematy tej ścieżki opanowane. Wybierz inną ścieżkę albo powtarzaj.",
+  "path.allDoneSchool": "Wszystkie tematy tej ścieżki opanowane. Powtarzaj albo czytaj dalej w Podręczniku.",
+  "path.lowerInTextbook": "Materiał z niższych klas znajdziesz w Podręczniku.",
   "path.levelNow": "Ścieżka nauki jest teraz dla: {level}.",
   "stats.week": "XP w tym tygodniu",
   "stats.streak": {

@@ -114,6 +114,8 @@
   "path.next": "다음 주제",
   "path.allDone": "이 경로의 모든 주제를 마스터했어요!",
   "path.allDoneToast": "이 경로의 모든 주제를 마스터했어요. 다른 경로를 고르거나 복습하세요.",
+  "path.allDoneSchool": "이 경로의 모든 주제를 마스터했어요. 복습하거나 교과서에서 더 읽어 보세요.",
+  "path.lowerInTextbook": "아래 학년의 내용은 교과서에 있어요.",
   "path.levelNow": "학습 경로가 이제 {level}(으)로 설정됐어요.",
   "stats.week": "이번 주 XP",
   "stats.streak": {

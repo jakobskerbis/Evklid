@@ -114,6 +114,8 @@
   "path.next": "下一个主题",
   "path.allDone": "这条路径上的所有主题都已掌握！",
   "path.allDoneToast": "这条路径上的所有主题都已掌握。选择另一条路径或进行复习。",
+  "path.allDoneSchool": "这条路径上的所有主题都已掌握。进行复习或在课本中继续阅读。",
+  "path.lowerInTextbook": "较低年级的内容在课本里。",
   "path.levelNow": "学习路径现在设为：{level}。",
   "stats.week": "本周 XP",
   "stats.streak": {

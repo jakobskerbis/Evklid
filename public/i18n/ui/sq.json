@@ -116,6 +116,8 @@
   "path.next": "Tema e radhës",
   "path.allDone": "Të gjitha temat e kësaj rruge janë zotëruar!",
   "path.allDoneToast": "Të gjitha temat e kësaj rruge janë zotëruar. Zgjidh një rrugë tjetër ose përsërit.",
+  "path.allDoneSchool": "Të gjitha temat e kësaj rruge janë zotëruar. Përsërit ose lexo më tej te Teksti.",
+  "path.lowerInTextbook": "Lëndën e klasave dhe viteve më të ulëta e gjen te Teksti.",
   "path.levelNow": "Rruga e të mësuarit tani është për {level}.",
   "stats.week": "XP këtë javë",
   "stats.streak": {
