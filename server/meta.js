@@ -1,9 +1,13 @@
 // Branje in odstranjevanje strojnih blokov iz odgovorov modela:
 // vrstice <<META ...>> (analitika) in blokov <<KARTICA V: … O: … >> (kartice za ponavljanje).
 
-const META_RE = /<<META\b([\s\S]*?)>>/g;
-const CARD_RE = /<<KARTICA\b([\s\S]*?)>>/g;
-const MARKERS = ["<<META", "<<KARTICA"];
+const META_RE = /<<\s*META\b([\s\S]*?)>>/g;
+const CARD_RE = /<<\s*KARTICA\b([\s\S]*?)>>/g;
+// META brez oklepajev ali z enim samim (»META subject=MAT …«, »<META …>«, v oznakah kode): model se včasih
+// zmoti v zapisu; učenec vrstice ne sme videti (digitalni razred, 2026-11-01: vidna pri treh učencih).
+const META_LOOSE_RE = /^[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\bsubject=[^\n]*$/gm;
+const MARKERS = ["<<META", "<<KARTICA", "<< META", "<< KARTICA", "<META", "META subject="];
+const MARKER_MAX = Math.max(...MARKERS.map((m) => m.length));
 
 import { ALL_SUBJECTS } from "./subjects.js";
 
@@ -28,6 +32,7 @@ function parseAttrs(body) {
 export function parseMeta(text) {
   let last = null;
   for (const m of text.matchAll(META_RE)) last = m[1];
+  if (last === null) for (const m of String(text).matchAll(META_LOOSE_RE)) last = m[0].replace(/^[\s`*_<]*META\b/, "").replace(/[>`*_\s]+$/, "");
   if (last === null) return null;
   const a = parseAttrs(last);
   const pick = (key, fallback) => (VALID[key].includes(a[key]) ? a[key] : fallback);
@@ -64,13 +69,22 @@ export function parseCards(text, max = 3) {
 }
 
 export function stripMeta(text) {
-  return text
+  return String(text)
+    // META v bloku kode: cel blok z oznakami (zaključne oznake pravih blokov kode ostanejo).
+    .replace(/^[ \t]*```[^\n]*\n(?:[ \t]*\n)*[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\n(?:[ \t]*\n)*[ \t]*```[ \t]*$/gm, "")
+    .replace(META_LOOSE_RE, "") // cela vrstica, tudi z oznakami kode okoli (»`<<META …>>`«)
     .replace(META_RE, "")
     .replace(CARD_RE, "")
-    .replace(/<<(?:META|KARTICA)\b[\s\S]*$/, "") // nedokončan blok (npr. odrezan odgovor)
+    .replace(/<<\s*(?:META|KARTICA)\b[\s\S]*$/, "") // nedokončan blok (npr. odrezan odgovor)
     .replace(/\n{3,}/g, "\n\n")
     .replace(/\s+$/, "");
 }
+
+// Uvodne fraze, ki jih prompt prepoveduje (»Odlično vprašanje!«, »Seveda!«): odstranjene še na strežniku.
+// Pohvala pravilnega koraka (»Točno tako.«, »Bravo.«) ni uvodna fraza in ostane.
+const LEAD_RE = /^[ \t]*(?:(?:odlično|dobro|super|zanimivo|izvrstno|krasno|lepo|zelo dobro|fino)\s+vprašanje|seveda|z veseljem|jasno|great question|good question|of course|sure)[!.,:;]+(?![ \t]*da\b)[ \t]*(?:\n[ \t]*)?/i; // »Jasno, da …« je stavek, ne uvodna fraza
+export const LEAD_MAX = 40; // toliko znakov zadrži pretakanje, dokler ni jasno, ali se odgovor začne z uvodno frazo
+export const stripLeadPhrase = (text) => String(text).replace(LEAD_RE, (m) => (m.trim().length === String(text).trim().length ? m : "")).replace(/^[ \t]*\n/, "");
 
 // Filter za pretakanje: sproti spušča besedilo naprej, a zadrži vse od
 // začetka prvega strojnega bloka ("<<META" ali "<<KARTICA") naprej (in morebitno
@@ -80,11 +94,20 @@ export function createStreamFilter() {
   let emitted = 0; // koliko znakov iz buffer je že šlo naprej
   let metaStarted = false;
 
+  let leadDone = false; // začetek odgovora je pregledan za uvodno frazo
+  const lead = (out) => {
+    if (leadDone) return out;
+    leadDone = true;
+    return stripLeadPhrase(out);
+  };
+
   return {
     push(chunk) {
       buffer += chunk;
       if (metaStarted) return "";
-      const from = Math.max(0, emitted - 10);
+      // Začetek zadrži, dokler ni dovolj besedila (ali prelom vrstice), da se uvodna fraza odstrani kot celota.
+      if (!leadDone && buffer.length < LEAD_MAX && !buffer.includes("\n")) return "";
+      const from = Math.max(0, emitted - MARKER_MAX);
       const found = MARKERS.map((mk) => buffer.indexOf(mk, from)).filter((i) => i !== -1);
       const idx = found.length ? Math.min(...found) : -1;
       let safeEnd;
@@ -94,7 +117,7 @@ export function createStreamFilter() {
       } else {
         // Zadrži konec, ki bi lahko bil začetek markerja (npr. "<", "<<M").
         safeEnd = buffer.length;
-        for (let k = Math.min(9, buffer.length); k > 0; k--) {
+        for (let k = Math.min(MARKER_MAX - 1, buffer.length); k > 0; k--) {
           const tail = buffer.slice(-k);
           if (MARKERS.some((mk) => mk.length > k && mk.startsWith(tail))) {
             safeEnd = buffer.length - k;
@@ -102,16 +125,16 @@ export function createStreamFilter() {
           }
         }
       }
-      // Presledke in prelome na koncu zadrži, dokler ne vemo, ali jim sledi META.
-      while (safeEnd > emitted && /\s/.test(buffer[safeEnd - 1])) safeEnd--;
+      // Presledke, prelome in oznake kode na koncu zadrži, dokler ne vemo, ali jim sledi META.
+      while (safeEnd > emitted && /[\s`]/.test(buffer[safeEnd - 1])) safeEnd--;
       if (safeEnd <= emitted) return "";
       const out = buffer.slice(emitted, safeEnd);
       emitted = safeEnd;
-      return out;
+      return lead(out);
     },
     // Na koncu vrne preostanek (brez strojnih blokov) in celotno surovo besedilo.
     end() {
-      const rest = stripMeta(buffer.slice(emitted));
+      const rest = lead(stripMeta(buffer.slice(emitted)));
       return { rest, raw: buffer };
     },
   };

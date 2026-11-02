@@ -55,9 +55,9 @@ export function checkerUser({ question, answer, kind = "answer" }) {
   return `STUDENT QUESTION:\n${String(question || "(none)").slice(0, 4000)}\n\n${label}:\n${String(answer)}`;
 }
 
-export async function askModel(model, user, createFn) {
+export async function askModel(model, user, createFn, system = SYSTEM) {
   const create = createFn || ((p) => getClient().messages.create(p));
-  const r = await create({ model, max_tokens: 8000, output_config: { effort: EFFORT }, system: SYSTEM, messages: [{ role: "user", content: user }] });
+  const r = await create({ model, max_tokens: 8000, output_config: { effort: EFFORT }, system, messages: [{ role: "user", content: user }] });
   const text = (r.content || []).filter((b) => b.type === "text").map((b) => b.text).join("").trim();
   // Odrezan (max_tokens) ali zavrnjen odgovor preverjevalca ni OK, tudi če se začne z »OK«.
   const cut = r.stop_reason && r.stop_reason !== "end_turn" && r.stop_reason !== "stop_sequence";

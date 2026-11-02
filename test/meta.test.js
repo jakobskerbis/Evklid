@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { parseMeta, stripMeta, createStreamFilter } from "../server/meta.js";
+import { parseMeta, stripMeta, createStreamFilter, stripLeadPhrase } from "../server/meta.js";
 import { buildSystemPrompt } from "../server/prompt.js";
 import { normalizeSettings } from "../server/settings.js";
 
@@ -83,4 +83,50 @@ test("prompt: zero prior knowledge, summary box, adaptive difficulty and cards s
   assert.match(stat, /izrecno želi zahtevnejše primere/);
   assert.match(dyn, /Rezultati učenca: Vadnica: 9 od 10\. Predlagana začetna zahtevnost: višja/);
   assert.match(buildSystemPrompt({ settings: normalizeSettings({}) }), /Rezultati učenca: še ni podatkov\. Predlagana začetna zahtevnost: osnovna/);
+});
+
+test("META without brackets, with one bracket or in a code block is still read and never shown (digitalni razred, 1. 11.)", () => {
+  const variants = [
+    'Ok.\nMETA subject=MAT topic="x" error=0 mode=A flag=none done=0',
+    'Ok.\n<META subject=MAT topic="x" error=0 mode=A flag=none done=0>',
+    'Ok.\n`<<META subject=MAT topic="x" error=0 mode=A flag=none done=0>>`',
+    'Ok.\n```\n<<META subject=MAT topic="x" error=0 mode=A flag=none done=0>>\n```',
+    'Ok.\n<< META subject=MAT topic="x" error=0 mode=A flag=none done=0 >>',
+  ];
+  for (const v of variants) {
+    assert.equal(stripMeta(v), "Ok.", v);
+    assert.equal(parseMeta(v)?.subject, "MAT", v);
+    for (const size of [1, 4, 50]) {
+      const f = createStreamFilter();
+      let out = "";
+      for (let i = 0; i < v.length; i += size) out += f.push(v.slice(i, i + size));
+      out += f.end().rest;
+      assert.equal(out, "Ok.", `${v} (size ${size})`);
+    }
+  }
+  assert.equal(stripMeta("Metamorfoza je sprememba oblike. META podatki niso tema."), "Metamorfoza je sprememba oblike. META podatki niso tema.");
+});
+
+test("a forbidden lead phrase is stripped from the stream and from the stored text; praise for a correct step stays", () => {
+  assert.equal(stripLeadPhrase("Odlično vprašanje! Kaj je 2 + 2?"), "Kaj je 2 + 2?");
+  assert.equal(stripLeadPhrase("Seveda.\nPoglejva prvi korak."), "Poglejva prvi korak.");
+  assert.equal(stripLeadPhrase("Odlično, 12 je prav. Kaj sledi?"), "Odlično, 12 je prav. Kaj sledi?");
+  assert.equal(stripLeadPhrase("Jasno je, da velja."), "Jasno je, da velja.");
+  assert.equal(stripLeadPhrase("Seveda!"), "Seveda!");
+  assert.equal(stripLeadPhrase("Jasno, da velja: 2x = 6."), "Jasno, da velja: 2x = 6.");
+  assert.equal(stripLeadPhrase("Super, 12 je prav."), "Super, 12 je prav.");
+  const full = 'Dobro vprašanje! Ulomek je del celote. Koliko je pol pice?\n<<META subject=MAT topic="ulomki" error=0 mode=A flag=none done=0>>';
+  for (const size of [1, 3, 20, 200]) {
+    const f = createStreamFilter();
+    let out = "";
+    for (let i = 0; i < full.length; i += size) out += f.push(full.slice(i, i + size));
+    out += f.end().rest;
+    assert.equal(out, "Ulomek je del celote. Koliko je pol pice?", `size ${size}`);
+  }
+});
+
+test("stripMeta keeps the fences of a real code block and strips only the block that held META", () => {
+  const code = "Velja $a<b$.\n\n```js\nlet x = 1;\n```\n\nKonec.";
+  assert.equal(stripMeta(code + '\n```\n<<META subject=MAT topic="x" error=0 mode=A flag=none done=0>>\n```'), code);
+  assert.equal(stripMeta('Ok.\n`META subject=MAT topic="x" error=0 mode=A flag=none done=0`'), "Ok.");
 });

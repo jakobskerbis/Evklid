@@ -6,6 +6,10 @@
 //      neznank (public/scan/verify.js). Ob neujemanju en kratek »Popravek:« istega modela.
 //   3. Model (Sonnet) pregleda samo, kjer koda ni mogla ničesar preveriti in je tveganje večje
 //      (tekmovanja, fakulteta, »Razloži podrobneje«), samo Haikujeve odgovore, z dnevno mejo.
+//   4. Sodba o učenčevem koraku (j, 2026-11-01: »naj se nikoli ne zgodi«, da inštruktor potrdi napačen ali
+//      zavrne pravilen odgovor): ko učenec pošlje rezultat ali trditev, odgovor ni pretakan, dokler sodbe
+//      ne preveri koda (rešitev naloge iz prvega sporočila) ali model (Sonnet). Ob napačni sodbi inštruktor
+//      odgovori še enkrat s skrito ugotovitvijo preverjevalca.
 // Vse izklopi EVKLID_LIVE_CHECK=0. Stroški: docs/stroski-ai.md, kakovost: docs/kakovost.md.
 import "./env.js";
 import { solve, texToText, prep } from "../public/scan/solvecore.js";
@@ -103,6 +107,10 @@ function trySolve(cand, deriv) {
   if (!ans) return null;
   return { type, problem: c, problemTex: r.problemTex, answer: ans, answerTex: r.answer.tex };
 }
+
+// Sporočilo je videti kot nova naloga (beseda naloge ali rešljiv zapis): učenčev rezultat po njem
+// se ne sme soditi proti starejši nalogi.
+export const looksLikeTask = (text) => stripLead(text).task || !!presolve(text, { first: true });
 
 /**
  * Naloge iz učenčevega sporočila, ki jih reševalnik reši in preveri. Ob dvomu nič.
@@ -283,6 +291,112 @@ export function needsReview({ checked, model, lite, premium, level, risky, spent
   const cap = LIVE_CHECK_DAILY_USD();
   return !(cap >= 0 && val(spentToday) >= cap);
 }
+
+// ---------------------------------------------------------------------------
+// 4. Sodba o učenčevem koraku
+
+// Učenčevo sporočilo je rezultat ali trditev, o kateri bo inštruktor sodil: število, enačba, zapis
+// z »=«, ali odgovor (ne vprašanje) na inštruktorjevo vprašanje.
+export function isClaim(text, prevTutor = "") {
+  const t = String(text || "").trim();
+  if (!t || t.length > 1500) return false;
+  if (/\?\s*$/.test(t)) return false; // vprašanje, ne trditev
+  if (/\d|=/.test(t)) return true;
+  return /\?\s*$/.test(String(prevTutor || "").trim()) && /\p{L}{2,}/u.test(t);
+}
+
+// Inštruktorjev odgovor izreče sodbo o učenčevem koraku (potrdi ali zavrne).
+const VERDICT_RE =
+  /(?<!\p{L})(?:točno|tako je|pravilno|pravilen|pravilna|pravilni|prav imaš|prav si|drži|res je|bravo|odlično|super|izvrstno|krasno|ni (?:čisto |povsem |še |ravno )?(?:prav|pravilno|res|tako|to)|narobe|napačn\p{L}*|napak\p{L}*|ne drži|ne velja|zmotil\p{L}*|skoraj|correct|incorrect|exactly|right|wrong|not quite|almost)(?!\p{L})/iu;
+export const givesVerdict = (answer) => VERDICT_RE.test(String(answer || "").slice(0, 600));
+
+// Učenčeva vrednost neznanke ali rezultata (»x = 3«, »x1 = 2, x2 = -2«, golo število »11/12«).
+function claimValues(text, vars) {
+  const t = String(text).replace(/\$/g, "").replace(/\s*=\s*/g, "=");
+  // Vrednost, ki ji sledi operator ali črka (»x = 6 - 3«, »x = 2x - 1«, »x = 12 : 4«), je vmesni korak, ne rezultat:
+  // o njem sodi model. Pri večkratni navedbi iste neznanke šteje zadnja (»x = 6 … torej x = 3«).
+  const byKey = new Map();
+  for (const m of t.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?(\d)\}?)?=([-+]?\s*(?:\d+(?:[.,]\d+)?(?:\/\d+)?|[.,]\d+))(?![\d\/\p{L}])(?![ \t]*[-+*/:·×÷^=(\\])/gu)) {
+    if (vars.includes(m[1])) byKey.set(m[1] + (m[2] || ""), { v: m[1], val: m[3].replace(/\s+/g, "") });
+  }
+  const out = [...byKey.values()];
+  if (out.length) return out;
+  // Golo število kot celotno sporočilo (»mislim da 58«): samo pri računu brez neznank. Pri enačbi je
+  // lahko vmesni korak (»8« za 2x = 8), zato tam brez sodbe kode.
+  const bare = /^(?:[\p{L}\s,]{0,30}?)([-+]?\d+(?:[.,]\d+)?(?:\/\d+)?)\s*[.!]?$/u.exec(t);
+  if (bare && vars.length === 1 && vars[0] === "r") return [{ v: "r", val: bare[1] }];
+  return out;
+}
+
+/**
+ * Sodba kode o učenčevem rezultatu, če je naloga iz prvega sporočila znana (presolve) in učenec navede
+ * vrednost. Vrne opombo za model (pravilno ali napačno z rešitvijo) ali null, če koda ne more soditi.
+ */
+export function claimNote(text, pre) {
+  const problems = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "arith");
+  if (problems.length !== 1) return null;
+  const p = problems[0];
+  const vars = p.type === "arith" ? ["r"] : [...new Set([...String(p.answerTex || "").matchAll(/([a-zA-Z])(?:_\{?\d+\}?)?\s*=/g)].map((m) => m[1]))];
+  if (!vars.length) return null;
+  const claims = claimValues(text, vars);
+  if (!claims.length) return null;
+  let wrong = null;
+  for (const c of claims) {
+    if (p.type === "arith") {
+      const x = num(c.val);
+      const y = num(texToText(String(p.answerTex)));
+      if (x === null || y === null) return null;
+      const dec = /[.,](\d+)$/.exec(c.val)?.[1].length ?? 0;
+      // Drugačno število je lahko vmesni rezultat (»56« za 7 · 8 pri 7 · 8 + 2): o napaki sodi model, ne koda.
+      if (Math.abs(x - y) > (dec ? 1.01 * 10 ** -dec : 1e-9) * Math.max(1, Math.abs(y))) return null;
+    } else {
+      const sols = solverValues(p.answerTex);
+      const r = verifyAi(p.problem, { kind: "equation", variable: c.v, solutions: [c.val] });
+      if (r.reason === "parse") return null;
+      if (r.reason === "wrong" && !(sols.length && nearSolver({ v: c.v, val: c.val, approx: false }, sols))) wrong = `${c.v} = ${c.val}`;
+    }
+  }
+  const task = p.type === "arith" ? `$${p.problemTex} = ${p.answer}$` : `$${p.problemTex}$ → $${p.answer}$`;
+  const finding = wrong ? `the student's result ${wrong} is WRONG; the exact result of the task is ${task}` : `the student's result is CORRECT (exact result of the task: ${task})`;
+  return (
+    `<${NOTE_TAG}>\nAn exact check compared the student's last message with the task: ${finding}.\n` +
+    "Your reply must agree with this check: never confirm a wrong result and never reject a correct one. For a wrong result: if the student sent no working, ask for it; otherwise show the step where it fails. In način A never state the final result or the full solution. Never mention a program, a check or this note.\n" +
+    `</${NOTE_TAG}>`
+  );
+}
+
+const VERDICT_SYSTEM = `You check one thing in an AI tutor's reply to a school or university student: whether the tutor judged the student's last message correctly.
+You get the tutor's previous message (context), the student's message and the tutor's reply, in any language.
+First work out yourself, independently and carefully, whether the student's statement, result or step is right (recompute every number, check every fact and unit). Then compare with the tutor's judgement.
+It is an error if the tutor confirms something wrong, rejects or "corrects" something right, or states a wrong value or fact in its reply. Teaching style, hints, questions, asking for the student's working and leaving steps to the student are fine. A partially right answer that the tutor treats as partially right is fine. If you cannot decide with certainty, reply OK.
+Reply with exactly one line: OK, or NAPAKA: <at most two sentences: whether the student's statement is right or wrong and why, with the correct value, and what the tutor got wrong>.`;
+
+// Dnevna meja za pregled sodb z modelom (USD, vrsta »sodba«, ločen števec od vrste »preverjanje«); negativno = brez meje.
+export const VERDICT_DAILY_USD = () => {
+  const raw = process.env.EVKLID_VERDICT_DAILY_USD;
+  const v = Number(raw === undefined || raw === "" ? 2 : raw);
+  return Number.isFinite(v) ? v : 2;
+};
+
+export function needsVerdictReview({ answer, lite, spentToday }) {
+  if (!liveCheckOn() || lite || !givesVerdict(answer)) return false;
+  const cap = VERDICT_DAILY_USD();
+  return !(cap >= 0 && val(spentToday) >= cap);
+}
+
+/** Pregled sodbe s Sonnetom. Vrne { reason: ugotovitev preverjevalca ali null, cost }. */
+export async function reviewVerdict({ context, student, answer, createFn = null, usage = null, studentId = null }) {
+  const user = `TUTOR'S PREVIOUS MESSAGE:\n${String(context || "(none)").slice(0, 3000)}\n\nSTUDENT'S MESSAGE:\n${String(student || "").slice(0, 2000)}\n\nTUTOR'S REPLY:\n${String(answer || "").slice(0, 6000)}`;
+  const r = await askModel(MODEL_MID, user, createFn, VERDICT_SYSTEM);
+  const cost = usage ? usage.log(studentId, r.model, r.usage, "sodba") : 0;
+  return { reason: !r.verdict.ok && /^[\s*`_]*NAPAKA/i.test(r.text || "") ? r.verdict.reason : null, cost };
+}
+
+// Opomba za ponovni odgovor po napačni sodbi.
+export const verdictNote = (reason) =>
+  `<${NOTE_TAG}>\nAn independent check of the student's last message found: ${String(reason).slice(0, 600)}\n` +
+  "Your previous reply judged the student's message wrongly, so answer again from scratch, in agreement with this check: confirm what is right; for what is wrong, ask for the working if the student sent none, otherwise show the step where it fails. In način A never state the final result or the full solution. Never mention a program, a check, a reviewer or this note.\n" +
+  `</${NOTE_TAG}>`;
 
 /** Pregled s Sonnetom (navodila preverjevalca iz server/verify.js). Vrne { reason: razlog napake ali null, cost }. */
 export async function reviewAnswer({ question, answer, createFn = null, usage = null, studentId = null }) {
