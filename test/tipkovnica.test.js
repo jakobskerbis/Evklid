@@ -230,7 +230,7 @@ test("telefonova tipkovnica samo za prijavne podatke; povezave in ostala e-pošt
 test("tablica: tipkovnica čez celo širino, ⌄ v vrstici zavihkov (j, 2. 11.)", async () => {
   const { readFile } = await import("node:fs/promises");
   const css = await readFile(new URL("../public/tipkovnica.css", import.meta.url), "utf8");
-  const i = css.indexOf("@media (pointer: coarse) and (min-width: 700px)");
+  const i = css.indexOf("@media (pointer: coarse) and (min-width: 700px) and (min-height: 600px)");
   assert.ok(i > css.indexOf(".tk-in {"), "pravilo za tablico mora biti za osnovnimi pravili, sicer ga ta povozijo");
   const blk = css.slice(i, css.indexOf("\n}\n", i));
   assert.match(blk, /\.tk-in \{[^}]*max-width: none/);

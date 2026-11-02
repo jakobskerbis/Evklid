@@ -113,7 +113,7 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
 .tk-chip.paste { font-weight: 800; color: var(--accent); }
 /* tablica (j, 2. 11.: »Tipkovnica je v obliki za telefon«): čez celo širino kot tipkovnica iPada,
    višje in širše tipke; ⌄ ostane v vrstici zavihkov, zato spodaj ni praznega pasu */
-@media (pointer: coarse) and (min-width: 700px) {
+@media (pointer: coarse) and (min-width: 700px) and (min-height: 600px) {
   .tk { --tk-dvig: max(12px, calc(20px - env(safe-area-inset-bottom))); }
   .tk:has(.tk-rows[data-layer="abc"]) { --tk-dvig: max(12px, calc(20px - env(safe-area-inset-bottom))); }
   .tk-in { max-width: none; margin: 0; padding-inline: 8px; gap: 8px; }
