@@ -55,7 +55,15 @@ class LocalTutor {
     t.raw = new Map(); // pogovor → zadnji surovi odgovor modela (z META vrstico)
     t.mock = claude.isMockMode() && !opts.streamFn && opts.engine !== "cli";
     t.model = claude.MODEL;
-    const { cliStreamFn } = await import("./cli.js");
+    const { cliStreamFn, cliCreateFn } = await import("./cli.js");
+    // Prek naročnine tudi preverjanje odgovorov in kartic (sicer bi klicalo API s ključem).
+    const extra = {};
+    if (opts.engine === "cli" && !opts.streamFn) {
+      const { verifyAnswer } = await import("../server/verify.js");
+      const create = cliCreateFn();
+      extra.reviewCreateFn = create;
+      extra.verifyFn = (a) => verifyAnswer({ ...a, createFn: create });
+    }
     const inner = opts.streamFn || (opts.engine === "cli" ? cliStreamFn({ modeParams: claude.modeParams }) : claude.streamReply);
     const streamFn = async (args) => {
       const result = await inner(args);
@@ -63,7 +71,7 @@ class LocalTutor {
       return result;
     };
     t.store = openDb(":memory:");
-    t.server = createApp(t.store, { streamFn }).listen(0);
+    t.server = createApp(t.store, { streamFn, ...extra }).listen(0);
     await new Promise((r) => t.server.once("listening", r));
     t.base = `http://127.0.0.1:${t.server.address().port}`;
     t.label = t.mock ? "lokalno (preizkusni način, brez modela)" : `lokalno (${claude.MODEL}${opts.engine === "cli" ? ", prek Claude Code" : ""})`;
