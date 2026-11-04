@@ -15,6 +15,7 @@
     .doc h2 { margin-top: 28px; font-size: 1.15rem; }
     .todo { background: #fff4d6; color: #6b4e00; padding: 0 4px; border-radius: 4px; }
     a { color: var(--accent); }
+    @media (max-width: 480px) { .doc table { font-size: 0.85rem; } .doc td, .doc th { padding: 6px; hyphens: auto; } } /* tabela ne sme čez rob na telefonu */
   </style>
 </head>
 <body>
@@ -58,6 +59,7 @@
     <tr><td>Google Ireland Ltd.</td><td>mobilna aplikacija za Android: nakup naročnine v Google Play, dostava obvestil (Firebase Cloud Messaging)</td><td>EU / ZDA</td></tr>
     <tr><td>650 Industries, Inc. (Expo)</td><td>posredovanje obvestil v mobilno aplikacijo (žeton naprave in besedilo obvestila)</td><td>ZDA</td></tr>
     <tr><td>Render Services, Inc.</td><td>strežnik in baza podatkov</td><td>EU (Frankfurt) / ZDA</td></tr>
+    <tr><td>Cloudflare, Inc.</td><td>domena in preusmerjanje e-pošte na evklid.app; hramba šifriranih dnevnih varnostnih kopij baze (ključ za odpiranje ima samo Evklid)</td><td>EU / ZDA</td></tr>
   </table>
   <p><b>Mobilna aplikacija</b>: kamera in galerija se uporabita samo, ko otrok sam fotografira ali izbere nalogo; fotografija gre inštruktorju kot v spletni aplikaciji. Obvestila (opomnik za vajo, cilj) so neobvezna; izklopite jih lahko v aplikaciji ali v nastavitvah telefona. Aplikacija ne uporablja oglasov, sledenja med aplikacijami ali lokacije.</p>
   <p><b>Glasovni vnos</b> (mikrofon v Inštruktorju) ni obvezen. Govor v besedilo pretvori brskalnik na napravi (npr. Google v Chromu, Apple v Safariju) po pogojih ponudnika brskalnika; mi zvoka ne prejmemo in ne hranimo, k nam pride samo zapisano besedilo, ko ga otrok pošlje.</p>
