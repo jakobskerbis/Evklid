@@ -211,8 +211,9 @@ export function zgradi(THREE, ctx) {
   telo.add(osiCev, osiKon);
   const osNapisi = []; // bazen spritov za številke in imena osi
   const osTeksture = new Map(); // besedilo|barva -> SpriteMaterial
-  function osMaterial(besedilo, barva, ime) {
-    const kljuc = besedilo + "|" + barva + "|" + (ime ? 1 : 0);
+  // skozi: napis je viden tudi za neprosojnim telesom
+  function osMaterial(besedilo, barva, ime, skozi) {
+    const kljuc = besedilo + "|" + barva + "|" + (ime ? 1 : 0) + (skozi ? 1 : 0);
     if (osTeksture.has(kljuc)) return osTeksture.get(kljuc);
     const c = document.createElement("canvas"), g = c.getContext("2d");
     const fs = ime ? 48 : 40, h = 58, pad = 8;
@@ -225,7 +226,7 @@ export function zgradi(THREE, ctx) {
       g.fillStyle = barva; g.fillText(besedilo, w / 2, h / 2 + 2);
     }
     const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-    const mat = new THREE.SpriteMaterial({ map: tex, depthTest: false, depthWrite: false, transparent: true });
+    const mat = new THREE.SpriteMaterial({ map: tex, depthTest: !skozi, depthWrite: false, transparent: true });
     mat.userData.razmerje = w / h;
     osTeksture.set(kljuc, mat);
     return mat;
@@ -861,10 +862,12 @@ export function zgradi(THREE, ctx) {
       _m.compose(_c.addVectors(a, b).multiplyScalar(0.5), _q, _sk.set(r, L, r));
       osiCev.setMatrixAt(nc, _m); osiCev.setColorAt(nc, barva); nc++;
     };
-    const napisOs = (besedilo, barva, p, vis, ime = false) => {
+    // pri izhodišču v kotu osi tečejo po robovih telesa, zato so številke vidne skozi (kot skriti robovi v učbeniku);
+    // pri izhodišču v središču bi tekle čez telo, zato jih telo zakrije
+    const napisOs = (besedilo, barva, p, vis, ime = false, skozi = ime || kot) => {
       let sp = osNapisi[nn];
       if (!sp) { sp = new THREE.Sprite(); sp.renderOrder = 9; telo.add(sp); osNapisi.push(sp); }
-      sp.material = osMaterial(besedilo, barva, ime); sp.visible = true;
+      sp.material = osMaterial(besedilo, barva, ime, skozi); sp.visible = true;
       const h = vis * u; sp.scale.set(h * sp.material.userData.razmerje, h, 1); sp.position.copy(p); nn++;
     };
     // odmik številk od osi: x levo od osi, y za osjo, z levo od osi
@@ -876,7 +879,10 @@ export function zgradi(THREE, ctx) {
       cev(A, B, rOs, barva);
       _m.compose(_c.copy(O).addScaledVector(d, tb - lKon / 2), _q.setFromUnitVectors(Y, d), _sk.set(rKon, lKon, rKon));
       osiKon.setMatrixAt(i, _m); osiKon.setColorAt(i, barva);
-      napisOs(["x", "y", "z"][i], OS_HEX[i], O.clone().addScaledVector(d, tb + 0.09 * u).add(i === 2 ? V(0, 0.02 * u, 0) : V(0, 0.03 * u, 0)), 0.13, true);
+      // ime osi za puščico; če bi tam segalo iz krogle prizora (kamera jo zajame, npr. z pri krogli), na drugi strani puščice
+      let pIme = O.clone().addScaledVector(d, tb + 0.09 * u).add(i === 2 ? V(0, 0.02 * u, 0) : V(0, 0.03 * u, 0));
+      if (pIme.distanceTo(sred) * s > 0.92) pIme = O.clone().addScaledVector(d, tb - lKon / 2).add(odmik[i].clone().multiplyScalar(-1.3)); // nasproti številk
+      napisOs(["x", "y", "z"][i], OS_HEX[i], pIme, 0.13, true);
       // črtica pravokotno na os (na podlagi v ravnini podlage, na osi z vodoravno)
       const pr = i === 0 ? V(1, 0, 0) : i === 1 ? V(0, 0, 1) : V(1, 0, 0);
       const crtica = (t, dl, b) => { const p = O.clone().addScaledVector(d, t); cev(p.clone().addScaledVector(pr, -dl), p.clone().addScaledVector(pr, dl), rOs * 0.9, b); };
@@ -889,7 +895,7 @@ export function zgradi(THREE, ctx) {
       // konec telesa: poudarjena črtica in mera (če je še na osi; npr. krogla sega čez majhno podlago)
       if (m > tb - 0.5 * lKon) continue;
       crtica(m, 0.03 * u, barva);
-      napisOs(st(m, Number.isInteger(Math.round(m * 10) / 10) ? 0 : 1), OS_HEX[i], O.clone().addScaledVector(d, m).add(odmik[i].clone().multiplyScalar(1.15)).add(V(0, 0.012 * u, 0)), 0.115);
+      napisOs(st(m, Number.isInteger(Math.round(m * 10) / 10) ? 0 : 1), OS_HEX[i], O.clone().addScaledVector(d, m).add(odmik[i].clone().multiplyScalar(1.15)).add(V(0, 0.012 * u, 0)), 0.115, false, true);
     }
     napisOs("0", SV, O.clone().add(V(-0.055 * u, 0.012 * u, -0.055 * u)), 0.1);
     osiCev.count = nc; osiCev.instanceMatrix.needsUpdate = true; if (osiCev.instanceColor) osiCev.instanceColor.needsUpdate = true;

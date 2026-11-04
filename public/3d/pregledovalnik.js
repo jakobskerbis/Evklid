@@ -518,7 +518,7 @@ export function odpriModel(el, mod, opts = {}) {
             }
             osveziVidnost();
             osveziIzpise();
-            if (typeof model?.merilo === "function") merilo();
+            if (typeof model?.merilo === "function" || typeof model?.povzetek === "function") merilo();
           }
           if (!model?.korak || !tece) return false;
           try {
