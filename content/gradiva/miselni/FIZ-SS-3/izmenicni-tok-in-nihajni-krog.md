@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sinusna napetost
+  - $U = U_0 \sin(\omega t)$, $\omega = 2\pi\nu$
+  - generator vrti tuljavo v magnetnem polju
+  - omrežje: $50\,\mathrm{Hz}$, $t_0 = 20\,\mathrm{ms}$
+- Izmenični tok
+  - $I_0 = \dfrac{U_0}{R}$, smer se menja $100$-krat v sekundi
+- Moč na uporniku
+  - niha med $0$ in $P_0$, nikoli negativna
+  - povprečje $\bar P = \dfrac{P_0}{2}$
+- Efektivna vrednost
+  - $U_{\mathrm{ef}} = \dfrac{U_0}{\sqrt{2}}$, $I_{\mathrm{ef}} = \dfrac{I_0}{\sqrt{2}}$
+  - $230\,\mathrm{V}$ efektivno, $325\,\mathrm{V}$ v vrhu
+  - napaka: deliti z $2$ namesto s $\sqrt{2}$
+- Nihajni krog
+  - kondenzator $C$ in tuljava $L$
+  - energija se pretaka med poljema
+  - prazen kondenzator: največji tok, energija v tuljavi
+- Lastna frekvenca
+  - $t_0 = 2\pi\sqrt{LC}$, $\nu_0 = \dfrac{1}{2\pi\sqrt{LC}}$
+  - štirikrat večji $C$: pol nižja frekvenca
+  - indukcijska plošča: okoli $25\,\mathrm{kHz}$

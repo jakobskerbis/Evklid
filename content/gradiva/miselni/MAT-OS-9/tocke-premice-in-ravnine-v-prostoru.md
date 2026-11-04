@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dve premici
+  - Sekajoči: ena skupna točka
+  - Vzporedni: ista ravnina, brez skupne točke
+  - Mimobežni: ne v isti ravnini, na primer $AB$, $CG$
+- Določitev ravnine
+  - Tri točke, ki niso na eni premici
+  - Trinožnik ne maja, stol s štirimi nogami lahko
+- Premica in ravnina
+  - Leži v ravnini, vzporedna ali jo prebada
+  - Prebodišče: edina skupna točka
+- Dve ravnini
+  - Vzporedni, na primer tla in strop
+  - Sekata se v presečnici, na primer $BC$
+- Pravokotnost na ravnino
+  - Pravokotna na dve premici skozi prebodišče
+  - Napaka: ena pravokotna premica ne zadošča
+- Razdalja točke od ravnine
+  - Dolžina pravokotnice do nožišča
+  - Poševna daljica je vedno daljša
+  - Oglišče kocke do prereza $ACGE$: $d = \dfrac{a\sqrt{2}}{2}$

@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sila
+  - delovanje enega telesa na drugo
+  - vektor, enota newton ($\mathrm{N}$)
+  - merimo z dinamometrom
+- Sile na daljavo
+  - teža $F_\mathrm{g} = m\,g$, navzdol
+  - magnetna in električna sila
+  - napaka: teža ni masa
+- Dotikalne sile
+  - sila podlage, pravokotno na podlago
+  - sila vrvi vzdolž vrvi, sila vzmeti
+  - trenje in upor zraka
+- Sestavljanje
+  - isti smeri seštej, nasprotni odštej
+  - pravokotni: $F_\mathrm{r} = \sqrt{F_1^2 + F_2^2}$
+  - poljuben kot: paralelogram
+- Ravnovesje
+  - rezultanta je nič
+  - telefon na mizi: teža in sila mize
+- Razstavljanje
+  - $F_x = F\cos\alpha$, $F_y = F\sin\alpha$
+  - kosinus spada h kateti ob kotu
+  - napaka: komponent ne seštevaj navadno
