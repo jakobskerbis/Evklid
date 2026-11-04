@@ -15,6 +15,7 @@
     .doc h2 { margin-top: 28px; font-size: 1.15rem; }
     .todo { background: #fff4d6; color: #6b4e00; padding: 0 4px; border-radius: 4px; }
     a { color: var(--accent); }
+    @media (max-width: 480px) { .doc table { font-size: 0.85rem; } .doc td, .doc th { padding: 6px; hyphens: auto; } } /* tabela ne sme čez rob na telefonu */
   </style>
 </head>
 <body>
@@ -34,6 +35,7 @@
     <tr><th>Kdo</th><th>Podatki</th></tr>
     <tr><td>Starš</td><td>e-naslov, ime (neobvezno), datum rojstva (za preverjanje starosti), geslo (shranjeno samo kot zgoščena vrednost), čas potrditve e-naslova in soglasij, stanje naročnine. Podatke o plačilni kartici obdeluje izključno Stripe (pri nakupu v mobilni aplikaciji pa Apple ali Google); mi jih ne vidimo in ne hranimo. Pri Prijavi z Apple še Applov anonimni identifikator uporabnika in e-naslov, ki ga Apple posreduje (lahko je skrit naslov za posredovanje).</td></tr>
     <tr><td>Otrok</td><td>ime ali vzdevek, letnica rojstva, šola in razred, nastavitve učenja, pogovori z inštruktorjem AI, fotografije nalog, ki jih otrok naloži, rešene naloge, napredek, točke in šibke točke.</td></tr>
+    <tr><td>Garancija »Boljša ocena ali vrnemo denar«</td><td>samo če se prijavite: izbrani otrok in predmet, otrokova ocena ob prijavi in nova ocena, ki jo sporočite, datum prijave, prvega plačila, zahtevka in odločitve, stanje garancije, odločitev z obrazložitvijo ter oznake vrnjenih plačil pri Stripe in vrnjeni znesek. Dneve vaje sproti preberemo iz točk, ki jih otrok zbira pri vaji, in jih ne hranimo posebej. Ker garancija velja enkrat na družino, hranimo zgoščeno vrednost vašega e-naslova. Zapis o garanciji z vsemi naštetimi podatki ostane tudi po izbrisu računa, a brez povezave z računom in otrokovim profilom. Časovne omejitve nima: samodejno ga ne izbrišemo.</td></tr>
   </table>
   <p>Priporočamo, da otrok uporablja vzdevek in da na fotografijah nalog ni obrazov ali drugih osebnih podatkov.</p>
 
@@ -45,7 +47,7 @@
     <li><b>Tedensko poročilo staršem</b>: zakoniti interes in vaša izbira; odjavite se lahko s povezavo v vsakem sporočilu ali v zavihku Račun.</li>
     <li><b>Računovodstvo</b> (izdani računi): zakonska obveznost, člen 6(1)(c) GDPR.</li>
   </ul>
-  <p>Podatkov ne prodajamo, ne uporabljamo za oglaševanje in ne izvajamo avtomatiziranega odločanja s pravnimi učinki. Na tedenski lestvici so prikazani samo vzdevki.</p>
+  <p>Podatkov ne prodajamo, ne uporabljamo za oglaševanje in ne izvajamo avtomatiziranega odločanja s pravnimi učinki. Na tedenski lestvici so prikazani samo vzdevki. <b>Vitrina v razredu</b> je privzeto izklopljena: če jo otrok vklopi, sošolci v razredu, ki ga je odprl učitelj, vidijo njegov vzdevek, avatar, mesto in točke na lestvici razreda (ta teden in ta mesec) ter do tri nagrade iz vitrine, za vsako pa dan, temo s šolskim predmetom in kako jo je dobil. Učitelj lahko vitrine za ves razred izklopi; takrat se izbira vseh otrok ponastavi na izklopljeno. Slika zbirke za deljenje nastane na napravi in ne vsebuje imena ali vzdevka.</p>
 
   <h2>4. Obdelovalci in prenosi</h2>
   <table>
@@ -57,13 +59,14 @@
     <tr><td>Google Ireland Ltd.</td><td>mobilna aplikacija za Android: nakup naročnine v Google Play, dostava obvestil (Firebase Cloud Messaging)</td><td>EU / ZDA</td></tr>
     <tr><td>650 Industries, Inc. (Expo)</td><td>posredovanje obvestil v mobilno aplikacijo (žeton naprave in besedilo obvestila)</td><td>ZDA</td></tr>
     <tr><td>Render Services, Inc.</td><td>strežnik in baza podatkov</td><td>EU (Frankfurt) / ZDA</td></tr>
+    <tr><td>Cloudflare, Inc.</td><td>domena in preusmerjanje e-pošte na evklid.app; hramba šifriranih dnevnih varnostnih kopij baze (ključ za odpiranje ima samo Evklid)</td><td>EU / ZDA</td></tr>
   </table>
   <p><b>Mobilna aplikacija</b>: kamera in galerija se uporabita samo, ko otrok sam fotografira ali izbere nalogo; fotografija gre inštruktorju kot v spletni aplikaciji. Obvestila (opomnik za vajo, cilj) so neobvezna; izklopite jih lahko v aplikaciji ali v nastavitvah telefona. Aplikacija ne uporablja oglasov, sledenja med aplikacijami ali lokacije.</p>
   <p><b>Glasovni vnos</b> (mikrofon v Inštruktorju) ni obvezen. Govor v besedilo pretvori brskalnik na napravi (npr. Google v Chromu, Apple v Safariju) po pogojih ponudnika brskalnika; mi zvoka ne prejmemo in ne hranimo, k nam pride samo zapisano besedilo, ko ga otrok pošlje.</p>
   <p>Prenosi v ZDA potekajo na podlagi okvira EU-ZDA za zasebnost podatkov ali standardnih pogodbenih klavzul Evropske komisije.</p>
 
   <h2>5. Koliko časa hranimo podatke</h2>
-  <p>Podatke hranimo, dokler imate račun. Ko izbrišete otrokov profil ali celoten račun, se podatki takoj izbrišejo iz baze (iz varnostnih kopij najpozneje v 30 dneh). Račune za plačila hrani Stripe toliko časa, kot zahteva davčna zakonodaja. Želje za trgovino z avatarji (»Kaj si želiš v trgovini?«) shranimo brez imena največ 90 dni in jih uporabimo samo za izbiro novih predmetov.</p>
+  <p>Podatke hranimo, dokler imate račun. Ko izbrišete otrokov profil ali celoten račun, se podatki takoj izbrišejo iz baze (iz varnostnih kopij najpozneje v 30 dneh). Izjema je zapis o garanciji »Boljša ocena ali vrnemo denar« (glejte zgoraj): ostane brez povezave z računom in brez časovne omejitve, da garancija velja enkrat na družino. Račune za plačila hrani Stripe toliko časa, kot zahteva davčna zakonodaja. Želje za trgovino z avatarji (»Kaj si želiš v trgovini?«) shranimo brez imena največ 90 dni in jih uporabimo samo za izbiro novih predmetov.</p>
 
   <h2>6. Vaše pravice</h2>
   <ul>

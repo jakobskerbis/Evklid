@@ -75,6 +75,22 @@ test("predlog za prehod samo na začetku šolskega leta in če je raven iz lansk
   assert.equal(schoolYearOf(new Date(Date.UTC(2027, 1, 1))), 2026);
 });
 
+test("faks: študijsko leto od 1. oktobra, predlog od 19. septembra do konca novembra", () => {
+  const st = { settings: { educational_track: "UNIVERZA", study_program: "", curriculum_level: "1. letnik" }, level_since: "2026-07-10 12:00:00" };
+  assert.equal(levelUpSuggestion(st, new Date(Date.UTC(2026, 8, 5))), null); // 5. 9.: šolsko leto da, študijsko še ne
+  const s = levelUpSuggestion(st, new Date(Date.UTC(2026, 9, 3)));
+  assert.equal(s.label, "2. letnik");
+  assert.equal(s.schoolYear, "2026/27");
+  assert.equal(s.study, true);
+  assert.ok(levelUpSuggestion(st, new Date(Date.UTC(2026, 10, 25)))); // 25. 11.
+  assert.equal(levelUpSuggestion(st, new Date(Date.UTC(2026, 11, 2))), null); // december
+  // Raven nastavljena avgusta (po izpitih) velja že za novo študijsko leto.
+  assert.equal(levelUpSuggestion({ ...st, level_since: "2026-08-20 08:00:00" }, new Date(Date.UTC(2026, 9, 3))), null);
+  // SŠ ostane pri šolskem letu (september).
+  const ss = { settings: { educational_track: "SREDNJA_SOLA", curriculum_level: "2. letnik OR" }, level_since: "2026-03-10 12:00:00" };
+  assert.equal(levelUpSuggestion(ss, new Date(Date.UTC(2026, 8, 5))).study, false);
+});
+
 test("sprememba ravni zapiše čas in API vrne predlog", async () => {
   const store = openDb(":memory:");
   const st = store.createStudent("Ana", { educational_track: "OSNOVNA_SOLA", curriculum_level: "8. razred" });

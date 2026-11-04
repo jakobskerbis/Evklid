@@ -3,7 +3,8 @@
 // 1) brez brskalnika: vsak lab- motor se označi z .lab (tako dobi pripetje), mountSim pokliče pripni, ključ je preveden;
 // 2) v pravem brskalniku (Playwright, če je nameščen): vsak lab- motor pri 360 × 740 v drsnem delu kot v aplikaciji –
 //    pri vsaki kontroli je risba vsaj 80 % vidna, nobena kontrola ni pod njo, sklep spodaj ni pokrit, gumb »Pripni sliko«
-//    jo odpne (zapomnjeno), ležeče (740 × 360) je risba ob kontrolah in cela vidna.
+//    jo odpne (zapomnjeno), ležeče (740 × 360) je risba ob kontrolah in cela vidna; na računalniku (1280 × 800) je pokončna
+//    risba levo ob kontrolah, široka (proga, vezje: razmerje ≥ 1,55) pa čez vso širino zgoraj, pripeta in vsaj 480 px široka.
 import test from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
@@ -90,6 +91,7 @@ const MEASURE = async () => {
   return {
     min, worst, covered, h: s.height / port().height,
     qFree: !q || (!(qr.top < s.bottom - 2 && qr.bottom > s.top + 2) && vis(q) > 0.5),
+    svgW: stage.querySelector(".demo-svg").getBoundingClientRect().width, siroka: demo.classList.contains("lab-siroka"),
     pin: btn?.getAttribute("aria-pressed"), label: btn?.getAttribute("aria-label"), sticky: getComputedStyle(stage).position,
     beside: ctl.getBoundingClientRect().left >= s.right - 1 || ctl.getBoundingClientRect().right <= s.left + 1,
     over: document.documentElement.scrollWidth - innerWidth,
@@ -153,13 +155,32 @@ test("lab on a phone: the drawing stays visible while using the controls", { ski
     await ctx.close();
   });
 
+  await t.test("desktop 1280 × 800: a wide drawing is pinned full width on top, controls below it in two columns", async () => {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+    for (const [id, minW] of [["lab-klanec", 600], ["lab-ohm", 480], ["lab-ohlajanje", 480], ["lab-dokaz", 480]]) {
+      const { p, errs } = await run(ctx, id);
+      const r = await p.evaluate(MEASURE);
+      assert.ok(r.siroka && !r.beside, `${id}: široka risba ni zgoraj`);
+      assert.equal(r.sticky, "sticky", `${id}: risba ni pripeta`);
+      assert.ok(r.svgW >= minW, `${id}: risba le ${Math.round(r.svgW)} px široka`);
+      assert.ok(r.h <= 0.5, `${id}: pripeta risba zavzame ${Math.round(r.h * 100)} % vidnega dela`);
+      assert.ok(r.min >= 0.9, `${id}: risba le ${Math.round(r.min * 100)} % vidna pri »${r.worst}«`);
+      assert.deepEqual(r.covered, [], `${id}: kontrole pod risbo`);
+      assert.ok(r.qFree && r.over <= 0, id);
+      assert.equal(await p.evaluate(() => getComputedStyle(document.querySelector(".lab-tit-top > .demo-controls")).columnCount), "2", `${id}: kontrole v dveh stolpcih`);
+      assert.deepEqual(errs, [], id);
+      await p.close();
+    }
+    await ctx.close();
+  });
+
   await t.test("landscape 740 × 360 and desktop 1280 × 800: drawing beside the controls", async () => {
-    for (const [width, height, ids] of [[740, 360, ["lab-ohm", "lab-titracija", "lab-grelnik", "lab-faze"]], [1280, 800, ["lab-co2", "lab-titracija"]]]) {
+    for (const [width, height, ids] of [[740, 360, ["lab-ohm", "lab-titracija", "lab-grelnik", "lab-faze"]], [1280, 800, ["lab-co2", "lab-titracija", "lab-newton2", "lab-elektroliza"]]]) {
       const ctx = await browser.newContext({ viewport: { width, height }, isMobile: width < 1000, hasTouch: width < 1000 });
       for (const id of ids) {
         const { p, errs } = await run(ctx, id);
         const r = await p.evaluate(MEASURE);
-        assert.ok(r.beside, `${id} @${width}: risba ni ob kontrolah`);
+        assert.ok(r.beside && (width < 1000 || !r.siroka), `${id} @${width}: risba ni ob kontrolah`);
         assert.ok(r.min >= 0.9, `${id} @${width}: risba le ${Math.round(r.min * 100)} % vidna pri »${r.worst}«`);
         assert.deepEqual(errs, [], id);
         await p.close();

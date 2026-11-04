@@ -10,7 +10,8 @@ const schools = existsSync(SCHOOLS_URL) ? await import(SCHOOLS_URL.href) : null;
 const SPENT_MS = 60000; // poraba AI šole se preračuna največ enkrat na minuto
 const CACHES = new WeakMap(); // db → Map(schoolId → { at, usd })
 
-// source: { access(db, studentId, now), students(db, schoolId) }; privzeto server/schools.js.
+// source: { access(db, studentId, now), students(db, schoolId), seats?(db, schoolId) }; privzeto server/schools.js.
+// seats: število mest veljavne licence (students je v vrstnem redu mest); brez njega šteje access().
 // personalOf(studentId): ali ima učenec osebni paket; njegova poraba AI se ne šteje v mejo šole.
 export function createSchoolSource(
   db,
@@ -22,6 +23,7 @@ export function createSchoolSource(
       ? {
           access: schools.schoolAccess,
           students: schools.schoolStudents,
+          seats: (d, schoolId) => schools.activeLicence(d, schoolId)?.seats ?? 0,
           membership: schools.schoolMembership,
         }
       : null);
@@ -31,9 +33,12 @@ export function createSchoolSource(
   function spentUsd(schoolId) {
     const c = cache.get(schoolId);
     if (c && Date.now() - c.at < SPENT_MS) return c.usd;
-    const ids = (src.students(db, schoolId) || []).filter(
-      (id) => !personalOf(id),
-    );
+    // V mejo šole šteje samo poraba učencev z mestom licence (prvih »seats«) in brez osebnega paketa.
+    const all = src.students(db, schoolId) || [];
+    const seated = src.seats
+      ? all.slice(0, src.seats(db, schoolId))
+      : all.filter((id) => src.access(db, id, Date.now())?.schoolId === schoolId);
+    const ids = seated.filter((id) => !personalOf(id));
     const usd = ids.length
       ? db
           .prepare(
