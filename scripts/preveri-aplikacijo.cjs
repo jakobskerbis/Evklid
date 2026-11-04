@@ -228,11 +228,15 @@ async function screen(p, name) {
       const raw = new Set();
       for (const t of texts) for (const m of t.matchAll(/\b[a-z]+\.[a-zA-Z]+(\.[a-zA-Z]+)*\b/g)) if (set.has(m[0])) raw.add(m[0]);
       const over = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - innerWidth;
-      return { raw: [...raw], over };
+      // V aplikaciji drsi samo odprt pogled, nikoli cela stran: sicer jo scrollIntoView premakne in spodnja vrstica
+      // obvisi sredi zaslona (j 2026-11-04, skrit napis na dnu Nastavitev).
+      const down = document.querySelector("#tabbar") ? document.documentElement.scrollHeight - innerHeight : 0;
+      return { raw: [...raw], over, down };
     }, KEYS)
     .catch((e) => ({ raw: [], over: 0, err: e.message }));
   if (r.err) problem(`${p.label} ${name}`, `ni mogoče pregledati: ${r.err.slice(0, 120)}`);
   if (r.over > 1) problem(`${p.label} ${name}`, `vodoravno drsenje za ${r.over} px`);
+  if (r.down > 1) problem(`${p.label} ${name}`, `cela stran je za ${r.down} px višja od zaslona (drsi stran namesto pogleda)`);
   if (r.raw.length) problem(`${p.label} ${name}`, `neprevedeni ključi: ${r.raw.join(", ")}`);
   if (SHOTS) {
     const file = path.join(SHOTS, `${String(++shotN).padStart(3, "0")}-${p.label}-${name}.png`.replace(/[^\w.\-]+/g, "_"));
