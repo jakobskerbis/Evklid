@@ -58,4 +58,8 @@ test("glava Inštruktorja na telefonu: oznake cele v svoji vrstici, »Preberi le
   assert.match(css("okna.css"), /\.chat-head #chat-state \{[^}]*flex: 1 1 100%/, "tudi v ozkem oknu");
   assert.doesNotMatch(css("ui.css"), /#chat-state[^{]*\{[^}]*max-width:\s*34%/, "brez odrezane oznake predmeta");
   assert.match(read("app.js"), /chat-lesson[\s\S]{0,80}icon\("book-open"\)/);
+  // Pregledna glava (j 4. 11.): oznake kot tiha vrstica s pikami, orodja skupaj na desni.
+  const style = css("style.css");
+  assert.match(style, /\.chat-head #chat-state \.chip:not\(\.chip-btn\) \{[^}]*background: none/);
+  assert.match(style, /\.chat-head #chat-state \{[^}]*flex: 1 1 auto/);
 });
