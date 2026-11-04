@@ -3048,6 +3048,7 @@
   "adm.rep.rerendered": "The answer, drawn again (older report without a snapshot):",
   "adm.rep.raw": "Tutor's raw text:",
   "pay.seats1Level": "1 profile · {level}",
+  "pay.save": "save {pct}%",
   "pay.family": "Family (2–4 profiles)",
   "pay.familyStudent": "Family with a student (2–4 profiles)",
   "up.title": "Higher level",

@@ -33,7 +33,10 @@
       };
       if (d.plans.some(function (pl) { return pl.level; })) {
         document.getElementById("plan-month").innerHTML = "Naročnina na mesec: <b>" + lv("OS", false, "month") + "</b> v osnovni šoli, <b>" + lv("SS", false, "month") + "</b> v srednji šoli, <b>" + lv("FAKS", false, "month") + "</b> na fakulteti. Družina (2–4 profili): <b>" + lv("SS", true, "month") + "</b>, s študentom <b>" + lv("FAKS", true, "month") + "</b>.";
-        document.getElementById("plan-year").innerHTML = "Za celo leto: <b>" + lv("OS", false, "year") + "</b> (osnovna šola), <b>" + lv("SS", false, "year") + "</b> (srednja šola), <b>" + lv("FAKS", false, "year") + "</b> (fakulteta). Družina <b>" + lv("SS", true, "year") + "</b>, s študentom <b>" + lv("FAKS", true, "year") + "</b>.";
+        // Letni paket prvi (j 2026-11-04), s prihrankom glede na 12 mesečnih plačil OŠ.
+        var amt = function (level, interval) { var x = d.plans.find(function (pl) { return pl.level === level && !pl.family && pl.interval === interval; }); return x ? x.amount : 0; };
+        var pct = amt("OS", "month") ? Math.floor((1 - amt("OS", "year") / (12 * amt("OS", "month"))) * 100) : 0;
+        document.getElementById("plan-year").innerHTML = "Za celo leto" + (pct > 0 ? " (prihranite " + pct + " %)" : "") + ": <b>" + lv("OS", false, "year") + "</b> (osnovna šola), <b>" + lv("SS", false, "year") + "</b> (srednja šola), <b>" + lv("FAKS", false, "year") + "</b> (fakulteta). Družina <b>" + lv("SS", true, "year") + "</b>, s študentom <b>" + lv("FAKS", true, "year") + "</b>.";
         return;
       }
       document.getElementById("plan-month").innerHTML = "Naročnina: <b>" + p(1, "month") + "</b> na mesec za enega otroka ali <b>" + p(2, "month") + "</b> za dva.";

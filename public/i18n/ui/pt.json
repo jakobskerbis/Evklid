@@ -3052,6 +3052,7 @@
   "adm.rep.rerendered": "A resposta, mostrada de novo (denúncia antiga sem captura):",
   "adm.rep.raw": "Texto original do tutor:",
   "pay.seats1Level": "1 perfil · {level}",
+  "pay.save": "poupas {pct} %",
   "pay.family": "Família (2–4 perfis)",
   "pay.familyStudent": "Família com estudante (2–4 perfis)",
   "up.title": "Nível superior",

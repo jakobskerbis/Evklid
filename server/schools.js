@@ -26,6 +26,26 @@ export const SCHOOL_LICENCE_PRICES = {
   school: { eur: 14, years: 1 }, // cela šola
   pilot: { eur: 12, years: 2 }, // pilotna šola
 };
+// Pilotna cena samo za prvih 10 šol (j 2026-11-04 »Vse da«); potem šola dobi navadno ceno.
+export const PILOT_SCHOOLS_MAX = 10;
+// Privzeta mesečna meja AI licence (j 2026-11-04): 25 % mesečne cene na učenca (cena na leto / 12), v $.
+// EVKLID_SCHOOL_AI_EUR (npr. 0.5) jo nastavi na stalen znesek v € na učenca. Licenca z ai_cap_usd_month ima svojo mejo.
+const EUR_PER_USD = 0.92; // kot COST.eurPerUsd v server/accounts/plans.js
+export function schoolAiEurPerStudent(plan) {
+  const fixed = Number(process.env.EVKLID_SCHOOL_AI_EUR);
+  if (process.env.EVKLID_SCHOOL_AI_EUR && Number.isFinite(fixed) && fixed >= 0) return fixed;
+  return ((SCHOOL_LICENCE_PRICES[plan]?.eur || SCHOOL_LICENCE_PRICES.school.eur) / 12) * 0.25;
+}
+export const defaultAiCapUsd = (lic) => Math.round(((Number(lic.seats) || 0) * schoolAiEurPerStudent(lic.plan) / EUR_PER_USD) * 100) / 100;
+// Koliko šol ima pilotno licenco; ali ta šola (ali nova) še lahko dobi pilotno ceno.
+export function pilotSchoolIds(db) {
+  if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_licences'").get()) return [];
+  return db.prepare("SELECT DISTINCT school_id AS id FROM school_licences WHERE plan = 'pilot' ORDER BY school_id").all().map((r) => r.id);
+}
+export const pilotOpen = (db, schoolId = null) => {
+  const ids = pilotSchoolIds(db);
+  return ids.length < PILOT_SCHOOLS_MAX || (schoolId != null && ids.includes(schoolId));
+};
 export const STAGES = ["OS", "SS"];
 export const SUBJECTS = ["MAT", "FIZ", "KEM", "BIO", "NAR"];
 
@@ -77,7 +97,7 @@ export function migrateSchools(db) {
       grades TEXT,                               -- JSON [6,7,8,9] ali NULL = vsi letniki
       valid_from TEXT NOT NULL,
       valid_until TEXT NOT NULL,                 -- zadnji veljavni dan (YYYY-MM-DD)
-      ai_cap_usd_month REAL,                     -- mesečna meja stroška AI za vso šolo (NULL = privzeto v pravice.js)
+      ai_cap_usd_month REAL,                     -- mesečna meja stroška AI za vso šolo (NULL = defaultAiCapUsd)
       invoice_ref TEXT NOT NULL DEFAULT '',
       note TEXT NOT NULL DEFAULT '',
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -151,7 +171,7 @@ export function schoolAccess(db, studentId, now = new Date()) {
       subjects: lic.subjects,
       grades: lic.grades,
       validUntil: lic.valid_until,
-      aiCapUsdMonth: lic.ai_cap_usd_month,
+      aiCapUsdMonth: lic.ai_cap_usd_month ?? defaultAiCapUsd(lic),
     };
   }
   return null;
@@ -278,7 +298,7 @@ export class Schools {
     return {
       students,
       licence: lic
-        ? { plan: lic.plan, seats: lic.seats, subjects: lic.subjects, grades: lic.grades, validUntil: lic.valid_until, aiCapUsdMonth: lic.ai_cap_usd_month }
+        ? { plan: lic.plan, seats: lic.seats, subjects: lic.subjects, grades: lic.grades, validUntil: lic.valid_until, aiCapUsdMonth: lic.ai_cap_usd_month ?? defaultAiCapUsd(lic) }
         : null,
       next: next || null,
     };
@@ -614,6 +634,7 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
     const seats = num(b.seats);
     const list = (v, ok) => (Array.isArray(v) && v.length && v.every(ok) ? v : null);
     if (!PLANS.includes(b.plan)) return res.status(400).json({ error: `Paket: ${PLANS.join(", ")}.` });
+    if (b.plan === "pilot" && !pilotOpen(db, id)) return res.status(409).json({ error: `Pilotna cena velja samo za prvih ${PILOT_SCHOOLS_MAX} šol.` });
     if (!Number.isInteger(seats) || seats < 1 || seats > 5000) return res.status(400).json({ error: "Število mest 1–5000." });
     const from = b.validFrom || day();
     if (!isDay(from) || !isDay(b.validUntil) || b.validUntil < from) return res.status(400).json({ error: "Veljavnost: validFrom ≤ validUntil (YYYY-MM-DD)." });

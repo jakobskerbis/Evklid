@@ -3104,6 +3104,7 @@
   "adm.rep.rerendered": "Odpowiedź wyświetlona ponownie (starsze zgłoszenie bez zrzutu):",
   "adm.rep.raw": "Surowy tekst korepetytora:",
   "pay.seats1Level": "1 profil · {level}",
+  "pay.save": "oszczędzasz {pct}%",
   "pay.family": "Rodzina (2–4 profile)",
   "pay.familyStudent": "Rodzina ze studentem (2–4 profile)",
   "up.title": "Wyższy poziom",

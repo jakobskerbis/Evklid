@@ -3048,6 +3048,7 @@
   "adm.rep.rerendered": "La réponse, affichée à nouveau (ancien signalement sans instantané) :",
   "adm.rep.raw": "Texte brut du tuteur :",
   "pay.seats1Level": "1 profil · {level}",
+  "pay.save": "tu économises {pct} %",
   "pay.family": "Famille (2–4 profils)",
   "pay.familyStudent": "Famille avec étudiant (2–4 profils)",
   "up.title": "Niveau supérieur",

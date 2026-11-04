@@ -3048,6 +3048,7 @@
   "adm.rep.rerendered": "Die Antwort, neu dargestellt (ältere Meldung ohne Momentaufnahme):",
   "adm.rep.raw": "Rohtext des Tutors:",
   "pay.seats1Level": "1 Profil · {level}",
+  "pay.save": "du sparst {pct} %",
   "pay.family": "Familie (2–4 Profile)",
   "pay.familyStudent": "Familie mit Studierenden (2–4 Profile)",
   "up.title": "Höhere Stufe",

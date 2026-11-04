@@ -243,7 +243,7 @@ export function createApp(store, opts = {}) {
   });
   // Merjenje v pilotu: števec ogledov strani za starše (pred statičnimi datotekami, glej pilot.js).
   app.use(visitCounter(store.db));
-  mountSolePage(app); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
+  mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {

@@ -3156,6 +3156,7 @@
   "adm.rep.rerendered": "الإجابة معروضة من جديد (بلاغ أقدم بلا لقطة):",
   "adm.rep.raw": "النص الأصلي للمعلم:",
   "pay.seats1Level": "ملف واحد · {level}",
+  "pay.save": "وفّر {pct} %",
   "pay.family": "العائلة (2–4 ملفات)",
   "pay.familyStudent": "العائلة مع طالب جامعي (2–4 ملفات)",
   "up.title": "مستوى أعلى",

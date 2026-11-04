@@ -3074,6 +3074,7 @@
   "adm.rep.rerendered": "Odgovor, ponovno prikazan (starija prijava bez snimke):",
   "adm.rep.raw": "Izvorni tekst instruktora:",
   "pay.seats1Level": "1 profil · {level}",
+  "pay.save": "uštediš {pct} %",
   "pay.family": "Obitelj (2–4 profila)",
   "pay.familyStudent": "Obitelj sa studentom (2–4 profila)",
   "up.title": "Viša razina",

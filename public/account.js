@@ -788,8 +788,12 @@ function plansPicker(acc) {
     if (!p) return "";
     const cur = p.currency || "EUR";
     const perMonth = interval === "year" ? `<span class="muted">≈ ${money(Math.round(p.amount / 10), cur)} / mesec (10 mesecev)</span>` : "";
+    // Letni paket je prvi in privzet (j 2026-11-04): prihranek glede na 12 mesečnih plačil.
+    const m = interval === "year" ? find(seats, "month") : null;
+    const pct = m && m.amount > 0 ? Math.floor((1 - p.amount / (12 * m.amount)) * 100) : 0;
+    const save = pct > 0 ? ` <span class="pill ok">${esc(t("pay.save", { pct }))}</span>` : "";
     return `<label class="plan"><input type="radio" name="plan" value="${seats}-${interval}">
-      <span><b>${money(p.amount, cur)}</b> / ${interval === "year" ? (p.level === "FAKS" && !p.family ? "študijsko leto" : "šolsko leto") : "mesec"}<br>${perMonth}</span></label>`;
+      <span><b>${money(p.amount, cur)}</b> / ${interval === "year" ? (p.level === "FAKS" && !p.family ? "študijsko leto" : "šolsko leto") : "mesec"}${save}<br>${perMonth}</span></label>`;
   };
   // Najprej izbira, za koliko otrok; šele nato cene samo za to izbiro (j 2026-10-30: prej je bilo prenatrpano).
   const familyLabel = acc.children.some((c) => c.level === "FAKS") ? t("pay.familyStudent") : t("pay.family");
@@ -801,8 +805,8 @@ function plansPicker(acc) {
       <fieldset class="plan-who"><legend>${esc(t("pay.howMany"))}</legend>
         <div class="plan-who-opts">${who.map(([v, label]) => `<label class="plan"><input type="radio" name="who" value="${v}"> <span><b>${esc(keepRange(label))}</b></span></label>`).join("")}</div>
       </fieldset>
-      <div class="plan-row" data-who="1" hidden>${cell(1, "month")}${cell(1, "year")}</div>
-      ${!levels || acc.family_ok ? `<div class="plan-row" data-who="2" hidden>${cell(2, "month")}${cell(2, "year")}</div>` : ""}
+      <div class="plan-row" data-who="1" hidden>${cell(1, "year")}${cell(1, "month")}</div>
+      ${!levels || acc.family_ok ? `<div class="plan-row" data-who="2" hidden>${cell(2, "year")}${cell(2, "month")}</div>` : ""}
       ${schoolRow(acc)}
       <div id="plan-rest" class="plans" hidden>
       <p class="form-error" role="alert" hidden></p>
@@ -824,9 +828,16 @@ function plansPicker(acc) {
 // Osebno ob šolski licenci (5,99 € / 49 €): samo, ko ima vsaj en otrok šolsko licenco.
 function schoolRow(acc) {
   if (!acc.school_plans?.length) return "";
+  const month = acc.school_plans.find((p) => p.interval === "month");
+  const save = (p) => {
+    const pct = p.interval === "year" && month?.amount > 0 ? Math.floor((1 - p.amount / (12 * month.amount)) * 100) : 0;
+    return pct > 0 ? ` <span class="pill ok">${esc(t("pay.save", { pct }))}</span>` : "";
+  };
   const cell = (p) => `<label class="plan"><input type="radio" name="plan" value="s-${p.interval}">
-      <span><b>${money(p.amount, "EUR")}</b> / ${esc(t(p.interval === "year" ? "school.perYear" : "school.perMonth"))}</span></label>`;
-  return `<div class="plan-row" data-who="s" hidden>${acc.school_plans.map(cell).join("")}<p class="muted plan-note">${esc(t("school.planNote"))}</p></div>`;
+      <span><b>${money(p.amount, "EUR")}</b> / ${esc(t(p.interval === "year" ? "school.perYear" : "school.perMonth"))}${save(p)}</span></label>`;
+  // Letni paket prvi (j 2026-11-04).
+  const sorted = [...acc.school_plans].sort((a, b) => (b.interval === "year") - (a.interval === "year"));
+  return `<div class="plan-row" data-who="s" hidden>${sorted.map(cell).join("")}<p class="muted plan-note">${esc(t("school.planNote"))}</p></div>`;
 }
 // Vrednost izbire paketa: »1-month« (otroci-obdobje) ali »s-year« (Osebno ob šolski licenci).
 const planBody = (v) => {

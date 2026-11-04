@@ -3046,6 +3046,7 @@
   "adm.rep.rerendered": "Cevap yeniden gösterildi (anlık görüntüsü olmayan eski bildirim):",
   "adm.rep.raw": "Öğretmenin ham metni:",
   "pay.seats1Level": "1 profil · {level}",
+  "pay.save": "%{pct} tasarruf",
   "pay.family": "Aile (2–4 profil)",
   "pay.familyStudent": "Öğrencili aile (2–4 profil)",
   "up.title": "Daha yüksek seviye",
