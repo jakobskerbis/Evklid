@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sila in pot
+  - več sile ali daljša pot, več dela
+  - bober: dve debli, dvojna pot, štirikrat več
+- Pravilo za delo
+  - $A = F \cdot s$
+  - sila stalna, v smeri gibanja
+- Enota joule
+  - $1\,\mathrm{J} = 1\,\mathrm{N} \cdot 1\,\mathrm{m}$
+  - $1\,\mathrm{kJ} = 1000\,\mathrm{J}$
+  - napaka: delo v newtonih
+- Delo nič
+  - telo se ne premakne: $s = 0$
+  - sila pravokotna na gibanje
+  - napaka: trudim se, torej delam
+- Dviganje
+  - $A = F_g \cdot h$, $F_g = m \cdot g$
+  - napaka: masa namesto teže
+- Obrnjena naloga
+  - $F = A/s$, $s = A/F$
+  - pot najprej v metre

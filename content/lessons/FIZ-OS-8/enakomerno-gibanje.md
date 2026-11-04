@@ -5,182 +5,254 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Gibanje opazuješ vsak dan: avtomobil na cesti, kolesar, pešec, vlak. Že veš, da se telesa gibljejo hitreje ali počasneje in da se pot meri v metrih ali kilometrih, čas pa v sekundah, minutah ali urah. Iz matematike znaš tudi računati z razmerji in brati preproste grafe.
+Poletni večer, nad hribi se bliska. Jan šteje sekunde od bliska do groma in reče: »Šest sekund. Vsaka sekunda je en kilometer, torej je nevihta $6\,\mathrm{km}$ daleč.«
 
-V tej lekciji zapišemo gibanje s fizikalnimi količinami. Naučil se boš izračunati, **kako hitro** se telo giblje, **kako daleč** pride v določenem času in **koliko časa** potrebuje za neko pot. To potrebuješ, ko načrtuješ pot (kdaj pridem na cilj?), ko razumeš prometne predpise ali ko prebereš podatke z grafa.
+Ima prav? Blisk vidimo skoraj v trenutku, ker svetloba potuje izjemno hitro. Zvok groma pa potuje po zraku veliko počasneje in vso pot skoraj enako hitro. Ko boš znal povezati **hitrost**, **pot** in **čas**, boš Janovo trditev preveril sam (v Primeru 2). Isti račun pove, čez koliko minut bo nevihtni oblak nad tvojo vasjo ali kako daleč odplava list po reki.
 
 ## Razlaga
 
-**1. Pot in čas.** **Pot** ($s$) je dolžina, ki jo telo prepotuje. Enota je meter ($\mathrm{m}$), pri daljših poteh kilometer ($\mathrm{km}$). **Čas** ($t$) je trajanje gibanja. Enota je sekunda ($\mathrm{s}$), tudi minuta ($\mathrm{min}$) ali ura ($\mathrm{h}$).
+**1. List na reki.** Na mirnem delu reke vržemo v vodo list in ob bregu merimo, kako daleč ga je odneslo. Vsakih $5\,\mathrm{s}$ zapišemo, koliko metrov je prepotoval od starta:
 
-**2. Enakomerno gibanje.** Telo se giblje **enakomerno**, kadar v enakih časovnih razmikih prepotuje enake poti. Njegova hitrost se ne spreminja. V tej lekciji obravnavamo gibanje po ravni črti (premo enakomerno gibanje).
+| čas $t$ (s) | pot $s$ (m) | $s : t$ (m/s) |
+|---|---|---|
+| 5 | 4 | 0,8 |
+| 10 | 8 | 0,8 |
+| 15 | 12 | 0,8 |
+| 20 | 16 | 0,8 |
 
-**3. Hitrost.** **Hitrost** ($v$) pove, kolikšno pot telo prepotuje v enoti časa:
+Poglej drugi stolpec. V vsakih $5\,\mathrm{s}$ se pot poveča za enako, za $4\,\mathrm{m}$. Poglej tretji stolpec. Količnik poti in časa je v vsaki vrstici enak.
+
+**2. Enakomerno gibanje.** Tako gibanje ima ime. Telo se giblje **enakomerno**, kadar v enakih časovnih razmikih prepotuje enake poti. **Pot** $s$ je dolžina, ki jo telo prepotuje (v metrih, $\mathrm{m}$, ali kilometrih, $\mathrm{km}$). **Čas** $t$ je trajanje gibanja (v sekundah, $\mathrm{s}$, minutah, $\mathrm{min}$, ali urah, $\mathrm{h}$). Tu obravnavamo gibanje po ravni črti, zato mu rečemo tudi premo enakomerno gibanje.
+
+**3. Hitrost.** Stalni količnik iz tabele imenujemo **hitrost** $v$. Pove, kolikšno pot telo prepotuje v enoti časa:
 
 $$v = \frac{s}{t}$$
 
-Enota je $\dfrac{\mathrm{m}}{\mathrm{s}}$ ali $\dfrac{\mathrm{km}}{\mathrm{h}}$. Hitrost $5\,\dfrac{\mathrm{m}}{\mathrm{s}}$ pomeni, da telo vsako sekundo prepotuje $5\,\mathrm{m}$.
+Enota je $\mathrm{m/s}$ ali $\mathrm{km/h}$. List ima hitrost $0{,}8\,\mathrm{m/s}$: vsako sekundo ga voda odnese $0{,}8\,\mathrm{m}$ naprej. Pri enakomernem gibanju se hitrost ne spreminja.
 
-**4. Preoblikovanje formule.** Iz $v = \dfrac{s}{t}$ dobimo:
+:::premisli
+Kje bo list po $30\,\mathrm{s}$, če ga voda nese enako kot prej? Napovej, preden računaš.
+---
+$24\,\mathrm{m}$ od starta. Vsako sekundo prepotuje $0{,}8\,\mathrm{m}$, v $30\,\mathrm{s}$ torej $30$-krat toliko. Tudi iz tabele: v $15\,\mathrm{s}$ je $12\,\mathrm{m}$, v dvakrat daljšem času dvakrat daljša pot.
+:::
 
-$$s = v \cdot t \qquad\qquad t = \frac{s}{v}$$
+**4. Pot in čas iz hitrosti.** Iz $v = \dfrac{s}{t}$ dobimo še dve obliki:
 
-**5. Pretvarjanje enot.** Velja:
+$$s = v \cdot t \qquad t = \frac{s}{v}$$
 
-$$1\,\frac{\mathrm{m}}{\mathrm{s}} = 3{,}6\,\frac{\mathrm{km}}{\mathrm{h}}$$
+Pot dobimo z množenjem, čas z deljenjem. Izberi obliko, v kateri je neznanka sama na levi.
 
-Zakaj? $1\,\mathrm{m} = 0{,}001\,\mathrm{km}$ in $1\,\mathrm{s} = \dfrac{1}{3600}\,\mathrm{h}$, zato je $1\,\dfrac{\mathrm{m}}{\mathrm{s}} = 0{,}001 \cdot 3600\,\dfrac{\mathrm{km}}{\mathrm{h}} = 3{,}6\,\dfrac{\mathrm{km}}{\mathrm{h}}$. Pri pretvorbi iz $\dfrac{\mathrm{m}}{\mathrm{s}}$ v $\dfrac{\mathrm{km}}{\mathrm{h}}$ **množimo** s $3{,}6$, v obratni smeri **delimo** s $3{,}6$.
+**5. Iz m/s v km/h.** Velja $1\,\mathrm{m} = 0{,}001\,\mathrm{km}$ in $1\,\mathrm{h} = 3600\,\mathrm{s}$. V eni uri telo prepotuje $3600$-krat toliko kot v eni sekundi. Pri $1\,\mathrm{m/s}$ je to $3600\,\mathrm{m} = 3{,}6\,\mathrm{km}$ na uro:
 
-**6. Graf poti $s(t)$.** Na vodoravno os nanesemo čas, na navpično pot. Pri enakomernem gibanju je graf **premica skozi izhodišče** (če ob času $0$ začnemo pri poti $0$). Večja ko je hitrost, bolj strma je premica. Strmina premice je enaka hitrosti.
+$$1\,\mathrm{m/s} = 3{,}6\,\mathrm{km/h}$$
 
-**7. Graf hitrosti $v(t)$.** Na vodoravno os nanesemo čas, na navpično hitrost. Ker se hitrost ne spreminja, je graf **vodoravna črta**. Ploščina pod to črto (pravokotnik z višino $v$ in širino $t$) je enaka prepotovani poti: $v \cdot t = s$.
+Iz $\mathrm{m/s}$ v $\mathrm{km/h}$ **množimo** s $3{,}6$, v obratni smeri **delimo** s $3{,}6$. Pred računom vse količine izrazi v enotah, ki se ujemajo: $\mathrm{km/h}$ s $\mathrm{km}$ in $\mathrm{h}$, $\mathrm{m/s}$ z $\mathrm{m}$ in $\mathrm{s}$.
+
+**6. Graf poti $s(t)$.** Točke iz tabele nanesemo v koordinatni sistem: čas na vodoravno os, pot na navpično. Točke $(5, 4)$, $(10, 8)$, $(15, 12)$ in $(20, 16)$ ležijo na **premici skozi izhodišče**. To velja za vsako enakomerno gibanje, ki se začne ob času $0$ na startu. Hitrejši list (na primer sredi reke, kjer voda teče hitreje) bi v istem času prepotoval več, zato bi bila njegova premica **strmejša**. Strmina pove, za koliko metrov se pot poveča v eni sekundi, in to je ravno hitrost.
+
+:::premisli
+Kamen leži na bregu in se ne premakne. Kakšen je njegov graf $s(t)$ in v čem se razlikuje od grafa lista?
+---
+Vodoravna črta: čas teče, pot pa ostaja enaka. Kamen miruje, njegova hitrost je $0$. Enakomerno gibanje s hitrostjo, večjo od $0$, je v grafu $s(t)$ vedno poševna premica.
+:::
+
+**7. Graf hitrosti $v(t)$.** Na navpično os zdaj nanesemo hitrost. Ker je stalna, je graf **vodoravna črta**, za list na višini $0{,}8\,\mathrm{m/s}$. Pod črto do časa $20\,\mathrm{s}$ nastane pravokotnik z višino $0{,}8$ in širino $20$. Njegova ploščina je $0{,}8 \cdot 20 = 16$, natanko pot $16\,\mathrm{m}$ iz tabele. Ploščina pod grafom $v(t)$ je prepotovana pot.
+
+V simulaciji spodaj, »Enakomerno gibanje in grafi«, nastavi najprej majhno, nato dvakrat večjo hitrost. Opazuj, kako se premica v grafu $s(t)$ postavi bolj pokonci, črta v grafu $v(t)$ pa se dvigne, a ostane vodoravna.
+
+**8. V naravi.** Pravo gibanje je redko povsem enakomerno: veter popusti, reka se zoži. Računi s stalno hitrostjo zato dajo dobro oceno, ne natančne vrednosti.
 
 ## Rešeni primeri
 
-### Primer 1: hitrost
+### Primer 1: lastovka
 
-Kolesar v $20\,\mathrm{s}$ prevozi $100\,\mathrm{m}$. Kolikšna je njegova hitrost?
+Lastovka leti naravnost nad travnikom in v $4\,\mathrm{s}$ preleti $60\,\mathrm{m}$. Kolikšna je njena hitrost v $\mathrm{m/s}$ in v $\mathrm{km/h}$?
 
-**Podatki:** $t = 20\,\mathrm{s}$, $s = 100\,\mathrm{m}$
+**Podatki:** $s = 60\,\mathrm{m}$, $t = 4\,\mathrm{s}$
 **Iščemo:** hitrost $v$
 
 :::formula
-$v = \dfrac{s}{t}$; za pretvorbo velja $1\,\dfrac{\mathrm{m}}{\mathrm{s}} = 3{,}6\,\dfrac{\mathrm{km}}{\mathrm{h}}$
+$v = \dfrac{s}{t}$; $1\,\mathrm{m/s} = 3{,}6\,\mathrm{km/h}$
 :::
 
 **Rešitev:**
 
-1. Iščemo hitrost, zato uporabimo $v = \dfrac{s}{t}$.
-2. Vstavimo: $v = \dfrac{100\,\mathrm{m}}{20\,\mathrm{s}} = 5\,\dfrac{\mathrm{m}}{\mathrm{s}}$.
-3. Pretvorimo v $\dfrac{\mathrm{km}}{\mathrm{h}}$: $5 \cdot 3{,}6 = 18\,\dfrac{\mathrm{km}}{\mathrm{h}}$.
-4. Smiselnost: $18\,\dfrac{\mathrm{km}}{\mathrm{h}}$ je običajna hitrost kolesarja.
+1. Iščemo hitrost, zato pot delimo s časom: $v = \dfrac{60\,\mathrm{m}}{4\,\mathrm{s}} = 15\,\mathrm{m/s}$.
+2. V $\mathrm{km/h}$ množimo s $3{,}6$, ker v uri preleti $3600$-krat več kot v sekundi: $15 \cdot 3{,}6 = 54$.
+3. Odgovor: lastovka leti s hitrostjo $15\,\mathrm{m/s}$, to je $54\,\mathrm{km/h}$.
 
-### Primer 2: pot in čas
+### Primer 2: kako daleč je strela
 
-Avtomobil se enakomerno giblje s hitrostjo $90\,\dfrac{\mathrm{km}}{\mathrm{h}}$.
+Med bliskom in gromom mine $6\,\mathrm{s}$. Zvok se po zraku širi s hitrostjo približno $340\,\mathrm{m/s}$. Kako daleč je udarila strela? Je imel Jan iz uvoda prav?
 
-a) Kolikšno pot prevozi v $2{,}5\,\mathrm{h}$?
-b) Koliko časa potrebuje za $45\,\mathrm{km}$?
-
-**Podatki:** $v = 90\,\dfrac{\mathrm{km}}{\mathrm{h}}$; a) $t = 2{,}5\,\mathrm{h}$; b) $s = 45\,\mathrm{km}$
-**Iščemo:** a) pot $s$, b) čas $t$
+**Podatki:** $t = 6\,\mathrm{s}$, $v = 340\,\mathrm{m/s}$; svetloba bliska pride do nas skoraj v trenutku
+**Iščemo:** pot zvoka $s$ (razdaljo do strele)
 
 :::formula
-a) $s = v \cdot t$, b) $t = \dfrac{s}{v}$
+$s = v \cdot t$
 :::
 
 **Rešitev:**
 
-**a)**
-1. Iščemo pot: $s = v \cdot t$.
-2. $s = 90\,\dfrac{\mathrm{km}}{\mathrm{h}} \cdot 2{,}5\,\mathrm{h} = 225\,\mathrm{km}$.
-3. Enota $\mathrm{h}$ se pokrajša, ostane $\mathrm{km}$, kar je prava enota za pot.
+1. Svetlobo vidimo skoraj takoj, zato je $6\,\mathrm{s}$ čas, ki ga je za pot porabil zvok.
+2. Iščemo pot, zato hitrost množimo s časom: $s = 340\,\mathrm{m/s} \cdot 6\,\mathrm{s} = 2040\,\mathrm{m}$.
+3. $2040\,\mathrm{m}$ je približno $2\,\mathrm{km}$. En kilometer zvok prepotuje v približno $3\,\mathrm{s}$, saj je $3 \cdot 340\,\mathrm{m} = 1020\,\mathrm{m}$.
+4. Odgovor: strela je udarila približno $2\,\mathrm{km}$ daleč. Jan se je zmotil: sekunde je treba deliti s $3$, ne vzeti za kilometre.
 
-**b)**
-1. Iščemo čas: $t = \dfrac{s}{v}$.
-2. $t = \dfrac{45\,\mathrm{km}}{90\,\frac{\mathrm{km}}{\mathrm{h}}} = 0{,}5\,\mathrm{h}$.
-3. To je $30\,\mathrm{min}$. Preverimo: v pol ure pri $90\,\dfrac{\mathrm{km}}{\mathrm{h}}$ prevozimo polovico od $90\,\mathrm{km}$, torej $45\,\mathrm{km}$. ✓
+### Primer 3: nevihtni oblak nad vasjo
 
-### Primer 3: dve telesi in grafa
+Nevihtni oblak je $15\,\mathrm{km}$ od vasi. Veter ga premika naravnost proti vasi s stalno hitrostjo $36\,\mathrm{km/h}$. Čez koliko minut bo oblak nad vasjo?
 
-Pešec hodi enakomerno in je po $10\,\mathrm{s}$ prehodil $15\,\mathrm{m}$. Kolesar začne ob istem času na istem mestu in vozi v isti smeri s hitrostjo $5\,\dfrac{\mathrm{m}}{\mathrm{s}}$. Izračunaj hitrost pešca, primerjaj njuni hitrosti in poti po $10\,\mathrm{s}$, opiši grafa $s(t)$ in $v(t)$ ter izračunaj, kako daleč sta narazen po $10\,\mathrm{s}$.
-
-**Podatki:** pešec: $t = 10\,\mathrm{s}$, $s_1 = 15\,\mathrm{m}$; kolesar: $v_2 = 5\,\dfrac{\mathrm{m}}{\mathrm{s}}$; oba začneta ob istem času na istem mestu in se gibljeta v isti smeri
-**Iščemo:** hitrost pešca $v_1$, primerjavo hitrosti in poti po $10\,\mathrm{s}$, grafa $s(t)$ in $v(t)$ ter razdaljo med njima
+**Podatki:** $s = 15\,\mathrm{km}$, $v = 36\,\mathrm{km/h}$
+**Iščemo:** čas $t$ v minutah
 
 :::formula
-$v = \dfrac{s}{t}$ in $s = v \cdot t$
+$t = \dfrac{s}{v}$; $1\,\mathrm{h} = 60\,\mathrm{min}$
 :::
 
 **Rešitev:**
 
-1. **Hitrost pešca:** $v_1 = \dfrac{15\,\mathrm{m}}{10\,\mathrm{s}} = 1{,}5\,\dfrac{\mathrm{m}}{\mathrm{s}}$.
-2. **Primerjava:** $5\,\dfrac{\mathrm{m}}{\mathrm{s}} > 1{,}5\,\dfrac{\mathrm{m}}{\mathrm{s}}$, zato je kolesar hitrejši.
-3. **Poti po $10\,\mathrm{s}$:** pešec $15\,\mathrm{m}$, kolesar $s_2 = 5 \cdot 10 = 50\,\mathrm{m}$.
-4. **Graf $s(t)$:** obe premici gresta skozi izhodišče. Premica kolesarja je strmejša, ker je njegova hitrost večja. Pri $t = 10\,\mathrm{s}$ je ena točka pri $15\,\mathrm{m}$, druga pri $50\,\mathrm{m}$.
-5. **Graf $v(t)$:** obe sta vodoravni črti, kolesarjeva na višini $5\,\dfrac{\mathrm{m}}{\mathrm{s}}$, pešceva na višini $1{,}5\,\dfrac{\mathrm{m}}{\mathrm{s}}$.
-6. **Razdalja med njima po $10\,\mathrm{s}$:** $50\,\mathrm{m} - 15\,\mathrm{m} = 35\,\mathrm{m}$.
+1. Pot je v $\mathrm{km}$, hitrost v $\mathrm{km/h}$, enote se ujemajo in čas bomo dobili v urah.
+2. Iščemo čas, zato pot delimo s hitrostjo: $t = \dfrac{15\,\mathrm{km}}{36\,\mathrm{km/h}} \approx 0{,}417\,\mathrm{h}$.
+3. Ure pretvorimo v minute: $t = \dfrac{15}{36} \cdot 60\,\mathrm{min} = 25\,\mathrm{min}$.
+4. Preverimo po drugi poti: $36\,\mathrm{km/h} = 10\,\mathrm{m/s}$ in $15\,000\,\mathrm{m} : 10\,\mathrm{m/s} = 1500\,\mathrm{s}$, kar je $25\,\mathrm{min}$.
+5. Odgovor: oblak bo nad vasjo čez približno $25\,\mathrm{min}$.
+
+### Primer 4 – zdaj ti: srna na jasi
+
+Graf $s(t)$ za srno, ki enakomerno teče čez jaso, je premica skozi izhodišče in skozi točko $t = 8\,\mathrm{s}$, $s = 40\,\mathrm{m}$. Kolikšna je njena hitrost? Kolikšno pot bi s to hitrostjo pretekla v eni minuti?
+
+**Podatki:** točka na grafu: $t = 8\,\mathrm{s}$, $s = 40\,\mathrm{m}$; drugi čas $t_2 = 1\,\mathrm{min}$
+**Iščemo:** hitrost $v$ in pot $s_2$ v času $t_2$
+
+:::formula
+$v = \dfrac{s}{t}$, nato $s_2 = v \cdot t_2$
+:::
+
+**Rešitev:**
+
+1. Iz točke na grafu: $v = \dfrac{40\,\mathrm{m}}{8\,\mathrm{s}} = 5\,\mathrm{m/s}$.
+2. Hitrost je v $\mathrm{m/s}$, zato minuto pretvori v sekunde: $t_2 = 60\,\mathrm{s}$.
+3. Izračunaj $s_2$ sam, nato preveri:
+
+:::premisli
+Kolikšno pot $s_2$ preteče srna v $60\,\mathrm{s}$?
+---
+$s_2 = 300\,\mathrm{m}$. Če bi pozabil pretvoriti minuto, bi dobil napačnih $5\,\mathrm{m}$.
+:::
 
 ## Pogoste napake
 
-- **Mešanje enot.** Če je hitrost v $\dfrac{\mathrm{km}}{\mathrm{h}}$, mora biti čas v urah, ne v minutah ali sekundah. Pred računom enote uskladi.
-- **Napačna pretvorba $\dfrac{\mathrm{m}}{\mathrm{s}} \leftrightarrow \dfrac{\mathrm{km}}{\mathrm{h}}$.** Iz $\dfrac{\mathrm{m}}{\mathrm{s}}$ v $\dfrac{\mathrm{km}}{\mathrm{h}}$ množimo s $3{,}6$ (število se poveča), obratno delimo.
-- **Minute kot decimalke.** $1{,}5\,\mathrm{h}$ je $90\,\mathrm{min}$, ne $150\,\mathrm{min}$. Ura ima $60$ minut, ne $100$.
-- **Napačna formula.** Pot dobiš z množenjem $s = v \cdot t$, čas pa z deljenjem $t = \dfrac{s}{v}$. Pomaga preveriti enote.
-- **Vodoravna črta v grafu $s(t)$.** To ne pomeni gibanja s stalno hitrostjo, ampak mirovanje: pot se ne spreminja. Enakomerno gibanje je v grafu $s(t)$ poševna premica.
+- **Mešanje enot.** »Oblak potuje $36\,\mathrm{km/h}$, v $25\,\mathrm{min}$ prepotuje $36 \cdot 25 = 900\,\mathrm{km}$.« Ta rezultat je napačen, ker so v hitrosti ure, v času pa minute. Pred računom čas izrazi v urah: $25\,\mathrm{min} = \dfrac{25}{60}\,\mathrm{h}$, pot je $36 \cdot \dfrac{25}{60} = 15\,\mathrm{km}$.
+- **Pretvorba v napačno smer.** »$15\,\mathrm{m/s}$ je $15 : 3{,}6 \approx 4\,\mathrm{km/h}$.« Ne drži: v uri telo prepotuje veliko več kot v sekundi, zato je število v $\mathrm{km/h}$ **večje**. Iz $\mathrm{m/s}$ v $\mathrm{km/h}$ množi s $3{,}6$.
+- **Ure kot decimalno število minut.** »$1{,}5\,\mathrm{h}$ je $150\,\mathrm{min}$.« Ura nima $100$ minut, ampak $60$, zato je $1{,}5\,\mathrm{h} = 1{,}5 \cdot 60\,\mathrm{min} = 90\,\mathrm{min}$.
+- **Napačna oblika formule.** »Čas je $t = s \cdot v$.« Preveri enote: $\mathrm{km} \cdot \mathrm{km/h}$ ni enota za čas. Pravilno je $t = \dfrac{s}{v}$, kjer se $\mathrm{km}$ pokrajšajo in ostanejo ure.
+- **Vodoravna črta v grafu $s(t)$ pomeni stalno hitrost.** Ne: pot se ne spreminja, telo miruje. Stalna hitrost je vodoravna črta v grafu $v(t)$, v grafu $s(t)$ pa poševna premica.
 
 ## Povzetek
 
 - Enakomerno gibanje: v enakih časih telo prepotuje enake poti, hitrost je stalna.
-- Hitrost: $v = \dfrac{s}{t}$. Pot: $s = v \cdot t$. Čas: $t = \dfrac{s}{v}$.
-- $1\,\dfrac{\mathrm{m}}{\mathrm{s}} = 3{,}6\,\dfrac{\mathrm{km}}{\mathrm{h}}$.
-- Graf $s(t)$ je premica skozi izhodišče, strmina je hitrost.
-- Graf $v(t)$ je vodoravna črta, ploščina pod njo je pot.
-
-## Drugače: Na sliki
-
-Predstavljaj si graf $s(t)$ kot pot po klancu. Čas gre v desno, pot navzgor. Pri hitrosti $2\,\dfrac{\mathrm{m}}{\mathrm{s}}$ se vsako sekundo dvignemo za $2\,\mathrm{m}$: po $1\,\mathrm{s}$ smo na $2\,\mathrm{m}$, po $2\,\mathrm{s}$ na $4\,\mathrm{m}$, po $3\,\mathrm{s}$ na $6\,\mathrm{m}$. Točke ležijo na ravni črti. Če je hitrost večja, je klanec strmejši.
-
-V grafu $v(t)$ narišemo vodoravno črto na višini $2\,\dfrac{\mathrm{m}}{\mathrm{s}}$. Do časa $3\,\mathrm{s}$ je pod njo pravokotnik z višino $2$ in širino $3$. Njegova ploščina je $2 \cdot 3 = 6$, kar je ravno pot $6\,\mathrm{m}$. Ploščina pod grafom hitrosti torej pove prepotovano pot.
-
-## Drugače: Iz vsakdanjega življenja
-
-Na avtocesti vidiš kažipot: »Ljubljana 60 km«. Če avtomobil vozi s stalno hitrostjo $90\,\dfrac{\mathrm{km}}{\mathrm{h}}$, hitro oceniš čas: v eni uri prevozi $90\,\mathrm{km}$, torej bo $60\,\mathrm{km}$ prevozil v manj kot uri. Natančno: $t = \dfrac{60}{90}\,\mathrm{h} = \dfrac{2}{3}\,\mathrm{h} = 40\,\mathrm{min}$.
-
-Podobno razmišljamo pri hoji. Odrasel človek hodi približno $5\,\dfrac{\mathrm{km}}{\mathrm{h}}$ (običajna ocena). Za $2\,\mathrm{km}$ do šole potrebuje $\dfrac{2}{5}\,\mathrm{h} = 0{,}4\,\mathrm{h} = 24\,\mathrm{min}$.
-
-Pomembno: v resničnem življenju je hitrost redko popolnoma stalna (semaforji, ovinki). Račun z enakomernim gibanjem zato da **povprečno** oceno.
+- Hitrost $v = \dfrac{s}{t}$, pot $s = v \cdot t$, čas $t = \dfrac{s}{v}$.
+- $1\,\mathrm{m/s} = 3{,}6\,\mathrm{km/h}$; enote pred računom uskladi.
+- Graf $s(t)$ je premica skozi izhodišče; strmejša premica pomeni večjo hitrost. Vodoravna črta v $s(t)$ pomeni mirovanje.
+- Graf $v(t)$ je vodoravna črta; ploščina pod njo je pot.
+- Primer: zvok groma prepotuje $1\,\mathrm{km}$ v približno $3\,\mathrm{s}$.
 
 ## Drugače: Korak za korakom s številkami
 
-Recept za vsako nalogo:
+Postopek za vsako nalogo:
 
-1. Izpiši, kaj je podano in kaj iščeš (npr. $s = 180\,\mathrm{m}$, $t = 30\,\mathrm{s}$, iščem $v$).
-2. Preveri enote. Če so mešane, jih uskladi.
-3. Izberi formulo: iščem $v$ → $\dfrac{s}{t}$, iščem $s$ → $v \cdot t$, iščem $t$ → $\dfrac{s}{v}$.
-4. Vstavi in izračunaj z enotami.
-5. Preveri, ali je rezultat smiseln.
+1. Izpiši podano in iskano, npr. $s = 180\,\mathrm{m}$, $t = 2\,\mathrm{min}$, iščem $v$.
+2. Uskladi enote: $t = 2\,\mathrm{min} = 120\,\mathrm{s}$.
+3. Izberi obliko: iščem $v$ → $\dfrac{s}{t}$, iščem $s$ → $v \cdot t$, iščem $t$ → $\dfrac{s}{v}$.
+4. Vstavi z enotami: $v = \dfrac{180\,\mathrm{m}}{120\,\mathrm{s}} = 1{,}5\,\mathrm{m/s}$.
+5. Presodi smiselnost: $1{,}5\,\mathrm{m/s}$ je hitrost hitre hoje ali počasne reke.
 
-Primer s tabelo: vlak vozi s stalno hitrostjo $20\,\dfrac{\mathrm{m}}{\mathrm{s}}$.
+Ali je gibanje enakomerno, preveriš s tabelo. Reka nese čoln s stalno hitrostjo $2\,\mathrm{m/s}$:
 
-| čas $t$ (s) | 0 | 1 | 2 | 3 | 4 |
-|---|---|---|---|---|---|
-| pot $s$ (m) | 0 | 20 | 40 | 60 | 80 |
+| $t$ (s) | $s$ (m) | $s : t$ |
+|---|---|---|
+| 1 | 2 | 2 |
+| 2 | 4 | 2 |
+| 3 | 6 | 2 |
+| 4 | 8 | 2 |
 
-Vsako sekundo se pot poveča za $20\,\mathrm{m}$. Količnik $\dfrac{s}{t}$ je v vsakem stolpcu enak: $\dfrac{80}{4} = 20$, $\dfrac{60}{3} = 20$. To je znak enakomernega gibanja.
+Vsako sekundo pot zraste za $2\,\mathrm{m}$, količnik $s : t$ je povsod enak. Če bi se količnik od vrstice do vrstice spreminjal, gibanje ne bi bilo enakomerno.
+
+## Drugače: Kot zgodba
+
+Eva se odpravi po ravni gozdni poti do koče. Vsakih $10\,\mathrm{min}$ pogleda v telefon, koliko je že prehodila: $0{,}8\,\mathrm{km}$, $1{,}6\,\mathrm{km}$, $2{,}4\,\mathrm{km}$. Vsakih deset minut enak kos poti, torej hodi enakomerno, s hitrostjo $0{,}8\,\mathrm{km}$ v $10\,\mathrm{min}$, kar je $4{,}8\,\mathrm{km/h}$. Njen graf $s(t)$ je doslej poševna premica.
+
+Po $30\,\mathrm{min}$ sede na štor in $10\,\mathrm{min}$ opazuje veverico. Ura teče, kilometri pa ne: graf $s(t)$ postane vodoraven pri $2{,}4\,\mathrm{km}$, graf $v(t)$ pade na nič.
+
+Nato vstane in hodi enako hitro kot prej. Graf $s(t)$ se spet dviga, enako strmo kot na začetku. V $20\,\mathrm{min}$ naredi še $1{,}6\,\mathrm{km}$ in po eni uri od odhoda je pri koči, $4\,\mathrm{km}$ od starta.
+
+Evina zgodba v grafih: poševno, vodoravno, spet poševno v $s(t)$; v $v(t)$ pa višina $4{,}8$, nič, spet $4{,}8$.
 
 ## Drugače: Bolj natančno
 
-Pri enakomernem gibanju sta pot in čas **premo sorazmerna**: če se čas podvoji, se podvoji tudi pot. Količnik $\dfrac{s}{t}$ je stalen in ga imenujemo hitrost. Zato je graf $s(t)$ premica skozi izhodišče, enačba te premice pa je $s = v \cdot t$ (kakor $y = k \cdot x$ iz matematike, kjer je smerni koeficient $k$ enak hitrosti).
+Pri enakomernem gibanju sta pot in čas **premo sorazmerna**: podvojeni čas da podvojeno pot. Zato je graf $s(t)$ premica skozi izhodišče in njena enačba $s = v \cdot t$ je oblike $y = k \cdot x$ iz matematike (premo sorazmerje); koeficient $k$ je hitrost.
 
-Če telo začne gibanje na razdalji $s_0$ od izhodišča, je $s = s_0 + v \cdot t$. Graf je še vedno premica z enako strmino, le premaknjena navzgor.
+Če telo ob času $0$ ni na startu, ampak že $s_0$ od njega, je njegova razdalja od starta ob času $t$ enaka $s_0 + v \cdot t$. Graf je premica z enako strmino, le premaknjena navzgor za $s_0$.
 
-Ploščina pod grafom $v(t)$ od časa $0$ do $t$ je pravokotnik s ploščino $v \cdot t$. To je enako poti $s$. Ta ugotovitev velja tudi za zahtevnejša gibanja, kjer hitrost ni stalna, vendar tam ploščine ne računamo več kot enostaven pravokotnik.
+Da je ploščina pod grafom $v(t)$ enaka poti, velja tudi takrat, ko hitrost ni stalna. Takrat lik pod grafom ni več pravokotnik; to boš spoznal pri pospešenem gibanju.
 
 ## Preveri se
 
-? Rolkar v $8\,\mathrm{s}$ prevozi $40\,\mathrm{m}$ s stalno hitrostjo. Kolikšna je njegova hitrost?
-- $320\,\dfrac{\mathrm{m}}{\mathrm{s}}$
-+ $5\,\dfrac{\mathrm{m}}{\mathrm{s}}$
-- $0{,}2\,\dfrac{\mathrm{m}}{\mathrm{s}}$
-- $48\,\dfrac{\mathrm{m}}{\mathrm{s}}$
-> $v = \dfrac{s}{t} = \dfrac{40}{8} = 5\,\dfrac{\mathrm{m}}{\mathrm{s}}$. Odgovor $320$ dobiš z množenjem, $0{,}2$ pa z obrnjenim deljenjem $\dfrac{t}{s}$.
+? Katera trditev o enakomernem gibanju drži?
+- Hitrost telesa se vsako sekundo enako poveča.
+~ To opisuje pospešeno gibanje. Pri enakomernem gibanju se vsako sekundo enako poveča pot, hitrost pa ostane enaka.
+- Graf $s(t)$ je vodoravna črta.
+~ Vodoravna črta v grafu $s(t)$ pomeni, da se pot ne spreminja: telo miruje.
++ Graf $v(t)$ je vodoravna črta.
+- Graf $v(t)$ je poševna premica skozi izhodišče.
+~ Poševna premica skozi izhodišče je graf $s(t)$. Hitrost je stalna, zato je graf $v(t)$ vodoraven.
+> Pri enakomernem gibanju je hitrost stalna, zato je graf $v(t)$ vodoravna črta. Graf $s(t)$ je poševna premica.
 
-? Avtobus vozi s stalno hitrostjo $60\,\dfrac{\mathrm{km}}{\mathrm{h}}$. Koliko časa potrebuje za $150\,\mathrm{km}$?
-- $90\,\mathrm{h}$
-- $2{,}5\,\mathrm{min}$
-+ $2{,}5\,\mathrm{h}$
-- $9000\,\mathrm{h}$
-> $t = \dfrac{s}{v} = \dfrac{150\,\mathrm{km}}{60\,\frac{\mathrm{km}}{\mathrm{h}}} = 2{,}5\,\mathrm{h}$, kar je $2$ uri in $30$ minut. Če bi množili, bi dobili napačno enoto in nesmiselno veliko število.
+? Reka nese čoln s stalno hitrostjo $1{,}5\,\mathrm{m/s}$. Kolikšno pot prepotuje v $2\,\mathrm{min}$?
+- $3\,\mathrm{m}$
+~ Tu je čas ostal v minutah, hitrost pa je v metrih na **sekundo**. Najprej pretvori: $2\,\mathrm{min} = 120\,\mathrm{s}$.
+- $80\,\mathrm{m}$
+~ To je $120 : 1{,}5$. Pot dobiš z množenjem, $s = v \cdot t$, ne z deljenjem.
++ $180\,\mathrm{m}$
+- $0{,}0125\,\mathrm{m}$
+~ To je $1{,}5 : 120$, deljenje hitrosti s časom nima pomena poti.
+> $t = 2\,\mathrm{min} = 120\,\mathrm{s}$, $s = v \cdot t = 1{,}5\,\mathrm{m/s} \cdot 120\,\mathrm{s} = 180\,\mathrm{m}$.
 
-? Kakšen je graf $s(t)$ za telo, ki se giblje enakomerno s hitrostjo $3\,\dfrac{\mathrm{m}}{\mathrm{s}}$ in začne v izhodišču?
-- Vodoravna črta na višini $3$.
-- Navpična črta pri času $3\,\mathrm{s}$.
-+ Poševna premica skozi izhodišče.
-> Pot je $s = 3 \cdot t$, pot narašča sorazmerno s časom, zato je graf poševna premica skozi izhodišče. Vodoravna črta je graf $v(t)$ (ali mirovanje v grafu $s(t)$).
+? Maja računa: »Veter nosi oblak s hitrostjo $18\,\mathrm{km/h}$. V $20\,\mathrm{min}$ prepotuje $s = 18 \cdot 20 = 360\,\mathrm{km}$.« Kje je napaka?
+- Napačna je formula: pot dobiš z deljenjem.
+~ Formula $s = v \cdot t$ je prava. Deljenje bi dalo $0{,}9$, kar tudi ni prava pot.
++ Čas bi morala pretvoriti v ure: $20\,\mathrm{min} = \dfrac{1}{3}\,\mathrm{h}$, zato je $s = 6\,\mathrm{km}$.
+- Hitrost bi morala najprej pomnožiti s $3{,}6$.
+~ S $3{,}6$ pretvarjamo iz $\mathrm{m/s}$ v $\mathrm{km/h}$. Hitrost je že v $\mathrm{km/h}$, neusklajen je čas.
+- Napake ni, oblaki res potujejo tako daleč.
+~ $360\,\mathrm{km}$ v $20\,\mathrm{min}$ bi bilo hitreje od letala. Že ocena smiselnosti pokaže napako.
+> Hitrost je v $\mathrm{km/h}$, zato mora biti čas v urah: $s = 18\,\mathrm{km/h} \cdot \dfrac{1}{3}\,\mathrm{h} = 6\,\mathrm{km}$.
+
+? Ob prvem neurju je veter pihal s hitrostjo $20\,\mathrm{m/s}$, ob drugem s $70\,\mathrm{km/h}$. Kdaj je pihal močneje?
+- Ob drugem, ker je $70$ več kot $20$.
+~ Števil v različnih enotah ne moreš neposredno primerjati. Najprej ju izrazi v isti enoti.
++ Ob prvem, ker je $20\,\mathrm{m/s} = 72\,\mathrm{km/h}$.
+- Obakrat enako močno.
+~ $20 \cdot 3{,}6 = 72$, ne $70$. Razlika je majhna, a obstaja.
+- Ob drugem, ker je $20\,\mathrm{m/s}$ le približno $5{,}6\,\mathrm{km/h}$.
+~ Tu je bilo deljeno s $3{,}6$ namesto množeno. V uri veter prepiha več kot v sekundi, zato je število v $\mathrm{km/h}$ večje.
+> $20\,\mathrm{m/s} \cdot 3{,}6 = 72\,\mathrm{km/h}$, kar je več od $70\,\mathrm{km/h}$.
+
+? Med bliskom in gromom našteješ $9\,\mathrm{s}$. Zvok potuje s hitrostjo približno $340\,\mathrm{m/s}$. Kako daleč je strela?
+- $9\,\mathrm{km}$
+~ To je pravilo »sekunda je kilometer«, ki ne drži. Zvok v sekundi prepotuje le okoli tretjino kilometra.
++ približno $3\,\mathrm{km}$
+- približno $38\,\mathrm{m}$
+~ To je $340 : 9$. Pot dobiš z množenjem hitrosti in časa, ne z deljenjem.
+- Ne da se izračunati, ker blisk in grom prideta do nas hkrati.
+~ Nastaneta hkrati, a svetloba potuje veliko hitreje od zvoka, zato grom zamudi.
+> $s = v \cdot t = 340\,\mathrm{m/s} \cdot 9\,\mathrm{s} = 3060\,\mathrm{m}$, približno $3\,\mathrm{km}$.
 
 :::simboli
-v | hitrost | v = \dfrac{s}{t} | m/s | 1 m/s = 3,6 km/h
+v | hitrost | v = \dfrac{s}{t} | m/s | $1\,\mathrm{m/s} = 3{,}6\,\mathrm{km/h}$
 s | pot | s = v \cdot t | m
 t | čas | t = \dfrac{s}{v} | s
+s_2 | pot srne v eni minuti | s_2 = v \cdot t_2 | m
+t_2 | čas teka srne (ena minuta) | | s
 :::

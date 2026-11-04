@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sørensen 1909
+  - encimi delujejo le pri določeni kislosti
+  - kratko število namesto $0{,}0000001$
+- Smer lestvice
+  - $\mathrm{pH} < 7$ kislo, $= 7$ nevtralno
+  - manjši pH, bolj kislo
+  - napaka: pH 0 ni »nič kisline«
+- Faktor deset
+  - en korak, $10$-krat več $\mathrm{H_3O^+}$
+  - pH $5$ proti $7$: $100$-krat
+  - napaka: razlika $2$ ni dvakrat
+- Merjenje
+  - papirček ali rdeče zelje približno
+  - pH-meter natančno, prej umerimo
+- Razredčenje
+  - pH se približa $7$
+  - kislina z vodo ne postane bazična
+- Pomen
+  - kri okoli $7{,}4$
+  - tla, jezera, bazeni, koža
+  - zelo kislo in zelo bazično je jedko

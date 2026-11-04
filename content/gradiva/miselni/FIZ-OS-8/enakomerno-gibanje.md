@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enakomerno gibanje
+  - v enakih časih enake poti
+  - list na reki: vsakih $5\,\mathrm{s}$ po $4\,\mathrm{m}$
+- Hitrost
+  - $v = \dfrac{s}{t}$, enota $\mathrm{m/s}$ ali $\mathrm{km/h}$
+  - pri enakomernem gibanju stalna
+- Pot in čas
+  - $s = v \cdot t$
+  - $t = \dfrac{s}{v}$
+  - zvok groma: $1\,\mathrm{km}$ v približno $3\,\mathrm{s}$
+- Pretvarjanje enot
+  - $1\,\mathrm{m/s} = 3{,}6\,\mathrm{km/h}$
+  - napaka: $\mathrm{km/h}$ krat minute
+  - $1{,}5\,\mathrm{h} = 90\,\mathrm{min}$
+- Graf $s(t)$
+  - premica skozi izhodišče
+  - strmejša premica, večja hitrost
+  - vodoravna črta pomeni mirovanje
+- Graf $v(t)$
+  - vodoravna črta
+  - ploščina pod črto je pot

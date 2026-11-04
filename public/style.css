@@ -498,6 +498,9 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .lc-list li svg.i { flex: none; color: var(--accent); width: 20px; height: 20px; margin-top: 2px; }
 .level-card .actions { margin-top: 14px; }
 .image-preview { position: relative; display: inline-block; margin-bottom: 8px; }
+/* Predogled formul nad poljem (ulomki, integrali, vsote s tipkovnice), zavije se kot besedilo, ne drsi. */
+.formula-preview { margin: 0 0 8px; padding: 8px 12px; border-radius: var(--radius-sm); background: var(--surface-2); color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30vh; overflow-y: auto; }
+.formula-preview .katex { font-size: 1.1em; }
 .image-preview img { max-height: 120px; border-radius: 12px; border: 1px solid var(--border); }
 .image-preview button { position: absolute; top: -8px; right: -8px; border-radius: 50% !important; padding: 0 7px !important; min-height: 28px !important; }
 

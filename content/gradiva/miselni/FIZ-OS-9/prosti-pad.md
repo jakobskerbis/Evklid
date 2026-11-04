@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Prosti pad
+  - gibanje samo pod vplivom teže
+  - upor zraka zanemarimo: kamen da, pero ne
+- Težni pospešek
+  - $g \approx 9{,}8\,\mathrm{m/s^2}$, za račun $10\,\mathrm{m/s^2}$
+  - hitrost vsako sekundo zraste za $g$
+  - napaka: $g$ ni hitrost
+- Enako za vsa telesa
+  - $a = \frac{m\,g}{m} = g$
+  - kladivo in žebelj padeta hkrati
+- Hitrost
+  - $v = g\,t$
+  - raste enakomerno: $0$, $10$, $20\,\mathrm{m/s}$
+- Pot
+  - $h = \frac{1}{2}\,g\,t^2$
+  - dvakrat daljši čas, štirikrat daljša pot
+  - napaka: pozabljen faktor $\frac{1}{2}$
+- Čas iz višine
+  - $t = \sqrt{2h/g}$
+  - ravnilo $20\,\mathrm{cm}$: reakcijski čas $0{,}2\,\mathrm{s}$
+  - napaka: pozabljen koren
+- Luna in Mars
+  - Luna $1{,}6$, Mars $3{,}7\,\mathrm{m/s^2}$
+  - iste formule, drug $g$

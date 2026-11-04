@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Masa
+  - koliko snovi je v telesu
+  - $\mathrm{kg}$, tehtnica z utežmi
+  - povsod enaka
+- Sila teže
+  - Zemlja privlači telo navpično navzdol
+  - $F_g$ v $\mathrm{N}$, merimo s silomerom
+- Teža iz mase
+  - $F_g = m \cdot g$
+  - $g = 9{,}81\,\mathrm{N/kg}$
+  - $5\,\mathrm{kg}$ juhe: $49{,}05\,\mathrm{N}$
+- Masa iz teže
+  - $m = \dfrac{F_g}{g}$
+  - napaka: množenje namesto deljenja
+- Pretvorba gramov
+  - $250\,\mathrm{g} = 0{,}25\,\mathrm{kg}$
+  - $1\,\mathrm{N}$ ustreza približno $100\,\mathrm{g}$
+- Luna in planeti
+  - Luna: $g = 1{,}62\,\mathrm{N/kg}$
+  - teža približno šestkrat manjša, masa ista

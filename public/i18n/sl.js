@@ -1144,6 +1144,8 @@ export default {
   "sc.memory": "Shranjeno",
   "sc.insert": "Vstavi v račun",
   "sc.pressSolve": "Pritisni = za rešitev",
+  "sc.fmHint": "Namesto znanih črk vpiši števila, neznanko pusti in pritisni =.",
+  "sc.fmRad": "Kalkulator je zdaj v načinu RAD (koti v radianih).",
   "sc.errUndefined": "Rezultat ni definiran (npr. deljenje z 0).",
   "sc.constants": "Konstante",
   "sc.toCalc": "V kalkulator",

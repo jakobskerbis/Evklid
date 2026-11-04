@@ -27,6 +27,7 @@ import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from 
 import { attachMic } from "./speech.js";
 import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
 import { TUTOR_CHIPS } from "./tipkovnica-data.js";
+import { splitFormulas, hasFormula } from "./vnos-formul.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
 import { offlineApi, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback } from "./feedback.js";
@@ -190,10 +191,17 @@ setFormulaSubject(() => subjectWithGlossary(topicSubject(state.topic) || state.s
 // Razlaga teme in »Bistvo«: črke imajo pomen iz lekcije te teme (:::simboli), sicer iz slovarja predmeta.
 const topicRich = (tp, text) => withFormulaSubject(topicSubject(tp) || state.student?.settings?.subject || "MAT", () => renderRich(text), tp?.symbols);
 
-// Sporočilo učenca: besedilo ostane besedilo, le $...$ se izriše kot formula.
+// Sporočilo učenca: besedilo ostane besedilo, $...$ in zapis s tipkovnice ((3)/(4), √(2), x^(2), ∑_(n=1)^∞ …,
+// public/vnos-formul.js) se izrišeta kot formula.
 function renderUserText(text) {
   const parts = String(text).split(/(\$[^$\n]+?\$)/g);
-  return parts.map((p, i) => (i % 2 ? renderMath(p.slice(1, -1), false, false) : escapeHtml(p))).join("");
+  return parts
+    .map((p, i) =>
+      i % 2
+        ? renderMath(p.slice(1, -1), false, false)
+        : splitFormulas(p).map((x) => ("tex" in x ? renderMath(`\\displaystyle ${x.tex}`, false, false) : escapeHtml(x.text))).join(""), // ulomek v polni velikosti
+    )
+    .join("");
 }
 
 // ---------- pogledi ----------
@@ -1125,6 +1133,11 @@ const input = $("#input");
 // Če besedilo ne gre več v polje, se samodejno pokaže v večjem oknu (public/razpri.js). Zadnja sporočila
 // ostanejo vidna nad poljem.
 function autoGrow(stick, again) {
+  // Predogled formul nad poljem: (3)/(4) se pokaže kot ulomek, preden ga pošlješ.
+  const pv = $("#formula-preview");
+  const show = hasFormula(input.value);
+  if (show) pv.innerHTML = renderUserText(input.value);
+  pv.hidden = !show;
   const box = $("#messages");
   const atBottom = typeof stick === "boolean" ? stick : box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   const max = Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
@@ -3877,9 +3890,9 @@ function formulaBook() {
   const subj = ["MAT", "FIZ", "KEM"].includes(s) ? s : "MAT";
   return `${subj}-${stageCode(state.student?.settings)}`;
 }
-async function insertIntoCalc(text) {
+async function insertIntoCalc(text, o) {
   const tool = await setCalcMode("sci");
-  tool.insert(text);
+  tool.insert(text, o);
 }
 function calcTool(mode) {
   if (mode === "graph") return graphCalc();
