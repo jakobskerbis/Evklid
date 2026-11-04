@@ -188,7 +188,19 @@ test("every history chat look and column set is styled in ui.css, readable and s
         assert.equal(win.vars["--paper"], pal.surface, `${id} ${mode}: papir z lastnimi barvami`);
         assert.ok(win.vars["--paper-fibre"] && win.vars["--paper-2"] && T.check(win), `${id} ${mode}: kontrast papirja z lastnimi barvami`);
       }
+      // Pisani pas (ERAS[…].frieze, ui.css → »Pisani pas«): slika v barvah načina, obroba brez popravka 3:1.
+      if (e.frieze) {
+        assert.match(c.vars["--frieze"] || "", /^url\("data:image\/svg\+xml,/, `${id} ${mode}: --frieze`);
+        assert.equal(c.frieze.K, e[mode].frieze.K, `${id} ${mode}: obroba pasu naj ima 3:1 brez popravka`);
+        assert.ok(!T.compute({ style: id, mode, accent: "#1d7a3a", light: null, dark: null }).vars["--frieze"], `${id} ${mode}: lastni poudarek = enobarvni pas`);
+      }
       if (e.arch) for (const k of ["cap", "shaft", "base"]) assert.match(c.vars[`--arch-${k}`] + c.vars[`--arch-${k}-m`], /^url\("data:image\/svg\+xml,.*url\("data:image\/svg\+xml,/, `${id} ${mode}: --arch-${k}`);
+    }
+    if (e.frieze) {
+      const [w, h, body] = e.frieze;
+      assert.ok(w === e.band[1] && h === e.band[2] && body.length < 3000, `${id}: frieze ima mere pasu`);
+      assert.ok(!/<(?!\/?(g|path|rect|circle|ellipse|polygon)\b)/.test(body) && !/\son\w+=|href|url\(|style=|#[0-9a-f]{3}/i.test(body), `${id}: frieze samo osnovne oblike, barve K B R G Y`);
+      assert.ok(css.includes(":root[data-frieze]"), "ui.css: Pisani pas");
     }
     const simple = (body, what) => assert.ok(!/<(?!\/?(path|rect|circle|ellipse|line|polyline|polygon)\b)/.test(body) && !/\son\w+=|href|url\(|style=|fill="#|stroke="#/i.test(body), `${id}: ${what} samo osnovne oblike, barve iz ui.css`);
     for (const [k, part] of Object.entries(e.arch || {})) {
@@ -202,7 +214,8 @@ test("every history chat look and column set is styled in ui.css, readable and s
     // temple() iz tega sestavi zgornji (zatrep, entablatura) in spodnji del (4 stebri, stopnice), vse aria-hidden.
     const tp = e.arch && e.arch.temple;
     if (tp) {
-      assert.deepEqual(Object.keys(tp).sort(), ["column", "entablature", "pediment", "stylobate"], `${id}: deli pročelja`);
+      assert.deepEqual(Object.keys(tp).filter((k) => k !== "badge").sort(), ["column", "entablature", "pediment", "stylobate"], `${id}: deli pročelja`);
+      assert.ok(tp.badge === undefined || /^\d+(\.\d+)?(%|px)$/.test(tp.badge), `${id}: temple.badge (zaobljenost ikone, npr. 22%)`);
       const parts = { pediment: tp.pediment, entablature: tp.entablature, stylobate: tp.stylobate, cap: tp.column[0], shaft: tp.column[1], base: tp.column[2] };
       for (const [k, [w, h, body]] of Object.entries(parts)) {
         assert.ok(w > 0 && h > 0 && w <= 600 && h <= 200 && body.length < 2000, `${id}: temple.${k} mere`);

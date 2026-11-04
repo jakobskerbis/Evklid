@@ -367,6 +367,9 @@ html.lite[data-era] .view::before { display: none; }
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) { :root[data-era] .topbar { padding-bottom: calc(8px + var(--edge-h, var(--band-h))); } }
 :root[data-era] :is(.quick-pop, .profile-pop, .usage-pop, .dd-list, .overlay-card, .iq.card) { border-top: 3px solid var(--edge-c, var(--band-c)); }
 /* Žetoni (XP, niz dni, stanje pogovora) v odtenku poudarka. */
+/* Kartica Današnji trening: neobvezen tanek okvir v barvi obdobja (ERAS[…].light/dark.hero[2], Egipt zlato). */
+:root[data-era] .hero { outline: 1.5px solid var(--hero-line, transparent); outline-offset: -7px; }
+@media (forced-colors: active) { :root[data-era] .hero { outline-color: transparent; } }
 :root[data-era] .stat { background: var(--accent-soft); }
 :root[data-era] .chip { background: var(--accent-soft); color: var(--accent); }
 /* Iskalnik v spustnem seznamu: privzeto belo polje bi na temnem meniju dobilo svetlo besedilo menija. */
@@ -406,6 +409,19 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   :root[data-era] .topbar { border-bottom: 1px solid; }
   :root[data-era] :is(.tabbar, .composer) { border-top: 1px solid; }
   :root[data-era] .chat-view .sidebar { border-inline-end: 1px solid; }
+}
+
+/* Pisani pas (ERAS[…].frieze; theme.js → --frieze in data-frieze): pas v barvah obdobja (Egipt: friz kheker nad
+   pasom pisanih pravokotnikov, svetlo s črno obrobo, temno z zlato) kot slika namesto enobarvne maske, na kartici
+   dejstev, ob robovih okvirja in v arhitravu pročelja. Z lastnim poudarkom, ob forced-colors in pri tisku ostane maska. */
+@media screen and (forced-colors: none) {
+  :root[data-frieze] .gr-fact::before { background: var(--frieze) repeat-x 0 0 / var(--band-w) var(--band-h); -webkit-mask: none; mask: none; }
+  :root[data-frieze] :is(.topbar, .tabbar, .composer)::after, :root[data-frieze] .chat-view .sidebar::after {
+    background: var(--frieze) repeat-x left center / var(--edge-w) var(--edge-h); -webkit-mask: none; mask: none;
+  }
+  :root[data-frieze][data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-ent::after {
+    top: 5px; height: 16px; background: var(--frieze) repeat-x left center / auto 16px; -webkit-mask: none; mask: none;
+  }
 }
 
 /* ---------- Klepet obdobja (ERAS[…].chat; docs/oblikovanje.md → »Klepet obdobja«) ----------
@@ -497,10 +513,11 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col.t4 { grid-column: 8; }
   :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > :is(.t-col.t1, .t-col.t4) { display: none; }
   :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-steps { grid-area: 6 / 1 / 7 / -1; width: 100%; height: 16px; }
-  /* Ikona inštruktorja kot okrogel ščit sredi timpanona (rob v barvi črte, okrog pas timpanona). */
+  /* Ikona inštruktorja kot okrogel ščit sredi timpanona (rob v barvi črte, okrog pas timpanona); arch.temple.badge
+     (theme.js → --t-badge-r) jo zaobli drugače, npr. Egipt: ploščica v vencu, ne krog (ne spominja na sončni disk). */
   :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .tutor-avatar.big {
     grid-area: 1 / 1 / 2 / -1; justify-self: center; align-self: end; margin-bottom: max(6.6% - 0.5 * var(--t-badge), 1.4% + 8px);
-    --t-badge: clamp(26px, 6cqi, 40px); width: var(--t-badge); height: var(--t-badge); border-radius: 50%;
+    --t-badge: clamp(26px, 6cqi, 40px); width: var(--t-badge); height: var(--t-badge); border-radius: var(--t-badge-r, 50%);
     box-shadow: 0 0 0 3px var(--t-tint), 0 0 0 4.5px var(--t-line);
   }
   :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .tutor-avatar.big svg.i { width: 62%; height: 62%; }
