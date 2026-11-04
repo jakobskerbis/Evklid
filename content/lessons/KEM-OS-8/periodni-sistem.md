@@ -5,73 +5,90 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že veš, da je atom zgrajen iz jedra (protoni in nevtroni) in elektronov, ki se gibljejo v lupinah okoli jedra. Veš tudi, da ima vsak element svoje **atomsko (vrstno) število**, ki pove število protonov v jedru, v nevtralnem atomu pa tudi število elektronov.
+Leta 1869 je ruski kemik Dmitrij Mendelejev pisal učbenik kemije za svoje študente. Takrat so poznali okoli $63$ elementov, od mehkih kovin do strupenih plinov. Kako naj jih predstavi, da ne bodo le dolg seznam brez reda?
 
-Znanih je več kot sto elementov. Če bi se lastnosti vsakega učili posebej, bi bilo to zelo naporno. **Periodni sistem** elemente razporedi tako, da že iz mesta elementa v tabeli veš, koliko lupin ima njegov atom, koliko elektronov je v zunanji lupini in ali je kovina ali nekovina. Podobno kot ti znamenja na zemljevidu povedo, kaj je kje, ti mesto v periodnem sistemu pove veliko o elementu.
+Elemente je razvrstil po naraščajoči masi atomov in opazil, da se podobne lastnosti ponavljajo v rednih presledkih. Podobne elemente je zato postavil drugega pod drugega. Kjer ni ustrezal noben znan element, je pustil prazno mesto, ker je sklepal, da tak element še ni odkrit. Leta 1875 so odkrili galij, ki je imel prav take lastnosti, kot jih je napovedal za eno od praznih mest.
+
+Danes poznamo $118$ elementov, urejenih kot karte v roki dobrega igralca. Iz mesta elementa v periodnem sistemu veš, koliko lupin ima atom, koliko elektronov je v zunanji lupini in ali je element kovina.
 
 ## Razlaga
 
-**1. Kako je urejen periodni sistem.** Elementi so razvrščeni po naraščajočem atomskem številu. Tabela ima:
+**1. Mamljiva, a napačna misel.** V isti vrstici tabele sedijo sosedje: natrij, magnezij, aluminij ... Imajo zaporedna vrstna števila, zato bi pričakoval, da so si najbolj podobni. Niso. Natrij je mehka kovina, ki burno reagira z vodo, klor na koncu iste vrstice pa strupen rumenozelen plin. Natriju je najbolj podoben kalij, ki ne stoji ob njem, ampak *pod* njim.
 
-- **periode** (vodoravne vrstice), ki jih je 7,
-- **skupine** (navpični stolpci), ki jih je 18 in so oštevilčene od 1 do 18.
+**2. Vrstice in stolpci.** Elementi si sledijo po naraščajočem vrstnem številu $Z$. Vodoravne vrstice so **periode**; teh je $7$. Navpični stolpci so **skupine**; teh je $18$. Lego elementa povemo s periodo in skupino: klor je v 3. periodi in 17. skupini. Spodaj je prvih $18$ elementov. Skupin od $3$ do $12$ tu ni, ker se začnejo šele v 4. periodi:
 
-**2. Perioda pove število elektronskih lupin.** Številka periode je enaka številu lupin, ki so v atomu zasedene z elektroni.
+```
+perioda | 1   2   13  14  15  16  17  18
+   1    | H                           He
+   2    | Li  Be  B   C   N   O   F   Ne
+   3    | Na  Mg  Al  Si  P   S   Cl  Ar
+```
 
-- Natrij ima elektrone v treh lupinah, zato je v 3. periodi.
-- Litij ima elektrone v dveh lupinah, zato je v 2. periodi.
+**3. Lupine.** Elektroni so v ovojnici razporejeni v lupinah. Pri prvih $20$ elementih gresta v 1. lupino največ $2$ elektrona, v 2. največ $8$, v 3. prav tako $8$, ostali v naslednjo lupino. Natrij z $11$ elektroni ima tako razporeditev 2, 8, 1. Podrobneje to spoznaš v lekciji Razporeditev elektronov.
 
-Prva perioda ima samo dva elementa (vodik in helij), druga in tretja pa po osem.
+**4. Perioda pove število lupin.** Številka periode je enaka številu lupin, v katerih so elektroni. Natrij (2, 8, 1) ima tri lupine in je v 3. periodi. Litij (2, 1) ima dve lupini in je v 2. periodi. Prva perioda ima le dva elementa (H, He), ker gresta v 1. lupino samo dva elektrona; druga in tretja imata po osem.
 
-**3. Skupina pove število zunanjih elektronov.** Elektronom v zadnji (zunanji) lupini pravimo **valenčni elektroni**. Za skupini 1 in 2 je število valenčnih elektronov kar enako številki skupine. Za skupine od 13 do 18 je enako številki skupine minus 10 (npr. 17. skupina: 7 valenčnih elektronov). Izjema je helij v 18. skupini, ki ima 2 valenčna elektrona.
+**5. Skupina pove število valenčnih elektronov.** Elektrone v zunanji lupini imenujemo **valenčni elektroni**. V skupinah $1$ in $2$ je njihovo število enako številki skupine. V skupinah od $13$ do $18$ je enako številki skupine, zmanjšani za $10$: v 17. skupini je $17 - 10 = 7$ valenčnih elektronov. Izjema je helij v 18. skupini, ki ima samo $2$ elektrona.
 
-Ker imajo elementi iste skupine enako število valenčnih elektronov, imajo **podobne kemijske lastnosti**.
+Valenčni elektroni prvi pridejo v stik z drugimi atomi, zato imajo elementi iste skupine **podobne kemijske lastnosti**. Natrij (2, 8, 1) in kalij (2, 8, 8, 1) imata oba po $1$ valenčni elektron. To popravi misel iz točke 1: podobni so si elementi v istem stolpcu, ne v isti vrstici.
 
-**4. Imena nekaterih skupin.**
+:::premisli
+Litij ima razporeditev 2, 1. Ne da bi pogledal tabelo, napovej, koliko valenčnih elektronov ima, v kateri skupini je in ali z vodo reagira podobno kot natrij.
+---
+En valenčni elektron (2, 1). Ker je v isti skupini kot natrij, reagira z vodo podobno, le mirneje.
+:::
+
+**6. Imena nekaterih skupin.**
 
 - 1. skupina (brez vodika): **alkalijske kovine** (litij, natrij, kalij ...).
 - 2. skupina: **zemeljskoalkalijske kovine** (magnezij, kalcij ...).
 - 17. skupina: **halogeni** (fluor, klor, brom, jod ...).
-- 18. skupina: **žlahtni plini** (helij, neon, argon ...).
-- Skupine 3 do 12: **prehodne kovine** (npr. železo, baker, cink).
+- 18. skupina: **žlahtni plini** (helij, neon, argon ...). Zunanjo lupino imajo zapolnjeno, zato zelo malo reagirajo.
+- Skupine od 3 do 12: **prehodne kovine** (npr. železo, baker, cink).
 
-**5. Kovine in nekovine.** Večina elementov so **kovine**. Ležijo na levi in v sredini tabele. **Nekovine** ležijo na desni strani, zgoraj. Vodik je nekovina, čeprav stoji v 1. skupini na levi. Meja med kovinami in nekovinami poteka po stopničasti črti. Elementi ob tej črti (npr. silicij) imajo lastnosti obeh skupin in jih imenujemo polkovine.
+**7. Kovine in nekovine.** Večina elementov so **kovine**. Ležijo na levi in v sredini tabele. **Nekovine** ležijo na desni, zgoraj. Mejo med njimi kaže stopničasta črta od bora (B) do astata (At). Elementi ob njej, npr. silicij (Si), imajo nekaj lastnosti kovin in nekaj nekovin; imenujemo jih **polkovine**.
 
 | Lastnost | Kovine | Nekovine |
 |---|---|---|
 | Videz | kovinski sijaj | večinoma brez sijaja |
-| Prevajanje toplote in električnega toka | dobro | slabo |
-| Trdne snovi | kovne (jih lahko preoblikujemo, ne da bi se zdrobile) | krhke (se razbijejo) |
-| Agregatno stanje pri sobni temperaturi | skoraj vse trdne (izjema je živo srebro, tekoče) | trdne, tekoče ali plinaste (npr. kisik je plin) |
+| Prevajanje toplote in električnega toka | dobro | slabo (izjema je grafit) |
+| Pri kovanju (trdne snovi) | kovne: lahko jih preoblikujemo, ne da bi se zdrobile | krhke: se razbijejo |
+| Agregatno stanje pri sobni temperaturi | skoraj vse trdne (živo srebro je tekoče) | trdne, tekoče (brom) ali plinaste (kisik) |
 
-**6. Zapis lege elementa.** Lego povemo z dvema podatkoma: *skupina* in *perioda*. Primer: klor leži v 3. periodi in 17. skupini.
+:::premisli
+Vodik je nekovina, pa vendar stoji v 1. skupini, med kovinami. Zakaj?
+---
+Mesto določa zgradba atoma, ne to, ali je element kovina. Vodik ima en elektron, torej $1$ valenčni elektron kot alkalijske kovine. Je pa plin brez kovinskih lastnosti, zato ni alkalijska kovina.
+:::
+
+V simulaciji spodaj (»3D: Periodni sistem«) tapni natrij, nato kalij in primerjaj njuni zunanji lupini.
 
 ## Rešeni primeri
 
-### Primer 1: iz elektronov v lego (lažji)
+### Primer 1 (lažji): magnezija na rokah plezalca
 
-Atom magnezija ima 12 elektronov, razporejenih po lupinah: 2, 8, 2. V kateri periodi in skupini je magnezij?
+Plezalci in telovadci si roke posujejo z »magnezijo« (magnezijevim karbonatom), da ostanejo suhe. Atom magnezija ima $12$ elektronov, razporejenih 2, 8, 2. V kateri periodi in skupini je magnezij?
 
 **Podatki:** element magnezij ($\mathrm{Mg}$), število elektronov $12$, razporeditev po lupinah 2, 8, 2
 **Iščemo:** periodo in skupino magnezija
 
 :::formula
-številka periode = število zasedenih lupin
+številka periode = število lupin z elektroni
 
 številka skupine = število valenčnih elektronov (skupini 1 in 2)
 :::
 
 **Rešitev:**
 
-1. Preštejemo zasedene lupine: 2, 8 in 2 pomenijo **tri lupine**. Številka periode je enaka številu lupin, zato je magnezij v **3. periodi**.
-2. Zunanja lupina ima **2 elektrona**. Pri skupinah 1 in 2 je število valenčnih elektronov enako številki skupine, zato je magnezij v **2. skupini**.
-3. Preverimo: skupno število elektronov $2 + 8 + 2 = 12$, kar ustreza atomskemu številu magnezija. ✓
+1. Preštejemo lupine: 2, 8 in 2 so **tri lupine**, zato je magnezij v **3. periodi**.
+2. Zunanja lupina ima **2 elektrona**. Pri skupinah 1 in 2 je to kar številka skupine, zato je magnezij v **2. skupini**.
+3. Preverimo: $2 + 8 + 2 = 12$, kar ustreza vrstnemu številu magnezija.
 
-Odgovor: magnezij je v 3. periodi in 2. skupini, to je zemeljskoalkalijska kovina.
+Odgovor: magnezij je v 3. periodi in 2. skupini; je zemeljskoalkalijska kovina.
 
-### Primer 2: iz lege v zgradbo atoma
+### Primer 2: klor v bazenu
 
-Element je v 3. periodi in 17. skupini. To je klor. Koliko elektronov ima njegov nevtralni atom in kako so razporejeni po lupinah?
+Vodo v bazenih razkužujejo s spojinami klora. Klor je v 3. periodi in 17. skupini. Koliko elektronov ima njegov nevtralni atom in kako so razporejeni po lupinah?
 
 **Podatki:** element klor, 3. perioda, 17. skupina, atom je nevtralen
 **Iščemo:** število elektronov in njihovo razporeditev po lupinah
@@ -86,84 +103,68 @@ notranje lupine so polne: v 1. lupini $2$, v 2. lupini $8$ elektronov
 
 **Rešitev:**
 
-1. 3. perioda pomeni **tri zasedene lupine**.
-2. 17. skupina pomeni $17 - 10 = 7$ **valenčnih elektronov**, torej jih je 7 v zunanji (tretji) lupini.
-3. Prvi dve lupini sta polni: v prvi sta 2 elektrona, v drugi 8.
+1. 3. perioda pomeni **tri lupine** z elektroni.
+2. 17. skupina pomeni $17 - 10 = 7$ **valenčnih elektronov**, ki so v tretji, zunanji lupini.
+3. Notranji lupini sta polni: v prvi sta $2$ elektrona, v drugi $8$.
 4. Skupaj: $2 + 8 + 7 = 17$ elektronov.
-5. Preverimo: klor ima atomsko število 17, torej 17 protonov in v nevtralnem atomu 17 elektronov. ✓
+5. Preverimo: klor ima vrstno število $17$, torej $17$ elektronov.
 
-Razporeditev: 2, 8, 7. Klor je halogen in nekovina.
+Odgovor: klorov atom ima $17$ elektronov, razporejenih 2, 8, 7. Klor je halogen in nekovina.
 
-### Primer 3: iskanje sorodnika (težji)
+### Primer 3 (težji): napitek za športnike
 
-Natrij ($\mathrm{Na}$) ima 11 elektronov (2, 8, 1). Kateri od elementov $\mathrm{K}$ (19 elektronov), $\mathrm{Mg}$ (12 elektronov), $\mathrm{Cl}$ (17 elektronov) ima najbolj podobne kemijske lastnosti kot natrij? Utemelji in določi lego tega elementa.
+Športni napitki vsebujejo natrij in kalij. Natrij ($\mathrm{Na}$) ima $11$ elektronov (2, 8, 1). Kateri od elementov $\mathrm{K}$ ($19$ elektronov), $\mathrm{Mg}$ ($12$ elektronov) in $\mathrm{Cl}$ ($17$ elektronov) ima natriju najbolj podobne kemijske lastnosti? Določi lego tega elementa.
 
 **Podatki:** $\mathrm{Na}$: $11$ elektronov (2, 8, 1); $\mathrm{K}$: $19$ elektronov; $\mathrm{Mg}$: $12$ elektronov; $\mathrm{Cl}$: $17$ elektronov
-**Iščemo:** element z najbolj podobnimi kemijskimi lastnostmi kot natrij in njegovo lego (perioda, skupina)
+**Iščemo:** element z natriju najbolj podobnimi kemijskimi lastnostmi in njegovo lego (perioda, skupina)
 
 :::formula
 Podobne kemijske lastnosti imajo elementi z enakim številom valenčnih elektronov (ista skupina).
 
-razporeditev po lupinah (prvih 20 elementov): v 1. lupini največ $2$, v 2. lupini največ $8$, v 3. lupini največ $8$ elektronov, ostali gredo v naslednjo lupino
+lupine se polnijo po $2$, $8$, $8$ elektronov (prvih 20 elementov)
 
-številka periode = število zasedenih lupin
-
-številka skupine = število valenčnih elektronov (skupini 1 in 2)
+številka periode = število lupin; številka skupine = število valenčnih elektronov (skupini 1 in 2)
 :::
 
 **Rešitev:**
 
-1. Natrij ima 1 valenčni elektron, zato je v **1. skupini**. Lastnosti so podobne pri elementih iste skupine, iščemo torej element z 1 zunanjim elektronom.
+1. Natrij ima $1$ valenčni elektron (**1. skupina**). Iščemo element s prav tako $1$ zunanjim elektronom.
 2. Razporedimo elektrone drugih elementov:
-   - $\mathrm{K}$: 19 elektronov, razporeditev 2, 8, 8, 1. **1 zunanji elektron.**
-   - $\mathrm{Mg}$: 2, 8, 2. Zunanja lupina ima 2 elektrona.
-   - $\mathrm{Cl}$: 2, 8, 7. Zunanja lupina ima 7 elektronov.
-3. Natriju je najbolj podoben **kalij**, ker ima prav tako 1 valenčni elektron.
-4. Lega kalija: 4 zasedene lupine pomenijo **4. periodo**, 1 valenčni elektron pomeni **1. skupino**.
-5. Opazimo: natrij in kalij sta v isti skupini, a v različnih periodah. Kalij je v tabeli *pod* natrijem. Mg in Na sta v isti periodi (3.), a imata različno število valenčnih elektronov, zato nista tako podobna.
+   - $\mathrm{K}$: $19$ elektronov, razporeditev 2, 8, 8, 1; **1 zunanji elektron**.
+   - $\mathrm{Mg}$: 2, 8, 2; zunanja lupina ima $2$ elektrona.
+   - $\mathrm{Cl}$: 2, 8, 7; zunanja lupina ima $7$ elektronov.
+3. Natriju je najbolj podoben **kalij**, ker ima prav tako $1$ valenčni elektron. Magnezij je le sosed v 3. periodi.
+4. Določi sam še lego kalija iz njegove razporeditve 2, 8, 8, 1. Nato preveri:
+
+:::premisli
+V kateri periodi in skupini je kalij?
+---
+Štiri lupine pomenijo **4. periodo**, $1$ valenčni elektron pa **1. skupino**. Kalij stoji v tabeli neposredno pod natrijem; oba sta alkalijski kovini.
+:::
 
 ## Pogoste napake
 
-- **Zamenjava skupine in periode.** Perioda je vodoravna vrstica in pove število lupin. Skupina je navpični stolpec in pove število valenčnih elektronov. Pomagaj si z mislijo: *perioda = lupine*.
-- **Štetje vseh elektronov namesto valenčnih.** Za skupino štejemo samo elektrone v zadnji lupini. Klor ima 17 elektronov, a v 17. skupini je zato, ker jih je 7 v zunanji lupini. Da se številki ujemata, je naključje: brom ima 35 elektronov, pa je prav tako v 17. skupini.
-- **Vodik med kovine.** Vodik stoji v 1. skupini, a je nekovina.
-- **Mešanje podobnosti.** Podobne lastnosti imajo elementi v isti *skupini* (navpično), ne v isti periodi.
-- **»Vse nekovine so plini, vsi trdni elementi pa kovine.«** Ni res: žveplo, ogljik in jod so trdne nekovine, brom je tekoča nekovina. Tudi vse kovine niso trdne: živo srebro je tekoče.
+- **Zamenjava skupine in periode.** Učenec postavi magnezij (2, 8, 2) v 2. periodo, ker ima $2$ zunanja elektrona. Popravek: perioda (vrstica) = lupine, skupina (stolpec) = zunanji elektroni.
+- **»Prištejem 10 vedno.«** Učenec atom z 2 zunanjima elektronoma postavi v 12. skupino. Desetico prištejemo le pri skupinah od $13$ do $18$, ker so pred njimi skupine prehodnih kovin. Popravek: pri $1$ ali $2$ zunanjih elektronih je skupina $1$ ali $2$.
+- **Štetje vseh elektronov namesto valenčnih.** Klor ima $17$ elektronov in je v 17. skupini, a to je naključje: brom ima $35$ elektronov in je prav tako v 17. skupini. Popravek: za skupino štej le zunanje elektrone.
+- **»Sosedje v vrstici so si podobni.«** Natrij in magnezij sta soseda, a imata različno število valenčnih elektronov. Popravek: podobni so si elementi v istem *stolpcu*.
+- **»Vodik je kovina, ker je v 1. skupini«** in **»vse nekovine so plini«.** Vodik je nekovina. Žveplo, ogljik in jod so trdne nekovine, brom je tekoč. Popravek: kovine prepoznaš po lastnostih in po legi levo od stopničaste črte; vodik je edina nekovina na levi strani.
 
 ## Povzetek
 
-- Periodni sistem razvršča elemente po naraščajočem atomskem številu.
-- **Perioda** (vodoravna vrstica, 1 do 7) = število zasedenih elektronskih lupin.
-- **Skupina** (navpični stolpec, 1 do 18) = elementi s podobnimi lastnostmi in enakim številom valenčnih elektronov. Za 1. in 2. skupino je to številka skupine, za skupine 13 do 18 številka skupine minus 10.
+- Periodni sistem razvršča elemente po naraščajočem vrstnem številu.
+- **Perioda** (vodoravna vrstica, 1 do 7) = število lupin z elektroni.
+- **Skupina** (navpični stolpec, 1 do 18) = elementi s podobnimi lastnostmi in enakim številom valenčnih elektronov. Za 1. in 2. skupino je to številka skupine, za skupine 13 do 18 številka skupine minus 10 (izjema helij: 2).
 - Imena skupin: alkalijske kovine (1.), zemeljskoalkalijske kovine (2.), halogeni (17.), žlahtni plini (18.), prehodne kovine (3. do 12.).
-- Kovine so na levi in v sredini tabele, nekovine na desni zgoraj. Kovine dobro prevajajo toploto in električni tok ter so kovne, nekovine so slabi prevodniki in krhke, če so trdne.
+- Kovine so levo in v sredini, nekovine desno zgoraj, polkovine ob stopničasti meji. Kovine dobro prevajajo toploto in tok ter so kovne; nekovine slabo prevajajo in so krhke, če so trdne.
 
-## Drugače: Na sliki
+## Drugače: Kot zgodba
 
-Predstavljaj si prvih 18 elementov kot sedeže v kinu:
+Ema in Luka igrata igro s kartami. Na vsaki je element z razporeditvijo elektronov. Luka zloži karte po številu elektronov v eno dolgo vrsto, od vodika do kalcija, in iz nje ne razbere ničesar.
 
-| | 1 | 2 | 13 | 14 | 15 | 16 | 17 | 18 |
-|---|---|---|---|---|---|---|---|---|
-| **1. perioda** | H | | | | | | | He |
-| **2. perioda** | Li | Be | B | C | N | O | F | Ne |
-| **3. perioda** | Na | Mg | Al | Si | P | S | Cl | Ar |
+Ema opazi, da se karta z enim zunanjim elektronom ponavlja: litij ($3$), natrij ($11$), kalij ($19$). Vsakič je osem kart naprej: $3 + 8 = 11$, $11 + 8 = 19$. Zato vsakič, ko pride taka karta, začne novo vrsto. Karte z enakim številom zunanjih elektronov se same postavijo druga pod drugo.
 
-(Skupine 3 do 12 so za prvih 18 elementov prazne, zato so v tej tabeli izpuščene.)
-
-- Ko greš po vrstici z leve na desno, se atomsko število povečuje za 1 in zunanja lupina se polni z elektroni.
-- Ko greš po stolpcu navzdol, dobi atom po eno lupino več, število valenčnih elektronov ostane enako.
-- Kovine so na levi (Li, Be, Na, Mg, Al), nekovine na desni (C, N, O, F, S, Cl ...). Vmes je stopničasta meja. Na njej leži npr. silicij (Si).
-
-## Drugače: Iz vsakdanjega življenja
-
-Periodni sistem je kot **naslov v bloku**: nadstropje in številka stanovanja v nadstropju.
-
-- **Perioda** je kot nadstropje, le da v periodnem sistemu štejemo od zgoraj navzdol: nižje ko je element v tabeli, več lupin ima njegov atom.
-- **Skupina** je kot stolpec stanovanj. Vsa stanovanja v istem stolpcu so si podobna (enako število valenčnih elektronov).
-
-Podobno je v trgovini, kjer ima vsaka vrsta izdelkov svoj oddelek: če veš, v katerem oddelku je izdelek, že približno veš, kakšen je. Prav tako ti lega elementa v tabeli takoj pove veliko o njegovih lastnostih. Natrij je v 1. skupini med kovinami, ki burno reagirajo z vodo, klor je v 17. skupini med halogeni.
-
-Iz vsakdanjega življenja poznaš tudi kovine in nekovine. Bakrena žica prevaja električni tok (kovina), plastična ovojnica pa ne. Žveplo je rumen, krhek prah in ne prevaja toka (nekovina). Če pade na tla, se razbije, medtem ko se železna žica samo ukrivi.
+Pred njo je tabela. Vsaka nova vrsta pomeni novo lupino: to so periode. V stolpcih so karte z enakim številom zunanjih elektronov: to so skupine. Luka pokaže stolpec z litijem, natrijem in kalijem: same mehke kovine, ki reagirajo z vodo. Ema je ponovila, kar je Mendelejev naredil z elementi.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -173,44 +174,68 @@ Primer: atom ima elektrone razporejene 2, 8, 6.
 
 | Korak | Dejanje | Rezultat |
 |---|---|---|
-| 1 | Seštej vse elektrone | $2 + 8 + 6 = 16$ (atomsko število je 16) |
+| 1 | Seštej vse elektrone | $2 + 8 + 6 = 16$ (vrstno število je 16) |
 | 2 | Preštej lupine | 3 lupine, torej 3. perioda |
 | 3 | Zadnja lupina | 6 valenčnih elektronov |
 | 4 | Skupina | $10 + 6 = 16$, torej 16. skupina |
 | 5 | Poišči v tabeli | 3. perioda, 16. skupina: žveplo ($\mathrm{S}$) |
-| 6 | Kovina ali nekovina? | Desno zgoraj: nekovina |
+| 6 | Kovina ali nekovina? | desno zgoraj: nekovina |
 
-Obratni recept (iz lege v elektrone): perioda ti pove število lupin, skupina število valenčnih elektronov. Vse notranje lupine so polne.
+Obratno (iz lege v elektrone): perioda da število lupin, skupina valenčne elektrone, notranje lupine so polne.
 
 ## Drugače: Bolj natančno
 
-**Zgodovina.** Ruski kemik Dmitrij Mendelejev je leta 1869 uredil elemente po naraščajoči atomski masi. Opazil je, da se podobne lastnosti ponavljajo v rednih presledkih (periodično). Zato mu pravimo periodni sistem. Danes elemente razporejamo po atomskem številu, ki je enako številu protonov.
+Mendelejev je elemente razvrščal po masi atomov, danes jih po vrstnem številu, ker element določa število protonov. Vrstni red je večinoma enak, ne pa povsod: argon ima večjo maso atoma kot kalij, a manjše vrstno število, zato stoji pred njim.
 
-**Zakaj se lastnosti ponavljajo?** Kemijske lastnosti atoma določajo predvsem njegovi valenčni elektroni, saj ti stopijo v stik z drugimi atomi. Ko se po vrstici premikamo za en element naprej, se število protonov in elektronov poveča za ena. Ko se zunanja lupina napolni (pri žlahtnih plinih), sledi nova perioda in nova lupina. Tam se vzorec ponovi, zato so v istem stolpcu atomi z enakim številom valenčnih elektronov. Žlahtni plini imajo polno zunanjo lupino. Zato so zelo malo reaktivni.
-
-**Kovine na levi, nekovine desno.** Atomi kovin imajo običajno malo valenčnih elektronov, nekovine pa jih imajo več. Zato so kovine v tabeli levo, nekovine desno.
+Atomi kovin imajo običajno malo valenčnih elektronov (1 do 3), atomi nekovin več (4 do 7, žlahtni plini 8).
 
 ## Preveri se
 
-? Atom ima tri zasedene elektronske lupine, v zunanji pa 2 elektrona. Kje v periodnem sistemu je ta element?
-- 2. perioda, 3. skupina
-+ 3. perioda, 2. skupina
-- 5. perioda, 1. skupina
-- 3. perioda, 3. skupina
-> Tri lupine pomenijo 3. periodo, 2 valenčna elektrona pa 2. skupino. To je magnezij. Pogosta napaka je, da zamenjamo periodo in skupino.
+? Kateri element ne sodi v isto skupino kot ostali trije?
+- litij ($\mathrm{Li}$)
+~ Litij je v 1. skupini nad natrijem in ima $1$ valenčni elektron, tako kot natrij in kalij.
+- kalij ($\mathrm{K}$)
+~ Kalij je v 1. skupini pod natrijem, z enim valenčnim elektronom.
++ magnezij ($\mathrm{Mg}$)
+- natrij ($\mathrm{Na}$)
+~ Natrij je v 1. skupini, kot litij in kalij.
+> Litij, natrij in kalij imajo po $1$ valenčni elektron (1. skupina). Magnezij ima $2$ (2. skupina), čeprav je natrijev sosed.
 
-? Kateri od teh elementov je kovina?
-- Žveplo ($\mathrm{S}$)
-- Klor ($\mathrm{Cl}$)
-+ Železo ($\mathrm{Fe}$)
-- Kisik ($\mathrm{O}$)
-> Železo je prehodna kovina (dobro prevaja toploto in tok, je kovno). Žveplo, klor in kisik so nekovine in so v periodnem sistemu na desni strani.
+? Kalij stoji v periodnem sistemu neposredno pod natrijem. Kaj iz tega sledi?
+- Ima enako število lupin kot natrij.
+~ Enako število lupin imajo elementi v isti vrstici (periodi), ne v istem stolpcu.
+- Ima en valenčni elektron več kot natrij.
+~ Navzdol po stolpcu se število valenčnih elektronov ne spremeni; doda se ena lupina.
++ Ima eno lupino več in enako število valenčnih elektronov, zato ima podobne lastnosti.
+> Pod natrijem pomeni isto skupino in naslednjo periodo.
 
-? Zakaj imajo elementi iste skupine podobne kemijske lastnosti?
-- Ker imajo enako število elektronskih lupin.
-+ Ker imajo enako število valenčnih elektronov.
-- Ker imajo enako število nevtronov.
-> Kemijske lastnosti določajo valenčni elektroni. Elementi iste skupine jih imajo enako število, število lupin pa se znotraj skupine spreminja (enako je v isti periodi).
+? Maja določa lego atoma z razporeditvijo 2, 8, 8, 2. (1) Atom ima štiri lupine. (2) Torej je v 4. periodi. (3) V zunanji lupini sta $2$ elektrona. (4) Torej je v 12. skupini. Kateri korak je napačen?
+- korak 1
+~ Štiri števila v razporeditvi so res štiri lupine.
+- korak 2
+~ Perioda je enaka številu lupin, zato 4. perioda drži.
+- korak 3
+~ Zadnje število je $2$, zato ta korak drži.
++ korak 4
+> Pri $1$ ali $2$ valenčnih elektronih je številka skupine enaka njihovemu številu. Desetico prištejemo le pri skupinah od $13$ do $18$. Atom je kalcij v 4. periodi in 2. skupini.
+
+? Element je v 3. periodi in 14. skupini. Koliko elektronov ima njegov nevtralni atom?
+- $17$
+~ Seštel si periodo in skupino. Perioda pove lupine, ne elektronov.
+- $4$
+~ To so samo valenčni elektroni. Prišteti moraš še elektrone v obeh notranjih lupinah.
++ $14$
+- $24$
+~ Številko skupine si vzel za število zunanjih elektronov. V skupinah od 13 do 18 najprej odštej $10$.
+> Lupine: $2$, $8$ in $14 - 10 = 4$, skupaj $2 + 8 + 4 = 14$ (silicij).
+
+? Balone za okrasitev štadiona napolnijo s helijem, ne z vodikom, čeprav je vodik še lažji. Zakaj je helij varnejši?
+- Ker je kovina, kovine pa ne gorijo.
+~ Helij je žlahtni plin v 18. skupini, nekovina. Tudi nekatere kovine gorijo, npr. magnezij.
++ Ker je žlahtni plin z zapolnjeno zunanjo lupino in skoraj ne reagira, zato ne gori.
+- Ker ima več lupin kot vodik.
+~ Oba sta v 1. periodi in imata le eno lupino. Razlika je v zapolnjenosti lupine.
+> Helijeva edina lupina je z $2$ elektronoma zapolnjena, zato helij skoraj ne reagira. Vodik pa gori in lahko eksplodira.
 
 :::simboli
 \mathrm{Na} | natrij | | | 11 elektronov

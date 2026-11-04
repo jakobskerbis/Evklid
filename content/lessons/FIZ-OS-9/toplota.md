@@ -5,189 +5,179 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Iz naravoslovja in prejšnje teme že poznaš temperaturo (merimo jo v stopinjah Celzija) in veš, da se snovi pri segrevanju raztezajo. Poznaš tudi pojma masa ($m$, v kilogramih) in energija (v joulih).
+Pevka Nika si pred koncertom v grelniku segreje vodo za čaj z medom. Grelnik brni več kot pol minute, preden je voda dovolj vroča.
 
-Zdaj se vprašamo: **koliko energije moramo dovesti, da se nekaj segreje?** Zakaj se voda v loncu segreva dlje kot kovinska žlica? Zakaj je pesek na plaži opoldne vroč, morje pa precej hladnejše? Zakaj za polno skodelico čaja porabimo več energije kot za pol skodelice? Odgovore da enačba $Q = m \cdot c \cdot \Delta T$, ki jo spoznaš v tej lekciji.
+Trobentač Jure sedi v mrzli cerkvi. Hladna trobenta zveni prenizko, zato jo pred nastopom drži v rokah in vanjo nekaj minut tiho piha. Ko se kovina in zrak v trobenti ogrejeta, se ton popravi.
+
+Prizora sta si različna, ideja pa je ista: obe telesi moramo segreti, za to pa jima moramo dovesti energijo. Koliko? Zakaj Juretu zadošča že topel dih, Nika pa potrebuje grelnik z močjo $2000\,\mathrm{W}$? Odgovor je odvisen od tega, koliko snovi segrevamo, iz česa je in za koliko stopinj jo segrejemo.
 
 ## Razlaga
 
-**1. Toplota.** Toplota $Q$ je energija, ki se zaradi temperaturne razlike prenese s toplejšega telesa na hladnejše. Merimo jo v joulih ($\mathrm{J}$), pogosto tudi v kilojoulih ($1\,\text{kJ} = 1000\,\text{J}$).
+**1. En primer do konca.** Nika segreje $0{,}25\,\text{kg}$ vode z $20\,^\circ\text{C}$ na $80\,^\circ\text{C}$. Merilnik pokaže, da je grelnik vodi dovedel $63\,000\,\text{J}$ energije. Energiji, ki preide s toplejšega telesa (vroče grelne plošče) na hladnejše (vodo) zaradi razlike v temperaturi, rečemo **toplota** $Q$. Merimo jo v joulih; $1\,\text{kJ} = 1000\,\text{J}$. Ko voda toploto prejme, se ji poveča notranja energija in z njo temperatura.
 
-**2. Od česa je odvisna toplota za segrevanje?** Od treh stvari:
+**2. Spreminjamo en podatek naenkrat.** Kaj, če bi Nika segrevala več vode ali jo segrela manj? Meritve z isto vodo:
 
-- **mase** $m$: dvakrat več snovi potrebuje dvakrat več toplote,
-- **spremembe temperature** $\Delta T$: dvakrat večji dvig temperature potrebuje dvakrat več toplote,
-- **vrste snovi**: različne snovi se ob enaki dovedeni toploti segrejejo različno.
+| masa vode | dvig temperature | toplota |
+|---|---|---|
+| $0{,}25\,\text{kg}$ | $60\,^\circ\text{C}$ | $63\,000\,\text{J}$ |
+| $0{,}5\,\text{kg}$ | $60\,^\circ\text{C}$ | $126\,000\,\text{J}$ |
+| $0{,}25\,\text{kg}$ | $30\,^\circ\text{C}$ | $31\,500\,\text{J}$ |
+| $1\,\text{kg}$ | $1\,^\circ\text{C}$ | $4200\,\text{J}$ |
+
+Dvakrat več vode potrebuje dvakrat več toplote. Za pol manjši dvig temperature je treba pol manj toplote. Toplota je sorazmerna z maso in z dvigom temperature.
 
 :::premisli
-Za skodelico čaja segreješ $0{,}25\,\text{kg}$ vode z $20\,^\circ\text{C}$ na $80\,^\circ\text{C}$. Kolikokrat več toplote potrebuješ, da enako segreješ lonec z $1\,\text{kg}$ vode?
+Koliko toplote bi Nika potrebovala za $0{,}5\,\text{kg}$ vode, ki jo segreje le za $30\,^\circ\text{C}$? Napovej iz tabele, preden računaš.
 ---
-Štirikrat več. Dvig temperature je enak, masa pa štirikrat večja. Toplota je sorazmerna z maso.
+Spet $63\,000\,\text{J}$. Masa je dvakrat večja (toplota $\times 2$), dvig temperature pa pol manjši (toplota $: 2$). Učinka se izničita.
 :::
 
-**3. Sprememba temperature.** $\Delta T = T_{\text{konč}} - T_{\text{zač}}$. Pri segrevanju je pozitivna, pri ohlajanju negativna. Razlika temperatur je enaka v stopinjah Celzija in v kelvinih, zato lahko $\Delta T$ računamo kar v $^\circ\text{C}$.
+**3. Na en kilogram in eno stopinjo.** Zadnja vrstica tabele nastane, ko toploto iz prve vrstice deliš z maso in z dvigom temperature: $63\,000 : 0{,}25 : 60 = 4200$. To število je lastnost vode. Imenujemo ga **specifična toplota** $c$: pove, koliko toplote potrebuje $1\,\text{kg}$ snovi, da se segreje za $1\,^\circ\text{C}$. Enota je $\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$, kar je isto kot $\dfrac{\mathrm{J}}{\mathrm{kg}\cdot\mathrm{K}}$.
 
-**4. Specifična toplota.** Specifična toplota $c$ pove, koliko toplote potrebuje $1\,\text{kg}$ snovi, da se segreje za $1\,^\circ\text{C}$. Enota je $\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$ (enako kot $\dfrac{\mathrm{J}}{\mathrm{kg}\cdot\mathrm{K}}$). Nekaj vrednosti:
+**4. Druge snovi.** Jure segreva medenino (zlitino bakra in cinka), iz katere je trobenta, in ne vode. Vsaka snov ima svoj $c$ (zaokrožene vrednosti):
 
-| Snov | $c$ v $\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$ |
+| snov | $c$ v $\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$ |
 |---|---|
 | voda | $4200$ |
 | led | $2100$ |
 | aluminij | $900$ |
 | železo | $450$ |
 | baker | $390$ |
+| medenina | $380$ |
 
-(Vrednosti so zaokrožene, kot v tabelah za osnovno šolo.) Voda ima velik $c$, kovine pa majhen: pri enaki masi in enaki dovedeni toploti se voda segreje malo, kovine pa veliko.
+Medenina potrebuje za vsak kilogram in vsako stopinjo več kot desetkrat manj toplote kot voda. Zato Juretu zadošča topel dih, Nika pa za vodo potrebuje grelnik.
 
 :::premisli
-$1\,\text{kg}$ vode in $1\,\text{kg}$ železa prejmeta vsak po $4200\,\text{J}$ toplote. Za koliko stopinj se segreje vsak in zakaj je razlika tako velika?
+$1\,\text{kg}$ vode in $1\,\text{kg}$ železa prejmeta vsak po $4200\,\text{J}$ toplote. Za koliko stopinj se segreje vsak? Zakaj je razlika tako velika?
 ---
-Voda za $1\,^\circ\text{C}$, železo pa za približno $9\,^\circ\text{C}$ ($4200 : 450 \approx 9{,}3$). Železo potrebuje za vsako stopinjo približno devetkrat manj toplote kot voda.
+Voda za $1\,^\circ\text{C}$, železo pa za približno $9\,^\circ\text{C}$ ($4200 : 450 \approx 9{,}3$). Železo potrebuje za vsako stopinjo približno devetkrat manj toplote kot voda, zato ga ista toplota segreje bolj.
 :::
 
-V simulaciji spodaj (Toplota: segrevanje in mešanje vode) izberi vodo, maso $1\,\text{kg}$ in moč grelnika $1000\,\text{W}$ ter segrevaj, nato isto ponovi z železom. Opazuj graf: premica za železo je približno devetkrat strmejša, ker ima železo približno devetkrat manjši $c$.
-
-**5. Enačba.**
+**5. Enačba.** Vse skupaj zapišemo z eno enačbo:
 
 $$Q = m \cdot c \cdot \Delta T$$
 
-Pri ohlajanju je $\Delta T < 0$, zato je $Q < 0$: telo toploto oddaja. Pogosto računamo samo z absolutno vrednostjo oddane toplote.
+Tu je $\Delta T = t_{\text{konč}} - t_{\text{zač}}$ sprememba temperature, $t_{\text{zač}}$ in $t_{\text{konč}}$ pa začetna in končna temperatura v $^\circ\text{C}$. Razlika temperatur je v $^\circ\text{C}$ in v kelvinih enaka. Pri segrevanju je $\Delta T > 0$ in telo toploto prejme. Pri ohlajanju je $\Delta T < 0$, zato je $Q < 0$: telo toploto odda.
 
-**6. Izražanje drugih količin.**
+**6. Druge oblike.** Ko iščeš drugo količino, enačbo preoblikuješ:
 
-$$c = \frac{Q}{m \cdot \Delta T}, \qquad m = \frac{Q}{c \cdot \Delta T}, \qquad \Delta T = \frac{Q}{m \cdot c}$$
+$$c = \frac{Q}{m \cdot \Delta T}$$
 
-**7. Pazi na enote.** Masa mora biti v kilogramih. Če je podana v gramih, jo pretvoriš: $500\,\text{g} = 0{,}5\,\text{kg}$.
+$$\Delta T = \frac{Q}{m \cdot c}$$
+
+Masa mora biti v kilogramih, ker je $c$ podan na kilogram: $500\,\text{g} = 0{,}5\,\text{kg}$.
+
+V simulaciji spodaj (»Toplota: segrevanje in mešanje vode«) izberi vodo, maso $1\,\text{kg}$ in moč grelnika $1000\,\mathrm{W}$ ter segrevaj. Nato isto ponovi z železom. Opazuj graf: črta za železo je približno devetkrat strmejša, ker ima železo približno devetkrat manjši $c$.
 
 ## Rešeni primeri
 
-### Primer 1: segrevanje vode
+### Primer 1: čaj za ves zbor
 
-Koliko toplote potrebuje $2\,\text{kg}$ vode, da se segreje z $20\,^\circ\text{C}$ na $50\,^\circ\text{C}$?
+Pred vajo zbora Nika v velikem loncu segreje $2\,\text{kg}$ vode s $15\,^\circ\text{C}$ na $95\,^\circ\text{C}$. Koliko toplote prejme voda?
 
-**Podatki:** $m = 2\,\text{kg}$, $T_{\text{zač}} = 20\,^\circ\text{C}$, $T_{\text{konč}} = 50\,^\circ\text{C}$, $c = 4200\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$ (voda, iz tabele)
-**Iščemo:** toplota $Q$
+**Podatki:** $m = 2\,\text{kg}$, $t_{\text{zač}} = 15\,^\circ\text{C}$, $t_{\text{konč}} = 95\,^\circ\text{C}$, $c = 4200\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$ (voda, iz tabele)
+**Iščemo:** toploto $Q$
 
 :::formula
-$Q = m \cdot c \cdot \Delta T$, kjer je $\Delta T = T_{\text{konč}} - T_{\text{zač}}$
+$Q = m \cdot c \cdot \Delta T$, kjer je $\Delta T = t_{\text{konč}} - t_{\text{zač}}$
 :::
 
 **Rešitev:**
 
-1. Sprememba temperature: $\Delta T = 50 - 20 = 30\,^\circ\text{C}$. Zakaj? Ker enačba potrebuje razliko, ne končne temperature.
-2. Račun: $Q = 2 \cdot 4200 \cdot 30 = 252\,000\,\text{J}$.
-3. Odgovor: voda potrebuje $Q = 252\,000\,\text{J} = 252\,\text{kJ}$ toplote.
+1. Sprememba temperature, ker enačba potrebuje razliko: $\Delta T = 95 - 15 = 80\,^\circ\text{C}$.
+2. Toplota: $Q = 2 \cdot 4200 \cdot 80 = 672\,000\,\text{J}$.
+3. Odgovor: voda prejme $672\,000\,\text{J} = 672\,\text{kJ}$ toplote.
 
-### Primer 2: ohlajanje kovine
+### Primer 2: trobenta v mrzlem avtu
 
-Aluminijast kos mase $500\,\text{g}$ se ohladi s $100\,^\circ\text{C}$ na $20\,^\circ\text{C}$. Koliko toplote odda okolici?
+Po koncertu ima Juretova trobenta z maso $1100\,\text{g}$ temperaturo $30\,^\circ\text{C}$. V mrzlem avtu se ohladi na $10\,^\circ\text{C}$. Koliko toplote odda?
 
-**Podatki:** $m = 500\,\text{g}$, $T_{\text{zač}} = 100\,^\circ\text{C}$, $T_{\text{konč}} = 20\,^\circ\text{C}$, $c = 900\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$ (aluminij, iz tabele)
-**Iščemo:** oddana toplota $Q$
+**Podatki:** $m = 1100\,\text{g}$, $t_{\text{zač}} = 30\,^\circ\text{C}$, $t_{\text{konč}} = 10\,^\circ\text{C}$, $c = 380\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$ (medenina, iz tabele)
+**Iščemo:** oddano toploto $Q$
 
 :::formula
-$Q = m \cdot c \cdot \Delta T$, kjer je $\Delta T = T_{\text{konč}} - T_{\text{zač}}$; masa mora biti v $\text{kg}$
+$Q = m \cdot c \cdot \Delta T$, kjer je $\Delta T = t_{\text{konč}} - t_{\text{zač}}$; masa v $\text{kg}$
 :::
 
 **Rešitev:**
 
-1. Pretvorimo maso: $m = 500\,\text{g} = 0{,}5\,\text{kg}$. Zakaj? Ker je enota $c$ vezana na kilograme.
-2. Sprememba temperature: $\Delta T = 20 - 100 = -80\,^\circ\text{C}$.
-3. Račun: $Q = 0{,}5 \cdot 900 \cdot (-80) = -36\,000\,\text{J}$.
-4. Odgovor: telo odda $36\,000\,\text{J} = 36\,\text{kJ}$ toplote (minus pomeni oddajanje).
+1. Maso pretvorimo v kilograme, ker je $c$ podan na kilogram: $1100\,\text{g} = 1{,}1\,\text{kg}$.
+2. Sprememba temperature: $\Delta T = 10 - 30 = -20\,^\circ\text{C}$. Negativna je, ker se trobenta ohlaja.
+3. Toplota: $Q = 1{,}1 \cdot 380 \cdot (-20) = -8360\,\text{J}$.
+4. Odgovor: trobenta odda okolici $8360\,\text{J}$, približno $8{,}4\,\text{kJ}$ toplote (minus pomeni oddajanje).
 
-### Primer 3: iskanje specifične toplote
+### Primer 3: iz česa je ploščica metalofona?
 
-Kos neznane kovine z maso $2\,\text{kg}$ segrejemo s $15\,^\circ\text{C}$ na $35\,^\circ\text{C}$. Dovedemo mu $18\,000\,\text{J}$ toplote. Katera kovina je to?
+Ploščica metalofona z maso $200\,\text{g}$ leži na soncu. Prejme $1800\,\text{J}$ toplote in se segreje z $20\,^\circ\text{C}$ na $30\,^\circ\text{C}$. Iz katere kovine je?
 
-**Podatki:** $m = 2\,\text{kg}$, $T_{\text{zač}} = 15\,^\circ\text{C}$, $T_{\text{konč}} = 35\,^\circ\text{C}$, $Q = 18\,000\,\text{J}$
-**Iščemo:** specifična toplota $c$ in po tabeli vrsta kovine
+**Podatki:** $m = 200\,\text{g}$, $Q = 1800\,\text{J}$, $t_{\text{zač}} = 20\,^\circ\text{C}$, $t_{\text{konč}} = 30\,^\circ\text{C}$
+**Iščemo:** specifično toploto $c$ in po tabeli kovino
 
 :::formula
-Iz $Q = m \cdot c \cdot \Delta T$ izrazimo $c = \dfrac{Q}{m \cdot \Delta T}$
+$c = \dfrac{Q}{m \cdot \Delta T}$
 :::
 
 **Rešitev:**
 
-1. Iščemo $c$, zato enačbo preoblikujemo: $c = \dfrac{Q}{m \cdot \Delta T}$.
-2. $\Delta T = 35 - 15 = 20\,^\circ\text{C}$, ker v enačbo gre sprememba temperature.
-3. Račun: $c = \dfrac{18\,000}{2 \cdot 20} = \dfrac{18\,000}{40} = 450\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$.
-4. Primerjava s tabelo: to je vrednost za železo.
-5. Odgovor: kovina je verjetno železo.
+1. Iščemo $c$, zato vzamemo obliko $c = \dfrac{Q}{m \cdot \Delta T}$.
+2. Maso pretvorimo: $200\,\text{g} = 0{,}2\,\text{kg}$.
+3. Sprememba temperature: $\Delta T = 30 - 20 = 10\,^\circ\text{C}$.
+4. Račun: $c = \dfrac{1800}{0{,}2 \cdot 10} = 900\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$.
+5. Primerjava s tabelo: to vrednost ima aluminij.
+6. Odgovor: ploščica je najverjetneje iz aluminija.
 
 ### Primer 4: zdaj ti
 
-Grelnik dovede $1{,}5\,\text{kg}$ vode z začetno temperaturo $20\,^\circ\text{C}$ toploto $126\,000\,\text{J}$. Kolikšna je končna temperatura vode?
+V zaodrju je v grelniku $1{,}5\,\text{kg}$ vode z začetno temperaturo $20\,^\circ\text{C}$. Grelnik ji dovede $126\,000\,\text{J}$ toplote. Kolikšna je končna temperatura vode?
 
-**Podatki:** $m = 1{,}5\,\text{kg}$, $T_{\text{zač}} = 20\,^\circ\text{C}$, $Q = 126\,000\,\text{J}$, $c = 4200\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$ (voda, iz tabele)
-**Iščemo:** končna temperatura $T_{\text{konč}}$
+**Podatki:** $m = 1{,}5\,\text{kg}$, $t_{\text{zač}} = 20\,^\circ\text{C}$, $Q = 126\,000\,\text{J}$, $c = 4200\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$ (voda, iz tabele)
+**Iščemo:** končno temperaturo $t_{\text{konč}}$
 
 :::formula
-$\Delta T = \dfrac{Q}{m \cdot c}$, nato $T_{\text{konč}} = T_{\text{zač}} + \Delta T$
+$\Delta T = \dfrac{Q}{m \cdot c}$, nato $t_{\text{konč}} = t_{\text{zač}} + \Delta T$
 :::
 
 **Rešitev:**
 
 1. Najprej iščemo spremembo temperature, zato vzamemo obliko $\Delta T = \dfrac{Q}{m \cdot c}$.
-2. Enote so že osnovne (kg, J), pretvarjati ni treba.
+2. Enote so že prave (kg, J), pretvarjati ni treba.
 3. Izračunaj sam, nato preveri:
 
 :::premisli
-Koliko je $\Delta T = \dfrac{126\,000}{1{,}5 \cdot 4200}$ in kolikšna je končna temperatura?
+Koliko je $\Delta T$ in kolikšna je končna temperatura?
 ---
-$\Delta T = \dfrac{126\,000}{6300} = 20\,^\circ\text{C}$, torej $T_{\text{konč}} = 20\,^\circ\text{C} + 20\,^\circ\text{C} = 40\,^\circ\text{C}$. Pazi: $20\,^\circ\text{C}$ ni končna temperatura, ampak le dvig temperature.
+$\Delta T = \dfrac{126\,000}{1{,}5 \cdot 4200} = \dfrac{126\,000}{6300} = 20\,^\circ\text{C}$, torej $t_{\text{konč}} = 20\,^\circ\text{C} + 20\,^\circ\text{C} = 40\,^\circ\text{C}$. Pazi: $20\,^\circ\text{C}$ ni končna temperatura, ampak le dvig.
 :::
 
 ## Pogoste napake
 
-- **Masa v gramih.** Če v enačbo vstaviš $500$ namesto $0{,}5$, je rezultat tisočkrat prevelik, ker je $c$ podan na kilogram. Maso najprej pretvori v $\text{kg}$.
-- **Vstavljanje ene temperature namesto razlike.** V enačbo ne gre $50\,^\circ\text{C}$ (ali $20\,^\circ\text{C}$), ampak $\Delta T = 50 - 20$. Toplota je odvisna od tega, za koliko se telo segreje, ne od temperature same.
-- **Zamenjava zaporedja pri $\Delta T$.** Vedno je končna minus začetna. Če zamenjaš, dobiš napačen predznak.
-- **Večji $c$ pomeni močnejše segrevanje.** Ravno obratno: $c$ pove, koliko toplote snov potrebuje za vsako stopinjo. Pri enaki toploti in masi se bolj segreje snov z manjšim $c$.
-- **Mešanje pojmov temperatura in toplota.** Temperatura pove, kako je telo toplo (v $^\circ\text{C}$), toplota je energija (v $\mathrm{J}$), specifična toplota pa lastnost snovi (v $\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$). Velik lonec in skodelica se lahko ohladita za enako število stopinj, a lonec odda veliko več toplote.
+- **Masa v gramih.** Če vstaviš $1100$ namesto $1{,}1$, je rezultat tisočkrat prevelik, ker je $c$ podan na kilogram. Maso najprej pretvori v $\text{kg}$.
+- **Ena temperatura namesto razlike.** V enačbo ne gre $95\,^\circ\text{C}$, ampak $\Delta T = 95 - 15$. Toplota je odvisna od tega, *za koliko* se telo segreje.
+- **Obrnjena razlika.** $\Delta T$ je vedno končna minus začetna. Če ju zamenjaš, dobiš napačen predznak in zamenjaš prejeto toploto z oddano.
+- **»Večji $c$, močnejše segrevanje.«** Ravno obratno. $c$ pove, koliko toplote snov potrebuje za vsako stopinjo. Pri enaki toploti in masi se bolj segreje snov z manjšim $c$.
+- **Toplota in temperatura sta isto.** Temperatura pove, kako toplo je telo ($^\circ\text{C}$). Toplota je prenesena energija ($\text{J}$). Velik lonec in skodelica se lahko ohladita za enako število stopinj, lonec pa odda veliko več toplote.
 
 ## Povzetek
 
-- Toplota $Q$ je energija, ki se prenese zaradi temperaturne razlike; enota je $\mathrm{J}$.
-- Specifična toplota $c$ pove, koliko toplote potrebuje $1\,\text{kg}$ snovi za segretje za $1\,^\circ\text{C}$.
-- $Q = m \cdot c \cdot \Delta T$, pri čemer je $\Delta T = T_{\text{konč}} - T_{\text{zač}}$.
-- Voda ima veliko specifično toploto ($4200\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$), zato se segreva in ohlaja počasi.
+- Toplota $Q$ je energija, ki zaradi temperaturne razlike preide s toplejšega telesa na hladnejše; enota je $\mathrm{J}$.
+- Specifična toplota $c$ pove, koliko toplote potrebuje $1\,\text{kg}$ snovi za segretje za $1\,^\circ\text{C}$; je lastnost snovi.
+- $Q = m \cdot c \cdot \Delta T$, kjer je $\Delta T = t_{\text{konč}} - t_{\text{zač}}$; pri ohlajanju je $Q$ negativen.
+- Voda ima zelo velik $c$ ($4200\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$), kovine majhnega, zato se kovine ob enaki toploti segrejejo bolj.
 - Maso vedno pretvori v kilograme.
 
-## Drugače: Na sliki
+## Drugače: Z analogijo
 
-Predstavljaj si dve enaki posodi nad enakima gorilnikoma. V eni je $1\,\text{kg}$ vode, v drugi $1\,\text{kg}$ železa. Po eni minuti je železo že zelo vroče, voda pa komaj topla.
+Predstavljaj si kozarce različnih širin, v katere naliješ vodo.
 
-Sliko si lahko narišeš kot graf: na vodoravni osi je dovedena toplota $Q$, na navpični temperatura $T$. Za vsako snov dobiš premico. Premica za železo je strma (že majhna toplota močno dvigne temperaturo), premica za vodo pa položna. **Naklon premice je odvisen od $m \cdot c$**: večji kot je ta zmnožek, bolj položna je premica.
+- Nalita voda je **toplota** $Q$.
+- Višina gladine je **temperatura**.
+- Širina dna kozarca je zmnožek $m \cdot c$.
 
-## Drugače: Iz vsakdanjega življenja
+V ozek kozarec naliješ deciliter in gladina se močno dvigne. V širok kozarec naliješ isti deciliter in gladina se komaj premakne. Tako je z isto toploto pri železu (ozek kozarec) in vodi (širok). Večja masa pomeni širši kozarec, večji $c$ prav tako.
 
-Ob morju je čez dan pesek zelo vroč, morje pa prijetno hladno. Sonce da obema približno enako toploto na enoto površine, a ima voda veliko večjo specifično toploto kot pesek. Zato se pesek hitro segreje, voda pa le počasi.
+Za enak dvig gladine potrebuje širok kozarec več vode. Natanko to pove $Q = m \cdot c \cdot \Delta T$.
 
-Isto velja zvečer: pesek se hitro ohladi, voda pa dolgo zadrži toploto. Zato je podnebje ob morju bolj izenačeno kot v notranjosti celin.
-
-Še en primer: lonec je iz kovine, ki ima majhno specifično toploto, zato se hitro segreje. Voda v njem pa se segreva počasi, saj zaradi velike specifične toplote potrebuje veliko energije. To energijo shrani in jo nato dolgo oddaja, zato čaj v skodelici dolgo ostane vroč.
-
-## Drugače: Korak za korakom s številkami
-
-Recept za vsako nalogo:
-
-1. Izpiši podatke in jih pretvori v osnovne enote (kg, $^\circ\text{C}$, J).
-2. Izračunaj $\Delta T = T_{\text{konč}} - T_{\text{zač}}$.
-3. Izberi obliko enačbe glede na to, kaj iščeš.
-4. Vstavi in izračunaj.
-5. Preveri enoto in predznak.
-
-Primer s številkami: koliko toplote potrebuje $0{,}25\,\text{kg}$ vode (skodelica čaja), da se segreje z $20\,^\circ\text{C}$ na $90\,^\circ\text{C}$?
-
-| Korak | Vrednost |
-|---|---|
-| $m$ | $0{,}25\,\text{kg}$ |
-| $c$ | $4200\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$ |
-| $\Delta T$ | $90 - 20 = 70\,^\circ\text{C}$ |
-| $Q = m\cdot c\cdot\Delta T$ | $0{,}25 \cdot 4200 \cdot 70 = 73\,500\,\text{J}$ |
-
-Torej $Q = 73{,}5\,\text{kJ}$.
+Kje primerjava odpove: toplota ni snov, ki bi jo telo »vsebovalo«. Je energija, ki se prenese, ko je med telesoma razlika v temperaturi.
 
 ## Drugače: Bolj natančno
 
@@ -195,63 +185,64 @@ Specifična toplota je **definirana** kot količnik:
 
 $$c = \frac{Q}{m \cdot \Delta T}$$
 
-Iz definicije sledi enota: $\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$. Ko enačbo pomnožimo z $m \cdot \Delta T$, dobimo $Q = m \cdot c \cdot \Delta T$.
+Iz definicije sledi enota $\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$. Ko enačbo pomnožimo z $m \cdot \Delta T$, dobimo $Q = m \cdot c \cdot \Delta T$.
 
-Količino $C = m \cdot c$ imenujemo **toplotna kapaciteta** telesa: pove, koliko toplote potrebuje celotno telo za segretje za $1\,^\circ\text{C}$. Enačba se tako zapiše $Q = C \cdot \Delta T$.
+Zmnožek $C = m \cdot c$ imenujemo **toplotna kapaciteta** telesa. Pove, koliko toplote potrebuje celo telo, da se segreje za $1\,^\circ\text{C}$. Enačba je potem $Q = C \cdot \Delta T$. Juretova trobenta ima $C = 1{,}1 \cdot 380 = 418\,\mathrm{J/{}^\circ C}$, čaj v skodelici ($0{,}25\,\text{kg}$) pa $C = 0{,}25 \cdot 4200 = 1050\,\mathrm{J/{}^\circ C}$.
 
-Pri tem velja predpostavka, da se snov ne tali in ne izhlapeva (ne spremeni agregatnega stanja) in da je $c$ približno stalna na obravnavanem temperaturnem območju. Pri spremembi agregatnega stanja se temperatura ne spreminja kljub dovajanju toplote, zato tam enačba ne velja.
+Enačba velja, dokler snov ne spremeni agregatnega stanja in je $c$ približno stalen. Ko se snov tali ali vre, prejema toploto, temperatura pa ostane enaka. V simulaciji to vidiš pri vodi pri $100\,^\circ\text{C}$: graf postane vodoraven.
 
 ## Preveri se
 
+? V tabeli piše, da ima medenina $c = 380\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$. Kaj to pove o medeninasti trobenti?
++ Vsak kilogram trobente potrebuje $380\,\text{J}$ toplote, da se segreje za $1\,^\circ\text{C}$.
+- Cela trobenta potrebuje $380\,\text{J}$ za $1\,^\circ\text{C}$, ne glede na to, kako težka je.
+~ Podatek velja za $1\,\text{kg}$ snovi. Težja trobenta potrebuje sorazmerno več toplote.
+- Kilogram medenine se segreje za $380\,^\circ\text{C}$, če mu dovedemo $1\,\text{J}$.
+~ Razmerje je obrnjeno: $380\,\text{J}$ je toplota za eno stopinjo, ne dvig temperature.
+- Trobenta vsebuje $380\,\text{J}$ toplote.
+~ Toplota ni nekaj, kar telo vsebuje, ampak energija, ki se prenese. $c$ je lastnost snovi.
+> Specifična toplota pove, koliko toplote potrebuje $1\,\text{kg}$ snovi za segretje za $1\,^\circ\text{C}$.
+
+? Enako maso vode, aluminija in bakra postavimo na sonce, da vsaka prejme enako toploto. Razvrsti jih od najmanjšega do največjega dviga temperature.
+- baker, aluminij, voda
+~ Misliš, da večji $c$ pomeni močnejše segrevanje. Velja obratno: snov z večjim $c$ potrebuje za vsako stopinjo več toplote.
+- Vse se segrejejo enako, ker sta masa in toplota enaki.
+~ Enaki sta masa in toplota, snov pa ne. Različen $c$ pomeni različen $\Delta T$.
++ voda, aluminij, baker
+> Iz $\Delta T = \dfrac{Q}{m \cdot c}$: pri enakih $Q$ in $m$ je dvig tem večji, čim manjši je $c$. Voda ($4200$) se segreje najmanj, baker ($390$) najbolj.
+
+? Skodelica čaja ($0{,}2\,\text{kg}$) se ohladi z $80\,^\circ\text{C}$ na $20\,^\circ\text{C}$. Kaj se zgodi z oddano toploto, če se enako ohladi lonec juhe z maso $2\,\text{kg}$ ($c$ kot voda)?
+- Ostane enaka, ker se ohladi za enako število stopinj.
+~ Enaka je le sprememba temperature. Toplota je odvisna tudi od mase: $Q = m \cdot c \cdot \Delta T$.
+- Je manjša, ker se lonec ohlaja počasneje.
+~ Hitrost ohlajanja ne pove, koliko toplote telo odda. Več snovi pomeni več oddane toplote.
++ Je desetkrat večja.
+> $\Delta T$ in $c$ sta enaka, masa lonca pa je desetkrat večja. Lonec odda $504\,000\,\text{J}$, skodelica $50\,400\,\text{J}$.
+
 ? Koliko toplote potrebuje $3\,\text{kg}$ vode, da se segreje z $10\,^\circ\text{C}$ na $30\,^\circ\text{C}$? ($c = 4200\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$)
 - $126\,000\,\text{J}$
-~ To je $3 \cdot 4200 \cdot 10$: vstavil si začetno temperaturo. V enačbo gre sprememba $\Delta T = 30 - 10 = 20\,^\circ\text{C}$.
+~ To je $3 \cdot 4200 \cdot 10$: vstavil si začetno temperaturo. V enačbo gre $\Delta T = 30 - 10 = 20\,^\circ\text{C}$.
 + $252\,000\,\text{J}$
 - $378\,000\,\text{J}$
-~ To je $3 \cdot 4200 \cdot 30$: vstavil si končno temperaturo namesto spremembe temperature.
+~ To je $3 \cdot 4200 \cdot 30$: vstavil si končno temperaturo namesto spremembe.
 - $12\,600\,\text{J}$
 ~ To je le $3 \cdot 4200$: pozabil si pomnožiti s spremembo temperature.
 > $\Delta T = 30 - 10 = 20\,^\circ\text{C}$, torej $Q = 3 \cdot 4200 \cdot 20 = 252\,000\,\text{J}$.
 
-? Kos bakra mase $200\,\text{g}$ se segreje za $50\,^\circ\text{C}$. Koliko toplote prejme? ($c = 390\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$)
+? Kos bakra z maso $200\,\text{g}$ se segreje za $50\,^\circ\text{C}$. Koliko toplote prejme? ($c = 390\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$)
 - $3\,900\,000\,\text{J}$
-~ Maso si vstavil v gramih ($200$). Ker je $c$ podan na kilogram, je treba vstaviti $0{,}2\,\text{kg}$; rezultat je tisočkrat prevelik.
+~ Maso si vstavil v gramih. Ker je $c$ podan na kilogram, vstavi $0{,}2\,\text{kg}$; tvoj rezultat je tisočkrat prevelik.
 + $3900\,\text{J}$
 - $19\,500\,\text{J}$
-~ To je $390 \cdot 50$: pozabil si pomnožiti z maso. Toliko bi prejel $1\,\text{kg}$ bakra, ta kos pa ima le $0{,}2\,\text{kg}$.
-> Maso pretvorimo: $200\,\text{g} = 0{,}2\,\text{kg}$. $Q = 0{,}2 \cdot 390 \cdot 50 = 3900\,\text{J}$.
-
-? Dve telesi enake mase prejmeta enako toploto. Prvo ima večjo specifično toploto kot drugo. Katero se bolj segreje?
-- Prvo, ker ima večji $c$.
-~ Večji $c$ pomeni, da snov za vsako stopinjo potrebuje več toplote, zato se z enako toploto segreje manj.
-- Obe se segrejeta enako, ker je masa enaka.
-~ Enaka sta masa in toplota, snov pa ne. Pri različnem $c$ je tudi $\Delta T$ različen.
-+ Drugo, ker ima manjši $c$.
-> Iz $\Delta T = \dfrac{Q}{m \cdot c}$ sledi, da je pri enakih $Q$ in $m$ sprememba temperature večja pri manjšem $c$.
-
-? Kaj pove podatek, da ima voda specifično toploto $4200\,\dfrac{\mathrm{J}}{\mathrm{kg}\cdot{}^\circ\mathrm{C}}$?
-+ $1\,\text{kg}$ vode potrebuje $4200\,\text{J}$ toplote, da se segreje za $1\,^\circ\text{C}$.
-- Vsaka količina vode potrebuje $4200\,\text{J}$ toplote, da se segreje za $1\,^\circ\text{C}$.
-~ Podatek velja za $1\,\text{kg}$. Dvakrat več vode potrebuje dvakrat več toplote.
-- $1\,\text{kg}$ vode se segreje za $4200\,^\circ\text{C}$, če ji dovedemo $1\,\text{J}$ toplote.
-~ Razmerje je obrnjeno: $4200\,\text{J}$ je toplota za segretje za eno stopinjo, ne dvig temperature.
-- Voda vsebuje $4200\,\text{J}$ toplote.
-~ Toplota ni nekaj, kar telo vsebuje, ampak energija, ki se prenese. Specifična toplota je lastnost snovi in pove, koliko toplote je treba za segretje.
-> Specifična toplota pove, koliko toplote potrebuje $1\,\text{kg}$ snovi za segretje za $1\,^\circ\text{C}$.
-
-? Skodelico čaja ($0{,}2\,\text{kg}$) in lonec juhe ($2\,\text{kg}$) ohladimo z $80\,^\circ\text{C}$ na $20\,^\circ\text{C}$. Obe tekočini imata $c$ kot voda. Kaj drži?
-- Obe oddata enako toploto, ker se ohladita za enako število stopinj.
-~ Enaka je le sprememba temperature. Toplota je odvisna tudi od mase: $Q = m \cdot c \cdot \Delta T$.
-- Skodelica odda več toplote, ker se hitreje ohladi.
-~ Hitrost ohlajanja ne pove, koliko toplote telo odda. Manj snovi pomeni manj oddane toplote.
-+ Lonec odda desetkrat več toplote kot skodelica.
-> $\Delta T$ in $c$ sta enaka, masa lonca pa je desetkrat večja, zato odda desetkrat več toplote ($504\,000\,\text{J}$ proti $50\,400\,\text{J}$).
+~ To je $390 \cdot 50$: pozabil si pomnožiti z maso. Toliko bi prejel $1\,\text{kg}$ bakra.
+> $200\,\text{g} = 0{,}2\,\text{kg}$, zato je $Q = 0{,}2 \cdot 390 \cdot 50 = 3900\,\text{J}$.
 
 :::simboli
-Q | toplota | Q = m \cdot c \cdot \Delta T | J
+Q | toplota | Q = m \cdot c \cdot \Delta T | J | negativna, ko telo toploto odda
 m | masa | m = \frac{Q}{c \cdot \Delta T} | kg
-c | specifična toplota | c = \dfrac{Q}{m \cdot \Delta T} | J/(kg\cdot{}^\circ C) | voda 4200 J/(kg·°C)
-T | temperatura | | ^\circ C
-T_{\text{zač}} | začetna temperatura | | ^\circ C
-T_{\text{konč}} | končna temperatura | T_{\text{konč}} = T_{\text{zač}} + \Delta T | ^\circ C
+c | specifična toplota | c = \frac{Q}{m \cdot \Delta T} | J/(kg\cdot{}^\circ C) | voda: $4200\,\mathrm{J/(kg\cdot{}^\circ C)}$
+\Delta T | sprememba temperature | \Delta T = t_{\text{konč}} - t_{\text{zač}} | ^\circ C | enaka v $^\circ\mathrm{C}$ in v K
+t_{\text{zač}} | začetna temperatura | | ^\circ C
+t_{\text{konč}} | končna temperatura | t_{\text{konč}} = t_{\text{zač}} + \Delta T | ^\circ C
+C | toplotna kapaciteta telesa | C = m \cdot c | J/{}^\circ C
 :::

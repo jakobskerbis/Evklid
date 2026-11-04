@@ -5,165 +5,194 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Iz prejšnjih lekcij že poznaš silo (merimo jo v newtonih, $\mathrm{N}$), ploščino ($\mathrm{m^2}$, $\mathrm{cm^2}$) in gostoto ($\rho = \dfrac{m}{V}$). Veš tudi, da na telo z maso $m$ deluje teža $F_g = m \cdot g$, kjer za $g$ vzamemo približno $10\,\dfrac{\mathrm{N}}{\mathrm{kg}}$.
+Luka pomaga stricu, ki v kopalnici polaga estrih. Masa je še mehka, ko Luka reče: »Vseeno je, ali stopim nanjo v copatih ali na široko desko. Odtis bo enako globok, saj sem v obeh primerih enako težak.«
 
-Vprašaj se: zakaj se z ostrim nožem režemo lažje kot s topim, čeprav pritiskamo z enako silo? Zakaj se v snegu z navadnimi čevlji pogrezneš, s smučmi pa ne? Zakaj te v globokem bazenu bolijo ušesa? Odgovor je v novi količini, **tlaku**. Ni pomembna samo sila, ampak tudi to, **na kako veliki površini** deluje. Tlak razloži delovanje žebljev, smuči, gum, potapljaških odprav in vodnih stolpov.
+Stric se nasmehne, položi na estrih desko in stopi nanjo. Pod desko ostane komaj viden odtis, pod copati bi nastali globoki jamici. Kdo ima prav in zakaj?
+
+Odločilna ni samo sila, ampak tudi to, **na kako veliki ploskvi** deluje. Za to imamo količino **tlak**. Z njo razložimo ostro dleto, širok temelj hiše, vodovod v bloku in debelo steno jezu. Lukovo trditev bomo preverili v Primeru 2.
 
 ## Razlaga
 
-**1. Tlak trdnih teles.** Sila, ki deluje pravokotno na površino, povzroča tlak. **Tlak** je količnik med pravokotno silo in ploščino površine, na katero sila deluje:
+**1. Ista sila, različna ploskev.** Opeko položi na mehko zemljo najprej plosko, nato pokonci. Teža je obakrat enaka, pokonci pa se opeka pogrezne globlje, ker se ista sila razdeli po manjši ploskvi.
+
+**Tlak** je količnik med silo, ki deluje pravokotno na ploskev, in ploščino te ploskve:
 
 $$p = \frac{F}{S}$$
 
-- $p$ je tlak,
-- $F$ je sila, ki deluje pravokotno na površino,
-- $S$ je ploščina te površine.
+Tu je $p$ tlak, $F$ sila, pravokotna na ploskev, in $S$ ploščina ploskve. Pri telesu, ki leži na vodoravnih tleh, je ta sila njegova teža $F_g = m \cdot g$, kjer je $g \approx 10\,\mathrm{N/kg}$.
 
-**2. Enota.** Če je sila v $\mathrm{N}$ in ploščina v $\mathrm{m^2}$, je tlak v paskalih:
+*Hitri preizkus:* kje je tlak večji, pri $100\,\mathrm{N}$ na $1\,\mathrm{m^2}$ ali pri $100\,\mathrm{N}$ na $0{,}5\,\mathrm{m^2}$? (Pri drugem: $200\,\mathrm{Pa}$ namesto $100\,\mathrm{Pa}$.)
+
+**2. Enota paskal.** Če je sila v newtonih in ploščina v kvadratnih metrih, je tlak v **paskalih**:
 
 $$1\,\mathrm{Pa} = 1\,\frac{\mathrm{N}}{\mathrm{m^2}}$$
 
-Paskal je zelo majhna enota (približno tlak lista papirja na mizi), zato uporabljamo tudi $1\,\mathrm{kPa} = 1000\,\mathrm{Pa}$ in $1\,\mathrm{bar} = 100\,000\,\mathrm{Pa}$. Zračni tlak ob morju je približno $100\,000\,\mathrm{Pa} = 1\,\mathrm{bar}$.
+Paskal je majhna enota: približno tako pritiska list papirja, ki leži na mizi. Zato pogosto pišemo $1\,\mathrm{kPa} = 1000\,\mathrm{Pa}$ ali $1\,\mathrm{bar} = 100\,000\,\mathrm{Pa}$. Zračni tlak ob morju je približno $100\,000\,\mathrm{Pa}$.
 
-**3. Kaj pomeni formula.**
+Ploščine v $\mathrm{cm^2}$ pred računom pretvori: $1\,\mathrm{m^2} = 10\,000\,\mathrm{cm^2}$.
 
-- Večja sila pri isti ploščini pomeni večji tlak.
-- Manjša ploščina pri isti sili pomeni večji tlak (konica žeblja, rezilo noža).
-- Večja ploščina pri isti sili pomeni manjši tlak (smuči, široke gume traktorja).
+*Hitri preizkus:* koliko $\mathrm{m^2}$ je $50\,\mathrm{cm^2}$? ($0{,}005\,\mathrm{m^2}$.)
 
-**4. Tlak v tekočinah.** Tekočina (voda, olje) zaradi svoje teže pritiska na dno in stene posode. Pomembno:
+**3. Tlak povečamo ali zmanjšamo.** Mojstri to izkoriščajo vsak dan:
 
-- Tlak v tekočini deluje **v vseh smereh** (navzdol, navzgor, vstran) in vedno pravokotno na steno ali predmet, ki ga tekočina obdaja.
-- Na isti globini je tlak povsod enak.
-- Tlak z globino narašča.
+| Kje | Ploskev | Tlak | Zakaj |
+|---|---|---|---|
+| dleto, žebelj, žaga | zelo majhna | velik | prodre v les |
+| deska na estrihu | velika | majhen | ne pusti odtisa |
+| temelj pod steno | večja od stene | manjši | tla se manj posedejo |
 
-**5. Hidrostatični tlak.** Tlak, ki ga povzroča teža tekočine, imenujemo **hidrostatični tlak**. Zamislimo si valj tekočine nad ploščino $S$ do globine $h$. Njegova teža je $F_g = m g = \rho V g = \rho S h g$. Ko delimo s ploščino $S$, se ta krajša:
+V simulaciji spodaj (»Tlak na ploskev in tlak v tekočini«) izberi opeko in jo postavi plosko, nato pokonci. Opazuj ploščino stika in tlak: pokonci je ploščina skoraj štirikrat manjša, tlak pa skoraj štirikrat večji.
 
-$$p = \frac{F_g}{S} = \rho \, g \, h$$
+:::premisli
+Stena hiše je debela $30\,\mathrm{cm}$, betonski pas pod njo (temelj) pa je širok $60\,\mathrm{cm}$. Napovej: kolikokrat manjši je tlak na zemljo, kot bi bil, če bi stena stala kar na zemlji? Zakaj je to gradbenikom pomembno?
+---
+Teža stene in strehe se na temelju porazdeli po dvakrat večji ploskvi, zato je tlak na zemljo približno pol manjši. Zemlja manj popusti in hiša se manj poseda.
+:::
 
-- $\rho$ je gostota tekočine ($\dfrac{\mathrm{kg}}{\mathrm{m^3}}$),
-- $g \approx 10\,\dfrac{\mathrm{N}}{\mathrm{kg}}$,
-- $h$ je globina pod gladino ($\mathrm{m}$).
+**4. Tekočine pritiskajo v vse smeri.** Voda v rezervoarju zaradi svoje teže pritiska na dno, pa tudi na stene in na vsak predmet v njej. Ta tlak deluje **v vseh smereh** in vedno pravokotno na ploskev, ki se je tekočina dotika. Na isti globini je tlak povsod enak, z globino pa narašča.
 
-Hidrostatični tlak je odvisen od gostote tekočine in globine, **ne pa od oblike posode ali od količine vode**. Jezero in ozka cev, obe globoki $5\,\mathrm{m}$, imata na dnu enak hidrostatični tlak.
+V laboratoriju spodaj (»Laboratorij: hidrostatični tlak in manometer«) potopi sondo in obrni njeno opno navzgor, navzdol in vstran. Na isti globini manometer kaže enako.
 
-**6. Skupni tlak.** Na gladino tekočine pritiska še zrak. Če nas zanima celotni tlak v odprti posodi, mu prištejemo zračni tlak $p_0$: $p = p_0 + \rho g h$. V tej lekciji večinoma računamo samo hidrostatični del.
+*Hitri preizkus:* v katero smer pritiska voda na stransko steno bazena? (Pravokotno na steno, navzven.)
+
+**5. Hidrostatični tlak.** Tlak, ki ga povzroča teža mirujoče tekočine, je **hidrostatični tlak**. Zamisli si navpičen stolpec tekočine s ploščino $S$, ki sega od gladine do globine $h$. Njegova teža pritiska na ploskev $S$ spodaj. Iz tega dobimo (izpeljava je v razdelku »Bolj natančno«):
+
+$$p = \rho \cdot g \cdot h$$
+
+Tu je $\rho$ gostota tekočine v $\mathrm{kg/m^3}$, $h$ pa **globina pod gladino** v metrih. Za vodo:
+
+| Globina $h$ | Hidrostatični tlak $p$ |
+|---|---|
+| $1\,\mathrm{m}$ | $10\,000\,\mathrm{Pa}$ |
+| $2\,\mathrm{m}$ | $20\,000\,\mathrm{Pa}$ |
+| $5\,\mathrm{m}$ | $50\,000\,\mathrm{Pa}$ |
+| $10\,\mathrm{m}$ | $100\,000\,\mathrm{Pa}$ |
+
+Dvakrat globlje pomeni dvakrat večji tlak: tlak je premo sorazmeren z globino. Vsakih $10\,\mathrm{m}$ vode doda približno toliko, kolikor znaša zračni tlak.
+
+*Hitri preizkus:* kolikšen je hidrostatični tlak $4\,\mathrm{m}$ pod gladino vode? ($40\,000\,\mathrm{Pa}$.)
+
+**6. Ozka cev ali širok bazen?** Formula $p = \rho g h$ velja za vsako posodo. Preizkusi, kaj to pomeni:
+
+:::premisli
+Vodoinštalater ima ozko navpično cev, visoko $4\,\mathrm{m}$, in širok bazen, globok $4\,\mathrm{m}$. Oba sta polna vode. Napovej: kje je hidrostatični tlak na dnu večji?
+---
+Nikjer, enak je: $40\,000\,\mathrm{Pa}$. V bazenu je sicer veliko več vode, a ta pritiska na veliko večje dno. Na vsak kvadratni meter dna pritiska stolpec iste višine $h$.
+:::
+
+Oblika posode torej ni pomembna: v formuli $p = \rho g h$ ni ploščine in ni prostornine vode.
+
+Na gladino odprte posode pritiska še zrak. Celotni tlak v globini je zato $p_0 + \rho g h$, kjer je $p_0$ zračni tlak. V nalogah spodaj računamo samo hidrostatični del.
 
 ## Rešeni primeri
 
-### Primer 1: tlak trdnega telesa
+### Primer 1: zidak na tleh
 
-Teža opeke je $40\,\mathrm{N}$. Njena ploskev, s katero leži na tleh, ima ploščino $200\,\mathrm{cm^2}$. Kolikšen tlak povzroča na tla?
+Zidak s težo $40\,\mathrm{N}$ leži na tleh s ploskvijo, ki ima ploščino $200\,\mathrm{cm^2}$. Kolikšen tlak povzroča na tla?
 
 **Podatki:** $F = F_g = 40\,\mathrm{N}$, $S = 200\,\mathrm{cm^2}$
 **Iščemo:** tlak $p$ na tla
 
 :::formula
-$p = \dfrac{F}{S}$, pri čemer ploščino najprej pretvorimo: $1\,\mathrm{m^2} = 10\,000\,\mathrm{cm^2}$
+$p = \dfrac{F}{S}$, ploščina v $\mathrm{m^2}$ ($1\,\mathrm{m^2} = 10\,000\,\mathrm{cm^2}$)
 :::
 
 **Rešitev:**
 
-1. Ploščino pretvorimo v $\mathrm{m^2}$, ker je enota paskal definirana z $\mathrm{m^2}$. $1\,\mathrm{m^2} = 10\,000\,\mathrm{cm^2}$, zato $S = 200 : 10\,000 = 0{,}02\,\mathrm{m^2}$.
-2. Sila na podlago je teža opeke: $F = 40\,\mathrm{N}$.
-3. Vstavimo: $p = \dfrac{F}{S} = \dfrac{40\,\mathrm{N}}{0{,}02\,\mathrm{m^2}} = 2000\,\mathrm{Pa}$.
-4. Odgovor: tlak je $2000\,\mathrm{Pa} = 2\,\mathrm{kPa}$.
+1. Ploščino pretvorimo v $\mathrm{m^2}$, ker je paskal določen z njimi: $S = 200 : 10\,000 = 0{,}02\,\mathrm{m^2}$.
+2. Sila na tla je teža zidaka, $F = 40\,\mathrm{N}$, ker zidak leži na vodoravnih tleh.
+3. $p = \dfrac{40\,\mathrm{N}}{0{,}02\,\mathrm{m^2}} = 2000\,\mathrm{Pa}$.
+4. Odgovor: zidak pritiska na tla s tlakom $2000\,\mathrm{Pa} = 2\,\mathrm{kPa}$.
 
-### Primer 2: hidrostatični tlak
+### Primer 2: ima Luka prav?
 
-Kolikšen je hidrostatični tlak v globini $12\,\mathrm{m}$ pod gladino jezera? Gostota vode je $1000\,\dfrac{\mathrm{kg}}{\mathrm{m^3}}$.
+Luka ima težo $600\,\mathrm{N}$. Podplata njegovih copat imata skupaj ploščino $400\,\mathrm{cm^2}$. Deska je dolga $1\,\mathrm{m}$ in široka $0{,}3\,\mathrm{m}$, njeno težo zanemarimo. Kolikšen tlak povzroča Luka na estrih v copatih in kolikšnega na deski? Kolikokrat se tlak razlikuje?
 
-**Podatki:** $h = 12\,\mathrm{m}$, $\rho = 1000\,\dfrac{\mathrm{kg}}{\mathrm{m^3}}$, $g = 10\,\dfrac{\mathrm{N}}{\mathrm{kg}}$
-**Iščemo:** hidrostatični tlak $p$
+**Podatki:** $F = 600\,\mathrm{N}$, $S_1 = 400\,\mathrm{cm^2}$, deska $1\,\mathrm{m} \times 0{,}3\,\mathrm{m}$
+**Iščemo:** tlaka $p_1$ in $p_2$ ter njuno razmerje
 
 :::formula
-$p = \rho \, g \, h$
+$p = \dfrac{F}{S}$, ploščina pravokotnika $S = a \cdot b$
 :::
 
 **Rešitev:**
 
-1. Uporabimo $p = \rho g h$.
-2. Vstavimo: $p = 1000 \cdot 10 \cdot 12 = 120\,000\,\mathrm{Pa}$.
-3. Odgovor: $p = 120\,000\,\mathrm{Pa} = 120\,\mathrm{kPa} = 1{,}2\,\mathrm{bar}$.
-4. Smiselnost: vsakih $10\,\mathrm{m}$ vode doda približno $100\,000\,\mathrm{Pa}$, kar je približno en zračni tlak. Za $12\,\mathrm{m}$ je $120\,000\,\mathrm{Pa}$, torej prav.
+1. Copati: $S_1 = 400 : 10\,000 = 0{,}04\,\mathrm{m^2}$, zato $p_1 = \dfrac{600\,\mathrm{N}}{0{,}04\,\mathrm{m^2}} = 15\,000\,\mathrm{Pa}$.
+2. Deska: $S_2 = 1\,\mathrm{m} \cdot 0{,}3\,\mathrm{m} = 0{,}3\,\mathrm{m^2}$, zato $p_2 = \dfrac{600\,\mathrm{N}}{0{,}3\,\mathrm{m^2}} = 2000\,\mathrm{Pa}$.
+3. Razmerje: $15\,000 : 2000 = 7{,}5$. Sila je enaka, ploščina pa $7{,}5$-krat večja.
+4. Odgovor: v copatih je tlak $15\,000\,\mathrm{Pa}$, na deski $2000\,\mathrm{Pa}$, torej $7{,}5$-krat manjši. Luka nima prav: enaka teža ne pomeni enakega tlaka.
 
-### Primer 3: sila na steklo maske (težji)
+### Primer 3: zamašek na dnu rezervoarja
 
-Potapljač ima na globini $20\,\mathrm{m}$ v morju na potapljaški maski steklo s ploščino $150\,\mathrm{cm^2}$. Gostota morske vode je $1030\,\dfrac{\mathrm{kg}}{\mathrm{m^3}}$. S kolikšno silo pritiska voda na steklo (brez zračnega tlaka)?
+Na podstrešju stoji rezervoar, voda v njem je visoka $1{,}5\,\mathrm{m}$. Odprtino na dnu s ploščino $20\,\mathrm{cm^2}$ zapira zamašek. S kolikšno silo voda pritiska na zamašek? Zračnega tlaka ne upoštevamo, gostota vode je $1000\,\mathrm{kg/m^3}$.
 
-**Podatki:** $h = 20\,\mathrm{m}$, $S = 150\,\mathrm{cm^2}$, $\rho = 1030\,\dfrac{\mathrm{kg}}{\mathrm{m^3}}$, $g = 10\,\dfrac{\mathrm{N}}{\mathrm{kg}}$; zračnega tlaka ne upoštevamo
-**Iščemo:** silo $F$, s katero voda pritiska na steklo
+**Podatki:** $h = 1{,}5\,\mathrm{m}$, $S = 20\,\mathrm{cm^2}$, $\rho = 1000\,\mathrm{kg/m^3}$, $g = 10\,\mathrm{N/kg}$
+**Iščemo:** silo $F$ na zamašek
 
 :::formula
-Najprej $p = \rho \, g \, h$, nato iz $p = \dfrac{F}{S}$ sledi $F = p \cdot S$ (ploščina v $\mathrm{m^2}$)
+Najprej $p = \rho \, g \, h$, nato iz $p = \dfrac{F}{S}$ sledi $F = p \cdot S$
 :::
 
 **Rešitev:**
 
-1. Najprej hidrostatični tlak: $p = \rho g h = 1030 \cdot 10 \cdot 20 = 206\,000\,\mathrm{Pa}$.
-2. Ploščina v $\mathrm{m^2}$: $S = 150 : 10\,000 = 0{,}015\,\mathrm{m^2}$.
-3. Formulo $p = \dfrac{F}{S}$ preoblikujemo v $F = p \cdot S$, ker iščemo silo.
-4. Vstavimo: $F = 206\,000 \cdot 0{,}015 = 3090\,\mathrm{N}$.
-5. Odgovor: voda pritiska na steklo s silo približno $3090\,\mathrm{N}$. To je sila, ki bi jo imela teža telesa z maso približno $309\,\mathrm{kg}$. Steklo zdrži, ker na njegovo notranjo stran pritiska zrak v maski: potapljač med spuščanjem skozi nos izdihuje zrak v masko in tako izenači tlak na obeh straneh stekla.
+1. Tlak na dnu: $p = 1000 \cdot 10 \cdot 1{,}5 = 15\,000\,\mathrm{Pa}$.
+2. Ploščina v $\mathrm{m^2}$: $S = 20 : 10\,000 = 0{,}002\,\mathrm{m^2}$.
+3. Iščemo silo, zato formulo obrnemo: $F = p \cdot S$.
+4. $F = 15\,000 \cdot 0{,}002 = 30\,\mathrm{N}$.
+5. Odgovor: voda pritiska na zamašek s silo $30\,\mathrm{N}$, približno tako kot teža telesa z maso $3\,\mathrm{kg}$. Zato mora biti zamašek dobro vstavljen.
+
+### Primer 4 – zdaj ti: kako visoko je vodohran?
+
+Manometer na vodovodni cevi v kleti kaže hidrostatični tlak $150\,000\,\mathrm{Pa}$. Kako visoko nad kletjo je gladina vode v vodohranu?
+
+**Podatki:** $p = 150\,000\,\mathrm{Pa}$, $\rho = 1000\,\mathrm{kg/m^3}$, $g = 10\,\mathrm{N/kg}$
+**Iščemo:** višino gladine $h$ nad cevjo
+
+:::formula
+Iz $p = \rho \, g \, h$ sledi $h = \dfrac{p}{\rho \cdot g}$
+:::
+
+**Rešitev:**
+
+1. Višina gladine nad cevjo je ravno globina cevi pod gladino, torej $h$. Zato $p = \rho g h$ delimo z $\rho \cdot g$.
+2. Imenovalec: $\rho \cdot g = 1000 \cdot 10 = 10\,000$.
+3. Izračunaj $h$ sam, nato preveri:
+
+:::premisli
+Koliko je $h = \dfrac{150\,000}{10\,000}$?
+---
+$h = 15\,\mathrm{m}$. Smiselno: vsakih $10\,\mathrm{m}$ vode da približno $100\,000\,\mathrm{Pa}$.
+:::
 
 ## Pogoste napake
 
-- **Pozabljena pretvorba enot.** Če ploščino pustiš v $\mathrm{cm^2}$, rezultat ni v paskalih. Pred računom pretvori v $\mathrm{m^2}$ ($1\,\mathrm{m^2} = 10\,000\,\mathrm{cm^2}$).
-- **Zamenjava sile in tlaka.** Sila ($\mathrm{N}$) in tlak ($\mathrm{Pa}$) nista isto. Večja sila ne pomeni nujno večjega tlaka, če je površina velika.
-- **Mislimo, da je tlak odvisen od oblike posode.** Hidrostatični tlak je odvisen le od gostote in globine, ne od širine posode ali količine vode.
-- **Globino merimo narobe.** $h$ je razdalja od gladine navzdol, ne od dna posode do točke.
-- **Mislimo, da tlak v tekočini deluje samo navzdol.** Deluje v vseh smereh.
+- **»Enaka sila, enak učinek.«** Tako je mislil Luka. Učinek na podlago je odvisen od tlaka, ne le od sile: ista teža na $7{,}5$-krat večji ploskvi da $7{,}5$-krat manjši tlak. Vedno vprašaj tudi, kolikšna je ploskev.
+- **Ploščina ostane v $\mathrm{cm^2}$.** Potem rezultat ni v paskalih, ampak $10\,000$-krat premajhen. Pred računom pretvori v $\mathrm{m^2}$.
+- **»Več vode, večji tlak.«** Hidrostatični tlak je odvisen le od gostote in globine, ne od količine vode ali oblike posode. Več vode da večjo silo na večje dno, tlak pa ostane enak.
+- **Globina od dna.** $h$ merimo od gladine navzdol do točke, ne od dna navzgor.
+- **»Voda pritiska samo navzdol.«** Pritiska v vse smeri, tudi na stene in navzgor na predmet pod gladino. Zato voda pritiska tudi na jez, in ker tlak z globino narašča, je jez spodaj debelejši.
 
 ## Povzetek
 
-- Tlak je količnik pravokotne sile in ploščine: $p = \dfrac{F}{S}$. Enota je paskal, $1\,\mathrm{Pa} = 1\,\dfrac{\mathrm{N}}{\mathrm{m^2}}$.
-- Večja ploščina pomeni manjši tlak, manjša ploščina večji tlak.
-- Tekočina pritiska v vse smeri, pravokotno na stene; na isti globini je tlak enak.
-- Hidrostatični tlak: $p = \rho g h$. Odvisen je od gostote tekočine in globine, ne od oblike posode.
-- Tlak v tekočini z globino narašča; v vodi približno za $100\,000\,\mathrm{Pa}$ na vsakih $10\,\mathrm{m}$.
-- Silo na ploskev izračunamo kot $F = p \cdot S$.
+- Tlak je količnik pravokotne sile in ploščine: $p = \dfrac{F}{S}$. Enota je paskal, $1\,\mathrm{Pa} = 1\,\mathrm{N/m^2}$.
+- Pri isti sili manjša ploskev pomeni večji tlak (dleto), večja manjši (deska, temelj).
+- Pred računom pretvori $\mathrm{cm^2}$ v $\mathrm{m^2}$: $1\,\mathrm{m^2} = 10\,000\,\mathrm{cm^2}$.
+- Tekočina pritiska v vse smeri, pravokotno na ploskve; na isti globini je tlak enak.
+- Hidrostatični tlak: $p = \rho g h$, $h$ je globina pod gladino. Ni odvisen od oblike posode ali količine tekočine.
+- V vodi tlak naraste za približno $100\,000\,\mathrm{Pa}$ na vsakih $10\,\mathrm{m}$.
+- Silo na ploskev dobimo s $F = p \cdot S$.
 
 ## Drugače: Na sliki
 
-Predstavljaj si stolp iz zloženih vrečk vode. Spodnja vrečka nosi vse nad seboj, zgornja skoraj nič. Tako je tudi v vodi: čim globlje si, več vode je nad tabo in večji je tlak.
+Predstavljaj si stolp iz zloženih vrečk vode. Spodnja vrečka nosi vse nad seboj, zgornja skoraj nič. Tako je v rezervoarju: globlje kot si, več vode je nad tabo in večji je tlak.
 
-Zdaj si zamisli dve posodi: ozko visoko cev in široko nizko skledo, obe napolnjeni do višine $h$. V cevi je vode malo, v skledi veliko. Vendar je vsaka točka na dnu obremenjena z istim "stolpcem" vode višine $h$ nad njo, zato je tlak enak.
+Zdaj nariši dve posodi: ozko visoko cev in široko skledo, obe napolnjeni do višine $h$. Nad vsakim kvadratnim centimetrom dna stoji enako visok stolpec vode. V skledi je stolpcev več, a vsak pritiska enako. Zato je tlak na dnu enak, sila na celotno dno pa je v skledi večja.
 
-V interaktivni simulaciji spodaj (»Tlak na ploskev in tlak v tekočini«) postavi opeko pokonci, na bok ali plosko in opazuj, kako se pri isti teži spreminja tlak na podlago. Pri človeku primerjaj čevlje, krplje in smuči: večja ploskev pomeni manjši tlak.
-
-## Drugače: Iz vsakdanjega življenja
-
-- **Žebelj in kladivo.** S kladivom deluješ na glavico žeblja, konica pa z enako silo deluje na les. Ploščina konice je mnogo manjša, zato je tlak na les mnogo večji in žebelj prodre.
-- **Smuči.** Težka oseba stoji na dveh ozkih čevljih in se pogrezne v sneg. S smučmi je ista teža razporejena na veliko ploščino, tlak je manjši in se ne pogrezne.
-- **Bazen.** Na dnu globokega dela čutiš pritisk na ušesa. Tam je tlak večji zaradi večje globine, ne zaradi tega, da je voda "težja".
-- **Jez.** Zid jezu je ob dnu debelejši kot zgoraj, ker je tlak ob dnu večji.
-
-## Drugače: Korak za korakom s številkami
-
-Primerjajmo tlak pri isti sili, a različni ploščini. Sila je $F = 600\,\mathrm{N}$ (teža osebe).
-
-| Podlaga | Ploščina $S$ | Tlak $p = F/S$ |
-|---|---|---|
-| Dva čevlja | $0{,}04\,\mathrm{m^2}$ | $600 : 0{,}04 = 15\,000\,\mathrm{Pa}$ |
-| Dve smuči | $0{,}30\,\mathrm{m^2}$ | $600 : 0{,}30 = 2000\,\mathrm{Pa}$ |
-
-Smuči imajo $7{,}5$-krat večjo ploščino, zato je tlak $7{,}5$-krat manjši ($15\,000 : 2000 = 7{,}5$).
-
-Hidrostatični tlak v vodi ($\rho = 1000\,\dfrac{\mathrm{kg}}{\mathrm{m^3}}$, $g = 10\,\dfrac{\mathrm{N}}{\mathrm{kg}}$):
-
-| Globina $h$ | Račun | Tlak $p$ |
-|---|---|---|
-| $1\,\mathrm{m}$ | $1000 \cdot 10 \cdot 1$ | $10\,000\,\mathrm{Pa}$ |
-| $5\,\mathrm{m}$ | $1000 \cdot 10 \cdot 5$ | $50\,000\,\mathrm{Pa}$ |
-| $10\,\mathrm{m}$ | $1000 \cdot 10 \cdot 10$ | $100\,000\,\mathrm{Pa}$ |
-
-Dvakrat globlje pomeni dvakrat večji tlak: tlak je **premo sorazmeren** z globino.
+Pri trdnih telesih nariši isto opeko dvakrat: plosko in pokonci. Puščica teže je obakrat enako dolga, ploskev pod opeko pa je pokonci ozka. Ista puščica na ožji ploskvi pomeni večji tlak.
 
 ## Drugače: Bolj natančno (izpeljava)
 
-Zamislimo si navpičen valj tekočine s ploščino osnovne ploskve $S$ in višino $h$, ki sega od gladine do opazovane globine. Prostornina valja je $V = S \cdot h$.
-
-Masa tekočine v njem je $m = \rho V = \rho S h$, njena teža pa
+Vzemimo navpičen valj tekočine s ploščino osnovne ploskve $S$ in višino $h$, od gladine do opazovane globine. Prostornina valja je $V = S \cdot h$, masa tekočine v njem pa $m = \rho V = \rho S h$. Njegova teža je
 
 $$F_g = m g = \rho S h g.$$
 
@@ -171,39 +200,71 @@ Ta teža pritiska na ploskev $S$ na dnu valja, zato je tlak
 
 $$p = \frac{F_g}{S} = \frac{\rho S h g}{S} = \rho g h.$$
 
-Ploščina $S$ se je pokrajšala, zato tlak ni odvisen od širine valja. Zato je hidrostatični tlak odvisen le od $\rho$, $g$ in $h$.
+Ploščina $S$ se pokrajša. Zato tlak ni odvisen od širine valja ali oblike posode, ampak le od $\rho$, $g$ in $h$.
 
-Opomba: tekočina pritiska enako v vseh smereh, ker se delci tekočine prosto premikajo in prenašajo tlak na vse strani. Zato isti $p$ velja tudi na bočno steno in na predmet v tej globini.
+Zakaj tekočina pritiska tudi vstran in navzgor? Delci tekočine se prosto premikajo. Če jih stiskamo od zgoraj, se rinejo na vse strani, dokler tlak v isti globini ni povsod enak. Zato isti $p$ deluje tudi na bočno steno in na spodnjo stran potopljenega predmeta.
 
 ## Preveri se
 
-? Kolikšen tlak povzroča sila $500\,\mathrm{N}$, ki deluje pravokotno na ploščino $0{,}25\,\mathrm{m^2}$?
-- $125\,\mathrm{Pa}$
+? Katera trditev o tlaku je pravilna?
+- Tlak je drugo ime za silo, ki pritiska na ploskev.
+~ Sila in tlak nista isto: ista sila da na majhni ploskvi velik tlak, na veliki pa majhnega.
++ Tlak pove, kolikšna sila deluje na vsak kvadratni meter ploskve; $1\,\mathrm{Pa} = 1\,\mathrm{N/m^2}$.
+- Mirujoča voda pritiska samo navzdol, na dno posode.
+~ Voda pritiska v vse smeri, tudi na stene in navzgor. Na isti globini je tlak v vseh smereh enak.
+- Hidrostatični tlak je večji v posodi, v kateri je več vode.
+~ Količina vode ni pomembna, šteje le globina pod gladino: $p = \rho g h$.
+> Tlak je količnik sile in ploščine, $p = \dfrac{F}{S}$, zato pove silo na enoto ploščine.
+
+? Vreča cementa s težo $250\,\mathrm{N}$ leži na tleh s ploskvijo $1250\,\mathrm{cm^2}$. Kolikšen tlak povzroča na tla?
+- $0{,}2\,\mathrm{Pa}$
+~ Ploščino si pustil v $\mathrm{cm^2}$. Najprej pretvori: $1250\,\mathrm{cm^2} = 0{,}125\,\mathrm{m^2}$.
+- $31{,}25\,\mathrm{Pa}$
+~ Silo si pomnožil s ploščino. Tlak je količnik: silo deliš s ploščino.
+- $250\,\mathrm{Pa}$
+~ To je kar teža vreče. Sila v newtonih še ni tlak; deliti jo moraš s ploščino.
 + $2000\,\mathrm{Pa}$
-- $500\,\mathrm{Pa}$
-- $0{,}0005\,\mathrm{Pa}$
-> Tlak je $p = \dfrac{F}{S} = \dfrac{500}{0{,}25} = 2000\,\mathrm{Pa}$. Odgovor $125$ dobiš, če silo množiš s ploščino, namesto da bi delil.
+> $S = 0{,}125\,\mathrm{m^2}$, $p = \dfrac{250\,\mathrm{N}}{0{,}125\,\mathrm{m^2}} = 2000\,\mathrm{Pa}$.
 
-? Kolikšen je hidrostatični tlak v olju z gostoto $800\,\dfrac{\mathrm{kg}}{\mathrm{m^3}}$ na globini $5\,\mathrm{m}$? (Vzemi $g = 10\,\dfrac{\mathrm{N}}{\mathrm{kg}}$.)
-- $4000\,\mathrm{Pa}$
-- $400\,000\,\mathrm{Pa}$
-+ $40\,000\,\mathrm{Pa}$
-> $p = \rho g h = 800 \cdot 10 \cdot 5 = 40\,000\,\mathrm{Pa}$. Pri ostalih odgovorih je napaka v množenju ali v številu ničel.
+? Rezervoar je poln vode do višine $5\,\mathrm{m}$. Ana je izračunala tlak v točki $2\,\mathrm{m}$ pod gladino: »$h = 5\,\mathrm{m} - 2\,\mathrm{m} = 3\,\mathrm{m}$, zato $p = 1000 \cdot 10 \cdot 3 = 30\,000\,\mathrm{Pa}$.« Kje je napaka?
+- Napake ni: globino merimo od dna navzgor.
+~ Tlak povzroča voda **nad** točko, zato merimo od gladine navzdol.
++ Globina je $2\,\mathrm{m}$, ker jo merimo od gladine, zato je $p = 20\,000\,\mathrm{Pa}$.
+- Manjka ploščina dna rezervoarja; brez nje tlaka ne moremo izračunati.
+~ V $p = \rho g h$ ploščine ni. Oblika in velikost posode na hidrostatični tlak ne vplivata.
+> Nad točko je $2\,\mathrm{m}$ vode: $p = 1000 \cdot 10 \cdot 2 = 20\,000\,\mathrm{Pa}$.
 
-? Dve posodi različnih oblik sta napolnjeni z vodo do iste višine $h$. Ena vsebuje $2\,\mathrm{l}$ vode, druga $20\,\mathrm{l}$. Kaj velja za hidrostatični tlak na njunih dnih?
-- Večji je v posodi z več vode.
-+ Enak je v obeh posodah.
-- Večji je v posodi z manj vode.
-- V ozki posodi je enak nič.
-> Hidrostatični tlak je $p = \rho g h$ in je odvisen le od gostote tekočine in globine, ne od količine vode ali oblike posode. Obe posodi imata isti $\rho$ in isti $h$, zato je tlak enak.
+? Ozka cev s $3\,\mathrm{L}$ vode in širok sod z $200\,\mathrm{L}$ vode sta napolnjena do iste višine $1\,\mathrm{m}$. Primerjaj hidrostatični tlak na njunih dnih.
+- V sodu je večji, ker je v njem več vode.
+~ Več vode pritiska na večje dno, zato je večja le skupna sila na dno, ne tlak.
+- V cevi je večji, ker je voda stisnjena v ozek prostor.
+~ Voda v cevi ni bolj stisnjena; nad vsako točko dna je enako visok stolpec kot v sodu.
++ Enak je v obeh.
+> $p = \rho g h$ je odvisen le od gostote in globine. Oba imata vodo do $1\,\mathrm{m}$, zato je tlak obakrat $10\,000\,\mathrm{Pa}$.
+
+? Lestev se na razmočenem vrtu pogreza v zemljo. Mojster pod njeni nogi podloži široko desko. Zakaj to pomaga?
+- Ne pomaga, ker teža lestve ostane enaka.
+~ Teža je res enaka, a se porazdeli po večji ploskvi. Odločilen je tlak, ne le sila.
++ Ista teža deluje na večjo ploskev, zato je tlak na zemljo manjši.
+- Deska zmanjša težo lestve.
+~ Teža lestve je odvisna od njene mase in ostane enaka; deska ji doda še svojo težo, a jo porazdeli po veliko večji ploskvi.
+> Iz $p = \dfrac{F}{S}$: pri isti sili večja ploščina pomeni manjši tlak, zato se lestev ne pogreza.
 
 :::simboli
-p | tlak | p = \dfrac{F}{S} | Pa | v tekočini p = ρ g h (hidrostatični tlak)
-F | sila, pravokotna na površino | F = p \cdot S | N
-S | ploščina površine | | m^2 | 1 m² = 10 000 cm²
+p | tlak | p = \dfrac{F}{S} | Pa | v tekočini $p = \rho g h$ (hidrostatični tlak)
+p_1 | tlak v copatih | p_1 = \dfrac{F}{S_1} | Pa
+p_2 | tlak na deski | p_2 = \dfrac{F}{S_2} | Pa
+p_0 | zračni tlak | | Pa | ob morju približno $100\,000\,\mathrm{Pa}$
+F | sila, pravokotna na ploskev | F = p \cdot S | N
+S | ploščina ploskve | | m^2 | $1\,\mathrm{m^2} = 10\,000\,\mathrm{cm^2}$
+S_1 | ploščina podplatov | | m^2
+S_2 | ploščina deske | S_2 = a \cdot b | m^2
+a | dolžina deske | | m
+b | širina deske | | m
 F_g | teža | F_g = m \cdot g | N
-\rho | gostota tekočine | | kg/m^3
-g | težni pospešek | | N/kg | približno 10 N/kg
-h | globina v tekočini | | m
-m | masa | | kg
+m | masa | m = \rho \cdot V | kg
+V | prostornina stolpca tekočine | V = S \cdot h | m^3
+\rho | gostota tekočine | \rho = \dfrac{m}{V} | kg/m^3
+g | težni pospešek | | N/kg | približno $10\,\mathrm{N/kg}$
+h | globina pod gladino | h = \dfrac{p}{\rho \cdot g} | m
 :::

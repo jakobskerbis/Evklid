@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vztrajnost
+  - telefon v avtu ostane na mestu
+  - večja masa, večja vztrajnost
+- Prvi zakon
+  - rezultanta nič: mirovanje ali enakomerno premo gibanje
+  - napaka: brez sile ni gibanja
+- Drugi zakon
+  - $F = m \cdot a$
+  - $1\,\mathrm{N} = 1\,\mathrm{kg \cdot m/s^2}$
+  - pospešek v smeri rezultante
+- Rezultanta
+  - nasprotni sili odštejemo
+  - napaka: ena sila namesto rezultante
+- Teža
+  - $F_g = m \cdot g$, $g \approx 10\,\mathrm{N/kg}$
+  - masa v kg, teža v N
+- Tretji zakon
+  - $\vec F_{1\to 2} = -\vec F_{2\to 1}$
+  - sili na različnih telesih
+  - napaka: sili para se izničita
+- Odrin in pospešek
+  - enaki sili, lažje telo večji pospešek
+  - dron potiska zrak navzdol

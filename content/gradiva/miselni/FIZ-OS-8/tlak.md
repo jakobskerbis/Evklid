@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sila na ploskev
+  - opeka pokonci se pogrezne globlje kot plosko
+  - napaka: enaka teža, enak odtis
+- Tlak
+  - $p = \dfrac{F}{S}$
+  - sila pravokotno na ploskev
+- Enote
+  - $1\,\mathrm{Pa} = 1\,\mathrm{N/m^2}$
+  - $1\,\mathrm{m^2} = 10\,000\,\mathrm{cm^2}$
+  - napaka: ploščina ostane v $\mathrm{cm^2}$
+- Majhen in velik tlak
+  - dleto, žebelj: majhna ploskev
+  - deska, temelj: velika ploskev
+- Tlak v tekočinah
+  - deluje v vse smeri, pravokotno na ploskev
+  - na isti globini enak
+- Hidrostatični tlak
+  - $p = \rho \cdot g \cdot h$
+  - $h$ od gladine navzdol
+  - voda: $10\,000\,\mathrm{Pa}$ na meter
+- Oblika posode
+  - ozka cev in bazen: enak tlak
+  - napaka: več vode, večji tlak
+- Sila iz tlaka
+  - $F = p \cdot S$
+  - zamašek na dnu rezervoarja
