@@ -3519,5 +3519,19 @@
   "akt.more": "زیادہ",
   "sch.addAt": "کلاس شامل کریں: {day}، {time}",
   "lg.free": "خالی جگہ",
-  "corner.more": "ایک اور موضوع شامل کریں"
+  "corner.more": "ایک اور موضوع شامل کریں",
+  "open.group": "ایپ میں کھولیں",
+  "open.sim": "تجربہ",
+  "open.3d": "3D",
+  "open.lesson": "درسی کتاب",
+  "open.game": "کھیل",
+  "open.locked": "مقفل",
+  "open.close": "بند کریں",
+  "open.preset": "ٹیوٹر نے یہ قدریں مقرر کی ہیں۔ انہیں بدلو اور دیکھو کیا ہوتا ہے۔",
+  "open.failed": "یہ لوڈ نہیں ہو سکا۔",
+  "open.formula": "فارمولا",
+  "open.formulas": "فارمولوں کا مجموعہ",
+  "open.graph": "گراف",
+  "open.inCalc": "کیلکولیٹر میں کھولیں",
+  "open.sketch": "خاکہ"
 }

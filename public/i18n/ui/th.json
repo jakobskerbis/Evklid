@@ -3494,5 +3494,19 @@
   "akt.more": "มาก",
   "sch.addAt": "เพิ่มคาบเรียน: {day}, {time}",
   "lg.free": "ที่ว่าง",
-  "corner.more": "เพิ่มหัวข้ออื่น"
+  "corner.more": "เพิ่มหัวข้ออื่น",
+  "open.group": "เปิดในแอป",
+  "open.sim": "การทดลอง",
+  "open.3d": "3D",
+  "open.lesson": "หนังสือเรียน",
+  "open.game": "เกม",
+  "open.locked": "ล็อกอยู่",
+  "open.close": "ปิด",
+  "open.preset": "ติวเตอร์ตั้งค่าเหล่านี้ไว้ ลองเปลี่ยนแล้วสังเกตว่าเกิดอะไรขึ้น",
+  "open.failed": "โหลดไม่ได้",
+  "open.formula": "สูตร",
+  "open.formulas": "รวมสูตร",
+  "open.graph": "กราฟ",
+  "open.inCalc": "เปิดในเครื่องคิดเลข",
+  "open.sketch": "ภาพร่าง"
 }

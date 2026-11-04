@@ -3549,5 +3549,19 @@
   "akt.more": "Više",
   "sch.addAt": "Dodaj sat: {day}, {time}",
   "lg.free": "slobodno mjesto",
-  "corner.more": "Dodaj još neko područje"
+  "corner.more": "Dodaj još neko područje",
+  "open.group": "Otvori u aplikaciji",
+  "open.sim": "Pokus",
+  "open.3d": "3D",
+  "open.lesson": "Udžbenik",
+  "open.game": "Igra",
+  "open.locked": "zaključano",
+  "open.close": "Zatvori",
+  "open.preset": "Instruktor je postavio ove vrijednosti. Mijenjaj ih i promatraj što se događa.",
+  "open.failed": "Ovo se nije moglo učitati.",
+  "open.formula": "Formula",
+  "open.formulas": "Zbirka formula",
+  "open.graph": "Graf",
+  "open.inCalc": "Otvori u kalkulatoru",
+  "open.sketch": "Skica"
 }

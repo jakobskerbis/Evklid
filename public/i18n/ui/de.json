@@ -3521,5 +3521,19 @@
   "akt.more": "Mehr",
   "sch.addAt": "Stunde hinzufügen: {day}, {time}",
   "lg.free": "freier Platz",
-  "corner.more": "Weiteres Thema hinzufügen"
+  "corner.more": "Weiteres Thema hinzufügen",
+  "open.group": "In der App öffnen",
+  "open.sim": "Experiment",
+  "open.3d": "3D",
+  "open.lesson": "Lehrbuch",
+  "open.game": "Spiel",
+  "open.locked": "gesperrt",
+  "open.close": "Schließen",
+  "open.preset": "Diese Werte hat der Tutor eingestellt. Ändere sie und beobachte, was passiert.",
+  "open.failed": "Das konnte nicht geladen werden.",
+  "open.formula": "Formel",
+  "open.formulas": "Formelsammlung",
+  "open.graph": "Graph",
+  "open.inCalc": "Im Rechner öffnen",
+  "open.sketch": "Skizze"
 }

@@ -3519,5 +3519,19 @@
   "akt.more": "Çok",
   "sch.addAt": "Ders ekle: {day}, {time}",
   "lg.free": "boş yer",
-  "corner.more": "Başka bir konu ekle"
+  "corner.more": "Başka bir konu ekle",
+  "open.group": "Uygulamada aç",
+  "open.sim": "Deney",
+  "open.3d": "3B",
+  "open.lesson": "Ders kitabı",
+  "open.game": "Oyun",
+  "open.locked": "kilitli",
+  "open.close": "Kapat",
+  "open.preset": "Bu değerleri öğretmen ayarladı. Değiştir ve ne olduğunu gözlemle.",
+  "open.failed": "Yüklenemedi.",
+  "open.formula": "Formül",
+  "open.formulas": "Formül listesi",
+  "open.graph": "Grafik",
+  "open.inCalc": "Hesap makinesinde aç",
+  "open.sketch": "Taslak"
 }

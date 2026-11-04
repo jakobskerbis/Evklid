@@ -3521,5 +3521,19 @@
   "akt.more": "Më shumë",
   "sch.addAt": "Shto orë: {day}, {time}",
   "lg.free": "vend i lirë",
-  "corner.more": "Shto një fushë tjetër"
+  "corner.more": "Shto një fushë tjetër",
+  "open.group": "Hape në aplikacion",
+  "open.sim": "Eksperiment",
+  "open.3d": "3D",
+  "open.lesson": "Libër mësimor",
+  "open.game": "Lojë",
+  "open.locked": "e kyçur",
+  "open.close": "Mbyll",
+  "open.preset": "Tutori i vendosi këto vlera. Ndryshoji dhe shiko çfarë ndodh.",
+  "open.failed": "Nuk u ngarkua dot.",
+  "open.formula": "Formulë",
+  "open.formulas": "Përmbledhje formulash",
+  "open.graph": "Grafik",
+  "open.inCalc": "Hape në makinë llogaritëse",
+  "open.sketch": "Skicë"
 }

@@ -3494,5 +3494,19 @@
   "akt.more": "Nhiều",
   "sch.addAt": "Thêm tiết học: {day}, {time}",
   "lg.free": "chỗ trống",
-  "corner.more": "Thêm một chủ đề khác"
+  "corner.more": "Thêm một chủ đề khác",
+  "open.group": "Mở trong ứng dụng",
+  "open.sim": "Thí nghiệm",
+  "open.3d": "3D",
+  "open.lesson": "Sách giáo khoa",
+  "open.game": "Trò chơi",
+  "open.locked": "đã khóa",
+  "open.close": "Đóng",
+  "open.preset": "Gia sư đã đặt các giá trị này. Hãy thay đổi và quan sát điều gì xảy ra.",
+  "open.failed": "Không thể tải.",
+  "open.formula": "Công thức",
+  "open.formulas": "Bảng công thức",
+  "open.graph": "Đồ thị",
+  "open.inCalc": "Mở trong máy tính",
+  "open.sketch": "Phác thảo"
 }

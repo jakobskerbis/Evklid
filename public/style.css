@@ -1152,3 +1152,36 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .reward-offer button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
 .reward-offer.calm { border-style: solid; border-width: 1px; background: var(--surface); }
 .reward-offer.calm .reward-ic { background: var(--accent-soft); color: var(--accent); }
+
+/* Orodja aplikacije pod odgovorom inštruktorja (public/odpri.js): gumbi, formula, graf, skica, okno poskusa. */
+.open-tools { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; min-width: 0; }
+.open-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.open-btn { min-height: 40px; max-width: 100%; white-space: normal; text-align: start; overflow-wrap: anywhere; }
+.open-btn svg { flex: none; }
+.open-card { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.open-card-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.open-card-kind { font-size: 0.85rem; font-weight: 600; color: var(--muted); overflow-wrap: anywhere; }
+.open-formula-tex { font-size: 1.1rem; overflow-wrap: anywhere; }
+.open-graph-host { position: relative; height: 220px; border-radius: 8px; overflow: hidden; background: var(--bg); }
+.open-graph-sliders { display: flex; flex-direction: column; gap: 6px; }
+.open-graph-slider { display: grid; grid-template-columns: auto 1fr 4.5em; align-items: center; gap: 10px; min-height: 40px; }
+.open-graph-name { font-style: italic; font-weight: 600; min-width: 1.2em; }
+.open-graph-slider output { text-align: end; font-variant-numeric: tabular-nums; }
+.open-graph-slider input { width: 100%; min-width: 0; }
+.open-sketch-svg { width: 100%; max-width: 420px; height: auto; align-self: center; }
+.open-sk-line { stroke: var(--text); stroke-width: 2; fill: none; }
+.open-sk-angle { stroke: var(--accent); stroke-width: 1.5; fill: none; }
+.open-sk-vec { stroke: var(--danger); stroke-width: 2.5; }
+.open-sk-head { fill: var(--danger); }
+.open-sk-pt { fill: var(--text); }
+.open-sk-lbl { fill: var(--text); font-size: 13px; font-style: italic; }
+.open-sk-name { font-style: normal; font-weight: 600; }
+.open-sk-vlbl { fill: var(--danger); font-weight: 600; }
+.open-sim { position: fixed; inset: 0; z-index: 70; background: rgba(10, 14, 22, 0.45); display: flex; align-items: center; justify-content: center; padding: calc(12px + var(--varno-zg, env(safe-area-inset-top, 0px))) max(12px, env(safe-area-inset-right, 0px)) calc(12px + var(--varno-sp, env(safe-area-inset-bottom, 0px))) max(12px, env(safe-area-inset-left, 0px)); }
+.open-sim-card { background: var(--surface); color: var(--text); border-radius: var(--radius); box-shadow: var(--shadow-lg); width: min(960px, 100%); max-height: 100%; overflow-y: auto; display: flex; flex-direction: column; min-width: 0; }
+.open-sim-head { position: sticky; top: 0; z-index: 1; background: var(--surface); display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.open-sim-head h2 { flex: 1; min-width: 0; margin: 0; font-size: 1.05rem; overflow-wrap: anywhere; }
+.open-sim-close { min-width: 40px; min-height: 40px; }
+.open-sim-body { padding: 12px; min-width: 0; }
+.open-sim-note { margin: 0 12px 12px; font-size: 0.85rem; }
+@media (max-width: 600px) { .open-sim { padding: var(--varno-zg, env(safe-area-inset-top, 0px)) 0 var(--varno-sp, env(safe-area-inset-bottom, 0px)); } .open-sim-card { border-radius: 0; height: 100%; } }

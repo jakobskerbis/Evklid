@@ -3519,5 +3519,19 @@
   "akt.more": "বেশি",
   "sch.addAt": "ক্লাস যোগ করুন: {day}, {time}",
   "lg.free": "খালি জায়গা",
-  "corner.more": "আরেকটি বিষয় যোগ করুন"
+  "corner.more": "আরেকটি বিষয় যোগ করুন",
+  "open.group": "অ্যাপে খুলুন",
+  "open.sim": "পরীক্ষা",
+  "open.3d": "3D",
+  "open.lesson": "পাঠ্যবই",
+  "open.game": "খেলা",
+  "open.locked": "লক করা",
+  "open.close": "বন্ধ করুন",
+  "open.preset": "শিক্ষক এই মানগুলো ঠিক করেছেন। এগুলো বদলাও আর দেখো কী হয়।",
+  "open.failed": "এটি লোড করা যায়নি।",
+  "open.formula": "সূত্র",
+  "open.formulas": "সূত্রের তালিকা",
+  "open.graph": "গ্রাফ",
+  "open.inCalc": "ক্যালকুলেটরে খুলুন",
+  "open.sketch": "স্কেচ"
 }

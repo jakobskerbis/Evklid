@@ -3494,5 +3494,19 @@
   "akt.more": "많음",
   "sch.addAt": "수업 추가: {day}, {time}",
   "lg.free": "빈자리",
-  "corner.more": "다른 분야 추가"
+  "corner.more": "다른 분야 추가",
+  "open.group": "앱에서 열기",
+  "open.sim": "실험",
+  "open.3d": "3D",
+  "open.lesson": "교과서",
+  "open.game": "게임",
+  "open.locked": "잠김",
+  "open.close": "닫기",
+  "open.preset": "튜터가 값을 정해 두었어요. 바꿔 보고 무슨 일이 일어나는지 관찰하세요.",
+  "open.failed": "불러올 수 없습니다.",
+  "open.formula": "공식",
+  "open.formulas": "공식 모음",
+  "open.graph": "그래프",
+  "open.inCalc": "계산기에서 열기",
+  "open.sketch": "스케치"
 }

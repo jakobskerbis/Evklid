@@ -3521,5 +3521,19 @@
   "akt.more": "More",
   "sch.addAt": "Add a lesson: {day}, {time}",
   "lg.free": "free spot",
-  "corner.more": "Add another topic"
+  "corner.more": "Add another topic",
+  "open.group": "Open in the app",
+  "open.sim": "Experiment",
+  "open.3d": "3D",
+  "open.lesson": "Textbook",
+  "open.game": "Game",
+  "open.locked": "locked",
+  "open.close": "Close",
+  "open.preset": "The tutor set these values. Change them and watch what happens.",
+  "open.failed": "This could not be loaded.",
+  "open.formula": "Formula",
+  "open.formulas": "Formula sheet",
+  "open.graph": "Graph",
+  "open.inCalc": "Open in calculator",
+  "open.sketch": "Sketch"
 }

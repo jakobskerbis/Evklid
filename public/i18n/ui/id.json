@@ -3494,5 +3494,19 @@
   "akt.more": "Banyak",
   "sch.addAt": "Tambah pelajaran: {day}, {time}",
   "lg.free": "tempat kosong",
-  "corner.more": "Tambah topik lain"
+  "corner.more": "Tambah topik lain",
+  "open.group": "Buka di aplikasi",
+  "open.sim": "Percobaan",
+  "open.3d": "3D",
+  "open.lesson": "Buku pelajaran",
+  "open.game": "Permainan",
+  "open.locked": "terkunci",
+  "open.close": "Tutup",
+  "open.preset": "Tutor mengatur nilai-nilai ini. Ubah dan amati apa yang terjadi.",
+  "open.failed": "Tidak dapat dimuat.",
+  "open.formula": "Rumus",
+  "open.formulas": "Kumpulan rumus",
+  "open.graph": "Grafik",
+  "open.inCalc": "Buka di kalkulator",
+  "open.sketch": "Sketsa"
 }

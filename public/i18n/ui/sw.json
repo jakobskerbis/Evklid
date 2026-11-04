@@ -3519,5 +3519,19 @@
   "akt.more": "Zaidi",
   "sch.addAt": "Ongeza kipindi: {day}, {time}",
   "lg.free": "nafasi wazi",
-  "corner.more": "Ongeza mada nyingine"
+  "corner.more": "Ongeza mada nyingine",
+  "open.group": "Fungua kwenye programu",
+  "open.sim": "Jaribio",
+  "open.3d": "3D",
+  "open.lesson": "Kitabu cha kiada",
+  "open.game": "Mchezo",
+  "open.locked": "imefungwa",
+  "open.close": "Funga",
+  "open.preset": "Mwalimu ameweka thamani hizi. Zibadilishe na uangalie kinachotokea.",
+  "open.failed": "Haikuweza kupakiwa.",
+  "open.formula": "Fomula",
+  "open.formulas": "Mkusanyiko wa fomula",
+  "open.graph": "Grafu",
+  "open.inCalc": "Fungua kwenye kikokotoo",
+  "open.sketch": "Mchoro"
 }

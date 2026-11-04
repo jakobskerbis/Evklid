@@ -90,6 +90,7 @@ import { initSirina, prilagodiZdaj } from "./sirina.js";
 import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
 import { GUIDE } from "./vodic.js";
+import { initOpen, addOpen, simOverlayOpen, closeSimOverlay } from "./odpri.js";
 
 const $ = (sel) => document.querySelector(sel);
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
@@ -397,6 +398,11 @@ window.addEventListener("popstate", () => {
     return keep();
   }
   if (cornerBack()) return keep();
+  // Poskus, ki ga je odprl inštruktor (okno nad pogovorom, public/odpri.js).
+  if (simOverlayOpen()) {
+    closeSimOverlay();
+    return keep();
+  }
   // 3D čez cel zaslon (»Uči se« → 3D svet ali povezava iz lekcije) tudi, ko je »Uči se« v premičnem oknu nad drugim pogledom.
   if (isOpen3d()) {
     leaveUci();
@@ -971,7 +977,8 @@ function addMessage(role, text, hasImage = false, info = null) {
     if (text) addDeepButton(el, false);
     if (text && info?.full_offer) addFullButton(el);
     if (text && info?.choices) addChoices(el, info.choices);
-    if (text) addGraphButton(el, text);
+    if (text && info?.open) addOpen(el, info.open);
+    if (text && !info?.open?.some((x) => x.kind === "graph")) addGraphButton(el, text);
     if (text && info?.id) addMsgFoot(el, info);
   }
   box.appendChild(el);
@@ -1104,7 +1111,8 @@ async function send(text, { deep = false } = {}) {
         addChoices(bubble, doneData.choices);
         if (atBottom) requestAnimationFrame(() => (box.scrollTop = box.scrollHeight));
       }
-      if (doneData?.text) addGraphButton(bubble, doneData.text);
+      if (doneData?.open) addOpen(bubble, doneData.open);
+      if (doneData?.text && !doneData.open?.some((x) => x.kind === "graph")) addGraphButton(bubble, doneData.text);
       if (cardsData) addCardsNote(bubble, cardsData);
       if (allowanceData) addAllowanceNote(bubble, allowanceData);
       if (doneData?.id) addMsgFoot(bubble, doneData);
@@ -4291,6 +4299,23 @@ initTextbook({
     labFromLesson(); // tipka Nazaj iz poskusa vrne v lekcijo
   },
   open3d,
+});
+
+// Gumbi inštruktorja za orodja aplikacije (public/odpri.js).
+initOpen({
+  t,
+  icon,
+  escapeHtml,
+  renderMath,
+  openLesson,
+  open3d,
+  openGames: (concepts) => {
+    showView("games");
+    loadGames().then((m) => m.openReward(concepts)).catch(() => null);
+  },
+  openLab: () => openFromTutor({ view: "lab" }),
+  openFormulas: () => openFromTutor({ view: "graph", mode: "formulas" }),
+  openGraph: (exprs) => openGraphOverlay(exprs, t("nav.chat")),
 });
 
 // ---------- zagon ----------

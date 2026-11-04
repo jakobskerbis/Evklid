@@ -255,6 +255,17 @@ function mockAnswer(userText) {
       '<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>'
     );
   }
+  // Orodja aplikacije (server/odpri.js): poskus, 3D, graf in skica pod odgovorom.
+  if (/poka[žz]i (mi )?(poskus|v 3d|graf|skic)/.test(t)) {
+    return (
+      "*(Preizkusni način.)*\n\nPri prostem padu vsa telesa padajo z enakim pospeškom, če ni zračnega upora. Kaj misliš: kaj bo prej na tleh, težja ali lažja kroglica?\n" +
+      '<<ODPRI poskus="prosti pad" nastavi="višina=20">>\n' +
+      '<<ODPRI 3d="srce" del="levi prekat">>\n' +
+      '<<GRAF ["y = a*x^2 + c", "a = 1", "c = -2"]>>\n' +
+      '<<SKICA {"tocke": {"A": [0, 0], "B": [4, 0], "C": [4, 3]}, "daljice": [["A", "B", "a"], ["B", "C", "b"], ["C", "A", "c"]], "koti": [["A", "B", "C", "90°"]]}>>\n' +
+      '<<META subject=FIZ topic="prosti pad" error=0 mode=A flag=none done=0>>'
+    );
+  }
   if (/začniva s temo/.test(t)) {
     return "*(Preizkusni način.)*\n\nPreden razložim: kaj že veš o tej temi? Poskusi odgovoriti na kratko vprašanje:\n\nKoliko je $3 \\cdot 4$?\n" + '<<META subject=MAT topic="-" error=0 mode=A flag=none done=0>>';
   }

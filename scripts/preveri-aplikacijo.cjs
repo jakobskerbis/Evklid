@@ -609,6 +609,28 @@ async function chat(p, label) {
   if ((await p.locator("#messages .msg.user").count()) !== before + 1) throw new Error("tap na izbiro ne pošlje odgovora");
   if ((await p.locator("#messages .msg.user").last().textContent()).trim() !== "Preverim z vstavljanjem") throw new Error("poslano ni besedilo izbire");
   await settle(p, 300);
+  // Orodja aplikacije pod odgovorom (<<ODPRI …>>, <<GRAF …>>, <<SKICA …>>; public/odpri.js): poskus z nastavljeno
+  // višino v oknu nad pogovorom (Esc ga zapre), 3D, premičen graf z drsnikom in skica.
+  await p.fill("#input", "pokaži poskus");
+  await click(p, "#send", { wait: 300 });
+  await p.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 8000 }).catch(() => {});
+  if (await p.locator("#messages .msg.assistant.typing").count()) await click(p, "#messages .msg.assistant.typing", { wait: 300 });
+  const last = "#messages .msg.assistant:last-child";
+  await expectVisible(p, `${last} .open-tools .open-btn`, "gumbi orodij pod odgovorom", 8000);
+  if (await p.locator(last).evaluate((m) => /ODPRI|GRAF \[|SKICA/.test(m.textContent))) throw new Error("blok orodij je viden učencu");
+  if ((await p.locator(`${last} .open-btn`).count()) < 2) throw new Error("manjka gumb za poskus ali 3D");
+  await expectVisible(p, `${last} .open-graph canvas`, "graf v sporočilu");
+  await expectVisible(p, `${last} .open-graph-slider input`, "drsnik grafa");
+  await expectVisible(p, `${last} .open-sketch svg line`, "skica v sporočilu");
+  await screen(p, `klepet-orodja-${label}`);
+  await click(p, `${last} .open-btn >> nth=0`, { wait: 600 });
+  await expectVisible(p, ".open-sim .open-sim-body.demo", "poskus v oknu nad pogovorom", 8000);
+  const h = await p.evaluate(() => [...document.querySelectorAll(".open-sim input[type=range]")].find((i) => /^višina/i.test(i.getAttribute("aria-label") || ""))?.value);
+  if (h != null && Number(h) !== 20) throw new Error(`nastavljena višina v poskusu je ${h}, ne 20`);
+  await screen(p, `klepet-poskus-${label}`);
+  await p.keyboard.press("Escape");
+  await settle(p, 300);
+  if (await p.locator(".open-sim").count()) throw new Error("Esc ne zapre okna s poskusom");
   // Brisanje pogovora z enim klikom, brez potrditve (j, 4. 11.): na koncu prejšnji pogovor odpremo znova.
   if (p.viewportSize().width > 760 && (await p.locator("#conversation-list").isVisible())) {
     const keep = await p.evaluate(() => document.querySelector("#conversation-list li.active span")?.textContent);
