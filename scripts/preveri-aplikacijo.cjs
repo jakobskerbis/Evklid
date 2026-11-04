@@ -559,6 +559,14 @@ async function chat(p, label) {
   await p.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 8000 }).catch(() => {});
   await settle(p, 300);
   await screen(p, `klepet-${label}`);
+  // Način v glavi se zamenja kar tam (j, 4. 11.): »Celotna rešitev«, nato nazaj na »Vodenje«.
+  for (const want of ["Celotna rešitev", "Vodenje"]) {
+    await click(p, '#chat-state .chip-pick:has(select[data-pick="mode"]) .dd-btn', { wait: 200 });
+    if (want !== "Vodenje") await screen(p, `klepet-glava-izbira-${label}`);
+    await click(p, `.dd-list .dd-opt:has-text("${want}")`, { wait: 400 });
+    const shown = await p.locator('#chat-state .chip-pick:has(select[data-pick="mode"]) .dd-label').textContent();
+    if (shown.trim() !== want) throw new Error(`način v glavi ni »${want}«, ampak »${shown}«`);
+  }
   const n = await p.locator("#conversation-list li").count();
   if (!n) throw new Error("pogovor ni na seznamu");
   // Gumbi z izbirami (<<IZBIRE [...]>>): pod zadnjim odgovorom, tap pošlje odgovor, gumbi izginejo.
