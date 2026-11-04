@@ -115,7 +115,7 @@ test("periodičnost: vrednost se ponovi v x₀ + kT, točka ne pade na asimptoto
         assert.ok(Math.abs(PARI[par].f(xi) - PARI[par].f(x0)) < 1e-6 * Math.max(1, Math.abs(PARI[par].f(x0))));
         assert.ok(Math.abs(PARI[par].g(xi) - PARI[par].g(x0)) < 1e-6 * Math.max(1, Math.abs(PARI[par].g(x0))));
       }
-      if (par === "tan") assert.ok(Math.abs(Math.cos(x0)) > Math.sin(0.24));
+      if (par === "tan") assert.ok(Math.abs(PARI.tan.f(x0)) < 2.5, "točka ostane v okvirju");
     }
 });
 

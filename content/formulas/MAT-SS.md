@@ -9,8 +9,9 @@
 | Absolutna vrednost | $\lvert x \rvert < a \iff -a < x < a$; $\; \lvert x \rvert > a \iff x < -a$ ali $x > a$ |
 | Realna števila in intervali | $[a, b] = \{x \in \mathbb{R};\ a \le x \le b\}$, $\; (a, b) = \{x \in \mathbb{R};\ a < x < b\}$ |
 | | $[a, b) = \{x \in \mathbb{R};\ a \le x < b\}$, $\; (a, b] = \{x \in \mathbb{R};\ a < x \le b\}$, $\; [a, \infty) = \{x \in \mathbb{R};\ x \ge a\}$ |
-| Potenčna in korenska funkcija | $f(x) = x^n$: sodi $n$ soda funkcija, $Z_f = [0, \infty)$; lihi $n$ liha funkcija, $Z_f = \mathbb{R}$ |
-| | $f(x) = x^{-n}$: $D_f = \mathbb{R} \setminus \{0\}$; $\; f(x) = \sqrt[n]{x}$: sodi $n$ $D_f = [0, \infty)$, lihi $n$ $D_f = \mathbb{R}$ |
+| Potenčna in korenska funkcija | $f(x) = x^n$: pri sodem $n$ je $f$ soda, $Z_f = [0, \infty)$; pri lihem $n$ je $f$ liha, $Z_f = \mathbb{R}$ |
+| | $f(x) = x^{-n}$: $D_f = \mathbb{R} \setminus \{0\}$; pri sodem $n$ je $Z_f = (0, \infty)$, pri lihem $Z_f = \mathbb{R} \setminus \{0\}$ |
+| | $f(x) = \sqrt[n]{x}$: pri sodem $n$ je $D_f = [0, \infty)$, pri lihem $D_f = \mathbb{R}$ |
 | Kompleksna števila | $z = a + b i$, $\; i^2 = -1$, $\; \bar{z} = a - b i$, $\; \lvert z \rvert = \sqrt{a^2 + b^2}$, $\; z \bar{z} = \lvert z \rvert^2$ |
 
 :::simboli
@@ -36,7 +37,7 @@ i | imaginarna enota | i^2 = -1 | |
 :::simboli
 A, B | množici | | |
 x | element množice | | |
-U | univerzalna množica | | | vse množice so njene podmnožice
+U | univerzalna množica | | | vse obravnavane množice so njene podmnožice
 A' | komplement množice $A$ | A' = U - A | |
 m | moč množice (število elementov) | | | za končne množice
 :::
@@ -94,8 +95,8 @@ e | Eulerjevo število | | | $e \approx 2{,}71828$; osnova naravnega logaritma $
 | Radiani | $x\,[\text{rad}] = \dfrac{\pi}{180^\circ} \cdot \alpha\,[^\circ]$, $\; 180^\circ = \pi$ |
 | Periodičnost | $\sin (x + 2 k \pi) = \sin x$, $\; \cos (x + 2 k \pi) = \cos x$, $\; \tan (x + k \pi) = \tan x$, $\; \cot (x + k \pi) = \cot x$ |
 | Sinusna krivulja | $f(x) = A \sin \omega (x - \varphi)$, $\; T = \dfrac{2 \pi}{\omega}$, ničle $x = \varphi + \dfrac{k \pi}{\omega}$ |
-| Krožne funkcije | $y = \arcsin x \iff x = \sin y$, $\; D = [-1, 1]$, $\; Z = \left[-\dfrac{\pi}{2}, \dfrac{\pi}{2}\right]$ |
-| | $y = \arccos x$: $D = [-1, 1]$, $Z = [0, \pi]$; $\; y = \arctan x$: $D = \mathbb{R}$, $Z = \left(-\dfrac{\pi}{2}, \dfrac{\pi}{2}\right)$; $\; y = \operatorname{arccot} x$: $D = \mathbb{R}$, $Z = (0, \pi)$ |
+| Krožne funkcije | $y = \arcsin x \iff x = \sin y$ in $-\dfrac{\pi}{2} \le y \le \dfrac{\pi}{2}$, $\; D_f = [-1, 1]$, $\; Z_f = \left[-\dfrac{\pi}{2}, \dfrac{\pi}{2}\right]$ |
+| | $y = \arccos x$: $D_f = [-1, 1]$, $Z_f = [0, \pi]$; $\; y = \arctan x$: $D_f = \mathbb{R}$, $Z_f = \left(-\dfrac{\pi}{2}, \dfrac{\pi}{2}\right)$; $\; y = \operatorname{arccot} x$: $D_f = \mathbb{R}$, $Z_f = (0, \pi)$ |
 | Adicijski izreki | $\sin (x \pm y) = \sin x \cos y \pm \cos x \sin y$, $\; \cos (x \pm y) = \cos x \cos y \mp \sin x \sin y$ |
 | | $\tan (x \pm y) = \dfrac{\tan x \pm \tan y}{1 \mp \tan x \tan y}$ |
 | Dvojni kot | $\sin 2x = 2 \sin x \cos x$, $\; \cos 2x = \cos^2 x - \sin^2 x$ |
@@ -120,10 +121,10 @@ k | poljubno celo število | | |
 f | sinusna funkcija | | |
 A | amplituda (največji odmik od osi $x$ je $\lvert A \rvert$) | | | $A \ne 0$
 \omega | krožna frekvenca | \omega = \dfrac{2 \pi}{T} | | $\omega > 0$
-\varphi | premik grafa vzdolž osi $x$ | | |
+\varphi | premik grafa vzdolž osi $x$ (pri $\varphi > 0$ v desno) | | |
 T | osnovna perioda | T = \dfrac{2 \pi}{\omega} | |
-D | definicijsko območje krožne funkcije | | |
-Z | zaloga vrednosti krožne funkcije | | |
+D_f | definicijsko območje krožne funkcije | | |
+Z_f | zaloga vrednosti krožne funkcije | | |
 R | polmer trikotniku očrtane krožnice | R = \dfrac{a b c}{4 S} | |
 r | polmer trikotniku včrtane krožnice | r = \dfrac{S}{s} | |
 S | ploščina trikotnika | | |
@@ -234,13 +235,13 @@ x_i | posamezni podatki | | |
 
 | | |
 |---|---|
-| Limita funkcije | $\lim\limits_{x \to a} f(x) = b$: za vsak $\varepsilon > 0$ obstaja $\delta > 0$, da je $\lvert f(x) - b \rvert < \varepsilon$, ko je $0 < \lvert x - a \rvert < \delta$ |
+| Limita funkcije | $\lim\limits_{x \to a} f(x) = b$: za vsak $\varepsilon > 0$ obstaja tak $\delta > 0$, da je $\lvert f(x) - b \rvert < \varepsilon$ za vsak $x \in D_f$, za katerega je $0 < \lvert x - a \rvert < \delta$ |
 | Odvodi | $(x^n)' = n x^{n-1}$, $(\sin x)' = \cos x$, $(\cos x)' = -\sin x$, $(\tan x)' = \dfrac{1}{\cos^2 x}$ |
 | | $(e^x)' = e^x$, $(a^x)' = a^x \ln a$, $(\ln x)' = \dfrac{1}{x}$, $(\log_a x)' = \dfrac{1}{x \ln a}$ |
 | Pravila | $(u v)' = u' v + u v'$, $\; \left(\dfrac{u}{v}\right)' = \dfrac{u' v - u v'}{v^2}$, $\; (f(g(x)))' = f'(g(x))\, g'(x)$ |
 | Tangenta | $y - y_0 = f'(x_0)(x - x_0)$ |
 | Ekstrem | $f'(x_0) = 0$ in $f''(x_0) < 0$: maksimum; $f'(x_0) = 0$ in $f''(x_0) > 0$: minimum |
-| Diferencial | $d f = f'(x)\,d x$, $\; \Delta f = f(x + \Delta x) - f(x) \approx d f$ (za $d x = \Delta x$ blizu 0) |
+| Diferencial | $d f = f'(x)\,d x$, $\; d x = \Delta x$; $\; \Delta f = f(x + \Delta x) - f(x) \approx d f$ za majhen $\lvert \Delta x \rvert$ |
 | Integrali | $\int x^n\,dx = \dfrac{x^{n+1}}{n + 1} + C$ ($n \ne -1$), $\int \dfrac{dx}{x} = \ln \lvert x \rvert + C$ |
 | | $\int e^x\,dx = e^x + C$, $\int \sin x\,dx = -\cos x + C$, $\int \cos x\,dx = \sin x + C$ |
 | Newton–Leibniz | $\int_a^b f(x)\,dx = F(b) - F(a)$ |
@@ -249,7 +250,7 @@ x_i | posamezni podatki | | |
 
 :::simboli
 x | neodvisna spremenljivka | | | pri $\ln x$ in $\log_a x$ je $x > 0$
-n | poljubno realno število (eksponent; pri trapezni metodi število podintervalov) | | | pri integralu $n \ne -1$
+n | poljubno realno število (eksponent; pri trapezni metodi število podintervalov, naravno število) | | | pri integralu $n \ne -1$
 e | Eulerjevo število | | | $e \approx 2{,}71828$
 a | osnova potence in logaritma (pri določenem integralu: spodnja meja; pri limiti: točka, ki se ji $x$ približuje) | | | kot osnova $a > 0$, $a \ne 1$
 b | zgornja meja določenega integrala (pri limiti: limita funkcije) | | |
@@ -261,9 +262,10 @@ f'' | drugi odvod funkcije $f$ | | |
 x_0 | abscisa dotikališča (pri ekstremu: stacionarna točka) | | |
 y_0 | ordinata dotikališča | y_0 = f(x_0) | |
 y | ordinata točke na tangenti | | |
-d | oznaka diferenciala | | | $dx$ pove, po kateri spremenljivki integriramo
+d | oznaka diferenciala | | | $dx$ pove, po kateri spremenljivki integriramo; pri diferencialu $d x = \Delta x$, $d f = f'(x)\,d x$
 \varepsilon | dovoljeni odmik vrednosti od limite | | | poljubno majhno pozitivno število
-\delta | odmik $x$ od $a$, ki zagotovi odmik vrednosti manj kot $\varepsilon$ | | | odvisen od $\varepsilon$
+\delta | polmer okolice točke $a$, v kateri se vrednosti funkcije od $b$ razlikujejo za manj kot $\varepsilon$ | | | odvisen od $\varepsilon$
+D_f | definicijsko območje funkcije $f$ | | |
 \Delta x | sprememba neodvisne spremenljivke | | |
 \Delta f | sprememba vrednosti funkcije | \Delta f = f(x + \Delta x) - f(x) | |
 h | dolžina podintervala (širina trapeza) | h = \dfrac{b - a}{n} | |

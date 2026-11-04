@@ -22,7 +22,8 @@ export function omejiX(par, x) {
   x = Math.min(DO - 0.05, Math.max(OD + 0.05, x));
   if (par !== "tan") return x;
   const k = Math.round(x / Math.PI - 0.5), a = (k + 0.5) * Math.PI; // najbližja asimptota
-  return Math.abs(x - a) < 0.25 ? a + Math.sign(x - a || 1) * 0.25 : x;
+  // 0,4 od asimptote: |tan x| ≤ 2,4, točka ostane v okvirju (y do 2,6).
+  return Math.abs(x - a) < 0.4 ? a + Math.sign(x - a || 1) * 0.4 : x;
 }
 
 export default function narisi(host) {

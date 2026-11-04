@@ -51,7 +51,7 @@ export default function narisi(host) {
       tocka.move(...Z);
       if (S.svg.lastChild !== tocka) S.svg.append(tocka);
     }
-    const tocen = Number.isInteger(Math.round(q.abs * 1e9) / 1e9);
+    const tocen = Math.abs(q.abs - Number(q.abs.toFixed(2))) < 1e-9;
     S.cipi([
       { barva: "ploskev", oznaka: "z = a + bi", vrednost: zapisZ(a, b) },
       { barva: "izbor", oznaka: "\\bar{z} = a - bi", vrednost: zapisZ(a, -b) },
