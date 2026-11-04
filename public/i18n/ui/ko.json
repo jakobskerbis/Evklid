@@ -1489,6 +1489,8 @@
   "share.downloaded": "이미지 다운로드를 시작했어요.",
   "share.shared": "이미지를 공유했어요.",
   "share.failed": "이미지를 만들지 못했어요. 다시 해 봐요.",
+  "share.appOpened": "공유 메뉴가 열렸어요. 거기서 이미지를 저장하거나 공유할 수 있어요.",
+  "share.appFailed": "공유 메뉴를 열지 못했어요. 다시 해 봐요.",
   "zb.removeShow": "진열장에서 빼기",
   "zb.showFull": "진열장이 가득 찼어요. 먼저 아이템 하나를 빼 주세요.",
   "zb.new": "컬렉션에 새 아이템: {name}",

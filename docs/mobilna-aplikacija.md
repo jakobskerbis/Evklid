@@ -91,9 +91,23 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Govor | mikrofon v klepetu (`speech.js`) | M | naravna odvisnost (prepoznava govora) → nova gradnja APK | ✗ |
 | Učbenik za tisk | PDF učbenika (`/ucbenik`) | S | odpri v brskalniku (`WebBrowser`) | ✗ |
 
-- **Deljiva kartica zbirke** (»Deli zbirko«, public/deli-kartico.js) je v aplikaciji skrita: WebView ne podpira
-  Web Share z datotekami ne prenosa slike, `expo-sharing` pa ni med odvisnostmi (nova odvisnost zahteva novo
-  gradnjo APK, ne OTA). Ko bo nova gradnja, jo lahko dodamo prek mostu (PNG kot base64 → `expo-sharing`).
+- **Deljiva kartica zbirke** (»Deli zbirko«, public/deli-kartico.js): WebView ne podpira Web Share z datotekami
+  ne prenosa slike, zato aplikacija deli prek mostu (`public/deli-most.js`, `mobile/src/app/web.tsx`):
+  - Stran pošlje `{type: "evklid:share-image", id, name, dataBase64}` (`window.ReactNativeWebView.postMessage`).
+    Aplikacija sprejme samo sporočilo s strani Evklida, ime `*.png`, PNG v base64 (preveri glavo PNG) do 5 MB
+    (`checkShareImage`), sliko zapiše v predpomnilnik (`expo-file-system`, `Paths.cache`) in odpre sistemski meni
+    za deljenje (`expo-sharing`, `image/png`). Od tam jo učenec shrani v Galerijo/Datoteke ali deli.
+  - Odgovor (`injectJavaScript` → dogodek `evklid:share-image-result` na `window`) pove le, ali se je meni odprl:
+    stran napiše »Odprl se je meni za deljenje …« ali »Menija za deljenje ni bilo mogoče odpreti …«. Ali je
+    učenec sliko res shranil, aplikacija ne ve, zato tega nikoli ne trdimo.
+  - **Zmožnost**: gradnja z mostom pred nalaganjem strani nastavi `window.EvklidNative = { shareImage: 1 }`
+    (`injectedJavaScriptBeforeContentLoaded`). Stran gumb v aplikaciji (`EvklidApp/` v user agentu) pokaže samo
+    z zastavico (`shareMode`), sicer ostane skrit; v brskalniku ostaneta Web Share in prenos.
+  - **Potrebuje nov APK** (2026-11-04): `expo-sharing` je nov domorodni paket, zato se spremeni prstni odtis
+    (`runtimeVersion: fingerprint`) in posodobitev OTA nanj ne pride na stare gradnje. Do novega APK je gumb v
+    aplikaciji skrit kot doslej. Gradnja: v mapi `mobile` `npm install`, nato
+    `npx eas-cli build --profile direct --platform android` in povezavo do APK naloži kot v koraku 4 spodaj
+    (»Kaj mora narediti človek« → 1. APK za Android). Za trgovini enako s `--profile production`.
 
 ## Dve različici
 

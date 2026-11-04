@@ -5,7 +5,8 @@ import { icon } from "./icons.js";
 import { makeRowSortable } from "./vrstice.js";
 import { avatarSvg, itemName, itemOf, DEFAULT_AVATAR, isNew, isWorn, wear, takeOff, slotFull, MULTI_MAX } from "./avatar.js";
 import { COLLECTIONS, KNOWLEDGE, PASS_REWARDS, AWARD_MIN, baseId, variantOf, seasonLabel, elementTile } from "./zbirke.js";
-import { shareCardModel, shareCardSvg, shareCardPng, shareCardFile } from "./deli-kartico.js";
+import { shareCardModel, shareCardSvg, shareCardPng, shareCardFile, shareCardNative } from "./deli-kartico.js";
+import { shareMode, shareResultKey } from "./deli-most.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const TAB_KEY = "evklid.zbirkeTab";
@@ -215,7 +216,7 @@ function render(focus = null) {
         <h2>${icon("star")} ${esc(t("zb.showcase"))}</h2>
         <div class="zb-slots">${Array.from({ length: data.showcaseMax }, (_, i) => (show[i] ? `<button type="button" class="zb-slot full" data-zbopen="${esc(show[i])}" aria-label="${esc(itemName(itemOf(show[i]), lang()))}">${itemThumb(show[i], 56, equipped())}</button>` : `<span class="zb-slot"></span>`)).join("")}</div>
         <p class="muted small">${esc(show.length ? t("zb.showcaseHint") : t("zb.showcaseEmpty"))}</p>
-        ${IN_APP ? "" : `<button type="button" class="secondary zb-share-btn" data-act="share">${icon("share")}<span>${esc(t("share.button"))}</span></button>`}
+        ${!shareHow() ? "" : `<button type="button" class="secondary zb-share-btn" data-act="share">${icon("share")}<span>${esc(t("share.button"))}</span></button>`}
       </div>
     </div>
     ${shareHtml()}
@@ -261,9 +262,21 @@ function render(focus = null) {
     render('[data-act="share"]');
   });
   root.querySelector('[data-act="share-go"]')?.addEventListener("click", async () => {
-    const how = await shareCardFile(share.blob, { name: "evklid-zbirka.png", title: t("share.cardTitle") });
-    share.msg = how === "downloaded" ? t("share.downloaded") : how === "shared" ? t("share.shared") : "";
-    render('[data-act="share-go"]');
+    const s = share;
+    if (!s?.blob || s.busy) return;
+    if (shareHow() === "bridge") {
+      // Aplikacija odpre sistemski meni za deljenje; sporočilo pove le to, kar aplikacija res potrdi.
+      s.busy = true;
+      s.msg = "";
+      render('[data-act="share-go"]');
+      const r = await shareCardNative(s.blob, { name: "evklid-zbirka.png" });
+      s.busy = false;
+      s.msg = t(shareResultKey(r));
+    } else {
+      const how = await shareCardFile(s.blob, { name: "evklid-zbirka.png", title: t("share.cardTitle") });
+      s.msg = how === "downloaded" ? t("share.downloaded") : how === "shared" ? t("share.shared") : "";
+    }
+    if (share === s) render('[data-act="share-go"]');
   });
   root.querySelector('[data-act="wear"]')?.addEventListener("click", () => {
     const on = isWorn(equipped(), open);
@@ -279,8 +292,9 @@ function render(focus = null) {
 
 // Deljiva kartica: slika brez osebnih podatkov (public/deli-kartico.js), najprej predogled, nato Deli ali Prenesi.
 let share = null; // { url, blob, msg }
-// V mobilni aplikaciji (WebView) prenos in Web Share z datotekami ne delujeta: gumba tam ni (docs/mobilna-aplikacija.md).
-const IN_APP = typeof navigator !== "undefined" && / EvklidApp\//.test(navigator.userAgent);
+// V mobilni aplikaciji (WebView) prenos in Web Share z datotekami ne delujeta: tam deli most aplikacije
+// (public/deli-most.js, expo-sharing); aplikacija brez mostu (starejši APK) gumba ne pokaže (docs/mobilna-aplikacija.md).
+const shareHow = () => (typeof navigator === "undefined" ? "" : shareMode(navigator.userAgent, window.EvklidNative));
 function dropShare() {
   if (share?.url) URL.revokeObjectURL(share.url);
   share = null;
@@ -288,13 +302,13 @@ function dropShare() {
 function shareHtml() {
   if (!share) return "";
   if (!share.blob) return `<div class="card zb-share" role="status"><p class="muted">${esc(share.msg || t("share.making"))}</p></div>`;
-  const canFiles = !!navigator.canShare?.({ files: [new File([share.blob], "x.png", { type: "image/png" })] });
+  const canFiles = shareHow() === "bridge" || !!navigator.canShare?.({ files: [new File([share.blob], "x.png", { type: "image/png" })] });
   return `<section class="card zb-share" aria-label="${esc(t("share.cardTitle"))}">
     <img src="${share.url}" alt="${esc(t("share.alt"))}" width="270" height="338">
     <div class="zb-share-info">
       <p>${esc(t("share.private"))}</p>
       <div class="actions">
-        <button type="button" class="primary" data-act="share-go">${icon(canFiles ? "share" : "download")}<span>${esc(t(canFiles ? "share.send" : "share.download"))}</span></button>
+        <button type="button" class="primary" data-act="share-go"${share.busy ? " disabled" : ""}>${icon(canFiles ? "share" : "download")}<span>${esc(t(canFiles ? "share.send" : "share.download"))}</span></button>
         <button type="button" class="ghost" data-act="share-close">${esc(t("share.close"))}</button>
       </div>
       ${share.msg ? `<p class="muted small" role="status">${esc(share.msg)}</p>` : ""}

@@ -1706,6 +1706,8 @@ export default {
   "share.downloaded": "Prenos slike se je začel.",
   "share.shared": "Slika je deljena.",
   "share.failed": "Slike ni bilo mogoče narediti. Poskusi znova.",
+  "share.appOpened": "Odprl se je meni za deljenje. Od tam sliko shraniš ali deliš.",
+  "share.appFailed": "Menija za deljenje ni bilo mogoče odpreti. Poskusi znova.",
   "zb.removeShow": "Odstrani iz vitrine",
   "zb.showFull": "Vitrina je polna. Najprej odstrani en predmet.",
   "zb.new": "Nov predmet v zbirki: {name}",

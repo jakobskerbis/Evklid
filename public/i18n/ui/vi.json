@@ -1489,6 +1489,8 @@
   "share.downloaded": "Đã bắt đầu tải hình xuống.",
   "share.shared": "Đã chia sẻ hình.",
   "share.failed": "Không tạo được hình. Hãy thử lại.",
+  "share.appOpened": "Menu chia sẻ đã mở. Từ đó bạn có thể lưu hoặc chia sẻ hình.",
+  "share.appFailed": "Không mở được menu chia sẻ. Hãy thử lại.",
   "zb.removeShow": "Bỏ khỏi tủ trưng bày",
   "zb.showFull": "Tủ trưng bày đã đầy. Hãy bỏ bớt một vật phẩm trước.",
   "zb.new": "Vật phẩm mới trong bộ sưu tập: {name}",

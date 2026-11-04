@@ -1495,6 +1495,8 @@
   "share.downloaded": "Le téléchargement de l’image a commencé.",
   "share.shared": "Image partagée.",
   "share.failed": "Impossible de créer l’image. Réessaie.",
+  "share.appOpened": "Le menu de partage s’est ouvert. De là, tu peux enregistrer ou partager l’image.",
+  "share.appFailed": "Impossible d’ouvrir le menu de partage. Réessaie.",
   "zb.removeShow": "Retirer de la vitrine",
   "zb.showFull": "Ta vitrine est pleine. Retire d'abord un objet.",
   "zb.new": "Nouvel objet dans ta collection : {name}",

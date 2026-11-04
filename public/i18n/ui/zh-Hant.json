@@ -1489,6 +1489,8 @@
   "share.downloaded": "圖片已開始下載。",
   "share.shared": "圖片已分享。",
   "share.failed": "無法產生圖片，請再試一次。",
+  "share.appOpened": "分享選單已開啟，你可以在那裡儲存或分享圖片。",
+  "share.appFailed": "無法開啟分享選單，請再試一次。",
   "zb.removeShow": "移出展示櫃",
   "zb.showFull": "展示櫃已滿。請先移出一件物品。",
   "zb.new": "收藏中的新物品：{name}",

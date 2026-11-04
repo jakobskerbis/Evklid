@@ -1513,6 +1513,8 @@
   "share.downloaded": "Stahování obrázku začalo.",
   "share.shared": "Obrázek je sdílený.",
   "share.failed": "Obrázek se nepodařilo vytvořit. Zkus to znovu.",
+  "share.appOpened": "Otevřela se nabídka sdílení. Odtud obrázek uložíš nebo sdílíš.",
+  "share.appFailed": "Nabídku sdílení se nepodařilo otevřít. Zkus to znovu.",
   "zb.removeShow": "Z vitríny",
   "zb.showFull": "Vitrína je plná. Nejdřív z ní odeber jeden předmět.",
   "zb.new": "Nový předmět ve sbírce: {name}",

@@ -5,6 +5,9 @@
 //   (server/mobile/web-session.js), zato je stran prijavljena.
 // - Odjava na spletu (»/?odjava=1«) odjavi tudi aplikacijo; povezave na druge strani odpre brskalnik.
 // - Vrstici telefona (ura zgoraj, gumbi spodaj) dobita barvo roba strani, tudi ko učenec slog zamenja.
+// - Most za deljenje slike (public/deli-most.js): stran pošlje PNG (»Deli zbirko«), aplikacija ga zapiše v
+//   predpomnilnik in odpre sistemski meni za deljenje (expo-sharing). Zastavica window.EvklidNative pove strani,
+//   da ta gradnja most ima; starejši APK je nima, zato tam gumb ostane skrit.
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, BackHandler, Linking, Platform, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
@@ -13,12 +16,15 @@ import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
 import Constants from "expo-constants";
+import * as Sharing from "expo-sharing";
+import { File, Paths } from "expo-file-system";
 import { API_URL, appHeaders, BUSY_WAIT } from "@/lib/api";
 import { useSession } from "@/lib/session";
 import { t } from "@/lib/i18n";
 import { font, useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui";
 import { setWebPending } from "@/lib/web-state";
+import { checkShareImage, shareResultJs, NATIVE_FLAG_JS } from "../../../public/deli-most.js";
 
 const ORIGIN = API_URL.replace(/\/+$/, "");
 const START = `${ORIGIN}/api/mobile/web?to=${encodeURIComponent("/")}`;
@@ -52,6 +58,23 @@ const BAR_JS = `(function(){
 // Izbrani profil iz aplikacije, če ga splet na tej napravi še nima (public/app.js bere »studentId«).
 const studentJs = (id: number | null) =>
   `(function(){try{if(${id ? "true" : "false"}&&!localStorage.getItem('studentId'))localStorage.setItem('studentId','${id ?? ""}');}catch(e){}})();true;`;
+
+// Sliko s strani zapiše v predpomnilnik in odpre sistemski meni za deljenje (od tam Galerija, Datoteke, aplikacije).
+// Vrne { id, ok, error }: ok pomeni le, da se je meni odprl, ne da je učenec sliko shranil ali delil.
+async function shareImage(raw: unknown): Promise<{ id: string; ok: boolean; error?: string }> {
+  const c = checkShareImage(raw);
+  if (!c.ok) return { id: c.id, ok: false, error: c.error };
+  try {
+    if (!(await Sharing.isAvailableAsync())) return { id: c.id, ok: false, error: "unavailable" };
+    const file = new File(Paths.cache, c.name);
+    file.create({ overwrite: true });
+    await file.write(c.dataBase64, { encoding: "base64" });
+    await Sharing.shareAsync(file.uri, { mimeType: "image/png", UTI: "public.png", dialogTitle: t("share.button") });
+    return { id: c.id, ok: true };
+  } catch (e) {
+    return { id: c.id, ok: false, error: String((e as Error)?.message || e) };
+  }
+}
 
 // #rgb, #rrggbb ali rgb(): svetla barva → temne ikone v vrstici stanja.
 function isLight(c: string) {
@@ -152,12 +175,15 @@ export default function Web() {
             style={{ flex: 1, backgroundColor: th.bg }}
             applicationNameForUserAgent={`EvklidApp/${Constants.expoConfig?.version ?? "1"}`}
             originWhitelist={["*"]}
-            injectedJavaScriptBeforeContentLoaded={studentJs(student?.id ?? null)}
+            injectedJavaScriptBeforeContentLoaded={NATIVE_FLAG_JS + studentJs(student?.id ?? null)}
             injectedJavaScript={BAR_JS}
-            onMessage={(e: { nativeEvent: { data: string } }) => {
+            onMessage={(e: { nativeEvent: { data: string; url?: string } }) => {
               try {
                 const m = JSON.parse(e.nativeEvent.data);
                 if (m?.t === "bar") setBar({ top: String(m.top || ""), bottom: String(m.bottom || "") });
+                // Deljenje slike samo s strani Evklida (druge strani WebView odpre v brskalniku, a za vsak primer).
+                else if (m?.type === "evklid:share-image" && (!e.nativeEvent.url || e.nativeEvent.url.startsWith(ORIGIN)))
+                  shareImage(m).then((r) => ref.current?.injectJavaScript(shareResultJs(r)));
               } catch {}
             }}
             onNavigationStateChange={(s: { url: string; canGoBack: boolean }) => {
