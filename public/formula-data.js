@@ -446,11 +446,22 @@ export function annotateTex(tex, subject = override || subjectFn()) {
     }
     const sub = readSub(j);
     const hit = symbolKey(base, sub ? normSub(sub.raw) : "", subject, tex);
-    const end = sub ? sub.end : j;
+    let end = sub ? sub.end : j;
     if (!hit) { out += tex.slice(from, end); return end; }
     const [key, subj] = hit;
     const withSub = key.includes("_") || (sub && /^\d$/.test(normSub(sub.raw)));
-    const bodyEnd = withSub ? end : j;
+    let bodyEnd = withSub ? end : j;
+    // v_0^2: potenca gre v isto oznako, sicer jo KaTeX postavi za indeks namesto nadenj.
+    if (withSub) {
+      let q = end;
+      while (tex[q] === " ") q++;
+      if (tex[q] === "^") {
+        q++;
+        while (tex[q] === " ") q++;
+        const e2 = tex[q] === "{" ? readGroup(q) : q + (/^\\[a-zA-Z]+|^[A-Za-z0-9]/.exec(tex.slice(q))?.[0].length || 0);
+        if (e2 > q) end = bodyEnd = e2;
+      }
+    }
     // Za golim _ ali ^ (\log_a, \int_a^b, e^x) ali ukazom brez oklepajev (\vec F, \bar v) mora biti
     // oznaka v zavitih oklepajih, sicer jo KaTeX vzame za argument brez njenih argumentov (rdeč surov LaTeX).
     const bare = /(?:[_^]|\\[a-zA-Z]+|\\[dt]?frac\s*\w)\s*$/.test(out);

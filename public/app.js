@@ -2344,7 +2344,9 @@ function renderTask(task, ctx) {
   const counter = ctx.total ? `<span class="count">${ctx.index} / ${ctx.total}</span>` : "";
   let input;
   if (task.answerType === "choice") {
-    input = `<div class="choices">${task.options
+    // Dolge izbire (logični izrazi, formule) v enem stolpcu, da se na telefonu ne prelomijo sredi izraza.
+    const oneCol = task.options.some((o) => String(o).replace(/\\[a-zA-Z]+/g, "x").length > 20);
+    input = `<div class="choices${oneCol ? " one-col" : ""}">${task.options
       .map((o, i) => `<button type="button" class="choice" data-i="${i}">${choiceHtml(task, o, false)}</button>`)
       .join("")}</div>`;
   } else {

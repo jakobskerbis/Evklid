@@ -9,6 +9,15 @@
 | Absolutna vrednost | $\lvert x \rvert < a \iff -a < x < a$; $\; \lvert x \rvert > a \iff x < -a$ ali $x > a$ |
 | Kompleksna števila | $z = a + b i$, $\; i^2 = -1$, $\; \bar{z} = a - b i$, $\; \lvert z \rvert = \sqrt{a^2 + b^2}$, $\; z \bar{z} = \lvert z \rvert^2$ |
 
+:::simboli
+a, b | poljubni realni števili (pri $z = a + b i$: realni in imaginarni del) | | | pri $a^{-n}$ in $a^0$ je $a \ne 0$, pri $a^{\frac{m}{n}}$ je $a > 0$, v imenovalcu $b \ne 0$, pod korenom sode stopnje $a, b \ge 0$; pri absolutni vrednosti $a > 0$
+n, m | naravni števili (korenski eksponent in eksponent) | | | v $a^{\frac{m}{n}}$ je $m$ eksponent, $n \ge 2$ pa stopnja korena; v $\sqrt[n]{\sqrt[m]{a}}$ sta oba stopnji korena; pri $a^{-n}$ je $n$ poljubno naravno število
+x | poljubno realno število (neznanka v neenačbi) | | |
+z | kompleksno število | z = a + b i | |
+\bar{z} | konjugirano kompleksno število | \bar{z} = a - b i | |
+i | imaginarna enota | i^2 = -1 | |
+:::
+
 ## Kvadratna funkcija in enačba
 
 | | |
@@ -22,6 +31,19 @@
 | Ničelna oblika | $f(x) = a (x - x_1)(x - x_2)$ |
 | Vietovi formuli | $x_1 + x_2 = -\dfrac{b}{a}$, $\; x_1 x_2 = \dfrac{c}{a}$ |
 
+:::simboli
+f | kvadratna funkcija | f(x) = a x^2 + b x + c | |
+x | neodvisna spremenljivka | | |
+a | vodilni koeficient | | | $a \ne 0$; pri $a > 0$ je parabola odprta navzgor, pri $a < 0$ navzdol
+b | linearni koeficient | | |
+c | prosti člen | | | $f(0) = c$: presečišče grafa z osjo $y$
+D | diskriminanta | D = b^2 - 4 a c | | od njenega predznaka je odvisno število realnih ničel
+x_{1,2}, x_1, x_2 | ničli kvadratne funkcije (rešitvi kvadratne enačbe) | x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2 a} | |
+T | teme parabole | T(p, q) | |
+p | abscisa temena | p = -\dfrac{b}{2 a} | | os simetrije parabole je premica $x = p$
+q | ordinata temena | q = -\dfrac{D}{4 a} | | ekstremna (najmanjša ali največja) vrednost funkcije
+:::
+
 ## Eksponentna funkcija in logaritmi
 
 | | |
@@ -30,6 +52,15 @@
 | Pravila | $\log_a (x y) = \log_a x + \log_a y$, $\; \log_a \dfrac{x}{y} = \log_a x - \log_a y$, $\; \log_a x^n = n \log_a x$ |
 | Prehod na drugo osnovo | $\log_a x = \dfrac{\log_b x}{\log_b a}$ |
 | Posebni vrednosti | $\log_a 1 = 0$, $\; \log_a a = 1$, $\; \log x = \log_{10} x$, $\; \ln x = \log_e x$ |
+
+:::simboli
+a | osnova logaritma (in potence) | | | $a > 0$, $a \ne 1$
+x | logaritmand (pozitivno realno število) | | | $x > 0$
+y | vrednost logaritma (eksponent, na katerega potenciramo osnovo) | y = \log_a x | | v pravilih za produkt in količnik: drugi logaritmand, $y > 0$
+n | poljubno realno število (eksponent) | | |
+b | nova osnova logaritma | | | $b > 0$, $b \ne 1$
+e | Eulerjevo število | | | $e \approx 2{,}71828$; osnova naravnega logaritma $\ln$
+:::
 
 ## Kotne funkcije
 
@@ -52,6 +83,18 @@
 | $\cos x$ | $1$ | $\frac{\sqrt{3}}{2}$ | $\frac{\sqrt{2}}{2}$ | $\frac{1}{2}$ | $0$ |
 | $\tan x$ | $0$ | $\frac{\sqrt{3}}{3}$ | $1$ | $\sqrt{3}$ | ni def. |
 
+:::simboli
+\alpha | kot pri oglišču $A$ (nasproti stranice $a$) | | | v pravokotnem trikotniku ostri kot; pri pretvorbi v radiane velikost kota v stopinjah
+\beta, \gamma | kota pri ogliščih $B$ in $C$ | | | $\beta$ leži nasproti stranice $b$, $\gamma$ nasproti stranice $c$
+a, b | stranici trikotnika (v pravokotnem trikotniku kateti) | | |
+c | stranica trikotnika (v pravokotnem trikotniku hipotenuza) | | |
+x, y | poljubna kota (realni števili v radianih) | | | pri pretvorbi je $x$ velikost kota v radianih; pri $\tan x$ mora biti $\cos x \ne 0$
+R | polmer trikotniku očrtane krožnice | R = \dfrac{a b c}{4 S} | |
+r | polmer trikotniku včrtane krožnice | r = \dfrac{S}{s} | |
+S | ploščina trikotnika | | |
+s | polovični obseg trikotnika | s = \dfrac{a + b + c}{2} | | nastopa v Heronovi formuli
+:::
+
 ## Vektorji in analitična geometrija
 
 | | |
@@ -69,6 +112,31 @@
 | Hiperbola | $\dfrac{x^2}{a^2} - \dfrac{y^2}{b^2} = 1$, $\; e^2 = a^2 + b^2$, asimptoti $y = \pm \dfrac{b}{a} x$ |
 | Parabola | $y^2 = 2 p x$, gorišče $G\left(\dfrac{p}{2}, 0\right)$, vodnica $x = -\dfrac{p}{2}$ |
 
+:::simboli
+\vec{a}, \vec{b} | vektorja | | |
+a_1, a_2, a_3 | komponente vektorja $\vec{a}$ | | |
+b_1, b_2, b_3 | komponente vektorja $\vec{b}$ | | |
+\varphi | kot med vektorjema (pri premici: naklonski kot; pri dveh premicah: kot med njima) | | |
+d | razdalja (med točkama oziroma točke od premice) | | |
+A, B | točki (krajišči daljice) | | |
+x, y | koordinati poljubne točke na premici ali krivulji | | |
+x_1, y_1 | koordinati prve točke (oglišča $A$) | | |
+x_2, y_2 | koordinati druge točke (oglišča $B$) | | |
+x_3, y_3 | koordinati tretjega oglišča trikotnika | | |
+x_0, y_0 | koordinati dane točke | | | točke, katere razdaljo od premice računamo
+S | razpolovišče daljice $AB$ (pri trikotniku: ploščina) | | |
+k | smerni koeficient premice | k = \tan \varphi | |
+k_1, k_2 | smerna koeficienta premic | | |
+n | začetna vrednost (odsek na osi $y$) | | |
+a | koeficient pri $x$ v enačbi premice (pri elipsi in hiperboli: velika oziroma realna polos) | | | v enačbi premice $a$ in $b$ nista hkrati 0
+b | koeficient pri $y$ v enačbi premice (pri elipsi in hiperboli: mala oziroma imaginarna polos) | | |
+c | prosti člen v implicitni enačbi premice | | | $a x + b y + c = 0$
+p, q | koordinati središča krožnice (pri paraboli: $p$ parameter parabole) | | |
+r | polmer krožnice | | |
+e | linearna ekscentričnost | | | razdalja gorišča od središča elipse oziroma hiperbole
+G | gorišče parabole | G\left(\dfrac{p}{2}, 0\right) | |
+:::
+
 ## Zaporedja in obresti
 
 | | |
@@ -78,6 +146,21 @@
 | Geometrijska vrsta | $s = \dfrac{a_1}{1 - q}$ za $\lvert q \rvert < 1$ |
 | Navadno obrestovanje | $o = \dfrac{G_0 \cdot p \cdot n}{100}$ |
 | Obrestno obrestovanje | $G_n = G_0 \cdot r^n$, $\; r = 1 + \dfrac{p}{100}$ |
+
+:::simboli
+a_1 | prvi člen zaporedja | | |
+a_n | splošni ($n$-ti) člen zaporedja | | |
+n | zaporedna številka člena (število členov; pri obrestih število let) | | |
+d | diferenca aritmetičnega zaporedja | d = a_{n+1} - a_n | |
+q | količnik geometrijskega zaporedja | q = \dfrac{a_{n+1}}{a_n} | | $q \ne 0$; pri $s_n$ je $q \ne 1$, pri geometrijski vrsti $\lvert q \rvert < 1$
+s_n | vsota prvih $n$ členov | | |
+s | vsota geometrijske vrste | | |
+o | obresti | | |
+G_0 | začetna glavnica | | |
+G_n | glavnica po $n$ letih | | |
+p | letna obrestna mera | | \% |
+r | obrestovalni faktor | r = 1 + \dfrac{p}{100} | |
+:::
 
 ## Kombinatorika, verjetnost, statistika
 
@@ -91,6 +174,26 @@
 | Pogojna, neodvisni | $P(A \mid B) = \dfrac{P(A \cap B)}{P(B)}$; neodvisna: $P(A \cap B) = P(A) P(B)$ |
 | Bernoullijevo zaporedje | $P_n(k) = \dbinom{n}{k} p^k (1 - p)^{n - k}$ |
 | Povprečje, odklon | $\bar{x} = \dfrac{1}{N} \sum x_i$, $\; \sigma = \sqrt{\dfrac{1}{N} \sum (x_i - \bar{x})^2}$ |
+
+:::simboli
+P_n | število permutacij $n$ elementov (pri Bernoullijevem zaporedju: $P_n(k)$ verjetnost $k$ uspehov v $n$ poskusih) | | |
+n | število elementov (pri verjetnosti število vseh izidov, pri Bernoullijevem zaporedju število poskusov, pri binomskem izreku eksponent) | | |
+k_1, k_2 | števila ponovitev posameznih elementov | | |
+V_n | število variacij $r$-tega razreda iz $n$ elementov | | | vrstni red izbranih elementov je pomemben
+C_n | število kombinacij $r$-tega razreda iz $n$ elementov | | | vrstni red izbranih elementov ni pomemben
+r | razred (število izbranih elementov) | | |
+a, b | poljubni števili (člena binoma) | | |
+k | indeks seštevanja v binomskem razvoju, eksponent pri $b$ (pri Bernoullijevem zaporedju: število uspehov) | | |
+P | verjetnost | | | pri pogojni verjetnosti mora biti $P(B) > 0$
+A, B | dogodka | | |
+A' | nasprotni dogodek dogodka $A$ | | |
+m | število ugodnih izidov | | |
+p | verjetnost uspeha v posameznem poskusu | | |
+\bar{x} | aritmetična sredina | | |
+N | število podatkov | | |
+x_i | posamezni podatki | | |
+\sigma | standardni odklon | | |
+:::
 
 ## Odvod in integral
 
@@ -106,6 +209,27 @@
 | Newton–Leibniz | $\int_a^b f(x)\,dx = F(b) - F(a)$ |
 | Ploščina, vrtenina | $S = \int_a^b \lvert f(x) - g(x) \rvert\,dx$, $\; V = \pi \int_a^b f(x)^2\,dx$ |
 
+:::simboli
+x | neodvisna spremenljivka | | | pri $\ln x$ in $\log_a x$ je $x > 0$
+n | poljubno realno število (eksponent) | | | pri integralu $n \ne -1$
+e | Eulerjevo število | | | $e \approx 2{,}71828$
+a | osnova potence in logaritma (pri določenem integralu: spodnja meja) | | | kot osnova $a > 0$, $a \ne 1$
+b | zgornja meja določenega integrala | | |
+u, v | funkciji spremenljivke $x$ | | | v odvodu količnika $v \ne 0$
+u', v' | odvoda funkcij $u$ in $v$ | | |
+f, g | funkciji (pri sestavljeni funkciji: $f$ zunanja, $g$ notranja) | | |
+f', g' | odvoda funkcij $f$ in $g$ | | |
+f'' | drugi odvod funkcije $f$ | | |
+x_0 | abscisa dotikališča (pri ekstremu: stacionarna točka) | | |
+y_0 | ordinata dotikališča | y_0 = f(x_0) | |
+y | ordinata točke na tangenti | | |
+d | oznaka diferenciala | | | $dx$ pove, po kateri spremenljivki integriramo
+C | integracijska konstanta (poljubno realno število) | | |
+F | primitivna funkcija funkcije $f$ | | | $F' = f$
+S | ploščina lika med grafoma | | |
+V | prostornina vrtenine | | | vrtenje okoli osi $x$
+:::
+
 ## Telesa
 
 | Telo | Površina | Prostornina |
@@ -119,3 +243,14 @@
 | | |
 |---|---|
 | Konstanti | $\pi \approx 3{,}14159$, $\; e \approx 2{,}71828$ |
+
+:::simboli
+P | površina telesa | | |
+O | ploščina osnovne ploskve | | |
+S_{pl} | ploščina plašča | | |
+V | prostornina telesa | | |
+v | višina telesa | | |
+r | polmer (osnovne ploskve oziroma krogle) | | |
+s | stranica stožca | s^2 = r^2 + v^2 | |
+e | Eulerjevo število | | | osnova naravnega logaritma
+:::
