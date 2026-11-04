@@ -212,7 +212,7 @@
 /* odprt iz naloge ali inštruktorja: čez cel zaslon */
 .graph-overlay { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; background: var(--bg); }
 .graph-overlay[hidden] { display: none; }
-.go-head { display: flex; align-items: center; gap: 8px; padding: 6px 10px; padding-top: calc(6px + env(safe-area-inset-top)); background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.go-head { display: flex; align-items: center; gap: 8px; padding: 6px 10px; padding-top: calc(6px + var(--varno-zg, env(safe-area-inset-top, 0px))); background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .go-head b { font-weight: 800; }
 .go-body { flex: 1; min-height: 0; display: flex; }
 body.graph-open { overflow: hidden; }
@@ -277,7 +277,7 @@ body.graph-open { overflow: hidden; }
 .sc-live { min-height: 1.6em; text-align: right; font-size: 1.1rem; overflow-x: auto; }
 .sc-err { color: var(--danger); display: flex; gap: 6px; justify-content: flex-end; align-items: center; font-weight: 700; font-size: 0.9rem; }
 
-.sc-keys { display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; padding: 10px 10px calc(10px + env(safe-area-inset-bottom)); background: var(--surface-2); user-select: none; -webkit-user-select: none; }
+.sc-keys { display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; padding: 10px 10px calc(10px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); background: var(--surface-2); user-select: none; -webkit-user-select: none; }
 .sc-fn { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
 .sc-num { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .sc-key {
@@ -304,7 +304,7 @@ body.graph-open { overflow: hidden; }
 
 /* ---------- pretvornik enot ---------- */
 .un { flex: 1; min-height: 0; min-width: 0; overflow-y: auto; background: var(--bg); }
-.un-wrap { max-width: 680px; margin: 0 auto; padding: 12px 16px 24px; display: flex; flex-direction: column; gap: 12px; }
+.un-wrap { margin: 0 auto; padding: 12px var(--rob-strani) 24px; display: flex; flex-direction: column; gap: 12px; }
 .un-q { flex-wrap: wrap; }
 .un-card { display: flex; flex-direction: column; gap: 12px; }
 .un-field { display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 0.85rem; color: var(--muted); flex: 1; min-width: 0; }
@@ -321,7 +321,7 @@ body.graph-open { overflow: hidden; }
 @media (max-width: 860px) {
   .sc { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
   .sc-screen { border-right: 0; }
-  .sc-keys { padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); gap: 6px; }
+  .sc-keys { padding: 8px 8px calc(8px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); gap: 6px; }
   .sc-const-btn span { display: none; }
 }
 @media (max-width: 860px) and (max-height: 760px) {
@@ -349,9 +349,9 @@ body.graph-open { overflow: hidden; }
 /* ---------- orodja (public/graph/tools.js) ---------- */
 .tl, .pse, .fm { flex: 1; min-height: 0; min-width: 0; overflow-y: auto; background: var(--bg); }
 .tl { display: flex; flex-direction: column; }
-.tl-top { padding: 10px 16px 0; max-width: 760px; width: 100%; margin: 0 auto; }
+.tl-top { padding: 10px var(--rob-strani) 0; width: 100%; margin: 0 auto; }
 .tl-body { flex: 1; }
-.tl-body > .tl-view { max-width: 760px; margin: 0 auto; padding: 12px 16px 24px; display: flex; flex-direction: column; gap: 12px; }
+.tl-body > .tl-view { margin: 0 auto; padding: 12px var(--rob-strani) 24px; display: flex; flex-direction: column; gap: 12px; }
 .tl-body > .tl-units { padding: 0; }
 .tl-card { display: flex; flex-direction: column; gap: 10px; }
 .tl-field { display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 0.85rem; color: var(--muted); min-width: 0; flex: 1; }
@@ -386,7 +386,7 @@ body.graph-open { overflow: hidden; }
 .tl-seg { align-self: flex-start; }
 
 /* periodni sistem */
-.pse-wrap { padding: 12px 16px 24px; display: flex; flex-direction: column; gap: 12px; max-width: 1180px; margin: 0 auto; }
+.pse-wrap { padding: 12px var(--rob-strani) 24px; display: flex; flex-direction: column; gap: 12px; margin: 0 auto; }
 .pse-mm-res { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 1.15rem; overflow-x: auto; }
 .pse-tab { width: 100%; font-size: 0.9rem; }
 .pse-tab th, .pse-tab td { padding: 6px 8px; text-align: right; }
@@ -424,7 +424,7 @@ body.graph-open { overflow: hidden; }
 .pse-lg i { background: color-mix(in srgb, var(--c) 45%, var(--surface)); }
 
 /* formule */
-.fm-wrap { max-width: 860px; margin: 0 auto; padding: 0 16px 24px; display: flex; flex-direction: column; gap: 12px; }
+.fm-wrap { margin: 0 auto; padding: 0 var(--rob-strani) 24px; display: flex; flex-direction: column; gap: 12px; }
 .fm-bar { padding-top: 12px; }
 /* kazalo poglavij ostane na vrhu, ko se pomikaš po zbirki */
 .fm-sel { display: flex; flex-wrap: wrap; gap: 8px 12px; justify-content: center; }
@@ -482,6 +482,7 @@ body.graph-open { overflow: hidden; }
   .calc-modes > button { font-size: 0.78rem; padding: 6px 5px !important; letter-spacing: -0.01em; }
 }
 .tl-seg > button { min-width: 0; white-space: normal; line-height: 1.2; border-radius: 16px !important; }
+.tl-fseg > button { flex-basis: auto; } /* finance: ob dovolj prostora vsak zavihek v eni vrstici */
 
 /* ---------- kemija in verjetnost (tools-chem.js, tools-prob.js) ---------- */
 .tl-sub { flex-wrap: wrap; }
@@ -525,6 +526,10 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .pr-on { fill: var(--g-blue); }
 .pr-off { fill: color-mix(in srgb, var(--g-blue) 22%, var(--surface)); }
 .pr-t { font-size: 10px; fill: var(--muted); text-anchor: middle; }
+/* statistični test: porazdelitev z obarvano p-ploščino (tools-test.js pChart) */
+.tl-pchart { margin: 10px 0 0; }
+.tl-pchart figcaption { margin-top: 2px; }
+.pr-mark { stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 3 3; }
 @media (max-width: 860px) {
   .pse-cards .pse-bond { grid-column: auto; }
 }
@@ -692,3 +697,12 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .tl-vt { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
 .tl-vt th, .tl-vt td { text-align: right; padding: 6px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
 .tl-vt th { position: sticky; top: 0; background: var(--surface, var(--bg)); }
+.tl-anova thead th:first-child { text-align: start; }
+@media (max-width: 480px) {
+  .tl-vt th, .tl-vt td { padding: 6px 5px; }
+  .tl-amort .tl-vt { font-size: 13px; } /* načrt odplačevanja: štirje stolpci brez drsenja vstran */
+}
+.tl-vt tbody th[scope="row"] { position: static; text-align: start; font-weight: 600; white-space: normal; }
+/* RTL: števila, seznami in izrazi v orodjih ostanejo od leve proti desni (sicer »3 4 5« → »5 4 3«, »−1000« → »1000−») */
+[dir="rtl"] .tl-field textarea, [dir="rtl"] .tl-field input:not([type="checkbox"]) { direction: ltr; text-align: right; }
+[dir="rtl"] .tl-vt td { direction: ltr; }

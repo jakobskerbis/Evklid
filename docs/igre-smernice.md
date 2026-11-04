@@ -286,3 +286,20 @@ results in `game_scores.cleared` and passed checks in `game_unlocks`.
    check, or play the calmer game that unlocks it). Unlocked tiles are listed first.
 4. **New engines** must declare their speed class in `PACE` (a test checks this). Judge it by the
    time a student has per answer and how much dexterity the game needs at the same time.
+
+## 12. Games and the learning path (j, 2026-11-01)
+
+Logic in `public/games/learn-link.js` (shared by server and portal), offer in `public/games/reward.js`.
+**Reward game:** when a daily training ends (or any session ends with today's XP goal reached), the
+done card offers »Igraj igro za nagrado«: one game on a concept of the topics just practised (`reward`
+in the finished session, topic → concept via `lessons.js`), produce-the-answer games first
+(`REWARD_ENGINES`), else a calm game. Only an offer on the done screen, never during learning; none
+with »Skrij igre«; calm look for SŠ and faculty. **»Ponovi šibke teme«:** a row at the top of the
+grid (first page, no search) with up to 6 games for the concepts with the most mistakes in the last
+7 days (wrong first answers on the learning path plus wrong answers in games, `weakFor` in
+`server/games.js`), each tile says why (»3 napake ta teden«); no data → no row. **Pilot metrics**
+(`GET /api/games/pilot`, admin or the server's own computer, like the weekly votes; card under it in
+Games): per student and day only counters (`game_days`, `game_concept_days`, kept 120 days): games
+played, games followed by a learning-path answer within 30 min (»vrnitev na pot«; every waiting game of a run with ≤ 30 min gaps counts once), and game
+accuracy on the student's weak concepts vs. others. The report sums over students, no names or ids,
+and shows numbers only from 3 players on; days with fewer than 3 players are merged into one »Drugi dnevi skupaj« row, or left out (also from the totals) if that row would still have fewer than 3.

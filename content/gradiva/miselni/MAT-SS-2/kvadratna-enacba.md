@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Splošna oblika
+  - $ax^2 + bx + c = 0$, $a \ne 0$
+  - najprej vse člene na levo
+- Nepopolne enačbe
+  - $c = 0$: izpostavi $x$
+  - napaka: deljenje z $x$ izgubi $x = 0$
+- Diskriminanta
+  - $D = b^2 - 4ac$
+  - $D > 0$: dve realni, $D = 0$: ena dvojna
+  - $D < 0$: dve konjugirano kompleksni
+- Obrazec za rešitve
+  - $x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$
+  - ulomkova črta pod celim števcem
+- Vietovi formuli
+  - vsota rešitev $-\dfrac{b}{a}$
+  - produkt rešitev $\dfrac{c}{a}$
+  - napaka: vsota brez minusa
+- Uporaba Vieta
+  - rešitvi $2$ in $-5$: $x^2 + 3x - 10 = 0$
+  - razcep $a(x - x_1)(x - x_2)$
+- Met navzgor
+  - kamen na Luni: dva časa ali nobeden
+  - $D < 0$: višina ni dosežena

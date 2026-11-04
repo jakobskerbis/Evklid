@@ -8,6 +8,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Stebričasta celica pod zgornjo povrhnjico lista, polna kloroplastov, kjer poteka največ fotosinteze. Sprednja polovica celice je odrezana, da se vidita vakuola in kloroplasti ob steni.",
+  poskusi: "Tapni kloroplast in opazuj, kje v celici ležijo kloroplasti.",
   merilo: { m: 100e-6, oznaka: "100 µm" },
 };
 

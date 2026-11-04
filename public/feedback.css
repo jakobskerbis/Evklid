@@ -71,7 +71,7 @@
 .install-sheet { border: 0; padding: 0; margin: auto auto 0; width: 100%; max-width: 480px; background: transparent; color: var(--text); }
 .install-sheet.is-top { margin: 0 auto auto; }
 .install-sheet::backdrop { background: rgba(15, 23, 42, 0.45); }
-.is-box { background: var(--surface); border-radius: 20px 20px 0 0; padding: 18px 18px calc(18px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.2); }
+.is-box { background: var(--surface); border-radius: 20px 20px 0 0; padding: 18px 18px calc(18px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.2); }
 .is-top .is-box { border-radius: 0 0 20px 20px; }
 @media (min-width: 700px) { .install-sheet, .install-sheet.is-top { margin: auto; } .is-box, .is-top .is-box { border-radius: 20px; } }
 .is-head { display: flex; align-items: center; gap: 12px; }

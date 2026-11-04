@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Enocelični migetalkar iz mlakuž, dolg okoli četrt milimetra. Plava z migetalkami, hrano pa mu v celična usta nažene ustna kotanja. Migetalk je zaradi preglednosti manj kot v resnici (okoli 5000).",
+  poskusi: "Poišči oba krčljiva mehurčka in ustno kotanjo.",
   merilo: { m: 250e-6, oznaka: "250 µm" },
 };
 
@@ -486,7 +487,7 @@ export function zgradi(THREE, ctx = {}) {
   const _c = new THREE.Color(), _v = new THREE.Vector3();
   function postaviPreb(t) {
     preb.forEach((m, i) => {
-      const f = (m.f + t * 0.012) % 1;
+      const f = (((m.f + t * 0.012) % 1) + 1) % 1;
       kroz.getPointAt(f, _v);
       // sveži mehurčki ob požiralniku so večji in zelenkasti, starejši manjši in rjavkasti
       o.position.copy(_v); o.rotation.set(0, 0, 0); o.scale.setScalar(m.s * (1.15 - 0.45 * f)); o.updateMatrix();
@@ -586,7 +587,7 @@ export function zgradi(THREE, ctx = {}) {
     get deli() { return deli.filter((d) => d.meshes.some((m) => { for (let o = m; o; o = o.parent) if (!o.visible) return false; return true; })); },
     nadzor,
     korak(t) {
-      if (!gib) return;
+      if (!gib || !Number.isFinite(t)) return;
       zadnjiT = t;
       postaviMigetalke(t);
       utrip(t);
