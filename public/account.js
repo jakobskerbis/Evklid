@@ -7,6 +7,7 @@ import { openProfileMenu } from "./profile-menu.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
+import { guaranteeBox, guaranteeLine, podariAddon, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 // Starševski račun: prijava, potrditev e-naslova, otroci s soglasjem, naročnina, priporočila.
 // Deluje samo, ko je na strežniku EVKLID_ACCOUNTS=1.
 
@@ -335,6 +336,10 @@ export async function initAccount({ onReady }) {
       // Darilna koda: potrditev ob vrnitvi; koda je potem v zavihku Račun.
       const r = await api("/api/billing/gift/confirm", { method: "POST", body: { session_id: sessionId } }).catch(() => null);
       toast(r?.paid ? t("gift.paid") : t("pass.pending"));
+    } else if (billing === "podari" && sessionId) {
+      // »Podari Evklid«: potrditev ob vrnitvi s plačilne strani.
+      const r = await api("/api/billing/podari/confirm", { method: "POST", body: { session_id: sessionId } }).catch(() => null);
+      toast(r?.paid ? t("pod.paid") : t("pass.pending"));
     } else if (billing !== "cancel") await api("/api/billing/sync", { method: "POST" }).catch(() => {});
     if (billing === "success") toast("Hvala! Naročnina je aktivna.");
     status = await api("/api/account/status");
@@ -801,11 +806,13 @@ function plansPicker(acc) {
       ${schoolRow(acc)}
       <div id="plan-rest" class="plans" hidden>
       <p class="form-error" role="alert" hidden></p>
+      ${acc.guarantee ? guaranteeLine() : ""}
       ${acc.prices_draft ? `<p class="muted">Cene v lokalni valuti so predlog (razvojna različica).</p>` : ""}
       ${acc.parent.minor
         ? `<p class="muted">${esc(t("pay.minorNote"))}</p>
            <button class="secondary" type="button" id="plan-link">${esc(t("pay.askParent"))}</button><div id="plan-link-out"></div>`
-        : `${consentFields()}
+        : `${podariAddon(acc)}
+           ${consentFields()}
            <button class="primary" type="submit">${esc(t("pay.continue"))}</button>`}
       ${acc.parent.minor ? "" : `<p class="muted">Plačilo poteka varno prek Stripe. Naročnino lahko kadar koli prekličeš.${
         acc.access.tier === "trial" ? " Preostanek preizkusa se ohrani: prvo plačilo bo šele po njegovem koncu." : ""
@@ -1229,7 +1236,10 @@ export async function renderAccount() {
       ${promoBox(acc, paid)}
     </div>
     ${acc.promo?.codes ? adminCodes(acc) : ""}
+    ${guaranteeBox(acc)}
     ${giftBox(acc)}
+    ${podariBox(acc)}
+    ${adminCards(acc)}
     ${acc.promo?.codes ? `<div class="card" id="pilot-card"><h2>${esc(t("pilot.title"))}</h2><div id="pilot-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="reports-card"><h2>${esc(t("adm.rep.title"))}</h2><div id="reports-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="orders-card"><h2>${esc(t("orders.title"))}</h2><div id="orders-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
@@ -1298,6 +1308,12 @@ export async function renderAccount() {
     const first = f.querySelector(`.plan-row[data-who="${e.target.value}"] input[name=plan]`);
     if (first) first.checked = true;
     $("#plan-rest", f).hidden = false;
+    // Dodatek »Podari Evklid« ni na voljo pri šolski ceni (strežnik ga tam ne doda).
+    const addon = f.querySelector(".podari-addon");
+    if (addon) {
+      addon.hidden = e.target.value === "s";
+      if (addon.hidden) f.querySelector('input[name=podari][value="0"]').checked = true;
+    }
   });
   $("#plan-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -1305,7 +1321,8 @@ export async function renderAccount() {
     btn.disabled = true;
     try {
       if (!consentsOk(e.target)) throw new Error(t("payp.consentMissing"));
-      const r = await api("/api/billing/checkout", { method: "POST", body: { ...planBody(e.target.plan.value), ...consentBody() } });
+      const podari = Number(e.target.podari?.value || 0);
+      const r = await api("/api/billing/checkout", { method: "POST", body: { ...planBody(e.target.plan.value), ...consentBody(), ...(podari ? { podari } : {}) } });
       location.href = r.url;
     } catch (err) {
       btn.disabled = false;
@@ -1328,6 +1345,7 @@ export async function renderAccount() {
     }
   });
   bindAdminCodes(acc);
+  bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
   renderCreditCard($("#credit-card"), { api });
   $("#gift-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
