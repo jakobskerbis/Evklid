@@ -35,6 +35,22 @@ export function checkLessonSource(src, topicId) {
   for (const [re, name] of REQUIRED) if (!sections.some((s) => re.test(s.title))) err(`manjka razdelek »## ${name}«`);
   if (alternatives.length < 2) err(`premalo razdelkov »## Drugače: …« (${alternatives.length}, vsaj 2)`);
 
+  // Fakultetna zgradba (j 2026-11-04, po primerjavi s preteklimi izpiti): razdelek »Za izpit« z
+  // 2–3 izpitnimi nalogami, katerih »**Rešitev:**« je skrita za gumbom, »Uporaba v stroki« namesto šolskega »Iz vsakdanjega življenja«.
+  // Opozorilo, ne napaka, dokler starejših fakultetnih lekcij ne predelamo.
+  const uni = /^UNI-/.test(topicId || "");
+  if (uni) {
+    const exam = sections.find((s) => /^za izpit/i.test(s.title));
+    if (!exam) warn("fakultetna lekcija: manjka razdelek »## Za izpit« (kaj moraš znati povedati + 2–3 izpitne naloge s skrito rešitvijo)");
+    else {
+      const tasks = exam.md.split(/^### +/m).slice(1);
+      if (tasks.length < 2) warn(`»Za izpit«: potrebni sta vsaj 2 nalogi z naslovom »### Naloga …« (${tasks.length})`);
+      const open = tasks.filter((t) => !/^\*\*Rešitev:\*\*/m.test(t)).length;
+      if (open) warn(`»Za izpit«: ${open} nalog nima celotne rešitve za »**Rešitev:**« (v aplikaciji skrita za gumbom)`);
+    }
+    if (alternatives.some((a) => /vsakdanjega/i.test(a.title))) warn("fakultetna lekcija: namesto »Drugače: Iz vsakdanjega življenja« napiši »Drugače: Uporaba v stroki«");
+  }
+
   // Rešeni primeri: vsak ### Primer ima Podatki, Iščemo in blok :::formula.
   const ex = sections.find((s) => /^rešen/i.test(s.title));
   if (ex) {
@@ -116,8 +132,9 @@ export function checkLessonSource(src, topicId) {
   // Šablonski stavki naredijo lekcije enolične (j, 29. 10. 2026: lekcije ne smejo biti monotone).
   const stock = STOCK_PHRASES.filter((re) => re.test(body)).map((re) => `»${re.source.replace(/\\b|\\s\+/g, " ").trim()}«`);
   if (stock.length) warn(`šablonski stavek ${stock.join(", ")}: začni s situacijo, vprašanjem ali poskusom`);
-  if (words < 800) warn(`lekcija je kratka (${words} besed, cilj 1300–2300)`);
-  if (words > 2800) warn(`lekcija je dolga (${words} besed, cilj 1300–2300)`);
+  const goal = /^UNI-/.test(topicId || "") ? "1800–3000" : "1300–2300"; // fakultetne imajo še »Za izpit«
+  if (words < 800) warn(`lekcija je kratka (${words} besed, cilj ${goal})`);
+  if (words > (goal === "1300–2300" ? 2800 : 3500)) warn(`lekcija je dolga (${words} besed, cilj ${goal})`);
   return { errors, warnings, words, examples: ex ? ex.md.split(/^### +/m).length - 1 : 0, questions: qs.length, calcChecked: calc.checked, identitiesChecked: ids.checked };
 }
 

@@ -260,3 +260,17 @@ test("lesson: »Premisli« blocks and per-option feedback »~«", () => {
   assert.match(expandFormulaBlocks(md), /tb-think[\s\S]*Kaj je[\s\S]*<details><summary>Pokaži odgovor<\/summary>[\s\S]*Je \$4\$/);
   assert.equal(expandFormulaBlocks(md, "plain"), "Vprašanje: Kaj je $2+2$?\nOdgovor: Je $4$.");
 });
+
+test("university lessons: check-lesson asks for the exam-oriented structure", () => {
+  const base = fs.readFileSync(path.join(LESSONS_DIR, "FIZ-OS-9/upor-in-ohmov-zakon.md"), "utf8");
+  const id = fs.readdirSync(LESSONS_DIR).filter((d) => d.startsWith("UNI-")).flatMap((d) => fs.readdirSync(path.join(LESSONS_DIR, d)).map((f) => `${d}/${f.replace(/\.md$/, "")}`))[0];
+  const warns = (src) => checkLessonSource(src, id).warnings.join(" | ");
+  assert.match(warns(base), /manjka razdelek »## Za izpit«/);
+  assert.doesNotMatch(checkLessonSource(base, "FIZ-OS-9/upor-in-ohmov-zakon").warnings.join(" "), /Za izpit/);
+  const exam = "\n## Za izpit\n\nZnati moraš povedati:\n- definicijo\n\n### Naloga 1\nIzračunaj $2+2$.\n\n**Rešitev:**\n1. $2+2=4$.\n\n### Naloga 2\nUtemelji.\n";
+  const w = warns(base.replace(/\n## Drugače/, `${exam}\n## Drugače`));
+  assert.doesNotMatch(w, /manjka razdelek »## Za izpit«/);
+  assert.match(w, /1 nalog nima celotne rešitve/);
+  // Enovrstična rešitev zadnje naloge na koncu razdelka je tudi skrita za gumbom.
+  assert.match(hideSolutions("### Naloga 2\nUtemelji.\n\n**Rešitev:** Ker velja $2+2=4$."), /<details class="tb-solution">[\s\S]*Ker velja/);
+});
