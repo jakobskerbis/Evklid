@@ -35,6 +35,7 @@ import { mountGifts } from "../placila/darila.js";
 import { mountGuarantee } from "../placila/garancija.js";
 import { mountPodari } from "../placila/podari.js";
 import { Schedules, nowParts } from "../schedule.js";
+import { setSource } from "../rast.js";
 
 export const CONSENT_TEXT =
   "Izjavljam, da sem starš ali zakoniti zastopnik tega otroka in soglašam, da Evklid obdeluje otrokove osebne podatke " +
@@ -972,6 +973,7 @@ export function mountAccounts(app, store, opts = {}) {
       consents: q("SELECT * FROM consents WHERE parent_id = ?", p.id),
       children: children(p.id).map((c) => ({
         ...c,
+        vir: db.prepare("SELECT vir FROM students WHERE id = ?").get(c.id)?.vir ?? null, // od kod je profil prišel (server/rast.js)
         conversations: store.listConversations(c.id).map((conv) => ({
           ...conv,
           // Šifrirana besedila (server/crypto-polje.js) gredo v izvoz odšifrirana.
@@ -1200,6 +1202,7 @@ export function mountAccounts(app, store, opts = {}) {
     const under15 = now - year <= 15; // previdno: v letu 15. rojstnega dne še štejemo kot mlajšega od 15
     const s = store.createStudent(name, req.body?.settings);
     db.prepare("UPDATE students SET parent_id = ?, birth_year = ? WHERE id = ?").run(p.id, year, s.id);
+    setSource(db, s.id, req.body?.vir); // od kod je prišel (server/rast.js)
     db.prepare("INSERT INTO consents (parent_id, student_id, child_birth_year, under_15, version, text, parent_email) VALUES (?, ?, ?, ?, ?, ?, ?)").run(
       p.id,
       s.id,
