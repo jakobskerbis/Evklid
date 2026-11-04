@@ -14,7 +14,7 @@ druge strani odpre brskalnik.
 
 Naravno ostane: prijava in registracija (tipkovnica telefona), posodobitve (OTA in nov APK), obvestila, vaje
 brez povezave. Ko strežnik ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez
-povezave« (naravni zavihki spodaj). Seznam razlik spodaj velja zdaj samo še za te naravne zaslone.
+povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (posodobitev OTA pride pred objavo na Renderju, `/api/mobile/web` vrne 404), aplikacija do posodobitve strežnika pokaže naravne zaslone in spletno stran poskusi znova, ko se vrne v ospredje (`mobile/src/lib/web-state.ts`). Seznam razlik spodaj velja zdaj samo še za te naravne zaslone.
 
 ## Kaj zna
 
