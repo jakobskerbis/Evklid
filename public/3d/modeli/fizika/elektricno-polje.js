@@ -14,6 +14,7 @@ export const info = {
     "izračunane iz Coulombovega zakona. Preizkusni naboj pokaže silo F = q·E in kako ga polje pospeši " +
     "(poenostavitve: naboji mirujejo, teža preizkusnega naboja je zanemarjena, plošči sta enakomerno nabiti).",
   merilo: { m: 0.2, oznaka: "20 cm" },
+  poskusi: "Vklopi preizkusni naboj in ga spusti; nato vklopi ekvipotencialne ploskve in preveri, da so pravokotne na silnice.",
 };
 
 // ---------------------------------------------------------------- fizika (SI) --

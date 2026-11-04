@@ -12,6 +12,19 @@ export function sim3d(el, opts = {}) {
   const p = document.createElement("p");
   p.className = "muted";
   el.append(p);
+  // »Poskusi: …« (docs/kakovost.md §3) pod pregledovalnikom kot pri drugih simulacijah: besedilo iz vnosa v katalogu
+  // (opts.poskusi, za temo), sicer iz modela (info.poskusi).
+  let poskusi = null;
+  const dodajPoskusi = (besedilo) => {
+    if (!besedilo || poskusi) return;
+    poskusi = document.createElement("p");
+    poskusi.className = "demo-try";
+    const b = document.createElement("b");
+    b.textContent = "Poskusi: ";
+    poskusi.append(b, besedilo);
+    el.append(poskusi);
+  };
+  dodajPoskusi(opts.poskusi);
   (async () => {
     const [{ naloziModel }, { odpriModel }, { t }] = await Promise.all([import("./modeli.js"), import("./pregledovalnik.js"), import("/i18n.js")]);
     p.textContent = t("a3.loading");
@@ -22,8 +35,9 @@ export function sim3d(el, opts = {}) {
       return;
     }
     p.remove();
+    dodajPoskusi(mod.info?.poskusi);
     const box = document.createElement("div");
-    el.append(box);
+    el.insertBefore(box, poskusi);
     odpriModel(box, mod, { zacetek: opts.zacetek || {} });
   })().catch(async (err) => {
     console.error("3D simulacija:", err);

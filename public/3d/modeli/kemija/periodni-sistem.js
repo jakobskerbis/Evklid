@@ -18,6 +18,7 @@ export const info = {
   predmet: "KEM",
   opis: "Vseh 118 elementov v periodnem sistemu, kjer višina ploščice pokaže izbrano lastnost: maso, elektronegativnost, polmer, ionizacijsko energijo ali gostoto. Nad izbranim elementom lebdi poenostavljen Bohrov model z razporeditvijo elektronov po lupinah.",
   merilo: { m: 1, oznaka: "ni v merilu (diagram)" },
+  poskusi: "Tapni element, da vidiš njegov atom, in izberi lastnost za višino ploščic: kako se spreminja po periodi in skupini?",
 };
 
 const SIMBOLI = ("H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr " +

@@ -1,4 +1,4 @@
-// DNK (dvojna vijačnica, oblika B) in RNK (lasnica, oblika A), zgrajeni iz pravih mer. Pogodba: docs/3d.md.
+// DNA (dvojna vijačnica, oblika B) in RNA (lasnica, oblika A), zgrajeni iz pravih mer. Pogodba: docs/3d.md.
 //
 // Viri (vsi CC0 ali lastni izračun):
 // - Koordinate baz v standardnem koordinatnem sistemu baznega para: W. K. Olson in sod. (2001),
@@ -11,11 +11,12 @@
 
 export const info = {
   id: "dnk",
-  naslov: "DNK in RNK",
+  naslov: "DNA in RNA",
   podrocje: "kemija",
   predmet: "BIO",
-  opis: "Dvojna vijačnica DNK v pravih merah (premer 2 nm, 0,34 nm na bazni par, 10,5 baznega para na zavoj) in lasnica RNK. Vijačnico lahko odpreš kot zadrgo; baze so poenostavljene v ploščice, vodikovi atomi niso prikazani.",
+  opis: "Dvojna vijačnica DNA v pravih merah (premer 2 nm, 0,34 nm na bazni par, 10,5 baznega para na zavoj) in lasnica RNA. Vijačnico lahko odpreš kot zadrgo; baze so poenostavljene v ploščice, vodikovi atomi niso prikazani.",
   merilo: { m: 9.5e-9, oznaka: "9,5 nm" },
+  poskusi: "Povleci drsnik »Odpiranje« in poglej, kako se vijačnica DNA odpre; nato preklopi na RNA.",
 };
 
 // ---------------------------------------------------------------- podatki (Å)
@@ -505,7 +506,7 @@ export function zgradi(THREE, ctx = {}) {
     let rmax = 0;
     const meri = (rob) => { for (const n of s.nt) for (const a of [...Object.keys(BAZE[n.baza]), ...Object.keys(n.at)]) rmax = Math.max(rmax, tocka(THREE, n, lokalno(n, a)).distanceTo(c) + rob); };
     meri(3); // rob: konca verig (obroček, stožec) segata čez zadnji atom
-    // tudi povsem odprta DNK mora ostati v enotski krogli
+    // tudi povsem odprta DNA mora ostati v enotski krogli
     if (dnk) { odpri(THREE, s, 1); meri(2); odpri(THREE, s, 0); }
     const D = [3, 3.5, 4, 4.5, 5, 5.5, 6, 7, 8, 9, 9.5, 10].find((d) => d * 5 * 1.02 >= rmax) || 10; // premer enotske krogle v nm
     vsebina.position.copy(c).multiplyScalar(-1);
@@ -630,22 +631,22 @@ export function zgradi(THREE, ctx = {}) {
     const h = s.nPar, C = dnk ? CILJI.DNK : CILJI.RNK;
     const fos = najdi((n) => n.stran === 0, h * C.fosfat);
     d.push({ id: "fosfat", ime: "Fosfatna skupina", barva: BARVE.fosfat,
-      opis: "Fosfat povezuje sladkorja sosednjih nukleotidov v verigo; je negativno nabit, zato je DNK kisla molekula.",
+      opis: "Fosfat povezuje sladkorja sosednjih nukleotidov v verigo; je negativno nabit, zato je DNA kisla molekula.",
       meshes: atomski ? M.atomMeshes.fosfat : [M.fosfati], tocka: arr(tocka(THREE, fos, fos.at.P)) });
     const sl = najdi((n) => n.stran === 1, h * C.sladkor);
     d.push(dnk
       ? { id: "sladkor", ime: "Deoksiriboza", barva: BARVE.sladkor, opis: "Sladkor s petimi ogljikovimi atomi, na katerega je vezana baza; ima en kisikov atom manj kot riboza.", meshes: atomski ? M.atomMeshes.sladkor : [M.sladkorji.mesh], tocka: arr(sredina(THREE, sl, ["C1'", "C2'", "C3'", "C4'", "O4'"])) }
-      : { id: "sladkor", ime: "Riboza", barva: BARVE.sladkor, opis: "Sladkor RNK; na drugem ogljikovem atomu ima skupino OH, ki je deoksiriboza nima.", meshes: atomski ? M.atomMeshes.sladkor : [M.sladkorji.mesh], tocka: arr(sredina(THREE, sl, ["C1'", "C2'", "C3'", "C4'", "O4'"])) });
+      : { id: "sladkor", ime: "Riboza", barva: BARVE.sladkor, opis: "Sladkor RNA; na drugem ogljikovem atomu ima skupino OH, ki je deoksiriboza nima.", meshes: atomski ? M.atomMeshes.sladkor : [M.sladkorji.mesh], tocka: arr(sredina(THREE, sl, ["C1'", "C2'", "C3'", "C4'", "O4'"])) });
     if (!atomski) {
       const hr = najdi((n) => n.stran === C.hrbtenicaStran, h * C.hrbtenica);
-      d.push({ id: "hrbtenica", ime: dnk ? "Sladkorno-fosfatna veriga" : "Veriga RNK", barva: dnk ? BARVE.veriga1 : BARVE.rnk,
-        opis: dnk ? "Ogrodje verige iz nukleotidov: sladkorji in fosfati se izmenjujejo, na vsak sladkor pa je vezana dušikova baza, ki gleda navznoter k drugi verigi." : "RNK je ena sama veriga, ki se zvije sama vase, kjer se njene baze lahko parijo.",
+      d.push({ id: "hrbtenica", ime: dnk ? "Sladkorno-fosfatna veriga" : "Veriga RNA", barva: dnk ? BARVE.veriga1 : BARVE.rnk,
+        opis: dnk ? "Ogrodje verige iz nukleotidov: sladkorji in fosfati se izmenjujejo, na vsak sladkor pa je vezana dušikova baza, ki gleda navznoter k drugi verigi." : "RNA je ena sama veriga, ki se zvije sama vase, kjer se njene baze lahko parijo.",
         meshes: M.cevi.flatMap((c) => c.kosi), tocka: arr(tocka(THREE, hr, lokalno(hr, "C4'"))) });
     }
     const opisi = {
-      A: dnk ? "Purinska baza z dvema obročema (rdeča); v DNK se vedno poveže s timinom z dvema vodikovima vezema." : "Purinska baza z dvema obročema (rdeča); v RNK se poveže z uracilom z dvema vodikovima vezema.",
+      A: dnk ? "Purinska baza z dvema obročema (rdeča); v DNA se vedno poveže s timinom z dvema vodikovima vezema." : "Purinska baza z dvema obročema (rdeča); v RNA se poveže z uracilom z dvema vodikovima vezema.",
       T: "Pirimidinska baza z enim obročem (rumena); z adeninom jo povezujeta dve vodikovi vezi.",
-      U: "Pirimidinska baza z enim obročem (vijolična), ki v RNK nadomesti timin; z adeninom tvori dve vodikovi vezi.",
+      U: "Pirimidinska baza z enim obročem (vijolična), ki v RNA nadomesti timin; z adeninom tvori dve vodikovi vezi.",
       G: "Purinska baza z dvema obročema (zelena); s citozinom jo povezujejo tri vodikove vezi.",
       C: "Pirimidinska baza z enim obročem (modra); z gvaninom jo povezujejo tri vodikove vezi.",
     };
@@ -676,7 +677,7 @@ export function zgradi(THREE, ctx = {}) {
     if (!dnk && !atomski) {
       const n = s.nt[s.zanka[1]];
       d.push({ id: "zanka", ime: "Zanka (UUCG)", barva: BARVE.rnk,
-        opis: "Neparjeni nukleotidi, kjer se veriga RNK obrne nazaj in nastane lasnica.",
+        opis: "Neparjeni nukleotidi, kjer se veriga RNA obrne nazaj in nastane lasnica.",
         meshes: [M.cevi[0].kosi[1]], tocka: arr(tocka(THREE, n, n.at.P)) });
     }
     d.push({ id: "konec-5", ime: "5′-konec", barva: BARVE.konec,
@@ -689,11 +690,11 @@ export function zgradi(THREE, ctx = {}) {
   }
 
   const nadzor = [
-    { tip: "izbira", id: "molekula", oznaka: "Molekula", moznosti: [["DNK", "DNK (dvojna vijačnica)"], ["RNK", "RNK (lasnica)"]], vrednost: stanje.molekula,
+    { tip: "izbira", id: "molekula", oznaka: "Molekula", moznosti: [["DNK", "DNA (dvojna vijačnica)"], ["RNK", "RNA (lasnica)"]], vrednost: stanje.molekula,
       ob: (v) => { stanje.molekula = v === "RNK" ? "RNK" : "DNK"; sestavi(); } },
     { tip: "izbira", id: "prikaz", oznaka: "Prikaz", moznosti: [["shematski", "Shematski"], ["atomski", "Atomi (kalota)"]], vrednost: stanje.prikaz,
       ob: (v) => { stanje.prikaz = v === "atomski" ? "atomski" : "shematski"; posodobi(); } },
-    { tip: "drsnik", id: "odpiranje", oznaka: "Odpiranje vijačnice (le DNK)", min: 0, max: 1, korak: 0.01, vrednost: stanje.odpiranje, vidno: () => stanje.molekula === "DNK",
+    { tip: "drsnik", id: "odpiranje", oznaka: "Odpiranje vijačnice (le DNA)", min: 0, max: 1, korak: 0.01, vrednost: stanje.odpiranje, vidno: () => stanje.molekula === "DNK",
       ob: (v) => { stanje.odpiranje = Math.min(1, Math.max(0, +v || 0)); posodobi(); } },
     { tip: "stikalo", id: "zlebovi", oznaka: "Pokaži žlebova", vrednost: stanje.zlebovi,
       ob: (v) => { stanje.zlebovi = !!v; posodobi(); } },
