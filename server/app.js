@@ -412,6 +412,7 @@ export function createApp(store, opts = {}) {
       manual_weaknesses: s.manual_weaknesses,
       flags: store.flagEvents(s.id),
       activity: store.activityByDay(s.id),
+      xpDays: store.xpByDay(s.id),
     });
   });
 
