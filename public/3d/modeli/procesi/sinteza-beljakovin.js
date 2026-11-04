@@ -865,7 +865,7 @@ export function zgradi(THREE, ctx = {}) {
     { id: "mala-podenota", ime: "Mala podenota ribosoma", opis: "Spodnji del ribosoma, ki se veže na mRNA in poišče začetni kodon AUG; model prikazuje le en ribosom, čeprav mRNA hkrati bere več ribosomov.", barva: "#F2C14E", meshes: [mala], get tocka() { return [S.malaPos[0], S.malaPos[1] - 0.05, S.malaPos[2] + 0.1]; } },
     { id: "velika-podenota", ime: "Velika podenota ribosoma", opis: "Zgornji del ribosoma z mesti A, P in E, kjer med aminokislinami nastajajo peptidne vezi.", barva: "#E07A5F", meshes: [velika], get tocka() { return [S.velikaPos[0], S.velikaPos[1] + 0.12, S.velikaPos[2]]; } },
     { id: "trna", ime: "tRNA", opis: "Prenašalna RNA, ki na enem koncu nosi aminokislino, na drugem pa ima antikodon.", barva: "#6FA8FF", meshes: [trna], get tocka() { const t = S.trna.find((x) => x.vid) || S.trna[0]; return [t.p[0], t.p[1] + 0.18, t.p[2]]; } },
-    { id: "antikodon", ime: "Antikodon", opis: "Tri baze na tRNA, ki se po pravilu A–U, G–C ujemajo s kodonom na mRNA.", barva: "#F7F2FF", meshes: [zanka], get tocka() { const t = S.trna.find((x) => x.vid) || S.trna[0]; return [t.p[0], t.p[1] + 0.02, t.p[2] + 0.04]; } },
+    { id: "antikodon", ime: "Antikodon", opis: "Tri baze na tRNA, ki se po pravilu A–U, G–C ujemajo s kodonom na mRNA; ker leži obrnjen (antiparalelno), ga pod kodonom beremo od 3' proti 5'.", barva: "#F7F2FF", meshes: [zanka], get tocka() { const t = S.trna.find((x) => x.vid) || S.trna[0]; return [t.p[0], t.p[1] + 0.02, t.p[2] + 0.04]; } },
     { id: "kodon", ime: "Kodon", opis: "Tri zaporedne baze na mRNA, ki določajo eno aminokislino ali konec (stop).", barva: "#6E9BFF", meshes: [kodonOkvir], get tocka() { return [kodonX(S.kodonC || 0), YR, ZR + 0.05]; } },
     { id: "aminokisline", ime: "Aminokislina", opis: "Gradnik beljakovin; v celicah je 20 vrst aminokislin, vsako določajo en ali več kodonov.", barva: "#E9C46A", meshes: [kroglice], get tocka() { for (let k = NK - 1; k >= 0; k--) if (BK[k * 3] < 1e8) return [BK[k * 3], BK[k * 3 + 1], BK[k * 3 + 2]]; return [0, YR + 0.4, ZR]; } },
     { id: "polipeptid", ime: "Polipeptid", opis: "Veriga aminokislin, povezanih s peptidnimi vezmi; ko se zvije, postane beljakovina.", barva: "#E8EDF7", meshes: [vezi], get tocka() { return BK[0] < 1e8 ? [BK[0], BK[1], BK[2]] : FOLD; } },
@@ -883,7 +883,7 @@ export function zgradi(THREE, ctx = {}) {
     if (iv === 2) return "Na koncu gena se RNA-polimeraza odcepi in sprosti mRNA; DNK se spet zvije v vijačnico.";
     if (iv === 3) return "mRNA zapusti jedro skozi jedrno poro in pride v citoplazmo.";
     if (iv === 4) return "Začetek translacije: mala podenota se veže na mRNA in poišče začetni kodon AUG, tRNA z metioninom se veže na mesto P, nato se pridruži velika podenota.";
-    if (iv <= 10) { const a = AK[iv - 4]; return `tRNA z antikodonom ${a.ac} prinese ${a.toz} (${a.kr}) na mesto A h kodonu ${a.k}. Nastane peptidna vez, nato se ribosom premakne za en kodon naprej.`; }
+    if (iv <= 10) { const a = AK[iv - 4]; return `tRNA z antikodonom 3'-${a.ac}-5' prinese ${a.toz} (${a.kr}) na mesto A h kodonu ${a.k}. Nastane peptidna vez, nato se ribosom premakne za en kodon naprej.`; }
     return `Stop kodon ${STOP} na mestu A ne ustreza nobeni tRNA. Sprostitveni dejavnik sprosti polipeptid, podenoti ribosoma se ločita.`;
   }
   function zapis() {
@@ -899,7 +899,7 @@ export function zgradi(THREE, ctx = {}) {
     if (vv >= 11) return `Kodon ${STOP} → stop (ni tRNA)`;
     const c = iv === 4 ? 0 : iv - 4;
     const a = AK[c];
-    return `Kodon ${a.k} → antikodon ${a.ac} → ${a.kr} (${a.ime})`;
+    return `Kodon 5'-${a.k}-3' → antikodon 3'-${a.ac}-5' → ${a.kr} (${a.ime})`;
   }
   function veriga() {
     const vv = fazaV();
@@ -912,7 +912,15 @@ export function zgradi(THREE, ctx = {}) {
     return vv >= 11.5 ? `${s} (prosta veriga)` : s;
   }
 
+  // Naprej/Nazaj: korak se odvije od začetka do konca (brez gibanja skoči na njegov izid)
+  let doKonca = null;
+  function pojdi(n) {
+    n = Math.min(KONEC, Math.max(0, n));
+    if (n >= KONEC) { nastavi(KONEC); return; }
+    if (gibanje) { nastavi(n); if (!predvajaj) doKonca = n + 0.99; } else nastavi(n + 0.99);
+  }
   function nastavi(x) {
+    doKonca = null;
     v = Math.min(KONEC, Math.max(0, x));
     nKorak.vrednost = Math.round(v * 100) / 100;
     premor = 0;
@@ -921,9 +929,9 @@ export function zgradi(THREE, ctx = {}) {
   const nKorak = { tip: "drsnik", id: "korak", oznaka: "Korak", min: 0, max: KONEC, korak: 0.01, vrednost: v, ob: (x) => nastavi(Number(x)) };
   const nadzor = [
     nKorak,
-    { tip: "gumb", id: "nazaj", oznaka: "Nazaj", ob: () => nastavi(Math.ceil(v - 1e-6) - 1) },
-    { tip: "gumb", id: "naprej", oznaka: "Naprej", ob: () => nastavi(Math.floor(v + 1e-6) + 1) },
-    { tip: "stikalo", id: "predvajaj", oznaka: "Predvajaj", vrednost: predvajaj, ob: (x) => { predvajaj = !!x; if (predvajaj && v >= KONEC) nastavi(0); } },
+    { tip: "gumb", id: "nazaj", oznaka: "Nazaj", ob: () => pojdi(Math.floor(v + 1e-6) - 1) },
+    { tip: "gumb", id: "naprej", oznaka: "Naprej", ob: () => pojdi(Math.floor(v + 1e-6) + 1) },
+    { tip: "stikalo", id: "predvajaj", oznaka: "Predvajaj", vrednost: predvajaj, ob: (x) => { predvajaj = !!x; doKonca = null; premor = 0; if (predvajaj && v >= KONEC) pojdi(0); } },
     { tip: "stikalo", id: "oznake", oznaka: "Oznake", vrednost: kazOznake, ob: (x) => { kazOznake = !!x; izrisi(); } },
     { tip: "izpis", id: "opis", oznaka: "Kaj se dogaja", vrednost: () => stavek() },
     { tip: "izpis", id: "kodon", oznaka: "Kodon → antikodon → aminokislina", vrednost: () => zapis() },
@@ -931,17 +939,37 @@ export function zgradi(THREE, ctx = {}) {
   ];
   izrisi();
 
+  // na seznamu in s točkami so le deli, ki so v trenutnem koraku vidni
+  const VIDEN = {
+    promotor: () => promotor.visible, "rna-polimeraza": () => S.polVid > 0.3, mrna: () => fazaV() >= 1.15,
+    "mala-podenota": () => mala.visible, "velika-podenota": () => S.velVid > 0.5, trna: () => trna.visible, antikodon: () => trna.visible,
+    kodon: () => kodonOkvir.visible, aminokisline: () => kroglice.visible, polipeptid: () => vezi.visible, "sprostitveni-dejavnik": () => S.sprostVid > 0.3,
+  };
+  let deliKljuc = "", deliSeznam = deli;
   return {
     group,
-    deli,
+    get deli() {
+      const vid = deli.filter((d) => !VIDEN[d.id] || VIDEN[d.id]()), kljuc = vid.map((d) => d.id).join(",");
+      if (kljuc !== deliKljuc) { deliKljuc = kljuc; deliSeznam = vid; }
+      return deliSeznam;
+    },
     nadzor,
     merilo: () => null,
     korak(t, dt) {
       const d = Math.min(0.1, Math.max(0, dt || 0));
       if (gibanje) cas += d;
-      if (predvajaj) {
-        if (v >= KONEC) { premor += d; if (premor > 3) nastavi(0); }
-        else { v = Math.min(KONEC, v + d / TRAJANJE[Math.min(TRAJANJE.length - 1, Math.floor(v))]); nKorak.vrednost = Math.round(v * 100) / 100; }
+      if (predvajaj && !gibanje) {
+        // brez gibanja: vsake 3 s skok na izid naslednjega koraka
+        premor += d;
+        if (premor > 3) pojdi(v >= KONEC ? 0 : Math.floor(v + 1e-6) + 1);
+      } else if (predvajaj || doKonca !== null) {
+        if (predvajaj && v >= KONEC) { premor += d; if (premor > 3) nastavi(0); }
+        else {
+          const meja = predvajaj ? KONEC : doKonca, dk = doKonca;
+          v = Math.min(meja, v + d / TRAJANJE[Math.min(TRAJANJE.length - 1, Math.floor(v))]);
+          nKorak.vrednost = Math.round(v * 100) / 100;
+          doKonca = v >= meja ? null : dk;
+        }
       }
       izrisi();
     },

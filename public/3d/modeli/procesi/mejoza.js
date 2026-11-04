@@ -23,7 +23,7 @@ const FAZE = [
   ["Interfaza: faza G2", "Celica se pripravlja na mejozo; vsak kromosom ima dve enaki sestrski kromatidi.", `2n = ${KR4}, ${KT8}`],
   ["Profaza I: parjenje", "Kromosomi se kondenzirajo, homologna kromosoma se tesno zložita drug ob drugega v bivalent (tetrado s štirimi kromatidami).", `2n = ${KR4} v dveh bivalentih, ${KT8}`],
   ["Profaza I: prekrižanje", "Nesestrski kromatidi homolognih kromosomov si izmenjata dela (prekrižanje ali crossing-over); stik ostane viden kot hiazma, jedrna ovojnica razpade.", `2n = ${KR4} v dveh bivalentih, ${KT8}`],
-  ["Metafaza I", "Bivalenta se uredita v ekvatorialni ravnini, vsak homologni kromosom je pripet na en pol; lega vsakega para je naključna (2² = 4 možne razporeditve).", `2n = ${KR4} v dveh bivalentih, ${KT8}`],
+  ["Metafaza I", "Bivalenta se uredita v ekvatorialni ravnini, vsak homologni kromosom je pripet na en pol; lega vsakega para je naključna: 2 možni legi dasta 2² = 4 različne kombinacije kromosomov v celicah.", `2n = ${KR4} v dveh bivalentih, ${KT8}`],
   ["Anafaza I", "Homologna kromosoma se ločita in potujeta k nasprotnima poloma, sestrski kromatidi pa ostaneta skupaj.", `${KR4}, ${KT8}: na vsak pol gresta 2 kromosoma z dvema kromatidama`],
   ["Telofaza I in citokineza", "Nastaneta dve haploidni celici (n = 2), v katerih ima vsak kromosom še dve kromatidi.", `Vsaka nova celica: n = ${KR2}, ${KT4}`],
   ["Profaza II", "Brez ponovnega podvajanja DNK se v vsaki celici oblikuje novo delitveno vreteno, pravokotno na prejšnje.", `Vsaka celica: n = ${KR2}, ${KT4}`],
@@ -983,7 +983,7 @@ export function zgradi(THREE, ctx = {}) {
   const dLega = {
     tip: "izbira", id: "lega", oznaka: "Lega parov v metafazi I",
     moznosti: [["enako", "1M in 2M na isti strani"], ["navzkriz", "1M in 2M na nasprotnih straneh"]],
-    vrednost: lega, vidno: () => p >= 4, ob: (v) => { lega = v === "navzkriz" ? "navzkriz" : "enako"; dLega.vrednost = lega; posodobi(); },
+    vrednost: lega, vidno: () => p >= 5, ob: (v) => { lega = v === "navzkriz" ? "navzkriz" : "enako"; dLega.vrednost = lega; posodobi(); },
   };
   function ustavi() { igra = false; dPredvajaj.vrednost = false; }
   function nastavi(v) { p = cl(Number.isFinite(v) ? v : 0, 0, N); dPotek.vrednost = Math.round(p * 100) / 100; posodobi(); }
