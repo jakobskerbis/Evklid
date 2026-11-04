@@ -141,7 +141,7 @@ export function studentT(nu) {
     discrete: false,
     pdf: (t) => Math.exp(lc - ((nu + 1) / 2) * Math.log(1 + (t * t) / nu)),
     cdf,
-    inv: (p) => invert(cdf, p, -60, 60),
+    inv: (p) => invert(cdf, p, -1e7, 1e7), // df = 1, 99,9 %: |t| ≈ 636
     mean: nu > 1 ? 0 : NaN,
     sd: nu > 2 ? Math.sqrt(nu / (nu - 2)) : NaN,
     range: [-5, 5],
