@@ -727,10 +727,10 @@ function renderState(convState) {
   if (topicId) {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "chip chip-btn";
-    b.textContent = t("chat.readLesson");
+    b.className = "chip chip-btn chat-lesson";
+    b.innerHTML = `${icon("book-open")}<span>${escapeHtml(t("chat.readLesson"))}</span>`;
     b.addEventListener("click", () => openLesson(topicId));
-    $("#chat-state").append(b);
+    $("#chat-state").prepend(b); // prvi tudi za tipko Tab, ne le na zaslonu
   }
 }
 
@@ -3971,8 +3971,10 @@ initTextbook({
 
 // ---------- zagon ----------
 
-// Bližnjica z ikone aplikacije (dolg pritisk na ikono): /?pogled=chat odpre Inštruktorja.
-const START_VIEW = ["chat", "textbook", "graph"].find((v) => v === new URLSearchParams(location.search).get("pogled"));
+// Bližnjica z ikone aplikacije (dolg pritisk na ikono): /?pogled=chat odpre Inštruktorja. Iz 3D atlasa (/3d)
+// »Vprašaj inštruktorja«: /?pogled=chat&vprasaj=… odpre klepet z vpisanim vprašanjem (pošlje ga učenec sam).
+const START_VIEW = ["chat", "textbook", "graph", "lab"].find((v) => v === new URLSearchParams(location.search).get("pogled"));
+const START_ASK = START_VIEW === "chat" ? (new URLSearchParams(location.search).get("vprasaj") || "").slice(0, 2000) : "";
 if (new URLSearchParams(location.search).has("pogled")) history.replaceState(null, "", location.pathname);
 initInstall({ toast, onSheet: (open) => (open ? overlayOpened() : overlayClosed()) });
 initFullscreen();
@@ -4021,6 +4023,12 @@ initFormulaInfo();
     else refreshUsageMeter();
     if (!o?.keepView) showView("path");
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
+    if (first && START_ASK && !o?.keepView) {
+      const box = $("#input");
+      box.value = START_ASK;
+      autoGrow();
+      box.focus();
+    }
     if (first) restoreWindows();
     first = false;
   };

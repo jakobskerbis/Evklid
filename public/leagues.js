@@ -1,9 +1,10 @@
 // Pogled »Lige«: tedenska liga, vzdevek, razredi in skupine prijateljev.
 import { icon } from "./icons.js";
-import { avatarSvg, itemOf, itemName } from "./avatar.js";
+import { avatarSvg, itemOf, itemName, itemRarity, wear } from "./avatar.js";
 import { DRAW } from "./zbirke.js";
 import { t, currentLang, locale } from "./i18n.js";
 import { quizCardHtml, playQuiz } from "./kviz.js";
+import { itemThumb, earnedWhere } from "./zbirke-view.js";
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const api = async (url, opts = {}) => {
@@ -28,6 +29,7 @@ const OUTCOME = {
 };
 
 let current = null; // id učenca
+let vitrine = null; // odgovor /api/students/:id/vitrina
 let period = "week"; // razredi in prijatelji: ta teden | ta mesec
 try {
   period = localStorage.getItem("evklid.boardPeriod") === "month" ? "month" : "week";
@@ -131,13 +133,19 @@ export async function loadLeague(studentId) {
   const root = $("#league-content");
   let data;
   let tasks = null; // razredne naloge (server/schools.js); brez njih liga še vedno deluje
+  let vit = null;
   try {
-    [data, tasks] = await Promise.all([api(`/api/students/${studentId}/league`), api(`/api/students/${studentId}/assignments`).catch(() => null)]);
+    [data, tasks, vit] = await Promise.all([
+      api(`/api/students/${studentId}/league`),
+      api(`/api/students/${studentId}/assignments`).catch(() => null),
+      api(`/api/students/${studentId}/vitrina`).catch(() => null), // vitrine v razredu (server/vitrina.js)
+    ]);
   } catch (e) {
     root.innerHTML = `<p class="muted">${esc(e.message)}</p>`;
     return;
   }
   if (current !== studentId) return;
+  vitrine = vit;
   const L = data.league;
   const league = L.joined
     ? `<p class="muted league-rule"><span class="dot up"></span>${esc(t("lg.promote", { count: L.promoteCount }))}${L.demoteCount ? ` · <span class="dot down"></span>${esc(t("lg.demote", { count: L.demoteCount }))}` : ""} · ${icon("calendar")} ${esc(t("lg.ends", { time: timeLeft(L.endsAt) }))}</p>
@@ -180,6 +188,7 @@ export async function loadLeague(studentId) {
           <p class="muted">${esc(t(period === "month" ? "lg.classMonth" : c.kind === "friends" ? "lg.boardFriends" : "lg.board"))}</p>
           ${boardHtml(byPeriod(c.board))}
           ${c.kind === "class" ? classTasksHtml(tasks?.classes.find((x) => x.classId === c.id)) : ""}
+          ${c.kind === "class" ? showcaseHtml(vitrine?.classes.find((x) => x.id === c.id)) : ""}
           <button type="button" class="ghost small" data-leave="${c.id}">${icon("x")}<span>${esc(t("lg.leave"))}</span></button>
         </div>`,
       )
@@ -196,9 +205,11 @@ export async function loadLeague(studentId) {
         <button type="submit" class="secondary">${icon("plus")}<span>${esc(t("lg.create"))}</span></button>
       </form>
       <p class="muted">${esc(t("lg.teacher"))} <a href="ucitelj.html" target="_blank">${esc(t("lg.teacherLink"))}</a></p>
-    </div>`;
+    </div>
+    <div id="lg-vit-inspect"></div>`;
 
   watchQuiz(studentId, data.classes.some((c) => c.kind === "class"));
+  bindShowcase(root, studentId);
   $("#nick-change").addEventListener("click", showNickPicker);
   root.querySelectorAll("[data-period]").forEach((b) =>
     b.addEventListener("click", () => {
@@ -267,6 +278,81 @@ export async function loadLeague(studentId) {
       if (!confirm(t("lg.leaveConfirm"))) return;
       await api(`/api/students/${studentId}/classes/${b.dataset.leave}`, { method: "DELETE" });
       loadLeague(studentId);
+    }),
+  );
+}
+
+// Vitrine v razredu (server/vitrina.js): vklop »Pokaži mojo vitrino sošolcem« (privzeto izklopljen) in vitrine
+// sošolcev, ki so ga vklopili. Učenec vidi samo vzdevek (kot na lestvici), avatar, XP in do tri predmete.
+function showcaseHtml(v) {
+  if (!v) return "";
+  const toggle = v.off
+    ? `<p class="muted small lg-vit-off">${icon("lock")} ${esc(t("lg.vitOff"))}</p>`
+    : `<label class="lg-vit-toggle"><input type="checkbox" role="switch" data-vitrina="${v.id}" ${v.on ? "checked" : ""}><span><b>${esc(t("lg.vitShare"))}</b><small class="muted">${esc(t("lg.vitShareHint"))}</small></span></label>`;
+  const list = v.list.length
+    ? `<ul class="lg-vit-list">${v.list
+        .map(
+          (r, i) => `<li class="${r.me ? "me" : ""}">
+            <span class="lg-vit-who">${avatarSvg(r.avatar, { size: 56 })}<span><b class="nick-name">${esc(r.nickname)}</b>${r.me ? ` <span class="you">${esc(t("lg.you"))}</span>` : ""}<small>${period === "month" ? r.month : r.xp} XP</small></span></span>
+            <span class="lg-vit-items">${r.items.length
+              ? r.items.map((it, j) => `<button type="button" class="lg-vit-item gm-r-${itemRarity(itemOf(it.item))}" data-vit="${v.id}:${i}:${j}" aria-label="${esc(t("lg.vitOpen", { name: itemOf(it.item) ? itemName(itemOf(it.item), currentLang()) : it.item }))}">${itemThumb(it.item, 48, r.avatar)}</button>`).join("")
+              : `<small class="muted">${esc(t("lg.vitNoItems"))}</small>`}</span>
+          </li>`,
+        )
+        .join("")}</ul>`
+    : `<p class="muted small">${esc(t("lg.vitEmpty"))}</p>`;
+  return `<h3 class="h-icon">${icon("star")} ${esc(t("lg.vitrine"))}</h3>${toggle}${v.off ? "" : list}`;
+}
+
+let vitOpener = null;
+function closeVitInspect() {
+  const box = document.getElementById("lg-vit-inspect");
+  if (box) box.innerHTML = "";
+  vitOpener?.focus?.({ preventScroll: true });
+  vitOpener = null;
+}
+// »Preglej« predmet sošolca: katera tema (predmet, letnik) in kdaj ga je dobil (samo datum).
+function openVitInspect(btn) {
+  const [cid, i, j] = btn.dataset.vit.split(":").map(Number);
+  const r = vitrine?.classes.find((x) => x.id === cid)?.list[i];
+  const it = r?.items[j];
+  const x = it && itemOf(it.item);
+  const box = document.getElementById("lg-vit-inspect");
+  if (!x || !box) return;
+  vitOpener = btn;
+  const name = itemName(x, currentLang());
+  // Tema in predmet (npr. »Kemija«), brez razreda ali letnika.
+  const subj = it.topic?.subject && t(`subj.${it.topic.subject}`);
+  const where = earnedWhere(it.item, { ...it, topic: it.topic && { name: it.topic.name, path: subj && subj !== `subj.${it.topic.subject}` ? subj : "" } });
+  box.innerHTML = `<div class="zb-inspect card lg-vit-inspect" role="dialog" tabindex="-1" aria-modal="false" aria-label="${esc(name)}">
+    <button type="button" class="ghost zb-x" data-vit-close aria-label="${esc(t("nav.back"))}">${icon("x")}</button>
+    <div class="zb-big">${x.sym ? itemThumb(it.item, 120) : avatarSvg(wear(r.avatar, it.item), { size: 170, title: name })}</div>
+    <div class="zb-info">
+      <h2>${esc(name)}</h2>
+      <p><span class="gm-rtag gm-r-${itemRarity(x)}">${esc(t(`games.rarity.${itemRarity(x)}`))}</span></p>
+      <p>${icon("user")}<span>${esc(t("lg.vitOf", { nick: r.nickname }))}</span></p>
+      ${it.date ? `<p>${icon("calendar")}<span>${esc(t("zb.got", { date: fmtDay(it.date, true) }))}</span></p>` : ""}
+      ${where ? `<p>${icon("book-open")}<span>${esc(where)}</span></p>` : ""}
+    </div>
+  </div>`;
+  const dlg = box.firstElementChild;
+  dlg.querySelector("[data-vit-close]").addEventListener("click", closeVitInspect);
+  dlg.addEventListener("keydown", (e) => e.key === "Escape" && closeVitInspect());
+  dlg.focus({ preventScroll: true });
+}
+
+function bindShowcase(root, studentId) {
+  root.querySelectorAll("[data-vit]").forEach((b) => b.addEventListener("click", () => openVitInspect(b)));
+  root.querySelectorAll("[data-vitrina]").forEach((inp) =>
+    inp.addEventListener("change", async () => {
+      try {
+        await api(`/api/students/${studentId}/classes/${inp.dataset.vitrina}/vitrina`, { method: "PUT", body: { on: inp.checked } });
+        toast(t(inp.checked ? "lg.vitOn" : "lg.vitHidden"));
+        loadLeague(studentId);
+      } catch (err) {
+        inp.checked = !inp.checked;
+        toast(err.message);
+      }
     }),
   );
 }

@@ -15,7 +15,7 @@
   .topbar { padding: 10px 20px; gap: 12px; }
   .brand-name { display: inline; }
   .stat .xp-unit { display: inline; }
-  .tabbar { justify-content: center; padding: 6px 16px calc(6px + env(safe-area-inset-bottom)); }
+  .tabbar { justify-content: center; padding: 6px 16px calc(6px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
   .tabbar .tab { max-width: 150px; font-size: 0.8rem; }
   .tabbar .tab:not(.active) span { display: block; }
   /* Gumbi na dotik vsaj 44 px. */
@@ -66,8 +66,8 @@
    Učni poti, klepet ima svoje (#chat-off). */
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
   body:has(> #view-chat:not([hidden]):not(.in-okno)) > :is(.topbar, #mock-banner, #test-notice) { display: none; }
-  body > #view-chat:not(.in-okno) .chat-head { padding-top: max(10px, env(safe-area-inset-top)); }
-  body > #view-chat:not(.in-okno) .sidebar.open { padding-top: calc(72px + env(safe-area-inset-top)); }
+  body > #view-chat:not(.in-okno) .chat-head { padding-top: max(10px, var(--varno-zg, env(safe-area-inset-top, 0px))); }
+  body > #view-chat:not(.in-okno) .sidebar.open { padding-top: calc(72px + var(--varno-zg, env(safe-area-inset-top, 0px))); }
 }
 
 /* Telefon, Inštruktor: enak rob 16 px za glavo, klepet in vrstico za pisanje; gumbi v glavi enako veliki in enako
@@ -80,6 +80,17 @@
   body > #view-chat:not(.in-okno) .chat-head > .chat-back, .in-okno .chat-head > #toggle-sidebar { margin-inline-start: -8px; }
   .chat-head > .chat-calc { margin-inline-end: -8px; }
   .chat-head h1 { white-space: nowrap; text-overflow: ellipsis; }
+  /* Oznake pogovora v svoji vrstici pod naslovom, cele in berljive (j 2026-11-04: prej »Mat…«, »…lekci«); če jih je
+     več, kot gre v vrstico, se vrstica pomika vstran. Odprt seznam pogovorov jih skrije (glava spet ena vrstica). */
+  .chat-head { flex-wrap: wrap; row-gap: 2px; }
+  .chat-head #chat-state {
+    order: 10; flex: 1 1 100%; max-width: none; min-width: 0; overflow-x: auto; scrollbar-width: none;
+    margin-inline: -16px; padding: 0 16px 4px;
+  }
+  .chat-head #chat-state::-webkit-scrollbar { display: none; }
+  .chat-head #chat-state .chip { display: inline-flex; max-width: none; overflow: visible; }
+  .chat-head #chat-state .chip-btn { min-height: 40px; padding-inline: 12px !important; order: -1; } /* »Preberi lekcijo« prvi, vedno viden */
+  .chat-head #chat-state:empty, .chat-view:has(.sidebar.open) #chat-state { display: none; }
   .messages { padding-inline: 16px; }
   .composer { padding-inline: 16px; }
   .composer-row { gap: 2px; }
@@ -88,7 +99,8 @@
 
 /* ---------- Spodnja vrstica se umakne pri branju in gledanju (j, 2026-10-31) ----------
    Telefon in tablica na dotik, vsi slogi: v klepetu z inštruktorjem (prazen ali s sporočili), v temi (lekcija, naloge,
-   vaja, simulacije), pri karticah za ponavljanje, v odprti lekciji Učbenika in v kalkulatorju (cel pogled). Igra med
+   vaja, simulacije), pri karticah za ponavljanje, v odprti lekciji Učbenika, v odprtem poskusu Laboratorija (več prostora
+   za pripeto risbo, docs/laboratorij.md) in v kalkulatorju (cel pogled). Igra med
    igranjem, tipkovnica kalkulatorja, plošča za vnos, Oglasna deska in video gradiv jo že prekrijejo ali skrijejo.
    Vrstica je takrat pritrjena pod spodnjim robom (ne vzame prostora); poteg navzdol ali kolešček gor jo pokaže
    (body.tb-peek, app.js), poteg navzgor skrije. Na teh zaslonih je v glavi gumb Nazaj. app.js iz position: fixed
@@ -97,7 +109,7 @@
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
   body:is(:has(> #view-chat:not([hidden]):not(.in-okno)), :has(> #view-topic:not([hidden]):not(.in-okno)),
     :has(> #view-cards:not([hidden]):not(.in-okno)), :has(> #view-graph:not([hidden]):not(.in-okno)),
-    :has(> #view-textbook:not([hidden]):not(.in-okno) .tb-lesson-grid)) > .tabbar {
+    :has(> #view-textbook:not([hidden]):not(.in-okno) .tb-lesson-grid), :has(> #view-lab.lab-open:not([hidden]):not(.in-okno))) > .tabbar {
     position: fixed; inset-inline: 0; bottom: 0; z-index: 30;
     transform: translateY(var(--tb-y, 100%)); visibility: var(--tb-vis, hidden);
     transition: transform 0.22s ease, visibility 0s linear var(--tb-vd, 0.22s);
@@ -105,10 +117,10 @@
   body.tb-peek, body:has(> #tour:not([hidden])) { --tb-y: 0%; --tb-vis: visible; --tb-vd: 0s; }
   /* Klepet: gumb Nazaj v glavi; vrstica za pisanje na dnu z odmikom za varno območje, pokazana vrstica jo dvigne. */
   body > #view-chat:not(.in-okno) .chat-back { display: inline-grid; place-items: center; }
-  body > #view-chat:not(.in-okno) .composer { padding-bottom: max(10px, calc(4px + env(safe-area-inset-bottom))); }
+  body > #view-chat:not(.in-okno) .composer { padding-bottom: max(10px, calc(4px + var(--varno-sp, env(safe-area-inset-bottom, 0px)))); }
   body.tb-peek > #view-chat:not(.in-okno) .composer { padding-bottom: 10px; margin-bottom: var(--tabbar-h, 0px); }
   /* Krogi lekcije (Nazaj · 1/12 · Naprej) plavajo na dnu: odmik za varno območje, nad pokazano vrstico. */
-  body > #view-textbook:not(.in-okno) .tb-stepper { padding-bottom: max(12px, calc(4px + env(safe-area-inset-bottom))); transition: bottom 0.22s ease; }
+  body > #view-textbook:not(.in-okno) .tb-stepper { padding-bottom: max(12px, calc(4px + var(--varno-sp, env(safe-area-inset-bottom, 0px)))); transition: bottom 0.22s ease; }
   body.tb-peek > #view-textbook:not(.in-okno) .tb-stepper { bottom: var(--tabbar-h, 0px); padding-bottom: 12px; }
   /* Pokazana vrstica dvigne kroge: pogled dobi enak spodnji odmik, da konec koraka ne ostane pod krogi. */
   body.tb-peek > #view-textbook:not(.in-okno):has(.tb-stepper) { padding-bottom: var(--tabbar-h, 0px); }
