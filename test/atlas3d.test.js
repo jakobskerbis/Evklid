@@ -244,13 +244,17 @@ test("CSP: /3d doda samo 'wasm-unsafe-eval', drugje ostane stroga", async () => 
     assert.match(skripte, /'wasm-unsafe-eval'/);
     assert.ok(!/unsafe-inline|'unsafe-eval'|https?:|\*/.test(skripte), skripte);
     assert.match(csp, /object-src 'none'/);
-    assert.match(csp, /frame-ancestors 'none'/);
+    // Okvir samo na istem izvoru (»Uči se« → 3D svet čez cel zaslon); glavna stran ostane brez okvirjev.
+    assert.match(csp, /frame-ancestors 'self'/);
+    assert.ok(!/frame-ancestors[^;]*('none'|\*|https?:)/.test(csp), csp);
+    assert.equal(stran.headers.get("x-frame-options"), "SAMEORIGIN");
     const html = await stran.text();
     assert.ok(!/<script(?![^>]*\bsrc=)[^>]*>/i.test(html), "3d.html ne sme imeti vrinjenih skript");
     assert.ok(!/importmap/.test(html));
     assert.ok(!/\son[a-z]+=/i.test(html), "3d.html brez atributov on…");
     const domov = (await get("/")).headers.get("content-security-policy");
     assert.ok(!/wasm-unsafe-eval/.test(domov), "glavna stran ne sme dovoliti wasm");
+    assert.match(domov, /frame-ancestors 'none'/);
     assert.equal((await get("/3d/")).status, 200); // vse poti na strani so absolutne
     // three: jedro in dodatki; dodatki uvažajo three s polno potjo (brez importmap).
     const jedro = await get("/vendor/three/build/three.module.js");
@@ -288,7 +292,7 @@ test("prepis uvozov three: golo 'three' postane polna pot, drugo ostane", () => 
 
 test("prevodi: vsak ključ a3.* iz public/3d je v sl.js", () => {
   const kode = datoteke(D3, ".js").filter((f) => !f.includes(`${path.sep}modeli${path.sep}`));
-  kode.push(path.join(ROOT, "public", "laboratorij.js"), path.join(ROOT, "mobile", "src", "app", "atlas.tsx"));
+  kode.push(path.join(ROOT, "public", "laboratorij.js"), path.join(ROOT, "public", "uci-se.js"), path.join(ROOT, "mobile", "src", "app", "atlas.tsx"), path.join(ROOT, "mobile", "src", "components", "Web3D.tsx"));
   const kljuci = new Set();
   for (const f of kode) {
     const src = fs.readFileSync(f, "utf8");
