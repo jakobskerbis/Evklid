@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Dvojno vbočena ploščica s premerom 7,8 µm; oblika je izračunana iz enačbe Evansa in Funga. Zrela rdeča krvnička nima jedra in mitohondrijev, zato je v njej več prostora za hemoglobin, ki veže kisik. Molekule hemoglobina in sladkorne verige so močno povečane.",
+  poskusi: "Izberi »Prerez« in z »Mere« primerjaj debelino krvničke ob robu in na sredini.",
   merilo: { m: 9e-6, oznaka: "9 µm" },
 };
 

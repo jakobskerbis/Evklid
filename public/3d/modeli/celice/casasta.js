@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Celica v obliki čaše med valjastimi celicami črevesnega epitelija. Zgornji razširjeni del (teka) je poln zrnc sluzi, jedro je stisnjeno v ozkem dnu. Sluz prekrije in varuje površino črevesa. Zrnc in organelov je manj kot v resnici.",
+  poskusi: "Tapni sluzna zrnca in opazuj, kje celica izloča sluz.",
   merilo: { m: 29e-6, oznaka: "29 µm" },
 };
 
