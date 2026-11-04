@@ -284,7 +284,6 @@
   "chat.symbolsTitle": "記号：√, π, ∫, H₂O …",
   "chat.mic": "質問を話す",
   "chat.delete": "会話を削除",
-  "chat.confirmDelete": "この会話を削除しますか？",
   "chat.hello": "こんにちは、{name}さん！",
   "chat.intro": "問題を入力するか、写真を撮ってください。一緒に一歩ずつ解きましょう。",
   "chat.idea1": "2x + 3 = 11 はどう解くの？",
@@ -2912,5 +2911,7 @@
   "ai.buy": "説明を追加購入",
   "ai.pool": "家族のすべてのプロフィールで共有します。",
   "gift.level": "段階",
-  "meter.levelsTitle": "段階別の料金"
+  "meter.levelsTitle": "段階別の料金",
+  "chat.choices": "クイック返信",
+  "chat.deleted": "会話を削除しました。"
 }

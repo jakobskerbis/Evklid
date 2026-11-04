@@ -7,7 +7,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "./prompt.js";
-import { createStreamFilter, parseMeta, parseCards, stripMeta, stripLeadPhrase } from "./meta.js";
+import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, stripMeta, stripLeadPhrase } from "./meta.js";
 import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
 import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams } from "./claude.js";
@@ -40,6 +40,7 @@ import { competitionInfo, competitionKeyFor, isCompetitionPath } from "./competi
 import { PAPERS_SI, PAPERS_SOURCE } from "./exam-papers-si.js";
 import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, localizeExamView, localizeExamTopic } from "./exams.js";
 import { compressedStatic, compressedJson } from "./compress.js";
+import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode } from "./reports.js";
 import { verifyAnswer, codeCheck } from "./verify.js";
@@ -244,17 +245,18 @@ export function createApp(store, opts = {}) {
   mountSolePage(app); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
-    app.use(
-      compressedStatic([
-        ["/vendor/katex/", path.join(modules, "katex", "dist")],
-        ["/vendor/pdfjs/", path.join(modules, "pdfjs-dist")],
-        ["/vendor/marked/", path.join(modules, "marked")],
-        ["/vendor/dompurify/", path.join(modules, "dompurify", "dist")],
-        ...FONTS.map(([dir, pkg]) => [`/vendor/${dir}/`, path.join(modules, "@fontsource-variable", pkg)]),
-        ["/practice/", path.join(here, "practice")],
-        ["/", publicDir],
-      ]),
-    );
+    const statics = compressedStatic([
+      ["/vendor/katex/", path.join(modules, "katex", "dist")],
+      ["/vendor/pdfjs/", path.join(modules, "pdfjs-dist")],
+      ["/vendor/marked/", path.join(modules, "marked")],
+      ["/vendor/dompurify/", path.join(modules, "dompurify", "dist")],
+      ...FONTS.map(([dir, pkg]) => [`/vendor/${dir}/`, path.join(modules, "@fontsource-variable", pkg)]),
+      ["/practice/", path.join(here, "practice")],
+      ["/", publicDir],
+    ]);
+    app.use(statics);
+    // server/index.js po zagonu vnaprej stisne datoteke prvega odprtja strani (prvi obiski po posodobitvi hitri).
+    app.locals.warmStatic = () => statics.warm(startupFiles(publicDir, "index.html", ["games/index.js"]));
     app.use("/api", compressedJson());
   }
   app.use(express.static(publicDir));
@@ -434,6 +436,13 @@ export function createApp(store, opts = {}) {
     return modes.length === FULL_AFTER && modes.every((m) => m === "A");
   };
 
+  const choicesOf = (raw) => {
+    const c = parseChoices(raw);
+    return c.length ? c : undefined;
+  };
+  // Surovo besedilo shranjenega odgovora (z bloki), za gumbe z izbirami ob ponovnem odprtju pogovora.
+  const rawOf = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
+
   app.get("/api/conversations/:id", (req, res) => {
     const c = loadConversation(req, res);
     if (!c) return;
@@ -450,6 +459,7 @@ export function createApp(store, opts = {}) {
       topic: c.path_topic ? { id: c.path_topic, name: getTopic(c.path_topic)?.name } : null,
       messages: msgs.map((m) => ({
         full_offer: (offerOn && m === lastMsg) || undefined,
+        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || last.flag === "none") ? choicesOf(rawOf(m)) : undefined,
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
         reported: reported.has(m.id) || undefined,
@@ -772,7 +782,8 @@ export function createApp(store, opts = {}) {
       let display = (note || "") + stripLeadPhrase(stripMeta(result.text)) + fix;
       // V zgodovino shranimo samo besedilo (brez blokov razmišljanja): manj žetonov
       // pri naslednjih klicih in nobenih težav ob krajšanju zgodovine.
-      let content = [{ type: "text", text: (fix ? insertFix(result.text, fix) : result.text) || "…" }];
+      // Popravek preverjanja zamenja konec odgovora: gumbi z izbirami ne veljajo več (ne ob ponovnem odprtju).
+      let content = [{ type: "text", text: (fix ? insertFix(stripChoices(result.text), fix) : result.text) || "…" }];
       // Prvi odgovor gre v porabo kot »chat«; ponovni odgovor po napačni sodbi je že zabeležen kot »popravek« (extraCost).
       const cost = (cached ? 0 : usage.log(student.id, first.model || answerModelOf(mode, deep), first.usage, routed.boosted ? "boost" : "chat")) + extraCost;
       // Obvestilo pri 80 % in opomba pri 100 % (inštruktor nadaljuje v hitrem načinu): kot preostale podrobne razlage,
@@ -863,6 +874,9 @@ export function createApp(store, opts = {}) {
         ai_out: aiOut || undefined,
         settings: settingsTools.state.used || undefined,
         full_offer: (meta?.mode === "A" && meta.flag === "none" && !meta.done && !settingsTools.state.used && fullOffer(conv.id)) || undefined,
+        // Gumbi z izbirami (<<IZBIRE [...]>>): učenec tapne, odgovor se pošlje. Ne pri opozorilih in zavrnitvi.
+        // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
+        choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : ""),
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();

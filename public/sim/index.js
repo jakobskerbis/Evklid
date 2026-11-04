@@ -157,6 +157,8 @@ export const ENGINES = {
   "lab-mesanje": ["lab-toplota.js", "labMesanje"],
   "lab-faze": ["lab-toplota.js", "labFaze"],
   "lab-ohlajanje": ["lab-toplota.js", "labOhlajanje"],
+  "lab-lom": ["lab-optika.js", "labLom"],
+  "lab-leca": ["lab-optika.js", "labLeca"],
   "lab-hooke": ["lab-sile.js", "labHooke"],
   "lab-gostota": ["lab-sile.js", "labGostota"],
   "lab-vzgon": ["lab-sile.js", "labVzgon"],
@@ -164,6 +166,9 @@ export const ENGINES = {
   "lab-ph": ["lab-indikatorji.js", "labPh"],
   "lab-dokaz": ["lab-indikatorji.js", "labDokaz"],
   "lab-slina": ["lab-indikatorji.js", "labSlina"],
+  "lab-elektroliza": ["lab-elektrokemija.js", "labElektroliza"],
+  "lab-galvanski": ["lab-elektrokemija.js", "labGalvanski"],
+  "lab-kovine": ["lab-elektrokemija.js", "labKovine"],
   // teme, dodane po primerjavi z učnimi načrti (2026-10-30)
   logika: ["vrzeli.js", "logika"], prostor: ["vrzeli.js", "prostor"], "koord-trikotnik": ["vrzeli.js", "koordTrikotnik"],
   "vezava-vzmeti": ["vrzeli.js", "vezavaVzmeti"], izmenicni: ["vrzeli.js", "izmenicni"], "em-spekter": ["vrzeli.js", "emSpekter"], zvezde: ["vrzeli.js", "zvezde"], domine: ["vrzeli.js", "domine"],

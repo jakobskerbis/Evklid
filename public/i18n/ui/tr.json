@@ -290,7 +290,6 @@
   "chat.symbolsTitle": "Semboller: √, π, ∫, H₂O …",
   "chat.mic": "Sorunu sesli söyle",
   "chat.delete": "Sohbeti sil",
-  "chat.confirmDelete": "Bu sohbet silinsin mi?",
   "chat.hello": "Merhaba, {name}!",
   "chat.intro": "Bir soru yaz ya da fotoğrafını çek. Birlikte adım adım çözelim.",
   "chat.idea1": "2x + 3 = 11 nasıl çözülür?",
@@ -2934,5 +2933,7 @@
   "ai.buy": "Açıklama satın al",
   "ai.pool": "Ailedeki tüm profiller için ortak.",
   "gift.level": "Seviye",
-  "meter.levelsTitle": "Seviyeye göre fiyatlar"
+  "meter.levelsTitle": "Seviyeye göre fiyatlar",
+  "chat.choices": "Hızlı yanıtlar",
+  "chat.deleted": "Sohbet silindi."
 }

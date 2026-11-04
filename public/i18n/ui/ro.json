@@ -296,7 +296,6 @@
   "chat.symbolsTitle": "Simboluri: √, π, ∫, H₂O …",
   "chat.mic": "Spune întrebarea",
   "chat.delete": "Șterge conversația",
-  "chat.confirmDelete": "Ștergi această conversație?",
   "chat.hello": "Salut, {name}!",
   "chat.intro": "Scrie un exercițiu sau fotografiază-l. Îl rezolvăm împreună pas cu pas.",
   "chat.idea1": "Cum rezolv 2x + 3 = 11?",
@@ -2963,5 +2962,7 @@
   "ai.buy": "Cumpără explicații",
   "ai.pool": "Comun pentru toate profilurile familiei.",
   "gift.level": "Nivel",
-  "meter.levelsTitle": "Prețuri pe niveluri"
+  "meter.levelsTitle": "Prețuri pe niveluri",
+  "chat.choices": "Răspunsuri rapide",
+  "chat.deleted": "Conversația a fost ștearsă."
 }

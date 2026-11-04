@@ -26,7 +26,7 @@ export const ZNAKI = [
   // grafični kalkulator (orodja in vrste funkcij)
   "house", "table", "wrench", "activity", "chart-area", "chart-spline", "flower", "infinity", "spline", "square-function",
   // logotip
-  "elementi",
+  "kristal",
 ];
 
 const n = (v) => +v.toFixed(2);

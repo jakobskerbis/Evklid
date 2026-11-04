@@ -32,7 +32,34 @@ import { initFeedback, showFeedback } from "./feedback.js";
 import { openAdminBug, deviceInfo, shownHtml } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
-import { initGames, showGames, gamesBack, leaveGames } from "./games/index.js";
+// Igre (games/, ~2 MB kode s predmeti) se naložijo šele, ko jih učenec odpre, ali v mirnem trenutku po
+// zagonu: prvo odprtje Evklida mora prenesti in zagnati pol manj kode (j, 2026-11-04: »stran deluje počasi«).
+let gamesMod = null;
+let gamesCtx = null;
+let gamesP = null;
+let gamesTries = 0;
+// Brskalnik si neuspel modul zapomni do ponovnega nalaganja strani: nov poskus zato z drugim naslovom (?r=).
+const loadGames = () =>
+  (gamesP ||= (gamesTries++ ? import(`./games/index.js?r=${gamesTries}`) : import("./games/index.js")).then((m) => {
+    gamesMod = m;
+    if (gamesCtx) m.initGames(gamesCtx);
+    return m;
+  }).catch((err) => {
+    gamesP = null; // brez povezave ali napaka: naslednji poskus znova
+    throw err;
+  }));
+const initGames = (c) => {
+  gamesCtx = c;
+  gamesMod?.initGames(c);
+};
+const gamesNote = (key) =>
+  document.querySelector("#games-content")?.replaceChildren(Object.assign(document.createElement("p"), { className: "muted", textContent: t(key) }));
+const showGames = () => {
+  if (!gamesMod) gamesNote("common.loading");
+  return loadGames().then((m) => m.showGames()).catch(() => gamesMod || gamesNote("off.noConnection"));
+};
+const gamesBack = () => gamesMod?.gamesBack() ?? false;
+const leaveGames = () => gamesMod?.leaveGames();
 import { gamesOn } from "./games/stage.js";
 import { initCorner, showCorner, cornerBack, closeBoard, askInterests, maybeAskInterests, interestsSummary } from "./corner.js";
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
@@ -621,16 +648,28 @@ function renderConversationList() {
     li.className = c.id === state.conversationId ? "active" : "";
     li.innerHTML = `<span>${escapeHtml(c.title)}</span><button title="${t("chat.delete")}" aria-label="${t("chat.delete")}">${icon("trash-2")}</button>`;
     li.querySelector("span").addEventListener("click", () => openConversation(c.id));
+    // Brisanje z enim klikom, brez potrditve (j, 4. 11.): pogovor takoj izgine iz seznama (tudi ob hitrem
+    // brisanju več pogovorov), ob napaki se seznam znova naloži.
     li.querySelector("button").addEventListener("click", async (e) => {
       e.stopPropagation();
-      if (!confirm(t("chat.confirmDelete"))) return;
-      await api(`/api/conversations/${c.id}`, { method: "DELETE" });
+      state.conversations = state.conversations.filter((x) => x.id !== c.id);
       if (state.paperCtx?.conv === c.id) state.paperCtx = null; // id se lahko ponovi pri novem pogovoru
       if (state.conversationId === c.id) {
+        state.pacer?.skip();
         state.conversationId = null;
+        state.convTopic = null;
         renderEmptyChat();
       }
-      await loadConversations();
+      renderConversationList();
+      refreshBubble();
+      $("#new-chat")?.focus(); // fokus ne pade na stran (tipkovnica, bralnik zaslona)
+      try {
+        await api(`/api/conversations/${c.id}`, { method: "DELETE" });
+        toast(t("chat.deleted"), "trash-2");
+      } catch (err) {
+        await loadConversations().catch(() => {});
+        if (err.status !== 404) throw err; // obvestilo o napaki (unhandledrejection)
+      }
     });
     list.appendChild(li);
   }
@@ -787,6 +826,7 @@ function addMessage(role, text, hasImage = false, info = null) {
     el.innerHTML = chatRich(text);
     if (text) addDeepButton(el, false);
     if (text && info?.full_offer) addFullButton(el);
+    if (text && info?.choices) addChoices(el, info.choices);
     if (text) addGraphButton(el, text);
     if (text && info?.id) addMsgFoot(el, info);
   }
@@ -814,7 +854,7 @@ async function send(text, { deep = false } = {}) {
     const sentTo = state.conversationId;
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
     const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
-    document.querySelectorAll(".full-btn").forEach((x) => x.remove());
+    document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
     userEl = addMessage("user", text, !!image);
     $("#input").value = "";
     autoGrow();
@@ -887,6 +927,8 @@ async function send(text, { deep = false } = {}) {
         if (d.state?.subject && state.conversationId === sentTo && !state.chatFx?.symbols) state.chatFx = { subject: d.state.subject, symbols: null };
         pacer.finish(d.text);
         chatReply(d.text); // mehurček, če klepet ni na zaslonu (public/okna.js)
+        // Pogovor je med odgovorom morda izbrisan ali zamenjan: naslov in stanje ostaneta odprtemu pogovoru.
+        if (state.conversationId !== sentTo) return;
         if (d.state) renderState(d.state);
         if (d.title) $("#chat-title").textContent = d.title;
       },
@@ -894,7 +936,7 @@ async function send(text, { deep = false } = {}) {
         bubble.classList.add("error");
         pacer.finish(d.error);
         pacer.skip();
-        $("#input").value = text; // vrni besedilo za ponovni poskus
+        if (state.conversationId === sentTo) $("#input").value = text; // vrni besedilo za ponovni poskus
       },
     });
     pacer.finish();
@@ -905,7 +947,15 @@ async function send(text, { deep = false } = {}) {
       // Odgovor, ki samo spremeni nastavitve, ne potrebuje »Razloži podrobneje«.
       if (doneData && !doneData.settings) addDeepButton(bubble, doneData.deep);
       // Ne, če je učenec med počasnim izpisom že poslal novo sporočilo (gumb samo pri zadnjem odgovoru).
-      if (doneData?.full_offer && !bubble.nextElementSibling) addFullButton(bubble);
+      // bubble.isConnected: učenec je med izpisom morda odprl drug pogovor.
+      if (doneData?.full_offer && bubble.isConnected && !bubble.nextElementSibling) addFullButton(bubble);
+      if (doneData?.choices && bubble.isConnected && !bubble.nextElementSibling) {
+        // Gumbi pridejo po izpisu: če je bil učenec na dnu, jih pokažemo (na telefonu bi bili pod robom).
+        const box = $("#messages");
+        const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+        addChoices(bubble, doneData.choices);
+        if (atBottom) requestAnimationFrame(() => (box.scrollTop = box.scrollHeight));
+      }
       if (doneData?.text) addGraphButton(bubble, doneData.text);
       if (cardsData) addCardsNote(bubble, cardsData);
       if (allowanceData) addAllowanceNote(bubble, allowanceData);
@@ -1755,6 +1805,7 @@ function addDeepButton(el, wasDeep) {
   b.type = "button";
   b.innerHTML = `${icon("search")} ${t("chat.deeper")}`;
   b.addEventListener("click", () => {
+    if (state.sending || !$("#chat-off").hidden) return;
     b.remove();
     send(t("chat.deeperMsg"), { deep: true });
   });
@@ -1771,11 +1822,48 @@ function addFullButton(el) {
   b.type = "button";
   b.innerHTML = `${icon("list-checks")} ${t("chat.full")}`;
   b.addEventListener("click", () => {
+    if (state.sending || !$("#chat-off").hidden) return;
     b.remove();
     send(t("chat.fullMsg"));
   });
   (el.querySelector(".deep-btn:not(.full-btn)") || el.lastElementChild)?.after(b);
   if (!b.isConnected) el.appendChild(b);
+}
+
+// Gumbi z izbirami (<<IZBIRE [...]>>, server/meta.js): kratki odgovori pod zadnjim sporočilom. Tap pošlje
+// odgovor kot učenčevo sporočilo (kot predlogi v praznem klepetu); če je učenec že kaj napisal, gre pred to besedilo.
+function addChoices(el, choices) {
+  if (el.classList.contains("error") || el.querySelector(".choice-row") || !Array.isArray(choices) || choices.length < 2) return;
+  document.querySelectorAll(".choice-row").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
+  const row = document.createElement("div");
+  row.className = "choice-row";
+  row.setAttribute("role", "group");
+  row.setAttribute("aria-label", t("chat.choices"));
+  for (const c of choices.slice(0, 4)) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "secondary small choice-btn";
+    b.dir = "auto";
+    b.textContent = c;
+    b.addEventListener("click", () => {
+      // Med pošiljanjem ali ob izklopljenem klepetu tap ne sme izgubiti gumbov.
+      if (state.sending || !$("#chat-off").hidden) return;
+      const typed = $("#input").value.trim();
+      row.remove();
+      if (typed || state.image) {
+        // Napisano besedilo in fotografija ostaneta: izbira gre pred besedilo, učenec pošlje sam.
+        $("#input").value = typed ? `${c}, ${typed}` : c;
+        autoGrow();
+        $("#input").focus();
+        return;
+      }
+      send(c);
+    });
+    row.append(b);
+  }
+  // Takoj za besedilom odgovora, pred »Razloži podrobneje« in nogo sporočila.
+  const before = el.querySelector(":scope > .deep-btn, :scope > .graph-btn, :scope > .msg-foot");
+  before ? before.before(row) : el.appendChild(row);
 }
 
 // Tiha napaka (npr. prekinjena povezava) se pokaže kot obvestilo, ne pa kot »nič se ne zgodi«.
@@ -3884,6 +3972,16 @@ initFormulaInfo();
   $("#chat-bug").hidden = !cfg.admin;
   initFeedback({ api, getStudent: () => state.student, showView, toast, currentLang }, cfg);
   initGames({ api, getStudent: () => state.student, setStudent: studentUpdated, toast: (m, ic = "check") => toast(m, ic), refreshXp, currentLang });
+  // Igre v ozadju, ko se je stran že odprla (zavihek Igre se nato odpre takoj); ne ob »Skrij igre« in ne ob varčevanju s podatki.
+  const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1500));
+  setTimeout(() => idle(() => {
+    if ((state.student && !gamesOn(state.student.settings)) || navigator.connection?.saveData) return;
+    loadGames().catch(() => {});
+  }), 3000);
+  // Dotik zavihka Igre (ali vrstice v »Jaz«) začne nalaganje že pred klikom.
+  document.addEventListener("pointerdown", (e) => {
+    if (!gamesMod && e.target.closest?.('[data-view="games"], [data-go="games"]')) loadGames().catch(() => {});
+  }, { passive: true, capture: true });
   initZbirke({ api, getStudent: () => state.student, currentLang, showView });
   initCorner({
     api,

@@ -614,12 +614,17 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 /* Temen okvir v obeh temah; barve količin so enake v skici, čipu in drsniku. */
 .fm-item.has-skica { grid-template-columns: minmax(0, 1fr); }
 .fm-skica { min-height: 120px; }
+.md-table .fm-skica-row > td { padding: 4px 0 12px; white-space: normal; background: none; }
+/* Široka tabela se na telefonu pomika vstran: skica je široka kot vidni del tabele in ostane na mestu. */
+.md-table-wrap:has(.fm-skica-row) { container-type: inline-size; }
+/* Rob tabele (2 × 1 px) ne sme povzročiti pomika; na računalniku skica tabele ne razširi. */
+.fm-skica-row .fm-skica { width: min(calc(100cqw - 2px), 460px); position: sticky; left: 0; }
 .sk { --sk-bg: #10131f; --sk-line: rgb(255 255 255 / 0.16); --sk-glavna: #f4f5fb; --sk-ploskev: #8f8cff; --sk-izbor: #f5c542; --sk-druga: #4fd18b; --sk-napaka: #ff6b6b; --sk-pt: #4f8cff;
   display: grid; gap: 10px; margin: 6px 0 4px; }
 .sk-frame { background: var(--sk-bg); border: 1px solid var(--sk-line); border-radius: 14px; padding: 6px; }
 .sk-svg { stroke-width: 2; display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto; touch-action: pan-y; user-select: none; }
 /* Debelina 2 se deduje s .sk-svg, da atribut stroke-width na posameznem elementu velja (CSS bi ga povozil). */
-.sk-svg line, .sk-svg path, .sk-svg polygon, .sk-svg circle, .sk-svg ellipse { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.sk-svg line, .sk-svg path, .sk-svg polygon, .sk-svg circle, .sk-svg ellipse, .sk-svg polyline { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .sk-svg .sk-thin { stroke-width: 1.4; }
 .sk-svg .sk-dash { stroke-dasharray: 4 5; }
 .sk-svg .sk-faint { opacity: 0.35; }
@@ -629,6 +634,8 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-s-druga { stroke: var(--sk-druga); }
 .sk-s-napaka { stroke: var(--sk-napaka); }
 .sk-svg .sk-f-ploskev { fill: color-mix(in srgb, var(--sk-ploskev) 22%, transparent); stroke: none; }
+.sk-svg .sk-f-izbor { fill: color-mix(in srgb, var(--sk-izbor) 22%, transparent); stroke: none; }
+.sk-svg .sk-f-druga { fill: color-mix(in srgb, var(--sk-druga) 20%, transparent); stroke: none; }
 .sk-t { font: 600 14px/1 var(--font, system-ui), sans-serif; fill: var(--sk-glavna); font-style: italic; }
 .sk-t-ploskev { fill: var(--sk-ploskev); }
 .sk-t-izbor { fill: var(--sk-izbor); }

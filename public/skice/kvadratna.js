@@ -33,7 +33,7 @@ export default function narisi(host) {
     s("circle", { cx: A.X(p), cy: A.Y(q), r: 6, class: "sk-fill sk-fill-druga" }, zg);
     napis(g, A.X(p) + 9, A.Y(q) + (a > 0 ? 16 : -8), "T", "druga");
     napis(g, Math.min(A.R - 4, A.X(p) + 5), A.T + 12, "x = p", "izbor", { style: "font-size: 11px" });
-    const z = (v) => `${Math.abs(v - Number(v.toFixed(2))) < 1e-9 ? "" : "≈ "}${st(v, 2)}`;
+    const z = (v) => `${Math.abs(v - Number(v.toFixed(2))) < 1e-9 ? "" : "≈\u00a0"}${st(v, 2)}`;
     S.cipi([
       { barva: "druga", oznaka: "T(p, q)", vrednost: `T${par(p, q, 1)}` },
       { barva: "glavna", oznaka: "b = -2ap", vrednost: st(k.b, 2) },

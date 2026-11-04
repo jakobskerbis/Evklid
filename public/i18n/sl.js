@@ -453,7 +453,7 @@ export default {
   "chat.symbolsTitle": "Simboli: √, π, ∫, H₂O …",
   "chat.mic": "Povej vprašanje",
   "chat.delete": "Izbriši pogovor",
-  "chat.confirmDelete": "Izbrišem ta pogovor?",
+  "chat.deleted": "Pogovor izbrisan.",
   "chat.hello": "Živjo, {name}!",
   "chat.intro": "Napiši nalogo ali jo fotografiraj. Skupaj jo bova rešila po korakih.",
   "chat.idea1": "Kako rešim enačbo 2x + 3 = 11?",
@@ -472,6 +472,7 @@ export default {
   "chat.deeperMsg": "Tega ne razumem dobro. Razloži podrobneje, korak za korakom.",
   "chat.full": "Pokaži celoten postopek",
   "chat.fullMsg": "Pokaži mi celoten postopek te naloge.",
+  "chat.choices": "Hitri odgovori",
   "chat.aiNote": "Evklid se lahko zmoti. Pomembne rezultate preveri.",
   "chat.off": "Klepet z inštruktorjem je začasno izklopljen. Drugi deli aplikacije delujejo.",
   // prijava napake pod odgovorom inštruktorja (server/reports.js, docs/krizni-nacrt.md)

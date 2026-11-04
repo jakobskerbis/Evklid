@@ -284,7 +284,6 @@
   "chat.symbolsTitle": "符号：√, π, ∫, H₂O …",
   "chat.mic": "说出你的问题",
   "chat.delete": "删除对话",
-  "chat.confirmDelete": "删除这段对话？",
   "chat.hello": "你好，{name}！",
   "chat.intro": "输入题目或拍下来。我们一起一步步解出来。",
   "chat.idea1": "怎么解 2x + 3 = 11？",
@@ -2912,5 +2911,7 @@
   "ai.buy": "购买更多讲解",
   "ai.pool": "家庭所有档案共用。",
   "gift.level": "阶段",
-  "meter.levelsTitle": "按阶段的价格"
+  "meter.levelsTitle": "按阶段的价格",
+  "chat.choices": "快速回复",
+  "chat.deleted": "已删除对话。"
 }

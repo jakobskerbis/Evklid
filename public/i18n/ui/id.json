@@ -284,7 +284,6 @@
   "chat.symbolsTitle": "Simbol: √, π, ∫, H₂O …",
   "chat.mic": "Ucapkan pertanyaanmu",
   "chat.delete": "Hapus percakapan",
-  "chat.confirmDelete": "Hapus percakapan ini?",
   "chat.hello": "Hai, {name}!",
   "chat.intro": "Tulis soal atau fotokan. Kita selesaikan bersama langkah demi langkah.",
   "chat.idea1": "Bagaimana menyelesaikan 2x + 3 = 11?",
@@ -2912,5 +2911,7 @@
   "ai.buy": "Beli penjelasan lagi",
   "ai.pool": "Dipakai bersama oleh semua profil keluarga.",
   "gift.level": "Jenjang",
-  "meter.levelsTitle": "Harga per jenjang"
+  "meter.levelsTitle": "Harga per jenjang",
+  "chat.choices": "Balasan cepat",
+  "chat.deleted": "Percakapan dihapus."
 }

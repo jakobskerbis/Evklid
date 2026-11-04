@@ -117,3 +117,15 @@
 
 /* Pogled je lahko v spodnji vrstici (npr. Laboratorij): takrat brez »← Jaz«. */
 .me-back[hidden] { display: none !important; }
+
+/* Gumbi z izbirami pod odgovorom inštruktorja: glavni cilj dotika, 44 px (docs/oblikovanje.md). */
+@media (hover: none) and (pointer: coarse) {
+  .choice-row .choice-btn { min-height: 44px !important; }
+}
+
+/* Koš v seznamu pogovorov: brisanje je z enim dotikom (brez potrditve), zato je na dotik vedno viden,
+   dovolj velik in odmaknjen od naslova (prej je bil neviden, a se ga je dalo zadeti). */
+@media (hover: none) {
+  #conversation-list li { gap: 12px; }
+  #conversation-list li button { opacity: 0.8; min-width: 40px; min-height: 40px !important; margin-block: -8px; display: inline-flex; align-items: center; justify-content: center; }
+}
