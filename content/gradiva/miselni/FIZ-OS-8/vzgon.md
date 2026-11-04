@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vzgon
+  - sila tekočine na telo, navzgor
+  - tlak spodaj večji kot zgoraj
+- Arhimedov zakon
+  - vzgon je teža izpodrinjene tekočine
+  - $F_{vz} = \rho_t \cdot g \cdot V$
+  - napaka: gostota telesa namesto tekočine
+- Od česa je odvisen
+  - gostota tekočine in potopljena prostornina
+  - ne od teže telesa, ne od globine
+- Merjenje s silomerom
+  - $F_{vz} = F_g - F_1$
+  - ključavnica: $7{,}8\,\mathrm{N} - 6{,}8\,\mathrm{N} = 1{,}0\,\mathrm{N}$
+- Plava ali potone
+  - vzgon večji od teže: splava
+  - enaki sili: lebdi
+  - vzgon manjši od teže: potone
+- Plavajoče telo
+  - ravnovesje: $F_{vz} = F_g$
+  - šteje le potopljeni del
+- Primeri
+  - navadna kola potone, dietna plava
+  - jeklena ladja je votla

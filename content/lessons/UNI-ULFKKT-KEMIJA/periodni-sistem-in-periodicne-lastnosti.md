@@ -5,30 +5,24 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Vzemi telefon in poišči oznako baterije (na nalepki, v navodilih ali v nastavitvah): Li-ion. Zakaj prav litij in ne natrij, ki ga je v morski vodi na tone? Odgovor se skriva v legi obeh kovin v periodnem sistemu: litij je najlažja kovina, njegov ion je drobcen in zlahka potuje med plastmi grafita. Iz lege elementa brez merjenja napovemo, kako velik je njegov atom, kako lahko odda elektron in kako močno v vezi vleče elektrone k sebi. Tako je Mendelejev napovedal lastnosti galija in germanija, še preden so ju odkrili.
+Zakaj baterije telefonov uporabljajo litij in ne natrija, ki ga je v morju na tone? Odgovor je v legi obeh kovin: litij je najlažja kovina, njegov ion je drobcen in zlahka potuje med plastmi grafita. Iz lege elementa brez merjenja napovemo velikost atoma, kako lahko odda elektron in kako močno v vezi vleče elektrone. Tako je Mendelejev napovedal lastnosti galija in germanija, še preden so ju odkrili.
 
-V nadaljnjem študiju boš periodične lastnosti uporabljal ves čas: elektronegativnost pri polarnosti vezi in topnosti, ionizacijsko energijo pri redoks reakcijah in spektroskopiji, ionske polmere pri kristalih, mineralih in bioloških kanalih za ione (zakaj celica loči $\mathrm{K^+}$ od $\mathrm{Na^+}$).
+Periodične lastnosti boš rabil ves študij: pri polarnosti vezi, redoks reakcijah, spektroskopiji in kristalih.
 
-Razlaga poteka v osmih kratkih korakih, vmes pa te ustavijo kratka vprašanja. Na koncu boš znal:
-
-- pojasniti, kako je periodni sistem povezan z elektronsko konfiguracijo (skupine, periode, bloki),
-- opisati **efektivni naboj jedra** in pojasniti, zakaj določa trende,
-- razložiti trende **atomskih in ionskih polmerov**,
-- razložiti trende **ionizacijske energije** in njene izjeme,
-- uporabljati **elektronegativnost** za napoved polarnosti vezi.
+Na koncu boš iz elektronske konfiguracije in **efektivnega naboja jedra** utemeljil trende **polmerov**, **ionizacijske energije** in **elektronegativnosti**.
 
 ## Razlaga
 
-**1. Zgradba periodnega sistema.** Elementi so razvrščeni po naraščajočem vrstnem številu $Z$. **Perioda** (vrstica) ustreza glavnemu kvantnemu številu zunanje lupine $n$. **Skupina** (stolpec, oštevilčena od $1$ do $18$) združuje elemente z enako zunanjo konfiguracijo, zato imajo podobne kemijske lastnosti: alkalijske kovine $ns^1$, zemeljskoalkalijske $ns^2$, halogeni $ns^2\,np^5$, žlahtni plini $ns^2\,np^6$. Po zadnji zasedeni podlupini ločimo **bloke**: $s$ (skupini $1$ in $2$), $p$ ($13$ do $18$), $d$ (prehodni elementi, $3$ do $12$) in $f$ (lantanoidi in aktinoidi).
+**1. Zgradba periodnega sistema.** **Periodni zakon:** če elemente razvrstimo po naraščajočem vrstnem številu $Z$, se njihove lastnosti periodično ponavljajo, ker se periodično ponavlja konfiguracija zunanje lupine. **Perioda** (vrstica) ustreza glavnemu kvantnemu številu zunanje lupine $n$. **Skupina** (stolpec, oštevilčena od $1$ do $18$) združuje elemente z enako zunanjo konfiguracijo, zato imajo podobne kemijske lastnosti: alkalijske kovine $ns^1$, zemeljskoalkalijske $ns^2$, halogeni $ns^2\,np^5$, žlahtni plini $ns^2\,np^6$. Po zadnji zasedeni podlupini ločimo **bloke**: $s$ (skupini $1$ in $2$), $p$ ($13$ do $18$), $d$ (prehodni elementi, $3$ do $12$) in $f$ (lantanoidi in aktinoidi).
 
 **2. Efektivni naboj jedra.** Zunanji elektron ne čuti celotnega naboja jedra $Z$, ker ga notranji elektroni **senčijo**. Čuti efektivni naboj
 
 $$Z_\mathrm{eff} = Z - S,$$
 
-kjer je $S$ konstanta senčenja. Elektroni v isti lupini se med seboj senčijo slabo, notranji elektroni pa dobro. Zato velja:
+kjer je $S$ konstanta senčenja. Elektroni v isti lupini se med seboj senčijo slabo, notranji elektroni pa dobro. Oceno da **Slaterjevo pravilo** za elektron $ns$ ali $np$: vsak drug elektron v isti lupini $n$ prispeva k $S$ po $0{,}35$ (v $1s$ po $0{,}30$), vsak elektron v lupini $n - 1$ po $0{,}85$, vsak elektron v lupinah $n - 2$ in nižje pa po $1{,}00$. Iz tega sledi:
 
-- **vzdolž periode** (od leve proti desni) $Z$ raste za $1$, $S$ pa le malo, zato $Z_\mathrm{eff}$ izrazito **narašča**,
-- **navzdol po skupini** $Z_\mathrm{eff}$ za zunanje elektrone ostane približno enak, se pa poveča $n$, zato so zunanji elektroni dlje od jedra.
+- **vzdolž periode** (od leve proti desni, v blokih $s$ in $p$) $Z$ zraste za $1$, $S$ pa le za $0{,}35$ (en elektron več v isti lupini), zato $Z_\mathrm{eff}$ na vsakem koraku zraste za $1 - 0{,}35 = 0{,}65$: izrazito **narašča**,
+- **navzdol po skupini** $Z_\mathrm{eff}$ za zunanje elektrone ostane približno enak (za Li, Na in K po Slaterju $1{,}30$, $2{,}20$ in $2{,}20$), se pa poveča $n$, zato so zunanji elektroni dlje od jedra.
 
 Skoraj vse periodične lastnosti sledijo iz teh dveh dejstev.
 
@@ -45,7 +39,7 @@ Natrij. Zunanji elektroni obeh so v lupini $n = 3$, a klor ima večji $Z_\mathrm
 
 Največje atome imajo alkalijske kovine spodaj levo (Cs, Fr), najmanjše žlahtni plini in halogeni zgoraj desno (He, F). Pri prehodnih kovinah se polmer vzdolž periode spreminja le malo, ker se elektroni dodajajo v notranjo podlupino $(n-1)d$.
 
-**4. Ionski polmer.** **Kation** je manjši od svojega atoma: izgubi zunanje elektrone (pogosto celo lupino), preostali elektroni pa čutijo večji privlak. **Anion** je večji od atoma: dodatni elektron poveča odboj, $Z$ pa ostane enak. Pri **izoelektronski vrsti** (delci z enakim številom elektronov) je polmer manjši pri večjem $Z$. Za delce z $10$ elektroni (konfiguracija neona):
+**4. Ionski polmer** je del razdalje med jedroma sosednjih ionov v kristalu, ki ga pripišemo enemu ionu. **Kation** je manjši od svojega atoma: izgubi zunanje elektrone (pogosto celo lupino), preostali elektroni pa čutijo večji privlak. **Anion** je večji od atoma: dodatni elektron poveča odboj, $Z$ pa ostane enak. Pri **izoelektronski vrsti** (delci z enakim številom elektronov) je polmer manjši pri večjem $Z$. Za delce z $10$ elektroni (konfiguracija neona):
 
 $$r(\mathrm{O^{2-}}) > r(\mathrm{F^-}) > r(\mathrm{Na^+}) > r(\mathrm{Mg^{2+}}) > r(\mathrm{Al^{3+}}),$$
 
@@ -53,7 +47,7 @@ približno $140$, $133$, $102$, $72$ in $54\,\mathrm{pm}$.
 
 *Hitro preverjanje:* kateri ion je manjši, $\mathrm{Li^+}$ v bateriji telefona ali $\mathrm{Na^+}$? ($\mathrm{Li^+}$: ima eno lupino manj.)
 
-**5. Ionizacijska energija.** **Prva ionizacijska energija** $I_1$ je energija, potrebna za odstranitev najšibkeje vezanega elektrona iz atoma v plinastem stanju:
+**5. Ionizacijska energija.** **Prva ionizacijska energija** $I_1$ je najmanjša energija, potrebna za odstranitev najšibkeje vezanega elektrona iz izoliranega atoma v plinastem in osnovnem stanju; $k$-ta ionizacijska energija $I_k$ je enako definirana za ion $\mathrm{X^{(k-1)+}(g)}$:
 
 $$\mathrm{X(g) \longrightarrow X^+(g) + e^-}, \qquad \Delta H \approx I_1 > 0.$$
 
@@ -61,9 +55,13 @@ Navajamo jo v $\mathrm{kJ/mol}$ ali v $\mathrm{eV}$ na atom. Trend je obraten od
 
 Prve ionizacijske energije elementov 2. periode ($\mathrm{kJ/mol}$):
 
-| Li | Be | B | C | N | O | F | Ne |
-|---|---|---|---|---|---|---|---|
-| $520$ | $899$ | $801$ | $1086$ | $1402$ | $1314$ | $1681$ | $2081$ |
+| Li | Be | B | C |
+|---|---|---|---|
+| $520$ | $899$ | $801$ | $1086$ |
+
+| N | O | F | Ne |
+|---|---|---|---|
+| $1402$ | $1314$ | $1681$ | $2081$ |
 
 Dve izjemi od naraščanja imata jasen vzrok:
 
@@ -78,13 +76,23 @@ Magnezij ima konfiguracijo $[\mathrm{Ne}]\,3s^2$. Med katerima zaporednima ioniz
 Med $I_2$ in $I_3$. Prva dva elektrona odvzamemo iz lupine $3s$, tretji pa mora priti iz notranje, močno vezane podlupine $2p^6$ (izmerjeno: $I_2 = 1451$, $I_3 = 7733\,\mathrm{kJ/mol}$).
 :::
 
-**6. Elektronska afiniteta.** Energija, ki se sprosti (ali porabi), ko atom v plinastem stanju sprejme elektron: $\mathrm{X(g) + e^- \to X^-(g)}$. Največjo afiniteto imajo halogeni (klor okoli $349\,\mathrm{kJ/mol}$ sproščene energije), saj z dodatnim elektronom dosežejo konfiguracijo žlahtnega plina. Trend je manj pravilen kot pri ionizacijski energiji.
+**6. Elektronska afiniteta** $E_\mathrm{ea}$ je energija, ki se sprosti, ko izoliran atom v plinastem stanju sprejme elektron: $\mathrm{X(g) + e^- \to X^-(g)}$, $\Delta H \approx -E_\mathrm{ea}$. Pozitivna $E_\mathrm{ea}$ pomeni, da je anion stabilnejši od atoma; pri nekaterih atomih (Be, N, žlahtni plini) je negativna ali blizu nič, kar pomeni, da se energija porabi. Največjo afiniteto imajo halogeni (klor okoli $349\,\mathrm{kJ/mol}$ sproščene energije), saj z dodatnim elektronom dosežejo konfiguracijo žlahtnega plina. Trend je manj pravilen kot pri ionizacijski energiji.
 
-**7. Elektronegativnost** $\chi$ je sposobnost atoma, da v kemijski vezi k sebi pritegne vezne elektrone. Ni neposredno merljiva, ampak je izračunana iz vezavnih energij (Paulingova lestvica, brez enote). Trend: vzdolž periode **narašča**, navzdol po skupini **pada**. Nekaj vrednosti:
+**7. Elektronegativnost** $\chi$ je sposobnost atoma, da v kemijski vezi k sebi pritegne vezne elektrone. Ni neposredno merljiva. **Paulingova definicija** določa razliko elektronegativnosti iz presežka disociacijske energije polarne vezi nad povprečjem nepolarnih:
 
-| F | O | Cl | N | C | H | Na | K | Cs |
-|---|---|---|---|---|---|---|---|---|
-| $3{,}98$ | $3{,}44$ | $3{,}16$ | $3{,}04$ | $2{,}55$ | $2{,}20$ | $0{,}93$ | $0{,}82$ | $0{,}79$ |
+$$(\chi_\mathrm{A} - \chi_\mathrm{B})^2 = \frac{\Delta}{\mathrm{eV}},$$
+
+$$\Delta = D(\mathrm{A{-}B}) - \tfrac12\left[D(\mathrm{A{-}A}) + D(\mathrm{B{-}B})\right],$$
+
+kjer $\Delta$ izrazimo v eV na molekulo ($1\,\mathrm{eV} \leftrightarrow 96{,}49\,\mathrm{kJ/mol}$). Ker enačba določa le razlike, lestvico pritrdimo z izbrano vrednostjo $\chi(\mathrm{H}) = 2{,}20$; elektronegativnost je brez enote. Trend: vzdolž periode **narašča**, navzdol po skupini **pada**. Nekaj vrednosti:
+
+| Element | $\chi$ | Element | $\chi$ |
+|---|---|---|---|
+| F | $3{,}98$ | C | $2{,}55$ |
+| O | $3{,}44$ | H | $2{,}20$ |
+| Cl | $3{,}16$ | Na | $0{,}93$ |
+| N | $3{,}04$ | K | $0{,}82$ |
+| | | Cs | $0{,}79$ |
 
 Razlika elektronegativnosti $\Delta\chi$ med vezanima atomoma pove značaj vezi (orientacijsko): $\Delta\chi < 0{,}4$ nepolarna kovalentna, $0{,}4 \le \Delta\chi < 1{,}7$ polarna kovalentna, $\Delta\chi \gtrsim 1{,}7$ pretežno ionska. Meje niso ostre; vez $\mathrm{H{-}F}$ z $\Delta\chi = 1{,}78$ je še kovalentna.
 
@@ -134,10 +142,10 @@ Velik skok med $I_k$ in $I_{k+1}$ pomeni $k$ valenčnih elektronov. $\quad E = I
 
 ### Primer 3 (težji)
 
-S Slaterjevimi pravili oceni efektivni naboj jedra za zunanji elektron natrija ($Z = 11$) in klora ($Z = 17$). Z rezultatom razloži, zakaj je klorov atom manjši in ima večjo ionizacijsko energijo, čeprav sta oba v 3. periodi. Pravila za elektron $ns$ ali $np$: vsak drug elektron v isti lupini $n$ prispeva $0{,}35$, vsak elektron v lupini $n - 1$ prispeva $0{,}85$, vsak elektron v lupinah $n - 2$ in nižje pa $1{,}00$.
+S Slaterjevimi pravili oceni efektivni naboj jedra za zunanji elektron natrija ($Z = 11$) in klora ($Z = 17$). Z rezultatom razloži, zakaj je klorov atom manjši in ima večjo ionizacijsko energijo, čeprav sta oba v 3. periodi. Nato izračunaj še $Z_\mathrm{eff}$ za elektron $2p$ v ionu $\mathrm{Na^+}$ in pojasni, zakaj je $I_2(\mathrm{Na}) = 4562\,\mathrm{kJ/mol}$ skoraj desetkrat večja od $I_1(\mathrm{Na}) = 496\,\mathrm{kJ/mol}$.
 
-**Podatki:** Na: $Z = 11$, $1s^2\,2s^2\,2p^6\,3s^1$; Cl: $Z = 17$, $1s^2\,2s^2\,2p^6\,3s^2\,3p^5$; prispevki k senčenju $0{,}35$ (ista lupina), $0{,}85$ (lupina $n-1$), $1{,}00$ (lupina $n-2$ in nižje)
-**Iščemo:** $Z_\mathrm{eff}$ za oba atoma in razlago razlike v polmeru in ionizacijski energiji
+**Podatki:** Na: $Z = 11$, $1s^2\,2s^2\,2p^6\,3s^1$; Cl: $Z = 17$, $1s^2\,2s^2\,2p^6\,3s^2\,3p^5$; prispevki k senčenju $0{,}35$ (ista lupina), $0{,}85$ (lupina $n-1$), $1{,}00$ (lupina $n-2$ in nižje); $I_1(\mathrm{Na}) = 496\,\mathrm{kJ/mol}$, $I_2(\mathrm{Na}) = 4562\,\mathrm{kJ/mol}$, $I_1(\mathrm{Cl}) = 1251\,\mathrm{kJ/mol}$
+**Iščemo:** $Z_\mathrm{eff}$ za oba atoma in za elektron $2p$ v $\mathrm{Na^+}$, razlago razlike v polmeru in ionizacijski energiji ter skoka med $I_1$ in $I_2$
 
 :::formula
 $Z_\mathrm{eff} = Z - S$, $\quad S = 0{,}35\,N_{n} + 0{,}85\,N_{n-1} + 1{,}00\,N_{\le n-2}$
@@ -150,11 +158,13 @@ $Z_\mathrm{eff} = Z - S$, $\quad S = 0{,}35\,N_{n} + 0{,}85\,N_{n-1} + 1{,}00\,N
 3. Klor: v lupini $n = 3$ je poleg opazovanega elektrona še $6$ elektronov, $8$ v lupini $n = 2$ in $2$ v lupini $n = 1$. $S = 6 \cdot 0{,}35 + 8 \cdot 0{,}85 + 2 \cdot 1{,}00 = 2{,}10 + 6{,}80 + 2{,}00 = 10{,}90$.
 4. $Z_\mathrm{eff}(\mathrm{Cl}) = 17 - 10{,}90 = 6{,}10$.
 5. Zunanji elektroni klora čutijo skoraj trikrat večji efektivni naboj ($6{,}10/2{,}20 \approx 2{,}8$), zato so bliže jedru (manjši polmer: kovalentni polmer klora je okoli $99\,\mathrm{pm}$, kovinski polmer natrija okoli $186\,\mathrm{pm}$) in močneje vezani (večja $I_1$: $1251$ proti $496\,\mathrm{kJ/mol}$).
-6. Odgovor: $Z_\mathrm{eff}(\mathrm{Na}) \approx 2{,}2$, $Z_\mathrm{eff}(\mathrm{Cl}) \approx 6{,}1$; večji efektivni naboj pri kloru pojasni manjši atom in večjo ionizacijsko energijo.
+6. $\mathrm{Na^+}$ ima konfiguracijo $1s^2\,2s^2\,2p^6$; za elektron $2p$ je zdaj zunanja lupina $n = 2$. V njej je poleg opazovanega še $7$ elektronov, v lupini $n = 1$ pa $2$: $S = 7 \cdot 0{,}35 + 2 \cdot 0{,}85 = 2{,}45 + 1{,}70 = 4{,}15$.
+7. $Z_\mathrm{eff}(2p, \mathrm{Na^+}) = 11 - 4{,}15 = 6{,}85$, kar je $6{,}85/2{,}20 \approx 3{,}1$-krat več kot za elektron $3s$, poleg tega je elektron v lupini $n = 2$ bliže jedru. Oba učinka skupaj pojasnita, zakaj je $I_2/I_1 = 4562/496 \approx 9{,}2$.
+8. Odgovor: $Z_\mathrm{eff}(\mathrm{Na}) \approx 2{,}2$, $Z_\mathrm{eff}(\mathrm{Cl}) \approx 6{,}1$; večji efektivni naboj pri kloru pojasni manjši atom in večjo ionizacijsko energijo. Elektron $2p$ v $\mathrm{Na^+}$ čuti $Z_\mathrm{eff} \approx 6{,}9$ in je bliže jedru, zato je $I_2$ skoraj desetkrat večja od $I_1$.
 
 ### Primer 4 – zdaj ti
 
-Zaslon telefona prekriva kaljeno aluminosilikatno steklo, v katerem so vezi $\mathrm{Si{-}O}$ in $\mathrm{Al{-}O}$. Z razliko elektronegativnosti oceni značaj obeh vezi in ugotovi, katera je bolj ionska.
+V aluminosilikatnem steklu zaslona so vezi $\mathrm{Si{-}O}$ in $\mathrm{Al{-}O}$. Z razliko elektronegativnosti oceni značaj obeh in ugotovi, katera je bolj ionska.
 
 **Podatki:** $\chi(\mathrm{O}) = 3{,}44$, $\chi(\mathrm{Si}) = 1{,}90$, $\chi(\mathrm{Al}) = 1{,}61$; meje: $\Delta\chi < 0{,}4$ nepolarna, $0{,}4 \le \Delta\chi < 1{,}7$ polarna kovalentna, $\Delta\chi \gtrsim 1{,}7$ pretežno ionska
 **Iščemo:** značaj vezi $\mathrm{Si{-}O}$ in $\mathrm{Al{-}O}$ ter katera je bolj ionska
@@ -177,12 +187,11 @@ $\Delta\chi = 3{,}44 - 1{,}61 = 1{,}83$, kar je nad mejo $1{,}7$: vez $\mathrm{A
 
 ## Pogoste napake
 
-- **»Več elektronov, večji atom.«** Vzdolž periode se število elektronov povečuje, atom pa se **manjša**, ker se hkrati povečuje naboj jedra, nova lupina pa ne nastane.
-- **Kationi in anioni.** $\mathrm{Na^+}$ je manjši od $\mathrm{Na}$, $\mathrm{Cl^-}$ pa večji od $\mathrm{Cl}$. Ne zamenjuj.
-- **Izjeme pri ionizacijski energiji.** $I_1(\mathrm{O}) < I_1(\mathrm{N})$ in $I_1(\mathrm{B}) < I_1(\mathrm{Be})$. Kdor trend uporablja slepo, napove obratno.
-- **Elektronegativnost in elektronska afiniteta.** Afiniteta je energija izoliranega atoma v plinu, elektronegativnost pa lastnost atoma v vezi. Povezani sta, a nista isto.
-- **Elektronegativnost žlahtnih plinov.** Za He, Ne in Ar Paulingove vrednosti ne navajamo, ker skoraj ne tvorijo vezi. Najbolj elektronegativen element je fluor.
-- **Meje $\Delta\chi$ kot zakon.** Meja $1{,}7$ med kovalentno in ionsko vezjo je le orientacija. Lastnosti snovi (tališče, prevodnost taline) povedo več.
+- **»Več elektronov, večji atom.«** Vzdolž periode se atom **manjša**: naboj jedra raste, nove lupine pa ni.
+- **Kationi in anioni.** $\mathrm{Na^+}$ je manjši od $\mathrm{Na}$, $\mathrm{Cl^-}$ pa večji od $\mathrm{Cl}$.
+- **Izjeme pri ionizacijski energiji.** $I_1(\mathrm{O}) < I_1(\mathrm{N})$ in $I_1(\mathrm{B}) < I_1(\mathrm{Be})$.
+- **Afiniteta namesto elektronegativnosti.** Afiniteta velja za izoliran atom, elektronegativnost za atom v vezi. Za He, Ne in Ar Paulingovih vrednosti ni; največjo ima fluor.
+- **Meje $\Delta\chi$ kot zakon.** Meja $1{,}7$ je le orientacija; več povedo tališče in prevodnost taline.
 
 ## Povzetek
 
@@ -193,60 +202,91 @@ $\Delta\chi = 3{,}44 - 1{,}61 = 1{,}83$, kar je nad mejo $1{,}7$: vez $\mathrm{A
 - **Elektronegativnost** (Pauling) vzdolž periode narašča, navzdol pada; največja pri F ($3{,}98$); $\Delta\chi$ oceni polarnost vezi.
 - Kovinski značaj narašča proti spodnjemu levemu kotu.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- periodni zakon in zvezo periode, skupine in bloka z elektronsko konfiguracijo;
+- definicijo $Z_\mathrm{eff} = Z - S$, Slaterjevo pravilo in izpeljavo, da $Z_\mathrm{eff}$ vzdolž periode raste za $0{,}65$ na element;
+- definicije kovalentnega, kovinskega in ionskega polmera ter utemeljitev vrstnega reda v izoelektronski vrsti;
+- natančni definiciji $I_1$ in $I_k$, utemeljitev $I_{k+1} > I_k$ in izjem Be/B ter N/O;
+- definicijo elektronske afinitete in Paulingovo definicijo elektronegativnosti ter razliko med njima.
+
+### Naloga 1
+
+Disociacijske energije vezi so $D(\mathrm{H{-}H}) = 436\,\mathrm{kJ/mol}$, $D(\mathrm{Cl{-}Cl}) = 243\,\mathrm{kJ/mol}$, $D(\mathrm{H{-}Cl}) = 432\,\mathrm{kJ/mol}$ in $D(\mathrm{F{-}F}) = 158\,\mathrm{kJ/mol}$; $1\,\mathrm{eV}$ na molekulo ustreza $96{,}49\,\mathrm{kJ/mol}$. (a) S Paulingovo definicijo in $\chi(\mathrm{H}) = 2{,}20$ izračunaj elektronegativnost klora, oceni delež ionskega značaja vezi $\mathrm{H{-}Cl}$ z $1 - \mathrm{e}^{-(\Delta\chi)^2/4}$ in vez razvrsti. (b) Z obratnim računom oceni $D(\mathrm{Cl{-}F})$, če je $\chi(\mathrm{F}) = 3{,}98$ in $\chi(\mathrm{Cl}) = 3{,}16$, ter oceno primerjaj z izmerjeno vrednostjo okoli $251\,\mathrm{kJ/mol}$.
+
+**Rešitev:**
+
+1. Presežek za $\mathrm{H{-}Cl}$: $\Delta = 432 - \tfrac12(436 + 243) = 432 - 339{,}5 = 92{,}5\,\mathrm{kJ/mol}$.
+2. V eV na molekulo: $92{,}5 / 96{,}49 \approx 0{,}959$, zato $|\chi(\mathrm{Cl}) - \chi(\mathrm{H})| = \sqrt{0{,}959} \approx 0{,}98$.
+3. Klor je bolj elektronegativen od vodika (desno zgoraj v sistemu), zato $\chi(\mathrm{Cl}) = 2{,}20 + 0{,}98 = 3{,}18$, kar se dobro ujema s tabelirano $3{,}16$.
+4. Ionski značaj: $1 - \mathrm{e}^{-0{,}98^2/4} = 1 - \mathrm{e}^{-0{,}240} \approx 0{,}21$, torej okoli $21\,\%$. Ker je $0{,}4 \le 0{,}98 < 1{,}7$, je vez polarna kovalentna.
+5. (b) Razlika $\Delta\chi = 3{,}98 - 3{,}16 = 0{,}82$, zato je presežek $0{,}82^2 = 0{,}672\,\mathrm{eV}$ na molekulo, kar ustreza $0{,}672 \cdot 96{,}49\,\mathrm{kJ/mol} \approx 64{,}9\,\mathrm{kJ/mol}$.
+6. Iz definicije: $D(\mathrm{Cl{-}F}) = \tfrac12(243 + 158) + 64{,}9 = 200{,}5 + 64{,}9 \approx 265\,\mathrm{kJ/mol}$.
+7. Ocena je za $265/251 \approx 1{,}06$, torej okoli $6\,\%$, previsoka: Paulingova zveza je empirična.
+8. Odgovor: $\chi(\mathrm{Cl}) \approx 3{,}18$, vez $\mathrm{H{-}Cl}$ je polarna kovalentna z okoli $21\,\%$ ionskega značaja; ocena $D(\mathrm{Cl{-}F}) \approx 265\,\mathrm{kJ/mol}$ je za okoli $6\,\%$ nad izmerjeno.
+
+### Naloga 2
+
+Natančno definiraj prvo in drugo ionizacijsko energijo. Utemelji, zakaj je za vsak atom $I_2 > I_1$. S Slaterjevim pravilom izpelji, za koliko se $Z_\mathrm{eff}$ za zunanji elektron poveča med sosednjima elementoma od B do Ne, in utemelji, zakaj je kljub temu $I_1(\mathrm{B}) < I_1(\mathrm{Be})$ in $I_1(\mathrm{O}) < I_1(\mathrm{N})$.
+
+**Rešitev:**
+
+1. $I_1$ je najmanjša energija za $\mathrm{X(g) \to X^+(g) + e^-}$, $I_2$ za $\mathrm{X^+(g) \to X^{2+}(g) + e^-}$; oba delca sta izolirana, v plinastem in osnovnem stanju.
+2. $I_2 > I_1$: drugi elektron odstranjujemo iz pozitivnega iona. Jedro ima enak $Z$, elektronov pa je en manj, zato je senčenje manjše in odboj med elektroni šibkejši; preostali elektroni čutijo večji $Z_\mathrm{eff}$ in so bliže jedru.
+3. Od B do Ne dodajamo elektrone v isto lupino $n = 2$: $Z$ zraste za $1$, $S$ pa le za $0{,}35$, ker novi elektron senči zunanje elektrone z $0{,}35$. Zato $\Delta Z_\mathrm{eff} = 1 - 0{,}35 = 0{,}65$ na element; npr. $Z_\mathrm{eff}(\mathrm{N}) = 7 - (4 \cdot 0{,}35 + 2 \cdot 0{,}85) = 3{,}90$ in $Z_\mathrm{eff}(\mathrm{O}) = 4{,}55$.
+4. Slaterjevo pravilo obravnava $2s$ in $2p$ enako in ne loči parjenih elektronov, zato napove monoton porast in izjem ne more razložiti.
+5. Be/B: bor odda elektron $2p$, ki je višje v energiji kot $2s$, ker ga elektrona $2s$ delno senčita in manj prodira k jedru; zato ga je laže odstraniti.
+6. N/O: dušik ima $2p^3$, vsak elektron v svoji orbitali. Pri kisiku ($2p^4$) sta v eni orbitali dva elektrona; njun odboj dvigne energijo enega od njiju, zato je $I_1(\mathrm{O}) = 1314 < I_1(\mathrm{N}) = 1402\,\mathrm{kJ/mol}$.
+7. Odgovor: $I_2 > I_1$, ker elektron odvzemamo pozitivnemu ionu z večjim $Z_\mathrm{eff}$; $Z_\mathrm{eff}$ raste za $0{,}65$ na element, izjemi pa povzročita razlika $2s$/$2p$ in odboj parjenih elektronov.
+
 ## Drugače: Na sliki
 
-Trende si zapomniš s puščicami na obrisu periodnega sistema:
+Trendi na obrisu periodnega sistema ($r$ polmer, $I_1$ ionizacijska energija, $\chi$ elektronegativnost):
 
 ```
-              ionizacijska energija, elektronegativnost  ---->  rasteta
+              I1 in χ rasteta  ---->
           +-----------------------------------------------+
-   polmer |  Li  Be                        B  C  N  O  F  |  ^
-   raste  |  Na  Mg                       Al Si  P  S Cl  |  |  ionizacijska
-     |    |  K   Ca   (prehodne kovine)   Ga Ge As Se Br  |  |  energija in
-     v    |  Rb  Sr                       In Sn Sb Te  I  |  |  elektronega-
-          |  Cs  Ba                       Tl Pb Bi Po At  |  |  tivnost rasteta
+   r      |  Li  Be                        B  C  N  O  F  |  ^
+   raste  |  Na  Mg                       Al Si  P  S Cl  |  |  I1 in χ
+     |    |  K   Ca   (prehodne kovine)   Ga Ge As Se Br  |  |  rasteta
+     v    |  Rb  Sr                       In Sn Sb Te  I  |  |
+          |  Cs  Ba                       Tl Pb Bi Po At  |  |
           +-----------------------------------------------+
-              <----  polmer in kovinski značaj rasteta
+              <----  r in kovinski značaj rasteta
 ```
 
-Najmanjši, najbolj elektronegativni in najteže ionizirani atomi so zgoraj desno (F), največji in najlaže ionizirani spodaj levo (Cs).
+Graf $I_1(Z)$ je »žaga« z vrhovi pri žlahtnih plinih.
 
-Graf $I_1$ v odvisnosti od $Z$ je »žaga«: vrhovi so pri žlahtnih plinih (He, Ne, Ar, Kr), dna pri alkalijskih kovinah (Li, Na, K, Rb). Znotraj periode zobje niso gladki: majhni zarezi pri B in O sta izjemi iz Razlage.
+## Drugače: Uporaba v stroki
 
-## Drugače: Iz vsakdanjega življenja
+**Selektivno vezanje ionov.** V votlino kronskega etra 18-krona-6 se prilega $\mathrm{K^+}$ ($138\,\mathrm{pm}$), manjši $\mathrm{Na^+}$ ($102\,\mathrm{pm}$) pa slabše; z njim raztapljamo kalijeve soli v nepolarnih topilih. Enako ločijo kalijevi kanali.
 
-**Natrijevi in kalijevi kanali.** Živčni impulz temelji na tem, da membranski kanali ločijo $\mathrm{Na^+}$ ($102\,\mathrm{pm}$) od $\mathrm{K^+}$ ($138\,\mathrm{pm}$). Kalijev kanal ima selektivni filter, v katerem kisikovi atomi natančno nadomestijo vodni plašč okoli $\mathrm{K^+}$; manjši $\mathrm{Na^+}$ se jim ne prilega dobro in skozi kanal skoraj ne gre. Razlika polmerov za $36\,\mathrm{pm}$ je tako osnova delovanja živčevja.
+**Geokemija in toksikologija.** Ioni s podobnim nabojem in polmerom se nadomeščajo: $\mathrm{Cd^{2+}}$ ($95\,\mathrm{pm}$) zamenja $\mathrm{Ca^{2+}}$ ($100\,\mathrm{pm}$) v kosteh, $\mathrm{F^-}$ v sklenini $\mathrm{OH^-}$.
 
-**Litijeve baterije.** Litij ima najmanjšo maso med kovinami in majhno ionizacijsko energijo, njegov ion pa je majhen in se zlahka giblje med plastmi grafita in kovinskih oksidov. Zato so litijevi akumulatorji v telefonih in električnih avtomobilih lahki in imajo veliko energije na kilogram.
+**Atomska spektrometrija.** Alkalijske kovine (majhna $I_1$) se v plamenu delno ionizirajo; to zatre dodatek $\mathrm{CsCl}$: cezij z najmanjšo $I_1$ se ionizira sam in plamen napolni z elektroni, ki potisnejo ionizacijo analita nazaj.
 
-**Strupenost težkih kovin.** Ion $\mathrm{Cd^{2+}}$ ($95\,\mathrm{pm}$) ima skoraj enak polmer in naboj kot $\mathrm{Ca^{2+}}$ ($100\,\mathrm{pm}$), zato ga telo vgradi v kosti in encime namesto kalcija. Podobno se $\mathrm{Sr^{2+}}$ vgrajuje v kosti, kar je pomembno pri radioaktivnem stronciju-90.
-
-**Fluor v zobni pasti.** Fluor je najbolj elektronegativen element; ion $\mathrm{F^-}$ v zobni sklenini nadomesti skupino $\mathrm{OH^-}$ (podobna velikost) in nastane fluorapatit, ki je odpornejši proti kislinam iz bakterij.
+**Akumulatorji.** Litij je najlažja kovina z majhno $I_1$, zato so litijevi akumulatorji lahki in imajo veliko energije na kilogram.
 
 ## Drugače: Korak za korakom s številkami
 
-Z razliko elektronegativnosti razvrsti vezi $\mathrm{C{-}H}$, $\mathrm{H{-}Cl}$, $\mathrm{H{-}F}$ in $\mathrm{Na{-}Cl}$ po polarnosti. Uporabi vrednosti iz preglednice v Razlagi.
+Z razliko elektronegativnosti razvrsti vezi $\mathrm{C{-}H}$, $\mathrm{H{-}Cl}$, $\mathrm{H{-}F}$ in $\mathrm{Na{-}Cl}$ po polarnosti.
 
-1. $\mathrm{C{-}H}$: $\Delta\chi = 2{,}55 - 2{,}20 = 0{,}35$ → skoraj nepolarna kovalentna vez (zato so ogljikovodiki netopni v vodi).
-2. $\mathrm{H{-}Cl}$: $\Delta\chi = 3{,}16 - 2{,}20 = 0{,}96$ → polarna kovalentna vez, delni negativni naboj na kloru.
-3. $\mathrm{H{-}F}$: $\Delta\chi = 3{,}98 - 2{,}20 = 1{,}78$ → zelo polarna kovalentna vez.
-4. $\mathrm{Na{-}Cl}$: $\Delta\chi = 3{,}16 - 0{,}93 = 2{,}23$ → ionska vez, trdna snov z visokim tališčem.
-5. **Vrstni red** po naraščajoči polarnosti: $\mathrm{C{-}H} < \mathrm{H{-}Cl} < \mathrm{H{-}F} < \mathrm{Na{-}Cl}$.
-6. **Ocena deleža ionskega značaja** po Paulingu, $1 - \mathrm{e}^{-(\Delta\chi)^2/4}$: za $\mathrm{C{-}H}$ okoli $3\,\%$, za $\mathrm{H{-}Cl}$ okoli $21\,\%$, za $\mathrm{H{-}F}$ okoli $55\,\%$, za $\mathrm{Na{-}Cl}$ okoli $71\,\%$. Nobena vez ni $100\,\%$ ionska.
+1. $\mathrm{C{-}H}$: $\Delta\chi = 2{,}55 - 2{,}20 = 0{,}35$ → skoraj nepolarna.
+2. $\mathrm{H{-}Cl}$: $\Delta\chi = 3{,}16 - 2{,}20 = 0{,}96$ → polarna kovalentna.
+3. $\mathrm{H{-}F}$: $\Delta\chi = 3{,}98 - 2{,}20 = 1{,}78$ → zelo polarna kovalentna.
+4. $\mathrm{Na{-}Cl}$: $\Delta\chi = 3{,}16 - 0{,}93 = 2{,}23$ → ionska.
+5. **Vrstni red:** $\mathrm{C{-}H} < \mathrm{H{-}Cl} < \mathrm{H{-}F} < \mathrm{Na{-}Cl}$.
+6. **Delež ionskega značaja** po Paulingu, $1 - \mathrm{e}^{-(\Delta\chi)^2/4}$: okoli $3\,\%$, $21\,\%$, $55\,\%$ in $71\,\%$. Nobena vez ni $100\,\%$ ionska.
 
 ## Drugače: Bolj natančno
 
-**Kaj natančno merimo.** Ionizacijska energija je definirana za izoliran atom v osnovnem stanju pri $0\,\mathrm{K}$; entalpija ionizacije pri $298\,\mathrm{K}$ se od nje razlikuje za okoli $\tfrac52RT \approx 6\,\mathrm{kJ/mol}$. Merimo jo s fotoelektronsko spektroskopijo: atom obsevamo s fotoni znane energije $h\nu$ in merimo kinetično energijo izbitih elektronov, $I = h\nu - E_\mathrm{k}$. Fotoelektronski spekter pokaže vrhove za vse podlupine in je neposreden eksperimentalni dokaz lupinske zgradbe.
+**Kaj natančno merimo.** $I$ merimo s fotoelektronsko spektroskopijo, $I = h\nu - E_\mathrm{k}$; vrhovi za vse podlupine neposredno dokazujejo lupinsko zgradbo. Pri $298\,\mathrm{K}$ je entalpija ionizacije večja za $\tfrac52RT \approx 6\,\mathrm{kJ/mol}$.
 
-**Koopmansov približek.** Ionizacijska energija je približno enaka negativni energiji orbitale, iz katere elektron odstranimo, $I \approx -\varepsilon$. Za vodikov atom je to natančno: $I = 2{,}179 \cdot 10^{-18}\,\mathrm{J}$ na atom ali $1312\,\mathrm{kJ/mol}$. Za vodiku podoben model z efektivnim nabojem dobimo oceno $I \approx 1312\,\mathrm{kJ/mol} \cdot Z_\mathrm{eff}^2/n^2$; ocena je groba, a kaže, zakaj $Z_\mathrm{eff}$ in $n$ določata trend.
+**Koopmansov približek.** $I \approx -\varepsilon$ orbitale; za vodik natančno $1312\,\mathrm{kJ/mol}$, vodiku podoben model pa da grobo oceno $I \approx 1312\,\mathrm{kJ/mol} \cdot Z_\mathrm{eff}^2/n^2$. Mullikenova lestvica $\chi_\mathrm{M} = \tfrac12(I + A)$ poveže elektronegativnost z $I$ in afiniteto.
 
-**Lestvice elektronegativnosti.** Pauling je elektronegativnost definiral iz presežka vezavne energije polarne vezi nad povprečjem nepolarnih:
-
-$$(\chi_\mathrm{A} - \chi_\mathrm{B})^2 = \frac{D(\mathrm{A{-}B}) - \tfrac12\left[D(\mathrm{A{-}A}) + D(\mathrm{B{-}B})\right]}{\mathrm{eV}}.$$
-
-Mulliken jo je definiral kot povprečje ionizacijske energije in elektronske afinitete, $\chi_\mathrm{M} = \tfrac12(I + A)$, kar jasno pokaže, zakaj sta obe lastnosti povezani. Allred in Rochow pa elektronegativnost povežeta s silo $Z_\mathrm{eff}e^2/r^2$ na površini atoma. Lestvice se številsko razlikujejo, trendi pa so enaki.
-
-**Lantanoidno krčenje in relativistični učinki.** Elektroni $4f$ slabo senčijo, zato so atomi 6. periode po lantanoidih manjši, kot bi pričakovali: hafnij in cirkonij imata skoraj enak polmer in sta kemijsko zelo podobna. Pri najtežjih elementih (Au, Hg, Pb) postanejo pomembni še relativistični učinki: elektroni $6s$ se skrčijo in so močneje vezani. Zato je zlato žlahtno, živo srebro pa tekoče pri sobni temperaturi.
+**Lantanoidno krčenje in relativistični učinki.** Slabo senčenje elektronov $4f$ naredi hafnij in cirkonij skoraj enako velika in kemijsko podobna. Pri Au, Hg in Pb se elektroni $6s$ zaradi relativističnih učinkov skrčijo; zato je zlato žlahtno, živo srebro pa tekoče.
 
 ## Preveri se
 
@@ -256,15 +296,15 @@ Mulliken jo je definiral kot povprečje ionizacijske energije in elektronske afi
 - kalij
 ~ Kalij je večji od natrija, a cezij ima še dve lupini več, zato je še večji.
 + cezij
-> Vsi trije so alkalijske kovine; navzdol po skupini se dodajajo lupine, zato ima cezij ($n = 6$) največji polmer.
+> Navzdol po skupini se dodajajo lupine, zato je cezij ($n = 6$) največji.
 
 ? Zakaj ima kisik manjšo prvo ionizacijsko energijo kot dušik?
 - ker ima kisik manjši naboj jedra
 ~ Ravno obratno: kisik ima $Z = 8$, dušik $Z = 7$; večji naboj bi energijo celo povečal.
 + ker sta v eni orbitali $2p$ kisika dva elektrona, ki se odbijata
 - ker je kisikov atom večji od dušikovega
-~ Vzdolž periode se atom manjša, zato je kisik nekoliko manjši od dušika; vzrok je odboj v parjeni orbitali $2p$.
-> Kisik ima $2p^4$: en par elektronov v isti orbitali. Odboj v paru olajša odstranitev elektrona. Dušik ima stabilno polzasedeno podlupino $2p^3$, kisikov atom pa je celo nekoliko manjši.
+~ Kisik je celo nekoliko manjši od dušika; vzrok je odboj v parjeni orbitali $2p$.
+> Kisik ima $2p^4$: en par elektronov v isti orbitali, odboj v paru olajša odstranitev. Dušik ima polzasedeno podlupino $2p^3$.
 
 ? Kateri je pravilni vrstni red polmerov izoelektronskih delcev?
 + $\mathrm{Na^+} < \mathrm{F^-} < \mathrm{O^{2-}}$
@@ -272,7 +312,7 @@ Mulliken jo je definiral kot povprečje ionizacijske energije in elektronske afi
 ~ Obrnjen vrstni red: pri enakem številu elektronov večji naboj jedra delec skrči, zato je $\mathrm{Na^+}$ najmanjši.
 - $\mathrm{F^-} < \mathrm{Na^+} < \mathrm{O^{2-}}$
 ~ $\mathrm{Na^+}$ ima največji naboj jedra ($Z = 11$) in je zato manjši od $\mathrm{F^-}$, ne večji.
-> Vsi imajo $10$ elektronov. Večji naboj jedra ($Z = 11$ za Na, $9$ za F, $8$ za O) jih bolj pritegne, zato je $\mathrm{Na^+}$ najmanjši, $\mathrm{O^{2-}}$ največji.
+> Vsi imajo $10$ elektronov; največji naboj jedra ($Z = 11$) jih najbolj pritegne, zato je $\mathrm{Na^+}$ najmanjši.
 
 ? Kateri element ima največjo elektronegativnost?
 - kisik
@@ -280,7 +320,7 @@ Mulliken jo je definiral kot povprečje ionizacijske energije in elektronske afi
 - klor
 ~ Klor je v isti skupini kot fluor, a eno lupino niže; navzdol po skupini elektronegativnost pada.
 + fluor
-> Elektronegativnost narašča vzdolž periode in pada navzdol po skupini. Fluor je zgoraj desno (brez žlahtnih plinov) in ima vrednost $3{,}98$.
+> Fluor je zgoraj desno (brez žlahtnih plinov) in ima $\chi = 3{,}98$.
 
 ? Element ima zaporedne ionizacijske energije $I_1 = 496$, $I_2 = 4562$ in $I_3 = 6910\,\mathrm{kJ/mol}$. V kateri skupini je?
 + v 1. skupini
@@ -288,7 +328,7 @@ Mulliken jo je definiral kot povprečje ionizacijske energije in elektronske afi
 ~ Za 2. skupino bi moral biti velik skok šele med $I_2$ in $I_3$; tu je že med $I_1$ in $I_2$.
 - v 13. skupini
 ~ Število podanih vrednosti ne pove števila valenčnih elektronov; šteje, kje je največji skok.
-> Največji skok je med $I_1$ in $I_2$ ($4562/496 \approx 9{,}2$): po enem elektronu že posežemo v notranjo lupino. Element ima en valenčni elektron, to je natrij v 1. skupini.
+> Največji skok je med $I_1$ in $I_2$ ($4562/496 \approx 9{,}2$): en valenčni elektron, torej natrij v 1. skupini.
 
 :::simboli
 Z_\mathrm{eff} | efektivni naboj jedra | Z_\mathrm{eff} = Z - S | – | v enotah osnovnega naboja

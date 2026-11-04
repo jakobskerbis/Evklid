@@ -5,16 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Na kuhinjskem pultu so sol, sladkor in olje. Sladkor se v suhi ponvi kmalu stopi v karamelo, sol pa ostane trdna, saj ima tališče $801\,^\circ\mathrm{C}$. V vodi se sladkor raztopi tako kot sol, olje pa splava na vrh juhe. Molekula vode je upognjena, molekula $\mathrm{CO_2}$ iz mehurčkov v kisli vodi pa linearna. Preden bereš naprej, ugani: kaj imata skupnega sol in sladkor, da se oba topita v vodi, in kaj ju loči? Ključ do uganke sta **kemijska vez** in **sile med molekulami**.
+Sladkor se v suhi ponvi stopi v karamelo, sol pa ostane trdna do $801\,^\circ\mathrm{C}$. V vodi se raztopita oba, olje pa ne. Ugani: kaj imata sol in sladkor skupnega, da se topita v vodi, in kaj ju loči? Ključ do uganke sta **kemijska vez** in **sile med molekulami**.
 
-V gimnaziji si spoznal ionsko in kovalentno vez ter Lewisove strukture. Na fakulteti te pojme poglobimo in jih povežemo:
-
-- iz **elektronegativnosti** sklepamo, ali je vez ionska, polarna ali nepolarna kovalentna,
-- z modelom **VSEPR** napovemo obliko molekule in kote med vezmi,
-- s **hibridizacijo** opišemo, katere orbitale gradijo vezi,
-- iz oblike in polarnosti sklepamo na **medmolekulske sile**, te pa določajo vrelišče, topnost, viskoznost in zgradbo bioloških makromolekul (dvojna vijačnica DNA, zvitje beljakovin).
-
-To je temelj za organsko kemijo, biokemijo, farmacijo in znanost o materialih.
+Iz **elektronegativnosti** sklepamo na vrsto vezi, z modelom **VSEPR** in **hibridizacijo** na obliko molekule, iz oblike in polarnosti pa na **medmolekulske sile**, ki določajo vrelišče, topnost in zgradbo DNA in beljakovin.
 
 ## Razlaga
 
@@ -32,7 +25,13 @@ Meje niso ostre: prehod od kovalentne do ionske vezi je zvezen.
 
 ### Ionska vez
 
-Atom z nizko ionizacijsko energijo (kovina) odda elektrone, atom z visoko elektronsko afiniteto (nekovina) jih sprejme. Nastali kationi in anioni se privlačijo z električno silo v vse smeri, zato ne tvorijo molekul, ampak **ionsko kristalno mrežo**. Moč mreže opisuje **mrežna energija**: energija, ki se sprosti, ko iz plinastih ionov nastane mol kristala. Iz Coulombovega zakona sledi, da je približno sorazmerna z $\frac{z_+ z_-}{r_+ + r_-}$: večja naboja in manjša iona dasta trdnejšo mrežo (in višje tališče). Ionske snovi so trde, krhke, v talini in raztopini prevajajo električni tok.
+Atom z nizko ionizacijsko energijo (kovina) odda elektrone, atom z visoko elektronsko afiniteto (nekovina) jih sprejme. Nastali kationi in anioni se privlačijo z električno silo v vse smeri, zato ne tvorijo molekul, ampak **ionsko kristalno mrežo**. Moč mreže opisuje **mrežna entalpija** $\Delta H_{\mathrm{mr}}$: sprememba entalpije pri nastanku enega mola kristala iz plinastih ionov, npr. $\mathrm{Na^+(g) + Cl^-(g) \to NaCl(s)}$. Je negativna; njena absolutna vrednost je **mrežna energija**. Iz Coulombovega zakona $E = \frac{z_+ z_- e^2}{4\pi\varepsilon_0 r}$ ($z_+$, $z_-$: nabojni števili ionov, $r$: razdalja, $e$: osnovni naboj) sledi, da je $|\Delta H_{\mathrm{mr}}|$ pri enakem tipu mreže približno sorazmerna z $\frac{|z_+ z_-|}{r_+ + r_-}$: večja naboja in manjša iona dasta trdnejšo mrežo (in višje tališče). Ionske snovi so trde, krhke, v talini in raztopini prevajajo električni tok.
+
+**Born-Haberjev cikel.** Mrežne entalpije ne moremo izmeriti. Ker je entalpija funkcija stanja, je po **Hessovem zakonu** tvorbena entalpija enaka vsoti entalpij poti prek plinastih ionov. Za spojino $\mathrm{MX}$ iz kovine $\mathrm{M(s)}$ in dvoatomnega $\mathrm{X_2(g)}$:
+
+$$\Delta H_f^\circ = \Delta H_{\mathrm{sub}}(\mathrm{M}) + I(\mathrm{M}) + \tfrac{1}{2}D(\mathrm{X_2}) + \Delta H_{\mathrm{ea}}(\mathrm{X}) + \Delta H_{\mathrm{mr}},$$
+
+kjer je $I$ ionizacijska energija, $D$ disociacijska energija vezi in $\Delta H_{\mathrm{ea}}$ entalpija sprejema elektrona. Iz znanih členov izrazimo $\Delta H_{\mathrm{mr}}$.
 
 ### Kovalentna vez
 
@@ -40,7 +39,9 @@ Atoma si delita elektronski par. **Lewisova struktura** prikaže vezne in nevezn
 
 $$\mathrm{FN} = (\text{valenčni } e^-) - (\text{nevezni } e^-) - \tfrac{1}{2}(\text{vezni } e^-);$$
 
-najboljša struktura ima formalne naboje čim bližje nič. **Red vezi** (enojna, dvojna, trojna) je povezan z dolžino in energijo vezi: za ogljik je $\mathrm{C{-}C}$ dolga približno $154\,\mathrm{pm}$ ($347\,\mathrm{kJ/mol}$), $\mathrm{C{=}C}$ $134\,\mathrm{pm}$ ($614\,\mathrm{kJ/mol}$), $\mathrm{C{\equiv}C}$ $120\,\mathrm{pm}$ ($839\,\mathrm{kJ/mol}$).
+atomu pripišemo vse njegove nevezne elektrone in polovico veznih. Vsota formalnih nabojev je enaka naboju delca. Najboljša struktura ima formalne naboje čim bližje nič, negativne pa na bolj elektronegativnih atomih. Atomi 3. periode in višjih ($\mathrm{P}$, $\mathrm{S}$, $\mathrm{Cl}$, $\mathrm{Xe}$) imajo lahko **razširjen oktet** ($\mathrm{PCl_5}$, $\mathrm{SF_6}$).
+
+**Resonanca.** Če lahko pri istem razporedu atomov narišemo več Lewisovih struktur (npr. $\mathrm{O_3}$, $\mathrm{CO_3^{2-}}$), je dejansko stanje **resonančni hibrid**: elektroni $\pi$ so delokalizirani, enakovredne vezi so enako dolge, red vezi je povprečje (v $\mathrm{CO_3^{2-}}$ $\frac{4}{3}$, ker se ena dvojna vez porazdeli na tri vezi). **Red vezi** (enojna, dvojna, trojna) je povezan z dolžino in energijo vezi: za ogljik je $\mathrm{C{-}C}$ dolga približno $154\,\mathrm{pm}$ ($347\,\mathrm{kJ/mol}$), $\mathrm{C{=}C}$ $134\,\mathrm{pm}$ ($614\,\mathrm{kJ/mol}$), $\mathrm{C{\equiv}C}$ $120\,\mathrm{pm}$ ($839\,\mathrm{kJ/mol}$).
 
 ### Model VSEPR
 
@@ -55,8 +56,8 @@ Manjši, okoli $107^\circ$. Razporeditev skupin je še vedno tetraedrska, a neve
 - $2$ skupini: linearno, $180^\circ$ ($\mathrm{CO_2}$),
 - $3$ skupine: trigonalno planarno, $120^\circ$ ($\mathrm{BF_3}$); z enim neveznim parom kotna oblika ($\mathrm{SO_2}$),
 - $4$ skupine: tetraedrsko, $109{,}5^\circ$ ($\mathrm{CH_4}$); $\mathrm{AX_3E}$ trigonalna piramida ($\mathrm{NH_3}$, približno $107^\circ$); $\mathrm{AX_2E_2}$ kotna ($\mathrm{H_2O}$, približno $104{,}5^\circ$),
-- $5$ skupin: trigonalna bipiramida ($\mathrm{PCl_5}$),
-- $6$ skupin: oktaeder ($\mathrm{SF_6}$).
+- $5$ skupin: trigonalna bipiramida ($\mathrm{PCl_5}$, $90^\circ$ in $120^\circ$); nevezni pari zasedejo ekvatorialna mesta: $\mathrm{AX_4E}$ deformiran tetraeder ali »gugalnica« ($\mathrm{SF_4}$), $\mathrm{AX_3E_2}$ oblika T ($\mathrm{ClF_3}$), $\mathrm{AX_2E_3}$ linearna ($\mathrm{XeF_2}$, $\mathrm{I_3^-}$),
+- $6$ skupin: oktaeder ($\mathrm{SF_6}$, $90^\circ$); $\mathrm{AX_5E}$ kvadratna piramida ($\mathrm{BrF_5}$), $\mathrm{AX_4E_2}$ kvadratno planarna ($\mathrm{XeF_4}$, nevezna para nasproti).
 
 Nevezni pari se odbijajo močneje kot vezni, zato kote stisnejo. **Razporeditev elektronskih skupin** in **oblika molekule** (razporeditev atomov) se razlikujeta, kadar ima osrednji atom nevezne pare.
 
@@ -66,13 +67,26 @@ Atomske orbitale osrednjega atoma se pomešajo v enakovredne **hibridne orbitale
 
 - $2$ skupini: $sp$ (ena $s$ in ena $p$), $180^\circ$,
 - $3$ skupine: $sp^2$, $120^\circ$,
-- $4$ skupine: $sp^3$, $109{,}5^\circ$.
+- $4$ skupine: $sp^3$, $109{,}5^\circ$,
+- $5$ in $6$ skupin: formalno $sp^3d$ in $sp^3d^2$.
 
-Hibridne orbitale tvorijo **vezi $\sigma$** (prekrivanje vzdolž osi vezi). Nehibridizirane orbitale $p$ se lahko bočno prekrijejo v **vezi $\pi$**. Enojna vez je ena $\sigma$, dvojna $\sigma + \pi$, trojna $\sigma + 2\pi$. Ker vez $\pi$ zahteva vzporedni orbitali $p$, okoli dvojne vezi ni prostega vrtenja (od tod izomerija *cis-trans*).
+Iz $k$ atomskih orbital nastane natanko $k$ hibridnih. Hibridne orbitale tvorijo **vezi $\sigma$** (prekrivanje vzdolž osi vezi). Nehibridizirane orbitale $p$ se lahko bočno prekrijejo v **vezi $\pi$**. Enojna vez je ena $\sigma$, dvojna $\sigma + \pi$, trojna $\sigma + 2\pi$. Ker vez $\pi$ zahteva vzporedni orbitali $p$, okoli dvojne vezi ni prostega vrtenja (od tod izomerija *cis-trans*).
 
 ### Polarnost molekule
 
-Polarne vezi še ne pomenijo polarne molekule. **Dipolni moment** molekule je vektorska vsota dipolnih momentov vezi. V simetričnih molekulah ($\mathrm{CO_2}$, $\mathrm{BF_3}$, $\mathrm{CH_4}$, $\mathrm{CCl_4}$) se izničijo in molekula je nepolarna; v upognjeni $\mathrm{H_2O}$ ali piramidalnem $\mathrm{NH_3}$ se ne.
+Polarne vezi še ne pomenijo polarne molekule. Dva naboja $+q$ in $-q$ na razdalji $d$ imata **dipolni moment** z velikostjo $\mu = q d$ (enota $\mathrm{C\,m}$ ali debye, $1\,\mathrm{D} = 3{,}336 \cdot 10^{-30}\,\mathrm{C\,m}$). Dipolni moment molekule je vektorska vsota dipolnih momentov vezi; molekula je polarna natanko tedaj, ko ta vsota ni nič. V simetričnih molekulah ($\mathrm{CO_2}$, $\mathrm{BF_3}$, $\mathrm{CH_4}$, $\mathrm{CCl_4}$) se izničijo in molekula je nepolarna; v upognjeni $\mathrm{H_2O}$ ali piramidalnem $\mathrm{NH_3}$ se ne.
+
+### Teorija molekulskih orbital
+
+V teoriji MO so **molekulske orbitale** linearne kombinacije atomskih orbital in se raztezajo čez vso molekulo; iz $k$ atomskih orbital nastane $k$ molekulskih. Seštevek atomskih orbital (konstruktivno prekrivanje) da **vezno** orbitalo z nižjo energijo, njuna razlika **protivezno** (oznaka $*$) z višjo. Orbitale polnimo po energiji, s Paulijevim načelom in Hundovim pravilom. Za dvoatomne molekule 2. periode je zaporedje
+
+$$\sigma_{2s} < \sigma^*_{2s} < \sigma_{2p} < \pi_{2p} < \pi^*_{2p} < \sigma^*_{2p} \quad (\mathrm{O_2},\ \mathrm{F_2});$$
+
+pri $\mathrm{B_2}$, $\mathrm{C_2}$ in $\mathrm{N_2}$ leži $\pi_{2p}$ pod $\sigma_{2p}$. **Red vezi** je
+
+$$\text{red vezi} = \tfrac{1}{2}\left(n_{\text{vezni}} - n_{\text{protivezni}}\right).$$
+
+Molekula je obstojna le pri redu vezi večjem od $0$ ($\mathrm{He_2}$ ima red $0$ in ne obstaja); večji red pomeni krajšo in močnejšo vez. Molekula z nesparjenimi elektroni je **paramagnetna**. Za $\mathrm{N_2}$ je red $3$, za $\mathrm{O_2}$ pa $2$, pri čemer ima $\mathrm{O_2}$ dva nesparjena elektrona v orbitalah $\pi^*$: kisik je paramagneten, česar Lewisova struktura z vsemi sparjenimi elektroni ne pojasni.
 
 ### Medmolekulske sile
 
@@ -83,10 +97,10 @@ Od najšibkejših do najmočnejših, okvirno:
 - **vodikova vez**: ko je vodik vezan na $\mathrm{F}$, $\mathrm{O}$ ali $\mathrm{N}$ in ga privlači nevezni par sosednje molekule ($10$ do $40\,\mathrm{kJ/mol}$),
 - **ion-dipol**: pri raztapljanju ionskih snovi v vodi.
 
-Vse so mnogo šibkejše od kovalentnih vezi ($150$ do $1000\,\mathrm{kJ/mol}$). Močnejše medmolekulske sile pomenijo višje vrelišče, višjo površinsko napetost in višjo viskoznost. Za topnost velja »podobno se topi v podobnem«.
+Vse so mnogo šibkejše od kovalentnih vezi ($150$ do $1000\,\mathrm{kJ/mol}$). Močnejše medmolekulske sile pomenijo višje vrelišče, višjo površinsko napetost in višjo viskoznost. Propan ($44{,}1\,\mathrm{g/mol}$, le disperzijske sile), dimetil eter ($46{,}1\,\mathrm{g/mol}$, še dipol-dipol) in etanol ($46{,}1\,\mathrm{g/mol}$, še vodikove vezi prek skupine $\mathrm{O{-}H}$) imajo skoraj enake disperzijske sile, a vrelišča $-42\,^\circ\mathrm{C}$, $-24\,^\circ\mathrm{C}$ in $78\,^\circ\mathrm{C}$. Za topnost velja »podobno se topi v podobnem«.
 
 :::premisli
-Zdaj se vrni k uganki s pulta: zakaj se sladkor raztopi v vodi, olje pa ne, čeprav sladkor ni ionska snov kot sol?
+Zdaj se vrni k uganki iz uvoda: zakaj se sladkor raztopi v vodi, olje pa ne, čeprav sladkor ni ionska snov kot sol?
 ---
 Sladkor ima veliko skupin $\mathrm{O{-}H}$ in z vodo tvori vodikove vezi, sol pa se veže z vodo prek sil ion-dipol. Olje je skoraj nepolarno in ima le disperzijske sile; molekule vode raje ostanejo povezane med seboj z vodikovimi vezmi in olje izrinejo.
 :::
@@ -109,7 +123,7 @@ $\Delta\chi = \chi_{\text{večja}} - \chi_{\text{manjša}}$; $\Delta\chi < 0{,}4
 1. $\mathrm{NaCl}$: $\Delta\chi = 3{,}16 - 0{,}93 = 2{,}23 > 1{,}7$, ionska vez; klor je anion $\mathrm{Cl^-}$.
 2. $\mathrm{HCl}$: $\Delta\chi = 3{,}16 - 2{,}20 = 0{,}96$, polarna kovalentna; $\delta^-$ je na kloru.
 3. $\mathrm{Cl_2}$: $\Delta\chi = 0$, nepolarna kovalentna.
-4. $\mathrm{C{-}H}$: $\Delta\chi = 2{,}55 - 2{,}20 = 0{,}35 < 0{,}4$, praktično nepolarna, ker ogljik le malo močneje privlači skupni par kot vodik.
+4. $\mathrm{C{-}H}$: $\Delta\chi = 2{,}55 - 2{,}20 = 0{,}35 < 0{,}4$, praktično nepolarna.
 5. Odgovor: $\mathrm{NaCl}$ ima ionsko vez, $\mathrm{HCl}$ polarno kovalentno (negativni pol na $\mathrm{Cl}$), $\mathrm{Cl_2}$ in $\mathrm{C{-}H}$ pa nepolarni kovalentni vezi.
 
 ### Primer 2
@@ -135,27 +149,27 @@ Z modelom VSEPR določi obliko, približni kot med vezmi, hibridizacijo osrednje
 
 ### Primer 3 (težji)
 
-Propan $\mathrm{CH_3CH_2CH_3}$ ($M = 44{,}1\,\mathrm{g/mol}$), dimetil eter $\mathrm{CH_3OCH_3}$ ($M = 46{,}1\,\mathrm{g/mol}$) in etanol $\mathrm{CH_3CH_2OH}$ ($M = 46{,}1\,\mathrm{g/mol}$) imajo skoraj enake molske mase. Njihova vrelišča so $-42\,^\circ\mathrm{C}$, $-24\,^\circ\mathrm{C}$ in $78\,^\circ\mathrm{C}$. Določi hibridizacijo in obliko okoli kisika v obeh spojinah s kisikom ter pojasni vrstni red vrelišč z medmolekulskimi silami.
+Z Born-Haberjevim ciklom izračunaj mrežno entalpijo natrijevega klorida. Nato izračunaj entalpijo nastanka plinastih ionov $\mathrm{Na^+}$ in $\mathrm{Cl^-}$ iz plinastih atomov in pojasni, zakaj je nastanek $\mathrm{NaCl(s)}$ iz elementov kljub temu eksotermen. Podatki v $\mathrm{kJ/mol}$: sublimacijska entalpija natrija $107$, prva ionizacijska energija natrija $496$, disociacijska energija $\mathrm{Cl_2}$ $242$, entalpija sprejema elektrona klora $-349$, standardna tvorbena entalpija $\mathrm{NaCl(s)}$ $-411$.
 
-**Podatki:** propan $44{,}1\,\mathrm{g/mol}$, vrelišče $-42\,^\circ\mathrm{C}$; dimetil eter $46{,}1\,\mathrm{g/mol}$, vrelišče $-24\,^\circ\mathrm{C}$; etanol $46{,}1\,\mathrm{g/mol}$, vrelišče $78\,^\circ\mathrm{C}$
-**Iščemo:** hibridizacijo in obliko okoli $\mathrm{O}$, vrsto medmolekulskih sil in razlago vrstnega reda vrelišč
+**Podatki:** $\Delta H_{\mathrm{sub}}(\mathrm{Na}) = 107\,\mathrm{kJ/mol}$, $I(\mathrm{Na}) = 496\,\mathrm{kJ/mol}$, $D(\mathrm{Cl_2}) = 242\,\mathrm{kJ/mol}$, $\Delta H_{\mathrm{ea}}(\mathrm{Cl}) = -349\,\mathrm{kJ/mol}$, $\Delta H_f^\circ(\mathrm{NaCl}) = -411\,\mathrm{kJ/mol}$
+**Iščemo:** $\Delta H_{\mathrm{mr}}(\mathrm{NaCl})$, entalpijo $\mathrm{Na(g) + Cl(g) \to Na^+(g) + Cl^-(g)}$ in razlago
 
 :::formula
-Okoli $\mathrm{O}$: $\mathrm{AX_2E_2}$, $4$ skupine $\to sp^3$, kotna oblika. Sile: disperzijske $<$ dipol-dipol $<$ vodikove vezi ($\mathrm{H}$ na $\mathrm{O}$, $\mathrm{N}$, $\mathrm{F}$).
+$\Delta H_f^\circ = \Delta H_{\mathrm{sub}}(\mathrm{M}) + I(\mathrm{M}) + \tfrac{1}{2}D(\mathrm{X_2}) + \Delta H_{\mathrm{ea}}(\mathrm{X}) + \Delta H_{\mathrm{mr}}$ (Hessov zakon)
 :::
 
 **Rešitev:**
 
-1. V obeh spojinah ima kisik dve enojni vezi in dva nevezna para: $\mathrm{AX_2E_2}$, hibridizacija $sp^3$, kotna (upognjena) oblika s kotom blizu tetraedrskega (okoli $105^\circ$ do $112^\circ$). Vsi ogljiki so $sp^3$ (štiri enojne vezi).
-2. Propan: samo vezi $\mathrm{C{-}C}$ in $\mathrm{C{-}H}$, molekula je skoraj nepolarna; med molekulami delujejo le **disperzijske sile**.
-3. Dimetil eter: vezi $\mathrm{C{-}O}$ so polarne, upognjena oblika pomeni, da se dipola ne izničita, molekula je **polarna**: disperzijske sile in **dipol-dipol** privlak. Vodik je vezan le na ogljik, zato med molekulami etra ni vodikovih vezi.
-4. Etanol: ima skupino $\mathrm{O{-}H}$, zato poleg disperzijskih in dipolnih sil tvori **vodikove vezi** z nevezanimi pari kisika sosednjih molekul.
-5. Ker so molske mase (in s tem disperzijske sile) skoraj enake, vrstni red določajo dodatne sile: propan (le disperzijske) $<$ eter (dipol-dipol) $\ll$ etanol (vodikove vezi).
-6. Odgovor: kisik je v obeh spojinah $sp^3$ s kotno obliko; vrelišča naraščajo od propana ($-42\,^\circ\mathrm{C}$) prek etra ($-24\,^\circ\mathrm{C}$) do etanola ($78\,^\circ\mathrm{C}$), ker se dodajo najprej dipolne sile in nato vodikove vezi, ki jih je treba pri vrenju pretrgati.
+1. Pot prek plinastih ionov: $\mathrm{Na(s) \to Na(g)}$ ($+107$), $\mathrm{Na(g) \to Na^+(g) + e^-}$ ($+496$), $\mathrm{\tfrac{1}{2}Cl_2(g) \to Cl(g)}$ ($\tfrac{1}{2} \cdot 242 = +121$; razcepimo le pol mola $\mathrm{Cl_2}$, ker potrebujemo en mol atomov), $\mathrm{Cl(g) + e^- \to Cl^-(g)}$ ($-349$), $\mathrm{Na^+(g) + Cl^-(g) \to NaCl(s)}$ ($\Delta H_{\mathrm{mr}}$).
+2. Vsota znanih korakov: $107 + 496 + 121 - 349 = 375\,\mathrm{kJ/mol}$.
+3. Iz Hessovega zakona: $\Delta H_{\mathrm{mr}} = -411 - 375 = -786\,\mathrm{kJ/mol}$.
+4. Nastanek ionov iz plinastih atomov: $I + \Delta H_{\mathrm{ea}} = 496 - 349 = +147\,\mathrm{kJ/mol}$. Prenos elektrona med izoliranima atomoma je torej endotermen, tudi pri tako ugodnem paru, kot sta natrij in klor.
+5. Vsota vseh endotermnih korakov je $107 + 496 + 121 = 724\,\mathrm{kJ/mol}$, sprejem elektrona vrne le $349\,\mathrm{kJ/mol}$. Eksotermnost celotnega procesa da šele privlak ionov v mreži: $|\Delta H_{\mathrm{mr}}| = 786\,\mathrm{kJ/mol}$ preseže neto strošek $375\,\mathrm{kJ/mol}$ za $411\,\mathrm{kJ/mol}$.
+6. Odgovor: mrežna entalpija $\mathrm{NaCl}$ je $-786\,\mathrm{kJ/mol}$; nastanek plinastih ionov iz atomov stane $+147\,\mathrm{kJ/mol}$, ionska spojina je obstojna zaradi velike mrežne entalpije.
 
 ### Primer 4 – zdaj ti
 
-Sladkor (saharoza) se v čaju raztopi v nekaj sekundah. V njegovih molekulah so vezi $\mathrm{C{-}H}$, $\mathrm{C{-}O}$ in $\mathrm{O{-}H}$. Razvrsti jih po polarnosti in pojasni, katere sile povežejo sladkor z vodo. Elektronegativnosti: $\chi(\mathrm{H}) = 2{,}20$, $\chi(\mathrm{C}) = 2{,}55$, $\chi(\mathrm{O}) = 3{,}44$.
+V molekulah saharoze so vezi $\mathrm{C{-}H}$, $\mathrm{C{-}O}$ in $\mathrm{O{-}H}$. Razvrsti jih po polarnosti in pojasni, katere sile povežejo sladkor z vodo. Elektronegativnosti: $\chi(\mathrm{H}) = 2{,}20$, $\chi(\mathrm{C}) = 2{,}55$, $\chi(\mathrm{O}) = 3{,}44$.
 
 **Podatki:** $\chi(\mathrm{H}) = 2{,}20$, $\chi(\mathrm{C}) = 2{,}55$, $\chi(\mathrm{O}) = 3{,}44$; vezi $\mathrm{C{-}H}$, $\mathrm{C{-}O}$, $\mathrm{O{-}H}$
 **Iščemo:** vrstni red polarnosti vezi in vrsto sil med sladkorjem in vodo
@@ -180,11 +194,8 @@ $\mathrm{O{-}H}$: $\Delta\chi = 3{,}44 - 2{,}20 = 1{,}24$, najbolj polarna vez (
 
 - **Mešanje vezi in medmolekulskih sil.** Pri vrenju vode se ne pretrgajo vezi $\mathrm{O{-}H}$ v molekuli, ampak vodikove vezi **med** molekulami.
 - **Polarne vezi pomenijo polarno molekulo.** $\mathrm{CO_2}$ in $\mathrm{CCl_4}$ imata polarne vezi, a sta zaradi simetrije nepolarni.
-- **Pozabljeni nevezni pari pri VSEPR.** Voda ni linearna: kisik ima dva nevezna para, zato ima štiri elektronske skupine in kotno obliko.
 - **Dvojna vez šteje kot dve skupini.** Pri VSEPR je večkratna vez ena sama skupina; $\mathrm{CO_2}$ ima okoli ogljika dve skupini in je linearen ($sp$).
-- **Vodikova vez z vodikom na ogljiku.** $\mathrm{CH_4}$ ali $\mathrm{CH_3OCH_3}$ ne tvorita vodikovih vezi med svojimi molekulami; vodik mora biti vezan na $\mathrm{F}$, $\mathrm{O}$ ali $\mathrm{N}$.
-- **Ionska »molekula« NaCl.** Ionske snovi tvorijo mrežo; formula $\mathrm{NaCl}$ pove le razmerje ionov $1 : 1$.
-- **Hibridizacija pred obliko.** Hibridizacijo določimo iz števila elektronskih skupin (VSEPR), ne obratno.
+- **Vodikova vez z vodikom na ogljiku.** $\mathrm{CH_4}$ ali $\mathrm{CH_3OCH_3}$ ne tvorita vodikovih vezi; vodik mora biti vezan na $\mathrm{F}$, $\mathrm{O}$ ali $\mathrm{N}$.
 
 ## Povzetek
 
@@ -194,71 +205,73 @@ $\mathrm{O{-}H}$: $\Delta\chi = 3{,}44 - 2{,}20 = 1{,}24$, najbolj polarna vez (
 - VSEPR: število skupin $2, 3, 4$ da linearno ($180^\circ$), trigonalno planarno ($120^\circ$), tetraedrsko ($109{,}5^\circ$) razporeditev; nevezni pari spremenijo obliko in stisnejo kote.
 - Hibridizacija $sp$, $sp^2$, $sp^3$ ustreza $2$, $3$, $4$ skupinam; enojna vez je $\sigma$, dvojna $\sigma + \pi$, trojna $\sigma + 2\pi$.
 - Medmolekulske sile: disperzijske $<$ dipol-dipol $<$ vodikove vezi; določajo vrelišča in topnost.
+- Born-Haberjev cikel (Hessov zakon) da mrežno entalpijo; teorija MO: red vezi $\tfrac{1}{2}(n_{\text{vezni}} - n_{\text{protivezni}})$, nesparjeni elektroni pomenijo paramagnetnost.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo elektronegativnosti in okvirne meje $\Delta\chi$ med nepolarno, polarno kovalentno in ionsko vezjo;
+- definicijo mrežne entalpije, njeno odvisnost od nabojev in polmerov ionov (Coulombov zakon) ter izpeljavo Born-Haberjevega cikla iz Hessovega zakona;
+- postopek za Lewisovo strukturo, definicijo formalnega naboja in pomen resonance (povprečni red vezi);
+- pravila VSEPR za $2$ do $6$ elektronskih skupin z neveznimi pari, ustrezno hibridizacijo ter vezi $\sigma$ in $\pi$;
+- pogoj za polarno molekulo (vektorska vsota dipolnih momentov, $\mu = q d$) in vpliv medmolekulskih sil na vrelišče in topnost;
+- red vezi po teoriji MO, zaporedje orbital za dvoatomne molekule 2. periode in sklep o paramagnetnosti.
+
+### Naloga 1
+
+Drugo entalpijo sprejema elektrona kisika, $\mathrm{O^-(g) + e^- \to O^{2-}(g)}$, ne moremo izmeriti. Izračunaj jo z Born-Haberjevim ciklom za $\mathrm{MgO}$ in pojasni njen predznak. Nato utemelji, zakaj nastane $\mathrm{Mg^{2+}O^{2-}}$ in ne $\mathrm{Mg^+O^-}$. Podatki v $\mathrm{kJ/mol}$: $\Delta H_f^\circ(\mathrm{MgO}) = -602$, $\Delta H_{\mathrm{sub}}(\mathrm{Mg}) = 148$, $I_1(\mathrm{Mg}) = 738$, $I_2(\mathrm{Mg}) = 1451$, $D(\mathrm{O_2}) = 498$, $\Delta H_{\mathrm{ea},1}(\mathrm{O}) = -141$, $\Delta H_{\mathrm{mr}}(\mathrm{MgO}) = -3850$.
+
+**Rešitev:**
+
+1. Koraki cikla: $\mathrm{Mg(s) \to Mg(g)}$ ($+148$), $\mathrm{Mg(g) \to Mg^+(g)}$ ($+738$), $\mathrm{Mg^+(g) \to Mg^{2+}(g)}$ ($+1451$), $\mathrm{\tfrac{1}{2}O_2 \to O(g)}$ ($\tfrac{1}{2} \cdot 498 = +249$), $\mathrm{O \to O^-}$ ($-141$), $\mathrm{O^- \to O^{2-}}$ ($\Delta H_{\mathrm{ea},2}$), $\mathrm{Mg^{2+}(g) + O^{2-}(g) \to MgO(s)}$ ($-3850$).
+2. Hessov zakon: $-602 = 148 + 738 + 1451 + 249 - 141 + \Delta H_{\mathrm{ea},2} - 3850$.
+3. Vsota znanih korakov brez mreže: $148 + 738 + 1451 + 249 - 141 = 2445\,\mathrm{kJ/mol}$; z mrežo $2445 - 3850 = -1405\,\mathrm{kJ/mol}$.
+4. $\Delta H_{\mathrm{ea},2} = -602 + 1405 = +803\,\mathrm{kJ/mol}$.
+5. Predznak: drugi elektron dodajamo že negativnemu ionu $\mathrm{O^-}$, ki ga odbija, zato je proces močno endotermen; ion $\mathrm{O^{2-}}$ v plinu ni obstojen, stabilizira ga šele mreža.
+6. Dodatni strošek za $\mathrm{Mg^{2+}O^{2-}}$ glede na $\mathrm{Mg^+O^-}$ je $I_2 + \Delta H_{\mathrm{ea},2} = 1451 + 803 = 2254\,\mathrm{kJ/mol}$. Produkt nabojev pa je $4$ namesto $1$, zato je mrežna entalpija po Coulombovem zakonu grobo $4$-krat večja: za $\mathrm{Mg^+O^-}$ bi bila okoli $-3850/4 \approx -963\,\mathrm{kJ/mol}$, dobitek $3850 - 963 = 2887\,\mathrm{kJ/mol}$ pa preseže strošek.
+7. Odgovor: $\Delta H_{\mathrm{ea},2}(\mathrm{O}) \approx +803\,\mathrm{kJ/mol}$; kljub temu nastane $\mathrm{Mg^{2+}O^{2-}}$, ker mreža dvakrat nabitih ionov sprosti veliko več energije, kot stane drugi elektron.
+
+### Naloga 2
+
+Z diagramom molekulskih orbital izpelji konfiguracijo valenčnih elektronov in red vezi za $\mathrm{O_2^+}$, $\mathrm{O_2}$, $\mathrm{O_2^-}$ in $\mathrm{O_2^{2-}}$. Razvrsti delce po dolžini vezi, utemelji, kateri so paramagnetni, in pojasni, zakaj paramagnetizma $\mathrm{O_2}$ ne napove Lewisova struktura.
+
+**Rešitev:**
+
+1. Kisik ima $6$ valenčnih elektronov, $\mathrm{O_2}$ torej $12$; $\mathrm{O_2^+}$ ima $11$, $\mathrm{O_2^-}$ $13$, $\mathrm{O_2^{2-}}$ $14$. Zaporedje za $\mathrm{O_2}$: $\sigma_{2s} < \sigma^*_{2s} < \sigma_{2p} < \pi_{2p} < \pi^*_{2p} < \sigma^*_{2p}$.
+2. $\mathrm{O_2}$: $(\sigma_{2s})^2(\sigma^*_{2s})^2(\sigma_{2p})^2(\pi_{2p})^4(\pi^*_{2p})^2$. Veznih je $8$, protiveznih $4$: red vezi $\tfrac{1}{2}(8 - 4) = 2$. Dva elektrona v dveh enakovrednih orbitalah $\pi^*$ sta po Hundovem pravilu nesparjena.
+3. Razlike so le v $\pi^*$: $\mathrm{O_2^+}$ $(\pi^*)^1$, red $\tfrac{1}{2}(8 - 3) = 2{,}5$; $\mathrm{O_2^-}$ $(\pi^*)^3$, red $\tfrac{1}{2}(8 - 5) = 1{,}5$; $\mathrm{O_2^{2-}}$ $(\pi^*)^4$, red $\tfrac{1}{2}(8 - 6) = 1$.
+4. Večji red pomeni krajšo vez: $\mathrm{O_2^+} < \mathrm{O_2} < \mathrm{O_2^-} < \mathrm{O_2^{2-}}$ (od najkrajše do najdaljše).
+5. Nesparjeni elektroni: $\mathrm{O_2^+}$ $1$, $\mathrm{O_2}$ $2$, $\mathrm{O_2^-}$ $1$, $\mathrm{O_2^{2-}}$ $0$. Paramagnetni so prvi trije, peroksidni ion je diamagneten.
+6. Lewisova struktura $\mathrm{O{=}O}$ ima vse elektrone v parih (dva vezna in štiri nevezne), ker obravnava pare lokalizirano; delokalizirani orbitali $\pi^*$ z enako energijo, ki ju elektrona zasedeta posamično, pozna šele teorija MO.
+7. Odgovor: redi vezi so $2{,}5$; $2$; $1{,}5$; $1$, dolžina vezi narašča v tem vrstnem redu, paramagnetni so $\mathrm{O_2^+}$, $\mathrm{O_2}$ in $\mathrm{O_2^-}$.
 
 ## Drugače: Na sliki
 
-| Skupine | Nevezni pari | Oblika | Kot | Hibridizacija | Primer |
-|---|---|---|---|---|---|
-| $2$ | $0$ | linearna | $180^\circ$ | $sp$ | $\mathrm{CO_2}$ |
-| $3$ | $0$ | trigonalno planarna | $120^\circ$ | $sp^2$ | $\mathrm{BF_3}$ |
-| $3$ | $1$ | kotna | pod $120^\circ$ | $sp^2$ | $\mathrm{SO_2}$ |
-| $4$ | $0$ | tetraedrska | $109{,}5^\circ$ | $sp^3$ | $\mathrm{CH_4}$ |
-| $4$ | $1$ | trigonalna piramida | okoli $107^\circ$ | $sp^3$ | $\mathrm{NH_3}$ |
-| $4$ | $2$ | kotna | okoli $104{,}5^\circ$ | $sp^3$ | $\mathrm{H_2O}$ |
+| Zapis | Oblika, kot | Hibridizacija | Primer |
+|---|---|---|---|
+| $\mathrm{AX_2}$ | linearna, $180^\circ$ | $sp$ | $\mathrm{CO_2}$ |
+| $\mathrm{AX_3}$ | trigonalno planarna, $120^\circ$ | $sp^2$ | $\mathrm{BF_3}$ |
+| $\mathrm{AX_2E}$ | kotna, pod $120^\circ$ | $sp^2$ | $\mathrm{SO_2}$ |
+| $\mathrm{AX_4}$ | tetraedrska, $109{,}5^\circ$ | $sp^3$ | $\mathrm{CH_4}$ |
+| $\mathrm{AX_3E}$ | trigonalna piramida, okoli $107^\circ$ | $sp^3$ | $\mathrm{NH_3}$ |
+| $\mathrm{AX_2E_2}$ | kotna, okoli $104{,}5^\circ$ | $sp^3$ | $\mathrm{H_2O}$ |
 
-Predstavljaj si balone, zvezane v enem vozlu: dva balona se postavita na nasprotni strani, trije v ravnino pod $120^\circ$, štirje v oglišča tetraedra. Nevezni par je »debelejši balon«, ki potisne ostale bližje skupaj.
+## Drugače: Uporaba v stroki
 
-Vodikove vezi med molekulami vode:
+**Kromatografija.** Pri HPLC z obrnjenimi fazami je stacionarna faza nepolarna (verige $\mathrm{C_{18}}$), mobilna pa polarna (voda z metanolom). Polarne snovi se eluirajo prej.
 
-```
-      H          H
-       \          \
-        O-H ····· O-H ····· O
-       /    (vodikova vez)
-      H
-```
+**Molekularna biologija.** Par gvanin-citozin tvori tri vodikove vezi, adenin-timin dve; DNA z več $\mathrm{G{-}C}$ se tali pri višji temperaturi, kar upoštevamo pri načrtovanju začetnih oligonukleotidov za PCR.
 
-Polna črta je kovalentna vez v molekuli, pikčasta črta je vodikova vez med molekulami (več kot desetkrat šibkejša: okoli $20\,\mathrm{kJ/mol}$ proti $463\,\mathrm{kJ/mol}$ za vez $\mathrm{O{-}H}$).
+**Ognjevzdržni materiali.** $\mathrm{MgO}$ ima zaradi nabojev $2+$ in $2-$ in majhnih ionov okoli $5$-krat večjo mrežno entalpijo kot $\mathrm{NaCl}$ in tališče nad $2800\,^\circ\mathrm{C}$: obloge talilnih peči.
 
-## Drugače: Iz vsakdanjega življenja
-
-**DNA in beljakovine.** Dve verigi DNA drži skupaj veliko vodikovih vezi med bazami (adenin-timin z dvema, gvanin-citozin s tremi). Vsaka posamezna vez je šibka, zato se verigi pri podvajanju lahko razkleneta, vseh skupaj pa je dovolj, da je molekula stabilna. Pri beljakovinah vodikove vezi, disperzijske sile in ionski mostički določajo zvitje; pri segrevanju (kuhanje jajca) se te šibke interakcije pretrgajo in beljakovina denaturira.
-
-**Led plava.** Vodikove vezi v ledu razporedijo molekule v odprto heksagonalno mrežo, zato ima led manjšo gostoto kot voda. Jezera zamrznejo od zgoraj navzdol in življenje pod ledom preživi zimo.
-
-**Milo in čistila.** Molekula mila ima ionsko »glavo« (topno v vodi zaradi sil ion-dipol) in dolg nepolaren »rep« (topen v maščobi zaradi disperzijskih sil). Repi obdajo kapljico maščobe, glave pa jo držijo v vodi.
-
-**Zdravila.** Učinkovina se veže na receptor z vodikovimi vezmi in drugimi medmolekulskimi silami. Oblika molekule (VSEPR, hibridizacija, *cis-trans* izomerija) odloči, ali se prilega vezavnemu mestu kot ključ v ključavnico.
-
-## Drugače: Korak za korakom s številkami
-
-Določimo zgradbo metanala (formaldehida) $\mathrm{H_2CO}$.
-
-1. **Valenčni elektroni:** $\mathrm{C}$ $4$, $2 \cdot \mathrm{H}$ $2$, $\mathrm{O}$ $6$, skupaj $12$ elektronov ($6$ parov).
-2. **Ogrodje:** ogljik je osrednji atom, nanj sta vezana oba vodika in kisik. Tri enojne vezi porabijo $3$ pare.
-3. **Dopolnimo kisik:** trije nevezni pari na kisiku porabijo še $3$ pare. Vseh $6$ parov je porabljenih, ogljik pa ima le $6$ elektronov.
-4. **Dvojna vez:** en nevezni par kisika premaknemo v vez $\mathrm{C{=}O}$. Zdaj imata oba atoma oktet, kisik pa ima $2$ nevezna para.
-5. **Formalna naboja:** $\mathrm{C}$: $4 - 0 - \frac{1}{2} \cdot 8 = 0$; $\mathrm{O}$: $6 - 4 - \frac{1}{2} \cdot 4 = 0$. Struktura je ugodna.
-6. **VSEPR okoli ogljika:** $3$ skupine (dva $\mathrm{H}$ in en $\mathrm{O}$, dvojna vez šteje enkrat), brez neveznih parov: $\mathrm{AX_3}$, trigonalno planarno, okoli $120^\circ$.
-7. **Hibridizacija:** ogljik $sp^2$; ena nehibridizirana orbitala $p$ tvori vez $\pi$ s kisikom.
-8. **Štetje vezi:** $2$ vezi $\mathrm{C{-}H}$ ($\sigma$) in vez $\mathrm{C{=}O}$ ($\sigma + \pi$): skupaj $3\,\sigma$ in $1\,\pi$.
-9. **Polarnost:** $\Delta\chi(\mathrm{C{-}O}) = 3{,}44 - 2{,}55 = 0{,}89$, dipol se ne izniči: molekula je polarna.
+**Spektroskopija IR.** Večji red vezi pomeni višje valovno število nihanja: $\mathrm{C{=}O}$ okoli $1700\,\mathrm{cm^{-1}}$, $\mathrm{C{\equiv}N}$ okoli $2250\,\mathrm{cm^{-1}}$.
 
 ## Drugače: Bolj natančno
 
-**Delež ionskega značaja.** Pauling je predlagal oceno deleža ionskega značaja vezi $1 - e^{-(\Delta\chi)^2/4}$. Za $\mathrm{HCl}$ ($\Delta\chi = 0{,}96$) dobimo okoli $21\,\%$, za $\mathrm{NaCl}$ ($\Delta\chi = 2{,}23$) okoli $71\,\%$. Nobena vez ni povsem ionska; meja $1{,}7$ ustreza približno $50\,\%$ ionskega značaja.
+**Delež ionskega značaja.** Paulingova ocena deleža ionskega značaja je $1 - e^{-(\Delta\chi)^2/4}$. Za $\mathrm{HCl}$ ($\Delta\chi = 0{,}96$) dobimo okoli $21\,\%$, za $\mathrm{NaCl}$ ($\Delta\chi = 2{,}23$) okoli $71\,\%$. Meja $1{,}7$ ustreza približno $50\,\%$.
 
-**Mrežna energija in Born-Haberjev cikel.** Mrežne energije ne merimo neposredno, ampak jo izračunamo s Hessovim zakonom iz sublimacijske, ionizacijske in disociacijske energije, elektronske afinitete in tvorbene entalpije. Za $\mathrm{NaCl}$ je okoli $787\,\mathrm{kJ/mol}$, za $\mathrm{MgO}$ okoli $3800\,\mathrm{kJ/mol}$: produkt nabojev je $4$-krat večji, ioni pa so manjši, zato je $\mathrm{MgO}$ ognjevzdržen material s tališčem nad $2800\,^\circ\mathrm{C}$.
-
-**Teorija molekulskih orbital (MO).** Model VSEPR in hibridizacija sta lokalizirana opisa. Natančnejši je opis z molekulskimi orbitalami, ki so linearne kombinacije atomskih orbital in se raztezajo čez vso molekulo. **Red vezi** je
-
-$$\text{red vezi} = \tfrac{1}{2}\left(n_{\text{vezni}} - n_{\text{protivezni}}\right).$$
-
-Za $\mathrm{N_2}$ je red $3$, za $\mathrm{O_2}$ pa $2$, pri čemer ima $\mathrm{O_2}$ dva nesparjena elektrona v protiveznih orbitalah $\pi^*$. Zato je kisik **paramagneten** (ga privlači magnet), česar Lewisova struktura z vsemi sparjenimi elektroni ne pojasni.
-
-**Delokalizacija in resonanca.** V benzenu ali karbonatnem ionu nobena posamezna Lewisova struktura ne opiše dejanskega stanja; elektroni $\pi$ so delokalizirani. Vse vezi $\mathrm{C{-}O}$ v $\mathrm{CO_3^{2-}}$ so enako dolge, z redom vezi $1\frac{1}{3}$.
-
-**Izvor disperzijskih sil.** Trenutni dipol ene molekule inducira dipol v sosednji; potencialna energija pojema z razdaljo kot $1/r^6$. Zato so te sile kratkega dosega, a pri velikih molekulah (dolge verige alkanov, polimeri) zaradi velikega števila stikov zelo pomembne.
+**Mešanje $s$ in $p$.** Pri $\mathrm{B_2}$, $\mathrm{C_2}$ in $\mathrm{N_2}$ se orbitali $2s$ in $2p$ mešata, kar dvigne $\sigma_{2p}$ nad $\pi_{2p}$. Zato je $\mathrm{B_2}$ paramagneten, čeprav bi brez mešanja pričakovali sparjena elektrona.
 
 ## Preveri se
 
@@ -294,15 +307,17 @@ Za $\mathrm{N_2}$ je red $3$, za $\mathrm{O_2}$ pa $2$, pri čemer ima $\mathrm{
 ~ Trije enaki atomi zvenijo simetrično, a nevezni par naredi piramido; dipoli kažejo vsi na isto stran in se ne izničijo.
 > V linearni molekuli $\mathrm{CO_2}$ sta dipola vezi $\mathrm{C{=}O}$ nasprotno usmerjena in se izničita.
 
-? Maja kuha testenine in reče: »Ko voda v loncu zavre, molekule vode razpadejo na vodik in kisik.« Kaj je narobe?
-- Nič, mehurčki so vodik in kisik.
-~ Mehurčki so vodna para; za razcep vezi $\mathrm{O{-}H}$ ($463\,\mathrm{kJ/mol}$) je treba veliko več energije, kot je dobi voda pri $100\,^\circ\mathrm{C}$.
-+ Pretrgajo se vodikove vezi med molekulami, molekule $\mathrm{H_2O}$ ostanejo cele.
-- Pretrgajo se ionske vezi med ioni $\mathrm{H^+}$ in $\mathrm{OH^-}$.
-~ Voda je iz molekul s kovalentnimi vezmi, ne ionska snov; ionov je v čisti vodi zanemarljivo malo.
-> Pri vrenju se premagajo medmolekulske sile (pri vodi predvsem vodikove vezi); kovalentne vezi v molekulah ostanejo, zato je para še vedno $\mathrm{H_2O}$.
-
 :::simboli
+\Delta H_f | standardna tvorbena entalpija spojine | | kJ/mol
+\Delta H_{\mathrm{sub}} | sublimacijska entalpija kovine | | kJ/mol | pozitivna
+I | ionizacijska energija | | kJ/mol | I₁, I₂: prva in druga
+D | disociacijska energija vezi | | kJ/mol | pri X₂ uporabimo ½D
+\Delta H_{\mathrm{ea}} | entalpija sprejema elektrona | | kJ/mol | prvi sprejem običajno negativen, drugi pozitiven
+\Delta H_{\mathrm{mr}} | mrežna entalpija | \Delta H_f^\circ = \Delta H_{\mathrm{sub}} + I + \tfrac{1}{2}D + \Delta H_{\mathrm{ea}} + \Delta H_{\mathrm{mr}} | kJ/mol | negativna
+\mu | dipolni moment | \mu = q d | C m | 1 D = 3,336·10⁻³⁰ C m
+\sigma | vez sigma (prekrivanje vzdolž osi) | | |
+\sigma_{2s}, \sigma_{2p} | vezni molekulski orbitali sigma | | | z * protivezni
+\pi_{2p} | vezni molekulski orbitali pi | | | z * protivezni
 \mathrm{FN} | formalni naboj atoma | \mathrm{FN} = (\text{valenčni } e^-) - (\text{nevezni } e^-) - \tfrac{1}{2}(\text{vezni } e^-) | – | najboljša struktura ima naboje čim bližje nič
 e | elektron | | | v Paulingovi oceni je e osnova naravnega logaritma
 n_{\text{vezni}} | število elektronov v veznih orbitalah | | –

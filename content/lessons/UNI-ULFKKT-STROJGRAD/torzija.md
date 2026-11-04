@@ -15,7 +15,7 @@ Gred, ki jo obremenjuje navor okoli njene osi, je obremenjena na **torzijo** (zv
 
 Pri osni obremenitvi palico vlečemo vzdolž osi. Pri torziji jo vrtimo okoli osi: en konec zadržuje kolo ali vpetje, na drugi konec deluje motor z **navorom** $T$ (merimo ga v $\mathrm{N\,m}$). Novo idejo zgradimo iz razlik do osne obremenitve, ki jo že poznaš.
 
-**Razlika 1: vrsta deformacije.** Na površino gredi nariši mrežo kvadratkov. Pri nategu se kvadratek podaljša. Pri torziji se poševno nagne v romb: zgornji rob se premakne vstran glede na spodnjega. To je **strižna deformacija** $\gamma$, kot, za katerega se nagne nekdaj pravi kot (v radianih). Pripada ji **strižna napetost** $\tau$, sila na ploščino, ki deluje *v ravnini* preseka. Hookov zakon za strig je $\tau = G\gamma$, kjer je $G$ **strižni modul** (jeklo $80\,\mathrm{GPa}$, titan okoli $44\,\mathrm{GPa}$, aluminij okoli $26\,\mathrm{GPa}$).
+**Razlika 1: vrsta deformacije.** Na površino gredi nariši mrežo kvadratkov. Pri nategu se kvadratek podaljša. Pri torziji se poševno nagne v romb: zgornji rob se premakne vstran glede na spodnjega. To je **strižna deformacija** $\gamma$, kot, za katerega se nagne nekdaj pravi kot (v radianih). Pripada ji **strižna napetost** $\tau$, sila na ploščino, ki deluje *v ravnini* preseka. Hookov zakon za strig je $\tau = G\gamma$, kjer je $G$ **strižni modul** (jeklo $80\,\mathrm{GPa}$, titan okoli $44\,\mathrm{GPa}$, aluminij okoli $26\,\mathrm{GPa}$). Velja do meje proporcionalnosti za strig; za izotropen material je $G = \frac{E}{2(1 + \nu)}$, kjer je $\nu$ Poissonovo število.
 
 **Razlika 2: kako se napetost razporedi.** Pri nategu vsako vlakno nosi enako napetost $\sigma = F/A$. Pri torziji ne. Črta, ki jo narišeš vzdolž gredi, se zvije v vijačnico. Če se konec gredi zasuče za kot $\varphi$, se točka na razdalji $\rho$ od osi premakne po loku $\rho\varphi$. Točka na osi se sploh ne premakne. Ta premik se porazdeli po vsej dolžini $L$, zato je nagib kvadratka lok, deljen z dolžino:
 
@@ -23,8 +23,14 @@ $$\gamma = \frac{\rho\,\varphi}{L}, \qquad \tau = G\,\frac{\rho\,\varphi}{L}$$
 
 Napetost raste **linearno od nič na osi do največje vrednosti na površini**.
 
+**Predpostavke.** Gred je ravna, s stalnim polnim ali kolobarjastim krožnim prerezom, material je homogen, izotropen in linearno elastičen, navor deluje okoli osi. Prerezi ostanejo ravni in okrogli, polmeri v njih ostanejo ravni in se le zasučejo. Prav to smo zgoraj uporabili za $\gamma = \rho\varphi/L$.
+
+**Izrek.** Če gred dolžine $L$ ob teh predpostavkah prenaša stalen navor $T$, potem je $\tau(\rho) = \frac{T\rho}{J}$ in $\varphi = \frac{TL}{GJ}$, kjer je $J = \int_A \rho^2\,\mathrm{d}A$ polarni vztrajnostni moment preseka (pomen pojasni razlika 3).
+
+*Dokaz.* Napetost $\tau = G\rho\varphi/L$ na ploščici $\mathrm{d}A$ da glede na os navor $\tau\rho\,\mathrm{d}A$. Ravnovesje dela gredi: $T = \int_A \tau\rho\,\mathrm{d}A = \frac{G\varphi}{L}\int_A \rho^2\,\mathrm{d}A = \frac{G\varphi}{L} J$. Od tod $\varphi = \frac{TL}{GJ}$; vstavimo v $\tau = G\rho\varphi/L$ in dobimo $\tau = \frac{T\rho}{J}$. $\square$
+
 :::premisli
-V jekleni gredi s polmerom $10\,\mathrm{mm}$ je na površini $\tau = 90\,\mathrm{MPa}$. Kolikšna je strižna napetost $5\,\mathrm{mm}$ od osi? Kje bi pri preobremenitvi začela nastajati razpoka?
+V jekleni gredi s polmerom $10\,\mathrm{mm}$ je na površini $\tau = 90\,\mathrm{MPa}$. Sredico do polmera $5\,\mathrm{mm}$ bi radi izvrtali. Kolikšna je največja strižna napetost v snovi, ki jo odstranimo? Kje bi pri preobremenitvi začela nastajati razpoka?
 ---
 $45\,\mathrm{MPa}$, ker je $\tau$ sorazmerna z $\rho$, $5\,\mathrm{mm}$ pa je pol polmera. Razpoka nastane na površini, kjer je napetost največja.
 :::
@@ -33,7 +39,9 @@ $45\,\mathrm{MPa}$, ker je $\tau$ sorazmerna z $\rho$, $5\,\mathrm{mm}$ pa je po
 
 $$J = \frac{\pi d^4}{32}, \qquad J_{\text{cev}} = \frac{\pi (D^4 - d^4)}{32}$$
 
-Iz upogiba poznaš $I = \pi d^4/64$. Za krog je $J = 2I$.
+*Izpeljava.* Kolobar s polmerom $\rho$ in debelino $\mathrm{d}\rho$ ima $\mathrm{d}A = 2\pi\rho\,\mathrm{d}\rho$, zato je za poln krog s polmerom $r = d/2$: $J = \int_0^{r} 2\pi\rho^3\,\mathrm{d}\rho = \frac{\pi r^4}{2} = \frac{\pi d^4}{32}$. Za cev integriramo od $d/2$ do $D/2$.
+
+Iz upogiba poznaš $I = \pi d^4/64$. Za krog je $J = 2I$, ker je $\rho^2 = y^2 + z^2$ in zato $J = I_y + I_z$.
 
 Primerjava obeh obremenitev:
 
@@ -50,7 +58,11 @@ Največja napetost je na površini ($\rho = d/2$):
 
 $$\tau_{\max} = \frac{T\,d/2}{J} = \frac{16\,T}{\pi d^3}$$
 
-Kot zasuka $\varphi$ dobimo v **radianih**. V stopinje ga pretvorimo z $180^\circ/\pi$.
+Kot zasuka $\varphi$ dobimo v **radianih**. V stopinje ga pretvorimo z $180^\circ/\pi$. Pri cevi je $\tau_{\max} = \frac{T\,D/2}{J_{\text{cev}}}$. Količnik med $J$ in polmerom zunanje površine imenujemo **polarni odpornostni moment**: $W_\mathrm{p} = J/(d/2)$ pri polni gredi in $W_\mathrm{p} = J_{\text{cev}}/(D/2)$ pri cevi. Tedaj je $\tau_{\max} = T/W_\mathrm{p}$.
+
+**Dimenzioniranje.** Gred mora izpolniti **trdnostni pogoj** $\tau_{\max} \le \tau_\mathrm{dop}$ in pogosto še **togostni pogoj** $\varphi/L \le \theta_\mathrm{dop}$ (dopustni zasuk na meter, npr. $0{,}25^\circ/\mathrm{m}$ pri pogonskih gredeh). Navor pogosto ni podan neposredno, ampak z močjo $P$ in vrtilno frekvenco $n$: iz $P = T\omega$ in $\omega = 2\pi n$ sledi $T = \frac{P}{2\pi n}$.
+
+**Statično nedoločena gred.** Če je gred vpeta na obeh koncih in navor $T$ deluje vmes, na razdaljah $a$ in $b$ od vpetij, ravnovesje da le $T_A + T_B = T$. Drugo enačbo da skladnost: prerez, kjer deluje $T$, ima en sam zasuk, zato $\frac{T_A a}{GJ} = \frac{T_B b}{GJ}$. Sledi $T_A = \frac{Tb}{a + b}$ in $T_B = \frac{Ta}{a + b}$: bližnje vpetje prevzame večji del.
 
 :::premisli
 Premer gredi podvojiš, navor ostane enak. Kolikokrat se zmanjšata $\tau_{\max}$ in $\varphi$? Primerjaj s palico, ki ji pri nategu podvojiš premer.
@@ -59,6 +71,8 @@ $\tau_{\max} \propto 1/d^3$ se zmanjša osemkrat, $\varphi \propto 1/d^4$ šestn
 :::
 
 Iz linearne razporeditve sledi še nekaj: snov blizu osi nosi majhno napetost in skoraj nič ne prispeva k $J$. Zato so gredi v vesoljskih napravah pogosto votle. Formule veljajo le za okrogle prereze in v elastičnem območju.
+
+Na površinskem elementu delujejo enake strižne napetosti tudi v vzdolžnih ravninah (**konjugiranost strižnih napetosti**). V smereh pod $45^\circ$ na os sta zato glavni napetosti $\sigma_{1,2} = \pm\tau$: krhka snov poči po vijačnici pod $45^\circ$ zaradi natega, žilava pa po prečnem prerezu zaradi striga.
 
 ## Rešeni primeri
 
@@ -101,13 +115,13 @@ $J = \dfrac{\pi d^4}{32}$, $\quad \varphi = \dfrac{TL}{GJ}$
 
 ### Primer 3: votla gred je lažja in močnejša
 
-Inženirji polno gred iz primerov 1 in 2 zamenjajo z votlo jekleno cevjo z zunanjim premerom $24\,\mathrm{mm}$ in notranjim $18\,\mathrm{mm}$. Navor je še vedno $150\,\mathrm{N\,m}$. Je cev lažja? Kolikšna je v njej največja strižna napetost?
+Inženirji polno gred iz primerov 1 in 2 zamenjajo z votlo jekleno cevjo z zunanjim premerom $24\,\mathrm{mm}$ in notranjim $18\,\mathrm{mm}$. Navor je še vedno $150\,\mathrm{N\,m}$. Je cev lažja? Kolikšna je v njej največja strižna napetost? Nato obratno: kolikšen je najmanjši zunanji premer cevi z razmerjem premerov $d/D = 0{,}75$, ki ima enako $\tau_{\max}$ kot polna gred, in koliko je ta cev lažja?
 
-**Podatki:** $D = 24\,\mathrm{mm}$, $d = 18\,\mathrm{mm}$, $T = 150\,000\,\mathrm{N\,mm}$; polna gred: $d_0 = 20\,\mathrm{mm}$, $\tau_{\max,0} \approx 95{,}5\,\mathrm{MPa}$
-**Iščemo:** razmerje mas (pri enaki dolžini in snovi) in $\tau_{\max}$ v cevi
+**Podatki:** $D = 24\,\mathrm{mm}$, $d = 18\,\mathrm{mm}$, $T = 150\,000\,\mathrm{N\,mm}$; polna gred: $d_0 = 20\,\mathrm{mm}$, $\tau_{\max,0} \approx 95{,}5\,\mathrm{MPa}$; za drugi del $k = d/D = 0{,}75$
+**Iščemo:** razmerje mas (pri enaki dolžini in snovi), $\tau_{\max}$ v cevi ter $D$ druge cevi in njeno razmerje mas
 
 :::formula
-$A = \dfrac{\pi (D^2 - d^2)}{4}$, $\quad J = \dfrac{\pi (D^4 - d^4)}{32}$, $\quad \tau_{\max} = \dfrac{T\,D/2}{J}$
+$A = \dfrac{\pi (D^2 - d^2)}{4}$, $\quad J = \dfrac{\pi (D^4 - d^4)}{32}$, $\quad \tau_{\max} = \dfrac{T\,D/2}{J} = \dfrac{16\,T}{\pi D^3 (1 - k^4)}$
 :::
 
 **Rešitev:**
@@ -116,7 +130,9 @@ $A = \dfrac{\pi (D^2 - d^2)}{4}$, $\quad J = \dfrac{\pi (D^4 - d^4)}{32}$, $\qua
 2. Cev ima torej le $63\,\%$ mase polne gredi, je za $37\,\%$ lažja.
 3. $J = \dfrac{\pi \cdot (331\,776 - 104\,976)\,\mathrm{mm^4}}{32} \approx 22\,266\,\mathrm{mm^4}$, več kot pri polni gredi ($15\,708\,\mathrm{mm^4}$).
 4. Napetost na zunanji površini: $\tau_{\max} = \dfrac{150\,000\,\mathrm{N\,mm} \cdot 12\,\mathrm{mm}}{22\,266\,\mathrm{mm^4}} \approx 80{,}8\,\mathrm{MPa}$.
-5. Odgovor: cev je za $37\,\%$ lažja, največja napetost pa se zniža s $95{,}5$ na približno $80{,}8\,\mathrm{MPa}$. Snov smo premaknili tja, kjer nosi največ.
+5. Obratno vprašanje: enaka $\tau_{\max}$ pri istem $T$ zahteva enak $W_\mathrm{p}$, torej $D^3(1 - k^4) = d_0^3$. Z $1 - 0{,}75^4 = 0{,}6836$ dobimo $D = 20\,\mathrm{mm}/\sqrt[3]{0{,}6836} \approx 22{,}7\,\mathrm{mm}$ in notranji premer $0{,}75 \cdot 22{,}7 \approx 17{,}0\,\mathrm{mm}$.
+6. Razmerje mas: $\dfrac{D^2(1 - k^2)}{d_0^2} = \dfrac{22{,}7^2 \cdot 0{,}4375}{400} \approx 0{,}564$.
+7. Odgovor: prva cev je za $37\,\%$ lažja, največja napetost pa se zniža s $95{,}5$ na približno $80{,}8\,\mathrm{MPa}$. Cev z $D \approx 22{,}7\,\mathrm{mm}$ in $d \approx 17{,}0\,\mathrm{mm}$ je enako trdna kot polna gred in za okoli $44\,\%$ lažja. Snov smo premaknili tja, kjer nosi največ.
 
 ### Primer 4: zdaj ti
 
@@ -157,6 +173,45 @@ $d^3 \approx 3395\,\mathrm{mm^3}$, $d = \sqrt[3]{3395}\,\mathrm{mm} \approx 15{,
 - $\tau_{\max} \propto 1/d^3$, $\varphi \propto 1/d^4$. Votla gred pri isti masi prenese več.
 - Računaj v $\mathrm{N\,mm}$, $\mathrm{mm}$, $\mathrm{MPa}$; jeklo $G = 80\,\mathrm{GPa}$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- predpostavke torzije okrogle gredi (ravni in okrogli prerezi, ravni polmeri, linearno elastičen homogen material) in Hookov zakon za strig $\tau = G\gamma$;
+- izpeljavo $\gamma = \rho\varphi/L$, $\tau = T\rho/J$ in $\varphi = TL/(GJ)$ iz ravnovesja navorov;
+- izpeljavo $J = \pi d^4/32$ za krog in $J = \pi(D^4 - d^4)/32$ za cev ter zvezo $J = 2I$;
+- trdnostni in togostni pogoj ter $T = P/(2\pi n)$;
+- reševanje obojestransko vpete gredi (ravnovesje + skladnost zasukov) in zakaj krhka gred poči pod $45^\circ$.
+
+### Naloga 1
+
+Polna jeklena gred ($G = 80\,\mathrm{GPa}$) s premerom $40\,\mathrm{mm}$ in dolžino $1{,}2\,\mathrm{m}$ je na obeh koncih togo vpeta. Na razdalji $a = 0{,}4\,\mathrm{m}$ od levega vpetja A nanjo deluje navor $T = 1{,}2\,\mathrm{kN\,m}$. (a) Izračunaj reakcijska navora v vpetjih. (b) Preveri trdnostni pogoj pri $\tau_\mathrm{dop} = 60\,\mathrm{MPa}$ in določi najmanjši potrebni premer. (c) Za koliko stopinj se zasuče prerez, kjer deluje navor (pri $d = 40\,\mathrm{mm}$)?
+
+**Rešitev:**
+
+1. Ravnovesje: $T_A + T_B = T = 1200\,\mathrm{N\,m}$; ena enačba za dve neznanki, gred je statično nedoločena.
+2. Skladnost: zasuk prereza C, izračunan z leve in z desne, je enak: $T_A a = T_B b$ z $b = 0{,}8\,\mathrm{m}$.
+3. $T_A = \frac{Tb}{L} = \frac{1200 \cdot 0{,}8}{1{,}2} = 800\,\mathrm{N\,m}$, $T_B = 400\,\mathrm{N\,m}$.
+4. (b) Največji navor je v krajšem delu: $\tau_{\max} = \dfrac{16 \cdot 800\,000\,\mathrm{N\,mm}}{\pi \cdot (40\,\mathrm{mm})^3} \approx 63{,}7\,\mathrm{MPa} > 60\,\mathrm{MPa}$, pogoj ni izpolnjen.
+5. Najmanjši premer: $d^3 \ge \dfrac{16 \cdot 800\,000}{\pi \cdot 60}\,\mathrm{mm^3} \approx 67\,906\,\mathrm{mm^3}$, $d \ge 40{,}8\,\mathrm{mm}$; izberemo $41\,\mathrm{mm}$ (sprememba $d$ reakcij ne spremeni, ker se $GJ$ pokrajša).
+6. (c) $J = \dfrac{\pi \cdot 40^4}{32} \approx 251\,327\,\mathrm{mm^4}$, $GJ \approx 2{,}011 \cdot 10^{10}\,\mathrm{N\,mm^2}$.
+7. $\varphi_C = \dfrac{T_A a}{GJ} = \dfrac{800\,000 \cdot 400}{2{,}011 \cdot 10^{10}} \approx 0{,}0159\,\mathrm{rad} \approx 0{,}91^\circ$; kontrola z desne: $\frac{400\,000 \cdot 800}{2{,}011 \cdot 10^{10}}$ da isto.
+8. Odgovor: $T_A = 800\,\mathrm{N\,m}$, $T_B = 400\,\mathrm{N\,m}$; pri $40\,\mathrm{mm}$ je $\tau_{\max} \approx 63{,}7\,\mathrm{MPa}$, kar je preveč, potreben je premer vsaj $40{,}8\,\mathrm{mm}$; prerez C se zasuče za okoli $0{,}91^\circ$.
+
+### Naloga 2
+
+Navedi predpostavke torzije okrogle gredi in izpelji $\tau = T\rho/J$ in $\varphi = TL/(GJ)$. Izpelji $J$ za cev. Utemelji, ali votla gred z $d/D = 0{,}8$ prenese večji navor kot polna gred iz istega materiala z enako maso in dolžino, in kolikokrat.
+
+**Rešitev:**
+
+1. Predpostavke: krožen prerez, ravni in okrogli prerezi, ravni polmeri, homogen izotropen linearno elastičen material, navor okoli osi.
+2. Točka na razdalji $\rho$ se zasuče po loku $\rho\varphi$, porazdeljenem po dolžini $L$: $\gamma = \rho\varphi/L$, po Hookovem zakonu $\tau = G\rho\varphi/L$.
+3. Ravnovesje: $T = \int_A \tau\rho\,\mathrm{d}A = \frac{G\varphi}{L} J$, torej $\varphi = \frac{TL}{GJ}$ in $\tau = \frac{T\rho}{J}$.
+4. Cev: $J = \int_{d/2}^{D/2} 2\pi\rho^3\,\mathrm{d}\rho = \frac{\pi}{2}\Big[\big(\tfrac{D}{2}\big)^4 - \big(\tfrac{d}{2}\big)^4\Big] = \frac{\pi (D^4 - d^4)}{32}$.
+5. Enaka masa pomeni enako ploščino: $D^2(1 - 0{,}8^2) = d_0^2$, zato $D = d_0/0{,}6 \approx 1{,}667\,d_0$.
+6. Prenesen navor pri $\tau_\mathrm{dop}$ je $T = \tau_\mathrm{dop} W_\mathrm{p}$, $W_\mathrm{p} = \frac{\pi D^3(1 - k^4)}{16}$ s $k = 0{,}8$, pri polni gredi $\frac{\pi d_0^3}{16}$. Razmerje: $\frac{D^3(1 - 0{,}8^4)}{d_0^3} = 4{,}630 \cdot 0{,}5904 \approx 2{,}73$.
+7. Odgovor: da, votla gred enake mase prenese okoli $2{,}7$-krat večji navor, ker je snov odmaknjena od osi, kjer nosi največ napetosti. Meja je lokalno izbočenje pretankih sten.
+
 ## Drugače: Na sliki
 
 Predstavljaj si gred kot snop tankih cevi, vtaknjenih druga v drugo, kot letnice v deblu.
@@ -171,12 +226,12 @@ Ko zasučeš konec gredi za kot $\varphi$, se vse cevi zasučejo za isti kot. Zu
 
 Črta, ki je bila narisana vzdolž gredi, se po zasuku ovije v vijačnico. Kot med vijačnico in osjo je $\gamma$ na površini. Pri dvakrat daljši gredi se ob istem navoru konec zasuče dvakrat bolj, nagib $\gamma$ pa ostane enak.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-- **Ožemanje brisače.** Ko zvijaš mokro brisačo, se zunanji sloji močno nagnejo v vijačnico, sredica pa se skoraj ne premakne.
-- **Lomljenje krede.** Kos krede zvij med prsti. Ne odlomi se naravnost prečno kot pri upogibu, ampak po poševni vijačnici pod okoli $45^\circ$. Strig pod $45^\circ$ deluje kot nateg, krhka snov pa poči prav zaradi natega. Lom se vedno začne na površini.
-- **Izvijač.** Ročaj je debel, da ga z dlanjo zasučeš z dovolj velikim navorom. Steblo prenaša isti navor, a je iz trdnega jekla, zato zadošča tanko. Dolg tanek nastavek se pri močnem privijanju vidno zasuče, ker je $\varphi \propto L/d^4$.
-- **Kolesarska os.** Os pedalov je cev, ne poln valj: kolesarski deli morajo biti lahki, tako kot deli roverja.
+- **Mešala in črpalke.** Motor mešala v reaktorju z močjo $5{,}5\,\mathrm{kW}$ pri $150\,\mathrm{min^{-1}}$ obremenjuje gred z $T = P/(2\pi n) \approx 350\,\mathrm{N\,m}$. Gred dimenzioniramo z rezervo, ker utor za moznik povzroči koncentracijo napetosti, ponavljajoči se zagoni pa utrujanje.
+- **Vzmeti varnostnih ventilov.** Žica vijačne vzmeti je obremenjena pretežno torzijsko, $\tau \approx \frac{8FD_\mathrm{v}}{\pi d^3}$ ($D_\mathrm{v}$ je srednji premer vzmeti), s popravnim faktorjem za ukrivljenost. Od nje je odvisno, pri katerem tlaku se ventil odpre.
+- **Merjenje navora.** Merilni lističi, nalepljeni na gred pod $\pm 45^\circ$, merijo glavni deformaciji; iz njiju dobimo $\gamma$ in navor. Tako delujejo merilne gredi na preizkuševališčih.
+- **Preiskava lomov.** Žilava gred, porušena s torzijo, ima gladek prečen prelom; krhka (litina) poči po vijačnici pod $45^\circ$, kot kreda med prsti. Pri preiskavi nesreče oblika preloma pove, ali je šlo za preobremenitev z navorom ali za utrujanje.
 
 ## Drugače: Bolj natančno
 
@@ -249,4 +304,8 @@ D | zunanji premer cevi | | m |
 T | navor | | N m | v zgledih v N mm
 A | ploščina prečnega prereza | | m^2 | za cev A = π(D² − d²)/4
 \tau_{\text{dop}} | dopustna strižna napetost | | Pa | v zgledih v MPa
+W_\mathrm{p} | polarni odpornostni moment | W_\mathrm{p} = \frac{J}{d/2} | m^3 | τ_max = T/W_p; pri cevi W_p = J/(D/2)
+P | moč | P = T\omega | W |
+n | vrtilna frekvenca | | s^{-1} | T = P/(2πn)
+k | razmerje notranjega in zunanjega premera cevi | k = \frac{d}{D} | – |
 :::

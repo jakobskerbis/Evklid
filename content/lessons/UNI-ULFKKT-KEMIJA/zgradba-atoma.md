@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Bunsen in Kirchhoff sta v 19. stoletju opazila, da vsak element v plamenu seva svetlobo le pri nekaj značilnih valovnih dolžinah; po neznanih črtah v spektru sta odkrila cezij in rubidij. Metoda je delovala, nihče pa ni znal povedati, zakaj so črte prav tam. Bohr je pokazal, da črte vodika sledijo iz kvantiziranih energij elektrona, kvantna mehanika pa je razlago razširila na vse atome. Isti pojav vidiš nad stadionom ob odprtju velikega tekmovanja: rdečo barvo ognjemeta da stroncij, zeleno barij, rumeno natrij. Na njem temelji tudi atomska absorpcijska spektrometrija, s katero določajo kovine v vodi in krvi. **Razporeditev elektronov** pa razloži še, zakaj je natrij reaktiven, neon pa skoraj ne in zakaj je kisik paramagneten.
+Bunsen in Kirchhoff sta v 19. stoletju opazila, da vsak element v plamenu seva svetlobo le pri nekaj značilnih valovnih dolžinah; po neznanih črtah v spektru sta odkrila cezij in rubidij. Metoda je delovala, nihče pa ni znal povedati, zakaj so črte prav tam. Bohr je pokazal, da črte vodika sledijo iz kvantiziranih energij elektrona, kvantna mehanika pa je razlago razširila na vse atome. Isti pojav vidiš nad stadionom ob odprtju velikega tekmovanja: rdečo barvo ognjemeta da stroncij, zeleno barij, rumeno natrij. Na njem temelji tudi atomska absorpcijska spektrometrija, s katero določajo kovine v vodi in krvi. **Razporeditev elektronov** pa razloži še, zakaj je natrij reaktiven, neon pa skoraj ne, in zakaj je atom kisika paramagneten.
 
 Na koncu boš znal:
 
@@ -30,7 +30,13 @@ $$E_n = -\frac{2{,}179 \cdot 10^{-18}\,\mathrm{J}}{n^2}, \qquad n = 1, 2, 3, \do
 
 Pri prehodu elektrona z višjega na nižji nivo se izseva foton z energijo $\Delta E = h\nu = hc/\lambda$, kjer je $h = 6{,}626 \cdot 10^{-34}\,\mathrm{J\,s}$ Planckova konstanta.
 
-**3. Valovna narava elektrona.** Elektron ima tudi valovne lastnosti (de Brogliejeva valovna dolžina $\lambda = h/(mv)$). Po **Heisenbergovem načelu nedoločenosti** mu ne moremo hkrati natančno določiti lege in gibalne količine, zato o tirnicah (kot pri Bohru) ne moremo govoriti. Stanje elektrona opisuje **valovna funkcija** $\psi$, rešitev Schrödingerjeve enačbe. Kvadrat $|\psi|^2$ je **gostota verjetnosti**, da elektron najdemo na danem mestu.
+**Rydbergova enačba.** Naj elektron v vodikovem atomu preide z nivoja $n_2$ na nivo $n_1 < n_2$. Potem za izsevani foton velja
+
+$$\frac{1}{\lambda} = R_\mathrm{H}\left(\frac{1}{n_1^2} - \frac{1}{n_2^2}\right), \qquad R_\mathrm{H} = \frac{2{,}179 \cdot 10^{-18}\,\mathrm{J}}{hc} = 1{,}097 \cdot 10^{7}\,\mathrm{m^{-1}}.$$
+
+*Izpeljava:* $\Delta E = E_{n_2} - E_{n_1} = 2{,}179 \cdot 10^{-18}\,\mathrm{J}\,(1/n_1^2 - 1/n_2^2)$, in iz $\Delta E = hc/\lambda$ sledi $1/\lambda = \Delta E/(hc)$. Pri absorpciji je zveza enaka, le prehod gre z $n_1$ na $n_2$. Za $n_1 = 1$ in $n_2 \to \infty$ dobimo **ionizacijsko energijo** $2{,}179 \cdot 10^{-18}\,\mathrm{J}$ na atom.
+
+**3. Valovna narava elektrona.** Elektron ima tudi valovne lastnosti (de Brogliejeva valovna dolžina $\lambda = h/(mv)$). Po **Heisenbergovem načelu nedoločenosti** za nedoločenosti lege in gibalne količine v isti smeri velja $\Delta x\,\Delta p_x \ge \hbar/2$, kjer je $\hbar = h/2\pi$: obeh ne moremo hkrati natančno določiti, zato o tirnicah (kot pri Bohru) ne moremo govoriti. Stanje elektrona opisuje **valovna funkcija** $\psi$, rešitev Schrödingerjeve enačbe. Kvadrat $|\psi|^2$ je **gostota verjetnosti**, da elektron najdemo na danem mestu.
 
 **4. Orbitala** je valovna funkcija enega elektrona v atomu; v praksi tako imenujemo tudi območje prostora, kjer je elektron z veliko verjetnostjo (npr. $90\,\%$). Vsako orbitalo določajo tri kvantna števila $n$, $l$, $m_l$.
 
@@ -45,6 +51,8 @@ Pri prehodu elektrona z višjega na nižji nivo se izseva foton z energijo $\Del
 
 Podlupine označujemo s črkami: $l = 0$ je $s$, $l = 1$ je $p$, $l = 2$ je $d$, $l = 3$ je $f$. Podlupina z danim $l$ ima $2l + 1$ orbital: ena $s$, tri $p$, pet $d$, sedem $f$. Lupina z glavnim kvantnim številom $n$ ima $n^2$ orbital in največ $2n^2$ elektronov.
 
+*Dokaz.* Orbitalo določa trojica $(n, l, m_l)$. Pri danem $l$ je $m_l \in \{-l, \dots, +l\}$, to je $2l + 1$ vrednosti. Pri danem $n$ je $l = 0, \dots, n-1$, zato je orbital $\sum_{l=0}^{n-1}(2l+1) = 2 \cdot \dfrac{(n-1)n}{2} + n = n^2$. Po Paulijevem načelu (razdelek 7) sta v vsaki orbitali največ dva elektrona, torej $2n^2$. $\square$
+
 :::premisli
 Preden pogledaš odgovor, izračunaj iz tabele: koliko orbital ima lupina $n = 4$ in koliko elektronov sprejme?
 ---
@@ -55,17 +63,17 @@ $l$ je $0$, $1$, $2$ ali $3$ (podlupine $4s$, $4p$, $4d$, $4f$), torej $1 + 3 + 
 
 **7. Pravila za razporejanje elektronov.**
 
-- **Paulijevo izključitveno načelo:** v atomu nimata dva elektrona vseh štirih kvantnih števil enakih. V eni orbitali sta torej največ dva elektrona z nasprotnima spinoma.
+- **Paulijevo izključitveno načelo:** v atomu nimata nobena dva elektrona enakih vseh štirih kvantnih števil $(n, l, m_l, m_s)$. *Posledica:* elektroni v isti orbitali imajo enake $n$, $l$, $m_l$, razlikujejo se lahko le v $m_s$, ki ima dve vrednosti; v eni orbitali sta torej največ dva elektrona, in to z nasprotnima spinoma.
 - **Izgradno načelo:** elektroni zasedajo orbitale od najnižje energije navzgor. V večelektronskem atomu je energija podlupine odvisna od $n$ in $l$; vrstni red zasedanja da približno pravilo $n + l$ (nižji $n + l$ prej, pri enakem $n + l$ nižji $n$ prej):
 
 $$1s < 2s < 2p < 3s < 3p < 4s < 3d < 4p < 5s < 4d < 5p < 6s < 4f < 5d < 6p$$
 
-- **Hundovo pravilo:** v podlupini z več enakovrednimi orbitalami elektroni najprej zasedejo vsako orbitalo posamezno z vzporednimi spini, šele nato se parijo.
+- **Hundovo pravilo:** v osnovnem stanju atoma elektroni v podlupini z več degeneriranimi (energijsko enakovrednimi) orbitalami najprej zasedejo vsako orbitalo posamezno z vzporednimi spini, šele nato se parijo; osnovno stanje ima torej največje možno število nesparjenih elektronov.
 
 :::premisli
-Ogljik ima $1s^2\,2s^2\,2p^2$. Napovej: sta oba elektrona $2p$ v isti orbitali ali v dveh? Koliko nesparjenih elektronov ima ogljik?
+Ogljik ima $1s^2\,2s^2\,2p^2$. Hundovo pravilo pove, kam gresta elektrona $2p$, ne pa zakaj. Zakaj je zanju ugodneje, da sta v dveh orbitalah, in koliko nesparjenih elektronov ima ogljik?
 ---
-V dveh različnih orbitalah z vzporednima spinoma, ker se v ločenih orbitalah manj odbijata (Hundovo pravilo). Ogljik ima zato $2$ nesparjena elektrona.
+Orbitale $2p$ so usmerjene vzdolž različnih osi, zato sta elektrona v ločenih orbitalah v povprečju dlje narazen in se manj odbijata; z vzporednima spinoma se še redkeje srečata. Ogljik ima zato $2$ nesparjena elektrona.
 :::
 
 **8. Zapis konfiguracije.** Za kisik iz uvodnega primera ($Z = 8$): $1s^2\,2s^2\,2p^4$. Okrajšano zapišemo jedro kot konfiguracijo prejšnjega žlahtnega plina: železo je $[\mathrm{Ar}]\,3d^6\,4s^2$. Z orbitalnim diagramom (škatlice s puščicami) pokažemo tudi spine:
@@ -76,7 +84,7 @@ O:  1s [↑↓]  2s [↑↓]  2p [↑↓][↑ ][↑ ]    -> 2 nesparjena elektro
 
 **Valenčni elektroni** so elektroni v zunanji lupini (pri prehodnih kovinah še elektroni $(n-1)d$). Atom z nesparjenimi elektroni je **paramagneten** (privlači ga magnetno polje), atom z vsemi sparjenimi pa **diamagneten**.
 
-**9. Izjeme in ioni.** Polzasedena ($d^5$) in povsem zasedena ($d^{10}$) podlupina sta posebej stabilni, zato ima krom konfiguracijo $[\mathrm{Ar}]\,3d^5\,4s^1$ (ne $3d^4\,4s^2$) in baker $[\mathrm{Ar}]\,3d^{10}\,4s^1$. Pri tvorbi kationov prehodnih kovin atom **najprej odda elektrone $4s$**, šele nato $3d$: $\mathrm{Fe^{2+}}$ je $[\mathrm{Ar}]\,3d^6$, ne $[\mathrm{Ar}]\,3d^4\,4s^2$. Pri anionih elektrone dodajamo v prvo nezasedeno orbitalo: $\mathrm{Cl^-}$ je $[\mathrm{Ne}]\,3s^2\,3p^6$, izoelektronski z argonom.
+**9. Izjeme in ioni.** Polzasedena ($d^5$) in povsem zasedena ($d^{10}$) podlupina sta posebej stabilni, zato ima krom konfiguracijo $[\mathrm{Ar}]\,3d^5\,4s^1$ (ne $3d^4\,4s^2$) in baker $[\mathrm{Ar}]\,3d^{10}\,4s^1$. Pri tvorbi kationov prehodnih kovin atom **najprej odda elektrone $4s$**, šele nato $3d$, ker je pri teh elementih $3d$ že pod $4s$ (zakaj, pove razdelek »Bolj natančno«): $\mathrm{Fe^{2+}}$ je $[\mathrm{Ar}]\,3d^6$, ne $[\mathrm{Ar}]\,3d^4\,4s^2$. Pri anionih elektrone dodajamo v prvo nezasedeno orbitalo: $\mathrm{Cl^-}$ je $[\mathrm{Ne}]\,3s^2\,3p^6$, izoelektronski z argonom.
 
 ## Rešeni primeri
 
@@ -121,23 +129,25 @@ $l = 0, \dots, n-1$; $\quad m_l = -l, \dots, +l$ ($2l + 1$ vrednosti); $\quad$ �
 
 ### Primer 3 (težji)
 
-Zapiši elektronske konfiguracije železa ($Z = 26$), iona $\mathrm{Fe^{2+}}$ in iona $\mathrm{Fe^{3+}}$. Koliko nesparjenih elektronov ima vsak delec? Razloži, zakaj se $\mathrm{Fe^{2+}}$ na zraku rad oksidira v $\mathrm{Fe^{3+}}$.
+Ion $\mathrm{M^{3+}}$ kovine iz 4. periode ima v osnovnem stanju konfiguracijo $[\mathrm{Ar}]\,3d^5$. Kateri element je M? Zapiši elektronske konfiguracije atoma M ter ionov $\mathrm{M^{2+}}$ in $\mathrm{M^{3+}}$ in število nesparjenih elektronov v vsakem delcu. Navedi eno dovoljeno četverico kvantnih števil $(n, l, m_l, m_s)$ elektrona, ki se odcepi pri prehodu $\mathrm{M^{2+} \to M^{3+}}$, in razloži, zakaj se $\mathrm{M^{2+}}$ na zraku rad oksidira v $\mathrm{M^{3+}}$.
 
-**Podatki:** železo, $Z = 26$; iona $\mathrm{Fe^{2+}}$ ($24$ elektronov) in $\mathrm{Fe^{3+}}$ ($23$ elektronov)
-**Iščemo:** tri konfiguracije, število nesparjenih elektronov, razlago stabilnosti $\mathrm{Fe^{3+}}$
+**Podatki:** $\mathrm{M^{3+}}$: $[\mathrm{Ar}]\,3d^5$, argon ima $18$ elektronov; M je v 4. periodi
+**Iščemo:** element M, tri konfiguracije, število nesparjenih elektronov, kvantna števila odcepljenega elektrona, razlago stabilnosti $\mathrm{M^{3+}}$
 
 :::formula
-Izgradno načelo: $\dots\,3p < 4s < 3d$. Kationi prehodnih kovin najprej oddajo elektrone $4s$. Hundovo pravilo za $5$ orbital $3d$.
+Izgradno načelo: $\dots\,3p < 4s < 3d$. Kationi prehodnih kovin najprej oddajo elektrone $4s$. Hundovo pravilo za $5$ orbital $3d$; Paulijevo načelo.
 :::
 
 **Rešitev:**
 
-1. Atom: $1s^2\,2s^2\,2p^6\,3s^2\,3p^6\,4s^2\,3d^6$, okrajšano $[\mathrm{Ar}]\,3d^6\,4s^2$ (argon ima $18$ elektronov, $18 + 2 + 6 = 26$).
-2. $\mathrm{Fe^{2+}}$: odvzamemo oba elektrona $4s$, ker je pri prehodnih kovinah $4s$ nad $3d$ in se izprazni prva: $[\mathrm{Ar}]\,3d^6$.
-3. $\mathrm{Fe^{3+}}$: odvzamemo še en elektron $3d$: $[\mathrm{Ar}]\,3d^5$.
-4. Nesparjeni elektroni ($3d$ ima $5$ orbital): pri $d^6$ je zasedenost $[\uparrow\downarrow][\uparrow][\uparrow][\uparrow][\uparrow]$, torej $4$ nesparjeni (pri Fe in $\mathrm{Fe^{2+}}$); pri $d^5$ je vsaka orbitala zasedena z enim elektronom, torej $5$ nesparjenih.
-5. Šesti elektron $d$ v $\mathrm{Fe^{2+}}$ je v orbitali z drugim elektronom, zato ga odboj med njima destabilizira; z njegovo oddajo nastane polzasedena, posebej stabilna podlupina $d^5$.
-6. Odgovor: Fe $[\mathrm{Ar}]\,3d^6\,4s^2$ ($4$ nesparjeni), $\mathrm{Fe^{2+}}$ $[\mathrm{Ar}]\,3d^6$ ($4$), $\mathrm{Fe^{3+}}$ $[\mathrm{Ar}]\,3d^5$ ($5$); prehod $\mathrm{Fe^{2+}} \to \mathrm{Fe^{3+}}$ je ugoden, ker nastane polzasedena podlupina $3d^5$.
+1. Ion ima $18 + 5 = 23$ elektronov; ker ima naboj $3+$, ima atom $23 + 3 = 26$ elektronov, torej $Z = 26$: M je **železo**.
+2. Atom: $1s^2\,2s^2\,2p^6\,3s^2\,3p^6\,4s^2\,3d^6$, okrajšano $[\mathrm{Ar}]\,3d^6\,4s^2$ ($18 + 2 + 6 = 26$); železo ni izjema kot krom ali baker.
+3. $\mathrm{Fe^{2+}}$: odvzamemo oba elektrona $4s$, ker je pri prehodnih kovinah $4s$ nad $3d$ in se izprazni prva: $[\mathrm{Ar}]\,3d^6$.
+4. $\mathrm{Fe^{3+}}$: odvzamemo še en elektron $3d$: $[\mathrm{Ar}]\,3d^5$, kar se ujema s podatkom.
+5. Nesparjeni elektroni ($3d$ ima $5$ orbital): pri $d^6$ je zasedenost $[\uparrow\downarrow][\uparrow][\uparrow][\uparrow][\uparrow]$, torej $4$ nesparjeni (pri Fe in $\mathrm{Fe^{2+}}$); pri $d^5$ je vsaka orbitala zasedena z enim elektronom, torej $5$ nesparjenih.
+6. Odcepi se šesti elektron $3d$, tisti v sparjeni orbitali: $n = 3$, $l = 2$, $m_l$ je ena od vrednosti $-2, \dots, +2$ (npr. $+2$, odvisno od tega, v katero orbitalo zapišemo par), $m_s$ pa je nasproten spinu ostalih petih, npr. $(3, 2, +2, -\tfrac12)$.
+7. Ta elektron je v orbitali z drugim elektronom, zato ga odboj med njima destabilizira; z njegovo oddajo nastane polzasedena, posebej stabilna podlupina $d^5$.
+8. Odgovor: M je železo; Fe $[\mathrm{Ar}]\,3d^6\,4s^2$ ($4$ nesparjeni), $\mathrm{Fe^{2+}}$ $[\mathrm{Ar}]\,3d^6$ ($4$), $\mathrm{Fe^{3+}}$ $[\mathrm{Ar}]\,3d^5$ ($5$); odcepi se elektron npr. $(3, 2, +2, -\tfrac12)$, prehod $\mathrm{Fe^{2+}} \to \mathrm{Fe^{3+}}$ pa je ugoden, ker nastane polzasedena podlupina $3d^5$.
 
 ### Primer 4 – zdaj ti
 
@@ -180,9 +190,48 @@ Oba elektrona $5s$ sta v isti orbitali z nasprotnima spinoma, zato atom nima nes
 - Konfiguracija: izgradno načelo ($n + l$), Paulijevo načelo, Hundovo pravilo; izjemi Cr $3d^5\,4s^1$ in Cu $3d^{10}\,4s^1$.
 - Kationi prehodnih kovin najprej izgubijo elektrone $4s$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- kvantna števila z dovoljenimi vrednostmi in dokaz, da ima podlupina $2l + 1$ orbital, lupina $n^2$ orbital in največ $2n^2$ elektronov;
+- Paulijevo izključitveno načelo, izgradno načelo (pravilo $n + l$) in Hundovo pravilo natančno, z izjemama Cr in Cu ter pravilom za katione prehodnih kovin;
+- izpeljavo Rydbergove enačbe in ionizacijske energije vodika iz $E_n$;
+- načelo nedoločenosti, pomen $|\psi|^2$ in zakaj orbitala ni tirnica;
+- število vozlov orbitale: skupaj $n - 1$, od tega $l$ kotnih in $n - l - 1$ radialnih.
+
+### Naloga 1
+
+Vodikov atom v osnovnem stanju absorbira foton z valovno dolžino $97{,}25\,\mathrm{nm}$. (a) Na kateri nivo preide elektron? (b) Koliko različnih spektralnih črt lahko atom izseva pri vračanju v osnovno stanje in katere od njih so v vidnem delu spektra ($400$–$700\,\mathrm{nm}$)? Izračunaj njihove valovne dolžine. (c) Kolikšna je največja valovna dolžina svetlobe, ki atom iz vzbujenega stanja iz (a) še ionizira? $h = 6{,}626 \cdot 10^{-34}\,\mathrm{J\,s}$, $c = 2{,}998 \cdot 10^8\,\mathrm{m/s}$, $E_n = -2{,}179 \cdot 10^{-18}\,\mathrm{J}/n^2$.
+
+**Rešitev:**
+
+1. Energija fotona: $\Delta E = hc/\lambda = 6{,}626 \cdot 10^{-34} \cdot 2{,}998 \cdot 10^8/(97{,}25 \cdot 10^{-9})\,\mathrm{J} = 2{,}043 \cdot 10^{-18}\,\mathrm{J}$.
+2. Iz $\Delta E = 2{,}179 \cdot 10^{-18}\,\mathrm{J}\,(1 - 1/n^2)$: $1/n^2 = 1 - 2{,}043/2{,}179 = 0{,}062$, $n^2 \approx 16$, torej $n = 4$.
+3. Z nivoja $4$ so mogoči prehodi med vsakim parom nivojev $1$–$4$: $\binom{4}{2} = 6$ črt ($4\to3$, $4\to2$, $4\to1$, $3\to2$, $3\to1$, $2\to1$).
+4. Prehodi na $n = 1$ imajo $\Delta E \ge 1{,}634 \cdot 10^{-18}\,\mathrm{J}$ ($\lambda \le 122\,\mathrm{nm}$, ultravijolično), $4 \to 3$ pa $\lambda = 1875\,\mathrm{nm}$ (infrardeče); vidni sta le črti na $n = 2$.
+5. $4 \to 2$: $\Delta E = 2{,}179 \cdot 10^{-18}\,(\tfrac14 - \tfrac1{16})\,\mathrm{J} = 4{,}086 \cdot 10^{-19}\,\mathrm{J}$, $\lambda = 1{,}986 \cdot 10^{-25}/4{,}086 \cdot 10^{-19}\,\mathrm{m} = 486\,\mathrm{nm}$ (modrozelena).
+6. $3 \to 2$: $\Delta E = 3{,}026 \cdot 10^{-19}\,\mathrm{J}$, $\lambda = 656\,\mathrm{nm}$ (rdeča).
+7. Ionizacija z $n = 4$: $\Delta E = 2{,}179 \cdot 10^{-18}/16\,\mathrm{J} = 1{,}362 \cdot 10^{-19}\,\mathrm{J}$, $\lambda_\mathrm{max} = 1{,}986 \cdot 10^{-25}/1{,}362 \cdot 10^{-19}\,\mathrm{m} = 1{,}459 \cdot 10^{-6}\,\mathrm{m}$; daljša valovna dolžina ima premalo energije.
+8. Odgovor: elektron preide na $n = 4$; mogočih je $6$ črt, vidni sta $486\,\mathrm{nm}$ in $656\,\mathrm{nm}$; ionizira še svetloba z $\lambda \le 1459\,\mathrm{nm}$.
+
+### Naloga 2
+
+Natančno navedi Paulijevo izključitveno načelo in iz njega ter dovoljenih vrednosti kvantnih števil dokaži, da lupina z glavnim kvantnim številom $n$ sprejme največ $2n^2$ elektronov. Utemelji, ali obstaja orbitala $3f$, in koliko elektronov v atomu ima lahko hkrati $n = 4$ in $m_l = -2$.
+
+**Rešitev:**
+
+1. Načelo: v atomu nimata nobena dva elektrona enakih vseh štirih kvantnih števil $(n, l, m_l, m_s)$.
+2. Pri danem $l$ je $m_l = -l, \dots, +l$, to je $2l + 1$ orbital; pri danem $n$ je $l = 0, \dots, n-1$.
+3. Orbital v lupini: $\sum_{l=0}^{n-1}(2l + 1) = n(n-1) + n = n^2$.
+4. V vsaki orbitali sta $n$, $l$, $m_l$ določeni, $m_s = \pm\tfrac12$ ima dve vrednosti, zato po Paulijevem načelu največ $2$ elektrona; lupina sprejme $2n^2$ elektronov.
+5. Za $f$ je $l = 3$, pri $n = 3$ pa je $l \le 2$, zato orbitala $3f$ ne obstaja.
+6. $m_l = -2$ zahteva $l \ge 2$; pri $n = 4$ sta to $l = 2$ ($4d$) in $l = 3$ ($4f$): dve orbitali, v vsaki največ dva elektrona.
+7. Odgovor: lupina sprejme $2n^2$ elektronov; $3f$ ne obstaja; elektronov z $n = 4$ in $m_l = -2$ je lahko največ $4$.
+
 ## Drugače: Na sliki
 
-Vrstni red zasedanja podlupin si zapomniš z diagonalnim diagramom: piši podlupine v vrstice po $n$ in jih beri po diagonalah od zgoraj desno navzdol levo.
+Vrstni red zasedanja podlupin si zapomniš z diagonalnim diagramom: podlupine v vrsticah po $n$ beri po diagonalah od zgoraj desno navzdol levo.
 
 ```
 1s
@@ -196,38 +245,18 @@ Vrstni red zasedanja podlupin si zapomniš z diagonalnim diagramom: piši podlup
 diagonale:  1s | 2s | 2p 3s | 3p 4s | 3d 4p 5s | 4d 5p 6s | 4f 5d 6p 7s
 ```
 
-Energijske nivoje vodikovega atoma si predstavljaj kot lestev, katere prečke so vse gostejše navzgor:
+## Drugače: Uporaba v stroki
 
-```
- n = ∞  ---------------------  0
- n = 3  ---------------------  -2,42·10^-19 J
- n = 2  ---------------------  -5,45·10^-19 J
-            ↑ absorpcija   ↓ emisija (656 nm)
+**Atomska spektrometrija.** Analitski laboratoriji z **atomsko absorpcijsko spektrometrijo** (AAS) določajo npr. svinec v pitni vodi. Svetilka z votlo katodo iz iskanega elementa seva njegove črte, ki jih absorbirajo le njegovi atomi; meritev je zato selektivna.
 
- n = 1  ---------------------  -2,18·10^-18 J
-```
-
-Oblike orbital: $s$ je krogla, $p$ dvojni balon (tri med seboj pravokotne usmeritve), $d$ štirilistna deteljica (pet orbital).
-
-## Drugače: Iz vsakdanjega življenja
-
-**Ognjemet in plamenski test.** Natrijeve soli obarvajo plamen rumeno, litijeve in stroncijeve rdeče, bakrove zeleno-modro. V plamenu se elektroni vzbudijo na višje nivoje, pri vračanju pa izsevajo fotone z valovno dolžino, značilno za element. Isti pojav s svetilkami z natrijevimi parami daje rumeno cestno razsvetljavo.
-
-**Atomska spektrometrija.** V laboratorijih za okolje, hrano in klinično kemijo z **atomsko absorpcijsko spektrometrijo** določajo svinec v pitni vodi ali železo v krvnem serumu. Vsak element absorbira svetlobo le pri svojih valovnih dolžinah, zato je meritev zelo selektivna.
-
-**Barve prehodnih kovin.** Raztopine $\mathrm{Cu^{2+}}$ so modre, $\mathrm{Ni^{2+}}$ zelene, $\mathrm{Zn^{2+}}$ pa brezbarvne. Razlika je v konfiguraciji: $\mathrm{Cu^{2+}}$ ($3d^9$) ima nepopolno podlupino $d$ in elektron lahko absorbira vidno svetlobo, $\mathrm{Zn^{2+}}$ ($3d^{10}$) je nima. Barva hemoglobina in klorofila pa ne izvira iz prehodov $d$, ampak predvsem iz konjugiranega porfirinskega obroča (ion $\mathrm{Mg^{2+}}$ v klorofilu nima elektronov $d$).
-
-**Magnetizem.** Kisik $\mathrm{O_2}$ ima nesparjene elektrone, zato se tekoči kisik ujame med pola močnega magneta. Na lastnostih spina temelji tudi magnetna resonanca, ki jo v kemiji uporabljamo za določanje struktur, v medicini pa za slikanje tkiv.
+**Magnetne lastnosti.** Število nesparjenih elektronov ($\mathrm{Fe^{2+}}$ $4$, $\mathrm{Fe^{3+}}$ $5$) določijo z merjenjem magnetne susceptibilnosti ali z **EPR**.
 
 ## Drugače: Korak za korakom s številkami
 
-Izračunaj valovno dolžino svetlobe, ki jo vodikov atom izseva pri prehodu elektrona z $n = 3$ na $n = 2$, in ionizacijsko energijo vodika v $\mathrm{kJ/mol}$. Uporabi $h = 6{,}626 \cdot 10^{-34}\,\mathrm{J\,s}$, $c = 2{,}998 \cdot 10^8\,\mathrm{m/s}$, $N_\mathrm{A} = 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$.
+Izračunaj ionizacijsko energijo vodika v $\mathrm{kJ/mol}$. Uporabi $N_\mathrm{A} = 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$.
 
-1. **Energija nivojev:** $E_3 = -2{,}179 \cdot 10^{-18}/9 = -2{,}421 \cdot 10^{-19}\,\mathrm{J}$, $E_2 = -2{,}179 \cdot 10^{-18}/4 = -5{,}448 \cdot 10^{-19}\,\mathrm{J}$.
-2. **Razlika:** $\Delta E = E_3 - E_2 = 2{,}179 \cdot 10^{-18}\,(\tfrac14 - \tfrac19)\,\mathrm{J} = 3{,}026 \cdot 10^{-19}\,\mathrm{J}$.
-3. **Valovna dolžina:** $\lambda = \dfrac{hc}{\Delta E} = \dfrac{6{,}626 \cdot 10^{-34} \cdot 2{,}998 \cdot 10^{8}}{3{,}026 \cdot 10^{-19}}\,\mathrm{m} = 6{,}56 \cdot 10^{-7}\,\mathrm{m} = 656\,\mathrm{nm}$. To je rdeča črta v vodikovem spektru.
-4. **Ionizacija** pomeni prehod z $n = 1$ na $n = \infty$: $\Delta E = 0 - E_1 = 2{,}179 \cdot 10^{-18}\,\mathrm{J}$ na atom.
-5. **Na mol:** $2{,}179 \cdot 10^{-18}\,\mathrm{J} \cdot 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}} = 1{,}312 \cdot 10^{6}\,\mathrm{J/mol} = 1312\,\mathrm{kJ/mol}$, kar se ujema z izmerjeno prvo ionizacijsko energijo vodika.
+1. **Ionizacija** pomeni prehod z $n = 1$ na $n = \infty$: $\Delta E = 0 - E_1 = 2{,}179 \cdot 10^{-18}\,\mathrm{J}$ na atom.
+2. **Na mol:** $2{,}179 \cdot 10^{-18}\,\mathrm{J} \cdot 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}} = 1{,}312 \cdot 10^{6}\,\mathrm{J/mol} = 1312\,\mathrm{kJ/mol}$, enako izmerjeni vrednosti.
 
 ## Drugače: Bolj natančno
 
@@ -235,17 +264,15 @@ Izračunaj valovno dolžino svetlobe, ki jo vodikov atom izseva pri prehodu elek
 
 $$\hat H = -\frac{\hbar^2}{2m_e}\nabla^2 - \frac{Ze^2}{4\pi\varepsilon_0 r}.$$
 
-Ker je potencial odvisen le od $r$, rešitev v krogelnih koordinatah ločimo: $\psi_{nlm_l}(r, \theta, \varphi) = R_{nl}(r)\,Y_{l}^{m_l}(\theta, \varphi)$. Kvantna števila niso vpeljana »na roko«, ampak sledijo iz robnih pogojev: $\psi$ mora biti končna, enolična in normirana ($\int |\psi|^2\,\mathrm{d}V = 1$). Kotni del da pogoja $l = 0, 1, 2, \dots$ in $|m_l| \le l$, radialni pa $n \ge l + 1$. Energija vodiku podobnega atoma je
+Ker je potencial odvisen le od $r$, rešitev v krogelnih koordinatah ločimo: $\psi_{nlm_l}(r, \theta, \varphi) = R_{nl}(r)\,Y_{l}^{m_l}(\theta, \varphi)$. Kvantna števila sledijo iz robnih pogojev, da je $\psi$ končna, enolična in normirana ($\int |\psi|^2\,\mathrm{d}V = 1$). Kotni del da pogoja $l = 0, 1, 2, \dots$ in $|m_l| \le l$, radialni pa $n \ge l + 1$. Energija vodiku podobnega atoma je
 
 $$E_n = -\frac{m_e e^4 Z^2}{8\varepsilon_0^2 h^2 n^2},$$
 
 kar za $Z = 1$ da $-2{,}179 \cdot 10^{-18}\,\mathrm{J}/n^2$. Pri vodiku je energija odvisna le od $n$ (orbitale $2s$ in $2p$ so degenerirane).
 
-**Večelektronski atomi.** Pri več elektronih enačbe ne znamo rešiti natančno. V približku vsak elektron čuti **efektivni naboj jedra** $Z_\mathrm{eff} = Z - S$, kjer $S$ opisuje senčenje notranjih elektronov. Elektron $s$ ima večjo verjetnost blizu jedra (prodira skozi notranje lupine) kot elektron $p$ ali $d$ z istim $n$, zato čuti večji $Z_\mathrm{eff}$ in ima nižjo energijo. Od tod razcep $2s < 2p$ in pravilo $n + l$. Pri kaliju je $4s$ pod $3d$; ko pa se v vrsti prehodnih kovin povečuje $Z$, se $3d$ spusti pod $4s$, zato kationi najprej izgubijo elektrone $4s$.
+**Večelektronski atomi.** Pri več elektronih v približku vsak elektron čuti **efektivni naboj jedra** $Z_\mathrm{eff} = Z - S$, kjer $S$ opisuje senčenje notranjih elektronov. Elektron $s$ prodira bližje jedru kot $p$ ali $d$ z istim $n$, zato čuti večji $Z_\mathrm{eff}$ in ima nižjo energijo. Od tod razcep $2s < 2p$ in pravilo $n + l$. Pri kaliju je $4s$ pod $3d$; ko pa se v vrsti prehodnih kovin povečuje $Z$, se $3d$ spusti pod $4s$, zato kationi najprej izgubijo elektrone $4s$.
 
-**Spin in Paulijevo načelo.** Spin je notranja vrtilna količina elektrona brez klasičnega ustreznika; dokazali so ga s Stern-Gerlachovim poskusom. Paulijevo načelo je posledica splošnejše zahteve, da je valovna funkcija sistema elektronov **antisimetrična** pri zamenjavi dveh elektronov. Hundovo pravilo izhaja iz tega, da imajo elektroni z vzporednimi spini manjšo verjetnost, da so blizu skupaj (izmenjalna energija), zato je njihov odboj manjši.
-
-**Vozli in radialna porazdelitev.** Radialna porazdelitvena funkcija $P(r) = r^2 R_{nl}^2$ pove verjetnost, da je elektron na razdalji $r$ od jedra. Za $1s$ vodika ima maksimum pri Bohrovem polmeru $a_0 = 52{,}9\,\mathrm{pm}$. Orbitala z $n$ in $l$ ima $n - l - 1$ radialnih vozlov: $3s$ dva, $3p$ enega, $3d$ nobenega.
+**Spin in Paulijevo načelo.** Paulijevo načelo je posledica splošnejše zahteve, da je valovna funkcija sistema elektronov **antisimetrična** pri zamenjavi dveh elektronov. Hundovo pravilo izhaja iz izmenjalne energije: elektroni z vzporednimi spini so redkeje blizu skupaj in se manj odbijajo.
 
 ## Preveri se
 
@@ -303,6 +330,9 @@ f | podlupina f | | | l = 3, sedem orbital
 \hat H | Hamiltonov operator (operator energije) | | J | v Schrödingerjevi enačbi Ĥψ = Eψ
 \hbar | reducirana Planckova konstanta | \hbar = \frac{h}{2\pi} | J s
 h | Planckova konstanta | | J s | 6,626 · 10⁻³⁴ J s
+c | hitrost svetlobe v vakuumu | | m/s | 2,998 · 10⁸ m/s
+\lambda | valovna dolžina fotona | \lambda = \frac{hc}{\Delta E} | m
+R_\mathrm{H} | Rydbergova konstanta za vodik | R_\mathrm{H} = \frac{2{,}179 \cdot 10^{-18}\,\mathrm{J}}{hc} | m⁻¹ | 1,097 · 10⁷ m⁻¹
 m_e | masa elektrona | | kg | 9,109 · 10⁻³¹ kg
 Z | vrstno število (število protonov) | | –
 e | osnovni naboj | | C | 1,602 · 10⁻¹⁹ C

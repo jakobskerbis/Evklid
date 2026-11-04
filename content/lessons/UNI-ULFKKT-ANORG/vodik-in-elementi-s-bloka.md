@@ -9,7 +9,7 @@ Sošolec trdi: »Vodik je v 1. skupini nad litijem, torej je kovina, kot natrij.
 
 ## Razlaga
 
-**1. Vodik.** Postavi ga ob litij: konfiguracija je enako zgrajena ($1\mathrm{s}^1$ proti $2\mathrm{s}^1$), skoraj vse drugo pa se razlikuje. Vodik lahko elektron odda (kot kovine 1. skupine), sprejme še enega (kot halogeni) ali ga deli. Zato ima tri oksidacijska števila: $+1$ (v $\mathrm{H_2O}$, $\mathrm{HCl}$), $0$ (v $\mathrm{H_2}$) in $-1$ (v hidridih kovin, npr. $\mathrm{NaH}$). Prva ionizacijska energija je $1312\,\mathrm{kJ/mol}$, več kot dvakrat več kot pri litiju, zato vodik ni kovina.
+**1. Vodik.** Postavi ga ob litij: konfiguracija je enako zgrajena ($1\mathrm{s}^1$ proti $2\mathrm{s}^1$), skoraj vse drugo pa se razlikuje. Vodik lahko elektron odda (kot kovine 1. skupine), sprejme še enega (kot halogeni) ali ga deli. Zato ima tri oksidacijska števila: $+1$ (v $\mathrm{H_2O}$, $\mathrm{HCl}$), $0$ (v $\mathrm{H_2}$) in $-1$ (v hidridih kovin, npr. $\mathrm{NaH}$). **Prva ionizacijska energija** $I_1$ je energija, potrebna, da 1 molu plinastih atomov v osnovnem stanju odvzamemo po en najšibkeje vezani elektron: $\mathrm{X(g) \to X^+(g) + e^-}$. Pri vodiku je $1312\,\mathrm{kJ/mol}$, več kot dvakrat več kot pri litiju, zato vodik ni kovina.
 
 Element je dvoatomni plin $\mathrm{H_2}$ z močno vezjo ($436\,\mathrm{kJ/mol}$), zato je pri sobni temperaturi dokaj nereaktiven. Ima tri izotope: protij $^1\mathrm{H}$, devterij $^2\mathrm{H}$ (D) in radioaktivni tritij $^3\mathrm{H}$ (T).
 
@@ -20,7 +20,7 @@ $$\mathrm{CO + H_2O \longrightarrow CO_2 + H_2}$$
 
 Čistejši vodik da elektroliza vode. V laboratoriju ga pripravimo iz cinka in razredčene kisline: $\mathrm{Zn + 2\,HCl \longrightarrow ZnCl_2 + H_2}$. Največ vodika porabi sinteza amoniaka, sledijo hidrogenacije in rafinerije.
 
-**3. Hidridi.** Spojine z vodikom delimo na tri vrste:
+**3. Hidridi.** Hidrid je binarna spojina vodika z drugim elementom. Vrsto določa partner: če je to močno elektropozitivna kovina (1. skupina ter Ca, Sr, Ba), je vodik bolj elektronegativen in nastane ionski hidrid z ionom $\mathrm{H^-}$; z nekovino nastane kovalentni hidrid; s prehodno kovino kovinski hidrid.
 
 | Vrsta | Primeri | Vez in lastnosti |
 |---|---|---|
@@ -49,6 +49,12 @@ Zakaj natrij v spojinah nikoli nima oksidacijskega števila $+2$? Druga ionizaci
 ---
 Po oddaji prvega elektrona ima $\mathrm{Na^+}$ konfiguracijo neona. Drugi elektron bi moral priti iz notranje, popolnjene lupine $2\mathrm{p}$, ki je blizu jedra in malo zasenčena. Zato je $I_2$ skoraj desetkrat večja od $I_1$. Te energije ne povrne nobena mrežna ali hidratacijska energija.
 :::
+
+**Born-Haberjev krožni proces.** **Mrežna entalpija** $\Delta_\mathrm{L}H$ je sprememba entalpije, ko iz plinastih ionov nastane 1 mol ionske trdnine, npr. $\mathrm{M^+(g) + X^-(g) \to MX(s)}$; v tem dogovoru je negativna. Neposredno je ne moremo izmeriti, izračunamo jo s Hessovim zakonom. Ker je entalpija funkcija stanja, je pot od elementov do $\mathrm{MX(s)}$ prek plinastih atomov in ionov enakovredna neposredni tvorbi:
+
+$$\Delta_\mathrm{f}H(\mathrm{MX}) = \Delta_\mathrm{sub}H(\mathrm{M}) + I_1(\mathrm{M}) + \tfrac{1}{2}D(\mathrm{X_2}) + \Delta_\mathrm{eg}H(\mathrm{X}) + \Delta_\mathrm{L}H(\mathrm{MX})$$
+
+Tu je $D$ disociacijska entalpija vezi, $\Delta_\mathrm{eg}H$ entalpija sprejema elektrona. Iz te enačbe izrazimo $\Delta_\mathrm{L}H$. Isti krog pojasni, zakaj ni $\mathrm{NaCl_2}$: večja mrežna entalpija ne pokrije $I_2$.
 
 **5. Reakcije alkalijskih kovin.**
 
@@ -81,17 +87,23 @@ En valenčni elektron več spremeni skoraj vse. Razlike med sosedoma v periodi:
 - Topnost sulfatov navzdol **pada**: $\mathrm{MgSO_4}$ je dobro topen, $\mathrm{BaSO_4}$ praktično netopen.
 - Termična obstojnost karbonatov navzdol raste: $\mathrm{MCO_3 \longrightarrow MO + CO_2}$ poteče pri vse višji temperaturi.
 
-Zadnji trend razložimo s **polarizacijsko močjo** kationa. Majhen kation z nabojem $+2$ močno pritegne elektronski oblak karbonatnega iona in oslabi vez C–O, zato karbonat lažje razpade.
+Zadnji trend razložimo s **polarizacijsko močjo** kationa, ki narašča z gostoto naboja (naboj na velikost iona). Majhen kation z nabojem $+2$ močno pritegne elektronski oblak karbonatnega iona in oslabi vez C–O, zato karbonat lažje razpade.
+
+*Izpeljava z energijami.* Razpad $\mathrm{MCO_3(s) \to MO(s) + CO_2(g)}$ razstavimo s Hessovim zakonom: trdnino razgradimo v ione ($-\Delta_\mathrm{L}H(\mathrm{MCO_3})$), plinasti $\mathrm{CO_3^{2-} \to O^{2-} + CO_2}$ (za vse kovine enak $\Delta H_x$), iona sestavimo v oksid ($\Delta_\mathrm{L}H(\mathrm{MO})$):
+
+$$\Delta_\mathrm{r}H = \Delta_\mathrm{L}H(\mathrm{MO}) - \Delta_\mathrm{L}H(\mathrm{MCO_3}) + \Delta H_x$$
+
+Pri enakih nabojih ionov je mrežna entalpija po absolutni vrednosti približno sorazmerna $1/(r_+ + r_-)$. Ker je $\mathrm{O^{2-}}$ majhen, $\mathrm{CO_3^{2-}}$ pa velik, se pri majhnem kationu okrepi predvsem mreža oksida: razlika prvih dveh členov je pri Mg bolj negativna kot pri Ba, zato je $\Delta_\mathrm{r}H$ manjši. Ker je $\Delta_\mathrm{r}S$ za vse podobna (nastane 1 mol plina), razpad postane spontan pri $T \approx \Delta_\mathrm{r}H/\Delta_\mathrm{r}S$ (tam je $\Delta_\mathrm{r}G = 0$): manjši $\Delta_\mathrm{r}H$ pomeni nižjo temperaturo razpada.
 
 :::premisli
-Kateri karbonat razpade pri nižji temperaturi, $\mathrm{MgCO_3}$ ali $\mathrm{BaCO_3}$? Napovej, nato preveri.
+V apnenici $\mathrm{CaCO_3}$ razpade pri okoli $900\,^\circ\mathrm{C}$. Ali bi pri tej temperaturi razpadel tudi $\mathrm{MgCO_3}$? In $\mathrm{BaCO_3}$? Napovej, nato preveri.
 ---
-$\mathrm{MgCO_3}$, že pri nekaj sto stopinjah, $\mathrm{BaCO_3}$ šele nad $1000\,^\circ\mathrm{C}$. Ion $\mathrm{Mg^{2+}}$ je mnogo manjši od $\mathrm{Ba^{2+}}$, zato bolj polarizira karbonatni ion in olajša odcep $\mathrm{CO_2}$.
+$\mathrm{MgCO_3}$ da, razpade že pri nekaj sto stopinjah; $\mathrm{BaCO_3}$ ne, ta šele nad $1000\,^\circ\mathrm{C}$. Ion $\mathrm{Mg^{2+}}$ je mnogo manjši od $\mathrm{Ba^{2+}}$, zato bolj polarizira karbonatni ion in olajša odcep $\mathrm{CO_2}$.
 :::
 
-**8. Diagonalna podobnost.** Litij je po lastnostih bližje magneziju kot natriju: oba tvorita nitrid, njuna karbonata pri segrevanju razpadeta, $\mathrm{LiOH}$ je slabše topen od $\mathrm{NaOH}$. Razlog je podobna gostota naboja ionov $\mathrm{Li^+}$ in $\mathrm{Mg^{2+}}$.
+**8. Diagonalna podobnost.** Litij je po lastnostih bližje magneziju kot natriju: oba tvorita nitrid, njuna karbonata pri segrevanju razpadeta ($\mathrm{Na_2CO_3}$ ne), $\mathrm{LiOH}$ je slabše topen od $\mathrm{NaOH}$. Razlog je podobna gostota naboja ionov $\mathrm{Li^+}$ in $\mathrm{Mg^{2+}}$.
 
-**9. Pomembne spojine.** Elektroliza raztopine $\mathrm{NaCl}$ da $\mathrm{NaOH}$, $\mathrm{Cl_2}$ in $\mathrm{H_2}$. Iz apnenca dobimo žgano apno ($\mathrm{CaCO_3 \to CaO + CO_2}$), iz njega z vodo gašeno apno $\mathrm{Ca(OH)_2}$, ki na zraku s $\mathrm{CO_2}$ spet otrdi v $\mathrm{CaCO_3}$. Ioni $\mathrm{Ca^{2+}}$ in $\mathrm{Mg^{2+}}$ povzročajo trdoto vode; pri segrevanju se hidrogenkarbonat razgradi in izloči se kotlovec $\mathrm{CaCO_3}$.
+**9. Pomembne spojine.** Elektroliza raztopine $\mathrm{NaCl}$ da $\mathrm{NaOH}$, $\mathrm{Cl_2}$ in $\mathrm{H_2}$. Iz apnenca dobimo žgano apno ($\mathrm{CaCO_3 \to CaO + CO_2}$), iz njega z vodo gašeno apno $\mathrm{Ca(OH)_2}$, ki na zraku s $\mathrm{CO_2}$ spet otrdi v $\mathrm{CaCO_3}$. Ioni $\mathrm{Ca^{2+}}$ in $\mathrm{Mg^{2+}}$ povzročajo trdoto vode; v vodi so raztopljeni kot hidrogenkarbonata, npr. $\mathrm{Ca(HCO_3)_2}$. Pri segrevanju se hidrogenkarbonat razgradi ($\mathrm{Ca(HCO_3)_2 \to CaCO_3 + H_2O + CO_2}$) in izloči se kotlovec $\mathrm{CaCO_3}$.
 
 ## Rešeni primeri
 
@@ -135,10 +147,10 @@ $\mathrm{2\,Na + 2\,H_2O \to 2\,NaOH + H_2}$, $n = \dfrac{m}{M}$, $V = \dfrac{nR
 
 ### Primer 3 (težji): kateri hidrid je boljši vir vodika
 
-Za polnjenje meteorološkega balona na terenu potrebujemo $50{,}0\,\mathrm{L}$ vodika pri $25\,^\circ\mathrm{C}$ in $100\,\mathrm{kPa}$. Vodik pridobimo z reakcijo hidrida z vodo. Na voljo sta $\mathrm{LiH}$ in $\mathrm{CaH_2}$. S katerim hidridom moramo nesti manjšo maso in koliko ga potrebujemo?
+Za polnjenje meteorološkega balona na terenu potrebujemo $50{,}0\,\mathrm{L}$ vodika pri $25\,^\circ\mathrm{C}$ in $100\,\mathrm{kPa}$. Vodik pridobimo z reakcijo hidrida z vodo. Na voljo sta $\mathrm{LiH}$ in $\mathrm{CaH_2}$. (a) S katerim hidridom moramo nesti manjšo maso in koliko ga potrebujemo? (b) V skladišču je le še $30{,}0\,\mathrm{g}$ $\mathrm{CaH_2}$. Koliko $\mathrm{LiH}$ moramo dodati, da balon vseeno napolnimo?
 
-**Podatki:** $V(\mathrm{H_2}) = 50{,}0\,\mathrm{L}$, $T = 298{,}15\,\mathrm{K}$, $p = 100\,\mathrm{kPa}$, $M(\mathrm{LiH}) = 7{,}95\,\mathrm{g/mol}$, $M(\mathrm{CaH_2}) = 42{,}10\,\mathrm{g/mol}$, voda je v presežku
-**Iščemo:** maso vsakega hidrida in ugodnejši hidrid
+**Podatki:** $V(\mathrm{H_2}) = 50{,}0\,\mathrm{L}$, $T = 298{,}15\,\mathrm{K}$, $p = 100\,\mathrm{kPa}$, $M(\mathrm{LiH}) = 7{,}95\,\mathrm{g/mol}$, $M(\mathrm{CaH_2}) = 42{,}10\,\mathrm{g/mol}$, $m_0(\mathrm{CaH_2}) = 30{,}0\,\mathrm{g}$, voda je v presežku
+**Iščemo:** maso vsakega hidrida, ugodnejši hidrid in $m(\mathrm{LiH})$ za dopolnitev
 
 :::formula
 $\mathrm{LiH + H_2O \to LiOH + H_2}$, $\mathrm{CaH_2 + 2\,H_2O \to Ca(OH)_2 + 2\,H_2}$, $n = \dfrac{pV}{RT}$
@@ -150,7 +162,9 @@ $\mathrm{LiH + H_2O \to LiOH + H_2}$, $\mathrm{CaH_2 + 2\,H_2O \to Ca(OH)_2 + 2\
 2. $\mathrm{LiH}$: 1 mol hidrida da 1 mol $\mathrm{H_2}$, zato $m \approx 2{,}02\,\mathrm{mol} \cdot 7{,}95\,\mathrm{g/mol} \approx 16{,}0\,\mathrm{g}$.
 3. $\mathrm{CaH_2}$: 1 mol hidrida da 2 mol $\mathrm{H_2}$, zato potrebujemo $1{,}01\,\mathrm{mol}$ in $m \approx 1{,}01\,\mathrm{mol} \cdot 42{,}10\,\mathrm{g/mol} \approx 42{,}5\,\mathrm{g}$.
 4. Primerjava na gram: LiH da $\frac{1}{7{,}95} \approx 0{,}126\,\mathrm{mol}$ $\mathrm{H_2}$ na gram, $\mathrm{CaH_2}$ pa $\frac{2}{42{,}10} \approx 0{,}0475\,\mathrm{mol}$ na gram. LiH je okoli $2{,}6$-krat izdatnejši, ker je litij zelo lahek.
-5. Odgovor: ugodnejši je $\mathrm{LiH}$; potrebujemo okoli $16\,\mathrm{g}$, od $\mathrm{CaH_2}$ pa okoli $42\,\mathrm{g}$.
+5. (b) Kalcijev hidrid iz skladišča: $n(\mathrm{CaH_2}) = \dfrac{30{,}0}{42{,}10}\,\mathrm{mol} \approx 0{,}713\,\mathrm{mol}$, ki da $2 \cdot 0{,}713 \approx 1{,}43\,\mathrm{mol}$ $\mathrm{H_2}$ (razmerje $1:2$).
+6. Manjka $2{,}017 - 1{,}425 \approx 0{,}592\,\mathrm{mol}$ $\mathrm{H_2}$; ker da LiH vodik v razmerju $1:1$, potrebujemo $0{,}592\,\mathrm{mol}$ LiH, to je $0{,}592 \cdot 7{,}95 \approx 4{,}71\,\mathrm{g}$.
+7. Odgovor: ugodnejši je $\mathrm{LiH}$; potrebujemo okoli $16\,\mathrm{g}$, od $\mathrm{CaH_2}$ pa okoli $42\,\mathrm{g}$. Ob $30{,}0\,\mathrm{g}$ $\mathrm{CaH_2}$ moramo dodati še okoli $4{,}7\,\mathrm{g}$ LiH.
 
 ### Primer 4: zdaj ti
 
@@ -193,6 +207,44 @@ $m(\mathrm{CaO}) \approx 9{,}99\,\mathrm{mol} \cdot 56{,}08\,\mathrm{g/mol} \app
 - Navzdol v 2. skupini: topnost hidroksidov raste, sulfatov pada, obstojnost karbonatov raste (manjša polarizacijska moč kationa).
 - Diagonalna podobnost Li–Mg; apneni cikel $\mathrm{CaCO_3 \to CaO \to Ca(OH)_2 \to CaCO_3}$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije prve ionizacijske energije, hidrida (tri vrste z merilom za razvrstitev) in mrežne entalpije z dogovorom o predznaku;
+- Born-Haberjev krožni proces z utemeljitvijo (entalpija je funkcija stanja) in izračun mrežne entalpije iz njega;
+- trende v 1. in 2. skupini ($I_1$, tališča, reaktivnost z vodo, oksidi s kisikom, topnost hidroksidov in sulfatov) z razlago;
+- izpeljavo, zakaj obstojnost karbonatov 2. skupine navzdol narašča ($\Delta_\mathrm{r}H$ iz mrežnih entalpij, $T \approx \Delta_\mathrm{r}H/\Delta_\mathrm{r}S$);
+- urejene enačbe reakcij kovin in ionskih hidridov z vodo z oksidacijskimi števili.
+
+### Naloga 1
+
+Vzorec $2{,}00\,\mathrm{g}$ zmesi $\mathrm{NaH}$ in $\mathrm{CaH_2}$ prelijemo s presežkom vode. Nastane $2{,}24\,\mathrm{L}$ vodika pri $25\,^\circ\mathrm{C}$ in $100\,\mathrm{kPa}$. (a) Določi masni delež $\mathrm{CaH_2}$ v zmesi. (b) Koliko mL klorovodikove kisline s $c = 0{,}500\,\mathrm{mol/L}$ porabimo, da nevtraliziramo vse nastale hidroksidne ione? Molske mase: $M(\mathrm{NaH}) = 24{,}00\,\mathrm{g/mol}$, $M(\mathrm{CaH_2}) = 42{,}10\,\mathrm{g/mol}$; $R = 8{,}314\,\mathrm{J/(mol\,K)}$.
+
+**Rešitev:**
+
+1. Enačbi: $\mathrm{NaH + H_2O \to NaOH + H_2}$ in $\mathrm{CaH_2 + 2\,H_2O \to Ca(OH)_2 + 2\,H_2}$.
+2. Množina vodika: $n(\mathrm{H_2}) = \dfrac{100\,000 \cdot 2{,}24 \cdot 10^{-3}}{8{,}314 \cdot 298{,}15}\,\mathrm{mol} \approx 0{,}09037\,\mathrm{mol}$.
+3. Naj bo $x = m(\mathrm{CaH_2})$ v gramih; potem je $m(\mathrm{NaH}) = 2{,}00 - x$ in $\dfrac{2{,}00 - x}{24{,}00} + \dfrac{2x}{42{,}10} = 0{,}09037$.
+4. Ureditev: $0{,}08333 + x\,(0{,}04751 - 0{,}04167) = 0{,}09037$, torej $0{,}00584\,x \approx 0{,}00703$ in $x \approx 1{,}20\,\mathrm{g}$.
+5. Masni delež: $w(\mathrm{CaH_2}) = \dfrac{1{,}20}{2{,}00} \approx 0{,}60$, torej $60\,\%$.
+6. Hidroksid: iz vsake enačbe je razmerje $n(\mathrm{OH^-}) : n(\mathrm{H_2}) = 1 : 1$ (en $\mathrm{H^-}$ da en $\mathrm{OH^-}$ in en $\mathrm{H_2}$), zato $n(\mathrm{OH^-}) = n(\mathrm{H_2}) \approx 0{,}0904\,\mathrm{mol}$ ne glede na sestavo.
+7. Kislina: $V = \dfrac{0{,}0904\,\mathrm{mol}}{0{,}500\,\mathrm{mol/L}} \approx 0{,}181\,\mathrm{L}$.
+8. Odgovor: zmes vsebuje okoli $60\,\%$ $\mathrm{CaH_2}$; za nevtralizacijo porabimo okoli $181\,\mathrm{mL}$ HCl.
+
+### Naloga 2
+
+Natančno definiraj mrežno entalpijo in izpelji Born-Haberjev izraz za $\mathrm{NaH}$. Izračunaj $\Delta_\mathrm{L}H(\mathrm{NaH})$ iz podatkov: $\Delta_\mathrm{f}H(\mathrm{NaH,s}) = -56{,}3\,\mathrm{kJ/mol}$, $\Delta_\mathrm{sub}H(\mathrm{Na}) = 107{,}3\,\mathrm{kJ/mol}$, $I_1(\mathrm{Na}) = 496\,\mathrm{kJ/mol}$, $D(\mathrm{H{-}H}) = 436\,\mathrm{kJ/mol}$, $\Delta_\mathrm{eg}H(\mathrm{H}) = -73\,\mathrm{kJ/mol}$. Utemelji, ali je rezultat smiseln v primerjavi z $\Delta_\mathrm{L}H(\mathrm{NaCl}) = -787\,\mathrm{kJ/mol}$, če je $r(\mathrm{H^-}) \approx 146\,\mathrm{pm}$ in $r(\mathrm{Cl^-}) \approx 181\,\mathrm{pm}$.
+
+**Rešitev:**
+
+1. Definicija: $\Delta_\mathrm{L}H$ je sprememba entalpije pri $\mathrm{Na^+(g) + H^-(g) \to NaH(s)}$, na 1 mol trdnine; je negativna.
+2. Krog: $\mathrm{Na(s) \to Na(g)}$ ($\Delta_\mathrm{sub}H$), $\mathrm{Na(g) \to Na^+(g) + e^-}$ ($I_1$), $\mathrm{\tfrac12 H_2(g) \to H(g)}$ ($\tfrac12 D$), $\mathrm{H(g) + e^- \to H^-(g)}$ ($\Delta_\mathrm{eg}H$), ioni v trdnino ($\Delta_\mathrm{L}H$).
+3. Entalpija je funkcija stanja, zato je vsota korakov enaka $\Delta_\mathrm{f}H$; sledi $\Delta_\mathrm{L}H = \Delta_\mathrm{f}H - \Delta_\mathrm{sub}H - I_1 - \tfrac12 D - \Delta_\mathrm{eg}H$.
+4. Vstavimo: $\Delta_\mathrm{L}H = -56{,}3 - 107{,}3 - 496 - 218 + 73 \approx -805$, v $\mathrm{kJ/mol}$.
+5. Primerjava: oba iona imata naboj $-1$, $\mathrm{H^-}$ pa je manjši od $\mathrm{Cl^-}$, zato je razdalja med ioni manjša in privlak močnejši. Mrežna entalpija $\mathrm{NaH}$ mora biti po absolutni vrednosti nekoliko večja, kar $-805$ proti $-787$ tudi je.
+6. Odgovor: $\Delta_\mathrm{L}H(\mathrm{NaH}) \approx -805\,\mathrm{kJ/mol}$; rezultat je smiseln.
+
 ## Drugače: Na sliki
 
 Predstavljaj si atom kot jedro z »lupinami« čebule.
@@ -204,22 +256,23 @@ K:   (jedro) ) ) )    •
 Cs:  (jedro) ) ) ) ) )      •    zunanji e⁻ daleč, šibko vezan
 ```
 
-Vsaka nova lupina potisne zunanji elektron dlje in ga zakrije pred jedrom. Zato ga cezij odda najlaže. Pri 2. skupini sta zunanja elektrona dva, jedro pa ima en proton več, zato ju drži močneje: magnezij je manj reaktiven od natrija v isti periodi.
+Vsaka nova lupina potisne zunanji elektron dlje in ga zakrije pred jedrom, zato ga cezij odda najlaže. Pri 2. skupini ima jedro en proton več in oba zunanja elektrona drži močneje, zato je magnezij manj reaktiven od natrija.
 
-Pri karbonatih si predstavljaj kation kot magnet ob karbonatnem ionu. Majhen $\mathrm{Mg^{2+}}$ je močan magnet od blizu in »potegne« elektrone k sebi, vez C–O poči. Velik $\mathrm{Ba^{2+}}$ vleče šibko, karbonat ostane cel do zelo visoke temperature.
+Pri karbonatih si predstavljaj kation kot magnet: majhen $\mathrm{Mg^{2+}}$ od blizu »potegne« elektrone karbonata in vez C–O poči, velik $\mathrm{Ba^{2+}}$ vleče šibko.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-- **Kuhinjska sol** $\mathrm{NaCl}$ in **soda bikarbona** $\mathrm{NaHCO_3}$ sta spojini natrija. Soda bikarbona pri peki razpade in sprosti $\mathrm{CO_2}$, ki napihne testo.
-- **Kotlovec** v grelniku vode je $\mathrm{CaCO_3}$: trda voda vsebuje $\mathrm{Ca^{2+}}$ in hidrogenkarbonat, ki pri segrevanju razpade.
-- **Malta in omet** se strdita, ker gašeno apno $\mathrm{Ca(OH)_2}$ veže $\mathrm{CO_2}$ iz zraka v $\mathrm{CaCO_3}$.
-- **Ognjemet:** rdečo barvo da stroncij (in litij), rumeno natrij, zeleno barij.
+- **Kloralkalna elektroliza:** v membranskih celicah iz slanice nastanejo $\mathrm{NaOH}$, $\mathrm{Cl_2}$ in $\mathrm{H_2}$; to je ena največjih kemijskih proizvodenj.
+- **Vodik v industriji:** sinteza amoniaka, hidrogenacija rastlinskih olj na nikljevem katalizatorju, odstranjevanje žvepla v rafinerijah.
+- **Hidridi v laboratoriju:** $\mathrm{CaH_2}$ suši topila (voda se porabi, $\mathrm{H_2}$ uide), $\mathrm{NaH}$ je močna baza za deprotonacijo v organski sintezi.
+- **Analitika:** sulfat določamo gravimetrično kot $\mathrm{BaSO_4}$, trdoto vode s titracijo z EDTA, Na in K s plamensko fotometrijo; v pirotehniki dajo stroncijeve soli rdečo, barijeve zeleno barvo.
+- **Gradbeništvo:** žgano apno in cement; malta otrdi, ker $\mathrm{Ca(OH)_2}$ veže $\mathrm{CO_2}$ v $\mathrm{CaCO_3}$.
 
 ## Drugače: Bolj natančno
 
-**Zakaj ima Li kljub najvišji $I_1$ najbolj negativen $E^\circ$, a ne reagira najhitreje.** Standardni potencial ustreza celotnemu procesu $\mathrm{M(s) \to M^+(aq) + e^-}$, ki ga v Born-Haberjevem ciklu razstavimo na atomizacijo, ionizacijo in hidratacijo. Ion $\mathrm{Li^+}$ je tako majhen, da je njegova hidratacijska entalpija ($\approx -520\,\mathrm{kJ/mol}$) mnogo bolj negativna kot pri $\mathrm{Cs^+}$ ($\approx -280\,\mathrm{kJ/mol}$). To prevlada nad višjo ionizacijsko energijo in da litiju najbolj negativen $E^\circ$. Hitrost reakcije z vodo pa določa kinetika.
+**Zakaj ima Li kljub najvišji $I_1$ najbolj negativen $E^\circ$, a ne reagira najhitreje.** Standardni potencial ustreza procesu $\mathrm{M(s) \to M^+(aq) + e^-}$, ki ga v krožnem procesu razstavimo na atomizacijo, ionizacijo in hidratacijo. Majhen $\mathrm{Li^+}$ ima hidratacijsko entalpijo $\approx -520\,\mathrm{kJ/mol}$, $\mathrm{Cs^+}$ le $\approx -280\,\mathrm{kJ/mol}$; to prevlada nad višjo $I_1$. Hitrost pa določa kinetika.
 
-**Topnost in mrežna energija.** Topnost je ravnotežje med mrežno entalpijo in hidratacijsko entalpijo ionov. Pri sulfatih je anion velik, zato se mrežna entalpija navzdol po skupini spreminja malo, hidratacijska entalpija kationa pa postaja vse manj negativna: topnost pada. Pri hidroksidih je anion majhen, mrežna entalpija pada hitreje od hidratacijske: topnost raste.
+**Topnost in mrežna energija.** Topnost določa razlika med mrežno entalpijo in hidratacijsko entalpijo ionov. Pri sulfatih (velik anion) se mrežna entalpija navzdol spreminja malo, hidratacijska pa postaja manj negativna: topnost pada. Pri hidroksidih (majhen anion) mrežna entalpija pada hitreje: topnost raste.
 
 **Polarizacija (Fajansova pravila).** Kation polarizira bolj, če je majhen in z velikim nabojem; anion se polarizira lažje, če je velik. Zato je $\mathrm{BeCl_2}$ pretežno kovalenten (v plinu molekulski, v trdnem verižni polimer), $\mathrm{LiI}$ bolj kovalenten od $\mathrm{NaCl}$.
 
@@ -276,5 +329,9 @@ M | molska masa | | g/mol
 V | prostornina plina | V = \dfrac{nRT}{p} | L
 R | splošna plinska konstanta | | J/(mol K) | 8,314 J/(mol K)
 T | absolutna temperatura | | K
+\Delta | sprememba; indeks pove proces | | |
+H | entalpija; $\Delta_\mathrm{f}H$ tvorbena, $\Delta_\mathrm{sub}H$ sublimacijska, $\Delta_\mathrm{eg}H$ sprejema elektrona, $\Delta_\mathrm{L}H$ mrežna, $\Delta_\mathrm{r}H$ reakcijska | | kJ/mol
+I_1 | prva ionizacijska energija | | kJ/mol
+D | disociacijska entalpija vezi | | kJ/mol
 p | tlak | | kPa
 :::

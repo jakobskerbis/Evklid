@@ -1,0 +1,88 @@
+/* Uči se (#view-uci, public/uci-se.js): preklopnik Učbenik | Laboratorij | 3D svet nad zavihkom, ki se pomika sam.
+   Vsak zavihek je svoj drsni del (.narrow), zato preklopnik ostane na vrhu in vsak zavihek obdrži svoj položaj. */
+.uci-view { display: flex; flex-direction: column; min-width: 0; }
+.uci-head { flex: none; display: flex; justify-content: center; padding: 16px 16px 0; }
+.uci-pane { flex: 1; min-height: 0; }
+.uci-pane.narrow { padding-top: 18px; }
+/* Ime zavihka je v preklopniku: naslov zavihka ostane le za bralnike zaslona. */
+.uci-view .tb-head > h1, .uci-view .lab-h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Uvodna vrstica pod preklopnikom na istem mestu v vseh treh zavihkih (brez zgornjega roba odstavka). */
+.uci-view .tb-head > h1 + p { margin-top: 0; }
+@media (max-width: 760px) {
+  .uci-head { padding: 12px 16px 0; }
+  .uci-pane.narrow { padding-top: 14px; }
+  /* Preklopnik čez celo širino brez vodoravnega drsenja tudi v daljših jezikih (»Kitabu cha kiada«, »Phòng thí
+     nghiệm«): ime iz več besed gre v dve vrstici, posamezna beseda se ne lomi. */
+  .uci-tabs > button { flex: 1 1 auto; min-width: min-content; white-space: normal; text-wrap: balance; line-height: 1.15; text-align: center; padding-inline: 10px !important; }
+}
+/* Telefon in tablica na dotik: odprta lekcija ali poskus imata svoj gumb Nazaj (← Učbenik, ← Laboratorij), zato se
+   preklopnik umakne branju (kot spodnja vrstica, touch.css). Na računalniku ostane za hiter preklop. */
+@media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
+  .uci-view:has(> #view-textbook:not([hidden]) .tb-lesson-grid) > .uci-head,
+  .uci-view:has(> #view-lab:not([hidden]).lab-open) > .uci-head { display: none; }
+}
+
+/* ---------- 3D svet: kartice strani /3d ----------
+   Čez vso širino pogleda (»Brez praznih robov«, docs/oblikovanje.md): mreža auto-fill doda stolpce, ko je prostor. */
+.uci-3d-sub { margin: 0 0 16px; }
+.uci-3d-area { margin-top: 24px; }
+.uci-3d-area > h2 { font-size: 1.15rem; margin: 0 0 10px; }
+/* Atlas med področji ima enak razmik kot področje (ne prilepljen pod mrežo nad sabo). */
+.uci-3d-area + .uci-3d-atlas { margin-top: 24px; }
+.uci-3d-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 12px; }
+.uci-3d-card { display: flex; flex-direction: column; gap: 4px; min-width: 0; min-height: 96px; padding: 14px 16px; color: var(--text); text-decoration: none; }
+.uci-3d-card:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.uci-3d-card:focus-visible, .uci-3d-atlas:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.uci-3d-grid > .uci-3d-card { margin: 0; }
+@media (max-width: 760px) { .uci-3d-card { min-height: 0; } }
+.uci-3d-card b { font-size: 1rem; line-height: 1.3; overflow-wrap: anywhere; }
+.uci-3d-card small { color: var(--muted); line-height: 1.4; }
+.uci-3d-card .uci-3d-subj { font-size: 0.74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+.uci-3d-card.mine { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.uci-3d-card.mine .uci-3d-subj { color: var(--accent); }
+
+/* Atlas telesa: temna kartica kot 3D oder (barve strani /3d, public/3d/3d.css), modra ikona. */
+.uci-3d-atlas { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; margin-top: 8px; padding: 18px; text-decoration: none; color: #e8ecf3; background: radial-gradient(120% 160% at 90% 10%, #22335a 0%, #141a25 60%); border: 1px solid #273142; }
+.uci-3d-atlas:hover { border-color: #6e9bff; }
+.uci-3d-atlas-ic { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(145deg, #6e9bff, #3b5fc4); color: #0b0f16; }
+.uci-3d-atlas-ic svg.i { width: 28px; height: 28px; }
+.uci-3d-atlas-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.uci-3d-atlas-txt .eyebrow { color: #9aa6ba; }
+.uci-3d-atlas-txt b { font-size: 1.15rem; }
+.uci-3d-atlas-txt span { color: #9aa6ba; line-height: 1.45; }
+.uci-3d-open { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 18px; border-radius: 999px; background: #6e9bff; color: #0b0f16; font-weight: 800; white-space: nowrap; }
+@media (max-width: 640px) {
+  .uci-3d-atlas { grid-template-columns: auto minmax(0, 1fr); }
+  .uci-3d-open { grid-column: 1 / -1; justify-content: center; }
+}
+/* Premično okno (okna.css): ozko okno na širokem zaslonu dobi isto postavitev kot telefon. */
+@container okno (max-width: 640px) {
+  .uci-3d-atlas { grid-template-columns: auto minmax(0, 1fr); }
+  .uci-3d-open { grid-column: 1 / -1; justify-content: center; }
+}
+@container okno (max-width: 480px) { .tb-link { flex: 1 1 100%; } }
+
+/* Atlas ali model čez cel zaslon: stran /3d v okvirju (isti izvor). Varno območje telefona doda podlaga, ker ga okvir
+   sam ne dobi (env() je v okvirju 0); v aplikaciji je --varno-zg/--varno-sp 0, ker prostor pusti ona (theme.js).
+   Nad okni in mehurčkom, kot kalkulator čez cel zaslon. */
+.uci-3d-full {
+  position: fixed; inset: 0; z-index: 60; background: #0b0f16;
+  padding: var(--varno-zg, env(safe-area-inset-top, 0px)) env(safe-area-inset-right, 0px) var(--varno-sp, env(safe-area-inset-bottom, 0px)) env(safe-area-inset-left, 0px);
+}
+.uci-3d-full iframe { display: block; width: 100%; height: 100%; border: 0; background: #0b0f16; }
+body.uci-3d-open { overflow: hidden; }
+
+/* ---------- Iz lekcije: ista tema v Laboratoriju ali 3D svetu (textbook.js, .tb-links) ---------- */
+.tb-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 12px; }
+.tb-link {
+  display: inline-flex; align-items: center; justify-content: flex-start; gap: 10px; min-height: 44px; max-width: 100%; padding-block: 6px; padding-inline: 10px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text);
+  font: inherit; text-align: start; cursor: pointer;
+}
+.tb-link:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.tb-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tb-link > svg.i { flex: none; width: 20px; height: 20px; color: var(--accent); }
+.tb-link > span { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.tb-link small { color: var(--muted); font-size: 0.75rem; font-weight: 700; }
+.tb-link b { font-size: 0.92rem; overflow-wrap: anywhere; }
+@media (max-width: 480px) { .tb-link { flex: 1 1 100%; } }

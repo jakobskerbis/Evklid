@@ -17,7 +17,7 @@ stanje: osnutek
   - tangenta seka os $x$
   - napaka: plus namesto minus
 - Red konvergence
-  - linearna: $e_{n+1} \approx \frac{1}{2} e_n$
+  - linearna (bisekcija): $e_{n+1} \approx \frac{1}{2} e_n$
   - kvadratična: $e_{n+1} \approx C\,e_n^2$
   - decimalke se podvojijo
 - Kdaj Newton odpove

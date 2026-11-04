@@ -5,16 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Podrgni napihnjen balon ob suhe lase in ga počasi približaj koščkom papirja na mizi. Koščki poskočijo k balonu, še preden se jih ta dotakne, in pri tem premagajo lastno težo. To je elektrostatika: sila med mirujočimi naboji. Ista sila drži skupaj atome, molekule in kristale; ionska vez v kuhinjski soli, vodikova vez v vodi, zvijanje beljakovine in vezava zdravila na receptor so v jedru električne interakcije, zato je kemija na neki način uporabna elektrostatika.
+Podrgni napihnjen balon ob suhe lase in ga približaj koščkom papirja: poskočijo k njemu, še preden se jih dotakne. To je elektrostatika, sila med mirujočimi naboji. Ista sila drži skupaj atome, molekule in kristale; ionska vez, vodikova vez in vezava zdravila na receptor so v jedru električne interakcije. V laboratoriju z njo elektroforeza ločuje DNK po naboju, v masnem spektrometru in elektronskem mikroskopu pa polje pospeši nabite delce.
 
-Zunaj kemije jo srečaš v delavnici pri elektrostatičnem lakiranju kovinskih ograj, v elektrostatičnih filtrih v dimnikih in v fotokopirnih strojih. V laboratoriju elektroforeza z njo ločuje DNK in beljakovine po naboju, v masnem spektrometru in elektronskem mikroskopu pa električno polje pospeši nabite delce. Kondenzatorji v elektroniki pa shranjujejo energijo ločenih nabojev.
-
-Vse to stoji na štirih pojmih, ki se gradijo drug na drugem:
-
-- **Coulombov zakon** za silo med točkastima nabojema in vpliv snovi med njima,
-- **električno polje** kot lastnost prostora okoli nabojev in kako ga seštevamo iz več nabojev,
-- **električni potencial** in napetost ter zvezo med delom in energijo naboja,
-- **kondenzator**, njegovo kapaciteto in energijo, ki jo shrani.
+Vse to stoji na štirih pojmih, ki se gradijo drug na drugem: **Coulombov zakon**, **električno polje**, **električni potencial** in **kondenzator**.
 
 ## Razlaga
 
@@ -24,11 +17,11 @@ Elektrostatika je v marsičem dvojček gravitacije, ki jo že poznaš. Najhitrej
 
 **1. Naboj.** Naboj je lastnost delcev; obstaja pozitiven in negativen. Enoimenska naboja se odbijata, raznoimenska privlačita. Naboj je **kvantiziran**: vsak naboj je celoštevilski večkratnik osnovnega naboja $e_0 = 1{,}602 \cdot 10^{-19}\,\mathrm{C}$ (elektron ima $-e_0$, proton $+e_0$). Naboj se **ohranja**: v zaprtem sistemu je vsota nabojev stalna. Enota je **coulomb**, $1\,\mathrm{C} = 1\,\mathrm{A\,s}$.
 
-**2. Coulombov zakon.** Točkasta naboja $q_1$ in $q_2$ na razdalji $r$ v praznem prostoru delujeta drug na drugega s silo z velikostjo
+**2. Coulombov zakon.** Naj bosta $q_1$ in $q_2$ mirujoča točkasta naboja (njuni velikosti sta zanemarljivi v primerjavi z razdaljo $r$ med njima) v praznem prostoru. Potem $q_1$ deluje na $q_2$ s silo
 
-$$F = \frac{1}{4\pi\varepsilon_0}\,\frac{|q_1q_2|}{r^2}, \qquad \frac{1}{4\pi\varepsilon_0} = 8{,}99 \cdot 10^9\,\mathrm{\frac{V\,m}{A\,s}}.$$
+$$\vec{F}_{12} = \frac{1}{4\pi\varepsilon_0}\,\frac{q_1q_2}{r^2}\,\vec{e}_{12}, \qquad F = \frac{1}{4\pi\varepsilon_0}\,\frac{|q_1q_2|}{r^2}, \qquad \frac{1}{4\pi\varepsilon_0} = 8{,}99 \cdot 10^9\,\mathrm{\frac{V\,m}{A\,s}},$$
 
-Sila leži na zveznici nabojev; $\varepsilon_0 = 8{,}85 \cdot 10^{-12}\,\mathrm{A\,s/(V\,m)}$ je **influenčna konstanta**. Če sta naboja v snovi z **dielektričnostjo** $\varepsilon$ (voda: $\varepsilon \approx 80$), je sila $\varepsilon$-krat manjša. Zato se soli v vodi raztapljajo: privlak med ioni je tam okoli osemdesetkrat šibkejši.
+kjer je $\vec{e}_{12}$ enotski vektor od $q_1$ proti $q_2$. Če je $q_1q_2 > 0$, sila kaže stran od $q_1$ (odboj), če je $q_1q_2 < 0$, proti njemu (privlak); po tretjem Newtonovem zakonu je sila na $q_1$ nasprotno enaka. $\varepsilon_0 = 8{,}85 \cdot 10^{-12}\,\mathrm{A\,s/(V\,m)}$ je **influenčna konstanta**. Če homogen izotropen dielektrik z **dielektričnostjo** $\varepsilon$ (voda: $\varepsilon \approx 80$) zapolnjuje ves prostor okoli nabojev, je sila $\varepsilon$-krat manjša. Zato se soli v vodi raztapljajo: privlak med ioni je tam okoli osemdesetkrat šibkejši.
 
 | | Gravitacija | Elektrostatika |
 |---|---|---|
@@ -49,23 +42,27 @@ Ostane enaka: produkt nabojev se poveča štirikrat, kvadrat razdalje pa tudi š
 
 $$\vec{E} = \frac{\vec{F}}{q},$$
 
-kjer je $\vec{F}$ sila na majhen poskusni naboj $q$. Enota je $\mathrm{N/C} = \mathrm{V/m}$. Polje točkastega naboja $Q$ kaže radialno navzven (za $Q > 0$) ali navznoter (za $Q < 0$) in ima velikost
+kjer je $\vec{F}$ sila na mirujoč poskusni naboj $q$, ki je tako majhen, da ne premakne nabojev, ki polje ustvarjajo. Enota je $\mathrm{N/C} = \mathrm{V/m}$. Polje točkastega naboja $Q$ dobimo iz Coulombovega zakona s $q_1 = Q$, $q_2 = q$ in delimo s $q$: kaže radialno navzven (za $Q > 0$) ali navznoter (za $Q < 0$) in ima velikost
 
 $$E = \frac{1}{4\pi\varepsilon_0}\,\frac{|Q|}{r^2}.$$
 
 Za več nabojev velja **načelo superpozicije**: polje je **vektorska** vsota polj posameznih nabojev. Polje ponazorimo s **silnicami**, ki se začnejo na pozitivnih in končajo na negativnih nabojih; gostota silnic kaže velikost polja.
 
-**4. Gaussov zakon in homogeno polje.** Električni pretok skozi zaprto ploskev je sorazmeren z nabojem v njej, $\oint\vec{E} \cdot \mathrm{d}\vec{S} = Q/\varepsilon_0$. Iz njega sledi, da je polje med dvema velikima vzporednima ploščama z nasprotnima nabojema $\pm Q$ in površino $S$ **homogeno**:
+**4. Gaussov zakon in homogeno polje.** *Gaussov zakon:* za vsako zaprto ploskev v praznem prostoru je električni pretok skozi njo (vsota produktov $\vec{E} \cdot \mathrm{d}\vec{S}$ po vseh koščkih ploskve) enak celotnemu naboju $Q$ znotraj ploskve, deljenemu z $\varepsilon_0$: $\oint\vec{E} \cdot \mathrm{d}\vec{S} = Q/\varepsilon_0$, pri čemer $\mathrm{d}\vec{S}$ kaže navzven. Iz njega sledi, da je polje med dvema velikima vzporednima ploščama z nasprotnima nabojema $\pm Q$ in površino $S$ **homogeno**:
 
 $$E = \frac{\sigma}{\varepsilon_0}, \qquad \sigma = \frac{Q}{S}.$$
 
-Zunaj plošč je polje (skoraj) nič. V notranjosti prevodnika v ravnovesju je polje nič, naboj pa se zbere na površini. Če prevodnik postavimo v zunanje polje, se prosti elektroni v njem premaknejo, dokler njihovo polje v notranjosti ne izniči zunanjega (**influenca**). Na tem temelji Faradayeva kletka: kovinsko ohišje zaščiti občutljive merilne naprave pred zunanjimi električnimi motnjami, avtomobil pa potnike ob udaru strele.
+*Izpeljava* (pogoj: razmik plošč je majhen v primerjavi z njunimi stranicami, robove zanemarimo). Okoli dela ene plošče postavimo valj z osnovno ploskvijo $S_0$, ki ploščo prebada. Zaradi simetrije je polje pravokotno na ploščo, zato skozi plašč ni pretoka, skozi osnovni ploskvi pa je $2ES_0 = \sigma S_0/\varepsilon_0$, torej $E = \sigma/(2\varepsilon_0)$ za eno ploščo. Med ploščama z $\pm\sigma$ kažeta polji obeh plošč v isto smer in se seštejeta v $\sigma/\varepsilon_0$, zunaj sta nasprotni in se odštejeta v nič.
+
+V notranjosti prevodnika v elektrostatičnem ravnovesju je polje nič: sicer bi sila premikala proste elektrone in ravnovesja ne bi bilo. Po Gaussovem zakonu za poljubno ploskev v notranjosti je tam tudi naboj nič, zato je ves presežni naboj na površini. Če prevodnik postavimo v zunanje polje, se prosti elektroni v njem premaknejo, dokler njihovo polje v notranjosti ne izniči zunanjega (**influenca**). Na tem temelji Faradayeva kletka: kovinsko ohišje zaščiti občutljive merilne naprave pred zunanjimi električnimi motnjami, avtomobil pa potnike ob udaru strele.
 
 ### Potencial: električna »višina«
 
-**5. Potencialna energija in potencial.** Električna sila je konservativna kot teža: delo pri premiku naboja ni odvisno od poti. Zato lahko vpeljemo **električni potencial** $\varphi$, potencialno energijo na enoto naboja: $W_p = q\varphi$. **Napetost** med točkama je razlika potencialov, $U_{AB} = \varphi_A - \varphi_B$; enota je volt, $1\,\mathrm{V} = 1\,\mathrm{J/C}$. Ko se naboj $q$ premakne iz $A$ v $B$, električna sila opravi delo
+**5. Potencialna energija in potencial.** Električna sila mirujočih nabojev je konservativna kot teža: delo pri premiku naboja ni odvisno od poti. Zato lahko vpeljemo **električni potencial** $\varphi$: potencial v točki je potencialna energija poskusnega naboja v njej, deljena z nabojem: $W_p = q\varphi$. Točko z ničelnim potencialom izberemo sami; za omejeno porazdelitev nabojev jo postavimo v neskončnost. **Napetost** med točkama je razlika potencialov, $U_{AB} = \varphi_A - \varphi_B$; enota je volt, $1\,\mathrm{V} = 1\,\mathrm{J/C}$. Ko se naboj $q$ premakne iz $A$ v $B$, električna sila opravi delo
 
 $$A = qU_{AB}.$$
+
+*Dokaz:* delo konservativne sile je enako zmanjšanju potencialne energije, $A = q\varphi_A - q\varphi_B = qU_{AB}$.
 
 Primerjava s težo: potencial ima vlogo produkta $gh$, napetost vlogo višinske razlike. Razlika je v predznaku: kamen vedno pade navzdol, naboj pa »pade« proti nižjemu ali višjemu potencialu, odvisno od svojega predznaka.
 
@@ -73,11 +70,13 @@ Potencial točkastega naboja $Q$ (z ničlo v neskončnosti) je
 
 $$\varphi = \frac{1}{4\pi\varepsilon_0}\,\frac{Q}{r}.$$
 
+*Izpeljava:* $\varphi(r)$ je delo polja na enoto naboja pri premiku od $r$ do neskončnosti, $\varphi(r) = \int_r^\infty \frac{Q}{4\pi\varepsilon_0r'^2}\,\mathrm{d}r' = \frac{Q}{4\pi\varepsilon_0r}$.
+
 Potencial je **skalar**, zato potenciale več nabojev preprosto seštejemo, s predznaki. Polje in potencial povezuje
 
 $$E_x = -\frac{\mathrm{d}\varphi}{\mathrm{d}x},$$
 
-v homogenem polju preprosto $E = U/d$. Polje kaže v smer najhitrejšega padanja potenciala; ploskve z enakim potencialom (**ekvipotencialne ploskve**) so pravokotne na silnice.
+v homogenem polju preprosto $E = U/d$: na premiku $d$ vzdolž polja sila opravi delo $qEd$, ki je po točki 5 enako $qU$. Polje kaže v smer najhitrejšega padanja potenciala; ploskve z enakim potencialom (**ekvipotencialne ploskve**) so pravokotne na silnice.
 
 :::premisli
 Elektron spustimo iz mirovanja v električnem polju. Ali se začne gibati proti višjemu ali proti nižjemu potencialu? Zakaj?
@@ -91,15 +90,15 @@ Proti višjemu. Sila naboj vedno vleče tja, kjer je njegova potencialna energij
 
 **7. Kondenzator.** Kondenzator sta dva prevodnika (plošči), ki nosita nasprotna naboja $\pm Q$. Med njima je napetost $U$, sorazmerna z nabojem. **Kapaciteta** je
 
-$$C = \frac{Q}{U}, \qquad [C] = \mathrm{F} = \mathrm{A\,s/V}.$$
+$$C = \frac{Q}{U}, \qquad [C] = \mathrm{F} = \mathrm{A\,s/V};$$
 
-Za ploščati kondenzator s površino plošč $S$ in razmikom $d$, med ploščama pa je snov z dielektričnostjo $\varepsilon$, velja
+odvisna je le od oblike in lege prevodnikov ter snovi med njima, ne od $Q$. Za ploščati kondenzator s površino plošč $S$ in razmikom $d$, med ploščama pa je snov z dielektričnostjo $\varepsilon$, velja
 
 $$C = \frac{\varepsilon\varepsilon_0S}{d}.$$
 
-Dielektrik poveča kapaciteto $\varepsilon$-krat, ker se njegove molekule polarizirajo in delno izničijo polje plošč.
+*Izpeljava* (pogoji kot v točki 4): v dielektriku je polje $E = \sigma/(\varepsilon\varepsilon_0)$, napetost $U = Ed = Qd/(\varepsilon\varepsilon_0S)$, zato $C = Q/U = \varepsilon\varepsilon_0S/d$. Dielektrik poveča kapaciteto $\varepsilon$-krat, ker se njegove molekule polarizirajo in delno izničijo polje plošč.
 
-**8. Vezava kondenzatorjev.** Pri **vzporedni** vezavi je na vseh ista napetost, naboji se seštejejo: $C = C_1 + C_2 + \dots$ Pri **zaporedni** vezavi imajo vsi enak naboj, napetosti se seštejejo: $1/C = 1/C_1 + 1/C_2 + \dots$ Pravili sta ravno obratni kot pri uporih:
+**8. Vezava kondenzatorjev.** Pri **vzporedni** vezavi je na vseh ista napetost, naboji se seštejejo: $C = C_1 + C_2 + \dots$ Pri **zaporedni** vezavi imajo vsi enak naboj, napetosti se seštejejo: $1/C = 1/C_1 + 1/C_2 + \dots$ *Dokaz:* vzporedno je $Q = Q_1 + Q_2 + \dots = (C_1 + C_2 + \dots)U$. Zaporedno sta notranji plošči sosednjih kondenzatorjev povezani in skupaj nevtralni, zato influenca da vsem enak naboj $Q$ in $U = U_1 + U_2 + \dots = Q(1/C_1 + 1/C_2 + \dots)$. Pravili sta ravno obratni kot pri uporih:
 
 | vezava | skupno vsem | kondenzatorji | upori |
 |---|---|---|---|
@@ -110,7 +109,7 @@ Dielektrik poveča kapaciteto $\varepsilon$-krat, ker se njegove molekule polari
 
 $$W = \frac{1}{2}QU = \frac{1}{2}CU^2 = \frac{Q^2}{2C}.$$
 
-Energija je shranjena v električnem polju; njena gostota je $w = \tfrac{1}{2}\varepsilon\varepsilon_0E^2$.
+*Izpeljava:* ko je na kondenzatorju naboj $q$, je napetost $q/C$; za prenos dodatnega $\mathrm{d}q$ potrebujemo delo $(q/C)\,\mathrm{d}q$, zato $W = \int_0^Q \frac{q}{C}\,\mathrm{d}q = \frac{Q^2}{2C}$. Energija je shranjena v električnem polju: pri ploščatem kondenzatorju je $W = \frac{1}{2}\varepsilon\varepsilon_0\frac{S}{d}(Ed)^2 = \frac{1}{2}\varepsilon\varepsilon_0E^2 \cdot Sd$, zato je gostota energije (energija na prostornino $Sd$) $w = \tfrac{1}{2}\varepsilon\varepsilon_0E^2$.
 
 ## Rešeni primeri
 
@@ -146,7 +145,7 @@ $E_k = \dfrac{1}{4\pi\varepsilon_0}\dfrac{|Q_k|}{r_k^2}$, $\vec{E} = \vec{E}_1 +
 
 **Rešitev:**
 
-1. Razdalja od vsakega naboja do $P$: $r = \sqrt{0{,}030^2 + 0{,}040^2}\,\mathrm{m} = 0{,}050\,\mathrm{m}$ (Pitagorov izrek, ker naboja in $P$ tvorijo pravokotna trikotnika).
+1. Razdalja od vsakega naboja do $P$: $r = \sqrt{0{,}030^2 + 0{,}040^2}\,\mathrm{m} = 0{,}050\,\mathrm{m}$ (Pitagorov izrek, ker vsak naboj, izhodišče in $P$ tvorijo pravokoten trikotnik).
 2. Velikost vsakega polja: $E_1 = E_2 = 8{,}99 \cdot 10^9 \cdot 4{,}0 \cdot 10^{-9}/0{,}050^2\,\mathrm{V/m} \approx 1{,}44 \cdot 10^4\,\mathrm{V/m}$; velikosti sta enaki, ker sta naboja enako velika in enako oddaljena.
 3. Smeri: $\vec{E}_1$ kaže od $Q_1$ proti $P$, enotski vektor $(0{,}6;\,0{,}8)$. $\vec{E}_2$ kaže od $P$ proti $Q_2$, enotski vektor $(0{,}6;\,-0{,}8)$, ker polje kaže stran od pozitivnega in k negativnemu naboju.
 4. Vsota: $\vec{E} = 1{,}44 \cdot 10^4\,\mathrm{V/m} \cdot (1{,}2;\,0) \approx (1{,}73 \cdot 10^4\,\mathrm{V/m};\,0)$. Navpični komponenti se odštejeta.
@@ -155,13 +154,13 @@ $E_k = \dfrac{1}{4\pi\varepsilon_0}\dfrac{|Q_k|}{r_k^2}$, $\vec{E} = \vec{E}_1 +
 
 ### Primer 3 (težji)
 
-V delavnici sestavimo ploščati kondenzator iz dveh aluminijastih plošč s površino $0{,}020\,\mathrm{m^2}$, ki ju distančniki držijo na razmiku $1{,}0\,\mathrm{mm}$; vmes je zrak. Priključimo ga na napetost $100\,\mathrm{V}$. Kolikšni so kapaciteta, naboj, poljska jakost in shranjena energija? Nato kondenzator odklopimo in vmesni prostor zapolnimo z izolacijsko ploščo z dielektričnostjo $4{,}0$. Kolikšni sta zdaj napetost in energija?
+V delavnici sestavimo ploščati kondenzator iz dveh aluminijastih plošč s površino $0{,}020\,\mathrm{m^2}$, ki ju distančniki držijo na razmiku $1{,}0\,\mathrm{mm}$; vmes je zrak. Nabijemo ga na napetost $100\,\mathrm{V}$ in odklopimo od vira. Nato vzporedno s ploščama potisnemo vmes izolacijsko ploščo z dielektričnostjo $4{,}0$ in debelino $0{,}50\,\mathrm{mm}$, tako da ostane ob njej še $0{,}50\,\mathrm{mm}$ zraka. Kolikšni so kapaciteta, naboj, poljska jakost in energija pred vstavitvijo? Kolikšni so po vstavitvi kapaciteta, napetost, polje v zraku in v dielektriku ter energija? Koliko dela je opravilo polje?
 
-**Podatki:** $S = 0{,}020\,\mathrm{m^2}$, $d = 1{,}0\,\mathrm{mm} = 1{,}0 \cdot 10^{-3}\,\mathrm{m}$, $\varepsilon_\mathrm{zrak} = 1{,}0$, $U = 100\,\mathrm{V}$, $\varepsilon = 4{,}0$, $\varepsilon_0 = 8{,}85 \cdot 10^{-12}\,\mathrm{A\,s/(V\,m)}$, po odklopu je naboj stalen
-**Iščemo:** $C$, $Q$, $E$, $W$ pred vstavitvijo, $U'$ in $W'$ po vstavitvi dielektrika
+**Podatki:** $S = 0{,}020\,\mathrm{m^2}$, $d = 1{,}0\,\mathrm{mm} = 1{,}0 \cdot 10^{-3}\,\mathrm{m}$, $U = 100\,\mathrm{V}$, $\varepsilon = 4{,}0$, plast zraka $d_\mathrm{z} = 0{,}50 \cdot 10^{-3}\,\mathrm{m}$, plast dielektrika $d_\mathrm{d} = 0{,}50 \cdot 10^{-3}\,\mathrm{m}$, $\varepsilon_0 = 8{,}85 \cdot 10^{-12}\,\mathrm{A\,s/(V\,m)}$, po odklopu je naboj stalen
+**Iščemo:** $C$, $Q$, $E$, $W$ pred vstavitvijo; $C'$, $U'$, polji $E_\mathrm{z}$ in $E_\mathrm{d}$, $W'$ po vstavitvi; delo polja $A$
 
 :::formula
-$C = \dfrac{\varepsilon\varepsilon_0S}{d}$, $Q = CU$, $E = U/d$, $W = \tfrac{1}{2}CU^2 = \dfrac{Q^2}{2C}$
+$C = \dfrac{\varepsilon\varepsilon_0S}{d}$, $Q = CU$, $E = U/d$, zaporedno $C' = \dfrac{C_\mathrm{z}C_\mathrm{d}}{C_\mathrm{z} + C_\mathrm{d}}$, $W = \tfrac{1}{2}CU^2 = \dfrac{Q^2}{2C}$
 :::
 
 **Rešitev:**
@@ -170,9 +169,13 @@ $C = \dfrac{\varepsilon\varepsilon_0S}{d}$, $Q = CU$, $E = U/d$, $W = \tfrac{1}{
 2. $Q = 1{,}77 \cdot 10^{-10}\,\mathrm{F} \cdot 100\,\mathrm{V} \approx 1{,}77 \cdot 10^{-8}\,\mathrm{C}$.
 3. $E = 100\,\mathrm{V}/1{,}0 \cdot 10^{-3}\,\mathrm{m} = 1{,}0 \cdot 10^5\,\mathrm{V/m}$, ker je polje med ploščama homogeno.
 4. $W = \tfrac{1}{2} \cdot 1{,}77 \cdot 10^{-10}\,\mathrm{F} \cdot (100\,\mathrm{V})^2 \approx 8{,}85 \cdot 10^{-7}\,\mathrm{J}$.
-5. Po odklopu je naboj stalen, kapaciteta pa se poveča na $C' = 4{,}0\,C \approx 708\,\mathrm{pF}$. Napetost: $U' = Q/C' = U/4{,}0 = 25\,\mathrm{V}$.
-6. Energija: $W' = Q^2/(2C') = W/4{,}0 \approx 2{,}2 \cdot 10^{-7}\,\mathrm{J}$; obliko $Q^2/(2C)$ izberemo, ker je naboj stalen.
-7. Odgovor: kapaciteta je $177\,\mathrm{pF}$, naboj $17{,}7\,\mathrm{nC}$, poljska jakost $1{,}0 \cdot 10^5\,\mathrm{V/m}$, energija $0{,}89\,\mu\mathrm{J}$. Z dielektrikom napetost pade na $25\,\mathrm{V}$, energija pa na $0{,}22\,\mu\mathrm{J}$; razliko je opravilo polje, ki je dielektrik vleklo med plošči.
+5. Po vstavitvi sta plast zraka in plast dielektrika dva zaporedno vezana kondenzatorja, ker je meja med plastema ekvipotencialna ploskev in imata obe plasti isti $\sigma$: $C_\mathrm{z} = 8{,}85 \cdot 10^{-12} \cdot 0{,}020/0{,}50 \cdot 10^{-3}\,\mathrm{F} = 354\,\mathrm{pF}$, $C_\mathrm{d} = 4{,}0 \cdot 354\,\mathrm{pF} = 1416\,\mathrm{pF}$.
+6. $C' = 354 \cdot 1416/(354 + 1416)\,\mathrm{pF} \approx 283\,\mathrm{pF}$.
+7. Naboj odklopljenega kondenzatorja je stalen: $U' = Q/C' = 1{,}77 \cdot 10^{-8}/2{,}832 \cdot 10^{-10}\,\mathrm{V} \approx 62{,}5\,\mathrm{V}$.
+8. Polji: $E_\mathrm{z} = \sigma/\varepsilon_0 = 1{,}77 \cdot 10^{-8}/(8{,}85 \cdot 10^{-12} \cdot 0{,}020)\,\mathrm{V/m} = 1{,}0 \cdot 10^5\,\mathrm{V/m}$ (kot prej, ker se $\sigma$ ni spremenila), $E_\mathrm{d} = E_\mathrm{z}/4{,}0 = 2{,}5 \cdot 10^4\,\mathrm{V/m}$. Preizkus: $E_\mathrm{z}d_\mathrm{z} + E_\mathrm{d}d_\mathrm{d} = 50\,\mathrm{V} + 12{,}5\,\mathrm{V} = 62{,}5\,\mathrm{V}$ ✓.
+9. Energija: $W' = \tfrac{1}{2}QU' = 0{,}5 \cdot 1{,}77 \cdot 10^{-8} \cdot 62{,}5\,\mathrm{J} \approx 5{,}53 \cdot 10^{-7}\,\mathrm{J}$; obliko s $Q$ izberemo, ker je naboj stalen.
+10. Delo polja: $A = W - W' = 8{,}85 \cdot 10^{-7} - 5{,}53 \cdot 10^{-7}\,\mathrm{J} \approx 3{,}3 \cdot 10^{-7}\,\mathrm{J}$; energija se zmanjša, ker polje vleče polarizirano ploščo med plošči.
+11. Odgovor: pred vstavitvijo je kapaciteta $177\,\mathrm{pF}$, naboj $17{,}7\,\mathrm{nC}$, poljska jakost $1{,}0 \cdot 10^5\,\mathrm{V/m}$, energija $0{,}89\,\mu\mathrm{J}$. Po vstavitvi je kapaciteta $283\,\mathrm{pF}$, napetost $62{,}5\,\mathrm{V}$, polje v zraku $1{,}0 \cdot 10^5\,\mathrm{V/m}$ in v dielektriku $2{,}5 \cdot 10^4\,\mathrm{V/m}$, energija $0{,}55\,\mu\mathrm{J}$; polje je opravilo okoli $0{,}33\,\mu\mathrm{J}$ dela. Če bi dielektrik zapolnil ves prostor, bi napetost padla na $25\,\mathrm{V}$.
 
 ### Primer 4 – zdaj ti
 
@@ -199,12 +202,12 @@ $Q = \sigma S = 7{,}0 \cdot 10^{-4} \cdot 1{,}0 \cdot 10^{-12}\,\mathrm{C} = 7{,
 
 ## Pogoste napake
 
-- **Seštevanje velikosti polj.** Polja so vektorji. V Primeru 2 bi seštevanje velikosti dalo $2{,}9 \cdot 10^4\,\mathrm{V/m}$ namesto $1{,}7 \cdot 10^4\,\mathrm{V/m}$. Razstavi na komponente.
-- **Potencial kot vektor.** Potencial je skalar; seštevamo ga s predznaki nabojev, brez smeri. Ničeln potencial ne pomeni, da je polje nič, in obratno.
+- **Seštevanje velikosti polj.** Polja so vektorji. V Primeru 2 bi seštevanje velikosti dalo $2{,}9 \cdot 10^4\,\mathrm{V/m}$ namesto $1{,}7 \cdot 10^4\,\mathrm{V/m}$.
+- **Potencial kot vektor.** Potencial je skalar s predznakom. Ničeln potencial ne pomeni, da je polje nič, in obratno.
 - **Kvadrat razdalje pri potencialu.** Sila in polje točkastega naboja padata z $1/r^2$, potencial in potencialna energija pa z $1/r$.
-- **Enote kapacitete.** $1\,\mathrm{F}$ je ogromna kapaciteta. Navadne vrednosti so $\mathrm{pF}$, $\mathrm{nF}$ in $\mu\mathrm{F}$; pazi na predpone in razmik v metrih.
-- **Vezava kondenzatorjev kot vezava uporov.** Pri kondenzatorjih se pri vzporedni vezavi seštejejo kapacitete, pri zaporedni pa obratne vrednosti; pri uporih je obratno.
-- **Odklopljen ali priključen kondenzator.** Odklopljen kondenzator ohrani naboj, priključen ohrani napetost. Od tega je odvisno, kako se spremenita napetost in energija, ko spremenimo $C$.
+- **Enote kapacitete.** Navadne kapacitete so $\mathrm{pF}$ do $\mu\mathrm{F}$; pazi na predpone in razmik v metrih.
+- **Vezava kondenzatorjev kot vezava uporov.** Pravili sta obratni kot pri uporih.
+- **Odklopljen ali priključen kondenzator.** Odklopljen kondenzator ohrani naboj, priključen napetost.
 
 ## Povzetek
 
@@ -213,6 +216,46 @@ $Q = \sigma S = 7{,}0 \cdot 10^{-4} \cdot 1{,}0 \cdot 10^{-12}\,\mathrm{C} = 7{,
 - Potencial $\varphi = Q/(4\pi\varepsilon_0r)$ je skalar; napetost $U = \varphi_A - \varphi_B$, delo $A = qU$; $E_x = -\mathrm{d}\varphi/\mathrm{d}x$, homogeno polje $E = U/d$.
 - Kondenzator: $C = Q/U$, ploščati $C = \varepsilon\varepsilon_0S/d$; vzporedno $C = \sum C_k$, zaporedno $1/C = \sum 1/C_k$.
 - Energija $W = \tfrac{1}{2}CU^2 = Q^2/(2C)$, gostota energije $w = \tfrac{1}{2}\varepsilon\varepsilon_0E^2$.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- Coulombov zakon v vektorski obliki z vsemi pogoji (mirujoča točkasta naboja, prazen prostor ali homogen dielektrik povsod okoli njiju) in definicijo poljske jakosti s poskusnim nabojem;
+- Gaussov zakon in z njim izpeljavo polja velike plošče in ploščatega kondenzatorja ter dokaz, da je polje v prevodniku v ravnovesju nič;
+- definicijo potenciala in napetosti, dokaz $A = qU_{AB}$, izpeljavo $\varphi = Q/(4\pi\varepsilon_0r)$ in $E = U/d$;
+- definicijo kapacitete, izpeljavo $C = \varepsilon\varepsilon_0S/d$ in pravil za vzporedno in zaporedno vezavo;
+- izpeljavo $W = Q^2/(2C)$ in gostote energije $w = \tfrac{1}{2}\varepsilon\varepsilon_0E^2$.
+
+### Naloga 1
+
+Elektron pospešimo iz mirovanja z napetostjo $U_a = 1000\,\mathrm{V}$ in ga usmerimo vzporedno s ploščama na sredino ploščatega kondenzatorja z dolžino plošč $l = 4{,}0\,\mathrm{cm}$ in razmikom $d = 1{,}0\,\mathrm{cm}$, na katerem je napetost $U_p = 50\,\mathrm{V}$. Kolikšna sta prečni odmik elektrona na izstopu iz kondenzatorja in kot $\vartheta$, za katerega se odkloni njegov tir? Pokaži, da rezultat ni odvisen od mase in velikosti naboja delca. Robove polja in težo zanemari; $m_e = 9{,}11 \cdot 10^{-31}\,\mathrm{kg}$, $e_0 = 1{,}602 \cdot 10^{-19}\,\mathrm{C}$.
+
+**Rešitev:**
+
+1. Hitrost po pospeševanju iz $\tfrac{1}{2}m_ev_0^2 = e_0U_a$: $v_0 = \sqrt{2 \cdot 1{,}602 \cdot 10^{-19} \cdot 1000/9{,}11 \cdot 10^{-31}}\,\mathrm{m/s} \approx 1{,}875 \cdot 10^7\,\mathrm{m/s}$.
+2. Polje v kondenzatorju je homogeno, $E = U_p/d = 50/0{,}010\,\mathrm{V/m} = 5{,}0 \cdot 10^3\,\mathrm{V/m}$, in pravokotno na $v_0$, zato se vzdolžna hitrost ne spremeni.
+3. Prečni pospešek: $a = e_0E/m_e = 1{,}602 \cdot 10^{-19} \cdot 5{,}0 \cdot 10^3/9{,}11 \cdot 10^{-31}\,\mathrm{m/s^2} \approx 8{,}79 \cdot 10^{14}\,\mathrm{m/s^2}$.
+4. Čas preleta: $t = l/v_0 = 0{,}040/1{,}875 \cdot 10^7\,\mathrm{s} \approx 2{,}13 \cdot 10^{-9}\,\mathrm{s}$.
+5. Odmik: $y = \tfrac{1}{2}at^2 = 0{,}5 \cdot 8{,}79 \cdot 10^{14} \cdot (2{,}13 \cdot 10^{-9})^2\,\mathrm{m} \approx 2{,}0 \cdot 10^{-3}\,\mathrm{m}$; to je manj od $d/2 = 5{,}0\,\mathrm{mm}$, zato elektron plošče ne zadene.
+6. Kot: $\tan\vartheta = at/v_0 = 8{,}79 \cdot 10^{14} \cdot 2{,}13 \cdot 10^{-9}/1{,}875 \cdot 10^7 \approx 0{,}10$, torej $\vartheta \approx 5{,}7^\circ$.
+7. Splošno za delec z nabojem $q$ in maso $m$: $v_0^2 = 2qU_a/m$ in $a = qU_p/(md)$, zato $y = \dfrac{a}{2}\,\dfrac{l^2}{v_0^2} = \dfrac{U_pl^2}{4U_ad}$ in $\tan\vartheta = \dfrac{U_pl}{2U_ad}$; $q$ in $m$ se pokrajšata. Preizkus: $50 \cdot 0{,}040^2/(4 \cdot 1000 \cdot 0{,}010)\,\mathrm{m} = 2{,}0 \cdot 10^{-3}\,\mathrm{m}$ ✓.
+8. Odgovor: elektron se odmakne za $2{,}0\,\mathrm{mm}$ in izstopi pod kotom okoli $5{,}7^\circ$ glede na vpadno smer; enak tir bi imel vsak delec z nabojem istega predznaka, pospešen z isto napetostjo.
+
+### Naloga 2
+
+Natančno navedi Gaussov zakon. Z njim izpelji poljsko jakost in kapaciteto ploščatega kondenzatorja z dielektrikom ter dokaži, da je energija kondenzatorja shranjena v polju z gostoto $w = \tfrac{1}{2}\varepsilon\varepsilon_0E^2$. Povej, kje uporabiš katero predpostavko.
+
+**Rešitev:**
+
+1. Gaussov zakon: za vsako zaprto ploskev je električni pretok skozi njo enak celotnemu naboju znotraj nje, deljenemu z $\varepsilon_0$; $\mathrm{d}\vec{S}$ kaže navzven. Če homogen dielektrik zapolnjuje ves prostor s poljem, namesto $\varepsilon_0$ pišemo $\varepsilon\varepsilon_0$ in štejemo le prosti naboj na prevodnikih.
+2. Predpostavka: plošči sta veliki v primerjavi z razmikom $d$, zato je polje daleč od robov zaradi simetrije pravokotno na plošči.
+3. Valj z osnovno ploskvijo $S_0$ okoli dela ene plošče: skozi plašč ni pretoka (polje je vzporedno s plaščem), skozi osnovni ploskvi je $2ES_0$, naboj v valju pa $\sigma S_0$; zato je polje ene plošče $E = \sigma/(2\varepsilon\varepsilon_0)$.
+4. Superpozicija: med ploščama z $\pm\sigma$ kažeta polji obeh plošč od $+$ proti $-$, $E = \sigma/(\varepsilon\varepsilon_0)$; zunaj sta nasprotni, $E = 0$.
+5. Polje je homogeno, zato $U = Ed = Qd/(\varepsilon\varepsilon_0S)$ in $C = Q/U = \varepsilon\varepsilon_0S/d$.
+6. Energija: pri naboju $q$ je napetost $q/C$, prenos $\mathrm{d}q$ zahteva delo $(q/C)\,\mathrm{d}q$, zato $W = \int_0^Q (q/C)\,\mathrm{d}q = Q^2/(2C) = \tfrac{1}{2}CU^2$.
+7. Z $U = Ed$ in izrazom za $C$: $W = \tfrac{1}{2}\varepsilon\varepsilon_0\tfrac{S}{d}E^2d^2 = \tfrac{1}{2}\varepsilon\varepsilon_0E^2 \cdot Sd$. Vse polje je v prostornini $Sd$ med ploščama (točka 4), zato je gostota energije $w = W/(Sd) = \tfrac{1}{2}\varepsilon\varepsilon_0E^2$.
+8. Odgovor: $E = \sigma/(\varepsilon\varepsilon_0)$, $C = \varepsilon\varepsilon_0S/d$, $w = \tfrac{1}{2}\varepsilon\varepsilon_0E^2$; simetrijo (velike plošče) uporabimo pri smeri polja in ničelnem polju zunaj, homogen dielektrik pri faktorju $\varepsilon$.
 
 ## Drugače: Na sliki
 
@@ -227,43 +270,23 @@ Polje dipola iz Primera 2 ($+$ levo, $-$ desno, točka $P$ zgoraj na simetrali):
    -3 cm         0        3 cm
 ```
 
-Polje naboja $+$ kaže od njega (puščica gor-desno), polje naboja $-$ kaže k njemu (puščica dol-desno). Navpični komponenti se izničita, vodoravni seštejeta: v $P$ polje kaže vodoravno v desno. Simetrala dipola je ekvipotencialna ploskev s potencialom nič.
+Polje $+$ kaže od njega, polje $-$ k njemu; navpični komponenti se izničita, zato v $P$ polje kaže vodoravno v desno. Simetrala dipola je ekvipotencialna ploskev s potencialom nič. Pri ploščatem kondenzatorju so silnice vzporedne in enakomerno razmaknjene, ekvipotencialne ploskve pa ravnine, vzporedne s ploščama.
 
-Silnice ploščatega kondenzatorja so vzporedne, enakomerno razmaknjene črte od pozitivne k negativni plošči. Ekvipotencialne ploskve so ravnine, vzporedne s ploščama; potencial med njima pada linearno, za $E\,\mathrm{d}x$ na vsak $\mathrm{d}x$.
+## Drugače: Uporaba v stroki
 
-## Drugače: Iz vsakdanjega življenja
+**Gelska elektroforeza.** Napetost $100\,\mathrm{V}$ na $10\,\mathrm{cm}$ dolgem gelu da polje $1000\,\mathrm{V/m}$. Negativno nabita DNK potuje proti anodi, gel jo kot sito loči po velikosti.
 
-**Topnost soli v vodi.** Molekule vode so dipoli, ki obkrožijo ione (hidratacija), velika dielektričnost vode pa oslabi privlak med ioni. Zato se ionske spojine raztapljajo v vodi, ne pa v nepolarnih topilih z dielektričnostjo okoli $2$, kot je heksan.
+**Elektrofiziologija.** Membrana z debelino okoli $5\,\mathrm{nm}$ in napetostjo $70\,\mathrm{mV}$ ima v sebi polje $E = U/d \approx 0{,}070/5 \cdot 10^{-9}\,\mathrm{V/m} = 1{,}4 \cdot 10^7\,\mathrm{V/m}$. Specifična kapaciteta je okoli $1\,\mu\mathrm{F/cm^2}$, zato iz kapacitete celice ocenimo površino membrane.
 
-**Gelska elektroforeza.** V gelu ustvarimo homogeno polje, na primer $100\,\mathrm{V}$ na $10\,\mathrm{cm}$, torej $1000\,\mathrm{V/m}$. Molekule DNK so zaradi fosfatnih skupin negativno nabite in potujejo proti pozitivni elektrodi. Gel deluje kot sito, zato krajši odseki potujejo hitreje in se po velikosti ločijo v pasove.
-
-**Celična membrana.** Membrana z debelino okoli $5\,\mathrm{nm}$ ima mirovno napetost okoli $70\,\mathrm{mV}$. Polje v njej je $E = U/d \approx 0{,}070/5 \cdot 10^{-9}\,\mathrm{V/m} = 1{,}4 \cdot 10^7\,\mathrm{V/m}$, kar je več kot polje, pri katerem v zraku nastane iskra. Membrana je tudi kondenzator s specifično kapaciteto okoli $1\,\mu\mathrm{F/cm^2}$.
-
-**Iskra pri dotiku kljuke.** S hojo po preprogi se naelektriš na nekaj tisoč voltov. Ko se približaš kovinski kljuki, je polje med prstom in kljuko dovolj veliko (okoli $3 \cdot 10^6\,\mathrm{V/m}$ v suhem zraku), da zrak preskoči iskra.
-
-## Drugače: Korak za korakom s številkami
-
-Elektron iz mirovanja pospešimo z napetostjo $1000\,\mathrm{V}$ (kot v starem televizorju ali elektronskem mikroskopu). Kolikšni sta njegova kinetična energija in hitrost?
-
-1. **Delo električne sile:** $A = e_0U = 1{,}602 \cdot 10^{-19}\,\mathrm{C} \cdot 1000\,\mathrm{V} = 1{,}602 \cdot 10^{-16}\,\mathrm{J}$.
-2. **V elektronvoltih:** $A = 1000\,\mathrm{eV} = 1\,\mathrm{keV}$, ker je naboj osnovni in napetost $1000\,\mathrm{V}$.
-3. **Kinetična energija:** vse delo se pretvori v kinetično energijo, $W_k = 1{,}602 \cdot 10^{-16}\,\mathrm{J}$.
-4. **Hitrost:** $v = \sqrt{2W_k/m_e} = \sqrt{2 \cdot 1{,}602 \cdot 10^{-16}/9{,}11 \cdot 10^{-31}}\,\mathrm{m/s} \approx 1{,}88 \cdot 10^7\,\mathrm{m/s}$.
-5. **Preizkus smisla:** to je okoli $6\,\%$ svetlobne hitrosti, zato je nerelativistični račun še dovolj natančen.
+**Elektrostatična razelektritev.** V suhem zraku preskoči iskra pri okoli $3 \cdot 10^6\,\mathrm{V/m}$ in lahko uniči čip, zato pri delu z elektroniko nosimo ozemljene zapestnice.
 
 ## Drugače: Bolj natančno
 
-**Gaussov zakon in polje plošče.** Okoli dela neskončne plošče z nabojem na enoto površine $\sigma$ postavimo valj z osnovno ploskvijo $S$, ki prebada ploščo. Zaradi simetrije je polje pravokotno na ploščo, zato pretok teče le skozi osnovni ploskvi: $2ES = \sigma S/\varepsilon_0$, torej $E = \sigma/(2\varepsilon_0)$ za eno ploščo. Pri dveh ploščah z nasprotnima nabojema se polji med ploščama seštejeta ($E = \sigma/\varepsilon_0$), zunaj pa odštejeta.
-
-**Potencial iz polja.** Ker je električna sila mirujočih nabojev konservativna ($\oint\vec{E} \cdot \mathrm{d}\vec{s} = 0$), je potencial dobro definiran:
+**Potencial iz polja.** Ker je $\oint\vec{E} \cdot \mathrm{d}\vec{s} = 0$, je potencial dobro definiran:
 
 $$\varphi(\vec{r}) = -\int_{\infty}^{\vec{r}}\vec{E} \cdot \mathrm{d}\vec{s}, \qquad \vec{E} = -\nabla\varphi.$$
 
-Za točkasti naboj je $\varphi(r) = -\int_\infty^r \frac{Q}{4\pi\varepsilon_0r'^2}\,\mathrm{d}r' = \frac{Q}{4\pi\varepsilon_0r}$.
-
-**Energija kondenzatorja.** Ko je na kondenzatorju naboj $q$, je napetost $q/C$; za prenos dodatnega $\mathrm{d}q$ potrebujemo delo $(q/C)\,\mathrm{d}q$. Integral od $0$ do $Q$ da $W = Q^2/(2C)$. Pri ploščatem kondenzatorju je $W = \frac{1}{2}\varepsilon\varepsilon_0\frac{S}{d}(Ed)^2 = \frac{1}{2}\varepsilon\varepsilon_0E^2 \cdot Sd$, kar je gostota energije, pomnožena s prostornino med ploščama.
-
-**Dipol.** Par nabojev $\pm q$ na razdalji $l$ ima **dipolni moment** $\vec{p} = q\vec{l}$ (od $-$ proti $+$). Daleč od dipola potencial pada kot $1/r^2$, polje pa kot $1/r^3$. V zunanjem homogenem polju na dipol deluje navor $\vec{M} = \vec{p} \times \vec{E}$ in ima energijo $W = -\vec{p} \cdot \vec{E}$. Polarne molekule, na primer voda s $p \approx 6{,}2 \cdot 10^{-30}\,\mathrm{A\,s\,m}$, se zato v polju usmerijo, kar je mikroskopski izvor dielektričnosti.
+**Dipol.** Par nabojev $\pm q$ na razdalji $l$ ima **dipolni moment** $\vec{p} = q\vec{l}$ (od $-$ proti $+$). Daleč od dipola potencial pada kot $1/r^2$, polje pa kot $1/r^3$. V zunanjem homogenem polju na dipol deluje navor $\vec{M} = \vec{p} \times \vec{E}$ in ima energijo $W = -\vec{p} \cdot \vec{E}$. Polarne molekule (voda: $p \approx 6{,}2 \cdot 10^{-30}\,\mathrm{A\,s\,m}$) se zato v polju usmerijo; to je mikroskopski izvor dielektričnosti.
 
 ## Preveri se
 
@@ -309,6 +332,7 @@ Za točkasti naboj je $\varphi(r) = -\int_\infty^r \frac{Q}{4\pi\varepsilon_0r'^
 
 :::simboli
 \vec{F} | vektor električne sile | | N
+\vec{e}_{12} | enotski vektor od q₁ proti q₂ | | –
 F | električna sila med nabojema | F = \frac{1}{4\pi\varepsilon_0}\,\frac{\lvert q_1q_2\rvert}{r^2} | N
 \varepsilon_0 | influenčna konstanta | | A\,s/(V\,m) | 8,85 · 10⁻¹² A s/(V m)
 \varepsilon | dielektričnost snovi | | – | voda: približno 80

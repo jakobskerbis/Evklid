@@ -26,11 +26,11 @@ test("goal shortcuts: university and regional systems", () => {
 });
 
 test("phone tab bar: fourth tab follows the goal", () => {
-  assert.equal(goalTabbarView(os("sprotno"), { siExams: true }), "lab");
+  assert.equal(goalTabbarView(os("sprotno"), { siExams: true }), "competition");
   assert.equal(goalTabbarView(os("npz"), { siExams: true }), "exams");
   assert.equal(goalTabbarView(ss("matura"), { siExams: true }), "exams");
-  assert.equal(goalTabbarView(ss("matura"), { siExams: false }), "lab");
+  assert.equal(goalTabbarView(ss("matura"), { siExams: false }), "competition");
   assert.equal(goalTabbarView(ss("tekmovanje"), { siExams: true }), "competition");
-  assert.equal(goalTabbarView({ educational_track: "UNIVERZA", goal: "tekmovanje" }), "lab");
-  assert.equal(goalTabbarView({ school_system: "HR", goal: "tekmovanje" }), "lab");
+  assert.equal(goalTabbarView({ educational_track: "UNIVERZA", goal: "tekmovanje" }), null);
+  assert.equal(goalTabbarView({ school_system: "HR", goal: "tekmovanje" }), "competition");
 });

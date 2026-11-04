@@ -17,7 +17,8 @@ commands below and the checklist of their lens.
 - `node scripts/preveri-aplikacijo.cjs` (clicks through every tab and main flow on desktop and phone in
   test mode; fails on page errors, console errors, HTTP ≥ 400, horizontal scroll, raw i18n keys)
 - when touched: `node scripts/preveri-generatorje.js` (0 errors), `node scripts/kakovost-nalog.js <prefix>`,
-  `node scripts/preveri-simulacije.cjs`, `node scripts/check-lesson.js -q <files>`
+  `node scripts/preveri-simulacije.cjs`, `node scripts/check-lesson.js -q <files>`,
+  `node scripts/preveri-formule.cjs` (sims, `public/sirina.js` or KaTeX output: no formula may scroll at 360 px)
 
 **Pass 2 – function (reviewer agent 1):** reads the diff and the code paths it touches, and uses the
 feature in the running app (test mode, throwaway `EVKLID_DB`). Checklist: does every button and

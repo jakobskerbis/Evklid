@@ -1,0 +1,680 @@
+{
+ "id": "NPZ6-MAT-2023-redni",
+ "exam": "NPZ6",
+ "subject": "MAT",
+ "minutes": 60,
+ "points": 50,
+ "author": "AI",
+ "tools": "Modro ali črno nalivno pero oziroma kemični svinčnik, svinčnik (le za risanje in načrtovanje), radirka, šilček, ravnilo, geotrikotnik in šestilo; računala ne smeš uporabljati. Pri nalogah z reševanjem zapiši postopek.",
+ "tasks": [
+  {
+   "n": 1,
+   "intro": "Izračunaj brez računala. Zapiši postopek.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Pisno seštej $5\\,687 + 948$. Vsoto nato zaokroži na stotice.",
+     "answer": "$5\\,687 + 948 = 6\\,635$; zaokroženo na stotice $6\\,600$.",
+     "ways": [
+      {
+       "title": "Po korakih (pisno seštevanje)",
+       "text": "Števili podpiši tako, da so enice pod enicami, desetice pod deseticami in stotice pod stoticami. Seštevaj od desne proti levi:\n\n1. enice: $7 + 8 = 15$, zapiši $5$, $1$ prenesi,\n2. desetice: $8 + 4 + 1 = 13$, zapiši $3$, $1$ prenesi,\n3. stotice: $6 + 9 + 1 = 16$, zapiši $6$, $1$ prenesi,\n4. tisočice: $5 + 1 = 6$.\n\nVsota je $6\\,635$.\n\n**Zaokroževanje na stotice:** števka stotic je $6$. O zaokrožitvi odloča števka desno od nje, to je števka desetic $3$. Ker je $3$ manj kot $5$, zaokroži navzdol: $6\\,635 \\approx 6\\,600$."
+      },
+      {
+       "title": "Drugače: z dopolnjevanjem do okroglega števila in preizkusom",
+       "text": "Število $948$ je za $52$ manjše od $1\\,000$. Zato najprej prištej $1\\,000$ in nato odštej $52$:\n\n$5\\,687 + 1\\,000 = 6\\,687$, $\\quad 6\\,687 - 52 = 6\\,635$.\n\n**Preizkus z odštevanjem:** $6\\,635 - 948 = 5\\,687$, kar je prvi seštevanec, zato je vsota pravilna.\n\nŠtevilo $6\\,635$ leži med stoticama $6\\,600$ in $6\\,700$. Od $6\\,600$ je oddaljeno $35$, od $6\\,700$ pa $65$, zato je bližja stotica $6\\,600$."
+      }
+     ],
+     "scoring": "1 t. za pravilno vsoto $6\\,635$, 1 t. za pravilno zaokroženo vrednost $6\\,600$ (točko za zaokrožitev dobiš tudi, če pravilno zaokrožiš napačno vsoto).",
+     "mistake": "Napačno je podpisati števili »na levo« (devetico pod petico). Potem sešteješ stotice s tisočicami in dobiš nesmiseln rezultat. Pri pisnem seštevanju morajo biti števke istih desetiških enot ena pod drugo, poravnane na desni."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "$12{,}4 - 5{,}738 =$",
+     "answer": "$6{,}662$",
+     "ways": [
+      {
+       "title": "Pisno odštevanje z dopisanimi ničlami",
+       "text": "Zmanjševanec ima eno decimalko, odštevanec tri. Zmanjševancu dopiši dve ničli, da imata obe števili enako decimalk: $12{,}4 = 12{,}400$. Decimalni vejici morata biti ena pod drugo.\n\nOdštevaj od desne proti levi:\n\n- tisočinke: $0 - 8$ ne gre, zato si izposodi: $10 - 8 = 2$,\n- stotinke: $0 - (3 + 1)$ ne gre, izposodi si: $10 - 4 = 6$,\n- desetinke: $4 - (7 + 1)$ ne gre, izposodi si: $14 - 8 = 6$,\n- enice: $2 - (5 + 1)$ ne gre, izposodi si: $12 - 6 = 6$,\n- desetice: $1 - 1 = 0$.\n\nRezultat: $12{,}400 - 5{,}738 = 6{,}662$.\n\n**Preizkus:** $6{,}662 + 5{,}738 = 12{,}400 = 12{,}4$."
+      }
+     ],
+     "mistake": "Napačno je števki $3$ in $8$, nad katerima pri $12{,}4$ ni števke, kar prepisati v rezultat in dobiti $6{,}738$. Prazno mesto pomeni $0$, od $0$ pa $8$ ne moreš odšteti brez izposojanja. Najprej izenači število decimalk ($12{,}400$), nato odštevaj."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Pisno zmnoži $3{,}6 \\cdot 2{,}47$. Zmnožek nato zaokroži na desetine.",
+     "answer": "$3{,}6 \\cdot 2{,}47 = 8{,}892$; zaokroženo na desetine $8{,}9$.",
+     "ways": [
+      {
+       "title": "Po korakih (najprej brez vejic)",
+       "text": "Najprej zmnoži števili, kot da ne bi imeli decimalnih vejic: $36 \\cdot 247$.\n\n- $247 \\cdot 3 = 741$ ($3$ je števka desetic, zato rezultat zapiši za eno mesto zamaknjeno v levo; to pomeni $7\\,410$),\n- $247 \\cdot 6 = 1\\,482$,\n- vsota: $7\\,410 + 1\\,482 = 8\\,892$.\n\nPrvi faktor ima $1$ decimalko, drugi $2$, skupaj $3$. Zato ima zmnožek $3$ decimalke: $3{,}6 \\cdot 2{,}47 = 8{,}892$.\n\n**Zaokroževanje na desetine:** števka desetin je $8$, desno od nje je števka stotin $9$. Ker je $9$ vsaj $5$, zaokroži navzgor: $8{,}892 \\approx 8{,}9$."
+      },
+      {
+       "title": "Drugače: po delih in z oceno",
+       "text": "Število $3{,}6$ razdeli na $3$ in $0{,}6$:\n\n$3 \\cdot 2{,}47 = 7{,}41$, $\\quad 0{,}6 \\cdot 2{,}47 = 1{,}482$, $\\quad 7{,}41 + 1{,}482 = 8{,}892$.\n\n**Ocena:** $3{,}6$ je približno $3{,}5$, $2{,}47$ pa približno $2{,}5$. Ker je $3{,}5 \\cdot 2{,}5 = 8{,}75$, je rezultat okoli $9$. Torej je vejica na pravem mestu ($8{,}892$, ne $88{,}92$).\n\nŠtevilo $8{,}892$ leži med $8{,}8$ in $8{,}9$; do $8{,}9$ manjka le $0{,}008$, zato zaokroženo $8{,}9$."
+      }
+     ],
+     "scoring": "1 t. za pravilen zmnožek $8{,}892$, 1 t. za pravilno zaokroženo vrednost $8{,}9$ (točko za zaokrožitev dobiš tudi, če pravilno zaokrožiš napačen zmnožek).",
+     "mistake": "Napačno je vejico postaviti tako kot pri seštevanju (»ena decimalka, ker ima $3{,}6$ eno«) in zapisati $889{,}2$. Pri množenju se decimalke obeh faktorjev seštejejo: $1 + 2 = 3$ decimalke."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "open",
+     "text": "$25{,}92 : 6 =$",
+     "answer": "$4{,}32$",
+     "ways": [
+      {
+       "title": "Pisno deljenje",
+       "text": "Deli po vrsti od leve proti desni:\n\n- $25 : 6 = 4$, ostanek $1$ (ker je $4 \\cdot 6 = 24$),\n- ko pri deljencu prideš do decimalne vejice, zapiši vejico tudi v količnik,\n- pripiši $9$: $19 : 6 = 3$, ostanek $1$,\n- pripiši $2$: $12 : 6 = 2$, ostanek $0$.\n\nKoličnik je $4{,}32$.\n\n**Preizkus:** $4{,}32 \\cdot 6 = 25{,}92$."
+      }
+     ],
+     "mistake": "Če pozabiš zapisati vejico v količnik, ko jo pri deljencu prestopiš, dobiš $432$. Ocena pokaže, da to ne more biti prav: $25{,}92 : 6$ je le malo več kot $24 : 6 = 4$."
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "intro": "Trener namiznega tenisa je za klub kupil $8$ škatlic žogic. V vsaki škatlici je $6$ enakih žogic. Ena škatlica stane $5{,}70$ €.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko stane ena žogica?",
+     "answer": "Ena žogica stane $0{,}95$ €.",
+     "ways": [
+      {
+       "title": "Ceno škatlice razdeli na žogice",
+       "text": "**Podatki:** v škatlici je $6$ žogic, škatlica stane $5{,}70$ €.\n\n**Iščemo:** ceno ene žogice.\n\nCeno škatlice razdeli na $6$ enakih delov: $5{,}70 : 6 = 0{,}95$.\n\nLahko računaš tudi v centih: $570 : 6 = 95$ centov, kar je $0{,}95$ €.\n\n**Preizkus:** $6 \\cdot 0{,}95 = 5{,}70$."
+      }
+     ],
+     "mistake": "Napačno je deliti s številom škatlic ($5{,}70 : 8$). Ena škatlica vsebuje $6$ žogic, zato njeno ceno deliš s $6$."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "choice",
+     "text": "Kateri številski izraz pove, koliko je trener plačal za vse škatlice? Obkroži črko pred pravilnim izrazom.",
+     "choices": [
+      "$8 \\cdot 6 \\cdot 5{,}70$",
+      "$5{,}70 : 6 \\cdot 8$",
+      "$8 \\cdot 5{,}70$",
+      "$8 + 6 + 5{,}70$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C: $8 \\cdot 5{,}70$",
+     "ways": [
+      {
+       "title": "Kaj pomeni vsak izraz",
+       "text": "Kupil je $8$ škatlic, vsaka stane $5{,}70$ €. Cena vseh škatlic je $8$-krat cena ene škatlice: $8 \\cdot 5{,}70$. Pravilen je **C**.\n\n- **A** ($8 \\cdot 6 \\cdot 5{,}70$): tak izraz bi veljal, če bi vsaka **žogica** stala $5{,}70$ €. Cena $5{,}70$ € pa velja za celo škatlico.\n- **B** ($5{,}70 : 6 \\cdot 8$): to je cena ene žogice, pomnožena z $8$, torej cena samo $8$ žogic, ne $8$ škatlic ($48$ žogic).\n- **D** ($8 + 6 + 5{,}70$): seštevanje števila škatlic, števila žogic in cene nima pomena; ceno vseh enakih škatlic dobiš z množenjem."
+      }
+     ]
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj, koliko je trener plačal za vse škatlice. Zapiši odgovor.",
+     "answer": "$8 \\cdot 5{,}70 = 45{,}60$; trener je plačal $45{,}60$ €.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $8$ škatlic, ena škatlica stane $5{,}70$ €.\n\n**Iščemo:** ceno vseh škatlic.\n\nIzračunaj izraz $8 \\cdot 5{,}70$ po delih:\n\n$8 \\cdot 5 = 40$, $\\quad 8 \\cdot 0{,}70 = 5{,}60$, $\\quad 40 + 5{,}60 = 45{,}60$.\n\n**Odgovor:** Trener je za vse škatlice plačal $45{,}60$ €."
+      },
+      {
+       "title": "Drugače: prek cene ene žogice",
+       "text": "Vseh žogic je $8 \\cdot 6 = 48$, ena stane $0{,}95$ € (del a).\n\n$48 \\cdot 0{,}95$: ker je $0{,}95$ za $0{,}05$ manj kot $1$, je $48 \\cdot 0{,}95 = 48 - 48 \\cdot 0{,}05 = 48 - 2{,}40 = 45{,}60$.\n\nDobiš enak znesek, $45{,}60$ €.\n\n**Z oceno:** škatlica stane skoraj $6$ €, $8 \\cdot 6 = 48$, zato mora biti rezultat malo pod $48$ €. Tako tudi je."
+      }
+     ],
+     "scoring": "1 t. za pravilen račun (npr. $8 \\cdot 5{,}70$), 1 t. za pravilen rezultat $45{,}60$ € z odgovorom.",
+     "mistake": "Napačno je zapisati $8 \\cdot 5{,}70 = 40{,}70$, ker pomnožiš le cele evre. Z $8$ pomnoži tudi $0{,}70$ €: $8 \\cdot 0{,}70 = 5{,}60$."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "choice",
+     "text": "Trener je nakup plačal samo z bankovci, brez kovancev. Katera trditev je zagotovo pravilna? Obkroži črko pred njo.",
+     "choices": [
+      "Prodajalka mu je vrnila $4{,}40$ €.",
+      "Prodajalka mu je vrnila $54{,}40$ €.",
+      "Prodajalka mu ni vrnila ničesar, ker je plačal točen znesek.",
+      "Koliko denarja mu je vrnila prodajalka, iz podatkov ne moremo izračunati."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D: iz podatkov ne moremo izračunati, koliko denarja so mu vrnili.",
+     "ways": [
+      {
+       "title": "Presodi, ali je podatkov dovolj",
+       "text": "Vračilo je razlika med zneskom, ki ga je trener dal prodajalki, in ceno nakupa $45{,}60$ €. Ne veš pa, katere bankovce je dal. Pravilna je **D**.\n\n- **A** bi veljala le, če bi plačal z bankovcem za $50$ €: $50 - 45{,}60 = 4{,}40$. Lahko pa je plačal npr. s tremi bankovci za $20$ €, potem bi dobil nazaj $14{,}40$ €.\n- **B** bi veljala le, če bi plačal z bankovcem za $100$ €: $100 - 45{,}60 = 54{,}40$. Tudi tega ne veš.\n- **C** ne more biti res: bankovci so vredni cele evre ($5$ €, $10$ €, $20$ € …), znesek $45{,}60$ € pa ima $60$ centov. Samo z bankovci ga ni mogoče plačati točno, zato je trener zagotovo dobil nekaj vračila."
+      }
+     ],
+     "mistake": "Kdor izbere A, je tiho predpostavil, da je trener plačal s petdesetakom. Tega podatka v besedilu ni."
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "intro": "Pri vsakem vprašanju obkroži črko pred pravilnim odgovorom.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Katero število je na številski premici najbližje številu $37$ desetin?",
+     "choices": [
+      "$0{,}37$",
+      "$3{,}69$",
+      "$3{,}8$",
+      "$37$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B: $3{,}69$",
+     "ways": [
+      {
+       "title": "Zapiši z decimalno vejico in primerjaj razdalje",
+       "text": "$37$ desetin je $3{,}7$ (ker je $10$ desetin $1$ cela, je $30$ desetin $3$ cele in ostane še $7$ desetin).\n\nRazdalje od $3{,}7$:\n\n- $0{,}37$: $3{,}7 - 0{,}37 = 3{,}33$, daleč;\n- $3{,}69$: $3{,}70 - 3{,}69 = 0{,}01$, to je le ena stotina;\n- $3{,}8$: $3{,}8 - 3{,}7 = 0{,}1$, to je deset stotin;\n- $37$: desetkrat večje število, zelo daleč.\n\nNajbližje je $3{,}69$ (**B**). Možnost **A** dobiš, če zamešaš desetine in stotine ($37$ stotin), **D**, če prezreš besedo »desetin«, **C** pa je sicer blizu, a $0{,}1$ je več kot $0{,}01$."
+      }
+     ]
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "choice",
+     "text": "Katero število je najbližje številu $\\frac{204}{100}$?",
+     "choices": [
+      "$2{,}4$",
+      "$2$",
+      "$2{,}1$",
+      "$20{,}4$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B: $2$",
+     "ways": [
+      {
+       "title": "Decimalni ulomek zapiši kot decimalno število",
+       "text": "$\\frac{204}{100}$ je $204$ stotin, to je $2{,}04$ (dve celi in štiri stotine).\n\nRazdalje od $2{,}04$:\n\n- $2{,}4$: $2{,}40 - 2{,}04 = 0{,}36$;\n- $2$: $2{,}04 - 2 = 0{,}04$;\n- $2{,}1$: $2{,}10 - 2{,}04 = 0{,}06$;\n- $20{,}4$: desetkrat preveliko.\n\nNajbližje je $2$ (**B**). Možnost **A** izbereš, če ničlo med števkama preskočiš in $\\frac{204}{100}$ bereš kot $2{,}4$. **D** dobiš, če deliš z $10$ namesto s $100$. **C** je blizu, a $0{,}06$ je več kot $0{,}04$."
+      }
+     ]
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "choice",
+     "text": "V katerem številu pomeni števka $7$ stotice?",
+     "choices": [
+      "$4\\,078$",
+      "$61\\,724$",
+      "$0{,}07$",
+      "$27\\,105$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B: $61\\,724$",
+     "ways": [
+      {
+       "title": "Določi mesto števke",
+       "text": "Pri celem številu štej mesta od desne: enice, desetice, stotice, tisočice …\n\n- $4\\,078$: $7$ je na drugem mestu z desne, pomeni **desetice** ($70$).\n- $61\\,724$: $7$ je na tretjem mestu z desne, pomeni **stotice** ($700$). Pravilno je **B**.\n- $0{,}07$: $7$ je na drugem mestu **za** vejico, pomeni **stotinke**. Stotinke niso stotice.\n- $27\\,105$: $7$ je na četrtem mestu z desne, pomeni **tisočice** ($7\\,000$)."
+      }
+     ]
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "choice",
+     "text": "Kateri zapis je enak številu $6\\,048$?",
+     "choices": [
+      "$6 \\cdot 10^3 + 4 \\cdot 10^2 + 8$",
+      "$6 \\cdot 10^3 + 4 \\cdot 10 + 8$",
+      "$6 \\cdot 10^4 + 4 \\cdot 10 + 8$",
+      "$6 \\cdot 10^3 + 4 \\cdot 10^2 + 8 \\cdot 10$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B: $6 \\cdot 10^3 + 4 \\cdot 10 + 8$",
+     "ways": [
+      {
+       "title": "Razstavi po desetiških enotah",
+       "text": "V številu $6\\,048$ je $6$ tisočic, $0$ stotic, $4$ desetice in $8$ enic:\n\n$6\\,048 = 6 \\cdot 1\\,000 + 0 \\cdot 100 + 4 \\cdot 10 + 8$.\n\nKer je $10^3 = 1\\,000$ in $10^2 = 100$, je to $6 \\cdot 10^3 + 4 \\cdot 10 + 8$ (**B**).\n\n- **A** je $6\\,000 + 400 + 8 = 6\\,408$: štirica bi bila na mestu stotic, ničla pa na mestu desetic.\n- **C** je $60\\,000 + 40 + 8 = 60\\,048$: $10^4 = 10\\,000$, ne $1\\,000$. Pri štirimestnem številu je najvišja potenca $10^3$, ne $10^4$.\n- **D** je $6\\,000 + 400 + 80 = 6\\,480$: števki $4$ in $8$ sta zamaknjeni za eno mesto v levo."
+      }
+     ],
+     "mistake": "Ničla na mestu stotic se v razvoju ne vidi, a mesto obstaja. Če jo preskočiš, števke zamakneš (možnosti A in D)."
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "fill",
+     "text": "Razdalje med sosednjimi oznakami na številski premici so enake. V okvirček vpiši manjkajoče decimalno število. Nato to število zapiši še z ulomkom.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 304 78\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><path d=\"M4 40H296\" stroke-width=\"1.2\"/><path d=\"M296 40l-7-3.5v7z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M10 34V46M46 30V50M82 34V46M118 34V46M154 34V46M190 34V46M226 30V50M262 34V46\" stroke-width=\"1.2\"/><text x=\"46\" y=\"66\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">0,4</text><text x=\"226\" y=\"66\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">0,5</text><path d=\"M154 46V52\" stroke-width=\"1\"/><rect x=\"137\" y=\"53\" width=\"34\" height=\"18\" stroke-width=\"1\"/></svg>",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 304 78\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><path d=\"M4 40H296\" stroke-width=\"1.2\"/><path d=\"M296 40l-7-3.5v7z\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M10 34V46M46 30V50M82 34V46M118 34V46M154 34V46M190 34V46M226 30V50M262 34V46\" stroke-width=\"1.2\"/><text x=\"46\" y=\"66\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">0,4</text><text x=\"226\" y=\"66\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">0,5</text><path d=\"M154 46V52\" stroke-width=\"1\"/><rect x=\"137\" y=\"53\" width=\"34\" height=\"18\" stroke-width=\"1\"/><text x=\"154\" y=\"66\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"bold\">0,46</text></svg>",
+     "answer": "V okvirček spada $0{,}46$; z ulomkom $\\frac{46}{100}$ (okrajšano $\\frac{23}{50}$).",
+     "ways": [
+      {
+       "title": "Po korakih: velikost enega razdelka",
+       "text": "Med $0{,}4$ in $0{,}5$ je razlika $0{,}1$, to je $10$ stotin. Ta razdalja je razdeljena na $5$ enakih razdelkov, zato je en razdelek $10 : 5 = 2$ stotini, to je $0{,}02$.\n\nOkvirček je tri razdelke desno od $0{,}4$:\n\n$0{,}4 + 3 \\cdot 0{,}02 = 0{,}4 + 0{,}06 = 0{,}46$.\n\n$0{,}46$ je $46$ stotin, zato ga z ulomkom zapišeš kot $\\frac{46}{100}$. Ulomek lahko še okrajšaš z $2$: $\\frac{23}{50}$."
+      },
+      {
+       "title": "Drugače: zapiši vse oznake s stotinami",
+       "text": "Zapiši $0{,}4 = 0{,}40$ in $0{,}5 = 0{,}50$. Od $40$ do $50$ stotin v petih enakih korakih: $40, 42, 44, 46, 48, 50$. Oznake so torej $0{,}40$, $0{,}42$, $0{,}44$, $0{,}46$, $0{,}48$, $0{,}50$. Okvirček je pri tretji oznaki za $0{,}40$: $0{,}46$.\n\n**Preizkus:** do $0{,}5$ sta še dva razdelka, $0{,}46 + 2 \\cdot 0{,}02 = 0{,}50$. ✓\n\nZ ulomkom: $0{,}46 = \\frac{46}{100}$."
+      }
+     ],
+     "scoring": "1 t. za število $0{,}46$ v okvirčku, 1 t. za pravilen zapis z ulomkom ($\\frac{46}{100}$ ali $\\frac{23}{50}$).",
+     "mistake": "Pogosto učenci predpostavijo, da je med $0{,}4$ in $0{,}5$ vedno deset razdelkov po $0{,}01$, in zapišejo $0{,}43$. Najprej preštej razdelke: tu jih je $5$, ne $10$."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "construct",
+     "text": "Krog je razdeljen na enake dele. Pobarvaj $\\frac{3}{4}$ kroga. Kolikšen del kroga ostane nepobarvan? Zapiši ga z ulomkom.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 140 140\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><circle cx=\"70\" cy=\"70\" r=\"60\" stroke-width=\"1.4\"/><path d=\"M70 10L70 130M100 18L40 122M122 40L18 100M130 70L10 70M122 100L18 40M100 122L40 18\" stroke-width=\"1\"/></svg>",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 140 140\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><path d=\"M70 70L70 10A60 60 0 0 1 100 18z\" fill=\"currentColor\" fill-opacity=\"0.35\" stroke=\"none\"/><path d=\"M70 70L100 18A60 60 0 0 1 122 40z\" fill=\"currentColor\" fill-opacity=\"0.35\" stroke=\"none\"/><path d=\"M70 70L122 40A60 60 0 0 1 130 70z\" fill=\"currentColor\" fill-opacity=\"0.35\" stroke=\"none\"/><path d=\"M70 70L130 70A60 60 0 0 1 122 100z\" fill=\"currentColor\" fill-opacity=\"0.35\" stroke=\"none\"/><path d=\"M70 70L122 100A60 60 0 0 1 100 122z\" fill=\"currentColor\" fill-opacity=\"0.35\" stroke=\"none\"/><path d=\"M70 70L100 122A60 60 0 0 1 70 130z\" fill=\"currentColor\" fill-opacity=\"0.35\" stroke=\"none\"/><path d=\"M70 70L70 130A60 60 0 0 1 40 122z\" fill=\"currentColor\" fill-opacity=\"0.35\" stroke=\"none\"/><path d=\"M70 70L40 122A60 60 0 0 1 18 100z\" fill=\"currentColor\" fill-opacity=\"0.35\" stroke=\"none\"/><path d=\"M70 70L18 100A60 60 0 0 1 10 70z\" fill=\"currentColor\" fill-opacity=\"0.35\" stroke=\"none\"/><circle cx=\"70\" cy=\"70\" r=\"60\" stroke-width=\"1.4\"/><path d=\"M70 10L70 130M100 18L40 122M122 40L18 100M130 70L10 70M122 100L18 40M100 122L40 18\" stroke-width=\"1\"/></svg>",
+     "answer": "Pobarvaš $9$ od $12$ delov. Nepobarvan ostane $\\frac{3}{12} = \\frac{1}{4}$ kroga.",
+     "ways": [
+      {
+       "title": "Po korakih: preštej dele",
+       "text": "Krog je razdeljen na $12$ enakih delov.\n\n- $\\frac{1}{4}$ kroga je $12 : 4 = 3$ deli,\n- $\\frac{3}{4}$ kroga je $3 \\cdot 3 = 9$ delov. Pobarvaj katerihkoli $9$ delov.\n\nNepobarvanih ostane $12 - 9 = 3$ deli, to je $\\frac{3}{12}$ kroga. Ulomek okrajšaš s $3$: $\\frac{3}{12} = \\frac{1}{4}$."
+      },
+      {
+       "title": "Drugače: od celote",
+       "text": "Cel krog je $\\frac{4}{4}$. Če pobarvaš $\\frac{3}{4}$, ostane $\\frac{4}{4} - \\frac{3}{4} = \\frac{1}{4}$ kroga.\n\nNa sliki to preveriš tako, da krog z navpičnim in vodoravnim premerom razdeliš na četrtine (vsaka ima $3$ dele): pobarvane so tri četrtine, nepobarvana ena."
+      }
+     ],
+     "scoring": "1 t. za $9$ pobarvanih delov, 1 t. za nepobarvani del $\\frac{1}{4}$ (ali $\\frac{3}{12}$).",
+     "mistake": "Napačno je pobarvati $3$ dele, ker v ulomku piše $3$. Števec $3$ pove, koliko **četrtin** pobarvaš; ena četrtina tega kroga pa obsega $3$ dele."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "fill",
+     "text": "Dopolni.\n\n$\\frac{3}{5}$ od $45$ € je $\\underline{\\qquad}$ €.\n\nČe je $\\frac{2}{7}$ poti dolgih $16\\,\\mathrm{km}$, je vsa pot dolga $\\underline{\\qquad}\\,\\mathrm{km}$.",
+     "answer": "$27$ €; $56\\,\\mathrm{km}$",
+     "ways": [
+      {
+       "title": "Po korakih: najprej en del",
+       "text": "**Podatki:** $\\frac{3}{5}$ od $45$ €; $\\frac{2}{7}$ poti je $16\\,\\mathrm{km}$.\n\n**Iščemo:** del zneska in dolžino vse poti.\n\n**Del celote:** $\\frac{1}{5}$ od $45$ € je $45 : 5 = 9$ €, $\\frac{3}{5}$ pa je $3 \\cdot 9 = 27$ €.\n\n**Celota iz dela:** $\\frac{2}{7}$ poti je $16\\,\\mathrm{km}$, zato je $\\frac{1}{7}$ poti $16 : 2 = 8\\,\\mathrm{km}$. Vsa pot ($\\frac{7}{7}$) je $7 \\cdot 8 = 56\\,\\mathrm{km}$."
+      },
+      {
+       "title": "Drugače: s trakom in preizkusom",
+       "text": "Nariši trak za $45$ € in ga razdeli na $5$ enakih delov po $9$ €. Trije deli skupaj: $9 + 9 + 9 = 27$ €.\n\nPot nariši kot daljico s $7$ enakimi deli. Dva dela skupaj merita $16\\,\\mathrm{km}$, torej en del $8\\,\\mathrm{km}$, vseh sedem $56\\,\\mathrm{km}$.\n\n**Preizkus:** $\\frac{2}{7}$ od $56$ je $56 : 7 \\cdot 2 = 16$. ✓"
+      }
+     ],
+     "scoring": "1 t. za $27$ €, 1 t. za $56\\,\\mathrm{km}$.",
+     "mistake": "Pri drugem delu je napačno izračunati $\\frac{2}{7}$ od $16$. Znano je, da je $16\\,\\mathrm{km}$ **del** poti, zato mora biti vsa pot daljša od $16\\,\\mathrm{km}$, ne krajša."
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "intro": "Kmetica Mojca ima pravokoten pašnik za ovce. Dolg je $48\\,\\mathrm{m}$, širok pa $35\\,\\mathrm{m}$. Pašnik je po vsem robu ograjen. Skica ni v merilu.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 250 134\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><rect x=\"44\" y=\"14\" width=\"176\" height=\"96\" fill=\"currentColor\" fill-opacity=\"0.08\" stroke-width=\"1.4\"/><text x=\"132\" y=\"66\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-style=\"italic\">pašnik</text><text x=\"132\" y=\"126\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">48 m</text><text x=\"38\" y=\"66\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"end\" font-size=\"11\">35 m</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Koliko metrov ograje obdaja pašnik?",
+     "answer": "$166\\,\\mathrm{m}$",
+     "ways": [
+      {
+       "title": "Po korakih: obseg pravokotnika",
+       "text": "**Podatki:** $a = 48\\,\\mathrm{m}$, $b = 35\\,\\mathrm{m}$.\n\n**Iščemo:** dolžino ograje, to je obseg pravokotnika $o$.\n\n$o = 2 \\cdot a + 2 \\cdot b = 2 \\cdot 48\\,\\mathrm{m} + 2 \\cdot 35\\,\\mathrm{m} = 96\\,\\mathrm{m} + 70\\,\\mathrm{m} = 166\\,\\mathrm{m}$.\n\n**Odgovor:** Pašnik obdaja $166\\,\\mathrm{m}$ ograje."
+      },
+      {
+       "title": "Drugače: seštej vse štiri stranice",
+       "text": "Ograja gre okoli pašnika po vseh štirih stranicah:\n\n$48 + 35 + 48 + 35 = 83 + 83 = 166$, torej $166\\,\\mathrm{m}$.\n\nEnako dobiš z $o = 2 \\cdot (a + b) = 2 \\cdot 83\\,\\mathrm{m} = 166\\,\\mathrm{m}$."
+      }
+     ],
+     "scoring": "1 t. za pravilen postopek (obrazec za obseg ali seštevanje vseh stranic), 1 t. za pravilen rezultat $166\\,\\mathrm{m}$.",
+     "mistake": "Napačno je sešteti le dolžino in širino ($48 + 35 = 83$). Tako dobiš samo polovico ograje, saj ima pravokotnik dve dolžini in dve širini."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Kolikšna je ploščina pašnika?",
+     "answer": "$1\\,680\\,\\mathrm{m^2}$",
+     "ways": [
+      {
+       "title": "Po korakih: ploščina pravokotnika",
+       "text": "**Podatki:** $a = 48\\,\\mathrm{m}$, $b = 35\\,\\mathrm{m}$.\n\n**Iščemo:** ploščino $p$.\n\n$p = a \\cdot b = 48\\,\\mathrm{m} \\cdot 35\\,\\mathrm{m}$.\n\nPisno: $48 \\cdot 30 = 1\\,440$, $48 \\cdot 5 = 240$, $1\\,440 + 240 = 1\\,680$.\n\n$p = 1\\,680\\,\\mathrm{m^2}$.\n\n**Odgovor:** Ploščina pašnika je $1\\,680\\,\\mathrm{m^2}$."
+      },
+      {
+       "title": "Drugače: z okroglim številom",
+       "text": "$48$ je za $2$ manj kot $50$:\n\n$50 \\cdot 35 = 1\\,750$, $\\quad 2 \\cdot 35 = 70$, $\\quad 1\\,750 - 70 = 1\\,680$.\n\nNa pašnik si lahko misliš $48$ vrst kvadratnih metrov po $35$ v vsaki vrsti; $50$ vrst bi imelo $1\\,750\\,\\mathrm{m^2}$, dve vrsti ($70\\,\\mathrm{m^2}$) pa sta preveč."
+      }
+     ],
+     "scoring": "1 t. za pravilen postopek ($48 \\cdot 35$), 1 t. za pravilen rezultat z enoto $\\mathrm{m^2}$.",
+     "mistake": "Ploščine ne meriš v metrih, ampak v kvadratnih metrih. Zapis $1\\,680\\,\\mathrm{m}$ je napačen, ker $\\mathrm{m}$ meri dolžino."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Mojčin sosed ima kvadraten pašnik, ki ima enako dolgo ograjo (enak obseg) kot Mojčin. Kako dolga je stranica sosedovega pašnika?",
+     "answer": "$41{,}5\\,\\mathrm{m}$",
+     "ways": [
+      {
+       "title": "Po korakih: obseg razdeli na štiri",
+       "text": "**Podatki:** obseg kvadrata $o = 166\\,\\mathrm{m}$ (enak kot pri Mojčinem pašniku, del a).\n\n**Iščemo:** stranico kvadrata $a$.\n\nKvadrat ima štiri enako dolge stranice, zato je $o = 4 \\cdot a$ in\n\n$a = o : 4 = 166\\,\\mathrm{m} : 4 = 41{,}5\\,\\mathrm{m}$.\n\nPisno: $16 : 4 = 4$, $6 : 4 = 1$ ostanek $2$; dopiši vejico in ničlo: $20 : 4 = 5$. Torej $41{,}5$.\n\n**Preizkus:** $4 \\cdot 41{,}5 = 166$. ✓"
+      },
+      {
+       "title": "Drugače: s polovico obsega",
+       "text": "Polovica ograje gre ob dveh sosednjih stranicah. Pri Mojčinem pašniku je to $48 + 35 = 83\\,\\mathrm{m}$. Pri kvadratu sta ti dve stranici enaki, zato je ena stranica $83 : 2 = 41{,}5\\,\\mathrm{m}$.\n\nStranica kvadrata z enakim obsegom je torej ravno na sredini med dolžino in širino pravokotnika."
+      }
+     ],
+     "scoring": "1 t. za pravilen postopek ($166 : 4$ ali $83 : 2$), 1 t. za pravilen rezultat $41{,}5\\,\\mathrm{m}$.",
+     "mistake": "Napačno je obseg deliti z $2$ ($83\\,\\mathrm{m}$). Kvadrat ima štiri stranice, zato obseg deliš s $4$. Napačno je tudi iskati kvadrat z enako **ploščino**: naloga sprašuje po enako dolgi ograji."
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "intro": "Dana je množica $M = \\{6, 8, 12, 15, 20, 27, 34, 36, 49\\}$. Množica $A$ vsebuje tista števila iz množice $M$, ki so deljiva s $3$. Množica $B$ vsebuje tista števila iz množice $M$, ki so deljiva s $4$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 184\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><rect x=\"4\" y=\"16\" width=\"292\" height=\"164\" stroke-width=\"1.2\"/><text x=\"8\" y=\"12\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">M</text><circle cx=\"112\" cy=\"98\" r=\"66\" fill=\"currentColor\" fill-opacity=\"0.06\" stroke-width=\"1.2\"/><circle cx=\"188\" cy=\"98\" r=\"66\" fill=\"currentColor\" fill-opacity=\"0.06\" stroke-width=\"1.2\"/><text x=\"62\" y=\"40\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">A</text><text x=\"232\" y=\"40\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">B</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "construct",
+     "text": "Vsa števila iz množice $M$ vpiši na ustrezna mesta v Euler-Vennov diagram.",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 184\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><rect x=\"4\" y=\"16\" width=\"292\" height=\"164\" stroke-width=\"1.2\"/><text x=\"8\" y=\"12\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">M</text><circle cx=\"112\" cy=\"98\" r=\"66\" fill=\"currentColor\" fill-opacity=\"0.06\" stroke-width=\"1.2\"/><circle cx=\"188\" cy=\"98\" r=\"66\" fill=\"currentColor\" fill-opacity=\"0.06\" stroke-width=\"1.2\"/><text x=\"62\" y=\"40\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">A</text><text x=\"232\" y=\"40\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">B</text><text x=\"78\" y=\"80\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">6</text><text x=\"100\" y=\"104\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">15</text><text x=\"74\" y=\"126\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">27</text><text x=\"150\" y=\"88\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">12</text><text x=\"150\" y=\"116\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">36</text><text x=\"200\" y=\"80\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">8</text><text x=\"226\" y=\"104\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">20</text><text x=\"28\" y=\"168\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">34</text><text x=\"272\" y=\"168\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">49</text></svg>",
+     "answer": "Samo v $A$: $6, 15, 27$; v obeh krogih: $12, 36$; samo v $B$: $8, 20$; zunaj krogov: $34, 49$.",
+     "ways": [
+      {
+       "title": "Preveri vsako število s pravili deljivosti",
+       "text": "- Število je deljivo s $3$, če je vsota njegovih števk deljiva s $3$.\n- Število je deljivo s $4$, če je število iz njegovih zadnjih dveh števk deljivo s $4$ (pri enomestnem številu kar število samo).\n\n| Število | deljivo s $3$? | deljivo s $4$? | Kam ga vpišeš |\n|---|---|---|---|\n| $6$ | da | ne | samo v $A$ |\n| $8$ | ne | da | samo v $B$ |\n| $12$ | da ($1 + 2 = 3$) | da | v presek |\n| $15$ | da ($1 + 5 = 6$) | ne | samo v $A$ |\n| $20$ | ne ($2 + 0 = 2$) | da | samo v $B$ |\n| $27$ | da ($2 + 7 = 9$) | ne | samo v $A$ |\n| $34$ | ne ($3 + 4 = 7$) | ne ($34 = 8 \\cdot 4 + 2$) | zunaj krogov |\n| $36$ | da ($3 + 6 = 9$) | da ($36 = 9 \\cdot 4$) | v presek |\n| $49$ | ne ($4 + 9 = 13$) | ne | zunaj krogov |\n\nŠtevila, ki niso v nobenem krogu, morajo biti vseeno vpisana v pravokotnik, saj so elementi množice $M$."
+      }
+     ],
+     "mistake": "Števil $34$ in $49$ ne smeš izpustiti. Pravokotnik predstavlja vso množico $M$; število, ki ni v nobenem krogu, vpišeš v pravokotnik zunaj krogov."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "fill",
+     "text": "Zapiši množico $B$ z naštevanjem elementov. $\\quad B = \\underline{\\qquad\\qquad}$",
+     "answer": "$B = \\{8, 12, 20, 36\\}$",
+     "ways": [
+      {
+       "title": "Preberi iz diagrama",
+       "text": "V množici $B$ so vsa števila v desnem krogu, tudi tista v preseku: $8$, $20$, $12$ in $36$.\n\n$B = \\{8, 12, 20, 36\\}$ (vrstni red elementov ni pomemben).\n\n**Preizkus:** $8 = 2 \\cdot 4$, $12 = 3 \\cdot 4$, $20 = 5 \\cdot 4$, $36 = 9 \\cdot 4$."
+      }
+     ],
+     "mistake": "Pogosto učenci zapišejo le $\\{8, 20\\}$ in pozabijo števila v preseku. Presek je del obeh krogov, zato $12$ in $36$ spadata tudi v $B$."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "fill",
+     "text": "Zapiši množico $A$ z naštevanjem elementov. $\\quad A = \\underline{\\qquad\\qquad}$",
+     "answer": "$A = \\{6, 12, 15, 27, 36\\}$",
+     "ways": [
+      {
+       "title": "Preberi iz diagrama",
+       "text": "V množici $A$ so vsa števila v levem krogu, tudi tista v preseku: $6$, $15$, $27$, $12$ in $36$.\n\n$A = \\{6, 12, 15, 27, 36\\}$.\n\n**Preizkus:** $6 = 2 \\cdot 3$, $12 = 4 \\cdot 3$, $15 = 5 \\cdot 3$, $27 = 9 \\cdot 3$, $36 = 12 \\cdot 3$."
+      }
+     ]
+    },
+    {
+     "id": "d",
+     "points": 2,
+     "format": "fill",
+     "text": "Zapiši presek in unijo množic $A$ in $B$.\n\n$A \\cap B = \\underline{\\qquad\\qquad} \\qquad A \\cup B = \\underline{\\qquad\\qquad}$",
+     "answer": "$A \\cap B = \\{12, 36\\}$, $\\quad A \\cup B = \\{6, 8, 12, 15, 20, 27, 36\\}$",
+     "ways": [
+      {
+       "title": "Iz diagrama",
+       "text": "**Presek** $A \\cap B$ so števila, ki so v **obeh** krogih hkrati (v skupnem delu): $A \\cap B = \\{12, 36\\}$.\n\n**Unija** $A \\cup B$ so števila, ki so v **vsaj enem** krogu: v levem, v desnem ali v obeh. Števila zunaj krogov ($34$ in $49$) ne spadajo zraven:\n\n$A \\cup B = \\{6, 8, 12, 15, 20, 27, 36\\}$."
+      },
+      {
+       "title": "Drugače: iz zapisanih množic",
+       "text": "$A = \\{6, 12, 15, 27, 36\\}$, $B = \\{8, 12, 20, 36\\}$.\n\n- Presek: poišči elemente, ki se pojavijo v obeh zapisih: $12$ in $36$.\n- Unija: zapiši vse elemente iz $A$ in dodaj tiste iz $B$, ki jih še ni ($8$ in $20$). Vsak element zapišeš le enkrat.\n\n**Preizkus s štetjem:** $A$ ima $5$ elementov, $B$ ima $4$, skupna sta $2$. Unija ima $5 + 4 - 2 = 7$ elementov. ✓"
+      }
+     ],
+     "scoring": "1 t. za pravilen presek, 1 t. za pravilno unijo.",
+     "mistake": "Zamenjava znakov: $\\cap$ (presek) pomeni »in hkrati«, $\\cup$ (unija) pa »ali«. Napačno je tudi v unijo vpisati vso množico $M$, skupaj s $34$ in $49$."
+    },
+    {
+     "id": "e",
+     "points": 1,
+     "format": "fill",
+     "text": "V kvadratka vpiši ustrezna znaka. Izbiraš med $\\in$, $\\notin$ in $\\subset$.\n\n$27 \\;\\square\\; B \\qquad\\qquad \\{12, 36\\} \\;\\square\\; A$",
+     "answer": "$27 \\notin B$, $\\quad \\{12, 36\\} \\subset A$",
+     "ways": [
+      {
+       "title": "Element ali podmnožica",
+       "text": "- $27$ je **število** (element). Primerjaš ga z množico z znakoma $\\in$ (je element) ali $\\notin$ (ni element). Ker $27$ ni deljivo s $4$ ($27 = 6 \\cdot 4 + 3$), ni v $B$: $27 \\notin B$.\n- $\\{12, 36\\}$ je **množica**. Množico primerjaš z množico z znakom $\\subset$ (je podmnožica). Oba elementa, $12$ in $36$, sta v $A$, zato velja $\\{12, 36\\} \\subset A$ (dopusten je tudi znak $\\subseteq$).\n\nTočko dobiš, če sta oba znaka pravilna."
+      }
+     ],
+     "mistake": "Zapis $\\{12, 36\\} \\in A$ je napačen: elementi množice $A$ so števila, ne množice. Znak $\\in$ stoji le med elementom in množico."
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "intro": "Na sliki so premice $a$, $b$, $c$ in $d$, točke $A$, $B$, $C$ in $D$ pa so njihova presečišča. Slika je narisana natančno. Kote lahko meriš kar na sliki (natisnjeni ali na zaslonu), saj se velikost kota ob povečavi ali pomanjšavi slike ne spremeni. Dolžino pa izmeri z ravnilom, ki je narisano pod sliko v istem merilu kot slika (razdaljo lahko s šestilom preneseš na to ravnilo).",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 242\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><path d=\"M6 70.4L294 29.9M6 146.1L294 105.7M51.5 194L91.5 6M275.1 194L153 6\" stroke-width=\"1.3\"/><text x=\"286\" y=\"23.9\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">a</text><text x=\"286\" y=\"99.7\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">b</text><text x=\"96.5\" y=\"14\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">c</text><text x=\"160\" y=\"14\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">d</text><circle cx=\"80\" cy=\"60\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><text x=\"66\" y=\"55\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">A</text><circle cx=\"63.4\" cy=\"138.1\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><text x=\"49.4\" y=\"152.1\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">B</text><circle cx=\"179\" cy=\"46.1\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><text x=\"185\" y=\"39.1\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">C</text><circle cx=\"224.1\" cy=\"115.5\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><text x=\"232.1\" y=\"129.5\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">D</text><path d=\"M95.8 57.8A16 16 0 0 0 83.3 44.3\" stroke-width=\"1\"/><text x=\"95\" y=\"46.3\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">α</text><rect x=\"14\" y=\"214\" width=\"162\" height=\"24\" stroke-width=\"0.8\"/><path d=\"M20 214v9M23 214v3.5M26 214v3.5M29 214v3.5M32 214v3.5M35 214v6M38 214v3.5M41 214v3.5M44 214v3.5M47 214v3.5M50 214v9M53 214v3.5M56 214v3.5M59 214v3.5M62 214v3.5M65 214v6M68 214v3.5M71 214v3.5M74 214v3.5M77 214v3.5M80 214v9M83 214v3.5M86 214v3.5M89 214v3.5M92 214v3.5M95 214v6M98 214v3.5M101 214v3.5M104 214v3.5M107 214v3.5M110 214v9M113 214v3.5M116 214v3.5M119 214v3.5M122 214v3.5M125 214v6M128 214v3.5M131 214v3.5M134 214v3.5M137 214v3.5M140 214v9M143 214v3.5M146 214v3.5M149 214v3.5M152 214v3.5M155 214v6M158 214v3.5M161 214v3.5M164 214v3.5M167 214v3.5M170 214v9\" stroke-width=\"0.6\"/><text x=\"20\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">0</text><text x=\"50\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">1</text><text x=\"80\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">2</text><text x=\"110\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">3</text><text x=\"140\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">4</text><text x=\"170\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">5</text><text x=\"185\" y=\"230\" fill=\"currentColor\" stroke=\"none\" font-size=\"8\">cm (ravnilo v merilu slike)</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Kakšna je medsebojna lega premic $a$ in $b$? Zapiši z besedo in z znakom.",
+     "answer": "Premici sta vzporedni: $a \\parallel b$.",
+     "ways": [
+      {
+       "title": "Preveri z geotrikotnikom",
+       "text": "Premici $a$ in $b$ se na sliki ne sekata in sta povsod enako narazen. To preveriš z geotrikotnikom: položi ga z vzporednicami na premico $a$ in ga drsi do premice $b$; ena od vzporednic na geotrikotniku se ujema s premico $b$.\n\nPremici sta **vzporedni**, kar zapišeš $a \\parallel b$.\n\nDodatno potrdilo: premica $c$ seka $a$ in $b$ pod enakim kotom (kota pri $A$ in pri $B$ na isti strani sta enaka), kar velja le za vzporedni premici."
+      }
+     ],
+     "mistake": "Znak $\\perp$ pomeni pravokotni premici (sekata se pod pravim kotom). Za vzporedni premici uporabiš znak $\\parallel$."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Ali se premici $c$ in $d$ sekata? Utemelji.",
+     "answer": "Da, sekata se (zunaj slike, nad njo), ker nista vzporedni.",
+     "ways": [
+      {
+       "title": "Premica je neomejena",
+       "text": "Premica nima ne začetka ne konca; na sliki je narisan le njen del. Premici $c$ in $d$ se proti zgornjemu robu slike približujeta (razdalja med njima je zgoraj manjša kot spodaj), zato nista vzporedni.\n\nDve premici v ravnini, ki nista vzporedni, se vedno sekata. Premici $c$ in $d$ se torej **sekata**, le da je presečišče nad sliko."
+      }
+     ],
+     "mistake": "Odgovor »Ne, ker se na sliki ne sekata« je napačen: na sliki sta narisana le dela premic. Premici se ne sekata samo, če sta vzporedni."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "fill",
+     "text": "Izmeri kot $\\alpha$. $\\quad \\alpha = \\underline{\\qquad}$",
+     "answer": "$\\alpha = 70^\\circ$ (dopustno odstopanje $\\pm 2^\\circ$)",
+     "ways": [
+      {
+       "title": "Merjenje s kotomerom",
+       "text": "Središče kotomera (geotrikotnika) postavi v oglišče $A$, ničelno črto pa položi na krak, ki leži na premici $a$ (proti točki $C$). Na lestvici, ki se pri tem kraku začne z $0^\\circ$, odčitaj, kje gre krak na premici $c$: $70^\\circ$.\n\n**Preverjanje smiselnosti:** kot $\\alpha$ je manjši od pravega kota, torej oster. Odčitek mora biti manjši od $90^\\circ$."
+      }
+     ],
+     "mistake": "Če odčitaš na napačni lestvici, dobiš $110^\\circ$. To je top kot, kot $\\alpha$ pa je očitno oster."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "fill",
+     "text": "Izmeri kot $\\angle ACD$. $\\quad \\angle ACD = \\underline{\\qquad}$",
+     "answer": "$\\angle ACD = 115^\\circ$ (dopustno odstopanje $\\pm 2^\\circ$)",
+     "ways": [
+      {
+       "title": "Srednja črka je oglišče",
+       "text": "Pri zapisu $\\angle ACD$ je oglišče kota srednja točka, $C$. Kraka sta poltraka $CA$ (po premici $a$ proti levi) in $CD$ (po premici $d$ navzdol).\n\nSredišče kotomera postavi v $C$, ničelno črto na krak $CA$ in odčitaj pri kraku $CD$: $115^\\circ$.\n\n**Preverjanje smiselnosti:** kraka $CA$ in $CD$ oklepata kot, ki je večji od pravega in manjši od iztegnjenega, torej top kot. Sosednji kot (med $CD$ in podaljškom premice $a$ v desno) meri $180^\\circ - 115^\\circ = 65^\\circ$."
+      }
+     ],
+     "mistake": "Odčitek $65^\\circ$ je sosednji kot ob premici $a$, ne kot $\\angle ACD$. Preveri, med katerima krakoma meriš: krak $CA$ kaže proti točki $A$."
+    },
+    {
+     "id": "e",
+     "points": 2,
+     "format": "construct",
+     "text": "Načrtaj daljico, ki ponazarja razdaljo med premicama $a$ in $b$. Izmeri jo in zapiši razdaljo v milimetrih.",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 242\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><path d=\"M6 70.4L294 29.9M6 146.1L294 105.7M51.5 194L91.5 6M275.1 194L153 6\" stroke-width=\"1.3\"/><text x=\"286\" y=\"23.9\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">a</text><text x=\"286\" y=\"99.7\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">b</text><text x=\"96.5\" y=\"14\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">c</text><text x=\"160\" y=\"14\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">d</text><circle cx=\"80\" cy=\"60\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><text x=\"66\" y=\"55\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">A</text><circle cx=\"63.4\" cy=\"138.1\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><text x=\"49.4\" y=\"152.1\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">B</text><circle cx=\"179\" cy=\"46.1\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><text x=\"185\" y=\"39.1\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">C</text><circle cx=\"224.1\" cy=\"115.5\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><text x=\"232.1\" y=\"129.5\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">D</text><path d=\"M95.8 57.8A16 16 0 0 0 83.3 44.3\" stroke-width=\"1\"/><text x=\"95\" y=\"46.3\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" font-size=\"12\">α</text><path d=\"M228.5 39.1L239 113.4\" stroke-width=\"1.6\" stroke-dasharray=\"4 2\"/><path d=\"M244.9 112.6L244.1 106.6L238.1 107.5\" stroke-width=\"0.9\"/><text x=\"239.8\" y=\"80.3\" fill=\"currentColor\" stroke=\"none\" font-size=\"11\" font-weight=\"bold\">25 mm</text><rect x=\"14\" y=\"214\" width=\"162\" height=\"24\" stroke-width=\"0.8\"/><path d=\"M20 214v9M23 214v3.5M26 214v3.5M29 214v3.5M32 214v3.5M35 214v6M38 214v3.5M41 214v3.5M44 214v3.5M47 214v3.5M50 214v9M53 214v3.5M56 214v3.5M59 214v3.5M62 214v3.5M65 214v6M68 214v3.5M71 214v3.5M74 214v3.5M77 214v3.5M80 214v9M83 214v3.5M86 214v3.5M89 214v3.5M92 214v3.5M95 214v6M98 214v3.5M101 214v3.5M104 214v3.5M107 214v3.5M110 214v9M113 214v3.5M116 214v3.5M119 214v3.5M122 214v3.5M125 214v6M128 214v3.5M131 214v3.5M134 214v3.5M137 214v3.5M140 214v9M143 214v3.5M146 214v3.5M149 214v3.5M152 214v3.5M155 214v6M158 214v3.5M161 214v3.5M164 214v3.5M167 214v3.5M170 214v9\" stroke-width=\"0.6\"/><text x=\"20\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">0</text><text x=\"50\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">1</text><text x=\"80\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">2</text><text x=\"110\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">3</text><text x=\"140\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">4</text><text x=\"170\" y=\"233\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"7\">5</text><text x=\"185\" y=\"230\" fill=\"currentColor\" stroke=\"none\" font-size=\"8\">cm (ravnilo v merilu slike)</text></svg>",
+     "answer": "Razdalja med premicama $a$ in $b$ je $25\\,\\mathrm{mm}$ (dopustno odstopanje $\\pm 1\\,\\mathrm{mm}$).",
+     "ways": [
+      {
+       "title": "Z geotrikotnikom: pravokotnica",
+       "text": "Razdalja med vzporednima premicama je dolžina daljice, ki je **pravokotna** na obe premici in ima krajišči na njiju.\n\n1. Geotrikotnik položi tako, da njegova srednja (pravokotna) črta leži na premici $b$.\n2. Ob dolgem robu geotrikotnika nariši daljico od premice $b$ do premice $a$. Daljica je pravokotna na $b$, zato tudi na $a$.\n3. Izmeri jo z ravnilom pod sliko (dolžino lahko preneseš s šestilom): $2{,}5\\,\\mathrm{cm}$.\n\n$2{,}5\\,\\mathrm{cm} = 25\\,\\mathrm{mm}$, saj je $1\\,\\mathrm{cm} = 10\\,\\mathrm{mm}$."
+      },
+      {
+       "title": "Drugače: preizkus na drugem mestu",
+       "text": "Ker sta premici vzporedni, je razdalja med njima povsod enaka. Pravokotno daljico načrtaj še na drugem mestu, npr. pri točki $B$. Tudi ta meri $25\\,\\mathrm{mm}$, kar potrdi meritev.\n\nPrimerjaj še z daljico $AB$: ta je poševna in meri približno $27\\,\\mathrm{mm}$, torej več kot $25\\,\\mathrm{mm}$. Poševna daljica med vzporednicama je vedno daljša od pravokotne, zato $AB$ ni razdalja med premicama."
+      }
+     ],
+     "scoring": "1 t. za narisano daljico, pravokotno na premici $a$ in $b$, 1 t. za izmerjeno razdaljo $25\\,\\mathrm{mm}$ ($\\pm 1\\,\\mathrm{mm}$).",
+     "mistake": "Napačno je za razdaljo izmeriti poševno daljico $AB$ ali $CD$. Razdalja je najkrajša pot med premicama, ta pa je pravokotna nanju."
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "intro": "Reši brez enačb. Zapiši postopek ali razmislek.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Na košarkarski tekmi sta ekipi Zmajev in Risov skupaj dosegli $146$ točk. Zmaji so dosegli $18$ točk več kot Risi. Koliko točk je dosegla vsaka ekipa?",
+     "answer": "Risi $64$ točk, Zmaji $82$ točk.",
+     "ways": [
+      {
+       "title": "Po korakih: najprej odvzemi razliko",
+       "text": "**Podatki:** skupaj $146$ točk, Zmaji imajo $18$ točk več kot Risi.\n\n**Iščemo:** točke Risov in točke Zmajev.\n\nČe od vsote odvzameš $18$ točk, ki jih imajo Zmaji več, ostaneta dva enaka dela:\n\n$146 - 18 = 128$, $\\quad 128 : 2 = 64$.\n\nRisi so dosegli $64$ točk, Zmaji pa $64 + 18 = 82$ točk.\n\n**Preizkus:** $64 + 82 = 146$ in $82 - 64 = 18$. ✓"
+      },
+      {
+       "title": "Drugače: od polovice vsote",
+       "text": "Če bi imeli ekipi enako točk, bi vsaka imela $146 : 2 = 73$ točk. Razliko $18$ razdeli na pol: $18 : 2 = 9$.\n\nZmaji imajo $9$ točk več od polovice, Risi $9$ manj:\n\nZmaji: $73 + 9 = 82$, $\\quad$ Risi: $73 - 9 = 64$.\n\nRazlika med njima je $82 - 64 = 18$. ✓"
+      }
+     ],
+     "scoring": "1 t. za pravilen postopek ali razmislek, 1 t. za oba pravilna rezultata.",
+     "mistake": "Napačno je vsoto razpoloviti in eni ekipi prišteti cel $18$ ($73$ in $91$). Potem je vsota $164$, ne $146$. Razliko si morata ekipi »razdeliti«: ena ima $9$ več od polovice, druga $9$ manj."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Na naslednji tekmi sta igralki Ana in Eva skupaj dosegli $39$ točk. Ana je dosegla dvakrat toliko točk kot Eva. Koliko točk je dosegla vsaka?",
+     "answer": "Eva $13$ točk, Ana $26$ točk.",
+     "ways": [
+      {
+       "title": "Po korakih: z deli",
+       "text": "**Podatki:** skupaj $39$ točk, Ana ima dvakrat toliko točk kot Eva.\n\n**Iščemo:** točke Eve in točke Ane.\n\nEvine točke so en del, Anine pa dva taka dela. Skupaj so to $3$ enaki deli:\n\n$39 : 3 = 13$.\n\nEva je dosegla $13$ točk, Ana pa $2 \\cdot 13 = 26$ točk.\n\n**Preizkus:** $13 + 26 = 39$ in $26 = 2 \\cdot 13$. ✓"
+      },
+      {
+       "title": "Drugače: s poskušanjem",
+       "text": "Ugibaj Evine točke, Anine so dvakrat toliko, in preveri vsoto:\n\n| Eva | Ana | skupaj |\n|---|---|---|\n| $10$ | $20$ | $30$ (premalo) |\n| $12$ | $24$ | $36$ (premalo) |\n| $13$ | $26$ | $39$ ✓ |\n\nEva je dosegla $13$ točk, Ana $26$."
+      }
+     ],
+     "scoring": "1 t. za pravilen postopek ali razmislek (npr. tri enaki deli ali sistematično poskušanje), 1 t. za oba pravilna rezultata.",
+     "mistake": "Napačno je vsoto deliti z $2$, ker je »dvakrat«. Če ima Ana dva dela in Eva en del, je vseh delov $3$, zato deliš s $3$."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Ekipa Zmajev je na turnirju dosegla $27$ košev iz igre in z njimi $61$ točk. Vsak koš je bil vreden $2$ ali $3$ točke (prostih metov ni). Koliko košev za $2$ točki in koliko košev za $3$ točke je dosegla ekipa?",
+     "answer": "$20$ košev za $2$ točki in $7$ košev za $3$ točke.",
+     "ways": [
+      {
+       "title": "Po korakih: sklepanje",
+       "text": "**Podatki:** $27$ košev, skupaj $61$ točk, koš je vreden $2$ ali $3$ točke.\n\n**Iščemo:** število košev za $2$ točki in število košev za $3$ točke.\n\nPredstavljaj si, da bi bil vsak koš vreden $2$ točki. Potem bi imeli $27 \\cdot 2 = 54$ točk.\n\nDejansko imajo $61 - 54 = 7$ točk več. Vsak koš za $3$ točke prinese $1$ točko več kot koš za $2$ točki, zato je bilo košev za $3$ točke $7$.\n\nKošev za $2$ točki je $27 - 7 = 20$.\n\n**Preizkus:** $20 + 7 = 27$ košev in $20 \\cdot 2 + 7 \\cdot 3 = 40 + 21 = 61$ točk. ✓"
+      },
+      {
+       "title": "Drugače: s poskušanjem v preglednici",
+       "text": "Ugibaj število košev za $3$ točke, ostali do $27$ so za $2$ točki, in izračunaj točke:\n\n| za $3$ t. | za $2$ t. | točke |\n|---|---|---|\n| $5$ | $22$ | $15 + 44 = 59$ |\n| $6$ | $21$ | $18 + 42 = 60$ |\n| $7$ | $20$ | $21 + 40 = 61$ ✓ |\n\nOpaziš, da vsak dodaten koš za $3$ točke (namesto koša za $2$) poveča vsoto za $1$ točko. Ekipa je dosegla $7$ košev za $3$ točke in $20$ košev za $2$ točki."
+      }
+     ],
+     "scoring": "1 t. za pravilen razmislek ali sistematično poskušanje, 1 t. za obe pravilni števili košev.",
+     "mistake": "Napačno je točke razdeliti na pol ali deliti $61 : 27$. Preveri vedno oba pogoja: skupno število košev ($27$) in skupno število točk ($61$)."
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "intro": "V preglednici je število učencev v posameznih razredih neke osnovne šole.\n\n| Razred | 1. | 2. | 3. | 4. | 5. | 6. | 7. | 8. | 9. |\n|---|---|---|---|---|---|---|---|---|---|\n| Število učencev | 47 | 55 | 52 | 45 | 58 | 60 | 49 | 63 | 41 |",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "fill",
+     "text": "Dopolni. Največ učencev je v $\\underline{\\qquad}$ razredu, najmanj pa v $\\underline{\\qquad}$ razredu.",
+     "answer": "Največ v $8.$ razredu ($63$ učencev), najmanj v $9.$ razredu ($41$ učencev).",
+     "ways": [
+      {
+       "title": "Primerjaj števila",
+       "text": "Poišči največje in najmanjše število v vrstici »Število učencev«.\n\n- Edino število nad $60$ je $63$, zato je največ učencev v **8. razredu**.\n- Edino število pod $45$ je $41$, zato je najmanj učencev v **9. razredu**.\n\nTočko dobiš, če sta oba podatka pravilna."
+      }
+     ],
+     "mistake": "Odgovor mora biti razred, ne število učencev. Zapis »$63$« namesto »v 8. razredu« ne odgovori na vprašanje."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "construct",
+     "text": "V mrežo s stolpci prikaži število učencev 4., 6. in 2. razreda. En kvadratek pomeni $5$ učencev.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 228 186\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><path d=\"M10 10h108M10 22h108M10 34h108M10 46h108M10 58h108M10 70h108M10 82h108M10 94h108M10 106h108M10 118h108M10 130h108M10 142h108M10 154h108M10 166h108M10 10v156M22 10v156M34 10v156M46 10v156M58 10v156M70 10v156M82 10v156M94 10v156M106 10v156M118 10v156\" stroke-width=\"0.4\" stroke-opacity=\"0.5\"/><path d=\"M10 6V166H122\" stroke-width=\"1.2\"/><text x=\"34\" y=\"179\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"9\">4. r.</text><text x=\"70\" y=\"179\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"9\">6. r.</text><text x=\"106\" y=\"179\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"9\">2. r.</text><rect x=\"136\" y=\"18\" width=\"12\" height=\"12\" stroke-width=\"0.8\"/><text x=\"153\" y=\"28\" fill=\"currentColor\" stroke=\"none\" font-size=\"9\">pomeni 5 učencev</text></svg>",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 228 186\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><path d=\"M10 10h108M10 22h108M10 34h108M10 46h108M10 58h108M10 70h108M10 82h108M10 94h108M10 106h108M10 118h108M10 130h108M10 142h108M10 154h108M10 166h108M10 10v156M22 10v156M34 10v156M46 10v156M58 10v156M70 10v156M82 10v156M94 10v156M106 10v156M118 10v156\" stroke-width=\"0.4\" stroke-opacity=\"0.5\"/><path d=\"M10 6V166H122\" stroke-width=\"1.2\"/><text x=\"34\" y=\"179\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"9\">4. r.</text><rect x=\"22\" y=\"58\" width=\"24\" height=\"108\" fill=\"currentColor\" fill-opacity=\"0.3\" stroke-width=\"1.1\"/><text x=\"70\" y=\"179\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"9\">6. r.</text><rect x=\"58\" y=\"22\" width=\"24\" height=\"144\" fill=\"currentColor\" fill-opacity=\"0.3\" stroke-width=\"1.1\"/><text x=\"106\" y=\"179\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"9\">2. r.</text><rect x=\"94\" y=\"34\" width=\"24\" height=\"132\" fill=\"currentColor\" fill-opacity=\"0.3\" stroke-width=\"1.1\"/><rect x=\"136\" y=\"18\" width=\"12\" height=\"12\" stroke-width=\"0.8\"/><text x=\"153\" y=\"28\" fill=\"currentColor\" stroke=\"none\" font-size=\"9\">pomeni 5 učencev</text></svg>",
+     "answer": "Stolpci visoki $9$ kvadratkov (4. r.), $12$ kvadratkov (6. r.) in $11$ kvadratkov (2. r.).",
+     "ways": [
+      {
+       "title": "Po korakih: učence pretvori v kvadratke",
+       "text": "En kvadratek pomeni $5$ učencev, zato število učencev deliš s $5$:\n\n- 4. razred: $45 : 5 = 9$ kvadratkov,\n- 6. razred: $60 : 5 = 12$ kvadratkov,\n- 2. razred: $55 : 5 = 11$ kvadratkov.\n\nNad vsako oznako razreda nariši in pobarvaj stolpec ustrezne višine. Stolpci naj bodo enako široki."
+      },
+      {
+       "title": "Drugače: štej po pet",
+       "text": "Pri risanju štej ob vsakem kvadratku po $5$ učencev: $5, 10, 15, \\ldots$\n\n- za 4. razred se ustaviš pri $45$, to je po $9$ kvadratkih,\n- za 2. razred pri $55$, po $11$ kvadratkih,\n- za 6. razred pri $60$, po $12$ kvadratkih.\n\n**Preizkus:** stolpec 6. razreda mora biti najvišji, stolpec 4. razreda najnižji, saj je $60 > 55 > 45$."
+      }
+     ],
+     "scoring": "2 t. za vse tri pravilno visoke stolpce, 1 t. za dva pravilno visoka stolpca.",
+     "mistake": "Napačno je narisati stolpec visok $45$ ali $60$ kvadratkov oziroma en kvadratek za vsakega učenca. Legenda pove, da en kvadratek pomeni $5$ učencev."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Koliko učencev obiskuje to šolo?",
+     "answer": "$470$ učencev",
+     "ways": [
+      {
+       "title": "Po korakih: seštej vse razrede",
+       "text": "**Podatki:** število učencev v razredih: $47$, $55$, $52$, $45$, $58$, $60$, $49$, $63$, $41$.\n\n**Iščemo:** skupno število učencev.\n\nSeštevaj po vrsti:\n\n$47 + 55 = 102$, $\\quad 102 + 52 = 154$, $\\quad 154 + 45 = 199$, $\\quad 199 + 58 = 257$,\n\n$257 + 60 = 317$, $\\quad 317 + 49 = 366$, $\\quad 366 + 63 = 429$, $\\quad 429 + 41 = 470$.\n\n**Odgovor:** Šolo obiskuje $470$ učencev."
+      },
+      {
+       "title": "Drugače: združi v ugodne pare",
+       "text": "Seštevance združi tako, da dobiš okrogla števila:\n\n$(47 + 63) + (55 + 45) + (52 + 58) + (60 + 41) + 49$\n\n$= 110 + 100 + 110 + 101 + 49 = 470$.\n\n**Z oceno:** v devetih razredih je povprečno okoli $50$ učencev, $9 \\cdot 50 = 450$. Rezultat $470$ je blizu, zato je smiseln."
+      }
+     ],
+     "scoring": "1 t. za pravilen postopek (seštevanje vseh devetih razredov), 1 t. za pravilen rezultat $470$.",
+     "mistake": "Pri seštevanju devetih števil je lahko izpustiti kakšno. Preveri, ali je seštevancev res devet, in naredi oceno."
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lupine K, L, M, N
+  - K je najbližje jedru
+  - elektronov je toliko kot $Z$
+- Največ elektronov
+  - K največ $2$, L največ $8$
+  - M največ $8$ pri prvih 20 elementih
+- Polnjenje od znotraj
+  - notranja lupina najprej polna
+  - Na: $2, 8, 1$
+  - napaka: enakomerna delitev $4, 4, 3$
+- Zunanji elektroni
+  - v zadnji zasedeni lupini
+  - odločajo o kemijskih lastnostih
+- Periodni sistem
+  - perioda = število lupin
+  - skupina = število zunanjih elektronov
+  - skupine 13 do 18: številka minus $10$
+- Polna zunanja lupina
+  - žlahtni plini: He $2$, Ne $2, 8$
+  - skoraj ne reagirajo

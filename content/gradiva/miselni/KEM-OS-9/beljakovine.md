@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Peptidna vez
+  - $\mathrm{{-}CO{-}NH{-}}$ med aminokislinama
+  - pri vsaki vezi odide voda
+- Veriga aminokislin
+  - $N = n - 1$ vezi
+  - trije glicini: $189\,\text{g/mol}$
+  - napaka: odšteti $n$ molekul vode
+- Zaporedje
+  - $20$ različnih aminokislin
+  - ena zamenjava spremeni beljakovino
+- Oblika
+  - vijačnica, klobčič
+  - encim deluje le s pravo obliko
+- Denaturacija in hidroliza
+  - toplota, kisline, alkohol: izgubi obliko
+  - hidroliza pretrga vezi (prebava)
+- Pomen
+  - kolagen, keratin, encimi, hemoglobin
+  - inzulin, protitelesa, $17\,\text{kJ/g}$
+- Dokaz
+  - biuretni reagent: vijolično

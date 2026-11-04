@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Ko je Willard Libby sredi 20. stoletja razvijal radiokarbonsko datiranje, je imel eno samo meritev: koliko $^{14}\mathrm{C}$ je še ostalo v vzorcu lesa ali kosti. Ključ je bil zakon, da vsak trenutek razpade enak delež preostalih jeder, torej je **hitrost spreminjanja** sorazmerna s številom jeder. Zakon, ki povezuje neznano funkcijo in njen odvod, je **diferencialna enačba**; njena rešitev ni število, ampak **funkcija** časa. Metodo je preveril na vzorcih znane starosti, med drugim na lesu iz egipčanskih grobnic. Enako obliko imajo zakoni, ki jih srečaš na dolgi vožnji: kofein iz kave na počivališču se iz krvi izloča po kinetiki prvega reda, hladilna tekočina parkiranega avta pa se ohlaja proti temperaturi zraka. Ko rešitev poznaš, napoveš prihodnost sistema ali izračunaš, kdaj bo dosežena želena vrednost.
+Ko je Willard Libby sredi 20. stoletja razvijal radiokarbonsko datiranje, je imel eno samo meritev: koliko $^{14}\mathrm{C}$ je še ostalo v vzorcu lesa ali kosti. Ključ je bil zakon, da vsak trenutek razpade enak delež preostalih jeder, torej je **hitrost spreminjanja** sorazmerna s številom jeder. Metodo je preveril na vzorcih znane starosti, med drugim na lesu iz egipčanskih grobnic. Zakon, ki povezuje neznano funkcijo in njen odvod, je **diferencialna enačba**; njena rešitev ni število, ampak **funkcija** časa. Enako obliko imajo zakoni, ki jih srečaš na dolgi vožnji: kofein iz kave na počivališču se iz krvi izloča po kinetiki prvega reda, hladilna tekočina parkiranega avta pa se ohlaja proti temperaturi zraka. Ko rešitev poznaš, napoveš prihodnost sistema ali izračunaš, kdaj bo dosežena želena vrednost.
 
 Obravnavamo dve najpomembnejši vrsti enačb prvega reda:
 
@@ -41,7 +41,7 @@ Strmejša: višje ko si, večji je naklon, zato se vzpon pospešuje (eksponentna
 
 $$y' = f(x, y).$$
 
-**Rešitev** na intervalu $I$ je odvedljiva funkcija $y$, za katero velja $y'(x) = f(x, y(x))$ za vse $x \in I$. Primer: $y = Ce^{2x}$ je rešitev enačbe $y' = 2y$ za vsak $C \in \mathbb{R}$, saj je $y' = 2Ce^{2x} = 2y$. Družini rešitev s poljubno konstanto pravimo **splošna rešitev**. Vsako rešitev preverimo tako, da jo vstavimo v enačbo.
+Naj bo $f$ definirana na množici $D \subseteq \mathbb{R}^2$. **Rešitev** na odprtem intervalu $I$ je odvedljiva funkcija $y\colon I \to \mathbb{R}$, za katero je $(x, y(x)) \in D$ in $y'(x) = f(x, y(x))$ za vse $x \in I$. Primer: $y = Ce^{2x}$ je rešitev enačbe $y' = 2y$ za vsak $C \in \mathbb{R}$, saj je $y' = 2Ce^{2x} = 2y$. Družini rešitev s poljubno konstanto pravimo **splošna rešitev**. Vsako rešitev preverimo tako, da jo vstavimo v enačbo.
 
 **2. Začetni problem.** Splošna rešitev enačbe prvega reda vsebuje eno konstanto. Da jo določimo, potrebujemo en podatek, **začetni pogoj** $y(x_0) = y_0$. Enačba skupaj z začetnim pogojem je **začetni problem** (Cauchyjeva naloga):
 
@@ -60,6 +60,10 @@ Postopek **ločitve spremenljivk**:
 3. Integriramo obe strani: $\displaystyle \int \frac{dy}{g(y)} = \int f(x)\, dx + C$. Konstanto pišemo le na eni strani.
 4. Če gre, izrazimo $y$; sicer ostane rešitev v **implicitni** obliki.
 5. Konstanto določimo iz začetnega pogoja.
+
+**Izrek (ločitev spremenljivk).** Naj bo $f$ zvezna na intervalu $I$, $g$ zvezna na intervalu $J$ in $g(y) \neq 0$ za vse $y \in J$; $F$ naj bo primitivna funkcija $f$, $G$ pa primitivna funkcija $\frac{1}{g}$. Potem je odvedljiva funkcija $y\colon I \to J$ rešitev enačbe $y' = f(x)g(y)$ natanko tedaj, ko je $G(y(x)) = F(x) + C$ za neko konstanto $C$.
+
+*Dokaz.* Po verižnem pravilu je $\frac{d}{dx}G(y(x)) = \frac{y'(x)}{g(y(x))}$. To je enako $f(x)$ natanko tedaj, ko je $y' = f(x)g(y)$, funkciji z enakim odvodom na intervalu pa se razlikujeta za konstanto. Zapis $\frac{dy}{g(y)} = f(x)\,dx$ je le okrajšava tega računa.
 
 :::premisli
 Zakaj moramo konstantne rešitve poiskati že na začetku, preden ločimo spremenljivke?
@@ -81,16 +85,18 @@ Leva stran je odvod produkta, zato integriramo:
 
 $$y(x) = e^{-P(x)}\left(\int q(x)\, e^{P(x)}\, dx + C\right).$$
 
-Enak rezultat da **variacija konstante**: v homogeni rešitvi $y = C e^{-P}$ konstanto nadomestimo s funkcijo $C(x)$, vstavimo v enačbo in dobimo $C'(x) = q\, e^{P}$.
+Enak rezultat da **variacija konstante**: v homogeni rešitvi $y = C e^{-P}$ konstanto nadomestimo s funkcijo $C(x)$. Iz $y = C(x)e^{-P}$ sledi $y' = C'e^{-P} - pCe^{-P}$, torej $y' + py = C'e^{-P}$. Enačba zahteva $C'e^{-P} = q$, zato je $C'(x) = q\, e^{P}$ in $C(x) = \int q\,e^{P}\,dx + C$.
 
-Zgradba rešitve je pomembna: **splošna rešitev nehomogene enačbe = splošna rešitev homogene + ena partikularna rešitev nehomogene**, $y = y_h + y_p$.
+**Izrek (zgradba rešitve).** Naj bosta $p$ in $q$ zvezni na intervalu $I$ in naj bo $y_p$ ena rešitev enačbe $y' + py = q$ na $I$. Potem je vsaka rešitev na $I$ oblike $y = y_p + Ce^{-P}$: **splošna rešitev nehomogene enačbe = splošna rešitev homogene + ena partikularna rešitev nehomogene**, $y = y_h + y_p$. Za $y_p$ je dobra katerakoli rešitev, ne nujno tista z danim začetnim pogojem. Za vsak $x_0 \in I$ in $y_0 \in \mathbb{R}$ ima začetni problem natanko eno rešitev, in to na celem $I$.
+
+*Dokaz.* Če je $y$ rešitev, je $u = y - y_p$ rešitev homogene enačbe $u' + pu = 0$. Tedaj je $(ue^{P})' = (u' + pu)e^{P} = 0$, zato je $ue^{P}$ na intervalu konstanta in $u = Ce^{-P}$. Ker je $e^{-P(x_0)} \neq 0$, začetni pogoj določi $C$ enolično.
 
 **5. Modeli rasti in razpada.** Najpreprostejši model pravi, da je hitrost spreminjanja količine sorazmerna s količino:
 
 $$\frac{dN}{dt} = kN \quad\Rightarrow\quad N(t) = N_0\, e^{kt}.$$
 
 - Za $k > 0$ je to **eksponentna rast** (bakterije v ugodnem okolju, obrestovanje). **Podvojitveni čas** je $t_2 = \dfrac{\ln 2}{k}$.
-- Za $k < 0$ pišemo $k = -\lambda$ in dobimo **eksponentni razpad** (radioaktivni razpad, kinetika prvega reda, izločanje zdravila iz krvi). **Razpolovni čas** je $t_{1/2} = \dfrac{\ln 2}{\lambda}$ in ni odvisen od začetne količine.
+- Za $k < 0$ pišemo $k = -\lambda$ in dobimo **eksponentni razpad** (radioaktivni razpad, kinetika prvega reda, izločanje zdravila iz krvi). **Razpolovni čas** je $t_{1/2} = \dfrac{\ln 2}{\lambda}$ in ni odvisen od začetne količine: iz $\frac{N_0}{2} = N_0e^{-\lambda t}$ sledi $e^{\lambda t} = 2$.
 
 Pri kemijski kinetiki prvega reda pišemo $\dfrac{dc}{dt} = -kc$ in $c(t) = c_0 e^{-kt}$, kjer je $k$ **konstanta hitrosti** z enoto $\mathrm{s^{-1}}$ ali $\mathrm{min^{-1}}$.
 
@@ -98,15 +104,19 @@ Bolj realističen model rasti je **logistična enačba**
 
 $$\frac{dN}{dt} = rN\left(1 - \frac{N}{K}\right),$$
 
-kjer je $K$ **nosilnost okolja**. Je ločljiva; rešitev je $N(t) = \dfrac{K}{1 + \left(\frac{K}{N_0} - 1\right)e^{-rt}}$. Na začetku raste skoraj eksponentno, nato se približuje $K$.
+kjer je $K$ **nosilnost okolja**. Je ločljiva s konstantnima rešitvama $N = 0$ in $N = K$. Za $0 < N < K$ ločimo spremenljivki in uporabimo razcep $\frac{K}{N(K - N)} = \frac{1}{N} + \frac{1}{K - N}$:
+
+$$\int \frac{K\,dN}{N(K - N)} = \ln\frac{N}{K - N} = rt + C \quad\Rightarrow\quad \frac{N}{K - N} = \frac{N_0}{K - N_0}\,e^{rt} \quad\Rightarrow\quad N(t) = \frac{K}{1 + \left(\frac{K}{N_0} - 1\right)e^{-rt}}.$$
+
+Na začetku raste skoraj eksponentno, nato se približuje $K$. Hitrost $rN\left(1 - \frac{N}{K}\right)$ je kvadratna funkcija $N$ z ničlama $0$ in $K$, zato je največja, $\frac{rK}{4}$, pri $N = \frac{K}{2}$.
 
 **Newtonov zakon ohlajanja** $\dfrac{dT}{dt} = -k(T - T_\mathrm{o})$, kjer je $T_\mathrm{o}$ temperatura okolice, je linearen. Rešitev je $T(t) = T_\mathrm{o} + (T_0 - T_\mathrm{o})e^{-kt}$: razlika do okolice razpada eksponentno. Linearne so tudi **enačbe mešanja** (koliko soli je v posodi, v katero priteka raztopina) in enačba za tok v vezju z uporom in tuljavo.
 
 **6. Obstoj in enoličnost rešitve.** Ali ima začetni problem sploh rešitev in ali je ena sama? Odgovor da izrek o obstoju in enoličnosti (Picardov izrek):
 
-> Če sta $f$ in $\dfrac{\partial f}{\partial y}$ zvezni na nekem pravokotniku okoli točke $(x_0, y_0)$, ima začetni problem $y' = f(x, y)$, $y(x_0) = y_0$ na nekem intervalu okoli $x_0$ natanko eno rešitev.
+> Naj bosta $f$ in $\dfrac{\partial f}{\partial y}$ zvezni na pravokotniku $R = [x_0 - a, x_0 + a] \times [y_0 - b, y_0 + b]$, $a, b > 0$. Potem obstaja $h > 0$, da ima začetni problem $y' = f(x, y)$, $y(x_0) = y_0$ na intervalu $[x_0 - h, x_0 + h]$ natanko eno rešitev.
 
-Izrek zagotavlja rešitev le **lokalno**, na nekem intervalu okoli $x_0$. Rešitev lahko »pobegne v neskončnost« v končnem času. Za linearno enačbo z zveznima $p$ in $q$ na intervalu $I$ pa rešitev obstaja in je enolična na **celem** $I$. Ko pogoji izreka niso izpolnjeni, ima lahko začetni problem več rešitev (zgled je v razdelku Bolj natančno).
+Izrek zagotavlja rešitev le **lokalno**, na nekem intervalu okoli $x_0$. Rešitev lahko »pobegne v neskončnost« v končnem času, kot bomo videli v Primeru 2. Za linearno enačbo z zveznima $p$ in $q$ na intervalu $I$ pa rešitev obstaja in je enolična na **celem** $I$. Pogoji so zadostni, ne potrebni. Ko niso izpolnjeni, ima lahko začetni problem več rešitev: $y' = 3y^{2/3}$, $y(0) = 0$ rešita $y \equiv 0$ in $y = x^3$, ker je $f = 3y^{2/3}$ sicer zvezna, $\frac{\partial f}{\partial y} = 2y^{-1/3}$ pa pri $y = 0$ ne obstaja.
 
 ## Rešeni primeri
 
@@ -155,13 +165,13 @@ Ločljiva enačba: $\int \frac{dy}{g(y)} = \int f(x)\, dx + C$. Tabelni integral
 
 ### Primer 3 (težji)
 
-V posodi je $100\,\mathrm{L}$ vode, v kateri je raztopljenih $5\,\mathrm{kg}$ soli. V posodo priteka slanica z masno koncentracijo $0{,}2\,\mathrm{kg/L}$ s pretokom $4\,\mathrm{L/min}$, dobro premešana raztopina pa odteka s pretokom $2\,\mathrm{L/min}$. Koliko soli je v posodi po $25\,\mathrm{min}$ in kolikšna je takrat masna koncentracija?
+V posodi je $100\,\mathrm{L}$ vode, v kateri je raztopljenih $5\,\mathrm{kg}$ soli. V posodo priteka slanica z masno koncentracijo $0{,}2\,\mathrm{kg/L}$ s pretokom $4\,\mathrm{L/min}$, dobro premešana raztopina pa odteka s pretokom $2\,\mathrm{L/min}$. Posoda drži $200\,\mathrm{L}$. Koliko soli je v posodi po $25\,\mathrm{min}$ in kolikšna je takrat masna koncentracija? Kdaj koncentracija doseže $0{,}1\,\mathrm{kg/L}$ in ali se to zgodi, preden posoda začne prelivati?
 
-**Podatki:** $V_0 = 100\,\mathrm{L}$, $m_0 = 5\,\mathrm{kg}$, koncentracija dotoka $\gamma_\mathrm{d} = 0{,}2\,\mathrm{kg/L}$, dotok $4\,\mathrm{L/min}$, odtok $2\,\mathrm{L/min}$, $t = 25\,\mathrm{min}$
-**Iščemo:** maso soli $m(25\,\mathrm{min})$ in masno koncentracijo $\gamma(25\,\mathrm{min})$
+**Podatki:** $V_0 = 100\,\mathrm{L}$, $m_0 = 5\,\mathrm{kg}$, koncentracija dotoka $\gamma_\mathrm{d} = 0{,}2\,\mathrm{kg/L}$, dotok $4\,\mathrm{L/min}$, odtok $2\,\mathrm{L/min}$, $t = 25\,\mathrm{min}$, prostornina posode $200\,\mathrm{L}$
+**Iščemo:** maso soli $m(25\,\mathrm{min})$, masno koncentracijo $\gamma(25\,\mathrm{min})$ in čas $t^*$, ko je $\gamma = 0{,}1\,\mathrm{kg/L}$
 
 :::formula
-Bilanca: $\frac{dm}{dt} = (\text{dotok soli}) - (\text{odtok soli})$. Linearna enačba $m' + p(t)\, m = q(t)$ z integrirajočim množiteljem $\mu = e^{\int p\, dt}$: $(\mu m)' = \mu q$.
+Bilanca: $\frac{dm}{dt} = (\text{dotok soli}) - (\text{odtok soli})$. Linearna enačba $m' + p(t)\, m = q(t)$ z integrirajočim množiteljem $\mu = e^{\int p\, dt}$: $(\mu m)' = \mu q$. Koncentracija $\gamma = \frac{m}{V}$.
 :::
 
 **Rešitev:**
@@ -174,8 +184,11 @@ Bilanca: $\frac{dm}{dt} = (\text{dotok soli}) - (\text{odtok soli})$. Linearna e
 6. Začetni pogoj $m(0) = 5$: $50 \cdot 5 = 0{,}4 \cdot 2500 + C$, $250 = 1000 + C$, $C = -750$.
 7. Rešitev: $m(t) = 0{,}4\,(50 + t) - \frac{750}{50 + t}$.
 8. Pri $t = 25$: $m = 0{,}4 \cdot 75 - \frac{750}{75} = 30 - 10 = 20\,\mathrm{kg}$. Prostornina je $V = 150\,\mathrm{L}$, koncentracija $\gamma = \frac{20\,\mathrm{kg}}{150\,\mathrm{L}} = 0{,}133\,\mathrm{kg/L}$.
-9. Preizkus smisla: koncentracija je narasla od $0{,}05\,\mathrm{kg/L}$ proti $0{,}2\,\mathrm{kg/L}$ (koncentraciji dotoka), a je še ni dosegla.
-10. Odgovor: po $25\,\mathrm{min}$ je v posodi $20\,\mathrm{kg}$ soli, masna koncentracija je $0{,}133\,\mathrm{kg/L}$.
+9. Koncentracija kot funkcija časa (delimo z $V = 2(50 + t)$): $\gamma(t) = \frac{m(t)}{V(t)} = 0{,}2 - \frac{375}{(50 + t)^2}$ v $\mathrm{kg/L}$. Preizkus: $\gamma(0) = 0{,}2 - 0{,}15 = 0{,}05$ in $\gamma(25) = 0{,}2 - 0{,}0667 = 0{,}133$.
+10. Pogoj $\gamma = 0{,}1$: $\frac{375}{(50 + t)^2} = 0{,}1$, $(50 + t)^2 = 3750$, $50 + t = 61{,}24$ (negativni koren odpade, ker je $50 + t > 0$), torej $t^* = 11{,}2\,\mathrm{min}$.
+11. Posoda je polna, ko je $100 + 2t = 200$, torej pri $t = 50\,\mathrm{min}$. Model velja do tedaj, zato sta $t = 25\,\mathrm{min}$ in $t^* = 11{,}2\,\mathrm{min}$ v njegovem območju.
+12. Preizkus smisla: $\gamma$ narašča od $0{,}05\,\mathrm{kg/L}$ proti $0{,}2\,\mathrm{kg/L}$ (koncentraciji dotoka), a je ne doseže.
+13. Odgovor: po $25\,\mathrm{min}$ je v posodi $20\,\mathrm{kg}$ soli, masna koncentracija je $0{,}133\,\mathrm{kg/L}$; koncentracija $0{,}1\,\mathrm{kg/L}$ je dosežena po $11{,}2\,\mathrm{min}$, dolgo preden posoda pri $50\,\mathrm{min}$ začne prelivati.
 
 ### Primer 4 – zdaj ti
 
@@ -218,50 +231,73 @@ Iz $T(0) = 90$ dobimo $90 = 10 + C$, torej $C = 80$. Eksponent je $kt = 0{,}05 \
 - Rast in razpad: $N' = kN$, $N = N_0 e^{kt}$; $t_{1/2} = \frac{\ln 2}{\lambda}$, $t_2 = \frac{\ln 2}{k}$. Logistični model, Newtonov zakon ohlajanja, enačbe mešanja.
 - Picardov izrek: če sta $f$ in $\partial f/\partial y$ zvezni, ima začetni problem lokalno natanko eno rešitev.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo diferencialne enačbe prvega reda, njene rešitve na intervalu in začetnega problema;
+- izrek o ločitvi spremenljivk z dokazom po verižnem pravilu in zakaj konstantne rešitve iščemo posebej;
+- izpeljavo splošne rešitve linearne enačbe z integrirajočim množiteljem ali variacijo konstante ter izrek $y = y_h + y_p$ z dokazom;
+- Picardov izrek z vsemi pogoji in protiprimer $y' = 3y^{2/3}$, $y(0) = 0$;
+- izpeljavo razpolovnega časa in rešitve logistične enačbe.
+
+### Naloga 1
+
+Biomasa kvasovk v šaržnem bioreaktorju raste po logističnem modelu $\frac{dX}{dt} = rX\left(1 - \frac{X}{K}\right)$. Na začetku je $X_0 = 1{,}0\,\mathrm{g/L}$, nosilnost je $K = 9{,}0\,\mathrm{g/L}$, po $2{,}0\,\mathrm{h}$ pa izmerijo $3{,}0\,\mathrm{g/L}$. Določi $r$, čas, ko biomasa doseže $90\,\%$ nosilnosti, ter trenutek in velikost največje hitrosti rasti.
+
+**Rešitev:**
+
+1. Rešitev logistične enačbe: $X(t) = \frac{K}{1 + (K/X_0 - 1)e^{-rt}} = \frac{9{,}0}{1 + 8e^{-rt}}$, ker je $\frac{K}{X_0} - 1 = 8$.
+2. Iz $X(2) = 3{,}0$: $1 + 8e^{-2r} = 3$, $e^{-2r} = \frac{1}{4}$, torej $r = \frac{\ln 4}{2} = \ln 2 = 0{,}693\,\mathrm{h^{-1}}$.
+3. $90\,\%$ nosilnosti je $8{,}1\,\mathrm{g/L}$: $1 + 8e^{-rt} = \frac{9{,}0}{8{,}1} = \frac{10}{9}$, zato $e^{-rt} = \frac{1}{72}$.
+4. $t = \frac{\ln 72}{\ln 2} = \frac{4{,}277}{0{,}693}\,\mathrm{h} = 6{,}17\,\mathrm{h}$.
+5. Hitrost $rX(1 - X/K)$ je največja pri $X = \frac{K}{2} = 4{,}5\,\mathrm{g/L}$ (teme parabole z ničlama $0$ in $K$).
+6. Trenutek: $1 + 8e^{-rt} = 2$, $e^{-rt} = \frac{1}{8}$, $t = \frac{\ln 8}{\ln 2} = 3{,}0\,\mathrm{h}$.
+7. Največja hitrost: $\frac{rK}{4} = \frac{0{,}693 \cdot 9{,}0}{4} = 1{,}56\,\mathrm{g/(L\,h)}$.
+8. Odgovor: $r = \ln 2 = 0{,}693\,\mathrm{h^{-1}}$; $90\,\%$ nosilnosti je doseženih po $6{,}17\,\mathrm{h}$; najhitreje raste po $3{,}0\,\mathrm{h}$, s hitrostjo $1{,}56\,\mathrm{g/(L\,h)}$.
+
+### Naloga 2
+
+Natančno navedi izrek o obstoju in enoličnosti rešitve začetnega problema. Utemelji, ali ga lahko uporabiš za začetna problema (a) $y' = 3y^{2/3}$, $y(0) = 0$ in (b) $y' = 3y^{2/3}$, $y(1) = 1$. Pri (a) pokaži dve različni rešitvi, pri (b) poišči rešitev.
+
+**Rešitev:**
+
+1. Izrek: naj bosta $f$ in $\frac{\partial f}{\partial y}$ zvezni na pravokotniku $R = [x_0 - a, x_0 + a] \times [y_0 - b, y_0 + b]$; potem obstaja $h > 0$, da ima začetni problem na $[x_0 - h, x_0 + h]$ natanko eno rešitev.
+2. Tu je $f(x, y) = 3\sqrt[3]{y^2}$ zvezna na vsej ravnini, $\frac{\partial f}{\partial y} = 2y^{-1/3}$ pa obstaja le za $y \neq 0$.
+3. (a) Vsak pravokotnik okoli $(0, 0)$ vsebuje točke z $y = 0$, kjer $\frac{\partial f}{\partial y}$ ne obstaja, zato pogoji izreka niso izpolnjeni in izrek o enoličnosti nič ne pove.
+4. Rešitvi: $y \equiv 0$, ker je $y' = 0 = 3 \cdot 0^{2/3}$, in $y = x^3$, ker je $y' = 3x^2 = 3(x^3)^{2/3}$; obe zadoščata $y(0) = 0$.
+5. (b) Na pravokotniku $[0{,}5;\ 1{,}5] \times [0{,}5;\ 1{,}5]$ je $y > 0$, zato sta $f$ in $2y^{-1/3}$ zvezni: izrek velja.
+6. Ločimo spremenljivki: $\int \frac{dy}{3y^{2/3}} = \int dx$, $y^{1/3} = x + C$; iz $y(1) = 1$ je $C = 0$.
+7. Odgovor: pri (a) pogoj izreka ni izpolnjen in problem ima vsaj dve rešitvi; pri (b) je blizu $x = 1$ edina rešitev $y = x^3$.
+
 ## Drugače: Na sliki
 
-Enačba $y' = f(x, y)$ vsaki točki ravnine pripiše **naklon**. Če v mnogo točkah narišemo kratke daljice s tem naklonom, dobimo **smerno polje**. Rešitve so krivulje, ki se v vsaki točki dotikajo daljic.
+Enačba $y' = f(x, y)$ vsaki točki pripiše **naklon**; kratke daljice s temi nakloni tvorijo **smerno polje**, rešitve pa so krivulje, ki se jih povsod dotikajo. Pri $y' = -y$ so daljice nad osjo $x$ nagnjene navzdol, pod njo navzgor, zato se vse rešitve $y = Ce^{-x}$ približujejo osi $x$, ki je sama rešitev ($C = 0$); začetni pogoj izbere krivuljo skozi dano točko.
 
-Pri $y' = -y$ so daljice nad osjo $x$ nagnjene navzdol, pod njo navzgor, na osi $x$ pa vodoravne. Vse rešitve $y = Ce^{-x}$ se zato približujejo osi $x$, ki je sama rešitev ($C = 0$). Začetni pogoj izbere eno krivuljo: tisto, ki gre skozi dano točko.
+Kjer velja Picardov izrek, se rešitvi ne moreta sekati (v presečišču bi imel začetni problem dve rešitvi). Pri logistični enačbi ležijo med vodoravnima rešitvama $N = 0$ in $N = K$ naraščajoče krivulje; tiste, ki začnejo pod $K/2$, imajo obliko črke S.
 
-Ker se po Picardovem izreku rešitvi ne moreta sekati (v presečišču bi imel začetni problem dve rešitvi), krivulje rešitev **lepo prekrijejo** ravnino, kot plasti v zloženem papirju. Pri logistični enačbi vidimo dve vodoravni rešitvi, $N = 0$ in $N = K$; krivulje med njima naraščajo in se od spodaj približujejo premici $N = K$; tiste, ki začnejo pod $K/2$, imajo obliko črke S.
+## Drugače: Uporaba v stroki
 
-## Drugače: Iz vsakdanjega življenja
+**Določanje reda reakcije.** Koncentracijo reaktanta spremljaš spektrofotometrično. Ker je $\ln c = \ln c_0 - kt$, točke $(t, \ln c)$ pri reakciji prvega reda ležijo na premici z naklonom $-k$; z linearno regresijo dobiš $k$ in $t_{1/2}$. Ukrivljen graf pomeni drug red.
 
-**Bakterije.** Kultura bakterij ima podvojitveni čas $20\,\mathrm{min}$. Konstanta rasti je $k = \frac{\ln 2}{20\,\mathrm{min}} = 0{,}0347\,\mathrm{min^{-1}}$. Iz $500$ bakterij jih v dveh urah (šest podvojitev) nastane $500 \cdot 2^6 = 32\,000$. Ko zmanjka hranil, rast upočasni, kar bolje opiše logistični model.
-
-**Zdravila.** Koncentracija zdravila v krvni plazmi po injekciji pogosto pada po kinetiki prvega reda. Iz razpolovnega časa zdravnik določi, kako pogosto je treba odmerek ponoviti.
-
-**Radiokarbonsko datiranje.** Izotop $^{14}\mathrm{C}$ ima razpolovni čas približno $5730$ let. Iz razmerja med ostankom $^{14}\mathrm{C}$ in začetno vrednostjo izračunamo starost organskih ostankov: $t = \frac{t_{1/2}}{\ln 2} \ln\frac{N_0}{N}$.
-
-**Gozdarstvo in ribištvo.** Logistični model opisuje rast populacije v omejenem okolju. Največja hitrost rasti je pri $N = \frac{K}{2}$, kar se uporablja pri načrtovanju trajnostnega izlova ali sečnje.
-
-**Električni krog.** Pri polnjenju kondenzatorja v vezju z uporom velja $RC\,\frac{dU}{dt} + U = U_0$, kar je linearna enačba z rešitvijo $U(t) = U_0\left(1 - e^{-t/(RC)}\right)$. Produkt $RC$ je časovna konstanta.
+**Izpiranje pretočnega reaktorja.** V idealno premešan reaktor s prostornino $V$ priteka čisto topilo s pretokom $Q$. Bilanca $V\frac{dc}{dt} = -Qc$ da $c = c_0e^{-t/\tau}$ s časom zadrževanja $\tau = \frac{V}{Q}$. Pri $V = 2{,}0\,\mathrm{m^3}$ in $Q = 0{,}10\,\mathrm{m^3/min}$ je $\tau = 20\,\mathrm{min}$; po $60\,\mathrm{min}$ ostane $e^{-3} \approx 5\,\%$ začetne koncentracije.
 
 ## Drugače: Korak za korakom s številkami
 
-Čaj s temperaturo $90\,^\circ\mathrm{C}$ postavimo v sobo s $20\,^\circ\mathrm{C}$. Po $5\,\mathrm{min}$ ima $70\,^\circ\mathrm{C}$. Kdaj bo imel $40\,^\circ\mathrm{C}$?
+Vzorec s $90\,^\circ\mathrm{C}$ postavimo v prostor s $20\,^\circ\mathrm{C}$; po $5\,\mathrm{min}$ ima $70\,^\circ\mathrm{C}$. Kdaj bo imel $40\,^\circ\mathrm{C}$?
 
-1. **Model:** $\frac{dT}{dt} = -k(T - 20)$. Rešitev: $T(t) = 20 + 70\, e^{-kt}$ (začetna razlika do okolice je $90 - 20 = 70$).
-2. **Konstanta iz meritve:** $70 = 20 + 70e^{-5k}$, torej $e^{-5k} = \frac{50}{70} = \frac{5}{7}$.
-3. **Logaritmiramo:** $k = \frac{1}{5}\ln\frac{7}{5} = \frac{0{,}3365}{5} = 0{,}0673\,\mathrm{min^{-1}}$.
-4. **Pogoj za $40\,^\circ\mathrm{C}$:** $40 = 20 + 70e^{-kt}$, torej $e^{-kt} = \frac{20}{70} = \frac{2}{7}$.
-5. **Čas:** $t = \frac{\ln 3{,}5}{k} = \frac{1{,}2528}{0{,}0673}\,\mathrm{min} = 18{,}6\,\mathrm{min}$.
-6. **Preizkus smisla:** v prvih petih minutah se je razlika do okolice zmanjšala s $70$ na $50$ stopinj, kasneje se čaj ohlaja počasneje. Pri $t = 10\,\mathrm{min}$ je $T = 20 + 70 \cdot \left(\frac{5}{7}\right)^2 = 55{,}7\,^\circ\mathrm{C}$, kar je smiselno med $70$ in $40$.
+1. **Model:** $\frac{dT}{dt} = -k(T - 20)$, torej $T(t) = 20 + 70\, e^{-kt}$.
+2. **Konstanta:** $70 = 20 + 70e^{-5k}$, $e^{-5k} = \frac{5}{7}$, $k = \frac{1}{5}\ln\frac{7}{5} = \frac{0{,}3365}{5} = 0{,}0673\,\mathrm{min^{-1}}$.
+3. **Pogoj:** $40 = 20 + 70e^{-kt}$, $e^{-kt} = \frac{2}{7}$, $t = \frac{\ln 3{,}5}{k} = \frac{1{,}2528}{0{,}0673}\,\mathrm{min} = 18{,}6\,\mathrm{min}$.
+4. **Preizkus:** pri $t = 10\,\mathrm{min}$ je $T = 20 + 70 \cdot \left(\frac{5}{7}\right)^2 = 55{,}7\,^\circ\mathrm{C}$, med $70$ in $40$.
 
 ## Drugače: Bolj natančno
-
-**Utemeljitev ločitve spremenljivk.** Naj bo $y$ rešitev enačbe $y' = f(x)g(y)$ z $g(y(x)) \neq 0$. Naj bo $G$ primitivna funkcija $\frac{1}{g}$ in $F$ primitivna funkcija $f$. Po verižnem pravilu je $\frac{d}{dx} G(y(x)) = \frac{y'(x)}{g(y(x))} = f(x)$, torej $G(y(x)) = F(x) + C$. Zapis $\frac{dy}{g(y)} = f(x)\,dx$ je le priročna okrajšava tega računa.
-
-**Linearna enačba ima vse rešitve oblike $y_h + y_p$.** Če sta $y_1$ in $y_2$ rešitvi enačbe $y' + py = q$, je razlika $u = y_1 - y_2$ rešitev homogene enačbe $u' + pu = 0$. Ta pa je (iz $(ue^{P})' = 0$ in izreka, da ima funkcija z ničelnim odvodom na intervalu konstantno vrednost) oblike $u = Ce^{-P}$.
 
 **Picardov izrek natančneje.** Naj bo $f$ zvezna na pravokotniku $R = [x_0 - a, x_0 + a] \times [y_0 - b, y_0 + b]$ in naj zadošča **Lipschitzovemu pogoju** po $y$: obstaja $L$, da je $|f(x, y_1) - f(x, y_2)| \le L\,|y_1 - y_2|$ za vse točke iz $R$. (Zadošča, da je $\partial f/\partial y$ zvezna na $R$; tedaj je $L = \max|\partial f/\partial y|$ po Lagrangeovem izreku.) Naj bo $M = \max_R |f|$ in $h = \min(a, b/M)$. Tedaj ima začetni problem natanko eno rešitev na $[x_0 - h, x_0 + h]$.
 
 *Ideja dokaza.* Začetni problem je enakovreden integralski enačbi $y(x) = y_0 + \int_{x_0}^x f(t, y(t))\, dt$. Zaporedje **Picardovih približkov** $y_0(x) = y_0$, $y_{n+1}(x) = y_0 + \int_{x_0}^x f(t, y_n(t))\, dt$ ostane v $R$ in zaradi Lipschitzovega pogoja velja ocena $|y_{n+1} - y_n| \le \frac{M L^n |x - x_0|^{n+1}}{(n+1)!}$. Vrsta $\sum (y_{n+1} - y_n)$ zato enakomerno konvergira k zvezni funkciji, ki reši integralsko enačbo. Enoličnost sledi iz Gronwallove neenakosti. Pri $y' = y$, $y(0) = 1$ dajo Picardovi približki ravno delne vsote vrste $1 + x + \frac{x^2}{2!} + \dots$ za $e^x$.
 
-**Kdaj enoličnost odpove.** Začetni problem $y' = 3y^{2/3}$, $y(0) = 0$ ima rešitvi $y \equiv 0$ in $y = x^3$ (pa še neskončno »zlepljenih«). Funkcija $f(y) = 3y^{2/3}$ je zvezna, njen odvod $2y^{-1/3}$ pa pri $y = 0$ ne obstaja, zato Lipschitzov pogoj ni izpolnjen.
-
-**Globalni obstoj.** Pri Primeru 2 je $f = 2x(1 + y^2)$ gladka na vsej ravnini, pa rešitev vseeno obstaja le na omejenem intervalu, ker $f$ raste kvadratno v $y$. Če $f$ raste največ linearno v $y$ (na primer pri linearnih enačbah), rešitev obstaja na celem intervalu, kjer so koeficienti zvezni.
+**Globalni obstoj.** V Primeru 2 je $f = 2x(1 + y^2)$ gladka na vsej ravnini, rešitev pa obstaja le na omejenem intervalu, ker $f$ raste kvadratno v $y$. Če $f$ raste največ linearno v $y$, rešitev obstaja na celem intervalu zveznosti koeficientov.
 
 ## Preveri se
 
@@ -343,5 +379,10 @@ T | temperatura telesa | T(t) = T_\mathrm{o} + (T_0 - T_\mathrm{o})e^{-kt} | °C
 T' | hitrost spreminjanja temperature | | °C/min | Newtonov zakon ohlajanja
 T_\mathrm{o} | temperatura okolice | | °C
 m | masa soli v posodi | | kg
+V | prostornina raztopine v posodi | V(t) = 100 + 2t | L | v Uporabi v stroki prostornina reaktorja
+\gamma | masna koncentracija soli | \gamma = \frac{m}{V} | kg/L | γ_d je koncentracija dotoka
+X | masna koncentracija biomase | | g/L | Naloga 1, logistični model
+Q | prostorninski pretok | | m³/min
+\tau | čas zadrževanja | \tau = \frac{V}{Q} | min
 m' | hitrost spreminjanja mase soli | | kg/min | dotok soli minus odtok soli
 :::

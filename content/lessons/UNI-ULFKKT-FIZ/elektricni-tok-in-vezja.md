@@ -24,13 +24,13 @@ O toku se hitro ustalijo štiri mamljive predstave. Vse so napačne ali vsaj nep
 
 $$I = \frac{\mathrm{d}Q}{\mathrm{d}t}, \qquad [I] = \mathrm{A} = \mathrm{C/s}.$$
 
-Naboj označujemo s $Q$, osnovni naboj pa z $e_0 = 1{,}602 \cdot 10^{-19}\,\mathrm{C}$. Dogovorjena smer toka je smer gibanja pozitivnih nosilcev; v kovinah se elektroni gibljejo v nasprotni smeri. **Gostota toka** je tok na enoto preseka, $j = I/S$. Če je v prostornini $n$ nosilcev z nabojem $e_0$, ki se v povprečju premikajo z **hitrostjo potovanja** $v$, velja
+Naboj označujemo s $Q$, osnovni naboj pa z $e_0 = 1{,}602 \cdot 10^{-19}\,\mathrm{C}$. Dogovorjena smer toka je smer gibanja pozitivnih nosilcev; v kovinah se elektroni gibljejo v nasprotni smeri. **Gostota toka** je tok na enoto preseka, $j = I/S$. Če je v enoti prostornine $n$ nosilcev z nabojem $e_0$, ki se v povprečju premikajo z **hitrostjo potovanja** $v$, velja
 
 $$I = n e_0 v S.$$
 
-Hitrost potovanja je presenetljivo majhna (delčki milimetra na sekundo); tok pa steče takoj, ker se električno polje po vodniku razširi skoraj s svetlobno hitrostjo.
+*Izpeljava.* V času $\mathrm{d}t$ preidejo presek vsi nosilci v valju s presekom $S$ in dolžino $v\,\mathrm{d}t$, torej $\mathrm{d}Q = ne_0Sv\,\mathrm{d}t$. Hitrost potovanja je presenetljivo majhna (delčki milimetra na sekundo); tok pa steče takoj, ker se električno polje po vodniku razširi skoraj s svetlobno hitrostjo.
 
-**2. Ohmov zakon in upor.** Za mnoge snovi pri stalni temperaturi je tok sorazmeren z napetostjo:
+**2. Ohmov zakon in upor.** Za mnoge snovi (ohmske vodnike) pri stalni temperaturi je tok sorazmeren z napetostjo:
 
 $$U = RI, \qquad [R] = \Omega = \mathrm{V/A}.$$
 
@@ -38,7 +38,7 @@ Upor žice z dolžino $l$ in presekom $S$ je
 
 $$R = \zeta\,\frac{l}{S},$$
 
-kjer je $\zeta$ **specifični upor** snovi (baker: $1{,}7 \cdot 10^{-8}\,\Omega\,\mathrm{m}$). Obratna vrednost $\sigma = 1/\zeta$ je **specifična prevodnost**. Pri kovinah upor s temperaturo narašča, približno $R = R_0(1 + \alpha\,\Delta T)$, pri polprevodnikih in elektrolitih pa pada. Ohmov zakon ni naravni zakon za vse snovi: za diodo, žarnico z žarilno nitko in plinsko razelektritev ne velja.
+kjer je $\zeta$ **specifični upor** snovi (baker: $1{,}7 \cdot 10^{-8}\,\Omega\,\mathrm{m}$). Obratna vrednost $\sigma = 1/\zeta$ je **specifična prevodnost**. *Izpeljava.* V ohmski snovi velja Ohmov zakon v točki, $\vec{j} = \sigma\vec{E}$. V homogeni žici je $E = U/l$ in $j = I/S$, zato $I/S = \sigma U/l$ oziroma $U = \dfrac{l}{\sigma S}\,I = \zeta\dfrac{l}{S}\,I$. Pri kovinah upor s temperaturo narašča, približno $R = R_0(1 + \alpha\,\Delta T)$, pri polprevodnikih in elektrolitih pa pada. Ohmov zakon ni naravni zakon za vse snovi: za diodo, žarnico z žarilno nitko in plinsko razelektritev ne velja.
 
 **3. Moč.** Ko naboj $\mathrm{d}Q$ preide napetost $U$, električno polje opravi delo $U\,\mathrm{d}Q$. Moč je zato
 
@@ -52,9 +52,11 @@ Na uporu se ta moč pretvori v toploto (Joulova toplota).
 
 $$U = U_g - IR_n.$$
 
+Z zunanjim uporom $R$ je $U = RI$, zato $I = U_g/(R + R_n)$.
+
 Pri kratkem stiku ($R = 0$) teče največji tok $U_g/R_n$, ki baterijo hitro segreje.
 
-**5. Zaporedna in vzporedna vezava.** Pri **zaporedni** vezavi teče skozi vse upore isti tok, napetosti se seštejejo, zato je $R = R_1 + R_2 + \dots$ Pri **vzporedni** vezavi je na vseh uporih ista napetost, tokovi se seštejejo, zato je $1/R = 1/R_1 + 1/R_2 + \dots$ Nadomestni upor vzporedne vezave je vedno manjši od najmanjšega posameznega upora.
+**5. Zaporedna in vzporedna vezava.** Pri **zaporedni** vezavi teče skozi vse upore isti tok, napetosti se seštejejo, zato je $R = R_1 + R_2 + \dots$ Pri **vzporedni** vezavi je na vseh uporih ista napetost, tokovi se seštejejo, zato je $1/R = 1/R_1 + 1/R_2 + \dots$ *Dokaz* sledi iz Kirchhoffovih zakonov (točka 6): brez razcepov je po vozliščnem zakonu tok povsod isti in $U = \sum IR_k = I\sum R_k$; pri vzporedni vezavi je po zančnem zakonu napetost na vseh vejah enaka in $I = \sum U/R_k = U\sum 1/R_k$. Nadomestni upor vzporedne vezave je vedno manjši od najmanjšega posameznega upora.
 
 :::premisli
 Žarnici z uporoma $R$ in $2R$ priključimo vzporedno na isto napetost. Katera sveti močneje? Kaj pa, če ju vežemo zaporedno?
@@ -64,10 +66,10 @@ Vzporedno imata isto napetost, zato je $P = U^2/R$ večja pri manjšem uporu: mo
 
 ### Kirchhoffova zakona
 
-**6. Kirchhoffova zakona.** Vezja z več viri ali s prepletenimi vejami ne moremo vedno poenostaviti na zaporedne in vzporedne dele. Takrat uporabimo dva splošna zakona.
+**6. Kirchhoffova zakona.** Vezja z več viri ali s prepletenimi vejami ne moremo vedno poenostaviti na zaporedne in vzporedne dele. Takrat uporabimo dva splošna zakona, ki veljata za **stacionarne** (s časom nespremenljive ali počasi spremenljive) tokove v vezjih brez tuljav (induktivnosti).
 
-- **Prvi (vozliščni) zakon:** vsota tokov, ki pritekajo v vozlišče, je enaka vsoti tokov, ki iz njega odtekajo, $\sum I_k = 0$ (pritekajoče štejemo pozitivno, odtekajoče negativno). To je ohranitev naboja: v vozlišču se naboj ne nabira.
-- **Drugi (zančni) zakon:** vsota gonilnih napetosti v sklenjeni zanki je enaka vsoti padcev napetosti na uporih, $\sum U_{g,k} = \sum R_kI_k$. To je ohranitev energije: naboj, ki obkroži zanko, se vrne na isti potencial.
+- **Prvi (vozliščni) zakon:** vsota tokov, ki pritekajo v vozlišče, je enaka vsoti tokov, ki iz njega odtekajo, $\sum I_k = 0$ (pritekajoče štejemo pozitivno, odtekajoče negativno). To je ohranitev naboja: v vozlišču se naboj ne nabira, zato je naboj, ki v času $\mathrm{d}t$ priteče, enak naboju, ki odteče.
+- **Drugi (zančni) zakon:** vsota gonilnih napetosti v sklenjeni zanki je enaka vsoti padcev napetosti na uporih, $\sum U_{g,k} = \sum R_kI_k$. To je ohranitev energije: pri stacionarnih tokovih je električno polje potencialno, $\oint\vec{E}\cdot\mathrm{d}\vec{s} = 0$, zato se naboj, ki obkroži zanko, vrne na isti potencial.
 
 Postopek: (a) vsaki veji izberi smer toka (če je izbira napačna, dobiš negativen tok); (b) zapiši vozliščne enačbe (za $N$ vozlišč je neodvisnih $N - 1$); (c) zapiši zančne enačbe za toliko neodvisnih zank, da imaš toliko enačb, kolikor je neznanih tokov; (d) reši sistem linearnih enačb. Pri zančnem zakonu gonilno napetost štejemo pozitivno, če nas smer obhoda vodi skozi vir od $-$ proti $+$, padec $RI$ pa pozitivno, če gremo skozi upor v smeri izbranega toka.
 
@@ -79,14 +81,14 @@ Postopek: (a) vsaki veji izberi smer toka (če je izbira napačna, dobiš negati
 
 $$R\,\frac{\mathrm{d}Q}{\mathrm{d}t} + \frac{Q}{C} = U_g.$$
 
-Rešitev z začetnim pogojem $Q(0) = 0$ je
+*Rešitev.* Z novo spremenljivko $y = Q - CU_g$ dobimo $\dot{y} = -y/(RC)$, torej $y = y_0e^{-t/RC}$. Iz začetnega pogoja $Q(0) = 0$ sledi $y_0 = -CU_g$ in
 
 $$Q(t) = CU_g\left(1 - e^{-t/\tau}\right), \qquad I(t) = \frac{U_g}{R}\,e^{-t/\tau}, \qquad \tau = RC.$$
 
 Količina $\tau$ je **časovna konstanta** (enota $\Omega \cdot \mathrm{F} = \mathrm{s}$). V času $\tau$ se kondenzator napolni do $1 - e^{-1} \approx 63\,\%$ končnega naboja, po $5\tau$ pa do več kot $99\,\%$. Pri **praznjenju** kondenzatorja z začetnim nabojem $Q_0$ prek upora $R$ je $Q(t) = Q_0\,e^{-t/\tau}$, napetost in tok pojemata z isto časovno konstanto. V napolnjenem kondenzatorju je shranjena energija $W = \tfrac{1}{2}CU^2$.
 
 :::premisli
-Zakaj je tok ob priključitvi praznega kondenzatorja največji, $U_g/R$, in ne nič, čeprav skozi izolator med ploščama naboj ne more preiti?
+Tik po priklopu praznega kondenzatorja: kolikšna je napetost na kondenzatorju in kolikšna na uporu? Zakaj torej takrat teče največji tok in ne nič, čeprav skozi izolator med ploščama naboj ne more preiti?
 ---
 Na praznem kondenzatorju je napetost $Q/C = 0$, zato je ob $t = 0$ vsa gonilna napetost na uporu in teče tok $U_g/R$; naboj teče po žicah do plošč, ne skozi izolator. Ko se kondenzator polni, njegova napetost raste, napetost na uporu in tok pa pojemata.
 :::
@@ -136,10 +138,10 @@ Vozlišče: $I_1 + I_2 = I_3$. Zanki: $U_1 = R_1I_1 + R_3I_3$, $U_2 = R_2I_2 + R
 
 ### Primer 3 (težji)
 
-Ana na laboratorijski vaji sestavi počasen model celične membrane, da lahko napetost spremlja z voltmetrom. Kondenzator s kapaciteto $47\,\mu\mathrm{F}$, ki je na začetku prazen, prek upora $100\,\mathrm{k}\Omega$ priključi na baterijo z gonilno napetostjo $9{,}0\,\mathrm{V}$ (notranji upor zanemarimo). Kolikšna je časovna konstanta? Po kolikšnem času je napetost na kondenzatorju $5{,}0\,\mathrm{V}$ in kolikšen tok takrat teče? Koliko energije je v kondenzatorju, ko je popolnoma napolnjen?
+Ana na laboratorijski vaji sestavi počasen model celične membrane, da lahko napetost spremlja z voltmetrom. Kondenzator s kapaciteto $47\,\mu\mathrm{F}$, ki je na začetku prazen, prek upora $100\,\mathrm{k}\Omega$ priključi na baterijo z gonilno napetostjo $9{,}0\,\mathrm{V}$ (notranji upor zanemarimo). Kolikšna je časovna konstanta? Po kolikšnem času je napetost na kondenzatorju $5{,}0\,\mathrm{V}$ in kolikšen tok takrat teče? Koliko energije je v kondenzatorju, ko je popolnoma napolnjen? Kolikšen upor bi morala izbrati, da bi napetost $5{,}0\,\mathrm{V}$ dosegla šele po $10\,\mathrm{s}$?
 
 **Podatki:** $C = 47\,\mu\mathrm{F} = 4{,}7 \cdot 10^{-5}\,\mathrm{F}$, $R = 100\,\mathrm{k}\Omega = 1{,}0 \cdot 10^{5}\,\Omega$, $U_g = 9{,}0\,\mathrm{V}$, $Q(0) = 0$, $U_C = 5{,}0\,\mathrm{V}$
-**Iščemo:** $\tau$, čas $t_1$, ko je $U_C = 5{,}0\,\mathrm{V}$, tok $I(t_1)$, energijo $W$ pri polnem kondenzatorju
+**Iščemo:** $\tau$, čas $t_1$, ko je $U_C = 5{,}0\,\mathrm{V}$, tok $I(t_1)$, energijo $W$ pri polnem kondenzatorju, upor $R'$, s katerim bi bil $t_1 = 10\,\mathrm{s}$
 
 :::formula
 $\tau = RC$, $U_C(t) = U_g(1 - e^{-t/\tau})$, $I(t) = \dfrac{U_g}{R}e^{-t/\tau}$, $W = \tfrac{1}{2}CU_g^2$
@@ -151,8 +153,9 @@ $\tau = RC$, $U_C(t) = U_g(1 - e^{-t/\tau})$, $I(t) = \dfrac{U_g}{R}e^{-t/\tau}$
 2. Napetost na kondenzatorju je $Q/C$, zato raste kot naboj. Iz $5{,}0 = 9{,}0\,(1 - e^{-t_1/\tau})$ sledi $e^{-t_1/\tau} = 4/9$, torej $t_1 = \tau\ln(9/4) = 4{,}7\,\mathrm{s} \cdot 0{,}811 \approx 3{,}8\,\mathrm{s}$.
 3. Tok pojema z istim faktorjem $e^{-t/\tau}$ kot napetost na uporu. Začetni tok je $U_g/R = 9{,}0\,\mathrm{V}/1{,}0 \cdot 10^5\,\Omega = 90\,\mu\mathrm{A}$. Ob $t_1$: $I = 90\,\mu\mathrm{A} \cdot 4/9 = 40\,\mu\mathrm{A}$.
 4. Preizkus z zančnim zakonom: $RI + U_C = 10^5\,\Omega \cdot 40 \cdot 10^{-6}\,\mathrm{A} + 5{,}0\,\mathrm{V} = 4{,}0\,\mathrm{V} + 5{,}0\,\mathrm{V} = 9{,}0\,\mathrm{V}$ ✓.
-5. $W = \tfrac{1}{2} \cdot 4{,}7 \cdot 10^{-5}\,\mathrm{F} \cdot (9{,}0\,\mathrm{V})^2 \approx 1{,}9 \cdot 10^{-3}\,\mathrm{J}$.
-6. Odgovor: časovna konstanta je $4{,}7\,\mathrm{s}$; napetost $5{,}0\,\mathrm{V}$ doseže po približno $3{,}8\,\mathrm{s}$, ko teče tok $40\,\mu\mathrm{A}$; napolnjen kondenzator hrani približno $1{,}9\,\mathrm{mJ}$ energije.
+5. Obratno vprašanje: $t_1 = RC\ln(9/4)$ je sorazmeren z $R$, zato za $t_1' = 10\,\mathrm{s}$ potrebujemo $R' = \dfrac{t_1'}{C\ln(9/4)} = \dfrac{10\,\mathrm{s}}{4{,}7 \cdot 10^{-5}\,\mathrm{F} \cdot 0{,}811} \approx 2{,}6 \cdot 10^5\,\Omega$.
+6. $W = \tfrac{1}{2} \cdot 4{,}7 \cdot 10^{-5}\,\mathrm{F} \cdot (9{,}0\,\mathrm{V})^2 \approx 1{,}9 \cdot 10^{-3}\,\mathrm{J}$.
+7. Odgovor: časovna konstanta je $4{,}7\,\mathrm{s}$; napetost $5{,}0\,\mathrm{V}$ doseže po približno $3{,}8\,\mathrm{s}$, ko teče tok $40\,\mu\mathrm{A}$; napolnjen kondenzator hrani približno $1{,}9\,\mathrm{mJ}$ energije. Za $10\,\mathrm{s}$ bi potrebovala upor okoli $260\,\mathrm{k}\Omega$.
 
 ### Primer 4 – zdaj ti
 
@@ -195,6 +198,43 @@ $U_C = 12\,\mathrm{V} \cdot e^{-1{,}36} \approx 12\,\mathrm{V} \cdot 0{,}256 \ap
 - Kirchhoff: v vozlišču $\sum I = 0$ (ohranitev naboja), v zanki $\sum U_g = \sum RI$ (ohranitev energije).
 - RC vezje: $\tau = RC$; polnjenje $U_C = U_g(1 - e^{-t/\tau})$, praznjenje $U_C = U_0e^{-t/\tau}$, tok $I \propto e^{-t/\tau}$; energija $W = \tfrac{1}{2}CU^2$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo toka in gostote toka ter izpeljavo $I = ne_0vS$;
+- Ohmov zakon s pogojem veljavnosti in izpeljavo $R = \zeta l/S$ iz $\vec{j} = \sigma\vec{E}$;
+- Kirchhoffova zakona s pogojem (stacionarni tokovi), njuno utemeljitev z ohranitvijo naboja in energije ter iz njiju izpeljavo zaporedne in vzporedne vezave;
+- diferencialno enačbo RC vezja, njeno rešitev za polnjenje in praznjenje ter pomen časovne konstante;
+- energijsko bilanco polnjenja kondenzatorja.
+
+### Naloga 1
+
+Vir z gonilno napetostjo $12\,\mathrm{V}$ in zanemarljivim notranjim uporom je prek upora $R_1 = 10\,\mathrm{k}\Omega$ priključen na vzporedno vezavo upora $R_2 = 20\,\mathrm{k}\Omega$ in praznega kondenzatorja s kapaciteto $100\,\mu\mathrm{F}$. Ob $t = 0$ sklenemo stikalo. Zapiši diferencialno enačbo za napetost $U_C$ na kondenzatorju in jo reši. Kolikšni sta končna napetost in časovna konstanta, kolikšen tok teče skozi $R_1$ takoj po vklopu in po dolgem času ter po kolikšnem času doseže $U_C$ $90\,\%$ končne vrednosti?
+
+**Rešitev:**
+
+1. Tokovi: $I_1$ skozi $R_1$, $I_2$ skozi $R_2$, $I_C = C\,\mathrm{d}U_C/\mathrm{d}t$ v kondenzator. Vozlišče: $I_1 = I_2 + I_C$. Zanka vir–$R_1$–$C$: $U_g = R_1I_1 + U_C$. Zanka $C$–$R_2$: $U_C = R_2I_2$.
+2. Vstavimo $I_1 = (U_g - U_C)/R_1$ in $I_2 = U_C/R_2$ v vozliščno enačbo: $C\,\dfrac{\mathrm{d}U_C}{\mathrm{d}t} = \dfrac{U_g - U_C}{R_1} - \dfrac{U_C}{R_2}$. Pomnožimo z $R_p = \dfrac{R_1R_2}{R_1 + R_2}$: $R_pC\,\dfrac{\mathrm{d}U_C}{\mathrm{d}t} + U_C = U_g\dfrac{R_2}{R_1 + R_2}$.
+3. To je enačba RC vezja z gonilno napetostjo $U_\infty = 12 \cdot 20/30\,\mathrm{V} = 8{,}0\,\mathrm{V}$ in uporom $R_p = 10 \cdot 20/30\,\mathrm{k}\Omega \approx 6{,}67\,\mathrm{k}\Omega$, zato $U_C(t) = U_\infty(1 - e^{-t/\tau})$ s $\tau = R_pC = 6{,}67 \cdot 10^3\,\Omega \cdot 1{,}0 \cdot 10^{-4}\,\mathrm{F} \approx 0{,}667\,\mathrm{s}$.
+4. Ob $t = 0$ je $U_C = 0$, zato $I_2 = 0$ in $I_1 = U_g/R_1 = 12\,\mathrm{V}/10^4\,\Omega = 1{,}2\,\mathrm{mA}$. Po dolgem času je $I_C = 0$ in $I_1 = I_2 = U_g/(R_1 + R_2) = 12\,\mathrm{V}/(3{,}0 \cdot 10^4\,\Omega) = 0{,}40\,\mathrm{mA}$.
+5. $90\,\%$: $e^{-t/\tau} = 0{,}10$, torej $t = \tau\ln 10 = 0{,}667\,\mathrm{s} \cdot 2{,}303 \approx 1{,}54\,\mathrm{s}$.
+6. Odgovor: $U_C(t) = 8{,}0\,\mathrm{V}\,(1 - e^{-t/0{,}667\,\mathrm{s}})$; končna napetost je $8{,}0\,\mathrm{V}$, $\tau \approx 0{,}67\,\mathrm{s}$; tok skozi $R_1$ pade z $1{,}2\,\mathrm{mA}$ na $0{,}40\,\mathrm{mA}$, $90\,\%$ končne napetosti je doseženih po približno $1{,}5\,\mathrm{s}$.
+
+### Naloga 2
+
+Izpelji diferencialno enačbo za polnjenje praznega kondenzatorja s kapaciteto $C$ prek upora $R$ iz vira z gonilno napetostjo $U_g$ in jo reši. Dokaži, da se med polnjenjem v uporu pretvori v toploto natanko toliko energije, kot je na koncu ostane v kondenzatorju, ne glede na $R$.
+
+**Rešitev:**
+
+1. Zančni zakon: $U_g = RI + Q/C$, z $I = \mathrm{d}Q/\mathrm{d}t$ torej $R\,\dfrac{\mathrm{d}Q}{\mathrm{d}t} + \dfrac{Q}{C} = U_g$.
+2. Z $y = Q - CU_g$ dobimo $\mathrm{d}y/\mathrm{d}t = -y/(RC)$ in $y = y_0e^{-t/\tau}$, $\tau = RC$. Iz $Q(0) = 0$ sledi $y_0 = -CU_g$, zato $Q(t) = CU_g(1 - e^{-t/\tau})$ in $I(t) = \dfrac{U_g}{R}e^{-t/\tau}$.
+3. Vir pri stalni napetosti $U_g$ prenese naboj $CU_g$ in opravi delo $A = U_g \cdot CU_g = CU_g^2$.
+4. Energija v kondenzatorju: $W = \int_0^{CU_g}\dfrac{Q}{C}\,\mathrm{d}Q = \tfrac{1}{2}CU_g^2$.
+5. Toplota v uporu: $\int_0^\infty I^2R\,\mathrm{d}t = \dfrac{U_g^2}{R}\int_0^\infty e^{-2t/\tau}\,\mathrm{d}t = \dfrac{U_g^2}{R} \cdot \dfrac{\tau}{2} = \tfrac{1}{2}CU_g^2$.
+6. Bilanca: $CU_g^2 = \tfrac{1}{2}CU_g^2 + \tfrac{1}{2}CU_g^2$. Upor $R$ se je pokrajšal: manjši upor da večji tok v krajšem času, izguba pa ostane enaka.
+7. Odgovor: $Q(t) = CU_g(1 - e^{-t/RC})$; v uporu se vedno pretvori polovica dela vira, $\tfrac{1}{2}CU_g^2$, ne glede na $R$.
+
 ## Drugače: Na sliki
 
 Vezje iz Primera 2 (vozlišče $A$ zgoraj, $B$ spodaj):
@@ -211,26 +251,27 @@ Vezje iz Primera 2 (vozlišče $A$ zgoraj, $B$ spodaj):
   B o-------------o-------------o
 ```
 
-Vsaka navpična črta je ena veja. Skozi vsako vejo teče en sam tok; v vozlišču $A$ se tokovi srečajo. Zanka »levo + sredina« vsebuje $U_1$, $R_1$ in $R_3$, zanka »desno + sredina« pa $U_2$, $R_2$ in $R_3$.
+Vsaka navpična črta je veja z enim tokom. Zanka »levo + sredina« vsebuje $U_1$, $R_1$ in $R_3$, zanka »desno + sredina« pa $U_2$, $R_2$ in $R_3$.
 
 Polnjenje kondenzatorja je krivulja, ki se pri $t = 0$ dviga najhitreje in se nato vse počasneje približuje vodoravni asimptoti $U_g$:
 
-| $t/\tau$ | $0$ | $1$ | $2$ | $3$ | $5$ |
-|---|---|---|---|---|---|
-| $U_C/U_g$ | $0$ | $0{,}63$ | $0{,}86$ | $0{,}95$ | $0{,}99$ |
-| $I/I_0$ | $1$ | $0{,}37$ | $0{,}14$ | $0{,}05$ | $0{,}01$ |
+| $t/\tau$ | $U_C/U_g$ | $I/I_0$ |
+|---|---|---|
+| $0$ | $0$ | $1$ |
+| $1$ | $0{,}63$ | $0{,}37$ |
+| $2$ | $0{,}86$ | $0{,}14$ |
+| $3$ | $0{,}95$ | $0{,}05$ |
+| $5$ | $0{,}99$ | $0{,}01$ |
 
 Tangenta na krivuljo $U_C(t)$ v izhodišču seka asimptoto ravno pri $t = \tau$: če bi tok ves čas ostal začetni, bi se kondenzator napolnil v času $\tau$.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Celična membrana kot RC vezje.** Lipidni dvosloj je tanek izolator med dvema prevodnima raztopinama, torej kondenzator: specifična kapaciteta je okoli $1\,\mu\mathrm{F/cm^2}$. Ionski kanali so upori vzporedno s tem kondenzatorjem, za mirujočo membrano je specifični upor reda $1\,\mathrm{k}\Omega\,\mathrm{cm^2}$. Časovna konstanta je zato $\tau \approx 1\,\mathrm{k}\Omega\,\mathrm{cm^2} \cdot 1\,\mu\mathrm{F/cm^2} = 1\,\mathrm{ms}$, kar določa, kako hitro se membranski potencial odzove na tok ionov. Gonilne napetosti so ravnovesni (Nernstovi) potenciali, ki izhajajo iz razlik koncentracij ionov, mirovni potencial pa izračunamo s Kirchhoffovimi zakoni za veje s kanali za $\mathrm{K^+}$, $\mathrm{Na^+}$ in $\mathrm{Cl^-}$.
+**Celična membrana kot RC vezje.** Lipidni dvosloj je tanek izolator med prevodnima raztopinama, torej kondenzator s specifično kapaciteto okoli $1\,\mu\mathrm{F/cm^2}$. Ionski kanali so upori vzporedno z njim (mirujoča membrana: reda $1\,\mathrm{k}\Omega\,\mathrm{cm^2}$), zato je $\tau \approx 1\,\mathrm{ms}$. Gonilne napetosti so Nernstovi potenciali, mirovni potencial pa dobimo s Kirchhoffovimi zakoni za veje s kanali za $\mathrm{K^+}$, $\mathrm{Na^+}$ in $\mathrm{Cl^-}$.
 
-**Konduktometrija.** Prevodnost raztopine je sorazmerna s koncentracijo ionov in njihovo gibljivostjo. Pri titraciji močne kisline z bazo prevodnost najprej pada (hitri ioni $\mathrm{H_3O^+}$ se zamenjajo s počasnejšimi), za ekvivalentno točko pa spet narašča. Merilnik uporablja izmenično napetost, da se elektrodi ne polarizirata.
+**Konduktometrija.** Prevodnost raztopine je sorazmerna s koncentracijo in gibljivostjo ionov. Pri titraciji močne kisline z bazo najprej pada (hitri $\mathrm{H_3O^+}$ zamenjajo počasnejši kationi), za ekvivalentno točko spet narašča. Merilnik uporablja izmenično napetost, da se elektrodi ne polarizirata.
 
-**Bliskavica in defibrilator.** Kondenzator se počasi polni prek velikega upora iz šibkega vira, nato pa se v delčku sekunde izprazni prek majhnega upora (bliskavice ali telesa). Ista energija, $\tfrac{1}{2}CU^2$, se sprosti v zelo kratkem času, zato je moč velika.
-
-**Podaljšek na kolutu.** Zaradi Joulove toplote $I^2R$ se navit podaljšek pri velikem toku segreje, ker toplota iz notranjih ovojev ne more uiti. Zato proizvajalci navajajo manjšo dovoljeno moč za navit podaljšek kot za razvitega.
+**Merilni instrumenti.** Voltmeter z notranjim uporom $10\,\mathrm{M}\Omega$ na uporu $1\,\mathrm{M}\Omega$ tvori vzporedno vezavo z $0{,}91\,\mathrm{M}\Omega$ in meritev popači; pri pH-elektrodi z uporom stekla reda $100\,\mathrm{M}\Omega$ zato potrebujemo merilnik z vhodnim uporom nad $10^{12}\,\Omega$.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -241,21 +282,13 @@ Upora $R_1 = 6{,}0\,\Omega$ in $R_2 = 3{,}0\,\Omega$ sta vezana vzporedno, zapor
 3. **Celotni tok:** $I = 12\,\mathrm{V}/6{,}0\,\Omega = 2{,}0\,\mathrm{A}$; ta tok teče skozi $R_3$.
 4. **Napetosti:** $U_3 = 4{,}0\,\Omega \cdot 2{,}0\,\mathrm{A} = 8{,}0\,\mathrm{V}$, na vzporednem delu $U_{12} = 2{,}0\,\Omega \cdot 2{,}0\,\mathrm{A} = 4{,}0\,\mathrm{V}$. Vsota $12\,\mathrm{V}$ ✓.
 5. **Tokova v vejah:** $I_1 = 4{,}0/6{,}0 \approx 0{,}67\,\mathrm{A}$, $I_2 = 4{,}0/3{,}0 \approx 1{,}33\,\mathrm{A}$. Vsota $2{,}0\,\mathrm{A}$ ✓ (vozliščni zakon).
-6. **Moč:** $P = UI = 12\,\mathrm{V} \cdot 2{,}0\,\mathrm{A} = 24\,\mathrm{W}$; od tega je na $R_3$ $16\,\mathrm{W}$, na $R_1$ približno $2{,}7\,\mathrm{W}$ in na $R_2$ približno $5{,}3\,\mathrm{W}$.
-
-Isti rezultat dobiš tudi s Kirchhoffovima zakonoma; poenostavljanje je le hitrejša pot, kadar je vezje sestavljeno iz zaporednih in vzporednih delov.
+6. **Moč:** $P = UI = 12\,\mathrm{V} \cdot 2{,}0\,\mathrm{A} = 24\,\mathrm{W}$; na $R_3$ je $16\,\mathrm{W}$, na $R_1$ $2{,}7\,\mathrm{W}$, na $R_2$ $5{,}3\,\mathrm{W}$.
 
 ## Drugače: Bolj natančno
 
-**Ohmov zakon v točki.** V snovi z linearnim odzivom je gostota toka sorazmerna z električno poljsko jakostjo: $\vec{j} = \sigma\vec{E}$. Za homogeno žico je $E = U/l$ in $j = I/S$, iz česar sledi $R = l/(\sigma S)$. Preprost Drudejev model: elektron se med trki pospešuje v polju, povprečni čas med trki je $t_\mathrm{c}$, zato je hitrost potovanja $v = e_0Et_\mathrm{c}/m$ in $\sigma = ne_0^2t_\mathrm{c}/m$.
-
-**Izpeljava Kirchhoffovih zakonov.** Iz ohranitve naboja za majhno ploskev okoli vozlišča, v katerem se naboj ne kopiči, sledi $\oint \vec{j} \cdot \mathrm{d}\vec{S} = 0$, kar je vozliščni zakon. Pri stacionarnih tokovih je električno polje potencialno, $\oint \vec{E} \cdot \mathrm{d}\vec{s} = 0$; ko integral razdelimo na odseke po uporih in virih, dobimo zančni zakon. Pri hitro spreminjajočih se tokovih in v tuljavah moramo upoštevati še inducirano napetost.
+**Drudejev model.** Zakaj velja $\vec{j} = \sigma\vec{E}$? Elektron se med trki pospešuje v polju, povprečni čas med trki je $t_\mathrm{c}$, zato je hitrost potovanja $v = e_0Et_\mathrm{c}/m$ in $\sigma = ne_0^2t_\mathrm{c}/m$ ($m$ je masa elektrona).
 
 **Število enačb.** Vezje z $N$ vozlišči in $B$ vejami ima $B$ neznanih tokov, $N - 1$ neodvisnih vozliščnih enačb in $B - N + 1$ neodvisnih zank. V Primeru 2 je $N = 2$ in $B = 3$: ena vozliščna in dve zančni enačbi.
-
-**Rešitev enačbe RC vezja.** Enačbo $R\dot{Q} + Q/C = U_g$ zapišemo kot $\dot{Q} = -(Q - CU_g)/(RC)$. Z novo spremenljivko $y = Q - CU_g$ dobimo $\dot{y} = -y/\tau$ z rešitvijo $y = y_0e^{-t/\tau}$. Pri $Q(0) = 0$ je $y_0 = -CU_g$ in $Q(t) = CU_g(1 - e^{-t/\tau})$.
-
-**Energijska bilanca polnjenja.** Vir med polnjenjem odda delo $U_g \cdot CU_g = CU_g^2$. Na kondenzatorju ostane $\tfrac{1}{2}CU_g^2$, preostala polovica se v uporu pretvori v toploto: $\int_0^\infty I^2R\,\mathrm{d}t = \frac{U_g^2}{R}\cdot\frac{\tau}{2} = \tfrac{1}{2}CU_g^2$. Rezultat ni odvisen od velikosti $R$.
 
 ## Preveri se
 
