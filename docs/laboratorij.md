@@ -15,8 +15,8 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 3. **Mistakes have consequences** that a real lab would show: overrange (OL), blown fuse, burnt resistor,
    short circuit (supply current limit), foam overflow, popped stopper, missing goggles.
 4. **Table + graph + conclusion question** (one correct option, an explanation for every option).
-5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, `POENOSTAVITVE_SILE`, »Kaj je poenostavljeno?«) and here.
-6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`, forces: `test/laboratorij-sile.test.js`) with the allowed deviation stated.
+5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, `POENOSTAVITVE_SILE`, `POENOSTAVITVE_INDIKATORJI`, `POENOSTAVITVE_OPTIKA`, »Kaj je poenostavljeno?«) and here.
+6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`, forces: `test/laboratorij-sile.test.js`, indicators: `test/laboratorij-indikatorji.test.js`, optics: `test/laboratorij-optika.test.js`) with the allowed deviation stated.
 7. **Review:** pass 1 automatic, pass 2 an Opus expert check of the science and function, pass 3 look/phone/pedagogy
    (`docs/pregled.md`). Dangerous experiments are only simulated; a short video only when no realistic
    simulation is possible; home experiments get a safety note and an equipment list.
@@ -35,8 +35,12 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 | `public/sim/lab-elektrika.js` | `labVezava` (engine `lab-vezava`), `labPrevodnost` (engine `lab-prevodnost`); circuit parts `drawMeter`, `drawResistor`, `drawLamp` shared with `labOhm` (`lab-fiz.js`) |
 | `public/sim/lab-model-toplota.js` | heat models, no DOM: `Voda` (water + vessel, two nodes, losses through wall, bottom and surface incl. evaporation), `POSODE`, thermometer and balance, `GrelnikBench`, `MesanjeBench`, `FazeBench` (enthalpy model ice/brine/water/steam), `OhlajanjeBench`, `vrelisce` (Antoine), `talisceSoli` (CRC table) |
 | `public/sim/lab-toplota.js` | `labGrelnik` (engine `lab-grelnik`), `labMesanje` (`lab-mesanje`), `labFaze` (`lab-faze`), `labOhlajanje` (`lab-ohlajanje`); time-speed control (×1 … ×300), auto-record at round times |
+| `public/sim/lab-model-optika.js` | optics models, no DOM: `sledi` (2D ray tracer on the optical disc: flat face, curved face, mirror, Fresnel split of every ray), `snell`, `mejniKot`, `fresnel`, `LomBench`, `LecaBench` (thin lens, blur circle, depth of focus), `slika`, `nejasnost`, `fIzMeritev` |
+| `public/sim/lab-optika.js` | `labLom` (engine `lab-lom`), `labLeca` (`lab-leca`); no clock, the drawing is redrawn on every change |
 | `public/sim/lab-model-sile.js` | »Silomer in uteži«, no DOM: `HookeBench` (springs, M3 masses, elastic–plastic spring, swinging, parallax), `GostotaBench` (balance ±0,1 g, 100 mL cylinder class B, samples, meniscus), `VzgonBench` (5 N spring scale, level rise, bottom contact), `TlakBench` (membrane probe, water U-tube, leak), `G_LJ`, `TEKOCINE`, `naklonSkoziIzhodisce` |
 | `public/sim/lab-sile.js` | `labHooke` (`lab-hooke`), `labGostota` (`lab-gostota`), `labVzgon` (`lab-vzgon`), `labTlak` (`lab-tlak`); `lupa` = magnified analog scale (ruler, meniscus, spring scale, manometer legs) |
+| `public/sim/lab-model-indikatorji.js` | indicator models, no DOM: `phMesanice` (charge balance with HCl, NaOH, acetic acid, carbonate, ammonia; `solvePH` from the titration model when only those three), `PH_VZORCI`, red cabbage scale `ZELJE`, universal paper `PAPIR`, `PhBench` (pH meter: calibration, carry-over), `DokazBench` (`ZIVILA`, `PRESKUSI`), `SlinaBench` (`AMILAZA`, `EPRUVETE`, `casRazgradnje`) |
+| `public/sim/lab-indikatorji.js` | `labPh` (engine `lab-ph`), `labDokaz` (`lab-dokaz`), `labSlina` (`lab-slina`); CSS prefix `lab-ind-` |
 
 Engines are registered in `public/sim/index.js` and shown at topics through `public/sim/katalog.js`.
 The »Laboratorij« tab (`public/laboratorij.js`, `server/laboratorij.js`, `GET /api/students/:id/lab`) lists every `lab-` engine
@@ -177,10 +181,60 @@ in a 1000 mL beaker (Ø 9,5 cm, 800 mL, ocena); the level rise is included (d = 
 Membrane probe to 30 cm in water, salt water or oil; water U-tube ±15 cm, legs read to 1 mm. Membrane takes 1 % (ocena), settling τ 0,8 s, leak τ 15 s (ocena), Δh > 30 cm spills (refill button).
 Orientation down/up/side gives the same reading (shown in the log). Mistakes: one leg only (half), leaking tube (drifts to zero), overfilling. Tests: 981 Pa at 10 cm ±0,5 %, Δh 100 ±3 mm,
 oil less and salt water more, orientation identical, linear in depth (9,9 mm/cm), one leg = half, leak < 5 % after 60 s, spill and refill.
+### `lab-ph` – pH of household substances (KEM-OS-8 kisline in baze, pH lestvica; KEM-SS-2 pH)
+Goggles first (nothing starts without them). 13 samples: lemon juice, vinegar, cola, coffee, milk, tap water, distilled water, 1 % baking soda, soap,
+toothpaste slurry, ammonia cleaner, drain cleaner, HCl 0,1 mol/L. Computed from the charge balance where one solute fits (vinegar 0,8 M acetic acid, 1 % NaHCO₃
+= 0,119 M, 1 M NH₃, 0,5 M NaOH, HCl, distilled water with CO₂ from air: kH 0,034 mol/(L·atm), 420 ppm, pKa 6,35/10,33, NH₄⁺ 9,25, CRC); these can be diluted
+1 : 10 and 1 : 100. Others take a seeded value in a literature range (FDA Approximate pH of Foods: lemon 2,0–2,6, vinegar 2,4–3,4, milk 6,4–6,8; cola 2,3–2,5
+Reddy 2016; soap 9–10 Tarun 2014; coffee 4,8–5,2 Rao & Fuller 2018; tap water 7,2–7,7, toothpaste 7,5–9,5 ocena). Three ways to measure: red cabbage extract (8 colour bands,
+Fossen 1998 / RSC scale, shown as a pH range), universal indicator paper (chart 0–14, read to the nearest field, error ≤ 1), pH meter (uncalibrated: offset
+0,3–0,8, slope 90–97 %, ocena; calibrated with buffers 4,01/7,00/10,01: ±0,05; not rinsed between samples: 15 % of the difference to the previous sample,
+decaying with τ 30 s, ocena). Coloured samples (cola, coffee) mask the indicator colour. The student sorts each measured sample into kislo/nevtralno/bazično
+(true pH < 6,5 / 6,5–7,5 / > 7,5, both accepted within 0,2 of a boundary) on a pH line; table, scatter graph pH vs sample number per method; conclusion question
+after five sorted samples and a second one after measuring a diluted acid. Tests: 0,8 M acetic acid 2,43 (±0,1), 1 % NaHCO₃ 8,34 (±0,2, unchanged by dilution),
+0,1 M HCl 1,00, distilled water 5,6, NH₃ 11,6, NaOH 13,7; dilution 10× +1,00 (HCl) and +0,50 (vinegar); literature ranges; paper within ±1 (2000 draws);
+cabbage bands; uncalibrated offset ≥ 0,15 at pH 5,6, calibrated within ±0,05 over 300 seeds × 5 samples; carry-over from drain cleaner > 0,5 pH.
+
+### `lab-dokaz` – food tests (KEM-OS-9 ogljikovi hidrati, beljakovine; BIO-OS-8 prebavila in prehrana)
+Samples: white bread, raw potato, apple juice, honey, egg white, milk, sunflower oil, table sugar, glucose, water (control); composition per 100 g from USDA
+FoodData Central; solids mashed ~1 g in 5 mL (ocena), milk 1 : 1, egg white 1 : 4 (its ~0,4 % glucose then stays below the Fehling limit, so egg white is negative, as in school tables). Tests: iodine (Lugol) yellow-brown → blue-black with starch (≥ 0,01 %, ocena); Fehling's reagent only in a
+boiling water bath (otherwise stays blue: mistake), colour steps blue/green/yellow/orange/brick-red as the Benedict semi-quantitative scale (0,1/0,5/1/1,5 %);
+sucrose negative unless hydrolysed with a drop of HCl; biuret light blue → violet (≥ 0,2 %, ocena); grease spot on paper (≥ 2 % faint, ≥ 20 % clear; ocena).
+Dirty dropper carries 5 % of the previous sample (false positive). The student decides »present / absent«; table with colour swatches, colour grid
+(foods × tests) as the graph, conclusion about reducing sugars. Tests: starch–iodine, sucrose negative, hydrolysed sucrose and heated glucose positive,
+unheated glucose negative, egg white Fehling negative, egg white and milk biuret positive, oil grease spot, water control negative in all four, dirty dropper false positive, goggles.
+
+### `lab-slina` – salivary amylase digests starch (NAR-OS-7 prehranjevanje in prebava; BIO-OS-8 prebavila; BIO-OS-9 načrtovanje poskusa)
+Six tubes of 1 % (or 5 %, mistake) starch with diluted saliva at 0, 20, 37, 70 °C, boiled saliva at 37 °C and a control without saliva; real minutes with
+time speed ×1/×10/×60, an iodine drop from each tube every minute (colour by remaining starch: blue-black / dark blue / violet-brown / yellow-brown below 0,1 %, ocena).
+Model (shape ocena, optimum ~37 °C and inactivation above ~60 °C as in Bernfeld 1955): V(T) = V37 · 2^((T−37)/10) · f(T)/f(37) with reversible loss
+f = 1/(1 + e^((T−42)/4)), irreversible denaturation half-life 1 min at 60 °C (e-fold per 3 K), Michaelis–Menten Km 0,2 %, V37 so that 1 % starch clears in ~5 min;
+saliva activity ±15 % per seed. Same dropper for all tubes carries 0,8 % of the enzyme into the next tube (boiled saliva then digests: mistake). Graph: time to
+yellow-brown vs temperature; conclusion after 15 min. Tests: 37 °C in 5 ± 1 min, faster than 20 °C, faster than 0 °C; 70 °C and boiled never; curve peak 38 ± 3 °C;
+5 % starch > 3× slower; with sampling 0 °C, 70 °C, boiled and control stay blue for 30 min; dirty dropper lets boiled saliva digest; deterministic seeds.
+### `lab-lom` – reflection and refraction on the optical disc (FIZ-OS-8 odboj svetlobe, lom svetlobe; FIZ-SS-3 geometrijska optika)
+Optical disc with a 1° scale (radius 120 mm, ocena), red 650 nm class 2 laser (safety note on switch-on: never into the eye), plane mirror (R 90 %, ocena) or a
+semicircular block (radius 50 mm, ocena) of acrylic PMMA n = 1,4881 (Sultanova 2009), glass N-BK7 1,5145 (Schott) or water 1,3314 (Daimon & Masumura 2007), air 1,00028
+(Ciddor 1996; all at 650 nm, refractiveindex.info). Light from air into the block through the flat face, or from the block into air (enters radially through the curved face).
+Every ray is traced in 2D and split by the Fresnel equations (unpolarised), so the weak reflected ray (3,85 % at normal incidence for PMMA) is drawn faint and its share is shown.
+Reading: the disc is set to a mark within ±0,25° (ocena), angles are read to 0,5° with an eye error ≤ 0,24° (total ±0,5°). Table α, odbojni, β, sin α, sin β; graph sin β vs sin α
+with a fit through the origin, slope 1/n (air → block) or n (block → air); total internal reflection above the critical angle (PMMA 42,2°). Mistakes: angles measured from the surface,
+laser 0,5–5 mm off the centre (the ray then also bends at the curved face, readings are off). Tests: Snell 30° → 19,6° ± 0,3°, reflection = incidence (mirror and block, both directions),
+critical angles PMMA 42,2 / water 48,7 / BK7 41,3 (±0,3°) and TIR above, Fresnel 3,85 % and n(PMMA) from Sultanova's Sellmeier formula, slope 1/n ± 2 % (3 materials × 20 seeds) and n from block → air, readings within ±0,5° (500 seeds),
+3 mm offset changes both readings by > 0,5°, a 4 mm offset spoils the slope by > 2 %, measuring from the surface makes sin β/sin α non-constant, deterministic seeds.
+
+### `lab-leca` – converging lens on an optical bench (FIZ-OS-8 lom svetlobe (leče); FIZ-SS-3 geometrijska optika)
+1 m rail with a mm scale, a 20 mm LED arrow, converging lenses f = 50/100/150 mm (true f within ±2 % of the label, ocena), aperture 30 mm (ocena), screen. Riders 15 mm apart at least,
+lens and arrow centre up to ±1 mm from the rider's mark (ocena). Sharpness from the blur circle c = D·|1 − s(1/f − 1/a)|; the image looks sharp while c ≤ 0,5 mm (per student 0,35–0,65 mm, ocena),
+so the »sharp« screen position is an interval of a few mm and readings scatter. Screen view shows the image (chief-ray size −h·s/a, blurred by c); image size read with a ruler to 0,5 mm (±0,45 mm).
+a < f: no image on the screen, »Poglej skozi lečo« shows the upright virtual image (M = f/(f − a), magnifier). Table a, b, image size and orientation, 1/a, 1/b; graph 1/b vs 1/a with the line of slope −1
+through 1/f = mean of 1/a + 1/b; conclusion question. Mistakes: object inside f, a and b read from the rail end instead of the lens centre, screen closer than 4f to the object (never sharp; refused with the reason), unsharp image (refused).
+Tests: a = 2f → b = 2f and M = −1, a < f virtual and upright (M = 2,5 at a = 60, f = 100), f from students' readings within ±3 % (20 seeds × 3 lenses, screen placed randomly inside the sharp interval),
+a < f never sharp on the whole rail, object–screen 3,8f never sharp but 4,2f is, reading from the rail end shifts a by the object position, image size within ±0,5 mm (300 seeds), deterministic seeds.
 
 The colours of graph series (`--demo-a/b/c`) are now also defined for the Laboratorij tab (`.lab-view` in `textbook.css`); before, points there were black.
 
 ## Next (from j's list)
-FIZ: pendulum and stopwatch, refraction through a lens; forces: series/parallel springs and a digital force sensor, Pascal's vessels, a typed reading (student enters the value) in `lab-hooke`/`lab-gostota`. KEM: flame test, electrolysis of water.
-NAR: the same engines on more NAR-OS-6/7 topics. Heat: specific heat of metals (hot metal block into a calorimeter, reuses `MesanjeBench`),
+FIZ: pendulum and stopwatch; optics: concave mirror on the optical bench (`lab-zrcalo`, reuses `LecaBench` with 1/a + 1/b = 2/R), diverging lens with a converging one, dispersion with a prism (white light), lens defects; forces: series/parallel springs and a digital force sensor, Pascal's vessels, a typed reading (student enters the value) in `lab-hooke`/`lab-gostota`. KEM: flame test, electrolysis of water.
+NAR: the same engines on more NAR-OS-6/7 topics. Indicators: enzyme pH dependence (amylase at pH 4/7/9, reuses `SlinaBench`), the 0 °C tube warmed to 37 °C, a home version of `lab-ph` with only red cabbage, Sudan III for fats, pH meter alkaline error. Heat: specific heat of metals (hot metal block into a calorimeter, reuses `MesanjeBench`),
 solidification curve (cooling of stearic acid / salol), a separate stopwatch for `lab-grelnik` (now started by the switch), stirring as a choice in `lab-faze`. Each one: model + test first, then UI, then the three reviews.

@@ -53,11 +53,11 @@ export const GROUPS = {
   },
 };
 
-/** Vrstni red skupin glede na raven (OSNOVNA_SOLA, SREDNJA_SOLA, UNIVERZA) in predmet. */
-export function groupOrder(track, subject) {
+/** Vrstni red skupin glede na stopnjo (OS, SS, FAKS iz public/stopnja.js) in predmet. */
+export function groupOrder(level, subject) {
   const chem = subject === "KEM";
-  if (track === "UNIVERZA") return chem ? ["kemija", "analiza", "osnovno", "funkcije", "grske"] : ["analiza", "osnovno", "funkcije", "grske", "kemija"];
-  if (track === "SREDNJA_SOLA") return chem ? ["kemija", "osnovno", "funkcije", "grske", "analiza"] : ["osnovno", "funkcije", "grske", "analiza", "kemija"];
+  if (level === "FAKS") return chem ? ["kemija", "analiza", "osnovno", "funkcije", "grske"] : ["analiza", "osnovno", "funkcije", "grske", "kemija"];
+  if (level === "SS") return chem ? ["kemija", "osnovno", "funkcije", "grske", "analiza"] : ["osnovno", "funkcije", "grske", "analiza", "kemija"];
   return chem ? ["kemija", "osnovno", "grske"] : ["osnovno", "grske", "kemija"];
 }
 

@@ -2,6 +2,7 @@
 import "./env.js";
 import Anthropic from "@anthropic-ai/sdk";
 import { systemBlocks } from "./prompt.js";
+import { isHiddenNote } from "./skrite-opombe.js";
 import { mockToolCall, mockToolText } from "./chat-settings.js";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
@@ -28,7 +29,8 @@ const EFFORT_THINK = env("EVKLID_EFFORT_THINK", "high");
 export const MAX_TOKENS = {
   chat: Number(env("EVKLID_MAX_TOKENS", 3000)),
   lite: Number(env("EVKLID_MAX_TOKENS_LITE", 1200)),
-  think: Number(env("EVKLID_MAX_TOKENS_THINK", 5000)),
+  // Razmišljanje Haikuja pri visokem naporu porabi več tisoč žetonov; 5000 je odgovor lahko odrezalo (SŠ, 2026-11-04).
+  think: Number(env("EVKLID_MAX_TOKENS_THINK", 8000)),
   deep: Number(env("EVKLID_MAX_TOKENS_DEEP", 6000)),
 };
 
@@ -226,7 +228,7 @@ function lastUserText(messages) {
   if (typeof last.content === "string") return last.content;
   // Skriti opombi s preverjenim rezultatom (server/live-check.js) in pole (server/paper-context.js) nista del učenčevega besedila.
   return last.content
-    .filter((b) => b.type === "text" && !b.text.startsWith("<preverjen_racun>") && !b.text.startsWith("<kontekst_pole>") && !b.text.startsWith("<povzetek_pogovora>"))
+    .filter((b) => b.type === "text" && !isHiddenNote(b.text))
     .map((b) => b.text)
     .join(" ");
 }
@@ -249,6 +251,7 @@ function mockAnswer(userText) {
       "> 📌 **Zapomni si:** rešitev enačbe je število, ki ga vstavimo namesto neznanke, da sta obe strani enaki.\n\n" +
       "Ali je $x = 4$ rešitev enačbe $x + 1 = 5$? Preveri z vstavljanjem.\n" +
       "<<KARTICA\nV: Kaj je rešitev enačbe?\nO: Število, ki ga vstavimo namesto neznanke, da sta leva in desna stran enaki (npr. $x = 2$ pri $x + 3 = 5$).\n>>\n" +
+      '<<IZBIRE ["Preverim z vstavljanjem", "Pokaži mi primer", "Ne vem"]>>\n' +
       '<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>'
     );
   }

@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vezje kot zemljevid
+  - vozlišče: stik vsaj treh žic
+  - veja: isti tok med vozliščema
+  - zanka: sklenjena pot
+- Kirchhoffova zakona
+  - KZT: vsota tokov v vozlišču $0$
+  - KZN: vsota napetosti po zanki $0$
+  - enačb: $n - 1$ vozliščnih, $b - n + 1$ zančnih
+- Vozliščni potenciali
+  - referenčno vozlišče ima potencial $0$
+  - tok veje: $I_1 = (U_1 - V_A)/R_1$
+  - negativen tok: nasprotna smer
+- Zančni tokovi
+  - vsako okence svoj tok
+  - skupna veja: $I_a - I_b$
+- Theveninov vir
+  - $U_\mathrm{Th}$: napetost odprtih sponk
+  - $R_\mathrm{Th}$: napetostni viri kratko sklenjeni
+  - $I_\mathrm{p} = U_\mathrm{Th}/(R_\mathrm{Th} + R_\mathrm{p})$
+- Zvezda in trikot
+  - $R_A = R_{AB} R_{CA}/\Sigma$
+  - enaki uporniki: $R_Y = R_\Delta/3$
+  - razdre mostiček

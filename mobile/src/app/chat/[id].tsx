@@ -1,6 +1,6 @@
 // Klepet z inštruktorjem: odgovor prihaja sproti, formule in tabele kot na spletu, fotografija naloge
 // (kamera ali galerija), »Razloži podrobneje«, predlog spremembe šole in letnika, osvojena tema.
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ActionSheetIOS, Alert, FlatList, Image, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,10 +13,11 @@ import { radius, useTheme } from "@/lib/theme";
 import { celebrate, failure, success, tap } from "@/lib/haptics";
 import { pickPhoto, takePendingPhoto, type Photo } from "@/lib/images";
 import { RichText } from "@/components/RichText";
+import { toHtml } from "@/lib/rich";
 import { FormulaCtx } from "@/lib/formula-ctx";
 import { useTopicFx } from "@/lib/useTopicFx";
 import { Banner, Button, Card, ErrorView, Icon, Loading } from "@/components/ui";
-import { ReportSheet } from "@/components/ReportSheet";
+import { appDevice, ReportSheet } from "@/components/ReportSheet";
 
 type Msg = { id: number | string; role: "user" | "assistant"; text: string; has_image?: boolean; photo?: string; error?: boolean; streaming?: boolean };
 type Proposal = { settings: Record<string, string>; from: Desc; to: Desc; state?: "done" | "kept" };
@@ -48,7 +49,11 @@ export default function Chat() {
   const [photo, setPhoto] = useState<Photo | null>(null);
   const [busy, setBusy] = useState(false);
   const [deepOk, setDeepOk] = useState(false);
-  const [notes, setNotes] = useState<{ key: string; text: string; tone?: "gold" | "ok" }[]>([]);
+  // »Pokaži celoten postopek« po treh korakih vodenja (strežnik: full_offer), kot na spletu.
+  const [fullOk, setFullOk] = useState(false);
+  // Gumbi z izbirami pod zadnjim odgovorom (strežnik: choices iz <<IZBIRE [...]>>), kot na spletu.
+  const [choices, setChoices] = useState<string[]>([]);
+  const [notes, setNotes] = useState<{ key: string; text: string; tone?: "gold" | "ok" | "info" }[]>([]);
   const [proposal, setProposal] = useState<Proposal | null>(null);
   const list = useRef<FlatList<Msg>>(null);
   const abort = useRef<AbortController | null>(null);
@@ -64,6 +69,8 @@ export default function Chat() {
       tap();
       setBusy(true);
       setDeepOk(false);
+      setFullOk(false);
+      setChoices([]);
       setProposal(null);
       const reply: Msg = { id: `r${Date.now()}`, role: "assistant", text: "", streaming: true };
       const userId = `u${Date.now()}`;
@@ -83,7 +90,10 @@ export default function Chat() {
               if (e.data.title) setTitle(e.data.title);
               // Predmet, ki ga je inštruktor pravkar določil (nov pogovor brez teme), kot na spletu.
               if (e.data.state?.subject) setConvFx((c) => (c.subject === e.data.state.subject ? c : { ...c, subject: e.data.state.subject }));
-              setDeepOk(!e.data.deep);
+              // Ves delež podrobnih razlag porabljen (ai_out): brez »Razloži podrobneje«, kot na spletu.
+              setDeepOk(!e.data.deep && !e.data.ai_out);
+              setFullOk(!!e.data.full_offer);
+              setChoices(Array.isArray(e.data.choices) ? e.data.choices.slice(0, 4) : []);
               if (e.data.settings) refresh().catch(() => {});
             } else if (e.event === "error") {
               patch((m) => ({ ...m, text: e.data.error, error: true, streaming: false }));
@@ -93,6 +103,12 @@ export default function Chat() {
               celebrate();
             } else if (e.event === "cards") {
               setNotes((n) => [...n, { key: `c${Date.now()}`, text: t("mob.cardsAdded", { n: e.data.cards?.length || 0 }) }]);
+            } else if (e.event === "allowance") {
+              // Zajamčena poraba naročnika (kot na spletu): 80 % obvestilo, 100 % hitri način; brez zneskov.
+              // Družina: skupen delež za vse profile (ai.pool).
+              const base = e.data.stage === "out" ? t("ai.out") : `${t("ai.low")}\n${t("ai.left", { n: e.data.left ?? 0 })}`;
+              const text = e.data.pool ? `${base}\n${t("ai.pool")}` : base;
+              setNotes((n) => [...n, { key: `a${Date.now()}`, text, tone: "info" }]);
             } else if (e.event === "proposal") setProposal(e.data);
           },
           abort.current.signal,
@@ -126,6 +142,9 @@ export default function Chat() {
         setTitle(c.title || "");
         setConvFx({ topic: c.topic?.id || null, subject: c.state?.subject || null });
         setMessages(c.messages);
+        const lastMsg = c.messages[c.messages.length - 1] as (Msg & { full_offer?: boolean; choices?: string[] }) | undefined;
+        setFullOk(!!lastMsg?.full_offer);
+        setChoices(Array.isArray(lastMsg?.choices) ? lastMsg.choices.slice(0, 4) : []);
         setLoading(false);
         // Prvo sporočilo (iz lekcije, naloge ali skeniranja) se pošlje samo v prazen pogovor.
         if (started.current || c.messages.length) return;
@@ -216,7 +235,7 @@ export default function Chat() {
           needNote
           onClose={() => setBugOpen(false)}
           onSend={async ({ note }) => {
-            await api(`/api/students/${student.id}/bug`, { body: { note, conversation_id: Number(id), view: "chat", device: "app" } });
+            await api(`/api/students/${student.id}/bug`, { body: { note, conversation_id: Number(id), view: "chat", ...appDevice() } });
             Alert.alert(t("bug.thanks"));
           }}
         />
@@ -238,7 +257,7 @@ export default function Chat() {
           ListFooterComponent={
             <View style={{ gap: 10 }}>
               {notes.map((n) => (
-                <Banner key={n.key} text={n.text} tone={n.tone} icon={n.tone === "gold" ? { ios: "trophy.fill", android: "emoji_events" } : { ios: "rectangle.stack", android: "style" }} />
+                <Banner key={n.key} text={n.text} tone={n.tone === "info" ? undefined : n.tone} icon={n.tone === "gold" ? { ios: "trophy.fill", android: "emoji_events" } : n.tone === "info" ? { ios: "info.circle", android: "info" } : { ios: "rectangle.stack", android: "style" }} />
               ))}
               {proposal ? (
                 <Card tone="accent">
@@ -256,12 +275,41 @@ export default function Chat() {
                   )}
                 </Card>
               ) : null}
+              {choices.length >= 2 && !busy && last?.role === "assistant" && !last.error ? (
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+                  {choices.map((c) => (
+                    <Pressable
+                      key={c}
+                      accessibilityRole="button"
+                      // Napisano besedilo in fotografija ostaneta: izbira gre pred besedilo, učenec pošlje sam (kot na spletu).
+                      onPress={() => {
+                        tap();
+                        setChoices([]);
+                        if (text.trim() || photo) setText(text.trim() ? `${c}, ${text.trim()}` : c);
+                        else send({ text: c });
+                      }}
+                      style={{ minHeight: 44, maxWidth: "100%", justifyContent: "center", paddingHorizontal: 14, paddingVertical: 8, borderRadius: radius.button, backgroundColor: th.accentSoft, borderWidth: 1, borderColor: th.accent }}
+                    >
+                      <Text style={{ color: th.text, fontWeight: "600", fontSize: 15, flexShrink: 1 }}>{c}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+              ) : null}
               {deepOk && !busy && last?.role === "assistant" && !last.error ? (
                 <Button
                   title={t("chat.deeper")}
                   kind="secondary"
                   icon={{ ios: "sparkles", android: "auto_awesome" }}
                   onPress={() => send({ text: t("chat.deeperMsg"), deep: true })}
+                  style={{ alignSelf: "flex-start" }}
+                />
+              ) : null}
+              {fullOk && !busy && last?.role === "assistant" && !last.error ? (
+                <Button
+                  title={t("chat.full")}
+                  kind="secondary"
+                  icon={{ ios: "list.number", android: "format_list_numbered" }}
+                  onPress={() => send({ text: t("chat.fullMsg") })}
                   style={{ alignSelf: "flex-start" }}
                 />
               ) : null}
@@ -310,11 +358,21 @@ export default function Chat() {
 
 // »Prijavi napako« pod odgovorom (kot na spletu, server/reports.js). Trgovini zahtevata, da uporabnik
 // neprimerno vsebino AI prijavi v aplikaciji (Google Play: AI-generated content, Apple 1.2).
-function ReportButton({ conv, mid }: { conv: string; mid: number }) {
+function ReportButton({ conv, mid, text }: { conv: string; mid: number; text: string }) {
   const th = useTheme();
+  const fx = useContext(FormulaCtx);
   const [done, setDone] = useState(false);
+  // shown: isti HTML, kot ga je izrisal RichText (skrbnik vidi napako izrisa, kot jo je videl učenec).
+  const shown = () => {
+    try {
+      const html = toHtml(text, { ai: true, fx });
+      return html.length <= 200000 ? html : undefined;
+    } catch {
+      return undefined;
+    }
+  };
   const report = (reason: string) =>
-    api(`/api/conversations/${conv}/messages/${mid}/report`, { body: { reason } })
+    api(`/api/conversations/${conv}/messages/${mid}/report`, { body: { reason, shown: shown(), ...appDevice() } })
       .then(() => {
         setDone(true);
         Alert.alert(t("rep.thanks"));
@@ -372,7 +430,7 @@ function Bubble({ m, conv }: { m: Msg; conv: string }) {
   return (
     <View style={{ alignSelf: "stretch", backgroundColor: m.error ? th.dangerSoft : th.surface, borderRadius: radius.card, borderWidth: 1, borderColor: m.error ? th.danger : th.border, padding: 14 }}>
       {m.text ? <RichText text={m.text} ai streaming={m.streaming} size={16} /> : <Text style={{ color: th.muted, fontSize: 22 }}>…</Text>}
-      {typeof m.id === "number" && !m.streaming && !m.error ? <ReportButton conv={conv} mid={m.id} /> : null}
+      {typeof m.id === "number" && !m.streaming && !m.error ? <ReportButton conv={conv} mid={m.id} text={m.text} /> : null}
     </View>
   );
 }

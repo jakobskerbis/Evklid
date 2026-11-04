@@ -52,3 +52,12 @@ export function offerPolicy({
     return { show: true, prices: false, reason: "under_15" };
   return { show: true, prices: true, reason: null };
 }
+
+// Ena ponudba naenkrat (j 2026-11-01): brez naročnine in s testom v naslednjih 30 dneh → paket pred testom;
+// naročnik, ki je porabil 80 % ali več zajamčenih podrobnih razlag → dokup. Nikoli obe isti osebi hkrati.
+// subscribed: naročnina ali darilna koda; testSoon: test v Urniku v 30 dneh; overShare: poraba ≥ 80 %.
+// Vrne "pass", "topup" ali null.
+export function oneOffer({ subscribed = false, testSoon = false, overShare = false } = {}) {
+  if (subscribed) return overShare ? "topup" : null;
+  return testSoon ? "pass" : null;
+}

@@ -561,6 +561,21 @@ async function chat(p, label) {
   await screen(p, `klepet-${label}`);
   const n = await p.locator("#conversation-list li").count();
   if (!n) throw new Error("pogovor ni na seznamu");
+  // Gumbi z izbirami (<<IZBIRE [...]>>): pod zadnjim odgovorom, tap pošlje odgovor, gumbi izginejo.
+  await p.fill("#input", "kaj je rešitev enačbe");
+  await click(p, "#send", { wait: 300 });
+  // Dolg odgovor se izpisuje z berljivim tempom; dotik pokaže vse naenkrat (gumbi pridejo na koncu izpisa).
+  await p.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 8000 }).catch(() => {});
+  if (await p.locator("#messages .msg.assistant.typing").count()) await click(p, "#messages .msg.assistant.typing", { wait: 300 });
+  await expectVisible(p, "#messages .msg.assistant:last-child .choice-row .choice-btn", "gumbi z izbirami pod odgovorom", 8000);
+  if (await p.locator("#messages .msg.assistant").last().evaluate((m) => m.textContent.includes("IZBIRE"))) throw new Error("blok IZBIRE je viden učencu");
+  await screen(p, `klepet-izbire-${label}`);
+  const before = await p.locator("#messages .msg.user").count();
+  await click(p, "#messages .choice-row .choice-btn >> nth=0", { wait: 300 });
+  await p.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 8000 }).catch(() => {});
+  if ((await p.locator("#messages .msg.user").count()) !== before + 1) throw new Error("tap na izbiro ne pošlje odgovora");
+  if ((await p.locator("#messages .msg.user").last().textContent()).trim() !== "Preverim z vstavljanjem") throw new Error("poslano ni besedilo izbire");
+  await settle(p, 300);
 }
 
 async function calculator(p, label) {
@@ -658,6 +673,33 @@ async function okna(p, label) {
   await screen(p, `okno-kalkulator-${label}`);
   await click(p, '.okno[data-view="graph"] .okno-x');
   if (await p.locator(".okno").count()) throw new Error("okno se ni zaprlo");
+  // Prijava odgovora: skrbnik vidi odgovor tako, kot ga je videl učenec (izrisan HTML in naprava).
+  const ans = "#view-chat .msg.assistant:has(.msg-report) >> nth=-1";
+  {
+    if (!(await p.locator(ans).count())) throw new Error("v klepetu ni odgovora s »Prijavi napako«");
+    await click(p, `${ans} >> .msg-report`, { wait: 150 });
+    await click(p, `${ans} >> .report-box .rep-reasons button >> nth=0`, { wait: 50 });
+    await click(p, `${ans} >> .report-box .rep-send`, { wait: 400 });
+    const seen = await p.evaluate(async () => {
+      const { renderAdminReports } = await import("/prijave.js");
+      const box = document.createElement("div");
+      document.body.append(box);
+      const api = async (u) => {
+        const r = await fetch(u, { credentials: "same-origin" });
+        if (!r.ok) throw new Error(`${u}: ${r.status}`);
+        return r.json();
+      };
+      await renderAdminReports(box, { api });
+      const li = box.querySelector('.adm-rep[data-kind="message"]');
+      const { t } = await import("/i18n.js");
+      const label = li?.querySelector(".adm-rep-shown > small")?.textContent;
+      const out = { shown: label === t("adm.rep.shown") ? li.querySelector(".adm-rep-shown .msg").textContent.trim().length : 0, device: li?.querySelector("small")?.textContent || "" };
+      box.remove();
+      return out;
+    });
+    if (!seen.shown) throw new Error("prijava odgovora skrbniku ne pokaže odgovora, kot ga je videl učenec");
+    if (!/web-(phone|tablet|desktop) \d+x\d+/.test(seen.device)) throw new Error(`prijava odgovora brez naprave (${seen.device})`);
+  }
   if (!(await p.locator("#view-graph").evaluate((v) => v.hidden && v.parentElement === document.body))) throw new Error("kalkulator se po zaprtju okna ni vrnil na svoje mesto");
   await tab(p, "path");
   await expectVisible(p, "#chat-bubble .cb-main", "mehurček inštruktorja zunaj klepeta");

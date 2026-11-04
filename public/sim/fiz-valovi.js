@@ -40,8 +40,8 @@ export function senca(el) {
       s("rect", { x: screenX - 8, y, width: 8, height: 3, fill: lit === L.length ? "#ffd84d" : lit ? "#9a8f6a" : "#2b2b33" }, svg);
     }
     L.forEach((Lp, i) => {
-      s("line", { x1: Lp[0], y1: Lp[1], x2: screenX, y2: hitY(Lp, top), class: "graph-line thin-line", stroke: i ? "var(--demo-b)" : "var(--demo-a)", opacity: 0.8 }, svg);
-      s("line", { x1: Lp[0], y1: Lp[1], x2: screenX, y2: hitY(Lp, bot), class: "graph-line thin-line", stroke: i ? "var(--demo-b)" : "var(--demo-a)", opacity: 0.8 }, svg);
+      s("line", { x1: Lp[0], y1: Lp[1], x2: screenX, y2: hitY(Lp, top), class: `graph-line thin-line stroke-${i ? "b" : "a"}`, opacity: 0.8 }, svg);
+      s("line", { x1: Lp[0], y1: Lp[1], x2: screenX, y2: hitY(Lp, bot), class: `graph-line thin-line stroke-${i ? "b" : "a"}`, opacity: 0.8 }, svg);
       s("circle", { cx: Lp[0], cy: Lp[1], r: 9, fill: "#ffd84d", stroke: "var(--text)" }, svg);
     });
     s("rect", { x: obs.x - 5, y: top, width: 10, height: size, class: "fill-text" }, svg);

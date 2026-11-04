@@ -81,6 +81,20 @@ export function verifyEmail(url) {
   };
 }
 
+// Prošnja otroka, mlajšega od starosti digitalne privolitve: starš dobi povezavo na stran za starše.
+// Naslova starša ne shranimo; ime je neobvezno in že očiščeno (samo črke, presledki, vezaji).
+export function parentInviteEmail(url, name = "") {
+  const who = name ? esc(name) : "Vaš otrok";
+  return {
+    subject: "Prošnja za dovoljenje za Evklid", // stalna zadeva: ime, ki ga vpiše obiskovalec, je samo v besedilu
+    html: layout(
+      "Prošnja za dovoljenje",
+      `<p>${who} bi rad(a) uporabljal(a) Evklid, inštruktorja AI za matematiko, fiziko in kemijo. Za otroke račun ustvari starš ali skrbnik.</p><p>Na spodnji povezavi piše, kaj je Evklid, katere podatke hranimo in koliko stane. Ko ustvarite račun in dodate otrokov profil, se lahko začne učiti.</p>${button(url, "Preberite več in ustvarite račun")}<p style="font-size:13px;color:#5f6779">Če otroka ne poznate, sporočilo prezrite. Vašega e-naslova nismo shranili.</p>`,
+    ),
+    text: `${name || "Vaš otrok"} bi rad(a) uporabljal(a) Evklid, inštruktorja AI za matematiko, fiziko in kemijo. Za otroke račun ustvari starš ali skrbnik. Več in registracija: ${url}`,
+  };
+}
+
 export function resetEmail(url) {
   return {
     subject: "Novo geslo za Evklid",
@@ -140,5 +154,36 @@ export function renewalEmail(dateText, amountText, appUrl) {
       `<p>Vaša letna naročnina na Evklid se bo samodejno obnovila ${esc(dateText)} za ${esc(amountText)}.</p><p>Če je ne želite podaljšati, jo do takrat prekličite v zavihku Račun (»Upravljaj naročnino in račune«).</p>${button(appUrl, "Odpri Evklid")}`,
     ),
     text: `Vaša letna naročnina na Evklid se bo samodejno obnovila ${dateText} za ${amountText}. Prekličete jo v zavihku Račun: ${appUrl}`,
+  };
+}
+
+// Nova cena ob prehodu stopnje (j 2026-11-01): 30 dni pred podaljšanjem, ko velja nova cena.
+// up: nova cena je višja (prehod navzgor), sicer nižja (prehod navzdol ali konec starega paketa).
+export function planChangeEmail({ planText, amountText, dateText, up }, appUrl) {
+  const n = BRAND.name;
+  const body = up
+    ? `Od ${dateText} bo vaša naročnina na ${n} veljala za paket ${planText}: ${amountText}. Do takrat ostane stara cena, profil ima novo stopnjo odprto že zdaj. Napredek ostane.`
+    : `Od ${dateText} bo vaša naročnina na ${n} cenejša: paket ${planText}, ${amountText}. Do takrat ostane odprta tudi višja stopnja. Napredek ostane.`;
+  return {
+    subject: `${n}: nova cena naročnine od ${dateText}`,
+    html: layout("Nova cena naročnine", `<p>${esc(body)}</p><p>Če naročnine ne želite podaljšati, jo do takrat prekličite v zavihku Račun (»Upravljaj naročnino in račune«).</p>${button(appUrl, `Odprite ${n}`)}`),
+    text: `${body} Naročnino prekličete v zavihku Račun: ${appUrl}`,
+  };
+}
+
+// Poraba podrobnih razlag pri profilu otroka, mlajšega od 15 let (j 2026-11-01): starš dobi e-pošto pri 80 % in
+// 100 %. Brez zneskov: samo, koliko razlag je še ostalo. Inštruktor odgovarja naprej v hitrem načinu.
+// Družina (pool): skupen delež vseh profilov, zato brez imena otroka.
+export function allowanceEmail({ childName, stage, left, untilText, pool = false }, appUrl) {
+  const n = BRAND.name;
+  if (pool) childName = "Skupni delež družine";
+  const body =
+    stage === "out"
+      ? `${childName}: podrobne razlage za ta mesec so porabljene. Inštruktor odgovarja naprej v hitrem načinu, nove razlage so na voljo ${untilText}.`
+      : `${childName}: porabljenih je 80 % podrobnih razlag za ta mesec, ostalo jih je še približno ${left}. Ko jih zmanjka, inštruktor odgovarja naprej v hitrem načinu.`;
+  return {
+    subject: stage === "out" ? `${n}: podrobne razlage za ta mesec so porabljene` : `${n}: porabljenih 80 % podrobnih razlag`,
+    html: layout("Podrobne razlage ta mesec", `<p>${esc(body)}</p><p>Več razlag lahko dokupite v zavihku Račun.</p>${button(appUrl, `Odprite ${n}`)}`),
+    text: `${body} Več razlag dokupite v zavihku Račun: ${appUrl}`,
   };
 }

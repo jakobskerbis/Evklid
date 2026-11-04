@@ -2,9 +2,10 @@
 import { mountSim } from "./sim/index.js";
 import { t, locale } from "./i18n.js";
 import { withFormulaSubject } from "./formula-data.js";
-import { lessonSteps } from "./lesson-steps.js";
+import { lessonSteps, demoSteps } from "./lesson-steps.js";
 import { gradivaHtml, wireGradiva, stopReading } from "./gradiva.js";
 import { prilagodiSirino } from "./sirina.js";
+import { jeFaks } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
 
 let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView }
@@ -188,14 +189,23 @@ export async function showTextbook() {
 // Na širokem zaslonu so poskusi v desnem stolpcu (ostanejo vidni med branjem), sicer med besedilom.
 // Isti pogoj kot v ui.css: računalnik od 1200 px ali tablica ležeče od 1000 px.
 const WIDE = matchMedia("(min-width: 1200px), (min-width: 1000px) and (hover: none) and (pointer: coarse)");
+// Po korakih ima vsak korak, ki simulacijo omenja, svoje mesto zanjo (data-demos); simulacija se
+// premakne na mesto vidnega koraka in ohrani stanje (lesson-steps.js demoSteps).
 function placeDemos(root = document) {
   root.querySelectorAll(".tb-lesson-grid").forEach((grid) => {
     const side = grid.querySelector(".tb-side");
-    const slot = grid.querySelector(".tb-demo-slot");
-    const demos = grid.querySelectorAll(".tb-demo, .tb-locked");
+    const slots = [...grid.querySelectorAll(".tb-demo-slot")];
+    // Po zaporedni številki simulacije, ne po mestu v strani: premik na korak spremeni vrstni red v DOM.
+    const nr = (d) => Number(d.querySelector(".tb-demo-mount")?.dataset.sim || 0);
+    const demos = [...grid.querySelectorAll(".tb-demo, .tb-locked")].sort((a, b) => nr(a) - nr(b));
     if (!demos.length) return;
-    if (WIDE.matches || !slot) side.append(...demos);
-    else slot.append(...demos);
+    if (WIDE.matches || !slots.length) return side.append(...demos);
+    const shown = slots.filter((s) => !s.closest(".tb-step[hidden]"));
+    demos.forEach((d, i) => {
+      const mine = (s) => !s.dataset.demos || s.dataset.demos.split(",").includes(String(i));
+      const slot = shown.find(mine) || slots.find(mine) || slots[0];
+      if (d.parentElement !== slot) slot.append(d);
+    });
   });
 }
 WIDE.addEventListener?.("change", () => placeDemos());
@@ -213,7 +223,7 @@ async function renderHome() {
   const student = ctx.getStudent();
   syncProfile();
   // Študent fakultete: najprej učbenik njegovega študijskega programa, nato OŠ/SŠ.
-  const program = student?.settings?.educational_track === "UNIVERZA" ? student.settings.study_program || "" : "";
+  const program = jeFaks(student?.settings) ? student.settings.study_program || "" : "";
   const system = student?.settings?.school_system || "SI";
   if (!tb.books.length || tb.program !== program || tb.system !== system) {
     tb.program = program;
@@ -486,6 +496,10 @@ async function renderLesson(topicId) {
   // Po korakih (privzeto): kratke kartice, vmes vprašanje, spodaj Nazaj / Naprej.
   const stepMode = !!lesson && sections.length > 0 && stepPref();
   const steps = stepMode ? lessonSteps(sections, nChecks) : [];
+  // Simulacija je na istem koraku kot besedilo, ki jo omenja (j, 2. 11. 2026).
+  const onStep = steps.map(() => []);
+  if (steps.length) demoSteps(steps, demos.length ? demos : locked ? [{ title: L.locked.demo }] : [], demoAfter).forEach((ks, i) => ks.forEach((k) => onStep[k]?.push(i)));
+  const stepSlot = (k) => (onStep[k].length ? `<div class="tb-demo-slot" data-demos="${onStep[k].join(",")}"></div>` : "");
   const stepsHtml = steps
     .map((st, k) => {
       const body =
@@ -493,7 +507,7 @@ async function renderLesson(topicId) {
           ? checksCard(st.checks, st.final ? "Preveri se" : t("tb.steps.quick"))
           : `<section class="card tb-section ${sectionCls(st.title)}">${st.title ? `<h2>${esc(st.title)}</h2>` : ""}<div class="explanation">${R(st.md)}</div>${
               st.last && st.section === altAt ? altHtml : ""
-            }</section>${st.last && st.section === demoAfter ? SLOT : ""}`;
+            }</section>${stepSlot(k)}`;
       return `<div class="tb-step" data-step="${k}"${k ? " hidden" : ""}>${body}</div>`;
     })
     .join("");
@@ -648,6 +662,7 @@ function wireSteps(box, lessonId, n) {
   const go = (k, scroll) => {
     cur = Math.max(0, Math.min(n - 1, k));
     all.forEach((el, i) => (el.hidden = i !== cur));
+    placeDemos(box);
     count.innerHTML = `<b>${cur + 1}</b><small>/${n}</small>`;
     count.setAttribute("aria-label", t("tb.steps.count", { n: cur + 1, m: n }));
     bar.setAttribute("aria-valuenow", String(cur + 1));

@@ -405,7 +405,11 @@ html[data-tutor-ic] .msg.assistant::after {
 /* Pri seznamu za besedilom zadnje točke, ne v novi vrstici; prazen mehurček dobi <p></p> (app.js, paint). */
 .msg.assistant.typing > :last-child:not(ul, ol)::after, .msg.assistant.typing > :is(ul, ol):last-child > li:last-child::after { content: ""; display: inline-block; width: 8px; height: 8px; margin-inline-start: 4px; border-radius: 50%; background: var(--accent); animation: blink 1s ease-in-out infinite; }
 @keyframes blink { 50% { opacity: 0.2; } }
-.deep-btn { display: inline-flex !important; margin-top: 10px; font-size: 0.85rem; min-height: 34px !important; padding: 4px 12px !important; color: var(--muted) !important; }
+.deep-btn { display: inline-flex !important; margin-top: 10px; font-size: 0.85rem; min-height: 40px !important; padding: 4px 12px !important; color: var(--muted) !important; }
+/* Ob prelomu v novo vrstico »Pokaži celoten postopek« ostane poravnan z levim robom (razmik je za prvim gumbom). */
+.deep-btn:has(+ .full-btn) { margin-inline-end: 8px; }
+.choice-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.choice-row .choice-btn { min-height: 40px !important; max-width: 100%; white-space: normal; text-align: start; overflow-wrap: anywhere; background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); color: var(--text); } /* odgovori se ločijo od »Razloži podrobneje« */
 /* Pod odgovorom: koda sporočila (za preverjanje posnetkov zaslona) in »Prijavi napako« (server/reports.js) */
 .msg-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-top: 8px; font-size: 0.78rem; color: var(--muted); }
 .msg-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.03em; user-select: all; }
@@ -435,6 +439,9 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .adm-rep .pill { background: var(--surface); color: var(--text); } /* --muted na --surface-2 je v slogih Igriv/Temen pod 4,5 : 1 */
 .adm-rep button.small { min-height: 40px !important; }
 .adm-rep-note { margin: 0; overflow-wrap: anywhere; }
+.adm-rep-shown { justify-self: stretch; display: grid; gap: 4px; }
+.adm-rep-shown .msg { max-width: 100%; margin: 0; contain: layout paint; } /* posnetek nič ne prekrije zunaj kartice */
+.adm-rep-shown .msg::before, .adm-rep-shown .msg::after { display: none; } /* brez avatarja ob robu kartice */
 .adm-rep details { justify-self: stretch; }
 .adm-rep pre, .adm-rep details p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.85rem; max-height: 320px; overflow-y: auto; }
 .report-box .rep-err { color: var(--text); margin: 0; font-weight: 400; border-inline-start: 3px solid var(--danger); padding-inline-start: 8px; } /* --danger na --surface-2 je pod 4,5 : 1 */
@@ -947,9 +954,10 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 .cards-note { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border)); font-size: 0.92rem; }
 .cards-note .cn-head { display: flex; align-items: center; gap: 6px; color: var(--accent); }
 .cards-note .cn-head b { color: var(--text); }
+.allowance-note .cn-head small { color: var(--text); font-size: 0.92em; }
 .cards-note ul { margin: 6px 0 4px; padding-inline-start: 20px; }
 .cards-note li p { margin: 0; }
-.cards-note .text-btn { display: inline-flex; align-items: center; gap: 4px; padding: 2px 0; }
+.cards-note .text-btn { display: inline-flex; align-items: center; gap: 4px; padding: 2px 0; min-height: 40px; margin-top: 0; }
 /* Predlog spremembe šole/letnika, ki ga da inštruktor (public/chat-settings.js). */
 .set-proposal { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border)); font-size: 0.92rem; }
 .set-proposal .sp-head { display: flex; align-items: center; gap: 6px; color: var(--accent); }

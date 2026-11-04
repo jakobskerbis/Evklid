@@ -3,12 +3,12 @@
 // Novice da strežnik (server/corner.js), seznam področij je v public/interests.js.
 import { t, locale, currentLang } from "./i18n.js";
 import { icon } from "./icons.js";
+import { jeOs } from "./stopnja.js";
 import { INTERESTS, MAX_INTERESTS } from "./interests.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const $ = (s, root = document) => root.querySelector(s);
 const MODE_KEY = "evklid.cornerBoard";
-const SIMPLE = { OSNOVNA_SOLA: true };
 
 let ctx = null; // { api, getStudent, setStudent, toast, askTutor }
 let data = null; // { items, pinned, failed, sources, level }
@@ -276,7 +276,7 @@ function renderBoard() {
 export function askInterests({ first = false } = {}) {
   const s = student().settings;
   const pick = new Set(s.interests || []);
-  let level = s.news_level === "simple" || s.news_level === "all" ? s.news_level : SIMPLE[s.educational_track] ? "simple" : "all";
+  let level = s.news_level === "simple" || s.news_level === "all" ? s.news_level : jeOs(s) ? "simple" : "all";
   let custom = s.interest_custom || "";
   let english = s.news_lang !== "mine";
   const askEnglish = !currentLang().startsWith("en");

@@ -158,6 +158,9 @@ export function runGame(host, opts) {
     if (sec) startTimer(sec / Math.max(0.8, Math.min(1.4, G.speed)));
     // igra lahko vrne opis prizora za bralnik zaslona (npr. vse naloge robotkov, ki so samo na platnu)
     const said = eng.question?.(q);
+    // igra lahko v glavi pokaže svoje navodilo za to nalogo (npr. »Razvrsti od največjega do najmanjšega.«)
+    const head = eng.headline?.();
+    if (head) $(".gm-q").textContent = head;
     if (typeof said === "string") {
       const sr = document.createElement("span");
       sr.className = "sr-only";
@@ -371,9 +374,10 @@ export function runGame(host, opts) {
       }
       return;
     }
-    // Enter/presledek na gumbu (👍/👎, »Druge igre«) sproži ta gumb, ne »Znova«
+    // Enter/presledek na gumbu (👍/👎, »Druge igre«) sproži ta gumb, ne »Znova«; le ob pritisku (spust tipke,
+    // s katero je igralec potrdil zadnji odgovor, bi sicer končno kartico takoj preskočil v novo igro)
     if ((e.key === "Enter" || e.key === " ") && !G.running && !e.target.closest?.("button") && overlay.querySelector("[data-act=play], [data-act=again]")) {
-      overlay.querySelector("[data-act=play], [data-act=again]").click();
+      if (e.type === "keydown") overlay.querySelector("[data-act=play], [data-act=again]").click();
       e.preventDefault();
       return;
     }

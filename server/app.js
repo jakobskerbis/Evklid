@@ -7,7 +7,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "./prompt.js";
-import { createStreamFilter, parseMeta, parseCards, stripMeta, stripLeadPhrase } from "./meta.js";
+import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, stripMeta, stripLeadPhrase } from "./meta.js";
 import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
 import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams } from "./claude.js";
@@ -29,7 +29,9 @@ import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
 import { detectWeakTopics, weaknessesForPrompt } from "./weaknesses.js";
 import { cleanText, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
-import { paperContext, PAPER_NOTE_HEAD } from "./paper-context.js";
+import { paperContext } from "./paper-context.js";
+import { isHiddenNote } from "./skrite-opombe.js";
+import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
 import { mountAccounts } from "./accounts/index.js";
 import { passwordGate, gateNeeded } from "./gate.js";
@@ -56,6 +58,8 @@ import { appVersion, vendorVersion } from "./razlicica.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
+import { jeFaks, jeSs } from "../public/stopnja.js";
+import { startBackups } from "./kopije.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -194,9 +198,10 @@ export function createApp(store, opts = {}) {
   // (scripts/nadzor.js) pa strežnik znova zažene, ko nihče ne čaka na odgovor.
   const version = appVersion();
   const activity = { active: 0, lastSend: 0 };
+  let backups = null; // dnevne varnostne kopije baze (server/kopije.js), nastavljene spodaj
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null });
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
@@ -275,7 +280,8 @@ export function createApp(store, opts = {}) {
   const helpTasks = new Map();
   const usage = new Usage(store.db);
   // Delitev mesečnega proračuna po profilih in dokupljeni kredit (z računi; server/proracun.js).
-  if (accounts?.credits) usage.configure({ weightOf: accounts.shareWeightFor, ownerOf: accounts.ownerOf, credits: accounts.credits, freeOver: accounts.freeOver });
+  // Zajamčeni delež naročnikov in poziv k dokupu (j 2026-11-01) morata veljati tudi tu, ne samo v Računu.
+  if (accounts?.credits) usage.configure({ weightOf: accounts.shareWeightFor, ownerOf: accounts.ownerOf, credits: accounts.credits, freeOver: accounts.freeOver, guaranteeOf: accounts.guaranteeFor, topupPrompt: accounts.topupPrompt });
   // Kartice, ki so čakale na preverjanje ob ponovnem zagonu, ne bodo nikoli preverjene: proč z njimi
   // (sicer bi skrite blokirale isto vprašanje, UNIQUE student_id + norm).
   store.db.prepare("DELETE FROM flashcards WHERE verified = 0").run();
@@ -417,16 +423,41 @@ export function createApp(store, opts = {}) {
     if (req.body?.topic_id && !topic) return res.status(400).json({ error: "Tema ne obstaja." });
     res.status(201).json(store.createConversation(s.id, topic ? { pathTopic: topic.id, title: `Tema: ${topic.name}` } : {}));
   });
+  // »Pokaži celoten postopek«: po treh zaporednih odgovorih v načinu A (vodenje) učenec dobi gumb za celotno
+  // rešitev te naloge (enkratna prošnja, prompt: »Spremembe iz pogovora«). Odgovor v načinu B števec ponastavi.
+  const FULL_AFTER = 3;
+  const fullOffer = (convId) => {
+    const modes = store.db
+      .prepare("SELECT mode FROM events WHERE conversation_id = ? AND message_id IS NOT NULL ORDER BY id DESC LIMIT ?")
+      .all(convId, FULL_AFTER)
+      .map((r) => r.mode);
+    return modes.length === FULL_AFTER && modes.every((m) => m === "A");
+  };
+
+  const choicesOf = (raw) => {
+    const c = parseChoices(raw);
+    return c.length ? c : undefined;
+  };
+  // Surovo besedilo shranjenega odgovora (z bloki), za gumbe z izbirami ob ponovnem odprtju pogovora.
+  const rawOf = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
+
   app.get("/api/conversations/:id", (req, res) => {
     const c = loadConversation(req, res);
     if (!c) return;
     const last = store.lastEvent(c.id);
     const reported = new Set(store.db.prepare("SELECT message_id FROM message_reports WHERE conversation_id = ?").all(c.id).map((r) => r.message_id));
+    const msgs = store.listMessages(c.id);
+    const lastMsg = msgs.at(-1);
+    // done ni v tabeli events: prebere se iz META zadnjega odgovora (kot v done ob pošiljanju).
+    const lastText = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
+    const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && last.flag === "none" && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
     res.json({
       ...c,
       state: last ? { subject: last.subject, mode: last.mode } : null,
       topic: c.path_topic ? { id: c.path_topic, name: getTopic(c.path_topic)?.name } : null,
-      messages: store.listMessages(c.id).map((m) => ({
+      messages: msgs.map((m) => ({
+        full_offer: (offerOn && m === lastMsg) || undefined,
+        choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || last.flag === "none") ? choicesOf(rawOf(m)) : undefined,
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
         reported: reported.has(m.id) || undefined,
@@ -464,6 +495,8 @@ export function createApp(store, opts = {}) {
     const blocked = usage.blockReason(student.id);
     if (blocked) return res.status(429).json({ error: blocked, limit: true });
     busy.add(conv.id);
+    // Zajamčena poraba naročnika (j 2026-11-01): stanje pred odgovorom, da ob prehodu 80 % ali 100 % pošljemo obvestilo.
+    const allowBefore = accounts ? usage.allowance(student.id) : null;
     // Lahki način: vedno (lite), nikoli (normal) ali po povezavi naprave, ki jo sporoči odjemalec (auto).
     const lite = student.settings.data_mode === "lite" || (student.settings.data_mode !== "normal" && req.body?.lite === true);
     // »Razloži podrobneje« je vedno na voljo, čim ceneje: prva ponovna razlaga je Haiku z več
@@ -487,6 +520,7 @@ export function createApp(store, opts = {}) {
       wantDeep: againStreak >= 2,
       wantThink: againStreak === 1,
       competition: student.settings.track === "COMPETITION",
+      secondary: jeSs(student.settings),
       lite,
       free: !!accounts && !accounts.premiumFor(student.id),
       deepModel: capped ? MODEL_MID : MODEL_DEEP,
@@ -508,8 +542,17 @@ export function createApp(store, opts = {}) {
     // Naloga iz pretekle pole: navodilo za inštruktorja kot skrit blok (server/paper-context.js), učenec vidi le text.
     const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper });
     if (paperNote) userContent.push({ type: "text", text: paperNote });
-    userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     const isFirst = store.listMessages(conv.id).length === 0;
+    // Prvo vprašanje prostega pogovora: povzetek ujemajoče se lekcije iz učbenika kot skrita opomba
+    // (server/lekcija-za-vprasanje.js). Shranjen s sporočilom, zato se začetek zgodovine ne spreminja.
+    let lesson = null;
+    try {
+      if (isFirst && !conv.path_topic && !paperNote && text) lesson = lessonForQuestion(text, student.settings);
+    } catch (err) {
+      console.warn(`[evklid] iskanje lekcije ni uspelo: ${err?.message || err}`);
+    }
+    if (lesson) userContent.push({ type: "text", text: lessonNote(lesson) });
+    userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     const userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
     const help = isFirst && !image ? helpTasks.get(conv.id) : null;
     if (help) helpTasks.delete(conv.id);
@@ -613,7 +656,7 @@ export function createApp(store, opts = {}) {
       let firstPre = null;
       if (claim) {
         // Brez skrite opombe pole (server/paper-context.js), sicer reševalnik prve naloge ne prepozna.
-        const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !x.text?.startsWith(PAPER_NOTE_HEAD)) } : m);
+        const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !isHiddenNote(x.text)) } : m);
         const earlier = fullHistory.filter((m) => m.role === "user").slice(0, -1).map(ownText);
         let at = -1;
         for (let i = earlier.length - 1; i >= 0 && !firstPre; i--) {
@@ -700,7 +743,7 @@ export function createApp(store, opts = {}) {
         const plain = stripMeta(result.text);
         const found = codeFindings(plain, pre);
         let issue = found.issue;
-        const risky = !!tekTopic || student.settings.track === "COMPETITION" || student.settings.educational_track === "UNIVERZA" || again;
+        const risky = !!tekTopic || student.settings.track === "COMPETITION" || jeFaks(student.settings) || again;
         if (
           !issue &&
           !image && // pregledovalec slike naloge ne vidi
@@ -737,9 +780,27 @@ export function createApp(store, opts = {}) {
       let display = (note || "") + stripLeadPhrase(stripMeta(result.text)) + fix;
       // V zgodovino shranimo samo besedilo (brez blokov razmišljanja): manj žetonov
       // pri naslednjih klicih in nobenih težav ob krajšanju zgodovine.
-      let content = [{ type: "text", text: (fix ? insertFix(result.text, fix) : result.text) || "…" }];
+      // Popravek preverjanja zamenja konec odgovora: gumbi z izbirami ne veljajo več (ne ob ponovnem odprtju).
+      let content = [{ type: "text", text: (fix ? insertFix(stripChoices(result.text), fix) : result.text) || "…" }];
       // Prvi odgovor gre v porabo kot »chat«; ponovni odgovor po napačni sodbi je že zabeležen kot »popravek« (extraCost).
       const cost = (cached ? 0 : usage.log(student.id, first.model || answerModelOf(mode, deep), first.usage, routed.boosted ? "boost" : "chat")) + extraCost;
+      // Obvestilo pri 80 % in opomba pri 100 % (inštruktor nadaljuje v hitrem načinu): kot preostale podrobne razlage,
+      // nikoli € ali $. Gumb za dokup samo, če ga sme videti (polnoleten imetnik, profil 15+, ena ponudba naenkrat);
+      // pri profilu pod 15 let dobi starš e-pošto (billing.allowanceMail).
+      let aiOut = false; // ves zajamčeni delež porabljen: brez gumba »Razloži podrobneje« (hitri način)
+      if (allowBefore?.guaranteed) {
+        const after = usage.allowance(student.id);
+        // Z dokupljenim kreditom so podrobne razlage še na voljo (usage.fastOnly), gumb ostane.
+        aiOut = usage.fastOnly(student.id);
+        if (after.stage !== allowBefore.stage && (after.stage === "low" || after.stage === "out")) {
+          send("allowance", { stage: after.stage, percent: after.percent, left: after.explanations_left, pool: after.pool || undefined, buy: !!accounts.topupButton?.(student.id) });
+        }
+        // E-pošta staršu ob vsakem odgovoru nad mejo (enkrat na mesec za mejo, email_log): mejo lahko prestopi tudi
+        // strošek zunaj tega odgovora (preverjanje, skeniranje), zato ne samo ob prehodu v tem odgovoru.
+        if (after.stage === "low" || after.stage === "out") {
+          accounts.billing?.allowanceMail(student.id, after.stage).catch?.((e) => console.error("[evklid] e-pošta o porabi:", e?.message));
+        }
+      }
       if (settingsTools.state.proposal) send("proposal", settingsTools.state.proposal);
       if (key && !cached && !fix && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
@@ -808,7 +869,12 @@ export function createApp(store, opts = {}) {
         title: store.getConversation(conv.id).title,
         // Brez ponovnega gumba »Razloži podrobneje«, tudi če je odgovor pripravil hitri model.
         deep: deep || req.body?.deep === true,
+        ai_out: aiOut || undefined,
         settings: settingsTools.state.used || undefined,
+        full_offer: (meta?.mode === "A" && meta.flag === "none" && !meta.done && !settingsTools.state.used && fullOffer(conv.id)) || undefined,
+        // Gumbi z izbirami (<<IZBIRE [...]>>): učenec tapne, odgovor se pošlje. Ne pri opozorilih in zavrnitvi.
+        // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
+        choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : ""),
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();
@@ -1253,5 +1319,6 @@ export function createApp(store, opts = {}) {
 
   // Šifriranje obstoječih vrstic in dnevno čiščenje po rokih hrambe (server/zasebnost.js).
   startPrivacyJobs(store.db, { scheduler: opts.scheduler !== false && opts.privacyJobs !== false });
+  backups = startBackups(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false });
   return app;
 }

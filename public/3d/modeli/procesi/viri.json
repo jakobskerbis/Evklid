@@ -1,0 +1,36 @@
+{
+  "viri": [
+    {
+      "id": "evklid-procesi",
+      "ime": "Modeli, izdelani v kodi",
+      "avtor": "Evklid",
+      "opis": "Mitoza, mejoza, fotosinteza in sinteza beljakovin kot shematski modeli, narisani v kodi.",
+      "licenca": "Lastno delo Evklida",
+      "datoteke": [
+        "procesi/*.js"
+      ]
+    },
+    {
+      "id": "campbell",
+      "ime": "Campbell Biology",
+      "avtor": "L. A. Urry in sod., Pearson",
+      "opis": "Potek delitev, svetlobne reakcije in Calvinov cikel, velikosti kloroplasta.",
+      "licenca": "Podatki (dejstva), uporabljeni kot vir"
+    },
+    {
+      "id": "alberts",
+      "ime": "Molecular Biology of the Cell",
+      "avtor": "B. Alberts in sod., W. W. Norton",
+      "opis": "Zgradba tilakoidne membrane, transkripcija in translacija, mere DNK.",
+      "licenca": "Podatki (dejstva), uporabljeni kot vir"
+    },
+    {
+      "id": "ncbi-gc",
+      "ime": "The Genetic Codes, tabela 1 (standardni genetski kod)",
+      "avtor": "NCBI",
+      "opis": "Prevajanje kodonov v aminokisline.",
+      "licenca": "Podatki (dejstva), uporabljeni kot vir",
+      "url": "https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi"
+    }
+  ]
+}

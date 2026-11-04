@@ -1,6 +1,9 @@
 // Tanek odjemalec za Stripe REST API (brez dodatne knjižnice) in preverjanje webhookov.
 import crypto from "node:crypto";
-import { plansFor, SCHOOL_PLANS } from "./plans.js";
+import { plansFor, planByKey, SCHOOL_PLANS } from "./plans.js";
+
+// Stripe GET /prices sprejme največ 10 lookup_keys naenkrat.
+const LOOKUP_CHUNK = 10;
 
 const API = "https://api.stripe.com/v1";
 
@@ -24,6 +27,11 @@ export class Stripe {
   get enabled() {
     return !!this.key;
   }
+  // Testni način (ključ sk_test_ ali rk_test_): j še nima s.p., zato nadgradnja s proracijo deluje samo v
+  // testnem načinu, razen če EVKLID_STRIPE_LIVE_UPGRADE=1 (server/accounts/index.js, /api/billing/upgrade).
+  get testMode() {
+    return /^(sk|rk)_test_/.test(String(this.key || ""));
+  }
   async request(method, path, params) {
     if (!this.key) throw new Error("STRIPE_SECRET_KEY ni nastavljen.");
     let url = API + path;
@@ -44,7 +52,7 @@ export class Stripe {
     return body;
   }
 
-  // Izdelek in štiri cene v valuti (po lookup_key). Ustvari jih, če manjkajo.
+  // Izdelek in cene v valuti (po lookup_key; v evrih 10 cen: stopnje in družinska paketa). Ustvari jih, če manjkajo.
   // EUR: cene iz PLANS; regijske valute (INR, NGN …) imajo svoje cene istega izdelka.
   // Če se znesek spremeni, ustvari novo ceno (lookup_key se prenese nanjo)
   // in staro arhivira; obstoječe naročnine ostanejo pri stari ceni.
@@ -58,15 +66,19 @@ export class Stripe {
       const c = JSON.parse(cached);
       if (JSON.stringify(c.amounts) === JSON.stringify(amounts)) return c;
     }
-    const found = await this.request("GET", "/prices", { lookup_keys: plans.map((p) => p.key), active: "true", limit: 10 });
-    const existing = Object.fromEntries(found.data.map((p) => [p.lookup_key, p]));
-    let product = found.data[0]?.product;
+    const data = [];
+    const keys = plans.map((p) => p.key);
+    for (let i = 0; i < keys.length; i += LOOKUP_CHUNK) {
+      const found = await this.request("GET", "/prices", { lookup_keys: keys.slice(i, i + LOOKUP_CHUNK), active: "true", limit: 100 });
+      data.push(...(found.data || []));
+    }
+    const existing = Object.fromEntries(data.map((p) => [p.lookup_key, p]));
+    let product = data[0]?.product;
     if (!product && (currency !== "EUR" || extra)) product = (await this.ensurePrices("EUR")).product;
     if (!product) {
       product = (await this.request("POST", "/products", { name: "Evklid", description: "AI inštruktor za matematiko, fiziko in kemijo" })).id;
     }
     const byKey = {};
-    let replaced = false;
     for (const plan of plans) {
       const old = existing[plan.key];
       if (old && old.unit_amount === plan.amount) {
@@ -87,13 +99,10 @@ export class Stripe {
       byKey[plan.key] = price.id;
       if (old) {
         await this.request("POST", `/prices/${old.id}`, { active: false });
-        replaced = true;
       }
     }
     const result = { product, prices: byKey, amounts };
     this.kv?.set(cacheKey, JSON.stringify(result));
-    // Portal za stranke našteva cene (EUR) za preklop paketa: z novimi cenami se ustvari znova.
-    if (replaced && currency === "EUR" && !extra) this.kv?.set("stripe_portal_config", "");
     return result;
   }
 
@@ -102,11 +111,26 @@ export class Stripe {
     return this.ensurePrices("EUR", { plans: SCHOOL_PLANS, cacheKey: "stripe_prices_sola" });
   }
 
-  // Nastavitve portala za stranke: preklop paketa, odpoved, kartica, računi.
-  async ensurePortalConfig() {
-    const cached = this.kv?.get("stripe_portal_config");
+  // Nastavitve portala za stranke: odpoved, kartica, računi in preklop paketa samo med mesečnim in letnim
+  // obdobjem ISTEGA paketa (planKey = sedanji paket naročnine). Ena konfiguracija na paket: portal z vsemi cenami bi
+  // dovolil npr. preklop s faksa na ceno OŠ s proracijo ob ohranjenem faksu. Stari paket »2 otroka«, neznan paket
+  // in račun brez naročnine: brez preklopa. Ključ predpomnilnika vsebuje id-ja cen, zato nova cena (ensurePrices)
+  // samodejno ustvari novo konfiguracijo.
+  async ensurePortalConfig(planKey = null) {
+    const plan = planByKey(planKey);
+    let product = null;
+    let prices = [];
+    if (plan && !plan.legacy) {
+      const set = plan.school ? await this.ensureSchoolPrices() : await this.ensurePrices(plan.currency || "EUR");
+      const month = plan.key.replace(/_year(?=$|_)/, "_month");
+      const year = month.replace(/_month(?=$|_)/, "_year");
+      prices = [set.prices[month], set.prices[year]].filter(Boolean);
+      product = set.product;
+    }
+    const swap = prices.length === 2;
+    const cacheKey = `stripe_portal_config:${swap ? prices.join(",") : "brez_preklopa"}`;
+    const cached = this.kv?.get(cacheKey);
     if (cached) return cached;
-    const { product, prices } = await this.ensurePrices();
     const conf = await this.request("POST", "/billing_portal/configurations", {
       business_profile: { headline: "Evklid – upravljanje naročnine" },
       features: {
@@ -114,15 +138,12 @@ export class Stripe {
         invoice_history: { enabled: true },
         payment_method_update: { enabled: true },
         subscription_cancel: { enabled: true, mode: "at_period_end" },
-        subscription_update: {
-          enabled: true,
-          default_allowed_updates: ["price"],
-          proration_behavior: "create_prorations",
-          products: [{ product, prices: Object.values(prices) }],
-        },
+        subscription_update: swap
+          ? { enabled: true, default_allowed_updates: ["price"], proration_behavior: "create_prorations", products: [{ product, prices }] }
+          : { enabled: false },
       },
     });
-    this.kv?.set("stripe_portal_config", conf.id);
+    this.kv?.set(cacheKey, conf.id);
     return conf.id;
   }
 }

@@ -110,8 +110,15 @@
   /* Krogi lekcije (Nazaj · 1/12 · Naprej) plavajo na dnu: odmik za varno območje, nad pokazano vrstico. */
   body > #view-textbook:not(.in-okno) .tb-stepper { padding-bottom: max(12px, calc(4px + env(safe-area-inset-bottom))); transition: bottom 0.22s ease; }
   body.tb-peek > #view-textbook:not(.in-okno) .tb-stepper { bottom: var(--tabbar-h, 0px); padding-bottom: 12px; }
+  /* Pokazana vrstica dvigne kroge: pogled dobi enak spodnji odmik, da konec koraka ne ostane pod krogi. */
+  body.tb-peek > #view-textbook:not(.in-okno):has(.tb-stepper) { padding-bottom: var(--tabbar-h, 0px); }
 }
 @media (prefers-reduced-motion: reduce) { .tabbar, .tb-stepper { transition: none !important; } }
 
 /* Pogled je lahko v spodnji vrstici (npr. Laboratorij): takrat brez »← Jaz«. */
 .me-back[hidden] { display: none !important; }
+
+/* Gumbi z izbirami pod odgovorom inštruktorja: glavni cilj dotika, 44 px (docs/oblikovanje.md). */
+@media (hover: none) and (pointer: coarse) {
+  .choice-row .choice-btn { min-height: 44px !important; }
+}
