@@ -27,6 +27,7 @@ import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from 
 import { attachMic } from "./speech.js";
 import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
 import { TUTOR_CHIPS } from "./tipkovnica-data.js";
+import { splitFormulas, hasFormula } from "./vnos-formul.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
 import { offlineApi, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback } from "./feedback.js";
@@ -76,6 +77,7 @@ import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirk
 import { initTestNotice } from "./testna-verzija.js";
 import { initFormulaInfo, annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-info.js";
 import { xpStatsHtml, xpItemsHtml, levelRowHtml, paintBadge, celebrateXp } from "./xp-fx.js";
+import { heatmapHtml, weeksHtml } from "./aktivnost.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
 import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
@@ -190,10 +192,17 @@ setFormulaSubject(() => subjectWithGlossary(topicSubject(state.topic) || state.s
 // Razlaga teme in »Bistvo«: črke imajo pomen iz lekcije te teme (:::simboli), sicer iz slovarja predmeta.
 const topicRich = (tp, text) => withFormulaSubject(topicSubject(tp) || state.student?.settings?.subject || "MAT", () => renderRich(text), tp?.symbols);
 
-// Sporočilo učenca: besedilo ostane besedilo, le $...$ se izriše kot formula.
+// Sporočilo učenca: besedilo ostane besedilo, $...$ in zapis s tipkovnice ((3)/(4), √(2), x^(2), ∑_(n=1)^∞ …,
+// public/vnos-formul.js) se izrišeta kot formula.
 function renderUserText(text) {
   const parts = String(text).split(/(\$[^$\n]+?\$)/g);
-  return parts.map((p, i) => (i % 2 ? renderMath(p.slice(1, -1), false, false) : escapeHtml(p))).join("");
+  return parts
+    .map((p, i) =>
+      i % 2
+        ? renderMath(p.slice(1, -1), false, false)
+        : splitFormulas(p).map((x) => ("tex" in x ? renderMath(`\\displaystyle ${x.tex}`, false, false) : escapeHtml(x.text))).join(""), // ulomek v polni velikosti
+    )
+    .join("");
 }
 
 // ---------- pogledi ----------
@@ -440,7 +449,54 @@ function renderMe() {
   paintMeLevel();
   $("#me-streak").textContent = $("#xp-streak").textContent;
   $("#me-account").hidden = $("#account-tab").hidden;
+  loadMeOverview();
 }
+// Pregled na strani Jaz (j, 4. 11. 2026: prazen spodnji del strani naj bo izkoriščen): koledar aktivnosti,
+// »Nadaljuj« (današnji trening, Učna pot, Inštruktor) in prihodnji testi iz Urnika.
+async function loadMeOverview() {
+  const box = $("#me-overview");
+  const id = state.student?.id;
+  if (!box || !id) return;
+  if (box.dataset.for !== String(id)) box.innerHTML = ""; // pregled prejšnjega profila ne ostane na zaslonu
+  box.dataset.for = id;
+  const [p, sch] = await Promise.all([api(`/api/students/${id}/progress`).catch(() => null), api(`/api/students/${id}/schedule`).catch(() => null)]);
+  if (state.student?.id !== id) return;
+  if (!p && !sch) return void (box.innerHTML = `<p class="muted">${t("lock.offline")}</p>`);
+  const events = (sch?.schedule?.events || []).filter((e) => e.daysLeft >= 0).slice(0, 4);
+  const when = (n) => (n === 0 ? t("test.today") : n === 1 ? t("test.tomorrow") : t("test.inDays", { n }));
+  const row = (go, ic, title, sub = "") =>
+    `<button type="button" class="list-row" data-me="${go}"><span class="ic">${icon(ic)}</span><span class="lr-text"><b>${title}</b>${sub ? `<small>${sub}</small>` : ""}</span>${icon("chevron-right")}</button>`;
+  box.innerHTML = `
+    <div class="card me-akt">
+      <div class="me-ov-head"><h2>${t("akt.title")}</h2><button type="button" class="text-btn" data-me="progress">${t("nav.progress")}</button></div>
+      ${heatmapHtml(p?.xpDays || [])}
+    </div>
+    <div class="card me-next">
+      <h2>${t("qs.title")}</h2>
+      <div class="list-card">
+        ${row("daily", "zap", t("daily.title"), t("daily.about"))}
+        ${row("path", "map", t("nav.path"))}
+        ${row("chat", "message-circle", t("nav.chat"))}
+      </div>
+    </div>
+    <div class="card me-tests">
+      <div class="me-ov-head"><h2>${t("sch.upcoming")}</h2><button type="button" class="text-btn" data-me="schedule">${t("sch.title")}</button></div>
+      ${
+        events.length
+          ? `<div class="list-card">${events
+              .map((e) => row("schedule", "clipboard-check", escapeHtml(e.name), `${escapeHtml(new Date(`${e.date}T12:00:00`).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "numeric" }))} · ${when(e.daysLeft)}`))
+              .join("")}</div>`
+          : `<p class="muted">${t("sch.noEvents")}</p><button type="button" class="secondary" data-me="schedule">${icon("plus")} ${t("sch.addTest")}</button>`
+      }
+    </div>`;
+  hydrateIcons?.(box);
+}
+$("#me-overview")?.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-me]");
+  if (!b) return;
+  if (b.dataset.me === "daily") startSession("daily", { path: state.pathKey });
+  else showView(b.dataset.me);
+});
 // Raven z vrstico napredka na strani Jaz.
 function paintMeLevel() {
   const box = $("#me-lvl");
@@ -624,6 +680,7 @@ async function selectStudent(id) {
   else renderEmptyChat();
   if (!$("#view-settings").hidden) fillSettingsForm();
   if (!$("#view-progress").hidden) loadProgress();
+  if (!$("#view-me").hidden) renderMe(); // pregled (aktivnost, testi) novega profila
   if (!$("#view-league").hidden) loadLeague(state.student.id);
   if (!$("#view-scan").hidden) showScan(); // naloga prejšnjega profila ne ostane na zaslonu
   if (!$("#view-lab").closest("[hidden]")) showLab(); // zaklep in vrstni red poskusov sta po profilu
@@ -1125,6 +1182,11 @@ const input = $("#input");
 // Če besedilo ne gre več v polje, se samodejno pokaže v večjem oknu (public/razpri.js). Zadnja sporočila
 // ostanejo vidna nad poljem.
 function autoGrow(stick, again) {
+  // Predogled formul nad poljem: (3)/(4) se pokaže kot ulomek, preden ga pošlješ.
+  const pv = $("#formula-preview");
+  const show = hasFormula(input.value);
+  if (show) pv.innerHTML = renderUserText(input.value);
+  pv.hidden = !show;
   const box = $("#messages");
   const atBottom = typeof stick === "boolean" ? stick : box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   const max = Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
@@ -1810,6 +1872,10 @@ async function loadProgress() {
     .then((w) => (sheetBtn.hidden = !w.topics.length || w.locked))
     .catch(() => (sheetBtn.hidden = true));
 
+  // Koledar aktivnosti čez zadnje leto in XP po tednih (public/aktivnost.js).
+  $("#prog-heatmap").innerHTML = heatmapHtml(p.xpDays);
+  $("#prog-weeks").innerHTML = weeksHtml(p.xpDays);
+
   // 30 stolpcev, en na dan (dnevi brez aktivnosti so prazni).
   const byDay = Object.fromEntries(p.activity.map((a) => [a.day, a]));
   const days = [...Array(30)].map((_, i) => {
@@ -1817,6 +1883,7 @@ async function loadProgress() {
     return byDay[d] || { day: d, turns: 0, errors: 0 };
   });
   const max = Math.max(1, ...days.map((a) => a.turns));
+  $("#prog-turns").hidden = !p.activity.length; // koledar zgoraj že pokaže, da še ni aktivnosti
   $("#activity").innerHTML = p.activity.length
     ? days
         .map(
@@ -1830,7 +1897,7 @@ async function loadProgress() {
     ? p.topics
         .map(
           (t) => `<tr><td>${t.subject ?? "–"}</td><td>${escapeHtml(t.topic)}</td><td>${t.turns}</td>
-            <td class="${t.rate >= 0.4 && t.turns >= 3 ? "bad" : ""}">${t.errors} (${Math.round(t.rate * 100)} %)</td></tr>`,
+            <td class="${t.rate >= 0.4 && t.turns >= 3 ? "bad" : ""}">${t.errors} (${Math.round(t.rate * 100)} %)<span class="tp-bar" aria-hidden="true"><i style="width:${Math.round((1 - t.rate) * 100)}%"></i></span></td></tr>`,
         )
         .join("")
     : `<tr><td colspan="4" class="muted">${t("common.noData")}</td></tr>`;
@@ -3877,9 +3944,9 @@ function formulaBook() {
   const subj = ["MAT", "FIZ", "KEM"].includes(s) ? s : "MAT";
   return `${subj}-${stageCode(state.student?.settings)}`;
 }
-async function insertIntoCalc(text) {
+async function insertIntoCalc(text, o) {
   const tool = await setCalcMode("sci");
-  tool.insert(text);
+  tool.insert(text, o);
 }
 function calcTool(mode) {
   if (mode === "graph") return graphCalc();
@@ -4295,6 +4362,7 @@ async function bootFailed(err) {
   box.querySelector("button").onclick = () => location.reload();
   for (const el of document.body.children) el.inert = true; // prazna lupina pod sporočilom ni dosegljiva s tipkovnico
   document.body.append(box);
+  document.body.classList.add("boot-down-on");
   box.querySelector("button").focus();
   const timer = setInterval(async () => {
     if ((await serverReach()) !== "down") {

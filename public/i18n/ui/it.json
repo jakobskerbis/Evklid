@@ -896,6 +896,8 @@
   "sc.memory": "In memoria",
   "sc.insert": "Inserisci nel calcolo",
   "sc.pressSolve": "Premi = per risolvere",
+  "sc.fmHint": "Sostituisci le lettere note con numeri, lascia l’incognita e premi =.",
+  "sc.fmRad": "La calcolatrice ora è in modalità RAD (angoli in radianti).",
   "sc.errUndefined": "Il risultato non è definito (ad es. divisione per 0).",
   "sc.constants": "Costanti",
   "sc.toCalc": "Nella calcolatrice",
@@ -3506,5 +3508,16 @@
   "block.freeMonth": "Questo mese hai usato le tue domande gratuite al tutor. Esercitazione e lezioni continuano a funzionare senza limiti.",
   "block.freePool": "Questo mese le domande gratuite al tutor sono finite per tutti. Esercitazione e lezioni continuano a funzionare senza limiti.",
   "block.hintGuest": "Per avere più domande, crea un account nella scheda Account.",
-  "block.hintParent": "Per avere più domande, chiedi a un genitore di scegliere un abbonamento nella scheda Account."
+  "block.hintParent": "Per avere più domande, chiedi a un genitore di scegliere un abbonamento nella scheda Account.",
+  "akt.title": "Attività nell'ultimo anno",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Giorni di studio: {n}",
+  "akt.best": "Serie più lunga: {n}",
+  "akt.week": "Questa settimana: {n} XP",
+  "akt.weeks": "XP per settimana",
+  "akt.less": "Meno",
+  "akt.more": "Più",
+  "sch.addAt": "Aggiungi un'ora: {day}, {time}",
+  "lg.free": "posto libero",
+  "corner.more": "Aggiungi un altro argomento"
 }

@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Nekovine proti kovinam
+  - brez sijaja, slabo prevajajo, krhke
+  - izjema: grafit prevaja tok
+  - elektrone sprejmejo ali si jih delijo
+- Halogeni
+  - 17. skupina, $7$ zunanjih elektronov
+  - sprejmejo en elektron, ion $1-$
+- Dvoatomne molekule
+  - $\mathrm{F_2}$, $\mathrm{Cl_2}$, $\mathrm{Br_2}$, $\mathrm{I_2}$
+  - napaka: plin klor zapisan kot $\mathrm{Cl}$
+- Stanje in barva
+  - fluor, klor plina; brom tekočina; jod trden
+  - navzdol se barva temni
+- Reaktivnost navzdol pada
+  - fluor je najreaktivnejši
+  - obratno kot pri alkalijskih kovinah
+- Žlahtni plini
+  - 18. skupina, zapolnjena zunanja lupina
+  - enoatomni: $\mathrm{He}$, ne $\mathrm{He_2}$
+  - skoraj ne reagirajo
+- Soli iz morja
+  - $\mathrm{NaCl}$ in $\mathrm{MgCl_2}$
+  - v soli kloridni ion, ne strupeni klor
+- Uporaba
+  - helij za balone, argon za žarnice
+  - klor in jod za razkuževanje

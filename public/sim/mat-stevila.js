@@ -886,11 +886,14 @@ export function koren(el) {
     s("rect", { x: 20, y: 200 - hi * sc, width: hi * sc, height: hi * sc, class: "sq sq-b" }, svg);
     s("rect", { x: 20, y: 200 - r * sc, width: r * sc, height: r * sc, class: "sq sq-a" }, svg);
     s("rect", { x: 20, y: 200 - lo * sc, width: lo * sc, height: lo * sc, class: "sq sq-c" }, svg);
-    label(svg, 20 + (r * sc) / 2, 214, `stranica √${A} ≈ ${fmt(r, 3)}`, "tick");
+    // pod majhnim kvadratom napis ne sme čez levi rob (≈ 6 px na znak)
+    const stTxt = `stranica √${A} ${Number.isInteger(r) ? "=" : "≈"} ${fmt(r, 3)}`;
+    label(svg, Math.max(20 + (r * sc) / 2, 4 + stTxt.length * 3), 214, stTxt, "tick");
     // približevanje na premici
     let a = lo, b = hi;
     const rows = [];
-    for (let i = 0; i < steps; i++) {
+    // pri popolnem kvadratu ni kaj približevati (sicer »4² = 16 < 16«)
+    for (let i = 0; i < (Number.isInteger(r) ? 0 : steps); i++) {
       const step = 10 ** -(i + 1);
       let x = a;
       while ((x + step) ** 2 <= A + 1e-12) x += step;

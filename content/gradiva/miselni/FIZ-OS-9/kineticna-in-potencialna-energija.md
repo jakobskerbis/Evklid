@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Energija
+  - zmožnost telesa, da opravi delo
+  - enota joule, $\mathrm{J}$
+- Potencialna energija
+  - $W_p = m g h$
+  - enaka delu pri dviganju
+  - $h$ od izbrane ničelne ravni
+- Kinetična energija
+  - $W_k = \frac{m v^2}{2}$
+  - dvakrat hitreje, štirikrat več energije
+  - napaka: hitrost ni kvadrirana
+- Pretvarjanje
+  - pri padu $W_p$ v $W_k$
+  - brez trenja $W_k + W_p$ stalna
+- Hitrost na dnu
+  - $v = \sqrt{2 g h}$
+  - masa se pokrajša
+  - napaka: težje pade hitreje
+- Trenje
+  - del energije v notranjo energijo
+  - mehanska se zmanjša, celotna ostane

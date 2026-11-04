@@ -5,221 +5,247 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že veš, da so snovi sestavljene iz atomov, da so elementi razporejeni v periodnem sistemu v skupine (navpični stolpci) in periode (vodoravne vrstice) in da se elementi delijo na kovine in nekovine.
+Tvoja soba je dolga $5\,\mathrm{m}$, široka $4\,\mathrm{m}$ in visoka $2{,}5\,\mathrm{m}$, torej je v njej $50\,\mathrm{m^3}$ zraka. Približno $0{,}93\,\%$ tega zraka je argon. To je skoraj pol kubičnega metra, okoli $465$ litrov, kar bi napolnilo tri kopalne kadi. Argon vdihuješ vse življenje, pa v tvojem telesu ne zreagira z ničimer.
 
-Zdaj si bomo podrobneje ogledali dve skupini nekovin, ki ležita na desni strani periodnega sistema: **halogene** (17. skupina) in **žlahtne pline** (18. skupina). Prvi so zelo reaktivni, drugi skoraj nikoli ne reagirajo. Prav ta razlika nam pove veliko o tem, kako so elementi urejeni in zakaj se obnašajo tako, kot se.
-
-Halogene srečaš vsak dan: klor v bazenu in v belilu, jod v razkužilu, fluor (v obliki fluoridov) v zobni pasti. Žlahtni plini pa svetijo v neonskih reklamah, polnijo balone (helij) in žarnice (argon).
+V periodnem sistemu stoji levo od argona klor. Že majhna količina plina klora v zraku draži oči in pljuča, v naravi pa ga kot prostega elementa sploh ne najdeš, ker reagira skoraj z vsem. Kako sta lahko soseda tako različna? Odgovor se skriva v zunanjih elektronih, ki jih že znaš prešteti.
 
 ## Razlaga
 
-**1. Kje ležita skupini.** Halogeni so v 17. skupini periodnega sistema, žlahtni plini v 18. skupini (skrajno desni stolpec). Elementi iste skupine imajo **podobne lastnosti**.
+**1. Nekovine nasproti kovinam.** Kovine že poznaš. Nekovine stojijo desno zgoraj v periodnem sistemu, nad stopničasto črto. Nekovina je tudi vodik, čeprav stoji zgoraj levo. Najlažje jih spoznaš, če jih postaviš ob kovine:
 
-**2. Halogeni.** Med halogene spadajo:
+| Lastnost | Kovine | Nekovine |
+|---|---|---|
+| sijaj | kovinski sijaj | večinoma brez sijaja |
+| prevodnost | dobro prevajajo | slabo prevajajo (izjema: grafit) |
+| trdne snovi | kovne | krhke, se zdrobijo |
+| stanje pri sobni temperaturi | trdne (razen $\mathrm{Hg}$) | mnoge so plini, brom je tekočina |
+| elektroni v reakciji | oddajo, nastane pozitivni ion | sprejmejo, nastane negativni ion, ali si jih delijo |
 
-| Element | Simbol | Agregatno stanje pri sobni temperaturi | Barva |
+Med plinastimi nekovinami so vodik, dušik, kisik, fluor, klor in žlahtni plini. Trdne so ogljik, žveplo, fosfor in jod. Ogljik je zanimiv: kot diamant je najtrša naravna snov in ne prevaja toka, kot grafit v svinčniku pa je mehak in tok prevaja.
+
+**2. Halogeni, zrcalna slika alkalijskih kovin.** V 17. skupini so fluor, klor, brom, jod in redki radioaktivni astat ($\mathrm{At}$). Imenujemo jih **halogeni**, kar pomeni »tvorci soli«. Tabela kaže, v čem so podobni 1. skupini in v čem so njeno nasprotje:
+
+| Lastnost | 1. skupina | 17. skupina |
+|---|---|---|
+| zunanji elektroni | $1$ | $7$ |
+| kaj atom naredi | odda $1$ elektron | sprejme $1$ elektron |
+| naboj iona | $1+$ (npr. $\mathrm{Na^+}$) | $1-$ (npr. $\mathrm{Cl^-}$) |
+| reaktivnost | zelo velika | zelo velika |
+| v naravi | le v spojinah | le v spojinah |
+
+Obe skupini sta zelo reaktivni, a iz nasprotnih razlogov. Alkalijska kovina se želi znebiti enega elektrona, halogenu pa do osmih zunanjih elektronov manjka eden. Osem zunanjih elektronov pomeni zapolnjeno lupino, kakršno imajo žlahtni plini (spoznaš jih v 3. točki). Ko se srečata, se elektron preseli: iz natrija in klora nastane natrijev klorid $\mathrm{NaCl}$. Zato v naravi ne najdemo ne prostega natrija ne prostega klora, ampak sol, na primer raztopljeno v morju.
+
+Kot elementi halogeni tvorijo **dvoatomne molekule**: dva atoma si delita en par elektronov.
+
+| Element | Formula | Pri sobni temperaturi | Barva |
 |---|---|---|---|
-| fluor | $\mathrm{F}$ | plin | bledorumen |
-| klor | $\mathrm{Cl}$ | plin | rumenozelen |
-| brom | $\mathrm{Br}$ | tekočina | rjavordeč |
-| jod | $\mathrm{I}$ | trdna snov | temnovijoličen do skoraj črn |
+| fluor | $\mathrm{F_2}$ | plin | bledorumen |
+| klor | $\mathrm{Cl_2}$ | plin | rumenozelen |
+| brom | $\mathrm{Br_2}$ | tekočina | rjavordeč |
+| jod | $\mathrm{I_2}$ | trdna snov | temnovijoličen, skoraj črn |
 
-V 17. skupino spada še radioaktivni astat ($\mathrm{At}$), ki je zelo redek.
+Navzdol po skupini se barva temni, snov pa prehaja od plina prek tekočine do trdne snovi. Vsi so strupeni ali dražilni.
 
-Ime »halogen« pomeni »tvorec soli«: halogeni z drugimi elementi (zlasti s kovinami) tvorijo soli. Na primer natrij in klor dasta kuhinjsko sol $\mathrm{NaCl}$.
+:::premisli
+Pri alkalijskih kovinah reaktivnost navzdol po skupini narašča. Halogen elektron sprejme, večji atom pa tuj elektron privlači šibkeje kot manjši. Kdo je reaktivnejši, fluor ali jod?
+---
+Fluor. Pri halogenih reaktivnost navzdol pada, ravno obratno kot pri alkalijskih kovinah. Najmanjši atom, fluor, najmočneje pritegne dodatni elektron.
+:::
 
-**3. Lastnosti halogenov.**
+Fluor je najreaktivnejša nekovina. Reaktivnost halogenov navzdol po skupini **pada**: fluor, klor, brom, jod.
 
-- So **zelo reaktivni**, fluor je najbolj reaktiven med njimi. Reaktivnost se v skupini navzdol zmanjšuje.
-- V naravi jih ne najdemo kot proste elemente, ampak vezane v spojinah (npr. v soli).
-- Kot elementi tvorijo **dvoatomne molekule**: $\mathrm{F_2}$, $\mathrm{Cl_2}$, $\mathrm{Br_2}$, $\mathrm{I_2}$.
-- Večina je strupenih ali dražilnih, zato z njimi ravnamo previdno.
-- Klor in jod uničujeta mikroorganizme, zato ju (oziroma njune spojine) uporabljamo za razkuževanje, klorove spojine pa tudi za beljenje.
+**3. Žlahtni plini, sosedje brez potreb.** Desno od halogenov, v 18. skupini, so helij, neon, argon, kripton, ksenon in radon. Postavi jih ob halogene:
 
-**4. Žlahtni plini.** Med žlahtne pline spadajo helij $\mathrm{He}$, neon $\mathrm{Ne}$, argon $\mathrm{Ar}$, kripton $\mathrm{Kr}$, ksenon $\mathrm{Xe}$ in radon $\mathrm{Rn}$.
+| Lastnost | 17. skupina | 18. skupina |
+|---|---|---|
+| zunanji elektroni | $7$ | $8$ (helij $2$) |
+| zunanja lupina | manjka en elektron | zapolnjena |
+| oblika elementa | dvoatomne molekule | posamezni atomi |
+| reaktivnost | zelo velika | skoraj nič |
 
-**5. Lastnosti žlahtnih plinov.**
+Atom žlahtnega plina ima zapolnjeno zunanjo lupino, zato mu ni treba ne oddati ne sprejeti elektrona. Helij ima le eno lupino, ki je polna že z dvema elektronoma. Ker atomu ni treba niti deliti elektronov z drugim atomom, so žlahtni plini **enoatomni**: helij zapišemo $\mathrm{He}$, ne $\mathrm{He_2}$. Vsi so pri sobni temperaturi plini brez barve in vonja. Radon je radioaktiven: iz kamnin v tleh uhaja v slabo prezračene kleti.
 
-- Pri sobni temperaturi so vsi **plini**, brez barve in vonja.
-- So **zelo malo reaktivni**: skoraj ne tvorijo spojin.
-- Zato se pojavljajo kot **enoatomni plini**: $\mathrm{He}$, $\mathrm{Ne}$, $\mathrm{Ar}$ (ne tvorijo molekul).
-- Argon je v zraku (približno $1\,\%$ zraka).
+:::premisli
+V 2. periodi stojita drug ob drugem fluor (17. skupina) in neon (18. skupina). Kateri bi reagiral z natrijem in kakšna snov bi nastala?
+---
+Fluor. Ima $7$ zunanjih elektronov, sprejme enega in postane ion $\mathrm{F^-}$, z ionom $\mathrm{Na^+}$ pa tvori natrijev fluorid $\mathrm{NaF}$. Neon ima zapolnjeno zunanjo lupino in z natrijem ne reagira, tako kot argon v zraku ostane prost.
+:::
 
-**6. Zakaj so tako različni.** Razlago poiščemo v zgradbi atoma: žlahtni plini imajo **zapolnjeno zunanjo energijsko lupino**, zato so stabilni in ne reagirajo. Halogenom do zapolnjene zunanje lupine manjka en elektron, zato ga radi sprejmejo in zato so tako reaktivni.
+**4. Kje jih srečaš.** Z imenom skupine si zapomni še uporabo:
 
-**7. Uporaba.**
-
-- Klor: razkuževanje vode v bazenih, pridobivanje belil.
-- Jod: razkužilo (jodova tinktura).
-- Fluor (v obliki fluoridov): zobne paste, ki varujejo zobe pred kariesom.
-- Helij: polnjenje balonov in zračnih ladij (je lažji od zraka in ne gori).
-- Neon: svetleče reklame (svetijo rdečkasto-oranžno).
-- Argon: polnjenje žarnic, zaščitni plin pri varjenju.
+- klor: razkuževanje pitne vode in bazenov;
+- jod: razkužilo za rane, jodirana kuhinjska sol;
+- fluor: fluoridi v zobni pasti utrjujejo sklenino;
+- helij: meteorološki baloni in baloni za zabave, ker je lažji od zraka in ne gori;
+- neon: svetleče reklame z rdečeoranžno svetlobo;
+- argon: polnilo žarnic in zaščitni plin pri varjenju, ker ne reagira z vročo kovino.
 
 ## Rešeni primeri
 
-### Primer 1 (lažji): določi skupino
+### Primer 1 (lažji): soseda v 3. periodi
 
-Element ima simbol $\mathrm{Cl}$. Kateri skupini pripada in kakšne lastnosti pričakuješ?
+Klor in argon sta v 3. periodi, klor v 17. in argon v 18. skupini. Za vsakega napiši število zunanjih elektronov, kako zapišemo element in kako reaktiven je.
 
-**Podatki:** simbol elementa $\mathrm{Cl}$ (klor)
-**Iščemo:** skupino, v kateri je element, in njegove pričakovane lastnosti
+**Podatki:** klor $\mathrm{Cl}$: 17. skupina, 3. perioda; argon $\mathrm{Ar}$: 18. skupina, 3. perioda
+**Iščemo:** zunanje elektrone, zapis elementa in reaktivnost za oba
 
 :::formula
-17. skupina = halogeni (zelo reaktivne nekovine, dvoatomne molekule); 18. skupina = žlahtni plini (skoraj nereaktivni, enoatomni).
+Pri skupinah 13 do 18: število zunanjih elektronov = številka skupine $- 10$.
 :::
 
 **Rešitev:**
 
-1. Poiščemo klor v periodnem sistemu: je v 17. skupini.
-2. Ta skupina so halogeni.
-3. Pričakujemo: zelo reaktiven nekovinski element, pri sobni temperaturi plin, dvoatomne molekule $\mathrm{Cl_2}$.
-4. Preverimo: klor je res rumenozelen plin. ✓
+1. Klor: $17 - 10 = 7$ zunanjih elektronov. Do osmih manjka eden, zato je zelo reaktiven.
+2. Klor je halogen, kot element tvori dvoatomne molekule $\mathrm{Cl_2}$.
+3. Argon: $18 - 10 = 8$ zunanjih elektronov. Lupina je zapolnjena, zato skoraj ne reagira.
+4. Argon je žlahtni plin, zapišemo ga kot posamezen atom $\mathrm{Ar}$.
+5. Odgovor: klor ($\mathrm{Cl_2}$, $7$ zunanjih elektronov) je zelo reaktiven, argon ($\mathrm{Ar}$, $8$ zunanjih elektronov) skoraj nereaktiven.
 
-### Primer 2: primerjava dveh elementov
+### Primer 2: soli iz morja
 
-Primerjaj neon $\mathrm{Ne}$ in fluor $\mathrm{F}$: kaj imata skupnega in v čem se razlikujeta?
+Ko morska voda izhlapi, ostanejo soli. Največ je natrijevega klorida, precej pa tudi magnezijevega klorida. Določi naboje ionov in formuli obeh spojin.
 
-**Podatki:** elementa neon $\mathrm{Ne}$ in fluor $\mathrm{F}$
-**Iščemo:** skupne lastnosti in razlike med elementoma
+**Podatki:** natrij $\mathrm{Na}$: 1. skupina; magnezij $\mathrm{Mg}$: 2. skupina; klor $\mathrm{Cl}$: 17. skupina
+**Iščemo:** naboje ionov ter formuli natrijevega in magnezijevega klorida
 
 :::formula
-Halogenom (17. skupina) do zapolnjene zunanje lupine manjka en elektron, zato so zelo reaktivni. Žlahtni plini (18. skupina) imajo zapolnjeno zunanjo lupino, zato skoraj ne reagirajo.
+Kovina odda zunanje elektrone, halogen sprejme $1$ elektron. V formuli ionske spojine je vsota nabojev $0$.
 :::
 
 **Rešitev:**
 
-1. **Skupno:** oba sta nekovini in oba sta plina pri sobni temperaturi.
-2. **Skupina:** fluor je halogen (17. skupina), neon je žlahtni plin (18. skupina). Sta soseda v isti periodi.
-3. **Reaktivnost:** fluor je izredno reaktiven, neon praktično ne reagira. Zakaj? Fluoru do zapolnjene zunanje lupine manjka en elektron, neon pa jo ima že zapolnjeno.
-4. **Zgradba:** fluor tvori dvoatomne molekule $\mathrm{F_2}$, neon je enoatomen plin $\mathrm{Ne}$.
+1. Natrij odda $1$ elektron: $\mathrm{Na^+}$. Magnezij odda $2$: $\mathrm{Mg^{2+}}$.
+2. Klor sprejme $1$ elektron: kloridni ion $\mathrm{Cl^-}$.
+3. Natrijev klorid: $(+1) + (-1) = 0$, zato je formula $\mathrm{NaCl}$.
+4. Magnezijev klorid: en $\mathrm{Mg^{2+}}$ potrebuje dva $\mathrm{Cl^-}$, saj $(+2) + 2 \cdot (-1) = 0$. Formula je $\mathrm{MgCl_2}$.
+5. Odgovor: ioni so $\mathrm{Na^+}$, $\mathrm{Mg^{2+}}$ in $\mathrm{Cl^-}$, formuli pa $\mathrm{NaCl}$ in $\mathrm{MgCl_2}$.
 
-### Primer 3 (težji): izberi pravi plin
+### Primer 3 (težji): plin za vremenski balon
 
-Balon želimo napolniti s plinom, ki je lažji od zraka in ne gori. Hkrati iščemo plin za polnjenje žarnice, ki naj ne reagira z razbeljeno žarilno nitko. Kateri plin izbereš v vsakem primeru in zakaj?
+Učenci bodo na naravoslovnem dnevu spustili vremenski balon z merilnikom temperature. Plin v balonu mora biti lažji od zraka in ne sme goreti, saj bodo z njim delali otroci. V tabeli je masa $1\,\mathrm{L}$ plina pri $20\,^\circ\mathrm{C}$:
 
-**Podatki:** plin za balon mora biti lažji od zraka in negorljiv; plin za žarnico ne sme reagirati z razbeljeno žarilno nitko
-**Iščemo:** primeren plin za balon in primeren plin za žarnico
+| Plin | Masa $1\,\mathrm{L}$ v $\mathrm{g}$ | Gori? |
+|---|---|---|
+| zrak | 1,20 | ne |
+| vodik $\mathrm{H_2}$ | 0,08 | da |
+| helij $\mathrm{He}$ | 0,17 | ne |
+| argon $\mathrm{Ar}$ | 1,66 | ne |
+| klor $\mathrm{Cl_2}$ | 2,95 | ne, a je strupen in reaktiven |
+
+**Podatki:** mase $1\,\mathrm{L}$ plinov iz tabele; plin mora biti lažji od zraka ($1{,}20\,\mathrm{g}$ na liter) in ne sme goreti
+**Iščemo:** primeren plin in kolikokrat je lažji od zraka
 
 :::formula
-Žlahtni plini (18. skupina) so negorljivi in skoraj nereaktivni. Helij je lažji od zraka.
+Plin je lažji od zraka, če ima $1\,\mathrm{L}$ plina manjšo maso kot $1\,\mathrm{L}$ zraka. Kolikokrat je lažji: $n = \dfrac{m_\mathrm{zrak}}{m_\mathrm{plin}}$.
 :::
 
 **Rešitev:**
 
-1. **Za balon:** potrebujemo plin, ki je lažji od zraka in negorljiv. Izberemo **helij** $\mathrm{He}$. Je žlahtni plin, zato ne gori in ni strupen. Vodik je sicer še lažji, a je gorljiv, zato ni varen.
-2. **Za žarnico:** potrebujemo plin, ki ne reagira. Žlahtni plini so skoraj nereaktivni, zato izberemo **argon** $\mathrm{Ar}$.
-3. **Zakaj ne klor?** Klor je reaktiven in strupen, zato ni primeren za polnjenje balonov ali žarnic.
-4. **Sklep:** za varno uporabo, kjer ne želimo reakcij, uporabimo žlahtne pline.
+1. Lažja od zraka sta le vodik ($0{,}08\,\mathrm{g}$) in helij ($0{,}17\,\mathrm{g}$). Argon in klor sta težja, z njima bi balon ostal na tleh.
+2. Zdaj ti: kateri od obeh ustreza drugemu pogoju? Izračunaj še, kolikokrat je lažji od zraka.
+
+:::premisli
+Kateri plin izbereš in kolikokrat je lažji od zraka?
+---
+Helij, ker je žlahtni plin in ne gori. Vodik gori, zato za otroke ni varen. $n = \dfrac{1{,}20}{0{,}17} \approx 7{,}1$: helij je približno $7$-krat lažji od zraka. Vremenske službe sicer pogosto uporabljajo cenejši vodik, a z njim delajo izurjeni ljudje.
+:::
 
 ## Pogoste napake
 
-- **Zamenjava skupin.** Halogeni so v 17., žlahtni plini v 18. skupini. Ne zamenjuj ju.
-- **»Vsi halogeni so plini.«** Fluor in klor sta plina, brom je tekočina, jod je trdna snov.
-- **»Žlahtni plini tvorijo molekule.«** Pri običajnih pogojih so enoatomni: $\mathrm{He}$, ne $\mathrm{He_2}$.
-- **Pisanje halogenov kot enega atoma.** Elementarni klor je $\mathrm{Cl_2}$, ne $\mathrm{Cl}$.
-- **Zamenjava reaktivnosti.** Halogeni so zelo reaktivni, žlahtni plini pa skoraj nereaktivni, ne obratno.
-- **Pozabljena varnost.** Klor in brom sta strupena in dražilna, z njima ne ravnamo brez zaščite.
+- **Halogen kot en atom.** Kdo zapiše plin klor kot $\mathrm{Cl}$, ker tako piše v periodnem sistemu. Kot element je klor iz dvoatomnih molekul, zato $\mathrm{Cl_2}$. Pri žlahtnih plinih je obratno: $\mathrm{He}$, ne $\mathrm{He_2}$.
+- **»Vsi halogeni so plini.«** Fluor in klor sta res plina, a brom je tekočina, jod trdna snov. Stanje se navzdol po skupini spreminja.
+- **»Reaktivnost navzdol narašča, kot pri alkalijskih kovinah.«** Kovina elektron odda, halogen ga sprejme. Velik atom elektron lažje odda, a ga teže pritegne. Pri halogenih reaktivnost navzdol pada: fluor je najreaktivnejši.
+- **»Vsi žlahtni plini so lažji od zraka.«** Ker helij dvigne balon, se zdi, da to velja za vse. Liter argona ima maso $1{,}66\,\mathrm{g}$, liter zraka $1{,}20\,\mathrm{g}$. Lažja od zraka sta le helij in neon.
+- **»V kuhinjski soli je strupeni klor.«** V soli ni molekul $\mathrm{Cl_2}$, ampak kloridni ioni $\mathrm{Cl^-}$. Spojina ima povsem druge lastnosti kot elementa, iz katerih je nastala.
 
 ## Povzetek
 
-- Halogeni (17. skupina): $\mathrm{F}$, $\mathrm{Cl}$, $\mathrm{Br}$, $\mathrm{I}$. So zelo reaktivne nekovine, kot elementi tvorijo dvoatomne molekule ($\mathrm{F_2}$, $\mathrm{Cl_2}$, $\mathrm{Br_2}$, $\mathrm{I_2}$).
-- Agregatna stanja: fluor in klor sta plina, brom tekočina, jod trdna snov.
-- Žlahtni plini (18. skupina): $\mathrm{He}$, $\mathrm{Ne}$, $\mathrm{Ar}$, $\mathrm{Kr}$, $\mathrm{Xe}$, $\mathrm{Rn}$. So enoatomni plini, skoraj nereaktivni.
-- Razlika v reaktivnosti izvira iz zgradbe atoma: žlahtni plini imajo zapolnjeno zunanjo lupino, halogenom manjka en elektron.
-- Uporaba: klor in jod za razkuževanje, helij za balone, neon za reklame, argon za žarnice.
+- Desno zgoraj v periodnem sistemu (in vodik) so nekovine. Večinoma nimajo sijaja, slabo prevajajo (izjema grafit), trdne so krhke, mnoge so plini. V reakcijah elektrone sprejmejo ali si jih delijo.
+- Halogeni (17. skupina): $\mathrm{F}$, $\mathrm{Cl}$, $\mathrm{Br}$, $\mathrm{I}$. Imajo $7$ zunanjih elektronov, sprejmejo enega in tvorijo ione $1-$. So zelo reaktivni, v naravi le v spojinah, kot elementi dvoatomne molekule ($\mathrm{Cl_2}$).
+- Fluor in klor sta plina, brom tekočina, jod trdna snov. Reaktivnost halogenov navzdol po skupini pada.
+- Žlahtni plini (18. skupina): $\mathrm{He}$, $\mathrm{Ne}$, $\mathrm{Ar}$, $\mathrm{Kr}$, $\mathrm{Xe}$, $\mathrm{Rn}$. Imajo zapolnjeno zunanjo lupino, so enoatomni, brezbarvni in skoraj nereaktivni.
+- Uporaba: klor in jod za razkuževanje, fluoridi v zobni pasti, helij za balone, neon za reklame, argon za žarnice in varjenje.
 
 ## Drugače: Na sliki
 
-Predstavljaj si skrajno desni del periodnega sistema kot dva sosednja stolpca:
+Nariši tri atome iz 3. periode in okoli vsakega le zunanje elektrone kot pikice:
 
-- **17. skupina (halogeni):** fluor, klor, brom, jod, od zgoraj navzdol.
-- **18. skupina (žlahtni plini):** helij, neon, argon, kripton, ksenon, radon.
+```
+Na  ·          1 pikica:  odda jo    → Na⁺
+Cl  ·······    7 pikic:   manjka ena → Cl⁻ ali Cl₂
+Ar  ········   8 pikic:   polno      → ostane Ar
+```
 
-Barve halogenov pri sobni temperaturi se spreminjajo navzdol po skupini: bledorumen plin, rumenozelen plin, rjavordeča tekočina, temnovijolična trdna snov. Čim nižje v skupini, tem temnejša barva in tem »trdnejše« agregatno stanje.
+Natrij ima eno samo pikico in jo rad podari. Klor ima skoraj polno lupino, manjka mu le ena pikica, zato jo zgrabi. Argon ima vseh osem in ničesar ne potrebuje. Natrij in klor si zato ustrezata kot ključ in ključavnica, argon pa ostane sam.
 
-Pomisli še na atom kot jedro z lupinami elektronov. Pri žlahtnem plinu je zunanja lupina polna, kakor skleda, ki je do roba napolnjena in ne more sprejeti nič več. Pri halogenu v skledi manjka še en kos, zato ga atom pohlepno zgrabi.
+Če pikice narišeš še za fluor nad klorom, jih je prav tako sedem, a bližje jedru. Zato jedro novo pikico pritegne močneje in fluor je reaktivnejši.
 
 ## Drugače: Iz vsakdanjega življenja
 
-**Halogeni doma:**
-- V bazenu je voda razkužena s snovmi, ki vsebujejo klor. Vonj »po bazenu« izvira iz klorovih spojin.
-- Jodova tinktura na rani uniči mikrobe.
-- Fluoridi v zobni pasti utrjujejo zobno sklenino.
-- Kuhinjska sol $\mathrm{NaCl}$ je spojina klora z natrijem. Klor sam je strupen plin, v soli pa je vezan in nam ne škoduje.
+**Ob morju.** Ko poleti morska voda izhlapeva v solinah, ostane sol. Klor iz nje je vezan kot kloridni ion, zato sol lahko ješ, plin klor pa bi te zastrupil.
 
-**Žlahtni plini okoli nas:**
-- Helij v balonih na proslavah poleti kvišku, ker je lažji od zraka.
-- Neon v svetlobnih reklamah sveti rdečkasto-oranžno.
-- Argon polni žarnice, da nitka ne zgori.
+**V bazenu.** Vonj »po bazenu« dajejo klorove spojine, ki uničujejo mikroorganizme. Enako razkužujejo pitno vodo.
 
-Analogija: halogeni so kot nemirni, družabni ljudje, ki se radi povežejo z drugimi. Žlahtni plini so kot samotarji, ki jim družba ni potrebna.
+**V vremenu.** Meteorologi vsak dan spuščajo balone z merilniki, napolnjene s helijem ali vodikom. Balon se dvigne več kot $20\,\mathrm{km}$ visoko, tam se razširi in poči.
 
-## Drugače: Korak za korakom s številkami
+**Pod zemljo.** Radon nastaja v kamninah in uhaja v kleti. Ker je radioaktiven, kleti redno zračimo.
 
-Kako določiš, ali je element halogen ali žlahtni plin, če imaš le periodni sistem?
-
-1. Poišči element po simbolu, npr. $\mathrm{Ar}$.
-2. Preberi številko skupine v stolpcu: argon je v 18. skupini.
-3. Odloči: 17. skupina = halogen, 18. skupina = žlahtni plin.
-4. Iz tega sklepaj: argon je žlahtni plin, zato ni reaktiven in je enoatomni plin.
-
-Še en primer: element $\mathrm{Br}$.
-
-1. Brom je v 17. skupini.
-2. Je halogen, zato je reaktiven nekovinski element.
-3. Kot element tvori dvoatomno molekulo $\mathrm{Br_2}$ in je pri sobni temperaturi tekočina.
-
-Tabelo za pomnjenje:
-
-| Skupina | Ime | Reaktivnost | Elementarna oblika |
-|---|---|---|---|
-| 17 | halogeni | zelo velika | dvoatomne molekule |
-| 18 | žlahtni plini | skoraj nič | posamezni atomi |
-
-## Drugače: Bolj natančno
-
-Zakaj imajo elementi iste skupine podobne lastnosti? Ker imajo enako število elektronov v zunanji lupini, ta pa določa, kako atom reagira.
-
-- **Žlahtni plini** imajo zunanjo lupino zapolnjeno (helij z dvema elektronoma, drugi z osmimi). Taka ureditev je stabilna, zato atomi ne težijo k reakcijam.
-- **Halogeni** imajo v zunanji lupini sedem elektronov, do osmih jih manjka en. Zato radi sprejmejo en elektron ali si ga z drugim atomom delijo. Tako dosežejo stabilno ureditev.
-
-Posledica: dva atoma klora si delita par elektronov in tvorita molekulo $\mathrm{Cl_2}$. Pri reakciji z natrijem klor sprejme elektron in nastane natrijev klorid $\mathrm{NaCl}$.
-
-Reaktivnost halogenov upada od fluora proti jodu, ker so atomi navzdol po skupini večji in je zunanja lupina bolj oddaljena od jedra, zato je privlak za dodatni elektron šibkejši.
+**V zraku, ki ga dihaš.** Argon je v zraku, ker ne reagira z ničimer. Zato ga tudi uporabljamo tam, kjer reakcije ne želimo: v žarnici, kjer bi se vroča nitka v zraku hitro uničila.
 
 ## Preveri se
 
-? Kateri skupini periodnega sistema pripadajo halogeni?
-- 1. skupini
-- 18. skupini
-+ 17. skupini
-> Halogeni so v 17. skupini. V 18. skupini so žlahtni plini, v 1. skupini pa alkalijske kovine.
+? Katera vrstica pravilno opiše brom?
+- 17. skupina, plin, zapis $\mathrm{Br}$
+~ Plina sta le fluor in klor, halogen kot element pa je vedno dvoatomen.
++ 17. skupina, tekočina, zapis $\mathrm{Br_2}$
+- 18. skupina, tekočina, zapis $\mathrm{Br_2}$
+~ V 18. skupini so žlahtni plini. Brom je halogen, zato je v 17. skupini.
+- 17. skupina, trdna snov, zapis $\mathrm{Br_2}$
+~ Trdna snov je jod pod bromom. Brom je ena redkih tekočih snovi med elementi.
+> Brom je halogen v 17. skupini, pri sobni temperaturi rjavordeča tekočina iz molekul $\mathrm{Br_2}$.
+
+? V učilnici je $200\,\mathrm{m^3}$ zraka, od tega približno $0{,}93\,\%$ argona. Koliko argona je približno v učilnici?
+- približno $2\,\mathrm{L}$
+~ Dobil si $1{,}86$, a to so kubični metri. En kubični meter je $1000\,\mathrm{L}$.
++ približno $1900\,\mathrm{L}$
+- približno $186\,000\,\mathrm{L}$
+~ Pozabil si deliti s $100$: $0{,}93\,\%$ je $0{,}0093$, ne $0{,}93$.
+- skoraj nič, ker je argon redek
+~ Argon je za dušikom in kisikom tretji najpogostejši plin v zraku.
+> $200 \cdot 0{,}0093 = 1{,}86\,\mathrm{m^3}$, kar je $1860\,\mathrm{L}$, približno $1900\,\mathrm{L}$.
 
 ? Zakaj žlahtni plini skoraj ne reagirajo?
-- Ker so težki in počasni.
+- Ker so plini, plini pa ne reagirajo.
+~ Tudi klor in kisik sta plina, pa sta zelo reaktivna. Odloča zgradba atoma, ne agregatno stanje.
 + Ker imajo zapolnjeno zunanjo lupino elektronov.
 - Ker jim do zapolnjene lupine manjka en elektron.
-> Žlahtni plini imajo zapolnjeno zunanjo lupino, zato so stabilni. Prav halogenom manjka en elektron do zapolnjene lupine, zato so tako reaktivni.
+~ To velja za halogene in je razlog, da so ti zelo reaktivni.
+- Ker imajo zelo velike atome.
+~ Helij in neon imata majhne atome, pa tudi ne reagirata.
+> Atomu žlahtnega plina ni treba ne oddati ne sprejeti elektrona, ker ima zapolnjeno zunanjo lupino.
 
-? Kateri plin je primeren za polnjenje balonov, ker je lažji od zraka in ne gori?
+? Plin je enoatomen, brez barve, skoraj ne reagira in ga je v zraku skoraj $1\,\%$. Kateri je?
 - klor
-- argon
-- vodik
-+ helij
-> Helij je žlahtni plin, lažji od zraka in negorljiv. Klor je strupen in težji od zraka, argon je prav tako težji od zraka, vodik pa je sicer lažji od zraka, a gori.
+~ Klor je rumenozelen, zelo reaktiven in tvori molekule $\mathrm{Cl_2}$.
+- dušik
+~ Dušika je v zraku okoli $78\,\%$ in je iz dvoatomnih molekul $\mathrm{N_2}$.
++ argon
+- helij
+~ Helij je žlahtni plin, a ga je v zraku le sled, ker kot zelo lahek uhaja v vesolje.
+> Argon je žlahtni plin, enoatomen in nereaktiven, v zraku ga je $0{,}93\,\%$.
+
+? Astat stoji v 17. skupini pod jodom. Kaj pričakuješ?
+- Je plin in reaktivnejši od fluora.
+~ Tako bi sklepal po vzorcu alkalijskih kovin. Pri halogenih reaktivnost navzdol pada, stanje pa prehaja proti trdnemu.
++ Je trdna snov in manj reaktiven od joda.
+- Je enoatomen plin kot žlahtni plini.
+~ Astat ima $7$ zunanjih elektronov kot drugi halogeni, ne zapolnjene lupine.
+- Je tekočina in enako reaktiven kot brom.
+~ Tekočina je le brom. Pod jodom je snov trdna in še manj reaktivna.
+> Navzdol po 17. skupini halogeni prehajajo od plinov k trdnim snovem, reaktivnost pa pada. Astat je zato trdna snov, manj reaktivna od joda.
 
 :::simboli
-\mathrm{F} | fluor | | | halogen (17. skupina), najbolj reaktiven
-\mathrm{Cl} | klor | | | halogen (17. skupina)
-\mathrm{Br} | brom | | | halogen (17. skupina)
-\mathrm{I} | jod | | | halogen (17. skupina)
-\mathrm{At} | astat | | | radioaktiven in zelo redek halogen
-\mathrm{F_2}, \mathrm{Cl_2}, \mathrm{Br_2}, \mathrm{I_2} | dvoatomna molekula halogena | | | halogeni kot elementi tvorijo dvoatomne molekule
-\mathrm{He} | helij | | | žlahtni plin (18. skupina), enoatomen
-\mathrm{Ne} | neon | | | žlahtni plin (18. skupina)
-\mathrm{Ar} | argon | | | žlahtni plin (18. skupina)
-\mathrm{Kr} | kripton | | | žlahtni plin (18. skupina)
-\mathrm{Xe} | ksenon | | | žlahtni plin (18. skupina)
-\mathrm{Rn} | radon | | | žlahtni plin (18. skupina)
+n | kolikokrat je plin lažji od zraka | n = \dfrac{m_\mathrm{zrak}}{m_\mathrm{plin}} | –
+m_\mathrm{zrak} | masa $1\,\mathrm{L}$ zraka | | g
+m_\mathrm{plin} | masa $1\,\mathrm{L}$ plina | | g
 :::

@@ -5,86 +5,82 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že znaš, da so snovi zgrajene iz atomov in molekul, da ima vsak element v periodnem sistemu svojo relativno atomsko maso in da kemijska formula (npr. $\mathrm{H_2O}$) pove, iz katerih atomov je zgrajena molekula.
+Izdelovalka glasbil ima na tehtnici dva kupčka po $10\,\mathrm{g}$: aluminij za palčko triangla in zlato za pozlato ustnika trobente. Tehtnica pri obeh kaže isto. Pa vendar je v aluminiju več kot sedemkrat več atomov kot v zlatu.
 
-Težava: atomi in molekule so tako majhni, da jih ne moremo prešteti niti stehtati posamično. V kapljici vode jih je več milijard milijard. Kemiki zato uporabljajo veličino, ki jo imenujemo **množina snovi**. Povezuje maso, ki jo lahko stehtamo, s številom delcev, ki jih ne moremo videti. Z njo izračunaš, koliko gramov snovi je treba odtehtati za reakcijo, koliko molekul je v vzorcu in koliko snovi nastane.
+Zveni narobe? Enaka masa, različno število delcev. Iz prejšnje lekcije poznaš mol in molsko maso. Zdaj ju boš uporabil za pot, ki jo kemik prehodi vsak dan: od mase na tehtnici do števila delcev in nazaj. Tako izračunaš, koliko atomov je v kitarski struni, koliko zlata pokrije ustnik ali koliko molekul se dvigne v odrsko meglo.
 
 ## Razlaga
 
-**1. Množina snovi.** Množina snovi ima oznako $n$, enota je **mol** ($\mathrm{mol}$). Mol je enota, ki pomeni določeno število delcev, podobno kot ducat pomeni 12 kosov, le da je delcev v molu veliko več.
+**1. Mamljiva misel: enaka masa, enako delcev.** Zdi se logično, da imata enako težka vzorca enako atomov. Preverimo z množino. Uporabimo $M(\mathrm{Al}) = 27\,\mathrm{g/mol}$ in $M(\mathrm{Au}) = 197\,\mathrm{g/mol}$:
 
-**2. Avogadrova konstanta.** En mol vsebuje vedno enako število delcev (atomov, molekul ali formulskih enot):
+$$n(\mathrm{Al}) = \frac{10\,\mathrm{g}}{27\,\mathrm{g/mol}} \approx 0{,}370\,\mathrm{mol}$$
 
-$$N_A = 6{,}02 \cdot 10^{23}\,\frac{1}{\text{mol}}$$
+$$n(\mathrm{Au}) = \frac{10\,\mathrm{g}}{197\,\mathrm{g/mol}} \approx 0{,}0508\,\mathrm{mol}$$
 
-Število delcev $N$ izračunamo takole:
+Atom zlata je približno $7{,}3$-krat težji od atoma aluminija. Zato je v enaki masi zlata $7{,}3$-krat manj atomov. Število delcev določa množina $n$, ne masa $m$.
 
-$$N = n \cdot N_A$$
+:::premisli
+Kje je več atomov: v $27\,\mathrm{g}$ aluminija ali v $197\,\mathrm{g}$ zlata? Napovej, preden računaš.
+---
+Enako. Oba vzorca imata maso, enako svoji molski masi, zato je v vsakem $1\,\mathrm{mol}$ atomov, to je $6{,}02 \cdot 10^{23}$. Zlato je več kot sedemkrat težje, atomov pa ni več.
+:::
 
-**3. Molska masa.** Molska masa $M$ pove, koliko gramov tehta en mol snovi. Enota je $\dfrac{\text{g}}{\text{mol}}$. Številsko je enaka relativni atomski masi elementa (iz periodnega sistema) oziroma relativni molekulski masi spojine:
+**2. Mamljiva misel: iz mase naravnost v število delcev.** Nekateri pomnožijo maso z Avogadrovo konstanto, $m \cdot N_A$ (napačno). Enote izdajo napako: $\mathrm{g} \cdot \mathrm{mol^{-1}}$ ni število delcev. $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$ pove, koliko delcev je v enem *molu*, ne v enem gramu. Pot zato vedno vodi čez množino:
 
-- $M(\mathrm{H}) = 1\,\dfrac{\text{g}}{\text{mol}}$, $M(\mathrm{O}) = 16\,\dfrac{\text{g}}{\text{mol}}$, $M(\mathrm{C}) = 12\,\dfrac{\text{g}}{\text{mol}}$
-- Pri spojinah molske mase atomov seštejemo z upoštevanjem indeksov: $M(\mathrm{H_2O}) = 2 \cdot 1 + 16 = 18\,\dfrac{\text{g}}{\text{mol}}$.
+$$m \xrightarrow{\ :M\ } n \xrightarrow{\ \cdot N_A\ } N$$
 
-**4. Zveza med maso in množino.**
+| Iz | V | Kaj narediš |
+|---|---|---|
+| masa $m$ | množina $n$ | deliš z $M$ |
+| množina $n$ | število $N$ | množiš z $N_A$ |
+| število $N$ | množina $n$ | deliš z $N_A$ |
+| množina $n$ | masa $m$ | množiš z $M$ |
+
+Množina je v sredini, ker je most med svetom, ki ga stehtamo, in svetom delcev. Zapisano z enačbami:
 
 $$n = \frac{m}{M} \qquad m = n \cdot M$$
 
-kjer je $m$ masa vzorca v gramih.
+$$N = n \cdot N_A \qquad n = \frac{N}{N_A}$$
 
-**5. Pot do števila delcev.** Masa in število delcev sta povezana prek množine:
+**3. Mamljiva misel: molekul in atomov je enako.** $1\,\mathrm{mol}$ vode $\mathrm{H_2O}$ vsebuje $6{,}02 \cdot 10^{23}$ molekul. Vsaka molekula ima dva atoma vodika, zato je atomov vodika $2\,\mathrm{mol}$, atomov kisika pa $1\,\mathrm{mol}$. Preden računaš, se vprašaj: katere delce štejem?
 
-$$m \;\longleftrightarrow\; n \;\longleftrightarrow\; N$$
+:::premisli
+Je v $1\,\mathrm{mol}$ ogljikovega dioksida $\mathrm{CO_2}$ več ali manj kot $6{,}02 \cdot 10^{23}$ atomov? Kolikokrat? Odgovori, preden bereš naprej.
+---
+Več, trikrat. Vsaka molekula ima $3$ atome ($1$ C in $2$ O), zato so v $1\,\mathrm{mol}$ molekul $3\,\mathrm{mol}$ atomov: $3 \cdot 6{,}02 \cdot 10^{23} = 1{,}806 \cdot 10^{24}$ atomov.
+:::
 
-Pri nalogah, kjer iz mase iščeš število delcev, najprej izračunaš $n$, nato $N$.
+**4. Računanje s potencami.** Ko množiš z $N_A$, množiš samo število pred potenco, potenca ostane: $0{,}5 \cdot 6{,}02 \cdot 10^{23} = 3{,}01 \cdot 10^{23}$. Če je število pred potenco $10$ ali več, rezultat zapišeš drugače: $12{,}04 \cdot 10^{23} = 1{,}204 \cdot 10^{24}$. Vejica se premakne za eno mesto v levo, eksponent se poveča za $1$.
 
-**6. Podatki za vaje.** Uporabljali bomo: $M(\mathrm{H}) = 1$, $M(\mathrm{C}) = 12$, $M(\mathrm{N}) = 14$, $M(\mathrm{O}) = 16$, $M(\mathrm{Na}) = 23$, $M(\mathrm{Mg}) = 24$, $M(\mathrm{Cl}) = 35{,}5$ (vse v $\dfrac{\text{g}}{\text{mol}}$).
+**5. Podatki za vaje.** Uporabljali bomo $M(\mathrm{H}) = 1$, $M(\mathrm{C}) = 12$, $M(\mathrm{O}) = 16$, $M(\mathrm{Na}) = 23$, $M(\mathrm{Al}) = 27$, $M(\mathrm{Fe}) = 56$, $M(\mathrm{Au}) = 197$ (vse v $\mathrm{g/mol}$).
 
 ## Rešeni primeri
 
-### Primer 1: iz mase v množino
+### Primer 1: atomi v kitarski struni
 
-Kolikšna je množina $36\,\text{g}$ vode $\mathrm{H_2O}$? Uporabi $M(\mathrm{H}) = 1\,\dfrac{\text{g}}{\text{mol}}$ in $M(\mathrm{O}) = 16\,\dfrac{\text{g}}{\text{mol}}$.
+Jeklena struna kitare ima maso $0{,}56\,\mathrm{g}$. Vzemimo, da je iz čistega železa. Koliko atomov železa je v njej? Uporabi $M(\mathrm{Fe}) = 56\,\mathrm{g/mol}$ in $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$.
 
-**Podatki:** $m = 36\,\text{g}$, formula $\mathrm{H_2O}$, $M(\mathrm{H}) = 1\,\dfrac{\text{g}}{\text{mol}}$, $M(\mathrm{O}) = 16\,\dfrac{\text{g}}{\text{mol}}$
-**Iščemo:** množino snovi $n$
+**Podatki:** $m = 0{,}56\,\mathrm{g}$, snov $\mathrm{Fe}$, $M(\mathrm{Fe}) = 56\,\mathrm{g/mol}$, $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$
+**Iščemo:** število atomov $N$
 
 :::formula
-$n = \dfrac{m}{M}$
+$n = \dfrac{m}{M}$, nato $N = n \cdot N_A$
 :::
 
 **Rešitev:**
 
-1. Najprej potrebujemo molsko maso: $M(\mathrm{H_2O}) = 2 \cdot 1 + 16 = 18\,\dfrac{\text{g}}{\text{mol}}$. Voda ima dva atoma vodika, zato vodik štejemo dvakrat.
-2. Uporabimo $n = \dfrac{m}{M}$, ker iščemo množino iz mase.
-3. Vstavimo: $n = \dfrac{36\,\text{g}}{18\,\text{g/mol}} = 2\,\text{mol}$.
-4. Preverimo smiselnost: $36$ je dvakrat več kot $18$, zato sta dva mola. ✓
-5. Odgovor: množina $36\,\text{g}$ vode je $2\,\text{mol}$.
+1. **Množina.** Iz mase ne moremo naravnost v število atomov, zato najprej izračunamo $n$:
+$$n = \frac{0{,}56\,\mathrm{g}}{56\,\mathrm{g/mol}} = 0{,}01\,\mathrm{mol}$$
+2. **Število atomov.** Vsak mol ima $N_A$ atomov:
+$$N = 0{,}01 \cdot 6{,}02 \cdot 10^{23} = 6{,}02 \cdot 10^{21}$$
+3. Smiselnost: struna je stotina mola, zato ima stotino od $6{,}02 \cdot 10^{23}$ atomov. ✓
+4. Odgovor: v struni je približno $6{,}02 \cdot 10^{21}$ atomov železa.
 
-### Primer 2: iz množine v maso
+### Primer 2: požirek vode med koncertom
 
-Kolikšna je masa $0{,}5\,\text{mol}$ ogljikovega dioksida $\mathrm{CO_2}$? Uporabi $M(\mathrm{C}) = 12\,\dfrac{\text{g}}{\text{mol}}$ in $M(\mathrm{O}) = 16\,\dfrac{\text{g}}{\text{mol}}$.
+Pevka med dvema pesmima popije požirek, $9\,\mathrm{g}$ vode $\mathrm{H_2O}$. Koliko molekul vode in koliko atomov vodika je to? Uporabi $M(\mathrm{H_2O}) = 18\,\mathrm{g/mol}$ in $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$.
 
-**Podatki:** $n = 0{,}5\,\text{mol}$, formula $\mathrm{CO_2}$, $M(\mathrm{C}) = 12\,\dfrac{\text{g}}{\text{mol}}$, $M(\mathrm{O}) = 16\,\dfrac{\text{g}}{\text{mol}}$
-**Iščemo:** maso $m$
-
-:::formula
-$m = n \cdot M$
-:::
-
-**Rešitev:**
-
-1. Molska masa: $M(\mathrm{CO_2}) = 12 + 2 \cdot 16 = 44\,\dfrac{\text{g}}{\text{mol}}$.
-2. Iščemo maso, zato $m = n \cdot M$.
-3. $m = 0{,}5\,\text{mol} \cdot 44\,\dfrac{\text{g}}{\text{mol}} = 22\,\text{g}$.
-4. Preverimo: pol mola mora tehtati polovico molske mase, torej polovico od $44$, kar je $22$. ✓
-5. Odgovor: $0{,}5\,\text{mol}$ ogljikovega dioksida ima maso $22\,\text{g}$.
-
-### Primer 3: iz mase v število delcev
-
-Koliko molekul vode in koliko atomov vodika je v $9\,\text{g}$ vode $\mathrm{H_2O}$? Uporabi $M(\mathrm{H_2O}) = 18\,\dfrac{\text{g}}{\text{mol}}$ (iz primera 1) in $N_A = 6{,}02 \cdot 10^{23}\,\frac{1}{\text{mol}}$.
-
-**Podatki:** $m = 9\,\text{g}$, formula $\mathrm{H_2O}$ (2 atoma vodika v molekuli), $M(\mathrm{H_2O}) = 18\,\dfrac{\text{g}}{\text{mol}}$ (iz primera 1), $N_A = 6{,}02 \cdot 10^{23}\,\frac{1}{\text{mol}}$
+**Podatki:** $m = 9\,\mathrm{g}$, formula $\mathrm{H_2O}$ (2 atoma vodika v molekuli), $M(\mathrm{H_2O}) = 18\,\mathrm{g/mol}$, $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$
 **Iščemo:** število molekul vode $N(\mathrm{H_2O})$ in število atomov vodika $N(\mathrm{H})$
 
 :::formula
@@ -93,103 +89,150 @@ $n = \dfrac{m}{M}$, nato $N = n \cdot N_A$; atomov vodika je $2$-krat več kot m
 
 **Rešitev:**
 
-1. Molska masa vode je $18\,\dfrac{\text{g}}{\text{mol}}$ (kot v primeru 1).
-2. **Množina:** $n = \dfrac{9\,\text{g}}{18\,\text{g/mol}} = 0{,}5\,\text{mol}$.
-3. **Število molekul:** $N = n \cdot N_A = 0{,}5 \cdot 6{,}02 \cdot 10^{23} = 3{,}01 \cdot 10^{23}$ molekul.
-4. **Atomi vodika:** vsaka molekula $\mathrm{H_2O}$ ima 2 atoma vodika, zato $2 \cdot 3{,}01 \cdot 10^{23} = 6{,}02 \cdot 10^{23}$ atomov vodika.
-5. Preverimo: $0{,}5\,\text{mol}$ vode vsebuje $1\,\text{mol}$ atomov vodika, to je ravno $6{,}02 \cdot 10^{23}$ atomov. ✓
-6. Odgovor: v $9\,\text{g}$ vode je $3{,}01 \cdot 10^{23}$ molekul vode in $6{,}02 \cdot 10^{23}$ atomov vodika.
+1. **Množina:** $n = \dfrac{9\,\mathrm{g}}{18\,\mathrm{g/mol}} = 0{,}5\,\mathrm{mol}$.
+2. **Število molekul:** $N = n \cdot N_A = 0{,}5 \cdot 6{,}02 \cdot 10^{23} = 3{,}01 \cdot 10^{23}$ molekul.
+3. **Atomi vodika:** vsaka molekula $\mathrm{H_2O}$ ima 2 atoma vodika, zato $2 \cdot 3{,}01 \cdot 10^{23} = 6{,}02 \cdot 10^{23}$ atomov vodika.
+4. Preverimo: $0{,}5\,\mathrm{mol}$ vode vsebuje $1\,\mathrm{mol}$ atomov vodika, to je ravno $6{,}02 \cdot 10^{23}$ atomov. ✓
+5. Odgovor: v požirku je $3{,}01 \cdot 10^{23}$ molekul vode in $6{,}02 \cdot 10^{23}$ atomov vodika.
+
+### Primer 3: zlato na ustniku trobente
+
+Ustnik trobente je prevlečen s tanko plastjo zlata, v kateri je $3{,}01 \cdot 10^{20}$ atomov zlata. Kolikšna je masa zlata? Uporabi $M(\mathrm{Au}) = 197\,\mathrm{g/mol}$ in $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$.
+
+**Podatki:** $N = 3{,}01 \cdot 10^{20}$, snov $\mathrm{Au}$, $M(\mathrm{Au}) = 197\,\mathrm{g/mol}$, $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$
+**Iščemo:** maso zlata $m$
+
+:::formula
+$n = \dfrac{N}{N_A}$, nato $m = n \cdot M$
+:::
+
+**Rešitev:**
+
+1. Pot gre tokrat v obratni smeri, $N \to n \to m$. Tudi nazaj ne moremo preskočiti množine.
+2. **Množina.** Število atomov delimo z $N_A$. $3{,}01$ je polovica od $6{,}02$, $10^{20}$ pa je tisočina od $10^{23}$. Polovica tisočine je $0{,}0005$:
+$$n = \frac{3{,}01 \cdot 10^{20}}{6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}} = 0{,}0005\,\mathrm{mol}$$
+3. **Masa.**
+$$m = 0{,}0005\,\mathrm{mol} \cdot 197\,\mathrm{g/mol} = 0{,}0985\,\mathrm{g}$$
+4. Smiselnost: plast zlata je zelo tanka, zato je pričakovana masa manj kot gram. ✓
+5. Odgovor: na ustniku je približno $0{,}1\,\mathrm{g}$ zlata.
+
+### Primer 4: zdaj ti
+
+Za nizko meglo na odru porabijo $4{,}4\,\mathrm{kg}$ suhega ledu, to je trdnega ogljikovega dioksida $\mathrm{CO_2}$. Koliko molekul $\mathrm{CO_2}$ se spremeni v plin? Uporabi $M(\mathrm{CO_2}) = 44\,\mathrm{g/mol}$ in $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$.
+
+**Podatki:** $m = 4{,}4\,\mathrm{kg}$, formula $\mathrm{CO_2}$, $M(\mathrm{CO_2}) = 44\,\mathrm{g/mol}$, $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$
+**Iščemo:** število molekul $N$
+
+:::formula
+$n = \dfrac{m}{M}$, nato $N = n \cdot N_A$
+:::
+
+**Rešitev:**
+
+1. Molska masa je v $\mathrm{g/mol}$, zato maso pretvorimo v grame: $4{,}4\,\mathrm{kg} = 4400\,\mathrm{g}$.
+2. **Množina:**
+$$n = \frac{4400\,\mathrm{g}}{44\,\mathrm{g/mol}} = 100\,\mathrm{mol}$$
+3. Zadnji korak naredi sam, nato preveri:
+
+:::premisli
+Koliko je $N = 100\,\mathrm{mol} \cdot 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$?
+---
+$N = 6{,}02 \cdot 10^{25}$ molekul. Množenje s $100 = 10^2$ poveča eksponent za $2$.
+:::
 
 ## Pogoste napake
 
-- **Zamenjava $m$ in $M$.** Masa vzorca $m$ (v $\text{g}$) in molska masa $M$ (v $\dfrac{\text{g}}{\text{mol}}$) nista isto. $M$ je lastnost snovi, $m$ je količina, ki jo stehtaš.
-- **Obrnjena formula.** Če dobiš $n = M/m$, preveri enote: rezultat mora biti v $\text{mol}$. Pravilno je $n = m/M$.
-- **Pozabljeni indeksi.** Pri $\mathrm{CO_2}$ je $M = 12 + 2 \cdot 16$, ne $12 + 16$.
-- **Mešanje molekul in atomov.** Mol molekul $\mathrm{H_2O}$ vsebuje dva mola atomov vodika in en mol atomov kisika. Vedno preveri, česa delce šteješ.
-- **Napake pri potencah.** $0{,}5 \cdot 6{,}02 \cdot 10^{23} = 3{,}01 \cdot 10^{23}$, potenca ostane enaka. Rezultat ni $3{,}01 \cdot 10^{22}$ ali $3{,}01 \cdot 10^{24}$.
+- **Enaka masa, enako delcev.** Učenec misli, da je v $10\,\mathrm{g}$ zlata toliko atomov kot v $10\,\mathrm{g}$ aluminija, ker »tehtata enako«. Atomi različnih elementov so različno težki. Popravek: za vsako snov posebej izračunaj $n = \dfrac{m}{M}$ in primerjaj množine.
+- **Preskok množine.** Učenec računa $m \cdot N_A$ (napačno), ker sta obe števili na voljo. $N_A$ velja za en mol, ne za en gram. Popravek: najprej $n = \dfrac{m}{M}$, šele nato $N = n \cdot N_A$.
+- **Obrnjena formula.** Učenec računa $\dfrac{M}{m}$, ker zamenja maso vzorca $m$ (v $\mathrm{g}$, s tehtnice) in molsko maso $M$ (v $\mathrm{g/mol}$, iz formule). Preveri enote: rezultat mora biti v $\mathrm{mol}$. Pravilno je $n = \dfrac{m}{M}$.
+- **Mešanje molekul in atomov.** Učenec za število atomov vodika v vodi vzame število molekul. Mol molekul $\mathrm{H_2O}$ vsebuje dva mola atomov vodika in en mol atomov kisika. Vedno preveri, katere delce šteješ.
+- **Napake pri potencah.** Učenec pri množenju spremeni eksponent ali ga pri prepisu pozabi popraviti. $0{,}5 \cdot 6{,}02 \cdot 10^{23} = 3{,}01 \cdot 10^{23}$: potenca ostane enaka, rezultat ni $3{,}01 \cdot 10^{22}$. Pri $12{,}04 \cdot 10^{23}$ pa se eksponent poveča: $1{,}204 \cdot 10^{24}$.
 
 ## Povzetek
 
 - Množina snovi $n$ se meri v molih. En mol vsebuje $N_A = 6{,}02 \cdot 10^{23}$ delcev.
-- Molska masa $M$ ($\dfrac{\text{g}}{\text{mol}}$) je številsko enaka relativni atomski oziroma molekulski masi, pri spojinah jo dobimo s seštevanjem mas atomov z upoštevanjem indeksov.
-- $n = \dfrac{m}{M}$, $m = n \cdot M$, $N = n \cdot N_A$.
-- Od mase do števila delcev greš prek množine: $m \to n \to N$.
-- Pri vsaki nalogi najprej zapiši formulo snovi in izračunaj molsko maso.
+- Enaka masa različnih snovi ne pomeni enakega števila delcev; o tem odloča $n = \dfrac{m}{M}$.
+- $n = \dfrac{m}{M}$, $m = n \cdot M$, $N = n \cdot N_A$, $n = \dfrac{N}{N_A}$.
+- Od mase do števila delcev in nazaj greš vedno prek množine: $m \to n \to N$.
+- Molekul in atomov ni enako: za število atomov ene vrste pomnoži število molekul z indeksom.
+- Pri vsaki nalogi najprej zapiši formulo snovi in molsko maso, maso pretvori v grame.
 
-## Drugače: Na sliki
+## Drugače: Kot zgodba
 
-Predstavljaj si tri »posode« v vrsti:
+Maja igra kitaro in na koncertu šole rada udari še po trianglu. Nekega dne opazi, da aluminijasti triangel tehta le $54\,\mathrm{g}$. »Koliko atomov je v njem?« se vpraša.
 
-$$\boxed{m\ (\text{g})} \xrightarrow{\ :M\ } \boxed{n\ (\text{mol})} \xrightarrow{\ \cdot N_A\ } \boxed{N\ (\text{delcev})}$$
+Šteti ne more, tehtati pa. V periodnem sistemu najde aluminij: relativna atomska masa $27$, torej $M = 27\,\mathrm{g/mol}$. Vsakih $27\,\mathrm{g}$ je en mol, en »paket« atomov. V $54\,\mathrm{g}$ sta dva paketa: $n = 2\,\mathrm{mol}$.
 
-Pot nazaj gre v obratni smeri:
+Nato se spomni, da je v vsakem paketu $6{,}02 \cdot 10^{23}$ atomov. Dva paketa: $2 \cdot 6{,}02 \cdot 10^{23} = 12{,}04 \cdot 10^{23}$, lepše zapisano $1{,}204 \cdot 10^{24}$ atomov.
 
-$$\boxed{N} \xrightarrow{\ :N_A\ } \boxed{n} \xrightarrow{\ \cdot M\ } \boxed{m}$$
-
-Množina $n$ je v sredini, ker je most med svetom, ki ga stehtamo, in svetom delcev. Iz mase se ne da skočiti naravnost v število delcev. Vedno greš prek mola. Ko greš v desno, deliš z $M$ in množiš z $N_A$, ko greš v levo, narediš obratno.
-
-## Drugače: Iz vsakdanjega življenja
-
-V trgovini jajca kupuješ po ducatih: ducat je 12 kosov, pol ducata je 6 kosov. Za polovico ducata ne potrebuješ šteti vsakega jajca, ker veš, da je to 6.
-
-Mol je »kemijski ducat«, le da ne vsebuje 12, ampak $6{,}02 \cdot 10^{23}$ delcev. Tako kot ducat jajc tehta več kot ducat češenj, ima tudi mol različnih snovi različno maso:
-
-- 1 mol vode ($\mathrm{H_2O}$): $18\,\text{g}$, to je nekaj več kot ena jušna žlica vode,
-- 1 mol kuhinjske soli ($\mathrm{NaCl}$): $58{,}5\,\text{g}$,
-- 1 mol železa ($\mathrm{Fe}$): $56\,\text{g}$.
-
-V vseh teh vzorcih je enako število delcev, le da so delci različno težki.
+Ko pokaže račun bratu, ta vpraša: »Kaj pa, če bi bil triangel iz jekla in bi prav tako tehtal $54\,\mathrm{g}$?« Maja se nasmehne: »Potem bi bilo atomov manj, ker je atom železa težji. Najprej bi moral spet izračunati množino.«
 
 ## Drugače: Korak za korakom s številkami
 
-Naloga: Koliko formulskih enot $\mathrm{NaCl}$ je v $117\,\text{g}$ kuhinjske soli?
+Naloga: Koliko formulskih enot $\mathrm{NaCl}$ je v $117\,\mathrm{g}$ kuhinjske soli?
 
 | Korak | Kaj naredim | Račun |
 |---|---|---|
 | 1 | Zapišem formulo | $\mathrm{NaCl}$ |
-| 2 | Izračunam molsko maso | $M = 23 + 35{,}5 = 58{,}5\,\dfrac{\text{g}}{\text{mol}}$ |
-| 3 | Izračunam množino | $n = \dfrac{117}{58{,}5} = 2\,\text{mol}$ |
+| 2 | Izračunam molsko maso | $M = 23 + 35{,}5 = 58{,}5\,\dfrac{\mathrm{g}}{\mathrm{mol}}$ |
+| 3 | Izračunam množino | $n = \dfrac{117}{58{,}5} = 2\,\mathrm{mol}$ |
 | 4 | Izračunam število delcev | $N = 2 \cdot 6{,}02 \cdot 10^{23} = 12{,}04 \cdot 10^{23}$ |
 | 5 | Zapišem v znanstvenem zapisu (število pred potenco med 1 in 10) | $N = 1{,}204 \cdot 10^{24}$ formulskih enot |
 
 Preverjanje: $117$ je dvakrat $58{,}5$, zato sta dva mola, delcev pa dvakrat $N_A$. ✓
 
-## Drugače: Bolj natančno
-
-Mol je bil dolgo definiran kot množina snovi, ki vsebuje toliko delcev, kot je atomov v $12\,\text{g}$ izotopa ogljik-12. Poskusi so pokazali, da je to približno $6{,}02 \cdot 10^{23}$ atomov. Od leta 2019 je mol definiran neposredno s tem številom: en mol vsebuje natanko $6{,}02214076 \cdot 10^{23}$ delcev. Avogadrova konstanta je zato natanko $N_A = 6{,}02214076 \cdot 10^{23}\,\frac{1}{\text{mol}}$, pri računih pa uporabljamo zaokroženo vrednost $6{,}02 \cdot 10^{23}\,\frac{1}{\text{mol}}$.
-
-Zakaj je molska masa številsko enaka relativni atomski masi? Atom ogljika-12 ima relativno atomsko maso $12$. Če vzamemo $N_A$ takih atomov, imajo skupaj maso $12\,\text{g}$ (po definiciji iz leta 2019 to ne velja več povsem točno, a zelo natančno). Torej je
-
-$$M(\mathrm{C}) = 12\,\frac{\text{g}}{\text{mol}}.$$
-
-Enako velja za vse druge atome: kolikorkrat je atom težji od ogljikovega, toliko težji je tudi mol teh atomov. Pri spojinah masi atomov preprosto seštejemo, ker mol molekul vsebuje mol atomov vsake vrste, pomnožen z indeksom. Za $\mathrm{H_2O}$ je to dva mola vodika in en mol kisika: $2 \cdot 1 + 16 = 18\,\dfrac{\text{g}}{\text{mol}}$.
-
 ## Preveri se
 
-? Kolikšna je množina $80\,\text{g}$ natrijevega hidroksida $\mathrm{NaOH}$? ($M(\mathrm{Na}) = 23$, $M(\mathrm{O}) = 16$, $M(\mathrm{H}) = 1$ v $\dfrac{\text{g}}{\text{mol}}$)
-- $0{,}5\,\text{mol}$
-+ $2\,\text{mol}$
-- $3200\,\text{mol}$
-- $40\,\text{mol}$
-> $M(\mathrm{NaOH}) = 23 + 16 + 1 = 40\,\dfrac{\text{g}}{\text{mol}}$, zato $n = \dfrac{80}{40} = 2\,\text{mol}$. Rezultat $0{,}5$ dobiš z obrnjeno formulo, $3200$ z množenjem namesto deljenja, $40$ pa je molska masa, ne množina.
+? Na škatlici kitarskih strun piše: »Ena struna vsebuje $0{,}01\,\mathrm{mol}$ železa.« Kaj to pomeni?
+- Struna tehta $0{,}01\,\mathrm{g}$.
+~ Mol ni enota za maso. Masa bi bila $0{,}01\,\mathrm{mol} \cdot 56\,\mathrm{g/mol} = 0{,}56\,\mathrm{g}$.
++ V struni je $6{,}02 \cdot 10^{21}$ atomov železa.
+- V struni je $0{,}01$ atoma železa.
+~ Mol je paket $6{,}02 \cdot 10^{23}$ delcev. $0{,}01\,\mathrm{mol}$ je stotina tega paketa, ne stotina atoma.
+> Množina pove število delcev: $N = 0{,}01 \cdot 6{,}02 \cdot 10^{23} = 6{,}02 \cdot 10^{21}$.
 
-? Kolikšna je masa $3\,\text{mol}$ kisika $\mathrm{O_2}$? ($M(\mathrm{O}) = 16\,\dfrac{\text{g}}{\text{mol}}$)
-- $48\,\text{g}$
-- $10{,}7\,\text{g}$
-+ $96\,\text{g}$
-- $35\,\text{g}$
-> Molekula kisika ima dva atoma, zato $M(\mathrm{O_2}) = 2 \cdot 16 = 32\,\dfrac{\text{g}}{\text{mol}}$. Masa je $m = 3 \cdot 32 = 96\,\text{g}$. Odgovor $48$ pozabi indeks $2$, $10{,}7$ dobiš z deljenjem namesto množenja, $35$ pa s seštevanjem $3 + 32$.
+? Razvrsti vzorce po številu atomov, od največ do najmanj: A $27\,\mathrm{g}$ aluminija ($M = 27\,\mathrm{g/mol}$), B $127\,\mathrm{g}$ bakra ($M = 63{,}5\,\mathrm{g/mol}$), C $98{,}5\,\mathrm{g}$ zlata ($M = 197\,\mathrm{g/mol}$).
+- B, C, A
+~ To je razvrstitev po masi. Več mase ne pomeni več atomov, če so atomi težji.
++ B, A, C
+- C, B, A
+~ To je razvrstitev po molski masi, torej po teži enega atoma. Težji atomi pomenijo pri isti masi manj atomov.
+- Vsi imajo enako atomov.
+~ Tako bi bilo le, če bi bil vsak vzorec $1\,\mathrm{mol}$. Izračunaj $n$ za vsakega.
+> $n(\mathrm{A}) = 1\,\mathrm{mol}$, $n(\mathrm{B}) = 2\,\mathrm{mol}$, $n(\mathrm{C}) = 0{,}5\,\mathrm{mol}$. Število atomov je sorazmerno z množino.
 
-? Koliko atomov magnezija je v $2\,\text{mol}$ magnezija?
-- $3{,}01 \cdot 10^{23}$
-- $6{,}02 \cdot 10^{23}$
-+ $1{,}204 \cdot 10^{24}$
-> $N = n \cdot N_A = 2 \cdot 6{,}02 \cdot 10^{23} = 12{,}04 \cdot 10^{23} = 1{,}204 \cdot 10^{24}$. Odgovor $6{,}02 \cdot 10^{23}$ ustreza enemu molu, $3{,}01 \cdot 10^{23}$ pa bi dobili z deljenjem z $2$.
+? Kitarist zamenja struno z debelejšo iz istega jekla, ki ima dvakrat večjo maso. Kaj se zgodi s številom atomov železa v struni?
+- Ostane enako.
+~ Enaka ostane molska masa, ker je snov ista. Množina in število atomov sta odvisna od mase vzorca.
++ Se podvoji.
+- Se razpolovi.
+~ Tako bi bilo, če bi bila masa v imenovalcu ($n = \dfrac{M}{m}$), kar je obrnjena formula.
+> $n = \dfrac{m}{M}$: pri isti $M$ dvakrat večja masa da dvakrat večjo množino, s tem pa dvakrat več atomov.
+
+? Kolikšna je množina $80\,\mathrm{g}$ natrijevega hidroksida $\mathrm{NaOH}$? ($M(\mathrm{Na}) = 23$, $M(\mathrm{O}) = 16$, $M(\mathrm{H}) = 1$ v $\mathrm{g/mol}$)
+- $0{,}5\,\mathrm{mol}$
+~ To je $\dfrac{M}{m} = \dfrac{40}{80}$, obrnjena formula. Masa vzorca je v števcu.
++ $2\,\mathrm{mol}$
+- $3200\,\mathrm{mol}$
+~ To je $m \cdot M$. Množino dobiš z deljenjem.
+- $40\,\mathrm{mol}$
+~ $40$ je molska masa v $\mathrm{g/mol}$, ne množina. To je zamenjava $m$, $M$ in $n$.
+> $M(\mathrm{NaOH}) = 23 + 16 + 1 = 40\,\mathrm{g/mol}$, zato $n = \dfrac{80}{40} = 2\,\mathrm{mol}$.
+
+? Koliko atomov je v $5{,}4\,\mathrm{g}$ aluminija? ($M(\mathrm{Al}) = 27\,\mathrm{g/mol}$, $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$)
+- približno $3{,}25 \cdot 10^{24}$
+~ To je $m \cdot N_A$, preskok množine. $N_A$ velja za en mol, ne za en gram.
+- $1{,}204 \cdot 10^{22}$
+~ Množina je prava, eksponent pa ne: $0{,}2 \cdot 6{,}02 \cdot 10^{23} = 1{,}204 \cdot 10^{23}$.
++ $1{,}204 \cdot 10^{23}$
+- $0{,}2$
+~ To je množina v molih, ne število atomov. Pomnoži še z $N_A$.
+> $n = \dfrac{5{,}4\,\mathrm{g}}{27\,\mathrm{g/mol}} = 0{,}2\,\mathrm{mol}$, $N = 0{,}2 \cdot 6{,}02 \cdot 10^{23} = 1{,}204 \cdot 10^{23}$.
 
 :::simboli
 n | množina snovi | n = \frac{m}{M} | mol
 m | masa vzorca | m = n \cdot M | g
 M | molska masa | | g/mol | koliko gramov tehta en mol snovi
-N | število delcev | N = n \cdot N_A | – | molekul ali atomov
-N_A | Avogadrova konstanta | | mol^{-1} | N_A = 6,02 · 10²³ mol⁻¹
+N | število delcev | N = n \cdot N_A | – | atomov, molekul ali formulskih enot
+N_A | Avogadrova konstanta | | mol^{-1} | $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$
 :::

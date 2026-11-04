@@ -890,6 +890,8 @@
   "sc.memory": "Đã lưu",
   "sc.insert": "Chèn vào phép tính",
   "sc.pressSolve": "Bấm = để giải",
+  "sc.fmHint": "Thay các chữ đã biết bằng số, giữ lại ẩn số rồi bấm =.",
+  "sc.fmRad": "Máy tính hiện ở chế độ RAD (góc tính bằng radian).",
   "sc.errUndefined": "Kết quả không xác định (ví dụ chia cho 0).",
   "sc.constants": "Hằng số",
   "sc.toCalc": "Vào máy tính",
@@ -3478,5 +3480,16 @@
   "block.freeMonth": "Tháng này bạn đã dùng hết câu hỏi miễn phí cho gia sư. Phần Luyện tập và bài học vẫn hoạt động không giới hạn.",
   "block.freePool": "Tháng này câu hỏi miễn phí cho gia sư đã hết cho tất cả mọi người. Phần Luyện tập và bài học vẫn hoạt động không giới hạn.",
   "block.hintGuest": "Để có thêm câu hỏi, hãy tạo tài khoản ở thẻ Tài khoản.",
-  "block.hintParent": "Để có thêm câu hỏi, hãy nhờ bố mẹ chọn gói đăng ký ở thẻ Tài khoản."
+  "block.hintParent": "Để có thêm câu hỏi, hãy nhờ bố mẹ chọn gói đăng ký ở thẻ Tài khoản.",
+  "akt.title": "Hoạt động trong năm qua",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Số ngày học: {n}",
+  "akt.best": "Chuỗi dài nhất: {n}",
+  "akt.week": "Tuần này: {n} XP",
+  "akt.weeks": "XP theo tuần",
+  "akt.less": "Ít",
+  "akt.more": "Nhiều",
+  "sch.addAt": "Thêm tiết học: {day}, {time}",
+  "lg.free": "chỗ trống",
+  "corner.more": "Thêm một chủ đề khác"
 }

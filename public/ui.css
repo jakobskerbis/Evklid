@@ -238,7 +238,7 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
   /* Napredek ima le 3–4 kartice: vrstica s flex-wrap, da na širokem zaslonu ne ostane prazen četrti stolpec. */
   #view-progress { display: flex; flex-wrap: wrap; gap: 0 16px; align-items: flex-start; align-content: flex-start; }
   #view-progress > * { flex: 1 1 440px; min-width: 0; }
-  #view-progress > h1 { flex-basis: 100%; }
+  #view-progress > :is(h1, .prog-akt) { flex-basis: 100%; } /* koledar aktivnosti čez vso širino */
   #view-progress > .me-back { flex: 0 0 auto; } /* sam v prvi vrstici, naslov se prelomi pod njim */
 }
 @media (min-width: 1700px) {
@@ -855,8 +855,10 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .boot-down .card { max-width: 360px; text-align: center; display: grid; gap: 14px; justify-items: center; }
 .boot-down .card svg { width: 40px; height: 40px; color: var(--muted, #8b949e); }
 .boot-down p { margin: 0; }
-/* prazna aplikacija pod sporočilom: ne sprejme fokusa (Tab) in je bralnik zaslona ne bere */
-body:has(> #boot-down) > :not(#boot-down) { visibility: hidden; }
+/* prazna aplikacija pod sporočilom: ne sprejme fokusa (Tab) in je bralnik zaslona ne bere.
+   Razred na <body> namesto »body:has(> #boot-down)«: tak :has je ob vsakem pritisku tipke na novo
+   preračunal slog vse strani (zaviralo je Evklidovo tipkovnico). */
+body.boot-down-on > :not(#boot-down) { visibility: hidden; }
 
 /* ---------- besedilo vedno vidno (public/razpri.js) ----------
    Vnos, naloga ali odgovor, ki nima prostora, se pokaže v celoti v oknu nad vsebino (mirno: rahel dvig in prikaz). */
@@ -898,11 +900,14 @@ body:has(> #boot-down) > :not(#boot-down) { visibility: hidden; }
    Pogledi segajo čez vso širino okna (rob --rob-strani). Kartice strani se razvrstijo v stolpce širine vsaj 400 px,
    kolikor jih gre: telefon in tablica pokončno 1, računalnik 2–4. Stolpci se računajo iz širine vsebnika (column-width,
    auto-fill), zato veljajo tudi v premičnem oknu. Vsaka kartica ostane cela v enem stolpcu. */
-.kolone, .set-cols, #view-me .list-card, .sch-body, #exams-content, #competition-content, #league-content, #path-content {
+.kolone, .set-cols, #view-me .list-card, #exams-content, #competition-content, #league-content, #path-content {
   column-width: 400px; column-gap: 20px;
 }
-:is(.kolone, .set-cols, .sch-body, #exams-content, #competition-content, #league-content, #path-content) > * { break-inside: avoid; }
-:is(.kolone, .set-cols, .sch-body, #exams-content, #competition-content, #league-content, #path-content) > :is(h1, h2, h3) { break-after: avoid; }
+:is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > * { break-inside: avoid; }
+/* Nastavitve: največ trije stolpci, na širokem zaslonu na sredini skupaj z naslovom (j, 4. 11. 2026). */
+.set-cols { columns: 400px 3; }
+#view-settings > :is(h1, .set-cols) { width: min(100%, calc(3 * 460px + 2 * 20px)); margin-inline: auto; }
+:is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > :is(h1, h2, h3) { break-after: avoid; }
 #exams-content > :is(h1, .comp-pickers), #competition-content > :is(h1, .comp-pickers), #path-content > .legend { column-span: all; }
 /* Jaz: profil, raven, števci in zbirke v vrsti; seznam povezav pod njimi v stolpcih. */
 #view-me { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 0 16px; align-content: start; }
@@ -923,3 +928,37 @@ body:has(> #boot-down) > :not(#boot-down) { visibility: hidden; }
 #onboard-form.form > * { break-inside: avoid; }
 #onboard-form.form > * + * { margin-top: 14px; }
 #onboard-form.form > :is(h1, p) { break-after: avoid; }
+
+/* ---------- Koledar aktivnosti in pregledi (public/aktivnost.js; Napredek, Jaz, j 2026-11-04) ----------
+   En kvadratek na dan za zadnje leto; v ozkem vsebniku (telefon, majhno okno) zadnjih 26 tednov.
+   Stolpec ima 8 celic (oznaka meseca + 7 dni), zato skrijemo prvih 27 stolpcev s :nth-child. */
+.hm { container-type: inline-size; }
+.hm-grid { display: grid; grid-template-rows: auto repeat(7, auto); grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 3px; }
+@container (max-width: 560px) { .hm-grid > :nth-child(-n + 216) { display: none; } }
+.hm-d { display: block; aspect-ratio: 1; min-width: 0; border-radius: 3px; background: var(--surface-2); }
+.hm-d.l1 { background: color-mix(in srgb, var(--accent) 45%, var(--surface-2)); }
+.hm-d.l2 { background: color-mix(in srgb, var(--accent) 60%, var(--surface-2)); }
+.hm-d.l3 { background: color-mix(in srgb, var(--accent) 80%, var(--surface-2)); }
+.hm-d.l4 { background: var(--accent); }
+.hm-d.future { background: none; }
+.hm-d.today { outline: 1.5px solid var(--accent); outline-offset: 1px; }
+.hm-m { height: 1.2em; font-size: 0.72rem; line-height: 1.2; color: var(--muted); white-space: nowrap; overflow: visible; }
+.hm-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; margin-top: 10px; font-size: 0.86rem; color: var(--muted); }
+.hm-legend { display: inline-flex; align-items: center; gap: 3px; }
+.hm-legend .hm-d { width: 13px; }
+.wk-bars { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; height: 170px; }
+.wk { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; min-width: 0; }
+.wk span { display: block; width: 100%; height: calc((100% - 38px) * var(--h, 0)); min-height: 2px; border-radius: 4px 4px 0 0; background: var(--accent); }
+.wk b { font-size: 0.72rem; font-weight: 700; color: var(--muted); min-height: 1em; }
+.wk small { font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+#prog-weeks { container-type: inline-size; }
+@container (max-width: 520px) { .wk:nth-child(even):not(:last-child) small { visibility: hidden; } } /* na telefonu vsak drugi datum */
+.tp-bar { display: block; height: 4px; margin-top: 4px; border-radius: 2px; overflow: hidden; background: color-mix(in srgb, var(--danger) 70%, transparent); }
+.tp-bar i { display: block; height: 100%; background: var(--ok); }
+/* Jaz: pod povezavami koledar aktivnosti čez vso širino, Nadaljuj in testi ob njem. */
+#view-me > .me-overview { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; }
+.me-overview > .card { flex: 1 1 360px; min-width: 0; margin: 0; }
+.me-overview > .me-akt { flex-basis: 100%; }
+.me-overview h2 { margin: 0 0 10px; font-size: 1.05rem; }
+.me-ov-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.me-overview .list-card { box-shadow: none; border: 0; padding: 0; background: none; columns: auto; }

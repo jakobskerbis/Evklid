@@ -257,7 +257,8 @@ export function tokenize(src) {
       let first = true;
       while (k < run.length) {
         const name = NAMES.find((n) => run.startsWith(n, k));
-        const piece = name || run[k];
+        // Δt, ΔW, Δm: sprememba količine je eno ime (fizikalne formule), ne Δ · t
+        const piece = run[k] === "Δ" && k + 1 < run.length && !"πτeiΔ".includes(run[k + 1]) && !NAMES.some((n) => run.startsWith(n, k + 1)) ? run.slice(k, k + 2) : name || run[k];
         i = start + k;
         if (!first) sp = false;
         push("id", GREEK[piece] || ALIASES[piece] || piece, { raw: piece });

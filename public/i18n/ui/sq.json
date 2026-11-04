@@ -896,6 +896,8 @@
   "sc.memory": "Të ruajtura",
   "sc.insert": "Fute në llogaritje",
   "sc.pressSolve": "Shtyp = për ta zgjidhur",
+  "sc.fmHint": "Zëvendëso shkronjat e njohura me numra, lëre të panjohurën dhe shtyp =.",
+  "sc.fmRad": "Makina llogaritëse tani është në modalitetin RAD (këndet në radianë).",
   "sc.errUndefined": "Rezultati nuk është i përcaktuar (p.sh. pjesëtim me 0).",
   "sc.constants": "Konstante",
   "sc.toCalc": "Në makinë llogaritëse",
@@ -3505,5 +3507,16 @@
   "block.freeMonth": "Këtë muaj i ke përdorur pyetjet falas për tutorin. Ushtrimet dhe mësimet vazhdojnë të funksionojnë pa kufi.",
   "block.freePool": "Këtë muaj pyetjet falas për tutorin kanë mbaruar për të gjithë. Ushtrimet dhe mësimet vazhdojnë të funksionojnë pa kufi.",
   "block.hintGuest": "Për më shumë pyetje, krijo një llogari te skeda Llogaria.",
-  "block.hintParent": "Për më shumë pyetje, kërkoji një prindi të zgjedhë një abonim te skeda Llogaria."
+  "block.hintParent": "Për më shumë pyetje, kërkoji një prindi të zgjedhë një abonim te skeda Llogaria.",
+  "akt.title": "Aktiviteti në vitin e fundit",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Ditë me mësim: {n}",
+  "akt.best": "Seria më e gjatë: {n}",
+  "akt.week": "Këtë javë: {n} XP",
+  "akt.weeks": "XP sipas javëve",
+  "akt.less": "Më pak",
+  "akt.more": "Më shumë",
+  "sch.addAt": "Shto orë: {day}, {time}",
+  "lg.free": "vend i lirë",
+  "corner.more": "Shto një fushë tjetër"
 }
