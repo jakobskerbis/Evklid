@@ -252,8 +252,9 @@ export function zgradi(THREE, ctx = {}) {
   const vsebina = new THREE.Group();
   group.add(vsebina);
   const odvrzi = [];
-  const fiz = (barva, o = {}) => new THREE.MeshPhysicalMaterial({ color: barva, roughness: 0.45, metalness: 0, clearcoat: 0.25, clearcoatRoughness: 0.4, ...o });
-  const matVez = fiz("#c3cad6", { roughness: 0.5 });
+  // skupni videz atomov (enako v modelih molekule, atom, periodni sistem): sijoč lak in mehak rob (sheen)
+  const fiz = (barva, o = {}) => new THREE.MeshPhysicalMaterial({ color: barva, roughness: 0.32, metalness: 0, clearcoat: 0.7, clearcoatRoughness: 0.14, sheen: 0.35, sheenRoughness: 0.45, sheenColor: "#dfe7ff", ...o });
+  const matVez = fiz("#c3cad6", { roughness: 0.42, clearcoat: 0.4, sheen: 0.15 });
   const matVodVez = new THREE.MeshPhysicalMaterial({ color: "#8fb2ff", roughness: 0.5, emissive: "#2a4fa8", emissiveIntensity: 0.4 });
   const matCelica = new THREE.MeshPhysicalMaterial({ color: "#5d8cff", roughness: 0.35, emissive: "#2b56d6", emissiveIntensity: 0.6 });
   const matPoli = new THREE.MeshPhysicalMaterial({ color: "#ffd166", roughness: 0.4, transparent: true, opacity: 0.3, side: THREE.DoubleSide, depthWrite: false, emissive: "#7a5a10", emissiveIntensity: 0.4 });

@@ -260,11 +260,26 @@ function smoothstep(a, b, x) {
   return t * t * (3 - 2 * t);
 }
 
-/** Cevke vzdolž silnic (ena geometrija, barve po ogliščih). */
+/** Osvetljena cevka, ki tudi sama sveti (emisija = lastna barva · sij), da so silnice vidne na temnem ozadju. */
+function sijocMaterial(THREE, sij, o = {}) {
+  const m = new THREE.MeshStandardMaterial({ roughness: 0.3, metalness: 0, ...o });
+  m.onBeforeCompile = (sh) => {
+    sh.fragmentShader = sh.fragmentShader.replace("#include <emissivemap_fragment>", `#include <emissivemap_fragment>\n\ttotalEmissiveRadiance += diffuseColor.rgb * ${sij.toFixed(3)};`);
+  };
+  m.customProgramCacheKey = () => `sij${sij}`;
+  return m;
+}
+
+/** Barvni prelivi v treh postankih (šibko → srednje → močno polje), t ∈ [0, 1]. */
+function preliv(out, c0, c1, c2, t) {
+  return t < 0.55 ? out.copy(c0).lerp(c1, t / 0.55) : out.copy(c1).lerp(c2, ((t - 0.55) / 0.45) ** 1.5);
+}
+
+/** Cevke vzdolž silnic (ena geometrija, barve po ogliščih; barva() lahko vrne še 5. člen: faktor debeline). */
 function cevi(THREE, crte, polmer, rad, barva) {
   let nv = 0, ni = 0;
   for (const c of crte) if (c.tocke.length > 1) { nv += c.tocke.length * rad; ni += (c.tocke.length - 1) * rad * 6; }
-  const pos = new Float32Array(nv * 3), col = new Float32Array(nv * 4);
+  const pos = new Float32Array(nv * 3), nor = new Float32Array(nv * 3), col = new Float32Array(nv * 4);
   const idx = nv > 65535 ? new Uint32Array(ni) : new Uint16Array(ni);
   let v = 0, ii = 0;
   for (const c of crte) {
@@ -283,9 +298,10 @@ function cevi(THREE, crte, polmer, rad, barva) {
       if (ln < 1e-6) { const ref = Math.abs(T[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0]; const d = dot3(ref, T); N = [ref[0] - d * T[0], ref[1] - d * T[1], ref[2] - d * T[2]]; ln = len3(N); }
       N = [N[0] / ln, N[1] / ln, N[2] / ln];
       const B = [T[1] * N[2] - T[2] * N[1], T[2] * N[0] - T[0] * N[2], T[0] * N[1] - T[1] * N[0]];
-      const [r, g, bb, al = 1] = barva(c, i);
+      const [r, g, bb, al = 1, deb = 1] = barva(c, i);
       for (let k = 0; k < rad; k++) {
-        const f = (k / rad) * Math.PI * 2, cs = Math.cos(f) * polmer, sn = Math.sin(f) * polmer;
+        const f = (k / rad) * Math.PI * 2, cf = Math.cos(f), sf = Math.sin(f), cs = cf * polmer * deb, sn = sf * polmer * deb;
+        nor[v * 3] = cf * N[0] + sf * B[0]; nor[v * 3 + 1] = cf * N[1] + sf * B[1]; nor[v * 3 + 2] = cf * N[2] + sf * B[2];
         pos[v * 3] = P[i][0] + cs * N[0] + sn * B[0];
         pos[v * 3 + 1] = P[i][1] + cs * N[1] + sn * B[1];
         pos[v * 3 + 2] = P[i][2] + cs * N[2] + sn * B[2];
@@ -302,6 +318,7 @@ function cevi(THREE, crte, polmer, rad, barva) {
   }
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  g.setAttribute("normal", new THREE.BufferAttribute(nor, 3));
   g.setAttribute("color", new THREE.BufferAttribute(col, 4));
   g.setIndex(new THREE.BufferAttribute(idx, 1));
   g.computeBoundingSphere();
@@ -335,7 +352,7 @@ function besediloB(B) {
 // ---------------------------------------------------------------- gradnja --
 const BARVE = {
   sever: "#d9534f", jug: "#4f78d0", crka: "#f4f5f8", baker: "#c97b4b", tok: "#ffb547",
-  silnicaTemna: "#2c3f6a", silnicaSvetla: "#cfe0ff", notranjost: "#6e9bff", igla: "#e0473f", iglaJug: "#e9ecf2",
+  silnicaTemna: "#1b2f60", silnicaSrednja: "#3f7cf5", silnicaSvetla: "#d6e6ff", notranjost: "#6e9bff", igla: "#e0473f", iglaJug: "#e9ecf2",
 };
 const VIRI = [
   ["magnet", "Paličasti magnet"],
@@ -395,20 +412,22 @@ export function zgradi(THREE, ctx = {}) {
   const mat = (o) => { const m = new THREE.MeshPhysicalMaterial(o); smeti.add(m); return m; };
   const geo = (g) => { smeti.add(g); return g; };
 
-  const matN = mat({ color: BARVE.sever, roughness: 0.32, clearcoat: 0.5, clearcoatRoughness: 0.25 });
-  const matS = mat({ color: BARVE.jug, roughness: 0.32, clearcoat: 0.5, clearcoatRoughness: 0.25 });
-  const matCrka = mat({ color: BARVE.crka, roughness: 0.4, clearcoat: 0.3 });
-  const matBaker = mat({ color: BARVE.baker, roughness: 0.3, metalness: 0.75, clearcoat: 0.35 });
-  const matTok = mat({ color: BARVE.tok, roughness: 0.35, clearcoat: 0.4, emissive: "#4a2a00" });
+  // lakiran magnet (kot pobarvana kovina), polirana bakrena žica, žareče puščice toka
+  const lak = { roughness: 0.3, metalness: 0.15, clearcoat: 1, clearcoatRoughness: 0.07, sheen: 0.3, sheenRoughness: 0.5, emissiveIntensity: 0.12 };
+  const matN = mat({ color: BARVE.sever, emissive: BARVE.sever, sheenColor: "#ffd0cc", ...lak });
+  const matS = mat({ color: BARVE.jug, emissive: BARVE.jug, sheenColor: "#d0dcff", ...lak });
+  const matCrka = mat({ color: BARVE.crka, roughness: 0.3, clearcoat: 0.8, emissive: "#ffffff", emissiveIntensity: 0.18 });
+  const matBaker = mat({ color: "#d88a58", roughness: 0.24, metalness: 0.85, clearcoat: 0.6, clearcoatRoughness: 0.12, emissive: "#3a1606", emissiveIntensity: 1 });
+  const matTok = mat({ color: BARVE.tok, roughness: 0.3, clearcoat: 0.8, emissive: BARVE.tok, emissiveIntensity: 0.45 });
   const matNotr = new THREE.MeshStandardMaterial({ color: BARVE.notranjost, transparent: true, opacity: 0.1, depthWrite: false, side: THREE.DoubleSide, roughness: 0.5 });
   smeti.add(matNotr);
-  const matSilnice = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true });
+  const matSilnice = sijocMaterial(THREE, 0.6, { vertexColors: true, transparent: true });
   smeti.add(matSilnice);
-  const matStozec = new THREE.MeshStandardMaterial({ color: "#ffffff", roughness: 0.45, emissive: "#16233d" });
+  const matStozec = sijocMaterial(THREE, 0.55, { color: "#ffffff" });
   smeti.add(matStozec);
-  const matIgla = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.4, metalness: 0.1 });
+  const matIgla = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.28, metalness: 0.2, clearcoat: 0.8, clearcoatRoughness: 0.12 });
   smeti.add(matIgla);
-  const stozecG = geo(new THREE.ConeGeometry(0.018, 0.05, visoka ? 14 : 8));
+  const stozecG = geo(new THREE.ConeGeometry(0.021, 0.056, visoka ? 18 : 8));
   const tokG = geo(new THREE.ConeGeometry(0.042, 0.11, visoka ? 20 : 10));
   const crkaN = geo(crkaG(THREE, "N", 0.007)), crkaS = geo(crkaG(THREE, "S", 0.007));
 
@@ -445,8 +464,16 @@ export function zgradi(THREE, ctx = {}) {
     const d = { g };
     if (ime === "magnet") {
       const L = MAGNET.dolzina / ENOTA, h = MAGNET.pol / ENOTA;
-      const nG = geo(new THREE.BoxGeometry(L / 2, 2 * h, 2 * h).translate(L / 4, 0, 0));
-      const sG = geo(new THREE.BoxGeometry(L / 2, 2 * h, 2 * h).translate(-L / 4, 0, 0));
+      // polovici z zaobljenimi robovi (izvlečen zaobljen kvadrat s posnetimi konci); vmes ostane tanek šiv
+      const polovica = (x0) => {
+        const b = 0.012, rc = 0.01, a = h - b, oblika = new THREE.Shape();
+        oblika.moveTo(-a + rc, -a); oblika.lineTo(a - rc, -a); oblika.quadraticCurveTo(a, -a, a, -a + rc);
+        oblika.lineTo(a, a - rc); oblika.quadraticCurveTo(a, a, a - rc, a); oblika.lineTo(-a + rc, a);
+        oblika.quadraticCurveTo(-a, a, -a, a - rc); oblika.lineTo(-a, -a + rc); oblika.quadraticCurveTo(-a, -a, -a + rc, -a);
+        const g = new THREE.ExtrudeGeometry(oblika, { depth: L / 2 - 2 * b, bevelEnabled: true, bevelThickness: b, bevelSize: b, bevelSegments: visoka ? 4 : 2, curveSegments: visoka ? 6 : 3 });
+        return g.translate(0, 0, b).rotateY(Math.PI / 2).translate(x0, 0, 0);
+      };
+      const nG = geo(polovica(0)), sG = geo(polovica(-L / 2));
       d.n = [new THREE.Mesh(nG, matN)]; d.s = [new THREE.Mesh(sG, matS)];
       for (const [arr, cg, x] of [[d.n, crkaN, L / 4], [d.s, crkaS, -L / 4]]) {
         arr.push(crkaMesh(cg, matCrka, x, 0, h - 0.001, 0, 0, 0.11));
@@ -505,9 +532,10 @@ export function zgradi(THREE, ctx = {}) {
   // ---- silnice in puščice
   const crtePredp = new Map();
   let silniceM = null, puscM = null, crte = [];
-  const cT = new THREE.Color(BARVE.silnicaTemna), cS = new THREE.Color(BARVE.silnicaSvetla), tmpC = new THREE.Color();
+  const cT = new THREE.Color(BARVE.silnicaTemna), cM = new THREE.Color(BARVE.silnicaSrednja), cS = new THREE.Color(BARVE.silnicaSvetla), tmpC = new THREE.Color();
   const faktor = () => (st.vir === "magnet" ? 1 : st.I);
-  const svetlost = (B) => Math.max(0, Math.min(1, (Math.log10(Math.max(B, 1e-9)) + 6) / 4)); // 1 µT → 0, 10 mT → 1
+  // magnet: 0,25 mT → 0, 60 mT → 1; tokovi: 2,5 µT → 0, 2,5 mT → 1 (logaritemsko; magnet je precej močnejši od žice)
+  const svetlost = (B) => { const [lo, raz] = st.vir === "magnet" ? [-3.6, 2.4] : [-5.6, 3]; return Math.max(0, Math.min(1, (Math.log10(Math.max(B, 1e-9)) - lo) / raz)); };
   const zatemni = (p) => 1 - smoothstep(R_POGLED - 0.2, R_POGLED, len3(p));
   function silniceVidne() {
     for (const m of [silniceM, puscM]) if (m) { group.remove(m); if (m.isInstancedMesh) m.dispose(); else m.geometry.dispose(); }
@@ -515,9 +543,11 @@ export function zgradi(THREE, ctx = {}) {
     if (!crtePredp.has(kljuc)) crtePredp.set(kljuc, silniceB(st.vir, { N: st.N, visoka }));
     crte = crtePredp.get(kljuc);
     const f = faktor();
-    const g = cevi(THREE, crte, visoka ? 0.0055 : 0.0065, visoka ? 6 : 4, (c, i) => {
-      tmpC.copy(cT).lerp(cS, 0.15 + 0.85 * svetlost(c.jakost[i] * f));
-      return [tmpC.r, tmpC.g, tmpC.b, zatemni(c.tocke[i])];
+    // barva in debelina po gostoti polja: šibko polje temno modro in tanko, močno svetlo in debelejše
+    const g = cevi(THREE, crte, visoka ? 0.0072 : 0.0078, visoka ? 8 : 4, (c, i) => {
+      const t = 0.1 + 0.9 * svetlost(c.jakost[i] * f);
+      preliv(tmpC, cT, cM, cS, t);
+      return [tmpC.r, tmpC.g, tmpC.b, zatemni(c.tocke[i]) * (0.75 + 0.25 * t), 0.7 + 0.6 * t];
     });
     silniceM = new THREE.Mesh(g, matSilnice);
     silniceM.renderOrder = 1;
@@ -532,7 +562,7 @@ export function zgradi(THREE, ctx = {}) {
       dv.set(...a.d); if (obrni) dv.negate();
       q.setFromUnitVectors(yAx, dv); pv.set(...a.p);
       m4.compose(pv, q, one); puscM.setMatrixAt(k, m4);
-      tmpC.copy(cT).lerp(cS, 0.35 + 0.65 * svetlost(crte[a.ci].jakost[a.i] * f));
+      preliv(tmpC, cT, cM, cS, 0.35 + 0.65 * svetlost(crte[a.ci].jakost[a.i] * f));
       puscM.setColorAt(k, tmpC);
     });
     puscM.instanceMatrix.needsUpdate = true;

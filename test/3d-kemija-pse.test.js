@@ -1,7 +1,11 @@
 // Znanstvene preverbe modelov »Periodni sistem v 3D« in »Kristalne mreže« (public/3d/modeli/kemija/periodni-sistem.js, kristali.js).
-import { test } from "node:test";
+import { test as nodeTest } from "node:test";
+import { naloziThree } from "./fixtures/3d-modeli.js";
+
+// three pride s kompletom 3D (package.json); brez njega se preverbe preskočijo, kot v test/3d-kemija.test.js.
+const THREE = await naloziThree();
+const test = (ime, fn) => nodeTest(ime, { skip: !THREE && "three ni nameščen" }, fn);
 import assert from "node:assert/strict";
-import * as THREE from "three";
 import * as P from "../public/3d/modeli/kemija/periodni-sistem.js";
 import * as K from "../public/3d/modeli/kemija/kristali.js";
 import * as A from "../public/3d/modeli/kemija/atom.js";
