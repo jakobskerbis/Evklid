@@ -1,0 +1,29 @@
+{
+ "id": "POKLICNA-MAT-2025-spomladanski",
+ "points": 70,
+ "maxListed": 80,
+ "minutes": 120,
+ "choice": "v 2. delu kandidat izbere 2 od 3 nalog po 10 točk in ju označi na naslovnici (sicer se ocenita prvi dve rešeni)",
+ "choose": {"section": "B", "solve": 2, "of": 3, "points": 20},
+ "tools": "Nalivno pero ali kemični svinčnik, svinčnik (za grafe, skice in risbe), radirka, računalo in geometrijsko orodje; kandidat dobi dva konceptna lista in perforirano prilogo s formulami. Pot do rezultata mora biti zapisana z vmesnimi računi in sklepi.",
+ "sections": {
+  "A": "1. del: 11 nalog po 4–6 točk (skupaj 50 točk), rešiti je treba vse; enostopenjske naloge brez delov",
+  "B": "2. del: 3 strukturirane naloge po 10 točk z deli 1.1, 1.2 …; kandidat izbere in reši dve (skupaj 20 točk), zato je vsota točk vseh nalog 80, dosegljivih pa 70"
+ },
+ "tasks": [
+  {"section": "A", "n": 1, "points": [4], "format": ["choice"], "topic": "štiri algebrske trditve za pozitivni realni števili, pri vsaki obkrožiti DA ali NE: potenca z negativnim eksponentom vsote, seštevanje ulomkov s spremenljivkama v imenovalcu (napačno seštevanje imenovalcev), koren vsote kvadratov, produkt korenov različnih stopenj iste osnove"},
+  {"section": "A", "n": 2, "points": [4], "format": ["open"], "topic": "presečišče dveh premic, ena v eksplicitni, druga v implicitni obliki (sistem dveh linearnih enačb)"},
+  {"section": "A", "n": 3, "points": [4], "format": ["open"], "topic": "odstotni račun z raztopino: masa topljenca iz mase raztopine in odstotka; po dolivanju vode se masa raztopine poveča za dani odstotek – nova koncentracija"},
+  {"section": "A", "n": 4, "points": [4], "format": ["open"], "topic": "besedilna naloga, ki vodi do kvadratne enačbe: kvadrat neznanega naravnega števila, zmanjšan za dano število, je enak večkratniku števila; izbrati naravno rešitev"},
+  {"section": "A", "n": 5, "points": [4], "format": ["open"], "topic": "pravokotnik z danima stranicama, vsaka stranica razdeljena na tretjine; ploščina osenčenega lika, ki ga omejujejo delilne točke (odštevanje vogalnih trikotnikov)", "figure": "skica pravokotnika z delilnimi točkami in osenčenim likom"},
+  {"section": "A", "n": 6, "points": [4], "format": ["open"], "topic": "zaporedje s splošnim členom z alternirajočim predznakom (potenca −1): prvi štirje členi, vsota prvih petih, vrednost izraza z dvema oddaljenima členoma"},
+  {"section": "A", "n": 7, "points": [4], "format": ["open"], "topic": "dva opazovalca na znani medsebojni razdalji vidita predmet v zraku pod dvema danima kotoma; razdalja predmeta od enega opazovalca (sinusni izrek)", "figure": "skica trikotnika z dvema danima kotoma ob osnovnici"},
+  {"section": "A", "n": 8, "points": [5], "format": ["open"], "topic": "odvodi štirih funkcij: potenca z negativnim eksponentom (ulomek), koren kot potenca z ulomljenim eksponentom, naravni logaritem linearne funkcije (verižno pravilo), produkt kotne in eksponentne funkcije"},
+  {"section": "A", "n": 9, "points": [5], "format": ["open"], "topic": "kot, pod katerim graf polinoma tretje stopnje seka abscisno os: ničla z razcepom (izpostavljanje po skupinah), odvod v ničli, kot iz smernega koeficienta tangente"},
+  {"section": "A", "n": 10, "points": [6], "format": ["open"], "topic": "kvader (tovorni prostor) z danimi merami v mm: stranica največjega kvadrata, s katerim se dno v celoti tlakuje (največji skupni delitelj), in število enakih zabojev dane višine, ki napolnijo dno"},
+  {"section": "A", "n": 11, "points": [6], "format": ["open"], "topic": "eksponentna funkcija s premikom v x in y (graf dan): presečišči z osema; presečišče z drugo eksponentno funkcijo z obratno osnovo (eksponentna enačba z isto osnovo)", "figure": "graf eksponentne funkcije v mreži"},
+  {"section": "B", "n": 1, "points": [5, 5], "format": ["open", "open"], "topic": "dve točki v koordinatnem sistemu (odčitati iz mreže): 1) enačba premice skozi točki in presečišče z ordinatno osjo; 2) zrcaljenje točk čez ordinatno os da enakokraki trapez – obseg (razdalje med točkami) in ploščina", "figure": "koordinatna mreža z dvema označenima točkama"},
+  {"section": "B", "n": 2, "points": [4, 6], "format": ["table", "open"], "topic": "statistika in kombinatorika: 1) frekvenčna preglednica nekaj kategorij z absolutnimi in relativnimi frekvencami ter skupno vsoto, dopolniti štiri manjkajoča polja; 2) število izborov podskupine iz skupine (kombinacije) in verjetnost, da so izločeni člani vsak iz drugega podpodročja (kombinacije po skupinah)", "figure": "frekvenčna preglednica s praznimi polji"},
+  {"section": "B", "n": 3, "points": [6, 4], "format": ["construct", "open"], "topic": "racionalna funkcija s konstantnim števcem in kvadratnim imenovalcem ter kvadratna funkcija: 1) začetna vrednost, enačbi navpičnih asimptot in graf racionalne funkcije; 2) abscise presečišč obeh grafov (enačba, ki vodi do bikvadratne)", "figure": "prazen koordinatni sistem z enoto"}
+ ]
+}
