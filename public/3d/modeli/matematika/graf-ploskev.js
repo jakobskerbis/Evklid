@@ -106,7 +106,7 @@ function lepKorak(raz, n) { // »lep« korak (1, 2, 2,5, 5 · 10^k) za približn
 export function zgradi(THREE, ctx) {
   const { Vector3, Color, Matrix4, Quaternion } = THREE;
   const visoka = ctx.kakovost !== "nizka";
-  const N = visoka ? 120 : 64; // celice mreže na stranico
+  const N = visoka ? 144 : 64; // celice mreže na stranico (pri visoki kakovosti deljivo z 12 za redko mrežo)
   const zac = ctx.zacetek || {};
   const stevilo = (k, lo, hi, def) => { const x = Number(zac[k]); return zac[k] != null && Number.isFinite(x) ? Math.min(hi, Math.max(lo, x)) : def; };
   const bool = (k, def) => (zac[k] == null ? def : zac[k] === true || zac[k] === "1" || zac[k] === "true");
@@ -122,7 +122,8 @@ export function zgradi(THREE, ctx) {
   const group = new THREE.Group(); group.name = "graf-ploskev";
 
   // ---------- materiali ----------
-  const mPloskev = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.55, metalness: 0, clearcoat: 0.25, clearcoatRoughness: 0.45, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+  // mehak odsev: nizka kovinskost, rahel lak z zamegljenim odsevom (normale so analitične, zato je senčenje gladko)
+  const mPloskev = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.48, metalness: 0, specularIntensity: 0.5, clearcoat: 0.3, clearcoatRoughness: 0.4, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
   const mMreza = new THREE.LineBasicMaterial({ color: "#0B0F16", transparent: true, opacity: 0.32, depthWrite: false });
   const mStena = new THREE.MeshStandardMaterial({ color: "#161D2B", roughness: 0.9, transparent: true, opacity: 0.75, side: THREE.DoubleSide, depthWrite: false, polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 2 });
   const mCrte = new THREE.LineBasicMaterial({ color: "#8FA2C7", transparent: true, opacity: 0.22, depthWrite: false });
@@ -189,31 +190,64 @@ export function zgradi(THREE, ctx) {
   // ---------- besedila: ena tekstura (atlas), štirikotniki obrnjeni proti kameri ----------
   const atlas = document.createElement("canvas"); atlas.width = 1024; atlas.height = 1024;
   const atlasTex = new THREE.CanvasTexture(atlas); atlasTex.colorSpace = THREE.SRGBColorSpace; atlasTex.generateMipmaps = true; atlasTex.minFilter = THREE.LinearMipmapLinearFilter; atlasTex.anisotropy = 4;
-  const vs = `attribute vec2 kot; varying vec2 vUv;
+  // uF: povečava napisov na majhnih zaslonih (iz projekcije in velikosti pogleda, glej osveziF); skrij = 1: napis se tam ne izpiše (manj, a večjih številk)
+  const uF = { value: 1 };
+  const vs = `attribute vec2 kot; attribute float skrij; uniform float uF; varying vec2 vUv;
     void main() { vUv = uv; vec4 mv = modelViewMatrix * vec4(position, 1.0);
       float sc = length(vec3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]));
-      mv.xy += kot * sc; gl_Position = projectionMatrix * mv; }`;
+      mv.xy += kot * sc * uF; gl_Position = projectionMatrix * mv;
+      if (skrij > 0.5 && uF > 1.25) gl_Position = vec4(0.0, 0.0, 2.0, 1.0); }`;
   const fs = `uniform sampler2D map; uniform float opacity; varying vec2 vUv;
     void main() { vec4 c = texture2D(map, vUv); if (c.a < 0.03) discard; gl_FragColor = vec4(c.rgb, c.a * opacity); }`;
-  const besediloMat = (globina) => new THREE.ShaderMaterial({ uniforms: { map: { value: atlasTex }, opacity: { value: 1 } }, vertexShader: vs, fragmentShader: fs, transparent: true, depthWrite: false, depthTest: globina });
+  const besediloMat = (globina) => new THREE.ShaderMaterial({ uniforms: { map: { value: atlasTex }, opacity: { value: 1 }, uF }, vertexShader: vs, fragmentShader: fs, transparent: true, depthWrite: false, depthTest: globina });
   const MAXB = 80;
   const besGeo = (n) => {
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(n * 12), 3));
     g.setAttribute("kot", new THREE.BufferAttribute(new Float32Array(n * 8), 2));
     g.setAttribute("uv", new THREE.BufferAttribute(new Float32Array(n * 8), 2));
+    g.setAttribute("skrij", new THREE.BufferAttribute(new Float32Array(n * 4), 1));
     const idx = []; for (let i = 0; i < n; i++) idx.push(4 * i, 4 * i + 1, 4 * i + 2, 4 * i, 4 * i + 2, 4 * i + 3); g.setIndex(idx);
     return g;
   };
   const besedilaSpredaj = praviMesh(besGeo(MAXB), besediloMat(false), 10); // osi: vedno berljive
   const besedilaGlobina = praviMesh(besGeo(MAXB), besediloMat(true), -0.5); // napisi plastnic na tleh (pred ploskvijo)
   group.add(besedilaSpredaj, besedilaGlobina);
+  // Napisi so v enotah prizora; na ozkem zaslonu (telefon) bi bili premajhni, zato jih povečamo glede na to,
+  // koliko pikslov meri enota prizora (iz kamere in velikosti pogleda, brez branja DOM). Pri ≥ REF px na enoto ostanejo 1 : 1.
+  const REF = 300, FMAX = 1.75, _v4 = new THREE.Vector4(), _o = new Vector3(), _sk3 = new Vector3();
+  let fZadnji = -1;
+  function osveziF(renderer, scena, camera) { // podpis onBeforeRender
+    if (!renderer || !camera || !camera.projectionMatrix) return;
+    renderer.getCurrentViewport(_v4);
+    const H = _v4.w / (renderer.getPixelRatio ? renderer.getPixelRatio() : 1);
+    _o.setFromMatrixPosition(group.matrixWorld).applyMatrix4(camera.matrixWorldInverse);
+    const sc = _sk3.setFromMatrixScale(group.matrixWorld).x;
+    const e5 = camera.projectionMatrix.elements[5];
+    const ppu = (camera.isPerspectiveCamera ? (H * 0.5 * e5) / Math.max(1e-6, -_o.z) : H * 0.5 * e5) * sc;
+    const f = ppu > 0 && Number.isFinite(ppu) ? Math.min(FMAX, Math.max(1, REF / ppu)) : 1;
+    uF.value = f;
+    if (Math.abs(f - fZadnji) > 1e-4) { fZadnji = f; postaviLegendo(); legenda.updateMatrixWorld(true); }
+  }
+  besedilaSpredaj.onBeforeRender = besedilaGlobina.onBeforeRender = osveziF;
 
-  // legenda (sprite z barvno lestvico)
-  const legPlatno = document.createElement("canvas"); legPlatno.width = 200; legPlatno.height = 420;
+  // legenda (sprite z barvno lestvico). Na širokem zaslonu je pokončna desno od okvirja, na ozkem (telefon) pa vodoravna
+  // nad okvirjem, kjer je prostora dovolj za večje številke. Obe postavitvi sta na istem platnu (izrez z offset/repeat).
+  const LW = 512, LH = 448, LV = [216, 440], LO = [512, 156];
+  const legPlatno = document.createElement("canvas"); legPlatno.width = LW; legPlatno.height = LH;
   const legTex = new THREE.CanvasTexture(legPlatno); legTex.colorSpace = THREE.SRGBColorSpace;
   const legenda = new THREE.Sprite(new THREE.SpriteMaterial({ map: legTex, transparent: true, depthWrite: false }));
-  legenda.scale.set(0.23, 0.483, 1); legenda.position.set(WH + 0.2, 0.13, -0.3); legenda.renderOrder = 11; group.add(legenda);
+  legenda.renderOrder = 11; group.add(legenda);
+  let legVod = false;
+  function postaviLegendo() {
+    const f = uF.value, vod = f > 1.3;
+    if (vod !== legVod) { legVod = vod; narisiLegendo(); }
+    const [rw, rh] = vod ? LO : LV;
+    legTex.repeat.set(rw / LW, rh / LH); legTex.offset.set(0, 1 - rh / LH);
+    if (vod) { const h = 0.155 * f, w = (h * rw) / rh; legenda.scale.set(w, h, 1); legenda.position.set(0, YT + 0.1 + h / 2, -0.45); }
+    else { const h = 0.47 * f, w = (h * rw) / rh; legenda.scale.set(w, h, 1); legenda.position.set(WH + 0.09 + w / 2, 0.11, -0.3); }
+  }
+  legenda.onBeforeRender = osveziF;
 
   // ---------- pomožne ----------
   const _a = new Vector3(), _b = new Vector3(), _c = new Vector3(), _d = new Vector3(), _s = new Vector3(), _q = new Quaternion(), _m = new Matrix4(), _col = new Color();
@@ -249,8 +283,8 @@ export function zgradi(THREE, ctx) {
   const tockaXY = () => [Math.max(-S.L, Math.min(S.L, S.x0)), S.prerez ? cx() : Math.max(-S.L, Math.min(S.L, S.y0))];
 
   // ---------- besedila ----------
-  const bes = []; // {t, p: Vector3, h, barva, spredaj, x: poravnava −1/0/1}
-  function dodajBes(t, p, h, barvaHex, spredaj = true, por = 0) { bes.push({ t, p: p.clone(), h, barva: barvaHex, spredaj, por }); }
+  const bes = []; // {t, p: Vector3, h, barva, spredaj, x: poravnava −1/0/1, skrij: na majhnem zaslonu ga ne izpišemo}
+  function dodajBes(t, p, h, barvaHex, spredaj = true, por = 0, skrij = false) { bes.push({ t, p: p.clone(), h, barva: barvaHex, spredaj, por, skrij }); }
   function narisiBesedila() {
     const g = atlas.getContext("2d");
     const fsz = 40, vrst = 54;
@@ -272,7 +306,7 @@ export function zgradi(THREE, ctx) {
     }
     atlasTex.needsUpdate = true;
     for (const [mesh, spredaj] of [[besedilaSpredaj, true], [besedilaGlobina, false]]) {
-      const geo = mesh.geometry, P = geo.attributes.position.array, Kt = geo.attributes.kot.array, U = geo.attributes.uv.array;
+      const geo = mesh.geometry, P = geo.attributes.position.array, Kt = geo.attributes.kot.array, U = geo.attributes.uv.array, Sk = geo.attributes.skrij.array;
       let n = 0;
       bes.forEach((b, i) => {
         const m = mere[i]; if (!m || b.spredaj !== spredaj || n >= MAXB) return;
@@ -280,28 +314,46 @@ export function zgradi(THREE, ctx) {
         const ox = b.por === 0 ? -hw / 2 : b.por < 0 ? 0 : -hw;
         const kot = [[ox, -hh / 2], [ox + hw, -hh / 2], [ox + hw, hh / 2], [ox, hh / 2]];
         const uv = [[ax / atlas.width, 1 - (ay + h) / atlas.height], [(ax + w) / atlas.width, 1 - (ay + h) / atlas.height], [(ax + w) / atlas.width, 1 - ay / atlas.height], [ax / atlas.width, 1 - ay / atlas.height]];
-        for (let k = 0; k < 4; k++) { P.set([b.p.x, b.p.y, b.p.z], (4 * n + k) * 3); Kt.set(kot[k], (4 * n + k) * 2); U.set(uv[k], (4 * n + k) * 2); }
+        for (let k = 0; k < 4; k++) { P.set([b.p.x, b.p.y, b.p.z], (4 * n + k) * 3); Kt.set(kot[k], (4 * n + k) * 2); U.set(uv[k], (4 * n + k) * 2); Sk[4 * n + k] = b.skrij ? 1 : 0; }
         n++;
       });
-      geo.setDrawRange(0, n * 6); geo.attributes.position.needsUpdate = geo.attributes.kot.needsUpdate = geo.attributes.uv.needsUpdate = true;
+      geo.setDrawRange(0, n * 6); geo.attributes.position.needsUpdate = geo.attributes.kot.needsUpdate = geo.attributes.uv.needsUpdate = geo.attributes.skrij.needsUpdate = true;
       geo.computeBoundingSphere(); mesh.visible = n > 0;
     }
   }
   function narisiLegendo() {
     const g = legPlatno.getContext("2d"); if (!g) { legTex.needsUpdate = true; return; }
-    const W = legPlatno.width, H = legPlatno.height, x0 = 20, y0 = 44, bw = 28, bh = H - 80;
-    g.clearRect(0, 0, W, H);
+    const [W, H] = legVod ? LO : LV;
+    g.clearRect(0, 0, LW, LH);
     g.fillStyle = "rgba(11,15,22,0.78)"; g.strokeStyle = "rgba(110,155,255,0.6)"; g.lineWidth = 3;
     g.beginPath(); g.roundRect ? g.roundRect(2, 2, W - 4, H - 4, 18) : g.rect(2, 2, W - 4, H - 4); g.fill(); g.stroke();
-    const grad = g.createLinearGradient(0, y0 + bh, 0, y0);
-    for (let i = 0; i <= 20; i++) { const t = i / 20, f = (0.06 + 0.94 * t) * (VIRIDIS.length - 1), k = Math.min(VIRIDIS.length - 2, Math.floor(f)); const c0 = new Color(viridisSRGB[k]), c1 = new Color(viridisSRGB[k + 1]); grad.addColorStop(t, "#" + c0.lerp(c1, f - k).getHexString()); }
-    g.fillStyle = grad; g.fillRect(x0, y0, bw, bh);
-    g.font = `italic 600 34px ${PISAVA}`; g.fillStyle = "#E8EDF7"; g.textBaseline = "middle"; g.fillText("z", x0 + 4, 21);
-    g.font = `600 33px ${PISAVA}`;
-    const n = Math.round((zhi - zlo) / zKorak), korak = Math.max(1, Math.ceil(n / 6));
-    for (let i = 0; i <= n; i += korak) {
-      const z = zlo + i * zKorak, yy = y0 + bh - (i / n) * bh;
-      g.fillStyle = "#E8EDF7"; g.fillRect(x0 + bw, yy - 1.5, 10, 3); g.fillText(st(z), x0 + bw + 14, yy);
+    const n = Math.round((zhi - zlo) / zKorak), korak = Math.max(1, Math.ceil(n / 5));
+    const lestvica = (x0, y0, x1, y1) => { // barvni prehod od zlo (x0, y0) do zhi (x1, y1)
+      const grad = g.createLinearGradient(x0, y0, x1, y1);
+      for (let i = 0; i <= 20; i++) { const t = i / 20, f = (0.06 + 0.94 * t) * (VIRIDIS.length - 1), k = Math.min(VIRIDIS.length - 2, Math.floor(f)); const c0 = new Color(viridisSRGB[k]), c1 = new Color(viridisSRGB[k + 1]); grad.addColorStop(t, "#" + c0.lerp(c1, f - k).getHexString()); }
+      return grad;
+    };
+    g.textBaseline = "middle";
+    if (!legVod) {
+      const x0 = 18, y0 = 58, bw = 26, bh = H - 88;
+      g.fillStyle = lestvica(0, y0 + bh, 0, y0); g.fillRect(x0, y0, bw, bh);
+      g.font = `italic 600 44px ${PISAVA}`; g.fillStyle = "#E8EDF7"; g.fillText("z", x0 + 2, 28);
+      g.font = `600 42px ${PISAVA}`;
+      for (let i = 0; i <= n; i += korak) {
+        const z = zlo + i * zKorak, yy = y0 + bh - (i / n) * bh;
+        g.fillStyle = "#E8EDF7"; g.fillRect(x0 + bw, yy - 2, 10, 4); g.fillText(st(z), x0 + bw + 14, yy);
+      }
+    } else {
+      const x0 = 70, x1 = W - 40, y0 = 22, bh = 30;
+      g.fillStyle = lestvica(x0, 0, x1, 0); g.fillRect(x0, y0, x1 - x0, bh);
+      g.font = `italic 600 48px ${PISAVA}`; g.fillStyle = "#E8EDF7"; g.textAlign = "left"; g.fillText("z", 26, y0 + bh / 2 + 2);
+      g.font = `600 44px ${PISAVA}`; g.textAlign = "center";
+      for (let i = 0; i <= n; i += korak) {
+        const z = zlo + i * zKorak, xx = x0 + (i / n) * (x1 - x0), t = st(z), tw = g.measureText(t).width;
+        g.fillRect(xx - 2, y0 + bh, 4, 12);
+        g.fillText(t, Math.min(W - 8 - tw / 2, Math.max(8 + tw / 2, xx)), y0 + bh + 46);
+      }
+      g.textAlign = "left";
     }
     legTex.needsUpdate = true;
   }
@@ -327,6 +379,15 @@ export function zgradi(THREE, ctx) {
       barva((z - zlo) / (zhi - zlo), _col); pBar[3 * k] = _col.r; pBar[3 * k + 1] = _col.g; pBar[3 * k + 2] = _col.b;
     }
     pGeo.attributes.position.needsUpdate = pGeo.attributes.color.needsUpdate = true; pGeo.computeVertexNormals(); pGeo.computeBoundingSphere();
+    { // gladko senčenje: normale iz analitičnega gradienta (n ∝ (−∂Y/∂X, 1, −∂Y/∂Z) v merilu prizora); kjer gradienta ni (konica), ostane izračunana normala
+      const Nn = pGeo.attributes.normal.array, sx = WH / L, sz = (YT - YB) / (zhi - zlo), kx = sz / sx;
+      for (let j = 0; j <= N; j++) for (let i = 0; i <= N; i++) {
+        const k = j * (N + 1) + i, x = -L + (2 * L * i) / N, y = L - (2 * L * j) / N;
+        if (!fn.g(x, y, a, b, gr) || !Number.isFinite(gr[0]) || !Number.isFinite(gr[1])) continue;
+        const nx = -gr[0] * kx, nz = gr[1] * kx, il = 1 / Math.hypot(nx, 1, nz);
+        Nn[3 * k] = nx * il; Nn[3 * k + 1] = il; Nn[3 * k + 2] = nz * il;
+      }
+    }
     // redka mreža
     {
       const P = mrezaGeo.attributes.position.array; let n = 0;
@@ -407,7 +468,7 @@ export function zgradi(THREE, ctx) {
     nivoji.korak = korak;
     const PS = plSGeo.attributes.position.array, PT = plTGeo.attributes.position.array, CT = plTGeo.attributes.color.array;
     let n = 0;
-    const najboljse = nivoji.map(() => null);
+    const kandidati = nivoji.map(() => []); // [ocena, x, z] za mesto napisa
     const ytla = YF + 0.002;
     const tri = (i0, i1, i2) => {
       const z0 = zv[i0], z1 = zv[i1], z2 = zv[i2];
@@ -429,7 +490,7 @@ export function zgradi(THREE, ctx) {
         n++;
         // mesto za napis: točka, ki je najbolj spredaj desno (najbolje vidna)
         const ocena = _a.x - _a.z * 0.6 + (_a.z > 0.9 * WH || _a.x > 0.9 * WH ? -5 : 0);
-        if (!najboljse[l] || ocena > najboljse[l][0]) najboljse[l] = [ocena, _a.x, _a.z];
+        if ((n & 1) === 0) kandidati[l].push([ocena, _a.x, _a.z]);
       }
     };
     for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const a = j * (N + 1) + i, b = a + 1, c = a + N + 1, d = c + 1; tri(a, c, b); tri(b, c, d); }
@@ -437,11 +498,24 @@ export function zgradi(THREE, ctx) {
     plSGeo.attributes.position.needsUpdate = plTGeo.attributes.position.needsUpdate = plTGeo.attributes.color.needsUpdate = true;
     plSGeo.computeBoundingSphere(); plTGeo.computeBoundingSphere();
     plastS.visible = plastT.visible = n > 0;
-    const vsak = nivoji.length > 8 ? 2 : 1;
-    nivoji.forEach((h, l) => {
-      if (l % vsak || !najboljse[l]) return;
+    // Napisi: vsak na najbolj vidnem mestu svoje plastnice (spredaj desno), a ne preblizu drugim napisom.
+    // Na majhnem zaslonu izpišemo le vsak drugi (večje številke), zato te postavimo prve in z večjim razmikom.
+    const vsak = nivoji.length > 8 ? 2 : 1, izbrani = [];
+    nivoji.forEach((h, l) => { if (!(l % vsak) && kandidati[l].length) izbrani.push(l); });
+    const postavljeni = [], mesto = new Map();
+    for (const [skupina, dmin] of [[0, 0.24], [1, 0.13]]) {
+      izbrani.forEach((l, k) => {
+        if (k % 2 !== skupina) return;
+        const c = kandidati[l].sort((p, q) => q[0] - p[0]);
+        let naj = c[0];
+        for (const q of c) if (postavljeni.every(([x, z]) => Math.hypot(q[1] - x, q[2] - z) >= dmin)) { naj = q; break; }
+        postavljeni.push([naj[1], naj[2]]); mesto.set(l, naj);
+      });
+    }
+    izbrani.forEach((l, k) => {
+      const h = nivoji[l], q = mesto.get(l);
       barva((h - zlo) / (zhi - zlo), _col); _col.offsetHSL(0, 0, 0.15);
-      dodajBes(st(h), _a.set(najboljse[l][1], YF + 0.02, najboljse[l][2]), 0.058, "#" + _col.convertLinearToSRGB().getHexString(), false);
+      dodajBes(st(h), _a.set(q[1], YF + 0.02, q[2]), 0.062, "#" + _col.convertLinearToSRGB().getHexString(), false, 0, k % 2 === 1);
     });
   }
 
@@ -588,5 +662,6 @@ export function zgradi(THREE, ctx) {
     },
   };
   obnovi();
+  postaviLegendo();
   return api;
 }

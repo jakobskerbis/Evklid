@@ -69,12 +69,42 @@ export function zgradi(THREE, ctx) {
   const klipi = [klip], duhKlipi = [duh];
   const posodobiKlip = () => { klip.copy(lokKlip).applyMatrix4(telo.matrixWorld); duh.copy(lokDuh).applyMatrix4(telo.matrixWorld); };
 
-  const ploskevMat = (barva, side, opacity) => new THREE.MeshPhysicalMaterial({
-    color: barva, roughness: 0.42, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.4, side, transparent: true, opacity,
-    polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1,
-  });
-  const mOsnF = ploskevMat("#5C8BF2", THREE.FrontSide, 1), mOsnB = ploskevMat("#3E5DA6", THREE.BackSide, 1);
-  const mPlF = ploskevMat("#E8973A", THREE.FrontSide, 1), mPlB = ploskevMat("#9A6428", THREE.BackSide, 1);
+  // Ploskve: neprosojne so rahlo lakirane in ob robovih nežno potemnjene (razdalja do roba je v atributih robA/robB,
+  // glej robVrednosti); prosojne so svetlo obarvano steklo: skoraj prozorne, ob robovih in pod poševnim kotom svetlejše.
+  const BIG = 1e4; // »ni roba«
+  const RJ = { uSteklo: { value: 0 }, uAOw: { value: 1 }, uAO: { value: 0.24 }, uOdt: { value: 0 } };
+  function obPrevajanju(sh) {
+    Object.assign(sh.uniforms, RJ, { uZadaj: { value: this.side === THREE.BackSide ? 1 : 0 } });
+    sh.vertexShader = sh.vertexShader
+      .replace("#include <common>", "#include <common>\nattribute vec4 robA;\nattribute vec4 robB;\nvarying vec4 vRobA;\nvarying vec4 vRobB;")
+      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvRobA = robA; vRobB = robB;");
+    sh.fragmentShader = sh.fragmentShader
+      .replace("#include <common>", "#include <common>\nuniform float uSteklo, uAOw, uAO, uOdt, uZadaj;\nvarying vec4 vRobA;\nvarying vec4 vRobB;")
+      .replace("#include <color_fragment>", `#include <color_fragment>
+        float dRob = vRobB.w < 0.0 ? -vRobB.w - length(vRobA.xy) : min(min(min(vRobA.x, vRobA.y), min(vRobA.z, vRobA.w)), min(vRobB.x, vRobB.y));
+        float kRob = 1.0 - smoothstep(0.0, uAOw, max(dRob, 0.0));
+        diffuseColor.rgb *= (1.0 - uAO * kRob * (1.0 - uSteklo)) * (1.0 + uOdt * vRobB.z);`)
+      .replace("#include <premultiplied_alpha_fragment>", `#include <premultiplied_alpha_fragment>
+        if (uSteklo > 0.5) {
+          float nv = clamp(abs(dot(normal, normalize(vViewPosition))), 0.0, 1.0);
+          float fr = pow(1.0 - nv, 3.0), rb = kRob * (1.0 - uZadaj);
+          float a = clamp(mix(0.1, 0.07, uZadaj) + 0.4 * fr + 0.3 * rb, 0.0, 0.85);
+          vec3 svetlo = mix(vec3(0.82, 0.88, 1.0), diffuseColor.rgb, 0.35); // hladen odsev neba, rahlo obarvan
+          vec3 sij = svetlo * (0.15 + 0.45 * fr) * (1.0 - 0.55 * uZadaj) + diffuseColor.rgb * 0.45 * rb;
+          gl_FragColor = vec4(gl_FragColor.rgb * a * 0.4 + sij, a);
+        }`);
+  }
+  const ploskevMat = (barva, side) => {
+    const m = new THREE.MeshPhysicalMaterial({
+      color: barva, roughness: 0.4, metalness: 0, specularIntensity: 0.6, clearcoat: 0.3, clearcoatRoughness: 0.25, side, transparent: true, opacity: 1, premultipliedAlpha: true,
+      polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1,
+    });
+    m.onBeforeCompile = obPrevajanju; return m;
+  };
+  const mOsnF = ploskevMat("#5C8BF2", THREE.FrontSide), mOsnB = ploskevMat("#3E5DA6", THREE.BackSide);
+  const mPlF = ploskevMat("#E8973A", THREE.FrontSide), mPlB = ploskevMat("#9A6428", THREE.BackSide);
+  // [material, barva neprosojno, barva steklo]
+  const BARVE = [[mOsnF, "#5C8BF2", "#A9C6FF"], [mOsnB, "#3E5DA6", "#5D7BC0"], [mPlF, "#E8973A", "#FFD39A"], [mPlB, "#9A6428", "#B58955"]];
   const mDuh = new THREE.MeshBasicMaterial({ color: "#AFC4FF", transparent: true, opacity: 0.1, depthWrite: false, side: THREE.FrontSide, clippingPlanes: duhKlipi });
   const mRob = new THREE.MeshStandardMaterial({ color: "#F1F4FF", roughness: 0.35, metalness: 0.05, transparent: true, opacity: 1 });
   // skrite robove rišemo črtkano (črtice sestavimo sami, neodvisno od gonilnika)
@@ -82,11 +112,19 @@ export function zgradi(THREE, ctx) {
   const mKonV = new THREE.MeshStandardMaterial({ color: "#7CE0B5", roughness: 0.4, transparent: true, opacity: 1 });
   const mKonS = new THREE.LineBasicMaterial({ color: "#7CE0B5", transparent: true, opacity: 0.9, depthWrite: false, depthFunc: THREE.GreaterDepth });
   const mNevidno = new THREE.MeshBasicMaterial({ visible: false });
-  // šrafura prereza (kot v učbeniku), narisana na platno
-  const srafPlatno = document.createElement("canvas"); srafPlatno.width = 64; srafPlatno.height = 64;
-  { const g = srafPlatno.getContext("2d"); if (g) { g.fillStyle = "#E4577F"; g.fillRect(0, 0, 64, 64); g.strokeStyle = "rgba(255,226,234,0.85)"; g.lineWidth = 7; for (let k = -64; k <= 128; k += 32) { g.beginPath(); g.moveTo(k, 64); g.lineTo(k + 64, 0); g.stroke(); } } }
-  const srafTex = new THREE.CanvasTexture(srafPlatno); srafTex.wrapS = srafTex.wrapT = THREE.RepeatWrapping; srafTex.colorSpace = THREE.SRGBColorSpace;
-  const mPrerez = new THREE.MeshStandardMaterial({ map: srafTex, roughness: 0.7, side: THREE.DoubleSide, transparent: true, opacity: 1 });
+  // šrafura prereza (kot v učbeniku): poševne črte, izračunane v senčilniku (ostre in brez valovanja pri vsaki velikosti)
+  const mPrerez = new THREE.ShaderMaterial({
+    uniforms: { uBarva: { value: new THREE.Color("#D94A72") }, uCrta: { value: new THREE.Color("#F7B9CB") } },
+    vertexShader: "varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: `uniform vec3 uBarva, uCrta; varying vec2 vUv;
+      void main() {
+        float t = vUv.x + vUv.y, w = max(fwidth(t), 1e-4), f = abs(fract(t) - 0.5);
+        float crta = smoothstep(0.5 - 0.13 - w, 0.5 - 0.13 + w, f);
+        gl_FragColor = vec4(mix(uBarva, uCrta, crta), 1.0);
+        #include <colorspace_fragment>
+      }`,
+    side: THREE.DoubleSide, transparent: true,
+  });
   const mPrerezRob = new THREE.MeshStandardMaterial({ color: "#FFD3DF", roughness: 0.4, transparent: true, opacity: 1 });
   const mRavnina = new THREE.MeshBasicMaterial({ color: "#9FB6FF", transparent: true, opacity: 0.13, side: THREE.DoubleSide, depthWrite: false, polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 8 });
   const mRavninaRob = new THREE.LineBasicMaterial({ color: "#B8C9FF", transparent: true, opacity: 0.7 });
@@ -123,6 +161,34 @@ export function zgradi(THREE, ctx) {
   const rgeo = new THREE.BufferGeometry().setFromPoints([new Vector3(-1, -1, 0), new Vector3(1, -1, 0), new Vector3(1, 1, 0), new Vector3(-1, 1, 0)]);
   const ravninaRob = new THREE.LineLoop(rgeo, mRavninaRob); ravninaRob.renderOrder = 6; ravnina.add(ravninaRob);
   telo.add(prerezM, prerezRob, ravnina);
+
+  // podlaga: kvadratki po 1 cm (pri velikih mrežah po 5 cm) in mehka senca pod telesom, da lažje oceniš velikost
+  const TS = 256;
+  const sencaPlatno = document.createElement("canvas"); sencaPlatno.width = sencaPlatno.height = TS;
+  const obrisPlatno = document.createElement("canvas"); obrisPlatno.width = obrisPlatno.height = TS;
+  const sencaTex = new THREE.CanvasTexture(sencaPlatno); sencaTex.flipY = false; // vrstica platna = z
+  const mTla = new THREE.ShaderMaterial({
+    uniforms: { uSenca: { value: sencaTex }, uC: { value: new THREE.Vector2() }, uR: { value: 1 }, uKorak: { value: 1 }, uVelik: { value: 5 }, uMoc: { value: 1 }, uBarva: { value: new THREE.Color("#A9BCE8") } },
+    vertexShader: "uniform vec2 uC; uniform float uR; varying vec2 vP; void main() { vP = uC + position.xz * uR; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: `uniform sampler2D uSenca; uniform vec2 uC; uniform float uR, uKorak, uVelik, uMoc; uniform vec3 uBarva; varying vec2 vP;
+      float mreza(float k, float deb) {
+        vec2 q = vP / k, w = max(fwidth(q), vec2(1e-5)), g = abs(fract(q - 0.5) - 0.5) / w;
+        return (1.0 - min(min(g.x, g.y) / deb, 1.0)) * (1.0 - smoothstep(0.18, 0.4, max(w.x, w.y)));
+      }
+      void main() {
+        vec2 d = vP - uC; float r = length(d) / uR;
+        float rob = 1.0 - smoothstep(0.72, 1.0, r);
+        float a = rob * (0.05 + 0.16 * mreza(uKorak, 1.0) + 0.2 * mreza(uVelik, 1.4));
+        float sh = texture2D(uSenca, d / (2.0 * uR) + 0.5).a * uMoc * (1.0 - smoothstep(0.85, 1.0, r));
+        float A = a + sh * (1.0 - a);
+        gl_FragColor = vec4(uBarva * a * (1.0 - sh) / max(A, 1e-4), A);
+        #include <colorspace_fragment>
+      }`,
+    transparent: true, depthWrite: false,
+  });
+  const tlaGeo = new THREE.CircleGeometry(1, visoka ? 96 : 48); tlaGeo.rotateX(-Math.PI / 2);
+  const tla = mesh(tlaGeo, mTla, -2); telo.add(tla);
+  let korakTal = 1;
 
   // nevidni »ročaji« za tanke dele (višina, polmer ...), da jih lahko tapneš
   const proxyCev = {}, proxyKr = {};
@@ -323,21 +389,42 @@ export function zgradi(THREE, ctx) {
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(Math.max(3, n) * 3), 3));
     g.setAttribute("normal", new THREE.BufferAttribute(new Float32Array(Math.max(3, n) * 3), 3));
+    g.setAttribute("robA", new THREE.BufferAttribute(new Float32Array(Math.max(3, n) * 4), 4));
+    g.setAttribute("robB", new THREE.BufferAttribute(new Float32Array(Math.max(3, n) * 4), 4));
     const st0 = mesh3[0].geometry; for (const m of mesh3) m.geometry = g; st0.dispose();
     return true;
   }
-  function napolniMnogokotnike(geo, ploskve) {
-    const P = geo.attributes.position.array, N = geo.attributes.normal.array; let k = 0;
+  // Razdalje oglišča ploskve do premic njenih robov (največ 6 robov; razdalja do premice je afina, zato je
+  // linearna interpolacija v trikotniku natančna). Krog (več kot 6 oglišč): lokalni koordinati glede na središče in −R.
+  const _e = new Vector3(), _f = new Vector3(), rv = new Float32Array(8);
+  function robVrednosti(F, j, odt) {
+    const p = F.p, n = p.length, q = p[j];
+    if (n > 6) {
+      if (!F.kc) { F.kc = sredisce(p, new Vector3()); F.kR = F.kc.distanceTo(p[0]); F.k1 = p[0].clone().sub(F.kc).normalize(); F.k2 = new Vector3().crossVectors(F.n, F.k1); }
+      _e.subVectors(q, F.kc); rv[0] = _e.dot(F.k1); rv[1] = _e.dot(F.k2); rv[2] = rv[3] = rv[4] = rv[5] = BIG; rv[6] = odt; rv[7] = -F.kR; return rv;
+    }
+    for (let k = 0; k < 6; k++) {
+      if (k >= n) { rv[k] = BIG; continue; }
+      const a = p[k], b = p[(k + 1) % n]; _e.subVectors(b, a); const L = _e.length();
+      rv[k] = L > 1e-12 ? _f.subVectors(q, a).cross(_e).length() / L : BIG;
+    }
+    rv[6] = odt; rv[7] = 1; return rv;
+  }
+  // odtenki ploskev v mreži (ista barva, malo svetlejša ali temnejša ploskev)
+  const ODT = [0, 0.1, -0.07, 0.05, -0.1, 0.03, 0.08, -0.04];
+  function napolniMnogokotnike(geo, ploskve, odt0 = 0) {
+    const P = geo.attributes.position.array, N = geo.attributes.normal.array, RA = geo.attributes.robA.array, RB = geo.attributes.robB.array; let k = 0, kr = 0, fi = odt0;
     for (const F of ploskve) {
       _d.copy(F.n).transformDirection(F.M);
-      const p0 = _a.copy(F.p[0]).applyMatrix4(F.M);
+      const p0 = _a.copy(F.p[0]).applyMatrix4(F.M), odt = ODT[fi++ % ODT.length];
       for (let i = 1; i < F.p.length - 1; i++) {
         _b.copy(F.p[i]).applyMatrix4(F.M); _c.copy(F.p[i + 1]).applyMatrix4(F.M);
         for (const q of [p0, _b, _c]) { P[k] = q.x; P[k + 1] = q.y; P[k + 2] = q.z; N[k] = _d.x; N[k + 1] = _d.y; N[k + 2] = _d.z; k += 3; }
+        for (const j of [0, i, i + 1]) { const r = robVrednosti(F, j, odt); RA.set(r.subarray(0, 4), kr); RB.set(r.subarray(4, 8), kr); kr += 4; }
       }
     }
     geo.setDrawRange(0, k / 3);
-    geo.attributes.position.needsUpdate = true; geo.attributes.normal.needsUpdate = true;
+    geo.attributes.position.needsUpdate = true; geo.attributes.normal.needsUpdate = true; geo.attributes.robA.needsUpdate = geo.attributes.robB.needsUpdate = true;
     geo.computeBoundingSphere();
   }
 
@@ -365,7 +452,7 @@ export function zgradi(THREE, ctx) {
     const osnovne = T.F.filter((F) => F.vrsta === "osn"), stranske = T.F.filter((F) => F.vrsta === "pl");
     const nOsn = geoMnogokotniki(null, osnovne);
     if (zagotovi([osnB, osnF, osnD], nOsn, osnVel)) osnVel = nOsn;
-    napolniMnogokotnike(osnB.geometry, osnovne);
+    napolniMnogokotnike(osnB.geometry, osnovne, 6);
     osnB.visible = osnF.visible = nOsn > 0;
     lokTocke.length = 0;
     for (const F of T.F) for (const p of F.p) lokTocke.push(p.clone().applyMatrix4(F.M));
@@ -391,6 +478,16 @@ export function zgradi(THREE, ctx) {
         _d.subVectors(_b, _a).cross(_sk.subVectors(_c, _a)); _sk.set(_a.x, 0, _a.z);
         if (_d.dot(_sk) < 0) { for (let k = 0; k < ix.length; k += 3) { const t = ix[k + 1]; ix[k + 1] = ix[k + 2]; ix[k + 2] = t; } g.index.needsUpdate = true; g.computeVertexNormals(); }
       }
+      { // razdalje do robov plašča (vzdolž plašča): spodnja in zgornja krožnica, v mreži še oba stranska robova
+        const RA = g.attributes.robA.array, RB = g.attributes.robB.array, poln = pl.tip === "valj" ? pl.v : pl.Sc - pl.s1;
+        for (let j = 0; j <= Nw; j++) for (let i = 0; i <= Nu; i++) {
+          const w = j / Nw, u = -1 + (2 * i) / Nu, k = (j * (Nu + 1) + i) * 4;
+          const pol = pl.tip === "valj" ? Math.PI * pl.r1 : ((pl.Sc - w * (pl.Sc - pl.s1)) * pl.fi) / 2;
+          RA[k] = w * poln; RA[k + 1] = pl.r2 > 0 ? (1 - w) * poln : BIG; RA[k + 2] = e > 1e-4 ? (1 - Math.abs(u)) * pol : BIG; RA[k + 3] = BIG;
+          RB[k] = RB[k + 1] = BIG; RB[k + 2] = 0; RB[k + 3] = 1;
+        }
+        g.attributes.robA.needsUpdate = g.attributes.robB.needsUpdate = true;
+      }
       g.computeBoundingSphere();
       for (let i = 0; i <= 16; i++) { lokTocke.push(plascTocka(pl, -1 + i / 8, 0, e, new Vector3())); lokTocke.push(plascTocka(pl, -1 + i / 8, 1, e, new Vector3())); }
     } else if (T.krogla) {
@@ -399,6 +496,7 @@ export function zgradi(THREE, ctx) {
       if (zagotovi([plB, plF, plD], n, plVel)) { plVel = n; plB.geometry.setIndex(enotaKrogla.index.clone()); plIndeks = -1; }
       const g = plB.geometry, P = g.attributes.position.array, Nn = g.attributes.normal.array, U = enotaKrogla.attributes.position.array;
       for (let k = 0; k < n * 3; k += 3) { P[k] = U[k] * T.krogla; P[k + 1] = U[k + 1] * T.krogla + T.krogla; P[k + 2] = U[k + 2] * T.krogla; Nn[k] = U[k]; Nn[k + 1] = U[k + 1]; Nn[k + 2] = U[k + 2]; }
+      { const RA = g.attributes.robA.array, RB = g.attributes.robB.array; RA.fill(BIG); for (let k = 0; k < RB.length; k += 4) { RB[k] = RB[k + 1] = BIG; RB[k + 2] = 0; RB[k + 3] = 1; } g.attributes.robA.needsUpdate = g.attributes.robB.needsUpdate = true; }
       g.setDrawRange(0, Infinity); g.attributes.position.needsUpdate = true; g.attributes.normal.needsUpdate = true; g.computeBoundingSphere();
       lokTocke.push(V(T.krogla, T.krogla, 0), V(-T.krogla, T.krogla, 0), V(0, 0, 0), V(0, 2 * T.krogla, 0), V(0, T.krogla, T.krogla), V(0, T.krogla, -T.krogla));
     } else {
@@ -466,11 +564,15 @@ export function zgradi(THREE, ctx) {
     sestaviNapise(T, e);
     // ----- prerez -----
     prerez(T, e);
+    // ----- podlaga in senca -----
+    podlaga(T, e);
     // ----- prosojnost -----
     // izklopljeno: neprosojno telo, skriti robovi črtkano (kot v učbeniku);
     // vklopljeno: prosojne ploskve, vsi robovi vidni (robove rišemo prej, ploskve jih le obarvajo)
     const pro = S.prosojno;
-    for (const m of [mOsnF, mPlF, mOsnB, mPlB]) { m.opacity = pro ? (m.side === THREE.BackSide ? 0.3 : 0.42) : 1; m.depthWrite = !pro; }
+    RJ.uSteklo.value = pro ? 1 : 0; RJ.uAOw.value = 0.07 / s; RJ.uOdt.value = Math.min(1, e * 4);
+    for (const [m, neprosojna, steklo] of BARVE) { m.color.set(pro ? steklo : neprosojna); m.depthWrite = !pro; m.roughness = pro ? 0.15 : 0.4; m.clearcoat = pro ? 0.8 : 0.3; }
+    mTla.uniforms.uMoc.value = pro ? 0.45 : 1;
     robovi.renderOrder = oglisca.renderOrder = konV.renderOrder = pro ? -1 : 3;
     skrite.visible = !pro; konS.visible = !pro && konN > 0;
     // ----- deli -----
@@ -611,6 +713,43 @@ export function zgradi(THREE, ctx) {
     for (const k of Object.keys(proxyKr)) { const v = prx[k]; proxyKr[k].visible = !!v; if (v) { proxyKr[k].position.copy(v); proxyKr[k].scale.setScalar(0.05 / s); } }
   }
 
+  // ---------- podlaga ----------
+  // Krog na ravnini y = 0 (spodnja ploskev telesa), ki ostane v krogli s polmerom 1. Senca je navpična projekcija
+  // vseh ploskev (mehko zamegljena) in ostrejši stik tam, kjer telo leži na podlagi.
+  function podlaga(T, e) {
+    const yb = -sred.y * s, rs = Math.min(0.95, Math.sqrt(Math.max(0.04, 0.97 * 0.97 - yb * yb))), R = rs / s;
+    tla.position.set(sred.x, -0.0015 / s, sred.z); tla.scale.set(R, 1, R);
+    const u = mTla.uniforms; u.uC.value.set(sred.x, sred.z); u.uR.value = R;
+    korakTal = s >= 0.04 ? 1 : 5; u.uKorak.value = korakTal; u.uVelik.value = korakTal === 1 ? 5 : 10;
+    const g = obrisPlatno.getContext("2d"), h = sencaPlatno.getContext("2d");
+    if (!g || !h) { sencaTex.needsUpdate = true; return; }
+    const px = (x) => ((x - sred.x) / (2 * R) + 0.5) * TS, pz = (z) => ((z - sred.z) / (2 * R) + 0.5) * TS;
+    const obris = (samoStik) => {
+      g.clearRect(0, 0, TS, TS); g.fillStyle = "#000";
+      if (T.krogla) { if (!samoStik) { g.beginPath(); g.arc(px(0), pz(0), (0.75 * T.krogla) / (2 * R) * TS, 0, 2 * Math.PI); g.fill(); } return; }
+      for (const F of T.F) {
+        let stik = true; g.beginPath();
+        F.p.forEach((q, i) => { _a.copy(q).applyMatrix4(F.M); if (Math.abs(_a.y) > 1e-3 * D) stik = false; i ? g.lineTo(px(_a.x), pz(_a.z)) : g.moveTo(px(_a.x), pz(_a.z)); });
+        if (!samoStik || stik) g.fill();
+      }
+      if (T.plasc && !samoStik) {
+        const pl = T.plasc, Nu = 64, Nw = Math.max(1, pl.Nw >> 1);
+        for (let j = 0; j < Nw; j++) for (let i = 0; i < Nu; i++) {
+          g.beginPath();
+          for (const [di, dj] of [[0, 0], [1, 0], [1, 1], [0, 1]]) { plascTocka(pl, -1 + (2 * (i + di)) / Nu, (j + dj) / Nw, e, _a); di + dj ? g.lineTo(px(_a.x), pz(_a.z)) : g.moveTo(px(_a.x), pz(_a.z)); }
+          g.closePath(); g.fill(); g.stroke();
+        }
+      }
+    };
+    h.clearRect(0, 0, TS, TS);
+    const OD = TS * 4; // senco narišemo z zamikom, obris pa izven platna (shadowBlur deluje v vseh brskalnikih)
+    for (const [samoStik, blur, alfa] of [[false, 22, 0.42], [true, 6, 0.38]]) {
+      obris(samoStik);
+      h.save(); h.shadowColor = `rgba(0,0,0,${alfa})`; h.shadowBlur = blur; h.shadowOffsetX = OD; h.drawImage(obrisPlatno, -OD, 0); h.restore();
+    }
+    sencaTex.needsUpdate = true;
+  }
+
   // ---------- prerez z ravnino ----------
   function ravninaZdaj(T, n, tocka) {
     const al = (S.nagib * Math.PI) / 180, ze = (S.zasuk * Math.PI) / 180;
@@ -731,7 +870,7 @@ export function zgradi(THREE, ctx) {
     prerezInfo = { ime, S: plos };
     // trikotniki (pahljača iz težišča), uv za šrafuro (stalna gostota na zaslonu)
     const P = capGeo.attributes.position.array, N = capGeo.attributes.normal.array, UV = capGeo.attributes.uv.array;
-    const gost = s / 0.06; let k = 0, ku = 0;
+    const gost = s / 0.085; let k = 0, ku = 0; // ena črta na 0,06 enote prizora (≈ 10 px pri 360 px širine)
     const np = Math.min(pts.length, NS + 15);
     for (let i = 0; i < np; i++) {
       const a = pts[i], b = pts[(i + 1) % np];
@@ -864,6 +1003,10 @@ export function zgradi(THREE, ctx) {
       if (pr.polmer2) d.push({ id: "polmer2", ime: "Polmer r₂", opis: "Polmer zgornje (manjše) osnovne ploskve.", barva: "#7CE0B5", meshes: [proxyCev.polmer2], tocka: tk(pr.polmer2[0].clone().lerp(pr.polmer2[1], 0.5)) });
       if (pr.vrh) d.push({ id: "vrh", ime: "Vrh", opis: vr === "stozec" ? "Točka, v kateri se stečejo vse stranice stožca." : "Skupno oglišče vseh stranskih ploskev piramide.", barva: "#F1F4FF", meshes: [proxyKr.vrh], tocka: tk(pr.vrh) });
     }
+    {
+      const R = tla.scale.x, k = korakTal, K = k === 1 ? 5 : 10;
+      d.push({ id: "podlaga", ime: "Karirasta podlaga", opis: `Podlaga je razdeljena na kvadratke s stranico ${k} cm (debelejše črte so na vsakih ${K} cm), kot karirasti zvezek; z njimi oceniš velikost telesa in njegove mreže.`, barva: "#A9BCE8", meshes: [tla], tocka: tk(V(sred.x - 0.6 * R, 0, sred.z + 0.6 * R)) });
+    }
     if (prerezInfo) {
       d.push({ id: "prerez", ime: "Prerez", opis: `Presek telesa z ravnino: ${prerezInfo.ime}. Odrezani del je prikazan prosojno.`, barva: "#E4577F", meshes: [prerezM], tocka: tk(T.prerezSred) });
       d.push({ id: "ravnina", ime: "Ravnina", opis: "Ravnina, ki seka telo; premikaš jo z drsniki za lego, nagib in zasuk.", barva: "#9FB6FF", meshes: [ravnina], tocka: tockaSvet(_a.copy(ravnina.position).addScaledVector(_b.set(1, 0, 0).applyQuaternion(ravnina.quaternion), ravnina.scale.x * 0.85)) });
@@ -919,7 +1062,7 @@ export function zgradi(THREE, ctx) {
       geos.add(cevGeo); geos.add(kroglicaGeo); if (enotaKrogla) geos.add(enotaKrogla);
       for (const g of geos) g.dispose();
       for (const m of mats) { if (m.map) m.map.dispose(); m.dispose(); }
-      srafTex.dispose(); pikaTex.dispose();
+      pikaTex.dispose(); sencaTex.dispose();
       for (const sp of napisi.values()) sp.userData.tex.dispose();
     },
   };
