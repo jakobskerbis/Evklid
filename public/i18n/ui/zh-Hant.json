@@ -3047,6 +3047,7 @@
   "adm.rep.rerendered": "重新顯示的回答（較早的回報，沒有快照）：",
   "adm.rep.raw": "家教的原始文字：",
   "pay.seats1Level": "1 個檔案 · {level}",
+  "pay.save": "省 {pct}%",
   "pay.family": "家庭（2–4 個檔案）",
   "pay.familyStudent": "含大學生的家庭（2–4 個檔案）",
   "up.title": "更高階段",

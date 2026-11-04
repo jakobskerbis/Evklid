@@ -3072,6 +3072,7 @@
   "adm.rep.rerendered": "La respuesta, mostrada de nuevo (aviso antiguo sin captura):",
   "adm.rep.raw": "Texto sin procesar del tutor:",
   "pay.seats1Level": "1 perfil · {level}",
+  "pay.save": "ahorras un {pct} %",
   "pay.family": "Familia (2–4 perfiles)",
   "pay.familyStudent": "Familia con estudiante (2–4 perfiles)",
   "up.title": "Nivel superior",

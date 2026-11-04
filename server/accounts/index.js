@@ -222,6 +222,12 @@ export function mountAccounts(app, store, opts = {}) {
     return r.personal || r.school;
   }
 
+  // Plačan AI iz katerega koli vira; šola, ki je porabila mesečno mejo AI, za AI šteje kot brezplačni paket.
+  function aiPremiumFor(studentId) {
+    const r = rightsFor(studentId);
+    return r.personal || (r.school && !r.schoolAiOut);
+  }
+
   // Utež profila pri delitvi mesečnega proračuna AI (server/proracun.js): plačljiva naročnina po mesečni
   // ceni na otroka v €, preizkus/koda/bonus/paket kot mesečna naročnina za enega otroka, šola in brezplačni po SHARE.
   function shareWeightFor(studentId) {
@@ -234,12 +240,12 @@ export function mountAccounts(app, store, opts = {}) {
       if (!plan || plan.currency && plan.currency !== "EUR") return standard;
       return plan.amount / 100 / (plan.interval === "year" ? 12 : 1) / Math.max(1, plan.seats || 1);
     }
-    return r.school ? SHARE.school() : SHARE.free();
+    return r.school && !r.schoolAiOut ? SHARE.school() : SHARE.free();
   }
   // Dokupljena poraba AI, vezana na račun (server/placila/krediti.js).
   const credits = new Credits(db);
   // Brezplačni profil nad mejo paketa: s kreditom nadaljuje, strošek gre iz kredita (server/usage.js chargeCredit).
-  const freeOver = (studentId) => !premiumFor(studentId) && !!freeBudgetReason(studentId);
+  const freeOver = (studentId) => !aiPremiumFor(studentId) && !!freeBudgetReason(studentId);
   // Zajamčena poraba AI na mesec (j 2026-11-04, plans.js planGuarantee): naročnina po paketu (stopnja in obdobje,
   // Družina en skupen delež za ves račun, šolska cena, regijska cena po pravilu 75 %), darilna koda kot letna
   // naročnina stopnje; ima prednost pred deleži brezplačnih v skupnem proračunu, nad njo hitri model (server/usage.js).
@@ -295,7 +301,7 @@ export function mountAccounts(app, store, opts = {}) {
   function modelCapFor(studentId) {
     const r = rightsFor(studentId);
     if (r.personalTier === "promo") return promo.termsOf(ownerOf(studentId)).maxModel;
-    return !r.personal && r.school ? "sonnet" : null;
+    return !r.personal && r.school && !r.schoolAiOut ? "sonnet" : null;
   }
 
   // Poraba AI brezplačnih učencev v tem mesecu (učenci brez naročnine, preizkusa, bonusa ali kode).
@@ -356,7 +362,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
     const pool = freeMonthlyPoolUsd();
     const gone = db.prepare("SELECT COALESCE(SUM(usd),0) AS usd FROM guest_spent WHERE day >= date('now','start of month')").get().usd;
-    if (pool && rows.filter((r) => !premiumFor(r.id)).reduce((t, r) => t + r.usd, gone) >= pool) {
+    if (pool && rows.filter((r) => !aiPremiumFor(r.id)).reduce((t, r) => t + r.usd, gone) >= pool) {
       return `Brezplačna vprašanja za inštruktorja so ta mesec za vse porabljena. Vadnica in lekcije delujejo naprej neomejeno. ${moreHint(studentId)}`.trim();
     }
     return null;
@@ -455,7 +461,7 @@ export function mountAccounts(app, store, opts = {}) {
     // šolske licence (15) in Osebno (60), s proračunom AI več (dailyLimitFor).
     if (c && req.method === "POST" && /\/messages$/i.test(req.path)) {
       const r = rightsFor(studentId);
-      if (!r.personal && !r.school) {
+      if (!r.personal && (!r.school || r.schoolAiOut)) {
         const limit = freeDailyQuestions();
         if (questionsToday(studentId) >= limit) {
           return res.status(429).json({
@@ -476,7 +482,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
     // Mesečna meja porabe brezplačnega paketa velja za vse klice AI (inštruktor, branje zapisa, fotografija urnika).
     // Z dokupljenim kreditom ta meja ne velja (poraba gre iz kredita, server/usage.js chargeCredit).
-    if (studentId !== null && req.method === "POST" && /(\/messages|\/tasks\/\d+\/read|\/schedule\/photo)$/i.test(req.path) && !premiumFor(studentId) && !(credits.balance(ownerOf(studentId)) > 0)) {
+    if (studentId !== null && req.method === "POST" && /(\/messages|\/tasks\/\d+\/read|\/schedule\/photo)$/i.test(req.path) && !aiPremiumFor(studentId) && !(credits.balance(ownerOf(studentId)) > 0)) {
       const blocked = freeBudgetReason(studentId);
       if (blocked) return res.status(429).json({ error: blocked, limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) });
     }
@@ -1655,6 +1661,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { credits, shareWeightFor, ownerOf, freeOver, guaranteeFor, poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { credits, shareWeightFor, ownerOf, freeOver, guaranteeFor, poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

@@ -3047,6 +3047,7 @@
   "adm.rep.rerendered": "回答を再表示（スナップショットのない以前の報告）：",
   "adm.rep.raw": "チューターの元のテキスト：",
   "pay.seats1Level": "プロフィール1件 · {level}",
+  "pay.save": "{pct}% お得",
   "pay.family": "ファミリー（2〜4プロフィール）",
   "pay.familyStudent": "大学生のいるファミリー（2〜4プロフィール）",
   "up.title": "上の段階",

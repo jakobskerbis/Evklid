@@ -2551,6 +2551,7 @@ export default {
   "pay.seats2": "2 otroka",
   // paketi po stopnjah (j 2026-11-01): 1 profil po stopnji profila, Družina pri vsaj 2 profilih
   "pay.seats1Level": "1 profil · {level}",
+  "pay.save": "prihraniš {pct} %",
   "pay.family": "Družina (2–4 profili)",
   "pay.familyStudent": "Družina s študentom (2–4 profili)",
   // nadgradnja na višjo stopnjo med obdobjem (zavihek Račun)

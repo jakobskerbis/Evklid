@@ -57,9 +57,16 @@ test("rights: viri se seštejejo, šola do Sonneta, Osebno do Opusa", () => {
     [["osebno", "sola"], 75, "opus"],
   );
   assert.equal(both.until, school.valid_until); // kasnejši konec
-  // Potekla licenca in porabljena meja AI šole ne dajeta pravic.
+  // Potekla licenca ne daje pravic. Porabljena meja AI (j 2026-11-04) ustavi samo šolski AI:
+  // vsebine ostanejo, inštruktor deluje kot v brezplačnem paketu (vprašanja na dan, brez Sonneta).
   assert.equal(schoolValid({ ...school, valid_until: iso(-1) }), false);
-  assert.equal(schoolValid({ ...school, ai_spent_usd: 5 }), false);
+  assert.equal(schoolValid({ ...school, ai_spent_usd: 5 }), true);
+  const out = rights({ schools: [{ ...school, ai_spent_usd: 5 }], freeDaily: 10 });
+  assert.deepEqual([out.school, out.schoolAiOut, out.dailyQuestions, out.maxModel], [true, true, 10, null]);
+  assert.equal(rights({ schools: [school] }).schoolAiOut, false);
+  // Z osebnim paketom: šola brez AI ne prišteje ničesar (kot samo Osebno), Opus ostane.
+  const ownOut = rights({ personal: { tier: "paid", until: iso(10) }, schools: [{ ...school, ai_spent_usd: 5 }], freeDaily: 10 });
+  assert.deepEqual([ownOut.schoolAiOut, ownOut.dailyQuestions, ownOut.maxModel], [true, 60, "opus"]);
   assert.equal(
     schoolValid({ ...school, ai_month_usd: 0, ai_spent_usd: 99 }),
     true,
@@ -301,15 +308,47 @@ test("šolska licenca v aplikaciji: interaktivne lekcije za šolske predmete, 15
       .prepare("UPDATE parents SET sub_status = NULL WHERE id = ?")
       .run(parentId);
 
-    // Porabljena mesečna meja AI šole: licenca ne velja več, učenec je spet v brezplačnem paketu.
+    // Porabljena mesečna meja AI šole (j 2026-11-04): vsebine ostanejo do konca licence, ustavi se samo
+    // šolski AI (inštruktor kot v brezplačnem paketu).
     store.db
       .prepare(
         "INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku', 'chat', 6)",
       )
       .run(kid.id);
     createSchoolSource(store.db).clearCache();
-    assert.equal((await lesson(MAT)).body.interactive, false);
-    assert.equal((await call("/api/account")).body.children[0].premium, false);
+    assert.equal((await lesson(MAT)).body.interactive, true);
+    assert.equal((await call("/api/account")).body.children[0].premium, true);
+    // Inštruktor kot brezplačni paket: brez Sonneta (»Razloži podrobneje« ostane pri razmisleku) in 10 vprašanj na dan.
+    // Porabo šole prenesemo na sošolca, da učenca ne ustavi njegova lastna mesečna meja.
+    const mate = store.createStudent("Ana");
+    store.db.prepare("UPDATE students SET parent_id = ? WHERE id = ?").run(parentId, mate.id);
+    schools.join(1, mate.id);
+    store.db.prepare("UPDATE usage SET student_id = ? WHERE student_id = ? AND cost_usd = 6").run(mate.id, kid.id);
+    createSchoolSource(store.db).clearCache();
+    store.db.prepare("UPDATE messages SET created_at = datetime('now', '-2 day')").run();
+    const prevPool = process.env.EVKLID_FREE_POOL_USD;
+    process.env.EVKLID_FREE_POOL_USD = "100"; // skupni brezplačni sklad (10 $) bi sicer ustavil prej
+    try {
+      const c3 = (await call(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
+      for (let i = 0; i < 3; i++)
+        { const x = await call(`/api/conversations/${c3.id}/messages`, { method: "POST", body: { text: "Pojasni še enkrat.", deep: true } }); assert.equal(x.status, 200, JSON.stringify(x.body)); }
+      assert.deepEqual(modes.slice(-3), ["think", "think", "think"]);
+      for (let i = 0; i < 7; i++) store.addMessage(c3.id, "user", [{ type: "text", text: "x" }], "x", false);
+      const out = await call(`/api/conversations/${c3.id}/messages`, { method: "POST", body: { text: "Še eno?" } });
+      assert.equal(out.status, 429);
+      assert.match(out.body.error, /vseh 10 brezplačnih vprašanj/);
+    } finally {
+      if (prevPool === undefined) delete process.env.EVKLID_FREE_POOL_USD;
+      else process.env.EVKLID_FREE_POOL_USD = prevPool;
+    }
+    // Brezplačni sklad za vse (10 $) velja tudi zanj: sošolčevih 6 $ šteje vanj, zdaj je sklad porabljen.
+    store.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku', 'chat', 5)").run(mate.id);
+    store.db.prepare("UPDATE messages SET created_at = datetime('now', '-2 day')").run();
+    const c4 = (await call(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
+    const capped = await call(`/api/conversations/${c4.id}/messages`, { method: "POST", body: { text: "Še eno?" } });
+    assert.equal(capped.status, 429);
+    assert.match(capped.body.error, /za vse porabljena/);
+    assert.equal((await lesson(MAT)).body.interactive, true);
   });
 });
 

@@ -59,14 +59,16 @@
     @media (min-width: 700px) {
       .grid.g2 { grid-template-columns: 1fr 1fr; }
       .grid.g3 { grid-template-columns: repeat(3, 1fr); }
+      [data-pilot-full="1"] .grid.g3 { grid-template-columns: 1fr 1fr; } /* brez pilotne ploščice dve enako široki */
       .order { padding: 24px; }
       .order .two { grid-template-columns: 1fr 1fr; }
       .order button.primary { width: auto; align-self: flex-start; min-width: 200px; }
     }
+    [data-pilot-full="1"] .pilot-only { display: none; }
   </style>
 </head>
 <body>
-<main class="doc">
+<main class="doc" data-pilot-full="{{pilot.full}}">
   <p><a href="/">← {{name}}</a></p>
   <p class="who">Za ravnatelje, učitelje in računovodstvo</p>
   <h1>{{name}} za šole</h1>
@@ -91,7 +93,7 @@
   <div class="grid g3">
     <div class="tile price"><h3>Licenca za razrede</h3><span class="amt">{{price.class}}</span><span class="per">na učenca na leto</span><p>Za posamezne razrede ali predmete.</p></div>
     <div class="tile price best"><h3>Cela šola</h3><span class="amt">{{price.school}}</span><span class="per">na učenca na leto</span><p>Za vse učence šole, po nižji ceni na učenca.</p></div>
-    <div class="tile price"><h3>Pilotna šola</h3><span class="amt">{{price.pilot}}</span><span class="per">na učenca na leto, za {{pilot.years}} leti</span><p>Za šole, ki z nami preizkusijo {{name}} in nam povedo, kaj naj izboljšamo.</p></div>
+    <div class="tile price pilot-only"><h3>Pilotna šola</h3><span class="amt">{{price.pilot}}</span><span class="per">na učenca na leto, za {{pilot.years}} leti</span><p>Samo za prvih {{pilot.max}} šol, ki z nami preizkusijo {{name}} in nam povedo, kaj naj izboljšamo.</p></div>
   </div>
   <p class="small">Cena velja za vsakega učenca, ki ga licenca zajema. Končni znesek bo naveden na predračunu.</p>
 
@@ -111,11 +113,11 @@
     <details><summary>Ali učitelj vidi pogovore učencev z inštruktorjem?</summary>
       <p>Ne. Učitelj vidi samo rezultate pri temah, ki jih je dodelil razredu, in lestvico lige razreda. Zasebni pogovori, druge teme in ostali podatki iz profila učenca ostanejo zasebni.</p></details>
     <details><summary>Ali lahko najprej preizkusimo?</summary>
-      <p>Da. Učiteljski račun je brezplačen, zato lahko učitelj razred odpre takoj: <a href="/ucitelj.html">Za učitelje</a>. Za šole, ki želijo daljši preizkus, je na voljo pilotna cena.</p></details>
+      <p>Da. Učiteljski račun je brezplačen, zato lahko učitelj razred odpre takoj: <a href="/ucitelj.html">Za učitelje</a>. <span class="pilot-only">Za prvih {{pilot.max}} šol, ki želijo daljši preizkus, je na voljo pilotna cena.</span></p></details>
     <details><summary>Kaj se zgodi, ko učenec zamenja šolo?</summary>
       <p>Učenec svoj napredek prenese na novo šolo ali ga izvozi. Oboje je vedno brezplačno, tudi brez licence.</p></details>
     <details><summary>Kako dolgo velja licenca?</summary>
-      <p>Licenca velja 12 mesecev od dogovorjenega začetka. Pilotna cena velja {{pilot.years}} leti.</p></details>
+      <p>Licenca velja 12 mesecev od dogovorjenega začetka.<span class="pilot-only"> Pilotna cena velja {{pilot.years}} leti.</span></p></details>
   </div>
 
   <h2 id="narocilo">Naročilo ali povpraševanje</h2>
@@ -149,7 +151,7 @@
         <legend>Paket</legend>
         <label class="radio"><input type="radio" name="plan" value="class" required> Licenca za razrede ({{price.class}} na učenca na leto)</label>
         <label class="radio"><input type="radio" name="plan" value="school" checked> Cela šola ({{price.school}} na učenca na leto)</label>
-        <label class="radio"><input type="radio" name="plan" value="pilot"> Pilotna šola ({{price.pilot}} na učenca na leto, za {{pilot.years}} leti)</label>
+        <label class="radio pilot-only"><input type="radio" name="plan" value="pilot"> Pilotna šola ({{price.pilot}} na učenca na leto, za {{pilot.years}} leti)</label>
       </fieldset>
       <div class="two">
         <label>Okvirno število učencev <input name="students" type="number" inputmode="numeric" min="1" max="{{maxStudents}}" required></label>

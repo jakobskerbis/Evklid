@@ -238,6 +238,27 @@ test("invalid input is 4xx; only the owner moves a class into a school; transfer
     for (let i = 0; i < 40; i++) db.prepare("INSERT INTO class_members (class_id, student_id) VALUES (?, ?)").run(c2.id, Number(full.run().lastInsertRowid));
     assert.equal((await p(`/api/students/${id}/transfer`, { method: "POST", body: { code: c2.code } })).status, 400);
     assert.deepEqual(groups(), [cls.id]);
+
+    // Pilotna cena samo za prvih 10 šol (j 2026-11-04): skrbnik 11. šoli pilotne licence ne vnese, pilotna šola jo podaljša.
+    delete process.env.EVKLID_SCHOOL_AI_EUR;
+    const addLic = (schoolId, body) => t(`/api/admin/schools/${schoolId}/licences`, { method: "POST", body: { seats: 30, validUntil: "2099-08-31", ...body } });
+    assert.equal((await addLic(sb.id, { plan: "pilot", aiCapUsdMonth: 0 })).status, 201);
+    for (let i = 1; i <= 9; i++) {
+      const sid = Number(db.prepare("INSERT INTO schools (name, invite_code) VALUES (?, ?)").run(`Pilot ${i}`, `PIL${i}X`).lastInsertRowid);
+      db.prepare("INSERT INTO school_licences (school_id, plan, seats, valid_from, valid_until) VALUES (?, 'pilot', 10, '2026-01-01', '2026-02-01')").run(sid); // tudi potekla šteje
+    }
+    const eleventh = await addLic(sch.id, { plan: "pilot" });
+    assert.equal(eleventh.status, 409);
+    assert.match(eleventh.body.error, /prvih 10 šol/);
+    assert.equal((await addLic(sb.id, { plan: "pilot", validFrom: "2099-09-01", validUntil: "2100-08-31" })).status, 201, "pilotna šola podaljša");
+    // Brez meje AI v licenci velja privzeta (25 % mesečne cene na učenca); 0 = brez meje ostane 0.
+    const normal = await addLic(sch.id, { plan: "school" });
+    assert.equal(normal.status, 201);
+    assert.equal(normal.body.licence.aiCapUsdMonth, Math.round(((30 * 14) / 12 * 0.25 / 0.92) * 100) / 100);
+    assert.equal(schoolAccess(db, id).aiCapUsdMonth, normal.body.licence.aiCapUsdMonth);
+    assert.equal(db.prepare("SELECT ai_cap_usd_month AS c FROM school_licences WHERE id = ?").get(normal.body.id ?? 0)?.c ?? null, null, "v bazi ostane NULL");
+    const tuja = db.prepare("SELECT ai_cap_usd_month AS c FROM school_licences WHERE school_id = ? ORDER BY id LIMIT 1").get(sb.id);
+    assert.equal(tuja.c, 0);
   });
 });
 

@@ -3072,6 +3072,7 @@
   "adm.rep.rerendered": "La risposta, mostrata di nuovo (segnalazione precedente senza istantanea):",
   "adm.rep.raw": "Testo grezzo del tutor:",
   "pay.seats1Level": "1 profilo · {level}",
+  "pay.save": "risparmi il {pct} %",
   "pay.family": "Famiglia (2–4 profili)",
   "pay.familyStudent": "Famiglia con studente (2–4 profili)",
   "up.title": "Livello superiore",

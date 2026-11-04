@@ -3047,6 +3047,7 @@
   "adm.rep.rerendered": "重新显示的回答（较早的报告，没有快照）：",
   "adm.rep.raw": "辅导老师的原始文本：",
   "pay.seats1Level": "1 个档案 · {level}",
+  "pay.save": "省 {pct}%",
   "pay.family": "家庭（2–4 个档案）",
   "pay.familyStudent": "含大学生的家庭（2–4 个档案）",
   "up.title": "更高阶段",
