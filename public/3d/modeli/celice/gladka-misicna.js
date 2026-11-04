@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Vretenasta celica brez prečnih prog z enim osrednjim jedrom; aktinski in miozinski filamenti so pripeti na gosta telesca in tvorijo poševno mrežo. Povečan izsek pokaže notranjost; filamenti in kaveole so narisani debelejši in redkejši kot v resnici.",
+  poskusi: "Premikaj drsnik »Krčenje« in primerjaj dolžino celice pred krčenjem in po njem.",
   merilo: { m: 12e-6, oznaka: "12 µm" },
 };
 

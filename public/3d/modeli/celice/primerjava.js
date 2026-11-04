@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Poenostavljeni celici v istem merilu, obe v prerezu. Z izbiro »Poudari« vidiš, kateri deli so skupni in katere ima le živalska ali le rastlinska celica.",
+  poskusi: "Izberi »Samo v rastlinski« in nato »Samo v živalski«: kateri deli zasvetijo?",
   merilo: { m: 60e-6, oznaka: "60 µm" },
 };
 

@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Visoka valjasta celica črevesnega epitelija (enterocit, približno 20 µm × 8 µm) med dvema prerezanima sosedama. Na vrhu ima gost krtačasti obrobek iz mikrovilov, ki močno poveča površino za vsrkavanje hranil. Mikrovilov in organelov je manj kot v resnici.",
+  poskusi: "Tapni mikrovile in pomisli, zakaj črevo potrebuje tako veliko površino.",
   merilo: { m: 28e-6, oznaka: "28 µm" },
 };
 
