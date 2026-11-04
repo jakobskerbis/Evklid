@@ -18,11 +18,13 @@ export function clen(n, k) {
 
 export default function narisi(host, { binom = false } = {}) {
   const W = 300, H = 232, dy = 23, dx = 33, Y0 = 20;
-  const S = skica({ w: W, h: H, navodilo: "Spreminjaj n in r.", oznaka: binom ? "Pascalov trikotnik in binomski izrek" : "Pascalov trikotnik: kombinacije" });
+  // Pri binomskem izreku je spodnja številka k (kot na kartici), pri kombinacijah r.
+  const c = binom ? "k" : "r";
+  const S = skica({ w: W, h: H, navodilo: `Spreminjaj n in ${c}.`, oznaka: binom ? "Pascalov trikotnik in binomski izrek" : "Pascalov trikotnik: kombinacije" });
   const poz = (n, r) => [W / 2 + (r - n / 2) * dx, Y0 + n * dy];
   let n = 5, r = 2;
   const sN = S.stevec({ label: "n", min: 0, max: N_MAX, value: n, barva: "glavna", onInput: (v) => ((n = v), sR.meje(0, n), (r = sR.get()), izris()) });
-  const sR = S.stevec({ label: binom ? "r = k" : "r", min: 0, max: n, value: r, barva: "izbor", onInput: (v) => ((r = v), izris()) });
+  const sR = S.stevec({ label: c, min: 0, max: n, value: r, barva: "izbor", onInput: (v) => ((r = v), izris()) });
 
   function izris() {
     const g = S.plast("trikotnik");
@@ -35,12 +37,12 @@ export default function narisi(host, { binom = false } = {}) {
         if (jeIzb || jeSim || jeStars) s("circle", { cx: x, cy: y, r: 12, class: `sk-fill sk-fill-${jeIzb ? "izbor" : jeSim ? "druga" : "ploskev"}` }, g);
         s("text", { x, y: y + 4, class: "sk-n", "text-anchor": "middle", style: `font-size: 12px; ${jeIzb || jeSim || jeStars ? "fill: #10131f; font-weight: 700" : i === n ? "" : "opacity: 0.55"}` }, g, st(C(i, j), 0));
       }
-    const f = (k) => (k < 2 ? "1" : `${k}!`);
+    const f = (k) => `${k}!`;
     const cipi = [
-      { barva: "izbor", oznaka: "\\binom{n}{r} = \\frac{n!}{r!\\,(n - r)!}", vrednost: `${f(n)} : (${f(r)} · ${f(n - r)}) = ${st(C(n, r), 0)}` },
-      { barva: "druga", oznaka: "\\binom{n}{n - r}", vrednost: st(C(n, n - r), 0) },
+      { barva: "izbor", oznaka: `\\binom{n}{${c}} = \\frac{n!}{${c}!\\,(n - ${c})!}`, vrednost: `${f(n)} : (${f(r)} · ${f(n - r)}) = ${st(C(n, r), 0)}` },
+      { barva: "druga", oznaka: `\\binom{n}{n - ${c}}`, vrednost: st(C(n, n - r), 0) },
       stars
-        ? { barva: "ploskev", oznaka: "\\binom{n - 1}{r - 1} + \\binom{n - 1}{r} = \\binom{n}{r}", vrednost: `${st(C(n - 1, r - 1), 0)} + ${st(C(n - 1, r), 0)} = ${st(C(n, r), 0)}` }
+        ? { barva: "ploskev", oznaka: `\\binom{n - 1}{${c} - 1} + \\binom{n - 1}{${c}} = \\binom{n}{${c}}`, vrednost: `${st(C(n - 1, r - 1), 0)} + ${st(C(n - 1, r), 0)} = ${st(C(n, r), 0)}` }
         : { barva: "ploskev", oznaka: "\\binom{n}{0} = \\binom{n}{n} = 1", vrednost: "robni člen" },
     ];
     if (binom) cipi.push({ barva: "izbor", oznaka: "\\binom{n}{k} a^{n - k} b^k", vrednost: clen(n, r) });

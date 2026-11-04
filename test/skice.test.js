@@ -514,3 +514,15 @@ test("povprečje in odklon: σ se računa z delitvijo z N", async () => {
   const d = statistika([2, 3.5, 5, 6, 8.5]);
   assert.ok(Math.abs(d.x - 5) < 1e-12 && Math.abs(d.var - (9 + 2.25 + 0 + 1 + 12.25) / 5) < 1e-12);
 });
+
+test("Bernoulli: zelo majhna verjetnost ni »= 0« (n = 12, p = 0,05, k = 12)", async () => {
+  const { bernoulli } = await import("../public/skice/integral.js");
+  const { zapisP } = await import("../public/skice/bernoulli.js");
+  for (let k = 0; k <= 12; k++)
+    for (const p of [0.05, 0.95]) {
+      const z = zapisP(bernoulli(12, p, k));
+      assert.ok(z !== "0" && !/^≈ 0$/.test(z), `k=${k} p=${p}: ${z}`);
+    }
+  assert.equal(zapisP(bernoulli(12, 0.05, 12)), "< 0,0001");
+  assert.equal(zapisP(0.25), "0,25");
+});

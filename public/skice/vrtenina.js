@@ -16,6 +16,9 @@ export default function narisi(host) {
   const preklop = (v) => {
     [P.el, V.el].forEach((el, i) => (el.hidden = VRSTE[i] !== v));
     gumbi.forEach((gb) => gb.set(v, true));
+    // Gumb, ki je imel fokus, je zdaj skrit: fokus preide na izbrani gumb vidne skice.
+    const i = VRSTE.indexOf(v);
+    if ([P.el, V.el][1 - i].contains(document.activeElement)) gumbi[i].querySelector(".on")?.focus();
   };
   const P = ploscinaSkica(), V = vrteninaSkica();
   for (const S of [P, V]) gumbi.push(S.gumbi({ label: "Skica", options: VRSTE, value: VRSTE[0], onChange: preklop }));
@@ -30,7 +33,7 @@ function ploscinaSkica() {
   const T = { a: 0.5, b: 3.8 };
   const vlecne = {};
   function izris() {
-    const [lo, hi] = [Math.min(T.a, T.b), Math.max(T.a, T.b)];
+    const [lo, hi] = [T.a, T.b];
     const g = S.plast("graf");
     if (hi > lo) {
       const nazaj = fnPath(g1, A, { from: hi, to: lo, n: 2 }).replace(/^M/, "L");
@@ -42,7 +45,8 @@ function ploscinaSkica() {
     napis(g, A.X(2) + 4, A.Y(f1(2)) - 7, "f", "glavna");
     napis(g, A.X(4.2), A.Y(g1(4.2)) + 16, "g", "druga", { "text-anchor": "middle" });
     for (const k of ["a", "b"]) {
-      napis(g, A.X(T[k]), A.Y(0) + 16, k, "glavna", { "text-anchor": "middle" });
+      // Nad osjo (pod osjo sta oznaki osi in vlečna točka): a levo od meje, b desno.
+      napis(g, A.X(T[k]) + (k === "a" ? -6 : 6), A.Y(0) - 8, k, "glavna", { "text-anchor": k === "a" ? "end" : "start" });
       vlecne[k]?.move(A.X(T[k]), A.Y(0));
     }
     S.cipi([
@@ -56,7 +60,12 @@ function ploscinaSkica() {
       x: A.X(T[k]),
       y: A.Y(0),
       label: `Meja ${k}: premikaj jo po osi x`,
-      onMove: (x) => ((T[k] = Math.max(MEJA[0], Math.min(MEJA[1], Math.round(A.inv(x, 0)[0] * 10) / 10))), izris()),
+      onMove: (x) => {
+        // a ostane levo od b (vsaj 0,1 narazen), da je ∫ od a do b res ploščina.
+        const v = Math.round(A.inv(x, 0)[0] * 10) / 10;
+        T[k] = k === "a" ? Math.max(MEJA[0], Math.min(T.b - 0.1, v)) : Math.min(MEJA[1], Math.max(T.a + 0.1, v));
+        izris();
+      },
     });
   izris();
   return S;
@@ -86,8 +95,9 @@ function vrteninaSkica() {
     elipsa(g, x, "sk-f-izbor");
     elipsa(g, x, "sk-s-izbor", { "stroke-width": 2.5 });
     crta(g, A.X(x), A.Y(0), A.X(x), A.Y(f2(x)), "izbor", { "stroke-width": 2 });
-    napis(g, A.X(x) + Math.abs(A.Y(f2(x)) - A.Y(0)) * 0.28 + 4, (A.Y(0) + A.Y(f2(x))) / 2, "f(x)", "izbor", { style: "font-size: 11px" });
-    napis(g, A.X(0.1), A.T + 12, "f(x) = 0,3x² − 1,2x + 2", "glavna", { style: "font-size: 11px" });
+    const rx = Math.abs(A.Y(f2(x)) - A.Y(0)) * 0.28, desno = A.X(x) + rx + 34 <= W;
+    napis(g, A.X(x) + (desno ? rx + 4 : -rx - 4), (A.Y(0) + A.Y(f2(x))) / 2, "f(x)", "izbor", { style: "font-size: 11px", "text-anchor": desno ? "start" : "end" });
+    napis(g, A.X(2), A.T + 12, "f(x) = 0,3x² − 1,2x + 2", "glavna", { style: "font-size: 11px", "text-anchor": "middle" });
     S.cipi([
       { barva: "izbor", oznaka: "f(x)", vrednost: vr(f2(x), 3) },
       { barva: "izbor", oznaka: "\\pi f^2(x)", vrednost: vr(Math.PI * f2(x) ** 2, 3) },

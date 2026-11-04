@@ -31,9 +31,12 @@ export default function narisi(host) {
       crta(g, X(xs[i]), y, X(xs[i]), Y, "glavna", { class: "sk-s-glavna sk-thin sk-faint" });
     });
     crta(g, X(q.x), 18, X(q.x), Y, "izbor", { "stroke-width": 2.5 });
-    const t = napis(g, X(q.x) + 5, 30, "x", "izbor");
-    s("tspan", { dx: -8, dy: -9, style: "font-size: 12px" }, t, "‾");
-    napis(g, Math.min(R, X(q.x + q.sigma)) - 4, 30, "+σ", "druga", { "text-anchor": "end", style: "font-size: 11px" });
+    // x̄: črta nad črko je narisana (znak »‾« se v vsaki pisavi zamakne drugače).
+    napis(g, X(q.x) + 5, 30, "x", "izbor");
+    crta(g, X(q.x) + 5.5, 19.5, X(q.x) + 12.5, 19.5, "izbor", { "stroke-width": 1.4 });
+    // »+σ« ob desnem robu pasu, če ne prekrije oznake x̄.
+    const desnoS = Math.min(R, X(q.x + q.sigma));
+    if (desnoS - X(q.x) >= 36) napis(g, desnoS - 4, 30, "+σ", "druga", { "text-anchor": "end", style: "font-size: 11px" });
     xs.forEach((v, i) => vlecne[i]?.move(X(v), Y));
     S.cipi([
       { barva: "glavna", oznaka: "x_i", vrednost: xs.map((v) => st(v, 1)).join("; ") },

@@ -34,7 +34,8 @@ export default function narisi(host) {
     crta(g, xm, A.Y(p.fi), xm, A.Y(0), "izbor", { class: "sk-s-izbor sk-thin sk-dash" });
     const t = napis(g, xm + 6, (A.Y(p.fi) + A.Y(0)) / 2, "f", "izbor", { style: "font-size: 12px" });
     s("tspan", { dy: 4, style: "font-size: 9px" }, t, "i");
-    const d = napis(g, xm, A.Y(0) + 15, "Δx", "izbor", { "text-anchor": "middle", style: "font-size: 11px" });
+    // Nad osjo (pod njo so oznake osi), z obrobo v barvi ozadja, da se bere čez sosednje pravokotnike.
+    const d = napis(g, xm, A.Y(0) - 5, "Δx", "izbor", { "text-anchor": "middle", style: "font-size: 11px; paint-order: stroke; stroke: var(--sk-bg); stroke-width: 3px" });
     s("tspan", { dy: 3, style: "font-size: 8px" }, d, "i");
     S.cipi([
       { barva: "ploskev", oznaka: "n", vrednost: st(n, 0) },
