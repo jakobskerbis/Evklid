@@ -2701,6 +2701,7 @@
   "sim.layers": "แสดงบนกราฟ",
   "sim.layers.show": "แสดง:",
   "sim.layer.grid": "เส้นตาราง",
+  "sim.lab.pin": "ปักหมุดภาพ",
   "sim.layer.marks": "เครื่องหมาย",
   "sim.layer.fit": "{name}: เส้นตรง",
   "sim.color.accent": "น้ำเงิน",
