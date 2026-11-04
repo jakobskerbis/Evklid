@@ -86,6 +86,10 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Govor | mikrofon v klepetu (`speech.js`) | M | naravna odvisnost (prepoznava govora) → nova gradnja APK | ✗ |
 | Učbenik za tisk | PDF učbenika (`/ucbenik`) | S | odpri v brskalniku (`WebBrowser`) | ✗ |
 
+- **Deljiva kartica zbirke** (»Deli zbirko«, public/deli-kartico.js) je v aplikaciji skrita: WebView ne podpira
+  Web Share z datotekami ne prenosa slike, `expo-sharing` pa ni med odvisnostmi (nova odvisnost zahteva novo
+  gradnjo APK, ne OTA). Ko bo nova gradnja, jo lahko dodamo prek mostu (PNG kot base64 → `expo-sharing`).
+
 ## Dve različici
 
 | | Neposredni prenos (zdaj) | Trgovini (kasneje) |

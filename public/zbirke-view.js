@@ -215,7 +215,7 @@ function render(focus = null) {
         <h2>${icon("star")} ${esc(t("zb.showcase"))}</h2>
         <div class="zb-slots">${Array.from({ length: data.showcaseMax }, (_, i) => (show[i] ? `<button type="button" class="zb-slot full" data-zbopen="${esc(show[i])}" aria-label="${esc(itemName(itemOf(show[i]), lang()))}">${itemThumb(show[i], 56, equipped())}</button>` : `<span class="zb-slot"></span>`)).join("")}</div>
         <p class="muted small">${esc(show.length ? t("zb.showcaseHint") : t("zb.showcaseEmpty"))}</p>
-        <button type="button" class="secondary zb-share-btn" data-act="share">${icon("share")}<span>${esc(t("share.button"))}</span></button>
+        ${IN_APP ? "" : `<button type="button" class="secondary zb-share-btn" data-act="share">${icon("share")}<span>${esc(t("share.button"))}</span></button>`}
       </div>
     </div>
     ${shareHtml()}
@@ -279,6 +279,8 @@ function render(focus = null) {
 
 // Deljiva kartica: slika brez osebnih podatkov (public/deli-kartico.js), najprej predogled, nato Deli ali Prenesi.
 let share = null; // { url, blob, msg }
+// V mobilni aplikaciji (WebView) prenos in Web Share z datotekami ne delujeta: gumba tam ni (docs/mobilna-aplikacija.md).
+const IN_APP = typeof navigator !== "undefined" && / EvklidApp\//.test(navigator.userAgent);
 function dropShare() {
   if (share?.url) URL.revokeObjectURL(share.url);
   share = null;

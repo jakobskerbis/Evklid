@@ -321,7 +321,9 @@ function openVitInspect(btn) {
   if (!x || !box) return;
   vitOpener = btn;
   const name = itemName(x, currentLang());
-  const where = earnedWhere(it.item, it);
+  // Tema in predmet (npr. »Kemija«), brez razreda ali letnika.
+  const subj = it.topic?.subject && t(`subj.${it.topic.subject}`);
+  const where = earnedWhere(it.item, { ...it, topic: it.topic && { name: it.topic.name, path: subj && subj !== `subj.${it.topic.subject}` ? subj : "" } });
   box.innerHTML = `<div class="zb-inspect card lg-vit-inspect" role="dialog" tabindex="-1" aria-modal="false" aria-label="${esc(name)}">
     <button type="button" class="ghost zb-x" data-vit-close aria-label="${esc(t("nav.back"))}">${icon("x")}</button>
     <div class="zb-big">${x.sym ? itemThumb(it.item, 120) : avatarSvg(wear(r.avatar, it.item), { size: 170, title: name })}</div>

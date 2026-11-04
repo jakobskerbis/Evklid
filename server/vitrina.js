@@ -7,6 +7,15 @@
 // - učitelj lahko vitrine v razredu izklopi (classes.showcase_off) in učenec tega ne more obiti;
 // - poti so pod /api/students/:id, zato z računi veljata lastništvo profila (starš) in geslo profila;
 // - odgovor ima samo vzdevek (kot na lestvici), avatar, XP in predmete: brez id-jev, imen, šole, starosti.
+import { getTopic } from "./curriculum.js";
+
+// Dan pridobitve po slovenskem času (earned_at je UTC iz SQLite), brez ure.
+const DAY = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Ljubljana", year: "numeric", month: "2-digit", day: "2-digit" });
+export function dayOf(sql) {
+  const d = new Date(`${String(sql || "").replace(" ", "T")}Z`);
+  return Number.isNaN(d.getTime()) ? "" : DAY.format(d);
+}
+
 const SOURCES = new Set(["practice", "chat", "placement", "pass", "set", "xp", "league", "games"]);
 
 export function ensureShowcaseColumns(db) {
@@ -42,8 +51,10 @@ export class ClassShowcase {
     return { on: !!on };
   }
 
+  // Izklop pobriše tudi vklope učencev: ko učitelj vitrine spet dovoli, se nobena ne pokaže brez novega vklopa.
   setTeacherOff(classId, off) {
     this.db.prepare("UPDATE classes SET showcase_off = ? WHERE id = ? AND kind = 'class'").run(off ? 1 : 0, classId);
+    if (off) this.db.prepare("UPDATE class_members SET showcase_shared = 0 WHERE class_id = ?").run(classId);
   }
 
   // Predmeti vitrine učenca s temo in datumom (samo dan), brez id-jev teme in učenca.
@@ -53,8 +64,9 @@ export class ClassShowcase {
     const rows = new Map(this.knowledge.rows(studentId).map((r) => [r.item, r]));
     return shown.map((item) => {
       const r = rows.get(item);
-      const topic = r?.topic_id ? this.knowledge.topicLabel(r.topic_id) : null;
-      return { item, date: String(r?.earned_at || "").slice(0, 10), source: SOURCES.has(r?.source) ? r.source : null, topic };
+      const t = r?.topic_id ? getTopic(r.topic_id) : null;
+      // Samo ime teme in predmet (koda, npr. KEM), brez učne poti z razredom ali letnikom.
+      return { item, date: dayOf(r?.earned_at), source: SOURCES.has(r?.source) ? r.source : null, topic: t ? { name: t.name, subject: t.subject || null } : null };
     });
   }
 
