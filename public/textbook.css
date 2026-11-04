@@ -266,6 +266,7 @@
 .demo-svg text { font-family: inherit; }
 .demo-seg-wrap { width: 100%; display: flex; justify-content: center; margin-bottom: 6px; }
 .demo-seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 4px; border-radius: 22px; background: var(--surface-2); }
+.ovl { text-decoration: overline; text-decoration-thickness: 0.07em; }
 .demo .demo-seg .seg-btn { min-height: 36px; padding: 5px 14px; border: 0; border-radius: 999px; background: none; font-weight: 800; color: var(--muted); }
 .demo .demo-seg .seg-btn.on { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
 .demo-controls > .demo-seg, .demo-controls > .demo-buttons { align-self: flex-start; }
@@ -485,7 +486,7 @@
 .demo-svg .domino { fill: color-mix(in srgb, var(--demo-a) 55%, transparent); stroke: var(--demo-a); stroke-width: 2; pointer-events: none; }
 .demo-svg .hit-area { fill: transparent; }
 .demo-svg .edge-red { stroke: var(--danger); cursor: pointer; }
-.demo-svg .edge-blue { stroke: var(--accent); cursor: pointer; }
+.demo-svg .edge-blue { stroke: var(--demo-b); cursor: pointer; }
 .demo-svg .edge-none { stroke: var(--border); stroke-dasharray: 4 4; cursor: pointer; }
 .demo-svg .edge-on { stroke: var(--muted); }
 .demo-svg .lone-pair { fill: color-mix(in srgb, var(--demo-c) 35%, transparent); stroke: var(--demo-c); stroke-width: 1; }
