@@ -25,21 +25,27 @@ Potrebuješ odvod, eksponentno funkcijo, kompleksna števila in diferencialne en
 
 $$y'' + p(x)\, y' + q(x)\, y = f(x).$$
 
-Je **homogena**, če je $f \equiv 0$, sicer **nehomogena**. Neznana funkcija in njena odvoda nastopajo le linearno; členi, kot so $y^2$, $y\,y'$ ali $\sin y$, niso dovoljeni.
+Je **homogena**, če je $f \equiv 0$, sicer **nehomogena**. Neznana funkcija in njena odvoda nastopajo le linearno; členi, kot so $y^2$, $y\,y'$ ali $\sin y$, niso dovoljeni. Levo stran zapišemo kot operator $L[y] = y'' + py' + qy$; ta je **linearen**: $L[C_1y_1 + C_2y_2] = C_1L[y_1] + C_2L[y_2]$, ker sta odvajanje in množenje s funkcijo linearna.
 
 Za enolično rešitev potrebujemo **dva** začetna pogoja, lego in hitrost:
 
 $$y(x_0) = y_0, \qquad y'(x_0) = y_1.$$
 
-Če sta $p$, $q$ in $f$ zvezne na intervalu $I$, ima tak začetni problem natanko eno rešitev na celem $I$.
+**Izrek (obstoj in enoličnost).** Naj bodo $p$, $q$ in $f$ zvezne na odprtem intervalu $I$ in $x_0 \in I$. Potem ima za poljubni števili $y_0$, $y_1$ začetni problem natanko eno rešitev, in ta je definirana na celem $I$.
 
-**2. Zgradba rešitev homogene enačbe.** Velja **načelo superpozicije**: če sta $y_1$ in $y_2$ rešitvi homogene enačbe, je rešitev tudi vsaka linearna kombinacija $C_1y_1 + C_2y_2$. Če sta $y_1$ in $y_2$ **linearno neodvisni** (nobena ni konstantni večkratnik druge), je to že **splošna rešitev**:
+**2. Zgradba rešitev homogene enačbe.** Velja **načelo superpozicije**: če sta $y_1$ in $y_2$ rešitvi homogene enačbe, je rešitev tudi vsaka linearna kombinacija $C_1y_1 + C_2y_2$. Dokaz: $L[C_1y_1 + C_2y_2] = C_1 \cdot 0 + C_2 \cdot 0 = 0$.
+
+Funkciji $y_1$, $y_2$ sta **linearno neodvisni** na $I$, če iz $C_1y_1(x) + C_2y_2(x) = 0$ za vse $x \in I$ sledi $C_1 = C_2 = 0$ (nobena ni konstantni večkratnik druge). Za par rešitev definiramo **Wronskijevo determinanto**
+
+$$W(x) = \begin{vmatrix} y_1 & y_2 \\ y_1' & y_2' \end{vmatrix} = y_1 y_2' - y_1' y_2.$$
+
+**Izrek (zgradba rešitev).** Naj bosta $p$, $q$ zvezni na $I$ ter $y_1$, $y_2$ rešitvi homogene enačbe na $I$. Potem je $W$ bodisi povsod na $I$ enaka $0$ bodisi nikjer (**Abelova formula** $W(x) = W(x_0)\,e^{-\int_{x_0}^x p(t)\,dt}$). Če je $W(x_0) \neq 0$ v neki točki $x_0 \in I$, sta $y_1$, $y_2$ linearno neodvisni in je **vsaka** rešitev homogene enačbe oblike
 
 $$y_h = C_1 y_1 + C_2 y_2.$$
 
-Par $y_1$, $y_2$ imenujemo **fundamentalni sistem**. Neodvisnost preverimo z **Wronskijevo determinanto**
+*Dokaz.* Abelova formula: $W' = y_1y_2'' - y_1''y_2 = y_1(-py_2' - qy_2) - (-py_1' - qy_1)y_2 = -p\,W$, to je enačba prvega reda z rešitvijo $W(x_0)e^{-\int p}$, eksponent pa ni nikoli $0$. Neodvisnost: iz $C_1y_1 + C_2y_2 = 0$ na $I$ z odvajanjem sledi še $C_1y_1' + C_2y_2' = 0$; v točki $x_0$ je to sistem z determinanto $W(x_0) \neq 0$, zato $C_1 = C_2 = 0$. Naj bo $y$ poljubna rešitev. Sistem $C_1y_1(x_0) + C_2y_2(x_0) = y(x_0)$, $C_1y_1'(x_0) + C_2y_2'(x_0) = y'(x_0)$ ima determinanto $W(x_0) \neq 0$, zato enolično rešitev $C_1$, $C_2$. Funkciji $y$ in $C_1y_1 + C_2y_2$ rešita isti začetni problem, zato sta po izreku o enoličnosti enaki. $\square$
 
-$$W(x) = \begin{vmatrix} y_1 & y_2 \\ y_1' & y_2' \end{vmatrix} = y_1 y_2' - y_1' y_2 \neq 0.$$
+Par $y_1$, $y_2$ z $W \neq 0$ imenujemo **fundamentalni sistem**; $y_h$ je **splošna rešitev** homogene enačbe.
 
 **3. Homogena enačba s konstantnimi koeficienti.** Za $y'' + ay' + by = 0$ z realnima $a$ in $b$ poskusimo z $y = e^{\lambda x}$. Ker je $y' = \lambda e^{\lambda x}$ in $y'' = \lambda^2 e^{\lambda x}$, dobimo $(\lambda^2 + a\lambda + b)\, e^{\lambda x} = 0$. Eksponentna funkcija ni nikoli nič, zato mora veljati **karakteristična enačba**
 
@@ -53,15 +59,25 @@ Glede na diskriminanto $D = a^2 - 4b$ ločimo tri primere:
 | $D = 0$: dvojna $\lambda$ | $e^{\lambda x}$, $x e^{\lambda x}$ | $(C_1 + C_2 x)\, e^{\lambda x}$ |
 | $D < 0$: $\lambda = \alpha \pm i\beta$ | $e^{\alpha x}\cos\beta x$, $e^{\alpha x}\sin\beta x$ | $e^{\alpha x}(C_1\cos\beta x + C_2\sin\beta x)$ |
 
-Pri kompleksnih ničlah izhajamo iz Eulerjeve formule $e^{(\alpha + i\beta)x} = e^{\alpha x}(\cos\beta x + i\sin\beta x)$. Realni in imaginarni del kompleksne rešitve sta realni rešitvi. Pri dvojni ničli nam ena eksponentna funkcija ne zadošča; drugo rešitev dobimo z množenjem z $x$.
+Pri kompleksnih ničlah izhajamo iz Eulerjeve formule $e^{(\alpha + i\beta)x} = e^{\alpha x}(\cos\beta x + i\sin\beta x)$. Realni in imaginarni del kompleksne rešitve sta realni rešitvi: ker sta $a$, $b$ realna, iz $L[u + iv] = L[u] + iL[v] = 0$ sledi $L[u] = L[v] = 0$.
+
+Pri dvojni ničli nam ena eksponentna funkcija ne zadošča; drugo rešitev dobimo z množenjem z $x$. *Izpeljava:* pri $D = 0$ je $\lambda = -\frac a2$, torej $2\lambda + a = 0$. Za $y = xe^{\lambda x}$ je $y' = (1 + \lambda x)e^{\lambda x}$, $y'' = (2\lambda + \lambda^2x)e^{\lambda x}$ in
+$$L[xe^{\lambda x}] = \big[(2\lambda + a) + x(\lambda^2 + a\lambda + b)\big]e^{\lambda x} = 0.$$
+Ker je $W = e^{2\lambda x} \neq 0$, sta $e^{\lambda x}$ in $xe^{\lambda x}$ fundamentalni sistem.
 
 Poseben primer je $y'' + \omega^2 y = 0$ z ničlama $\pm i\omega$ in rešitvijo $y = C_1\cos\omega x + C_2\sin\omega x$: to je **harmonično nihanje** s krožno frekvenco $\omega$.
+
+:::premisli
+Brez reševanja: ali imata enačbi $y'' + y' + 5y = 0$ in $y'' + 5y' + y = 0$ rešitve, ki nihajo (sekajo os $x$ neskončnokrat)?
+---
+Prva da: $D = 1 - 20 < 0$, ničli sta kompleksni, rešitve so dušena nihanja. Druga ne: $D = 25 - 4 > 0$, ničli sta realni, rešitve so vsote dveh eksponentnih funkcij.
+:::
 
 **4. Nehomogena enačba.** Kot pri enačbah prvega reda velja:
 
 $$y = y_h + y_p,$$
 
-kjer je $y_h$ splošna rešitev homogene enačbe, $y_p$ pa ena (katerakoli) **partikularna rešitev** nehomogene. Začetne pogoje vstavimo šele v celotno rešitev $y_h + y_p$.
+kjer je $y_h$ splošna rešitev homogene enačbe, $y_p$ pa ena (katerakoli) **partikularna rešitev** nehomogene. *Dokaz:* za vsako rešitev $y$ nehomogene enačbe je $L[y - y_p] = f - f = 0$, torej je $y - y_p$ rešitev homogene enačbe, $y - y_p = C_1y_1 + C_2y_2$. Obratno je $L[y_h + y_p] = 0 + f = f$. Začetne pogoje vstavimo šele v celotno rešitev $y_h + y_p$.
 
 **5. Metoda nastavka (nedoločenih koeficientov).** Kadar je desna stran polinom, eksponentna funkcija, sinus, kosinus ali njihov produkt, ima $y_p$ enako obliko z neznanimi koeficienti. Koeficiente določimo tako, da nastavek vstavimo v enačbo in primerjamo koeficiente.
 
@@ -73,9 +89,17 @@ kjer je $y_h$ splošna rešitev homogene enačbe, $y_p$ pa ena (katerakoli) **pa
 
 Tu so $Q_n$, $Q$, $S$ polinomi z neznanimi koeficienti (v zadnji vrstici stopnje $\max(\deg P, \deg R)$), število $k$ pa je **večkratnost** števila $\mu$ (oziroma $0$ pri polinomu, $\alpha + i\beta$ pri zadnji vrstici) kot ničle karakteristične enačbe: $k = 0$, če ni ničla, $k = 1$ pri enojni in $k = 2$ pri dvojni ničli.
 
-Faktor $x^k$ je pomemben. Če bi bil nastavek že rešitev homogene enačbe, bi ga enačba »požrla« in na levi bi dobili $0$. To je **resonanca**. Tudi pri $\sin\beta x$ na desni moramo v nastavek vzeti oba, sinus in kosinus.
+Faktor $x^k$ je pomemben. Če bi bil nastavek brez njega že rešitev homogene enačbe, bi ga leva stran »požrla«: ne glede na koeficiente bi dobili $0$. Temu pravimo **resonanca**.
+
+Če na desni stoji le $\sin\beta x$ (ali le $\cos\beta x$), v nastavek vseeno vzamemo oba, sinus in kosinus, ker odvajanje enega pretvori v drugega.
 
 Če je desna stran vsota, na primer $f = f_1 + f_2$, poiščemo partikularni rešitvi za vsak del posebej in ju seštejemo (superpozicija).
+
+:::premisli
+Kakšen nastavek potrebuješ za $y'' - 4y = e^{2x} + e^{3x}$?
+---
+Ničli sta $\pm 2$. Za $e^{2x}$ je $\mu = 2$ enojna ničla, $k = 1$, nastavek $Axe^{2x}$; za $e^{3x}$ je $k = 0$, nastavek $Be^{3x}$. Skupaj $y_p = Axe^{2x} + Be^{3x}$.
+:::
 
 **6. Mehansko nihanje.** Utež z maso $m$ na vzmeti s koeficientom $k$, z dušenjem $b\dot x$ in zunanjo silo $F(t)$:
 
@@ -135,33 +159,35 @@ $m\ddot x + b\dot x + kx = 0$; pri $\lambda = \alpha \pm i\beta$ je $x = e^{\alp
 
 ### Primer 3 (težji)
 
-Reši začetni problem $y'' - 3y' + 2y = 4e^{2x}$, $y(0) = 0$, $y'(0) = 0$.
+Reši začetni problem $y'' + 4y = 8\sin 2x + 4x$, $y(0) = 0$, $y'(0) = 0$, in utemelji, ali je rešitev na $[0, \infty)$ omejena.
 
-**Podatki:** enačba $y'' - 3y' + 2y = 4e^{2x}$, začetna pogoja $y(0) = 0$, $y'(0) = 0$
-**Iščemo:** rešitev začetnega problema
+**Podatki:** enačba $y'' + 4y = 8\sin 2x + 4x$, začetna pogoja $y(0) = 0$, $y'(0) = 0$
+**Iščemo:** rešitev začetnega problema in odgovor, ali je omejena
 
 :::formula
-$y = y_h + y_p$. Za $f = Ae^{\mu x}$ je nastavek $y_p = x^k B e^{\mu x}$, kjer je $k$ večkratnost $\mu$ kot ničle karakteristične enačbe.
+$y = y_h + y_p$; pri $f = f_1 + f_2$ je $y_p = y_{p1} + y_{p2}$. Nastavek za $e^{\alpha x}(P\cos\beta x + R\sin\beta x)$ je $x^k e^{\alpha x}(Q\cos\beta x + S\sin\beta x)$ s polinomoma $Q$, $S$ stopnje $\max(\deg P, \deg R)$ z neznanimi koeficienti, kjer je $k$ večkratnost $\alpha + i\beta$ kot ničle karakteristične enačbe.
 :::
 
 **Rešitev:**
 
-1. Karakteristična enačba: $\lambda^2 - 3\lambda + 2 = 0$, $(\lambda - 1)(\lambda - 2) = 0$, ničli $1$ in $2$. Homogena rešitev: $y_h = C_1 e^x + C_2 e^{2x}$.
-2. Na desni je $e^{2x}$, $\mu = 2$ je enojna ničla, zato $k = 1$ (resonanca). Nastavek: $y_p = Bxe^{2x}$.
-3. Odvoda: $y_p' = Be^{2x}(1 + 2x)$, $y_p'' = Be^{2x}(4 + 4x)$.
-4. Vstavimo: $Be^{2x}\big[(4 + 4x) - 3(1 + 2x) + 2x\big] = Be^{2x}\big[1 + 0 \cdot x\big] = Be^{2x}$. Členi z $x$ se odštejejo, kot morajo.
-5. Iz $Be^{2x} = 4e^{2x}$ sledi $B = 4$, $y_p = 4xe^{2x}$.
-6. Splošna rešitev: $y = C_1 e^x + C_2 e^{2x} + 4xe^{2x}$, odvod $y' = C_1 e^x + 2C_2 e^{2x} + 4e^{2x} + 8xe^{2x}$.
-7. Začetna pogoja: $C_1 + C_2 = 0$ in $C_1 + 2C_2 + 4 = 0$. Odštejemo: $C_2 = -4$, $C_1 = 4$.
-8. Preizkus: $y(0) = 4 - 4 + 0 = 0$, $y'(0) = 4 - 8 + 4 = 0$.
-9. Odgovor: $y = 4e^x - 4e^{2x} + 4xe^{2x}$.
+1. Karakteristična enačba: $\lambda^2 + 4 = 0$, ničli $\pm 2i$. Homogena rešitev: $y_h = C_1\cos 2x + C_2\sin 2x$.
+2. Desna stran je vsota, zato po superpoziciji iščemo $y_{p1}$ za $4x$ in $y_{p2}$ za $8\sin 2x$.
+3. Za $4x$: število $0$ ni ničla, $k = 0$, nastavek $y_{p1} = Ax + B$. Vstavimo: $4Ax + 4B = 4x$, torej $A = 1$, $B = 0$ in $y_{p1} = x$.
+4. Za $8\sin 2x$: $\alpha + i\beta = 2i$ je enojna ničla, $k = 1$ (resonanca). Nastavek: $y_{p2} = x(P\cos 2x + Q\sin 2x)$; potrebujemo oba, kosinus in sinus.
+5. Odvoda: $y_{p2}' = (P + 2Qx)\cos 2x + (Q - 2Px)\sin 2x$, $y_{p2}'' = (4Q - 4Px)\cos 2x + (-4P - 4Qx)\sin 2x$.
+6. Vstavimo: $y_{p2}'' + 4y_{p2} = 4Q\cos 2x - 4P\sin 2x$; členi z $x$ se odštejejo, kot morajo pri resonanci.
+7. Primerjamo z $8\sin 2x$: $4Q = 0$ in $-4P = 8$, torej $Q = 0$, $P = -2$ in $y_{p2} = -2x\cos 2x$.
+8. Splošna rešitev: $y = C_1\cos 2x + C_2\sin 2x + x - 2x\cos 2x$.
+9. Pogoja: $y(0) = C_1 = 0$. Odvod $y' = -2C_1\sin 2x + 2C_2\cos 2x + 1 - 2\cos 2x + 4x\sin 2x$, torej $y'(0) = 2C_2 + 1 - 2 = 0$ in $C_2 = \frac12$.
+10. Omejenost: v točkah $x_n = n\pi$ je $\sin 2x_n = 0$, $\cos 2x_n = 1$, torej $y(n\pi) = n\pi - 2n\pi = -n\pi \to -\infty$. Rešitev ni omejena; k temu prispevata odziv $x$ na linearno rastočo silo $4x$ in resonančni člen $-2x\cos 2x$, ki niha z rastočo amplitudo.
+11. Odgovor: $y = \frac12\sin 2x + x - 2x\cos 2x$; rešitev na $[0, \infty)$ ni omejena (rastoči člen $x$ in resonanca: sila $8\sin 2x$ zadene lastno krožno frekvenco $2$).
 
 ## Pogoste napake
 
 - **En sam začetni pogoj.** Enačba drugega reda ima dve konstanti, zato potrebujemo dva pogoja: $y(x_0)$ in $y'(x_0)$ (ali dve vrednosti na robu intervala).
 - **Pri dvojni ničli le $Ce^{\lambda x}$.** Pri $y'' - 4y' + 4y = 0$ je $\lambda = 2$ dvojna, splošna rešitev pa $(C_1 + C_2x)e^{2x}$. Ena sama eksponentna funkcija ne more zadostiti dvema poljubnima pogojema.
 - **Kompleksne rešitve brez prevoda v realne.** Pri $\lambda = -2 \pm 3i$ pišemo $e^{-2x}(C_1\cos 3x + C_2\sin 3x)$, ne $e^{-2x}\cos 3x$ samo in ne $e^{3x}(\dots)$. Realni del ničle je v eksponentu, imaginarni v argumentu kotnih funkcij.
-- **Nastavek brez faktorja $x$ pri resonanci.** V Primeru 3 nastavek $Be^{2x}$ da $B(4 - 6 + 2)e^{2x} = 0$, kar nikoli ni $4e^{2x}$. Vedno najprej preveri, ali je $\mu$ ničla karakteristične enačbe.
+- **Nastavek brez faktorja $x$ pri resonanci.** Pri $y'' - 3y' + 2y = 4e^{2x}$ (ničli $1$ in $2$) nastavek $Be^{2x}$ da $B(4 - 6 + 2)e^{2x} = 0$, kar nikoli ni $4e^{2x}$; pravilni nastavek $Bxe^{2x}$ da $B = 4$. Vedno najprej preveri, ali je $\mu$ ničla karakteristične enačbe.
 - **Pri $\sin$ na desni le $A\sin$ v nastavku.** Pri $y'' + y' = \sin x$ odvajanje ustvari kosinus, zato potrebujemo $A\cos x + B\sin x$.
 - **Začetni pogoji v $y_h$ namesto v $y_h + y_p$.** Konstanti določimo šele v celotni rešitvi; drugače dobimo napačne vrednosti.
 - **Napačni predznaki v karakteristični enačbi.** Enačba $y'' + 2y' - 3y = 0$ ima karakteristično enačbo $\lambda^2 + 2\lambda - 3 = 0$; predznaki koeficientov ostanejo.
@@ -174,6 +200,57 @@ $y = y_h + y_p$. Za $f = Ae^{\mu x}$ je nastavek $y_p = x^k B e^{\mu x}$, kjer j
 - Nehomogena: $y = y_h + y_p$; nastavek ima obliko desne strani, pomnožen z $x^k$, kjer je $k$ večkratnost ustrezne ničle (resonanca).
 - Nihanje $m\ddot x + b\dot x + kx = F$: podkritično, kritično in nadkritično dušenje; resonanca pri $\Omega \approx \omega_0$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- izrek o obstoju in enoličnosti za $y'' + py' + qy = f$ z vsemi pogoji (zveznost $p$, $q$, $f$ na $I$, dva začetna pogoja v $x_0 \in I$),
+- načelo superpozicije in definicijo linearne neodvisnosti ter Wronskijeve determinante,
+- izrek o zgradbi rešitev homogene enačbe z dokazom (Abelova formula, sistem za $C_1$, $C_2$, enoličnost),
+- izpeljavo karakteristične enačbe in dokaz, da je pri dvojni ničli $xe^{\lambda x}$ rešitev,
+- izrek $y = y_h + y_p$ z dokazom in pravilo za faktor $x^k$ v nastavku.
+
+### Naloga 1
+
+Reši začetni problem $y'' - 2y' + y = 6xe^x + 2$, $y(0) = 0$, $y'(0) = 0$.
+
+**Rešitev:**
+
+1. Karakteristična enačba $\lambda^2 - 2\lambda + 1 = (\lambda - 1)^2 = 0$ ima dvojno ničlo $1$, zato $y_h = (C_1 + C_2x)e^x$.
+2. Za konstanto $2$: $0$ ni ničla, nastavek $y_{p1} = A$, iz $A = 2$ sledi $y_{p1} = 2$.
+3. Za $6xe^x$: $\mu = 1$ je dvojna ničla, $k = 2$, nastavek $y_{p2} = x^2(Ax + B)e^x = u\,e^x$ z $u = Ax^3 + Bx^2$.
+4. Za $y = ue^x$ je $y' = (u' + u)e^x$, $y'' = (u'' + 2u' + u)e^x$, torej $y'' - 2y' + y = (u'' + 2u' + u - 2u' - 2u + u)e^x = u''e^x$.
+5. Pogoj $u'' = 6Ax + 2B = 6x$ da $A = 1$, $B = 0$, torej $y_{p2} = x^3e^x$.
+6. Splošna rešitev: $y = (C_1 + C_2x + x^3)e^x + 2$.
+7. $y(0) = C_1 + 2 = 0$, torej $C_1 = -2$. Odvod $y' = (C_1 + C_2 + C_2x + 3x^2 + x^3)e^x$, torej $y'(0) = C_1 + C_2 = 0$ in $C_2 = 2$.
+8. Odgovor: $y = (x^3 + 2x - 2)e^x + 2$. Preizkus: $y(0) = -2 + 2 = 0$, $y'(0) = -2 + 2 = 0$.
+
+### Naloga 2
+
+Določi vse realne $a$, za katere **vse** rešitve enačbe $y'' + 2y' + ay = 0$ za $x \to \infty$ konvergirajo k $0$.
+
+**Rešitev:**
+
+1. Karakteristična enačba $\lambda^2 + 2\lambda + a = 0$, $D = 4 - 4a$, ničli $\lambda = -1 \pm \sqrt{1 - a}$.
+2. $a > 1$: ničli $-1 \pm i\beta$ z $\beta = \sqrt{a - 1}$, rešitve $e^{-x}(C_1\cos\beta x + C_2\sin\beta x) \to 0$, ker je $|\cos|, |\sin| \le 1$.
+3. $a = 1$: dvojna ničla $-1$, $(C_1 + C_2x)e^{-x} \to 0$, ker eksponentna funkcija premaga polinom.
+4. $a < 1$: realni ničli; vse rešitve gredo k $0$ natanko tedaj, ko sta obe negativni. Večja je $-1 + \sqrt{1 - a} < 0 \iff \sqrt{1 - a} < 1 \iff a > 0$.
+5. Pri $a = 0$ sta ničli $0$ in $-2$; rešitev $y = 1$ ne gre k $0$. Pri $a < 0$ je ena ničla pozitivna in rešitev raste čez vse meje.
+6. Odgovor: natanko za $a > 0$ (pri $0 < a < 1$ brez nihanja, pri $a > 1$ z dušenim nihanjem).
+
+### Naloga 3
+
+Naj bosta $p$, $q$ zvezni na intervalu $I$. Natančno navedi in dokaži izrek o zgradbi rešitev homogene enačbe $y'' + py' + qy = 0$. Nato utemelji, ali sta lahko $y_1 = x$ in $y_2 = x^2$ fundamentalni sistem take enačbe na $I = (-1, 1)$.
+
+**Rešitev:**
+
+1. Izrek: če sta $y_1$, $y_2$ rešitvi in $W(x_0) \neq 0$ za neki $x_0 \in I$, je vsaka rešitev oblike $C_1y_1 + C_2y_2$; poleg tega je $W$ bodisi povsod $0$ bodisi nikjer.
+2. Dokaz Abelove formule: $W' = y_1y_2'' - y_1''y_2 = -pW$, torej $W(x) = W(x_0)e^{-\int_{x_0}^x p}$.
+3. Dokaz zgradbe: iz $C_1y_1 + C_2y_2 = 0$ sledi tudi $C_1y_1' + C_2y_2' = 0$, sistem v $x_0$ ima determinanto $W(x_0) \neq 0$, zato $C_1 = C_2 = 0$ (neodvisnost). Za poljubno rešitev $y$ ima sistem za $C_1$, $C_2$ v točki $x_0$ determinanto $W(x_0) \neq 0$, zato rešitev; $y$ in $C_1y_1 + C_2y_2$ imata enaka začetna pogoja, po izreku o enoličnosti sta enaki.
+4. Za $y_1 = x$, $y_2 = x^2$: $W = x \cdot 2x - 1 \cdot x^2 = x^2$.
+5. $W(0) = 0$, $W\big(\frac12\big) = \frac14 \neq 0$. To nasprotuje Abelovi formuli, zato $x$ in $x^2$ ne moreta biti obe rešitvi take enačbe z zveznima $p$, $q$ na $(-1, 1)$.
+6. Odgovor: ne. Na $(0, 1)$ pa sta fundamentalni sistem enačbe $y'' - \frac2x y' + \frac{2}{x^2}y = 0$, katere koeficienta v $0$ nista zvezna.
+
 ## Drugače: Na sliki
 
 Rešitve homogene enačbe s konstantnimi koeficienti imajo tri značilne oblike grafov.
@@ -184,17 +261,15 @@ Rešitve homogene enačbe s konstantnimi koeficienti imajo tri značilne oblike 
 
 Na kompleksni ravnini ničel: ničle na levi polravnini pomenijo pojemanje, na desni rast, ničle na imaginarni osi pa nedušeno nihanje. Oddaljenost od realne osi je krožna frekvenca, oddaljenost od imaginarne osi pa hitrost pojemanja.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Vzmetenje avtomobila.** Blažilnik je izbran tako, da je dušenje blizu kritičnega: po luknji se avto vrne v ravnovesje hitro in ne poskakuje. Iztrošen blažilnik pomeni manjši $b$ in podkritično dušenje; avto po luknji še nekajkrat zaniha.
+**Infrardeča spektroskopija.** Vez v dvoatomni molekuli modeliramo kot harmonični oscilator $\mu\ddot x + kx = 0$ z reducirano maso $\mu = \frac{m_1m_2}{m_1 + m_2}$ in $\omega = \sqrt{k/\mu}$. Iz valovnega števila $\tilde\nu = \frac{\omega}{2\pi c}$ dobimo konstanto vezi: za $\mathrm{C{=}O}$ pri $1715\,\mathrm{cm^{-1}}$ in $\mu = 6{,}86\,\mathrm{u}$ je $k = \mu(2\pi c\tilde\nu)^2 \approx 1{,}19 \cdot 10^3\,\mathrm{N/m}$. Ker je $\omega \propto \mu^{-1/2}$, zamenjava $\mathrm{H}$ z devterijem poveča reducirano maso z $0{,}948$ na $1{,}789\,\mathrm{u}$ in premakne trak $\mathrm{O{-}H}$ s približno $3300$ na približno $3300/1{,}37 \approx 2400\,\mathrm{cm^{-1}}$, kar se uporablja pri prirejanju trakov.
 
-**Električni krog RLC.** Za naboj na kondenzatorju velja $L\ddot q + R\dot q + \frac{q}{C} = U(t)$. To je ista enačba kot pri nihalu: induktivnost $L$ ima vlogo mase, upor $R$ dušenja, $\frac{1}{C}$ pa koeficienta vzmeti. Radijski sprejemnik izbere postajo z resonanco pri $\omega_0 = \frac{1}{\sqrt{LC}}$.
+**Kremenova mikrotehtnica (QCM).** Kremenov kristal niha pri lastni frekvenci reda $5$–$10\,\mathrm{MHz}$. Nalaganje tanke plasti poveča efektivno maso in zniža $\omega_0 = \sqrt{k/m}$; iz premika frekvence merijo maso adsorbiranih molekul do nanogramov natančno.
 
-**Nihanje molekul.** Dvoatomno molekulo si predstavljamo kot dve masi na vzmeti. Krožna frekvenca nihanja je $\omega = \sqrt{k/\mu}$, kjer je $\mu$ reducirana masa. V infrardečem spektru se pokaže absorpcija pri tej frekvenci; vez $\mathrm{C{=}O}$ absorbira okoli $1700\,\mathrm{cm^{-1}}$, $\mathrm{O{-}H}$ okoli $3300\,\mathrm{cm^{-1}}$.
+**Merilni in regulacijski sistemi.** Analitska tehtnica, kazalni instrumenti in tipala tlaka so dušena blizu kritičnega, da odčitek hitro obstane brez nihanja. Regulacijo temperature reaktorja ali pretoka pogosto opišemo s sistemom drugega reda $\tau^2\ddot y + 2\zeta\tau\dot y + y = Ku(t)$: pri razmernem dušenju $\zeta < 1$ (podkritično) odziv preniha zastavljeno vrednost, pri $\zeta \ge 1$ ne.
 
-**Gradbeništvo.** Most ali stavba ima lastne frekvence. Če vsiljevanje (veter, korakanje vojakov, potres) zadene lastno frekvenco, se nihanje močno ojača. Zato vgrajujejo dušilnike.
-
-**Ultrazvok in glasbila.** Struna, zračni steber in kremenov kristal v uri nihajo pri lastnih frekvencah, ki jih določa enačba oblike $y'' + \omega^2 y = 0$.
+**Električni krog RLC.** Za naboj velja $L\ddot q + R\dot q + \frac{q}{C} = U(t)$, ista enačba kot pri nihalu ($L$ ↔ masa, $R$ ↔ dušenje, $\frac1C$ ↔ vzmet). Resonanca pri $\omega_0 = \frac{1}{\sqrt{LC}}$ je osnova nihajnih krogov v merilni elektroniki; sondo spektrometra NMR z nastavljivim kondenzatorjem uglasimo tako, da je $\omega_0$ enaka Larmorjevi frekvenci jeder.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -243,9 +318,12 @@ Primer: za $y'' + y = \frac{1}{\cos x}$ na $\left(-\frac{\pi}{2}, \frac{\pi}{2}\
 
 ? Kateri nastavek za partikularno rešitev je pravilen pri $y'' - y = e^{x}$?
 - $y_p = Ae^{x}$
+~ Ker je $e^x$ rešitev homogene enačbe, da ta nastavek na levi $0$.
 + $y_p = Axe^{x}$
 - $y_p = Ax^2e^{x}$
+~ Faktor $x^2$ potrebujemo le pri dvojni ničli; $1$ je enojna.
 - $y_p = A\cos x + B\sin x$
+~ Kotne funkcije v nastavek vzamemo le, če so na desni strani.
 > Ničli karakteristične enačbe $\lambda^2 - 1 = 0$ sta $\pm 1$. Število $1$ je enojna ničla, zato pomnožimo z $x^1$. Nastavek $Ae^x$ bi dal $0$.
 
 ? Kakšna je splošna rešitev enačbe $y'' - 4y' + 4y = 0$?
@@ -289,5 +367,8 @@ t | čas | | s
 T | nihajni čas dušenega nihanja | T = \frac{2\pi}{\beta} | s
 A | koeficient desne strani $f = A e^{\mu x}$ | |
 B | neznani koeficient v nastavku za y_p | |
+L | linearni operator leve strani | L[y] = y'' + p y' + q y | | v krogu RLC induktivnost
+P, R | polinoma v desni strani f | | | v nastavku za sinus/kosinus neznana koeficienta P, Q; v krogu RLC R upor
+Q, S | polinoma z neznanimi koeficienti v nastavku | |
 \mu | eksponent v desni strani $f = A e^{\mu x}$ | |
 :::

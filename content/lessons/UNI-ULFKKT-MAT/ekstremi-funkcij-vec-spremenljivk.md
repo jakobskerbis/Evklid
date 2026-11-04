@@ -17,7 +17,7 @@ Potrebuješ parcialne odvode, reševanje sistemov enačb in determinante $2 \tim
 
 ## Razlaga
 
-Najprej slika. Graf funkcije $z = f(x, y)$ je ploskev nad ravnino $xy$, podobna pokrajini. Tri oblike okoli točke, kjer so »tla vodoravna«, so:
+Graf funkcije $z = f(x, y)$ je ploskev nad ravnino $xy$, podobna pokrajini z dolinami, vrhovi in prelazi. Tri oblike okoli točke, kjer so »tla vodoravna«, so:
 
 | oblika | kako gre ploskev iz točke | nivojnice okoli točke | zgled v $(0, 0)$ |
 |---|---|---|---|
@@ -27,9 +27,9 @@ Najprej slika. Graf funkcije $z = f(x, y)$ je ploskev nad ravnino $xy$, podobna 
 
 Vodoravna tla opiše gradient, ukrivljenost okoli točke pa drugi odvodi; spodaj to zapišemo s simboli.
 
-**1. Lokalni in globalni ekstremi.** Funkcija $f$ ima v točki $T_0 = (x_0, y_0)$ **lokalni minimum**, če je $f(x, y) \ge f(x_0, y_0)$ za vse točke $(x, y)$ v neki okolici $T_0$. Podobno definiramo **lokalni maksimum** z $\le$. **Globalni** (absolutni) minimum na množici $D$ je najmanjša vrednost $f$ na vsem $D$.
+**1. Lokalni in globalni ekstremi.** Naj bo $f$ definirana na množici $D \subseteq \mathbb{R}^2$ in $T_0 = (x_0, y_0) \in D$. Funkcija $f$ ima v $T_0$ **lokalni minimum**, če obstaja okolica $U$ točke $T_0$, da je $f(x, y) \ge f(x_0, y_0)$ za vse $(x, y) \in U \cap D$; če za $(x, y) \neq T_0$ velja stroga neenakost, je minimum **strog**. Podobno definiramo **lokalni maksimum** z $\le$. **Globalni** (absolutni) minimum na množici $D$ je najmanjša vrednost $f$ na vsem $D$.
 
-**2. Stacionarne točke.** Če ima odvedljiva funkcija v notranji točki $T_0$ lokalni ekstrem, je tam **gradient enak nič**:
+**2. Stacionarne točke.** **Izrek (potrebni pogoj).** Naj ima $f$ v notranji točki $T_0$ množice $D$ lokalni ekstrem in naj v $T_0$ obstajata oba parcialna odvoda. Potem je tam **gradient enak nič**:
 
 $$\nabla f(x_0, y_0) = \big(f_x(x_0, y_0),\ f_y(x_0, y_0)\big) = (0, 0).$$
 
@@ -49,9 +49,9 @@ Nima, izhodišče je sedlo. Gradient $(y, x)$ je tam res nič, a na premici $y =
 
 $$H(x, y) = \begin{bmatrix} f_{xx} & f_{xy} \\ f_{yx} & f_{yy} \end{bmatrix}.$$
 
-Za funkcije z zveznimi drugimi odvodi je po Schwarzovem izreku $f_{xy} = f_{yx}$, zato je $H$ simetrična. Njena determinanta je $\det H = f_{xx} f_{yy} - f_{xy}^2$.
+Če sta mešana odvoda zvezna v okolici točke, je po Schwarzovem izreku $f_{xy} = f_{yx}$, zato je $H$ simetrična. Njena determinanta je $\det H = f_{xx} f_{yy} - f_{xy}^2$.
 
-**4. Zadostni pogoj (test drugih odvodov).** Naj bo $T_0$ stacionarna točka, $A = f_{xx}(T_0)$, $B = f_{xy}(T_0)$, $C = f_{yy}(T_0)$ in $D = AC - B^2$.
+**4. Zadostni pogoj (test drugih odvodov).** Naj ima $f$ zvezne druge parcialne odvode v okolici stacionarne točke $T_0$ in naj bo $A = f_{xx}(T_0)$, $B = f_{xy}(T_0)$, $C = f_{yy}(T_0)$ in $D = AC - B^2$.
 
 | $D = \det H$ | $A = f_{xx}$ | narava točke |
 |---|---|---|
@@ -64,7 +64,9 @@ Pri $D > 0$ sta $A$ in $C$ istega predznaka, zato lahko namesto $A$ pogledamo tu
 
 Ideja testa: blizu stacionarne točke je funkcija po Taylorjevi formuli približno kvadratna,
 $$f(x_0 + h, y_0 + k) \approx f(x_0, y_0) + \tfrac{1}{2}\left(Ah^2 + 2Bhk + Ck^2\right).$$
-Če je kvadratna forma za vse $(h, k) \neq (0, 0)$ pozitivna, je v točki minimum; če je negativna, maksimum; če zavzame obe predznaki, sedlo.
+Če je kvadratna forma za vse $(h, k) \neq (0, 0)$ pozitivna, je v točki minimum; če je negativna, maksimum; če zavzame obe predznaki, sedlo. Pri $A \neq 0$ jo dopolnimo do kvadrata:
+$$Ah^2 + 2Bhk + Ck^2 = A\left(h + \tfrac{B}{A}k\right)^2 + \tfrac{AC - B^2}{A}\,k^2.$$
+Pri $D > 0$ imata oba člena predznak števila $A$ in nista hkrati nič, zato je forma pri $A > 0$ pozitivna, pri $A < 0$ negativna. Pri $D < 0$ da $k = 0$, $h \neq 0$ predznak $A$, izbira $h = -\frac{B}{A}k$, $k \neq 0$ pa nasprotni predznak, zato je točka sedlo. (Pri $A = 0$ in $D < 0$ je $B \neq 0$ in forma $2Bhk + Ck^2$ prav tako zavzame obe predznaki.)
 
 **5. Več spremenljivk.** Za $f(x_1, \dots, x_n)$ je stacionarna točka rešitev sistema $\frac{\partial f}{\partial x_i} = 0$, $i = 1, \dots, n$, Hessejeva matrika pa je $n \times n$ z elementi $\frac{\partial^2 f}{\partial x_i \partial x_j}$. Če je $H$ v stacionarni točki **pozitivno definitna** (vse lastne vrednosti pozitivne), je tam lokalni minimum; če je **negativno definitna**, maksimum; če ima lastne vrednosti obeh predznakov, sedlo. Pozitivno definitnost preverimo s **Sylvestrovim kriterijem**: vse vodilne glavne poddeterminante $\Delta_1 = f_{x_1x_1}$, $\Delta_2$, …, $\Delta_n = \det H$ so pozitivne. Za negativno definitnost morajo predznaki alternirati: $\Delta_1 < 0$, $\Delta_2 > 0$, $\Delta_3 < 0$, …
 
@@ -86,9 +88,13 @@ Zakaj pri vezanem ekstremu ne zahtevamo $\nabla f = 0$?
 Ker se smemo gibati le vzdolž krivulje $g = 0$. Dovolj je, da se $f$ v smeri tangente ne spreminja, torej da je $\nabla f$ pravokoten na tangento in s tem vzporeden $\nabla g$. Funkcija $f = x + y$ ima povsod $\nabla f = (1, 1) \neq 0$, na krožnici pa vseeno doseže največjo vrednost.
 :::
 
-Metoda velja v točkah, kjer je $\nabla g \neq 0$. Pri več spremenljivkah in več pogojih $g_1 = 0, \dots, g_m = 0$ uvedemo po en multiplikator za vsak pogoj: $\nabla f = \lambda_1 \nabla g_1 + \dots + \lambda_m \nabla g_m$.
+**Izrek (Lagrange).** Naj bosta $f$ in $g$ zvezno odvedljivi v okolici točke $T_0$, $g(T_0) = 0$ in $\nabla g(T_0) \neq 0$. Če ima $f$ v $T_0$ lokalni ekstrem na množici $\{g = 0\}$, obstaja $\lambda \in \mathbb{R}$, da je $\nabla f(T_0) = \lambda \nabla g(T_0)$.
 
-**7. Globalni ekstremi na zaprti omejeni množici.** Zvezna funkcija na zaprti in omejeni množici $D$ zavzame največjo in najmanjšo vrednost. Iščemo ju takole: (1) stacionarne točke v notranjosti $D$, (2) vezane ekstreme na robu $D$ (z Lagrangeovo metodo ali parametrizacijo roba), (3) oglišča roba, če obstajajo. Med vsemi dobljenimi vrednostmi izberemo največjo in najmanjšo. Hessejeve matrike tu ne potrebujemo.
+*Dokaz (skica).* Ker je $\nabla g(T_0) \neq 0$, je krivulja $g = 0$ blizu $T_0$ po izreku o implicitni funkciji gladka: ima parametrizacijo $r(t)$ z $r(0) = T_0$ in $r'(0) \neq 0$. Funkcija $\varphi(t) = f(r(t))$ ima ekstrem pri $t = 0$, zato je $\varphi'(0) = \nabla f(T_0) \cdot r'(0) = 0$. Iz $g(r(t)) = 0$ z odvajanjem dobimo še $\nabla g(T_0) \cdot r'(0) = 0$. V ravnini sta oba gradienta pravokotna na isti neničelni vektor $r'(0)$, zato sta vzporedna, in ker je $\nabla g(T_0) \neq 0$, je $\nabla f(T_0) = \lambda \nabla g(T_0)$.
+
+Točke, kjer je $\nabla g = 0$, moramo zato pregledati posebej. Pri več spremenljivkah in več pogojih $g_1 = 0, \dots, g_m = 0$ uvedemo po en multiplikator za vsak pogoj: $\nabla f = \lambda_1 \nabla g_1 + \dots + \lambda_m \nabla g_m$.
+
+**7. Globalni ekstremi na zaprti omejeni množici.** **Weierstrassov izrek:** naj bo $D \subset \mathbb{R}^n$ zaprta in omejena, $f$ pa zvezna na $D$; potem $f$ na $D$ zavzame največjo in najmanjšo vrednost. Iščemo ju takole: (1) stacionarne točke v notranjosti $D$, (2) vezane ekstreme na robu $D$ (z Lagrangeovo metodo ali parametrizacijo roba), (3) oglišča roba, če obstajajo. Med vsemi dobljenimi vrednostmi izberemo največjo in najmanjšo. Hessejeve matrike tu ne potrebujemo.
 
 ## Rešeni primeri
 
@@ -136,13 +142,13 @@ $\nabla f = 0$; $H = \begin{bmatrix} f_{xx} & f_{xy} \\ f_{xy} & f_{yy} \end{bma
 
 ### Primer 3 (težji)
 
-Izdelati želimo pravokotno škatlo brez pokrova s prostornino $32\,\mathrm{dm^3}$. Kakšne naj bodo mere, da porabimo čim manj materiala?
+Izdelati želimo pravokotno škatlo brez pokrova s prostornino $32\,\mathrm{dm^3}$. Kakšne naj bodo mere, da porabimo čim manj materiala? Določi tudi Lagrangeov multiplikator in z njim oceni, za koliko se poveča najmanjša površina, če prostornino povečamo na $33\,\mathrm{dm^3}$.
 
 **Podatki:** prostornina $V = xyz = 32\,\mathrm{dm^3}$, škatla brez pokrova (dno in štiri stranice), dolžina $x$, širina $y$, višina $z$, vse pozitivne
-**Iščemo:** mere $x$, $y$, $z$, pri katerih je površina $S$ najmanjša, in to površino
+**Iščemo:** mere $x$, $y$, $z$, pri katerih je površina $S$ najmanjša, to površino, multiplikator $\lambda$ in spremembo $\Delta S$
 
 :::formula
-$S = xy + 2xz + 2yz$, pogoj $g = xyz - 32 = 0$. Lagrange: $\nabla S = \lambda \nabla g$, $g = 0$.
+$S = xy + 2xz + 2yz$, pogoj $g = xyz - V = 0$. Lagrange: $\nabla S = \lambda \nabla g$, $g = 0$. Pomen multiplikatorja: $\frac{dS_{\min}}{dV} = \lambda$.
 :::
 
 **Rešitev:**
@@ -155,7 +161,10 @@ $S = xy + 2xz + 2yz$, pogoj $g = xyz - 32 = 0$. Lagrange: $\nabla S = \lambda \n
 6. Vstavimo v pogoj: $2z \cdot 2z \cdot z = 4z^3 = 32$, $z^3 = 8$, $z = 2\,\mathrm{dm}$, $x = y = 4\,\mathrm{dm}$.
 7. Površina: $S = 4 \cdot 4 + 2 \cdot 4 \cdot 2 + 2 \cdot 4 \cdot 2 = 16 + 16 + 16 = 48\,\mathrm{dm^2}$.
 8. To je res minimum: ko gre katerakoli mera proti $0$ ali $\infty$, gre $S$ proti $\infty$, zato zvezna funkcija na tej ploskvi zavzame najmanjšo vrednost, edina kandidatka pa je najdena točka. Za primerjavo: kocka z robom $\sqrt[3]{32} \approx 3{,}17\,\mathrm{dm}$ bi porabila $5 \cdot 3{,}17^2 \approx 50{,}4\,\mathrm{dm^2}$.
-9. Odgovor: škatla naj ima dno $4\,\mathrm{dm} \times 4\,\mathrm{dm}$ in višino $2\,\mathrm{dm}$; porabimo $48\,\mathrm{dm^2}$ materiala.
+9. Multiplikator iz prve enačbe: $4 + 2 \cdot 2 = \lambda \cdot 4 \cdot 2$, torej $\lambda = 1\,\mathrm{dm^{-1}}$.
+10. Preverimo pomen: za poljuben $V$ je $x = y = 2z$ in $4z^3 = V$, torej $S_{\min} = 12z^2 = 12\left(\frac{V}{4}\right)^{2/3}$ in $\frac{dS_{\min}}{dV} = \frac{2}{z}$, kar je pri $z = 2\,\mathrm{dm}$ ravno $1\,\mathrm{dm^{-1}} = \lambda$.
+11. Ocena: $\Delta S \approx \lambda\, \Delta V = 1\,\mathrm{dm^{-1}} \cdot 1\,\mathrm{dm^3} = 1\,\mathrm{dm^2}$. Natančno: $12 \cdot 8{,}25^{2/3} = 49{,}0\,\mathrm{dm^2}$, torej $\Delta S = 0{,}995\,\mathrm{dm^2}$.
+12. Odgovor: škatla naj ima dno $4\,\mathrm{dm} \times 4\,\mathrm{dm}$ in višino $2\,\mathrm{dm}$; porabimo $48\,\mathrm{dm^2}$ materiala. Multiplikator je $\lambda = 1\,\mathrm{dm^{-1}}$, zato dodatni $\mathrm{dm^3}$ prostornine zahteva približno $1\,\mathrm{dm^2}$ materiala več.
 
 ### Primer 4 – zdaj ti
 
@@ -176,7 +185,7 @@ $N_x = 0$, $N_y = 0$; $D = N_{xx} N_{yy} - N_{xy}^2$, pri $D > 0$ in $N_{xx} > 0
 4. Izračunaj $D$, določi naravo točke $(-1, 4)$ in vrednost $N$ v njej.
 
 :::premisli
-Kaj dobiš?
+Je $(-1, 4)$ minimum, maksimum ali sedlo in kolikšno je tam odstopanje?
 ---
 $D = 4 \cdot 2 - 2^2 = 4 > 0$ in $N_{xx} = 4 > 0$, zato je v $(-1, 4)$ minimum. Vrednost je $N(-1, 4) = 2 - 8 + 16 + 4 - 24 + 20 = 10$: nizke tone je treba za $1\,\mathrm{dB}$ znižati, visoke za $4\,\mathrm{dB}$ zvišati.
 :::
@@ -200,23 +209,61 @@ $D = 4 \cdot 2 - 2^2 = 4 > 0$ in $N_{xx} = 4 > 0$, zato je v $(-1, 4)$ minimum. 
 - Vezani ekstremi: $L = f - \lambda g$, sistem $\nabla f = \lambda \nabla g$, $g = 0$; gradienta sta vzporedna.
 - Globalni ekstremi na zaprti omejeni množici: notranje stacionarne točke, rob in oglišča, nato primerjava vrednosti.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo lokalnega (strogega) in globalnega ekstrema ter stacionarne točke;
+- potrebni pogoj za lokalni ekstrem v notranji točki z dokazom in zakaj ni zadosten;
+- test drugih odvodov z vsemi pogoji in utemeljitev z dopolnitvijo do kvadrata; Sylvestrov kriterij za $n$ spremenljivk;
+- Lagrangeov izrek s pogojem $\nabla g \neq 0$, skico dokaza in geometrijski pomen;
+- Weierstrassov izrek in postopek za globalne ekstreme na zaprti omejeni množici.
+
+### Naloga 1
+
+Poišči največjo in najmanjšo vrednost funkcije $f(x, y) = x^2 + 2y^2 - x$ na krogu $D = \{(x, y) : x^2 + y^2 \le 4\}$.
+
+**Rešitev:**
+
+1. $D$ je zaprt in omejen, $f$ zvezna, zato po Weierstrassovem izreku obe vrednosti obstajata.
+2. Notranjost: $f_x = 2x - 1 = 0$, $f_y = 4y = 0$ da $T_1\left(\frac{1}{2}, 0\right)$, ki leži v $D$; $f(T_1) = \frac{1}{4} - \frac{1}{2} = -\frac{1}{4}$.
+3. Rob $g = x^2 + y^2 - 4 = 0$, kjer je $\nabla g = (2x, 2y) \neq 0$: Lagrangeove enačbe $2x - 1 = 2\lambda x$, $4y = 2\lambda y$, $x^2 + y^2 = 4$.
+4. Iz druge enačbe $y(4 - 2\lambda) = 0$, torej $y = 0$ ali $\lambda = 2$.
+5. Pri $y = 0$ je $x = \pm 2$: $f(2, 0) = 4 - 2 = 2$ in $f(-2, 0) = 4 + 2 = 6$.
+6. Pri $\lambda = 2$: $2x - 1 = 4x$, $x = -\frac{1}{2}$, $y^2 = 4 - \frac{1}{4} = \frac{15}{4}$, $y = \pm\frac{\sqrt{15}}{2}$; $f = \frac{1}{4} + 2 \cdot \frac{15}{4} + \frac{1}{2} = \frac{33}{4}$.
+7. Primerjava kandidatov $-\frac{1}{4}$, $2$, $6$, $\frac{33}{4}$.
+8. Odgovor: najmanjša vrednost je $-\frac{1}{4}$ v $\left(\frac{1}{2}, 0\right)$, največja $\frac{33}{4} = 8{,}25$ v točkah $\left(-\frac{1}{2}, \pm\frac{\sqrt{15}}{2}\right)$.
+
+### Naloga 2
+
+Natančno navedi zadostni pogoj za lokalni ekstrem funkcije dveh spremenljivk in ga utemelji. Nato poišči in razvrsti stacionarne točke funkcije $f(x, y) = x^4 + y^4 - 4xy$ in utemelji, ali so najdeni minimumi globalni.
+
+**Rešitev:**
+
+1. Izrek: naj ima $f$ zvezne druge parcialne odvode v okolici stacionarne točke $T_0$, $A = f_{xx}(T_0)$, $B = f_{xy}(T_0)$, $C = f_{yy}(T_0)$, $D = AC - B^2$. Pri $D > 0$, $A > 0$ je v $T_0$ strogi lokalni minimum, pri $D > 0$, $A < 0$ strogi lokalni maksimum, pri $D < 0$ sedlo; pri $D = 0$ test ne odloči.
+2. Utemeljitev: po Taylorjevi formuli je $f(T_0 + (h, k)) - f(T_0) = \frac{1}{2}(Ah^2 + 2Bhk + Ck^2) + R$, ker je $\nabla f(T_0) = 0$; ostanek $R$ gre proti $0$ hitreje kot $h^2 + k^2$. Pri $A \neq 0$ je $Ah^2 + 2Bhk + Ck^2 = A\left(h + \frac{B}{A}k\right)^2 + \frac{D}{A}k^2$: pri $D > 0$ ima forma za $(h, k) \neq (0, 0)$ predznak $A$ in za majhne $(h, k)$ prevlada nad ostankom; pri $D < 0$ izbiri $k = 0$, $h \neq 0$ in $h = -\frac{B}{A}k$, $k \neq 0$ dasta nasprotna predznaka, zato je točka sedlo.
+3. Odvoda: $f_x = 4x^3 - 4y$, $f_y = 4y^3 - 4x$. Iz $f_x = 0$ je $y = x^3$, vstavimo: $x^9 - x = x(x^8 - 1) = 0$, torej $x \in \{0, 1, -1\}$.
+4. Stacionarne točke: $(0, 0)$, $(1, 1)$, $(-1, -1)$.
+5. $f_{xx} = 12x^2$, $f_{yy} = 12y^2$, $f_{xy} = -4$, $D = 144x^2y^2 - 16$.
+6. V $(0, 0)$: $D = -16 < 0$, sedlo. V $(1, 1)$ in $(-1, -1)$: $D = 128 > 0$, $f_{xx} = 12 > 0$, lokalni minimum z vrednostjo $1 + 1 - 4 = -2$.
+7. Globalnost: ker je $4xy \le 2(x^2 + y^2)$, je $f \ge x^4 - 2x^2 + y^4 - 2y^2 = (x^2 - 1)^2 + (y^2 - 1)^2 - 2 \ge -2$.
+8. Odgovor: $(0, 0)$ je sedlo, v $(1, 1)$ in $(-1, -1)$ ima $f$ minimum $-2$, ki je tudi globalni.
+
 ## Drugače: Na sliki
 
-Graf funkcije $z = f(x, y)$ si predstavljaj kot **pokrajino**. Minimum je dno kotanje, maksimum vrh hriba, sedlo pa prelaz med dvema vrhovoma: če hodiš po grebenu od enega vrha do drugega, je prelaz tvoja najnižja točka, če pa greš čez prelaz iz ene doline v drugo, je tvoja najvišja točka. V vseh treh primerih so tla v točki vodoravna, zato je gradient nič.
+Graf $z = f(x, y)$ je kot **pokrajina**. Sedlo je prelaz: na grebenu med vrhovoma je najnižja točka, na poti iz doline v dolino pa najvišja. Na **zemljevidu z nivojnicami** so okoli minimuma in maksimuma sklenjene krivulje, podobne elipsam, okoli sedla pa hiperbolam; nivojnica skozi sedlo se seka v obliki črke X.
 
-Na **zemljevidu z nivojnicami** (plastnicami) so okoli minimuma in maksimuma sklenjene krivulje, podobne elipsam. Okoli sedla so nivojnice podobne hiperbolam, nivojnica skozi samo sedlo pa se v njem seka v obliki črke X.
+Narišimo še pot $g(x, y) = 0$. Najvišja točka na njej je tam, kjer se pot ene od nivojnic **le dotakne** in je ne seka: tam sta $\nabla f$ in $\nabla g$ pravokotna na pot, torej vzporedna, $\nabla f = \lambda \nabla g$.
 
-Pri vezanem ekstremu na zemljevid narišemo še pot $g(x, y) = 0$. Hodimo po poti in iščemo najvišjo točko na njej. Ta je tam, kjer se pot nivojnice **le dotakne**: tam je smer poti pravokotna na gradient $\nabla f$, ki kaže navkreber. Ker je tudi $\nabla g$ pravokoten na pot, sta oba gradienta vzporedna. To je slika enačbe $\nabla f = \lambda \nabla g$.
+## Drugače: Uporaba v stroki
 
-## Drugače: Iz vsakdanjega življenja
+**Umeritvena premica.** Skozi meritve $(x_i, y_i)$, npr. absorbance standardov z znano koncentracijo, iščemo premico $y = kx + n$ z najmanjšo vsoto kvadratov odstopanj $F(k, n) = \sum_i (y_i - kx_i - n)^2$. Pogoja $F_k = 0$, $F_n = 0$ sta linearni **normalni enačbi**. Hessejeva matrika $2\begin{bmatrix} \sum x_i^2 & \sum x_i \\ \sum x_i & m \end{bmatrix}$ ($m$ meritev) je pozitivno definitna, če niso vsi $x_i$ enaki: rešitev je minimum.
 
-**Metoda najmanjših kvadratov.** Skozi meritve $(x_i, y_i)$ iščemo premico $y = kx + n$, ki se jim najbolje prilega. Minimiziramo vsoto kvadratov odstopanj $F(k, n) = \sum_i (y_i - kx_i - n)^2$. Pogoj $F_k = 0$, $F_n = 0$ da dve linearni enačbi (normalni enačbi) za $k$ in $n$. Hessejeva matrika je pozitivno definitna, če niso vsi $x_i$ enaki, zato je rešitev res minimum. Na tem temelji linearna regresija in vsaka umeritvena premica v laboratoriju.
+**Optimizacija procesa.** Pri metodologiji odzivnih ploskev izkoristku, izmerjenemu pri načrtovanih kombinacijah temperature in tlaka, prilagodimo kvadratni polinom. Njegova stacionarna točka je kandidat za optimum; Hessejeva matrika loči maksimum od sedla.
 
-**Kemijsko inženirstvo.** Izkoristek procesa je funkcija temperature, tlaka in razmerja reaktantov. Inženir poišče stacionarno točko izmerjene ali modelirane ploskve odziva; sedlo v takšnem modelu pove, da je treba eno spremenljivko povečati, drugo pa zmanjšati.
+**Ploskev potencialne energije.** Energija molekule je funkcija koordinat jeder. Optimizacija geometrije išče točke z ničelnim gradientom: stabilna struktura ima pozitivno definitno Hessejevo matriko, prehodno stanje reakcije pa natanko eno negativno lastno vrednost (imaginarno frekvenco).
 
-**Molekulska geometrija.** Energija molekule je funkcija koordinat jeder. Stabilne strukture so lokalni minimumi te energijske ploskve, prehodno stanje kemijske reakcije pa je **sedlo**: v smeri reakcijske koordinate je maksimum, v vseh drugih smereh minimum.
-
-**Ekonomija in ekologija.** Kmet razdeli omejeno površino med dve kulturi tako, da je pridelek največji. Omejitev površine je pogoj $g = 0$, multiplikator $\lambda$ pa pove, za koliko bi se povečal največji pridelek, če bi imeli na voljo eno enoto površine več.
+**Kemijsko ravnotežje.** Ravnotežna sestava pri danih $T$ in $p$ minimizira Gibbsovo prosto energijo pri vezeh ohranitve atomov; vsak element dobi svoj Lagrangeov multiplikator.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -228,7 +275,7 @@ Določi ekstreme funkcije $f(x, y) = 2x^2 + y^2 - 2xy - 4x + 1$.
 4. **Drugi odvodi:** $f_{xx} = 4$, $f_{yy} = 2$, $f_{xy} = -2$.
 5. **Determinanta:** $D = 4 \cdot 2 - (-2)^2 = 8 - 4 = 4 > 0$, $f_{xx} = 4 > 0$, torej minimum.
 6. **Vrednost:** $f(2, 2) = 8 + 4 - 8 - 8 + 1 = -3$.
-7. **Preizkus:** $f(3, 2) = 18 + 4 - 12 - 12 + 1 = -1$ in $f(2, 3) = 8 + 9 - 12 - 8 + 1 = -2$ sta večji od $-3$, kot pri minimumu pričakujemo.
+7. **Preizkus:** $f(3, 2) = 18 + 4 - 12 - 12 + 1 = -1$ in $f(2, 3) = 8 + 9 - 12 - 8 + 1 = -2$ sta večji od $-3$.
 
 ## Drugače: Bolj natančno
 
@@ -238,11 +285,9 @@ Določi ekstreme funkcije $f(x, y) = 2x^2 + y^2 - 2xy - 4x + 1$.
 $$f(a + h) = f(a) + \tfrac{1}{2}\, h^{\mathsf T} H(a)\, h + o(\|h\|^2).$$
 Če je $H(a)$ pozitivno definitna, je njena najmanjša lastna vrednost $m > 0$ in $h^{\mathsf T} H h \ge m\|h\|^2$. Za dovolj majhen $\|h\|$ je ostanek po absolutni vrednosti manjši od $\frac{m}{4}\|h\|^2$, zato je $f(a + h) - f(a) \ge \frac{m}{4}\|h\|^2 > 0$ za $h \neq 0$: v $a$ je strogi lokalni minimum. Če ima $H(a)$ lastni vrednosti obeh predznakov, vzdolž ustreznih lastnih vektorjev $f$ enkrat narašča, drugič pada, zato je $a$ sedlo.
 
-Za $n = 2$ je simetrična matrika $\begin{bmatrix} A & B \\ B & C \end{bmatrix}$ pozitivno definitna natanko tedaj, ko je $A > 0$ in $AC - B^2 > 0$. To sledi iz dopolnitve do kvadrata: $Ah^2 + 2Bhk + Ck^2 = A\left(h + \frac{B}{A}k\right)^2 + \frac{AC - B^2}{A}k^2$.
+**Ko $\nabla g = 0$.** Pogoj $\nabla g(a) \neq 0$ v Lagrangeovem izreku je bistven: pri $f = x$ in $g = y^2 - x^3$ je minimum v $(0, 0)$, kjer je $\nabla g = 0$; Lagrangeov sistem ga ne najde.
 
-**Lagrangeov izrek.** Naj bosta $f$ in $g$ zvezno odvedljivi, $a$ naj bo lokalni ekstrem $f$ na množici $\{g = 0\}$ in naj bo $\nabla g(a) \neq 0$. Tedaj obstaja $\lambda \in \mathbb{R}$, da je $\nabla f(a) = \lambda\, \nabla g(a)$. Dokaz uporabi izrek o implicitni funkciji: blizu $a$ je množica $\{g = 0\}$ graf gladke funkcije, zato je $\nabla f(a)$ pravokoten na vsak tangentni vektor, tangentni prostor pa je ravno ortogonalni komplement $\nabla g(a)$. Pogoj $\nabla g(a) \neq 0$ je bistven: pri $f = x$ in $g = y^2 - x^3$ je minimum v $(0, 0)$, kjer je $\nabla g = 0$, Lagrangeov sistem pa te točke ne najde.
-
-**Narava vezanega ekstrema.** Odloči jo **obrobljena Hessejeva matrika** oziroma predznak forme $h^{\mathsf T} H_L h$ (kjer je $H_L$ Hessejeva matrika Lagrangeove funkcije po $x$ in $y$), omejene na tangentne vektorje $h$, za katere je $\nabla g \cdot h = 0$.
+**Narava vezanega ekstrema.** Odloči jo predznak forme $h^{\mathsf T} H_L h$ ($H_L$ je Hessejeva matrika Lagrangeove funkcije po $x$ in $y$) na tangentnih vektorjih z $\nabla g \cdot h = 0$: test z **obrobljeno Hessejevo matriko**.
 
 ## Preveri se
 
@@ -318,5 +363,8 @@ g_x, g_y | parcialna odvoda funkcije vezi | |
 a | notranja točka lokalnega ekstrema v ℝⁿ | |
 o | mali o (Landauova oznaka) | | | o(‖h‖²) gre proti nič hitreje kot ‖h‖²
 S | površina škatle brez pokrova | S = xy + 2xz + 2yz |
+V | prostornina škatle | V = xyz | dm³ | Primer 3
+\Delta S | sprememba najmanjše površine | \Delta S \approx \lambda\, \Delta V | dm²
+d | oznaka diferenciala | | | dS/dV je odvod S po V
 N | odstopanje posnetka od želenega zvoka | | | v primeru 4; x, y sta ojačanji v dB
 :::

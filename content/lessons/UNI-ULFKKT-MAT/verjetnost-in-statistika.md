@@ -9,7 +9,7 @@ Nobena meritev ni popolnoma natančna. Če petkrat stehtaš isti vzorec, dobiš 
 
 Verjetnostni račun iz znanega modela napove, kako pogosti bodo posamezni izidi. Statistika gre v obratno smer: iz izmerjenih podatkov (**vzorca**) sklepa o lastnostih celotne **populacije** in pove, kako zanesljiv je ta sklep.
 
-V tej lekciji spoznamo:
+Spoznali bomo:
 
 - slučajne spremenljivke in njihove **porazdelitve** (binomsko, Poissonovo, normalno),
 - **povprečje**, **varianco** in **standardni odklon** vzorca,
@@ -19,7 +19,13 @@ To znanje potrebuješ pri vsaki laboratorijski vaji, pri umeritvenih krivuljah, 
 
 ## Razlaga
 
-**1. Dogodki in verjetnost.** **Poskus** je postopek z negotovim izidom (met kocke, kalitev semena, meritev). Množico vseh izidov označimo z $\Omega$, **dogodek** je podmnožica $\Omega$. **Verjetnost** $P(A)$ je število med $0$ in $1$, za katero velja $P(\Omega) = 1$ in $P(A \cup B) = P(A) + P(B)$ za nezdružljiva dogodka. Iz tega sledi $P(\bar A) = 1 - P(A)$ za nasprotni dogodek. Pri enako verjetnih izidih je **klasična** verjetnost $P(A) = \frac{\text{število ugodnih izidov}}{\text{število vseh izidov}}$. Dogodka sta **neodvisna**, če je $P(A \cap B) = P(A)\,P(B)$.
+**1. Dogodki in verjetnost.** **Poskus** je postopek z negotovim izidom (met kocke, kalitev semena, meritev). Množico vseh izidov označimo z $\Omega$, **dogodek** je podmnožica $\Omega$. *Definicija.* **Verjetnost** je preslikava, ki vsakemu dogodku $A$ priredi število $P(A) \in [0, 1]$, tako da je $P(\Omega) = 1$ in $P(A \cup B) = P(A) + P(B)$, kadar sta $A$ in $B$ **nezdružljiva** ($A \cap B = \emptyset$); enako velja za števno mnogo paroma nezdružljivih dogodkov. Iz tega sledi $P(\bar A) = 1 - P(A)$ za nasprotni dogodek (ker sta $A$ in $\bar A$ nezdružljiva in $A \cup \bar A = \Omega$), za poljubna dogodka pa
+
+$$P(A \cup B) = P(A) + P(B) - P(A \cap B).$$
+
+*Dokaz:* $A \cup B$ je unija nezdružljivih dogodkov $A$ in $B \setminus A$, dogodek $B$ pa unija nezdružljivih $A \cap B$ in $B \setminus A$; zato je $P(A \cup B) = P(A) + P(B \setminus A) = P(A) + P(B) - P(A \cap B)$.
+
+Pri enako verjetnih izidih je **klasična** verjetnost $P(A) = \frac{\text{število ugodnih izidov}}{\text{število vseh izidov}}$. Če je $P(B) > 0$, je **pogojna verjetnost** $P(A \mid B) = \frac{P(A \cap B)}{P(B)}$. Dogodka sta **neodvisna**, če je $P(A \cap B) = P(A)\,P(B)$; pri $P(B) > 0$ je to isto kot $P(A \mid B) = P(A)$.
 
 **2. Slučajna spremenljivka.** **Slučajna spremenljivka** $X$ vsakemu izidu priredi število: število vzklilih semen, maso tablete, število razpadov v eni sekundi. Je **diskretna**, če zavzame le števne vrednosti $x_1, x_2, \dots$ z verjetnostmi $p_i = P(X = x_i)$, $\sum p_i = 1$. Je **zvezna**, če jo opiše **gostota** $f(x) \ge 0$ z $\int_{-\infty}^{\infty} f(x)\,dx = 1$; tedaj je $P(a \le X \le b) = \int_a^b f(x)\,dx$.
 
@@ -31,33 +37,41 @@ Označimo jo tudi z $\mu$. **Varianca** meri razpršenost okoli $\mu$, **standar
 
 $$D(X) = \sigma^2 = E\big((X - \mu)^2\big) = E(X^2) - \mu^2, \qquad \sigma = \sqrt{D(X)}.$$
 
-Standardni odklon ima isto enoto kot $X$, zato ga lažje razložimo.
+Standardni odklon ima isto enoto kot $X$, zato ga lažje razložimo. Pričakovana vrednost je linearna, $E(aX + b) = aE(X) + b$, zato je $E\big((X - \mu)^2\big) = E(X^2) - 2\mu E(X) + \mu^2 = E(X^2) - \mu^2$. Podobno sledi $D(aX + b) = a^2 D(X)$; za **neodvisni** $X$ in $Y$ velja še $D(X + Y) = D(X) + D(Y)$.
+
+:::premisli
+Temperatura ima standardni odklon $\sigma = 2\,^\circ\mathrm{C}$. Kolikšen je $\sigma$, če iste vrednosti zapišeš v kelvinih ($T = t + 273{,}15$) in kolikšen v stopinjah Fahrenheita ($t_F = 1{,}8\,t + 32$)?
+---
+Iz $D(aX + b) = a^2 D(X)$ sledi $\sigma(aX + b) = |a|\,\sigma$. Premik $b$ razpršenosti ne spremeni: v kelvinih je $\sigma = 2\,\mathrm{K}$. Faktor $1{,}8$ jo raztegne: $\sigma = 3{,}6\,^\circ\mathrm{F}$.
+:::
 
 **4. Pomembne porazdelitve.**
 
 - **Binomska porazdelitev** $B(n, p)$: poskus z dvema izidoma (uspeh z verjetnostjo $p$) ponovimo $n$-krat neodvisno, $X$ je število uspehov.
 $$P(X = k) = \binom{n}{k} p^k (1 - p)^{n - k}, \qquad E(X) = np, \qquad \sigma^2 = np(1 - p).$$
+Vsako zaporedje izidov s $k$ uspehi ima zaradi neodvisnosti verjetnost $p^k(1 - p)^{n - k}$, takih zaporedij pa je $\binom{n}{k}$ (izberemo mesta uspehov).
 - **Poissonova porazdelitev** s parametrom $\lambda > 0$: število redkih dogodkov v danem času ali prostoru (razpadi jeder, mutacije, klici v centrali).
 $$P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad k = 0, 1, 2, \dots, \qquad E(X) = \sigma^2 = \lambda.$$
+Res: $E(X) = \sum_{k \ge 1} k\,\frac{\lambda^k e^{-\lambda}}{k!} = \lambda \sum_{k \ge 1} \frac{\lambda^{k-1} e^{-\lambda}}{(k - 1)!} = \lambda$, ker je zadnja vsota vsota vseh verjetnosti.
 - **Normalna (Gaussova) porazdelitev** $N(\mu, \sigma)$ z gostoto
 $$f(x) = \frac{1}{\sigma\sqrt{2\pi}}\, e^{-\frac{(x - \mu)^2}{2\sigma^2}}.$$
-Graf je zvonasta krivulja, simetrična okoli $\mu$. Z **standardizacijo** $Z = \frac{X - \mu}{\sigma}$ dobimo standardno normalno porazdelitev $N(0, 1)$, katere porazdelitvena funkcija $\Phi(z) = P(Z \le z)$ je tabelirana. Velja **pravilo 68–95–99,7**: na intervalu $\mu \pm \sigma$ leži približno $68\,\%$, na $\mu \pm 2\sigma$ približno $95\,\%$ in na $\mu \pm 3\sigma$ približno $99{,}7\,\%$ vrednosti.
+Graf je zvonasta krivulja, simetrična okoli $\mu$. Z **standardizacijo** $Z = \frac{X - \mu}{\sigma}$ dobimo standardno normalno porazdelitev $N(0, 1)$, katere porazdelitvena funkcija $\Phi(z) = P(Z \le z)$ je tabelirana. Po pravilih iz točke 3 je $E(Z) = 0$ in $D(Z) = 1$. Ker je $X \le b$ natanko tedaj, ko je $Z \le \frac{b - \mu}{\sigma}$, je $P(a \le X \le b) = \Phi\big(\frac{b - \mu}{\sigma}\big) - \Phi\big(\frac{a - \mu}{\sigma}\big)$ in zaradi simetrije zvona $\Phi(-z) = 1 - \Phi(z)$. Velja **pravilo 68–95–99,7**: na intervalu $\mu \pm \sigma$ leži približno $68\,\%$, na $\mu \pm 2\sigma$ približno $95\,\%$ in na $\mu \pm 3\sigma$ približno $99{,}7\,\%$ vrednosti.
 
-Normalna porazdelitev je tako pomembna zaradi **centralnega limitnega izreka**: vsota (in povprečje) mnogih neodvisnih slučajnih vplivov je približno normalno porazdeljena, ne glede na porazdelitev posameznih vplivov. Zato so meritve pogosto normalno razpršene okoli prave vrednosti.
+Normalna porazdelitev je tako pomembna zaradi **centralnega limitnega izreka**. Naj bodo $X_1, \dots, X_n$ neodvisne in enako porazdeljene z $E(X_i) = \mu$ in končno varianco $D(X_i) = \sigma^2$, njihovo povprečje pa je $\bar X = \frac{1}{n}\sum X_i$. Potem za vsak $z$ velja $P\Big(\frac{\bar X - \mu}{\sigma/\sqrt n} \le z\Big) \to \Phi(z)$, ko gre $n \to \infty$. Vsota (in povprečje) mnogih neodvisnih slučajnih vplivov je torej približno normalno porazdeljena, ne glede na porazdelitev posameznih vplivov. Zato so meritve pogosto normalno razpršene okoli prave vrednosti.
 
 **5. Vzorec in opisna statistika.** Iz populacije izberemo **vzorec** $x_1, x_2, \dots, x_n$. Populacijskih $\mu$ in $\sigma$ ne poznamo, ocenimo ju z vzorčnimi količinami:
 
 $$\bar x = \frac{1}{n}\sum_{i=1}^n x_i, \qquad s^2 = \frac{1}{n - 1}\sum_{i=1}^n (x_i - \bar x)^2, \qquad s = \sqrt{s^2}.$$
 
-$\bar x$ je **vzorčno povprečje**, $s$ **vzorčni standardni odklon**. Delimo z $n - 1$, ne z $n$, ker so odmiki merjeni od $\bar x$, ki je sam izračunan iz istih podatkov: vsota odmikov je vedno $0$, zato je neodvisnih odmikov le $n - 1$ (**prostostne stopnje**). Delitev z $n - 1$ da nepristransko oceno $\sigma^2$.
+$\bar x$ je **vzorčno povprečje**, $s$ **vzorčni standardni odklon**. Delimo z $n - 1$, ne z $n$, ker so odmiki merjeni od $\bar x$, ki je sam izračunan iz istih podatkov: vsota odmikov je vedno $0$, zato je neodvisnih odmikov le $n - 1$ (**prostostne stopnje**). Delitev z $n - 1$ da **nepristransko** oceno $\sigma^2$: povprečje $s^2$ čez vse možne vzorce je natanko $\sigma^2$.
 
-Natančnost povprečja opisuje **standardna napaka povprečja** $s_{\bar x} = \frac{s}{\sqrt n}$: več meritev naredimo, bolj zanesljivo je povprečje. Sredino podatkov lahko opišemo tudi z **mediano** (srednjo vrednostjo urejenih podatkov), ki je manj občutljiva za osamelce, razpršenost pa še z **razponom** $x_{\max} - x_{\min}$.
+Natančnost povprečja opisuje **standardna napaka povprečja** $s_{\bar x} = \frac{s}{\sqrt n}$: več meritev naredimo, bolj zanesljivo je povprečje. Utemeljitev: za neodvisne meritve $X_i$ z varianco $\sigma^2$ je $D(\bar X) = \frac{1}{n^2}\sum D(X_i) = \frac{\sigma^2}{n}$. Sredino podatkov lahko opišemo tudi z **mediano** (srednjo vrednostjo urejenih podatkov), ki je manj občutljiva za osamelce, razpršenost pa še z **razponom** $x_{\max} - x_{\min}$.
 
 **6. Linearna regresija.** Merimo pare $(x_i, y_i)$, na primer koncentracijo in absorbanco. Če točke ležijo približno na premici, iščemo premico $y = kx + n$, za katero je vsota kvadratov navpičnih odstopanj najmanjša (**metoda najmanjših kvadratov**):
 
 $$F(k, n) = \sum_{i=1}^n (y_i - kx_i - n)^2 \to \min.$$
 
-Iz $F_k = 0$ in $F_n = 0$ dobimo:
+V minimumu sta parcialna odvoda nič. Enačba $F_n = -2\sum (y_i - kx_i - n) = 0$ da $\bar y = k\bar x + n$, enačba $F_k = -2\sum x_i(y_i - kx_i - n) = 0$ pa po vstavljanju $n = \bar y - k\bar x$ še naklon:
 
 $$k = \frac{\sum (x_i - \bar x)(y_i - \bar y)}{\sum (x_i - \bar x)^2} = \frac{n\sum x_i y_i - \sum x_i \sum y_i}{n\sum x_i^2 - \left(\sum x_i\right)^2}, \qquad n = \bar y - k\bar x.$$
 
@@ -67,7 +81,13 @@ Kako dobro premica opisuje podatke, pove **Pearsonov korelacijski koeficient**
 
 $$r = \frac{\sum (x_i - \bar x)(y_i - \bar y)}{\sqrt{\sum (x_i - \bar x)^2 \sum (y_i - \bar y)^2}}, \qquad -1 \le r \le 1.$$
 
-Pri $r = \pm 1$ ležijo vse točke na premici, pri $r \approx 0$ linearne povezave ni. Predznak $r$ je enak predznaku naklona. Kvadrat $r^2$ (**determinacijski koeficient**) pove, kolikšen delež razpršenosti $y$ pojasni premica. Korelacija ne pomeni vzročnosti: dve količini lahko naraščata skupaj, ker obe povzroča tretja.
+Neenakost $|r| \le 1$ je Cauchy-Schwarzeva neenakost $|\vec u \cdot \vec v| \le |\vec u|\,|\vec v|$ za vektorja odmikov $(x_i - \bar x)$ in $(y_i - \bar y)$. Pri $r = \pm 1$ ležijo vse točke na premici, pri $r \approx 0$ linearne povezave ni. Predznak $r$ je enak predznaku naklona. Kvadrat $r^2$ (**determinacijski koeficient**) pove, kolikšen delež razpršenosti $y$ pojasni premica. Korelacija ne pomeni vzročnosti: dve količini lahko naraščata skupaj, ker obe povzroča tretja.
+
+:::premisli
+Vse $y_i$ pomnožimo s $1000$ (npr. zamenjamo enoto). Kako se spremenita naklon $k$ in korelacijski koeficient $r$?
+---
+V formuli za $k$ se s $1000$ pomnoži le števec, zato je naklon $1000$-krat večji. Pri $r$ se s $1000$ pomnožita števec in imenovalec (prek $\sqrt{\sum (y_i - \bar y)^2}$), zato se $r$ ne spremeni: je brez enote in meri le, kako tesno točke ležijo ob premici.
+:::
 
 ## Rešeni primeri
 
@@ -114,13 +134,13 @@ $X \sim B(n, p)$: $P(X = k) = \binom{n}{k} p^k (1 - p)^{n - k}$, $E(X) = np$, $\
 
 ### Primer 3 (težji)
 
-Za umeritveno premico smo izmerili absorbanco $A$ raztopin z masnimi koncentracijami $\gamma = 0$, $1$, $2$, $3$ in $4\,\mathrm{mg/L}$ in dobili $A = 0{,}02$; $0{,}21$; $0{,}39$; $0{,}62$; $0{,}80$. Določi regresijsko premico $A = k\gamma + n$, korelacijski koeficient in koncentracijo neznanega vzorca z absorbanco $0{,}50$.
+Za umeritveno premico smo izmerili absorbanco $A$ raztopin z masnimi koncentracijami $\gamma = 0$, $1$, $2$, $3$ in $4\,\mathrm{mg/L}$ in dobili $A = 0{,}02$; $0{,}21$; $0{,}39$; $0{,}62$; $0{,}80$. Določi regresijsko premico $A = k\gamma + n$, korelacijski koeficient in delež razpršenosti absorbanc, ki ga pojasni premica. Neznani vzorec smo pred meritvijo razredčili: $2{,}00\,\mathrm{mL}$ vzorca smo dopolnili do $10{,}0\,\mathrm{mL}$, razredčena raztopina pa je imela absorbanco $0{,}50$. Kolikšna je masna koncentracija v prvotnem vzorcu in zakaj je bila razredčitev potrebna?
 
-**Podatki:** $\gamma_i = 0;\ 1;\ 2;\ 3;\ 4\,\mathrm{mg/L}$, $A_i = 0{,}02;\ 0{,}21;\ 0{,}39;\ 0{,}62;\ 0{,}80$, $A_\mathrm{vz} = 0{,}50$, število meritev $5$
-**Iščemo:** naklon $k$, začetno vrednost $n$, korelacijski koeficient $r$ in koncentracijo $\gamma_\mathrm{vz}$
+**Podatki:** $\gamma_i = 0;\ 1;\ 2;\ 3;\ 4\,\mathrm{mg/L}$, $A_i = 0{,}02;\ 0{,}21;\ 0{,}39;\ 0{,}62;\ 0{,}80$, $A_\mathrm{vz} = 0{,}50$, število meritev $5$, $V_1 = 2{,}00\,\mathrm{mL}$, $V_2 = 10{,}0\,\mathrm{mL}$
+**Iščemo:** naklon $k$, začetno vrednost $n$, korelacijski koeficient $r$, $r^2$, koncentracijo razredčene raztopine $\gamma_\mathrm{vz}$ in prvotnega vzorca $\gamma_0$
 
 :::formula
-$k = \frac{\sum (x_i - \bar x)(y_i - \bar y)}{\sum (x_i - \bar x)^2}$, $n = \bar y - k\bar x$, $r = \frac{\sum (x_i - \bar x)(y_i - \bar y)}{\sqrt{\sum (x_i - \bar x)^2 \sum (y_i - \bar y)^2}}$
+$k = \frac{\sum (x_i - \bar x)(y_i - \bar y)}{\sum (x_i - \bar x)^2}$, $n = \bar y - k\bar x$, $r = \frac{\sum (x_i - \bar x)(y_i - \bar y)}{\sqrt{\sum (x_i - \bar x)^2 \sum (y_i - \bar y)^2}}$, $\gamma_0 = \gamma_\mathrm{vz} \cdot \frac{V_2}{V_1}$
 :::
 
 **Rešitev:**
@@ -133,7 +153,10 @@ $k = \frac{\sum (x_i - \bar x)(y_i - \bar y)}{\sum (x_i - \bar x)^2}$, $n = \bar
 6. Vsota kvadratov odmikov $A$: $S_{yy} = 0{,}150544 + 0{,}039204 + 0{,}000324 + 0{,}044944 + 0{,}153664 = 0{,}38868$.
 7. Korelacijski koeficient: $r = \frac{1{,}970}{\sqrt{10 \cdot 0{,}38868}} = \frac{1{,}970}{1{,}9715} = 0{,}9992$.
 8. Neznani vzorec: $\gamma_\mathrm{vz} = \frac{A_\mathrm{vz} - n}{k} = \frac{0{,}50 - 0{,}014}{0{,}197\,\mathrm{L/mg}} = 2{,}47\,\mathrm{mg/L}$.
-9. Odgovor: premica je $A = 0{,}197\,\mathrm{L/mg} \cdot \gamma + 0{,}014$, $r = 0{,}9992$ (zelo dobra linearnost), neznani vzorec ima masno koncentracijo $2{,}47\,\mathrm{mg/L}$.
+9. Determinacijski koeficient: $r^2 = \frac{S_{xy}^2}{S_{xx}S_{yy}} = \frac{1{,}970^2}{10 \cdot 0{,}38868} = 0{,}9985$, premica pojasni $99{,}85\,\%$ razpršenosti absorbanc.
+10. Razredčitev: masa snovi se ne spremeni, $\gamma_0 V_1 = \gamma_\mathrm{vz} V_2$, faktor je $\frac{10{,}0\,\mathrm{mL}}{2{,}00\,\mathrm{mL}} = 5$, zato $\gamma_0 = 5 \cdot 2{,}467\,\mathrm{mg/L} = 12{,}3\,\mathrm{mg/L}$.
+11. Zakaj razredčitev: nerazredčen vzorec bi imel absorbanco približno $0{,}197 \cdot 12{,}3 + 0{,}014 = 2{,}44$, kar je daleč nad največjo umeritveno vrednostjo $0{,}80$; tam premica ne velja več (in tudi fotometer meri nenatančno).
+12. Odgovor: premica je $A = 0{,}197\,\mathrm{L/mg} \cdot \gamma + 0{,}014$, $r = 0{,}9992$ in $r^2 = 0{,}9985$ (zelo dobra linearnost), razredčena raztopina ima $2{,}47\,\mathrm{mg/L}$, prvotni vzorec pa $12{,}3\,\mathrm{mg/L}$.
 
 ## Pogoste napake
 
@@ -153,6 +176,55 @@ $k = \frac{\sum (x_i - \bar x)(y_i - \bar y)}{\sum (x_i - \bar x)^2}$, $n = \bar
 - Vzorec: $\bar x = \frac{1}{n}\sum x_i$, $s = \sqrt{\frac{1}{n - 1}\sum (x_i - \bar x)^2}$, standardna napaka $\frac{s}{\sqrt n}$.
 - Linearna regresija: $k = \frac{S_{xy}}{S_{xx}}$, $n = \bar y - k\bar x$; premica gre skozi $(\bar x, \bar y)$; kakovost opisuje $r$ oziroma $r^2$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo verjetnosti, pogojne verjetnosti in neodvisnosti ter izpeljavo $P(\bar A) = 1 - P(A)$ in $P(A \cup B) = P(A) + P(B) - P(A \cap B)$;
+- definiciji pričakovane vrednosti in variance (diskretno in zvezno) ter izpeljavo $D(X) = E(X^2) - \mu^2$, $E(aX + b)$ in $D(aX + b)$;
+- binomsko, Poissonovo in normalno porazdelitev s pogoji uporabe, izpeljavo $E(X) = np$ in $D(X) = np(1 - p)$ ter standardizacijo;
+- centralni limitni izrek z vsemi pogoji, $D(\bar X) = \frac{\sigma^2}{n}$ in zakaj pri $s^2$ delimo z $n - 1$;
+- metodo najmanjših kvadratov z izpeljavo $n = \bar y - k\bar x$ in $k = \frac{S_{xy}}{S_{xx}}$ ter pomen $r$ in $r^2$.
+
+### Naloga 1
+
+Stroj polni zavitke, masa polnila je normalno porazdeljena s standardnim odklonom $\sigma = 4\,\mathrm{g}$, sredino $\mu$ pa lahko nastavimo. Na zavitku piše $500\,\mathrm{g}$. (a) Na katero vrednost $\mu$ moramo nastaviti stroj, da bo lažjih od $500\,\mathrm{g}$ le $1\,\%$ zavitkov? (b) Kontrolor pri tej nastavitvi naključno vzame $20$ zavitkov. Kolikšna je verjetnost, da je med njimi vsaj en prelahek? (c) Kolikšna je verjetnost, da je povprečna masa $4$ naključnih zavitkov manjša od $505\,\mathrm{g}$? Uporabi $\Phi(2{,}33) = 0{,}9901$ in $\Phi(2{,}16) = 0{,}9846$.
+
+**Rešitev:**
+
+1. (a) Zahtevamo $P(X < 500) = \Phi\big(\frac{500 - \mu}{4}\big) = 0{,}01$. Ker je $\Phi(-2{,}33) = 1 - 0{,}9901 = 0{,}0099 \approx 0{,}01$, mora biti $\frac{500 - \mu}{4} = -2{,}33$.
+2. Od tod $\mu = 500 + 2{,}33 \cdot 4 = 509{,}3\,\mathrm{g}$.
+3. (b) Zavitki so neodvisni, vsak je prelahek z verjetnostjo $p = 0{,}01$, zato je število prelahkih $Y \sim B(20;\ 0{,}01)$.
+4. Prek nasprotnega dogodka: $P(Y \ge 1) = 1 - P(Y = 0) = 1 - 0{,}99^{20} = 1 - 0{,}818 = 0{,}182$. (Poissonov približek z $\lambda = 0{,}2$ da $1 - e^{-0{,}2} = 0{,}181$.)
+5. (c) Vsota (in zato povprečje) neodvisnih normalnih spremenljivk je spet normalna; povprečje $4$ mas ima $E(\bar X) = 509{,}32\,\mathrm{g}$ in $\sigma_{\bar X} = \frac{4\,\mathrm{g}}{\sqrt 4} = 2\,\mathrm{g}$.
+6. Standardizacija: $z = \frac{505 - 509{,}32}{2} = -2{,}16$, torej $P(\bar X < 505) = \Phi(-2{,}16) = 1 - 0{,}9846 = 0{,}0154$.
+7. Odgovor: (a) $\mu = 509{,}3\,\mathrm{g}$; (b) vsaj en prelahek zavitek med $20$ z verjetnostjo $0{,}182$; (c) povprečje štirih je pod $505\,\mathrm{g}$ z verjetnostjo $0{,}015$, čeprav je posamezen zavitek pod $505\,\mathrm{g}$ precej pogosteje.
+
+### Naloga 2
+
+Natančno navedi definicijo pričakovane vrednosti in variance diskretne slučajne spremenljivke. Izpelji, da za $X \sim B(n, p)$ velja $E(X) = np$ in $D(X) = np(1 - p)$.
+
+**Rešitev:**
+
+1. Če $X$ zavzame vrednosti $x_i$ z verjetnostmi $p_i$, je $E(X) = \sum_i x_i p_i$ (če vrsta absolutno konvergira) in $D(X) = E\big((X - \mu)^2\big)$ z $\mu = E(X)$.
+2. Zapišemo $X = X_1 + X_2 + \dots + X_n$, kjer je $X_i = 1$, če je $i$-ti poskus uspel, in $X_i = 0$ sicer; $X_i$ so neodvisne.
+3. $E(X_i) = 1 \cdot p + 0 \cdot (1 - p) = p$ in, ker je $X_i^2 = X_i$, tudi $E(X_i^2) = p$, zato $D(X_i) = E(X_i^2) - E(X_i)^2 = p - p^2 = p(1 - p)$.
+4. Zaradi linearnosti pričakovane vrednosti je $E(X) = \sum E(X_i) = np$.
+5. Ker so $X_i$ neodvisne, se variance seštevajo: $D(X) = \sum D(X_i) = np(1 - p)$.
+6. Preizkus s Primerom 2: $B(10;\ 0{,}8)$ ima $E(X) = 8$ in $D(X) = 1{,}6$, kar se ujema.
+
+### Naloga 3
+
+Utemelji, ali velja: (a) dva nezdružljiva dogodka s pozitivnima verjetnostma sta neodvisna; (b) če sta dogodka $A$ in $B$ neodvisna, sta neodvisna tudi $A$ in $\bar B$.
+
+**Rešitev:**
+
+1. (a) Ne velja. Za nezdružljiva dogodka je $P(A \cap B) = P(\emptyset) = 0$, za neodvisnost pa bi moralo biti $P(A)P(B) = 0$, kar pri pozitivnih verjetnostih ni res.
+2. Primer: met kocke, $A$ = »pade $6$«, $B$ = »pade $1$«: $P(A \cap B) = 0 \neq \frac{1}{6} \cdot \frac{1}{6} = \frac{1}{36}$. Nezdružljiva dogodka sta celo močno odvisna: če se zgodi $B$, se $A$ zagotovo ne.
+3. (b) Velja. Dogodek $A$ je unija nezdružljivih $A \cap B$ in $A \cap \bar B$, zato $P(A \cap \bar B) = P(A) - P(A \cap B)$.
+4. Zaradi neodvisnosti $A$ in $B$: $P(A \cap \bar B) = P(A) - P(A)P(B) = P(A)\big(1 - P(B)\big) = P(A)P(\bar B)$.
+5. Odgovor: (a) ne velja, (b) velja.
+
 ## Drugače: Na sliki
 
 **Histogram.** Če velikokrat izmerimo isto količino in meritve razvrstimo v razrede, dobimo histogram. Pri mnogo meritvah se njegovi stolpci približajo zvonasti krivulji normalne porazdelitve. Vrh zvona je pri $\mu$, prevojni točki krivulje pa sta natanko pri $\mu - \sigma$ in $\mu + \sigma$. Večji $\sigma$ pomeni nižji in širši zvon; ploščina pod krivuljo je vedno $1$.
@@ -161,17 +233,15 @@ $k = \frac{\sum (x_i - \bar x)(y_i - \bar y)}{\sum (x_i - \bar x)^2}$, $n = \bar
 
 **Razsevni diagram.** Pri regresiji narišemo točke $(x_i, y_i)$ in premico skozi njih. Navpične daljice od točk do premice so **ostanki**; metoda najmanjših kvadratov poišče premico, pri kateri je vsota kvadratov dolžin teh daljic najmanjša. Če ostanki kažejo vzorec (na primer najprej pozitivni, nato negativni, nato spet pozitivni), odvisnost ni linearna, četudi je $r$ blizu $1$.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Kontrola kakovosti.** Tovarna polni tablete z nazivno maso. Če je masa normalno porazdeljena, pravilo $\pm 3\sigma$ pove, da bo le približno $0{,}3\,\%$ tablet zunaj tega pasu. Kontrolne karte v proizvodnji opozorijo, ko meritev pade zunaj $\mu \pm 3\sigma$.
+**Kontrola kakovosti.** Pri proizvodnji tablet z nazivno maso je masa približno normalno porazdeljena; zunaj pasu $\mu \pm 3\sigma$ je le okoli $0{,}3\,\%$ tablet. Na **kontrolni karti** rišemo povprečja vzorcev po $n$ tablet z mejama $\mu \pm 3\frac{\sigma}{\sqrt n}$: pri $\sigma = 10\,\mathrm{mg}$ in $n = 4$ je to $\mu \pm 15\,\mathrm{mg}$. Točka zunaj mej sproži pregled stroja.
 
-**Radioaktivnost.** Števec v eni sekundi v povprečju zazna $3$ razpade. Število razpadov je Poissonovo porazdeljeno z $\lambda = 3$, zato je verjetnost, da v neki sekundi ne zazna nobenega, $e^{-3} = 0{,}050$, verjetnost za natanko en razpad pa $3e^{-3} = 0{,}149$.
+**Štetje razpadov.** Števec v eni sekundi v povprečju zazna $3$ razpade. Število razpadov je Poissonovo porazdeljeno z $\lambda = 3$, zato je verjetnost, da v neki sekundi ne zazna nobenega, $e^{-3} = 0{,}050$, za natanko en razpad pa $3e^{-3} = 0{,}149$. Ker je $\sigma = \sqrt\lambda$, ima meritev z $N$ preštetimi sunki relativno negotovost približno $\frac{1}{\sqrt N}$: za $1\,\%$ natančnost moramo prešteti $10\,000$ sunkov.
 
-**Genetika.** Pri križanju dveh heterozigotov $Aa \times Aa$ je verjetnost recesivnega fenotipa $\frac{1}{4}$. Število recesivnih potomcev med $20$ je binomsko porazdeljeno z $E = 5$. Če jih dobimo $12$, je to sumljivo in nakazuje, da model ne velja.
+**Meja zaznavnosti.** V instrumentalni analizi mejo zaznavnosti ocenimo kot koncentracijo, ki ustreza trikratnemu standardnemu odklonu signala slepega vzorca: $\gamma_\mathrm{LOD} = \frac{3s_\mathrm{slepi}}{k}$. Z naklonom iz Primera 3 in $s_\mathrm{slepi} = 0{,}004$ je $\gamma_\mathrm{LOD} = \frac{3 \cdot 0{,}004}{0{,}197\,\mathrm{L/mg}} \approx 0{,}061\,\mathrm{mg/L}$.
 
-**Gozdarstvo in ekologija.** Iz premerov dreves na vzorčnih ploskvah ocenimo povprečni premer in njegovo standardno napako za cel sestoj. Z regresijo povežemo premer debla in višino drevesa.
-
-**Kemijska analiza.** Vsaka spektrofotometrična, kromatografska ali elektrokemijska metoda temelji na umeritveni premici, kot v Primeru 3.
+**Genetika.** Pri križanju $Aa \times Aa$ je verjetnost recesivnega fenotipa $\frac{1}{4}$, število recesivnih potomcev med $20$ je $B(20;\ 0{,}25)$ z $E = 5$. Če jih dobimo $12$ ali več, je verjetnost tega po modelu le okoli $0{,}0009$, zato je Mendlov model za ta gen vprašljiv (morda starša nista oba heterozigota ali je napaka pri določanju fenotipa).
 
 ## Drugače: Korak za korakom s številkami
 
@@ -256,4 +326,11 @@ X_i | neodvisne slučajne spremenljivke (posamezne meritve) | | | E(Xᵢ) = μ, 
 \bar X | povprečje slučajnih spremenljivk Xᵢ | \bar X = \frac{1}{n}\sum X_i | | njegova pričakovana vrednost je μ
 s_{\bar x} | standardna napaka povprečja | s_{\bar x} = \frac{s}{\sqrt n} | |
 B | binomska porazdelitev B(n, p) | | | v P(A ∪ B) oznaka dogodka
+A | dogodek | | | v Primeru 3 absorbanca
+\gamma_\mathrm{vz} | masna koncentracija razredčenega vzorca | \gamma_\mathrm{vz} = \frac{A_\mathrm{vz} - n}{k} | mg/L |
+\gamma_0 | masna koncentracija prvotnega vzorca | \gamma_0 = \gamma_\mathrm{vz} \cdot \frac{V_2}{V_1} | mg/L |
+V_1 | prostornina odpipetiranega vzorca | | mL |
+V_2 | prostornina po razredčitvi | | mL |
+Z | standardizirana slučajna spremenljivka | Z = \frac{X - \mu}{\sigma} | | porazdeljena N(0, 1)
+\Phi | porazdelitvena funkcija N(0, 1) | \Phi(z) = P(Z \le z) | |
 :::
