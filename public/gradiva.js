@@ -169,6 +169,9 @@ function applyAction(simEl, a) {
   if (a.do === "click") {
     const b = [...simEl.querySelectorAll("button, [role=button]")].find((x) => x.getAttribute("aria-label")?.trim() === a.target || x.textContent.trim() === a.target);
     if (b) return b.click(), true;
+    // Potrditveno polje (kit.toggle): klik na njegov napis ga preklopi.
+    const c = [...simEl.querySelectorAll("label.demo-check")].find((x) => x.textContent.trim() === a.target)?.querySelector("input");
+    if (c) return c.click(), true;
   }
   console.warn(`Video: v simulaciji ni »${a.target}«.`);
   return false;

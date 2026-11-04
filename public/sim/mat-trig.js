@@ -1,6 +1,6 @@
 // Simulacije: kotne funkcije (pravokotni trikotnik, enotska krožnica, grafi, adicijski izreki, enačbe),
 // vektorji, krožnica in stožnice, obodni in središčni kot.
-import { h, s, svgBox, slider, segmented, toggle, readout, layout, tex, texBlock, fmt, tfmt, clamp, label, axes, fnPath, arrow, animate, playButton, buttons, draggable, handle, deg, rad, gcd } from "./kit.js";
+import { h, s, svgBox, slider, select, segmented, toggle, readout, layout, tex, texBlock, fmt, tfmt, clamp, label, axes, fnPath, arrow, animate, playButton, buttons, draggable, handle, deg, rad, gcd } from "./kit.js";
 
 const PI = Math.PI;
 const T = (x, d = 2) => tfmt(x, d);
@@ -101,8 +101,13 @@ export function trigTrikotnik(el) {
 }
 
 // ------------------------------------------------------------ enotska krožnica
-const QUAD = (a) => (a === 0 || a === 90 || a === 180 || a === 270 ? 0 : a < 90 ? 1 : a < 180 ? 2 : a < 270 ? 3 : 4);
-const refAngle = (a) => (a <= 90 ? a : a <= 180 ? 180 - a : a <= 270 ? a - 180 : 360 - a);
+// Kvadrant kota (0 = na osi). Kot najprej prevedemo na [0°, 360°) in toleriramo napako zaokroževanja (360° je na osi).
+const QUAD = (a) => {
+  a = norm360(a);
+  const r = a % 90;
+  return r < 1e-9 || 90 - r < 1e-9 ? 0 : Math.floor(a / 90) + 1;
+};
+const refAngle = (a) => ((a = norm360(a)), a <= 90 ? a : a <= 180 ? 180 - a : a <= 270 ? a - 180 : 360 - a);
 const clean = (x) => (Math.abs(x) < 1e-10 ? 0 : x);
 
 export function enotska(el, { mode = "krog" } = {}) {
@@ -255,8 +260,10 @@ function adicija(el) {
     const sa = sinD(a), ca = cosD(a), sb = sinD(b), cb = cosD(b);
     const sg = sinD(g), cg = cosD(g);
     const pm = op === "+" ? "+" : "-", mp = op === "+" ? "-" : "+";
-    out.innerHTML = texBlock(`\\sin(\\alpha ${pm} \\beta) = \\sin\\alpha\\cos\\beta ${pm} \\cos\\alpha\\sin\\beta = ${T(sa, 3)}\\cdot ${T(cb, 3)} ${pm} ${T(ca, 3)}\\cdot ${T(sb, 3)} = ${T(sg, 3)}`) +
-      texBlock(`\\cos(\\alpha ${pm} \\beta) = \\cos\\alpha\\cos\\beta ${mp} \\sin\\alpha\\sin\\beta = ${T(ca, 3)}\\cdot ${T(cb, 3)} ${mp} ${T(sa, 3)}\\cdot ${T(sb, 3)} = ${T(cg, 3)}`) +
+    // negativen faktor v oklepaju: 0,866 · (−0,5)
+    const F3 = (x) => (Number(x.toFixed(3)) < 0 ? `(${T(x, 3)})` : T(x, 3));
+    out.innerHTML = texBlock(`\\sin(\\alpha ${pm} \\beta) = \\sin\\alpha\\cos\\beta ${pm} \\cos\\alpha\\sin\\beta = ${F3(sa)}\\cdot ${F3(cb)} ${pm} ${F3(ca)}\\cdot ${F3(sb)} = ${T(sg, 3)}`) +
+      texBlock(`\\cos(\\alpha ${pm} \\beta) = \\cos\\alpha\\cos\\beta ${mp} \\sin\\alpha\\sin\\beta = ${F3(ca)}\\cdot ${F3(cb)} ${mp} ${F3(sa)}\\cdot ${F3(sb)} = ${T(cg, 3)}`) +
       `<p>Preverba na krožnici: kot α ${op === "+" ? "+" : "−"} β = ${g}°, njegova točka ima koordinati (${fmt(cg, 3)}, ${fmt(sg, 3)}). <b>Pozor:</b> sin(α ${op === "+" ? "+" : "−"} β) ni sin α ${op === "+" ? "+" : "−"} sin β = ${fmt(op === "+" ? sa + sb : sa - sb, 3)}.</p>
        <p class="muted">${a === b && op === "+" ? `Ker je β = α, dobimo formuli za dvojni kot: sin 2α = 2 sin α cos α = ${fmt(2 * sa * ca, 3)}, cos 2α = cos²α − sin²α = ${fmt(ca * ca - sa * sa, 3)}.` : "Nastavi β = α, pa dobiš formuli za dvojni kot."}</p>`;
   };
@@ -278,7 +285,7 @@ function trigEnacba(el) {
   const out = readout();
   let fn = "sin", k = 0.5;
   const ccx = 62, cy = 110, R = 50, gx0 = 128, gx1 = 332, sx = (gx1 - gx0) / (2 * PI);
-  const ks = slider({ label: "desna stran k", min: -1.5, max: 1.5, step: 0.05, value: k, onInput: (v) => ((k = v), draw()) });
+  const ks = slider({ label: "desna stran a", min: -1.5, max: 1.5, step: 0.05, value: k, onInput: (v) => ((k = v), draw()) });
   const draw = () => {
     svg.replaceChildren();
     s("circle", { cx: ccx, cy, r: R, class: "guide solid", fill: "none" }, svg);
@@ -324,23 +331,25 @@ function trigEnacba(el) {
     if (!sol.length) html += `<p><b>Enačba nima rešitev</b>, ker je ${fn === "sin" ? "sinus" : "kosinus"} vedno med −1 in 1: premica y = ${fmt(k)} ne seka grafa.</p>`;
     else {
       html += `<p>Rešitve na [0, 2π): ${sol.map((x, i) => `<span class="dot dot-${i ? "c" : "b"}"></span> x${i ? "₂" : "₁"} = ${fmtX(x)}`).join(", ")}.</p>`;
+      // pri sin x = ±1 in cos x = ±1 se obe veji splošne rešitve ujemata: ena točka na krožnici
+      const one = sol.length === 1;
       const gen = {
-        sin: `x = \\arcsin(${T(k)}) + 2k\\pi \\ \\text{ ali } \\ x = \\pi - \\arcsin(${T(k)}) + 2k\\pi`,
-        cos: `x = \\pm\\arccos(${T(k)}) + 2k\\pi`,
+        sin: one ? `x = \\arcsin(${T(k)}) + 2k\\pi` : `x = \\arcsin(${T(k)}) + 2k\\pi \\ \\text{ ali } \\ x = \\pi - \\arcsin(${T(k)}) + 2k\\pi`,
+        cos: one ? `x = \\arccos(${T(k)}) + 2k\\pi` : `x = \\pm\\arccos(${T(k)}) + 2k\\pi`,
         tan: `x = \\arctan(${T(k)}) + k\\pi`,
       }[fn];
-      html += `<p>Splošna rešitev (k ∈ ℤ):</p>${texBlock(gen)}<p class="muted">${fn === "tan" ? "Tangens ima periodo π, zato rešitve ponavljamo na π." : "Na krožnici sta dve točki z enako " + (fn === "sin" ? "ordinato (zrcalno čez os y)." : "absciso (zrcalno čez os x).")} Neskončno rešitev dobimo, ker so kotne funkcije periodične.</p>`;
+      html += `<p>Splošna rešitev (k ∈ ℤ):</p>${texBlock(gen)}<p class="muted">${fn === "tan" ? "Tangens ima periodo π, zato rešitve ponavljamo na π." : one ? `Na krožnici je samo ena točka z ${fn === "sin" ? "ordinato" : "absciso"} ${fmt(k)}: premica se krožnice le dotakne.` : "Na krožnici sta dve točki z enako " + (fn === "sin" ? "ordinato (zrcalno čez os y)." : "absciso (zrcalno čez os x).")} Neskončno rešitev dobimo, ker so kotne funkcije periodične.</p>`;
     }
     out.innerHTML = html;
   };
   layout(el, {
     stage: [svg],
     controls: [
-      segmented({ options: [["sin", "sin x = k"], ["cos", "cos x = k"], ["tan", "tan x = k"]], value: fn, onChange: (v) => ((fn = v), (k = clamp(k, -1.5, 1.5)), draw()) }),
+      segmented({ options: [["sin", "sin x = a"], ["cos", "cos x = a"], ["tan", "tan x = a"]], value: fn, onChange: (v) => ((fn = v), (k = clamp(k, -1.5, 1.5)), draw()) }),
       ks,
     ],
     out,
-    tryText: "Pri katerih vrednostih k ima enačba sin x = k na [0, 2π) samo eno rešitev?",
+    tryText: "Pri katerih vrednostih a ima enačba sin x = a na [0, 2π) samo eno rešitev?",
   });
   draw();
 }
@@ -350,7 +359,15 @@ export function vektorji(el, { mode = "vsota" } = {}) {
   const svg = svgBox(340, 340);
   const out = readout();
   let a = [3, 1], b = [1, 3], op = "+", kk = 2;
-  const ctl = [];
+  // prednastavljena para (za predvajalnik videa, ki ne more vleči); vlečenje izbiro preklopi na »lastna«
+  const PARI = { 1: [[3, 1], [1, 3]], 2: [[3, 1], [-1, 3]], 3: [[3, 1], [-3, 1]], 4: [[2, 0], [4, 0]] };
+  const par = select({
+    label: "vektorja",
+    options: [["1", "a (3, 1), b (1, 3): oster kot"], ["2", "a (3, 1), b (−1, 3): pravi kot"], ["3", "a (3, 1), b (−3, 1): top kot"], ["4", "a (2, 0), b (4, 0): vzporedna"], ["0", "lastna (povleci konca)"]],
+    value: "1",
+    onChange: (v) => PARI[v] && ((a = [...PARI[v][0]]), (b = [...PARI[v][1]]), draw()),
+  });
+  const ctl = [par];
   const draw = () => {
     svg.replaceChildren();
     const A = axes(svg, { W: 340, H: 340, x: [-6, 6], y: [-6, 6], xStep: 1, yStep: 1 });
@@ -411,6 +428,7 @@ export function vektorji(el, { mode = "vsota" } = {}) {
         if (nu !== v[0] || nw !== v[1]) {
           v[0] = nu;
           v[1] = nw;
+          par.sel.value = "0";
           draw();
         }
       });
@@ -424,7 +442,7 @@ export function vektorji(el, { mode = "vsota" } = {}) {
   }
   layout(el, {
     stage: [svg],
-    controls: ctl.length ? ctl : null,
+    controls: ctl,
     out,
     tryText: mode === "vsota" ? "Kdaj je |a + b| = |a| + |b|? Kdaj je a + b ničelni vektor?" : "Postavi a = (3, 1). Poišči vektor b, ki je pravokoten na a.",
   });

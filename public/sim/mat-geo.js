@@ -530,19 +530,39 @@ export function trikotnik(el, { mode = "vrste" } = {}) {
         <li><span class="dot" style="background:var(--danger)"></span> <b>V</b>: višinska točka, presečišče nosilk višin.</li></ul>
         <p class="muted">${Math.max(r1, r2, r3) > 90 ? "Trikotnik je topokoten: O in V ležita zunaj trikotnika." : Math.max(r1, r2, r3) === 90 ? "Pri pravokotnem trikotniku je O na sredini hipotenuze, V v pravem kotu." : "Pri ostrokotnem trikotniku so vse štiri točke znotraj."} O, T in V vedno ležijo na isti premici (Eulerjeva premica).</p>`;
     } else {
-      const A2 = (x) => tfmt(x, 2);
-      const sa = a / CM, sb = b / CM, sc = c / CM;
-      html = texBlock(`\\frac{a}{\\sin\\alpha} = \\frac{${A2(sa)}}{\\sin ${r1}^\\circ} = ${A2(sa / Math.sin(rad(al)))},\\quad \\frac{b}{\\sin\\beta} = ${A2(sb / Math.sin(rad(be)))},\\quad \\frac{c}{\\sin\\gamma} = ${A2(sc / Math.sin(rad(ga)))}`) +
-        `<p><b>Sinusni izrek</b>: razmerje stranice in sinusa nasprotnega kota je za vse tri enako (= 2R, premer očrtane krožnice).</p>` +
-        texBlock(`c^2 = a^2 + b^2 - 2ab\\cos\\gamma:\\quad ${A2(sc * sc)} = ${A2(sa * sa)} + ${A2(sb * sb)} - 2\\cdot ${A2(sa)}\\cdot ${A2(sb)}\\cdot\\cos ${r3}^\\circ`) +
-        `<p><b>Kosinusni izrek</b> posploši Pitagorov izrek: pri γ = 90° je cos γ = 0. ${r3 > 90 ? "Kot γ je top, cos γ < 0, zato je c² večji od a² + b²." : r3 < 90 ? "Kot γ je oster, zato je c² manjši od a² + b²." : ""}</p>`;
+      // Vse izpisane rezultate računamo iz izpisanih (zaokroženih) podatkov, da jih učenec lahko ponovi:
+      // stranici a, b in kota α, β na 2 decimalki, γ = 180° − α − β, c iz kosinusnega izreka.
+      const A2 = (x) => tfmt(x, 2), K1 = (x) => tfmt(x, 2), r2d = (x) => Number(x.toFixed(2));
+      const al1 = r2d(al), be1 = r2d(be), ga1 = r2d(180 - al1 - be1);
+      const sa = r2d(a / CM), sb = r2d(b / CM);
+      const c2 = sa * sa + sb * sb - 2 * sa * sb * Math.cos(rad(ga1)), sc = r2d(Math.sqrt(Math.max(c2, 0)));
+      const q = [sa / Math.sin(rad(al1)), sb / Math.sin(rad(be1)), sc / Math.sin(rad(ga1))];
+      const razlika = new Set(q.map((x) => x.toFixed(2))).size > 1;
+      html = texBlock(`\\begin{aligned}\\frac{a}{\\sin\\alpha} &= \\frac{${A2(sa)}}{\\sin ${K1(al1)}^\\circ} = ${A2(q[0])}\\\\ \\frac{b}{\\sin\\beta} &= \\frac{${A2(sb)}}{\\sin ${K1(be1)}^\\circ} = ${A2(q[1])}\\\\ \\frac{c}{\\sin\\gamma} &= \\frac{${A2(sc)}}{\\sin ${K1(ga1)}^\\circ} = ${A2(q[2])}\\end{aligned}`) +
+        `<p><b>Sinusni izrek</b>: razmerje stranice in sinusa nasprotnega kota je za vse tri enako (= 2R, premer očrtane krožnice).${razlika ? " Razlike v zadnji decimalki so posledica zaokroževanja." : ""}</p>` +
+        texBlock(`c^2 = a^2 + b^2 - 2ab\\cos\\gamma = ${A2(sa)}^2 + ${A2(sb)}^2 - 2\\cdot ${A2(sa)}\\cdot ${A2(sb)}\\cdot\\cos ${K1(ga1)}^\\circ \\approx ${A2(c2)},\\quad c \\approx ${A2(sc)}`) +
+        `<p><b>Kosinusni izrek</b> posploši Pitagorov izrek: pri γ = 90° je cos γ = 0. ${ga1 > 90 ? "Kot γ je top, cos γ < 0, zato je c² večji od a² + b²." : ga1 < 90 ? "Kot γ je oster, zato je c² manjši od a² + b²." : ""}</p>`;
     }
     out.innerHTML = html;
     place();
   };
-  const place = dragPoints(svg, top, pts, draw, { bounds: [10, 10, 330, 280] });
+  // Pri izrekih lahko trikotnik izberemo tudi brez vlečenja (predvajalnik videa ne more vleči): podani a, b (cm) in γ.
+  const TRI = { ostrokotni: [6, 7, 60], topokotni: [4, 5, 120], pravokotni: [6, 8, 90] };
+  let triSel = null;
+  const setTri = (key) => {
+    if (!TRI[key]) return;
+    const [ta, tb, tg] = TRI[key];
+    const tc = Math.sqrt(ta * ta + tb * tb - 2 * ta * tb * Math.cos(rad(tg)));
+    const tal = Math.acos((tb * tb + tc * tc - ta * ta) / (2 * tb * tc)), x0 = 170 - (tc * CM) / 2;
+    pts.A = [x0, 250];
+    pts.B = [x0 + tc * CM, 250];
+    pts.C = [x0 + tb * CM * Math.cos(tal), 250 - tb * CM * Math.sin(tal)];
+    draw();
+  };
+  const place = dragPoints(svg, top, pts, () => (triSel && (triSel.sel.value = "lastni"), draw()), { bounds: [10, 10, 330, 280] });
   if (mode === "tocke") show.T = true;
-  const ctl = mode === "tocke" ? [buttons(...["O", "S", "T", "H"].map((k) => toggle({ O: "simetrale stranic", S: "simetrale kotov", T: "težiščnice", H: "višine" }[k], show[k], (v) => ((show[k] = v), draw()))))] : [];
+  if (mode === "izreki") triSel = select({ label: "trikotnik", options: [["lastni", "lastni (povleci oglišča)"], ["ostrokotni", "ostrokotni: a 6 cm, b 7 cm, γ 60°"], ["topokotni", "topokotni: a 4 cm, b 5 cm, γ 120°"], ["pravokotni", "pravokotni: a 6 cm, b 8 cm, γ 90°"]], value: "lastni", onChange: setTri });
+  const ctl = mode === "tocke" ? [buttons(...["O", "S", "T", "H"].map((k) => toggle({ O: "simetrale stranic", S: "simetrale kotov", T: "težiščnice", H: "višine" }[k], show[k], (v) => ((show[k] = v), draw()))))] : triSel ? [triSel] : [];
   layout(el, {
     stage: [svg],
     controls: ctl,

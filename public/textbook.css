@@ -1,7 +1,7 @@
 /* Učbenik in interaktivne demonstracije. Barve samo iz spremenljivk v :root. */
 
-.textbook, .lab-view { --demo-a: #e8833a; --demo-b: #2f9e8f; --demo-c: #7b61d1; }
-.dark .textbook, .dark .lab-view { --demo-a: #f2a061; --demo-b: #4cc3b2; --demo-c: #a58ff0; }
+.textbook, .lab-view, .gr-video { --demo-a: #e8833a; --demo-b: #2f9e8f; --demo-c: #7b61d1; }
+.dark .textbook, .dark .lab-view, .dark .gr-video { --demo-a: #f2a061; --demo-b: #4cc3b2; --demo-c: #a58ff0; }
 
 /* Ikone v učbeniku. Ne KaTeX: njegovi SVG-ji (znak korena s črto, puščice, oklepaji) imajo svojo širino (j 2026-10-31). */
 .textbook svg:not(.demo-svg):not(.katex svg) { width: 1.1em; height: 1.1em; vertical-align: -0.15em; margin-right: 6px; }
