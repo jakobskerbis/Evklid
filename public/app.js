@@ -1245,6 +1245,7 @@ async function pickSubject(item) {
   else if (currentView === "me") renderMe();
   else if (currentView === "exams") loadExams();
   else if (currentView === "competition") regionalExams() ? loadExams() : loadCompetition();
+  else if (currentView === "cards") showFlashcards();
 }
 
 async function fillCourseOptions() {
@@ -1388,7 +1389,10 @@ $("#settings-form").addEventListener("submit", async (e) => {
   fillDeleteCard();
   refreshProfileButton();
   renderState(null);
-  if (levelChanged(before, updated.settings)) state.pathKey = null;
+  if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
+    state.pathKey = null; // Ponavljanje in Kartice (state.pathKey) za novi predmet, ne za prejšnjega
+    refreshModes();
+  }
   // Prehod OŠ → SŠ ali SŠ → fakulteta: na Učni poti pokažemo, kaj je novega.
   const up = stageUp(before, updated.settings);
   if (up) {
@@ -1414,7 +1418,10 @@ function studentUpdated(updated) {
   leaveHiddenGames();
   refreshProfileButton();
   renderState(null);
-  if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) state.pathKey = null;
+  if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
+    state.pathKey = null;
+    refreshModes(); // številki na gumbih Ponavljanje in Kartice za novi predmet
+  }
   const up = stageUp(before, updated.settings);
   if (up) state.welcome = { stage: up };
   if (!$("#view-settings").hidden) fillSettingsForm();
@@ -1873,7 +1880,7 @@ async function showTestPrep(edit = false) {
     const when = plan.daysLeft === 0 ? t("test.today") : plan.daysLeft === 1 ? t("test.tomorrow") : t("test.inDays", { n: plan.daysLeft });
     box.innerHTML = `<h1 class="with-icon">${icon("clipboard-check")} ${t("mode.test")}</h1>
       <div class="card"><p>${t("test.when", { when, date: escapeHtml(new Date(plan.date).toLocaleDateString(locale())) })}</p>
-      <p class="muted">${t("test.material", { list: plan.unitTitles.map(escapeHtml).join(", ") })}</p>
+      <p class="muted">${t("test.material", { list: (plan.subject && state.pathSubject && plan.subject !== state.pathSubject ? `${escapeHtml(SUBJECT_NAMES[plan.subject] || plan.subject)} – ` : "") + plan.unitTitles.map(escapeHtml).join(", ") })}</p>
       <p class="muted">${t("test.howto")}</p>
       <div class="actions"><button class="primary" id="tp-start">${t("test.startToday")}</button><button id="tp-edit">${t("common.change")}</button></div></div>`;
     $("#tp-start").addEventListener("click", () => startSession("test-prep"));
@@ -1960,7 +1967,10 @@ async function loadPath(key = state.pathKey) {
     content.innerHTML = `<p class="muted">${escapeHtml(p.message)}</p>`;
     return;
   }
+  const changed = state.pathKey !== p.key;
   state.pathKey = p.key;
+  state.pathSubject = paths.find((x) => x.key === p.key)?.subject || state.student.settings.subject;
+  if (changed) refreshModes(); // fakulteta: drug predmet iz seznama poti
   showLevelCard();
   renderScheduleCard($("#schedule-card"));
   syncOfflineBanner();
@@ -2254,6 +2264,7 @@ async function startSession(kind, body = {}) {
   if (examMode() && kind === "tek") cfg = { ...cfg, icon: "target", title: t("exam.train"), intro: t("exam.trainText") };
   if (examMode() && kind === "contest") cfg = { ...cfg, title: t("exam.mock"), intro: t("exam.mockIntro") };
   setActiveMode({ review: "review", daily: "daily", "test-prep": "test" }[kind] || null);
+  if (kind === "review" && state.pathKey) body = { path: state.pathKey, ...body }; // le izbrani predmet
   let out;
   try {
     out = await api(`/api/students/${state.student.id}/${cfg.endpoint || kind}`, { method: "POST", body });
@@ -3768,7 +3779,7 @@ makeSplitter($("#view-path"), splitOpts("path"));
 makeSplitter($("#topic-content"), splitOpts("topic"));
 makeSplitter($("#view-textbook"), splitOpts("lesson"));
 
-initFlashcards({ api, renderRich, escapeHtml, toast, showView, getStudent: () => state.student, onDue: setCardsDue });
+initFlashcards({ api, renderRich, escapeHtml, toast, showView, getStudent: () => state.student, getPath: () => state.pathKey, subjectName: () => SUBJECT_NAMES[(state.pathKey && state.pathSubject) || state.student?.settings.subject] || "", onDue: setCardsDue });
 
 // Urnik (public/schedule.js): po spremembi se osvežita kartica »Danes imaš …« in Priprava na test.
 function scheduleChanged() {

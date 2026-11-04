@@ -187,7 +187,7 @@ test("tutor flashcards: saved from a reply, shown as an event, reviewed with spa
     '<<META subject=FIZ topic="gostota" error=0 mode=A flag=none done=0>>';
   const shield = "Ne.\n<<KARTICA\nV: Skrito?\nO: Ne sme se shraniti.\n>>\n<<META subject=FIZ topic=\"-\" error=0 mode=A flag=injection done=0>>";
   await withServer([reply, reply, shield], async ({ call, seen, store }) => {
-    const s = (await call("/api/students", { method: "POST", body: { name: "Nika" } })).body;
+    const s = (await call("/api/students", { method: "POST", body: { name: "Nika", settings: { educational_track: "OSNOVNA_SOLA", curriculum_level: "8. razred", subject: "FIZ" } } })).body;
     const c = (await call(`/api/students/${s.id}/conversations`, { method: "POST" })).body;
     const r = await call(`/api/conversations/${c.id}/messages`, { method: "POST", body: { text: "kaj je gostota" } });
     const ev = events(r.body);
@@ -209,6 +209,14 @@ test("tutor flashcards: saved from a reply, shown as an event, reviewed with spa
     const card = list.cards[0];
     assert.equal(card.topic, "gostota");
     assert.equal((await call(`/api/students/${s.id}/modes`)).body.cardsDue, 1);
+    // Pod gumbi učne poti le kartice izbranega predmeta (j, 4. 11.): pri matematiki fizikalne kartice ni.
+    assert.equal((await call(`/api/students/${s.id}/flashcards?path=MAT-OS-8`)).body.total, 0);
+    assert.equal((await call(`/api/students/${s.id}/modes?path=MAT-OS-8`)).body.cardsDue, 0);
+    await call(`/api/students/${s.id}`, { method: "PUT", body: { settings: { subject: "MAT" } } });
+    assert.equal((await call(`/api/students/${s.id}/modes`)).body.cardsDue, 0);
+    assert.equal((await call(`/api/students/${s.id}/flashcards`)).body.total, 0);
+    assert.equal((await call(`/api/students/${s.id}/flashcards?path=FIZ-OS-8`)).body.total, 1);
+    await call(`/api/students/${s.id}`, { method: "PUT", body: { settings: { subject: "FIZ" } } });
 
     // Znam: naslednja škatla, na vrsti čez 1 dan. Ne znam: nazaj na začetek, na vrsti takoj.
     let rv = (await call(`/api/students/${s.id}/flashcards/${card.id}/review`, { method: "POST", body: { ok: true } })).body;
