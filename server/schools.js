@@ -321,6 +321,7 @@ export class Schools {
       subject: c.subject ?? null,
       path: c.path ?? null,
       offersOff: !!c.offers_off,
+      showcaseOff: !!c.showcase_off,
       members: c.members,
       assignments: c.assignments,
     };

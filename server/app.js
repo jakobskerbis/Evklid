@@ -16,6 +16,7 @@ import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
 import { Progress } from "./progress.js";
 import { mountLeagues } from "./leagues.js";
+import { mountClassShowcase } from "./vitrina.js";
 import { mountGradiva } from "./gradiva.js";
 import { mountKviz } from "./kviz.js";
 import { mountSchools } from "./schools.js";
@@ -1286,6 +1287,7 @@ export function createApp(store, opts = {}) {
   mountLab(app, { loadStudent, accounts }); // virtualni laboratorij: vsi poskusi, zaklep kot v učbeniku
   mountAvatar(app, avatars, { loadStudent, trendsFile: opts.trendsFile ?? null });
   mountKnowledge(app, knowledge, { loadStudent, avatars });
+  mountClassShowcase(app, store.db, { loadStudent, leagues, knowledge }); // vitrina v razredu (opt-in, server/vitrina.js)
   mountCorner(app, store, { loadStudent, fetchFn: opts.newsFetch, offline: opts.newsOffline });
   mountSchedule(app, store, { loadStudent, progress, usage, schedules, photoFn: opts.schedulePhotoFn, fetchFn: opts.fetchFn, lookup: opts.lookup, modelCapFor: (id) => accounts?.modelCapFor?.(id) ?? null });
   mountScan(app, { loadStudent, usage, readFn: opts.scanReadFn, solveFn: opts.scanSolveFn });
