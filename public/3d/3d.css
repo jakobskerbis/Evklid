@@ -133,7 +133,7 @@
 
 /* ---------- stran /3d ---------- */
 html.k3-stran, html.k3-stran body { margin: 0; height: 100%; background: #0b0f16; color-scheme: dark; }
-html.k3-stran body { overflow: hidden; }
+html.k3-stran, html.k3-stran body { overflow: hidden; max-width: 100%; } /* nič čez desni rob (Android razširi postavitev) */
 .k3-glavni { position: fixed; inset: 0; overflow: auto; overscroll-behavior: contain; }
 /* Evklidova tipkovnica na strani /3d (tipkovnica-strani.js): barve plošče iz barv odra (stran nima style.css), odprta
    tipkovnica skrajša stran, da iskalnik in zadetki ostanejo nad njo. */
