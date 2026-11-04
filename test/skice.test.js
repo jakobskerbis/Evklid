@@ -245,3 +245,39 @@ test("eksponentna in logaritemska pri a blizu 1: graf nima navpičnih skokov če
       for (let i = 1; i < tocke.length; i++) if (tocke[i][0] === "L") assert.ok(Math.abs(tocke[i][1] - tocke[i - 1][1]) < 274, `a = ${a}`);
     }
 });
+
+test("stožnice: r₁ + r₂ = 2a, |r₁ − r₂| = 2a, d(T, G) = d(T, v) za vsak položaj T", async () => {
+  const { elipsa, hiperbola, parabola, kroznica } = await import("../public/skice/stoznice.js");
+  for (let a = 1; a <= 5.5; a += 0.5)
+    for (let b = 0.5; b <= a; b += 0.5)
+      for (let t = -Math.PI; t <= Math.PI; t += 0.3) {
+        const q = elipsa(a, b, t);
+        assert.ok(Math.abs(q.r1 + q.r2 - 2 * a) < 1e-9);
+        assert.ok(Math.abs(q.T[0] ** 2 / a ** 2 + q.T[1] ** 2 / b ** 2 - 1) < 1e-9);
+      }
+  for (let a = 0.5; a <= 3.5; a += 0.5)
+    for (let b = 0.5; b <= 3.5; b += 0.5)
+      for (let t = -2.2; t <= 2.2; t += 0.4) // (skica omeji t še na okvir)
+        for (const v of [1, -1]) {
+          const q = hiperbola(a, b, t, v);
+          assert.ok(Math.abs(Math.abs(q.r1 - q.r2) - 2 * a) < 1e-9);
+          assert.ok(Math.abs(q.T[0] ** 2 / a ** 2 - q.T[1] ** 2 / b ** 2 - 1) < 1e-9);
+        }
+  for (let p = 0.5; p <= 4; p += 0.5)
+    for (let y = -4.3; y <= 4.3; y += 0.7) {
+      const q = parabola(p, y);
+      assert.ok(Math.abs(q.dG - q.dV) < 1e-9);
+      assert.ok(Math.abs(q.T[1] ** 2 - 2 * p * q.T[0]) < 1e-9);
+    }
+  assert.equal(kroznica(1, -2, 3).enacba, "(x − 1)² + (y + 2)² = 9");
+  assert.equal(kroznica(0, 0.5, 2.5).enacba, "x² + (y − 0,5)² = 6,25");
+});
+
+test("hiperbola: točka T ostane v okvirju za vse a in b", async () => {
+  const { tMeja } = await import("../public/skice/hiperbola.js");
+  for (let a = 0.5; a <= 3.5; a += 0.5)
+    for (let b = 0.5; b <= 3.5; b += 0.5) {
+      const m = tMeja(a, b);
+      assert.ok(a * Math.cosh(m) <= 5.8 + 1e-9 && b * Math.sinh(m) <= 4.3 + 1e-9);
+    }
+});
