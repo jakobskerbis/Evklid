@@ -4,6 +4,7 @@ import { buildModel, emptyState, newId, derivativeOf, sliderRange, MODELS, DEFAU
 import { niceNumber, parse, compile } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { EXAMPLES } from "./examples.js";
+import { exampleIcon } from "./ex-ikone.js";
 import { configureKeyboard, initKeyboard, toggleKeyboard, keyboardOpenFor } from "../tipkovnica.js";
 
 const MAX_HISTORY = 80;
@@ -912,7 +913,7 @@ export function createCalculator(root, opts) {
 
   function openExamples(anchor) {
     const html = `<div class="gc-pop-h">${esc(t("gc.examples"))}</div><div class="gc-ex-list">${EXAMPLES.map(
-      (ex, i) => `<button type="button" class="gc-ex" data-ex="${i}"><span class="gc-ex-ic">${icon(ex.icon || "chart-spline")}</span><span class="gc-ex-tex">${tex(ex.label)}</span></button>`,
+      (ex, i) => `<button type="button" class="gc-ex" data-ex="${i}"><span class="gc-ex-ic">${exampleIcon(ex, icon)}</span><span class="gc-ex-tex">${tex(ex.label)}</span></button>`,
     ).join("")}</div>`;
     openPop(
       html,

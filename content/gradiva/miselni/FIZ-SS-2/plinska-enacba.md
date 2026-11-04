@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Stanje plina
+  - $p$ v Pa, $V$ v $\mathrm{m^3}$, $T$ v K
+  - $1\,\mathrm{L} = 10^{-3}\,\mathrm{m^3}$
+- Stalna temperatura
+  - $p_1 V_1 = p_2 V_2$
+  - mehurček z dna jezera se napihne
+- Stalni tlak
+  - $\dfrac{V_1}{T_1} = \dfrac{V_2}{T_2}$
+  - balon v mrazu se skrči
+- Stalna prostornina
+  - $\dfrac{p_1}{T_1} = \dfrac{p_2}{T_2}$
+  - guma zjutraj mehkejša
+- Združeni zakon
+  - $\dfrac{p_1 V_1}{T_1} = \dfrac{p_2 V_2}{T_2}$
+  - vremenski balon na višini
+- Plinska enačba
+  - $pV = nRT$, $R = 8{,}31\,\mathrm{J/(mol\,K)}$
+  - $n = \dfrac{m}{M}$
+  - napaka: kPa ali litri v enačbi
+- Idealni plin
+  - molekule kot točke, le trki
+  - odstopa blizu utekočinjenja
+- Absolutna temperatura
+  - $T = t + 273\,\mathrm{K}$
+  - podvojeni °C ne pomenijo podvojitve

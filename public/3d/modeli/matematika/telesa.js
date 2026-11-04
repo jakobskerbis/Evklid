@@ -442,6 +442,7 @@ export function zgradi(THREE, ctx) {
   // zraste ali se skrči (prej se je vsakič samo prilagodilo zaslonu in se je spremenilo le merilo).
   const MERE = ["a", "b", "c", "r", "a1", "a2", "r1", "r2", "v"];
   let Dfiks = 0, zadnja = "";
+  const OHRANI = ["prosojno", "prerez", "lega", "nagib", "zasuk", "razpri"];
   const kljucMer = () => MERE.filter((k) => rabi(k)()).map((k) => S[k]).join(); // le mere izbranega telesa
   const naslednjaLepa = (x) => LEPA.find((l) => l >= x - 1e-9) ?? x;
   const robSeg = []; // [x1,y1,z1,x2,y2,z2] ...
@@ -528,6 +529,7 @@ export function zgradi(THREE, ctx) {
     { // zloženo telo: lepa (okrogla) dolžina merila
       const T0 = e > 0 ? (() => { izracunajMatrike(T, 0); const t0 = []; for (const F of T.F) for (const p of F.p) t0.push(p.clone().applyMatrix4(F.M)); if (T.plasc) for (let i = 0; i <= 16; i++) { t0.push(plascTocka(T.plasc, -1 + i / 8, 0, 0, new Vector3()), plascTocka(T.plasc, -1 + i / 8, 1, 0, new Vector3())); } izracunajMatrike(T, e); return t0; })() : lokTocke;
       D0 = lepD(meje(T0, _d), 0.9);
+      if (e > 0 && Dfiks > 0) D0 = Math.max(D0, Dfiks); // razpiranje začne pri trenutnem merilu (brez skoka)
       if (e > 0) {
         izracunajMatrike(T, 1);
         const t1 = []; for (const F of T.F) for (const p of F.p) t1.push(p.clone().applyMatrix4(F.M));
@@ -539,12 +541,13 @@ export function zgradi(THREE, ctx) {
       } else D = D0;
     }
     if (e <= 1e-4) {
-      if (MERE.includes(zadnja) && Dfiks > 0) {
+      // merilo ostane tudi ob stikalih, ravnini in zložitvi mreže; na novo se prilagodi ob novem telesu
+      if ((MERE.includes(zadnja) || OHRANI.includes(zadnja)) && Dfiks > 0) {
         if (D > Dfiks) Dfiks = naslednjaLepa(D * 1.25); // preraslo: večji korak, da naslednji premiki spet vidno rastejo
-        else if (D < Dfiks * 0.45) Dfiks = D;
+        else if (MERE.includes(zadnja) && D < Dfiks * 0.45) Dfiks = D;
       } else Dfiks = D;
       D = Dfiks;
-    } else Dfiks = D;
+    }
     s = 2 / D;
     telo.scale.setScalar(s); telo.position.copy(sred).multiplyScalar(-s);
     telo.updateMatrix();
@@ -1051,7 +1054,7 @@ export function zgradi(THREE, ctx) {
   }
 
   // ---------- nadzor ----------
-  const ob = (k) => (v) => { S[k] = v; zadnja = k; obnovi(); zadnja = ""; };
+  const ob = (k) => (v) => { S[k] = v; zadnja = k; if (k === "telo") Dfiks = 0; obnovi(); zadnja = ""; };
   // drsniki ravnine delujejo le, ko je mreža zložena (krogla nima mreže)
   const ravninaDela = () => S.prerez && (S.razpri <= 1e-4 || S.telo === "krogla");
   const api = {

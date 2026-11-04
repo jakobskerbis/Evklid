@@ -181,7 +181,7 @@ const state = {
 // ---------- izris matematike in markdowna ----------
 
 // Klikljive formule (formula-info.js): znani simboli in enote dobijo data-fx; renderMath(…, false) za gumbe.
-const { renderMath, renderRich } = createRenderer({ annotate: (tex) => annotateTex(tex) });
+const { renderMath, renderRich } = createRenderer({ annotate: (tex, o) => annotateTex(tex, undefined, o) });
 // Predmet za pomen simbolov: tema naloge (FIZ-OS-9 …), sicer predmet učenca.
 const subjectOfId = (id) => (/^([A-Z]{3})-/.exec(id || "") || [])[1];
 // Predmet teme: fakultetne teme (UNI-…) imajo predmet v podatkih, šolske ga imajo v oznaki.

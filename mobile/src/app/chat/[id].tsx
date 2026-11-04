@@ -365,7 +365,7 @@ function ReportButton({ conv, mid, text }: { conv: string; mid: number; text: st
   // shown: isti HTML, kot ga je izrisal RichText (skrbnik vidi napako izrisa, kot jo je videl učenec).
   const shown = () => {
     try {
-      const html = toHtml(text, { ai: true, fx });
+      const html = toHtml(text, { ai: true, fx, owner: {}, ownPage: true });
       return html.length <= 200000 ? html : undefined;
     } catch {
       return undefined;
@@ -429,7 +429,7 @@ function Bubble({ m, conv }: { m: Msg; conv: string }) {
   }
   return (
     <View style={{ alignSelf: "stretch", backgroundColor: m.error ? th.dangerSoft : th.surface, borderRadius: radius.card, borderWidth: 1, borderColor: m.error ? th.danger : th.border, padding: 14 }}>
-      {m.text ? <RichText text={m.text} ai streaming={m.streaming} size={16} /> : <Text style={{ color: th.muted, fontSize: 22 }}>…</Text>}
+      {m.text ? <RichText text={m.text} ai streaming={m.streaming} size={16} ownPage /> : <Text style={{ color: th.muted, fontSize: 22 }}>…</Text>}
       {typeof m.id === "number" && !m.streaming && !m.error ? <ReportButton conv={conv} mid={m.id} text={m.text} /> : null}
     </View>
   );

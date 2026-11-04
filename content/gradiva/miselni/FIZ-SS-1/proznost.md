@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Raztezek
+  - podaljšanje glede na dolžino brez bremena
+  - napaka: celotna dolžina vzmeti
+- Hookov zakon
+  - $F = k\,x$
+  - graf $F(x)$ je premica skozi izhodišče
+- Prožnostni koeficient
+  - enota $\mathrm{N/m}$
+  - večji $k$, trša vzmet
+  - pred računom: $m\,g$ in metri
+- Meja prožnosti
+  - čez njo vzmet ostane podaljšana
+  - Hookov zakon ne velja več
+- Vzporedna vezava
+  - enak raztezek, sili se seštejeta
+  - $k_\mathrm{v} = k_1 + k_2$
+- Zaporedna vezava
+  - enaka sila, raztezka se seštejeta
+  - $\dfrac{1}{k_\mathrm{z}} = \dfrac{1}{k_1} + \dfrac{1}{k_2}$
+  - mehkejša od vsake vzmeti

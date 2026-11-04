@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sosed dušika odloča
+  - ogljikovodikov ostanek: amin, baza
+  - skupina $\mathrm{C=O}$: amid, ni baza
+  - še $\mathrm{-COOH}$: aminokislina, dipolarni ion
+- Amini
+  - iz amoniaka, H zamenja alkilna skupina
+  - metanamin $\mathrm{CH_3NH_2}$, končnica -amin
+- Primarni, sekundarni, terciarni
+  - štejemo ogljike na dušiku
+  - napaka: razvrščanje kot pri alkoholih
+  - propan-2-amin je primarni
+- Bazičnost aminov
+  - nevezni par na N sprejme $\mathrm{H^+}$
+  - s kislino sol $\mathrm{RNH_3^+Cl^-}$, ne diši
+  - metanamin > amoniak > anilin
+- Amidi
+  - skupina $\mathrm{-CONH_2}$, etanamid
+  - par deli s $\mathrm{C=O}$, ni bazičen
+  - sečnina $\mathrm{(NH_2)_2CO}$ je diamid
+- Aminokisline
+  - $\mathrm{-NH_2}$ in $\mathrm{-COOH}$, glicin
+  - v vodi dipolarni ion, trdne snovi
+  - amfoterne; alanin kiralen, glicin ne
