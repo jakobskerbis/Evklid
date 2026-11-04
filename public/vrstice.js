@@ -8,10 +8,14 @@ const PREFIX = "evklid.vrsta.";
 const LONG_PRESS = 400;
 const rows = new Map(); // ime → [{ row, opts, def }]
 
+// Učbenik in Laboratorij sta od 4. 11. 2026 zavihka gumba »Uči se« (public/uci-se.js): v shranjenem redu zgornje in
+// spodnje vrstice »Uči se« dobi mesto, ki ga je imel Učbenik, Laboratorij odpade.
+const fromOld = (ids) => (ids.includes("uci") ? ids : ids.map((id) => (id === "textbook" ? "uci" : id)).filter((id) => id !== "lab"));
 const read = (key) => {
   try {
     const v = JSON.parse(localStorage.getItem(PREFIX + key));
-    return Array.isArray(v) ? v : null;
+    if (!Array.isArray(v)) return null;
+    return key === "tabs" || key === "tabbar" ? fromOld(v) : v;
   } catch {
     return null;
   }
