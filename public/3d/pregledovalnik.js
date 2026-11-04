@@ -64,6 +64,7 @@ export function odpriModel(el, mod, opts = {}) {
   });
 
   const btnPonastavi = mk("button", "k3-krog");
+  btnPonastavi.dataset.reset = ""; // scripts/preveri-simulacije.cjs ga prepozna kot »Ponastavi«
   btnPonastavi.type = "button";
   btnPonastavi.innerHTML = icon("rotate-ccw");
   btnPonastavi.setAttribute("aria-label", t("a3.reset"));
