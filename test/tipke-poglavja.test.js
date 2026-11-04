@@ -22,6 +22,16 @@ test("poglavje → profil tipk", () => {
   assert.equal(p("KEM-OS-8/molska-masa"), "kem");
   assert.equal(p("MAT-SS-1/x", { unit: "Statistika" }), "stat"); // tudi po imenu sklopa
   assert.equal(chapterProfile(null), null);
+  // ime teme pred imenom sklopa; »vrste trikotnikov«, »logika«, biologija niso analiza/logaritmi/enačbe
+  assert.equal(p("MAT-SS-4/obrestni-racun", { unit: "Zaporedja in vrste" }), "fin");
+  assert.equal(p("MAT-SS-4/statistika", { unit: "Kombinatorika in verjetnost" }), "stat");
+  assert.equal(p("MAT-OS-7/vrste-trikotnikov-in-notranji-koti", { unit: "Trikotnik" }), "geo");
+  assert.equal(p("MAT-SS-4/geometrijska-vrsta", { unit: "Zaporedja in vrste" }), "ana");
+  assert.equal(p("MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje", { unit: "Zaporedja in vrste" }), "eq");
+  assert.equal(p("MAT-SS-1/osnove-logike", { unit: "Množice in števila" }), "num");
+  assert.equal(p("FIZ-OS-9/elektricni-krog"), "fiz");
+  assert.equal(p("BIO-SS-3/imunski-sistem"), null);
+  assert.equal(p("BIO-SS-4/statistika-v-biologiji"), "stat");
 });
 
 test("prilagojene tipke: stalne ostanejo na mestu, 24 tipk, brez podvojenih, vsaka se izračuna", () => {
@@ -39,7 +49,7 @@ test("prilagojene tipke: stalne ostanejo na mestu, 24 tipk, brez podvojenih, vsa
   const stat = adaptKeys(FN_KEYS, "stat").map((k) => k[1]);
   assert.equal(stat[1], "mean(");
   // nove tipke dajo veljaven račun v znanstvenem kalkulatorju
-  for (const [s, v] of [["mean(1;2;3)", 2], ["stdev(1;2;3)", 1], ["total(1;2;3)", 6], ["cot(45°)", 1], ["logb(8;2)", 3], ["gcd(12;18)", 6], ["10^(2)", 100], ["count(4;5)", 2]]) {
+  for (const [s, v] of [["mean(1;2;3)", 2], ["stdev(1;2;3)", 1], ["stdevp(1;2;2;3)", Math.sqrt(0.5)], ["total(1;2;3)", 6], ["cot(45°)", 1], ["logb(8;2)", 3], ["gcd(12;18)", 6], ["10^(2)", 100], ["count(4;5)", 2]]) {
     const r = evaluate(s, { comma: true, deg: true });
     assert.ok(r && !r.error && Math.abs(r.value - v) < 1e-9, `${s}: ${JSON.stringify(r)}`);
   }

@@ -3926,6 +3926,7 @@ document.querySelectorAll(".calc-open").forEach((b) =>
     if (isFloating("graph")) {
       focusWindow("graph");
       if (calcSubject() === "KEM") setCalcMode("pse");
+      else calcTools.sci?.then((tool) => tool.adapt?.()); // tipke poglavja, iz katerega je odprt
       return;
     }
     const view = document.querySelector("main.view:not([hidden]):not(.in-okno)")?.id;

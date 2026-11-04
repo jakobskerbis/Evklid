@@ -3,33 +3,42 @@
 // znanstvenega kalkulatorja dobi vrstni red in izbor poglavja. Evklidova tipkovnica odpre ustrezno skupino f(x).
 // Brez DOM (testi v test/tipke-poglavja.test.js).
 
-// Poglavje → profil. Iščemo po id-ju teme (»MAT-SS-2/logaritem«) in imenu sklopa, brez šumnikov, sl in en.
+// Poglavje → profil. Iščemo po id-ju in imenu teme (»MAT-SS-2/logaritem«), šele nato po imenu sklopa
+// (»obrestni-racun« v sklopu »Zaporedja in vrste« je fin), brez šumnikov, sl in en.
 const RULES = [
   ["cplx", /komplek|complex/],
   ["trig", /kotn[a-z]*-funkc|kotov|trigonom|sinus|kosinus|adicijsk|polarn|\btrig|sine|cosine/],
-  ["log", /logarit|eksponent|exponent|potenc.*racional|\blog/],
-  ["ana", /odvod|integral|limit|zvezn|diferencial|derivat|calculus|analiz|taylor|vrst[ae]\b/],
+  ["log", /logarit|eksponent|exponent|potenc.*racional|\blog\b/],
+  ["ana", /odvod|integral|limit|zvezn|diferencial|derivat|calculus|analiz(?!a[- ]varianc)|taylor|-vrst[ae]\b|in vrste\b/],
   ["comb", /kombinator|permutac|variac|combinator|binom/],
-  ["stat", /statist|verjetn|podatk|probab|porazdel|frekvenc|vzor[ce]/],
+  ["stat", /statist|verjetn|varianc|regresij|podatk|probab|porazdel|frekvenc|vzor[ce]/],
   ["fin", /obrest|financ|kredit|interest|odstot|percent|procent/],
-  ["geo", /geometr|trikotnik|stirikotnik|krog|kroznic|telo|teles|povrsin|prostornin|pitagor|podobnost|mnogokotnik|triangle|circle|area|volume/],
-  ["num", /naravn|cela-stevil|racionaln|ulom|deljiv|delitel|praštevil|prastevil|fraction|integer|stevil/],
-  ["eq", /enacb|neenacb|funkcij|polinom|sistem|izraz|zaporedj|equation|inequal|function|polynom|razstav|sequence/],
+  ["geo", /geometr(?!ijsk[a-z]*[- ]zaporedj)|trikotnik|stirikotnik|krog|kroznic|telo|teles|povrsin|prostornin|pitagor|podobnost|mnogokotnik|triangle|circle|area|volume/],
+  ["num", /cela-stevil|racionaln|\bulom|deljiv|delitel|praštevil|prastevil|fraction|integer|stevil/],
+  ["eq", /enacb|neenacb|funkcij|polinom|izraz|zaporedj|equation|inequal|function|polynom|razstav|sequence/],
+];
+// drugi predmeti (biologija, geografija, računalništvo, ekonomija): »telo«, »izražanje«, »analiza«, »podatki«
+// tam niso matematična poglavja, zato samo izrazita statistika in finance, sicer privzete tipke
+const OTHER = [
+  ["stat", /statist|verjetn|probab|varianc|regresij/],
+  ["fin", /obrest|financ|kredit|interest/],
 ];
 
 /** Profil za temo { id, unit, name, subject } ali null (privzete tipke). */
 export function chapterProfile(topic) {
   if (!topic) return null;
-  const text = [topic.id, topic.unit, topic.name]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "");
+  const norm = (...parts) =>
+    parts
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "");
   const subj = String(topic.subject || topic.id || "").slice(0, 3).toUpperCase();
   if (subj === "KEM") return "kem";
-  for (const [p, re] of RULES) if (re.test(text)) return p;
-  if (subj === "FIZ") return "fiz";
+  if (subj === "FIZ") return "fiz"; // »električni krog«, »plinska enačba«, »dimenzijska analiza« so fizika
+  const rules = subj === "MAT" || !/^[A-Z]{3}$/.test(subj) ? RULES : OTHER;
+  for (const text of [norm(topic.id, topic.name), norm(topic.unit)]) for (const [p, re] of rules) if (re.test(text)) return p;
   return null;
 }
 
@@ -39,8 +48,9 @@ const EXTRA = {
   "e^(": ["eˣ", "e^(", "e", "e"],
   "10^(": ["10ˣ", "10^(", "log", "log("],
   "logb(@;)": ["logₐ", "logb(@;)", "log₂", "logb(@;2)"],
-  "mean(": ["mean", "mean(", "med", "median("],
-  "stdev(": ["σ", "stdev(", "σₙ", "stdevp("],
+  // šolski zapis: x̅ (aritmetična sredina; U+0305, ker U+0304 v pisavi zdrsne desno kot x⁻), Me (mediana), σ z N v imenovalcu (MAT-SS-4/statistika), s z n − 1
+  "mean(": ["x̅", "mean(", "Me", "median("],
+  "stdevp(": ["σ", "stdevp(", "s", "stdev("],
   "total(": ["Σ", "total(", "n", "count("],
   "min(": ["min", "min(", "max", "max("],
   "gcd(@;)": ["gcd", "gcd(@;)", "lcm", "lcm(@;)"],
@@ -50,6 +60,8 @@ const EXTRA = {
   "nCr(@;)": ["nCr", "nCr(@;)", "nPr", "nPr(@;)"],
   "root(@;)": ["ⁿ√x", "root(@;)", "∛", "∛("],
   "³": ["x³", "³", "∛", "∛("],
+  "<": ["<", "<", "≤", "≤"],
+  ">": [">", ">", "≥", "≥"],
 };
 
 // Profil: tipke po pomembnosti (vstavi glavne tipke); ostala mesta zapolnijo privzete v svojem vrstnem redu.
@@ -58,11 +70,11 @@ const PROFILES = {
   log: ["log(", "ln(", "logb(@;)", "^(", "e^(", "10^(", "√(", "²", "x", "=", "π", "⁻¹"],
   ana: ["d/dx(@)", "∫(@;;)", "x", "=", "ln(", "e^(", "sin(", "cos(", "^(", "√(", "²", "π"],
   comb: ["!", "nCr(@;)", "^(", "²", "%", ";", "√(", "⁻¹"],
-  stat: ["mean(", "stdev(", "total(", "min(", "nCr(@;)", "!", "%", ";", "√(", "²", "^(", "x"],
+  stat: ["mean(", "stdevp(", "total(", "min(", "nCr(@;)", "!", "%", ";", "√(", "²", "^(", "x"],
   fin: ["%", "^(", "root(@;)", "log(", "ln(", "e^(", "⁻¹", "√(", "x", "="],
   geo: ["π", "√(", "²", "³", "sin(", "cos(", "tan(", "#dms", "^(", "⁻¹", "x", "="],
   num: ["gcd(@;)", "mod(@;)", "%", "!", "²", "^(", "√(", "⁻¹", "x", "="],
-  eq: ["x", "=", "²", "^(", "√(", ";", "<", "abs(", "⁻¹", "f(x)=", "π", "sin("],
+  eq: ["x", "=", "<", ">", "²", "^(", "√(", ";", "abs(", "⁻¹", "f(x)=", "π"],
   cplx: ["i", "abs(", "Pol(@;)", "^(", "²", "√(", "x", "=", "π", "#dms", "e^(", "ln("],
   fiz: ["²", "√(", "^(", "⁻¹", "sin(", "cos(", "tan(", "π", "#dms", "log(", "ln(", "e^("],
   kem: ["log(", "10^(", "ln(", "^(", "²", "√(", "%", "x", "=", "⁻¹", "e^(", "π"],
