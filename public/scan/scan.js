@@ -8,6 +8,7 @@ import { jeOs } from "../stopnja.js";
 import { solve, analyze, prep, tex as exprTex, parseTask } from "./solvecore.js";
 import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
+import { answerParts } from "./odgovor.js";
 
 let D = null; // { api, getStudent, toast, escapeHtml, askTutor, openGraph }
 const fresh = () => ({
@@ -691,7 +692,7 @@ function renderSolution(box) {
   box.innerHTML = `${head}
     <section class="card scan-answer" aria-label="${esc(t("scan.answer"))}">
       <div class="scan-answer-head"><span class="scan-label">${esc(t("scan.answer"))}</span>${badge}</div>
-      <div class="scan-answer-tex">${r.answer.key ? `<p>${esc(t(r.answer.key))}</p>` : ""}${math(r.answer.tex, true)}</div>
+      <div class="scan-answer-tex">${r.answer.key ? `<p>${esc(t(r.answer.key))}</p>` : ""}${answerParts(r.answer.tex).map((p) => math(p, true)).join("")}</div>
       ${r.answer.approx ? `<div class="scan-approx">${math(r.answer.approx)}</div>` : ""}
     </section>
     ${r.methods.length > 1 ? `<div class="scan-methods"><span class="scan-label">${esc(t("scan.method"))}</span><div class="seg" role="tablist">${r.methods.map((mm, i) => `<button type="button" role="tab" data-method="${i}" class="${i === S.method ? "active" : ""}" aria-selected="${i === S.method}">${esc(mm.name || t(`scan.m.${mm.id}`))}</button>`).join("")}</div></div>` : ""}

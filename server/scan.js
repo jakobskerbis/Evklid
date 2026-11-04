@@ -28,12 +28,14 @@ export const READ_PROMPT =
   "The image shows a maths task (printed or handwritten) that a student photographed to get a step-by-step solution. " +
   "Transcribe every separate maths problem you can see, exactly as written (do not solve, do not fix mistakes, do not invent missing parts). " +
   "A page often holds several tasks (numbered, side by side or one below another): list each of them, not only the first.\n" +
-  "Give each task as originally stated, never a line of the student's working or a result: if a task is followed by its solution, give only the task; if only working is visible, give its first line.\n" +
+  "Give each task as originally stated, never a line of the student's working or a result: if a task is followed by its solution, give only the task; if only working is visible, give its first line. " +
+  "If any maths is legible, never return an empty list: when unsure whether a line is a task, include it.\n" +
   "For each problem give:\n" +
   '- "text": the problem in calculator syntax: * for multiplication, / for division and fractions with parentheses ((x+1)/2), ^ for powers, sqrt(), abs(), sin(), ln(), log(), pi, e; ' +
   "decimal point as a dot; an equation with =, inequalities with <, >, <=, >=; a system as equations separated by ; ; a derivative as d/dx(...); an integral as ∫ f dx or ∫_a^b f dx; " +
   "a limit as lim_(x->a) f; a binomial coefficient (n choose k) or C_n^k as nCr(n,k); variations V_n^k as nPr(n,k); a factorial as n!; " +
-  "a double inequality as a<x<b. Keep the student's letters for variables.\n" +
+  "a double inequality as a<x<b; a logarithm with its base as log_10(x), log_2(x), log_a(x). Keep the student's letters for variables. " +
+  "Copy every base, index and exponent exactly as written: never replace a written digit by a letter (log_10 stays log_10, not log_a).\n" +
   '- "given": only if the task states conditions needed to solve it (a point on the graph, an asymptote, a pole, a zero, a domain, a value such as f(0)=5): ' +
   'a list of them in LaTeX, one condition each, in the words of the page (e.g. ["T(7,2)", "\\text{pol: } x=3", "f(0)=5"]). Otherwise leave it out.\n' +
   '- "tex": the same problem in LaTeX.\n' +

@@ -6,6 +6,7 @@ import SL from "../public/i18n/sl.js";
 import { solve, analyze, prep, splitSystem, texToText } from "../public/scan/solvecore.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, READ_PROMPT } from "../server/scan.js";
+import { answerParts } from "../public/scan/odgovor.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 
@@ -264,6 +265,7 @@ test("server cleans AI output (limits, types)", () => {
   assert.match(READ_PROMPT, /not only the first/);
   assert.match(READ_PROMPT, /never a line of the student's working/);
   assert.match(READ_PROMPT, /nCr\(n,k\)/);
+  assert.match(READ_PROMPT, /log_10 stays log_10/);
   assert.equal(cleanSolution({ methods: [] }), null);
   const s = cleanSolution({ kind: "equation", methods: [{ name: "A", steps: [{ title: "t", tex: "x=1", why: 3 }] }], solutions: ["1", 2] });
   assert.deepEqual(s.solutions, ["1"]);
@@ -334,4 +336,10 @@ test("API: scan solve says the tutor is unavailable when the API account has no 
     assert.equal(out.body.unavailable, true);
     assert.match(out.body.error, /dobroimetja/);
   });
+});
+
+test("AI answer as a list of facts is shown one fact per line (j's screenshot 4. 11.)", () => {
+  assert.deepEqual(answerParts("D_f=(0,\\infty), Z_f=\\mathbb{R}, \\text{ničla } x=1, \\text{naraščajoča}"), ["D_f=(0,\\infty)", "Z_f=\\mathbb{R}", "\\text{ničla } x=1", "\\text{naraščajoča}"]);
+  assert.deepEqual(answerParts("x\\in\\{2,3,4\\}, y\\in\\{1,2,3\\}"), ["x\\in\\{2,3,4\\}", "y\\in\\{1,2,3\\}"]);
+  for (const one of ["x\\in[-5,\\infty)", "T(7,2)", "x=2{,}5", "f(x)=\\frac{1}{x}, x\\neq 0"]) assert.equal(answerParts(one).length, 1, one);
 });
