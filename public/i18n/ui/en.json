@@ -885,6 +885,7 @@
   "sc.memory": "Saved",
   "sc.insert": "Insert into calculation",
   "sc.pressSolve": "Press = to solve",
+  "sc.fmHint": "Replace the known letters with numbers, leave the unknown and press =.",
   "sc.errUndefined": "The result is undefined (e.g. division by 0).",
   "sc.constants": "Constants",
   "sc.toCalc": "To calculator",

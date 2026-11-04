@@ -879,6 +879,7 @@
   "sc.memory": "已保存",
   "sc.insert": "插入算式",
   "sc.pressSolve": "按 = 求解",
+  "sc.fmHint": "把已知的字母换成数字，保留未知量，然后按 =。",
   "sc.errUndefined": "结果无定义（例如除以 0）。",
   "sc.constants": "常数",
   "sc.toCalc": "放入计算器",

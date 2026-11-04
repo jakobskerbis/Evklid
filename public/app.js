@@ -3818,9 +3818,9 @@ function formulaBook() {
   const subj = ["MAT", "FIZ", "KEM"].includes(s) ? s : "MAT";
   return `${subj}-${stageCode(state.student?.settings)}`;
 }
-async function insertIntoCalc(text) {
+async function insertIntoCalc(text, o) {
   const tool = await setCalcMode("sci");
-  tool.insert(text);
+  tool.insert(text, o);
 }
 function calcTool(mode) {
   if (mode === "graph") return graphCalc();

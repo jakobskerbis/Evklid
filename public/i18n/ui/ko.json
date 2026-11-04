@@ -879,6 +879,7 @@
   "sc.memory": "저장됨",
   "sc.insert": "계산식에 넣기",
   "sc.pressSolve": "= 를 눌러서 풀어 봐",
+  "sc.fmHint": "알고 있는 문자를 숫자로 바꾸고 미지수는 그대로 둔 뒤 = 를 누르세요.",
   "sc.errUndefined": "결과가 정의되지 않아 (예: 0으로 나누기).",
   "sc.constants": "상수",
   "sc.toCalc": "계산기로",

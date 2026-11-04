@@ -897,6 +897,7 @@
   "sc.memory": "Zapisane",
   "sc.insert": "Wstaw do obliczenia",
   "sc.pressSolve": "Naciśnij =, aby rozwiązać",
+  "sc.fmHint": "Zastąp znane litery liczbami, niewiadomą zostaw i naciśnij =.",
   "sc.errUndefined": "Wynik jest nieokreślony (np. dzielenie przez 0).",
   "sc.constants": "Stałe",
   "sc.toCalc": "Do kalkulatora",

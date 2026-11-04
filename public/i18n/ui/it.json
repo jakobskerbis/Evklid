@@ -885,6 +885,7 @@
   "sc.memory": "In memoria",
   "sc.insert": "Inserisci nel calcolo",
   "sc.pressSolve": "Premi = per risolvere",
+  "sc.fmHint": "Sostituisci le lettere note con numeri, lascia l’incognita e premi =.",
   "sc.errUndefined": "Il risultato non è definito (ad es. divisione per 0).",
   "sc.constants": "Costanti",
   "sc.toCalc": "Nella calcolatrice",

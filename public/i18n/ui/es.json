@@ -885,6 +885,7 @@
   "sc.memory": "Guardado",
   "sc.insert": "Insertar en el cálculo",
   "sc.pressSolve": "Pulsa = para resolver",
+  "sc.fmHint": "Sustituye las letras conocidas por números, deja la incógnita y pulsa =.",
   "sc.errUndefined": "El resultado no está definido (p. ej. división entre 0).",
   "sc.constants": "Constantes",
   "sc.toCalc": "A la calculadora",

@@ -885,6 +885,7 @@
   "sc.memory": "Të ruajtura",
   "sc.insert": "Fute në llogaritje",
   "sc.pressSolve": "Shtyp = për ta zgjidhur",
+  "sc.fmHint": "Zëvendëso shkronjat e njohura me numra, lëre të panjohurën dhe shtyp =.",
   "sc.errUndefined": "Rezultati nuk është i përcaktuar (p.sh. pjesëtim me 0).",
   "sc.constants": "Konstante",
   "sc.toCalc": "Në makinë llogaritëse",

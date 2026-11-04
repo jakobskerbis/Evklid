@@ -814,3 +814,10 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 /* zadnji met: kocke in vsota »5 + 2 + 1 = 8« ostanejo od leve proti desni (v RTL bi se obrnile) */
 [dir="rtl"] .tl-lastv { direction: ltr; }
 .tl-nl-lab { font-size: 12px; font-weight: 800; text-anchor: middle; fill: currentColor; stroke: none !important; }
+
+/* ---------- formula iz zbirke v kalkulator (public/graph/formula-calc.js) ---------- */
+.fm-fx { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.fm-fx > .fm-f { flex: 1 1 auto; }
+.fm-calc { flex: none; width: 36px; height: 36px; color: var(--muted); }
+.fm-calc:hover, .fm-calc:focus-visible { color: var(--accent); }
+@media (pointer: coarse) { .fm-calc { width: 40px; height: 40px; } }

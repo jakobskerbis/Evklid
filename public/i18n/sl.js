@@ -1133,6 +1133,7 @@ export default {
   "sc.memory": "Shranjeno",
   "sc.insert": "Vstavi v račun",
   "sc.pressSolve": "Pritisni = za rešitev",
+  "sc.fmHint": "Namesto znanih črk vpiši števila, neznanko pusti in pritisni =.",
   "sc.errUndefined": "Rezultat ni definiran (npr. deljenje z 0).",
   "sc.constants": "Konstante",
   "sc.toCalc": "V kalkulator",

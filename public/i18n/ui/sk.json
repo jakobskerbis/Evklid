@@ -897,6 +897,7 @@
   "sc.memory": "Uložené",
   "sc.insert": "Vložiť do výpočtu",
   "sc.pressSolve": "Na vyriešenie stlač =",
+  "sc.fmHint": "Známe písmená nahraď číslami, neznámu nechaj a stlač =.",
   "sc.errUndefined": "Výsledok nie je definovaný (napr. delenie 0).",
   "sc.constants": "Konštanty",
   "sc.toCalc": "Do kalkulačky",

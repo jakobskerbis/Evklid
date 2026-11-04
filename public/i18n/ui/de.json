@@ -885,6 +885,7 @@
   "sc.memory": "Gespeichert",
   "sc.insert": "In die Rechnung einfügen",
   "sc.pressSolve": "Drücke = zum Lösen",
+  "sc.fmHint": "Ersetze die bekannten Buchstaben durch Zahlen, lass die Unbekannte stehen und drücke =.",
   "sc.errUndefined": "Das Ergebnis ist nicht definiert (z. B. Division durch 0).",
   "sc.constants": "Konstanten",
   "sc.toCalc": "In den Rechner",

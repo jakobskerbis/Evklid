@@ -891,6 +891,7 @@
   "sc.memory": "Sačuvano",
   "sc.insert": "Ubaci u račun",
   "sc.pressSolve": "Pritisni = za rješenje",
+  "sc.fmHint": "Umjesto poznatih slova upiši brojeve, nepoznatu ostavi i pritisni =.",
   "sc.errUndefined": "Rezultat nije definisan (npr. dijeljenje sa 0).",
   "sc.constants": "Konstante",
   "sc.toCalc": "U kalkulator",

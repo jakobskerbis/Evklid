@@ -891,6 +891,7 @@
   "sc.memory": "Salvate",
   "sc.insert": "Inserează în calcul",
   "sc.pressSolve": "Apasă = pentru rezolvare",
+  "sc.fmHint": "Înlocuiește literele cunoscute cu numere, lasă necunoscuta și apasă =.",
   "sc.errUndefined": "Rezultatul nu este definit (de ex. împărțire la 0).",
   "sc.constants": "Constante",
   "sc.toCalc": "În calculator",
