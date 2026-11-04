@@ -15,8 +15,8 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 3. **Mistakes have consequences** that a real lab would show: overrange (OL), blown fuse, burnt resistor,
    short circuit (supply current limit), foam overflow, popped stopper, missing goggles.
 4. **Table + graph + conclusion question** (one correct option, an explanation for every option).
-5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, »Kaj je poenostavljeno?«) and here.
-6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`) with the allowed deviation stated.
+5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, `POENOSTAVITVE_SILE`, »Kaj je poenostavljeno?«) and here.
+6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`, forces: `test/laboratorij-sile.test.js`) with the allowed deviation stated.
 7. **Review:** pass 1 automatic, pass 2 an Opus expert check of the science and function, pass 3 look/phone/pedagogy
    (`docs/pregled.md`). Dangerous experiments are only simulated; a short video only when no realistic
    simulation is possible; home experiments get a safety note and an equipment list.
@@ -35,6 +35,8 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 | `public/sim/lab-elektrika.js` | `labVezava` (engine `lab-vezava`), `labPrevodnost` (engine `lab-prevodnost`); circuit parts `drawMeter`, `drawResistor`, `drawLamp` shared with `labOhm` (`lab-fiz.js`) |
 | `public/sim/lab-model-toplota.js` | heat models, no DOM: `Voda` (water + vessel, two nodes, losses through wall, bottom and surface incl. evaporation), `POSODE`, thermometer and balance, `GrelnikBench`, `MesanjeBench`, `FazeBench` (enthalpy model ice/brine/water/steam), `OhlajanjeBench`, `vrelisce` (Antoine), `talisceSoli` (CRC table) |
 | `public/sim/lab-toplota.js` | `labGrelnik` (engine `lab-grelnik`), `labMesanje` (`lab-mesanje`), `labFaze` (`lab-faze`), `labOhlajanje` (`lab-ohlajanje`); time-speed control (×1 … ×300), auto-record at round times |
+| `public/sim/lab-model-sile.js` | »Silomer in uteži«, no DOM: `HookeBench` (springs, M3 masses, elastic–plastic spring, swinging, parallax), `GostotaBench` (balance ±0,1 g, 100 mL cylinder class B, samples, meniscus), `VzgonBench` (5 N spring scale, level rise, bottom contact), `TlakBench` (membrane probe, water U-tube, leak), `G_LJ`, `TEKOCINE`, `naklonSkoziIzhodisce` |
+| `public/sim/lab-sile.js` | `labHooke` (`lab-hooke`), `labGostota` (`lab-gostota`), `labVzgon` (`lab-vzgon`), `labTlak` (`lab-tlak`); `lupa` = magnified analog scale (ruler, meniscus, spring scale, manometer legs) |
 
 Engines are registered in `public/sim/index.js` and shown at topics through `public/sim/katalog.js`.
 The »Laboratorij« tab (`public/laboratorij.js`, `server/laboratorij.js`, `GET /api/students/:id/lab`) lists every `lab-` engine
@@ -148,9 +150,37 @@ Tests: ideal plateau length m L_f / P (±1,5 s); real heat during melting = m L_
 Same `Voda` model (Newton cooling through the wall plus evaporation from an open surface), three thermometers, speed ×10/×60/×300, auto-record every minute, graph T(t)
 with three series, conclusion question (thermos, lid, evaporation). Tests: porcelain 90 → 55–68 °C in 10 min (ocena), lid and thermos slower, closed thermos k constant ±15 %, full closed thermos (350 g) loses 8–12 K in 6 h (calibration). Meters: thermometer at −20…120 °C within ±0,5 (500 seeds and the worst-case sum), balance ±0,2 g.
 
+### Forces: shared data (`lab-model-sile.js`)
+The model uses g = 9,806 m/s² (Ljubljana: GRS 80 formula at 46,05° plus free-air correction for 295 m), the student computes with 9,81. Liquids at 20 °C: water 0,9982,
+4 % NaCl 1,0268, ethanol 0,7893 (CRC), sunflower oil 0,920 (Engineering ToolBox); meniscus heights 1,3–2 mm (ocena). Analog scales are read in a magnifier (`lupa`).
+
+### `lab-hooke` – spring, masses and Hooke's law (FIZ-OS-8 sila in merjenje sile; FIZ-SS-1 prožnost)
+Stand, 50 cm ruler (1 mm, read to 1 mm), three springs 15/30/60 N/m ±5 % with elastic limits 2,5/3/8 N (ocena), masses 10, 20, 20, 50, 100, 200 g within OIML R111 class M3.
+Above the limit a bilinear model (slope k/2, ocena) leaves a permanent extension (F − Fy)/k; the unloaded reading then shows it and the spring is drawn »raztegnjena«.
+Hanging a mass starts a damped swing (30 % of the step, τ 2,5 s, ocena; »Umiri z roko« to 3 %); reading while it swings warns. Eye above/below the pointer: parallax ±1,7 mm (ocena).
+Table m, F, reading, x; graph F(x) per spring with a line through the origin; k in N/cm and N/m vs the label. Tests: fit k within ±3 % (3 springs × 30 seeds), ideal 100 g → 6,54 cm,
+no permanent set below the limit and (F − Fy)/k ±3 mm above it, swing > 1 mm right after hanging, parallax, masses within M3 (500 seeds).
+
+### `lab-gostota` – density of solids and liquids (FIZ-OS-8 gostota)
+Balance 0,1 g ±0,1 g; 100 mL cylinder class B ±1 mL (ISO 4788; scale error a·V/100 + b), read to 0,5 mL at the bottom or (mistake) top of the meniscus. Samples Ø 2 cm in three sizes:
+Al 2,70, Cu 8,96 (CRC), steel 7,85, brass 8,47, PVC 1,38, granite 2,65 (irregular ±10 %), spruce 0,45 (Engineering ToolBox). Displacement V = V₂ − V₁; liquids: empty and full cylinder on the balance.
+Mistakes: dropping the sample (air bubble 0,4–1,0 mL, ocena), wood floats unless pushed under with a thin wire (0,05 mL), too little water (sample not covered), overflow, meniscus top (cancels for
+displacement, not for liquids). Graph m(V) per material, slope = ρ. Tests: Al 30 cm³ 2,70 ±3 % (100 seeds), other sinking samples ±6 %, floating wood reads ≈ 1,00 and 0,45 ±5 % with the wire,
+bubble lower, uncovered higher, liquids ±3 % and lower at the meniscus top, cylinder and balance within spec (500 seeds).
+
+### `lab-vzgon` – buoyancy with a spring scale (FIZ-OS-8 vzgon; FIZ-SS-1 tlak in vzgon)
+Spring scale 0–5 N, 0,05 N divisions, read to 0,025 N, ±0,05 N (gain ≤ 0,5 %, ocena); zero offset 0,08–0,20 N until »Naravnaj ničlo«. Al 100 cm³ or steel 50 cm³ cylinder with 1 cm rings
+in a 1000 mL beaker (Ø 9,5 cm, 800 mL, ocena); the level rise is included (d = s·A/(A − a)). Touching the bottom: the scale spring (50 N/m) unloads by k·δ. Table and graph F_vzg(V_izp) per liquid,
+ρ = slope/g. Tests: 100 cm³ in water 0,981 N ±2 %, salt water > water > oil > ethanol, readings ±0,06 N (50 seeds × 4 liquids), level rise and Archimedes exact, bottom −0,5 N per cm, offset cancels.
+
+### `lab-tlak` – hydrostatic pressure with a U-tube manometer (FIZ-OS-8 tlak; FIZ-SS-1 tlak in vzgon)
+Membrane probe to 30 cm in water, salt water or oil; water U-tube ±15 cm, legs read to 1 mm. Membrane takes 1 % (ocena), settling τ 0,8 s, leak τ 15 s (ocena), Δh > 30 cm spills (refill button).
+Orientation down/up/side gives the same reading (shown in the log). Mistakes: one leg only (half), leaking tube (drifts to zero), overfilling. Tests: 981 Pa at 10 cm ±0,5 %, Δh 100 ±3 mm,
+oil less and salt water more, orientation identical, linear in depth (9,9 mm/cm), one leg = half, leak < 5 % after 60 s, spill and refill.
+
 The colours of graph series (`--demo-a/b/c`) are now also defined for the Laboratorij tab (`.lab-view` in `textbook.css`); before, points there were black.
 
 ## Next (from j's list)
-FIZ: pendulum and stopwatch, density and buoyancy in a measuring cylinder, refraction through a lens. KEM: flame test, electrolysis of water.
+FIZ: pendulum and stopwatch, refraction through a lens; forces: series/parallel springs and a digital force sensor, Pascal's vessels, a typed reading (student enters the value) in `lab-hooke`/`lab-gostota`. KEM: flame test, electrolysis of water.
 NAR: the same engines on more NAR-OS-6/7 topics. Heat: specific heat of metals (hot metal block into a calorimeter, reuses `MesanjeBench`),
 solidification curve (cooling of stearic acid / salol), a separate stopwatch for `lab-grelnik` (now started by the switch), stirring as a choice in `lab-faze`. Each one: model + test first, then UI, then the three reviews.
