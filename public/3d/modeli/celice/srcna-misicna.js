@@ -7,7 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Razvejana prečno progasta celica z enim ali dvema jedroma v sredini, polna miofibril in mitohondrijev. S sosedami je povezana z interkalarnimi diski, zato se srce krči kot celota. Sosednje celice so prikazane le delno.",
-  poskusi: "Vklopi utripanje in poišči interkalarni disk med sosednjima celicama.",
+  poskusi: "Poišči interkalarni disk in preberi, kako se utrip prenese na sosednjo celico.",
   merilo: { m: 120e-6, oznaka: "120 µm" },
 };
 

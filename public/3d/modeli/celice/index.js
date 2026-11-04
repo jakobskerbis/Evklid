@@ -1,6 +1,6 @@
 // 3D celice: modeli, ki jih zgradi koda (pogodba v docs/3d.md). Vrstni red = vrstni red v pregledu.
 export default [
-  { id: "celica-zivalska", pot: "./zivalska.js", naslov: "Živalska celica", predmet: "BIO", opis: "Celica brez celične stene v prerezu: jedro, mitohondriji, ER, Golgijev aparat in drugi organeli." },
+  { id: "celica-zivalska", pot: "./zivalska.js", naslov: "Živalska celica", predmet: "BIO", opis: "Prerez celice brez celične stene: jedro, mitohondriji, endoplazemski retikulum, Golgijev aparat in drugi organeli." },
   { id: "celica-rastlinska", pot: "./rastlinska.js", naslov: "Rastlinska celica", predmet: "BIO", opis: "Celica iz lista s celično steno, kloroplasti in veliko osrednjo vakuolo." },
   { id: "celice-primerjava", pot: "./primerjava.js", naslov: "Živalska in rastlinska celica", predmet: "BIO", opis: "Živalska in rastlinska celica druga ob drugi: kateri deli so skupni in kateri ne." },
   { id: "celica-bakterijska", pot: "./bakterija.js", naslov: "Bakterijska celica", predmet: "BIO", opis: "Bakterija E. coli brez jedra: nukleoid, plazmidi, ribosomi, bički in pili." },

@@ -7,7 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Paličasta bakterija Escherichia coli (dolga okoli 2 µm). Nima jedra ne organelov z membrano: DNK leži prosto v citoplazmi kot nukleoid. Bički so skrajšani (v resnici so nekajkrat daljši od celice).",
-  poskusi: "Vklopi kapsulo in poišči nukleoid: zakaj bakterija nima jedra?",
+  poskusi: "Izklopi kapsulo in poišči nukleoid: kje je DNK, če bakterija nima jedra?",
   merilo: { m: 3.33e-6, oznaka: "3,3 µm" },
 };
 
