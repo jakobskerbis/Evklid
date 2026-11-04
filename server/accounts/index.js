@@ -210,10 +210,15 @@ export function mountAccounts(app, store, opts = {}) {
   const freeOver = (studentId) => !premiumFor(studentId) && !!freeBudgetReason(studentId);
   aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver });
 
-  // Dnevna meja vprašanj plačljivega ali šolskega profila: po proračunu AI (server/usage.js dailyLimit),
-  // brez proračuna stalna meja iz pravic. null = brez meje (stari profili, meja 0 v nastavitvah).
-  const dailyLimitFor = (studentId, r = rightsFor(studentId)) =>
-    r.dailyQuestions === null ? null : aiUsage.dailyLimit(studentId) ?? r.dailyQuestions;
+  // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
+  // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
+  // null = brez meje (stari profili, meja 0 v nastavitvah). Mesečni delež še vedno omeji usage.blockReason.
+  const dailyLimitFor = (studentId, r = rightsFor(studentId)) => {
+    if (r.dailyQuestions === null) return null;
+    const owner = ownerOf(studentId);
+    const credit = owner ? credits.balance(owner) / Math.max(1, childIds(owner).length) : 0;
+    return Math.max(r.dailyQuestions, aiUsage.dailyLimit(studentId, { credit }) ?? 0);
+  };
 
   // Interaktivni del lekcije: Osebno za vse teme, šolska licenca za svoje predmete in razrede.
   const lessonInteractive = (studentId, topicId) => lessonOpen(rightsFor(studentId), topicId);
@@ -364,8 +369,8 @@ export function mountAccounts(app, store, opts = {}) {
       }
     }
 
-    // Vprašanja inštruktorju na dan: brezplačni paket (10); plačljivi paketi in šolska licenca po proračunu AI
-    // (usage.dailyLimit), brez proračuna vsota šolske licence (15) in Osebno (60).
+    // Vprašanja inštruktorju na dan: brezplačni paket (10); plačljivi paketi in šolska licenca vsaj vsota
+    // šolske licence (15) in Osebno (60), s proračunom AI več (dailyLimitFor).
     if (c && req.method === "POST" && /\/messages$/i.test(req.path)) {
       const r = rightsFor(studentId);
       if (!r.personal && !r.school) {
@@ -381,7 +386,7 @@ export function mountAccounts(app, store, opts = {}) {
         const limit = dailyLimitFor(studentId, r);
         if (limit && questionsToday(studentId) >= limit) {
           return res.status(429).json({
-            error: `Danes si porabil vseh ${limit} vprašanj za inštruktorja. Jutri jih spet dobiš. Vadnica in lekcije delujejo naprej neomejeno.`,
+            error: `Danes si porabil vseh ${limit} vprašanj za inštruktorja. Jutri dobiš nova. Vadnica in lekcije delujejo naprej neomejeno.`,
             limit: true,
           });
         }

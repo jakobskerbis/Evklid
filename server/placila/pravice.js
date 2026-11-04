@@ -18,8 +18,8 @@ const envNum = (k, d) => {
     ? v
     : d;
 };
-// 0 = brez omejitve. S proračunom AI se meja plačljivih virov prilagaja proračunu (server/usage.js dailyLimit),
-// ti števili veljata samo brez proračuna.
+// 0 = brez omejitve. Spodnja meja: s proračunom AI meja plačljivih virov zraste (server/usage.js dailyLimit,
+// accounts/index.js dailyLimitFor).
 export const schoolDailyQuestions = () =>
   envNum("EVKLID_SOLA_DAILY_QUESTIONS", 15);
 export const personalDailyQuestions = () =>

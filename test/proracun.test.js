@@ -113,51 +113,41 @@ test("daily question limit scales with the student's remaining share and the day
   const state = u.budgetState();
   const allowance = u.studentBudget(a, state).allowance;
   assert.ok(Math.abs(allowance - 48.5) < 1e-9);
-  // Delež / dni do konca meseca (vključno z danes) / 0,005 $ na vprašanje, med 10 in 200.
+  // Delež / dni do konca meseca (vključno z danes) / 0,005 $ na vprašanje, največ 200.
   process.env.EVKLID_DAILY_QUESTIONS_MAX = "0";
   try {
     assert.equal(u.dailyLimit(a, { state, now: day(1, 0) }), Math.floor(48.5 / 30 / 0.005), "prvi dan: 30 dni");
     assert.equal(u.dailyLimit(a, { state, now: day(16, 23) }), Math.floor(48.5 / 15 / 0.005), "ura v dnevu ne šteje");
     assert.equal(u.dailyLimit(a, { state, now: day(30, 18) }), Math.floor(48.5 / 0.005), "zadnji dan: ves ostanek");
-    // Nov mesec: decembra 31 dni, poraba novembra ne šteje (SQL šteje od 1. v mesecu).
+    // Nov mesec ima svoje število dni (december 31); porabo šteje SQL od 1. v tekočem mesecu.
     assert.equal(u.dailyLimit(a, { state, now: new Date(Date.UTC(2026, 11, 1, 6)) }), Math.floor(48.5 / 31 / 0.005));
   } finally {
     delete process.env.EVKLID_DAILY_QUESTIONS_MAX;
   }
   assert.equal(u.dailyLimit(a, { state, now: day(10) }), 200, "zgornja meja");
-  // Poraba danes ne zmanjša današnje meje (šteje ostanek na začetku dneva); včerajšnja jo.
+  // Poraba danes ne zmanjša današnje meje (šteje ostanek na začetku dneva).
   const before = u.dailyLimit(a, { state, now: day(29) });
   spend(a, 20);
   assert.equal(u.dailyLimit(a, { state: u.budgetState(), now: day(29) }), before);
-  // Porabljen delež: spodnja meja; deleža ni več, blockReason ponudi dokup.
-  spend(a, 40, "datetime('now','start of day','-1 second')");
-  const st = u.budgetState();
-  const left = Math.max(0, u.studentBudget(a, st).allowance - 40); // 8,5 $ → 850, nad zgornjo mejo
-  if (new Date().getUTCDate() > 1) {
-    // Včerajšnja poraba je v tem mesecu le, če danes ni 1. v mesecu.
-    assert.equal(u.dailyLimit(a, { state: st, now: day(29) }), Math.min(200, Math.max(10, Math.floor(left / 2 / 0.005))));
-  }
-  spend(a, 100, "datetime('now','start of day','-1 second')");
-  if (new Date().getUTCDate() > 1) {
-    assert.equal(u.dailyLimit(a, { state: u.budgetState(), now: day(29) }), 10, "spodnja meja");
-    assert.match(u.blockReason(a), /dokupom porabe/);
-    // Dokupljeni kredit dvigne mejo: 5,74 $ / 2 dni / 0,05 $ na vprašanje.
-    assert.ok(credits.activate(credits.create(1, CREDIT_PACKS.find((p) => p.id === "k10")), "pi_m"));
-    process.env.EVKLID_QUESTION_USD = "0.05";
-    try {
-      assert.equal(u.dailyLimit(a, { state: u.budgetState(), now: day(29) }), Math.floor(5.74 / 2 / 0.05));
-    } finally {
-      delete process.env.EVKLID_QUESTION_USD;
-    }
-  }
-  process.env.EVKLID_DAILY_QUESTIONS_MIN = "0";
-  process.env.EVKLID_QUESTION_USD = "1000";
+  // Skoraj ničen delež (učenec z majhno utežjo ob velikem): 0 vprašanj iz proračuna (spodnja meja je stalna
+  // meja paketa v accounts/index.js); nad deležem blockReason ponudi dokup.
+  const c = student("Majhen", 3);
+  owner[c] = 3;
+  u.configure({ weightOf: (id) => (id === c ? 0.0001 : 9.99), ownerOf: (id) => owner[id], credits });
+  spend(c, 0.01);
+  u.shareCache = null;
+  assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29) }), 0);
+  assert.match(u.blockReason(c), /dokupom porabe/);
+  // Dokupljeni kredit dvigne mejo: 5,74 $ / 2 dni / 0,05 $ na vprašanje; učenčev del kredita (credit) šteje namesto vsega.
+  assert.ok(credits.activate(credits.create(3, CREDIT_PACKS.find((p) => p.id === "k10")), "pi_m"));
+  process.env.EVKLID_QUESTION_USD = "0.05";
   try {
-    assert.equal(u.dailyLimit(b, { state: u.budgetState(), now: day(10) }), 0, "brez spodnje meje lahko pade na 0");
+    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29) }), Math.floor(5.74 / 2 / 0.05));
+    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29), credit: 5.74 / 2 }), Math.floor(5.74 / 4 / 0.05), "kredit, deljen med dva otroka");
   } finally {
-    delete process.env.EVKLID_DAILY_QUESTIONS_MIN;
     delete process.env.EVKLID_QUESTION_USD;
   }
+  assert.equal(u.blockReason(c), null, "s kreditom naprej");
 });
 
 test("admin sets the monthly budget and adds bought credit; the tutor upgrades while under plan", async () => {
