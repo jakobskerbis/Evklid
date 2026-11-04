@@ -449,6 +449,22 @@ export const M = {
   sub: (A, B) => (A.length === B.length && A[0].length === B[0].length ? A.map((r, i) => r.map((v, j) => v - B[i][j])) : null),
   mul: (A, B) => (A[0].length === B.length ? cleanM(A.map((r) => B[0].map((_, j) => r.reduce((s, v, k) => s + v * B[k][j], 0)))) : null),
   scale: (A, k) => A.map((r) => r.map((v) => v * k)),
+  /** Enotska matrika I_n (enice na diagonali). */
+  identity: (n) => Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => (i === j ? 1 : 0))),
+  /** A^n za celo n (A^0 = I, negativni n prek inverza); null, če A ni kvadratna ali nima inverza. */
+  pow(A, n) {
+    if (A.length !== A[0].length || !Number.isInteger(n) || Math.abs(n) > 1e6) return null;
+    let B = n < 0 ? M.inverse(A) : A;
+    if (!B) return null;
+    let k = Math.abs(n);
+    let R = M.identity(A.length);
+    while (k > 0) {
+      if (k & 1) R = M.mul(R, B);
+      B = M.mul(B, B);
+      k >>= 1;
+    }
+    return R;
+  },
   transpose: (A) => A[0].map((_, j) => A.map((r) => r[j])),
   det(A) {
     const n = A.length;
@@ -516,6 +532,29 @@ export const M = {
     return { x: R.slice(0, n).map((r) => clean(r[n])) };
   },
 };
+
+// ---------- razmerje ----------
+
+/**
+ * Razmerje a : b = c : d z eno neznanko (Casio »Razmerje«): vals so štiri števila, neznanka je NaN.
+ * Vrne { i, value } (i = mesto neznanke 0–3) ali { error: "count" | "zero" }.
+ * Velja a·d = b·c; za neznanko delimo s številom na nasprotnem mestu.
+ */
+export function solveRatio(vals) {
+  const miss = vals.map((v, i) => (Number.isFinite(v) ? -1 : i)).filter((i) => i >= 0);
+  if (miss.length !== 1) return { error: "count" };
+  const i = miss[0];
+  const [a, b, c, d] = vals;
+  const [num, den] = [
+    [b * c, d],
+    [a * d, c],
+    [a * d, b],
+    [b * c, a],
+  ][i];
+  if (den === 0) return { error: "zero" };
+  const v = num / den;
+  return { i, value: Math.abs(v) < 1e-6 ? v : clean(v) }; // clean bi 2 : 3 = 10⁻¹³ : x zaokrožil na 0
+}
 
 // ---------- številski sistemi ----------
 

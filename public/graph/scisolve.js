@@ -196,11 +196,19 @@ const isPeriodic = (F, P) =>
     const b = F(x + P);
     return Number.isNaN(a) ? Number.isNaN(b) : near(a, b, 1e-7);
   });
-const periodTex = (deg, comma) => (deg ? `[0^{\\circ}${comma ? ";" : ","}\\,360^{\\circ})` : `[0${comma ? ";" : ","}\\,2\\pi)`);
+// enota kota: radiani, stopinje ali gradi (400 v polnem krogu)
+const unitOf = (env) => (env.grad ? "grad" : env.deg ? "deg" : "rad");
+const PERIOD = { rad: 2 * Math.PI, deg: 360, grad: 400 };
+const UNIT_RAD = { rad: 1, deg: Math.PI / 180, grad: Math.PI / 200 }; // 1 enota v radianih
+export const ANGLE_SUP = { rad: "", deg: "^{\\circ}", grad: "^{\\mathrm{g}}" };
+const periodTex = (unit, comma) => {
+  const sep = `${comma ? ";" : ","}\\,`;
+  return unit === "rad" ? `[0${sep}2\\pi)` : `[0${ANGLE_SUP[unit]}${sep}${PERIOD[unit]}${ANGLE_SUP[unit]})`;
+};
 
 // ---------- enačba z eno neznanko ----------
 
-function solveOne(F, v, { comma, deg, src }) {
+function solveOne(F, v, { comma, unit = "rad", src }) {
   const poly = polyCoeffs(F);
   if (poly) {
     const d = poly.length - 1;
@@ -220,13 +228,13 @@ function solveOne(F, v, { comma, deg, src }) {
     }
     return { kind: "solve", v, roots: roots.sort((a, b) => a - b), complex, poly };
   }
-  const P = deg ? 360 : 2 * Math.PI;
+  const P = PERIOD[unit];
   if (TRIG.test(src) && isPeriodic(F, P)) {
-    // periodična enačba: rešitve na eni periodi kota (v stopinjah [0°, 360°), v radianih [0, 2π))
+    // periodična enačba: rešitve na eni periodi kota (v stopinjah [0°, 360°), v gradih [0, 400), v radianih [0, 2π))
     const roots = criticalPoints(F, 0, P, 6000).filter((x) => isRoot(F, x) && x >= 0 && x < P - 1e-9);
-    return { kind: "solve", v, roots, complex: [], interval: periodTex(deg, comma), periodic: true, deg: !!deg };
+    return { kind: "solve", v, roots, complex: [], interval: periodTex(unit, comma), periodic: true, ...(unit === "rad" ? {} : { [unit]: true }) };
   }
-  const R = deg ? 10 * RANGE : RANGE;
+  const R = unit === "rad" ? RANGE : 10 * RANGE;
   let roots = criticalPoints(F, -R, R).filter((x) => isRoot(F, x));
   if (roots.length > 12) roots = roots.filter((x) => Math.abs(x) <= 20).slice(0, 12);
   return { kind: "solve", v, roots, complex: [] };
@@ -243,7 +251,7 @@ export function solutionTex(r, comma = true, mode = "auto") {
   const name = (i) => (many ? `${v}_{${i + 1}}` : v);
   if (r.exact)
     r.roots.forEach((x, i) => parts.push(`${name(i)} \\approx ${decTex(x, comma, mode)}`));
-  else if (r.deg) r.roots.forEach((x, i) => parts.push(`${name(i)} = ${decTex(x, comma, mode)}^{\\circ}`));
+  else if (r.deg || r.grad) r.roots.forEach((x, i) => parts.push(`${name(i)} = ${decTex(x, comma, mode)}${ANGLE_SUP[r.grad ? "grad" : "deg"]}`));
   else r.roots.forEach((x, i) => parts.push(`${name(i)} = ${numberTex(x, comma, mode)}`));
   if (!r.exact)
     (r.complex || []).forEach(([re, im], i) => {
@@ -403,7 +411,9 @@ function solveLinear(Gs, unknowns) {
 function plotText(s, env) {
   return prepare(s, { comma: env.comma !== false })
     .replace(/A_\{ans\}/g, `(${env.ans ?? 0})`)
-    .replace(/\*G_\{deg\}/g, env.deg ? "*(π/180)" : "*(π/180)")
+    .replace(/\*G_\{deg\}/g, "*(π/180)")
+    .replace(/\*G_\{min\}/g, "*(π/10800)")
+    .replace(/\*G_\{sec\}/g, "*(π/648000)")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -439,10 +449,10 @@ export function previewTex(text, env = {}) {
 // ---------- glavna funkcija ----------
 
 /**
- * Pol(x; y) → r, θ in Rec(r; θ) → x, y (Casio Pol/Rec); kot je v trenutni enoti (stopinje ali radiani).
+ * Pol(x; y) → r, θ in Rec(r; θ) → x, y (Casio Pol/Rec); kot je v trenutni enoti (stopinje, radiani ali gradi).
  * Tudi sredi izraza (public/graph/vektor.js): Rec(5; 30) + Rec(3; 120), 2·Rec(…), Pol(Rec(…) + Rec(…)),
  * Rec(…)·Rec(…) (skalarni produkt), |Rec(…) − Rec(…)|.
- * @returns {{ kind:"pair", tex, deg, items:[{name, v, angle?}] } | { kind:"value", value, tex } | { error } | null}
+ * @returns {{ kind:"pair", tex, deg, grad, items:[{name, v, angle?}] } | { kind:"value", value, tex } | { error } | null}
  *   null, če v vrstici ni Pol/Rec.
  */
 export function polRec(text, env = {}) {
@@ -467,12 +477,12 @@ export function polRec(text, env = {}) {
     const a = ev(vl.x);
     const b = ev(vl.y);
     if (!Number.isFinite(a) || !Number.isFinite(b)) return { error: { code: "undef", info: {} } };
-    const k = env.deg ? Math.PI / 180 : 1; // enota kota → radiani
+    const k = UNIT_RAD[unitOf(env)]; // enota kota → radiani
     const items =
       vl.kind === "pol"
         ? [{ name: "r", v: clean(Math.hypot(a, b)) }, { name: "\\theta", v: clean(Math.atan2(b, a) / k), angle: true }]
         : [{ name: "x", v: clean(a) }, { name: "y", v: clean(b) }];
-    return { kind: "pair", tex, deg: !!env.deg, items };
+    return { kind: "pair", tex, deg: unitOf(env) === "deg", grad: unitOf(env) === "grad", items };
   } catch (e) {
     return { error: { code: e.code || "other", info: e.info || {} } };
   }
@@ -480,7 +490,7 @@ export function polRec(text, env = {}) {
 
 /**
  * Analizira vrstico znanstvenega kalkulatorja.
- * env: { vars, funcs, ans, deg, comma }
+ * env: { vars, funcs, ans, deg, grad, comma } (grad: gradi, ima prednost pred deg)
  * Vrne { kind, tex, … } ali { error }:
  * - value: { value, assign? } (navaden račun)
  * - complex: { re, im }
@@ -488,7 +498,7 @@ export function polRec(text, env = {}) {
  * - solve: { v, roots, complex, exact?, interval?, all?, none? }
  * - ineq: { v, intervals }
  * - system: { unknowns, values | none | many }
- * - pair: { items: [{ name, v, angle? }], deg } (Pol/Rec: dva rezultata)
+ * - pair: { items: [{ name, v, angle? }], deg, grad } (Pol/Rec: dva rezultata)
  * - bool: { value } (enačba brez neznank: drži / ne drži)
  * - deriv: { resTex } (simbolni odvod)
  * - expr: izraz z eno spremenljivko (narišemo ga)
@@ -523,8 +533,8 @@ export function analyze(text, env = {}) {
     }
   }
 
-  // odvodi in integrali so vedno v radianih (d/dx sin x = cos x, ∫ sin x od 0 do π = 2), tudi v načinu DEG
-  if (env.deg && /d\/d|∫|'/.test(raw)) env = { ...env, deg: false };
+  // odvodi in integrali so vedno v radianih (d/dx sin x = cos x, ∫ sin x od 0 do π = 2), tudi v načinu DEG in GRA
+  if ((env.deg || env.grad) && /d\/d|∫|'/.test(raw)) env = { ...env, deg: false, grad: false };
   const pr = polRec(raw, env);
   if (pr) return pr;
   const r = evaluate(raw, env);
@@ -538,9 +548,11 @@ export function analyze(text, env = {}) {
     try {
       const s = prepare(raw, { comma })
         .replace(/A_\{ans\}/g, `(${env.ans ?? 0})`)
-        .replace(/G_\{deg\}/g, env.deg ? "1" : "(π/180)");
+        .replace(/G_\{deg\}/g, env.deg && !env.grad ? "1" : "(π/180)")
+        .replace(/G_\{min\}/g, env.deg && !env.grad ? "(1/60)" : "(π/10800)")
+        .replace(/G_\{sec\}/g, env.deg && !env.grad ? "(1/3600)" : "(π/648000)");
       if (/[A-Za-z]_\{/.test(s)) throw new MathError("other");
-      const [re, im] = evalComplex(s, { deg: !!env.deg });
+      const [re, im] = evalComplex(s, { deg: !!env.deg && !env.grad });
       const line = compileLine(raw, env);
       return { kind: "complex", re: clean(re), im: clean(im), tex: lineTex(line.ast, comma) };
     } catch (e) {
@@ -581,17 +593,17 @@ export function analyze(text, env = {}) {
           const L = fnOf(ast.terms[0], v);
           const R = fnOf(ast.terms[1], v);
           const F = (x) => L(x) - R(x);
-          const res = solveOne(F, v, { comma, deg: !!env.deg, src: raw });
+          const res = solveOne(F, v, { comma, unit: unitOf(env), src: raw });
           return { ...res, tex, plot };
         }
         const pairs = [];
         for (let i = 0; i + 1 < ast.terms.length; i++) pairs.push([fnOf(ast.terms[i], v), fnOf(ast.terms[i + 1], v)]);
         // periodična neenačba (sin x > 0): rešitve na eni periodi kota, kot pri enačbah
-        const P = env.deg ? 360 : 2 * Math.PI;
+        const P = PERIOD[unitOf(env)];
         const periodic = TRIG.test(raw) && pairs.every(([L, R]) => isPeriodic((x) => L(x) - R(x), P));
         const res = solveIneq(pairs, ast.ops, v, periodic ? P : 0);
         const full = res.intervals.length === 1 && res.intervals[0].lo === -Infinity && res.intervals[0].hi === Infinity;
-        return { ...res, ...(periodic && res.intervals.length && !full ? { interval: periodTex(!!env.deg, comma), periodic: true } : {}), tex, plot };
+        return { ...res, ...(periodic && res.intervals.length && !full ? { interval: periodTex(unitOf(env), comma), periodic: true } : {}), tex, plot };
       }
       if (U.length === 2 && U.includes("x") && U.includes("y")) return { kind: "plot", tex, plot: [plotText(raw, env)] };
       return { error: { code: "missing", info: { names: U.slice(1) } } };
