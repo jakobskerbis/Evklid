@@ -74,4 +74,7 @@ test("krogi lekcije ob pokazani spodnji vrstici: dvig samo s premikom, brez spre
     assert.doesNotMatch(body, /(^|;)\s*(bottom|padding[\w-]*|margin[\w-]*|height)\s*:/);
   }
   assert.doesNotMatch(touch, /body\.tb-peek[^{]*#view-textbook[^{]*\{[^}]*padding/, "pogled ob pokazani vrstici ne dobi odmika");
+  // Kratek korak: krogi stojijo na dnu pogleda, sicer bi jih dvig potisnil v besedilo (na tablici korak 1 brez drsenja).
+  assert.match(touch, /#view-textbook:has\(> \.tb-stepper\)\s*\{[^}]*flex-direction:\s*column/);
+  assert.match(touch, /#view-textbook \.tb-stepper\s*\{[^}]*margin-top:\s*auto/);
 });
