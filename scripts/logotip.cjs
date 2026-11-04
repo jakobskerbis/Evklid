@@ -39,7 +39,7 @@ function tile({ size, pad, radius = 0, bg = true, fg = "#fff" }) {
 }
 
 // Vse slike: pot, velikost, mere ploščice. Android: varno območje prilagodljive ikone je krog 66/108,
-// maskable (PWA) krog 80 %: znak (34 enot od 48) mora biti ves v njem.
+// maskable (PWA) krog 80 %: znak z ioni vred mora biti ves v njem (račun pod seznamom).
 const OUT = [
   ["public/icons/icon-192.png", 192, { pad: 0.2, radius: 0.22 }],
   ["public/icons/icon-512.png", 512, { pad: 0.2, radius: 0.22 }],
@@ -55,6 +55,7 @@ const OUT = [
 // Znak z ioni vred zavzame 42 od 48 enot (oglišča 7…41, ioni do polmera 3,9 čez). Android foreground:
 // pad 0.27 → mreža 471 px, znak 412 px, diagonala 583 px < 626 px (varni krog 66/108 · 1024).
 // Maskable: pad 0.19 → mreža 317 px, znak 277 px, diagonala 392 px < 410 px (varni krog 80 % · 512).
+// Diagonala okvirja je zgornja meja; najdlje od središča je veliki ion zadaj desno zgoraj (24,0 + 3,9 enote).
 const ICO = [16, 32, 48, 64, 128, 256];
 // Favicon do 32 px: manj roba, da je znak večji.
 const icoPad = (n) => (n <= 32 ? 0.1 : 0.16);
