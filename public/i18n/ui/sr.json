@@ -2841,5 +2841,7 @@
   "adm.rep.none": "Нема пријава.",
   "adm.rep.download": "Преузми за исправке (.md)",
   "adm.rep.showAll": "Прикажи и исправљене",
-  "adm.rep.onlyOpen": "Само отворене"
+  "adm.rep.onlyOpen": "Само отворене",
+  "chat.full": "Прикажи цео поступак",
+  "chat.fullMsg": "Покажи ми цео поступак овог задатка."
 }

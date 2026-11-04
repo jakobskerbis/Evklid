@@ -2814,5 +2814,7 @@
   "adm.rep.none": "Hakuna ripoti.",
   "adm.rep.download": "Pakua kwa kurekebisha (.md)",
   "adm.rep.showAll": "Onyesha pia zilizorekebishwa",
-  "adm.rep.onlyOpen": "Zilizo wazi tu"
+  "adm.rep.onlyOpen": "Zilizo wazi tu",
+  "chat.full": "Onyesha suluhisho lote",
+  "chat.fullMsg": "Nionyeshe suluhisho lote la swali hili."
 }

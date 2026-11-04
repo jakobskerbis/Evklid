@@ -2792,5 +2792,7 @@
   "adm.rep.none": "Không có báo cáo.",
   "adm.rep.download": "Tải về để sửa (.md)",
   "adm.rep.showAll": "Hiện cả các lỗi đã sửa",
-  "adm.rep.onlyOpen": "Chỉ đang mở"
+  "adm.rep.onlyOpen": "Chỉ đang mở",
+  "chat.full": "Xem toàn bộ lời giải",
+  "chat.fullMsg": "Cho mình xem toàn bộ lời giải của bài này."
 }

@@ -2792,5 +2792,7 @@
   "adm.rep.none": "沒有回報。",
   "adm.rep.download": "下載以便修正（.md）",
   "adm.rep.showAll": "也顯示已修正的",
-  "adm.rep.onlyOpen": "只看未處理的"
+  "adm.rep.onlyOpen": "只看未處理的",
+  "chat.full": "顯示完整解題過程",
+  "chat.fullMsg": "請給我看這道題的完整解題過程。"
 }

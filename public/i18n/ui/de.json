@@ -2816,5 +2816,7 @@
   "adm.rep.none": "Keine Meldungen.",
   "adm.rep.download": "Zum Beheben herunterladen (.md)",
   "adm.rep.showAll": "Auch behobene zeigen",
-  "adm.rep.onlyOpen": "Nur offene"
+  "adm.rep.onlyOpen": "Nur offene",
+  "chat.full": "Ganzen Lösungsweg zeigen",
+  "chat.fullMsg": "Zeig mir den ganzen Lösungsweg dieser Aufgabe."
 }

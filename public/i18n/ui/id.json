@@ -2792,5 +2792,7 @@
   "adm.rep.none": "Tidak ada laporan.",
   "adm.rep.download": "Unduh untuk diperbaiki (.md)",
   "adm.rep.showAll": "Tampilkan juga yang sudah diperbaiki",
-  "adm.rep.onlyOpen": "Hanya yang terbuka"
+  "adm.rep.onlyOpen": "Hanya yang terbuka",
+  "chat.full": "Tampilkan seluruh penyelesaian",
+  "chat.fullMsg": "Tunjukkan seluruh penyelesaian soal ini."
 }

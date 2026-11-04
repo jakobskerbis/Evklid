@@ -2814,5 +2814,7 @@
   "adm.rep.none": "کوئی رپورٹ نہیں۔",
   "adm.rep.download": "درستی کے لیے ڈاؤن لوڈ کریں (.md)",
   "adm.rep.showAll": "درست شدہ بھی دکھائیں",
-  "adm.rep.onlyOpen": "صرف کھلی"
+  "adm.rep.onlyOpen": "صرف کھلی",
+  "chat.full": "پورا حل دکھائیں",
+  "chat.fullMsg": "مجھے اس سوال کا پورا حل دکھائیں۔"
 }

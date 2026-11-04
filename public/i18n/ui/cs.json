@@ -2864,5 +2864,7 @@
   "adm.rep.none": "Žádná hlášení.",
   "adm.rep.download": "Stáhnout k opravě (.md)",
   "adm.rep.showAll": "Zobrazit i opravené",
-  "adm.rep.onlyOpen": "Jen otevřené"
+  "adm.rep.onlyOpen": "Jen otevřené",
+  "chat.full": "Ukázat celý postup",
+  "chat.fullMsg": "Ukaž mi celý postup této úlohy."
 }

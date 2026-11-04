@@ -2841,5 +2841,7 @@
   "adm.rep.none": "Nema prijava.",
   "adm.rep.download": "Preuzmi za ispravke (.md)",
   "adm.rep.showAll": "Prikaži i ispravljene",
-  "adm.rep.onlyOpen": "Samo otvorene"
+  "adm.rep.onlyOpen": "Samo otvorene",
+  "chat.full": "Prikaži cijeli postupak",
+  "chat.fullMsg": "Pokaži mi cijeli postupak ovog zadatka."
 }

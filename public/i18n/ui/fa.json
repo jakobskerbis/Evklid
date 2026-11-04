@@ -2814,5 +2814,7 @@
   "adm.rep.none": "گزارشی نیست.",
   "adm.rep.download": "دانلود برای رفع (.md)",
   "adm.rep.showAll": "نمایش رفع‌شده‌ها هم",
-  "adm.rep.onlyOpen": "فقط باز"
+  "adm.rep.onlyOpen": "فقط باز",
+  "chat.full": "نمایش کل راه‌حل",
+  "chat.fullMsg": "کل راه‌حل این مسئله را به من نشان بده."
 }

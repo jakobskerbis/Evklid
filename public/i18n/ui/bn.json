@@ -2814,5 +2814,7 @@
   "adm.rep.none": "কোনো রিপোর্ট নেই।",
   "adm.rep.download": "ঠিক করার জন্য ডাউনলোড (.md)",
   "adm.rep.showAll": "ঠিক হওয়াগুলোও দেখাও",
-  "adm.rep.onlyOpen": "শুধু খোলা"
+  "adm.rep.onlyOpen": "শুধু খোলা",
+  "chat.full": "পুরো সমাধান দেখাও",
+  "chat.fullMsg": "আমাকে এই প্রশ্নের পুরো সমাধান দেখাও।"
 }

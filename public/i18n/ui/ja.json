@@ -2792,5 +2792,7 @@
   "adm.rep.none": "報告はありません。",
   "adm.rep.download": "修正用にダウンロード（.md）",
   "adm.rep.showAll": "修正済みも表示",
-  "adm.rep.onlyOpen": "未対応のみ"
+  "adm.rep.onlyOpen": "未対応のみ",
+  "chat.full": "解き方をすべて見る",
+  "chat.fullMsg": "この問題の解き方をすべて見せてください。"
 }

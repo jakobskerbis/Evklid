@@ -2843,5 +2843,7 @@
   "adm.rep.none": "Niciun raport.",
   "adm.rep.download": "Descarcă pentru reparare (.md)",
   "adm.rep.showAll": "Arată și cele reparate",
-  "adm.rep.onlyOpen": "Doar deschise"
+  "adm.rep.onlyOpen": "Doar deschise",
+  "chat.full": "Arată toată rezolvarea",
+  "chat.fullMsg": "Arată-mi toată rezolvarea acestei probleme."
 }

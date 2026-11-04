@@ -2816,5 +2816,7 @@
   "adm.rep.none": "Nessuna segnalazione.",
   "adm.rep.download": "Scarica per la correzione (.md)",
   "adm.rep.showAll": "Mostra anche quelli corretti",
-  "adm.rep.onlyOpen": "Solo aperte"
+  "adm.rep.onlyOpen": "Solo aperte",
+  "chat.full": "Mostra tutto il procedimento",
+  "chat.fullMsg": "Mostrami tutto il procedimento di questo esercizio."
 }

@@ -2816,5 +2816,7 @@
   "adm.rep.none": "No reports.",
   "adm.rep.download": "Download for fixing (.md)",
   "adm.rep.showAll": "Show fixed ones too",
-  "adm.rep.onlyOpen": "Open only"
+  "adm.rep.onlyOpen": "Open only",
+  "chat.full": "Show the whole solution",
+  "chat.fullMsg": "Show me the whole solution to this task."
 }

@@ -2792,5 +2792,7 @@
   "adm.rep.none": "신고가 없습니다.",
   "adm.rep.download": "수정용으로 내려받기(.md)",
   "adm.rep.showAll": "수정된 것도 보기",
-  "adm.rep.onlyOpen": "열린 것만"
+  "adm.rep.onlyOpen": "열린 것만",
+  "chat.full": "전체 풀이 보기",
+  "chat.fullMsg": "이 문제의 전체 풀이를 보여 줘."
 }

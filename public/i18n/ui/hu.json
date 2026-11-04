@@ -2814,5 +2814,7 @@
   "adm.rep.none": "Nincs jelentés.",
   "adm.rep.download": "Letöltés javításhoz (.md)",
   "adm.rep.showAll": "A javítottak is",
-  "adm.rep.onlyOpen": "Csak a nyitottak"
+  "adm.rep.onlyOpen": "Csak a nyitottak",
+  "chat.full": "Teljes megoldás mutatása",
+  "chat.fullMsg": "Mutasd meg a feladat teljes megoldását."
 }

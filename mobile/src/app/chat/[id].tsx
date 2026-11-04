@@ -48,6 +48,8 @@ export default function Chat() {
   const [photo, setPhoto] = useState<Photo | null>(null);
   const [busy, setBusy] = useState(false);
   const [deepOk, setDeepOk] = useState(false);
+  // »Pokaži celoten postopek« po treh korakih vodenja (strežnik: full_offer), kot na spletu.
+  const [fullOk, setFullOk] = useState(false);
   const [notes, setNotes] = useState<{ key: string; text: string; tone?: "gold" | "ok" }[]>([]);
   const [proposal, setProposal] = useState<Proposal | null>(null);
   const list = useRef<FlatList<Msg>>(null);
@@ -64,6 +66,7 @@ export default function Chat() {
       tap();
       setBusy(true);
       setDeepOk(false);
+      setFullOk(false);
       setProposal(null);
       const reply: Msg = { id: `r${Date.now()}`, role: "assistant", text: "", streaming: true };
       const userId = `u${Date.now()}`;
@@ -84,6 +87,7 @@ export default function Chat() {
               // Predmet, ki ga je inštruktor pravkar določil (nov pogovor brez teme), kot na spletu.
               if (e.data.state?.subject) setConvFx((c) => (c.subject === e.data.state.subject ? c : { ...c, subject: e.data.state.subject }));
               setDeepOk(!e.data.deep);
+              setFullOk(!!e.data.full_offer);
               if (e.data.settings) refresh().catch(() => {});
             } else if (e.event === "error") {
               patch((m) => ({ ...m, text: e.data.error, error: true, streaming: false }));
@@ -126,6 +130,7 @@ export default function Chat() {
         setTitle(c.title || "");
         setConvFx({ topic: c.topic?.id || null, subject: c.state?.subject || null });
         setMessages(c.messages);
+        setFullOk(!!(c.messages[c.messages.length - 1] as Msg & { full_offer?: boolean })?.full_offer);
         setLoading(false);
         // Prvo sporočilo (iz lekcije, naloge ali skeniranja) se pošlje samo v prazen pogovor.
         if (started.current || c.messages.length) return;
@@ -262,6 +267,15 @@ export default function Chat() {
                   kind="secondary"
                   icon={{ ios: "sparkles", android: "auto_awesome" }}
                   onPress={() => send({ text: t("chat.deeperMsg"), deep: true })}
+                  style={{ alignSelf: "flex-start" }}
+                />
+              ) : null}
+              {fullOk && !busy && last?.role === "assistant" && !last.error ? (
+                <Button
+                  title={t("chat.full")}
+                  kind="secondary"
+                  icon={{ ios: "list.number", android: "format_list_numbered" }}
+                  onPress={() => send({ text: t("chat.fullMsg") })}
                   style={{ alignSelf: "flex-start" }}
                 />
               ) : null}

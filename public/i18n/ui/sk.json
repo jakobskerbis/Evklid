@@ -2868,5 +2868,7 @@
   "adm.rep.none": "Žiadne hlásenia.",
   "adm.rep.download": "Stiahnuť na opravu (.md)",
   "adm.rep.showAll": "Zobraziť aj opravené",
-  "adm.rep.onlyOpen": "Iba otvorené"
+  "adm.rep.onlyOpen": "Iba otvorené",
+  "chat.full": "Ukázať celý postup",
+  "chat.fullMsg": "Ukáž mi celý postup tejto úlohy."
 }

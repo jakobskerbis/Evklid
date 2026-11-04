@@ -2814,5 +2814,7 @@
   "adm.rep.none": "Bildirim yok.",
   "adm.rep.download": "Düzeltmek için indir (.md)",
   "adm.rep.showAll": "Düzeltilenleri de göster",
-  "adm.rep.onlyOpen": "Yalnızca açık olanlar"
+  "adm.rep.onlyOpen": "Yalnızca açık olanlar",
+  "chat.full": "Çözümün tamamını göster",
+  "chat.fullMsg": "Bu sorunun çözümünün tamamını göster."
 }

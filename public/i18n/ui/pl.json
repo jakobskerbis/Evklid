@@ -2870,5 +2870,7 @@
   "adm.rep.none": "Brak zgłoszeń.",
   "adm.rep.download": "Pobierz do poprawek (.md)",
   "adm.rep.showAll": "Pokaż też poprawione",
-  "adm.rep.onlyOpen": "Tylko otwarte"
+  "adm.rep.onlyOpen": "Tylko otwarte",
+  "chat.full": "Pokaż całe rozwiązanie",
+  "chat.fullMsg": "Pokaż mi całe rozwiązanie tego zadania."
 }

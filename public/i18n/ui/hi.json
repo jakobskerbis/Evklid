@@ -2814,5 +2814,7 @@
   "adm.rep.none": "कोई रिपोर्ट नहीं।",
   "adm.rep.download": "ठीक करने के लिए डाउनलोड करें (.md)",
   "adm.rep.showAll": "ठीक हुई भी दिखाएँ",
-  "adm.rep.onlyOpen": "केवल खुली"
+  "adm.rep.onlyOpen": "केवल खुली",
+  "chat.full": "पूरा हल दिखाएँ",
+  "chat.fullMsg": "मुझे इस प्रश्न का पूरा हल दिखाइए।"
 }

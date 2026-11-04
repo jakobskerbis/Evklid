@@ -2920,5 +2920,7 @@
   "adm.rep.none": "لا توجد بلاغات.",
   "adm.rep.download": "تنزيل للإصلاح (.md)",
   "adm.rep.showAll": "إظهار المُصلَحة أيضًا",
-  "adm.rep.onlyOpen": "المفتوحة فقط"
+  "adm.rep.onlyOpen": "المفتوحة فقط",
+  "chat.full": "اعرض الحل كاملًا",
+  "chat.fullMsg": "اعرض لي حل هذه المسألة كاملًا."
 }

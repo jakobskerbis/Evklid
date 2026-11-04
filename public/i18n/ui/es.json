@@ -2816,5 +2816,7 @@
   "adm.rep.none": "No hay informes.",
   "adm.rep.download": "Descargar para corregir (.md)",
   "adm.rep.showAll": "Mostrar también los corregidos",
-  "adm.rep.onlyOpen": "Solo abiertos"
+  "adm.rep.onlyOpen": "Solo abiertos",
+  "chat.full": "Mostrar todo el procedimiento",
+  "chat.fullMsg": "Muéstrame todo el procedimiento de este ejercicio."
 }
