@@ -1840,7 +1840,7 @@
   "games.yourAnswer": "Ta réponse",
   "games.e.tiles": "Construis l’équation",
   "games.e.tiles.how": "Touche ou fais glisser les étiquettes dans les cases vides pour que l’égalité soit vraie (toute égalité vraie compte), puis touche Valider. Touches : chiffres, signes, Retour arrière et Entrée.",
-  "games.e.tiles.ask": "Complète avec les étiquettes pour que l’égalité soit vraie.",
+  "games.e.tiles.ask": "Complète l’égalité avec les étiquettes.",
   "games.e.tiles.build": "Construis la réponse avec les étiquettes.",
   "games.e.tiles.sides": "Ton membre de gauche vaut {l} et celui de droite {r}.",
   "games.e.tiles.pieces": "Étiquettes",

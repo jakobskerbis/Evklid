@@ -1840,7 +1840,7 @@
   "games.yourAnswer": "La tua risposta",
   "games.e.tiles": "Componi l’uguaglianza",
   "games.e.tiles.how": "Tocca o trascina le tessere negli spazi vuoti perché l’uguaglianza sia vera (vale qualsiasi uguaglianza vera), poi tocca Conferma. Tasti: cifre, segni, Backspace e Invio.",
-  "games.e.tiles.ask": "Completa con le tessere perché l’uguaglianza sia vera.",
+  "games.e.tiles.ask": "Completa l’uguaglianza con le tessere.",
   "games.e.tiles.build": "Componi la risposta con le tessere.",
   "games.e.tiles.sides": "Il tuo membro sinistro vale {l} e il destro {r}.",
   "games.e.tiles.pieces": "Tessere",

@@ -1840,7 +1840,7 @@
   "games.yourAnswer": "A tua resposta",
   "games.e.tiles": "Constrói a equação",
   "games.e.tiles.how": "Toca nas peças ou arrasta-as para os espaços vazios para que a igualdade seja verdadeira (conta qualquer uma verdadeira); depois toca em Confirmar. Teclas: algarismos, sinais, Backspace e Enter.",
-  "games.e.tiles.ask": "Completa com as peças para que a igualdade seja verdadeira.",
+  "games.e.tiles.ask": "Completa a igualdade com as peças.",
   "games.e.tiles.build": "Constrói a resposta com as peças.",
   "games.e.tiles.sides": "O teu lado esquerdo é {l} e o direito é {r}.",
   "games.e.tiles.pieces": "Peças",

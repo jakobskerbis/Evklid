@@ -1840,7 +1840,7 @@
   "games.yourAnswer": "Përgjigjja jote",
   "games.e.tiles": "Ndërto barazimin",
   "games.e.tiles.how": "Prek ose tërhiq pllakat në vendet bosh që barazimi të jetë i saktë (vlen çdo barazim i saktë), pastaj prek Konfirmo. Tastet: shifrat, shenjat, Backspace dhe Enter.",
-  "games.e.tiles.ask": "Plotëso me pllaka që barazimi të jetë i saktë.",
+  "games.e.tiles.ask": "Plotëso barazimin me pllaka.",
   "games.e.tiles.build": "Ndërto përgjigjen me pllaka.",
   "games.e.tiles.sides": "Ana jote e majtë është {l}, kurse e djathta {r}.",
   "games.e.tiles.pieces": "Pllakat",

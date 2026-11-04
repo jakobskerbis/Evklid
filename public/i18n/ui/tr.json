@@ -1840,7 +1840,7 @@
   "games.yourAnswer": "Cevabın",
   "games.e.tiles": "Eşitliği kur",
   "games.e.tiles.how": "Kartlara dokun ya da onları boş yerlere sürükle ki eşitlik doğru olsun (doğru olan her eşitlik sayılır), sonra Onayla’ya dokun. Tuşlar: rakamlar, işaretler, Backspace ve Enter.",
-  "games.e.tiles.ask": "Eşitlik doğru olsun diye boşlukları kartlarla doldur.",
+  "games.e.tiles.ask": "Eşitliği kartlarla tamamla.",
   "games.e.tiles.build": "Cevabı kartlarla kur.",
   "games.e.tiles.sides": "Senin sol tarafın {l}, sağ tarafın {r}.",
   "games.e.tiles.pieces": "Kartlar",

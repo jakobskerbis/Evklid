@@ -1500,7 +1500,7 @@ export default {
   "games.yourAnswer": "Tvoj odgovor",
   "games.e.tiles": "Sestavi enačbo",
   "games.e.tiles.how": "Tapni ali povleci ploščice na prazna mesta, da bo enačba pravilna (šteje vsaka pravilna), nato tapni Potrdi. Tipke: števke, znaki, Backspace in Enter.",
-  "games.e.tiles.ask": "Dopolni s ploščicami, da bo enačba pravilna.",
+  "games.e.tiles.ask": "Dopolni enačbo s ploščicami.",
   "games.e.tiles.build": "Sestavi odgovor iz ploščic.",
   "games.e.tiles.sides": "Tvoja leva stran je {l}, desna pa {r}.",
   "games.e.tiles.pieces": "Ploščice",

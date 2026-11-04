@@ -408,8 +408,22 @@ function exprModel(q) {
   const vars = varsOf(toks);
   if (!tree || (!vars.size && !evalTree(tree))) return null;
   if (vars.size && !same(tree, tree, vars)) return null; // vsaj 9 točk, kjer je izraz določen
-  return { mode: "expr", pre, s: body, toks, slots, vars, tree };
+  // »1(x + 8)« ni naloga (odgovor je že napisan); »−1(x + 4)« igra pokaže kot »−(x + 4)« (leadText)
+  if (/(^|[^\d,.\/−])1\(/.test(q.q)) return null;
+  return { mode: "expr", pre, s: body, toks, slots, vars, tree, factored: factored(tree) };
 }
+// Razstavljen odgovor (vsota v produktu, količniku ali potenci: 6(x + 3), (x − 6)(x + 6)): enakovreden izraz
+// iz drugih členov ni nujno razstavljen do konca (3(2x + 6)), zato mora uporabiti iste člene (predznak je lahko drug).
+function factored(a, inside = false) {
+  if (!a || typeof a !== "object") return false;
+  if (a.t === "bin") {
+    if ((a.f === "add" || a.f === "sub") && inside) return true;
+    const deeper = inside || a.f === "mul" || a.f === "div";
+    return factored(a.a, deeper) || factored(a.b, deeper);
+  }
+  return factored(a.a, inside || a.t === "pow" || a.t === "powe");
+}
+const leadText = (s) => s.replace(/(^|[^\d,.\/])−1\(/g, `$1${MINUS}(`);
 
 // Bližnje napačne vrednosti za ploščico (tipične napake: ±1, ±10, ×10, obrnjen ulomek, drug predznak).
 function nearTiles(t, negOk) {
@@ -521,10 +535,13 @@ export function tilesTask(q, tier = 1, rnd = Math.random) {
     at = tk.end;
   }
   if (at < src.length) items.push({ fixed: src.slice(at) });
-  // ploščica je celota: negativno število ali ulomek pred potenco dobi oklepaj ((−5)², (1/2)⁻¹)
+  // ploščica je celota: negativno število ali ulomek pred potenco dobi oklepaj ((−5)², (1/2)⁻¹), negativen člen
+  // za računskim znakom tudi (6 + (−5x), 9 : (−9), ne »6 + −5x«)
   const unit = (k, x) => {
-    const nx = M.toks[slots[k].i + 1];
-    return x != null && slots[k].kind === "t" && (x.startsWith(MINUS) || x.includes("/")) && nx && (nx.k === "sup" || (nx.k === "op" && nx.f === "pow")) ? `(${x})` : x;
+    if (x == null || slots[k].kind !== "t") return x;
+    const nx = M.toks[slots[k].i + 1], pv = M.toks[slots[k].i - 1];
+    const pow = (x.startsWith(MINUS) || x.includes("/")) && nx && (nx.k === "sup" || (nx.k === "op" && nx.f === "pow"));
+    return pow || (x.startsWith(MINUS) && pv?.k === "op") ? `(${x})` : x;
   };
   const fill = (f) => {
     let out = "", a = 0;
@@ -537,7 +554,7 @@ export function tilesTask(q, tier = 1, rnd = Math.random) {
   };
   // naloga v besedilu (expr): »30 = ?« dobi odgovor na mesto »?«, sicer naloga nad odgovorom
   const embed = M.mode === "expr" && /=\s*\?/.test(q.q);
-  const lead = M.mode === "expr" && !embed ? q.q : "";
+  const lead = M.mode === "expr" && !embed ? leadText(q.q) : "";
   const head = M.mode === "expr" ? (embed ? q.q.slice(0, q.q.indexOf("?")) : M.pre || "= ") : "";
   const tail = embed ? q.q.slice(q.q.indexOf("?") + 1) : "";
   if (head.trim()) items.unshift({ fixed: head });
@@ -550,7 +567,8 @@ export function tilesTask(q, tier = 1, rnd = Math.random) {
     if (M.mode === "expr") {
       const tree = toks && parseExpr(toks);
       const used = f.filter((_, k) => slots[k].kind === "t");
-      const ok = !!tree && same(tree, M.tree, M.vars) && (M.vars.size > 0 || [...used].sort().join("|") === [...canon].sort().join("|"));
+      const key = (a, abs) => a.map((s) => (abs ? s.replace(/^−/, "") : s)).sort().join("|");
+      const ok = !!tree && same(tree, M.tree, M.vars) && (M.vars.size > 0 && !M.factored ? true : key(used, M.vars.size > 0) === key(canon, M.vars.size > 0));
       return { ok, full: true, text: whole(f) };
     }
     const tree = toks && parseStatement(toks);
@@ -907,7 +925,8 @@ export const tiles = {
         G.answer(true, G.W / 2, L ? L.by + L.bh / 2 : G.H / 3, { note: res.text, delay: 1.3 });
       } else {
         shake = 0.5;
-        const sides = res.sides && !eqQ(res.sides[0], res.sides[1]) ? ` · ${t("games.e.tiles.sides", { l: iso(qText(res.sides[0])), r: iso(qText(res.sides[1])) })}` : "";
+        // ločilo »—«, ne »·«: za računom bi se »·« bral kot množenje
+        const sides = res.sides && !eqQ(res.sides[0], res.sides[1]) ? ` — ${t("games.e.tiles.sides", { l: iso(qText(res.sides[0])), r: iso(qText(res.sides[1])) })}` : "";
         G.answer(false, G.W / 2, L ? L.by + L.bh / 2 : G.H / 3, { note: `${t("games.correctWas", { a: iso(T.right) })}${sides}`, delay: 3 });
       }
     }
@@ -942,7 +961,8 @@ export const tiles = {
     function layout() {
       const tall = G.H > G.W * 1.25;
       const pad = 12, bw = Math.min(G.W - 2 * pad, 620), bx = (G.W - bw) / 2, by = 30;
-      for (let th = tall ? 58 : 52; ; th -= 4) {
+      // računalnik: večje ploščice (prizor je visok dovolj), telefon ležeče ostane pri 52
+      for (let th = tall ? 58 : G.H > 480 ? 64 : 52; ; th -= 4) {
         const fs = Math.round(th * 0.44);
         const tw = (s, f) => G.tw(s, f, 900);
         let tpl = null;
@@ -1304,16 +1324,20 @@ export const order = {
       // kartica se v vrstici ne prelomi (presledki v njej so nedeljivi), vrstni red pa ostane od leve proti desni tudi v RTL
       const right = iso(R.right.map((i) => R.cards[i].s.replace(/ /g, "\u00a0")).join(R.dir > 0 ? " < " : " > "));
       if (ok) glow = 1;
-      G.answer(ok, G.W * 0.75, L ? L.y0 + L.ch : G.H / 3, ok ? { note: right, delay: 1.8 } : { note: t("games.correctWas", { a: right }), delay: 3.6 });
+      G.answer(ok, L ? L.rx + L.colW / 2 : G.W * 0.75, L ? L.y0 + L.ch : G.H / 3, ok ? { note: right, delay: 1.8 } : { note: t("games.correctWas", { a: right }), delay: 3.6 });
     }
     function layout() {
       const tall = G.H > G.W * 1.25, n = R.cards.length, pad = 10, gap = tall ? 10 : 7;
       const colW = (Math.min(G.W, 760) - 3 * pad) / 2, x0 = (G.W - 2 * colW - pad) / 2;
       const y0 = 34, foot = 34, room = G.H - y0 - foot - (tall ? 70 : 6);
-      const ch = clamp((room - (n - 1) * gap) / n, 40, tall ? 76 : 62);
+      // telefon ležeče: 6 hlodov mora pasti v prizor (nižji hlodi, a še vedno široki za dotik)
+      const ch = clamp((room - (n - 1) * gap) / n, tall ? 40 : 28, tall ? 76 : 62);
       const badge = 26;
       const rows = R.cards.map((_, i) => y0 + i * (ch + gap));
-      return { tall, n, ch, gap, y0, colW, badge, pool: rows.map((y) => ({ x: x0, y, w: colW, h: ch })), slots: rows.map((y) => ({ x: x0 + colW + pad + badge, y, w: colW - badge, h: ch })), bottom: rows[n - 1] + ch, rx: x0 + colW + pad };
+      // RTL (arabščina, perzijščina): kup desno, vrsta z mesti levo, številke mest med njima; števila ostanejo LTR
+      const rtl = typeof document !== "undefined" && document.documentElement.dir === "rtl";
+      const px = rtl ? x0 + colW + pad : x0, rx = rtl ? x0 : x0 + colW + pad;
+      return { tall, n, ch, gap, y0, colW, badge, pool: rows.map((y) => ({ x: px, y, w: colW, h: ch })), slots: rows.map((y) => ({ x: rtl ? rx : rx + badge, y, w: colW - badge, h: ch })), bottom: rows[n - 1] + ch, rx, bx: rtl ? rx + colW - badge / 2 + 1 : rx + badge / 2 - 1 };
     }
     const drag = dragger({
       hit(p) {
@@ -1440,8 +1464,8 @@ export const order = {
         // desno: vrsta z mesti 1 … n
         const next = slot.indexOf(null);
         L.slots.forEach((r, k) => {
-          circle(g, L.rx + L.badge / 2 - 1, r.y + r.h / 2, 11, "#fff", 2.5);
-          G.fit(String(k + 1), L.rx + L.badge / 2 - 1, r.y + r.h / 2 + 1, 18, 14, { color: INK, weight: 900 });
+          circle(g, L.bx, r.y + r.h / 2, 11, "#fff", 2.5);
+          G.fit(String(k + 1), L.bx, r.y + r.h / 2 + 1, 18, 14, { color: INK, weight: 900 });
           const i = slot[k];
           const dragged = d && d.from === "slot" && d.k === k && d.moved;
           if (i != null && !dragged) {

@@ -803,6 +803,18 @@ test("games: »Sestavi enačbo« and »Razvrsti po velikosti« apply only to fit
   assert.equal(orderItems({ q: "Največje?", a: "2/4", w: ["1/2", "1/3", "1/5"] }), null);
   assert.equal(orderItems({ q: "Imam 5 jabolk. Dobim 3. Koliko jih imam?", a: "8", w: ["7", "9", "2"] }), null);
   assert.ok(orderItems({ q: "Katero število je največje?", a: "7/2", w: ["√8", "1,8", "3,2"] }));
+  // »1(x + 8)« ni naloga; »−1(x + 4)« se pokaže kot »−(x + 4)«
+  assert.equal(tilesModel({ q: "1(x + 8)", a: "x + 8", w: ["x + 1", "x − 8", "8x + 8"] }), null);
+  assert.equal(tilesTask({ q: "−1(x + 4)", a: "−x − 4", w: ["−x + 4", "x − 4", "−4x − 4"] }, 1).lead, "−(x + 4)");
+  // razstavljanje: enakovreden, a ne do konca razstavljen izraz (3(2x + 6)) ne šteje; isti členi v drugem redu da
+  const fa = tilesTask({ q: "6x + 18", a: "6(x + 3)", w: ["3(2x + 6)", "6(x + 18)", "x(6 + 18)"] }, 1);
+  const by = (a) => fa.slots.map((s, k) => (s.kind === "o" ? "+" : a[k]));
+  assert.equal(fa.check(by(["3", "2x", null, "6"])).ok, false);
+  assert.ok(fa.check(by(["6", "3", null, "x"])).ok);
+  // negativen člen za računskim znakom dobi oklepaj (6 + (−5x), ne »6 + −5x«)
+  const ln = tilesTask({ q: "k = −5, n = 6", a: "y = −5x + 6", w: ["y = 6x − 5", "y = 5x + 6", "y = −5x − 6"] }, 1);
+  assert.equal(ln.fill(["6", "+", "−5x"]), "6 + (−5x)");
+  assert.ok(ln.check(["6", "+", "−5x"]).ok);
 });
 
 test("games: »Sestavi enačbo« – always solvable, the canonical tiles count, every accepted arrangement is truly right", () => {

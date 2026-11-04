@@ -227,6 +227,8 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-tl .gm-key { min-height: 52px; font-size: 1.15rem; }
 /* besedilna naloga je v celoti na tabli v prizoru: v glavi največ 2 vrstici, da glava ne poskakuje (bralnik prebere vse) */
 .gm-has-ui .gm-q { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+/* Sestavi enačbo, Razvrsti: v glavi je navodilo (besedilo, ne račun), zato manjša pisava in do 3 vrstice, da ga ozek telefon ne odreže */
+.gm-has-ui:has(.gm-tl) .gm-q { font-size: clamp(0.92rem, 2.9vw, 1.35rem); line-height: 1.15; -webkit-line-clamp: 3; line-clamp: 3; }
 .gm-calm .gm-ui { border-top: 0; }
 .gm-calm .gm-key { border: 1px solid rgba(15, 23, 42, 0.25); border-radius: 10px; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.2); font-family: var(--font); font-weight: 700; }
 .gm-calm .gm-key:active { transform: none; box-shadow: none; background: #f1f5f9; }
@@ -238,6 +240,9 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 @media (max-width: 600px) and (min-height: 820px) { .gm-pad .gm-key { min-height: 58px; } .gm-nl .gm-key, .gm-tl .gm-key { min-height: 60px; } }
 /* telefon položeno: gumbi ob strani prizora, da prizor ne postane trak */
 @media (orientation: landscape) and (max-height: 560px) {
+  /* telefon ležeče: med igro brez zgornje vrstice aplikacije (igra ima svojo glavo z nazaj in premorom), igra se ne sme odrezati */
+  body.gm-on .topbar { display: none; }
+  .gm-play { min-height: 0; }
   .gm-play.gm-has-ui { display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, 36%); grid-template-rows: auto auto minmax(0, 1fr); }
   .gm-has-ui > .gm-hud, .gm-has-ui > .gm-timer { grid-column: 1 / -1; }
   .gm-has-ui > .gm-stage { grid-column: 1; grid-row: 3; }

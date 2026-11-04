@@ -1862,7 +1862,7 @@
   "games.yourAnswer": "Twoja odpowiedź",
   "games.e.tiles": "Ułóż równanie",
   "games.e.tiles.how": "Dotknij płytek albo przeciągnij je w puste miejsca, żeby równość była prawdziwa (liczy się każda prawdziwa), potem dotknij Zatwierdź. Klawisze: cyfry, znaki, Backspace i Enter.",
-  "games.e.tiles.ask": "Uzupełnij płytkami, żeby równość była prawdziwa.",
+  "games.e.tiles.ask": "Uzupełnij równość płytkami.",
   "games.e.tiles.build": "Ułóż odpowiedź z płytek.",
   "games.e.tiles.sides": "Twoja lewa strona to {l}, a prawa {r}.",
   "games.e.tiles.pieces": "Płytki",

@@ -1840,7 +1840,7 @@
   "games.yourAnswer": "Tu respuesta",
   "games.e.tiles": "Construye la ecuación",
   "games.e.tiles.how": "Toca o arrastra las fichas a los huecos para que la ecuación sea correcta (vale cualquiera correcta); luego toca Confirmar. Teclas: dígitos, signos, Retroceso e Intro.",
-  "games.e.tiles.ask": "Completa con fichas para que la ecuación sea correcta.",
+  "games.e.tiles.ask": "Completa la ecuación con fichas.",
   "games.e.tiles.build": "Construye la respuesta con las fichas.",
   "games.e.tiles.sides": "Tu lado izquierdo es {l} y el derecho, {r}.",
   "games.e.tiles.pieces": "Fichas",

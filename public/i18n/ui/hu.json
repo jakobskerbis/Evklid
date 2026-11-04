@@ -1840,7 +1840,7 @@
   "games.yourAnswer": "A válaszod",
   "games.e.tiles": "Rakd ki az egyenletet",
   "games.e.tiles.how": "Koppints a kártyákra, vagy húzd őket az üres helyekre, hogy az egyenlőség igaz legyen (bármelyik igaz jó), aztán koppints a Megerősítés gombra. Billentyűk: számjegyek, jelek, Backspace és Enter.",
-  "games.e.tiles.ask": "Töltsd ki kártyákkal, hogy az egyenlőség igaz legyen.",
+  "games.e.tiles.ask": "Egészítsd ki az egyenlőséget kártyákkal.",
   "games.e.tiles.build": "Rakd ki a választ a kártyákból.",
   "games.e.tiles.sides": "A bal oldalad {l}, a jobb oldalad {r}.",
   "games.e.tiles.pieces": "Kártyák",

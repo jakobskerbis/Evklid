@@ -1851,7 +1851,7 @@
   "games.yourAnswer": "Tvoj odgovor",
   "games.e.tiles": "Sastavi jednačinu",
   "games.e.tiles.how": "Dodirni ili prevuci pločice na prazna mjesta tako da jednačina bude tačna (svaka tačna se računa), zatim dodirni Potvrdi. Tipke: cifre, znakovi, Backspace i Enter.",
-  "games.e.tiles.ask": "Dopuni pločicama tako da jednačina bude tačna.",
+  "games.e.tiles.ask": "Dopuni jednačinu pločicama.",
   "games.e.tiles.build": "Sastavi odgovor od pločica.",
   "games.e.tiles.sides": "Tvoja lijeva strana je {l}, a desna {r}.",
   "games.e.tiles.pieces": "Pločice",

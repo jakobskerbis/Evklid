@@ -1851,7 +1851,7 @@
   "games.yourAnswer": "Răspunsul tău",
   "games.e.tiles": "Construiește egalitatea",
   "games.e.tiles.how": "Atinge sau trage plăcuțele în locurile goale, ca egalitatea să fie adevărată (contează oricare adevărată), apoi atinge Confirmă. Taste: cifre, semne, Backspace și Enter.",
-  "games.e.tiles.ask": "Completează cu plăcuțe ca egalitatea să fie adevărată.",
+  "games.e.tiles.ask": "Completează egalitatea cu plăcuțe.",
   "games.e.tiles.build": "Construiește răspunsul din plăcuțe.",
   "games.e.tiles.sides": "Membrul tău stâng este {l}, iar cel drept {r}.",
   "games.e.tiles.pieces": "Plăcuțe",

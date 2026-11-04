@@ -1840,7 +1840,7 @@
   "games.yourAnswer": "Deine Antwort",
   "games.e.tiles": "Gleichung bauen",
   "games.e.tiles.how": "Tippe auf die Kärtchen oder zieh sie in die Lücken, damit die Gleichung stimmt (jede richtige zählt), dann tippe auf Bestätigen. Tasten: Ziffern, Zeichen, Rücktaste und Enter.",
-  "games.e.tiles.ask": "Füll die Lücken mit Kärtchen, damit die Gleichung stimmt.",
+  "games.e.tiles.ask": "Ergänze die Gleichung mit Kärtchen.",
   "games.e.tiles.build": "Bau die Antwort aus den Kärtchen.",
   "games.e.tiles.sides": "Deine linke Seite ist {l}, deine rechte {r}.",
   "games.e.tiles.pieces": "Kärtchen",

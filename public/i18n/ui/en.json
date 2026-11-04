@@ -1840,7 +1840,7 @@
   "games.yourAnswer": "Your answer",
   "games.e.tiles": "Build the equation",
   "games.e.tiles.how": "Tap or drag tiles into the empty spaces so the equation is true (any true one counts), then tap Confirm. Keys: digits, signs, Backspace and Enter.",
-  "games.e.tiles.ask": "Fill in the tiles so the equation is true.",
+  "games.e.tiles.ask": "Complete the equation with the tiles.",
   "games.e.tiles.build": "Build the answer from the tiles.",
   "games.e.tiles.sides": "Your left side is {l} and your right side is {r}.",
   "games.e.tiles.pieces": "Tiles",
