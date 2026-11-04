@@ -1000,13 +1000,19 @@ export function mountAccounts(app, store, opts = {}) {
         // Igre (server/games.js, server/daily-puzzle.js); tabele morda še ne obstajajo.
         games: Object.fromEntries(
           [
-            ["scores", "SELECT game, best, plays, tier, correct, wrong, updated_at FROM game_scores WHERE student_id = ?"],
+            ["scores", "SELECT game, best, plays, tier, correct, wrong, cleared, updated_at FROM game_scores WHERE student_id = ?"],
             ["ratings", "SELECT engine, up, updated_at FROM game_ratings WHERE student_id = ?"],
             ["wishes", "SELECT week, genre FROM game_wishes WHERE student_id = ?"],
             ["unlocks", "SELECT concept, created_at FROM game_unlocks WHERE student_id = ?"],
-            ["days", "SELECT day, plays, returns FROM game_days WHERE student_id = ?"],
+            ["days", "SELECT day, plays, returns, pending, last_end FROM game_days WHERE student_id = ?"],
             ["concept_days", "SELECT day, concept, weak, correct, wrong FROM game_concept_days WHERE student_id = ?"],
-            ["daily_puzzle", "SELECT day, level, hints, wrong, solved, time_ms, total_ms FROM daily_puzzle WHERE student_id = ?"],
+            // Vzdevek na lestvicah (tudi pri dnevni uganki), lige, avatar in kovanci.
+            ["league_profile", "SELECT nickname, tier, created_at FROM league_profiles WHERE student_id = ?"],
+            ["leagues", "SELECT week, final_rank, final_xp, outcome FROM league_members WHERE student_id = ?"],
+            ["avatar", "SELECT equipped FROM avatar_state WHERE student_id = ?"],
+            ["avatar_items", "SELECT item, bought_at FROM avatar_items WHERE student_id = ?"],
+            ["coins", "SELECT amount, reason, created_at FROM coin_events WHERE student_id = ?"],
+            ["daily_puzzle", "SELECT day, level, started_at, finished_at, hints, wrong, solved, time_ms, total_ms FROM daily_puzzle WHERE student_id = ?"],
           ].map(([k, sql]) => {
             try {
               return [k, q(sql, c.id)];
