@@ -17,7 +17,26 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 4. **Table + graph + conclusion question** (one correct option, an explanation for every option).
 5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, `POENOSTAVITVE_SILE`, `POENOSTAVITVE_INDIKATORJI`, `POENOSTAVITVE_OPTIKA`, `POENOSTAVITVE_ELEKTROKEMIJA`, »Kaj je poenostavljeno?«) and here.
 6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`, forces: `test/laboratorij-sile.test.js`, indicators: `test/laboratorij-indikatorji.test.js`, optics: `test/laboratorij-optika.test.js`, electrochemistry: `test/laboratorij-elektrokemija.test.js`) with the allowed deviation stated.
-7. **Review:** pass 1 automatic, pass 2 an Opus expert check of the science and function, pass 3 look/phone/pedagogy
+7. **Na telefonu ostane risba vidna** (j, 2026-11-04: »s scrollanjem do gumbov skriješ animacijo«). Shared, nothing per
+   experiment: `mountSim` (`public/sim/index.js`) calls `pripni(el)` (`public/sim/lab.js`) for every engine that marks
+   itself `.lab`. It puts the drawing (`.demo-stage`, with the meters `.lab-meters` and status) and the controls
+   (`.demo-controls`) into one `.lab-tit-top` (wraps them when the engine used `layout({ stage, controls })`), adds the
+   toggle »Pripni sliko« (`.lab-pin`, `sim.lab.pin`, `aria-pressed`, remembered in `localStorage` `evklid.lab.pripni`),
+   measures the visible height of the scroll area (`--lab-okno`, `--lab-vrh`) and sizes the drawing (`--lab-risba-h`,
+   aspect from the SVG viewBox). CSS in `public/textbook.css` (»Na telefonu ostane risba vidna«, container `labtit` on
+   `.demo.lab`): narrow (container < 800 px) → drawing + meters sticky at the top of the scroll area below the app
+   header, together ~45 % of the visible height (~52 % for an upright drawing such as the titration, 60 % with a mouse),
+   compact LCDs (note up to 3 lines, never cut to »…«), shadow once stuck, controls scroll under it and carry
+   `scroll-margin-top: var(--lab-pin-h)` so `scrollIntoView`/focus never park one under the drawing; landscape phone (height ≤ 560 px, container ≥ 520 px) and wide (container ≥ 800 px) → drawing
+   pinned left beside the controls and fully visible. Pinning lives only inside `.lab-tit-top`, so the table, graph and
+   conclusion below are never covered. Very low visible height (< 330 px, e.g. keyboard on a small phone) unpins in
+   portrait (`.lab-nizko`); a focused control under the drawing or under the keyboard is scrolled into view. The phone
+   bottom bar hides in an open experiment like in a lesson (`touch.css`). Every lab table (`dataTable`) scrolls in its
+   `.lab-table-wrap`, not in the table, so the header row stays visible (sticky `thead th`). Check: `test/laboratorij-telefon.test.js`
+   (every `lab-` engine at 360 × 740: drawing ≥ 80 % visible at every control, no control under it, ≤ 62 % of the
+   view; toggle; landscape and desktop beside). A new experiment only needs `el.classList.add("lab")` and its drawing
+   in a `.demo-stage` directly followed by `.demo-controls` (or both inside `.lab-tit-top`).
+8. **Review:** pass 1 automatic, pass 2 an Opus expert check of the science and function, pass 3 look/phone/pedagogy
    (`docs/pregled.md`). Dangerous experiments are only simulated; a short video only when no realistic
    simulation is possible; home experiments get a safety note and an equipment list.
 
@@ -26,7 +45,7 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 | File | What |
 |---|---|
 | `public/sim/lab-model.js` | models, no DOM (tests import it): `OhmBench`, `Co2Bench`, multimeter, fuse, lamp, `rng`/`gauss` |
-| `public/sim/lab.js` | UI parts: `ticker` (real time, also with reduced motion), `lcd`, `dataTable`, `dataGraph`, `conclusion`, `eventLog`, `notes`, `fixed` |
+| `public/sim/lab.js` | UI parts: `ticker` (real time, also with reduced motion), `lcd`, `dataTable`, `dataGraph`, `conclusion`, `eventLog`, `notes`, `fixed`; `pripni` (drawing stays visible on a phone, rule 7) |
 | `public/sim/lab-fiz.js` | `labOhm` (engine `lab-ohm`) |
 | `public/sim/lab-kem.js` | `labCo2` (engine `lab-co2`), `flaskLevel` |
 | `public/sim/lab-model-titracija.js` | titration model, no DOM: `TitrBench`, `solvePH` (charge balance), indicators, burette/pipette/pH meter |
