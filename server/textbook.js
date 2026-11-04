@@ -34,6 +34,9 @@ export function simsFor(topicId, lesson = loadLesson(topicId)) {
   return list;
 }
 
+// Napis gumba že pove »Poskus v laboratoriju« ali »Poglej v 3D«: naslov simulacije brez predpone »3D: « oziroma »Laboratorij: «.
+const bare = (title) => String(title || "").replace(/^(3D|Laboratorij)\s*:\s*/i, "");
+
 // Ista tema v Laboratoriju in 3D svetu (»Uči se«, public/uci-se.js): iz simulacij lekcije, ki so v katalogu poskus
 // (lab-…, ključ kot na seznamu laboratorija) ali 3D model (3d-<id>). Brez lastnih povezav: samo, kar je v katalogu.
 export function lessonLinks(demos) {
@@ -44,12 +47,12 @@ export function lessonLinks(demos) {
       const key = labKey(d.id, d.opts);
       if (seen.has(key)) continue;
       seen.add(key);
-      out.push({ kind: "lab", key, title: (LAB_INFO[key] || LAB_INFO[d.id])?.title || d.title });
+      out.push({ kind: "lab", key, title: (LAB_INFO[key] || LAB_INFO[d.id])?.title || bare(d.title) });
     }
     const m3 = /^3d-([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(d.id);
     if (m3 && !seen.has(d.id)) {
       seen.add(d.id);
-      out.push({ kind: "3d", id: m3[1], title: d.title });
+      out.push({ kind: "3d", id: m3[1], title: bare(d.title) });
     }
   }
   return out;

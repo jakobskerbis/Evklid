@@ -6,9 +6,14 @@
 .uci-pane.narrow { padding-top: 18px; }
 /* Ime zavihka je v preklopniku: naslov zavihka ostane le za bralnike zaslona. */
 .uci-view .tb-head > h1, .uci-view .lab-h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Uvodna vrstica pod preklopnikom na istem mestu v vseh treh zavihkih (brez zgornjega roba odstavka). */
+.uci-view .tb-head > h1 + p { margin-top: 0; }
 @media (max-width: 760px) {
   .uci-head { padding: 12px 16px 0; }
   .uci-pane.narrow { padding-top: 14px; }
+  /* Preklopnik čez celo širino brez vodoravnega drsenja tudi v daljših jezikih (»Kitabu cha kiada«, »Phòng thí
+     nghiệm«): ime iz več besed gre v dve vrstici, posamezna beseda se ne lomi. */
+  .uci-tabs > button { flex: 1 1 auto; min-width: min-content; white-space: normal; text-wrap: balance; line-height: 1.15; text-align: center; padding-inline: 10px !important; }
 }
 /* Telefon in tablica na dotik: odprta lekcija ali poskus imata svoj gumb Nazaj (← Učbenik, ← Laboratorij), zato se
    preklopnik umakne branju (kot spodnja vrstica, touch.css). Na računalniku ostane za hiter preklop. */
@@ -22,6 +27,8 @@
 .uci-3d-sub { margin: 0 0 16px; }
 .uci-3d-area { margin-top: 24px; }
 .uci-3d-area > h2 { font-size: 1.15rem; margin: 0 0 10px; }
+/* Atlas med področji ima enak razmik kot področje (ne prilepljen pod mrežo nad sabo). */
+.uci-3d-area + .uci-3d-atlas { margin-top: 24px; }
 .uci-3d-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 12px; }
 .uci-3d-card { display: flex; flex-direction: column; gap: 4px; min-width: 0; min-height: 96px; padding: 14px 16px; color: var(--text); text-decoration: none; }
 .uci-3d-card:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
@@ -48,6 +55,12 @@
   .uci-3d-atlas { grid-template-columns: auto minmax(0, 1fr); }
   .uci-3d-open { grid-column: 1 / -1; justify-content: center; }
 }
+/* Premično okno (okna.css): ozko okno na širokem zaslonu dobi isto postavitev kot telefon. */
+@container okno (max-width: 640px) {
+  .uci-3d-atlas { grid-template-columns: auto minmax(0, 1fr); }
+  .uci-3d-open { grid-column: 1 / -1; justify-content: center; }
+}
+@container okno (max-width: 480px) { .tb-link { flex: 1 1 100%; } }
 
 /* Atlas ali model čez cel zaslon: stran /3d v okvirju (isti izvor). Varno območje telefona doda podlaga, ker ga okvir
    sam ne dobi (env() je v okvirju 0); v aplikaciji je --varno-zg/--varno-sp 0, ker prostor pusti ona (theme.js).
@@ -62,7 +75,7 @@ body.uci-3d-open { overflow: hidden; }
 /* ---------- Iz lekcije: ista tema v Laboratoriju ali 3D svetu (textbook.js, .tb-links) ---------- */
 .tb-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 12px; }
 .tb-link {
-  display: inline-flex; align-items: center; gap: 10px; min-height: 44px; max-width: 100%; padding: 6px 14px 6px 10px;
+  display: inline-flex; align-items: center; justify-content: flex-start; gap: 10px; min-height: 44px; max-width: 100%; padding-block: 6px; padding-inline: 10px 14px;
   border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text);
   font: inherit; text-align: start; cursor: pointer;
 }

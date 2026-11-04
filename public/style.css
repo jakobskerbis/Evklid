@@ -993,7 +993,8 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
     flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px;
     padding: 4px 1px; border-radius: 14px; font-size: 0.72rem; font-weight: 800; line-height: 1.15; background: none;
   }
-  .tabbar .tab span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* Napis v eni vrstici; predolg (»Rruga e të mësuarit«, »Навчальний шлях«) gre v največ dve vrstici, ne v tropičje. */
+  .tabbar .tab span { max-width: 100%; overflow: hidden; overflow-wrap: break-word; text-align: center; text-wrap: balance; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
   .tabbar .tab svg.i { width: 46px; height: 30px; padding: 4px 12px; border-radius: 99px; transition: background 0.15s; }
   .tabbar .tab:hover { background: none; }
   .tabbar .tab.active { background: none; color: var(--accent); }
