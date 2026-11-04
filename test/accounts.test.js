@@ -170,6 +170,8 @@ test("free tier limits tutor questions; subscription via webhook lifts it", asyn
       // Otrok, mlajši od 15 let: brez ponudbe nakupa (server/placila/ponudbe.js).
       assert.equal(blocked.body.upgrade, false);
       assert.doesNotMatch(blocked.body.error, /naročnin/);
+      assert.equal(blocked.body.code, "block.freeDaily");
+      assert.equal(blocked.body.hint, undefined);
 
       // Plačilo: checkout s pravilno ceno.
       const co = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "year", adult: true, withdrawal: true } });
@@ -272,11 +274,13 @@ test("free tier stops at the monthly AI budget (all free students and per studen
       const pool = await ask("drugo");
       assert.equal(pool.status, 429);
       assert.match(pool.body.error, /za vse porabljena/);
+      assert.equal(pool.body.code, "block.freePool");
       process.env.EVKLID_FREE_POOL_USD = "0";
       process.env.EVKLID_FREE_STUDENT_USD = "0.5";
       const per = await ask("tretje");
       assert.equal(per.status, 429);
       assert.match(per.body.error, /Ta mesec si porabil/);
+      assert.equal(per.body.code, "block.freeMonth");
       process.env.EVKLID_FREE_STUDENT_USD = "0";
       assert.equal((await ask("četrto")).status, 200);
     });
@@ -335,7 +339,7 @@ test("weekly report, export and account deletion", async () => {
   await withServer(async ({ client, calls, store }) => {
     const a = client();
     await registerVerified(a, calls, "gal@primer.si");
-    const kid = (await a("/api/students", { method: "POST", body: { name: "Zala", birth_year: YEAR - 13, consent: true } })).body;
+    const kid = (await a("/api/students", { method: "POST", body: { name: "Zala", birth_year: YEAR - 13, consent: true, vir: "Šola Bežigrad" } })).body;
     store.db.prepare("INSERT INTO xp_events (student_id, amount, reason) VALUES (?, 40, 'test')").run(kid.id);
 
     const preview = await a("/api/account/weekly-report/preview");
@@ -361,10 +365,17 @@ test("weekly report, export and account deletion", async () => {
     store.setSummary(kidConv.id, "Rešujeta 2x = 10", 20);
     assert.equal((await a("/api/account/export")).status, 404);
     assert.equal((await a("/api/account/export", { method: "POST", body: { password: "narobe123" } })).status, 401);
+    store.db.prepare("INSERT INTO game_scores (student_id, game, best, plays) VALUES (?, 'numline:frac', 12, 3)").run(kid.id);
+    store.db.prepare("INSERT INTO daily_puzzle (student_id, day, level, started_at, solved, total_ms) VALUES (?, '2026-11-04', 'easy', 1, 1, 42000)").run(kid.id);
     const exp = await a("/api/account/export", { method: "POST", body: { password: "geslo1234" } });
     assert.equal(exp.body.children[0].name, "Zala");
+    assert.equal(exp.body.children[0].vir, "sola-bezigrad", "vir profila (server/rast.js) je v izvozu");
     assert.equal(exp.body.parent.password_hash, undefined);
     assert.deepEqual(exp.body.children[0].reports, [], "prijave napak so v izvozu");
+    const games = exp.body.children[0].games;
+    assert.equal(games.scores[0].best, 12, "rezultati iger so v izvozu");
+    assert.equal(games.daily_puzzle[0].total_ms, 42000, "dnevna uganka je v izvozu");
+    assert.ok(Array.isArray(games.concept_days) && Array.isArray(games.ratings));
     assert.equal(exp.body.children[0].conversations.find((c) => c.id === kidConv.id).summary, "Rešujeta 2x = 10", "povzetek pogovora je v izvozu");
 
     assert.equal((await a("/api/account", { method: "DELETE", body: { password: "narobe123" } })).status, 401);
@@ -1009,6 +1020,8 @@ test("guest: clearing cookies or deleting the profile does not give a new free a
       const blocked = await ask(a, conv, "3");
       assert.equal(blocked.status, 429);
       assert.match(blocked.body.error, /ustvari račun/);
+      assert.equal(blocked.body.code, "block.freeDaily");
+      assert.equal(blocked.body.hint, "block.hintGuest");
 
       // Nov gost z istega omrežja (izbrisani piškotki) deli isto kvoto.
       const b = client();
@@ -1056,6 +1069,8 @@ test("guest: monthly AI spend counts for the whole network, also after deletion"
       const r = await b(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: "x" } });
       assert.equal(r.status, 429);
       assert.match(r.body.error, /Ta mesec si porabil/);
+      assert.equal(r.body.code, "block.freeMonth");
+      assert.equal(r.body.hint, "block.hintGuest");
     });
   } finally {
     delete process.env.EVKLID_FREE_STUDENT_USD;

@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Logaritem je eksponent
+  - $\log_a b = x \iff a^x = b$
+  - $\log_2 5 \approx 2{,}32$ (alge)
+- Pogoji
+  - $a > 0$, $a \ne 1$, $b > 0$
+  - $\log_a 1 = 0$, $\log_a a = 1$
+- Desetiški in naravni
+  - $\log b = \log_{10} b$, $\ln b = \log_{\mathrm{e}} b$
+- Pravila kot pri potencah
+  - $\log_a (xy) = \log_a x + \log_a y$
+  - $\log_a \frac{x}{y} = \log_a x - \log_a y$
+  - $\log_a x^n = n \log_a x$
+- Pasti pri pravilih
+  - napaka: $\log (x + y) = \log x + \log y$
+  - napaka: $(\log x)^2 = 2 \log x$
+- Prehod na novo osnovo
+  - $\log_a b = \frac{\log b}{\log a}$
+  - logaritmand v števec, osnova v imenovalec
+- Smiselnost
+  - $2^2 < 5 < 2^3$, zato $2 < \log_2 5 < 3$

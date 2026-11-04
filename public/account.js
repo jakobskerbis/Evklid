@@ -8,6 +8,8 @@ import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
 import { guaranteeBox, guaranteeLine, podariAddon, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
+import { landingHtml } from "./pristajalna.js";
+import { currentSource } from "./vir.js";
 // Starševski račun: prijava, potrditev e-naslova, otroci s soglasjem, naročnina, priporočila.
 // Deluje samo, ko je na strežniku EVKLID_ACCOUNTS=1.
 
@@ -16,11 +18,12 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 const eur = (cents) => (cents / 100).toLocaleString("sl-SI", { style: "currency", currency: "EUR" });
 // Cena v valuti paketa (regijske cene: rupije, naire …); valute brez decimalk imajo cele enote.
 const ZERO_DECIMAL = new Set(["VND", "XOF", "XAF", "UGX", "RWF", "JPY", "KRW", "GNF", "MGA"]);
+// V jeziku vmesnika (locale(), kot garancija-ui.js, placaj.js), da je zapis enak povsod (npr. arabščina »9.99 €«).
+// Evro vedno s centi; druge valute s celim zneskom brez decimalk.
 const money = (minor, currency = "EUR") => {
-  if (currency === "EUR") return eur(minor);
   const major = ZERO_DECIMAL.has(currency) ? minor : minor / 100;
-  const whole = Number.isInteger(major);
-  return major.toLocaleString(currentLang() === "sl" ? "sl-SI" : undefined, { style: "currency", currency, minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: whole ? 0 : 2 });
+  const digits = currency !== "EUR" && Number.isInteger(major) ? 0 : 2;
+  return major.toLocaleString(locale(), { style: "currency", currency, minimumFractionDigits: digits, maximumFractionDigits: digits });
 };
 const date = (iso) => (iso ? new Date(iso).toLocaleDateString("sl-SI", { day: "numeric", month: "long", year: "numeric" }) : "");
 const store = {
@@ -301,6 +304,13 @@ export async function initAccount({ onReady }) {
   lockAccountOnLeave();
   guardLogoOnAuth();
   $("#account-tab").addEventListener("click", renderAccount);
+  // Nazaj in Naprej med pristajalno stranjo, prijavo in registracijo (#prijava, #registracija).
+  addEventListener("popstate", () => {
+    if (status?.logged_in || !document.body.classList.contains("auth-mode")) return;
+    const m = hashMode();
+    if (m) renderAuthMode(m);
+    else renderLanding();
+  });
 
   const q = new URLSearchParams(location.search);
   if (q.get("ref")) store.set("evklid_ref", q.get("ref"));
@@ -353,6 +363,7 @@ export async function initAccount({ onReady }) {
 
 // Na zaslonih prijave logotip ne odpira menija »Nadaljuj z učenjem« (brez profila ne deluje).
 // Skriti vhod za goste (dotik logotipa) je odstranjen skupaj z uporabo brez računa (j, 2026-10-29).
+// Neprijavljen obiskovalec se z logotipom vrne na pristajalno stran.
 function guardLogoOnAuth() {
   document.addEventListener(
     "click",
@@ -360,13 +371,74 @@ function guardLogoOnAuth() {
       if (!e.target.closest(".brand") || !document.body.classList.contains("auth-mode")) return;
       e.preventDefault();
       e.stopImmediatePropagation();
+      if (!status?.logged_in) goAuth(null);
     },
     true,
   );
 }
 
+// Naprava, na kateri je bil kdo že prijavljen: neprijavljen obiskovalec dobi takoj prijavo, ne pristajalne strani.
+const SEEN = "evklid.racun";
+const AUTH_HASH = { "#prijava": "login", "#registracija": "register", "#pozabljeno-geslo": "forgot" };
+const hashMode = () => AUTH_HASH[location.hash] || null;
+const hashOf = (mode) => Object.keys(AUTH_HASH).find((h) => AUTH_HASH[h] === mode) || "";
+const renderAuthMode = (mode) => (mode === "forgot" ? renderForgot() : renderLogin(mode));
+
+// Pristajalna stran ↔ prijava ↔ registracija, z zapisom v zgodovini (#prijava, #registracija), da Nazaj deluje.
+function goAuth(mode) {
+  const hash = hashOf(mode);
+  if (location.hash !== hash) history.pushState(null, "", hash || location.pathname + location.search);
+  const shown = mode ? renderAuthMode(mode) : renderLanding();
+  scrollTo(0, 0);
+  // Fokus na naslov novega zaslona (tipkovnica, bralnik zaslona); brez odpiranja tipkovnice na telefonu.
+  Promise.resolve(shown).then(() => {
+    const h = $("#view-auth h1");
+    if (!h) return;
+    h.tabIndex = -1;
+    h.focus({ preventScroll: true });
+  });
+}
+
+// Cene in preizkus za pristajalno stran (isti podatki kot na strani za starše); največ 1,5 s čakanja.
+let landingPrices, landingReq;
+function loadLandingPrices() {
+  if (landingReq) return landingPrices;
+  const region = deviceRegion();
+  landingReq = api(`/api/account/prices${region ? `?country=${region}` : ""}`).catch(() => null);
+  landingPrices = Promise.race([landingReq, new Promise((r) => setTimeout(() => r(null), 1500))]);
+  landingReq.then((p) => p && (landingPrices = Promise.resolve(p)));
+  return landingPrices;
+}
+
+async function renderLanding() {
+  const prices = await loadLandingPrices();
+  // Med čakanjem na cene je obiskovalec morda že odšel na prijavo ali registracijo.
+  if (status?.logged_in || hashMode()) return;
+  authMode(true);
+  document.body.classList.add("land-mode");
+  const name = document.querySelector(".topbar .brand-name")?.textContent || "";
+  // Cele zneske brez decimalk (99 € namesto 99,00 €), sicer kot drugod v računu.
+  const whole = (minor, currency) => money(minor, currency).replace(/[,.]00(?=\D*$)/, "");
+  $("#view-auth").innerHTML = landingHtml({ name, prices, money: whole });
+  $("#view-auth").querySelectorAll("[data-land]").forEach((a) =>
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      goAuth(a.dataset.land);
+    }),
+  );
+  // Cene so prišle po izrisu (počasna povezava): kartice stopenj dopolnimo, ko pridejo.
+  if (!prices) landingReq.then((p) => p && document.body.classList.contains("land-mode") && renderLanding());
+}
+
 async function route() {
-  if (!status.logged_in) return renderLogin(route.firstMode || "login"), false;
+  if (!status.logged_in) {
+    const mode = route.firstMode || hashMode() || (store.get(SEEN) ? "login" : null);
+    // Prijava dobi svoj zapis (#prijava), da »Kaj je Evklid?« in nato Nazaj vrneta na prijavo.
+    if (mode && !hashMode()) history.replaceState(null, "", location.pathname + location.search + hashOf(mode));
+    return (mode ? renderAuthMode(mode) : await renderLanding()), false;
+  }
+  store.set(SEEN, "1");
+  if (hashMode()) history.replaceState(null, "", location.pathname + location.search);
   // Uporaba brez računa je izklopljena: gost lahko samo ustvari račun in obdrži napredek.
   if (status.parent.guest && !status.guest_mode) return renderGuestOff(), false;
   if (!status.parent.verified && !status.parent.guest) return renderVerify(), false;
@@ -398,6 +470,7 @@ export function openAddChild() {
 // ime vzamemo iz zgornje vrstice (brand.json → scripts/preimenuj.js), da ga ni treba popravljati na dveh mestih.
 function shell(inner) {
   authMode(true);
+  document.body.classList.remove("land-mode");
   const name = document.querySelector(".topbar .brand-name")?.innerHTML || "";
   $("#view-auth").innerHTML = `<div class="auth-wrap"><div class="auth-brand"><span class="logo" aria-hidden="true">${icon("kristal")}</span><b class="brand-name">${name}</b><p>${esc(t("mob.tagline"))}</p></div><div class="auth-box">${inner}</div></div>`;
 }
@@ -413,7 +486,7 @@ function renderLogin(mode = "login") {
   const koda = store.get("evklid_koda") || "";
   shell(`
     <h1>${mode === "login" ? "Prijava" : "Nov račun"}</h1>
-    <p class="muted">${mode === "login" ? "Za starše (otrokov profil) in za dijake ter študente (lasten profil)." : `Evklid je 7 dni brezplačen, brez kartice. Nato ${eur(999)} na mesec ali brezplačni paket z omejenim številom vprašanj.`}</p>
+    <p class="muted">${mode === "login" ? "Za starše (otrokov profil) in za dijake ter študente (lasten profil)." : `Evklid je 7 dni brezplačen, brez kartice. Nato naročnina od ${eur(999)} na mesec ali brezplačni paket z omejenim številom vprašanj.`}</p>
     ${invited ? `<p class="card">Ustvari svoj račun starša. Nato dodaš otrokov profil (<b>${esc(invited)}</b>) in s tem daš soglasje.</p>` : ""}
     <form id="auth-form" class="card form">
       ${mode === "register" ? `<label>Tvoje ime (neobvezno) <input name="name" maxlength="60" autocomplete="name"></label>` : ""}
@@ -432,7 +505,8 @@ function renderLogin(mode = "login") {
       ${mode === "login"
         ? `Še nimaš računa? <a href="#" data-go="register">Registracija</a> · <a href="#" data-go="forgot">Pozabljeno geslo</a>`
         : `Že imaš račun? <a href="#" data-go="login">Prijava</a>`}
-    </p>`);
+    </p>
+    <p class="auth-links"><a href="#" data-go="landing">${esc(t("land.what"))}</a></p>`);
   bindLinks();
   $("#auth-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -532,8 +606,7 @@ function bindLinks() {
     a.addEventListener("click", (e) => {
       e.preventDefault();
       const go = a.dataset.go;
-      if (go === "forgot") renderForgot();
-      else renderLogin(go);
+      goAuth(go === "landing" ? null : go);
     }),
   );
 }
@@ -695,7 +768,7 @@ function bindChildForm(after) {
     try {
       const s = await api("/api/students", {
         method: "POST",
-        body: { name: f.name.value, birth_year: Number(f.birth_year.value), self: isSelf(), consent: f.consent.checked, settings: childSettings(f), ...(profilePw ? { profile_password: profilePw } : {}), ...(Object.keys(otherPasswords).length ? { other_passwords: otherPasswords } : {}) },
+        body: { name: f.name.value, birth_year: Number(f.birth_year.value), self: isSelf(), consent: f.consent.checked, settings: childSettings(f), vir: currentSource(), ...(profilePw ? { profile_password: profilePw } : {}), ...(Object.keys(otherPasswords).length ? { other_passwords: otherPasswords } : {}) },
       });
       store.set("studentId", String(s.id));
       store.set("evklid_invite_name", null);
@@ -790,13 +863,13 @@ function plansPicker(acc) {
     const p = find(seats, interval);
     if (!p) return "";
     const cur = p.currency || "EUR";
-    const perMonth = interval === "year" ? `<span class="muted">≈ ${money(Math.round(p.amount / 10), cur)} / mesec (10 mesecev)</span>` : "";
+    const perMonth = interval === "year" ? `<span class="muted">${esc(t("pay.yearPerMonth", { price: money(Math.round(p.amount / 10), cur) }))}</span>` : "";
     // Letni paket je prvi in privzet (j 2026-11-04): prihranek glede na 12 mesečnih plačil.
     const m = interval === "year" ? find(seats, "month") : null;
     const pct = m && m.amount > 0 && p.amount > 0 && (m.currency || "EUR") === cur ? Math.floor((1 - p.amount / (12 * m.amount)) * 100) : 0;
     const save = pct > 0 ? ` <span class="pill ok">${esc(t("pay.save", { pct }))}</span>` : "";
     return `<label class="plan"><input type="radio" name="plan" value="${seats}-${interval}">
-      <span><b>${money(p.amount, cur)}</b> / ${interval === "year" ? (p.level === "FAKS" && !p.family ? "študijsko leto" : "šolsko leto") : "mesec"}${save}<br>${perMonth}</span></label>`;
+      <span><b>${money(p.amount, cur)}</b> / ${esc(t(interval === "year" ? (p.level === "FAKS" && !p.family ? "pay.perStudyYear" : "school.perYear") : "school.perMonth"))}${save}<br>${perMonth}</span></label>`;
   };
   // Najprej izbira, za koliko otrok; šele nato cene samo za to izbiro (j 2026-10-30: prej je bilo prenatrpano).
   const familyLabel = acc.children.some((c) => c.level === "FAKS") ? t("pay.familyStudent") : t("pay.family");
@@ -814,16 +887,14 @@ function plansPicker(acc) {
       <div id="plan-rest" class="plans" hidden>
       <p class="form-error" role="alert" hidden></p>
       ${acc.guarantee ? guaranteeLine() : ""}
-      ${acc.prices_draft ? `<p class="muted">Cene v lokalni valuti so predlog (razvojna različica).</p>` : ""}
+      ${acc.prices_draft ? `<p class="muted">${esc(t("pay.pricesDraft"))}</p>` : ""}
       ${acc.parent.minor
         ? `<p class="muted">${esc(t("pay.minorNote"))}</p>
            <button class="secondary" type="button" id="plan-link">${esc(t("pay.askParent"))}</button><div id="plan-link-out"></div>`
         : `${podariAddon(acc)}
            ${consentFields()}
            <button class="primary" type="submit">${esc(t("pay.continue"))}</button>`}
-      ${acc.parent.minor ? "" : `<p class="muted">Plačilo poteka varno prek Stripe. Naročnino lahko kadar koli prekličeš.${
-        acc.access.tier === "trial" ? " Preostanek preizkusa se ohrani: prvo plačilo bo šele po njegovem koncu." : ""
-      }</p>`}
+      ${acc.parent.minor ? "" : `<p class="muted">${esc(t("pay.secureCancel"))}${acc.access.tier === "trial" ? ` ${esc(t("pay.trialKept"))}` : ""}</p>`}
       </div>
     </form>`;
 }
@@ -980,9 +1051,11 @@ async function loadPilot(days = 30, school = "", focusId = "") {
   const seq = ++pilotSeq;
   const out = $("#pilot-out");
   if (!out) return;
-  let r;
+  let r, g;
   try {
-    r = await api(`/api/admin/pilot?days=${days}${school ? `&school=${school}` : ""}`);
+    const qs = `days=${days}${school ? `&school=${school}` : ""}`;
+    // Rast in vračanje (server/rast.js) je dodatek: če ne uspe, kartica pokaže vsaj merjenje v pilotu.
+    [r, g] = await Promise.all([api(`/api/admin/pilot?${qs}`), api(`/api/admin/rast?${qs}`).catch(() => null)]);
     if (seq !== pilotSeq) return;
   } catch (err) {
     out.innerHTML = `<p class="muted">${esc(err.message)}</p>`;
@@ -1009,12 +1082,39 @@ async function loadPilot(days = 30, school = "", focusId = "") {
     ${r.students != null ? `<p class="muted">${esc(t("pilot.schoolStudents", { n: r.students }))}</p>` : ""}
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr><th scope="col">${esc(t("pilot.day"))}</th><th scope="col">${esc(t("pilot.questions"))}</th><th scope="col">${esc(t("pilot.askers"))}</th><th scope="col">${esc(t("pilot.ai"))}</th><th scope="col">${esc(t("pilot.parents"))}</th></tr></thead>
       <tbody>${[...r.rows].reverse().map((d) => `<tr><td>${esc(day(d.day))}</td><td>${nf(d.questions)}</td><td>${nf(d.askers)}</td><td>${eur(d.aiUsd * rate, 3)}</td><td>${nf(d.visits.starsi + d.visits.placaj)}</td></tr>`).join("")}</tbody></table></div>
-    <p class="muted small">${esc(t("pilot.note"))}</p>`;
+    <p class="muted small">${esc(t("pilot.note"))}</p>
+    ${g ? growthHtml(g, loc) : ""}`;
   // Kartica se izriše znova: fokus ostane na izbiri, ki jo je uporabnik spremenil (tipkovnica).
   if (focusId) setTimeout(() => $(`#${focusId}`)?.focus());
   const reload = (e) => loadPilot($("#pilot-days").value, $("#pilot-school")?.value || "", e.target.id);
   $("#pilot-days").addEventListener("change", reload);
   $("#pilot-school")?.addEventListener("change", reload);
+}
+
+// Skrbnik: rast in vračanje (server/rast.js): prva naloga v 24 urah, vrnitev naslednji dan in po 7 dneh, viri, tedni.
+function growthHtml(g, loc) {
+  const nf = (x) => Number(x).toLocaleString(loc);
+  const pc = (x) => Number(x).toLocaleString(loc, { style: "percent", maximumFractionDigits: 0 });
+  const pct = (s) => (s.pct == null ? "–" : pc(s.pct));
+  const of = (s) => ({ a: nf(s.returned), b: nf(s.eligible) });
+  const dm = (s) => new Date(`${s}T12:00:00`).toLocaleDateString(loc, { day: "numeric", month: "numeric" });
+  const SRC = { "": "rast.src.none", priporocilo: "rast.src.ref", razred: "rast.src.class", drugo: "rast.src.other" };
+  const src = (v) => (SRC[v] ? t(SRC[v]) : v);
+  const th = (k) => `<th scope="col">${esc(t(k))}</th>`;
+  // Povezava v opombi je v \u2066 … \u2069 (LRI … PDI), da je v arabščini in perzijščini ne premeša smer besedila.
+  return `<h3 class="rast-title">${esc(t("rast.title"))}</h3>
+    <ul class="pilot-sum">
+      <li><b>${nf(g.newProfiles)}</b> ${esc(t("rast.newProfiles"))}</li>
+      <li><b>${pct(g.activation)}</b> ${esc(t("rast.activated", of(g.activation)))}</li>
+      <li><b>${pct(g.d1)}</b> ${esc(t("rast.d1", of(g.d1)))}</li>
+      <li><b>${pct(g.d7)}</b> ${esc(t("rast.d7", of(g.d7)))} · ${esc(t("rast.goal", { pct: pc(g.goal.target) }))} <b>${esc(t(`rast.goal.${g.goal.status}`))}</b></li>
+      <li><b>${nf(g.weeklyActive)}</b> ${esc(t("rast.wau"))}</li>
+    </ul>
+    <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.week")}${th("rast.new")}${th("rast.active")}</tr></thead>
+      <tbody>${[...g.weeks].reverse().map((w) => `<tr><td>${esc(`${dm(w.start)} – ${dm(w.end)}`)}</td><td>${nf(w.newProfiles)}</td><td>${nf(w.active)}</td></tr>`).join("")}</tbody></table></div>
+    ${g.sources.length ? `<div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.source")}${th("rast.visits")}${th("rast.profiles")}${th("rast.firstTask")}${th("rast.returned")}</tr></thead>
+      <tbody>${g.sources.map((s) => `<tr><td>${esc(src(s.vir))}</td><td>${nf(s.visits)}</td><td>${nf(s.profiles)}</td><td>${nf(s.firstTask)}</td><td>${s.d7Eligible ? `${nf(s.d7Returned)} / ${nf(s.d7Eligible)}` : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
+    <p class="muted small">${esc(t("rast.note", { link: `\u2066${location.origin}/?vir=facebook\u2069` }))}</p>`;
 }
 
 // Skrbnik: naročila šol s strani /sole (server/sole.js): stanje, opomba, predračun za tisk.

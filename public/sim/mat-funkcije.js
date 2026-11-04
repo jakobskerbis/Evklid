@@ -53,6 +53,23 @@ const piTicks = (v) => {
   const n = k / 2;
   return Number.isInteger(n) ? `${n === 1 ? "" : n === -1 ? "−" : fmt(n)}π` : `${k === 1 ? "" : k === -1 ? "−" : fmt(k)}π/2`;
 };
+// večkratnik π/12 kot besedilo: π/4, −π/2, 3π/4, π, 2π; sicer decimalno
+const piTxt = (v) => {
+  const k = Math.round((v / PI) * 12);
+  if (Math.abs(v - (k * PI) / 12) > 1e-6) return fmt(v, 2);
+  if (k === 0) return "0";
+  const g = ((a, b) => { while (b) [a, b] = [b, a % b]; return a; })(Math.abs(k), 12);
+  const n = Math.abs(k) / g, d = 12 / g;
+  return `${k < 0 ? "−" : ""}${n === 1 ? "" : n}π${d === 1 ? "" : "/" + d}`;
+};
+// osnovna perioda 2π/b kot večkratnik π (b je večkratnik 0,5): 4π, 2π, 4π/3, π …
+const periodTex = (b) => {
+  const m = Math.round(2 * b);
+  if (Math.abs(2 * b - m) > 1e-9 || m <= 0) return `${T(2 / b, 2)}\\pi`;
+  const g = ((a, c) => { while (c) [a, c] = [c, a % c]; return a; })(4, m);
+  const n = 4 / g, d = m / g;
+  return d === 1 ? `${n === 1 ? "" : n}\\pi` : `\\frac{${n === 1 ? "" : n}\\pi}{${d}}`;
+};
 
 // ------------------------------------------------------------ prednastavitve za graf
 const PRESETS = {
@@ -239,7 +256,7 @@ const PRESETS = {
   },
   sinus: {
     params: [["A", 0.5, 3, 0.5, 1], ["b", 0.5, 3, 0.5, 1], ["c", -PI, PI, PI / 12, 0], ["d", -2, 2, 0.5, 0]],
-    fmtParam: { c: (v) => piTicks(v) || `${fmt(v / PI, 2)}π` },
+    fmtParam: { c: piTxt },
     f: (x, P) => P.A * Math.sin(P.b * (x - P.c)) + P.d,
     gName: "y = sin x",
     g: (x) => Math.sin(x),
@@ -255,7 +272,7 @@ const PRESETS = {
       s("line", { x1: A.L, y1: A.Y(P.d + P.A), x2: A.R, y2: A.Y(P.d + P.A), class: "guide" }, svg);
       s("line", { x1: A.L, y1: A.Y(P.d - P.A), x2: A.R, y2: A.Y(P.d - P.A), class: "guide" }, svg);
     },
-    info: (P) => `<p>Amplituda |A| = ${fmt(P.A)}, osnovna perioda ${tex(`\\frac{2\\pi}{b} = ${T(2 / P.b, 2)}\\pi`)}, premik v desno za ${piTicks(P.c) || fmt(P.c, 2)}, premik navzgor za ${fmt(P.d)}. Zaloga vrednosti [${fmt(P.d - P.A)}, ${fmt(P.d + P.A)}].</p>
+    info: (P) => `<p>Amplituda |A| = ${fmt(P.A)}, osnovna perioda ${tex(`\\frac{2\\pi}{b} = ${periodTex(P.b)}`)}, premik ${P.c < -1e-9 ? "v levo" : "v desno"} za ${piTxt(Math.abs(P.c))}, premik navzgor za ${fmt(P.d)}. Zaloga vrednosti [${fmt(P.d - P.A)}, ${fmt(P.d + P.A)}].</p>
       <p class="muted"><span class="dot dot-b"></span> je osnovni graf y = sin x. Kosinus je sinus, premaknjen za π/2 v levo: cos x = sin(x + π/2).</p>`,
     tryText: "Nastavi c = −π/2. Kateri znan graf dobiš?",
   },
@@ -263,9 +280,10 @@ const PRESETS = {
     params: [["a", -2, 2, 0.25, 0.5], ["x₁", -4, 4, 0.5, -3], ["x₂", -4, 4, 0.5, 0], ["x₃", -4, 4, 0.5, 2.5], ["stopnja x₁", 0, 3, 1, 1], ["stopnja x₂", 0, 3, 1, 2], ["stopnja x₃", 0, 3, 1, 1]],
     f: (x, P) => P.a * (x - P["x₁"]) ** P["stopnja x₁"] * (x - P["x₂"]) ** P["stopnja x₂"] * (x - P["x₃"]) ** P["stopnja x₃"],
     win: [-5, 5, -8, 8],
-    tex: (P) => `p(x) = ${T(P.a)}${["x₁", "x₂", "x₃"].map((k, i) => (P[`stopnja ${k}`] ? `${shift("x", P[k])}${P[`stopnja ${k}`] > 1 ? `^${P[`stopnja ${k}`]}` : ""}` : "")).join("")}`,
-    marks: (A, P, svg) => ["x₁", "x₂", "x₃"].forEach((k) => P[`stopnja ${k}`] && dot(svg, A, P[k], 0, P[`stopnja ${k}`] % 2 ? "a" : "c", "")),
+    tex: (P) => !P.a ? "p(x) = 0" : `p(x) = ${["x₁", "x₂", "x₃"].some((k) => P[`stopnja ${k}`]) ? cf(P.a) : T(P.a)}${["x₁", "x₂", "x₃"].map((k, i) => (P[`stopnja ${k}`] ? `${shift("x", P[k])}${P[`stopnja ${k}`] > 1 ? `^${P[`stopnja ${k}`]}` : ""}` : "")).join("")}`,
+    marks: (A, P, svg) => P.a && ["x₁", "x₂", "x₃"].forEach((k) => P[`stopnja ${k}`] && dot(svg, A, P[k], 0, P[`stopnja ${k}`] % 2 ? "a" : "c", "")),
     info: (P) => {
+      if (!P.a) return `<p>Pri a = 0 je p(x) = 0 (ničelni polinom): graf je os x, vsak x je ničla. Nastavi a ≠ 0.</p>`;
       const deg = P["stopnja x₁"] + P["stopnja x₂"] + P["stopnja x₃"];
       const lim = (side) => (deg === 0 ? "konstanta" : (P.a > 0) === (side > 0 || deg % 2 === 0) ? "+∞" : "−∞");
       return `<p>Stopnja polinoma: <b>${deg}</b>. Vodilni koeficient a = ${fmt(P.a)}. Ko gre x → +∞, gre p(x) → ${lim(1)}; ko gre x → −∞, gre p(x) → ${lim(-1)}.</p>
@@ -279,13 +297,20 @@ const PRESETS = {
     f: (x, P) => (P.a * (x - P["ničla"])) / (x - P.pol) ** P["stopnja pola"],
     tex: (P) => (P.a ? `f(x) = \\frac{${cf(P.a)}${shift("x", P["ničla"])}}{${shift("x", P.pol)}${P["stopnja pola"] > 1 ? "^2" : ""}}` : "f(x) = 0"),
     marks: (A, P, svg) => {
-      s("line", { x1: A.X(P.pol), y1: A.T, x2: A.X(P.pol), y2: A.B, class: "guide stroke-danger" }, svg);
+      // Ista ničla in pol stopnje 1: ostane luknja. Pri polu stopnje 2 se okrajša en faktor, pol ostane.
+      // Pri a = 0 je f(x) = 0 za x ≠ pol: premica z luknjo, pola ni.
+      const hole = !P.a || (P["ničla"] === P.pol && P["stopnja pola"] === 1);
+      if (!hole) s("line", { x1: A.X(P.pol), y1: A.T, x2: A.X(P.pol), y2: A.B, class: "guide stroke-danger" }, svg);
       const hy = P["stopnja pola"] === 1 ? P.a : 0;
       s("line", { x1: A.L, y1: A.Y(hy), x2: A.R, y2: A.Y(hy), class: "guide stroke-danger" }, svg);
-      if (P["ničla"] !== P.pol) dot(svg, A, P["ničla"], 0, "a", "");
-      else s("circle", { cx: A.X(P.pol), cy: A.Y(P["stopnja pola"] === 1 ? P.a : 0), r: 6, class: "pt open stroke-a" }, svg);
+      if (P.a && P["ničla"] !== P.pol) dot(svg, A, P["ničla"], 0, "a", "");
+      else if (hole) s("circle", { cx: A.X(P.pol), cy: A.Y(P.a), r: 6, class: "pt open stroke-a" }, svg);
     },
-    info: (P) => (P["ničla"] === P.pol
+    info: (P) => (!P.a
+      ? `<p>Pri a = 0 je števec enak 0: f(x) = 0 za vse x ≠ ${fmt(P.pol)}. Graf je os x z <b>luknjo</b> pri x = ${fmt(P.pol)} (tam funkcija ni definirana), pola ni.</p>`
+      : P["ničla"] === P.pol && P["stopnja pola"] === 2
+      ? `<p>Števec in imenovalec imata skupni faktor ${tex(shift("x", P.pol))}: izraz se okrajša v ${tex(`f(x) = \\frac{${T(P.a)}}{${shift("x", P.pol).replace(/^\((.*)\)$/, "$1")}}`)} (za x ≠ ${fmt(P.pol)}). Pri x = ${fmt(P.pol)} ostane <b>pol</b> lihe stopnje: navpična asimptota. Ničle ni, vodoravna asimptota je y = 0.</p>`
+      : P["ničla"] === P.pol
       ? `<p>Števec in imenovalec imata isti faktor: izraz se okrajša. Pri x = ${fmt(P.pol)} je v grafu <b>luknja</b> (funkcija tam ni definirana), pola ni.</p>`
       : `<p><b>Pol</b> pri x = ${fmt(P.pol)} (ničla imenovalca): navpična asimptota. ${P["stopnja pola"] === 2 ? "Pol sode stopnje: na obeh straneh gre graf v isto neskončnost." : "Pol lihe stopnje: graf na eni strani gre v +∞, na drugi v −∞."}</p>
          <p><b>Ničla</b> pri x = ${fmt(P["ničla"])} (ničla števca). Vodoravna asimptota: y = ${fmt(P["stopnja pola"] === 1 ? P.a : 0)} (${P["stopnja pola"] === 1 ? "stopnji števca in imenovalca sta enaki, zato je to razmerje vodilnih koeficientov" : "stopnja imenovalca je večja, zato y = 0"}).</p>`),
@@ -563,11 +588,11 @@ export function odvod(el, { mode = "tangenta" } = {}) {
 
 // ------------------------------------------------------------ integral
 const IFUN = {
-  x2: { name: "x²", f: (x) => x * x, F: (x) => x ** 3 / 3, Ftex: "\\frac{x^3}{3}", win: [-1, 3.2, -1, 9] },
-  lin: { name: "0,5x + 1", f: (x) => 0.5 * x + 1, F: (x) => x * x / 4 + x, Ftex: "\\frac{x^2}{4} + x", win: [-1, 4.5, -1, 4] },
-  sin: { name: "sin x + 1", f: (x) => Math.sin(x) + 1, F: (x) => -Math.cos(x) + x, Ftex: "x - \\cos x", win: [-0.5, 2 * PI, -0.5, 2.5] },
-  sqrt: { name: "√x", f: (x) => (x >= 0 ? Math.sqrt(x) : NaN), F: (x) => (2 / 3) * x ** 1.5, Ftex: "\\frac{2}{3}x^{3/2}", win: [-0.5, 5, -0.5, 2.6] },
-  x3: { name: "x³ − 2x", f: (x) => x ** 3 - 2 * x, F: (x) => x ** 4 / 4 - x * x, Ftex: "\\frac{x^4}{4} - x^2", win: [-2.2, 2.2, -4, 4] },
+  x2: { name: "x²", tex: "x^2", f: (x) => x * x, F: (x) => x ** 3 / 3, Ftex: "\\frac{x^3}{3}", win: [-1, 3.2, -1, 9] },
+  lin: { name: "0,5x + 1", tex: "(0{,}5x + 1)", f: (x) => 0.5 * x + 1, F: (x) => x * x / 4 + x, Ftex: "\\frac{x^2}{4} + x", win: [-1, 4.5, -1, 4] },
+  sin: { name: "sin x + 1", tex: "(\\sin x + 1)", f: (x) => Math.sin(x) + 1, F: (x) => -Math.cos(x) + x, Ftex: "x - \\cos x", win: [-0.5, 2 * PI, -0.5, 2.5] },
+  sqrt: { name: "√x", tex: "\\sqrt{x}", f: (x) => (x >= 0 ? Math.sqrt(x) : NaN), F: (x) => (2 / 3) * x ** 1.5, Ftex: "\\frac{2}{3}x^{3/2}", win: [-0.5, 5, -0.5, 2.6] },
+  x3: { name: "x³ − 2x", tex: "(x^3 - 2x)", f: (x) => x ** 3 - 2 * x, F: (x) => x ** 4 / 4 - x * x, Ftex: "\\frac{x^4}{4} - x^2", win: [-2.2, 2.2, -4, 4] },
 };
 export function integral(el, { mode = "doloceni" } = {}) {
   const svg = svgBox(340, 300);
@@ -603,7 +628,7 @@ export function integral(el, { mode = "doloceni" } = {}) {
       axisMark(svg, A, clamp(a, x0, x1), `a = ${fmt(a, 1)}`, "a", { y: Fn.f(clamp(a, x0, x1)), sl: sa, key: "a" });
       axisMark(svg, A, clamp(b, x0, x1), `b = ${fmt(b, 1)}`, "c", { y: Fn.f(clamp(b, x0, x1)), sl: sb, key: "b", lblDy: Math.abs(A.X(a) - A.X(b)) < 56 ? 14 : 0 });
       const exact = Fn.F(hi) - Fn.F(lo);
-      out.innerHTML = texBlock(`\\int_{${T(lo)}}^{${T(hi)}} ${Fn.name.replace("√x", "\\sqrt{x}").replace(",", "{,}").replace("³", "^3").replace("²", "^2")}\\,dx = \\Big[${Fn.Ftex}\\Big]_{${T(lo)}}^{${T(hi)}} = ${T(exact, 4)}`) +
+      out.innerHTML = texBlock(`\\int_{${T(lo)}}^{${T(hi)}} ${Fn.tex}\\,dx = \\Big[${Fn.Ftex}\\Big]_{${T(lo)}}^{${T(hi)}} = ${T(exact, 4)}`) +
         `<p>Vsota ${n} ${rule === "trapez" ? "trapezov" : "pravokotnikov"}: <b>${fmt(sum, 4)}</b>, napaka ${fmt(Math.abs(sum - exact), 4)}. Več ko je delov, manjša je napaka: določeni integral je limita teh vsot.</p>
          <p class="muted">Ploščine pod osjo x štejejo negativno (rdeče). Newton–Leibniz: integral izračunamo z nedoločenim integralom F, ker je F' = f.</p>`;
     } else {
@@ -619,7 +644,7 @@ export function integral(el, { mode = "doloceni" } = {}) {
       for (let c2 = -3; c2 <= 3; c2++) if (c2 !== C) s("path", { d: fnPath((x) => Fn.F(x) + c2, A), class: "graph-line stroke-muted thin-line", opacity: 0.35, "data-name": "Druge primitivne" }, svg);
       s("path", { d: fnPath((x) => Fn.F(x) + C, A), class: "graph-line stroke-c", "data-name": "F(x) + C" }, svg);
       s("path", { d: fnPath(Fn.f, A), class: "graph-line stroke-b thin-line", "data-name": "f(x)" }, svg);
-      out.innerHTML = texBlock(`\\int ${Fn.name.replace("√x", "\\sqrt{x}").replace(",", "{,}").replace("³", "^3").replace("²", "^2")}\\,dx = ${Fn.Ftex} + C,\\quad C = ${C}`) +
+      out.innerHTML = texBlock(`\\int ${Fn.tex}\\,dx = ${Fn.Ftex} + C,\\quad C = ${C}`) +
         `<p><span class="dot dot-c"></span> Primitivna funkcija F ima v vsaki točki naklon enak vrednosti <span class="dot dot-b"></span> f(x). Kratke črtice kažejo ta naklon (polje smeri).</p>
          <p class="muted">Konstanta C premakne graf F navzgor ali navzdol: vse te funkcije imajo isti odvod, zato je nedoločeni integral cela družina funkcij.</p>`;
     }
@@ -674,19 +699,23 @@ export function zaporedje(el, { mode = "ag" } = {}) {
       s("line", { x1: A.L, y1: A.Y(L), x2: A.R, y2: A.Y(L), class: "guide stroke-c" }, svg);
     }
     let Ne = 0;
+    // zunaj pasu: |aₙ − L| ≥ ε (toleranca za zaokrožitev, npr. 6/5 − 1 = 0,19999…)
+    const zunaj = (t) => Math.abs(t - L) >= eps - 1e-9;
     terms.forEach((t, i) => {
-      if (L != null && Math.abs(t - L) >= eps) Ne = i + 1;
-      if (t >= A.y0 && t <= A.y1) s("circle", { cx: A.X(i + 1), cy: A.Y(t), r: 4.5, class: `pt ${L != null && Math.abs(t - L) < eps ? "fill-c" : "fill-a"}` }, svg);
+      if (L != null && zunaj(t)) Ne = i + 1;
+      if (t >= A.y0 && t <= A.y1) s("circle", { cx: A.X(i + 1), cy: A.Y(t), r: 4.5, class: `pt ${L != null && !zunaj(t) ? "fill-c" : "fill-a"}` }, svg);
     });
+    // Narisanih je le 30 členov; pri majhnem ε je zadnji člen zunaj pasu lahko dlje.
+    if (L != null) for (let i = n + 1; i <= 5000; i++) if (zunaj(SEQS[key][1](i))) Ne = i;
     if (mode === "ag") {
       const S = terms.reduce((x, y) => x + y, 0);
       out.innerHTML = (kind === "a"
-        ? texBlock(`a_n = a_1 + (n - 1)d = ${T(a1)} + (n - 1)\\cdot ${T(d)},\\quad a_{${N}} = ${T(terms[N - 1])}`) + texBlock(`s_{${N}} = \\frac{n(a_1 + a_n)}{2} = ${T(S)}`) + `<p>Vsak člen dobimo tako, da prejšnjemu <b>prištejemo</b> d. Točke ležijo na premici. ${d > 0 ? "d > 0: zaporedje narašča." : d < 0 ? "d < 0: zaporedje pada." : "d = 0: konstantno."}</p>`
-        : texBlock(`a_n = a_1 q^{n-1} = ${T(a1)}\\cdot ${T(q, 1)}^{n-1},\\quad a_{${N}} = ${T(terms[N - 1])}`) + texBlock(`s_{${N}} = a_1\\frac{q^n - 1}{q - 1} = ${T(S)}`) + `<p>Vsak člen dobimo tako, da prejšnjega <b>pomnožimo</b> s q. ${Math.abs(q) > 1 ? "|q| > 1: členi po absolutni vrednosti hitro rastejo." : Math.abs(q) < 1 ? "|q| < 1: členi se bližajo 0." : ""}${q < 0 ? " q < 0: predznaki se izmenjujejo." : ""}</p>`);
+        ? texBlock(`a_n = a_1 + (n - 1)d = ${T(a1)} + (n - 1)\\cdot ${d < 0 ? `(${T(d)})` : T(d)},\\quad a_{${N}} = ${T(terms[N - 1])}`) + texBlock(`s_{${N}} = \\frac{n(a_1 + a_n)}{2} = ${T(S)}`) + `<p>Vsak člen dobimo tako, da prejšnjemu <b>prištejemo</b> d. Točke ležijo na premici. ${d > 0 ? "d > 0: zaporedje narašča." : d < 0 ? "d < 0: zaporedje pada." : "d = 0: konstantno."}</p>`
+        : texBlock(`a_n = a_1 q^{n-1} = ${T(a1)}\\cdot ${q < 0 ? `(${T(q, 1)})` : T(q, 1)}^{n-1},\\quad a_{${N}} = ${T(terms[N - 1])}`) + texBlock(`s_{${N}} = a_1\\frac{q^n - 1}{q - 1} = ${T(S)}`) + `<p>Vsak člen dobimo tako, da prejšnjega <b>pomnožimo</b> s q. ${Math.abs(q) > 1 ? "|q| > 1: členi po absolutni vrednosti hitro rastejo." : Math.abs(q) < 1 ? "|q| < 1: členi se bližajo 0." : ""}${q < 0 ? " q < 0: predznaki se izmenjujejo." : ""}</p>`);
     } else {
       const inc = terms.every((t, i) => !i || t >= terms[i - 1] - 1e-12), dec = terms.every((t, i) => !i || t <= terms[i - 1] + 1e-12);
       out.innerHTML = `<p>${inc ? "Zaporedje <b>narašča</b>." : dec ? "Zaporedje <b>pada</b>." : "Zaporedje ni monotono."} ${L != null || key === "osc" ? "Je <b>omejeno</b>." : "Ni navzgor omejeno."}</p>
-        <p>${L != null ? `Limita je ${fmt(L, 4)}. Za ε = ${fmt(eps, 2)} so vsi členi od n = ${Ne + 1} naprej (vijolične pike) v senčenem pasu: to pomeni, da je ${fmt(L, 4)} limita. Manjši ε zahteva večji n.` : key === "osc" ? "Členi skačejo med −1 in 1: limite ni (zaporedje ima dve stekališči)." : "Členi rastejo čez vse meje: zaporedje je divergentno."}</p>`;
+        <p>${L != null ? `Limita je ${fmt(L, 4)}. Za ε = ${fmt(eps, 2)} so vsi členi od n = ${Ne + 1} naprej ${Ne < n ? "(vijolične pike) " : `(na sliki jih ni: narisanih je le prvih ${n} členov) `}v senčenem pasu: to pomeni, da je ${fmt(L, 4)} limita. Manjši ε zahteva večji n.` : key === "osc" ? "Členi skačejo med −1 in 1: limite ni (zaporedje ima dve stekališči)." : "Členi rastejo čez vse meje: zaporedje je divergentno."}</p>`;
     }
   };
   layout(el, { stage: [svg], controls: ctl, out, tryText: mode === "ag" ? "Kateri pogoj mora veljati za q, da gredo členi geometrijskega zaporedja proti 0?" : "Zmanjšaj ε na 0,01 pri 1/n. Od katerega člena naprej so vsi v pasu?" });
@@ -768,7 +797,7 @@ export function obresti(el) {
     if (dbl <= n) s("circle", { cx: A.X(dbl), cy: A.Y(2 * G), r: 5, class: "pt fill-c" }, svg);
     out.innerHTML = `<p><span class="dot dot-b"></span> <b>Navadno obrestovanje</b>: obresti vsako leto od začetne glavnice: ${tex(`G_n = G_0(1 + \\frac{p}{100}n) = ${T(simple(n))}\\ €`)}.</p>
       <p><span class="dot dot-a"></span> <b>Obrestno obrestovanje</b>: obresti se pripišejo in naprej obrestujejo: ${tex(`G_n = G_0\\left(1 + \\frac{p}{100 m}\\right)^{mn} = ${T(comp(n))}\\ €`)}.</p>
-      <p>Razlika po ${n} letih: ${fmt(comp(n) - simple(n))} €. <span class="dot dot-c"></span> Pri obrestnem obrestovanju se glavnica podvoji po ${fmt(dbl, 1)} letih (pravilo 72: 72 / ${p} ≈ ${fmt(72 / p, 1)}).</p>`;
+      <p>Razlika po ${n} ${n === 1 ? "letu" : "letih"}: ${fmt(comp(n) - simple(n))} €. <span class="dot dot-c"></span> Pri obrestnem obrestovanju se glavnica podvoji po ${fmt(dbl, 1)} letih (pravilo 72: 72 / ${p} ≈ ${fmt(72 / p, 1)}).</p>`;
   };
   layout(el, {
     stage: [svg],

@@ -789,7 +789,7 @@ export function zgradi(THREE, ctx) {
   ];
 
   const nadzor = [
-    { tip: "drsnik", id: "dan", oznaka: "Dan od mlaja", min: 0, max: 29.5, korak: 0.1, get vrednost() { return Math.round(dan * 10) / 10; }, ob: (v) => { dan = Math.min(29.5, Math.max(0, Number(v) || 0)); zem.rotation.y = (dan % 1) * 2 * Math.PI; postavi(); } },
+    { tip: "drsnik", id: "dan", oznaka: "Dan od mlaja", min: 0, max: 29.5, korak: 0.1, get vrednost() { return Math.round(dan * 10) / 10; }, set vrednost(_) { /* kit zapiše vrednost; stanje nastavi ob() */ }, ob: (v) => { dan = Math.min(29.5, Math.max(0, Number(v) || 0)); zem.rotation.y = (dan % 1) * 2 * Math.PI; postavi(); } },
     { tip: "stikalo", id: "predvajaj", oznaka: "Predvajaj", vrednost: tece, vidno: () => gib, ob: (v) => { tece = !!v; } },
     { tip: "izpis", id: "mena", oznaka: "Lunina mena", vrednost: () => mena(kotE()) },
     { tip: "izpis", id: "dan-cikla", oznaka: "Dan Luninega cikla", vrednost: () => `${dneva(dan)} od mlaja (cikel traja 29,5 dneva)` },

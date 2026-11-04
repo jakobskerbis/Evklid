@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Lestev potenc
+  - $16^{\frac{1}{4}} = 2$, $16^{\frac{1}{2}} = 4$, $16^{\frac{3}{4}} = 8$
+  - korak $\frac{1}{4}$ v eksponentu pomnoži z $2$
+- Koren je potenca
+  - $a^{\frac{1}{n}} = \sqrt[n]{a}$, $\sqrt{a} = a^{\frac{1}{2}}$
+  - $a^{\frac{m}{n}} = \left(\sqrt[n]{a}\right)^m$
+  - napaka: $a^{\frac{2}{3}} = \sqrt{a^3}$
+- Negativni eksponent
+  - $a^{-r} = \frac{1}{a^r}$, obratna vrednost
+  - napaka: $25^{-\frac{1}{2}} = -5$
+- Pozitivna osnova
+  - $a > 0$, sicer protislovje
+  - $\sqrt[3]{-8} = -2$ pišemo s korenom
+- Pravila potenc
+  - $a^r \cdot a^s = a^{r+s}$
+  - $\left(a^r\right)^s = a^{rs}$
+  - napaka: $a^{\frac{1}{2}} + a^{\frac{1}{3}} = a^{\frac{5}{6}}$
+- Koreni različnih stopenj
+  - $\sqrt{a} \cdot \sqrt[3]{a} = \sqrt[6]{a^5}$
+- Uporaba: energija živali
+  - $P = 70 \cdot M^{\frac{3}{4}}$, $M$ v kg
+  - $16^{\frac{3}{4}} = 8$, $P = 560\,\mathrm{kcal/dan}$

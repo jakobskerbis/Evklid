@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Množice števil
+  - $\mathbb{N} \subset \mathbb{N}_0 \subset \mathbb{Z}$
+  - $0 \notin \mathbb{N}$, $0 \in \mathbb{N}_0$
+  - $a - (-b) = a + b$
+- Deljivost
+  - $a \mid b$: obstaja celo $k$ z $b = k \cdot a$
+  - $a \mid b$ in $a \mid c$ da $a \mid (b \pm c)$
+- Merila
+  - $4$: zadnji dve števki, ker $4 \mid 100$
+  - $3$ in $9$: vsota števk
+  - sestavljeno merilo le pri tujih deliteljih
+- Deljenje z ostankom
+  - $a = q \cdot b + r$, $0 \le r < b$
+  - $-17 = (-4) \cdot 5 + 3$
+- Praštevila
+  - natanko dva pozitivna delitelja
+  - $1$ ni praštevilo, $2$ edino sodo
+  - preizkus s praštevili $p$, $p^2 \le n$
+  - vsako $n > 1$ ima en sam razcep na praštevila
+- D in v
+  - $D$: skupni prafaktorji, manjši eksponent
+  - $v$: vsi prafaktorji, večji eksponent
+  - $D(a, b) \cdot v(a, b) = a \cdot b$
+- Evklidov algoritem
+  - $D(a, b) = D(b, r)$
+  - zadnji neničelni ostanek je $D$

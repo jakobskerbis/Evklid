@@ -147,6 +147,18 @@ export function schoolStudents(db, schoolId) {
     .map((r) => r.id);
 }
 
+// Kateri od učencev ids so v razredu še kakšne druge šole (redko; sola-vir.js jih šteje samo v šolo, ki jim da pravice).
+export function inOtherSchools(db, schoolId, ids) {
+  if (!ready(db) || !ids.length) return [];
+  return db
+    .prepare(
+      `SELECT DISTINCT m.student_id AS id FROM class_members m JOIN classes c ON c.id = m.class_id
+       WHERE c.school_id != ? AND c.kind = 'class' AND m.student_id IN (${ids.map(() => "?").join(",")})`,
+    )
+    .all(schoolId, ...ids)
+    .map((r) => r.id);
+}
+
 // Šolske pravice učenca (za server/placila/pravice.js): null, če ni v razredu šole z veljavno licenco in prostim mestom.
 // { schoolId, schoolName, licenceId, plan, subjects, grades, validUntil, aiCapUsdMonth }
 export function schoolAccess(db, studentId, now = new Date()) {

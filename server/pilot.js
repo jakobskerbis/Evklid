@@ -6,7 +6,7 @@ import { EUR_PER_USD } from "./usage.js";
 
 // Strani za starše in šole, ki jih štejemo (pot → ime v poročilu).
 export const COUNTED = { "/starsi.html": "starsi", "/placaj.html": "placaj", "/sole": "sole", "/sole.html": "sole" };
-const BOT = /bot|crawl|spider|slurp|preview|facebookexternalhit|whatsapp|telegram|curl|wget|python|headless/i;
+export const BOT = /bot|crawl|spider|slurp|preview|facebookexternalhit|whatsapp|telegram|curl|wget|python|headless/i;
 const MAX_DAYS = 120;
 
 export function migratePilot(db) {

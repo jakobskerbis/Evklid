@@ -5,60 +5,91 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Iz prejšnje lekcije že znaš, da je logaritem eksponent: $\log_a b = x$ pomeni $a^x = b$. Znaš tudi računati z logaritmi in poznaš eksponentno funkcijo $f(x) = a^x$ z njenim grafom. Zdaj bomo logaritem obravnavali kot **funkcijo**: vsakemu pozitivnemu številu $x$ priredimo število $\log_a x$.
+Nika programira aplikacijo za uglaševanje kitare. Mikrofon izmeri frekvenco strune $\nu$, zaslon pa mora pokazati, za koliko oktav je ton nad tonom A s frekvenco $440\,\mathrm{Hz}$ ali pod njim. Iz eksponentne funkcije Nika ve, da se frekvenca z vsako oktavo podvoji: ton, ki je $x$ oktav nad A, ima frekvenco $440 \cdot 2^x\,\mathrm{Hz}$. Aplikacija pa dobi frekvenco in mora najti $x$. Potrebuje torej obratno pot: od frekvence nazaj do eksponenta.
 
-Logaritemska funkcija je **obratna (inverzna) funkcija** eksponentne funkcije. Eksponentna funkcija pove, koliko bakterij bo v posodi po $x$ urah, logaritemska pa obratno: po koliko urah jih bo toliko, kot jih želimo. Ker logaritem stisne zelo velika števila na pregledno lestvico, ga srečaš pri pH, decibelih in magnitudi potresov. V tej lekciji spoznaš **graf** in **lastnosti** logaritemske funkcije, se naučiš določiti njeno **definicijsko območje** in rešiti **logaritemske enačbe**. Kako osnova in premiki spremenijo graf, si oglej v interaktivni simulaciji spodaj (»Logaritemska funkcija«).
+Ta obratna pot je logaritem, zapisan kot funkcija: $x = \log_2 \dfrac{\nu}{440\,\mathrm{Hz}}$. Struna A na kitari zveni pri $110\,\mathrm{Hz}$ in aplikacija pokaže $-2$, dve oktavi niže. Kaj pa naj pokaže, ko je v sobi tiho in mikrofon ne zazna ničesar? Na to vprašanje odgovori definicijsko območje, kako se prikaz spreminja z višino tona, pa pokaže graf.
 
 ## Razlaga
 
-**1. Definicija.** Naj bo $a > 0$ in $a \ne 1$. Funkcijo
+**1. Od oktav do tabele.** Na klaviaturi so oktave enako široke, frekvence pa se ne povečujejo za enak korak, temveč se podvajajo. Preberimo to v tabeli:
+
+| frekvenca $\nu$ [Hz] | oktave nad A |
+|---|---|
+| $110$ | $-2$ |
+| $220$ | $-1$ |
+| $440$ | $0$ |
+| $880$ | $1$ |
+| $1760$ | $2$ |
+
+V levem stolpcu vsak korak navzdol pomnoži z $2$, v desnem pa prišteje $1$. Množenje na levi se spremeni v seštevanje na desni. Desni stolpec je eksponent, zato je to delo logaritma.
+
+:::premisli
+Koliko oktav nad A je ton s frekvenco $3520\,\mathrm{Hz}$? In kaj bi morala aplikacija pokazati pri $0\,\mathrm{Hz}$?
+---
+Ker je $3520 : 440 = 8 = 2^3$, je ton $3$ oktave nad A. Pri $0\,\mathrm{Hz}$ ni nobenega odgovora: potenca $2^x$ je vedno pozitivna, zato nobeno število oktav ne da frekvence $0$. Logaritem nič (in negativnega števila) ne obstaja.
+:::
+
+**2. Od tabele do grafa.** Izpustimo glasbo in vzemimo kar $y = \log_2 x$. Vrednosti preberemo iz potenc števila $2$:
+
+| $x$ | $\log_2 x$ |
+|---|---|
+| $\frac{1}{2}$ | $-1$ |
+| $1$ | $0$ |
+| $2$ | $1$ |
+| $4$ | $2$ |
+| $8$ | $3$ |
+
+To je tabela funkcije $y = 2^x$, le da sta stolpca zamenjana. Točka $(2, 4)$ na grafu $y = 2^x$ zato preide v točko $(4, 2)$ na grafu $y = \log_2 x$. Predstavljaj si list, na katerem je narisan graf $y = 2^x$ in črtkana premica $y = x$ (simetrala lihih kvadrantov). Če list prepogneš po črtkani premici, se graf odtisne na drugo stran in nastane graf $y = \log_2 x$. Vodoravna asimptota $y = 0$ eksponentne funkcije se pri tem spremeni v navpično asimptoto $x = 0$.
+
+Funkciji, ki druga drugi »izničita« učinek, imenujemo **obratni (inverzni) funkciji**: velja $\log_a a^x = x$ in $a^{\log_a x} = x$ za $x > 0$. Grafa obratnih funkcij sta vedno zrcalna čez premico $y = x$.
+
+**3. Definicija.** Naj bo $a > 0$ in $a \ne 1$. Funkcijo
 
 $$f(x) = \log_a x$$
 
-imenujemo **logaritemska funkcija** z osnovo $a$. Ker je logaritem definiran le za pozitivna števila, je njeno **definicijsko območje** $D_f = (0, \infty)$. Njena **zaloga vrednosti** je $Z_f = \mathbb{R}$: logaritem je lahko poljubno realno število.
+imenujemo **logaritemska funkcija** z osnovo $a$. Ker je logaritem definiran le za pozitivna števila, je njeno **definicijsko območje** (množica vseh $x$, za katere je funkcija definirana) $D_f = (0, \infty)$. Njena **zaloga vrednosti** je $Z_f = \mathbb{R}$: logaritem je lahko poljubno realno število.
 
-**2. Obratna funkcija eksponentne.** Velja $\log_a a^x = x$ in $a^{\log_a x} = x$ za $x > 0$. Funkciji $y = a^x$ in $y = \log_a x$ torej »izničita« druga drugo. Zato se v tabeli vrednosti zamenjata vlogi $x$ in $y$:
-
-| $x$ | $\frac{1}{4}$ | $\frac{1}{2}$ | $1$ | $2$ | $4$ | $8$ |
-|---|---|---|---|---|---|---|
-| $\log_2 x$ | $-2$ | $-1$ | $0$ | $1$ | $2$ | $3$ |
-
-Graf funkcije $y = \log_a x$ dobimo tako, da graf funkcije $y = a^x$ **prezrcalimo čez premico** $y = x$ (simetralo lihih kvadrantov). Točka $(2, 4)$ na grafu $y = 2^x$ preide v točko $(4, 2)$ na grafu $y = \log_2 x$.
-
-**3. Lastnosti.** Lastnosti so odvisne od tega, ali je osnova večja ali manjša od $1$:
+**4. Lastnosti.** Lastnosti so odvisne od tega, ali je osnova večja ali manjša od $1$:
 
 | lastnost | $a > 1$ | $0 < a < 1$ |
 |---|---|---|
-| definicijsko območje | $(0, \infty)$ | $(0, \infty)$ |
-| zaloga vrednosti | $\mathbb{R}$ | $\mathbb{R}$ |
-| monotonost | strogo narašča | strogo pada |
+| $D_f$ | $(0, \infty)$ | $(0, \infty)$ |
+| $Z_f$ | $\mathbb{R}$ | $\mathbb{R}$ |
+| monotonost | narašča | pada |
 | ničla | $x = 1$ | $x = 1$ |
-| skozi točko | $(a, 1)$ | $(a, 1)$ |
-| asimptota | navpična, os $y$ ($x = 0$) | navpična, os $y$ ($x = 0$) |
-| predznak | negativna na $(0, 1)$, pozitivna na $(1, \infty)$ | pozitivna na $(0, 1)$, negativna na $(1, \infty)$ |
+| točka | $(a, 1)$ | $(a, 1)$ |
+| asimptota | $x = 0$ | $x = 0$ |
+| $f(x) < 0$ | na $(0, 1)$ | na $(1, \infty)$ |
+| $f(x) > 0$ | na $(1, \infty)$ | na $(0, 1)$ |
 
 Graf vsake logaritemske funkcije gre skozi točko $(1, 0)$, ker je $\log_a 1 = 0$. Os $y$ je **navpična asimptota**: pri $a > 1$ se graf, ko gre $x$ proti $0$, spušča neomejeno navzdol in se osi $y$ približuje, a je nikoli ne doseže. Osi $y$ graf ne seka, ker $0$ ni v definicijskem območju. Za $x > 1$ graf pri $a > 1$ narašča vse počasneje, a ni navzgor omejen: $\log_2 x = 10$ doseže šele pri $x = 1024$.
 
-Grafa funkcij $y = \log_a x$ in $y = \log_{\frac{1}{a}} x$ sta simetrična glede na os $x$, ker je $\log_{\frac{1}{a}} x = -\log_a x$.
+Grafa funkcij $y = \log_a x$ in $y = \log_{\frac{1}{a}} x$ sta simetrična glede na os $x$, ker je $\log_{\frac{1}{a}} x = -\log_a x$: iz $a^y = x$ sledi $\left(\frac{1}{a}\right)^{-y} = x$. V simulaciji spodaj (»Logaritemska funkcija«) spremeni osnovo z $2$ na $\frac{1}{2}$ in opazuj: graf se prezrcali čez os $x$, točka $(1, 0)$ pa ostane na mestu.
 
-**4. Premiki grafa.** Funkcijo $g(x) = \log_a (x - p) + q$ dobimo iz $y = \log_a x$ s premikom za $p$ v smeri osi $x$ in za $q$ v smeri osi $y$:
+**5. Premiki grafa.** Funkcijo $g(x) = \log_a (x - p) + q$ dobimo iz $y = \log_a x$ s premikom za $p$ v smeri osi $x$ in za $q$ v smeri osi $y$:
 
 - asimptota je premica $x = p$,
 - definicijsko območje je $(p, \infty)$, ker mora veljati $x - p > 0$,
 - točka $(1, 0)$ preide v $(1 + p, q)$.
 
-Pazi na znak: pri $\log_2 (x - 3)$ se graf premakne za $3$ **v desno**, pri $\log_2 (x + 3)$ pa za $3$ **v levo**.
+Pazi na znak: pri $\log_2 (x - 3)$ se graf premakne za $3$ **v desno**.
 
-**5. Definicijsko območje sestavljene funkcije.** Če je pod logaritmom izraz, zahtevamo, da je ta izraz **strogo pozitiven**. Za $f(x) = \log_3 (6 - 2x)$ rešimo neenačbo $6 - 2x > 0$ in dobimo $x < 3$, torej $D_f = (-\infty, 3)$. Če je pod logaritmom kvadratni izraz, rešimo kvadratno neenačbo.
+:::premisli
+Kje je asimptota grafa $y = \log_2 (x + 3)$ in kam se premakne točka $(1, 0)$? Napovej, preden računaš.
+---
+Asimptota je $x = -3$, točka $(1, 0)$ pa preide v $(-2, 0)$. Tu je $p = -3$, ker je $x + 3 = x - (-3)$, zato se graf premakne za $3$ v levo. Preizkus: $\log_2 (-2 + 3) = \log_2 1 = 0$.
+:::
 
-**6. Logaritemske enačbe.** V logaritemski enačbi je neznanka v logaritmandu (ali v osnovi). Ker je logaritemska funkcija **injektivna** (strogo monotona), iz enakosti logaritmov z isto osnovo sledi enakost logaritmandov. Glavni tipi:
+**6. Definicijsko območje sestavljene funkcije.** Če je pod logaritmom izraz, zahtevamo, da je ta izraz **strogo pozitiven**. Za $f(x) = \log_3 (6 - 2x)$ rešimo neenačbo $6 - 2x > 0$ in dobimo $x < 3$, torej $D_f = (-\infty, 3)$. Če je pod logaritmom kvadratni izraz, rešimo kvadratno neenačbo. Pri $\log (x^2 - x - 6)$ ima izraz $(x - 3)(x + 2)$ ničli $-2$ in $3$; parabola je odprta navzgor, zato je izraz pozitiven zunaj ničel in $D = (-\infty, -2) \cup (3, \infty)$.
+
+**7. Logaritemske enačbe.** V logaritemski enačbi je neznanka v logaritmandu (ali v osnovi). Ker je logaritemska funkcija strogo monotona, nobene vrednosti ne zavzame dvakrat, zato iz enakosti logaritmov z isto osnovo sledi enakost logaritmandov. Glavni tipi:
 
 - $\log_a A = c$: po definiciji zapišemo $A = a^c$.
 - $\log_a A = \log_a B$: sklepamo $A = B$.
 - Več logaritmov z isto osnovo: s pravili jih **združimo** v en logaritem, na primer $\log_a A + \log_a B = \log_a (A \cdot B)$, nato nadaljujemo kot zgoraj.
 - V enačbi nastopata $\log_a x$ in $(\log_a x)^2$: uvedemo **novo neznanko** $t = \log_a x$ in rešimo kvadratno enačbo.
 
-**7. Preizkus je obvezen.** Pri združevanju logaritmov se definicijsko območje lahko razširi, zato lahko dobimo »rešitev«, pri kateri prvotni logaritmi niso definirani. Zato **pred** reševanjem zapišemo pogoje (vsi logaritmandi so pozitivni), **po** reševanju pa vsako rešitev preverimo.
+**8. Preizkus je obvezen.** Pri združevanju logaritmov se definicijsko območje lahko razširi (v Primeru 2 izraz $(x + 3)(x - 1)$ obstaja tudi pri $x = -7$), zato lahko dobimo »rešitev«, pri kateri prvotni logaritmi niso definirani. Zato **pred** reševanjem zapišemo pogoje (vsi logaritmandi so pozitivni), **po** reševanju pa vsako rešitev preverimo.
 
 ## Rešeni primeri
 
@@ -105,7 +136,28 @@ $\log_a A + \log_a B = \log_a (A \cdot B)$; $\;\log_a C = c \iff C = a^c$
 7. Preizkus: $\log_2 8 + \log_2 4 = 3 + 2 = 5$. ✓
 8. Odgovor: enačba ima eno rešitev, $x = 5$.
 
-### Primer 3 (težji)
+### Primer 3 (težji): uglaševalnik
+
+Nikina aplikacija pokaže, za koliko poltonov $k$ je ton nad tonom A s frekvenco $440\,\mathrm{Hz}$ (oktava ima $12$ poltonov). a) Kaj pokaže, ko zazveni struna A s frekvenco $110\,\mathrm{Hz}$? b) Ton E je $7$ poltonov nad A. Pri kateri frekvenci aplikacija pokaže $k = 7$?
+
+**Podatki:** $\nu_0 = 440\,\mathrm{Hz}$, $12$ poltonov v oktavi, a) $\nu = 110\,\mathrm{Hz}$, b) $k = 7$
+**Iščemo:** a) število poltonov $k$, b) frekvenco $\nu$
+
+:::formula
+$k = 12 \log_2 \dfrac{\nu}{\nu_0}$; $\;\log_a A = c \iff A = a^c$
+:::
+
+**Rešitev:**
+
+1. Pogoj: $\nu > 0$, saj je logaritem definiran le za pozitivne logaritmande. Ničelne ali negativne frekvence aplikacija ne more prikazati.
+2. a) Razmerje je $\dfrac{110}{440} = \dfrac{1}{4} = 2^{-2}$, zato je $\log_2 \dfrac{1}{4} = -2$.
+3. a) Pomnožimo z $12$: $12 \cdot (-2) = -24$. Ton je $24$ poltonov oziroma dve oktavi pod A.
+4. b) Enačbo $12 \log_2 \dfrac{\nu}{440} = 7$ delimo z $12$: $\log_2 \dfrac{\nu}{440} = \dfrac{7}{12}$.
+5. b) Po definiciji logaritma je $\dfrac{\nu}{440} = 2^{\frac{7}{12}} \approx 1{,}4983$; osnova $2$ se potencira, desna stran je eksponent.
+6. b) Pomnožimo z $440$: $\nu \approx 440 \cdot 1{,}4983 \approx 659{,}3\,\mathrm{Hz}$, kar je pozitivno in ustreza pogoju.
+7. Odgovor: pri struni A aplikacija pokaže $k = -24$, vrednost $k = 7$ pa pri frekvenci približno $659{,}3\,\mathrm{Hz}$ (ton E).
+
+### Primer 4 – zdaj ti
 
 Reši enačbo $(\log x)^2 - \log x^3 + 2 = 0$.
 
@@ -122,15 +174,18 @@ $\log_a x^n = n \log_a x$ (za $x > 0$); nova neznanka $t = \log x$; $\;\log x = 
 2. Drugi člen preoblikujemo: $\log x^3 = 3 \log x$. Enačba se glasi $(\log x)^2 - 3\log x + 2 = 0$.
 3. Uvedemo novo neznanko $t = \log x$: $t^2 - 3t + 2 = 0$.
 4. Razcepimo: $(t - 1)(t - 2) = 0$, zato je $t_1 = 1$ in $t_2 = 2$.
-5. Vrnemo se k $x$: iz $\log x = 1$ sledi $x = 10^1 = 10$, iz $\log x = 2$ pa $x = 10^2 = 100$.
-6. Obe rešitvi sta pozitivni, zato ustrezata pogoju.
-7. Preizkus za $x = 10$: $1^2 - \log 1000 + 2 = 1 - 3 + 2 = 0$. ✓ Za $x = 100$: $2^2 - \log 10^6 + 2 = 4 - 6 + 2 = 0$. ✓
-8. Odgovor: rešitvi enačbe sta $x = 10$ in $x = 100$.
+5. Zdaj ti: iz $t_1$ in $t_2$ izračunaj $x$, preveri pogoj in naredi preizkus.
+
+:::premisli
+Kateri sta rešitvi in ali obe prestaneta preizkus?
+---
+Iz $\log x = 1$ sledi $x = 10^1 = 10$, iz $\log x = 2$ pa $x = 10^2 = 100$. Obe sta pozitivni. Preizkus za $x = 10$: $1^2 - \log 1000 + 2 = 1 - 3 + 2 = 0$. Za $x = 100$: $2^2 - \log 10^6 + 2 = 4 - 6 + 2 = 0$. Rešitvi enačbe sta $x = 10$ in $x = 100$.
+:::
 
 ## Pogoste napake
 
 - **Rešitev brez preizkusa.** V Primeru 2 kvadratna enačba da tudi $x = -7$. Ko logaritme združimo, izraz $\log_2 \big((x + 3)(x - 1)\big)$ obstaja tudi pri $x = -7$, prvotna enačba pa ne. Pravilno: na začetku zapiši pogoje in na koncu vsako rešitev preveri v **prvotni** enačbi.
-- **Logaritem vsote razbit na vsoto.** $\log_2 (x + 3) = \log_2 x + \log_2 3$ ne velja; za logaritem vsote ni pravila. Pravilo $\log_a A + \log_a B = \log_a (AB)$ velja le v smeri »vsota logaritmov je logaritem produkta«.
+- **Logaritem vsote razbit na vsoto.** $\log_2 (x + 3) = \log_2 x + \log_2 3$ ne velja. Pravilo $\log_a A + \log_a B = \log_a (AB)$ govori o **produktu** pod logaritmom; za vsoto $x + 3$ pod logaritmom pravila ni, zato tak logaritem pustimo cel.
 - **Napačna pot od logaritma do potence.** Iz $\log_3 (2x + 1) = 2$ ne sledi $2x + 1 = 3 \cdot 2$ ali $2x + 1 = 2^3$. Osnova se potencira, desna stran je eksponent: $2x + 1 = 3^2 = 9$, torej $x = 4$.
 - **Premik v napačno smer.** Graf $y = \log_2 (x + 3)$ ni premaknjen v desno. Asimptoto najdeš tako, da logaritmand izenačiš z nič: $x + 3 = 0$, torej $x = -3$; graf je premaknjen za $3$ v levo in $D = (-3, \infty)$.
 - **Kvadrat logaritma zamenjan z logaritmom kvadrata.** $(\log x)^2$ ni enako $\log x^2 = 2\log x$. Pri substituciji $t = \log x$ je $(\log x)^2 = t^2$, $\log x^3$ pa je $3t$.
@@ -145,11 +200,11 @@ $\log_a x^n = n \log_a x$ (za $x > 0$); nova neznanka $t = \log x$; $\;\log x = 
 - Enačbe: $\log_a A = c \Rightarrow A = a^c$; $\;\log_a A = \log_a B \Rightarrow A = B$; po potrebi $t = \log_a x$.
 - Na začetku zapiši pogoje, na koncu naredi preizkus.
 
-## Drugače: Na sliki
+## Drugače: Z analogijo
 
-Predstavljaj si koordinatni sistem, v katerem je s črtkano črto narisana premica $y = x$. Nad njo leži graf $y = 2^x$: gre skozi točke $(0, 1)$, $(1, 2)$, $(2, 4)$ in se na levi približuje osi $x$. Zdaj si predstavljaj, da list prepogneš po črtkani premici. Graf $y = 2^x$ se odtisne na drugo stran in nastane graf $y = \log_2 x$ skozi točke $(1, 0)$, $(2, 1)$, $(4, 2)$.
+Logaritem je kot števec prepogibov. List papirja je debel $0{,}1\,\mathrm{mm}$; vsak prepogib debelino podvoji. Eksponentna funkcija odgovori na vprašanje »Kako debel je kup po $x$ prepogibih?«, logaritemska pa na obratno: »Kolikokrat moram prepogniti, da dobim dano debelino?«. Za $0{,}8\,\mathrm{mm}$ je odgovor $\log_2 8 = 3$.
 
-Pri prepogibu se vse zamenja: os $x$ postane os $y$, zato se vodoravna asimptota $y = 0$ eksponentne funkcije spremeni v navpično asimptoto $x = 0$ logaritemske. Zaloga vrednosti $(0, \infty)$ eksponentne funkcije postane definicijsko območje logaritemske. Zato graf logaritemske funkcije v celoti leži desno od osi $y$. V interaktivni simulaciji spodaj spreminjaj osnovo $a$ in opazuj: pri $a > 1$ graf narašča, pri $0 < a < 1$ pada. Graf za osnovo $\frac{1}{2}$ je zrcalna slika grafa za osnovo $2$ čez os $x$. Točka $(1, 0)$ pa ostane na mestu pri vsaki osnovi.
+Analogija pokaže tudi definicijsko območje. Debelina je vedno pozitivna, zato vprašanje »kolikokrat do debeline $0$« nima odgovora. Za debelino $0{,}05\,\mathrm{mm}$ bi morali list enkrat »odpogniti«, zato je odgovor negativen: $\log_2 \frac{1}{2} = -1$. Kup z vsakim prepogibom zraste bolj, zato je za vsak dodatni milimeter treba vse manj prepogibov: graf logaritma narašča vse bolj položno.
 
 ## Drugače: Iz vsakdanjega življenja
 
@@ -157,26 +212,9 @@ Zamisli si igro: prijatelj si izmisli celo število med $1$ in $1\,000\,000$, ti
 
 Pri $1000$ številih zadošča $10$ vprašanj, pri milijardi pa le $30$. To je značilnost logaritemske funkcije: ko se $x$ tisočkrat poveča, se $\log_2 x$ poveča le za približno $10$. Graf narašča, a vse bolj položno. Na tem počasnem naraščanju temeljijo iskanje po slovarju, iskanje po urejenih podatkih v računalniku in logaritemske lestvice, kot je magnituda potresa, kjer potres z magnitudo za $1$ večjo pomeni desetkrat večjo amplitudo nihanja tal.
 
-## Drugače: Korak za korakom s številkami
-
-**Določi definicijsko območje funkcije $f(x) = \log (x^2 - x - 6)$.**
-
-1. Zapišemo pogoj: logaritmand mora biti strogo pozitiven, $x^2 - x - 6 > 0$.
-2. Poiščemo ničle kvadratnega izraza: $x^2 - x - 6 = (x - 3)(x + 2)$, ničli sta $x = -2$ in $x = 3$.
-3. Vodilni koeficient je $1 > 0$, zato je parabola odprta navzgor in je izraz pozitiven **zunaj** ničel.
-4. Preverimo s testnimi točkami: pri $x = 0$ je $-6 < 0$ (ne ustreza), pri $x = 4$ je $16 - 4 - 6 = 6 > 0$ (ustreza), pri $x = -3$ je $9 + 3 - 6 = 6 > 0$ (ustreza).
-5. Ničli nista vključeni, ker je neenačba stroga.
-6. Odgovor: $D_f = (-\infty, -2) \cup (3, \infty)$.
-
-**Tabela za risanje grafa $y = \log_{\frac{1}{2}} x$.**
-
-1. Izberemo $x$, ki so potence osnove $\frac{1}{2}$: $\frac{1}{4}$, $\frac{1}{2}$, $1$, $2$, $4$.
-2. Ker je $\log_{\frac{1}{2}} x = -\log_2 x$, dobimo vrednosti $2$, $1$, $0$, $-1$, $-2$.
-3. Točke povežemo z gladko krivuljo, ki pada in se ob osi $y$ dviga neomejeno navzgor.
-
 ## Drugače: Bolj natančno
 
-**Zakaj je logaritemska funkcija dobro definirana obratna funkcija.** Za $a > 0$, $a \ne 1$ je funkcija $x \mapsto a^x$ strogo monotona, zato je injektivna, njena zaloga vrednosti pa je $(0, \infty)$. Tako je bijektivna preslikava iz $\mathbb{R}$ na $(0, \infty)$ in ima obratno funkcijo z definicijskim območjem $(0, \infty)$ in zalogo vrednosti $\mathbb{R}$. To je $\log_a x$. Ker sta grafa obratnih funkcij zrcalna glede na $y = x$, obratna funkcija podeduje monotonost: pri $a > 1$ narašča, pri $0 < a < 1$ pada.
+**Zakaj je logaritemska funkcija dobro definirana obratna funkcija.** Za $a > 0$, $a \ne 1$ je funkcija $x \mapsto a^x$ strogo monotona, zato nobene vrednosti ne zavzame dvakrat, njena zaloga vrednosti pa je $(0, \infty)$. Vsakemu $y > 0$ torej pripada natanko en $x$ z $a^x = y$. Zato ima obratno funkcijo z definicijskim območjem $(0, \infty)$ in zalogo vrednosti $\mathbb{R}$. To je $\log_a x$. Ker sta grafa obratnih funkcij zrcalna glede na $y = x$, obratna funkcija podeduje monotonost: pri $a > 1$ narašča, pri $0 < a < 1$ pada.
 
 **Injektivnost in sklep $A = B$.** Iz $\log_a A = \log_a B$ sledi $A = B$ ravno zato, ker strogo monotona funkcija nobene vrednosti ne zavzame dvakrat. Obratni sklep zahteva previdnost: iz $A = B$ sledi $\log_a A = \log_a B$ le, če sta $A$ in $B$ pozitivna.
 
@@ -184,43 +222,71 @@ Pri $1000$ številih zadošča $10$ vprašanj, pri milijardi pa le $30$. To je z
 
 ## Preveri se
 
-? Kakšno je definicijsko območje funkcije $f(x) = \log_2 (x - 5)$?
-- $(-5, \infty)$
-+ $(5, \infty)$
-- $[5, \infty)$
-- $\mathbb{R}$
-> Logaritmand mora biti strogo pozitiven: $x - 5 > 0$, torej $x > 5$. Točka $x = 5$ ni vključena, ker $\log_2 0$ ne obstaja.
+? Katera trditev o funkciji $f(x) = \log_2 x$ **ne** drži?
+- Definicijsko območje je $(0, \infty)$.
+~ To drži: logaritem obstaja le za pozitivna števila. Morda si pomislil, da sme biti $x$ poljuben, kot pri $2^x$.
+- Graf gre skozi točko $(1, 0)$.
+~ To drži, ker je $\log_2 1 = 0$. Točko $(0, 1)$ ima eksponentna funkcija, ne logaritemska.
+- Os $y$ je navpična asimptota.
+~ To drži: graf se osi $y$ približuje, a je ne doseže. Vodoravno asimptoto ima eksponentna funkcija.
++ Graf seka os $y$ v točki $(0, 1)$.
+> Graf osi $y$ ne seka, ker $x = 0$ ni v definicijskem območju. Točka $(0, 1)$ leži na grafu $y = 2^x$; po zrcaljenju čez $y = x$ postane $(1, 0)$.
+
+? Pri reševanju $\log x + \log (x - 3) = 1$ dobimo $x = 5$ in $x = -2$. Zakaj $x = -2$ ni rešitev?
++ Ker pri $x = -2$ izraza $\log (-2)$ in $\log (-5)$ nista definirana.
+- Ker logaritem nikoli ne more biti negativen.
+~ Logaritem je lahko negativen ($\log 0{,}1 = -1$); negativen ne sme biti logaritmand.
+- Ker smo se pri razcepu $x^2 - 3x - 10$ zmotili.
+~ Razcep $(x - 5)(x + 2)$ je pravilen; $x = -2$ res reši kvadratno enačbo, ne pa prvotne.
+- Ker ima kvadratna enačba vedno le eno pravo rešitev.
+~ Kvadratna enačba ima lahko dve rešitvi. Tu odpade le zato, ker je pogoj $x > 3$.
+> Pogoj je $x > 3$. Pri združevanju v $\log \big(x(x - 3)\big)$ se definicijsko območje razširi, zato se pojavi odvečna rešitev $-2$. Preizkus v prvotni enačbi jo izloči.
+
+? Maja določa definicijsko območje funkcije $f(x) = \log (x^2 - 4)$. Kateri korak je napačen?
+1) $x^2 - 4 > 0$; 2) $(x - 2)(x + 2) > 0$; 3) parabola je odprta navzgor, zato je izraz pozitiven med ničlama; 4) $D_f = (-2, 2)$.
+- korak 1
+~ Korak 1 je pravilen: logaritmand mora biti strogo pozitiven.
+- korak 2
+~ Razcep razlike kvadratov je pravilen.
++ korak 3
+- korak 4
+~ Korak 4 le zapiše, kar sledi iz koraka 3. Napaka je prej, v koraku 3.
+> Parabola, odprta navzgor, je med ničlama pod osjo $x$: pri $x = 0$ je $0 - 4 = -4 < 0$. Izraz je pozitiven zunaj ničel, zato je $D_f = (-\infty, -2) \cup (2, \infty)$.
 
 ? Katera je rešitev enačbe $\log_3 (2x + 1) = 2$?
 - $x = 2{,}5$
+~ To dobiš iz $2x + 1 = 3 \cdot 2$. Osnova se ne množi z desno stranjo, temveč potencira.
 - $x = 1$
+~ To dobiš iz $2x + 1 = 3$, kot da bi bila vrednost logaritma $1$, ne $2$.
 + $x = 4$
 - $x = 3{,}5$
+~ To dobiš iz $2x + 1 = 2^3$: osnovo in eksponent si zamenjal.
 > Po definiciji je $2x + 1 = 3^2 = 9$, zato je $x = 4$. Preizkus: $\log_3 9 = 2$.
 
-? Za katere osnove $a$ je funkcija $f(x) = \log_a x$ padajoča?
-- za $a > 1$
-+ za $0 < a < 1$
-- za $a < 0$
-> Pri osnovi med $0$ in $1$ je logaritemska funkcija strogo padajoča, na primer $\log_{\frac{1}{2}} 4 = -2 < \log_{\frac{1}{2}} 2 = -1$. Negativna osnova ni dovoljena.
-
-? Katere so rešitve enačbe $\log x + \log (x - 3) = 1$?
-- $x = 5$ in $x = -2$
-+ samo $x = 5$
-- samo $x = -2$
-- enačba nima rešitve
-> Pogoj je $x > 3$. Združimo: $x(x - 3) = 10$, $x^2 - 3x - 10 = 0$, $(x - 5)(x + 2) = 0$. Pogoju ustreza le $x = 5$; preizkus: $\log 5 + \log 2 = \log 10 = 1$.
+? Nikin uglaševalnik računa $k = 12 \log_2 \dfrac{\nu}{440\,\mathrm{Hz}}$ in pokaže $k = -12$. Kolikšna je frekvenca tona?
+- $428\,\mathrm{Hz}$
+~ Od $440$ si odštel $12$. Logaritem šteje množenja z $2$, ne korakov po $1\,\mathrm{Hz}$.
++ $220\,\mathrm{Hz}$
+- $880\,\mathrm{Hz}$
+~ Negativen $k$ pomeni ton pod A, zato frekvenca ni večja od $440\,\mathrm{Hz}$.
+- Take frekvence ni, ker je $k$ negativen.
+~ Negativen je lahko logaritem, ne logaritmand: frekvenca je pozitivna, le manjša od $440\,\mathrm{Hz}$.
+> Iz $12 \log_2 \dfrac{\nu}{440} = -12$ sledi $\log_2 \dfrac{\nu}{440} = -1$ in $\dfrac{\nu}{440} = 2^{-1}$, torej $\nu = 220\,\mathrm{Hz}$: ena oktava pod A.
 
 :::simboli
 f | logaritemska funkcija | f(x) = \log_a x | |
-x | spremenljivka (neznanka) | | | x > 0
-a | osnova logaritma | | | a > 0, a ≠ 1
+x | spremenljivka (neznanka) | | | pri $\log_a x$ je $x > 0$
+a | osnova logaritma | | | $a > 0$, $a \ne 1$
+D_f, D_g | definicijsko območje funkcije | D_g = (p, \infty) | |
+Z_f | zaloga vrednosti funkcije | | |
 g | premaknjena logaritemska funkcija | g(x) = \log_a (x - p) + q | |
-p | premik grafa v smeri osi x | | | asimptota je x = p
-q | premik grafa v smeri osi y | | |
-D_g | definicijsko območje funkcije g | D_g = (p, \infty) | |
+p | premik grafa v smeri osi $x$ | | | asimptota je $x = p$
+q | premik grafa v smeri osi $y$ | | |
 A, B, C | izrazi z neznanko pod logaritmom | | | morajo biti pozitivni
-c | vrednost logaritma | | | logₐ A = c pomeni A = aᶜ
+c | vrednost logaritma | | | $\log_a A = c$ pomeni $A = a^c$
 n | eksponent | | |
 t | nova neznanka | t = \log x | |
+k | število poltonov nad tonom A | k = 12 \log_2 \frac{\nu}{\nu_0} | – | negativno pod tonom A
+\nu | frekvenca tona | | Hz | $\nu > 0$
+\nu_0 | frekvenca tona A | | Hz | $440\,\mathrm{Hz}$
 :::

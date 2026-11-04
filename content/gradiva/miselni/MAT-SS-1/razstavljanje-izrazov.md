@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Množenje nazaj
+  - vsota postane produkt
+  - preizkus: zmnoži faktorje nazaj
+- Izpostavljanje
+  - $ab + ac = a(b + c)$
+  - $12x^3y - 18x^2y^2 = 6x^2y(2x - 3y)$
+  - člen enak faktorju pusti $1$
+- Po skupinah
+  - $ax + ay + bx + by = (a + b)(x + y)$
+- Razlika kvadratov
+  - $a^2 - b^2 = (a - b)(a + b)$
+  - $52^2 - 48^2 = 4 \cdot 100$
+  - $x^2 + 9$ se ne razstavi
+- Popolni kvadrat
+  - $a^2 + 2ab + b^2 = (a + b)^2$
+  - napaka: $(x + 3)^2 = x^2 + 9$
+- Vietovo pravilo
+  - $x^2 + px + q = (x + a)(x + b)$, če $a + b = p$, $ab = q$
+  - $x^2 - 5x - 14 = (x + 2)(x - 7)$
+  - preveri vsoto in produkt
+- Vrstni red
+  - skupni faktor, nato obrazec
+  - razstavi do konca

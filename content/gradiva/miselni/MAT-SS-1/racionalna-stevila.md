@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Delež je količnik
+  - $7$ od $12$ je $\dfrac{7}{12}$
+  - $\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q}$
+- Enakost ulomkov
+  - $\dfrac{a}{b} = \dfrac{c}{d} \iff ad = bc$
+  - krajšaj z $D(a, b)$: $\dfrac{18}{30} = \dfrac{3}{5}$
+- Računanje
+  - seštevaj na skupnem imenovalcu
+  - napaka: $\dfrac{1}{2} + \dfrac{1}{3} = \dfrac{2}{5}$
+  - deljenje: množi z obratno vrednostjo
+- Decimalni zapis
+  - končen ali periodičen, npr. $0{,}58\overline{3}$
+  - končen le s prafaktorji $2$ in $5$
+  - najprej skrajšaj: $\dfrac{21}{28} = 0{,}75$
+- Nazaj v ulomek
+  - $0{,}\overline{45}$: $99x = 45$
+  - napaka: $0{,}\overline{3} = \dfrac{3}{10}$
+- Urejenost
+  - levo na premici je manjše
+  - $\dfrac{a}{b} < \dfrac{c}{d} \iff ad < bc$ za $b, d > 0$
+  - $-\dfrac{1}{2} < -\dfrac{1}{3}$
+- Gostost
+  - med $p$ in $q$ leži $\dfrac{p + q}{2}$

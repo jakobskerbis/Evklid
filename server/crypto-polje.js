@@ -37,6 +37,15 @@ function keys() {
   return state;
 }
 
+// Ključ za kopije baze zunaj strežnika (server/kopije-oblak.js), izpeljan iz EVKLID_DATA_KEY (HKDF), da ni
+// nove skrivnosti. id = keyId ključa podatkov (tudi starega iz EVKLID_DATA_KEYS_OLD); brez id sedanji. Brez ključa null.
+export function backupKey(id = null) {
+  const k = keys();
+  const raw = k ? (id ? k.all.get(id) : k.key) : null;
+  if (!raw) return null;
+  return { id: id || k.id, key: Buffer.from(crypto.hkdfSync("sha256", raw, Buffer.alloc(0), "baza-kopija-v1", 32)) };
+}
+
 export const encryptionOn = () => !!keys();
 export const currentKeyId = () => keys()?.id ?? null;
 export const isEncrypted = (v) => typeof v === "string" && v.startsWith(PREFIX);
