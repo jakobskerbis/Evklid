@@ -278,13 +278,19 @@ export function ustvariSceno(el, opts = {}) {
   const _hNova = new THREE.Vector3();
   const tipke = new Set(); // držane tipke za hojo
   let gumbHoje = 0; // gumb Naprej (1) / Nazaj (−1) na odru
-  const hitrostHoje = () => fitRazdalja(1) * 0.2; // enot na sekundo (prizor ima polmer ~1)
+  const hitrostHoje = () => fitRazdalja(1) * 0.35; // enot na sekundo (prizor ima polmer ~1)
+  // Desni vektor kamere (v _hDesno); pri pogledu natanko navpično (križni produkt 0) vzame desno os kamere, ne NaN.
+  function desnoOd(smer) {
+    _hDesno.crossVectors(smer, OS_Y);
+    if (_hDesno.lengthSq() < 1e-8) _hDesno.set(1, 0, 0).applyQuaternion(camera.quaternion);
+    _hDesno.normalize();
+  }
   function zavrtiPogled(yaw, pitch) {
     const L = Math.max(1e-3, camera.position.distanceTo(controls.target));
     camera.getWorldDirection(_hSmer).applyAxisAngle(OS_Y, yaw);
-    _hDesno.crossVectors(_hSmer, OS_Y).normalize();
+    desnoOd(_hSmer);
     _hNova.copy(_hSmer).applyAxisAngle(_hDesno, pitch);
-    if (Math.abs(_hNova.y) < 0.995) _hSmer.copy(_hNova); // ne čez navpičnico
+    if (Math.abs(_hNova.y) < 0.995 || Math.abs(_hNova.y) < Math.abs(_hSmer.y)) _hSmer.copy(_hNova); // ne čez navpičnico
     camera.up.copy(OS_Y);
     controls.target.copy(camera.position).addScaledVector(_hSmer, L);
     camera.lookAt(controls.target);
@@ -292,7 +298,7 @@ export function ustvariSceno(el, opts = {}) {
   }
   function premakni(naprej, vstran, gor) {
     camera.getWorldDirection(_hSmer);
-    _hDesno.crossVectors(_hSmer, OS_Y).normalize();
+    desnoOd(_hSmer);
     _hNova.set(0, 0, 0).addScaledVector(_hSmer, naprej).addScaledVector(_hDesno, vstran).addScaledVector(OS_Y, gor);
     camera.position.add(_hNova);
     controls.target.add(_hNova);
@@ -306,6 +312,7 @@ export function ustvariSceno(el, opts = {}) {
     const g = (ima("e") ? 1 : 0) - (ima("q") ? 1 : 0);
     const zavoj = (ima("arrowleft") ? 1 : 0) - (ima("arrowright") ? 1 : 0);
     if (!n && !st && !g && !zavoj) return false;
+    let_ = null; // premik prekine prelet
     if (zavoj) zavrtiPogled(zavoj * 1.4 * dt, 0);
     const v = hitrostHoje() * dt;
     if (n || st || g) premakni(n * v, st * v, g * v);
@@ -530,6 +537,7 @@ export function ustvariSceno(el, opts = {}) {
     return true;
   }
   // Preklop načina: v pokončnem se kamera gladko postavi pokonci (OrbitControls kroži okoli navpične osi).
+  let vhodHoje = null; // pogled ob vstopu v hojo (cilj, razdalja), da se ob izhodu vrnemo ven
   function nacinVrtenja(nov) {
     if (nov === undefined) return nacin;
     if (!NACINI.includes(nov)) return nacin;
@@ -537,6 +545,7 @@ export function ustvariSceno(el, opts = {}) {
       localStorage.setItem(KLJUC_NACINA, nov);
     } catch {}
     if (nov === nacin) return nov;
+    const izHoje = nacin === "hoja";
     nacin = nov;
     prosto = nov === "prosto";
     vztr.x = vztr.y = 0;
@@ -544,7 +553,24 @@ export function ustvariSceno(el, opts = {}) {
     tipke.clear();
     gumbHoje = 0;
     uporabiNacin();
-    if (!prosto) poleti(controls.target, 1, { razdalja: camera.position.distanceTo(controls.target), pokonci: true, trajanje: 0.5 });
+    if (nacin === "hoja") {
+      vhodHoje = { cilj: controls.target.clone(), d: camera.position.distanceTo(controls.target) };
+      // Vstop v hojo: »gor« vodoravno, pogled ne natanko navpično (sicer bi bil desni vektor nedoločen).
+      camera.getWorldDirection(_hSmer);
+      _hSmer.y = Math.max(-0.99, Math.min(0.99, _hSmer.y));
+      _hSmer.normalize();
+      const L = Math.max(1e-3, camera.position.distanceTo(controls.target));
+      camera.up.copy(OS_Y);
+      controls.target.copy(camera.position).addScaledVector(_hSmer, L);
+      camera.lookAt(controls.target);
+    }
+    if (izHoje && vhodHoje) {
+      // Iz hoje nazaj k pogledu od zunaj: isti cilj in razdalja kot ob vstopu, smer od tam, kjer si zdaj.
+      const smer = camera.position.clone().sub(vhodHoje.cilj);
+      if (smer.lengthSq() < 1e-6) camera.getWorldDirection(smer).negate();
+      poleti(vhodHoje.cilj, 1, { smer, razdalja: vhodHoje.d, pokonci: !prosto, trajanje: 0.6 });
+      vhodHoje = null;
+    } else if (!prosto) poleti(controls.target, 1, { razdalja: camera.position.distanceTo(controls.target), pokonci: true, trajanje: 0.5 });
     narisi();
     return nov;
   }
@@ -568,7 +594,7 @@ export function ustvariSceno(el, opts = {}) {
   // Tipkovnica na platnu: puščice vrtijo, + in − približata, Home ponastavi pogled (opts.ponastavi).
   canvas.addEventListener("keydown", (e) => {
     const k = e.key;
-    if (nacin === "hoja" && HOJA_TIPKE.has(k.toLowerCase())) {
+    if (nacin === "hoja" && HOJA_TIPKE.has(k.toLowerCase()) && !e.ctrlKey && !e.metaKey && !e.altKey) {
       tipke.add(k.toLowerCase());
       e.preventDefault();
       return;
@@ -786,7 +812,10 @@ export function ustvariSceno(el, opts = {}) {
     zadnji = now;
     if (++stevec % 60 === 0 && !el.isConnected) return unici();
     let risi = dirty;
-    if (korakLeta(dt)) risi = true;
+    if (korakLeta(dt)) {
+      risi = true;
+      if (nacin === "hoja") camera.lookAt(controls.target); // OrbitControls je izklopljen: kamero obrne sam
+    }
     if (korakVztrajnosti(dt)) risi = true;
     if (korakHoje(dt)) risi = true;
     if (nacin !== "hoja" && controls.update(dt)) risi = true;
