@@ -3,7 +3,7 @@
 // naloži v shrambo, združljivo s S3 (Cloudflare R2). Kopije, starejše od EVKLID_KOPIJE_OBLAK_DNI (privzeto 30),
 // pobriše (obvestilo o zasebnosti: iz varnostnih kopij najkasneje v 30 dneh). Brez ključa podatkov ne naloži nič,
 // ker nešifrirani podatki ne smejo zapustiti strežnika.
-// Nastavitve (Render → Environment): EVKLID_KOPIJE_S3_URL (npr. https://<račun>.r2.cloudflarestorage.com),
+// Nastavitve (Render → Environment): EVKLID_KOPIJE_S3_URL (za vedro v EU: https://<račun>.eu.r2.cloudflarestorage.com),
 // EVKLID_KOPIJE_S3_BUCKET, EVKLID_KOPIJE_S3_KEY_ID, EVKLID_KOPIJE_S3_SECRET, neobvezno EVKLID_KOPIJE_S3_REGION (auto).
 import fs from "node:fs";
 import path from "node:path";

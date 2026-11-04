@@ -30,7 +30,7 @@ const HELP = `Uporaba:
   node scripts/obnovi-kopijo.js --preklici    prekliči pripravljeno obnovo
   node scripts/obnovi-kopijo.js --razveljavi  vrni bazo, kakršna je bila pred zadnjo obnovo
   node scripts/obnovi-kopijo.js --oblak       seznam kopij zunaj strežnika
-  node scripts/obnovi-kopijo.js --oblak-zdaj  naloži najnovejšo kopijo zunaj strežnika takoj
+  node scripts/obnovi-kopijo.js --oblak-zdaj  takoj naloži najnovejšo kopijo v shrambo zunaj strežnika
   node scripts/obnovi-kopijo.js --oblak-prenesi LLLL-MM-DD   prenese kopijo od zunaj (nato obnova z LLLL-MM-DD-0000)`;
 
 /** Preizkus obnove: kopija je cela, pogovori berljivi s sedanjim ključem, števila vrstic v primerjavi z bazo. */
@@ -135,7 +135,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     try {
       if (arg === "--oblak") {
         const remote = await listCloud(cfg, file);
-        if (!remote.length) console.log("Zunaj strežnika še ni nobene kopije (strežnik jo naloži 10 minut po zagonu ali: --oblak-zdaj).");
+        if (!remote.length) console.log("Zunaj strežnika še ni nobene kopije (strežnik jo naloži 10 minut po zagonu; takoj: --oblak-zdaj).");
         for (const b of remote) console.log(b.date);
       } else if (arg === "--oblak-zdaj") {
         const b = list.find((x) => !x.manual) ?? list[0];

@@ -67,9 +67,9 @@ Obnova izgubi vse, kar se je zgodilo po kopiji. Pogovori v kopiji so šifrirani 
 Če odpove cel Render (ne samo disk), pomaga kopija drugje. Strežnik najnovejšo dnevno kopijo 10 minut po zagonu in nato vsako uro, ko je nova, **zašifrira** (AES-256-GCM, ključ izpeljan iz `EVKLID_DATA_KEY`) in naloži v Cloudflare R2; kopije, starejše od 30 dni, pobriše (`server/kopije-oblak.js`). Brez `EVKLID_DATA_KEY` ne naloži ničesar. Stanje: `https://evklid.app/healthz/stanje` → `kopijeZunaj` (`zadnja`, `napaka`).
 
 Nastavitev (enkrat):
-1. Cloudflare → **R2 Object Storage** → **Create bucket**: ime `evklid-kopije`, Location **Specify jurisdiction → European Union**. R2 ima 10 GB na mesec brezplačno.
+1. Cloudflare → **R2 Object Storage** → **Create bucket**: ime `evklid-kopije`, Location **Specify jurisdiction → European Union**. Prvih 10 GB je brezplačnih; ob prvem vklopu R2 Cloudflare zahteva plačilno kartico (**Add R2 subscription**).
    V vedru še **Settings → Object lifecycle rules → Add rule**: Delete objects after **30 days** (varovalka, če nalaganje dlje ne bi delovalo).
-2. R2 → **Manage API tokens** → **Create API token**: Permission **Object Read & Write**, Specify bucket **evklid-kopije**, TTL Forever. Kopiraj **Access Key ID**, **Secret Access Key** in **S3 endpoint za EU** (`https://<račun>.eu.r2.cloudflarestorage.com`). Prikažejo se samo enkrat.
+2. R2 → **Manage API tokens** → **Create API token**: Permission **Object Read & Write**, Specify bucket **evklid-kopije**, TTL Forever. Kopiraj **Access Key ID**, **Secret Access Key** in endpoint pod **European Union (EU)** (`https://<račun>.eu.r2.cloudflarestorage.com`; ne privzetega brez `.eu`, ki vedra v EU ne najde). Ključa se prikažeta samo enkrat; endpoint je tudi v vedru pod **Settings → S3 API**.
 3. Render → evklid → **Environment**: `EVKLID_KOPIJE_S3_URL` (endpoint brez `/evklid-kopije` na koncu), `EVKLID_KOPIJE_S3_BUCKET=evklid-kopije`, `EVKLID_KOPIJE_S3_KEY_ID`, `EVKLID_KOPIJE_S3_SECRET`, nato **Save, rebuild, and deploy**.
 4. Preizkus v Render → **Shell**: `node scripts/obnovi-kopijo.js --oblak-zdaj` (mora pisati »Naložena kopija …«), nato `node scripts/obnovi-kopijo.js --oblak` (seznam).
 
