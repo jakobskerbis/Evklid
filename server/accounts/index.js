@@ -35,6 +35,7 @@ import { mountGifts } from "../placila/darila.js";
 import { mountGuarantee } from "../placila/garancija.js";
 import { mountPodari } from "../placila/podari.js";
 import { Schedules, nowParts } from "../schedule.js";
+import { setSource } from "../rast.js";
 
 export const CONSENT_TEXT =
   "Izjavljam, da sem starš ali zakoniti zastopnik tega otroka in soglašam, da Evklid obdeluje otrokove osebne podatke " +
@@ -972,6 +973,7 @@ export function mountAccounts(app, store, opts = {}) {
       consents: q("SELECT * FROM consents WHERE parent_id = ?", p.id),
       children: children(p.id).map((c) => ({
         ...c,
+        vir: db.prepare("SELECT vir FROM students WHERE id = ?").get(c.id)?.vir ?? null, // od kod je profil prišel (server/rast.js)
         conversations: store.listConversations(c.id).map((conv) => ({
           ...conv,
           // Šifrirana besedila (server/crypto-polje.js) gredo v izvoz odšifrirana.
@@ -1002,6 +1004,30 @@ export function mountAccounts(app, store, opts = {}) {
             return [];
           }
         })(),
+        // Igre (server/games.js, server/daily-puzzle.js); tabele morda še ne obstajajo.
+        games: Object.fromEntries(
+          [
+            ["scores", "SELECT game, best, plays, tier, correct, wrong, cleared, updated_at FROM game_scores WHERE student_id = ?"],
+            ["ratings", "SELECT engine, up, updated_at FROM game_ratings WHERE student_id = ?"],
+            ["wishes", "SELECT week, genre FROM game_wishes WHERE student_id = ?"],
+            ["unlocks", "SELECT concept, created_at FROM game_unlocks WHERE student_id = ?"],
+            ["days", "SELECT day, plays, returns, pending, last_end FROM game_days WHERE student_id = ?"],
+            ["concept_days", "SELECT day, concept, weak, correct, wrong FROM game_concept_days WHERE student_id = ?"],
+            // Vzdevek na lestvicah (tudi pri dnevni uganki), lige, avatar in kovanci.
+            ["league_profile", "SELECT nickname, tier, created_at FROM league_profiles WHERE student_id = ?"],
+            ["leagues", "SELECT week, final_rank, final_xp, outcome FROM league_members WHERE student_id = ?"],
+            ["avatar", "SELECT equipped FROM avatar_state WHERE student_id = ?"],
+            ["avatar_items", "SELECT item, bought_at FROM avatar_items WHERE student_id = ?"],
+            ["coins", "SELECT amount, reason, created_at FROM coin_events WHERE student_id = ?"],
+            ["daily_puzzle", "SELECT day, level, started_at, finished_at, hints, wrong, solved, time_ms, total_ms FROM daily_puzzle WHERE student_id = ?"],
+          ].map(([k, sql]) => {
+            try {
+              return [k, q(sql, c.id)];
+            } catch {
+              return [k, []];
+            }
+          }),
+        ),
         schedule: (() => {
           try {
             const r = db.prepare("SELECT data FROM schedules WHERE student_id = ?").get(c.id);
@@ -1200,6 +1226,7 @@ export function mountAccounts(app, store, opts = {}) {
     const under15 = now - year <= 15; // previdno: v letu 15. rojstnega dne še štejemo kot mlajšega od 15
     const s = store.createStudent(name, req.body?.settings);
     db.prepare("UPDATE students SET parent_id = ?, birth_year = ? WHERE id = ?").run(p.id, year, s.id);
+    setSource(db, s.id, req.body?.vir); // od kod je prišel (server/rast.js)
     db.prepare("INSERT INTO consents (parent_id, student_id, child_birth_year, under_15, version, text, parent_email) VALUES (?, ?, ?, ?, ?, ?, ?)").run(
       p.id,
       s.id,
