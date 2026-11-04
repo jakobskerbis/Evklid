@@ -328,6 +328,7 @@
    "id": "mreznica",
    "ime": "Mrežnica",
    "la": "Retina",
+   "povecava": "organ-mreznica",
    "barva": "#ff7a6b",
    "opis": "Notranja plast s čutnicami (paličnicami in čepnicami), ki svetlobo spremenijo v živčne signale.",
    "vozlisca": [

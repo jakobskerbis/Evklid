@@ -117,6 +117,7 @@
  "deli": [
   {
    "id": "desni-zgornji",
+   "povecava": "organ-mesicki",
    "ime": "Zgornji reženj desnih pljuč",
    "la": "Lobus superior pulmonis dextri",
    "barva": "#ff9a8a",
@@ -127,6 +128,7 @@
   },
   {
    "id": "desni-srednji",
+   "povecava": "organ-mesicki",
    "ime": "Srednji reženj desnih pljuč",
    "la": "Lobus medius pulmonis dextri",
    "barva": "#ffc06a",
@@ -137,6 +139,7 @@
   },
   {
    "id": "desni-spodnji",
+   "povecava": "organ-mesicki",
    "ime": "Spodnji reženj desnih pljuč",
    "la": "Lobus inferior pulmonis dextri",
    "barva": "#f472b6",
@@ -147,6 +150,7 @@
   },
   {
    "id": "levi-zgornji",
+   "povecava": "organ-mesicki",
    "ime": "Zgornji reženj levih pljuč",
    "la": "Lobus superior pulmonis sinistri",
    "barva": "#a78bfa",
@@ -157,6 +161,7 @@
   },
   {
    "id": "levi-spodnji",
+   "povecava": "organ-mesicki",
    "ime": "Spodnji reženj levih pljuč",
    "la": "Lobus inferior pulmonis sinistri",
    "barva": "#60a5fa",

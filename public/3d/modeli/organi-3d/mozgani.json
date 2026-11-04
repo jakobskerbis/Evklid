@@ -143,6 +143,7 @@
    "id": "celni",
    "ime": "Čelni reženj",
    "la": "Lobus frontalis",
+   "povecava": "celica-nevron",
    "barva": "#ff7a6b",
    "opis": "Z njim premišljujemo, se odločamo, govorimo in zavestno premikamo mišice.",
    "vozlisca": [
@@ -161,6 +162,7 @@
    "id": "temenski",
    "ime": "Temenski reženj",
    "la": "Lobus parietalis",
+   "povecava": "celica-nevron",
    "barva": "#f2b84b",
    "opis": "Sprejema občutke dotika, toplote in bolečine ter ve, kje so deli telesa.",
    "vozlisca": [
@@ -179,6 +181,7 @@
    "id": "senceni",
    "ime": "Senčni reženj",
    "la": "Lobus temporalis",
+   "povecava": "celica-nevron",
    "barva": "#6e9bff",
    "opis": "Tu so središča za sluh in razumevanje govora; pomaga tudi pri spominu.",
    "vozlisca": [
@@ -197,6 +200,7 @@
    "id": "zatilni",
    "ime": "Zatilni reženj",
    "la": "Lobus occipitalis",
+   "povecava": "celica-nevron",
    "barva": "#c084fc",
    "opis": "Obdeluje, kar vidimo: oblike, barve, razdalje in gibanje.",
    "vozlisca": [
@@ -215,6 +219,7 @@
    "id": "limbicni",
    "ime": "Limbični reženj",
    "la": "Lobus limbicus",
+   "povecava": "celica-nevron",
    "barva": "#f472b6",
    "opis": "Pas skorje na notranji strani poloble okoli žuljevega telesa (s pasasto vijugo); sodeluje pri čustvih, pozornosti in spominu.",
    "vozlisca": [
@@ -233,6 +238,7 @@
    "id": "otok",
    "ime": "Otok",
    "la": "Insula",
+   "povecava": "celica-nevron",
    "barva": "#fb923c",
    "opis": "Skrit je globoko v stranski brazdi; sodeluje pri okusu in občutkih iz notranjosti telesa.",
    "vozlisca": [

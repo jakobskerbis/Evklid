@@ -522,7 +522,11 @@ export function ustvariSceno(el, opts = {}) {
       const vidna = _p.z <= 1;
       const desno = x < w * 0.6;
       oznaka.el.classList.toggle("levo", !desno);
-      oznaka.el.style.transform = `translate(${desno ? x + 16 : x - 16}px, ${y}px)`;
+      // Kartica ostane cela na odru (ozek telefon, gumb »Poglej pod povečavo«).
+      const cw = oznaka.el.offsetWidth, ch = oznaka.el.offsetHeight;
+      const lx = Math.min(Math.max(8, desno ? x + 16 : x - 16 - cw), Math.max(8, w - cw - 8));
+      const ly = Math.min(Math.max(y, ch / 2 + 8), Math.max(ch / 2 + 8, h - ch / 2 - 8));
+      oznaka.el.style.transform = `translate(${desno ? lx : lx + cw}px, ${ly}px)`;
       oznaka.el.classList.toggle("skrita", !vidna);
     }
   }
@@ -569,6 +573,7 @@ export function ustvariSceno(el, opts = {}) {
     plast.append(d);
     oznaka = { id, el: d, pos: pos ? new THREE.Vector3().copy(pos) : new THREE.Vector3() };
     narisi();
+    return d; // pregledovalnik doda gumb (»Poglej pod povečavo«)
   }
 
   // Merilo: črta prave dolžine na globini cilja; merilo.m je prava velikost dolžine `enota` v svetu.

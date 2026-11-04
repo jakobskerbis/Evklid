@@ -3267,6 +3267,7 @@ export default {
   "a3.noResults": "Ni zadetkov.",
   "a3.parts": "Deli",
   "a3.organDetails": "Podrobnosti organa",
+  "a3.magnify": "Poglej pod povečavo",
   "a3.organLoading": "Nalagam 3D prikaz",
   "a3.play": "Predvajaj",
   "a3.pause": "Ustavi",

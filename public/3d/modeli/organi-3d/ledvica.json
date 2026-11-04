@@ -140,6 +140,7 @@
   },
   {
    "id": "skorja",
+   "povecava": "organ-nefron",
    "ime": "Ledvična skorja",
    "la": "Cortex renalis",
    "barva": "#f08060",
@@ -151,6 +152,7 @@
   },
   {
    "id": "piramide",
+   "povecava": "organ-nefron",
    "ime": "Ledvične piramide (sredica)",
    "la": "Pyramides renales",
    "barva": "#e04050",
