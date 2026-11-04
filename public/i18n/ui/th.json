@@ -1249,7 +1249,6 @@
   "cards.hide": "ซ่อนคำตอบ",
   "cards.flipHint": "แตะบัตรเพื่อพลิก",
   "cards.flipBackHint": "แตะเพื่อดูคำถาม",
-  "cards.flipLabel": "พลิกบัตร",
   "cards.start": "เริ่มทบทวน",
   "cards.practiceAll": "ฝึกต่อเลย",
   "cards.practiceNote": "ฝึก: บัตรเหล่านี้ยังไม่ถึงกำหนดวันนี้ ตารางทบทวนจึงไม่เปลี่ยน",

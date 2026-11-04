@@ -1018,7 +1018,7 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 }
 .fc-front .katex-display, .fc-backside .katex-display, .fc-a .katex-display, .cards-note .katex-display { overflow-x: auto; overflow-y: hidden; }
 /* seznam vseh kartic: po sklopih, odgovori skriti */
-.fc-list summary { cursor: pointer; padding: 2px 0; }
+.fc-list summary { cursor: pointer; padding: 8px 0; }
 .fc-group { margin: 16px 0 0; font-size: 0.98rem; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; overflow-wrap: anywhere; }
 .fc-group small { font-weight: 600; font-size: 0.82rem; }
 .fc-list ul { list-style: none; margin: 8px 0 0; padding: 0; }
@@ -1026,7 +1026,7 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 .fc-row-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .fc-row-text p { margin: 0; }
 .fc-q { font-weight: 700; }
-.fc-peek { display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; margin: 2px 0 0; font-size: 0.85rem; min-height: 36px; }
+.fc-peek { display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; margin: 2px 0 0; font-size: 0.85rem; min-height: 40px; }
 .fc-a { margin-top: 2px; }
 .fc-row-btns { display: flex; gap: 2px; flex: none; }
 .fc-form { display: grid; gap: 10px; margin-top: 16px; }

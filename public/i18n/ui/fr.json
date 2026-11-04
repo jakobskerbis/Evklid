@@ -1255,7 +1255,6 @@
   "cards.hide": "Masquer la réponse",
   "cards.flipHint": "Touche la fiche pour la retourner",
   "cards.flipBackHint": "Touche pour voir la question",
-  "cards.flipLabel": "Retourner la fiche",
   "cards.start": "Commencer la révision",
   "cards.practiceAll": "S'entraîner quand même",
   "cards.practiceNote": "Entraînement : ces fiches ne sont pas prévues aujourd'hui, leur calendrier ne change donc pas.",

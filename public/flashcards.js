@@ -143,7 +143,7 @@ function renderPractice() {
   session.seen = false;
   const topic = session.key === null && c.source !== "own" && c.topic ? `<span class="fc-topic" dir="auto">${esc(c.topic)}</span>` : "";
   v.innerHTML = `<div class="fc-practice">${head}
-    <div class="fc-flip" role="button" tabindex="0" aria-pressed="false" aria-label="${t("cards.flipLabel")}">
+    <div class="fc-flip" role="button" tabindex="0" aria-pressed="false">
       <div class="fc-inner">
         <div class="fc-face fc-face-front">
           <div class="fc-face-top"><span class="fc-side">${t("cards.front")}</span>${topic}</div>
@@ -157,6 +157,7 @@ function renderPractice() {
         </div>
       </div>
     </div>
+    <div class="sr-only fc-live" aria-live="polite"></div>
     <div class="actions fc-grade fc-wait" inert>
       <button type="button" class="secondary" data-act="again">${icon("rotate-ccw")} ${t("cards.again")}</button>
       <button type="button" class="primary" data-act="know">${icon("check")} ${t("cards.know")}</button>
@@ -177,12 +178,19 @@ function renderPractice() {
 function flip() {
   const v = box();
   const card = v?.querySelector(".fc-flip");
-  if (!card || !session) return;
+  if (!card || !session || session.busy) return;
   session.flipped = !session.flipped;
   card.classList.toggle("flipped", session.flipped);
   card.setAttribute("aria-pressed", String(session.flipped));
   card.querySelector(".fc-face-front").setAttribute("aria-hidden", String(session.flipped));
   card.querySelector(".fc-face-back").setAttribute("aria-hidden", String(!session.flipped));
+  // Bralnik zaslona: po obratu prebere vidno stran (ime gumba se sicer ne prebere znova).
+  const live = v.querySelector(".fc-live");
+  if (live) {
+    const face = card.querySelector(session.flipped ? ".fc-face-back" : ".fc-face-front").cloneNode(true);
+    face.querySelectorAll('[aria-hidden="true"], annotation').forEach((n) => n.remove()); // KaTeX: brez slike in izvorne kode
+    live.textContent = face.textContent.replace(/\s+/g, " ").trim();
+  }
   if (session.flipped && !session.seen) {
     session.seen = true;
     const g = v.querySelector(".fc-grade");
@@ -193,9 +201,11 @@ function flip() {
 
 async function grade(ok) {
   if (!session?.seen) return;
-  const id = session.queue.shift();
-  session.seen = false;
-  if (!session.practice) {
+  const s = session;
+  const id = s.queue.shift();
+  s.seen = false;
+  if (!s.practice) {
+    s.busy = true; // do odgovora strežnika se kartica ne obrne (sicer bi ocena šla naslednji, neodkriti kartici)
     try {
       const r = await D.api(`/api/students/${sid()}/flashcards/${id}/review`, { method: "POST", body: { ok, path: D.getPath?.() || undefined } });
       cards.set(id, r.card);
@@ -203,8 +213,9 @@ async function grade(ok) {
     } catch (err) {
       D.toast(err.message);
     }
+    s.busy = false;
   }
-  if (!session) return; // učenec je medtem zapustil vajo
+  if (session !== s) return; // učenec je medtem zapustil vajo (ali začel novo)
   // Pozabljena kartica pride v isti vaji še enkrat na konec (le enkrat).
   if (!ok && !session.again.has(id)) {
     session.again.add(id);

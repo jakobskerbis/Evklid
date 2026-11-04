@@ -229,7 +229,6 @@ export default {
   "cards.hide": "Skrij odgovor",
   "cards.flipHint": "Tapni kartico, da jo obrneš",
   "cards.flipBackHint": "Tapni za vprašanje",
-  "cards.flipLabel": "Obrni kartico",
   "cards.start": "Začni ponavljanje",
   "cards.practiceAll": "Vadi vseeno",
   "cards.practiceNote": "Vaja: te kartice danes niso na vrsti, zato se njihov razpored ne spremeni.",
