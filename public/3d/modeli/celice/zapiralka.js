@@ -31,11 +31,49 @@ export function zgradi(THREE, ctx = {}) {
   }
   const fbm = (x, y, z) => sum(x, y, z) * 0.6 + sum(x * 2.1, y * 2.1, z * 2.1) * 0.3 + sum(x * 4.3, y * 4.3, z * 4.3) * 0.1;
   const gladko = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  // Proceduralna normalna mapa (DataTexture iz periodičnega šuma, brez platna): "zrnje" drobne izbokline, "gube" gubice, "vlakna" proge.
+  const _nm = {}, odpadT = [];
+  function normalnaMapa(vrsta) {
+    if (_nm[vrsta]) return _nm[vrsta];
+    const N = 128, P = vrsta === "gube" ? 5 : vrsta === "vlakna" ? 4 : 12, h = new Float32Array(N * N), sl = vrsta.length * 13.1;
+    const hp = (i, j, s) => hash(((i % s) + s) % s, ((j % s) + s) % s, s * 7.3 + sl);
+    const vn = (x, y, s) => {
+      const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+      const a = hp(xi, yi, s), b = hp(xi + 1, yi, s), c = hp(xi, yi + 1, s), d = hp(xi + 1, yi + 1, s);
+      return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+    };
+    for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+      let s = 0, a = 1, f = P;
+      for (let o = 0; o < 4; o++) {
+        let n = vrsta === "vlakna" ? vn(i / N * f * 6, j / N * f, f * 6) * 0.7 + vn(i / N * f, j / N * f, f) * 0.3 : vn(i / N * f, j / N * f, f);
+        if (vrsta === "gube") n = 1 - Math.abs(2 * n - 1);
+        s += n * a; a *= 0.5; f *= 2;
+      }
+      h[j * N + i] = s;
+    }
+    const d = new Uint8Array(N * N * 4), k = vrsta === "gube" ? 2.4 : 3.4;
+    for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+      const dx = h[j * N + (i + 1) % N] - h[j * N + (i + N - 1) % N], dy = h[((j + 1) % N) * N + i] - h[((j + N - 1) % N) * N + i];
+      let x = -dx * k, y = -dy * k, z = 1; const l = Math.hypot(x, y, z);
+      const o = (j * N + i) * 4; d[o] = (x / l * 0.5 + 0.5) * 255; d[o + 1] = (y / l * 0.5 + 0.5) * 255; d[o + 2] = (z / l * 0.5 + 0.5) * 255; d[o + 3] = 255;
+    }
+    const t = new THREE.DataTexture(d, N, N, THREE.RGBAFormat);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping; t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; t.needsUpdate = true;
+    odpadT.push(t);
+    return (_nm[vrsta] = t);
+  }
+  // mat(barva, { …, zrnje: [vrsta, ponovitev u, ponovitev v, jakost] }): mokra, rahlo prosojna organska površina.
   function mat(barva, o = {}) {
+    const { zrnje, ...ost } = o;
     const m = new THREE.MeshPhysicalMaterial(Object.assign({
-      color: barva, roughness: 0.4, clearcoat: 0.8, clearcoatRoughness: 0.3,
-      sheen: 0.5, sheenColor: new THREE.Color(0xffffff), sheenRoughness: 0.5,
-    }, o));
+      color: barva, roughness: 0.55, clearcoat: 0.35, clearcoatRoughness: 0.22,
+      sheen: 0.35, sheenColor: new THREE.Color(barva).lerp(new THREE.Color(0xffffff), 0.45).multiplyScalar(0.8), sheenRoughness: 0.45,
+    }, ost));
+    if (zrnje) {
+      const [vrsta = "zrnje", ru = 4, rv = 2, j = 0.3] = zrnje, t = normalnaMapa(vrsta).clone();
+      t.repeat.set(ru, rv); t.needsUpdate = true; odpadT.push(t);
+      m.normalMap = t; m.normalScale = new THREE.Vector2(j, j);
+    }
     odpad.push(m);
     return m;
   }
@@ -114,14 +152,15 @@ export function zgradi(THREE, ctx = {}) {
   const matPlasti = (o = {}) => mat(0xffffff, Object.assign({ vertexColors: true, roughness: 0.5, clearcoat: 0.5, clearcoatRoughness: 0.3, sheen: 0.2, side: THREE.DoubleSide }, o));
   // Združi geometrije (z index ali brez) v eno; po želji pobarva vsako z barvo oglišč.
   function zdruzi(geos, barve) {
-    const pos = [], nor = [], col = [], idx = [];
+    const pos = [], nor = [], col = [], idx = [], uv = [];
     let off = 0;
     geos.forEach((g, i) => {
-      const p = g.attributes.position, n = g.attributes.normal, gc = g.attributes.color;
+      const tu = g.attributes.uv, p = g.attributes.position, n = g.attributes.normal, gc = g.attributes.color;
       const c = barve && barve[i] != null ? new THREE.Color(barve[i]) : null;
       for (let k = 0; k < p.count; k++) {
         pos.push(p.getX(k), p.getY(k), p.getZ(k));
         nor.push(n.getX(k), n.getY(k), n.getZ(k));
+        if (tu) uv.push(tu.getX(k), tu.getY(k)); else { const x = p.getX(k), y = p.getY(k), zz = p.getZ(k); uv.push(0.5 + Math.atan2(zz, x) / (2 * Math.PI), 0.5 + Math.asin(Math.max(-1, Math.min(1, y / (Math.hypot(x, y, zz) || 1)))) / Math.PI); }
         if (c) col.push(c.r, c.g, c.b);
         else if (barve) { if (gc) col.push(gc.getX(k), gc.getY(k), gc.getZ(k)); else col.push(1, 1, 1); }
       }
@@ -133,9 +172,39 @@ export function zgradi(THREE, ctx = {}) {
     const out = new THREE.BufferGeometry();
     out.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
     out.setAttribute("normal", new THREE.Float32BufferAttribute(nor, 3));
+    out.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
     if (barve) out.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
     out.setIndex(idx);
     return out;
+  }
+  // Barve oglišč kot množilnik okoli 1 (material obdrži svojo barvo): rahle lise iz šuma, po želji toplejše/hladnejše.
+  // Material mora imeti vertexColors: true in ga ne sme deliti z geometrijo brez barv.
+  // mnozi: true pomnoži obstoječe barve oglišč (npr. iz pobarvaj) namesto da jih zamenja.
+  function lise(g, { j = 0.14, fr = 3, odtenek = 0.04, temno = null, mnozi = false } = {}) {
+    const p = g.attributes.position, a = new Float32Array(p.count * 3), st = mnozi && g.attributes.color;
+    for (let i = 0; i < p.count; i++) {
+      const x = p.getX(i), y = p.getY(i), z = p.getZ(i), n = fbm(x * fr + 3.1, y * fr - 0.7, z * fr + 1.9), h = sum(x * fr * 0.5 - 4, y * fr * 0.5 + 2, z * fr * 0.5);
+      const k = (1 + n * j) * (temno ? temno(x, y, z) : 1);
+      a[i * 3] = k * (1 + h * odtenek); a[i * 3 + 1] = k; a[i * 3 + 2] = k * (1 - h * odtenek);
+      if (st) { a[i * 3] *= st.getX(i); a[i * 3 + 1] *= st.getY(i); a[i * 3 + 2] *= st.getZ(i); }
+    }
+    g.setAttribute("color", new THREE.BufferAttribute(a, 3));
+    return g;
+  }
+  // Drobni delci (ribosomi, zrnca, mehurčki) v škatli od a do b, kjer pogoj(p) velja: ikozaedri z rahlo različno barvo in velikostjo.
+  function drobci(n, a, b, velikost, material, pogoj, { razlika = 0.25, detajl = 0 } = {}) {
+    const m = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, detajl), material, n), ob = new THREE.Object3D(), p = new THREE.Vector3(), c = new THREE.Color();
+    let k = 0;
+    for (let t = 0; t < n * 80 && k < n; t++) {
+      p.set(a.x + (b.x - a.x) * rnd(), a.y + (b.y - a.y) * rnd(), a.z + (b.z - a.z) * rnd());
+      if (!pogoj(p)) continue;
+      ob.position.copy(p); ob.rotation.set(rnd() * 6, rnd() * 6, rnd() * 6);
+      ob.scale.set(1, 0.75 + rnd() * 0.4, 0.8 + rnd() * 0.3).multiplyScalar(velikost * (0.6 + rnd() * 0.8)); ob.updateMatrix();
+      m.setMatrixAt(k, ob.matrix); const s = 1 + (rnd() * 2 - 1) * razlika; m.setColorAt(k, c.setRGB(s, s, s)); k++;
+    }
+    m.count = k; m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true;
+    m.computeBoundingSphere(); m.computeBoundingBox();
+    return m;
   }
   function del(id, ime, opis, barva, meshes, tocka) {
     meshes.forEach((m) => { m.userData.del = id; });
@@ -161,6 +230,7 @@ export function zgradi(THREE, ctx = {}) {
     g.setIndex(idx);
     const A = new THREE.Vector3(), B = new THREE.Vector3(), C = new THREE.Vector3(), D = new THREE.Vector3(), E = new THREE.Vector3(), N = new THREE.Vector3();
     g.userData.uv = uv;
+    g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
     g.userData.osvezi = (Pf) => {
       const p = g.attributes.position.array, no = g.attributes.normal.array, e = 1e-3;
       for (let k = 0; k < n; k++) {
@@ -290,10 +360,10 @@ export function zgradi(THREE, ctx = {}) {
   const Pz = (plast) => (u, v, out) => zapiralka(u, v, plast, out);
   const VENT = [Math.PI * 0.62, Math.PI * 1.38]; // trebušna stran (ob reži)
 
-  const stenaZMat = mat(0xc9d8a0, { roughness: 0.25, clearcoat: 1, transparent: true, opacity: 0.38, depthWrite: false, sheen: 0.8, sheenColor: new THREE.Color(0xf0ffd8) });
-  const citZMat = mat(0xe8e4b8, { roughness: 0.6, clearcoat: 0.2, transparent: true, opacity: 0.32, depthWrite: false });
+  const stenaZMat = mat(0x9cae68, { roughness: 0.35, clearcoat: 0.7, clearcoatRoughness: 0.12, transparent: true, opacity: 0.42, depthWrite: false, sheen: 0.45, sheenColor: new THREE.Color(0xd0e0a8) });
+  const citZMat = mat(0xb8b27e, { roughness: 0.6, clearcoat: 0.2, transparent: true, opacity: 0.34, depthWrite: false });
   const ventMat = mat(0xa08a52, { roughness: 0.5, clearcoat: 0.5, side: THREE.DoubleSide });
-  const vakZMat = mat(0x9fe3f0, { roughness: 0.2, clearcoat: 1, sheen: 0.3 });
+  const vakZMat = mat(0x62bcd6, { roughness: 0.28, clearcoat: 0.7, clearcoatRoughness: 0.1, sheen: 0.35, sheenColor: new THREE.Color(0xb8e8f4) });
   const zg = [];
   function zapiralkaMesh(Pf, krpe, material, red) {
     const m = new THREE.Mesh(ploskev(Pf, krpe, true), material);
@@ -306,7 +376,7 @@ export function zgradi(THREE, ctx = {}) {
   const vakZ = [zapiralkaMesh(Pz(2), zadaj(q(110), q(18)), vakZMat, 0), zapiralkaMesh(Pz(2), spredaj(q(110), q(18)), vakZMat, 0)];
 
   // stena med zapiralkama na obeh koncih
-  const koncaMat = mat(0xb8a86a, { roughness: 0.5, clearcoat: 0.4, transparent: true, opacity: 0.6, depthWrite: false, side: THREE.DoubleSide });
+  const koncaMat = mat(0xa39350, { roughness: 0.5, clearcoat: 0.4, transparent: true, opacity: 0.6, depthWrite: false, side: THREE.DoubleSide });
   const konca = new THREE.Mesh(zdruzi([0, 1].map(() => new THREE.CircleGeometry(1, q(20)))), koncaMat);
   konca.renderOrder = 1;
   list.add(konca);
@@ -334,7 +404,7 @@ export function zgradi(THREE, ctx = {}) {
     const p = g.attributes.position, col = [], c = new THREE.Color();
     for (let i = 0; i < p.count; i++) {
       const t = 0.5 + 0.5 * sum(p.getX(i) * 3 + 2, p.getY(i) * 3, p.getZ(i) * 3);
-      c.set(0x6cc24a).lerp(new THREE.Color(0x2a7a34), gladko(0.45, 0.8, t) * 0.8); col.push(c.r, c.g, c.b);
+      c.set(0x4fa83a).lerp(new THREE.Color(0x1b5a26), gladko(0.45, 0.8, t) * 0.8); col.push(c.r, c.g, c.b);
     }
     g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
     return g.scale(0.03, 0.014, 0.04);
@@ -350,9 +420,9 @@ export function zgradi(THREE, ctx = {}) {
       k++;
     }
   }
-  const kloroplasti = new THREE.InstancedMesh(kloGeo, mat(0xffffff, { vertexColors: true, roughness: 0.35, clearcoat: 0.9 }), kloPol.length);
+  const kloroplasti = new THREE.InstancedMesh(kloGeo, mat(0xffffff, { vertexColors: true, roughness: 0.45, clearcoat: 0.55, clearcoatRoughness: 0.15, sheen: 0.4, sheenColor: new THREE.Color(0x9adf80) }), kloPol.length);
   const jedri = new THREE.InstancedMesh(preoblikuj(new THREE.SphereGeometry(1, q(20), q(14)), (v) => v.multiplyScalar(1 + 0.04 * sum(v.x * 3, v.y * 3, v.z * 3))).scale(0.032, 0.04, 0.06),
-    mat(0x7a68d8, { roughness: 0.34 }), 2);
+    mat(0x6654c4, { roughness: 0.45, clearcoat: 0.4, sheen: 0.4, sheenColor: new THREE.Color(0xa898f0), zrnje: ["gube", 3, 2, 0.4] }), 2);
   list.add(kloroplasti, jedri);
   const vA = new THREE.Vector3(), vB = new THREE.Vector3(), vC = new THREE.Vector3(), M4 = new THREE.Matrix4();
   function postaviNotranjost() {
@@ -381,8 +451,8 @@ export function zgradi(THREE, ctx = {}) {
   }
 
   // prerez leve zapiralke na ravnini z = 0 (α = π)
-  const kapaMat = [mat(0xb8a86a, { roughness: 0.55, clearcoat: 0.3, side: THREE.DoubleSide }),
-    mat(0xe4dcae, { roughness: 0.8, clearcoat: 0.1, side: THREE.DoubleSide }), mat(0x9fe3f0, { roughness: 0.3, clearcoat: 0.8, side: THREE.DoubleSide })];
+  const kapaMat = [mat(0xa39350, { roughness: 0.6, clearcoat: 0.25, side: THREE.DoubleSide }),
+    mat(0xc4b886, { roughness: 0.75, clearcoat: 0.15, side: THREE.DoubleSide }), mat(0x62bcd6, { roughness: 0.35, clearcoat: 0.6, side: THREE.DoubleSide })];
   const kape = kapaMat.map((m) => { const x = new THREE.Mesh(new THREE.BufferGeometry(), m); list.add(x); return x; });
   function obris(plast, a) {
     const pts = [];
@@ -391,7 +461,7 @@ export function zgradi(THREE, ctx = {}) {
   }
   // celična membrana tik pod steno, vidna na prerezu (debelina povečana)
   const TMZ = 0.0045;
-  const memZ = new THREE.Mesh(new THREE.BufferGeometry(), matPlasti({ roughness: 0.4 }));
+  const memZ = new THREE.Mesh(new THREE.BufferGeometry(), matPlasti({ roughness: 0.55, clearcoat: 0.25 }));
   list.add(memZ);
   const naMembrani = (a, psi, k, out) => { zapiralka(a, psi, 1, out); const c = _c.clone(); return out.addScaledVector(c.sub(out).setZ(0).normalize(), TMZ * k); };
   function postaviMembrano() {
@@ -470,10 +540,11 @@ export function zgradi(THREE, ctx = {}) {
     material(uu(u), a, X0);
     const { e, id } = sestavljanka(X0.x, X0.z);
     const dl = uu(u) * I0.distanceTo(O0);
-    c.setHSL(0.22 + odtenki[id] * 0.06, 0.25, 0.8 + odtenki[id] * 0.06);
-    c.lerp(new THREE.Color(0xb6a46a), 1 - gladko(0.004, 0.02, Math.min(e, dl)));
+    c.setHSL(0.2 + odtenki[id] * 0.05, 0.4, 0.4 + odtenki[id] * 0.07);
+    c.multiplyScalar(0.86 + 0.14 * gladko(0.0, 0.08, Math.min(e, dl))); // ob stenah med celicami rahla senca
+    c.lerp(new THREE.Color(0x8e7c44), 1 - gladko(0.004, 0.02, Math.min(e, dl)));
   };
-  const povMat = mat(0xffffff, { vertexColors: true, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.2, sheen: 0.5, sheenColor: new THREE.Color(0xf4f8e0) });
+  const povMat = mat(0xffffff, { vertexColors: true, roughness: 0.58, clearcoat: 0.32, clearcoatRoughness: 0.14, sheen: 0.3, sheenColor: new THREE.Color(0xc8d0a8), zrnje: ["zrnje", 18, 10, 0.22] });
   const pg = [];
   function povMesh(Pf, krpe, obrni, barva, mt = povMat) {
     const g = ploskev(Pf, krpe, obrni);
@@ -484,14 +555,14 @@ export function zgradi(THREE, ctx = {}) {
   }
   const povZad = povMesh(Pvrh, kZad(NU, NV), true, barvaCelic);
   const povSpr = povMesh(Pvrh, kSpr(NU, NV), true, barvaCelic);
-  const dnoMat = mat(0xffffff, { vertexColors: true, roughness: 0.6, clearcoat: 0.3 });
+  const dnoMat = mat(0xffffff, { vertexColors: true, roughness: 0.65, clearcoat: 0.2, zrnje: ["zrnje", 18, 10, 0.25] });
   const dno = povMesh(Pdno, [[0, 1, q(20), 0, TAU, q(96)]], false, barvaCelic, dnoMat);
   // stranice: ob luknji (pod zapiralkama) in na robu koščka
   const Pstr = (u0) => (s, a, out) => { const top = povrsje(u0, a, new THREE.Vector3()); return out.copy(top).setY(top.y + (-T - top.y) * s); };
-  const strBarva = (x, y, z, u, a, c) => { barvaCelic(x, y, z, 1, a, c); if (y < -T + 0.012) c.set(0xb6a46a); };
+  const strBarva = (x, y, z, u, a, c) => { barvaCelic(x, y, z, 1, a, c); if (y < -T + 0.012) c.set(0x8e7c44); };
   const strZad = povMesh(Pstr(1), [[0, 1, 6, Math.PI, Math.PI * 2, q(144)]], true, strBarva, dnoMat);
   const strSpr = povMesh(Pstr(1), [[0, 1, 6, 0, Math.PI, q(144)]], true, strBarva, dnoMat);
-  const lukMat = mat(0xd4dcc4, { roughness: 0.7, clearcoat: 0, sheen: 0.3, side: THREE.DoubleSide });
+  const lukMat = mat(0x9ca88a, { roughness: 0.7, clearcoat: 0.1, sheen: 0.3, side: THREE.DoubleSide });
   const luknja = povMesh(Pstr(0), [[0, 1, 4, Math.PI, Math.PI * 2, q(60)]], true, null, lukMat);
   const luknjaSpr = povMesh(Pstr(0), [[0, 1, 4, 0, Math.PI, q(60)]], true, null, lukMat);
 
@@ -502,15 +573,15 @@ export function zgradi(THREE, ctx = {}) {
   const rezBarva = (a) => (x, y, z, u, s, c) => {
     material(uu(u), a, X0);
     const { e } = sestavljanka(X0.x, X0.z);
-    c.set(0xe8f2f0).lerp(new THREE.Color(0xd2ecf2), s);
+    c.set(0xaabca4).lerp(new THREE.Color(0x7c9c9c), s);
     const dl = uu(u) * I0.distanceTo(O0);
-    if (Math.min(e, dl) < 0.008 || y < -T + 0.01) c.set(0xb6a46a);
+    if (Math.min(e, dl) < 0.008 || y < -T + 0.01) c.set(0x8e7c44);
   };
   // ploskve reza gledajo navzdol-naprej; normale jim nagnemo proti gledalcu, da so svetle in berljive
   const proti = (g, z = 1) => { const n = g.attributes.normal; for (let i = 0; i < n.count; i++) n.setXYZ(i, 0, 0.6 * z, 0.8 * z); n.needsUpdate = true; return g; };
-  const rezMat = mat(0xffffff, { vertexColors: true, roughness: 0.55, clearcoat: 0.3, side: THREE.DoubleSide });
+  const rezMat = mat(0xffffff, { vertexColors: true, roughness: 0.6, clearcoat: 0.25, side: THREE.DoubleSide, zrnje: ["zrnje", 24, 3, 0.3] });
   const rez = [0, Math.PI].map((a) => povMesh(Prez(a), [[0, 1, q(140), 0, 1, 5]], false, rezBarva(a), rezMat));
-  const kutMat = mat(0xe8cf5a, { roughness: 0.2, clearcoat: 1, side: THREE.DoubleSide });
+  const kutMat = mat(0xd4b240, { roughness: 0.32, clearcoat: 0.8, clearcoatRoughness: 0.08, sheen: 0.3, side: THREE.DoubleSide });
   const kut = [0, Math.PI].map((a) => povMesh(Pkut(a), [[0, 1, q(140), 0, 1, 1]], false, null, kutMat));
   // kutikula na zunanjem robu koščka (vidna tudi v celem prikazu)
   const Pkrob = (s, a, out) => { povrsje(1, a, out); out.x *= 1.003; out.z *= 1.003; out.y = out.y + 0.002 - (D_KUT + 0.002) * s; return out; };
@@ -525,11 +596,11 @@ export function zgradi(THREE, ctx = {}) {
     const g = new THREE.SphereGeometry(1, q(40), q(28));
     preoblikuj(g, (v) => { v.multiplyScalar(1 + 0.12 * fbm(v.x * 1.4 + i * 3, v.y * 1.4, v.z * 1.4)); v.multiply(new THREE.Vector3(r * 1.3, r, r * sz)); v.add(new THREE.Vector3(x, y ?? -T - r * 0.72, z)); });
     const p = g.attributes.position, col = [], c = new THREE.Color();
-    for (let k = 0; k < p.count; k++) { const t = 0.5 + 0.5 * sum(p.getX(k) * 40, p.getY(k) * 40, p.getZ(k) * 40); c.set(0x9ccf7a).lerp(new THREE.Color(0x3d8a3a), gladko(0.5, 0.68, t)); col.push(c.r, c.g, c.b); }
+    for (let k = 0; k < p.count; k++) { const t = 0.5 + 0.5 * sum(p.getX(k) * 40, p.getY(k) * 40, p.getZ(k) * 40); c.set(0x6aa850).lerp(new THREE.Color(0x24622a), gladko(0.5, 0.68, t)); col.push(c.r, c.g, c.b); }
     g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
     gob.push(g);
   });
-  const gobasto = new THREE.Mesh(zdruzi(gob, gob.map(() => null)), mat(0xffffff, { vertexColors: true, roughness: 0.4, clearcoat: 0.6 }));
+  const gobasto = new THREE.Mesh(zdruzi(gob, gob.map(() => null)), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, sheen: 0.4, sheenColor: new THREE.Color(0x9adf80), zrnje: ["zrnje", 6, 3, 0.3] }));
   list.add(gobasto);
   const votlina = new THREE.Mesh(new THREE.SphereGeometry(0.22, q(32), q(12), 0, TAU, Math.PI / 2, Math.PI / 2).scale(1.1, 0.7, 1.5).translate(0, -T + 0.01, 0),
     mat(0x24405e, { roughness: 0.9, clearcoat: 0, sheen: 0, transparent: true, opacity: 0.4, depthWrite: false, side: THREE.BackSide }));
@@ -614,11 +685,13 @@ export function zgradi(THREE, ctx = {}) {
 
   return {
     group,
+    pogled: [-0.47, 0.34, 0.81], // smer kamere: yaw −30°, pitch 20° (odrezani del proti gledalcu)
     deli,
     nadzor,
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
       odpad.forEach((m) => m.dispose());
+      odpadT.forEach((t) => t.dispose());
     },
   };
 }
