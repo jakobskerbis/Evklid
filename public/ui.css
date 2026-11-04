@@ -165,6 +165,7 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
 .help-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .guide-list { margin-top: 12px; padding: 0; }
 .guide-list .guide-intro { margin: 0 0 6px; }
+.guide-list div.list-row:hover { background: none !important; }
 .guide-list .list-row .lr-text small { font-weight: 500; line-height: 1.4; }
 
 /* ---------- Jaz (profil na telefonu) ---------- */

@@ -3298,10 +3298,15 @@ $("#tour-again").addEventListener("click", () => {
 $("#guide-open").addEventListener("click", (e) => {
   const list = $("#guide-list");
   const open = list.hidden;
-  if (open && !list.childElementCount) {
-    list.innerHTML = `<p class="muted guide-intro">${escapeHtml(t("guide.intro"))}</p>${GUIDE.map(
-      (g) => `<button type="button" class="list-row" data-guide-view="${g.view || ""}"><span class="ic">${icon(g.icon)}</span><span class="lr-text"><b>${escapeHtml(t(g.title))}</b><small>${escapeHtml(t(g.text))}</small></span>${g.view ? icon("chevron-right") : ""}</button>`,
-    ).join("")}`;
+  if (open) {
+    // Ob vsakem odprtju znova: profil določa, kaj obstaja (fakulteta brez tekmovanj, regionalni sistemi imajo Izpite).
+    // Nastavitve izpustimo, ker smo že tu.
+    const skip = (g) => g.view === "settings" || (g.view === "competition" && (isUni(state.student?.settings) || regionalExams()));
+    const row = (g) => {
+      const inner = `<span class="ic">${icon(g.icon)}</span><span class="lr-text"><b>${escapeHtml(t(g.title))}</b><small>${escapeHtml(t(g.text))}</small></span>`;
+      return g.view ? `<button type="button" class="list-row" data-guide-view="${g.view}">${inner}${icon("chevron-right")}</button>` : `<div class="list-row">${inner}</div>`;
+    };
+    list.innerHTML = `<p class="muted guide-intro">${escapeHtml(t("guide.intro"))}</p>${GUIDE.filter((g) => !skip(g)).map(row).join("")}`;
   }
   list.hidden = !open;
   e.currentTarget.setAttribute("aria-expanded", String(open));
