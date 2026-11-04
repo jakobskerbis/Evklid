@@ -426,7 +426,8 @@ export function ustvariSceno(el, opts = {}) {
       _p.copy(pos).project(camera);
       const x = (_p.x * 0.5 + 0.5) * w;
       const y = (-_p.y * 0.5 + 0.5) * h;
-      const vidna = _p.z <= 1 && !(t && t.zakrita);
+      // Oznaka izbranega dela ostane vidna, tudi ko se točka med vrtenjem skrije za predmet (j, 4. 11.: do dotika).
+      const vidna = _p.z <= 1;
       const desno = x < w * 0.6;
       oznaka.el.classList.toggle("levo", !desno);
       oznaka.el.style.transform = `translate(${desno ? x + 16 : x - 16}px, ${y}px)`;

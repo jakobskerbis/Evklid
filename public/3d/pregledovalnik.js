@@ -56,6 +56,26 @@ export function odpriModel(el, mod, opts = {}) {
   deliEl.setAttribute("aria-label", t("a3.parts"));
   spodaj.append(nadzorEl, deliEl);
   el.append(oder, spodaj);
+  // Stran /3d (opts.stran): plošča ob odru (desno na širokih zaslonih, spodaj na telefonu) z opisom modela, nadzorom in
+  // seznamom delov; plošča se drsi sama, oder ostane ves čas viden. V lekcijah ostane postavitev kot prej.
+  let oModelu = null;
+  let deliGlava = null;
+  if (opts.stran) {
+    el.classList.add("k3-stran-pregled");
+    spodaj.classList.add("k3-plosca");
+    oModelu = mk("section", "k3-o-modelu");
+    oModelu.setAttribute("aria-label", t("a3.about"));
+    if (info.opis) oModelu.append(mk("p", "k3-o-opis", info.opis));
+    if (info.poskusi) {
+      const p = mk("p", "k3-o-poskusi");
+      p.append(mk("b", "", `${t("sc.try")} `), mk("bdi", "", info.poskusi)); // bdi: slovensko besedilo v RTL ostane LTR
+      oModelu.append(p);
+    }
+    oModelu.hidden = !oModelu.children.length;
+    deliGlava = mk("h2", "k3-deli-glava");
+    spodaj.prepend(oModelu);
+    spodaj.insertBefore(deliGlava, deliEl);
+  }
   // Esc prekliče izbiro dela (šele naslednji Esc gre na strani /3d nazaj na zbirko).
   el.addEventListener("keydown", (e) => {
     if (e.key !== "Escape" || !izbran || e.defaultPrevented) return;
@@ -73,7 +93,17 @@ export function odpriModel(el, mod, opts = {}) {
   const btnTeci = mk("button", "k3-krog");
   btnTeci.type = "button";
   btnTeci.addEventListener("click", () => nastaviTek(!tece));
-  orodja.append(btnTeci, btnPonastavi);
+  // Povečava z gumbi (poleg koleščka in prstov): miška brez koleščka, sledilna ploščica, dostopnost.
+  const povecava = (f, ikona, kljuc) => {
+    const b = mk("button", "k3-krog k3-povecava");
+    b.type = "button";
+    b.innerHTML = icon(ikona);
+    b.setAttribute("aria-label", t(kljuc));
+    b.title = t(kljuc);
+    b.addEventListener("click", () => kit?.priblizaj(f));
+    return b;
+  };
+  orodja.append(povecava(1 / 1.35, "zoom-out", "a3.zoomOut"), povecava(1.35, "zoom-in", "a3.zoomIn"), btnTeci, btnPonastavi);
 
   function nastaviTek(on) {
     tece = on;
@@ -162,6 +192,10 @@ export function odpriModel(el, mod, opts = {}) {
       deliEl.append(b);
     }
     deliEl.hidden = !seznam.length;
+    if (deliGlava) {
+      deliGlava.hidden = !seznam.length;
+      deliGlava.replaceChildren(t("a3.parts"), mk("span", "k3-stevec", String(seznam.length)));
+    }
     kit.nastaviTocke(
       seznam.filter((d) => Array.isArray(d.tocka) && !d.skrijTocko).map((d) => ({ id: d.id, ime: d.ime, barva: d.barva, pos: svetovnaTocka(d) })),
       { ob: (id) => izberi(id === izbran ? null : id), zakriva: () => (model?.group ? [model.group] : []) },
@@ -358,6 +392,19 @@ export function odpriModel(el, mod, opts = {}) {
     if (!kit) {
       kit = ustvariSceno(oder, { kakovost: opts.kakovost, oznaka: info.naslov, ponastavi: () => zgradiVse(true) });
       oder.append(orodja);
+      // Barvne točke po 4 s mirovanja zbledijo (j, 4. 11.) in se vrnejo ob dotiku, premiku kamere, koleščku ali tipki;
+      // izbrana točka ostane vidna. Velja na strani /3d in v lekcijah.
+      let mir = 0;
+      const zbudi = () => {
+        oder.classList.remove("k3-tocke-mirne");
+        clearTimeout(mir);
+        mir = setTimeout(() => oder.classList.add("k3-tocke-mirne"), 4000);
+      };
+      for (const ev of ["pointerdown", "pointermove", "wheel", "keydown", "focusin"]) oder.addEventListener(ev, zbudi, { passive: true });
+      kit.controls.addEventListener("start", zbudi);
+      kit.controls.addEventListener("end", zbudi);
+      pocisti.push(() => clearTimeout(mir));
+      zbudi();
       kit.naTap((ndc) => {
         if (!model?.group) return;
         const hit = kit.zadetki(ndc, [model.group])[0];
@@ -396,6 +443,23 @@ export function odpriModel(el, mod, opts = {}) {
         }),
       );
       if (kit.kakovost === "visoka") kit.pripraviAO(0.3);
+      if (opts.stran) {
+        // Namig na odru, dokler se ga prvič ne dotakneš (kot v atlasu).
+        const grob = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
+        const namig = mk("p", "k3-namig", t(grob ? "a3.hintModel" : "a3.hintModelMouse"));
+        oder.append(namig);
+        oder.classList.add("k3-namig-viden"); // telefon: merilo nad namigom, dokler je ta viden
+        let skrit = false;
+        const skrij = () => {
+          if (skrit) return;
+          skrit = true;
+          namig.classList.add("skrit");
+          oder.classList.remove("k3-namig-viden");
+        };
+        setTimeout(skrij, 9000);
+        kit.canvas.addEventListener("pointerdown", skrij, { once: true });
+        kit.canvas.addEventListener("wheel", skrij, { once: true, passive: true });
+      }
     }
     const moj = ++gradnja;
     const ctx = {
