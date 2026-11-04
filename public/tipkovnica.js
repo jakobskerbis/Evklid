@@ -375,10 +375,12 @@ function fxHtml() {
     <div class="tk-row">${toNum}${leftKey()}${rightKey()}${bsKey()}${goKey()}</div>`;
 }
 
-// skupina Algebra: v slovenščini poenostavi/razvij/razstavi/reši, drugje angleška imena (kot na kalkulatorjih CAS)
+// skupini Algebra in Analiza: v slovenščini poenostavi/razvij/razstavi/reši/integriraj/limita, drugje angleška imena
+// (kot na kalkulatorjih CAS)
 function fxKey(group, l, ins) {
-  const sl = group === "alg" && CAS_SL[l] && /^sl/.test(currentLang() || "sl");
-  const cls = group === "alg" && CAS_SL[l] ? "sm word" : "sm";
+  const cas = (group === "alg" || group === "ana") && CAS_SL[l];
+  const sl = cas && /^sl/.test(currentLang() || "sl");
+  const cls = cas ? "sm word" : "sm";
   return sl ? key(CAS_SL[l], { a: "ins", v: ins.replace(l, CAS_SL[l]) }, { cls }) : key(l, { a: "ins", v: ins }, { cls });
 }
 

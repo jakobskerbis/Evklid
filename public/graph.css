@@ -569,6 +569,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sc-bool { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; }
 .sc-bool.ok { color: var(--ok); }
 .sc-bool.no { color: var(--danger); }
+.sc-none { font-size: 1rem; font-weight: 700; }
 .sc-acts { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; padding: 4px 0 2px; }
 .sc-act { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 4px 12px; border-radius: 999px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font-weight: 700; font-size: 0.85rem; cursor: pointer; }
 .sc-act:hover, .sc-act:focus-visible { border-color: var(--accent); color: var(--accent); }
