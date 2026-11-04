@@ -321,8 +321,8 @@ export const SIM_TOPICS = {
   "FIZ-OS-9/elektricni-krog": [["krog-el", "Zaporedna in vzporedna vezava žarnic", { mode: "zarnice" }], ["lab-vezava", "Laboratorij: zaporedna in vzporedna vezava"]],
   "FIZ-OS-9/upor-in-ohmov-zakon": [["ohm", "Ohmov zakon v električnem krogu"], ["lab-ohm", "Laboratorij: izmeri Ohmov zakon"]],
   "FIZ-OS-9/elektricno-delo-in-moc": [["poraba", "Poraba električne energije doma"], ["lab-grelnik", "Laboratorij: električno delo grelca"]],
-  "FIZ-OS-9/magneti-in-magnetno-polje": [["magnet", "Magnetno polje in kompas", { mode: "magnet" }], ["3d-magnetno-polje", "3D: Magnetno polje magneta", { zacetek: { vir: "magnet" }, poskusi: "Vklopi kompase. Kam kaže rdeči konec igle blizu severnega pola in kam blizu južnega?" }]],
-  "FIZ-OS-9/elektromagnet": [["magnet", "Elektromagnet", { mode: "tuljava" }], ["3d-magnetno-polje", "3D: Magnetno polje tuljave", { zacetek: { vir: "tuljava" }, poskusi: "Povečaj tok in število ovojev: kako se spremeni polje v tuljavi? Nato zamenjaj smer toka in poglej, kje je zdaj severni pol." }]],
+  "FIZ-OS-9/magneti-in-magnetno-polje": [["magnet", "Magnetno polje in kompas", { mode: "magnet" }], ["3d-magnetno-polje", "3D: Magnetno polje magneta", { zacetek: { vir: "magnet" }, poskusi: "Vklopi kompase. Kam kaže rdeči konec igle blizu severnega pola in kam blizu južnega?" }], ["lab-elektromagnet", "Laboratorij: tuljava, kompas in sponke"]],
+  "FIZ-OS-9/elektromagnet": [["magnet", "Elektromagnet", { mode: "tuljava" }], ["3d-magnetno-polje", "3D: Magnetno polje tuljave", { zacetek: { vir: "tuljava" }, poskusi: "Povečaj tok in število ovojev: kako se spremeni polje v tuljavi? Nato zamenjaj smer toka in poglej, kje je zdaj severni pol." }], ["lab-elektromagnet", "Laboratorij: elektromagnet s Hallovo sondo, sponkami in kompasom"]],
   "FIZ-OS-9/fizika-v-sodobnih-napravah": [["uvrsti", "GPS, laser, sončna celica, jedrska elektrarna", { set: "naprave" }], ["fotoefekt", "Svetloba izbija elektrone (sončna celica)"], ["razpad", "Razpad jeder (jedrsko gorivo in odpadki)"]],
   // ---------------------------------------------------------------- KEM OŠ 8
   "KEM-OS-8/varno-delo-v-laboratoriju": ["razvrsti", "Varnostni znaki v laboratoriju", { set: "ghs" }],
@@ -384,9 +384,9 @@ export const SIM_TOPICS = {
   "FIZ-SS-2/elektricna-vezja": [["krog-el", "Zaporedna in vzporedna vezava upornikov", { mode: "uporniki" }], ["lab-vezava", "Laboratorij: Kirchhoffova zakona in skupna upornost"]],
   "FIZ-SS-2/prevajanje-toplote-in-sevanje": [["prenos", "Prevajanje, konvekcija in sevanje"], ["zvezde", "Stefanov zakon: sevanje vročega telesa"], ["lab-ohlajanje", "Laboratorij: ohlajanje in Newtonov zakon"]],
   // ---------------------------------------------------------------- FIZ SŠ 3
-  "FIZ-SS-3/magnetno-polje": [["magnet", "Magnetno polje magneta, žice in tuljave", { mode: "zica" }], ["3d-magnetno-polje", "3D: Magnetno polje vodnika in tuljave", { zacetek: { vir: "vodnik" }, poskusi: "Zamenjaj smer toka v vodniku in preveri pravilo desne roke. Nato izberi tuljavo: kje je polje skoraj homogeno?" }]],
-  "FIZ-SS-3/magnetna-sila": ["lorentz", "Naboj v magnetnem polju"],
-  "FIZ-SS-3/indukcija": ["indukcija", "Elektromagnetna indukcija"],
+  "FIZ-SS-3/magnetno-polje": [["magnet", "Magnetno polje magneta, žice in tuljave", { mode: "zica" }], ["3d-magnetno-polje", "3D: Magnetno polje vodnika in tuljave", { zacetek: { vir: "vodnik" }, poskusi: "Zamenjaj smer toka v vodniku in preveri pravilo desne roke. Nato izberi tuljavo: kje je polje skoraj homogeno?" }], ["lab-elektromagnet", "Laboratorij: gostota polja tuljave in železno jedro"]],
+  "FIZ-SS-3/magnetna-sila": [["lorentz", "Naboj v magnetnem polju"], ["lab-sila-vodnik", "Laboratorij: tokovna tehtnica, F = BIL"]],
+  "FIZ-SS-3/indukcija": [["indukcija", "Elektromagnetna indukcija"], ["lab-indukcija", "Laboratorij: magnet pade skozi tuljavo"]],
   "FIZ-SS-3/nihanje": [["nihalo", "Matematično nihalo"], ["vzmet", "Nihanje uteži na vzmeti", { mode: "nihanje" }]],
   "FIZ-SS-3/valovanje": ["val", "Prečno in vzdolžno valovanje", { mode: "precno" }],
   "FIZ-SS-3/zvok": ["val", "Zvok: frekvenca in glasnost", { mode: "zvok" }],
@@ -500,7 +500,7 @@ export const SIM_TOPICS = {
   "FIZ-TEK-SS/idealni-plin-in-termodinamika": ["pv", "Procesi v p–V diagramu"],
   "FIZ-TEK-SS/elektrostatika": [["naboji", "Električno polje", { mode: "polje" }], ["naboji", "Coulombov zakon", { mode: "coulomb" }], ["3d-elektricno-polje", "3D: Silnice in ekvipotencialne ploskve", { zacetek: { postavitev: "dipol", ekvipotencialne: true }, poskusi: "Pri dipolu in pri dveh enakih nabojih preveri, da so silnice povsod pravokotne na ekvipotencialne ploskve. Kje je polje enako nič?" }]],
   "FIZ-TEK-SS/tokokrogi-s-kirchhoffovimi-pravili": ["kirchhoff", "Kirchhoffova pravila"],
-  "FIZ-TEK-SS/magnetno-polje-in-lorentzova-sila": [["lorentz", "Naboj v magnetnem polju"], ["magnet", "Polje ravnega vodnika", { mode: "zica" }], ["3d-magnetno-polje", "3D: Magnetno polje krožne zanke", { zacetek: { vir: "zanka" }, poskusi: "Primerjaj polje krožne zanke s poljem paličastega magneta. Kje na osi zanke je polje najmočnejše?" }]],
+  "FIZ-TEK-SS/magnetno-polje-in-lorentzova-sila": [["lorentz", "Naboj v magnetnem polju"], ["magnet", "Polje ravnega vodnika", { mode: "zica" }], ["3d-magnetno-polje", "3D: Magnetno polje krožne zanke", { zacetek: { vir: "zanka" }, poskusi: "Primerjaj polje krožne zanke s poljem paličastega magneta. Kje na osi zanke je polje najmočnejše?" }], ["lab-sila-vodnik", "Laboratorij: sila na vodnik s tokovno tehtnico"]],
   "FIZ-TEK-SS/geometrijska-optika": [["lece", "Leče"], ["zarki", "Lom in popolni odboj", { mode: "lom" }]],
   "FIZ-TEK-SS/ocenjevanje-in-dimenzijska-analiza": [["dimenzije", "Dimenzijska analiza"], ["znanstveni", "Red velikosti"]],
   // ---------------------------------------------------------------- TEKMOVANJA: KEM
@@ -657,6 +657,21 @@ export const LAB_INFO = {
     subject: "FIZ",
     title: "Drugi Newtonov zakon",
     desc: "Voziček na progi vleče obešalo z utežmi čez škripec. Izravnaj trenje, prestavljaj utežice in iz grafov a(F) in a(1/m) pokaži, da je a = F/m.",
+  },
+  "lab-elektromagnet": {
+    subject: "FIZ",
+    title: "Elektromagnet",
+    desc: "Sestavi krog z napajalnikom, ampermetrom in tuljavo (250, 500 ali 1000 ovojev), s Hallovo sondo izmeri gostoto polja, dodaj železno jedro in preštej dvignjene sponke.",
+  },
+  "lab-sila-vodnik": {
+    subject: "FIZ",
+    title: "Sila na vodnik v magnetnem polju",
+    desc: "Magnet stoji na tehtnici, skozi njegovo režo teče tok po vodniku. Iz spremembe odčitka določi silo, nariši F(I) in F(L) ter izračunaj gostoto polja.",
+  },
+  "lab-indukcija": {
+    subject: "FIZ",
+    title: "Elektromagnetna indukcija",
+    desc: "Spusti magnet skozi tuljavo in s senzorjem napetosti zapiši oba vrhova inducirane napetosti. Pokaži, da je vrh sorazmeren s hitrostjo, ploščina pa ne.",
   },
 };
 export const labKey = (id, opts = {}) => (opts && Object.keys(opts).length ? `${id}:${JSON.stringify(opts)}` : id);
