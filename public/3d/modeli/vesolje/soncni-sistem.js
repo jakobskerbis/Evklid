@@ -57,7 +57,7 @@ const OPISI = {
   jupiter: "Jupiter je največji planet, plinski velikan iz vodika in helija s pisanimi pasovi oblakov. Velika rdeča pega je vrtinčast vihar, večji od Zemlje, ki ga opazujemo že več kot 150 let.",
   saturn: "Saturn je plinski velikan z najlepšimi obroči. Njegova povprečna gostota je manjša od gostote vode, zato bi v dovolj veliki kadi plaval.",
   obroci: ["Saturnovi obroči", "#d8c49a", "Obroči so iz neštetih koščkov ledu in kamnin; premer glavnih obročev je okoli 270 000 km, debeli pa so večinoma manj kot kilometer. Temna vrzel med obročema A in B je Cassinijeva ločnica."],
-  uran: "Uran je ledeni velikan, ki je zaradi metana v ozračju modrozelen. Njegova os je nagnjena za skoraj 98°, zato okoli Sonca kroži tako rekoč po boku.",
+  uran: "Uran je ledeni velikan, ki je zaradi metana v ozračju modrozelen. Njegova os je nagnjena za skoraj 98°, zato na poti okoli Sonca tako rekoč leži na boku.",
   neptun: "Neptun je najbolj oddaljen planet, temno modri ledeni velikan. Na njem pihajo najmočnejši vetrovi v Osončju, do 2100 km/h; temno pego je leta 1989 posnela sonda Voyager 2.",
   pluton: "Pluton je pritlikavi planet v Kuiperjevem pasu; od leta 2006 ga ne štejemo več med planete. Na njegovem površju je svetlo ledeno območje v obliki srca.",
   asteroidi: ["Asteroidni pas", "#a39a8c", "Med Marsom in Jupitrom kroži več milijonov skalnatih teles, asteroidov. Vsi skupaj imajo le okoli 3 % mase Lune; prikazanih je samo nekaj tisoč točk."],
@@ -85,7 +85,7 @@ const MERILA = {
 const V_MERILU = {
   pregledno: "nič: razdalje so stisnjene, telesa močno povečana",
   velikosti: "velikosti teles; razdalje so stisnjene",
-  razdalje: "razdalje; telesa so premajhna, zato so pike",
+  razdalje: "razdalje; telesa so premajhna, zato jih kažejo pike",
 };
 const HITROSTI = [
   [1, "1 dan", "10 dni"],
@@ -671,7 +671,7 @@ export function zgradi(THREE, ctx) {
         float b = texture2D(map, vUv + vec2(0.0123 + uTime * 0.0009, 0.0071)).r;
         float g = mix(a.r, b, 0.5 + 0.5 * sin(uTime * 0.7));
         float limb = 1.0 - 0.6 * (1.0 - pow(mu, 0.85));
-        vec3 hot = vec3(1.0, 0.9, 0.62), warm = vec3(1.0, 0.5, 0.12), deep = vec3(0.75, 0.2, 0.03);
+        vec3 hot = vec3(1.0, 0.86, 0.52), warm = vec3(1.0, 0.52, 0.13), deep = vec3(0.75, 0.2, 0.03);
         vec3 col = mix(warm, hot, smoothstep(0.05, 0.9, mu));
         col = mix(deep, col, smoothstep(0.0, 0.3, mu));
         float I = limb * (0.8 + 0.3 * g) * a.g + a.b * (1.0 - mu) * 0.45;
@@ -1096,7 +1096,7 @@ export function zgradi(THREE, ctx) {
 
   const nadzor = [
     { tip: "izbira", id: "merilo", oznaka: "Merilo", moznosti: [["pregledno", "Pregledno"], ["velikosti", "Resnične velikosti"], ["razdalje", "Resnične razdalje"]], vrednost: nacin0, ob: (v) => nastaviNacin(v) },
-    { tip: "izpis", id: "v-merilu", oznaka: "V merilu so", vrednost: () => V_MERILU[nacin] },
+    { tip: "izpis", id: "v-merilu", oznaka: "Kaj je v merilu", vrednost: () => V_MERILU[nacin] },
     { tip: "drsnik", id: "hitrost", oznaka: "Hitrost časa", min: 0, max: 4, korak: 1, vrednost: hitrost, ob: (v) => { hitrost = Math.min(4, Math.max(0, Math.round(Number(v) || 0))); polozaji(0, true); } },
     { tip: "izpis", id: "sekunda", oznaka: "V 1 sekundi mine", vrednost: () => `${HITROSTI[hitrost][1]} (skok: ${HITROSTI[hitrost][2]})` + (gib ? "" : ", čas teče le s skoki") },
     { tip: "gumb", id: "naprej", oznaka: "Skoči naprej", ob: () => { dni += 10 * HITROSTI[hitrost][0]; polozaji(0, true); } },

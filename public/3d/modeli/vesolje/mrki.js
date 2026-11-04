@@ -461,12 +461,14 @@ function orodja(THREE, ctx) {
   }
   // Per frame (call from any object's onBeforeRender): labels with userData.tocka sit above their point when the point
   // is farther from the camera than userData.sredisce (world), below it otherwise; every label stays on the screen.
-  const uP = new THREE.Vector3(), uC = new THREE.Vector3(), uS = new THREE.Vector3();
+  // Labels earlier in »seznam« win: a later label that would cover one of them is hidden (material.visible).
+  const uP = new THREE.Vector3(), uC = new THREE.Vector3(), uS = new THREE.Vector3(), zas = [];
   function uredi(renderer, camera, group, seznam) {
     if (!camera.isPerspectiveCamera) return;
     renderer.getSize(sz);
     const W = sz.x, H = sz.y, P5 = camera.projectionMatrix.elements[5], gs = group.matrixWorld.getMaxScaleOnAxis() || 1;
     uC.setFromMatrixPosition(camera.matrixWorld);
+    let nz = 0;
     for (const s of seznam) {
       const u = s.userData;
       if (u.tocka) {
@@ -480,6 +482,12 @@ function orodja(THREE, ctx) {
       uP.setFromMatrixPosition(s.matrixWorld).project(camera);
       const x = ((uP.x + 1) / 2) * W, wpx = ((s.scale.x * gs * P5) / 2) * H;
       s.center.x = Math.min(Math.max(u.cx0, 1 - (W - 6 - x) / wpx), (x - 6) / wpx);
+      const hpx = ((s.scale.y * gs * P5) / 2) * H, x0 = x - s.center.x * wpx, y0 = ((1 - uP.y) / 2) * H - (1 - s.center.y) * hpx;
+      const kaze = s.visible && s.material.opacity > 0.05 && uP.z < 1;
+      let prost = kaze;
+      for (let i = 0; prost && i < nz; i += 4) if (x0 < zas[i + 1] && x0 + wpx > zas[i] && y0 < zas[i + 3] && y0 + hpx > zas[i + 2]) prost = false;
+      s.material.visible = prost || !kaze;
+      if (prost) { zas[nz++] = x0 - 3; zas[nz++] = x0 + wpx + 3; zas[nz++] = y0 - 2; zas[nz++] = y0 + hpx + 2; }
     }
   }
   function ploscica(c2, w, h) {
@@ -502,7 +510,7 @@ function orodja(THREE, ctx) {
           float b = texture2D(map, vUv + vec2(0.0123 + uTime * 0.0009, 0.0071)).r;
           float g = mix(a.r, b, 0.5 + 0.5 * sin(uTime * 0.7));
           float limb = 1.0 - 0.6 * (1.0 - pow(mu, 0.85));
-          vec3 hot = vec3(1.0, 0.9, 0.62), warm = vec3(1.0, 0.5, 0.12), deep = vec3(0.75, 0.2, 0.03);
+          vec3 hot = vec3(1.0, 0.86, 0.52), warm = vec3(1.0, 0.52, 0.13), deep = vec3(0.75, 0.2, 0.03);
           vec3 col = mix(warm, hot, smoothstep(0.05, 0.9, mu));
           col = mix(deep, col, smoothstep(0.0, 0.3, mu));
           float I = limb * (0.8 + 0.3 * g) * a.g + a.b * (1.0 - mu) * 0.45;
@@ -634,7 +642,7 @@ export function zgradi(THREE, ctx) {
   group.add(svet);
   const luc = new THREE.DirectionalLight(0xfff4e2, 3.2);
   luc.position.set(-1, 0, 0);
-  svet.add(luc, luc.target, new THREE.AmbientLight(0x9fb0d0, 0.04));
+  svet.add(luc, luc.target, new THREE.AmbientLight(0x9fb0d0, 0.08));
 
   // materials whose sunlight is reduced by the shadow of another body (per fragment, from true angles)
   function snovMrk(op, U, kljuc) {
@@ -879,7 +887,7 @@ export function zgradi(THREE, ctx) {
     L.luna.position.set(xM, -rM - 0.03, zM);
     L.senca.position.set(xM - 0.2, (R_E - ((xM - 0.2 - xE) / k) * tanU) * s * 0.5, 0);
     L.polsenca.position.set(xM - 0.16, (R_E + ((xM - 0.16 - xE) / k) * tanP) * s + 0.02, 0);
-    L.lom.position.set(xE + 0.2, -rE - 0.01, 0);
+    L.lom.position.set(xE + 0.33, -0.165, 0);
     T("sonce", -0.84, 0.05, 0); T("zemlja", xE - rE * 0.7, rE * 0.45, 0); T("luna", xM, 0, zM);
     T("senca", xM - 0.2, 0, 0); T("polsenca", xM - 0.16, (R_E + ((xM - 0.16 - xE) / k) * tanP) * s * 0.85, 0); T("lom", xE + 0.12, rE * 0.96, 0);
   }
@@ -953,9 +961,12 @@ export function zgradi(THREE, ctx) {
       const x = ((i + 0.5) / N) * 2 - 1, y = 1 - ((j + 0.5) / N) * 2, r2 = x * x + y * y, k = (j * N + i) * 4;
       if (r2 > 1) { d[k + 3] = 0; continue; }
       const z = Math.sqrt(1 - r2), lat = Math.asin(y), lon = Math.atan2(x, z);
-      const u = Math.min(tw - 1, Math.floor((lon / (2 * Math.PI) + 0.5) * tw)), v = Math.min(th - 1, Math.floor((0.5 - lat / Math.PI) * th));
-      const s = (v * tw + u) * 4, l = 0.85 + 0.15 * z;
-      d[k] = px[s] * l; d[k + 1] = px[s + 1] * l; d[k + 2] = px[s + 2] * l; d[k + 3] = 255 * Math.min(1, (1 - Math.sqrt(r2)) * N * 0.5);
+      const fu = (lon / (2 * Math.PI) + 0.5) * tw - 0.5, fv = Math.min(th - 1, Math.max(0, (0.5 - lat / Math.PI) * th - 0.5));
+      const u0 = Math.floor(fu), v0 = Math.floor(fv), au = fu - u0, av = fv - v0, v1 = Math.min(th - 1, v0 + 1);
+      const s00 = (v0 * tw + ((u0 + tw) % tw)) * 4, s10 = (v0 * tw + ((u0 + 1) % tw)) * 4, s01 = (v1 * tw + ((u0 + tw) % tw)) * 4, s11 = (v1 * tw + ((u0 + 1) % tw)) * 4;
+      const tex = (c) => (px[s00 + c] * (1 - au) + px[s10 + c] * au) * (1 - av) + (px[s01 + c] * (1 - au) + px[s11 + c] * au) * av;
+      const l = 0.85 + 0.15 * z;
+      d[k] = tex(0) * l; d[k + 1] = tex(1) * l; d[k + 2] = tex(2) * l; d[k + 3] = 255 * Math.min(1, (1 - Math.sqrt(r2)) * N * 0.5);
     }
     c2.putImageData(img, 0, 0);
   }
@@ -978,7 +989,9 @@ export function zgradi(THREE, ctx) {
     c.textAlign = "center"; c.textBaseline = "alphabetic";
     if (vrsta === "soncni") {
       c.fillStyle = "#e8edf7"; c.font = o.font(600, 13); c.fillText("Pogled proti Soncu", cx, 21);
-      c.fillStyle = "#9aa6bf"; c.font = o.font(500, 10.5); c.fillText("z mesta na Zemlji, najbližjega osi sence", cx, 36);
+      c.fillStyle = "#9aa6bf"; let fs = 10.5; c.font = o.font(500, fs);
+      while (fs > 8.5 && c.measureText("z mesta na Zemlji, najbližjega osi sence").width > w - 20) c.font = o.font(500, (fs -= 0.5));
+      c.fillText("z mesta na Zemlji, najbližjega osi sence", cx, 36);
       const K = 30 / RA.rhoS, rS = 30, rL = K * RA.rhoM, off = Math.min(K * RA.sig, 120) * RA.sgn;
       c.save(); c.beginPath(); c.arc(cx, cy, 58, 0, 2 * Math.PI); c.clip();
       const nebo = 1 - RA.f;

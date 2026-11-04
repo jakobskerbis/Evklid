@@ -404,12 +404,14 @@ function orodja(THREE, ctx) {
   }
   // Per frame (call from any object's onBeforeRender): labels with userData.tocka sit above their point when the point
   // is farther from the camera than userData.sredisce (world), below it otherwise; every label stays on the screen.
-  const uP = new THREE.Vector3(), uC = new THREE.Vector3(), uS = new THREE.Vector3();
+  // Labels earlier in »seznam« win: a later label that would cover one of them is hidden (material.visible).
+  const uP = new THREE.Vector3(), uC = new THREE.Vector3(), uS = new THREE.Vector3(), zas = [];
   function uredi(renderer, camera, group, seznam) {
     if (!camera.isPerspectiveCamera) return;
     renderer.getSize(sz);
     const W = sz.x, H = sz.y, P5 = camera.projectionMatrix.elements[5], gs = group.matrixWorld.getMaxScaleOnAxis() || 1;
     uC.setFromMatrixPosition(camera.matrixWorld);
+    let nz = 0;
     for (const s of seznam) {
       const u = s.userData;
       if (u.tocka) {
@@ -423,6 +425,12 @@ function orodja(THREE, ctx) {
       uP.setFromMatrixPosition(s.matrixWorld).project(camera);
       const x = ((uP.x + 1) / 2) * W, wpx = ((s.scale.x * gs * P5) / 2) * H;
       s.center.x = Math.min(Math.max(u.cx0, 1 - (W - 6 - x) / wpx), (x - 6) / wpx);
+      const hpx = ((s.scale.y * gs * P5) / 2) * H, x0 = x - s.center.x * wpx, y0 = ((1 - uP.y) / 2) * H - (1 - s.center.y) * hpx;
+      const kaze = s.visible && s.material.opacity > 0.05 && uP.z < 1;
+      let prost = kaze;
+      for (let i = 0; prost && i < nz; i += 4) if (x0 < zas[i + 1] && x0 + wpx > zas[i] && y0 < zas[i + 3] && y0 + hpx > zas[i + 2]) prost = false;
+      s.material.visible = prost || !kaze;
+      if (prost) { zas[nz++] = x0 - 3; zas[nz++] = x0 + wpx + 3; zas[nz++] = y0 - 2; zas[nz++] = y0 + hpx + 2; }
     }
   }
   function ploscica(c2, w, h) {
@@ -445,7 +453,7 @@ function orodja(THREE, ctx) {
           float b = texture2D(map, vUv + vec2(0.0123 + uTime * 0.0009, 0.0071)).r;
           float g = mix(a.r, b, 0.5 + 0.5 * sin(uTime * 0.7));
           float limb = 1.0 - 0.6 * (1.0 - pow(mu, 0.85));
-          vec3 hot = vec3(1.0, 0.9, 0.62), warm = vec3(1.0, 0.5, 0.12), deep = vec3(0.75, 0.2, 0.03);
+          vec3 hot = vec3(1.0, 0.86, 0.52), warm = vec3(1.0, 0.52, 0.13), deep = vec3(0.75, 0.2, 0.03);
           vec3 col = mix(warm, hot, smoothstep(0.05, 0.9, mu));
           col = mix(deep, col, smoothstep(0.0, 0.3, mu));
           float I = limb * (0.8 + 0.3 * g) * a.g + a.b * (1.0 - mu) * 0.45;
@@ -583,7 +591,7 @@ export function zgradi(THREE, ctx) {
 
   const snov = (op) => hrani(new THREE.MeshStandardMaterial({ roughness: 0.92, metalness: 0, ...op }));
   const luc = new THREE.PointLight(0xfff2dc, 3.3, 0, 0);
-  const okolje = new THREE.AmbientLight(0x9fb0d0, 0.05);
+  const okolje = new THREE.AmbientLight(0x9fb0d0, 0.12);
   svet.add(luc, okolje);
 
   // ---- Sun
@@ -662,7 +670,7 @@ export function zgradi(THREE, ctx) {
     lj: o.napis("Ljubljana", "#ff5c7a", { visina: 0.018, sredina: [0, 0.5] }),
   };
   napisi.sonce.position.set(0, -R_SONCE - 0.02, 0);
-  Object.assign(napisi.zemlja.userData, { tocka: piv.position, dvig: R_ZEMLJA * 1.1, sredisce: S.g });
+  Object.assign(napisi.zemlja.userData, { tocka: piv.position, dvig: R_ZEMLJA * 1.22, sredisce: S.g });
   for (const s of Object.values(napisi)) svet.add(s);
 
   // ---- inset: the noon Sun in Ljubljana
@@ -724,7 +732,7 @@ export function zgradi(THREE, ctx) {
     vrt.rotation.y = alfa - lamS;
     group.updateMatrixWorld(true);
     // labels and hotspots
-    vSvet(os, v2.set(0, 1.8, 0), napisi.severnica.position);
+    vSvet(os, v2.set(0, 1.95, 0), napisi.severnica.position);
     vSvet(vrt, v2.copy(LJ).multiplyScalar(1.08), napisi.lj.position);
     const ljS = vSvet(vrt, v2.copy(LJ).multiplyScalar(1.01), v3);
     const p = zarekGeo.attributes.position;
@@ -763,7 +771,7 @@ export function zgradi(THREE, ctx) {
   }
   // per-frame: hide labels that sit on the far side of the Earth
   const camL = new THREE.Vector3(), inv = new THREE.Matrix4();
-  const vsiNapisi = [...tockeNapisi, ...Object.values(napisi)];
+  const vsiNapisi = [...Object.values(napisi), ...tockeNapisi];
   tirnica.onBeforeRender = (renderer, sc, camera) => o.uredi(renderer, camera, group, vsiNapisi);
   napisi.lj.onBeforeRender = (r, sc, camera) => {
     inv.copy(svet.matrixWorld).invert();
@@ -775,13 +783,13 @@ export function zgradi(THREE, ctx) {
 
   const del = (id, ime, opis, barva, meshes) => ({ id, ime, opis, barva, meshes, tocka: tockeG[id] });
   const deli = [
-    del("sonce", "Sonce", "Sonce osvetljuje polovico Zemlje. Velikosti in razdalje v modelu niso v merilu: v resnici ima Sonce 109-krat večji premer kot Zemlja in oddaljeno okoli 150 milijonov km.", "#ffc35a", [S.mesh]),
+    del("sonce", "Sonce", "Sonce osvetljuje polovico Zemlje. Velikosti in razdalje v modelu niso v merilu: v resnici ima Sonce 109-krat večji premer kot Zemlja in je od nje oddaljeno okoli 150 milijonov km.", "#ffc35a", [S.mesh]),
     del("zemlja", "Zemlja", "Zemlja se v enem dnevu zavrti okoli svoje osi, v enem letu pa obkroži Sonce. Na strani, obrnjeni proti Soncu, je dan, na drugi strani noč.", "#4f8fe0", [Z.mesh, Z.oblaki]),
     del("os", "Zemljina os", "Os je nagnjena za 23,44° in ves čas kaže v isto smer, proti Severnici. Zato je severna polobla junija nagnjena proti Soncu (poletje), decembra pa stran od njega (zima).", "#e3e9f6", [osMesh]),
     del("ekvator", "Ekvator", "Ekvator razdeli Zemljo na severno in južno poloblo. Ob enakonočjih je Sonce opoldne nad ekvatorjem navpično nad glavo, dan in noč pa trajata povsod po 12 ur.", "#ffd166", [ekvator]),
     del("povratnika", "Povratnika", "Severni in južni povratnik ležita na 23,44° severne in južne geografske širine. Samo med njima je Sonce opoldne lahko navpično nad glavo; nad povratnikom se to zgodi ob sončevem obratu.", "#ff9466", [povratnika]),
     del("tecajnika", "Tečajnika", "Severni in južni tečajnik ležita na 66,56° geografske širine. Za njima Sonce vsaj en dan na leto ne zaide (polarni dan) in vsaj en dan ne vzide (polarna noč).", "#7cc6ff", [tecajnika]),
-    del("ljubljana", "Ljubljana", "Ljubljana leži na 46,05° severne geografske širine. Rumena črta je sončni žarek: nižje kot je Sonce, bolj poševno padajo žarki in bolj se ista svetloba razleze po tleh, zato manj segreje.", "#ff5c7a", [ljMesh]),
+    del("ljubljana", "Ljubljana", "Ljubljana leži na 46,05° severne geografske širine. Rumena črta je sončni žarek. Nižje ko je Sonce, bolj poševno padajo žarki: ista svetloba se razporedi po večji površini tal, zato jih manj segreje.", "#ff5c7a", [ljMesh]),
     del("tirnica", "Zemljina tirnica", "Tirnica je skoraj krog. Zemlja je Soncu najbližje v začetku januarja (147 milijonov km), najdlje pa v začetku julija (152 milijonov km). Letnih časov torej ne povzroča razdalja do Sonca, ampak nagib Zemljine osi.", "#8394b8", [tirnica]),
   ];
 

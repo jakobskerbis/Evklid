@@ -452,12 +452,14 @@ function orodja(THREE, ctx) {
   }
   // Per frame (call from any object's onBeforeRender): labels with userData.tocka sit above their point when the point
   // is farther from the camera than userData.sredisce (world), below it otherwise; every label stays on the screen.
-  const uP = new THREE.Vector3(), uC = new THREE.Vector3(), uS = new THREE.Vector3();
+  // Labels earlier in »seznam« win: a later label that would cover one of them is hidden (material.visible).
+  const uP = new THREE.Vector3(), uC = new THREE.Vector3(), uS = new THREE.Vector3(), zas = [];
   function uredi(renderer, camera, group, seznam) {
     if (!camera.isPerspectiveCamera) return;
     renderer.getSize(sz);
     const W = sz.x, H = sz.y, P5 = camera.projectionMatrix.elements[5], gs = group.matrixWorld.getMaxScaleOnAxis() || 1;
     uC.setFromMatrixPosition(camera.matrixWorld);
+    let nz = 0;
     for (const s of seznam) {
       const u = s.userData;
       if (u.tocka) {
@@ -471,6 +473,12 @@ function orodja(THREE, ctx) {
       uP.setFromMatrixPosition(s.matrixWorld).project(camera);
       const x = ((uP.x + 1) / 2) * W, wpx = ((s.scale.x * gs * P5) / 2) * H;
       s.center.x = Math.min(Math.max(u.cx0, 1 - (W - 6 - x) / wpx), (x - 6) / wpx);
+      const hpx = ((s.scale.y * gs * P5) / 2) * H, x0 = x - s.center.x * wpx, y0 = ((1 - uP.y) / 2) * H - (1 - s.center.y) * hpx;
+      const kaze = s.visible && s.material.opacity > 0.05 && uP.z < 1;
+      let prost = kaze;
+      for (let i = 0; prost && i < nz; i += 4) if (x0 < zas[i + 1] && x0 + wpx > zas[i] && y0 < zas[i + 3] && y0 + hpx > zas[i + 2]) prost = false;
+      s.material.visible = prost || !kaze;
+      if (prost) { zas[nz++] = x0 - 3; zas[nz++] = x0 + wpx + 3; zas[nz++] = y0 - 2; zas[nz++] = y0 + hpx + 2; }
     }
   }
   function ploscica(c2, w, h) {
@@ -493,7 +501,7 @@ function orodja(THREE, ctx) {
           float b = texture2D(map, vUv + vec2(0.0123 + uTime * 0.0009, 0.0071)).r;
           float g = mix(a.r, b, 0.5 + 0.5 * sin(uTime * 0.7));
           float limb = 1.0 - 0.6 * (1.0 - pow(mu, 0.85));
-          vec3 hot = vec3(1.0, 0.9, 0.62), warm = vec3(1.0, 0.5, 0.12), deep = vec3(0.75, 0.2, 0.03);
+          vec3 hot = vec3(1.0, 0.86, 0.52), warm = vec3(1.0, 0.52, 0.13), deep = vec3(0.75, 0.2, 0.03);
           vec3 col = mix(warm, hot, smoothstep(0.05, 0.9, mu));
           col = mix(deep, col, smoothstep(0.0, 0.3, mu));
           float I = limb * (0.8 + 0.3 * g) * a.g + a.b * (1.0 - mu) * 0.45;
@@ -605,7 +613,7 @@ export function zgradi(THREE, ctx) {
   const snov = (op) => hrani(new THREE.MeshStandardMaterial({ roughness: 0.92, metalness: 0, ...op }));
   const luc = new THREE.DirectionalLight(0xfff4e2, 3.2);
   luc.position.set(1, 0, 0);
-  svet.add(luc, luc.target, new THREE.AmbientLight(0x9fb0d0, 0.05));
+  svet.add(luc, luc.target, new THREE.AmbientLight(0x9fb0d0, 0.12));
 
   // ---- Earth (north pole up; its tilt is left out here)
   const geoV = hrani(new THREE.SphereGeometry(1, seg(96), seg(64)));
@@ -664,7 +672,7 @@ export function zgradi(THREE, ctx) {
   napisi.svetloba.position.set(0.85, 0.15, 0);
   napisi.zemlja.position.set(0, -R_ZEMLJA - 0.02, 0);
   for (const s of Object.values(napisi)) svet.add(s);
-  const vsiNapisi = [...menaNapisi, ...Object.values(napisi)];
+  const vsiNapisi = [napisi.luna, napisi.zemlja, napisi.svetloba, ...menaNapisi];
   tirnica.onBeforeRender = (renderer, sc, camera) => o.uredi(renderer, camera, group, vsiNapisi);
 
   // ---- inset: the Moon as seen from the northern hemisphere (waxing = lit on the right)
@@ -682,9 +690,12 @@ export function zgradi(THREE, ctx) {
       const x = ((i + 0.5) / N) * 2 - 1, y = 1 - ((j + 0.5) / N) * 2, r2 = x * x + y * y, k = (j * N + i) * 4;
       if (r2 > 1) { d[k + 3] = 0; continue; }
       const z = Math.sqrt(1 - r2), lat = Math.asin(y), lon = Math.atan2(x, z);
-      const u = Math.min(tw - 1, Math.floor((lon / (2 * Math.PI) + 0.5) * tw)), v = Math.min(th - 1, Math.floor((0.5 - lat / Math.PI) * th));
-      const s = ((v * tw + u) * 4), l = 0.82 + 0.18 * z;
-      d[k] = px[s] * l; d[k + 1] = px[s + 1] * l; d[k + 2] = px[s + 2] * l;
+      const fu = (lon / (2 * Math.PI) + 0.5) * tw - 0.5, fv = Math.min(th - 1, Math.max(0, (0.5 - lat / Math.PI) * th - 0.5));
+      const u0 = Math.floor(fu), v0 = Math.floor(fv), au = fu - u0, av = fv - v0, v1 = Math.min(th - 1, v0 + 1);
+      const s00 = (v0 * tw + ((u0 + tw) % tw)) * 4, s10 = (v0 * tw + ((u0 + 1) % tw)) * 4, s01 = (v1 * tw + ((u0 + tw) % tw)) * 4, s11 = (v1 * tw + ((u0 + 1) % tw)) * 4;
+      const tex = (c) => (px[s00 + c] * (1 - au) + px[s10 + c] * au) * (1 - av) + (px[s01 + c] * (1 - au) + px[s11 + c] * au) * av;
+      const l = 0.82 + 0.18 * z;
+      d[k] = tex(0) * l; d[k + 1] = tex(1) * l; d[k + 2] = tex(2) * l;
       d[k + 3] = 255 * Math.min(1, (1 - Math.sqrt(r2)) * N * 0.5);
     }
     c2.putImageData(img, 0, 0);
@@ -756,7 +767,7 @@ export function zgradi(THREE, ctx) {
   const deli = [
     del("zemlja", "Zemlja", "Zemlja se v enem dnevu enkrat zavrti, zato Luna vsak dan vzide in zaide. Kaj vidimo z Zemlje, kaže okvir »Kako Luno vidimo z Zemlje« (pogled s severne poloble, kjer je Slovenija).", "#4f8fe0", [Z.mesh, Z.oblaki]),
     del("luna", "Luna", "Luna sama ne sveti, ampak odbija sončno svetlobo, zato je vedno osvetljena le polovica, obrnjena proti Soncu. Ker se okoli svoje osi zavrti v enakem času, kot obkroži Zemljo, je proti Zemlji vedno obrnjena ista stran (rdeča pika).", "#c9c6bf", [luna]),
-    del("tirnica", "Lunina tirnica", "Luna obkroži Zemljo v 27,3 dneva (siderski mesec). Ker se Zemlja medtem premakne po poti okoli Sonca za približno 27°, potrebuje Luna še dobra dva dneva, da je spet med Zemljo in Soncem. Zato se mene ponovijo na 29,5 dneva (sinodski mesec); v modelu je Sonce vedno na isti strani, zato tu Luna obkroži Zemljo v 29,5 dneva.", "#8394b8", [tirnica]),
+    del("tirnica", "Lunina tirnica", "Luna obkroži Zemljo v 27,3 dneva (siderski mesec). Ker se Zemlja medtem premakne po poti okoli Sonca za približno 27°, potrebuje Luna še dobra dva dneva, da je spet med Zemljo in Soncem. Zato se mene ponovijo vsakih 29,5 dneva (sinodski mesec); v modelu je Sonce vedno na isti strani, zato tu Luna obkroži Zemljo v 29,5 dneva.", "#8394b8", [tirnica]),
     del("svetloba", "Sončna svetloba", "Sonce je okoli 390-krat dlje od nas kot Luna, zato so njegovi žarki pri Zemlji in Luni skoraj vzporedni. V modelu sta Zemlja in Luna v pravem razmerju velikosti, razdalja med njima pa je 15-krat skrajšana.", "#ffd27a", [zarki]),
   ];
 
