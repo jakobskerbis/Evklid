@@ -4,26 +4,31 @@
 // prihaja sproti), WebView ostane naložen in se zamenja le vsebina, brez utripanja.
 // onExplain (samo besedilo lekcije, ne klepet): v meniju označenega besedila je »Razloži«, kot na spletu
 // gumb ob izboru v public/textbook.js. Android ob lastnih postavkah skrije sistemske, zato tam še »Kopiraj«.
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
-import { Clipboard, Platform, Text, useWindowDimensions, View } from "react-native";
+import React, { memo, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { Clipboard, Modal, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { WebView } from "react-native-webview";
 import * as WebBrowser from "expo-web-browser";
-import { docHtml, isPlain, MEASURE_JS, toHtml } from "@/lib/rich";
+import { docHtml, formulaCard, isPlain, MEASURE_JS, toHtml } from "@/lib/rich";
+import { FormulaCtx } from "@/lib/formula-ctx";
 import { API_URL } from "@/lib/api";
 import { font, useTheme } from "@/lib/theme";
 import { t } from "@/lib/i18n";
 
-type Props = { text: string; html?: string; ai?: boolean; streaming?: boolean; size?: number; center?: boolean; minHeight?: number; onExplain?: (selected: string) => void };
+// noFx: brez klikljivih črk (izbire v nalogah in kvizu: dotik izbere odgovor, kartica bi izdala rešitev).
+type Props = { text: string; html?: string; ai?: boolean; streaming?: boolean; size?: number; center?: boolean; minHeight?: number; onExplain?: (selected: string) => void; noFx?: boolean };
 
 const replaceJs = (body: string) => `(function(){var c=document.getElementById('c');if(c)c.innerHTML=${JSON.stringify(body)};if(window.__fit)window.__fit();})();true;`;
 
-function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size = 17, center = false, minHeight = 0, onExplain }: Props) {
+function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size = 17, center = false, minHeight = 0, onExplain, noFx = false }: Props) {
   const th = useTheme();
+  const ctxFx = useContext(FormulaCtx);
+  const fx = noFx ? null : ctxFx;
+  const [card, setCard] = useState<{ label: string; html: string } | null>(null);
   // Velikost pisave v WebView sledi nastavitvi telefona (Dynamic Type, Android »Velikost pisave«), kot pri Text.
   const { fontScale } = useWindowDimensions();
   // Z »Razloži« vedno WebView: naravni Text nima lastnih postavk v meniju izbora.
   const plain = !rawHtml && !onExplain && isPlain(text);
-  const body = useMemo(() => (plain ? "" : (rawHtml ?? toHtml(text, { ai, streaming }))), [plain, rawHtml, text, ai, streaming]);
+  const body = useMemo(() => (plain ? "" : (rawHtml ?? toHtml(text, { ai, streaming, fx }))), [plain, rawHtml, text, ai, streaming, fx]);
   const [height, setHeight] = useState(minHeight || size * 1.6);
   const ref = useRef<React.ComponentRef<typeof WebView>>(null);
   const loaded = useRef(false);
@@ -59,7 +64,12 @@ function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size
           ref.current?.injectJavaScript(replaceJs(latest.current));
         }}
         onMessage={(e: { nativeEvent: { data: string } }) => {
-          const h = Number(e.nativeEvent.data);
+          const d = e.nativeEvent.data;
+          if (d.startsWith("fx:")) {
+            setCard(formulaCard(d.slice(3)));
+            return;
+          }
+          const h = Number(d);
           if (h > 0) setHeight(Math.max(minHeight, h));
         }}
         onShouldStartLoadWithRequest={(req: { url: string }) => {
@@ -84,7 +94,29 @@ function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size
         } : undefined}
         accessible
       />
+      {card ? <FormulaCard card={card} onClose={() => { setCard(null); ref.current?.injectJavaScript("window.__fxClose&&window.__fxClose();true;"); }} /> : null}
     </View>
+  );
+}
+
+// Kartica oznake kot spodnji list (na spletu okence ob znaku): ime, zveza, sestavni deli in enota.
+function FormulaCard({ card, onClose }: { card: { label: string; html: string }; onClose: () => void }) {
+  const th = useTheme();
+  return (
+    <Modal transparent animationType="fade" visible onRequestClose={onClose}>
+      <Pressable style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.35)", justifyContent: "flex-end" }} onPress={onClose} accessibilityLabel={t("fx.close")}>
+        <Pressable onPress={() => {}} accessible accessibilityLabel={card.label} style={{ backgroundColor: th.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18, padding: 16, paddingBottom: 28, borderWidth: 1, borderColor: th.border }}>
+          <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 8 }}>
+            <View style={{ flex: 1 }}>
+              <RichText text="" html={`<div class="fx-card">${card.html}</div>`} size={16} noFx />
+            </View>
+            <Pressable onPress={onClose} hitSlop={10} accessibilityRole="button" accessibilityLabel={t("fx.close")} style={{ minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
+              <Text style={{ color: th.muted, fontSize: 24 }}>×</Text>
+            </Pressable>
+          </View>
+        </Pressable>
+      </Pressable>
+    </Modal>
   );
 }
 

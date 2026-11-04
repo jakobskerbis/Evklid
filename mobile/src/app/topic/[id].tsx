@@ -13,6 +13,7 @@ import { radius, useTheme } from "@/lib/theme";
 import { failure, success, tap } from "@/lib/haptics";
 import { useLoad } from "@/lib/useLoad";
 import { RichText } from "@/components/RichText";
+import { FormulaCtx, type Fx } from "@/lib/formula-ctx";
 import { Banner, Body, Button, Card, Chip, ErrorView, Icon, Loading, ProgressBar, Screen, Title } from "@/components/ui";
 import { ReportSheet } from "@/components/ReportSheet";
 
@@ -24,7 +25,8 @@ type Lesson = {
   goals?: string;
   unit?: string;
   pathLabel?: string;
-  lesson: { sections: Section[]; alternatives?: Section[]; checks?: Check[] } | null;
+  subject?: string;
+  lesson: { sections: Section[]; alternatives?: Section[]; checks?: Check[]; symbols?: unknown[] } | null;
   explanation?: string | null;
   practice: boolean;
   interactive: boolean;
@@ -49,6 +51,8 @@ export default function Topic() {
   const [reporting, setReporting] = useState(false);
   const [reported, setReported] = useState(false);
 
+  // Klikljive črke s pomenom iz predmeta in oznak te lekcije (kot na spletu).
+  const fx = useMemo<Fx>(() => (L ? { subject: L.subject || L.id.split("-")[0], symbols: L.lesson?.symbols || null } : null), [L]);
   const steps = useMemo<Step[]>(() => (L?.lesson ? (lessonSteps(L.lesson.sections, L.lesson.checks?.length || 0) as Step[]) : []), [L]);
 
   if (loading) return <Loading />;
@@ -95,6 +99,7 @@ export default function Topic() {
   const lastStep = step >= steps.length - 1;
 
   return (
+    <FormulaCtx.Provider value={fx}>
     <Screen>
       <Stack.Screen options={{ title: L.name }} />
       <View style={{ gap: 4 }}>
@@ -194,6 +199,7 @@ export default function Topic() {
         </View>
       ) : null}
     </Screen>
+    </FormulaCtx.Provider>
   );
 }
 
@@ -244,7 +250,7 @@ function CheckItem({ c, interactive }: { c: Check; interactive: boolean }) {
           >
             <Text style={{ color: th.muted, fontWeight: "800" }}>{"abcdefgh"[oi]})</Text>
             <View style={{ flex: 1 }} pointerEvents="none">
-              <RichText text={o} size={16} />
+              <RichText text={o} size={16} noFx />
             </View>
             {state ? <Icon name={state === "ok" ? { ios: "checkmark.circle.fill", android: "check_circle" } : { ios: "xmark.circle.fill", android: "cancel" }} color={state === "ok" ? th.ok : th.danger} size={20} /> : null}
           </Pressable>

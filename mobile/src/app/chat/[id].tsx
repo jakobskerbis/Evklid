@@ -13,6 +13,8 @@ import { radius, useTheme } from "@/lib/theme";
 import { celebrate, failure, success, tap } from "@/lib/haptics";
 import { pickPhoto, takePendingPhoto, type Photo } from "@/lib/images";
 import { RichText } from "@/components/RichText";
+import { FormulaCtx } from "@/lib/formula-ctx";
+import { useTopicFx } from "@/lib/useTopicFx";
 import { Banner, Button, Card, ErrorView, Icon, Loading } from "@/components/ui";
 import { ReportSheet } from "@/components/ReportSheet";
 
@@ -28,10 +30,13 @@ const levelText = (d: Desc) => {
 };
 
 export default function Chat() {
+  // Formule v odgovorih: predmet pogovora in, pri pogovoru o temi, oznake lekcije te teme (kot na spletu).
+  const [convFx, setConvFx] = useState<{ topic: string | null; subject: string | null }>({ topic: null, subject: null });
   const th = useTheme();
   const insets = useSafeAreaInsets();
   const { id, send: initial } = useLocalSearchParams<{ id: string; send?: string }>();
   const student = useStudent();
+  const fx = useTopicFx(convFx.topic, convFx.subject || student.settings?.subject || "MAT");
   const { refresh, updateStudent, parent } = useSession();
   // Skrbnik: »Prijavi napako« v glavi klepeta (kot na spletu, public/prijave.js).
   const [bugOpen, setBugOpen] = useState(false);
@@ -113,10 +118,11 @@ export default function Chat() {
 
   useEffect(() => {
     let alive = true;
-    api<{ title: string | null; messages: Msg[] }>(`/api/conversations/${id}`)
+    api<{ title: string | null; messages: Msg[]; topic?: { id: string } | null; state?: { subject?: string } | null }>(`/api/conversations/${id}`)
       .then((c) => {
         if (!alive) return;
         setTitle(c.title || "");
+        setConvFx({ topic: c.topic?.id || null, subject: c.state?.subject || null });
         setMessages(c.messages);
         setLoading(false);
         // Prvo sporočilo (iz lekcije, naloge ali skeniranja) se pošlje samo v prazen pogovor.
@@ -185,6 +191,7 @@ export default function Chat() {
 
   const last = messages[messages.length - 1];
   return (
+    <FormulaCtx.Provider value={fx}>
     // Odmik tipkovnice = kje se zaslon začne (pod naslovno vrstico); izmerjen, ker se višina vrstice razlikuje.
     <View ref={root} onLayout={() => root.current?.measureInWindow((_x: number, y: number) => setTop(y))} style={{ flex: 1, backgroundColor: th.bg }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={top}>
@@ -295,6 +302,7 @@ export default function Chat() {
         </View>
       </KeyboardAvoidingView>
     </View>
+    </FormulaCtx.Provider>
   );
 }
 
