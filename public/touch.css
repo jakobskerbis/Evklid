@@ -121,16 +121,17 @@
   body > #view-chat:not(.in-okno) .chat-back { display: inline-grid; place-items: center; }
   body > #view-chat:not(.in-okno) .composer { padding-bottom: max(10px, calc(4px + var(--varno-sp, env(safe-area-inset-bottom, 0px)))); }
   body.tb-peek > #view-chat:not(.in-okno) .composer { padding-bottom: 10px; margin-bottom: var(--tabbar-h, 0px); }
-  /* Krogi lekcije (Nazaj · 1/12 · Naprej) plavajo na dnu: odmik za varno območje, nad pokazano vrstico. */
-  body > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { padding-bottom: max(12px, calc(4px + var(--varno-sp, env(safe-area-inset-bottom, 0px)))); transition: padding-bottom 0.22s ease; }
-  body.tb-peek > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { padding-bottom: 12px; }
-  /* Pokazana vrstica dvigne kroge: pogled dobi spodnji odmik v višini vrstice (konec koraka ne ostane pod krogi).
-     Pripeti krogi se že sami ustavijo nad tem odmikom, zato jim ne damo še »bottom« (prej dvojna višina: med drsenjem
-     so krogi viseli sredi besedila, j 2026-11-04). Odmik se spreminja hkrati z vrstico (0,22 s), krogi gredo z njo. */
-  body > #view-uci:not(.in-okno) > #view-textbook:has(.tb-stepper) { transition: padding-bottom 0.22s ease; }
-  body.tb-peek > #view-uci:not(.in-okno) > #view-textbook:has(.tb-stepper) { padding-bottom: var(--tabbar-h, 0px); }
+  /* Krogi lekcije (Nazaj · 1/12 · Naprej) plavajo na dnu: odmik za varno območje, pokazana vrstica jih dvigne.
+     Dvig je samo premik (transform, enako kot vrstica), brez spremembe postavitve: če se med hitrim drsenjem z zamahom
+     spremeni odmik pogleda ali višina krogov, jih Android lahko ne postavi znova in ostanejo previsoko sredi
+     besedila (j 2026-11-04, tudi po #391). Krogi se ustavijo 12 px nad vrstico in gredo z njo (0,22 s). */
+  body > #view-uci:not(.in-okno) > #view-textbook .tb-stepper {
+    --tb-step-pb: max(12px, calc(4px + var(--varno-sp, env(safe-area-inset-bottom, 0px))));
+    padding-bottom: var(--tb-step-pb); transition: transform 0.22s ease;
+  }
+  body.tb-peek > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { transform: translateY(calc(var(--tb-step-pb) - 12px - var(--tabbar-h, 0px))); }
 }
-@media (prefers-reduced-motion: reduce) { .tabbar, .tb-stepper, #view-textbook { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { .tabbar, .tb-stepper { transition: none !important; } }
 
 /* Pogled je lahko v spodnji vrstici (npr. Tekmovanja ali NPZ in matura): takrat brez »← Jaz«. */
 .me-back[hidden] { display: none !important; }

@@ -64,10 +64,14 @@ test("glava Inštruktorja na telefonu: oznake cele v svoji vrstici, »Preberi le
   assert.match(style, /\.chat-head #chat-state \{[^}]*flex: 1 1 auto/);
 });
 
-test("krogi lekcije ob pokazani spodnji vrstici: samo odmik pogleda, ne še »bottom« (prej dvojna višina)", () => {
+test("krogi lekcije ob pokazani spodnji vrstici: dvig samo s premikom, brez spremembe postavitve (hitro drsenje)", () => {
   const touch = css("touch.css");
   const peek = [...touch.matchAll(/body\.tb-peek[^{]*\.tb-stepper\s*\{([^}]*)\}/g)].map((m) => m[1]);
   assert.ok(peek.length, "pravilo za kroge ob pokazani vrstici obstaja");
-  for (const body of peek) assert.doesNotMatch(body, /(^|;)\s*bottom\s*:/);
-  assert.match(touch, /body\.tb-peek[^{]*#view-textbook:has\(\.tb-stepper\)\s*\{[^}]*padding-bottom:\s*var\(--tabbar-h/);
+  for (const body of peek) {
+    assert.match(body, /transform:\s*translateY\([^;]*var\(--tabbar-h/);
+    // bottom, padding ali margin bi spremenili postavitev: po zamahu na Androidu krogi ostanejo previsoko (j 4. 11.).
+    assert.doesNotMatch(body, /(^|;)\s*(bottom|padding[\w-]*|margin[\w-]*|height)\s*:/);
+  }
+  assert.doesNotMatch(touch, /body\.tb-peek[^{]*#view-textbook[^{]*\{[^}]*padding/, "pogled ob pokazani vrstici ne dobi odmika");
 });
