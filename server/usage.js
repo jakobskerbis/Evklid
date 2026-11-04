@@ -10,6 +10,12 @@ const num = (k, d) => {
 
 export const LIMITS = {
   dailyQuestions: () => num("EVKLID_DAILY_QUESTIONS", 0), // 0 = brez omejitve
+  // Dnevna meja vprašanj po proračunu (j 2026-11-04: namesto stalne meje se prilagaja proračunu AI):
+  // preostali del učenčevega deleža (+ dokupljeni kredit) razdeljen na preostale dni v mesecu,
+  // deljen z oceno stroška enega vprašanja. Spodnja in zgornja meja (0 pri zgornji = brez nje).
+  questionUsd: () => Math.max(0.0001, num("EVKLID_QUESTION_USD", 0.005)),
+  dailyQuestionsMin: () => Math.max(0, num("EVKLID_DAILY_QUESTIONS_MIN", 10)),
+  dailyQuestionsMax: () => Math.max(0, num("EVKLID_DAILY_QUESTIONS_MAX", 200)),
   monthlyBudgetUsd: () => BUDGET.baseUsd(), // 0 = brez omejitve; skrbnik ga spremeni v števcu porabe (server/proracun.js)
   // Na učenca na mesec: nad mehko mejo »Razloži podrobneje« uporabi hitri model,
   // nad trdo mejo inštruktor počaka do naslednjega meseca (Vadnica deluje naprej).
@@ -259,6 +265,23 @@ export class Usage {
   // Odgovor brez klica modela (ponovna raba ali namig iz generatorja): zapišemo, da je viden prihranek.
   logSaved(studentId, kind) {
     this.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, ?, ?, 0)").run(studentId, kind === "reuse" ? "cache" : "koda", kind);
+  }
+  // Poraba učenca danes (UTC), v USD.
+  studentToday(studentId) {
+    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE student_id = ? AND created_at >= date('now')").get(studentId).s;
+  }
+  // Dnevna meja vprašanj iz proračuna (plačljivi paketi in šolska licenca; brezplačni paket ima svojo mejo).
+  // Brez proračuna vrne null (veljajo stalne meje iz server/placila/pravice.js). Šteje del deleža, ki je
+  // ostal na začetku dneva, zato se meja čez dan ne spreminja, ko učenec sprašuje; zadnji dan dobi ves ostanek.
+  dailyLimit(studentId, { state = this.budgetState(), now = new Date() } = {}) {
+    if (!state.cap) return null;
+    const sb = this.studentBudget(studentId, state);
+    const left = Math.max(0, sb.allowance - Math.max(0, sb.spent - this.studentToday(studentId))) + Math.max(0, sb.credit);
+    const startOfDay = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const days = Math.max(1, Math.round((periodOf(now).end - startOfDay) / 86_400_000));
+    const n = Math.floor(left / days / LIMITS.questionUsd());
+    const max = LIMITS.dailyQuestionsMax();
+    return Math.max(LIMITS.dailyQuestionsMin(), max ? Math.min(max, n) : n);
   }
   questionsToday(studentId) {
     return this.db

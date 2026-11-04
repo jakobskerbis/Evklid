@@ -51,7 +51,9 @@ export const PRICES = {
 };
 
 export function costUsd(model, u) {
-  const p = PRICES[model] || PRICES["claude-opus-5-5"];
+  // API lahko vrne ime z datumom (»claude-haiku-5-5-20261015«): cena po začetku imena, sicer bi Haiku štel po ceni Opusa.
+  const id = String(model || "");
+  const p = PRICES[id] || PRICES[Object.keys(PRICES).find((k) => id.startsWith(`${k}-`))] || PRICES["claude-opus-5-5"];
   return (
     ((u.input_tokens || 0) * p.in +
       (u.output_tokens || 0) * p.out +

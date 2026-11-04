@@ -210,6 +210,11 @@ export function mountAccounts(app, store, opts = {}) {
   const freeOver = (studentId) => !premiumFor(studentId) && !!freeBudgetReason(studentId);
   aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver });
 
+  // Dnevna meja vprašanj plačljivega ali šolskega profila: po proračunu AI (server/usage.js dailyLimit),
+  // brez proračuna stalna meja iz pravic. null = brez meje (stari profili, meja 0 v nastavitvah).
+  const dailyLimitFor = (studentId, r = rightsFor(studentId)) =>
+    r.dailyQuestions === null ? null : aiUsage.dailyLimit(studentId) ?? r.dailyQuestions;
+
   // Interaktivni del lekcije: Osebno za vse teme, šolska licenca za svoje predmete in razrede.
   const lessonInteractive = (studentId, topicId) => lessonOpen(rightsFor(studentId), topicId);
 
@@ -359,7 +364,8 @@ export function mountAccounts(app, store, opts = {}) {
       }
     }
 
-    // Vprašanja inštruktorju na dan: brezplačni paket (10) ali vsota šolske licence (15) in Osebno (60).
+    // Vprašanja inštruktorju na dan: brezplačni paket (10); plačljivi paketi in šolska licenca po proračunu AI
+    // (usage.dailyLimit), brez proračuna vsota šolske licence (15) in Osebno (60).
     if (c && req.method === "POST" && /\/messages$/i.test(req.path)) {
       const r = rightsFor(studentId);
       if (!r.personal && !r.school) {
@@ -371,11 +377,14 @@ export function mountAccounts(app, store, opts = {}) {
             upgrade: !!guests.netOf(studentId) || upsell(studentId),
           });
         }
-      } else if (r.dailyQuestions && questionsToday(studentId) >= r.dailyQuestions) {
-        return res.status(429).json({
-          error: `Danes si porabil vseh ${r.dailyQuestions} vprašanj za inštruktorja. Jutri jih spet dobiš. Vadnica in lekcije delujejo naprej neomejeno.`,
-          limit: true,
-        });
+      } else {
+        const limit = dailyLimitFor(studentId, r);
+        if (limit && questionsToday(studentId) >= limit) {
+          return res.status(429).json({
+            error: `Danes si porabil vseh ${limit} vprašanj za inštruktorja. Jutri jih spet dobiš. Vadnica in lekcije delujejo naprej neomejeno.`,
+            limit: true,
+          });
+        }
       }
     }
     // Mesečna meja porabe brezplačnega paketa velja za vse klice AI (inštruktor, branje zapisa, fotografija urnika).
