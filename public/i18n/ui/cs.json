@@ -527,6 +527,8 @@
   "set.dataLite": "Vždy zapnuto",
   "set.dataNormal": "Vypnuto",
   "set.dataNote": "Kratší odpovědi tutora, menší fotky, bez animací a bez dalšího písma. Úlohy ze studijní cesty se uloží pro procvičování bez připojení.",
+  "set.hideGames": "Skrýt hry",
+  "set.hideGamesNote": "Sekce Hry se skryje. Pokrok, mince a avatar zůstanou.",
   "set.xpGoal": "Denní cíl XP",
   "set.xpGoal30": "30 XP – v klidu",
   "set.xpGoal50": "50 XP – běžně",

@@ -509,6 +509,8 @@
   "set.dataLite": "始终开启",
   "set.dataNormal": "关闭",
   "set.dataNote": "导师回答更简短、照片更小、无动画、不加载额外字体。学习路径的练习会保存下来，便于离线练习。",
+  "set.hideGames": "隐藏游戏",
+  "set.hideGamesNote": "“游戏”栏目将被隐藏。你的进度、金币和头像都会保留。",
   "set.xpGoal": "每日 XP 目标",
   "set.xpGoal30": "30 XP – 轻松",
   "set.xpGoal50": "50 XP – 普通",

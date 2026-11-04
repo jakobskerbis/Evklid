@@ -509,6 +509,8 @@
   "set.dataLite": "Selalu aktif",
   "set.dataNormal": "Mati",
   "set.dataNote": "Jawaban tutor lebih singkat, foto lebih kecil, tanpa animasi dan tanpa font tambahan. Latihan jalur belajar disimpan agar bisa berlatih tanpa koneksi.",
+  "set.hideGames": "Sembunyikan game",
+  "set.hideGamesNote": "Bagian Game disembunyikan. Kemajuan, koin, dan avatarmu tetap tersimpan.",
   "set.xpGoal": "Target XP harian",
   "set.xpGoal30": "30 XP – santai",
   "set.xpGoal50": "50 XP – biasa",

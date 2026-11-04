@@ -515,6 +515,8 @@
   "set.dataLite": "Siempre activado",
   "set.dataNormal": "Desactivado",
   "set.dataNote": "Respuestas del tutor más cortas, fotos más pequeñas, sin animaciones y sin fuente adicional. Los ejercicios de tu ruta se guardan para practicar sin conexión.",
+  "set.hideGames": "Ocultar juegos",
+  "set.hideGamesNote": "La sección Juegos se oculta. Tu progreso, monedas y avatar se conservan.",
   "set.xpGoal": "Meta diaria de XP",
   "set.xpGoal30": "30 XP – tranquilo",
   "set.xpGoal50": "50 XP – normal",

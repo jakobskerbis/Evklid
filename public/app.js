@@ -32,6 +32,7 @@ import { initFeedback, showFeedback } from "./feedback.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
 import { initGames, showGames, gamesBack, leaveGames } from "./games/index.js";
+import { gamesOn } from "./games/stage.js";
 import { initCorner, showCorner, cornerBack, closeBoard, askInterests, maybeAskInterests, interestsSummary } from "./corner.js";
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
 import { initFullscreen } from "./fullscreen.js";
@@ -140,6 +141,7 @@ function renderUserText(text) {
 // ---------- pogledi ----------
 
 function showView(name) {
+  if (name === "games" && state.student && !gamesOn(state.student.settings)) name = "me"; // »Skrij igre«
   // Uvod profila: izbira v meniju pod logotipom ali tipka Nazaj ga zapreta (prej so ostali skriti vsi zavihki).
   // Prvi profil na napravi mora nastati, zato takrat ostanemo na uvodu.
   if (name !== "onboard" && document.body.classList.contains("onboarding")) {
@@ -536,6 +538,12 @@ async function selectStudent(id) {
   applyLite();
   refreshBubble(); // premična okna zavihkov, ki jih ta profil nima (NPZ in matura, Tekmovanja), se zaprejo
   localStorageSet("studentId", state.student.id);
+  leaveHiddenGames(); // »Skrij igre« novega profila
+  // Igre (glavni pogled ali okno): igra, kovanci in videz po stopnji prejšnjega profila ne ostanejo.
+  if (!$("#view-games").hidden) {
+    leaveGames();
+    showGames();
+  }
   sendOffline();
   state.conversationId = null;
   await loadConversations();
@@ -556,7 +564,7 @@ async function selectStudent(id) {
   if (!$("#view-exams").hidden) showView(siExams() ? "exams" : "path");
   if (!$("#view-competition").hidden) showView(isUni(state.student.settings) ? "path" : "competition");
   // Drugi pogledi v premičnih oknih pokažejo podatke novega profila (zgornji so se že osvežili).
-  for (const v of floatingViews()) if (!["settings", "progress", "league", "scan", "path", "exams", "competition"].includes(v)) v === "account" ? renderAccount() : initView(v);
+  for (const v of floatingViews()) if (!["settings", "progress", "league", "scan", "path", "exams", "competition", "games"].includes(v)) v === "account" ? renderAccount() : initView(v);
   refreshProfileButton();
   refreshXp();
   // Vprašalnik kotička zanimanj: profil, ki ga še ni izpolnil, ga dobi ob zagonu (enkrat).
@@ -1239,6 +1247,7 @@ async function fillSettingsForm() {
   const programs = await loadPrograms(api);
   for (const key of ["track", "personality_setting"]) f[key].value = s[key];
   f.data_mode.value = s.data_mode || "auto";
+  f.games.checked = !gamesOn(s);
   f.xp_goal.value = String(s.xp_goal || 50);
   fillDialectOptions(f, s);
   f.subject.innerHTML = subjectOptions(null, s.subject, schoolSubjectsFor(s.educational_track, s.curriculum_level, isRegional(s.school_system)));
@@ -1303,6 +1312,7 @@ $("#settings-form").addEventListener("submit", async (e) => {
         personality_setting: f.personality_setting.value,
         dialect: f.dialect.value,
         data_mode: f.data_mode.value,
+        games: f.games.checked ? "off" : "on",
         xp_goal: Number(f.xp_goal.value),
         ...readGoalFields($("#settings-goal")),
       },
@@ -1314,6 +1324,7 @@ $("#settings-form").addEventListener("submit", async (e) => {
   if (before.xp_goal !== updated.settings.xp_goal) refreshXp().catch(() => null);
   syncCompetitionTab();
   applyLite();
+  leaveHiddenGames();
   $("#student-select").options[$("#student-select").selectedIndex].textContent = updated.name;
   fillDeleteCard();
   refreshProfileButton();
@@ -1341,6 +1352,7 @@ function studentUpdated(updated) {
   state.student = updated;
   syncCompetitionTab();
   applyLite();
+  leaveHiddenGames();
   refreshProfileButton();
   renderState(null);
   if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) state.pathKey = null;
@@ -2001,7 +2013,19 @@ function offTabbarViews() {
   return examsInTabbar() ? ["competition", "lab"] : siExams() ? ["competition", "exams"] : ["competition"];
 }
 const meBackHtml = () => `<button type="button" class="ghost back me-back">${icon("arrow-left")}<span>${t("nav.me")}</span></button>`;
+// »Skrij igre« (nastavitev profila games: off): brez zavihka, vrstice pod Jaz in koraka v uvodnem ogledu.
+function syncGamesTab() {
+  const off = !!state.student && !gamesOn(state.student.settings);
+  document.querySelectorAll('.tab[data-view="games"], [data-go="games"]').forEach((el) => (el.hidden = off));
+}
+// Igre so se pravkar skrile (Nastavitve, inštruktor, menjava profila): odprto okno se zapre, glavni pogled gre na Jaz.
+function leaveHiddenGames() {
+  if (!state.student || gamesOn(state.student.settings)) return;
+  if (isFloating("games")) closeWindow("games");
+  if (currentView === "games") showView("me");
+}
 function syncCompetitionTab() {
+  syncGamesTab();
   const noComp = !state.student || isUni(state.student.settings);
   $("#competition-tab").hidden = noComp;
   $("#exams-tab").hidden = !siExams();

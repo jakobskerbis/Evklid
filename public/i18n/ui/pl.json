@@ -527,6 +527,8 @@
   "set.dataLite": "Zawsze włączony",
   "set.dataNormal": "Wyłączony",
   "set.dataNote": "Krótsze odpowiedzi tutora, mniejsze zdjęcia, bez animacji i dodatkowej czcionki. Zadania ze ścieżki zapisują się do ćwiczeń offline.",
+  "set.hideGames": "Ukryj gry",
+  "set.hideGamesNote": "Sekcja Gry zostanie ukryta. Postępy, monety i awatar zostają.",
   "set.xpGoal": "Dzienny cel XP",
   "set.xpGoal30": "30 XP – na luzie",
   "set.xpGoal50": "50 XP – zwykle",

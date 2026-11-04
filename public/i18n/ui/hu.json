@@ -515,6 +515,8 @@
   "set.dataLite": "Mindig be",
   "set.dataNormal": "Ki",
   "set.dataNote": "Rövidebb tutorválaszok, kisebb fotók, animációk és extra betűtípus nélkül. A tanulási út feladatai elmentődnek offline gyakorláshoz.",
+  "set.hideGames": "Játékok elrejtése",
+  "set.hideGamesNote": "A Játékok rész elrejtődik. Az előrehaladásod, az érméid és az avatarod megmaradnak.",
   "set.xpGoal": "Napi XP-cél",
   "set.xpGoal30": "30 XP – lazán",
   "set.xpGoal50": "50 XP – átlagosan",
