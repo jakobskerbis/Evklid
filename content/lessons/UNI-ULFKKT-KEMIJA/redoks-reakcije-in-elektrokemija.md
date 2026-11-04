@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Alkalna baterija v kuhinjski tehtnici da $1{,}5\,\mathrm{V}$, litijev akumulator v telefonu $3{,}7\,\mathrm{V}$. Zakaj ravno toliko in ne $5\,\mathrm{V}$? Napetosti ne določa velikost baterije, ampak snovi, ki si izmenjata elektrone. Isti prenos elektronov počrni srebrno žličko ob jajčnem rumenjaku in jo spet očisti, ko jo v vroči vodi s sodo položiš na aluminijasto folijo, aluminij za to folijo pa pridobivajo z elektrolizo. Z lestvico elektrodnih potencialov izračunaš napetost člena, smer reakcije in maso kovine, ki se izloči; v laboratoriju pa na istih zakonih slonijo titracije s permanganatom in pH-meter.
+Alkalna baterija v kuhinjski tehtnici da $1{,}5\,\mathrm{V}$, litijev akumulator v telefonu $3{,}7\,\mathrm{V}$. Zakaj ravno toliko in ne $5\,\mathrm{V}$? Odgovor se skriva v snoveh, ki si izmenjata elektrone. Isti prenos elektronov počrni srebrno žličko ob jajčnem rumenjaku in jo spet očisti, ko jo v vroči vodi s sodo položiš na aluminijasto folijo, aluminij za to folijo pa pridobivajo z elektrolizo. Z lestvico elektrodnih potencialov izračunaš napetost člena, smer reakcije in maso kovine, ki se izloči; v laboratoriju pa na istih zakonih slonijo titracije s permanganatom in pH-meter.
 
 ## Razlaga
 
@@ -33,7 +33,7 @@ V $\mathrm{SO_4^{2-}}$: $x + 4 \cdot (-2) = -2$, zato je $x(\mathrm{S}) = +6$.
 6. Polreakciji pomnoži tako, da je število elektronov enako, in ju seštej.
 7. Okrajšaj snovi, ki so na obeh straneh, in preveri atome ter naboj.
 
-V **bazičnem** postopamo enako, nato pa na obe strani dodamo toliko $\mathrm{OH^-}$, kolikor je $\mathrm{H^+}$, in $\mathrm{H^+ + OH^- \to H_2O}$. Primer: $\mathrm{MnO_4^-}$ oksidira $\mathrm{SO_3^{2-}}$ v bazičnem:
+V **bazičnem** postopamo enako, nato pa na obe strani dodamo toliko $\mathrm{OH^-}$, kolikor je $\mathrm{H^+}$, in ju združimo v vodo ($\mathrm{H^+ + OH^- \to H_2O}$). Primer: $\mathrm{MnO_4^-}$ oksidira $\mathrm{SO_3^{2-}}$ v bazičnem:
 
 - redukcija: $\mathrm{MnO_4^- + 2\,H_2O + 3\,e^- \to MnO_2 + 4\,OH^-}$ $(\times 2)$,
 - oksidacija: $\mathrm{SO_3^{2-} + 2\,OH^- \to SO_4^{2-} + H_2O + 2\,e^-}$ $(\times 3)$,
@@ -58,7 +58,7 @@ Vzorec: kovina odda elektrone ionom »plemenitejše« kovine, obratno pa ne gre.
 
 Zapis člena: $\mathrm{Zn(s)\,|\,Zn^{2+}(aq)\,||\,Cu^{2+}(aq)\,|\,Cu(s)}$, anoda levo, katoda desno.
 
-**5. Standardni elektrodni potencial** $E^\circ$ je potencial polreakcije, zapisane kot **redukcija**, merjen proti standardni vodikovi elektrodi ($\mathrm{2\,H^+ + 2\,e^- \rightleftharpoons H_2}$, $E^\circ = 0$ po dogovoru) pri $c = 1\,\mathrm{mol/L}$, $p = 1\,\mathrm{bar}$ in običajno $25\,^\circ\mathrm{C}$. Nekaj vrednosti:
+**5. Standardni elektrodni potencial** $E^\circ$ redoks para $\mathrm{Ox/Red}$ je napetost člena, v katerem je leva elektroda standardna vodikova elektroda ($\mathrm{2\,H^+ + 2\,e^- \rightleftharpoons H_2}$, $E^\circ = 0$ po dogovoru), desna pa elektroda tega para. Napetost je potencial desne elektrode minus potencial leve, zato je lahko tudi negativna. Vse snovi so v standardnem stanju: raztopljene snovi z aktivnostjo $1$ (približno $c = 1\,\mathrm{mol/L}$), plini pri $p = 1\,\mathrm{bar}$, običajno pri $25\,^\circ\mathrm{C}$. Polreakcijo vedno zapišemo kot **redukcijo**. Nekaj vrednosti:
 
 | Polreakcija | $E^\circ$ / V |
 |---|---|
@@ -84,11 +84,15 @@ Ne. $\mathrm{Cu^{2+}}$ ($+0{,}34\,\mathrm{V}$) je šibkejši oksidant od $\mathr
 
 $$E^\circ_\text{člena} = E^\circ_\text{katode} - E^\circ_\text{anode}.$$
 
-Elektrodnih potencialov **ne množimo** s koeficienti, ker so intenzivne količine. Povezava z Gibbsovo energijo:
+Povezava z Gibbsovo energijo:
 
-$$\Delta_\mathrm{r}G^\circ = -zFE^\circ_\text{člena},$$
+$$\Delta_\mathrm{r}G = -zFE_\text{člena}, \qquad \Delta_\mathrm{r}G^\circ = -zFE^\circ_\text{člena},$$
 
-kjer je $z$ število prenesenih elektronov in $F = 96\,485\,\mathrm{C/mol}$ Faradayeva konstanta. Reakcija je spontana, če je $E_\text{člena} > 0$ ($\Delta_\mathrm{r}G < 0$).
+kjer je $z$ število prenesenih elektronov v enačbi reakcije in $F = 96\,485\,\mathrm{C/mol}$ Faradayeva konstanta. *Izpeljava:* ko po zunanjem krogu steče $z$ molov elektronov z nabojem $zF$ skozi napetost $E$, člen opravi električno delo $zFE$. Pri reverzibilnem delovanju (tok skoraj nič) je to največje neekspanzijsko delo, ki je pri konstantnih $T$ in $p$ enako $-\Delta_\mathrm{r}G$.
+
+**Izrek o spontanosti.** Pri konstantnih $T$ in $p$ poteka reakcija spontano v zapisani smeri natanko tedaj, ko je $\Delta_\mathrm{r}G < 0$, torej ko je $E_\text{člena} > 0$. Znak $E^\circ$ pove smer le pri standardnih pogojih; $E^\circ > 0$ pomeni, da je konstanta ravnotežja $K > 1$ (razdelek 7).
+
+Elektrodnih potencialov **ne množimo** s koeficienti. *Dokaz:* če enačbo pomnožimo z $k$, se $\Delta_\mathrm{r}G$ in $z$ povečata $k$-krat, zato $E = -\Delta_\mathrm{r}G/(zF)$ ostane enak; $E$ je intenzivna količina. Iz istega razloga potencialov ne smemo seštevati, kadar iz dveh polreakcij sestavimo tretjo **polreakcijo**: seštejemo Gibbsovi energiji, $z_3E_3^\circ = z_1E_1^\circ + z_2E_2^\circ$ (primer v Bolj natančno).
 
 :::premisli
 Alkalna baterija velikosti D je nekajkrat težja od baterije AAA. Katera ima večjo napetost?
@@ -100,13 +104,17 @@ Obe imata okoli $1{,}5\,\mathrm{V}$. Napetost je odvisna le od snovi na elektrod
 
 $$E = E^\circ - \frac{RT}{zF}\ln Q, \qquad \text{pri } 25\,^\circ\mathrm{C}: \quad E = E^\circ - \frac{0{,}0592\,\mathrm{V}}{z}\log Q.$$
 
-V ravnotežju je $E = 0$ in $Q = K$, zato $\log K = zE^\circ/0{,}0592\,\mathrm{V}$.
+Tu je $Q$ **reakcijski kvocient**: izraz kot za konstanto ravnotežja, a s trenutnimi koncentracijami. Enačba velja tudi za posamezno elektrodo (polreakcija kot redukcija).
 
-**8. Elektroliza.** Z zunanjim virom napetosti poganjamo nespontano reakcijo. Tudi tu je na anodi oksidacija, na katodi redukcija, le predznaka polov sta obrnjena (anoda je priključena na pozitivni pol vira). Množina elektronov, ki stečejo, je $n(\mathrm{e^-}) = It/F$, zato je masa izločene snovi
+*Izpeljava:* za reakcijsko Gibbsovo energijo velja $\Delta_\mathrm{r}G = \Delta_\mathrm{r}G^\circ + RT\ln Q$. Vstavimo $\Delta_\mathrm{r}G = -zFE$ in $\Delta_\mathrm{r}G^\circ = -zFE^\circ$ ter delimo z $-zF$. Pri $T = 298{,}15\,\mathrm{K}$ je $RT\ln 10/F = 0{,}0592\,\mathrm{V}$. V $Q$ vstavljamo aktivnosti: za razredčene raztopine $c/(1\,\mathrm{mol/L})$, za pline $p/(1\,\mathrm{bar})$, za čiste trdne snovi in topilo $1$.
 
-$$m = \frac{I\,t\,M}{z\,F}$$
+V ravnotežju je $\Delta_\mathrm{r}G = 0$, torej $E = 0$ in $Q = K$, zato $\log K = zE^\circ/0{,}0592\,\mathrm{V}$ oziroma $\Delta_\mathrm{r}G^\circ = -RT\ln K$.
 
-(**Faradayev zakon**), kjer je $z$ število elektronov na delec.
+**8. Elektroliza.** Z zunanjim virom napetosti poganjamo nespontano reakcijo. Tudi tu je na anodi oksidacija, na katodi redukcija, le predznaka polov sta obrnjena (anoda je priključena na pozitivni pol vira). **Faradayev zakon:** naj skozi elektrolizno celico teče stalen tok $I$ čas $t$ in naj se ves naboj porabi za eno samo elektrodno reakcijo, v kateri delec sprejme ali odda $z$ elektronov (tokovni izkoristek $100\,\%$). Potem je masa izločene snovi
+
+$$m = \frac{I\,t\,M}{z\,F}.$$
+
+*Izpeljava:* naboj je $Q = It$, množina elektronov $n(\mathrm{e^-}) = Q/F$, množina snovi $n = n(\mathrm{e^-})/z$ in masa $m = nM$. Če del toka porabi stranska reakcija (npr. nastanek vodika), se izloči manj.
 
 ## Rešeni primeri
 
@@ -152,10 +160,10 @@ Metoda polreakcij (O z $\mathrm{H_2O}$, H z $\mathrm{H^+}$, naboj z $\mathrm{e^-
 
 ### Primer 3 (težji)
 
-Daniellov člen $\mathrm{Zn\,|\,Zn^{2+}(0{,}010\,mol/L)\,||\,Cu^{2+}(1{,}0\,mol/L)\,|\,Cu}$ deluje pri $25\,^\circ\mathrm{C}$. Izračunaj standardno napetost, standardno reakcijsko Gibbsovo energijo, napetost pri danih koncentracijah in konstanto ravnotežja reakcije $\mathrm{Zn + Cu^{2+} \rightleftharpoons Zn^{2+} + Cu}$. $E^\circ(\mathrm{Cu^{2+}/Cu}) = +0{,}34\,\mathrm{V}$, $E^\circ(\mathrm{Zn^{2+}/Zn}) = -0{,}76\,\mathrm{V}$, $F = 96\,485\,\mathrm{C/mol}$.
+Daniellov člen $\mathrm{Zn\,|\,Zn^{2+}(0{,}010\,mol/L)\,||\,Cu^{2+}(1{,}0\,mol/L)\,|\,Cu}$ deluje pri $25\,^\circ\mathrm{C}$. Izračunaj standardno napetost, standardno reakcijsko Gibbsovo energijo, napetost pri danih koncentracijah in konstanto ravnotežja reakcije $\mathrm{Zn + Cu^{2+} \rightleftharpoons Zn^{2+} + Cu}$. Nato ugotovi, na kolikšno koncentracijo bi morali razredčiti $\mathrm{Cu^{2+}}$ (ob nespremenjeni $[\mathrm{Zn^{2+}}]$), da bi napetost padla na $1{,}00\,\mathrm{V}$. $E^\circ(\mathrm{Cu^{2+}/Cu}) = +0{,}34\,\mathrm{V}$, $E^\circ(\mathrm{Zn^{2+}/Zn}) = -0{,}76\,\mathrm{V}$, $F = 96\,485\,\mathrm{C/mol}$.
 
-**Podatki:** $[\mathrm{Zn^{2+}}] = 0{,}010\,\mathrm{mol/L}$, $[\mathrm{Cu^{2+}}] = 1{,}0\,\mathrm{mol/L}$, $T = 298\,\mathrm{K}$, $E^\circ(\mathrm{Cu^{2+}/Cu}) = +0{,}34\,\mathrm{V}$, $E^\circ(\mathrm{Zn^{2+}/Zn}) = -0{,}76\,\mathrm{V}$, $F = 96\,485\,\mathrm{C/mol}$, $z = 2$
-**Iščemo:** $E^\circ$, $\Delta_\mathrm{r}G^\circ$, $E$ in $K$
+**Podatki:** $[\mathrm{Zn^{2+}}] = 0{,}010\,\mathrm{mol/L}$, $[\mathrm{Cu^{2+}}] = 1{,}0\,\mathrm{mol/L}$, $T = 298\,\mathrm{K}$, $E^\circ(\mathrm{Cu^{2+}/Cu}) = +0{,}34\,\mathrm{V}$, $E^\circ(\mathrm{Zn^{2+}/Zn}) = -0{,}76\,\mathrm{V}$, $F = 96\,485\,\mathrm{C/mol}$, $z = 2$, ciljna napetost $E' = 1{,}00\,\mathrm{V}$
+**Iščemo:** $E^\circ$, $\Delta_\mathrm{r}G^\circ$, $E$, $K$ in $[\mathrm{Cu^{2+}}]$ pri $E' = 1{,}00\,\mathrm{V}$
 
 :::formula
 $E^\circ = E^\circ_\text{katode} - E^\circ_\text{anode}$, $\quad \Delta_\mathrm{r}G^\circ = -zFE^\circ$, $\quad E = E^\circ - \dfrac{0{,}0592\,\mathrm{V}}{z}\log\dfrac{[\mathrm{Zn^{2+}}]}{[\mathrm{Cu^{2+}}]}$, $\quad \log K = \dfrac{zE^\circ}{0{,}0592\,\mathrm{V}}$
@@ -168,7 +176,9 @@ $E^\circ = E^\circ_\text{katode} - E^\circ_\text{anode}$, $\quad \Delta_\mathrm{
 3. Kvocient: $Q = 0{,}010/1{,}0 = 0{,}010$, $\log Q = -2{,}00$ (trdnih kovin ne pišemo).
 4. $E = 1{,}10\,\mathrm{V} - \dfrac{0{,}0592\,\mathrm{V}}{2} \cdot (-2{,}00) = 1{,}10 + 0{,}0592 = 1{,}16\,\mathrm{V}$.
 5. V ravnotežju je $E = 0$ in $Q = K$: $\log K = 2 \cdot 1{,}10/0{,}0592 = 37{,}2$, $K \approx 1{,}5 \cdot 10^{37}$.
-6. Odgovor: $E^\circ = 1{,}10\,\mathrm{V}$, $\Delta_\mathrm{r}G^\circ \approx -212\,\mathrm{kJ/mol}$, pri danih koncentracijah $E \approx 1{,}16\,\mathrm{V}$ (manj produkta $\mathrm{Zn^{2+}}$ poveča napetost), $K \approx 1{,}5 \cdot 10^{37}$: reakcija praktično poteče do konca.
+6. Obratno vprašanje: iz Nernstove enačbe izrazimo $\log Q = \dfrac{z(E^\circ - E')}{0{,}0592\,\mathrm{V}} = \dfrac{2 \cdot 0{,}10}{0{,}0592} = 3{,}38$, torej $Q = 2{,}39 \cdot 10^3$.
+7. $[\mathrm{Cu^{2+}}] = [\mathrm{Zn^{2+}}]/Q = 0{,}010/(2{,}39 \cdot 10^3)\,\mathrm{mol/L} \approx 4{,}2 \cdot 10^{-6}\,\mathrm{mol/L}$.
+8. Odgovor: $E^\circ = 1{,}10\,\mathrm{V}$, $\Delta_\mathrm{r}G^\circ \approx -212\,\mathrm{kJ/mol}$, pri danih koncentracijah $E \approx 1{,}16\,\mathrm{V}$ (manj produkta $\mathrm{Zn^{2+}}$ poveča napetost), $K \approx 1{,}5 \cdot 10^{37}$: reakcija praktično poteče do konca. Da napetost pade na $1{,}00\,\mathrm{V}$ (le za $0{,}16\,\mathrm{V}$), moramo $\mathrm{Cu^{2+}}$ razredčiti na okoli $4{,}2 \cdot 10^{-6}\,\mathrm{mol/L}$: napetost je od koncentracij odvisna le logaritemsko, zato člen daje skoraj stalno napetost, dokler ionov $\mathrm{Cu^{2+}}$ skoraj povsem ne zmanjka.
 
 ### Primer 4 – zdaj ti
 
@@ -196,7 +206,7 @@ $n(\mathrm{e^-}) = 600/96\,485 = 0{,}006\,219\,\mathrm{mol}$, in ker je $z = 1$,
 
 ## Pogoste napake
 
-- **Množenje $E^\circ$ s koeficienti.** Pri $\mathrm{Ag^+ + e^- \to Ag}$ ostane $E^\circ = 0{,}80\,\mathrm{V}$, tudi če polreakcijo pomnožimo z $2$. Množimo Gibbsove energije, ne potencialov.
+- **Množenje $E^\circ$ s koeficienti.** Pri $\mathrm{Ag^+ + e^- \to Ag}$ ostane $E^\circ = 0{,}80\,\mathrm{V}$, tudi če polreakcijo pomnožimo z $2$.
 - **Zamenjava anode in katode.** Anoda je vedno kraj oksidacije, katoda kraj redukcije. Predznak pola pa je v galvanskem členu in pri elektrolizi obrnjen.
 - **Oksidant se oksidira.** Ne: oksidant se **reducira** (sprejme elektrone). $\mathrm{MnO_4^-}$ je oksidant, ker se mangan reducira s $+7$ na $+2$.
 - **Neurejen naboj.** Enačba z enakim številom atomov, a različnim nabojem na obeh straneh, ni urejena. Vedno preveri naboj.
@@ -212,6 +222,44 @@ $n(\mathrm{e^-}) = 600/96\,485 = 0{,}006\,219\,\mathrm{mol}$, in ker je $z = 1$,
 - Galvanski člen: anoda (oksidacija, $-$), katoda (redukcija, $+$), solni most; $E^\circ_\text{člena} = E^\circ_\text{katode} - E^\circ_\text{anode}$.
 - $\Delta_\mathrm{r}G^\circ = -zFE^\circ$; spontano pri $E > 0$; $E = E^\circ - \tfrac{0{,}0592\,\mathrm{V}}{z}\log Q$; $\log K = zE^\circ/0{,}0592\,\mathrm{V}$.
 - Elektroliza: $m = ItM/(zF)$, $F = 96\,485\,\mathrm{C/mol}$.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije oksidacije, redukcije, oksidanta, reducenta, oksidacijskega števila, anode in katode;
+- definicijo standardnega elektrodnega potenciala (standardna vodikova elektroda, standardno stanje) in $E^\circ_\text{člena} = E^\circ_\text{katode} - E^\circ_\text{anode}$;
+- zvezo $\Delta_\mathrm{r}G = -zFE$ z izpeljavo iz električnega dela, izrek o spontanosti in dokaz, zakaj $E^\circ$ ne množimo s koeficienti;
+- Nernstovo enačbo z izpeljavo iz $\Delta_\mathrm{r}G = \Delta_\mathrm{r}G^\circ + RT\ln Q$ in zvezo $\log K = zE^\circ/0{,}0592\,\mathrm{V}$;
+- Faradayev zakon s pogoji in izpeljavo.
+
+### Naloga 1
+
+Galvanski člen sestavljata polčlena $\mathrm{Pt\,|\,Fe^{3+}(0{,}10\,mol/L), Fe^{2+}(0{,}010\,mol/L)}$ in $\mathrm{Pt\,|\,MnO_4^-(0{,}010\,mol/L), Mn^{2+}(0{,}10\,mol/L)}$ pri $\mathrm{pH} = 2{,}00$ in $25\,^\circ\mathrm{C}$. a) Zapiši celično reakcijo in izračunaj napetost člena. b) Izračunaj konstanto ravnotežja. c) Kolikšna je napetost, če pH v permanganatnem polčlenu povečamo na $4{,}00$, druge koncentracije pa ostanejo enake? $E^\circ(\mathrm{MnO_4^-/Mn^{2+}}) = +1{,}51\,\mathrm{V}$, $E^\circ(\mathrm{Fe^{3+}/Fe^{2+}}) = +0{,}77\,\mathrm{V}$.
+
+**Rešitev:**
+
+1. Permanganat ima višji potencial, zato je katoda; reakcija (Primer 2): $\mathrm{MnO_4^- + 8\,H^+ + 5\,Fe^{2+} \to Mn^{2+} + 5\,Fe^{3+} + 4\,H_2O}$, $z = 5$, $E^\circ = 1{,}51 - 0{,}77 = 0{,}74\,\mathrm{V}$.
+2. $[\mathrm{H^+}] = 10^{-2{,}00}\,\mathrm{mol/L}$. Kvocient: $Q = \dfrac{[\mathrm{Mn^{2+}}][\mathrm{Fe^{3+}}]^5}{[\mathrm{MnO_4^-}][\mathrm{H^+}]^8[\mathrm{Fe^{2+}}]^5} = \dfrac{0{,}10 \cdot 0{,}10^5}{0{,}010 \cdot (10^{-2})^8 \cdot 0{,}010^5} = 10^{22}$.
+3. $E = 0{,}74\,\mathrm{V} - \dfrac{0{,}0592\,\mathrm{V}}{5} \cdot 22 = 0{,}74 - 0{,}260 = 0{,}48\,\mathrm{V}$.
+4. Preizkus po polčlenih: $E_\text{katode} = 1{,}51 - \dfrac{0{,}0592}{5}\log\dfrac{0{,}10}{0{,}010 \cdot 10^{-16}} = 1{,}51 - 0{,}201 = 1{,}309\,\mathrm{V}$, $E_\text{anode} = 0{,}77 - 0{,}0592\log\dfrac{0{,}010}{0{,}10} = 0{,}829\,\mathrm{V}$, razlika $0{,}48\,\mathrm{V}$.
+5. b) $\log K = \dfrac{5 \cdot 0{,}74}{0{,}0592} = 62{,}5$, $K \approx 3 \cdot 10^{62}$.
+6. c) Pri $\mathrm{pH} = 4{,}00$ je $[\mathrm{H^+}]^8$ za faktor $10^{16}$ manjši, zato $\log Q = 22 + 16 = 38$ in $E = 0{,}74 - \dfrac{0{,}0592}{5} \cdot 38 = 0{,}74 - 0{,}450 = 0{,}29\,\mathrm{V}$.
+7. Odgovor: $E \approx 0{,}48\,\mathrm{V}$, $K \approx 3 \cdot 10^{62}$; pri $\mathrm{pH} = 4{,}00$ napetost pade na okoli $0{,}29\,\mathrm{V}$, zato permanganometrične titracije izvajamo v močno kislem.
+
+### Naloga 2
+
+a) Iz $\Delta_\mathrm{r}G = \Delta_\mathrm{r}G^\circ + RT\ln Q$ izpelji Nernstovo enačbo in pokaži, da je $\log K = zE^\circ/0{,}0592\,\mathrm{V}$ pri $25\,^\circ\mathrm{C}$. b) Iz $E^\circ(\mathrm{Cu^{2+}/Cu}) = +0{,}34\,\mathrm{V}$ in $E^\circ(\mathrm{Cu^+/Cu}) = +0{,}52\,\mathrm{V}$ izračunaj $E^\circ(\mathrm{Cu^{2+}/Cu^+})$. c) Utemelji, ali je ion $\mathrm{Cu^+}$ v vodni raztopini obstojen glede na disproporcionacijo $\mathrm{2\,Cu^+ \rightleftharpoons Cu^{2+} + Cu}$, in izračunaj njeno konstanto ravnotežja.
+
+**Rešitev:**
+
+1. a) Vstavimo $\Delta_\mathrm{r}G = -zFE$ in $\Delta_\mathrm{r}G^\circ = -zFE^\circ$: $-zFE = -zFE^\circ + RT\ln Q$. Delimo z $-zF$: $E = E^\circ - \dfrac{RT}{zF}\ln Q$.
+2. Z $\ln Q = \ln 10 \cdot \log Q$ in $\dfrac{RT\ln 10}{F} = \dfrac{8{,}314 \cdot 298{,}15 \cdot 2{,}303}{96\,485}\,\mathrm{V} = 0{,}0592\,\mathrm{V}$ dobimo $E = E^\circ - \dfrac{0{,}0592\,\mathrm{V}}{z}\log Q$.
+3. V ravnotežju je $\Delta_\mathrm{r}G = 0$, zato $E = 0$ in $Q = K$: $0 = E^\circ - \dfrac{0{,}0592\,\mathrm{V}}{z}\log K$, torej $\log K = zE^\circ/0{,}0592\,\mathrm{V}$.
+4. b) Seštevamo Gibbsove energije, ne potencialov: $\mathrm{Cu^{2+} + e^- \to Cu^+}$ dobimo kot $(\mathrm{Cu^{2+} + 2\,e^- \to Cu})$ minus $(\mathrm{Cu^+ + e^- \to Cu})$, zato $1 \cdot E^\circ = 2 \cdot 0{,}34 - 1 \cdot 0{,}52 = 0{,}16\,\mathrm{V}$.
+5. c) Pri disproporcionaciji je $\mathrm{Cu^+}$ hkrati oksidant (para $\mathrm{Cu^+/Cu}$, katoda) in reducent (para $\mathrm{Cu^{2+}/Cu^+}$, anoda): $E^\circ = 0{,}52 - 0{,}16 = 0{,}36\,\mathrm{V} > 0$, $z = 1$.
+6. $\log K = 0{,}36/0{,}0592 = 6{,}08$, $K = \dfrac{[\mathrm{Cu^{2+}}]}{[\mathrm{Cu^+}]^2} \approx 1{,}2 \cdot 10^6$.
+7. Odgovor: $E^\circ(\mathrm{Cu^{2+}/Cu^+}) \approx 0{,}16\,\mathrm{V}$; $\mathrm{Cu^+}$ v vodi ni obstojen, ker spontano disproporcionira ($K \approx 1{,}2 \cdot 10^6$). Obstojen je le v netopnih spojinah ali kompleksih ($\mathrm{CuCl}$, $\mathrm{Cu_2O}$), ki njegovo koncentracijo močno znižajo.
 
 ## Drugače: Na sliki
 
@@ -235,15 +283,15 @@ Elektroni tečejo po žici od anode k katodi, ioni v solnem mostu pa tako, da na
 
 Lestvico elektrodnih potencialov si predstavljaj kot navpično lestev: zgoraj so oksidanti, ki elektrone radi sprejemajo ($\mathrm{MnO_4^-}$, $\mathrm{Cl_2}$), spodaj reducenti, ki jih radi oddajajo ($\mathrm{Zn}$). Spontano »padajo« elektroni z nižje prečke na višjo; večja višinska razlika pomeni večjo napetost.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Rjavenje in zaščita železa.** Železo se na vlažnem zraku oksidira ($E^\circ(\mathrm{Fe^{2+}/Fe}) = -0{,}44\,\mathrm{V}$, kisik pa ima $+1{,}23\,\mathrm{V}$). Pri **cinkanju** (pocinkanju) železo prevlečemo s cinkom, ki ima še bolj negativen potencial ($-0{,}76\,\mathrm{V}$): če se prevleka poškoduje, se raztaplja cink, železo pa ostane zaščiteno. Na istem načelu ladje in podzemne cevovode ščitijo s **požrtvovalnimi anodami** iz magnezija ali cinka.
+**Protikorozijska zaščita.** Železo se na vlažnem zraku oksidira ($E^\circ(\mathrm{Fe^{2+}/Fe}) = -0{,}44\,\mathrm{V}$, kisik pa ima $+1{,}23\,\mathrm{V}$). Pri **cinkanju** se ob poškodbi prevleke raztaplja cink ($-0{,}76\,\mathrm{V}$), železo pa ostane zaščiteno. Ladje in cevovode ščitijo s **požrtvovalnimi anodami** iz magnezija ali cinka ali s katodno zaščito z zunanjim virom napetosti.
 
-**Baterije in akumulatorji.** Alkalna baterija ($\mathrm{Zn}$ in $\mathrm{MnO_2}$) da okoli $1{,}5\,\mathrm{V}$, svinčev akumulator v avtomobilu okoli $2\,\mathrm{V}$ na celico (šest celic za $12\,\mathrm{V}$), litijev ionski akumulator okoli $3{,}7\,\mathrm{V}$. Pri polnjenju akumulatorja z zunanjim virom poženemo reakcijo nazaj, kar je elektroliza.
+**Industrijska elektroliza.** Aluminij pridobivajo z elektrolizo taline glinice v kriolitu ($z = 3$, Hall-Héroultov postopek). Za $1\,\mathrm{kg}$ aluminija je potrebnih $Q = mzF/M \approx 1{,}07 \cdot 10^7\,\mathrm{C}$; pri napetosti celice okoli $4\,\mathrm{V}$ je to okoli $12\,\mathrm{kWh}$, zato je cena elektrike odločilna. Galvanotehnika s Faradayevim zakonom nastavlja debelino prevlek.
 
-**Dihalna veriga.** V mitohondrijih se elektroni iz hrane (prek NADH, $E^{\circ\prime} \approx -0{,}32\,\mathrm{V}$) postopoma prenašajo do kisika ($E^{\circ\prime} \approx +0{,}82\,\mathrm{V}$ pri $\mathrm{pH} = 7$). Razlika okoli $1{,}1\,\mathrm{V}$ ustreza $\Delta G^{\circ\prime} = -2F \cdot 1{,}14\,\mathrm{V} \approx -220\,\mathrm{kJ/mol}$, energija pa se porabi za tvorbo ATP.
+**Analitika.** Permanganometrija in jodometrija sta redoks titraciji (Primer 2). Steklena elektroda pH-metra meri potencial, ki se po Nernstovi enačbi spremeni za okoli $59\,\mathrm{mV}$ na enoto pH; podobno delujejo ionoselektivne elektrode.
 
-**Alkotest in pH-meter.** Elektrokemijski alkotest meri tok pri oksidaciji etanola na elektrodi; tok je sorazmeren s koncentracijo alkohola v izdihanem zraku. Steklena elektroda pH-metra pa meri potencial, ki se po Nernstovi enačbi spremeni za okoli $59\,\mathrm{mV}$ na enoto pH.
+**Energetika in biokemija.** Galvanski členi za shranjevanje energije: alkalna baterija okoli $1{,}5\,\mathrm{V}$, svinčev akumulator okoli $2\,\mathrm{V}$ na celico, litijev ionski okoli $3{,}7\,\mathrm{V}$; polnjenje je elektroliza. V dihalni verigi gredo elektroni od NADH ($E^{\circ\prime} \approx -0{,}32\,\mathrm{V}$) do kisika ($E^{\circ\prime} \approx +0{,}82\,\mathrm{V}$ pri $\mathrm{pH} = 7$), kar ustreza $\Delta G^{\circ\prime} = -2F \cdot 1{,}14\,\mathrm{V} \approx -220\,\mathrm{kJ/mol}$.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -255,13 +303,13 @@ Kovinski predmet pobakrimo v raztopini $\mathrm{CuSO_4}$ s tokom $I = 2{,}00\,\m
 4. **Množina elektronov:** $n(\mathrm{e^-}) = Q/F = 3600/96\,485 = 0{,}037\,31\,\mathrm{mol}$.
 5. **Množina bakra:** $n(\mathrm{Cu}) = n(\mathrm{e^-})/2 = 0{,}018\,66\,\mathrm{mol}$.
 6. **Masa:** $m = 0{,}018\,66 \cdot 63{,}55\,\mathrm{g} \approx 1{,}19\,\mathrm{g}$.
-7. **Preizkus z enačbo:** $m = \dfrac{ItM}{zF} = \dfrac{2{,}00 \cdot 1800 \cdot 63{,}55}{2 \cdot 96\,485}\,\mathrm{g} = 1{,}19\,\mathrm{g}$. Če bi bil izkoristek toka manjši (del toka porabi nastajanje vodika), bi se izločilo manj.
+7. **Preizkus z enačbo:** $m = \dfrac{ItM}{zF} = \dfrac{2{,}00 \cdot 1800 \cdot 63{,}55}{2 \cdot 96\,485}\,\mathrm{g} = 1{,}19\,\mathrm{g}$.
 
 ## Drugače: Bolj natančno
 
-**Od kod $\Delta G = -zFE$.** Električno delo, ki ga opravi člen, ko steče $z$ molov elektronov pri napetosti $E$, je $w = zFE$. Pri reverzibilnem delovanju (tok skoraj nič) je to največje neekspanzijsko delo, ki je enako zmanjšanju Gibbsove energije: $\Delta_\mathrm{r}G = -zFE$. Če to vstavimo v $\Delta_\mathrm{r}G = \Delta_\mathrm{r}G^\circ + RT\ln Q$ in delimo z $-zF$, dobimo Nernstovo enačbo. Faktor $RT\ln 10/F$ je pri $298{,}15\,\mathrm{K}$ enak $0{,}059\,16\,\mathrm{V}$.
+**Natančnejši faktor.** $RT\ln 10/F$ je pri $298{,}15\,\mathrm{K}$ enak $0{,}059\,16\,\mathrm{V}$; pri $37\,^\circ\mathrm{C}$ je okoli $0{,}0615\,\mathrm{V}$, kar upoštevajo fiziološke meritve.
 
-**Kombiniranje polreakcij.** Potencialov polreakcij, ki dajo novo **polreakcijo**, ne smemo preprosto seštevati; seštevamo Gibbsove energije. Iz $\mathrm{Fe^{3+} + e^- \to Fe^{2+}}$ ($+0{,}77\,\mathrm{V}$) in $\mathrm{Fe^{2+} + 2\,e^- \to Fe}$ ($-0{,}44\,\mathrm{V}$) dobimo za $\mathrm{Fe^{3+} + 3\,e^- \to Fe}$:
+**Kombiniranje polreakcij.** Primer k razdelku 6 (seštevamo Gibbsove energije): iz $\mathrm{Fe^{3+} + e^- \to Fe^{2+}}$ ($+0{,}77\,\mathrm{V}$) in $\mathrm{Fe^{2+} + 2\,e^- \to Fe}$ ($-0{,}44\,\mathrm{V}$) dobimo za $\mathrm{Fe^{3+} + 3\,e^- \to Fe}$:
 
 $$E^\circ = \frac{1 \cdot 0{,}77 + 2 \cdot (-0{,}44)}{3}\,\mathrm{V} = -0{,}037\,\mathrm{V} \approx -0{,}04\,\mathrm{V}.$$
 
@@ -285,7 +333,7 @@ $$E^\circ = \frac{1 \cdot 0{,}77 + 2 \cdot (-0{,}44)}{3}\,\mathrm{V} = -0{,}037\
 ~ Zamenjava pojmov: na katodi delci elektrone sprejemajo, to je redukcija. Zmede lahko to, da je katoda v galvanskem členu pozitivni pol.
 - v solnem mostu
 ~ Solni most sklene krog, a v njem se le gibljejo ioni in ohranjajo nevtralnost raztopin; elektroni se tam ne prenašajo.
-> Oksidacija vedno poteka na anodi, redukcija na katodi. V solnem mostu se le gibljejo ioni.
+> Oksidacija vedno poteka na anodi, redukcija na katodi.
 
 ? Kolikšna je standardna napetost člena iz srebrove ($E^\circ = +0{,}80\,\mathrm{V}$) in cinkove ($E^\circ = -0{,}76\,\mathrm{V}$) elektrode?
 - $0{,}04\,\mathrm{V}$
@@ -293,7 +341,7 @@ $$E^\circ = \frac{1 \cdot 0{,}77 + 2 \cdot (-0{,}44)}{3}\,\mathrm{V} = -0{,}037\
 + $1{,}56\,\mathrm{V}$
 - $2{,}36\,\mathrm{V}$
 ~ Potencial srebra si pomnožil z $2$, ker je v enačbi $2\,\mathrm{Ag^+}$. $E^\circ$ je intenzivna količina in se s koeficientom ne množi.
-> $E^\circ = E^\circ_\text{katode} - E^\circ_\text{anode} = 0{,}80 - (-0{,}76) = 1{,}56\,\mathrm{V}$. $2{,}36\,\mathrm{V}$ dobiš, če potencial srebra napačno pomnožiš z $2$, $0{,}04\,\mathrm{V}$ pa, če potenciala seštevaš.
+> $E^\circ = E^\circ_\text{katode} - E^\circ_\text{anode} = 0{,}80 - (-0{,}76) = 1{,}56\,\mathrm{V}$.
 
 ? Kateri delec je med naštetimi najmočnejši oksidant (glej preglednico potencialov)?
 - $\mathrm{Zn^{2+}}$

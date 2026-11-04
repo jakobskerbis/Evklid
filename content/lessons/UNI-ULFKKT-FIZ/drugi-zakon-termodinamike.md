@@ -30,7 +30,7 @@ Spodnji razdelki desni stolpec razložijo korak za korakom.
 - **Clausiusova:** toplota sama od sebe ne prehaja s hladnejšega telesa na toplejše. (Hladilnik to zmore le, če mu dovajamo delo.)
 - **Kelvin-Planckova:** ni mogoče sestaviti stroja, ki bi pri krožni spremembi prejemal toploto iz enega samega rezervoarja in jo v celoti pretvarjal v delo.
 
-Obe obliki sta enakovredni: iz kršitve ene bi lahko sestavili napravo, ki krši drugo.
+Obe obliki sta enakovredni: iz kršitve ene bi lahko sestavili napravo, ki krši drugo. *Dokaz ene smeri.* Denimo, da stroj K krši Kelvin-Planckovo obliko: iz toplega rezervoarja prejme toploto $Q$ in jo v celoti spremeni v delo $A' = Q$. S tem delom poganjamo hladilnik, ki iz hladnega rezervoarja odvzame $Q_2$ in toplemu odda $Q_2 + Q$. Topli rezervoar skupno prejme $Q_2 + Q - Q = Q_2$, zato skupna naprava brez dovedenega dela prenese toploto $Q_2$ s hladnega na topli rezervoar, kar krši Clausiusovo obliko. Drugo smer dokažeš v Nalogi 2.
 
 ### Stroji med dvema rezervoarjema
 
@@ -40,11 +40,15 @@ $$\eta = \frac{A'}{Q_1} = 1 - \frac{Q_2}{Q_1}.$$
 
 Po Kelvin-Planckovi obliki je $Q_2 > 0$ in zato vedno $\eta < 1$.
 
-**4. Carnotov cikel in Carnotov izkoristek.** Carnotov cikel je povratni cikel idealnega plina iz dveh izoterm in dveh adiabat: izotermno razširjanje pri $T_1$ (plin prejme $Q_1$), adiabatno razširjanje do $T_2$, izotermno stiskanje pri $T_2$ (plin odda $Q_2$) in adiabatno stiskanje nazaj do $T_1$. Za ta cikel velja $Q_2/Q_1 = T_2/T_1$, zato je izkoristek
+**4. Carnotov cikel in Carnotov izkoristek.** Carnotov cikel je povratni cikel idealnega plina iz dveh izoterm in dveh adiabat: izotermno razširjanje pri $T_1$ (plin prejme $Q_1$), adiabatno razširjanje do $T_2$, izotermno stiskanje pri $T_2$ (plin odda $Q_2$) in adiabatno stiskanje nazaj do $T_1$. *Izpeljava.* Prostornine v ogliščih cikla so po vrsti $V_1, V_2, V_3, V_4$. Na izotermah se notranja energija idealnega plina ne spremeni, zato $Q_1 = nRT_1\ln(V_2/V_1)$ in $Q_2 = nRT_2\ln(V_3/V_4)$. Na adiabatah velja $TV^{\kappa-1} = \text{konst.}$: $T_1V_2^{\kappa-1} = T_2V_3^{\kappa-1}$ in $T_1V_1^{\kappa-1} = T_2V_4^{\kappa-1}$. Deljenje enačb da $V_2/V_1 = V_3/V_4$, zato $Q_2/Q_1 = T_2/T_1$ in
 
 $$\eta_C = 1 - \frac{T_2}{T_1}.$$
 
-**Carnotov izrek:** noben stroj, ki deluje med istima rezervoarjema, nima večjega izkoristka od povratnega stroja, in vsi povratni stroji imajo enak izkoristek $\eta_C$, ne glede na delovno snov. Izkoristek raste, čim večja je razlika temperatur. Temperature morajo biti v kelvinih.
+**Carnotov izrek:** naj stroja X in C delujeta med istima rezervoarjema s temperaturama $T_1 > T_2$. Če je C povraten, potem je $\eta_X \le \eta_C$; če sta povratna oba, je $\eta_X = \eta_C = 1 - T_2/T_1$, ne glede na delovno snov.
+
+*Dokaz.* Denimo, da je $\eta_X > \eta_C$. Stroja naj v ciklu opravita enako delo $A'$; X prejme toploto $Q_{1X} = A'/\eta_X$, C pa $Q_{1C} = A'/\eta_C > Q_{1X}$. Z delom stroja X poganjamo C obratno, kot hladilnik. Skupna naprava ne prejme dela, toplemu rezervoarju pa odda toploto $Q_{1C} - Q_{1X} > 0$, ki jo po prvem zakonu vzame hladnemu. To krši Clausiusovo obliko, zato $\eta_X \le \eta_C$. Če je povraten tudi X, vlogi zamenjamo in dobimo še $\eta_C \le \eta_X$. Ker so vsi povratni stroji enako dobri, velja $\eta_C$, izračunan za idealni plin, za vsako delovno snov.
+
+Izkoristek raste, čim večja je razlika temperatur. Temperature morajo biti v kelvinih.
 
 :::premisli
 Stroj deluje med $600\,\mathrm{K}$ in $300\,\mathrm{K}$. Kaj bolj poveča Carnotov izkoristek: topli rezervoar segreti za $100\,\mathrm{K}$ ali hladnega ohladiti za $100\,\mathrm{K}$?
@@ -57,25 +61,25 @@ Ohladiti hladnega: $1 - 200/600 \approx 67\,\%$, segreti toplega pa le $1 - 300/
 - **Hladilno število** hladilnika: $\varepsilon_h = Q_2/A$, največ $\dfrac{T_2}{T_1 - T_2}$.
 - **Grelno število** toplotne črpalke: $\varepsilon_g = Q_1/A$, največ $\dfrac{T_1}{T_1 - T_2}$.
 
-Obe števili sta lahko večji od $1$: s $1\,\mathrm{kJ}$ dela lahko v hišo prečrpamo več kot $1\,\mathrm{kJ}$ toplote.
+Najvišji vrednosti (po razmisleku kot pri Carnotovem izreku) da povratni (obrnjeni Carnotov) cikel, za katerega velja $Q_2/Q_1 = T_2/T_1$: $\varepsilon_h = \dfrac{Q_2}{Q_1 - Q_2} = \dfrac{T_2}{T_1 - T_2}$ in $\varepsilon_g = \dfrac{Q_1}{A} = \varepsilon_h + 1$. Obe števili sta lahko večji od $1$: s $1\,\mathrm{kJ}$ dela lahko v hišo prečrpamo več kot $1\,\mathrm{kJ}$ toplote.
 
 ### Entropija in njen pomen
 
-**6. Entropija.** Pri Carnotovem ciklu iz $Q_2/Q_1 = T_2/T_1$ sledi $Q_1/T_1 - Q_2/T_2 = 0$. Količina »prejeta toplota, deljena s temperaturo« se v povratnem ciklu sešteje v nič. To je znak, da obstaja funkcija stanja, katere sprememba je
+**6. Entropija.** Pri Carnotovem ciklu iz $Q_2/Q_1 = T_2/T_1$ sledi $Q_1/T_1 - Q_2/T_2 = 0$. Količina »prejeta toplota, deljena s temperaturo« se v povratnem ciklu sešteje v nič. To je znak, da obstaja funkcija stanja. **Definicija:** naj sistem preide iz ravnovesnega stanja 1 v ravnovesno stanje 2 po povratni poti, na kateri pri temperaturi $T$ prejme toploto $\delta Q_{\text{rev}}$. Sprememba **entropije** $S$ (enota $\mathrm{J/K}$) je
 
 $$\Delta S = \int_1^2\frac{\delta Q_{\text{rev}}}{T}.$$
 
-To je **entropija** $S$ (enota $\mathrm{J/K}$). Ker je funkcija stanja, je $\Delta S$ odvisna le od začetnega in končnega stanja. Pri nepovratni spremembi jo izračunamo tako, da si zamislimo **katero koli** povratno pot med istima stanjema. Pogosti primeri:
+Da je integral za vse povratne poti enak, sledi iz Clausiusove neenakosti (»Bolj natančno«). Ker je entropija funkcija stanja, je $\Delta S$ odvisna le od začetnega in končnega stanja. Pri nepovratni spremembi jo izračunamo tako, da si zamislimo **katero koli** povratno pot med istima stanjema. Pogosti primeri:
 
 - **izotermna sprememba** (taljenje, izparevanje, izotermno razširjanje): $\Delta S = Q/T$,
-- **segrevanje** s stalno toplotno kapaciteto: $\Delta S = mc\ln\dfrac{T_2}{T_1}$ (oziroma $nC\ln\frac{T_2}{T_1}$),
-- **idealni plin**: $\Delta S = nC_V\ln\dfrac{T_2}{T_1} + nR\ln\dfrac{V_2}{V_1}$.
+- **segrevanje** s stalno specifično toploto: $\delta Q_{\text{rev}} = mc\,\mathrm{d}T$, zato $\Delta S = \int_{T_1}^{T_2}\dfrac{mc\,\mathrm{d}T}{T} = mc\ln\dfrac{T_2}{T_1}$ (oziroma $nC\ln\frac{T_2}{T_1}$),
+- **idealni plin**: po prvem zakonu je $\delta Q_{\text{rev}} = nC_V\,\mathrm{d}T + p\,\mathrm{d}V$ s $p = nRT/V$; deljenje s $T$ in integriranje da $\Delta S = nC_V\ln\dfrac{T_2}{T_1} + nR\ln\dfrac{V_2}{V_1}$.
 
-**7. Drugi zakon z entropijo.** Za izoliran sistem velja
+**7. Drugi zakon z entropijo (načelo naraščanja entropije).** Če je sistem toplotno izoliran, potem pri vsaki spremembi velja
 
-$$\Delta S_{\text{izol}} \ge 0.$$
+$$\Delta S_{\text{izol}} \ge 0,$$
 
-Enačaj velja za povratne, neenačaj za nepovratne spremembe. Entropija sistema se lahko tudi zmanjša, a le, če se entropija okolice poveča vsaj za toliko. Skupna entropija sistema in okolice se pri vsakem resničnem procesu poveča. Pri prehodu toplote $Q$ s telesa pri $T_1$ na telo pri $T_2 < T_1$ je $\Delta S = Q/T_2 - Q/T_1 > 0$, kar je Clausiusova oblika v jeziku entropije.
+enačaj pa natanko pri povratnih spremembah. *Dokaz (skica).* Iz Carnotovega izreka sledi Clausiusova neenakost $\Delta S \ge \int_1^2\delta Q/T$; v izoliranem sistemu je $\delta Q = 0$. Entropija sistema se lahko tudi zmanjša, a le, če se entropija okolice poveča vsaj za toliko. Skupna entropija sistema in okolice se pri vsakem resničnem procesu poveča. Pri prehodu toplote $Q$ s telesa pri $T_1$ na telo pri $T_2 < T_1$ je $\Delta S = Q/T_2 - Q/T_1 > 0$, kar je Clausiusova oblika v jeziku entropije.
 
 :::premisli
 Voda v zamrzovalniku zmrzne in njena entropija se zmanjša. Ali to krši drugi zakon?
@@ -128,23 +132,24 @@ Taljenje (izotermno): $\Delta S_1 = \dfrac{mq_t}{T_0}$. Segrevanje: $\Delta S_2 
 
 ### Primer 3 (težji)
 
-V toplotno izolirani posodi zmešamo $1{,}0\,\mathrm{kg}$ vode pri $80\,^\circ\mathrm{C}$ in $1{,}0\,\mathrm{kg}$ vode pri $20\,^\circ\mathrm{C}$. Kolikšna je končna temperatura in za koliko se spremeni skupna entropija? Toplotno kapaciteto posode zanemari, $c = 4186\,\mathrm{J/(kg\,K)}$.
+V toplotno izolirani posodi zmešamo $1{,}0\,\mathrm{kg}$ vode pri $80\,^\circ\mathrm{C}$ in $0{,}20\,\mathrm{kg}$ ledu pri $0\,^\circ\mathrm{C}$. Kolikšna je končna temperatura in za koliko se spremeni skupna entropija? Toplotno kapaciteto posode zanemari, $c = 4186\,\mathrm{J/(kg\,K)}$, talilna toplota ledu je $334\,\mathrm{kJ/kg}$.
 
-**Podatki:** $m_1 = 1{,}0\,\mathrm{kg}$, $T_1 = 353{,}15\,\mathrm{K}$, $m_2 = 1{,}0\,\mathrm{kg}$, $T_2 = 293{,}15\,\mathrm{K}$, $c = 4186\,\mathrm{J/(kg\,K)}$, sistem je izoliran
+**Podatki:** $m_1 = 1{,}0\,\mathrm{kg}$ vode, $T_1 = 353{,}15\,\mathrm{K}$, $m_2 = 0{,}20\,\mathrm{kg}$ ledu, $T_0 = 273{,}15\,\mathrm{K}$, $c = 4186\,\mathrm{J/(kg\,K)}$, $q_t = 334\,\mathrm{kJ/kg}$, sistem je izoliran
 **Iščemo:** končno temperaturo $T_k$ in spremembo entropije $\Delta S$
 
 :::formula
-$m_1c(T_1 - T_k) = m_2c(T_k - T_2)$; $\Delta S = m_1c\ln\dfrac{T_k}{T_1} + m_2c\ln\dfrac{T_k}{T_2}$
+$m_1c(T_1 - T_k) = m_2q_t + m_2c(T_k - T_0)$; $\Delta S = m_1c\ln\dfrac{T_k}{T_1} + \dfrac{m_2q_t}{T_0} + m_2c\ln\dfrac{T_k}{T_0}$
 :::
 
 **Rešitev:**
 
-1. Masi sta enaki, zato je $T_k$ aritmetična sredina: $T_k = 323{,}15\,\mathrm{K}$ ($50\,^\circ\mathrm{C}$).
-2. Topla voda se ohladi; ker se temperatura med tem spreminja, uporabimo logaritem: $\Delta S_1 = 4186 \cdot \ln(323{,}15/353{,}15)\,\mathrm{J/K} \approx -371{,}6\,\mathrm{J/K}$.
-3. Hladna voda se segreje: $\Delta S_2 = 4186 \cdot \ln(323{,}15/293{,}15)\,\mathrm{J/K} \approx +407{,}9\,\mathrm{J/K}$.
-4. Skupaj: $\Delta S = -371{,}6 + 407{,}9 \approx +36{,}2\,\mathrm{J/K}$.
-5. Entropija hladne vode naraste bolj, kot entropija tople pade, ker isto toploto ($125{,}6\,\mathrm{kJ}$) hladna voda prejema pri nižji temperaturi.
-6. Odgovor: končna temperatura je $50\,^\circ\mathrm{C}$, skupna entropija pa se poveča za približno $36\,\mathrm{J/K}$. Ker je $\Delta S > 0$ v izoliranem sistemu, je mešanje nepovratno: voda se sama od sebe ne bo več razdelila na toplo in hladno.
+1. Ali se ves led stali? Za taljenje je treba $m_2q_t = 0{,}20 \cdot 334\,\mathrm{kJ} = 66{,}8\,\mathrm{kJ}$, topla voda pa bi pri ohladitvi na $0\,^\circ\mathrm{C}$ oddala $1{,}0 \cdot 4186 \cdot 80\,\mathrm{J} \approx 335\,\mathrm{kJ}$. Led se stali ves in $T_k > T_0$.
+2. Posoda je izolirana, zato oddana toplota tople vode gre za taljenje in segrevanje staljene vode. Iz enačbe toplotnega ravnovesja izrazimo $T_k = \dfrac{m_1cT_1 - m_2q_t + m_2cT_0}{(m_1 + m_2)c}$ in vstavimo: $T_k = \dfrac{4186 \cdot 353{,}15 - 66\,800 + 837{,}2 \cdot 273{,}15}{1{,}20 \cdot 4186}\,\mathrm{K} \approx 326{,}5\,\mathrm{K}$ ($53{,}4\,^\circ\mathrm{C}$).
+3. Proces je nepovraten, entropija pa je funkcija stanja, zato vsak del računamo po zamišljeni povratni poti. Topla voda se ohladi: $\Delta S_1 = 4186 \cdot \ln(326{,}52/353{,}15)\,\mathrm{J/K} \approx -328{,}2\,\mathrm{J/K}$.
+4. Taljenje poteka pri stalni $T_0$: $\Delta S_2 = 66\,800\,\mathrm{J}/273{,}15\,\mathrm{K} \approx 244{,}6\,\mathrm{J/K}$.
+5. Staljena voda se segreje: $\Delta S_3 = 0{,}20 \cdot 4186 \cdot \ln(326{,}52/273{,}15)\,\mathrm{J/K} \approx 149{,}4\,\mathrm{J/K}$.
+6. Skupaj: $\Delta S = -328{,}2 + 244{,}6 + 149{,}4 \approx +65{,}8\,\mathrm{J/K}$. Led prejema toploto pri nižji temperaturi, kot jo topla voda oddaja, zato njegova entropija naraste bolj, kot entropija vode pade.
+7. Odgovor: končna temperatura je približno $53\,^\circ\mathrm{C}$, skupna entropija pa se poveča za približno $66\,\mathrm{J/K}$. Ker je $\Delta S > 0$ v izoliranem sistemu, je proces nepovraten.
 
 ### Primer 4 – zdaj ti
 
@@ -186,62 +191,78 @@ $\Delta S_2 = 1000\,\mathrm{J}/268{,}15\,\mathrm{K} \approx 3{,}73\,\mathrm{J/K}
 - Entropija: $\Delta S = \int\delta Q_{\text{rev}}/T$; izotermno $Q/T$, segrevanje $mc\ln(T_2/T_1)$; funkcija stanja.
 - V izoliranem sistemu $\Delta S \ge 0$; $S = k_B\ln\Omega$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo povratne spremembe ter Clausiusovo in Kelvin-Planckovo obliko drugega zakona z dokazom njune enakovrednosti;
+- izkoristek toplotnega stroja in izpeljavo Carnotovega izkoristka za idealni plin;
+- Carnotov izrek s pogoji in dokazom;
+- najvišje hladilno in grelno število ter njuno izpeljavo;
+- definicijo entropije, izpeljavo $\Delta S$ pri segrevanju in za idealni plin, načelo naraščanja entropije s pogojem (izoliran sistem).
+
+### Naloga 1
+
+Med dvema telesoma, $1{,}0\,\mathrm{kg}$ vode pri $80\,^\circ\mathrm{C}$ in $1{,}0\,\mathrm{kg}$ vode pri $20\,^\circ\mathrm{C}$, deluje povratni toplotni stroj, dokler se temperaturi ne izenačita. Izračunaj končno temperaturo in največje delo, ki ga stroj lahko opravi. Primerjaj z neposrednim mešanjem obeh količin vode v izolirani posodi. $c = 4186\,\mathrm{J/(kg\,K)}$, toplotno kapaciteto stroja zanemari.
+
+**Rešitev:**
+
+1. Carnotovega izkoristka ne smemo uporabiti naravnost, ker se temperaturi teles med delovanjem spreminjata (na začetku je $\eta_C = 1 - 293{,}15/353{,}15 \approx 17\,\%$, na koncu nič).
+2. Stroj je povraten in deluje v ciklih, zato se skupna entropija obeh teles ne spremeni: $mc\ln\dfrac{T_k}{T_1} + mc\ln\dfrac{T_k}{T_2} = 0$, torej $T_k^2 = T_1T_2$.
+3. $T_k = \sqrt{353{,}15 \cdot 293{,}15}\,\mathrm{K} \approx 321{,}75\,\mathrm{K}$ ($48{,}6\,^\circ\mathrm{C}$).
+4. Toplo telo odda $Q_1 = mc(T_1 - T_k) = 4186 \cdot 31{,}40\,\mathrm{J} \approx 131{,}4\,\mathrm{kJ}$, hladno prejme $Q_2 = mc(T_k - T_2) = 4186 \cdot 28{,}60\,\mathrm{J} \approx 119{,}7\,\mathrm{kJ}$.
+5. Po prvem zakonu je delo $A' = Q_1 - Q_2 \approx 11{,}7\,\mathrm{kJ}$, skupni izkoristek pa $11{,}7/131{,}4 \approx 8{,}9\,\%$.
+6. Pri neposrednem mešanju ni dela, končna temperatura je $50\,^\circ\mathrm{C}$, entropija pa naraste za $4186 \cdot \ln(323{,}15/353{,}15) + 4186 \cdot \ln(323{,}15/293{,}15) \approx 36{,}2\,\mathrm{J/K}$. Neizkoriščenih $11{,}7\,\mathrm{kJ}$ ostane v vodi kot notranja energija: $2 \cdot 4186 \cdot (323{,}15 - 321{,}75)\,\mathrm{J} \approx 11{,}7\,\mathrm{kJ}$.
+7. Odgovor: s povratnim strojem je končna temperatura $48{,}6\,^\circ\mathrm{C}$ in največje delo okoli $11{,}7\,\mathrm{kJ}$; pri mešanju je končna temperatura $50\,^\circ\mathrm{C}$, dela ni, entropija pa naraste za $36\,\mathrm{J/K}$.
+
+### Naloga 2
+
+Natančno navedi Clausiusovo in Kelvin-Planckovo obliko drugega zakona in dokaži, da iz kršitve Clausiusove oblike sledi kršitev Kelvin-Planckove. Nato natančno navedi Carnotov izrek in utemelji, zakaj Carnotov izkoristek, izpeljan za idealni plin, velja za vsako delovno snov.
+
+**Rešitev:**
+
+1. Clausiusova oblika: toplota sama od sebe, brez dovedenega dela, ne prehaja s hladnejšega telesa na toplejše. Kelvin-Planckova: ni stroja, ki bi pri krožni spremembi prejemal toploto iz enega samega rezervoarja in jo v celoti pretvarjal v delo.
+2. Denimo, da naprava D brez dela prenaša toploto $Q_2$ s hladnega rezervoarja na toplega.
+3. Ob njej deluje navaden toplotni stroj, ki iz toplega rezervoarja prejme $Q_1$, hladnemu odda ravno $Q_2$ in opravi delo $A' = Q_1 - Q_2$.
+4. Hladni rezervoar skupno ne izgubi ne pridobi ničesar, topli izgubi $Q_1 - Q_2$, ta toplota pa se v celoti pretvori v delo. Skupna naprava jemlje toploto enemu rezervoarju in jo v celoti pretvarja v delo, kar krši Kelvin-Planckovo obliko.
+5. Carnotov izrek: med istima rezervoarjema s temperaturama $T_1 > T_2$ noben stroj nima večjega izkoristka od povratnega, vsi povratni stroji pa imajo enak izkoristek. Dokaz je v točki 4 razlage: stroj z večjim izkoristkom bi skupaj z obrnjenim povratnim strojem brez dela prenašal toploto s hladnega na topli rezervoar.
+6. Ker imajo vsi povratni stroji med istima rezervoarjema enak izkoristek, je ta enak izkoristku Carnotovega cikla z idealnim plinom, $1 - T_2/T_1$, ne glede na snov.
+7. Odgovor: obliki sta enakovredni (iz kršitve vsake sledi kršitev druge), $\eta_C = 1 - T_2/T_1$ pa je univerzalna zgornja meja za vse stroje med danima rezervoarjema.
+
 ## Drugače: Na sliki
 
-Toplotni stroj kot slap: voda (toplota) pada s toplega na hladni nivo in pri tem vrti kolo (delo). Več ko je višinska razlika (temperaturna razlika), več dela dobimo. Vsa voda pa mora na koncu priteči na spodnji nivo; ne moremo je »porabiti« na poti.
+Toplotni stroj je kot slap: toplota »pade« s toplega rezervoarja $T_1$ na hladnega $T_2$ in spotoma da delo $A' = Q_1 - Q_2$, del $Q_2$ pa mora vedno priteči na spodnji nivo. Pri hladilniku puščice obrnemo: delo $A$ vstopi, $Q_2$ teče iz hladnega rezervoarja, $Q_1 = Q_2 + A$ pa v toplega.
 
-```
-   topli rezervoar  T1
-         |
-         | Q1
-         v
-     +-------+
-     | stroj | ----> A' = Q1 - Q2
-     +-------+
-         |
-         | Q2
-         v
-   hladni rezervoar T2
-```
+V diagramu $T(S)$ je Carnotov cikel pravokotnik: izotermi sta vodoravni, adiabati (entropija se ne spremeni) navpični. Ploščina pravokotnika je delo cikla, ploščina pod zgornjo stranico pa $Q_1$.
 
-Pri hladilniku puščici obrnemo: delo $A$ vstopi v stroj, toplota $Q_2$ teče iz hladnega rezervoarja, $Q_1 = Q_2 + A$ pa v topli rezervoar.
+## Drugače: Uporaba v stroki
 
-V diagramu $T(S)$ je Carnotov cikel pravokotnik: izotermi sta vodoravni črti, adiabati (pri katerih se entropija ne spremeni) navpični. Ploščina pravokotnika je delo cikla, ploščina pod zgornjo črto pa prejeta toplota $Q_1$.
+**Termoelektrarna.** Para v turbini ima okoli $550\,^\circ\mathrm{C}$ ($823\,\mathrm{K}$), kondenzator okoli $30\,^\circ\mathrm{C}$ ($303\,\mathrm{K}$). Carnotov izkoristek je $1 - 303/823 \approx 63\,\%$, resnične elektrarne dosežejo okoli $40\,\%$. Ostanek gre v reko, hladilni stolp ali daljinsko ogrevanje.
 
-## Drugače: Iz vsakdanjega življenja
+**Spontanost kemijskih reakcij.** Pri stalnih $p$ in $T$ je porast skupne entropije enakovreden pogoju, da se Gibbsova prosta entalpija zmanjša, $\Delta G = \Delta H - T\Delta S < 0$, zato endotermne reakcije z velikim porastom entropije potečejo pri višjih temperaturah.
 
-**Termoelektrarna.** Para v turbini ima okoli $550\,^\circ\mathrm{C}$ ($823\,\mathrm{K}$), kondenzator pa okoli $30\,^\circ\mathrm{C}$ ($303\,\mathrm{K}$). Carnotov izkoristek je $1 - 303/823 \approx 63\,\%$, resnične elektrarne pa dosežejo okoli $40\,\%$. Ostala toplota gre v reko ali hladilni stolp. Zato elektrarne gradijo ob rekah in razmišljajo o soproizvodnji (daljinsko ogrevanje z odpadno toploto).
-
-**Toplotna črpalka.** Če toplotna črpalka greje hišo na $35\,^\circ\mathrm{C}$ (talno gretje) in jemlje toploto zraku pri $0\,^\circ\mathrm{C}$, je največje grelno število $308/35 \approx 8{,}8$. Resnične naprave dosežejo $3$ do $4$, kar je še vedno trikrat do štirikrat bolje od električnega grelnika.
-
-**Spontanost kemijskih reakcij.** Pri stalnem tlaku in temperaturi reakcija poteče sama od sebe, če se skupna entropija sistema in okolice poveča. To je enakovredno pogoju, da se Gibbsova prosta entalpija zmanjša: $\Delta G = \Delta H - T\Delta S < 0$. Zato endotermne reakcije, pri katerih entropija močno naraste (raztapljanje nekaterih soli, razpad na pline), potečejo, posebno pri višjih temperaturah.
-
-**Življenje in entropija.** Organizmi gradijo zelo urejene strukture (beljakovine, celice) in s tem lokalno zmanjšujejo entropijo. To ne krši drugega zakona: organizem s hrano prejema energijo z nizko entropijo, okolici pa oddaja toploto in odpadne snovi z višjo entropijo. Skupna entropija naraste.
+**Ločevanje zraka.** Za popolno ločitev $1\,\mathrm{mol}$ zraka ($21\,\%$ $\mathrm{O_2}$, $79\,\%$ $\mathrm{N_2}$) pri $298\,\mathrm{K}$ je potrebno najmanj toliko dela, kolikor entropije pri mešanju nastane, pomnoženo s $T$. Ker se vsak plin pri mešanju izotermno razširi z $x_iV$ na $V$, je to $-RT\sum x_i\ln x_i \approx 1{,}27\,\mathrm{kJ}$ dela ($x_i$ so molski deleži, plina obravnavamo kot idealna).
 
 ## Drugače: Korak za korakom s številkami
 
-Hladilnik ima v notranjosti $5\,^\circ\mathrm{C}$, v kuhinji je $25\,^\circ\mathrm{C}$. Iz notranjosti odvaja $150\,\mathrm{W}$ toplote, njegovo dejansko hladilno število je $3{,}0$. Kolikšno električno moč porabi in koliko toplote odda v kuhinjo? Kolikšna bi bila najmanjša možna moč?
+Hladilnik pri $5\,^\circ\mathrm{C}$ v kuhinji s $25\,^\circ\mathrm{C}$ odvaja $150\,\mathrm{W}$ toplote, hladilno število je $3{,}0$. Kolikšno moč porabi, koliko toplote odda in kolikšna bi bila najmanjša možna moč?
 
-1. **Temperature v kelvinih:** $T_2 = 278{,}15\,\mathrm{K}$, $T_1 = 298{,}15\,\mathrm{K}$.
+1. **Kelvini:** $T_2 = 278{,}15\,\mathrm{K}$, $T_1 = 298{,}15\,\mathrm{K}$.
 2. **Porabljena moč:** $P = \dot{Q}_2/\varepsilon_h = 150\,\mathrm{W}/3{,}0 = 50\,\mathrm{W}$.
 3. **Toplota v kuhinjo:** $\dot{Q}_1 = \dot{Q}_2 + P = 150\,\mathrm{W} + 50\,\mathrm{W} = 200\,\mathrm{W}$. Hladilnik kuhinjo segreva.
 4. **Idealno hladilno število:** $\varepsilon_{h,C} = 278{,}15/(298{,}15 - 278{,}15) \approx 13{,}9$.
 5. **Najmanjša moč:** $P_{\min} = 150\,\mathrm{W}/13{,}9 \approx 10{,}8\,\mathrm{W}$.
-6. **Pomen:** resnični hladilnik porabi skoraj petkrat več moči od idealnega, ker so v njem nepovratni procesi (prenos toplote ob končnih temperaturnih razlikah, dušenje hladiva, trenje v kompresorju).
+6. **Pomen:** resnični hladilnik porabi skoraj petkrat več moči od idealnega zaradi nepovratnih procesov.
 
 ## Drugače: Bolj natančno
 
-**Clausiusova neenakost.** Za vsak cikel velja $\oint\frac{\delta Q}{T} \le 0$, kjer je $T$ temperatura rezervoarja, s katerim sistem izmenjuje toploto; enačaj velja za povratne cikle. Iz enačaja sledi, da je integral $\int_1^2\delta Q_{\text{rev}}/T$ neodvisen od poti, torej da je $S$ funkcija stanja. Iz neenačaja za cikel, sestavljen iz nepovratne poti $1 \to 2$ in povratne $2 \to 1$, sledi
+**Clausiusova neenakost.** Za vsak cikel velja $\oint\frac{\delta Q}{T} \le 0$, kjer je $T$ temperatura rezervoarja, s katerim sistem izmenjuje toploto; enačaj velja za povratne cikle. Iz enačaja sledi, da je $S$ funkcija stanja, iz neenačaja za cikel, sestavljen iz nepovratne poti $1 \to 2$ in povratne $2 \to 1$, sledi
 
 $$\Delta S = S_2 - S_1 \ge \int_1^2\frac{\delta Q}{T},$$
 
 za izoliran sistem ($\delta Q = 0$) pa $\Delta S \ge 0$.
 
-**Carnotov izkoristek za idealni plin.** Na izotermah je $Q_1 = nRT_1\ln(V_2/V_1)$ in $Q_2 = nRT_2\ln(V_3/V_4)$. Na adiabatah velja $T_1V_2^{\kappa-1} = T_2V_3^{\kappa-1}$ in $T_1V_1^{\kappa-1} = T_2V_4^{\kappa-1}$; deljenje da $V_2/V_1 = V_3/V_4$. Zato $Q_2/Q_1 = T_2/T_1$ in $\eta_C = 1 - T_2/T_1$.
-
-**Dokaz Carnotovega izreka (skica).** Denimo, da bi imel stroj X večji izkoristek od povratnega stroja C. Stroj X poganjamo med rezervoarjema, njegovo delo pa uporabimo, da C obrnemo v hladilnik. Ker je $\eta_X > \eta_C$, bi skupna naprava brez zunanjega dela prenašala toploto s hladnega na topli rezervoar, kar nasprotuje Clausiusovi obliki drugega zakona.
-
-**Entropija idealnega plina.** Iz $T\,\mathrm{d}S = \mathrm{d}W_n + p\,\mathrm{d}V = nC_V\,\mathrm{d}T + \frac{nRT}{V}\mathrm{d}V$ z integriranjem dobimo $\Delta S = nC_V\ln\frac{T_2}{T_1} + nR\ln\frac{V_2}{V_1}$. Pri prosti ekspanziji na dvakratno prostornino je $\Delta S = nR\ln 2 > 0$, čeprav je $Q = 0$. Statistično: vsaka od $N$ molekul ima dvakrat več prostora, zato se $\Omega$ poveča za faktor $2^N$ in $\Delta S = k_B\ln 2^N = Nk_B\ln 2 = nR\ln 2$. Obe sliki se ujemata.
+**Entropija idealnega plina.** Pri prosti ekspanziji na dvakratno prostornino je $\Delta S = nR\ln 2$, čeprav je $Q = 0$. Statistično ima vsaka od $N$ molekul dvakrat več prostora, $\Omega$ se poveča za faktor $2^N$ in $\Delta S = Nk_B\ln 2 = nR\ln 2$.
 
 ## Preveri se
 

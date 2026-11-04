@@ -19,7 +19,11 @@ Odvajanje je »mehanično«: za vsako elementarno funkcijo imamo pravila, ki ved
 
 **1. Primitivna funkcija.** Funkcija $F$ je **primitivna funkcija** funkcije $f$ na intervalu $I$, če je $F'(x) = f(x)$ za vse $x \in I$. Primer: $F(x) = x^3$ je primitivna funkcija $f(x) = 3x^2$. Tudi $x^3 + 5$ in $x^3 - \pi$ sta, ker se konstanta pri odvajanju izgubi.
 
-Če sta $F$ in $G$ primitivni funkciji iste funkcije na intervalu, se razlikujeta za konstanto: $G = F + C$. **Nedoločeni integral** je množica vseh primitivnih funkcij:
+**Izrek.** Naj bosta $F$ in $G$ primitivni funkciji iste funkcije $f$ na **intervalu** $I$. Potem obstaja konstanta $C$, da je $G(x) = F(x) + C$ za vse $x \in I$.
+
+*Dokaz.* Za $H = G - F$ je $H' = f - f = 0$ na $I$. Za poljubna $x_1 < x_2$ iz $I$ po Lagrangeovem izreku obstaja $\xi \in (x_1, x_2)$ z $H(x_2) - H(x_1) = H'(\xi)(x_2 - x_1) = 0$, torej je $H$ konstantna. $\square$
+
+Pogoj »interval« je bistven: na $\mathbb R \setminus \{0\}$ je konstanta lahko na vsakem delu drugačna. Vsaka **zvezna** funkcija na intervalu ima primitivno funkcijo (osnovni izrek analize), ni pa nujno elementarna. **Nedoločeni integral** je množica vseh primitivnih funkcij:
 
 $$\int f(x)\, dx = F(x) + C, \qquad C \in \mathbb{R}.$$
 
@@ -39,27 +43,43 @@ Konstanta $C$ je **integracijska konstanta**. Vsak rezultat lahko preverimo z od
 | $\frac{1}{1 + x^2}$ | $\arctan x + C$ |
 | $\frac{1}{\sqrt{1 - x^2}}$ | $\arcsin x + C$ |
 
-**Linearnost:** $\int (\alpha f + \beta g)\, dx = \alpha \int f\, dx + \beta \int g\, dx$. Polinome zato integriramo člen za členom.
+**Linearnost:** $\int (\alpha f + \beta g)\, dx = \alpha \int f\, dx + \beta \int g\, dx$, ker je $(\alpha F + \beta G)' = \alpha f + \beta g$. Polinome zato integriramo člen za členom.
 
 **Linearni argument.** Če je $\int f(x)\, dx = F(x) + C$, je $\int f(ax + b)\, dx = \frac{1}{a} F(ax + b) + C$ za $a \neq 0$. Na primer $\int e^{3x}\, dx = \frac{1}{3} e^{3x} + C$ in $\int \cos(2x + 1)\, dx = \frac{1}{2}\sin(2x + 1) + C$.
 
-**3. Uvedba nove spremenljivke (substitucija).** Iz verižnega pravila $\big(F(g(x))\big)' = f(g(x))\, g'(x)$ sledi
+**3. Uvedba nove spremenljivke (substitucija).**
 
-$$\int f(g(x))\, g'(x)\, dx = \int f(t)\, dt, \qquad t = g(x),\ dt = g'(x)\, dx.$$
+**Izrek.** Naj bo $g$ zvezno odvedljiva na intervalu $I$, $f$ zvezna na intervalu, ki vsebuje $g(I)$, in $F$ primitivna funkcija $f$. Potem je
+
+$$\int f(g(x))\, g'(x)\, dx = F(g(x)) + C, \quad \text{kratko} \quad \int f(g(x))\, g'(x)\, dx = \int f(t)\, dt, \qquad t = g(x),\ dt = g'(x)\, dx.$$
+
+*Dokaz:* po verižnem pravilu je $\big(F(g(x))\big)' = F'(g(x))\, g'(x) = f(g(x))\, g'(x)$.
 
 Postopek: (1) v integrandu poiščemo notranjo funkcijo $g(x)$, katere odvod (do konstante natančno) je tudi v integrandu, (2) vpeljemo $t = g(x)$ in izrazimo $dx$ ali $g'(x)\, dx$ z $dt$, (3) integriramo v spremenljivki $t$, (4) vrnemo $t = g(x)$.
 
 Pomemben poseben primer je **logaritemski integral**:
 
-$$\int \frac{g'(x)}{g(x)}\, dx = \ln|g(x)| + C.$$
+$$\int \frac{g'(x)}{g(x)}\, dx = \ln|g(x)| + C,$$
 
-Na primer $\int \tan x\, dx = \int \frac{\sin x}{\cos x}\, dx = -\ln|\cos x| + C$.
+ki velja na intervalu, kjer je $g(x) \neq 0$: s $t = g(x)$ dobimo $\int \frac{dt}{t} = \ln|t| + C$.
 
-**4. Integracija po delih.** Iz pravila za odvod produkta $(uv)' = u'v + uv'$ sledi
+Na primer $\int \tan x\, dx = \int \frac{\sin x}{\cos x}\, dx = -\ln|\cos x| + C$, ker je števec $\sin x = -(\cos x)'$.
 
-$$\int u\, dv = uv - \int v\, du.$$
+:::premisli
+Ali s substitucijo $t = x^2$ izračunaš $\int e^{x^2}\, dx$? Kaj pa $\int x\, e^{x^2}\, dx$?
+---
+Prvega ne: $dt = 2x\, dx$, faktorja $x$ pa v integrandu ni. Pri drugem je $x\, dx = \frac12\, dt$, zato $\int x\, e^{x^2}\, dx = \frac12 e^{x^2} + C$.
+:::
 
-Integrand razdelimo na dva dela: $u$, ki ga odvajamo, in $dv$, ki ga integriramo. Izbira je dobra, če je novi integral $\int v\, du$ preprostejši od prvotnega. Praktično pravilo: za $u$ izberemo funkcijo, ki se z odvajanjem poenostavi. Prednost imajo logaritmi in ciklometrične funkcije, nato polinomi; za $dv$ pa raje vzamemo eksponentno ali krožno funkcijo.
+**4. Integracija po delih.**
+
+**Izrek.** Naj bosta $u$ in $v$ zvezno odvedljivi na intervalu $I$. Potem je
+
+$$\int u\, v'\, dx = uv - \int u'\, v\, dx, \qquad \text{kratko} \qquad \int u\, dv = uv - \int v\, du.$$
+
+*Izpeljava:* $(uv)' = u'v + uv'$, torej je $uv$ primitivna funkcija $u'v + uv'$, $\int (u'v + uv')\, dx = uv + C$. Zaradi linearnosti je $\int uv'\, dx = uv - \int u'v\, dx$.
+
+Integrand razdelimo na dva dela: $u$, ki ga odvajamo, in $dv$, ki ga integriramo. Izbira je dobra, če je novi integral $\int v\, du$ preprostejši od prvotnega. Praktično pravilo: za $u$ izberemo funkcijo, ki se z odvajanjem poenostavi. Prednost imajo logaritmi in ciklometrične (arkus) funkcije, kot je $\arctan x$, nato polinomi; za $dv$ pa raje vzamemo eksponentno ali krožno funkcijo.
 
 Tipični primeri: $\int x e^x\, dx$ ($u = x$), $\int x \sin x\, dx$ ($u = x$), $\int \ln x\, dx$ ($u = \ln x$, $dv = dx$), $\int \arctan x\, dx$ ($u = \arctan x$). Včasih postopek ponovimo, pri $\int e^x \sin x\, dx$ pa po dveh korakih dobimo enačbo za iskani integral.
 
@@ -71,13 +91,23 @@ Pri $\int \ln x\, dx$ je drugi faktor skrit: pišemo $\ln x \cdot 1$, vzamemo $u
 
 1. **Deljenje.** Če je stopnja $p$ večja ali enaka stopnji $q$, polinoma delimo: $\frac{p}{q} = s(x) + \frac{r(x)}{q(x)}$, kjer ima ostanek $r$ nižjo stopnjo od $q$. Polinom $s$ integriramo člen za členom.
 2. **Razcep imenovalca** na linearne faktorje $(x - a)$ in nerazcepne kvadratne faktorje $x^2 + px + q$ (z negativno diskriminanto).
-3. **Parcialni ulomki.** Vsakemu faktorju $(x - a)^k$ pripadajo členi $\frac{A_1}{x - a} + \dots + \frac{A_k}{(x - a)^k}$, nerazcepnemu kvadratnemu faktorju pa člen $\frac{Bx + C}{x^2 + px + q}$. Neznane koeficiente določimo tako, da pomnožimo z imenovalcem in primerjamo koeficiente ali vstavimo primerne vrednosti $x$.
+3. **Parcialni ulomki.** Vsakemu faktorju $(x - a)^k$ pripadajo členi $\frac{A_1}{x - a} + \dots + \frac{A_k}{(x - a)^k}$, nerazcepnemu kvadratnemu faktorju pa člen $\frac{Bx + C}{x^2 + px + q}$ (faktorju $(x^2 + px + q)^m$ pa členi $\frac{B_1x + C_1}{x^2 + px + q} + \dots + \frac{B_mx + C_m}{(x^2 + px + q)^m}$). Neznane koeficiente določimo tako, da pomnožimo z imenovalcem in primerjamo koeficiente ali vstavimo primerne vrednosti $x$.
+
+**Izrek (razcep na parcialne ulomke).** Naj bosta $r$ in $q$ realna polinoma in $\deg r < \deg q$. Potem lahko $\frac{r}{q}$ zapišemo kot vsoto parcialnih ulomkov zgornje oblike, ki pripadajo faktorjem razcepa $q$, in to na en sam način. Ker se vsak realni polinom razcepi na linearne in nerazcepne kvadratne faktorje, ima vsaka racionalna funkcija elementarno primitivno funkcijo.
 
 Posamezni členi se integrirajo takole:
 
 $$\int \frac{dx}{x - a} = \ln|x - a| + C, \qquad \int \frac{dx}{(x - a)^k} = \frac{-1}{(k - 1)(x - a)^{k-1}} + C \ (k \ge 2),$$
 
-$$\int \frac{dx}{x^2 + a^2} = \frac{1}{a} \arctan\frac{x}{a} + C.$$
+$$\int \frac{dx}{x^2 + a^2} = \frac{1}{a} \arctan\frac{x}{a} + C \quad (a > 0).$$
+
+*Izpeljava zadnjega:* z $x = at$, $dx = a\, dt$ je $\int \frac{a\, dt}{a^2(t^2 + 1)} = \frac1a \arctan t + C$.
+
+:::premisli
+Zapiši nastavek za razcep $\frac{x + 5}{(x - 1)^2(x^2 + 4)}$. Koliko neznanih koeficientov ima?
+---
+$\frac{A}{x - 1} + \frac{B}{(x - 1)^2} + \frac{Cx + D}{x^2 + 4}$, torej štiri, kolikor je stopnja imenovalca.
+:::
 
 Pri splošnem kvadratnem imenovalcu dopolnimo do popolnega kvadrata, števec pa razdelimo na del, ki je odvod imenovalca (da logaritem), in konstanto (da arkus tangens).
 
@@ -138,24 +168,25 @@ Integracija po delih: $\int u\, dv = uv - \int v\, du$. Za $u$ izberemo logarite
 
 ### Primer 3 (težji)
 
-Izračunaj $\displaystyle \int \frac{3x + 5}{x^2 + x - 2}\, dx$.
+Izračunaj $\displaystyle \int \frac{2x^2 + 4x + 2}{(x - 1)(x^2 + 2x + 5)}\, dx$.
 
-**Podatki:** racionalna funkcija s števcem $p(x) = 3x + 5$ in imenovalcem $q(x) = x^2 + x - 2$
+**Podatki:** racionalna funkcija s števcem $r(x) = 2x^2 + 4x + 2$ in imenovalcem $q(x) = (x - 1)(x^2 + 2x + 5)$
 **Iščemo:** nedoločeni integral
 
 :::formula
-Imenovalec razstavimo, $\frac{p(x)}{(x - a)(x - b)} = \frac{A}{x - a} + \frac{B}{x - b}$, nato $\int \frac{dx}{x - a} = \ln|x - a| + C$.
+$\frac{r(x)}{(x - a)(x^2 + px + q)} = \frac{A}{x - a} + \frac{Bx + C}{x^2 + px + q}$; $\int \frac{g'}{g}\, dx = \ln|g| + C$, $\int \frac{dt}{t^2 + a^2} = \frac1a \arctan\frac ta + C$.
 :::
 
 **Rešitev:**
 
-1. Stopnja števca ($1$) je manjša od stopnje imenovalca ($2$), deljenje ni potrebno.
-2. Razcep: $x^2 + x - 2 = (x - 1)(x + 2)$.
-3. Nastavek: $\frac{3x + 5}{(x - 1)(x + 2)} = \frac{A}{x - 1} + \frac{B}{x + 2}$, torej $3x + 5 = A(x + 2) + B(x - 1)$.
-4. Za $x = 1$: $8 = 3A$, $A = \frac{8}{3}$. Za $x = -2$: $-1 = -3B$, $B = \frac{1}{3}$.
-5. Preizkus koeficientov: pri $x$ je $A + B = 3$, prosti člen $2A - B = \frac{16}{3} - \frac{1}{3} = 5$.
-6. Integriramo: $\int \left(\frac{8/3}{x - 1} + \frac{1/3}{x + 2}\right) dx = \frac{8}{3}\ln|x - 1| + \frac{1}{3}\ln|x + 2| + C$.
-7. Odgovor: $\int \frac{3x + 5}{x^2 + x - 2}\, dx = \frac{8}{3}\ln|x - 1| + \frac{1}{3}\ln|x + 2| + C$.
+1. Stopnja števca ($2$) je manjša od stopnje imenovalca ($3$), deljenje ni potrebno. Faktor $x^2 + 2x + 5$ ima diskriminanto $4 - 20 = -16 < 0$, je nerazcepen.
+2. Nastavek: $2x^2 + 4x + 2 = A(x^2 + 2x + 5) + (Bx + C)(x - 1)$.
+3. Za $x = 1$: $8 = 8A$, $A = 1$.
+4. Primerjamo koeficiente: pri $x^2$: $A + B = 2$, torej $B = 1$; prosti člen: $5A - C = 2$, torej $C = 3$. Preizkus pri $x$: $2A - B + C = 2 - 1 + 3 = 4$.
+5. Prvi člen: $\int \frac{dx}{x - 1} = \ln|x - 1|$.
+6. Drugi člen razdelimo na odvod imenovalca in konstanto: $x + 3 = \frac12(2x + 2) + 2$, zato $\int \frac{x + 3}{x^2 + 2x + 5}\, dx = \frac12\ln(x^2 + 2x + 5) + 2\int \frac{dx}{(x + 1)^2 + 4}$.
+7. S $t = x + 1$: $2\int \frac{dt}{t^2 + 2^2} = 2 \cdot \frac12 \arctan\frac t2 = \arctan\frac{x + 1}{2}$.
+8. Odgovor: $\int \frac{2x^2 + 4x + 2}{(x - 1)(x^2 + 2x + 5)}\, dx = \ln|x - 1| + \frac12\ln(x^2 + 2x + 5) + \arctan\frac{x + 1}{2} + C$ (absolutna vrednost pri drugem logaritmu ni potrebna, ker je $x^2 + 2x + 5 > 0$).
 
 ## Pogoste napake
 
@@ -175,23 +206,74 @@ Imenovalec razstavimo, $\frac{p(x)}{(x - a)(x - b)} = \frac{A}{x - a} + \frac{B}
 - Po delih: $\int u\, dv = uv - \int v\, du$; $u$ naj se z odvajanjem poenostavi.
 - Racionalne funkcije: deljenje, razcep imenovalca, parcialni ulomki; členi dajo $\ln|x - a|$, potence $(x - a)^{-k}$ in $\arctan$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo primitivne funkcije in nedoločenega integrala ter izrek, da se primitivni funkciji na intervalu razlikujeta za konstanto, z dokazom (Lagrangeov izrek) in protiprimerom zunaj intervala,
+- izrek o substituciji s pogoji in dokaz z verižnim pravilom,
+- formulo za integracijo po delih s pogoji in njeno izpeljavo iz odvoda produkta,
+- izrek o razcepu na parcialne ulomke in izpeljavo integralov $\int \frac{dx}{(x - a)^k}$ in $\int \frac{dx}{x^2 + a^2}$,
+- da ima vsaka zvezna funkcija na intervalu primitivno funkcijo, ki pa ni nujno elementarna ($\int e^{-x^2}\, dx$).
+
+### Naloga 1
+
+Poišči tisto primitivno funkcijo $F$ funkcije $f(x) = \dfrac{2x^3 + 2x^2 + x + 1}{x^2(x^2 + 1)}$ na intervalu $(0, \infty)$, za katero je $F(1) = 0$.
+
+**Rešitev:**
+
+1. Stopnja števca ($3$) je manjša od stopnje imenovalca ($4$). Faktor $x$ je dvojen, $x^2 + 1$ je nerazcepen.
+2. Nastavek: $\frac{2x^3 + 2x^2 + x + 1}{x^2(x^2 + 1)} = \frac Ax + \frac{B}{x^2} + \frac{Cx + D}{x^2 + 1}$, torej $2x^3 + 2x^2 + x + 1 = Ax(x^2 + 1) + B(x^2 + 1) + (Cx + D)x^2$.
+3. Primerjamo koeficiente: $x^3$: $A + C = 2$; $x^2$: $B + D = 2$; $x$: $A = 1$; prosti člen: $B = 1$. Torej $A = B = C = D = 1$.
+4. Integriramo člen za členom: $\int \frac{dx}{x} = \ln x$ (na $(0, \infty)$), $\int \frac{dx}{x^2} = -\frac1x$, $\int \frac{x\, dx}{x^2 + 1} = \frac12\ln(x^2 + 1)$, $\int \frac{dx}{x^2 + 1} = \arctan x$.
+5. $F(x) = \ln x - \frac1x + \frac12\ln(x^2 + 1) + \arctan x + C$.
+6. Pogoj: $F(1) = 0 - 1 + \frac12\ln 2 + \frac\pi4 + C = 0$, torej $C = 1 - \frac12\ln 2 - \frac\pi4 \approx -0{,}132$.
+7. Odgovor: $F(x) = \ln x - \frac1x + \frac12\ln(x^2 + 1) + \arctan x + 1 - \frac12\ln 2 - \frac\pi4$. Ker je $(0, \infty)$ interval, je ta $F$ po izreku o konstanti ena sama.
+
+### Naloga 2
+
+Natančno navedi in dokaži izrek o razliki dveh primitivnih funkcij iste funkcije. Nato utemelji, ali sta $F(x) = \arctan x$ in $G(x) = -\arctan\frac1x$ primitivni funkciji iste funkcije na $\mathbb R \setminus \{0\}$ in ali je $G - F$ tam konstantna.
+
+**Rešitev:**
+
+1. Izrek: če sta $F$, $G$ primitivni funkciji $f$ na intervalu $I$, obstaja $C$, da je $G = F + C$ na $I$.
+2. Dokaz: $H = G - F$ ima $H' = 0$; po Lagrangeovem izreku je $H(x_2) - H(x_1) = H'(\xi)(x_2 - x_1) = 0$ za vse $x_1 < x_2$ iz $I$.
+3. $F'(x) = \frac{1}{1 + x^2}$. Po verižnem pravilu $G'(x) = -\frac{1}{1 + 1/x^2} \cdot \left(-\frac{1}{x^2}\right) = \frac{1}{x^2 + 1}$. Obe sta primitivni funkciji $\frac{1}{1 + x^2}$ na $\mathbb R \setminus \{0\}$.
+4. Pri $x = 1$: $G - F = -\frac\pi4 - \frac\pi4 = -\frac\pi2$. Pri $x = -1$: $G - F = \frac\pi4 + \frac\pi4 = \frac\pi2$.
+5. Razlika torej ni konstantna. To ni v nasprotju z izrekom, ker $\mathbb R \setminus \{0\}$ ni interval; na $(0, \infty)$ je $G - F = -\frac\pi2$, na $(-\infty, 0)$ pa $\frac\pi2$.
+6. Odgovor: da, obe sta primitivni funkciji iste funkcije, a $G - F$ je konstantna le na vsakem od intervalov $(-\infty, 0)$ in $(0, \infty)$ posebej.
+
+### Naloga 3
+
+Izpelji formulo za integracijo po delih (s pogoji) in z njo rekurzivno formulo za $I_n = \int x^n e^x\, dx$, $n \in \mathbb N$. Izračunaj $I_3$.
+
+**Rešitev:**
+
+1. Za zvezno odvedljivi $u$, $v$ na intervalu je $(uv)' = u'v + uv'$, zato $\int uv'\, dx = uv - \int u'v\, dx$.
+2. Za $I_n$ vzamemo $u = x^n$, $v' = e^x$: $u' = nx^{n-1}$, $v = e^x$.
+3. Rekurzija: $I_n = x^ne^x - n I_{n-1}$, z začetkom $I_0 = e^x + C$.
+4. $I_1 = xe^x - e^x = (x - 1)e^x$.
+5. $I_2 = x^2e^x - 2(x - 1)e^x = (x^2 - 2x + 2)e^x$.
+6. $I_3 = x^3e^x - 3(x^2 - 2x + 2)e^x = (x^3 - 3x^2 + 6x - 6)e^x + C$.
+7. Preizkus: $\big((x^3 - 3x^2 + 6x - 6)e^x\big)' = (3x^2 - 6x + 6 + x^3 - 3x^2 + 6x - 6)e^x = x^3e^x$.
+
 ## Drugače: Na sliki
 
 Nariši grafe funkcij $F(x) = x^2 + C$ za $C = -2, -1, 0, 1, 2$. Dobiš pet enakih parabol, premaknjenih navzgor ali navzdol. Pri vsakem $x$ imajo vse **enak naklon tangente** $2x$. Nedoločeni integral $\int 2x\, dx$ je cela ta družina vzporednih krivulj.
 
 Če je dan še **začetni pogoj**, na primer da krivulja gre skozi točko $(1, 3)$, izmed vseh parabol izberemo eno: $1 + C = 3$, $C = 2$, torej $F(x) = x^2 + 2$.
 
-Na grafu $f$ pa pomeni vrednost $F(b) - F(a)$ ploščino pod grafom od $a$ do $b$. Konstanta $C$ se pri tej razliki odšteje, zato je za ploščino vseeno, katero primitivno funkcijo izberemo.
+Na grafu $f$ pa pomeni vrednost $F(b) - F(a)$ (za $f \ge 0$) ploščino pod grafom od $a$ do $b$. Konstanta $C$ se pri tej razliki odšteje, zato je za ploščino vseeno, katero primitivno funkcijo izberemo.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Kinetika prvega reda.** Hitrost razpada snovi je sorazmerna s koncentracijo: $\frac{dc}{dt} = -kc$. Ločimo spremenljivki in integriramo: $\int \frac{dc}{c} = -\int k\, dt$, torej $\ln c = -kt + C$. Iz začetnega pogoja $c(0) = c_0$ dobimo $c(t) = c_0 e^{-kt}$. Uporabili smo logaritemski integral.
+**Kinetika prvega reda.** Hitrost razpada snovi je sorazmerna s koncentracijo: $\frac{dc}{dt} = -kc$. Ločimo spremenljivki in integriramo: $\int \frac{dc}{c} = -\int k\, dt$, torej $\ln c = -kt + C$. Iz začetnega pogoja $c(0) = c_0$ dobimo $c(t) = c_0 e^{-kt}$ in razpolovni čas $t_{1/2} = \frac{\ln 2}{k}$. Uporabili smo logaritemski integral.
 
-**Kinetika drugega reda z dvema reaktantoma.** Pri reakciji $\mathrm{A} + \mathrm{B} \to$ produkti z začetnima koncentracijama $a \neq b$ pridemo do integrala $\int \frac{dx}{(a - x)(b - x)}$, ki ga rešimo s parcialnimi ulomki. Enako se zgodi pri **logistični rasti** populacije $\frac{dN}{dt} = rN\left(1 - \frac{N}{K}\right)$, kjer je $K$ nosilnost okolja: integral $\int \frac{K\, dN}{N(K - N)}$ razcepimo na $\frac{1}{N} + \frac{1}{K - N}$.
+**Kinetika drugega reda z dvema reaktantoma.** Pri reakciji $\mathrm{A} + \mathrm{B} \to$ produkti z začetnima koncentracijama $a \neq b$ in pretvorbo $x$ velja $\frac{dx}{dt} = k(a - x)(b - x)$. S parcialnimi ulomki $\frac{1}{(a - x)(b - x)} = \frac{1}{b - a}\left(\frac{1}{a - x} - \frac{1}{b - x}\right)$ in pogojem $x(0) = 0$ dobimo integrirani zakon $kt = \frac{1}{b - a}\ln\frac{a(b - x)}{b(a - x)}$, iz katerega v laboratoriju z linearno regresijo določimo $k$.
 
-**Hitrost iz pospeška.** Če ima telo pospešek $a(t) = 6t\,\mathrm{m/s^3}$ in začetno hitrost $v(0) = 2\,\mathrm{m/s}$, je $v(t) = \int 6t\, dt = 3t^2 + C$ in iz začetnega pogoja $C = 2\,\mathrm{m/s}$. Po $2\,\mathrm{s}$ je hitrost $3 \cdot 4 + 2 = 14\,\mathrm{m/s}$. Lego dobimo z ponovnim integriranjem: $s(t) = \int (3t^2 + 2)\, dt = t^3 + 2t + C_2$, kjer $C_2$ določimo iz začetne lege.
+**Clausius-Clapeyronova enačba.** Za parni tlak velja $\frac{dp}{dT} = \frac{\Delta H_{\mathrm{izp}}\, p}{RT^2}$. Ločimo spremenljivki in privzamemo, da $\Delta H_{\mathrm{izp}}$ ni odvisna od $T$: $\int \frac{dp}{p} = \frac{\Delta H_{\mathrm{izp}}}{R}\int \frac{dT}{T^2}$, torej $\ln p = -\frac{\Delta H_{\mathrm{izp}}}{RT} + C$. Graf $\ln p$ proti $\frac1T$ je premica z naklonom $-\frac{\Delta H_{\mathrm{izp}}}{R}$; tako iz meritev parnega tlaka določimo izparilno entalpijo.
 
-**Newtonov zakon ohlajanja.** Skodelica čaja se ohlaja s hitrostjo, sorazmerno z razliko do temperature okolice: $\frac{dT}{dt} = -k(T - T_0)$. Z enako ločitvijo spremenljivk kot pri kinetiki dobimo $\ln|T - T_0| = -kt + C$ in $T(t) = T_0 + (T_z - T_0)e^{-kt}$, kjer je $T_z$ začetna temperatura. Isti model uporabljajo sodni zdravniki za oceno časa smrti in inženirji pri hlajenju strojnih delov.
+**Rast v bioreaktorju.** Rast mikroorganizmov z omejenim substratom opišemo z logistično enačbo $\frac{dN}{dt} = rN\left(1 - \frac{N}{K}\right)$; integral $\int \frac{K\, dN}{N(K - N)}$ razcepimo na $\frac{1}{N} + \frac{1}{K - N}$.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -230,7 +312,9 @@ Pogoj, da je $I$ **interval**, je bistven. Funkciji $\ln|x|$ in $\ln|x| + \opera
 ? Koliko je $\displaystyle \int \frac{2x}{x^2 + 5}\, dx$?
 + $\ln(x^2 + 5) + C$
 - $2\ln(x^2 + 5) + C$
+~ Faktor $2$ v števcu je že del odvoda imenovalca, zato se ne pojavi še enkrat.
 - $\frac{1}{x^2 + 5} + C$
+~ Odvod te funkcije je $-\frac{2x}{(x^2 + 5)^2}$, ne integrand.
 > Števec je odvod imenovalca, zato je integral $\ln|x^2 + 5| + C$; absolutno vrednost lahko izpustimo, ker je $x^2 + 5 > 0$.
 
 ? Koliko je $\displaystyle \int x e^x\, dx$?
@@ -260,6 +344,10 @@ a | realna konstanta (ničla imenovalca x − a) | | | v aˣ osnova potence, a >
 b | druga ničla imenovalca (x − b) | | | v f(ax + b) prosti člen
 k | stopnja (večkratnost) faktorja (x − a)ᵏ | | | naravno število, k ≥ 2
 n | eksponent potence | | | n ≠ −1
-p | polinom v števcu racionalne funkcije | | |
+p | polinom v števcu racionalne funkcije | | | v x² + px + q koeficient
+r | ostanek pri deljenju polinomov (števec prave racionalne funkcije) | | |
+q | polinom v imenovalcu racionalne funkcije | | | v x² + px + q prosti člen
+D | koeficient parcialnega ulomka | |
+I_n | integral ∫ xⁿ eˣ dx | I_n = x^n e^x - n I_{n-1} |
 A, B | koeficienta parcialnih ulomkov | | | dobimo ju s primerjavo števcev
 :::
