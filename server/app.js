@@ -58,7 +58,7 @@ import { appVersion, vendorVersion } from "./razlicica.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
-import { jeFaks } from "../public/stopnja.js";
+import { jeFaks, jeSs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -512,7 +512,7 @@ export function createApp(store, opts = {}) {
       wantDeep: againStreak >= 2,
       wantThink: againStreak === 1,
       competition: student.settings.track === "COMPETITION",
-      secondary: student.settings.educational_track === "SREDNJA_SOLA",
+      secondary: jeSs(student.settings),
       lite,
       free: !!accounts && !accounts.premiumFor(student.id),
       deepModel: capped ? MODEL_MID : MODEL_DEEP,
