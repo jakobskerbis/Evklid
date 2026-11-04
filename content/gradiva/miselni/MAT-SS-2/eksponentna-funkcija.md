@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Množenje s faktorjem
+  - vsaka oktava podvoji frekvenco
+  - napaka: enaki koraki v hercih
+- Definicija
+  - $f(x) = a^x$, $a > 0$, $a \ne 1$
+  - spremenljivka v eksponentu, ne v osnovi
+- Lastnosti
+  - $D_f = \mathbb{R}$, $Z_f = (0, \infty)$
+  - graf skozi $(0, 1)$ in $(1, a)$
+  - ničel ni, asimptota $y = 0$
+- Vpliv osnove
+  - $a > 1$ narašča, $0 < a < 1$ pada
+  - levo od osi $y$: $2^{-1} > 3^{-1}$
+- Zrcaljenje
+  - $\left(\frac{1}{a}\right)^x = a^{-x}$
+  - zrcalna slika čez os $y$
+- Premiki grafa
+  - $y = a^{x-p} + q$, asimptota $y = q$
+  - napaka: $2^{x-3}$ premaknjen v levo
+- Primerjanje potenc
+  - $2^{0{,}4} < 2^{0{,}7}$
+  - pri $0 < a < 1$ se neenakost obrne
+- Število e
+  - $e \approx 2{,}718$
+  - graf $e^x$ med $2^x$ in $3^x$

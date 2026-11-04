@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Množenje postane seštevanje
+  - frekvenca $\cdot 2$, oktava $+1$
+  - $\log_2 \frac{\nu}{440\,\mathrm{Hz}}$ šteje oktave
+- Obratna k eksponentni
+  - zrcaljenje čez $y = x$
+  - $(2, 4)$ preide v $(4, 2)$
+- Definicijsko območje
+  - $D_f = (0, \infty)$, $Z_f = \mathbb{R}$
+  - logaritmand strogo pozitiven
+  - napaka: $(-2, 2)$ pri $\log (x^2 - 4)$
+- Graf in lastnosti
+  - skozi $(1, 0)$ in $(a, 1)$
+  - os $y$ je navpična asimptota
+  - $a > 1$ narašča, $0 < a < 1$ pada
+- Premiki grafa
+  - $\log_a (x - p) + q$: asimptota $x = p$
+  - $\log_2 (x + 3)$: v levo za $3$
+- Enačbe
+  - $\log_a A = c \Rightarrow A = a^c$
+  - $\log_a A = \log_a B \Rightarrow A = B$
+  - $t = \log x$ za $(\log x)^2$
+- Pogoji in preizkus
+  - pogoje zapiši pred reševanjem
+  - odvečna rešitev po združevanju

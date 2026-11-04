@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Premica, poltrak, daljica
+  - premica brez krajišč, daljica z dvema
+  - meriš le dolžino daljice $|AB|$
+- Lega dveh premic
+  - sekata se, vzporedni $p \parallel q$ ali sovpadata
+  - pravokotni $p \perp q$: sekata se pod $90^\circ$
+- Aksiom o vzporednici
+  - skozi točko zunaj premice natanko ena vzporednica
+- Vrste kotov
+  - ostri, pravi, topi, iztegnjeni, polni
+  - $1^\circ = 60'$, $1' = 60''$
+  - napaka: $37^\circ 42' = 37{,}42^\circ$
+- Pari kotov
+  - sovršna kota sta enaka
+  - sokota merita skupaj $180^\circ$
+  - komplementarna $90^\circ$, suplementarna $180^\circ$
+- Koti ob prečnici
+  - istoležna in izmenična kota sta enaka
+  - notranja na isti strani: vsota $180^\circ$
+  - velja le pri $p \parallel q$

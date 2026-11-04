@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vsota kotov
+  - $\alpha + \beta + \gamma + \delta = 360^\circ$
+  - diagonala da dva trikotnika
+- Diagonale razkrijejo lik
+  - paralelogram: diagonali se razpolavljata
+  - pravokotnik: enako dolgi, romb: pravokotni
+  - mizar preveri okvir z diagonalama
+- Ploščine štirikotnikov
+  - paralelogram $S = a \cdot v_a$, ne $a \cdot b$
+  - trapez $S = \dfrac{(a + c)\, v}{2}$
+  - romb, deltoid $S = \dfrac{e \cdot f}{2}$
+- Krog in krožnica
+  - $o = 2\pi r$ v $\text{cm}$, $S = \pi r^2$ v $\text{cm}^2$
+  - napaka: premer namesto polmera
+- Lok in izsek
+  - $l = \dfrac{\pi r \alpha}{180^\circ}$
+  - $S_{\text{izs}} = \dfrac{\pi r^2 \alpha}{360^\circ}$
+- Obodni kot
+  - polovica središčnega nad istim lokom
+  - Talesov izrek: nad premerom $90^\circ$
+- Tetivni in tangentni
+  - tetivni: nasprotna kota skupaj $180^\circ$
+  - tangentni: $a + c = b + d$
