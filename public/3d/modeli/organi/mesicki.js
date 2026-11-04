@@ -485,7 +485,7 @@ export function zgradi(THREE, ctx = {}) {
       const sm = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false });
       odpad.push(sm, tex);
       const sp = new THREE.Sprite(sm);
-      sp.scale.set(104, 26, 1);
+      sp.scale.set(130, 32.5, 1); // berljivo tudi na telefonu
       sp.position.copy(p);
       sp.raycast = () => {};
       sp.renderOrder = 5;

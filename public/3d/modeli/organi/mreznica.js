@@ -293,7 +293,7 @@ export function zgradi(THREE, ctx = {}) {
   }
 
   function sestavi() {
-    for (const m of mreze) { svet.remove(m); if (!m.userData.deljena || !m.isInstancedMesh) m.geometry.dispose(); }
+    for (const m of mreze) { svet.remove(m); if (!m.userData.deljena || !m.isInstancedMesh) m.geometry.dispose(); if (m.isInstancedMesh) m.dispose(); } // tudi instanceMatrix
     mreze.length = 0;
     deli = [];
     seme = 11;
@@ -423,13 +423,13 @@ export function zgradi(THREE, ctx = {}) {
     del("zilnica", "Žilnica (kapilare)", "Lamina choroidocapillaris", "Gosta mreža širokih kapilar tik nad mrežnico; hrani pigmentni epitelij in čutnice.", "#d0606a", [kap, kri], [40, GL.bruch + 6, 8]);
     del("bruchova-membrana", "Bruchova membrana", "Lamina basalis choroideae", "Tanka plast med žilnico in pigmentnim epitelijem; skoznjo prehajajo hranila in kisik.", "#ead9c0", [bruch], [xd, GL.bruch, B], { skrijTocko: true });
     del("pigmentni-epitelij", "Pigmentni epitelij", "Stratum pigmentosum", "Ena plast celic s temnim pigmentom melaninom; vpije odvečno svetlobo in vsak dan »poje« obrabljene konice zunanjih členkov.", "#8a5a44", [pe, mvM], [xd, 52, B]);
-    if (palM) del("palicice", "Paličice", "Cellulae bacilliferae", "Vitke čutnice z dolgim valjastim zunanjim členkom; zaznajo že zelo šibko svetlobo, ne ločijo pa barv. Zunaj rumene pege jih je okoli 20-krat več kot čepkov.", "#b27ccc", [palM], [xd - 6, 34, B - 4], { povecava: "celica-palicica-cepek" });
-    del("cepki", "Čepki", "Cellulae coniferae", fovea ? "V rumeni pegi so samo čepki, tanki in tesno skupaj; zato tu vidimo najostreje in v barvah." : "Čutnice s stožčastim zunanjim členkom; delujejo pri dnevni svetlobi in nam omogočajo barvni vid.", "#eaa648", [cepM], fovea ? [10, 30, B - 4] : [xc, 28, B - 3], { povecava: "celica-palicica-cepek" });
+    if (palM) del("palicice", "Paličice", "Cellulae bacilliferae", "Vitke čutnice (imenujemo jih tudi paličnice) z dolgim valjastim zunanjim členkom; zaznajo že zelo šibko svetlobo, ne ločijo pa barv. Zunaj rumene pege jih je okoli 20-krat več kot čepkov.", "#b27ccc", [palM], [xd - 6, 34, B - 4], { povecava: "celica-palicica-cepek" });
+    del("cepki", "Čepki", "Cellulae coniferae", fovea ? "V jamici rumene pege so samo čepki, tanki in tesno skupaj; zato tu vidimo najostreje in v barvah." : "Čutnice (imenujemo jih tudi čepnice) s stožčastim zunanjim členkom; delujejo pri dnevni svetlobi in nam omogočajo barvni vid.", "#eaa648", [cepM], fovea ? [10, 30, B - 4] : [xc, 28, B - 3], { povecava: "celica-palicica-cepek" });
     del("zunanja-mejna-membrana", "Zunanja mejna membrana", "Stratum limitans externum", "Ni prava membrana, temveč vrsta stikov med čutnicami in Müllerjevimi celicami; loči členke od jeder.", "#f2dbe6", [olm], [xd + 8, 0.5, 4], { skrijTocko: true });
     del("zunanji-jedrni-sloj", "Zunanji jedrni sloj", "Stratum nucleare externum", "Jedra paličic in čepkov, naložena v več vrstah; jedra čepkov so večja in ležijo tik pod zunanjo mejno membrano.", "#6650b4", [onlJ, onl], [xd, -24, B]);
     del("zunanji-pleksiformni-sloj", "Zunanji pleksiformni sloj", "Stratum plexiforme externum", "Tu se čutnice s sinapsami povežejo z bipolarnimi in horizontalnimi celicami.", "#eab4c0", [opl], [xd, yMid("onl", "opl", xd), B], { skrijTocko: true });
     del("horizontalne-celice", "Horizontalne celice", "Neurocyti horizontales", "Povezujejo sosednje čutnice vodoravno in poudarijo meje med svetlim in temnim (kontrast).", "#f08a5d", [veriga[2][0]], [xh, yh, zf]);
-    del("bipolarne-celice", "Bipolarne celice", "Neurocyti bipolares", "Prenašajo signal od čutnic do ganglijskih celic; so drugi nevron na vidni poti.", "#5aa6ea", [veriga[3][0]], [xb, yb, zf]);
+    del("bipolarne-celice", "Bipolarne celice", "Neurocyti bipolares", "Prenašajo signal od čutnic do ganglijskih celic.", "#5aa6ea", [veriga[3][0]], [xb, yb, zf]);
     del("amakrine-celice", "Amakrine celice", "Neurocyti amacrini", "Celice brez aksona, ki v notranjem pleksiformnem sloju povezujejo bipolarne in ganglijske celice; pomagajo zaznati gibanje.", "#46c2a2", [veriga[4][0]], [xa, ya, zf]);
     del("notranji-jedrni-sloj", "Notranji jedrni sloj", "Stratum nucleare internum", "Jedra bipolarnih, horizontalnih, amakrinih in Müllerjevih (opornih) celic.", "#7d63c4", [inl, inlJ], [xd, yMid("opl", "inl", xd), B], { skrijTocko: true });
     del("notranji-pleksiformni-sloj", "Notranji pleksiformni sloj", "Stratum plexiforme internum", "Tu se bipolarne in amakrine celice s sinapsami povežejo z dendriti ganglijskih celic.", "#e6aeba", [ipl], [xd, yMid("inl", "ipl", xd), B], { skrijTocko: true });
@@ -508,7 +508,7 @@ export function zgradi(THREE, ctx = {}) {
     pogled: [0.62, 0.16, 1],
     okvir: { sredisce: [0, -0.05, 0], polmer: 1 },
     dispose() {
-      for (const m of mreze) m.geometry.dispose();
+      for (const m of mreze) { m.geometry.dispose(); if (m.isInstancedMesh) m.dispose(); }
       for (const x of odpad) x.dispose();
       if (napis) napis.geometry.dispose();
     },
