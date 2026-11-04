@@ -745,7 +745,7 @@ label.check input { width: 18px; height: 18px; accent-color: var(--accent); }
 .topbar.tabs-tight .tabs { gap: 2px; }
 .topbar.tabs-tight .tab { padding: 9px 9px; gap: 6px; }
 .topbar.tabs-nobrand .brand-name { display: none; }
-.topbar.tabs-minor .tab:not(.active):not([data-view="path"], [data-view="textbook"], [data-view="chat"], [data-view="competition"]) span { display: none; }
+.topbar.tabs-minor .tab:not(.active):not([data-view="path"], [data-view="uci"], [data-view="chat"], [data-view="competition"]) span { display: none; }
 .topbar.tabs-compact .tab { padding: 9px 11px; }
 .topbar.tabs-compact .tab:not(.active) span { display: none; }
 /* Računalnik: vrstica zavihkov nikoli ne gre pod števce in profil (desno). Če zavihki tudi samo z ikonami
@@ -1002,12 +1002,19 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
     flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px;
     padding: 4px 1px; border-radius: 14px; font-size: 0.72rem; font-weight: 800; line-height: 1.15; background: none;
   }
-  .tabbar .tab span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* Napis v eni vrstici; predolg (»Rruga e të mësuarit«, »Навчальний шлях«) gre v največ dve vrstici, ne v tropičje. */
+  .tabbar .tab span { max-width: 100%; overflow: hidden; overflow-wrap: break-word; text-align: center; text-wrap: balance; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
   .tabbar .tab svg.i { width: 46px; height: 30px; padding: 4px 12px; border-radius: 99px; transition: background 0.15s; }
   .tabbar .tab:hover { background: none; }
   .tabbar .tab.active { background: none; color: var(--accent); }
   .tabbar .tab.active svg.i { background: var(--accent-soft); }
   .topbar { flex-wrap: nowrap; padding: 8px 12px; }
+}
+/* Ozek telefon (360 px): pet napisov brez tropičja (»Tekmovanja«, »Inštruktor«). */
+@media (max-width: 400px) {
+  .tabbar { padding-inline: 2px; }
+  .tabbar .tab { padding-inline: 0; }
+  .tabbar .tab span { letter-spacing: -0.015em; }
 }
 body.pad-open .tabbar { display: none; }
 .pad-tabs button { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; }

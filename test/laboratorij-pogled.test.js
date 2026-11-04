@@ -64,11 +64,10 @@ test("HTTP: lab list without accounts is unlocked (as the textbook)", async () =
   }
 });
 
-test("lab view: tab, Jaz row, i18n and the tutor's open-window command", () => {
+test("lab view: tab in »Uči se«, i18n and the tutor's open-window command", () => {
   const html = fs.readFileSync(new URL("../public/index.html", import.meta.url), "utf8");
-  assert.match(html, /class="tab" data-view="lab"/);
-  assert.match(html, /data-go="lab"/);
-  assert.match(html, /id="view-lab"/);
+  assert.match(html, /data-uci-tab="lab"/);
+  assert.match(html, /<section id="view-lab" class="uci-pane/);
   assert.ok(WINDOW_VIEWS.includes("lab"));
   assert.equal(openWindowIntent("odpri laboratorij").view, "lab");
 });
