@@ -1,0 +1,75 @@
+{
+  "viri": [
+    {
+      "id": "evklid-vesolje",
+      "ime": "Modeli, izdelani v kodi",
+      "avtor": "Evklid",
+      "opis": "Sončni sistem, letni časi, Lunine mene in mrki; vse teksture narisane v kodi, obrisi celin poenostavljeni ročno.",
+      "licenca": "Lastno delo Evklida",
+      "datoteke": [
+        "vesolje/*.js"
+      ]
+    },
+    {
+      "id": "nasa-fact-sheets",
+      "ime": "NASA Planetary Fact Sheets",
+      "avtor": "D. R. Williams, NASA GSFC",
+      "opis": "Polmeri, razdalje, obhodni in vrtilni časi, nagibi osi planetov, Sonca in Lune.",
+      "licenca": "Podatki (dejstva), uporabljeni kot vir",
+      "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/"
+    },
+    {
+      "id": "jpl-approx",
+      "ime": "Approximate Positions of the Planets",
+      "avtor": "E. M. Standish, JPL",
+      "opis": "Elementi tirnic planetov za izračun leg.",
+      "licenca": "Podatki (dejstva), uporabljeni kot vir",
+      "url": "https://ssd.jpl.nasa.gov/planets/approx_pos.html"
+    },
+    {
+      "id": "iau-wgccre",
+      "ime": "IAU WGCCRE 2015: rotacijski elementi",
+      "avtor": "Archinal in sod., Celestial Mechanics and Dynamical Astronomy 130:22 (2018)",
+      "opis": "Smeri vrtilnih osi in vrtenje teles.",
+      "licenca": "Podatki (dejstva), uporabljeni kot vir"
+    },
+    {
+      "id": "schlyter",
+      "ime": "How to compute planetary positions",
+      "avtor": "P. Schlyter",
+      "opis": "Srednji elementi Lunine tirnice.",
+      "licenca": "Podatki (dejstva), uporabljeni kot vir",
+      "url": "https://stjarnhimlen.se/comp/ppcomp.html"
+    },
+    {
+      "id": "usno-seasons",
+      "ime": "Earth's Seasons and Apsides",
+      "avtor": "U.S. Naval Observatory",
+      "opis": "Datumi enakonočij, sončevih obratov, prisončja in odsončja.",
+      "licenca": "Podatki (dejstva), uporabljeni kot vir",
+      "url": "https://aa.usno.navy.mil/data/Earth_Seasons"
+    },
+    {
+      "id": "astro-almanac",
+      "ime": "The Astronomical Almanac, razdelek C (približni obrazci za Sonce)",
+      "avtor": "USNO in HM Nautical Almanac Office",
+      "opis": "Deklinacija Sonca in višina Sonca.",
+      "licenca": "Podatki (dejstva), uporabljeni kot vir"
+    },
+    {
+      "id": "espenak-meeus",
+      "ime": "Five Millennium Canon of Solar/Lunar Eclipses",
+      "avtor": "F. Espenak, J. Meeus, NASA",
+      "opis": "Geometrija mrkov, povečanje Zemljine sence za 2 %.",
+      "licenca": "Podatki (dejstva), uporabljeni kot vir",
+      "url": "https://eclipse.gsfc.nasa.gov/"
+    },
+    {
+      "id": "iau-konstante",
+      "ime": "IAU 2006/2012/2015 resolucije",
+      "avtor": "Mednarodna astronomska zveza",
+      "opis": "Nagib ekliptike 23,4393°, astronomska enota, nazivni polmer Sonca.",
+      "licenca": "Podatki (dejstva), uporabljeni kot vir"
+    }
+  ]
+}

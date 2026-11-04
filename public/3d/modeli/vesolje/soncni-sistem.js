@@ -621,23 +621,8 @@ export function zgradi(THREE, ctx) {
   const hrani = (x) => (odpadki.push(x), x);
   const T = (n) => (visoka ? n : n / 2);
 
-  const kitU = { value: 0.06 };
-  const LUCI = THREE.ShaderChunk.lights_fragment_begin
-    .replace("getDirectionalLightInfo( directionalLight, directLight );", "getDirectionalLightInfo( directionalLight, directLight ); directLight.color *= uKit;")
-    .replace("getSunLightInfo( sunLight, directLight );", "getSunLightInfo( sunLight, directLight ); directLight.color *= uKit;")
-    .replace("getHemisphereLightIrradiance( hemisphereLights[ i ], geometryNormal );", "getHemisphereLightIrradiance( hemisphereLights[ i ], geometryNormal ) * uKit;")
-    .replace("getAmbientLightIrradiance( ambientLightColor );", "getAmbientLightIrradiance( ambientLightColor ) * uKit;");
-  // Planets: lit by the Sun's point light; the kit's studio lights and environment (IBL) are dimmed to a faint fill.
-  function snovSonca(o) {
-    const m = hrani(new THREE.MeshStandardMaterial({ roughness: 0.92, metalness: 0, ...o }));
-    m.onBeforeCompile = (sh) => {
-      sh.uniforms.uKit = kitU;
-      sh.fragmentShader = "uniform float uKit;\n" + sh.fragmentShader.replace("#include <lights_fragment_begin>", LUCI)
-        .replace("#include <lights_fragment_end>", "iblIrradiance *= uKit; radiance *= uKit;\n#include <lights_fragment_end>");
-    };
-    m.customProgramCacheKey = () => "soncni-sistem-luc";
-    return m;
-  }
+  // Planets: lit only by the Sun's point light and a faint ambient fill (the kit's studio lights are off, luci: false).
+  const snovSonca = (o) => hrani(new THREE.MeshStandardMaterial({ roughness: 0.92, metalness: 0, ...o }));
   function tekstura(px, w, h, barvna = true) {
     const cv = document.createElement("canvas");
     cv.width = w; cv.height = h;
@@ -661,7 +646,7 @@ export function zgradi(THREE, ctx) {
 
   // ---- Sun
   const sun = new THREE.PointLight(0xfff2dc, 3.4, 0, 0);
-  group.add(sun);
+  group.add(sun, new THREE.AmbientLight(0xb4c2de, 0.22));
   // Textures start at a quarter of their size (fast first frame) and are replaced by full-size ones in time slices.
   const naloge = [];
   function postopna(gen, izbor, w, barvna, nastavi, prednost = false) {
@@ -1144,6 +1129,7 @@ export function zgradi(THREE, ctx) {
     deli,
     nadzor,
     merilo: () => MERILA[nacin],
+    luci: false,
     izberi(id) {
       izbran = T_[id] && T_[id].Pv ? id : id === "obroci" ? "saturn" : null;
       barvajTirnice();
