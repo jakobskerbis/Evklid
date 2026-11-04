@@ -215,14 +215,19 @@ export function open3d(id, title = "", param = null) {
   frame.src = `/3d?vgrajeno=1#${encodeURIComponent(id)}${q ? `?${q}` : ""}`;
   el.append(frame);
   document.body.append(el);
-  document.body.classList.add("uci-3d-open");
-  // Okvir je širok kot vidni del zaslona: če je stran aplikacije kje širša od zaslona, Android razširi postavitev in
-  // okvir s `inset: 0` bi segal čez desni rob (odrezane vrednosti in gumbi v 3D svetu).
+  document.body.classList.add("uci-3d-odprto");
+  // Okvir je velik kot vidni del zaslona: če je stran aplikacije kje širša od zaslona, Android razširi postavitev (in
+  // z njo višino) in okvir s `inset: 0` bi segal čez desni in spodnji rob (drsenje, odrezana glava ali spodnja vrstica).
   const vv = window.visualViewport;
-  const prilagodi = () => { if (vv) Object.assign(el.style, { width: `${Math.round(vv.width * Math.max(1, vv.scale))}px`, left: "0", right: "auto" }); };
+  const prilagodi = () => {
+    if (!vv) return;
+    const k = Math.max(1, vv.scale);
+    Object.assign(el.style, { width: `${Math.round(vv.width * k)}px`, height: `${Math.round(vv.height * k)}px`, left: "0", right: "auto", top: `${k > 1 ? 0 : Math.round(vv.offsetTop)}px`, bottom: "auto" });
+  };
   prilagodi();
   vv?.addEventListener("resize", prilagodi);
-  full = { el, frame, from: document.activeElement, odjavi: () => vv?.removeEventListener("resize", prilagodi) };
+  vv?.addEventListener("scroll", prilagodi); // iOS premakne vidni del (tipkovnica): okvir mu sledi
+  full = { el, frame, from: document.activeElement, odjavi: () => (vv?.removeEventListener("resize", prilagodi), vv?.removeEventListener("scroll", prilagodi)) };
   D?.onOverlay?.(true);
   frame.focus();
 }
@@ -233,7 +238,7 @@ function close3d() {
   full = null;
   odjavi();
   el.remove(); // okvir se uniči skupaj s prizorom (pomnilnik grafične kartice)
-  document.body.classList.remove("uci-3d-open");
+  document.body.classList.remove("uci-3d-odprto");
   D?.onOverlay?.(false);
   if (from?.isConnected) from.focus({ preventScroll: true });
   return true;

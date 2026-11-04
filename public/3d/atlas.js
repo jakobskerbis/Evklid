@@ -1,6 +1,6 @@
 // Atlas človeškega telesa (docs/3d.md): plasti telesa iz Z-Anatomy (public/3d/modeli/telo/*.glb), imena iz
 // atlas-strukture.json in atlas-imena.json. Postavitev zaslona kot pri Astri (iskanje, Brskaj, učenje, povečava,
-// kompas smeri, Nastavitve pogleda), videz Evklidov. Vsaka plast je razdeljena po razredih tkiva v nekaj
+// smeri pogleda v meniju »⋯«, Nastavitve pogleda), videz Evklidov. Vsaka plast je razdeljena po razredih tkiva v nekaj
 // BatchedMesh (en klic risanja na razred), zato je okostje z organi okoli 15 klicev risanja namesto 400.
 // Izbran del se nariše posebej (sij), ostali potemnijo; rentgen naredi vse ostalo prosojno steklo.
 import { THREE, ustvariSceno, kakovostNaprave, poveziGumbVrtenja } from "./scena.js";
@@ -33,14 +33,36 @@ const POGLEDI = {
   perspektiva: [0.62, 0.28, 1],
 };
 const KOMPAS = [
-  ["zg", [0, 1, 0]],
-  ["sp", [0, -1, 0]],
-  ["l", [1, 0, 0]],
-  ["d", [-1, 0, 0]],
   ["pr", [0, 0, 1]],
   ["za", [0, 0, -1]],
+  ["l", [1, 0, 0]],
+  ["d", [-1, 0, 0]],
+  ["zg", [0, 1, 0]],
+  ["sp", [0, -1, 0]],
 ];
 const KVIZ_VPRASANJ = 10;
+// Med vlečenjem drsnika (prerez, razmik) ostaneta vidna le njegov gumb in tirnica, ostalo je prosojno, da se vidi
+// telo (j, 4. 11.). Brez pointercancel: iOS ga pošlje takoj, ko drsnik prevzame poteg; konec ujamemo s pointerup,
+// touchend (iOS) ali change ob spustu.
+function prosojnoObVlecenju(inp, koren) {
+  inp.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    const id = e.pointerId;
+    const KONEC = ["pointerup", "touchend", "touchcancel", "blur", "contextmenu"];
+    inp.classList.add("a3-aktiven");
+    koren.classList.add("a3-drsam");
+    const konec = (ev) => {
+      if (ev.pointerId !== undefined && ev.pointerId !== id) return; // drug prst na odru ne konča vlečenja
+      if (ev.touches?.length) return; // dvig drugega prsta (touchend nima pointerId)
+      inp.classList.remove("a3-aktiven");
+      koren.classList.remove("a3-drsam");
+      for (const t of KONEC) window.removeEventListener(t, konec);
+      inp.removeEventListener("change", konec);
+    };
+    for (const t of KONEC) window.addEventListener(t, konec);
+    inp.addEventListener("change", konec);
+  });
+}
 
 const mk = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -151,19 +173,6 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   vrsta3.append(levo3, povecava);
   vrh.append(glava, vrsta2, vrsta3);
 
-  const kompas = mk("div", "a3-kompas");
-  kompas.setAttribute("role", "group");
-  kompas.setAttribute("aria-label", t("a3.compass"));
-  const kompasGumbi = KOMPAS.map(([k, d]) => {
-    const b = gumb("a3-smer", "", t(`a3.dir.${k}`));
-    b.textContent = t(`a3.dirShort.${k}`);
-    b.dataset.smer = k;
-    // Pogled od zgoraj ali spodaj: majhen odmik naprej, da se kamera ne obrne okoli navpične osi.
-    b.addEventListener("click", () => pogled(new THREE.Vector3(d[0], d[1], d[2] + (d[1] ? 0.002 : 0))));
-    kompas.append(b);
-    return { b, d: new THREE.Vector3(...d) };
-  });
-
   const dno = mk("div", "a3-dno");
   const namig = mk("p", "a3-namig", t(typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches ? "a3.hintMouse" : "a3.hint"));
   const btnNastavitve = gumb("a3-krog a3-nast", icon("sliders-horizontal"), t("a3.viewSettings"));
@@ -196,7 +205,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   meni.setAttribute("role", "menu");
   meni.hidden = true;
 
-  el.append(oder, vrh, kompas, dno, nalaganje, list, meni);
+  el.append(oder, vrh, dno, nalaganje, list, meni);
 
   // ---------- podatki ----------
   const [strukture, imena, seznam] = await Promise.all([
@@ -940,25 +949,6 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     });
   }
 
-  // ---------- kompas ----------
-  const _q = new THREE.Quaternion();
-  const _v = new THREE.Vector3();
-  kit.naKorak(() => {
-    _q.copy(kit.camera.quaternion).invert();
-    const R = 24;
-    const vrstni = kompasGumbi.map((k) => {
-      _v.copy(k.d).applyQuaternion(_q);
-      return { k, x: _v.x, y: _v.y, z: _v.z };
-    });
-    vrstni.sort((a, b) => a.z - b.z);
-    vrstni.forEach((o, i) => {
-      o.k.b.style.transform = `translate(${(o.x * R).toFixed(1)}px, ${(-o.y * R).toFixed(1)}px)`;
-      o.k.b.style.zIndex = String(i + 1);
-      o.k.b.classList.toggle("zadaj", o.z < -0.2);
-    });
-    return false;
-  });
-
   // ---------- iskanje ----------
   let izbranRez = -1;
   function isci() {
@@ -1272,6 +1262,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       razIn.value = 0;
       razIn.dispatchEvent(new Event("input"));
     });
+    prosojnoObVlecenju(razIn, el);
     razVrsta.append(razIn, razPon);
     raz.append(razVrh, razVrsta);
     box.append(raz);
@@ -1311,6 +1302,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       preSw.setAttribute("aria-checked", String(prerez.on));
       uporabiPrerez();
     });
+    prosojnoObVlecenju(preIn, el);
     pre.append(preVrh, preOs, preIn);
     box.append(pre);
     // Rentgen.
@@ -1583,16 +1575,33 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     e.stopPropagation();
     if (!meni.hidden) return zapriPlavajoce();
     meni.replaceChildren();
+    // Smeri pogleda (prej okrogel kompas spodaj desno; j, 4. 11.: samo v tem meniju, da ne zakriva telesa).
+    const smeri = mk("div", "a3-meni-skupina");
+    smeri.setAttribute("role", "group");
+    smeri.setAttribute("aria-label", t("a3.compass"));
+    smeri.append(mk("p", "a3-meni-naslov", t("a3.compass")));
+    for (const [k, d] of KOMPAS) {
+      const b = gumb("a3-meni-vrsta", "", "");
+      b.textContent = t(`a3.dir.${k}`);
+      b.setAttribute("role", "menuitem");
+      // Pogled od zgoraj ali spodaj: majhen odmik naprej, da se kamera ne obrne okoli navpične osi.
+      b.addEventListener("click", () => {
+        zapriPlavajoce();
+        btnMeni.focus({ preventScroll: true });
+        pogled(new THREE.Vector3(d[0], d[1], d[2] + (d[1] ? 0.002 : 0)));
+      });
+      smeri.append(b);
+    }
     const v = gumb("a3-meni-vrsta", `${icon("info")}<span>${t("a3.sources")}</span>`);
     v.setAttribute("role", "menuitem");
     v.addEventListener("click", () => {
       meni.hidden = true;
       viri();
     });
-    meni.append(v);
+    meni.append(smeri, mk("hr", "a3-meni-crta"), v);
     meni.hidden = false;
     btnMeni.setAttribute("aria-expanded", "true");
-    v.focus();
+    smeri.querySelector("button").focus();
   });
   btnZapri.hidden = !zapri;
   btnZapri.addEventListener("click", () => zapri?.());

@@ -597,8 +597,9 @@ export function ustvariSceno(el, opts = {}) {
   };
   const priblizaj = (k) => {
     if (nacin === "hoja") return premakni((k > 1 ? 1 : -1) * hitrostHoje() * 0.6, 0, 0); // gumba +/− stopita naprej/nazaj
-    if (k > 1) controls.dollyIn(k);
-    else controls.dollyOut(1 / k);
+    // OrbitControls: dollyOut(k) kamero približa (polmer / k), dollyIn(k) oddalji (polmer · k); k > 1 je »+«.
+    if (k > 1) controls.dollyOut(k);
+    else controls.dollyIn(1 / k);
     controls.update();
     narisi();
   };
@@ -648,10 +649,16 @@ export function ustvariSceno(el, opts = {}) {
   raycaster.camera = camera; // zakritje točk (raycaster.set brez kamere): Sprite.raycast potrebuje kamero
   // Točke (oblak elektronov, pike orbital) zadene samo tap blizu točke: privzeti prag 1 je pri modelu s polmerom 1 cel model.
   raycaster.params.Points.threshold = 0.02;
+  const vidnaVeja = (o) => {
+    for (let x = o; x; x = x.parent) if (!x.visible) return false;
+    return true;
+  };
   function zadetki(ndc, objekti, filter = null) {
     raycaster.setFromCamera(ndc, camera);
     // Najbližji zadetek prvi (mreže lahko imajo svoj raycast, ki doda zadetke v poljubnem vrstnem redu).
-    const vsi = raycaster.intersectObjects(objekti, true).sort((a, b) => a.distance - b.distance);
+    // Raycaster three.js zadene tudi skrite mreže (visible = false), npr. skrit pokrov izreza celične membrane, ki bi
+    // prestregel vsak dotik (j, 4. 11.). Takih ne štejemo; nevidni ročaji (vidna mreža, material visible: false) ostanejo.
+    const vsi = raycaster.intersectObjects(objekti, true).filter((h) => vidnaVeja(h.object)).sort((a, b) => a.distance - b.distance);
     return filter ? vsi.filter(filter) : vsi;
   }
 
@@ -702,7 +709,7 @@ export function ustvariSceno(el, opts = {}) {
         const d = _smer.length();
         raycaster.set(camera.position, _smer.normalize());
         raycaster.far = d;
-        const hit = raycaster.intersectObjects(ovire, true)[0];
+        const hit = raycaster.intersectObjects(ovire, true).find((h) => vidnaVeja(h.object));
         raycaster.far = Infinity;
         t.zakrita = !!hit && hit.distance < d - Math.max(0.02, d * 0.015);
       }
