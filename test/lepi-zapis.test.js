@@ -47,3 +47,10 @@ test("zapis s tipkovnice se olepša, ko kazalec gre naprej", () => {
   // Zapletenejši ulomek ostane zapis, ki ga izriše predogled.
   assert.equal(type(" ", "(x+1)/(x-1)"), "(x+1)/(x-1) ");
 });
+
+test("zapis ne spremeni pomena", () => {
+  assert.equal(type("+", "f(2)/(3)"), "f(2)/(3)+"); // funkcija, ne ulomek
+  assert.equal(type("y", "√(x)"), "√(x)y"); // √xy bi bil drug koren
+  assert.equal(type("x2/3"), "x2/3"); // ne x na 2/3
+  assert.equal(type("3", "x^(2)"), "x^(2)3");
+});

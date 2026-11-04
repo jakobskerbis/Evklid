@@ -473,8 +473,8 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .composer { padding: 2px 16px 6px; background: transparent; }
 /* Vrstica za pisanje brez okna (j, 2026-11-04: »naj samo piše po strani brez okna«, več prostora za vsebino): pišeš
    naravnost na stran pod pogovorom, le tanka črta pokaže, kje; ob pisanju se obarva. */
-.composer-row { display: flex; gap: 6px; align-items: flex-end; margin: 0 auto; background: none; border: 0; border-top: 1px solid var(--border); border-radius: 0; padding: 4px 0 0; }
-.composer-row:focus-within { border-top-color: var(--accent); }
+.composer-row { display: flex; gap: 6px; align-items: flex-end; margin: 0 auto; background: none; border: 0; border-top: 1px solid color-mix(in srgb, var(--muted) 55%, transparent); border-radius: 0; padding: 4px 0 0; }
+.composer-row:focus-within { border-top: 2px solid var(--accent); padding-top: 3px; } /* jasen fokus: črta debelejša, vrstica ne skoči */
 .composer textarea { flex: 1; resize: none; max-height: 200px; padding: 8px 6px; border: 0; background: none; outline: none; min-height: 38px; }
 .chat-view:has(.messages > .msg) .composer > .hint { display: none; } /* namig le v praznem klepetu */
 .icon-btn { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; color: var(--muted); }

@@ -27,21 +27,21 @@ const RULES = [
   [/->$/, () => ["→"]],
   [/\+-$/, () => ["±"]],
   // Ulomek iz števil: 3/4 → ³⁄₄ (ne datum ali del daljšega števila z vejico).
-  [/(?<![\d.,/⁄])(\d+)\/(\d)$/, (m) => [conv(m[1], SUP) + "⁄" + SUB[m[2]], "sub"]],
+  [/(?<![\p{L}\d.,/⁄])(\d+)\/(\d)$/u, (m) => [conv(m[1], SUP) + "⁄" + SUB[m[2]], "sub"]],
   // Ulomek s tipkovnice s preprostim števcem in imenovalcem: (3)/(4) → ³⁄₄, tudi ko kazalec že gre naprej.
-  [/\((\d+|\p{L})\)\/\((\d+|\p{L})\)(\D?)$/u, (m) => {
+  [/(?<![\p{L}\p{N})\]])\((\d+|\p{L})\)\/\((\d+|\p{L})\)([^\p{L}\p{N}]?)$/u, (m) => {
     const a = conv(m[1], SUP), b = conv(m[2], SUB);
     return a && b ? [a + "⁄" + b + m[3]] : null;
   }],
   // Potenca in indeks: x^2, x^-1, x^n, x^(n+1), a_n, log_10, a_(n+1).
   [/(?<=\S)([\^_])([−-]?\d)$/, (m) => [conv(m[2], m[1] === "^" ? SUP : SUB), m[1] === "^" ? "sup" : "sub"]],
   [/(?<=\S)([\^_])(\p{Ll})$/u, (m) => (m[1] === "^" ? SUP : SUB)[m[2]] ? [(m[1] === "^" ? SUP : SUB)[m[2]]] : null],
-  [/(?<=\S)([\^_])\(([^()\s]+)\)(.?)$/, (m) => {
+  [/(?<=\S)([\^_])\(([^()\s]+)\)(\D?)$/, (m) => {
     const s = conv(m[2], m[1] === "^" ? SUP : SUB);
     return s ? [s + m[3]] : null;
   }],
   // Koren s tipkovnice s preprostim argumentom: √(2) → √2.
-  [/([√∛∜])\((\d+|\p{L})\)(\D?)$/u, (m) => [m[1] + m[2] + m[3]]],
+  [/([√∛∜])\((\d+|\p{L})\)([^\p{L}\p{N}]?)$/u, (m) => [m[1] + m[2] + m[3]]],
 ];
 
 /**
@@ -69,14 +69,32 @@ export function prettify(before, typed, run = null) {
 /** Polje (textarea) med pisanjem sproti lepša. Kliči pred drugimi poslušalci »input«. */
 export function attachPrettify(field) {
   let run = null;
-  field.addEventListener("input", (e) => {
-    const typed = e.data ?? "";
-    if (e.isComposing || !/^insert(Text|CompositionText)?$/.test(e.inputType || "") || !typed) return void (run = null);
+  let last = null; // zadnja zamenjava: { from, text, orig } – Backspace takoj po njej vrne prvotni zapis (x^2, *, _)
+  const apply = (typed) => {
     const at = field.selectionStart;
-    if (at !== field.selectionEnd) return void (run = null);
-    const r = prettify(field.value.slice(0, at), typed.slice(-1), run);
+    if (at !== field.selectionEnd) return void (run = last = null);
+    const before = field.value.slice(0, at);
+    const r = prettify(before, typed.slice(-1), run);
     run = r?.run ?? null;
+    last = null;
     if (!r) return;
     field.setRangeText(r.text, r.from, at, "end");
+    last = { from: r.from, text: r.text, orig: before.slice(r.from) };
+  };
+  field.addEventListener("keydown", (e) => {
+    if (e.key !== "Backspace" || !last || e.ctrlKey || e.metaKey || e.altKey) return;
+    const at = field.selectionStart;
+    const { from, text, orig } = last;
+    last = run = null;
+    if (at !== field.selectionEnd || at !== from + text.length || field.value.slice(from, at) !== text) return;
+    e.preventDefault();
+    field.setRangeText(orig, from, at, "end"); // kot razveljavitev samopopravka na tipkovnici
+    field.dispatchEvent(new Event("input", { bubbles: true }));
   });
+  field.addEventListener("input", (e) => {
+    const typed = e.data ?? "";
+    if (e.isComposing || !/^insert(Text|CompositionText)?$/.test(e.inputType || "") || !typed) return void (run = last = null);
+    apply(typed);
+  });
+  field.addEventListener("compositionend", (e) => e.data && apply(e.data));
 }

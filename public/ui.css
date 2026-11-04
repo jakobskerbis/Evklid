@@ -637,24 +637,22 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
    gumbe (vsak steber ima svoj odmik). Na telefonu brez stebrov; lahki način, tisk in forced-colors brez arhitekture. */
 @media screen and (forced-colors: none) {
   :root[data-arch]:not(.lite) { --arch-line: color-mix(in srgb, var(--edge-c) 70%, var(--surface)); }
-  :root[data-arch]:not(.lite) :is(.topbar, .tabbar, .composer) { background-repeat: no-repeat; background-size: 100% 1px; }
+  :root[data-arch]:not(.lite) :is(.topbar, .tabbar) { background-repeat: no-repeat; background-size: 100% 1px; }
   :root[data-arch]:not(.lite) .topbar {
     padding-bottom: calc(10px + 9px + var(--edge-h, var(--band-h)));
     background-image: linear-gradient(var(--arch-line), var(--arch-line)), linear-gradient(var(--arch-line), var(--arch-line)), linear-gradient(var(--arch-line), var(--arch-line));
     background-position: left bottom 0, left bottom 3px, left bottom calc(8px + var(--edge-h, var(--band-h)));
   }
   :root[data-arch]:not(.lite) .topbar::after { bottom: 6px; }
-  :root[data-arch]:not(.lite) :is(.tabbar, .composer) {
+  :root[data-arch]:not(.lite) .tabbar {
     background-image: linear-gradient(var(--arch-line), var(--arch-line)), linear-gradient(var(--arch-line), var(--arch-line));
     background-position: left top, left top 3px;
   }
   :root[data-arch]:not(.lite) .tabbar { padding-top: calc(12px + var(--edge-h, var(--band-h))); }
   :root[data-arch]:not(.lite) .tabbar::after { top: 6px; }
-  :root[data-arch]:not(.lite) .composer { padding-top: calc(17px + var(--edge-h, var(--band-h))); }
-  :root[data-arch]:not(.lite) .composer::after { top: 6px; }
+  /* Vrstica za pisanje je brez stilobata (j, 2026-11-04: brez okna, več prostora za vsebino). */
   @media (max-width: 760px) {
     :root[data-arch]:not(.lite) .topbar { padding-bottom: calc(8px + 9px + var(--edge-h, var(--band-h))); }
-    :root[data-arch]:not(.lite) .composer { padding-top: calc(13px + var(--edge-h, var(--band-h))); }
   }
   /* Kapitela na zgornjih vogalih okenc in spustnih seznamov (pod 3 px črto v barvi pasu). */
   :root[data-arch]:not(.lite) :is(.quick-pop, .profile-pop, .usage-pop, .dd-list) {
