@@ -6,37 +6,56 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Iz osnovne šole že poznaš aritmetično sredino, ki ji pravimo tudi povprečje, in veš, da podatke lahko prikažemo v tabeli ali s stolpci. V srednji šoli pa dobiš na voljo orodja, s katerimi o podatkih zares **odločaš**.
+Dva prijatelja sta avgusta pet noči štela utrinke iz roja Perzeidov, vsak na svojem kraju. Vsako noč sta zapisala, koliko utrinkov sta videla v eni uri.
 
-Predstavljaj si, da dva razreda pri isti kontrolni nalogi dosežeta enako povprečje. Ali sta razreda enako uspešna? Ni nujno. V prvem so lahko vsi približno povprečni, v drugem pa je polovica odličnih in polovica na robu padca. Povprečje samo tega ne pove. Povedo pa ti to **mere razpršenosti**. Statistiko srečaš povsod: pri vremenski napovedi, v športnih rezultatih, v anketah in pri branju novic. Če jo razumeš, ne nasedaš preprosto izbranim številkam.
+- Prvi kraj: $20, 22, 19, 21, 18$
+- Drugi kraj: $2, 38, 35, 3, 22$
 
-Vse, kar potrebuješ iz prejšnjih tem, so osnovni računi, preoblikovanje izrazov in reševanje enačb. Nove ideje te lekcije so srednje vrednosti, mere razpršenosti in prikazi podatkov. Pri preverjanju razumevanja ti pomaga interaktivna simulacija spodaj (»Obdelava podatkov: sredine in razpršenost«).
+Vsak je v petih nočeh naštel $100$ utrinkov, torej v povprečju $20$ na uro. Prihodnje leto boš imel samo eno prosto noč. Kam bi šel? Zapiši si odločitev in razlog zanjo.
+
+Na prvem kraju je vsaka noč skoraj enaka. Na drugem so bile nekatere noči oblačne, druge jasne, zato tam ne veš, kaj te čaka. Povprečje tega ne pove. Pove ti to **razpršenost** podatkov. Enaka orodja uporabljajo vremenoslovci, trenerji in novinarji, ki poročajo o anketah. Če jih razumeš, ne nasedaš preprosto izbranim številkam.
 
 ## Razlaga
 
 **1. Osnovni pojmi.** Statistična enota je en predmet opazovanja (učenec, meritev). Spremenljivka je lastnost, ki jo opazujemo (točke na testu). Vrednosti zapišemo kot $x_1, x_2, \ldots, x_n$, kjer je $n$ število podatkov. **Frekvenca** $f$ pove, kolikokrat se vrednost pojavi. **Relativna frekvenca** je delež $\dfrac{f}{n}$, običajno v odstotkih.
 
+*Preveri:* V $40$ nočeh je bilo $10$ jasnih. Kolikšna je relativna frekvenca jasnih noči? ($\dfrac{10}{40} = 0{,}25$, torej $25\,\%$.)
+
 **2. Srednje vrednosti.** To so števila, ki predstavijo »sredino« podatkov.
 
 - **Aritmetična sredina** je vsota podatkov, deljena z njihovim številom:
 $$\bar{x} = \frac{x_1 + x_2 + \cdots + x_n}{n}$$
-Če so podatki v frekvenčni tabeli z vrednostmi $x_i$ in frekvencami $f_i$, računamo **tehtano sredino** $\bar{x} = \dfrac{\sum f_i x_i}{\sum f_i}$.
+Če so podatki v frekvenčni tabeli z vrednostmi $x_i$ in frekvencami $f_i$, računamo **tehtano sredino** $\bar{x} = \dfrac{\sum f_i x_i}{\sum f_i}$. Znak $\sum$ (sigma) pomeni vsoto vseh takih členov: $\sum f_i x_i = f_1 x_1 + f_2 x_2 + \cdots$, $\sum f_i$ pa je število vseh podatkov $n$.
 - **Mediana** $M$ je srednja vrednost urejenih podatkov. Podatke uredimo po velikosti. Pri lihem $n$ je mediana srednji podatek, pri sodem $n$ pa aritmetična sredina obeh srednjih.
 - **Modus** je podatek z največjo frekvenco. Podatki imajo lahko dva modusa ali pa nobenega, če se vse vrednosti pojavijo enakokrat.
 
 Aritmetična sredina je občutljiva na **osamelce**, to so podatki, ki zelo odstopajo. Mediana je odpornejša. Če je v razredu devet dijakov z žepnino $10\,\text{€}$ in eden z $200\,\text{€}$, je povprečje $29\,\text{€}$, mediana pa $10\,\text{€}$.
 
+:::premisli
+Napovej: kako se spremenita povprečje in mediana, če žepnina tistega dijaka naraste z $200\,\text{€}$ na $2\,000\,\text{€}$?
+---
+Povprečje skoči na $\dfrac{9 \cdot 10 + 2\,000}{10} = 209\,\text{€}$, mediana pa ostane $10\,\text{€}$. Mediana je odvisna le od srednjih podatkov, zato je skrajni podatek ne premakne.
+:::
+
 **3. Mere razpršenosti.** Pokažejo, kako se podatki raztezajo okoli sredine.
 
 - **Razmah** (variacijski razmik) je $R = x_{\max} - x_{\min}$. Je preprost, a odvisen le od dveh skrajnih podatkov.
 - **Kvartili.** Urejene podatke razdelimo na štiri približno enake dele. Drugi kvartil $Q_2$ je mediana. Prvi kvartil $Q_1$ je mediana spodnje polovice, tretji kvartil $Q_3$ pa mediana zgornje polovice. Pri lihem $n$ srednji podatek v nobeno polovico ne všteješ. **Medkvartilni razmik** je $Q_3 - Q_1$ in zajame sredinsko polovico podatkov.
-- **Varianca** je povprečje kvadratov odklonov od sredine:
+- **Varianca** je povprečje kvadratov odklonov. **Odklon** podatka je razlika $x_i - \bar{x}$, torej koliko podatek leži nad sredino ali pod njo:
 $$\sigma^2 = \frac{(x_1-\bar{x})^2 + \cdots + (x_n-\bar{x})^2}{n}$$
 - **Standardni odklon** je njen koren: $\sigma = \sqrt{\sigma^2}$. Ima enako enoto kot podatki, zato ga lahko neposredno primerjamo s sredino. Manjši kot je, bolj so podatki zbrani okoli sredine.
 
-Odklone kvadriramo, ker je njihova vsota vedno $0$ (pozitivni in negativni se uničijo). Kvadrati pa so vsi nenegativni.
+*Preveri:* Kolikšen je razmah utrinkov na drugem kraju iz uvoda? ($38 - 2 = 36$, na prvem pa le $22 - 18 = 4$.)
+
+:::premisli
+Zakaj v varianci odklone kvadriramo? Kaj bi dobil, če bi jih samo seštel?
+---
+Vsota odklonov je vedno $0$, ker se pozitivni in negativni izničijo. Na prvem kraju iz uvoda so odkloni od $20$ enaki $0, 2, -1, 1, -2$, vsota je $0$. Kvadrati so nenegativni, zato se ne izničijo, veliki odkloni pa štejejo več.
+:::
 
 **4. Osamelci.** Podatek je običajno osamelec, če leži pod $Q_1 - 1{,}5\,(Q_3 - Q_1)$ ali nad $Q_3 + 1{,}5\,(Q_3 - Q_1)$.
+
+*Preveri:* Je pri $Q_1 = 10$ in $Q_3 = 14$ podatek $21$ osamelec? (Da, zgornja meja je $14 + 1{,}5 \cdot 4 = 20$.)
 
 **5. Prikazi podatkov.**
 
@@ -46,17 +65,21 @@ Odklone kvadriramo, ker je njihova vsota vedno $0$ (pozitivni in negativni se un
 | Stolpčni diagram | kategorije ali posamezne vrednosti; stolpci so ločeni |
 | Krožni diagram | deleži celote; središčni kot kroga je $\dfrac{f}{n}\cdot 360^\circ$ |
 | Histogram | števila, razvrščena v razrede iste širine; stolpci se dotikajo |
-| Škatla z brki | pet števil: najmanjši podatek, $Q_1$, $M$, $Q_3$, največji podatek |
+| Škatla z brki | pet števil: najmanjši podatek, $Q_1$, $M$, $Q_3$, največji podatek; osamelce rišemo kot pike |
 
-Pri razvrščenih podatkih računamo z **razrednimi sredinami**. Rezultat je le približek, saj ne vemo, kje v razredu ležijo posamezni podatki.
+Pri razvrščenih podatkih vsak podatek nadomestimo z **razredno sredino**, to je s sredino njegovega razreda (za razred od $10$ do $20$ je to $15$). Rezultat je le približek, saj ne vemo, kje v razredu ležijo posamezni podatki.
+
+*Preveri:* Kolikšen središčni kot dobi $25\,\%$ podatkov? ($0{,}25 \cdot 360^\circ = 90^\circ$.)
+
+V simulaciji spodaj (»Obdelava podatkov: sredine in razpršenost«) najprej napovej, kaj se zgodi s sredino, ko drsnik »razpršenost« premakneš s $4$ na $12\,\text{cm}$. Nato ga premakni: histogram in škatla z brki se razširita, $\sigma$ naraste, sredina pa ostane skoraj enaka.
 
 ## Rešeni primeri
 
 ### Primer 1 (lažji)
 
-Osem dijakov je na kontrolni nalogi doseglo točke: $6, 9, 7, 10, 8, 9, 5, 12$. Določi aritmetično sredino, mediano, modus in razmah.
+Osem članov astronomskega krožka je v isti uri naštelo utrinke: $6, 9, 7, 10, 8, 9, 5, 12$. Določi aritmetično sredino, mediano, modus in razmah.
 
-**Podatki:** $n = 8$, točke: $6, 9, 7, 10, 8, 9, 5, 12$
+**Podatki:** $n = 8$, števila utrinkov: $6, 9, 7, 10, 8, 9, 5, 12$
 **Iščemo:** $\bar{x}$, $M$, modus in $R$
 
 :::formula
@@ -69,7 +92,7 @@ $\bar{x} = \dfrac{x_1 + \cdots + x_n}{n}$, $\;M$ = sredina urejenih podatkov, $\
 2. Urejeni podatki: $5, 6, 7, 8, 9, 9, 10, 12$. Ker je $n = 8$ sod, je mediana sredina četrtega in petega podatka: $M = \dfrac{8 + 9}{2} = 8{,}5$.
 3. Modus je $9$, ker se pojavi dvakrat, vse ostale vrednosti pa le enkrat.
 4. Razmah: $R = 12 - 5 = 7$.
-5. Odgovor: aritmetična sredina je $8{,}25$ točke, mediana $8{,}5$ točke, modus $9$ točk in razmah $7$ točk.
+5. Odgovor: aritmetična sredina je $8{,}25$ utrinka, mediana $8{,}5$, modus $9$ in razmah $7$ utrinkov.
 
 ### Primer 2 (srednji)
 
@@ -107,15 +130,38 @@ $\bar{x} = \dfrac{\sum f_i x_i}{n}$, $\;\sigma^2 = \dfrac{\sum f_i (x_i - \bar{x
 
 1. Preveri število podatkov: $4 + 8 + 5 + 2 + 1 = 20$.
 2. Vsota vrednosti: $\sum f_i x_i = 0 + 8 + 10 + 6 + 4 = 28$, zato je $\bar{x} = \dfrac{28}{20} = 1{,}4$.
-3. Frekvence seštevamo po vrsti: do vrednosti $0$ je $4$ podatkov, do vrednosti $1$ pa $12$. Deseti in enajsti podatek sta zato oba $1$, torej je $M = 1$. Modus je $1$ (največja frekvenca $8$).
-4. Kvadrati odklonov, pomnoženi s frekvenco: $4 \cdot 1{,}96 = 7{,}84$; $8 \cdot 0{,}16 = 1{,}28$; $5 \cdot 0{,}36 = 1{,}8$; $2 \cdot 2{,}56 = 5{,}12$; $1 \cdot 6{,}76 = 6{,}76$. Vsota je $22{,}8$.
+3. Frekvence seštevamo po vrsti: do vrednosti $0$ je $4$ podatkov, do vrednosti $1$ pa $12$. Pri $n = 20$ sta srednja podatka deseti in enajsti. Oba ležita med petim in dvanajstim podatkom, ki so vsi enaki $1$, torej je $M = 1$. Modus je $1$ (največja frekvenca $8$).
+4. Kvadrati odklonov od $\bar{x} = 1{,}4$, pomnoženi s frekvenco (npr. $(0 - 1{,}4)^2 = 1{,}96$): $4 \cdot 1{,}96 = 7{,}84$; $8 \cdot 0{,}16 = 1{,}28$; $5 \cdot 0{,}36 = 1{,}8$; $2 \cdot 2{,}56 = 5{,}12$; $1 \cdot 6{,}76 = 6{,}76$. Vsota je $22{,}8$.
 5. Varianca: $\sigma^2 = \dfrac{22{,}8}{20} = 1{,}14$. Standardni odklon: $\sigma = \sqrt{1{,}14} \approx 1{,}07$.
 6. Odgovor: $\bar{x} = 1{,}4$, $M = 1$, modus $1$, $\sigma^2 = 1{,}14$ in $\sigma \approx 1{,}07$. Učenec ima v povprečju $1{,}4$ brata ali sestre, običajni odklon od tega pa je okoli $1$.
+
+### Primer 4 – zdaj ti
+
+Astronomski krožek je štiri noči štel utrinke v eni uri: $14$, $18$, $11$ in $20$. Koliko utrinkov mora našteti peto noč, da bo povprečje vseh petih noči $16$?
+
+**Podatki:** $x_1 = 14$, $x_2 = 18$, $x_3 = 11$, $x_4 = 20$, $n = 5$, $\bar{x} = 16$
+**Iščemo:** število utrinkov $x_5$ v peti noči
+
+:::formula
+$\bar{x} = \dfrac{x_1 + \cdots + x_n}{n}$, torej je vsota vseh podatkov $n \cdot \bar{x}$
+:::
+
+**Rešitev:**
+
+1. Vsota vseh petih noči mora biti $5 \cdot 16 = 80$, ker je vsota enaka številu podatkov krat povprečje.
+2. Vsota prvih štirih noči: $14 + 18 + 11 + 20 = 63$.
+3. Izračunaj $x_5$ sam in preveri povprečje.
+
+:::premisli
+Koliko je $x_5$?
+---
+$x_5 = 80 - 63 = 17$ utrinkov. Preizkus: $\dfrac{63 + 17}{5} = 16$.
+:::
 
 ## Pogoste napake
 
 - **Mediana neurejenih podatkov.** Če vzameš srednji podatek v prvotnem vrstnem redu, dobiš napačno število. Mediana je definirana za *urejene* podatke. Najprej uredi, nato poišči sredino.
-- **Napačen imenovalec pri frekvenčni tabeli.** Pri frekvenčni tabeli učenci pogosto delijo s številom različnih vrednosti (v primeru zgoraj s $5$), ne s številom podatkov ($20$). Pravilno: $\bar{x} = \dfrac{\sum f_i x_i}{\sum f_i}$.
+- **Napačen imenovalec pri frekvenčni tabeli.** Pri frekvenčni tabeli učenci pogosto delijo s številom različnih vrednosti (v Primeru 3 s $5$), ne s številom podatkov ($20$). Pravilno: $\bar{x} = \dfrac{\sum f_i x_i}{\sum f_i}$.
 - **Standardni odklon brez korena.** Varianca ima enoto na kvadrat (npr. $\text{min}^2$), zato je ni smiselno primerjati s podatki. Vedno dokončaj z $\sigma = \sqrt{\sigma^2}$.
 - **Vsota odklonov namesto vsote kvadratov.** $\sum (x_i - \bar{x}) = 0$ za vsak nabor podatkov. Odklone moraš najprej kvadrirati in šele nato sešteti.
 - **Povprečje kot edina številka.** Povprečje brez razpršenosti je lahko zavajajoče. Ob njem vedno pogledaj mediano in standardni odklon ali medkvartilni razmik.
@@ -185,41 +231,62 @@ torej »povprečje kvadratov minus kvadrat povprečja«. Preizkus za podatke $2,
 
 ## Preveri se
 
-? Podatki: $4, 7, 7, 9, 13$. Kolikšna je mediana?
-- $8$
-+ $7$
+? Na astronomskem taboru je $15\,\%$ dijakov za večerni ogled izbralo Luno, ostali pa planete ali zvezde. Kateri prikaz pokaže deleže izbir in kolikšen kot dobi Luna?
+- Krožni diagram, kot $15^\circ$.
+~ Odstotke si prepisal kot stopinje. Cel krog ima $360^\circ$, zato je kot $0{,}15 \cdot 360^\circ$.
+- Histogram s stolpcem višine $15$.
+~ Histogram je za številske podatke v razredih. Luna, planeti in zvezde so kategorije.
+- Škatla z brki.
+~ Škatla z brki potrebuje števila, ki jih lahko uredimo. Izbire niso števila.
++ Krožni diagram, kot $54^\circ$.
+> Deleže celote pokaže krožni diagram. Središčni kot je $0{,}15 \cdot 360^\circ = 54^\circ$.
+
+? Zakaj poročila o plačah pogosto navajajo mediano namesto povprečja?
+- Ker je mediana vedno večja od povprečja.
+~ Mediana je lahko večja ali manjša. Pri plačah je pogosto manjša, ker visoke plače dvignejo povprečje.
+- Ker mediana upošteva vse podatke, povprečje pa ne.
+~ Ravno obratno: v povprečje vsak podatek prispeva s svojo velikostjo, mediana pa je odvisna le od srednjih podatkov.
++ Ker nekaj zelo visokih plač potegne povprečje navzgor, mediane pa skoraj ne premakne.
+> Pri devetih plačah po $1\,000\,\text{€}$ in eni po $11\,000\,\text{€}$ je povprečje $2\,000\,\text{€}$, mediana pa $1\,000\,\text{€}$, kar bolje opiše običajnega delavca.
+
+? Petkrat so izmerili, kako dolgo je bila vesoljska postaja ISS vidna na nebu: $5{,}8$, $6{,}0$, $6{,}1$, $5{,}9$ in $6{,}2$ minute. Oceni brez natančnega računa: kateri standardni odklon je najbolj verjeten?
+- $0\,\text{min}$
+~ $\sigma = 0$ velja le, če so vsi podatki enaki. Tu niso.
+- $0{,}02\,\text{min}$
+~ To je varianca $\sigma^2$ (in njena enota je $\text{min}^2$). Pozabil si koreniti.
++ $0{,}14\,\text{min}$
+- $1{,}4\,\text{min}$
+~ Noben podatek ni od sredine $6{,}0$ oddaljen več kot $0{,}2\,\text{min}$, zato tipični odklon ne more biti večji.
+> Odkloni od $6{,}0$ so med $-0{,}2$ in $0{,}2$, zato je $\sigma$ manjši od $0{,}2\,\text{min}$. Natančno: $\sigma^2 = \dfrac{0{,}1}{5} = 0{,}02$ in $\sigma \approx 0{,}14\,\text{min}$.
+
+? Sedem dijakov je zapisalo, koliko minut so reševali nalogo: $8, 3, 11, 5, 15, 6, 9$. Kolikšna je mediana?
+- $5$
+~ To je srednji podatek v prvotnem vrstnem redu. Mediana je srednji podatek šele, ko podatke uredimo.
 - $9$
-> Podatki so že urejeni, $n = 5$ je lih, zato je mediana srednji podatek, to je $7$. Vrednost $8$ je aritmetična sredina ($\frac{40}{5}$), ne mediana.
+~ To je sredina med najmanjšim in največjim podatkom, $\dfrac{3 + 15}{2}$. Mediana je srednji podatek urejenega niza.
++ $8$
+> Urejeni podatki: $3, 5, 6, 8, 9, 11, 15$. Pri $n = 7$ je mediana četrti podatek, $M = 8\,\text{min}$.
 
-? Pri katerem naboru podatkov je standardni odklon enak $0$?
-- $1, 2, 3$
-- $-5, 0, 5$
-+ $4, 4, 4, 4$
-> Standardni odklon je $0$ le, če so vsi podatki enaki sredini, torej enaki med seboj.
-
-? Frekvenčna tabela: vrednost $1$ ima frekvenco $3$, vrednost $2$ frekvenco $5$, vrednost $3$ frekvenco $2$. Kolikšna je aritmetična sredina?
-- $2$
-- $2{,}5$
-+ $1{,}9$
-> $n = 3 + 5 + 2 = 10$, $\sum f_i x_i = 3 + 10 + 6 = 19$, zato je $\bar{x} = \dfrac{19}{10} = 1{,}9$. Vrednost $2$ bi dobil, če bi seštel samo vrednosti $1, 2, 3$ in delil s $3$.
-
-? Pri krožnem diagramu ima kategorija 15 % vseh podatkov. Kolikšen je središčni kot njenega izseka?
-- $15^\circ$
-- $90^\circ$
-+ $54^\circ$
-> Središčni kot je $0{,}15 \cdot 360^\circ = 54^\circ$.
+? Vsakemu dijaku pri kontrolni nalogi prištejemo $5$ točk. Kaj se zgodi z aritmetično sredino in s standardnim odklonom?
+- Oba se povečata za $5$.
+~ $\sigma$ meri odklone od sredine. Podatki in sredina se premaknejo skupaj, zato se odkloni ne spremenijo.
+- Sredina ostane enaka, standardni odklon se poveča.
+~ Vsota podatkov se poveča za $5n$, zato se sredina poveča za $5$.
++ Sredina se poveča za $5$, standardni odklon ostane enak.
+> Vsi podatki in sredina se premaknejo za $5$, odkloni $x_i - \bar{x}$ ostanejo enaki, zato se $\sigma$ ne spremeni.
 
 :::simboli
 \bar{x} | aritmetična sredina (povprečje) | \bar{x} = \frac{x_1 + x_2 + \cdots + x_n}{n}
-x_1, x_2, x_n | vrednosti podatkov | | |
+x_1, x_2, x_n | vrednosti podatkov (v Primeru 4 števila utrinkov) | | |
+x_5 | število utrinkov v peti noči | x_5 = n \cdot \bar{x} - (x_1 + \cdots + x_4) | |
 x_i | i-ta vrednost podatka | | |
 n | število podatkov | | |
-\sigma | standardni odklon | \sigma = \sqrt{\sigma^2} | | σ² je varianca
+\sigma | standardni odklon | \sigma = \sqrt{\sigma^2} | | $\sigma^2$ je varianca
 M | mediana | | | srednja vrednost urejenih podatkov
 R | razmah (variacijski razmik) | R = x_{\max} - x_{\min} | |
 x_{\max} | največji podatek | | |
 x_{\min} | najmanjši podatek | | |
 Q_1 | prvi kvartil | | | mediana spodnje polovice podatkov
-Q_3 | tretji kvartil | | | Q₃ − Q₁ je medkvartilni razmik
-f_i | frekvenca vrednosti x_i | | |
+Q_3 | tretji kvartil | | | $Q_3 - Q_1$ je medkvartilni razmik
+f_i | frekvenca vrednosti $x_i$ | | |
 :::

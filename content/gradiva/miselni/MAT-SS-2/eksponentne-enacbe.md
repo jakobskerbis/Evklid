@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Neznanka v eksponentu
+  - enačba $2^{n-1} = 1024$ da polje $n = 11$
+  - $x^2 = 9$ ni eksponentna
+- Enačenje osnov
+  - $a^u = a^v \iff u = v$
+  - $\frac{1}{8} = 2^{-3}$, $\sqrt{2} = 2^{\frac{1}{2}}$
+  - napaka: izenačiš eksponenta pri različnih osnovah
+- Brez rešitve
+  - $a^x > 0$ za vsak $x$
+  - enačba $2^x = -4$ nima rešitve
+- Skupni faktor
+  - $2^{x+2} = 4 \cdot 2^x$
+  - napaka: $2^{x+3} = 2^x + 2^3$
+- Nova spremenljivka
+  - $t = a^x$, $t > 0$
+  - $9^x = \left(3^x\right)^2$
+  - zavrzi $t \le 0$, nato reši $a^x = t$
+- Preizkus
+  - vstavi rešitev v prvotno enačbo
+- Grafični pogled
+  - presečišče krivulje $y = 2^x$ in premice $y = b$

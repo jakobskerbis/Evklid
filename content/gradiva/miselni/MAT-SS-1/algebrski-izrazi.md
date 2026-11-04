@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vrednost izraza
+  - vstavi število, negativno v oklepaju
+  - $3x^2 - 5x + 2$ pri $x = 2$ je $4$
+- Enočleniki
+  - seštevamo le podobne: $5ab - 2ab = 3ab$
+  - pri množenju eksponente seštejemo: $x \cdot x = x^2$
+- Minus pred oklepajem
+  - obrne predznak vsem členom
+  - $5x - (2x - 3) = 3x + 3$
+- Množenje mnogočlenikov
+  - vsak člen z vsakim
+  - $(a + b)(c + d) = ac + ad + bc + bd$
+- Kvadrat dvočlenika
+  - $(a + b)^2 = a^2 + 2ab + b^2$
+  - dno pekača: kvadrata in dva trakova
+  - napaka: $(a + b)^2 = a^2 + b^2$
+- Zmnožek vsote in razlike
+  - $(a + b)(a - b) = a^2 - b^2$
+  - $(2x + 5)(2x - 5) = 4x^2 - 25$
+- Kub dvočlenika
+  - $(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$
+  - koeficienti $1, 3, 3, 1$; pri razliki $+, -, +, -$
+- Preizkus
+  - vstavi isto število v oba izraza
+  - ne izberi $0$
