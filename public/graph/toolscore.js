@@ -71,6 +71,33 @@ export function stats(values) {
   };
 }
 
+/** Podatki s pogostostmi (Casio »Freq«): vsak podatek ponovljen tolikokrat; null, če pogostosti niso cela števila ≥ 0. */
+export function expandFreq(values, freqs) {
+  if (!freqs?.length) return values;
+  if (freqs.length !== values.length || !freqs.every((f) => Number.isInteger(f) && f >= 0)) return null;
+  if (freqs.reduce((s, f) => s + f, 0) > 100000) return null;
+  return values.flatMap((v, i) => Array(freqs[i]).fill(v));
+}
+
+/** Statistika dveh spremenljivk (Casio 2-spremenljivčna, TI 2-Var Stats): vsote, povprečja, odkloni, r. */
+export function stats2(xs, ys) {
+  const n = xs.length;
+  if (n < 2 || ys.length !== n || !xs.every(Number.isFinite) || !ys.every(Number.isFinite)) return null;
+  const S = (f) => xs.reduce((s, x, i) => s + f(x, ys[i]), 0);
+  const sx = S((x) => x);
+  const sy = S((x, y) => y);
+  const sxx = S((x) => x * x);
+  const syy = S((x, y) => y * y);
+  const sxy = S((x, y) => x * y);
+  const mx = sx / n;
+  const my = sy / n;
+  const Sxx = S((x) => (x - mx) ** 2);
+  const Syy = S((x, y) => (y - my) ** 2);
+  const Sxy = S((x, y) => (x - mx) * (y - my));
+  const r = Sxx > 0 && Syy > 0 ? Sxy / Math.sqrt(Sxx * Syy) : NaN;
+  return { n, sx, sy, sxx, syy, sxy, mx, my, sdPx: Math.sqrt(Sxx / n), sdSx: Math.sqrt(Sxx / (n - 1)), sdPy: Math.sqrt(Syy / n), sdSy: Math.sqrt(Syy / (n - 1)), r };
+}
+
 // ---------- kompleksna števila ----------
 
 export const C = {
@@ -235,6 +262,31 @@ const clean = (v) => (Math.abs(v) < 1e-12 ? 0 : Math.abs(v - Math.round(v)) < 1e
 const cleanM = (M) => M.map((r) => r.map(clean));
 
 export const M = {
+  /** Sled (vsota diagonale). */
+  trace: (A) => (A.length === A[0].length ? A.reduce((s, r, i) => s + r[i], 0) : null),
+  /** Karakteristični polinom det(λI − A) po Faddejev–LeVerrierju: koeficienti od λⁿ navzdol. */
+  charPoly(A) {
+    const n = A.length;
+    if (n !== A[0].length || n > 10) return null;
+    let Mk = A.map((r) => r.map(() => 0)); // M0 = 0
+    const c = [1];
+    for (let k = 1; k <= n; k++) {
+      // Mk = A·M(k−1) + c(k−1)·I, c(k) = −tr(A·Mk)/k
+      const AM = A.map((r) => Mk[0].map((_, j) => r.reduce((s, v, m) => s + v * Mk[m][j], 0)));
+      Mk = AM.map((r, i) => r.map((v, j) => v + (i === j ? c[k - 1] : 0)));
+      const AMk = A.map((r) => Mk[0].map((_, j) => r.reduce((s, v, m) => s + v * Mk[m][j], 0)));
+      c.push(-AMk.reduce((s, r, i) => s + r[i], 0) / k);
+    }
+    return c.map(clean);
+  },
+  /** Lastne vrednosti (ničle karakterističnega polinoma), [re, im] urejene po realnem delu. */
+  eigen(A) {
+    const c = M.charPoly(A);
+    if (!c) return null;
+    return polyRoots(c)
+      .map(([re, im]) => [clean(re), Math.abs(im) < 1e-9 * Math.max(1, Math.abs(re)) ? 0 : clean(im)])
+      .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  },
   add: (A, B) => (A.length === B.length && A[0].length === B[0].length ? A.map((r, i) => r.map((v, j) => v + B[i][j])) : null),
   sub: (A, B) => (A.length === B.length && A[0].length === B[0].length ? A.map((r, i) => r.map((v, j) => v - B[i][j])) : null),
   mul: (A, B) => (A[0].length === B.length ? cleanM(A.map((r) => B[0].map((_, j) => r.reduce((s, v, k) => s + v * B[k][j], 0)))) : null),
@@ -321,9 +373,24 @@ export function convertBase(text, from, to) {
   for (const ch of body) v = v * BigInt(from) + BigInt(DIG.indexOf(ch));
   if (neg) v = -v;
   const out = (b) => (v < 0n ? "-" : "") + (v < 0n ? -v : v).toString(b).toUpperCase();
-  const res = { 2: out(2), 8: out(8), 10: out(10), 16: out(16) };
+  const res = { 2: out(2), 8: out(8), 10: out(10), 16: out(16), value: v };
   if (to) res[to] = out(to);
   return res;
+}
+
+export const LOGIC_OPS = ["and", "or", "xor", "xnor", "not", "neg"];
+/**
+ * Logične operacije po bitih kot Casio (32-bitna cela števila, dvojiški komplement): a, b sta BigInt.
+ * Vrne { 2, 8, 10, 16 } (BIN/OCT/HEX kot 32-bitni vzorec, DEC s predznakom) ali null zunaj obsega.
+ */
+export function logic32(a, b, op) {
+  const lim = 2n ** 31n;
+  const inR = (x) => typeof x === "bigint" && x >= -lim && x < lim;
+  const unary = op === "not" || op === "neg";
+  if (!inR(a) || (!unary && !inR(b)) || !LOGIC_OPS.includes(op)) return null;
+  const r = BigInt.asIntN(32, { and: () => a & b, or: () => a | b, xor: () => a ^ b, xnor: () => ~(a ^ b), not: () => ~a, neg: () => -a }[op]());
+  const u = BigInt.asUintN(32, r);
+  return { 2: u.toString(2), 8: u.toString(8), 10: r.toString(), 16: u.toString(16).toUpperCase() };
 }
 
 // ---------- molska masa ----------
