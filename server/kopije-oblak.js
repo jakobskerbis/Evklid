@@ -33,10 +33,11 @@ export function encryptBackup(buf) {
   const k = backupKey();
   if (!k) throw new Error("EVKLID_DATA_KEY ni nastavljen; nešifrirane kopije ne nalagam (docs/varnost-podatkov.md).");
   const iv = crypto.randomBytes(12);
+  const head = Buffer.concat([MAGIC, Buffer.from(k.id, "ascii")]);
   const c = crypto.createCipheriv("aes-256-gcm", k.key, iv);
-  c.setAAD(MAGIC);
+  c.setAAD(head); // oznaka in id ključa sta zaščitena pred spremembo
   const body = Buffer.concat([c.update(buf), c.final()]);
-  return Buffer.concat([MAGIC, Buffer.from(k.id, "ascii"), iv, c.getAuthTag(), body]);
+  return Buffer.concat([head, iv, c.getAuthTag(), body]);
 }
 
 export function decryptBackup(buf) {
@@ -45,7 +46,7 @@ export function decryptBackup(buf) {
   const k = backupKey(id);
   if (!k) throw new Error(`kopija je šifrirana s ključem ${id}, ki ga ni v EVKLID_DATA_KEY ali EVKLID_DATA_KEYS_OLD`);
   const d = crypto.createDecipheriv("aes-256-gcm", k.key, buf.subarray(12, 24));
-  d.setAAD(MAGIC);
+  d.setAAD(buf.subarray(0, 12));
   d.setAuthTag(buf.subarray(24, 40));
   try {
     return Buffer.concat([d.update(buf.subarray(40)), d.final()]);
@@ -126,10 +127,11 @@ export async function uploadBackup(cfg, dbFile, backupFile, date, { fetchFn, now
   const body = encryptBackup(fs.readFileSync(backupFile));
   const key = objectKey(dbFile, date);
   await client.put(key, body);
+  // Kopija z datumom `limit` ali starejša gre: nobena kopija ni starejša od keepDays dni (obvestilo o zasebnosti).
   const limit = new Date(now().getTime() - cfg.keepDays * DAY).toISOString().slice(0, 10);
   const deleted = [];
   for (const b of await listCloud(cfg, dbFile, { fetchFn, now })) {
-    if (b.date < limit && b.key !== key) {
+    if (b.date <= limit && b.key !== key) {
       await client.del(b.key);
       deleted.push(b.date);
     }
@@ -170,10 +172,11 @@ export function startCloudBackups(dbFile, { scheduler = true, log = console, fet
   let busy = false;
   const run = async () => {
     if (off || busy) return;
-    const latest = listBackups(dbFile).find((b) => !b.manual);
-    if (!latest || latest.date === uploaded) return;
     busy = true;
+    // Vse v try: run teče iz setTimeout/setInterval, zavrnjena obljuba bi ustavila strežnik.
     try {
+      const latest = listBackups(dbFile).find((b) => !b.manual);
+      if (!latest || latest.date === uploaded) return;
       const r = await uploadBackup(cfg, dbFile, latest.file, latest.date, { fetchFn, now });
       uploaded = latest.date;
       failed = false;

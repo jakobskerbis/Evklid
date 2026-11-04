@@ -68,6 +68,7 @@ Obnova izgubi vse, kar se je zgodilo po kopiji. Pogovori v kopiji so šifrirani 
 
 Nastavitev (enkrat):
 1. Cloudflare → **R2 Object Storage** → **Create bucket**: ime `evklid-kopije`, Location **Specify jurisdiction → European Union**. R2 ima 10 GB na mesec brezplačno.
+   V vedru še **Settings → Object lifecycle rules → Add rule**: Delete objects after **30 days** (varovalka, če nalaganje dlje ne bi delovalo).
 2. R2 → **Manage API tokens** → **Create API token**: Permission **Object Read & Write**, Specify bucket **evklid-kopije**, TTL Forever. Kopiraj **Access Key ID**, **Secret Access Key** in **S3 endpoint za EU** (`https://<račun>.eu.r2.cloudflarestorage.com`). Prikažejo se samo enkrat.
 3. Render → evklid → **Environment**: `EVKLID_KOPIJE_S3_URL` (endpoint brez `/evklid-kopije` na koncu), `EVKLID_KOPIJE_S3_BUCKET=evklid-kopije`, `EVKLID_KOPIJE_S3_KEY_ID`, `EVKLID_KOPIJE_S3_SECRET`, nato **Save, rebuild, and deploy**.
 4. Preizkus v Render → **Shell**: `node scripts/obnovi-kopijo.js --oblak-zdaj` (mora pisati »Naložena kopija …«), nato `node scripts/obnovi-kopijo.js --oblak` (seznam).

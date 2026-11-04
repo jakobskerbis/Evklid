@@ -94,12 +94,16 @@ test("kopija zunaj strežnika: nalaganje, 30 dni, prenos nazaj in obnova po obi�
     const cfg = cloudConfig(ENV);
     // Stara kopija v shrambi (starejša od 30 dni) in tuja datoteka, ki ostane.
     s3.objects.set("kopije/evklid-2026-10-01.db.enc", Buffer.from("star"));
+    s3.objects.set("kopije/evklid-2026-10-05.db.enc", Buffer.from("star")); // točno 30 dni: gre
+    s3.objects.set("kopije/evklid-2026-10-06.db.enc", Buffer.from("mlajsa")); // 29 dni: ostane
     s3.objects.set("kopije/drugo.txt", Buffer.from("x"));
 
     const local = listBackups(file)[0];
     const r = await uploadBackup(cfg, file, local.file, local.date, { fetchFn: s3.fetchFn, now: () => new Date("2026-11-04T04:00:00Z") });
     assert.equal(r.key, "kopije/evklid-2026-11-04.db.enc");
-    assert.deepEqual(r.deleted, ["2026-10-01"]);
+    assert.deepEqual(r.deleted.sort(), ["2026-10-01", "2026-10-05"]);
+    assert.ok(s3.objects.has("kopije/evklid-2026-10-06.db.enc"));
+    s3.objects.delete("kopije/evklid-2026-10-06.db.enc");
     assert.ok(!s3.objects.has("kopije/evklid-2026-10-01.db.enc"));
     assert.ok(s3.objects.has("kopije/drugo.txt"));
     assert.ok(!s3.objects.get(r.key).includes(Buffer.from("SQLite format")), "naložena kopija je šifrirana");
@@ -144,6 +148,12 @@ test("kopija zunaj strežnika: urnik naloži vsako dnevno kopijo enkrat, napako 
     makeBackup(store.db, file, { now: new Date("2026-11-05T03:00:00Z") });
     await c.run();
     assert.equal(puts(), 2);
+    // Napaka pri branju lokalnih kopij (npr. disk) ne sme zavrniti obljube iz setInterval.
+    const broken = path.join(tmp(), "evklid.db");
+    fs.writeFileSync(path.join(path.dirname(broken), "kopije"), "ni mapa");
+    const b = startCloudBackups(broken, { scheduler: false, log: quiet, fetchFn, env: ENV });
+    await b.run();
+    assert.deepEqual(b.status(), { zadnja: null, napaka: true });
     // Brez nastavitev ali z izklopljenimi kopijami ni stanja in ni klicev.
     assert.equal(startCloudBackups(file, { scheduler: false, log: quiet, env: {} }).status(), null);
     assert.equal(startCloudBackups(file, { scheduler: false, log: quiet, env: { ...ENV, EVKLID_BACKUPS: "0" } }).status(), null);
