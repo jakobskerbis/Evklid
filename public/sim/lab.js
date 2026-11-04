@@ -160,11 +160,13 @@ export function notes(items, sources) {
 // Na telefonu ostane risba vidna (j, 2026-11-04: »s scrollanjem do gumbov skriješ animacijo«; docs/laboratorij.md).
 // sim/index.js (mountSim) to pokliče za vsak poskus z razredom .lab, zato ga dobi tudi vsak nov poskus.
 // Risba (.demo-stage) in kontrole (.demo-controls) gredo v skupni .lab-tit-top; CSS (textbook.css) risbo z merilniki
-// pripne na vrh drsnega dela, na širokem in ležečem zaslonu pa levo ob kontrole. Tu le: gumb »Pripni sliko«
+// pripne na vrh drsnega dela, na širokem in ležečem zaslonu pa levo ob kontrole; široko risbo (vodoravna proga, vezje:
+// razmerje stranic ≥ SIROKA) na širokem zaslonu pa čez vso širino na vrh, kontrole pod njo v dveh stolpcih. Tu le: gumb »Pripni sliko«
 // (zapomnjen na napravi), višina vidnega dela (--lab-okno), senca, ko je risba pripeta, in fokus, ki ne gre pod risbo.
 const PIN_KEY = "evklid.lab.pripni";
 const pinRead = () => { try { return localStorage.getItem(PIN_KEY) !== "0"; } catch { return true; } };
 const pinWrite = (on) => { try { localStorage.setItem(PIN_KEY, on ? "1" : "0"); } catch {} };
+const SIROKA = 1.55; // od tega razmerja širina : višina je risba na računalniku zgoraj čez vso širino (lab-klanec 2,33, lab-ohm 1,6)
 const vvH = () => (typeof visualViewport !== "undefined" && visualViewport ? visualViewport.height : innerHeight);
 
 export function pripni(el) {
@@ -180,8 +182,11 @@ export function pripni(el) {
   }
   const stage = top.querySelector(":scope > .demo-stage");
   if (!stage) return null;
-  const vb = stage.querySelector(".demo-svg")?.viewBox?.baseVal;
+  const svg0 = stage.querySelector(".demo-svg"), vb = svg0?.viewBox?.baseVal;
   if (vb?.width && vb.height) stage.style.setProperty("--lab-ar", (vb.width / vb.height).toFixed(3));
+  el.classList.toggle("lab-siroka", vb?.height > 0 && vb.width / vb.height >= SIROKA);
+  // risba (ali njen ovoj, npr. .lab-ek-risba) v .demo-stage: CSS jo pri široki risbi postavi levo od merilnikov
+  [...stage.children].find((c) => c.contains(svg0))?.classList.add("lab-slika");
   const btn = h("button", { type: "button", class: "lab-pin", "aria-label": t("sim.lab.pin"), title: t("sim.lab.pin"), html: icon("pin") });
   const set = (on) => {
     el.classList.toggle("lab-odpeto", !on);
@@ -231,8 +236,11 @@ export function pripni(el) {
     // telefon in tablica ~45 %, z miško (npr. stranski stolpec lekcije na računalniku) ~60 %: tam se drsi s kolescem
     // pokončna risba (titracija: bireta in povečan menisk) je pri isti višini ozka, zato dobi malo več višine (~52 %)
     const tall = (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1.4) < 0.95;
-    const total = beside ? okno - Math.max(0, gap) - 6 : okno * (matchMedia("(pointer: coarse)").matches ? (tall ? 0.52 : 0.45) : 0.6);
-    const rest = sr.height - svg.getBoundingClientRect().height;
+    // široka risba na širokem zaslonu (zgoraj, merilniki desno od nje): ~45 % vidne višine, ne glede na miško
+    const vrh = !beside && el.classList.contains("lab-siroka") && top.clientWidth >= 800;
+    const total = beside ? okno - Math.max(0, gap) - 6 : okno * (vrh || matchMedia("(pointer: coarse)").matches ? (tall ? 0.52 : 0.45) : 0.6);
+    // ob merilnikih je višina pripetega dela višina risbe in odmikov (merilniki ne štejejo, sicer bi se risba zibala)
+    const rest = vrh ? 18 : sr.height - svg.getBoundingClientRect().height;
     put(stage, "--lab-risba-h", `${Math.round(Math.max(beside ? 100 : 110, total - rest))}px`);
   }
   const later = () => raf || (raf = requestAnimationFrame(upd));
