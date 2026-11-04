@@ -3,6 +3,7 @@
 import { t, locale, currentLang, applyI18n } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { initDrsniki } from "./drsniki.js";
+import { initSirina } from "./sirina.js";
 
 const MODES = ["sci", "graph", "tools", "pse"];
 const q = new URLSearchParams(location.search);
@@ -56,6 +57,7 @@ async function setMode(m) {
 applyI18n();
 document.title = t("nav.graph");
 hydrateIcons();
+initSirina();
 initDrsniki();
 document.querySelector(".calc-modes").addEventListener("click", (e) => {
   const b = e.target.closest("[data-calc-mode]");
