@@ -153,6 +153,25 @@ export function usesOwnKeyboard(el, mode = "always", { math = false, inputmode }
  * Vstavi predlogo v besedilo: »@« je mesto kazalca, tja gre označeno besedilo (označiš 16, pritisneš √ → √(16)).
  * Vrne { value, caret, text } (text = vstavljeni del).
  */
+// Zapisi za ljudi (j, 2. 11.: »Vmesni koraki« so izpisali abs(abs(…)) namesto |x|). Kalkulator in skener
+// (configureKeyboard … parsed: true) dobita zapis, ki ga razčleni math.js; |x| razume tudi ta.
+const PRETTY_ALWAYS = { "abs(@)": "|@|" };
+const PRETTY_TEXT = {
+  "floor(@)": "⌊@⌋",
+  "ceil(@)": "⌈@⌉",
+  "stdev(@)": "σ(@)",
+  "total(@)": "Σ(@)",
+  "root(@;)": "@√()",
+  "logb(@;)": "log_@()",
+  "gcd(@;)": "D(@; )",
+  "lcm(@;)": "v(@; )",
+  "d/dx(@;)": "f′(@)",
+};
+/** Kaj vstavi tipka: v poljih, ki jih bere človek ali inštruktor, matematični zapis namesto imena funkcije. */
+export function prettyIns(ins, parsed = false) {
+  return PRETTY_ALWAYS[ins] ?? (parsed ? ins : PRETTY_TEXT[ins] ?? ins);
+}
+
 export function applyTemplate(value, start, end, ins, maxLength = -1, literal = false) {
   const v = String(value ?? "");
   const s = Math.max(0, Math.min(start ?? v.length, v.length));
@@ -218,4 +237,62 @@ export function suggest(words, prefix, n = 3) {
     if (out.length >= n) break;
   }
   return out;
+}
+
+// ---------- črke kot Gboard (j, 3. 11.: »po funkcionalnosti enak g-boardu«) ----------
+// Zgornja vrsta: dolg pritisk da številko (namig v kotu tipke), nato različice črke.
+const DIGITS = "1234567890";
+/** Številka za tipko v zgornji vrsti (prvih deset tipk) ali "". */
+export const digitFor = (rows, c) => {
+  const i = rows?.[0]?.indexOf(c) ?? -1;
+  return i >= 0 && i < DIGITS.length ? DIGITS[i] : "";
+};
+
+/** Velika začetnica: na začetku polja, po . ! ? … in presledku ali v novi vrstici. */
+export function autoCapNeeded(before) {
+  const b = String(before ?? "");
+  return !b.trim() || /[.!?…]\s+$/u.test(b) || /\n\s*$/.test(b);
+}
+
+/** Dva presledka za besedo ali številko = pika in presledek (kot Gboard). Vrne položaj prvega presledka ali -1. */
+export function doubleSpaceAt(before) {
+  return /[\p{L}\p{N})] $/u.test(String(before ?? "")) ? String(before).length - 1 : -1;
+}
+
+/** Začetek n-te besede nazaj od pos (poteg levo po ⌫ označi besede). */
+export function wordsBack(value, pos, n = 1) {
+  const v = String(value ?? "");
+  let p = Math.max(0, Math.min(pos, v.length));
+  for (let k = 0; k < n && p > 0; k++) {
+    while (p > 0 && /\s/u.test(v[p - 1])) p--;
+    while (p > 0 && !/\s/u.test(v[p - 1])) p--;
+  }
+  return p;
+}
+
+// Samopopravek (le s predlogi besed): seznam je majhen, zato popravimo samo varne tipkarske napake —
+// manjkajoče strešice (resitev → rešitev) in zamenjani sosednji črki (enacba ← enčaba ni, a »koilko« → »koliko«).
+const FOLD = { č: "c", ć: "c", š: "s", ž: "z", đ: "d" };
+const fold = (w) => [...w].map((ch) => FOLD[ch] || ch).join("");
+function swapped(a, b) {
+  if (a.length !== b.length) return false;
+  const d = [];
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) d.push(i);
+  return d.length === 2 && d[1] === d[0] + 1 && a[d[0]] === b[d[1]] && a[d[1]] === b[d[0]];
+}
+/** Popravek besede ali null. words: seznam po pogostosti. Velika začetnica ostane. */
+export function autocorrect(word, words) {
+  const w = String(word ?? "");
+  if (!words?.length || w.length < 3 || !/^[\p{L}]+$/u.test(w)) return null;
+  const low = w.toLocaleLowerCase();
+  if (low !== w && low.slice(1) !== w.slice(1)) return null; // KRATICE ostanejo
+  const set = new Set(words.map((x) => x.toLocaleLowerCase()));
+  if (set.has(low)) return null;
+  const f = fold(low);
+  const hit = words.find((x) => {
+    const xl = x.toLocaleLowerCase();
+    return xl.length === low.length && ((fold(xl) === f && f === low) || swapped(xl, low));
+  });
+  if (!hit) return null;
+  return w[0] !== low[0] ? hit[0].toLocaleUpperCase() + hit.slice(1) : hit;
 }

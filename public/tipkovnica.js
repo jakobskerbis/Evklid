@@ -6,6 +6,7 @@
 // Klicatelji opišejo polje (ali okvir s polji) s configureKeyboard(el, {...}):
 //   layers  plasti: "abc" | "num" | "fx" | "sym" | "kem" ali lastna mreža { id, label, cols, keys: [[napis, vstavi]] }
 //   start   začetna plast (ali funkcija polja); enter: "calc" | "check" | "send" | "next" | "newline" | "go" (enterText: napis)
+//   parsed  polje bere math.js (kalkulator, skener): tipke vstavijo imena funkcij (floor, stdev …), drugje zapis za ljudi (⌊x⌋, σ)
 //   ctx     vrstica nad tipkami: [[napis, vstavi]] ali { label, ins, unit } (ali funkcija polja)
 //   math    polje za matematiko (velja tudi pri nastavitvi »Samo za matematiko«); own: polje ima svoje tipke
 import { t, currentLang } from "./i18n.js";
@@ -13,7 +14,7 @@ import { icon } from "./icons.js";
 import { GROUPS, groupOrder, chemFormat } from "./symbols.js";
 import {
   layoutFor, FX_GROUPS, KEM_ROWS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
-  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest,
+  fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest,
 } from "./tipkovnica-data.js";
 
 const touch = () => typeof matchMedia !== "undefined" && matchMedia("(pointer: coarse)").matches;
@@ -117,6 +118,8 @@ export function openKeyboard(field, { layer } = {}) {
   S.layers = layerList();
   if (layer || !same || !S.layers.some((l) => layerId(l) === S.layer)) S.layer = startLayer(layer);
   S.shift = 0;
+  S.corr = null;
+  if (S.layer === "abc") autoShift();
   prepare(field);
   if (document.activeElement !== field) field.focus({ preventScroll: true });
   const was = S.open;
@@ -270,6 +273,34 @@ function tabsHtml() {
   return `<div class="tk-tabs"><div class="tk-tablist" role="tablist" aria-label="${esc(t("tk.label"))}">${tabs}</div><button type="button" class="tk-hide" data-k="${h}" aria-label="${esc(t("gc.hideKeypad"))}">${icon("chevron-down")}</button></div>`;
 }
 
+/** Različice za dolg pritisk: v zgornji vrsti najprej številka (kot Gboard), nato črke z znaki. */
+function varsFor(c) {
+  const lay = layoutFor(currentLang());
+  const d = digitFor(lay.rows, c);
+  return [...(d ? [d] : []), ...(lay.variants[c] || [])];
+}
+// Gboard v besedilu: velika začetnica, dva presledka = pika, samopopravek (s predlogi). Ne v matematiki,
+// e-pošti, povezavah ali polju z autocapitalize="off"/"none".
+function prose() {
+  const f = S.field;
+  if (!f || S.kind !== "text" || S.cfg.math || S.layer !== "abc" || isUrlField(f)) return false;
+  if (/\bemail\b/.test(String(f.getAttribute("autocomplete") || "") + " " + String(orig(f) || "") + " " + String(f.type || ""))) return false;
+  return !/^(off|none)$/i.test(f.getAttribute("autocapitalize") || "");
+}
+function before() {
+  const f = S.field;
+  const r = f && sel(f);
+  return r ? f.value.slice(0, r[0]) : null;
+}
+/** Samodejni ⇧ na začetku stavka; ročno izbranega ali zaklenjenega ne spreminja. */
+function autoShift() {
+  if (S.shift === 2 || (S.shift === 1 && !S.autoShift)) return;
+  const b = prose() ? before() : null;
+  const want = b !== null && autoCapNeeded(b) && !layoutFor(currentLang()).caseless;
+  S.shift = want ? 1 : 0;
+  S.autoShift = want;
+}
+
 function abcHtml() {
   const lay = layoutFor(currentLang());
   const up = (c) => {
@@ -277,8 +308,8 @@ function abcHtml() {
     return S.shift && u.length === 1 ? u : c;
   };
   const letter = (c) => {
-    const v = lay.variants[c];
-    return key(up(c), { a: "char", v: c }, { hint: v ? up(v[0]) : "" });
+    const v = varsFor(c);
+    return key(up(c), { a: "char", v: c }, { hint: v[0] ? up(v[0]) : "" });
   };
   const [r1, r2, r3] = lay.rows;
   const shift = lay.caseless ? "" : key("⇧", { a: "sh" }, { cls: `fn w15 shift${S.shift ? " on" : ""}${S.shift === 2 ? " lock" : ""}`, aria: t("tk.shift") });
@@ -523,6 +554,7 @@ function act(a) {
   if (a.a === "layer") {
     S.layer = a.v;
     S.shift = 0;
+    autoShift();
     return render();
   }
   if (a.a === "fxg") return (S.fxg = a.v), render();
@@ -533,18 +565,24 @@ function act(a) {
     const now = Date.now();
     S.shift = S.shift ? (S.shift === 1 && now - S.shiftAt < 350 ? 2 : 0) : 1;
     S.shiftAt = now;
+    S.autoShift = false;
     return render();
   }
   const f = target();
   if (!f) return;
-  const before = S.shift;
-  if (a.a === "ins" || a.a === "lit") insertText(f, a.v, a.a === "lit");
+  const shiftWas = S.shift;
+  const corr = S.corr;
+  S.corr = null;
+  if (a.a === "ins") insertText(f, prettyIns(a.v, !!S.cfg.parsed));
+  else if (a.a === "lit") insertText(f, a.v, true);
   else if (a.a === "char") {
     const u = a.v.toLocaleUpperCase(currentLang());
     insertText(f, S.shift && u.length === 1 ? u : a.v);
     if (S.shift === 1) S.shift = 0;
-  } else if (a.a === "sp") insertText(f, " ");
-  else if (a.a === "bs") backspace(f);
+  } else if (a.a === "sp") space(f);
+  else if (a.a === "bs") {
+    if (!undoCorrection(f, corr)) backspace(f);
+  }
   else if (a.a === "l") moveCaret(f, -1);
   else if (a.a === "r") moveCaret(f, 1);
   else if (a.a === "go") return enter(f);
@@ -567,28 +605,85 @@ function act(a) {
       fire(f, "insertReplacementText", a.v);
     }
   }
-  if (before !== S.shift) render();
+  if (S.layer === "abc") autoShift();
+  if (shiftWas !== S.shift) render();
   else renderCtx();
+}
+
+// Preslednica kot Gboard: samopopravek zadnje besede (le s predlogi), dva presledka = ». «.
+function space(f) {
+  const b = before();
+  if (b !== null && prose()) {
+    const ds = S.lastSpace && Date.now() - S.lastSpace < 1500 ? doubleSpaceAt(b) : -1;
+    S.lastSpace = 0;
+    if (ds >= 0) {
+      f.setRangeText(". ", ds, ds + 1, "end");
+      return fire(f, "insertText", ". ");
+    }
+    const w = prefs.words && words ? currentWord() : "";
+    const fix = w && autocorrect(w, words);
+    if (fix) {
+      const end = b.length;
+      f.setRangeText(fix + " ", end - w.length, end, "end");
+      fire(f, "insertReplacementText", fix);
+      S.corr = { from: w, to: fix, end: end - w.length + fix.length + 1 };
+      return;
+    }
+  }
+  insertText(f, " ");
+  S.lastSpace = Date.now();
+}
+/** ⌫ takoj po samopopravku vrne napisano besedo (kot Gboard). */
+function undoCorrection(f, c) {
+  const r = c && sel(f);
+  if (!r || r[0] !== r[1] || r[0] !== c.end || !f.value.slice(0, c.end).endsWith(c.to + " ")) return false;
+  const s = c.end - c.to.length - 1;
+  f.setRangeText(c.from, s, c.end, "end");
+  fire(f, "insertReplacementText", c.from);
+  return true;
 }
 
 // ---------- dotik: tipke ne vzamejo fokusa, dolg pritisk, poteg po preslednici, ponavljanje ⌫ ----------
 
 let down = null;
+// Povečana tipka nad prstom (kot Gboard), samo črke na dotik.
+let prevTimer = 0;
+function preview(btn) {
+  closePreview();
+  const host = board.firstElementChild;
+  const r = btn.getBoundingClientRect();
+  const br = host.getBoundingClientRect();
+  const p = document.createElement("div");
+  p.className = "tk-prev";
+  p.setAttribute("aria-hidden", "true");
+  p.textContent = btn.firstChild?.nodeType === 3 ? btn.firstChild.textContent : btn.textContent;
+  const w = r.width + 16;
+  const h = Math.round(r.height * 1.15);
+  p.style.cssText = `width:${w}px;height:${h}px;left:${Math.round(r.left - br.left - 8)}px;top:${Math.round(r.top - br.top - h - 6)}px`;
+  host.appendChild(p);
+}
+function closePreview(ms = 0) {
+  clearTimeout(prevTimer);
+  const p = board?.querySelector(".tk-prev");
+  if (!p) return;
+  if (!ms) return p.remove();
+  p.classList.add("out");
+  prevTimer = setTimeout(() => p.remove(), ms);
+}
 function closePop() {
   board?.querySelector(".tk-pop")?.remove();
 }
 function showPop(btn, base) {
   closePop();
-  const lay = layoutFor(currentLang());
-  const vars = lay.variants[base];
-  if (!vars) return false;
+  const vars = varsFor(base);
+  if (!vars.length) return false;
   const up = S.shift && base.toLocaleUpperCase(currentLang()).length === 1;
   const list = [base, ...vars].map((v) => (up && v.toLocaleUpperCase().length === 1 ? v.toLocaleUpperCase() : v));
   const pop = document.createElement("div");
   pop.className = "tk-pop";
   pop.setAttribute("role", "group");
   pop.setAttribute("aria-label", t("tk.variants"));
-  pop.innerHTML = list.map((v) => `<button type="button" data-v="${esc(v)}">${esc(v)}</button>`).join("");
+  pop.innerHTML = list.map((v, i) => `<button type="button" data-v="${esc(v)}"${i === 1 ? ' class="on"' : ""}>${esc(v)}</button>`).join("");
   board.firstElementChild.appendChild(pop);
   const r = btn.getBoundingClientRect();
   const br = board.firstElementChild.getBoundingClientRect();
@@ -625,18 +720,25 @@ function wireBoard() {
     closePop();
     clearTimers();
     const a = keys[Number(b.dataset.k)];
-    down = { b, a, x: e.clientX, moved: false, pop: false };
+    down = { b, a, x: e.clientX, x0: e.clientX, moved: false, pop: false };
     b.classList.add("down");
     if (b.classList.contains("tk-k")) buzz();
+    if (a?.a === "char" && e.pointerType !== "mouse") preview(b);
     if (a?.a === "sp") {
       try {
         b.setPointerCapture(e.pointerId);
       } catch {}
-    } else if (a?.a === "char" && layoutFor(currentLang()).variants[a.v]) {
+    } else if (a?.a === "char" && varsFor(a.v).length) {
       down.lp = setTimeout(() => {
-        if (down?.b === b) down.pop = showPop(b, a.v);
+        if (down?.b === b) {
+          down.pop = showPop(b, a.v);
+          if (down.pop) closePreview();
+        }
       }, 380);
     } else if (a?.a === "bs") {
+      try {
+        b.setPointerCapture(e.pointerId);
+      } catch {}
       down.rep = setTimeout(() => {
         down.moved = true;
         act(a);
@@ -655,8 +757,24 @@ function wireBoard() {
         down.x = e.clientX;
         down.moved = true;
       }
+    } else if (down.a?.a === "bs") {
+      // Poteg levo po ⌫ označi besede, dvig prsta jih izbriše (kot Gboard); nazaj desno prekliče.
+      const n = Math.floor((down.x0 - e.clientX) / 36);
+      const f = S.field;
+      const r = f && !f.isContentEditable && sel(f);
+      if (!r || (!down.swipe && n < 1)) return;
+      if (!down.swipe) {
+        clearTimers();
+        down.swipe = true;
+        down.moved = true;
+        down.at = r[1];
+      }
+      const from = n > 0 ? wordsBack(f.value, down.at, n) : down.at;
+      f.setSelectionRange(from, down.at);
     } else if (down.pop) {
-      board.querySelectorAll(".tk-pop button").forEach((x) => x.classList.toggle("on", x === document.elementFromPoint(e.clientX, e.clientY)?.closest(".tk-pop button")));
+      // izbrana ostane zadnja različica pod prstom (na začetku prva, kot Gboard)
+      const over = document.elementFromPoint(e.clientX, e.clientY)?.closest(".tk-pop button");
+      if (over) board.querySelectorAll(".tk-pop button").forEach((x) => x.classList.toggle("on", x === over));
     }
   });
   // Dejanje ob dvigu prsta nad isto tipko (ne čakamo na »click«, ki ga telefon po potegu včasih ne pošlje).
@@ -671,11 +789,18 @@ function wireBoard() {
     const d = down;
     down = null;
     d.b.classList.remove("down");
+    closePreview(70);
+    if (d.swipe) {
+      const f = S.field;
+      const r = f && sel(f);
+      if (e.type === "pointerup" && r && r[0] !== r[1]) act(d.a);
+      return;
+    }
     if (e.type !== "pointerup") return;
     // Na dotik po »touchend« (spodaj): tipka mora biti takrat še v tipkovnici, da se klik prekliče.
     const run = (fn) => (e.pointerType === "touch" ? setTimeout(fn, 0) : fn());
     if (d.pop) {
-      const v = at?.closest(".tk-pop button");
+      const v = at?.closest(".tk-pop button") || board.querySelector(".tk-pop button.on");
       if (v) run(() => popInsert(v.dataset.v));
       return;
     }
