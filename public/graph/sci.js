@@ -189,6 +189,13 @@ export function createScientific(root, opts) {
         return t("sc.errEquation");
       case "sumLimit":
         return t("sc.errSumLimit");
+      case "polInside":
+        return t("sc.errPolInside");
+      case "vecMix":
+      case "vecOp":
+        return t("sc.errVec");
+      case "undef":
+        return t("sc.errUndefined");
       case "other":
         return t("gc.errOther");
       default:

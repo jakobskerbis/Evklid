@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Primeri niso dokaz
+  - $n^2 + n + 41$ pri $n = 40$ da $41^2$
+- Baza
+  - preverimo $P(n_0)$, običajno $n_0 = 1$
+  - prva domina pade
+- Indukcijski korak
+  - iz $P(n)$ izpeljemo $P(n + 1)$
+  - predpostavko res uporabimo
+  - napaka: začeti s $P(n + 1)$
+- Vsote
+  - $1 + 3 + \dots + (2n - 1) = n^2$
+  - prištejemo naslednji člen
+- Deljivost
+  - $n^3 + 2n$ je deljivo s $3$
+  - izraz za $n$ plus večkratnik delitelja
+- Neenakosti
+  - $2^n > n^2$ za $n \ge 5$
+  - baza tam, kjer korak začne veljati
+- Hanojski stolpi
+  - $H_{n + 1} = 2H_n + 1$
+  - $H_n = 2^n - 1$

@@ -1,7 +1,7 @@
 // Pregled vseh simulacij iz kataloga na telefonski širini (360 px) po merilih docs/kakovost.md §3:
 // napake v konzoli, vodoravno drsenje, oznake kontrol, tipkovnica za vlečne elemente, »Poskusi«, »Ponastavi«,
 // drsnik, poravnan z osjo (kit.axisSlider): ročica je pri min, sredini in max navpično pod oznako na osi (≤ 2 px, 360 in 1280 px).
-// Zagon: node scripts/preveri-simulacije.cjs   (potrebuje Playwright s Chromiumom; zažene strežnik na vratih 3998)
+// Zagon: node scripts/preveri-simulacije.cjs [SIM_FILTER='^3d-' za del]   (potrebuje Playwright s Chromiumom; zažene strežnik na vratih 3998)
 const { spawn } = require("node:child_process");
 const path = require("node:path");
 const { chromium } = require("playwright");
@@ -22,7 +22,7 @@ const PORT = 3998;
   p.on("pageerror", (e) => errs.push(`${cur}: ${String(e.message).slice(0, 140)}`));
   p.on("console", (m) => m.type() === "error" && errs.push(`${cur}: ${m.text().slice(0, 140)}`));
   await p.goto(base + "/zasebnost.html");
-  await p.evaluate(async () => {
+  await p.evaluate(async (filter) => {
     document.head.innerHTML = '<meta name="viewport" content="width=device-width,initial-scale=1">' + ["vendor/katex/katex.min.css", "style.css", "ui.css", "textbook.css"].map((h) => `<link rel="stylesheet" href="/${h}">`).join("");
     document.body.innerHTML = '<div id="box" style="padding:16px"></div>';
     await new Promise((r) => { const sc = document.createElement("script"); sc.src = "/vendor/katex/katex.min.js"; sc.onload = r; document.head.append(sc); });
@@ -34,6 +34,8 @@ const PORT = 3998;
       const k = id + JSON.stringify(opts || {});
       if (!seen.has(k)) seen.add(k), SIMS.push({ topic, id, opts: opts || {} });
     }
+    // SIM_FILTER=<regex> preveri le simulacije z ujemajočim id (npr. SIM_FILTER='^3d-').
+    if (filter) window.SIMS = SIMS.filter((s) => new RegExp(filter).test(s.id));
     window.mountOne = async (i) => {
       const box = document.getElementById("box");
       box.innerHTML = "";
@@ -41,11 +43,13 @@ const PORT = 3998;
       box.append(m);
       await mountSim(SIMS[i].id, m, SIMS[i].opts);
       await new Promise((r) => setTimeout(r, 200));
+      // 3D modeli (pogon »3d-<id>«) naložijo three in model asinhrono: počakaj na kontrole pregledovalnika.
+      if (SIMS[i].id.startsWith("3d-")) for (let k = 0; k < 150 && !m.querySelector("[data-reset]"); k++) await new Promise((r) => setTimeout(r, 100));
       const ctrls = [...m.querySelectorAll("input,select,button")];
       return {
         overflow: Math.max(document.documentElement.scrollWidth - innerWidth, 0),
         tryText: !!m.querySelector(".demo-try"),
-        reset: !!m.querySelector(".demo-reset") || SIMS[i].id === "zbirka",
+        reset: !!m.querySelector(".demo-reset, [data-reset]") || SIMS[i].id === "zbirka",
         unlabeled: ctrls.filter((c) => !(c.getAttribute("aria-label") || c.textContent.trim() || c.labels?.length || c.title)).length,
         dragNoKey: m.querySelectorAll(".drag:not([tabindex])").length,
         axis: [...m.querySelectorAll(".axis-slider[data-for]")].map((x) => x.dataset.for),
@@ -66,7 +70,7 @@ const PORT = 3998;
       const lo = +inp.min, hi = +inp.max, val = +inp.value;
       return { markX: tr ? tr.left + tr.width / 2 : NaN, thumbX: ir.left + thumb / 2 + ((val - lo) / (hi - lo)) * (ir.width - thumb), y: ir.top + ir.height / 2, lo, hi, step: +inp.step, ppu: (ir.width - thumb) / (hi - lo), val };
     };
-  });
+  }, process.env.SIM_FILTER || "");
   const n = await p.evaluate(() => SIMS.length);
   const bad = [];
   // Ročica pod oznako: izračunana lega in klik na tirnico pod oznako (drsnik skoči na isto vrednost).

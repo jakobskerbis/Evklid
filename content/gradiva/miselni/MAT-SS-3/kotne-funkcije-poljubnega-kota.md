@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kot kot zasuk
+  - pozitivno: nasproti urinemu kazalcu
+  - $400^\circ$ je obrat in $40^\circ$
+- Enotska krožnica
+  - središče v izhodišču, polmer $1$
+  - $T(\cos\alpha, \sin\alpha)$
+  - $\tan\alpha = \dfrac{\sin\alpha}{\cos\alpha}$, ni definiran pri $90^\circ$ in $270^\circ$
+- Predznaki po kvadrantih
+  - II.: $\sin > 0$, $\cos < 0$
+  - napaka: $\cos 120^\circ = \frac12$
+- Pripadajoči ostri kot
+  - da absolutno vrednost, kvadrant da predznak
+  - $\sin 150^\circ = \sin 30^\circ = \frac12$
+- Osnovna zveza
+  - $\sin^2\alpha + \cos^2\alpha = 1$
+  - vrednosti med $-1$ in $1$
+- Periodičnost
+  - $\sin(\alpha + 360^\circ) = \sin\alpha$
+- Radian
+  - $\pi\,\text{rad} = 180^\circ$
+  - $1\,\text{rad} \approx 57{,}3^\circ$
+  - kalkulator: DEG ali RAD

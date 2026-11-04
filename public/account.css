@@ -1,6 +1,20 @@
 /* Prijava staršev in zavihek Račun (account.js) */
 body.auth-mode .tabs, body.auth-mode .xp-badge, body.auth-mode .student-picker, body.auth-mode .tabbar { display: none !important; }
 .auth-box { max-width: 440px; margin: 24px auto 0; }
+.auth-brand { display: none; }
+@media (min-width: 1000px) {
+  /* Obrazec ima ozek stolpec, znak aplikacije vzame preostanek (desno od obrazca ni praznega pasu). */
+  .auth-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 560px); gap: 48px; align-items: center; min-height: 100%; }
+  .auth-wrap > .auth-box { max-width: none; width: 100%; margin: 0; }
+  .auth-brand {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 16px; align-self: stretch; padding: 48px;
+    border-radius: var(--radius); color: #fff; background: linear-gradient(135deg, var(--hero-a), var(--hero-b));
+  }
+  .auth-brand .logo { width: 72px; height: 72px; border-radius: 22px; background: rgb(255 255 255 / 0.18); box-shadow: none; }
+  .auth-brand .logo svg.i { width: 40px; height: 40px; }
+  .auth-brand .brand-name, .auth-brand .brand-name span { font-size: clamp(2.2rem, 4vw, 3.4rem); font-weight: 900; line-height: 1.05; color: #fff; }
+  .auth-brand p { margin: 0; max-width: 28ch; font-size: clamp(1.1rem, 1.6vw, 1.45rem); line-height: 1.4; font-weight: 700; }
+}
 .auth-box h1 { margin-bottom: 4px; }
 .auth-links { text-align: center; font-size: 0.92rem; }
 a { color: var(--accent); }
