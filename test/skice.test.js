@@ -589,3 +589,48 @@ test("telesa: prizma ima 5 zakritih robov, deli mreže se ne prekrivajo, P in V 
     }
   }
 });
+
+test("presek stožca: parabola nastane natanko pri τ = 90° − α, pri manjšem nagibu zaprta krivulja, pri večjem dve veji", async () => {
+  const { vrsta, nastavitev, krivulja, izsrednost, VISINA } = await import("../public/skice/presek-stozca.js");
+  for (let alfa = 15; alfa <= 60; alfa++) {
+    const par = nastavitev("Parabola", alfa);
+    assert.equal(par.tau, 90 - alfa, "gumb Parabola");
+    assert.equal(vrsta(par.tau, alfa, par.h), "parabola");
+    assert.ok(Math.abs(izsrednost(par.tau, alfa) - 1) < 1e-12, "e = 1");
+    assert.equal(vrsta(par.tau - 1, alfa, 0.6), par.tau - 1 === 0 ? "krožnica" : "elipsa");
+    assert.equal(vrsta(par.tau + 1, alfa, 0.6), "hiperbola");
+    for (const ime of ["Krožnica", "Elipsa", "Parabola", "Hiperbola"]) assert.equal(vrsta(nastavitev(ime, alfa).tau, alfa, 1), ime.toLowerCase(), `${ime} α=${alfa}`);
+    assert.equal(nastavitev("Skozi vrh", alfa).h, 0);
+  }
+  // Izrojeni primeri (h = 0): točka, premica, par premic.
+  assert.equal(vrsta(20, 30, 0), "točka");
+  assert.equal(vrsta(60, 30, 0), "premica");
+  assert.equal(vrsta(80, 30, 0), "par premic");
+  assert.equal(krivulja(20, 30, 0).odseki.length, 0);
+  assert.deepEqual(krivulja(20, 30, 0).tocka, [0, 0, 0]);
+  assert.equal(krivulja(60, 30, 0).odseki.length, 1);
+  assert.equal(krivulja(80, 30, 0).odseki.length, 2);
+  // Točke krivulje ležijo na stožcu (x² + z² = y² tan² α) in na ravnini (n·p = h cos τ); elipsa je ena zaprta krivulja.
+  const na = (tau, alfa, hh) => (p) => {
+    const t = Math.tan((alfa * Math.PI) / 180), r = (tau * Math.PI) / 180;
+    assert.ok(Math.abs(p[0] ** 2 + p[2] ** 2 - p[1] ** 2 * t * t) < 1e-9);
+    assert.ok(Math.abs(p[1] * Math.cos(r) + p[2] * Math.sin(r) - hh * Math.cos(r)) < 1e-9);
+    assert.ok(Math.abs(p[1]) <= VISINA + 1e-9);
+  };
+  const el = krivulja(30, 30, 0.6);
+  assert.equal(el.odseki.length, 1);
+  const o = el.odseki[0];
+  assert.ok(Math.hypot(...o[0].map((x, k) => x - o[o.length - 1][k])) < 1e-9, "zaprta");
+  o.forEach(na(30, 30, 0.6));
+  const hip = krivulja(75, 30, 0.6);
+  assert.equal(hip.odseki.length, 2, "dve veji");
+  assert.ok(hip.odseki.some((s) => s.every((p) => p[1] > 0)) && hip.odseki.some((s) => s.every((p) => p[1] < 0)), "veji na obeh plaščih");
+  hip.odseki.flat().forEach(na(75, 30, 0.6));
+  const pa = krivulja(60, 30, 0.6);
+  assert.equal(pa.odseki.length, 1);
+  pa.odseki[0].forEach(na(60, 30, 0.6));
+  assert.ok(pa.odseki[0].every((p) => p[1] > 0), "parabola na enem plašču");
+  const kr = krivulja(0, 30, 0.6);
+  assert.equal(kr.odseki.length, 1);
+  kr.odseki[0].forEach((p) => assert.ok(Math.abs(p[1] - 0.6) < 1e-12));
+});

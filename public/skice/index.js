@@ -18,7 +18,8 @@ export const SKICE = {
   "MAT-SS|Definicija": () => import("./eksponentna.js"), // edina kartica »Definicija« na listu (Eksponentna funkcija in logaritmi)
   "MAT-SS|Skalarni produkt": () => import("./vektorja.js"),
   "MAT-SS|Razdalja točk": () => import("./tocke.js"),
-  "MAT-SS|Krožnica": () => import("./kroznica.js"),
+  // Presek stožca je uvod v stožnice: nad skico krožnice na isti kartici (j-jeva naloga: »nad krožnico«).
+  "MAT-SS|Krožnica": z(() => import("./presek-stozca.js"), { potem: () => import("./kroznica.js") }),
   "MAT-SS|Elipsa": () => import("./elipsa.js"),
   "MAT-SS|Hiperbola": () => import("./hiperbola.js"),
   "MAT-SS|Parabola": () => import("./parabola.js"),
