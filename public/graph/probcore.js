@@ -175,7 +175,8 @@ export function fisherF(d1, d2) {
     inv: (p) => invert(cdf, p, 0, Math.max(1e4, hi * 10)),
     mean,
     sd: d2 > 4 ? Math.sqrt((2 * d2 * d2 * (d1 + d2 - 2)) / (d1 * (d2 - 2) ** 2 * (d2 - 4))) : NaN,
-    range: [0, invert(cdf, 0.995, 0, hi)],
+    // pri majhnih d2 je rep zelo dolg (F(1;1): 0,995-kvantil ≈ 16 000), zato os omejimo, da krivulja ni le špica pri 0
+    range: [0, Math.min(invert(cdf, 0.995, 0, hi), Math.max(5, 4 * invert(cdf, 0.75, 0, hi)))],
   };
 }
 

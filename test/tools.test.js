@@ -743,6 +743,7 @@ test("statistika 2 spremenljivk in pogostosti (kot Casio fx-991CW)", () => {
   near(s.r, 0.7745966692);
   assert.equal(stats2([1, 2], [3]), null);
   assert.ok(Number.isNaN(stats2([1, 1, 1], [1, 2, 3]).r));
+  near(stats2([1e200, 2e200, 3e200], [1, 2, 3]).r, 1); // Σx² = ∞, r pa ostane 1
   assert.deepEqual(expandFreq([1, 2, 3], [2, 0, 1]), [1, 1, 3]);
   assert.equal(expandFreq([1, 2], [1]), null);
   assert.equal(expandFreq([1, 2], [1, 1.5]), null);
@@ -772,6 +773,11 @@ test("matrike: sled, karakteristični polinom, lastne vrednosti", () => {
   const rot = M.eigen([[0, -1], [1, 0]]); // ±i
   assert.deepEqual(rot.map(([re, im]) => [+re.toFixed(9) + 0, Math.abs(+im.toFixed(9))]), [[0, 1], [0, 1]]);
   assert.equal(M.trace([[1, 2, 3]]), null);
+  // večkratne lastne vrednosti (QR, ne ničle polinoma): I in Jordanov blok brez »kompleksnega« šuma
+  const I10 = Array.from({ length: 10 }, (_, i) => Array.from({ length: 10 }, (_, j) => (i === j ? 1 : 0)));
+  assert.deepEqual(M.eigen(I10), Array(10).fill([1, 0]));
+  assert.deepEqual(M.eigen([[2, 1, 0], [0, 2, 1], [0, 0, 2]]), [[2, 0], [2, 0], [2, 0]]);
+  assert.deepEqual(M.eigen([[5]]), [[5, 0]]);
 });
 
 test("Fisherjeva F: kvantil, pričakovana vrednost, isto kot F-test", () => {

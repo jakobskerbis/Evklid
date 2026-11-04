@@ -177,7 +177,7 @@ export function createTools(root, opts) {
     el.innerHTML =
       card(`<div class="tl-mx"><label class="tl-field"><span>${texHtml("A")}</span><textarea class="tl-A" rows="3" spellcheck="false">${esc(st.A)}</textarea></label><label class="tl-field"><span>${texHtml("B")}</span><textarea class="tl-B" rows="3" spellcheck="false">${esc(st.B)}</textarea></label></div>
       <p class="muted tl-note">${esc(t("sc.mx.hint"))}</p>
-      <div class="chip-row tl-ops">${["det A", "A^{-1}", "A^T", "\\operatorname{rref} A", "A + B", "A - B", "A \\cdot B", "A x = B", "\\operatorname{sl} A", "A^2", "\\lambda"].map((o, i) => `<button type="button" data-op="${i}">${texHtml(o)}</button>`).join("")}</div>`) + `<div class="tl-out" aria-live="polite"></div>`;
+      <div class="chip-row tl-ops">${["\\det A", "A^{-1}", "A^T", "\\operatorname{rref} A", "A + B", "A - B", "A \\cdot B", "A x = B", "\\operatorname{sl} A", "A^2", "\\lambda"].map((o, i) => `<button type="button" data-op="${i}">${texHtml(o)}</button>`).join("")}</div>`) + `<div class="tl-out" aria-live="polite"></div>`;
     const out = el.querySelector(".tl-out");
     let op = 0;
     const run = () => {
@@ -248,7 +248,7 @@ export function createTools(root, opts) {
         }
       }
       if (res == null) out.innerHTML = err(t("sc.mx.size"));
-      else if (Array.isArray(res)) out.innerHTML = card(res.map((r) => `<div class="tl-mx-res">${texHtml(r, true)}</div>`).join(""));
+      else if (Array.isArray(res)) out.innerHTML = card(res.map((r) => `<div class="tl-mx-line">${texHtml(r)}</div>`).join("")); // vrstični KaTeX: dolg polinom se prelomi pri + in −
       else if (res.startsWith("!")) out.innerHTML = err(res.slice(1));
       else out.innerHTML = card(`<div class="tl-mx-res">${texHtml(res, true)}</div>`);
     };
@@ -293,7 +293,9 @@ export function createTools(root, opts) {
         if (binary && !st.w.trim()) logic = "";
         else if (binary && !w) logic = err(t("sc.base.invalid"));
         else {
-          const lr = logic32(r.value, w?.value ?? null, st.op);
+          // BIN/OCT/HEX od 2³¹ do 2³² − 1 je 32-bitni vzorec (kot Casio: FFFFFFFF = −1), DEC ostane s predznakom
+          const bits = (v) => (st.b !== 10 && typeof v === "bigint" && v >= 2n ** 31n && v < 2n ** 32n ? BigInt.asIntN(32, v) : v);
+          const lr = logic32(bits(r.value), bits(w?.value ?? null), st.op);
           logic = lr ? card(`<div class="tl-h">${esc(t("sc.base.result"))}: ${esc(opName(st.op))}</div>${rows(lr)}`) + `<p class="muted tl-note">${esc(t("sc.base.bits"))}</p>` : err(t("sc.base.range"));
         }
       }

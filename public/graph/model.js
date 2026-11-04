@@ -803,7 +803,7 @@ export function regression(xs, ys, model) {
 
 /**
  * Obratna napoved (Casio x̂): vrednosti x, pri katerih je model enak y. Seznam (prazen, če rešitve ni);
- * null za modele brez zaprte oblike (kubična, kvartična).
+ * null za modele brez ene same zaprte rešitve (kubična, kvartična, sinusna).
  */
 export function regressionX(fit, y) {
   const p = fit.p;
@@ -831,11 +831,7 @@ export function regressionX(fit, y) {
       return ok(p[1] / (y - p[0]));
     case "logistic":
       return Number.isFinite(fit.xm) ? ok(fit.xm - Math.log(p[2] / y - 1) / p[1]) : ok(-Math.log((p[2] / y - 1) / p[0]) / p[1]);
-    case "sin": {
-      const s = (y - p[3]) / p[0];
-      return Math.abs(s) <= 1 ? ok((Math.asin(s) - p[2]) / p[1]) : [];
-    }
-    default:
+    default: // tudi sinusna: rešitev je neskončno (ena na periodo), zato je ne ponujamo
       return null;
   }
 }
@@ -846,7 +842,9 @@ export const regressionTex = (fit, comma = true) => fitTex(fit, comma);
 const r4 = (v) => Number(v.toPrecision(4));
 function fitTex(fit, comma) {
   const n = (v) => {
-    const s = String(r4(v));
+    // 7.282e-287 → 7,282·10^{−287} (ne »e-287«, kar bi se bralo kot e na potenco)
+    const [m, e] = String(r4(v)).split("e");
+    const s = e === undefined ? m : `${m}\\cdot 10^{${Number(e)}}`;
     return comma ? s.replace(".", "{,}") : s;
   };
   const term = (c, pow, first) => {

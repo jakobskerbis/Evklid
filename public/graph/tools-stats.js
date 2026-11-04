@@ -55,7 +55,7 @@ export function statsTool(el, ctx) {
     const vals = readList(text);
     const fr = st.f.trim() ? readList(st.f) : null;
     const data = fr ? expandFreq(vals, fr) : vals;
-    if (!data) return (out.innerHTML = err(t("sc.st.freqBad")));
+    if (!data || (fr && vals.length && !data.length)) return (out.innerHTML = err(t("sc.st.freqBad")));
     const s = stats(data);
     if (!s) return (out.innerHTML = "");
     const r = (key, sym, v, extra) => row(t(`sc.st.${key}`), sym, v, extra);
@@ -89,12 +89,15 @@ export function statsTool(el, ctx) {
     const ys = readList(st.y);
     const s = stats2(xs, ys);
     if (!s) return (out.innerHTML = err(t("sc.st.pairsBad")));
-    const fit = regression(xs, ys, st.model);
+    // kot Casio/TI (Math ERROR, ERR:DOMAIN): podatki zunaj definicijskega območja modela se ne preskočijo tiho
+    const dom = { exp: [0, 1], expe: [0, 1], pow: [1, 1], log: [1, 0], inv: [2, 0] }[st.model] ?? [0, 0];
+    const inDom = xs.every((x, i) => (dom[0] !== 1 || x > 0) && (dom[0] !== 2 || x !== 0) && (!dom[1] || ys[i] > 0));
+    const fit = inDom ? regression(xs, ys, st.model) : null;
     // logistična pri x daleč od 0 (npr. leta): a = e^{b·x₀} je prevelik, zato zapis z x₀ (prevoj), kot v načinu graf
     const shifted = fit?.model === "logistic" && Number.isFinite(fit.xm) && !(Math.abs(Math.log10(fit.p[0])) < 12);
     const coefs = shifted ? [["b", fit.p[1]], ["c", fit.p[2]], ["x_0", fit.xm]] : fit ? fit.p.map((v, i) => ["abcde"[i], v]) : [];
     let reg = "";
-    if (!fit || !coefs.every(([, v]) => Number.isFinite(v))) reg = err(t("sc.st.regBad"));
+    if (!fit || !coefs.every(([, v]) => Number.isFinite(v)) || !Number.isFinite(fit.r2)) reg = err(t("sc.st.regBad"));
     else {
       const est = [];
       const ex = st.ex.trim() ? readNumber(st.ex) : NaN;
