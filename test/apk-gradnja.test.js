@@ -16,7 +16,8 @@ test("APK na GitHubu: isti kanal in prstni odtis kot profil direct", () => {
 });
 
 test("APK na GitHubu: ključ samo iz skrivnosti, izdaja samo z main, brez samodejnega zagona", () => {
-  for (const s of ["ANDROID_KEYSTORE_BASE64", "ANDROID_KEYSTORE_PASSWORD", "ANDROID_KEY_ALIAS", "ANDROID_KEY_PASSWORD"]) assert.ok(wf.includes(`secrets.${s}`), s);
+  assert.match(wf, /eas-cli@latest build --local --non-interactive --platform android --profile direct/, "pot z EXPO_TOKEN");
+  for (const s of ["EXPO_TOKEN", "ANDROID_KEYSTORE_BASE64", "ANDROID_KEYSTORE_PASSWORD", "ANDROID_KEY_ALIAS", "ANDROID_KEY_PASSWORD"]) assert.ok(wf.includes(`secrets.${s}`), s);
   assert.match(wf, /--ks-pass env:KS_PASS/, "geslo ne v ukazni vrstici");
   assert.match(wf, /github\.ref == 'refs\/heads\/main'/);
   assert.doesNotMatch(wf, /^\s+push:/m, "gradnja samo ročno");

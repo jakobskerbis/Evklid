@@ -168,7 +168,12 @@ namesto spletne različice, prav tako stran https://evklid.app/prenesi. Ob novi 
 Naredi isto kot gradnja s profilom `direct`: kanal `direct`, številka različice = trenutna na evklid.app + 1.
 APK mora biti podpisan z **istim ključem** kot prejšnji, sicer ga telefon ne namesti čez staro aplikacijo.
 
-Enkrat (ključ v skrivnosti GitHub, nikoli v repozitorij):
+Enkrat, najlažje (gre tudi s telefonom): expo.dev → Account settings → **Access tokens** → Create; žeton
+prilepi na github.com/jakobskerbis/Evklid → Settings → Secrets and variables → Actions → **New repository
+secret** z imenom `EXPO_TOKEN`. Gradnja nato ključ in številko različice vzame z Expa sama (`eas build --local`
+na GitHubu, Expo te gradnje ne šteje). Nadaljuj pri koraku 4.
+
+Ali brez Expa (ključ v skrivnosti GitHub, nikoli v repozitorij):
 1. expo.dev → projekt evklid → **Credentials** → Android → `app.evklid` → Keystore → **Download**. Na isti
    strani si zapiši *Keystore password*, *Key alias* in *Key password*.
 2. Preneseno datoteko preimenuj v `evklid.jks`. V PowerShellu pojdi v njeno mapo (`cd Downloads`) in zaženi:

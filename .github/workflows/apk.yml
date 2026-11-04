@@ -2,9 +2,11 @@
 # Ročni zagon: GitHub > Actions > »APK za Android« > Run workflow (veja main).
 # Naredi isto kot gradnja EAS s profilom "direct": kanal posodobitev "direct", številka različice
 # = trenutna na evklid.app + 1, podpis z istim ključem kot prej (sicer ga telefon ne namesti čez staro).
-# Ključ je v skrivnostih repozitorija (Settings > Secrets and variables > Actions):
-#   ANDROID_KEYSTORE_BASE64  datoteka .jks z expo.dev (Credentials) v base64
-#   ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD  podatki s iste strani
+# Ključ za podpis (skrivnosti repozitorija, Settings > Secrets and variables > Actions), ena od poti:
+#   EXPO_TOKEN  žeton z expo.dev (Access tokens): »eas build --local« vzame ključ in številko z Expa,
+#               gradi pa tukaj (lokalne gradnje Expo ne šteje med plačljive);
+#   ali ANDROID_KEYSTORE_BASE64 (.jks z expo.dev Credentials v base64) + ANDROID_KEYSTORE_PASSWORD,
+#               ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD.
 # Rezultat: izdaja »apk-<številka>« z datoteko evklid.apk; povezavo do nje skrbnik prilepi v
 # Račun > Aplikacija za Android (server/mobile/download.js dovoli github.com). Navodila: docs/mobilna-aplikacija.md
 name: APK za Android
@@ -22,6 +24,7 @@ jobs:
     env:
       EXPO_PUBLIC_CHANNEL: direct
       EXPO_NO_TELEMETRY: "1"
+      HAS_EXPO: ${{ secrets.EXPO_TOKEN != '' }}
       HAS_KEY: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     defaults:
       run:
@@ -38,8 +41,14 @@ jobs:
           distribution: temurin
           java-version: 17
       - run: npm ci
+      - name: Gradnja EAS na tem strežniku (ključ in številka z Expa)
+        if: env.HAS_EXPO == 'true'
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: npx --yes eas-cli@latest build --local --non-interactive --platform android --profile direct --output "$GITHUB_WORKSPACE/mobile/evklid.apk"
       # Večja od APK na evklid.app in od zadnje izdaje apk-N (ponovni zagon, preden je povezava prilepljena).
       - name: Številka različice
+        if: env.HAS_EXPO != 'true'
         id: ver
         env:
           GH_TOKEN: ${{ github.token }}
@@ -53,13 +62,17 @@ jobs:
       # Prstni odtis pred prebuild (kot EAS): enak kot pri objavi posodobitev (.eas/workflows/posodobitev.yml),
       # sicer APK ne dobi posodobitev JavaScripta.
       - name: Prstni odtis
+        if: env.HAS_EXPO != 'true'
         run: |
           fp=$(npx expo-updates fingerprint:generate --platform android | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).hash))')
           test -n "$fp"
           echo "EXPO_UPDATES_FINGERPRINT_OVERRIDE=$fp" >> "$GITHUB_ENV"
           echo "Prstni odtis: $fp"
-      - run: npx expo prebuild --platform android --no-install
+      - name: Prebuild
+        if: env.HAS_EXPO != 'true'
+        run: npx expo prebuild --platform android --no-install
       - name: Kanal direct in številka različice
+        if: env.HAS_EXPO != 'true'
         env:
           CODE: ${{ steps.ver.outputs.code }}
         run: |
@@ -71,10 +84,11 @@ jobs:
           fi
           grep -n "expo-channel-name\|expo.modules.updates" "$m"
       - name: Gradnja
+        if: env.HAS_EXPO != 'true'
         working-directory: mobile/android
         run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
       - name: Podpis z ključem Evklid
-        if: env.HAS_KEY == 'true'
+        if: env.HAS_EXPO != 'true' && env.HAS_KEY == 'true'
         env:
           KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -89,19 +103,26 @@ jobs:
           "$signer" verify --print-certs evklid.apk | grep -m1 "SHA-256"
           rm -f "$RUNNER_TEMP/evklid.jks"
       - name: Brez ključa (samo preizkus)
-        if: env.HAS_KEY != 'true'
+        if: env.HAS_EXPO != 'true' && env.HAS_KEY != 'true'
         run: |
           cp android/app/build/outputs/apk/release/app-release.apk evklid.apk
           echo "::warning::Ni skrivnosti ANDROID_KEYSTORE_BASE64: APK ni podpisan s ključem Evklid in se ne namesti čez staro aplikacijo."
+      - name: Številka v APK
+        id: apk
+        run: |
+          code=$(node -e 'import("../server/mobile/apk-info.js").then(async m=>console.log((await m.apkVersion("evklid.apk")).versionCode))')
+          test "$code" -gt 0
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "APK različica $code"
       - uses: actions/upload-artifact@v5
         with:
-          name: evklid-apk-${{ steps.ver.outputs.code }}
+          name: evklid-apk-${{ steps.apk.outputs.code }}
           path: mobile/evklid.apk
       - name: Izdaja na GitHubu
-        if: env.HAS_KEY == 'true' && github.ref == 'refs/heads/main'
+        if: (env.HAS_EXPO == 'true' || env.HAS_KEY == 'true') && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
-          CODE: ${{ steps.ver.outputs.code }}
+          CODE: ${{ steps.apk.outputs.code }}
         run: |
           gh release create "apk-$CODE" evklid.apk --target "$GITHUB_SHA" --title "Evklid APK $CODE" --notes "Gradnja $CODE (kanal direct). Povezavo prilepi v Račun > Aplikacija za Android."
           url="https://github.com/${GITHUB_REPOSITORY}/releases/download/apk-$CODE/evklid.apk"
