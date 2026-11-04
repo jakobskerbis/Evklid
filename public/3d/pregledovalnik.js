@@ -144,6 +144,53 @@ export function odpriModel(el, mod, opts = {}) {
     }
   }
 
+  // Izbrani del: deli, ki ga obdajajo (celična stena, membrana, citoplazma, ovojnica ...), postanejo nevidni, da se
+  // izbrani vidi (j, 4. 11.). »Obdaja« = njegov okvir vsebuje središče izbranega in je večji (vsaj 1,25-krat). Skrijemo s
+  // plastjo 31, ki je kamera in tap ne vidita; model sam še naprej upravlja `visible`.
+  const SKRITA_PLAST = 31;
+  const skrite = new Map(); // object → izvirna maska plasti
+  const _okvir = new THREE.Box3();
+  function okvirDela(d, box) {
+    box.makeEmpty();
+    for (const m of d.meshes || []) {
+      if (!m) continue;
+      m.updateWorldMatrix(true, false);
+      m.traverseVisible((o) => {
+        if (!o.geometry) return;
+        if (o.isInstancedMesh && o.count === 0) return;
+        _okvir.makeEmpty().expandByObject(o, false);
+        box.union(_okvir);
+      });
+    }
+    return box;
+  }
+  const prostornina = (b) => {
+    const v = b.getSize(new THREE.Vector3());
+    return Math.max(v.x, 1e-6) * Math.max(v.y, 1e-6) * Math.max(v.z, 1e-6);
+  };
+  function skrijObdajajoce(d) {
+    for (const [o, maska] of skrite) o.layers.mask = maska;
+    skrite.clear();
+    if (!d || !model?.deli) return;
+    const izbrane = new Set();
+    for (const m of d.meshes || []) m?.traverse((o) => izbrane.add(o));
+    const bS = okvirDela(d, new THREE.Box3());
+    if (bS.isEmpty()) return;
+    const c = bS.getCenter(new THREE.Vector3());
+    const vS = prostornina(bS);
+    const bP = new THREE.Box3();
+    for (const p of model.deli) {
+      if (p === d || !p.meshes?.length) continue;
+      okvirDela(p, bP);
+      if (bP.isEmpty() || !bP.containsPoint(c) || prostornina(bP) < vS * 1.25) continue;
+      for (const m of p.meshes) m?.traverse((o) => {
+        if (izbrane.has(o) || skrite.has(o)) return;
+        skrite.set(o, o.layers.mask);
+        o.layers.set(SKRITA_PLAST);
+      });
+    }
+  }
+
   // hit = { object, instanceId, point } iz tapa (null iz seznama delov); model.izberi lahko vrne drug del (npr. element
   // v InstancedMesh). preklopi: ponoven tap na izbrani del izbiro prekliče.
   function izberi(id, { leti = true, hit = null, preklopi = false } = {}) {
@@ -160,6 +207,8 @@ export function odpriModel(el, mod, opts = {}) {
     const d = (model?.deli || []).find((x) => x.id === cilj) || null;
     izbran = d ? d.id : null;
     obarvaj(d);
+    skrijObdajajoce(d);
+    kit.narisi();
     kit.izbranaTocka(izbran);
     deliEl.querySelectorAll("[data-del]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.del === izbran)));
     if (!d) {
