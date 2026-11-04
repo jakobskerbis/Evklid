@@ -5,7 +5,7 @@ import { s } from "../sim/kit.js";
 import { parabola, ravnina } from "./stoznice.js";
 
 export default function narisi(host) {
-  const { S, A, P } = ravnina("Povleci točko T po paraboli.", "Parabola z goriščem in vodnico");
+  const { S, A, P, oznakaT } = ravnina("Povleci točko T po paraboli.", "Parabola z goriščem in vodnico");
   let p = 2, y = 2, tocka;
   S.drsnik({ label: "p", min: 0.5, max: 4, step: 0.5, value: p, digits: 1, barva: "ploskev", onInput: (v) => ((p = v), izris()) });
   // T ostane v okvirju: x = y²/2p ≤ 5,8 in |y| ≤ 4,3.
@@ -29,10 +29,11 @@ export default function narisi(host) {
     crta(zg, ...T, ...V, "druga", { "stroke-width": 2.5 });
     s("circle", { cx: G[0], cy: G[1], r: 5, class: "sk-fill sk-fill-ploskev" }, zg);
     napis(g, G[0] + 6, G[1] + 18, "G", "ploskev");
+    oznakaT(g, q.T);
     if (tocka) tocka.move(...T);
     S.cipi([
       { barva: "ploskev", oznaka: "\\frac{p}{2}", vrednost: st(p / 2, 2) },
-      { barva: "izbor", oznaka: "d(T, G)", vrednost: vr(q.dG) },
+      { barva: "izbor", oznaka: "d(T, G)", vrednost: vr(q.dV) }, // enaki razdalji, zaokrožena enako
       { barva: "druga", oznaka: "d(T, v)", vrednost: vr(q.dV) },
     ]);
   }

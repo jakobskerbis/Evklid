@@ -257,7 +257,7 @@ test("stožnice: r₁ + r₂ = 2a, |r₁ − r₂| = 2a, d(T, G) = d(T, v) za vs
       }
   for (let a = 0.5; a <= 3.5; a += 0.5)
     for (let b = 0.5; b <= 3.5; b += 0.5)
-      for (let t = -2.2; t <= 2.2; t += 0.4)
+      for (let t = -2.2; t <= 2.2; t += 0.4) // (skica omeji t še na okvir)
         for (const v of [1, -1]) {
           const q = hiperbola(a, b, t, v);
           assert.ok(Math.abs(Math.abs(q.r1 - q.r2) - 2 * a) < 1e-9);
@@ -271,4 +271,13 @@ test("stožnice: r₁ + r₂ = 2a, |r₁ − r₂| = 2a, d(T, G) = d(T, v) za vs
     }
   assert.equal(kroznica(1, -2, 3).enacba, "(x − 1)² + (y + 2)² = 9");
   assert.equal(kroznica(0, 0.5, 2.5).enacba, "x² + (y − 0,5)² = 6,25");
+});
+
+test("hiperbola: točka T ostane v okvirju za vse a in b", async () => {
+  const { tMeja } = await import("../public/skice/hiperbola.js");
+  for (let a = 0.5; a <= 3.5; a += 0.5)
+    for (let b = 0.5; b <= 3.5; b += 0.5) {
+      const m = tMeja(a, b);
+      assert.ok(a * Math.cosh(m) <= 5.8 + 1e-9 && b * Math.sinh(m) <= 4.3 + 1e-9);
+    }
 });

@@ -1,6 +1,6 @@
 // Stožnice v ravnini (krožnica, elipsa, hiperbola, parabola): računi za skice in skupni koordinatni sistem.
 // Oznake kot na kartici lista MAT-SŠ: središče (p, q), polosi a, b, linearna ekscentričnost e, gorišče G.
-import { skica, st, osi } from "./skica.js";
+import { skica, st, osi, napis } from "./skica.js";
 
 // Enačba z vstavljenimi števili, npr. »(x − 1)² + (y + 2)² = 9«; pri središču v 0 samo »x²«.
 export function kroznica(p, q, r) {
@@ -35,6 +35,12 @@ export function ravnina(navodilo, oznaka) {
   const W = 300, H = 230;
   const S = skica({ w: W, h: H, navodilo, oznaka });
   const oz = [-4, -2, 2, 4].map((v) => [v, st(v, 0)]);
-  const A = osi(S.svg, { W, H, x: [-6, 6], y: [-4.54, 4.54], rob: 6, xOznake: [[-6, ""], ...oz, [6, ""]], yOznake: oz });
-  return { S, A, P: (v) => [A.X(v[0]), A.Y(v[1])] };
+  const A = osi(S.svg, { W, H, x: [-6, 6], y: [-4.5417, 4.5417], rob: 6, xOznake: [[-6, ""], ...oz, [6, ""]], yOznake: oz });
+  const P = (v) => [A.X(v[0]), A.Y(v[1])];
+  // Oznaka točke ob njej, na strani stran od središča, vedno v okvirju.
+  const oznakaT = (g, v, ime = "T") => {
+    const [x, y] = P(v);
+    napis(g, Math.min(A.R - 12, Math.max(A.L + 12, x + (v[0] >= 0 ? 12 : -12))), Math.min(A.B - 4, Math.max(A.T + 14, y + (v[1] >= 0 ? -10 : 20))), ime, "glavna", { "text-anchor": "middle" });
+  };
+  return { S, A, P, oznakaT };
 }
