@@ -304,13 +304,18 @@ export function odpriModel(el, mod, opts = {}) {
           const koren = lab.closest(".k3-pregled") || lab;
           lab.classList.add("k3-aktiven");
           koren.classList.add("k3-drsam");
+          // Brez pointercancel: iOS ga pošlje takoj, ko drsnik prevzame poteg, in prosojnost bi izginila. Konec
+          // vlečenja zato ujamemo s pointerup, touchend (iOS) ali change ob spustu.
+          const KONEC = ["pointerup", "touchend", "touchcancel", "blur", "contextmenu"];
           const konec = (ev) => {
             if (ev.pointerId !== undefined && ev.pointerId !== id) return; // drug prst na odru ne konča vlečenja
             lab.classList.remove("k3-aktiven");
             koren.classList.remove("k3-drsam");
-            for (const t of ["pointerup", "pointercancel", "blur", "contextmenu"]) window.removeEventListener(t, konec);
+            for (const t of KONEC) window.removeEventListener(t, konec);
+            inp.removeEventListener("change", konec);
           };
-          for (const t of ["pointerup", "pointercancel", "blur", "contextmenu"]) window.addEventListener(t, konec);
+          for (const t of KONEC) window.addEventListener(t, konec);
+          inp.addEventListener("change", konec);
         });
         inp.addEventListener("input", () => {
           const v = Number(inp.value);

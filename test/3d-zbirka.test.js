@@ -104,8 +104,63 @@ test("every 3D stage (viewer and atlas) has the rotation mode button, with strin
 test("dragging a slider hides everything but its knob and track until release", () => {
   const src = fs.readFileSync(path.join(D3, "pregledovalnik.js"), "utf8");
   assert.match(src, /koren\.classList\.add\("k3-drsam"\)/);
-  assert.match(src, /for \(const t of \["pointerup", "pointercancel", "blur", "contextmenu"\]\) window\.addEventListener\(t, konec\)/, "released on pointerup/cancel/blur/contextmenu");
+  // Brez pointercancel (iOS ga pošlje ob začetku poteza drsnika); konec ujame pointerup, touchend ali change.
+  assert.match(src, /const KONEC = \["pointerup", "touchend", "touchcancel", "blur", "contextmenu"\]/, "released on pointerup/touchend/blur/contextmenu");
+  assert.match(src, /inp\.addEventListener\("change", konec\)/);
   const css = fs.readFileSync(path.join(D3, "3d.css"), "utf8");
   assert.match(css, /\.k3-drsam \.k3-spodaj[^{]*\{ visibility: hidden; \}/);
   assert.match(css, /\.k3-drsam \.k3-aktiven input\[type="range"\] \{ visibility: visible; \}/);
+});
+
+test("atlas: cut and spread sliders make everything else transparent while dragging", () => {
+  const src = fs.readFileSync(path.join(D3, "atlas.js"), "utf8");
+  assert.match(src, /prosojnoObVlecenju\(preIn, el\)/);
+  assert.match(src, /prosojnoObVlecenju\(razIn, el\)/);
+  assert.doesNotMatch(src, /"pointercancel"/);
+  const css = fs.readFileSync(path.join(D3, "3d.css"), "utf8");
+  assert.match(css, /\.a3-drsam \.a3-list[^{]*\{ visibility: hidden; \}/);
+  assert.match(css, /\.a3-drsam input\.a3-aktiven \{ visibility: visible; \}/);
+});
+
+test("atlas: view directions live only in the »⋯« menu (no round compass)", () => {
+  const src = fs.readFileSync(path.join(D3, "atlas.js"), "utf8");
+  assert.doesNotMatch(src, /a3-kompas|a3-smer/);
+  assert.match(src, /for \(const \[k, d\] of KOMPAS\)/);
+  assert.match(src, /t\(`a3\.dir\.\$\{k\}`\)/);
+  assert.doesNotMatch(fs.readFileSync(path.join(D3, "3d.css"), "utf8"), /\.a3-kompas|\.a3-smer/);
+});
+
+test("3D overlay: body class does not clash with the blue »Odpri« button and the frame fits the visible screen", () => {
+  const js = fs.readFileSync(path.join(D3, "..", "uci-se.js"), "utf8");
+  const css = fs.readFileSync(path.join(D3, "..", "uci.css"), "utf8");
+  assert.doesNotMatch(js, /body\.classList\.(add|remove)\("uci-3d-open"\)/);
+  assert.match(js, /body\.classList\.add\("uci-3d-odprto"\)/);
+  assert.match(js, /height: `\$\{Math\.round\(vv\.height \* k\)\}px`/);
+  assert.match(css, /body\.uci-3d-odprto \{ overflow: hidden;/);
+});
+
+test("zoom buttons: »+« moves the camera closer, »−« further away", () => {
+  const src = fs.readFileSync(path.join(D3, "scena.js"), "utf8");
+  assert.match(src, /if \(k > 1\) controls\.dollyOut\(k\);\s*else controls\.dollyIn\(1 \/ k\);/);
+  // OrbitControls: _dollyOut deli _scale (manjši polmer = bližje), _dollyIn ga množi.
+  const oc = fs.readFileSync(path.join(ROOT, "node_modules", "three", "examples", "jsm", "controls", "OrbitControls.js"), "utf8");
+  assert.match(oc, /_dollyOut\( dollyScale \) \{[\s\S]{0,200}?this\._scale \/= dollyScale/);
+  assert.match(oc, /_dollyIn\( dollyScale \) \{[\s\S]{0,200}?this\._scale \*= dollyScale/);
+});
+
+test("tap ignores hidden meshes (hidden membrane cover no longer catches every tap)", async () => {
+  // three.js zadene tudi skrite mreže, zato jih scena.js izloči sama.
+  const THREE = await import("three");
+  const skrit = new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshBasicMaterial());
+  skrit.visible = false;
+  const notri = new THREE.Mesh(new THREE.SphereGeometry(0.3), new THREE.MeshBasicMaterial());
+  const g = new THREE.Group();
+  g.add(skrit, notri);
+  g.updateMatrixWorld(true);
+  const rc = new THREE.Raycaster(new THREE.Vector3(0, 0, 5), new THREE.Vector3(0, 0, -1));
+  assert.equal(rc.intersectObjects([g], true)[0].object, skrit, "three sam skritih ne preskoči");
+  const src = fs.readFileSync(path.join(D3, "scena.js"), "utf8");
+  assert.match(src, /intersectObjects\(objekti, true\)\.filter\(\(h\) => vidnaVeja\(h\.object\)\)/);
+  assert.match(src, /intersectObjects\(ovire, true\)\.find\(\(h\) => vidnaVeja\(h\.object\)\)/);
+  assert.match(src, /for \(let x = o; x; x = x\.parent\) if \(!x\.visible\) return false;/);
 });

@@ -306,10 +306,6 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .a3-skupina .a3-krog { width: 40px; height: 40px; min-height: 40px; border-color: transparent; background: transparent; }
 .a3-skupina .a3-krog:hover { background: var(--k3-povrsina-2); }
 
-.a3-kompas { position: absolute; right: max(16px, env(safe-area-inset-right)); bottom: calc(96px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); z-index: 2; width: 84px; height: 84px; border-radius: 50%; border: 1px solid var(--k3-rob); background: rgba(14, 19, 28, 0.6); }
-.a3-smer { position: absolute; left: 25px; top: 25px; width: 34px; height: 34px; padding: 0; border-radius: 50%; border: 1px solid var(--k3-rob); background: var(--k3-povrsina-2); color: var(--k3-besedilo); font-size: 0.72rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s; }
-.a3-smer.zadaj { opacity: 0.35; }
-.a3-smer:hover { border-color: var(--k3-accent); opacity: 1; }
 
 .a3-dno { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; flex-direction: column; gap: 10px; padding: 0 max(16px, env(safe-area-inset-right)) max(14px, var(--varno-sp, env(safe-area-inset-bottom, 0px))) max(16px, env(safe-area-inset-left)); pointer-events: none; }
 .a3-dno > * { pointer-events: auto; }
@@ -384,6 +380,9 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .a3-meni { position: absolute; z-index: 7; right: 72px; top: calc(max(14px, var(--varno-zg, env(safe-area-inset-top, 0px))) + 50px); min-width: 220px; padding: 6px; border-radius: 16px; border: 1px solid var(--k3-rob); background: var(--k3-povrsina); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5); }
 .a3-meni-vrsta { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0 12px; border: 0; border-radius: 12px; background: transparent; cursor: pointer; text-align: left; }
 .a3-meni-vrsta:hover, .a3-meni-vrsta:focus-visible { background: var(--k3-povrsina-2); }
+.a3-meni { max-height: calc(100% - 140px); overflow-y: auto; overscroll-behavior: contain; }
+.a3-meni-naslov { margin: 4px 12px 2px; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--k3-muted); }
+.a3-meni-crta { margin: 6px 4px; border: 0; border-top: 1px solid var(--k3-rob); }
 .a3-sporocilo { position: absolute; z-index: 8; left: 50%; top: calc(max(14px, var(--varno-zg, env(safe-area-inset-top, 0px))) + 170px); translate: -50% 0; max-width: calc(100% - 32px); padding: 10px 16px; border-radius: 14px; background: var(--k3-povrsina-2); border: 1px solid var(--k3-rob); }
 
 .a3-kviz-vrh { display: flex; align-items: center; gap: 10px; }
@@ -405,7 +404,7 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 /* Naprej ostane viden tudi, ko se kartica kviza drsi. */
 .a3-kviz .a3-naprej { position: sticky; bottom: 0; }
 
-/* Telefon: manjši naslov, stevec in povečava v isti vrstici, kompas manjši. */
+/* Telefon: manjši naslov, stevec in povečava v isti vrstici. */
 @media (max-width: 420px) {
   .a3-glava { gap: 8px; }
   .a3-znak { width: 40px; height: 40px; border-radius: 12px; }
@@ -421,15 +420,12 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   .a3-kviz-moznosti { grid-template-columns: 1fr; gap: 6px; }
   .a3-moznost { min-height: 42px !important; }
   .a3-kviz-vpr { margin-top: 8px; font-size: 1.05rem; }
-  .a3-kompas { transform: scale(0.86); transform-origin: 100% 100%; }
 }
 /* Široki zasloni: listi ob desnem robu, kartica levo spodaj, namig na sredini. */
 @media (min-width: 900px) {
   .a3-vrsta:not(.a3-vrsta3) { max-width: 640px; }
   .a3-list { left: auto; top: max(14px, var(--varno-zg, env(safe-area-inset-top, 0px))); bottom: 14px; right: 14px; width: 400px; max-height: none; border-radius: 22px; border-bottom: 1px solid var(--k3-rob); }
   .a3-dno { right: auto; width: min(460px, 42vw); }
-  .a3-kompas { bottom: 24px; right: 24px; }
-  .a3-list-odprt .a3-kompas { right: 432px; }
   .k3-zvezda { grid-template-columns: auto 1fr; align-items: center; padding: 28px; }
   .k3-zvezda > :not(.k3-zvezda-ic):not(.k3-zvezda-slika) { grid-column: 2; }
 }
@@ -569,9 +565,13 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .k3-hoja-gumb:active { background: var(--k3-accent-soft, #1a2540); }
 /* pri hoji namig za vrtenje ne velja (navodilo za hojo pokaže obvestilo ob preklopu) */
 .k3-oder-ovoj:has(.k3-hoja:not([hidden])) .k3-namig, .a3:has(.k3-hoja:not([hidden])) .a3-namig { visibility: hidden; }
-/* atlas: desno sta kompas in zapri na kartici, zato gumba za hojo levo */
+/* atlas: desno je zapri na kartici, zato gumba za hojo levo */
 .a3 .k3-hoja { inset-inline-end: auto; inset-inline-start: max(12px, env(safe-area-inset-left)); }
 /* Vlečenje drsnika (pregledovalnik.js): vse razen gumba in tirnice tega drsnika je prosojno, da se vidi telo */
 .k3-drsam .k3-spodaj, .k3-drsam .k3-nadzor, .k3-drsam .k3-orodja, .k3-drsam .k3-plast, .k3-drsam .k3-namig, .k3-drsam .k3-merilo,
 .k3-drsam .k3-hoja, html:has(.k3-stran-pregled.k3-drsam) .k3-model-vrh { visibility: hidden; }
 .k3-drsam .k3-aktiven input[type="range"] { visibility: visible; }
+/* Isto v atlasu (atlas.js, prosojnoObVlecenju): list z nastavitvami, glava in spodnja vrstica izginejo, ostane drsnik. */
+.a3-drsam .a3-vrh, .a3-drsam .a3-dno, .a3-drsam .a3-list, .a3-drsam .a3-lebdi, .a3-drsam .k3-hoja { visibility: hidden; }
+.a3-drsam .a3-list { box-shadow: none; }
+.a3-drsam input.a3-aktiven { visibility: visible; }
