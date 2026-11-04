@@ -4,11 +4,19 @@
       "id": "evklid-vesolje",
       "ime": "Modeli, izdelani v kodi",
       "avtor": "Evklid",
-      "opis": "Sončni sistem, letni časi, Lunine mene in mrki; vse teksture narisane v kodi, obrisi celin poenostavljeni ročno.",
+      "opis": "Sončni sistem, letni časi, Lunine mene in mrki; vse teksture narisane v kodi, obrisi celin po zemljevidu Natural Earth.",
       "licenca": "Lastno delo Evklida",
       "datoteke": [
         "vesolje/*.js"
       ]
+    },
+    {
+      "id": "natural-earth",
+      "ime": "Natural Earth: sloja Land in Lakes, merilo 1 : 50 milijonov (različica 4.1.0)",
+      "avtor": "Natural Earth (NACIS)",
+      "opis": "Obrisi celin, otokov, Kaspijskega jezera in velikih jezer na Zemlji, poenostavljeni in vgrajeni v modele.",
+      "licenca": "Javna last (public domain)",
+      "url": "https://www.naturalearthdata.com/"
     },
     {
       "id": "nasa-fact-sheets",
