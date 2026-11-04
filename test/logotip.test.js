@@ -33,11 +33,23 @@ test("logo: favicon SVG and the in-app icon are the salt crystal", () => {
   assert.match(fav, /^<svg[^>]+viewBox="0 0 64 64"/);
   assert.ok(/<mask id=/.test(fav) && (fav.match(/<circle /g) || []).length >= 7 * 2, "polni znak: ploskve z masko in 7 ionov");
   const html = read("public/index.html").toString();
-  assert.ok(html.includes('href="/icons/favicon.svg"'), "index.html naloži favicon.svg");
+  assert.ok(html.includes('href="/icons/favicon.svg?v='), "index.html naloži favicon.svg (z ?v=, da brskalnik ne kaže stare ikone)");
   for (const f of ["public/index.html", "public/ucitelj.html"]) assert.ok(read(f).toString().includes('data-icon="kristal"'), `${f}: logotip je ikona kristal`);
   const icons = read("public/icons.js").toString();
   assert.ok(icons.includes('"kristal":'), "icons.js ima ikono kristal");
   assert.ok(!icons.includes('"elementi":'), "stara ikona logotipa je odstranjena");
   const { tile } = createRequire(import.meta.url)(path.join(ROOT, "scripts/logotip.cjs"));
   assert.equal(tile({ size: 64, pad: 0.1, radius: 0.22 }) + "\n", fav, "favicon.svg je enak izrisu scripts/logotip.cjs");
+});
+
+// Brskalnik si ikono zapomni po naslovu: vsaka stran jo naloži z ?v=, sicer ostane stari klobuček (j 2026-11-04).
+test("logo: every HTML page links the icon with a cache-busting ?v=", () => {
+  const pages = fs.readdirSync(path.join(ROOT, "public")).filter((f) => f.endsWith(".html"));
+  for (const f of pages) {
+    const html = read(`public/${f}`).toString();
+    assert.match(html, /rel="icon"[^>]+href="\/icons\/[\w.-]+\?v=/, `${f}: <link rel="icon"> z ?v=`);
+    assert.ok(!/href="\/icons\/(favicon\.svg|icon-192\.png|apple-touch-icon\.png)"/.test(html), `${f}: ikona brez ?v=`);
+  }
+  const gate = read("server/gate.js").toString();
+  assert.ok(gate.includes('rel="icon"') && gate.includes("apple-touch-icon.png?v="), "prijavna stran ima ikono z ?v=");
 });
