@@ -13,7 +13,7 @@ Vrstici telefona (ura, gumbi) dobita barvo roba strani. Gumb nazaj na Androidu g
 druge strani odpre brskalnik.
 
 Naravno ostane: prijava in registracija (tipkovnica telefona), posodobitve (OTA in nov APK), obvestila, vaje
-brez povezave. Ko strežnik ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez
+brez povezave. Med objavo nove različice (gostitelj vrne 502/503/504) aplikacija ob vrtavki pokaže »Evklid se posodablja …« in poskuša znova do ~70 s (`BUSY_WAIT`, kot splet), ob prekinjeni povezavi dvakrat tiho poskusi znova. Ko strežnik še vedno ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez
 povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (posodobitev OTA pride pred objavo na Renderju, `/api/mobile/web` vrne 404), aplikacija do posodobitve strežnika pokaže naravne zaslone in spletno stran poskusi znova, ko se vrne v ospredje (`mobile/src/lib/web-state.ts`). Seznam razlik spodaj velja zdaj samo še za te naravne zaslone.
 
 ## Kaj zna
@@ -90,6 +90,10 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Skeniraj: po korakih | reševalnik po korakih (`public/scan/`); aplikacija pošlje fotografijo inštruktorju | M | WebView strani skeniranja ali naravni zaslon korakov | delno |
 | Govor | mikrofon v klepetu (`speech.js`) | M | naravna odvisnost (prepoznava govora) → nova gradnja APK | ✗ |
 | Učbenik za tisk | PDF učbenika (`/ucbenik`) | S | odpri v brskalniku (`WebBrowser`) | ✗ |
+
+- **Deljiva kartica zbirke** (»Deli zbirko«, public/deli-kartico.js) je v aplikaciji skrita: WebView ne podpira
+  Web Share z datotekami ne prenosa slike, `expo-sharing` pa ni med odvisnostmi (nova odvisnost zahteva novo
+  gradnjo APK, ne OTA). Ko bo nova gradnja, jo lahko dodamo prek mostu (PNG kot base64 → `expo-sharing`).
 
 ## Dve različici
 

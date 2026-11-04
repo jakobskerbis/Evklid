@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Dve fižolasti celici zapiralki med povrhnjičnimi celicami lista uravnavata listno režo. Ko vanju vstopijo kalijevi ioni in voda, nabreknesta in reža se odpre. V prikazu »Prerez« je sprednja polovica odrezana, da se vidi prerez obeh zapiralk.",
+  poskusi: "Premikaj drsnik »Turgor« in opazuj, kdaj se listna reža odpre.",
   merilo: { m: 85e-6, oznaka: "85 µm" },
 };
 

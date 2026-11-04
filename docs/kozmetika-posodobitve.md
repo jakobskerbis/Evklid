@@ -2,7 +2,7 @@
 
 j, 30. 10. 2026: »naj kozmetika in sorodni aspekti dobivajo tedenske update«, usklajeno s povratnimi
 informacijami uporabnikov. Nove vrste iger vsak teden doda nit IGRE (docs/igre-smernice.md), dve uri za to
-posodobitvijo. Ta dokument velja za avatarje, trgovino, Zbirke in lestvice.
+posodobitvijo. Ta dokument velja za avatarje, trgovino, Zbirke, vitrine in lestvice.
 
 ## Kdaj
 
@@ -53,6 +53,21 @@ v poročilu povej, da podatkov ni bilo.
 - Trikratni pregled (docs/pregled.md): `npm test` + `node scripts/preveri-aplikacijo.cjs`, nato pregledovalec.
   Za pogled pokaži slike novih predmetov (Playwright) v svetli in temni temi.
 - Največ 2 agenta hkrati (docs/token-rules.md).
+
+## Vitrina v razredu in deljiva kartica (4. 11. 2026)
+
+- **Vitrina v razredu** (server/vitrina.js, Lige → kartica razreda): samo v razredu, ki ga je odprl učitelj (ne v
+  skupini prijateljev). Učenec vklopi »Pokaži mojo vitrino sošolcem« posebej za vsak razred; privzeto je izklopljeno
+  in izstop iz razreda vklop pobriše. Sošolci vidijo samo vzdevek (kot na lestvici), avatar, XP in do 3 predmete
+  iz vitrine (izbira je ista kot na profilu, »V vitrino«), v pogledu »Preglej« pa temo in datum (brez ure).
+  Učitelj lahko vitrine v razredu izklopi (stran za učitelje); izklopa učenec ne more obiti. Poti so pod
+  `/api/students/:id`, zato z računi veljata lastništvo profila in geslo profila. Brez klepeta.
+- **Deljiva kartica** (public/deli-kartico.js, Zbirke → »Deli zbirko«): PNG nariše brskalnik (SVG → canvas), na
+  strežnik ne gre nič. Na njej so avatar, do 3 predmeti iz vitrine z okvirjem redkosti, števila po zbirkah,
+  stopnja passa in znak Evklid; nikoli ime, vzdevek, šola, razred, e-naslov ali id. Model kartice vzame samo
+  dovoljena polja. Deli prek Web Share API z datoteko, sicer prenos.
+- Nov predmet v vitrini ali na kartici ne potrebuje dodatne kode; nova polja v odgovoru `/api/students/:id/vitrina`
+  ali v `shareCardModel` pa morajo skozi test/vitrina.test.js (seznam dovoljenih ključev).
 
 ## Poročilo j-ju
 

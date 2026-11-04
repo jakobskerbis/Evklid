@@ -78,7 +78,7 @@ export const setTakenHandler = (fn: ((studentId: number) => void) | null) => {
 
 type Opts = { method?: string; body?: unknown; signal?: AbortSignal; stream?: boolean };
 
-const BUSY_WAIT = [2000, 3000, 5000, 8000, 10000, 12000, 15000, 15000]; // skupaj ~70 s
+export const BUSY_WAIT = [2000, 3000, 5000, 8000, 10000, 12000, 15000, 15000]; // skupaj ~70 s
 // čakanje, ki ga prekliče signal zahteve (zapuščen zaslon)
 const pause = (ms: number, signal?: AbortSignal) =>
   new Promise<void>((ok, fail) => {

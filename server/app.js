@@ -16,6 +16,7 @@ import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
 import { Progress } from "./progress.js";
 import { mountLeagues } from "./leagues.js";
+import { mountClassShowcase } from "./vitrina.js";
 import { mountGradiva } from "./gradiva.js";
 import { mountKviz } from "./kviz.js";
 import { mountSchools } from "./schools.js";
@@ -243,7 +244,7 @@ export function createApp(store, opts = {}) {
   });
   // Merjenje v pilotu: števec ogledov strani za starše (pred statičnimi datotekami, glej pilot.js).
   app.use(visitCounter(store.db));
-  mountSolePage(app); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
+  mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
@@ -528,13 +529,14 @@ export function createApp(store, opts = {}) {
       competition: student.settings.track === "COMPETITION",
       secondary: jeSs(student.settings),
       lite,
-      free: !!accounts && !accounts.premiumFor(student.id),
+      free: !!accounts && !accounts.aiPremiumFor(student.id),
       deepModel: capped ? MODEL_MID : MODEL_DEEP,
       capped,
     });
     // Mesečni proračun API (server/proracun.js): pod načrtom porabe močnejši model, nad njim hitri.
     // Brezplačni paket brez nadgradnje (nikoli Opus, ima svoje meje); koda in šolska licenca največ Sonnet.
-    const premium = !accounts || accounts.premiumFor(student.id);
+    // Šola s porabljeno mesečno mejo AI (schoolAiOut) tu šteje kot brezplačni paket (aiPremiumFor).
+    const premium = !accounts || accounts.aiPremiumFor(student.id);
     const maxTier = !premium ? null : ladder && (!ladder.opus || ladder.promo) ? "mid" : "deep";
     // Z opombo (dnevna meja Opusa, mehka meja, brezplačni paket) ostane izbrani hitri model: opomba mora držati.
     const routed = chosen.note ? { mode: chosen.mode, boosted: false, saved: false } : usage.route(student.id, chosen.mode, { lite, maxTier });
@@ -1286,6 +1288,7 @@ export function createApp(store, opts = {}) {
   mountLab(app, { loadStudent, accounts }); // virtualni laboratorij: vsi poskusi, zaklep kot v učbeniku
   mountAvatar(app, avatars, { loadStudent, trendsFile: opts.trendsFile ?? null });
   mountKnowledge(app, knowledge, { loadStudent, avatars });
+  mountClassShowcase(app, store.db, { loadStudent, leagues, knowledge }); // vitrina v razredu (opt-in, server/vitrina.js)
   mountCorner(app, store, { loadStudent, fetchFn: opts.newsFetch, offline: opts.newsOffline });
   mountSchedule(app, store, { loadStudent, progress, usage, schedules, photoFn: opts.schedulePhotoFn, fetchFn: opts.fetchFn, lookup: opts.lookup, modelCapFor: (id) => accounts?.modelCapFor?.(id) ?? null });
   mountScan(app, { loadStudent, usage, readFn: opts.scanReadFn, solveFn: opts.scanSolveFn });

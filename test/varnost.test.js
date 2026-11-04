@@ -117,7 +117,7 @@ test("varnostne glave: CSP, HSTS samo prek https, no-store za API", async () => 
     assert.equal((await call("/api/students")).headers.get("cache-control"), "no-store");
     assert.equal((await call("/api/paths")).headers.get("cache-control"), "no-cache");
     // Strani brez vrinjenih skript (CSP script-src 'self').
-    for (const f of ["index.html", "starsi.html", "placaj.html", "ucitelj.html", "zasebnost.html"]) {
+    for (const f of ["index.html", "starsi.html", "placaj.html", "ucitelj.html", "zasebnost.html", "garancija.html"]) {
       const html = fs.readFileSync(path.join("public", f), "utf8");
       assert.ok(!/<script(?![^>]*\bsrc=)[^>]*>/i.test(html), `${f}: vrinjena skripta`);
       assert.ok(!/\son[a-z]+\s*=/i.test(html), `${f}: on…= v HTML`);
