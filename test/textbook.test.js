@@ -194,6 +194,9 @@ test("textbook API and PDF page", async () => {
     // Kartica teme brez vnaprej pripravljene razlage pokaže povzetek lekcije.
     const topic = await (await fetch(`${base}/api/topic?id=FIZ-OS-9/upor-in-ohmov-zakon`)).json();
     assert.match(topic.explanation || "", /### Bistvo/);
+    // Predmet in oznake lekcije: črke v razlagi in nalogah teme imajo pomen iz lekcije (:::simboli).
+    assert.equal(topic.subject, "FIZ");
+    assert.ok(topic.symbols?.some((g) => g.keys.includes("R")), "oznake lekcije");
     assert.equal(lesson.demo.id, "ohm");
     assert.equal(lesson.phet, undefined, "brez zunanjih simulacij");
     assert.equal(lesson.next.id.startsWith("FIZ-OS-9/"), true);

@@ -137,6 +137,14 @@ export function hintSteps(task) {
   return steps;
 }
 
+// Možnosti so čisti TeX (»A \\wedge \\neg B«), tudi če generator ni nastavil options_tex:
+// vsaj ena ima ukaz TeX in nobena nima $…$. Sicer bi učenec videl surove ukaze.
+export function optionsAreTex(task) {
+  if (task.options_tex) return true;
+  const opts = task.answer?.type === "choice" ? (task.answer.options || []).map(String) : [];
+  return opts.length > 0 && !opts.some((o) => o.includes("$")) && opts.some((o) => /\\[a-zA-Z]+/.test(o));
+}
+
 // Kar gre k odjemalcu: brez pravilnega odgovora in rešitve.
 export function publicTask(task) {
   const { answer } = task;
@@ -148,7 +156,7 @@ export function publicTask(task) {
     answerType: answer.type,
     unit: answer.unit || null,
     options: answer.type === "choice" ? answer.options : null,
-    optionsTex: !!task.options_tex,
+    optionsTex: optionsAreTex(task),
     coefficientCount: answer.type === "coefficients" ? answer.values.length : null,
     // Podatki iz besedila (Podatki / Iščemo) in potrebna formula za rešen zgled.
     data: task.data || null,

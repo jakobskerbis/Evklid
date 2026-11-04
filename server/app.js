@@ -22,7 +22,7 @@ import { visitCounter, mountPilot } from "./pilot.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
 import { uiLanguage } from "../public/i18n/languages.js";
-import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheet } from "./textbook.js";
+import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
 import { printPage } from "./textbook-print.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
@@ -310,6 +310,10 @@ export function createApp(store, opts = {}) {
   mountFeedback(app, store, { usage, file: opts.feedbackFile ?? null, createFn: opts.feedbackCreateFn });
   mountReports(app, store, {
     loadConversation,
+    loadStudent,
+    // Skrbnik: račun skrbnika (z računi) ali računalnik, kjer teče strežnik.
+    isAdmin: (req) => !!req.parent?.is_admin || isLocalRequest(req),
+    topicName: (id) => lessonView(id)?.name || null,
     localOnly: (req, res, next) => (isLocalRequest(req) ? next() : res.status(403).json({ error: "Samo na računalniku, kjer teče Evklid." })),
   });
 
@@ -331,6 +335,8 @@ export function createApp(store, opts = {}) {
       defaults: DEFAULT_SETTINGS,
       daily_questions: LIMITS.dailyQuestions() || null,
       feedback: { prompt: feedbackPromptOn(), ai: feedbackAiOn(), admin: isLocalRequest(req) },
+      // Skrbnik vidi »Prijavi napako« v klepetu in seznam prijav (server/reports.js).
+      admin: !!req.parent?.is_admin || isLocalRequest(req),
       chat_off: chatOff(),
       test_notice: testNotice(),
     });
@@ -433,6 +439,7 @@ export function createApp(store, opts = {}) {
     if (!c) return;
     // Prijava napake ostane kot zapis dogodka (odgovor inštruktorja), učenčevo vprašanje in opomba pa se izbrišeta.
     store.db.prepare("UPDATE message_reports SET question = NULL, note = NULL WHERE conversation_id = ?").run(c.id);
+    store.db.prepare("UPDATE bug_reports SET context = NULL WHERE conversation_id = ?").run(c.id);
     res.json({ ok: store.deleteConversation(c.id) });
   });
 
@@ -823,7 +830,8 @@ export function createApp(store, opts = {}) {
     // lang: jezik vmesnika (indijski izpiti imajo imena tem tudi v hindijščini).
     const lang = String(req.query.lang || "");
     const topic = localizeExamTopic({ ...localTopic(t, uiLanguage(lang)), pathLabel: getPath(t.path).label }, taskLanguage(lang));
-    res.json({ ...topic, explanation: explanationFor(t.id) || lessonExplanation(t.id) });
+    // symbols: oznake lekcije, da so črke v razlagi in »Bistvu« klikljive s pomenom iz lekcije.
+    res.json({ ...topic, subject: t.subject, explanation: explanationFor(t.id) || lessonExplanation(t.id), symbols: lessonSymbols(t.id) });
   });
   // --- učbenik ---
   const systemOf = (req) => String(req.query.system || "SI");
@@ -874,9 +882,9 @@ export function createApp(store, opts = {}) {
   // Formule in konstante predmeta (za orodja ob kalkulatorju), npr. ?book=KEM-OS
   app.get("/api/formulas", (req, res) => {
     const key = String(req.query.book || "");
-    const md = /^[A-Z]{3}-(OS|SS|UNI)$/.test(key) ? formulaSheet(key) : null;
-    if (!md) return res.status(404).json({ error: "Zbirke formul ni." });
-    res.set("Cache-Control", "public, max-age=3600").json({ key, md });
+    const sheet = /^[A-Z]{3}-(OS|SS|UNI)$/.test(key) ? formulaSheetSections(key) : null;
+    if (!sheet) return res.status(404).json({ error: "Zbirke formul ni." });
+    res.set("Cache-Control", "public, max-age=3600").json({ key, md: sheet.md, sections: sheet.sections });
   });
   app.get("/api/textbook/search", (req, res) => {
     const subject = /^[A-Z]{2,6}$/.test(req.query.subject || "") ? req.query.subject : undefined;

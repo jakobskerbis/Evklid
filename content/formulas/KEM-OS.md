@@ -9,6 +9,13 @@
 | Skupina | število zunanjih (valenčnih) elektronov glavnih skupin |
 | Perioda | število lupin z elektroni |
 
+:::simboli
+Z | vrstno (atomsko) število | | – | število protonov v jedru
+A | masno število | A = Z + N | – | število protonov in nevtronov skupaj
+N | število nevtronov | N = A - Z | – |
+\mathrm{X} | simbol elementa | | | npr. $\mathrm{C}$ za ogljik
+:::
+
 ## Ioni in formule
 
 | Kationi | Anioni |
@@ -18,6 +25,11 @@
 | $\mathrm{Al^{3+}}$, $\mathrm{Fe^{3+}}$ | $\mathrm{N^{3-}}$, $\mathrm{PO_4^{3-}}$ |
 
 Formula ionske spojine: vsota nabojev je $0$, npr. $\mathrm{Al^{3+}}$ in $\mathrm{O^{2-}}$ → $\mathrm{Al_2O_3}$.
+
+:::simboli
+\mathrm{X^+} | kation (pozitivno nabit ion) | | | atom je oddal elektrone; številka pred + pove, koliko
+\mathrm{X^-} | anion (negativno nabit ion) | | | atom je sprejel elektrone; številka pred – pove, koliko
+:::
 
 ## Kemijske reakcije
 
@@ -31,6 +43,16 @@ Formula ionske spojine: vsota nabojev je $0$, npr. $\mathrm{Al^{3+}}$ in $\mathr
 | Kovina in kislina | kovina $+$ kislina → sol $+$ vodik |
 | Gorenje ogljikovodikov | ogljikovodik $+$ kisik → $\mathrm{CO_2}$ $+$ $\mathrm{H_2O}$ |
 
+:::simboli
+\mathrm{H_2} | vodik | | | molekula iz dveh atomov vodika
+\mathrm{O_2} | kisik | | | molekula iz dveh atomov kisika
+\mathrm{H_2O} | voda | | |
+\mathrm{HCl} | klorovodikova kislina | | |
+\mathrm{NaOH} | natrijev hidroksid | | |
+\mathrm{NaCl} | natrijev klorid (kuhinjska sol) | | |
+\mathrm{CO_2} | ogljikov dioksid | | |
+:::
+
 ## Množina snovi in raztopine
 
 | | |
@@ -42,6 +64,19 @@ Formula ionske spojine: vsota nabojev je $0$, npr. $\mathrm{Al^{3+}}$ in $\mathr
 | Masna koncentracija | $\gamma = \dfrac{m_{\text{topljenca}}}{V_{\text{raztopine}}}$ |
 | Množinska koncentracija | $c = \dfrac{n}{V}$ |
 | pH | kislo $< 7$, nevtralno $= 7$, bazično $> 7$ |
+
+:::simboli
+n | množina snovi | n = \dfrac{m}{M} | mol |
+m | masa snovi | | g | $m_{\text{topljenca}}$: masa raztopljene snovi; $m_{\text{topila}}$: masa topila (npr. vode); $m_{\text{raztopine}}$: masa vse raztopine
+M | molska masa | | g/mol | masa enega mola snovi
+N | število delcev (atomov, molekul ali ionov) | N = n \cdot N_A | – |
+N_A | Avogadrovo število | | mol^{-1} | v enem molu je $6{,}02 \cdot 10^{23}$ delcev
+A_r | relativna atomska masa | | – | preberemo jo iz periodnega sistema
+w | masni delež | w = \dfrac{m_{\text{topljenca}}}{m_{\text{raztopine}}} | – | pogosto v odstotkih
+\gamma | masna koncentracija | \gamma = \dfrac{m_{\text{topljenca}}}{V_{\text{raztopine}}} | g/L |
+c | množinska koncentracija | c = \dfrac{n}{V} | mol/L |
+V | prostornina raztopine | | L | $V_{\text{raztopine}}$ pomeni isto: prostornino vse raztopine
+:::
 
 ## Kisline, baze, organske spojine
 
@@ -58,6 +93,10 @@ Formula ionske spojine: vsota nabojev je $0$, npr. $\mathrm{Al^{3+}}$ in $\mathr
 | Predpone | 1 met-, 2 et-, 3 prop-, 4 but-, 5 pent-, 6 heks-, 7 hept-, 8 okt-, 9 non-, 10 dek- |
 | Funkcionalne skupine | alkohol $\mathrm{-OH}$, karboksilna kislina $\mathrm{-COOH}$, ester $\mathrm{-COO-}$, amin $\mathrm{-NH_2}$ |
 
+:::simboli
+n | število ogljikovih atomov v molekuli | | | poljubno naravno število ($1, 2, 3, \dots$); vodikovih atomov je pri alkanih $2n + 2$
+:::
+
 ## Konstante in podatki
 
 | | |
@@ -68,3 +107,8 @@ Formula ionske spojine: vsota nabojev je $0$, npr. $\mathrm{Al^{3+}}$ in $\mathr
 | Element | H | C | N | O | Na | Mg | Al | S | Cl | K | Ca | Fe | Cu | Zn |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | $A_r$ | $1$ | $12$ | $14$ | $16$ | $23$ | $24$ | $27$ | $32$ | $35{,}5$ | $39$ | $40$ | $56$ | $63{,}5$ | $65$ |
+
+:::simboli
+N_A | Avogadrovo število | | mol^{-1} | število delcev v enem molu snovi
+A_r | relativna atomska masa elementa | | – |
+:::

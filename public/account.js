@@ -6,6 +6,7 @@ import { currentLang, currentRegion, deviceRegion, locale, t } from "./i18n.js";
 import { openProfileMenu } from "./profile-menu.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
+import { renderAdminReports } from "./prijave.js";
 // Starševski račun: prijava, potrditev e-naslova, otroci s soglasjem, naročnina, priporočila.
 // Deluje samo, ko je na strežniku EVKLID_ACCOUNTS=1.
 
@@ -983,6 +984,7 @@ async function loadSchoolOrders() {
 function bindAdminCodes(acc) {
   if (!acc.promo?.codes) return;
   loadPilot();
+  renderAdminReports($("#reports-out"), { api, toast });
   bindApk();
   loadSchoolOrders();
   $("#code-form")?.addEventListener("submit", async (e) => {
@@ -1169,6 +1171,7 @@ export async function renderAccount() {
     ${acc.promo?.codes ? adminCodes(acc) : ""}
     ${giftBox(acc)}
     ${acc.promo?.codes ? `<div class="card" id="pilot-card"><h2>${esc(t("pilot.title"))}</h2><div id="pilot-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
+    ${acc.promo?.codes ? `<div class="card" id="reports-card"><h2>${esc(t("adm.rep.title"))}</h2><div id="reports-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="orders-card"><h2>${esc(t("orders.title"))}</h2><div id="orders-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
 
     <div class="card">

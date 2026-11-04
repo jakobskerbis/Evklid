@@ -4,7 +4,7 @@ import katex from "katex";
 import { parseLesson, expandFormulaBlocks } from "./textbook.js";
 import { getTopic } from "./curriculum.js";
 import { checkArithmetic } from "./lesson-math.js";
-import { SYMBOLS_BLOCK_RE, parseSymbolsBlock, symbolsIn } from "../public/formula-data.js";
+import { SYMBOLS_BLOCK_RE, parseSymbolsBlock, symbolsIn, SYMBOLS, SUBJECT_TABLES } from "../public/formula-data.js";
 
 const REQUIRED = [
   [/^zakaj/i, "Zakaj se tega učimo"],
@@ -166,4 +166,49 @@ export function checkSymbols(body, err, warn) {
   };
   const unused = [...keys].filter((k) => !used.has(k) && !rawUsed(k));
   if (unused.length) warn(`:::simboli: oznake ${unused.slice(0, 8).join(", ")} ni v nobeni formuli lekcije`);
+}
+
+// Pomen črke iz drugega predmeta (c = »hitrost svetlobe« v matematiki, j 1. 11. 2026): ime vrstice je
+// enako pomenu iste črke v slovarju drugega predmeta, v slovarju lastnega predmeta pa ga ni.
+// Samo za liste s formulami: v lekciji je t = »čas« pri besedilni nalogi iz matematike pravilen.
+const normName = (x) => String(x || "").toLowerCase().replace(/\(.*?\)/g, "").replace(/\s+/g, " ").trim();
+export function foreignMeanings(list, subject) {
+  const own = new Set(SUBJECT_TABLES[subject] || [subject]);
+  const out = [];
+  for (const g of list) {
+    for (const k of g.keys) {
+      const name = normName(g.n);
+      const names = (tb) => [].concat(SYMBOLS[tb]?.[k] || []).map((e) => normName(e.n));
+      if ([...own].some((tb) => names(tb).includes(name))) continue;
+      const other = Object.keys(SYMBOLS).find((tb) => !own.has(tb) && names(tb).includes(name));
+      if (other) out.push(`»${k}« je »${g.n}«, kar je pomen iz predmeta ${other}, ne ${subject}`);
+    }
+  }
+  return out;
+}
+
+// List s formulami (content/formulas/<PREDMET>-<STOPNJA>.md): vsak razdelek »## …« ima svoj blok
+// :::simboli in v njem vrstico za vsako črko iz formul razdelka, s pomenom iz tega predmeta.
+export function checkFormulaSheet(raw, subject) {
+  const problems = [];
+  for (const part of String(raw).split(/^(?=## )/m)) {
+    const title = /^## +(.+)/.exec(part)?.[1]?.trim() || "(uvod)";
+    const blocks = [...part.matchAll(SYMBOLS_BLOCK_RE)];
+    const text = part.replace(SYMBOLS_BLOCK_RE, "");
+    const formulas = [];
+    text.replace(/\$\$?([^$]+?)\$\$?/g, (_, t) => (formulas.push(t), ""));
+    if (!formulas.length) continue;
+    if (blocks.length !== 1) { problems.push(`${title}: ${blocks.length ? "več blokov" : "ni bloka"} »:::simboli«`); if (!blocks.length) continue; }
+    const { list, errors } = parseSymbolsBlock(blocks[0][1]);
+    errors.forEach((e) => problems.push(`${title}: ${e}`));
+    const keys = new Set(list.flatMap((g) => g.keys));
+    const inner = (k) => /^\w+\((.+)\)/.exec(k)?.[1];
+    const has = (k) => keys.has(k) || keys.has(k.replace(/'/g, "")) || keys.has(k.split("_")[0]) || (k[0] === "Δ" && keys.has(k.slice(1).split("_")[0])) || keys.has(inner(k));
+    const missing = new Set();
+    for (const f of formulas) for (const [k] of symbolsIn(f, "@*")) if (!has(k) && !ALWAYS_KNOWN.has(k)) missing.add(k);
+    if (missing.size) problems.push(`${title}: brez vrstice: ${[...missing].join(", ")}`);
+    // Fizika in kemija si pomene delita (T, Q, c); tuj pomen je napaka le na listu iz matematike.
+    if (subject === "MAT") foreignMeanings(list, subject).forEach((f) => problems.push(`${title}: ${f}`));
+  }
+  return problems;
 }
