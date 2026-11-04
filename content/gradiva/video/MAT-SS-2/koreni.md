@@ -3,7 +3,7 @@ naslov: Delno korenjenje na kvadratih
 simulacija: koren
 trajanje: 1:34
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -20,7 +20,7 @@ Ploščino povečaj na $20$. Stranica $\sqrt{20}$ leži med $4$ in $5$, ker je $
 
 ## 0:25
 
-Pri ploščini $5$ je stranica $\sqrt{5} \approx 2{,}236$, ravno polovica od $4{,}472$. Ker je $20 = 4 \cdot 5$, je $\sqrt{20} = \sqrt{4} \cdot \sqrt{5} = 2\sqrt{5}$.
+Ploščino zmanjšaj na $5$: stranica $\sqrt{5} \approx 2{,}236$ je ravno polovica od $4{,}472$. Ker je $20 = 4 \cdot 5$, je $\sqrt{20} = \sqrt{4} \cdot \sqrt{5} = 2\sqrt{5}$.
 
 - nastavi: ploščina = 5
 

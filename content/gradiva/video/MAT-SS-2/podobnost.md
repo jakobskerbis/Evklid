@@ -3,7 +3,7 @@ naslov: Koeficient podobnosti in ploščina
 simulacija: podobnost
 trajanje: 1:20
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -14,7 +14,7 @@ Trikotnik $A'B'C'$ dobimo iz trikotnika $ABC$ tako, da razdalje vseh oglišč od
 
 ## 0:13
 
-Pri $k = 2$ je vsaka stranica slike $2$-krat daljša, na primer $4{,}47 : 2{,}24 = 2$. Koti ostanejo enaki, zato sta trikotnika podobna s koeficientom podobnosti $k = 2$.
+Pri $k = 2$ je vsaka stranica slike $2$-krat daljša, na primer $|B'C'| : |BC| = 4{,}47 : 2{,}24 = 2$. Koti ostanejo enaki, zato sta trikotnika podobna s koeficientom podobnosti $k = 2$.
 
 - nastavi: k = 2
 

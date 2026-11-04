@@ -892,7 +892,8 @@ export function koren(el) {
     // približevanje na premici
     let a = lo, b = hi;
     const rows = [];
-    for (let i = 0; i < steps; i++) {
+    // pri popolnem kvadratu ni kaj približevati (sicer »4² = 16 < 16«)
+    for (let i = 0; i < (Number.isInteger(r) ? 0 : steps); i++) {
       const step = 10 ** -(i + 1);
       let x = a;
       while ((x + step) ** 2 <= A + 1e-12) x += step;

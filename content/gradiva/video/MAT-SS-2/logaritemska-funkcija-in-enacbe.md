@@ -4,7 +4,7 @@ simulacija: graf
 moznosti: {"preset": "logaritemska"}
 trajanje: 1:26
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -17,13 +17,13 @@ Graf $f(x) = \log_2 (x - 1)$ obstaja le za $x > 1$, desno od rdeče asimptote $x
 
 ## 0:14
 
-Reši enačbo $\log_2 (x - 1) = 2$. Ko $2$ preneseš na levo, se graf $\log_2 (x - 1) - 2$ spusti za $2$ in njegova ničla je rešitev: $x - 1 = 2^2 = 4$, $x = 5$.
+Reši enačbo $\log_2 (x - 1) = 2$. Ko $2$ preneseš na levo, je graf $\log_2 (x - 1) - 2$ za $2$ nižje, njegova ničla pa je rešitev: $x - 1 = 2^2 = 4$, $x = 5$.
 
 - nastavi: q = -2
 
 ## 0:29
 
-Enačba $\log_2 (x - 1) = -1$: graf je zdaj dvignjen za $1$. Iz $x - 1 = 2^{-1} = 0{,}5$ dobimo $x = 1{,}5$, kar je spet desno od asimptote.
+Enačba $\log_2 (x - 1) = -1$: ko $-1$ preneseš na levo, se graf dvigne za $1$. Iz $x - 1 = 2^{-1} = 0{,}5$ dobimo $x = 1{,}5$, kar je spet desno od asimptote.
 
 - nastavi: q = 1
 

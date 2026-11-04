@@ -170,8 +170,8 @@ const PRESETS = {
       const m = P["m (števec)"], n = P["n (imenovalec)"];
       // n ≥ 2: potenco z racionalnim eksponentom pišemo le za x > 0 (pri m > 0 še x = 0), kot v lekciji.
       if (n > 1 && (x < 0 || (x === 0 && m <= 0))) return NaN;
+      if (x === 0 && m <= 0) return NaN; // 0⁰ in 0 na negativni eksponent nista definirana
       if (m === 0) return 1;
-      if (x === 0 && m < 0) return NaN;
       const v = Math.abs(x) ** (m / n);
       return x < 0 && m % 2 ? -v : v;
     },
@@ -206,12 +206,12 @@ const PRESETS = {
     f: (x, P) => (Math.abs(P.a - 1) < 1e-9 ? 1 + P.q : P.a ** (x - P.p) + P.q),
     tex: (P) => `f(x) = ${T(P.a, 1)}^{${shift("x", P.p).replace(/[()]/g, "")}}${term(P.q)}`,
     marks: (A, P, svg) => {
-      s("line", { x1: A.L, y1: A.Y(P.q), x2: A.R, y2: A.Y(P.q), class: "guide stroke-danger", "data-name": "Asimptota" }, svg);
+      if (Math.abs(P.a - 1) > 1e-9) s("line", { x1: A.L, y1: A.Y(P.q), x2: A.R, y2: A.Y(P.q), class: "guide stroke-danger", "data-name": "Asimptota" }, svg);
       dot(svg, A, P.p, 1 + P.q, "c", "", "Točka (p, 1 + q)");
     },
-    info: (P) => `<p>${P.a > 1 ? "a > 1: funkcija <b>narašča</b> (eksponentna rast)." : P.a < 1 ? "0 < a < 1: funkcija <b>pada</b> (eksponentno upadanje)." : "a = 1: konstantna funkcija, ni eksponentna."} Vodoravna asimptota je y = ${fmt(P.q)} (rdeča črta): graf se ji približuje, a je ne doseže.</p>
+    info: (P) => Math.abs(P.a - 1) < 1e-9 ? `<p>a = 1: 1<sup>x − p</sup> = 1 za vsak x, zato je f(x) = ${fmt(1 + P.q)} konstantna funkcija, ni eksponentna. Graf je vodoravna premica, asimptote ni.</p>` : `<p>${P.a > 1 ? "a > 1: funkcija <b>narašča</b> (eksponentna rast)." : "0 < a < 1: funkcija <b>pada</b> (eksponentno upadanje)."} Vodoravna asimptota je y = ${fmt(P.q)} (rdeča črta): graf se ji približuje, a je ne doseže.</p>
       <p>Graf gre skozi (${fmt(P.p)}, ${fmt(1 + P.q)}), ker je a⁰ = 1. Zaloga vrednosti: (${fmt(P.q)}, ∞).</p>
-      ${Math.abs(P.a - 1) < 1e-9 ? "" : `<p class="muted">Ko se x poveča za 1, se vrednost a<sup>x − p</sup> pomnoži z a = ${fmt(P.a, 1)}: ${[0, 1, 2, 3].map((k) => fmt(P.a ** k, 3)).join("; ")}; …</p>`}`,
+      <p class="muted">Ko se x poveča za 1, se vrednost a<sup>x − p</sup> pomnoži z a = ${fmt(P.a, 1)}: ${[0, 1, 2, 3].map((k) => fmt(P.a ** k, 3)).join("; ")}; …</p>`,
     tryText: "Primerjaj a = 2 in a = 0,5. Kako sta grafa povezana? (Namig: zrcaljenje.)",
   },
   "eksponentna-enacba": {
@@ -230,7 +230,7 @@ const PRESETS = {
       }
     },
     info: (P) => {
-      if (Math.abs(P.a - 1) < 1e-9) return "<p>a = 1: 1ˣ = 1 za vsak x.</p>";
+      if (Math.abs(P.a - 1) < 1e-9) return `<p>a = 1: 1ˣ = 1 za vsak x, ${Math.abs(P.b - 1) < 1e-9 ? "zato je rešitev vsak x." : `zato enačba 1ˣ = ${fmt(P.b, 1)} nima rešitve.`}</p>`;
       const x = Math.log(P.b) / Math.log(P.a), q = [1, 2, 3, 4, 6].find((d) => Math.abs(x * d - Math.round(x * d)) < 1e-9);
       if (!q) return `<p>Rešitev je abscisa presečišča grafa y = aˣ in premice y = b: <b>x ≈ ${fmt(x, 3)}</b>.</p>
         <p class="muted">Števila ${fmt(P.b, 1)} ne znamo zapisati kot potenco osnove ${fmt(P.a, 1)} s preprostim eksponentom, zato osnov ne moremo izenačiti. Natančno takšno rešitev zapišemo z logaritmom, ki ga spoznaš v naslednji lekciji.</p>`;
@@ -275,9 +275,9 @@ const PRESETS = {
     marks: (A, P, svg) => {
       s("line", { x1: A.X(P.p), y1: A.T, x2: A.X(P.p), y2: A.B, class: "guide stroke-danger" }, svg);
       const z = P.p + P.a ** -P.q;
-      if (Number.isFinite(z) && z < A.x1) dot(svg, A, z, 0, "c", "");
+      if (Math.abs(P.a - 1) > 1e-9 && Number.isFinite(z) && z < A.x1) dot(svg, A, z, 0, "c", "");
     },
-    info: (P) => `<p>Definicijsko območje: x > ${fmt(P.p)}. Navpična asimptota x = ${fmt(P.p)} (rdeča). Ničla: ${tex(`x = ${T(P.p)} + ${T(P.a, 1)}^{${T(-P.q)}} ${Math.abs(P.p + P.a ** -P.q - Math.round((P.p + P.a ** -P.q) * 100) / 100) < 1e-9 ? "=" : "\\approx"} ${T(P.p + P.a ** -P.q)}`)}.</p>
+    info: (P) => Math.abs(P.a - 1) < 1e-9 ? `<p>Osnova logaritma ne sme biti 1 (1ʸ = 1 za vsak y), zato log₁ ne obstaja. Nastavi a ≠ 1.</p>` : `<p>Definicijsko območje: x > ${fmt(P.p)}. Navpična asimptota x = ${fmt(P.p)} (rdeča). Ničla: ${tex(`x = ${T(P.p)} + ${T(P.a, 1)}^{${T(-P.q)}} ${Math.abs(P.p + P.a ** -P.q - Math.round((P.p + P.a ** -P.q) * 100) / 100) < 1e-9 ? "=" : "\\approx"} ${T(P.p + P.a ** -P.q)}`)}.</p>
       <p class="muted">Pri reševanju logaritemskih enačb vedno preveri, ali rešitev leži v definicijskem območju.</p>`,
     tryText: "Kako parameter p vpliva na definicijsko območje? In parameter q?",
   },
@@ -851,7 +851,8 @@ export function kompleksna(el) {
   const out = readout();
   let z = [2, 1], w = [1, 2], op = "+", npow = 3;
   const mul = (a, b) => [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]];
-  const ztex = (c) => `${T(c[0])} ${c[1] < 0 ? "-" : "+"} ${T(Math.abs(c[1]))}i`;
+  // 2 + i namesto 2 + 1i
+  const ztex = (c) => `${T(c[0])} ${c[1] < 0 ? "-" : "+"} ${T(Math.abs(c[1])) === "1" ? "" : T(Math.abs(c[1]))}i`;
   const draw = () => {
     svg.replaceChildren();
     const A = axes(svg, { W: 340, H: 340, x: [-6, 6], y: [-6, 6], xStep: 1, yStep: 1, xLabel: "Re", yLabel: "Im" });
@@ -890,7 +891,7 @@ export function kompleksna(el) {
     const absTxt = (n, c) => `|${n}| = √(${sq(c[0])} + ${sq(c[1])}) ${eqA(abs(c))} ${fmt(abs(c))}`;
     const zero = op === ":" && !w[0] && !w[1];
     const nm = op === "z̄" ? "\\bar z" : op === "^" ? `z^{${npow}}` : `z ${{ "+": "+", "−": "-", "·": "\\cdot", ":": ":" }[op]} w`;
-    out.innerHTML = (zero ? "<p><b>Z 0 ne delimo:</b> premakni w stran od izhodišča.</p>" : texBlock(`${nm} = ${ztex(r)}`)) +
+    out.innerHTML = (zero ? "<p><b>Z 0 ne delimo:</b> premakni w stran od izhodišča.</p>" : texBlock(`${nm} ${r.every((v) => Math.abs(v - Math.round(v * 100) / 100) < 1e-9) ? "=" : "\\approx"} ${ztex(r)}`)) +
       `<p>z = ${ztex(z).replace(/\{,\}/g, ",")}: ${absTxt("z", z)}.${useW ? ` w = ${ztex(w).replace(/\{,\}/g, ",")}: ${absTxt("w", w)}.` : ""}</p>
        <p>${op === "+" || op === "−" ? "Seštevamo kot vektorje: realne dele posebej, imaginarne posebej (paralelogram)." : op === "·" ? `Množimo kot dvočlenika in upoštevamo i² = −1. Absolutni vrednosti se zmnožita: |z · w| = |z| · |w| ${eqA(abs(r))} ${fmt(abs(r))}. Množenje z i zavrti točko za 90° v pozitivni smeri.` : op === ":" ? (zero ? "" : `Ulomek razširimo s številom, konjugiranim imenovalcu, da imenovalec postane realen: ${tex("w \\cdot \\bar{w} = |w|^2")} = ${fmt(w[0] ** 2 + w[1] ** 2)}. Absolutni vrednosti se delita: |z : w| = |z| : |w| ${eqA(abs(r))} ${fmt(abs(r))}.`) : op === "z̄" ? `Konjugirano število je zrcalna slika čez realno os. ${tex("z \\cdot \\bar{z} = |z|^2")} je realno.` : `Potenco izračunamo z zaporednim množenjem: z${["²", "³", "⁴", "⁵", "⁶"][npow - 2]} = ${Array(npow).fill("z").join(" · ")}. Absolutne vrednosti se zmnožijo: |z${["²", "³", "⁴", "⁵", "⁶"][npow - 2]}| = |z|${["²", "³", "⁴", "⁵", "⁶"][npow - 2]} ${eqA(abs(z) ** npow)} ${fmt(abs(z) ** npow)}.`}</p>`;
   };

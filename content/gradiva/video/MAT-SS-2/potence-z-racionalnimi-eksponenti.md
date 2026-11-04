@@ -4,7 +4,7 @@ simulacija: graf
 moznosti: {"preset": "potencna"}
 trajanje: 1:33
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -28,14 +28,14 @@ Imenovalec povečaj na $4$: zdaj je $x^{\frac{1}{4}} = \sqrt[4]{x}$. Opazuj, da 
 
 ## 0:40
 
-Zdaj je $m = 3$ in $n = 2$: $x^{\frac{3}{2}} = \sqrt{x^3} = \left(\sqrt{x}\right)^3$. Števec $3$ je eksponent potence. Eksponent je večji od $1$, zato graf hitro zapusti sliko: že $\left(\sqrt{4}\right)^3 = 8$.
+Zdaj je $m = 3$ in $n = 2$: $x^{\frac{3}{2}} = \sqrt{x^3} = \left(\sqrt{x}\right)^3$, števec $3$ je eksponent potence. Eksponent je večji od $1$, zato graf za $x > 1$ hitro raste: pri $x = 4$ bi bil že $\left(\sqrt{4}\right)^3 = 8$, nad robom slike.
 
 - nastavi: m (števec) = 3
 - nastavi: n (imenovalec) = 2
 
 ## 0:54
 
-Negativni števec: $x^{-\frac{1}{2}} = \dfrac{1}{x^{\frac{1}{2}}} = \dfrac{1}{\sqrt{x}}$. Opazuj, da graf zdaj pada in pri $x = 0$ ni definiran; skozi $(1, 1)$ gre še vedno.
+Negativni števec: $x^{-\frac{1}{2}} = \sqrt{x^{-1}} = \dfrac{1}{\sqrt{x}}$, to je obratna vrednost korena. Opazuj, da graf zdaj pada in pri $x = 0$ ni definiran; skozi $(1, 1)$ gre še vedno.
 
 - nastavi: m (števec) = -1
 

@@ -3,7 +3,7 @@ naslov: Računanje s kompleksnimi števili
 simulacija: kompleksna
 trajanje: 1:23
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -26,13 +26,13 @@ Množimo kot dvočlenika: $(2 + i)(1 + 2i) = 2 + 4i + i + 2i^2$. Ker je $i^2 = -
 
 ## 0:41
 
-Konjugirano število $\bar{z} = 2 - i$ je zrcalna slika $z$ čez realno os. Zmnožek $z \cdot \bar{z} = 2^2 + 1^2 = 5$ je realen in enak $|z|^2$; pod sliko piše $|z| = \sqrt{5} \approx 2{,}24$.
+Konjugirano število $\bar{z} = 2 - i$ je zrcalna slika $z$ čez realno os. Zmnožek $z \cdot \bar{z} = 2^2 + 1^2 = 5$ je realen in enak $|z|^2$; pod sliko piše $|z| = \sqrt{2^2 + 1^2} \approx 2{,}24$.
 
 - klikni: z̄
 
 ## 0:56
 
-Deljenje: ulomek $\dfrac{2 + i}{1 + 2i}$ razširimo s številom $1 - 2i$, konjugiranim imenovalcu, in dobimo $\dfrac{4 - 3i}{5} = 0{,}8 - 0{,}6i$.
+Deljenje: ulomek $\dfrac{2 + i}{1 + 2i}$ razširimo s številom $1 - 2i$, konjugiranim imenovalcu, in dobimo $\dfrac{4 - 3i}{5} = 0{,}8 - 0{,}6i$, kamor kaže vijolična puščica.
 
 - klikni: :
 

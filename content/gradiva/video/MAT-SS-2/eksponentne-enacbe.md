@@ -4,7 +4,7 @@ simulacija: graf
 moznosti: {"preset": "eksponentna-enacba"}
 trajanje: 1:42
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
