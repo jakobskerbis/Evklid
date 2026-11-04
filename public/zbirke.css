@@ -109,3 +109,18 @@
 /* Pot znanja (okvirji redkosti so v games.css) */
 .zb-pot { margin-bottom: 12px; }
 .zb-pot p { margin: 0 0 6px; }
+
+/* Deljiva kartica (public/deli-kartico.js): predogled slike, nato Deli ali Prenesi. */
+.zb-share-btn { margin-top: 10px; min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+.zb-share { display: flex; gap: 18px; align-items: center; margin-top: 14px; }
+.zb-share img { flex: none; width: 216px; height: auto; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 10px 30px color-mix(in srgb, var(--text) 18%, transparent); }
+.zb-share-info { min-width: 0; }
+.zb-share-info p { margin: 0 0 10px; }
+.zb-share-info .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.zb-share-info .actions button { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+.dark .zb-share img { border-color: var(--border); box-shadow: none; }
+@media (max-width: 640px) {
+  .zb-share { flex-direction: column; text-align: center; }
+  .zb-share img { width: min(240px, 70vw); }
+  .zb-share-info .actions { justify-content: center; }
+}

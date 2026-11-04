@@ -5,6 +5,7 @@ import { icon } from "./icons.js";
 import { makeRowSortable } from "./vrstice.js";
 import { avatarSvg, itemName, itemOf, DEFAULT_AVATAR, isNew, isWorn, wear, takeOff, slotFull, MULTI_MAX } from "./avatar.js";
 import { COLLECTIONS, KNOWLEDGE, PASS_REWARDS, AWARD_MIN, baseId, variantOf, seasonLabel, elementTile } from "./zbirke.js";
+import { shareCardModel, shareCardSvg, shareCardPng, shareCardFile } from "./deli-kartico.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const TAB_KEY = "evklid.zbirkeTab";
@@ -43,6 +44,7 @@ export async function showZbirke(item = null, back = null) {
   open = item;
   from = back;
   msg = "";
+  dropShare(); // predogled kartice ne ostane od prejšnjega odprtja
   // Iz iger: namesto »← Jaz« gumb »← Nazaj na igre« (isto mesto, isti videz).
   const view = root.closest(".view");
   view?.classList.toggle("zb-from-games", from === "games");
@@ -62,7 +64,7 @@ const lang = () => ctx?.currentLang?.() || "sl"; // unlockedText kličejo tudi i
 const collectionOf = (id) => itemOf(id)?.collection || "pse";
 const ownedSet = () => new Set((data?.items || []).map((x) => x.id));
 const equipped = () => data?.avatar?.equipped || { ...DEFAULT_AVATAR };
-const fmtDate = (sql) => {
+export const fmtDate = (sql) => {
   try {
     return new Date(String(sql).replace(" ", "T") + "Z").toLocaleDateString(lang());
   } catch {
@@ -147,6 +149,15 @@ function passCard() {
   </section>`;
 }
 
+// Od kod je predmet (tema s potjo ali vir): pogled »preglej« tukaj in v vitrini sošolca (public/leagues.js).
+export function earnedWhere(id, row) {
+  const x = itemOf(id);
+  if (!x || !row) return "";
+  if (row.topic) return t("zb.fromTopic", { topic: row.topic.path ? `${row.topic.name} (${row.topic.path})` : row.topic.name });
+  const src = { pass: () => t("zb.fromPass", { season: seasonLabel(variantOf(id)) }), set: () => t("zb.fromSet"), xp: () => t(x.collection === "pot" ? "zb.fromXp" : "zb.fromXpAt", { xp: num(x.need?.xp) }), league: () => t("zb.fromLeague"), games: () => t("zb.fromGames") };
+  return src[row.source]?.() || "";
+}
+
 function inspect(id) {
   const x = itemOf(id);
   if (!x) return "";
@@ -155,7 +166,7 @@ function inspect(id) {
   const on = isWorn(equipped(), id);
   const shown = data.showcase.includes(id);
   const v = variantOf(id);
-  const where = row?.topic ? t("zb.fromTopic", { topic: `${row.topic.name} (${row.topic.path})` }) : row?.source === "pass" ? t("zb.fromPass", { season: seasonLabel(v) }) : row?.source === "set" ? t("zb.fromSet") : row?.source === "xp" ? t(x.collection === "pot" ? "zb.fromXp" : "zb.fromXpAt", { xp: num(x.need?.xp) }) : row?.source === "league" ? t("zb.fromLeague") : row?.source === "games" ? t("zb.fromGames") : "";
+  const where = earnedWhere(id, row);
   return `<div class="zb-inspect card" role="dialog" tabindex="-1" aria-modal="false" aria-label="${esc(itemName(x, lang()))}">
     <button type="button" class="ghost zb-x" data-act="close" aria-label="${esc(t("nav.back"))}">${icon("x")}</button>
     <div class="zb-big">${x.sym ? itemThumb(id, 120) : avatarSvg(wear(equipped(), id), { size: 170, title: itemName(x, lang()) })}</div>
@@ -204,8 +215,10 @@ function render(focus = null) {
         <h2>${icon("star")} ${esc(t("zb.showcase"))}</h2>
         <div class="zb-slots">${Array.from({ length: data.showcaseMax }, (_, i) => (show[i] ? `<button type="button" class="zb-slot full" data-zbopen="${esc(show[i])}" aria-label="${esc(itemName(itemOf(show[i]), lang()))}">${itemThumb(show[i], 56, equipped())}</button>` : `<span class="zb-slot"></span>`)).join("")}</div>
         <p class="muted small">${esc(show.length ? t("zb.showcaseHint") : t("zb.showcaseEmpty"))}</p>
+        <button type="button" class="secondary zb-share-btn" data-act="share">${icon("share")}<span>${esc(t("share.button"))}</span></button>
       </div>
     </div>
+    ${shareHtml()}
     <p class="zb-intro">${esc(t("zb.intro"))} <span class="muted">${esc(t("zb.rules"))}</span></p>
     ${passCard()}
     <div class="chip-row zb-tabs" role="tablist">${tabs.map((x) => `<button type="button" role="tab" aria-selected="${tab === x.id}" class="${tab === x.id ? "active" : ""}" data-tab="${x.id}">${icon(x.ic)}${esc(x.label)}${x.of ? ` <small>${x.n}/${x.of}</small>` : ""}</button>`).join("")}</div>
@@ -242,6 +255,16 @@ function render(focus = null) {
     }),
   );
   root.querySelector('[data-act="close"]')?.addEventListener("click", closeInspect);
+  root.querySelector('[data-act="share"]')?.addEventListener("click", makeShare);
+  root.querySelector('[data-act="share-close"]')?.addEventListener("click", () => {
+    dropShare();
+    render('[data-act="share"]');
+  });
+  root.querySelector('[data-act="share-go"]')?.addEventListener("click", async () => {
+    const how = await shareCardFile(share.blob, { name: "evklid-zbirka.png", title: t("share.cardTitle") });
+    share.msg = how === "downloaded" ? t("share.downloaded") : how === "shared" ? t("share.shared") : "";
+    render('[data-act="share-go"]');
+  });
   root.querySelector('[data-act="wear"]')?.addEventListener("click", () => {
     const on = isWorn(equipped(), open);
     if (!on && slotFull(equipped(), open)) return ((msg = t("games.slotFull", { n: MULTI_MAX })), render());
@@ -252,6 +275,44 @@ function render(focus = null) {
     if (!has && show.length >= data.showcaseMax) return ((msg = t("zb.showFull")), render());
     save("zbirke/vitrina", { items: has ? show.filter((i) => i !== open) : [...show, open] }, (r) => ((data = r), ""));
   });
+}
+
+// Deljiva kartica: slika brez osebnih podatkov (public/deli-kartico.js), najprej predogled, nato Deli ali Prenesi.
+let share = null; // { url, blob, msg }
+function dropShare() {
+  if (share?.url) URL.revokeObjectURL(share.url);
+  share = null;
+}
+function shareHtml() {
+  if (!share) return "";
+  if (!share.blob) return `<div class="card zb-share" role="status"><p class="muted">${esc(share.msg || t("share.making"))}</p></div>`;
+  const canFiles = !!navigator.canShare?.({ files: [new File([share.blob], "x.png", { type: "image/png" })] });
+  return `<section class="card zb-share" aria-label="${esc(t("share.cardTitle"))}">
+    <img src="${share.url}" alt="${esc(t("share.alt"))}" width="270" height="338">
+    <div class="zb-share-info">
+      <p>${esc(t("share.private"))}</p>
+      <div class="actions">
+        <button type="button" class="primary" data-act="share-go">${icon(canFiles ? "share" : "download")}<span>${esc(t(canFiles ? "share.send" : "share.download"))}</span></button>
+        <button type="button" class="ghost" data-act="share-close">${esc(t("share.close"))}</button>
+      </div>
+      ${share.msg ? `<p class="muted small" role="status">${esc(share.msg)}</p>` : ""}
+    </div>
+  </section>`;
+}
+async function makeShare() {
+  dropShare();
+  share = { msg: "" };
+  render();
+  try {
+    const wm = document.querySelector(".brand-name");
+    const wordmark = wm ? [wm.firstChild?.textContent || "", wm.querySelector("span")?.textContent || ""] : undefined;
+    const svg = shareCardSvg(shareCardModel(data), { t, lang: lang(), wordmark, rtl: document.documentElement.dir === "rtl" });
+    const blob = await shareCardPng(svg);
+    share = { blob, url: URL.createObjectURL(blob), msg: "" };
+  } catch {
+    share = { msg: t("share.failed") };
+  }
+  render('[data-act="share-go"]');
 }
 
 async function save(url, body, apply) {
