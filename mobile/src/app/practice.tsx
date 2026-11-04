@@ -12,6 +12,8 @@ import { celebrate, failure, success, tap } from "@/lib/haptics";
 import { offlineAnswer, offlineHint, offlineNext } from "@/lib/offline";
 import { figureHtml, type Figure } from "@/lib/figures";
 import { RichText } from "@/components/RichText";
+import { FormulaCtx } from "@/lib/formula-ctx";
+import { useTopicFx } from "@/lib/useTopicFx";
 import Storage from "expo-sqlite/kv-store";
 import { key } from "@/lib/keys";
 import { expectedMs, progressAt, addDuration } from "../../../public/check-progress.js";
@@ -28,6 +30,7 @@ type Task = {
   unit?: string | null;
   options?: string[] | null;
   optionsTex?: boolean; // možnosti so formule brez $ (kot renderMath na spletu)
+  topicId?: string | null; // tema naloge (za pomen črk v formulah)
   coefficientCount?: number | null;
   data?: { given?: string[]; find?: string[] } | null;
   hintSteps?: number;
@@ -195,12 +198,15 @@ export default function Practice() {
     } else load();
   };
 
+  // Klikljive črke: predmet in oznake lekcije teme te naloge (pri mešanih vajah vsaka naloga svojo).
+  const fx = useTopicFx(task?.topicId || example?.topicId || topic, student.settings?.subject);
   const title = mode === "daily" ? t("daily.title") : mode === "review" ? t("session.review") : task?.topicName || t("mob.practice");
   if (loading) return <Loading />;
   if (error) return <ErrorView message={t("task.loadError", { msg: error })} onRetry={load} retryLabel={t("mob.retry")} />;
 
   if (done) {
     return (
+      <FormulaCtx.Provider value={fx}>
       <Screen>
         <Stack.Screen options={{ title }} />
         <Card style={{ alignItems: "center", paddingVertical: 28 }}>
@@ -219,12 +225,14 @@ export default function Practice() {
           <Button title={t("result.toPath")} onPress={() => router.back()} style={{ alignSelf: "stretch" }} />
         </Card>
       </Screen>
+    </FormulaCtx.Provider>
     );
   }
 
   // Rešen zgled pred prvo nalogo teme (učenje iz zgleda).
   if (example) {
     return (
+      <FormulaCtx.Provider value={fx}>
       <Screen>
         <Stack.Screen options={{ title }} />
         <Card tone="accent">
@@ -235,6 +243,7 @@ export default function Practice() {
         </Card>
         <Button title={t("task.yourTurn")} icon={{ ios: "arrow.right", android: "arrow_forward" }} onPress={load} />
       </Screen>
+    </FormulaCtx.Provider>
     );
   }
 
@@ -243,6 +252,7 @@ export default function Practice() {
   const fig = figureHtml(task.figure, th);
 
   return (
+    <FormulaCtx.Provider value={fx}>
     <Screen>
       <Stack.Screen options={{ title }} />
       {offline ? <Banner text={t("mob.offlinePractice")} tone="gold" icon={{ ios: "wifi.slash", android: "wifi_off" }} /> : null}
@@ -308,6 +318,7 @@ export default function Practice() {
         </View>
       )}
     </Screen>
+  </FormulaCtx.Provider>
   );
 }
 
@@ -333,7 +344,7 @@ function AnswerInput({ task, value, onChange, onSubmit, inputRef }: { task: Task
                 <Text style={{ color: on ? th.accentText : th.text, fontWeight: "800" }}>{String.fromCharCode(65 + i)}</Text>
               </View>
               <View style={{ flex: 1 }} pointerEvents="none">
-                <RichText text={task.optionsTex ? `$${o}$` : o} size={16} />
+                <RichText text={task.optionsTex ? `$${o}$` : o} size={16} noFx />
               </View>
             </Pressable>
           );

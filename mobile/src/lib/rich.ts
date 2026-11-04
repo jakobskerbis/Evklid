@@ -4,8 +4,12 @@
 import { Marked } from "marked";
 import katex from "katex";
 import { createRenderer, streamSafe } from "../../../public/rich.js";
+import { annotateTex, withFormulaSubject } from "../../../public/formula-data.js";
+import { cardFor, configureCard } from "../../../public/formula-card.js";
 import type { Theme } from "./theme";
+import type { Fx } from "./formula-ctx";
 import { API_URL } from "./api";
+import { t, currentLanguage } from "./i18n";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 // Vsebina strežnika (lekcije, naloge, rešitve) sme imeti HTML (npr. <details> »Pokaži formulo«).
@@ -17,10 +21,26 @@ const safeMarked = new Marked({ renderer: { html: ({ text }: { text: string }) =
 const make = createRenderer as (o: object) => { renderRich: (s: string) => string };
 const trusted = make({ marked: trustedMarked, katex, sanitize: (h: string) => h });
 const untrusted = make({ marked: safeMarked, katex, sanitize: (h: string) => h });
+// Klikljive črke (kot na spletu): oznake v formuli dobijo data-fx s pomenom iz predmeta in lekcije.
+const annotate = (tex: string) => annotateTex(tex) as string;
+const trustedFx = make({ marked: trustedMarked, katex, sanitize: (h: string) => h, annotate });
+const untrustedFx = make({ marked: safeMarked, katex, sanitize: (h: string) => h, annotate });
 
-export function toHtml(md: string, { ai = false, streaming = false } = {}) {
+export function toHtml(md: string, { ai = false, streaming = false, fx = null as Fx } = {}) {
   const src = streaming ? streamSafe(md) : md;
-  return (ai ? untrusted : trusted).renderRich(src) as string;
+  if (!fx) return (ai ? untrusted : trusted).renderRich(src) as string;
+  const r = ai ? untrustedFx : trustedFx;
+  return withFormulaSubject(fx.subject || "MAT", () => r.renderRich(src), fx.symbols as never) as string;
+}
+
+// Kartica dotaknjene oznake (koda iz data-fx): { label, html } ali null; isto besedilo kot na spletu.
+configureCard({ t, lang: currentLanguage, katex });
+export function formulaCard(code: string): { label: string; html: string } | null {
+  try {
+    return cardFor(decodeURIComponent(code.replace(/\./g, "%"))) as { label: string; html: string } | null;
+  } catch {
+    return null;
+  }
 }
 
 // Kratko besedilo brez formul in Markdowna se izriše kar z naravnim besedilom (brez WebView).
@@ -76,7 +96,23 @@ summary{color:${th.accent};font-weight:700;cursor:pointer}
 .tb-think{margin:.8em 0;padding:.7em .9em;border-radius:12px;background:${th.goldSoft}}
 .tb-think-label{font-weight:700;color:${th.gold};margin-bottom:.3em}
 img,svg{max-width:100%;height:auto}
-</style></head><body><div id="c">${body}</div></body></html>`;
+/* Dotik: iOS pošlje click le klikljivemu elementu (cursor), KaTeX-ovi okvirji ulomkov ga ne smejo prestreči (kot ui.css). */
+.katex .vlist{pointer-events:none}.katex [data-fx],.katex [data-fx] *{pointer-events:auto}.katex .pstrut{pointer-events:none!important}
+[data-fx]{cursor:pointer;color:${th.accent};border-radius:3px;padding:0 .08em;margin:0 -.08em}
+[data-fx].fx-open{background:${th.accentSoft}}
+.fx-title{display:flex;align-items:baseline;gap:8px;color:${th.accent}}.fx-title b{color:${th.text};min-width:0}
+.fx-title .katex{font-size:1.25em;color:${th.accent};flex:none}
+.fx-card{display:grid;gap:6px}.fx-line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.fx-k{color:${th.muted};font-size:.8em;font-weight:700;text-transform:uppercase;letter-spacing:.05em;min-width:62px}
+/* Kartica kot na spletu v ozkem oknu (ui.css .fx-pop, max-width 760px): deli pod oznako »Kjer je«. */
+.fx-un,.fx-sub span{color:${th.muted}}.fx-sub{padding-inline-start:0;font-size:.9em}
+.fx-parts{display:flex;flex-direction:column;gap:3px;align-items:flex-start}.fx-parts ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}
+.fx-parts li{display:grid;grid-template-columns:minmax(1.6em,auto) 1fr;column-gap:8px;align-items:baseline}.fx-parts li>.katex{color:${th.accent}}
+.fx-parts .fx-un{white-space:nowrap}.fx-note{color:${th.muted};font-size:.88em;border-top:1px solid ${th.border};padding-top:6px}
+/* Formule vedno od leve proti desni, tudi v arabščini (kartica ima dir=rtl). */
+.katex{direction:ltr;unicode-bidi:isolate}
+</style>
+<script>document.addEventListener('click',function(e){var el=e.target.closest&&e.target.closest('[data-fx]');if(!el||!window.ReactNativeWebView)return;e.preventDefault();var o=document.querySelector('.fx-open');if(o)o.classList.remove('fx-open');el.classList.add('fx-open');window.ReactNativeWebView.postMessage('fx:'+el.getAttribute('data-fx'));},true);window.__fxClose=function(){var o=document.querySelector('.fx-open');if(o)o.classList.remove('fx-open');};</script></head><body><div id="c">${body}</div></body></html>`;
 }
 
 // Merjenje višine vsebine (WebView brez drsenja, višino dobi od vsebine).
