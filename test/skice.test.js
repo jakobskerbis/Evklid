@@ -634,3 +634,20 @@ test("presek stožca: parabola nastane natanko pri τ = 90° − α, pri manjše
   assert.equal(kr.odseki.length, 1);
   kr.odseki[0].forEach((p) => assert.ok(Math.abs(p[1] - 0.6) < 1e-12));
 });
+
+test("presek stožca: pri τ = 90° ravnina vsebuje os (par premic), krivulja sega do roba stožca", async () => {
+  const { vrsta, nastavitev, krivulja, skoziVrh, VISINA } = await import("../public/skice/presek-stozca.js");
+  assert.ok(skoziVrh(90, 1) && skoziVrh(40, 0) && !skoziVrh(89, 1));
+  assert.equal(vrsta(90, 30, 1), "par premic");
+  assert.equal(krivulja(90, 30, 1).odseki.length, 2);
+  for (let alfa = 15; alfa <= 60; alfa++) assert.ok(nastavitev("Hiperbola", alfa).tau < 90);
+  // Konci vej hiperbole in parabole so na robu stožca (|y| = VISINA) ali na robu ravnine, ne korak prej.
+  for (const [tau, alfa, hh] of [[75, 30, 0.6], [89, 30, 1], [60, 30, 0.6]]) {
+    const { odseki } = krivulja(tau, alfa, hh, { pol: 2.5 });
+    for (const o of odseki)
+      for (const p of [o[0], o[o.length - 1]]) {
+        const w = (p[1] - hh) * -Math.sin((tau * Math.PI) / 180) + p[2] * Math.cos((tau * Math.PI) / 180);
+        assert.ok(Math.abs(Math.abs(p[1]) - VISINA) < 1e-6 || Math.abs(Math.abs(p[0]) - 2.5) < 1e-6 || Math.abs(Math.abs(w) - 2.5) < 1e-6, `${tau}/${alfa}/${hh}: konec ${p}`);
+      }
+  }
+});

@@ -10,10 +10,13 @@ export const VISINA = 1.6; // višina vsakega plašča (od vrha)
 export const VRSTE = ["Krožnica", "Elipsa", "Parabola", "Hiperbola", "Skozi vrh"];
 const RAD = Math.PI / 180;
 
+// Ravnina gre skozi vrh, ko je h = 0 ali ko je navpična (τ = 90°): takrat vsebuje os stožca.
+export const skoziVrh = (tau, hh) => Math.abs(hh * Math.cos(tau * RAD)) < 1e-9;
+
 // Vrsta preseka iz τ, α (v stopinjah) in h.
 export function vrsta(tau, alfa, hh) {
   const meja = 90 - alfa, d = tau - meja, eps = 1e-9;
-  if (Math.abs(hh) < eps) return d < -eps ? "točka" : d > eps ? "par premic" : "premica";
+  if (skoziVrh(tau, hh)) return d < -eps ? "točka" : d > eps ? "par premic" : "premica";
   if (Math.abs(tau) < eps) return "krožnica";
   return d < -eps ? "elipsa" : d > eps ? "hiperbola" : "parabola";
 }
@@ -27,44 +30,64 @@ export function nastavitev(ime, alfa, prej = { tau: 0, h: 1 }) {
   if (ime === "Krožnica") return { tau: 0, h: hh };
   if (ime === "Elipsa") return { tau: Math.round(meja / 2), h: hh };
   if (ime === "Parabola") return { tau: meja, h: hh };
-  if (ime === "Hiperbola") return { tau: Math.min(90, meja + Math.max(10, Math.round(alfa / 2))), h: hh };
+  if (ime === "Hiperbola") return { tau: Math.min(89, meja + Math.max(10, Math.round(alfa / 2))), h: hh };
   // Skozi vrh: h = 0, naklon ostane (točka, premica ali par premic).
   return { tau: prej.tau, h: 0 };
 }
 
 // Ravnina: skozi (0, h, 0), normala n = (0, cos τ, sin τ) (vodoravna ravnina, zasukana za τ okoli osi x).
-// Točke preseka s stožcem p = t·(sin α cos θ, cos α, sin α sin θ), |t cos α| ≤ VISINA; vrne odseke (seznami točk).
+// Točke preseka s stožcem p = t·(sin α cos θ, cos α, sin α sin θ), |t cos α| ≤ VISINA, znotraj kvadrata ravnine
+// (polovica stranice pol); vrne odseke (seznami točk). Konci odsekov so poiskani z razpolavljanjem, zato krivulja
+// sega točno do roba stožca ali ravnine.
 export function krivulja(tau, alfa, hh, { n = 720, pol = 2.8 } = {}) {
   const ct = Math.cos(tau * RAD), stt = Math.sin(tau * RAD), ca = Math.cos(alfa * RAD), sa = Math.sin(alfa * RAD);
+  const smer = (th) => [sa * Math.cos(th), ca, sa * Math.sin(th)];
+  // Lokalne koordinate v ravnini: u = x, w = razdalja vzdolž naklona.
+  const znotraj = (p) => Math.abs(p[1]) <= VISINA + 1e-9 && Math.abs(p[0]) <= pol + 1e-9 && Math.abs((p[1] - hh) * -stt + p[2] * ct) <= pol + 1e-9;
+  // Razpolavljanje med dobro (a) in slabo (b) vrednostjo parametra.
+  const meja = (a, b, tocka) => {
+    for (let i = 0; i < 40; i++) {
+      const m = (a + b) / 2, p = tocka(m);
+      if (p && znotraj(p)) a = m;
+      else b = m;
+    }
+    return tocka(a);
+  };
   const odseki = [];
-  let tren = [];
-  const konec = () => (tren.length > 1 && odseki.push(tren), (tren = []));
-  if (Math.abs(hh) < 1e-9) {
-    // Skozi vrh: tvorilke, za katere je n·d = 0 (sin θ = −ct·ca / (stt·sa)).
+  // Vzorčenje po parametru u od u0 do u1 (n korakov); vsak odsek dobi natančna konca.
+  const vzorci = (tocka, u0, u1, k) => {
+    let tren = [], prej = null;
+    for (let i = 0; i <= k; i++) {
+      const u = u0 + ((u1 - u0) * i) / k, p = tocka(u), ok = !!p && znotraj(p);
+      if (ok && !tren.length && prej != null) tren.push(meja(u, prej, tocka));
+      if (ok) tren.push(p);
+      else if (tren.length) {
+        tren.push(meja(prej, u, tocka));
+        if (tren.length > 1) odseki.push(tren);
+        tren = [];
+      }
+      prej = u;
+    }
+    if (tren.length > 1) odseki.push(tren);
+  };
+  if (skoziVrh(tau, hh)) {
+    // Skozi vrh: tvorilke, za katere je n·d = 0 (sin θ = −ct·ca / (stt·sa)), odrezane na kvadrat ravnine.
     const s = stt * sa > 1e-12 ? (-ct * ca) / (stt * sa) : Infinity;
     if (Math.abs(s) > 1 + 1e-12) return { odseki: [], tocka: [0, 0, 0] };
-    const th = Math.asin(Math.max(-1, Math.min(1, s)));
-    const T = VISINA / ca;
+    const th = Math.asin(Math.max(-1, Math.min(1, s))), T = VISINA / ca;
     for (const t0 of Math.abs(Math.abs(s) - 1) < 1e-12 ? [th] : [th, Math.PI - th]) {
-      const d = [sa * Math.cos(t0), ca, sa * Math.sin(t0)];
-      odseki.push([d.map((x) => -x * T), d.map((x) => x * T)]);
+      const d = smer(t0);
+      vzorci((t) => d.map((x) => x * t), -T, T, 64);
     }
     return { odseki, tocka: null };
   }
-  for (let i = 0; i <= n; i++) {
-    const th = (2 * Math.PI * i) / n;
-    const d = [sa * Math.cos(th), ca, sa * Math.sin(th)];
-    const nd = ct * d[1] + stt * d[2];
-    const t = Math.abs(nd) > 1e-12 ? (hh * ct) / nd : Infinity;
-    const p = d.map((x) => x * t);
-    // Lokalne koordinate v ravnini: u = x, w = razdalja vzdolž naklona; ravnina je kvadrat s polovico stranice pol.
-    const w = (p[1] - hh) * -stt + p[2] * ct;
-    const ok = Number.isFinite(t) && Math.abs(p[1]) <= VISINA + 1e-9 && Math.abs(p[0]) <= pol && Math.abs(w) <= pol;
-    if (ok) tren.push(p);
-    else konec();
-  }
-  konec();
-  // Zaprta krivulja (krožnica, elipsa): prvi in zadnji odsek se stakneta pri θ = 0.
+  vzorci((th) => {
+    const d = smer(th), nd = ct * d[1] + stt * d[2];
+    if (Math.abs(nd) < 1e-12) return null;
+    const t = (hh * ct) / nd;
+    return d.map((x) => x * t);
+  }, 0, 2 * Math.PI, n);
+  // Zaprta krivulja (krožnica, elipsa) ali veja čez θ = 0: prvi in zadnji odsek se stakneta.
   if (odseki.length > 1) {
     const a = odseki[0], b = odseki[odseki.length - 1];
     if (Math.hypot(...a[0].map((x, k) => x - b[b.length - 1][k])) < 1e-6) {
@@ -83,7 +106,7 @@ export default async function narisi(host, { potem } = {}) {
   S.svg.replaceWith(oder);
   const napis = h("div", { class: "sk-3d-vrsta", "aria-live": "polite" });
   const gumbV = (znak, opis, fn) => h("button", { type: "button", class: "sk-3d-btn", "aria-label": opis, title: opis, onclick: fn }, znak);
-  let tece = null, prerez = false;
+  let tece = null, prerez = false, gotovo = false;
   const bPrerez = gumbV("✂", "Prerez: skrij del stožca nad ravnino", () => ((prerez = !prerez), bPrerez.classList.toggle("on", prerez), bPrerez.setAttribute("aria-pressed", prerez), posodobi()));
   bPrerez.setAttribute("aria-pressed", "false");
   const bPredvajaj = gumbV("▶", "Predvajaj: ravnina se počasi nagiba", () => (tece ? ustavi() : predvajaj()));
@@ -101,8 +124,10 @@ export default async function narisi(host, { potem } = {}) {
     const pokazi = () => (vnos.value = st(Number(sl.get()), d));
     sl.input.addEventListener("input", pokazi);
     vnos.addEventListener("keydown", (e) => e.key === "Enter" && vnos.blur());
+    vnos.addEventListener("focus", () => ustavi()); // predvajanje ne prepisuje vnosa
     vnos.addEventListener("change", () => {
       const v = Math.min(max, Math.max(min, Math.round(Number(String(vnos.value).replace(",", ".").replace("−", "-")) / korak) * korak));
+      if (!String(vnos.value).trim()) return pokazi(); // prazno polje ne pomeni 0
       if (Number.isFinite(v)) sl.set(Number(v.toFixed(d)));
       pokazi();
     });
@@ -110,9 +135,11 @@ export default async function narisi(host, { potem } = {}) {
     pokazi();
     return sl;
   };
-  const sTau = polje(S.drsnik({ label: "τ (°)", min: 0, max: 90, step: 1, value: tau, digits: 0, barva: "izbor", onInput: (v) => (ustavi(), (tau = v), posodobi()) }), 0, 90, 1, 0);
-  const sH = polje(S.drsnik({ label: "h", min: -1, max: 1, step: 0.1, value: hh, digits: 1, barva: "ploskev", onInput: (v) => (ustavi(), (hh = Math.round(v * 10) / 10), posodobi()) }), -1, 1, 0.1, 1);
-  const sA = polje(S.drsnik({ label: "α (°)", min: 15, max: 60, step: 1, value: alfa, digits: 0, barva: "ploskev", onInput: (v) => (ustavi(), (alfa = v), zgradiStozec(), posodobi()) }), 15, 60, 1, 0);
+  const sTau = polje(S.drsnik({ label: "naklon τ (°)", min: 0, max: 90, step: 1, value: tau, digits: 0, barva: "izbor", onInput: (v) => (ustavi(), (tau = v), posodobi()) }), 0, 90, 1, 0);
+  const sH = polje(S.drsnik({ label: "višina h", min: -1, max: 1, step: 0.1, value: hh, digits: 1, barva: "ploskev", onInput: (v) => (ustavi(), (hh = Math.round(v * 10) / 10), posodobi()) }), -1, 1, 0.1, 1);
+  const sA = polje(S.drsnik({ label: "polovični kot α (°)", min: 15, max: 60, step: 1, value: alfa, digits: 0, barva: "ploskev", onInput: (v) => (ustavi(), (alfa = v), gotovo && zgradiStozec(), posodobi()) }), 15, 60, 1, 0);
+
+  cipi(); // oznaka in čipi že med nalaganjem Three.js
 
   function nastavi(o) {
     tau = o.tau;
@@ -126,10 +153,10 @@ export default async function narisi(host, { potem } = {}) {
     const v = vrsta(tau, alfa, hh), e = izsrednost(tau, alfa);
     const znak = Math.abs(tau - (90 - alfa)) < 1e-9 ? "=" : tau < 90 - alfa ? "<" : ">";
     napis.textContent = v.toUpperCase();
-    seg.set(hh === 0 ? "Skozi vrh" : VRSTE.find((x) => x.toLowerCase() === v) || "", true);
+    seg.set(hh === 0 || skoziVrh(tau, hh) ? "Skozi vrh" : VRSTE.find((x) => x.toLowerCase() === v) || "", true);
     S.cipi([
       { barva: "izbor", oznaka: `\\tau ${znak} 90^\\circ - \\alpha`, vrednost: `${st(tau, 0)}° ${znak} ${st(90 - alfa, 0)}°` },
-      { barva: "glavna", oznaka: "e = \\frac{\\sin \\tau}{\\cos \\alpha}", vrednost: hh === 0 ? "–" : vr(e, 3) },
+      { barva: "glavna", oznaka: "e = \\frac{\\sin \\tau}{\\cos \\alpha}", vrednost: skoziVrh(tau, hh) ? "–" : vr(e, 3) },
       { barva: "ploskev", oznaka: "\\text{presek}", vrednost: v },
     ]);
   }
@@ -153,6 +180,7 @@ export default async function narisi(host, { potem } = {}) {
   }
   if (!renderer) {
     oder.classList.add("sk-3d-brez");
+    kot.hidden = true;
     oder.append(h("p", { class: "sk-hint" }, "3D pogled v tem brskalniku ni na voljo (WebGL)."));
     cipi();
     if (potem) (await potem()).default(host);
@@ -226,14 +254,14 @@ export default async function narisi(host, { potem } = {}) {
 
   function posodobi() {
     cipi();
+    if (!gotovo) return; // Three.js se še nalaga (ali ga ni): čipi in oznaka so že pravi
     ravnina.position.set(0, hh, 0);
     ravnina.rotation.set(tau * RAD, 0, 0);
     const n = new THREE.Vector3(0, Math.cos(tau * RAD), Math.sin(tau * RAD));
     // Prerez: obdrži samo del stožca pod ravnino (−n·p + h·cos τ ≥ 0).
     rezStozca.normal.copy(n).negate();
     rezStozca.constant = hh * Math.cos(tau * RAD);
-    matTv.clippingPlanes = prerez ? [rezStozca] : [];
-    matTv.needsUpdate = true;
+    if ((matTv.clippingPlanes?.length || 0) !== (prerez ? 1 : 0)) (matTv.clippingPlanes = prerez ? [rezStozca] : []), (matTv.needsUpdate = true);
     for (const c of [...presek.children]) (c.geometry.dispose(), presek.remove(c));
     const { odseki, tocka } = krivulja(tau, alfa, hh, { pol: POL });
     for (const o of odseki) {
@@ -257,11 +285,14 @@ export default async function narisi(host, { potem } = {}) {
     bPredvajaj.textContent = "❚❚";
     bPredvajaj.setAttribute("aria-label", "Ustavi predvajanje");
     tece = (t) => {
-      const v = Math.min(90, od + ((t - t0) / 9000) * 90);
-      tau = Math.round(v);
-      sTau.set(tau, true), sTau.pokazi();
-      posodobi();
-      if (v >= 90) ustavi();
+      // Do 89°: pri 90° bi ravnina vsebovala os (par premic skozi vrh), predvajanje pa naj konča pri hiperboli.
+      const v = Math.min(89, od + ((t - t0) / 9000) * 89);
+      if (Math.round(v) !== tau) {
+        tau = Math.round(v);
+        sTau.set(tau, true), sTau.pokazi();
+        posodobi();
+      }
+      if (v >= 89) ustavi();
     };
   }
   function ustavi() {
@@ -274,11 +305,15 @@ export default async function narisi(host, { potem } = {}) {
     camera.position.copy(ZACETEK);
     controls.target.set(0, 0, 0);
     controls.update();
-    risi = true;
+    velikost(true);
   }
 
-  function velikost() {
-    const w = oder.clientWidth || 300, hgt = Math.round(Math.min(340, Math.max(230, w * 0.78)));
+  let sirina = 0;
+  function velikost(vedno) {
+    const w = oder.clientWidth || 300;
+    if (w === sirina && vedno !== true) return;
+    sirina = w;
+    const hgt = Math.round(Math.min(340, Math.max(230, w * 0.78)));
     renderer.setSize(w, hgt, false);
     platno.style.width = "100%";
     platno.style.height = `${hgt}px`;
@@ -288,9 +323,10 @@ export default async function narisi(host, { potem } = {}) {
     camera.updateProjectionMatrix();
     risi = true;
   }
-  const ro = new ResizeObserver(velikost);
+  const ro = new ResizeObserver(() => requestAnimationFrame(() => velikost()));
   ro.observe(oder);
-  velikost();
+  gotovo = true;
+  velikost(true);
   posodobi();
   let zivo = true;
   function zanka(t) {
