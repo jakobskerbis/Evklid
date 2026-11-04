@@ -459,7 +459,7 @@ const MORJA = [
   [-7.8, 51.3, 11, 7, 0.9], [-1, 45, 5, 5, 0.6], [-15.2, 35.5, 5, 5, 1], [-21, -17, 10, 10, 0.9], [-24.4, -38.6, 6, 6, 1],
   [56, 2, 4.5, 28, 0.85], [53, -35, 5, 12, 0.6], [13.3, 3.6, 4, 4, 0.9], [7.5, -30.9, 6, 7, 0.8], [-10, -23, 4.5, 5, 0.8],
   [2.4, 1.7, 3, 4, 0.7], [1.3, 87, 4.5, 4, 0.9], [13, 86, 4, 4, 0.8], [-39, 93, 6, 7, 0.6], [27, 148, 4, 4, 0.9],
-  [-19, -93, 3.5, 3.5, 0.9], [-34, 163, 3, 3, 0.7], [-28, 61, 3, 4, 0.7], [44, 27, 4, 7, 0.6],
+  [-19, -93, 3.5, 3.5, 0.9], [-34, 163, 3, 3, 0.7], [4, 66.5, 4, 3, 0.75], [44, 27, 4, 7, 0.6],
 ];
 function texLuna(w, h) {
   return slika("luna" + w, function* () {
@@ -577,7 +577,7 @@ function texPluton(w, h) {
 // Saturn's rings as a radial profile, u = (r − 66900 km) / (140400 − 66900 km)
 // Ring profile along the radius (km from Saturn's centre): opacity and colour of the D, C, B, A and F rings with the
 // Maxwell gap (87 491 km), Cassini division with the Huygens gap (117 680 km), Encke (133 589 km) and Keeler gap
-// (136 505 km); fine ringlets are value noise at three scales (≈ 2000, 500 and 120 km).
+// (136 505 km), each about as wide as the real gap (≈ 270, 350, 325, 42 km); fine ringlets are value noise at three scales (≈ 2000, 500 and 120 km).
 const OBROC_IN = 66900, OBROC_OUT = 140400;
 function texObroci(w) {
   return izvedi(slika("obroci" + w, function* () {
@@ -591,7 +591,7 @@ function texObroci(w) {
       if (km < 74658) { a = 0.03 + 0.03 * f; c = [140, 132, 124]; }
       else if (km < 92000) {
         const t = (km - 74658) / 17342;
-        a = (0.1 + 0.16 * t + 0.14 * f) * vrzel(km, 87491, 135) + (Math.abs(km - 90200) < 300 ? 0.12 : 0);
+        a = (0.1 + 0.16 * t + 0.14 * f) * vrzel(km, 87491, 320) + (Math.abs(km - 90200) < 300 ? 0.12 : 0);
         c = [mix(132, 160, t), mix(122, 146, t), mix(110, 126, t)];
       } else if (km < 117580) {
         const t = (km - 92000) / 25580, jedro = sm(0.08, 0.3, t) * (1 - sm(0.9, 1, t) * 0.3);
@@ -599,11 +599,11 @@ function texObroci(w) {
         const b = Math.sin(Math.min(1, t * 1.15) * Math.PI) * (0.7 + 0.6 * f);
         c = [mix(204, 240, b), mix(186, 222, b), mix(150, 182, b)];
       } else if (km < 122170) {
-        a = (0.05 + 0.06 * f + (Math.abs(km - 120400) < 350 ? 0.1 : 0) + (Math.abs(km - 121700) < 300 ? 0.08 : 0)) * vrzel(km, 117680, 180);
+        a = (0.05 + 0.06 * f + (Math.abs(km - 120400) < 350 ? 0.1 : 0) + (Math.abs(km - 121700) < 300 ? 0.08 : 0)) * vrzel(km, 117680, 300);
         c = [118, 110, 102];
       } else if (km < 136775) {
         const t = (km - 122170) / 14605;
-        a = (0.5 + 0.14 * f + 0.1 * sm(0.75, 0.95, t)) * vrzel(km, 133589, 170) * vrzel(km, 136505, 40) * (1 - sm(0.985, 1, t) * 0.6);
+        a = (0.5 + 0.14 * f + 0.1 * sm(0.75, 0.95, t)) * vrzel(km, 133589, 390) * vrzel(km, 136505, 50) * (1 - sm(0.985, 1, t) * 0.6);
         c = [mix(206, 196, t) + 14 * (f - 0.5), mix(192, 184, t) + 12 * (f - 0.5), mix(166, 160, t) + 10 * (f - 0.5)];
       } else if (Math.abs(km - 140180) < 220) { a = 0.55 * Math.exp(-(((km - 140180) / 110) ** 2)); c = [214, 204, 190]; }
       for (const row of [0, 1]) put(px, (row * w + i) * 4, c[0], c[1], c[2], a * 255);

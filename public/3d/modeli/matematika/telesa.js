@@ -1005,7 +1005,7 @@ export function zgradi(THREE, ctx) {
     }
     {
       const R = tla.scale.x, k = korakTal, K = k === 1 ? 5 : 10;
-      d.push({ id: "podlaga", ime: "Karirasta podlaga", opis: `Podlaga je razdeljena na kvadratke s stranico ${k} cm (debelejše črte so na vsakih ${K} cm), kot karirasti zvezek; z njimi oceniš velikost telesa in njegove mreže.`, barva: "#A9BCE8", meshes: [tla], tocka: tk(V(sred.x - 0.6 * R, 0, sred.z + 0.6 * R)) });
+      d.push({ id: "podlaga", ime: "Karirasta podlaga", opis: `Podlaga je razdeljena na kvadratke s stranico ${k} cm (debelejše črte so na vsakih ${K} cm) kot v karirastem zvezku; z njimi oceniš velikost telesa in njegove mreže.`, barva: "#A9BCE8", meshes: [tla], tocka: tk(V(sred.x - 0.6 * R, 0, sred.z + 0.6 * R)) });
     }
     if (prerezInfo) {
       d.push({ id: "prerez", ime: "Prerez", opis: `Presek telesa z ravnino: ${prerezInfo.ime}. Odrezani del je prikazan prosojno.`, barva: "#E4577F", meshes: [prerezM], tocka: tk(T.prerezSred) });

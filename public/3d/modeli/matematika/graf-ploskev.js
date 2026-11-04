@@ -341,7 +341,7 @@ export function zgradi(THREE, ctx) {
       g.font = `600 42px ${PISAVA}`;
       for (let i = 0; i <= n; i += korak) {
         const z = zlo + i * zKorak, yy = y0 + bh - (i / n) * bh;
-        g.fillStyle = "#E8EDF7"; g.fillRect(x0 + bw, yy - 2, 10, 4); g.fillText(st(z), x0 + bw + 14, yy);
+        g.fillStyle = "#E8EDF7"; g.fillRect(x0 + bw, yy - 2, 8, 4); g.fillText(st(z), x0 + bw + 22, yy); // razmik, da oznaka ni videti kot minus
       }
     } else {
       const x0 = 70, x1 = W - 40, y0 = 22, bh = 30;
