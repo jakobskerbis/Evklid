@@ -30,7 +30,7 @@ export function appVersion() {
 export function vendorVersion() {
   let fonts = [];
   try { fonts = Object.keys(JSON.parse(read(path.join(root, "package.json"))).dependencies || {}).filter((m) => m.startsWith("@fontsource-variable/")).sort(); } catch {}
-  const mods = ["katex", "marked", "dompurify", "pdfjs-dist", ...fonts];
+  const mods = ["katex", "marked", "dompurify", "pdfjs-dist", "three", ...fonts];
   const v = mods.map((m) => {
     try { return JSON.parse(read(path.join(root, "node_modules", m, "package.json"))).version; } catch { return "?"; }
   });

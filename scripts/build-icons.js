@@ -39,6 +39,8 @@ const NAMES = [
   "scan-line", "scan-text", "badge-check", "image",
   // kovanci (igre, zbirke)
   "coins",
+  // 3D atlas in modeli (public/3d/)
+  "ellipsis", "eye-off", "scissors", "box", "bone", "rotate-3d", "focus",
 ];
 const dir = path.join("node_modules", "lucide-static", "icons");
 const out = {};

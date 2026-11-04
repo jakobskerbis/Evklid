@@ -1,0 +1,64 @@
+{
+  "_opis": "Viri 3D modelov za »Viri in licence« (public/3d/atlas.js) in test/atlas3d.test.js. Vrstica: { id, ime, avtor, opis, licenca, licencaUrl?, url?, datoteke? }; datoteke so vzorci poti glede na public/3d/modeli (npr. \"telo/*.glb\", \"celice/*.js\"; * ne prečka mape). Vsaka datoteka .glb in .js pod public/3d/modeli mora ustrezati vzorcu vira z licenco brez NC. Področje lahko doda public/3d/modeli/<podrocje>/viri.json v isti obliki ({ viri: [...], izkljuceno?: [...] }); atlas ga združi s tem seznamom. Licenca izpeljanih modelov telesa je CC BY-SA 4.0 (docs/3d.md).",
+  "viri": [
+    {
+      "id": "z-anatomy",
+      "ime": "Z-Anatomy",
+      "avtor": "Gauthier Kervyn in sodelavci",
+      "opis": "Odprti 3D atlas človeške anatomije. Iz njega so plasti telesa: koža, mišice, okostje, sklepi in vezi, organi, žile, živčevje in limfni sistem.",
+      "url": "https://www.z-anatomy.com",
+      "licenca": "CC BY-SA 4.0",
+      "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "datoteke": [
+        "telo/*.glb"
+      ]
+    },
+    {
+      "id": "bodyparts3d",
+      "ime": "BodyParts3D",
+      "avtor": "Database Center for Life Science (DBCLS), Japonska",
+      "opis": "Anatomska podatkovna zbirka, iz katere izhaja velik del modelov Z-Anatomy.",
+      "url": "https://lifesciencedb.jp/bp3d/",
+      "licenca": "CC BY-SA 2.1 JP",
+      "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
+      "datoteke": [
+        "telo/*.glb"
+      ]
+    },
+    {
+      "id": "evklid-telo",
+      "ime": "Evklid: prirejeni modeli telesa",
+      "avtor": "Evklid",
+      "opis": "Modele smo razdelili po plasteh, stisnili za hiter prenos in jim dodali slovenska imena. Prirejene modele delimo pod isto licenco.",
+      "url": "https://evklid.app/3d",
+      "licenca": "CC BY-SA 4.0",
+      "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "datoteke": [
+        "telo/*.glb"
+      ]
+    },
+    {
+      "id": "evklid-koda",
+      "ime": "Evklid: modeli iz kode",
+      "avtor": "Evklid",
+      "opis": "Celice, molekule, polja in drugi modeli, narisani v kodi brez tujih modelov in slik.",
+      "licenca": "Lastno delo Evklida",
+      "datoteke": [
+        "*/*.js"
+      ]
+    },
+    {
+      "id": "three",
+      "ime": "three.js",
+      "avtor": "three.js authors",
+      "opis": "Knjižnica za izris 3D v brskalniku.",
+      "url": "https://threejs.org",
+      "licenca": "MIT",
+      "licencaUrl": "https://github.com/mrdoob/three.js/blob/dev/LICENSE"
+    }
+  ],
+  "izkljuceno": [
+    "Podrobni model notranjega ušesa »Anatomy of the Inner Ear« (University of Dundee, CC BY-NC-SA) ni uporabljen, ker licenca ne dovoli komercialne uporabe.",
+    "Podrobni model ledvice »Kidney« (Lissie Cowley, CC BY-NC) ni uporabljen, ker licenca ne dovoli komercialne uporabe."
+  ]
+}

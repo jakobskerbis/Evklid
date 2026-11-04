@@ -52,6 +52,7 @@ import { mountScan } from "./scan.js";
 import { appVersion, vendorVersion } from "./razlicica.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
+import { mount3d } from "./tri-d.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -234,6 +235,7 @@ export function createApp(store, opts = {}) {
   // Merjenje v pilotu: števec ogledov strani za starše (pred statičnimi datotekami, glej pilot.js).
   app.use(visitCounter(store.db));
   mountSolePage(app); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
+  mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
     app.use(
@@ -242,6 +244,7 @@ export function createApp(store, opts = {}) {
         ["/vendor/pdfjs/", path.join(modules, "pdfjs-dist")],
         ["/vendor/marked/", path.join(modules, "marked")],
         ["/vendor/dompurify/", path.join(modules, "dompurify", "dist")],
+        ["/vendor/three/build/", path.join(modules, "three", "build")],
         ...FONTS.map(([dir, pkg]) => [`/vendor/${dir}/`, path.join(modules, "@fontsource-variable", pkg)]),
         ["/practice/", path.join(here, "practice")],
         ["/", publicDir],

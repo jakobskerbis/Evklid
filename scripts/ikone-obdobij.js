@@ -25,6 +25,8 @@ export const ZNAKI = [
   "badge-check", "zap", "heart", "bell", "wallet", "coins", "gem", "spade", "bomb", "venetian-mask",
   // grafični kalkulator (orodja in vrste funkcij)
   "house", "table", "wrench", "activity", "chart-area", "chart-spline", "flower", "infinity", "spline", "square-function",
+  // 3D atlas in modeli (temni oder brez slogov obdobij)
+  "ellipsis", "eye-off", "scissors", "box", "bone", "rotate-3d", "focus",
   // logotip
   "elementi",
 ];

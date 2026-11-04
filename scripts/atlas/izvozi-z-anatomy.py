@@ -53,6 +53,17 @@ def preprost_material(src):
         _mats[name] = m
     return _mats[name]
 
+def prevladujoc_material(o, me):
+    """Material z največ ploskvami (kosti imajo pogosto prvo režo »Cartilage« za sklepne ploskve)."""
+    mats = list(me.materials) or list(getattr(o.data, "materials", []))
+    if not mats:
+        return o.active_material
+    count = [0] * len(mats)
+    for p in me.polygons:
+        if p.material_index < len(count): count[p.material_index] += 1
+    best = max(range(len(mats)), key=lambda i: count[i])
+    return mats[best] or o.active_material
+
 def tris_of(me):
     return sum(len(p.vertices) - 2 for p in me.polygons)
 
@@ -85,7 +96,7 @@ for key, (prefix, target) in SISTEMI.items():
         if not me or len(me.polygons) == 0:
             continue
         me.transform(o.matrix_world)
-        srcmat = o.active_material or (o.data.materials[0] if o.type == "CURVE" and o.data.materials else None)
+        srcmat = prevladujoc_material(o, me)
         me.materials.clear(); me.materials.append(preprost_material(srcmat))
         n = tris_of(me); raw_tris += n
         if n > MIN_TRI and ratio < 1:

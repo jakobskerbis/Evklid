@@ -99,11 +99,18 @@ function topicsHtml(x) {
       .join("")}</div>`;
 }
 
+// Kartica 3D atlasa in modelov (stran /3d, docs/3d.md) nad poskusi: odpre se čez cel zaslon.
+const card3d = () => `<a class="card lab-3d" href="/3d" data-lab-3d>
+    <span class="lab-3d-ic">${icon("box")}</span>
+    <span class="lab-3d-txt"><small>${esc(t("a3.eyebrow"))}</small><b>${esc(t("lab.3dTitle"))}</b><span>${esc(t("lab.3dText"))}</span></span>
+    ${icon("chevron-right")}
+  </a>`;
+
 function renderList() {
   view()?.classList.remove("lab-open");
   const list = data?.experiments || [];
   if (!list.length) {
-    box().innerHTML = `<p class="muted">${esc(t("lab.empty"))}</p>`;
+    box().innerHTML = `${card3d()}<p class="muted">${esc(t("lab.empty"))}</p>`;
     return;
   }
   const groups = [];
@@ -113,7 +120,7 @@ function renderList() {
     g.items.push(x);
   }
   box().innerHTML =
-    `<p class="muted lab-intro">${esc(t("lab.intro"))}</p><div class="lab-groups">` +
+    `${card3d()}<p class="muted lab-intro">${esc(t("lab.intro"))}</p><div class="lab-groups">` +
     groups
       .map(
         (g) => `<section class="lab-group${g.items.length > 1 ? " many" : ""}">
