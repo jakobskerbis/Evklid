@@ -37,6 +37,7 @@ import {
   accessFor,
   monthlyOf,
   passLevel,
+  upgradeMonthUsd,
 } from "../server/accounts/plans.js";
 import { STORE_PRICES_EUR, STORE_PRODUCTS } from "../server/mobile/store-billing.js";
 import { rights, lessonInteractive } from "../server/placila/pravice.js";
@@ -358,6 +359,30 @@ test("Račun: cena stopnje profila, Družina pri ≥ 2 profilih; nakup po stopnj
     const g = await call("/api/billing/gift", { method: "POST", body: { level: "SS", adult: true, withdrawal: true } });
     assert.equal(g.status, 200, JSON.stringify(g.body));
     assert.equal(stripe.calls.filter((c) => c.path === "/v1/checkout/sessions").at(-1).body["line_items[0][price_data][unit_amount]"], "13900");
+  });
+});
+
+test("nadgradnja med mesecem: zajamčeni AI ta mesec po dnevih (stari paket do nadgradnje, novi za preostanek)", async () => {
+  // Pure: 30-dnevni mesec, nadgradnja 11. (10 dni starega, 20 dni novega); 1. v mesecu ves novi; prejšnji mesec ali nižji paket: novi.
+  const nov = Date.UTC(2026, 10, 15);
+  assert.equal(upgradeMonthUsd(1, 4, Date.UTC(2026, 10, 11, 18), nov), 3);
+  assert.equal(upgradeMonthUsd(1, 4, Date.UTC(2026, 10, 1, 0, 5), nov), 4);
+  assert.equal(upgradeMonthUsd(1, 4, Date.UTC(2026, 9, 31, 23), nov), 4);
+  assert.equal(upgradeMonthUsd(4, 1, Date.UTC(2026, 10, 11), nov), 1);
+  await withAccounts(async ({ call, kid, subscribe, api, db, pid }) => {
+    const ana = kid("Ana", "OS");
+    subscribe("evklid_1_month");
+    const before = api.guaranteeFor(ana);
+    const full = planGuarantee(planByKey("evklid_ss_month")).usd;
+    assert.ok(full > before);
+    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month" } })).status, 200);
+    const up = JSON.parse(db.prepare("SELECT value FROM kv WHERE key = ?").get(`ai_upgrade_${pid}`).value);
+    assert.equal(up.from, "evklid_1_month");
+    assert.equal(api.guaranteeFor(ana), upgradeMonthUsd(before, full, up.at));
+    assert.ok(api.guaranteeFor(ana) <= full && api.guaranteeFor(ana) >= before);
+    // Nadgradnja v prejšnjem mesecu: ta mesec ves novi delež.
+    db.prepare("UPDATE kv SET value = ? WHERE key = ?").run(JSON.stringify({ ...up, at: Date.UTC(2000, 0, 15) }), `ai_upgrade_${pid}`);
+    assert.equal(api.guaranteeFor(ana), full);
   });
 });
 
