@@ -8,8 +8,6 @@ import { listPaths, topicOrder, getTopic } from "../server/curriculum.js";
 import { loadLesson } from "../server/textbook.js";
 import { transcript } from "../server/povzetek.js";
 
-// Privzeto izklopljeno (čaka na j-jev pregled); testi ga vklopijo.
-process.env.EVKLID_LESSON_SEARCH = "1";
 
 const os = (subject, g) => ({ subject, educational_track: "OSNOVNA_SOLA", curriculum_level: `${g}. razred` });
 const ss = (subject, g) => ({ subject, educational_track: "SREDNJA_SOLA", curriculum_level: `${g}. letnik` });
@@ -63,7 +61,7 @@ test("lesson search: no lesson for chit-chat, off-topic, higher grades, other sy
   try {
     assert.equal(lessonForQuestion("Kaj je Pitagorov izrek?", os("MAT", 8)), null);
   } finally {
-    process.env.EVKLID_LESSON_SEARCH = "1";
+    delete process.env.EVKLID_LESSON_SEARCH;
   }
   assert.deepEqual(terms("Kako rešim ENAČBO?"), ["resim", "enacb"]);
 });
