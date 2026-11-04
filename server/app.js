@@ -49,6 +49,7 @@ import { verifyAnswer, codeCheck } from "./verify.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
 import { mountGames, notePathActivity } from "./games.js";
+import { mountDailyPuzzle } from "./daily-puzzle.js";
 import { mountLab } from "./laboratorij.js";
 import { Avatars, mountAvatar } from "./avatar.js";
 import { Knowledge, mountKnowledge } from "./zbirke.js";
@@ -503,8 +504,8 @@ export function createApp(store, opts = {}) {
     // Stikalo za nujne primere (docs/krizni-nacrt.md): klepet izklopljen, Vadnica in lekcije delujejo.
     if (chatOff()) return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true });
     if (busy.has(conv.id)) return res.status(409).json({ error: "Počakaj, da Evklid odgovori." });
-    const blocked = usage.blockReason(student.id);
-    if (blocked) return res.status(429).json({ error: blocked, limit: true });
+    const blocked = usage.blockInfo(student.id);
+    if (blocked) return res.status(429).json({ ...blocked, limit: true });
     busy.add(conv.id);
     // Zajamčena poraba naročnika (j 2026-11-01): stanje pred odgovorom, da ob prehodu 80 % ali 100 % pošljemo obvestilo.
     const allowBefore = accounts ? usage.allowance(student.id) : null;
@@ -532,6 +533,7 @@ export function createApp(store, opts = {}) {
       wantThink: againStreak === 1,
       competition: student.settings.track === "COMPETITION",
       secondary: jeSs(student.settings),
+      university: jeFaks(student.settings),
       lite,
       free: !!accounts && !accounts.aiPremiumFor(student.id),
       deepModel: capped ? MODEL_MID : MODEL_DEEP,
@@ -1240,8 +1242,8 @@ export function createApp(store, opts = {}) {
     if (!t || t.student_id !== s.id) return res.status(404).json({ error: "Naloga ne obstaja." });
     const m = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(String(req.body?.image || ""));
     if (!m || m[2].length > 2 * 1024 * 1024) return res.status(400).json({ error: "Slika zapisa manjka ali je prevelika." });
-    const blocked = usage.blockReason(s.id);
-    if (blocked) return res.status(429).json({ error: blocked });
+    const blocked = usage.blockInfo(s.id);
+    if (blocked) return res.status(429).json(blocked);
     try {
       const a = t.payload.answer || {};
       const out = await readFn({ imageBase64: m[2], mediaType: m[1], answerType: a.type, unit: a.unit || null });
@@ -1295,6 +1297,7 @@ export function createApp(store, opts = {}) {
   mountKviz(app, store, { loadStudent, leagues }); // kviz v živo za razred
   mountGraphs(app, store, { loadStudent });
   mountGames(app, store, { loadStudent, progress, avatars, knowledge });
+  mountDailyPuzzle(app, store, { loadStudent, leagues, ...(opts.dailyNow ? { now: opts.dailyNow } : {}) }); // dnevna uganka in lestvica po času
   mountLab(app, { loadStudent, accounts }); // virtualni laboratorij: vsi poskusi, zaklep kot v učbeniku
   mountAvatar(app, avatars, { loadStudent, trendsFile: opts.trendsFile ?? null });
   mountKnowledge(app, knowledge, { loadStudent, avatars });

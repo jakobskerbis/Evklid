@@ -1,4 +1,4 @@
-// Definicija odvoda (SŠ kartica Odvodi, faks kartica Definicija): f(x) = x²/2, točka x₀ se vleče po grafu,
+// Definicija odvoda (SŠ kartica Definicija odvoda, faks kartica Definicija): f(x) = x²/2, točka x₀ se vleče po grafu,
 // drsnik Δx (na faksu h, brez 0). Sekanta (rumena) skozi x₀ in x₀ + Δx, tangenta (zelena) v x₀, trikotnik Δx, Δf.
 // Ko gre Δx proti 0, se Δf/Δx približa f′(x₀).
 import { st, crta, napis, vr } from "./skica.js";

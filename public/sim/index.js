@@ -169,6 +169,9 @@ export const ENGINES = {
   "lab-elektroliza": ["lab-elektrokemija.js", "labElektroliza"],
   "lab-galvanski": ["lab-elektrokemija.js", "labGalvanski"],
   "lab-kovine": ["lab-elektrokemija.js", "labKovine"],
+  "lab-klanec": ["lab-gibanje.js", "labKlanec"],
+  "lab-prosti-pad": ["lab-gibanje.js", "labProstiPad"],
+  "lab-newton2": ["lab-gibanje.js", "labNewton2"],
   // teme, dodane po primerjavi z učnimi načrti (2026-10-30)
   logika: ["vrzeli.js", "logika"], prostor: ["vrzeli.js", "prostor"], "koord-trikotnik": ["vrzeli.js", "koordTrikotnik"],
   "vezava-vzmeti": ["vrzeli.js", "vezavaVzmeti"], izmenicni: ["vrzeli.js", "izmenicni"], "em-spekter": ["vrzeli.js", "emSpekter"], zvezde: ["vrzeli.js", "zvezde"], domine: ["vrzeli.js", "domine"],
@@ -209,8 +212,9 @@ export async function mountSim(id, el, opts = {}) {
       el.append(b);
     }
     // Prikaz na grafu: gumbi za vklop in izklop krivulj, točk, oznak in mreže (public/sim/prikaz.js).
+    // Počakamo nanje, da predvajalnik videa (gradiva.js) v prvem prizoru že najde npr. »Vijolična«.
     if (id !== "zbirka" && !m3 && id !== "3d")
-      Promise.all([import("./prikaz.js"), import("../i18n.js")])
+      await Promise.all([import("./prikaz.js"), import("../i18n.js")])
         .then(([m, i18n]) => m.layerToggles(el, i18n.t))
         .catch((err) => console.error("Prikaz na grafu:", err));
   } catch (err) {
