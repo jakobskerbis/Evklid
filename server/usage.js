@@ -56,7 +56,7 @@ export const NOTES = {
 
 // Razlogi, zakaj inštruktor ne odgovori (blockInfo). Enako besedilo je v public/i18n/sl.js pod istim ključem.
 export const BLOCK_TEXT = {
-  "block.daily": "Današnja vprašanja za inštruktorja so porabljena (na dan jih je {n}). Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
+  "block.daily": "Današnja vprašanja za inštruktorja so porabljena ({n} na dan). Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
   "block.creditOut": "Inštruktor je za nekaj minut nedosegljiv (dobroimetje za AI je porabljeno). Vadnica in razlage tem delujejo naprej.",
   "block.freeTailTopup": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
   "block.freeTail": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
@@ -65,6 +65,12 @@ export const BLOCK_TEXT = {
   "block.capOutTopup": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj. Vadnica in razlage tem delujejo naprej.",
   "block.shareOutTopup": "Ta mesec si porabil svoj del inštruktorja. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
   "block.monthLimit": "Ta mesec si dosegel omejitev vprašanj za inštruktorja. Vadnica in razlage tem delujejo naprej.",
+  // Brezplačni paket (server/accounts/index.js): dnevna in mesečna meja ter namig, kako do več vprašanj (hint).
+  "block.freeDaily": "Današnja brezplačna vprašanja za inštruktorja so porabljena ({n} na dan). Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
+  "block.freeMonth": "Ta mesec si porabil brezplačna vprašanja za inštruktorja. Vadnica in lekcije delujejo naprej neomejeno.",
+  "block.freePool": "Brezplačna vprašanja za inštruktorja so ta mesec za vse porabljena. Vadnica in lekcije delujejo naprej neomejeno.",
+  "block.hintGuest": "Za več vprašanj ustvari račun v zavihku Račun.",
+  "block.hintParent": "Za več vprašanj naj starš izbere naročnino v zavihku Račun.",
 };
 
 // Kako dolgo po napaki »ni dobroimetja« inštruktor ne kliče API-ja (en neuspel klic na 10 minut).

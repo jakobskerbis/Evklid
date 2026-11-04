@@ -18,7 +18,7 @@ import { buildWeeklyReport, weekKey, isSendTime } from "./weekly.js";
 import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-reminder.js";
 import { Devices, deviceLabel, deviceWarnLimit } from "./devices.js";
 import { cleanText } from "../settings.js";
-import { Usage } from "../usage.js";
+import { Usage, BLOCK_TEXT } from "../usage.js";
 import { promoConfig, createPromo } from "./promo.js";
 import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE } from "./age.js";
 import { guestModeOn, guestNet, guestPerDay, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
@@ -356,22 +356,27 @@ export function mountAccounts(app, store, opts = {}) {
     const o = offersFor(studentId);
     return o.show && o.prices && !schools.membership(studentId)?.inSchool;
   };
-  const moreHint = (studentId) =>
-    guests.netOf(studentId) ? "Za več vprašanj ustvari račun v zavihku Račun." : upsell(studentId) ? "Za več vprašanj naj starš izbere naročnino v zavihku Račun." : "";
+  // Namig, kako do več vprašanj: ključ i18n (block.hint*) ali null; odjemalec ga doda razlogu (public/app.js serverError).
+  const moreHintCode = (studentId) => (guests.netOf(studentId) ? "block.hintGuest" : upsell(studentId) ? "block.hintParent" : null);
+  // Odgovor 429 za brezplačni paket: { error, code, params?, hint? }; error je slovenska rezerva (razlog + namig).
+  function freeBlock(studentId, code, params) {
+    const hint = moreHintCode(studentId);
+    const text = params ? BLOCK_TEXT[code].replace("{n}", params.n) : BLOCK_TEXT[code];
+    return { error: hint ? `${text} ${BLOCK_TEXT[hint]}` : text, code, ...(params ? { params } : {}), ...(hint ? { hint } : {}) };
+  }
 
-  function freeBudgetReason(studentId) {
+  function freeBudgetInfo(studentId) {
     const rows = monthUsdByStudent();
     const per = freeStudentMonthlyUsd();
     const scope = quotaScope(studentId);
-    if (per && guests.monthUsd(scope.ids, scope.net) >= per) {
-      return `Ta mesec si porabil brezplačna vprašanja za inštruktorja. Vadnica in lekcije delujejo naprej neomejeno. ${moreHint(studentId)}`.trim();
-    }
+    if (per && guests.monthUsd(scope.ids, scope.net) >= per) return freeBlock(studentId, "block.freeMonth");
     const pool = freeMonthlyPoolUsd();
     const gone = db.prepare("SELECT COALESCE(SUM(usd),0) AS usd FROM guest_spent WHERE day >= date('now','start of month')").get().usd;
-    if (pool && rows.filter((r) => !aiPremiumFor(r.id)).reduce((t, r) => t + r.usd, gone) >= pool) {
-      return `Brezplačna vprašanja za inštruktorja so ta mesec za vse porabljena. Vadnica in lekcije delujejo naprej neomejeno. ${moreHint(studentId)}`.trim();
-    }
+    if (pool && rows.filter((r) => !aiPremiumFor(r.id)).reduce((t, r) => t + r.usd, gone) >= pool) return freeBlock(studentId, "block.freePool");
     return null;
+  }
+  function freeBudgetReason(studentId) {
+    return freeBudgetInfo(studentId)?.error ?? null;
   }
 
   function questionsToday(studentId) {
@@ -471,7 +476,7 @@ export function mountAccounts(app, store, opts = {}) {
         const limit = freeDailyQuestions();
         if (questionsToday(studentId) >= limit) {
           return res.status(429).json({
-            error: `Danes si porabil vseh ${limit} brezplačnih vprašanj za inštruktorja. Vadnica deluje naprej neomejeno. ${moreHint(studentId)}`.trim(),
+            ...freeBlock(studentId, "block.freeDaily", { n: limit }),
             limit: true,
             upgrade: !!guests.netOf(studentId) || upsell(studentId),
           });
@@ -480,7 +485,9 @@ export function mountAccounts(app, store, opts = {}) {
         const limit = dailyLimitFor(studentId, r);
         if (limit && questionsToday(studentId) >= limit) {
           return res.status(429).json({
-            error: `Danes si porabil vseh ${limit} vprašanj za inštruktorja. Jutri dobiš nova. Vadnica in lekcije delujejo naprej neomejeno.`,
+            error: BLOCK_TEXT["block.daily"].replace("{n}", limit),
+            code: "block.daily",
+            params: { n: limit },
             limit: true,
           });
         }
@@ -489,8 +496,8 @@ export function mountAccounts(app, store, opts = {}) {
     // Mesečna meja porabe brezplačnega paketa velja za vse klice AI (inštruktor, branje zapisa, fotografija urnika).
     // Z dokupljenim kreditom ta meja ne velja (poraba gre iz kredita, server/usage.js chargeCredit).
     if (studentId !== null && req.method === "POST" && /(\/messages|\/tasks\/\d+\/read|\/schedule\/photo)$/i.test(req.path) && !aiPremiumFor(studentId) && !(credits.balance(ownerOf(studentId)) > 0)) {
-      const blocked = freeBudgetReason(studentId);
-      if (blocked) return res.status(429).json({ error: blocked, limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) });
+      const blocked = freeBudgetInfo(studentId);
+      if (blocked) return res.status(429).json({ ...blocked, limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) });
     }
     next();
   });
