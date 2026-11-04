@@ -227,6 +227,10 @@ export function ustvariSceno(el, opts = {}) {
     canvas.addEventListener("pointerdown", (e) => {
       if (nacin === "pokoncno" || (e.pointerType === "mouse" && e.button !== 0)) return;
       prsti.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      // OrbitControls je v hoji izklopljen in ne zajame kazalca: brez zajema bi spust zunaj platna ostal neopažen
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch {}
       vztr.x = vztr.y = 0;
       pot = 0;
       zadnjiCas = performance.now();
@@ -234,6 +238,7 @@ export function ustvariSceno(el, opts = {}) {
     canvas.addEventListener("pointermove", (e) => {
       const p = prsti.get(e.pointerId);
       if (!p) return;
+      if (e.pointerType === "mouse" && e.buttons === 0) return void prsti.delete(e.pointerId); // spust smo zgrešili
       const dx = e.clientX - p.x;
       const dy = e.clientY - p.y;
       const razmik = () => { const [a, b] = [...prsti.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
@@ -272,6 +277,7 @@ export function ustvariSceno(el, opts = {}) {
     canvas.addEventListener("pointercancel", spusti);
   }
   // ---- hoja ----
+  let vhodHoje = null; // pogled ob vstopu v hojo (cilj, razdalja), da se ob izhodu vrnemo ven
   const OS_Y = new THREE.Vector3(0, 1, 0);
   const _hSmer = new THREE.Vector3();
   const _hDesno = new THREE.Vector3();
@@ -318,15 +324,20 @@ export function ustvariSceno(el, opts = {}) {
     if (n || st || g) premakni(n * v, st * v, g * v);
     return true;
   }
+  // W A S D Q E po legi tipke (e.code), da delujejo tudi v cirilici, arabščini, tajščini …
+  const KODE = { KeyW: "w", KeyA: "a", KeyS: "s", KeyD: "d", KeyQ: "q", KeyE: "e" };
+  const tipkaHoje = (e) => KODE[e.code] || String(e.key).toLowerCase();
   const HOJA_TIPKE = new Set(["w", "a", "s", "d", "q", "e", "arrowup", "arrowdown", "arrowleft", "arrowright"]);
-  canvas.addEventListener("keyup", (e) => tipke.delete(e.key.toLowerCase()));
+  canvas.addEventListener("keyup", (e) => tipke.delete(tipkaHoje(e)));
   canvas.addEventListener("blur", () => tipke.clear());
   canvas.addEventListener(
     "wheel",
     (e) => {
       if (nacin !== "hoja") return;
       e.preventDefault();
-      premakni(-Math.sign(e.deltaY) * hitrostHoje() * 0.25, 0, 0);
+      // sledilna ploščica pošlje veliko majhnih dogodkov: korak sorazmeren z deltaY (100 px ≈ en zarez koleščka)
+      const d = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
+      premakni((-Math.max(-100, Math.min(100, d)) / 100) * hitrostHoje() * 0.25, 0, 0);
     },
     { passive: false },
   );
@@ -493,6 +504,7 @@ export function ustvariSceno(el, opts = {}) {
     // vzporedno s pogledom (kader bi se prevrnil, vodoravni poteg bi kader le kotalil).
     if (prosto && !pokonci) doUp.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(camera.position.clone().sub(controls.target).normalize(), s)).normalize();
     const d = razdalja ?? fitRazdalja(polmer);
+    if (nacin === "hoja") vhodHoje = { cilj: cilj.clone(), d }; // prelet ali Ponastavi med hojo: izhod se vrne sem
     const poz = cilj.clone().addScaledVector(s, d);
     if (!gib || trajanje <= 0) {
       controls.target.copy(cilj);
@@ -537,7 +549,6 @@ export function ustvariSceno(el, opts = {}) {
     return true;
   }
   // Preklop načina: v pokončnem se kamera gladko postavi pokonci (OrbitControls kroži okoli navpične osi).
-  let vhodHoje = null; // pogled ob vstopu v hojo (cilj, razdalja), da se ob izhodu vrnemo ven
   function nacinVrtenja(nov) {
     if (nov === undefined) return nacin;
     if (!NACINI.includes(nov)) return nacin;
@@ -594,8 +605,8 @@ export function ustvariSceno(el, opts = {}) {
   // Tipkovnica na platnu: puščice vrtijo, + in − približata, Home ponastavi pogled (opts.ponastavi).
   canvas.addEventListener("keydown", (e) => {
     const k = e.key;
-    if (nacin === "hoja" && HOJA_TIPKE.has(k.toLowerCase()) && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      tipke.add(k.toLowerCase());
+    if (nacin === "hoja" && HOJA_TIPKE.has(tipkaHoje(e)) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      tipke.add(tipkaHoje(e));
       e.preventDefault();
       return;
     }
