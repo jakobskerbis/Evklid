@@ -25,7 +25,7 @@ const AK = [
   { k: "GCU", ac: "CGA", kr: "Ala", ime: "alanin", toz: "alanin", barva: "#8CC084" },
   { k: "UGG", ac: "ACC", kr: "Trp", ime: "triptofan", toz: "triptofan", barva: "#E76F51" },
   { k: "AAA", ac: "UUU", kr: "Lys", ime: "lizin", toz: "lizin", barva: "#2EC4B6" },
-  { k: "GAC", ac: "CUG", kr: "Asp", ime: "asparaginska kislina", toz: "asparaginsko kislino", barva: "#F4A261" },
+  { k: "GAC", ac: "CUG", kr: "Asp", ime: "asparaginska kislina", toz: "asparaginsko kislino", barva: "#F48FB1" },
   { k: "UUC", ac: "AAG", kr: "Phe", ime: "fenilalanin", toz: "fenilalanin", barva: "#B388EB" },
   { k: "GGC", ac: "CCG", kr: "Gly", ime: "glicin", toz: "glicin", barva: "#5BC0EB" },
 ];
@@ -207,6 +207,55 @@ export function zgradi(THREE, ctx = {}) {
     g.scale(rx, ry, rz); g.translate(x, y, z);
     return [g, barva];
   }
+  // gladke normale tudi na šivu krogle (podvojena oglišča dobijo skupno normalo)
+  function zgladi(g) {
+    g.computeVertexNormals();
+    const p = g.attributes.position, n = g.attributes.normal, mapa = new Map();
+    for (let i = 0; i < p.count; i++) {
+      const k = Math.round(p.getX(i) * 1e4) + "," + Math.round(p.getY(i) * 1e4) + "," + Math.round(p.getZ(i) * 1e4);
+      const e = mapa.get(k); if (e) e.push(i); else mapa.set(k, [i]);
+    }
+    for (const sk of mapa.values()) {
+      if (sk.length < 2) continue;
+      let x = 0, y = 0, z = 0;
+      for (const i of sk) { x += n.getX(i); y += n.getY(i); z += n.getZ(i); }
+      const l = Math.hypot(x, y, z) || 1;
+      for (const i of sk) n.setXYZ(i, x / l, y / l, z / l);
+    }
+    return g;
+  }
+  // grudasta oblika: elipsoid z izboklinami (a > 0) in vdolbinami (a < 0) v izbranih smereh; zleb = žleb po vrhu vzdolž osi x
+  function grudica(rx, ry, rz, izbokline, w, zleb = 0) {
+    const g = new THREE.SphereGeometry(1, seg(w), seg(w * 0.75));
+    const pa = g.attributes.position;
+    const izb = izbokline.map(([x, y, z, a, s]) => { const l = Math.hypot(x, y, z); return [x / l, y / l, z / l, a, s * s]; });
+    for (let i = 0; i < pa.count; i++) {
+      const x = pa.getX(i), y = pa.getY(i), z = pa.getZ(i);
+      let f = 1;
+      for (const [dx, dy, dz, a, s2] of izb) f += a * Math.exp((x * dx + y * dy + z * dz - 1) / s2);
+      let yy = y * f;
+      if (zleb && y > 0) yy -= zleb * Math.exp(-((z / 0.32) ** 2)) * ss(y / 0.5);
+      pa.setXYZ(i, x * f * rx, yy * ry, z * f * rz);
+    }
+    return zgladi(g);
+  }
+  // cev z vijačnim žlebom (nakazana dvojna vijačnica RNA): pot, polmer, globina žleba, dolžina zavoja
+  function vijacnaCev(tocke, r, glob, zavoj, n) {
+    const kr = new THREE.CatmullRomCurve3(tocke.map((p) => V(p[0], p[1], p[2])));
+    const RS = seg(12), g = new THREE.TubeGeometry(kr, n, r, RS, false);
+    const pa = g.attributes.position, L = kr.getLength(), c = new THREE.Vector3();
+    for (let i = 0; i <= n; i++) {
+      kr.getPointAt(i / n, c);
+      for (let j = 0; j <= RS; j++) {
+        const k = i * (RS + 1) + j, f = 1 + glob * Math.sin((2 * Math.PI * (i / n) * L) / zavoj + (2 * Math.PI * j) / RS);
+        pa.setXYZ(k, c.x + (pa.getX(k) - c.x) * f, c.y + (pa.getY(k) - c.y) * f, c.z + (pa.getZ(k) - c.z) * f);
+      }
+    }
+    // zaprta konca
+    const kon = [];
+    for (const u of [0, 1]) { const t = kr.getPointAt(u); kon.push([new THREE.SphereGeometry(r * 0.98, RS, seg(8)).translate(t.x, t.y, t.z), null]); }
+    return [[zgladi(g), null], ...kon];
+  }
 
 
   // črke baz: ploščice v svetu (velikost v enotah prizora), obrnjene proti kameri
@@ -365,11 +414,11 @@ export function zgradi(THREE, ctx = {}) {
   const mKod = fiz("#4DA3FF", { roughness: 0.35, clearcoat: 0.8, emissive: "#4da3ff", emissiveIntensity: 0 });
   const mMat = fiz("#C77DFF", { roughness: 0.35, clearcoat: 0.8, emissive: "#c77dff", emissiveIntensity: 0 });
   const mMrna = fiz("#FF6B9A", { roughness: 0.35, clearcoat: 0.8, emissive: "#ff6b9a", emissiveIntensity: 0 });
-  const mBaze = fiz("#ffffff", { roughness: 0.45, clearcoat: 0.5, sheen: 0.2 });
-  const mBazeR = fiz("#ffffff", { roughness: 0.45, clearcoat: 0.5, sheen: 0.2 });
+  const mBaze = fiz("#ffffff", { roughness: 0.45, clearcoat: 0.5, sheen: 0.2, vertexColors: true });
+  const mBazeR = fiz("#ffffff", { roughness: 0.45, clearcoat: 0.5, sheen: 0.2, vertexColors: true });
 
   // ---------- DNK in mRNA ----------
-  const cevS = nizka ? 3 : 4, cevR = nizka ? 6 : 8;
+  const cevS = nizka ? 4 : 7, cevR = nizka ? 8 : 14;
   const kodCev = dinCev(NBP, cevS, cevR, 0.02, mKod);
   const matCev = dinCev(NBP, cevS, cevR, 0.02, mMat);
   const mrnaCev = dinCev(NNT, cevS, cevR, 0.019, mMrna);
@@ -377,6 +426,12 @@ export function zgradi(THREE, ctx = {}) {
   kodCev.mesh.onBeforeRender = merilniZaslon;
   const palGeo = h(new THREE.CylinderGeometry(1, 1, 1, nizka ? 6 : 10, 1));
   palGeo.translate(0, 0.5, 0);
+  {
+    // baza je ob sredini vijačnice (kjer se para) temnejša: nakazana zasenčenost
+    const pa = palGeo.attributes.position, b = new Float32Array(pa.count * 3);
+    for (let i = 0; i < pa.count; i++) { const t = 1 - 0.34 * pa.getY(i); b[i * 3] = b[i * 3 + 1] = b[i * 3 + 2] = t; }
+    palGeo.setAttribute("color", new THREE.BufferAttribute(b, 3));
+  }
   const bazeDNK = new THREE.InstancedMesh(palGeo, mBaze, NBP * 2);
   const bazeR = new THREE.InstancedMesh(palGeo, mBazeR, NNT);
   bazeDNK.frustumCulled = false; bazeR.frustumCulled = false;
@@ -481,10 +536,27 @@ export function zgradi(THREE, ctx = {}) {
 
   // ribosom
   const mMala = fiz("#F2C14E", { roughness: 0.38, clearcoat: 0.6, sheen: 0.4, emissive: "#ffd36b", emissiveIntensity: 0 });
-  const mVelika = h(new THREE.MeshPhysicalMaterial({ color: "#FF8A6B", transparent: true, opacity: 0.34, roughness: 0.3, clearcoat: 0.8, sheen: 0.4, sheenColor: new THREE.Color("#ffffff"), depthWrite: false, emissive: "#ff9a7a", emissiveIntensity: 0 }));
-  const mala = new THREE.Mesh(zdruzi([kepa(0.25, 0.07, 0.16, 0, 0, 0, null, 28), kepa(0.11, 0.065, 0.11, -0.13, -0.012, -0.03, null, 18), kepa(0.095, 0.055, 0.095, 0.14, -0.01, 0.04, null, 18)]), mMala);
-  const velika = new THREE.Mesh(zdruzi([kepa(0.3, 0.18, 0.2, 0, 0, 0, null, 30), kepa(0.1, 0.07, 0.1, -0.2, 0.08, -0.04, null, 16), kepa(0.11, 0.07, 0.1, 0.0, 0.1, -0.05, null, 16), kepa(0.09, 0.06, 0.09, 0.21, 0.06, -0.03, null, 16)]), mVelika);
+  const mVelika = h(new THREE.MeshPhysicalMaterial({ color: "#FF9A7C", transparent: true, opacity: 0.34, roughness: 0.3, clearcoat: 0.8, sheen: 0.4, sheenColor: new THREE.Color("#ffffff"), depthWrite: false, emissive: "#ff9a7a", emissiveIntensity: 0 }));
+  // mala podenota: telo z glavo, ploščadjo in kljunom, po vrhu žleb za mRNA
+  const mala = new THREE.Mesh(zdruzi([[grudica(0.25, 0.075, 0.165, [
+    [-0.35, 0.45, -0.85, 0.3, 0.55], [0.5, 0.2, 0.85, 0.24, 0.5], [-0.9, 0.3, -0.35, 0.16, 0.35], [0.85, 0.25, -0.45, 0.12, 0.4], [0, -1, 0, 0.1, 0.6],
+  ], 56, 0.28), null]]), mMala);
+  // velika podenota: osrednja izboklina, steblo L1 in steblo P (»krona«), spodaj vdolbina za tRNA
+  const velika = new THREE.Mesh(zdruzi([[grudica(0.3, 0.2, 0.21, [
+    [0.05, 1, -0.35, 0.18, 0.36], [-1, 0.5, -0.1, 0.36, 0.3], [1, 0.45, 0.1, 0.3, 0.22], [-0.43, 1.15, 0.67, 0.4, 0.34], [0, -1, 0.35, -0.16, 0.55],
+  ], 64), null]]), mVelika);
   velika.renderOrder = 9;
+  // prosojnost po Fresnelu: rob podenote je gostejši, sredina prosojna (vidijo se tRNA in tunel)
+  mVelika.onBeforeCompile = (sh) => {
+    sh.fragmentShader = sh.fragmentShader.replace("#include <opaque_fragment>",
+      "{ float frs = pow(1.0 - clamp(abs(dot(normalize(vViewPosition), normal)), 0.0, 1.0), 2.0); diffuseColor.a = opacity * mix(0.45, 2.2, frs); }\n#include <opaque_fragment>");
+  };
+  mVelika.customProgramCacheKey = () => "evklid-velika-fresnel";
+  // izstopni tunel: skozi veliko podenoto od mesta, kjer nastaja peptidna vez, do površja
+  const mTunel = h(new THREE.MeshPhysicalMaterial({ color: "#8E2F22", transparent: true, opacity: 0.6, roughness: 0.5, depthWrite: false, side: THREE.DoubleSide }));
+  const tunel = new THREE.Mesh(h(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([V(-0.031, 0.15, 0.03), V(-0.04, 0.2, 0.075), V(-0.08, 0.222, 0.105), V(-0.108, 0.23, 0.124)]), seg(20), 0.019, seg(12), false)), mTunel);
+  tunel.renderOrder = 8;
+  velika.add(tunel);
   group.add(mala, velika);
   // označen kodon na mestu A
   const kodonOkvir = new THREE.Mesh(h(new THREE.BoxGeometry(3 * D, 0.1, 0.09)), h(new THREE.MeshBasicMaterial({ color: "#6E9BFF", transparent: true, opacity: 0.22, depthWrite: false, toneMapped: false })));
@@ -492,14 +564,13 @@ export function zgradi(THREE, ctx = {}) {
   group.add(kodonOkvir);
 
   // tRNA (oblika črke L: antikodonska zanka spodaj, aminokislina zgoraj)
+  // dve skoraj pravokotni ročici (antikodonska in sprejemna), v kotu »komolec«; na koncu CCA se veže aminokislina
   const trnaGeo = zdruzi([
-    kepa(0.024, 0.07, 0.024, 0, 0.11, 0, null, 12),
-    kepa(0.05, 0.03, 0.028, -0.025, 0.19, 0, null, 14),
-    kepa(0.03, 0.035, 0.028, -0.07, 0.2, 0, null, 12),
-    kepa(0.075, 0.024, 0.026, 0.0, 0.225, 0, null, 14),
-    kepa(0.022, 0.05, 0.022, 0.05, 0.255, 0, null, 12),
+    ...vijacnaCev([[0, 0.03, 0], [-0.028, 0.1, -0.012], [-0.062, 0.162, -0.02]], 0.02, 0.13, 0.058, seg(24)),
+    kepa(0.034, 0.03, 0.03, -0.066, 0.172, -0.02, null, 16),
+    ...vijacnaCev([[-0.06, 0.18, -0.02], [-0.016, 0.205, -0.012], [0.026, 0.222, 0]], 0.02, 0.13, 0.058, seg(20)),
+    kepa(0.009, 0.02, 0.009, 0.036, 0.236, 0, null, 8),
   ]);
-  trnaGeo.scale(0.82, 0.82, 0.82);
   viri.add(trnaGeo);
   const trna = new THREE.InstancedMesh(trnaGeo, fiz("#4F8CFF", { roughness: 0.38, clearcoat: 0.6, sheen: 0, emissive: "#a8c8ff", emissiveIntensity: 0 }), 4);
   const zanka = new THREE.InstancedMesh(h(new THREE.SphereGeometry(1, seg(16), seg(10))), fiz("#BFD6FF", { roughness: 0.35, clearcoat: 0.6, sheen: 0, emissive: "#ffffff", emissiveIntensity: 0 }), 4);
@@ -512,6 +583,8 @@ export function zgradi(THREE, ctx = {}) {
   const vezi = new THREE.InstancedMesh(palGeo, fiz("#E8EDF7", { roughness: 0.4, clearcoat: 0.5 }), NK);
   kroglice.frustumCulled = false; vezi.frustumCulled = false;
   group.add(kroglice, vezi);
+  // velikost kroglice nakazuje velikost stranske verige (Gly najmanjša, Trp največja)
+  const AK_VEL = AK.map((a) => ({ Gly: 0.78, Ala: 0.86, Asp: 0.95, Met: 1, Lys: 1.02, Phe: 1.1, Trp: 1.18 })[a.kr] || 1);
   const akZnacke = {};
   for (const a of AK) { const z = znacka(a.kr, a.barva); akZnacke[a.kr] = { tex: z.tex, razmerje: z.razmerje, n: 1, s: 14 * K_PX }; }
   const AZ = billboardi(group, akZnacke, false);
@@ -665,7 +738,7 @@ export function zgradi(THREE, ctx = {}) {
       S.cp = cp;
       S.ribVid = 1; S.velVid = velVid;
       S.malaPos[0] = S.xR - 0.12 * raz; S.malaPos[1] = YR - 0.085 + malaOff; S.malaPos[2] = ZR - 0.01;
-      S.velikaPos[0] = S.xR + 0.06 * raz; S.velikaPos[1] = YR + 0.22 + velOff; S.velikaPos[2] = ZR - 0.03;
+      S.velikaPos[0] = S.xR + 0.06 * raz; S.velikaPos[1] = YR + 0.25 + 0.3 * velOff; S.velikaPos[2] = ZR - 0.03 + 1.2 * velOff;
     }
   }
 
@@ -673,8 +746,8 @@ export function zgradi(THREE, ctx = {}) {
   const POT = new Float32Array(15), BK = new Float32Array(NK * 3), BK2 = new Float32Array(NK * 3);
   function potVerige(sidro, xR, yOff) {
     POT[0] = sidro[0]; POT[1] = sidro[1]; POT[2] = sidro[2];
-    POT[3] = xR - 0.03; POT[4] = YR + 0.43 + yOff; POT[5] = ZR + 0.04;
-    POT[6] = xR - 0.13; POT[7] = YR + 0.47 + yOff; POT[8] = ZR + 0.1;
+    POT[3] = xR - 0.04; POT[4] = YR + 0.46 + yOff; POT[5] = ZR + 0.05;
+    POT[6] = xR - 0.13; POT[7] = YR + 0.48 + yOff; POT[8] = ZR + 0.11;
     POT[9] = xR - 0.29; POT[10] = YR + 0.45 + yOff; POT[11] = ZR + 0.2;
     POT[12] = xR - 0.46; POT[13] = YR + 0.38 + yOff; POT[14] = ZR + 0.28;
   }
@@ -733,7 +806,7 @@ export function zgradi(THREE, ctx = {}) {
     mala.position.set(S.malaPos[0], S.malaPos[1], S.malaPos[2]);
     mala.scale.setScalar(S.malaSc);
     velika.position.set(S.velikaPos[0], S.velikaPos[1], S.velikaPos[2]);
-    mVelika.opacity = 0.34 * S.velVid;
+    mVelika.opacity = 0.34 * S.velVid; mTunel.opacity = 0.6 * S.velVid;
     kodonOkvir.visible = !!S.kodonVid && vv < 11.75;
     if (S.kodonVid) kodonOkvir.position.set(kodonX(S.kodonC), YR + 0.03, ZR);
     // tRNA
@@ -799,7 +872,8 @@ export function zgradi(THREE, ctx = {}) {
       if (BK[k * 3] > 1e8) { mt.makeScale(0, 0, 0); kroglice.setMatrixAt(k, mt); continue; }
       let f = 1;
       if (vv >= 4 && vv < 11) { const c = Math.floor(vv) - 4; if (k === c) f = S.trna[k].f; }
-      mt.compose(vB.set(BK[k * 3], BK[k * 3 + 1], BK[k * 3 + 2]), qv.identity(), vS.set(f, f, f));
+      const fk = f * AK_VEL[k];
+      mt.compose(vB.set(BK[k * 3], BK[k * 3 + 1], BK[k * 3 + 2]), qv.identity(), vS.set(fk, fk, fk));
       kroglice.setMatrixAt(k, mt);
       AZ.dodaj(AK[k].kr, BK[k * 3], BK[k * 3 + 1] + 0.055, BK[k * 3 + 2], f * (vv >= 11 ? 1 - ss((S.prosta - 0.6) / 0.3) : 1));
       nb++;
@@ -883,11 +957,11 @@ export function zgradi(THREE, ctx = {}) {
     { id: "jedrna-ovojnica", ime: "Jedrna ovojnica", opis: "Dvojna membrana, ki loči jedro od citoplazme; ob porah se zunanja in notranja membrana zlijeta. Razmik med membranama je v modelu povečan.", barva: "#73C2C9", meshes: [ovZg, ovSp, ovRob, ovPora], tocka: [-0.3, yOv(-0.3, OV_Z1), OV_Z1] },
     { id: "jedrna-pora", ime: "Jedrna pora", opis: "Odprtina v jedrni ovojnici iz mnogih beljakovin, skozi katero mRNA zapusti jedro.", barva: "#5A8FD8", meshes: [pora], tocka: [PORA[0], yP + 0.04, PORA[2] + PR] },
     { id: "mala-podenota", ime: "Mala podenota ribosoma", opis: "Spodnji del ribosoma, ki se veže na mRNA in poišče začetni kodon AUG; model prikazuje le en ribosom, čeprav mRNA hkrati bere več ribosomov.", barva: "#F2C14E", meshes: [mala], get tocka() { return [S.malaPos[0], S.malaPos[1] - 0.05, S.malaPos[2] + 0.1]; } },
-    { id: "velika-podenota", ime: "Velika podenota ribosoma", opis: "Zgornji del ribosoma z mesti A, P in E, kjer med aminokislinami nastajajo peptidne vezi.", barva: "#E07A5F", meshes: [velika], get tocka() { return [S.velikaPos[0], S.velikaPos[1] + 0.12, S.velikaPos[2]]; } },
-    { id: "trna", ime: "tRNA", opis: "Prenašalna RNA, ki na enem koncu nosi aminokislino, na drugem pa ima antikodon.", barva: "#6FA8FF", meshes: [trna], get tocka() { const t = S.trna.find((x) => x.vid) || S.trna[0]; return [t.p[0], t.p[1] + 0.18, t.p[2]]; } },
+    { id: "velika-podenota", ime: "Velika podenota ribosoma", opis: "Zgornji del ribosoma z mesti A, P in E, kjer med aminokislinami nastajajo peptidne vezi; nastajajoča veriga zapusti ribosom skozi izstopni tunel (temnejša cev).", barva: "#E07A5F", meshes: [velika, tunel], get tocka() { return [S.velikaPos[0], S.velikaPos[1] + 0.12, S.velikaPos[2]]; } },
+    { id: "trna", ime: "tRNA", opis: "Prenašalna RNA, zvita v obliko črke L: na koncu ene ročice nosi aminokislino, na koncu druge ima antikodon.", barva: "#6FA8FF", meshes: [trna], get tocka() { const t = S.trna.find((x) => x.vid) || S.trna[0]; return [t.p[0], t.p[1] + 0.18, t.p[2]]; } },
     { id: "antikodon", ime: "Antikodon", opis: "Tri baze na tRNA, ki se po pravilu A–U, G–C ujemajo s kodonom na mRNA; ker leži obrnjen (antiparalelno), ga pod kodonom beremo od 3' proti 5'.", barva: "#F7F2FF", meshes: [zanka], get tocka() { const t = S.trna.find((x) => x.vid) || S.trna[0]; return [t.p[0], t.p[1] + 0.02, t.p[2] + 0.04]; } },
     { id: "kodon", ime: "Kodon", opis: "Tri zaporedne baze na mRNA, ki določajo eno aminokislino ali konec (stop).", barva: "#6E9BFF", meshes: [kodonOkvir], get tocka() { return [kodonX(S.kodonC || 0), YR, ZR + 0.05]; } },
-    { id: "aminokisline", ime: "Aminokislina", opis: "Gradnik beljakovin; v celicah je 20 vrst aminokislin, vsako določajo en ali več kodonov.", barva: "#E9C46A", meshes: [kroglice], get tocka() { for (let k = NK - 1; k >= 0; k--) if (BK[k * 3] < 1e8) return [BK[k * 3], BK[k * 3 + 1], BK[k * 3 + 2]]; return [0, YR + 0.4, ZR]; } },
+    { id: "aminokisline", ime: "Aminokislina", opis: "Gradnik beljakovin; v celicah je 20 vrst aminokislin, vsako določajo en ali več kodonov. V modelu ima vsaka svojo barvo in tričrkovno oznako, velikost kroglice pa nakazuje velikost njene stranske verige.", barva: "#E9C46A", meshes: [kroglice], get tocka() { for (let k = NK - 1; k >= 0; k--) if (BK[k * 3] < 1e8) return [BK[k * 3], BK[k * 3 + 1], BK[k * 3 + 2]]; return [0, YR + 0.4, ZR]; } },
     { id: "polipeptid", ime: "Polipeptid", opis: "Veriga aminokislin, povezanih s peptidnimi vezmi; ko se zvije, postane beljakovina.", barva: "#E8EDF7", meshes: [vezi], get tocka() { return BK[0] < 1e8 ? [BK[0], BK[1], BK[2]] : FOLD; } },
     { id: "sprostitveni-dejavnik", ime: "Sprostitveni dejavnik", opis: "Beljakovina, ki se veže na stop kodon in sprosti polipeptid z ribosoma.", barva: "#8E9AAF", meshes: [sprost], get tocka() { return [S.sprost[0], S.sprost[1] + 0.15, S.sprost[2]]; } },
   ];

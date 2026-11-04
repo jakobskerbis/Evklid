@@ -379,9 +379,10 @@ export function zgradi(THREE, ctx = {}) {
     const znotraj = (x, y, z, f) => (x / (A[0] * f)) ** 2 + (y / (A[1] * f)) ** 2 + (z / (A[2] * f)) ** 2 < 1;
 
     // grana
-    const grana = [];
-    const DEB = 0.0105, RAZ = 0.0148;
-    for (let p = 0; p < 6000 && grana.length < (nizka ? 22 : 28); p++) {
+    const DEB = 0.0105, RAZ = 0.0148, DEB_V = 0.03, RAZ_V = 0.037;
+    // izpostavljeno (prerezano) granum je večje in debelejše ter stoji spredaj na sredini, da se v prerezu jasno vidita membrana in lumen
+    const grana = [{ x: 0.0, y: 0.02, z: 0.3, n: 6, r: 0.13, v: 6 * RAZ_V, deb: DEB_V, raz: RAZ_V }];
+    for (let p = 0; p < 6000 && grana.length < (nizka ? 23 : 29); p++) {
       const x = (rnd() * 2 - 1) * 0.68, z = (rnd() * 2 - 1) * 0.42, y = (rnd() * 2 - 1) * 0.11;
       const n = 5 + Math.floor(rnd() * 5), r = 0.068 + rnd() * 0.022, v = n * RAZ;
       let ok = true;
@@ -393,11 +394,20 @@ export function zgradi(THREE, ctx = {}) {
       for (const o of grana) {
         if (Math.abs(o.y - y) < (o.v + v) / 2 + 0.03 && Math.hypot(o.x - x, o.z - z) < o.r + r + 0.04) ok = false;
       }
-      if (ok) grana.push({ x, y, z, n, r, v });
+      if (ok) grana.push({ x, y, z, n, r, v, deb: DEB, raz: RAZ });
     }
     // izpostavljeno granum v izrezu (spredaj zgoraj)
-    let gi = 0;
-    grana.forEach((g, i) => { const s = g.z + g.y * 0.8 - Math.abs(g.x - 0.0) * 0.4; if (s > grana[gi].z + grana[gi].y * 0.8 - Math.abs(grana[gi].x) * 0.4) gi = i; });
+    const gi = 0;
+    // drugo prerezano granum: običajne velikosti, spredaj levo od velikega
+    let gi2 = 1;
+    {
+      // na zaslonu (privzeti pogled) ne sme stati za DNK ali tik ob velikem granumu
+      const zx = (p) => p[0] * KAM_R.x + p[2] * KAM_R.z, zy = (p) => p[0] * KAM_G.x + p[1] * KAM_G.y + p[2] * KAM_G.z;
+      const prost = (g) => [[0, 0.02, 0.3, 0.3], ...DNK.map((d) => [...d, 0.2])].every((c) => Math.hypot(zx([g.x, g.y, g.z]) - zx(c), zy([g.x, g.y, g.z]) - zy(c)) > c[3]);
+      const sc = (o) => (prost(o) ? 0 : -9) + o.z + o.y * 0.8;
+      grana.forEach((g, i) => { if (i > 0 && sc(g) > sc(grana[gi2])) gi2 = i; });
+    }
+    const rezano = (i) => i === gi || i === gi2;
     const vidna = grana.map((g, i) => [g.z * 1.0 + g.y * 0.6 - Math.abs(g.x) * 0.15, i]).sort((a, b) => b[0] - a[0]).slice(0, 5).map(([, i]) => grana[i]);
 
     const prof = [V(0, 0.5, 0)];
@@ -408,16 +418,16 @@ export function zgradi(THREE, ctx = {}) {
     const mDisk = fiz("#ffffff", { roughness: 0.5, clearcoat: 0.45, sheen: 0, emissive: "#58e06a", emissiveIntensity: 0 });
     const mDisk2 = fiz("#ffffff", { roughness: 0.5, clearcoat: 0.45, sheen: 0, emissive: "#58e06a", emissiveIntensity: 0 });
     let nDisk = 0, nDisk2 = 0;
-    for (const [i, g] of grana.entries()) (i === gi ? (nDisk2 += g.n) : (nDisk += g.n));
+    for (const [i, g] of grana.entries()) (rezano(i) ? (nDisk2 += g.n) : (nDisk += g.n));
     const diski = new THREE.InstancedMesh(diskGeo, mDisk, nDisk);
     // izpostavljeno granum je prerezano: manjka klin proti privzeti kameri (azimut 35°), v prerezu se vidita membrana in lumen
     const KLIN = (100 * Math.PI) / 180, FI0 = 0.611 + KLIN / 2;
     const diskGeo2 = h(new THREE.LatheGeometry(prof.map((p) => new THREE.Vector2(p.x, p.y)).reverse(), nizka ? 10 : 18, FI0, 2 * Math.PI - KLIN));
-    const notr = [V(0, 0.3, 0)];
-    for (let i = 0; i <= nr; i++) { const f = Math.PI / 2 - (i / nr) * Math.PI; notr.push(V(0.9 + 0.074 * Math.cos(f), 0.3 * Math.sin(f), 0)); }
-    notr.push(V(0, -0.3, 0));
+    const notr = [V(0, 0.22, 0)];
+    for (let i = 0; i <= nr; i++) { const f = Math.PI / 2 - (i / nr) * Math.PI; notr.push(V(0.9 + 0.06 * Math.cos(f), 0.22 * Math.sin(f), 0)); }
+    notr.push(V(0, -0.22, 0));
     const pPos = [], pBar = [], pIdx = [];
-    const cMem = new THREE.Color("#72D282"), cLum = new THREE.Color("#7FA2EC");
+    const cMem = new THREE.Color("#86E494"), cLum = new THREE.Color("#5E97FF");
     for (const fi of [FI0, FI0 + 2 * Math.PI - KLIN]) {
       const sn = Math.sin(fi), cs = Math.cos(fi), o = pPos.length / 3, M = prof.length;
       const tk = (p, c) => { pPos.push(p.x * sn, p.y, p.x * cs); pBar.push(c.r, c.g, c.b); };
@@ -437,15 +447,17 @@ export function zgradi(THREE, ctx = {}) {
     prerezGeo.computeVertexNormals();
     const diski2 = new THREE.InstancedMesh(diskGeo2, mDisk2, nDisk2);
     const prerez = new THREE.InstancedMesh(prerezGeo, fiz("#ffffff", { vertexColors: true, side: THREE.DoubleSide, roughness: 0.55, clearcoat: 0.3, sheen: 0, emissive: "#58e06a", emissiveIntensity: 0 }), nDisk2);
-    const mt = new THREE.Matrix4(), q0 = new THREE.Quaternion(), sv = V(1, 1, 1), pv = V(0, 0, 0), barva = new THREE.Color();
+    const mt = new THREE.Matrix4(), q0 = new THREE.Quaternion(), sv = V(1, 1, 1), pv = V(0, 0, 0), barva = new THREE.Color(), sencaB = new THREE.Color();
     let a1 = 0, a2 = 0;
     const zeleni = ["#1F7A34", "#24873A", "#1A6E2E", "#2A9441"];
     for (const [i, g] of grana.entries()) {
       for (let d = 0; d < g.n; d++) {
-        const yy = g.y - g.v / 2 + (d + 0.5) * RAZ, rr = g.r * (1 - 0.05 * rnd());
-        mt.compose(pv.set(g.x, yy, g.z), q0, sv.set(rr, DEB, rr));
+        const yy = g.y - g.v / 2 + (d + 0.5) * g.raz, rr = g.r * (1 - 0.05 * rnd());
+        mt.compose(pv.set(g.x, yy, g.z), q0, sv.set(rr, g.deb, rr));
         barva.set(zeleni[Math.floor(rnd() * zeleni.length)]);
-        if (i === gi) { prerez.setMatrixAt(a2, mt); diski2.setMatrixAt(a2, mt); diski2.setColorAt(a2++, barva.offsetHSL(0, 0.05, 0.04)); } else { diski.setMatrixAt(a1, mt); diski.setColorAt(a1++, barva); }
+        // senčenje: spodnje tilakoide v kupčku so temnejše (zakrite od zgornjih)
+        const ao = 0.72 + 0.28 * (g.n > 1 ? d / (g.n - 1) : 1);
+        if (rezano(i)) { prerez.setMatrixAt(a2, mt); prerez.setColorAt(a2, sencaB.setScalar(0.8 + 0.2 * ao)); diski2.setMatrixAt(a2, mt); diski2.setColorAt(a2++, barva.offsetHSL(0, 0.05, 0.04).multiplyScalar(ao)); } else { diski.setMatrixAt(a1, mt); diski.setColorAt(a1++, barva.multiplyScalar(ao)); }
       }
     }
     G.add(diski, diski2, prerez);
@@ -460,7 +472,7 @@ export function zgradi(THREE, ctx = {}) {
         pari.add(kl);
         const o = grana[j];
         for (let s = 0; s < 2; s++) {
-          const ya = g.y - g.v / 2 + (Math.floor(rnd() * g.n) + 0.5) * RAZ, yb = o.y - o.v / 2 + (Math.floor(rnd() * o.n) + 0.5) * RAZ;
+          const ya = g.y - g.v / 2 + (Math.floor(rnd() * g.n) + 0.5) * g.raz, yb = o.y - o.v / 2 + (Math.floor(rnd() * o.n) + 0.5) * o.raz;
           const smer = V(o.x - g.x, 0, o.z - g.z).normalize();
           const p1 = V(g.x, ya, g.z).addScaledVector(smer, g.r * 0.9), p2 = V(o.x, yb, o.z).addScaledVector(smer, -o.r * 0.9);
           const d = p2.clone().sub(p1), L = d.length();
@@ -486,6 +498,22 @@ export function zgradi(THREE, ctx = {}) {
     const ribosomi = new THREE.InstancedMesh(h(new THREE.IcosahedronGeometry(0.0085, nizka ? 0 : 1)), fiz("#5E4FA8", { roughness: 0.55, clearcoat: 0.3, sheen: 0, emissive: "#a58cff", emissiveIntensity: 0 }), ribP.length);
     ribP.forEach((p, i) => { mt.makeTranslation(p[0], p[1], p[2]); ribosomi.setMatrixAt(i, mt); });
     G.add(ribosomi);
+
+    // plastoglobuli: kapljice lipidov, pogosto ob tilakoidah
+    const plgP = [];
+    for (let p = 0; p < 4000 && plgP.length < (nizka ? 9 : 14); p++) {
+      const g = grana[1 + Math.floor(rnd() * (grana.length - 1))], f = rnd() * Math.PI * 2, r = 0.011 + 0.01 * rnd();
+      const x = g.x + Math.cos(f) * (g.r + r + 0.006), y = g.y + (rnd() - 0.5) * g.v, z = g.z + Math.sin(f) * (g.r + r + 0.006);
+      if (!znotraj(x, y, z, 0.86) || vGranumu(x, y, z, r + 0.004)) continue;
+      if (rez.some(([c, rr]) => Math.hypot(x - c[0], y - c[1], z - c[2]) < rr * 0.9 + r)) continue;
+      if (plgP.some((q) => Math.hypot(q[0] - x, q[1] - y, q[2] - z) < 0.08)) continue;
+      plgP.push([x, y, z, r]);
+    }
+    const plastoglobuli = new THREE.InstancedMesh(h(new THREE.SphereGeometry(1, nizka ? 12 : 20, nizka ? 8 : 14)), fiz("#F2C14E", { roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.12, sheen: 0.4, sheenColor: new THREE.Color("#fff1c2"), emissive: "#ffd36b", emissiveIntensity: 0 }), Math.max(1, plgP.length));
+    plgP.forEach((p, i) => { mt.compose(pv.set(p[0], p[1], p[2]), q0, sv.set(p[3], p[3] * 0.92, p[3])); plastoglobuli.setMatrixAt(i, mt); plastoglobuli.setColorAt(i, barva.set("#F2C14E").offsetHSL(0.02 * (rnd() - 0.5), 0, 0.06 * (rnd() - 0.5))); });
+    plastoglobuli.count = plgP.length;
+    G.add(plastoglobuli);
+    const tPlg = plgP.length ? plgP.reduce((b, p) => (p[2] + p[1] > b[2] + b[1] ? p : b), plgP[0]).slice(0, 3) : [0, 0, 0];
 
     // drobci v stromi (encimi)
     const tP = [];
@@ -513,7 +541,24 @@ export function zgradi(THREE, ctx = {}) {
     G.add(dnk);
 
     // škrobna zrna
-    const skrob = new THREE.InstancedMesh(h(new THREE.SphereGeometry(1, nizka ? 18 : 30, nizka ? 12 : 20)), fiz("#F2E9D0", { roughness: 0.62, clearcoat: 0.25, sheen: 0.3, emissive: "#fff3cf", emissiveIntensity: 0 }), 3);
+    // škrobno zrno: rahlo grudasto, z nežnimi plastmi (rastnimi kolobarji)
+    const skGeo = h(new THREE.SphereGeometry(1, nizka ? 18 : 30, nizka ? 12 : 20));
+    {
+      const pa = skGeo.attributes.position;
+      for (let i = 0; i < pa.count; i++) {
+        const x = pa.getX(i), y = pa.getY(i), z = pa.getZ(i), f = 1 + 0.05 * Math.sin(3 * x + 1) * Math.sin(4 * y + 2) * Math.sin(3 * z) + 0.03 * Math.sin(6 * x + 5 * z);
+        pa.setXYZ(i, x * f, y * f, z * f);
+      }
+      skGeo.computeVertexNormals();
+    }
+    const skc = document.createElement("canvas");
+    skc.width = 16; skc.height = 256;
+    {
+      const g = skc.getContext("2d");
+      g.fillStyle = "#F4ECD6"; g.fillRect(0, 0, 16, 256);
+      for (let i = 0; i < 22; i++) { g.fillStyle = i % 2 ? "rgba(214,196,150,0.28)" : "rgba(255,252,240,0.35)"; g.fillRect(0, 10 + i * 10.6, 16, 4 + 3 * rnd()); }
+    }
+    const skrob = new THREE.InstancedMesh(skGeo, fiz("#ffffff", { map: tekstura(skc), roughness: 0.5, clearcoat: 0.45, clearcoatRoughness: 0.35, sheen: 0.4, sheenColor: new THREE.Color("#fff6dc"), emissive: "#fff3cf", emissiveIntensity: 0 }), 3);
     SKROB.forEach((p, i) => {
       mt.compose(pv.set(...p), q0.setFromEuler(new THREE.Euler(0.2 * i, 0.9 * i + 0.3, 0.1)), sv.set(0.105 - 0.012 * i, 0.06, 0.08));
       skrob.setMatrixAt(i, mt);
@@ -610,10 +655,11 @@ export function zgradi(THREE, ctx = {}) {
       { id: "notranja-membrana", ime: "Notranja membrana", opis: "Notranja ovojnica s prenašalci, ki izbirajo, katere snovi pridejo v stromo.", barva: "#A6D46A", meshes: [not, notRob], tocka: tNot },
       { id: "stroma", ime: "Stroma", opis: "Gosta tekočina v kloroplastu, polna encimov; v njej poteka Calvinov cikel, v katerem nastane sladkor.", barva: "#C9DE95", meshes: [stromaStena, drobci], tocka: tStr },
       { id: "tilakoide", ime: "Tilakoide", opis: "Sploščeni membranski mešički s klorofilom, v katerih poteka svetlobni del fotosinteze; narisani so debelejši, kot so v resnici.", barva: "#34A84C", meshes: [diski], tocka: tTil },
-      { id: "granum", ime: "Granum", opis: "Kupček tilakoid, zloženih kot kovanci; v enem kloroplastu jih je več deset. V prerezu se vidi, da ima vsaka tilakoida membrano in v njej prostor, imenovan lumen.", barva: "#3BB255", meshes: [diski2, prerez], tocka: vrh(gTop) },
+      { id: "granum", ime: "Granum", opis: "Kupček tilakoid, zloženih kot kovanci; v enem kloroplastu jih je več deset. V prerezu (prerezani granum spredaj je narisan večji in debelejši) se vidi, da ima vsaka tilakoida membrano in v njej prostor, imenovan lumen (modro).", barva: "#3BB255", meshes: [diski2, prerez], tocka: vrh(gTop) },
       { id: "lamele", ime: "Lamele", opis: "Stromalne tilakoide, ki povezujejo grana, tako da so vse tilakoide ena sama povezana membrana.", barva: "#49B85C", meshes: [lamele], tocka: tLam },
       { id: "ribosomi", ime: "Ribosomi", opis: "Kloroplast ima svoje majhne ribosome, na katerih izdela del svojih beljakovin.", barva: "#7A63C9", meshes: [ribosomi], tocka: tRib },
       { id: "dnk", ime: "Kloroplastna DNK", opis: "Kloroplast ima svojo krožno DNK, podobno bakterijski, z geni za nekatere svoje beljakovine.", barva: "#F08A5D", meshes: [dnk], tocka: tDnk },
+      { id: "plastoglobuli", ime: "Plastoglobuli", opis: "Drobne kapljice maščob (lipidov) ob tilakoidah, v katerih kloroplast hrani snovi za svoje membrane, na primer rumena in oranžna barvila karotenoide.", barva: "#F2C14E", meshes: [plastoglobuli], tocka: tPlg },
       { id: "skrobna-zrna", ime: "Škrobna zrna", opis: "Zaloga škroba, ki nastane iz sladkorja, narejenega pri fotosintezi.", barva: "#F2E9D0", meshes: [skrob], tocka: tSkr },
     ];
     const sij = {
