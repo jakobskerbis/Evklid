@@ -247,6 +247,11 @@ export function withFormulaSubject(subject, fn, glossary = null) {
   }
 }
 
+// Predmet skupaj z oznakami lekcije za setFormulaSubject (tema odprta v poti: naloge, namigi, klepet).
+export function subjectWithGlossary(subject, glossary) {
+  return glossary?.length ? registerGlossary(subject, glossary) : subject;
+}
+
 function pick(entry, tex) {
   if (!entry) return null;
   const list = Array.isArray(entry) ? entry : [entry];

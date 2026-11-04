@@ -41,7 +41,7 @@ import { initScan, showScan, leaveScan, scanBack } from "./scan/scan.js";
 import { initLab, showLab, labBack } from "./laboratorij.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
 import { initTestNotice } from "./testna-verzija.js";
-import { initFormulaInfo, annotateTex, setFormulaSubject } from "./formula-info.js";
+import { initFormulaInfo, annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-info.js";
 import { xpStatsHtml, xpItemsHtml, levelRowHtml, paintBadge, celebrateXp } from "./xp-fx.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
 import { validDate } from "./goal-data.js";
@@ -129,7 +129,12 @@ const state = {
 const { renderMath, renderRich } = createRenderer({ annotate: (tex) => annotateTex(tex) });
 // Predmet za pomen simbolov: tema naloge (FIZ-OS-9 …), sicer predmet učenca.
 const subjectOfId = (id) => (/^([A-Z]{3})-/.exec(id || "") || [])[1];
-setFormulaSubject(() => subjectOfId(state.topic?.id) || state.student?.settings?.subject || "MAT");
+// Predmet teme: fakultetne teme (UNI-…) imajo predmet v podatkih, šolske ga imajo v oznaki.
+const topicSubject = (tp) => tp?.subject || (/^UNI-/.test(tp?.id || "") ? null : subjectOfId(tp?.id));
+// Odprta tema: naloge, namigi, rešitve in klepet o njej uporabijo oznake njene lekcije.
+setFormulaSubject(() => subjectWithGlossary(topicSubject(state.topic) || state.student?.settings?.subject || "MAT", state.topic?.symbols));
+// Razlaga teme in »Bistvo«: črke imajo pomen iz lekcije te teme (:::simboli), sicer iz slovarja predmeta.
+const topicRich = (tp, text) => withFormulaSubject(topicSubject(tp) || state.student?.settings?.subject || "MAT", () => renderRich(text), tp?.symbols);
 
 // Sporočilo učenca: besedilo ostane besedilo, le $...$ se izriše kot formula.
 function renderUserText(text) {
@@ -667,10 +672,25 @@ function renderState(convState) {
   }
 }
 
+// Formule v odgovorih inštruktorja: črke s pomenom iz predmeta pogovora in, pri pogovoru o temi
+// učne poti, iz lekcije te teme (:::simboli). Nov pogovor: predmet iz nastavitev.
+async function setChatFx(conv) {
+  state.chatFx = { subject: conv?.state?.subject || state.student?.settings?.subject || "MAT", symbols: null };
+  const id = conv?.topic?.id;
+  if (!id) return;
+  try {
+    if (!topicCache.has(id)) topicCache.set(id, await api(`/api/topic?id=${encodeURIComponent(id)}`));
+    const tp = topicCache.get(id);
+    state.chatFx = { subject: topicSubject(tp) || state.chatFx.subject, symbols: tp?.symbols || null };
+  } catch { /* brez oznak lekcije */ }
+}
+const chatRich = (text) => withFormulaSubject(state.chatFx?.subject || state.student?.settings?.subject || "MAT", () => renderRich(text), state.chatFx?.symbols);
+
 async function openConversation(id) {
   const conv = await api(`/api/conversations/${id}`);
   state.conversationId = conv.id;
   state.convTopic = conv.topic?.id || null;
+  await setChatFx(conv);
   $("#chat-title").textContent = conv.title;
   const box = $("#messages");
   box.innerHTML = "";
@@ -698,6 +718,7 @@ document.addEventListener("keydown", (e) => {
 $("#new-chat").addEventListener("click", () => {
   setSidebar(false);
   state.conversationId = null;
+  state.chatFx = null;
   renderConversationList();
   renderEmptyChat();
   $("#input").focus();
@@ -721,7 +742,7 @@ function addMessage(role, text, hasImage = false, info = null) {
       el.prepend(note);
     }
   } else {
-    el.innerHTML = renderRich(text);
+    el.innerHTML = chatRich(text);
     if (text) addDeepButton(el, false);
     if (text) addGraphButton(el, text);
     if (text && info?.id) addMsgFoot(el, info);
@@ -757,7 +778,7 @@ async function send(text, { deep = false } = {}) {
     const box = $("#messages");
     const paint = (shown) => {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-      bubble.innerHTML = renderRich(streamSafe(shown)) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
+      bubble.innerHTML = chatRich(streamSafe(shown)) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
       if (atBottom) box.scrollTop = box.scrollHeight;
     };
     paint("");
@@ -2068,7 +2089,7 @@ async function openTopic(topicId) {
       <h2 class="with-icon">${icon("book-open")} ${t("topic.explanation")}</h2>
       ${
         tp.explanation
-          ? renderRich(tp.explanation)
+          ? topicRich(tp, tp.explanation)
           : `<p class="muted">${t("topic.noExplanation")}</p>`
       }
     </div>
@@ -2286,13 +2307,21 @@ async function showSideExplanation(task, ctx) {
     const tp = topicCache.get(task.topicId);
     if (side.dataset.topic !== task.topicId) return;
     side.innerHTML = `<h2 class="with-icon">${icon("book-open")} ${escapeHtml(tp.name)}</h2>${
-      tp.explanation ? renderRich(tp.explanation) : `<p class="muted">${t("topic.noExplanationShort")}</p>`
+      tp.explanation ? topicRich(tp, tp.explanation) : `<p class="muted">${t("topic.noExplanationShort")}</p>`
     }<button type="button" class="secondary small" id="side-lesson">${icon("book-open")}${t("topic.fullLesson")}</button>`;
     side.hidden = false;
     $("#side-lesson").addEventListener("click", () => openLesson(tp.id));
   } catch {
     side.hidden = true;
   }
+}
+
+// Ena izbira: čisti TeX, besedilo z $…$ (»$f(x) = x^4$«, »elipsa, $e = \\frac{5}{4}$«) ali navadno besedilo.
+function choiceHtml(task, o, fx = true) {
+  if (task.optionsTex) return renderMath(o, false, fx);
+  const s = String(o);
+  if (!s.includes("$")) return escapeHtml(s);
+  return s.split(/(\$[^$]+\$)/).map((p) => (/^\$[^$]+\$$/.test(p) ? renderMath(p.slice(1, -1), false, fx) : escapeHtml(p))).join("");
 }
 
 function renderTask(task, ctx) {
@@ -2306,7 +2335,7 @@ function renderTask(task, ctx) {
   let input;
   if (task.answerType === "choice") {
     input = `<div class="choices">${task.options
-      .map((o, i) => `<button type="button" class="choice" data-i="${i}">${task.optionsTex ? renderMath(o, false, false) : escapeHtml(o)}</button>`)
+      .map((o, i) => `<button type="button" class="choice" data-i="${i}">${choiceHtml(task, o, false)}</button>`)
       .join("")}</div>`;
   } else {
     const ph =
@@ -2319,7 +2348,7 @@ function renderTask(task, ctx) {
   const penalty = ctx.mode === "contest" && task.penalty ? `<span class="pts neg">${t("exam.penaltyPts", { n: String(task.penalty).replace("-", "−") })}</span>` : "";
   const hintLadder = task.hintSteps > 0 && !["contest", "placement", "pretest"].includes(ctx.mode);
   const pretestHead =
-    ctx.mode === "pretest" ? `<div class="card pretest-head"><h2 class="with-icon">${icon("target")} ${t("pretest.title")}</h2><p class="muted">${t("pretest.intro")}</p></div>` : "";
+    ctx.mode === "pretest" ? `<div class="card pretest-head"><h2 class="with-icon">${icon("target")} ${t("pretest.title")}</h2><p class="muted">${t("pretest.intro")}</p>${ctx.note ? `<p class="pretest-note with-icon" role="status">${icon(ctx.note.icon)}<span>${escapeHtml(ctx.note.text)}</span></p>` : ""}</div>` : "";
   box.innerHTML = `${bar}${pretestHead}<div class="card task${["contest", "placement", "pretest"].includes(ctx.mode) ? " no-fx" : ""}">
     <div class="task-top task-tag"><span class="task-topic">${task.topicName ? escapeHtml(task.topicName) : ""}</span>${stars}${pts}${penalty}${counter}${calcBtn}</div>
     ${ctx.total ? `<div class="progress" aria-hidden="true"><div style="width:${Math.round(((ctx.index - 1) / ctx.total) * 100)}%"></div></div>` : ""}
@@ -2660,8 +2689,9 @@ function pretestStep(r, ctx) {
   }
   const n = r.next;
   if (n && !n.finished) {
-    toast(r.skipped ? t("pretest.skipped") : r.correct ? t("task.correct") : t("pretest.noted"), r.correct ? "circle-check" : "arrow-right");
-    renderTask(n.task, { mode: "pretest", index: n.index, total: n.total });
+    // Odziv na prejšnje vprašanje je v glavi preizkusa, ne v obvestilu na dnu, ki bi prekrilo izbire.
+    const note = { text: r.skipped ? t("pretest.skipped") : r.correct ? t("task.correct") : t("pretest.noted"), icon: r.correct ? "circle-check" : "arrow-right" };
+    renderTask(n.task, { mode: "pretest", index: n.index, total: n.total, note });
   }
 }
 
@@ -3090,7 +3120,7 @@ function showContestResult(c, timeUp = false) {
         ${
           it.task
             ? `<div class="task-text">${renderRich(it.task.text)}</div>
-          ${it.task.answerType === "choice" ? `<div class="choices static">${it.task.options.map((o, k) => `<div class="choice ${String(k) === String(it.yourAnswer) ? "picked" : ""} ${k === it.task.correctIndex ? "right" : ""}">${it.task.optionsTex ? renderMath(o, false) : escapeHtml(o)}</div>`).join("")}</div>` : ""}
+          ${it.task.answerType === "choice" ? `<div class="choices static">${it.task.options.map((o, k) => `<div class="choice ${String(k) === String(it.yourAnswer) ? "picked" : ""} ${k === it.task.correctIndex ? "right" : ""}">${choiceHtml(it.task, o)}</div>`).join("")}</div>` : ""}
           <p><b>${t("comp.yourAnswer")}</b> ${it.task.optionsTex && it.yourAnswer != null && it.task.answerType === "choice" ? renderMath(yours(it), false) : escapeHtml(yours(it))}</p>
           ${workedBlock(it.task, it.task.solution)}
           ${tutorRow(it.taskId)}`
@@ -3342,7 +3372,7 @@ function calcTool(mode) {
       });
     if (mode === "tools") return m.createTools(host, { ...base, subject: calcSubject });
     if (mode === "pse") return m.createPse(host, { ...base, lang: currentLang });
-    return m.createFormulas(host, { ...base, api, renderRich, bookKey: formulaBook });
+    return m.createFormulas(host, { ...base, api, renderRich, withSymbols: withFormulaSubject, bookKey: formulaBook });
   });
   return calcTools[mode];
 }

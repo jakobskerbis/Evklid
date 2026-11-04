@@ -94,6 +94,7 @@ h1 { font-size: 1.55rem; line-height: 1.25; margin: 0 0 8px; font-weight: 800; l
 h2 { font-size: 1.12rem; margin: 0 0 8px; font-weight: 800; }
 .with-icon { display: flex; align-items: center; gap: 8px; }
 .with-icon svg.i { color: var(--accent); }
+.pretest-note { margin: 8px 0 0; font-weight: 600; }
 .eyebrow { font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 a { color: var(--accent); }
 :focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }

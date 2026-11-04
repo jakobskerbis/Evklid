@@ -2,7 +2,7 @@
 import { t, currentLang } from "./i18n.js";
 import { lookupSymbol, lookupUnit, symbolsIn, SYMBOLS, GREEK, SUBJECT_TABLES } from "./formula-data.js";
 
-export { annotateTex, setFormulaSubject, withFormulaSubject } from "./formula-data.js";
+export { annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-data.js";
 
 // ---------- kartica ----------
 const en = () => currentLang() !== "sl";
