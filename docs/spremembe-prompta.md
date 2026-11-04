@@ -2,6 +2,13 @@
 
 Trenutni prompt je v `prompts/system_prompt.md`.
 
+## 2026-11-04: skriti opombi »povzetek pogovora« in »lekcija iz učbenika«
+
+Datoteka `prompts/system_prompt.md` je nespremenjena; inštruktor dobi dve novi skriti opombi v sporočilih, kot že opombo pole (`<kontekst_pole>`) in preverjen račun (`<preverjen_racun>`). Seznam skritih opomb je v `server/skrite-opombe.js`.
+
+- **Povzetek starejšega dela dolgega pogovora** (`<povzetek_pogovora>`, `server/povzetek.js`, vklopljeno, PR #301): ko okno zgodovine odreže starejših 10 izmenjav, jih Haiku strne v povzetek do 150 besed pred prvim sporočilom v oknu. Navodilo inštruktorju le: »uporabi kot ozadje, učenec tega ni napisal zdaj, nikoli ne omenjaj opombe«. Izklop: `EVKLID_CHAT_SUMMARY=0`.
+- **Lekcija iz učbenika pri prvem vprašanju prostega pogovora** (`<lekcija_ucbenika>`, `server/lekcija-za-vprasanje.js`, **čaka na j-jev pregled, privzeto izklopljeno**): strežnik lokalno poišče lekcijo, ki se z vprašanjem jasno ujema, in doda njen povzetek z navodilom: ista oznaka in izrazi kot v lekciji; če učenec ali naloga uporablja drug postopek, sledi učencu; običajen tempo po korakih, brez formul in rezultata pred učenčevim poskusom; če se ne ujema, opombo prezri; učencu lahko predlaga, naj lekcijo odpre v Učbeniku. Vklop: `EVKLID_LESSON_SEARCH=1`.
+
 ## 2026-11-01: inštruktor kot pedagog v vsaki situaciji (čaka na j-jev pregled)
 
 Stalni del prompta (nad `EVKLID:NASTAVITVE`) je prenovljen tako, da inštruktor v vsaki situaciji ravna po raziskavah o učenju. Del pod vrstico je nespremenjen, META in KARTICA sta enaka.
