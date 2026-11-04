@@ -196,7 +196,8 @@
 .gc-ex-list { display: grid; grid-template-columns: 1fr; gap: 4px; }
 .gc .gc-ex { display: flex; justify-content: flex-start; gap: 10px; min-height: 48px; border: 0; background: none; border-radius: 10px; padding: 6px 8px; text-align: left; overflow-x: auto; }
 .gc .gc-ex:hover { background: var(--surface-2); }
-.gc-ex-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); flex: none; }
+.gc-ex-ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); flex: none; }
+.gc-ex-ic .gc-ex-curve { width: 34px; height: 34px; }
 .gc-ex-tex { font-size: 1rem; }
 .gc-save-row { display: flex; gap: 8px; padding: 4px 4px 8px; }
 .gc-save-row input { flex: 1; min-width: 0; min-height: 40px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--bg); padding: 6px 10px; font-weight: 700; }

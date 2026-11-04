@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Toplotni tok
+  - $P = \dfrac{Q}{t}$
+  - enota vat ($\mathrm{W} = \mathrm{J/s}$)
+- Prevajanje
+  - trki delcev, snov miruje
+  - $P = \dfrac{\lambda S \Delta T}{d}$
+  - debelino vstavi v metrih
+- Toplotna prevodnost
+  - $\lambda$ v $\mathrm{W/(m\,K)}$
+  - baker $400$, maščoba $0{,}2$, zrak $0{,}025$
+  - kovina se zdi hladnejša, ker bolje prevaja
+- Sevanje
+  - seva vsako telo nad $0\,\mathrm{K}$
+  - koža seva infrardeče
+- Stefanov zakon
+  - $j = \sigma T^4$, $T$ v kelvinih
+  - $\sigma = 5{,}67 \cdot 10^{-8}\,\mathrm{W/(m^2\,K^4)}$
+  - dvakrat višja $T$: $16$-krat več
+- Izmenjava z okolico
+  - $P = \sigma S\,(T^4 - T_o^4)$
+  - novorojenček in hladne stene
