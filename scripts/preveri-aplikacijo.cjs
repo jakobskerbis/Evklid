@@ -1301,6 +1301,26 @@ async function uciPhone(p) {
   await barTab(p, "path", { wait: 300 });
   await barTab(p, "uci", { wait: 300 });
   if ((await currentView(p)) !== "view-lab") throw new Error(`»Uči se« ne odpre zadnjega zavihka (${await currentView(p)})`);
+  // Lekcija s poskusom in 3D modelom (katalog): »Poglej v 3D« odpre model čez cel zaslon, Nazaj ga zapre in lekcija
+  // ostane; »Poskus v laboratoriju« odpre poskus, Nazaj vrne v lekcijo (ne na seznam poskusov).
+  await p.evaluate(() => window.evklid.openLesson("BIO-OS-8/prebavila-in-prehrana"));
+  await expectVisible(p, "#view-textbook .tb-link[data-tb-3d]", "povezava »Poglej v 3D« v lekciji", 8000);
+  await click(p, "#view-textbook .tb-link[data-tb-3d]", { wait: 300 });
+  await p.locator(".uci-3d-full iframe").waitFor({ state: "attached", timeout: 20000 }).catch(() => {
+    throw new Error("»Poglej v 3D« v lekciji ne odpre modela");
+  });
+  await p.goBack();
+  await settle(p, 300);
+  if (await p.locator(".uci-3d-full").count()) throw new Error("Nazaj ne zapre 3D modela iz lekcije");
+  await expectVisible(p, "#view-textbook .tb-link[data-tb-lab]", "lekcija po zaprtju 3D modela");
+  await click(p, "#view-textbook .tb-link[data-tb-lab]", { wait: 400 });
+  await expectVisible(p, "#view-lab .lab-stage", "poskus iz lekcije");
+  await p.goBack();
+  await settle(p, 300);
+  if ((await currentView(p)) !== "view-textbook") throw new Error(`Nazaj iz poskusa, odprtega v lekciji, odpre ${await currentView(p)} namesto lekcije`);
+  await expectVisible(p, "#view-textbook .tb-title", "lekcija po Nazaj iz poskusa");
+  await p.goBack();
+  await settle(p, 300);
 }
 
 async function phone(browser, app) {
