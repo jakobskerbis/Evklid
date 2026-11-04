@@ -926,13 +926,17 @@ function undoPress(d) {
   d.done = false;
   const f = S.field;
   const k = (d.len1 ?? 0) - (d.len0 ?? 0);
-  if (!f || f !== d.f || k <= 0 || vlen(f) !== d.len1) return;
-  const r = sel(f);
-  if (f.isContentEditable || !r) backspace(f);
-  else if (r[0] === r[1] && r[0] >= k) {
-    f.setRangeText("", r[0] - k, r[0], "end");
-    fire(f, "deleteContentBackward");
-  }
+  const r = f && sel(f);
+  if (!f || f !== d.f || vlen(f) !== d.len1) {
+    // polje se je vmes spremenilo: znaka ne brišemo, ⇧ pa vseeno vrnemo
+  } else if (d.r0 && r) {
+    // znak je morda zamenjal izbrano besedilo: vrnemo ga in izbiro, da ga drsana beseda ali različica zamenja
+    if (r[0] === r[1] && r[0] >= d.r0[0] && f.value !== d.v0) {
+      f.setRangeText(d.v0.slice(d.r0[0], d.r0[1]), d.r0[0], r[0], "end");
+      f.setSelectionRange(d.r0[0], d.r0[1]);
+      fire(f, "deleteContentBackward");
+    }
+  } else if (k > 0) backspace(f);
   if (S.shift !== d.shift) {
     S.shift = d.shift;
     paintShift();
@@ -1041,17 +1045,27 @@ function wireBoard() {
       down.done = true;
       down.f = S.field;
       down.len0 = vlen(S.field);
+      down.r0 = S.field && sel(S.field);
+      down.v0 = down.r0 ? String(S.field.value) : null;
       act(a);
       down.len1 = vlen(S.field);
+      // act lahko ploščo nariše znova (npr. izgine vrstica drsanja): tipko poiščemo v novi plošči
+      if (!b.isConnected) {
+        // po dejanju in vrednosti (kazala data-k se premaknejo, če se je vrstica nad zavihki spremenila)
+        down.b = [...board.querySelectorAll(".tk-rows button[data-k]")].find((x) => { const k = keys[Number(x.dataset.k)]; return k?.a === a.a && k.v === a.v; }) || b;
+        down.b.classList.add("down");
+        if (a.a === "char" && e.pointerType !== "mouse") preview(down.b);
+      }
     }
     if (a?.a === "sp") {
       try {
         b.setPointerCapture(e.pointerId);
       } catch {}
     } else if (a?.a === "char" && varsFor(a.v).length) {
+      const kb = down.b;
       down.lp = setTimeout(() => {
-        if (down?.b === b) {
-          down.pop = showPop(b, a.v, down.shift);
+        if (down?.b === kb) {
+          down.pop = showPop(kb, a.v, down.shift);
           if (down.pop) closePreview();
         }
       }, 380);

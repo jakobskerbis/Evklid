@@ -165,6 +165,15 @@ for (const [name, opts] of [
       await page.mouse.up();
       await page.waitForTimeout(40);
       assert.match(await page.inputValue("#t"), /^a [šŠ]$/, "dolg pritisk zamenja črko");
+      // z izbranim besedilom: različica zamenja izbiro (ne ostane še črka s pritiska)
+      await page.waitForTimeout(500);
+      await page.evaluate(() => { const t = document.getElementById("t"); t.value = "a xyz b"; t.setSelectionRange(2, 5); });
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      await page.waitForTimeout(600);
+      await page.mouse.up();
+      await page.waitForTimeout(40);
+      assert.match(await page.inputValue("#t"), /^a [šŠ] b$/, "različica namesto izbire");
     }
     await page.waitForTimeout(500);
     // ⌫ briše že ob pritisku (pred dvigom prsta), ob dvigu ne še enkrat
