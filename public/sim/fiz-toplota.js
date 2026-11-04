@@ -394,7 +394,7 @@ export function pv(el) {
     out.innerHTML = texBlock(`pV = nRT:\\quad ${T(st.p, 0)}\\ \\text{kPa}\\cdot ${T(st.V, 2)}\\ \\text{L} = ${T(st.p * st.V, 0)}\\ \\text{J}`) +
       texBlock(`\\Delta W_n = Q - A_{plin}:\\quad ${T(dU, 0)}\\ \\text{J} = ${T(Q, 0)}\\ \\text{J} - ${T(Wg, 0)}\\ \\text{J}`) +
       `<p>${{ izoterma: "Izotermna sprememba: temperatura je stalna, notranja energija se ne spremeni; vsa dovedena toplota gre za delo plina.", izobara: "Izobarna sprememba: tlak je stalen; plin se pri segrevanju razteza in opravlja delo p·ΔV.", izohora: "Izohorna sprememba: prostornina je stalna, plin ne opravi dela; vsa toplota poveča notranjo energijo.", adiabata: "Adiabatna sprememba: ni izmenjave toplote; plin opravi delo na račun notranje energije, zato se ohladi." }[proc]}</p>
-       <p class="muted">Delo plina je ploščina pod krivuljo v p–V diagramu (modro). Sive krivulje so izoterme. Enoatomni idealni plin, n = 0,04 mol.</p>`;
+       <p class="muted">Delo plina je ploščina pod krivuljo v p–V diagramu (senčeno). Sive krivulje so izoterme. Enoatomni idealni plin, n = 0,04 mol.</p>`;
   };
   layout(el, {
     stage: [svg],
