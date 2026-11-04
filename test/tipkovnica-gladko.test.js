@@ -116,6 +116,49 @@ for (const [name, opts] of [
     assert.equal(await page.inputValue("#t"), "AnaQ");
     assert.equal(await page.locator(letter("q")).count(), 1, "enkratni ⇧ ugasne");
 
+    // ⌫: en dotik = znak, dvoklik = beseda, troklik = poved; držanje briše po znakih (j, 4. 11.)
+    const bsSel = await page.evaluate(() => {
+      const b = [...document.querySelectorAll("#tipkovnica .tk-rows .tk-k")].find((x) => /briši|izbriši|delete/i.test(x.getAttribute("aria-label") || ""));
+      b.dataset.bs = "1";
+      return '#tipkovnica .tk-k[data-bs="1"]';
+    });
+    const tapBs = async (times) => {
+      for (let i = 0; i < times; i++) {
+        if (touch) await page.locator(bsSel).tap();
+        else await page.locator(bsSel).click();
+      }
+      await page.waitForTimeout(40); // na dotik tipka deluje takoj po »touchend«
+    };
+    const setText = (v) => page.evaluate((v) => { const t = document.getElementById("t"); t.value = v; t.setSelectionRange(v.length, v.length); }, v);
+    await setText("Prva poved. Druga beseda");
+    await tapBs(1);
+    assert.equal(await page.inputValue("#t"), "Prva poved. Druga besed", "en dotik");
+    await page.waitForTimeout(500);
+    await tapBs(2);
+    assert.equal(await page.inputValue("#t"), "Prva poved. Druga ", "dvoklik");
+    await page.waitForTimeout(500);
+    await setText("Prva poved. Druga beseda");
+    await tapBs(3);
+    assert.equal(await page.inputValue("#t"), "Prva poved. ", "troklik");
+    await page.waitForTimeout(500);
+    // druga tipka vmes prekine dvoklik
+    await setText("abc def");
+    await tapBs(1);
+    await press(letter("x"));
+    await tapBs(1);
+    assert.equal(await page.inputValue("#t"), "abc de", "⌫ x ⌫ ni dvoklik");
+    await page.waitForTimeout(500);
+    // držanje: po en znak
+    await setText("ena dva tri");
+    const box = await page.locator(bsSel).boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.waitForTimeout(700);
+    await page.mouse.up();
+    const held = await page.inputValue("#t");
+    assert.ok(held.length < 11 && held.length >= 4 && "ena dva tri".startsWith(held), `držanje: »${held}«`);
+    await page.waitForTimeout(500);
+
     // enaka višina v vseh plasteh
     const heights = {};
     for (const layer of ["abc", "num", "fx", "sym", "kem"]) {
