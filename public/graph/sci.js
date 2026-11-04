@@ -3,6 +3,7 @@
 // Tipkovnica je vedno vidna (kot pri pravem kalkulatorju); na računalniku lahko tipkaš tudi s tipkovnico.
 import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
 import { analyze, previewTex, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
+import { commandName } from "./cas.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -57,6 +58,7 @@ const KEY_LABEL = { "#2nd": "sc.second", "#left": "sc.left", "#right": "sc.right
 const MEM_LABEL = { "#m+": "sc.mPlus", "#m-": "sc.mMinus", M: "sc.mRecall", "#mc": "sc.mClear" };
 // Meni »⋯«: vse funkcije po skupinah. [napis (TeX), vstavi]
 const MORE = [
+  ["alg", null], // poenostavi, razvij, razstavi, reši za (imena v jeziku vmesnika, glej renderMore)
   ["cmp", [["=", "="], ["<", "<"], [">", ">"], ["\\le", "≤"], ["\\ge", "≥"], [";", ";"]]],
   ["vars", [["x", "x"], ["y", "y"], ["z", "z"], ["a", "a"], ["b", "b"], ["c", "c"], ["n", "n"], ["t", "t"], ["f(x)=", "f(x)="], ["g(x)=", "g(x)="]]],
   ["ana", [["\\tfrac{d}{dx}", "d/dx(@)"], ["\\tfrac{d}{dx}\\big|_{x=a}", "d/dx(@;)"], ["\\int_a^b", "∫(@;;)"], ["\\sum", "∑_(n=1)^(@) "], ["\\prod", "∏_(n=1)^(@) "], ["|x|", "abs("]]],
@@ -69,7 +71,7 @@ const MORE = [
 
 /**
  * Znanstveni kalkulator v elementu root.
- * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text), canSteps?() }
+ * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?() }
  */
 export function createScientific(root, opts) {
   const { t, icon } = opts;
@@ -200,6 +202,22 @@ export function createScientific(root, opts) {
         return t("sc.errVec");
       case "undef":
         return t("sc.errUndefined");
+      case "casUnsupported":
+      case "casEquation":
+      case "casNeedEq":
+        return t(`sc.cas.${e.code.slice(3).toLowerCase()}`);
+      case "casBig":
+        return t("sc.cas.big");
+      case "casUnverified":
+        return t("sc.cas.unverified");
+      case "casDegree":
+        return t("sc.cas.degree", { v: e.info.v });
+      case "casVar":
+        return t("sc.cas.var", { v: e.info.v });
+      case "casIrrational":
+        return t("sc.cas.irrational");
+      case "casEmpty":
+        return t("sc.cas.empty");
       case "other":
         return t("gc.errOther");
       default:
@@ -278,8 +296,26 @@ export function createScientific(root, opts) {
         break;
       case "expr":
         e.note = { key: "sc.exprHint", name: r.v };
+        if (r.cas) e.cas = true;
+        break;
+      case "sym":
+        e.cas = true;
+        e.note = { key: "sc.cas.symHint" };
+        break;
+      case "symeq":
+        e.note = { key: "sc.cas.eqHint" };
+        break;
+      case "cas":
+        e.op = r.op;
+        e.res = r.resTex;
+        if (r.cond) e.note = { key: "sc.cas.cond", tex: r.cond };
+        if (r.steps) {
+          e.steps = true;
+          e.stepsText = r.inner;
+        }
         break;
     }
+    if (r.solveFor?.length) e.solveFor = r.solveFor.slice(0, 6);
     return e;
   }
 
@@ -311,6 +347,11 @@ export function createScientific(root, opts) {
         return `<span class="sc-bool ${e.value ? "ok" : "no"}">${icon2(e.value ? "check" : "x")}${esc(t(e.value ? "sc.true" : "sc.false"))}</span>`;
       case "deriv":
         return texHtml(`= ${e.res}`);
+      case "cas": {
+        if (e.op !== "solve") return texHtml(`= ${e.res}`);
+        const parts = String(e.res || "").split(",\\quad ").filter(Boolean);
+        return `<span class="sc-parts">${parts.map((x) => `<span>${texHtml(x)}</span>`).join("")}</span>`;
+      }
       case "solve":
       case "system":
       case "pair": {
@@ -359,6 +400,7 @@ export function createScientific(root, opts) {
     if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`= ${fmt(r.value).tex}`) : "";
     else if (r.kind === "complex") live.innerHTML = texHtml(`= ${complexTex(r.re, r.im)}`);
     else if (r.kind === "deriv") live.innerHTML = texHtml(`= ${r.resTex}`);
+    else if (r.kind === "cas") live.innerHTML = texHtml(r.op === "solve" ? r.resTex : `= ${r.resTex}`);
     else live.innerHTML = r.kind === "solve" || r.kind === "ineq" || r.kind === "system" ? `<span class="sc-live-hint">${esc(t("sc.pressSolve"))}</span>` : "";
   }
   // Sproten predogled ne rešuje enačb in neenačb (rešitev pride ob =): samo račun, odvod, kompleksno število.
@@ -369,7 +411,7 @@ export function createScientific(root, opts) {
       const tex = previewTex(text, env());
       return tex ? { kind: "solve", tex } : null;
     }
-    return analyze(text, env());
+    return analyze(text, { ...env(), live: true });
   }
 
   function compute() {
@@ -448,12 +490,14 @@ export function createScientific(root, opts) {
     const acts = [];
     const btn = (act, ic, label) => `<button type="button" class="sc-act" data-act="${act}" data-i="${i}">${icon(ic)}<span>${esc(t(label))}</span></button>`;
     if (e.plot?.length && opts.openGraph) acts.push(btn("plot", "chart-spline", "sc.plot"));
+    if (e.cas) for (const [op, ic] of [["simplify", "sparkles"], ["expand", "maximize-2"], ["factor", "blocks"]]) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="${op}" data-i="${i}">${icon(ic)}<span>${esc(t(`sc.cas.${op}`))}</span></button>`);
+    if (e.solveFor) for (const v of e.solveFor) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="solve" data-v="${esc(v)}" data-i="${i}">${icon("square-function")}<span>${esc(t("sc.cas.solveFor", { v }))}</span></button>`);
     if (e.steps && opts.steps && opts.canSteps?.()) acts.push(btn("steps", "list-ordered", "sc.steps"));
     if ((e.kind || "value") === "value" && primeFactors(e.value)?.some(([, k], j, a) => a.length > 1 || k > 1) && !e.fact) acts.push(btn("fact", "grid-2x2", "sc.factor"));
     // kot v stopinjah → stopinje, minute, sekunde (in nazaj), kot tipka °′″ na kalkulatorju
     if ((e.kind || "value") === "value" && st.angle === "deg" && /°|\d\s*[′″]|arc(?:sin|cos|tan|cot)/.test(e.text) && !Number.isInteger(e.value) && dmsOf(e.value))
       acts.push(`<button type="button" class="sc-act" data-act="dms" data-i="${i}" aria-pressed="${!!e.dms}" title="${esc(t("sc.toDms"))}"><span aria-hidden="true">°′″</span><span class="sr-only">${esc(t("sc.toDms"))}</span></button>`);
-    if (["value", "solve", "ineq", "system", "deriv", "complex", "pair"].includes(e.kind || "value")) acts.push(btn("copy", "copy", "sc.copy"));
+    if (["value", "solve", "ineq", "system", "deriv", "complex", "pair", "cas"].includes(e.kind || "value")) acts.push(btn("copy", "copy", "sc.copy"));
     return acts.length ? `<div class="sc-acts">${acts.join("")}</div>` : "";
   }
 
@@ -461,7 +505,7 @@ export function createScientific(root, opts) {
     const h = st.history;
     if (!h.length) {
       hist.innerHTML = `<div class="sc-empty muted"><p>${esc(t("sc.empty"))}</p><p class="sc-try">${esc(t("sc.try"))}</p>
-        <div class="sc-examples">${["2x+3=7", "x²−5x+6=0", "x²<4", "x+y=3; x−y=1", "d/dx(x³)", "∫(x²;0;1)", "(1+2i)(3−i)"].map((x) => `<button type="button" class="chip sc-ex" data-ex="${esc(x)}">${esc(x)}</button>`).join("")}</div></div>`;
+        <div class="sc-examples">${["2x+3=7", "x²−5x+6=0", "x²<4", "x+y=3; x−y=1", "d/dx(x³)", "∫(x²;0;1)", `${commandName("factor", opts.locale?.())}(x³−8)`, "(1+2i)(3−i)"].map((x) => `<button type="button" class="chip sc-ex" data-ex="${esc(x)}">${esc(x)}</button>`).join("")}</div></div>`;
       return;
     }
     hist.innerHTML = h
@@ -472,7 +516,7 @@ export function createScientific(root, opts) {
           <button type="button" class="sc-h-expr" data-i="${i}" title="${esc(t("sc.recall"))}">${texHtml(e.tex)}</button>
           ${resultHtml(e) ? `<button type="button" class="sc-h-res" data-i="${i}" title="${esc(t("sc.useResult"))}">${resultHtml(e)}</button>` : ""}
           ${fact ? `<div class="sc-h-note muted">${texHtml(`${fmt(e.value).tex} = ${factorsTex(e.value, fact)}`)}</div>` : ""}
-          ${noteHtml(e)}
+          ${last || !/^sc\.cas\.(symHint|eqHint)$/.test(e.note?.key || "") ? noteHtml(e) : ""}
           ${last ? actionsHtml(e, i) : ""}
         </div>`;
       })
@@ -512,7 +556,12 @@ export function createScientific(root, opts) {
   }
   function renderMore() {
     more.innerHTML = `<div class="sc-consts-h"><b>${esc(t("sc.functions"))}</b><button type="button" class="ghost icon-only sc-more-x" aria-label="${esc(t("pad.close"))}">${icon("x")}</button></div>
-      ${MORE.map(([g, keys]) => `<div class="sc-more-g"><div class="sc-more-h">${esc(t(`sc.grp.${g}`))}</div><div class="sc-more-keys">${keys.map(([l, ins]) => `<button type="button" class="sc-mk" data-ins="${esc(ins)}"${g === "mem" ? ` title="${esc(t(MEM_LABEL[ins]))}" aria-label="${esc(t(MEM_LABEL[ins]))}"` : ""}>${texHtml(l)}</button>`).join("")}</div></div>`).join("")}`;
+      ${MORE.map(([g, keys]) => [g, keys || algKeys()]).map(([g, keys]) => `<div class="sc-more-g" data-g="${g}"><div class="sc-more-h">${esc(t(`sc.grp.${g}`))}</div><div class="sc-more-keys">${keys.map(([l, ins]) => `<button type="button" class="sc-mk" data-ins="${esc(ins)}"${g === "mem" ? ` title="${esc(t(MEM_LABEL[ins]))}" aria-label="${esc(t(MEM_LABEL[ins]))}"` : ""}>${texHtml(l)}</button>`).join("")}</div></div>`).join("")}`;
+  }
+  function algKeys() {
+    const n = (op) => commandName(op, opts.locale?.());
+    const nm = (op) => `\\operatorname{${n(op)}}`;
+    return [[nm("simplify"), `${n("simplify")}(@)`], [nm("expand"), `${n("expand")}(@)`], [nm("factor"), `${n("factor")}(@)`], [`${nm("solve")}\\ (\\ldots;x)`, `${n("solve")}(@; x)`]];
   }
   // panel (konstante, funkcije) prekrije tipkovnico, zgodovina ostane vidna; največ en naenkrat
   function showPanel(which) {
@@ -623,7 +672,13 @@ export function createScientific(root, opts) {
     if (b.classList.contains("sc-act")) {
       const act = b.dataset.act;
       if (act === "plot") opts.openGraph?.(it.plot);
-      else if (act === "steps") opts.steps?.(it.text);
+      else if (act === "steps") opts.steps?.(it.stepsText || it.text, it.op === "factor" ? "factor" : it.op === "simplify" ? "simplify" : null);
+      else if (act === "cas") {
+        // ukaz se zapiše v vrstico in izračuna kot vsak drug vnos (v zgodovini ga lahko prikličeš)
+        const v = b.dataset.v;
+        input.value = `${commandName(b.dataset.op, opts.locale?.())}(${it.text}${v ? `; ${v}` : ""})`;
+        compute();
+      }
       else if (act === "fact") {
         it.fact = true;
         save();
@@ -657,12 +712,24 @@ export function createScientific(root, opts) {
     if (!it.im) return n(it.re);
     return `${it.re ? `${n(it.re)}${it.im < 0 ? "-" : "+"}` : it.im < 0 ? "-" : ""}${Math.abs(it.im) === 1 ? "" : n(Math.abs(it.im))}i`;
   };
+  // gnezdeni \frac, \sqrt, ^{…} od znotraj navzven: √(E/m) ostane √((E)/(m)), ne √(E)/(m)
+  function unnest(x) {
+    for (let prev = ""; prev !== x; ) {
+      prev = x;
+      x = x
+        .replace(/_\{([^{}]*)\}/g, "$1")
+        .replace(/\^\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `^${a}` : `^(${a})`))
+        .replace(/\\t?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)")
+        .replace(/\\sqrt\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `√${a}` : `√(${a})`));
+    }
+    return x;
+  }
   // besedilo za odložišče: število ali rešitev v zapisu, ki ga razume vsak program (brez TeX)
   function copyText(it) {
     const c = comma();
     if ((it.kind || "value") === "value") return it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: c }).text : formatNumber(it.value, { mode: st.format, comma: c }).text;
     if (it.kind === "complex") return complexText(it);
-    return String(resTex(it))
+    return unnest(String(resTex(it)).replace(/\{,\}/g, ","))
       .replace(/\\Leftrightarrow/g, "⇔")
       .replace(/\\(quad|,|;|left|right)/g, " ")
       .replace(/\\approx/g, "≈")
@@ -676,11 +743,7 @@ export function createScientific(root, opts) {
       .replace(/\\pm/g, "±")
       .replace(/\\pi/g, "π")
       .replace(/\\cdot/g, "·")
-      .replace(/\\sqrt\{([^}]*)\}/g, "√$1")
-      .replace(/\\t?frac\{([^}]*)\}\{([^}]*)\}/g, "($1)/($2)")
       .replace(/\{,\}/g, ",")
-      .replace(/_\{([^}]*)\}/g, "$1")
-      .replace(/\^\{([^}]*)\}/g, "^$1")
       .replace(/\\[a-z]+/g, "")
       .replace(/[{}]/g, "")
       .replace(/\s+/g, " ")
