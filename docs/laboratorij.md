@@ -155,7 +155,7 @@ Goggles first (nothing starts without them). 13 samples: lemon juice, vinegar, c
 toothpaste slurry, ammonia cleaner, drain cleaner, HCl 0,1 mol/L. Computed from the charge balance where one solute fits (vinegar 0,8 M acetic acid, 1 % NaHCO₃
 = 0,119 M, 1 M NH₃, 0,5 M NaOH, HCl, distilled water with CO₂ from air: kH 0,034 mol/(L·atm), 420 ppm, pKa 6,35/10,33, NH₄⁺ 9,25, CRC); these can be diluted
 1 : 10 and 1 : 100. Others take a seeded value in a literature range (FDA Approximate pH of Foods: lemon 2,0–2,6, vinegar 2,4–3,4, milk 6,4–6,8; cola 2,3–2,5
-Reddy 2016; soap 9–10 Tarun 2014; coffee 4,8–5,2, tap water 7,2–8,0, toothpaste 7,5–9,5 ocena). Three ways to measure: red cabbage extract (8 colour bands,
+Reddy 2016; soap 9–10 Tarun 2014; coffee 4,8–5,2 Rao & Fuller 2018; tap water 7,2–7,7, toothpaste 7,5–9,5 ocena). Three ways to measure: red cabbage extract (8 colour bands,
 Fossen 1998 / RSC scale, shown as a pH range), universal indicator paper (chart 0–14, read to the nearest field, error ≤ 1), pH meter (uncalibrated: offset
 0,3–0,8, slope 90–97 %, ocena; calibrated with buffers 4,01/7,00/10,01: ±0,05; not rinsed between samples: 15 % of the difference to the previous sample,
 decaying with τ 30 s, ocena). Coloured samples (cola, coffee) mask the indicator colour. The student sorts each measured sample into kislo/nevtralno/bazično
@@ -166,12 +166,12 @@ cabbage bands; uncalibrated offset ≥ 0,15 at pH 5,6, calibrated within ±0,05 
 
 ### `lab-dokaz` – food tests (KEM-OS-9 ogljikovi hidrati, beljakovine; BIO-OS-8 prebavila in prehrana)
 Samples: white bread, raw potato, apple juice, honey, egg white, milk, sunflower oil, table sugar, glucose, water (control); composition per 100 g from USDA
-FoodData Central; solids mashed ~1 g in 5 mL (ocena). Tests: iodine (Lugol) yellow-brown → blue-black with starch (≥ 0,01 %, ocena); Fehling's reagent only in a
+FoodData Central; solids mashed ~1 g in 5 mL (ocena), milk 1 : 1, egg white 1 : 4 (its ~0,4 % glucose then stays below the Fehling limit, so egg white is negative, as in school tables). Tests: iodine (Lugol) yellow-brown → blue-black with starch (≥ 0,01 %, ocena); Fehling's reagent only in a
 boiling water bath (otherwise stays blue: mistake), colour steps blue/green/yellow/orange/brick-red as the Benedict semi-quantitative scale (0,1/0,5/1/1,5 %);
 sucrose negative unless hydrolysed with a drop of HCl; biuret light blue → violet (≥ 0,2 %, ocena); grease spot on paper (≥ 2 % faint, ≥ 20 % clear; ocena).
 Dirty dropper carries 5 % of the previous sample (false positive). The student decides »present / absent«; table with colour swatches, colour grid
 (foods × tests) as the graph, conclusion about reducing sugars. Tests: starch–iodine, sucrose negative, hydrolysed sucrose and heated glucose positive,
-unheated glucose negative, egg white and milk biuret positive, oil grease spot, water control negative in all four, dirty dropper false positive, goggles.
+unheated glucose negative, egg white Fehling negative, egg white and milk biuret positive, oil grease spot, water control negative in all four, dirty dropper false positive, goggles.
 
 ### `lab-slina` – salivary amylase digests starch (NAR-OS-7 prehranjevanje in prebava; BIO-OS-8 prebavila; BIO-OS-9 načrtovanje poskusa)
 Six tubes of 1 % (or 5 %, mistake) starch with diluted saliva at 0, 20, 37, 70 °C, boiled saliva at 37 °C and a control without saliva; real minutes with

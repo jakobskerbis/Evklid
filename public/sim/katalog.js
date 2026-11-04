@@ -591,7 +591,7 @@ export const LAB_INFO = {
   "lab-dokaz": {
     subject: "KEM",
     title: "Dokaz škroba, sladkorjev in beljakovin",
-    desc: "Z jodovico, Fehlingovim in biuretnim reagentom ter madežem na papirju ugotovi, katera živila vsebujejo škrob, glukozo, beljakovine in maščobe.",
+    desc: "Z jodovico, Fehlingovim in biuretnim reagentom ter madežem na papirju ugotovi, katera živila vsebujejo škrob, sladkorje, kot je glukoza, beljakovine in maščobe.",
   },
   "lab-slina": {
     subject: "NAR",

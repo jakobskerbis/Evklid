@@ -766,6 +766,10 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo:is(.demo-lab-ph, .demo-lab-dokaz) .lab-table td:nth-child(2) { min-width: 6.5em; }
 .demo:is(.demo-lab-ph, .demo-lab-dokaz) .lab-table td { text-align: left; }
 .demo-lab-slina .lab-table td { text-align: center; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table { overflow: visible; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); } /* glava ostane vidna, ko se okvir pomakne na zadnjo vrstico */
+.lab-ind-key { margin: 0 0 8px; color: var(--text); }
+.lab-ind-key > span { white-space: nowrap; }
 @media (max-width: 480px) {
   .demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table { font-size: 0.8rem; }
   .demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table :is(th, td) { padding: 5px 4px; }

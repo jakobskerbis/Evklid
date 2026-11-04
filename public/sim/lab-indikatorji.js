@@ -42,14 +42,14 @@ export function labPh(el) {
   const ids = Object.keys(PH_VZORCI);
   const nr = (id) => ids.indexOf(id) + 1;
   const KR = { limona: "limona", kis: "kis", kola: "kola", kava: "kava", mleko: "mleko", voda: "voda iz pipe", destilirana: "destil. voda", soda: "soda bikarbona", milo: "milo", pasta: "zobna pasta", amoniak: "amoniak", odtok: "čistilo za odtoke", hcl: "HCl" };
-  const kratko = (id) => `${nr(id)}. ${KR[id]}${(B.krat[id] || 1) > 1 ? ` 1 : ${B.krat[id]}` : ""}`;
-  const ime = (id) => `${PH_VZORCI[id].name}${(B.krat[id] || 1) > 1 ? `, razredčen 1 : ${B.krat[id]}` : ""}`;
+  const kratko = (id) => `${nr(id)}. ${KR[id]}${(B.krat[id] || 1) > 1 ? ` 1 : ${B.krat[id]}` : ""}`;
+  const ime = (id) => `${PH_VZORCI[id].name}${(B.krat[id] || 1) > 1 ? `, razredčen 1 : ${B.krat[id]}` : ""}`;
   const table = dataTable([
     { key: "vz", label: "vzorec" },
     { key: "nac", label: "način" },
     { key: "ph", label: "pH" },
   ], { empty: "Še ni meritev. Izberi vzorec in ga preizkusi z rdečim zeljem, papirjem ali pH-metrom." });
-  const graph = dataGraph({ x: [0, 15], y: [0, 14], xStep: 1, yStep: 2, xLabel: "št.", yLabel: "pH", title: "Izmerjeni pH (vodoravna os: številka vzorca) vzorcev po treh načinih" });
+  const graph = dataGraph({ H: 300, x: [0, 14], y: [0, 15], xStep: 1, yStep: 1, xLabel: "pH", yLabel: "vzorec", title: "Izmerjeni pH vzorcev po treh načinih: vodoravno pH od 0 do 14, navpično številka vzorca; oznake istega vzorca so v isti vrstici" });
   const lineSvg = svgBox(360, 92, "lab-ind-line");
   const qBox = h("div");
   const meas = { zelje: [], papir: [], meter: [] };
@@ -81,7 +81,7 @@ export function labPh(el) {
       h("h4", { class: "lab-h" }, "Meritve"), table,
       h("h4", { class: "lab-h" }, "pH vzorcev"), graph,
       h("h4", { class: "lab-h" }, "Lestvica pH"), h("figure", { class: "lab-graph-wrap" }, lineSvg), qBox,
-      notes(POENOSTAVITVE_INDIKATORJI.ph, "pH iz bilance nabojev; Kw = 1,0·10⁻¹⁴, pKa: ocetna kislina 4,76, ogljikova kislina 6,35 in 10,33, NH₄⁺ 9,25 (CRC Handbook). CO₂ v vodi: kH = 0,034 mol/(L·atm) (Sander 2015), 420 ppm v zraku. Območja pH živil: FDA, Approximate pH of Foods (2007); kola: Reddy idr. 2016; milo: Tarun idr. 2014. Rdeče zelje: Fossen idr. 1998, Food Chem. 63, 435. Pufri pH 4,01/7,00/10,01 (DIN 19266). Ocene: kava, voda iz pipe, zobna pasta, čistila, barve lestvic, napake pH-metra."),
+      notes(POENOSTAVITVE_INDIKATORJI.ph, "pH iz bilance nabojev; Kw = 1,0·10⁻¹⁴, pKa: ocetna kislina 4,76, ogljikova kislina 6,35 in 10,33, NH₄⁺ 9,25 (CRC Handbook). CO₂ v vodi: kH = 0,034 mol/(L·atm) (Sander 2015), 420 ppm v zraku. Območja pH živil: FDA, Approximate pH of Foods (2007); kola: Reddy idr. 2016; milo: Tarun idr. 2014. Rdeče zelje: Fossen idr. 1998, Food Chem. 63, 435. Pufri pH 4,01/7,00/10,01 (DIN 19266). Ocene: kava, voda iz pipe, zobna pasta, čistila, barve lestvic, napake pH-metra."),
     ],
     tryText: "Napovej, ali je milo kislo ali bazično, in preveri z rdečim zeljem. Izmeri destilirano vodo s pH-metrom, ki ga še nisi umeril, nato ga umeri in izmeri znova. Razredči klorovodikovo kislino in kis 10-krat: za koliko se spremeni pH?",
   });
@@ -96,15 +96,15 @@ export function labPh(el) {
   function add(nac, pH, text) {
     zadnji[cur] = pH;
     if (nac === "meter" && (cur === "hcl" || cur === "kis") && B.krat[cur] >= 10) dilMeasured = true;
-    const x = nr(cur) + { zelje: -0.2, papir: 0, meter: 0.2 }[nac];
-    meas[nac].push([x, pH]);
+    const y = nr(cur) + { zelje: 0.25, papir: 0, meter: -0.25 }[nac];
+    meas[nac].push([pH, y]);
     table.add({ vz: kratko(cur), nac: { zelje: "zelje", papir: "papir", meter: "pH-meter" }[nac], ph: text });
     redraw();
   }
   function dilute() {
     const r = B.razredci(cur);
-    if (!r.ok) return log.push(r.why === "sestava" ? "Ta vzorec ima v sebi veliko različnih snovi; razredčimo le tiste, pri katerih vemo, kaj je v njih." : "Bolj kot 1 : 100 ne redčimo.", "warn");
-    log.push(`Odpipetiral si 10 mL vzorca in ga z destilirano vodo razredčil do 100 mL: zdaj ${ime(cur)}.`, "info");
+    if (!r.ok) return log.push(r.why === "sestava" ? "Ta vzorec ima v sebi veliko različnih snovi; razredčimo le tiste, pri katerih vemo, kaj je v njih." : "Bolj kot 1 : 100 ne redčimo.", "warn");
+    log.push(`Odpipetiral si 10 mL vzorca in ga z destilirano vodo razredčil do 100 mL: zdaj ${ime(cur)}.`, "info");
     show = { zelje: null, papir: null };
     status(), draw();
   }
@@ -113,8 +113,8 @@ export function labPh(el) {
     const r = B.zelje(cur);
     show.zelje = r.rgb;
     const p = r.pas, mid = (p.od + p.do) / 2;
-    log.push(`Barva z rdečim zeljem: <b>${p.ime}</b>, po lestvici pH ${num(p.od, p.od % 1 ? 1 : 0)}–${num(p.do, p.do % 1 ? 1 : 0)}.${PH_VZORCI[cur].barva && PH_VZORCI[cur].a > 0.5 ? " Lastna barva vzorca prekrije barvo indikatorja; bolje izmeri s pH-metrom." : ""}`, "info");
-    add("zelje", mid, `${num(p.od, p.od % 1 ? 1 : 0)}–${num(p.do, p.do % 1 ? 1 : 0)}`);
+    log.push(`Barva z rdečim zeljem: <b>${p.ime}</b>, po lestvici pH ${num(p.od, p.od % 1 ? 1 : 0)}–${num(p.do, p.do % 1 ? 1 : 0)}.${PH_VZORCI[cur].barva && PH_VZORCI[cur].a > 0.5 ? " Lastna barva vzorca prekrije barvo indikatorja; bolje izmeri s pH-metrom." : ""}`, "info");
+    add("zelje", mid, `${num(p.od, p.od % 1 ? 1 : 0)}–${num(p.do, p.do % 1 ? 1 : 0)}`);
     draw();
   }
   function papir() {
@@ -174,7 +174,7 @@ export function labPh(el) {
         { t: "Pri močni kislini (HCl) se pH zviša za 1, pri šibki (kis) le za približno 0,5.", ok: true, why: "pH pove, koliko je ionov H⁺: 10-krat manj ionov je za 1 večji pH. Močna kislina je vsa razpadla na ione, zato se pH zviša za 1. Pri šibki kislini razpade le majhen del molekul; po razredčenju razpade večji del, zato se pH zviša le za ~0,5." },
         { t: "pH se zviša na 7, ker je zdaj v raztopini večinoma voda.", ok: false, why: "Raztopina ostane kisla: kislina je še vedno v njej, le manj je je. Do pH 7 bi jo morali razredčiti zelo veliko." },
         { t: "pH se zmanjša za 1.", ok: false, why: "Ko je kisline manj, je raztopina manj kisla, pH se poveča." },
-        { t: "pH se ne spremeni, ker je kislina še vedno ista.", ok: false, why: "pH ni odvisen le od snovi, temveč tudi od tega, koliko je je v litru. Tako se ne spremeni le pH sode bikarbone." },
+        { t: "pH se ne spremeni, ker je kislina še vedno ista.", ok: false, why: "pH ni odvisen le od snovi, temveč tudi od tega, koliko je je v litru raztopine. Manj kisline v litru pomeni manj ionov H⁺ in večji pH." },
       ],
     }));
   }
@@ -212,7 +212,7 @@ export function labPh(el) {
     meterL.set(v == null ? "" : num(v, 2), "pH", B.cal ? "umerjen" : "ni umerjen");
   }, 250);
 
-  // ---------------------------------------------------------------- risba (1 cm = 10 px)
+  // ---------------------------------------------------------------- risba (1 cm = 10 px)
   function draw() {
     svg.replaceChildren();
     s("line", { x1: 0, y1: 176, x2: W, y2: 176, class: "lab-tit-bench" }, svg);
@@ -223,7 +223,7 @@ export function labPh(el) {
     s("path", { d: `M${bx0 - 5},${yT - 2} Q${bx0},${yT} ${bx0},${yT + 5} V${yB - 5} Q${bx0},${yB} ${bx0 + 5},${yB} H${bx1 - 5} Q${bx1},${yB} ${bx1},${yB - 5} V${yT}`, class: "lab-glass" }, svg);
     label(svg, (bx0 + bx1) / 2, 190, "vzorec", "lbl small");
     const inS = B.elektroda.v === cur;
-    const ex = inS ? 272 : 346, ey = inS ? 166 : 150;
+    const ex = inS ? 272 : 346, ey = inS ? 166 : 150;
     s("rect", { x: ex - 5, y: ey - 76, width: 10, height: 64, rx: 4, class: "lab-tit-electrode" }, svg);
     s("ellipse", { cx: ex, cy: ey - 8, rx: 6, ry: 8, class: "lab-tit-bulb" }, svg);
     s("path", { d: `M${ex},${ey - 76} C${ex},${ey - 100} 360,30 372,40`, class: "lab-top-cable" }, svg);
@@ -242,7 +242,7 @@ export function labPh(el) {
     PAPIR.forEach((c, i) => (s("rect", { x: 12 + i * cw, y: 210, width: cw - 2, height: 18, rx: 2, fill: rgb(c) }, svg), label(svg, 12 + i * cw + (cw - 2) / 2, 238, String(i), "tick small")));
     label(svg, 200, 252, "barvna lestvica indikatorskega papirja (pH)", "tick small");
     if (!B.goggles) label(svg, 180, 26, "brez zaščitnih očal", "lab-warn");
-    merilo(svg, 166, 186, 20, "2 cm");
+    merilo(svg, 166, 186, 20, "2 cm");
     svg.setAttribute("aria-label", `Vzorec ${ime(cur)}. Epruveta z rdečim zeljem: ${show.zelje ? zeljePas(B.pH(cur)).ime : "prazna"}. Indikatorski papir ${show.papir ? "obarvan" : "suh"}. Elektroda ${inS ? "v vzorcu" : "zunaj"}.`);
   }
   status();
@@ -291,7 +291,7 @@ export function labDokaz(el) {
       )),
       h("h4", { class: "lab-h" }, "Rezultati"), table,
       h("h4", { class: "lab-h" }, "Pregled barv"), h("figure", { class: "lab-graph-wrap" }, grid), qBox,
-      notes(POENOSTAVITVE_INDIKATORJI.dokaz, "Sestava živil: USDA FoodData Central (SR Legacy). Barvne stopnje s Fehlingovim reagentom kot pri Benedictovem polkvantitativnem testu (modra, zelena, rumena, oranžna, opečnato rdeča). Ocene: meje zaznave (škrob ~0,01 %, reducirajoči sladkor ~0,1 %, beljakovine ~0,2 %, maščobe ~2 %), redčenje vzorcev, ostanek v kapalki."),
+      notes(POENOSTAVITVE_INDIKATORJI.dokaz, "Sestava živil: USDA FoodData Central (SR Legacy). Barvne stopnje s Fehlingovim reagentom kot pri Benedictovem polkvantitativnem testu (modra, zelena, rumena, oranžna, opečnato rdeča). Ocene: meje zaznave (škrob ~0,01 %, reducirajoči sladkor ~0,1 %, beljakovine ~0,2 %, maščobe ~2 %), redčenje vzorcev, ostanek v kapalki."),
     ],
     tryText: "Napovej, katera živila vsebujejo škrob, in preveri z jodovico. Preizkusi glukozo in namizni sladkor s Fehlingovim reagentom, enkrat brez segrevanja in enkrat s segrevanjem. Kaj se zgodi s sladkorjem, če ga prej segreješ s kislino?",
   });
@@ -319,7 +319,7 @@ export function labDokaz(el) {
     table.add({ z: ZIVILA[last.zivilo].name + (last.hyd ? " (hidroliza)" : ""), p: KRATKO[last.test], b: h("span", {}, swatch(r.rgb, r.ime), " ", r.ime), s: `${say ? "je" : "ni"} ${ok ? "✓" : "✗"}` });
     if (ok) log.push("Sklep je pravilen.", "ok");
     else if (seen) log.push(`Barvo si prav prebral, a preskus je zavajal: ${r.brezToplote ? "brez segrevanja Fehlingov reagent ne pokaže sladkorja" : "kapalka je prenesla prejšnji vzorec"}. Ponovi pravilno.`, "warn");
-    else log.push(`Poglej barvo še enkrat: brez ${PRESKUSI[last.test].snov} je ${{ jod: "rumeno rjava", fehling: "modra", biuret: "svetlo modra", madez: "madež se posuši" }[last.test]}.`, "warn");
+    else log.push(`Poglej barvo še enkrat: ${{ jod: "brez škroba je kapljica rumeno rjava", fehling: "brez reducirajočega sladkorja ostane raztopina modra", biuret: "brez beljakovin je raztopina svetlo modra", madez: "brez maščob se madež posuši in izgine" }[last.test]}.`, "warn");
     last = null;
     yes.disabled = no.disabled = true;
     drawGrid();
@@ -331,7 +331,7 @@ export function labDokaz(el) {
           { t: "Med vsebuje glukozo in fruktozo, ki sta reducirajoča sladkorja; saharoza (namizni sladkor) ni reducirajoča, dokler je s kislino ne razgradiš na glukozo in fruktozo.", ok: true, why: "Reducirajoči sladkorji reducirajo modre ione Cu²⁺ v rdeči Cu₂O. V saharozi je skupina, ki bi reducirala, porabljena za vez med obema deloma. Ko jo s kislino in toploto razgradiš (hidroliza), dobiš glukozo in fruktozo, ki reagirata." },
           { t: "Namizni sladkor ni sladkor, ker je iz pese.", ok: false, why: "Saharoza iz pese ali sladkornega trsa je ista snov in je sladkor (disaharid). Le ne reducira Fehlingovega reagenta." },
           { t: "Med je bolj sladek, zato reagira močneje.", ok: false, why: "Sladkost s tem nima zveze: tudi zelo koncentrirana raztopina saharoze ostane modra." },
-          { t: "Sladkor bi reagiral, če bi ga bilo več.", ok: false, why: "Tudi čista saharoza (100 %) ne da oborine. Odloča vrsta sladkorja, ne količina." },
+          { t: "Sladkor bi reagiral, če bi ga bilo več.", ok: false, why: "Tudi čista saharoza (100 %) ne da oborine. Odloča vrsta sladkorja, ne količina." },
         ],
       }));
     }
@@ -371,7 +371,7 @@ export function labDokaz(el) {
     if (on) for (let i = 0; i < 5; i++) s("circle", { cx: 310 + i * 13, cy: 150 - (i % 2) * 18, r: 2.5, class: "lab-top-bubble" }, svg);
     label(svg, 337, 190, on ? "vrela vodna kopel" : "kopel (ne greje)", "tick small");
     if (!B.goggles) label(svg, 200, 24, "brez zaščitnih očal", "lab-warn");
-    merilo(svg, 327, 200, 20, "2 cm");
+    merilo(svg, 327, 200, 20, "2 cm");
     svg.setAttribute("aria-label", `Stojalo z epruvetami: ${rack.map((t) => `${t.t} ${t.p}`).join(", ") || "prazno"}. Vodna kopel ${on ? "vre" : "ne greje"}.`);
   }
   heat.querySelector("input").addEventListener("change", draw);
@@ -380,7 +380,7 @@ export function labDokaz(el) {
 }
 
 // ================================================================ amilaza v slini razgrajuje škrob
-const KRAT_EP = { t0: "0 °C", t20: "20 °C", t37: "37 °C", kuh: "kuh.", t70: "70 °C", kontrola: "brez" };
+const KRAT_EP = { t0: "0 °C", t20: "20 °C", t37: "37 °C", kuh: "kuh.", t70: "70 °C", kontrola: "brez" };
 export function labSlina(el) {
   const B = new SlinaBench({ seed: (Math.random() * 2 ** 31) | 0 });
   const W = 400, H = 238;
@@ -392,7 +392,7 @@ export function labSlina(el) {
   const qBox = h("div");
   const auto = { every: 60, next: 60 };
   let speed = 10, spots = null, asked = false;
-  const starchSeg = seg("škrob", [["1", "1 % škrob"], ["5", "5 % škrob"]], "1", (v) => (B.skrob = +v));
+  const starchSeg = seg("škrob", [["1", "1 % škrob"], ["5", "5 % škrob"]], "1", (v) => (B.skrob = +v));
   const same = toggle("ista kapalka za vse epruvete, brez spiranja", false, (v) => (B.ista = v));
   const goBtn = button("Dodaj slino v epruvete in zaženi štoparico", () => start(), "primary small");
   const spotBtn = button("Kapljice z jodovico zdaj", () => sample(false));
@@ -401,15 +401,16 @@ export function labSlina(el) {
   layout(el, {
     extra: [
       h("div", { class: "lab-tit-top" }, stageBox(svg, h("div", { class: "lab-meters" }, swL)), controlsBox(
-        grp("1. Priprava", hint("V šest epruvet daš po 5 mL škrobovice in jih postaviš v vodne kopeli. Slino zbereš v čisto čašo (le svojo), razredčiš jo z vodo 1 : 10. Del je prej prekuhan."), starchSeg, same, buttons(goBtn)),
+        grp("1. Priprava", hint("V šest epruvet daš po 5 mL škrobovice in jih postaviš v vodne kopeli. Slino zbereš v čisto čašo (le svojo), razredčiš jo z vodo 1 : 10. Del sline je prej prekuhan."), starchSeg, same, buttons(goBtn)),
         grp("2. Merjenje", hint("Vsako minuto kaneš kapljico iz vsake epruvete k jodovici na ploščici. Ko kapljica ostane rumeno rjava, škroba ni več."), speedSeg, buttons(spotBtn)),
         log,
       )),
-      h("h4", { class: "lab-h" }, "Barva kapljic z jodovico"), table,
+      h("h4", { class: "lab-h" }, "Barva kapljic z jodovico"),
+      h("p", { class: "lab-legend lab-ind-key" }, ...JOD_STOPNJE.map(([, ime, c], i) => h("span", {}, swatch(c, ime), ` ${ime}${i === 0 ? " (veliko škroba)" : i === 3 ? " (škroba ni več)" : ""}`))), table,
       h("h4", { class: "lab-h" }, "Čas razgradnje"), graph, qBox,
-      notes(POENOSTAVITVE_INDIKATORJI.slina, "Slinska α-amilaza: optimum ~37 °C in pH 6,7–7,0, nad ~60 °C se uniči (Bernfeld 1955, Methods Enzymol. 1, 149). Ocene: oblika krivulje (Q10 = 2, povratna izguba aktivnosti nad ~40 °C, razpolovni čas 1 min pri 60 °C), Km = 0,2 %, ~5 min pri 37 °C, barvne stopnje jodovice, prenos s kapalko."),
+      notes(POENOSTAVITVE_INDIKATORJI.slina, "Slinska α-amilaza: optimum ~37 °C in pH 6,7–7,0, nad ~60 °C se uniči (Bernfeld 1955, Methods Enzymol. 1, 149). Ocene: oblika krivulje (Q10 = 2, povratna izguba aktivnosti nad ~40 °C, razpolovni čas 1 min pri 60 °C), Km = 0,2 %, ~5 min pri 37 °C, barvne stopnje jodovice, prenos s kapalko."),
     ],
-    tryText: "Napovej, v kateri epruveti bo škrob izginil najprej. Kaj pričakuješ pri prekuhani slini? Ponovi s 5 % škrobom in z isto kapalko za vse epruvete: kaj se spremeni?",
+    tryText: "Napovej, v kateri epruveti bo škrob izginil najprej. Kaj pričakuješ pri prekuhani slini? Ponovi s 5 % škrobom in z isto kapalko za vse epruvete: kaj se spremeni?",
   });
   el.classList.add("lab");
 
@@ -418,7 +419,7 @@ export function labSlina(el) {
     auto.next = auto.every;
     table.clear();
     sample(true);
-    log.push(`Slina je v epruvetah (${B.skrob} % škrob). Štoparica teče.`, "info");
+    log.push(`Slina je v epruvetah (${B.skrob} % škrob). Štoparica teče.`, "info");
     if (B.skrob > 1) log.push("Škroba je veliko: amilaza ga bo razgrajevala dolgo.", "warn");
     draw();
   }
@@ -430,7 +431,7 @@ export function labSlina(el) {
     spots.forEach((p) => (row0[p.id] = swatch(p.rgb, p.ime)));
     table.add(row0, { quiet: isAuto });
     B.tubes.forEach((u, i) => {
-      if (before[i] == null && u.tKonec != null) log.push(`${u.name}: kapljica ostane rumeno rjava po ${num(u.tKonec / 60, 0)} min. Škroba ni več.`, "ok");
+      if (before[i] == null && u.tKonec != null) log.push(`${u.name}: kapljica ostane rumeno rjava po ${num(u.tKonec / 60, 0)} min. Škroba ni več.`, "ok");
     });
     if (B.ista && B.tubes.find((u) => u.id === "kuh").tKonec != null) log.push("Prekuhana slina je »razgradila« škrob: s kapalko si vanjo prenesel amilazo iz druge epruvete.", "warn");
     redraw();
@@ -439,16 +440,16 @@ export function labSlina(el) {
       qBox.append(conclusion({
         text: "Kaj pokaže poskus z amilazo iz sline?",
         options: [
-          { t: "Amilaza najhitreje razgrajuje škrob pri ~37 °C; pri 0 °C dela zelo počasi, pri 70 °C in po prekuhanju pa se uniči in ne dela več.", ok: true, why: "Encim je beljakovina. Ko je topleje, se molekule hitreje gibljejo in reakcija teče hitreje, a nad ~40 °C se oblika beljakovine začne spreminjati. Pri 70 °C in pri vrenju se nepovratno spremeni (denaturira). Pri 0 °C encim ni uničen: če epruveto segreješ, spet deluje." },
-          { t: "Čim višja je temperatura, tem hitreje amilaza razgrajuje škrob.", ok: false, why: "Pri 70 °C škrob ostane: kapljica je še po pol ure modro črna. Encim se pri visoki temperaturi uniči." },
+          { t: "Amilaza najhitreje razgrajuje škrob pri ~37 °C; pri 0 °C dela zelo počasi, pri 70 °C in po prekuhanju pa se uniči in ne dela več.", ok: true, why: "Encim je beljakovina. Ko je topleje, se molekule hitreje gibljejo in reakcija teče hitreje, a nad ~40 °C se oblika beljakovine začne spreminjati. Pri 70 °C in pri vrenju se nepovratno spremeni (denaturira). Pri 0 °C encim ni uničen: če epruveto segreješ, spet deluje." },
+          { t: "Čim višja je temperatura, tem hitreje amilaza razgrajuje škrob.", ok: false, why: "Pri 70 °C škrob ostane: kapljica je še po pol ure modro črna. Encim se pri visoki temperaturi uniči." },
           { t: "Škrob razpade sam od sebe, slina ga le obarva.", ok: false, why: "V kontrolni epruveti brez sline in v epruveti s prekuhano slino škrob ostane. Razgradi ga encim amilaza." },
-          { t: "Mraz amilazo za vedno uniči, zato pri 0 °C ne deluje.", ok: false, why: "Pri 0 °C amilaza deluje počasi, uničena pa ni. Uniči jo vročina." },
+          { t: "Mraz amilazo za vedno uniči, zato pri 0 °C ne deluje.", ok: false, why: "Pri 0 °C amilaza deluje počasi, uničena pa ni. Uniči jo vročina." },
         ],
       }));
     }
   }
   function redraw() {
-    const pts = (B.tubes || []).filter((u) => u.tKonec != null && u.id !== "kontrola").map((u) => [u.T + (u.kuhana ? 1.5 : 0), u.tKonec / 60]);
+    const pts = (B.tubes || []).filter((u) => u.tKonec != null && u.id !== "kontrola").map((u) => [u.T + (u.kuhana ? 1.5 : 0), u.tKonec / 60]);
     graph.draw([{ id: "s", pts, cls: "a", shape: "o", label: "čas do rumeno rjave kapljice" }]);
   }
   ticker(el, (dt) => {

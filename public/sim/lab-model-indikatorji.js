@@ -45,9 +45,9 @@ export const PH_VZORCI = {
   limona: { name: "limonin sok", lit: [2.0, 2.6] },
   kis: { name: "kis (~5 % ocetne kisline)", sestava: { ac: 0.8 }, lit: [2.4, 3.4] }, // 4,8 % = 0,8 mol/L (M = 60,05 g/mol)
   kola: { name: "kola", lit: [2.3, 2.5], barva: [70, 30, 15], a: 0.75 },
-  kava: { name: "kava (črna)", lit: [4.8, 5.2], barva: [60, 35, 20], a: 0.85, ocena: true }, // ocena po več meritvah, 4,8–5,2
+  kava: { name: "kava (črna)", lit: [4.8, 5.2], barva: [60, 35, 20], a: 0.85 }, // Rao in Fuller 2018, Sci. Rep. 8, 16030: vroča kava pH 4,85–5,13
   mleko: { name: "mleko", lit: [6.4, 6.8], barva: [250, 250, 245], a: 0.55 },
-  voda: { name: "voda iz pipe", lit: [7.2, 8.0], ocena: true }, // pravilnik o pitni vodi dovoljuje 6,5–9,5; trda slovenska voda ~7,5 (ocena)
+  voda: { name: "voda iz pipe", lit: [7.2, 7.7], ocena: true }, // pravilnik o pitni vodi dovoljuje 6,5–9,5; trda slovenska voda ~7,5 (ocena); zgornja meja 7,7, da jo z ±0,2 še priznamo kot nevtralno
   destilirana: { name: "destilirana voda (na zraku)", sestava: { co2: CO2_ZRAK }, lit: [5.4, 5.8] }, // CO₂ iz zraka: pH 5,6
   soda: { name: "soda bikarbona, 1 % raztopina", sestava: { na: 10 / 84.01, co2: 10 / 84.01 }, lit: [8.1, 8.5] }, // 10 g/L, M(NaHCO₃) = 84,01 g/mol
   milo: { name: "milo, raztopljeno v vodi", lit: [9.0, 10.0], barva: [245, 245, 240], a: 0.25 },
@@ -201,13 +201,14 @@ export class PhBench {
 // ================================================================ dokazne reakcije (lab-dokaz)
 // Sestava na 100 g (USDA FoodData Central, SR Legacy; zaokroženo): škrob, reducirajoči sladkorji (glukoza, fruktoza,
 // laktoza, maltoza), saharoza, beljakovine, maščobe. Trdna živila zmečkaš z vodo (~1 g v 5 mL, redčenje 1/6, ocena),
-// tekoča uporabiš razredčena 1 : 1 (beljak, mleko) ali kar tako.
+// tekoča uporabiš razredčena 1 : 1 (mleko), beljak 1 : 4 (sicer je preveč gost; tako je ~0,4 % glukoze v beljaku pod mejo
+// Fehlingovega reagenta in rezultat ne zmede, beljakovine pa biuret še jasno pokaže) ali kar tako.
 export const ZIVILA = {
   kruh: { name: "kruh (bel)", skrob: 43, red: 4, sah: 0.5, belj: 9, mast: 3.3, redci: 1 / 6 },
   krompir: { name: "krompir (surov)", skrob: 15, red: 0.5, sah: 0.2, belj: 2, mast: 0.1, redci: 1 / 6 },
   sok: { name: "jabolčni sok", skrob: 0, red: 8.4, sah: 1.3, belj: 0.1, mast: 0.1, redci: 1 },
   med: { name: "med", skrob: 0, red: 75, sah: 0.9, belj: 0.3, mast: 0, redci: 1 / 6 },
-  beljak: { name: "jajčni beljak", skrob: 0, red: 0.4, sah: 0, belj: 10.9, mast: 0.2, redci: 1 / 2 },
+  beljak: { name: "jajčni beljak", skrob: 0, red: 0.4, sah: 0, belj: 10.9, mast: 0.2, redci: 1 / 5 },
   mleko: { name: "mleko", skrob: 0, red: 4.8, sah: 0, belj: 3.3, mast: 3.5, redci: 1 / 2 },
   olje: { name: "sončnično olje", skrob: 0, red: 0, sah: 0, belj: 0, mast: 100, redci: 1 },
   sladkor: { name: "namizni sladkor (saharoza)", skrob: 0, red: 0, sah: 100, belj: 0, mast: 0, redci: 1 / 6 },
@@ -367,6 +368,7 @@ export const POENOSTAVITVE_INDIKATORJI = {
     "Barve in najmanjše količine, ki jih preskus še pokaže, so ocenjene po šolskih navodilih.",
     "Segrevanje v vreli vodni kopeli je skrajšano na trenutek. Pravi preskus s Fehlingovim reagentom traja nekaj minut.",
     "Pri umazani kapalki pride v epruveto vedno enak delež prejšnjega vzorca.",
+    "Beljak razredčimo z vodo 1 : 4. V beljaku je tudi malo glukoze, a v razredčenem premalo, da bi jo Fehlingov reagent pokazal.",
   ],
   slina: [
     "Slina je pri vseh ljudeh podobna; v resnici ima nekdo veliko več amilaze kot drug.",

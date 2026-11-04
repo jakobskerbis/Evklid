@@ -39,6 +39,7 @@ test("household pH within literature ranges, sorted as in the textbook", () => {
   for (const k of ["soda", "milo", "amoniak", "odtok"]) assert.equal(skupina(pravPH(k)), "bazicno", k);
   assert.ok(razvrstitevOk(6.4, "nevtralno") && razvrstitevOk(6.4, "kislo") && !razvrstitevOk(6.4, "bazicno"), "mleko blizu meje");
   assert.ok(!razvrstitevOk(2.4, "nevtralno"));
+  for (const r of [0, 1]) assert.ok(razvrstitevOk(pravPH("voda", { r }), "nevtralno"), "voda iz pipe je nevtralna");
 });
 
 test("universal indicator paper reading within ±1 of the true pH, colours follow the chart", () => {
@@ -114,6 +115,8 @@ test("food tests: starch–iodine, Fehling only with heat and reducing sugar, bi
   assert.equal(t("glukoza", "fehling", { segrej: false }).ime, NEGATIVNO.fehling, "brez segrevanja ostane modra");
   assert.equal(t("med", "fehling").pozitiven, true);
   assert.equal(t("beljak", "biuret").ime, "vijolična");
+  assert.equal(t("beljak", "fehling").pozitiven, false, "razredčen beljak (glukoza ~0,4 % · 1/5) pod mejo 0,1 %");
+  assert.equal(t("mleko", "fehling").pozitiven, true, "laktoza reducira");
   assert.equal(t("mleko", "biuret").pozitiven, true);
   assert.equal(t("olje", "biuret").pozitiven, false);
   assert.equal(t("olje", "madez").ime, "prosojen masten madež");
