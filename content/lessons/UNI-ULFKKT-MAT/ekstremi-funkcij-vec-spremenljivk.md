@@ -5,9 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Pri funkciji ene spremenljivke smo ekstreme iskali tako, da smo odvod izenačili z nič in nato z drugim odvodom ugotovili, ali gre za minimum ali maksimum. V praksi pa je količina, ki jo želimo optimizirati, skoraj vedno odvisna od **več** spremenljivk: izkoristek reakcije je odvisen od temperature in tlaka, cena embalaže od vseh treh dimenzij škatle, napaka prilagajanja premice meritvam od naklona in začetne vrednosti premice, energija molekule od vseh dolžin vezi in kotov.
+Na začetku 19. stoletja so astronomi izgubili komaj odkrito telo Ceres, ko je izginilo v soju Sonca. Carl Friedrich Gauss je iz peščice opazovanj izračunal njegov tir, pri tem pa iskal parametre, pri katerih je vsota kvadratov odstopanj od meritev najmanjša; Ceres so nato našli blizu napovedanega mesta. Iskal je minimum funkcije **več** spremenljivk, ne ene. Malo pred tem je Joseph-Louis Lagrange v mehaniki rešil sorodno nalogo: kako najti ekstrem, kadar spremenljivk ne smemo spreminjati prosto, ker jih veže pogoj. Isti račun danes rešuje izenačevalnik v glasbenem studiu, ki išče jakosti frekvenčnih pasov z najmanjšim odstopanjem od želenega zvoka.
 
-V tej lekciji posplošimo znani postopek na funkcije $f(x, y)$ in $f(x_1, \dots, x_n)$:
+Postopek za eno spremenljivko (odvod enak nič, nato drugi odvod) se prenese na funkcije $f(x, y)$ in $f(x_1, \dots, x_n)$:
 
 - **stacionarne točke** poiščemo z ničelnim gradientom,
 - naravo stacionarne točke določimo s **Hessejevo matriko** drugih odvodov,
@@ -16,6 +16,16 @@ V tej lekciji posplošimo znani postopek na funkcije $f(x, y)$ in $f(x_1, \dots,
 Potrebuješ parcialne odvode, reševanje sistemov enačb in determinante $2 \times 2$.
 
 ## Razlaga
+
+Najprej slika. Graf funkcije $z = f(x, y)$ je ploskev nad ravnino $xy$, podobna pokrajini. Tri oblike okoli točke, kjer so »tla vodoravna«, so:
+
+| oblika | kako gre ploskev iz točke | nivojnice okoli točke | zgled v $(0, 0)$ |
+|---|---|---|---|
+| kotanja (minimum) | v vseh smereh navzgor | sklenjene, podobne elipsam | $x^2 + y^2$ |
+| vrh (maksimum) | v vseh smereh navzdol | sklenjene, podobne elipsam | $-x^2 - y^2$ |
+| prelaz (sedlo) | v nekaterih smereh gor, v drugih dol | hiperbole, skozi točko križ X | $x^2 - y^2$ |
+
+Vodoravna tla opiše gradient, ukrivljenost okoli točke pa drugi odvodi; spodaj to zapišemo s simboli.
 
 **1. Lokalni in globalni ekstremi.** Funkcija $f$ ima v točki $T_0 = (x_0, y_0)$ **lokalni minimum**, če je $f(x, y) \ge f(x_0, y_0)$ za vse točke $(x, y)$ v neki okolici $T_0$. Podobno definiramo **lokalni maksimum** z $\le$. **Globalni** (absolutni) minimum na množici $D$ je najmanjša vrednost $f$ na vsem $D$.
 
@@ -28,6 +38,12 @@ Razlog: če $y$ zamrznemo na $y_0$, ima funkcija ene spremenljivke $x \mapsto f(
 $$f_x(x, y) = 0, \qquad f_y(x, y) = 0.$$
 
 Pogoj je **potreben, ne pa zadosten**: v stacionarni točki je lahko minimum, maksimum ali pa **sedlo**. Primer sedla je $f(x, y) = x^2 - y^2$ v $(0, 0)$: v smeri osi $x$ funkcija narašča, v smeri osi $y$ pada. Graf je videti kot konjsko sedlo ali gorski prelaz.
+
+:::premisli
+Ima funkcija $f(x, y) = xy$ v izhodišču ekstrem?
+---
+Nima, izhodišče je sedlo. Gradient $(y, x)$ je tam res nič, a na premici $y = x$ je $f = x^2 \ge 0$, na premici $y = -x$ pa $f = -x^2 \le 0$, zato $f$ blizu izhodišča zavzame obe predznaki.
+:::
 
 **3. Hessejeva matrika.** Drugi parcialni odvodi tvorijo **Hessejevo matriko**
 
@@ -64,6 +80,12 @@ $$f_x = \lambda g_x, \qquad f_y = \lambda g_y, \qquad g(x, y) = 0.$$
 
 Število $\lambda$ je **Lagrangeov multiplikator**. Geometrijski pomen: v točki vezanega ekstrema sta gradienta $\nabla f$ in $\nabla g$ **vzporedna**, $\nabla f = \lambda \nabla g$. Nivojnica funkcije $f$ se tam krivulje $g = 0$ le dotika. Če bi jo sekala, bi se lahko po krivulji premaknili do večje ali manjše vrednosti $f$.
 
+:::premisli
+Zakaj pri vezanem ekstremu ne zahtevamo $\nabla f = 0$?
+---
+Ker se smemo gibati le vzdolž krivulje $g = 0$. Dovolj je, da se $f$ v smeri tangente ne spreminja, torej da je $\nabla f$ pravokoten na tangento in s tem vzporeden $\nabla g$. Funkcija $f = x + y$ ima povsod $\nabla f = (1, 1) \neq 0$, na krožnici pa vseeno doseže največjo vrednost.
+:::
+
 Metoda velja v točkah, kjer je $\nabla g \neq 0$. Pri več spremenljivkah in več pogojih $g_1 = 0, \dots, g_m = 0$ uvedemo po en multiplikator za vsak pogoj: $\nabla f = \lambda_1 \nabla g_1 + \dots + \lambda_m \nabla g_m$.
 
 **7. Globalni ekstremi na zaprti omejeni množici.** Zvezna funkcija na zaprti in omejeni množici $D$ zavzame največjo in najmanjšo vrednost. Iščemo ju takole: (1) stacionarne točke v notranjosti $D$, (2) vezane ekstreme na robu $D$ (z Lagrangeovo metodo ali parametrizacijo roba), (3) oglišča roba, če obstajajo. Med vsemi dobljenimi vrednostmi izberemo največjo in najmanjšo. Hessejeve matrike tu ne potrebujemo.
@@ -85,7 +107,7 @@ Stacionarna točka: $f_x = 0$, $f_y = 0$. Test: $D = f_{xx} f_{yy} - f_{xy}^2$; 
 
 1. Parcialna odvoda: $f_x = 2x - 4$, $f_y = 2y + 6$.
 2. Sistem $2x - 4 = 0$, $2y + 6 = 0$ ima rešitev $x = 2$, $y = -3$. Edina stacionarna točka je $T(2, -3)$.
-3. Drugi odvodi: $f_{xx} = 2$, $f_{yy} = 2$, $f_{xy} = 0$, torej $D = 2 \cdot 2 - 0^2 = 4 > 0$ in $f_{xx} > 0$.
+3. Drugi odvodi: $f_{xx} = 2$, $f_{yy} = 2$, $f_{xy} = 0$, torej $D = 2 \cdot 2 - 0^2 = 4 > 0$ in $f_{xx} > 0$, zato je v $T$ lokalni minimum.
 4. Vrednost: $f(2, -3) = 4 + 9 - 8 - 18 + 1 = -12$.
 5. Preizkus z dopolnitvijo do kvadrata: $f = (x - 2)^2 + (y + 3)^2 - 12 \ge -12$. Minimum je celo globalni.
 6. Odgovor: funkcija ima v točki $(2, -3)$ minimum z vrednostjo $-12$.
@@ -134,6 +156,30 @@ $S = xy + 2xz + 2yz$, pogoj $g = xyz - 32 = 0$. Lagrange: $\nabla S = \lambda \n
 7. Površina: $S = 4 \cdot 4 + 2 \cdot 4 \cdot 2 + 2 \cdot 4 \cdot 2 = 16 + 16 + 16 = 48\,\mathrm{dm^2}$.
 8. To je res minimum: ko gre katerakoli mera proti $0$ ali $\infty$, gre $S$ proti $\infty$, zato zvezna funkcija na tej ploskvi zavzame najmanjšo vrednost, edina kandidatka pa je najdena točka. Za primerjavo: kocka z robom $\sqrt[3]{32} \approx 3{,}17\,\mathrm{dm}$ bi porabila $5 \cdot 3{,}17^2 \approx 50{,}4\,\mathrm{dm^2}$.
 9. Odgovor: škatla naj ima dno $4\,\mathrm{dm} \times 4\,\mathrm{dm}$ in višino $2\,\mathrm{dm}$; porabimo $48\,\mathrm{dm^2}$ materiala.
+
+### Primer 4 – zdaj ti
+
+Tonska mojstrica v studiu nastavlja izenačevalnik: $x$ je ojačanje nizkih tonov, $y$ ojačanje visokih tonov (oboje v $\mathrm{dB}$). Odstopanje posnetka od želenega zvoka opisuje model $N(x, y) = 2x^2 + 2xy + y^2 - 4x - 6y + 20$. Pri katerih nastavitvah je odstopanje najmanjše in koliko je?
+
+**Podatki:** $N(x, y) = 2x^2 + 2xy + y^2 - 4x - 6y + 20$, $x$ in $y$ v $\mathrm{dB}$
+**Iščemo:** stacionarno točko, njeno naravo in vrednost $N$ v njej
+
+:::formula
+$N_x = 0$, $N_y = 0$; $D = N_{xx} N_{yy} - N_{xy}^2$, pri $D > 0$ in $N_{xx} > 0$ je minimum.
+:::
+
+**Rešitev:**
+
+1. Parcialna odvoda: $N_x = 4x + 2y - 4$, $N_y = 2x + 2y - 6$.
+2. Enačbi $N_x = 0$ in $N_y = 0$ odštejemo, da se $y$ izloči: $2x + 2 = 0$, torej $x = -1$ in iz $N_y = 0$ še $y = 4$.
+3. Drugi odvodi: $N_{xx} = 4$, $N_{yy} = 2$, $N_{xy} = 2$.
+4. Izračunaj $D$, določi naravo točke $(-1, 4)$ in vrednost $N$ v njej.
+
+:::premisli
+Kaj dobiš?
+---
+$D = 4 \cdot 2 - 2^2 = 4 > 0$ in $N_{xx} = 4 > 0$, zato je v $(-1, 4)$ minimum. Vrednost je $N(-1, 4) = 2 - 8 + 16 + 4 - 24 + 20 = 10$: nizke tone je treba za $1\,\mathrm{dB}$ znižati, visoke za $4\,\mathrm{dB}$ zvišati.
+:::
 
 ## Pogoste napake
 
@@ -202,31 +248,51 @@ Za $n = 2$ je simetrična matrika $\begin{bmatrix} A & B \\ B & C \end{bmatrix}$
 
 ? Katera je stacionarna točka funkcije $f(x, y) = x^2 + xy + y^2 - 3x$?
 - $(1, 1)$
+~ Ta točka zadošča le enačbi $f_x = 0$; preveri še $f_y = x + 2y$, ki tu ni nič.
 + $(2, -1)$
 - $(-2, 1)$
+~ Predznaka sta zamenjana; vstavi v $f_x = 2x + y - 3$ in dobiš $-6$, ne $0$.
 - $\left(\frac{3}{2}, 0\right)$
+~ Dobiš, če člen $xy$ pri odvajanju izpustiš; njegova odvoda po $x$ in po $y$ sta $y$ in $x$, ne $0$.
 > $f_x = 2x + y - 3 = 0$ in $f_y = x + 2y = 0$. Iz druge $x = -2y$, vstavimo: $-4y + y = 3$, $y = -1$, $x = 2$.
 
 ? V stacionarni točki je $f_{xx} = 2$, $f_{yy} = -8$ in $f_{xy} = 1$. Kaj je ta točka?
 - lokalni minimum
+~ Pogledal si le $f_{xx} > 0$; predznak $f_{xx}$ odloča šele, ko je $D > 0$.
 - lokalni maksimum
+~ Pogledal si le $f_{yy} < 0$; ko sta $f_{xx}$ in $f_{yy}$ različnih predznakov, je $D$ negativen.
 + sedlo
 - test ne odloči
+~ To velja le pri $D = 0$, tu pa $D$ ni nič.
 > $D = 2 \cdot (-8) - 1^2 = -17 < 0$, zato je točka sedlo.
 
 ? Funkcija ima v stacionarni točki $D = f_{xx} f_{yy} - f_{xy}^2 = 0$. Kaj lahko zanesljivo sklepamo?
 - v točki ni ekstrema
+~ Pri $D = 0$ ekstrem lahko obstaja: $x^4 + y^4$ ima v izhodišču minimum.
 - v točki je sedlo
+~ Sedlo zanesljivo napove le $D < 0$; pri $D = 0$ je lahko tudi ekstrem.
 + test drugih odvodov ne odloči, potrebna je dodatna raziskava
 - v točki je minimum, če je $f_{xx} > 0$
+~ To pravilo velja le pri $D > 0$; $x^2 + y^3$ ima v izhodišču $D = 0$ in $f_{xx} = 2$, minimuma pa ni.
 > Pri $D = 0$ je lahko v točki minimum ($x^4 + y^4$), maksimum ($-x^4 - y^4$) ali sedlo ($x^4 - y^4$).
 
 ? Kolikšna je največja vrednost $f(x, y) = x + y$ pri pogoju $x^2 + y^2 = 2$?
 - $\sqrt{2}$
+~ To je polmer krožnice oziroma vrednost $f(\sqrt{2}, 0)$; v tej točki gradienta nista vzporedna.
 + $2$
 - $4$
+~ To je največja vrednost $(x + y)^2$, ne $x + y$; pozabil si koreniti.
 - $1$
+~ To je koordinata $x = 1$ točke maksimuma, ne vrednost $f(1, 1)$.
 > Lagrange: $1 = 2\lambda x$, $1 = 2\lambda y$, torej $x = y$; iz $2x^2 = 2$ sledi $x = \pm 1$. V $(1, 1)$ je največja vrednost $2$, v $(-1, -1)$ najmanjša $-2$.
+
+? Zakaj sta v točki vezanega ekstrema gradienta $\nabla f$ in $\nabla g$ vzporedna?
+- Ker je v vsakem ekstremu $\nabla f = 0$.
+~ To velja za proste ekstreme v notranjosti; pri vezanem je $\nabla f$ navadno različen od nič, npr. $(1, 1)$ pri $f = x + y$.
++ Ker bi sicer $\nabla f$ imel komponento vzdolž krivulje $g = 0$ in bi se po njej lahko premaknili do večje ali manjše vrednosti.
+- Ker je Lagrangeov multiplikator vedno $\lambda = 1$.
+~ Multiplikator je lahko poljubno število in ga dobimo šele iz sistema; vzporednost ne izhaja iz njegove vrednosti.
+> Na krivulji se gibljemo le v smeri tangente, ki je pravokotna na $\nabla g$. Če $f$ v tej smeri ne sme ne rasti ne padati, je tudi $\nabla f$ pravokoten na tangento, torej $\nabla f = \lambda \nabla g$.
 
 :::simboli
 f | funkcija dveh ali več spremenljivk | |
@@ -252,4 +318,5 @@ g_x, g_y | parcialna odvoda funkcije vezi | |
 a | notranja točka lokalnega ekstrema v ℝⁿ | |
 o | mali o (Landauova oznaka) | | | o(‖h‖²) gre proti nič hitreje kot ‖h‖²
 S | površina škatle brez pokrova | S = xy + 2xz + 2yz |
+N | odstopanje posnetka od želenega zvoka | | | v primeru 4; x, y sta ojačanji v dB
 :::

@@ -2813,7 +2813,6 @@
   "adm.rep.app": "Error de la app (administrador)",
   "adm.rep.more": "Detalles",
   "adm.rep.question": "Pregunta:",
-  "adm.rep.answer": "Respuesta:",
   "adm.rep.fixed": "Corregido",
   "adm.rep.reopen": "Reabrir",
   "adm.rep.none": "No hay informes.",
@@ -2866,5 +2865,10 @@
   "sc.tab.range": "El inicio, el paso (no 0) y el número de filas (1–200) deben ser números.",
   "gc.reg.quart": "Cuártica",
   "gc.reg.logistic": "Logística",
-  "gc.reg.sin": "Sinusoidal"
+  "gc.reg.sin": "Sinusoidal",
+  "chat.full": "Mostrar todo el procedimiento",
+  "chat.fullMsg": "Muéstrame todo el procedimiento de este ejercicio.",
+  "adm.rep.shown": "Así vio el alumno la respuesta:",
+  "adm.rep.rerendered": "La respuesta, mostrada de nuevo (aviso antiguo sin captura):",
+  "adm.rep.raw": "Texto sin procesar del tutor:"
 }

@@ -2865,7 +2865,6 @@
   "adm.rep.app": "Chyba aplikácie (správca)",
   "adm.rep.more": "Podrobnosti",
   "adm.rep.question": "Otázka:",
-  "adm.rep.answer": "Odpoveď:",
   "adm.rep.fixed": "Opravené",
   "adm.rep.reopen": "Znova otvoriť",
   "adm.rep.none": "Žiadne hlásenia.",
@@ -2918,5 +2917,10 @@
   "sc.tab.range": "Začiatok, krok (nie 0) a počet riadkov (1–200) musia byť čísla.",
   "gc.reg.quart": "Kvartická",
   "gc.reg.logistic": "Logistická",
-  "gc.reg.sin": "Sínusová"
+  "gc.reg.sin": "Sínusová",
+  "chat.full": "Ukázať celý postup",
+  "chat.fullMsg": "Ukáž mi celý postup tejto úlohy.",
+  "adm.rep.shown": "Takto žiak videl odpoveď:",
+  "adm.rep.rerendered": "Odpoveď znova vykreslená (staršie hlásenie bez snímky):",
+  "adm.rep.raw": "Pôvodný text lektora:"
 }

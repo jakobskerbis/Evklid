@@ -15,7 +15,7 @@ import { useLoad } from "@/lib/useLoad";
 import { RichText } from "@/components/RichText";
 import { FormulaCtx, type Fx } from "@/lib/formula-ctx";
 import { Banner, Body, Button, Card, Chip, ErrorView, Icon, Loading, ProgressBar, Screen, Title } from "@/components/ui";
-import { ReportSheet } from "@/components/ReportSheet";
+import { appDevice, ReportSheet } from "@/components/ReportSheet";
 
 type Check = { q: string; options: string[]; correct: number; why?: string; optionWhy?: string[] };
 type Section = { title: string; md: string };
@@ -126,7 +126,7 @@ export default function Topic() {
         onClose={() => setReporting(false)}
         onSend={async ({ reason, note }) => {
           await api(`/api/students/${student.id}/lesson-report`, {
-            body: { topic: L.id, reason, note, step: lesson && byStep && steps.length > 1 ? Math.min(step, steps.length - 1) + 1 : null, device: "app" },
+            body: { topic: L.id, reason, note, step: lesson && byStep && steps.length > 1 ? Math.min(step, steps.length - 1) + 1 : null, ...appDevice() },
           });
           setReported(true);
           Alert.alert(t("lrep.thanks"));

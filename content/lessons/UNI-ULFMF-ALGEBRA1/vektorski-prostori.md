@@ -5,15 +5,19 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Pri sistemih linearnih enačb si opazil nekaj posebnega. Če sta $x$ in $y$ rešitvi **homogenega** sistema $A\mathbf{x} = \mathbf{0}$, je rešitev tudi njuna vsota $x + y$ in vsak večkratnik $\lambda x$. Množica rešitev je torej »zaprta« za seštevanje in množenje s skalarjem.
+V 19. stoletju je gimnazijski učitelj Hermann Grassmann opazil, da se s premiki, silami in še marsičim računa po istih pravilih. Sodobniki njegove knjige skoraj niso razumeli; šele Giuseppe Peano je pozneje ta pravila zbral v kratek seznam, ki mu danes rečemo aksiomi **vektorskega prostora**.
 
-Isto se zgodi drugje. Dva polinoma stopnje največ $2$ seštejemo in dobimo polinom stopnje največ $2$. Dve matriki velikosti $2 \times 3$ seštejemo in dobimo matriko $2 \times 3$. Rešitve, polinomi in matrike so različni predmeti, a jih seštevamo in množimo s številom po istih pravilih kot puščice v ravnini.
+Isti vzorec srečaš sam. Če sta $x$ in $y$ rešitvi **homogenega** sistema $A\mathbf{x} = \mathbf{0}$, sta rešitvi tudi $x + y$ in vsak večkratnik $\lambda x$. Dva polinoma stopnje največ $2$ data v vsoti spet tak polinom, dve matriki $2 \times 3$ spet matriko $2 \times 3$. Na nogometnem igrišču se premika žoge pri dveh zaporednih podajah seštejeta v en sam premik, prav kot puščice v ravnini.
 
-**Vektorski prostor** je ime za vse take množice hkrati. Ko enkrat dokažeš izrek za vektorski prostor, velja za vse naenkrat. V tej lekciji se naučiš štiri ključne pojme: **podprostor**, **linearno neodvisnost**, **bazo** in **dimenzijo**. Z njimi izmeriš, »kako velika« je množica rešitev sistema.
+Izrek, dokazan enkrat za vektorski prostor, velja za vse te primere hkrati. Štirje pojmi, **podprostor**, **linearna neodvisnost**, **baza** in **dimenzija**, povedo, »kako velika« je množica rešitev sistema.
 
 ## Razlaga
 
-**1. Vektorski prostor.** Vektorski prostor nad $\mathbb{R}$ je množica $V$, v kateri znamo vektorje seštevati ($u + v \in V$) in množiti s skalarjem ($\lambda u \in V$ za $\lambda \in \mathbb{R}$). Operaciji morata ustrezati običajnim pravilom: seštevanje je asociativno in komutativno, obstaja ničelni vektor $\mathbf{0}$, vsak $u$ ima nasprotni vektor $-u$, veljata distributivnosti in $1 \cdot u = u$.
+Vsak razdelek spodaj se začne s predstavo, ki se zdi naravna, a vodi v napako. Ko jo popravimo, dobimo natančen pojem.
+
+### »Vektor je puščica«
+
+Puščica je le en primer. Pomembno ni, kako je vektor videti, ampak kaj z vektorji znamo početi. Vektorski prostor nad $\mathbb{R}$ je množica $V$, v kateri znamo vektorje seštevati ($u + v \in V$) in množiti s skalarjem ($\lambda u \in V$ za $\lambda \in \mathbb{R}$). Operaciji morata ustrezati običajnim pravilom: seštevanje je asociativno in komutativno, obstaja ničelni vektor $\mathbf{0}$, vsak $u$ ima nasprotni vektor $-u$, veljata distributivnosti in $1 \cdot u = u$.
 
 Primeri, ki jih boš srečeval ves čas:
 
@@ -23,9 +27,11 @@ Primeri, ki jih boš srečeval ves čas:
 | $\mathbb{R}_n[x]$ | polinomi stopnje $\le n$ | polinom $0$ |
 | $\mathbb{R}^{m \times n}$ | matrike $m \times n$ | ničelna matrika |
 
-**2. Podprostor.** Podmnožica $U \subseteq V$ je **vektorski podprostor**, če je neprazna in zaprta za obe operaciji: za vse $u, v \in U$ in $\lambda \in \mathbb{R}$ velja $u + v \in U$ in $\lambda u \in U$. Ekvivalentno: $\mathbf{0} \in U$ in $\alpha u + \beta v \in U$ za vse $u, v \in U$ in vse skalarje $\alpha, \beta$.
+### »Vsaka premica je podprostor«
 
-Hiter test: če $\mathbf{0} \notin U$, $U$ ni podprostor. Premica $y = 2x$ v ravnini je podprostor. Premica $y = 2x + 1$ ni, ker ne gre skozi izhodišče.
+Premici $y = 2x$ in $y = 2x + 1$ sta vzporedni, podprostor pa je le prva. Odloča zaprtost za obe operaciji. Podmnožica $U \subseteq V$ je **vektorski podprostor**, če je neprazna in zaprta za obe operaciji: za vse $u, v \in U$ in $\lambda \in \mathbb{R}$ velja $u + v \in U$ in $\lambda u \in U$. Ekvivalentno: $\mathbf{0} \in U$ in $\alpha u + \beta v \in U$ za vse $u, v \in U$ in vse skalarje $\alpha, \beta$.
+
+Hiter test: če $\mathbf{0} \notin U$, $U$ ni podprostor. Zato premica $y = 2x + 1$ odpade: ne gre skozi izhodišče. Premica $y = 2x$ pa test prestane in je podprostor.
 
 Množica rešitev homogenega sistema $A\mathbf{x} = \mathbf{0}$ je vedno podprostor v $\mathbb{R}^n$. Množica rešitev nehomogenega sistema $A\mathbf{x} = \mathbf{b}$ z $\mathbf{b} \neq \mathbf{0}$ ni, saj $\mathbf{0}$ ni njena rešitev.
 
@@ -35,11 +41,15 @@ Ali je unija obeh koordinatnih osi v ravnini, $\{(x, y) : xy = 0\}$, podprostor 
 Ni. Vsebuje $\mathbf{0}$ in je zaprta za množenje s skalarjem, a ni zaprta za seštevanje: $(1, 0) + (0, 1) = (1, 1)$, za to točko pa $xy = 1 \neq 0$. Unija podprostorov v splošnem ni podprostor, presek pa vedno je.
 :::
 
-**3. Linearna kombinacija in ogrinjača.** Vektor $\alpha_1 v_1 + \alpha_2 v_2 + \ldots + \alpha_k v_k$ je **linearna kombinacija** vektorjev $v_1, \ldots, v_k$. Množica vseh njihovih linearnih kombinacij je **linearna ogrinjača** $\mathcal{L}\{v_1, \ldots, v_k\}$. Ogrinjača je vedno podprostor. Pravimo, da vektorji $v_1, \ldots, v_k$ **napenjajo** $V$, če je $\mathcal{L}\{v_1, \ldots, v_k\} = V$.
+### »Več vektorjev pomeni večji prostor«
 
-V $\mathbb{R}^3$ je ogrinjača enega neničelnega vektorja premica skozi izhodišče. Ogrinjača dveh nevzporednih vektorjev je ravnina skozi izhodišče.
+Kaj vse dosežemo z danimi vektorji? Vektor $\alpha_1 v_1 + \alpha_2 v_2 + \ldots + \alpha_k v_k$ je **linearna kombinacija** vektorjev $v_1, \ldots, v_k$. Množica vseh njihovih linearnih kombinacij je **linearna ogrinjača** $\mathcal{L}\{v_1, \ldots, v_k\}$. Ogrinjača je vedno podprostor. Pravimo, da vektorji $v_1, \ldots, v_k$ **napenjajo** $V$, če je $\mathcal{L}\{v_1, \ldots, v_k\} = V$.
 
-**4. Linearna neodvisnost.** Vektorji $v_1, \ldots, v_k$ so **linearno neodvisni**, če iz
+V $\mathbb{R}^3$ je ogrinjača enega neničelnega vektorja premica skozi izhodišče. Ogrinjača dveh nevzporednih vektorjev je ravnina skozi izhodišče. Tretji vektor v isti ravnini ogrinjače ne poveča: več vektorjev še ne pomeni večjega prostora.
+
+### »Če noben par ni vzporeden, so vektorji neodvisni«
+
+Za dva vektorja to drži, za tri ne več: trije paroma nevzporedni vektorji lahko ležijo v isti ravnini. Pravo merilo je tole. Vektorji $v_1, \ldots, v_k$ so **linearno neodvisni**, če iz
 
 $$\alpha_1 v_1 + \ldots + \alpha_k v_k = \mathbf{0}$$
 
@@ -49,13 +59,17 @@ Neodvisnost preverjaš s homogenim sistemom. Vektorje zapišeš kot stolpce matr
 
 Geometrijska slika v $\mathbb{R}^3$: dva vektorja sta odvisna natanko takrat, ko sta vzporedna. Trije vektorji so odvisni natanko takrat, ko ležijo v isti ravnini skozi izhodišče.
 
-**5. Baza.** **Baza** prostora $V$ je zaporedje vektorjev $b_1, \ldots, b_n$, ki je linearno neodvisno in napenja $V$. Takrat lahko vsak $v \in V$ zapišemo **na en sam način** kot
+### »Vsak nabor, ki napenja prostor, je baza«
+
+Nabor, ki napenja, ima lahko odvečne vektorje. **Baza** prostora $V$ je zaporedje vektorjev $b_1, \ldots, b_n$, ki je linearno neodvisno in napenja $V$. Takrat lahko vsak $v \in V$ zapišemo **na en sam način** kot
 
 $$v = \alpha_1 b_1 + \ldots + \alpha_n b_n.$$
 
 Števila $(\alpha_1, \ldots, \alpha_n)$ so **koordinate** vektorja $v$ glede na bazo. Napenjanje zagotovi, da zapis obstaja, neodvisnost pa, da je en sam. **Standardna baza** prostora $\mathbb{R}^3$ je $e_1 = (1,0,0)$, $e_2 = (0,1,0)$, $e_3 = (0,0,1)$. Standardna baza prostora $\mathbb{R}_2[x]$ je $1, x, x^2$.
 
-**6. Dimenzija.** Prostor ima veliko baz, a vse imajo **enako število elementov**. To število je **dimenzija** $\dim V$. Velja $\dim \mathbb{R}^n = n$, $\dim \mathbb{R}_n[x] = n + 1$ in $\dim \mathbb{R}^{m \times n} = mn$.
+### »Dimenzija je število komponent«
+
+Vektorji v $\mathbb{R}^4$ imajo po štiri komponente, ravnina skozi izhodišče v $\mathbb{R}^4$ pa je kljub temu dvorazsežna. Dimenzija šteje vektorje v bazi, ne komponent. Prostor ima veliko baz, a vse imajo **enako število elementov**. To število je **dimenzija** $\dim V$. Velja $\dim \mathbb{R}^n = n$, $\dim \mathbb{R}_n[x] = n + 1$ in $\dim \mathbb{R}^{m \times n} = mn$.
 
 Podprostori v $\mathbb{R}^3$, urejeni po dimenziji:
 
@@ -97,7 +111,7 @@ $U$ je podprostor, če $\mathbf{0} \in U$ in za $u, v \in U$, $\alpha, \beta \in
 
 ### Primer 2: so vektorji neodvisni?
 
-Ali so vektorji $v_1 = (1, 2, 1)$, $v_2 = (2, 1, 0)$, $v_3 = (1, -1, -1)$ v $\mathbb{R}^3$ linearno neodvisni? Če niso, poišči netrivialno kombinacijo, ki da $\mathbf{0}$.
+Dron, ki snema košarkarsko tekmo, ima tri osnovne ukaze za premik (v metrih vzdolž igrišča, čez igrišče in navzgor): $v_1 = (1, 2, 1)$, $v_2 = (2, 1, 0)$, $v_3 = (1, -1, -1)$. Pilot bi z njihovimi kombinacijami rad dosegel vsako točko nad igriščem. Ali so ti vektorji v $\mathbb{R}^3$ linearno neodvisni? Če niso, poišči netrivialno kombinacijo, ki da $\mathbf{0}$.
 
 **Podatki:** $v_1 = (1, 2, 1)$, $v_2 = (2, 1, 0)$, $v_3 = (1, -1, -1)$
 **Iščemo:** ali so neodvisni; sicer zvezo med njimi.
@@ -113,7 +127,7 @@ $$\det\begin{bmatrix} 1 & 2 & 1 \\ 2 & 1 & 0 \\ 1 & -1 & -1 \end{bmatrix}$$
 2. Razvoj po prvi vrstici: $1 \cdot (-1 - 0) - 2 \cdot (-2 - 0) + 1 \cdot (-2 - 1)$.
 3. To je $-1 + 4 - 3 = 0$, zato so vektorji linearno odvisni.
 4. Iščemo zvezo. Opazimo $v_2 - v_1 = (2 - 1,\ 1 - 2,\ 0 - 1) = (1, -1, -1) = v_3$.
-5. Odgovor: vektorji so odvisni, velja $v_1 - v_2 + v_3 = \mathbf{0}$. Noben par ni vzporeden, a vsi trije ležijo v isti ravnini, zato je $\dim \mathcal{L}\{v_1, v_2, v_3\} = 2$.
+5. Odgovor: vektorji so odvisni, velja $v_1 - v_2 + v_3 = \mathbf{0}$. Noben par ni vzporeden, a vsi trije ležijo v isti ravnini, zato je $\dim \mathcal{L}\{v_1, v_2, v_3\} = 2$. Dron s temi ukazi ostane v eni ravnini in ne doseže vsake točke nad igriščem.
 
 ### Primer 3 (težji): baza in dimenzija množice rešitev
 

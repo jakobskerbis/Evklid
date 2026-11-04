@@ -5,19 +5,21 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Poševno zapičena palica pod svetilko, ki sveti navpično navzdol, meče senco na ravna tla. Konec sence je **najbližja točka na tleh** vrhu palice: od vrha do konca sence gre črta, pravokotna na tla. Isto vprašanje se pojavi povsod. Katera točka na premici je najbližja dani točki? Katera kombinacija danih vektorjev se merjenim podatkom najbolj prilega?
-
-V vektorskem prostoru doslej nismo imeli ne dolžin ne kotov. Znali smo seštevati vektorje in jih množiti s skalarji, nismo pa znali reči, da je vektor »dolg 3« ali da sta dva vektorja »pravokotna«. To dodamo s **skalarnim produktom**. Iz njega dobimo dolžino (normo), pravokotnost (ortogonalnost), sence (ortogonalne projekcije) in postopek, ki iz poljubne baze naredi pravokotno bazo (Gram-Schmidtov postopek).
+Na začetku 19. stoletja so astronomi izgubili komaj odkriti Ceres, ko je izginil v soju Sonca. Carl Friedrich Gauss je iz peščice netočnih meritev izračunal tir, ki se jim najbolj prilega, in Ceres so znova našli blizu mesta, ki ga je napovedal. Njegova metoda najmanjših kvadratov je v jeziku tega poglavja **ortogonalna projekcija**: izbere točko podprostora, ki je meritvam najbližja, tako kot konec sence poševne palice pod navpično svetilko leži na tleh najbliže njenemu vrhu. Enak račun danes potegne premico trenda skozi serijo bolnikovih meritev krvnega tlaka. Zanj potrebujemo dolžine in kote, ki jih vektorski prostor doslej ni poznal; prinese jih **skalarni produkt**. Iz njega dobimo normo, ortogonalnost, projekcije in Gram-Schmidtov postopek, ki iz poljubne baze naredi pravokotno.
 
 ## Razlaga
 
-**1. Skalarni produkt v $\mathbb{R}^n$.** Za $x = (x_1, \dots, x_n)$ in $y = (y_1, \dots, y_n)$ je standardni skalarni produkt
+### Skalarni produkt v $\mathbb{R}^n$: rezultat ni vektor
+
+Mamljivo je pričakovati, da je produkt dveh vektorjev spet vektor, na primer zmnožki po komponentah. Skalarni produkt te zmnožke še sešteje. Za $x = (x_1, \dots, x_n)$ in $y = (y_1, \dots, y_n)$ je standardni skalarni produkt
 
 $$\langle x, y \rangle = x_1 y_1 + x_2 y_2 + \dots + x_n y_n .$$
 
 Rezultat je število, ne vektor. Za $x = (1, 2)$ in $y = (3, -1)$ je $\langle x, y \rangle = 3 - 2 = 1$.
 
-**2. Splošna definicija.** Naj bo $V$ realen vektorski prostor. **Skalarni produkt** je preslikava $\langle \cdot , \cdot \rangle : V \times V \to \mathbb{R}$, ki za vse $u, v, w \in V$ in $\alpha \in \mathbb{R}$ zadošča:
+### Splošna definicija
+
+Naj bo $V$ realen vektorski prostor. **Skalarni produkt** je preslikava $\langle \cdot , \cdot \rangle : V \times V \to \mathbb{R}$, ki za vse $u, v, w \in V$ in $\alpha \in \mathbb{R}$ zadošča:
 
 - simetričnost: $\langle u, v \rangle = \langle v, u \rangle$,
 - linearnost v prvem faktorju: $\langle \alpha u + w, v \rangle = \alpha \langle u, v \rangle + \langle w, v \rangle$,
@@ -29,11 +31,13 @@ $$\langle p, q \rangle = \int_0^1 p(x)\, q(x)\, dx$$
 
 skalarni produkt. Pozitivna definitnost velja, ker je $\int_0^1 p^2\,dx > 0$ za vsak neničelni polinom. V kompleksnem prostoru namesto simetričnosti zahtevamo $\langle u, v \rangle = \overline{\langle v, u \rangle}$.
 
-**3. Norma.** **Norma** (dolžina) vektorja je
+### Norma: dolžina, ki ni linearna
+
+**Norma** (dolžina) vektorja je
 
 $$\|v\| = \sqrt{\langle v, v \rangle}.$$
 
-V $\mathbb{R}^2$ je to Pitagorov izrek: $\|(3, 4)\| = \sqrt{9 + 16} = 5$. Norma ima tri lastnosti:
+V $\mathbb{R}^2$ je to Pitagorov izrek: $\|(3, 4)\| = \sqrt{9 + 16} = 5$. Hitro se zdi, da se norma obnaša kot linearna preslikava. Ne: $\|{-2}v\| = 2\|v\|$, ne $-2\|v\|$, dolžina vsote pa je lahko krajša od vsote dolžin. Norma ima tri lastnosti:
 
 - $\|v\| \ge 0$ in $\|v\| = 0$ le za $v = 0$,
 - $\|\alpha v\| = |\alpha| \, \|v\|$ (absolutna vrednost!),
@@ -41,7 +45,9 @@ V $\mathbb{R}^2$ je to Pitagorov izrek: $\|(3, 4)\| = \sqrt{9 + 16} = 5$. Norma 
 
 Vektor z normo $1$ je **enotski**. Iz vsakega $v \ne 0$ ga dobimo z **normiranjem**: $\dfrac{v}{\|v\|}$.
 
-**4. Cauchy-Schwarzeva neenakost in kot.** Za vse $u, v$ velja
+### Cauchy-Schwarzeva neenakost in kot
+
+Za vse $u, v$ velja
 
 $$|\langle u, v \rangle| \le \|u\| \, \|v\| .$$
 
@@ -49,7 +55,9 @@ Zato je za neničelna $u, v$ količnik $\dfrac{\langle u, v \rangle}{\|u\|\,\|v\
 
 $$\cos \varphi = \frac{\langle u, v \rangle}{\|u\| \, \|v\|} .$$
 
-**5. Ortogonalnost.** Vektorja sta **ortogonalna** (pravokotna), $u \perp v$, če je $\langle u, v \rangle = 0$. Za ortogonalna vektorja velja Pitagorov izrek:
+### Ortogonalnost
+
+Vektorja sta **ortogonalna** (pravokotna), $u \perp v$, če je $\langle u, v \rangle = 0$. Za ortogonalna vektorja velja Pitagorov izrek:
 
 $$\|u + v\|^2 = \|u\|^2 + \|v\|^2 .$$
 
@@ -61,7 +69,9 @@ Ali je vsaka ortogonalna množica neničelnih vektorjev $u_1, \dots, u_k$ linear
 Da. Po množenju z $u_j$ vsi členi razen enega izginejo: $\alpha_j \langle u_j, u_j \rangle = 0$. Ker je $u_j \ne 0$, je $\langle u_j, u_j \rangle > 0$, torej $\alpha_j = 0$. To velja za vsak $j$. Obratno ne velja: neodvisna vektorja nista nujno pravokotna.
 :::
 
-**6. Ortogonalna projekcija na vektor.** Naj bo $u \ne 0$. Vektor $v$ razstavimo na del vzdolž $u$ in del, pravokoten na $u$. Slika v besedah:
+### Projekcija na vektor: deliti z $\|u\|$ ali z $\|u\|^2$?
+
+Prva misel je, da senco $v$ na $u$ dobimo tako, da $\langle v, u \rangle u$ delimo z dolžino $\|u\|$. Popravi jo en sam pogoj: ostanek mora biti pravokoten na $u$. Naj bo $u \ne 0$. Vektor $v$ razstavimo na del vzdolž $u$ in del, pravokoten na $u$. Slika v besedah:
 
 ```
         v
@@ -78,13 +88,17 @@ $$\operatorname{proj}_u v = \frac{\langle v, u \rangle}{\langle u, u \rangle}\, 
 
 V imenovalcu je $\langle u, u \rangle = \|u\|^2$, ne $\|u\|$. Za enotski $u$ se formula skrajša v $\langle v, u \rangle u$.
 
-**7. Projekcija na podprostor.** Naj ima podprostor $W$ **ortogonalno** bazo $u_1, \dots, u_k$. Ortogonalna projekcija $v$ na $W$ je
+### Projekcija na podprostor
+
+Senco na podprostor bi radi dobili kot vsoto senc na vektorje, ki ga razpenjajo. To deluje le, če so med seboj pravokotni. Naj ima podprostor $W$ **ortogonalno** bazo $u_1, \dots, u_k$. Ortogonalna projekcija $v$ na $W$ je
 
 $$\operatorname{proj}_W v = \sum_{j=1}^{k} \frac{\langle v, u_j \rangle}{\langle u_j, u_j \rangle}\, u_j .$$
 
 Ostanek $v - \operatorname{proj}_W v$ je pravokoten na vsak vektor iz $W$. Projekcija je tudi **najbližja točka** podprostora: za vsak $w \in W$ velja $\|v - w\| \ge \|v - \operatorname{proj}_W v\|$. To je senca palice iz uvoda. Formula zahteva ortogonalno bazo. Pri neortogonalni bazi se posamezne sence prekrivajo in vsota ni projekcija.
 
-**8. Gram-Schmidtov postopek.** Kako dobimo ortogonalno bazo? Iz baze $v_1, \dots, v_k$ podprostora $W$ gradimo po vrsti:
+### Gram-Schmidtov postopek
+
+Kako dobimo ortogonalno bazo? Iz baze $v_1, \dots, v_k$ podprostora $W$ gradimo po vrsti:
 
 - $u_1 = v_1$,
 - $u_2 = v_2 - \operatorname{proj}_{u_1} v_2$,
@@ -122,7 +136,7 @@ $\|v\| = \sqrt{\langle v, v \rangle}$, $\quad \cos \varphi = \dfrac{\langle u, v
 
 ### Primer 2: projekcija na premico
 
-Poišči ortogonalno projekcijo vektorja $v = (3, 1, 2)$ na premico skozi izhodišče s smernim vektorjem $u = (1, 1, 1)$ ter razdaljo točke $v$ do te premice.
+Medicinska sestra trikrat izmeri bolnikovo telesno temperaturo; odčitki nad $36\,^\circ\text{C}$ so $3$, $1$ in $2$ desetinke stopinje, kar zapišemo kot vektor $v = (3, 1, 2)$. Poišči ortogonalno projekcijo $v$ na premico skozi izhodišče s smernim vektorjem $u = (1, 1, 1)$ ter razdaljo točke $v$ do te premice.
 
 **Podatki:** $v = (3, 1, 2)$, $u = (1, 1, 1)$, standardni skalarni produkt
 **Iščemo:** $p = \operatorname{proj}_u v$ in razdaljo $\|v - p\|$
@@ -138,7 +152,7 @@ $\operatorname{proj}_u v = \dfrac{\langle v, u \rangle}{\langle u, u \rangle}\, 
 3. Ostanek: $v - p = (1, -1, 0)$.
 4. Preizkus pravokotnosti: $\langle v - p, u \rangle = 1 - 1 + 0 = 0$. Ostanek je res pravokoten na premico.
 5. Razdalja: $\|v - p\| = \sqrt{1 + 1 + 0} = \sqrt{2} \approx 1{,}41$.
-6. Odgovor: projekcija je $(2, 2, 2)$, razdalja točke do premice je $\sqrt{2}$.
+6. Odgovor: projekcija je $(2, 2, 2)$, razdalja točke do premice je $\sqrt{2}$. Projekcija na $(1, 1, 1)$ v vsako komponento zapiše povprečje meritev: $\tfrac{3 + 1 + 2}{3} = 2$ desetinki.
 
 ### Primer 3 (težji): najbližja točka ravnine
 

@@ -2789,7 +2789,6 @@
   "adm.rep.app": "アプリの不具合（管理者）",
   "adm.rep.more": "詳細",
   "adm.rep.question": "質問：",
-  "adm.rep.answer": "回答：",
   "adm.rep.fixed": "修正済み",
   "adm.rep.reopen": "再び開く",
   "adm.rep.none": "報告はありません。",
@@ -2842,5 +2841,10 @@
   "sc.tab.range": "開始値、刻み（0以外）、行数（1〜200）は数で入力してください。",
   "gc.reg.quart": "4次",
   "gc.reg.logistic": "ロジスティック",
-  "gc.reg.sin": "正弦"
+  "gc.reg.sin": "正弦",
+  "chat.full": "解き方をすべて見る",
+  "chat.fullMsg": "この問題の解き方をすべて見せてください。",
+  "adm.rep.shown": "生徒にはこのように表示されました：",
+  "adm.rep.rerendered": "回答を再表示（スナップショットのない以前の報告）：",
+  "adm.rep.raw": "チューターの元のテキスト："
 }

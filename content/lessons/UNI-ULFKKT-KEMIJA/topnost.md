@@ -5,11 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Ko v raztopino srebrovega nitrata kanemo nekaj kapljic raztopine natrijevega klorida, se takoj pojavi bela oborina srebrovega klorida. Nekatere soli so v vodi zelo dobro topne, druge skoraj netopne. A tudi »netopna« sol se raztaplja vsaj malo, in prav ta majhna topnost je pomembna: določa, ali bo iz raztopine nastala oborina, koliko snovi bo ostalo raztopljene in kako natančno lahko z obarjanjem določimo vsebnost iona.
+Uganka za začetek: srebrov kromat ima več kot $150$-krat manjši topnostni produkt kot srebrov klorid. Je zato tudi manj topen? Večina reče »da« in se zmoti; zakaj, izveš v razdelku 3. Takšna majhna števila odločajo o rečeh na gradbišču in v delavnici: apnenčasta fasada se v kislem dežju počasi raztaplja, v grelniku vode se nabira kotlovec, keramiki barij iz glazur z obarjanjem odstranijo iz odpadne vode. V laboratoriju isto ravnotežje izkoristimo za **gravimetrijo**: ion oborimo in oborino stehtamo. Barijev sulfat, ki ga bolniki popijejo pred rentgenskim slikanjem, je kljub strupenim barijevim ionom varen prav zaradi izjemno majhne topnosti.
 
-Topnostna ravnotežja so povsod. Ledvični kamni so oborine kalcijevega oksalata in fosfata, zobna sklenina je hidroksiapatit, ki ga kisline raztapljajo, kapniki in školjke so kalcijev karbonat. V čistilnih napravah fosfate in težke kovine odstranjujemo z obarjanjem, v analizni kemiji pa z **gravimetrijo** natančno določamo maso iona prek mase oborine. Barijev sulfat, ki ga bolniki popijejo pred rentgenskim slikanjem, je kljub strupenosti barijevih ionov varen ravno zaradi izjemno majhne topnosti.
-
-V tej lekciji se naučiš:
+Na koncu boš znal:
 
 - zapisati **topnostni produkt** $K_\mathrm{sp}$ in ga povezati s **topnostjo**,
 - napovedati **obarjanje** s primerjavo ionskega produkta in $K_\mathrm{sp}$,
@@ -30,6 +28,12 @@ Trdna snov v izrazu ne nastopa (aktivnost $1$). $K_\mathrm{sp}$ je konstanta rav
 - $\mathrm{CaF_2(s) \rightleftharpoons Ca^{2+} + 2\,F^-}$: $K_\mathrm{sp} = [\mathrm{Ca^{2+}}][\mathrm{F^-}]^2 = 3{,}9 \cdot 10^{-11}$,
 - $\mathrm{Ag_2CrO_4(s) \rightleftharpoons 2\,Ag^+ + CrO_4^{2-}}$: $K_\mathrm{sp} = [\mathrm{Ag^+}]^2[\mathrm{CrO_4^{2-}}] = 1{,}1 \cdot 10^{-12}$,
 - $\mathrm{BaSO_4}$: $K_\mathrm{sp} = 1{,}1 \cdot 10^{-10}$ (vse vrednosti pri $25\,^\circ\mathrm{C}$).
+
+:::premisli
+V nasičeno raztopino AgCl, na dnu katere je že nekaj oborine, stresemo še žličko trdnega AgCl. Napovej: ali se koncentracija $\mathrm{Ag^+}$ v raztopini poveča?
+---
+Ne. Trdna snov v izrazu za $K_\mathrm{sp}$ ne nastopa, zato več oborine ne premakne ravnotežja: raztopina je že nasičena in $[\mathrm{Ag^+}][\mathrm{Cl^-}]$ ostane $1{,}8 \cdot 10^{-10}$. Dodani AgCl le leži na dnu.
+:::
 
 **3. Povezava $K_\mathrm{sp}$ in topnosti.** Če se v čisti vodi raztopi $s$ mol soli na liter, je $[\mathrm{A}] = ms$ in $[\mathrm{B}] = ns$:
 
@@ -52,6 +56,12 @@ Pomembno: topnosti soli **različnih tipov** ne moremo primerjati le po $K_\math
 **5. Vpliv skupnega iona.** Če raztopina že vsebuje enega od ionov soli (»skupni ion«), se ravnotežje po Le Chatelierju premakne v levo in **topnost se zmanjša**. V raztopini $\mathrm{NaCl}$ je $\mathrm{AgCl}$ veliko manj topen kot v čisti vodi. Zato oborine v gravimetriji obarjamo s presežkom obarjalnega reagenta in jih spiramo z razredčeno raztopino skupnega iona, ne s čisto vodo.
 
 **6. Vpliv pH in kompleksov.** Če je anion soli baza (npr. $\mathrm{OH^-}$, $\mathrm{CO_3^{2-}}$, $\mathrm{PO_4^{3-}}$, $\mathrm{F^-}$, oksalat), ga kislina veže in odstrani iz ravnotežja, zato se topnost v kislem **poveča**. Hidroksidi kovin se zato obarjajo šele nad določenim pH. Topnost poveča tudi tvorba kompleksov: $\mathrm{AgCl}$ se raztopi v amoniaku, ker nastane $\mathrm{[Ag(NH_3)_2]^+}$.
+
+:::premisli
+Zakaj se fasada ali kamnit kip iz apnenca ($\mathrm{CaCO_3}$) v kislem dežju počasi raztaplja, v čisti deževnici pa skoraj nič?
+---
+Ioni $\mathrm{H^+}$ vežejo karbonat v $\mathrm{HCO_3^-}$ (in naprej v $\mathrm{CO_2}$), zato $[\mathrm{CO_3^{2-}}]$ pade. Ionski produkt $[\mathrm{Ca^{2+}}][\mathrm{CO_3^{2-}}]$ je tedaj manjši od $K_\mathrm{sp}$ in raztapljanje se nadaljuje: karbonat je bazičen anion, zato je topnost v kislem večja.
+:::
 
 **7. Selektivno obarjanje.** Če raztopina vsebuje več ionov, ki z istim reagentom tvorijo oborine, se najprej obori tista sol, pri kateri ionski produkt najprej doseže $K_\mathrm{sp}$. S postopnim dodajanjem reagenta lahko ione ločimo.
 
@@ -86,8 +96,8 @@ $K_\mathrm{sp} = [\mathrm{Ag^+}][\mathrm{Cl^-}] = s^2$, $\quad s = \sqrt{K_\math
 **Rešitev:**
 
 1. Raztopi se $s$ mol AgCl na liter, torej $[\mathrm{Ag^+}] = [\mathrm{Cl^-}] = s$.
-2. $s^2 = 1{,}8 \cdot 10^{-10}$, $s = \sqrt{1{,}8 \cdot 10^{-10}} = 1{,}34 \cdot 10^{-5}\,\mathrm{mol/L}$.
-3. Masna topnost: $\gamma = 1{,}34 \cdot 10^{-5}\,\mathrm{mol/L} \cdot 143{,}32\,\mathrm{g/mol} = 1{,}92 \cdot 10^{-3}\,\mathrm{g/L}$.
+2. Ker je $K_\mathrm{sp} = s \cdot s$: $s^2 = 1{,}8 \cdot 10^{-10}$, $s = \sqrt{1{,}8 \cdot 10^{-10}} = 1{,}34 \cdot 10^{-5}\,\mathrm{mol/L}$.
+3. Masna topnost (vsak mol tehta $M$ gramov): $\gamma = 1{,}34 \cdot 10^{-5}\,\mathrm{mol/L} \cdot 143{,}32\,\mathrm{g/mol} = 1{,}92 \cdot 10^{-3}\,\mathrm{g/L}$.
 4. Odgovor: topnost AgCl v vodi je $1{,}34 \cdot 10^{-5}\,\mathrm{mol/L}$ oziroma približno $1{,}9\,\mathrm{mg}$ na liter.
 
 ### Primer 2
@@ -103,7 +113,7 @@ $K_\mathrm{sp} = [\mathrm{Ca^{2+}}][\mathrm{F^-}]^2$; v vodi $K_\mathrm{sp} = s(
 
 **Rešitev:**
 
-1. V vodi: $[\mathrm{Ca^{2+}}] = s_1$, $[\mathrm{F^-}] = 2s_1$, $4s_1^3 = 3{,}9 \cdot 10^{-11}$.
+1. V vodi: $[\mathrm{Ca^{2+}}] = s_1$, $[\mathrm{F^-}] = 2s_1$ (vsaka formulska enota da dva fluoridna iona), $4s_1^3 = 3{,}9 \cdot 10^{-11}$.
 2. $s_1 = \sqrt[3]{3{,}9 \cdot 10^{-11}/4} = \sqrt[3]{9{,}75 \cdot 10^{-12}} = 2{,}14 \cdot 10^{-4}\,\mathrm{mol/L}$.
 3. V raztopini NaF: $[\mathrm{Ca^{2+}}] = s_2$, $[\mathrm{F^-}] = 0{,}010 + 2s_2 \approx 0{,}010\,\mathrm{mol/L}$ (ker bo $s_2$ zelo majhna).
 4. $s_2 = \dfrac{3{,}9 \cdot 10^{-11}}{(0{,}010)^2} = 3{,}9 \cdot 10^{-7}\,\mathrm{mol/L}$.
@@ -131,6 +141,29 @@ $n(\mathrm{SO_4^{2-}}) = n(\mathrm{BaSO_4}) = \dfrac{m(\mathrm{BaSO_4})}{M(\math
 5. Izguba pri spiranju: $s(\mathrm{BaSO_4}) = \sqrt{1{,}1 \cdot 10^{-10}} = 1{,}05 \cdot 10^{-5}\,\mathrm{mol/L}$; v $0{,}200\,\mathrm{L}$ se raztopi $2{,}10 \cdot 10^{-6}\,\mathrm{mol}$, kar je $2{,}10 \cdot 10^{-6} \cdot 233{,}39\,\mathrm{g} = 0{,}49\,\mathrm{mg}$.
 6. Relativna napaka: $0{,}49\,\mathrm{mg}/825\,\mathrm{mg} \approx 0{,}06\,\%$, kar je manj od običajne natančnosti gravimetrične analize (okoli $0{,}1\,\%$); pri bolj topnih oborinah bi bila napaka večja.
 7. Odgovor: vzorec vsebuje $67{,}9\,\%$ sulfata oziroma $93{,}4\,\%$ amonijevega sulfata; spiranje z $200\,\mathrm{mL}$ vode bi raztopilo največ okoli $0{,}5\,\mathrm{mg}$ oborine ($0{,}06\,\%$).
+
+### Primer 4 – zdaj ti
+
+Keramična delavnica ima odpadno vodo z barijevimi ioni iz glazur, $[\mathrm{Ba^{2+}}] = 0{,}0020\,\mathrm{mol/L}$. Keramik zmeša $100\,\mathrm{mL}$ te vode s $100\,\mathrm{mL}$ raztopine natrijevega sulfata s koncentracijo $0{,}0020\,\mathrm{mol/L}$. Ali nastane oborina $\mathrm{BaSO_4}$? $K_\mathrm{sp}(\mathrm{BaSO_4}) = 1{,}1 \cdot 10^{-10}$.
+
+**Podatki:** $[\mathrm{Ba^{2+}}] = 0{,}0020\,\mathrm{mol/L}$ v $100\,\mathrm{mL}$, $c(\mathrm{Na_2SO_4}) = 0{,}0020\,\mathrm{mol/L}$ v $100\,\mathrm{mL}$, $K_\mathrm{sp}(\mathrm{BaSO_4}) = 1{,}1 \cdot 10^{-10}$
+**Iščemo:** ionski produkt $Q$ po mešanju in ali nastane oborina
+
+:::formula
+$Q = [\mathrm{Ba^{2+}}][\mathrm{SO_4^{2-}}]$ z razredčenimi koncentracijami; oborina nastane pri $Q > K_\mathrm{sp}$.
+:::
+
+**Rešitev:**
+
+1. Po mešanju je prostornina $200\,\mathrm{mL}$, zato se obe koncentraciji razpolovita: $[\mathrm{Ba^{2+}}] = [\mathrm{SO_4^{2-}}] = 0{,}0010\,\mathrm{mol/L}$.
+2. Ionski produkt: $Q = 0{,}0010 \cdot 0{,}0010 = 1{,}0 \cdot 10^{-6}$.
+3. Primerjaj $Q$ s $K_\mathrm{sp}$ in zapiši odgovor sam, nato preveri:
+
+:::premisli
+Ali je $Q$ večji od $K_\mathrm{sp}$ in kaj to pomeni za odpadno vodo?
+---
+$Q = 1{,}0 \cdot 10^{-6}$ je približno $9000$-krat večji od $K_\mathrm{sp} = 1{,}1 \cdot 10^{-10}$, zato je raztopina prenasičena in nastane bela oborina $\mathrm{BaSO_4}$. Barij se večinoma izloči, oborino keramik odfiltrira.
+:::
 
 ## Pogoste napake
 
@@ -204,33 +237,52 @@ ker je le del raztopljenega aniona v obliki $\mathrm{A^-}$. Pri $[\mathrm{H^+}] 
 
 ? Kateri je pravilni izraz za topnostni produkt srebrovega kromata $\mathrm{Ag_2CrO_4}$?
 - $K_\mathrm{sp} = [\mathrm{Ag^+}][\mathrm{CrO_4^{2-}}]$
+~ Formula ima dva srebrova iona, zato koeficient $2$ postane eksponent; brez njega izraz velja za sol tipa AB.
 + $K_\mathrm{sp} = [\mathrm{Ag^+}]^2[\mathrm{CrO_4^{2-}}]$
 - $K_\mathrm{sp} = \dfrac{[\mathrm{Ag^+}]^2[\mathrm{CrO_4^{2-}}]}{[\mathrm{Ag_2CrO_4}]}$
+~ To je zapis kot pri homogenem ravnotežju; trdna snov ima aktivnost $1$ in v izrazu ne nastopa.
 > Iz $\mathrm{Ag_2CrO_4(s) \rightleftharpoons 2\,Ag^+ + CrO_4^{2-}}$ dobimo koeficient $2$ kot eksponent. Trdne snovi v izrazu ne pišemo.
 
 ? Topnost soli tipa $\mathrm{AB}$ v vodi je $2{,}0 \cdot 10^{-4}\,\mathrm{mol/L}$. Kolikšen je njen $K_\mathrm{sp}$?
 - $2{,}0 \cdot 10^{-4}$
+~ To je kar topnost $s$; za sol AB sta v izrazu dve koncentraciji, zato je $K_\mathrm{sp} = s \cdot s$.
 - $1{,}4 \cdot 10^{-2}$
+~ Topnost je bila korenjena namesto kvadrirana; $K_\mathrm{sp}$ je manjši od $s$, ne večji.
 + $4{,}0 \cdot 10^{-8}$
 > Za sol $\mathrm{AB}$ je $K_\mathrm{sp} = s^2 = (2{,}0 \cdot 10^{-4})^2 = 4{,}0 \cdot 10^{-8}$. $1{,}4 \cdot 10^{-2}$ je koren topnosti, ne kvadrat.
 
 ? Ionski produkt v raztopini je večji od $K_\mathrm{sp}$. Kaj se zgodi?
 + nastaja oborina
 - sol se raztaplja
+~ Raztapljanje poteka pri $Q < K_\mathrm{sp}$; tu je ionov preveč, ne premalo.
 - nič, raztopina je nasičena
+~ Nasičena je pri $Q = K_\mathrm{sp}$; pri večjem $Q$ je prenasičena in ravnotežje se šele vzpostavlja.
 > Pri $Q > K_\mathrm{sp}$ je raztopina prenasičena; ioni se izločajo kot oborina, dokler ni $Q = K_\mathrm{sp}$.
 
 ? Kaj se zgodi s topnostjo srebrovega klorida, če v nasičeno raztopino dodamo kuhinjsko sol?
 - poveča se
+~ Zdi se, da več soli v raztopini »pomaga« raztapljanju, a $\mathrm{Cl^-}$ je skupni ion in ravnotežje potisne v levo.
 + zmanjša se
 - ostane enaka
+~ Enak ostane $K_\mathrm{sp}$, ne topnost: pri večjem $[\mathrm{Cl^-}]$ mora biti $[\mathrm{Ag^+}]$ manjši.
 > Dodani $\mathrm{Cl^-}$ je skupni ion; ravnotežje $\mathrm{AgCl(s) \rightleftharpoons Ag^+ + Cl^-}$ se premakne v levo, del AgCl se obori in topnost se zmanjša.
+
+? Študent računa topnost $\mathrm{CaF_2}$ v čisti vodi takole: $K_\mathrm{sp} = s^2$, $s = \sqrt{3{,}9 \cdot 10^{-11}} = 6{,}2 \cdot 10^{-6}\,\mathrm{mol/L}$. Kje je napaka?
++ Ker je $[\mathrm{F^-}] = 2s$, velja $K_\mathrm{sp} = 4s^3$ in $s = 2{,}1 \cdot 10^{-4}\,\mathrm{mol/L}$.
+- Koren je izračunan narobe, prav je $6{,}2 \cdot 10^{-5}\,\mathrm{mol/L}$.
+~ Koren je pravilen; napaka je že v izrazu za $K_\mathrm{sp}$, ki ne upošteva dveh fluoridnih ionov.
+- Prav je $s = \sqrt[3]{K_\mathrm{sp}} = 3{,}4 \cdot 10^{-4}\,\mathrm{mol/L}$.
+~ Eksponent $3$ je pravi, manjka pa koeficient: $(2s)^2 = 4s^2$, zato je $K_\mathrm{sp} = 4s^3$, ne $s^3$.
+- Napake ni, $\mathrm{CaF_2}$ je sol tipa AB.
+~ Ena formulska enota da en ion $\mathrm{Ca^{2+}}$ in dva iona $\mathrm{F^-}$, zato je to sol tipa $\mathrm{AB_2}$.
+> Za sol $\mathrm{AB_2}$ je $K_\mathrm{sp} = s(2s)^2 = 4s^3$, zato $s = \sqrt[3]{3{,}9 \cdot 10^{-11}/4} = 2{,}1 \cdot 10^{-4}\,\mathrm{mol/L}$, kot v Primeru 2.
 
 :::simboli
 m | število kationov v formulski enoti | | – | m(…) pomeni maso snovi v g
 n | število anionov v formulski enoti | | – | n(…) pomeni množino snovi v mol
 z | naboj iona | | – | z₊ kationa, z₋ aniona
 K_\mathrm{sp} | topnostni produkt | K_\mathrm{sp} = (ms)^m(ns)^n | – | koncentracije v mol/L brez enote
+Q | ionski produkt | Q = [\mathrm{A}]^m[\mathrm{B}]^n | – | trenutne koncentracije po mešanju
 s | množinska topnost | | mol/L
 \gamma | masna topnost | \gamma = s\,M | g/L
 M | molska masa | | g/mol

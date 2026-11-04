@@ -5,11 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-V naravoslovju zakone pogosto poznamo v obliki **hitrosti spreminjanja**: hitrost razpada radioaktivnega jedra je sorazmerna s številom jeder, hitrost reakcije prvega reda je sorazmerna s koncentracijo, populacija bakterij raste sorazmerno s svojo velikostjo, čaj se ohlaja tem hitreje, čim večja je razlika do temperature sobe. Zapis takega zakona je enačba, v kateri nastopata neznana funkcija in njen odvod. Takšni enačbi pravimo **diferencialna enačba**.
+Ko je Willard Libby sredi 20. stoletja razvijal radiokarbonsko datiranje, je imel eno samo meritev: koliko $^{14}\mathrm{C}$ je še ostalo v vzorcu lesa ali kosti. Ključ je bil zakon, da vsak trenutek razpade enak delež preostalih jeder, torej je **hitrost spreminjanja** sorazmerna s številom jeder. Zakon, ki povezuje neznano funkcijo in njen odvod, je **diferencialna enačba**; njena rešitev ni število, ampak **funkcija** časa. Metodo je preveril na vzorcih znane starosti, med drugim na lesu iz egipčanskih grobnic. Enako obliko imajo zakoni, ki jih srečaš na dolgi vožnji: kofein iz kave na počivališču se iz krvi izloča po kinetiki prvega reda, hladilna tekočina parkiranega avta pa se ohlaja proti temperaturi zraka. Ko rešitev poznaš, napoveš prihodnost sistema ali izračunaš, kdaj bo dosežena želena vrednost.
 
-Rešitev diferencialne enačbe ni število, ampak **funkcija**: koncentracija kot funkcija časa, temperatura kot funkcija časa. Ko jo poznamo, lahko napovemo prihodnost sistema, določimo razpolovni čas ali izračunamo, kdaj bo dosežena želena vrednost.
-
-V tej lekciji se naučimo reševati dve najpomembnejši vrsti enačb prvega reda:
+Obravnavamo dve najpomembnejši vrsti enačb prvega reda:
 
 - **ločljive** (separabilne) enačbe $y' = f(x)\,g(y)$,
 - **linearne** enačbe $y' + p(x)\,y = q(x)$,
@@ -17,6 +15,27 @@ V tej lekciji se naučimo reševati dve najpomembnejši vrsti enačb prvega reda
 ter **začetni problem**, pri katerem iz družine rešitev izberemo tisto, ki ustreza začetnemu stanju. Spoznamo tudi osnovne **modele rasti in razpada** in izrek, ki pove, kdaj rešitev sploh obstaja in je ena sama. Potrebuješ odvod, nedoločeni integral in lastnosti eksponentne ter logaritemske funkcije.
 
 ## Razlaga
+
+### Najprej slika: zemljevid smerokazov
+
+Predstavljaj si zemljevid, na katerem v vsaki točki stoji smerokaz, ki pove, kako strmo naprej. Enačba $y' = 2y$ je natanko tak zemljevid: v točki na višini $y$ kaže naklon $2y$, ne glede na $x$.
+
+| višina $y$ | naklon $2y$ | smer poti |
+|---|---|---|
+| $-1$ | $-2$ | strmo navzdol |
+| $0$ | $0$ | vodoravno |
+| $1$ | $2$ | navzgor |
+| $2$ | $4$ | še strmeje navzgor |
+
+**Rešitev** je pot, ki v vsaki točki sledi smerokazu, **začetni pogoj** pa je izhodišče poti. Iz vsakega izhodišča vodi ena pot, vse skupaj pa tvorijo družino krivulj.
+
+:::premisli
+Na tem zemljevidu začneš v točki $(0, 1)$. Napovej: ali pot postaja strmejša ali položnejša? Kaj pa, če začneš v $(0, 0)$?
+---
+Strmejša: višje ko si, večji je naklon, zato se vzpon pospešuje (eksponentna rast, pot je $y = e^{2x}$). Iz $(0, 0)$ ostaneš na osi $x$, ker je tam naklon povsod $0$: to je konstantna rešitev $y = 0$.
+:::
+
+### Simboli in postopki
 
 **1. Kaj je diferencialna enačba.** **Navadna diferencialna enačba** je enačba, ki povezuje neodvisno spremenljivko $x$, neznano funkcijo $y = y(x)$ in njene odvode. **Red** enačbe je red najvišjega odvoda, ki v njej nastopa. Enačba prvega reda ima obliko $F(x, y, y') = 0$, najpogosteje pa jo zapišemo razrešeno na odvod:
 
@@ -41,6 +60,12 @@ Postopek **ločitve spremenljivk**:
 3. Integriramo obe strani: $\displaystyle \int \frac{dy}{g(y)} = \int f(x)\, dx + C$. Konstanto pišemo le na eni strani.
 4. Če gre, izrazimo $y$; sicer ostane rešitev v **implicitni** obliki.
 5. Konstanto določimo iz začetnega pogoja.
+
+:::premisli
+Zakaj moramo konstantne rešitve poiskati že na začetku, preden ločimo spremenljivke?
+---
+Ker v koraku 2 delimo z $g(y)$, kar pri $g(y) = 0$ ni dovoljeno. Rešitve $y \equiv y_0$ z $g(y_0) = 0$ ločitev spremenljivk zato sama ne najde; na zemljevidu so to vodoravne poti.
+:::
 
 Primer: $y' = xy$. Konstantna rešitev je $y = 0$. Za $y \neq 0$: $\int \frac{dy}{y} = \int x\, dx$, torej $\ln|y| = \frac{x^2}{2} + C$ in $|y| = e^C e^{x^2/2}$. Ker je $\pm e^C$ poljubno neničelno število, pišemo $y = Ke^{x^2/2}$; vrednost $K = 0$ zajame še konstantno rešitev.
 
@@ -121,7 +146,7 @@ Ločljiva enačba: $\int \frac{dy}{g(y)} = \int f(x)\, dx + C$. Tabelni integral
 
 1. Desna stran je produkt $f(x) = 2x$ in $g(y) = 1 + y^2$. Ker je $1 + y^2 > 0$, konstantnih rešitev ni.
 2. Ločimo spremenljivki: $\frac{dy}{1 + y^2} = 2x\, dx$.
-3. Integriramo: $\arctan y = x^2 + C$.
+3. Integriramo (levo tabelni integral, desno $\int 2x\,dx = x^2$): $\arctan y = x^2 + C$.
 4. Začetni pogoj: $\arctan 1 = 0 + C$, torej $C = \frac{\pi}{4}$.
 5. Izrazimo $y$: $y = \tan\left(x^2 + \frac{\pi}{4}\right)$. To je dovoljeno, dokler je $x^2 + \frac{\pi}{4} < \frac{\pi}{2}$ (zaloga vrednosti arkus tangensa je $(-\frac{\pi}{2}, \frac{\pi}{2})$).
 6. Pogoj $x^2 < \frac{\pi}{4}$ da $|x| < \frac{\sqrt{\pi}}{2} \approx 0{,}886$.
@@ -144,13 +169,37 @@ Bilanca: $\frac{dm}{dt} = (\text{dotok soli}) - (\text{odtok soli})$. Linearna e
 1. Prostornina: $V(t) = 100 + (4 - 2)t = 100 + 2t$ (v litrih, $t$ v minutah).
 2. Dotok soli: $0{,}2\,\mathrm{kg/L} \cdot 4\,\mathrm{L/min} = 0{,}8\,\mathrm{kg/min}$. Odtok soli: koncentracija v posodi krat pretok, $\frac{m}{100 + 2t} \cdot 2 = \frac{m}{50 + t}$.
 3. Enačba: $m' = 0{,}8 - \frac{m}{50 + t}$, torej $m' + \frac{1}{50 + t}\, m = 0{,}8$. Je linearna s $p(t) = \frac{1}{50 + t}$.
-4. Integrirajoči množitelj: $\mu = e^{\ln(50 + t)} = 50 + t$.
+4. Integrirajoči množitelj (ker je $\int \frac{dt}{50 + t} = \ln(50 + t)$): $\mu = e^{\ln(50 + t)} = 50 + t$.
 5. $\big((50 + t)\, m\big)' = 0{,}8\,(50 + t)$, integriramo: $(50 + t)\, m = 0{,}4\,(50 + t)^2 + C$.
 6. Začetni pogoj $m(0) = 5$: $50 \cdot 5 = 0{,}4 \cdot 2500 + C$, $250 = 1000 + C$, $C = -750$.
 7. Rešitev: $m(t) = 0{,}4\,(50 + t) - \frac{750}{50 + t}$.
 8. Pri $t = 25$: $m = 0{,}4 \cdot 75 - \frac{750}{75} = 30 - 10 = 20\,\mathrm{kg}$. Prostornina je $V = 150\,\mathrm{L}$, koncentracija $\gamma = \frac{20\,\mathrm{kg}}{150\,\mathrm{L}} = 0{,}133\,\mathrm{kg/L}$.
 9. Preizkus smisla: koncentracija je narasla od $0{,}05\,\mathrm{kg/L}$ proti $0{,}2\,\mathrm{kg/L}$ (koncentraciji dotoka), a je še ni dosegla.
 10. Odgovor: po $25\,\mathrm{min}$ je v posodi $20\,\mathrm{kg}$ soli, masna koncentracija je $0{,}133\,\mathrm{kg/L}$.
+
+### Primer 4 – zdaj ti
+
+Po nočni vožnji parkiraš avto ob cesti. Hladilna tekočina v motorju ima $90\,^\circ\mathrm{C}$, zrak $10\,^\circ\mathrm{C}$. Tekočina se ohlaja po Newtonovem zakonu s konstanto $k = 0{,}05\,\mathrm{min^{-1}}$. Kolikšna je njena temperatura po $20\,\mathrm{min}$?
+
+**Podatki:** $\dfrac{dT}{dt} = -k(T - T_\mathrm{o})$, $T_0 = 90\,^\circ\mathrm{C}$, $T_\mathrm{o} = 10\,^\circ\mathrm{C}$, $k = 0{,}05\,\mathrm{min^{-1}}$, $t = 20\,\mathrm{min}$
+**Iščemo:** temperaturo $T(20\,\mathrm{min})$
+
+:::formula
+Linearna enačba $T' + kT = kT_\mathrm{o}$ z integrirajočim množiteljem $\mu = e^{kt}$: $(\mu T)' = \mu\, k T_\mathrm{o}$.
+:::
+
+**Rešitev:**
+
+1. Enačbo zapišemo v obliki $T' + kT = kT_\mathrm{o}$; je linearna s konstantnima $p = k$ in $q = kT_\mathrm{o}$.
+2. Množitelj $\mu = e^{kt}$, ker je $\int k\, dt = kt$; tedaj je $(e^{kt}T)' = kT_\mathrm{o}\, e^{kt}$.
+3. Integriramo: $e^{kt}T = T_\mathrm{o}\, e^{kt} + C$, torej $T(t) = T_\mathrm{o} + Ce^{-kt}$.
+4. Konstanto $C$ iz začetnega pogoja in temperaturo po $20\,\mathrm{min}$ izračunaj sam, nato preveri:
+
+:::premisli
+Koliko je $C$ in koliko je $T(20\,\mathrm{min})$?
+---
+Iz $T(0) = 90$ dobimo $90 = 10 + C$, torej $C = 80$. Eksponent je $kt = 0{,}05 \cdot 20 = 1$, zato $T(20) = 10 + 80\,e^{-1} = 10 + 29{,}4 = 39{,}4\,^\circ\mathrm{C}$. Razlika do zraka je padla z $80$ na približno $29$ stopinj, kar je dobra tretjina, kot pri $e^{-1} \approx 0{,}37$.
+:::
 
 ## Pogoste napake
 
@@ -218,31 +267,53 @@ Ker se po Picardovem izreku rešitvi ne moreta sekati (v presečišču bi imel z
 
 ? Katera funkcija je rešitev začetnega problema $y' = 3y$, $y(0) = 2$?
 - $y = 3e^{2x}$
+~ Vlogi sta zamenjani: $3$ iz enačbe sodi v eksponent, začetna vrednost $2$ pa pred eksponentno funkcijo.
 + $y = 2e^{3x}$
 - $y = e^{3x} + 1$
+~ Konstanta je prišteta namesto pomnožena; začetni pogoj velja, enačba pa ne, saj je $y' = 3e^{3x} \neq 3y$.
 - $y = 2e^{x/3}$
+~ Koeficient je v eksponentu delil namesto množil; odvod je $\frac{2}{3}e^{x/3}$, ne $3y$.
 > Splošna rešitev je $y = Ce^{3x}$, iz $y(0) = C = 2$ dobimo $y = 2e^{3x}$. Funkcija $e^{3x} + 1$ sicer zadošča začetnemu pogoju, a ni rešitev enačbe: $y' = 3e^{3x} \neq 3y$.
 
 ? Snov razpada po kinetiki prvega reda s konstanto hitrosti $k = 0{,}10\,\mathrm{s^{-1}}$. Kolikšen je razpolovni čas?
 - $5{,}0\,\mathrm{s}$
+~ To je $\frac{1}{2k}$: »polovica« je pomotoma šla v števec namesto $\ln 2$.
 + $6{,}9\,\mathrm{s}$
 - $10\,\mathrm{s}$
+~ To je $\frac{1}{k}$, čas, v katerem količina pade na $e^{-1} \approx 37\,\%$, ne na polovico.
 - $0{,}069\,\mathrm{s}$
+~ Tu je $\ln 2$ pomnožen s $k$ namesto deljen; enota bi bila $\mathrm{s^{-1}}$, ne $\mathrm{s}$.
 > $t_{1/2} = \frac{\ln 2}{k} = \frac{0{,}693}{0{,}10\,\mathrm{s^{-1}}} = 6{,}9\,\mathrm{s}$. Razpolovni čas ni odvisen od začetne koncentracije.
 
 ? Kateri integrirajoči množitelj uporabimo za enačbo $y' + \frac{2}{x}\, y = x$ pri $x > 0$?
 - $e^{2x}$
+~ Integrirati je treba ves koeficient $p(x) = \frac{2}{x}$, ne le števila $2$.
 - $\frac{1}{x^2}$
+~ Napačen predznak: $e^{-2\ln x}$ bi veljal za $y' - \frac{2}{x}y = x$.
 + $x^2$
 - $2\ln x$
+~ To je šele $P(x) = \int p\, dx$; množitelj je $e^{P(x)}$.
 > $\mu = e^{\int \frac{2}{x}\, dx} = e^{2\ln x} = x^2$. Tedaj je $(x^2 y)' = x^3$.
 
 ? Katera od naslednjih enačb je linearna, ni pa ločljiva?
 - $y' = xy$
+~ Je linearna, a tudi ločljiva: desna stran je produkt $f(x) = x$ in $g(y) = y$.
 + $y' = x + y$
 - $y' = y^2$
+~ Je ločljiva ($f = 1$, $g = y^2$), a ni linearna, ker $y$ nastopa v drugi potenci.
 - $y' = y\,(1 - y)$
+~ Je ločljiva (logistična oblika), a ni linearna zaradi člena $-y^2$.
 > $y' = x + y$ zapišemo kot $y' - y = x$, kar je linearna enačba; desne strani ne moremo zapisati kot produkt funkcije $x$ in funkcije $y$. Enačba $y' = xy$ je linearna in ločljiva, ostali dve sta ločljivi, a nelinearni.
+
+? Kaj velja za razpolovni čas snovi, ki razpada po kinetiki prvega reda?
++ Enak je ne glede na začetno količino snovi.
+- Daljši je, če je snovi na začetku več.
+~ Več snovi tudi hitreje razpada (hitrost je sorazmerna s količino), zato se polovica porabi v enakem času.
+- Vsak naslednji razpolovni čas je krajši od prejšnjega.
+~ Tako bi bilo, če bi razpadala stalna množina na minuto; pri prvem redu razpade stalni delež, zato so vsi razpolovni časi enaki.
+- Enak je $\frac{1}{k}$.
+~ $\frac{1}{k}$ je čas padca na $e^{-1}$; razpolovni čas je $\frac{\ln 2}{k}$.
+> Iz $c(t) = c_0 e^{-kt}$ in $c = \frac{c_0}{2}$ sledi $t_{1/2} = \frac{\ln 2}{k}$, kjer $c_0$ ne nastopa. Na tem temelji radiokarbonsko datiranje: $^{14}\mathrm{C}$ ima vedno enak razpolovni čas, ne glede na velikost vzorca.
 
 :::simboli
 y | iskana funkcija (rešitev enačbe) | |
@@ -268,6 +339,9 @@ K | nosilnost okolja | | | drugje tudi poljubna konstanta v rešitvi
 c | množinska koncentracija reaktanta | c(t) = c_0 e^{-kt} | mol/L | kinetika prvega reda
 c_0 | začetna koncentracija | | mol/L
 t_{1/2} | razpolovni čas | t_{1/2} = \frac{\ln 2}{k} | | ni odvisen od začetne količine
+T | temperatura telesa | T(t) = T_\mathrm{o} + (T_0 - T_\mathrm{o})e^{-kt} | °C | T₀ je začetna temperatura
+T' | hitrost spreminjanja temperature | | °C/min | Newtonov zakon ohlajanja
+T_\mathrm{o} | temperatura okolice | | °C
 m | masa soli v posodi | | kg
 m' | hitrost spreminjanja mase soli | | kg/min | dotok soli minus odtok soli
 :::

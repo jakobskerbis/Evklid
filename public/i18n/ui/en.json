@@ -2813,7 +2813,6 @@
   "adm.rep.app": "App bug (admin)",
   "adm.rep.more": "Details",
   "adm.rep.question": "Question:",
-  "adm.rep.answer": "Answer:",
   "adm.rep.fixed": "Fixed",
   "adm.rep.reopen": "Reopen",
   "adm.rep.none": "No reports.",
@@ -2866,5 +2865,10 @@
   "sc.tab.range": "Start, step (not 0) and number of rows (1–200) must be numbers.",
   "gc.reg.quart": "Quartic",
   "gc.reg.logistic": "Logistic",
-  "gc.reg.sin": "Sinusoidal"
+  "gc.reg.sin": "Sinusoidal",
+  "chat.full": "Show the whole solution",
+  "chat.fullMsg": "Show me the whole solution to this task.",
+  "adm.rep.shown": "This is how the student saw the answer:",
+  "adm.rep.rerendered": "The answer, drawn again (older report without a snapshot):",
+  "adm.rep.raw": "Tutor's raw text:"
 }

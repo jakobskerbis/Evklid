@@ -2789,7 +2789,6 @@
   "adm.rep.app": "앱 오류(관리자)",
   "adm.rep.more": "자세히",
   "adm.rep.question": "질문:",
-  "adm.rep.answer": "답변:",
   "adm.rep.fixed": "수정됨",
   "adm.rep.reopen": "다시 열기",
   "adm.rep.none": "신고가 없습니다.",
@@ -2842,5 +2841,10 @@
   "sc.tab.range": "시작값, 간격(0 아님), 행 수(1~200)는 숫자여야 합니다.",
   "gc.reg.quart": "4차",
   "gc.reg.logistic": "로지스틱",
-  "gc.reg.sin": "사인형"
+  "gc.reg.sin": "사인형",
+  "chat.full": "전체 풀이 보기",
+  "chat.fullMsg": "이 문제의 전체 풀이를 보여 줘.",
+  "adm.rep.shown": "학생에게 보인 답변:",
+  "adm.rep.rerendered": "다시 표시한 답변(스냅샷이 없는 이전 신고):",
+  "adm.rep.raw": "튜터의 원본 텍스트:"
 }

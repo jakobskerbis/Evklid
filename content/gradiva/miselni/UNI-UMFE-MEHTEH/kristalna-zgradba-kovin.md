@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kristalna mreža
+  - atomi v ponavljajočem se vzorcu
+  - nasprotje: amorfno steklo
+- Osnovna celica
+  - rob $a$ okoli $0{,}3\,\mathrm{nm}$
+  - oglišče $\frac{1}{8}$, ploskev $\frac{1}{2}$ atoma
+  - napaka: šteti vsak atom cel
+- Mreže KPC in KPloC
+  - KPC: 2 atoma, 8 sosedov, $f = 0{,}68$
+  - KPloC: 4 atomi, 12 sosedov, $f = 0{,}74$
+  - $a = \frac{4r}{\sqrt{3}}$ oziroma $a = 2\sqrt{2}\,r$
+- Gostota iz mreže
+  - $\rho = \frac{n M}{N_\mathrm{A} a^3}$
+  - α-Fe: približno $7{,}88\,\mathrm{g/cm^3}$
+- Alotropija železa
+  - do $912\,^\circ\mathrm{C}$ ferit (KPC)
+  - nad tem avstenit (KPloC)
+- Točkaste napake
+  - praznina, intersticijski, substitucijski atom
+  - ogljik v železu je intersticijski
+- Dislokacije in meje
+  - zdrs po eno vrsto atomov naenkrat
+  - kristalne meje ločijo zrna
+- Utrjevanje kovin
+  - ovire za gibanje dislokacij
+  - tuji atomi, drobna zrna, hladno preoblikovanje
