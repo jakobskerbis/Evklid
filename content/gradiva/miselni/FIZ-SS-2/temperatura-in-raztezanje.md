@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sprememba temperature
+  - $\Delta T$ v K enaka kot v °C
+  - ne prištevaj $273$ k razliki
+- Delci bolj narazen
+  - močnejše nihanje pri višji temperaturi
+  - pri ohlajanju se telo skrči
+- Linearno raztezanje
+  - $\Delta L = \alpha L_0 \Delta T$
+  - $L = L_0 (1 + \alpha \Delta T)$
+  - $\alpha$ v $\mathrm{K^{-1}}$, ne pozabi $10^{-6}$
+- Različne snovi
+  - titan $8{,}6$, sklenina $11$, amalgam $25$ ($10^{-6}\,\mathrm{K^{-1}}$)
+  - zalivka z velikim $\alpha$ odstopi od zoba
+- Prostorninsko raztezanje
+  - $\Delta V = \beta V_0 \Delta T$
+  - za trdnine $\beta \approx 3\alpha$
+  - luknja se pri segrevanju poveča
+- Kapljevine in termometer
+  - alkohol $\beta = 1{,}1 \cdot 10^{-3}\,\mathrm{K^{-1}}$
+  - steklo se razteza $40$-krat manj
+  - dvig stolpca $\Delta h = \dfrac{\Delta V}{S}$

@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pritisna sila
+  - stiska telo in podlago
+  - vodoravno $F_\mathrm{p} = m\,g$
+- Lepenje
+  - telo miruje, lepenje vrača tvojo silo
+  - največ $F_\mathrm{l,max} = k_\mathrm{l}\,F_\mathrm{p}$
+  - napaka: lepenje ni vedno največje
+- Drsenje
+  - $F_\mathrm{tr} = k_\mathrm{tr}\,F_\mathrm{p}$
+  - neodvisno od hitrosti in ploskve
+  - običajno $k_\mathrm{tr} < k_\mathrm{l}$
+- Klanec
+  - dinamična komponenta $F_\parallel = m\,g\sin\alpha$
+  - pritisna sila $F_\mathrm{p} = m\,g\cos\alpha$
+- Mejni kot
+  - $\tan\alpha_\mathrm{m} = k_\mathrm{l}$, neodvisno od mase
+  - deska: $k_\mathrm{l} = \dfrac{h}{d}$
+- Drsenje po klancu
+  - $F_\mathrm{r} = F_\parallel - F_\mathrm{tr}$
+  - $a = \dfrac{F_\mathrm{r}}{m}$

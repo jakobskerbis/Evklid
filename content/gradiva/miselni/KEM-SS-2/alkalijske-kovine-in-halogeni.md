@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Dve skupini
+  - 1. skupina: en zunanji elektron, ion $\mathrm{M^+}$
+  - 17. skupina: sedem zunanjih elektronov, ion $\mathrm{X^-}$
+- Reaktivnost
+  - alkalijske kovine: raste navzdol
+  - halogeni: raste navzgor, najmočnejši fluor
+- Reakcija z vodo
+  - $\mathrm{2\,Na + 2\,H_2O \rightarrow 2\,NaOH + H_2}$
+  - nastane vodik, ne kisik
+  - raztopina bazična, fenolftalein rožnat
+- Reakcija s kisikom
+  - Li da $\mathrm{Li_2O}$, Na $\mathrm{Na_2O_2}$, K $\mathrm{KO_2}$
+  - hranimo jih pod petrolejem
+- Plamenska reakcija
+  - Li rdeča, Na rumena, K vijolična
+- Halogenidi
+  - $\mathrm{2\,Na + Cl_2 \rightarrow 2\,NaCl}$
+  - ion $\mathrm{Cl^-}$ ni strupen kot $\mathrm{Cl_2}$
+- Izpodrivanje halogenov
+  - višji halogen izpodrine nižjega
+  - $\mathrm{Cl_2 + 2\,KBr \rightarrow 2\,KCl + Br_2}$
+  - jod ne izpodrine broma ali klora

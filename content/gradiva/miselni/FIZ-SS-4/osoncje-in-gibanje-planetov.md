@@ -1,0 +1,31 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Telesa v Osončju
+  - Sonce ima $99{,}86\,\%$ mase
+  - štirje kamniti planeti, štirje velikani
+  - pritlikavi planeti, lune, asteroidi, kometi
+- Astronomska enota
+  - $1\,\mathrm{a.e.} = 1{,}50\cdot10^{11}\,\mathrm{m}$
+  - povprečna razdalja Zemlja–Sonce
+- Eliptični tir
+  - 1. Keplerjev zakon
+  - Sonce v gorišču, ne v središču
+  - velika polos $a$
+- Enake ploščine
+  - 2. Keplerjev zakon
+  - prisončje hitreje, odsončje počasneje
+  - napaka: letni časi zaradi razdalje
+- Razdalja določa leto
+  - $T^2 = a^3$ v letih in a.e.
+  - Mars: $1{,}52\,\mathrm{a.e.}$, $1{,}87$ leta
+  - napaka: dvakrat dlje, dvakrat daljše leto
+- Gravitacija kot centripetalna sila
+  - $F_\mathrm{g} = \dfrac{G m M}{r^2}$
+  - $v = \sqrt{\dfrac{G M}{r}}$
+  - masa satelita se pokrajša
+- Sateliti okoli Zemlje
+  - $\dfrac{T^2}{r^3} = \dfrac{4\pi^2}{G M_\mathrm{Z}}$
+  - televizijski: $24\,\mathrm{h}$, okoli $36\,000\,\mathrm{km}$ visoko
+  - GPS: $12\,\mathrm{h}$, $20\,200\,\mathrm{km}$ visoko
