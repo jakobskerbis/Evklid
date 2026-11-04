@@ -62,8 +62,8 @@
   //     ozadje (--arch-*) in za meni (--arch-*-m). temple: pročelje ob pozdravu praznega klepeta (pediment, entablature,
   //     column = [kapitel, deblo, baza], stylobate; samo s frame »stebri«), glej temple() spodaj. Brez »stebri« ni
   //     stebrov ob klepetu (seznam pogovorov, rob klepeta), ostanejo okenca in Učna pot.
-  //   building (neobvezno, za okvir pozdrava, ki ni »stebri«): stavba iz obdobja z istimi deli kot arch.temple (pediment
-  //     = vrh, entablature, column = [vrh, telo, podnožje] stranskega dela, stylobate), npr. Egipt: pilon.
+  //   building (za okvir pozdrava, ki ni »stebri«): stavba iz obdobja, front = [širina, višina, oznake] ena risba z
+  //     nespremenljivim razmerjem (razredi kot pri temple, o = odprtina), npr. Egipt: pilon; temple() jo vrne kot top.
   const ERAS = {
     antik: {
       light: { bg: "#f5f0e8", surface: "#fffcf7", menu: "#efe2d2", text: "#241c15", accent: "#973f1c", bar: "#f6ece0", banner: "#f6e2d1", paper: "#f4e6cb", wood: "#8a5b36" },
@@ -118,7 +118,7 @@
       dark: { bg: "#0c1430", surface: "#141f42", menu: "#13285a", menuAccent: "#ecc25f", text: "#f4ecd9", accent: "#e6b955", band: "#d6a64a", bar: "#101a39", banner: "#1c2852", paper: "#18244a", wood: "#b88a45", soft: "#3a3320", menuSoft: "#3a3320",
         hero: ["#1b3a86", "#2154b0", "#e8c063"], frieze: { K: "#e2b65a", B: "#3466c8", R: "#c55a3c", G: "#38ae9a", Y: "#e2b65a" } },
       font: ["El Messiri Variable", "el-messiri"], hero: 10, band: ["kheker", 36, 16], edge: 1, glyph: "ikona",
-      motifs: ["piramide", "papirus", "ladja", "lotos", "paleta", "gos", "vrv", "steber"],
+      motifs: ["piramide", "papirus", "ladja", "lotos", "paleta", "gos", "vrv", "shaduf"],
       facts: ["era.egipt", 6], icons: "ikone",
       chat: { tutor: "papirus", user: "ostrakon", frame: "pilon", composer: "vosek" },
       // Friz kheker (pas, polna barva; theme.js → friezeUrl): trije snopi trstja (glava, vez, telo) in pas pravokotnikov.
@@ -126,29 +126,27 @@
       frieze: [36, 16, '<g stroke="K" stroke-width=".9" stroke-linejoin="round"><path fill="R" d="M0 12.6h9v3.4H0z"/><path fill="G" d="M9 12.6h9v3.4H9z"/><path fill="Y" d="M18 12.6h9v3.4h-9z"/><path fill="B" d="M27 12.6h9v3.4h-9z"/>' +
         [["B", 6], ["R", 18], ["G", 30]].map(([c, x]) => `<path fill="${c}" d="M${x} .3C${x + .6} 1.6 ${x + 2.2} 2.2 ${x + 2} 3.6L${x + 1.5} 4.4H${x - 1.5}L${x - 2} 3.6C${x - 2.2} 2.2 ${x - .6} 1.6 ${x} .3z"/><path fill="Y" d="M${x - 1.9} 4.4h3.8v1.8h-3.8z"/><path stroke-width=".5" d="M${x - 1.9} 5.3h3.8"/><path fill="${c}" d="M${x - 1.2} 6.2h2.4c.6.6 1 2.6.9 4-.1 1-.4 1.8-.7 2.4h-2.8c-.3-.6-.6-1.4-.7-2.4-.1-1.4.3-3.4.9-4z"/>`).join("") + "</g>"],
       // Pilon ob pozdravu (chat.frame »pilon«, ui.css → »Pilon«; j 2026-11-04: stavba iz obdobja, stebri samo v antiki):
-      // masivna stolpa s poševnim zunanjim robom (nagib), venec kavetto z navpičnimi listi nad torusom, torus po
-      // zunanjem robu; vmes nižja vrata z vencem, preklada s frizom kheker (entablature), pozdrav v odprtini vrat. Brez stebrov, krilatega diska in drugih verskih znamenj, brez reliefov in hieroglifov.
-      // Deli kot arch.temple (pediment = vrh stolpov in vrat, column = [-, telo stolpa, podnožje], stylobate = ploščad),
-      // temple() jih sestavi; desni stolp je zrcalna slika (ui.css).
+      // ena risba z nespremenljivim razmerjem (kot Edfu): stolpa 190 enot široka spodaj in 165 zgoraj (poševni zunanji
+      // rob), visoka 213 (venec kavetto z listi, torus zgoraj in po zunanjem robu), na vsakem dve vdolbini z drogovoma in
+      // zastavicama; vmes nižji portal (180) z vencem, podboji in preklado, v odprtini vrat ikona inštruktorja; spodaj
+      // ploščad. Pozdrav in predlogi pod stavbo. Razred o = odprtina vrat (ui.css). Brez stebrov, krilatega diska in
+      // drugih verskih znamenj, brez reliefov in hieroglifov.
       building: (() => {
-        // Stolp je 114 enot od 600 (19 % širine = stolpca mreže v ui.css), notranji rob navpičen, zunanji poševen
-        // (x = 17 pod vencem, 12 na dnu pročelja, v telesu stolpa od 12 do 0).
         const tower = (X) => {
           const r = (x0, x1, y, h, cls, rx) => `<rect class="${cls}" x="${Math.min(X(x0), X(x1))}" y="${y}" width="${Math.abs(x1 - x0)}" height="${h}"${rx ? ` rx="${rx}"` : ""}/>`;
-          return r(6, 122, 2, 6, "f") + `<path class="f" d="M${X(6)} 8H${X(122)}Q${X(116)} 11 ${X(116)} 25H${X(14)}Q${X(14)} 11 ${X(6)} 8z"/>` +
-            `<path class="l" d="${Array.from({ length: 12 }, (_, i) => `M${X(21 + i * 8)} 11v13`).join("")}"/>` + r(12, 118, 25, 5, "f", 2.5) +
-            `<path class="l" d="${Array.from({ length: 13 }, (_, i) => `M${X(17 + i * 8)} 25.5l${X(3) - X(0)} 4`).join("")}"/>` +
-            `<path class="t n" d="M${X(17)} 30H${X(114)}V100H${X(12)}z"/><path class="f" d="M${X(17)} 30H${X(21)}L${X(16)} 100H${X(12)}z"/>` +
-            `<path d="M${X(17)} 30 ${X(12)} 100M${X(114)} 30V100"/>`;
+          return `<path class="f" d="M${X(37)} 72H${X(202)}V248H${X(12)}z"/><path class="t" d="M${X(37)} 72H${X(42)}L${X(17)} 248H${X(12)}z"/>` +
+            r(70, 80, 86, 162, "t") + r(150, 160, 86, 162, "t") + r(25, 212, 35, 5, "f") +
+            `<path class="f" d="M${X(25)} 40H${X(212)}Q${X(204)} 44 ${X(204)} 66H${X(33)}Q${X(33)} 44 ${X(25)} 40z"/>` +
+            `<path class="l" d="${Array.from({ length: 18 }, (_, i) => `M${X(42 + i * 9)} 44v21`).join("")}"/>` + r(31, 206, 66, 6, "f", 3) +
+            `<path class="l" d="${Array.from({ length: 21 }, (_, i) => `M${X(36 + i * 8.3)} 66.5l${X(3) - X(0)} 5`).join("")}"/>` +
+            [75, 155].map((x) => `<path d="M${X(x)} 247V12"/><path class="t" d="M${X(x)} 13l13 4-13 4z"/>`).join("");
         };
-        const gate = '<rect class="f" x="114" y="68" width="372" height="4"/><path class="f" d="M114 72h372q-4 2-4 14H118q0-12-4-14z"/><path class="l" d="' +
-          Array.from({ length: 36 }, (_, i) => `M${125 + i * 10} 74v11`).join("") + '"/><rect class="f" x="116" y="86" width="368" height="5" rx="2.5"/><path class="l" d="' +
-          Array.from({ length: 46 }, (_, i) => `M${120 + i * 8} 86.5l3 4`).join("") + '"/><path class="f n" d="M114 91h372v9H114z"/><path d="M114 100V91h372v9"/>';
+        const portal = '<rect class="t" x="202" y="118" width="196" height="130"/><rect class="f" x="206" y="100" width="188" height="4"/>' +
+          '<path class="f" d="M206 104h188q-6 3-6 18H212q0-15-6-18z"/><path class="l" d="' + Array.from({ length: 19 }, (_, i) => `M${219 + i * 9} 107v14`).join("") + '"/>' +
+          '<rect class="f" x="210" y="122" width="180" height="5" rx="2.5"/><rect class="f" x="214" y="127" width="172" height="121"/>' +
+          '<path class="l" d="M256 248V150h88v98"/><rect class="o" x="262" y="156" width="76" height="92"/>';
         return {
-          pediment: [600, 100, tower((x) => x) + tower((x) => 600 - x) + gate],
-          entablature: [372, 24, '<path class="f n" d="M0 0h372v24H0z"/><path class="l" d="M0 2.5h372M0 21.5h372"/>'],
-          column: [[114, 1, ""], [114, 100, '<path class="t n" d="M12 0h102v100H0z"/><path class="f" d="M12 0h4L4 100H0z"/><path d="M12 0 0 100M114 0v100"/>'], [114, 8, '<path class="f" d="M.75 .75h112.5v6.5H.75z"/><path class="l" d="M.75 3.5h112.5"/>']],
-          stylobate: [600, 14, '<path class="f" d="M.75 .75h598.5v12.5H.75z"/><path class="l" d="M.75 4.5h598.5"/>'],
+          front: [600, 262, tower((x) => x) + tower((x) => 600 - x) + portal + '<rect class="f" x="2" y="248" width="596" height="13"/><path class="l" d="M2 252h596"/>'],
         };
       })(),
       // Papirusov steber (okenca, Učna pot; ne v Inštruktorju, j 2026-11-04: stebri v klepetu samo za antiko): odprt
@@ -422,6 +420,8 @@
     if (!t) return null;
     const svg = (cls, [w, h, body], fit) =>
       `<svg class="${cls}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="${fit || "none"}"${fit ? ` width="${w}" height="${h}"` : ""} aria-hidden="true" focusable="false">${body}</svg>`;
+    // Stavba kot ena risba (building.front, npr. pilon): nespremenljivo razmerje, brez stebrov in stopnic.
+    if (t.front) return { top: svg("t-part t-front", t.front, "xMidYMax meet"), bottom: "" };
     const [cap, shaft, base] = t.column;
     const col = (n) => `<div class="t-part t-col t${n}" aria-hidden="true">${svg("t-cap", cap, "xMidYMin")}${svg("t-shaft", shaft)}${svg("t-base", base, "xMidYMax")}</div>`;
     return {

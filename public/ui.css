@@ -413,7 +413,7 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 
 /* Pisani pas (ERAS[…].frieze; theme.js → --frieze in data-frieze): pas v barvah obdobja (Egipt: friz kheker nad
    pasom pisanih pravokotnikov, svetlo s črno obrobo, temno z zlato) kot slika namesto enobarvne maske, na kartici
-   dejstev, ob robovih okvirja, v arhitravu pročelja in na prekladi vrat pilona. Z lastnim poudarkom, ob forced-colors in pri tisku ostane maska. */
+   dejstev, ob robovih okvirja in v arhitravu pročelja. Z lastnim poudarkom, ob forced-colors in pri tisku ostane maska. */
 @media screen and (forced-colors: none) {
   :root[data-frieze] .gr-fact::before { background: var(--frieze) repeat-x 0 0 / var(--band-w) var(--band-h); -webkit-mask: none; mask: none; }
   :root[data-frieze] :is(.topbar, .tabbar, .composer)::after, :root[data-frieze] .chat-view .sidebar::after {
@@ -570,70 +570,51 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   :root[data-chat-frame="stebri"] .idea:is(:hover, :focus-visible)::after { opacity: 1; }
   :root[data-chat-frame="stebri"] .idea:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
 
-  /* Pilon (Egipt; j, 2026-11-04: stebri samo v antiki, drugi slogi stavbo iz obdobja): pozdrav v vratih templja s
-     pilonom (ERAS[…].building, deli iz theme.js temple() kot pri pročelju). Zgoraj vrh stolpov (venec kavetto z listi,
-     torus) in nižja vrata, pod njimi preklada vrat s frizom kheker (z lastnim poudarkom pas obdobja v --edge-c), ob
-     straneh telesi stolpov s poševnim zunanjim robom (desni zrcaljen, v RTL levi), spodaj ploščad. Črte v --edge-c
-     (obrobe poslikav), kamen v barvi peščenjaka iz --wood. Ikona inštruktorja,
-     pozdrav in predlogi v odprtini vrat, kartica dejstev pod ploščadjo. Brez stebrov in verskih znamenj. Stolpa
-     zavzameta po 19 % širine, zato se vrh in telo ujemata pri vsaki širini. */
-  :root[data-chat-frame="pilon"]:not(.lite) .messages:has(.t-roof) { container: pilon / inline-size; padding-block: 6px; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty:has(.t-roof) { width: min(100%, 700px); max-width: none; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) {
+  /* Pilon (Egipt; j, 2026-11-04: stebri samo v antiki, drugi slogi stavbo iz obdobja): pozdrav pred templjem s
+     pilonom (ERAS[…].building.front, ena risba iz theme.js temple() z nespremenljivim razmerjem 600 : 262). Stolpa
+     sta široka skoraj kot visoka (venec kavetto, torus, vdolbini z drogovoma), vmes nižji portal s podboji; v
+     odprtini vrat stoji ikona inštruktorja (zaobljen kvadrat), pozdrav in predlogi so pod stavbo, kartica dejstev
+     pod njimi. Stavba je nizka (največ 28 % višine zaslona), da so predlogi vidni tudi na 1100 × 800. Črte v
+     --edge-c (obrobe poslikav), kamen v peščenjaku iz --wood (v temnem les na temno rjavi, ne na modri
+     podlagi, da ni siv), odprtina temnejša. Brez stebrov in
+     verskih znamenj. --p-h = višina risbe (širina pozdrava × 262/600, omejena), iz nje mesto in velikost ikone. */
+  :root[data-chat-frame="pilon"]:not(.lite) .messages:has(.t-front) { container: pilon / inline-size; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty:has(.t-front) { width: min(100%, 700px); max-width: none; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) {
     --t-line: color-mix(in srgb, var(--edge-c) 82%, var(--surface));
-    --t-fill: color-mix(in srgb, var(--wood) 10%, var(--surface));
-    --t-tint: color-mix(in srgb, var(--wood) 20%, var(--surface));
-    --t-wall: color-mix(in srgb, var(--edge-c) 4%, var(--bg));
-    display: grid; width: 100%; padding: 0;
-    grid-template-columns: 19% minmax(0, 1fr) 19%;
-    grid-template-rows: auto auto auto auto auto 1fr auto auto;
+    --t-fill: color-mix(in srgb, var(--wood) 12%, var(--surface));
+    --t-tint: color-mix(in srgb, var(--wood) 24%, var(--surface));
+    --t-door: color-mix(in srgb, var(--wood) 42%, var(--surface));
+    --p-h: min(min(100cqi, 700px) * 0.4367, max(140px, 28svh));
+    --p-a: clamp(26px, var(--p-h) * 0.19, 46px);
+    display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; padding: 0;
   }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof)::before {
-    content: ""; grid-area: 2 / 2 / 8 / 3;
-    background: linear-gradient(color-mix(in srgb, var(--edge-c) 14%, transparent), transparent 26px), var(--t-wall);
+  :root.dark[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) {
+    --t-fill: color-mix(in srgb, var(--wood) 36%, #17120b);
+    --t-tint: color-mix(in srgb, var(--wood) 46%, #17120b);
+    --t-door: color-mix(in srgb, #000 35%, var(--surface));
   }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall .t-part { display: block; pointer-events: none; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-roof { grid-area: 1 / 1 / 2 / -1; width: 100%; height: auto; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-ent { grid-area: 2 / 2 / 3 / 3; position: relative; height: 24px; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-ent svg { width: 100%; height: 100%; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-ent::after {
-    content: ""; position: absolute; inset-inline: 0; top: 4px; height: 16px; background: var(--t-line);
-    -webkit-mask: var(--band) repeat-x center / auto 12px; mask: var(--band) repeat-x center / auto 12px;
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-front { display: block; grid-area: 1 / 1; width: 100%; height: var(--p-h); pointer-events: none; }
+  .empty-hall .t-part .o { fill: var(--t-door); }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .tutor-avatar.big {
+    grid-area: 1 / 1; justify-self: center; align-self: end; position: relative;
+    width: var(--p-a); height: var(--p-a); border-radius: 22%; margin-bottom: calc(var(--p-h) * 0.229 - var(--p-a) / 2);
+    box-shadow: 0 0 0 2px var(--t-door), 0 0 0 3.5px var(--t-line);
   }
-  :root[data-chat-frame="pilon"][data-frieze]:not(.lite) .empty-hall > .t-ent::after { background: var(--frieze) repeat-x left center / auto 16px; -webkit-mask: none; mask: none; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-col { grid-row: 2 / 8; display: flex; flex-direction: column; min-height: 0; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > :is(.t-col.t1, .t-col.t4), :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-col .t-cap { display: none; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-col.t2 { grid-column: 1; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-col.t3 { grid-column: 3; transform: scaleX(-1); }
-  :root[dir="rtl"][data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-col.t2 { transform: scaleX(-1); }
-  :root[dir="rtl"][data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-col.t3 { transform: none; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-col .t-shaft { flex: 1; width: 100%; min-height: 40px; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-col .t-base { width: 100%; height: auto; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-steps { grid-area: 8 / 1 / 9 / -1; width: 100%; height: 14px; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) > :is(.tutor-avatar, p, .ideas) { grid-column: 2; position: relative; margin-inline: 14px; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) > .tutor-avatar.big {
-    grid-row: 3; justify-self: center; margin-top: 18px; width: 48px; height: 48px; border-radius: 13px;
-    box-shadow: 0 0 0 3px var(--t-wall), 0 0 0 4.5px var(--t-line);
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .tutor-avatar.big svg.i { width: 58%; height: 58%; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > p.big { margin: 14px 0 4px; line-height: 1.25; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > p:not(.big) { margin: 0; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .ideas { margin-top: 14px; gap: 8px; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .idea {
+    border-width: 1px; border-radius: 5px; text-wrap: balance;
+    box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--wood) 16%, transparent);
   }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) > .tutor-avatar.big svg.i { width: 26px; height: 26px; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) > p.big { grid-row: 4; margin-top: 12px; margin-bottom: 4px; line-height: 1.25; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) > p:not(.big) { grid-row: 5; margin-block: 0; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) > .ideas { grid-row: 6; width: auto; margin-top: 14px; margin-bottom: 20px; gap: 8px; }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) .idea {
-    border-width: 1px; border-radius: 5px; background: var(--surface);
-    box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--edge-c) 12%, transparent);
-  }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) .idea:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
-  :root[data-chat-frame="pilon"]:not(.lite) .empty:has(.t-roof) .gr-chat { margin: 10px 0 0; }
-  /* Širše (vsebnik ≥ 600 px): predlogi kot ploščice v vrsti, da so pilon in kartica dejstev vidni brez drsenja. */
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .idea:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty:has(.t-front) .gr-chat { margin-top: 18px; }
+  /* Širše (vsebnik ≥ 600 px): predlogi kot ploščice v vrsti, da je pozdrav nižji. */
   @container pilon (min-width: 600px) {
-    :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) .ideas { flex-flow: row wrap; justify-content: center; }
-    :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) .idea { flex: 1 1 auto; padding-block: 9px; text-align: center; }
-  }
-  /* Ozko (telefon): manjši odmiki v vratih, da je besedila v vrstici dovolj. */
-  @container pilon (max-width: 479.98px) {
-    :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) > :is(.tutor-avatar, p, .ideas) { margin-inline: 8px; }
-    :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-roof) .idea { padding: 10px; }
+    :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .ideas { flex-flow: row wrap; justify-content: center; }
+    :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .idea { flex: 1 1 auto; padding-block: 9px; text-align: center; }
   }
 
   /* Voščena tablica: polje ostane čisto (--surface), okvir iz lesa (--wood, 3:1) z notranjo svetlejšo letvico. */
