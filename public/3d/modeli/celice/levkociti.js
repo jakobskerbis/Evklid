@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Pet vrst belih krvničk v prerezu: nevtrofilec, eozinofilec, bazofilec, limfocit in monocit. Ob vsaki je rdeča krvnička (7,8 µm) za primerjavo velikosti; zrnc in drugih organelov je manj kot v resnici.",
+  poskusi: "Zamenjaj vrsto bele krvničke in primerjaj obliko jedra in velikost z rdečo krvničko.",
   merilo: { m: 24e-6, oznaka: "24 µm" },
 };
 

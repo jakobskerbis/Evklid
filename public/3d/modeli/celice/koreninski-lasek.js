@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Celica povrhnjice korenine z dolgim cevastim izrastkom, ki poveča površino za vpijanje vode in mineralnih snovi iz prsti. Lasek je skrajšan: v resnici je lahko dolg do 1 mm, to je 20-krat več od telesa celice.",
+  poskusi: "Tapni koreninski lasek in pomisli, zakaj je tako dolg in tanek.",
   merilo: { m: 120e-6, oznaka: "120 µm" },
 };
 

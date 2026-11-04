@@ -8,6 +8,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Največja celica človeškega telesa (okoli 120 µm), obdana s prozorno ovojnico in venčkom foliklovih celic (korona radiata). Ob njej so semenčice v pravi velikosti. Zrnc in celic korone je manj kot v resnici.",
+  poskusi: "Vklopi semenčice za primerjavo: kolikokrat je jajčna celica večja?",
   merilo: { m: 200e-6, oznaka: "200 µm" },
 };
 

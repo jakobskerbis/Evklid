@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Osteocit leži v votlinici (lakuni) trde kostne medceličnine, ki je tu prerezana. Skozi tanke kanalčke (kanalikule) pošilja izrastke do sosednjih osteocitov in z njimi izmenjuje snovi. Kanalikuli in izrastki so zaradi preglednosti debelejši in jih je manj kot v resnici.",
+  poskusi: "Sledi izrastkom kostne celice po kanalčkih do sosednjih celic.",
   merilo: { m: 55e-6, oznaka: "55 µm" },
 };
 
