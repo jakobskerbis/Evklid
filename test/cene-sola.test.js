@@ -16,10 +16,10 @@ import {
 const YEAR = new Date().getFullYear();
 const SECRET = "whsec_test";
 
-test("cene: Osebno ob šolski licenci 5,99 €/49 €, redne cene ostanejo, darilo 49 €", () => {
+test("cene: Osebno ob šolski licenci 5,99 €/49 €, redne cene po stopnjah, darilo po letni ceni stopnje", () => {
   assert.deepEqual(
     PLANS.map((p) => p.amount),
-    [999, 8900, 1599, 13900],
+    [999, 9900, 1399, 13900, 1999, 19900, 1899, 18900, 2799, 26900],
   );
   assert.deepEqual(
     SCHOOL_PLANS.map((p) => [p.interval, p.amount, p.seats]),
@@ -28,7 +28,7 @@ test("cene: Osebno ob šolski licenci 5,99 €/49 €, redne cene ostanejo, dari
       ["year", 4900, 1],
     ],
   );
-  assert.equal(GIFT.amount, 4900);
+  assert.equal(GIFT.amount, 9900, "darilo OŠ = letna cena OŠ");
   assert.equal(GIFT.days, 365);
   assert.equal(isSchoolPlan(SCHOOL_PLANS[1].key), true);
   assert.equal(isSchoolPlan(PLANS[0].key), false);
@@ -38,7 +38,9 @@ test("cene: Osebno ob šolski licenci 5,99 €/49 €, redne cene ostanejo, dari
     tier: "gift",
     seats: 1,
     until,
+    level: null, // staro darilo brez stopnje odpre vse stopnje
   });
+  assert.equal(accessFor({ gift_until: until, gift_level: "SS" }).level, "SS");
 });
 
 function fakeStripe() {
@@ -244,7 +246,7 @@ test("darilna koda: nakup, koda po plačilu, vpis pri drugem računu, enkratna u
       .at(-1);
     assert.equal(
       Number(s.body["line_items[0][price_data][unit_amount]"]),
-      4900,
+      9900,
     );
     const giftId = s.body["metadata[gift_id]"];
     stripe.state.sessions.cs_paid = {
@@ -311,7 +313,7 @@ test("darilna koda: nakup, koda po plačilu, vpis pri drugem računu, enkratna u
     await hook({
       id: "evt_g2",
       type: "charge.refunded",
-      data: { object: { payment_intent: "pi_gift", amount_refunded: 4900 } },
+      data: { object: { payment_intent: "pi_gift", amount_refunded: 9900 } },
     });
     assert.equal((await friend("/api/account")).body.access.tier, "free");
   });
@@ -367,7 +369,7 @@ test("darilna koda: izbris prejemnika ne sprosti kode, vračilo enega od dveh da
     assert.match((await other("/api/account/promo", { method: "POST", body: { code: codes[0] } })).body.error, /že uporabljena/);
     // Dve darili: vračilo enega pusti drugo leto.
     for (const c of codes.slice(1)) assert.equal((await other("/api/account/promo", { method: "POST", body: { code: c } })).status, 200);
-    await hook({ id: "evt_r1", type: "charge.refunded", data: { object: { payment_intent: "pi_b", amount_refunded: 4900 } } });
+    await hook({ id: "evt_r1", type: "charge.refunded", data: { object: { payment_intent: "pi_b", amount_refunded: 9900 } } });
     const acc = (await other("/api/account")).body.access;
     assert.equal(acc.tier, "gift");
     const days = (Date.parse(acc.until) - Date.now()) / 86400000;

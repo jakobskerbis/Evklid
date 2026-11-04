@@ -51,6 +51,7 @@ import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS }
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
 import { openOurPaper, closeOurPaper } from "./our-paper.js";
 import { initDrsniki } from "./drsniki.js";
+import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
 import { GUIDE } from "./vodic.js";
 
@@ -117,7 +118,7 @@ const api = async (url, opts = {}) => {
 
 const MODE_NAMES = { A: t("chatMode.A"), B: t("chatMode.B") };
 
-const isUni = (s) => s?.educational_track === "UNIVERZA";
+const isUni = (s) => jeFaks(s);
 
 const state = {
   students: [],
@@ -538,6 +539,7 @@ async function selectStudent(id) {
     return selectStudent(open.id);
   }
   state.student = target;
+  state.aiOut = false; // delež drugega profila ne skrije »Razloži podrobneje« (osveži ga naslednji odgovor)
   keptPaper = null;
   state.paperCtx = null; // skrit kontekst pole ne gre v pogovor drugega profila
   // Jezik je del profila: ob menjavi učenca se vmesnik preklopi v njegov jezik (stran se naloži znova).
@@ -857,7 +859,13 @@ async function send(text, { deep = false } = {}) {
     let cardsData = null;
     let proposal = null;
     let newLanguage = null;
+    let allowanceData = null;
     await readSse(res, {
+      // Zajamčena poraba naročnika: obvestilo pri 80 %, opomba pri 100 % (server/app.js, j 2026-11-01).
+      allowance: (d) => {
+        allowanceData = d;
+        if (d.stage === "out") state.aiOut = true;
+      },
       delta: (d) => pacer.push(d.text),
       cards: (d) => (cardsData = d),
       // Inštruktor je spremenil nastavitve (server/chat-settings.js).
@@ -874,6 +882,8 @@ async function send(text, { deep = false } = {}) {
       mastered: (d) => toast(d.unlocked?.length ? `${t("chat.mastered", { topic: d.topic })} ${unlockedText(d.unlocked)}` : t("chat.mastered", { topic: d.topic }), "trophy"),
       done: (d) => {
         doneData = d;
+        // Ves delež podrobnih razlag porabljen (strežnik, ai_out): gumba »Razloži podrobneje« ne kažemo več.
+        state.aiOut = !!d.ai_out;
         // Predmet pogovora, ki ga je inštruktor pravkar določil (nov pogovor brez teme): formule v tem in naslednjih odgovorih.
         if (d.state?.subject && state.conversationId === sentTo && !state.chatFx?.symbols) state.chatFx = { subject: d.state.subject, symbols: null };
         pacer.finish(d.text);
@@ -907,6 +917,7 @@ async function send(text, { deep = false } = {}) {
       }
       if (doneData?.text) addGraphButton(bubble, doneData.text);
       if (cardsData) addCardsNote(bubble, cardsData);
+      if (allowanceData) addAllowanceNote(bubble, allowanceData);
       if (doneData?.id) addMsgFoot(bubble, doneData);
       if (proposal) addProposal(bubble, proposal, { onConfirm: confirmChatProposal });
       checkReplyFits(bubble, doneData?.id);
@@ -945,6 +956,20 @@ function checkReplyFits(bubble, id) {
   const copy = bubble.cloneNode(true);
   copy.querySelectorAll("button, .msg-foot, .graph-btn").forEach((b) => b.remove());
   showFull({ kind: "reply", sig: String(id || bubble.textContent.length), title: t("nav.chat"), html: copy.innerHTML });
+}
+
+// Obvestilo pod odgovorom: koliko podrobnih razlag je še ostalo (nikoli € ali $). Gumb za dokup samo, ko ga
+// strežnik dovoli (polnoleten imetnik, profil 15+, ena ponudba naenkrat).
+function addAllowanceNote(bubble, d) {
+  const el = document.createElement("div");
+  el.className = "cards-note allowance-note";
+  // Pri 80 % dve vrstici: obvestilo, pod njim preostanek (»Podrobne razlage ta mesec: še 6«).
+  const base = d.stage === "out" ? escapeHtml(t("ai.out")) : `${escapeHtml(t("ai.low"))}<br><small>${escapeHtml(t("ai.left", { n: d.left }))}</small>`;
+  // Družina: obvestilo velja za skupen delež vseh profilov.
+  const text = d.pool ? `${base}<br><small>${escapeHtml(t("ai.pool"))}</small>` : base;
+  el.innerHTML = `<div class="cn-head">${icon("info")} <span>${text}</span></div>${d.buy ? `<button type="button" class="text-btn">${escapeHtml(t("ai.buy"))} ${icon("chevron-right")}</button>` : ""}`;
+  el.querySelector("button")?.addEventListener("click", () => $("#account-tab").click());
+  bubble.appendChild(el);
 }
 
 async function readSse(res, handlers) {
@@ -1534,7 +1559,7 @@ $("#delete-student").addEventListener("click", async () => {
 
 // Cilj: vrstica na Učni poti, značka v zgornji vrstici in opomnik ob 12.00 (public/goal.js).
 function goalLevelText(st) {
-  return [st.educational_track === "UNIVERZA" ? t("lp.uni") : st.educational_track === "SREDNJA_SOLA" ? t("lp.ss") : t("lp.os"), levelLabel(st.curriculum_level)].filter(Boolean).join(" ");
+  return [jeFaks(st) ? t("lp.uni") : jeSs(st) ? t("lp.ss") : t("lp.os"), levelLabel(st.curriculum_level)].filter(Boolean).join(" ");
 }
 function renderGoal() {
   const st = state.student;
@@ -1733,6 +1758,7 @@ function addDeepButton(el, wasDeep) {
   // Ponovna razlaga je vedno na voljo (tudi po ponovni razlagi); strežnik izbere najcenejši model.
   if (el.classList.contains("error") || el.querySelector(".deep-btn:not(.full-btn)")) return;
   document.querySelectorAll(".deep-btn:not(.full-btn)").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
+  if (state.aiOut) return; // 100 % deleža: inštruktor odgovarja v hitrem načinu, podrobne razlage ni
   const b = document.createElement("button");
   b.className = "deep-btn";
   b.type = "button";
@@ -2049,7 +2075,7 @@ async function loadPath(key = state.pathKey) {
   const prog = uni ? programsCache().find((x) => x.id === state.student.settings.study_program) : null;
   // OŠ 1.–5. razred: učne poti še ni, prikažemo snov 6. razreda (igre in inštruktor so prilagojeni razredu).
   const st = state.student.settings;
-  const early = !prog && !isRegional(sys) && st.educational_track === "OSNOVNA_SOLA" && /^[1-5]\./.test(String(st.curriculum_level || "").trim());
+  const early = !prog && !isRegional(sys) && jeOs(st) && /^[1-5]\./.test(String(st.curriculum_level || "").trim());
   $("#path-note").hidden = !prog && !isRegional(sys) && !early;
   if (early) $("#path-note").textContent = t("path.earlyNote", { grade: levelLabel(st.curriculum_level) });
   // Regijski šolski sistem: učna pot je preslikana na snov te države (osnutek).
@@ -2177,7 +2203,7 @@ function syncCompetitionTab() {
   m.dataset.view = exams ? "exams" : "lab";
   const ms = m.querySelector("span");
   // Na ozki spodnji vrstici kratko: »NPZ« v OŠ, »Matura« v SŠ (zgoraj »NPZ in matura«).
-  const short = state.student?.settings.educational_track === "OSNOVNA_SOLA" ? "goal.npz" : "goal.matura";
+  const short = jeOs(state.student?.settings) ? "goal.npz" : "goal.matura";
   ms.dataset.i18n = exams ? short : "nav.lab";
   ms.textContent = exams ? t(short) : t("nav.lab");
   m.querySelector("i, svg").outerHTML = icon(exams ? "clipboard-check" : "flask-conical");
@@ -2974,7 +3000,7 @@ document.addEventListener("click", (e) => {
 // ---------- priprave na izpite: regijski »Izpiti« (v zavihku Tekmovanja) in slovenski »NPZ in matura« ----------
 
 // Cilj, ki ustreza izpitom šole: NPZ v OŠ, matura v SŠ (splošna ali poklicna).
-const siGoal = () => (state.student?.settings.educational_track === "OSNOVNA_SOLA" ? "npz" : "matura");
+const siGoal = () => (jeOs(state.student?.settings) ? "npz" : "matura");
 
 // Kartica Pripravljenost: dni do izpita (datum cilja), delež znane snovi izpita in tri najšibkejše teme.
 function readinessHtml(c) {
@@ -3023,7 +3049,7 @@ async function loadExams(key = state.examKey, exam = null) {
     return;
   }
   // Slovenski izpit zunaj šole učenca (npr. ostanek izbire po menjavi OŠ → SŠ): privzeti izpit šole.
-  const own = si ? SI_EXAMS[state.student.settings.educational_track] : null;
+  const own = si ? SI_EXAMS[TRACK[stopnja(state.student.settings)]] : null;
   if (si && !own.includes(c.exam) && (key || exam)) return loadExams(null, null);
   if (!c.key) {
     box.innerHTML = `<h1>${t("exam.title")}</h1>`;
@@ -3611,8 +3637,7 @@ function calcSubject() {
 function formulaBook() {
   const s = calcSubject();
   const subj = ["MAT", "FIZ", "KEM"].includes(s) ? s : "MAT";
-  const track = state.student?.settings?.educational_track;
-  return `${subj}-${track === "OSNOVNA_SOLA" ? "OS" : track === "UNIVERZA" ? "UNI" : "SS"}`;
+  return `${subj}-${stageCode(state.student?.settings)}`;
 }
 async function insertIntoCalc(text) {
   const tool = await setCalcMode("sci");

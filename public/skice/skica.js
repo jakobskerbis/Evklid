@@ -150,3 +150,11 @@ export function osi(svg, { W, H, x: [x0, x1], y: [y0, y1], rob = 12, xOznake = [
   for (const [v, t] of yOznake) if (t) stevilka(g, ay - 5, Y(v) + 4, t, { "text-anchor": "end" });
   return { X, Y, inv, x0, x1, y0, y1, L, R, T, B, izrez: `url(#${id})` };
 }
+
+// Točka ali par števil: pri decimalni vejici loči podpičje, npr. »(4; 3,5)«, sicer »(4, 3)«.
+export const par = (x, y, d = 2) => {
+  const t = [x, y].map((v) => st(v, d));
+  return `(${t.join(t.some((v) => v.includes(",")) ? "; " : ", ")})`;
+};
+// Število z »≈«, kadar je zaokroženo na d decimalk, sicer brez.
+export const vr = (v, d = 2) => (Math.abs(v - Number(v.toFixed(d))) < 1e-9 ? st(v, d) : `≈ ${st(v, d)}`);

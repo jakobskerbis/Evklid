@@ -53,7 +53,7 @@ export default function Chat() {
   const [fullOk, setFullOk] = useState(false);
   // Gumbi z izbirami pod zadnjim odgovorom (strežnik: choices iz <<IZBIRE [...]>>), kot na spletu.
   const [choices, setChoices] = useState<string[]>([]);
-  const [notes, setNotes] = useState<{ key: string; text: string; tone?: "gold" | "ok" }[]>([]);
+  const [notes, setNotes] = useState<{ key: string; text: string; tone?: "gold" | "ok" | "info" }[]>([]);
   const [proposal, setProposal] = useState<Proposal | null>(null);
   const list = useRef<FlatList<Msg>>(null);
   const abort = useRef<AbortController | null>(null);
@@ -90,7 +90,8 @@ export default function Chat() {
               if (e.data.title) setTitle(e.data.title);
               // Predmet, ki ga je inštruktor pravkar določil (nov pogovor brez teme), kot na spletu.
               if (e.data.state?.subject) setConvFx((c) => (c.subject === e.data.state.subject ? c : { ...c, subject: e.data.state.subject }));
-              setDeepOk(!e.data.deep);
+              // Ves delež podrobnih razlag porabljen (ai_out): brez »Razloži podrobneje«, kot na spletu.
+              setDeepOk(!e.data.deep && !e.data.ai_out);
               setFullOk(!!e.data.full_offer);
               setChoices(Array.isArray(e.data.choices) ? e.data.choices.slice(0, 4) : []);
               if (e.data.settings) refresh().catch(() => {});
@@ -102,6 +103,12 @@ export default function Chat() {
               celebrate();
             } else if (e.event === "cards") {
               setNotes((n) => [...n, { key: `c${Date.now()}`, text: t("mob.cardsAdded", { n: e.data.cards?.length || 0 }) }]);
+            } else if (e.event === "allowance") {
+              // Zajamčena poraba naročnika (kot na spletu): 80 % obvestilo, 100 % hitri način; brez zneskov.
+              // Družina: skupen delež za vse profile (ai.pool).
+              const base = e.data.stage === "out" ? t("ai.out") : `${t("ai.low")}\n${t("ai.left", { n: e.data.left ?? 0 })}`;
+              const text = e.data.pool ? `${base}\n${t("ai.pool")}` : base;
+              setNotes((n) => [...n, { key: `a${Date.now()}`, text, tone: "info" }]);
             } else if (e.event === "proposal") setProposal(e.data);
           },
           abort.current.signal,
@@ -250,7 +257,7 @@ export default function Chat() {
           ListFooterComponent={
             <View style={{ gap: 10 }}>
               {notes.map((n) => (
-                <Banner key={n.key} text={n.text} tone={n.tone} icon={n.tone === "gold" ? { ios: "trophy.fill", android: "emoji_events" } : { ios: "rectangle.stack", android: "style" }} />
+                <Banner key={n.key} text={n.text} tone={n.tone === "info" ? undefined : n.tone} icon={n.tone === "gold" ? { ios: "trophy.fill", android: "emoji_events" } : n.tone === "info" ? { ios: "info.circle", android: "info" } : { ios: "rectangle.stack", android: "style" }} />
               ))}
               {proposal ? (
                 <Card tone="accent">

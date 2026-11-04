@@ -1,18 +1,20 @@
 // Dokupljena poraba AI (j 2026-10-30): ko učenec porabi svoj mesečni delež skupnega proračuna
-// (server/proracun.js), lahko račun dokupi kredit. Od plačila gre na kredit največ polovica
-// (EVKLID_CREDIT_SHARE, privzeto 0,5), ostalo pokrije DDV, Stripe in dobiček: 10 € → 5 € kredita
-// (v $ po EVKLID_EUR_PER_USD). Kredit je vezan na račun (starša ali polnoletnega učenca) in velja
-// za vse njegove profile, dokler ga ne porabijo; ne poteče ob koncu meseca.
+// (server/proracun.js), lahko račun dokupi kredit. Pravilo 75 % (j 2026-11-04, kot pri paketih): od plačila
+// ostane vsaj 75 % dobička tudi, ko je ves kredit porabljen. Kredit v $ = (plačilo × (1 − 0,015 − 0,75) − 0,25 €)
+// / 0,92 (Stripe 1,5 % + 0,25 €, AI po 0,92 € za 1 $; plans.js COST): 5 € → 1,00 $, 10 € → 2,28 $, 20 € → 4,83 $.
+// Učenec in starš vidita samo ~število razlag oziroma pogovorov, nikoli € ali $. Kredit je vezan na račun
+// (starša ali polnoletnega učenca) in velja za vse njegove profile, dokler ga ne porabijo; ne poteče ob koncu meseca.
 import "../env.js";
+import { COST } from "../accounts/plans.js";
 
 const num = (k, d) => {
   const v = Number(process.env[k]);
   return Number.isFinite(v) && process.env[k] !== "" && process.env[k] !== undefined ? v : d;
 };
 
-// Delež plačila, ki postane kredit: največ 0,5, da ostane vsaj polovica (j).
-export const creditShare = () => Math.min(0.5, Math.max(0.05, num("EVKLID_CREDIT_SHARE", 0.5)));
-const eurPerUsd = () => num("EVKLID_EUR_PER_USD", 0.87);
+// Delež plačila, ki lahko postane kredit: največ 1 − 1,5 % − 75 % = 0,235 (EVKLID_CREDIT_SHARE ga lahko le zniža).
+const MAX_SHARE = 1 - COST.stripePct - COST.minProfit;
+export const creditShare = () => Math.min(MAX_SHARE, Math.max(0.05, num("EVKLID_CREDIT_SHARE", MAX_SHARE)));
 
 // Paketi za dokup v centih z DDV (osnutek, potrdi j pred objavo).
 export const CREDIT_PACKS = [
@@ -40,8 +42,8 @@ export function conversationsFor(usd) {
   return n >= 20 ? n - (n % 5) : n;
 }
 
-// Kredit v $ za plačilo v centih (evri): polovica zneska, pretvorjena v dolarje.
-export const creditUsdFor = (amountCents) => Math.floor(((amountCents / 100) * creditShare() * 100) / eurPerUsd()) / 100;
+// Kredit v $ za plačilo v centih (evri), navzdol na cent.
+export const creditUsdFor = (amountCents) => Math.max(0, Math.floor((((amountCents / 100) * creditShare() - COST.stripeFixedEur) / COST.eurPerUsd) * 100 + 1e-9) / 100);
 
 export function migrateCredits(db) {
   db.exec(`

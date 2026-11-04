@@ -10,9 +10,9 @@ import { icon } from "../icons.js";
 import { FITS } from "./produce-fits.js";
 
 const MINUS = "−";
-const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 // odgovor sredi prevedenega besedila osamljen (FSI … PDI), da »−3/4« v arabščini ne postane »3/4−«
-const iso = (s) => `\u2068${s}\u2069`;
+export const iso = (s) => `\u2068${s}\u2069`;
 const gcd = (a, b) => (b ? gcd(b, a % b) : Math.abs(a));
 // decimalni ločilnik trenutnega jezika (setNumberStyle v topics.js)
 export const decSep = () => (fmt(1.5).includes(",") ? "," : ".");
@@ -75,7 +75,7 @@ const wrongNums = (q, p) => (q.w || []).map(readNumber).filter((w) => w && w.uni
 // ---------- ali pojem ustreza igri ----------
 // Ponovljiv vzorec nalog: generatorji uporabljajo Math.random, ki ga za ta čas zamenja semenski generator
 // (mulberry32), da je odločitev za vsak pojem vedno enaka (v testu, na portalu, v aplikaciji).
-function seeded(seed, fn) {
+export function seeded(seed, fn) {
   const r = Math.random;
   let s = seed >>> 0;
   Math.random = () => {
@@ -90,13 +90,14 @@ function seeded(seed, fn) {
     Math.random = r;
   }
 }
-const hash = (s) => [...s].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) | 0, 7);
+export const hash = (s) => [...s].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) | 0, 7);
 export const FIT_SAMPLES = 8; // vzorčnih nalog na stopnjo
 export const FIT_NEED = 6; // od teh mora ustrezati vsaj toliko (ostale igra med igro preskoči, engine.accept)
 // Pojem ustreza, če na vsaki od treh stopenj ustreza vsaj FIT_NEED od FIT_SAMPLES vzorčnih nalog. Vzorec je
 // vedno v slovenščini, da je izbira pojmov v vseh jezikih enaka; rezultat se zapomni. Portal bere vnaprej
 // izračunan seznam (produce-fits.js, scripts/igre-pojmi.js); test preveri, da se ujema s tem izračunom.
-function fitter(accept, salt) {
+// more(c, tier): dodatni pogoj na stopnjo (npr. ali se iz nalog pojma da sestaviti cel krog igre).
+export function fitter(accept, salt, more) {
   const memo = new Map();
   const test = (c) => {
     for (let tier = 1; tier <= 3; tier++) {
@@ -108,6 +109,7 @@ function fitter(accept, salt) {
         } catch {}
         if (!ok && ++bad > FIT_SAMPLES - FIT_NEED) return false;
       }
+      if (more && !more(c, tier)) return false;
     }
     return true;
   };
@@ -274,7 +276,7 @@ export const fitNow = {
   numline: fitter((q) => !!lineTask(q), ":line"),
   typed: fitter((q) => !!typedTask(q), ":typed"),
 };
-const fitList = (id) => {
+export const fitList = (id) => {
   const set = new Set(FITS[id] || []);
   return (c) => set.has(c.id);
 };
@@ -378,7 +380,7 @@ function mailbox(g, x, y, r, open) {
 }
 
 // Naloga na tabli: račun v eni vrstici (pomanjša se), besedilna naloga v več vrsticah, da ostane berljiva.
-function boardText(G, text, cx, cy, maxW, maxH, size, opts) {
+export function boardText(G, text, cx, cy, maxW, maxH, size, opts) {
   if (!/\p{L}{3}/u.test(text)) return G.fit(text, cx, cy, maxW, size, { ...opts, min: 12 });
   // znak ali enota brez črk in številk (€, %, »,«) ostane ob prejšnji besedi
   const words = text.split(/\s+/).reduce((a, w) => (a.length && !/[\p{L}\p{N}]/u.test(w) ? (a[a.length - 1] += ` ${w}`) : a.push(w), a), []);
@@ -397,11 +399,11 @@ function boardText(G, text, cx, cy, maxW, maxH, size, opts) {
 }
 
 // Gumb s tipko za G.ui (core.js): velik cilj za prst, aria-label, brez kraje fokusa platnu ob tapu.
-function keyBtn(k, html, label, cls = "") {
+export function keyBtn(k, html, label, cls = "") {
   return `<button type="button" class="gm-key ${cls}" data-k="${esc(k)}"${label ? ` aria-label="${esc(label)}"` : ""}>${html}</button>`;
 }
 // Tipke v G.ui: tap sproži eng.key, držanje ponavlja (premikanje po premici).
-function wireKeys(G, eng, repeat = []) {
+export function wireKeys(G, eng, repeat = []) {
   let hold = null;
   const live = () => G.running && !G.paused && !G.over;
   G.ui.addEventListener("mousedown", (e) => e.target.closest(".gm-key") && e.preventDefault());

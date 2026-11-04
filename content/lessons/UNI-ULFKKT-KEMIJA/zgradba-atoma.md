@@ -5,11 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Iz gimnazije poznaš atom kot jedro s protoni in nevtroni ter elektrone v »lupinah«. Ta slika zadošča za štetje delcev, ne razloži pa, zakaj je natrij tako reaktiven, neon pa skoraj nič, zakaj ima ogljik štiri vezi, zakaj je bakrov(II) sulfat moder in zakaj je kisik paramagneten. Vse to določa **razporeditev elektronov** v atomu, ki jo opisuje kvantna mehanika.
+Bunsen in Kirchhoff sta v 19. stoletju opazila, da vsak element v plamenu seva svetlobo le pri nekaj značilnih valovnih dolžinah; po neznanih črtah v spektru sta odkrila cezij in rubidij. Metoda je delovala, nihče pa ni znal povedati, zakaj so črte prav tam. Bohr je pokazal, da črte vodika sledijo iz kvantiziranih energij elektrona, kvantna mehanika pa je razlago razširila na vse atome. Isti pojav vidiš nad stadionom ob odprtju velikega tekmovanja: rdečo barvo ognjemeta da stroncij, zeleno barij, rumeno natrij. Na njem temelji tudi atomska absorpcijska spektrometrija, s katero določajo kovine v vodi in krvi. **Razporeditev elektronov** pa razloži še, zakaj je natrij reaktiven, neon pa skoraj ne in zakaj je kisik paramagneten.
 
-Zgradba atoma je temelj za periodni sistem, kemijsko vez, spektroskopijo in reaktivnost. Na njej temeljijo metode, ki jih srečaš v laboratoriju in v medicini: atomska absorpcijska spektrometrija za določanje kovin v vodi in krvi, plamenski testi, rentgenska analiza, magnetna resonanca, laserji.
-
-V tej lekciji se naučiš:
+Na koncu boš znal:
 
 - kaj so **orbitale** in kako izgledajo,
 - kaj pomenijo **kvantna števila** $n$, $l$, $m_l$ in $m_s$ ter katere kombinacije so dovoljene,
@@ -17,6 +15,12 @@ V tej lekciji se naučiš:
 - razložiti izjeme (krom, baker) in konfiguracije ionov prehodnih kovin.
 
 ## Razlaga
+
+### Najprej en atom: kisik
+
+Kisik ima $Z = 8$, torej $8$ elektronov. Dva gresta v $1s$, dva v $2s$, preostali štirje v tri orbitale $2p$: $1s^2\,2s^2\,2p^4$. V $2p$ se trije elektroni najprej razporedijo vsak v svojo orbitalo, četrti se pari z enim od njih, zato ostaneta dva nesparjena. Ta zapis skriva vsa pravila spodaj: zakaj so orbitale prav $1s$, $2s$, $2p$ (kvantna števila), zakaj sta v orbitali največ dva elektrona (Paulijevo načelo), zakaj ta vrstni red (izgradno načelo) in zakaj se elektroni $2p$ ne parijo takoj (Hundovo pravilo). Razdelki 1–9 to splošno utemeljijo.
+
+### Splošno: od delcev do pravil
 
 **1. Delci v atomu.** Atom ima pozitivno **jedro** iz protonov in nevtronov (skupaj nukleoni) ter negativni elektronski oblak. **Vrstno število** $Z$ je število protonov, **masno število** $A$ število nukleonov. Atome z enakim $Z$ in različnim $A$ imenujemo **izotopi**, npr. $^{12}\mathrm{C}$ in $^{14}\mathrm{C}$. Jedro ima premer okoli $10^{-15}\,\mathrm{m}$, atom okoli $10^{-10}\,\mathrm{m}$: skoraj vsa masa je v jedru, skoraj vsa prostornina pa pripada elektronom.
 
@@ -41,6 +45,12 @@ Pri prehodu elektrona z višjega na nižji nivo se izseva foton z energijo $\Del
 
 Podlupine označujemo s črkami: $l = 0$ je $s$, $l = 1$ je $p$, $l = 2$ je $d$, $l = 3$ je $f$. Podlupina z danim $l$ ima $2l + 1$ orbital: ena $s$, tri $p$, pet $d$, sedem $f$. Lupina z glavnim kvantnim številom $n$ ima $n^2$ orbital in največ $2n^2$ elektronov.
 
+:::premisli
+Preden pogledaš odgovor, izračunaj iz tabele: koliko orbital ima lupina $n = 4$ in koliko elektronov sprejme?
+---
+$l$ je $0$, $1$, $2$ ali $3$ (podlupine $4s$, $4p$, $4d$, $4f$), torej $1 + 3 + 5 + 7 = 16 = 4^2$ orbital in največ $2 \cdot 16 = 32$ elektronov.
+:::
+
 **6. Oblike orbital.** Orbitale $s$ so kroglasto simetrične. Orbitale $p$ ($p_x$, $p_y$, $p_z$) imajo obliko dvojnega balona vzdolž ene osi, z vozelno ravnino skozi jedro. Orbitale $d$ imajo večinoma štiri »liste« (štirilistna deteljica), $d_{z^2}$ pa dva lista in obroč. Število **vozlov** (ploskev, kjer je $\psi = 0$) je $n - 1$: od tega je $l$ kotnih in $n - l - 1$ radialnih. Orbitala $2s$ ima en radialni vozel, $3p$ en radialni in en kotni.
 
 **7. Pravila za razporejanje elektronov.**
@@ -52,7 +62,13 @@ $$1s < 2s < 2p < 3s < 3p < 4s < 3d < 4p < 5s < 4d < 5p < 6s < 4f < 5d < 6p$$
 
 - **Hundovo pravilo:** v podlupini z več enakovrednimi orbitalami elektroni najprej zasedejo vsako orbitalo posamezno z vzporednimi spini, šele nato se parijo.
 
-**8. Zapis konfiguracije.** Za kisik ($Z = 8$): $1s^2\,2s^2\,2p^4$. Okrajšano zapišemo jedro kot konfiguracijo prejšnjega žlahtnega plina: železo je $[\mathrm{Ar}]\,3d^6\,4s^2$. Z orbitalnim diagramom (škatlice s puščicami) pokažemo tudi spine:
+:::premisli
+Ogljik ima $1s^2\,2s^2\,2p^2$. Napovej: sta oba elektrona $2p$ v isti orbitali ali v dveh? Koliko nesparjenih elektronov ima ogljik?
+---
+V dveh različnih orbitalah z vzporednima spinoma, ker se v ločenih orbitalah manj odbijata (Hundovo pravilo). Ogljik ima zato $2$ nesparjena elektrona.
+:::
+
+**8. Zapis konfiguracije.** Za kisik iz uvodnega primera ($Z = 8$): $1s^2\,2s^2\,2p^4$. Okrajšano zapišemo jedro kot konfiguracijo prejšnjega žlahtnega plina: železo je $[\mathrm{Ar}]\,3d^6\,4s^2$. Z orbitalnim diagramom (škatlice s puščicami) pokažemo tudi spine:
 
 ```
 O:  1s [↑↓]  2s [↑↓]  2p [↑↓][↑ ][↑ ]    -> 2 nesparjena elektrona
@@ -77,7 +93,7 @@ Izgradno načelo $1s < 2s < 2p < 3s < 3p$, Paulijevo načelo (največ $2$ elektr
 
 **Rešitev:**
 
-1. Razporejamo $16$ elektronov: $1s^2$ ($2$), $2s^2$ ($4$), $2p^6$ ($10$), $3s^2$ ($12$), $3p^4$ ($16$).
+1. Razporejamo $16$ elektronov od najnižje energije navzgor, podlupino $s$ napolnimo z $2$, $p$ s $6$ elektroni (Paulijevo načelo): $1s^2$ ($2$), $2s^2$ ($4$), $2p^6$ ($10$), $3s^2$ ($12$), $3p^4$ ($16$).
 2. Konfiguracija: $1s^2\,2s^2\,2p^6\,3s^2\,3p^4$ oziroma $[\mathrm{Ne}]\,3s^2\,3p^4$.
 3. Po Hundovem pravilu prvi trije elektroni $3p$ zasedejo vsak svojo orbitalo, četrti se pari s prvim: $3p\ [\uparrow\downarrow][\uparrow\ ][\uparrow\ ]$.
 4. Nesparjena sta $2$ elektrona, zato je atom paramagneten.
@@ -117,11 +133,34 @@ Izgradno načelo: $\dots\,3p < 4s < 3d$. Kationi prehodnih kovin najprej oddajo 
 **Rešitev:**
 
 1. Atom: $1s^2\,2s^2\,2p^6\,3s^2\,3p^6\,4s^2\,3d^6$, okrajšano $[\mathrm{Ar}]\,3d^6\,4s^2$ (argon ima $18$ elektronov, $18 + 2 + 6 = 26$).
-2. $\mathrm{Fe^{2+}}$: odvzamemo oba elektrona $4s$: $[\mathrm{Ar}]\,3d^6$.
+2. $\mathrm{Fe^{2+}}$: odvzamemo oba elektrona $4s$, ker je pri prehodnih kovinah $4s$ nad $3d$ in se izprazni prva: $[\mathrm{Ar}]\,3d^6$.
 3. $\mathrm{Fe^{3+}}$: odvzamemo še en elektron $3d$: $[\mathrm{Ar}]\,3d^5$.
 4. Nesparjeni elektroni ($3d$ ima $5$ orbital): pri $d^6$ je zasedenost $[\uparrow\downarrow][\uparrow][\uparrow][\uparrow][\uparrow]$, torej $4$ nesparjeni (pri Fe in $\mathrm{Fe^{2+}}$); pri $d^5$ je vsaka orbitala zasedena z enim elektronom, torej $5$ nesparjenih.
 5. Šesti elektron $d$ v $\mathrm{Fe^{2+}}$ je v orbitali z drugim elektronom, zato ga odboj med njima destabilizira; z njegovo oddajo nastane polzasedena, posebej stabilna podlupina $d^5$.
 6. Odgovor: Fe $[\mathrm{Ar}]\,3d^6\,4s^2$ ($4$ nesparjeni), $\mathrm{Fe^{2+}}$ $[\mathrm{Ar}]\,3d^6$ ($4$), $\mathrm{Fe^{3+}}$ $[\mathrm{Ar}]\,3d^5$ ($5$); prehod $\mathrm{Fe^{2+}} \to \mathrm{Fe^{3+}}$ je ugoden, ker nastane polzasedena podlupina $3d^5$.
+
+### Primer 4 – zdaj ti
+
+Ob odprtju tekmovanja na stadionu zažari rdeč ognjemet; rdečo barvo dajo stroncijeve soli, v katerih je stroncij kot ion $\mathrm{Sr^{2+}}$. Zapiši elektronsko konfiguracijo atoma stroncija ($Z = 38$) in iona $\mathrm{Sr^{2+}}$. Koliko nesparjenih elektronov ima atom?
+
+**Podatki:** stroncij, $Z = 38$ (atom ima $38$ elektronov); ion $\mathrm{Sr^{2+}}$ ($36$ elektronov)
+**Iščemo:** konfiguraciji atoma in iona, število nesparjenih elektronov v atomu
+
+:::formula
+Izgradno načelo $\dots\,3d < 4p < 5s < 4d$ (pravilo $n + l$); kripton ima $36$ elektronov; Paulijevo načelo.
+:::
+
+**Rešitev:**
+
+1. Do kriptona ($[\mathrm{Kr}] = 1s^2 \dots 4p^6$) je razporejenih $36$ elektronov, ostaneta $38 - 36 = 2$.
+2. Za $4p$ pride na vrsto $5s$, ker ima $n + l = 5$, podlupina $4d$ pa $n + l = 6$: atom je $[\mathrm{Kr}]\,5s^2$.
+3. Določi sam število nesparjenih elektronov in konfiguracijo iona, nato preveri:
+
+:::premisli
+Koliko nesparjenih elektronov ima atom Sr in kakšna je konfiguracija $\mathrm{Sr^{2+}}$?
+---
+Oba elektrona $5s$ sta v isti orbitali z nasprotnima spinoma, zato atom nima nesparjenih elektronov (je diamagneten). Pri nastanku iona $\mathrm{Sr^{2+}}$ atom odda prav ta dva zunanja elektrona, zato je ion $[\mathrm{Kr}]$, izoelektronski s kriptonom.
+:::
 
 ## Pogoste napake
 
@@ -212,27 +251,45 @@ kar za $Z = 1$ da $-2{,}179 \cdot 10^{-18}\,\mathrm{J}/n^2$. Pri vodiku je energ
 
 ? Koliko elektronov lahko največ sprejme podlupina $4f$?
 - $7$
+~ Sedem je število orbital $f$; v vsako gresta dva elektrona.
 + $14$
 - $10$
+~ Deset elektronov sprejme podlupina $d$ ($l = 2$); za $f$ je $l = 3$.
 > Za $f$ je $l = 3$, zato je $2l + 1 = 7$ orbital, v vsaki dva elektrona: $14$. Sedem je število orbital, deset pa velja za podlupino $d$.
 
 ? Katera kombinacija kvantnih števil $(n, l, m_l, m_s)$ **ni** dovoljena?
 - $(2, 1, -1, +\tfrac12)$
+~ Ta je dovoljena: $l = 1 \le n - 1$ in $m_l = -1$ je med $-1$ in $+1$ (orbitala $2p$).
 - $(3, 2, 2, -\tfrac12)$
+~ Ta je dovoljena: pri $l = 2$ sme biti $m_l$ do $+2$ (orbitala $3d$); meja za $m_l$ je $l$, ne $l - 1$.
 + $(2, 2, 0, +\tfrac12)$
 > Stransko kvantno število je največ $n - 1$. Pri $n = 2$ je $l$ lahko le $0$ ali $1$, zato orbitale $2d$ ni.
 
 ? Kakšna je elektronska konfiguracija kroma ($Z = 24$) v osnovnem stanju?
 - $[\mathrm{Ar}]\,3d^4\,4s^2$
+~ To da pravilo $n + l$, krom pa je izjema: en elektron preide iz $4s$ v $3d$, ker je polzasedena podlupina $3d^5$ stabilnejša.
 + $[\mathrm{Ar}]\,3d^5\,4s^1$
 - $[\mathrm{Ar}]\,3d^6$
+~ Število elektronov se ujema, a $4s$ v atomu ni prazna; konfiguracija brez $4s$ velja za ione, ne za nevtralen atom.
 > Krom je izjema: polzasedena podlupina $3d^5$ s šestimi nesparjenimi elektroni ima nižjo energijo kot $3d^4\,4s^2$.
 
 ? Koliko nesparjenih elektronov ima atom dušika ($1s^2\,2s^2\,2p^3$)?
 - $1$
+~ Tako je, če prva dva elektrona $2p$ sparimo v eni orbitali ($[\uparrow\downarrow][\uparrow][\ ]$); po Hundovem pravilu gre najprej po en elektron v vsako orbitalo.
 - $2$
+~ Dva nesparjena ima kisik ($2p^4$); pri $2p^3$ so tri orbitale in trije elektroni, zato para ni.
 + $3$
 > Po Hundovem pravilu trije elektroni $2p$ zasedejo vsak svojo orbitalo z vzporednimi spini, zato so vsi trije nesparjeni.
+
+? Študent določa konfiguracijo iona $\mathrm{Mn^{2+}}$ ($Z = 25$): (1) ion ima $25 - 2 = 23$ elektronov; (2) atom je $[\mathrm{Ar}]\,3d^5\,4s^2$; (3) ion je $[\mathrm{Ar}]\,3d^3\,4s^2$; (4) ion ima $3$ nesparjene elektrone. V katerem koraku je prva napaka?
+- korak (1)
+~ Ta je pravilen: kation z nabojem $2+$ ima dva elektrona manj kot atom.
+- korak (2)
+~ Ta je pravilen: mangan ni izjema kot krom, pravilo $n + l$ da $3d^5\,4s^2$.
++ korak (3)
+- korak (4)
+~ Iz $3d^3$ res sledijo $3$ nesparjeni; napaka je prej, v napačni konfiguraciji iona.
+> Kation prehodne kovine najprej odda elektrone $4s$, zato je $\mathrm{Mn^{2+}}$ $[\mathrm{Ar}]\,3d^5$ s petimi nesparjenimi elektroni. Korak (4) računa pravilno, a iz napačne konfiguracije, zato je tudi njegov rezultat napačen.
 
 :::simboli
 E_n | energija elektrona na n-tem nivoju | E_n = -\frac{2{,}179 \cdot 10^{-18}\,\mathrm{J}}{n^2} | J | za vodikov atom

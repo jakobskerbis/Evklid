@@ -8,6 +8,7 @@
 // Možnosti: --n 50 (število nalog), --modes chat,mid (tudi think, deep), --max-usd 5 (ustavi se pred mejo),
 //           --out data/primerjava-modelov.md, --seed 1,
 //           --groups ss,tek (le te stopnje: os, ss, tek, uni),
+//           --prompt /tmp/novi-prompt.md (drug sistemski prompt za preizkus spremembe, aplikacija ga ne uporablja),
 //           --from data/primerjava-modelov.json (iste naloge kot prejšnji zagon, npr. za primerjavo z drugim načinom)
 // Brez ključa (ali z EVKLID_MOCK=1) teče v preizkusnem načinu: odgovori in ocene so izmišljeni, strošek 0.
 import "../server/env.js";
@@ -33,6 +34,8 @@ const N = Number(arg("n", 50));
 const MODES = arg("modes", "chat,mid").split(",").filter((m) => ["chat", "think", "mid", "deep"].includes(m));
 const MAX_USD = Number(arg("max-usd", 5));
 const OUT = path.resolve(root, arg("out", "data/primerjava-modelov.md"));
+const PROMPT = arg("prompt", "");
+const TEMPLATE = PROMPT ? fs.readFileSync(path.resolve(root, PROMPT), "utf8") : undefined;
 const MOCK = isMockMode();
 const GROUP_KEYS = { os: "osnovna šola", ss: "srednja šola", tek: "tekmovanja", uni: "fakulteta" };
 const GROUPS = arg("groups", "")
@@ -209,7 +212,7 @@ for (const [i, t] of tasks.entries()) {
     settings: settingsFor(t.path),
     studentName: "Ana",
     learningPath: [learningPathPrompt(t.id), lessonSummaryForPrompt(t.id)].filter(Boolean).join("\n"),
-  });
+  }, TEMPLATE);
   for (const m of MODES) {
     if (!MOCK && spent + worstStep(m) > MAX_USD) {
       stopped = true;
@@ -245,7 +248,7 @@ const pct = (a, b) => (b ? `${Math.round((100 * a) / b)} %` : "–");
 const lines = [
   `# Primerjava modelov za inštruktorja`,
   ``,
-  `${new Date().toISOString().slice(0, 10)} · ${new Set(rows.map((r) => r.id)).size} rešenih primerov iz lekcij · ocenjevalec ${MODEL_DEEP}${MOCK ? " · PREIZKUSNI NAČIN (izmišljeni rezultati)" : ""}`,
+  `${new Date().toISOString().slice(0, 10)} · ${new Set(rows.map((r) => r.id)).size} rešenih primerov iz lekcij · ocenjevalec ${MODEL_DEEP}${PROMPT ? ` · prompt ${path.basename(PROMPT)}` : ""}${MOCK ? " · PREIZKUSNI NAČIN (izmišljeni rezultati)" : ""}`,
   ``,
   `| Model | Pravilno | Manjša napaka | Napaka | Rezultat podan | Cena na odgovor |`,
   `|---|---|---|---|---|---|`,

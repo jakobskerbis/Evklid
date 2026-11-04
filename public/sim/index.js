@@ -157,6 +157,8 @@ export const ENGINES = {
   "lab-mesanje": ["lab-toplota.js", "labMesanje"],
   "lab-faze": ["lab-toplota.js", "labFaze"],
   "lab-ohlajanje": ["lab-toplota.js", "labOhlajanje"],
+  "lab-lom": ["lab-optika.js", "labLom"],
+  "lab-leca": ["lab-optika.js", "labLeca"],
   "lab-hooke": ["lab-sile.js", "labHooke"],
   "lab-gostota": ["lab-sile.js", "labGostota"],
   "lab-vzgon": ["lab-sile.js", "labVzgon"],

@@ -5,6 +5,7 @@ import { icon, hydrateIcons } from "./icons.js";
 import { t, locale } from "./i18n.js";
 import { schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
 import { renderPassOffer } from "./pass-offer.js";
+import { jeFaks } from "./stopnja.js";
 
 let D = null; // { api, getStudent, showView, startSession, toast, escapeHtml, onChange }
 let data = null; // zadnji odgovor strežnika { schedule, courses }
@@ -333,7 +334,7 @@ async function icsPanel() {
   });
   // Javni urnik UL FMF: izbira letnika (predlagan je letnik iz profila).
   const st = D.getStudent().settings;
-  if (st.educational_track !== "UNIVERZA") return;
+  if (!jeFaks(st)) return;
   const src = await D.api(`/api/students/${sid()}/schedule/sources`).catch(() => null);
   const fmf = src?.sources?.[0];
   if (!fmf?.layers?.length) return;

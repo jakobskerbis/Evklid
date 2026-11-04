@@ -2,6 +2,7 @@
 // Teme so v curriculum-data.js (poti <predmet>-TEK-<OS|SS>), naloge v
 // practice/generators/tek-*.js. Fakultete tekmovanj nimajo.
 import { getPath } from "./curriculum.js";
+import { jeFaks, jeSs } from "../public/stopnja.js";
 
 export const COMPETITIONS = {
   "MAT-TEK-OS": ["Kenguru", "Vegovo priznanje"],
@@ -32,10 +33,10 @@ export function competitionKey(subject, school) {
 
 // Privzeta tekmovalna pot iz nastavitev učenca (fakulteta: ni tekmovanj).
 export function competitionKeyFor(settings) {
-  if (settings.educational_track === "UNIVERZA") return null;
+  if (jeFaks(settings)) return null;
   // Tekmovanja so za MAT, FIZ in KEM; pri drugih predmetih (npr. biologija) pokažemo matematiko.
   const subject = ["MAT", "FIZ", "KEM"].includes(settings.subject) ? settings.subject : "MAT";
-  return competitionKey(subject, settings.educational_track === "SREDNJA_SOLA" ? "SS" : "OS");
+  return competitionKey(subject, jeSs(settings) ? "SS" : "OS");
 }
 
 export function competitionInfo(key) {

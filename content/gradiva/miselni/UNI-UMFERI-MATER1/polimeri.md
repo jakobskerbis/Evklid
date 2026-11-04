@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Veriga enot
+  - monomer eten, enota $-\mathrm{CH_2{-}CH_2}-$
+  - stopnja polimerizacije $n = \dfrac{M}{M_0}$
+- Zgradba verig
+  - linearna, razvejana: termoplasti
+  - rahlo zamrežena: elastomer (guma)
+  - gosto zamrežena: duromer, ne stali
+- Urejenost verig
+  - amorfne ali delno kristalne
+  - nad $T_g$ gumijasto, PET okoli $75\,^\circ\mathrm{C}$
+- Adicijska polimerizacija
+  - iniciacija, rast, zaključek
+  - odpre se $\mathrm{C{=}C}$, brez stranskega produkta
+  - PE, PP, PVC, PS
+- Kondenzacijska polimerizacija
+  - dve funkcionalni skupini na monomer
+  - odcepi se majhna molekula, navadno voda: PET, najlon
+  - napaka: enota ni vsota monomerov
+- Molska masa
+  - $M_n = \sum x_i M_i$
+  - $M_w = \sum w_i M_i$, vedno $M_w \geq M_n$

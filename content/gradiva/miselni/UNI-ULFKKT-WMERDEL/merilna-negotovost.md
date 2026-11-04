@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ponovljivost
+  - isti merilec, merilnik, postopek, kratek čas
+  - raztros meri standardni odmik $s$
+  - obnovljivost: drug merilec ali dan
+- Negotovost povprečja
+  - $u_A = s/\sqrt{n}$, tip A
+  - napaka: $s$ namesto $u_A$
+- Kalibracija
+  - primerjava z etalonom znane vrednosti
+  - popravek $K$ = referenca − odčitek
+  - ponovitve ne odpravijo zamika
+- Ocena tipa B
+  - toleranca, kalibracijski list, ločljivost
+  - meja $\pm a$: $u_B = a/\sqrt{3}$
+- Proračun negotovosti
+  - $u_c = \sqrt{u_1^2 + u_2^2 + u_3^2}$
+  - napaka: seštevanje naravnost
+- Razširjena negotovost
+  - $U = k \cdot u_c$, običajno $k = 2$
+  - interval $\bar{x} \pm U$, približno $95\,\%$
+- Poročilo o meritvah
+  - merilnik, kalibracija, postopek, pogoji
+  - rezultat $\bar{x} \pm U$ z enoto in $k$
+  - primerjava z mejo upošteva $U$

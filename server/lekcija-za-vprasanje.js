@@ -5,13 +5,13 @@
 // napoti. Brez klica modela in brez zunanjih storitev: iskanje po besedah s težo redkosti (IDF).
 // Opomba je del shranjenega sporočila, zato se začetek zgodovine ne spreminja (predpomnilnik ostane).
 import { listPaths, topicOrder } from "./curriculum.js";
+import { stopnja } from "../public/stopnja.js";
 import { loadLesson, expandFormulaBlocks } from "./textbook.js";
 
 export const LESSON_TAG = "lekcija_ucbenika";
 export const LESSON_NOTE_HEAD = `<${LESSON_TAG}>`;
-// Privzeto izklopljeno, dokler j ne pregleda (opomba inštruktorju je sprememba tega, kar mu rečemo:
-// docs/spremembe-prompta.md). Vklop: EVKLID_LESSON_SEARCH=1.
-export const lessonSearchOn = () => process.env.EVKLID_LESSON_SEARCH === "1";
+// j vklopil 4. 11. (kartica); EVKLID_LESSON_SEARCH=0 izklopi.
+export const lessonSearchOn = () => process.env.EVKLID_LESSON_SEARCH !== "0";
 
 const fold = (s) =>
   String(s || "")
@@ -49,7 +49,8 @@ export function terms(text) {
 
 const SCHOOL_RANK = { OS: 0, SS: 1 };
 function levelOf(settings) {
-  const school = settings?.educational_track === "SREDNJA_SOLA" ? "SS" : settings?.educational_track === "OSNOVNA_SOLA" || !settings?.educational_track ? "OS" : null;
+  const st = stopnja(settings || {});
+  const school = st === "FAKS" ? null : st;
   const grade = Number((String(settings?.curriculum_level || "").match(/([1-9])/) || [])[1]) || (school === "SS" ? 4 : 9);
   return school ? { school, grade } : null;
 }

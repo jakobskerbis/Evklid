@@ -13,12 +13,17 @@ Nov razdelek »Gumbi z izbirami (strojni blok)« v stalnem delu (nad `EVKLID:NAS
 - Strežnik (`server/meta.js`, `parseChoices`) blok odstrani iz besedila (tudi z enim oklepajem, prevedeno oznako ali »>>« v nizu), sprejme le veljaven JSON z 2–4 različnimi kratkimi odgovori in gumbe pošlje le pri zadnjem odgovoru, ne pri opozorilih, zavrnitvi, popravku preverjanja ali predlogu nastavitev. Splet (`public/app.js`, `addChoices`) in aplikacija (`mobile/src/app/chat/[id].tsx`) jih pokažeta enako; napisano besedilo ostane.
 - Stalni del zraste za približno 2 000 znakov (~550 žetonov, predpomnjeno), odgovor z gumbi za ~20–40 žetonov.
 
+## 2026-11-04: dodatne vaje in stranske trditve (j potrdil 4. 11. po testu)
+
+- Nova vrstica v razdelku Pravilnost (stalni del, nad `EVKLID:NASTAVITVE`): preden inštruktor ponudi vajo za samostojno delo z novimi podatki, jo zase reši, rešitve ne zapiše (rešitev obstaja, enolično rešljiva, na učenčevi ravni), sicer jo popravi ali sestavi drugo; stranske trditve s števili (primerjave, »približno desetkrat«, deleži, ocene, zaokrožitve) pred zapisom izračuna, nepreverjeno izpusti.
+- Zakaj: v primerjavi modelov (4. 11., ocenjevalec Opus) je bila večina napak Haikuja prav tu (nerešljiva dodatna vaja AB + BA = CCC, protislovna vaja s koti, »desetkrat manj« namesto ~94-krat, »šibko v primerjavi z zemeljskim poljem«), ne v končnem rezultatu. Preizkus (`scripts/primerjava-modelov.js --prompt`, navadni Haiku, istih 35 nalog SŠ, tekmovanj in faksa): napake 6 → 2 (SŠ 27 % → 13 %, tekmovanja 13 % → 0 %, faks 8 % → 0 %), cena odgovora enaka.
+
 ## 2026-11-04: skriti opombi »povzetek pogovora« in »lekcija iz učbenika«
 
 Datoteka `prompts/system_prompt.md` je nespremenjena; inštruktor dobi dve novi skriti opombi v sporočilih, kot že opombo pole (`<kontekst_pole>`) in preverjen račun (`<preverjen_racun>`). Seznam skritih opomb je v `server/skrite-opombe.js`.
 
 - **Povzetek starejšega dela dolgega pogovora** (`<povzetek_pogovora>`, `server/povzetek.js`, vklopljeno, PR #301): ko okno zgodovine odreže starejših 10 izmenjav, jih Haiku strne v povzetek do 150 besed pred prvim sporočilom v oknu. Navodilo inštruktorju le: »uporabi kot ozadje, učenec tega ni napisal zdaj, nikoli ne omenjaj opombe«. Izklop: `EVKLID_CHAT_SUMMARY=0`.
-- **Lekcija iz učbenika pri prvem vprašanju prostega pogovora** (`<lekcija_ucbenika>`, `server/lekcija-za-vprasanje.js`, **čaka na j-jev pregled, privzeto izklopljeno**): strežnik lokalno poišče lekcijo, ki se z vprašanjem jasno ujema, in doda njen povzetek z navodilom: ista oznaka in izrazi kot v lekciji; če učenec ali naloga uporablja drug postopek, sledi učencu; običajen tempo po korakih, brez formul in rezultata pred učenčevim poskusom; če se ne ujema, opombo prezri; učencu lahko predlaga, naj lekcijo odpre v Učbeniku. Vklop: `EVKLID_LESSON_SEARCH=1`.
+- **Lekcija iz učbenika pri prvem vprašanju prostega pogovora** (`<lekcija_ucbenika>`, `server/lekcija-za-vprasanje.js`, j vklopil 4. 11.): strežnik lokalno poišče lekcijo, ki se z vprašanjem jasno ujema, in doda njen povzetek z navodilom: ista oznaka in izrazi kot v lekciji; če učenec ali naloga uporablja drug postopek, sledi učencu; običajen tempo po korakih, brez formul in rezultata pred učenčevim poskusom; če se ne ujema, opombo prezri; učencu lahko predlaga, naj lekcijo odpre v Učbeniku. Izklop: `EVKLID_LESSON_SEARCH=0`.
 
 ## 2026-11-01: inštruktor kot pedagog v vsaki situaciji (čaka na j-jev pregled)
 

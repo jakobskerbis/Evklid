@@ -39,10 +39,10 @@ test("kemijske formule dobijo indekse in naboje", () => {
 });
 
 test("skupine simbolov so urejene po ravni", () => {
-  assert.equal(groupOrder("UNIVERZA", "MAT")[0], "analiza");
-  assert.equal(groupOrder("OSNOVNA_SOLA", "MAT")[0], "osnovno");
-  assert.equal(groupOrder("SREDNJA_SOLA", "KEM")[0], "kemija");
-  assert.ok(!groupOrder("OSNOVNA_SOLA", "FIZ").includes("analiza"));
+  assert.equal(groupOrder("FAKS", "MAT")[0], "analiza");
+  assert.equal(groupOrder("OS", "MAT")[0], "osnovno");
+  assert.equal(groupOrder("SS", "KEM")[0], "kemija");
+  assert.ok(!groupOrder("OS", "FIZ").includes("analiza"));
   for (const g of Object.values(GROUPS)) for (const k of g.keys) assert.ok((k.ins.match(/@/g) || []).length <= 1, k.label);
 });
 

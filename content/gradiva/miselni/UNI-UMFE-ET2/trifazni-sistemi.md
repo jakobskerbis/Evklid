@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Trije viri
+  - zamik $120^\circ$, enaka velikost
+  - vsota kazalcev je nič
+- Fazna in medfazna
+  - $U_\mathrm{m} = \sqrt{3}\, U_\mathrm{f}$
+  - omrežje $230/400\,\mathrm V$
+  - napaka: $230 + 230 = 460\,\mathrm V$
+- Vezava v zvezdo
+  - breme dobi $U_\mathrm{m}/\sqrt{3}$
+  - $I_\mathrm{v} = I_\mathrm{f}$
+  - simetrično breme: ničelni tok nič
+- Vezava v trikot
+  - breme dobi $U_\mathrm{m}$
+  - $I_\mathrm{v} = \sqrt{3}\, I_\mathrm{f}$
+- Trifazna moč
+  - $P = 3\, U_\mathrm{f} I_\mathrm{f} \cos\varphi$
+  - $P = \sqrt{3}\, U_\mathrm{m} I_\mathrm{v} \cos\varphi$
+  - $\varphi$ je kot impedance bremena
+- Zvezda proti trikotu
+  - isto breme v trikotu: trikrat večja moč
+  - tablica $\Delta/\mathrm Y$ $230/400\,\mathrm V$: na $400\,\mathrm V$ zvezda

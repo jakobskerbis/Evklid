@@ -8,12 +8,13 @@
 // - dnevna opravila: usklajevanje naročnin s Stripom, opomnik pred koncem kode in pred letno obnovitvijo.
 import express from "express";
 import { randomToken, sha256, Throttle } from "./auth.js";
-import { PASSES, passByDays, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan } from "./plans.js";
+import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd } from "./plans.js";
 import { Schedules, nowParts, cleanDate, TEST_KINDS } from "../schedule.js";
 import { cleanText } from "../settings.js";
 import { ljNow } from "./goal-reminder.js";
-import { promoEndingEmail, renewalEmail, schoolSubEndEmail } from "./email.js";
+import { promoEndingEmail, renewalEmail, schoolSubEndEmail, planChangeEmail, allowanceEmail } from "./email.js";
 import { audit } from "../dnevnik-dostopov.js";
+import { NO_PRICE_AGE } from "../placila/ponudbe.js";
 import { CREDIT_PACKS, packById, customPack, CUSTOM_MIN_CENTS, creditUsdFor, conversationsFor } from "../placila/krediti.js";
 
 export const ADULT_TEXT = "Sem polnoleten/-na in plačujem za svoj profil ali kot starš oziroma skrbnik.";
@@ -78,6 +79,59 @@ export function migrateBilling(db) {
   const cols = db.prepare("PRAGMA table_info(parents)").all().map((c) => c.name);
   // Začetek neuspelega plačila (status past_due): poln dostop ostane še GRACE_DAYS dni.
   if (!cols.includes("past_due_since")) db.exec("ALTER TABLE parents ADD COLUMN past_due_since TEXT");
+  // Stopnja paketa pred testom (FAKS: faks cene in meja AI ×1,5; SS: paket OŠ in SŠ; prazno: kupljen pred cenami po stopnjah, vse stopnje).
+  const pcols = db.prepare("PRAGMA table_info(passes)").all().map((c) => c.name);
+  if (!pcols.includes("level")) db.exec("ALTER TABLE passes ADD COLUMN level TEXT");
+  // Prehod stopnje (j 2026-11-01): nova cena ob naslednjem podaljšanju, e-pošta vsaj 30 dni prej.
+  // Ena vrstica na račun: čakajoča sprememba paketa naročnine (to_key) z dnem, ko začne veljati.
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS plan_changes (
+      parent_id INTEGER PRIMARY KEY REFERENCES parents(id) ON DELETE CASCADE,
+      sub_id TEXT NOT NULL,
+      from_key TEXT NOT NULL,
+      to_key TEXT NOT NULL,
+      effective_at TEXT NOT NULL,
+      notified_at TEXT,
+      applied_at TEXT
+    );
+    -- Naročnina iz trgovine (Apple, Google) za en profil: cene ob podaljšanju ne moremo zamenjati sami, zato je višja
+    -- stopnja profila odprta samo do konca obdobja, v katerem je profil prešel nanjo (until), nato le stopnja
+    -- izdelka in nižje (server/accounts/index.js storeGrace).
+    CREATE TABLE IF NOT EXISTS store_level_grace (
+      parent_id INTEGER NOT NULL REFERENCES parents(id) ON DELETE CASCADE,
+      sub_id TEXT NOT NULL,
+      level TEXT NOT NULL,
+      until TEXT NOT NULL,
+      PRIMARY KEY (parent_id, sub_id, level)
+    );
+  `);
+}
+
+// Prvo podaljšanje naročnine (konec obdobja periodEnd, nato vsak mesec ali leto), ki je vsaj minMs po zdaj:
+// nova cena velja šele tedaj, da je e-pošta poslana vsaj 30 dni prej.
+export function firstRenewalAfter(periodEnd, interval, minMs) {
+  const d = new Date(periodEnd);
+  if (!Number.isFinite(d.getTime())) return null;
+  for (let i = 0; i < 40 && d.getTime() < minMs; i++) {
+    if (interval === "year") d.setUTCFullYear(d.getUTCFullYear() + 1);
+    else d.setUTCMonth(d.getUTCMonth() + 1);
+  }
+  return d.toISOString();
+}
+
+// Paket, ki naj velja ob naslednjem podaljšanju (prehod stopnje, j 2026-11-01), ali null (ni spremembe).
+// plan: sedanji paket; levels: stopnje profilov računa po vrsti (prvi je profil s sedežem pri paketu za en profil).
+// En profil: cena stopnje profila (navzgor in navzdol). Družina: navzdol (brez študenta) ob podaljšanju, navzgor
+// samo z nadgradnjo (faks profil je do takrat zaklenjen); stari paket »2 otroka« preide na Družino.
+export function targetPlan(plan, levels) {
+  if (!plan || plan.school || (plan.currency && plan.currency !== "EUR") || !planLevel(plan)) return null;
+  const withStudent = levels.includes("FAKS");
+  let to = null;
+  if (plan.family) {
+    if (plan.legacy) to = familyPlanFor(withStudent, plan.interval);
+    else if (plan.level === "FAKS" && !withStudent) to = familyPlanFor(false, plan.interval);
+  } else if (levels.length) to = levelPlanFor(levels[0], plan.interval);
+  return to && to.key !== plan.key ? to : null;
 }
 
 const iso = (ms) => new Date(ms).toISOString();
@@ -88,8 +142,8 @@ export class Passes {
   }
   create({ parentId, studentId, plan, testDate, testName }) {
     const r = this.db
-      .prepare("INSERT INTO passes (parent_id, student_id, days, amount, currency, ai_usd, test_date, test_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-      .run(parentId, studentId, plan.days, plan.amount, plan.currency, plan.aiUsd, testDate, testName || "");
+      .prepare("INSERT INTO passes (parent_id, student_id, days, amount, currency, ai_usd, test_date, test_name, level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+      .run(parentId, studentId, plan.days, plan.amount, plan.currency, plan.aiUsd, testDate, testName || "", plan.level || "SS");
     return Number(r.lastInsertRowid);
   }
   get(id) {
@@ -156,7 +210,9 @@ export function nextTest(schedules, studentId, now = new Date()) {
 }
 
 export function mountBilling(app, ctx) {
-  const { credits = null, db, store, stripe, log, json, getParent, update, childIds, ownerOf, ensureCustomer, accessOf, baseUrl, sendMail, currencyOf, isMinor, applySubscription, syncCustomer, promo, kv, offersFor = () => ({ show: true, prices: true }), hasSchoolChild = () => false } = ctx;
+  const { credits = null, db, store, stripe, log, json, getParent, update, childIds, ownerOf, ensureCustomer, accessOf, baseUrl, sendMail, currencyOf, isMinor, applySubscription, syncCustomer, promo, kv, offersFor = () => ({ show: true, prices: true }), hasSchoolChild = () => false, levelOf = () => "OS", planForParent = null, aiUsage = null, ageOf = () => null } = ctx;
+  // Paket naročnine za račun: stopnja profila (en profil) ali Družina (glej index.js planForAccount).
+  const subPlan = (p, seats, interval, currency) => (planForParent ? planForParent(p.id, seats, interval, currency) : planFor(seats, interval, currency));
   migrateBilling(db);
   const passes = new Passes(db);
   const schedules = new Schedules(db);
@@ -187,7 +243,8 @@ export function mountBilling(app, ctx) {
   function checkPass(req, parent, body) {
     const studentId = Number(body?.student_id);
     if (!Number.isInteger(studentId) || ownerOf(studentId) !== parent.id) return { status: 404, body: { error: "Učenec ne obstaja." } };
-    const plan = passByDays(body?.days);
+    // Faks ima svoje pakete (6,99 / 11,49 / 19,99 €), OŠ in SŠ skupne (plans.js PASSES).
+    const plan = passByDays(body?.days, levelOf(studentId));
     if (!plan) return { status: 400, body: { error: "Neznan paket." } };
     // j 2026-10-30: paket se ponudi samo učencu brez aktivne naročnine na Evklid.
     if (paidActive(parent)) return { status: 409, body: { error: "Ta račun že ima naročnino, zato paket pred testom ni potreben.", subscription: true } };
@@ -241,24 +298,35 @@ export function mountBilling(app, ctx) {
   }
 
   // --- paket pred testom ---
-  app.get("/api/students/:id/pass-offer", (req, res) => {
-    const parent = req.parent;
-    const studentId = Number(req.params.id);
-    const active = passes.latestFor(studentId);
-    const base = { billing: stripe.enabled, active: publicPass(active), passes: PASSES.map(({ days, amount, currency, label }) => ({ days, amount, currency, label })) };
-    if (!stripe.enabled || active || paidActive(parent) || currencyOf(req, parent) !== "EUR") return res.json({ ...base, offer: null });
+  // Ponudba paketa pred testom za profil ali null (j 2026-10-30): samo brez naročnine, s testom v 30 dneh, po
+  // pravilih ponudb; ena ponudba naenkrat (ponudbe.js oneOffer): naročnik paketa nikoli ne dobi.
+  // Vrne { test, parent_info } ali { test, suggested, pay_link }.
+  function passOfferFor(studentId, req = null) {
+    const parent = getParent(ownerOf(studentId));
+    if (!parent || !stripe.enabled || passes.latestFor(studentId) || paidActive(parent)) return null;
+    if (currencyOf(req || { headers: {} }, parent) !== "EUR") return null;
     const test = nextTest(schedules, studentId);
-    if (!test) return res.json({ ...base, offer: null });
+    if (!test) return null;
     // Pravila ponudb (server/placila/ponudbe.js): ne med poukom in ne, če jih je učitelj izklopil;
     // pod 15 let brez cene, le povezava s podatki za starše.
     const policy = offersFor(studentId);
-    if (!policy.show) return res.json({ ...base, offer: null });
+    if (!policy.show) return null;
     // Preizkus, koda ali bonus, ki pokrije čas do dneva po testu: ponudba ni potrebna.
     const access = accessOf(parent);
     const coverEnd = Date.parse(`${test.date}T23:59:59Z`) + 86400000;
-    if (isPremiumChild(access, childIds(parent.id), studentId) && access.until && Date.parse(access.until) >= coverEnd) return res.json({ ...base, offer: null });
-    if (!policy.prices) return res.json({ ...base, passes: [], offer: { test, parent_info: true } });
-    res.json({ ...base, offer: { test, suggested: passForDaysLeft(test.daysLeft)?.days ?? 30, pay_link: isMinor(parent) } });
+    if (isPremiumChild(access, childIds(parent.id), studentId) && access.until && Date.parse(access.until) >= coverEnd) return null;
+    if (!policy.prices) return { test, parent_info: true };
+    return { test, suggested: passForDaysLeft(test.daysLeft, levelOf(studentId))?.days ?? 30, pay_link: isMinor(parent) };
+  }
+
+  // --- paket pred testom ---
+  app.get("/api/students/:id/pass-offer", (req, res) => {
+    const studentId = Number(req.params.id);
+    const active = passes.latestFor(studentId);
+    const base = { billing: stripe.enabled, active: publicPass(active), passes: passesFor(levelOf(studentId)).map(({ days, amount, currency, label }) => ({ days, amount, currency, label })) };
+    const offer = passOfferFor(studentId, req);
+    if (offer?.parent_info) return res.json({ ...base, passes: [], offer });
+    res.json({ ...base, offer });
   });
 
   app.post("/api/billing/pass", json, async (req, res) => {
@@ -321,7 +389,8 @@ export function mountBilling(app, ctx) {
     res.json({
       billing: stripe.enabled,
       balance_conversations: conversationsFor(credits.balance(p.id)),
-      packs: currencyOf(req, p) === "EUR" ? CREDIT_PACKS.map(publicPack) : [],
+      // Ena ponudba naenkrat: ko ima kateri profil računa ponudbo paketa pred testom, dokupa ne ponudimo.
+      packs: currencyOf(req, p) === "EUR" && !childIds(p.id).some((id) => passOfferFor(id, req)) ? CREDIT_PACKS.map(publicPack) : [],
       // Poljuben znesek: najmanjši znesek in ocena pogovorov na 1 € (za sprotni izračun v kartici).
       custom: { min: CUSTOM_MIN_CENTS, per_eur: conversationsFor(creditUsdFor(100_000)) / 1000 },
       minor: isMinor(p),
@@ -415,7 +484,7 @@ export function mountBilling(app, ctx) {
     if (kind === "sub") {
       if (paidActive(p)) return res.status(409).json({ error: "Naročnino že imaš." });
       const school = req.body?.school === true;
-      const plan = school ? schoolPlanFor(req.body?.interval) : planFor(Number(req.body?.seats), req.body?.interval, currencyOf(req, p));
+      const plan = school ? schoolPlanFor(req.body?.interval) : subPlan(p, Number(req.body?.seats), req.body?.interval, currencyOf(req, p));
       if (!plan) return res.status(400).json({ error: "Neznan paket." });
       if (school && !hasSchoolChild(p.id)) return res.status(403).json({ error: "Ta cena velja samo za učence s šolsko licenco." });
       row = { plan_key: plan.key, student_id: null, days: null, test_date: null, test_name: "" };
@@ -441,13 +510,20 @@ export function mountBilling(app, ctx) {
     res.status(201).json({ url: `${baseUrl(req)}/placaj.html?t=${token}`, expires_at: expires });
   });
 
+  // Paket naročnine na povezavi za plačilo. Povezava izpred cen po stopnjah s starim paketom »2 otroka« (ni več
+  // cene v Stripu): današnji paket računa, enak na strani za starše in v plačilu.
+  const linkSubPlan = (l, parent) => {
+    const linked = planByKey(l.plan_key);
+    return linked?.legacy && parent ? subPlan(parent, linked.seats, linked.interval, "EUR") : linked;
+  };
+
   // Stran za starše (placaj.html) brez prijave: kaj plačujejo, za koga in koliko.
   function linkView(l) {
     const parent = getParent(l.parent_id);
     // Za naročnino: ime prvega profila na računu (najstnikov lasten profil).
     const sid = l.student_id ?? childIds(l.parent_id)[0];
     const student = sid ? store.getStudent(sid) : null;
-    const plan = l.kind === "sub" ? planByKey(l.plan_key) : passByDays(l.days);
+    const plan = l.kind === "sub" ? linkSubPlan(l, parent) : passByKey(l.plan_key) || passByDays(l.days);
     const pass = l.pass_id ? passes.get(l.pass_id) : null;
     const paid = !!l.done_at || (l.kind === "sub" ? paidActive(parent) : pass?.status === "active");
     return {
@@ -500,7 +576,8 @@ export function mountBilling(app, ctx) {
       let session;
       if (l.kind === "sub") {
         if (paidActive(parent)) return res.status(409).json({ error: "To je že plačano. Hvala!", paid: true });
-        const plan = planByKey(l.plan_key);
+        const plan = linkSubPlan(l, parent);
+        if (!plan) return res.status(410).json({ error: "Povezava za plačilo ne velja več. Prosite za novo.", expired: true });
         // Povezava je lahko stara: šolska cena le, če ima otrok šolsko licenco še ob plačilu.
         if (plan.school && !hasSchoolChild(parent.id)) return res.status(403).json({ error: "Ta cena velja samo za učence s šolsko licenco. Prosite za novo povezavo." });
         const { prices } = plan.school ? await stripe.ensureSchoolPrices() : await stripe.ensurePrices(plan.currency || "EUR");
@@ -520,7 +597,7 @@ export function mountBilling(app, ctx) {
           metadata: { parent_id: parent.id, pay_link: l.token_hash },
         });
       } else {
-        const plan = passByDays(l.days);
+        const plan = passByKey(l.plan_key) || passByDays(l.days);
         if (paidActive(parent)) return res.status(409).json({ error: "Ta račun že ima naročnino, zato paket pred testom ni potreben.", subscription: true });
         if (passes.latestFor(l.student_id)) return res.status(409).json({ error: "To je že plačano. Hvala!", paid: true });
         // Ponoven klik na isti povezavi uporabi isti (še neplačan) paket, zato dve plačilni strani ne dasta dveh paketov.
@@ -628,13 +705,105 @@ export function mountBilling(app, ctx) {
     }
     // Pred opomnikom o obnovitvi: ta isti dan ne sme reči »se bo obnovila«, če jo tu ustavimo.
     await schoolSubEnd(now, out, appUrl);
+    await levelChanges(now, out, appUrl);
     const in30 = iso(now.getTime() + 30 * 86400000);
     for (const p of db.prepare("SELECT * FROM parents WHERE sub_period_end > ? AND sub_period_end <= ? AND sub_cancel_at_period_end = 0").all(nowIso, in30)) {
       const plan = planByKey(p.sub_plan);
       if (plan?.interval !== "year" || !paidActive(p, now.getTime())) continue;
-      out.renewal += await remind(p, "renewal", p.sub_period_end.slice(0, 10), renewalEmail(fmtDate(p.sub_period_end), fmtMoney(plan.amount, plan.currency || "EUR"), appUrl));
+      // Čakajoča nova cena (prehod stopnje) ob tem podaljšanju: opomnik navede znesek, ki bo res zaračunan.
+      const pend = changeOf(p.id);
+      const next = pend && !pend.applied_at && pend.sub_id === p.sub_id && Math.abs(Date.parse(pend.effective_at) - Date.parse(p.sub_period_end)) <= 86400000 ? planByKey(pend.to_key) : null;
+      const bill = next || plan;
+      out.renewal += await remind(p, "renewal", p.sub_period_end.slice(0, 10), renewalEmail(fmtDate(p.sub_period_end), fmtMoney(bill.amount, bill.currency || "EUR"), appUrl));
     }
     return out;
+  }
+
+  // Prehod stopnje (j 2026-11-01, načrt »Prehod med stopnjami in cena«): cena sledi stopnji profila, a se spremeni
+  // šele ob podaljšanju, ki je vsaj 30 dni po e-pošti z novo ceno. Do takrat ostane stara cena; profil za en sedež ima
+  // novo stopnjo odprto že zdaj (pravice.js grace), pri prehodu navzdol ostane do podaljšanja odprta višja.
+  // Tik pred podaljšanjem (3 dni prej) se cena v Stripu zamenja brez proracije, da je naslednji račun po novi ceni.
+  const APPLY_BEFORE_MS = 3 * 86400000;
+  const changeOf = (parentId) => db.prepare("SELECT * FROM plan_changes WHERE parent_id = ?").get(parentId) || null;
+  // Stopnje profilov računa: najprej profil s sedežem (najstarejši), kot isPremiumChild.
+  const levelsOf = (parentId) => childIds(parentId).sort((a, b) => a - b).map((id) => levelOf(id));
+  async function levelChanges(now, out, appUrl) {
+    out.plan_notified = 0;
+    out.plan_applied = 0;
+    for (const p of db.prepare("SELECT * FROM parents WHERE sub_id IS NOT NULL").all()) {
+      if ((p.sub_provider || "stripe") !== "stripe" || !paidActive(p, now.getTime())) continue;
+      const plan = planByKey(p.sub_plan);
+      let row = changeOf(p.id);
+      const to = p.sub_cancel_at_period_end ? null : targetPlan(plan, levelsOf(p.id));
+      try {
+        if (!to) {
+          if (row) db.prepare("DELETE FROM plan_changes WHERE parent_id = ?").run(p.id); // spet ista stopnja ali izvedeno
+          continue;
+        }
+        // Zamujena izvedba (strežnik ugasnjen ali napaka Stripa ves čas pred podaljšanjem): izračunaj znova.
+        const stale = !!row && !row.applied_at && Date.parse(row.effective_at) < now.getTime() - 86400000;
+        if (!row || stale || row.to_key !== to.key || row.sub_id !== p.sub_id || row.from_key !== plan.key) {
+          // Dražje: podaljšanje vsaj 30 dni po e-pošti. Ceneje (prehod navzdol): že naslednje podaljšanje, da
+          // naročnik nižje stopnje ne plača še enega obdobja po višji ceni.
+          const up = to.amount > plan.amount;
+          const effective = firstRenewalAfter(p.sub_period_end, plan.interval, now.getTime() + (up ? 30 * 86400000 : 0));
+          if (!effective) continue;
+          db.prepare(
+            "INSERT INTO plan_changes (parent_id, sub_id, from_key, to_key, effective_at, notified_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(parent_id) DO UPDATE SET sub_id = excluded.sub_id, from_key = excluded.from_key, to_key = excluded.to_key, effective_at = excluded.effective_at, notified_at = excluded.notified_at, applied_at = NULL",
+          ).run(p.id, p.sub_id, plan.key, to.key, effective, iso(now.getTime()));
+          const msg = planChangeEmail({ planText: to.label, amountText: fmtMoney(to.amount, "EUR"), dateText: fmtDate(effective), up }, appUrl);
+          const period = `${to.key}:${effective.slice(0, 10)}`;
+          const sent = await remind(p, "plan_change", period, msg);
+          // Višja cena brez poslane e-pošte ne sme začeti veljati: jutri znova (z novim rokom vsaj 30 dni).
+          if (up && !sent && !db.prepare("SELECT 1 FROM email_log WHERE parent_id = ? AND kind = 'plan_change' AND period = ? AND ok = 1").get(p.id, period)) {
+            db.prepare("DELETE FROM email_log WHERE parent_id = ? AND kind = 'plan_change' AND period = ?").run(p.id, period);
+            db.prepare("DELETE FROM plan_changes WHERE parent_id = ?").run(p.id);
+            continue;
+          }
+          out.plan_notified += sent;
+          if (up) continue;
+          row = changeOf(p.id); // ceneje: izvede se lahko že zdaj, če je podaljšanje čez največ 3 dni
+        }
+        // Izvedba: obdobje, ki se konča ob effective_at, teče; podaljšanje je čez največ 3 dni.
+        const end = Date.parse(p.sub_period_end);
+        if (row.applied_at || !stripe.enabled || Math.abs(end - Date.parse(row.effective_at)) > 86400000 || end - now.getTime() > APPLY_BEFORE_MS) continue;
+        const sub = await stripe.request("GET", `/subscriptions/${p.sub_id}`);
+        const item = sub.items?.data?.[0];
+        const { prices } = await stripe.ensurePrices("EUR");
+        if (!item?.id || !prices[to.key]) continue;
+        const updated = await stripe.request("POST", `/subscriptions/${p.sub_id}`, { items: [{ id: item.id, price: prices[to.key] }], proration_behavior: "none" });
+        await applySubscription(p.id, updated);
+        db.prepare("UPDATE plan_changes SET applied_at = ? WHERE parent_id = ?").run(iso(now.getTime()), p.id);
+        out.plan_applied++;
+      } catch (err) {
+        log.error?.("[evklid] prehod stopnje:", p.id, err.message);
+      }
+    }
+  }
+  // Čakajoča sprememba paketa za zavihek Račun: { plan, amount, effective_at } ali null.
+  function pendingChange(p) {
+    const row = changeOf(p.id);
+    const to = row && !row.applied_at && row.sub_id === p.sub_id ? planByKey(row.to_key) : null;
+    return to ? { plan: to.key, label: to.label, amount: to.amount, currency: "EUR", effective_at: row.effective_at } : null;
+  }
+
+  // Poraba podrobnih razlag (j 2026-11-01): pri profilu, mlajšem od 15 let, dobi starš e-pošto pri 80 % in 100 %
+  // (enkrat na mesec za vsako mejo, email_log). Starejši in polnoletni vidijo obvestilo v aplikaciji.
+  async function allowanceMail(studentId, stage, now = new Date()) {
+    if (stage !== "low" && stage !== "out") return 0;
+    const age = ageOf(studentId, now);
+    if (age !== null && age >= NO_PRICE_AGE) return 0; // neznana starost velja kot pod 15 (ponudbe.js)
+    const p = getParent(ownerOf(studentId));
+    if (!p || p.is_guest || !p.email_verified_at || isMinor(p)) return 0;
+    const month = now.toISOString().slice(0, 7);
+    const a = aiUsage?.studentMonth(studentId);
+    // Skupen delež družine: ena e-pošta za ves račun (ne za vsak profil posebej).
+    const kind = a?.pool ? `ai_${stage}:pool` : `ai_${stage}:${studentId}`;
+    if (db.prepare("SELECT 1 FROM email_log WHERE parent_id = ? AND kind = ? AND period = ?").get(p.id, kind, month)) return 0; // že poslano ta mesec
+    const st = store.getStudent(studentId);
+    const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+    const msg = allowanceEmail({ childName: st?.name || "", stage, left: a?.explanations_left ?? 0, untilText: fmtDate(next.toISOString()), pool: !!a?.pool }, baseUrl(null) + "/");
+    return remind(p, kind, month, msg);
   }
 
   // Osebno ob šolski licenci po izteku licence (j 2026-10-30: »naj se naročnina ob poteku šolske licence
@@ -663,7 +832,7 @@ export function mountBilling(app, ctx) {
           continue;
         }
         out.school_ended++;
-        const regular = planFor(1, "month", "EUR");
+        const regular = subPlan(p, 1, "month", "EUR"); // cena stopnje profila (OŠ, SŠ, faks)
         await remind(p, "school_sub_end", (p.sub_period_end || "").slice(0, 10), schoolSubEndEmail(p.sub_period_end ? fmtDate(p.sub_period_end) : "", fmtMoney(regular.amount, "EUR"), appUrl));
       } catch (err) {
         log.error?.("[evklid] konec naročnine po šolski licenci:", p.id, err.message);
@@ -671,5 +840,5 @@ export function mountBilling(app, ctx) {
     }
   }
 
-  return { passes, passPremium, completePassSession, completeCreditSession, completeSubSession, billingDaily, recordConsent };
+  return { passes, passPremium, passOfferFor, completePassSession, completeCreditSession, completeSubSession, billingDaily, recordConsent, pendingChange, allowanceMail, levelChanges };
 }

@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pravokotna projekcija
+  - vzporedni žarki, pravokotni na ravnino
+  - prave mere ploskev, vzporednih z ravnino
+  - fotografija: žarki skozi eno točko
+- Glavni pogledi
+  - naris: širina in višina
+  - tloris: širina in globina
+  - stranski ris: globina in višina
+- Skupne mere
+  - vsaka mera v dveh pogledih
+  - tloris poravnan pod narisom po širini
+- Število pogledov
+  - kocka in klin: enak naris in tloris
+  - dodaj pogled, dokler oblika ni nedvoumna
+  - nevidni robovi: črtkana črta
+- Metoda E
+  - tloris pod narisom, pogled z leve desno
+  - sprednja stran obrnjena stran od narisa
+- Metoda A
+  - tloris nad narisom, pogled z leve levo
+  - metodo pove simbol stožca v naslovnem polju
+- Aksonometrija
+  - izometrija: osi $120^\circ$, poenostavljeno $k = 1$
+  - dimetrija: osi $7^\circ$ in $42^\circ$, globina $\tfrac{1}{2}$
+  - mere le vzdolž osi

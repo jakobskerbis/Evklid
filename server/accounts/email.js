@@ -156,3 +156,34 @@ export function renewalEmail(dateText, amountText, appUrl) {
     text: `Vaša letna naročnina na Evklid se bo samodejno obnovila ${dateText} za ${amountText}. Prekličete jo v zavihku Račun: ${appUrl}`,
   };
 }
+
+// Nova cena ob prehodu stopnje (j 2026-11-01): 30 dni pred podaljšanjem, ko velja nova cena.
+// up: nova cena je višja (prehod navzgor), sicer nižja (prehod navzdol ali konec starega paketa).
+export function planChangeEmail({ planText, amountText, dateText, up }, appUrl) {
+  const n = BRAND.name;
+  const body = up
+    ? `Od ${dateText} bo vaša naročnina na ${n} veljala za paket ${planText}: ${amountText}. Do takrat ostane stara cena, profil ima novo stopnjo odprto že zdaj. Napredek ostane.`
+    : `Od ${dateText} bo vaša naročnina na ${n} cenejša: paket ${planText}, ${amountText}. Do takrat ostane odprta tudi višja stopnja. Napredek ostane.`;
+  return {
+    subject: `${n}: nova cena naročnine od ${dateText}`,
+    html: layout("Nova cena naročnine", `<p>${esc(body)}</p><p>Če naročnine ne želite podaljšati, jo do takrat prekličite v zavihku Račun (»Upravljaj naročnino in račune«).</p>${button(appUrl, `Odprite ${n}`)}`),
+    text: `${body} Naročnino prekličete v zavihku Račun: ${appUrl}`,
+  };
+}
+
+// Poraba podrobnih razlag pri profilu otroka, mlajšega od 15 let (j 2026-11-01): starš dobi e-pošto pri 80 % in
+// 100 %. Brez zneskov: samo, koliko razlag je še ostalo. Inštruktor odgovarja naprej v hitrem načinu.
+// Družina (pool): skupen delež vseh profilov, zato brez imena otroka.
+export function allowanceEmail({ childName, stage, left, untilText, pool = false }, appUrl) {
+  const n = BRAND.name;
+  if (pool) childName = "Skupni delež družine";
+  const body =
+    stage === "out"
+      ? `${childName}: podrobne razlage za ta mesec so porabljene. Inštruktor odgovarja naprej v hitrem načinu, nove razlage so na voljo ${untilText}.`
+      : `${childName}: porabljenih je 80 % podrobnih razlag za ta mesec, ostalo jih je še približno ${left}. Ko jih zmanjka, inštruktor odgovarja naprej v hitrem načinu.`;
+  return {
+    subject: stage === "out" ? `${n}: podrobne razlage za ta mesec so porabljene` : `${n}: porabljenih 80 % podrobnih razlag`,
+    html: layout("Podrobne razlage ta mesec", `<p>${esc(body)}</p><p>Več razlag lahko dokupite v zavihku Račun.</p>${button(appUrl, `Odprite ${n}`)}`),
+    text: `${body} Več razlag dokupite v zavihku Račun: ${appUrl}`,
+  };
+}
