@@ -3964,6 +3964,10 @@ initFormulaInfo();
     if ((state.student && !gamesOn(state.student.settings)) || navigator.connection?.saveData) return;
     loadGames().catch(() => {});
   }), 3000);
+  // Dotik zavihka Igre (ali vrstice v »Jaz«) začne nalaganje že pred klikom.
+  document.addEventListener("pointerdown", (e) => {
+    if (!gamesMod && e.target.closest?.('[data-view="games"], [data-go="games"]')) loadGames().catch(() => {});
+  }, { passive: true, capture: true });
   initZbirke({ api, getStudent: () => state.student, currentLang, showView });
   initCorner({
     api,
