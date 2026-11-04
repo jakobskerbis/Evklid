@@ -597,11 +597,14 @@ export function createScientific(root, opts) {
     stopHold();
     hold.b = null;
     const step = { "#left": () => move(-1), "#right": () => move(1), "#del": () => del() }[b.dataset.ins];
-    if (!step || (second && b.dataset.ins2)) return;
+    if (!step || e.button > 0 || (second && b.dataset.ins2)) return;
+    // tipka skrita med držanjem (drugo orodje, zaprto okno) → ustavi
+    const tick = () => (b.getClientRects().length ? step() : stopHold());
     hold.t = setTimeout(() => {
       hold.b = b; // klik ob dvigu prsta ne doda še enega koraka
-      step();
-      hold.iv = setInterval(step, 75);
+      if (second) setSecond(false); // kot pri dotiku
+      tick();
+      hold.iv = setInterval(tick, 75);
     }, 450);
   });
   for (const ev of ["pointerup", "pointercancel", "pointerleave"]) root.querySelector(".sc-keys").addEventListener(ev, stopHold);
@@ -613,10 +616,10 @@ export function createScientific(root, opts) {
   root.querySelector(".sc-keys").addEventListener("click", (e) => {
     const b = e.target.closest(".sc-key");
     if (!b) return;
-    if (hold.b === b) {
-      hold.b = null;
-      return;
-    }
+    const wasHeld = hold.b === b;
+    hold.b = null;
+    if (wasHeld && e.detail > 0) return; // tipka Enter (detail 0) ni del držanja
+
     const ins = second && b.dataset.ins2 ? b.dataset.ins2 : b.dataset.ins;
     if (ins === "#2nd") return setSecond(!second);
     if (ins === "#more") showPanel(more.hidden ? "more" : null);
