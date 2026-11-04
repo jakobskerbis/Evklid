@@ -87,6 +87,7 @@ test("daily deep cap and monthly soft budget fall back to the thinking Haiku wit
   // Srednja šola: Haiku z več razmisleka (primerjava modelov 4. 11.), razen v varčnem načinu ali z EVKLID_SS_THINK=0.
   assert.equal(u.chooseMode(t.id, { secondary: true }).mode, "think");
   assert.equal(u.chooseMode(t.id, { secondary: true, lite: true }).mode, "lite");
+  assert.equal(u.chooseMode(t.id, { secondary: true, free: true }).mode, "chat", "brezplačni paket ostane pri navadnem Haikuju");
   assert.equal(u.chooseMode(t.id, { secondary: true, wantDeep: true, deepModel: MODEL_DEEP }).mode, "think", "nad mehko mejo");
   process.env.EVKLID_SS_THINK = "0";
   try {

@@ -263,7 +263,9 @@ export class Usage {
       return { mode: capped ? "mid" : "deep", note: null };
     }
     if (wantThink) return { mode: "think", note: null };
-    if (secondary && !lite && LIMITS.secondaryThink()) return { mode: "think", note: null };
+    // Brezplačni paket ostane pri navadnem Haikuju (0,2 $ na mesec bi sicer zadoščalo za ~3× manj odgovorov).
+    // Prva »Razloži podrobneje« je pri SŠ isti model z novo, podrobnejšo prošnjo; druga gre višje kot doslej.
+    if (secondary && !lite && !free && LIMITS.secondaryThink()) return { mode: "think", note: null };
     return { mode: lite ? "lite" : "chat", note: null };
   }
   // Odgovor brez klica modela (ponovna raba ali namig iz generatorja): zapišemo, da je viden prihranek.

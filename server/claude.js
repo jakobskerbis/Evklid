@@ -29,7 +29,8 @@ const EFFORT_THINK = env("EVKLID_EFFORT_THINK", "high");
 export const MAX_TOKENS = {
   chat: Number(env("EVKLID_MAX_TOKENS", 3000)),
   lite: Number(env("EVKLID_MAX_TOKENS_LITE", 1200)),
-  think: Number(env("EVKLID_MAX_TOKENS_THINK", 5000)),
+  // Razmišljanje Haikuja pri visokem naporu porabi več tisoč žetonov; 5000 je odgovor lahko odrezalo (SŠ, 2026-11-04).
+  think: Number(env("EVKLID_MAX_TOKENS_THINK", 8000)),
   deep: Number(env("EVKLID_MAX_TOKENS_DEEP", 6000)),
 };
 
