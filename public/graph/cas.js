@@ -8,6 +8,8 @@
 import { Q, P, AlgebraError, gcdInt, lcmInt } from "../scan/algebra.js";
 import { compileLine, lineTex, splitTop, HIDDEN_VARS } from "./scicore.js";
 import { runCalc, CALC_OPS } from "./calculus.js";
+import { runAtoms, atomInfo, ATOM_TEX, isAtom } from "./casalg.js";
+import { MAT_OPS, runMatrix } from "./casmat.js";
 
 const BUDGET_MS = 1500; // kot reševalnik enačb: potem »preveč zapleteno«
 const LIVE_MS = 200; // sprotni predogled med tipkanjem
@@ -24,7 +26,7 @@ const fail = (code) => new AlgebraError(code);
 const mono = (m, c = Q.ONE) => new P([{ m, c: Q.of(c) }]);
 const ONE = () => P.num(1);
 // vrstni red črk: po abecedi ne glede na velikost (Gmm₂, pV, nRT), mala pred veliko (r pred R), π in e na koncu
-const rank = (v) => (v === "π" || v === "e" ? 2 : 0);
+const rank = (v) => (v[0] === "⟨" ? 3 : v === "π" || v === "e" ? 2 : 0);
 const varCmp = (a, b) => rank(a) - rank(b) || (a.toLowerCase() < b.toLowerCase() ? -1 : a.toLowerCase() > b.toLowerCase() ? 1 : a < b ? 1 : a > b ? -1 : 0);
 const order = (...ps) => [...new Set(ps.flatMap((p) => p.vars()))].sort(varCmp);
 
@@ -437,6 +439,10 @@ function cancel(r) {
 
 // ctx: { scope (znane vrednosti), dens: [P] (delitelji za pogoje), dec: bool (vnos z decimalkami) }
 function rat(node, ctx) {
+  const out = rat0(node, ctx);
+  return ctx.fix ? ctx.fix(out) : out;
+}
+function rat0(node, ctx) {
   tick();
   const r = (x) => rat(x, ctx);
   switch (node.k) {
@@ -461,6 +467,7 @@ function rat(node, ctx) {
     }
     case "const":
       if (node.name in SYMBOLS) return new R(P.v(node.name));
+      if (ctx.ext) return ctx.ext(node, ctx);
       throw fail("unsupported");
     case "grp":
       return r(node.a);
@@ -491,6 +498,7 @@ function rat(node, ctx) {
     }
     case "^": {
       const e = r(node.b);
+      if (ctx.ext && (!e.n.isConst() || !e.d.isConst() || !e.n.constValue().div(e.d.constValue()).int)) return ctx.ext(node, ctx, e);
       if (!e.n.isConst() || !e.d.isConst()) throw fail("unsupported");
       const k = e.n.constValue().div(e.d.constValue());
       if (!k.int) throw fail("unsupported");
@@ -507,7 +515,8 @@ function rat(node, ctx) {
       return new R(a.n.scale(new Q(1n, 100n)), a.d);
     }
     default:
-      throw fail("unsupported"); // funkcije (sin, √, |x|), odvodi … pridejo v 2. in 3. fazi
+      if (ctx.ext) return ctx.ext(node, ctx); // 3. faza: koreni, kotne funkcije, logaritmi (casalg.js)
+      throw fail("unsupported");
   }
 }
 function qOfNumber(v) {
@@ -527,6 +536,12 @@ const varTex = (v) => {
 };
 const MAIN = (vs) => (vs.includes("x") ? "x" : [...vs].sort(varCmp)[0]);
 function monoTex(m) {
+  const at = Object.keys(m).filter((v) => m[v] && isAtom(v));
+  if (at.length) {
+    const rest = { ...m };
+    for (const v of at) delete rest[v];
+    return monoTex(rest) + ATOM_TEX(Object.fromEntries(at.map((v) => [v, m[v]])));
+  }
   return Object.keys(m)
     .filter((v) => m[v])
     .sort((a, b) => (rank(a) === 2) - (rank(b) === 2) ? (rank(a) === 2 ? -1 : 1) : varCmp(a, b))
@@ -541,8 +556,14 @@ function termTex({ m, c }, first, dec) {
   let body;
   if (!mt) body = coefTex(a, dec);
   else if (a.one) body = mt;
-  else if (a.int || (dec && a.finiteDecimal)) body = coefTex(a, dec) + mt;
-  else body = `\\frac{${a.n === 1n ? "" : a.n}${mt}}{${a.d}}`;
+  else if (a.int || (dec && a.finiteDecimal)) body = coefTex(a, dec) + (/^\d/.test(mt) ? "\\cdot " : "") + mt;
+  else {
+    // ½·sin x: ulomek pred funkcijo (\frac{\sqrt{2}}{2}\sin x)
+    const cut = mt.search(/\\(sin|cos|tan|cot|ln|log)(?![a-z])/);
+    const head = cut < 0 ? mt : mt.slice(0, cut);
+    const tail = cut < 0 ? "" : mt.slice(cut);
+    body = `\\frac{${a.n === 1n ? (head ? "" : "1") : a.n}${/^\d/.test(head) && a.n !== 1n ? "\\cdot " : ""}${head}}{${a.d}}${tail}`;
+  }
   if (first) return (neg ? "-" : "") + body;
   return (neg ? " - " : " + ") + body;
 }
@@ -555,7 +576,7 @@ export function polyTex(p, dec = false, pos = false) {
   const list = p.terms().sort((a, b) => (b.m[main] || 0) - (a.m[main] || 0) || deg(b.m) - deg(a.m) || lexCmp(b.m, a.m, ord));
   if (!list.length) return "0";
   // več črk ali števec ulomka: začnemo s pozitivnim členom (b² − 4ac, (5 − a)/2)
-  if ((pos || p.vars().length > 1) && list[0].c.sign < 0) {
+  if ((pos || p.vars().length > 1 || p.vars().some(isAtom)) && list[0].c.sign < 0) {
     const i = list.findIndex((t) => t.c.sign > 0);
     if (i > 0) list.unshift(...list.splice(i, 1));
   }
@@ -659,7 +680,8 @@ function neTex(f, dec) {
     const a = coefIn(f, w, 1);
     if (!a.isConst()) continue;
     const rest = coefIn(f, w, 0).scale(a.constValue().inv().neg());
-    return `${varTex(w)} \\ne ${polyTex(rest, dec)}`;
+    if (isAtom(w) && rest.vars().length) continue;
+    return `${isAtom(w) ? ATOM_TEX({ [w]: 1 }).trim() : varTex(w)} \\ne ${polyTex(rest, dec)}`;
   }
   return `${polyTex(f, dec)} \\ne 0`;
 }
@@ -697,11 +719,16 @@ const CMDS = {
   limita: "limit",
   lim: "limit",
   taylor: "taylor",
+  // 3. faza (public/graph/casmat.js): matrike s črkami
+  det: "det",
+  inverz: "inverse",
+  inverse: "inverse",
+  inv: "inverse",
 };
 /** Imena ukazov v jeziku vmesnika (slovenski zapis za sl, sicer angleški, kot na kalkulatorjih CAS). */
 export function commandName(op, locale = "sl") {
   const sl = /^sl/i.test(locale || "");
-  return sl ? { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši", integrate: "integriraj", limit: "limita", taylor: "taylor" }[op] : op;
+  return sl ? { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši", integrate: "integriraj", limit: "limita", taylor: "taylor", det: "det", inverse: "inverz" }[op] : op;
 }
 
 /** Se besedilo začne z imenom ukaza CAS in oklepajem (tudi če za zaklepajem sledi še kaj)? */
@@ -749,6 +776,7 @@ export function runCas(cmd, env = {}) {
   } catch (e) {
     return { error: { code: e.code || "other", info: e.info || {} } };
   }
+  if (MAT_OPS.has(cmd.op)) return runMatrix(cmd, line, env);
   if (CALC_OPS.has(cmd.op)) {
     // analiza je vedno v radianih; v načinu DEG/GRA to povemo pod rezultatom
     const r = runCalc(cmd, env);
@@ -760,7 +788,14 @@ export function runCas(cmd, env = {}) {
     if (cmd.op === "solve") return solveCmd(cmd, line, name, innerTex);
     if (line.ast.k === "cmp") return { error: { code: "casEquation", info: {} } };
     const ctx = { scope: line.scope, dens: [], dec: false, vars: new Set() };
-    const r = rat(line.ast, ctx);
+    let r;
+    try {
+      r = rat(line.ast, ctx);
+    } catch (e) {
+      // koreni, kotne funkcije, logaritmi, eksponentne funkcije: 3. faza (casalg.js)
+      if (e instanceof AlgebraError && (e.code === "unsupported" || e.code === "irrational") && line.ast.k !== "cmp") return runAtoms(cmd, line, env, name, innerTex);
+      throw e;
+    }
     const vs = [...new Set([...order(r.n, r.d), ...ctx.vars])].sort(varCmp);
     let resTex;
     let check;
@@ -788,7 +823,7 @@ export function runCas(cmd, env = {}) {
     return { error: { code: casCode(e), info: {} } };
   }
 }
-const casCode = (e) => (e instanceof AlgebraError ? (e.code === "timeout" || e.code === "big" ? "casBig" : e.code === "div0" ? "undef" : e.code === "irrational" ? "casIrrational" : e.code === "unverified" ? "casUnverified" : "casUnsupported") : e?.code || "other");
+const casCode = (e) => (e instanceof AlgebraError ? (e.code === "timeout" || e.code === "big" ? "casBig" : e.code === "div0" || e.code === "domain" ? "undef" : e.code === "matrix" ? "casMatrix" : e.code === "singular" ? "casSingular" : e.code === "irrational" ? "casIrrational" : e.code === "unverified" ? "casUnverified" : "casUnsupported") : e?.code || "other");
 
 // Σ|c|·Π|x|^e: velikost členov, ki jih seštejemo (razvit (x + 1)²⁴ izgubi pri x ≈ −1,5 zaradi odštevanja do 1e−8)
 function absEval(p, env) {
@@ -1008,7 +1043,7 @@ function sqrtConst(q) {
 }
 
 // za 2. fazo (calculus.js): notranje funkcije brez lastnega izvoza
-export const KIT = { tick, rat, coeffsIn, coefIn, factorP, points, varTex };
+export const KIT = { tick, rat, coeffsIn, coefIn, factorP, points, varTex, R, cancel, gcd, divExact, prim, powP, order, varCmp, polyTex, simplifiedTex, expandedTex, factoredTex, productTex, conditions, close, SYMBOLS, MAX_POW, fail, casCode, evalR, setDeadline: (ms) => (deadline = Date.now() + ms), BUDGET_MS, LIVE_MS };
 
 /**
  * Ali lahko izraz (brez ukaza) obdelamo simbolno? Za gumbe Poenostavi / Razvij / Razstavi in Reši za … pod vrstico.
@@ -1027,6 +1062,6 @@ export function casInfo(ast, scope) {
     const r = rat(ast, ctx);
     return order(r.n, r.d).filter((v) => !(v in SYMBOLS));
   } catch {
-    return null;
+    return ast.k === "cmp" ? null : atomInfo(ast, scope);
   }
 }

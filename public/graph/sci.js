@@ -79,13 +79,19 @@ function unnest(x) {
       .replace(/_\{([^{}]*)\}/g, "$1")
       .replace(/\^\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `^${a}` : `^(${a})`))
       .replace(/\\t?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)")
+      .replace(/\\sqrt\[(\d+)\]\{([^{}]*)\}/g, (_, n, a) => (n === "3" ? (/^[\w.,]+$/.test(a) ? `∛${a}` : `∛(${a})`) : `root(${a}; ${n})`))
       .replace(/\\sqrt\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `√${a}` : `√(${a})`));
   }
   return x;
 }
 /** Rezultat v TeX → besedilo za odložišče, ki ga razume vsak program (izvoženo za teste). */
 export function texPlain(tex) {
-  return unnest(String(tex).replace(/\{,\}/g, ","))
+  const pre = String(tex)
+    // matrika → [[a; b]; [c; d]] (zapis, ki ga kalkulator prebere v obeh načinih)
+    .replace(/\}\\begin\{pmatrix\}/g, "}\\cdot\\begin{pmatrix}")
+    .replace(/\\begin\{pmatrix\}([\s\S]*?)\\end\{pmatrix\}/g, (_, body) => `[${body.split("\\\\").map((r) => `[${r.split("&").map((x) => x.trim()).join("; ")}]`).join("; ")}]`)
+    .replace(/\\log_\{([^{}]*)\}/g, "log_$1");
+  return unnest(pre.replace(/\{,\}/g, ","))
     .replace(/\\Leftrightarrow/g, "⇔")
     .replace(/\\(left|right)(?![a-z])/g, "")
     .replace(/\\(quad|,|;)/g, " ")
@@ -305,6 +311,10 @@ export function createScientific(root, opts) {
         return t("sc.cas.irrational");
       case "casEmpty":
         return t("sc.cas.empty");
+      case "casSingular":
+        return t("sc.cas.singular");
+      case "casMatrix":
+        return t("sc.cas.matrix");
       case "casIntegral":
         return t("sc.cas.integral");
       case "casLimit":
@@ -677,7 +687,8 @@ export function createScientific(root, opts) {
   function algKeys() {
     const n = (op) => commandName(op, opts.locale?.());
     const nm = (op) => `\\operatorname{${n(op)}}`;
-    return [[nm("simplify"), `${n("simplify")}(@)`], [nm("expand"), `${n("expand")}(@)`], [nm("factor"), `${n("factor")}(@)`], [`${nm("solve")}\\ (\\ldots;x)`, `${n("solve")}(@; x)`]];
+    // det in inverz s predlogo 2 × 2 (»;« loči elemente v obeh načinih decimalnega ločila)
+    return [[nm("simplify"), `${n("simplify")}(@)`], [nm("expand"), `${n("expand")}(@)`], [nm("factor"), `${n("factor")}(@)`], [`${nm("solve")}\\ (\\ldots;x)`, `${n("solve")}(@; x)`], ["\\det", `${n("det")}([[@; ]; [; ]])`], ["A^{-1}", `${n("inverse")}([[@; ]; [; ]])`]];
   }
   function anaKeys() {
     const n = (op) => commandName(op, opts.locale?.());
