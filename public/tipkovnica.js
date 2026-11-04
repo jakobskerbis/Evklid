@@ -932,7 +932,8 @@ function wireBoard() {
           if (down.pop) closePreview();
         }
       }, 380);
-    } else if (a?.a === "bs") {
+    } else if (a?.a === "bs" || a?.a === "l" || a?.a === "r") {
+      // držanje ⌫, ← ali → ponavlja (briše ali premika kazalec, dokler je prst na tipki)
       try {
         b.setPointerCapture(e.pointerId);
       } catch {}

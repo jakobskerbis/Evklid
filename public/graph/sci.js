@@ -583,15 +583,40 @@ export function createScientific(root, opts) {
   const touch = isTouch();
   if (touch) input.setAttribute("inputmode", "none");
   // tipke ne vzamejo fokusa polju (kazalec ostane na mestu)
+  // držanje ◀, ▶ ali ⌫ ponavlja (kazalec se premika ali briše, dokler je prst na tipki)
+  const hold = { t: 0, iv: 0, b: null };
+  const stopHold = () => {
+    clearTimeout(hold.t);
+    clearInterval(hold.iv);
+    hold.t = hold.iv = 0;
+  };
   root.querySelector(".sc-keys").addEventListener("pointerdown", (e) => {
-    if (e.target.closest(".sc-key")) e.preventDefault();
+    const b = e.target.closest(".sc-key");
+    if (!b) return;
+    e.preventDefault();
+    stopHold();
+    hold.b = null;
+    const step = { "#left": () => move(-1), "#right": () => move(1), "#del": () => del() }[b.dataset.ins];
+    if (!step || (second && b.dataset.ins2)) return;
+    hold.t = setTimeout(() => {
+      hold.b = b; // klik ob dvigu prsta ne doda še enega koraka
+      step();
+      hold.iv = setInterval(step, 75);
+    }, 450);
   });
+  for (const ev of ["pointerup", "pointercancel", "pointerleave"]) root.querySelector(".sc-keys").addEventListener(ev, stopHold);
+  window.addEventListener("blur", stopHold);
+  root.querySelector(".sc-keys").addEventListener("contextmenu", (e) => e.target.closest(".sc-key") && e.preventDefault());
   more.addEventListener("pointerdown", (e) => {
     if (e.target.closest(".sc-mk")) e.preventDefault();
   });
   root.querySelector(".sc-keys").addEventListener("click", (e) => {
     const b = e.target.closest(".sc-key");
     if (!b) return;
+    if (hold.b === b) {
+      hold.b = null;
+      return;
+    }
     const ins = second && b.dataset.ins2 ? b.dataset.ins2 : b.dataset.ins;
     if (ins === "#2nd") return setSecond(!second);
     if (ins === "#more") showPanel(more.hidden ? "more" : null);
