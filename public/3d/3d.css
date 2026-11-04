@@ -572,7 +572,6 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 /* atlas: desno sta kompas in zapri na kartici, zato gumba za hojo levo */
 .a3 .k3-hoja { inset-inline-end: auto; inset-inline-start: max(12px, env(safe-area-inset-left)); }
 /* Vlečenje drsnika (pregledovalnik.js): vse razen gumba in tirnice tega drsnika je prosojno, da se vidi telo */
-html.k3-drsam .k3-pregled .k3-spodaj, html.k3-drsam .k3-pregled .k3-nadzor, html.k3-drsam .k3-pregled .k3-orodja, html.k3-drsam .k3-pregled .k3-plast,
-html.k3-drsam .k3-pregled .k3-namig, html.k3-drsam .k3-pregled .k3-merilo, html.k3-drsam .k3-model-vrh, html.k3-drsam .k3-hoja { visibility: hidden; }
-html.k3-drsam .k3-pregled .k3-spodaj { background: transparent; border-color: transparent; }
-html.k3-drsam .k3-pregled .k3-aktiven input[type="range"] { visibility: visible; }
+.k3-drsam .k3-spodaj, .k3-drsam .k3-nadzor, .k3-drsam .k3-orodja, .k3-drsam .k3-plast, .k3-drsam .k3-namig, .k3-drsam .k3-merilo,
+.k3-drsam .k3-hoja, html:has(.k3-stran-pregled.k3-drsam) .k3-model-vrh { visibility: hidden; }
+.k3-drsam .k3-aktiven input[type="range"] { visibility: visible; }
