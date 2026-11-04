@@ -7,6 +7,7 @@ import { t } from "../i18n.js";
 import { jeOs } from "../stopnja.js";
 import { solve, analyze, prep, tex as exprTex, parseTask } from "./solvecore.js";
 import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
+import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
 
 let D = null; // { api, getStudent, toast, escapeHtml, askTutor, openGraph }
 const fresh = () => ({
@@ -21,6 +22,7 @@ const fresh = () => ({
   shown: 1, // koliko korakov je razkritih
   ai: null, // { loading, error }
   note: null, // obvestilo nad poljem (npr. brez povezave)
+  quality: null, // težava fotografije (blur | dark | glare), ki jo zaznamo na napravi pred branjem
 });
 const S = fresh();
 let owner = null; // profil, čigar naloga je v S (drug profil začne na praznem zaslonu)
@@ -28,6 +30,11 @@ let aiSeq = 0; // odgovor AI za prejšnjo nalogo ne prepiše nove
 let stream = null;
 let frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
 let graphView = null;
+// sprotna preverba slike v kameri: ostrina, svetloba, odsev, nagib telefona (kakovost.js)
+let qTimer = null;
+let qLast = null; // težava zadnjega vzorca
+let qShown = null; // težava, ki je na zaslonu
+let tilt = null; // kot telefona glede na vodoravno (°), null brez senzorja
 
 export function initScan(deps) {
   D = deps;
@@ -92,6 +99,7 @@ export function scanBack() {
   if (S.mode === "capture") return false;
   S.mode = "capture";
   S.note = null;
+  S.quality = null;
   frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
   aiSeq++;
   render();
@@ -109,7 +117,7 @@ export function leaveScan() {
 function render() {
   const box = $v();
   if (!box) return;
-  if (S.mode !== "capture") stopCamera();
+  stopCamera(); // tudi pri zajemu: renderCapture zamenja <video>, kamero po potrebi zažene znova
   if (graphView && S.mode !== "solution") {
     graphView.destroy?.();
     graphView = null;
@@ -135,6 +143,7 @@ function renderCapture(box) {
           <button type="button" class="secondary" data-act="cam">${icon("camera")}${esc(t("scan.camOn"))}</button>
         </div>
         ${frameHtml()}
+        <p class="scan-q" role="status" aria-live="polite" hidden></p>
       </div>
       <p class="scan-hint muted">${esc(t("scan.hint"))}</p>
       <div class="scan-bar">
@@ -156,6 +165,7 @@ function renderCapture(box) {
     }`;
   const stage = box.querySelector("[data-stage]");
   bindFrame(stage);
+  stage.addEventListener("pointerup", askTiltPermission, { once: true }); // pointerdown z dotikom ni »user gesture« (iOS)
   box.querySelector('[data-act="gallery"]').addEventListener("click", () => box.querySelector("[data-file]").click());
   box.querySelector("[data-file]").addEventListener("change", (e) => e.target.files[0] && loadFile(e.target.files[0]));
   box.querySelector("[data-shot]").addEventListener("change", (e) => e.target.files[0] && loadFile(e.target.files[0]));
@@ -167,7 +177,10 @@ function renderCapture(box) {
     render();
   });
   box.querySelector('[data-act="shoot"]').addEventListener("click", shoot);
-  box.querySelector('[data-act="cam"]').addEventListener("click", () => startCamera(true));
+  box.querySelector('[data-act="cam"]').addEventListener("click", () => {
+    askTiltPermission();
+    startCamera(true);
+  });
   box.querySelector('[data-act="torch"]').addEventListener("click", toggleTorch);
   box.querySelector('[data-act="clear"]')?.addEventListener("click", () => {
     try {
@@ -214,6 +227,7 @@ async function startCamera(userAsked) {
     const caps = track?.getCapabilities?.() || {};
     const torch = $v()?.querySelector('[data-act="torch"]');
     if (torch) torch.hidden = !caps.torch;
+    startQuality();
   } catch {
     showCamOff(true);
     if (userAsked) $v()?.querySelector("[data-shot]")?.click();
@@ -222,6 +236,51 @@ async function startCamera(userAsked) {
 function stopCamera() {
   if (stream) stream.getTracks().forEach((tr) => tr.stop());
   stream = null;
+  stopQuality();
+}
+
+// ---------- preverba slike, preden jo pošljemo v branje ----------
+
+// Sprotno: vsakih 700 ms izmeri okvir v videu; namig se pokaže, ko sta dva zaporedna vzorca enaka
+// (en zamegljen vzorec med premikanjem telefona še ni težava), in izgine ob prvem dobrem.
+function startQuality() {
+  stopQuality();
+  window.addEventListener("deviceorientation", onTilt);
+  qTimer = setInterval(sampleQuality, 700);
+}
+function stopQuality() {
+  if (qTimer) clearInterval(qTimer);
+  qTimer = null;
+  qLast = qShown = null;
+  tilt = null;
+  window.removeEventListener("deviceorientation", onTilt);
+}
+function onTilt(e) {
+  tilt = tiltAngle(e.beta, e.gamma);
+}
+// iOS dovoli senzor nagiba šele po dotiku in vprašanju; drugje je na voljo brez vprašanja.
+function askTiltPermission() {
+  const ask = window.DeviceOrientationEvent?.requestPermission;
+  try {
+    if (typeof ask === "function") ask.call(window.DeviceOrientationEvent).catch(() => {});
+  } catch {}
+}
+function sampleQuality() {
+  const video = $v()?.querySelector("video");
+  const stage = $v()?.querySelector("[data-stage]");
+  if (!stream || !video?.videoWidth || !stage || document.hidden) return;
+  const r = frameRect(video.videoWidth, video.videoHeight, stage, "cover");
+  const p = problemOf(measureSource(video, r.sx, r.sy, r.sw, r.sh, 1600, 640), tilt);
+  if (p === qLast || !p) showQuality(p);
+  qLast = p;
+}
+function showQuality(p) {
+  if (p === qShown) return;
+  qShown = p;
+  const el = $v()?.querySelector(".scan-q");
+  if (!el) return;
+  el.hidden = !p;
+  el.textContent = p ? t(`scan.q.${p}`) : "";
 }
 async function toggleTorch(e) {
   const track = stream?.getVideoTracks()[0];
@@ -240,9 +299,18 @@ function shoot() {
     return $v()?.querySelector("[data-shot]")?.click();
   }
   const stage = $v().querySelector("[data-stage]");
+  const r = frameRect(video.videoWidth, video.videoHeight, stage, "cover");
+  const bad = problemOf(measureSource(video, r.sx, r.sy, r.sw, r.sh, 1600));
   const url = cropTo(video, video.videoWidth, video.videoHeight, stage, "cover");
   stopCamera();
   S.image = { url: snapshot(video), w: video.videoWidth, h: video.videoHeight };
+  // zamegljena ali pretemna slika: ne pošljemo je takoj (branje stane in bi verjetno spodletelo);
+  // učenec jo vidi z opozorilom in jo posname znova ali vseeno pritisne »Preberi«
+  S.quality = bad === "blur" || bad === "dark" ? bad : null;
+  if (S.quality) {
+    S.mode = "crop";
+    return render();
+  }
   readImage(url);
 }
 
@@ -257,6 +325,17 @@ function snapshot(video) {
 
 // izrez okvirja iz videa ali slike (fit: cover pri videu, contain pri sliki)
 function cropTo(src, iw, ih, stage, fit) {
+  const { sx, sy, sw, sh } = frameRect(iw, ih, stage, fit);
+  const k = Math.min(1, 1600 / Math.max(sw, sh));
+  const c = document.createElement("canvas");
+  c.width = Math.max(1, Math.round(sw * k));
+  c.height = Math.max(1, Math.round(sh * k));
+  c.getContext("2d").drawImage(src, sx, sy, sw, sh, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.88);
+}
+
+// okvir na zaslonu → pravokotnik v pikah vira
+function frameRect(iw, ih, stage, fit) {
   const r = stage.getBoundingClientRect();
   const scale = fit === "cover" ? Math.max(r.width / iw, r.height / ih) : Math.min(r.width / iw, r.height / ih);
   const ox = (r.width - iw * scale) / 2;
@@ -271,12 +350,7 @@ function cropTo(src, iw, ih, stage, fit) {
   sy = Math.max(0, sy - pad);
   sw = Math.min(iw - sx, sw + 2 * pad);
   sh = Math.min(ih - sy, sh + 2 * pad);
-  const k = Math.min(1, 1600 / Math.max(sw, sh));
-  const c = document.createElement("canvas");
-  c.width = Math.max(1, Math.round(sw * k));
-  c.height = Math.max(1, Math.round(sh * k));
-  c.getContext("2d").drawImage(src, sx, sy, sw, sh, 0, 0, c.width, c.height);
-  return c.toDataURL("image/jpeg", 0.88);
+  return { sx, sy, sw, sh };
 }
 
 function onPaste(e) {
@@ -294,6 +368,10 @@ function loadFile(file) {
     S.image = { url, w: img.naturalWidth, h: img.naturalHeight };
     // slika iz galerije: privzeto označimo skoraj vse, učenec okvir zoži
     frame = { x: 0.04, y: 0.04, w: 0.92, h: 0.92 };
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+    const p = problemOf(measureSource(img, w * 0.04, h * 0.04, w * 0.92, h * 0.92, 1600));
+    S.quality = p === "blur" || p === "dark" ? p : null;
     S.mode = "crop";
     render();
   };
@@ -312,7 +390,7 @@ function renderCrop(box) {
         ${frameHtml()}
         ${reading ? `<div class="scan-reading"><span class="spinner"></span>${esc(t("scan.reading"))}</div>` : ""}
       </div>
-      <p class="scan-hint muted">${esc(t("scan.cropHint"))}</p>
+      ${S.quality && !reading ? `<p class="scan-warn" role="status">${icon("info")}<span>${esc(t(`scan.q.${S.quality}`))} ${esc(t("scan.q.anyway"))}</span></p>` : `<p class="scan-hint muted">${esc(t("scan.cropHint"))}</p>`}
       <div class="scan-actions">
         <button type="button" class="secondary" data-act="back">${icon("rotate-ccw")}${esc(t("scan.retake"))}</button>
         <button type="button" class="primary" data-act="read" ${reading ? "disabled" : ""}>${icon("scan-text")}${esc(t("scan.read"))}</button>
@@ -320,12 +398,16 @@ function renderCrop(box) {
     </div>`;
   const stage = box.querySelector("[data-stage]");
   if (!reading) bindFrame(stage);
+  // opozorilo in gumba sta na telefonu lahko pod spodnjo vrstico: pokaži ju
+  if (S.quality && !reading) requestAnimationFrame(() => box.querySelector(".scan-actions")?.scrollIntoView?.({ block: "center", behavior: "smooth" }));
   box.querySelector('[data-act="back"]').addEventListener("click", () => {
     S.mode = "capture";
+    S.quality = null;
     frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
     render();
   });
   box.querySelector('[data-act="read"]').addEventListener("click", () => {
+    S.quality = null;
     const img = stage.querySelector("img");
     readImage(cropTo(img, img.naturalWidth, img.naturalHeight, stage, "contain"));
   });
