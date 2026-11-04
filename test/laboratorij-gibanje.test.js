@@ -219,6 +219,13 @@ test("air: ρ = pM/RT (1,157 kg/m³ at 22 °C and 98 kPa); ping-pong ball: termi
   const S = pad({ h: 2, idealno: true }), T = pad({ h: 2, idealno: true, predmet: "pingpong", spust: "klesce" });
   assert.ok(T.run.tin - T.run.tm - (S.run.tin - S.run.tm) > 0.02, "žogica zaostane > 20 ms");
   assert.ok(T.hitrostPri(2) < 0.92 * S.hitrostPri(2), "in je počasnejša");
+  // pri 2 m (6,3 m/s) je upor jeklene kroglice ~1,3 % teže, žogice ~50 %: 2k iz h(t²) je za žogico > 5 % pod g
+  near((2 * G_LJ * 2) / koncnaHitrost(PREDMETI.jeklo, 1.157) ** 2, 0.013, 0.001, "upor/teža jeklo pri 2 m");
+  const pts = [0.4, 0.8, 1.2, 1.6, 2.0].map((h) => {
+    const X = pad({ h, idealno: true, predmet: "pingpong", spust: "klesce" });
+    return [(X.run.tin - X.run.tm) ** 2, h];
+  });
+  assert.ok(2 * naklonSkoziIzhodisce(pts) < 0.95 * G_LJ, `žogica: 2k = ${2 * naklonSkoziIzhodisce(pts)}`);
 });
 
 test("coffee filter reaches its terminal speed ~1,1 m/s (literature ~1–1,5 m/s) within 0,5 m; feather ~0,6 m/s", () => {
@@ -252,11 +259,14 @@ test("mistakes: electromagnet does not hold the ping-pong ball; gate offset larg
   assert.ok(Math.abs(pad({ seed: 9 }).zamikVrat) >= 0.002, "vrata so ob postavitvi zamaknjena");
 });
 
-test("release delays: magnet 5 ± 1,5 ms, clamp 12 ± 4 ms (ocena); timer starts at the release signal", () => {
+test("release delays: magnet 5 ± 1,5 ms per device ± 0,3 ms per drop, clamp 12 ± 4 ms ± 1,5 ms (ocena); timer starts at the release signal", () => {
   for (let seed = 1; seed <= 50; seed++) {
     const P = pad({ seed }), K = pad({ seed, spust: "klesce" });
-    assert.ok(P.run.tm >= 0.0034 && P.run.tm <= 0.0066, `magnet ${P.run.tm}`);
-    assert.ok(K.run.tm >= 0.0065 && K.run.tm <= 0.0175, `klešče ${K.run.tm}`);
+    const zm = P.zamikSpust.magnet, zk = K.zamikSpust.klesce;
+    assert.ok(zm >= 0.0035 - 1e-12 && zm <= 0.0065 + 1e-12, `magnet (naprava) ${zm}`);
+    assert.ok(Math.abs(P.run.tm - zm) <= SPUST.magnet.jitter + 1e-12, `magnet (spust) ${P.run.tm}`);
+    assert.ok(zk >= 0.008 - 1e-12 && zk <= 0.016 + 1e-12, `klešče (naprava) ${zk}`);
+    assert.ok(Math.abs(K.run.tm - zk) <= SPUST.klesce.jitter + 1e-12, `klešče (spust) ${K.run.tm}`);
     assert.ok(Math.abs(P.meritev().t - P.run.tin) <= casovnikSpec(P.run.tin) + 1e-12, "časovnik v mejah");
   }
 });
@@ -305,6 +315,28 @@ test("Newton II: moving masses keeps total mass; a ∝ F through the origin when
   assert.ok(Math.abs(L.b) < 0.02, `izravnano: premica skozi izhodišče (b = ${L.b})`);
   assert.ok(LN.b < -0.02, `brez izravnave trenja: odsek na osi (b = ${LN.b})`);
   rel(L.a, 1 / (0.25 + 0.07 + VOZICEK.Iw + SKRIPEC.Ip), 0.04, "naklon = 1/m (m s kolesi in škripcem)");
+});
+
+test("Newton II: every 10 g mass is in one place (cart, hanger or box); moving one keeps exactly the same set", () => {
+  const B = new ProgaBench({ seed: 5, skripec: true });
+  B.naObes = 4;
+  B.naVoz = 4; // prekriva se z obešalom: utežica gre na voziček in z obešala izgine (nikoli ni šteta dvakrat)
+  assert.equal(B.naVoz + B.naObes, 6);
+  B.naVoz = 2;
+  B.naObes = 1;
+  assert.equal(B.kje.filter((k) => k === "s").length, 3, "3 v škatli");
+  const sum = () => B.M - B.mVoz + B.mo - B.mObes;
+  const s0 = sum();
+  assert.ok(B.prestavi("v", "o"));
+  near(sum(), s0, 1e-15, "z vozička na obešalo gre ista utežica");
+  assert.ok(B.prestavi("o", "v"));
+  near(sum(), s0, 1e-15, "in nazaj");
+  assert.ok(B.prestavi("s", "o"));
+  assert.ok(Math.abs(sum() - s0 - 0.01) <= 2e-5, "iz škatle pride ena utežica");
+  for (let i = 0; i < 10; i++) B.prestavi("s", "o");
+  assert.equal(B.naObes + B.naVoz, 6, "škatla je prazna, več utežic ni");
+  B.naVoz = 0;
+  assert.ok(!B.prestavi("v", "o"), "na vozičku ni utežic");
 });
 
 test("Newton II: a ∝ 1/m at constant force (cart bars 0/1/2 × 250 g)", () => {

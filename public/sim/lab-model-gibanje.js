@@ -10,8 +10,8 @@ const napaka = (r, max, lim = 2.5) => gauss(r, max / lim, lim); // naključna na
 
 // ------------------------------------------------------------------ časovnik za svetlobna vrata
 // Digitalni časovnik s štirimi kanali (kot PASCO ME-8930 »Smart Timer« ali PHYWE »Timer 4-4«): ločljivost 0,1 ms
-// (navodila PASCO ME-8930: »resolution 0.1 ms«). Točnost ±(0,01 % + 1 digit): ocena za kvarčni oscilator (tipično 50 ppm)
-// in zaokroževanje na zadnjo števko. Vsak časovnik ima svojo stalno napako umerjanja (do polovice dopustne) in zaokroži na 0,1 ms.
+// (PASCO ME-8930: »Resolution 100 μs«). Točnost ±(0,01 % + 1 digit): PASCO ME-8930 navaja 0,01 % merjenega časa,
+// zadnja števka pa je zaokrožena. Vsak časovnik ima svojo stalno napako umerjanja (do polovice dopustne) in zaokroži na 0,1 ms.
 export const CASOVNIK = { res: 1e-4, rel: 1e-4, max: 999.9999 };
 export function makeCasovnik(r, idealno = false) {
   return { cal: idealno ? 0 : (r() - 0.5) * CASOVNIK.rel };
@@ -145,8 +145,9 @@ export class ProgaBench {
     this.kvadri = 0;
     this.podlozka = 0; // mm pod levo nogo (izravnava trenja)
     this.nPalic = 0;
-    this.naObes = 1; // utežic na obešalu (poleg obešala)
-    this.naVoz = SKRIPEC.n - 1; // utežic na vozičku
+    // Kje je vsaka utežica: "v" na vozičku, "o" na obešalu, "s" v škatli. Vsaka je vedno na enem mestu, zato se masa
+    // nikoli ne šteje dvakrat; ob prestavljanju (prestavi) gre na drugo mesto prav ta utežica, ne katera druga.
+    this.kje = Array.from({ length: SKRIPEC.n }, (_, i) => (i < SKRIPEC.n - 1 ? "v" : "o"));
     this.vrvica = skripec;
     this.visinaSkripca = 0; // −1, 0, +1
     this.spust = "magnet"; // magnet | roka | potisk
@@ -168,12 +169,35 @@ export class ProgaBench {
   get sinTheta() {
     return Math.sin(this.beta + Math.asin((this.kvadri * PROGA.kvader + this.podlozka / 1000) / PROGA.noge));
   }
+  // število utežic na vozičku in na obešalu; nastavitev (preizkusi) postavi prve na voziček, zadnje na obešalo, ostale v škatlo
+  get naVoz() {
+    return this.kje.filter((k) => k === "v").length;
+  }
+  set naVoz(n) {
+    this.kje = this.kje.map((k, i) => (i < n ? "v" : k === "v" ? "s" : k));
+  }
+  get naObes() {
+    return this.kje.filter((k) => k === "o").length;
+  }
+  set naObes(n) {
+    this.kje = this.kje.map((k, i) => (i >= SKRIPEC.n - n ? "o" : k === "o" ? "s" : k));
+  }
+  // Prestavi eno utežico z mesta od (v, o, s) na mesto kam; vrne false, če je tam ni.
+  prestavi(od, kam) {
+    const i = od === "v" ? this.kje.lastIndexOf("v") : this.kje.indexOf(od);
+    if (i < 0) return false;
+    this.kje[i] = kam;
+    return true;
+  }
+  _vsota(kje) {
+    return this.utezi.reduce((s, m, i) => s + (this.kje[i] === kje ? m : 0), 0);
+  }
   // masa vozička z vsem, kar je na njem
   get M() {
-    return this.mVoz + this.palice.slice(0, this.nPalic).reduce((s, m) => s + m, 0) + (this.skripecNa ? this.utezi.slice(0, this.naVoz).reduce((s, m) => s + m, 0) : 0);
+    return this.mVoz + this.palice.slice(0, this.nPalic).reduce((s, m) => s + m, 0) + (this.skripecNa ? this._vsota("v") : 0);
   }
   get mo() {
-    return this.mObes + this.utezi.slice(SKRIPEC.n - this.naObes).reduce((s, m) => s + m, 0);
+    return this.mObes + this._vsota("o");
   }
   // nazivne mase (kot piše na utežeh), za tabelo
   get Mnaz() {
@@ -450,7 +474,7 @@ export class PadBench {
 export const POENOSTAVITVE_GIBANJE = {
   klanec: [
     "Proga je ravna in toga; v resnici se 1,2 m dolga proga na nogah malo povesi.",
-    "Kotalni upor (ležaji koles, kotaljenje po aluminiju) je majhna stalna sila, μr ≈ 0,003 (ocena); zračni upor vozička zanemarimo, pri teh hitrostih je manjši od 1 mN.",
+    "Kotalni upor (ležaji koles, kotaljenje po aluminiju) je majhna stalna sila, μr ≈ 0,003 (ocena); zračni upor vozička zanemarimo: pri 1 m/s je ~1–2 mN, manj kot 1 % sile, ki voziček pospešuje.",
     "Kolesa se vrtijo, zato del energije gre v vrtenje: pospešek je za ~4 % manjši, kot bi bil za drsečo klado brez trenja (ocena za lahka plastična kolesa).",
     "Nogi proge sta točno 100 cm narazen, kvadri so visoki točno 2,0 cm; miza je nagnjena za 3–6 mm na meter, dokler je ne izravnaš z libelo.",
     "Časovnik zaokroži na 0,1 ms in ima napako do 0,01 %; vrata preklopijo, ko je žarek približno napol zastrt, zato je zastavica »videti« za ~0,2 mm širša.",
@@ -459,7 +483,7 @@ export const POENOSTAVITVE_GIBANJE = {
   pad: [
     "Zračni upor je F = ½ ρ c A v² s stalnim koeficientom upora c (krogla 0,47; stožec, filter in pero: ocene). Pri majhnih hitrostih bi bil upor bolj sorazmeren s hitrostjo.",
     "Gostota zraka je izračunana iz tlaka in temperature za suh zrak; vlaga jo spremeni za manj kot 1 %.",
-    "Pri kroglah upoštevamo vzgon zraka in zrak, ki se giblje s kroglo (pridružena masa); pri papirju in peresu ju zanemarimo.",
+    "Pri kroglah upoštevamo vzgon zraka in zrak, ki se giblje s kroglo (pridružena masa); pri papirju in peresu ju zanemarimo. Vzgon je tam majhen, pridružena masa pa bi filter in stožec na prvih decimetrih nekoliko upočasnila (končne hitrosti ne spremeni).",
     "Elektromagnet kroglico spusti s ~5 ms zamikom (remanentni magnetizem, ocena), klešče s ~12 ms (ocena); časovnik začne meriti že ob izklopu.",
     "Težni pospešek je ljubljanski 9,806 m/s² (formula GRS 80 za 46° širine in 295 m višine); ti računaš z 9,81 m/s².",
     "Pero niha levo in desno po preprosti sinusni poti (ocena); pravo pero se tudi vrti.",

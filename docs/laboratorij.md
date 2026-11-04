@@ -28,13 +28,13 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
    header, together ~45 % of the visible height (~52 % for an upright drawing such as the titration, 60 % with a mouse),
    compact LCDs (note up to 3 lines, never cut to »…«), shadow once stuck, controls scroll under it and carry
    `scroll-margin-top: var(--lab-pin-h)` so `scrollIntoView`/focus never park one under the drawing; landscape phone (height ≤ 560 px, container ≥ 520 px) and wide (container ≥ 800 px) → drawing
-   pinned left beside the controls and fully visible. Pinning lives only inside `.lab-tit-top`, so the table, graph and
+   pinned left beside the controls and fully visible; a wide drawing (viewBox ≥ 1,55 : 1, `.lab-siroka`: track, circuit) in a wide container is instead pinned full width on top (~45 % of the visible height, meters right of it, toggle shown) with the controls below in two columns. Pinning lives only inside `.lab-tit-top`, so the table, graph and
    conclusion below are never covered. Very low visible height (< 330 px, e.g. keyboard on a small phone) unpins in
    portrait (`.lab-nizko`); a focused control under the drawing or under the keyboard is scrolled into view. The phone
    bottom bar hides in an open experiment like in a lesson (`touch.css`). Every lab table (`dataTable`) scrolls in its
    `.lab-table-wrap`, not in the table, so the header row stays visible (sticky `thead th`). Check: `test/laboratorij-telefon.test.js`
    (every `lab-` engine at 360 × 740: drawing ≥ 80 % visible at every control, no control under it, ≤ 62 % of the
-   view; toggle; landscape and desktop beside). A new experiment only needs `el.classList.add("lab")` and its drawing
+   view; toggle; landscape and desktop beside; at 1280 × 800 a wide drawing on top, ≥ 600 px for the track, ≥ 480 px otherwise). A new experiment only needs `el.classList.add("lab")` and its drawing
    in a `.demo-stage` directly followed by `.demo-controls` (or both inside `.lab-tit-top`).
 8. **Review:** pass 1 automatic, pass 2 an Opus expert check of the science and function, pass 3 look/phone/pedagogy
    (`docs/pregled.md`). Dangerous experiments are only simulated; a short video only when no realistic
@@ -295,29 +295,29 @@ Tests: rate Mg > 10× Zn > 5× Fe > 0, Cu no gas and no mass loss in 2 M HCl aft
 Zn powder bleaches 0,1 M CuSO₄ (shaken, 30 min), zinc limiting in 0,5 M; Mg in CuSO₄ bubbles (≥ »zmerno«) and warms, in MgSO₄ ≤ single bubbles, on a Zn deposit < 1/3; Cu in AgNO₃: one Cu²⁺ per 2 Ag; goggles, 6 M fumes, powder foam overflow and popped plunger, acid limiting (0,196 ± 0,002 g Mg left); syringe within ±0,95 mL (200 seeds), deterministic seed.
 
 ### Motion: shared data (`lab-model-gibanje.js`)
-g = 9,806 m/s² (`G_LJ`). Gate timer: 0,1 ms resolution (PASCO ME-8930 Smart Timer), ±(0,01 % + 1 digit) (ocena): a fixed calibration error per device (≤ half the spec) and rounding to the last digit. Light gates: IR beam ~1 mm, the blocking object looks 0,2 mm wider (switching thresholds), edge jitter σ 0,05 mm, gate set on the track scale σ 0,5 mm (all ocena).
+g = 9,806 m/s² (`G_LJ`). Gate timer: 0,1 ms resolution, ±(0,01 % + 1 digit) (PASCO ME-8930 Smart Timer: 100 μs, 0,01 %): a fixed calibration error per device (≤ half the spec) and rounding to the last digit. Light gates: IR beam ~1 mm, the blocking object looks 0,2 mm wider (switching thresholds), edge jitter σ 0,05 mm, gate set on the track scale σ 0,5 mm (all ocena).
 Holding electromagnet release delay 5 ± 1,5 ms per device and ±0,3 ms per drop; clamp with a switch 12 ± 4 ms; hand + start key σ 40 ms; push 0,15–0,35 m/s (all ocena). Air ρ = pM/RT (M = 28,96 g/mol, ISO 2533), lab 22 ± 2 °C, 98 ± 0,9 kPa (Ljubljana).
 
 ### `lab-klanec` – cart on an inclined track (FIZ-OS-8 pospešeno gibanje; FIZ-SS-1 enakomerno pospešeno gibanje; FIZ-TEK-OS grafi gibanja; FIZ-TEK-SS Newtonovi zakoni s trenjem in klanci)
 Aluminium track 1,2 m with a cm scale (PASCO ME-9493), feet 1,00 m apart, 0–5 wooden blocks of 2,0 cm under the left foot (sin θ = h/100 cm); the table tilts 3–6 mm/m until levelled with a spirit level (±0,3 mm/m). Cart 250 g (+0–2 bars of 250 g), 17 cm, flag 20,0 mm at 4,5–9 cm,
 four wheels ΣI/r² = 10 g, rolling resistance μr 0,0025–0,0045 (ocena). Two gates at 20–110 cm, beam height 5–110 mm (below 8 mm it hits the track profile, 8–45 mm the cart body blocks it, above 90 mm nothing). Bumper with restitution 0,35 (ocena).
-Motion integrated with 0,2 ms steps; a = g(sin θ − μr cos θ)/(1 + I/(mr²)). Table s, t, Δt, v = d/Δt per gate; graphs s(t²) and v(t) with lines through the origin; a = 2k compared with g sin θ.
+Motion integrated with 0,2 ms steps; a = g(sin θ − μr cos θ)/(1 + I/(mr²)). Table s, t, Δt, v = d/Δt per gate (mean speed while the flag blocks the beam = the speed at the middle of Δt, i.e. at t + Δt/2, not at the gate; the 0,2 mm wider effective flag makes it ~1 % low); graphs s(t²) and v(t) with lines through the origin; a = 2k compared with g sin θ.
 Mistakes: table not level (cart drifts or stays at 0 blocks, ~25 % error at 1 block), push (t shorter, s(t²) not through the origin), hand release with the start key (offset), gates in the wrong order in »gate 1 → 2« mode (timer never stops), beam above the flag (no signal), on the cart body (Δt ×8), on the track (LED always on).
 Tests: frictionless a = g sin θ/(1 + I/mr²) within 0,5 % (1, 3, 5 blocks); with μr within 0,5 % (20 seeds); v = d/Δt within 2 % of the true speed at mid-blocking (30 seeds); timer within ±(0,01 % + 0,1 ms) (500 seeds, and 100 runs on the track); a = 2k from s(t²) within 2 %; one test per mistake; bumper bounce.
 
 ### `lab-prosti-pad` – free fall with a light gate (FIZ-OS-9 prosti pad; FIZ-SS-1 prosti pad in navpični met; FIZ-TEK-OS načrtovanje poskusa in obdelava meritev)
 Stand with an electromagnet (holds only steel) or a clamp with a switch, the object's bottom 2,20 m above the floor; gate 2–200 cm lower on a tape measure (mounting σ 0,5 mm), moved back and forth (the mount is 2–6 mm off until aligned in the top-view magnifier). A person 1,70 m for scale.
 Objects: steel ball Ø 16 mm (16,8 g), table-tennis ball 40 mm 2,7 g (ITTF), paper cone 2 g Ø 10 cm, coffee filter 1 g Ø 12 cm, feather 0,1 g (swings ±2,5 cm). Drag ½ρcAv² with c = 0,47 for spheres (NASA Glenn »Shape Effects on Drag«), cone 0,8, filter 1,2 (tuned to ~1,1 m/s, Vernier »Air Resistance«), feather v_t ≈ 0,6 m/s (ocena);
-spheres with buoyancy and added mass ½ρV (Lamb). RK4, 0,25 ms. Timer: t from the release signal to the beam and Δt of the blocking (v = L/Δt). Table, graphs h(t²) and v(t), g = 2k, terminal speeds; two conclusion questions.
+spheres with buoyancy and added mass ½ρV (Lamb). RK4, 0,25 ms. Timer: t from the release signal to the beam and Δt of the blocking (v = L/Δt). Table, graphs h(t²) and v(t) (v plotted at t + Δt/2, the middle of the blocking), g = 2k (»2k« only, with the drag share at the gate, for the ping-pong ball and paper), terminal speeds; two conclusion questions.
 Mistakes: ping-pong ball on the magnet (falls off), gate offset > radius (ball misses the beam, the timer runs on), partial chord (Δt short, v too big), gate 2 cm below (delay ~8 % of t, g > 10 % low).
-Tests: steel ball from 1,000 m t = 0,4517 s ± 1 ms; g from h(t²) within 2 % (10 seeds; the release delay lowers the slope by ~δ/t ≈ 1 %, intercept < 0); ρ air 1,157 at 22 °C and 98 kPa, 1,2922 at 0 °C and 101,325 kPa;
+Tests: steel ball from 1,000 m t = 0,4517 s ± 1 ms (drag at 2 m ~1,3 % of the weight; ping-pong ~50 %, its 2k from h(t²) > 5 % below g); g from h(t²) within 2 % (10 seeds; the release delay lowers the slope by ~δ/t ≈ 1 %, intercept < 0); ρ air 1,157 at 22 °C and 98 kPa, 1,2922 at 0 °C and 101,325 kPa;
 ping-pong v_t 8–9,5 m/s (literature ~8–9) and > 20 ms behind the steel ball from 2 m; coffee filter v_t 1,0–1,3 m/s, reached within 2 % after 0,5 m; feather 0,6 ± 0,05 m/s; release delays; mistakes.
 
 ### `lab-newton2` – Newton's second law with a cart and a pulley (FIZ-OS-9 Newtonovi zakoni; FIZ-SS-1 Newtonovi zakoni; FIZ-TEK-SS Newtonovi zakoni s trenjem in klanci)
-Same track and cart on a 90 cm bench (ocena), string over a pulley (I/r² = 4 g, bearing 0,5 mN, ocena) to a 10 g hanger; six 10 g masses (OIML R111 M3, ±20 mg) on the cart, the hanger or in the box, two 250 g bars; shim 0–8 mm under the left foot to compensate rolling resistance;
+Same track and cart on a 90 cm bench (ocena), string over a pulley (I/r² = 4 g, bearing 0,5 mN, ocena) to a 10 g hanger; six 10 g masses (OIML R111 M3, ±20 mg) each in one place (`kje`: cart, hanger or box; `prestavi` moves that very mass, so nothing is counted twice), two 250 g bars; shim 0–8 mm under the left foot to compensate rolling resistance;
 pulley at hook height or 5 cm higher/lower (string angle); the hanger starts 82 cm above the floor (ocena) and lands after 82 cm of travel. a = (m_o g − F_p + M g sin θ − μr M g cos θ)/(M + m_o + I_k/r² + I_p/r²), with the string angle solved for the tension.
 Table m, F = m_o g, v₁, v₂, a = (v₂² − v₁²)/2s (gate 1 → 2) or 2s/t² (from release); graphs a(F) per total mass (general line: the intercept shows friction) and a(1/m) per force; friction check with the string off and a push (Δt₁ vs Δt₂); two conclusion questions (a ∝ F/m; why masses move from the cart to the hanger).
-Tests: formula within 0,5 % (4 mass combinations); constant total mass when moving masses, a(F) through the origin when compensated (|b| < 0,02 m/s²) and an intercept without; a ∝ 1/m within 6 %; hanger lands after 82 cm (a from v² < 95 %); pulley 5 cm high lowers a near the pulley by ~1 %; string off: no motion; push test even only with the right shim; M3 masses (200 seeds).
+Tests: formula within 0,5 % (4 mass combinations); constant total mass when moving masses, each mass in one place (moving one keeps the exact set), a(F) through the origin when compensated (|b| < 0,02 m/s²) and an intercept without; a ∝ 1/m within 6 %; hanger lands after 82 cm (a from v² < 95 %); pulley 5 cm high lowers a near the pulley by ~1 %; string off: no motion; push test even only with the right shim; M3 masses (200 seeds).
 
 The colours of graph series (`--demo-a/b/c`) are now also defined for the Laboratorij tab (`.lab-view` in `textbook.css`); before, points there were black.
 

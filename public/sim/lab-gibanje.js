@@ -144,7 +144,8 @@ function risiProgo(svg, B, { P, X0, yMiza, newton = false }) {
     const big = c % 10 === 0, mid = c % 5 === 0;
     if (!mid && P < 250) continue;
     s("line", { x1: L(c / 100), y1: top + prof, x2: L(c / 100), y2: top + prof - (big ? prof * 0.7 : mid ? prof * 0.5 : prof * 0.3), class: "lab-gib-crtica" }, T);
-    if (big && c % (kor * 200) === 0 && c > 0 && c < 120) label(T, L(c / 100), top + prof + 5.5, String(c), "lab-gib-cm");
+    // številke pod merilom, razen ob nogah (10 in 110 cm), kjer bi jih noga prekrila
+    if (big && c % (kor * 200) === 0 && c > 10 && c < 110) label(T, L(c / 100), top + prof + 5.5, String(c), "lab-gib-cm");
   }
   // držalni elektromagnet na levem koncu in odbijač na desnem
   s("rect", { x: L(0.012), y: top - 0.03 * P, width: 0.025 * P, height: 0.03 * P, rx: 1.5, fill: u(svg, "crno") }, T);
@@ -195,7 +196,7 @@ function posodobiProgo(B, R, L1, L2, lcdTxt) {
   const lg = B.lega();
   R.cart.setAttribute("transform", `translate(${R.L(lg.u).toFixed(2)},0)`);
   R.leds.forEach((l, i) => l.classList.toggle("on", B.zastrt(i)));
-  const c = B.casovnik(), sp = B.run?.nacin !== "vrata";
+  const c = B.casovnik(), sp = (B.run?.nacin ?? B.nacin) !== "vrata";
   const t1 = num(c.t1, 4), t2 = num(c.t2, 4), d1 = num(c.dt1 * 1000, 1), d2 = num(c.dt2 * 1000, 1);
   if (sp) {
     L1.set(t1, "s", `Δt₁ = ${d1}${nb}ms`);
@@ -225,7 +226,7 @@ function porociloPoteka(B, log, { newton = false, konec = false } = {}) {
   if (R.nacin === "vrata" && m.dt1 != null && m.dt2 != null && m.t12 == null) log.push("Časovnik še teče: voziček je šel skozi vrata 2, preden so ga vrata 1 sprožila. Pri načinu »vrata 1 → 2« morajo biti vrata 1 bližje začetku.", "bad");
   if (R.nacin === "spust" && B.spust !== "magnet") log.push(B.spust === "potisk" ? "Voziček si sunil: ni začel iz mirovanja, zato pot ni sorazmerna s <i>t</i>²." : "Spustil si ga z roko in hkrati pritisnil tipko časovnika: začetek meritve je zamaknjen za nekaj stotink sekunde.", "warn");
   if (R.tla && R.tla.u < B.vrata[1].x + VOZICEK.zastavica + 0.01) log.push(`Obešalo je pristalo na tleh, ko je bil voziček pri ${num(R.tla.u * 100, 0)}${nb}cm; od tam vrvica ne vleče več, zato hitrost na vratih 2 ni več taka, kot bi bila ob stalni sili.`, "warn");
-  if (!R.udarec && B.lega(Infinity).u < PROGA.u0 + 0.01) log.push(B.kvadri === 0 && !newton ? "Voziček se ni premaknil: na vodoravni progi ga nič ne pospešuje." : "Voziček se ni premaknil.", "info");
+  if (!R.udarec && B.lega(Infinity).u < PROGA.u0 + 0.01) log.push(B.kvadri === 0 && !newton ? "Voziček se ni premaknil: na vodoravni progi ga nič ne pospešuje." : newton && !B.vrvica ? "Voziček se ni premaknil: brez vrvice ga nič ne vleče. Za preizkus trenja izberi spust »s potiskom«." : "Voziček se ni premaknil.", "info");
   else if (!newton && B.kvadri === 0 && !B.izravnana) log.push("Proga je brez kvadrov, a voziček se je sam odpeljal: miza ni vodoravna. Izravnaj progo z libelo.", "warn");
 }
 
@@ -247,6 +248,7 @@ export function labKlanec(el) {
   const gS = dataGraph({ x: [0, 4], y: [0, 1], xStep: 1, yStep: 0.2, xLabel: "t² [s²]", yLabel: "s [m]", title: "Pot v odvisnosti od kvadrata časa" });
   const gV = dataGraph({ x: [0, 3], y: [0, 1], xStep: 0.5, yStep: 0.2, xLabel: "t [s]", yLabel: "v [m/s]", title: "Hitrost v odvisnosti od časa" });
   const calc = h("div", { class: "lab-gib-calc", "aria-live": "polite" });
+  const vHint = hint(`Hitrost <i>v</i> = <i>d</i>/Δ<i>t</i> je povprečna hitrost, medtem ko zastavica zastira žarek. Tako hitrost ima voziček sredi zatemnitve, zato je točka narisana ob času <i>t</i> + Δ<i>t</i>/2.`);
   const qBox = h("div");
   const meas = [];
   let graf = "st2", asked = false, slow = false;
@@ -279,12 +281,12 @@ export function labKlanec(el) {
       h("div", { class: "lab-tit-top" }, stageBox(svg, h("div", { class: "lab-meters" }, L1, L2)), controlsBox(
         grp("1. Klanec", hint(`Nogi proge sta 100${nb}cm narazen. Vsak kvader dvigne levo nogo za 2,0${nb}cm, zato je sin${nb}θ = <i>h</i>/100${nb}cm. Miza ni nujno vodoravna: preveri, ali voziček brez kvadrov miruje.`), row("kvadri", kvSeg), buttons(levBtn), row("voziček", mSeg)),
         grp("2. Svetlobna vrata", hint(`Zastavica na vozičku je široka 20,0${nb}mm. Žarek naj jo seka (povečava levo zgoraj). Začetek zastavice je pri 15,0${nb}cm.`), ...vrSl, zSl),
-        grp("3. Spust in časovnik", hint("Elektromagnet drži voziček; ko ga izklopiš, začne teči časovnik. V načinu »od spusta« meri čas do vsakih vrat, v načinu »vrata 1 → 2« čas med vratoma."), row("spust", spSeg), row("časovnik", ncSeg), buttons(goBtn, backBtn, slowBtn)),
+        grp("3. Spust in časovnik", hint(`Elektromagnet drži voziček; ko ga izklopiš, začne teči časovnik. V načinu »od spusta« meri čas do vsakih vrat, v načinu »vrata${nb}1${nb}→${nb}2« čas med vratoma.`), row("spust", spSeg), row("časovnik", ncSeg), buttons(goBtn, backBtn, slowBtn)),
         grp("4. Zapiši", buttons(recBtn, clrBtn)),
         log,
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table,
-      h("h4", { class: "lab-h" }, "Graf"), row("prikaži", grSeg), gS, gV, calc, qBox,
+      h("h4", { class: "lab-h" }, "Graf"), row("prikaži", grSeg), gS, vHint, gV, calc, qBox,
       notes(POENOSTAVITVE_GIBANJE.klanec, "Pospešek na klancu <i>a</i> = <i>g</i>(sin θ − μ<sub>r</sub> cos θ)/(1 + <i>I</i>/(<i>m r</i>²)), <i>g</i> = 9,806 m/s² v Ljubljani. Časovnik: ločljivost 0,1 ms (kot PASCO ME-8930), točnost ±(0,01 % + 1 digit, ocena). Ocene: koeficient kotalnega upora 0,0025–0,0045, vztrajnost koles (10 g), nagib mize 3–6 mm/m, zamik elektromagneta ~5 ms, širina žarka."),
     ],
     tryText: "Postavi 2 kvadra in vrata na 30, 50, 70 in 90 cm (dva spusta). Nariši s(t²) in iz naklona izračunaj pospešek. Je manjši od g·sin θ? Zakaj? Kaj se zgodi s pospeškom, če voziček obtežiš?",
@@ -325,7 +327,8 @@ export function labKlanec(el) {
       if (t == null) return;
       const s_ = (B.vrata[i].nom - PROGA.u0), v = dt ? VOZICEK.zastavica / dt : null;
       table.add({ niz, s: num(s_, 2), t: num(t, 4), dt: dt ? num(dt * 1000, 1) : "–", v: v ? num(v, 3) : "–" });
-      meas.push({ niz, s: s_, t, t2: t * t, v });
+      // v = d/Δt je povprečna hitrost med zatemnitvijo: tako hitrost ima voziček sredi nje, ob t + Δt/2 (ne ob t)
+      meas.push({ niz, s: s_, t, t2: t * t, v, tv: v ? t + dt / 2 : null });
       n++;
     });
     if (!n) return log.push("Časovnik ni ustavljen: ni kaj zapisati.", "bad");
@@ -338,15 +341,16 @@ export function labKlanec(el) {
     const a1 = os(Math.max(2, ...meas.map((r) => r.t2))), b1 = os(Math.max(1, ...meas.map((r) => r.s)));
     gS.setAxes({ x: [0, a1.top], y: [0, b1.top], xStep: a1.step, yStep: b1.step });
     gS.draw(serije(skupine(meas, "niz", "t2", "s")));
-    const a2 = os(Math.max(1.5, ...vm.map((r) => r.t))), b2 = os(Math.max(1, ...vm.map((r) => r.v)));
+    vHint.hidden = graf === "st2";
+    const a2 = os(Math.max(1.5, ...vm.map((r) => r.tv))), b2 = os(Math.max(1, ...vm.map((r) => r.v)));
     gV.setAxes({ x: [0, a2.top], y: [0, b2.top], xStep: a2.step, yStep: b2.step });
-    gV.draw(serije(skupine(vm, "niz", "t", "v")));
+    gV.draw(serije(skupine(vm, "niz", "tv", "v")));
     const out = [];
     for (const [name, pts] of skupine(meas, "niz", "t2", "s")) {
       if (pts.length < 2) continue;
-      const a = 2 * naklonSkoziIzhodisce(pts), vp = meas.filter((r) => r.niz === name && r.v != null).map((r) => [r.t, r.v]);
+      const a = 2 * naklonSkoziIzhodisce(pts), vp = meas.filter((r) => r.niz === name && r.v != null).map((r) => [r.tv, r.v]);
       const av = vp.length >= 2 ? naklonSkoziIzhodisce(vp) : null, h_ = parseFloat(name) / 100;
-      out.push(`<p><b>${name}</b>: <i>a</i> = 2<i>k</i> = <b>${num(a, 3)}${nb}m/s²</b>${av ? `; iz <i>v</i>(<i>t</i>): ${num(av, 3)}${nb}m/s²` : ""}. ${h_ ? `Brez upora in vrtenja koles bi bil <i>g</i>${nb}sin${nb}θ = 9,81 · ${num(h_, 2)} = ${num(G_SOLA * h_, 3)}${nb}m/s² (${num((100 * a) / (G_SOLA * h_), 0)}${nb}%).` : ""}</p>`);
+      out.push(`<p><b>${name}</b>: <i>a</i> = 2<i>k</i> = <b>${num(a, 3)}${nb}m/s²</b>${av ? `; iz <i>v</i>(<i>t</i>): ${num(av, 3)}${nb}m/s²` : ""}. ${h_ ? `Brez upora in vrtenja koles bi bil <i>g</i>${nb}sin${nb}θ = 9,81 · ${num(h_, 2)} = ${num(G_SOLA * h_, 3)}${nb}m/s²; izmerjeni pospešek je ${num((100 * a) / (G_SOLA * h_), 0)}${nb}% tega.` : ""}</p>`);
     }
     calc.innerHTML = out.join("");
     const max = Math.max(0, ...[...skupine(meas, "niz", "t2", "s").values()].map((p) => p.length));
@@ -429,6 +433,7 @@ export function labProstiPad(el) {
   const gH = dataGraph({ x: [0, 0.5], y: [0, 2], xStep: 0.1, yStep: 0.5, xLabel: "t² [s²]", yLabel: "h [m]", title: "Višina padca v odvisnosti od kvadrata časa" });
   const gV = dataGraph({ x: [0, 1], y: [0, 7], xStep: 0.2, yStep: 1, xLabel: "t [s]", yLabel: "v [m/s]", title: "Hitrost v odvisnosti od časa" });
   const calc = h("div", { class: "lab-gib-calc", "aria-live": "polite" });
+  const vHint = hint(`Hitrost <i>v</i> = <i>D</i>/Δ<i>t</i> je povprečna hitrost, medtem ko predmet zastira žarek. Tako hitrost ima predmet sredi zatemnitve, zato je točka narisana ob času <i>t</i> + Δ<i>t</i>/2.`);
   const qBox = h("div"), qBox2 = h("div");
   const meas = [];
   let graf = "ht2", asked = false, asked2 = false, slow = false, lcdTxt, ball;
@@ -459,7 +464,7 @@ export function labProstiPad(el) {
         log,
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table,
-      h("h4", { class: "lab-h" }, "Graf"), row("prikaži", grSeg), gH, gV, calc, qBox, qBox2,
+      h("h4", { class: "lab-h" }, "Graf"), row("prikaži", grSeg), gH, vHint, gV, calc, qBox, qBox2,
       notes(POENOSTAVITVE_GIBANJE.pad, "Prosti pad <i>h</i> = ½<i>gt</i>², <i>g</i> = 9,806 m/s² (Ljubljana, GRS 80). Zračni upor <i>F</i> = ½ρ<i>c</i><i>Av</i>², ρ = <i>pM</i>/(<i>RT</i>), <i>c</i> = 0,47 za kroglo (NASA Glenn, »Shape Effects on Drag«). Namiznoteniška žogica 40 mm, 2,7 g (ITTF). Ocene: <i>c</i> stožca, filtra in peresa, zamik elektromagneta ~5 ms in klešč ~12 ms, zamik vrat ob postavitvi."),
     ],
     tryText: "Kroglico spusti z višin 20, 50, 100, 150 in 200 cm. Nariši h(t²) in iz naklona izračunaj g. Nato isto naredi s filtrom za kavo. Kdaj filter neha pospeševati?",
@@ -484,7 +489,7 @@ export function labProstiPad(el) {
       R.porocilo = true;
       const m = B.meritev();
       if (m.t == null) log.push(`Predmet je šel mimo žarka: vrata so ${num(Math.abs(B.odmik) * 1000, 1)}${nb}mm iz navpičnice. Premakni jih (povečava od zgoraj).`, "bad");
-      else if (m.dt != null && PREDMETI[B.predmet].krogla && Math.abs(B.odmik) > 0.25 * PREDMETI[B.predmet].D) log.push("Žarek je kroglico le oplazil: zastrl je krajšo tetivo, zato je Δ<i>t</i> prekratek in <i>v</i> = <i>D</i>/Δ<i>t</i> prevelik.", "warn");
+      else if (m.dt != null && PREDMETI[B.predmet].krogla && Math.abs(B.odmik) > 0.25 * PREDMETI[B.predmet].D) log.push(`Žarek je kroglico le oplazil (${num(Math.abs(B.odmik) * 1000, 1)}${nb}mm iz navpičnice): zastrl je krajšo tetivo, zato je Δ<i>t</i> prekratek in <i>v</i> = <i>D</i>/Δ<i>t</i> prevelik. Premakni vrata naprej–nazaj, da gre žarek skozi križec v povečavi od zgoraj.`, "warn");
       if (m.t != null && B.hNom < 0.1) log.push(`Vrata so le ${num(B.hNom * 100, 0)}${nb}cm pod predmetom: zamik spusta (nekaj ms) je tu velik del izmerjenega časa.`, "warn");
     }
     if (R.t >= R.tEnd + 1.2 * (slow ? 0.1 : 1)) {
@@ -497,8 +502,9 @@ export function labProstiPad(el) {
     const m = B.meritev(), Pr = PREDMETI[B.predmet];
     if (m.t == null) return log.push("Časovnik ni ustavljen: ni kaj zapisati.", "bad");
     const v = m.dt ? Pr.L / m.dt : null, pr = Pr.name.replace(/ \(.*\)/, "");
-    table.add({ pr, h: num(B.hNom, 2), t: num(m.t, 4), t2: num(m.t * m.t, 4), v: v ? num(v, 2) : "–" });
-    meas.push({ pr, id: B.predmet, h: B.hNom, t: m.t, t2: m.t * m.t, v });
+    table.add({ pr: KRATKO[B.predmet] ?? pr, h: num(B.hNom, 2), t: num(m.t, 4), t2: num(m.t * m.t, 4), v: v ? num(v, 2) : "–" });
+    // v = L/Δt je povprečna hitrost med zatemnitvijo: na grafu v(t) spada k sredini zatemnitve, t + Δt/2
+    meas.push({ pr, id: B.predmet, h: B.hNom, t: m.t, t2: m.t * m.t, v, tv: v ? m.t + m.dt / 2 : null });
     redraw();
   }
   function redraw() {
@@ -508,16 +514,19 @@ export function labProstiPad(el) {
     const a1 = os(Math.max(0.4, ...meas.map((r) => r.t2))), b1 = os(Math.max(2, ...meas.map((r) => r.h)));
     gH.setAxes({ x: [0, a1.top], y: [0, b1.top], xStep: a1.step, yStep: b1.step });
     gH.draw(serije(skupine(meas, "pr", "t2", "h")));
-    const a2 = os(Math.max(0.6, ...vm.map((r) => r.t))), b2 = os(Math.max(2, ...vm.map((r) => r.v)));
+    vHint.hidden = graf === "ht2";
+    const a2 = os(Math.max(0.6, ...vm.map((r) => r.tv))), b2 = os(Math.max(2, ...vm.map((r) => r.v)));
     gV.setAxes({ x: [0, a2.top], y: [0, b2.top], xStep: a2.step, yStep: b2.step });
-    gV.draw(serije(skupine(vm, "pr", "t", "v"), { origin: false }));
+    gV.draw(serije(skupine(vm, "pr", "tv", "v"), { origin: false }));
     const out = [];
     for (const [name, pts] of skupine(meas, "pr", "t2", "h")) {
       if (pts.length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), L = premica(pts), id = meas.find((r) => r.pr === name).id;
       const vt = koncnaHitrost(PREDMETI[id], B.rho);
-      const lahek = vt < 4, zamik = id === "jeklo" && 2 * k < 9.75 ? " Manj kot 9,81: časovnik začne teči ob izklopu magneta, kroglica pa se odlepi nekaj milisekund pozneje (zamik je največji delež pri majhnih višinah)." : "";
-      out.push(`<p><b>${name}</b>: ${lahek ? "2<i>k</i>" : "<i>g</i> = 2<i>k</i>"} = <b>${num(2 * k, 2)}${nb}m/s²</b>${pts.length >= 3 ? ` (premica, ki ni nujno skozi izhodišče: ${num(2 * L.a, 2)}${nb}m/s²)` : ""}.${lahek ? ` To ni težni pospešek: zaradi zračnega upora točke ne ležijo na premici. Končna hitrost v tem zraku je ~${num(vt, 1)}${nb}m/s.` : vt < 12 ? ` Zračni upor jo malo zavira: končna hitrost je ~${num(vt, 1)}${nb}m/s.` : ""}${zamik}</p>`);
+      const lahek = vt < 4, upor = !lahek && vt < 12, hMax = Math.max(...pts.map((p) => p[1]));
+      // delež upora ob vratih pri največji višini: F/(mg) = (v/v_t)², v² = v_t²(1 − e^(−2gh/v_t²)) (upor ∝ v²)
+      const delez = 1 - Math.exp((-2 * G_SOLA * hMax) / (vt * vt)), zamik = id === "jeklo" && 2 * k < 9.75 ? " Manj kot 9,81: časovnik začne teči ob izklopu magneta, kroglica pa se odlepi nekaj milisekund pozneje (zamik je največji delež pri majhnih višinah)." : "";
+      out.push(`<p><b>${name}</b>: ${lahek || upor ? "2<i>k</i>" : "<i>g</i> = 2<i>k</i>"} = <b>${num(2 * k, 2)}${nb}m/s²</b>${pts.length >= 3 ? ` (premica, ki ni nujno skozi izhodišče: ${num(2 * L.a, 2)}${nb}m/s²)` : ""}.${lahek ? ` To ni težni pospešek: zaradi zračnega upora točke ne ležijo na premici. Končna hitrost v tem zraku je ~${num(vt, 1)}${nb}m/s.` : upor ? ` To ni težni pospešek: zračni upor jo močno zavira. Pri padcu z ${num(hMax, 2)}${nb}m je upor ob vratih že ~${Math.round(delez * 20) * 5}${nb}% njene teže, zato žogica pospešuje vse manj in 2<i>k</i> je manjši od <i>g</i>. Končna hitrost v tem zraku je ~${num(vt, 1)}${nb}m/s.` : ""}${zamik}</p>`);
     }
     calc.innerHTML = out.join("");
     const nJ = meas.filter((r) => r.id === "jeklo").length, nL = Math.max(0, ...["stozec", "filter", "pero", "pingpong"].map((id) => meas.filter((r) => r.id === id).length));
@@ -526,7 +535,7 @@ export function labProstiPad(el) {
       qBox.append(conclusion({
         text: "Kaj pove naklon premice <i>h</i>(<i>t</i>²) za jekleno kroglico?",
         options: [
-          { t: "Naklon je <i>g</i>/2: iz njega dobiš težni pospešek, ki je enak pri vseh višinah.", ok: true, why: "Pri prostem padu iz mirovanja velja <i>h</i> = ½<i>gt</i>², zato je naklon premice <i>g</i>/2 ≈ 4,9 m/s². Pri jekleni kroglici je zračni upor na 2 m manj kot 1 % teže, zato je <i>g</i> ≈ 9,8 m/s² pri vseh višinah." },
+          { t: "Naklon je <i>g</i>/2: iz njega dobiš težni pospešek, ki je enak pri vseh višinah.", ok: true, why: "Pri prostem padu iz mirovanja velja <i>h</i> = ½<i>gt</i>², zato je naklon premice <i>g</i>/2 ≈ 4,9 m/s². Pri jekleni kroglici je zračni upor tudi po 2 m padca le približno 1 % teže, zato se <i>g</i> iz naklona spremeni le za nekaj tisočink: <i>g</i> ≈ 9,8 m/s² pri vseh višinah." },
           { t: "Naklon je kar <i>g</i>.", ok: false, why: "Iz <i>h</i> = ½<i>gt</i>² je naklon premice skozi izhodišče ½<i>g</i>. Če naklon vzameš za <i>g</i>, dobiš ~4,9 m/s²." },
           { t: "Z višino težni pospešek raste, ker kroglica pada vse hitreje.", ok: false, why: "Hitrost raste, pospešek pa ne: zato so točke na premici. Na nekaj metrih višine se tudi <i>g</i> sam ne spremeni opazno (manj kot milijoninka)." },
           { t: "Težja kroglica bi imela večji naklon.", ok: false, why: "Brez zračnega upora vsa telesa padajo z enakim pospeškom <i>g</i>, ne glede na maso (Galilej). Pri težkih in majhnih telesih je upor zanemarljiv." },
@@ -540,7 +549,7 @@ export function labProstiPad(el) {
         options: [
           { t: "Zračni upor raste s hitrostjo; pri lahkem in širokem predmetu hitro postane enak teži, nato pada s stalno končno hitrostjo.", ok: true, why: "Upor <i>F</i> = ½ρ<i>cAv</i>² je pri filtru (velik presek, masa 1 g) enak teži že pri ~1,1 m/s, zato filter po nekaj decimetrih ne pospešuje več: točke na grafu <i>v</i>(<i>t</i>) so vodoravne, <i>h</i>(<i>t</i>²) ni premica." },
           { t: "Lahka telesa imajo manjši težni pospešek.", ok: false, why: "Težni pospešek je za vsa telesa enak (v vakuumu pero in kroglica padeta enako hitro). Razlika je samo zračni upor, ki je pri lahkem in širokem telesu velik v primerjavi s težo." },
-          { t: "Filter nosi vzgon zraka.", ok: false, why: "Vzgon je teža izpodrinjenega zraka: za tanek papir je tisočkrat manjši od teže. Filter ustavlja upor zaradi gibanja skozi zrak, ne vzgon." },
+          { t: "Filter nosi vzgon zraka.", ok: false, why: "Vzgon je teža izpodrinjenega zraka: za tanek papir je več stokrat manjši od teže. Filter ustavlja upor zaradi gibanja skozi zrak, ne vzgon." },
           { t: "Klešče filter spustijo počasneje kot magnet kroglico.", ok: false, why: "Zamik klešč je ~12 ms, kar je pri času ~2 s zanemarljivo. Filter je počasnejši ves čas padanja, ker ga zavira zrak." },
         ],
       }));
@@ -617,6 +626,9 @@ export function labProstiPad(el) {
   redraw();
 }
 
+// kratka imena za tabelo (šest stolpcev mora iti na telefon brez vodoravnega drsenja)
+const KRATKO = { jeklo: "kroglica", pingpong: "žogica", stozec: "stožec", filter: "filter", pero: "pero" };
+
 // Povečava od zgoraj: žarek med krakoma vrat, navpičnica (križec) in obris predmeta.
 function lupaZgoraj(svg, x, y, w, hh, B, Pr) {
   const k = Math.min(3, 70 / (Pr.D * 1000)), cx = x + w / 2, cy = y + hh / 2 + 4; // px/mm
@@ -638,8 +650,6 @@ function lupaZgoraj(svg, x, y, w, hh, B, Pr) {
 export function labNewton2(el) {
   const B = new ProgaBench({ seed: seme(), skripec: true });
   B.nacin = "vrata";
-  B.naObes = 1;
-  B.naVoz = 5;
   const W = 400, H = 326, P = 270, X0 = 20, yMiza = 74, yTla = yMiza + SKRIPEC.miza * P, yPolica = yMiza + 120;
   const svg = svgBox(W, H, "lab-bench lab-gib lab-gib-newton");
   const log = eventLog();
@@ -668,10 +678,10 @@ export function labNewton2(el) {
   const toH = button("Utežico z vozička na obešalo", () => move(1));
   const toC = button("Utežico z obešala na voziček", () => move(-1));
   const fromBox = button("Dodaj utežico iz škatle na obešalo", () => {
-    if (B.naObes + B.naVoz >= SKRIPEC.n) return log.push("V škatli ni več utežic.", "warn");
-    B.naObes++, log.push("Utežico si vzel iz škatle: sila se je povečala, a tudi skupna masa.", "warn"), ch();
+    if (!B.prestavi("s", "o")) return log.push("V škatli ni več utežic.", "warn");
+    log.push("Utežico si vzel iz škatle: sila se je povečala, a tudi skupna masa.", "warn"), ch();
   });
-  const toBox = button("Utežico z obešala v škatlo", () => (B.naObes > 0 ? (B.naObes--, ch()) : log.push("Na obešalu ni utežic.", "warn")));
+  const toBox = button("Utežico z obešala v škatlo", () => (B.prestavi("o", "s") ? ch() : log.push("Na obešalu ni utežic.", "warn")));
   const palSeg = seg("palice po 250 g na vozičku", [["0", "0"], ["1", "1"], ["2", "2"]], "0", (v) => ((B.nPalic = +v), ch()));
   const skSeg = seg("višina škripca", [["-1", "5 cm niže"], ["0", "v višini kavlja"], ["1", "5 cm više"]], "0", (v) => ((B.visinaSkripca = +v), ch()));
   const vrSl = [0, 1].map((i) => slider({ label: `vrata ${i + 1} pri`, min: 20, max: 110, step: 1, value: [30, 70][i], unit: "cm", onInput: (v) => (B.postaviVrata(i, v / 100), ch()) }));
@@ -704,11 +714,9 @@ export function labNewton2(el) {
   el.classList.add("lab");
   imenaKanalov(B, L1, L2);
 
+  // Vedno ista utežica zamenja mesto (B.kje): skupna masa ostane točno enaka, nobena ni šteta dvakrat.
   function move(d) {
-    if (d > 0 && B.naVoz === 0) return log.push("Na vozičku ni več utežic.", "warn");
-    if (d < 0 && B.naObes === 0) return log.push("Na obešalu ni utežic.", "warn");
-    B.naVoz -= d;
-    B.naObes += d;
+    if (!(d > 0 ? B.prestavi("v", "o") : B.prestavi("o", "v"))) return log.push(d > 0 ? "Na vozičku ni več utežic." : "Na obešalu ni utežic.", "warn");
     ch();
   }
   function syncUt() {
@@ -773,7 +781,7 @@ export function labNewton2(el) {
     for (const [name, pts] of skupine(meas, "mk", "F", "a")) {
       if (pts.length < 3) continue;
       const L = premica(pts);
-      out.push(`<p><b>${name}</b>: naklon <i>a</i>/<i>F</i> = ${num(L.a, 2)}${nb}1/kg, torej <i>m</i> = <i>F</i>/<i>a</i> ≈ <b>${num(1000 / L.a, 0)}${nb}g</b> (voziček, uteži in obešalo: ${name.slice(4)}). Odsek na osi <i>a</i>: ${num(L.b, 3)}${nb}m/s²${Math.abs(L.b) > 0.03 ? " – premica ne gre skozi izhodišče: trenje ni izravnano." : "."}</p>`);
+      out.push(`<p><b>${name}</b>: naklon <i>a</i>/<i>F</i> = ${num(L.a, 2)}${nb}1/kg, torej <i>m</i> = <i>F</i>/<i>a</i> ≈ <b>${num(1000 / L.a, 0)}${nb}g</b> (voziček, uteži in obešalo: ${name.slice(4)}${1000 / L.a > 1.03 * parseFloat(name.slice(4)) ? "; malo več, ker sila zavrti tudi kolesa in škripec" : ""}). Odsek na osi <i>a</i>: ${num(L.b, 3)}${nb}m/s²${Math.abs(L.b) > 0.03 ? " – premica ne gre skozi izhodišče: trenje ni izravnano." : "."}</p>`);
     }
     calc.innerHTML = out.join("");
     const maxF = Math.max(0, ...[...skupine(meas, "mk", "F", "a").values()].map((p) => p.length));
@@ -784,7 +792,7 @@ export function labNewton2(el) {
         text: "Kaj velja za pospešek pri stalni skupni masi?",
         options: [
           { t: "Pospešek je sorazmeren s silo: dvakrat večja sila, dvakrat večji pospešek; naklon premice je 1/<i>m</i>.", ok: true, why: "Drugi Newtonov zakon: <i>a</i> = <i>F</i>/<i>m</i>. Pri izravnanem trenju so točke <i>a</i>(<i>F</i>) na premici skozi izhodišče, naklon je obratna vrednost skupne mase (z maso obešala in s koleščki)." },
-          { t: "Pospešek je pri vseh silah enak, spremeni se le hitrost.", ok: false, why: "Hitrost na drugih vratih raste s silo hitreje, kot bi pri stalnem pospešku: izračunani pospeški so pri večji sili večji." },
+          { t: "Pospešek je pri vseh silah enak, spremeni se le hitrost.", ok: false, why: "Izračunani pospeški so pri večji sili večji: točke na grafu <i>a</i>(<i>F</i>) se dvigajo. Če bi bil pospešek pri vseh silah enak, bi ležale na vodoravni črti." },
           { t: "Pospešek je sorazmeren z maso obešala, voziček ne vpliva.", ok: false, why: "Sila obešala pospešuje ves sistem: voziček, uteži na njem in obešalo. Zato je naklon 1/(skupna masa), ne 1/(masa obešala)." },
           { t: "Premica gre vedno skozi izhodišče, tudi brez izravnave trenja.", ok: false, why: "Brez izravnave mora sila najprej premagati kotalni upor (~10 mN), zato premica seka os <i>F</i> desno od izhodišča." },
         ],
