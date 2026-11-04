@@ -193,7 +193,7 @@ export function zgradi(THREE, ctx) {
 
   // Obris začetne velikosti: robovi telesa, kot je bilo izbrano. Ko spreminjaš mere, ostane na mestu (v cm, na isti
   // podlagi), zato vidiš, koliko je telo zraslo ali se skrčilo, tudi ko se merilo prilagodi.
-  const mObris = new THREE.LineBasicMaterial({ color: 0xdfe8ff, transparent: true, opacity: 0.5, depthTest: false, depthWrite: false });
+  const mObris = new THREE.LineBasicMaterial({ color: 0xdfe8ff, transparent: true, opacity: 0.65, depthTest: false, depthWrite: false });
   const obrisZac = new THREE.LineSegments(new THREE.BufferGeometry(), mObris); obrisZac.name = "obris-zacetka"; obrisZac.renderOrder = 7; obrisZac.visible = false; obrisZac.frustumCulled = false;
   telo.add(obrisZac);
   let zacetek = null; // { telo, mere, tocke }
@@ -581,6 +581,7 @@ export function zgradi(THREE, ctx) {
     // obris začetne velikosti (posnetek zloženega telesa ob izbiri; krogli dodamo še poldnevnik)
     if (!zacetek && e <= 1e-4) {
       const seg = robSeg.slice(0, nSeg * 6);
+      if (T.plasc) for (const u of [-0.5, 0.5]) { plascTocka(T.plasc, u, 0, 0, _a); plascTocka(T.plasc, u, 1, 0, _b); seg.push(_a.x, _a.y, _a.z, _b.x, _b.y, _b.z); } // zloženo telo ima na robovih le osnovna kroga: dodaj obe stranici
       if (T.krogla) { const r = T.krogla; for (let i = 0; i < NK; i++) { const f1 = (2 * Math.PI * i) / NK, f2 = (2 * Math.PI * (i + 1)) / NK; seg.push(r * Math.sin(f1), r - r * Math.cos(f1), 0, r * Math.sin(f2), r - r * Math.cos(f2), 0); } }
       obrisZac.geometry.setAttribute("position", new THREE.Float32BufferAttribute(seg, 3));
       obrisZac.geometry.computeBoundingSphere();

@@ -218,7 +218,7 @@ export function open3d(id, title = "") {
   // Okvir je širok kot vidni del zaslona: če je stran aplikacije kje širša od zaslona, Android razširi postavitev in
   // okvir s `inset: 0` bi segal čez desni rob (odrezane vrednosti in gumbi v 3D svetu).
   const vv = window.visualViewport;
-  const prilagodi = () => { if (vv) Object.assign(el.style, { width: `${Math.round(vv.width * vv.scale)}px`, left: "0", right: "auto" }); };
+  const prilagodi = () => { if (vv) Object.assign(el.style, { width: `${Math.round(vv.width * Math.max(1, vv.scale))}px`, left: "0", right: "auto" }); };
   prilagodi();
   vv?.addEventListener("resize", prilagodi);
   full = { el, frame, from: document.activeElement, odjavi: () => vv?.removeEventListener("resize", prilagodi) };
