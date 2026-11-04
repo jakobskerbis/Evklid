@@ -117,7 +117,8 @@ export function rights({
   // Vprašanja na dan: vsota virov; 0 pri katerem koli viru pomeni brez omejitve (null).
   const parts = [
     own && (personal.tier === "legacy" ? 0 : personalDailyQuestions(useLevel)), // stari profili brez starša: brez meje kot doslej
-    school && (schoolAiOut ? freeDaily : schoolDailyQuestions()),
+    // Šola s porabljeno mejo AI ne prispeva vprašanj: brez osebnega paketa velja freeDaily (spodaj), z njim samo Osebno.
+    school && !schoolAiOut && schoolDailyQuestions(),
   ].filter((x) => x !== false);
   const dailyQuestions = !parts.length
     ? freeDaily

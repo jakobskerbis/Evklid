@@ -528,13 +528,14 @@ export function createApp(store, opts = {}) {
       competition: student.settings.track === "COMPETITION",
       secondary: jeSs(student.settings),
       lite,
-      free: !!accounts && !accounts.premiumFor(student.id),
+      free: !!accounts && !accounts.aiPremiumFor(student.id),
       deepModel: capped ? MODEL_MID : MODEL_DEEP,
       capped,
     });
     // Mesečni proračun API (server/proracun.js): pod načrtom porabe močnejši model, nad njim hitri.
     // Brezplačni paket brez nadgradnje (nikoli Opus, ima svoje meje); koda in šolska licenca največ Sonnet.
-    const premium = !accounts || accounts.premiumFor(student.id);
+    // Šola s porabljeno mesečno mejo AI (schoolAiOut) tu šteje kot brezplačni paket (aiPremiumFor).
+    const premium = !accounts || accounts.aiPremiumFor(student.id);
     const maxTier = !premium ? null : ladder && (!ladder.opus || ladder.promo) ? "mid" : "deep";
     // Z opombo (dnevna meja Opusa, mehka meja, brezplačni paket) ostane izbrani hitri model: opomba mora držati.
     const routed = chosen.note ? { mode: chosen.mode, boosted: false, saved: false } : usage.route(student.id, chosen.mode, { lite, maxTier });
