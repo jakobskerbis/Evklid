@@ -3,7 +3,7 @@
 // (plašč rumenkasto, osnovi modro). Opcije: { telo: "kocka" | "kvader" | "prizma" | "valj" | "piramida" |
 // "prisekana" | "stozec", ss: true za oznake s SŠ lista }.
 // Valj in stožec sta mnogokotnika z N stranicami; njune stranske robove (tvorilke) rišemo samo na obrisu.
-import { skica, st, crta, napis, vr } from "./skica.js";
+import { skica, st, crta, napis, vr, praviKot } from "./skica.js";
 import { s } from "../sim/kit.js";
 
 export const TETA = 0.36; // nagib pogleda od zgoraj (≈ 20°)
@@ -127,7 +127,7 @@ function naStranici(P, Q, n) {
 }
 
 export function mreza(T) {
-  const L = [], O = [];
+  const L = [], O = [], C = []; // liki, oznake, črte (polmer v krogu osnove)
   const plasc = (t) => L.push({ tocke: t, vrsta: "plasc" }), osnova = (t) => L.push({ tocke: t, vrsta: "osnova" });
   if (T.ime === "kocka" || T.ime === "kvader") {
     const { a, b, c } = T;
@@ -146,8 +146,9 @@ export function mreza(T) {
     const { r, v } = T, o = 2 * Math.PI * r;
     plasc(pr(0, 0, o, v));
     osnova(krog(Math.PI * r, -r, r));
+    C.push([[Math.PI * r, -r], [Math.PI * r + r, -r]]);
     osnova(krog(Math.PI * r, v + r, r));
-    O.push({ p: [o * 0.78, v / 2], t: "2πr" }, { p: [o + 0.25, v / 2], t: "v" });
+    O.push({ p: [o * 0.2, -0.25], t: "2πr" }, { p: [o + 0.25, v / 2], t: "v" }, { p: [Math.PI * r + r * 0.5, -r + 0.25], t: "r" });
   } else if (T.ime === "stozec") {
     const { r, s: sl } = T, beta = (2 * Math.PI * r) / sl, n = 120;
     plasc([[0, 0], ...Array.from({ length: n + 1 }, (_, i) => {
@@ -155,6 +156,7 @@ export function mreza(T) {
       return [sl * Math.cos(t), sl * Math.sin(t)];
     })]);
     osnova(krog(0, -sl - r, r));
+    C.push([[0, -sl - r], [r, -sl - r]]);
     O.push({ p: [sl * 0.62 * Math.cos(-Math.PI / 2 + beta / 2) + 0.3, sl * 0.62 * Math.sin(-Math.PI / 2 + beta / 2)], t: "s" }, { p: [r * 0.55, -sl - r + 0.25], t: "r" });
   } else if (T.ime === "piramida") {
     const { a, ha } = T, k = pravokotnik(a, a);
@@ -176,14 +178,14 @@ export function mreza(T) {
     });
     O.push({ p: [0, -a1 / 2 + 0.3], t: "a₁" }, { p: [0, -a1 / 2 - ha + 0.3], t: "a₂" });
   }
-  return { liki: L, oznake: O };
+  return { liki: L, oznake: O, crte: C };
 }
 
 // Ploščina mnogokotnika (za test: vsota ploščin mreže = P).
 export const ploscinaLika = (t) => Math.abs(t.reduce((a, p, i) => a + p[0] * t[(i + 1) % t.length][1] - t[(i + 1) % t.length][0] * p[1], 0)) / 2;
 
 // Čipi po telesu; oznake formul kot na kartici (OŠ ali SŠ).
-function cipi(T, ss) {
+export function cipi(T, ss) {
   const PV = (P, V) => [{ barva: "ploskev", oznaka: P, vrednost: vr(T.P, 2) }, { barva: "ploskev", oznaka: V, vrednost: vr(T.Vol, 2) }];
   switch (T.ime) {
     case "kocka":
@@ -199,22 +201,57 @@ function cipi(T, ss) {
     case "piramida":
       return [{ barva: "glavna", oznaka: "a,\\ v", vrednost: `${st(T.a, 1)}; ${st(T.v, 1)}` }, { barva: "ploskev", oznaka: "O = a^2", vrednost: vr(T.O, 2) }, { barva: "izbor", oznaka: "S_{pl}", vrednost: vr(T.Spl, 2) }, ...PV("P = O + S_{pl}", ss ? "V = \\frac{O v}{3}" : "V = \\frac{O \\cdot v}{3}")];
     case "prisekana":
-      return [{ barva: "glavna", oznaka: "a_1,\\ a_2,\\ v", vrednost: [T.a1, T.a2, T.v].map((x) => st(x, 1)).join("; ") }, { barva: "izbor", oznaka: "S_{pl}", vrednost: vr(T.Spl, 2) }, ...PV("P = O_1 + O_2 + S_{pl}", "V = \\frac{v}{3} \\left(O_1 + \\sqrt{O_1 O_2} + O_2\\right)")];
+      return [{ barva: "glavna", oznaka: "a_1,\\ a_2,\\ v", vrednost: [T.a1, T.a2, T.v].map((x) => st(x, 1)).join("; ") }, { barva: "ploskev", oznaka: "O_1 = a_1^2", vrednost: vr(T.O1, 2) }, { barva: "ploskev", oznaka: "O_2 = a_2^2", vrednost: vr(T.O2, 2) }, { barva: "izbor", oznaka: "S_{pl}", vrednost: vr(T.Spl, 2) }, ...PV("P = O_1 + O_2 + S_{pl}", "V = \\frac{v}{3} \\left(O_1 + \\sqrt{O_1 O_2} + O_2\\right)")];
   }
   return [];
 }
+
+// Zaporedni robovi → verige oglišč (za eno črtkano črto namesto mnogo kratkih).
+export function verige(robovi) {
+  const sosedi = new Map();
+  for (const e of robovi) for (const [x, y] of [[e.a, e.b], [e.b, e.a]]) (sosedi.get(x) || sosedi.set(x, []).get(x)).push(y);
+  const uporabljen = new Set(), key = (x, y) => (x < y ? `${x}-${y}` : `${y}-${x}`), out = [];
+  // Začnemo pri koncih verig (oglišče z enim sosedom), nato še zaprte zanke.
+  const zacetki = [...sosedi.keys()].sort((x, y) => (sosedi.get(x).length === 1 ? -1 : 0) - (sosedi.get(y).length === 1 ? -1 : 0));
+  for (const z of zacetki)
+    for (const prvi of sosedi.get(z)) {
+      if (uporabljen.has(key(z, prvi))) continue;
+      const pot = [z];
+      let a = z, b = prvi;
+      while (b != null && !uporabljen.has(key(a, b))) {
+        uporabljen.add(key(a, b));
+        pot.push(b);
+        const nasl = (sosedi.get(b) || []).find((c) => !uporabljen.has(key(b, c)));
+        [a, b] = [b, sosedi.get(b).length === 2 ? nasl : undefined];
+      }
+      out.push(pot);
+    }
+  return out;
+}
+
+const OPIS = {
+  kocka: "Kocka z robom a.",
+  kvader: "Kvader z robovi a, b in c.",
+  prizma: "Pravilna šeststrana prizma z osnovnim robom a in višino v.",
+  valj: "Valj s polmerom osnove r in višino v.",
+  stozec: "Stožec s polmerom osnove r, višino v in stranico s.",
+  piramida: "Pravilna štiristrana piramida z osnovnim robom a in višino v.",
+  prisekana: "Prisekana pravilna štiristrana piramida z osnovnima robovoma a₁ in a₂ ter višino v.",
+};
 
 const IMENA = { kocka: "Kocka", kvader: "Kvader", prizma: "Pravilna šeststrana prizma", valj: "Valj", stozec: "Stožec", piramida: "Pravilna štiristrana piramida", prisekana: "Prisekana piramida" };
 
 export default function narisi(host, { telo: ime = "kocka", ss = false } = {}) {
   const W = 300, H = 230, M = 24;
   const T = telo(ime);
-  const S = skica({ w: W, h: H, navodilo: "Povleci telo vodoravno, da se zavrti. »Mreža« ga razgrne.", oznaka: `${IMENA[ime]}: žični model in mreža` });
+  const S = skica({ w: W, h: H, navodilo: `${OPIS[ime]} Povleci telo vodoravno ali pritisni puščici, da se zavrti; »Mreža« ga razgrne.`, oznaka: `${IMENA[ime]}: žični model in mreža` });
   // Merilo: telo se pri vsakem zasuku prilega okvirju.
-  const Rmax = Math.max(...T.V.map(([x, , z]) => Math.hypot(x, z)));
-  const hz = T.v * Math.cos(TETA) + 2 * Rmax * Math.sin(TETA);
+  // Spodaj sega telo do −R_spodaj·sin θ, zgoraj do v·cos θ + R_zgoraj·sin θ (vrh: R_zgoraj = 0).
+  const polmer = (y) => Math.max(0, ...T.V.filter((p) => p[1] === y).map(([x, , z]) => Math.hypot(x, z)));
+  const Rs = polmer(0), Rz = polmer(T.v), Rmax = Math.max(Rs, Rz);
+  const hz = T.v * Math.cos(TETA) + (Rs + Rz) * Math.sin(TETA);
   const k = Math.min((W - 2 * M) / (2 * Rmax), (H - 2 * M) / hz);
-  const Y0 = H / 2 + (k * hz) / 2 - k * Rmax * Math.sin(TETA);
+  const Y0 = H / 2 + (k * hz) / 2 - k * Rs * Math.sin(TETA);
   const zaslon = (p) => [W / 2 + k * p[0], Y0 - k * p[1]];
   let phi = 0.5, pogled = "Telo";
 
@@ -224,59 +261,73 @@ export default function narisi(host, { telo: ime = "kocka", ss = false } = {}) {
     const cS = Z([0, T.v / 2, 0]);
     // Osnovni ploskvi rahlo modri.
     T.F.forEach((f) => f.vrsta === "osnova" && s("polygon", { points: f.v.map((i) => Z(T.V[i])).join(" "), class: "sk-f-ploskev" }, g));
-    for (const e of R.filter((e) => !e.vidno)) crta(g, ...Z(T.V[e.a]), ...Z(T.V[e.b]), "glavna", { class: "sk-s-glavna sk-thin sk-dash sk-faint" });
+    // Zakriti robovi: zaporedne robove združimo v eno črto, da je črtkanje enakomerno (tudi na loku osnove valja).
+    for (const pot of verige(R.filter((e) => !e.vidno))) s("polyline", { points: pot.map((i) => Z(T.V[i])).join(" "), class: "sk-s-glavna sk-thin sk-dash sk-faint" }, g);
     // Višina v z pravim kotom v središču osnove (pri kocki in kvadru telesna diagonala D).
-    const oznaka = (p, t, barva, odmik = 12) => {
-      const q = Z(p), d = [q[0] - cS[0], q[1] - cS[1]], l = Math.hypot(...d) || 1;
+    const oznaka = (p, t, barva, odmik = 12, sredisce = cS) => {
+      const q = Z(p), d = [q[0] - sredisce[0], q[1] - sredisce[1]], l = Math.hypot(...d) || 1;
       napis(g, q[0] + (d[0] / l) * odmik, q[1] + (d[1] / l) * odmik + 4, t, barva, { "text-anchor": "middle" });
     };
     // Najbolj sprednji rob med danimi (po globini sredine).
-    const spredaj = (seznam) => seznam.reduce((b, e) => (P(sred(e))[2] > P(sred(b))[2] ? e : b));
+    // Rob, ki je na zaslonu močno skrajšan (gledan skoraj od spredaj), ne dobi oznake: oznaka bi se zlila s sosednjo.
+    const dolg = (e) => {
+      const [p, q] = [Z(T.V[e[0]]), Z(T.V[e[1]])], prava = k * Math.hypot(...T.V[e[0]].map((x, i) => x - T.V[e[1]][i]));
+      return Math.hypot(p[0] - q[0], p[1] - q[1]) >= Math.max(15, 0.5 * prava);
+    };
+    const spredaj = (seznam) => seznam.filter(dolg).reduce((b, e) => (!b || P(sred(e))[2] > P(sred(b))[2] ? e : b), null);
+    const oznakaRoba = (e, t, odmik, sredisce) => e && oznaka(sred(e), t, "glavna", odmik, sredisce);
     const sred = ([a, b]) => T.V[a].map((x, i) => (x + T.V[b][i]) / 2);
     const spodnji = T.E.filter((e) => T.V[e.a][1] === 0 && T.V[e.b][1] === 0).map((e) => [e.a, e.b]);
     if (ime === "kocka" || ime === "kvader") {
       const a0 = 0, b0 = T.n + 2;
       crta(g, ...Z(T.V[a0]), ...Z(T.V[b0]), "druga", { "stroke-width": 2 });
-      const dm = Z(T.V[a0].map((x, i) => (x + T.V[b0][i]) / 2));
-      napis(g, dm[0] + 6, dm[1] - 5, "D", "druga");
+      // »D« ob diagonali, odmaknjen pravokotno nanjo (nad njo), da ga črta ne prečka.
+      const dm = Z(T.V[a0].map((x, i) => (x + T.V[b0][i]) / 2)), da = Z(T.V[a0]), db = Z(T.V[b0]);
+      let nx = -(db[1] - da[1]), ny = db[0] - da[0];
+      const nl = Math.hypot(nx, ny) || 1;
+      if (ny > 0) (nx = -nx), (ny = -ny);
+      napis(g, dm[0] + (nx / nl) * 10, dm[1] + (ny / nl) * 10 + 4, "D", "druga", { "text-anchor": "middle" });
       const vzX = spodnji.filter(([a, b]) => T.V[a][2] === T.V[b][2]), vzZ = spodnji.filter(([a, b]) => T.V[a][0] === T.V[b][0]);
       const navp = T.E.filter((e) => T.V[e.a][1] !== T.V[e.b][1]).map((e) => [e.a, e.b]);
-      oznaka(sred(spredaj(vzX)), "a", "glavna");
+      oznakaRoba(spredaj(ime === "kocka" ? spodnji : vzX), "a");
       if (ime === "kvader") {
-        oznaka(sred(spredaj(vzZ)), "b", "glavna");
-        oznaka(sred(spredaj(navp)), "c", "glavna", 10);
+        oznakaRoba(spredaj(vzZ), "b");
+        oznakaRoba(spredaj(navp), "c", 10);
       }
     } else {
       const vrh = [0, T.v, 0], dno = [0, 0, 0];
       crta(g, ...Z(dno), ...Z(vrh), "izbor", { "stroke-width": 2 });
       const vm = Z([0, T.v / 2, 0]);
       napis(g, vm[0] + 6, vm[1], "v", "izbor");
-      // Krak pravega kota: polmer r v desno (valj, stožec) ali do sredine sprednjega osnovnega roba.
+      // Krak pravega kota: polmer r, pritrjen na telo (z vrtenjem se vidi, da se telo vrti; zadaj črtkan),
+      // pri oglatih telesih do sredine sprednjega osnovnega roba.
       const okrogel = ime === "valj" || ime === "stozec";
-      const kraj = okrogel ? [T.r * Math.cos(phi), 0, T.r * Math.sin(phi)] : sred(spredaj(spodnji));
-      crta(g, ...Z(dno), ...Z(kraj), okrogel ? "druga" : "izbor", { "stroke-width": okrogel ? 2 : 1.4 });
-      const D0 = Z(dno), u = Z(kraj), w = Z([0, 1, 0]);
-      const e1 = [u[0] - D0[0], u[1] - D0[1]], l1 = Math.hypot(...e1) || 1, e2 = [w[0] - D0[0], w[1] - D0[1]], l2 = Math.hypot(...e2) || 1;
-      const q = 8, p1 = [D0[0] + (e1[0] / l1) * q, D0[1] + (e1[1] / l1) * q], p3 = [D0[0] + (e2[0] / l2) * q, D0[1] + (e2[1] / l2) * q];
-      s("path", { d: `M${p1} L${p1[0] + p3[0] - D0[0]},${p1[1] + p3[1] - D0[1]} L${p3}`, class: "sk-s-izbor sk-thin" }, g);
+      const kraj = okrogel ? [T.r, 0, 0] : sred(spodnji.reduce((b, e) => (P(sred(e))[2] > P(sred(b))[2] ? e : b)));
+      const zadaj = okrogel && P(kraj)[2] < 0;
+      crta(g, ...Z(dno), ...Z(kraj), okrogel ? "glavna" : "izbor", okrogel ? { "stroke-width": 2, class: `sk-s-glavna${zadaj ? " sk-dash" : ""}` } : { "stroke-width": 1.4 });
+      praviKot(g, Z(dno), Z(kraj), Z([0, 1, 0]), 8, "izbor");
       if (okrogel) {
         const rm = Z(kraj.map((x) => x / 2));
-        napis(g, rm[0], rm[1] + 15, "r", "druga", { "text-anchor": "middle" });
+        napis(g, rm[0], rm[1] + 15, "r", "glavna", { "text-anchor": "middle" });
       }
       if (ime === "stozec") {
-        const sm = Z(kraj.map((x, i) => (x + vrh[i]) / 2));
-        napis(g, sm[0] + 9, sm[1], "s", "glavna");
+        // Stranica s (zelena kot v čipu): od roba osnove do vrha, na desnem obrisu.
+        const desni = [T.r * Math.cos(phi), 0, T.r * Math.sin(phi)];
+        crta(g, ...Z(desni), ...Z(vrh), "druga", { "stroke-width": 2.5 });
+        const sm = Z(desni.map((x, i) => (x + vrh[i]) / 2));
+        napis(g, sm[0] + 9, sm[1], "s", "druga");
       } else if (ime === "prisekana") {
-        oznaka(sred(spredaj(spodnji)), "a₁", "glavna", 14);
+        oznakaRoba(spredaj(spodnji), "a₁", 14);
+        // a₂ navzven od središča zgornje ploskve (ne čez višino v).
         const zgornji = T.E.filter((e) => T.V[e.a][1] === T.v && T.V[e.b][1] === T.v).map((e) => [e.a, e.b]);
-        oznaka(sred(spredaj(zgornji)), "a₂", "glavna", 12);
-      } else if (!okrogel) oznaka(sred(spredaj(spodnji)), "a", "glavna", 14);
+        oznakaRoba(spredaj(zgornji), "a₂", 11, Z([0, T.v, 0]));
+      } else if (!okrogel) oznakaRoba(spredaj(spodnji), "a", 14);
     }
     for (const e of R.filter((e) => e.vidno)) crta(g, ...Z(T.V[e.a]), ...Z(T.V[e.b]), "glavna", { "stroke-width": 2, "stroke-linecap": "round" });
   }
 
   function izrisMreza(g) {
-    const { liki, oznake } = mreza(T);
+    const { liki, oznake, crte } = mreza(T);
     const vse = liki.flatMap((l) => l.tocke);
     const [x0, x1] = [Math.min(...vse.map((p) => p[0])), Math.max(...vse.map((p) => p[0]))];
     const [y0, y1] = [Math.min(...vse.map((p) => p[1])), Math.max(...vse.map((p) => p[1]))];
@@ -284,6 +335,7 @@ export default function narisi(host, { telo: ime = "kocka", ss = false } = {}) {
     const Q = ([x, y]) => [W / 2 + (x - (x0 + x1) / 2) * m, H / 2 - (y - (y0 + y1) / 2) * m];
     for (const l of liki) s("polygon", { points: l.tocke.map(Q).join(" "), class: `${l.vrsta === "plasc" ? "sk-f-izbor" : "sk-f-ploskev"}` }, g);
     for (const l of liki) s("polygon", { points: l.tocke.map(Q).join(" "), class: `sk-s-${l.vrsta === "plasc" ? "izbor" : "ploskev"} sk-thin`, style: "fill: none" }, g);
+    for (const [p, q] of crte) crta(g, ...Q(p), ...Q(q), "glavna", { class: "sk-s-glavna sk-thin" });
     for (const o of oznake) {
       const [x, y] = Q(o.p);
       napis(g, x, y + 4, o.t, "glavna", { "text-anchor": "middle", style: "font-size: 12px" });
@@ -299,6 +351,7 @@ export default function narisi(host, { telo: ime = "kocka", ss = false } = {}) {
   // Vrtenje: vodoravno vlečenje (navpično se stran še pomika) ali puščici levo/desno.
   const svg = S.svg;
   svg.setAttribute("tabindex", "0");
+  svg.setAttribute("role", "img");
   svg.setAttribute("aria-roledescription", "vrtljiv model");
   let vlek = null, cakaj = false;
   const narisiKmalu = () => {

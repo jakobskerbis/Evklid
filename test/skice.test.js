@@ -560,3 +560,32 @@ test("telesa: pri vsakem zasuku so pri kocki zakriti 3 robovi, valj in stožec i
     assert.ok(p.some((e) => !e.vidno));
   }
 });
+
+test("telesa: prizma ima 5 zakritih robov, deli mreže se ne prekrivajo, P in V v čipih sta kot na kartici", async () => {
+  const { telo, robovi, mreza, cipi, verige } = await import("../public/skice/telesa.js");
+  const P = telo("prizma");
+  for (let phi = 0.05; phi < 2 * Math.PI; phi += 0.21) assert.equal(robovi(P, phi).robovi.filter((e) => !e.vidno).length, 5, `φ=${phi}`);
+  // Zakriti lok osnove valja je ena veriga (enakomerno črtkanje).
+  const V = telo("valj");
+  assert.equal(verige(robovi(V, 0.5).robovi.filter((e) => !e.vidno)).length, 1);
+  // Težišče vsakega dela mreže ne leži v nobenem drugem delu.
+  const notri = ([x, y], t) => t.reduce((c, p, i) => {
+    const q = t[(i + 1) % t.length];
+    return (p[1] > y) !== (q[1] > y) && x < ((q[0] - p[0]) * (y - p[1])) / (q[1] - p[1]) + p[0] ? !c : c;
+  }, false);
+  for (const ime of ["kocka", "kvader", "prizma", "valj", "stozec", "piramida", "prisekana"]) {
+    const L = mreza(telo(ime)).liki;
+    L.forEach((a, i) => {
+      const c = a.tocke.reduce((s, p) => [s[0] + p[0] / a.tocke.length, s[1] + p[1] / a.tocke.length], [0, 0]);
+      L.forEach((b, j) => i !== j && assert.ok(!notri(c, b.tocke), `${ime}: del ${i} v delu ${j}`));
+    });
+  }
+  const norm = (t) => t.replace(/\\dfrac/g, "\\frac").replace(/\s+/g, "");
+  for (const [list, ss, vrste] of [["MAT-OS", false, { Kocka: "kocka", Kvader: "kvader", Prizma: "prizma", Valj: "valj", Piramida: "piramida", Stožec: "stozec" }], ["MAT-SS", true, { Prizma: "prizma", Piramida: "piramida", "Prisekana piramida": "prisekana", Valj: "valj", Stožec: "stozec" }]]) {
+    const md = fs.readFileSync(new URL(`../content/formulas/${list}.md`, import.meta.url), "utf8").split("\n");
+    for (const [ime, t] of Object.entries(vrste)) {
+      const vrstica = norm(md.find((l) => l.startsWith(`| ${ime} |`)));
+      for (const c of cipi(telo(t), ss).filter((c) => /^[PV] =/.test(c.oznaka))) assert.ok(vrstica.includes(norm(c.oznaka)), `${list} ${ime}: ${c.oznaka}`);
+    }
+  }
+});
