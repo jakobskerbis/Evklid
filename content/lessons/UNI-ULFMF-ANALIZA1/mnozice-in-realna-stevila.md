@@ -5,9 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Vzemi števila $\tfrac12, \tfrac23, \tfrac34, \tfrac45, \dots$, torej $1 - \tfrac1n$ za $n = 2, 3, 4, \dots$. Katero je največje? Nobeno: za vsakim pride večje. Vsa pa so manjša od $1$, in $1$ je med vsemi takimi mejami najmanjša. Takemu številu bomo rekli **supremum**.
+Sošolka Nika trdi: »Vsaka navzgor omejena množica ima največji element.« Preizkusi trditev na vrstici napredka v telefonu, ki med prenosom kaže deleže $\tfrac12, \tfrac23, \tfrac34, \tfrac45, \dots$, torej $1 - \tfrac1n$ za $n = 2, 3, 4, \dots$. Največjega deleža ni: za vsakim pride večji. Vsi pa ostanejo pod $1$, in $1$ je med vsemi takimi mejami najmanjša. Takemu številu rečemo **supremum**; Nikino trditev bomo popravili: neprazna navzgor omejena množica realnih števil ima vedno supremum, maksimuma pa ne nujno.
 
-Še eno vprašanje. Ulomki $1$; $1{,}4$; $1{,}41$; $1{,}414$; ... imajo kvadrate pod $2$ in rastejo. Med ulomki ni najmanjšega števila, ki bi jih vse omejilo od zgoraj, ker $\sqrt2$ ni ulomek. Na številski premici ulomkov je »luknja«. Realna števila so narejena tako, da lukenj ni. To zapišemo z **aksiomom o polnosti**. Na njem stojijo limite, zveznost, odvodi in integrali. Za dokazovanje trditev »za vsak $n$« pa potrebujemo še **matematično indukcijo**.
+Ulomki imajo pri tem težavo. Števila $1$; $1{,}4$; $1{,}41$; $1{,}414$; ... rastejo in imajo kvadrate pod $2$, a med ulomki ni najmanjše meje nad njimi, ker $\sqrt2$ ni ulomek: na premici ulomkov je tu »luknja«. Realna števila lukenj nimajo, kar zapiše **aksiom o polnosti**, temelj limit, zveznosti, odvodov in integralov. Za trditve »za vsak $n$« dodamo še **matematično indukcijo**.
 
 ## Razlaga
 
@@ -23,9 +23,11 @@ Vzemi števila $\tfrac12, \tfrac23, \tfrac34, \tfrac45, \dots$, torej $1 - \tfra
 
 Zgornjih mej je veliko. Za $A = [0, 1)$ so zgornje meje $1$, $2$, $\pi$, $100$ in vsako število $\ge 1$. Najmanjša med njimi je $1$.
 
-**3. Supremum in infimum.** **Supremum** $\sup A$ je **najmanjša zgornja meja** množice $A$. **Infimum** $\inf A$ je **največja spodnja meja**. Če $\sup A$ leži v $A$, mu rečemo **maksimum**, $\max A$; podobno je **minimum** infimum, ki leži v $A$.
+**3. Supremum in infimum.** Preden pojem poimenujemo, primerjaj tri množice. Pri $[0, 1)$ je najmanjša zgornja meja $1$, v množici pa je ni. Pri $[0, 1]$ je najmanjša zgornja meja spet $1$, tokrat leži v množici. Pri $\{\tfrac1n : n \in \mathbb{N}\}$ je največja spodnja meja $0$, a noben $\tfrac1n$ ni enak $0$. Vzorec: najmanjša zgornja (ali največja spodnja) meja je v množici le včasih. Zato potrebujemo dve imeni.
 
-Primerjava na zgledih:
+**Supremum** $\sup A$ je **najmanjša zgornja meja** množice $A$. **Infimum** $\inf A$ je **največja spodnja meja**. Če $\sup A$ leži v $A$, mu rečemo **maksimum**, $\max A$; podobno je **minimum** infimum, ki leži v $A$.
+
+Iste množice in še $\mathbb{N}$, zdaj z novimi imeni:
 
 | množica | $\sup$ | $\max$ | $\inf$ |
 |---|---|---|---|
@@ -61,14 +63,14 @@ Zakaj iz arhimedske lastnosti sledi $\inf\{\tfrac1n : n \in \mathbb{N}\} = 0$?
 $0$ je spodnja meja, ker je $\tfrac1n > 0$. Za dani $\varepsilon > 0$ po arhimedski lastnosti obstaja $n > \tfrac1\varepsilon$, torej $\tfrac1n < \varepsilon = 0 + \varepsilon$. Nobeno število nad $0$ zato ni spodnja meja.
 :::
 
-**6. Matematična indukcija.** Denimo, da želimo dokazati trditev $T(n)$ za vsak $n \in \mathbb{N}$. Dovolj je dvoje:
+**6. Matematična indukcija.** Seštej prvih nekaj naravnih števil: $1 = 1$, $1 + 2 = 3$, $1 + 2 + 3 = 6$, $1 + 2 + 3 + 4 = 10$. Vsakič dobiš $\tfrac{n(n+1)}{2}$: $\tfrac{1 \cdot 2}{2} = 1$, $\tfrac{2 \cdot 3}{2} = 3$, $\tfrac{3 \cdot 4}{2} = 6$, $\tfrac{4 \cdot 5}{2} = 10$. Štirje primeri pa še niso dokaz za vsak $n$. Za trditev $T(n)$ pri vseh $n \in \mathbb{N}$ je dovolj dvoje:
 
 1. **baza**: velja $T(1)$,
 2. **indukcijski korak**: za vsak $n$ iz $T(n)$ sledi $T(n+1)$.
 
 Predstavljaj si vrsto domin. Prva pade (baza). Vsaka padajoča podre naslednjo (korak). Zato padejo vse. Predpostavki $T(n)$ v koraku rečemo **indukcijska predpostavka**. Če začnemo pri $n_0$ namesto pri $1$, dobimo trditev za vse $n \ge n_0$.
 
-Zgled: $1 + 2 + \dots + n = \dfrac{n(n+1)}{2}$. Baza: $1 = \dfrac{1 \cdot 2}{2}$. Korak: če formula velja za $n$, je
+Uganjeni vzorec zdaj dokažimo: $1 + 2 + \dots + n = \dfrac{n(n+1)}{2}$. Baza: $1 = \dfrac{1 \cdot 2}{2}$. Korak: če formula velja za $n$, je
 
 $$1 + \dots + n + (n+1) = \frac{n(n+1)}{2} + (n + 1) = \frac{(n+1)(n+2)}{2},$$
 
@@ -97,7 +99,7 @@ $\sup A$ je najmanjša zgornja meja; če $\sup A \in A$, je $\sup A = \max A$. Z
 
 ### Primer 2: supremum z $\varepsilon$
 
-Naj bo $A = \{1 - \tfrac1n : n \in \mathbb{N}\}$. Dokaži, da je $\sup A = 1$. Za $\varepsilon = 0{,}01$ poišči element $A$, ki je večji od $1 - \varepsilon$.
+Vrstica napredka iz uvoda kaže deleže iz množice $A = \{1 - \tfrac1n : n \in \mathbb{N}\}$. Dokaži, da je $\sup A = 1$. Za $\varepsilon = 0{,}01$ poišči element $A$, ki je večji od $1 - \varepsilon$, torej trenutek, ko vrstica preseže $99\,\%$.
 
 **Podatki:** $A = \{1 - \tfrac1n : n \in \mathbb{N}\}$, $\varepsilon = 0{,}01$
 **Iščemo:** dokaz $\sup A = 1$ in element $a > 0{,}99$
@@ -117,7 +119,7 @@ $M = \sup A \iff$ (1) $a \le M$ za vse $a \in A$ in (2) za vsak $\varepsilon > 0
 
 ### Primer 3 (težji): od katerega $n$ naprej?
 
-Od katerega naravnega števila naprej velja $2^n > n^2$? Ugotovi z računom in dokaži z indukcijo.
+Programer primerja dva algoritma: prvi pri vhodu velikosti $n$ naredi $2^n$ korakov, drugi $n^2$. Od katerega naravnega števila naprej je prvi počasnejši, torej velja $2^n > n^2$? Ugotovi z računom in dokaži z indukcijo.
 
 **Podatki:** neenakost $2^n > n^2$, $n \in \mathbb{N}$
 **Iščemo:** najmanjši $n_0$, da neenakost velja za vse $n \ge n_0$, in dokaz

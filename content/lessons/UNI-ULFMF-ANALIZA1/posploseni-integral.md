@@ -5,19 +5,15 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Določeni integral $\int_a^b f(x)\,dx$ si spoznal za omejen interval $[a, b]$ in omejeno funkcijo. Pogosto pa potrebujemo več. Kolikšna je ploščina pod krivuljo $y = \dfrac{1}{x^2}$ desno od $x = 1$, vse do neskončnosti? Lik je neskončno dolg. Ali ima lahko končno ploščino?
+Lena se s pohodniškim zemljevidom odpravi na dolgo pot in se vse bolj utruja: $t$ ur po odhodu ($t \ge 1$) hodi s hitrostjo $\dfrac{1}{t^2}$ km/h. Na zemljevidu bi rada označila mejo, čez katero nikoli ne pride, če taka meja sploh obstaja. Pot od $t = 1$ do $t = b$ je ploščina pod krivuljo $y = \dfrac{1}{t^2}$, Lena pa hodi brez konca, zato potrebuje ploščino lika vse do neskončnosti. Lik je neskončno dolg; ali ima lahko končno ploščino?
 
-Podobna vprašanja se pojavijo povsod: delo, ki ga moramo opraviti, da telo odnesemo »v neskončnost« iz gravitacijskega polja; verjetnost, da žarnica deluje več kot $t$ ur; Laplaceova transformacija in funkcija gama. Vsa ta orodja so **posplošeni integrali**. Naučili se bomo, kdaj imajo končno vrednost in kako jo izračunamo.
+Določeni integral $\int_a^b f(x)\,dx$ poznaš le za omejen interval $[a, b]$ in omejeno funkcijo. Za Lenin lik, delo, s katerim telo odnesemo »v neskončnost« iz gravitacijskega polja, verjetnost, da žarnica deluje več kot $t$ ur, Laplaceovo transformacijo in funkcijo gama potrebujemo **posplošene integrale**. Pri vsakem se vprašamo, ali ima končno vrednost, in če jo ima, kolikšna je.
 
 ## Razlaga
 
-**1. Neomejen interval.** Riemannov integral na $[1, \infty)$ ni definiran, ker neomejenega intervala ne moremo razdeliti na končno mnogo omejenih kosov. Zato najprej integriramo do končne meje $b$ in nato pošljemo $b$ proti neskončnosti:
+### Najprej slika: dva neskončno dolga lika
 
-$$\int_a^\infty f(x)\,dx = \lim_{b \to \infty} \int_a^b f(x)\,dx .$$
-
-Tu je $f$ integrabilna na vsakem intervalu $[a, b]$. Če limita obstaja in je končna, rečemo, da posplošeni integral **konvergira**. Sicer (limita je $\pm\infty$ ali ne obstaja) integral **divergira**.
-
-**2. Tabela.** Primerjajmo dve funkciji, ki obe padata proti $0$. Ker je $\int_1^b \frac{dx}{x^2} = 1 - \frac1b$ in $\int_1^b \frac{dx}{x} = \ln b$, dobimo:
+Nariši krivulji $y = \frac{1}{x^2}$ (Lenina hitrost) in $y = \frac1x$ za $x \ge 1$. Obe se začneta v točki $(1, 1)$, padata proti $0$ in se proti desni lepita na os $x$. Lik pod vsako je neskončno dolg. Na os $x$ postavi zastavico pri $b$ in izmeri ploščino do nje. Ker je $\int_1^b \frac{dx}{x^2} = 1 - \frac1b$ in $\int_1^b \frac{dx}{x} = \ln b$, dobimo za vse bolj oddaljene zastavice:
 
 | $b$ | $\int_1^b \frac{dx}{x^2}$ | $\int_1^b \frac{dx}{x}$ |
 |---|---|---|
@@ -25,7 +21,15 @@ Tu je $f$ integrabilna na vsakem intervalu $[a, b]$. Če limita obstaja in je ko
 | $100$ | $0{,}99$ | $\approx 4{,}605$ |
 | $1000$ | $0{,}999$ | $\approx 6{,}908$ |
 
-Prvi stolpec se približuje $1$, drugi raste čez vse meje, čeprav počasi. Na sliki: oba lika sta neskončno dolga, a lik pod $\frac{1}{x^2}$ se proti desni tanjša tako hitro, da ima končno ploščino $1$. Lik pod $\frac1x$ se tanjša prepočasi.
+Prvi stolpec se približuje $1$, drugi raste čez vse meje, čeprav počasi. Lik pod $\frac{1}{x^2}$ se proti desni tanjša tako hitro, da ima končno ploščino $1$: Lena nikoli ne prehodi več kot $1$ km. Lik pod $\frac1x$ se tanjša prepočasi.
+
+### Definicija: zastavico pošljemo v neskončnost
+
+Riemannov integral na $[1, \infty)$ ni definiran, ker neomejenega intervala ne moremo razdeliti na končno mnogo omejenih kosov. Zato integriramo do končne meje $b$ in nato pošljemo $b$ proti neskončnosti:
+
+$$\int_a^\infty f(x)\,dx = \lim_{b \to \infty} \int_a^b f(x)\,dx .$$
+
+Tu je $f$ integrabilna na vsakem intervalu $[a, b]$. Če limita obstaja in je končna, posplošeni integral **konvergira**. Sicer (limita je $\pm\infty$ ali ne obstaja) integral **divergira**.
 
 :::premisli
 Funkciji $\frac1x$ in $\frac1{x^2}$ obe gresta proti $0$. Ali je torej pogoj $\lim_{x\to\infty} f(x) = 0$ dovolj, da $\int_1^\infty f(x)\,dx$ konvergira?
@@ -33,11 +37,15 @@ Funkciji $\frac1x$ in $\frac1{x^2}$ obe gresta proti $0$. Ali je torej pogoj $\l
 Ne. Primer $\frac1x$ kaže, da funkcija lahko gre proti $0$, integral pa vseeno divergira. Pomembno je, **kako hitro** gre proti $0$.
 :::
 
-**3. Pravilo za potence.** Za $p \neq 1$ je $\int_1^b x^{-p}\,dx = \dfrac{b^{1-p} - 1}{1-p}$. Člen $b^{1-p}$ gre proti $0$, če je $p > 1$, in proti $\infty$, če je $p < 1$. Za $p = 1$ dobimo $\ln b \to \infty$. Torej:
+### Pravilo za potence
+
+Za $p \neq 1$ je $\int_1^b x^{-p}\,dx = \dfrac{b^{1-p} - 1}{1-p}$. Člen $b^{1-p}$ gre proti $0$, če je $p > 1$, in proti $\infty$, če je $p < 1$. Za $p = 1$ dobimo $\ln b \to \infty$. Torej:
 
 $$\int_1^\infty \frac{dx}{x^p} \ \text{konvergira} \iff p > 1 .$$
 
-**4. Neomejena funkcija.** Funkcija $\frac{1}{\sqrt x}$ je na $(0, 1]$ zvezna, a pri $x \to 0^+$ raste čez vse meje. Točki, kjer funkcija ni omejena, rečemo **singularnost**. Ideja je enaka kot prej: od singularnosti se odmaknemo za $\varepsilon > 0$ in pošljemo $\varepsilon \to 0^+$:
+### Neskončno visok lik
+
+Nariši še $y = \frac{1}{\sqrt x}$ na $(0, 1]$. Krivulja je zvezna, a ob osi $y$ se dvigne čez vse meje: lik je tokrat neskončno visok, ne dolg. Točki, kjer funkcija ni omejena (tu $x = 0$), rečemo **singularnost**. Ideja je enaka kot pri zastavici: od singularnosti se odmaknemo za $\varepsilon > 0$ in pošljemo $\varepsilon \to 0^+$:
 
 $$\int_a^b f(x)\,dx = \lim_{\varepsilon \to 0^+} \int_{a+\varepsilon}^b f(x)\,dx ,$$
 
@@ -47,7 +55,15 @@ Pri potencah se pravilo obrne. Ker je $\int_\varepsilon^1 x^{-p}\,dx = \dfrac{1 
 
 $$\int_0^1 \frac{dx}{x^p} \ \text{konvergira} \iff p < 1 .$$
 
-Pri $\infty$ mora funkcija padati dovolj hitro (velik $p$), pri $0$ pa ne sme rasti prehitro (majhen $p$). Integral $\int_0^\infty \frac{dx}{x^p}$ zato divergira za vsak $p$.
+Pri $\infty$ mora funkcija padati dovolj hitro (velik $p$), pri $0$ pa ne sme rasti prehitro (majhen $p$). Obe pravili v eni tabeli:
+
+| $p$ | $\int_1^\infty \frac{dx}{x^p}$ | $\int_0^1 \frac{dx}{x^p}$ |
+|---|---|---|
+| $p < 1$ | divergira | konvergira |
+| $p = 1$ | divergira | divergira |
+| $p > 1$ | konvergira | divergira |
+
+V nobeni vrstici ne konvergirata oba, zato integral $\int_0^\infty \frac{dx}{x^p}$ divergira za vsak $p$.
 
 :::premisli
 Singularnost je lahko tudi **v notranjosti** intervala, npr. $\int_{-1}^1 \frac{dx}{x^2}$. Kako bi tak integral definiral in ali konvergira?
@@ -55,9 +71,13 @@ Singularnost je lahko tudi **v notranjosti** intervala, npr. $\int_{-1}^1 \frac{
 Razdelimo ga v točki singularnosti: $\int_{-1}^0 + \int_0^1$. Integral konvergira le, če konvergirata **oba** dela posebej. Tu je $p = 2 \geq 1$, zato že $\int_0^1 \frac{dx}{x^2}$ divergira in celoten integral divergira.
 :::
 
-**5. Obe meji neskončni.** Integral $\int_{-\infty}^{\infty} f(x)\,dx$ razdelimo v poljubni točki $c$ na $\int_{-\infty}^c + \int_c^\infty$. Konvergira, če konvergirata oba dela, in to **neodvisno**: meji gresta proti $-\infty$ in $\infty$ vsaka po svoje, ne skupaj.
+### Obe meji neskončni
 
-**6. Primerjalni kriterij.** Pogosto primitivne funkcije ne znamo zapisati. Tedaj pomaga primerjava. Če je $0 \leq f(x) \leq g(x)$ za vse $x \geq a$, velja:
+Integral $\int_{-\infty}^{\infty} f(x)\,dx$ razdelimo v poljubni točki $c$ na $\int_{-\infty}^c + \int_c^\infty$. Konvergira, če konvergirata oba dela, in to **neodvisno**: meji gresta proti $-\infty$ in $\infty$ vsaka po svoje, ne skupaj.
+
+### Primerjalni kriterij
+
+Kadar primitivne funkcije ne znamo zapisati, pomaga primerjava. Na sliki: če krivulja $f$ povsod leži pod krivuljo $g$, je tudi lik pod $f$ vsebovan v liku pod $g$. Simbolno: če je $0 \leq f(x) \leq g(x)$ za vse $x \geq a$, velja:
 
 - če $\int_a^\infty g$ konvergira, konvergira tudi $\int_a^\infty f$;
 - če $\int_a^\infty f$ divergira, divergira tudi $\int_a^\infty g$.
@@ -68,7 +88,7 @@ Funkcija pod konvergentno je »še manjša«, zato ima tudi končno ploščino. 
 
 ### Primer 1 (lažji): neomejen interval
 
-Izračunaj $\int_1^\infty \dfrac{dx}{x^2}$, če konvergira.
+Kje na zemljevidu je Lenina meja iz uvoda? Izračunaj $\int_1^\infty \dfrac{dx}{x^2}$, če konvergira.
 
 **Podatki:** funkcija $f(x) = \dfrac{1}{x^2}$, interval $[1, \infty)$
 **Iščemo:** vrednost integrala ali ugotovitev, da divergira
@@ -82,7 +102,7 @@ $\displaystyle \int_a^\infty f(x)\,dx = \lim_{b \to \infty} \int_a^b f(x)\,dx$
 1. Primitivna funkcija: $\int x^{-2}\,dx = -\dfrac{1}{x} + C$.
 2. Integral do končne meje: $\int_1^b \dfrac{dx}{x^2} = \left[-\dfrac1x\right]_1^b = 1 - \dfrac1b$.
 3. Limita: $\lim_{b\to\infty}\left(1 - \dfrac1b\right) = 1$, ker gre $\dfrac1b \to 0$.
-4. Odgovor: integral konvergira in je enak $1$.
+4. Odgovor: integral konvergira in je enak $1$. Lena po prvi uri prehodi manj kot $1$ km, mejo torej označi $1$ km naprej od tam, kjer je bila ob $t = 1$.
 
 ### Primer 2: neomejena funkcija
 

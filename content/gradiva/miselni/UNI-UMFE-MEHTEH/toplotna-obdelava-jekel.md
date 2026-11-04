@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Faze jekla
+  - avstenit γ (KPloC) nad $A_3$
+  - ferit, cementit, perlit pod $A_1 = 727\,^\circ\mathrm{C}$
+- Hitrost ohlajanja
+  - počasi: difuzija, perlit, mehko
+  - hitreje od $v_\mathrm{k}$: martenzit, trdo
+  - $v = \frac{\Delta T}{\Delta t}$ v $^\circ\mathrm{C/s}$
+- Martenzit
+  - ujeti ogljik, tetragonalna mreža
+  - potrebno vsaj okoli $0{,}3\,\%$ C
+- Kaljenje
+  - $T_\mathrm{k} = A_3 + (30 \ldots 50)\,^\circ\mathrm{C}$
+  - voda, olje ali zrak
+  - napaka: segreti le nad $A_1$
+- Popuščanje
+  - takoj po kaljenju, vedno pod $A_1$
+  - nizko $150$–$250\,^\circ\mathrm{C}$ za orodja
+  - kaljenje z visokim popuščanjem je poboljšanje
+- Žarjenje
+  - počasno ohlajanje, mehka struktura
+  - normalizacijsko, mehko, za odpravo napetosti
+- Prekaljivost
+  - legirni elementi zmanjšajo $v_\mathrm{k}$
+  - legirana jekla kalimo v olju

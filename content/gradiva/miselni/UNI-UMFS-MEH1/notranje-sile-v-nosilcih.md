@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Miselni rez
+  - ravnotežje enega dela nosilca
+  - napaka: sile z obeh strani reza
+- Tri notranje veličine
+  - osna sila $N$, nateg pozitiven
+  - prečna sila $T$ v N
+  - upogibni moment $M$ v N·m
+- Dogovor o predznaku
+  - $T > 0$: vsota sil levo navzgor
+  - $M > 0$: spodnja vlakna raztegnjena
+- Diagrami
+  - točkovna sila: skok v $T$, prelom v $M$
+  - zvezna $q$: $T$ linearen, $M$ parabola
+- Diferencialni zvezi
+  - $\mathrm{d}T/\mathrm{d}x = -q$
+  - $\mathrm{d}M/\mathrm{d}x = T$
+  - $M_{\max}$ tam, kjer je $T = 0$
+- Tipični primeri
+  - sila na sredini: $M_{\max} = FL/4$
+  - enakomerna $q$: $M_{\max} = qL^2/8$
+  - konzola: $|M| = FL$ v vpetju
+- Poševno breme
+  - $F_x$ napne del do nepomične podpore
+  - $F_x$ ne vpliva na $M$

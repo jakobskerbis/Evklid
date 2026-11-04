@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Natezni preizkus
+  - $R_e$ za duktilne, $R_m$ za krhke
+  - $\sigma_{\mathrm{dop}} = \dfrac{R_e}{\nu}$
+- Primerjalna napetost
+  - enoosna, enako nevarna napetost
+  - pogoj $\sigma_{\mathrm{pr}} \le \sigma_{\mathrm{dop}}$
+- Glavne napetosti
+  - $\sigma_1 \ge \sigma_2 \ge \sigma_3$
+  - ravninsko stanje: tretja je $0$
+- Krhke snovi
+  - $\sigma_{\mathrm{pr}} = \sigma_1$, primerjaj z $R_m$
+  - špageta poči po vijačnici pod $45^\circ$
+- Tresca
+  - $\sigma_{\mathrm{pr}} = \sigma_1 - \sigma_3$
+  - napaka: $\sigma' - \sigma''$ brez ničle
+- Von Mises
+  - koren polovice vsote kvadratov razlik
+  - hidrostatični tlak da $\sigma_{\mathrm{pr}} = 0$
+- Upogib s torzijo
+  - Mises $\sqrt{\sigma^2 + 3\tau^2}$
+  - Tresca $\sqrt{\sigma^2 + 4\tau^2}$
+  - Tresca strožja, največ za $15{,}5\,\%$
