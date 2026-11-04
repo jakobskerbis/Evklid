@@ -1,4 +1,4 @@
-// Verjetnostne porazdelitve: normalna, binomska, Poissonova, Studentova t, hi-kvadrat.
+// Verjetnostne porazdelitve: normalna, binomska, Poissonova, geometrijska, hipergeometrijska, Studentova t, hi-kvadrat.
 // Brez DOM (preizkusi v test/tools.test.js). Natančnost ~1e-10, kar je več kot dovolj za tabele.
 
 const LN_SQRT_2PI = 0.9189385332046727;
@@ -197,6 +197,43 @@ export function poisson(lambda) {
     mean: lambda,
     sd: Math.sqrt(lambda),
     range: [0, Math.ceil(lambda + 5 * Math.sqrt(lambda) + 3)],
+  };
+}
+
+/** Geometrijska: P(X = k) = (1 − p)^(k−1) · p za k ≥ 1 (kot geometpdf/geometcdf na TI-84). */
+export function geometric(p) {
+  return {
+    discrete: true,
+    pdf: (k) => (k < 1 || k !== Math.floor(k) ? 0 : p === 1 ? (k === 1 ? 1 : 0) : Math.exp((k - 1) * Math.log1p(-p)) * p),
+    cdf: (x) => {
+      const k = Math.floor(x);
+      return k < 1 ? 0 : p === 1 ? 1 : -Math.expm1(k * Math.log1p(-p));
+    },
+    mean: 1 / p,
+    sd: Math.sqrt(1 - p) / p,
+    range: [0, Math.ceil(1 / p + (5 * Math.sqrt(1 - p)) / p + 3)],
+  };
+}
+
+/** Hipergeometrijska: N vseh, K ugodnih, n izbranih; P(X = k) = C(K,k)·C(N−K,n−k) / C(N,n). */
+export function hypergeometric(N, K, n) {
+  const lnC = (a, b) => lnGamma(a + 1) - lnGamma(b + 1) - lnGamma(a - b + 1);
+  const lo = Math.max(0, n - (N - K));
+  const hi = Math.min(n, K);
+  const pmf = (k) => (k < lo || k > hi || k !== Math.floor(k) ? 0 : Math.exp(lnC(K, k) + lnC(N - K, n - k) - lnC(N, n)));
+  const q = K / N;
+  return {
+    discrete: true,
+    pdf: pmf,
+    cdf: (x) => {
+      const k = Math.min(Math.floor(x), hi);
+      let s = 0;
+      for (let i = lo; i <= k; i++) s += pmf(i);
+      return Math.min(1, s);
+    },
+    mean: n * q,
+    sd: N > 1 ? Math.sqrt(n * q * (1 - q) * ((N - n) / (N - 1))) : 0,
+    range: [lo, hi],
   };
 }
 

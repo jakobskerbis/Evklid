@@ -58,7 +58,7 @@ const MORE = [
   ["vars", [["x", "x"], ["y", "y"], ["z", "z"], ["a", "a"], ["b", "b"], ["c", "c"], ["n", "n"], ["t", "t"], ["f(x)=", "f(x)="], ["g(x)=", "g(x)="]]],
   ["ana", [["\\tfrac{d}{dx}", "d/dx(@)"], ["\\tfrac{d}{dx}\\big|_{x=a}", "d/dx(@;)"], ["\\int_a^b", "∫(@;;)"], ["\\sum", "∑_(n=1)^(@) "], ["\\prod", "∏_(n=1)^(@) "], ["|x|", "abs("]]],
   ["trig", [["\\sin", "sin("], ["\\cos", "cos("], ["\\tan", "tan("], ["\\cot", "cot("], ["\\arcsin", "arcsin("], ["\\arccos", "arccos("], ["\\arctan", "arctan("], ["\\sinh", "sinh("], ["\\cosh", "cosh("], ["\\tanh", "tanh("]]],
-  ["num", [["\\gcd", "gcd(@;)"], ["\\operatorname{lcm}", "lcm(@;)"], ["\\bmod", "mod(@;)"], ["\\operatorname{round}", "round(@;)"], ["\\lfloor x\\rfloor", "floor("], ["\\lceil x\\rceil", "ceil("], ["\\binom{n}{k}", "nCr(@;)"], ["n!", "!"], ["\\%", "%"], ["\\operatorname{sgn}", "sgn("]]],
+  ["num", [["\\gcd", "gcd(@;)"], ["\\operatorname{lcm}", "lcm(@;)"], ["\\bmod", "mod(@;)"], ["\\operatorname{round}", "round(@;)"], ["\\lfloor x\\rfloor", "floor("], ["\\lceil x\\rceil", "ceil("], ["\\binom{n}{k}", "nCr(@;)"], ["n!", "!"], ["\\%", "%"], ["\\operatorname{sgn}", "sgn("], ["\\operatorname{Int}", "Int("], ["\\operatorname{frac}", "frac("], ["\\mathrm{Ran\\#}", "rand"], ["\\operatorname{RanInt}", "randint(@;)"], ["\\operatorname{Pol}", "Pol(@;)"], ["\\operatorname{Rec}", "Rec(@;)"]]],
   ["stat", [["\\operatorname{mean}", "mean(@)"], ["\\operatorname{median}", "median(@)"], ["\\sigma", "stdev(@)"], ["\\min", "min(@)"], ["\\max", "max(@)"], ["\\Sigma", "total(@)"]]],
   ["cplx", [["i", "i"], ["|z|", "abs("]]],
 ];
@@ -161,7 +161,7 @@ export function createScientific(root, opts) {
     if (s !== e) input.value = input.value.slice(0, s) + input.value.slice(e);
     else if (s > 0) {
       // celo ime funkcije z oklepajem naenkrat (sin( …)
-      const m = /(?:arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|mean|median|stdev|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(input.value.slice(0, s));
+      const m = /(?:arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|Int|frac|randint|Pol|Rec|mean|median|stdev|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(input.value.slice(0, s));
       const n = m ? m[0].length : 1;
       input.value = input.value.slice(0, s - n) + input.value.slice(s);
       input.setSelectionRange(s - n, s - n);
@@ -187,6 +187,8 @@ export function createScientific(root, opts) {
         return t("gc.errChar", { ch: e.info.f });
       case "notCalc":
         return t("sc.errEquation");
+      case "sumLimit":
+        return t("sc.errSumLimit");
       case "other":
         return t("gc.errOther");
       default:
@@ -246,6 +248,11 @@ export function createScientific(root, opts) {
       case "bool":
         e.value = r.value ? 1 : 0;
         break;
+      case "pair":
+        // Pol/Rec: dva rezultata, vsak v svojem delu (r = …, θ = …)
+        e.res = r.items.map((x) => `${x.name} = ${valueTex(x.v)}${x.angle && r.deg ? "^{\\circ}" : ""}`).join(",\\quad ");
+        e.first = r.items[0].v;
+        break;
       case "deriv":
         e.res = r.resTex;
         e.steps = true;
@@ -292,7 +299,8 @@ export function createScientific(root, opts) {
       case "deriv":
         return texHtml(`= ${e.res}`);
       case "solve":
-      case "system": {
+      case "system":
+      case "pair": {
         // vsaka rešitev posebej, da se na ozkem zaslonu prelomi med rešitvami, ne sredi njih
         const parts = String(resTex(e)).split(",\\quad ").filter(Boolean);
         return parts.length ? `<span class="sc-parts">${parts.map((x) => `<span>${texHtml(x)}</span>`).join("")}</span>` : "";
@@ -389,7 +397,7 @@ export function createScientific(root, opts) {
     if (e.plot?.length && opts.openGraph) acts.push(btn("plot", "chart-spline", "sc.plot"));
     if (e.steps && opts.steps && opts.canSteps?.()) acts.push(btn("steps", "list-ordered", "sc.steps"));
     if ((e.kind || "value") === "value" && primeFactors(e.value)?.some(([, k], j, a) => a.length > 1 || k > 1) && !e.fact) acts.push(btn("fact", "grid-2x2", "sc.factor"));
-    if (["value", "solve", "ineq", "system", "deriv", "complex"].includes(e.kind || "value")) acts.push(btn("copy", "copy", "sc.copy"));
+    if (["value", "solve", "ineq", "system", "deriv", "complex", "pair"].includes(e.kind || "value")) acts.push(btn("copy", "copy", "sc.copy"));
     return acts.length ? `<div class="sc-acts">${acts.join("")}</div>` : "";
   }
 

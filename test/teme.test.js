@@ -218,8 +218,35 @@ test("every history chat look and column set is styled in ui.css, readable and s
       assert.ok(/t-steps/.test(html.bottom), `${id}: temple().bottom`);
       assert.ok([html.top, html.bottom].every((s) => (s.match(/<svg/g) || []).length === (s.match(/aria-hidden="true"/g) || []).length - (s.match(/<div/g) || []).length), `${id}: deli pročelja so aria-hidden`);
       for (const k of ["t-roof", "t-ent", "t-col", "t-steps"]) assert.ok(css.includes(`.${k}`), `${id}: ui.css nima .${k}`);
-    } else assert.equal(T.temple(id), null, `${id}: brez pročelja`);
+    } else if (!e.building) assert.equal(T.temple(id), null, `${id}: brez pročelja`);
     if (e.chat && e.chat.frame === "stebri") assert.ok(tp, `${id}: stebri potrebujejo arch.temple`);
   }
   assert.ok(T.PAPER > 0 && T.PAPER <= 0.15, "PAPER (vlakna papirusa)");
+});
+
+// Stavba obdobja (ERAS[…].building, j 2026-11-04: stebri samo za Antični, drugi slogi stavba iz svojega obdobja, npr.
+// Tadž Mahal za Indijo): vsak slog ima natanko en okvir pozdrava, deli so preprost SVG z razredi za barve iz ui.css.
+test("every history style frames the empty chat with a building of its own period, columns only in Antični", () => {
+  const css = fs.readFileSync(path.join(PUB, "ui.css"), "utf8");
+  for (const [id, e] of Object.entries(T.ERAS)) {
+    const own = e.chat && e.chat.frame;
+    assert.ok(!!own !== !!e.frame, `${id}: natanko en okvir pozdrava (chat.frame ali frame)`);
+    if (own === "stebri") assert.equal(id, "antik", "stebri samo v Antičnem");
+    if (!e.frame) continue;
+    assert.equal(e.frame, "stavba", `${id}: frame je »stavba«`);
+    assert.ok(css.includes(`[data-chat-frame="${e.frame}"]`), `${id}: ui.css nima videza stavbe`);
+    const b = e.building;
+    assert.ok(b && !e.arch, `${id}: stavba v building, brez stebrov v okvirju (arch)`);
+    const parts = { roof: b.pediment, cap: b.column[0], shaft: b.column[1], base: b.column[2], plinth: b.stylobate, ...(b.entablature ? { band: b.entablature } : {}) };
+    for (const [k, [w, h, body]] of Object.entries(parts)) {
+      assert.ok(w > 0 && h > 0 && w <= 600 && h <= 200 && body.length < 2000, `${id}: ${k} mere`);
+      assert.ok(!/<(?!\/?(path|rect|circle|ellipse)\b)/.test(body) && !/\son\w+=|href|url\(|style=|fill="#|stroke="#/i.test(body), `${id}: ${k} samo osnovne oblike`);
+      assert.ok(!/class="(?![ftlsdvn ]+")/.test(body), `${id}: ${k} samo razredi f t l s d v n`);
+    }
+    const [rw, rh] = b.pediment;
+    assert.ok(rw / rh >= 3 && rw / rh <= 7, `${id}: streha ${rw}:${rh}`);
+    const html = T.temple(id);
+    assert.ok(html && /t-roof/.test(html.top) && (html.bottom.match(/class="t-part t-col/g) || []).length === 4 && /t-steps/.test(html.bottom), `${id}: temple() sestavi stavbo`);
+    assert.ok(!!b.entablature === /t-ent/.test(html.top), `${id}: pas pod streho samo, če je podan`);
+  }
 });

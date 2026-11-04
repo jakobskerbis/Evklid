@@ -1,0 +1,10 @@
+[
+  { "ime": "RCSB Protein Data Bank (wwPDB): 2HHB (Fermi in sod. 1984), 4INS (Baker in sod. 1988), 1EMA (Ormö in sod. 1996)", "za": "beljakovina: koordinate Cα, hem, kromofor, disulfidni mostovi (poenostavljeno)", "licenca": "CC0 1.0", "url": "https://www.rcsb.org" },
+  { "ime": "RCSB Protein Data Bank (wwPDB): 1BNA (Drew in sod. 1981), 2KOC (Nozinovic in sod. 2010)", "za": "dnk: sladkorno-fosfatna hrbtenica oblike B in A, zanka UUCG", "licenca": "CC0 1.0", "url": "https://www.rcsb.org" },
+  { "ime": "W. K. Olson in sod. (2001), J. Mol. Biol. 313, 229–237", "za": "dnk: geometrija baz v standardnem sistemu baznega para", "licenca": "znanstveni podatki (dejstva)", "url": "https://doi.org/10.1006/jmbi.2001.4987" },
+  { "ime": "PubChem 3D konformerji (NCBI)", "za": "molekule: metanol, etanol, etanojska kislina, propanon, cikloheksan, glicin, glukoza", "licenca": "javna last (US Government Work)", "url": "https://pubchem.ncbi.nlm.nih.gov" },
+  { "ime": "NIST CCCBDB in CRC Handbook of Chemistry and Physics", "za": "molekule: poskusne dolžine vezi in vezni koti; periodni sistem: elektronegativnost, gostota", "licenca": "znanstveni podatki (dejstva)", "url": "https://cccbdb.nist.gov" },
+  { "ime": "NIST Atomic Spectra Database", "za": "periodni sistem: prve ionizacijske energije, elektronske konfiguracije", "licenca": "javna last (US Government Work)", "url": "https://physics.nist.gov/asd" },
+  { "ime": "IUPAC/CIAAW, standardne atomske mase (2021)", "za": "periodni sistem, molekule: relativne atomske mase, molske mase", "licenca": "znanstveni podatki (dejstva)", "url": "https://www.ciaaw.org" },
+  { "ime": "B. Cordero in sod. (2008), Dalton Trans. 2832; A. Bondi (1964); R. D. Shannon (1976); E. Clementi in sod. (1963, 1967)", "za": "polmeri atomov in ionov (periodni sistem, molekule, kristali, atom)", "licenca": "znanstveni podatki (dejstva)", "url": "https://doi.org/10.1039/b801115j" }
+]

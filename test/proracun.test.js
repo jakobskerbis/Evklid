@@ -5,7 +5,7 @@ import { createApp } from "../server/app.js";
 import { Usage } from "../server/usage.js";
 import { paceLevel, budgetMode, periodOf } from "../server/proracun.js";
 import { Credits, creditUsdFor, CREDIT_PACKS } from "../server/placila/krediti.js";
-import { modeParams } from "../server/claude.js";
+import { modeParams, costUsd } from "../server/claude.js";
 
 const day = (d, h = 12) => new Date(Date.UTC(2026, 10, d, h)); // november 2026, 30 dni
 
@@ -88,6 +88,66 @@ test("budget is shared by plan weight; over the share the account's bought credi
   assert.ok(credits.refund("pi_1"));
   assert.equal(credits.balance(2), 0);
   assert.match(u.blockReason(free), /dokupom porabe/);
+});
+
+test("cost uses the model's price also when the API returns a dated model id", () => {
+  const u = { input_tokens: 1_000_000 };
+  assert.equal(costUsd("claude-haiku-5-5", u), 0.1);
+  assert.equal(costUsd("claude-haiku-5-5-20261015", u), 0.1, "ne po ceni Opusa");
+  assert.equal(costUsd("claude-sonnet-5-5-20261001", u), 2);
+  assert.equal(costUsd("neznan-model", u), 4, "neznan model: najdražja cena (varno)");
+});
+
+test("daily question limit scales with the student's remaining share and the days left in the month", () => {
+  const { db, u, credits, student } = setup();
+  const a = student("Plačnik", 1);
+  const b = student("Drugi", 2);
+  const owner = { [a]: 1, [b]: 2 };
+  u.configure({ weightOf: () => 9.99, ownerOf: (id) => owner[id], credits });
+  const spend = (id, usd, when = "datetime('now')") => db.prepare(`INSERT INTO usage (student_id, model, kind, cost_usd, created_at) VALUES (?, 'claude-haiku-5-5', 'chat', ?, ${when})`).run(id, usd);
+  assert.equal(u.dailyLimit(a), null, "brez proračuna: stalne meje iz pravic");
+  assert.ok(u.setBudgetBase(100)); // meja 97 $, dva enaka učenca → 48,5 $ vsak
+  spend(a, 0);
+  spend(b, 0);
+  u.shareCache = null;
+  const state = u.budgetState();
+  const allowance = u.studentBudget(a, state).allowance;
+  assert.ok(Math.abs(allowance - 48.5) < 1e-9);
+  // Delež / dni do konca meseca (vključno z danes) / 0,005 $ na vprašanje, največ 200.
+  process.env.EVKLID_DAILY_QUESTIONS_MAX = "0";
+  try {
+    assert.equal(u.dailyLimit(a, { state, now: day(1, 0) }), Math.floor(48.5 / 30 / 0.005), "prvi dan: 30 dni");
+    assert.equal(u.dailyLimit(a, { state, now: day(16, 23) }), Math.floor(48.5 / 15 / 0.005), "ura v dnevu ne šteje");
+    assert.equal(u.dailyLimit(a, { state, now: day(30, 18) }), Math.floor(48.5 / 0.005), "zadnji dan: ves ostanek");
+    // Nov mesec ima svoje število dni (december 31); porabo šteje SQL od 1. v tekočem mesecu.
+    assert.equal(u.dailyLimit(a, { state, now: new Date(Date.UTC(2026, 11, 1, 6)) }), Math.floor(48.5 / 31 / 0.005));
+  } finally {
+    delete process.env.EVKLID_DAILY_QUESTIONS_MAX;
+  }
+  assert.equal(u.dailyLimit(a, { state, now: day(10) }), 200, "zgornja meja");
+  // Poraba danes ne zmanjša današnje meje (šteje ostanek na začetku dneva).
+  const before = u.dailyLimit(a, { state, now: day(29) });
+  spend(a, 20);
+  assert.equal(u.dailyLimit(a, { state: u.budgetState(), now: day(29) }), before);
+  // Skoraj ničen delež (učenec z majhno utežjo ob velikem): 0 vprašanj iz proračuna (spodnja meja je stalna
+  // meja paketa v accounts/index.js); nad deležem blockReason ponudi dokup.
+  const c = student("Majhen", 3);
+  owner[c] = 3;
+  u.configure({ weightOf: (id) => (id === c ? 0.0001 : 9.99), ownerOf: (id) => owner[id], credits });
+  spend(c, 0.01);
+  u.shareCache = null;
+  assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29) }), 0);
+  assert.match(u.blockReason(c), /dokupom porabe/);
+  // Dokupljeni kredit dvigne mejo: 5,74 $ / 2 dni / 0,05 $ na vprašanje; učenčev del kredita (credit) šteje namesto vsega.
+  assert.ok(credits.activate(credits.create(3, CREDIT_PACKS.find((p) => p.id === "k10")), "pi_m"));
+  process.env.EVKLID_QUESTION_USD = "0.05";
+  try {
+    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29) }), Math.floor(5.74 / 2 / 0.05));
+    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29), credit: 5.74 / 2 }), Math.floor(5.74 / 4 / 0.05), "kredit, deljen med dva otroka");
+  } finally {
+    delete process.env.EVKLID_QUESTION_USD;
+  }
+  assert.equal(u.blockReason(c), null, "s kreditom naprej");
 });
 
 test("admin sets the monthly budget and adds bought credit; the tutor upgrades while under plan", async () => {

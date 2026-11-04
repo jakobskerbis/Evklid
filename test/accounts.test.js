@@ -215,6 +215,46 @@ test("free tier limits tutor questions; subscription via webhook lifts it", asyn
   }
 });
 
+test("daily tutor questions: the plan's limit is the floor, the AI budget raises it; the free plan keeps its own", async () => {
+  process.env.EVKLID_FREE_DAILY_QUESTIONS = "2";
+  process.env.EVKLID_OSEBNO_DAILY_QUESTIONS = "3";
+  process.env.EVKLID_DAILY_QUESTIONS_MAX = "5";
+  try {
+    await withServer(async ({ client, calls, store }) => {
+      const askAll = async (a, n) => {
+        const kid = (await a("/api/students", { method: "POST", body: { name: "Lan", birth_year: YEAR - 10, consent: true } })).body;
+        const conv = (await a(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
+        const out = [];
+        for (let i = 0; i < n; i++) out.push((await a(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: `vprašanje ${i}` } })).status);
+        return out;
+      };
+      // Brez proračuna: stalna meja Osebno (tu 3).
+      const trial = client();
+      await registerVerified(trial, calls, "meja@preizkus.si");
+      const first = await askAll(trial, 4);
+      assert.deepEqual(first, [200, 200, 200, 429]);
+      // S proračunom (200 $, malo učencev): meja zraste do zgornje meje (tu 5); brezplačni paket ostane 2.
+      store.db.prepare("INSERT INTO kv (key, value) VALUES ('budget_base_usd', '200') ON CONFLICT(key) DO UPDATE SET value = excluded.value").run();
+      const trial2 = client();
+      await registerVerified(trial2, calls, "meja2@preizkus.si");
+      assert.deepEqual(await askAll(trial2, 6), [200, 200, 200, 200, 200, 429]);
+      const free = client();
+      const p = await registerVerified(free, calls, "meja@brezplacno.si");
+      store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(p.id);
+      assert.deepEqual(await askAll(free, 3), [200, 200, 429]);
+      // Zgornja meja pod stalno mejo paketa: velja stalna meja (proračun meje nikoli ne zniža).
+      process.env.EVKLID_DAILY_QUESTIONS_MAX = "1";
+      const trial3 = client();
+      await registerVerified(trial3, calls, "meja3@preizkus.si");
+      assert.deepEqual(await askAll(trial3, 4), [200, 200, 200, 429]);
+    });
+  } finally {
+    delete process.env.EVKLID_FREE_DAILY_QUESTIONS;
+    delete process.env.EVKLID_OSEBNO_DAILY_QUESTIONS;
+    delete process.env.EVKLID_DAILY_QUESTIONS_MAX;
+  }
+});
+
 test("free tier stops at the monthly AI budget (all free students and per student)", async () => {
   process.env.EVKLID_FREE_POOL_USD = "0.5";
   process.env.EVKLID_FREE_STUDENT_USD = "0";

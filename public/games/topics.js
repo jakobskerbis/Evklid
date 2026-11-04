@@ -16,6 +16,18 @@ export function setNumberStyle(lang) {
   }
 }
 
+// Za čas klica fn drug jezik nalog in zapis števil, nato prejšnji (npr. igre izberejo pojme v enem jeziku,
+// da je izbira v vseh jezikih enaka).
+export function withNumberStyle(lang, fn) {
+  const was = [LANG, DEC];
+  setNumberStyle(lang);
+  try {
+    return fn();
+  } finally {
+    [LANG, DEC] = was;
+  }
+}
+
 // ---------- pomožne ----------
 const R = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
