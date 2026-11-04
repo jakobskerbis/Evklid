@@ -203,8 +203,12 @@ test("kvadratna funkcija: temenska in splošna oblika se ujemata, ničli sta ni�
         assert.equal(k.nicle.length, k.D > 0 ? 2 : k.D === 0 ? 1 : 0);
         for (const x of k.nicle) assert.ok(Math.abs(k.f(x)) < 1e-9);
       }
-  assert.equal(brezNic(0, 0.5), -0.5);
-  assert.equal(brezNic(0, -0.5), 0.5);
+  assert.equal(brezNic(0, 0.5), -0.1);
+  assert.equal(brezNic(0, -0.5), 0.1);
+  // Skoraj zvezen drsnik: blizu 0 se pripne na ±0,1 na strani vrednosti.
+  assert.equal(brezNic(0.03, 0.5), 0.1);
+  assert.equal(brezNic(-0.0001, 0.1), -0.1);
+  assert.equal(brezNic(0.1234, 0.5), 0.1234);
 });
 
 test("potenčna funkcija: sodost, lihost in zaloga vrednosti po vrsti eksponenta", async () => {
@@ -231,6 +235,9 @@ test("eksponentna in logaritemska: zrcalni čez y = x, a = 1 se preskoči", asyn
   }
   assert.equal(brezEna(1, 0.9), 1.1);
   assert.equal(brezEna(1, 1.1), 0.9);
+  assert.equal(brezEna(1.04, 1.5), 1.1);
+  assert.equal(brezEna(0.97, 0.5), 0.9);
+  assert.equal(brezEna(1.2345, 1.5), 1.2345);
 });
 
 test("eksponentna in logaritemska pri a blizu 1: graf nima navpičnih skokov čez okvir", async () => {
@@ -440,6 +447,9 @@ test("odvod in diferencial: Δf/Δx → f′(x₀), ko gre h proti 0; Δf − df
   }
   assert.equal(brezNic(0, 0.1, 0.1), -0.1);
   assert.equal(brezNic(0, -0.1, 0.1), 0.1);
+  assert.equal(brezNic(0.04, 0.3, 0.1), 0.1);
+  assert.equal(brezNic(-0.00002, 0.1, 0.1), -0.1);
+  assert.equal(brezNic(0.012, 0.3, 0.01), 0.012);
 });
 
 test("skice: »≈« je vedno pred nedeljivim presledkom (v ozkem čipu se ne loči od števila)", () => {
@@ -663,4 +673,15 @@ test("presek stožca: gumb Elipsa da zaprto elipso za vsak α", async () => {
   }
   // Začetno stanje skice (τ = 25°, h = 0,8, α = 30°) je zaprta elipsa.
   assert.equal(krivulja(25, 30, 0.8, { pol: 2.5 }).odseki.length, 1);
+});
+
+test("skice: drsniki so vsaj 10000-krat drobnejši od koraka; samo celoštevilski n ostanejo celi (j 2026-11-04)", () => {
+  const skica = fs.readFileSync(new URL("../public/skice/skica.js", import.meta.url), "utf8");
+  assert.match(skica, /fino: zvezno \? 10000 : 0/);
+  const kit = fs.readFileSync(new URL("../public/sim/kit.js", import.meta.url), "utf8");
+  assert.match(kit, /step: fino \? Number\(\(step \/ fino\)/);
+  const dir = new URL("../public/skice/", import.meta.url);
+  for (const f of fs.readdirSync(dir).filter((f) => f.endsWith(".js") && f !== "skica.js"))
+    for (const m of fs.readFileSync(new URL(f, dir), "utf8").matchAll(/drsnik\(\{([^}]*)\}/g))
+      if (/zvezno: false/.test(m[1])) assert.match(m[1], /step: 1, value: \w+, digits: 0/, `${f}: zvezno: false samo za cela števila`);
 });

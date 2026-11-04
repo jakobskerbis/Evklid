@@ -17,8 +17,8 @@ export default function narisi(host, { kot = true } = {}) {
   // Enako merilo na obeh oseh (284 : 224 px), da je narisani kot φ pravi.
   const A = osi(S.svg, { W, H, x: [-5, 5], y: [-3.94, 3.94], rob: 8, xOznake: oz, yOznake: [-2, 2].map((v) => [v, st(v, 0)]) });
   let k = 0.5, n = 1;
-  S.drsnik({ label: "k", min: -3, max: 3, step: 0.25, value: k, digits: 2, barva: "izbor", onInput: (v) => ((k = v), izris()) });
-  S.drsnik({ label: "n", min: -3, max: 3, step: 0.5, value: n, digits: 1, barva: "druga", onInput: (v) => ((n = v), izris()) });
+  S.drsnik({ pripni: [0], label: "k", min: -3, max: 3, step: 0.25, value: k, digits: 2, barva: "izbor", onInput: (v) => ((k = v), izris()) });
+  S.drsnik({ pripni: [0], label: "n", min: -3, max: 3, step: 0.5, value: n, digits: 1, barva: "druga", onInput: (v) => ((n = v), izris()) });
 
   function izris() {
     const q = linearna(k, n);

@@ -11,7 +11,8 @@ export function kvadratna(a, p, q) {
 }
 
 // a = 0 ni kvadratna funkcija: drsnik ga preskoči.
-export const brezNic = (v, prej) => (Math.abs(v) < 1e-9 ? (prej > 0 ? -0.5 : 0.5) : v);
+// Drsnik je skoraj zvezen: |a| < 0,1 (izpis bi bil 0) se pripne na ±0,1; pri a = 0 (puščica) skoči na drugo stran.
+export const brezNic = (v, prej) => (Math.abs(v) >= 0.1 - 1e-9 ? v : v > 0 ? 0.1 : v < 0 ? -0.1 : prej > 0 ? -0.1 : 0.1);
 
 export default function narisi(host) {
   const W = 300, H = 240;
@@ -21,7 +22,7 @@ export default function narisi(host) {
   let a = 1, p = 1, q = -2;
   const slA = S.drsnik({ label: "a", min: -2, max: 2, step: 0.5, value: a, digits: 1, barva: "glavna", onInput: (v) => ((a = brezNic(v, a)), a !== v && slA.set(a, true), izris()) });
   S.drsnik({ label: "p", min: -3, max: 3, step: 0.5, value: p, digits: 1, barva: "izbor", onInput: (v) => ((p = v), izris()) });
-  S.drsnik({ label: "q", min: -3, max: 3, step: 0.5, value: q, digits: 1, barva: "druga", onInput: (v) => ((q = v), izris()) });
+  S.drsnik({ pripni: [0], label: "q", min: -3, max: 3, step: 0.5, value: q, digits: 1, barva: "druga", onInput: (v) => ((q = v), izris()) });
 
   function izris() {
     const k = kvadratna(a, p, q);

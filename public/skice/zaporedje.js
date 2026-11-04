@@ -24,11 +24,11 @@ export default function narisi(host, vrsta = "aritmeticno") {
   const id = novId("izrez");
   s("rect", { x: L - 4, y: T - 16, width: R - L + 8, height: B - T + 32 }, s("clipPath", { id }, s("defs", {}, S.svg)));
   let a1 = ar ? 2 : 1, k = ar ? 1.5 : 1.5, n = 5;
-  const sA = S.drsnik({ label: "a₁", min: -4, max: 4, step: 0.5, value: a1, digits: 1, barva: "ploskev", onInput: (v) => ((a1 = ar ? v : brezNic(v, a1, 0.5)), a1 !== v && sA.set(a1, true), izris()) });
+  const sA = S.drsnik({ label: "a₁", min: -4, max: 4, step: 0.5, value: a1, digits: 1, barva: "ploskev", onInput: (v) => ((a1 = ar ? v : brezNic(v, a1, 0.1)), a1 !== v && sA.set(a1, true), izris()) });
   const sK = ar
-    ? S.drsnik({ label: "d", min: -2, max: 2, step: 0.5, value: k, digits: 1, barva: "izbor", onInput: (v) => ((k = v), izris()) })
-    : S.drsnik({ label: "q", min: -2, max: 2, step: 0.25, value: k, digits: 2, barva: "izbor", onInput: (v) => ((k = brezNic(v, k, 0.25)), k !== v && sK.set(k, true), izris()) });
-  S.drsnik({ label: "n", min: 1, max: N_MAX, step: 1, value: n, digits: 0, barva: "glavna", onInput: (v) => ((n = v), izris()) });
+    ? S.drsnik({ pripni: [0], label: "d", min: -2, max: 2, step: 0.5, value: k, digits: 1, barva: "izbor", onInput: (v) => ((k = v), izris()) })
+    : S.drsnik({ pripni: [-1, 1], label: "q", min: -2, max: 2, step: 0.25, value: k, digits: 2, barva: "izbor", onInput: (v) => ((k = brezNic(v, k, 0.01)), k !== v && sK.set(k, true), izris()) });
+  S.drsnik({ zvezno: false, label: "n", min: 1, max: N_MAX, step: 1, value: n, digits: 0, barva: "glavna", onInput: (v) => ((n = v), izris()) });
 
   function izris() {
     const q = zaporedje(vrsta, a1, k, n);

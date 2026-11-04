@@ -3,7 +3,8 @@
 import { skica, st, crta, napis, osi, vr } from "./skica.js";
 import { s, fnPath } from "../sim/kit.js";
 
-export const brezEna = (v, prej) => (Math.abs(v - 1) < 1e-9 ? (prej > 1 ? 0.9 : 1.1) : v);
+// Drsnik je skoraj zvezen: |a − 1| < 0,1 (izpis bi bil 1) se pripne na 0,9 ali 1,1; pri a = 1 skoči na drugo stran.
+export const brezEna = (v, prej) => (Math.abs(v - 1) >= 0.1 - 1e-9 ? v : v > 1 ? 1.1 : v < 1 ? 0.9 : prej > 1 ? 0.9 : 1.1);
 export const exp = (a) => (x) => a ** x;
 export const log = (a) => (x) => (x > 0 ? Math.log(x) / Math.log(a) : NaN);
 
