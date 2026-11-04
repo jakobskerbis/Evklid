@@ -583,8 +583,8 @@ function orodja(THREE, ctx) {
 
 // ---------------------------------------------------------------- phases
 const MENE = [
-  [0, "mlaj"], [7.3, "rastoči srp"], [82.7, "prvi krajec"], [97.3, "rastoča luna (izbočena)"], [172.7, "ščip (polna luna)"],
-  [187.3, "pojemajoča luna (izbočena)"], [262.7, "zadnji krajec"], [277.3, "pojemajoči srp"], [352.7, "mlaj"],
+  [0, "mlaj"], [7.3, "rastoči srp"], [82.7, "prvi krajec"], [97.3, "rastoča izbočena luna"], [172.7, "ščip (polna luna)"],
+  [187.3, "pojemajoča izbočena luna"], [262.7, "zadnji krajec"], [277.3, "pojemajoči srp"], [352.7, "mlaj"],
 ];
 const GLAVNE = [[90, "prvi krajec"], [180, "ščip"], [270, "zadnji krajec"], [360, "mlaj"]];
 const mena = (E) => { let n = MENE[0][1]; for (const [k, ime] of MENE) if (E >= k) n = ime; return n; };
@@ -702,12 +702,13 @@ export function zgradi(THREE, ctx) {
     c.fillStyle = "#e8edf7"; c.font = o.font(600, 13); c.fillText("Kako Luno vidimo z Zemlje", CX, 21);
     c.drawImage(obraz, CX - RD, CY - RD, RD * 2, RD * 2);
     // unlit part (with faint earthshine): left limb + terminator for a waxing Moon, mirrored when waning
-    const narasca = Math.sin(E * D) >= 0, kk = (narasca ? 1 : -1) * Math.cos(E * D) * RD;
+    // the terminator bulges away from the dark limb for a crescent (cos E > 0) and towards it for a gibbous Moon
+    const narasca = Math.sin(E * D) >= 0, kk = Math.cos(E * D) * RD, desno = (kk >= 0) === narasca;
     c.fillStyle = "rgba(6,8,13,0.92)";
     c.beginPath();
     c.arc(CX, CY, RD + 0.5, -Math.PI / 2, Math.PI / 2, narasca);
-    if (kk >= 0) c.ellipse(CX, CY, Math.abs(kk), RD + 0.5, 0, Math.PI / 2, -Math.PI / 2, narasca);
-    else c.ellipse(CX, CY, Math.abs(kk), RD + 0.5, 0, Math.PI / 2, (3 * Math.PI) / 2, !narasca);
+    if (desno) c.ellipse(CX, CY, Math.abs(kk), RD + 0.5, 0, Math.PI / 2, -Math.PI / 2, true);
+    else c.ellipse(CX, CY, Math.abs(kk), RD + 0.5, 0, Math.PI / 2, (3 * Math.PI) / 2, false);
     c.closePath(); c.fill();
     c.strokeStyle = "rgba(200,212,238,0.22)"; c.lineWidth = 1; c.beginPath(); c.arc(CX, CY, RD + 0.5, 0, 2 * Math.PI); c.stroke();
     c.fillStyle = "#e8edf7"; const ime = mena(E); let fs = 14; c.font = o.font(600, fs);
@@ -760,7 +761,7 @@ export function zgradi(THREE, ctx) {
   ];
 
   const nadzor = [
-    { tip: "drsnik", id: "dan", oznaka: "Dan od mlaja", min: 0, max: 29.5, korak: 0.1, vrednost: Math.round(dan * 10) / 10, ob: (v) => { dan = Math.min(29.5, Math.max(0, Number(v) || 0)); zem.rotation.y = (dan % 1) * 2 * Math.PI; postavi(); } },
+    { tip: "drsnik", id: "dan", oznaka: "Dan od mlaja", min: 0, max: 29.5, korak: 0.1, get vrednost() { return Math.round(dan * 10) / 10; }, ob: (v) => { dan = Math.min(29.5, Math.max(0, Number(v) || 0)); zem.rotation.y = (dan % 1) * 2 * Math.PI; postavi(); } },
     { tip: "stikalo", id: "predvajaj", oznaka: "Predvajaj", vrednost: tece, vidno: () => gib, ob: (v) => { tece = !!v; } },
     { tip: "izpis", id: "mena", oznaka: "Lunina mena", vrednost: () => mena(kotE()) },
     { tip: "izpis", id: "dan-cikla", oznaka: "Dan Luninega cikla", vrednost: () => `${dneva(dan)} od mlaja (cikel traja 29,5 dneva)` },

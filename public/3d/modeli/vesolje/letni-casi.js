@@ -775,7 +775,7 @@ export function zgradi(THREE, ctx) {
 
   const del = (id, ime, opis, barva, meshes) => ({ id, ime, opis, barva, meshes, tocka: tockeG[id] });
   const deli = [
-    del("sonce", "Sonce", "Sonce osvetljuje polovico Zemlje. Velikosti in razdalje v modelu niso v merilu: v resnici je Sonce 109-krat večje od Zemlje in oddaljeno okoli 150 milijonov km.", "#ffc35a", [S.mesh]),
+    del("sonce", "Sonce", "Sonce osvetljuje polovico Zemlje. Velikosti in razdalje v modelu niso v merilu: v resnici ima Sonce 109-krat večji premer kot Zemlja in oddaljeno okoli 150 milijonov km.", "#ffc35a", [S.mesh]),
     del("zemlja", "Zemlja", "Zemlja se v enem dnevu zavrti okoli svoje osi, v enem letu pa obkroži Sonce. Na strani, obrnjeni proti Soncu, je dan, na drugi strani noč.", "#4f8fe0", [Z.mesh, Z.oblaki]),
     del("os", "Zemljina os", "Os je nagnjena za 23,44° in ves čas kaže v isto smer, proti Severnici. Zato je severna polobla junija nagnjena proti Soncu (poletje), decembra pa stran od njega (zima).", "#e3e9f6", [osMesh]),
     del("ekvator", "Ekvator", "Ekvator razdeli Zemljo na severno in južno poloblo. Ob enakonočjih je Sonce opoldne nad ekvatorjem navpično nad glavo, dan in noč pa trajata povsod po 12 ur.", "#ffd166", [ekvator]),
@@ -791,8 +791,8 @@ export function zgradi(THREE, ctx) {
   const nadzor = [
     { tip: "drsnik", id: "dan", oznaka: "Dan v letu", min: 1, max: 365, korak: 1, vrednost: dan, ob: (v) => { dan = Math.min(365, Math.max(1, Math.round(Number(v) || 1))); osvezi(); } },
     { tip: "izpis", id: "datum", oznaka: "Datum", vrednost: () => `${dolgo(dan)} ${LETO} (${dan}. dan v letu)` },
-    { tip: "stikalo", id: "vrti", oznaka: "Zemlja se vrti", vrednost: vrti, ob: (v) => { vrti = !!v; osvezi(); } },
-    { tip: "drsnik", id: "ura", oznaka: "Sončni čas v Ljubljani", min: 0, max: 24, korak: 0.25, vrednost: ure, vidno: () => !vrti || !gib, ob: (v) => { ure = Math.min(24, Math.max(0, Number(v) || 0)); osvezi(); } },
+    { tip: "stikalo", id: "vrti", oznaka: "Zemlja se vrti", vrednost: vrti, vidno: () => gib, ob: (v) => { vrti = !!v; osvezi(); } },
+    { tip: "drsnik", id: "ura", oznaka: "Sončni čas v Ljubljani", min: 0, max: 24, korak: 0.25, get vrednost() { return Math.round(ure * 4) / 4; }, vidno: () => !vrti || !gib, ob: (v) => { ure = Math.min(24, Math.max(0, Number(v) || 0)); osvezi(); } },
     { tip: "izpis", id: "cas", oznaka: "Ura v Ljubljani (sončni čas)", vrednost: () => ura(ure) + (Math.abs(ure - 12) < 0.13 ? " – poldne" : "") },
     { tip: "izpis", id: "letni-cas", oznaka: "Letni čas na severni polobli", vrednost: () => {
       let k = 3;
@@ -822,9 +822,10 @@ export function zgradi(THREE, ctx) {
     merilo: () => null,
     luci: false,
     korak(t, dt) {
+      if (!gib) return;
       const k = Math.min(Math.max(dt, 0), 0.1);
       S.sMat.uniforms.uTime.value += k;
-      if (!gib || !vrti) return;
+      if (!vrti) return;
       ure = (ure + k * 3) % 24;
       osvezi();
     },

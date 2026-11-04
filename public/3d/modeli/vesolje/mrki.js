@@ -1042,7 +1042,7 @@ export function zgradi(THREE, ctx) {
     else if (vrsta === "lunin") deli = [
       del("sonce", "Sonce", "Sonce osvetljuje Zemljo, ta pa meče za seboj dolgo senco, več kot 1,3 milijona km. V modelu je Sonce narisano zelo blizu in premajhno.", "#ffc35a", [S.mesh]),
       del("zemlja", "Zemlja", "Lunin mrk vidijo naenkrat vsi, ki imajo tedaj Luno nad obzorjem, torej vsa nočna polovica Zemlje. " + zemOpis, "#4f8fe0", [Z.mesh, Z.oblaki]),
-      del("senca", "Zemljina senca", "Pri Luni je Zemljina senca široka okoli 9200 km, skoraj trikrat toliko kot Luna, zato lahko popolni Lunin mrk traja več kot uro in pol.", "#ff9e6b", [senca]),
+      del("senca", "Zemljina senca", "Pri Luni je Zemljina senca široka okoli 9400 km, skoraj trikrat toliko kot Luna, zato lahko popolni Lunin mrk traja več kot uro in pol.", "#ff9e6b", [senca]),
       del("polsenca", "Zemljina polsenca", "V polsenci Zemlja zakriva le del Sonca, zato Luna le malo potemni; polsenčni mrk je s prostim očesom težko opaziti.", "#9fb4dc", [polsenca]),
       del("luna", "Luna", "Ob ščipu je Luna za Zemljo. Ko zaide v Zemljino senco, ne izgine, ampak postane temno rdeča: Zemljino ozračje lomi sončno svetlobo v senco, modro svetlobo pa sproti razprši, zato pride do Lune predvsem rdeča. Barva je v modelu svetlejša kot v resnici.", "#c9c6bf", [luna]),
       del("lom", "Lom svetlobe v ozračju", "Sončni žarki, ki gredo tik ob Zemlji skozi ozračje, se upognejo v senco. Ozračje modro svetlobo razprši (zato je nebo modro), rdeča pa gre naprej, kot pri sončnem zahodu.", "#ff7a4d", [lom]),
@@ -1087,10 +1087,10 @@ export function zgradi(THREE, ctx) {
   };
   const nadzor = [
     { tip: "izbira", id: "vrsta", oznaka: "Prikaz", moznosti: [["soncni", "Sončni mrk"], ["lunin", "Lunin mrk"], ["zakaj", "Zakaj ni mrka vsak mesec"]], vrednost: vrsta, ob: (v) => nastaviVrsto(v) },
-    { tip: "drsnik", id: "lega", oznaka: "Lega Lune (prečno na premico Sonce–Zemlja)", min: -1, max: 1, korak: 0.01, vrednost: lega, vidno: () => !zakaj(), ob: (v) => { lega = num(v, -1, 1, 0); osvezi(); } },
+    { tip: "drsnik", id: "lega", oznaka: "Lega Lune (prečno na premico Sonce–Zemlja)", min: -1, max: 1, korak: 0.01, get vrednost() { return Math.round(lega * 100) / 100; }, vidno: () => !zakaj(), ob: (v) => { lega = num(v, -1, 1, 0); osvezi(); } },
     { tip: "drsnik", id: "razdalja", oznaka: "Razdalja Luna–Zemlja (od perigeja do apogeja)", min: PERIGEJ, max: APOGEJ, korak: 100, vrednost: razdalja, vidno: ali("soncni"), ob: (v) => { razdalja = num(v, PERIGEJ, APOGEJ, 365000); osvezi(); } },
-    { tip: "drsnik", id: "dan", oznaka: "Lega Lune na tirnici (dan od mlaja)", min: 0, max: 29.5, korak: 0.1, vrednost: dan, vidno: zakaj, ob: (v) => { dan = num(v, 0, 29.5, 0); osvezi(); } },
-    { tip: "drsnik", id: "vozel", oznaka: "Smer vozelne črte glede na Sonce", min: 0, max: 359, korak: 1, vrednost: vozel, vidno: zakaj, ob: (v) => { vozel = num(v, 0, 359, 35); osvezi(); } },
+    { tip: "drsnik", id: "dan", oznaka: "Lega Lune na tirnici (dan od mlaja)", min: 0, max: 29.5, korak: 0.1, get vrednost() { return Math.round(dan * 10) / 10; }, vidno: zakaj, ob: (v) => { dan = num(v, 0, 29.5, 0); osvezi(); } },
+    { tip: "drsnik", id: "vozel", oznaka: "Smer vozelne črte glede na Sonce", min: 0, max: 359, korak: 1, get vrednost() { return Math.round(vozel) % 360; }, vidno: zakaj, ob: (v) => { vozel = num(v, 0, 359, 35); osvezi(); } },
     { tip: "stikalo", id: "povecaj", oznaka: "Povečaj kote in telesa 5-krat", vrednost: povecaj, vidno: zakaj, ob: (v) => { povecaj = !!v; osvezi(); } },
     { tip: "stikalo", id: "predvajaj", oznaka: "Predvajaj", vrednost: tece, vidno: () => gib, ob: (v) => { tece = !!v; } },
     { tip: "izpis", id: "vrsta-mrka", oznaka: "Mrk", vrednost: () => {
@@ -1131,9 +1131,10 @@ export function zgradi(THREE, ctx) {
     merilo: () => null,
     luci: false,
     korak(t, dt) {
+      if (!gib) return;
       const k = Math.min(Math.max(dt, 0), 0.1);
       S.sMat.uniforms.uTime.value += k;
-      if (!gib || !tece) return;
+      if (!tece) return;
       if (zakaj()) { dan = (dan + 2 * k) % SINODSKI; vozel = (((vozel - ((2 * k * 360) / MRKOVNO_LETO)) % 360) + 360) % 360; }
       else lega = lega + k * 0.25 > 1 ? -1 : lega + k * 0.25;
       osvezi();
