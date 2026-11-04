@@ -959,22 +959,74 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 
 /* ---------- kartice za ponavljanje (public/flashcards.js) ---------- */
 #view-cards h1.with-icon svg.i { color: var(--accent); }
-.fc-review { margin: 12px 0 16px; }
-.fc-card { padding: 18px; border: 1.5px solid var(--border); box-shadow: 0 var(--press) 0 var(--border); }
-.fc-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; }
-.fc-front { font-size: 1.15rem; font-weight: 700; line-height: 1.45; overflow-wrap: anywhere; }
-.fc-backside { margin-top: 14px; padding-top: 14px; border-top: 1.5px dashed var(--border); line-height: 1.5; overflow-wrap: anywhere; }
-.fc-card .actions { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
-.fc-card .actions button { flex: 1 1 140px; justify-content: center; min-height: 44px; }
-.fc-keys { font-size: 0.78rem; margin: 10px 0 0; }
+.fc-start { margin-top: 12px; }
+.fc-start p:first-child { margin-top: 0; }
+.fc-start-n { font-size: 1.05rem; }
+.fc-start .actions, .fc-done .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.fc-start .actions button, .fc-done .actions button { flex: 1 1 200px; max-width: 420px; justify-content: center; min-height: 44px; }
+/* sklopi: kupčki kartic */
+.fc-sets h2 { margin: 18px 0 2px; font-size: 1.1rem; }
+.fc-sets > p { margin: 0 0 12px; font-size: 0.9rem; }
+.fc-set-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 16px 18px; margin-bottom: 18px; padding: 0 8px 8px 0; }
+.fc-set { position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 4px; min-height: 92px; padding: 14px 14px 12px; text-align: start; color: var(--text); font: inherit;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer;
+  box-shadow: 4px 4px 0 -1.5px var(--surface), 4px 4px 0 0 var(--border), 8px 8px 0 -1.5px var(--surface), 8px 8px 0 0 var(--border);
+  transition: transform 0.15s ease, border-color 0.15s ease; }
+.fc-set:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); transform: translate(-1px, -1px); }
+.fc-set:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.fc-set-name { font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; }
+.fc-set-meta { font-size: 0.85rem; font-weight: 600; }
+.fc-set-due { margin-top: auto; padding: 2px 9px; border-radius: 999px; font-size: 0.78rem; font-weight: 800; background: var(--accent-soft); color: var(--accent); }
+/* vaja: ena kartica naenkrat, ki se obrne */
+.fc-practice { max-width: 640px; margin: 0 auto; }
+.fc-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.fc-bar .fc-exit { flex: none; min-height: 40px; }
+.fc-progress { flex: 1; height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.fc-progress span { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width 0.3s ease; }
+.fc-count { flex: none; font-weight: 800; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.fc-sub { margin: 4px 0 12px; overflow-wrap: anywhere; }
+.fc-flip { perspective: 1400px; cursor: pointer; border-radius: var(--radius); outline: none; -webkit-tap-highlight-color: transparent; animation: fc-in 0.25s ease; }
+.fc-inner { display: grid; transition: transform 0.55s cubic-bezier(0.3, 0.7, 0.25, 1); transform-style: preserve-3d; }
+.fc-flip.flipped .fc-inner { transform: rotateY(180deg); }
+/* Obe strani v isti celici mreže: kartica je visoka kot daljša stran. Skrita stran je ob polovici obrata še nevidna
+   (visibility), da odgovor ne pokuka skozi tudi tam, kjer brskalnik 3D ne podpira. */
+.fc-face { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 12px; min-height: 240px; min-width: 0; padding: 16px 18px 14px; box-sizing: border-box;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+  box-shadow: 0 var(--press) 0 var(--border), var(--shadow-lg);
+  -webkit-backface-visibility: hidden; backface-visibility: hidden; transition: visibility 0s linear 0.27s; }
+.fc-face-back { transform: rotateY(180deg); background: linear-gradient(160deg, var(--accent-soft), var(--surface) 70%); border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); }
+.fc-flip:not(.flipped) .fc-face-back, .fc-flip.flipped .fc-face-front { visibility: hidden; }
+.fc-flip:focus-visible .fc-face { outline: 2px solid var(--accent); outline-offset: 3px; }
+.fc-face-top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.fc-face-back .fc-side { color: var(--accent); }
+.fc-topic { text-transform: none; letter-spacing: 0; font-weight: 700; overflow-wrap: anywhere; }
+.fc-front, .fc-backside { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; overflow-wrap: anywhere; min-width: 0; }
+.fc-front { font-size: 1.25rem; font-weight: 700; line-height: 1.45; }
+.fc-backside { font-size: 1.1rem; line-height: 1.5; }
+.fc-front > :first-child, .fc-backside > :first-child { margin-top: 0; }
+.fc-front > :last-child, .fc-backside > :last-child { margin-bottom: 0; }
+.fc-hint { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.85rem; font-weight: 700; }
+.fc-grade { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; transition: opacity 0.2s ease; }
+.fc-grade button { flex: 1 1 140px; justify-content: center; min-height: 48px; }
+.fc-grade.fc-wait { visibility: hidden; opacity: 0; }
+.fc-keys, .fc-note { font-size: 0.78rem; margin: 10px 0 0; text-align: center; }
 @media (hover: none) and (pointer: coarse) { .fc-keys { display: none; } }
-.fc-front .katex-display, .fc-backside .katex-display, .cards-note .katex-display { overflow-x: auto; overflow-y: hidden; }
-.fc-list summary { cursor: pointer; padding: 2px 0; }
-.fc-list ul { list-style: none; margin: 10px 0 0; padding: 0; }
+@keyframes fc-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .fc-flip { animation: none; }
+  .fc-inner, .fc-face, .fc-set, .fc-progress span { transition: none; }
+}
+.fc-front .katex-display, .fc-backside .katex-display, .fc-a .katex-display, .cards-note .katex-display { overflow-x: auto; overflow-y: hidden; }
+/* seznam vseh kartic: po sklopih, odgovori skriti */
+.fc-list summary { cursor: pointer; padding: 8px 0; }
+.fc-group { margin: 16px 0 0; font-size: 0.98rem; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; overflow-wrap: anywhere; }
+.fc-group small { font-weight: 600; font-size: 0.82rem; }
+.fc-list ul { list-style: none; margin: 8px 0 0; padding: 0; }
 .fc-list li { display: flex; gap: 8px; align-items: flex-start; padding: 10px 0; border-top: 1px solid var(--border); }
 .fc-row-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .fc-row-text p { margin: 0; }
 .fc-q { font-weight: 700; }
+.fc-peek { display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; margin: 2px 0 0; font-size: 0.85rem; min-height: 40px; }
 .fc-a { margin-top: 2px; }
 .fc-row-btns { display: flex; gap: 2px; flex: none; }
 .fc-form { display: grid; gap: 10px; margin-top: 16px; }
@@ -983,7 +1035,7 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 .fc-form textarea { width: 100%; box-sizing: border-box; resize: vertical; font: inherit; }
 .fc-list .fc-form { flex: 1; margin: 0; }
 .fc-err:empty { display: none; }
-.fc-done h2, .fc-empty p:first-child { margin-top: 0; }
+.fc-done h2 { margin-top: 0; }
 /* Pod odgovorom inštruktorja: dodane kartice */
 .cards-note { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border)); font-size: 0.92rem; }
 .cards-note .cn-head { display: flex; align-items: center; gap: 6px; color: var(--accent); }
