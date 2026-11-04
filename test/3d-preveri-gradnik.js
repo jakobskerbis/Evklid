@@ -1,7 +1,6 @@
 // Shared checks for code-built 3D models (public/3d/modeli/<area>/*.js), contract in docs/3d.md.
 // Used by test/3d-matematika.test.js, test/3d-vesolje.test.js and test/3d-procesi.test.js.
 // CLI for one builder while writing it: node test/3d-preveri-gradnik.js matematika/telesa
-import * as THREE from "three";
 import { pathToFileURL } from "node:url";
 import path from "node:path";
 
@@ -9,6 +8,10 @@ export const PODROCJA = ["celice", "organi", "sistemi", "kemija", "fizika", "mat
 export const PREDMETI = ["BIO", "KEM", "FIZ", "MAT", "NAR"];
 export const MEJE = { visoka: 150_000, nizka: 60_000, klici: 60, polmer: 1.1 };
 const TIPI = ["drsnik", "izbira", "stikalo", "gumb", "izpis"];
+// three arrives with the 3D kit (package.json); without it the tests are skipped.
+let THREE = null;
+try { THREE = await import("three"); } catch { /* not installed */ }
+export const IMA_THREE = !!THREE;
 const MODELI = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../public/3d/modeli");
 
 // Node has no canvas: a 2D context that accepts every call, so builders may draw textures in code.

@@ -1,10 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { preveriPodrocje } from "./3d-preveri-gradnik.js";
+import { preveriPodrocje, IMA_THREE } from "./3d-preveri-gradnik.js";
 
 // Every vesolje model follows the builder contract (docs/3d.md): info, parts with ime + opis,
 // controls at every extreme, triangle and draw-call budgets, fits the unit sphere.
-test("3D vesolje: gradniki po pogodbi in v proračunu", async () => {
+test("3D vesolje: gradniki po pogodbi in v proračunu", { skip: IMA_THREE ? false : "three ni nameščen" }, async () => {
   const { seznam, izid } = await preveriPodrocje("vesolje");
   assert.ok(seznam.length > 0);
   assert.equal(new Set(seznam.map((e) => e.id)).size, seznam.length, "id-ji niso enolični");
