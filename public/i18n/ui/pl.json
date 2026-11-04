@@ -3565,5 +3565,16 @@
   "block.freeMonth": "W tym miesiącu wykorzystano twoje darmowe pytania do korepetytora. Ćwiczenia i lekcje działają dalej bez ograniczeń.",
   "block.freePool": "W tym miesiącu darmowe pytania do korepetytora skończyły się dla wszystkich. Ćwiczenia i lekcje działają dalej bez ograniczeń.",
   "block.hintGuest": "Aby mieć więcej pytań, załóż konto w zakładce Konto.",
-  "block.hintParent": "Aby mieć więcej pytań, poproś rodzica o wybranie subskrypcji w zakładce Konto."
+  "block.hintParent": "Aby mieć więcej pytań, poproś rodzica o wybranie subskrypcji w zakładce Konto.",
+  "akt.title": "Aktywność w ostatnim roku",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Dni z nauką: {n}",
+  "akt.best": "Najdłuższa seria: {n}",
+  "akt.week": "W tym tygodniu: {n} XP",
+  "akt.weeks": "XP w tygodniach",
+  "akt.less": "Mniej",
+  "akt.more": "Więcej",
+  "sch.addAt": "Dodaj lekcję: {day}, {time}",
+  "lg.free": "wolne miejsce",
+  "corner.more": "Dodaj kolejną dziedzinę"
 }

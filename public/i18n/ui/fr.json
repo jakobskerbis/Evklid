@@ -3506,5 +3506,16 @@
   "block.freeMonth": "Ce mois-ci, tu as utilisé tes questions gratuites au tuteur. L'entraînement et les leçons continuent de fonctionner sans limite.",
   "block.freePool": "Ce mois-ci, les questions gratuites au tuteur sont épuisées pour tout le monde. L'entraînement et les leçons continuent de fonctionner sans limite.",
   "block.hintGuest": "Pour avoir plus de questions, crée un compte dans l’onglet Compte.",
-  "block.hintParent": "Pour avoir plus de questions, demande à un parent de choisir un abonnement dans l’onglet Compte."
+  "block.hintParent": "Pour avoir plus de questions, demande à un parent de choisir un abonnement dans l’onglet Compte.",
+  "akt.title": "Activité sur la dernière année",
+  "akt.day": "{day} : {xp} XP",
+  "akt.activeDays": "Jours d'apprentissage : {n}",
+  "akt.best": "Plus longue série : {n}",
+  "akt.week": "Cette semaine : {n} XP",
+  "akt.weeks": "XP par semaine",
+  "akt.less": "Moins",
+  "akt.more": "Plus",
+  "sch.addAt": "Ajouter un cours : {day}, {time}",
+  "lg.free": "place libre",
+  "corner.more": "Ajouter un autre thème"
 }

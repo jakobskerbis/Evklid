@@ -111,6 +111,31 @@ function emptyText() {
   return t("corner.none");
 }
 
+// Ko ni novic (ali še ni izbranih področij): področja, ki jih učenec še nima, kot ploščice; klik ga doda
+// (j, 4. 11. 2026: prazen prostor strani naj bo izkoriščen z nečim uporabnim).
+function moreHtml(s) {
+  const have = new Set(s.interests || []);
+  const rest = INTERESTS.filter((i) => !have.has(i.id));
+  if (!rest.length || have.size >= MAX_INTERESTS) return "";
+  return `<section class="corner-more"><h2>${esc(t("corner.more"))}</h2><div class="corner-tiles">${rest
+    .map((i) => `<button type="button" class="card corner-tile" data-add-int="${esc(i.id)}"><span class="ct-emoji" aria-hidden="true">${i.emoji}</span><span>${esc(t(`int.${i.id}`))}</span>${icon("plus")}</button>`)
+    .join("")}</div></section>`;
+}
+
+async function addInterest(id) {
+  const s = student().settings;
+  const interests = [...new Set([...(s.interests || []), id])].slice(0, MAX_INTERESTS);
+  try {
+    const updated = await ctx.api(`/api/students/${student().id}`, { method: "PUT", body: { settings: { interests } } });
+    ctx.setStudent(updated);
+    ctx.toast?.(t("iq.saved"));
+    filter = id;
+    showCorner();
+  } catch (err) {
+    ctx.toast?.(err.message);
+  }
+}
+
 function render() {
   const box = $("#corner-content");
   if (!box || !data) return;
@@ -124,7 +149,7 @@ function render() {
       </div>
     </div>`;
   if (!chosen) {
-    box.innerHTML = `${head}<div class="card corner-empty"><div class="corner-empty-art" aria-hidden="true">🔭🧪🦕🚀</div><p>${esc(t("corner.empty"))}</p><button type="button" class="primary" data-edit>${icon("sparkles")}${esc(t("corner.choose"))}</button></div>`;
+    box.innerHTML = `${head}<div class="card corner-empty"><div class="corner-empty-art" aria-hidden="true">🔭🧪🦕🚀</div><p>${esc(t("corner.empty"))}</p><button type="button" class="primary" data-edit>${icon("sparkles")}${esc(t("corner.choose"))}</button></div>${moreHtml(s)}`;
     return;
   }
   const items = visibleItems();
@@ -132,7 +157,7 @@ function render() {
   const sources = [...new Set(data.items.map((i) => i.source))];
   box.innerHTML = `${head}${chips()}
     ${data.failed && !items.length ? `<p class="corner-note">${icon("wifi-off")}${esc(t("corner.offline"))}</p>` : ""}
-    ${items.length ? `<div class="corner-list">${items.map((it) => newsCard(it, pins, "card")).join("")}</div>` : `<div class="card corner-empty"><p>${esc(emptyText())}</p></div>`}
+    ${items.length ? `<div class="corner-list">${items.map((it) => newsCard(it, pins, "card")).join("")}</div>` : `<div class="card corner-empty"><p>${esc(emptyText())}</p></div>${filter === "pinned" ? "" : moreHtml(s)}`}
     ${sources.length ? `<p class="muted small corner-sources">${esc(t("corner.sources", { list: sources.join(", ") }))}</p>` : ""}`;
 }
 
@@ -152,6 +177,8 @@ document.addEventListener("click", async (e) => {
     if (await askInterests()) showCorner();
     return;
   }
+  const add = e.target.closest("[data-add-int]");
+  if (add) return addInterest(add.dataset.addInt);
   if (e.target.closest("[data-board]")) return openBoard();
   if (e.target.closest("[data-board-close]")) return closeBoard();
   const mode = e.target.closest("[data-mode]");

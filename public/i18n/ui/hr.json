@@ -3533,5 +3533,16 @@
   "block.freeMonth": "Ovaj su mjesec potrošena tvoja besplatna pitanja za instruktora. Vježbanje i lekcije i dalje rade bez ograničenja.",
   "block.freePool": "Ovaj su mjesec besplatna pitanja za instruktora potrošena za sve. Vježbanje i lekcije i dalje rade bez ograničenja.",
   "block.hintGuest": "Za više pitanja izradi račun u kartici Račun.",
-  "block.hintParent": "Za više pitanja neka roditelj odabere pretplatu u kartici Račun."
+  "block.hintParent": "Za više pitanja neka roditelj odabere pretplatu u kartici Račun.",
+  "akt.title": "Aktivnost u posljednjih godinu dana",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Dani s učenjem: {n}",
+  "akt.best": "Najduži niz: {n}",
+  "akt.week": "Ovaj tjedan: {n} XP",
+  "akt.weeks": "XP po tjednima",
+  "akt.less": "Manje",
+  "akt.more": "Više",
+  "sch.addAt": "Dodaj sat: {day}, {time}",
+  "lg.free": "slobodno mjesto",
+  "corner.more": "Dodaj još neko područje"
 }

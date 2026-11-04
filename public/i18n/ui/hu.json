@@ -3503,5 +3503,16 @@
   "block.freeMonth": "Ebben a hónapban elfogytak az ingyenes kérdéseid az oktatóhoz. A Gyakorlás és a leckék továbbra is korlátlanul működnek.",
   "block.freePool": "Ebben a hónapban mindenki számára elfogytak az ingyenes kérdések az oktatóhoz. A Gyakorlás és a leckék továbbra is korlátlanul működnek.",
   "block.hintGuest": "Több kérdéshez hozz létre fiókot a Fiók lapon.",
-  "block.hintParent": "Több kérdéshez kérd meg az egyik szülődet, hogy válasszon előfizetést a Fiók lapon."
+  "block.hintParent": "Több kérdéshez kérd meg az egyik szülődet, hogy válasszon előfizetést a Fiók lapon.",
+  "akt.title": "Aktivitás az elmúlt évben",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Tanulással töltött napok: {n}",
+  "akt.best": "Leghosszabb sorozat: {n}",
+  "akt.week": "Ezen a héten: {n} XP",
+  "akt.weeks": "XP hetente",
+  "akt.less": "Kevesebb",
+  "akt.more": "Több",
+  "sch.addAt": "Óra hozzáadása: {day}, {time}",
+  "lg.free": "szabad hely",
+  "corner.more": "Újabb téma hozzáadása"
 }

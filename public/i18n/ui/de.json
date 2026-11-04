@@ -3505,5 +3505,16 @@
   "block.freeMonth": "Du hast diesen Monat deine kostenlosen Fragen an den Tutor verbraucht. Übungsbereich und Lektionen funktionieren unbegrenzt weiter.",
   "block.freePool": "Die kostenlosen Fragen an den Tutor sind diesen Monat für alle aufgebraucht. Übungsbereich und Lektionen funktionieren unbegrenzt weiter.",
   "block.hintGuest": "Für mehr Fragen erstelle unter „Konto“ ein Konto.",
-  "block.hintParent": "Für mehr Fragen soll ein Elternteil unter „Konto“ ein Abo wählen."
+  "block.hintParent": "Für mehr Fragen soll ein Elternteil unter „Konto“ ein Abo wählen.",
+  "akt.title": "Aktivität im letzten Jahr",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Lerntage: {n}",
+  "akt.best": "Längste Serie: {n}",
+  "akt.week": "Diese Woche: {n} XP",
+  "akt.weeks": "XP pro Woche",
+  "akt.less": "Weniger",
+  "akt.more": "Mehr",
+  "sch.addAt": "Stunde hinzufügen: {day}, {time}",
+  "lg.free": "freier Platz",
+  "corner.more": "Weiteres Thema hinzufügen"
 }

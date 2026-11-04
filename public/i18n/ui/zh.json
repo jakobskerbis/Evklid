@@ -3478,5 +3478,16 @@
   "block.freeMonth": "本月你向辅导老师免费提问的次数已用完。练习和课程仍可无限制使用。",
   "block.freePool": "本月所有用户向辅导老师免费提问的次数都已用完。练习和课程仍可无限制使用。",
   "block.hintGuest": "如需更多提问次数，请在“账户”标签页中创建账户。",
-  "block.hintParent": "如需更多提问次数，请让家长在“账户”标签页中选择订阅。"
+  "block.hintParent": "如需更多提问次数，请让家长在“账户”标签页中选择订阅。",
+  "akt.title": "过去一年的活动",
+  "akt.day": "{day}：{xp} XP",
+  "akt.activeDays": "学习天数：{n}",
+  "akt.best": "最长连续：{n}",
+  "akt.week": "本周：{n} XP",
+  "akt.weeks": "每周 XP",
+  "akt.less": "少",
+  "akt.more": "多",
+  "sch.addAt": "添加课程：{day}，{time}",
+  "lg.free": "空位",
+  "corner.more": "再添加一个领域"
 }

@@ -3535,5 +3535,16 @@
   "block.freeMonth": "Luna aceasta ai folosit întrebările gratuite pentru tutor. Exersarea și lecțiile funcționează în continuare fără limită.",
   "block.freePool": "Luna aceasta întrebările gratuite pentru tutor s-au terminat pentru toată lumea. Exersarea și lecțiile funcționează în continuare fără limită.",
   "block.hintGuest": "Pentru mai multe întrebări, creează un cont în fila Cont.",
-  "block.hintParent": "Pentru mai multe întrebări, roagă un părinte să aleagă un abonament în fila Cont."
+  "block.hintParent": "Pentru mai multe întrebări, roagă un părinte să aleagă un abonament în fila Cont.",
+  "akt.title": "Activitate în ultimul an",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Zile cu învățare: {n}",
+  "akt.best": "Cea mai lungă serie: {n}",
+  "akt.week": "Săptămâna aceasta: {n} XP",
+  "akt.weeks": "XP pe săptămână",
+  "akt.less": "Mai puțin",
+  "akt.more": "Mai mult",
+  "sch.addAt": "Adaugă o oră: {day}, {time}",
+  "lg.free": "loc liber",
+  "corner.more": "Adaugă încă un domeniu"
 }
