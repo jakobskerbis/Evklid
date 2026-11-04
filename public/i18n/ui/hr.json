@@ -858,6 +858,7 @@
   "sc.cas.solveFor": "Riješi po {v}",
   "sc.cas.symHint": "Izraz sa slovima: odaberi što da učinim s njim.",
   "sc.cas.eqHint": "Jednadžba sa slovima: odaberi koje slovo da izrazim.",
+  "sc.cas.radians": "Izračunano u radijanima.",
   "sc.cas.cond": "Vrijedi za",
   "sc.cas.unsupported": "Sa slovima zasad računam samo izraze s +, −, ·, : i cjelobrojnim potencijama (polinome i razlomke polinoma).",
   "sc.cas.equation": "Ovo je jednadžba. Upotrijebi »Riješi po«.",

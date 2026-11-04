@@ -749,7 +749,11 @@ export function runCas(cmd, env = {}) {
   } catch (e) {
     return { error: { code: e.code || "other", info: e.info || {} } };
   }
-  if (CALC_OPS.has(cmd.op)) return runCalc(cmd, env);
+  if (CALC_OPS.has(cmd.op)) {
+    // analiza je vedno v radianih; v načinu DEG/GRA to povemo pod rezultatom
+    const r = runCalc(cmd, env);
+    return (env.deg || env.grad) && !r.error ? { ...r, rad: true } : r;
+  }
   const innerTex = lineTex(line.ast, comma);
   const name = `\\operatorname{${cmd.name}}`;
   try {

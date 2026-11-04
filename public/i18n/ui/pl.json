@@ -864,6 +864,7 @@
   "sc.cas.solveFor": "Wyznacz {v}",
   "sc.cas.symHint": "Wyrażenie z literami: wybierz, co mam z nim zrobić.",
   "sc.cas.eqHint": "Równanie z literami: wybierz, którą literę mam wyznaczyć.",
+  "sc.cas.radians": "Obliczono w radianach.",
   "sc.cas.cond": "Dla",
   "sc.cas.unsupported": "Z literami na razie liczę tylko wyrażenia z +, −, ·, : i potęgami całkowitymi (wielomiany i ułamki wielomianów).",
   "sc.cas.equation": "To jest równanie. Użyj „Wyznacz”.",

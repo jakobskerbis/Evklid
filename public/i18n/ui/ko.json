@@ -846,6 +846,7 @@
   "sc.cas.solveFor": "{v}에 대해 풀기",
   "sc.cas.symHint": "문자가 있는 식이에요. 무엇을 할지 골라 줘.",
   "sc.cas.eqHint": "문자가 있는 방정식이에요. 어떤 문자에 대해 풀지 골라 줘.",
+  "sc.cas.radians": "라디안으로 계산했어.",
   "sc.cas.cond": "조건:",
   "sc.cas.unsupported": "문자 계산은 아직 +, −, ·, : 와 정수 거듭제곱만 있는 식(다항식과 분수식)만 할 수 있어.",
   "sc.cas.equation": "이건 방정식이야. “…에 대해 풀기”를 써 줘.",

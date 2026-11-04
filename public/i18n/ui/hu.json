@@ -852,6 +852,7 @@
   "sc.cas.solveFor": "Fejezd ki: {v}",
   "sc.cas.symHint": "Betűs kifejezés: válaszd ki, mit csináljak vele.",
   "sc.cas.eqHint": "Betűs egyenlet: válaszd ki, melyik betűt fejezzem ki.",
+  "sc.cas.radians": "Radiánban számolva.",
   "sc.cas.cond": "Érvényes, ha",
   "sc.cas.unsupported": "Betűkkel egyelőre csak +, −, ·, : jeles és egész kitevős kifejezésekkel számolok (polinomok és polinomok hányadosai).",
   "sc.cas.equation": "Ez egy egyenlet. Használd a „Fejezd ki” gombot.",

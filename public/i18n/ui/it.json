@@ -852,6 +852,7 @@
   "sc.cas.solveFor": "Risolvi per {v}",
   "sc.cas.symHint": "Espressione con lettere: scegli che cosa farne.",
   "sc.cas.eqHint": "Equazione con lettere: scegli quale lettera ricavare.",
+  "sc.cas.radians": "Calcolato in radianti.",
   "sc.cas.cond": "Vale per",
   "sc.cas.unsupported": "Con le lettere per ora calcolo solo espressioni con +, −, ·, : e potenze intere (polinomi e frazioni di polinomi).",
   "sc.cas.equation": "Questa è un'equazione. Usa «Risolvi per».",

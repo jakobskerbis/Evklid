@@ -852,6 +852,7 @@
   "sc.cas.solveFor": "Tatua kwa {v}",
   "sc.cas.symHint": "Usemi wenye herufi: chagua nifanye nini nao.",
   "sc.cas.eqHint": "Mlinganyo wenye herufi: chagua herufi ipi nitafute.",
+  "sc.cas.radians": "Imekokotolewa kwa radiani.",
   "sc.cas.cond": "Inafaa kwa",
   "sc.cas.unsupported": "Kwa herufi kwa sasa nakokotoa tu semi zenye +, −, ·, : na vipeo kamili (polinomia na sehemu za polinomia).",
   "sc.cas.equation": "Huu ni mlinganyo. Tumia “Tatua kwa”.",

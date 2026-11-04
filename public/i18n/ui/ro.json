@@ -858,6 +858,7 @@
   "sc.cas.solveFor": "Exprimă {v}",
   "sc.cas.symHint": "Expresie cu litere: alege ce să fac cu ea.",
   "sc.cas.eqHint": "Ecuație cu litere: alege ce literă să exprim.",
+  "sc.cas.radians": "Calculat în radiani.",
   "sc.cas.cond": "Valabil pentru",
   "sc.cas.unsupported": "Cu litere deocamdată calculez doar expresii cu +, −, ·, : și puteri întregi (polinoame și fracții de polinoame).",
   "sc.cas.equation": "Aceasta este o ecuație. Folosește „Exprimă”.",

@@ -846,6 +846,7 @@
   "sc.cas.solveFor": "求解 {v}",
   "sc.cas.symHint": "含字母的式子：選擇要怎麼處理。",
   "sc.cas.eqHint": "含字母的方程式：選擇要求解哪個字母。",
+  "sc.cas.radians": "按弧度計算。",
   "sc.cas.cond": "條件：",
   "sc.cas.unsupported": "目前只能對含 +、−、·、: 和整數次方的式子（多項式和分式）進行字母運算。",
   "sc.cas.equation": "這是方程式。請使用「求解」。",

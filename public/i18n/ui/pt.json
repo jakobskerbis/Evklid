@@ -852,6 +852,7 @@
   "sc.cas.solveFor": "Resolver em ordem a {v}",
   "sc.cas.symHint": "Expressão com letras: escolhe o que faço com ela.",
   "sc.cas.eqHint": "Equação com letras: escolhe que letra resolvo.",
+  "sc.cas.radians": "Calculado em radianos.",
   "sc.cas.cond": "Válido para",
   "sc.cas.unsupported": "Com letras, por agora só calculo expressões com +, −, ·, : e potências inteiras (polinómios e frações de polinómios).",
   "sc.cas.equation": "Isto é uma equação. Usa «Resolver em ordem a».",

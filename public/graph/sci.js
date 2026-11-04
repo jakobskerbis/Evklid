@@ -69,6 +69,50 @@ const MORE = [
   ["mem", [["\\mathrm{M+}", "#m+"], ["\\mathrm{M-}", "#m-"], ["\\mathrm{MR}", "M"], ["\\mathrm{MC}", "#mc"]]],
 ];
 
+// gnezdeni \frac, \sqrt, ^{…} od znotraj navzven: √(E/m) ostane √((E)/(m)), ne √(E)/(m)
+function unnest(x) {
+  for (let prev = ""; prev !== x; ) {
+    prev = x;
+    x = x
+      .replace(/_\{([^{}]*)\}/g, "$1")
+      .replace(/\^\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `^${a}` : `^(${a})`))
+      .replace(/\\t?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)")
+      .replace(/\\sqrt\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `√${a}` : `√(${a})`));
+  }
+  return x;
+}
+/** Rezultat v TeX → besedilo za odložišče, ki ga razume vsak program (izvoženo za teste). */
+export function texPlain(tex) {
+  return unnest(String(tex).replace(/\{,\}/g, ","))
+    .replace(/\\Leftrightarrow/g, "⇔")
+    .replace(/\\(left|right)(?![a-z])/g, "")
+    .replace(/\\(quad|,|;)/g, " ")
+    .replace(/\\approx/g, "≈")
+    .replace(/\\le(?![a-z])/g, "≤")
+    .replace(/\\ge(?![a-z])/g, "≥")
+    .replace(/\\in(?![a-z])/g, "∈")
+    // funkcije in grške črke (integral, Taylor): ime ostane, sicer bi »\ln|x|« postal »|x|«
+    .replace(/\\(arcsin|arccos|arctan|arccot|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|exp)(?![a-z])/g, (_, f, i, str) => `${/[\w)|]/.test(str[i - 1] || "") ? " " : ""}${f}`)
+    .replace(/\\ldots/g, "…")
+    .replace(/\\(alpha|beta|gamma|delta|varepsilon|epsilon|vartheta|theta|lambda|mu|nu|xi|rho|sigma|tau|varphi|phi|psi|omega)(?![a-z])/g, (_, g) => ({ alpha: "α", beta: "β", gamma: "γ", delta: "δ", varepsilon: "ε", epsilon: "ε", vartheta: "θ", theta: "θ", lambda: "λ", mu: "μ", nu: "ν", xi: "ξ", rho: "ρ", sigma: "σ", tau: "τ", varphi: "φ", phi: "φ", psi: "ψ", omega: "ω" })[g])
+    .replace(/\\cup/g, "∪")
+    .replace(/\\infty/g, "∞")
+    .replace(/\\mathbb\{R\}/g, "ℝ")
+    .replace(/\\varnothing/g, "∅")
+    .replace(/\\pm/g, "±")
+    .replace(/\\pi/g, "π")
+    .replace(/\\cdot/g, "·")
+    .replace(/\{,\}/g, ",")
+    .replace(/\\\{/g, "\u0001")
+    .replace(/\\\}/g, "\u0002")
+    .replace(/\\[a-z]+/g, "")
+    .replace(/[{}\\]/g, "")
+    .replace(/\u0001/g, "{")
+    .replace(/\u0002/g, "}")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 /**
  * Znanstveni kalkulator v elementu root.
  * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?() }
@@ -322,8 +366,9 @@ export function createScientific(root, opts) {
         e.op = r.op;
         e.res = r.resTex;
         if (r.approx) e.approx = true;
-        if (r.none) e.none = true; // limita ne obstaja
+        if (r.none && r.op === "limit") e.none = true; // limita ne obstaja (pri reši je none prazna množica)
         if (r.cond) e.note = { key: "sc.cas.cond", tex: r.cond };
+        else if (r.rad) e.note = { key: "sc.cas.radians" };
         if (r.steps) {
           e.steps = true;
           e.stepsText = r.inner;
@@ -416,7 +461,7 @@ export function createScientific(root, opts) {
     if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`= ${fmt(r.value).tex}`) : "";
     else if (r.kind === "complex") live.innerHTML = texHtml(`= ${complexTex(r.re, r.im)}`);
     else if (r.kind === "deriv") live.innerHTML = texHtml(`= ${r.resTex}`);
-    else if (r.kind === "cas") live.innerHTML = r.none ? esc(t("sc.cas.limitNone")) : texHtml(r.op === "solve" ? r.resTex : `${r.approx ? "\\approx" : "="} ${r.resTex}`);
+    else if (r.kind === "cas") live.innerHTML = r.none && r.op === "limit" ? esc(t("sc.cas.limitNone")) : texHtml(r.op === "solve" ? r.resTex : `${r.approx ? "\\approx" : "="} ${r.resTex}`);
     else live.innerHTML = r.kind === "solve" || r.kind === "ineq" || r.kind === "system" ? `<span class="sc-live-hint">${esc(t("sc.pressSolve"))}</span>` : "";
   }
   // Sproten predogled ne rešuje enačb in neenačb (rešitev pride ob =): samo račun, odvod, kompleksno število.
@@ -513,7 +558,7 @@ export function createScientific(root, opts) {
     if (e.ana) {
       // ∫ dx in Taylor: spremenljivko dopišemo le, če ni x
       const v = e.ana === "x" ? "" : ` data-v="${esc(e.ana)}"`;
-      acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="integrate"${v} data-i="${i}" title="${esc(t("sc.cas.integrate"))}"><span aria-hidden="true">∫ d${esc(e.ana)}</span><span class="sr-only">${esc(t("sc.cas.integrate"))}</span></button>`);
+      acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="integrate"${v} data-i="${i}" title="${esc(t("sc.cas.integrate"))}"><span aria-hidden="true" dir="ltr">∫ d${esc(e.ana)}</span><span class="sr-only">${esc(t("sc.cas.integrate"))}</span></button>`);
       acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="taylor"${v} data-i="${i}" title="${esc(t("sc.cas.taylorPoly"))}">${icon("sigma")}<span>${esc(t("sc.cas.taylor"))}</span></button>`);
     }
     if (e.solveFor) for (const v of e.solveFor) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="solve" data-v="${esc(v)}" data-i="${i}">${icon("square-function")}<span>${esc(t("sc.cas.solveFor", { v }))}</span></button>`);
@@ -741,43 +786,13 @@ export function createScientific(root, opts) {
     if (!it.im) return n(it.re);
     return `${it.re ? `${n(it.re)}${it.im < 0 ? "-" : "+"}` : it.im < 0 ? "-" : ""}${Math.abs(it.im) === 1 ? "" : n(Math.abs(it.im))}i`;
   };
-  // gnezdeni \frac, \sqrt, ^{…} od znotraj navzven: √(E/m) ostane √((E)/(m)), ne √(E)/(m)
-  function unnest(x) {
-    for (let prev = ""; prev !== x; ) {
-      prev = x;
-      x = x
-        .replace(/_\{([^{}]*)\}/g, "$1")
-        .replace(/\^\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `^${a}` : `^(${a})`))
-        .replace(/\\t?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)")
-        .replace(/\\sqrt\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `√${a}` : `√(${a})`));
-    }
-    return x;
-  }
   // besedilo za odložišče: število ali rešitev v zapisu, ki ga razume vsak program (brez TeX)
   function copyText(it) {
     const c = comma();
     if (it.none) return t("sc.cas.limitNone");
     if ((it.kind || "value") === "value") return it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: c }).text : formatNumber(it.value, { mode: st.format, comma: c }).text;
     if (it.kind === "complex") return complexText(it);
-    return unnest(String(resTex(it)).replace(/\{,\}/g, ","))
-      .replace(/\\Leftrightarrow/g, "⇔")
-      .replace(/\\(quad|,|;|left|right)/g, " ")
-      .replace(/\\approx/g, "≈")
-      .replace(/\\le/g, "≤")
-      .replace(/\\ge/g, "≥")
-      .replace(/\\in/g, "∈")
-      .replace(/\\cup/g, "∪")
-      .replace(/\\infty/g, "∞")
-      .replace(/\\mathbb\{R\}/g, "ℝ")
-      .replace(/\\varnothing/g, "∅")
-      .replace(/\\pm/g, "±")
-      .replace(/\\pi/g, "π")
-      .replace(/\\cdot/g, "·")
-      .replace(/\{,\}/g, ",")
-      .replace(/\\[a-z]+/g, "")
-      .replace(/[{}]/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
+    return texPlain(String(resTex(it)));
   }
   root.querySelector(".sc-angle").addEventListener("click", (e) => {
     const b = e.target.closest("[data-angle]");

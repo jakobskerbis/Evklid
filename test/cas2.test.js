@@ -122,16 +122,16 @@ test("limita: ne obstaja (leva ≠ desna) je rezultat, ne napaka", () => {
 });
 
 test("Taylorjev polinom: točni koeficienti, točka a, privzeti a = 0 in n = 5", () => {
-  assert.equal(res("taylor(eˣ; x; 0; 4)"), "1 + x + \\frac{x^{2}}{2} + \\frac{x^{3}}{6} + \\frac{x^{4}}{24} + \\ldots");
-  assert.equal(res("taylor(sin x; x; 0; 5)"), "x - \\frac{x^{3}}{6} + \\frac{x^{5}}{120} + \\ldots");
-  assert.equal(res("taylor(ln x; x; 1; 3)"), "\\left(x - 1\\right) - \\frac{\\left(x - 1\\right)^{2}}{2} + \\frac{\\left(x - 1\\right)^{3}}{3} + \\ldots");
-  assert.equal(res("taylor(cos x)"), "1 - \\frac{x^{2}}{2} + \\frac{x^{4}}{24} + \\ldots");
-  assert.equal(res("taylor(tan x; x; 0; 7)"), "x + \\frac{x^{3}}{3} + \\frac{2x^{5}}{15} + \\frac{17x^{7}}{315} + \\ldots");
-  assert.equal(res("taylor(√(1+x); x; 0; 3)"), "1 + \\frac{x}{2} - \\frac{x^{2}}{8} + \\frac{x^{3}}{16} + \\ldots");
-  assert.equal(res("taylor(eˣ; x; 1; 2)"), "e + e\\left(x - 1\\right) + \\frac{e\\left(x - 1\\right)^{2}}{2} + \\ldots");
-  assert.equal(res("taylor(sin x; x; π/6; 2)"), "\\frac{1}{2} + \\frac{\\sqrt{3}\\left(x - \\frac{\\pi}{6}\\right)}{2} - \\frac{\\left(x - \\frac{\\pi}{6}\\right)^{2}}{4} + \\ldots");
-  assert.equal(res("taylor(ln x; x; 2; 2)"), "\\ln 2 + \\frac{x - 2}{2} - \\frac{\\left(x - 2\\right)^{2}}{8} + \\ldots");
-  assert.equal(res("taylor(eˣ; x; 0; 10)").split(" + ").length, 12);
+  assert.equal(res("taylor(eˣ; x; 0; 4)"), "1 + x + \\frac{x^{2}}{2} + \\frac{x^{3}}{6} + \\frac{x^{4}}{24}");
+  assert.equal(res("taylor(sin x; x; 0; 5)"), "x - \\frac{x^{3}}{6} + \\frac{x^{5}}{120}");
+  assert.equal(res("taylor(ln x; x; 1; 3)"), "\\left(x - 1\\right) - \\frac{\\left(x - 1\\right)^{2}}{2} + \\frac{\\left(x - 1\\right)^{3}}{3}");
+  assert.equal(res("taylor(cos x)"), "1 - \\frac{x^{2}}{2} + \\frac{x^{4}}{24}");
+  assert.equal(res("taylor(tan x; x; 0; 7)"), "x + \\frac{x^{3}}{3} + \\frac{2x^{5}}{15} + \\frac{17x^{7}}{315}");
+  assert.equal(res("taylor(√(1+x); x; 0; 3)"), "1 + \\frac{x}{2} - \\frac{x^{2}}{8} + \\frac{x^{3}}{16}");
+  assert.equal(res("taylor(eˣ; x; 1; 2)"), "e + e\\left(x - 1\\right) + \\frac{e\\left(x - 1\\right)^{2}}{2}");
+  assert.equal(res("taylor(sin x; x; π/6; 2)"), "\\frac{1}{2} + \\frac{\\sqrt{3}\\left(x - \\frac{\\pi}{6}\\right)}{2} - \\frac{\\left(x - \\frac{\\pi}{6}\\right)^{2}}{4}");
+  assert.equal(res("taylor(ln x; x; 2; 2)"), "\\ln 2 + \\frac{x - 2}{2} - \\frac{\\left(x - 2\\right)^{2}}{8}");
+  assert.equal(res("taylor(eˣ; x; 0; 10)").split(" + ").length, 11);
   // polinom: brez » + …«
   assert.equal(res("taylor(x³+1; x; 1; 5)"), "2 + 3\\left(x - 1\\right) + 3\\left(x - 1\\right)^{2} + \\left(x - 1\\right)^{3}");
   assert.equal(code("taylor(ln x; x; 0; 3)"), "casTaylor");
@@ -168,4 +168,41 @@ test("kalkulator: ukazi, imena po jezikih, stopinje ne vplivajo", () => {
   // shranjena spremenljivka je število
   assert.equal(analyze("integriraj(a·x)", { vars: { a: 4 } }).resTex, "2x^{2} + C");
   assert.equal(analyze("x²·sin(x)").kind, "expr");
+});
+
+test("pregled: zapis ln 2, −2x, −λ in krajšanje konstant; besedilo za odložišče", async () => {
+  // »\ln 2x« bi se bralo kot ln(2x)
+  assert.equal(res("integriraj(ln(2)·x)"), "\\frac{x^{2}\\ln 2}{2} + C");
+  assert.equal(res("integriraj(ln(2))"), "x\\ln 2 + C");
+  assert.equal(res("integriraj(ln(2)·sin(x))"), "-\\cos\\left(x\\right)\\ln 2 + C");
+  assert.equal(res("integriraj(x·2^x)"), "\\frac{x\\cdot 2^{x}}{\\ln 2} - \\frac{2^{x}}{\\ln^{2} 2} + C");
+  assert.equal(res("taylor(3^x; x; 0; 1)"), "1 + x\\ln 3");
+  // ln(kx): x ln(kx) − x, ne ½·2x ln(2x); −2x brez (−2)
+  assert.equal(res("integriraj(ln(2x))"), "x\\ln\\left(2x\\right) - x + C");
+  assert.equal(res("integriraj(ln(−2x))"), "x\\ln\\left(-2x\\right) - x + C");
+  assert.equal(res("integriraj(e^(−2x))"), "-\\frac{1}{2}e^{-2x} + C");
+  assert.equal(res("integriraj(√(−2x+1))"), "-\\frac{1}{3}\\sqrt{\\left(-2x+1\\right)^{3}} + C");
+  assert.equal(res("integriraj(e^(−λ·t); t)"), "-\\frac{e^{-\\lambda t}}{\\lambda} + C");
+  assert.equal(res("integriraj(a·cos(a·x))"), "\\sin\\left(a x\\right) + C");
+  // odložišče: imena funkcij in grške črke ostanejo, \infty ni »∈fty«
+  const { texPlain } = await import("../public/graph/sci.js");
+  assert.equal(texPlain(res("integriraj(1/(x²−4))")), "(1)/(4) ln|x-2| - (1)/(4) ln|x+2| + C");
+  assert.equal(texPlain(res("integriraj(x·cos x)")), "x sin(x) + cos(x) + C");
+  assert.equal(texPlain(res("integriraj(e^(−λ·t); t)")), "-(e^(-λ t))/(λ) + C");
+  assert.equal(texPlain(res("taylor(eˣ; x; 0; 2)")), "1 + x + (x^2)/(2)");
+  assert.equal(texPlain("x \\in \\left(2,\\infty\\right)"), "x ∈ (2,∞)");
+});
+
+test("pregled: limita ⁵√x pri 0 obstaja (ni »ne obstaja«), majhna točka a ne preskoči 0", () => {
+  for (const t of ["limita(root(x;5); x; 0)", "limita(root(x−2;9); x; 2)", "limita(sgn(x)/ln(abs(x)); x; 0)"]) assert.ok(!cas(t).none, t);
+  const r = cas("limita(1/x; x; 1e-9)");
+  assert.ok(!r.none && !r.error && Math.abs(Number(r.resTex) - 1e9) < 1, JSON.stringify(r));
+  assert.ok(cas("limita(sin(1/x); x; 0)").none || code("limita(sin(1/x); x; 0)") === "casLimit");
+});
+
+test("analiza v načinu DEG: računano v radianih, to pove opomba", () => {
+  const r = analyze("integriraj(sin(x))", { deg: true });
+  assert.equal(r.rad, true);
+  assert.equal(analyze("integriraj(sin(x))", {}).rad, undefined);
+  assert.doesNotMatch(analyze("taylor(sin(x); x; 0; 5)").resTex, /ldots/);
 });

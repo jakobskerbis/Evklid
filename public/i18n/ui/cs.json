@@ -864,6 +864,7 @@
   "sc.cas.solveFor": "Vyjádřit {v}",
   "sc.cas.symHint": "Výraz s písmeny: vyber, co s ním mám udělat.",
   "sc.cas.eqHint": "Rovnice s písmeny: vyber, které písmeno mám vyjádřit.",
+  "sc.cas.radians": "Počítáno v radiánech.",
   "sc.cas.cond": "Platí pro",
   "sc.cas.unsupported": "S písmeny zatím počítám jen výrazy s +, −, ·, : a celočíselnými mocninami (mnohočleny a zlomky mnohočlenů).",
   "sc.cas.equation": "Toto je rovnice. Použij „Vyjádřit“.",

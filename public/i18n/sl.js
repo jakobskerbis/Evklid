@@ -1100,6 +1100,7 @@ export default {
   "sc.cas.solveFor": "Izrazi {v}",
   "sc.cas.symHint": "Izraz s črkami: izberi, kaj naj naredim z njim.",
   "sc.cas.eqHint": "Enačba s črkami: izberi, katero črko naj izrazim.",
+  "sc.cas.radians": "Računano v radianih.",
   "sc.cas.cond": "Velja za",
   "sc.cas.unsupported": "S črkami zaenkrat računam le izraze s +, −, ·, : in celimi potencami (polinome in ulomke polinomov).",
   "sc.cas.equation": "To je enačba. Uporabi »Izrazi«.",

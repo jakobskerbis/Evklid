@@ -846,6 +846,7 @@
   "sc.cas.solveFor": "Giải theo {v}",
   "sc.cas.symHint": "Biểu thức có chữ: chọn việc mình cần làm với nó.",
   "sc.cas.eqHint": "Phương trình có chữ: chọn chữ cần tìm.",
+  "sc.cas.radians": "Tính theo radian.",
   "sc.cas.cond": "Với điều kiện",
   "sc.cas.unsupported": "Với chữ, hiện mình chỉ tính được biểu thức có +, −, ·, : và lũy thừa nguyên (đa thức và phân thức).",
   "sc.cas.equation": "Đây là phương trình. Hãy dùng “Giải theo”.",

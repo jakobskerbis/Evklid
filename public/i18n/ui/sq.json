@@ -852,6 +852,7 @@
   "sc.cas.solveFor": "Shpreh {v}",
   "sc.cas.symHint": "Shprehje me shkronja: zgjidh çfarë të bëj me të.",
   "sc.cas.eqHint": "Ekuacion me shkronja: zgjidh cilën shkronjë të shpreh.",
+  "sc.cas.radians": "Llogaritur në radianë.",
   "sc.cas.cond": "Vlen për",
   "sc.cas.unsupported": "Me shkronja për momentin llogaris vetëm shprehje me +, −, ·, : dhe fuqi të plota (polinome dhe thyesa polinomesh).",
   "sc.cas.equation": "Ky është ekuacion. Përdor «Shpreh».",

@@ -165,13 +165,24 @@ function linear(u, v, scope) {
 const T = (c, x, ks = [], kds = [], r = 1) => ({ c: Q.of(c), x, ks, kds, r });
 const scaleT = (ts, q, ks = [], kds = []) => ts.map((t) => ({ ...t, c: t.c.mul(q), ks: [...t.ks, ...ks], kds: [...t.kds, ...kds] }));
 function slopeT(ts, lin) {
-  return scaleT(ts, lin.a.inv(), [], lin.ak ? [lin.ak] : []);
+  // naklon −λ: −1/λ (ne 1/(−λ))
+  const ak = lin.ak && unwrap(lin.ak).k === "neg" ? unwrap(lin.ak).a : lin.ak;
+  return scaleT(ts, ak !== lin.ak ? lin.a.inv().neg() : lin.a.inv(), [], ak ? [ak] : []);
 }
 function combine(ts) {
   const out = [];
   const idx = new Map();
-  for (const t of ts) {
+  for (let t of ts) {
     if (t.c.zero) continue;
+    // a·sin(ax)/a = sin(ax): enake konstante v števcu in imenovalcu se pokrajšajo
+    const kds = [...t.kds];
+    const ks = t.ks.filter((k) => {
+      const j = kds.findIndex((d) => keyOf(d) === keyOf(k));
+      if (j < 0) return true;
+      kds.splice(j, 1);
+      return false;
+    });
+    t = { ...t, ks, kds };
     const k = `${t.x ? keyOf(t.x) : ""}|${t.r}|${t.ks.map(keyOf).join(",")}|${t.kds.map(keyOf).join(",")}`;
     if (idx.has(k)) out[idx.get(k)].c = out[idx.get(k)].c.add(t.c);
     else {
@@ -206,7 +217,9 @@ function texOf(n) {
   return toTex(fixTex(n), { comma: COMMA, sep: COMMA ? ";" : "," })
     .replace(/\\ln\\left\(\\left\|/g, "\\ln\\left|")
     .replace(/\\right\|\\right\)/g, "\\right|")
-    .replace(/\\ln\\left\((\d+)\\right\)/g, "\\ln $1");
+    .replace(/\\ln\\left\((\d+)\\right\)/g, "\\ln $1")
+    // vnos »−2x« je (−2)·x: na začetku oklepaja ali eksponenta brez oklepaja okoli −2
+    .replace(/(^|\\left\(|\\left\||\{)\\left\(-(\d+(?:\{,\}\d+)?|[a-zA-Z]|\\[a-zA-Z]+)\\right\)(?=[a-zA-Z\\])/g, (m, pre, a, i, str) => `${pre}-${a}${/^\\/.test(a) && /[a-zA-Z]/.test(str[i + m.length]) ? " " : ""}`);
 }
 const isSum = (n) => ["+", "-", "neg"].includes(unwrap(n).k);
 const fTex = (n) => (isSum(n) ? `\\left(${texOf(n)}\\right)` : texOf(n));
@@ -224,6 +237,17 @@ function joinP(parts) {
   for (const p of parts) s += !s ? p : /^\d/.test(p) ? `\\cdot ${p}` : /[a-zA-Z]$/.test(s) && /^[a-zA-Zα-ωπ]/.test(p) ? ` ${p}` : p;
   return s;
 }
+function lnLast(parts) {
+  const rest = [];
+  const ln = new Map();
+  for (const p of parts) {
+    const m = /^\\ln (\d+)$/.exec(p);
+    if (m) ln.set(m[1], (ln.get(m[1]) || 0) + 1);
+    else rest.push(p);
+  }
+  const lns = [...ln].map(([a, k]) => (k === 1 ? `\\ln ${a}` : `\\ln^{${k}} ${a}`));
+  return [rest, lns.length ? [lns.join("\\cdot ")] : []];
+}
 function termTex(t, first) {
   const neg = t.c.sign < 0;
   const c = t.c.abs();
@@ -239,8 +263,11 @@ function termTex(t, first) {
       fn = x.b;
     } else fn = x;
   }
-  const num = [...(c.n !== 1n ? [String(c.n)] : []), ...(t.r > 1 ? [`\\sqrt{${t.r}}`] : []), ...t.ks.map(fTex), ...(mono ? [mono] : [])];
-  const den = [...(c.d !== 1n ? [String(c.d)] : []), ...t.kds.map(fTex), ...(rec ? [numOf(rec.b) === -1 ? texOf(rec.a) : fTexPow(pow(rec.a, N(-numOf(rec.b))))] : [])];
+  // ln 2 na konec produkta (x ln 2, ne »ln 2x«, kar bi se bralo kot ln(2x)); ln 2 · ln 2 = ln² 2
+  const [kn, lnN] = lnLast(t.ks.map(fTex));
+  const [kd, lnD] = lnLast(t.kds.map(fTex));
+  const num = [...(c.n !== 1n ? [String(c.n)] : []), ...(t.r > 1 ? [`\\sqrt{${t.r}}`] : []), ...kn, ...(mono ? [mono] : [])];
+  const den = [...(c.d !== 1n ? [String(c.d)] : []), ...kd, ...(rec ? [numOf(rec.b) === -1 ? texOf(rec.a) : fTexPow(pow(rec.a, N(-numOf(rec.b))))] : []), ...lnD];
   let fnT = fn ? fTex(fn) : "";
   // 2ˣ/ln 2, −cos(ωt)/ω: funkcija v števec, če je v imenovalcu kaj več kot število
   if (fnT && (t.kds.length || rec)) {
@@ -250,8 +277,8 @@ function termTex(t, first) {
   let body;
   // (x − 2)/2 brez oklepaja, če je v števcu sam
   if (den.length && num.length === 1 && t.xTex && !/\^\{/.test(t.xTex)) num[0] = num[0].replace(/^\\left\((.*)\\right\)$/, "$1");
-  if (!den.length) body = joinP([...num, ...(fnT ? [fnT] : [])]) || "1";
-  else body = `\\frac{${joinP(num) || "1"}}{${joinP(den)}}${fnT}`;
+  if (!den.length) body = joinP([...num, ...(fnT ? [fnT] : []), ...lnN]) || "1";
+  else body = `\\frac{${joinP([...num, ...lnN]) || "1"}}{${joinP(den)}}${fnT}`;
   return (first ? (neg ? "-" : "") : neg ? " - " : " + ") + body;
 }
 const fTexPow = (n) => (unwrap(n).k === "^" && numOf(unwrap(n).b) === 1 ? fTex(unwrap(n).a) : texOf(n));
@@ -436,6 +463,9 @@ function single({ b, e }, v, S) {
     case "log":
       if (E1) {
         const kd = b.f === "log" ? [call("ln", N(10))] : [];
+        // ln(k·x): x ln(kx) − x (ne ½·2x ln(2x))
+        const ur = tryRat(div(u, x), S.scope);
+        if (ur && !ur.n.vars().includes(v) && !ur.d.vars().includes(v)) return [T(1, mul(x, call("ln", u)), [], kd), T(-1, x, [], kd)];
         return [...scaleT(slopeT([T(1, mul(u, call("ln", u)))], lu), Q.ONE, [], kd), T(-1, x, [], kd)];
       }
       break;
@@ -888,8 +918,10 @@ function reciprocal(n) {
   if (n.k === "/") return isNumNode(n.a) && numOf(n.a) === 1 ? n.b : div(n.b, n.a);
   return div(N(1), n);
 }
+// korak h okoli točke a: relativno (pri a = 10⁻⁹ ne sme preskočiti 0), pri a = 0 absolutno
+const hScale = (a) => (a === 0 ? 1 : Math.abs(a));
 function continuous(n, y, L) {
-  const h = 1e-10 * Math.max(1, Math.abs(L.a));
+  const h = 1e-10 * hScale(L.a);
   const near = L.sides.map((s) => L.at(n, L.a + s * h));
   return near.every((z) => Number.isFinite(z) && Math.abs(z - y) <= 1e-3 * Math.max(1, Math.abs(y)));
 }
@@ -924,7 +956,7 @@ function quotient(Nn, Dn, L, depth, lh) {
 function approach(f, L, s, far) {
   const ks = far ? [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] : [2, 3, 4, 5, 6, 7];
   if (!Number.isFinite(L.a)) return ks.map((k) => f(Math.sign(L.a) * 10 ** k));
-  return ks.map((k) => f(L.a + s * 10 ** -k * Math.max(1, Math.abs(L.a))));
+  return ks.map((k) => f(L.a + s * 10 ** -k * hScale(L.a)));
 }
 function verifyLimit(val, f, L) {
   const sides = Number.isFinite(L.a) ? L.sides : [1];
@@ -946,15 +978,16 @@ function verifyLimit(val, f, L) {
 // leva in desna vrednost se ne približujeta (1/x, |x|/x pri 0)
 function sidesDiffer(f, L) {
   if (!Number.isFinite(L.a) || L.sides.length < 2) return false;
-  const d = [3, 4, 5].map((k) => {
-    const h = 10 ** -k * Math.max(1, Math.abs(L.a));
+  // razlika se ne zmanjša v petih dekadah (⁵√x pri 0: razlika pada kot h^(1/5), limita obstaja)
+  const d = [3, 4, 5, 6, 7, 8].map((k) => {
+    const h = 10 ** -k * hScale(L.a);
     const l = f(L.a - h);
     const r = f(L.a + h);
     if (Number.isNaN(l) || Number.isNaN(r)) return NaN;
     if (!Number.isFinite(l) || !Number.isFinite(r)) return l === r ? 0 : Infinity; // e^(1/x): 0 in ∞
     return Math.abs(r - l) / Math.max(1, Math.min(Math.abs(l), Math.abs(r)));
   });
-  return d.every((x) => x > 1e-3) && (d[2] === Infinity || d[2] >= 0.3 * d[0]);
+  return d.every((x) => x > 1e-3) && (d[5] === Infinity || d[5] >= 0.9 * d[0]);
 }
 
 // ---------------------------------------------------------------------------
@@ -1100,7 +1133,7 @@ function limitCmd(ast, v, cmd, env, S, wrapT) {
     return cache.get(k)({ [v]: x });
   };
   // strani, kjer je funkcija definirana (√x, ln x pri 0: samo desno)
-  L.sides = Number.isFinite(pt.val) ? [-1, 1].filter((s) => [3, 4, 5].some((k) => !Number.isNaN(f(pt.val + s * 10 ** -k * Math.max(1, Math.abs(pt.val)))))) : [1];
+  L.sides = Number.isFinite(pt.val) ? [-1, 1].filter((s) => [3, 4, 5].some((k) => !Number.isNaN(f(pt.val + s * 10 ** -k * hScale(pt.val))))) : [1];
   if (!L.sides.length) return err("casLimit");
   const tex = `\\lim\\limits_{${KIT.varTex(v)} \\to ${pt.tex}} ${wrapT}`;
   const base = { kind: "cas", op: "limit", tex, inner: cmd.inner };
@@ -1172,7 +1205,6 @@ function taylorCmd(ast, v, cmd, env, S, name, innerTex) {
   }
   if (!checked) return err("casUnverified");
   let resTex = terms.length ? terms.map((t, i) => (t.dec ? decTerm(t, i === 0) : termTex(t, i === 0))).join("") : "0";
-  if (!poly) resTex += " + \\ldots";
   const nT = (cmd.args[2]?.trim() ? `;\\ ${n}` : "");
   const aT = cmd.args[1]?.trim() || nT ? `;\\ ${pt.tex}` : "";
   return { kind: "cas", op: "taylor", tex: `${name}\\left(${innerTex};\\ ${KIT.varTex(v)}${aT}${nT}\\right)`, resTex, inner: cmd.inner, ...(approx ? { approx: true } : {}) };

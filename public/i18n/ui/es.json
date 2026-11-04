@@ -852,6 +852,7 @@
   "sc.cas.solveFor": "Despejar {v}",
   "sc.cas.symHint": "Expresión con letras: elige qué hago con ella.",
   "sc.cas.eqHint": "Ecuación con letras: elige qué letra despejo.",
+  "sc.cas.radians": "Calculado en radianes.",
   "sc.cas.cond": "Válido para",
   "sc.cas.unsupported": "Con letras por ahora solo calculo expresiones con +, −, ·, : y potencias enteras (polinomios y fracciones de polinomios).",
   "sc.cas.equation": "Esto es una ecuación. Usa «Despejar».",

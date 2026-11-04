@@ -846,6 +846,7 @@
   "sc.cas.solveFor": "Selesaikan untuk {v}",
   "sc.cas.symHint": "Ekspresi dengan huruf: pilih apa yang harus kulakukan.",
   "sc.cas.eqHint": "Persamaan dengan huruf: pilih huruf mana yang dicari.",
+  "sc.cas.radians": "Dihitung dalam radian.",
   "sc.cas.cond": "Berlaku untuk",
   "sc.cas.unsupported": "Dengan huruf saat ini aku hanya menghitung ekspresi dengan +, −, ·, : dan pangkat bulat (polinomial dan pecahan polinomial).",
   "sc.cas.equation": "Ini persamaan. Gunakan “Selesaikan untuk”.",

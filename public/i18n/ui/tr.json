@@ -852,6 +852,7 @@
   "sc.cas.solveFor": "{v} için çöz",
   "sc.cas.symHint": "Harfli ifade: onunla ne yapacağımı seç.",
   "sc.cas.eqHint": "Harfli denklem: hangi harfi yalnız bırakacağımı seç.",
+  "sc.cas.radians": "Radyan cinsinden hesaplandı.",
   "sc.cas.cond": "Geçerli olduğu durum:",
   "sc.cas.unsupported": "Harflerle şimdilik yalnızca +, −, ·, : ve tam sayı kuvvetler içeren ifadeleri hesaplayabiliyorum (polinomlar ve polinom kesirleri).",
   "sc.cas.equation": "Bu bir denklem. “… için çöz” düğmesini kullan.",
