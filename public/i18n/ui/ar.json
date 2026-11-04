@@ -2830,6 +2830,7 @@
   "sim.layers": "الإظهار على الرسم البياني",
   "sim.layers.show": "إظهار:",
   "sim.layer.grid": "الشبكة",
+  "sim.lab.pin": "تثبيت الصورة",
   "sim.layer.marks": "العلامات",
   "sim.layer.fit": "{name}: خط مستقيم",
   "sim.color.accent": "أزرق",

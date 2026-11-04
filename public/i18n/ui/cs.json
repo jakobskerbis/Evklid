@@ -2774,6 +2774,7 @@
   "sim.layers": "Zobrazit v grafu",
   "sim.layers.show": "Zobrazit:",
   "sim.layer.grid": "Mřížka",
+  "sim.lab.pin": "Připnout obrázek",
   "sim.layer.marks": "Značky",
   "sim.layer.fit": "{name}: přímka",
   "sim.color.accent": "Modrá",

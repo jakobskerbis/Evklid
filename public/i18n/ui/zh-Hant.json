@@ -2702,6 +2702,7 @@
   "sim.layers": "在圖上顯示",
   "sim.layers.show": "顯示：",
   "sim.layer.grid": "格線",
+  "sim.lab.pin": "固定圖片",
   "sim.layer.marks": "標記",
   "sim.layer.fit": "{name}：直線",
   "sim.color.accent": "藍色",

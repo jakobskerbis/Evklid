@@ -2780,6 +2780,7 @@
   "sim.layers": "Показати на графіку",
   "sim.layers.show": "Показати:",
   "sim.layer.grid": "Сітка",
+  "sim.lab.pin": "Закріпити малюнок",
   "sim.layer.marks": "Позначки",
   "sim.layer.fit": "{name}: пряма",
   "sim.color.accent": "Синій",

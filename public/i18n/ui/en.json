@@ -2726,6 +2726,7 @@
   "sim.layers": "Show on the graph",
   "sim.layers.show": "Show:",
   "sim.layer.grid": "Grid",
+  "sim.lab.pin": "Pin the picture",
   "sim.layer.marks": "Markers",
   "sim.layer.fit": "{name}: line",
   "sim.color.accent": "Blue",

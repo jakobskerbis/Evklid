@@ -2751,6 +2751,7 @@
   "sim.layers": "Prikaži na grafu",
   "sim.layers.show": "Prikaži:",
   "sim.layer.grid": "Mreža",
+  "sim.lab.pin": "Prikači sliku",
   "sim.layer.marks": "Oznake",
   "sim.layer.fit": "{name}: prava",
   "sim.color.accent": "Plava",

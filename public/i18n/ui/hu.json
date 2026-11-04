@@ -2724,6 +2724,7 @@
   "sim.layers": "Megjelenítés a grafikonon",
   "sim.layers.show": "Megjelenítés:",
   "sim.layer.grid": "Rács",
+  "sim.lab.pin": "Kép rögzítése",
   "sim.layer.marks": "Jelölések",
   "sim.layer.fit": "{name}: egyenes",
   "sim.color.accent": "Kék",

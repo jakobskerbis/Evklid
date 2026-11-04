@@ -2726,6 +2726,7 @@
   "sim.layers": "Afficher sur le graphique",
   "sim.layers.show": "Afficher :",
   "sim.layer.grid": "Grille",
+  "sim.lab.pin": "Épingler l'image",
   "sim.layer.marks": "Repères",
   "sim.layer.fit": "{name} : droite",
   "sim.color.accent": "Bleu",

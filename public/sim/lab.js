@@ -2,6 +2,7 @@
 // Modeli so v lab-model.js; tu je samo prikaz. Besedila so slovenska kot v ostalih simulacijah učbenika.
 import { h, s, fmt, svgBox, axes, tex } from "./kit.js";
 import SL from "../i18n/sl.js";
+import { icon } from "../icons.js";
 
 // Prevodi: public/i18n.js naložimo šele v brskalniku (preizkusi v Node uvozijo ta modul brez njega); do tedaj slovensko.
 let t = (k, v = {}) => String(SL[k] ?? k).replace(/\{(\w+)\}/g, (_, n) => v[n] ?? "");
@@ -154,6 +155,115 @@ export function notes(items, sources) {
     h("ul", {}, ...items.map((t) => h("li", {}, t))),
     sources ? h("p", { class: "muted", html: sources }) : null,
   );
+}
+
+// Na telefonu ostane risba vidna (j, 2026-11-04: »s scrollanjem do gumbov skriješ animacijo«; docs/laboratorij.md).
+// sim/index.js (mountSim) to pokliče za vsak poskus z razredom .lab, zato ga dobi tudi vsak nov poskus.
+// Risba (.demo-stage) in kontrole (.demo-controls) gredo v skupni .lab-tit-top; CSS (textbook.css) risbo z merilniki
+// pripne na vrh drsnega dela, na širokem in ležečem zaslonu pa levo ob kontrole. Tu le: gumb »Pripni sliko«
+// (zapomnjen na napravi), višina vidnega dela (--lab-okno), senca, ko je risba pripeta, in fokus, ki ne gre pod risbo.
+const PIN_KEY = "evklid.lab.pripni";
+const pinRead = () => { try { return localStorage.getItem(PIN_KEY) !== "0"; } catch { return true; } };
+const pinWrite = (on) => { try { localStorage.setItem(PIN_KEY, on ? "1" : "0"); } catch {} };
+const vvH = () => (typeof visualViewport !== "undefined" && visualViewport ? visualViewport.height : innerHeight);
+
+export function pripni(el) {
+  let top = el.querySelector(":scope > .lab-tit-top");
+  // Poskus z layout({ stage, controls }) (lab-ohm, lab-co2): risbo in kontrole zavijemo v .lab-tit-top.
+  if (!top) {
+    const st = el.querySelector(":scope > .demo-stage"), ctl = st?.nextElementSibling;
+    if (!st || !ctl?.classList.contains("demo-controls")) return null;
+    top = h("div", { class: "lab-tit-top" });
+    st.before(top);
+    top.append(st, ctl);
+  }
+  const stage = top.querySelector(":scope > .demo-stage");
+  if (!stage) return null;
+  const vb = stage.querySelector(".demo-svg")?.viewBox?.baseVal;
+  if (vb?.width && vb.height) stage.style.setProperty("--lab-ar", (vb.width / vb.height).toFixed(3));
+  const btn = h("button", { type: "button", class: "lab-pin", "aria-label": t("sim.lab.pin"), title: t("sim.lab.pin"), html: icon("pin") });
+  const set = (on) => {
+    el.classList.toggle("lab-odpeto", !on);
+    btn.setAttribute("aria-pressed", String(on));
+  };
+  btn.addEventListener("click", () => {
+    const on = btn.getAttribute("aria-pressed") !== "true";
+    pinWrite(on);
+    set(on);
+    upd();
+  });
+  stage.prepend(btn);
+  set(pinRead());
+
+  // Drsni del, v katerem je poskus (pogled aplikacije, stranski stolpec lekcije ali stran sama).
+  const scroller = () => {
+    for (let a = el.parentElement; a; a = a.parentElement) {
+      const o = getComputedStyle(a).overflowY;
+      if (o === "auto" || o === "scroll") return a;
+    }
+    return null;
+  };
+  const gen = (el._labPin = (el._labPin || 0) + 1);
+  let sc = null, raf = 0;
+  const port = () => (sc ? sc.getBoundingClientRect() : { top: 0, bottom: innerHeight });
+  const sticky = () => getComputedStyle(stage).position === "sticky";
+  function upd() {
+    raf = 0;
+    if (el._labPin !== gen || !el.isConnected) return off();
+    const p = port();
+    const okno = Math.round(Math.max(0, Math.min(p.bottom, vvH()) - Math.max(p.top, 0)));
+    if (okno) el.style.setProperty("--lab-okno", `${okno}px`);
+    // Zelo nizek vidni del (odprta tipkovnica na majhnem telefonu, deljen zaslon): risba ne gre nad kontrole.
+    el.classList.toggle("lab-nizko", okno > 0 && okno < 330);
+    const pin = sticky(), sr = stage.getBoundingClientRect();
+    stage.classList.toggle("lab-prilepljeno", pin && sr.top - top.getBoundingClientRect().top > 1);
+    // Višina risbe: pripeti del (risba + merilniki + stanje) skupaj ~45 % vidne višine nad kontrolami,
+    // ob kontrolah (široko, ležeče) pa cel na zaslonu. Merilniki in stanje so neodvisni od risbe, zato se ne ziblje.
+    const svg = stage.querySelector(".demo-svg"), ctl = top.querySelector(":scope > .demo-controls");
+    if (!pin || !svg || !okno) return stage.style.removeProperty("--lab-risba-h");
+    const cr = ctl?.getBoundingClientRect(), beside = cr && (cr.left >= sr.right - 1 || cr.right <= sr.left + 1);
+    const gap = parseFloat(getComputedStyle(stage).top) + (sc ? parseFloat(getComputedStyle(sc).paddingTop) || 0 : 0);
+    // telefon in tablica ~45 %, z miško (npr. stranski stolpec lekcije na računalniku) ~60 %: tam se drsi s kolescem
+    const total = beside ? okno - Math.max(0, gap) - 6 : okno * (matchMedia("(pointer: coarse)").matches ? 0.45 : 0.6);
+    const rest = sr.height - svg.getBoundingClientRect().height;
+    stage.style.setProperty("--lab-risba-h", `${Math.round(Math.max(beside ? 100 : 110, total - rest))}px`);
+  }
+  const later = () => raf || (raf = requestAnimationFrame(upd));
+  // Fokus (Tab, tipkovnica telefona) na kontroli pod pripeto risbo ali pod spodnjim robom: pomakni jo na vidno mesto.
+  const reveal = (x) => {
+    if (!x || !top.contains(x) || stage.contains(x) || !sticky()) return;
+    const r = x.getBoundingClientRect(), s = stage.getBoundingClientRect(), bottom = Math.min(port().bottom, vvH());
+    if (s.right <= r.left || s.left >= r.right) return; // risba je ob kontrolah (široko), ne nad njimi
+    const dy = r.top < s.bottom + 4 ? r.top - s.bottom - 8 : r.bottom > bottom - 4 ? Math.min(r.bottom - bottom + 8, r.top - s.bottom - 8) : 0;
+    if (dy) (sc || document.scrollingElement).scrollBy({ top: dy });
+  };
+  const focused = () => (top.contains(document.activeElement) ? document.activeElement : null);
+  const onFocus = (e) => {
+    if (el._labPin !== gen) return el.removeEventListener("focusin", onFocus); // »Ponastavi« je poskus zgradil znova
+    reveal(e.target);
+    setTimeout(() => reveal(focused() === e.target ? e.target : null), 350);
+  };
+  const onResize = () => (later(), setTimeout(() => reveal(focused()), 60));
+  const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(later) : null;
+  function off() {
+    (sc || window).removeEventListener("scroll", later);
+    removeEventListener("resize", onResize);
+    ro?.disconnect();
+  }
+  el.addEventListener("focusin", onFocus);
+  // Drsni del poiščemo ob prvem izrisu, ko je poskus že na strani.
+  requestAnimationFrame(() => {
+    if (el._labPin !== gen) return;
+    sc = scroller();
+    // Pripeta risba se drži vrha drsnega dela, ne njegovega notranjega odmika (sicer bi nad njo kukale kontrole).
+    if (sc) el.style.setProperty("--lab-vrh", `${-parseFloat(getComputedStyle(sc).paddingTop) || 0}px`);
+    (sc || window).addEventListener("scroll", later, { passive: true });
+    addEventListener("resize", onResize);
+    ro?.observe(sc || document.documentElement);
+    ro?.observe(stage); // novo stanje ali opomba merilnika spremeni višino pripetega dela
+    upd();
+  });
+  return btn;
 }
 
 export const num = (x, d) => fmt(x, d);

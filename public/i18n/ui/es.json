@@ -2726,6 +2726,7 @@
   "sim.layers": "Mostrar en la gráfica",
   "sim.layers.show": "Mostrar:",
   "sim.layer.grid": "Cuadrícula",
+  "sim.lab.pin": "Fijar la imagen",
   "sim.layer.marks": "Marcas",
   "sim.layer.fit": "{name}: recta",
   "sim.color.accent": "Azul",

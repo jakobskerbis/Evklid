@@ -2730,6 +2730,7 @@
   "sim.layers": "Mostrar no gráfico",
   "sim.layers.show": "Mostrar:",
   "sim.layer.grid": "Grelha",
+  "sim.lab.pin": "Fixar a imagem",
   "sim.layer.marks": "Marcas",
   "sim.layer.fit": "{name}: reta",
   "sim.color.accent": "Azul",
