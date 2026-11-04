@@ -107,6 +107,8 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
         }
       const clipped = S.pts.filter((p) => !inside(p)).length;
       if (!S.label) return;
+      // Samo premica brez točk (npr. izračunana vrednost): en gumb z imenom, brez praznega gumba za točke.
+      if (S.line && !S.pts.length) return legend.append(chip(`fit:${id}`, h("i", { class: `lab-sym line bg-${S.cls}`, "aria-hidden": "true" }), S.label));
       legend.append(chip(`pt:${id}`, h("i", { class: `lab-sym ${S.shape === "^" ? "tri" : "dot"} bg-${S.cls}`, "aria-hidden": "true" }), S.label + (clipped ? ` (${clipped} izven grafa)` : "")));
       if (S.line) legend.append(chip(`fit:${id}`, h("i", { class: `lab-sym line bg-${S.cls}`, "aria-hidden": "true" }), t("sim.layer.fit", { name: S.label })));
     });

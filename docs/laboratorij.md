@@ -110,9 +110,9 @@ Water and its vessel are two nodes (water T, vessel Tv). Water → vessel: 250 W
 half the wall in series with natural convection 4,5 W/(m²·K) (ocena) + radiation 4εσT³; bottom on the table 3 W/(m²·K) (ocena). Open surface: convection
 6 W/(m²·K) (ocena), radiation (ε 0,96) and evaporation by the Chilton–Colburn analogy (Le 0,85) with vapour density from the Antoine equation and 50 % room
 humidity (ocena); a lid replaces this with conduction through the lid. Vessels (masses, diameters, wall thickness are ocena): 400/600 mL borosilicate beaker
-(c 840, k 1,14, Schott), styrofoam cup (k 0,035, EN 13163), porcelain cup (c 1085, k 1,5), enamelled mug, thermos (G = 0,01 W/K with stopper, ocena from ~10 K in 6 h).
+(c 830 at 20 °C, ~900 at 100 °C, model 840; k 1,14, Schott), styrofoam cup (k 0,035, EN 13163), porcelain cup (c 1085, k 1,5), enamelled mug, thermos (G = 0,01 W/K with stopper, ocena from ~10 K in 6 h).
 Data: c water 4182 J/(kg·K) at 20 °C (IAPWS/CRC), ice 2100, L_f 334 kJ/kg, L_v 2257 kJ/kg at 100 °C (linear to 2454 at 20 °C), NaCl c 864 (CRC).
-Digital thermometer ±0,5 °C, 0,1 °C, response time 4 s (offset ≤ 0,3, gain ≤ 0,1 %, jitter ≤ 0,06); balance 0,1 g, ±0,2 g. Euler steps of 0,2 s.
+Digital thermometer ±0,5 °C, 0,1 °C, response time 4 s (offset ≤ 0,25, gain ≤ 0,1 %, jitter ≤ 0,06: worst case 0,48 °C at 120 °C); balance 0,1 g, ±0,2 g. Euler steps of 0,2 s.
 Room 20 °C, tap water 18 °C (ocena).
 
 ### `lab-grelnik` – heater, Q = mcΔT vs W = UIt, efficiency (FIZ-OS-9 toplota, električno delo in moč, moč in izkoristek)
@@ -121,7 +121,7 @@ Room 20 °C, tap water 18 °C (ocena).
 time speed ×1/×10/×60, auto-record every 30 s. Table t, U, I, T; graph T(t); W = ŪĪt, Q = mcΔT (start T at t = 0, highest T after switch-off), η, warnings for ΔT < 3 K
 and for an unstirred final reading. Heater: sheath 10 J/K, 2,0 W/K to water, 0,1 W/K to air, wire 2,5 K/W above the sheath (all ocena); thermal fuse 250 °C, wire burns at 650 °C (ocena).
 Coil 0,5–3 cm above the bottom (less water → part of it in air). Unstirred water: the side probe reads up to 0,06 K/W · P lower (τ 120 s, stirring 4 s; ocena).
-Mistakes: heater on dry (thermal fuse in ~1 min, voltmeter then shows the supply voltage and I = 0), shallow water, above 12 V (warning; ≥ 24 V burns the wire),
+Mistakes: heater on dry (thermal fuse in ~1 min, voltmeter then shows the supply voltage and I = 0), shallow water, above 12 V (warning; the wire burns at ≥ 26 V within seconds and at 24 V after ~6 min as the water warms, only if the current limit lets more than ~8 A through; with the default 5 A limit it survives),
 low current limit (CC), too much water (small ΔT, large relative error), reading without stirring, boiling.
 Tests: R and 50 W ±10 % at 12 V; ideal 200 g, 50 W, 120 s → ΔT 7,17 K ±0,01 and Q = W; student's η 60–95 % over 20 seeds, lid + stirring > open + unstirred by ≥ 5 points
 (means > 84 % and < 80 %), η below the water's share of the heat capacity; ΔT and relative error for 350 g vs 150 g; dry heater trips in 30–120 s, 30 V burns, 13 V survives 10 min, CC at 2 A.
@@ -140,13 +140,13 @@ in equilibrium on the liquidus (CRC freezing points of NaCl solutions, eutectic 
 elevation K_b·2·φ·b up to saturation 39,1 g/100 g) water evaporates. Probe in the middle or touching the bottom (+0,06 K/W · P, ocena). Auto-record every 30 s, graph T(t) in minutes,
 two conclusion questions (constant T while melting; boiling point and pressure). Mistakes: probe on the bottom, boiling dry (plate switched off, warning).
 Tests: ideal plateau length m L_f / P (±1,5 s); real heat during melting = m L_f ±10 % and readings 0,0 ± 0,5 °C; Antoine 100,0 at 101,325 kPa, 98,49 at 96 kPa (IF97), 99,0 in Ljubljana,
-91,6 on Kredarica; boiling plateau in the model ±0,2 K and the reading ±0,7; CRC table vs ΔT = K_f·2·φ·b (±0,12 K); 10 g salt in 150 g ice: last ice melts at −3,93 ± 0,15 °C;
+91,6 on Kredarica; boiling plateau in the model ±0,2 K and the reading ±0,7; boiling evaporates P/L_v (ideal ±1 %, real 80–100 %); CRC table vs ΔT = K_f·2·φ·b (±0,12 K); 10 g salt in 150 g ice: last ice melts at −3,93 ± 0,15 °C;
 30 g salt cools to −21,1 °C; probe on the bottom reads > 4 K more.
 
 ### `lab-ohlajanje` – cooling of tea (FIZ-OS-9 prenos toplote; FIZ-SS-2 prevajanje toplote in sevanje; NAR-OS-6 toplota in temperatura)
 200 g of tea at 90 °C (ocena) into up to three vessels at room temperature: porcelain cup with/without a saucer lid, enamelled mug, styrofoam cup with lid, thermos with/without stopper.
 Same `Voda` model (Newton cooling through the wall plus evaporation from an open surface), three thermometers, speed ×10/×60/×300, auto-record every minute, graph T(t)
-with three series, conclusion question (thermos, lid, evaporation). Tests: porcelain 90 → 55–68 °C in 10 min (ocena), lid and thermos slower, closed thermos k constant ±15 %.
+with three series, conclusion question (thermos, lid, evaporation). Tests: porcelain 90 → 55–68 °C in 10 min (ocena), lid and thermos slower, closed thermos k constant ±15 %, full closed thermos (350 g) loses 8–12 K in 6 h (calibration). Meters: thermometer at −20…120 °C within ±0,5 (500 seeds and the worst-case sum), balance ±0,2 g.
 
 The colours of graph series (`--demo-a/b/c`) are now also defined for the Laboratorij tab (`.lab-view` in `textbook.css`); before, points there were black.
 

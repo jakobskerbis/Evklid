@@ -26,7 +26,7 @@ const ura = (t) => {
   if (m >= 10) return `${m}:${String(Math.floor(sec)).padStart(2, "0")}`; // po 10 min brez desetink, da gre na zaslon
   return `${m}:${sec.toFixed(1).padStart(4, "0").replace(".", ",")}`;
 };
-const minSek = (t) => `${Math.floor(t / 60)}:${String(Math.round(t % 60)).padStart(2, "0")}`;
+const minSek = (t) => ((t = Math.round(t)), `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`); // najprej zaokroži, sicer 22:60
 // Barva vode po temperaturi (od modrikaste hladne do rožnate vroče).
 // Modra do ~45 °C bledi, nad tem postaja rožnato oranžna (brez sivih in zelenih vmesnih barv).
 const barva = (T) => {
@@ -165,7 +165,7 @@ export function labGrelnik(el) {
   let lastU = null, lastI = null, lastT = null;
   function readMeters() {
     const st = B.state;
-    supL.set(B.on ? fixed(st.Uout, 1) : "", "V", B.on ? (st.cc ? `CC: omejitev ${fmt(B.Ilim, 1)} A` : `nastavljeno ${fmt(B.U0, 1)} V`) : "izhod izklopljen");
+    supL.set(B.on ? fixed(st.Uout, 1) : "", B.on ? "V" : "", B.on ? (st.cc ? `CC: omejitev ${fmt(B.Ilim, 1)}\u00a0A` : `nastavljeno ${fmt(B.U0, 1)}\u00a0V`) : "izhod izklopljen");
     lastU = B.readV(), lastI = B.readA(), lastT = B.readT();
     vmL.set(lastU.text, lastU.over ? "" : "V", "na grelcu");
     amL.set(lastI.text, lastI.over ? "" : "A", "območje 10 A");
@@ -213,7 +213,7 @@ export function labGrelnik(el) {
     if (!asked && r.eta > 0 && r.eta < 1.2) {
       asked = true;
       qBox.append(conclusion({
-        text: "Zakaj je izkoristek grelca manjši od 100 %?",
+        text: "Zakaj je izkoristek grelca manjši od 100\u00a0%?",
         options: [
           { t: "Del električnega dela segreje čašo, grelec in termometer, del toplote pa uide v zrak skozi steno, dno in gladino (tudi z izhlapevanjem).", ok: true, why: "Električna energija se v grelcu skoraj v celoti spremeni v toploto, a vsa ne ostane v vodi. Steklena čaša (~110 g) prejme okoli desetino toplote, ki jo prejme 200 g vode, zrak pa še nekaj. Pokrov zmanjša izhlapevanje, mešanje pa da pravo končno temperaturo, zato je izmerjeni izkoristek večji." },
           { t: "Grelec del električne energije uniči.", ok: false, why: "Energija se ne uniči (zakon o ohranitvi energije). V grelcu se električno delo spremeni v toploto, ki pa se razdeli med vodo, posodo in okolico." },
@@ -225,9 +225,9 @@ export function labGrelnik(el) {
   }
 
   const say = {
-    suh: () => ["Grelec ni v vodi! V zraku se ne more ohladiti, zato se hitro segreva. Takoj ga izklopi.", "bad"],
+    suh: () => ["Grelec ni v vodi! Zrak mu toplote ne odvzame dovolj hitro, zato se hitro segreva. Takoj ga izklopi.", "bad"],
     plitvo: () => ["Voda ne pokrije vse grelne spirale. Del grelca je v zraku in se pregreva.", "warn"],
-    vroc: (e) => [`Grelec je vroč že ${fmt(e.T, 0)} °C. V vodi bi imel le kakšnih 20 °C več od vode.`, "warn"],
+    vroc: (e) => [`Grelec je segret že na ${fmt(e.T, 0)} °C. V vodi bi bil le kakšnih 20 °C toplejši od vode.`, "warn"],
     varovalka: () => ["Ohišje grelca se je segrelo nad 250 °C in termična varovalka je prekinila tok. Grelec je pokvarjen; zamenjaj ga.", "bad"],
     zica: (e) => [`Grelna žica je pregorela: moč je bila ${fmt(e.P, 0)} W, grelec pa je narejen za 50 W. Moč raste s kvadratom napetosti (<i>P</i> = <i>U</i>²/<i>R</i>).`, "bad"],
     prenapetost: (e) => [`Na grelcu je ${fmt(e.U, 1)} V, več od nazivnih 12 V. Grelec se bolj greje, kot je zanj varno.`, "warn"],
@@ -294,7 +294,7 @@ export function labGrelnik(el) {
     if (hot > 0) s("rect", { x: hx - 46, y: yc1 - 6, width: 50, height: yc0 - yc1 + 12, rx: 6, class: "fill-danger", opacity: (0.55 * hot).toFixed(2) }, svg);
     if (B.pokvarjen) for (let i = 0; i < 3; i++) s("circle", { cx: hx - 30 + i * 12, cy: yc1 - 14 - i * 6, r: 6 + i * 2, class: "lab-smoke", style: `animation-delay:${faza(1.6, i * 0.5)}s` }, svg);
     if (B.potopljen) label(svg, hx + 16, 104, B.pokvarjen ? "pokvarjen" : "12 V / 50 W", "tick small", "start");
-    else label(svg, hx - 22, yc1 - 12, B.pokvarjen ? "pokvarjen" : "v zraku", "tick small");
+    else label(svg, W - 4, yB + 16, B.pokvarjen ? "grelec pokvarjen" : "grelec v zraku", "tick small", "end"); // pod mizo: nad spiralo je dim
     // termometer, pokrov, mešalna palčka
     sonda(svg, X0 + 18, 96, yB - 22);
     if (B.pokrov) s("rect", { x: X0 - 6, y: yT - 7, width: X1 - X0 + 12, height: 6, rx: 2, class: "lab-top-lid" }, svg);
@@ -323,8 +323,8 @@ export function labMesanje(el) {
     { key: "pos", label: "posoda" },
     { key: "w1", label: "topla <i>m</i>₁, <i>T</i>₁" },
     { key: "w2", label: "hladna <i>m</i>₂, <i>T</i>₂" },
-    { key: "Tm", label: "<i>T</i> izm." },
-    { key: "Tc", label: "<i>T</i> izr." },
+    { key: "Tm", label: "<i>T</i> izm. [°C]" },
+    { key: "Tc", label: "<i>T</i> izr. [°C]" },
   ], { empty: "Še ni meritev. Natoči hladno vodo, zlij k njej toplo, premešaj in zapiši končno temperaturo." });
   const graph = dataGraph({ x: [0, 120], y: [10, 60], xStep: 20, yStep: 10, xLabel: "t [s]", yLabel: "T [°C]", title: "Temperatura zmesi po zlivanju", origin: false });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
@@ -359,7 +359,7 @@ export function labMesanje(el) {
       h("h4", { class: "lab-h" }, "Temperatura po zlivanju"), graph, qBox,
       notes(POENOSTAVITVE_TOPLOTA.mesanje, "Toplotna bilanca: <i>m</i>₁<i>c</i>(<i>T</i>₁ − <i>T</i>) = <i>m</i>₂<i>c</i>(<i>T</i> − <i>T</i>₂), torej <i>T</i> = (<i>m</i>₁<i>T</i>₁ + <i>m</i>₂<i>T</i>₂)/(<i>m</i>₁ + <i>m</i>₂). Steklo ~0,83 kJ/(kg·K), k = 1,14 W/(m·K) (Schott Duran); stiropor k = 0,035 W/(m·K) (EN 13163). Termometer ±0,5 °C, tehtnica ±0,2 g. Ocene: mase in stene posod, prestop toplote, razplastenost."),
     ],
-    tryText: "Zmešaj 100 g vode s 80 °C in 100 g vode z 20 °C v lončku iz stiropora s pokrovom. Napovej končno temperaturo, nato poskus ponovi v stekleni čaši brez pokrova. Kaj se zgodi, če zapišeš temperaturo, preden premešaš?",
+    tryText: "Zmešaj 100 g vode z 80 °C in 100 g vode z 20 °C v lončku iz stiropora s pokrovom. Napovej končno temperaturo, nato poskus ponovi v stekleni čaši brez pokrova. Kaj se zgodi, če zapišeš temperaturo, preden premešaš?",
   });
   el.classList.add("lab");
 
@@ -391,9 +391,9 @@ export function labMesanje(el) {
     const T = B.readT().value, Tc = T_IDEALNA(trial.m1, trial.T1, trial.m2, trial.T2);
     const name = `${trial.pos === "stiropor" ? "stiropor" : "steklo"}${trial.pokrov ? " s pokrovom" : ""}`;
     const g = (m, T) => `${trial.m2w ? fixed(m, 1) : `≈\u00a0${m}`}\u00a0g, ${fixed(T, 1)}\u00a0°C`;
-    table.add({ pos: name, w1: g(trial.m1, trial.T1), w2: g(trial.m2, trial.T2), Tm: `${fixed(T, 1)}\u00a0°C`, Tc: `${fixed(Tc, 1)}\u00a0°C` });
+    table.add({ pos: name, w1: g(trial.m1, trial.T1), w2: g(trial.m2, trial.T2), Tm: fixed(T, 1), Tc: fixed(Tc, 1) });
     if (B.premesano < 5) log.push("Zmesi nisi premešal: termometer pri dnu kaže temperaturo hladnejše plasti. Premešaj in zapiši znova.", "bad");
-    else if (B.t > 240) log.push("Dolgo si čakal: zmes se je že ohlajala, zato je izmerjena temperatura nižja.", "warn");
+    else if (B.t > 240) log.push("Dolgo si čakal: zmes se je medtem že ohladila, zato je izmerjena temperatura nižja.", "warn");
     if (!trial.m2w) log.push("Vode nisi stehtal: maso si ocenil po oznaki, ki je natančna le na ~5 %.", "warn");
     trial.done = { T, Tc, ok: B.premesano >= 5 };
     sync();
@@ -413,7 +413,7 @@ export function labMesanje(el) {
   function sync() {
     if (!trial?.T1) return (calc.innerHTML = "");
     const Tc = T_IDEALNA(trial.m1, trial.T1, trial.m2, trial.T2);
-    calc.innerHTML = `<p><i>T</i> = (<i>m</i>₁<i>T</i>₁ + <i>m</i>₂<i>T</i>₂)/(<i>m</i>₁ + <i>m</i>₂) = (${fixed(trial.m1, 1)} g · ${fixed(trial.T1, 1)} °C + ${fixed(trial.m2, 1)} g · ${fixed(trial.T2, 1)} °C)/${fixed(trial.m1 + trial.m2, 1)} g = <b>${fixed(Tc, 1)} °C</b></p>${trial.done ? `<p>Izmeril si ${fixed(trial.done.T, 1)} °C, to je ${fixed(trial.done.T - Tc, 1)} °C ${trial.done.T < Tc ? "manj" : "več"} od izračuna.</p>` : ""}`;
+    calc.innerHTML = `<p><i>T</i> = (<i>m</i>₁<i>T</i>₁ + <i>m</i>₂<i>T</i>₂)/(<i>m</i>₁ + <i>m</i>₂) = (${fixed(trial.m1, 1)} g · ${fixed(trial.T1, 1)} °C + ${fixed(trial.m2, 1)} g · ${fixed(trial.T2, 1)} °C)/${fixed(trial.m1 + trial.m2, 1)} g = <b>${fixed(Tc, 1)} °C</b></p>${trial.done ? `<p>Izmeril si ${fixed(trial.done.T, 1)} °C, to je ${fixed(Math.abs(trial.done.T - Tc), 1)} °C ${trial.done.T < Tc ? "manj" : "več"}, kot kaže izračun.</p>` : ""}`;
   }
   function reset() {
     B.faza = "prazno";
@@ -439,7 +439,7 @@ export function labMesanje(el) {
     tick: () => {
       const r = B.readT();
       thL.set(B.faza === "prazno" ? "" : r.text, "°C", B.faza === "prazno" ? "posoda je prazna" : B.mesaj ? "mešaš" : "sonda pri dnu");
-      swL.set(B.faza === "zmes" ? ura(B.t) : "", "", B.faza === "zmes" ? "od zlivanja" : "teče od zlivanja");
+      swL.set(B.faza === "zmes" ? ura(B.t) : "", "", B.faza === "zmes" ? "od zlivanja" : "začne ob zlivanju");
       if (B.faza === "zmes") redraw();
       draw();
     },
@@ -568,8 +568,8 @@ export function labFaze(el) {
   const say = {
     tali: () => (B.sol > 0 ? ["Sol topi led: nastaja slana voda, temperatura pada pod 0 °C.", "info"] : ["Led se začne taliti. Opazuj termometer.", "info"]),
     stalilo: (e) => [`Ves led se je stalil (pri ${fmt(e.T, 1)} °C). Zdaj se segreva voda.`, "ok"],
-    vre: (e) => [`Voda vre pri ${fmt(e.T, 1)} °C. Mehurčki so vodna para.`, "ok"],
-    suho: () => ["Skoraj vsa voda je izparela. Kuhalnik smo izklopili: prazna čaša na vroči plošči lahko poči.", "bad"],
+    vre: (e) => [`Voda vre pri ${fixed(e.T, 1)} °C. Mehurčki so vodna para.`, "ok"],
+    suho: () => ["Skoraj vsa voda je izparela, zato se je kuhalnik izklopil: prazna čaša na vroči plošči lahko poči.", "bad"],
   };
   ura0(el, B, {
     speed: () => speed, auto, running: () => B.tekla, record,
@@ -579,19 +579,19 @@ export function labFaze(el) {
         log.push(...say[e.type](e));
         if (e.type === "stalilo" && B.sol === 0)
           ask("tali", {
-            text: "Zakaj je temperatura med taljenjem ledu ostala pri 0 °C, čeprav je kuhalnik ves čas grel?",
+            text: "Zakaj je temperatura med taljenjem ledu ostala pri 0\u00a0°C, čeprav je kuhalnik ves čas grel?",
             options: [
               { t: "Vsa dovedena toplota se je porabila za taljenje: za razbijanje vezi med molekulami v kristalu ledu, ne za hitrejše gibanje molekul.", ok: true, why: "To je talilna toplota: za 1 kg ledu pri 0 °C potrebuješ 334 kJ. Dokler je v čaši še led, temperatura ne naraste. Iz dolžine ravnega dela grafa lahko oceniš moč kuhalnika: <i>P</i> ≈ <i>m</i> · 334 kJ/kg / <i>t</i>." },
               { t: "Kuhalnik med taljenjem ni grel.", ok: false, why: "Kuhalnik je grel ves čas z enako močjo. Toplota je šla v led, a je ni bilo videti na termometru." },
               { t: "Termometer v ledu ne meri pravilno.", ok: false, why: "Termometer meri pravilno: zmes ledu in vode ima res 0 °C. Ko se led stali, temperatura spet raste." },
-              { t: "Led toploto odbija nazaj v zrak.", ok: false, why: "Led toplote ne odbija, prejema jo. Ker se led tali, se je ves čas porablja za spremembo stanja." },
+              { t: "Led toploto odbija nazaj v zrak.", ok: false, why: "Led toplote ne odbija, prejema jo. Vsa prejeta toplota se porabi za taljenje, zato temperatura ne naraste." },
             ],
           });
-        if (e.type === "vre")
+        if (e.type === "vre" && e.T < 99.5) // ob morju voda zavre pri ~100 °C: vprašanje »zakaj ne pri 100 °C« tam ni smiselno
           ask("vre", {
-            text: `Zakaj je voda zavrela pri ${fmt(e.T, 1)} °C in ne točno pri 100 °C?`,
+            text: `Zakaj je voda zavrela pri ${fixed(e.T, 1)}\u00a0°C in ne točno pri 100\u00a0°C?`,
             options: [
-              { t: "Vrelišče je odvisno od zračnega tlaka: 100 °C velja pri 101,3 kPa. Višje je tlak manjši, zato voda zavre prej.", ok: true, why: `Voda zavre, ko je tlak njene pare enak zračnemu tlaku. ${B.sol > 0 ? "Sol vrelišče še malo zviša. " : ""}Ob morju voda vre pri 100 °C, v Ljubljani pri ~99 °C, na Kredarici pri ~92 °C. V loncu na pritisk je tlak večji, zato voda vre pri ~120 °C in hrana se skuha hitreje.` },
+              { t: "Vrelišče je odvisno od zračnega tlaka: 100 °C velja pri 101,3 kPa. Višje kot smo, manjši je tlak, zato voda zavre pri nižji temperaturi.", ok: true, why: `Voda zavre, ko je tlak njene pare enak zračnemu tlaku. ${B.sol > 0 ? "Sol vrelišče še malo zviša. " : ""}Ob morju voda vre pri 100 °C, v Ljubljani pri ~99 °C, na Kredarici pri ~92 °C. V loncu na pritisk je tlak večji, zato voda vre pri ~120 °C in hrana se skuha hitreje.` },
               { t: "Termometer je pokvarjen.", ok: false, why: "Termometer meri na ±0,5 °C. Razlika je v zraku nad nami, ne v termometru: izberi drug kraj in poglej." },
               { t: "Kuhalnik je prešibak, da bi vodo segrel do 100 °C.", ok: false, why: "Tudi z najmočnejšo stopnjo voda ne bo toplejša od vrelišča. Več moči pomeni le, da voda hitreje izpareva." },
             ],
@@ -601,7 +601,7 @@ export function labFaze(el) {
       thL.set(r.text, "°C", B.polozaj === "dno" ? "sonda na dnu" : "sonda v sredini");
       swL.set(ura(B.t), "", B.tekla ? "od vklopa" : "čaka na vklop");
       plL.set(B.on ? String(B.stopnja) : "0", "", B.on ? `stopnja ${B.stopnja}` : B.Pk > 5 ? "izklopljen, še topel" : "izklopljen");
-      status.textContent = `V čaši: ${B.stanje}${B.sol ? " (slana)" : ""}. Vrelišče tu: ${fmt(vrelisce(B.p), 1)} °C.`;
+      status.textContent = `V čaši: ${B.stanje}${B.sol ? " (slana)" : ""}. Vrelišče tu: ${fixed(vrelisce(B.p), 1)}\u00a0°C.`;
       if (!B.on && onBtn.textContent !== "Vklopi kuhalnik") onBtn.textContent = "Vklopi kuhalnik";
       if (B.tekla) redraw();
       draw();
@@ -645,7 +645,7 @@ export function labFaze(el) {
     // tlak in vrelišče
     label(svg, 12, 30, KRAJI[B.kraj].name, "tick small", "start");
     label(svg, 12, 48, `p = ${fmt(B.p / 1000, 1)} kPa`, "tick small", "start");
-    label(svg, 12, 66, `vrelišče ${fmt(vrelisce(B.p), 1)} °C`, "tick small", "start");
+    label(svg, 12, 66, `vrelišče ${fixed(vrelisce(B.p), 1)} °C`, "tick small", "start");
     merilo(svg, 20, 238, 24, "2 cm");
     svg.setAttribute("aria-label", `Čaša na kuhalniku (${B.on ? `stopnja ${B.stopnja}` : "izklopljen"}). V čaši: ${B.stanje}, ${fmt(B.led * 1000, 0)} g ledu in ${fmt(B.ml * 1000, 0)} g vode${B.sol ? ", s soljo" : ""}. Sonda termometra je ${B.polozaj === "dno" ? "na dnu" : "v sredini"}.`);
   }
@@ -659,7 +659,7 @@ export function labOhlajanje(el) {
   const W = 400, H = 242;
   const svg = svgBox(W, H, "lab-bench lab-top lab-top-ohl");
   const log = eventLog();
-  const thL = [0, 1, 2].map((i) => lcd(`termometer ${i + 1}`));
+  const thL = [0, 1, 2].map((i) => lcd(`posoda ${i + 1}`));
   const swL = lcd("štoparica");
   const CLS = ["a", "b", "c"];
   const table = dataTable([
@@ -668,7 +668,7 @@ export function labOhlajanje(el) {
     { key: "T1", label: "<i>T</i>₂ [°C]" },
     { key: "T2", label: "<i>T</i>₃ [°C]" },
   ], { empty: "Še ni meritev. Nalij čaj; meritve se zapisujejo vsako minuto." });
-  const graph = dataGraph({ x: [0, 60], y: [20, 95], xStep: 10, yStep: 10, xLabel: "t [min]", yLabel: "T [°C]", title: "Ohlajanje čaja v treh posodah", origin: false });
+  const graph = dataGraph({ x: [0, 60], y: [20, 100], xStep: 10, yStep: 10, xLabel: "t [min]", yLabel: "T [°C]", title: "Ohlajanje čaja v treh posodah", origin: false });
   const qBox = h("div");
   const meas = [[], [], []];
   const auto = { on: true, every: 60, next: 60 };
@@ -689,13 +689,14 @@ export function labOhlajanje(el) {
       h("h4", { class: "lab-h" }, "Ohlajanje"), graph, qBox,
       notes(POENOSTAVITVE_TOPLOTA.ohlajanje, "Newtonov zakon ohlajanja: toplotni tok je sorazmeren z razliko temperatur, <i>P</i> = <i>G</i> (<i>T</i> − <i>T</i><sub>sobe</sub>). Porcelan ~1,1 kJ/(kg·K), k ≈ 1,5 W/(m·K); stiropor k = 0,035 W/(m·K) (EN 13163); izhlapevanje po analogiji Chilton–Colburn. Ocene: mase in stene posod, prestop toplote, termovka."),
     ],
-    tryText: "Nalij čaj v porcelansko skodelico z pokrovčkom in brez njega ter v termovko. Napovej, v kateri bo čez pol ure najtoplejši. Zakaj se čaj na začetku ohlaja hitreje kot pozneje? Kaj naredi pokrovček?",
+    tryText: "Nalij čaj v porcelansko skodelico s pokrovčkom in brez njega ter v termovko. Napovej, v kateri bo čez pol ure najtoplejši. Zakaj se čaj na začetku ohlaja hitreje kot pozneje? Kaj naredi pokrovček?",
   });
   el.classList.add("lab");
 
   function pour() {
     if (!B.vrste.some(Boolean)) return log.push("Izberi vsaj eno posodo.", "warn");
     B.nalij();
+    B.cups.forEach((c, i) => c && (B.th[i].Tp = c.T)); // sonda je takoj v čaju: zapis pri t = 0 ni prazen (sicer NaN, »1 izven grafa«)
     meas.forEach((m) => (m.length = 0));
     table.clear();
     auto.next = auto.every;
@@ -714,10 +715,10 @@ export function labOhlajanje(el) {
       qBox.append(conclusion({
         text: "Zakaj se čaj v zaprti termovki skoraj ne ohladi, v odprti skodelici pa hitro?",
         options: [
-          { t: "Med stenama termovke je vakuum (ni prevajanja in konvekcije), svetleča stena slabo seva, zamašek pa prepreči izhlapevanje.", ok: true, why: "Čaj oddaja toploto s prevajanjem skozi steno, s konvekcijo zraka, s sevanjem in z izhlapevanjem z gladine. Termovka zavre vse štiri poti. Odprta skodelica največ izgubi z izhlapevanjem: zato tudi pokrovček veliko pomaga. Bolj ko je čaj topel, hitreje se ohlaja (Newtonov zakon), zato je krivulja na začetku strma." },
+          { t: "Med stenama termovke je vakuum (ni prevajanja in konvekcije), svetleča stena slabo seva, zamašek pa prepreči izhlapevanje.", ok: true, why: "Čaj oddaja toploto s prevajanjem skozi steno, s konvekcijo zraka, s sevanjem in z izhlapevanjem z gladine. Termovka zavira vse štiri poti. Odprta skodelica največ izgubi z izhlapevanjem: zato tudi pokrovček veliko pomaga. Bolj ko je čaj topel, hitreje se ohlaja (Newtonov zakon), zato je krivulja na začetku strma." },
           { t: "Termovka je iz kovine, ki dobro prevaja toploto in jo vrača čaju.", ok: false, why: "Dober prevodnik toploto odvaja, ne vrača. Termovka deluje, ker med notranjo in zunanjo steno ni snovi, ki bi prevajala." },
           { t: "V termovki je manj čaja.", ok: false, why: "V vseh posodah je 200 g čaja. Razlika je v tem, kako hitro posoda prepušča toploto v okolico." },
-          { t: "Porcelan toploto ustvarja, termovka pa ne.", ok: false, why: "Posoda toplote ne ustvarja. Porcelan na začetku čaju toploto vzame (skodelica se segreje), zato čaj v težki skodelici v prvi minuti hitro pade za ~15 °C." },
+          { t: "Porcelan toploto ustvarja, termovka pa ne.", ok: false, why: "Posoda toplote ne ustvarja. Porcelan na začetku čaju toploto vzame (skodelica se segreje), zato se čaj v težki skodelici v prvi minuti ohladi za ~15 °C." },
         ],
       }));
     }

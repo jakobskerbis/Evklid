@@ -72,7 +72,7 @@ const zaporedno = (...g) => 1 / g.reduce((s, x) => s + 1 / x, 0);
 
 // Posode. m: masa posode, c: specifična toplota, d: notranji premer, k in t: toplotna prevodnost in debelina stene,
 // eps: emisivnost zunanje površine. Gout: izmerjena skupna prevodnost (termovka), pokrov: { k, t } ali { G }.
-// Viri: borosilikatno steklo c = 830 J/(kg·K), k = 1,14 W/(m·K) (Schott Duran); porcelan c ≈ 1085 J/(kg·K), k ≈ 1,5 W/(m·K)
+// Viri: borosilikatno steklo c = 830 J/(kg·K) pri 20 °C, ~900 pri 100 °C (vzamemo 840), k = 1,14 W/(m·K) (Schott Duran); porcelan c ≈ 1085 J/(kg·K), k ≈ 1,5 W/(m·K)
 // (Engineering Toolbox); jeklo c = 470–500 J/(kg·K), k = 16–50 W/(m·K) (CRC); stiropor (EPS) c ≈ 1300 J/(kg·K),
 // k = 0,035 W/(m·K) (EN 13163). Mase, premeri in debeline so ocene za običajne šolske in domače posode.
 export const POSODE = {
@@ -119,17 +119,19 @@ export function izgubeVrh(P, T, pokrov, Tr = T_SOBA) {
 // ------------------------------------------------------------------ merilniki
 // Digitalni termometer s kovinsko sondo: ločljivost 0,1 °C, natančnost ±0,5 °C med −20 in 120 °C (razred šolskih
 // termometrov, npr. Voltcraft DET3R, TFA 30.1018); odzivni čas sonde v vodi ~4 s (ocena, časovna konstanta).
-// Napaka: stalni zamik do ±0,3 °C, naklon do ±0,1 %, nihanje zadnjega mesta do ±0,06 °C, zaokrožanje 0,05 °C: skupaj ≤ 0,5 °C.
-export const TERMOMETER = { tol: 0.5, dec: 1, tau: 4 };
+// Napaka: stalni zamik do ±0,25 °C, naklon do ±0,1 % (pri 120 °C 0,12 °C), nihanje zadnjega mesta do ±0,06 °C, zaokrožanje 0,05 °C:
+// skupaj ≤ 0,48 °C, torej v mejah ±0,5 °C v vsem območju.
+export const TERMOMETER = { tol: 0.5, dec: 1, tau: 4, off: 0.25, gain: 0.001, jit: 0.06, Tmin: -20, Tmax: 120 };
 export function makeThermo(r) {
-  return { off: clamp(gauss(r, 0.12, 2.5), -0.3, 0.3), gain: clamp(gauss(r, 0.0004, 2.5), -0.001, 0.001), r, Tp: null };
+  const T = TERMOMETER;
+  return { off: clamp(gauss(r, 0.1, 2.5), -T.off, T.off), gain: clamp(gauss(r, 0.0004, 2.5), -T.gain, T.gain), r, Tp: null };
 }
 export function thermoStep(th, T, dt) {
   th.Tp = th.Tp == null ? T : th.Tp + (T - th.Tp) * (1 - Math.exp(-dt / TERMOMETER.tau));
 }
 export function thermoRead(th) {
   if (th.Tp == null) return { text: "–", value: NaN };
-  const jit = clamp(gauss(th.r, 0.025, 2.4), -0.06, 0.06);
+  const jit = clamp(gauss(th.r, 0.025, 2.4), -TERMOMETER.jit, TERMOMETER.jit);
   const v = Math.round((th.Tp * (1 + th.gain) + th.off + jit) * 10) / 10;
   return { text: v.toFixed(1), value: v };
 }
@@ -564,8 +566,8 @@ export class OhlajanjeBench {
 export const POENOSTAVITVE_TOPLOTA = {
   grelnik: [
     "Specifična toplota vode je stalna, 4182 J/(kg·K) (pri 20 °C; med 0 in 100 °C se spremeni za manj kot 1 %).",
-    "Voda in steklena čaša sta dve »točki« z eno temperaturo; v resnici je steklo zunaj hladnejše kot znotraj.",
-    "Toplotne izgube (stena, dno, gladina, izhlapevanje) so izračunane iz ocenjenih koeficientov prestopa toplote, ne izmerjene.",
+    "Voda ima povsod enako temperaturo, čaša tudi; v resnici je steklo zunaj hladnejše kot znotraj.",
+    "Koliko toplote uide skozi steno, dno in gladino ter z izhlapevanjem, smo ocenili, ne izmerili.",
     "Razplastenost vode brez mešanja je ocena: termometer ob strani kaže do ~3 °C manj od povprečja.",
     "Upor grelca je stalen. Pregrevanje grelca, termična varovalka (250 °C) in pregorevanje žice (650 °C) so ocene.",
     "Štoparica se zažene ob prvem vklopu grelca; čas segrevanja šteje samo, ko je grelec vklopljen.",
@@ -573,22 +575,22 @@ export const POENOSTAVITVE_TOPLOTA = {
   ],
   mesanje: [
     "Obe vodi imata enako specifično toploto (4182 J/(kg·K)); pri 80 °C je v resnici za 0,4 % večja.",
-    "Posoda je ena »točka« z eno temperaturo. Na začetku ima sobno temperaturo (20 °C).",
+    "Posoda ima povsod enako temperaturo. Na začetku ima sobno temperaturo (20 °C).",
     "Kako se voda po zlivanju razplasti in kako hitro se zmeša, je ocena.",
     "Med natakanjem se topla voda ohladi za ~0,3 °C (ocena). Toplo vodo izmeriš tik pred zlivanjem.",
     "Brez tehtanja natočiš do oznake; masa odstopa do ±5 % (ocena).",
   ],
   faze: [
-    "Led in voda sta ves čas v ravnovesju (vse je premešano): med taljenjem je temperatura točno tališče.",
+    "Led in voda sta ves čas dobro premešana, zato je med taljenjem temperatura točno enaka tališču.",
     "Kuhalnik odda v čašo stalno moč (ocena 80/150/250 W), ne glede na to, koliko je v njej.",
     "Zračni tlak je iz standardne atmosfere za izbrano višino; z vremenom se spreminja za ±2 kPa (±0,6 °C pri vrelišču).",
-    "Vrelišče je iz Antoinove enačbe; voda zavre točno pri vrelišču (brez pregrevanja).",
+    "Vrelišče pri izbranem tlaku je izračunano po enačbi iz literature; voda zavre točno pri vrelišču, nič višje.",
     "Sol se raztopi v ~1 minuti; toplota raztapljanja soli je zanemarjena. Tališče slane vode je iz tabele (CRC).",
-    "Pod −21,1 °C (evtektik) je slana zmes trdna; tega dela ne pokažemo podrobno.",
+    "Pod −21,1 °C zamrzne tudi slana voda; tega dela ne pokažemo podrobno. V resnici se zmes ledu in soli ohlaja več minut, tu hitreje.",
   ],
   ohlajanje: [
     "Čaj je voda (enaka specifična toplota). Posoda ima na začetku sobno temperaturo.",
-    "Koeficienti prestopa toplote in podatki o posodah (masa, debelina sten) so ocene za običajne skodelice.",
+    "Koliko toplote uide iz posode ter masa in debelina sten so ocene za običajne skodelice.",
     "Termovka izgubi ~10 °C v 6 urah, če je zaprta (ocena iz navodil proizvajalcev).",
     "Soba ima stalno temperaturo 20 °C in 50 % relativne vlage; ni prepiha.",
   ],

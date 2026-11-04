@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import {
   GrelnikBench, MesanjeBench, FazeBench, OhlajanjeBench, izkoristek, VODA, LED, L_IZP, R_GRELEC, GRELEC, KUHALNIK, POSODE,
   vrelisce, tlakNaVisini, talisceSoli, zvisanjeVrelisca, SOL, T_IDEALNA, makeThermo, thermoStep, thermoRead, TERMOMETER,
-  makeTehtnica, tehtnicaRead, TEHTNICA, POENOSTAVITVE_TOPLOTA,
+  makeTehtnica, tehtnicaRead, TEHTNICA, POENOSTAVITVE_TOPLOTA, Voda,
 } from "../public/sim/lab-model-toplota.js";
 import { rng } from "../public/sim/lab-model.js";
 
@@ -163,8 +163,19 @@ test("boiling point: 100,0 °C at 101,325 kPa, 98,5 °C at 96 kPa (steam tables 
     near(b.readT().value, Tb, 0.2 + TERMOMETER.tol, `${kraj}: odčitek`);
     assert.ok(b.izparelo > 0.005, "med vrenjem voda izpareva");
   }
-  // izparilna toplota: med vrenjem pri 250 W izpari ~P/L_v
+  // izparilna toplota 2257 kJ/kg (CRC); med vrenjem izpari P/L_v: brez izgub točno (±1 %), z izgubami 80–100 %
   near(L_IZP, 2257e3, 1, "L_v");
+  for (const idealno of [true, false]) {
+    const b = new FazeBench({ seed: 2, idealno });
+    b.kraj = "morje", (b.stopnja = 3), (b.on = true);
+    while (b.stanje !== "voda vre" && b.t < 3000) b.step(1);
+    b.step(60);
+    const m0 = b.izparelo;
+    b.step(300);
+    const r = (b.izparelo - m0) / 300 / (KUHALNIK.moc[3] / L_IZP);
+    if (idealno) near(r, 1, 0.01, "idealno izparevanje");
+    else assert.ok(r > 0.8 && r <= 1, `izparevanje ${r} od P/L_v`);
+  }
 });
 
 test("salt: freezing point of NaCl solution from CRC agrees with ΔT = K_f·2·φ·b; ice with 10 g salt melts at −3,9 °C", () => {
@@ -210,17 +221,24 @@ test("cooling of tea: thermos slowest, lid slows cooling, porcelain without lid 
   };
   const k1 = k(b.cups[2], 1800), k2 = k(b.cups[2], 1800);
   near(k2, k1, 0.15 * k1, "termovka: stalni k");
+  // umeritev (ocena iz navodil proizvajalcev): polna zaprta termovka (350 g) izgubi ~10 K v 6 urah (8–12 K)
+  const polna = new Voda(POSODE.termovka, { m: 0.35, T: 90, pokrov: true });
+  for (let i = 0; i < (6 * 3600) / 0.2; i++) polna.step(0.2);
+  assert.ok(90 - polna.T > 8 && 90 - polna.T < 12, `termovka v 6 h: ${90 - polna.T} K`);
 });
 
 test("meters within spec: thermometer ±0,5 °C, balance ±0,2 g (500 seeds); seeded runs are deterministic", () => {
   for (let seed = 1; seed <= 500; seed++) {
     const r = rng(seed), th = makeThermo(r), t = makeTehtnica(r);
-    for (const T of [-20, 0, 50, 100]) {
+    for (const T of [-20, 0, 50, 100, 120]) {
       thermoStep(th, T, 100);
       near(thermoRead(th).value, T, TERMOMETER.tol, "termometer");
     }
     for (const g of [50, 200, 500]) near(tehtnicaRead(t, g).value, g, TEHTNICA.tol, "tehtnica");
   }
+  // najslabši primer po specifikaciji: zamik + naklon pri 120 °C + nihanje + zaokrožanje ≤ ±0,5 °C
+  const T = TERMOMETER;
+  assert.ok(T.off + T.gain * Math.max(T.Tmax, -T.Tmin) + T.jit + 0.05 <= T.tol + 1e-12, "termometer: vsota napak");
   const run = () => poskusGrelnik(7).eta;
   assert.equal(run(), run());
   const f = () => {

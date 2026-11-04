@@ -720,6 +720,7 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo:is(.demo-lab-grelnik, .demo-lab-mesanje, .demo-lab-faze, .demo-lab-ohlajanje) .seg-btn { min-width: 44px; }
 .lab-bench:has(> :is(.demo-lab-grelnik, .demo-lab-mesanje, .demo-lab-faze, .demo-lab-ohlajanje)) { overflow-x: clip; }
 .demo:is(.demo-lab-grelnik, .demo-lab-mesanje, .demo-lab-faze, .demo-lab-ohlajanje) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.demo:is(.demo-lab-faze, .demo-lab-ohlajanje) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; } /* dolga imena (»porcelanska skodelica s pokrovčkom«, »Ljubljana (295 m), 97,8 kPa«) */
 .lab-top-calc { font-size: 0.92rem; overflow-wrap: anywhere; }
 .lab-top-calc p { margin: 4px 0; }
 .lab-top-calc ul { margin: 4px 0; padding-inline-start: 1.2em; color: var(--muted); }
