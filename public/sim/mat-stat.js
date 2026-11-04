@@ -144,7 +144,10 @@ export function statistika(el) {
   const draw = () => {
     svg.replaceChildren();
     const sorted = [...data].sort((a, b) => a - b);
-    const lo = 140, hi = 200, L = 30, R = 330, Bh = 180, Hh = 150;
+    const mean = data.reduce((a, b) => a + b, 0) / n, sdv = Math.sqrt(data.reduce((a, b) => a + (b - mean) ** 2, 0) / n);
+    // os sledi podatkom (in pasu x̄ ± σ), da noben podatek ni stisnjen v robni razred in brki ne segajo čez os
+    const lo = Math.floor(Math.min(sorted[0], mean - sdv, 140) / 10) * 10, hi = Math.ceil(Math.max(sorted[n - 1], mean + sdv, 200) / 10) * 10;
+    const L = 30, R = 330, Bh = 180, Hh = 150, tickStep = hi - lo > 80 ? 20 : 10;
     const X = (v) => L + ((v - lo) / (hi - lo)) * (R - L);
     const w = (hi - lo) / classes;
     const counts = Array(classes).fill(0);
@@ -152,8 +155,7 @@ export function statistika(el) {
     const maxC = Math.max(1, ...counts);
     counts.forEach((c, i) => s("rect", { x: X(lo + i * w) + 1, y: Bh - (c / maxC) * Hh, width: X(lo + w) - X(lo) - 2, height: (c / maxC) * Hh, class: "bar fill-b" }, svg));
     s("line", { x1: L, y1: Bh, x2: R, y2: Bh, class: "axis" }, svg);
-    for (let v = lo; v <= hi; v += 10) label(svg, X(v), Bh + 13, String(v), "tick");
-    const mean = data.reduce((a, b) => a + b, 0) / n, sdv = Math.sqrt(data.reduce((a, b) => a + (b - mean) ** 2, 0) / n);
+    for (let v = Math.ceil(lo / tickStep) * tickStep; v <= hi; v += tickStep) label(svg, X(v), Bh + 13, String(v), "tick");
     s("line", { x1: X(mean), y1: 20, x2: X(mean), y2: Bh, class: "guide solid stroke-c" }, svg);
     s("rect", { x: X(mean - sdv), y: 14, width: X(mean + sdv) - X(mean - sdv), height: 6, rx: 3, class: "fill-c", opacity: 0.5 }, svg);
     // škatla z brki
@@ -168,7 +170,7 @@ export function statistika(el) {
     label(svg, X(q2), y + 26, "Me", "tick");
     label(svg, X(q3), y + 26, "Q₃", "tick");
     out.innerHTML = `<p>Višine ${n} dijakov (cm). <span class="dot dot-c"></span> Aritmetična sredina ${tex(`\\bar x = ${tfmt(mean, 1)}`)}, standardni odklon ${tex(`\\sigma = ${tfmt(sdv, 1)}`)} (pas zgoraj: ${tex("\\bar x \\pm \\sigma")}).</p>
-      <p>Škatla z brki: min ${sorted[0]}, Q₁ = ${fmt(q1, 1)}, mediana ${fmt(q2, 1)}, Q₃ = ${fmt(q3, 1)}, max ${sorted[n - 1]}. Medčetrtinski razmik ${fmt(q3 - q1, 1)}: v škatli je srednja polovica podatkov.</p>
+      <p>Škatla z brki: min ${sorted[0]}, Q₁ = ${fmt(q1, 1)}, mediana ${fmt(q2, 1)}, Q₃ = ${fmt(q3, 1)}, max ${sorted[n - 1]}. Medkvartilni razmik ${fmt(q3 - q1, 1)}: v škatli je srednja polovica podatkov.</p>
       <p class="muted">Večji σ pomeni bolj razpršene podatke (širši histogram in daljša škatla). Število razredov spremeni videz histograma, ne pa podatkov.</p>`;
   };
   gen();

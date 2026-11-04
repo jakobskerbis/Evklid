@@ -163,6 +163,8 @@ export function neenacba(el, { mode = "neenacba" } = {}) {
       const finalRel = flip ? { "<": ">", ">": "<", "≤": "≥", "≥": "≤" }[rel] : rel;
       const dir = finalRel === "<" || finalRel === "≤" ? -1 : 1;
       if (Math.abs(k) <= 8) ray(k, dir, finalRel === "≤" || finalRel === "≥", "a");
+      // Meja zunaj slike (do ±14): če rešitve segajo čez ves prikazani del (npr. x < 14), pobarvamo celo premico.
+      else if ((k > 8) === (dir < 0)) s("line", { x1: 10, y1: 70, x2: 330, y2: 70, class: "ray a" }, svg);
       // Meja (c − b)/a točno: tretjine kot ulomek (7/3, ne zaokroženo 2,33), polovice in četrtine decimalno.
       const g = gcd(c - b, a);
       const kT = Number.isInteger(k * 4) ? tfmt(k) : `${k < 0 ? "-" : ""}\\frac{${Math.abs(c - b) / g}}{${Math.abs(a) / g}}`;
@@ -350,11 +352,16 @@ export function povrsinski(el, { mode = "stevila" } = {}) {
         `<p><b>Distributivnost:</b> pravokotnik ${a} × ${b} razrežemo na manjše pravokotnike, ki jih znamo izračunati na pamet, in ploščine seštejemo.</p>
          <p class="muted">Komutativnost: ${a} · ${b} = ${b} · ${a} (pravokotnik obrnemo). Tako računamo tudi pisno množenje.</p>`;
     } else if (mode === "izrazi") {
-      const cols = [[xv, "x"], [p, `${p}`]], rows = [[xv, "x"], [q, `${q}`]];
-      rect2(cols, rows, (i, j) => [["x²", `${q}x`], [`${p}x`, `${p * q}`]][i][j]);
-      out.innerHTML = texBlock(`(x ${p < 0 ? "-" : "+"} ${Math.abs(p)})(x ${q < 0 ? "-" : "+"} ${Math.abs(q)}) = x^2 ${q < 0 ? "-" : "+"} ${Math.abs(q)}x ${p < 0 ? "-" : "+"} ${Math.abs(p)}x ${p * q < 0 ? "-" : "+"} ${Math.abs(p * q)} = x^2 ${p + q < 0 ? "-" : "+"} ${Math.abs(p + q)}x ${p * q < 0 ? "-" : "+"} ${Math.abs(p * q)}`) +
+      // členi s pravim minusom, brez koeficienta 1 in brez členov 0 (x, ne 1x; 0x izpustimo)
+      const mono = (c, v = "x", m = "−") => (c === 0 ? "" : `${c < 0 ? m : ""}${Math.abs(c) === 1 && v ? "" : Math.abs(c)}${v}`);
+      const sum = (terms, m = "−") => terms.filter(([c]) => c).map(([c, v], i) => (i ? `${c < 0 ? ` ${m} ` : " + "}${mono(Math.abs(c), v)}` : mono(c, v, m))).join("") || "0";
+      const fac = (c) => (c ? `(x ${c < 0 ? "-" : "+"} ${Math.abs(c)})` : "x");
+      const facN = (c) => (c ? `(${xv} ${c < 0 ? "−" : "+"} ${Math.abs(c)})` : `${xv}`);
+      const cols = [[xv, "x"], [p, mono(p, "")]], rows = [[xv, "x"], [q, mono(q, "")]];
+      rect2(cols, rows, (i, j) => [["x²", mono(q)], [mono(p), mono(p * q, "")]][i][j]);
+      out.innerHTML = texBlock([`${fac(p)}${p || q ? "" : "\\cdot "}${fac(q)}`, sum([[1, "x^2"], [q, "x"], [p, "x"], [p * q, ""]], "-"), sum([[1, "x^2"], [p + q, "x"], [p * q, ""]], "-")].filter((t, i, L) => t !== L[i - 1]).join(" = ")) +
         `<p>Vsak člen prvega oklepaja pomnožimo z vsakim členom drugega: dobimo 4 pravokotnike. Rdeči deli imajo negativno ploščino.</p>
-         <p class="muted">Pri x = ${xv}: (${xv} ${p < 0 ? "−" : "+"} ${Math.abs(p)}) · (${xv} ${q < 0 ? "−" : "+"} ${Math.abs(q)}) = ${(xv + p) * (xv + q)} in ${xv}² + ${p + q} · ${xv} + ${p * q} = ${xv * xv + (p + q) * xv + p * q}.</p>`;
+         <p class="muted">Pri x = ${xv}: ${facN(p)} · ${facN(q)} = ${(xv + p) * (xv + q)} in ${sum([[1, `${xv}²`], [p + q, Math.abs(p + q) === 1 ? `${xv}` : ` · ${xv}`], [p * q, ""]])} = ${xv * xv + (p + q) * xv + p * q}.</p>`;
     } else {
       const t = Math.floor(n / 10) * 10, u = n % 10;
       const cols = [[t, String(t)], [u, String(u)]];
