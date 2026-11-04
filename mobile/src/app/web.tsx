@@ -18,6 +18,7 @@ import { useSession } from "@/lib/session";
 import { t } from "@/lib/i18n";
 import { font, useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui";
+import { setWebPending } from "@/lib/web-state";
 
 const ORIGIN = API_URL.replace(/\/+$/, "");
 const START = `${ORIGIN}/api/mobile/web?to=${encodeURIComponent("/")}`;
@@ -145,12 +146,20 @@ export default function Web() {
               else if (/^(mailto|tel|sms):/i.test(req.url)) Linking.openURL(req.url).catch(() => {});
               return false;
             }}
-            onLoadEnd={() => setLoading(false)}
+            onLoadEnd={(e: { nativeEvent: { url: string } }) => {
+              setLoading(false);
+              if (!e.nativeEvent.url.includes("/api/mobile/web")) setWebPending(false);
+            }}
             onError={() => setFailed(true)}
             onHttpError={(e: { nativeEvent: { url: string; statusCode: number } }) => {
               // Seja aplikacije ne velja več (npr. odjava na drugi napravi ali novo geslo): nazaj na prijavo.
               if (e.nativeEvent.url.includes("/api/mobile/web") && e.nativeEvent.statusCode === 401) signOut().catch(() => {});
-              else if (e.nativeEvent.url.includes("/api/mobile/web")) setFailed(true);
+              // 404: strežnik je starejši od aplikacije (OTA pred objavo na Renderju): do njegove posodobitve
+              // naravni zasloni, ob vrnitvi v ospredje nov poskus (src/app/_layout.tsx).
+              else if (e.nativeEvent.url.includes("/api/mobile/web") && e.nativeEvent.statusCode === 404) {
+                setWebPending(true);
+                router.replace(student ? "/(tabs)" : "/profiles");
+              } else if (e.nativeEvent.url.includes("/api/mobile/web")) setFailed(true);
             }}
             javaScriptEnabled
             domStorageEnabled

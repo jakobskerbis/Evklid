@@ -2,7 +2,7 @@
 // aplikacija vedno enaka). Naravni zavihki (učna pot, vaje, pogovor …) ostanejo za vaje brez povezave in se
 // odprejo iz zaslona »Ni povezave«; zasloni nad njimi so naravni sklad (iOS: potisk z robu, Android: nazaj).
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Modal, Text, View } from "react-native";
+import { ActivityIndicator, Alert, AppState, Modal, Text, View } from "react-native";
 import { Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import * as Notifications from "expo-notifications";
@@ -14,6 +14,7 @@ import { font, fonts, setFontsReady, useTheme } from "@/lib/theme";
 import { watchPurchases } from "@/lib/billing";
 import { useAppUpdates } from "@/lib/updates";
 import { api, setBusyListener, setTakenHandler } from "@/lib/api";
+import { webPending } from "@/lib/web-state";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -77,6 +78,14 @@ function Root() {
 
   // Po prijavi (in ob zagonu prijavljene aplikacije) se odpre spletna stran; tudi po »Nadaljuj tukaj« (epoch
   // znova izriše Stack, ki se sicer odpre na prvem zaslonu, naravni učni poti).
+  // Strežnik je bil starejši od aplikacije (src/lib/web-state.ts): ob vrnitvi v ospredje znova spletna stran.
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (st) => {
+      if (st === "active" && signedIn && webPending()) router.replace("/web");
+    });
+    return () => sub.remove();
+  }, [signedIn]);
+
   // fontsDone: Stack je že izrisan (prej navigacija ne gre).
   useEffect(() => {
     if (ready && fontsDone && signedIn) router.replace("/web");
