@@ -105,8 +105,9 @@ function Textbook({ seg }: { seg: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [q, student.settings?.school_system]);
 
-  if (loading) return <Loading />;
-  if (error) return <ErrorView message={error.message} onRetry={reload} retryLabel={t("mob.retry")} />;
+  // Preklopnik ostane tudi med nalaganjem in ob napaki (brez povezave): drugače zavihka ni mogoče zamenjati.
+  if (loading) return <FullTab seg={seg}><Loading /></FullTab>;
+  if (error) return <FullTab seg={seg}><ErrorView message={error.message} onRetry={reload} retryLabel={t("mob.retry")} /></FullTab>;
 
   const open = (id: string) => router.push({ pathname: "/topic/[id]", params: { id } });
   return (
