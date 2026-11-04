@@ -7,7 +7,7 @@
 //   tapneš (odpre klepet v oknu) ali odstraniš (× ali poteg na × spodaj). Nov odgovor pokaže predogled.
 import { t } from "./i18n.js";
 import { icon } from "./icons.js";
-import { makeRowSortable, resetRows } from "./vrstice.js";
+import { makeRowSortable, resetRows, uciLayout } from "./vrstice.js";
 import { resetSplits, refreshSplitters } from "./razdelilnik.js";
 import { addSample, inMagnet, shouldClose } from "./magnet.js";
 
@@ -55,12 +55,7 @@ const wins = new Map(); // ime pogleda → { el, body, view, ph }
 let layout = readJson(KEY, {});
 layout.geo ||= {};
 layout.open ||= [];
-// Okni Učbenik in Laboratorij (do 4. 11. 2026) sta zdaj okno »Uči se« (public/uci-se.js): isto mesto in velikost.
-for (const old of ["textbook", "lab"]) {
-  if (layout.geo[old] && !layout.geo.uci) layout.geo.uci = layout.geo[old];
-  delete layout.geo[old];
-}
-layout.open = [...new Set(layout.open.map((n) => (n === "textbook" || n === "lab" ? "uci" : n)))];
+uciLayout(layout); // okni Učbenik in Laboratorij (do 4. 11. 2026) sta zdaj okno »Uči se«
 let z = 40;
 const saveLayout = () => ls.set(KEY, JSON.stringify(layout));
 

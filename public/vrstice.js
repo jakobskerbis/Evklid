@@ -9,8 +9,17 @@ const LONG_PRESS = 400;
 const rows = new Map(); // ime → [{ row, opts, def }]
 
 // Učbenik in Laboratorij sta od 4. 11. 2026 zavihka gumba »Uči se« (public/uci-se.js): v shranjenem redu zgornje in
-// spodnje vrstice »Uči se« dobi mesto, ki ga je imel Učbenik, Laboratorij odpade.
-const fromOld = (ids) => (ids.includes("uci") ? ids : ids.map((id) => (id === "textbook" ? "uci" : id)).filter((id) => id !== "lab"));
+// spodnje vrstice »Uči se« dobi mesto, ki ga je imel Učbenik, Laboratorij odpade. uciLayout: isto za shranjena
+// premična okna (public/okna.js), okno »Uči se« dobi mesto in velikost okna Učbenik (ali Laboratorij).
+export const fromOld = (ids) => (ids.includes("uci") ? ids : ids.map((id) => (id === "textbook" ? "uci" : id)).filter((id) => id !== "lab"));
+export function uciLayout(layout) {
+  for (const old of ["textbook", "lab"]) {
+    if (layout.geo[old] && !layout.geo.uci) layout.geo.uci = layout.geo[old];
+    delete layout.geo[old];
+  }
+  layout.open = [...new Set(layout.open.map((n) => (n === "textbook" || n === "lab" ? "uci" : n)))];
+  return layout;
+}
 const read = (key) => {
   try {
     const v = JSON.parse(localStorage.getItem(PREFIX + key));

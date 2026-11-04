@@ -165,3 +165,13 @@ test("Uči se texts exist in Slovenian, without banned words", () => {
   for (const k of ["tour.learnText", "tb.in3d", "tb.open3d"]) assert.doesNotMatch(SL[k], /model/i, k);
   assert.match(SL["tb.openLab"], /\{title\}/);
 });
+
+test("stored tab orders and window layouts from before Uči se move to it (Učbenik's place, size and open window)", async () => {
+  const { fromOld, uciLayout } = await import("../public/vrstice.js");
+  assert.deepEqual(fromOld(["path", "chat", "scan", "graph", "lab", "competition", "textbook"]), ["path", "chat", "scan", "graph", "competition", "uci"]);
+  assert.deepEqual(fromOld(["path", "chat", "textbook", "competition", "me"]), ["path", "chat", "uci", "competition", "me"]);
+  assert.deepEqual(fromOld(["path", "uci", "chat"]), ["path", "uci", "chat"]); // že novi red ostane
+  const geo = { x: 700, y: 80, w: 500, h: 600, snap: null };
+  assert.deepEqual(uciLayout({ geo: { textbook: geo, lab: { x: 1 }, graph: { x: 2 } }, open: ["graph", "lab", "textbook"] }), { geo: { uci: geo, graph: { x: 2 } }, open: ["graph", "uci"] });
+  assert.deepEqual(uciLayout({ geo: { uci: { x: 3 }, textbook: geo }, open: ["uci"] }), { geo: { uci: { x: 3 } }, open: ["uci"] });
+});
