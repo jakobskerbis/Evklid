@@ -1485,7 +1485,8 @@ export function plottableFromText(text) {
   let m;
   while ((m = re.exec(String(text || ""))) && out.length < 6) {
     const tex = m[1] || m[2] || m[3] || m[4];
-    for (const part of tex.split(/\\\\|,\s*\\quad|\\quad|;\s|\\qquad/)) {
+    // tudi ⟺ / ⟹ med dvema zapisoma (»y = \log_{10} x \iff 10^y = x«): vsak del posebej
+    for (const part of tex.split(/\\\\|,\s*\\quad|\\quad|;\s|\\qquad|\\iff|\\Leftrightarrow|\\Longleftrightarrow|\\Rightarrow|\\Longrightarrow|\\implies/)) {
       const src = fromTex(part).replace(/\s*\\?[,.]\s*$/, "");
       if (!/=|<|>/.test(src) || !/[xy]/.test(src)) continue;
       if (!/^(\s*[yf-hx]\s*(\(\s*x\s*\))?\s*(=|<|>|<=|>=)|.*\by\b.*=)/.test(src) && !/^[^=]*x[^=]*=.*y|^[^=]*y[^=]*=/.test(src)) continue;
@@ -1507,7 +1508,9 @@ export function plottableFromText(text) {
       }
     }
   }
-  return out;
+  // Ob krivulji je samostojen pogoj »x > 0« (definicijsko območje) le opomba: graf naj pokaže funkcijo, ne polravnine.
+  const curve = out.some((s) => /=/.test(s) && /y|^\s*[a-hk-wz]\s*\(\s*x\s*\)/.test(s));
+  return curve ? out.filter((s) => !/^\s*x\s*(<=|>=|<|>|≤|≥)[^xy=]*$/.test(s)) : out;
 }
 
 // ---------- oblikovanje števil ----------

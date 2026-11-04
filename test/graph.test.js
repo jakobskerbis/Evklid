@@ -195,3 +195,10 @@ test("saved graphs API: create, list, update, delete; per student", async () => 
     server.close();
   }
 });
+
+test("plottableFromText: \\iff splits two forms, a bare domain x > 0 next to a curve is dropped (j 4. 11.)", () => {
+  const found = plottableFromText("Zapišemo $y = \\log_{10}(x) \\iff 10^y = x$, kjer je $x > 0$.");
+  assert.ok(found.includes("y = log_(10)(x)"), JSON.stringify(found));
+  assert.ok(!found.some((s) => /^x\s*>/.test(s)), JSON.stringify(found));
+  assert.deepEqual(plottableFromText("Rešitev: $x > 0$"), ["x > 0"]);
+});

@@ -27,7 +27,7 @@ const textOf = (msg) => msg.content.filter((b) => b.type === "text").map((b) => 
 export const READ_PROMPT =
   "The image shows a maths task (printed or handwritten) that a student photographed to get a step-by-step solution. " +
   "Transcribe every separate maths problem you can see, exactly as written (do not solve, do not fix mistakes, do not invent missing parts). " +
-  "A page often holds several tasks (numbered, side by side or one below another): list each of them, not only the first.\n" +
+  "A page often holds several tasks (numbered, side by side or one below another): list each of them, not only the first. Subtasks a), b), c) count as separate tasks when each has its own equation or expression (e.g. a later f(x)=4).\n" +
   "Give each task as originally stated, never a line of the student's working or a result: if a task is followed by its solution, give only the task; if only working is visible, give its first line. " +
   "If any maths is legible, never return an empty list: when unsure whether a line is a task, include it.\n" +
   "For each problem give:\n" +
@@ -37,9 +37,9 @@ export const READ_PROMPT =
   "a double inequality as a<x<b; a logarithm with its base as log_10(x), log_2(x), log_a(x). Keep the student's letters for variables. " +
   "Copy every base, index and exponent exactly as written: never replace a written digit by a letter (log_10 stays log_10, not log_a).\n" +
   '- "given": only if the task states conditions needed to solve it (a point on the graph, an asymptote, a pole, a zero, a domain, a value such as f(0)=5): ' +
-  'a list of them in LaTeX, one condition each, in the words of the page (e.g. ["T(7,2)", "\\text{pol: } x=3", "f(0)=5"]). Otherwise leave it out.\n' +
+  'a list of them in LaTeX, one condition each, in the words of the page (e.g. ["T(7,2)", "\\\\text{pol: } x=3", "f(0)=5"]). Otherwise leave it out.\n' +
   '- "tex": the same problem in LaTeX.\n' +
-  "Ignore task numbers (1., a)), instructions and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve.\n" +
+  "Ignore task numbers (1., a)), the wording of instructions (but keep their conditions in \"given\") and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve.\n" +
   'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."]}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
   // Fotografije, ki niso učno gradivo, zavrnemo (j, 2026-10-30); slike strežnik nikoli ne shrani.
   'Accept schoolwork even if people appear in the frame (book illustrations, a teacher at a whiteboard, hands). Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message) or it is a random scene, do not describe it and return only {"problems":[],"unrelated":true}. If unsure, read it.';
@@ -88,7 +88,7 @@ export function cleanGiven(list) {
   return (Array.isArray(list) ? list : [])
     .filter((g) => typeof g === "string" && g.trim())
     .slice(0, MAX_GIVEN)
-    .map((g) => g.trim().slice(0, MAX_GIVEN_LEN));
+    .map((g) => g.replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN)); // brez novih vrstic v pozivu
 }
 
 // Cilj, ki ga je učenec izbral na zaslonu (npr. »Razstavi«): brez njega bi AI izraz morda le poenostavil.

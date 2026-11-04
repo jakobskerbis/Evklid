@@ -27,6 +27,8 @@ export function answerParts(tex) {
   }
   parts.push(src.slice(from).trim());
   const facts = parts.filter(Boolean);
+  // decimalna vejica brez {,} (x=2,5) ali naštevanje (x=1, 2, 3): del, ki je le število, pomeni, da formula ostane cela
+  if (facts.some((f) => /^[-−]?\d/.test(f))) return [src];
   // le seznam dejstev z »=« (npr. več rešitev x_1=2, x_2=3 tudi); sicer formula ostane cela
   return facts.length > 1 && facts.filter((f) => /=|\\in\b/.test(f)).length >= 2 ? facts : [src];
 }

@@ -136,4 +136,7 @@
 @keyframes scan-rot { to { transform: rotate(360deg); } }
 .scan-given { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 8px 0 0; }
 .scan-given .scan-label { margin: 0; }
-.scan-given-item { padding: 4px 10px; border-radius: 999px; background: var(--surface-2); max-width: 100%; }
+.scan-given-item { padding: 4px 10px; border-radius: 14px; background: var(--surface-2); max-width: 100%; }
+/* dolg pogoj (besedilo v \text{}) se prelomi v čipu, ne štrli čez rob */
+.scan-given-item .katex .katex-base { white-space: normal; width: auto; }
+.scan-answer-tex .scan-fact { margin: 4px 0; text-align: center; font-size: 1.15rem; font-weight: 400; }
