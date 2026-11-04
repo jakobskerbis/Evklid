@@ -271,14 +271,20 @@ export default function Chat() {
               {choices.length >= 2 && !busy && last?.role === "assistant" && !last.error ? (
                 <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
                   {choices.map((c) => (
-                    <Button
+                    <Pressable
                       key={c}
-                      title={c}
-                      kind="secondary"
+                      accessibilityRole="button"
                       // Napisano besedilo in fotografija ostaneta: izbira gre pred besedilo, učenec pošlje sam (kot na spletu).
-                      onPress={() => (text.trim() || photo ? setText(text.trim() ? `${c} ${text.trim()}` : c) : send({ text: c }))}
-                      style={{ alignSelf: "flex-start", maxWidth: "100%" }}
-                    />
+                      onPress={() => {
+                        tap();
+                        setChoices([]);
+                        if (text.trim() || photo) setText(text.trim() ? `${c}, ${text.trim()}` : c);
+                        else send({ text: c });
+                      }}
+                      style={{ minHeight: 44, maxWidth: "100%", justifyContent: "center", paddingHorizontal: 14, paddingVertical: 8, borderRadius: radius.button, backgroundColor: th.accentSoft, borderWidth: 1, borderColor: th.accent }}
+                    >
+                      <Text style={{ color: th.text, fontWeight: "600", fontSize: 15, flexShrink: 1 }}>{c}</Text>
+                    </Pressable>
                   ))}
                 </View>
               ) : null}

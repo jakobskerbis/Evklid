@@ -7,7 +7,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "./prompt.js";
-import { createStreamFilter, parseMeta, parseCards, parseChoices, stripMeta, stripLeadPhrase } from "./meta.js";
+import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, stripMeta, stripLeadPhrase } from "./meta.js";
 import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
 import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams } from "./claude.js";
@@ -776,7 +776,8 @@ export function createApp(store, opts = {}) {
       let display = (note || "") + stripLeadPhrase(stripMeta(result.text)) + fix;
       // V zgodovino shranimo samo besedilo (brez blokov razmišljanja): manj žetonov
       // pri naslednjih klicih in nobenih težav ob krajšanju zgodovine.
-      let content = [{ type: "text", text: (fix ? insertFix(result.text, fix) : result.text) || "…" }];
+      // Popravek preverjanja zamenja konec odgovora: gumbi z izbirami ne veljajo več (ne ob ponovnem odprtju).
+      let content = [{ type: "text", text: (fix ? insertFix(stripChoices(result.text), fix) : result.text) || "…" }];
       // Prvi odgovor gre v porabo kot »chat«; ponovni odgovor po napačni sodbi je že zabeležen kot »popravek« (extraCost).
       const cost = (cached ? 0 : usage.log(student.id, first.model || answerModelOf(mode, deep), first.usage, routed.boosted ? "boost" : "chat")) + extraCost;
       if (settingsTools.state.proposal) send("proposal", settingsTools.state.proposal);
@@ -850,7 +851,8 @@ export function createApp(store, opts = {}) {
         settings: settingsTools.state.used || undefined,
         full_offer: (meta?.mode === "A" && meta.flag === "none" && !meta.done && !settingsTools.state.used && fullOffer(conv.id)) || undefined,
         // Gumbi z izbirami (<<IZBIRE [...]>>): učenec tapne, odgovor se pošlje. Ne pri opozorilih in zavrnitvi.
-        choices: choicesOf(result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? result.text : ""),
+        // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
+        choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : ""),
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();

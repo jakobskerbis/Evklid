@@ -251,7 +251,7 @@ function mockAnswer(userText) {
       "> 📌 **Zapomni si:** rešitev enačbe je število, ki ga vstavimo namesto neznanke, da sta obe strani enaki.\n\n" +
       "Ali je $x = 4$ rešitev enačbe $x + 1 = 5$? Preveri z vstavljanjem.\n" +
       "<<KARTICA\nV: Kaj je rešitev enačbe?\nO: Število, ki ga vstavimo namesto neznanke, da sta leva in desna stran enaki (npr. $x = 2$ pri $x + 3 = 5$).\n>>\n" +
-      '<<IZBIRE ["Da, je rešitev", "Ne, ni rešitev", "Ne vem"]>>\n' +
+      '<<IZBIRE ["Preverim z vstavljanjem", "Pokaži mi primer", "Ne vem"]>>\n' +
       '<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>'
     );
   }

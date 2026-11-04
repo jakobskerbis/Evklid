@@ -4,11 +4,15 @@
 
 const META_RE = /<<\s*META\b([\s\S]*?)>>/g;
 const CARD_RE = /<<\s*KARTICA\b([\s\S]*?)>>/g;
-const CHOICES_RE = /<<\s*IZBIRE\b([\s\S]*?)>>/g;
+// Gumbi: najprej natančen zapis s seznamom JSON (tudi »>>« ali »]« znotraj niza), sicer do prvega »>>«.
+// Oznaka je lahko prevedena (CHOICES) ali z enim oklepajem; učenec bloka nikoli ne vidi.
+const CHOICES_JSON_RE = /<{1,2}\s*(?:IZBIRE|CHOICES)\b\s*(\[(?:"(?:[^"\\\n]|\\.)*"|[^\]"\n])*\])\s*>{1,2}/g;
+const CHOICES_RE = /<<\s*(?:IZBIRE|CHOICES)\b([\s\S]*?)>>/g;
+const CHOICES_LOOSE_RE = /^[ \t]*[`*_]*<{1,2}[ \t]*(?:IZBIRE|CHOICES)\b[^\n]*$/gm;
 // META brez oklepajev ali z enim samim (»META subject=MAT …«, »<META …>«, v oznakah kode): model se včasih
 // zmoti v zapisu; učenec vrstice ne sme videti (digitalni razred, 2026-11-01: vidna pri treh učencih).
 const META_LOOSE_RE = /^[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\bsubject=[^\n]*$/gm;
-const MARKERS = ["<<META", "<<KARTICA", "<<IZBIRE", "<< META", "<< KARTICA", "<< IZBIRE", "<META", "META subject="];
+const MARKERS = ["<<META", "<<KARTICA", "<<IZBIRE", "<< META", "<< KARTICA", "<< IZBIRE", "<META", "META subject=", "<IZBIRE", "< IZBIRE", "<CHOICES", "< CHOICES"];
 const MARKER_MAX = Math.max(...MARKERS.map((m) => m.length));
 
 import { ALL_SUBJECTS } from "./subjects.js";
@@ -73,9 +77,13 @@ export function parseCards(text, max = 3) {
 // Gumbi z izbirami: JSON seznam 2–4 kratkih odgovorov (zadnji blok šteje). Neveljaven zapis = brez gumbov.
 export const CHOICES_MAX = 4;
 export const CHOICE_LEN = 60;
+/** Besedilo brez bloka z gumbi (npr. ko popravek preverjanja zamenja konec odgovora). */
+export const stripChoices = (text) => String(text).replace(CHOICES_JSON_RE, "").replace(CHOICES_RE, "").replace(CHOICES_LOOSE_RE, "");
+
 export function parseChoices(text) {
   let last = null;
-  for (const m of String(text || "").matchAll(CHOICES_RE)) last = m[1];
+  for (const m of String(text || "").matchAll(CHOICES_JSON_RE)) last = m[1];
+  if (last === null) for (const m of String(text || "").matchAll(CHOICES_RE)) last = m[1];
   if (last === null) return [];
   let list;
   try {
@@ -103,8 +111,10 @@ export function stripMeta(text) {
     .replace(META_LOOSE_RE, "") // cela vrstica, tudi z oznakami kode okoli (»`<<META …>>`«)
     .replace(META_RE, "")
     .replace(CARD_RE, "")
+    .replace(CHOICES_JSON_RE, "")
     .replace(CHOICES_RE, "")
-    .replace(/<<\s*(?:META|KARTICA|IZBIRE)\b[\s\S]*$/, "") // nedokončan blok (npr. odrezan odgovor)
+    .replace(CHOICES_LOOSE_RE, "")
+    .replace(/(?:<<\s*(?:META|KARTICA)|<{1,2}\s*(?:IZBIRE|CHOICES))\b[\s\S]*$/, "") // nedokončan blok (npr. odrezan odgovor)
     .replace(/\n{3,}/g, "\n\n")
     .replace(/\s+$/, "");
 }

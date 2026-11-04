@@ -55,7 +55,7 @@ test("full solution offer: after three guided replies in a row, reset by a mode 
 
 test("full solution button: web and app show it and send a one-time request", () => {
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
-  assert.match(app, /if \(doneData\?\.full_offer && !bubble\.nextElementSibling\) addFullButton\(bubble\)/);
+  assert.match(app, /if \(doneData\?\.full_offer && bubble\.isConnected && !bubble\.nextElementSibling\) addFullButton\(bubble\)/);
   assert.match(app, /send\(t\("chat\.fullMsg"\)\)/);
   const mob = readFileSync(new URL("../mobile/src/app/chat/[id].tsx", import.meta.url), "utf8");
   assert.match(mob, /setFullOk\(!!e\.data\.full_offer\)/);
@@ -71,6 +71,20 @@ test("choice buttons: parsed from <<IZBIRE [...]>>, hidden from the student, kep
   assert.deepEqual(parseChoices(`<<IZBIRE ["${"x".repeat(61)}", "ok", "da"]>>`), ["ok", "da"], "predolga izbira odpade");
   assert.equal(stripMeta('Vprašanje?\n<<IZBIRE ["Da", "Ne"]>>\n<<META subject=MAT>>'), "Vprašanje?");
   assert.equal(stripMeta('Vprašanje?\n<<IZBIRE ["Da", "Ne'), "Vprašanje?", "odrezan blok");
+  // Zapisi, ki se modelu zgodijo: »>>« v nizu, en oklepaj, prevedena oznaka, več vrstic.
+  assert.deepEqual(parseChoices('<<IZBIRE ["a >> b", "Ne"]>>'), ["a >> b", "Ne"]);
+  assert.equal(stripMeta('Vprašanje?\n<<IZBIRE ["a >> b", "Ne"]>>'), "Vprašanje?");
+  assert.deepEqual(parseChoices('<IZBIRE ["Da", "Ne"]>'), ["Da", "Ne"]);
+  assert.equal(stripMeta('Vprašanje?\n<IZBIRE ["Da", "Ne"]>\n<<META subject=MAT>>'), "Vprašanje?");
+  assert.equal(stripMeta('Question?\n<<CHOICES ["Yes", "No"]>>'), "Question?");
+  assert.deepEqual(parseChoices('<<IZBIRE [\n  "Da",\n  "Ne"\n]>>'), ["Da", "Ne"]);
+  for (const reply of ['Je to res?\n<IZBIRE ["Da", "Ne"]>\n<<META subject=MAT>>', 'Is it?\n<<CHOICES ["Yes", "No"]>>\n<<META subject=MAT>>', 'Je?\n<<IZBIRE ["a >> b", "Ne"]>>']) {
+    const g = createStreamFilter();
+    let out = "";
+    for (let i = 0; i < reply.length; i += 7) out += g.push(reply.slice(i, i + 7));
+    out += g.end().rest;
+    assert.ok(!/IZBIRE|CHOICES|<</.test(out), out);
+  }
   const f = createStreamFilter();
   let shown = "";
   for (const ch of 'Je to res? Premisli dobro, preden odgovoriš.\n<<IZBIRE ["Da", "Ne"]>>\n<<META subject=MAT>>') shown += f.push(ch);
@@ -97,11 +111,12 @@ test("choice buttons: parsed from <<IZBIRE [...]>>, hidden from the student, kep
 
 test("choice buttons: web and app show them under the last answer, a tap sends, typed text is kept", () => {
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
-  assert.match(app, /if \(doneData\?\.choices && !bubble\.nextElementSibling\) addChoices\(bubble, doneData\.choices\);/);
+  assert.match(app, /if \(doneData\?\.choices && bubble\.isConnected && !bubble\.nextElementSibling\) \{[^}]*addChoices\(bubble, doneData\.choices\);/, "le, če učenec še ni poslal novega sporočila");
   assert.match(app, /if \(text && info\?\.choices\) addChoices\(el, info\.choices\);/);
   assert.match(app, /querySelectorAll\("\.full-btn, \.choice-row"\)\.forEach\(\(x\) => x\.remove\(\)\)/, "gumbi izginejo ob pošiljanju");
-  const fn = app.slice(app.indexOf("function addChoices("));
-  assert.ok(fn.indexOf("${c} ${typed}") > 0 && fn.indexOf("send(c)") > fn.indexOf("${c} ${typed}"), "napisano besedilo ostane");
+  const fn = app.slice(app.indexOf("function addChoices("), app.indexOf("\n}\n", app.indexOf("function addChoices(")));
+  assert.ok(fn.indexOf("state.sending") < fn.indexOf("row.remove()"), "tap med pošiljanjem ne izgubi gumbov");
+  assert.ok(fn.indexOf("${c}, ${typed}") > 0 && fn.indexOf("send(c)") > fn.indexOf("${c}, ${typed}"), "napisano besedilo ostane");
   const mob = readFileSync(new URL("../mobile/src/app/chat/[id].tsx", import.meta.url), "utf8");
   assert.match(mob, /setChoices\(Array\.isArray\(e\.data\.choices\)/);
   assert.match(mob, /send\(\{ text: c \}\)/);

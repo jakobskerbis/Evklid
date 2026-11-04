@@ -896,8 +896,15 @@ async function send(text, { deep = false } = {}) {
       // Odgovor, ki samo spremeni nastavitve, ne potrebuje »Razloži podrobneje«.
       if (doneData && !doneData.settings) addDeepButton(bubble, doneData.deep);
       // Ne, če je učenec med počasnim izpisom že poslal novo sporočilo (gumb samo pri zadnjem odgovoru).
-      if (doneData?.full_offer && !bubble.nextElementSibling) addFullButton(bubble);
-      if (doneData?.choices && !bubble.nextElementSibling) addChoices(bubble, doneData.choices);
+      // bubble.isConnected: učenec je med izpisom morda odprl drug pogovor.
+      if (doneData?.full_offer && bubble.isConnected && !bubble.nextElementSibling) addFullButton(bubble);
+      if (doneData?.choices && bubble.isConnected && !bubble.nextElementSibling) {
+        // Gumbi pridejo po izpisu: če je bil učenec na dnu, jih pokažemo (na telefonu bi bili pod robom).
+        const box = $("#messages");
+        const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+        addChoices(bubble, doneData.choices);
+        if (atBottom) requestAnimationFrame(() => (box.scrollTop = box.scrollHeight));
+      }
       if (doneData?.text) addGraphButton(bubble, doneData.text);
       if (cardsData) addCardsNote(bubble, cardsData);
       if (doneData?.id) addMsgFoot(bubble, doneData);
@@ -1731,6 +1738,7 @@ function addDeepButton(el, wasDeep) {
   b.type = "button";
   b.innerHTML = `${icon("search")} ${t("chat.deeper")}`;
   b.addEventListener("click", () => {
+    if (state.sending || !$("#chat-off").hidden) return;
     b.remove();
     send(t("chat.deeperMsg"), { deep: true });
   });
@@ -1747,6 +1755,7 @@ function addFullButton(el) {
   b.type = "button";
   b.innerHTML = `${icon("list-checks")} ${t("chat.full")}`;
   b.addEventListener("click", () => {
+    if (state.sending || !$("#chat-off").hidden) return;
     b.remove();
     send(t("chat.fullMsg"));
   });
@@ -1770,15 +1779,17 @@ function addChoices(el, choices) {
     b.dir = "auto";
     b.textContent = c;
     b.addEventListener("click", () => {
+      // Med pošiljanjem ali ob izklopljenem klepetu tap ne sme izgubiti gumbov.
+      if (state.sending || !$("#chat-off").hidden) return;
       const typed = $("#input").value.trim();
+      row.remove();
       if (typed || state.image) {
         // Napisano besedilo in fotografija ostaneta: izbira gre pred besedilo, učenec pošlje sam.
-        $("#input").value = typed ? `${c} ${typed}` : c;
+        $("#input").value = typed ? `${c}, ${typed}` : c;
         autoGrow();
         $("#input").focus();
         return;
       }
-      row.remove();
       send(c);
     });
     row.append(b);
