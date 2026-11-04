@@ -88,3 +88,8 @@ test("Moj kotiček: brez novic ponudi področja, ki jih učenec še nima", () =>
   assert.match(js, /data-add-int/);
   assert.match(js, /if \(add\) return addInterest\(add\.dataset\.addInt\)/);
 });
+
+test("Jaz: vrstice mreže po vsebini, da se kartica s profilom ne stisne pod ikono (telefon, j 4. 11.)", () => {
+  const rule = pub("ui.css").match(/#view-me \{ display: grid;[^}]*\}/)?.[0] || "";
+  assert.match(rule, /grid-auto-rows: max-content/);
+});
