@@ -56,6 +56,7 @@ import { appVersion, vendorVersion } from "./razlicica.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
+import { startBackups } from "./kopije.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -194,9 +195,10 @@ export function createApp(store, opts = {}) {
   // (scripts/nadzor.js) pa strežnik znova zažene, ko nihče ne čaka na odgovor.
   const version = appVersion();
   const activity = { active: 0, lastSend: 0 };
+  let backups = null; // dnevne varnostne kopije baze (server/kopije.js), nastavljene spodaj
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null });
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
@@ -1253,5 +1255,6 @@ export function createApp(store, opts = {}) {
 
   // Šifriranje obstoječih vrstic in dnevno čiščenje po rokih hrambe (server/zasebnost.js).
   startPrivacyJobs(store.db, { scheduler: opts.scheduler !== false && opts.privacyJobs !== false });
+  backups = startBackups(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false });
   return app;
 }
