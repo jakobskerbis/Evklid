@@ -2953,5 +2953,6 @@
   "ai.pool": "Spoločné pre všetky profily rodiny.",
   "gift.level": "Stupeň",
   "meter.levelsTitle": "Ceny podľa stupňa",
-  "chat.choices": "Rýchle odpovede"
+  "chat.choices": "Rýchle odpovede",
+  "chat.deleted": "Konverzácia vymazaná."
 }

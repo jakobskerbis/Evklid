@@ -2877,5 +2877,6 @@
   "ai.pool": "Dùng chung cho mọi hồ sơ trong gia đình.",
   "gift.level": "Cấp",
   "meter.levelsTitle": "Giá theo cấp",
-  "chat.choices": "Trả lời nhanh"
+  "chat.choices": "Trả lời nhanh",
+  "chat.deleted": "Đã xóa cuộc trò chuyện."
 }

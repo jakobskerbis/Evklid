@@ -2877,5 +2877,6 @@
   "ai.pool": "家庭所有档案共用。",
   "gift.level": "阶段",
   "meter.levelsTitle": "按阶段的价格",
-  "chat.choices": "快速回复"
+  "chat.choices": "快速回复",
+  "chat.deleted": "已删除对话。"
 }

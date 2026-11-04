@@ -2877,5 +2877,6 @@
   "ai.pool": "家族のすべてのプロフィールで共有します。",
   "gift.level": "段階",
   "meter.levelsTitle": "段階別の料金",
-  "chat.choices": "クイック返信"
+  "chat.choices": "クイック返信",
+  "chat.deleted": "会話を削除しました。"
 }

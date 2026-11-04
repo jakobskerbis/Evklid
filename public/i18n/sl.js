@@ -453,6 +453,7 @@ export default {
   "chat.symbolsTitle": "Simboli: √, π, ∫, H₂O …",
   "chat.mic": "Povej vprašanje",
   "chat.delete": "Izbriši pogovor",
+  "chat.deleted": "Pogovor izbrisan.",
   "chat.hello": "Živjo, {name}!",
   "chat.intro": "Napiši nalogo ali jo fotografiraj. Skupaj jo bova rešila po korakih.",
   "chat.idea1": "Kako rešim enačbo 2x + 3 = 11?",

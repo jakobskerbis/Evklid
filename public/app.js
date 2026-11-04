@@ -621,17 +621,28 @@ function renderConversationList() {
     li.className = c.id === state.conversationId ? "active" : "";
     li.innerHTML = `<span>${escapeHtml(c.title)}</span><button title="${t("chat.delete")}" aria-label="${t("chat.delete")}">${icon("trash-2")}</button>`;
     li.querySelector("span").addEventListener("click", () => openConversation(c.id));
-    // Brisanje z enim klikom, brez potrditve (j, 4. 11.); gumb se med brisanjem onemogoči.
+    // Brisanje z enim klikom, brez potrditve (j, 4. 11.): pogovor takoj izgine iz seznama (tudi ob hitrem
+    // brisanju več pogovorov), ob napaki se seznam znova naloži.
     li.querySelector("button").addEventListener("click", async (e) => {
       e.stopPropagation();
-      e.currentTarget.disabled = true;
-      await api(`/api/conversations/${c.id}`, { method: "DELETE" });
+      state.conversations = state.conversations.filter((x) => x.id !== c.id);
       if (state.paperCtx?.conv === c.id) state.paperCtx = null; // id se lahko ponovi pri novem pogovoru
       if (state.conversationId === c.id) {
+        state.pacer?.skip();
         state.conversationId = null;
+        state.convTopic = null;
         renderEmptyChat();
       }
-      await loadConversations();
+      renderConversationList();
+      refreshBubble();
+      $("#new-chat")?.focus(); // fokus ne pade na stran (tipkovnica, bralnik zaslona)
+      try {
+        await api(`/api/conversations/${c.id}`, { method: "DELETE" });
+        toast(t("chat.deleted"), "trash-2");
+      } catch (err) {
+        await loadConversations().catch(() => {});
+        if (err.status !== 404) throw err; // obvestilo o napaki (unhandledrejection)
+      }
     });
     list.appendChild(li);
   }
@@ -889,6 +900,8 @@ async function send(text, { deep = false } = {}) {
         if (d.state?.subject && state.conversationId === sentTo && !state.chatFx?.symbols) state.chatFx = { subject: d.state.subject, symbols: null };
         pacer.finish(d.text);
         chatReply(d.text); // mehurček, če klepet ni na zaslonu (public/okna.js)
+        // Pogovor je med odgovorom morda izbrisan ali zamenjan: naslov in stanje ostaneta odprtemu pogovoru.
+        if (state.conversationId !== sentTo) return;
         if (d.state) renderState(d.state);
         if (d.title) $("#chat-title").textContent = d.title;
       },
@@ -896,7 +909,7 @@ async function send(text, { deep = false } = {}) {
         bubble.classList.add("error");
         pacer.finish(d.error);
         pacer.skip();
-        $("#input").value = text; // vrni besedilo za ponovni poskus
+        if (state.conversationId === sentTo) $("#input").value = text; // vrni besedilo za ponovni poskus
       },
     });
     pacer.finish();

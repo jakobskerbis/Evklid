@@ -2901,5 +2901,6 @@
   "ai.pool": "Shared by all profiles in the family.",
   "gift.level": "Level",
   "meter.levelsTitle": "Prices by level",
-  "chat.choices": "Quick replies"
+  "chat.choices": "Quick replies",
+  "chat.deleted": "Conversation deleted."
 }

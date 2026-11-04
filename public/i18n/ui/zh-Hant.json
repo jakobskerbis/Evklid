@@ -2877,5 +2877,6 @@
   "ai.pool": "家庭所有檔案共用。",
   "gift.level": "階段",
   "meter.levelsTitle": "依階段的價格",
-  "chat.choices": "快速回覆"
+  "chat.choices": "快速回覆",
+  "chat.deleted": "已刪除對話。"
 }

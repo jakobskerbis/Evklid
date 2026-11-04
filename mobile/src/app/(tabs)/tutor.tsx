@@ -1,12 +1,13 @@
 // Inštruktor: seznam pogovorov in nov pogovor.
 import React, { useState } from "react";
-import { Alert, Pressable, RefreshControl, Text, View } from "react-native";
+import { AccessibilityInfo, Alert, Pressable, RefreshControl, Text, View } from "react-native";
 import { router } from "expo-router";
 import { api } from "@/lib/api";
 import { useStudent } from "@/lib/session";
 import { t } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useLoad } from "@/lib/useLoad";
+import { tap } from "@/lib/haptics";
 import { Body, Button, Card, ErrorView, Icon, Loading, TabScreen } from "@/components/ui";
 
 type Conv = { id: number; title: string | null; updated_at: string };
@@ -28,10 +29,18 @@ export default function Tutor() {
       setCreating(false);
     }
   };
-  // Brisanje z enim dotikom, brez potrditve (kot na spletu, j 4. 11.).
+  // Brisanje z enim dotikom koša, brez potrditve (kot na spletu, j 4. 11.).
   const remove = async (c: Conv) => {
+    tap();
     setData((list) => (list || []).filter((x) => x.id !== c.id));
-    await api(`/api/conversations/${c.id}`, { method: "DELETE" }).catch(() => reload());
+    AccessibilityInfo.announceForAccessibility(t("chat.deleted"));
+    try {
+      await api(`/api/conversations/${c.id}`, { method: "DELETE" });
+    } catch (err) {
+      // Ni izbrisan (npr. brez povezave): pogovor se vrne na svoje mesto, seznam ne izgine.
+      setData((list) => (list?.some((x) => x.id === c.id) ? list : [...(list || []), c].sort((a, b) => (a.updated_at < b.updated_at ? 1 : -1))));
+      Alert.alert((err as Error).message);
+    }
   };
 
   if (loading) return <Loading />;
@@ -53,9 +62,7 @@ export default function Tutor() {
             <Pressable
               key={c.id}
               onPress={() => router.push({ pathname: "/chat/[id]", params: { id: String(c.id) } })}
-              onLongPress={() => remove(c)}
               accessibilityRole="button"
-              accessibilityHint={t("chat.delete")}
               accessibilityActions={[{ name: "delete", label: t("chat.delete") }]}
               onAccessibilityAction={(e) => e.nativeEvent.actionName === "delete" && remove(c)}
               style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 12, borderTopWidth: i ? 1 : 0, borderColor: th.border, opacity: pressed ? 0.6 : 1 })}
@@ -65,7 +72,15 @@ export default function Tutor() {
                 <Text style={{ color: th.text, fontSize: 16, fontWeight: "600" }} numberOfLines={1}>{c.title || t("chat.new")}</Text>
                 <Text style={{ color: th.muted, fontSize: 13 }}>{new Date(c.updated_at.replace(" ", "T") + "Z").toLocaleDateString()}</Text>
               </View>
-              <Icon name={{ ios: "chevron.right", android: "chevron_right" }} size={13} color={th.muted} />
+              <Pressable
+                onPress={() => remove(c)}
+                accessibilityRole="button"
+                accessibilityLabel={t("chat.delete")}
+                hitSlop={10}
+                style={{ minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}
+              >
+                <Icon name={{ ios: "trash", android: "delete" }} size={20} color={th.muted} />
+              </Pressable>
             </Pressable>
           ))}
         </Card>

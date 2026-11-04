@@ -2899,5 +2899,6 @@
   "ai.pool": "مشترک برای همهٔ پروفایل‌های خانواده.",
   "gift.level": "سطح",
   "meter.levelsTitle": "قیمت‌ها بر اساس سطح",
-  "chat.choices": "پاسخ‌های سریع"
+  "chat.choices": "پاسخ‌های سریع",
+  "chat.deleted": "گفتگو حذف شد."
 }

@@ -2877,5 +2877,6 @@
   "ai.pool": "ใช้ร่วมกันทุกโปรไฟล์ในครอบครัว",
   "gift.level": "ระดับ",
   "meter.levelsTitle": "ราคาตามระดับ",
-  "chat.choices": "ตอบกลับด่วน"
+  "chat.choices": "ตอบกลับด่วน",
+  "chat.deleted": "ลบบทสนทนาแล้ว"
 }

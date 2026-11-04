@@ -3005,5 +3005,6 @@
   "ai.pool": "مشترك بين كل ملفات العائلة.",
   "gift.level": "المستوى",
   "meter.levelsTitle": "الأسعار حسب المستوى",
-  "chat.choices": "ردود سريعة"
+  "chat.choices": "ردود سريعة",
+  "chat.deleted": "تم حذف المحادثة."
 }

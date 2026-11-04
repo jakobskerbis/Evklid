@@ -2928,5 +2928,6 @@
   "ai.pool": "Comun pentru toate profilurile familiei.",
   "gift.level": "Nivel",
   "meter.levelsTitle": "Prețuri pe niveluri",
-  "chat.choices": "Răspunsuri rapide"
+  "chat.choices": "Răspunsuri rapide",
+  "chat.deleted": "Conversația a fost ștearsă."
 }

@@ -2901,5 +2901,6 @@
   "ai.pool": "E përbashkët për të gjitha profilet e familjes.",
   "gift.level": "Niveli",
   "meter.levelsTitle": "Çmimet sipas nivelit",
-  "chat.choices": "Përgjigje të shpejta"
+  "chat.choices": "Përgjigje të shpejta",
+  "chat.deleted": "Biseda u fshi."
 }

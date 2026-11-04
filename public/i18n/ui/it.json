@@ -2901,5 +2901,6 @@
   "ai.pool": "Condiviso da tutti i profili della famiglia.",
   "gift.level": "Livello",
   "meter.levelsTitle": "Prezzi per livello",
-  "chat.choices": "Risposte rapide"
+  "chat.choices": "Risposte rapide",
+  "chat.deleted": "Conversazione eliminata."
 }
