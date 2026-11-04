@@ -42,8 +42,8 @@ test("web and app both wait through a restart and show the updating notice", () 
 test("app WebView: a deploy (5xx or dropped connection) retries quietly instead of »Ni povezave« at once", () => {
   const web = fs.readFileSync("mobile/src/app/web.tsx", "utf8");
   assert.match(fs.readFileSync("mobile/src/lib/api.ts", "utf8"), /export const BUSY_WAIT = \[/);
-  assert.match(web, /onError=\{\(\) => failOrWait\(2\)\}/);
-  assert.match(web, /failOrWait\(\[502, 503, 504\]\.includes\(e\.nativeEvent\.statusCode\) \? BUSY_WAIT\.length : 0\)/);
+  assert.match(web, /onError=\{\(\) => failOrWait\(busy\.current \? BUSY_WAIT\.length : 2\)\}/);
+  assert.match(web, /busy\.current = \[502, 503, 504\]\.includes\(e\.nativeEvent\.statusCode\);\s*failOrWait\(busy\.current \? BUSY_WAIT\.length : 0\)/);
   assert.doesNotMatch(web, /onError=\{\(\) => setFailed\(true\)\}/);
   assert.match(web, /updating \? \(\s*<Text accessibilityLiveRegion="polite"[^>]*>\{t\("off\.updating"\)\}/); // kot splet: obvestilo med čakanjem
 });

@@ -94,8 +94,10 @@ export default function Web() {
   // Med objavo nove različice je strežnik ~1 minuto ustavljen (gostitelj vrne 502/503/504 ali prekine
   // povezavo). Takrat aplikacija ne pokaže »Ni povezave«, ampak ob vrtavki tiho poskusi znova (kot splet,
   // public/restart-retry.js); zaslon »Ni povezave« šele, ko strežnika ni ~70 s (5xx) ali po 2 poskusih (napaka
-  // povezave: telefon je morda res brez interneta). Uspešno nalaganje števec ponastavi.
+  // povezave: telefon je morda res brez interneta). Uspešno nalaganje števec ponastavi. Ko je strežnik že
+  // odgovoril s 5xx, internet deluje: tudi prekinjena povezava potem čaka do ~70 s.
   const tries = useRef(0);
+  const busy = useRef(false);
   // Čakanje na 5xx (strežnik se posodablja): pod vrtavko »Evklid se posodablja …« kot splet in naravni zasloni
   // (src/app/_layout.tsx). Pri napaki povezave ne, ker je telefon morda res brez interneta (splet enako).
   const [updating, setUpdating] = useState(false);
@@ -115,6 +117,7 @@ export default function Web() {
 
   const retry = useCallback(() => {
     tries.current = 0;
+    busy.current = false;
     setUpdating(false);
     setFailed(false);
     setLoading(true);
@@ -176,10 +179,11 @@ export default function Web() {
               if (e.nativeEvent.url.startsWith(ORIGIN) && !e.nativeEvent.url.includes("/api/mobile/web")) {
                 setWebPending(false);
                 tries.current = 0;
+                busy.current = false;
                 setUpdating(false);
               }
             }}
-            onError={() => failOrWait(2)}
+            onError={() => failOrWait(busy.current ? BUSY_WAIT.length : 2)}
             onHttpError={(e: { nativeEvent: { url: string; statusCode: number } }) => {
               // Seja aplikacije ne velja več (npr. odjava na drugi napravi ali novo geslo): nazaj na prijavo.
               if (e.nativeEvent.url.includes("/api/mobile/web") && e.nativeEvent.statusCode === 401) signOut().catch(() => {});
@@ -188,7 +192,10 @@ export default function Web() {
               else if (e.nativeEvent.url.includes("/api/mobile/web") && e.nativeEvent.statusCode === 404) {
                 setWebPending(true);
                 router.replace(student ? "/(tabs)" : "/profiles");
-              } else if (e.nativeEvent.url.includes("/api/mobile/web")) failOrWait([502, 503, 504].includes(e.nativeEvent.statusCode) ? BUSY_WAIT.length : 0);
+              } else if (e.nativeEvent.url.includes("/api/mobile/web")) {
+                busy.current = [502, 503, 504].includes(e.nativeEvent.statusCode);
+                failOrWait(busy.current ? BUSY_WAIT.length : 0);
+              }
             }}
             javaScriptEnabled
             domStorageEnabled
