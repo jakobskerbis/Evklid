@@ -2870,5 +2870,6 @@
   "chat.fullMsg": "Muéstrame todo el procedimiento de este ejercicio.",
   "adm.rep.shown": "Así vio el alumno la respuesta:",
   "adm.rep.rerendered": "La respuesta, mostrada de nuevo (aviso antiguo sin captura):",
-  "adm.rep.raw": "Texto sin procesar del tutor:"
+  "adm.rep.raw": "Texto sin procesar del tutor:",
+  "chat.choices": "Respuestas rápidas"
 }

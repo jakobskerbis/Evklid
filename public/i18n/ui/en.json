@@ -2870,5 +2870,6 @@
   "chat.fullMsg": "Show me the whole solution to this task.",
   "adm.rep.shown": "This is how the student saw the answer:",
   "adm.rep.rerendered": "The answer, drawn again (older report without a snapshot):",
-  "adm.rep.raw": "Tutor's raw text:"
+  "adm.rep.raw": "Tutor's raw text:",
+  "chat.choices": "Quick replies"
 }

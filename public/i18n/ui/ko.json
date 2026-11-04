@@ -2846,5 +2846,6 @@
   "chat.fullMsg": "이 문제의 전체 풀이를 보여 줘.",
   "adm.rep.shown": "학생에게 보인 답변:",
   "adm.rep.rerendered": "다시 표시한 답변(스냅샷이 없는 이전 신고):",
-  "adm.rep.raw": "튜터의 원본 텍스트:"
+  "adm.rep.raw": "튜터의 원본 텍스트:",
+  "chat.choices": "빠른 답장"
 }

@@ -471,6 +471,7 @@ export default {
   "chat.deeperMsg": "Tega ne razumem dobro. Razloži podrobneje, korak za korakom.",
   "chat.full": "Pokaži celoten postopek",
   "chat.fullMsg": "Pokaži mi celoten postopek te naloge.",
+  "chat.choices": "Hitri odgovori",
   "chat.aiNote": "Evklid se lahko zmoti. Pomembne rezultate preveri.",
   "chat.off": "Klepet z inštruktorjem je začasno izklopljen. Drugi deli aplikacije delujejo.",
   // prijava napake pod odgovorom inštruktorja (server/reports.js, docs/krizni-nacrt.md)

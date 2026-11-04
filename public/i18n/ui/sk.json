@@ -2922,5 +2922,6 @@
   "chat.fullMsg": "Ukáž mi celý postup tejto úlohy.",
   "adm.rep.shown": "Takto žiak videl odpoveď:",
   "adm.rep.rerendered": "Odpoveď znova vykreslená (staršie hlásenie bez snímky):",
-  "adm.rep.raw": "Pôvodný text lektora:"
+  "adm.rep.raw": "Pôvodný text lektora:",
+  "chat.choices": "Rýchle odpovede"
 }

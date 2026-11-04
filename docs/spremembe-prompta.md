@@ -2,6 +2,16 @@
 
 Trenutni prompt je v `prompts/system_prompt.md`.
 
+## 2026-11-04: gumbi z izbirami (čaka na j-jev pregled)
+
+Nov razdelek »Gumbi z izbirami (strojni blok)« v stalnem delu (nad `EVKLID:NASTAVITVE`, predpomnilnik ostane skupen) in dve dopolnjeni vrstici (»Vedno«, »Analitika«: gumbi so pred META vrstico).
+
+- Kadar se na vprašanje na koncu sporočila odgovori z eno od nekaj kratkih možnosti, inštruktor tik pred META vrstico doda `<<IZBIRE ["…", "…"]>>`: seznam JSON z 2–4 odgovori, vsak do 60 znakov, kot bi jih napisal učenec. Pod odgovorom so gumbi; tap pošlje odgovor kot učenčevo sporočilo, učenec lahko napiše svojega.
+- Za: izbiro poti ali naslednjega koraka, da/ne, napoved (večje, manjše, enako), izbiro pristopa, potrditev spremembe nastavitev, ponudbo podobne naloge. Po da/ne ali napovedi vedno »zakaj«; zadnja možnost je po potrebi »Ne vem«.
+- Brez gumbov, kadar mora učenec sam izračunati, zapisati izraz ali razložiti (gumbi bi izdali odgovor ali spodbujali ugibanje), v odgovoru ščita in kadar `flag` ni `none`.
+- Strežnik (`server/meta.js`, `parseChoices`) blok odstrani iz besedila, sprejme le veljaven JSON z 2–4 različnimi kratkimi odgovori in gumbe pošlje le pri zadnjem odgovoru, ne pri opozorilih ali zavrnitvi. Splet (`public/app.js`, `addChoices`) in aplikacija (`mobile/src/app/chat/[id].tsx`) jih pokažeta enako; napisano besedilo ostane.
+- Stalni del zraste za približno 1 100 znakov (~300 žetonov, predpomnjeno).
+
 ## 2026-11-04: skriti opombi »povzetek pogovora« in »lekcija iz učbenika«
 
 Datoteka `prompts/system_prompt.md` je nespremenjena; inštruktor dobi dve novi skriti opombi v sporočilih, kot že opombo pole (`<kontekst_pole>`) in preverjen račun (`<preverjen_racun>`). Seznam skritih opomb je v `server/skrite-opombe.js`.

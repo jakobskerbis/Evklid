@@ -2846,5 +2846,6 @@
   "chat.fullMsg": "请给我看这道题的完整解题过程。",
   "adm.rep.shown": "学生看到的回答是这样的：",
   "adm.rep.rerendered": "重新显示的回答（较早的报告，没有快照）：",
-  "adm.rep.raw": "辅导老师的原始文本："
+  "adm.rep.raw": "辅导老师的原始文本：",
+  "chat.choices": "快速回复"
 }

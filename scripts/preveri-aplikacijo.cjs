@@ -561,6 +561,18 @@ async function chat(p, label) {
   await screen(p, `klepet-${label}`);
   const n = await p.locator("#conversation-list li").count();
   if (!n) throw new Error("pogovor ni na seznamu");
+  // Gumbi z izbirami (<<IZBIRE [...]>>): pod zadnjim odgovorom, tap pošlje odgovor, gumbi izginejo.
+  await p.fill("#input", "kaj je rešitev enačbe");
+  await click(p, "#send", { wait: 300 });
+  await expectVisible(p, "#messages .msg.assistant:last-child .choice-row .choice-btn", "gumbi z izbirami pod odgovorom", 8000);
+  if (await p.locator("#messages .msg.assistant").last().evaluate((m) => m.textContent.includes("IZBIRE"))) throw new Error("blok IZBIRE je viden učencu");
+  await screen(p, `klepet-izbire-${label}`);
+  const before = await p.locator("#messages .msg.user").count();
+  await click(p, "#messages .choice-row .choice-btn >> nth=0", { wait: 300 });
+  await p.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 8000 }).catch(() => {});
+  if ((await p.locator("#messages .msg.user").count()) !== before + 1) throw new Error("tap na izbiro ne pošlje odgovora");
+  if ((await p.locator("#messages .msg.user").last().textContent()).trim() !== "Da, je rešitev") throw new Error("poslano ni besedilo izbire");
+  await settle(p, 300);
 }
 
 async function calculator(p, label) {

@@ -2868,5 +2868,6 @@
   "chat.fullMsg": "Mutasd meg a feladat teljes megoldását.",
   "adm.rep.shown": "Így látta a tanuló a választ:",
   "adm.rep.rerendered": "A válasz újra megjelenítve (régebbi bejelentés pillanatkép nélkül):",
-  "adm.rep.raw": "A tanár nyers szövege:"
+  "adm.rep.raw": "A tanár nyers szövege:",
+  "chat.choices": "Gyors válaszok"
 }

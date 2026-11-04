@@ -2870,5 +2870,6 @@
   "chat.fullMsg": "Mostrami tutto il procedimento di questo esercizio.",
   "adm.rep.shown": "Così lo studente ha visto la risposta:",
   "adm.rep.rerendered": "La risposta, mostrata di nuovo (segnalazione precedente senza istantanea):",
-  "adm.rep.raw": "Testo grezzo del tutor:"
+  "adm.rep.raw": "Testo grezzo del tutor:",
+  "chat.choices": "Risposte rapide"
 }

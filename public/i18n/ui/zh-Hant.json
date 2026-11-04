@@ -2846,5 +2846,6 @@
   "chat.fullMsg": "請給我看這道題的完整解題過程。",
   "adm.rep.shown": "學生看到的回答是這樣的：",
   "adm.rep.rerendered": "重新顯示的回答（較早的回報，沒有快照）：",
-  "adm.rep.raw": "家教的原始文字："
+  "adm.rep.raw": "家教的原始文字：",
+  "chat.choices": "快速回覆"
 }

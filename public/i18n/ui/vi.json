@@ -2846,5 +2846,6 @@
   "chat.fullMsg": "Cho mình xem toàn bộ lời giải của bài này.",
   "adm.rep.shown": "Học sinh đã thấy câu trả lời như thế này:",
   "adm.rep.rerendered": "Câu trả lời được hiển thị lại (báo cáo cũ không có ảnh chụp):",
-  "adm.rep.raw": "Văn bản gốc của gia sư:"
+  "adm.rep.raw": "Văn bản gốc của gia sư:",
+  "chat.choices": "Trả lời nhanh"
 }

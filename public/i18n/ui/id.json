@@ -2846,5 +2846,6 @@
   "chat.fullMsg": "Tunjukkan seluruh penyelesaian soal ini.",
   "adm.rep.shown": "Beginilah siswa melihat jawabannya:",
   "adm.rep.rerendered": "Jawaban ditampilkan ulang (laporan lama tanpa cuplikan):",
-  "adm.rep.raw": "Teks asli tutor:"
+  "adm.rep.raw": "Teks asli tutor:",
+  "chat.choices": "Balasan cepat"
 }

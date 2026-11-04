@@ -2870,5 +2870,6 @@
   "chat.fullMsg": "Zeig mir den ganzen Lösungsweg dieser Aufgabe.",
   "adm.rep.shown": "So hat der Schüler die Antwort gesehen:",
   "adm.rep.rerendered": "Die Antwort, neu dargestellt (ältere Meldung ohne Momentaufnahme):",
-  "adm.rep.raw": "Rohtext des Tutors:"
+  "adm.rep.raw": "Rohtext des Tutors:",
+  "chat.choices": "Schnelle Antworten"
 }

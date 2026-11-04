@@ -2895,5 +2895,6 @@
   "chat.fullMsg": "Pokaži mi cijeli postupak ovog zadatka.",
   "adm.rep.shown": "Ovako je učenik vidio odgovor:",
   "adm.rep.rerendered": "Odgovor, ponovno prikazan (starija prijava bez snimke):",
-  "adm.rep.raw": "Izvorni tekst instruktora:"
+  "adm.rep.raw": "Izvorni tekst instruktora:",
+  "chat.choices": "Brzi odgovori"
 }

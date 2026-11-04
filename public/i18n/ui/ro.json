@@ -2897,5 +2897,6 @@
   "chat.fullMsg": "Arată-mi toată rezolvarea acestei probleme.",
   "adm.rep.shown": "Așa a văzut elevul răspunsul:",
   "adm.rep.rerendered": "Răspunsul, afișat din nou (raport mai vechi fără instantaneu):",
-  "adm.rep.raw": "Textul brut al tutorelui:"
+  "adm.rep.raw": "Textul brut al tutorelui:",
+  "chat.choices": "Răspunsuri rapide"
 }

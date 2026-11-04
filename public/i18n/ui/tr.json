@@ -2868,5 +2868,6 @@
   "chat.fullMsg": "Bu sorunun çözümünün tamamını göster.",
   "adm.rep.shown": "Öğrenci cevabı böyle gördü:",
   "adm.rep.rerendered": "Cevap yeniden gösterildi (anlık görüntüsü olmayan eski bildirim):",
-  "adm.rep.raw": "Öğretmenin ham metni:"
+  "adm.rep.raw": "Öğretmenin ham metni:",
+  "chat.choices": "Hızlı yanıtlar"
 }

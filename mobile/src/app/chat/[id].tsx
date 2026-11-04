@@ -51,6 +51,8 @@ export default function Chat() {
   const [deepOk, setDeepOk] = useState(false);
   // »Pokaži celoten postopek« po treh korakih vodenja (strežnik: full_offer), kot na spletu.
   const [fullOk, setFullOk] = useState(false);
+  // Gumbi z izbirami pod zadnjim odgovorom (strežnik: choices iz <<IZBIRE [...]>>), kot na spletu.
+  const [choices, setChoices] = useState<string[]>([]);
   const [notes, setNotes] = useState<{ key: string; text: string; tone?: "gold" | "ok" }[]>([]);
   const [proposal, setProposal] = useState<Proposal | null>(null);
   const list = useRef<FlatList<Msg>>(null);
@@ -68,6 +70,7 @@ export default function Chat() {
       setBusy(true);
       setDeepOk(false);
       setFullOk(false);
+      setChoices([]);
       setProposal(null);
       const reply: Msg = { id: `r${Date.now()}`, role: "assistant", text: "", streaming: true };
       const userId = `u${Date.now()}`;
@@ -89,6 +92,7 @@ export default function Chat() {
               if (e.data.state?.subject) setConvFx((c) => (c.subject === e.data.state.subject ? c : { ...c, subject: e.data.state.subject }));
               setDeepOk(!e.data.deep);
               setFullOk(!!e.data.full_offer);
+              setChoices(Array.isArray(e.data.choices) ? e.data.choices.slice(0, 4) : []);
               if (e.data.settings) refresh().catch(() => {});
             } else if (e.event === "error") {
               patch((m) => ({ ...m, text: e.data.error, error: true, streaming: false }));
@@ -131,7 +135,9 @@ export default function Chat() {
         setTitle(c.title || "");
         setConvFx({ topic: c.topic?.id || null, subject: c.state?.subject || null });
         setMessages(c.messages);
-        setFullOk(!!(c.messages[c.messages.length - 1] as Msg & { full_offer?: boolean })?.full_offer);
+        const lastMsg = c.messages[c.messages.length - 1] as (Msg & { full_offer?: boolean; choices?: string[] }) | undefined;
+        setFullOk(!!lastMsg?.full_offer);
+        setChoices(Array.isArray(lastMsg?.choices) ? lastMsg.choices.slice(0, 4) : []);
         setLoading(false);
         // Prvo sporočilo (iz lekcije, naloge ali skeniranja) se pošlje samo v prazen pogovor.
         if (started.current || c.messages.length) return;
@@ -261,6 +267,20 @@ export default function Chat() {
                     </View>
                   )}
                 </Card>
+              ) : null}
+              {choices.length >= 2 && !busy && last?.role === "assistant" && !last.error ? (
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+                  {choices.map((c) => (
+                    <Button
+                      key={c}
+                      title={c}
+                      kind="secondary"
+                      // Napisano besedilo in fotografija ostaneta: izbira gre pred besedilo, učenec pošlje sam (kot na spletu).
+                      onPress={() => (text.trim() || photo ? setText(text.trim() ? `${c} ${text.trim()}` : c) : send({ text: c }))}
+                      style={{ alignSelf: "flex-start", maxWidth: "100%" }}
+                    />
+                  ))}
+                </View>
               ) : null}
               {deepOk && !busy && last?.role === "assistant" && !last.error ? (
                 <Button

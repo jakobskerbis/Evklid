@@ -2870,5 +2870,6 @@
   "chat.fullMsg": "Më trego gjithë zgjidhjen e kësaj detyre.",
   "adm.rep.shown": "Kështu e pa nxënësi përgjigjen:",
   "adm.rep.rerendered": "Përgjigja, e shfaqur sërish (raportim më i vjetër pa pamje):",
-  "adm.rep.raw": "Teksti origjinal i tutorit:"
+  "adm.rep.raw": "Teksti origjinal i tutorit:",
+  "chat.choices": "Përgjigje të shpejta"
 }
