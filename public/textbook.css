@@ -267,6 +267,8 @@
 .demo-seg-wrap { width: 100%; display: flex; justify-content: center; margin-bottom: 6px; }
 .demo-seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 4px; border-radius: 22px; background: var(--surface-2); }
 .ovl { text-decoration: overline; text-decoration-thickness: 0.07em; }
+/* V HTML je overline na višini velikih črk, nad malo črko previsoko: črta tik nad x-višino (sredina vrstice − 0,36em). */
+span.ovl { text-decoration: none; background: linear-gradient(currentColor, currentColor) 50% calc(50% - 0.36em) / 0.62em 0.075em no-repeat; }
 .demo .demo-seg .seg-btn { min-height: 36px; padding: 5px 14px; border: 0; border-radius: 999px; background: none; font-weight: 800; color: var(--muted); }
 .demo .demo-seg .seg-btn.on { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
 .demo-controls > .demo-seg, .demo-controls > .demo-buttons { align-self: flex-start; }
@@ -306,7 +308,8 @@
 .demo-svg .handle .pt { stroke: var(--surface); stroke-width: 2.5; filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.3)); }
 .demo-svg .drag { touch-action: none; }
 .demo-svg .pt.open { fill: var(--surface); stroke-width: 2.5; }
-.demo-svg .guide.solid { stroke-dasharray: none; stroke: var(--muted); }
+.demo-svg .guide.solid { stroke-dasharray: none; }
+.demo-svg .guide.solid:not(.stroke-a, .stroke-b, .stroke-c) { stroke: var(--muted); }
 .demo-svg .guide.thin, .demo-svg .axis.thin { stroke-width: 0.8; }
 .demo-svg .shape { stroke: var(--text); stroke-width: 1.6; fill-opacity: 0.35; stroke-linejoin: round; }
 .demo-svg .shape.dashed { fill: none; stroke-dasharray: 5 4; stroke: var(--muted); }

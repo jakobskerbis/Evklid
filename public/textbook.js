@@ -194,7 +194,9 @@ function placeDemos(root = document) {
   root.querySelectorAll(".tb-lesson-grid").forEach((grid) => {
     const side = grid.querySelector(".tb-side");
     const slots = [...grid.querySelectorAll(".tb-demo-slot")];
-    const demos = [...grid.querySelectorAll(".tb-demo, .tb-locked")];
+    // Po zaporedni številki simulacije, ne po mestu v strani: premik na korak spremeni vrstni red v DOM.
+    const nr = (d) => Number(d.querySelector(".tb-demo-mount")?.dataset.sim || 0);
+    const demos = [...grid.querySelectorAll(".tb-demo, .tb-locked")].sort((a, b) => nr(a) - nr(b));
     if (!demos.length) return;
     if (WIDE.matches || !slots.length) return side.append(...demos);
     const shown = slots.filter((s) => !s.closest(".tb-step[hidden]"));
@@ -495,7 +497,7 @@ async function renderLesson(topicId) {
   const steps = stepMode ? lessonSteps(sections, nChecks) : [];
   // Simulacija je na istem koraku kot besedilo, ki jo omenja (j, 2. 11. 2026).
   const onStep = steps.map(() => []);
-  demoSteps(steps, demos.length ? demos : locked ? [{ title: L.locked.demo }] : [], demoAfter).forEach((ks, i) => ks.forEach((k) => onStep[k].push(i)));
+  if (steps.length) demoSteps(steps, demos.length ? demos : locked ? [{ title: L.locked.demo }] : [], demoAfter).forEach((ks, i) => ks.forEach((k) => onStep[k]?.push(i)));
   const stepSlot = (k) => (onStep[k].length ? `<div class="tb-demo-slot" data-demos="${onStep[k].join(",")}"></div>` : "");
   const stepsHtml = steps
     .map((st, k) => {

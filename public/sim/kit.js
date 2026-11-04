@@ -158,7 +158,8 @@ export function segmented({ options, value, onChange }) {
   const wrap = h("div", { class: "demo-seg", role: "radiogroup" });
   const btns = options.map((o) => {
     const [v, t] = Array.isArray(o) ? o : [o, o];
-    const b = h("button", { type: "button", role: "radio", class: "seg-btn", onclick: () => wrap.set(v) }, t);
+    // z̄ se izriše s črto nad črko (ovl), bralnik zaslona pa naj prebere celo oznako.
+    const b = h("button", { type: "button", role: "radio", class: "seg-btn", "aria-label": typeof t === "string" && t.includes("\u0304") ? t : null, onclick: () => wrap.set(v) }, t);
     b.dataset.v = v;
     return b;
   });

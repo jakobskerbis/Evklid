@@ -59,7 +59,7 @@ export function meritve(el) {
       const rel = (dx / mean) * 100;
       out.innerHTML = `<p>Meritve (${vals.length}): ${vals.map((v) => fmt(v, dg())).join("; ")} cm</p>` +
         texBlock(`\\bar{x} = \\frac{x_1 + x_2 + \\dots + x_n}{n} = ${T(mean, dg() + 2)}\\ \\text{cm}`) +
-        `<p>Absolutna napaka (največje odstopanje od povprečja${dev > 1e-9 ? "" : "; ker so vse meritve enake, vzamemo najmanjši razdelek merila"}): ${tex(`\\Delta x = ${T(dx, dg() + 1)}\\ \\text{cm}`)}. Relativna napaka: ${tex(`\\delta = \\Delta x / \\bar{x} = ${T(rel, 1)}\\ \\%`)}.</p>
+        `<p>Absolutna napaka (največje odstopanje od povprečja${dev > 1e-9 ? "" : "; ker so vse meritve enake, vzamemo najmanjši razdelek merila"}): <span style="white-space: nowrap">${tex(`\\Delta x = ${T(dx, dg() + 1)}\\ \\text{cm}`)}.</span> Relativna napaka: <span style="white-space: nowrap">${tex(`\\delta = \\Delta x / \\bar{x} = ${T(rel, 1)}\\ \\%`)}.</span></p>
          <p><b>Rezultat: l = (${fmt(mean, dg() + 1)} ± ${fmt(dx, dg() + 1)}) cm.</b> Senčeni pas kaže območje ${tex("\\bar{x} \\pm \\Delta x")}.</p>
          <p class="muted">Vsaka meritev je malo drugačna (odčitavanje, paralaksa). Več meritev da zanesljivejše povprečje. Natančnejše merilo (mm) zmanjša napako.</p>`;
     } else out.innerHTML = `<p>Klikni <b>Izmeri</b> nekajkrat. Vsaka meritev je odčitek z ravnila z razdelki po ${res === 1 ? "1 cm" : "1 mm"}.</p>`;

@@ -115,6 +115,7 @@ export function demoSteps(steps, demos = [], fallback = -1) {
   let fb = -1;
   steps.forEach((st, k) => { if (st.type === "text" && st.section === fallback && st.last) fb = k; });
   if (fb < 0) fb = steps.findLastIndex((st) => st.type === "text");
+  if (fb < 0) return demos.map(() => []);
   const intro = (k) => /zakaj/i.test(steps[k].title || "");
   return out.map((ks) => (ks.every(intro) && !ks.includes(fb) ? [...ks, fb] : ks));
 }
