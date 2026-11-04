@@ -398,7 +398,7 @@ export function sistem(el) {
       const dec = (v) => Math.abs(v * 100 - Math.round(v * 100)) < 1e-9;
       const exact = dec(x) && dec(y);
       const xT = exact ? tfmt(x) : fr(P, Q), yT = exact ? tfmt(y) : fr(2 * k1 * P + 2 * n1 * Q, 2 * Q);
-      msg = `<p>Premici se sekata v točki <b>${exact ? `(${fmt(x, 2)}, ${fmt(y, 2)})` : tex(`\\left(${xT}, ${yT}\\right)`)}</b>: to je edina rešitev sistema, ker leži na obeh premicah.</p>
+      msg = `<p>Premici se sekata v točki <b>${exact ? `(${fmt(x, 2)}${Number.isInteger(x) && Number.isInteger(y) ? ", " : "; "}${fmt(y, 2)})` : tex(`\\left(${xT}, ${yT}\\right)`)}</b>: to je edina rešitev sistema, ker leži na obeh premicah.</p>
         ${texBlock(`${L(k1, n1)} = ${L(k2, n2)} \\Rightarrow x = ${xT}`)}`;
     }
     out.innerHTML = `<p><span class="dot dot-a"></span> ${tex(E(k1, n1))} &nbsp; <span class="dot dot-b"></span> ${tex(E(k2, n2))}</p>${msg}
