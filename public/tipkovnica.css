@@ -177,4 +177,6 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
   .tk-multi .tk-rows[data-layer="abc"] .tk-k { height: 64px; min-height: 64px; }
   .tk-multi .tk-rows[data-layer="kem"] .tk-k { height: 66px; min-height: 66px; }
   .tk-hide { min-height: 44px; }
+  /* f(x) in Σ: tri cele vrste višjih tipk (56px), ne dve in pol z drsnikom ob praznem pasu */
+  .tk-scroll { max-height: calc(3 * 56px + 2 * 8px); }
 }

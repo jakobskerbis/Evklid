@@ -448,7 +448,8 @@ function render() {
 // Na dotik je vrstica nad zavihki v poljih z drsenjem ali predlogi vedno na mestu (tudi prazna, kot pas
 // predlogov pri Gboard): besede po drsenju se pokažejo, ne da bi tipkovnica zrasla in stran poskočila.
 function reserveCtx() {
-  return touch() && S.layers.some((l) => layerId(l) === "abc") && (prefs.words || glideAllowed(S.field));
+  // ne v matematičnih poljih (kalkulator): tam se drsi redko in prostor šteje
+  return touch() && !S.cfg.math && S.layers.some((l) => layerId(l) === "abc") && (prefs.words || glideAllowed(S.field));
 }
 function renderCtx() {
   const box = board?.querySelector(".tk-ctx");
