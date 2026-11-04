@@ -43,12 +43,14 @@ const later = (iso, now) => {
   );
 };
 
-// Ali licenca še velja: rok ni potekel in šola ni porabila mesečne meje AI (0 ali prazno = brez meje).
+// Ali licenca še velja (rok ni potekel). Vsebine (lekcije, vadnica) ostanejo do konca licence tudi,
+// ko šola porabi mesečno mejo AI (j 2026-11-04); takrat se ustavi samo šolski AI (schoolAiOut).
 export function schoolValid(s, now = Date.now()) {
   if (!s) return false;
-  if (s.valid_until && !later(s.valid_until, now)) return false;
-  return !(s.ai_month_usd > 0 && (s.ai_spent_usd || 0) >= s.ai_month_usd);
+  return !(s.valid_until && !later(s.valid_until, now));
 }
+// Ali je šola ta mesec porabila mejo AI (0 ali prazno = brez meje).
+export const schoolAiSpent = (s) => s.ai_month_usd > 0 && (s.ai_spent_usd || 0) >= s.ai_month_usd;
 
 // Seznam iz licence: tabela, besedilo JSON ali »MAT, FIZ«; napačna oblika ne sme podreti zahteve.
 const list = (v) => {
@@ -101,6 +103,8 @@ export function rights({
 } = {}) {
   const valid = schools.filter((s) => schoolValid(s, now));
   const school = valid.length > 0;
+  // Vse veljavne licence so porabile mesečno mejo AI: inštruktor za ta vir deluje kot v brezplačnem paketu.
+  const schoolAiOut = school && valid.every(schoolAiSpent);
   const own = !!personal;
   const lvl = STOPNJE.includes(ownLevel) ? ownLevel : "OS";
   // Najvišja odprta stopnja osebnega paketa: svoja (paket) in vse nižje; prehod profila navzgor do podaljšanja.
@@ -113,7 +117,7 @@ export function rights({
   // Vprašanja na dan: vsota virov; 0 pri katerem koli viru pomeni brez omejitve (null).
   const parts = [
     own && (personal.tier === "legacy" ? 0 : personalDailyQuestions(useLevel)), // stari profili brez starša: brez meje kot doslej
-    school && schoolDailyQuestions(),
+    school && (schoolAiOut ? freeDaily : schoolDailyQuestions()),
   ].filter((x) => x !== false);
   const dailyQuestions = !parts.length
     ? freeDaily
@@ -136,10 +140,11 @@ export function rights({
     levelLocked,
     useLevel,
     school,
+    schoolAiOut,
     schools: valid,
     dailyQuestions,
     // Najmočnejši model za »Razloži podrobneje«: Osebno do Opusa (ob 3. prošnji), šola do Sonneta.
-    maxModel: own ? "opus" : school ? "sonnet" : null,
+    maxModel: own ? "opus" : school && !schoolAiOut ? "sonnet" : null,
     allSubjects: own,
     scan: own,
     testPlan: own,

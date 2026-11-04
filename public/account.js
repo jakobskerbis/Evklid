@@ -790,7 +790,7 @@ function plansPicker(acc) {
     const perMonth = interval === "year" ? `<span class="muted">≈ ${money(Math.round(p.amount / 10), cur)} / mesec (10 mesecev)</span>` : "";
     // Letni paket je prvi in privzet (j 2026-11-04): prihranek glede na 12 mesečnih plačil.
     const m = interval === "year" ? find(seats, "month") : null;
-    const pct = m && m.amount > 0 ? Math.floor((1 - p.amount / (12 * m.amount)) * 100) : 0;
+    const pct = m && m.amount > 0 && p.amount > 0 && (m.currency || "EUR") === cur ? Math.floor((1 - p.amount / (12 * m.amount)) * 100) : 0;
     const save = pct > 0 ? ` <span class="pill ok">${esc(t("pay.save", { pct }))}</span>` : "";
     return `<label class="plan"><input type="radio" name="plan" value="${seats}-${interval}">
       <span><b>${money(p.amount, cur)}</b> / ${interval === "year" ? (p.level === "FAKS" && !p.family ? "študijsko leto" : "šolsko leto") : "mesec"}${save}<br>${perMonth}</span></label>`;
@@ -830,7 +830,7 @@ function schoolRow(acc) {
   if (!acc.school_plans?.length) return "";
   const month = acc.school_plans.find((p) => p.interval === "month");
   const save = (p) => {
-    const pct = p.interval === "year" && month?.amount > 0 ? Math.floor((1 - p.amount / (12 * month.amount)) * 100) : 0;
+    const pct = p.interval === "year" && p.amount > 0 && month?.amount > 0 ? Math.floor((1 - p.amount / (12 * month.amount)) * 100) : 0;
     return pct > 0 ? ` <span class="pill ok">${esc(t("pay.save", { pct }))}</span>` : "";
   };
   const cell = (p) => `<label class="plan"><input type="radio" name="plan" value="s-${p.interval}">
@@ -1311,7 +1311,7 @@ export async function renderAccount() {
       <button id="delete-account" class="danger" type="button">Izbriši račun in vse podatke</button>
     </div>`;
 
-  // Izbira števila otrok pokaže samo cene za to izbiro (mesečno je izbrano) in nato soglasja ter gumb.
+  // Izbira števila otrok pokaže samo cene za to izbiro (letno je prvo in izbrano, j 2026-11-04) in nato soglasja ter gumb.
   $("#plan-form")?.addEventListener("change", (e) => {
     if (e.target.name !== "who") return;
     const f = e.currentTarget;

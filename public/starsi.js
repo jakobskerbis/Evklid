@@ -33,9 +33,14 @@
       };
       if (d.plans.some(function (pl) { return pl.level; })) {
         document.getElementById("plan-month").innerHTML = "Naročnina na mesec: <b>" + lv("OS", false, "month") + "</b> v osnovni šoli, <b>" + lv("SS", false, "month") + "</b> v srednji šoli, <b>" + lv("FAKS", false, "month") + "</b> na fakulteti. Družina (2–4 profili): <b>" + lv("SS", true, "month") + "</b>, s študentom <b>" + lv("FAKS", true, "month") + "</b>.";
-        // Letni paket prvi (j 2026-11-04), s prihrankom glede na 12 mesečnih plačil OŠ.
-        var amt = function (level, interval) { var x = d.plans.find(function (pl) { return pl.level === level && !pl.family && pl.interval === interval; }); return x ? x.amount : 0; };
-        var pct = amt("OS", "month") ? Math.floor((1 - amt("OS", "year") / (12 * amt("OS", "month"))) * 100) : 0;
+        // Letni paket prvi (j 2026-11-04), s prihrankom glede na 12 mesečnih plačil: najmanjši med naštetimi paketi (nikoli preveč).
+        var amt = function (level, family, interval) { var x = d.plans.find(function (pl) { return pl.level === level && !!pl.family === family && pl.interval === interval; }); return x ? x.amount : 0; };
+        var pct = Infinity;
+        [["OS", false], ["SS", false], ["FAKS", false], ["SS", true], ["FAKS", true]].forEach(function (k) {
+          var m = amt(k[0], k[1], "month"), y = amt(k[0], k[1], "year");
+          if (m > 0 && y > 0) pct = Math.min(pct, Math.floor((1 - y / (12 * m)) * 100));
+        });
+        if (!isFinite(pct)) pct = 0;
         document.getElementById("plan-year").innerHTML = "Za celo leto" + (pct > 0 ? " (prihranite " + pct + " %)" : "") + ": <b>" + lv("OS", false, "year") + "</b> (osnovna šola), <b>" + lv("SS", false, "year") + "</b> (srednja šola), <b>" + lv("FAKS", false, "year") + "</b> (fakulteta). Družina <b>" + lv("SS", true, "year") + "</b>, s študentom <b>" + lv("FAKS", true, "year") + "</b>.";
         return;
       }

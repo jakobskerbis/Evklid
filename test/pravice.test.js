@@ -57,9 +57,13 @@ test("rights: viri se seštejejo, šola do Sonneta, Osebno do Opusa", () => {
     [["osebno", "sola"], 75, "opus"],
   );
   assert.equal(both.until, school.valid_until); // kasnejši konec
-  // Potekla licenca in porabljena meja AI šole ne dajeta pravic.
+  // Potekla licenca ne daje pravic. Porabljena meja AI (j 2026-11-04) ustavi samo šolski AI:
+  // vsebine ostanejo, inštruktor deluje kot v brezplačnem paketu (vprašanja na dan, brez Sonneta).
   assert.equal(schoolValid({ ...school, valid_until: iso(-1) }), false);
-  assert.equal(schoolValid({ ...school, ai_spent_usd: 5 }), false);
+  assert.equal(schoolValid({ ...school, ai_spent_usd: 5 }), true);
+  const out = rights({ schools: [{ ...school, ai_spent_usd: 5 }], freeDaily: 10 });
+  assert.deepEqual([out.school, out.schoolAiOut, out.dailyQuestions, out.maxModel], [true, true, 10, null]);
+  assert.equal(rights({ schools: [school] }).schoolAiOut, false);
   assert.equal(
     schoolValid({ ...school, ai_month_usd: 0, ai_spent_usd: 99 }),
     true,
@@ -301,15 +305,16 @@ test("šolska licenca v aplikaciji: interaktivne lekcije za šolske predmete, 15
       .prepare("UPDATE parents SET sub_status = NULL WHERE id = ?")
       .run(parentId);
 
-    // Porabljena mesečna meja AI šole: licenca ne velja več, učenec je spet v brezplačnem paketu.
+    // Porabljena mesečna meja AI šole (j 2026-11-04): vsebine ostanejo do konca licence, ustavi se samo
+    // šolski AI (inštruktor kot v brezplačnem paketu).
     store.db
       .prepare(
         "INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku', 'chat', 6)",
       )
       .run(kid.id);
     createSchoolSource(store.db).clearCache();
-    assert.equal((await lesson(MAT)).body.interactive, false);
-    assert.equal((await call("/api/account")).body.children[0].premium, false);
+    assert.equal((await lesson(MAT)).body.interactive, true);
+    assert.equal((await call("/api/account")).body.children[0].premium, true);
   });
 });
 

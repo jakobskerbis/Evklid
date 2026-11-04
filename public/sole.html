@@ -59,6 +59,7 @@
     @media (min-width: 700px) {
       .grid.g2 { grid-template-columns: 1fr 1fr; }
       .grid.g3 { grid-template-columns: repeat(3, 1fr); }
+      [data-pilot-full="1"] .grid.g3 { grid-template-columns: 1fr 1fr; } /* brez pilotne ploščice dve enako široki */
       .order { padding: 24px; }
       .order .two { grid-template-columns: 1fr 1fr; }
       .order button.primary { width: auto; align-self: flex-start; min-width: 200px; }
@@ -112,11 +113,11 @@
     <details><summary>Ali učitelj vidi pogovore učencev z inštruktorjem?</summary>
       <p>Ne. Učitelj vidi samo rezultate pri temah, ki jih je dodelil razredu, in lestvico lige razreda. Zasebni pogovori, druge teme in ostali podatki iz profila učenca ostanejo zasebni.</p></details>
     <details><summary>Ali lahko najprej preizkusimo?</summary>
-      <p>Da. Učiteljski račun je brezplačen, zato lahko učitelj razred odpre takoj: <a href="/ucitelj.html">Za učitelje</a>. Za prvih {{pilot.max}} šol, ki želijo daljši preizkus, je na voljo pilotna cena.</p></details>
+      <p>Da. Učiteljski račun je brezplačen, zato lahko učitelj razred odpre takoj: <a href="/ucitelj.html">Za učitelje</a>. <span class="pilot-only">Za prvih {{pilot.max}} šol, ki želijo daljši preizkus, je na voljo pilotna cena.</span></p></details>
     <details><summary>Kaj se zgodi, ko učenec zamenja šolo?</summary>
       <p>Učenec svoj napredek prenese na novo šolo ali ga izvozi. Oboje je vedno brezplačno, tudi brez licence.</p></details>
     <details><summary>Kako dolgo velja licenca?</summary>
-      <p>Licenca velja 12 mesecev od dogovorjenega začetka. Pilotna cena velja {{pilot.years}} leti.</p></details>
+      <p>Licenca velja 12 mesecev od dogovorjenega začetka.<span class="pilot-only"> Pilotna cena velja {{pilot.years}} leti.</span></p></details>
   </div>
 
   <h2 id="narocilo">Naročilo ali povpraševanje</h2>
