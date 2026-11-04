@@ -1108,3 +1108,13 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
   .credit-pack:has(> input:checked)::before { inset-inline-end: 18px; }
   .credit-custom .credit-amount { margin: 6px 0 4px; }
 }
+/* Igra kot nagrada na koncu treninga (app.js rewardHtml, public/games/reward.js) */
+.reward-offer { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; margin: 16px auto 0; max-width: 520px; padding: 12px 14px; border: 2px dashed color-mix(in srgb, var(--accent) 45%, var(--border)); border-radius: var(--radius-sm, 12px); background: var(--accent-soft); text-align: start; }
+.reward-ic { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff; flex-shrink: 0; }
+.reward-ic svg.i { width: 24px; height: 24px; }
+.reward-t { flex: 1 1 200px; min-width: 0; }
+.reward-t b, .reward-t small { display: block; }
+.reward-t small { color: var(--muted); font-weight: 600; margin-top: 2px; }
+.reward-offer button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+.reward-offer.calm { border-style: solid; border-width: 1px; background: var(--surface); }
+.reward-offer.calm .reward-ic { background: var(--accent-soft); color: var(--accent); }

@@ -7,6 +7,7 @@ import { WISH_IDS, weekKey } from "../public/games/wishes.js";
 import { GENRE_IDS, cleanTitles } from "../public/games/childhood.js";
 import { isLocalRequest } from "./feedback.js";
 import { jeFaks } from "../public/stopnja.js";
+import { weakConcepts } from "../public/games/learn-link.js";
 
 const GAME_ID = /^[a-z]{2,20}:[a-z0-9_]{2,30}$/;
 const XP_PER_GAME = 20; // največ na igro (1 XP za vsaka 2 pravilna odgovora)
@@ -61,6 +62,7 @@ export function mountGames(app, store, { loadStudent, progress, avatars, knowled
       PRIMARY KEY (student_id, concept)
     );
   `);
+  migrateGameDays(db);
   // Igra je »opravljena«, ko je v eni igri dovolj pravilnih (unlock.js); odklene hitrejše igre te snovi.
   const cols = db.prepare("PRAGMA table_info(game_scores)").all().map((c) => c.name);
   if (!cols.includes("cleared")) db.exec("ALTER TABLE game_scores ADD COLUMN cleared INTEGER NOT NULL DEFAULT 0");
@@ -87,7 +89,7 @@ export function mountGames(app, store, { loadStudent, progress, avatars, knowled
     const passed = db.prepare("SELECT concept FROM game_unlocks WHERE student_id = ?").all(s.id).map((r) => r.concept);
     const rated = Object.fromEntries(db.prepare("SELECT engine, up FROM game_ratings WHERE student_id = ?").all(s.id).map((r) => [r.engine, !!r.up]));
     const wish = db.prepare("SELECT genre FROM game_wishes WHERE student_id = ? AND week = ?").get(s.id, weekKey())?.genre || null;
-    res.json({ year: schoolYear(s.settings), games, concepts, known: [...known], passed, xpToday: xpToday(s.id), xpPerDay: XP_PER_DAY, rated, wish });
+    res.json({ year: schoolYear(s.settings), games, concepts, known: [...known], passed, xpToday: xpToday(s.id), xpPerDay: XP_PER_DAY, rated, wish, weak: weakFor(db, s.id) });
   });
 
   // Preizkus pred igrami: 4 od 5 pravilnih odklene mirne igre te snovi.
@@ -117,6 +119,7 @@ export function mountGames(app, store, { loadStudent, progress, avatars, knowled
        ON CONFLICT(student_id, game) DO UPDATE SET best = MAX(best, excluded.best), plays = plays + 1, tier = excluded.tier,
          correct = correct + excluded.correct, wrong = wrong + excluded.wrong, cleared = MAX(cleared, excluded.cleared), updated_at = datetime('now')`,
     ).run(s.id, game, score, tier, correct, wrong, cleared);
+    noteGame(db, s.id, game.split(":")[1], correct, wrong);
     const room = Math.max(0, XP_PER_DAY - xpToday(s.id));
     const xp = Math.min(XP_PER_GAME, Math.floor(correct / 2), room);
     const summary = xp > 0 ? progress.award(s.id, [[xp, `igra: ${game}`]]) : null;
@@ -165,6 +168,14 @@ export function mountGames(app, store, { loadStudent, progress, avatars, knowled
     if (!req.parent?.is_admin && !isLocalRequest(req)) return res.status(403).json({ error: "Samo za skrbnika." });
     res.set("Cache-Control", "no-store").json(gameTrends(db));
   });
+
+  // Merjenje v pilotu (igre in učna pot), enako zaščiteno kot glasovi: GET /api/games/pilot?days=30
+  app.get("/api/games/pilot", (req, res) => {
+    if (!req.parent?.is_admin && !isLocalRequest(req)) return res.status(403).json({ error: "Samo za skrbnika." });
+    const days = req.query.days === undefined ? 30 : /^\d{1,3}$/.test(String(req.query.days)) ? Number(req.query.days) : NaN;
+    if (!(days >= 1 && days <= PILOT_MAX_DAYS)) return res.status(400).json({ error: "Neveljavno obdobje." });
+    res.set("Cache-Control", "no-store").json(gamePilot(db, { days }));
+  });
 }
 
 // Samo števila, brez imen učencev in id-jev (edino besedilo so lastni naslovi iger, največ 5 × 40 znakov,
@@ -210,4 +221,113 @@ export function gameTrends(db, now = new Date()) {
   const base = { week, lastWeek: last, minStudents: MIN_STUDENTS, students: contributors.size };
   if (contributors.size < MIN_STUDENTS) return { ...base, enough: false };
   return { ...base, enough: true, ratings, wishes, allWishes, childhood, titles, plays };
+}
+
+// ---------- Povezava z učno potjo in merjenje v pilotu (docs/igre-smernice.md §12) ----------
+// Na učenca in dan samo števci (brez časov posameznih iger, brez naprave): igre, vrnitve na pot in
+// pravilni/napačni odgovori v igrah, ločeno za šibke teme in ostale. Stari dnevi se brišejo.
+export const RETURN_MINUTES = 30; // »vrnitev na pot«: naloga na učni poti v tem času po koncu igre
+export const PILOT_MAX_DAYS = 120;
+export function migrateGameDays(db) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS game_days (
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      day TEXT NOT NULL,
+      plays INTEGER NOT NULL DEFAULT 0,
+      returns INTEGER NOT NULL DEFAULT 0,
+      pending INTEGER NOT NULL DEFAULT 0, -- zadnja igra še čaka na vrnitev na pot
+      last_end TEXT,
+      PRIMARY KEY (student_id, day)
+    );
+    CREATE TABLE IF NOT EXISTS game_concept_days (
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      day TEXT NOT NULL,
+      concept TEXT NOT NULL,
+      weak INTEGER NOT NULL DEFAULT 0, -- pojem je bil ob igri med učenčevimi šibkimi temami
+      correct INTEGER NOT NULL DEFAULT 0,
+      wrong INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (student_id, day, concept, weak)
+    );
+    CREATE INDEX IF NOT EXISTS idx_game_days_day ON game_days(day);
+    CREATE INDEX IF NOT EXISTS idx_game_concept_days_day ON game_concept_days(day);
+  `);
+}
+
+// Šibke teme učenca: napake na učni poti (napačen prvi odgovor) in v igrah v zadnjih 7 dneh.
+export function weakFor(db, studentId) {
+  const path = db
+    .prepare(
+      `SELECT topic_id, COUNT(*) AS n FROM tasks WHERE student_id = ? AND attempts > 0 AND COALESCE(first_try_correct, 0) = 0
+         AND created_at >= datetime('now', '-7 days') GROUP BY topic_id`,
+    )
+    .all(studentId);
+  const games = db
+    .prepare("SELECT concept, SUM(wrong) AS n FROM game_concept_days WHERE student_id = ? AND day >= date('now', '-6 days') GROUP BY concept")
+    .all(studentId);
+  return weakConcepts(path, games, baseTopicIds);
+}
+
+// Konec igre: števec iger, čakanje na vrnitev na pot, točnost (šibka tema ali ne, pred to igro).
+export function noteGame(db, studentId, concept, correct, wrong) {
+  const weak = weakFor(db, studentId).some((x) => x.concept === concept) ? 1 : 0;
+  db.prepare(
+    `INSERT INTO game_days (student_id, day, plays, pending, last_end) VALUES (?, date('now'), 1, 1, datetime('now'))
+     ON CONFLICT(student_id, day) DO UPDATE SET plays = plays + 1, pending = 1, last_end = excluded.last_end`,
+  ).run(studentId);
+  db.prepare(
+    `INSERT INTO game_concept_days (student_id, day, concept, weak, correct, wrong) VALUES (?, date('now'), ?, ?, ?, ?)
+     ON CONFLICT(student_id, day, concept, weak) DO UPDATE SET correct = correct + excluded.correct, wrong = wrong + excluded.wrong`,
+  ).run(studentId, concept, weak, correct, wrong);
+  db.prepare("DELETE FROM game_days WHERE day < date('now', ?)").run(`-${PILOT_MAX_DAYS} days`);
+  db.prepare("DELETE FROM game_concept_days WHERE day < date('now', ?)").run(`-${PILOT_MAX_DAYS} days`);
+}
+
+// Odgovor na učni poti: če je učenec v RETURN_MINUTES po igri spet pri nalogah, šteje kot vrnitev.
+export function notePathActivity(db, studentId) {
+  db.prepare(
+    "UPDATE game_days SET returns = returns + 1, pending = 0 WHERE student_id = ? AND pending = 1 AND last_end >= datetime('now', ?)",
+  ).run(studentId, `-${RETURN_MINUTES} minutes`);
+}
+
+// Povzetek za skrbnika: samo vsote čez učence, brez imen in id-jev; pri manj kot MIN_STUDENTS
+// igralcih brez števil (iz majhnih števil bi se dalo sklepati, kdo je igral).
+export function gamePilot(db, { days = 30 } = {}) {
+  const n = Math.max(1, Math.min(PILOT_MAX_DAYS, Math.floor(days) || 30));
+  const since = `-${n - 1} days`;
+  const players = db.prepare("SELECT COUNT(DISTINCT student_id) AS n FROM game_days WHERE day >= date('now', ?) AND plays > 0").get(since).n;
+  const base = { days: n, minutes: RETURN_MINUTES, minStudents: MIN_STUDENTS, players };
+  if (players < MIN_STUDENTS) return { ...base, enough: false };
+  const rows = db
+    .prepare(
+      `SELECT day, COUNT(DISTINCT student_id) AS players, SUM(plays) AS plays, SUM(returns) AS returns
+       FROM game_days WHERE day >= date('now', ?) AND plays > 0 GROUP BY day ORDER BY day DESC`,
+    )
+    .all(since);
+  const acc = { weak: { correct: 0, wrong: 0 }, other: { correct: 0, wrong: 0 } };
+  for (const r of db
+    .prepare("SELECT weak, SUM(correct) AS c, SUM(wrong) AS w FROM game_concept_days WHERE day >= date('now', ?) GROUP BY weak")
+    .all(since)) {
+    const x = acc[r.weak ? "weak" : "other"];
+    x.correct += r.c || 0;
+    x.wrong += r.w || 0;
+  }
+  const rate = (a, b) => (b ? Math.round((100 * a) / b) : null);
+  const plays = rows.reduce((s, r) => s + r.plays, 0);
+  const returns = rows.reduce((s, r) => s + r.returns, 0);
+  const playerDays = rows.reduce((s, r) => s + r.players, 0);
+  return {
+    ...base,
+    enough: true,
+    totals: {
+      plays,
+      playsPerPlayerDay: playerDays ? Math.round((10 * plays) / playerDays) / 10 : 0,
+      returns,
+      returnRate: rate(returns, plays),
+      weakAccuracy: rate(acc.weak.correct, acc.weak.correct + acc.weak.wrong),
+      otherAccuracy: rate(acc.other.correct, acc.other.correct + acc.other.wrong),
+      weakAnswers: acc.weak.correct + acc.weak.wrong,
+      otherAnswers: acc.other.correct + acc.other.wrong,
+    },
+    rows: rows.map((r) => ({ ...r, returnRate: rate(r.returns, r.plays) })),
+  };
 }

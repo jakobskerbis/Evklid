@@ -46,7 +46,7 @@ import { mountReports, chatOff, messageCode } from "./reports.js";
 import { verifyAnswer, codeCheck } from "./verify.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
-import { mountGames } from "./games.js";
+import { mountGames, notePathActivity } from "./games.js";
 import { mountLab } from "./laboratorij.js";
 import { Avatars, mountAvatar } from "./avatar.js";
 import { Knowledge, mountKnowledge } from "./zbirke.js";
@@ -1196,6 +1196,9 @@ export function createApp(store, opts = {}) {
     if (!s) return;
     const out = progress.answer(s.id, intParam(req.params.taskId), req.body?.answer);
     if (out.error) return res.status(400).json(out);
+    try {
+      notePathActivity(store.db, s.id); // merjenje v pilotu: vrnitev na pot po igri (server/games.js)
+    } catch {}
     // Nova obvladana tema ali stopnja učnega passa odklene predmete v zbirkah.
     if (out.xp?.gained > 0 || out.placement?.passed || out.mastered) {
       const unlocked = knowledge.sync(s.id);
