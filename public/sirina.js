@@ -20,7 +20,7 @@ const opazovani = new Set();
 let ro = null;
 
 // Relacije, pri katerih zložimo predolgo formulo (le na vrhnji ravni, ne v ulomku ali oklepaju {…}).
-const REL = new Set(["\\approx", "\\le", "\\leq", "\\ge", "\\geq", "\\neq", "\\ne", "\\equiv", "\\doteq", "\\sim", "\\simeq", "\\to", "\\rightarrow", "\\Rightarrow", "\\Leftrightarrow", "\\iff", "\\implies", "\\longrightarrow", "\\rightleftharpoons", "\\propto", "\\lt", "\\gt"]);
+const REL = new Set(["\\approx", "\\le", "\\leq", "\\ge", "\\geq", "\\neq", "\\ne", "\\equiv", "\\doteq", "\\sim", "\\simeq", "\\to", "\\rightarrow", "\\Rightarrow", "\\Leftrightarrow", "\\iff", "\\implies", "\\longrightarrow", "\\leftrightarrow", "\\rightleftharpoons", "\\propto", "\\lt", "\\gt"]);
 const LOCI = new Set(["\\quad", "\\qquad"]);
 // Sklep (⇒, ⇔) začne novo izjavo, ki se v novi vrstici začne s puščico: »2h = 15« / »⇒ h = 7,5«.
 const SKLEP = new Set(["\\Rightarrow", "\\implies", "\\iff", "\\Leftrightarrow", "\\Longrightarrow", "\\Longleftrightarrow"]);
@@ -49,19 +49,39 @@ function globina(tok) {
 
 // Množenje: drugi, šele če vsota ni kje razrezati (dolg zmnožek števil in enot v fizikalnem računu).
 const KRAT = new Set(["\\cdot", "\\times"]);
+// Še za tem: dolg oklepaj (n-terica, množica, vsota v oklepaju) se nadaljuje v njem (glej razrezi).
+const NOTER = "noter";
+// Binarni operatorji med izjavami (logika, množice): tam se predolg člen nadaljuje kot pred ·.
+const KRAT_ALI = new Set([...KRAT, "\\wedge", "\\vee", "\\land", "\\lor", "\\cup", "\\cap", "\\setminus"]);
 // Del enačbe razreže pred vrhnjimi + in − na enako dolge kose, vsak največ približno `dolg` znakov; kos, ki je
-// še vedno predolg, še pred vrhnjim · ali ×. Vrne seznam kosov.
+// še vedno predolg, še pred vrhnjim · ali ×, nato v vrhnjem oklepaju (NOTER). Vrne seznam kosov.
 function razrezi(t, dolg, znaki = PLUS) {
-  const reze = []; // mesta, kjer se lahko začne nov kos
+  let reze = []; // mesta, kjer se lahko začne nov kos
+  const odprti = []; // oklepaji, v katerih smo
+  // NOTER: v vrhnjem navadnem oklepaju (ne \left(, ne {…} ulomka ali korena) najprej za vejicami (»(2 \cdot 3 - 0,\ 0 -
+  // 3,\ …)«, »\{(0, x), (0, y), …\}«), sicer pred + in −, sicer pred · (»10\,\mathrm{A}/(8{,}5 \cdot 10^{28} \cdot …)«).
+  const noter = [[], [], []];
   let depth = 0;
   for (let i = 0; i < t.length; ) {
     const tok = zeton(t, i);
     const g = globina(tok);
+    if (g > 0) odprti.push(tok);
+    else if (g < 0) odprti.pop();
+    const pred = () => !PRED.test(t.slice(0, i).trimEnd()) && !/^\s*10\s*\^/.test(t.slice(i + tok.length));
     if (g) depth = Math.max(0, depth + g);
+    else if (znaki === NOTER) {
+      if (depth !== 1 || /^(?:\{|\\left|\\begin)/.test(odprti[0] || "")) ;
+      else if (tok === ",") {
+        const j = i + 1 + /^(?:\s|\\[ ,;:!]|\\q?quad(?![a-zA-Z]))*/.exec(t.slice(i + 1))[0].length;
+        if (j < t.length) noter[0].push(j);
+      } else if (PLUS.has(tok) && pred()) noter[1].push(i);
+      else if (KRAT_ALI.has(tok) && pred()) noter[2].push(i);
+    }
     // Ne sredi števila v desetiškem zapisu (»2{,}998 \cdot 10^{8}«).
-    else if (depth === 0 && znaki.has(tok) && !PRED.test(t.slice(0, i).trimEnd()) && t.slice(0, i).trim() && !(znaki === KRAT && /^\s*10\s*\^/.test(t.slice(i + tok.length)))) reze.push(i);
+    else if (depth === 0 && znaki.has(tok) && !PRED.test(t.slice(0, i).trimEnd()) && t.slice(0, i).trim() && !(znaki === KRAT_ALI && /^\s*10\s*\^/.test(t.slice(i + tok.length)))) reze.push(i);
     i += tok.length;
   }
+  if (znaki === NOTER) reze = noter.find((x) => x.length) || [];
   const vse = dolzina(t);
   const kosov = Math.min(reze.length + 1, Math.ceil(vse / dolg));
   // Za vsak kos rez, ki je najbližje j-temu delu dolžine (»a + b + c + d« v dva kosa: »a + b«, »+ c + d«).
@@ -78,11 +98,14 @@ function razrezi(t, dolg, znaki = PLUS) {
   meje.push(t.length);
   const kosi = [];
   for (let j = 0; j + 1 < meje.length; j++) {
-    const k = t.slice(meje[j], meje[j + 1]).trim();
+    // Razmik na koncu vrstice (»,\ « za vejico n-terice) ni potreben; trim() sam bi pustil osamljen »\«.
+    const k = t.slice(meje[j], meje[j + 1]).replace(/(?:\s|\\[ ,;:!])+$/, "").trim();
     if (!k) continue;
-    // En sam predolg člen (zmnožek števil in enot) še pred · ali ×; člen vsote razreže naslednja stopnja.
+    // En sam predolg člen (zmnožek števil in enot) še pred · ali ×, nato za vejicami n-terice; člen vsote razreže
+    // naslednja stopnja.
     const clen = !reze.some((x) => x > meje[j] && x < meje[j + 1]);
-    kosi.push(...(znaki === PLUS && clen && dolzina(k) > Math.max(dolg, 14) ? razrezi(k, dolg, KRAT) : [k]));
+    const naprej = znaki === PLUS ? KRAT_ALI : znaki === KRAT_ALI ? NOTER : null;
+    kosi.push(...(naprej && clen && dolzina(k) > Math.max(dolg, 14) ? razrezi(k, dolg, naprej) : [k]));
   }
   return kosi;
 }
@@ -160,7 +183,12 @@ export function zlozTex(tex, stopnja = 2, meja = 0) {
   // Del v eno ali več vrstic: prva z relacijo (zamik `zamik`), nadaljevanja pred + ali − še malo bolj zamaknjena.
   const vrsticeDela = (d, zamik) => {
     const kosi = dolg < Infinity ? razrezi(d.t.trim(), dolg) : [d.t.trim()];
-    return kosi.map((t, j) => (j ? `&${zamik}\\quad {}${ovoj(t)}` : `&${zamik}${d.rel ? "{}" : ""}${del({ rel: d.rel, t })}`));
+    // V kemijski enačbi (\\mathrm) ostane znak na začetku nadaljevanja zunaj ovoja, sicer bi bil predznak (»+NaCl«).
+    const nad = (t) => {
+      const z = mr && /^(?:[-+]|\\(?:pm|mp|cdot|times)(?![a-zA-Z]))\s*/.exec(t);
+      return z ? `${z[0].trim()} ${ovoj(t.slice(z[0].length))}` : ovoj(t);
+    };
+    return kosi.map((t, j) => (j ? `&${zamik}\\quad {}${nad(t)}` : `&${zamik}${d.rel ? "{}" : ""}${del({ rel: d.rel, t })}`));
   };
   const vrstice = [];
   for (const iz of izjave) {
@@ -193,6 +221,12 @@ function zamenjaj(k, html) {
   nasi.add(n);
   k.replaceWith(n);
   return n;
+}
+// Bralnik zaslona bere MathML, kopiranje in »Vprašaj o izboru« (textbook.js) njegov TeX: oba ostaneta izvirna
+// formula, ne zložena (»\begin{aligned}…«) ali pomanjšana.
+function ohraniMathml(k, n) {
+  const m = k.querySelector(":scope > .katex-mathml");
+  if (m) n.querySelector(":scope > .katex-mathml")?.replaceWith(m);
 }
 const locilo = new WeakMap(); // zložena formula → ločilo, ki smo ga vzeli iz besedila za njo
 function obnovi(k) {
@@ -239,6 +273,7 @@ function zlozi(k, stopnja, meja = 0) {
     }
     const orig = izvirnik.get(k) ?? k.outerHTML;
     const n = zamenjaj(k, html);
+    ohraniMathml(k, n);
     izvirnik.set(n, orig);
     izvirniTex.set(n, tex);
     return n;
@@ -258,6 +293,7 @@ function zlozi(k, stopnja, meja = 0) {
   if (vzemi) nx.data = nx.data.slice(1); // šele ko se je izrisala, sicer bi se ločilo izgubilo
   const orig = izvirnik.get(k) ?? k.outerHTML;
   const n = zamenjaj(k, html);
+  ohraniMathml(k, n);
   n.classList.add("tb-zlozena");
   izvirnik.set(n, orig);
   izvirniTex.set(n, tex);
@@ -458,6 +494,12 @@ function noveFormule(zapisi) {
     sirine.delete(el); // nova vsebina: prilagodi tudi pri isti širini
   });
   hitro(mesta).forEach(prilagodi);
+}
+
+// Nove formule prilagodi takoj, ne šele v mikroopravilu opazovalca: klepet za izrisom pomakne pogovor na dno in
+// mora meriti že zloženo višino (sicer zložena formula odrine konec odgovora pod rob in pogovor ne sledi več).
+export function prilagodiZdaj() {
+  if (mo) noveFormule(mo.takeRecords());
 }
 
 // Enkrat ob zagonu aplikacije (app.js, kalkulator.js): odslej se prilagodi vsaka formula na strani.

@@ -94,7 +94,7 @@ test("an inline formula never overlaps the lines around it and keeps line spacin
 // j 2026-11-04: »Predolge zapise ustrezno prelomi v drugo vrstico. Če je mogoče, ne uporabljaj scrollanja. To naj velja
 // za vse enačbe.« Celoten videz v simulacijah, klepetu in nalogah preverja scripts/preveri-formule.cjs.
 test("every equation in the app is fitted: sims, chat, exercises, formula cards (not only lessons)", async () => {
-  for (const f of ["app.js", "kalkulator.js"]) assert.match(pub(f), /import \{ initSirina \} from "\.\/sirina\.js";[\s\S]*\ninitSirina\(\);\ninitDrsniki\(\);/, f);
+  for (const f of ["app.js", "kalkulator.js"]) assert.match(pub(f), /import \{ initSirina(?:, prilagodiZdaj)? \} from "\.\/sirina\.js";[\s\S]*\ninitSirina\(\);\ninitDrsniki\(\);/, f);
   const js = pub("sirina.js");
   assert.match(js, /mo\.observe\(document\.body, \{ childList: true, subtree: true \}\)/);
   // simulacija ob vsakem premiku drsnika: rešitev za isto obliko formule brez merjenja (drsnik ostane gladek)
@@ -152,4 +152,30 @@ test("decimal comma in sim formulas has no gap (»0,041«, not »0, 041«); list
   for (const t of ["1{,}5", "x_{1,2} = 3", "\\{1,2,3\\}", "\\{1,5\\}", "(1,2,3)", "T(1, 2)", "5\\,000"]) assert.equal(decVejica(t), t);
   assert.match(pub("sim/kit.js"), /katex\.renderToString\(decVejica\(t\)/);
   assert.match(pub("demos.js"), /katex\.renderToString\(decVejica\(t\)/);
+});
+
+// Pregled 4. 11.: zložena formula ostane za bralnik zaslona in kopiranje izvirna (MathML in njegov TeX); klepet
+// pomakne odgovor na dno šele po zlaganju (sicer zložena enačba odrine konec odgovora pod rob in pogovor ne sledi).
+test("a folded formula keeps the original MathML; the chat scrolls to the bottom after folding", async () => {
+  const js = pub("sirina.js");
+  assert.equal((js.match(/const n = zamenjaj\(k, html\);\n\s*ohraniMathml\(k, n\);/g) || []).length, 2);
+  assert.match(js, /export function prilagodiZdaj\(\) \{\n\s*if \(mo\) noveFormule\(mo\.takeRecords\(\)\);/);
+  const app = pub("app.js");
+  assert.match(app, /bubble\.innerHTML = chatRich\(streamSafe\(shown\)\)[^\n]*\n\s*prilagodiZdaj\(\);[^\n]*\n\s*if \(atBottom\) box\.scrollTop = box\.scrollHeight;/);
+  assert.match(app, /box\.appendChild\(el\);\n\s*prilagodiZdaj\(\);\n\s*box\.scrollTop = box\.scrollHeight;/);
+  // kemijska enačba: znak na začetku nadaljevanja ostane zunaj \mathrm (sicer predznak brez razmika)
+  const { zlozTex } = await import("../public/sirina.js");
+  const z = zlozTex("\\mathrm{2Mg + O_2 \\rightarrow 2MgO + 2H_2O + CO_2 + NaCl + KCl + HCl}", 3, 20);
+  assert.match(z, /\{\}\+ \\mathrm\{NaCl \+ KCl \+ HCl\}/);
+  assert.doesNotMatch(z, /\\mathrm\{\s*\+/);
+});
+
+test("a long tuple or set continues after a comma in its outer bracket (not inside \\left(…\\right) or {…})", async () => {
+  const { zlozTex } = await import("../public/sirina.js");
+  assert.equal(
+    zlozTex("\\vec n = \\big(2 \\cdot 3 - 0 \\cdot 0,\\ 0 \\cdot (-1) - (-1) \\cdot 3,\\ (-1) \\cdot 0 - 2 \\cdot (-1)\\big) = (6, 3, 2)", 5, 30),
+    "\\begin{aligned}&\\vec n \\\\ &\\quad {}= \\big(2 \\cdot 3 - 0 \\cdot 0, \\\\ &\\quad \\quad {}0 \\cdot (-1) - (-1) \\cdot 3, \\\\ &\\quad \\quad {}(-1) \\cdot 0 - 2 \\cdot (-1)\\big) \\\\ &\\quad {}= (6, 3, 2)\\end{aligned}",
+  );
+  assert.equal(zlozTex("A \\times B = \\{(0, x), (0, y), (0, z), (1, x), (1, y), (1, z)\\}", 3, 30), "\\begin{aligned}&A \\times B \\\\ &\\quad {}= \\{(0, x), (0, y), (0, z), \\\\ &\\quad \\quad {}(1, x), (1, y), (1, z)\\}\\end{aligned}");
+  assert.doesNotMatch(zlozTex("f(x, y) = \\left(x^2 + y^2, 2xy, x - y, x + y, 3x, 4y, 5x, 6y\\right)", 5, 20), /, \\\\/);
 });

@@ -78,7 +78,7 @@ import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS }
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
 import { openOurPaper, closeOurPaper } from "./our-paper.js";
 import { initDrsniki } from "./drsniki.js";
-import { initSirina } from "./sirina.js";
+import { initSirina, prilagodiZdaj } from "./sirina.js";
 import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
 import { GUIDE } from "./vodic.js";
@@ -762,6 +762,7 @@ async function openConversation(id) {
   for (const m of conv.messages) addMessage(m.role, m.text, m.has_image, m);
   renderState(conv.state);
   renderConversationList();
+  prilagodiZdaj(); // zložene formule (sirina.js) so višje: na dno šele zdaj
   box.scrollTop = box.scrollHeight;
   refreshBubble();
 }
@@ -832,6 +833,7 @@ function addMessage(role, text, hasImage = false, info = null) {
     if (text && info?.id) addMsgFoot(el, info);
   }
   box.appendChild(el);
+  prilagodiZdaj();
   box.scrollTop = box.scrollHeight;
   return el;
 }
@@ -867,6 +869,7 @@ async function send(text, { deep = false } = {}) {
     const paint = (shown) => {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
       bubble.innerHTML = chatRich(streamSafe(shown)) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
+      prilagodiZdaj(); // dolgo enačbo zloži že zdaj, da pomik na dno šteje njeno pravo višino
       if (atBottom) box.scrollTop = box.scrollHeight;
     };
     paint("");

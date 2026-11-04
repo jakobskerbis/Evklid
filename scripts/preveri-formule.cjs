@@ -8,6 +8,9 @@
 //   --vejice  izpiše še vse zapise števil z vejico v formulah simulacij (pregled decVejica v sim/kit.js)
 //   --dovoli  koliko simulacij s pomikajočo se formulo še dovolimo (privzeto ZNANE spodaj)
 const { spawn } = require("node:child_process");
+const fs = require("node:fs");
+const net = require("node:net");
+const os = require("node:os");
 const path = require("node:path");
 const { chromium } = require("playwright");
 
@@ -17,14 +20,22 @@ const arg = (k, d) => {
 };
 const W = Number(arg("--sirina", 360));
 const VEJICE = process.argv.includes("--vejice");
-const PORT = 3997;
+// Prosta vrata in začasna baza (kot preveri-videz-lekcij.cjs): drug strežnik na istih vratah bi dal tuje rezultate.
+const freePort = () => new Promise((res, rej) => {
+  const s = net.createServer();
+  s.listen(0, () => { const { port } = s.address(); s.close(() => res(port)); });
+  s.on("error", rej);
+});
 // Simulacije s formulo, ki je ni kje prelomiti (en sam nedeljiv člen), smejo ostati drsne; vsaka nova je napaka.
 const ZNANE = Number(arg("--dovoli", 0));
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 (async () => {
   const root = path.join(__dirname, "..");
-  const srv = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], { cwd: root, env: { ...process.env, PORT, EVKLID_MOCK: "1" }, stdio: "ignore" });
+  const PORT = String(await freePort());
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-formule-"));
+  const env = { ...process.env, PORT, EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", ANTHROPIC_API_KEY: "", RESEND_API_KEY: "", STRIPE_SECRET_KEY: "" };
+  const srv = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], { cwd: root, env, stdio: "ignore" });
   const base = `http://localhost:${PORT}`;
   for (let i = 0; i < 80; i++) {
     try { if ((await fetch(base + "/style.css")).ok) break; } catch {}
@@ -115,6 +126,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const vej = VEJICE ? await p.evaluate(() => [...VEJ.entries()].sort((a, b) => b[1] - a[1])) : [];
   await b.close();
   srv.kill();
+  fs.rmSync(dir, { recursive: true, force: true });
   slabe.forEach((x) => console.log(x));
   if (drugo.length) console.log(`Klepet, naloga, namig, kartica:\n${drugo.map((x) => `   ${x.cls} +${x.over} px  ${x.tex}`).join("\n")}`);
   if (VEJICE) console.log(`Števila z vejico v formulah (${vej.length}):\n${vej.map(([t, c]) => `   ${c}× ${t}`).join("\n")}`);
