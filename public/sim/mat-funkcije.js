@@ -280,9 +280,10 @@ const PRESETS = {
     params: [["a", -2, 2, 0.25, 0.5], ["x₁", -4, 4, 0.5, -3], ["x₂", -4, 4, 0.5, 0], ["x₃", -4, 4, 0.5, 2.5], ["stopnja x₁", 0, 3, 1, 1], ["stopnja x₂", 0, 3, 1, 2], ["stopnja x₃", 0, 3, 1, 1]],
     f: (x, P) => P.a * (x - P["x₁"]) ** P["stopnja x₁"] * (x - P["x₂"]) ** P["stopnja x₂"] * (x - P["x₃"]) ** P["stopnja x₃"],
     win: [-5, 5, -8, 8],
-    tex: (P) => `p(x) = ${["x₁", "x₂", "x₃"].some((k) => P[`stopnja ${k}`]) ? cf(P.a) : T(P.a)}${["x₁", "x₂", "x₃"].map((k, i) => (P[`stopnja ${k}`] ? `${shift("x", P[k])}${P[`stopnja ${k}`] > 1 ? `^${P[`stopnja ${k}`]}` : ""}` : "")).join("")}`,
-    marks: (A, P, svg) => ["x₁", "x₂", "x₃"].forEach((k) => P[`stopnja ${k}`] && dot(svg, A, P[k], 0, P[`stopnja ${k}`] % 2 ? "a" : "c", "")),
+    tex: (P) => !P.a ? "p(x) = 0" : `p(x) = ${["x₁", "x₂", "x₃"].some((k) => P[`stopnja ${k}`]) ? cf(P.a) : T(P.a)}${["x₁", "x₂", "x₃"].map((k, i) => (P[`stopnja ${k}`] ? `${shift("x", P[k])}${P[`stopnja ${k}`] > 1 ? `^${P[`stopnja ${k}`]}` : ""}` : "")).join("")}`,
+    marks: (A, P, svg) => P.a && ["x₁", "x₂", "x₃"].forEach((k) => P[`stopnja ${k}`] && dot(svg, A, P[k], 0, P[`stopnja ${k}`] % 2 ? "a" : "c", "")),
     info: (P) => {
+      if (!P.a) return `<p>Pri a = 0 je p(x) = 0 (ničelni polinom): graf je os x, vsak x je ničla. Nastavi a ≠ 0.</p>`;
       const deg = P["stopnja x₁"] + P["stopnja x₂"] + P["stopnja x₃"];
       const lim = (side) => (deg === 0 ? "konstanta" : (P.a > 0) === (side > 0 || deg % 2 === 0) ? "+∞" : "−∞");
       return `<p>Stopnja polinoma: <b>${deg}</b>. Vodilni koeficient a = ${fmt(P.a)}. Ko gre x → +∞, gre p(x) → ${lim(1)}; ko gre x → −∞, gre p(x) → ${lim(-1)}.</p>
@@ -297,14 +298,17 @@ const PRESETS = {
     tex: (P) => (P.a ? `f(x) = \\frac{${cf(P.a)}${shift("x", P["ničla"])}}{${shift("x", P.pol)}${P["stopnja pola"] > 1 ? "^2" : ""}}` : "f(x) = 0"),
     marks: (A, P, svg) => {
       // Ista ničla in pol stopnje 1: ostane luknja. Pri polu stopnje 2 se okrajša en faktor, pol ostane.
-      const hole = P["ničla"] === P.pol && P["stopnja pola"] === 1;
+      // Pri a = 0 je f(x) = 0 za x ≠ pol: premica z luknjo, pola ni.
+      const hole = !P.a || (P["ničla"] === P.pol && P["stopnja pola"] === 1);
       if (!hole) s("line", { x1: A.X(P.pol), y1: A.T, x2: A.X(P.pol), y2: A.B, class: "guide stroke-danger" }, svg);
       const hy = P["stopnja pola"] === 1 ? P.a : 0;
       s("line", { x1: A.L, y1: A.Y(hy), x2: A.R, y2: A.Y(hy), class: "guide stroke-danger" }, svg);
-      if (P["ničla"] !== P.pol) dot(svg, A, P["ničla"], 0, "a", "");
+      if (P.a && P["ničla"] !== P.pol) dot(svg, A, P["ničla"], 0, "a", "");
       else if (hole) s("circle", { cx: A.X(P.pol), cy: A.Y(P.a), r: 6, class: "pt open stroke-a" }, svg);
     },
-    info: (P) => (P["ničla"] === P.pol && P["stopnja pola"] === 2
+    info: (P) => (!P.a
+      ? `<p>Pri a = 0 je števec enak 0: f(x) = 0 za vse x ≠ ${fmt(P.pol)}. Graf je os x z <b>luknjo</b> pri x = ${fmt(P.pol)} (tam funkcija ni definirana), pola ni.</p>`
+      : P["ničla"] === P.pol && P["stopnja pola"] === 2
       ? `<p>Števec in imenovalec imata skupni faktor ${tex(shift("x", P.pol))}: izraz se okrajša v ${tex(`f(x) = \\frac{${T(P.a)}}{${shift("x", P.pol).replace(/^\((.*)\)$/, "$1")}}`)} (za x ≠ ${fmt(P.pol)}). Pri x = ${fmt(P.pol)} ostane <b>pol</b> lihe stopnje: navpična asimptota. Ničle ni, vodoravna asimptota je y = 0.</p>`
       : P["ničla"] === P.pol
       ? `<p>Števec in imenovalec imata isti faktor: izraz se okrajša. Pri x = ${fmt(P.pol)} je v grafu <b>luknja</b> (funkcija tam ni definirana), pola ni.</p>`
@@ -695,12 +699,14 @@ export function zaporedje(el, { mode = "ag" } = {}) {
       s("line", { x1: A.L, y1: A.Y(L), x2: A.R, y2: A.Y(L), class: "guide stroke-c" }, svg);
     }
     let Ne = 0;
+    // zunaj pasu: |aₙ − L| ≥ ε (toleranca za zaokrožitev, npr. 6/5 − 1 = 0,19999…)
+    const zunaj = (t) => Math.abs(t - L) >= eps - 1e-9;
     terms.forEach((t, i) => {
-      if (L != null && Math.abs(t - L) >= eps) Ne = i + 1;
-      if (t >= A.y0 && t <= A.y1) s("circle", { cx: A.X(i + 1), cy: A.Y(t), r: 4.5, class: `pt ${L != null && Math.abs(t - L) < eps ? "fill-c" : "fill-a"}` }, svg);
+      if (L != null && zunaj(t)) Ne = i + 1;
+      if (t >= A.y0 && t <= A.y1) s("circle", { cx: A.X(i + 1), cy: A.Y(t), r: 4.5, class: `pt ${L != null && !zunaj(t) ? "fill-c" : "fill-a"}` }, svg);
     });
     // Narisanih je le 30 členov; pri majhnem ε je zadnji člen zunaj pasu lahko dlje.
-    if (L != null) for (let i = n + 1; i <= 5000; i++) if (Math.abs(SEQS[key][1](i) - L) >= eps) Ne = i;
+    if (L != null) for (let i = n + 1; i <= 5000; i++) if (zunaj(SEQS[key][1](i))) Ne = i;
     if (mode === "ag") {
       const S = terms.reduce((x, y) => x + y, 0);
       out.innerHTML = (kind === "a"

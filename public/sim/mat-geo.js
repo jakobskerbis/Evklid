@@ -540,7 +540,7 @@ export function trikotnik(el, { mode = "vrste" } = {}) {
       const razlika = new Set(q.map((x) => x.toFixed(2))).size > 1;
       html = texBlock(`\\begin{aligned}\\frac{a}{\\sin\\alpha} &= \\frac{${A2(sa)}}{\\sin ${K1(al1)}^\\circ} = ${A2(q[0])}\\\\ \\frac{b}{\\sin\\beta} &= \\frac{${A2(sb)}}{\\sin ${K1(be1)}^\\circ} = ${A2(q[1])}\\\\ \\frac{c}{\\sin\\gamma} &= \\frac{${A2(sc)}}{\\sin ${K1(ga1)}^\\circ} = ${A2(q[2])}\\end{aligned}`) +
         `<p><b>Sinusni izrek</b>: razmerje stranice in sinusa nasprotnega kota je za vse tri enako (= 2R, premer očrtane krožnice).${razlika ? " Razlike v zadnji decimalki so posledica zaokroževanja." : ""}</p>` +
-        texBlock(`c^2 = a^2 + b^2 - 2ab\\cos\\gamma = ${A2(sa)}^2 + ${A2(sb)}^2 - 2\\cdot ${A2(sa)}\\cdot ${A2(sb)}\\cdot\\cos ${K1(ga1)}^\\circ \\approx ${A2(c2)},\\quad c \\approx ${A2(sc)}`) +
+        texBlock(`\\begin{aligned}c^2 &= a^2 + b^2 - 2ab\\cos\\gamma\\\\ &= ${A2(sa)}^2 + ${A2(sb)}^2\\\\ &\\quad - 2\\cdot ${A2(sa)}\\cdot ${A2(sb)}\\cdot\\cos ${K1(ga1)}^\\circ\\\\ &\\approx ${A2(c2)}\\\\ c &\\approx ${A2(sc)}\\end{aligned}`) +
         `<p><b>Kosinusni izrek</b> posploši Pitagorov izrek: pri γ = 90° je cos γ = 0. ${ga1 > 90 ? "Kot γ je top, cos γ < 0, zato je c² večji od a² + b²." : ga1 < 90 ? "Kot γ je oster, zato je c² manjši od a² + b²." : ""}</p>`;
     }
     out.innerHTML = html;
@@ -554,14 +554,15 @@ export function trikotnik(el, { mode = "vrste" } = {}) {
     const [ta, tb, tg] = TRI[key];
     const tc = Math.sqrt(ta * ta + tb * tb - 2 * ta * tb * Math.cos(rad(tg)));
     const tal = Math.acos((tb * tb + tc * tc - ta * ta) / (2 * tb * tc)), x0 = 170 - (tc * CM) / 2;
-    pts.A = [x0, 250];
-    pts.B = [x0 + tc * CM, 250];
-    pts.C = [x0 + tb * CM * Math.cos(tal), 250 - tb * CM * Math.sin(tal)];
+    const hc = tb * CM * Math.sin(tal), y0 = 150 + hc / 2; // trikotnik navpično na sredini slike
+    pts.A = [x0, y0];
+    pts.B = [x0 + tc * CM, y0];
+    pts.C = [x0 + tb * CM * Math.cos(tal), y0 - hc];
     draw();
   };
   const place = dragPoints(svg, top, pts, () => (triSel && (triSel.sel.value = "lastni"), draw()), { bounds: [10, 10, 330, 280] });
   if (mode === "tocke") show.T = true;
-  if (mode === "izreki") triSel = select({ label: "trikotnik", options: [["lastni", "lastni (povleci oglišča)"], ["ostrokotni", "ostrokotni: a 6 cm, b 7 cm, γ 60°"], ["topokotni", "topokotni: a 4 cm, b 5 cm, γ 120°"], ["pravokotni", "pravokotni: a 6 cm, b 8 cm, γ 90°"]], value: "lastni", onChange: setTri });
+  if (mode === "izreki") triSel = select({ label: "trikotnik", options: [["lastni", "lastni (povleci)"], ["ostrokotni", "ostrokotni (6 cm, 7 cm, 60°)"], ["topokotni", "topokotni (4 cm, 5 cm, 120°)"], ["pravokotni", "pravokotni (6 cm, 8 cm, 90°)"]], value: "lastni", onChange: setTri });
   const ctl = mode === "tocke" ? [buttons(...["O", "S", "T", "H"].map((k) => toggle({ O: "simetrale stranic", S: "simetrale kotov", T: "težiščnice", H: "višine" }[k], show[k], (v) => ((show[k] = v), draw()))))] : triSel ? [triSel] : [];
   layout(el, {
     stage: [svg],
