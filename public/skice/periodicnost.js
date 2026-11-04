@@ -54,7 +54,7 @@ export default function narisi(host) {
       if (S.svg.lastChild !== tocka) S.svg.append(tocka);
     }
     S.cipi([
-      { barva: "ploskev", oznaka: "T", vrednost: `${piZapis(P.T)} ≈ ${st(P.T, 2)}` },
+      { barva: "ploskev", oznaka: "T", vrednost: `${piZapis(P.T)} ≈\u00a0${st(P.T, 2)}` },
       { barva: "glavna", oznaka: "x_0", vrednost: st(x0, 2) },
       { barva: "izbor", oznaka: `${P.f_tex}\\,x_0`, vrednost: st(y0, 3) },
       { barva: "izbor", oznaka: `${P.f_tex}\\,(x_0 + T)`, vrednost: st(P.f(x0 + P.T), 3) },
