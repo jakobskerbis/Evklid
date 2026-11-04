@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Nasičen zrak
+  - $p_s$ se na vsakih $10\,^\circ\mathrm{C}$ približno podvoji
+  - pri $22\,^\circ\mathrm{C}$: $x_s = 16{,}7\,\mathrm{g/kg}$
+- Koliko vode je v zraku
+  - absolutna vlažnost $\rho_v$ v $\mathrm{g/m^3}$
+  - vsebnost vlage $x$ v $\mathrm{g/kg}$ suhega zraka
+- Relativna vlažnost
+  - $\varphi = \dfrac{p_v}{p_s}$
+  - za ugodje okoli $40$ do $60\,\%$
+- Segrevanje
+  - $x$ ostane, $\varphi$ pade
+  - $0\,^\circ\mathrm{C}$, $80\,\%$ segret na $22\,^\circ\mathrm{C}$: $18\,\%$
+- Rosišče
+  - $\varphi = 100\,\%$, para se kondenzira
+  - orošena šipa, očala, pločevinka
+- Mollierov diagram
+  - $x$ vodoravno, $t$ navpično
+  - krivulja $\varphi = 100\,\%$ je obala
+  - segrevanje navpično, mešanje ravna črta
+- Vlaženje
+  - $m_w = \rho V (x_3 - x_1)$
+  - s paro skoraj vodoravno desno
