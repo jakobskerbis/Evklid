@@ -1,0 +1,28 @@
+{
+ "id": "NPZ9-KEM-2018-redni",
+ "points": 33,
+ "minutes": 60,
+ "tools": "nalivno pero ali kemični svinčnik, svinčnik, radirka, šilček in žepno računalo; periodni sistem je sestavni del preizkusa (perforirana priloga)",
+ "tasks": [
+  {"n": 1, "points": [1], "format": ["choice"], "topic": "kemijske formule: iz racionalne formule preproste organske molekule prešteti vse atome"},
+  {"n": 2, "points": [1], "format": ["choice"], "topic": "periodni sistem: kaj imata skupnega atoma dveh elementov iste periode (število lupin; pasti s protoni, nevtroni, valenčnimi elektroni)"},
+  {"n": 3, "points": [1], "format": ["choice"], "topic": "kemijska reakcija: izbrati pravilno splošno trditev o reaktantih (ohranitev mase, zapis v enačbi, agregatno stanje kot pasti)"},
+  {"n": 4, "points": [1], "format": ["choice"], "topic": "nevtralizacija v vsakdanjem življenju: s katero gospodinjsko snovjo nevtraliziramo bazično (ali kislo) tekočino (izbrati snov z nasprotnimi lastnostmi)"},
+  {"n": 5, "points": [1], "format": ["choice"], "topic": "delčni modeli: iz sheme delcev v posodi sklepati, ali gre za čisto snov ali zmes elementov/spojin", "figure": "shema posode z delci (krogci različnih vrst)"},
+  {"n": 6, "points": [1], "format": ["choice"], "topic": "reaktivnost alkalijskih kovin: zakaj tako kovino hranimo pod zaščitno tekočino (preprečiti stik s kisikom in vodo)"},
+  {"n": 7, "points": [1], "format": ["choice"], "topic": "ionske spojine: med zapisi izbrati pravilno formulo ionske spojine (razmerje ionov glede na naboj)"},
+  {"n": 8, "points": [1], "format": ["choice"], "topic": "modeli molekul: izbrati kroglični model, ki ustreza dani kisikovi organski spojini (keton) iz vsakdanje rabe", "figure": "štirje kroglični modeli molekul z legendo atomov"},
+  {"n": 9, "points": [1], "format": ["choice"], "topic": "prostorska zgradba molekule: izbrati zapis, ki pravilno prikazuje prostorsko (tetraedrično) zgradbo najpreprostejšega ogljikovodika", "figure": "štirje različni zapisi strukturne formule"},
+  {"n": 10, "points": [1], "format": ["choice"], "topic": "molekula vode: izbrati pravilno trditev o vezi, polarnosti in sestavi molekule"},
+  {"n": 11, "points": [1], "format": ["choice"], "topic": "energijski diagram: iz diagrama reakcije gorenja sklepati, ali je reakcija eksotermna ali endotermna in primerjati energijo reaktantov in produktov", "figure": "energijski diagram reakcije (energija vs. potek reakcije)"},
+  {"n": 12, "points": [1], "format": ["choice"], "topic": "nastanek ionov: atom (dan s shemo elektronov) odda nekaj elektronov; kateremu žlahtnemu plinu je po številu elektronov enak nastali ion", "figure": "shema razporeditve elektronov po lupinah"},
+  {"n": 13, "points": [1, 1], "format": ["open", "construct"], "topic": "agregatna stanja na ravni delcev: shema prikazuje prehod snovi med stanjema; a) poimenovati spremembo; b) narisati razporeditev delcev po ohladitvi pod tališče", "figure": "shema razporeditve delcev pred in po spremembi"},
+  {"n": 14, "points": [1, 1], "format": ["open", "open"], "topic": "destilacija: shema aparature za pridobivanje čiste vode iz raztopine; a) kateri spremembi agregatnega stanja potekata; b) ali je to fizikalna ali kemijska sprememba", "figure": "shema destilacijske aparature z označenimi deli"},
+  {"n": 15, "points": [1, 1], "format": ["open", "open"], "topic": "trdota vode: poskus z milnico in več vzorci vode, preglednica višine pene; a) kateri vzorec je destilirana voda; b) utemeljitev (mehka voda, več pene)", "figure": "preglednica višine pene v epruvetah"},
+  {"n": 16, "points": [1, 2], "format": ["choice", "open"], "topic": "topnost in gostota: dve nemešljivi tekočini in obarvana nepolarna snov; a) izbrati shemo epruvete s pravilno lego in obarvanostjo plasti; b) navesti dve utemeljitvi (gostota tekočin, topnost nepolarne snovi v nepolarnem topilu)", "figure": "štiri sheme epruvet z dvema plastema"},
+  {"n": 17, "points": [2, 2], "format": ["open", "fill"], "topic": "gorenje kovine in nastali oksid: a) napisati urejeno enačbo gorenja kovine; b) dopolniti trditvi o raztopini oksida v vodi (pH večji/manjši od 7, ime reakcije s kislino – nevtralizacija)"},
+  {"n": 18, "points": [2], "format": ["open"], "topic": "masni delež: iz mas topljenca in topila izračunati masni delež topljenca v raztopini (pozor: masa raztopine = topljenec + topilo), rezultat v odstotkih ali kot delež"},
+  {"n": 19, "points": [1, 1, 1], "format": ["open", "open", "open"], "topic": "nenasičeni ogljikovodiki: iz modela molekule a) napisati strukturno ali racionalno formulo; b) poimenovati spojino; c) izbrati, s katero od naštetih snovi reagira pri sobnih pogojih (adicija broma)", "figure": "kroglični model molekule ogljikovodika"},
+  {"n": 20, "points": [1, 1, 1], "format": ["open", "open", "fill"], "topic": "alkoholi kot gorivo: a) v katero skupino kisikovih organskih spojin spada dana spojina; b) ime funkcionalne skupine; c) dopolniti manjkajoči produkt in urediti enačbo gorenja"}
+ ]
+}

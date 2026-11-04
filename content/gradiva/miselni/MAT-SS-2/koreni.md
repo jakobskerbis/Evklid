@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kvadratni koren
+  - $\sqrt{a} \ge 0$, definiran za $a \ge 0$
+  - $\sqrt{x^2} = |x|$
+- Lihi koren
+  - $\sqrt[3]{-27} = -3$
+  - sodi koren negativnega števila ni realen
+- Pravila
+  - $\sqrt{a \cdot b} = \sqrt{a} \cdot \sqrt{b}$ za $a, b \ge 0$
+  - napaka: $\sqrt{a + b} = \sqrt{a} + \sqrt{b}$
+- Istovrstni koreni
+  - $2\sqrt{3} + 5\sqrt{3} = 7\sqrt{3}$
+  - $2\sqrt{3} + 3\sqrt{5}$ ne združiš
+- Delno korenjenje
+  - $\sqrt{a^2 b} = a\sqrt{b}$ za $a, b \ge 0$
+  - diagonala lista: $\sqrt{450} = 15\sqrt{2}$
+  - izvleči največji popolni kvadrat
+- Racionalizacija
+  - $\dfrac{a}{\sqrt{b}} = \dfrac{a\sqrt{b}}{b}$
+  - konjugirani izraz: $\left(\sqrt{a} - \sqrt{b}\right)\left(\sqrt{a} + \sqrt{b}\right) = a - b$

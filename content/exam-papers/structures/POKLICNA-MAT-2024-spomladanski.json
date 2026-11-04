@@ -1,0 +1,29 @@
+{
+ "id": "POKLICNA-MAT-2024-spomladanski",
+ "points": 70,
+ "maxListed": 80,
+ "minutes": 120,
+ "choice": "v 2. delu kandidat izbere 2 od 3 nalog po 10 točk in ju označi na naslovnici (sicer se ocenita prvi dve rešeni)",
+ "choose": {"section": "B", "solve": 2, "of": 3, "points": 20},
+ "tools": "Nalivno pero ali kemični svinčnik, svinčnik (za grafe, skice in risbe), radirka, računalo in geometrijsko orodje; kandidat dobi dva konceptna lista in perforirano prilogo s formulami. Pot do rezultata mora biti zapisana z vmesnimi računi in sklepi.",
+ "sections": {
+  "A": "1. del: 11 nalog po 4–6 točk (skupaj 50 točk), rešiti je treba vse; večinoma enostopenjske naloge, zadnja ima dva dela",
+  "B": "2. del: 3 strukturirane naloge po 10 točk z deli 1.1, 1.2 …; kandidat izbere in reši dve (skupaj 20 točk), zato je vsota točk vseh nalog 80, dosegljivih pa 70"
+ },
+ "tasks": [
+  {"section": "A", "n": 1, "points": [4], "format": ["open"], "topic": "brez računala izračunati vrednost številskega izraza z negativnim decimalnim številom, ulomkom in potenco razlike (vrstni red operacij, pretvorba decimalnega števila v ulomek)"},
+  {"section": "A", "n": 2, "points": [4], "format": ["choice"], "topic": "štiri izjave o deljivosti, pri vsaki obkrožiti DA ali NE: ali je dvomestno število praštevilo, ali je dvomestno število sestavljeno, ali sta dve števili tuji, ali je zapisani razcep pravilni praštevilski razcep"},
+  {"section": "A", "n": 3, "points": [4], "format": ["open"], "topic": "romb z dano stranico in ostrim kotom: skica, višina (kotna funkcija v pravokotnem trikotniku) in ploščina"},
+  {"section": "A", "n": 4, "points": [4], "format": ["open"], "topic": "obrestno obrestovanje z letno kapitalizacijo: najmanjše število let, da glavnica preseže dani znesek (eksponentna neenačba, logaritem, zaokrožitev navzgor)"},
+  {"section": "A", "n": 5, "points": [4], "format": ["open"], "topic": "poenostaviti produkt racionalnega izraza in obratne vrednosti drugega racionalnega izraza (razcep kvadratnega tričlenika in razlike kvadratov, krajšanje)"},
+  {"section": "A", "n": 6, "points": [4], "format": ["open"], "topic": "verjetnost, da določena tekmovalka med štirimi zasede dano mesto, če so vsi časi različni (permutacije ali simetrija)"},
+  {"section": "A", "n": 7, "points": [4], "format": ["open"], "topic": "kvadratna enačba v nestandardni obliki (prestaviti člene in rešiti, neceli rešitvi)"},
+  {"section": "A", "n": 8, "points": [5], "format": ["open"], "topic": "odvod funkcije, ki je vsota potence, linearnega člena in naravnega logaritma, ter vrednost odvoda v dani točki"},
+  {"section": "A", "n": 9, "points": [5], "format": ["open"], "topic": "stavba v obliki kvadra: iz ploščine tlorisa in ene stranice druga stranica, ploščina stranskih sten, odšteti odstotek za okna in vrata – površina fasade za obnovo"},
+  {"section": "A", "n": 10, "points": [6], "format": ["fill"], "topic": "graf funkcije tangens z raztegom na intervalu z navpičnima asimptotama (graf dan): zaloga vrednosti, začetna vrednost, intervali, kjer je funkcija pozitivna, natančna vrednost pri kotu π/6", "figure": "graf tangensne funkcije z osjo x, označeno v večkratnikih π/2"},
+  {"section": "A", "n": 11, "points": [4, 2], "format": ["open", "open"], "topic": "cena prevoza kot linearna funkcija dolžine poti (graf z dvema označenima točkama): 11.1 enačba premice skozi dve točki; 11.2 najdaljša pot pri danem razpoložljivem znesku", "figure": "graf linearne funkcije v mreži (dolžina poti – cena)"},
+  {"section": "B", "n": 1, "points": [4, 6], "format": ["fill", "construct"], "topic": "polinom tretje stopnje z ulomljenimi koeficienti (brez kvadratnega člena): 1) stopnja, prosti člen, vodilni člen in vrednost v negativni točki; 2) ničle (Hornerjev algoritem ali uganjena ničla, nato kvadratna enačba) in graf s presečišči z osema", "figure": "prazen koordinatni sistem z enoto"},
+  {"section": "B", "n": 2, "points": [5, 5], "format": ["open", "table"], "topic": "statistika in eksponentna rast: 1) preglednica šestih vrednosti (velika števila v milijonih): aritmetična sredina, mediana in katere vrednosti so nad sredino; 2) eksponentni model rasti z osnovo e: v preglednico vpisati vrednosti za tri leta (začetno in dve v korakih po 50 let) ter izračunati odvod funkcije", "figure": "preglednica podatkov; prazna preglednica leto – ocena"},
+  {"section": "B", "n": 3, "points": [5, 5], "format": ["open", "open"], "topic": "trije členi zaporedja, srednji neznan: 1) vse vrednosti srednjega člena, da je zaporedje geometrijsko, in količnik naraščajočega; 2) vrednost srednjega člena pri aritmetičnem zaporedju z dano diferenco in število členov, manjših od dane velike meje (neenačba za n)"}
+ ]
+}

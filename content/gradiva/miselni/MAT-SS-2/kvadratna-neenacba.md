@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Past korenjenja
+  - iz $x^2 < 16$ sledi $-4 < x < 4$
+  - $\sqrt{x^2} = |x|$, ne $x$
+- Na desni nič
+  - vse prenesi na levo: $f(x) > 0$
+- Ničle
+  - $D = b^2 - 4ac$
+  - $x_{1,2} = \frac{-b \pm \sqrt{D}}{2a}$
+- Skica parabole
+  - $a > 0$ navzgor, $a < 0$ navzdol
+  - $f(x) > 0$: graf nad osjo $x$
+- Intervali
+  - $a > 0$: $f(x) < 0$ za $x \in (x_1, x_2)$
+  - oster znak $( \;)$, neoster $[\;]$
+- Brez ničel
+  - $D < 0$: povsod predznak $a$
+  - napaka: »ni rešitve« velja le za enačbo
+- Obrat neenačaja
+  - množenje z $-1$ obrne znak
+  - napaka: deljenje z $x$

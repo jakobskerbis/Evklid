@@ -1,0 +1,240 @@
+{
+ "id": "MATURA-MAT-VR-2024-spomladanski",
+ "points": 120,
+ "minutes": 180,
+ "polas": [
+  {
+   "pola": 1,
+   "minutes": 90,
+   "calculator": false,
+   "points": 60
+  },
+  {
+   "pola": 2,
+   "minutes": 90,
+   "calculator": true,
+   "points": 60
+  }
+ ],
+ "tools": "Nalivno pero ali kemični svinčnik, svinčnik, radirka in geometrijsko orodje (šestilo, ravnilo, po želji trikotnik); zbirka zahtevnejših formul je v izpitni poli, priložena sta konceptna lista (osnutki se ne ocenjujejo). Pri izpitni poli 1 računalo ni dovoljeno, pri izpitni poli 2 je dovoljeno. Pot do rezultata mora biti zapisana z vmesnimi računi in sklepi.",
+ "sections": {
+  "B": "krajše strukturirane naloge: 6 nalog po 5–8 točk (skupaj 40 točk na polo), priporočeno 45 minut; enake kot del B osnovne ravni",
+  "C": "strukturirane naloge: 2 nalogi po 10 točk (skupaj 20 točk na polo), priporočeno 45 minut; večstopenjske, z deli 1.1, 1.2 …, zahtevnejša vsebina višje ravni"
+ },
+ "tasks": [
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 1,
+   "points": [
+    8
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "linearna funkcija s celimi koeficienti: vrednost v ulomljeni točki, za kateri x ima funkcija dano ulomljeno vrednost, za katere x so vrednosti negativne (linearna neenačba)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 2,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "pravilni šestkotnik, včrtan krogu z danim polmerom: natančna obseg in ploščina (enakostranični trikotniki)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 3,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "razcep treh izrazov: razlika kvadratov, kvadratni trinom s skupnim faktorjem, polinom tretje stopnje (uganjena ničla, Hornerjev algoritem)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 4,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "elipsa s središčem v izhodišču: dani temeni na abscisni osi in točka na elipsi (koren v koordinati); enačba elipse in preostali temeni"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 5,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "funkcija oblike a·e^x + b; iz dane enačbe tangente v točki z absciso 0 določiti a in b (vrednost funkcije in odvoda)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 6,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "logaritemska funkcija z osnovo 2 in kvadratnim trinomom v argumentu: definicijsko območje (kvadratna neenačba) in zaloga vrednosti (teme parabole, monotonost logaritma)"
+  },
+  {
+   "pola": 1,
+   "section": "C",
+   "n": 1,
+   "points": [
+    4,
+    6
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "množice kompleksnih števil v kompleksni ravnini: 1) narisati pravokotnik, določen z mejami za realni in imaginarni del, zapisati težišče lika, največja absolutna vrednost in pri katerih z je dosežena; 2) narisati krog |z − z0| ≤ r, absolutna vrednost središča, najmanjša absolutna vrednost na krogu in kje je dosežena",
+   "figure": "dve prazni kompleksni ravnini"
+  },
+  {
+   "pola": 1,
+   "section": "C",
+   "n": 2,
+   "points": [
+    6,
+    1,
+    3
+   ],
+   "format": [
+    "open",
+    "open",
+    "open"
+   ],
+   "topic": "racionalna funkcija s kubičnim števcem in razliko kvadratov v imenovalcu: 1) definicijsko območje, ničle, poševna asimptota in skica grafa brez odvoda; 2) zapis kot vsota linearne funkcije in ulomka z linearnim števcem (deljenje polinomov); 3) ploščina lika v prvem kvadrantu med grafom in abscisno osjo (določeni integral)",
+   "figure": "prazen koordinatni sistem za skico grafa"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 1,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "presečišči grafov kvadratne in linearne funkcije (kvadratna enačba, obe koordinati)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 2,
+   "points": [
+    7
+   ],
+   "format": [
+    "table"
+   ],
+   "topic": "logika in množice: v prvo preglednico zapisati resničnost (1/0) štirih izjav (o praštevilih, moči unije disjunktnih množic, potenčni množici, kartezičnem produktu), v drugo resničnost sestavljenih izjav (konjunkcija, disjunkcija, implikacija …) iz izjav z dano resničnostjo; prve vrstice so rešene",
+   "figure": "dve preglednici resničnosti izjav"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 3,
+   "points": [
+    5
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "besedilna naloga: dane so skupne mase vseh treh parov treh oseb; sistem treh linearnih enačb in odgovor"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 4,
+   "points": [
+    2,
+    5
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "sinusna funkcija: 1) iz dela grafa funkcije A·sin x + C z danim lokalnim maksimumom in minimumom določiti A in C; 2) vsa presečišča grafa funkcije oblike a·sin x + b z vodoravno premico (trigonometrična enačba, splošna rešitev s periodo)",
+   "figure": "del grafa sinusne funkcije z označenima ekstremoma"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 5,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "vektorji v ravnini: dani dve točki, zapisati vektor med njima s komponentama; poiskati točko na simetrali lihih kvadrantov, da je vektor od prve točke do nje pravokoten na dani vektor (skalarni produkt nič)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 6,
+   "points": [
+    8
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "graf prvih členov neskončnega geometrijskega zaporedja z negativnim količnikom (izmenični predznaki): odčitati prva dva člena, izračunati peti člen, najmanjši n, pri katerem vsota prvih n členov preseže veliko mejo (formula za vsoto, logaritmi, upoštevati sodost n)",
+   "figure": "graf členov zaporedja kot točke v koordinatnem sistemu"
+  },
+  {
+   "pola": 2,
+   "section": "C",
+   "n": 1,
+   "points": [
+    2,
+    3,
+    2,
+    3
+   ],
+   "format": [
+    "open",
+    "open",
+    "open",
+    "open"
+   ],
+   "topic": "prostorska geometrija iz treh pravokotnih projekcij (tloris, naris, stranski ris) modela stavbe z dvokapno streho in valjastega silosa brez strehe: 1) koordinate točk iz skic; 2) površina notranjih sten in dna silosa pri dani debelini sten; 3) naklon strehe; 4) vektor od točke na silosu do točke na slemenu z eno neznano komponento: dopustne vrednosti te komponente",
+   "figure": "tri skice modela v koordinatnih ravninah xy, xz, yz"
+  },
+  {
+   "pola": 2,
+   "section": "C",
+   "n": 2,
+   "points": [
+    4,
+    6
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "nepošten kovanec z dano verjetnostjo grba: 1) Bernoullijevo zaporedje: verjetnost natanko k grbov in vsaj dveh grbov v n metih; 2) dva igralca izmenično mečeta, zmaga prvi, ki vrže grb: verjetnosti zmage v posameznih metih in skupna verjetnost zmage začetnika (neskončna geometrijska vrsta)"
+  }
+ ]
+}

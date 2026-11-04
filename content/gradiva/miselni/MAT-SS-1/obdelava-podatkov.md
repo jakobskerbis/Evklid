@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Frekvence
+  - frekvenca $f$: kolikokrat se vrednost pojavi
+  - relativna frekvenca $\dfrac{f}{n}$, pogosto v %
+- Srednje vrednosti
+  - $\bar{x} = \dfrac{x_1 + \cdots + x_n}{n}$
+  - mediana: sredina urejenih podatkov
+  - modus: najpogostejši podatek
+- Razmah in kvartili
+  - $R = x_{\max} - x_{\min}$
+  - utrinki: enako povprečje $20$, razmaha $4$ in $36$
+  - $Q_1$, $Q_3$: mediani spodnje in zgornje polovice
+  - medkvartilni razmik $Q_3 - Q_1$
+- Varianca in odklon
+  - $\sigma^2$: povprečje kvadratov odklonov
+  - $\sigma = \sqrt{\sigma^2}$, enota kot podatki
+  - napaka: pozabljen koren
+- Osamelci
+  - pod $Q_1 - 1{,}5\,(Q_3 - Q_1)$ ali nad $Q_3 + 1{,}5\,(Q_3 - Q_1)$
+  - premaknejo povprečje, mediane skoraj ne
+- Prikazi
+  - krožni diagram: kot $\dfrac{f}{n} \cdot 360^\circ$
+  - histogram: razredi, stolpci se dotikajo
+  - škatla z brki: pet števil

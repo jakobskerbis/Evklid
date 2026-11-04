@@ -38,6 +38,21 @@ export function migrateGuarantee(db) {
   `);
 }
 
+// Hramba zapisa (j 2026-11-04, kartica »10 let po odločitvi«): zapis se izbriše 10 let po odločitvi (vračilo, zavrnitev,
+// boljša ocena); zapis brez odločitve (starš ni sporočil ocene) 10 let po začetku. Zahtevek, o katerem še ni odločeno,
+// ostane. Poganja ga dnevno opravilo v server/accounts/index.js.
+export const RETENTION_YEARS = 10;
+export function purgeOldGuarantees(db, now = Date.now()) {
+  const d = new Date(now);
+  d.setUTCFullYear(d.getUTCFullYear() - RETENTION_YEARS);
+  const cutoff = sqlTime(d.getTime());
+  // started_at je ISO (»…T…Z«), claimed_at/decided_at iz datetime('now'): datetime() oboje poenoti, sicer bi se zapis
+  // na dan roka primerjal kot niz (»T« > presledek) in izbrisal dan pozneje.
+  return db
+    .prepare("DELETE FROM guarantees WHERE status != 'claimed' AND datetime(COALESCE(decided_at, claimed_at, started_at)) < ?")
+    .run(cutoff).changes;
+}
+
 // Dnevi in tedni vaje štejejo po času v Ljubljani (vaja ob 0.30 v ponedeljek je ponedeljek, ne nedelja v UTC).
 const LJ_DATE = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Ljubljana", year: "numeric", month: "2-digit", day: "2-digit" });
 const LJ_HOUR = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Ljubljana", hour: "2-digit", hourCycle: "h23" });

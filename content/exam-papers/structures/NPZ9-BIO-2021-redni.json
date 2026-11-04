@@ -1,0 +1,32 @@
+{
+ "id": "NPZ9-BIO-2021-redni",
+ "points": 35,
+ "minutes": 60,
+ "tools": "samo pisalo (nalivno pero ali kemični svinčnik); računalo in druga gradiva niso dovoljeni",
+ "tasks": [
+  {"n": 1, "points": [1], "format": ["choice"], "topic": "biotehnologija v kuhinji: zakaj se pri peki zaradi dodanih mikroorganizmov poveča prostornina testa (nastali plin pri vrenju)"},
+  {"n": 2, "points": [1], "format": ["choice"], "topic": "sistematika vretenčarjev: iz dveh opisanih lastnosti (način dihanja, uravnavanje telesne temperature) uvrstiti žival v razred"},
+  {"n": 3, "points": [1], "format": ["choice"], "topic": "kroženje snovi: kaj se zgodi s snovmi odmrlih organizmov (razgradnja in ponovna uporaba)"},
+  {"n": 4, "points": [1], "format": ["choice"], "topic": "prehranjevanje: iz preglednice hrane izbrane živali po letnih časih jo uvrstiti glede na način prehranjevanja (vsejedec)", "figure": "preglednica vrst hrane po letnih časih"},
+  {"n": 5, "points": [1], "format": ["choice"], "topic": "mikroorganizmi v prehranski industriji: kaj se dogaja z bakterijami med predelavo mlečnega izdelka (rast in razmnoževanje)"},
+  {"n": 6, "points": [1], "format": ["choice"], "topic": "prehrana rastlin: za kaj rastlina potrebuje mineralne snovi iz tal (gradnja snovi za rast)"},
+  {"n": 7, "points": [1], "format": ["choice"], "topic": "razmnoževala človeka: v katerem organu nastajajo moške spolne celice"},
+  {"n": 8, "points": [1], "format": ["choice"], "topic": "prebavila in presnova: kateri organ razstruplja škodljive snovi (pasti z drugimi organi trebušne votline)"},
+  {"n": 9, "points": [1], "format": ["choice"], "topic": "zgradba celice: katere strukture živalska celica nima v primerjavi z rastlinsko"},
+  {"n": 10, "points": [1], "format": ["choice"], "topic": "zdravje: vzrok pogoste nalezljive bolezni dihal (povzročitelj vs. dejavniki tveganja)"},
+  {"n": 11, "points": [1], "format": ["choice"], "topic": "evolucija: s katerim procesom razložimo podobno notranjo zgradbo različnih skupin vretenčarjev (skupni izvor)"},
+  {"n": 12, "points": [1], "format": ["choice"], "topic": "presnova: iz opisne trditve prepoznati proces (celično dihanje, fotosinteza, pljučno dihanje, transpiracija)"},
+  {"n": 13, "points": [1], "format": ["choice"], "topic": "razmnoževanje rastlin: kako nastane seme (spolno razmnoževanje; pasti z nespolnimi načini in trosi)"},
+  {"n": 14, "points": [1, 1], "format": ["open", "open"], "topic": "krvne skupine in transfuzija: preglednica združljivosti darovalcev in prejemnikov; a) katera skupina je splošni prejemnik; b) DA/NE z utemeljitvijo, ali lahko bolnik z dano skupino prejme kri druge skupine (Rh faktor, protitelesa)", "figure": "preglednica združljivosti krvnih skupin z kljukicami"},
+  {"n": 15, "points": [1, 1], "format": ["open", "open"], "topic": "gibala: slika krčenja okončine v sklepu; a) našteti tri sodelujoče strukture (mišica, kost, sklep, kita, živec); b) pojasniti, zakaj gib ni mogoč, ko je kost poškodovana (mišica potrebuje oporo/prijemališče)", "figure": "skica okončine s kostmi in mišicami med krčenjem"},
+  {"n": 16, "points": [1, 1], "format": ["open", "open"], "topic": "zgradba lista: a) naloga označenega dela lista (npr. listne žile/reže); b) kateri proces ne more potekati, ko listne reže zapremo s premazom, z utemeljitvijo (izmenjava plinov, transpiracija, fotosinteza)", "figure": "slika lista s puščico na označenem delu"},
+  {"n": 17, "points": [1, 1], "format": ["open", "open"], "topic": "zajedavci in sistematika členonožcev: opis in slika drobnega zajedavca žuželk; a) s katerim pripomočkom ga opazujemo (lupa/stereomikroskop); b) DA/NE z utemeljitvijo, ali spada med žuželke (število nog, členitev telesa)", "figure": "slika drobnega členonožca od spredaj in od zgoraj"},
+  {"n": 18, "points": [1, 1], "format": ["open", "open"], "topic": "razmnoževanje človeka: shema ženskih spolnih organov; a) DA/NE z utemeljitvijo, ali je oploditev mogoča po odstranitvi enega od parnih organov; b) utemeljiti, zakaj je dana metoda zaščite pri spolnih odnosih najustreznejša (zaščita pred nosečnostjo in spolno prenosljivimi boleznimi)", "figure": "shema notranjih ženskih spolnih organov"},
+  {"n": 19, "points": [1, 1], "format": ["open", "open"], "topic": "načrtovanje poskusa – transpiracija: več posod z vodo pod plastjo olja, v nekaterih poganjki z listi ali brez; a) napovedati, kje bo gladina najnižja, z utemeljitvijo; b) pomen kontrolne posode", "figure": "skica treh posod s poskusom"},
+  {"n": 20, "points": [1, 1], "format": ["choice", "open"], "topic": "virusi: a) ali je virus celica in ali ga uvrščamo med živa bitja; b) kako zaščitna oprema zavira širjenje kapljičnih okužb", "figure": "slika modela virusa"},
+  {"n": 21, "points": [1, 1], "format": ["open", "open"], "topic": "kromosomi: iz kariotipa in danega števila kromosomov v zigoti a) število kromosomov v spolni celici (haploidno); b) število kromosomov v telesni celici", "figure": "slika kariotipa živali"},
+  {"n": 22, "points": [1, 1], "format": ["open", "open"], "topic": "spolno vezano dedovanje: rodovnik družine z recesivno lastnostjo na kromosomu X; a) zapisati genotip izbranega člana z oznakami spolnih kromosomov; b) genotipa staršev, če bi bil drug potomec prizadet", "figure": "rodovnik z legendo (moški, ženska, prizadet)"},
+  {"n": 23, "points": [1, 1], "format": ["open", "open"], "topic": "gensko spremenjeni organizmi: kratek opis kulturne rastline z vnesenim genom za odpornost; a) DA/NE z utemeljitvijo, ali je gensko spremenjena; b) ena možna posledica vnosa GSO v okolje"},
+  {"n": 24, "points": [1, 1], "format": ["open", "open"], "topic": "rast rastlin in določevalni ključ: a) poleg fotosinteze in dihanja navesti proces, ki omogoča ponovno rast pokošenih rastlin (delitev celic); b) z dihotomnim ključem določiti imena več rastlin na slikah", "figure": "dihotomni določevalni ključ in štiri slike rastlin"}
+ ]
+}

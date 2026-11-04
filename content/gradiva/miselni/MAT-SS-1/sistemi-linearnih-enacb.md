@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Skupni par
+  - ustreza obema enačbama hkrati
+  - $x + y = 6$, $y = 2x$: par $(2, 4)$
+- Grafično
+  - rešitev je presečišče premic
+  - risba je ocena, naredi preizkus
+- Zamenjava
+  - izrazi neznanko, vstavi v drugo enačbo
+  - °C in °F enaki pri $-40$
+- Nasprotni koeficienti
+  - pomnoži vse člene, tudi desno stran
+  - $+y$ in $-y$ pri seštevanju izpadeta
+  - napaka: $(5x - 4y)$ odštet brez obrata predznaka
+- Število rešitev
+  - sekata se: natanko ena
+  - vzporedni: nobene, npr. $0 = 2$
+  - sovpadata: neskončno, $0 = 0$
+- Preizkus
+  - vstavi v obe prvotni enačbi
+  - $6$ štorkelj, $8$ srn: $2 \cdot 6 + 4 \cdot 8 = 44$

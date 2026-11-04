@@ -1,0 +1,370 @@
+{
+ "id": "MATURA-MAT-OR-2024-spomladanski",
+ "points": 120,
+ "minutes": 180,
+ "polas": [
+  {
+   "pola": 1,
+   "minutes": 90,
+   "calculator": false,
+   "points": 60
+  },
+  {
+   "pola": 2,
+   "minutes": 90,
+   "calculator": true,
+   "points": 60
+  }
+ ],
+ "tools": "Nalivno pero ali kemični svinčnik, svinčnik, radirka in geometrijsko orodje (šestilo, ravnilo, po želji trikotnik); zbirka zahtevnejših formul je v izpitni poli, priložena sta konceptna lista (osnutki se ne ocenjujejo). Pri izpitni poli 1 računalo ni dovoljeno, pri izpitni poli 2 je dovoljeno. Pot do rezultata mora biti zapisana z vmesnimi računi in sklepi.",
+ "sections": {
+  "A": "kratke naloge: 8 nalog po 2–3 točke (skupaj 20 točk na polo), priporočeno 30 minut; enostopenjske, brez delov",
+  "B": "krajše strukturirane naloge: 6 nalog po 5–8 točk (skupaj 40 točk na polo), priporočeno 60 minut; večinoma brez oštevilčenih delov, ena naloga razdeljena na dela 4.1 in 4.2; del B je enak kot pri višji ravni"
+ },
+ "tasks": [
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 1,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "linearna neenačba z neznanko na obeh straneh; rešitev kot interval ali neenakost"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 2,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "decimalno število z dvomestno periodo zapisati kot ulomek"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 3,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "izraz z visoko potenco imaginarne enote in večkratnikom i (periodičnost potenc i), rezultat v obliki a + bi"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 4,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "eksponentna enačba z enako osnovo na obeh straneh in linearnima izrazoma v eksponentih; enačenje eksponentov"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 5,
+   "points": [
+    3
+   ],
+   "format": [
+    "fill"
+   ],
+   "topic": "racionalna funkcija z linearnim števcem in linearnim imenovalcem: zapisati ničlo, pol in enačbo vodoravne asimptote"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 6,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "enačba krožnice z danim središčem, ki se dotika abscisne osi (polmer je razdalja središča od osi)"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 7,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "kombinatorika: na koliko načinov iz majhne skupine fantov in deklet izberemo ekipo z danim številom fantov in deklet (produkt kombinacij)"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 8,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "nedoločeni integral vsote potenčnih členov in sinusa (integriranje po členih)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 1,
+   "points": [
+    8
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "linearna funkcija s celimi koeficienti: vrednost v ulomljeni točki, za kateri x ima funkcija dano ulomljeno vrednost, za katere x so vrednosti negativne (linearna neenačba)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 2,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "pravilni šestkotnik, včrtan krogu z danim polmerom: natančna obseg in ploščina (enakostranični trikotniki)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 3,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "razcep treh izrazov: razlika kvadratov, kvadratni trinom s skupnim faktorjem, polinom tretje stopnje (uganjena ničla, Hornerjev algoritem)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 4,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "elipsa s središčem v izhodišču: dani temeni na abscisni osi in točka na elipsi (koren v koordinati); enačba elipse in preostali temeni"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 5,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "funkcija oblike a·e^x + b; iz dane enačbe tangente v točki z absciso 0 določiti a in b (vrednost funkcije in odvoda)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 6,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "logaritemska funkcija z osnovo 2 in kvadratnim trinomom v argumentu: definicijsko območje (kvadratna neenačba) in zaloga vrednosti (teme parabole, monotonost logaritma)"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 1,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "trije zaporedni členi aritmetičnega zaporedja, srednji je neznan; izračunati ga (aritmetična sredina)"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 2,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "enačba z absolutno vrednostjo linearnega izraza; dve rešitvi"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 3,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "ulomek s potencami in korenom iste spremenljivke zapisati kot eno potenco z racionalnim eksponentom"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 4,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "odstotki: za koliko odstotkov moramo povečati dano število, da dobimo dani odstotek drugega števila"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 5,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "neznana stranica trikotnika iz dveh kotov in ene stranice (tretji kot, sinusni izrek)",
+   "figure": "skica trikotnika z označenima kotoma in znano stranico"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 6,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "prostornina tristrane piramide, katere oglišča so štiri oglišča kocke z danim robom",
+   "figure": "kocka z označenimi oglišči"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 7,
+   "points": [
+    3
+   ],
+   "format": [
+    "choice"
+   ],
+   "topic": "dva diagrama škatla z brki (dve skupini po deset podatkov o starosti): presoditi pravilnost (da/ne) treh trditev o mediani, četrtinah in številu podatkov pod mejo",
+   "figure": "dva diagrama škatla z brki z vpisanimi petimi vrednostmi in preglednica da/ne"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 8,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "met dveh kock: verjetnost, da vsaj ena pokaže dano število (nasprotni dogodek ali štetje)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 1,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "presečišči grafov kvadratne in linearne funkcije (kvadratna enačba, obe koordinati)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 2,
+   "points": [
+    7
+   ],
+   "format": [
+    "table"
+   ],
+   "topic": "logika in množice: v prvo preglednico zapisati resničnost (1/0) štirih izjav (o praštevilih, moči unije disjunktnih množic, potenčni množici, kartezičnem produktu), v drugo resničnost sestavljenih izjav (konjunkcija, disjunkcija, implikacija …) iz izjav z dano resničnostjo; prve vrstice so rešene",
+   "figure": "dve preglednici resničnosti izjav"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 3,
+   "points": [
+    5
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "besedilna naloga: dane so skupne mase vseh treh parov treh oseb; sistem treh linearnih enačb in odgovor"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 4,
+   "points": [
+    2,
+    5
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "sinusna funkcija: 1) iz dela grafa funkcije A·sin x + C z danim lokalnim maksimumom in minimumom določiti A in C; 2) vsa presečišča grafa funkcije oblike a·sin x + b z vodoravno premico (trigonometrična enačba, splošna rešitev s periodo)",
+   "figure": "del grafa sinusne funkcije z označenima ekstremoma"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 5,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "vektorji v ravnini: dani dve točki, zapisati vektor med njima s komponentama; poiskati točko na simetrali lihih kvadrantov, da je vektor od prve točke do nje pravokoten na dani vektor (skalarni produkt nič)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 6,
+   "points": [
+    8
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "graf prvih členov neskončnega geometrijskega zaporedja z negativnim količnikom (izmenični predznaki): odčitati prva dva člena, izračunati peti člen, najmanjši n, pri katerem vsota prvih n členov preseže veliko mejo (formula za vsoto, logaritmi, upoštevati sodost n)",
+   "figure": "graf členov zaporedja kot točke v koordinatnem sistemu"
+  }
+ ]
+}
