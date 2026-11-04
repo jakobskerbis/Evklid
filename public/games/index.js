@@ -2,7 +2,7 @@
 // igra se odpre v istem pogledu. Igra = vrsta igre (engines.js) × matematični pojem (topics.js).
 import { t, locale } from "../i18n.js";
 import { icon } from "../icons.js";
-import { CONCEPTS, AREAS, SUBJECTS, conceptName, areaName, setNumberStyle, makeQuestion, shuffle } from "./topics.js";
+import { CONCEPTS, AREAS, SUBJECTS, conceptName, areaName, setNumberStyle, loadConceptNames, makeQuestion, shuffle } from "./topics.js";
 import { gameLock as ruleLock, clearedPace, lessonsOf, PACE, CLEAR_CORRECT, CHECK_TASKS, CHECK_PASS, LOCKS_ON } from "./unlock.js";
 // Zapora iger je izklopljena (LOCKS_ON v unlock.js): vse igre so odprte.
 const gameLock = (...a) => (LOCKS_ON ? ruleLock(...a) : null);
@@ -108,6 +108,7 @@ export async function showGames() {
   root = document.querySelector("#games-content");
   if (!root || !ctx) return;
   setNumberStyle(ctx.currentLang());
+  await loadConceptNames(ctx.currentLang());
   applyStageLook();
   if (game) return; // igra ostane odprta
   renderPortal();
