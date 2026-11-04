@@ -1,6 +1,6 @@
 // Klikljive formule: kartica ob kliku na simbol ali enoto (slovar in označevanje sta v formula-data.js).
 import { t, currentLang } from "./i18n.js";
-import { cardFor, configureCard } from "./formula-card.js";
+import { cardFor, configureCard, claimMarks, createMarkPage } from "./formula-card.js";
 
 configureCard({ t, lang: currentLang, katex: () => window.katex });
 
@@ -31,6 +31,8 @@ function open(el) {
     document.body.appendChild(pop);
   }
   pop.setAttribute("aria-label", card.label);
+  if (el.dataset.fxTone) pop.dataset.tone = el.dataset.fxTone;
+  else delete pop.dataset.tone;
   pop.innerHTML = `${card.html}<button type="button" class="fx-close" aria-label="${t("fx.close")}">×</button>`;
   pop.hidden = false;
   openEl = el;
@@ -87,12 +89,57 @@ function enhance(root) {
   }
 }
 
+// Na strani (pogled, okno, razdelek lista formul) je klikljiva le prva vidna pojavitev vsakega pomena;
+// ostale so navadno besedilo (fx-dup). Ista črka z več pomeni dobi ton barve (data-fx-tone) za vsak pomen.
+const PAGE = ".fm-sec, .fx-page, [role=dialog], dialog, .view";
+let marksQueued = false;
+function queueMarks() {
+  if (marksQueued) return;
+  marksQueued = true;
+  requestAnimationFrame(() => {
+    marksQueued = false;
+    refreshMarks();
+  });
+}
+function refreshMarks() {
+  const pages = new Map();
+  for (const el of document.querySelectorAll("[data-fx][tabindex]")) {
+    if (el.classList.contains("fx-off")) continue;
+    const root = el.closest(PAGE) || document.body;
+    if (!pages.has(root)) pages.set(root, []);
+    pages.get(root).push(el);
+  }
+  for (const [root, els] of pages) {
+    // Skrita pojavitev (zaprt razdelek, drug zavihek) ne sme vzeti oznake vidni.
+    const shown = els.filter((el) => el.getClientRects().length > 0);
+    const plan = claimMarks(createMarkPage(), root, shown.map((el) => decode(el.dataset.fx)));
+    const set = new Map(shown.map((el, i) => [el, plan[i]]));
+    for (const el of els) {
+      const p = set.get(el) || { dup: false, tone: 0 };
+      const dup = p.dup && el !== openEl;
+      el.classList.toggle("fx-dup", dup);
+      if (dup) {
+        el.removeAttribute("role");
+        el.setAttribute("tabindex", "-1");
+      } else if (!el.hasAttribute("role")) {
+        el.setAttribute("role", "button");
+        el.setAttribute("tabindex", "0");
+      }
+      if (p.tone && !dup) el.dataset.fxTone = String(p.tone);
+      else delete el.dataset.fxTone;
+    }
+  }
+}
+
 export function initFormulaInfo() {
   document.addEventListener("click", (e) => {
     if (e.target.closest(".fx-close")) return close();
     if (pop && pop.contains(e.target)) return;
     const el = e.target.closest("[data-fx]");
-    if (!el || blocked(el) || el.classList.contains("fx-off")) return close();
+    if (!el || blocked(el) || el.classList.contains("fx-off") || el.classList.contains("fx-dup")) {
+      queueMarks(); // zavihek ali razdelek se je morda odprl
+      return close();
+    }
     e.preventDefault();
     if (openEl === el) return close();
     close();
@@ -106,11 +153,17 @@ export function initFormulaInfo() {
   window.addEventListener("resize", close);
   document.addEventListener("scroll", (e) => { if (openEl && !pop.contains(e.target)) close(); }, true);
   enhance(document);
+  queueMarks();
+  document.addEventListener("toggle", queueMarks, true);
   new MutationObserver((list) => {
-    for (const m of list) for (const node of m.addedNodes) if (node.nodeType === 1) {
-      if (node.matches?.("[data-fx]")) enhance(node.parentElement || document);
-      else if (node.querySelector?.("[data-fx]")) enhance(node);
+    for (const m of list) {
+      if (m.type === "attributes") { queueMarks(); continue; }
+      for (const node of m.removedNodes) if (node.nodeType === 1 && (node.matches?.("[data-fx]") || node.querySelector?.("[data-fx]"))) queueMarks();
+      for (const node of m.addedNodes) if (node.nodeType === 1) {
+        if (node.matches?.("[data-fx]")) { enhance(node.parentElement || document); queueMarks(); }
+        else if (node.querySelector?.("[data-fx]")) { enhance(node); queueMarks(); }
+      }
     }
-  }).observe(document.body, { childList: true, subtree: true });
+  }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "open"] });
 }
 

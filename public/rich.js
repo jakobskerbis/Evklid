@@ -11,10 +11,11 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
   const trusted = { ...plain, trust: (c) => c.command === "\\htmlData" };
 
   // Označena formula, ki je KaTeX ne zna izrisati, se izriše neoznačena (nikoli rdeč surov LaTeX).
-  function renderMath(tex, display, fx = true) {
+  // sentence: poved okoli formule, da dvoumna črka dobi pomen iz besedila (formula-data.js annotateTex).
+  function renderMath(tex, display, fx = true, sentence = "") {
     try {
       if (annotate && fx) {
-        const annotated = annotate(tex);
+        const annotated = annotate(tex, sentence ? { sentence } : null);
         if (annotated !== tex) {
           try {
             return katex.renderToString(annotated, { ...trusted, throwOnError: true, displayMode: display });
@@ -40,20 +41,32 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       .replace(/\\\[([\s\S]+?)\\\]/g, (_, t) => stash(t, true))
       .replace(/\\\((.+?)\\\)/g, (_, t) => stash(t, false))
       .replace(/(^|[^\\$])\$([^$\n]+?)\$/g, (_, pre, t) => pre + stash(t, false));
+    if (annotate) for (let i = 0; i < math.length; i++) math[i].sentence = sentenceAt(src, `@@MATH${i}@@`);
     let html = clean(marked.parse(splitFormulaCells(fixTables(src), math), { breaks: true, gfm: true }));
     // Tabela dobi svoj razred (oblika v style.css velja povsod, ne glede na okvir okoli nje);
     // ulomki in potence v njej so v polni velikosti (\displaystyle), sicer so premajhni za branje.
     html = html.replace(/<table>([\s\S]*?)<\/table>/g, (_, body) => {
       const inner = centerNumberColumns(body).replace(/@@MATH(\d+)@@/g, (m, i) =>
-        math[i] ? renderMath(math[i].display ? math[i].tex : `\\displaystyle ${math[i].tex}`, math[i].display) : m,
+        math[i] ? renderMath(math[i].display ? math[i].tex : `\\displaystyle ${math[i].tex}`, math[i].display, true, math[i].sentence) : m,
       );
       return `<div class="md-table-wrap"><table class="md-table">${inner}</table></div>`;
     });
     html = subHeadings(html);
-    return html.replace(/@@MATH(\d+)@@/g, (m, i) => (math[i] ? renderMath(math[i].tex, math[i].display) : m));
+    return html.replace(/@@MATH(\d+)@@/g, (m, i) => (math[i] ? renderMath(math[i].tex, math[i].display, true, math[i].sentence) : m));
   }
 
   return { renderMath, renderRich };
+}
+
+// Poved, v kateri stoji formula (do pike, klicaja, vprašaja ali nove vrstice), brez drugih formul in Markdowna.
+export function sentenceAt(src, mark) {
+  const i = src.indexOf(mark);
+  if (i < 0) return "";
+  const before = src.slice(Math.max(0, i - 300), i);
+  const after = src.slice(i + mark.length, i + mark.length + 300);
+  const a = before.split(/[.!?\n](?=\s|$)|\n/).pop();
+  const b = after.split(/[.!?](?=\s|$)|\n/)[0];
+  return `${a} ${b}`.replace(/@@MATH\d+@@/g, " ").replace(/[*_#>`|]/g, " ").replace(/\s+/g, " ").trim();
 }
 
 // Oštevilčen podnaslov na začetku odstavka (»**1. Imaginarna enota.** Vpeljemo …«) postane svoj

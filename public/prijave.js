@@ -184,7 +184,7 @@ function shownBlock(r) {
   try {
     if (r.shown) html = safeShown(r.shown);
     else {
-      rich ||= createRenderer({ annotate: (tex) => annotateTex(tex) });
+      rich ||= createRenderer({ annotate: (tex, o) => annotateTex(tex, undefined, o) });
       html = rich.renderRich(r.answer);
       label = t("adm.rep.rerendered");
     }

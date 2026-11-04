@@ -1,6 +1,6 @@
 // Kartica oznake (simbol ali enota) iz kode data-fx: { label, html }. Brez DOM, zato jo uporablja
 // tudi aplikacija na telefonu (mobile/src/lib/rich.ts). Prevode, jezik in KaTeX dobi s configureCard.
-import { lookupSymbol, lookupUnit, symbolsIn, SYMBOLS, GREEK, SUBJECT_TABLES } from "./formula-data.js";
+import { lookupSymbol, lookupUnit, symbolsIn, symbolVariant, SYMBOLS, GREEK, SUBJECT_TABLES } from "./formula-data.js";
 
 let T = (k) => k;
 let LANG = () => "sl";
@@ -55,8 +55,9 @@ export function cardFor(code) {
         ${descOf(u) ? `<div class="fx-note" dir="auto">${subSup(esc(descOf(u)))}</div>` : ""}`,
     };
   }
-  const [subject, key] = rest;
-  const e = lookupSymbol(key, subject, "") || lookupSymbolAny(key, subject);
+  const [subject, key, vi] = rest;
+  // vi: pomen dvoumne črke, ki ga je izbrala formula ali poved (G v F = G m₁m₂/r² je gravitacijska konstanta).
+  const e = symbolVariant(key, vi) || lookupSymbol(key, subject, "") || lookupSymbolAny(key, subject);
   if (!e) return null;
   const delta = kind === "d";
   const name = delta ? T("fx.change", { what: nameOf(e) }) : nameOf(e);
@@ -117,3 +118,48 @@ function lookupSymbolAny(key, subject) {
   return null;
 }
 
+
+// ---------- ena oznaka za vsak pomen na strani ----------
+// Na strani je klikljiva le prva pojavitev vsakega pomena črke; ista črka z drugim pomenom (a kot realni
+// del z in a kot pospešek) dobi svojo oznako v drugi barvi (ton 1–3), da se pred dotikom vidi, katera je katera.
+// Spletna stran (formula-info.js) in aplikacija (mobile/src/lib/rich.ts) uporabljata isti claimMarks.
+const meanings = new Map();
+export function meaningOf(code) {
+  if (meanings.has(code)) return meanings.get(code);
+  const [kind, subject, key, vi] = String(code).split(":");
+  let m = null;
+  if (kind === "s" || kind === "d") {
+    const e = symbolVariant(key, vi) || lookupSymbol(key, subject, "") || lookupSymbolAny(key, subject);
+    if (e) m = { letter: `${kind === "d" ? "Δ" : ""}${key}`, id: `${kind}|${key}|${e.n}|${e.r || ""}` };
+  } else if (kind === "u" && lookupUnit(rest(code))) m = { letter: `u|${rest(code)}`, id: `u|${rest(code)}` };
+  if (meanings.size > 5000) meanings.clear();
+  meanings.set(code, m);
+  return m;
+}
+const rest = (code) => String(code).split(":").slice(1).join(":");
+export const createMarkPage = () => ({ owners: new Map(), tones: new Map() });
+const TONES = 4;
+// codes: kode data-fx enega lastnika (spletna stran, besedilo v aplikaciji) po vrsti; vrne { dup, tone } za vsako.
+export function claimMarks(page, owner, codes) {
+  const mine = new Set();
+  return codes.map((code) => {
+    const m = meaningOf(code);
+    if (!m) return { dup: false, tone: 0 };
+    const own = page.owners.get(m.id);
+    if ((own !== undefined && own !== owner) || mine.has(m.id)) return { dup: true, tone: 0 };
+    mine.add(m.id);
+    page.owners.set(m.id, owner);
+    let list = page.tones.get(m.letter);
+    if (!list) page.tones.set(m.letter, (list = []));
+    if (!list.includes(m.id)) list.push(m.id);
+    return { dup: false, tone: list.indexOf(m.id) % TONES };
+  });
+}
+export function releaseMarks(page, owner) {
+  for (const [id, o] of page.owners) if (o === owner) page.owners.delete(id);
+  for (const [letter, list] of page.tones) {
+    const left = list.filter((id) => page.owners.has(id));
+    if (left.length) page.tones.set(letter, left);
+    else page.tones.delete(letter);
+  }
+}
