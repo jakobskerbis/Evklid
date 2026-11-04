@@ -3,7 +3,7 @@
 // število nalog in točk po delih kot izvirna pola RIC, naloge pa so naše (Opus pisec, Opus pregledovalec, Opus
 // bralec). Vsak del ima rešitev in razlago na enega ali več načinov (ways), deli z 2 ali več točkami vsaj dva.
 //
-// Oblika: { id, exam, subject, minutes, points, author: "AI", tools?, tasks: [{ n, intro?, figure?, parts: [{
+// Oblika: { id, exam, subject, minutes, points, maxPoints?, author: "AI", tools?, tasks: [{ n, intro?, figure?, parts: [{
 //   id: "a", points, format: open|choice|fill|construct|table, text, figure?, choices?, correct?, answer,
 //   ways: [{ title, text }], solutionFigure?, scoring?, mistake? }] }] }
 // figure se vidi ob nalogi, solutionFigure (npr. končana konstrukcija) šele v »Pokaži rešitev«.
@@ -19,7 +19,7 @@ import { checkArithmetic } from "./lesson-math.js";
 export const OUR_PAPERS_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), "..", "content", "exam-papers");
 const FORMATS = ["open", "choice", "fill", "construct", "table"];
 const ID = /^(NPZ6|NPZ9|MATURA|POKLICNA)-(MAT|FIZ|KEM|BIO)-(?:(?:OR|VR)-)?\d{4}-[a-z0-9-]+$/;
-const SVG_BAD_RE = /<script|[\s/"']on\w+\s*=|javascript:|<foreignObject|href\s*=\s*(?!["']?#)/i; // samo notranje povezave (<use href="#oznaka">)
+const SVG_BAD_RE = /<script|[\s/"']on\w+\s*=|javascript:|<foreignObject|url\(\s*["']?(?!#)|href\s*=(?!\s*["']?#)/i; // samo notranje povezave (<use href="#oznaka">)
 // Samo risarske oznake: <img>, <iframe>, <embed>, <style>, <set>/<animate> (href → javascript:) ipd. niso dovoljene.
 const SVG_TAGS = new Set(["svg", "g", "path", "circle", "ellipse", "line", "polyline", "polygon", "rect", "text", "tspan", "title", "desc", "defs", "marker", "use", "lineargradient", "stop", "clippath", "pattern"]);
 const SVG_BAD = { test: (s) => SVG_BAD_RE.test(s) || [...String(s).matchAll(/<\s*([a-zA-Z][\w:-]*)/g)].some((m) => !SVG_TAGS.has(m[1].toLowerCase())) };
@@ -60,6 +60,9 @@ export function validatePaper(p, expected = null) {
     const group = `${task?.pola ?? ""}|${task?.section ?? ""}`;
     const tw = `naloga ${task?.pola ? `${task.pola}-` : ""}${task?.section ?? ""}${task?.n ?? ti + 1}`;
     if (task?.pola !== undefined && (!Number.isInteger(task.pola) || !(p.polas || []).some((x) => x.pola === task.pola))) err(`${tw}: pola ${task.pola} ni v polas`);
+    else if (task?.pola === undefined && Array.isArray(p.polas) && p.polas.length) err(`${tw}: pola manjka (pola ima polas)`);
+    // Skupina (pola, del) je strnjena: naslov pole in dela se izpiše enkrat, številčenje teče naprej.
+    if (seen.has(group) && (p.tasks[ti - 1]?.pola ?? "") + "|" + (p.tasks[ti - 1]?.section ?? "") !== group) err(`${tw}: naloge pole ${task?.pola ?? ""} dela ${task?.section ?? ""} niso skupaj`);
     if (task?.section !== undefined && !/^[A-Z]$/.test(task.section)) err(`${tw}: section je ena velika črka`);
     // V skupini zaporedno; prva naloga skupine z delom ali polo lahko nadaljuje številčenje izvirnika (B9 za A8).
     const want = seen.has(group) ? seen.get(group) + 1 : group === "|" ? 1 : null;
@@ -110,6 +113,9 @@ export function validatePaper(p, expected = null) {
   // Pri izbirnih nalogah (pola 2 mature: učenec izbere nekaj nalog) pola vsebuje vse naštete (maxListed).
   const want = expected?.maxListed ?? expected?.points;
   if (want && total !== want) err(`vsota točk ${total}, izvirna pola ${want}`);
+  // maxPoints: največ točk na izpitu, ko učenec izbere le nekaj nalog (manj od vsote naštetih).
+  if (p.maxPoints !== undefined && (!Number.isInteger(p.maxPoints) || p.maxPoints < 1 || p.maxPoints > total)) err(`maxPoints ${p.maxPoints} mora biti celo število do ${total}`);
+  if (expected?.maxListed && p.maxPoints !== expected.points) err(`maxPoints mora biti ${expected.points} (učenec izbere naloge)`);
   for (const [text, where] of md) {
     texErrors(text, where, err);
     const calc = checkArithmetic(String(text || ""));

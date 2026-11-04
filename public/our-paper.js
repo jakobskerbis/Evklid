@@ -3,9 +3,10 @@
 // pregledovalnik prenesene pole (public/paper-viewer.js, isti razredi .pv). Pri vsakem delu: »Pokaži rešitev«
 // (odgovor, razlaga na več načinov, točkovanje, pogosta napaka), »Imam prav« (učenec si sam šteje točke) in
 // »Vprašaj inštruktorja« (nov pogovor z nalogo; rešitev dobi inštruktor kot skrit kontekst).
-import { t } from "./i18n.js";
+import { t, locale } from "./i18n.js";
+import { prilagodiSirino } from "./sirina.js";
 import { icon } from "./icons.js";
-import { partKey, partLabel } from "./our-paper-key.js";
+import { partKey } from "./our-paper-key.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const label = partKey;
@@ -24,25 +25,53 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
   closeOurPaper();
   const back = document.activeElement;
   const got = { ...(score?.get?.() || {}) };
-  const max = paper.tasks.reduce((s, tk) => s + tk.parts.reduce((a, p) => a + p.points, 0), 0);
+  // maxPoints: izpit, pri katerem učenec izbere le nekaj nalog (pola našteje vse, šteje pa le izbrane).
+  const max = paper.maxPoints || paper.tasks.reduce((s, tk) => s + tk.parts.reduce((a, p) => a + p.points, 0), 0);
   const el = document.createElement("div");
   el.className = "pv op";
   el.setAttribute("role", "dialog");
   el.setAttribute("aria-modal", "true");
   el.setAttribute("aria-label", title);
   el.tabIndex = -1;
-  const sum = () => paper.tasks.reduce((s, tk) => s + tk.parts.reduce((a, p) => a + (got[label(tk, p)] ? p.points : 0), 0), 0);
+  const sum = () => Math.min(max, paper.tasks.reduce((s, tk) => s + tk.parts.reduce((a, p) => a + (got[label(tk, p)] ? p.points : 0), 0), 0));
   // Figure preveri že strežnik (server/our-papers.js, validatePaper); DOMPurify (globalen, public/rich.js) še enkrat.
-  const clean = (svg) => (globalThis.DOMPurify ? globalThis.DOMPurify.sanitize(svg, { USE_PROFILES: { svg: true } }) : "");
+  // Profil svg odstrani <use>; dovolimo ga kot strežnik, a samo z notranjo povezavo (href="#oznaka").
+  let figNo = 0;
+  const clean = (svg) => {
+    if (!globalThis.DOMPurify) return "";
+    const frag = globalThis.DOMPurify.sanitize(svg, { USE_PROFILES: { svg: true }, ADD_TAGS: ["use"], RETURN_DOM_FRAGMENT: true });
+    for (const u of frag.querySelectorAll("use")) if ([...u.attributes].some((a) => a.localName === "href" && !a.value.startsWith("#"))) u.remove();
+    // Oznake (id) so v vsaki sliki svoje: več slik z istim id="ar" bi delilo puščice, skrita rešitev pa bi jih skrila drugim.
+    const ids = new Map();
+    for (const n of frag.querySelectorAll("[id]")) ids.set(n.id, (n.id = `op${++figNo}-${n.id}`));
+    if (ids.size)
+      for (const n of frag.querySelectorAll("*"))
+        for (const a of [...n.attributes]) {
+          const v = a.value.replace(/url\(\s*(["']?)#([^"')\s]+)\1\s*\)/g, (m, q, id) => (ids.has(id) ? `url(#${ids.get(id)})` : m));
+          const w = a.localName === "href" && v.startsWith("#") && ids.has(v.slice(1)) ? `#${ids.get(v.slice(1))}` : v;
+          if (w !== a.value) a.value = w;
+        }
+    const box = document.createElement("div");
+    box.append(frag);
+    return box.innerHTML;
+  };
   const fig = (svg) => (svg ? `<figure class="op-fig">${clean(svg)}</figure>` : "");
+  // »90 minut« / »90 دقيقة« v jeziku vmesnika (števke latinske kot v glavi).
+  const minutes = (n) => {
+    try {
+      return new Intl.NumberFormat(`${locale()}-u-nu-latn`, { style: "unit", unit: "minute", unitDisplay: "long" }).format(n);
+    } catch {
+      return `${n} min`;
+    }
+  };
   // Naslov izpitne pole (čas, pripomočki) in dela (»A) Kratke naloge«), kadar se začne nova.
   const headings = (tk, prev) => {
     let h = "";
     if (tk.pola && tk.pola !== prev?.pola) {
       const info = (paper.polas || []).find((x) => x.pola === tk.pola);
-      h += `<h2 class="op-pola">${esc(t("pp.oursPola", { n: tk.pola }))}${info?.minutes ? ` <small>${esc(`${info.minutes} min`)}</small>` : ""}</h2>${info?.tools ? `<p class="op-tools">${esc(info.tools)}</p>` : ""}`;
+      h += `<h2 class="op-pola">${esc(t("pp.oursPola", { n: tk.pola }))}${info?.minutes ? ` <small>${esc(minutes(info.minutes))}</small>` : ""}</h2>${info?.tools ? `<p class="op-tools">${esc(info.tools)}</p>` : ""}`;
     }
-    if (tk.section && (tk.section !== prev?.section || tk.pola !== prev?.pola)) h += `<h3 class="op-section">${esc(paper.sections?.[tk.section] || `${tk.section})`)}</h3>`;
+    if (tk.section && (tk.section !== prev?.section || tk.pola !== prev?.pola)) h += `<h3 class="op-section">${esc(`${tk.section}) ${paper.sections?.[tk.section] || ""}`.trim())}</h3>`;
     return h;
   };
   const partHtml = (tk, p) => {
@@ -72,7 +101,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
     </header>
     <div class="pv-scroll"><div class="op-body">
       <p class="op-about">${icon("info")}<span>${esc(t("pp.oursAbout"))}</span></p>
-      ${paper.tools ? `<p class="op-tools">${esc(paper.tools)}</p>` : ""}
+      ${paper.tools && !(paper.polas?.length && paper.polas.every((x) => x.tools)) ? `<p class="op-tools">${esc(paper.tools)}</p>` : ""}
       ${paper.tasks
         .map((tk, i) => `${headings(tk, paper.tasks[i - 1])}<article class="op-task"><h3>${esc(t("pp.oursTask", { n: `${tk.section || ""}${tk.n}` }))}</h3>${tk.intro ? rich(tk.intro) : ""}${fig(tk.figure)}<ol class="op-parts">${tk.parts.map((p) => partHtml(tk, p)).join("")}</ol></article>`)
         .join("")}
@@ -129,6 +158,9 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
   current = { close };
   document.body.append(el);
   document.documentElement.classList.add("pv-open");
+  // Predolga formula se zloži pri enačajih, preširoka formula ali tabela se najprej pomanjša (public/sirina.js);
+  // skrite rešitve se prilagodijo, ko se pokažejo.
+  prilagodiSirino(el, { vrstice: false });
   el.querySelector("[data-op-close]").focus();
   return el;
 }

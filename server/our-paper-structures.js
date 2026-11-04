@@ -64,13 +64,21 @@ const INLINE = {
 const DIR = path.join(path.dirname(new URL(import.meta.url).pathname), "..", "content", "exam-papers", "structures");
 function fromFiles() {
   const out = {};
+  let files = [];
   try {
-    for (const f of fs.readdirSync(DIR)) if (f.endsWith(".json")) {
-      const s = JSON.parse(fs.readFileSync(path.join(DIR, f), "utf8"));
-      out[s.id || f.slice(0, -5)] = s;
-    }
+    files = fs.readdirSync(DIR).filter((f) => f.endsWith(".json"));
   } catch {
-    /* brez datotek */
+    /* brez imenika */
+  }
+  // Pokvarjena datoteka naj se pokaže (check-paper, npm test), ne da tiho izgine vsaka zgradba.
+  for (const f of files) {
+    let s;
+    try {
+      s = JSON.parse(fs.readFileSync(path.join(DIR, f), "utf8"));
+    } catch (e) {
+      throw new Error(`content/exam-papers/structures/${f}: ${e.message}`);
+    }
+    out[s.id || f.slice(0, -5)] = s;
   }
   return out;
 }

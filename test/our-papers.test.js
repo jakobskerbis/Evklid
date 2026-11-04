@@ -95,3 +95,27 @@ test("pola z dvema izpitnima polama in deli: številčenje po skupinah, ključ d
   assert.match(e, /pola 3 ni v polas/);
   assert.match(e, /se ne ujema z zgradbo/);
 });
+
+test("pola z več polami: vsaka naloga ima polo, skupine strnjene, <use> samo z notranjo povezavo", () => {
+  const two = (tasks) => ({ ...paper(tasks), id: "MATURA-MAT-OR-2026-spomladanski", polas: [{ pola: 1 }, { pola: 2 }] });
+  const errs = (p) => validatePaper(p).errors.join("\n");
+  assert.match(errs(two([{ pola: 1, n: 1, parts: [part()] }, { n: 2, parts: [part()] }])), /pola manjka/);
+  assert.match(errs(two([{ pola: 1, section: "A", n: 1, parts: [part()] }, { pola: 1, section: "B", n: 1, parts: [part()] }, { pola: 1, section: "A", n: 2, parts: [part()] }])), /niso skupaj/);
+  assert.equal(errs(two([{ pola: 1, section: "A", n: 1, parts: [part()] }, { pola: 1, section: "B", n: 1, parts: [part()] }, { pola: 2, section: "A", n: 1, parts: [part()] }])), "");
+  const fig = (f) => errs(paper([{ n: 1, figure: f, parts: [part()] }]));
+  assert.equal(fig('<svg><defs><circle id="o" r="2"/></defs><use href="#o" x="1"/><use href = "#o"/><use xlink:href="#o"/></svg>'), "");
+  for (const bad of ['<svg><use href="x.svg#o"/></svg>', "<svg><use href=//e/x#o /></svg>", '<svg><use href="#o" xlink:href="https://e/x#o"/></svg>', '<svg><use href="&#x23;o"/></svg>', "<svg><use href=\"data:image/svg+xml,<svg id='o'/>#o\"/></svg>"])
+    assert.match(fig(bad), /varen <svg>/, bad);
+});
+
+test("izbirne naloge: maxPoints je največ točk izpita; slike brez zunanjih url()", () => {
+  const p = paper([{ n: 1, parts: [part()] }, { n: 2, parts: [part()] }, { n: 3, parts: [part()] }]);
+  const exp = { points: 2, maxListed: 3, tasks: [[1], [1], [1]] };
+  assert.match(validatePaper(p, exp).errors.join("\n"), /maxPoints mora biti 2/);
+  assert.deepEqual(validatePaper({ ...p, maxPoints: 2 }, exp).errors, []);
+  assert.match(validatePaper({ ...p, maxPoints: 4 }).errors.join("\n"), /maxPoints 4/);
+  const fig = (f) => validatePaper(paper([{ n: 1, figure: f, parts: [part()] }])).errors.join("\n");
+  assert.equal(fig('<svg><defs><marker id="m"/></defs><path marker-end="url(#m)" d="M0 0L1 1"/></svg>'), "");
+  assert.match(fig('<svg><rect fill="url(https://e/x.svg#g)"/></svg>'), /varen <svg>/);
+  assert.match(fig("<svg><rect style=\"fill:url( 'https://e/x' )\"/></svg>"), /varen <svg>/);
+});

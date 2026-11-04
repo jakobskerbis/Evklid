@@ -20,6 +20,8 @@ for (const f of files) {
     bad++;
     continue;
   }
+  // Pri --pola tudi iz datoteke le naloge te pole (datoteka ima lahko že vse pole), brez skupne vsote points.
+  if (onlyPola && Array.isArray(p?.tasks)) p = { ...p, points: undefined, tasks: p.tasks.filter((t) => t?.pola === onlyPola) };
   const r = validatePaper(p, forPola(PAPER_STRUCTURES[p.id]) || null);
   if (r.errors.length) bad++;
   console.log(`${r.errors.length ? "✗" : "✓"} ${f}: ${r.points} točk, ${r.checked} preračunanih korakov${PAPER_STRUCTURES[p.id] ? "" : " (brez zgradbe izvirne pole)"}`);

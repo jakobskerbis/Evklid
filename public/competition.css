@@ -188,6 +188,8 @@ html.pv-open, html.pv-open body { overflow: hidden; }
 .op-score { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; padding: 0 6px; unicode-bidi: isolate; }
 /* Besedilo pole je slovensko (NPZ), zato v RTL ostane od leve proti desni; gumbi in naslovi sledijo jeziku vmesnika. */
 [dir="rtl"] .op :is(.op-tools, .op-q, .op-way, .op-answer, .op-note), [dir="rtl"] .op-task > :not(h3, .op-parts, .op-fig) { direction: ltr; text-align: left; }
+[dir="rtl"] .op :is(.op-section, .op-fig) { direction: ltr; } /* ime dela in napisi na sliki so v jeziku pole */
+[dir="rtl"] .op .op-section { text-align: left; }
 @media (max-width: 560px) { .op .pv-title { flex-basis: 0; } } /* telefon: točke ostanejo v vrstici z naslovom (pregledovalnik pole jih prelomi) */
 /* Naloge pole v stolpcih, kolikor jih gre v širino (vrstni red po vrsticah: 1 2 / 3 4). */
 .op-body { margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 560px), 1fr)); gap: 16px; align-items: start; }
@@ -197,7 +199,7 @@ html.pv-open, html.pv-open body { overflow: hidden; }
 .op-tools { margin: 0; color: var(--muted); font-size: 0.9rem; }
 .op-pola { margin: 8px 0 0; font-size: 1.2rem; display: flex; align-items: baseline; gap: 8px; }
 .op-pola small { color: var(--muted); font-size: 0.85rem; font-weight: 400; }
-.op-section { margin: 4px 0 0; font-size: 1rem; color: var(--muted); }
+.op-section { margin: 4px 0 0; font-size: 1.05rem; }
 .op-task { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: 14px 16px; }
 .op-task > h3 { margin: 0 0 8px; font-size: 1.05rem; }
 .op-parts { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
@@ -209,6 +211,12 @@ html.pv-open, html.pv-open body { overflow: hidden; }
 .op-text > :first-child { margin-top: 0; }
 .op-text > :last-child { margin-bottom: 0; }
 .op-pts { color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
+@media (max-width: 560px) { /* telefon: točke pod številko naloge, besedilo dobi vso širino */
+  .op-q { grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; row-gap: 2px; }
+  .op-no { grid-area: 1 / 1; }
+  .op-text { grid-area: 1 / 2 / 3 / 3; }
+  .op-pts { grid-area: 2 / 1; }
+}
 .op-fig { margin: 10px 0; text-align: center; color: var(--text); }
 .op-fig svg { max-width: min(100%, 420px); height: auto; }
 .op-choices { margin: 8px 0 0; padding-inline-start: 1.6em; }
