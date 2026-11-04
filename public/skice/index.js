@@ -37,6 +37,13 @@ export const SKICE = {
   "MAT-SS|Limita funkcije": () => import("./limita.js"),
   "MAT-SS|Odvodi": () => import("./odvod.js"),
   "MAT-SS|Diferencial": () => import("./diferencial.js"),
+  "MAT-SS|Integrali": () => import("./riemann.js"),
+  "MAT-SS|Trapezna metoda": () => import("./trapezna.js"),
+  "MAT-SS|Ploščina, vrtenina": () => import("./vrtenina.js"),
+  "MAT-SS|Kombinacije": () => import("./pascal.js"),
+  "MAT-SS|Binomski izrek": z(() => import("./pascal.js"), { binom: true }),
+  "MAT-SS|Bernoullijevo zaporedje": () => import("./bernoulli.js"),
+  "MAT-SS|Povprečje, odklon": () => import("./odklon.js"),
   "MAT-UNI|Definicija": z(() => import("./odvod.js"), "h"), // edina kartica »Definicija« na listu za faks (Odvodi)
   ...Object.fromEntries(["Kvadrat", "Pravokotnik", "Paralelogram", "Romb", "Trapez", "Deltoid"].map((ime) => [`MAT-OS|${ime}`, z(() => import("./liki.js"), ime.toLowerCase())])),
 };

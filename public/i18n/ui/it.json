@@ -2725,6 +2725,7 @@
   "sim.layers": "Mostra nel grafico",
   "sim.layers.show": "Mostra:",
   "sim.layer.grid": "Griglia",
+  "sim.lab.pin": "Fissa l'immagine",
   "sim.layer.marks": "Indicatori",
   "sim.layer.fit": "{name}: retta",
   "sim.color.accent": "Blu",

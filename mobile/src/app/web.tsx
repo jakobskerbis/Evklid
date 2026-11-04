@@ -13,7 +13,7 @@ import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
 import Constants from "expo-constants";
-import { API_URL, appHeaders } from "@/lib/api";
+import { API_URL, appHeaders, BUSY_WAIT } from "@/lib/api";
 import { useSession } from "@/lib/session";
 import { t } from "@/lib/i18n";
 import { font, useTheme } from "@/lib/theme";
@@ -91,16 +91,43 @@ export default function Web() {
     return () => sub.remove();
   }, [failed]);
 
+  // Med objavo nove različice je strežnik ~1 minuto ustavljen (gostitelj vrne 502/503/504 ali prekine
+  // povezavo). Takrat aplikacija ne pokaže »Ni povezave«, ampak ob vrtavki tiho poskusi znova (kot splet,
+  // public/restart-retry.js); zaslon »Ni povezave« šele, ko strežnika ni ~70 s (5xx) ali po 2 poskusih (napaka
+  // povezave: telefon je morda res brez interneta). Uspešno nalaganje števec ponastavi. Ko je strežnik že
+  // odgovoril s 5xx, internet deluje: tudi prekinjena povezava potem čaka do ~70 s.
+  const tries = useRef(0);
+  const busy = useRef(false);
+  // Čakanje na 5xx (strežnik se posodablja): pod vrtavko »Evklid se posodablja …« kot splet in naravni zasloni
+  // (src/app/_layout.tsx). Pri napaki povezave ne, ker je telefon morda res brez interneta (splet enako).
+  const [updating, setUpdating] = useState(false);
+  const waitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => void (waitTimer.current && clearTimeout(waitTimer.current)), []);
+  const failOrWait = useCallback((max: number) => {
+    if (waitTimer.current) return; // en poskus naenkrat
+    const i = tries.current++;
+    if (i >= max) return setFailed(true);
+    setUpdating(max === BUSY_WAIT.length);
+    setLoading(true);
+    waitTimer.current = setTimeout(() => {
+      waitTimer.current = null;
+      setKey((k) => k + 1);
+    }, BUSY_WAIT[i]);
+  }, []);
+
   const retry = useCallback(() => {
+    tries.current = 0;
+    busy.current = false;
+    setUpdating(false);
     setFailed(false);
     setLoading(true);
     setBar(null);
     setKey((k) => k + 1);
   }, []);
 
-  // »Ni povezave«: vrstica stanja v barvi tega zaslona, ne zadnje spletne strani.
-  const top = (!failed && bar?.top) || th.bg;
-  const bottom = bar?.bottom || th.bg;
+  // »Ni povezave« in vrtavka: vrstica stanja v barvi tega zaslona, ne zadnje (ali napake gostitelja) spletne strani.
+  const top = (!failed && !loading && bar?.top) || th.bg;
+  const bottom = (!loading && bar?.bottom) || th.bg;
   const light = isLight(top);
   const offline = () => router.push(student ? "/(tabs)" : "/profiles");
 
@@ -146,12 +173,17 @@ export default function Web() {
               else if (/^(mailto|tel|sms):/i.test(req.url)) Linking.openURL(req.url).catch(() => {});
               return false;
             }}
-            onLoadEnd={() => setLoading(false)}
+            onLoadEnd={() => !waitTimer.current && setLoading(false)}
             // onLoad (ne onLoadEnd): na iOS onLoadEnd pride tudi ob napaki povezave, z URL-jem "".
             onLoad={(e: { nativeEvent: { url: string } }) => {
-              if (e.nativeEvent.url.startsWith(ORIGIN) && !e.nativeEvent.url.includes("/api/mobile/web")) setWebPending(false);
+              if (e.nativeEvent.url.startsWith(ORIGIN) && !e.nativeEvent.url.includes("/api/mobile/web")) {
+                setWebPending(false);
+                tries.current = 0;
+                busy.current = false;
+                setUpdating(false);
+              }
             }}
-            onError={() => setFailed(true)}
+            onError={() => failOrWait(busy.current ? BUSY_WAIT.length : 2)}
             onHttpError={(e: { nativeEvent: { url: string; statusCode: number } }) => {
               // Seja aplikacije ne velja več (npr. odjava na drugi napravi ali novo geslo): nazaj na prijavo.
               if (e.nativeEvent.url.includes("/api/mobile/web") && e.nativeEvent.statusCode === 401) signOut().catch(() => {});
@@ -160,7 +192,10 @@ export default function Web() {
               else if (e.nativeEvent.url.includes("/api/mobile/web") && e.nativeEvent.statusCode === 404) {
                 setWebPending(true);
                 router.replace(student ? "/(tabs)" : "/profiles");
-              } else if (e.nativeEvent.url.includes("/api/mobile/web")) setFailed(true);
+              } else if (e.nativeEvent.url.includes("/api/mobile/web")) {
+                busy.current = [502, 503, 504].includes(e.nativeEvent.statusCode);
+                failOrWait(busy.current ? BUSY_WAIT.length : 0);
+              }
             }}
             javaScriptEnabled
             domStorageEnabled
@@ -175,6 +210,9 @@ export default function Web() {
           {loading ? (
             <View pointerEvents="none" style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, alignItems: "center", justifyContent: "center", backgroundColor: th.bg }}>
               <ActivityIndicator color={th.accent} />
+              {updating ? (
+                <Text accessibilityLiveRegion="polite" style={[{ color: th.text, textAlign: "center", marginTop: 12, paddingHorizontal: 24 }, font(400)]}>{t("off.updating")}</Text>
+              ) : null}
             </View>
           ) : null}
         </View>

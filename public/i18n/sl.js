@@ -2874,6 +2874,7 @@ export default {
   "sim.layers": "Prikaži na grafu",
   "sim.layers.show": "Prikaži:",
   "sim.layer.grid": "Mreža",
+  "sim.lab.pin": "Pripni sliko",
   "sim.layer.marks": "Oznake",
   "sim.layer.fit": "{name}: premica",
   "sim.color.accent": "Modra",

@@ -2723,6 +2723,7 @@
   "sim.layers": "Grafikte göster",
   "sim.layers.show": "Göster:",
   "sim.layer.grid": "Izgara",
+  "sim.lab.pin": "Resmi sabitle",
   "sim.layer.marks": "İşaretler",
   "sim.layer.fit": "{name}: doğru",
   "sim.color.accent": "Mavi",
