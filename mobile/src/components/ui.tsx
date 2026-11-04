@@ -215,3 +215,33 @@ export function Chip({ label, active, onPress }: { label: string; active?: boole
     </Pressable>
   );
 }
+
+// Preklopnik (spletni .seg, docs/oblikovanje.md): 2–4 možnosti, izbrana je bela s poudarkom na sivo-modri podlagi.
+export function Seg<T extends string>({ items, value, onChange, label }: { items: { key: T; label: string; icon?: IconName }[]; value: T; onChange: (key: T) => void; label?: string }) {
+  const th = useTheme();
+  return (
+    <View accessibilityRole="tablist" accessibilityLabel={label} style={{ flexDirection: "row", backgroundColor: th.surface2, borderRadius: radius.pill, padding: 4, gap: 2 }}>
+      {items.map((it) => {
+        const on = it.key === value;
+        return (
+          <Pressable
+            key={it.key}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: on }}
+            onPress={() => {
+              if (on) return;
+              tap();
+              onChange(it.key);
+            }}
+            style={{ flex: 1, minHeight: 40, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingHorizontal: 8, borderRadius: radius.pill, backgroundColor: on ? th.surface : "transparent" }}
+          >
+            {it.icon ? <Icon name={it.icon} size={16} color={on ? th.accent : th.muted} /> : null}
+            <Text numberOfLines={1} style={{ color: on ? th.accent : th.muted, ...font(700), fontSize: 14, flexShrink: 1 }}>
+              {it.label}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}

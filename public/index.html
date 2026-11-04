@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="zbirke.css">
   <link rel="stylesheet" href="schedule.css">
   <link rel="stylesheet" href="lab.css">
+  <link rel="stylesheet" href="uci.css">
   <link rel="stylesheet" href="corner.css">
   <link rel="stylesheet" href="xp.css">
   <link rel="stylesheet" href="touch.css">
@@ -46,11 +47,10 @@
     </button>
     <nav class="tabs" role="tablist">
       <button class="tab active" data-view="path"><i data-icon="map"></i><span data-i18n="nav.path">Učna pot</span></button>
-      <button class="tab" data-view="textbook"><i data-icon="book-open"></i><span data-i18n="nav.textbook">Učbenik</span></button>
+      <button class="tab" data-view="uci"><i data-icon="graduation-cap"></i><span data-i18n="nav.learn">Uči se</span></button>
       <button class="tab" data-view="chat"><i data-icon="message-circle"></i><span data-i18n="nav.chat">Inštruktor</span></button>
       <button class="tab" data-view="scan"><i data-icon="scan-line"></i><span data-i18n="scan.nav">Skeniraj</span></button>
       <button class="tab" data-view="graph"><i data-icon="calculator"></i><span data-i18n="nav.graph">Kalkulator</span></button>
-      <button class="tab" data-view="lab"><i data-icon="flask-conical"></i><span data-i18n="nav.lab">Laboratorij</span></button>
       <button class="tab" data-view="competition" id="competition-tab"><i data-icon="medal"></i><span data-i18n="nav.competition">Tekmovanja</span></button>
       <button class="tab" data-view="exams" id="exams-tab" hidden><i data-icon="clipboard-check"></i><span data-i18n="nav.examsSi">NPZ in matura</span></button>
       <button class="tab" data-view="games"><i data-icon="gamepad-2"></i><span data-i18n="nav.games">Igre</span></button>
@@ -165,8 +165,29 @@
     <div id="corner-content"><p class="muted" data-i18n="common.loading">Nalagam …</p></div>
   </main>
 
-  <!-- UČBENIK (textbook.js) -->
-  <main id="view-textbook" class="view narrow textbook" hidden></main>
+  <!-- UČI SE (public/uci-se.js): en zavihek z Učbenikom, Laboratorijem in 3D svetom (j, 4. 11. 2026). Odpre zadnji
+       uporabljeni zavihek; vsebina zavihkov so obstoječi pogledi (textbook.js, laboratorij.js, 3D svet v uci-se.js). -->
+  <main id="view-uci" class="view uci-view" hidden>
+    <div class="uci-head">
+      <div class="seg uci-tabs" role="tablist" aria-label="Uči se" data-i18n-aria="nav.learn">
+        <button type="button" role="tab" id="uci-tab-textbook" data-uci-tab="textbook" aria-controls="view-textbook" aria-selected="false"><i data-icon="book-open"></i><span data-i18n="nav.textbook">Učbenik</span></button>
+        <button type="button" role="tab" id="uci-tab-lab" data-uci-tab="lab" aria-controls="view-lab" aria-selected="false"><i data-icon="flask-conical"></i><span data-i18n="nav.lab">Laboratorij</span></button>
+        <button type="button" role="tab" id="uci-tab-3d" data-uci-tab="3d" aria-controls="view-3d" aria-selected="false"><i data-icon="box"></i><span data-i18n="a3.hubTitle">3D svet</span></button>
+      </div>
+    </div>
+    <!-- UČBENIK (textbook.js) -->
+    <section id="view-textbook" class="uci-pane narrow textbook" role="tabpanel" aria-labelledby="uci-tab-textbook" hidden></section>
+    <!-- LABORATORIJ (public/laboratorij.js): vsi virtualni poskusi, po predmetih; poskus čez celo širino -->
+    <section id="view-lab" class="uci-pane narrow lab-view" role="tabpanel" aria-labelledby="uci-tab-lab" hidden>
+      <h1 class="with-icon lab-h1"><i data-icon="flask-conical"></i> <span data-i18n="nav.lab">Laboratorij</span></h1>
+      <div id="lab-content"><p class="muted" data-i18n="common.loading">Nalagam …</p></div>
+    </section>
+    <!-- 3D SVET (uci-se.js): kartice strani /3d; atlas ali model se odpre čez cel zaslon -->
+    <section id="view-3d" class="uci-pane narrow uci-3d" role="tabpanel" aria-labelledby="uci-tab-3d" hidden>
+      <h1 class="sr-only" data-i18n="a3.hubTitle">3D svet</h1>
+      <div id="uci-3d-content"><p class="muted" data-i18n="common.loading">Nalagam …</p></div>
+    </section>
+  </main>
 
   <!-- KLEPET -->
   <main id="view-chat" class="view chat-view" hidden>
@@ -406,7 +427,6 @@
       <button type="button" class="list-row" data-go="games"><span class="ic"><i data-icon="gamepad-2"></i></span><span class="lr-text"><b data-i18n="nav.games">Igre</b><small data-i18n="games.meSub">Učenje z igrami</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="corner"><span class="ic"><i data-icon="newspaper"></i></span><span class="lr-text"><b data-i18n="corner.title">Moj kotiček</b><small data-i18n="corner.meSub">Novice o tem, kar te zanima</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="graph"><span class="ic"><i data-icon="calculator"></i></span><span class="lr-text"><b data-i18n="nav.graph">Kalkulator</b><small data-i18n="sc.meSub">Znanstveni, grafični in pretvornik enot</small></span><i data-icon="chevron-right"></i></button>
-      <button type="button" class="list-row" data-go="lab" id="me-lab" hidden><span class="ic"><i data-icon="flask-conical"></i></span><span class="lr-text"><b data-i18n="nav.lab">Laboratorij</b><small data-i18n="lab.meSub">Virtualni poskusi iz fizike in kemije</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="progress"><span class="ic"><i data-icon="chart-column"></i></span><span class="lr-text"><b data-i18n="nav.progress">Napredek</b><small data-i18n="me.progressSub">Šibke točke, aktivnost in teme</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="league"><span class="ic"><i data-icon="trophy"></i></span><span class="lr-text"><b data-i18n="nav.league">Lige</b><small data-i18n="me.leagueSub">Tedenska lestvica, razred in prijatelji</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="settings"><span class="ic"><i data-icon="settings"></i></span><span class="lr-text"><b data-i18n="nav.settings">Nastavitve</b><small data-i18n="me.settingsSub">Profil, šola, jezik, videz in barve</small></span><i data-icon="chevron-right"></i></button>
@@ -421,13 +441,6 @@
     <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
     <h1 class="with-icon"><i data-icon="scan-line"></i> <span data-i18n="scan.title">Skeniraj nalogo</span></h1>
     <div class="scan-body"></div>
-  </main>
-
-  <!-- LABORATORIJ (public/laboratorij.js): vsi virtualni poskusi, po predmetih; poskus čez celo širino -->
-  <main id="view-lab" class="view narrow lab-view" hidden>
-    <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
-    <h1 class="with-icon lab-h1"><i data-icon="flask-conical"></i> <span data-i18n="nav.lab">Laboratorij</span></h1>
-    <div id="lab-content"><p class="muted" data-i18n="common.loading">Nalagam …</p></div>
   </main>
 
   <!-- URNIK (public/schedule.js) -->
@@ -454,9 +467,9 @@
   <!-- SPODNJA VRSTICA (telefon) -->
   <nav id="tabbar" class="tabbar" aria-label="Glavni meni" data-i18n-aria="nav.main">
     <button class="tab" data-view="path"><i data-icon="map"></i><span data-i18n="nav.path">Učna pot</span></button>
-    <button class="tab" data-view="textbook"><i data-icon="book-open"></i><span data-i18n="nav.textbook">Učbenik</span></button>
+    <button class="tab" data-view="uci"><i data-icon="graduation-cap"></i><span data-i18n="nav.learn">Uči se</span></button>
     <button class="tab" data-view="chat"><i data-icon="message-circle"></i><span data-i18n="nav.chat">Inštruktor</span></button>
-    <button class="tab" data-view="lab" id="competition-tab-m"><i data-icon="flask-conical"></i><span data-i18n="nav.lab">Laboratorij</span></button>
+    <button class="tab" data-view="competition" id="competition-tab-m"><i data-icon="medal"></i><span data-i18n="nav.competition">Tekmovanja</span></button>
     <button class="tab" data-view="me"><i data-icon="user"></i><span data-i18n="nav.me">Jaz</span></button>
   </nav>
 

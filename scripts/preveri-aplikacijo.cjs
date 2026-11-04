@@ -300,7 +300,16 @@ async function barTab(p, view, opts) {
   await revealBar(p);
   return click(p, `#tabbar .tab[data-view="${view}"]`, opts);
 }
+// Učbenik, Laboratorij in 3D svet so zavihki pogleda »Uči se« (public/uci-se.js).
+const UCI_TABS = ["textbook", "lab", "3d"];
 async function tab(p, view) {
+  if (UCI_TABS.includes(view)) {
+    await tab(p, "uci");
+    const seg = p.locator(`#view-uci [data-uci-tab="${view}"]`);
+    // Na telefonu se preklopnik v odprti lekciji ali poskusu umakne: najprej nazaj na seznam.
+    if (!(await seg.isVisible())) await click(p, "#view-uci .uci-pane:not([hidden]) :is(.tb-back, [data-lab-back])", { wait: 200 });
+    return click(p, `#view-uci [data-uci-tab="${view}"]`, { wait: 200 });
+  }
   // Računalnik: zgornja vrstica; telefon: spodnja vrstica ali »Jaz« → seznam.
   const top = p.locator(`.topbar .tab[data-view="${view}"]`);
   if (await top.isVisible()) return click(p, `.topbar .tab[data-view="${view}"]`);
@@ -310,7 +319,13 @@ async function tab(p, view) {
   await barTab(p, "me");
   await click(p, `#view-me [data-go="${view}"]`);
 }
-const currentView = (p) => p.evaluate(() => [...document.querySelectorAll("main.view:not(.in-okno)")].find((v) => !v.hidden)?.id || "");
+const currentMain = (p) => p.evaluate(() => [...document.querySelectorAll("main.view:not(.in-okno)")].find((v) => !v.hidden)?.id || "");
+// V »Uči se« šteje viden zavihek (view-textbook, view-lab, view-3d).
+const currentView = (p) =>
+  p.evaluate(() => {
+    const v = [...document.querySelectorAll("main.view:not(.in-okno)")].find((x) => !x.hidden);
+    return (v?.id === "view-uci" ? [...v.querySelectorAll(".uci-pane")].find((x) => !x.hidden)?.id : v?.id) || "";
+  });
 
 // Klobuk zgoraj levo: »Nadaljuj z učenjem« (public/quick-start.js). Nazaj zapre meni, vrstica odpre temo.
 async function quickStart(p) {
@@ -383,7 +398,8 @@ async function onboard(p, name, levelSteps, { interests = false, tour = "preskoc
   } else if (away)
     await p.evaluate(() => {
       document.querySelector(".iq-wrap [data-iq=skip]").click();
-      document.querySelector('.topbar .tab[data-view="textbook"]').click();
+      document.querySelector('.topbar .tab[data-view="uci"]').click();
+      document.querySelector('#view-uci [data-uci-tab="textbook"]').click();
     });
   else await click(p, ".iq-wrap [data-iq=skip]", { wait: 300 });
   await p.locator(".iq-wrap").waitFor({ state: "detached", timeout: 5000 }).catch(() => {
@@ -728,19 +744,22 @@ async function okna(p, label) {
   if (await p.locator("#chat-bubble").isVisible()) throw new Error("mehurček ostane, ko je klepet odprt");
   await click(p, '.okno[data-view="chat"] .okno-x');
   if (!sheet) {
-    // Poteg zavihka Učbenik na desni rob: okno, pripeto na desno polovico.
-    const b = await p.locator('.topbar .tab[data-view="textbook"]').boundingBox();
+    // Poteg zavihka Uči se na desni rob: okno, pripeto na desno polovico.
+    const b = await p.locator('.topbar .tab[data-view="uci"]').boundingBox();
     const vw = p.viewportSize().width;
     await p.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
     await p.mouse.down();
     for (let i = 1; i <= 10; i++) await p.mouse.move(b.x + b.width / 2 + (vw - 4 - b.x - b.width / 2) * (i / 10), b.y + 30 + 300 * (i / 10));
     await p.mouse.up();
     await settle(p, 300);
-    const w = await p.locator('.okno[data-view="textbook"]').boundingBox();
+    const w = await p.locator('.okno[data-view="uci"]').boundingBox();
     if (!w || Math.abs(w.x + w.width - vw) > 2 || Math.abs(w.width - vw / 2) > 2) throw new Error("zavihek, spuščen ob desnem robu, ni okno na desni polovici");
     await screen(p, `okno-ucbenik-desno-${label}`);
-    await click(p, '.okno[data-view="textbook"] .okno-max');
-    if ((await currentView(p)) !== "view-textbook" || (await p.locator(".okno").count())) throw new Error("»Odpri čez cel zaslon« ne vrne Učbenika v glavni pogled");
+    // Zavihek v oknu se zamenja kot v glavnem pogledu.
+    await click(p, '.okno[data-view="uci"] [data-uci-tab="lab"]', { wait: 300 });
+    await expectVisible(p, '.okno[data-view="uci"] #view-lab .lab-card', "laboratorij v oknu Uči se");
+    await click(p, '.okno[data-view="uci"] .okno-max');
+    if ((await currentMain(p)) !== "view-uci" || (await p.locator(".okno").count())) throw new Error("»Odpri čez cel zaslon« ne vrne Uči se v glavni pogled");
     await tab(p, "path");
   }
   // Mehurček, povlečen na X, izgine (prej se je X skril, preden je bil spust preverjen); X ga privlači.
@@ -953,6 +972,13 @@ async function lab(p, label) {
   await expectVisible(p, "#view-lab .lab-card", "seznam po Esc");
   await click(p, "#view-lab .lab-card [data-lab-topic]", { wait: 300 });
   await expectVisible(p, "#view-textbook .tb-title", "tema učbenika iz laboratorija");
+  // Iz lekcije en dotik nazaj v isti poskus (»Uči se«: povezava iz kataloga, textbook.js .tb-links).
+  await expectVisible(p, "#view-textbook .tb-link[data-tb-lab]", "povezava »Poskus v laboratoriju« v lekciji");
+  await screen(p, `lekcija-povezave-${label}`);
+  await click(p, "#view-textbook .tb-link[data-tb-lab]", { wait: 400 });
+  await expectVisible(p, "#view-lab .lab-stage", "poskus iz lekcije");
+  if ((await currentView(p)) !== "view-lab") throw new Error("povezava iz lekcije ne odpre zavihka Laboratorij");
+  await click(p, "#view-lab [data-lab-back]", { wait: 300 });
 }
 
 async function views(p, label) {
@@ -1245,6 +1271,38 @@ async function desktop(browser, app) {
   await p.context().close();
 }
 
+// Uči se na telefonu: trije zavihki, zadnji ostane izbran, 3D svet odpre model čez cel zaslon in Nazaj ga zapre.
+async function uciPhone(p) {
+  for (const v of UCI_TABS) {
+    await click(p, `#view-uci [data-uci-tab="${v}"]`, { wait: 300 });
+    if ((await currentView(p)) !== `view-${v}`) throw new Error(`zavihek »${v}« v Uči se se ni odprl`);
+    const over = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+    if (over > 1) throw new Error(`Uči se → ${v}: vodoravno drsenje (${over} px)`);
+  }
+  await expectVisible(p, "#view-3d .uci-3d-card", "kartice 3D sveta", 8000);
+  await screen(p, "uci-3d");
+  await click(p, "#view-3d .uci-3d-card", { wait: 300 });
+  // Okvir je istega izvora in si deli glavno nit: gradnja prizora (swiftshader) lahko za nekaj sekund ustavi strani.
+  await p.locator(".uci-3d-full iframe").waitFor({ state: "attached", timeout: 20000 }).catch(async () => {
+    throw new Error(`3D se ni odprl čez cel zaslon (${await p.evaluate(() => document.querySelectorAll(".uci-3d-full").length)} okvirjev)`);
+  });
+  const box = await p.locator(".uci-3d-full").boundingBox();
+  if (!box || box.width < p.viewportSize().width - 1 || box.height < p.viewportSize().height - 1) throw new Error(`3D ni čez cel zaslon (${JSON.stringify(box)})`);
+  const frame = p.frameLocator(".uci-3d-full iframe");
+  await frame.locator("#k3-glavni > *").first().waitFor({ state: "attached", timeout: 20000 }).catch(() => {
+    throw new Error("stran /3d se v okvirju ni naložila");
+  });
+  await p.goBack();
+  await settle(p, 300);
+  if (await p.locator(".uci-3d-full").count()) throw new Error("tipka Nazaj ne zapre 3D čez cel zaslon");
+  if ((await currentView(p)) !== "view-3d") throw new Error(`po zaprtju 3D je odprt ${await currentView(p)}`);
+  // Zadnji zavihek: Laboratorij ostane izbran, ko se učenec vrne v »Uči se«.
+  await click(p, '#view-uci [data-uci-tab="lab"]', { wait: 300 });
+  await barTab(p, "path", { wait: 300 });
+  await barTab(p, "uci", { wait: 300 });
+  if ((await currentView(p)) !== "view-lab") throw new Error(`»Uči se« ne odpre zadnjega zavihka (${await currentView(p)})`);
+}
+
 async function phone(browser, app) {
   const p = await newPage(browser, true, "tel", app.base);
   p.db = app.db;
@@ -1264,15 +1322,17 @@ async function phone(browser, app) {
     await closeTour(p, "vse");
     if ((await currentView(p)) !== "view-path") throw new Error("po vodiču ni odprta Učna pot");
   });
-  // Četrto mesto spodnje vrstice je Laboratorij (j, 1. 11.); Tekmovanja so pod »Jaz«.
-  for (const v of ["textbook", "chat", "lab"]) {
+  // Uči se (Učbenik | Laboratorij | 3D svet, j 4. 11.), Inštruktor in četrto mesto: Tekmovanja ali NPZ/Matura.
+  const fourth = await p.locator("#competition-tab-m").getAttribute("data-view");
+  for (const v of ["uci", "chat", fourth]) {
     await step(p, `zavihek-${v}`, async () => {
       await barTab(p, v, { wait: 300 });
-      if ((await currentView(p)) !== `view-${v}`) throw new Error(`zavihek ${v} se ni odprl`);
+      if ((await currentMain(p)) !== `view-${v}`) throw new Error(`zavihek ${v} se ni odprl`);
       await screen(p, v);
-      if (v === "lab") {
-        if (!(await p.locator('#tabbar .tab[data-view="lab"]').evaluate((b) => b.classList.contains("active")))) throw new Error("Laboratorij v spodnji vrstici ni označen");
-        if (await p.locator("#view-lab > .me-back").isVisible()) throw new Error("Laboratorij v spodnji vrstici ima gumb »← Jaz«");
+      if (v === "uci") await uciPhone(p);
+      if (v === fourth) {
+        if (!(await p.locator("#competition-tab-m").evaluate((b) => b.classList.contains("active")))) throw new Error(`${v} v spodnji vrstici ni označen`);
+        if (await p.locator(`#view-${v} .me-back`).isVisible()) throw new Error(`${v} v spodnji vrstici ima gumb »← Jaz«`);
       }
     });
   }
@@ -1286,7 +1346,7 @@ async function phone(browser, app) {
     const over = await p.evaluate(() => document.querySelector("#composer").getBoundingClientRect().bottom - document.querySelector("#tabbar").getBoundingClientRect().top);
     if (over > 1) throw new Error(`pokazana spodnja vrstica prekrije vrstico za pisanje (${over} px)`);
     await click(p, "#chat-back", { wait: 400 });
-    if ((await currentView(p)) !== "view-lab") throw new Error(`Nazaj v klepetu vodi na ${await currentView(p)}`);
+    if ((await currentMain(p)) !== `view-${fourth}`) throw new Error(`Nazaj v klepetu vodi na ${await currentMain(p)}`);
   });
   await step(p, "jaz", async () => {
     await barTab(p, "me", { wait: 300 });

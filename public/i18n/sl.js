@@ -2856,6 +2856,14 @@ export default {
   "lab.packages": "Poglej pakete",
   "lab.empty": "Poskusov še ni.",
   "lab.error": "Laboratorija ni bilo mogoče naložiti.",
+  // Uči se (public/uci-se.js): Učbenik, Laboratorij in 3D svet v enem zavihku
+  "nav.learn": "Uči se",
+  "tour.learnText": "Učbenik, Laboratorij in 3D svet na enem mestu: lekcije po korakih, poskusi, ki jih izvedeš sam, ter telo, celice in molekule v 3D. Vedno se odpre zadnji odprti zavihek.",
+  "tb.inLab": "Poskus v laboratoriju",
+  "tb.in3d": "Poglej v 3D",
+  "tb.openLab": "Odpri poskus »{title}« v laboratoriju",
+  "tb.open3d": "Odpri »{title}« v 3D svetu",
+  "uci.labOffline": "Laboratorij potrebuje povezavo. Poskusi znova čez nekaj trenutkov.",
   // 3D atlas in modeli (public/3d/, docs/3d.md)
   "lab.3dTitle": "3D svet",
   "lab.3dEyebrow": "Biologija · kemija · fizika",

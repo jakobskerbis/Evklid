@@ -67,7 +67,8 @@ import { initFullscreen } from "./fullscreen.js";
 import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-settings.js";
 import { initSchedule, showSchedule, renderScheduleCard } from "./schedule.js";
 import { initScan, showScan, leaveScan, scanBack } from "./scan/scan.js";
-import { initLab, showLab, labBack } from "./laboratorij.js";
+import { initLab, showLab, labBack, openLabExperiment } from "./laboratorij.js";
+import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, UCI_TABS } from "./uci-se.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
 import { initTestNotice } from "./testna-verzija.js";
 import { initFormulaInfo, annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-info.js";
@@ -181,6 +182,11 @@ function renderUserText(text) {
 
 function showView(name) {
   if (name === "games" && state.student && !gamesOn(state.student.settings)) name = "me"; // »Skrij igre«
+  // Učbenik, Laboratorij in 3D svet so zavihki pogleda »Uči se« (public/uci-se.js): stare poti izberejo zavihek.
+  if (UCI_TABS.includes(name)) {
+    setUciTab(name);
+    name = "uci";
+  }
   // Uvod profila: izbira v meniju pod logotipom ali tipka Nazaj ga zapreta (prej so ostali skriti vsi zavihki).
   // Prvi profil na napravi mora nastati, zato takrat ostanemo na uvodu.
   if (name !== "onboard" && document.body.classList.contains("onboarding")) {
@@ -199,7 +205,10 @@ function showView(name) {
   }
   closeFull(); // okno s celim besedilom (public/razpri.js) pripada prejšnjemu pogledu
   const away = (v) => name !== v && !isFloating(v); // pogled ni ne glavni ne v oknu
-  if (away("textbook")) stopReading(); // branje povzetka na glas ne teče naprej brez gumba za ustavitev
+  if (away("uci")) {
+    stopReading(); // branje povzetka na glas ne teče naprej brez gumba za ustavitev
+    leaveUci(); // atlas ali model čez cel zaslon (3D svet)
+  }
   syncHistory(name);
   if (name !== currentView) prevView = currentView;
   currentView = name;
@@ -234,11 +243,10 @@ function initView(name) {
   }
   if (name === "progress") loadProgress();
   if (name === "schedule") showSchedule();
-  if (name === "lab") showLab();
+  if (name === "uci") showUci();
   if (name === "scan") showScan();
   if (name === "league") loadLeague(state.student.id);
   if (name === "path") loadPath();
-  if (name === "textbook") showTextbook();
   if (name === "competition") (regionalExams() ? loadExams() : loadCompetition());
   if (name === "exams") loadExams();
   if (name === "feedback") showFeedback();
@@ -364,10 +372,9 @@ window.addEventListener("popstate", () => {
     startTour.end?.(); // Nazaj zapre vodič (kot Esc ali »Preskoči«)
     return keep();
   }
-  if (currentView === "textbook" && textbookBack()) return keep();
+  if (currentView === "uci" && uciBack({ textbookBack, labBack })) return keep();
   if (currentView === "games" && gamesBack()) return keep();
   if (currentView === "scan" && scanBack()) return keep();
-  if (currentView === "lab" && labBack()) return keep();
   const subMe = meView(currentView) && !["me", "graph"].includes(currentView);
   if (subMe && $("#tabbar").offsetParent) return showView("me"); // telefon: nazaj na »Jaz«
   fromBack = true;
@@ -594,7 +601,7 @@ async function selectStudent(id) {
   if (!$("#view-progress").hidden) loadProgress();
   if (!$("#view-league").hidden) loadLeague(state.student.id);
   if (!$("#view-scan").hidden) showScan(); // naloga prejšnjega profila ne ostane na zaslonu
-  if (!$("#view-lab").hidden) showLab(); // zaklep in vrstni red poskusov sta po profilu
+  if (!$("#view-lab").closest("[hidden]")) showLab(); // zaklep in vrstni red poskusov sta po profilu
   state.pathKey = null;
   state.modes = null; // »Nadaljuj z učenjem« in goNew ne smeta pokazati naslednje teme prejšnjega profila
   clearLevelCard();
@@ -1320,7 +1327,7 @@ async function pickSubject(item) {
   toast(`${t("set.subject")}: ${item.label}`, "check");
   // Odprt zaslon pokaže novi predmet takoj.
   if (currentView === "path") loadPath();
-  else if (currentView === "textbook") showTextbook();
+  else if (currentView === "uci") showUci(); // učbenik, poskusi in 3D svet po novem predmetu
   else if (currentView === "me") renderMe();
   else if (currentView === "exams") loadExams();
   else if (currentView === "competition") regionalExams() ? loadExams() : loadCompetition();
@@ -2211,11 +2218,13 @@ const siExams = () => !!state.student && !regionalExams() && Object.hasOwn(SI_EX
 const examMode = () => regionalExams() || state.backTo === "exams";
 const prepLabel = () => (regionalExams() ? t("nav.exams") : t("nav.competition"));
 const prepBack = () => (examMode() ? t("exam.back") : t("result.toCompetitions"));
-// Telefon: na četrtem mestu »NPZ in matura«, ko je cilj NPZ ali matura, sicer Laboratorij (j, 1. 11.); Tekmovanja so pod Jaz.
+// Telefon: Laboratorij je v »Uči se« (j, 4. 11.), zato je četrto mesto spet »NPZ« ali »Matura«, ko je cilj NPZ ali
+// matura, sicer Tekmovanja (regijski sistemi: Izpiti); drugi od obeh je vrstica pod Jaz. Fakulteta tekmovanj nima:
+// spodnja vrstica ima takrat štiri zavihke.
 const examsInTabbar = () => siExams() && ["npz", "matura"].includes(state.student.settings.goal);
 function offTabbarViews() {
-  if (!state.student) return ["competition"];
-  return examsInTabbar() ? ["competition", "lab"] : siExams() ? ["competition", "exams"] : ["competition"];
+  if (!state.student) return [];
+  return examsInTabbar() ? ["competition"] : siExams() ? ["exams"] : [];
 }
 const meBackHtml = () => `<button type="button" class="ghost back me-back">${icon("arrow-left")}<span>${t("nav.me")}</span></button>`;
 // »Skrij igre« (nastavitev profila games: off): brez zavihka, vrstice pod Jaz in koraka v uvodnem ogledu.
@@ -2240,17 +2249,18 @@ function syncCompetitionTab() {
   $("#competition-tab").querySelector("i, svg").outerHTML = icon(regionalExams() ? "clipboard-check" : "medal");
   const m = $("#competition-tab-m");
   const exams = examsInTabbar();
-  m.hidden = false;
-  m.dataset.view = exams ? "exams" : "lab";
+  m.hidden = !exams && noComp;
+  m.dataset.view = exams ? "exams" : "competition";
   const ms = m.querySelector("span");
   // Na ozki spodnji vrstici kratko: »NPZ« v OŠ, »Matura« v SŠ (zgoraj »NPZ in matura«).
   const short = jeOs(state.student?.settings) ? "goal.npz" : "goal.matura";
-  ms.dataset.i18n = exams ? short : "nav.lab";
-  ms.textContent = exams ? t(short) : t("nav.lab");
-  m.querySelector("i, svg").outerHTML = icon(exams ? "clipboard-check" : "flask-conical");
+  const mKey = exams ? short : regionalExams() ? "nav.exams" : "nav.competition";
+  ms.dataset.i18n = mKey;
+  ms.textContent = t(mKey);
+  m.querySelector("i, svg").outerHTML = icon(exams || regionalExams() ? "clipboard-check" : "medal");
   m.classList.toggle("active", currentView === m.dataset.view);
   $("#me-exams").hidden = !siExams() || exams;
-  $("#me-competition").hidden = noComp;
+  $("#me-competition").hidden = noComp || !exams; // Tekmovanja so pod Jaz le, ko je na četrtem mestu NPZ ali matura
   // Regijski sistemi: isti vnos pod Jaz je »Izpiti« (pogled competition naloži loadExams).
   const mc = $("#me-competition");
   const [mb, msub] = mc.querySelectorAll("b, small");
@@ -2259,8 +2269,6 @@ function syncCompetitionTab() {
   msub.dataset.i18n = regionalExams() ? "exam.title" : "comp.meSub";
   msub.textContent = t(msub.dataset.i18n);
   mc.querySelector(".ic").innerHTML = icon(regionalExams() ? "clipboard-check" : "medal");
-  $("#me-lab").hidden = !exams;
-  $("#view-lab > .me-back").hidden = !exams;
 }
 // Gumb »nazaj« na temi oziroma pri seriji nalog vodi tja, od koder je učenec prišel.
 function setBack(view) {
@@ -2975,7 +2983,7 @@ async function loadCompetition(key = state.compKey) {
     : `<p class="muted small-note">${t("comp.historyEmpty")}</p>`;
   const learning = c.units.flatMap((u) => u.topics).filter((t) => t.status !== "new").length;
   box.innerHTML = `
-    ${meBackHtml()}
+    ${offTabbarViews().includes("competition") ? meBackHtml() : ""}
     <h1>${t("comp.title")}</h1>
     <div class="comp-pickers">
       ${seg(["MAT", "FIZ", "KEM"].map((k) => [k, SUBJECT_NAMES[k] || k]), c.subject, "data-comp-subject")}
@@ -3111,7 +3119,7 @@ async function loadExams(key = state.examKey, exam = null) {
     : [...c.exams.own, ...(ownIds.includes(c.exam) ? [] : [{ id: c.exam, name: c.name }])].map((x) => [x.id, x.name]);
   const m = c.mock;
   box.innerHTML = `
-    ${!si || offTabbarViews().includes("exams") ? meBackHtml() : ""}
+    ${offTabbarViews().includes(si ? "exams" : "competition") ? meBackHtml() : ""}
     <h1>${si ? t("nav.examsSi") : t("exam.title")}</h1>
     <div class="comp-pickers">
       ${seg(examSeg, c.exam, "data-exam")}
@@ -3506,7 +3514,7 @@ const TOUR = [
   { sel: "#xp-card", title: "daily.title", text: "tour.dailyText" },
   { sel: "#path-content .unit", title: "nav.path", text: "tour.pathText" },
   { sel: "#modebar", title: "tour.modes", text: "tour.modesText" },
-  { sel: '.tab[data-view="textbook"]', title: "nav.textbook", text: "tour.textbookText" },
+  { sel: '.tab[data-view="uci"]', title: "nav.learn", text: "tour.learnText" },
   { sel: '.tab[data-view="chat"]', title: "nav.chat", text: "tour.chatText" },
   { sel: '.tab[data-view="graph"]', title: "nav.graph", text: "tour.graphText" },
   { sel: '.tab[data-view="competition"]', title: "nav.competition", text: "tour.competitionText" },
@@ -3850,6 +3858,14 @@ function checkTaskFits() {
 // Ukaz inštruktorju »odpri kalkulator«: okno ob klepetu (telefon: spodnji list), kalkulator v pravem načinu.
 async function openFromTutor({ view, mode } = {}) {
   if (!document.getElementById(`view-${view}`)) return;
+  // Učbenik, Laboratorij, 3D svet: zavihek pogleda »Uči se« (v oknu ali glavnem delu).
+  if (UCI_TABS.includes(view)) {
+    const sameTab = uciTab() === view;
+    setUciTab(view);
+    if (isFloating("uci")) focusWindow("uci");
+    if (currentView === "uci" || isFloating("uci")) return sameTab || showUci();
+    view = "uci";
+  }
   const calc = () => view === "graph" && mode && setCalcMode(mode);
   if (currentView === view) return calc();
   if (!windowsOn() || !openWindow(view, { side: "right" })) {
@@ -3862,7 +3878,10 @@ initOkna({
   showView,
   initView: (name) => (name === "account" ? renderAccount() : initView(name)),
   leaveView: (name) => {
-    if (name === "textbook") stopReading();
+    if (name === "uci") {
+      stopReading();
+      leaveUci();
+    }
     if (name === "scan") leaveScan();
     if (name === "games") leaveGames();
     if (name === "corner") closeBoard();
@@ -3870,7 +3889,7 @@ initOkna({
   },
   // Pogled iz glavnega dela je šel v okno: glavni del pokaže prvi prosti zavihek.
   leaveMain: (name) =>
-    showView(["path", "textbook", "chat", "graph", "progress", "schedule", "settings"].find((v) => v !== name && !isFloating(v)) || "me"),
+    showView(["path", "uci", "chat", "graph", "progress", "schedule", "settings"].find((v) => v !== name && !isFloating(v)) || "me"),
   mainView: () => currentView,
   onResize: (name) => name === "graph" && calcTool(calcMode).then((tool) => tool.resize?.()),
   chatInfo: () => {
@@ -3940,6 +3959,22 @@ initScan({
 });
 // Laboratorij (public/laboratorij.js): vsi virtualni poskusi; »Odpri temo v učbeniku« odpre lekcijo.
 initLab({ api, escapeHtml, getStudent: () => state.student, openLesson });
+// Uči se (public/uci-se.js): Učbenik, Laboratorij in 3D svet v enem pogledu; »Vprašaj inštruktorja« iz 3D atlasa.
+initUci({
+  escapeHtml,
+  getStudent: () => state.student,
+  showTextbook,
+  showLab,
+  stopReading,
+  askTutor: (text) => {
+    showView("chat");
+    const box = $("#input");
+    box.value = text;
+    autoGrow();
+    box.focus();
+  },
+  onOverlay: (open) => (open ? overlayOpened() : overlayClosed()),
+});
 document.querySelectorAll("[data-open-scan]").forEach((b) => b.addEventListener("click", () => showView("scan")));
 
 initTextbook({
@@ -3952,13 +3987,20 @@ initTextbook({
   learnWithTutor,
   showView,
   toast,
+  // Iz lekcije: poskus iste teme v zavihku Laboratorij, atlas ali model čez cel zaslon (public/uci-se.js).
+  openLab: (key) => {
+    openLabExperiment(key);
+    showView("lab");
+  },
+  open3d,
 });
 
 // ---------- zagon ----------
 
 // Bližnjica z ikone aplikacije (dolg pritisk na ikono): /?pogled=chat odpre Inštruktorja. Iz 3D atlasa (/3d)
 // »Vprašaj inštruktorja«: /?pogled=chat&vprasaj=… odpre klepet z vpisanim vprašanjem (pošlje ga učenec sam).
-const START_VIEW = ["chat", "textbook", "graph", "lab"].find((v) => v === new URLSearchParams(location.search).get("pogled"));
+// Pogled »Uči se« z zadnjim zavihkom: ?pogled=uci; določen zavihek: ?pogled=textbook, lab ali 3d.
+const START_VIEW = ["chat", "graph", "uci", ...UCI_TABS].find((v) => v === new URLSearchParams(location.search).get("pogled"));
 const START_ASK = START_VIEW === "chat" ? (new URLSearchParams(location.search).get("vprasaj") || "").slice(0, 2000) : "";
 if (new URLSearchParams(location.search).has("pogled")) history.replaceState(null, "", location.pathname);
 initInstall({ toast, onSheet: (open) => (open ? overlayOpened() : overlayClosed()) });

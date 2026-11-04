@@ -3,6 +3,7 @@
 import { t, applyI18n } from "/i18n.js";
 import { icon } from "/icons.js";
 import { seznamModelov, naloziModel } from "./modeli.js";
+import { vgrajeno, starsu } from "./vgrajeno.js";
 
 const glavni = document.getElementById("k3-glavni");
 const vAplikaciji = !!window.ReactNativeWebView;
@@ -32,8 +33,10 @@ function razberi() {
 }
 
 // Nazaj na zbirko: če smo prišli z nje, z zgodovino (tipka Nazaj ostane naravna), sicer zamenjamo naslov.
+// V okvirju aplikacije (3D svet v »Uči se«) je zbirka aplikacija sama: okvir se zapre.
 function nazaj() {
   if (history.state?.k3Iz === "hub") history.back();
+  else if (vgrajeno) starsu({ tip: "zapri3d" });
   else location.hash = "";
 }
 // Povezava z zbirke: oznako »prišel z zbirke« dobi nov vnos v zgodovini (pushState), da nazaj() ve, da sme nazaj.
@@ -49,7 +52,7 @@ async function zbirka() {
   document.title = t("a3.hubTitle");
   const box = mk("div", "k3-hub");
   const vrh = mk("header", "k3-hub-vrh");
-  if (!vAplikaciji) {
+  if (!vAplikaciji && !vgrajeno) {
     const b = mk("a", "a3-krog");
     b.href = "/";
     b.innerHTML = icon("arrow-left");

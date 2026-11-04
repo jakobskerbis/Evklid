@@ -8,7 +8,7 @@ import { prilagodiSirino } from "./sirina.js";
 import { jeFaks } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
 
-let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView }
+let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView, openLab, open3d }
 const $ = (sel) => document.querySelector(sel);
 const tb = { browse: false, subject: null, book: null, group: null, query: "", topicId: null, books: [], myPath: null, program: null, profile: null, mode: "lessons", refType: "", refSl: false, refs: null, refOpen: new Set() };
 
@@ -165,7 +165,7 @@ const esc = (s) => ctx.escapeHtml(String(s ?? ""));
 // Odpre učbenik (kazalo ali zadnjo odprto lekcijo).
 // Tipka Nazaj (telefon): iz odprte lekcije nazaj na seznam lekcij. Vrne true, če je bila lekcija odprta.
 export function textbookBack() {
-  if (!tb.topicId || $("#view-textbook")?.hidden) return false;
+  if (!tb.topicId || !$("#view-textbook") || $("#view-textbook").closest("[hidden]")) return false;
   tb.topicId = null;
   renderHome();
   window.scrollTo(0, 0);
@@ -522,6 +522,17 @@ async function renderLesson(topicId) {
     ? `<button type="button" class="ghost tb-mode-btn" id="tb-mode">${ic(stepMode ? "file-text" : "layers")}${esc(t(stepMode ? "tb.steps.all" : "tb.steps.byStep"))}</button>`
     : "";
 
+  // Ista tema v Laboratoriju ali 3D svetu (public/sim/katalog.js, strežnik: lessonView → links): en dotik odpre poskus
+  // v zavihku Laboratorij ali atlas oziroma model čez cel zaslon.
+  const linkHtml = (L.links || []).length
+    ? `<div class="tb-links">${L.links
+        .map((k) =>
+          k.kind === "lab"
+            ? `<button type="button" class="tb-link" data-tb-lab="${esc(k.key)}" aria-label="${esc(t("tb.openLab", { title: k.title }))}">${ic("flask-conical")}<span><small>${esc(t("tb.inLab"))}</small><b dir="auto">${esc(k.title)}</b></span></button>`
+            : `<button type="button" class="tb-link" data-tb-3d="${esc(k.id)}" data-title="${esc(k.title)}" aria-label="${esc(t("tb.open3d", { title: k.title }))}">${ic("box")}<span><small>${esc(t("tb.in3d"))}</small><b dir="auto">${esc(k.title)}</b></span></button>`,
+        )
+        .join("")}</div>`
+    : "";
   // »Prijavi napako« v vsaki lekciji (tudi brez besedila lekcije): prijava gre skrbniku (server/reports.js).
   const reportBtn = `<button type="button" class="ghost tb-report-btn" id="tb-report" aria-expanded="false">${ic("flag")}<span>${esc(t("rep.btn"))}</span></button>`;
   // »Kaj zdaj?«: po korakih je del zadnjega koraka, nad krogi Nazaj · 1/12 · Naprej (ti plavajo na dnu nad
@@ -543,6 +554,7 @@ async function renderLesson(topicId) {
     <p class="muted tb-crumb">${esc(L.pathLabel)} · ${esc(L.unit)}</p>
     <h1 class="tb-title">${esc(L.name)}</h1>
     ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="/ucbenik/${L.path}/${L.id.split("/")[1]}#natisni" target="_blank" rel="noopener">${ic("download")}PDF lekcije</a>${modeBtn}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
+    ${linkHtml}
     <p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>
     ${L.goals ? `<p class="tb-goals"><b>Cilji:</b> ${esc(L.goals)}</p>` : ""}
     ${L.pretest_due ? `<section class="card tb-pretest"><h2>${ic("target")}${esc(t("pretest.title"))}</h2><p>${esc(t("pretest.lessonIntro"))}</p><button type="button" class="primary" id="tb-pretest">${ic("play")}${esc(t("pretest.start"))}</button></section>` : ""}
@@ -580,6 +592,8 @@ async function renderLesson(topicId) {
     },
     toast: ctx.toast,
   });
+  box.querySelectorAll("[data-tb-lab]").forEach((b) => b.addEventListener("click", () => ctx.openLab?.(b.dataset.tbLab)));
+  box.querySelectorAll("[data-tb-3d]").forEach((b) => b.addEventListener("click", () => ctx.open3d?.(b.dataset.tb3d, b.dataset.title)));
   box.querySelectorAll(".tb-demo-mount").forEach((m) => {
     const d = demos[Number(m.dataset.sim)];
     mountSim(d.id, m, d.opts);

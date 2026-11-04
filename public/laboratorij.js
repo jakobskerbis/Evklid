@@ -1,4 +1,4 @@
-// Laboratorij (zgornji zavihek in Jaz → Laboratorij): vsi virtualni poskusi na enem mestu, po predmetih,
+// Laboratorij (zavihek v »Uči se«, public/uci-se.js): vsi virtualni poskusi na enem mestu, po predmetih,
 // najprej učenčev predmet in razred. Klik na poskus ga odpre čez celo širino; »← Laboratorij«, Esc ali
 // tipka Nazaj (labBack v app.js) vrnejo na seznam. Strežnik: server/laboratorij.js (zaklep kot v učbeniku).
 import { t } from "./i18n.js";
@@ -8,8 +8,11 @@ import { mountSim } from "./sim/index.js";
 let D = null; // { api, escapeHtml, getStudent, openLesson }
 let data = null; // { sid, myPath, experiments, offers }
 let openKey = null; // odprt poskus
+let shownKey = null; // poskus, ki je zdaj narisan
 
 const view = () => document.getElementById("view-lab");
+// Zavihek je skrit tudi, ko je skrit pogled »Uči se« okoli njega.
+const hidden = () => !view() || !!view().closest("[hidden]");
 const box = () => document.getElementById("lab-content");
 const esc = (s) => D.escapeHtml(String(s ?? ""));
 const find = (key) => data?.experiments.find((x) => x.key === key);
@@ -29,7 +32,7 @@ export function initLab(deps) {
   // Esc v odprtem poskusu: nazaj na seznam (ne, ko je odprt meni ali okno, ki Esc porabi samo).
   // Tudi na pogledu samem, da v premičnem oknu (public/okna.js) Esc najprej vrne na seznam, šele nato zapre okno.
   const onEsc = (e) => {
-    if (e.key !== "Escape" || e.defaultPrevented || !openKey || root.hidden) return;
+    if (e.key !== "Escape" || e.defaultPrevented || !openKey || hidden()) return;
     const shown = (el) => !el.closest("[hidden]") && el.getClientRects().length > 0;
     if ([...document.querySelectorAll('[aria-modal="true"], [role="listbox"], [role="menu"]')].some(shown)) return;
     const at = e.target;
@@ -46,7 +49,7 @@ export async function showLab() {
   const s = D?.getStudent();
   if (!s || !box()) return;
   if (data && data.sid !== s.id) openKey = null; // drug profil: seznam znova
-  if (openKey && box().querySelector(".lab-stage") && !find(openKey)?.locked) return; // zaklenjen: znova (morda je zdaj odklenjen)
+  if (openKey && shownKey === openKey && box().querySelector(".lab-stage") && !find(openKey)?.locked) return; // zaklenjen: znova (morda je zdaj odklenjen)
   if (!data || data.sid !== s.id) box().innerHTML = `<p class="muted">${esc(t("common.loading"))}</p>`;
   try {
     const r = await D.api(`/api/students/${s.id}/lab`);
@@ -62,9 +65,14 @@ export async function showLab() {
   renderList();
 }
 
+// Iz lekcije (»Poskus v laboratoriju«): ta poskus se odpre, ko se pokaže zavihek Laboratorij (showLab).
+export function openLabExperiment(key) {
+  openKey = key || null;
+}
+
 // Tipka Nazaj ali Esc: iz poskusa na seznam. Vrne true, če je bil poskus odprt.
 export function labBack() {
-  if (!openKey || view()?.hidden) return false;
+  if (!openKey || hidden()) return false;
   const key = openKey;
   openKey = null;
   renderList();
@@ -99,18 +107,12 @@ function topicsHtml(x) {
       .join("")}</div>`;
 }
 
-// Kartica 3D atlasa in modelov (stran /3d, docs/3d.md) nad poskusi: odpre se čez cel zaslon.
-const card3d = () => `<a class="card lab-3d" href="/3d" data-lab-3d>
-    <span class="lab-3d-ic">${icon("box")}</span>
-    <span class="lab-3d-txt"><small>${esc(t("lab.3dEyebrow"))}</small><b>${esc(t("lab.3dTitle"))}</b><span>${esc(t("lab.3dText"))}</span></span>
-    ${icon("chevron-right")}
-  </a>`;
-
 function renderList() {
+  shownKey = null;
   view()?.classList.remove("lab-open");
   const list = data?.experiments || [];
   if (!list.length) {
-    box().innerHTML = `${card3d()}<p class="muted">${esc(t("lab.empty"))}</p>`;
+    box().innerHTML = `<p class="muted">${esc(t("lab.empty"))}</p>`;
     return;
   }
   const groups = [];
@@ -120,7 +122,7 @@ function renderList() {
     g.items.push(x);
   }
   box().innerHTML =
-    `${card3d()}<p class="muted lab-intro">${esc(t("lab.intro"))}</p><div class="lab-groups">` +
+    `<p class="muted lab-intro">${esc(t("lab.intro"))}</p><div class="lab-groups">` +
     groups
       .map(
         (g) => `<section class="lab-group${g.items.length > 1 ? " many" : ""}">
@@ -144,6 +146,7 @@ function renderList() {
 function renderExperiment() {
   const x = find(openKey);
   if (!x) return renderList();
+  shownKey = openKey;
   view().classList.add("lab-open");
   const offers = data.offers;
   const showOffer = !offers || (offers.show && offers.prices);
