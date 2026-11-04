@@ -45,10 +45,21 @@ Document.prototype.querySelectorAll = function (s) {
 window.ready = true;
 </script>`;
 
+// polje z dolgo vrstico predlog nad zavihki (kot Inštruktor)
+const PAGE_CHIPS = `<!doctype html><html lang="sl"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css"><link rel="stylesheet" href="/tipkovnica.css">
+<input id="v" style="width:300px">
+<script type="module">
+import { initKeyboard, configureKeyboard } from "/tipkovnica.js";
+initKeyboard();
+configureKeyboard(document.getElementById("v"), { layers: ["abc", "num", "fx", "sym"], start: "abc", ctx: ["a/b", "x", "xⁿ", "√", "aₙ", "∫", "Σ", "π", "→", "≤", "≥", "≠", "·", "°", "∞", "±"].map((l) => [l, l]) });
+window.ready = true;
+</script>`;
+
 function serve() {
   const server = http.createServer((req, res) => {
     const url = req.url.split("?")[0];
     if (url === "/t.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(PAGE);
+    if (url === "/v.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(PAGE_CHIPS);
     const file = path.join(PUB, path.normalize(url));
     if (!file.startsWith(PUB) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return res.writeHead(404).end();
     res.writeHead(200, { "content-type": TYPES[path.extname(file)] || "application/octet-stream" }).end(fs.readFileSync(file));
@@ -214,3 +225,33 @@ for (const [name, opts] of [
     assert.deepEqual(errors, []);
   });
 }
+
+test("swiping the template row scrolls it and inserts nothing; a clean tap inserts (phone)", { skip }, async (t) => {
+  const server = await serve();
+  const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true, locale: "sl-SI" });
+  t.after(async () => {
+    await ctx.close();
+    server.close();
+  });
+  const page = await ctx.newPage();
+  await page.goto(`http://127.0.0.1:${server.address().port}/v.html`);
+  await page.waitForFunction(() => window.ready);
+  await page.tap("#v");
+  await page.waitForSelector("#tipkovnica .tk-ctx .tk-chip");
+  const row = await page.locator("#tipkovnica .tk-ctx").boundingBox();
+  const cdp = await ctx.newCDPSession(page);
+  const y = row.y + row.height / 2;
+  const touch = (type, x) => cdp.send("Input.dispatchTouchEvent", { type, touchPoints: x == null ? [] : [{ x, y }] });
+  await touch("touchStart", row.x + row.width - 40);
+  for (let i = 1; i <= 12; i++) {
+    await touch("touchMove", row.x + row.width - 40 - i * 20);
+    await page.waitForTimeout(16);
+  }
+  await touch("touchEnd");
+  await page.waitForTimeout(300);
+  assert.ok(await page.locator("#tipkovnica .tk-ctx").evaluate((r) => r.scrollLeft > 20), "vrstica se je pomaknila");
+  assert.equal(await page.inputValue("#v"), "", "poteg ne vpiše predloge");
+  await page.locator("#tipkovnica .tk-ctx .tk-chip").filter({ hasText: "π" }).tap();
+  await page.waitForTimeout(60);
+  assert.equal(await page.inputValue("#v"), "π", "čist dotik vpiše");
+});
