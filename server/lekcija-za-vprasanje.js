@@ -9,7 +9,9 @@ import { loadLesson, expandFormulaBlocks } from "./textbook.js";
 
 export const LESSON_TAG = "lekcija_ucbenika";
 export const LESSON_NOTE_HEAD = `<${LESSON_TAG}>`;
-export const lessonSearchOn = () => process.env.EVKLID_LESSON_SEARCH !== "0";
+// Privzeto izklopljeno, dokler j ne pregleda (opomba inštruktorju je sprememba tega, kar mu rečemo:
+// docs/spremembe-prompta.md). Vklop: EVKLID_LESSON_SEARCH=1.
+export const lessonSearchOn = () => process.env.EVKLID_LESSON_SEARCH === "1";
 
 const fold = (s) =>
   String(s || "")
@@ -52,7 +54,10 @@ function levelOf(settings) {
   return school ? { school, grade } : null;
 }
 
-// Kazalo lekcij za predmet in raven: za vsako lekcijo z »Povzetkom« krni naslova, ciljev in besedila.
+const summaryOf = (lesson) => lesson?.sections?.find((s) => /^povzetek/i.test(s.title))?.md || "";
+
+// Kazalo tem za predmet in raven: krni naslova, ciljev in (kjer je lekcija s »Povzetkom«) besedila.
+// Teme brez lekcije so v kazalu tudi, da vprašanje o njih ne dobi sosednje lekcije z eno skupno besedo.
 const indexes = new Map();
 function indexFor(subject, school, grade) {
   const key = `${subject}|${school}|${grade}`;
@@ -64,17 +69,16 @@ function indexFor(subject, school, grade) {
     if (!below) continue;
     for (const t of topicOrder(p.key)) {
       const lesson = loadLesson(t.id);
-      const sum = lesson?.sections.find((s) => /^povzetek/i.test(s.title));
-      if (!sum) continue;
+      const has = !!summaryOf(lesson);
       docs.push({
         id: t.id,
         name: t.name,
         path: p.key,
         pathLabel: p.label,
-        summary: sum.md,
+        has,
         title: new Set(terms(t.name)),
-        meta: new Set(terms(`${t.goals} ${t.unit}`)),
-        body: new Set(terms(lesson.sections.map((s) => `${s.title} ${s.md}`).join(" "))),
+        meta: new Set(terms(`${t.goals || ""} ${t.unit || ""}`)),
+        body: new Set(has ? terms(lesson.sections.map((s) => `${s.title} ${s.md}`).join(" ")) : []),
       });
     }
   }
@@ -100,13 +104,17 @@ export function lessonForQuestion(text, settings) {
   if (!lessonSearchOn()) return null;
   const scored = rankLessons(text, settings);
   const [best, second] = scored;
-  if (!best || !best.inTitle || best.score < MIN_SCORE) return null;
+  if (!best || !best.d.has || !best.inTitle || best.score < MIN_SCORE) return null;
   // Bližnja druga lekcija je v redu le, če vprašanje pokrije ves naslov prve (»Pitagorov izrek«, »Logaritem«).
   const whole = best.inTitle === best.d.title.size;
   if (second && !whole && best.score < second.score * MIN_LEAD) return null;
-  // Ena sama beseda iz dolgega naslova (»geometrijsko« → »Osnovni geometrijski pojmi«) je preohlapna.
-  if (!whole && best.inTitle === 1 && best.d.title.size > 2) return null;
-  const { id, name, path, pathLabel, summary } = best.d;
+  // Ena sama beseda iz večbesednega naslova je preohlapna (»kocka« pri metu kocke → »Kocka in kvader«,
+  // »koren enačbe« → »Kvadratni koren«, »geometrijsko« → »Osnovni geometrijski pojmi«).
+  if (!whole && best.inTitle === 1) return null;
+  // Povzetek beremo sproti (loadLesson ima predpomnilnik po času spremembe), da velja popravljena lekcija.
+  const { id, name, path, pathLabel } = best.d;
+  const summary = summaryOf(loadLesson(id));
+  if (!summary) return null;
   return { id, name, path, pathLabel, summary, score: Math.round(best.score * 10) / 10 };
 }
 
@@ -128,7 +136,8 @@ export function rankLessons(text, settings) {
     if (!score) continue;
     // Naslov, ki ga vprašanje pokrije v celoti (»Pitagorov izrek«), pred širšim (»Uporaba Pitagorovega izreka«).
     if (inTitle) score += 3 * (inTitle / d.title.size);
-    // Pri enakem ujemanju prednost lekciji z učenčeve ravni.
+    // Prednost lekciji učenčeve šole (srednješolec dobi lekcijo OŠ le, če SŠ nima ustrezne) in razreda.
+    if (d.path.includes(`-${lvl.school}-`)) score += 2;
     if (d.path.endsWith(`-${lvl.school}-${lvl.grade}`)) score += 0.5;
     // Ista tema na več ravneh (Newtonovi zakoni v OŠ in SŠ): ostane tista z boljšo oceno.
     const key = fold(d.name);
@@ -145,7 +154,7 @@ export function lessonNote(hit) {
     LESSON_NOTE_HEAD,
     `The app's textbook (Učbenik) has a lesson that probably matches this question: »${hit.name}« (${hit.pathLabel}). Its summary:`,
     summary,
-    "If it matches the question, explain consistently with it (same notation and method), in your own words. If the question is about something else, ignore this note. You may suggest that the student opens this lesson in Učbenik; never mention this note itself.",
+    "Background only: if it matches the question, use the same notation and terms as the lesson. If the student or their task uses another method, follow the student. Keep your usual step-by-step pace and do not give formulas or the answer before the student tries. If the question is about something else, ignore this note. You may suggest that the student opens this lesson in Učbenik; never mention this note itself.",
     `</${LESSON_TAG}>`,
   ].join("\n");
 }

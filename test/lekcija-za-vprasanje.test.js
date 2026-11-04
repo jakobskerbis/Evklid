@@ -4,26 +4,57 @@ import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { lessonForQuestion, lessonNote, terms, LESSON_NOTE_HEAD } from "../server/lekcija-za-vprasanje.js";
 import { isHiddenNote } from "../server/skrite-opombe.js";
+import { listPaths, topicOrder, getTopic } from "../server/curriculum.js";
+import { loadLesson } from "../server/textbook.js";
 import { transcript } from "../server/povzetek.js";
+
+// Privzeto izklopljeno (čaka na j-jev pregled); testi ga vklopijo.
+process.env.EVKLID_LESSON_SEARCH = "1";
 
 const os = (subject, g) => ({ subject, educational_track: "OSNOVNA_SOLA", curriculum_level: `${g}. razred` });
 const ss = (subject, g) => ({ subject, educational_track: "SREDNJA_SOLA", curriculum_level: `${g}. letnik` });
 
 test("lesson search: clear questions find the matching lesson of the student's subject and level", () => {
+  // Ime teme, ne točen id: nova lekcija na drugi ravni testa ne sme podreti.
   const cases = [
-    ["Kaj je Pitagorov izrek in kako izračunam hipotenuzo?", os("MAT", 8), "MAT-OS-8/pitagorov-izrek"],
-    ["Kako izračunam prostornino valja?", os("MAT", 9), "MAT-OS-9/valj"],
-    ["Kako rešim kvadratno enačbo x^2 - 5x + 6 = 0?", ss("MAT", 2), "MAT-SS-2/kvadratna-enacba"],
-    ["Logaritmi mi niso jasni, kaj je log2 8?", ss("MAT", 3), "MAT-SS-2/logaritem"],
-    ["Kaj je Ohmov zakon?", os("FIZ", 9), "FIZ-OS-9/upor-in-ohmov-zakon"],
-    ["Kaj je drugi Newtonov zakon?", ss("FIZ", 1), "FIZ-SS-1/newtonovi-zakoni"],
-    ["Kaj je pH in kaj pomeni, da je raztopina kisla?", ss("KEM", 2), "KEM-SS-2/ph"],
+    ["Kaj je Pitagorov izrek in kako izračunam hipotenuzo?", os("MAT", 8), /pitagor/i],
+    ["Kako izračunam prostornino valja?", os("MAT", 9), /valj/i],
+    ["Kako rešim kvadratno enačbo x^2 - 5x + 6 = 0?", ss("MAT", 2), /kvadratn/i],
+    ["Logaritmi mi niso jasni, kaj je log2 8?", ss("MAT", 3), /logarit/i],
+    ["Kaj je Ohmov zakon?", os("FIZ", 9), /ohm/i],
+    ["Kaj je drugi Newtonov zakon?", ss("FIZ", 1), /newton/i],
+    ["Kaj je pH in kaj pomeni, da je raztopina kisla?", ss("KEM", 2), /ph/i],
   ];
-  for (const [q, s, id] of cases) assert.equal(lessonForQuestion(q, s)?.id, id, q);
+  const rank = (s) => (s.educational_track === "SREDNJA_SOLA" ? 10 : 0) + Number(s.curriculum_level[0]);
+  for (const [q, s, name] of cases) {
+    const hit = lessonForQuestion(q, s);
+    assert.match(hit?.name || "", name, q);
+    const t = getTopic(hit.id);
+    assert.ok((t.path.includes("-SS-") ? 10 : 0) + Number(t.path.at(-1)) <= rank(s), `${q}: ne višja raven`);
+  }
+});
+
+test("lesson search: asking about any topic by its name gives that topic's lesson, or none if it has no lesson", () => {
+  let found = 0;
+  const wrong = [];
+  for (const subject of ["MAT", "FIZ", "KEM", "BIO", "NAR"]) {
+    for (const p of listPaths(subject)) {
+      if (!["OS", "SS"].includes(p.school)) continue;
+      const settings = p.school === "SS" ? ss(subject, p.grade) : os(subject, p.grade);
+      for (const t of topicOrder(p.key)) {
+        const hit = lessonForQuestion(`Kaj je ${t.name}?`, settings);
+        const has = !!loadLesson(t.id)?.sections.some((x) => /^povzetek/i.test(x.title));
+        if (hit && hit.name.toLowerCase() !== t.name.toLowerCase()) wrong.push(`${t.id} → ${hit.id}`);
+        if (hit && has) found++;
+      }
+    }
+  }
+  assert.deepEqual(wrong, [], "nobena tema ne dobi tuje lekcije");
+  assert.ok(found > 100, `najde lekcije (${found})`);
 });
 
 test("lesson search: no lesson for chit-chat, off-topic, higher grades, other systems, or when switched off", () => {
-  for (const q of ["Živjo, kako si?", "Pomagaj mi pri domači nalogi", "Kdo je bil Napoleon?", "Imam test jutri, kaj naj se učim?", "Koliko je 2+2?", "Zakaj je nebo modro?", "Kako napišem graf v Excelu?", "Kako začnem geometrijsko nalogo?"])
+  for (const q of ["Živjo, kako si?", "Pomagaj mi pri domači nalogi", "Kdo je bil Napoleon?", "Imam test jutri, kaj naj se učim?", "Koliko je 2+2?", "Zakaj je nebo modro?", "Kako napišem graf v Excelu?", "Kako začnem geometrijsko nalogo?", "Vržemo dve kocki. Kolikšna je verjetnost za vsoto 7?", "Kako izračunam koren enačbe?", "Kako se reče kocka po angleško?"])
     assert.equal(lessonForQuestion(q, os("MAT", 8)), null, q);
   assert.equal(lessonForQuestion("Kaj je odvod funkcije?", os("MAT", 8)), null, "snov višjega letnika ne");
   assert.equal(lessonForQuestion("Kaj je Pitagorov izrek?", { ...os("MAT", 8), school_system: "IN" }), null);
@@ -32,7 +63,7 @@ test("lesson search: no lesson for chit-chat, off-topic, higher grades, other sy
   try {
     assert.equal(lessonForQuestion("Kaj je Pitagorov izrek?", os("MAT", 8)), null);
   } finally {
-    delete process.env.EVKLID_LESSON_SEARCH;
+    process.env.EVKLID_LESSON_SEARCH = "1";
   }
   assert.deepEqual(terms("Kako rešim ENAČBO?"), ["resim", "enacb"]);
 });

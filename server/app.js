@@ -513,7 +513,12 @@ export function createApp(store, opts = {}) {
     const isFirst = store.listMessages(conv.id).length === 0;
     // Prvo vprašanje prostega pogovora: povzetek ujemajoče se lekcije iz učbenika kot skrita opomba
     // (server/lekcija-za-vprasanje.js). Shranjen s sporočilom, zato se začetek zgodovine ne spreminja.
-    const lesson = isFirst && !conv.path_topic && !paperNote && text ? lessonForQuestion(text, student.settings) : null;
+    let lesson = null;
+    try {
+      if (isFirst && !conv.path_topic && !paperNote && text) lesson = lessonForQuestion(text, student.settings);
+    } catch (err) {
+      console.warn(`[evklid] iskanje lekcije ni uspelo: ${err?.message || err}`);
+    }
     if (lesson) userContent.push({ type: "text", text: lessonNote(lesson) });
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     const userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
