@@ -228,7 +228,7 @@ function pilotCard() {
         <li><b>${esc(pct(T.otherAccuracy))}</b><span>${esc(t("games.plOther", { n: T.otherAnswers }))}</span></li>
       </ul>
       <div class="pilot-scroll"><table class="table pilot-table gm-pltable"><thead><tr><th scope="col">${esc(t("games.plDay"))}</th><th scope="col">${esc(t("games.plPlayersCol"))}</th><th scope="col">${esc(t("games.plPlays"))}</th><th scope="col">${esc(t("games.plReturns"))}</th></tr></thead>
-      <tbody>${p.rows.map((r) => `<tr><td>${esc(r.day)}</td><td>${esc(r.players)}</td><td>${esc(r.plays)}</td><td>${esc(r.returns)} (${esc(pct(r.returnRate))})</td></tr>`).join("")}</tbody></table></div>`;
+      <tbody>${p.rows.map((r) => `<tr><td>${esc(r.day ?? t("games.plOtherDays"))}</td><td>${esc(r.players)}</td><td>${esc(r.plays)}</td><td>${esc(r.returns)} (${esc(pct(r.returnRate))})</td></tr>`).join("")}</tbody></table></div>`;
   return `<details class="card gm-trends gm-pilot"${plOpen ? " open" : ""}><summary>📈 ${esc(t("games.plTitle", { n: p.days }))}</summary><p class="muted small">${esc(t("games.trOnly"))}</p>${body}</details>`;
 }
 let plOpen = false;

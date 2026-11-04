@@ -1944,6 +1944,7 @@
   "games.plPlayersCol": "プレイヤー",
   "games.plPlays": "ゲーム",
   "games.plReturns": "ルートへ戻った数",
+  "games.plOtherDays": "その他の日（合計）",
   "chat.aiNote": "Evklidは間違えることがあります。大事な結果は自分で確かめてください。",
   "chat.off": "チューターとのチャットは一時的に停止しています。アプリのほかの部分は引き続き使えます。",
   "rep.btn": "間違いを報告",

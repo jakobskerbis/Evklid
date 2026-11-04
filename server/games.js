@@ -251,6 +251,7 @@ export function migrateGameDays(db) {
     CREATE INDEX IF NOT EXISTS idx_game_days_day ON game_days(day);
     CREATE INDEX IF NOT EXISTS idx_game_concept_days_day ON game_concept_days(day);
   `);
+  pruneGameDays(db); // rok hrambe tudi, ko nihče ne igra (ob zagonu)
 }
 
 // Šibke teme učenca: napake na učni poti (napačen prvi odgovor) in v igrah v zadnjih 7 dneh.
@@ -268,45 +269,66 @@ export function weakFor(db, studentId) {
 }
 
 // Konec igre: števec iger, čakanje na vrnitev na pot, točnost (šibka tema ali ne, pred to igro).
+// pending = igre v nizu (razmik največ RETURN_MINUTES), ki še čakajo na vrnitev; starejši niz se ne šteje več.
 export function noteGame(db, studentId, concept, correct, wrong) {
   const weak = weakFor(db, studentId).some((x) => x.concept === concept) ? 1 : 0;
   db.prepare(
     `INSERT INTO game_days (student_id, day, plays, pending, last_end) VALUES (?, date('now'), 1, 1, datetime('now'))
-     ON CONFLICT(student_id, day) DO UPDATE SET plays = plays + 1, pending = 1, last_end = excluded.last_end`,
-  ).run(studentId);
+     ON CONFLICT(student_id, day) DO UPDATE SET plays = plays + 1,
+       pending = CASE WHEN last_end >= datetime('now', ?) THEN pending + 1 ELSE 1 END, last_end = excluded.last_end`,
+  ).run(studentId, `-${RETURN_MINUTES} minutes`);
   db.prepare(
     `INSERT INTO game_concept_days (student_id, day, concept, weak, correct, wrong) VALUES (?, date('now'), ?, ?, ?, ?)
      ON CONFLICT(student_id, day, concept, weak) DO UPDATE SET correct = correct + excluded.correct, wrong = wrong + excluded.wrong`,
   ).run(studentId, concept, weak, correct, wrong);
+  pruneGameDays(db);
+}
+function pruneGameDays(db) {
   db.prepare("DELETE FROM game_days WHERE day < date('now', ?)").run(`-${PILOT_MAX_DAYS} days`);
   db.prepare("DELETE FROM game_concept_days WHERE day < date('now', ?)").run(`-${PILOT_MAX_DAYS} days`);
 }
 
-// Odgovor na učni poti: če je učenec v RETURN_MINUTES po igri spet pri nalogah, šteje kot vrnitev.
+// Odgovor na učni poti: če je učenec v RETURN_MINUTES po igri spet pri nalogah, se vse igre niza, ki
+// čakajo, štejejo kot vrnitev (vsaka igra največ enkrat; niz čez polnoč ostane pri dnevu svoje igre).
 export function notePathActivity(db, studentId) {
   db.prepare(
-    "UPDATE game_days SET returns = returns + 1, pending = 0 WHERE student_id = ? AND pending = 1 AND last_end >= datetime('now', ?)",
+    "UPDATE game_days SET returns = returns + pending, pending = 0 WHERE student_id = ? AND pending > 0 AND last_end >= datetime('now', ?)",
   ).run(studentId, `-${RETURN_MINUTES} minutes`);
 }
 
 // Povzetek za skrbnika: samo vsote čez učence, brez imen in id-jev; pri manj kot MIN_STUDENTS
-// igralcih brez števil (iz majhnih števil bi se dalo sklepati, kdo je igral).
+// igralcih brez števil (iz majhnih števil bi se dalo sklepati, kdo je igral). Enako za vrstice po dnevih:
+// dnevi z manj kot MIN_STUDENTS igralci so združeni v eno vrstico (day: null); če ima tudi ta manj kot
+// MIN_STUDENTS različnih igralcev, ti dnevi niso v nobeni vrstici in ne v vsotah (razlika bi jih izdala).
 export function gamePilot(db, { days = 30 } = {}) {
   const n = Math.max(1, Math.min(PILOT_MAX_DAYS, Math.floor(days) || 30));
   const since = `-${n - 1} days`;
   const players = db.prepare("SELECT COUNT(DISTINCT student_id) AS n FROM game_days WHERE day >= date('now', ?) AND plays > 0").get(since).n;
   const base = { days: n, minutes: RETURN_MINUTES, minStudents: MIN_STUDENTS, players };
   if (players < MIN_STUDENTS) return { ...base, enough: false };
-  const rows = db
+  const byDay = db
     .prepare(
       `SELECT day, COUNT(DISTINCT student_id) AS players, SUM(plays) AS plays, SUM(returns) AS returns
        FROM game_days WHERE day >= date('now', ?) AND plays > 0 GROUP BY day ORDER BY day DESC`,
     )
     .all(since);
+  const big = byDay.filter((r) => r.players >= MIN_STUDENTS);
+  const small = byDay.filter((r) => r.players < MIN_STUDENTS).map((r) => r.day);
+  let merged = null;
+  if (small.length) {
+    const marks = small.map(() => "?").join(",");
+    const m = db
+      .prepare(`SELECT COUNT(DISTINCT student_id) AS players, SUM(plays) AS plays, SUM(returns) AS returns FROM game_days WHERE plays > 0 AND day IN (${marks})`)
+      .get(...small);
+    if (m.players >= MIN_STUDENTS) merged = { day: null, dayCount: small.length, ...m };
+  }
+  const shown = new Set([...big.map((r) => r.day), ...(merged ? small : [])]);
+  const rows = merged ? [...big, merged] : big;
   const acc = { weak: { correct: 0, wrong: 0 }, other: { correct: 0, wrong: 0 } };
   for (const r of db
-    .prepare("SELECT weak, SUM(correct) AS c, SUM(wrong) AS w FROM game_concept_days WHERE day >= date('now', ?) GROUP BY weak")
+    .prepare("SELECT day, weak, SUM(correct) AS c, SUM(wrong) AS w FROM game_concept_days WHERE day >= date('now', ?) GROUP BY day, weak")
     .all(since)) {
+    if (!shown.has(r.day)) continue;
     const x = acc[r.weak ? "weak" : "other"];
     x.correct += r.c || 0;
     x.wrong += r.w || 0;
@@ -314,10 +336,12 @@ export function gamePilot(db, { days = 30 } = {}) {
   const rate = (a, b) => (b ? Math.round((100 * a) / b) : null);
   const plays = rows.reduce((s, r) => s + r.plays, 0);
   const returns = rows.reduce((s, r) => s + r.returns, 0);
-  const playerDays = rows.reduce((s, r) => s + r.players, 0);
+  // igralec-dan: pri združeni vrstici iz posameznih dni (ne iz števila različnih igralcev)
+  const playerDays = big.reduce((s, r) => s + r.players, 0) + (merged ? byDay.filter((r) => r.players < MIN_STUDENTS).reduce((s, r) => s + r.players, 0) : 0);
   return {
     ...base,
     enough: true,
+    hiddenDays: merged ? 0 : small.length,
     totals: {
       plays,
       playsPerPlayerDay: playerDays ? Math.round((10 * plays) / playerDays) / 10 : 0,

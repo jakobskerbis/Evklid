@@ -300,6 +300,6 @@ grid (first page, no search) with up to 6 games for the concepts with the most m
 `server/games.js`), each tile says why (»3 napake ta teden«); no data → no row. **Pilot metrics**
 (`GET /api/games/pilot`, admin or the server's own computer, like the weekly votes; card under it in
 Games): per student and day only counters (`game_days`, `game_concept_days`, kept 120 days): games
-played, games followed by a learning-path answer within 30 min (»vrnitev na pot«), and game
+played, games followed by a learning-path answer within 30 min (»vrnitev na pot«; every waiting game of a run with ≤ 30 min gaps counts once), and game
 accuracy on the student's weak concepts vs. others. The report sums over students, no names or ids,
-and shows numbers only from 3 players on.
+and shows numbers only from 3 players on; days with fewer than 3 players are merged into one »Drugi dnevi skupaj« row, or left out (also from the totals) if that row would still have fewer than 3.

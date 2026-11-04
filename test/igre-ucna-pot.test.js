@@ -105,18 +105,18 @@ test("weak topics row and pilot counters: from path mistakes and game answers, w
     g = (await call(`/api/students/${s.id}/games`)).body;
     assert.equal(g.weak.find((x) => x.concept === "frac_add").n, 4);
     const day = db.prepare("SELECT plays, returns, pending FROM game_days WHERE student_id = ?").get(s.id);
-    assert.deepEqual({ ...day }, { plays: 2, returns: 0, pending: 1 });
+    assert.deepEqual({ ...day }, { plays: 2, returns: 0, pending: 2 });
     const acc = db.prepare("SELECT concept, weak, correct, wrong FROM game_concept_days WHERE student_id = ? ORDER BY concept").all(s.id);
     assert.deepEqual(acc.map((r) => [r.concept, r.weak, r.correct, r.wrong]), [["frac_add", 1, 6, 2], ["sq_root_nope", 0, 3, 1]]);
-    // vrnitev na pot: odgovor na nalogo v RETURN_MINUTES po igri šteje enkrat
+    // vrnitev na pot: odgovor na nalogo v RETURN_MINUTES po igrah šteje vsako igro niza enkrat
     notePathActivity(db, s.id);
     notePathActivity(db, s.id);
-    assert.equal(db.prepare("SELECT returns FROM game_days WHERE student_id = ?").get(s.id).returns, 1);
+    assert.equal(db.prepare("SELECT returns FROM game_days WHERE student_id = ?").get(s.id).returns, 2);
     // prepozno: brez vrnitve
     noteGame(db, s.id, "add", 1, 0);
     db.prepare("UPDATE game_days SET last_end = datetime('now', ?) WHERE student_id = ?").run(`-${RETURN_MINUTES + 5} minutes`, s.id);
     notePathActivity(db, s.id);
-    assert.equal(db.prepare("SELECT returns FROM game_days WHERE student_id = ?").get(s.id).returns, 1);
+    assert.equal(db.prepare("SELECT returns FROM game_days WHERE student_id = ?").get(s.id).returns, 2);
     // premalo igralcev: brez števil
     assert.equal(gamePilot(db).enough, false);
     for (const n of ["C", "D"]) noteGame(db, store.createStudent(n, {}).id, "add", 2, 2);
@@ -124,8 +124,8 @@ test("weak topics row and pilot counters: from path mistakes and game answers, w
     assert.equal(p.enough, true);
     assert.equal(p.players, MIN_STUDENTS);
     assert.equal(p.totals.plays, 5);
-    assert.equal(p.totals.returns, 1);
-    assert.equal(p.totals.returnRate, 20);
+    assert.equal(p.totals.returns, 2);
+    assert.equal(p.totals.returnRate, 40);
     assert.equal(p.totals.weakAccuracy, 75); // 6 od 8
     assert.equal(p.totals.otherAccuracy, Math.round((100 * 8) / 13)); // 3+1+2+2 od 4+1+4+4
     assert.ok(!/Bor|"C"|student_id/.test(JSON.stringify(p)), "brez imen in id-jev");
@@ -151,4 +151,54 @@ test("reward and weak row: hidden games hide the offer; the docs describe the th
   const doc = fs.readFileSync(new URL("../docs/igre-smernice.md", import.meta.url), "utf8");
   assert.match(doc, /Ponovi šibke teme/);
   assert.match(doc, /api\/games\/pilot/);
+});
+
+test("pilot metrics: days with fewer than MIN_STUDENTS players are merged or left out (also from totals)", async () => {
+  await http(async ({ db, store }) => {
+    const ids = ["A", "B", "C", "D"].map((n) => store.createStudent(n, {}).id);
+    const day = (id, ago, plays, returns) =>
+      db.prepare("INSERT INTO game_days (student_id, day, plays, returns) VALUES (?, date('now', ?), ?, ?)").run(id, `-${ago} days`, plays, returns);
+    const acc = (id, ago, c, w) =>
+      db.prepare("INSERT INTO game_concept_days (student_id, day, concept, weak, correct, wrong) VALUES (?, date('now', ?), 'add', 0, ?, ?)").run(id, `-${ago} days`, c, w);
+    for (const id of ids.slice(0, 3)) {
+      day(id, 0, 2, 1); // danes 3 igralci: lastna vrstica
+      acc(id, 0, 3, 1);
+    }
+    day(ids[3], 1, 5, 5); // včeraj samo D
+    acc(ids[3], 1, 0, 9);
+    let p = gamePilot(db);
+    assert.deepEqual(p.rows.map((r) => r.players), [3], "dan z enim igralcem ni prikazan");
+    assert.equal(p.hiddenDays, 1);
+    assert.equal(p.totals.plays, 6, "in ni v vsotah (razlika bi ga izdala)");
+    assert.equal(p.totals.otherAccuracy, 75);
+    // še dva dneva z A in B: združeni dnevi imajo 3 različne igralce → ena vrstica brez datuma
+    day(ids[0], 2, 1, 0);
+    day(ids[1], 3, 1, 1);
+    p = gamePilot(db);
+    assert.deepEqual(p.rows.map((r) => [r.day === null, r.players, r.plays, r.returns]), [[false, 3, 6, 3], [true, 3, 7, 6]]);
+    assert.equal(p.hiddenDays, 0);
+    assert.equal(p.totals.plays, 13);
+    assert.equal(p.totals.otherAccuracy, Math.round((100 * 9) / 21));
+  });
+});
+
+test("pilot metrics: a return after midnight counts the waiting games of yesterday once", async () => {
+  await http(async ({ db, store }) => {
+    const id = store.createStudent("E", {}).id;
+    db.prepare("INSERT INTO game_days (student_id, day, plays, pending, last_end) VALUES (?, date('now', '-1 days'), 1, 1, datetime('now', '-10 minutes'))").run(id);
+    noteGame(db, id, "add", 1, 0);
+    notePathActivity(db, id);
+    notePathActivity(db, id);
+    const rows = db.prepare("SELECT plays, returns, pending FROM game_days WHERE student_id = ? ORDER BY day").all(id).map((r) => ({ ...r }));
+    assert.deepEqual(rows, [{ plays: 1, returns: 1, pending: 0 }, { plays: 1, returns: 1, pending: 0 }]);
+  });
+});
+
+test("pilot tables: created on an existing database without them", () => {
+  const store = openDb(":memory:");
+  createApp(store, {});
+  store.db.exec("DROP TABLE game_days; DROP TABLE game_concept_days;");
+  createApp(store, {});
+  assert.ok(store.db.prepare("SELECT name FROM sqlite_master WHERE name = 'game_days'").get());
+  assert.equal(gamePilot(store.db).players, 0);
 });

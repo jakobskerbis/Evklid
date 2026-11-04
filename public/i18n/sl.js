@@ -1618,6 +1618,7 @@ export default {
   "games.plPlayersCol": "Igralci",
   "games.plPlays": "Igre",
   "games.plReturns": "Vrnitve na pot",
+  "games.plOtherDays": "Drugi dnevi skupaj",
   "games.e.orb": "Čarobna krogla",
   "games.e.orb.how": "Stresi telefon ali tapni gumb s puščicama za naslednji odgovor. Pri pravem tapni kroglo ali ✓.",
   "games.subjects": "Predmeti",
