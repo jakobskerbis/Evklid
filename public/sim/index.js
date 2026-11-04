@@ -175,6 +175,9 @@ export const ENGINES = {
   "lab-elektromagnet": ["lab-magnetizem.js", "labElektromagnet"],
   "lab-sila-vodnik": ["lab-magnetizem.js", "labSilaVodnik"],
   "lab-indukcija": ["lab-magnetizem.js", "labIndukcija"],
+  "lab-hitrost": ["lab-reakcije.js", "labHitrost"],
+  "lab-energija": ["lab-reakcije.js", "labEnergija"],
+  "lab-plamenska": ["lab-reakcije.js", "labPlamenska"],
   // teme, dodane po primerjavi z učnimi načrti (2026-10-30)
   logika: ["vrzeli.js", "logika"], prostor: ["vrzeli.js", "prostor"], "koord-trikotnik": ["vrzeli.js", "koordTrikotnik"],
   "vezava-vzmeti": ["vrzeli.js", "vezavaVzmeti"], izmenicni: ["vrzeli.js", "izmenicni"], "em-spekter": ["vrzeli.js", "emSpekter"], zvezde: ["vrzeli.js", "zvezde"], domine: ["vrzeli.js", "domine"],
