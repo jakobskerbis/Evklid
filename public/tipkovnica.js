@@ -445,11 +445,11 @@ function render() {
   }
   if (S.layer === "abc" && prefs.glide) loadGlide();
 }
-// Na dotik je vrstica nad zavihki v poljih z drsenjem ali predlogi vedno na mestu (tudi prazna, kot pas
-// predlogov pri Gboard): besede po drsenju se pokažejo, ne da bi tipkovnica zrasla in stran poskočila.
+// Na dotik je pri vklopljenih predlogih besed vrstica nad zavihki vedno na mestu (tudi prazna, kot pas
+// predlogov pri Gboard), da tipkovnica med pisanjem ne raste. Izklopljeni predlogi: brez praznega pasu (j, 4. 11.).
 function reserveCtx() {
-  // ne v matematičnih poljih (kalkulator): tam se drsi redko in prostor šteje
-  return touch() && !S.cfg.math && S.layers.some((l) => layerId(l) === "abc") && (prefs.words || glideAllowed(S.field));
+  // ne v matematičnih poljih (kalkulator): tam prostor šteje
+  return touch() && prefs.words && !S.cfg.math && S.layers.some((l) => layerId(l) === "abc");
 }
 function renderCtx() {
   const box = board?.querySelector(".tk-ctx");
