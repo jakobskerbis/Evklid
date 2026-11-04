@@ -73,9 +73,10 @@ export function zgradi(THREE, ctx = {}) {
 
   // Lupina z odrezanim osmim delom; f(smer) vrne polmer v tej smeri.
   function lupina(f, ws, hs) {
-    const zg = new THREE.SphereGeometry(1, ws, hs / 2, Math.PI / 2, Math.PI * 1.5, 0, Math.PI / 2);
+    ws = Math.round(ws / 4) * 4; // enako število oglišč na ekvatorju: brez razpoke
+    const zg = new THREE.SphereGeometry(1, (ws * 3) / 4, hs / 2, Math.PI / 2, Math.PI * 1.5, 0, Math.PI / 2);
     const sp = new THREE.SphereGeometry(1, ws, hs / 2, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
-    const pokr = new THREE.SphereGeometry(1, Math.round(ws / 4), hs / 2, 0, Math.PI / 2, 0, Math.PI / 2);
+    const pokr = new THREE.SphereGeometry(1, ws / 4, hs / 2, 0, Math.PI / 2, 0, Math.PI / 2);
     const v = new THREE.Vector3();
     for (const g of [zg, sp, pokr]) {
       const p = g.attributes.position;

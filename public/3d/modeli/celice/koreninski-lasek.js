@@ -1,0 +1,484 @@
+// Celica koreninskega laska: celica povrhnjice korenine z dolgim cevastim izrastkom med delci prsti.
+// Pogodba graditelja: docs/3d.md. Brez uvozov; THREE pride od kompleta.
+
+export const info = {
+  id: "celica-koreninski-lasek",
+  naslov: "Celica koreninskega laska",
+  podrocje: "celice",
+  predmet: "BIO",
+  opis: "Celica povrhnjice korenine z dolgim cevastim izrastkom, ki poveča površino za vpijanje vode in mineralnih snovi iz prsti. Lasek je skrajšan: v resnici je lahko dolg do 1 mm, to je 20-krat več od telesa celice.",
+  merilo: { m: 120e-6, oznaka: "120 µm" },
+};
+
+export function zgradi(THREE, ctx = {}) {
+  const hi = ctx.kakovost !== "nizka";
+  const q = (n) => Math.max(3, Math.round(n * (hi ? 1 : 0.55)));
+  const gib = ctx.gibanje !== false;
+  const group = new THREE.Group();
+  const deli = [];
+  const odpad = [];
+  let seme = 31;
+  // ---------- orodja (enaka kot v zivalska.js, z dodatki za ploskve in prereze) ----------
+  const rnd = () => ((seme = (seme * 16807) % 2147483647) - 1) / 2147483646;
+  const hash = (x, y, z) => { const s = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453; return s - Math.floor(s); };
+  function sum(x, y, z) { // gladek 3D šum vrednosti, -1 … 1
+    const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
+    const xf = x - xi, yf = y - yi, zf = z - zi;
+    const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf), w = zf * zf * (3 - 2 * zf);
+    const l = (a, b, t) => a + (b - a) * t;
+    const h = (a, b, c) => hash(xi + a, yi + b, zi + c);
+    return 2 * l(l(l(h(0, 0, 0), h(1, 0, 0), u), l(h(0, 1, 0), h(1, 1, 0), u), v),
+      l(l(h(0, 0, 1), h(1, 0, 1), u), l(h(0, 1, 1), h(1, 1, 1), u), v), w) - 1;
+  }
+  const fbm = (x, y, z) => sum(x, y, z) * 0.6 + sum(x * 2.1, y * 2.1, z * 2.1) * 0.3 + sum(x * 4.3, y * 4.3, z * 4.3) * 0.1;
+  const gladko = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  function mat(barva, o = {}) {
+    const m = new THREE.MeshPhysicalMaterial(Object.assign({
+      color: barva, roughness: 0.4, clearcoat: 0.8, clearcoatRoughness: 0.3,
+      sheen: 0.5, sheenColor: new THREE.Color(0xffffff), sheenRoughness: 0.5,
+    }, o));
+    odpad.push(m);
+    return m;
+  }
+  // Združi geometrije (z index ali brez) v eno; po želji pobarva vsako z barvo oglišč.
+  function zdruzi(geos, barve) {
+    const pos = [], nor = [], col = [], idx = [];
+    let off = 0;
+    geos.forEach((g, i) => {
+      const p = g.attributes.position, n = g.attributes.normal, gc = g.attributes.color;
+      const c = barve && barve[i] != null ? new THREE.Color(barve[i]) : null;
+      for (let k = 0; k < p.count; k++) {
+        pos.push(p.getX(k), p.getY(k), p.getZ(k));
+        nor.push(n.getX(k), n.getY(k), n.getZ(k));
+        if (c) col.push(c.r, c.g, c.b);
+        else if (barve) { if (gc) col.push(gc.getX(k), gc.getY(k), gc.getZ(k)); else col.push(1, 1, 1); }
+      }
+      if (g.index) for (let k = 0; k < g.index.count; k++) idx.push(g.index.getX(k) + off);
+      else for (let k = 0; k < p.count; k++) idx.push(k + off);
+      off += p.count;
+      g.dispose();
+    });
+    const out = new THREE.BufferGeometry();
+    out.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    out.setAttribute("normal", new THREE.Float32BufferAttribute(nor, 3));
+    if (barve) out.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    out.setIndex(idx);
+    return out;
+  }
+  function del(id, ime, opis, barva, meshes, tocka) {
+    meshes.forEach((m) => { m.userData.del = id; });
+    deli.push({ id, ime, opis, barva, meshes, tocka: tocka.map((x) => Math.round(x * 1000) / 1000) });
+  }
+  // Ploskev iz parametrov: P(u, v, izhod) za več krp [u0, u1, nu, v0, v1, nv] v eni geometriji.
+  // Normale računa numerično iz P, zato se krpe zlepijo brez šivov; geo.userData.osvezi(P) premakne oglišča.
+  function ploskev(P, krpe, obrni = false) {
+    const pos = [], idx = [], uv = [];
+    let off = 0;
+    for (const [u0, u1, nu, v0, v1, nv] of krpe) {
+      for (let i = 0; i <= nu; i++) for (let j = 0; j <= nv; j++) uv.push(u0 + (u1 - u0) * i / nu, v0 + (v1 - v0) * j / nv);
+      for (let i = 0; i < nu; i++) for (let j = 0; j < nv; j++) {
+        const a = off + i * (nv + 1) + j, b = a + nv + 1, c = b + 1, d = a + 1;
+        if (obrni) idx.push(a, d, b, b, d, c); else idx.push(a, b, d, b, c, d);
+      }
+      off += (nu + 1) * (nv + 1);
+    }
+    const n = uv.length / 2;
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(new Float32Array(n * 3), 3));
+    g.setAttribute("normal", new THREE.Float32BufferAttribute(new Float32Array(n * 3), 3));
+    g.setIndex(idx);
+    const A = new THREE.Vector3(), B = new THREE.Vector3(), C = new THREE.Vector3(), D = new THREE.Vector3(), E = new THREE.Vector3(), N = new THREE.Vector3();
+    g.userData.uv = uv;
+    g.userData.osvezi = (Pf) => {
+      const p = g.attributes.position.array, no = g.attributes.normal.array, e = 1e-3;
+      for (let k = 0; k < n; k++) {
+        const u = uv[2 * k], v = uv[2 * k + 1];
+        Pf(u, v, A);
+        p[3 * k] = A.x; p[3 * k + 1] = A.y; p[3 * k + 2] = A.z;
+        Pf(u + e, v, B); Pf(u - e, v, C); B.sub(C);
+        Pf(u, v + e, C); Pf(u, v - e, D); C.sub(D);
+        N.crossVectors(B, C);
+        for (let t = 0, eu = e; t < 4 && N.lengthSq() < 1e-14; t++) {
+          // izrojena točka (pol, konica): smer v vzemi na sosednjih krogih
+          eu *= 6;
+          Pf(u + eu, v, B); Pf(u - eu, v, C); B.sub(C);
+          Pf(u + eu, v + e, C); Pf(u + eu, v - e, D); C.sub(D);
+          Pf(u - eu, v + e, D); Pf(u - eu, v - e, E); D.sub(E); C.add(D);
+          N.crossVectors(B, C);
+        }
+        if (N.lengthSq() < 1e-16) N.copy(A).normalize();
+        N.normalize();
+        if (obrni) N.negate();
+        no[3 * k] = N.x; no[3 * k + 1] = N.y; no[3 * k + 2] = N.z;
+      }
+      g.attributes.position.needsUpdate = true;
+      g.attributes.normal.needsUpdate = true;
+      g.computeBoundingSphere();
+    };
+    g.userData.osvezi(P);
+    return g;
+  }
+  // Odstrani trikotnike, katerih središče izpolni pogoj f(Vector3) (npr. odprtina, kjer se ploskvi stikata).
+  function izrezi(g, f) {
+    const p = g.attributes.position, ix = g.index.array, ost = [], c = new THREE.Vector3(), t = new THREE.Vector3();
+    for (let i = 0; i < ix.length; i += 3) {
+      c.set(0, 0, 0);
+      for (let k = 0; k < 3; k++) c.add(t.fromBufferAttribute(p, ix[i + k]));
+      if (!f(c.multiplyScalar(1 / 3))) ost.push(ix[i], ix[i + 1], ix[i + 2]);
+    }
+    g.setIndex(ost);
+    return g;
+  }
+  // Barve oglišč iz funkcije položaja (x, y, z, u, v) -> THREE.Color.
+  function pobarvaj(g, f) {
+    const p = g.attributes.position, uv = g.userData.uv || [];
+    const col = new Float32Array(p.count * 3), c = new THREE.Color();
+    for (let k = 0; k < p.count; k++) {
+      f(p.getX(k), p.getY(k), p.getZ(k), uv[2 * k], uv[2 * k + 1], c);
+      col[3 * k] = c.r; col[3 * k + 1] = c.g; col[3 * k + 2] = c.b;
+    }
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    return g;
+  }
+  // Trak med dvema nizoma točk (enako dolgima): ploskev prereza med dvema plastema.
+  function pas(A, B) {
+    const pos = [], idx = [];
+    for (let i = 0; i < A.length; i++) pos.push(A[i].x, A[i].y, A[i].z, B[i].x, B[i].y, B[i].z);
+    for (let i = 0; i < A.length - 1; i++) { const a = 2 * i; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+  // Cev vzdolž točk.
+  const cev = (pts, r, seg, rad, zaprta = false) => new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, zaprta), seg, r, rad, zaprta);
+  // Premakni oglišča s funkcijo f(v: Vector3) (spremeni v na mestu) in preračunaj normale.
+  function preoblikuj(g, f) {
+    const p = g.attributes.position, v = new THREE.Vector3();
+    for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i); f(v, i); p.setXYZ(i, v.x, v.y, v.z); }
+    g.computeVertexNormals();
+    return g;
+  }
+  const o = new THREE.Object3D();
+  // InstancedMesh iz seznama {p, r (Euler ali Quaternion), s (število ali Vector3)}.
+  function instance(geo, material, sez) {
+    const m = new THREE.InstancedMesh(geo, material, Math.max(1, sez.length));
+    m.count = sez.length;
+    postaviInstance(m, sez);
+    return m;
+  }
+  function postaviInstance(m, sez) {
+    sez.forEach((x, i) => {
+      o.position.copy(x.p);
+      if (x.r && x.r.isQuaternion) o.quaternion.copy(x.r); else if (x.r) o.rotation.copy(x.r); else o.rotation.set(0, 0, 0);
+      if (x.s == null) o.scale.setScalar(1); else if (typeof x.s === "number") o.scale.setScalar(x.s); else o.scale.copy(x.s);
+      o.updateMatrix();
+      m.setMatrixAt(i, o.matrix);
+    });
+    m.instanceMatrix.needsUpdate = true;
+    m.computeBoundingSphere && m.computeBoundingSphere();
+  }
+  // Odrezan osmi del: x < 0, y > 0, z > 0 (proti gledalcu levo zgoraj).
+  const vIzrezu = (v, c = { x: 0, y: 0, z: 0 }) => v.x < c.x && v.y > c.y && v.z > c.z;
+
+  // Lupina z odrezanim osmim delom; f(smer) vrne polmer v tej smeri.
+  function lupina(f, ws, hs) {
+    const zg = new THREE.SphereGeometry(1, ws, hs / 2, Math.PI / 2, Math.PI * 1.5, 0, Math.PI / 2);
+    const sp = new THREE.SphereGeometry(1, ws, hs / 2, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
+    const pokr = new THREE.SphereGeometry(1, Math.round(ws / 4), hs / 2, 0, Math.PI / 2, 0, Math.PI / 2);
+    const v = new THREE.Vector3();
+    for (const g of [zg, sp, pokr]) {
+      const p = g.attributes.position;
+      for (let i = 0; i < p.count; i++) {
+        v.fromBufferAttribute(p, i).normalize();
+        v.multiplyScalar(f(v));
+        p.setXYZ(i, v.x, v.y, v.z);
+      }
+      g.computeVertexNormals();
+    }
+    return { odprta: zdruzi([zg, sp]), pokrov: pokr };
+  }
+  // Rob prereza: tri loki na meji odrezanega osmega dela.
+  function rob(f, debelina, seg) {
+    const loki = [
+      (t) => new THREE.Vector3(0, Math.cos(t * Math.PI / 2), Math.sin(t * Math.PI / 2)),
+      (t) => new THREE.Vector3(-Math.sin(t * Math.PI / 2), Math.cos(t * Math.PI / 2), 0),
+      (t) => new THREE.Vector3(-Math.cos(t * Math.PI / 2), 0, Math.sin(t * Math.PI / 2)),
+    ];
+    return zdruzi(loki.map((L) => {
+      const pts = [];
+      for (let i = 0; i <= seg; i++) { const d = L(i / seg).normalize(); pts.push(d.multiplyScalar(f(d) * 0.99)); }
+      return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), seg, debelina, q(8), false);
+    }));
+  }
+
+
+  // 1 enota = 60 µm. Telo celice: 50 µm × 20 µm; lasek: premer 10 µm.
+  // Prerez: odrezana je sprednja polovica (z > 0), ravnina reza z = 0 gleda proti gledalcu.
+  const TAU = Math.PI * 2;
+  const B = new THREE.Vector3(-0.3, -0.5, 0), AX = 0.42, AY = 0.17, AZ = 0.18, EKS = 4;
+  const sp = (x, p) => Math.sign(x) * Math.pow(Math.abs(x), p);
+  // telo: u ∈ [0, π] vzdolž osi x, v okoli osi x (y = cos v, z = sin v); v ∈ [π, 2π] je zadnja polovica
+  const telo = (d, sredisce = B, ax = AX) => (u, v, out) => {
+    const s = Math.sin(u), r = sp(s, 2 / EKS);
+    const w = 0.006 * fbm(Math.cos(u) * 3 + sredisce.x * 5, Math.cos(v) * 2, Math.sin(v) * 2);
+    return out.set(sredisce.x + (ax - d + w) * sp(-Math.cos(u), 2 / EKS), sredisce.y + (AY - d + w) * r * sp(Math.cos(v), 2 / EKS), sredisce.z + (AZ - d + w) * r * sp(Math.sin(v), 2 / EKS));
+  };
+  // lasek: cev vzdolž krivulje, polmer se ob dnu razširi, konica je zaobljena
+  const krivulja = new THREE.CubicBezierCurve3(new THREE.Vector3(-0.1, -0.37, 0), new THREE.Vector3(-0.08, 0.08, 0), new THREE.Vector3(0.3, 0.45, 0), new THREE.Vector3(0.7, 0.6, 0));
+  const L = krivulja.getLength(), RL = 0.085;
+  const rL = (s) => {
+    const baza = 0.06 * (1 - gladko(0, 0.16, s));
+    const k = s > L - RL ? Math.sqrt(Math.max(0, 1 - Math.pow((s - (L - RL)) / RL, 2))) : 1;
+    return (RL + baza) * k;
+  };
+  const _t = new THREE.Vector3(), _nn = new THREE.Vector3(), Z = new THREE.Vector3(0, 0, 1);
+  const lasek = (d, konec = L) => (u, psi, out) => {
+    const s = Math.min(1, Math.max(0, u)) * konec, t = s / L;
+    krivulja.getPointAt(Math.min(1, t), out); krivulja.getTangentAt(Math.min(1, t), _t);
+    _nn.crossVectors(Z, _t).normalize();
+    let r;
+    if (konec < L) { const Rv = RL - d; r = (rL(s) - d) * (s > konec - Rv ? Math.sqrt(Math.max(0, 1 - Math.pow((s - (konec - Rv)) / Rv, 2))) : 1); }
+    else r = Math.max(0, rL(s) - d);
+    r *= 1 + 0.03 * sum(s * 9, Math.cos(psi) * 1.5, Math.sin(psi) * 1.5);
+    return out.addScaledVector(_nn, r * Math.cos(psi)).addScaledVector(Z, r * Math.sin(psi));
+  };
+  // odprtina v vrhu telesa, kjer se začne lasek
+  const xL = -0.1;
+  const vOdprtini = (c) => c.y > B.y + 0.05 && Math.abs(c.x - xL) < 0.12 && c.z * c.z + (c.x - xL) * (c.x - xL) < 0.12 * 0.12;
+  const NU = q(80), NV = q(64), NS = q(110), NP = q(36);
+  const D_ST = 0.014, D_MEM = 0.019, D_CIT = 0.02, D_VAK = 0.04;
+  const LV = L - 0.26; // vakuola sega daleč v lasek, konica je polna citoplazme
+  const kTelo = (spr) => [[0, Math.PI, NU, spr ? 0 : Math.PI, spr ? Math.PI : TAU, NV / 2]];
+  const kLas = (spr) => [[0, 1, NS, spr ? 0 : Math.PI, spr ? Math.PI : TAU, NP / 2]];
+  const plast = (d, spr, konec = L, nu = 1) => {
+    const a = izrezi(ploskev(telo(d), kTelo(spr).map((k) => [k[0], k[1], Math.round(k[2] * nu), k[3], k[4], Math.round(k[5] * nu)]), true), vOdprtini);
+    const b = ploskev(lasek(d, konec), kLas(spr).map((k) => [k[0], k[1], Math.round(k[2] * nu), k[3], k[4], Math.round(k[5] * nu)]), true);
+    return zdruzi([a, b]);
+  };
+  // robovi reza (z = 0): pri telesu v = 0 (zgoraj) in v = π (spodaj), pri lasku ψ = 0 in ψ = π
+  const vLuknji = (u) => Math.abs(telo(0)(u, 0, new THREE.Vector3()).x - xL) < 0.13;
+  function robovi(d) {
+    const T = [];
+    const zg = [], sp_ = [];
+    for (let i = 0; i <= 80; i++) {
+      const u = (i / 80) * Math.PI;
+      const a = telo(d)(u, 0, new THREE.Vector3());
+      if (!vLuknji(u)) zg.push(a); else if (zg.length) { T.push(zg.splice(0)); }
+      sp_.push(telo(d)(u, Math.PI, new THREE.Vector3()));
+    }
+    // zgornji rob telesa je razdeljen na dva kosa (odprtina za lasek)
+    const kosi = [...T, zg, sp_].filter((k) => k.length > 1);
+    const l1 = [], l2 = [];
+    for (let i = 0; i <= 90; i++) { l1.push(lasek(d)(i / 90, 0, new THREE.Vector3())); l2.push(lasek(d)(i / 90, Math.PI, new THREE.Vector3())); }
+    return [...kosi, l1, l2];
+  }
+  const pasovi = (d1, d2) => { const A = robovi(d1), Bq = robovi(d2); return zdruzi(A.map((a, i) => pas(a, Bq[i].length === a.length ? Bq[i] : a))); };
+  // vakuola ima svoje robove (krajši lasek)
+  function robVak() {
+    const T = [], zg = [], sp_ = [];
+    for (let i = 0; i <= 80; i++) {
+      const u = (i / 80) * Math.PI;
+      const a = telo(D_VAK)(u, 0, new THREE.Vector3());
+      if (!(Math.abs(a.x - xL) < 0.12)) zg.push(a); else if (zg.length) T.push(zg.splice(0));
+      sp_.push(telo(D_VAK)(u, Math.PI, new THREE.Vector3()));
+    }
+    const l = [];
+    for (let i = 0; i <= 120; i++) { const u = i / 120; l.push(lasek(D_VAK, LV)(u < 0.5 ? u * 2 : 1, u < 0.5 ? 0 : Math.PI, new THREE.Vector3())); }
+    const l1 = [], l2 = [];
+    for (let i = 0; i <= 60; i++) { l1.push(lasek(D_VAK, LV)(i / 60, 0, new THREE.Vector3())); l2.push(lasek(D_VAK, LV)(1 - i / 60, Math.PI, new THREE.Vector3())); }
+    return [...T, zg, sp_, l1.concat(l2)].filter((k) => k.length > 1);
+  }
+
+  // ---------- celična stena ----------
+  const stenaMat = mat(0xc2ad78, { roughness: 0.5, clearcoat: 0.5, sheen: 0.6, sheenColor: new THREE.Color(0xfff0d0) });
+  const stena = new THREE.Mesh(plast(0, false), stenaMat);
+  const stenaPokrov = new THREE.Mesh(plast(0, true), stenaMat);
+  stenaPokrov.visible = false;
+  const stenaRez = new THREE.Mesh(zdruzi([pasovi(0, D_ST), ...robovi(0.003).map((k) => cev(k, 0.0055, q(Math.min(90, k.length)), q(8)))]),
+    mat(0xc2ad78, { roughness: 0.55, clearcoat: 0.4, side: THREE.DoubleSide }));
+  group.add(stena, stenaPokrov, stenaRez);
+
+  // ---------- membrana, citoplazma, vakuola ----------
+  const membrana = new THREE.Mesh(pasovi(D_ST, D_MEM), mat(0xd88aa2, { roughness: 0.32, clearcoat: 1, side: THREE.DoubleSide }));
+  const citMat = mat(0xe9dcc0, { roughness: 0.75, clearcoat: 0.15, sheen: 0.3, side: THREE.BackSide });
+  const citoplazma = new THREE.Mesh(plast(D_CIT, false), citMat);
+  const citRez = new THREE.Mesh(pasovi(D_MEM, D_VAK), mat(0xe9dcc0, { roughness: 0.8, clearcoat: 0.1, side: THREE.DoubleSide }));
+  // konica laska je polna citoplazme: zapolnimo ploskev reza od vakuole do konice
+  {
+    const A = [], Bq = [];
+    for (let i = 0; i <= 30; i++) {
+      const u = LV / L + (1 - LV / L) * (i / 30);
+      A.push(lasek(D_MEM)(u, 0, new THREE.Vector3())); Bq.push(lasek(D_MEM)(u, Math.PI, new THREE.Vector3()));
+    }
+    void A; void Bq;
+  }
+  const vakMat = mat(0x86d8ee, { roughness: 0.15, clearcoat: 1, transparent: true, opacity: 0.3, depthWrite: false, side: THREE.BackSide });
+  const vakuola = new THREE.Mesh(zdruzi([izrezi(ploskev(telo(D_VAK), kTelo(false), true), vOdprtini), ploskev(lasek(D_VAK, LV), kLas(false), true)]), vakMat);
+  vakuola.renderOrder = 2;
+  const vakRob = new THREE.Mesh(zdruzi(robVak().map((k) => cev(k, 0.0042, q(Math.min(120, k.length)), q(6)))), mat(0x86d8ee, { roughness: 0.2, clearcoat: 1 }));
+  group.add(membrana, citoplazma, citRez, vakuola, vakRob);
+
+  // ---------- jedro blizu konice, mitohondriji, mešički ----------
+  const tJ = (L - 0.2) / L;
+  const J = krivulja.getPointAt(tJ).add(new THREE.Vector3(0, 0, -0.02));
+  const ea = 0.07, eb = 0.044, ec = 0.046;
+  const oblJ = (d) => (1 + 0.04 * sum(d.x * 2.5 + 3, d.y * 2.5, d.z * 2.5)) / Math.sqrt((d.x / ea) ** 2 + (d.y / eb) ** 2 + (d.z / ec) ** 2);
+  const jl = lupina(oblJ, q(56), q(36));
+  const jMat = mat(0x7a68d8, { roughness: 0.34 });
+  const jOut = new THREE.Mesh(jl.odprta, jMat);
+  const jIn = new THREE.Mesh(jl.odprta.clone().scale(0.93, 0.93, 0.93), mat(0xb9a8ff, { roughness: 0.6, clearcoat: 0.3, side: THREE.BackSide }));
+  const jRob = new THREE.Mesh(rob(oblJ, 0.004, q(24)), jMat);
+  const jPokrov = new THREE.Mesh(jl.pokrov, jMat);
+  jPokrov.visible = false;
+  const jedrce = new THREE.Mesh(new THREE.SphereGeometry(0.016, q(14), q(10)), mat(0x34268a, { roughness: 0.6, clearcoat: 0.3 }));
+  jedrce.position.set(-0.012, 0.008, 0.01);
+  const jedro = new THREE.Group();
+  jedro.add(jOut, jIn, jRob, jPokrov, jedrce);
+  jedro.position.copy(J);
+  jedro.rotation.z = Math.atan2(krivulja.getTangentAt(tJ).y, krivulja.getTangentAt(tJ).x);
+  group.add(jedro);
+  group.updateMatrixWorld(true);
+
+  const mitSez = [], vezSez = [];
+  for (let i = 0; i < (hi ? 46 : 30); i++) {
+    // v citoplazmi ob steni; več jih je v lasku in ob konici (aktivni prenos mineralnih snovi)
+    let p;
+    const psi = Math.PI * (1.08 + rnd() * 0.84);
+    if (i < 16) p = telo(0.03)(0.15 + rnd() * 2.8, psi, new THREE.Vector3());
+    else { const u = Math.pow(rnd(), 0.6) * 0.96; p = lasek(u * L > LV ? 0.045 : 0.03)(u, psi, new THREE.Vector3()); }
+    mitSez.push({ p, r: new THREE.Euler(rnd() * 3, rnd() * 3, rnd() * 3), s: 0.8 + rnd() * 0.4 });
+  }
+  for (let i = 0; i < (hi ? 30 : 18); i++) {
+    const u = 1 - rnd() * 0.07, psi = Math.PI * (1.05 + rnd() * 0.9);
+    vezSez.push({ p: lasek(0.02 + rnd() * 0.04)(u, psi, new THREE.Vector3()), s: 0.7 + rnd() * 0.6 });
+  }
+  const mitohondriji = instance(new THREE.CapsuleGeometry(0.011, 0.026, q(4), q(10)), mat(0xe8743b, { roughness: 0.38 }), mitSez);
+  const mesicki = instance(new THREE.SphereGeometry(0.008, q(10), q(8)), mat(0xf2c94c, { roughness: 0.3 }), vezSez);
+  group.add(mitohondriji, mesicki);
+
+  // ---------- sosednja celica povrhnjice (brez laska) ----------
+  const B2 = new THREE.Vector3(0.43, -0.5, 0);
+  const sosed = new THREE.Mesh(ploskev(telo(0, B2, 0.29), [[0, Math.PI, q(48), 0, TAU, q(40)]], true),
+    mat(0xc9b98a, { roughness: 0.45, clearcoat: 0.5, transparent: true, opacity: 0.5, depthWrite: false }));
+  sosed.renderOrder = 1;
+  group.add(sosed);
+
+  // ---------- delci prsti z vodnim filmom ----------
+  // delci ob lasku: [u na lasku, kot okoli laska (zadnja polovica ali bok), polmer, barva]
+  const ob = (u, beta, r) => {
+    const t = Math.min(1, u), c = krivulja.getPointAt(t), tg = krivulja.getTangentAt(t);
+    const nn = new THREE.Vector3().crossVectors(Z, tg).normalize(), d = RL + r * 1.05 + 0.03;
+    return c.addScaledVector(nn, d * Math.cos(beta)).addScaledVector(Z, d * Math.sin(beta));
+  };
+  const opisDelcev = [[0.3, -0.25, 0.15, 0x9a7650], [0.52, Math.PI + 0.35, 0.17, 0xb08a5a], [0.8, -0.55, 0.12, 0x8f8a7e], [0.14, Math.PI + 0.6, 0.11, 0x7d6648], [0.93, Math.PI + 0.2, 0.1, 0xa39478]];
+  const delci = opisDelcev.map(([u, beta, r, b]) => [ob(u, beta, r), r, b, u]);
+  const kamni = [], filmi = [];
+  delci.forEach(([c, r, b], i) => {
+    const sc = new THREE.Vector3(1.2, 0.8, 1).applyAxisAngle(new THREE.Vector3(0, 0, 1), i);
+    const obl = (v) => v.multiplyScalar(1 + 0.22 * fbm(v.x * 1.7 + i * 5, v.y * 1.7, v.z * 1.7) + 0.05 * sum(v.x * 6, v.y * 6, v.z * 6)).multiply(sc).multiplyScalar(r);
+    const g = preoblikuj(new THREE.SphereGeometry(1, q(36), q(24)), (v) => obl(v).add(c));
+    const p = g.attributes.position, col = [], cc = new THREE.Color();
+    for (let k = 0; k < p.count; k++) { const t = 0.5 + 0.5 * sum(p.getX(k) * 50, p.getY(k) * 50, p.getZ(k) * 50); cc.set(b).multiplyScalar(0.75 + 0.4 * t); col.push(cc.r, cc.g, cc.b); }
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    kamni.push(g);
+    filmi.push(preoblikuj(new THREE.SphereGeometry(1, q(30), q(20)), (v) => { const n = v.clone(); obl(v); v.addScaledVector(n, 0.026).add(c); }));
+  });
+  // vodni mostički med delci in laskom
+  const mostovi = delci.map((d, i) => [i, d[3]]);
+  // kot ψ na lasku, ki gleda proti delcu (le zadnja polovica, ki ostane v prerezu)
+  const proti = (u, c) => {
+    const t = Math.min(1, u); const s = krivulja.getPointAt(t), tg = krivulja.getTangentAt(t);
+    const nn = new THREE.Vector3().crossVectors(Z, tg).normalize(), d = c.clone().sub(s);
+    let psi = Math.atan2(d.dot(Z), d.dot(nn));
+    if (psi < 0) psi += TAU;
+    return psi < Math.PI ? (psi < Math.PI / 2 ? TAU - 0.15 : Math.PI + 0.15) : psi;
+  };
+  // vodni mostiček: podolgovata kapljica med delcem in laskom
+  mostovi.forEach(([i, u]) => {
+    const [c, r] = delci[i];
+    const h = lasek(0)(u, proti(u, c), new THREE.Vector3());
+    const sr = c.clone().lerp(h, 0.55), dl = c.distanceTo(h);
+    const g = new THREE.SphereGeometry(1, q(24), q(16)).scale(0.075 + r * 0.25, dl * 0.42, 0.07 + r * 0.2);
+    g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), h.clone().sub(c).normalize()));
+    filmi.push(g.translate(sr.x, sr.y, sr.z));
+  });
+  const prst = new THREE.Mesh(zdruzi(kamni, kamni.map(() => null)), mat(0xffffff, { vertexColors: true, roughness: 0.9, clearcoat: 0.05, sheen: 0.1 }));
+  const vodaMat = mat(0x9fd4ff, { roughness: 0.05, clearcoat: 1, transparent: true, opacity: 0.3, depthWrite: false, sheen: 0.6, sheenColor: new THREE.Color(0xd8f0ff), emissive: 0x0c2440 });
+  const voda = new THREE.Mesh(zdruzi(filmi), vodaMat);
+  voda.renderOrder = 4;
+  group.add(prst, voda);
+
+  // ---------- molekule vode, ki z osmozo vstopajo v lasek ----------
+  const poti = [];
+  mostovi.forEach(([i, u]) => {
+    const [c] = delci[i];
+    const h = lasek(0)(u, proti(u, c), new THREE.Vector3());
+    const a = c.clone().lerp(h, 0.45);
+    const notri = lasek(0.06)(u, Math.PI * 1.25, new THREE.Vector3());
+    const dol = lasek(0.06)(Math.max(0.04, u - 0.25), Math.PI * 1.15, new THREE.Vector3());
+    for (let k = 0; k < 7; k++) poti.push({ pot: new THREE.CatmullRomCurve3([a, h, notri, dol]), f: (k + rnd() * 0.5) / 7, z: (rnd() - 0.5) * 0.03 });
+  });
+  const molekule = new THREE.InstancedMesh(new THREE.SphereGeometry(0.011, q(10), q(8)), mat(0x2f86ff, { roughness: 0.2, clearcoat: 1, emissive: 0x0a2a66 }), poti.length);
+  const _m = new THREE.Vector3();
+  function postaviMolekule(t) {
+    poti.forEach((p, i) => {
+      const u = (p.f + t * 0.07) % 1;
+      p.pot.getPointAt(u, _m); _m.z += p.z;
+      o.position.copy(_m); o.rotation.set(0, 0, 0); o.scale.setScalar(Math.max(0.0001, gladko(0, 0.08, u) * (1 - gladko(0.85, 1, u)))); o.updateMatrix();
+      molekule.setMatrixAt(i, o.matrix);
+    });
+    molekule.instanceMatrix.needsUpdate = true;
+  }
+  postaviMolekule(0.5);
+  molekule.computeBoundingSphere();
+  group.add(molekule);
+
+  // ---------- deli ----------
+  const tL = (u, psi, d) => lasek(d)(u, psi, new THREE.Vector3()).toArray();
+  del("stena", "Celična stena", "Tanka in prožna stena iz celuloze; voda z raztopljenimi snovmi zlahka pronica skozi njo.", "#c2ad78",
+    [stena, stenaPokrov, stenaRez], tL(0.55, 0, 0.004));
+  del("membrana", "Celična membrana", "Polprepustna meja celice: vodo prepušča z osmozo, mineralne snovi pa celica črpa skoznjo z aktivnim prenosom.", "#d88aa2",
+    [membrana], tL(0.35, Math.PI, (D_ST + D_MEM) / 2));
+  del("citoplazma", "Citoplazma", "Tanka plast žive snovi ob steni; na konici laska je je največ, ker lasek tam raste.", "#e9dcc0",
+    [citoplazma, citRez], tL(0.92, Math.PI, 0.03));
+  del("vakuola", "Vakuola", "Velika vakuola s celičnim sokom sega daleč v lasek; ker je sok bolj koncentriran od vode v prsti, voda vstopa v celico.", "#86d8ee",
+    [vakuola, vakRob], telo(D_VAK)(1.2, Math.PI * 1.5, new THREE.Vector3()).toArray());
+  del("jedro", "Jedro", "Jedro se pomakne blizu konice laska in usmerja njegovo rast.", "#7a68d8", [jOut, jRob, jPokrov], [J.x + 0.03, J.y + 0.02, J.z + 0.035]);
+  del("jedrce", "Jedrce", "Gosto območje v jedru, kjer nastajajo deli ribosomov.", "#34268a", [jedrce], jedrce.getWorldPosition(new THREE.Vector3()).toArray());
+  del("mitohondrij", "Mitohondrij", "Daje energijo (ATP) za aktivni prenos mineralnih snovi iz prsti v celico, zato jih je v lasku veliko.", "#e8743b",
+    [mitohondriji], mitSez[20].p.toArray());
+  del("mesicki", "Mešički za rast laska", "Majhni mešički nosijo snovi za novo steno na konico, kjer se lasek podaljšuje.", "#f2c94c",
+    [mesicki], vezSez[0].p.toArray());
+  del("sosednja-celica", "Sosednja celica povrhnjice", "Celica povrhnjice korenine brez laska; laske tvorijo le nekatere celice v območju korenine nad koreninsko čepico.", "#c9b98a",
+    [sosed], [B2.x + 0.1, B2.y + 0.1, AZ]);
+  del("prst", "Delci prsti", "Drobni delci kamnin in gline; lasek se vrine mednje in se jih tesno dotika.", "#9a7650", [prst], delci[0][0].clone().add(new THREE.Vector3(0.05, 0.12, 0.08)).toArray());
+  del("voda", "Voda v prsti", "Tanek vodni film ovija delce prsti; v njem so raztopljene mineralne snovi, ki jih rastlina potrebuje.", "#5aa8ff",
+    [voda], delci[1][0].clone().add(new THREE.Vector3(0.04, 0.14, 0.06)).toArray());
+  del("osmoza", "Vstop vode z osmozo", "Molekule vode prehajajo iz prsti skozi steno in membrano v celico, ker je v celici manj vode kot zunaj.", "#2f86ff",
+    [molekule], poti[3].pot.getPointAt(0.42).toArray());
+
+  // ---------- nadzor ----------
+  const nadzor = [
+    {
+      tip: "izbira", id: "prikaz", oznaka: "Prikaz", moznosti: [["prerez", "Prerez"], ["cela", "Cela celica"]], vrednost: "prerez",
+      ob: (v) => { const cela = v === "cela"; stenaPokrov.visible = cela; jPokrov.visible = cela; for (const m of [stenaRez, membrana, citRez, vakRob, jRob]) m.visible = !cela; },
+    },
+  ];
+  if (ctx.zacetek && ctx.zacetek.prikaz) { nadzor[0].vrednost = ctx.zacetek.prikaz; nadzor[0].ob(ctx.zacetek.prikaz); }
+
+  return {
+    group,
+    deli,
+    nadzor,
+    korak(t) {
+      if (!gib) return;
+      postaviMolekule(t);
+    },
+    dispose() {
+      group.traverse((x) => x.geometry && x.geometry.dispose());
+      odpad.forEach((m) => m.dispose());
+    },
+  };
+}
