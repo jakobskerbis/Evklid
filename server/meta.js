@@ -13,7 +13,7 @@ const CHOICES_LOOSE_RE = /^[ \t]*[`*_]*<{1,2}[ \t]*(?:IZBIRE|CHOICES)\b[^\n]*$/g
 // zmoti v zapisu; učenec vrstice ne sme videti (digitalni razred, 2026-11-01: vidna pri treh učencih).
 const META_LOOSE_RE = /^[ \t]*[`*_]*<{0,2}[ \t]*META\b[^\n]*\bsubject=[^\n]*$/gm;
 // Bloki gumbov za orodja aplikacije (<<ODPRI …>>, <<GRAF […]>>, <<SKICA {…}>>, server/odpri.js).
-const OPEN_RE = /<<\s*(?:ODPRI|GRAF|SKICA)\b[\s\S]*?>>/g;
+const OPEN_RE = /`?<<\s*(?:ODPRI|GRAF|SKICA)\b[\s\S]*?>>`?/g;
 const MARKERS = ["<<ODPRI", "<<GRAF", "<<SKICA", "<< ODPRI", "<< GRAF", "<< SKICA", "<<META", "<<KARTICA", "<<IZBIRE", "<< META", "<< KARTICA", "<< IZBIRE", "<META", "META subject=", "<IZBIRE", "< IZBIRE", "<CHOICES", "< CHOICES"];
 const MARKER_MAX = Math.max(...MARKERS.map((m) => m.length));
 

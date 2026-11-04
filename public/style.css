@@ -1156,19 +1156,22 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 /* Orodja aplikacije pod odgovorom inštruktorja (public/odpri.js): gumbi, formula, graf, skica, okno poskusa. */
 .open-tools { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; min-width: 0; }
 .open-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.open-btn { min-height: 40px; max-width: 100%; white-space: normal; text-align: start; overflow-wrap: anywhere; }
+.open-tools button.small { min-height: 40px !important; } /* button.small ima 38 px */
+.open-btn { max-width: 100%; white-space: normal; text-align: start; overflow-wrap: anywhere; }
 .open-btn svg { flex: none; }
 .open-card { border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .open-card-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .open-card-kind { font-size: 0.85rem; font-weight: 600; color: var(--muted); overflow-wrap: anywhere; }
-.open-formula-tex { font-size: 1.1rem; overflow-wrap: anywhere; }
-.open-graph-host { position: relative; height: 220px; border-radius: 8px; overflow: hidden; background: var(--bg); }
+.open-formula-tex { font-size: 1.1rem; overflow-wrap: anywhere; direction: ltr; }
+[dir="rtl"] .open-formula-tex { text-align: right; }
+/* .gc-graph (graph.css) ima flex: 1, kar v stolpcu brez višine graf stisne na 0 px. */
+.open-card .open-graph-host { flex: none; direction: ltr; position: relative; height: 220px; border-radius: 8px; overflow: hidden; background: var(--bg); }
 .open-graph-sliders { display: flex; flex-direction: column; gap: 6px; }
 .open-graph-slider { display: grid; grid-template-columns: auto 1fr 4.5em; align-items: center; gap: 10px; min-height: 40px; }
 .open-graph-name { font-style: italic; font-weight: 600; min-width: 1.2em; }
-.open-graph-slider output { text-align: end; font-variant-numeric: tabular-nums; }
+.open-graph-slider output { direction: ltr; unicode-bidi: isolate; text-align: end; font-variant-numeric: tabular-nums; }
 .open-graph-slider input { width: 100%; min-width: 0; }
-.open-sketch-svg { width: 100%; max-width: 420px; height: auto; align-self: center; }
+.open-sketch-svg { direction: ltr; width: 100%; max-width: 420px; height: auto; align-self: center; }
 .open-sk-line { stroke: var(--text); stroke-width: 2; fill: none; }
 .open-sk-angle { stroke: var(--accent); stroke-width: 1.5; fill: none; }
 .open-sk-vec { stroke: var(--danger); stroke-width: 2.5; }

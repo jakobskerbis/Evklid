@@ -481,7 +481,9 @@ export function createApp(store, opts = {}) {
     const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && last.flag === "none" && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
     const owner = store.getStudent(c.student_id);
     const opens = new Map();
-    if (owner) for (const m of msgs) if (m.role === "assistant") opens.set(m.id, await openOf(rawOf(m), owner).catch(() => undefined));
+    // Kot ob pošiljanju: brez orodij pri opozorilih (flag ni none).
+    const flagOk = (raw) => (parseMeta(raw)?.flag || "none") === "none";
+    if (owner) for (const m of msgs) if (m.role === "assistant" && flagOk(rawOf(m))) opens.set(m.id, await openOf(rawOf(m), owner).catch(() => undefined));
     res.json({
       ...c,
       state: last ? { subject: last.subject, mode: last.mode } : null,
@@ -910,7 +912,7 @@ export function createApp(store, opts = {}) {
         // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
         choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : ""),
         // Gumbi za orodja aplikacije (<<ODPRI …>>, <<GRAF …>>, <<SKICA …>>; server/odpri.js).
-        open: result.stopReason !== "refusal" && (!meta || meta.flag === "none") ? await openOf(result.text, student) : undefined,
+        open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student) : undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();

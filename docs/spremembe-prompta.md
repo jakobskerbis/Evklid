@@ -7,7 +7,7 @@ Trenutni prompt je v `prompts/system_prompt.md`.
 Nov razdelek »Orodja aplikacije (strojni blok)« v stalnem delu (nad `EVKLID:NASTAVITVE`), pred »Analitiko«; vrstica »Vedno« omeni bloke orodij pred karticami. Ideje 1, 4, 6, 7, 11, 25, 26 (docs/odpri.md).
 
 - Ko učencu pomaga, da kaj vidi ali preizkusi sam, inštruktor na koncu odgovora doda `<<ODPRI poskus|3d|ucbenik|igra|formula="…">>`, `<<GRAF [...]>>` ali `<<SKICA {...}>>`; aplikacija pokaže gumb, premičen graf ali skico.
-- Iskalne besede vedno slovensko; gumba ne obljublja, preden ga ni. Največ dva bloka, večina odgovorov brez. V načinu A blok ne sme izdati rešitve. Brez blokov pri ščitu in kadar `flag` ni `none`.
+- Iskalne besede vedno slovensko; odgovor ne sme biti odvisen od gumba (brez »klikni spodaj«). Največ dva bloka, večina odgovorov brez. V načinu A blok ne sme izdati rešitve. Brez blokov pri ščitu in kadar `flag` ni `none`.
 - Stalni del +~2,4k znakov (~700 predpomnjenih žetonov, ≈ +0,0001 $ na sporočilo s Haikujem).
 
 ## 2026-11-04: gumbi z izbirami (čaka na j-jev pregled)

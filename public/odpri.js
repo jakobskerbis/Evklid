@@ -143,7 +143,11 @@ function formulaCard(x) {
   });
   top.append(b);
   const f = el("div", "open-formula-tex");
-  f.innerHTML = String(x.tex || "").replace(/\$([^$]+)\$/g, (_, m) => D.renderMath(m, false)).replace(/[<>]/g, (ch) => (ch === "<" ? "&lt;" : "&gt;"));
+  // Besedilo zunaj $…$ ubežimo, formule izrišemo (prej se je ubežal tudi izris KaTeX).
+  f.innerHTML = String(x.tex || "")
+    .split(/(\$[^$]+\$)/)
+    .map((p) => (/^\$[^$]+\$$/.test(p) ? D.renderMath(p.slice(1, -1), false) : D.escapeHtml(p)))
+    .join("");
   c.append(top, f);
   return c;
 }
@@ -237,7 +241,15 @@ export function sketchSvg(spec) {
   mk.append(svgEl("path", { d: "M0 0L10 5L0 10z", class: "open-sk-head" }));
   defs.append(mk);
   svg.append(defs);
-  const text = (x, y, s, cls = "open-sk-lbl") => svg.append(svgEl("text", { x, y, class: cls, "text-anchor": "middle", "dominant-baseline": "middle" }, s));
+  // Oznake so navadno besedilo; »F_g«, »F_{tr}« ali »$F_g$« pokaže z indeksom (ne s podčrtajem).
+  const text = (x, y, s, cls = "open-sk-lbl") => {
+    const t = svgEl("text", { x, y, class: cls, "text-anchor": "middle", "dominant-baseline": "middle" });
+    const plain = String(s).replace(/\$/g, "");
+    const m = plain.match(/^([^_]+)_\{?([^{}_]+)\}?$/);
+    if (m) t.append(m[1], svgEl("tspan", { dy: "0.35em", "font-size": "75%" }, m[2]));
+    else t.textContent = plain;
+    svg.append(t);
+  };
   for (const [p, r] of spec.krogi) svg.append(svgEl("circle", { cx: sx(pts[p][0]), cy: sy(pts[p][1]), r: r * k, class: "open-sk-line" }));
   for (const [a, b, l] of spec.daljice) {
     const [x1, y1, x2, y2] = [sx(pts[a][0]), sy(pts[a][1]), sx(pts[b][0]), sy(pts[b][1])];

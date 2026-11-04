@@ -205,8 +205,16 @@ let ATLAS = null;
 function atlasNames() {
   if (ATLAS) return ATLAS;
   try {
-    const j = JSON.parse(fs.readFileSync(path.join(here, "..", "public", "3d", "atlas-imena.json"), "utf8"));
-    ATLAS = Object.entries(j).filter(([, v]) => v?.sl).map(([id, v]) => ({ id, sl: v.sl }));
+    const read = (f) => JSON.parse(fs.readFileSync(path.join(here, "..", "public", "3d", f), "utf8"));
+    // Ključi atlas-imena so imena struktur, atlas pa izbira po id-ju vrstice (»Femur« → »Femur.r«);
+    // skupine (»Teeth«, »Skeletal system«) vrstice nimajo in gumba ne dobijo.
+    const idOf = new Map();
+    let zenske = [];
+    try {
+      zenske = read("atlas-zenski.json").strukture || [];
+    } catch {}
+    for (const r of [...read("atlas-strukture.json"), ...zenske]) if (r?.ime && !idOf.has(r.ime)) idOf.set(r.ime, r.id);
+    ATLAS = Object.entries(read("atlas-imena.json")).filter(([k, v]) => v?.sl && idOf.has(k)).map(([k, v]) => ({ id: idOf.get(k), sl: v.sl }));
   } catch {
     ATLAS = [];
   }
@@ -236,16 +244,17 @@ async function findModel(q, del) {
 
 function findLesson(q, settings) {
   const s = { ...(settings || {}) };
-  const ranked = rankLessons(q, s);
-  const top = ranked[0];
-  if (!top || !top.inTitle) return null;
+  // Kot pri poskusih: v naslovu vsaj dve tretjini besed (»kvadratna funkcija« ne najde »Linearna funkcija«).
+  const top = rankLessons(q, s).slice(0, 5).find((r) => score(q, r.d.name));
+  if (!top) return null;
   return { kind: "lesson", id: top.d.id, title: top.d.name };
 }
 
 function findGame(q, settings) {
   // Najprej tema (lekcija) poizvedbe, nato pojmi iger za to temo.
   const ranked = rankLessons(q, { ...(settings || {}) });
-  for (const r of ranked.slice(0, 3)) {
+  for (const r of ranked.slice(0, 5)) {
+    if (!score(q, r.d.name)) continue; // sicer »Pitagorov izrek« pri fiziki najde igro o silah
     const concepts = TOPIC_CONCEPTS[r.d.id];
     if (concepts?.length) return { kind: "game", concepts: concepts.slice(0, 4), title: r.d.name };
   }
