@@ -63,7 +63,8 @@ export function prepare(text, { comma = true } = {}) {
   s = s.replace(/;/g, ",");
   s = s.replace(/(\d|\.)[eE]([+\-−]?\d+)/g, "$1*10^($2)");
   s = s.replace(DMS_RUN, (m) => `(${m.replace(/([°′])\s*(?=\d)/g, "$1+")})`);
-  s = s.replace(/°/g, `*${DEG}`).replace(/′/g, `*${MIN}`).replace(/″/g, `*${SEC}`);
+  // ′ in ″ sta minuta in sekunda le za številom; f′(2) in (x³)′ ostaneta odvod (math.js ′ → ')
+  s = s.replace(/°/g, `*${DEG}`).replace(/(\d|\.)\s*′/g, `$1*${MIN}`).replace(/(\d|\.)\s*″/g, `$1*${SEC}`);
   let open = 0;
   for (const c of s) {
     if (c === "(") open++;
@@ -119,7 +120,7 @@ export function lineTex(ast, comma = true) {
     .replace(/\s*(?:\\cdot\s*)?G_\{deg\}/g, "^{\\circ}")
     .replace(/\s*(?:\\cdot\s*)?G_\{min\}/g, "^{\\prime}")
     .replace(/\s*(?:\\cdot\s*)?G_\{sec\}/g, "^{\\prime\\prime}")
-    .replace(/(\^\{\\circ\}|\^\{\\prime\})\s*\+\s*(?=[\d{},.]+\^\{\\prime)/g, "$1") // 30° + 15′ → 30°15′
+    .replace(/(\^\{\\circ\}|\^\{\\prime\})\s*\+\s*(?=[\d{},.]+\^\{\\prime(?:\\prime)?\}(?!\s*(?:\\cdot|\^|\\times)))/g, "$1") // 30° + 15′ → 30°15′ (ne 30° + 15′·2)
     .replace(/\\cdot\s*10\^/g, "\\cdot 10^");
 }
 

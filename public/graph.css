@@ -607,8 +607,10 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
   .sc-bar { flex-wrap: wrap; row-gap: 4px; }
   .sc-vars { order: 9; flex: 1 0 100%; }
   .sc-vars:not([hidden]) + .sc-sp { display: block; }
-  .sc-format-l { flex: 0 1 auto; }
-  .sc-format-l .dd { max-width: min(124px, 34vw); }
+  /* DEG RAD GRA, oblika izpisa, konstante in koš ostanejo v eni vrstici do 360 px: oblika se skrči, namesto da bi se vrstica prelomila */
+  .sc-angle > button { padding-inline: 6px !important; min-width: 40px; }
+  .sc-format-l { flex: 100 1 0; max-width: min(124px, 34vw); }
+  .sc-format-l .dd, .sc-format-l > select { max-width: 100%; }
   /* prazna zgodovina: primeri v eni vrstici, ki se pomika, da so vidni nad tipkovnico */
   .sc-empty { max-width: none; width: 100%; padding: 4px 0; }
   .sc-empty p { margin-bottom: 2px; }
@@ -715,6 +717,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .tl-vt tbody th[scope="row"] { position: static; text-align: start; font-weight: 600; white-space: normal; }
 /* RTL: števila, seznami in izrazi v orodjih ostanejo od leve proti desni (sicer »3 4 5« → »5 4 3«, »−1000« → »1000−») */
 [dir="rtl"] .tl-field textarea, [dir="rtl"] .tl-field input:not([type="checkbox"]) { direction: ltr; text-align: right; }
+[dir="rtl"] .tl-ratio .tl-field input { text-align: center; } /* a : b = c : d: kot v slovenščini */
 [dir="rtl"] .tl-vt td { direction: ltr; }
 /* drsni izrazi: v RTL bi bil desni del zunaj dosega drsnika (odrezan), »-2025« bi se izpisal »2025-« */
 [dir="rtl"] :is(.tl-v, .tl-mx-res) { direction: ltr; }

@@ -70,23 +70,34 @@ function pow(a, b) {
 // trig: u = enota kota v radianih (1 radiani, π/180 stopinje, π/200 gradi).
 // Na večkratnikih pravega kota so vrednosti točne (cos 90° = 0, ne 6·10⁻¹⁷; tan 90° ne obstaja), kot na kalkulatorju.
 const GRA = Math.PI / 200;
+// Stopinje in gradi najprej točno zmanjšamo na en krog (x % 360 je v plavajoči vejici točen), sicer bi bil
+// sin(1e20°) šum; radiane pustimo Math.sin (ta jih zmanjša sam), večkratnik π/2 iščemo le pri |q| < 2³¹
+// (pri velikih x je vsak x/(π/2) celo število, sin(1e20) pa ni 0).
+const reduce = (x, u) => (u === DEG ? x % 360 : u === GRA ? x % 400 : x);
 const quarter = (x, u) => {
   const q = x / (u === DEG ? 90 : u === GRA ? 100 : Math.PI / 2);
-  return Number.isInteger(q) ? ((q % 4) + 4) % 4 : -1;
+  return Number.isInteger(q) && Math.abs(q) < 2 ** 31 ? ((q % 4) + 4) % 4 : -1;
 };
 const SIN_Q = [0, 1, 0, -1];
 const COS_Q = [1, 0, -1, 0];
 const exactTrig = (f, x, u) => {
-  const q = quarter(x, u);
-  if (q < 0) return f(x * u);
+  const r = reduce(x, u);
+  const q = quarter(r, u);
+  if (q < 0) return f(r * u);
   return f === Math.sin ? SIN_Q[q] : COS_Q[q];
+};
+const tanQ = (x, u, cot) => {
+  const r = reduce(x, u);
+  const q = quarter(r, u);
+  if (q < 0) return cot ? 1 / Math.tan(r * u) : Math.tan(r * u);
+  return q % 2 === (cot ? 0 : 1) ? NaN : 0;
 };
 const inv = (c) => (c === 0 ? NaN : 1 / c);
 const TRIG = {
   sin: (x, u) => exactTrig(Math.sin, x, u),
   cos: (x, u) => exactTrig(Math.cos, x, u),
-  tan: (x, u) => (quarter(x, u) < 0 ? Math.tan(x * u) : quarter(x, u) % 2 ? NaN : 0),
-  cot: (x, u) => (quarter(x, u) < 0 ? 1 / Math.tan(x * u) : quarter(x, u) % 2 ? 0 : NaN),
+  tan: (x, u) => tanQ(x, u, false),
+  cot: (x, u) => tanQ(x, u, true),
   sec: (x, u) => inv(exactTrig(Math.cos, x, u)), // sec 90° ne obstaja (ne ∞)
   csc: (x, u) => inv(exactTrig(Math.sin, x, u)),
   arcsin: (x, u) => Math.asin(x) / u,

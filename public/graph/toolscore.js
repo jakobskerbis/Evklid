@@ -552,7 +552,8 @@ export function solveRatio(vals) {
     [b * c, a],
   ][i];
   if (den === 0) return { error: "zero" };
-  return { i, value: clean(num / den) };
+  const v = num / den;
+  return { i, value: Math.abs(v) < 1e-6 ? v : clean(v) }; // clean bi 2 : 3 = 10⁻¹³ : x zaokrožil na 0
 }
 
 // ---------- številski sistemi ----------

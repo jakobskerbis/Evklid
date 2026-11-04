@@ -104,7 +104,7 @@ export function createTools(root, opts) {
         if (st.ratio.some((x, i) => !/^\s*x?\s*$/i.test(x) && !Number.isFinite(vals[i]))) return (out.innerHTML = err(t("gc.errSyntax")));
         const r = solveRatio(vals);
         if (r.error) return (out.innerHTML = err(t(r.error === "zero" ? "sc.eq.ratioZero" : "sc.eq.ratioHint")));
-        const v = (j) => num(vals[j]).tex;
+        const v = (j) => (vals[j] < 0 && j !== den ? `(${num(vals[j]).tex})` : num(vals[j]).tex); // 3 · (−2), ne 3 · −2
         // za neznanko: produkt zunanjih (a·d) = produkt notranjih (b·c)
         const [p, q, den] = [
           [1, 2, 3],
@@ -113,9 +113,11 @@ export function createTools(root, opts) {
           [1, 2, 0],
         ][r.i];
         const x = L[r.i];
-        const steps = [`a \\cdot d = b \\cdot c`, `${x} = \\frac{${L[p]} \\cdot ${L[q]}}{${L[den]}} = \\frac{${v(p)} \\cdot ${v(q)}}{${v(den)}} = ${num(r.value).tex}`];
+        // neskončna decimalka (2,333…) dobi ≈, ne =
+        const eq = Number(r.value.toPrecision(8)) === r.value ? "=" : "\\approx";
+        const steps = [`a \\cdot d = b \\cdot c`, `${x} = \\dfrac{${L[p]} \\cdot ${L[q]}}{${L[den]}} = \\dfrac{${v(p)} \\cdot ${v(q)}}{${v(den)}} ${eq} ${num(r.value).tex}`];
         const full = vals.map((w, j) => (j === r.i ? `\\mathbf{${num(r.value).tex}}` : num(w).tex));
-        out.innerHTML = card(`<div class="tl-row"><span class="tl-v">${texHtml(`${x} = ${num(r.value).tex}`)}</span>${insertBtn(r.value)}</div>
+        out.innerHTML = card(`<div class="tl-row"><span class="tl-v">${texHtml(`${x} ${eq} ${num(r.value).tex}`)}</span>${insertBtn(r.value)}</div>
           ${steps.map((sx) => `<div class="tl-mx-line">${texHtml(sx)}</div>`).join("")}
           <div class="tl-mx-line">${texHtml(`${full[0]} : ${full[1]} = ${full[2]} : ${full[3]}`)}</div>`);
         return;

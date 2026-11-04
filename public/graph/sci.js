@@ -60,7 +60,7 @@ const MORE = [
   ["cmp", [["=", "="], ["<", "<"], [">", ">"], ["\\le", "≤"], ["\\ge", "≥"], [";", ";"]]],
   ["vars", [["x", "x"], ["y", "y"], ["z", "z"], ["a", "a"], ["b", "b"], ["c", "c"], ["n", "n"], ["t", "t"], ["f(x)=", "f(x)="], ["g(x)=", "g(x)="]]],
   ["ana", [["\\tfrac{d}{dx}", "d/dx(@)"], ["\\tfrac{d}{dx}\\big|_{x=a}", "d/dx(@;)"], ["\\int_a^b", "∫(@;;)"], ["\\sum", "∑_(n=1)^(@) "], ["\\prod", "∏_(n=1)^(@) "], ["|x|", "abs("]]],
-  ["trig", [["\\sin", "sin("], ["\\cos", "cos("], ["\\tan", "tan("], ["\\cot", "cot("], ["\\arcsin", "arcsin("], ["\\arccos", "arccos("], ["\\arctan", "arctan("], ["\\sinh", "sinh("], ["\\cosh", "cosh("], ["\\tanh", "tanh("], ["^{\\circ}", "°"], ["^{\\prime}", "′"], ["^{\\prime\\prime}", "″"]]],
+  ["trig", [["\\sin", "sin("], ["\\cos", "cos("], ["\\tan", "tan("], ["\\cot", "cot("], ["\\arcsin", "arcsin("], ["\\arccos", "arccos("], ["\\arctan", "arctan("], ["\\sinh", "sinh("], ["\\cosh", "cosh("], ["\\tanh", "tanh("], ["\\text{°}", "°"], ["\\text{′}", "′"], ["\\text{″}", "″"]]],
   ["num", [["\\gcd", "gcd(@;)"], ["\\operatorname{lcm}", "lcm(@;)"], ["\\bmod", "mod(@;)"], ["\\operatorname{round}", "round(@;)"], ["\\lfloor x\\rfloor", "floor("], ["\\lceil x\\rceil", "ceil("], ["\\binom{n}{k}", "nCr(@;)"], ["n!", "!"], ["\\%", "%"], ["\\operatorname{sgn}", "sgn("], ["\\operatorname{Int}", "Int("], ["\\operatorname{frac}", "frac("], ["\\mathrm{Ran\\#}", "rand"], ["\\operatorname{RanInt}", "randint(@;)"], ["\\operatorname{Pol}", "Pol(@;)"], ["\\operatorname{Rec}", "Rec(@;)"]]],
   ["stat", [["\\operatorname{mean}", "mean(@)"], ["\\operatorname{median}", "median(@)"], ["\\sigma", "stdev(@)"], ["\\min", "min(@)"], ["\\max", "max(@)"], ["\\Sigma", "total(@)"]]],
   ["cplx", [["i", "i"], ["|z|", "abs("]]],
@@ -390,7 +390,8 @@ export function createScientific(root, opts) {
     } else if (r.kind === "complex") st.ans = r.im ? st.ans : r.re;
     else if (r.kind === "func") st.funcs[r.name] = { param: r.param, body: r.body };
     const e = entryOf(text, r);
-    if (e.kind === "value" && /[′″]/.test(text) && dmsOf(e.value)) e.dms = true; // vnos v minutah in sekundah: tudi rezultat v °′″
+    // vnos v minutah in sekundah (v DEG): tudi rezultat v °′″; f′(2) je odvod, ne minuta
+    if (e.kind === "value" && st.angle === "deg" && /\d\s*[′″]/.test(text) && dmsOf(e.value)) e.dms = true;
     if (e.first !== undefined) {
       st.ans = e.first;
       delete e.first;
@@ -408,6 +409,15 @@ export function createScientific(root, opts) {
 
   // spomin M: M+ / M− najprej izračunata vnos (če ga je), nato rezultatu prištejeta ali odštejeta M
   function memory(op) {
+    if (op === "M") {
+      // MR: prazen spomin je 0 (kot na kalkulatorju), sicer bi bil M neznanka
+      if (!Number.isFinite(st.vars.M)) {
+        st.vars.M = 0;
+        save();
+        renderVars();
+      }
+      return insert("M");
+    }
     if (op === "#mc") delete st.vars.M;
     else {
       if (input.value.trim() && !compute()) return;
@@ -429,6 +439,7 @@ export function createScientific(root, opts) {
       return renderHistory(true);
     }
     const before = input.value.slice(0, input.selectionStart ?? input.value.length);
+    if (/[°′″]\s*$/.test(before)) return; // brez 30°° (oznaka je že tam)
     const m = /([°′])\s*\d+(?:[.,]\d*)?$/.exec(before);
     insert(m ? (m[1] === "°" ? "′" : "″") : "°");
   }
@@ -440,7 +451,7 @@ export function createScientific(root, opts) {
     if (e.steps && opts.steps && opts.canSteps?.()) acts.push(btn("steps", "list-ordered", "sc.steps"));
     if ((e.kind || "value") === "value" && primeFactors(e.value)?.some(([, k], j, a) => a.length > 1 || k > 1) && !e.fact) acts.push(btn("fact", "grid-2x2", "sc.factor"));
     // kot v stopinjah → stopinje, minute, sekunde (in nazaj), kot tipka °′″ na kalkulatorju
-    if ((e.kind || "value") === "value" && st.angle === "deg" && /[°′″]|arc(?:sin|cos|tan|cot)/.test(e.text) && !Number.isInteger(e.value) && dmsOf(e.value))
+    if ((e.kind || "value") === "value" && st.angle === "deg" && /°|\d\s*[′″]|arc(?:sin|cos|tan|cot)/.test(e.text) && !Number.isInteger(e.value) && dmsOf(e.value))
       acts.push(`<button type="button" class="sc-act" data-act="dms" data-i="${i}" aria-pressed="${!!e.dms}" title="${esc(t("sc.toDms"))}"><span aria-hidden="true">°′″</span><span class="sr-only">${esc(t("sc.toDms"))}</span></button>`);
     if (["value", "solve", "ineq", "system", "deriv", "complex", "pair"].includes(e.kind || "value")) acts.push(btn("copy", "copy", "sc.copy"));
     return acts.length ? `<div class="sc-acts">${acts.join("")}</div>` : "";
@@ -545,7 +556,7 @@ export function createScientific(root, opts) {
     else if (ins === "#right") move(1);
     else if (ins === "#dec") insert(comma() ? "," : ".");
     else if (ins === "#dms") dmsKey();
-    else if (MEM_LABEL[ins] && ins !== "M") memory(ins);
+    else if (MEM_LABEL[ins]) memory(ins);
     else insert(ins);
     if (second && ins !== "#2nd") setSecond(false);
     if (!touch) input.focus({ preventScroll: true });
@@ -554,7 +565,7 @@ export function createScientific(root, opts) {
     if (e.target.closest(".sc-more-x")) return showPanel(null);
     const b = e.target.closest(".sc-mk");
     if (!b) return;
-    if (MEM_LABEL[b.dataset.ins] && b.dataset.ins !== "M") memory(b.dataset.ins);
+    if (MEM_LABEL[b.dataset.ins]) memory(b.dataset.ins);
     else insert(b.dataset.ins);
     showPanel(null);
     if (!touch) input.focus({ preventScroll: true });
