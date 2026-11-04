@@ -16,7 +16,7 @@ import { stopnja } from "./stopnja.js";
 import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
 import {
   layoutFor, FX_GROUPS, CAS_SL, KEM_ROWS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
-  fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
+  fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
 } from "./tipkovnica-data.js";
 
 const touch = () => typeof matchMedia !== "undefined" && matchMedia("(pointer: coarse)").matches;
@@ -553,6 +553,24 @@ function backspace(f) {
   fire(f, "deleteContentBackward");
 }
 
+// Najdaljši razmik med dotiki ⌫, ki še šteje kot dvoklik ali troklik.
+const BS_MULTI_MS = 350;
+/** Dvoklik/troklik na ⌫: zbriše besedo ali poved pred kazalcem (izbrano besedilo kot en ⌫). */
+function deleteChunk(f, kind) {
+  if (f.isContentEditable) {
+    const s = getSelection();
+    if (s?.isCollapsed) s.modify?.("extend", "backward", kind);
+    return document.execCommand("delete");
+  }
+  const r = sel(f);
+  if (!r || r[0] !== r[1]) return backspace(f);
+  const from = kind === "word" ? wordsBack(f.value, r[0], 1) : sentenceBack(f.value, r[0]);
+  if (from === r[0]) return;
+  f.setRangeText("", from, r[0], "end");
+  f.setSelectionRange(from, from);
+  fire(f, "deleteContentBackward");
+}
+
 function moveCaret(f, dir) {
   if (f.isContentEditable) return getSelection()?.modify?.("move", dir < 0 ? "backward" : "forward", "character");
   const r = sel(f);
@@ -639,6 +657,7 @@ function finishGlide(pts, centers) {
     if (f.maxLength >= 0 && f.value.length - (r[1] - r[0]) + sp.length + w.length > f.maxLength) return;
     S.corr = null;
     S.lastSpace = 0;
+    S.bsAt = 0;
     insertText(f, sp + w, true);
     const e = sel(f);
     if (!e) return;
@@ -714,6 +733,7 @@ async function paste(f) {
 
 function act(a) {
   if (!a) return;
+  if (a.a !== "bs") S.bsAt = 0; // dvoklik na ⌫ šteje le, če vmes ni bilo druge tipke
   if (a.a === "layer") {
     S.layer = a.v;
     S.shift = 0;
@@ -758,7 +778,12 @@ function act(a) {
     if (S.shift === 1) S.shift = 0;
   } else if (a.a === "sp") space(f, !!lg);
   else if (a.a === "bs") {
-    if (!undoCorrection(f, corr)) backspace(f);
+    // dvoklik na ⌫ izbriše besedo, troklik poved (j, 4. 11.); držanje (rep) ponavlja po en znak
+    const now = Date.now();
+    const n = !a.rep && now - (S.bsAt || 0) < BS_MULTI_MS ? (S.bsN || 1) + 1 : 1;
+    if (!a.rep) Object.assign(S, { bsN: n, bsAt: now });
+    if (n >= 2) deleteChunk(f, n === 2 ? "word" : "sentence");
+    else if (!undoCorrection(f, corr)) backspace(f);
   }
   else if (a.a === "l") moveCaret(f, -1);
   else if (a.a === "r") moveCaret(f, 1);
@@ -848,9 +873,7 @@ function preview(btn) {
   const w = r.width + 16;
   const h = Math.round(r.height * 1.15);
   p.style.cssText = `width:${w}px;height:${h}px;left:${Math.round(r.left - br.left - 8)}px;top:${Math.round(r.top - br.top - h - 6)}px`;
-  // animacija vzpona steče znova tudi pri isti tipki
-  p.classList.remove("on", "out");
-  void p.offsetWidth;
+  p.classList.remove("out");
   p.classList.add("on");
 }
 function closePreview(ms = 0) {
@@ -864,11 +887,11 @@ function closePreview(ms = 0) {
 function closePop() {
   board?.querySelector(".tk-pop")?.remove();
 }
-function showPop(btn, base) {
+function showPop(btn, base, shift = S.shift) {
   closePop();
   const vars = varsFor(base);
   if (!vars.length) return false;
-  const up = S.shift && base.toLocaleUpperCase(currentLang()).length === 1;
+  const up = shift && base.toLocaleUpperCase(currentLang()).length === 1;
   const list = [base, ...vars].map((v) => (up && v.toLocaleUpperCase().length === 1 ? v.toLocaleUpperCase() : v));
   const pop = document.createElement("div");
   pop.className = "tk-pop";
@@ -885,6 +908,7 @@ function showPop(btn, base) {
   return true;
 }
 function popInsert(v) {
+  S.bsAt = 0;
   const f = target();
   S.lastGlide = null;
   if (f) insertText(f, v);
@@ -893,6 +917,30 @@ function popInsert(v) {
     S.shift = 0;
     paintShift();
   } else renderCtx();
+}
+
+const vlen = (f) => (!f ? undefined : f.isContentEditable ? f.textContent.length : String(f.value ?? "").length);
+/** Prekliče znak, vpisan ob pritisku (prst je začel drseti ali izbral različico), in vrne ⇧. */
+function undoPress(d) {
+  if (!d?.done) return;
+  d.done = false;
+  const f = S.field;
+  const k = (d.len1 ?? 0) - (d.len0 ?? 0);
+  const r = f && sel(f);
+  if (!f || f !== d.f || vlen(f) !== d.len1) {
+    // polje se je vmes spremenilo: znaka ne brišemo, ⇧ pa vseeno vrnemo
+  } else if (d.r0 && r) {
+    // znak je morda zamenjal izbrano besedilo: vrnemo ga in izbiro, da ga drsana beseda ali različica zamenja
+    if (r[0] === r[1] && r[0] >= d.r0[0] && f.value !== d.v0) {
+      f.setRangeText(d.v0.slice(d.r0[0], d.r0[1]), d.r0[0], r[0], "end");
+      f.setSelectionRange(d.r0[0], d.r0[1]);
+      fire(f, "deleteContentBackward");
+    }
+  } else if (k > 0) backspace(f);
+  if (S.shift !== d.shift) {
+    S.shift = d.shift;
+    paintShift();
+  }
 }
 
 function clearTimers() {
@@ -990,14 +1038,34 @@ function wireBoard() {
     b.classList.add("down");
     if (b.classList.contains("tk-k")) buzz();
     if (a?.a === "char" && e.pointerType !== "mouse") preview(b);
+    // črke in znaki se vpišejo že ob pritisku (j, 4. 11.: »takoj, brez zamika«); drsenje in dolg pritisk
+    // za različice vpisani znak spodaj zamenjata (undoPress)
+    down.shift = S.shift;
+    if (a?.a === "char" || a?.a === "ins" || a?.a === "lit") {
+      down.done = true;
+      down.f = S.field;
+      down.len0 = vlen(S.field);
+      down.r0 = S.field && sel(S.field);
+      down.v0 = down.r0 ? String(S.field.value) : null;
+      act(a);
+      down.len1 = vlen(S.field);
+      // act lahko ploščo nariše znova (npr. izgine vrstica drsanja): tipko poiščemo v novi plošči
+      if (!b.isConnected) {
+        // po dejanju in vrednosti (kazala data-k se premaknejo, če se je vrstica nad zavihki spremenila)
+        down.b = [...board.querySelectorAll(".tk-rows button[data-k]")].find((x) => { const k = keys[Number(x.dataset.k)]; return k?.a === a.a && k.v === a.v; }) || b;
+        down.b.classList.add("down");
+        if (a.a === "char" && e.pointerType !== "mouse") preview(down.b);
+      }
+    }
     if (a?.a === "sp") {
       try {
         b.setPointerCapture(e.pointerId);
       } catch {}
     } else if (a?.a === "char" && varsFor(a.v).length) {
+      const kb = down.b;
       down.lp = setTimeout(() => {
-        if (down?.b === b) {
-          down.pop = showPop(b, a.v);
+        if (down?.b === kb) {
+          down.pop = showPop(kb, a.v, down.shift);
           if (down.pop) closePreview();
         }
       }, 380);
@@ -1006,10 +1074,16 @@ function wireBoard() {
       try {
         b.setPointerCapture(e.pointerId);
       } catch {}
+      // ⌫ izbriše znak že ob pritisku, ne šele ob dvigu prsta (j, 4. 11.: »takoj, brez zamika«)
+      if (a.a === "bs") {
+        down.done = true;
+        act(a);
+      }
       down.rep = setTimeout(() => {
         down.moved = true;
-        act(a);
-        down.iv = setInterval(() => act(a), 75);
+        const rep = { ...a, rep: true }; // ponavljanje ni dvoklik
+        act(rep);
+        down.iv = setInterval(() => act(rep), 75);
       }, 450);
     }
   });
@@ -1031,6 +1105,7 @@ function wireBoard() {
         if (!(down.len >= 2 * down.kw || away)) return;
         down.glide = true;
         down.moved = true;
+        undoPress(down);
         clearTimers();
         closePreview();
         closePop();
@@ -1084,7 +1159,7 @@ function wireBoard() {
     const d = down;
     down = null;
     d.b.classList.remove("down");
-    closePreview(70);
+    closePreview(60);
     if (d.glide) {
       if (e.type === "pointerup") {
         trailAdd(e.clientX, e.clientY);
@@ -1104,7 +1179,7 @@ function wireBoard() {
     if (d.swipe) {
       const f = S.field;
       const r = f && sel(f);
-      if (e.type === "pointerup" && r && r[0] !== r[1]) act(d.a);
+      if (e.type === "pointerup" && r && r[0] !== r[1]) act({ ...d.a, rep: true });
       return;
     }
     if (e.type !== "pointerup") return;
@@ -1112,10 +1187,14 @@ function wireBoard() {
     const run = (fn) => (e.pointerType === "touch" ? setTimeout(fn, 0) : fn());
     if (d.pop) {
       const v = at?.closest(".tk-pop button") || board.querySelector(".tk-pop button.on");
-      if (v) run(() => popInsert(v.dataset.v));
+      if (v)
+        run(() => {
+          undoPress(d);
+          popInsert(v.dataset.v);
+        });
       return;
     }
-    if (d.moved || at?.closest("button") !== d.b) return;
+    if (d.done || d.moved || at?.closest("button") !== d.b) return;
     closePop();
     run(() => act(d.a));
   };
