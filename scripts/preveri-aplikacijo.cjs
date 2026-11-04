@@ -1177,7 +1177,23 @@ async function flashcards(p) {
   await p.fill('#fc-add textarea[name="back"]', "56");
   await click(p, "#fc-add button.primary", { wait: 400 });
   await expectVisible(p, ".fc-list li", "nova kartica na seznamu");
+  if (await p.locator(".fc-list .fc-a").first().isVisible()) throw new Error("odgovor na seznamu kartic je viden pred tapom");
   await screen(p, "kartice");
+  // vaja: kartica se obrne, ocena šele po obratu, med vajo ni seznama
+  await click(p, "#view-cards [data-start]", { wait: 300 });
+  await expectVisible(p, "#view-cards .fc-flip", "kartica za vajo");
+  if (await p.locator("#view-cards .fc-list").count()) throw new Error("med vajo je viden seznam kartic");
+  if (await p.locator("#view-cards .fc-face-back").isVisible()) throw new Error("odgovor viden pred obratom");
+  await click(p, "#view-cards .fc-flip", { wait: 700 });
+  await expectVisible(p, "#view-cards .fc-face-back", "hrbet kartice po obratu");
+  await screen(p, "kartice-obrnjena");
+  // na vrsti je lahko več kartic (tudi vzorčne): oceni vse do konca vaje
+  for (let i = 0; i < 20 && !(await p.locator("#view-cards .fc-done").count()); i++) {
+    if (!(await p.locator("#view-cards .fc-flip.flipped").count())) await click(p, "#view-cards .fc-flip", { wait: 650 });
+    await click(p, '#view-cards .fc-grade [data-act="know"]', { wait: 400 });
+  }
+  await expectVisible(p, "#view-cards .fc-done", "konec vaje");
+  await click(p, "#view-cards [data-back]", { wait: 400 });
   await click(p, ".fc-back");
 }
 
