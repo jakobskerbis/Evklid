@@ -68,7 +68,7 @@ import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-setting
 import { initSchedule, showSchedule, renderScheduleCard } from "./schedule.js";
 import { initScan, showScan, leaveScan, scanBack } from "./scan/scan.js";
 import { initLab, showLab, labBack, openLabExperiment } from "./laboratorij.js";
-import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, UCI_TABS } from "./uci-se.js";
+import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3d, labFromLesson, UCI_TABS } from "./uci-se.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
 import { initTestNotice } from "./testna-verzija.js";
 import { initFormulaInfo, annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-info.js";
@@ -367,6 +367,11 @@ window.addEventListener("popstate", () => {
     return keep();
   }
   if (cornerBack()) return keep();
+  // 3D čez cel zaslon (»Uči se« → 3D svet ali povezava iz lekcije) tudi, ko je »Uči se« v premičnem oknu nad drugim pogledom.
+  if (isOpen3d()) {
+    leaveUci();
+    return keep();
+  }
   if (wasOverlay && currentView === "path") return;
   if ($("#tour") && !$("#tour").hidden) {
     startTour.end?.(); // Nazaj zapre vodič (kot Esc ali »Preskoči«)
@@ -4058,6 +4063,7 @@ initTextbook({
   openLab: (key) => {
     openLabExperiment(key);
     showView("lab");
+    labFromLesson(); // tipka Nazaj iz poskusa vrne v lekcijo
   },
   open3d,
 });

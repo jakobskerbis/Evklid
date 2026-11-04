@@ -15,6 +15,7 @@ let D = null; // { escapeHtml, getStudent, showTextbook, showLab, stopReading, a
 let tab = read();
 let hub = null; // { key, html } narisan 3D svet (predmet in jezik)
 let full = null; // { el, frame } odprt atlas ali model čez cel zaslon
+let fromLesson = false; // poskus je odprla povezava v lekciji: tipka Nazaj vrne v lekcijo
 
 function read() {
   try {
@@ -44,6 +45,7 @@ export const uciTab = () => tab;
 export function setUciTab(name) {
   if (!UCI_TABS.includes(name)) return;
   if (name !== "textbook" && tab === "textbook") D?.stopReading?.(); // branje lekcije na glas ne teče naprej skrito
+  if (name !== "lab") fromLesson = false;
   tab = name;
   save(name);
   for (const b of document.querySelectorAll("[data-uci-tab]")) {
@@ -73,6 +75,7 @@ export function initUci(deps) {
   row.addEventListener("click", (e) => {
     const b = e.target.closest("[data-uci-tab]");
     if (!b || b.dataset.uciTab === tab) return;
+    fromLesson = false;
     setUciTab(b.dataset.uciTab);
     showUci();
   });
@@ -113,12 +116,26 @@ export function initUci(deps) {
 export function uciBack({ textbookBack, labBack }) {
   if (close3d()) return true;
   if (tab === "textbook") return textbookBack();
-  if (tab === "lab") return labBack();
+  if (tab === "lab") {
+    const closed = labBack();
+    if (!fromLesson) return closed;
+    // Poskus iz lekcije (»Poskus v laboratoriju«): Nazaj vrne v lekcijo, ne na seznam poskusov.
+    fromLesson = false;
+    setUciTab("textbook");
+    showUci();
+    return true;
+  }
   return false;
+}
+
+/** Povezava v lekciji je odprla poskus v zavihku Laboratorij (app.js, initTextbook → openLab). */
+export function labFromLesson() {
+  fromLesson = true;
 }
 
 /** Pogled »Uči se« je zaprt (premično okno ali drug pogled): okvir 3D se zapre, da ne porablja grafične kartice. */
 export function leaveUci() {
+  fromLesson = false;
   close3d();
 }
 
