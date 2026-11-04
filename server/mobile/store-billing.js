@@ -6,6 +6,7 @@
 import crypto from "node:crypto";
 import express from "express";
 import { BRAND } from "../brand.js";
+import { PLANS, LEGACY_PLANS, storeAmount } from "../accounts/plans.js";
 import { verifyAppleJws, AppleSignatureError } from "./apple-crypto.js";
 import { GooglePlay, googleSubscriptionState, loadServiceAccount } from "./google-play.js";
 
@@ -16,17 +17,27 @@ const APP = BRAND.app || {};
 export const BUNDLE_ID = process.env.EVKLID_APPLE_BUNDLE_ID || APP.bundle_id;
 export const ANDROID_PACKAGE = process.env.EVKLID_ANDROID_PACKAGE || APP.bundle_id;
 
-// Izdelki v obeh trgovinah: <predpona>.<month|year>.<1|2>; paket v plans.js je <slug>_<otroci>_<obdobje>.
-export const STORE_PRODUCTS = [1, 2].flatMap((seats) =>
-  ["month", "year"].map((interval) => ({ id: `${APP.product_prefix}.${interval}.${seats}`, seats, interval, plan: `${BRAND.slug}_${seats}_${interval}` })),
-);
+// Izdelki v obeh trgovinah: <predpona>.<month|year>.<paket>; paket je del ključa v plans.js
+// (<slug>_<paket>_<obdobje>): »1« OŠ (stari izdelek, ista cena), »ss«, »faks«, »druzina«, »druzina_student«.
+// Stari izdelek ».2« (2 otroka) ni več v ponudbi, obstoječe naročnine iz trgovine pa veljajo naprej.
+const STORE_PLAN = (p) => p.key.slice(`${BRAND.slug}_`.length, -`_${p.interval}`.length);
+export const STORE_PRODUCTS = [...PLANS, ...LEGACY_PLANS].map((p) => ({
+  id: `${APP.product_prefix}.${p.interval}.${STORE_PLAN(p)}`,
+  seats: p.seats,
+  interval: p.interval,
+  plan: p.key,
+  level: p.level,
+  family: !!p.family,
+  legacy: !!p.legacy,
+}));
 export const productById = (id) => STORE_PRODUCTS.find((p) => p.id === id) || null;
 
-// Osnovne cene v trgovinah (EUR z DDV, j 2026-10-30), vpišejo se v App Store Connect in Google Play Console;
-// drugim državam jih trgovini preračunata sami. Višje kot na spletu (plans.js), da po proviziji 15 %
-// ostane približno toliko kot pri Stripu: 9,99 → 11,99; 89 → 104,99; 15,99 → 18,99; 139 → 159,99.
-// V aplikaciji iz trgovine ne smemo omeniti, da je na spletu ceneje (pravila Apple in Google).
-export const STORE_PRICES_EUR = { month: { 1: 11.99, 2: 18.99 }, year: { 1: 104.99, 2: 159.99 } };
+// Osnovne cene v trgovinah (EUR z DDV), vpišejo se v App Store Connect in Google Play Console; drugim državam
+// jih trgovini preračunata sami. j 2026-11-01: vsak paket 2 € dražji kot na spletu (plans.js storeAmount),
+// splet je privzet. V aplikaciji iz trgovine ne smemo omeniti, da je na spletu ceneje (pravila Apple in Google).
+export const STORE_PRICES_EUR = Object.fromEntries(
+  ["month", "year"].map((interval) => [interval, Object.fromEntries(PLANS.filter((p) => p.interval === interval).map((p) => [STORE_PLAN(p), storeAmount(p) / 100]))]),
+);
 
 export function migrateStoreBilling(db) {
   db.exec(`
@@ -130,7 +141,8 @@ export function mountStoreBilling(app, ctx, opts = {}) {
     const p = req.parent;
     res.json({
       account_token: accountToken(p),
-      products: STORE_PRODUCTS.map(({ id, seats, interval }) => ({ id, seats, interval })),
+      // Ponudba: stopnje in družinska paketa (stari izdelek »2 otroka« samo za obstoječe naročnine).
+      products: STORE_PRODUCTS.filter((p) => !p.legacy).map(({ id, seats, interval, level, family }) => ({ id, seats, interval, level, family })),
       provider: p.sub_provider || (p.sub_id ? "stripe" : null),
       apple: true,
       google: play.enabled,

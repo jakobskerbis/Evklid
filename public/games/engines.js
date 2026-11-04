@@ -9,6 +9,7 @@ import { FUN_GAMES } from "./fun.js";
 import { RETRO_GAMES } from "./retro.js";
 import { DEDUCTION_GAMES } from "./deduction.js";
 import { PRODUCE_GAMES } from "./produce.js";
+import { PRODUCE2_GAMES } from "./produce2.js";
 import { statement } from "./topics.js";
 
 export { statement };
@@ -679,7 +680,7 @@ export const sorter = {
   },
 };
 
-export const ENGINES = [meteor, balloons, runner, sorter, ...ARCADE, ...ARCADE2, ...BUILD_GAMES, ...SENSOR_GAMES, ...FUN_GAMES, ...RETRO_GAMES, ...DEDUCTION_GAMES, ...PRODUCE_GAMES];
+export const ENGINES = [meteor, balloons, runner, sorter, ...ARCADE, ...ARCADE2, ...BUILD_GAMES, ...SENSOR_GAMES, ...FUN_GAMES, ...RETRO_GAMES, ...DEDUCTION_GAMES, ...PRODUCE_GAMES, ...PRODUCE2_GAMES];
 // Igra ustreza pojmu: večina iger sprejme vsak pojem, nekatere le pojme z ustreznimi nalogami (engine.fits,
 // npr. številska premica samo odgovor z enim številom). Portal pokaže ploščico le za ustrezne pare.
 export const fits = (e, c) => !e.fits || e.fits(c);

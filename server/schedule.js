@@ -15,6 +15,7 @@ import { getPath, pathKeyFor } from "./curriculum.js";
 import { getClient, isMockMode, MODEL_DEEP, MODEL_MID, quickParams } from "./claude.js";
 import { EVENT_KINDS } from "../public/settings-registry.js";
 import { seal, unseal } from "./crypto-polje.js";
+import { jeFaks } from "../public/stopnja.js";
 
 export { EVENT_KINDS };
 export const TEST_KINDS = ["test", "kolokvij", "izpit", "ustno"];
@@ -83,7 +84,7 @@ function programCourses(settings) {
 export function matchSubject(name, settings) {
   const n = norm(name);
   if (!n) return {};
-  if (settings.educational_track === "UNIVERZA") {
+  if (jeFaks(settings)) {
     const courses = programCourses(settings);
     const hit =
       courses.find((c) => norm(c.name) === n) ||
@@ -98,7 +99,7 @@ export function matchSubject(name, settings) {
 export function pathFor(item, settings) {
   if (item.course && getPath(item.course)) return item.course;
   if (!item.subject) return null;
-  if (settings.educational_track === "UNIVERZA") {
+  if (jeFaks(settings)) {
     const c = programCourses(settings).find((x) => x.subject === item.subject);
     return c && getPath(c.key) ? c.key : null;
   }
@@ -378,7 +379,7 @@ export async function scheduleSources({ fetchFn = fetch, settings = null } = {})
   }
   const layers = fmfCache.layers.map((l) => ({ ...l, url: `${FMF_BASE}/layer_one/${l.id}/?export=1` }));
   let suggested = null;
-  if (settings?.educational_track === "UNIVERZA" && FMF_PROGRAM[settings.study_program]) {
+  if (jeFaks(settings) && FMF_PROGRAM[settings.study_program]) {
     const code = FMF_PROGRAM[settings.study_program];
     const year = Number((String(settings.curriculum_level).match(/([1-5])/) || [])[1]) || 1;
     suggested = layers.find((l) => l.label.endsWith(`(${code}-${year})`))?.id ?? null;

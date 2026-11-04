@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Skoki atomov
+  - vakančno: Fe v Fe, počasi
+  - intersticijsko: C, N, H, hitro
+- Prvi Fickov zakon
+  - $J = -D\,\frac{dC}{dx}$, $J$ v $\mathrm{kg/(m^2\,s)}$
+  - stacionarno: profil je premica
+- Drugi Fickov zakon
+  - $\frac{\partial C}{\partial t} = D\,\frac{\partial^2 C}{\partial x^2}$
+  - $\frac{C_x - C_0}{C_s - C_0} = 1 - \mathrm{erf}(z)$
+- Globina difuzije
+  - $x \approx \sqrt{Dt}$
+  - napaka: dvakrat dlje ni dvakrat globlje
+- Aktivacijska energija
+  - $D = D_0\, e^{-Q/(RT)}$
+  - $T$ v K, $Q$ v $\mathrm{J/mol}$
+  - poleti $740$-krat hitrejše staranje kot pozimi
+- Graf $\ln D$ proti $1/T$
+  - meritve ležijo na premici
+  - naklon $-\frac{Q}{R}$

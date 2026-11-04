@@ -26,6 +26,16 @@
       };
       document.getElementById("trial").textContent = d.trial_days + " dni";
       document.getElementById("free").textContent = d.free_daily_questions;
+      // Cene po stopnjah (j 2026-11-01): v evrih ima vsak paket stopnjo, regijske cene so ene za vse stopnje.
+      var lv = function (level, family, interval) {
+        var x = d.plans.find(function (pl) { return pl.level === level && !!pl.family === family && pl.interval === interval; });
+        return x ? fmt(x.amount) : "";
+      };
+      if (d.plans.some(function (pl) { return pl.level; })) {
+        document.getElementById("plan-month").innerHTML = "Naročnina na mesec: <b>" + lv("OS", false, "month") + "</b> v osnovni šoli, <b>" + lv("SS", false, "month") + "</b> v srednji šoli, <b>" + lv("FAKS", false, "month") + "</b> na fakulteti. Družina (2–4 profili): <b>" + lv("SS", true, "month") + "</b>, s študentom <b>" + lv("FAKS", true, "month") + "</b>.";
+        document.getElementById("plan-year").innerHTML = "Za celo leto: <b>" + lv("OS", false, "year") + "</b> (osnovna šola), <b>" + lv("SS", false, "year") + "</b> (srednja šola), <b>" + lv("FAKS", false, "year") + "</b> (fakulteta). Družina <b>" + lv("SS", true, "year") + "</b>, s študentom <b>" + lv("FAKS", true, "year") + "</b>.";
+        return;
+      }
       document.getElementById("plan-month").innerHTML = "Naročnina: <b>" + p(1, "month") + "</b> na mesec za enega otroka ali <b>" + p(2, "month") + "</b> za dva.";
       document.getElementById("plan-year").innerHTML = "Za celo šolsko leto: <b>" + p(1, "year") + "</b> za enega otroka ali <b>" + p(2, "year") + "</b> za dva.";
     })

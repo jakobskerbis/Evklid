@@ -1,3 +1,4 @@
+import { jeFaks, jeSs } from "./stopnja.js";
 // Cilj učenca (NPZ, matura, tekmovanje, izpit …) in neobvezni datum. Vpraša se enkrat ob novem profilu,
 // spremeni ali izbriše se v Nastavitvah. Brez DOM: uporabljata ga strežnik (prompt, opomnik ob 12.00) in odjemalec.
 
@@ -6,9 +7,9 @@ export const DEFAULT_GOAL = "sprotno";
 
 // Cilji, ki imajo smisel za izbrano šolo: OŠ ima NPZ, SŠ maturo, fakulteta izpit; regijski sistemi svoje izpite.
 export function goalsFor(settings = {}) {
-  if (settings.educational_track === "UNIVERZA") return ["sprotno", "izpit"];
+  if (jeFaks(settings)) return ["sprotno", "izpit"];
   if (settings.school_system && settings.school_system !== "SI") return ["sprotno", "test", "izpit"];
-  if (settings.educational_track === "SREDNJA_SOLA") return ["sprotno", "test", "matura", "tekmovanje"];
+  if (jeSs(settings)) return ["sprotno", "test", "matura", "tekmovanje"];
   return ["sprotno", "test", "npz", "tekmovanje"];
 }
 

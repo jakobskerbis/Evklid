@@ -13,7 +13,7 @@ export const PACE = {
   pet: 1, pairs: 1, water: 1, mines: 1, diner: 2, hills: 2, catcher: 2, slicer: 3,
   match: 1, cards: 1, blocks: 2,
   impostor: 1,
-  numline: 1, typed: 2,
+  numline: 1, typed: 2, tiles: 1, order: 1,
 };
 // j (2026-10-29 18:04): »Odstrani zaporo iger« – zapora je izklopljena, vse igre so odprte.
 // Pravila spodaj ostajajo, da jo lahko spet vklopimo (true).

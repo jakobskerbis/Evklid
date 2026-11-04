@@ -6,6 +6,7 @@ import { isCleared, PACE } from "../public/games/unlock.js";
 import { WISH_IDS, weekKey } from "../public/games/wishes.js";
 import { GENRE_IDS, cleanTitles } from "../public/games/childhood.js";
 import { isLocalRequest } from "./feedback.js";
+import { jeFaks } from "../public/stopnja.js";
 
 const GAME_ID = /^[a-z]{2,20}:[a-z0-9_]{2,30}$/;
 const XP_PER_GAME = 20; // največ na igro (1 XP za vsaka 2 pravilna odgovora)
@@ -15,7 +16,7 @@ const int = (v, max) => Math.max(0, Math.min(max, Math.floor(Number(v) || 0)));
 
 // Leto šolanja (1–13) za izbiro iger in začetno težavnost; študent = 14.
 export function schoolYear(settings = {}) {
-  if (settings.educational_track === "UNIVERZA") return 14;
+  if (jeFaks(settings)) return 14;
   const info = gradeInfo(settings.school_system || "SI", settings.curriculum_level);
   if (info) return info.level;
   // Slovenski sistem: »7. razred« → 7, »2. letnik« (srednja šola) → 11.

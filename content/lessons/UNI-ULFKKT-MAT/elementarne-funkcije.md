@@ -5,7 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Funkcije so jezik, v katerem naravoslovje opisuje odvisnosti: koncentracija reaktanta v odvisnosti od časa, število bakterij v odvisnosti od časa, tlak plina v odvisnosti od prostornine, odmik nihala v odvisnosti od časa. Skoraj vse te odvisnosti zapišemo s peščico **elementarnih funkcij**: s potencami in koreni, polinomi, racionalnimi funkcijami, eksponentno in logaritemsko funkcijo ter s kotnimi (krožnimi) funkcijami in njihovimi inverzi.
+Najprej uganka. Vsaka stena med usmerjevalnikom in telefonom oslabi signal Wi-Fi približno na polovico. Skozi koliko sten mora signal, da pade pod en odstotek začetne moči? S poskušanjem najdeš $2^{-6} \approx 1{,}6\,\%$ in $2^{-7} \approx 0{,}78\,\%$, torej sedem sten. Obratno vprašanje, koliko sten ustreza dani moči, pa reši šele inverz eksponentne funkcije, logaritem: $\log_2 100 \approx 6{,}64$. Takšne odvisnosti zapišemo s peščico **elementarnih funkcij**: s potencami in koreni, polinomi, racionalnimi funkcijami, eksponentno in logaritemsko funkcijo ter s kotnimi (krožnimi) funkcijami in njihovimi inverzi.
 
 V gimnaziji si te funkcije že spoznal, večinoma na konkretnih primerih. Na univerzi jih potrebujemo bolj natančno, ker nanje gradimo limite, odvode, integrale in diferencialne enačbe. Zato moramo vedeti:
 
@@ -42,13 +42,33 @@ $$f^{-1}(f(x)) = x \ \text{za } x \in D_f, \qquad f(f^{-1}(y)) = y \ \text{za } 
 
 Definicijsko območje in zaloga vrednosti zamenjata vlogi. Graf $f^{-1}$ je zrcalna slika grafa $f$ čez premico $y = x$. Inverzno funkcijo izračunamo tako, da v enačbi $y = f(x)$ izrazimo $x$ z $y$, nato spremenljivki preimenujemo. Pozor: $f^{-1}(x)$ ni isto kot $\frac{1}{f(x)}$.
 
+:::premisli
+Zakaj funkcija $x^2$ na vsem $\mathbb{R}$ nima inverza?
+---
+Vodoravna premica $y = 4$ seka graf v točkah $x = -2$ in $x = 2$. Inverz bi moral številu $4$ prirediti dve vrednosti, funkcija pa vsakemu argumentu priredi natanko eno.
+:::
+
 Kadar $f$ ni injektivna, jo **zožimo** na interval, na katerem je strogo monotona. Tako dobimo $\sqrt{x}$ kot inverz funkcije $x^2$, zožene na $[0, \infty)$.
 
 **4. Potence, polinomi, racionalne funkcije.** Potenčna funkcija $x^n$ je za sodi $n$ soda, za lihi $n$ liha. **Polinom** stopnje $n$ je $p(x) = a_n x^n + \dots + a_1 x + a_0$ z $a_n \neq 0$; definiran je na vsem $\mathbb{R}$ in ima največ $n$ realnih ničel. **Racionalna funkcija** je kvocient polinomov $\frac{p(x)}{q(x)}$; definirana je povsod razen v ničlah imenovalca, kjer ima pole ali odpravljive nezveznosti.
 
 **5. Eksponentna funkcija.** Za osnovo $a > 0$, $a \neq 1$, je $f(x) = a^x$ definirana na $\mathbb{R}$, njena zaloga vrednosti je $(0, \infty)$. Za $a > 1$ je strogo naraščajoča, za $0 < a < 1$ strogo padajoča. Vedno gre skozi točko $(0, 1)$. Pravila: $a^{x+y} = a^x a^y$, $(a^x)^y = a^{xy}$, $a^{-x} = \frac{1}{a^x}$. Posebno vlogo ima **naravna eksponentna funkcija** $e^x$ z osnovo $e \approx 2{,}718$, ki jo bomo srečali pri odvodih: je edina eksponentna funkcija, ki je sama sebi enaka po odvajanju.
 
-**6. Logaritemska funkcija.** **Logaritem** $\log_a x$ je inverz eksponentne funkcije $a^x$:
+**6. Logaritemska funkcija.** Pravilo pride za vzorcem. Zapiši nekaj potenc števila $2$:
+
+| $n$ | $1$ | $2$ | $3$ | $4$ | $5$ |
+|---|---|---|---|---|---|
+| $2^n$ | $2$ | $4$ | $8$ | $16$ | $32$ |
+
+Zmnoži dve vrednosti iz spodnje vrstice, na primer $4 \cdot 8 = 32$, in poglej eksponenta: $2 + 3 = 5$. Množenje vrednosti ustreza seštevanju eksponentov. Funkcija, ki vrednosti $2^n$ vrne eksponent $n$, torej množenje spremeni v seštevanje.
+
+:::premisli
+Koliko je $\log_2 (8 \cdot 16)$, ne da bi množil?
+---
+$3 + 4 = 7$, ker je $8 = 2^3$ in $16 = 2^4$. Res je $2^7 = 128 = 8 \cdot 16$.
+:::
+
+Ta funkcija je **logaritem**: $\log_a x$ je inverz eksponentne funkcije $a^x$:
 
 $$y = \log_a x \iff a^y = x, \qquad x > 0.$$
 
@@ -85,7 +105,7 @@ Argument logaritma mora biti pozitiven: $4 - x^2 > 0$. Pod sodim korenom mora bi
 
 1. Logaritem: $4 - x^2 > 0 \iff x^2 < 4 \iff -2 < x < 2$, torej $x \in (-2, 2)$.
 2. Koren: $x + 1 \ge 0 \iff x \ge -1$, torej $x \in [-1, \infty)$.
-3. Presek: $(-2, 2) \cap [-1, \infty) = [-1, 2)$.
+3. Presek, ker morata oba pogoja veljati hkrati: $(-2, 2) \cap [-1, \infty) = [-1, 2)$.
 4. Preizkus: $f(-1) = \ln 3 + 0$ obstaja, $x = 2$ pa da $\ln 0$, ki ne obstaja.
 5. Odgovor: definicijsko območje je $D_f = [-1, 2)$.
 
@@ -105,7 +125,7 @@ Iz $y = f(x)$ izrazimo $x$; nato zamenjamo oznaki. Velja $D_{f^{-1}} = Z_f$ in $
 1. Zapišemo $y = \dfrac{2x + 1}{x - 3}$ in pomnožimo z $x - 3$: $y(x - 3) = 2x + 1$.
 2. Uredimo: $yx - 3y = 2x + 1$, torej $x(y - 2) = 3y + 1$.
 3. Za $y \neq 2$ dobimo natanko eno rešitev $x = \dfrac{3y + 1}{y - 2}$. Ker ima vsaka vrednost $y$ največ en $x$, je $f$ injektivna. Vrednosti $y = 2$ funkcija ne zavzame (enačba $0 = 7$ nima rešitve), zato je $Z_f = \mathbb{R} \setminus \{2\}$.
-4. Preimenujemo spremenljivki: $f^{-1}(x) = \dfrac{3x + 1}{x - 2}$.
+4. Preimenujemo spremenljivki, da je $x$ spet neodvisna spremenljivka: $f^{-1}(x) = \dfrac{3x + 1}{x - 2}$.
 5. Preizkus: $f(4) = \frac{9}{1} = 9$ in $f^{-1}(9) = \frac{28}{7} = 4$.
 6. Odgovor: $f^{-1}(x) = \dfrac{3x + 1}{x - 2}$, $D_{f^{-1}} = \mathbb{R} \setminus \{2\}$ in $Z_{f^{-1}} = \mathbb{R} \setminus \{3\}$. Graf $f$ ima navpično asimptoto $x = 3$ in vodoravno $y = 2$, graf $f^{-1}$ pa ravno obratno.
 
@@ -122,18 +142,41 @@ Logaritem je inverz eksponentne funkcije: $e^{u} = v \iff u = \ln v$. Torej iz $
 
 **Rešitev:**
 
-1. Delimo z $c_0$: $\dfrac{c}{c_0} = e^{-kt}$.
-2. Logaritmiramo: $\ln \dfrac{c}{c_0} = -kt$, zato $t(c) = \dfrac{1}{k} \ln \dfrac{c_0}{c}$ za $0 < c \le c_0$.
+1. Delimo z $c_0$, da osamimo eksponentno funkcijo: $\dfrac{c}{c_0} = e^{-kt}$.
+2. Logaritmiramo, ker je $\ln$ inverz funkcije $e^x$: $\ln \dfrac{c}{c_0} = -kt$, zato $t(c) = \dfrac{1}{k} \ln \dfrac{c_0}{c}$ za $0 < c \le c_0$.
 3. Razpolovni čas: $c = \frac{c_0}{2}$, torej $t_{1/2} = \dfrac{\ln 2}{k} = \dfrac{0{,}6931}{0{,}046\,\mathrm{min^{-1}}} \approx 15{,}1\,\mathrm{min}$. Neodvisen je od $c_0$.
 4. Za $c = 0{,}20\,\mathrm{mol/L}$: $\dfrac{c_0}{c} = \dfrac{0{,}80}{0{,}20} = 4$ in $t = \dfrac{\ln 4}{0{,}046\,\mathrm{min^{-1}}} = \dfrac{1{,}3863}{0{,}046}\,\mathrm{min} \approx 30{,}1\,\mathrm{min}$.
 5. Preizkus: koncentracija pade na četrtino v dveh razpolovnih časih, $2 \cdot 15{,}07\,\mathrm{min} \approx 30{,}1\,\mathrm{min}$, kar se ujema.
 6. Odgovor: $t(c) = \frac{1}{k}\ln\frac{c_0}{c}$; razpolovni čas je približno $15{,}1\,\mathrm{min}$, koncentracija $0{,}20\,\mathrm{mol/L}$ pa je dosežena po približno $30{,}1\,\mathrm{min}$.
 
+### Primer 4 – zdaj ti
+
+Telefon se pri hitrem polnjenju polni po modelu $Q(t) = 100\,\% \cdot \left(1 - e^{-t/30}\right)$, kjer je $t$ čas v minutah od začetka polnjenja prazne baterije. Izrazi čas kot funkcijo napolnjenosti in izračunaj, kdaj je baterija napolnjena do $80\,\%$.
+
+**Podatki:** $Q(t) = 100\,\% \cdot \left(1 - e^{-t/30}\right)$, $t$ v minutah, ciljna napolnjenost $Q = 80\,\%$
+**Iščemo:** inverzno funkcijo $t(Q)$ in čas $t$ pri $Q = 80\,\%$
+
+:::formula
+$e^{u} = v \iff u = \ln v$ za $v > 0$.
+:::
+
+**Rešitev:**
+
+1. Delimo s $100\,\%$ in osamimo eksponentno funkcijo: $e^{-t/30} = 1 - \frac{Q}{100\,\%}$.
+2. Logaritmiramo, ker je $\ln$ inverz funkcije $e^x$: $-\frac{t}{30} = \ln\left(1 - \frac{Q}{100\,\%}\right)$, torej $t(Q) = -30\,\mathrm{min} \cdot \ln\left(1 - \frac{Q}{100\,\%}\right)$.
+3. Vstavi $Q = 80\,\%$ in razmisli, za katere $Q$ je $t(Q)$ sploh definiran.
+
+:::premisli
+Kdaj je baterija napolnjena do $80\,\%$ in kaj model pove o $100\,\%$?
+---
+$t = -30\,\mathrm{min} \cdot \ln 0{,}2 = 30\,\mathrm{min} \cdot \ln 5 \approx 48{,}3\,\mathrm{min}$. Funkcija $t(Q)$ je definirana le za $0 \le Q < 100\,\%$: pri $Q = 100\,\%$ bi dobili $\ln 0$, ki ne obstaja, zato baterija v tem modelu polna nikoli ne postane, le vse počasneje se ji približuje.
+:::
+
 ## Pogoste napake
 
 - **Zamenjava $f^{-1}(x)$ in $\frac{1}{f(x)}$.** Za $f(x) = e^x$ je $f^{-1}(x) = \ln x$, ne $e^{-x}$. Oznaka $^{-1}$ pri funkciji pomeni obrat, ne recipročne vrednosti.
 - **Pozabljeno zoževanje.** Študent zapiše, da je $\sqrt{x}$ inverz $x^2$ na vsem $\mathbb{R}$. Funkcija $x^2$ na $\mathbb{R}$ ni injektivna, zato inverza nima; zožiti jo moramo na $[0, \infty)$.
-- **Napačna pravila za logaritme.** $\ln(x + y) \neq \ln x + \ln y$ in $\ln(xy) \neq \ln x \cdot \ln y$. Pravilno: $\ln(xy) = \ln x + \ln y$; za vsoto ni preproste formule.
+- **Napačna pravila za logaritme.** $\ln(x + y) \neq \ln x + \ln y$ in $\ln(xy) \neq \ln x \cdot \ln y$. Pravilno: $\ln(xy) = \ln x + \ln y$; za vsoto ni preproste formule. Pazi tudi na osnovo: pri podvajanju je število korakov $\log_2 \frac{N}{N_0}$, ne $\ln \frac{N}{N_0}$.
 - **$\arcsin(\sin x) = x$ za vse $x$.** To velja le za $x \in [-\frac{\pi}{2}, \frac{\pi}{2}]$. Na primer $\arcsin(\sin \frac{5\pi}{6}) = \frac{\pi}{6}$.
 - **Koti v stopinjah.** V analizi so argumenti krožnih funkcij v radianih. Kalkulator naj bo nastavljen na RAD.
 - **Pozabljeni pogoji pri $D_f$.** Pri $\ln(x - 1)$ mora biti $x > 1$, ne $x \ge 1$; pri $\frac{1}{\sqrt{x}}$ mora biti $x > 0$.
@@ -203,27 +246,43 @@ Za $f(x) = e^x$ sta to ravno $\operatorname{ch} x$ in $\operatorname{sh} x$.
 
 ? Koliko je $\log_2 8 + \ln e^3$?
 - $5$
+~ Verjetno si $\log_2 8$ vzel kot $2$; logaritem je eksponent $y$, pri katerem je $2^y = 8$, to pa je $3$.
 + $6$
 - $9$
+~ Delna rezultata $3$ in $3$ si zmnožil, naloga pa ju sešteva.
 > $\log_2 8 = 3$, ker je $2^3 = 8$, in $\ln e^3 = 3$. Vsota je $6$.
 
 ? Koliko je $\arcsin\left(\sin \frac{5\pi}{6}\right)$?
 - $\frac{5\pi}{6}$
+~ $\arcsin(\sin x) = x$ velja le za $x \in [-\frac{\pi}{2}, \frac{\pi}{2}]$, $\frac{5\pi}{6}$ pa je zunaj tega intervala.
 + $\frac{\pi}{6}$
 - $-\frac{\pi}{6}$
+~ Sinus kota $\frac{5\pi}{6}$ je pozitiven, zato je pozitiven tudi njegov $\arcsin$.
 > $\sin \frac{5\pi}{6} = \frac{1}{2}$, $\arcsin$ pa vrne kot iz $[-\frac{\pi}{2}, \frac{\pi}{2}]$, torej $\arcsin \frac{1}{2} = \frac{\pi}{6}$.
 
 ? Katera funkcija je liha?
 + $f(x) = x^3 - \sin x$
 - $f(x) = x^2 + \cos x$
+~ Oba člena sta soda, zato je vsota soda: $f(-x) = f(x)$.
 - $f(x) = e^x$
+~ $e^{-x}$ ni enako $-e^x$, saj je $e^x$ vedno pozitiven; funkcija ni ne soda ne liha.
 > $(-x)^3 - \sin(-x) = -x^3 + \sin x = -(x^3 - \sin x)$. Druga funkcija je soda, $e^x$ pa ni ne soda ne liha.
 
 ? Kaj je inverzna funkcija funkcije $f(x) = e^{2x} + 1$?
 + $f^{-1}(x) = \frac{1}{2}\ln(x - 1)$ za $x > 1$
 - $f^{-1}(x) = \ln\frac{x - 1}{2}$ za $x > 1$
+~ Faktor $2$ stoji v eksponentu, zato deliš z njim šele po logaritmiranju: $2x = \ln(x - 1)$.
 - $f^{-1}(x) = \frac{1}{e^{2x} + 1}$
+~ To je recipročna vrednost $\frac{1}{f(x)}$; oznaka $^{-1}$ pri funkciji pomeni obrat.
 > Iz $y = e^{2x} + 1$ sledi $e^{2x} = y - 1$ in $x = \frac{1}{2}\ln(y - 1)$. Recipročna vrednost $\frac{1}{f(x)}$ ni inverz.
+
+? Aplikacija za telefon ima $2000$ uporabnikov, njihovo število pa se vsak teden podvoji: $N(t) = 2000 \cdot 2^t$ ($t$ v tednih). Po koliko tednih ima $64\,000$ uporabnikov?
+- po $32$ tednih
+~ $32$ je razmerje $\frac{N}{N_0}$; število tednov je eksponent, pri katerem je $2^t = 32$.
++ po $5$ tednih
+- po približno $3{,}47$ tedna
+~ To je $\ln 32$; pri podvajanju potrebuješ $\log_2 32 = \frac{\ln 32}{\ln 2}$.
+> $2^t = \frac{64\,000}{2000} = 32$, zato je $t = \log_2 32 = 5$ tednov.
 
 :::simboli
 f | funkcija | |
@@ -241,4 +300,5 @@ c | množinska koncentracija reaktanta | c = c_0 e^{-kt} | mol/L | pri raztegih 
 c_0 | začetna koncentracija reaktanta | | mol/L
 k | konstanta hitrosti reakcije | | min^{-1} | pri grafih faktor stiskanja; k ∈ ℤ pri periodah
 t | čas | t = \frac{1}{k} \ln \frac{c_0}{c} | min
+Q | napolnjenost baterije (v odstotkih) | Q(t) = 100\,\% \cdot (1 - e^{-t/30}) | | v primeru 4
 :::

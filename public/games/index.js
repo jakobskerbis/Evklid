@@ -216,8 +216,15 @@ function renderPortal() {
     const path = [];
     const open = [];
     const shut = [];
+    // Vsak pojem začne pri drugi vrsti, razmaknjeno čez ves seznam vrst: že prvi krogi pokažejo vse vrste
+    // (prej so vrste s konca ENGINES, npr. novejše igre, pri področju z malo pojmi prišle šele na konec).
+    // (korak tuj dolžini seznama, da imata dva pojma vedno različen začetek)
+    const K = kinds.length, gcd = (a, b) => (b ? gcd(b, a % b) : a);
+    let step = Math.ceil(K / Math.max(1, cs.length));
+    while (step > 1 && step < K && gcd(step, K) !== 1) step++;
+    if (step >= K) step = 1;
     for (let r = 0; r < kinds.length; r++) cs.forEach((c, i) => {
-      const e = kinds[(i + r) % kinds.length];
+      const e = kinds[(i * step + r) % kinds.length];
       if (fits(e, c) && match(c, e)) (gameLock(e.id, c, LS) ? shut : onPath(e, c) ? path : open).push([e, c]);
     });
     paths += path.length;

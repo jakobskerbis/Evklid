@@ -5,23 +5,33 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Kos kruha, list papirja in bombažna majica so iz iste gradbene enote: glukoze. Kruh prebaviš, papirja in bombaža ne. Maslo in olivno olje sta oba maščobi, a eno je pri sobni temperaturi trdno, drugo tekoče. In vsaka celica tvojega telesa je obdana z membrano, ki je debela komaj okoli $5\,\text{nm}$ in je zgrajena iz lipidov.
-
-Pri proteinih si videl, da zaporedje aminokislin in vrsta vezi določata obliko in s tem vlogo. Pri ogljikovih hidratih in lipidih velja isto načelo: majhna razlika v zgradbi (lega ene skupine $-\text{OH}$, ena dvojna vez *cis*) da povsem drugačno vlogo v celici.
+V nakupovalni košarici ležijo štruca kruha, zavitek papirnatih brisač in bombažna majica. Vse tri stvari so zgrajene iz glukoze, prebaviš pa le kruh. Na blagajni dodaš še maslo in olivno olje: obe sta maščobi, a maslo je pri sobni temperaturi trdno, olje tekoče. Odloča majhna razlika v zgradbi: lega ene skupine $-\text{OH}$ ali ena dvojna vez *cis*. Pri proteinih si videl isto načelo, zaporedje in vrsta vezi določata obliko in s tem vlogo. Lipidi gradijo tudi membrano okoli vsake tvoje celice, debelo komaj okoli $5\,\text{nm}$.
 
 ## Razlaga
 
-**1. Monosaharidi.** Ogljikovi hidrati imajo pogosto splošno formulo $(\text{CH}_2\text{O})_n$. Najmanjše enote so **monosaharidi**: polihidroksialdehidi (**aldoze**) ali polihidroksiketoni (**ketoze**) s $3$ do $7$ ogljiki. Glukoza ($\text{C}_6\text{H}_{12}\text{O}_6$) je aldoheksoza, fruktoza ketoheksoza, riboza aldopentoza. Glukoza ima v odprti obliki $4$ stereocentre (C2–C5). Podobno kot pri aminokislinah oznaka D ali L pove lego skupine $-\text{OH}$ na stereocentru, ki je najdlje od karbonilne skupine (pri glukozi C5). V naravi prevladujejo D-sladkorji.
+### Najprej en primer: glukoza
 
-**2. Obroč in anomera.** V vodi se skupina $-\text{OH}$ na C5 glukoze veže na karbonilni ogljik C1. Nastane šestčlenski obroč (**piranoza**) s **hemiacetalno** skupino. Fruktoza tvori predvsem petčlenski obroč (**furanoza**). C1 glukoze postane nov stereocenter, **anomerni ogljik**. Če je $-\text{OH}$ na C1 v Haworthovi projekciji pod ravnino obroča (na nasprotni strani kot $\text{CH}_2\text{OH}$), je to anomer $\alpha$; če je nad njo, anomer $\beta$. V raztopini se obroč odpira in zapira, zato se oblike pretvarjajo druga v drugo (**mutarotacija**).
+Glukoza ($\text{C}_6\text{H}_{12}\text{O}_6$) ima šest ogljikov: na C1 aldehidno skupino, na ostalih petih skupine $-\text{OH}$. Je torej polihidroksialdehid s šestimi ogljiki, **aldoheksoza**. V odprti obliki ima $4$ stereocentre (C2–C5). Podobno kot pri aminokislinah oznaka D ali L pove lego skupine $-\text{OH}$ na stereocentru, ki je najdlje od karbonilne skupine (pri glukozi C5).
 
-**3. Glikozidna vez.** Anomerna skupina $-\text{OH}$ enega sladkorja se s kondenzacijo (odcepi se voda) poveže s skupino $-\text{OH}$ drugega. Nastane **glikozidna vez**, ki jo označimo z vrsto anomera in številkama ogljikov, npr. $\alpha(1 \to 4)$. To je podobno peptidni vezi: kondenzacija pri sintezi, hidroliza pri razgradnji.
+### Posplošitev: monosaharidi
+
+Glukoza je **monosaharid**, najmanjša enota ogljikovih hidratov. Ti imajo pogosto splošno formulo $(\text{CH}_2\text{O})_n$, pri glukozi je $n = 6$. Monosaharidi so polihidroksialdehidi (**aldoze**) ali polihidroksiketoni (**ketoze**) s $3$ do $7$ ogljiki: fruktoza je ketoheksoza, riboza aldopentoza. V naravi prevladujejo D-sladkorji.
+
+### Obroč in anomera
+
+V vodi se skupina $-\text{OH}$ na C5 glukoze veže na karbonilni ogljik C1. Nastane šestčlenski obroč (**piranoza**) s **hemiacetalno** skupino. Fruktoza tvori predvsem petčlenski obroč (**furanoza**). C1 glukoze postane nov stereocenter, **anomerni ogljik**. Če je $-\text{OH}$ na C1 v Haworthovi projekciji pod ravnino obroča (na nasprotni strani kot $\text{CH}_2\text{OH}$), je to anomer $\alpha$; če je nad njo, anomer $\beta$. V raztopini se obroč odpira in zapira, zato se oblike pretvarjajo druga v drugo (**mutarotacija**).
+
+### Dve enoti skupaj: glikozidna vez
+
+Anomerna skupina $-\text{OH}$ enega sladkorja se s kondenzacijo (odcepi se voda) poveže s skupino $-\text{OH}$ drugega. Nastane **glikozidna vez**, ki jo označimo z vrsto anomera in številkama ogljikov, npr. $\alpha(1 \to 4)$. To je podobno peptidni vezi: kondenzacija pri sintezi, hidroliza pri razgradnji.
 
 - **Maltoza**: glukoza $\alpha(1 \to 4)$ glukoza.
 - **Laktoza** (mleko): galaktoza $\beta(1 \to 4)$ glukoza.
 - **Saharoza** (namizni sladkor): glukoza $\alpha 1 \leftrightarrow \beta 2$ fruktoza. Oba anomerna ogljika sta v vezi, zato se obroč ne more odpreti in saharoza ni **reducirajoči sladkor**.
 
-**4. Polisaharidi.** Iz glukoze so zgrajeni trije najpomembnejši:
+### Veliko enot: polisaharidi
+
+Iz glukoze so zgrajeni trije najpomembnejši:
 
 | Polisaharid | Vez | Oblika | Vloga |
 |---|---|---|---|
@@ -37,9 +47,13 @@ Razvejanost glikogena ni naključna: vsaka veja ima prost konec, s katerega enci
 Ker se razlikujeta v glikozidni vezi, ne v monomeru. Naši encimi (amilaze) imajo aktivno mesto, ki se prilega vezi $\alpha(1 \to 4)$. Za vez $\beta(1 \to 4)$ nimamo encima; prežvekovalci in termiti ga imajo le prek mikroorganizmov v prebavilih. Enako kot pri proteinih: oblika molekule določa, kateri encim jo prepozna.
 :::
 
-**5. Vloga ogljikovih hidratov v celici.** Ogljikovi hidrati so hiter vir energije (glukoza v glikolizi), zaloga (škrob, glikogen), gradbena snov (celuloza, hitin) in del drugih molekul (riboza v RNA, deoksiriboza v DNA). Kratke verige sladkorjev na proteinih in lipidih zunanje strani membrane (**glikoproteini**, **glikolipidi**) služijo kot »osebna izkaznica« celice. Krvne skupine A, B in 0 se razlikujejo prav po teh sladkorjih.
+### Kaj ogljikovi hidrati počnejo v celici
 
-**6. Lipidi.** Lipidi niso določeni s skupno gradbeno enoto, ampak s topnostjo: so slabo topni v vodi in dobro v nepolarnih topilih. Niso polimeri.
+Ogljikovi hidrati so hiter vir energije (glukoza v glikolizi), zaloga (škrob, glikogen), gradbena snov (celuloza, hitin) in del drugih molekul (riboza v RNA, deoksiriboza v DNA). Kratke verige sladkorjev na proteinih in lipidih zunanje strani membrane (**glikoproteini**, **glikolipidi**) služijo kot »osebna izkaznica« celice. Krvne skupine A, B in 0 se razlikujejo prav po teh sladkorjih.
+
+### Druga družina: lipidi
+
+Lipidi niso določeni s skupno gradbeno enoto, ampak s topnostjo: so slabo topni v vodi in dobro v nepolarnih topilih. Niso polimeri.
 
 - **Maščobne kisline**: dolga ogljikovodikova veriga (navadno $12$–$20$ ogljikov, sodo število) s karboksilno skupino. **Nasičene** (npr. palmitinska, $16{:}0$) nimajo dvojnih vezi, verige so ravne in se tesno zložijo. **Nenasičene** (npr. oleinska, $18{:}1$) imajo dvojne vezi *cis*, ki verigo upognejo za okoli $30^\circ$.
 - **Triacilgliceroli** (maščobe in olja): glicerol, zaestren s tremi maščobnimi kislinami. So povsem nepolarni in služijo kot zaloga energije v maščobnem tkivu.
@@ -52,7 +66,9 @@ Maslo je bogato z nasičenimi maščobnimi kislinami, olivno olje z oleinsko. Na
 Dvojna vez *cis* upogne verigo, zato se verige ne morejo tesno zložiti. Med njimi je manj stika in šibkejše van der Waalsove sile, zato je tališče nižje. Ravne nasičene verige se zložijo kot svinčniki v škatli in tvorijo trdno snov.
 :::
 
-**7. Membrana v besedah (slika).** Fosfolipidi se v vodi sami uredijo v **dvosloj**. Predstavljaj si ga takole, od zunaj navznoter:
+### Membrana v besedah (slika)
+
+Fosfolipidi se v vodi sami uredijo v **dvosloj**. Predstavljaj si ga takole, od zunaj navznoter:
 
 ```
 voda
@@ -65,13 +81,15 @@ voda (citosol)
 
 Repi se skrijejo pred vodo v notranjost, glave so obrnjene proti vodi na obeh straneh. Tako je nastanek dvosloja energijsko ugoden (hidrofobni učinek, kot pri zvijanju proteinov). V dvosloj so vgrajeni proteini, holesterol in glikolipidi. Membrana prepušča majhne nepolarne molekule ($\text{O}_2$, $\text{CO}_2$), ione pa ne.
 
-**8. Vloga lipidov.** Lipidi so dolgoročna zaloga energije (pri oksidaciji okoli $37\,\text{kJ/g}$, ogljikovi hidrati okoli $17\,\text{kJ/g}$), gradniki membran, signalne molekule (steroidni hormoni, eikozanoidi) in toplotna izolacija. Maščoba ima več energije na gram, ker so njeni ogljiki bolj reducirani (manj kisika v molekuli) in ker se shranjuje brez vode.
+### Vloga lipidov
+
+Lipidi so dolgoročna zaloga energije (pri oksidaciji okoli $37\,\text{kJ/g}$, ogljikovi hidrati okoli $17\,\text{kJ/g}$), gradniki membran, signalne molekule (steroidni hormoni, eikozanoidi) in toplotna izolacija. Maščoba ima več energije na gram, ker so njeni ogljiki bolj reducirani (manj kisika v molekuli) in ker se shranjuje brez vode.
 
 ## Rešeni primeri
 
 ### Primer 1 (lažji): molska masa disaharida
 
-Saharoza nastane s kondenzacijo glukoze in fruktoze (obe $\text{C}_6\text{H}_{12}\text{O}_6$). Izračunaj njeno molsko maso.
+Kilogramska vrečka sladkorja iz trgovine je skoraj čista saharoza. Ta nastane s kondenzacijo glukoze in fruktoze (obe $\text{C}_6\text{H}_{12}\text{O}_6$). Izračunaj njeno molsko maso.
 
 **Podatki:** $M(\text{C}_6\text{H}_{12}\text{O}_6) = 180{,}16\,\text{g/mol}$, $M(\text{H}_2\text{O}) = 18{,}02\,\text{g/mol}$, pri nastanku glikozidne vezi se odcepi $1$ molekula vode
 **Iščemo:** $M(\text{saharoza})$
@@ -89,7 +107,7 @@ $M(\text{disaharid}) = 2 \cdot M(\text{monosaharid}) - M(\text{H}_2\text{O})$
 
 ### Primer 2: umiljenje maščobe
 
-Tripalmitin je triacilglicerol iz glicerola in treh molekul palmitinske kisline. Pri **umiljenju** z NaOH se hidrolizirajo vse tri estrske vezi. Koliko gramov NaOH potrebujemo za $10{,}0\,\text{g}$ tripalmitina?
+Tripalmitin je triacilglicerol iz glicerola in treh molekul palmitinske kisline. Pri **umiljenju** z NaOH se hidrolizirajo vse tri estrske vezi. Mala milarna, ki prodaja domače milo na tržnici, mora lug natehtati natančno, saj odvečni NaOH draži kožo. Koliko gramov NaOH potrebuje za $10{,}0\,\text{g}$ tripalmitina?
 
 **Podatki:** $m(\text{tripalmitin}) = 10{,}0\,\text{g}$; $M(\text{glicerol}) = 92{,}09\,\text{g/mol}$, $M(\text{palmitinska k.}) = 256{,}43\,\text{g/mol}$, $M(\text{H}_2\text{O}) = 18{,}02\,\text{g/mol}$, $M(\text{NaOH}) = 40{,}00\,\text{g/mol}$; na $1$ mol maščobe $3$ mol NaOH
 **Iščemo:** $m(\text{NaOH})$
