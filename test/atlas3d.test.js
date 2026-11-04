@@ -9,7 +9,7 @@ import * as THREE from "three";
 import { createApp } from "../server/app.js";
 import { openDb } from "../server/db.js";
 import { cspFor3d, rewriteThreeImports, PODROCJA as PODROCJA_STREZNIK } from "../server/tri-d.js";
-import { PODROCJA, preveriInfo, preveriModel } from "../public/3d/pogodba.js";
+import { PODROCJA, preveriInfo, preveriModel, normalizirajViri } from "../public/3d/pogodba.js";
 import sl from "../public/i18n/sl.js";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -97,7 +97,8 @@ test("vsak GLB ima vir z licenco brez NC; vsak vir je opisan", () => {
   // public/3d/viri.json in viri.json področij (public/3d/modeli/<podrocje>/viri.json), vzorci so vedno glede na modeli/.
   const viri = { viri: [] };
   for (const f of [path.join(D3, "viri.json"), ...PODROCJA.map((p) => path.join(MODELI, p, "viri.json")).filter((f) => fs.existsSync(f))]) {
-    const d = JSON.parse(fs.readFileSync(f, "utf8"));
+    const pod = path.relative(MODELI, path.dirname(f));
+    const d = normalizirajViri(JSON.parse(fs.readFileSync(f, "utf8")), pod && !pod.startsWith("..") ? pod : null);
     assert.ok(Array.isArray(d.viri), `${path.relative(ROOT, f)}: manjka seznam viri`);
     for (const v of d.viri) assert.ok(Array.isArray(v.datoteke ?? []), `${path.relative(ROOT, f)}: ${v.id} datoteke mora biti seznam`);
     viri.viri.push(...d.viri);

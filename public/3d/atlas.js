@@ -8,6 +8,7 @@ import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "/vendor/three/examples/jsm/libs/meshopt_decoder.module.js";
 import { tkivo, ustvariMaterial } from "./tkiva.js";
 import { seznamDatotek } from "./modeli.js";
+import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
 
@@ -1061,7 +1062,10 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   async function viri() {
     const box = mk("div", "a3-viri");
     const beri = (u) => fetch(new URL(u, import.meta.url)).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-    const vsebine = await Promise.all([beri("./viri.json"), ...(seznam.viri || []).map((p) => beri(`./modeli/${p}/viri.json`))]);
+    const vsebine = await Promise.all([
+      beri("./viri.json").then((d) => normalizirajViri(d)),
+      ...(seznam.viri || []).map((p) => beri(`./modeli/${p}/viri.json`).then((d) => normalizirajViri(d, p))),
+    ]);
     const data = { viri: [], izkljuceno: [] };
     const ids = new Set();
     for (const d of vsebine) {

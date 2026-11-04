@@ -47,3 +47,17 @@ export function preveriModel(model) {
   for (const k of ["korak", "izberi", "dispose"]) if (model[k] != null && typeof model[k] !== "function") napake.push(`${k} mora biti funkcija`);
   return napake;
 }
+
+// Viri področja: oblika {viri: [{id, ime, avtor, opis, licenca, licencaUrl?, url?, datoteke?}], izkljuceno?}
+// ali kratek seznam [{ime, za, licenca, url}]. Modeli v kodi področja so lastno delo Evklida.
+export function normalizirajViri(d, podrocje = null) {
+  if (!d) return { viri: [], izkljuceno: [] };
+  const vrstice = Array.isArray(d)
+    ? d.map((v, i) => ({ id: `${podrocje || "vir"}-${i + 1}`, ime: v.ime, avtor: v.avtor || v.ime, opis: v.opis || v.za || "", licenca: v.licenca, url: v.url }))
+    : d.viri || [];
+  const viri = [...vrstice];
+  if (podrocje && !viri.some((v) => (v.datoteke || []).some((p) => p.startsWith(`${podrocje}/`) && p.endsWith(".js")))) {
+    viri.push({ id: `${podrocje}-evklid`, ime: "Evklid", avtor: "Evklid", opis: "Modeli, narejeni v kodi", licenca: "CC BY-SA 4.0", datoteke: [`${podrocje}/*.js`] });
+  }
+  return { viri, izkljuceno: Array.isArray(d) ? [] : d.izkljuceno || [] };
+}
