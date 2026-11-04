@@ -283,6 +283,20 @@ export function wordsBack(value, pos, n = 1) {
   return p;
 }
 
+/** Začetek povedi pred kazalcem (troklik na ⌫): za zadnjim ».«, »!«, »?« ali »…« s presledkom ali za novo vrstico. */
+export function sentenceBack(value, pos) {
+  const v = String(value ?? "");
+  let p = Math.max(0, Math.min(pos, v.length));
+  while (p > 0 && /[ \t]/u.test(v[p - 1])) p--; // presledki tik pred kazalcem gredo s povedjo
+  while (p > 0 && /[.!?…]/u.test(v[p - 1])) p--; // ločilo konca te povedi
+  while (p > 0) {
+    const c = v[p - 1];
+    if (c === "\n" || (/\s/u.test(c) && p > 1 && /[.!?…]/u.test(v[p - 2]))) break;
+    p--;
+  }
+  return p;
+}
+
 // Samopopravek (le s predlogi besed): seznam je majhen, zato popravimo samo varne tipkarske napake —
 // manjkajoče strešice (resitev → rešitev) in zamenjani sosednji črki (enacba ← enčaba ni, a »koilko« → »koliko«).
 const FOLD = { č: "c", ć: "c", š: "s", ž: "z", đ: "d" };

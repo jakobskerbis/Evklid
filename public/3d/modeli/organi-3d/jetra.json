@@ -102,6 +102,7 @@
  "deli": [
   {
    "id": "desni-rezenj",
+   "povecava": "organ-jetrni-reznjic",
    "ime": "Desni jetrni reženj",
    "la": "Lobus hepatis dexter",
    "barva": "#ff8a6a",
@@ -115,6 +116,7 @@
   },
   {
    "id": "levi-rezenj",
+   "povecava": "organ-jetrni-reznjic",
    "ime": "Levi jetrni reženj",
    "la": "Lobus hepatis sinister",
    "barva": "#a78bfa",
@@ -126,6 +128,7 @@
   },
   {
    "id": "kvadratni-rezenj",
+   "povecava": "organ-jetrni-reznjic",
    "ime": "Kvadratni reženj",
    "la": "Lobus quadratus",
    "barva": "#ffc06a",
@@ -136,6 +139,7 @@
   },
   {
    "id": "repasti-rezenj",
+   "povecava": "organ-jetrni-reznjic",
    "ime": "Repasti reženj",
    "la": "Lobus caudatus",
    "barva": "#f472b6",

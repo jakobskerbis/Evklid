@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import {
-  prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, digitFor,
+  prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, digitFor,
   fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS,
   NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest, glideDecode,
 } from "../public/tipkovnica-data.js";
@@ -363,4 +363,16 @@ test("glide: slovar je veljaven, WORDS.sl na začetku, brez dvojnikov, pod 150 K
   assert.ok(GLIDE_SL.every((w) => /^\p{L}{1,20}$/u.test(w)), "samo črke");
   assert.ok(fs.statSync(path.join(ROOT, "public/tipkovnica-glide-sl.js")).size < 150 * 1024);
   assert.ok(GLIDE_SL.includes("enačba") && GLIDE_SL.includes("kemija"));
+});
+
+test("sentenceBack: troklik na ⌫ izbriše poved do konca prejšnje (presledek za piko ostane)", () => {
+  const v = "Prva poved. Druga po";
+  assert.equal(v.slice(0, sentenceBack(v, v.length)), "Prva poved. ");
+  assert.equal(sentenceBack("Prva poved.", 11), 0);
+  assert.equal(sentenceBack("Ali je? Da!  ", 13), 8);
+  assert.equal(sentenceBack("vrstica\nnova vrst", 17), 8);
+  assert.equal(sentenceBack("x = 3.5 cm", 10), 0, "decimalna pika brez presledka ni konec povedi");
+  assert.equal(sentenceBack("", 0), 0);
+  const w = "Prva poved. Druga ";
+  assert.equal(w.slice(0, sentenceBack(w, w.length)), "Prva poved. ");
 });

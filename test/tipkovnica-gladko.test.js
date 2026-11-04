@@ -116,6 +116,89 @@ for (const [name, opts] of [
     assert.equal(await page.inputValue("#t"), "AnaQ");
     assert.equal(await page.locator(letter("q")).count(), 1, "enkratni ⇧ ugasne");
 
+    // ⌫: en dotik = znak, dvoklik = beseda, troklik = poved; držanje briše po znakih (j, 4. 11.)
+    const bsSel = await page.evaluate(() => {
+      const b = [...document.querySelectorAll("#tipkovnica .tk-rows .tk-k")].find((x) => /briši|izbriši|delete/i.test(x.getAttribute("aria-label") || ""));
+      b.dataset.bs = "1";
+      return '#tipkovnica .tk-k[data-bs="1"]';
+    });
+    const tapBs = async (times) => {
+      for (let i = 0; i < times; i++) {
+        if (touch) await page.locator(bsSel).tap();
+        else await page.locator(bsSel).click();
+      }
+      await page.waitForTimeout(40); // na dotik tipka deluje takoj po »touchend«
+    };
+    const setText = (v) => page.evaluate((v) => { const t = document.getElementById("t"); t.value = v; t.setSelectionRange(v.length, v.length); }, v);
+    await setText("Prva poved. Druga beseda");
+    await tapBs(1);
+    assert.equal(await page.inputValue("#t"), "Prva poved. Druga besed", "en dotik");
+    await page.waitForTimeout(500);
+    await tapBs(2);
+    assert.equal(await page.inputValue("#t"), "Prva poved. Druga ", "dvoklik");
+    await page.waitForTimeout(500);
+    await setText("Prva poved. Druga beseda");
+    await tapBs(3);
+    assert.equal(await page.inputValue("#t"), "Prva poved. ", "troklik");
+    await page.waitForTimeout(500);
+    // druga tipka vmes prekine dvoklik
+    await setText("abc def");
+    await tapBs(1);
+    await press(letter("x"));
+    await tapBs(1);
+    assert.equal(await page.inputValue("#t"), "abc de", "⌫ x ⌫ ni dvoklik");
+    await page.waitForTimeout(500);
+    // črka se vpiše že ob pritisku; dolg pritisk na »s« in dvig izbere »š« (ne »sš«)
+    {
+      const center = async (l) => {
+        const i = await page.evaluate((l) => [...document.querySelectorAll("#tipkovnica .tk-rows .tk-k")].findIndex((b) => b.firstChild?.textContent?.toLowerCase() === l), l);
+        const b = await page.locator("#tipkovnica .tk-rows .tk-k").nth(i).boundingBox();
+        return [b.x + b.width / 2, b.y + b.height / 2];
+      };
+      await page.evaluate(() => { const t = document.getElementById("t"); t.value = "a "; t.setSelectionRange(2, 2); });
+      const [x, y] = await center("s");
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      assert.match(await page.inputValue("#t"), /^a [sS]$/, "črka ob pritisku");
+      await page.waitForTimeout(600);
+      assert.equal(await page.locator("#tipkovnica .tk-pop").count(), 1, "različice");
+      await page.mouse.up();
+      await page.waitForTimeout(40);
+      assert.match(await page.inputValue("#t"), /^a [šŠ]$/, "dolg pritisk zamenja črko");
+      // z izbranim besedilom: različica zamenja izbiro (ne ostane še črka s pritiska)
+      await page.waitForTimeout(500);
+      await page.evaluate(() => { const t = document.getElementById("t"); t.value = "a xyz b"; t.setSelectionRange(2, 5); });
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      await page.waitForTimeout(600);
+      await page.mouse.up();
+      await page.waitForTimeout(40);
+      assert.match(await page.inputValue("#t"), /^a [šŠ] b$/, "različica namesto izbire");
+    }
+    await page.waitForTimeout(500);
+    // ⌫ briše že ob pritisku (pred dvigom prsta), ob dvigu ne še enkrat
+    await setText("abc");
+    {
+      const b = await page.locator(bsSel).boundingBox();
+      await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
+      await page.mouse.down();
+      assert.equal(await page.inputValue("#t"), "ab", "⌫ ob pritisku");
+      await page.mouse.up();
+      await page.waitForTimeout(40);
+      assert.equal(await page.inputValue("#t"), "ab", "ob dvigu ne briše znova");
+    }
+    await page.waitForTimeout(500);
+    // držanje: po en znak
+    await setText("ena dva tri");
+    const box = await page.locator(bsSel).boundingBox();
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.waitForTimeout(700);
+    await page.mouse.up();
+    const held = await page.inputValue("#t");
+    assert.ok(held.length < 11 && held.length >= 4 && "ena dva tri".startsWith(held), `držanje: »${held}«`);
+    await page.waitForTimeout(500);
+
     // enaka višina v vseh plasteh
     const heights = {};
     for (const layer of ["abc", "num", "fx", "sym", "kem"]) {

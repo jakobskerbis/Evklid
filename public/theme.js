@@ -537,6 +537,16 @@
     const meta = document.querySelector('meta[name="theme-color"]');
     const top = c ? c.menu : isDarkMode(s) ? baseOf(s).dark.menu : baseOf(s).light.menu;
     if (meta) meta.setAttribute("content", top);
+    // Nameščena aplikacija (Android) pobarva spodnjo sistemsko vrstico z barvo iz manifesta: ista kot meni.
+    const link = document.querySelector('link[rel="manifest"]');
+    if (link) {
+      try {
+        const u = new URL(link.getAttribute("href") || "/manifest.webmanifest", location.href);
+        u.searchParams.set("barva", top);
+        u.searchParams.set("ozadje", c ? c.bg : baseOf(s)[dark ? "dark" : "light"].bg);
+        link.setAttribute("href", u.pathname + u.search);
+      } catch {}
+    }
   }
 
   // ---------- naključne barve ----------

@@ -165,7 +165,17 @@ export function odpriModel(el, mod, opts = {}) {
       return;
     }
     const v = svetovnaTocka(d)(new THREE.Vector3());
-    kit.pokaziOznako(d.id, d.ime, d.opis, v);
+    const kartica = kit.pokaziOznako(d.id, d.ime, d.opis, v);
+    if (d.la && kartica) kartica.querySelector("b")?.after(mk("i", "k3-la", d.la)); // latinsko ime (organi, prerezi tkiv)
+    // Del s `povecava: "<id modela>"` (docs/3d.md): gumb na kartici odpre povečan prikaz (stran /3d da opts.povecava).
+    if (d.povecava && typeof opts.povecava === "function" && kartica) {
+      const b = mk("button", "k3-pill k3-povecava-gumb");
+      b.type = "button";
+      b.innerHTML = `${icon("zoom-in")}<span></span>`;
+      b.lastChild.textContent = t("a3.magnify");
+      b.addEventListener("click", () => opts.povecava(d.povecava));
+      kartica.append(b);
+    }
     if (leti && model.postavitev === "organ") {
       // Organ: ista smer pogleda, le rahlo bližje k točki (organ ostane v kadru, točka ostane vidna).
       const [c, r] = zacetniOkvir();
