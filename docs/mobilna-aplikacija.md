@@ -43,7 +43,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 
 | Na spletu | Kaj je | Velikost | Predlog | Stanje |
 |---|---|---|---|---|
-| Videz sloga Čist | barve, robovi, pisava Instrument Sans, zavihki v istem redu | S | naravno (`theme.ts`, `font()`) | ✓ narejeno (besedilo v WebView, npr. formule v lekciji, je še v sistemski pisavi) |
+| Videz sloga Čist | barve, robovi, pisava Instrument Sans, zavihki v istem redu | S | naravno (`theme.ts`, `font()`) | ✓ narejeno; besedilo v WebView (lekcije, klepet) ima Instrument Sans, formule pa KaTeX in `public/sirina.js` s strežnika kot splet (brez povezave MathML) |
 | Razloži ob izboru | označeno besedilo lekcije → inštruktor | S | naravno (meni izbora WebView) | ✓ narejeno |
 | Kalkulator | znanstveni, grafični, orodja, PSE (`public/graph/`) | M | WebView `/kalkulator` | ✓ narejeno med vajo; manjka še gumb v lekciji in klepetu |
 | Formule | zbirka formul (način Formule kalkulatorja) | S | dodati način `formulas` na `/kalkulator` (potrebuje `rich.js`, marked) | ✗ |
