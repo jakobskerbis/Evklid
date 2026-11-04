@@ -1497,6 +1497,7 @@ function studentUpdated(updated) {
   leaveHiddenGames();
   refreshProfileButton();
   renderState(null);
+  if (before.goal !== updated.settings.goal || before.games !== updated.settings.games) renderGoal(); // bližnjici po cilju na Učni poti
   if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
     state.pathKey = null;
     refreshModes(); // številki na gumbih Ponavljanje in Kartice za novi predmet
@@ -1635,7 +1636,9 @@ const GOAL_MODES = {
   tek: ["medal", "session.tek", "goal.mTekSub"],
   contest: ["timer", "session.contest", "goal.mContestSub"],
 };
-let modebarOrder = null; // prvotni vrstni red načinov (cilj »test« premakne Pripravo na test na prvo mesto)
+// Cilj »test« premakne Pripravo na test na prvo mesto; ob drugem cilju gre nazaj pred svojega prejšnjega soseda.
+// Le ta gumb, da ostane red, ki ga je učenec nastavil s potegom (public/vrstice.js).
+let testModeNext; // undefined: ni premaknjen; sicer gumb (ali null = konec), pred katerim je bil
 function renderGoalModes() {
   const st = state.student;
   const box = $("#goal-modes");
@@ -1656,9 +1659,16 @@ function renderGoalModes() {
   box.hidden = !list.length;
   if (first) bar.before(box);
   else bar.after(box);
-  modebarOrder ||= [...bar.children];
-  const order = s.goal === "test" ? [bar.querySelector('[data-mode="test"]'), ...modebarOrder] : modebarOrder;
-  [...new Set(order)].filter(Boolean).forEach((b) => bar.append(b));
+  const test = bar.querySelector('[data-mode="test"]');
+  if (!test) return;
+  if (s.goal === "test" && testModeNext === undefined && bar.firstElementChild !== test) {
+    testModeNext = test.nextElementSibling;
+    bar.prepend(test);
+  } else if (s.goal !== "test" && testModeNext !== undefined) {
+    if (testModeNext?.parentElement === bar && testModeNext !== test) testModeNext.before(test);
+    else bar.append(test);
+    testModeNext = undefined;
+  }
 }
 $("#goal-modes")?.addEventListener("click", (e) => {
   const k = e.target.closest("[data-gm]")?.dataset.gm;
