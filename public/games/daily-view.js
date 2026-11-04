@@ -137,7 +137,7 @@ export function openDaily(root, ctx) {
     const s = p.show;
     if (!s) return "";
     if (s.type === "seq") return `<div class="gm-dz-seq" dir="ltr">${s.items.map((x) => `<span>${esc(x)}</span>`).join("")}<span class="gm-dz-ask">?</span></div>`;
-    if (s.type === "eq") return `<div class="gm-dz-eq" dir="ltr">${esc(s.text).replace(/□/g, `<span class="gm-dz-box" aria-label="?">${esc(buf) || "&nbsp;"}</span>`)}</div>`;
+    if (s.type === "eq") return `<div class="gm-dz-eq" dir="ltr">${s.text.split(/ (?=[−+·×:=] )/).map((part) => `<span class="gm-dz-nw">${esc(part)}</span>`).join(" ").replace(/□/g, `<span class="gm-dz-box" aria-label="?">${esc(buf) || "&nbsp;"}</span>`)}</div>`;
     return `<div class="gm-dz-pyr" dir="ltr">${s.rows
       .map((r, i) => `<div>${r.map((v, j) => (i === s.ask[0] && j === s.ask[1] ? `<span class="gm-dz-ask">${esc(buf) || "?"}</span>` : `<span class="${v == null ? "gm-dz-empty" : ""}">${v == null ? "" : esc(v)}</span>`)).join("")}</div>`)
       .join("")}</div>`;
@@ -197,11 +197,13 @@ export function openDaily(root, ctx) {
           ${box ? `<span class="sr-only" aria-live="polite">${esc(t("games.yourAnswer"))}: ${esc(buf)}</span>` : `<div class="gm-dz-input" dir="ltr" aria-live="polite"><span class="sr-only">${esc(t("games.yourAnswer"))}: </span>${esc(buf) || "&nbsp;"}</div>`}
           <p class="gm-dz-msg" role="status">${esc(msg)}</p>
           ${used ? `<ul class="gm-dz-hints">${p.hints.slice(0, used).map((h, i) => `<li><b>${esc(t("dz.hintN", { n: i + 1 }))}:</b> ${tx(h)}</li>`).join("")}</ul>` : ""}
+          <div class="gm-dz-side">
           <div class="gm-dz-acts">
             <button type="button" class="secondary" data-act="hint" ${used >= MAX_HINTS ? "disabled" : ""}>${icon("lightbulb")}${esc(t("dz.hintBtn", { s: sec(HINT_MS) }))}</button>
             <button type="button" class="ghost" data-act="giveup">${icon("flag")}${esc(sure ? t("dz.giveUpSure") : t("dz.giveUp"))}</button>
           </div>
           <div class="gm-ui gm-dz-pad"><div class="gm-pad" dir="ltr">${pad()}</div></div>
+          </div>
         </div>`;
     }
     // Kdor uporablja tipkovnico (Tab), po izrisu ostane na istem gumbu (tipka, Namig, stopnja), ne skoči na vrh.

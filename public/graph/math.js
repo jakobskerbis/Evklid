@@ -184,6 +184,7 @@ export function normalize(src) {
     .replace(/÷/g, "/")
     .replace(/≤|=</g, "<=")
     .replace(/≥|=>/g, ">=")
+    .replace(/≠/g, "!=")
     .replace(/∞/g, "inf")
     .replace(/[′’]/g, "'")
     .replace(/″/g, "''")
@@ -699,7 +700,7 @@ const lift2 = (f) => (a, b) => {
 };
 const lift1 = (f) => (a) => (Array.isArray(a) ? a.map(f) : f(a));
 const truth = (v) => v === true || (typeof v === "number" && v !== 0 && !Number.isNaN(v));
-const CMP = { "<": (a, b) => a < b, ">": (a, b) => a > b, "<=": (a, b) => a <= b, ">=": (a, b) => a >= b, "=": (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b)), "!=": (a, b) => a !== b };
+const CMP = { "<": (a, b) => a < b, ">": (a, b) => a > b, "<=": (a, b) => a <= b, ">=": (a, b) => a >= b, "=": (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b)), "!=": (a, b) => !(Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b))) };
 const ADD = lift2((a, b) => a + b);
 const SUB = lift2((a, b) => a - b);
 const MUL = lift2((a, b) => a * b);
