@@ -575,6 +575,15 @@ async function chat(p, label) {
   await p.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 8000 }).catch(() => {});
   await settle(p, 300);
   await screen(p, `klepet-${label}`);
+  // Ulomki, vsote in integrali s tipk (j, 4. 11.): predogled nad poljem jih izriše kot formulo.
+  await p.fill("#input", "Koliko je (3)/(4) + ∑_(n=1)^(5) n in ∫_(0)^(1) (x^(2)) dx?");
+  await expectVisible(p, "#formula-preview .katex .mfrac", "predogled ulomka nad poljem");
+  if (!(await p.locator("#formula-preview .katex .mop").count())) throw new Error("vsota ali integral nista izrisana v predogledu");
+  await screen(p, `klepet-formule-${label}`);
+  await p.fill("#input", "");
+  await p.waitForFunction(() => document.querySelector("#formula-preview")?.hidden, null, { timeout: 3000 }).catch(() => {
+    throw new Error("predogled ostane po praznjenju polja");
+  });
   // Način v glavi se zamenja kar tam (j, 4. 11.): »Celotna rešitev«, nato nazaj na »Vodenje«.
   for (const want of ["Celotna rešitev", "Vodenje"]) {
     await click(p, '#chat-state .chip-pick:has(select[data-pick="mode"]) .dd-btn', { wait: 200 });

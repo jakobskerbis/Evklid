@@ -122,12 +122,15 @@
   body > #view-chat:not(.in-okno) .composer { padding-bottom: max(10px, calc(4px + var(--varno-sp, env(safe-area-inset-bottom, 0px)))); }
   body.tb-peek > #view-chat:not(.in-okno) .composer { padding-bottom: 10px; margin-bottom: var(--tabbar-h, 0px); }
   /* Krogi lekcije (Nazaj · 1/12 · Naprej) plavajo na dnu: odmik za varno območje, nad pokazano vrstico. */
-  body > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { padding-bottom: max(12px, calc(4px + var(--varno-sp, env(safe-area-inset-bottom, 0px)))); transition: bottom 0.22s ease; }
-  body.tb-peek > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { bottom: var(--tabbar-h, 0px); padding-bottom: 12px; }
-  /* Pokazana vrstica dvigne kroge: pogled dobi enak spodnji odmik, da konec koraka ne ostane pod krogi. */
+  body > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { padding-bottom: max(12px, calc(4px + var(--varno-sp, env(safe-area-inset-bottom, 0px)))); transition: padding-bottom 0.22s ease; }
+  body.tb-peek > #view-uci:not(.in-okno) > #view-textbook .tb-stepper { padding-bottom: 12px; }
+  /* Pokazana vrstica dvigne kroge: pogled dobi spodnji odmik v višini vrstice (konec koraka ne ostane pod krogi).
+     Pripeti krogi se že sami ustavijo nad tem odmikom, zato jim ne damo še »bottom« (prej dvojna višina: med drsenjem
+     so krogi viseli sredi besedila, j 2026-11-04). Odmik se spreminja hkrati z vrstico (0,22 s), krogi gredo z njo. */
+  body > #view-uci:not(.in-okno) > #view-textbook:has(.tb-stepper) { transition: padding-bottom 0.22s ease; }
   body.tb-peek > #view-uci:not(.in-okno) > #view-textbook:has(.tb-stepper) { padding-bottom: var(--tabbar-h, 0px); }
 }
-@media (prefers-reduced-motion: reduce) { .tabbar, .tb-stepper { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { .tabbar, .tb-stepper, #view-textbook { transition: none !important; } }
 
 /* Pogled je lahko v spodnji vrstici (npr. Tekmovanja ali NPZ in matura): takrat brez »← Jaz«. */
 .me-back[hidden] { display: none !important; }
