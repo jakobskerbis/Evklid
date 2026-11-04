@@ -284,7 +284,6 @@
   "chat.symbolsTitle": "기호: √, π, ∫, H₂O …",
   "chat.mic": "질문 말하기",
   "chat.delete": "대화 삭제",
-  "chat.confirmDelete": "이 대화를 삭제할까요?",
   "chat.hello": "안녕, {name}!",
   "chat.intro": "문제를 입력하거나 사진을 찍어 보세요. 함께 한 단계씩 풀어요.",
   "chat.idea1": "2x + 3 = 11은 어떻게 풀어?",

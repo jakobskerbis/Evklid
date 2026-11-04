@@ -621,9 +621,10 @@ function renderConversationList() {
     li.className = c.id === state.conversationId ? "active" : "";
     li.innerHTML = `<span>${escapeHtml(c.title)}</span><button title="${t("chat.delete")}" aria-label="${t("chat.delete")}">${icon("trash-2")}</button>`;
     li.querySelector("span").addEventListener("click", () => openConversation(c.id));
+    // Brisanje z enim klikom, brez potrditve (j, 4. 11.); gumb se med brisanjem onemogoči.
     li.querySelector("button").addEventListener("click", async (e) => {
       e.stopPropagation();
-      if (!confirm(t("chat.confirmDelete"))) return;
+      e.currentTarget.disabled = true;
       await api(`/api/conversations/${c.id}`, { method: "DELETE" });
       if (state.paperCtx?.conv === c.id) state.paperCtx = null; // id se lahko ponovi pri novem pogovoru
       if (state.conversationId === c.id) {

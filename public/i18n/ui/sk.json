@@ -302,7 +302,6 @@
   "chat.symbolsTitle": "Symboly: √, π, ∫, H₂O …",
   "chat.mic": "Povedz otázku",
   "chat.delete": "Vymazať rozhovor",
-  "chat.confirmDelete": "Vymazať tento rozhovor?",
   "chat.hello": "Ahoj, {name}!",
   "chat.intro": "Napíš úlohu alebo ju odfoť. Vyriešime ju spolu krok za krokom.",
   "chat.idea1": "Ako vyriešim 2x + 3 = 11?",

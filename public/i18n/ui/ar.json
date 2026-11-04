@@ -314,7 +314,6 @@
   "chat.symbolsTitle": "الرموز: √، π، ∫، H₂O …",
   "chat.mic": "قل سؤالك",
   "chat.delete": "حذف المحادثة",
-  "chat.confirmDelete": "هل تحذف هذه المحادثة؟",
   "chat.hello": "مرحبًا يا {name}!",
   "chat.intro": "اكتب تمرينًا أو صوّره. سنحلّه معًا خطوة بخطوة.",
   "chat.idea1": "كيف أحلّ 2x + 3 = 11؟",

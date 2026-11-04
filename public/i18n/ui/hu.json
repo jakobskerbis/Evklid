@@ -290,7 +290,6 @@
   "chat.symbolsTitle": "Szimbólumok: √, π, ∫, H₂O …",
   "chat.mic": "Mondd el a kérdést",
   "chat.delete": "Beszélgetés törlése",
-  "chat.confirmDelete": "Törlöd ezt a beszélgetést?",
   "chat.hello": "Szia, {name}!",
   "chat.intro": "Írj be egy feladatot, vagy fényképezd le. Együtt oldjuk meg lépésről lépésre.",
   "chat.idea1": "Hogyan oldjam meg a 2x + 3 = 11 egyenletet?",

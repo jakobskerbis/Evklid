@@ -284,7 +284,6 @@
   "chat.symbolsTitle": "符號：√, π, ∫, H₂O …",
   "chat.mic": "說出你的問題",
   "chat.delete": "刪除對話",
-  "chat.confirmDelete": "刪除這段對話？",
   "chat.hello": "你好，{name}！",
   "chat.intro": "輸入題目或拍下來。我們一起一步步解出來。",
   "chat.idea1": "怎麼解 2x + 3 = 11？",

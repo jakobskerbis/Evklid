@@ -576,6 +576,15 @@ async function chat(p, label) {
   if ((await p.locator("#messages .msg.user").count()) !== before + 1) throw new Error("tap na izbiro ne pošlje odgovora");
   if ((await p.locator("#messages .msg.user").last().textContent()).trim() !== "Preverim z vstavljanjem") throw new Error("poslano ni besedilo izbire");
   await settle(p, 300);
+  // Brisanje pogovora z enim klikom, brez potrditve (j, 4. 11.).
+  const count = await p.locator("#conversation-list li").count();
+  let asked = false;
+  const onDialog = () => (asked = true);
+  p.on("dialog", onDialog);
+  await click(p, "#conversation-list li.active button", { wait: 500 });
+  p.off("dialog", onDialog);
+  if (asked) throw new Error("brisanje pogovora še vedno sprašuje za potrditev");
+  if ((await p.locator("#conversation-list li").count()) !== count - 1) throw new Error("pogovor se z enim klikom ni izbrisal");
 }
 
 async function calculator(p, label) {

@@ -28,18 +28,11 @@ export default function Tutor() {
       setCreating(false);
     }
   };
-  const remove = (c: Conv) =>
-    Alert.alert(t("chat.confirmDelete"), c.title || "", [
-      { text: t("mob.cancel"), style: "cancel" },
-      {
-        text: t("chat.delete"),
-        style: "destructive",
-        onPress: async () => {
-          await api(`/api/conversations/${c.id}`, { method: "DELETE" }).catch(() => null);
-          setData((list) => (list || []).filter((x) => x.id !== c.id));
-        },
-      },
-    ]);
+  // Brisanje z enim dotikom, brez potrditve (kot na spletu, j 4. 11.).
+  const remove = async (c: Conv) => {
+    setData((list) => (list || []).filter((x) => x.id !== c.id));
+    await api(`/api/conversations/${c.id}`, { method: "DELETE" }).catch(() => reload());
+  };
 
   if (loading) return <Loading />;
   if (error) return <ErrorView message={error.message} onRetry={reload} retryLabel={t("mob.retry")} />;

@@ -290,7 +290,6 @@
   "chat.symbolsTitle": "Símbolos: √, π, ∫, H₂O …",
   "chat.mic": "Diz a tua pergunta",
   "chat.delete": "Apagar conversa",
-  "chat.confirmDelete": "Apagar esta conversa?",
   "chat.hello": "Olá, {name}!",
   "chat.intro": "Escreve um exercício ou tira-lhe uma foto. Vamos resolvê-lo juntos, passo a passo.",
   "chat.idea1": "Como resolvo a equação 2x + 3 = 11?",

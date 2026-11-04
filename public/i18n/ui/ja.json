@@ -284,7 +284,6 @@
   "chat.symbolsTitle": "記号：√, π, ∫, H₂O …",
   "chat.mic": "質問を話す",
   "chat.delete": "会話を削除",
-  "chat.confirmDelete": "この会話を削除しますか？",
   "chat.hello": "こんにちは、{name}さん！",
   "chat.intro": "問題を入力するか、写真を撮ってください。一緒に一歩ずつ解きましょう。",
   "chat.idea1": "2x + 3 = 11 はどう解くの？",

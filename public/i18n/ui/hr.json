@@ -296,7 +296,6 @@
   "chat.symbolsTitle": "Simboli: √, π, ∫, H₂O …",
   "chat.mic": "Izgovori pitanje",
   "chat.delete": "Izbriši razgovor",
-  "chat.confirmDelete": "Izbrisati ovaj razgovor?",
   "chat.hello": "Bok, {name}!",
   "chat.intro": "Napiši zadatak ili ga fotografiraj. Zajedno ćemo ga riješiti korak po korak.",
   "chat.idea1": "Kako riješiti jednadžbu 2x + 3 = 11?",
