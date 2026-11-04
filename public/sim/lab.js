@@ -53,7 +53,8 @@ export function dataTable(cols, { empty = "Še ni meritev. Odčitaj merilnik in 
     none.hidden = rows.length > 0;
     table.hidden = rows.length === 0;
   };
-  el.add = (r) => (rows.push(r), draw(), el.querySelector("tbody tr:last-child")?.scrollIntoView?.({ block: "nearest" }));
+  // quiet: samodejni zapis (vsakih 30 s) premakne le okvir tabele, ne cele strani, da stran ne skače med delom.
+  el.add = (r, { quiet = false } = {}) => (rows.push(r), draw(), quiet ? (el.scrollTop = el.scrollHeight) : el.querySelector("tbody tr:last-child")?.scrollIntoView?.({ block: "nearest" }));
   el.clear = () => ((rows.length = 0), draw());
   el.rows = rows;
   draw();
@@ -106,6 +107,8 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
         }
       const clipped = S.pts.filter((p) => !inside(p)).length;
       if (!S.label) return;
+      // Samo premica brez točk (npr. izračunana vrednost): en gumb z imenom, brez praznega gumba za točke.
+      if (S.line && !S.pts.length) return legend.append(chip(`fit:${id}`, h("i", { class: `lab-sym line bg-${S.cls}`, "aria-hidden": "true" }), S.label));
       legend.append(chip(`pt:${id}`, h("i", { class: `lab-sym ${S.shape === "^" ? "tri" : "dot"} bg-${S.cls}`, "aria-hidden": "true" }), S.label + (clipped ? ` (${clipped} izven grafa)` : "")));
       if (S.line) legend.append(chip(`fit:${id}`, h("i", { class: `lab-sym line bg-${S.cls}`, "aria-hidden": "true" }), t("sim.layer.fit", { name: S.label })));
     });
