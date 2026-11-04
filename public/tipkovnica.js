@@ -318,20 +318,24 @@ function abcHtml() {
   };
   const letter = (c) => {
     const v = varsFor(c);
-    return key(up(c), { a: "char", v: c }, { hint: v[0] ? up(v[0]) : "" });
+    const show = digitFor(lay.rows, c) || !lay.hints || lay.hints.includes(c);
+    return key(up(c), { a: "char", v: c }, { hint: v[0] && show ? up(v[0]) : "" });
   };
   const [r1, r2, r3] = lay.rows;
+  // krajša vrsta je na sredini (kot Gboard: a–l zamaknjene za pol tipke), tipke ostanejo enako široke kot zgoraj
+  const pad = (r) => (r.length < r1.length ? `<span class="tk-pad" style="flex-grow:${(r1.length - r.length) / 2}" aria-hidden="true"></span>` : "");
   const shift = lay.caseless ? "" : key("⇧", { a: "sh" }, { cls: `fn w15 shift${S.shift ? " on" : ""}${S.shift === 2 ? " lock" : ""}`, aria: t("tk.shift") });
   const email = /\bemail\b/.test(String(S.field?.getAttribute("autocomplete") || "") + " " + String(orig(S.field) || ""));
   const slot = email ? key("@", { a: "lit", v: "@" }, { cls: "fn" }) : lay.globe ? key("🌐", { a: "globe" }, { cls: "fn", aria: t("tk.globe") }) : key("-", { a: "ins", v: "-" }, { cls: "fn" });
-  const toNum = S.layers.some((l) => layerId(l) === "num") ? key("123", { a: "layer", v: "num" }, { cls: "fn w15 sm" }) : "";
+  const toNum = S.layers.some((l) => layerId(l) === "num") ? key("?123", { a: "layer", v: "num" }, { cls: "fn w15 sm", aria: "123" }) : "";
   const comma = key(lay.comma, { a: "char", v: lay.comma }, { hint: lay.variants[lay.comma]?.[0] || "" });
   const dot = key(".", { a: "char", v: "." }, { hint: lay.variants["."]?.[0] || "" });
   // Vrstice so vedno od leve proti desni (tudi arabščina: ض levo zgoraj kot na telefonu; tipkovnica.css).
+  // spodnja vrsta kot Gboard (j, 4. 11.): ?123 , [-|@|🌐] presledek . Enter
   return `<div class="tk-row">${r1.map(letter).join("")}</div>
-    <div class="tk-row">${r2.map(letter).join("")}</div>
+    <div class="tk-row">${pad(r2)}${r2.map(letter).join("")}${pad(r2)}</div>
     <div class="tk-row">${shift}${r3.map(letter).join("")}${bsKey()}</div>
-    <div class="tk-row">${toNum}${slot}${comma}${spaceKey()}${dot}${goKey()}</div>`;
+    <div class="tk-row">${toNum}${comma}${slot}${spaceKey()}${dot}${goKey()}</div>`;
 }
 
 function numHtml() {

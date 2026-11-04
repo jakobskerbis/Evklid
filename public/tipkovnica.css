@@ -71,6 +71,8 @@
 .tk-k.go.txt { padding: 0 6px; }
 .tk-k.shift.on { background: var(--surface); color: var(--accent); }
 .tk-k.shift.lock { box-shadow: inset 0 -3px 0 var(--accent); }
+/* prazen rob krajše vrste črk (a–l kot Gboard); flex-grow je v slogu elementa (pol tipke na vsaki strani) */
+.tk-pad { flex: 0 1 0; min-width: 0; }
 .tk-k.w15 { flex-grow: 1.5; } .tk-k.w2 { flex-grow: 2.2; } .tk-k.w3 { flex-grow: 3; } .tk-k.w5 { flex-grow: 5; }
 .tk-grid .tk-k { width: 100%; }
 /* poteg po tipki (različice, preslednica) ne premika strani; v mreži, ki se pomika, ostane navpični poteg */
