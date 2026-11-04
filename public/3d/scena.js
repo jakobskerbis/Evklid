@@ -6,6 +6,7 @@
 import * as THREE from "/vendor/three/build/three.module.js";
 import { OrbitControls } from "/vendor/three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "/vendor/three/examples/jsm/environments/RoomEnvironment.js";
+import { zavrtiOkoli } from "./vrtenje.js";
 
 export { THREE };
 
@@ -130,6 +131,61 @@ export function ustvariSceno(el, opts = {}) {
   let dirty = true;
   const narisi = () => (dirty = true);
   controls.addEventListener("change", narisi);
+
+  // Prosto vrtenje (opts.prostoVrtenje, j 4. 11.: »okoli točke, ne osi«): model se obrača okoli središča v vse smeri
+  // kot krogla v roki (brez zaklenjene navpične osi in brez ustavljanja na polu). Kamera kroži okoli controls.target,
+  // njen »gor« se vrti z njo; OrbitControls ostane za povečavo in premik (dva prsta, desna tipka).
+  const prosto = opts.prostoVrtenje === true;
+  const vztr = { x: 0, y: 0 }; // hitrost po spustu (rad/s), pojema
+  function zavrti(kotX, kotY) {
+    zavrtiOkoli(THREE, camera.position, camera.up, controls.target, kotX, kotY);
+    camera.lookAt(controls.target);
+    narisi();
+  }
+  if (prosto) {
+    controls.enableRotate = false;
+    const prsti = new Map();
+    let zadnjiCas = 0;
+    canvas.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      prsti.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      vztr.x = vztr.y = 0;
+      zadnjiCas = performance.now();
+    });
+    canvas.addEventListener("pointermove", (e) => {
+      const p = prsti.get(e.pointerId);
+      if (!p || prsti.size !== 1 || let_) return; // dva prsta: povečava (OrbitControls)
+      const k = (2 * Math.PI * controls.rotateSpeed) / Math.max(1, canvas.clientHeight);
+      const kx = (e.clientX - p.x) * k;
+      const ky = (e.clientY - p.y) * k;
+      p.x = e.clientX;
+      p.y = e.clientY;
+      zavrti(kx, ky);
+      const now = performance.now();
+      const dt = Math.max(0.008, (now - zadnjiCas) / 1000);
+      zadnjiCas = now;
+      vztr.x = kx / dt;
+      vztr.y = ky / dt;
+    });
+    const spusti = (e) => {
+      prsti.delete(e.pointerId);
+      // Zastarel poteg (prst je obstal pred spustom) ne zavrti naprej.
+      if (!gib || performance.now() - zadnjiCas > 90) vztr.x = vztr.y = 0;
+    };
+    canvas.addEventListener("pointerup", spusti);
+    canvas.addEventListener("pointercancel", spusti);
+  }
+  function korakVztrajnosti(dt) {
+    if (!prosto || (!vztr.x && !vztr.y)) return false;
+    zavrti(vztr.x * dt, vztr.y * dt);
+    const f = Math.exp(-dt * 6);
+    vztr.x *= f;
+    vztr.y *= f;
+    if (Math.hypot(vztr.x, vztr.y) < 0.02) vztr.x = vztr.y = 0;
+    return true;
+  }
+  // Ponastavitev: kamera spet pokonci (opts pokonci pri poleti).
+  const pokonciUp = new THREE.Vector3(0, 1, 0);
 
   // Učinki samo pri visoki kakovosti (zaostrovanje okluzije v pregibih), naložijo se po potrebi. Vrstni red:
   // 1) neprosojni predmeti v ciljno sliko, 2) GTAO iz njihove globine in normal, 3) okluzija se zmnoži v isto sliko,
@@ -270,20 +326,24 @@ export function ustvariSceno(el, opts = {}) {
     const vodo = Math.atan(Math.tan(navp) * camera.aspect);
     return (polmer / Math.sin(Math.min(navp, vodo))) * 1.08;
   };
-  function poleti(sredisce, polmer, { smer = null, trajanje = 0.85, razdalja = null } = {}) {
+  function poleti(sredisce, polmer, { smer = null, trajanje = 0.85, razdalja = null, pokonci = false } = {}) {
     const cilj = new THREE.Vector3().copy(sredisce);
+    vztr.x = vztr.y = 0;
+    const odUp = camera.up.clone();
+    const doUp = pokonci ? pokonciUp.clone() : odUp.clone();
     const s = (smer ? new THREE.Vector3().copy(smer) : camera.position.clone().sub(controls.target)).normalize();
     const d = razdalja ?? fitRazdalja(polmer);
     const poz = cilj.clone().addScaledVector(s, d);
     if (!gib || trajanje <= 0) {
       controls.target.copy(cilj);
       camera.position.copy(poz);
+      camera.up.copy(doUp);
       let_ = null;
       controls.update();
       narisi();
       return;
     }
-    let_ = { t: 0, trajanje, odC: controls.target.clone(), doC: cilj, odP: camera.position.clone(), doP: poz };
+    let_ = { t: 0, trajanje, odC: controls.target.clone(), doC: cilj, odP: camera.position.clone(), doP: poz, odUp, doUp };
     narisi();
   }
   function korakLeta(dt) {
@@ -299,10 +359,12 @@ export function ustvariSceno(el, opts = {}) {
     const lb = b.length();
     const smer = a.normalize().lerp(b.normalize(), e).normalize();
     camera.position.copy(controls.target).addScaledVector(smer, la + (lb - la) * e);
+    if (let_.odUp && !let_.odUp.equals(let_.doUp)) camera.up.lerpVectors(let_.odUp, let_.doUp, e).normalize();
     if (let_.t >= 1) let_ = null;
     return true;
   }
   const obrni = (az, pol) => {
+    if (prosto) return zavrti(az, pol);
     controls.rotateLeft(az);
     controls.rotateUp(pol);
     controls.update();
@@ -526,6 +588,7 @@ export function ustvariSceno(el, opts = {}) {
     if (++stevec % 60 === 0 && !el.isConnected) return unici();
     let risi = dirty;
     if (korakLeta(dt)) risi = true;
+    if (korakVztrajnosti(dt)) risi = true;
     if (controls.update(dt)) risi = true;
     for (const f of koraki) if (f(dt, now / 1000) !== false) risi = true;
     if (stalno > 0) risi = true;
