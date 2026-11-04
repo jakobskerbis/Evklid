@@ -3108,6 +3108,8 @@
   "a3.visible": "可见结构：{n}",
   "a3.showAll": "全部显示",
   "a3.zoomIn": "放大",
+  "a3.rotFree": "全方向旋转（切换为竖直旋转）",
+  "a3.rotUpright": "竖直旋转（切换为全方向旋转）",
   "a3.zoomOut": "缩小",
   "a3.reset": "重置",
   "a3.compass": "观察方向",

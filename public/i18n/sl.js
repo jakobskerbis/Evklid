@@ -3194,6 +3194,8 @@ export default {
   "a3.visible": "Vidne strukture: {n}",
   "a3.showAll": "Pokaži vse",
   "a3.zoomIn": "Približaj",
+  "a3.rotFree": "Vrtenje v vse smeri (preklopi na pokončno)",
+  "a3.rotUpright": "Pokončno vrtenje (preklopi na vse smeri)",
   "a3.zoomOut": "Oddalji",
   "a3.reset": "Ponastavi",
   "a3.compass": "Smer pogleda",

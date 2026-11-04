@@ -3108,6 +3108,8 @@
   "a3.visible": "表示中の構造：{n}",
   "a3.showAll": "すべて表示",
   "a3.zoomIn": "拡大",
+  "a3.rotFree": "全方向に回転（縦回転に切り替え）",
+  "a3.rotUpright": "縦回転（全方向に切り替え）",
   "a3.zoomOut": "縮小",
   "a3.reset": "リセット",
   "a3.compass": "視点の向き",

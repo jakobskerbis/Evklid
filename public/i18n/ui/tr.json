@@ -3131,6 +3131,8 @@
   "a3.visible": "Görünen yapılar: {n}",
   "a3.showAll": "Tümünü göster",
   "a3.zoomIn": "Yakınlaştır",
+  "a3.rotFree": "Her yöne döndür (dik moda geç)",
+  "a3.rotUpright": "Dik döndürme (her yöne geç)",
   "a3.zoomOut": "Uzaklaştır",
   "a3.reset": "Sıfırla",
   "a3.compass": "Bakış yönü",

@@ -3134,6 +3134,8 @@
   "a3.visible": "Structures visibles : {n}",
   "a3.showAll": "Tout afficher",
   "a3.zoomIn": "Zoomer",
+  "a3.rotFree": "Rotation libre (passer en rotation verticale)",
+  "a3.rotUpright": "Rotation verticale (passer en rotation libre)",
   "a3.zoomOut": "Dézoomer",
   "a3.reset": "Réinitialiser",
   "a3.compass": "Direction de vue",

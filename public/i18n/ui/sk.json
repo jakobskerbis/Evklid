@@ -3187,6 +3187,8 @@
   "a3.visible": "Viditeľné štruktúry: {n}",
   "a3.showAll": "Zobraziť všetko",
   "a3.zoomIn": "Priblížiť",
+  "a3.rotFree": "Otáčanie všetkými smermi (prepnúť na zvislé)",
+  "a3.rotUpright": "Zvislé otáčanie (prepnúť na všetky smery)",
   "a3.zoomOut": "Oddialiť",
   "a3.reset": "Obnoviť",
   "a3.compass": "Smer pohľadu",

@@ -3133,6 +3133,8 @@
   "a3.visible": "Visible structures: {n}",
   "a3.showAll": "Show all",
   "a3.zoomIn": "Zoom in",
+  "a3.rotFree": "Rotate in all directions (switch to upright)",
+  "a3.rotUpright": "Upright rotation (switch to all directions)",
   "a3.zoomOut": "Zoom out",
   "a3.reset": "Reset",
   "a3.compass": "View direction",

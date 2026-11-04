@@ -3189,6 +3189,8 @@
   "a3.visible": "Widoczne struktury: {n}",
   "a3.showAll": "Pokaż wszystko",
   "a3.zoomIn": "Przybliż",
+  "a3.rotFree": "Obrót we wszystkich kierunkach (przełącz na pionowy)",
+  "a3.rotUpright": "Obrót pionowy (przełącz na wszystkie kierunki)",
   "a3.zoomOut": "Oddal",
   "a3.reset": "Resetuj",
   "a3.compass": "Kierunek widoku",

@@ -3133,6 +3133,8 @@
   "a3.visible": "Struktura të dukshme: {n}",
   "a3.showAll": "Shfaq të gjitha",
   "a3.zoomIn": "Zmadho",
+  "a3.rotFree": "Rrotullim në të gjitha drejtimet (kalo në vertikal)",
+  "a3.rotUpright": "Rrotullim vertikal (kalo në të gjitha drejtimet)",
   "a3.zoomOut": "Zvogëlo",
   "a3.reset": "Rivendos",
   "a3.compass": "Drejtimi i pamjes",

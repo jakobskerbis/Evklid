@@ -3,7 +3,7 @@
 // kompas smeri, Nastavitve pogleda), videz Evklidov. Vsaka plast je razdeljena po razredih tkiva v nekaj
 // BatchedMesh (en klic risanja na razred), zato je okostje z organi okoli 15 klicev risanja namesto 400.
 // Izbran del se nariše posebej (sij), ostali potemnijo; rentgen naredi vse ostalo prosojno steklo.
-import { THREE, ustvariSceno, kakovostNaprave } from "./scena.js";
+import { THREE, ustvariSceno, kakovostNaprave, poveziGumbVrtenja } from "./scena.js";
 import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "/vendor/three/examples/jsm/libs/meshopt_decoder.module.js";
 import { tkivo, ustvariMaterial } from "./tkiva.js";
@@ -146,7 +146,8 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   const btnManj = gumb("a3-krog", icon("zoom-out"), t("a3.zoomOut"));
   const btnVec = gumb("a3-krog", icon("zoom-in"), t("a3.zoomIn"));
   const btnPon = gumb("a3-krog", icon("rotate-ccw"), t("a3.reset"));
-  povecava.append(btnManj, btnVec, btnPon);
+  const btnVrtenje = gumb("a3-krog", "", "");
+  povecava.append(btnVrtenje, btnManj, btnVec, btnPon);
   vrsta3.append(levo3, povecava);
   vrh.append(glava, vrsta2, vrsta3);
 
@@ -368,7 +369,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   function pogled(smer, { trajanje = 0.7, cilj = null, polmer = null } = {}) {
     const c = cilj || kit.controls.target.clone();
     const d = polmer ? kit.fitRazdalja(polmer) : kit.camera.position.distanceTo(kit.controls.target);
-    kit.poleti(c, polmer || 1, { smer: smer.clone().normalize(), razdalja: d, trajanje });
+    kit.poleti(c, polmer || 1, { smer: smer.clone().normalize(), razdalja: d, trajanje, pokonci: true });
   }
   ponastaviPogled(0);
 
@@ -1564,6 +1565,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   btnBrskaj.addEventListener("click", () => (odprtList === "brskaj" ? zapriList() : brskaj()));
   btnNastavitve.addEventListener("click", () => (odprtList === "nastavitve" ? zapriList() : nastavitve()));
   btnUci.addEventListener("click", () => (odprtList === "uci" ? zapriList() : uci()));
+  poveziGumbVrtenja(btnVrtenje, kit, icon, t);
   btnManj.addEventListener("click", () => kit.priblizaj(1 / 1.35));
   btnVec.addEventListener("click", () => kit.priblizaj(1.35));
   btnPon.addEventListener("click", () => {

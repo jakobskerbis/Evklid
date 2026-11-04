@@ -87,3 +87,15 @@ test("free rotation turns the camera over the pole around the target, keeping di
   const kot = Math.acos(new THREE.Vector3(0, 0, 1).dot(p3.clone().normalize()));
   assert.ok(Math.abs(kot - (2 * Math.PI - 4)) < 1e-6, `turned 4 rad over the pole, angle from start ${kot}`);
 });
+
+test("every 3D stage (viewer and atlas) has the rotation mode button, with strings in every language", () => {
+  const scena = fs.readFileSync(path.join(D3, "scena.js"), "utf8");
+  assert.match(scena, /export function poveziGumbVrtenja/);
+  assert.match(scena, /nacinVrtenja,/, "kit exposes nacinVrtenja");
+  for (const f of ["pregledovalnik.js", "atlas.js"]) assert.match(fs.readFileSync(path.join(D3, f), "utf8"), /poveziGumbVrtenja\(btnVrtenje, kit, icon, t\)/, f);
+  const ui = path.join(ROOT, "public", "i18n", "ui");
+  for (const k of ["a3.rotFree", "a3.rotUpright"]) {
+    assert.ok(sl[k], `sl ${k}`);
+    for (const f of fs.readdirSync(ui)) assert.ok(JSON.parse(fs.readFileSync(path.join(ui, f), "utf8"))[k], `${f} ${k}`);
+  }
+});
