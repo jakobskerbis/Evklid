@@ -6,7 +6,7 @@
 // - Odjava na spletu (»/?odjava=1«) odjavi tudi aplikacijo; povezave na druge strani odpre brskalnik.
 // - Vrstici telefona (ura zgoraj, gumbi spodaj) dobita barvo roba strani, tudi ko učenec slog zamenja.
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, BackHandler, Platform, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, BackHandler, Linking, Platform, Pressable, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -129,6 +129,8 @@ export default function Web() {
               if (req.isTopFrame === false) return true;
               if (req.url.startsWith(ORIGIN + "/") || req.url === ORIGIN || /^(about|data|blob):/.test(req.url)) return true;
               if (/^https?:/.test(req.url)) WebBrowser.openBrowserAsync(req.url).catch(() => {});
+              // mailto: (zasebnost, povabilo staršem), tel: … odpre sistem (originWhitelist "*" jih ne odpre sam).
+              else if (/^(mailto|tel|sms):/i.test(req.url)) Linking.openURL(req.url).catch(() => {});
               return false;
             }}
             onLoadEnd={() => setLoading(false)}

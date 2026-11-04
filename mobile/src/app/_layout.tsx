@@ -75,11 +75,12 @@ function Root() {
     return () => sub.remove();
   }, [signedIn]);
 
-  // Po prijavi (in ob zagonu prijavljene aplikacije) se odpre spletna stran.
+  // Po prijavi (in ob zagonu prijavljene aplikacije) se odpre spletna stran; tudi po »Nadaljuj tukaj« (epoch
+  // znova izriše Stack, ki se sicer odpre na prvem zaslonu, naravni učni poti).
   // fontsDone: Stack je že izrisan (prej navigacija ne gre).
   useEffect(() => {
     if (ready && fontsDone && signedIn) router.replace("/web");
-  }, [ready, fontsDone, signedIn]);
+  }, [ready, fontsDone, signedIn, epoch]);
 
   if (!ready || !fontsDone) return null;
   // Kam gre zaščiten zaslon, ki ga ni mogoče odpreti. Brez tega Expo Router izbere prvi prosti zaslon
