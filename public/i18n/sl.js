@@ -1896,6 +1896,11 @@ export default {
   "goal.remWhen": "danes ob 12.00",
   "goal.remStart": "Začni današnji trening",
   "goal.remLater": "Kasneje",
+  "goal.modes": "Za tvoj cilj",
+  "goal.mChatSub": "Vprašaj, ko se zatakneš",
+  "goal.mTextbookSub": "Lekcije po poglavjih",
+  "goal.mTekSub": "Težje naloge po temah",
+  "goal.mContestSub": "Na čas, kot pravo tekmovanje",
   // urnik (public/schedule.js)
   "sch.title": "Urnik",
   "sch.meSub": "Ure v tednu in datumi testov",

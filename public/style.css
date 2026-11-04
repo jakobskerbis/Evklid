@@ -903,6 +903,7 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 
 /* ---------- načini učenja (kartice na učni poti) ---------- */
 .modes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 16px; }
+.modes.goal-modes { grid-template-columns: repeat(2, 1fr); } /* bližnjici po cilju (app.js → renderGoalModes) */
 .modes button {
   display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: start; min-height: 0;
   padding: 14px; border: 1.5px solid var(--border); border-radius: var(--radius); background: var(--surface);
