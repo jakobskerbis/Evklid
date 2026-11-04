@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Težišče in stabilnost
+  - prijemališče celotne teže
+  - stabilno nad podporno ploskvijo
+- Mamljiva bližnjica
+  - sredina obrisa je napačna
+  - L-lik: $(20, 15)$ namesto $(30, 25)\,\text{mm}$
+- Utežena sredina
+  - $x_T = \sum A_i x_i / \sum A_i$
+  - statični moment $A_i x_i$ v mm³
+  - napaka: navadno povprečje središč
+- Znana težišča
+  - trikotnik $h/3$, polkrog $4r/(3\pi)$
+  - polkrogla $3r/8$, stožec $h/4$
+  - simetrijska os vsebuje težišče
+- Luknje in telesa
+  - luknja ima negativno ploščino
+  - telesa: uteži z $V_i$ ali $m_i$
+- Pappus-Guldin
+  - površina $A = 2\pi r_T s$
+  - prostornina $V = 2\pi r_T A$
+  - napaka: razdalja roba namesto težišča

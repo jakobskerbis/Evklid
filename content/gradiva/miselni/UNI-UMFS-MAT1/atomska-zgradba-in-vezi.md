@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Valenčni elektroni
+  - zunanja lupina odloča o vezi
+  - elektronegativnost $\chi$: Na $0{,}93$, O $3{,}44$
+- Kovalentna vez
+  - skupni par med dvema atomoma
+  - usmerjena: diamant, Si, $\mathrm{SiO_2}$
+- Ionska vez
+  - elektron preide, $\mathrm{Na^+}$ in $\mathrm{Cl^-}$
+  - neusmerjena, $F = \frac{k z_1 z_2 e^2}{r^2}$
+  - trdna snov ne prevaja, ioni so ujeti
+- Kovinska vez
+  - ionski ostanki v elektronskem oblaku
+  - prosti elektroni prevajajo tok
+- Lastnosti iz vezi
+  - kovina je kovna, oblak po zdrsu ostane
+  - ionski kristal se razkolje, enaki naboji
+  - napaka: močna vez ni žilavost
+- Mešane vezi
+  - $p_\mathrm{i} = 1 - e^{-0{,}25(\Delta\chi)^2}$
+  - $\mathrm{Al_2O_3}$ okoli $57\,\%$ ionska
+- Sekundarne vezi
+  - med verigami polimera, šibke
+  - PVC se zmehča pod $150\,^\circ\mathrm{C}$

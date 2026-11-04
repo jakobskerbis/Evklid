@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Napetost je odvisna od ploskve
+  - $\sigma = F/A$ velja le na prečnem prerezu
+  - nateg pod $45^\circ$ skriva strig
+- Ravninsko stanje
+  - $\sigma_x$, $\sigma_y$, $\tau_{xy}$; v smeri $z$ nič
+  - nateg pozitiven
+- Transformacija napetosti
+  - formule s kotom $2\varphi$
+  - $\sigma_\varphi + \sigma_{\varphi+90^\circ} = \sigma_x + \sigma_y$
+- Glavne napetosti
+  - $\sigma_{1,2} = \sigma_s \pm R$
+  - na glavnih ploskvah ni striga
+  - $\tan 2\varphi_0 = 2\tau_{xy}/(\sigma_x - \sigma_y)$
+- Največji strig
+  - $\tau_{\max} = R$
+  - pod $45^\circ$ od glavnih smeri
+- Mohrov krog
+  - središče $\sigma_s$, polmer $R$
+  - točki $X(\sigma_x, \tau_{xy})$ in $Y(\sigma_y, -\tau_{xy})$
+  - napaka: odmeriti $\varphi$ namesto $2\varphi$
+- Spiralni zlom
+  - čisti strig: $\sigma_1 = \tau$ pod $45^\circ$
+  - krhka kost poči po vijačnici

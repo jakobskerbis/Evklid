@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Poves in zasuk
+  - poves $w(x)$, pozitiven navzdol
+  - zasuk $\varphi = w'$ v radianih
+- Ukrivljenost
+  - $1/\rho = M/(EI)$
+  - $EI$ je upogibna togost
+- Diferencialna enačba
+  - $EI\, w'' = -M(x)$
+  - napaka: napačen predznak, poves navzgor
+- Robni pogoji
+  - vpetje: $w = 0$, $w' = 0$
+  - členek: samo $w = 0$
+- Konzola s silo
+  - $w_{\max} = FL^3/(3EI)$
+  - $\varphi_{\max} = FL^2/(2EI)$
+  - dvojna dolžina, osemkrat večji poves
+- Prostoležeči nosilec
+  - $w(L/2) = 5qL^4/(384EI)$
+  - $\varphi(0) = qL^3/(24EI)$
+- Enote in velikost
+  - vse v N, m, Pa, $\mathrm{m^4}$
+  - poves premo sorazmeren s silo

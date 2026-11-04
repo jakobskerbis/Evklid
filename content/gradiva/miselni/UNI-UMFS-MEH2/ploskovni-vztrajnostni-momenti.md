@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Razporeditev materiala
+  - ista ploščina, različna togost
+  - ravnilo pokonci $100$-krat bolj togo
+- Vztrajnostni moment
+  - $I_y = \int_A z^2\,\mathrm{d}A$, vedno pozitiven
+  - pravokotnik $I = \dfrac{b h^3}{12}$, enota $\mathrm{mm^4}$
+  - napaka: zamenjava $I_y$ in $I_z$
+- Steinerjev izrek
+  - $I_y = I_{y_T} + a^2 A$
+  - najprej skupno težišče, nato vsak del
+  - napaka: vsota brez členov $a^2 A$
+- Deviacijski moment
+  - $I_{yz} = \int_A y z\,\mathrm{d}A$, lahko negativen
+  - simetrijska os da $I_{yz} = 0$
+- Glavne osi
+  - $I_{1,2} = I_s \pm R$
+  - $\tan 2\varphi_0 = \dfrac{2 I_{yz}}{I_z - I_y}$
+  - preizkus: katera os nosi $I_1$
+- Odpornostni moment
+  - $W = \dfrac{I}{e_{\max}}$, $\sigma_{\max} = \dfrac{M}{W}$
+  - pravokotnik $W = \dfrac{b h^2}{6}$
+  - nesimetričen prerez: merodajen manjši $W$
