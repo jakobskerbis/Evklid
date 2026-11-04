@@ -71,6 +71,9 @@ const periodTex = (b) => {
   return d === 1 ? `${n === 1 ? "" : n}\\pi` : `\\frac{${n === 1 ? "" : n}\\pi}{${d}}`;
 };
 
+// točka (x, y); pri decimalnih vejicah ločimo koordinati s podpičjem: T(1,5; −1)
+const pt = (x, y) => (/,/.test(x + y) ? `(${x}; ${y})` : `(${x}, ${y})`);
+
 // Ničle polinoma kot [x, stopnja]; drsnika na istem x se združita: (x + 2)(x + 2) → (x + 2)², stopnji se seštejeta.
 const polyRoots = (P) => {
   const out = [];
@@ -98,8 +101,8 @@ const PRESETS = {
     info: (P) => {
       const b = -2 * P.a * P.p, c = P.a * P.p * P.p + P.q;
       const D = b * b - 4 * P.a * c;
-      return `<p>Teme <b>T(${fmt(P.p)}, ${fmt(P.q)})</b>, simetrijska os x = ${fmt(P.p)}. ${P.a > 0 ? "a > 0: parabola je odprta navzgor, teme je najnižja točka." : P.a < 0 ? "a < 0: parabola je odprta navzdol, teme je najvišja točka." : "a = 0: to ni več kvadratna funkcija."} ${Math.abs(P.a) > 1 ? "|a| > 1: ožja od y = x²." : Math.abs(P.a) < 1 && P.a ? "|a| < 1: širša od y = x²." : ""}</p>
-        <p>${P.a ? `Splošna oblika: ${tex(`f(x) = ${term(P.a, "x^2", true)}${term(b, "x")}${term(c)}`)}. ` : ""}Presečišče z osjo y: (0, ${fmt(c)}). ${P.a ? (D > 0 ? `Ničli: ${fmt(P.p - Math.sqrt(-P.q / P.a))} in ${fmt(P.p + Math.sqrt(-P.q / P.a))}.` : D === 0 ? `Ena dvojna ničla: ${fmt(P.p)}.` : "Ničel ni: parabola ne seka osi x.") : ""}</p>
+      return `<p>Teme <b>T${pt(fmt(P.p), fmt(P.q))}</b>, simetrijska os x = ${fmt(P.p)}. ${P.a > 0 ? "a > 0: parabola je odprta navzgor, teme je najnižja točka." : P.a < 0 ? "a < 0: parabola je odprta navzdol, teme je najvišja točka." : "a = 0: to ni več kvadratna funkcija."} ${Math.abs(P.a) > 1 ? "|a| > 1: ožja od y = x²." : Math.abs(P.a) < 1 && P.a ? "|a| < 1: širša od y = x²." : ""}</p>
+        <p>${P.a ? `Splošna oblika: ${tex(`f(x) = ${term(P.a, "x^2", true)}${term(b, "x")}${term(c)}`)}. ` : ""}Presečišče z osjo y: ${pt("0", fmt(c))}. ${P.a ? (D > 0 ? `Ničli: ${fmt(P.p - Math.sqrt(-P.q / P.a))} in ${fmt(P.p + Math.sqrt(-P.q / P.a))}.` : D === 0 ? `Ena dvojna ničla: ${fmt(P.p)}.` : "Ničel ni: parabola ne seka osi x.") : ""}</p>
         <p class="muted">Zaloga vrednosti: ${P.a > 0 ? `[${fmt(P.q)}, ∞)` : P.a < 0 ? `(−∞, ${fmt(P.q)}]` : "{" + fmt(P.q) + "}"}. Parameter p premakne graf vodoravno, q navpično.</p>`;
     },
     tryText: "Kaj naredi parameter p? Zakaj se pri p = 2 graf premakne v desno, čeprav v oklepaju piše x − 2?",
@@ -210,7 +213,7 @@ const PRESETS = {
       dot(svg, A, P.p, 1 + P.q, "c", "", "Točka (p, 1 + q)");
     },
     info: (P) => Math.abs(P.a - 1) < 1e-9 ? `<p>a = 1: 1<sup>x − p</sup> = 1 za vsak x, zato je f(x) = ${fmt(1 + P.q)} konstantna funkcija, ni eksponentna. Graf je vodoravna premica, asimptote ni.</p>` : `<p>${P.a > 1 ? "a > 1: funkcija <b>narašča</b> (eksponentna rast)." : "0 < a < 1: funkcija <b>pada</b> (eksponentno upadanje)."} Vodoravna asimptota je y = ${fmt(P.q)} (rdeča črta): graf se ji približuje, a je ne doseže.</p>
-      <p>Graf gre skozi (${fmt(P.p)}, ${fmt(1 + P.q)}), ker je a⁰ = 1. Zaloga vrednosti: (${fmt(P.q)}, ∞).</p>
+      <p>Graf gre skozi ${pt(fmt(P.p), fmt(1 + P.q))}, ker je a⁰ = 1. Zaloga vrednosti: (${fmt(P.q)}, ∞).</p>
       <p class="muted">Ko se x poveča za 1, se vrednost a<sup>x − p</sup> pomnoži z a = ${fmt(P.a, 1)}: ${[0, 1, 2, 3].map((k) => fmt(P.a ** k, 3)).join("; ")}; …</p>`,
     tryText: "Primerjaj a = 2 in a = 0,5. Kako sta grafa povezana? (Namig: zrcaljenje.)",
   },
@@ -284,9 +287,10 @@ const PRESETS = {
   sinus: {
     params: [["A", 0.5, 3, 0.5, 1], ["b", 0.5, 3, 0.5, 1], ["c", -PI, PI, PI / 12, 0], ["d", -2, 2, 0.5, 0]],
     fmtParam: { c: piTxt },
-    f: (x, P) => P.A * Math.sin(P.b * (x - P.c)) + P.d,
+    // graf le na [−2π, 2π]: v robnem pasu bi krivulja prečrtala minus pri oznaki −2π
+    f: (x, P) => (Math.abs(x) > 2 * PI + 1e-9 ? NaN : P.A * Math.sin(P.b * (x - P.c)) + P.d),
     gName: "y = sin x",
-    g: (x) => Math.sin(x),
+    g: (x) => (Math.abs(x) > 2 * PI + 1e-9 ? NaN : Math.sin(x)),
     // malo širše od [−2π, 2π], da oznaka 2π ni pod puščico; brez ±3π/2, da se oznake na telefonu ne prekrivajo
     win: [-2 * PI - 0.4, 2 * PI + 0.4, -4, 4],
     xStep: PI / 2,
@@ -853,6 +857,8 @@ export function kompleksna(el) {
   const mul = (a, b) => [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]];
   // 2 + i namesto 2 + 1i
   const ztex = (c) => `${T(c[0])} ${c[1] < 0 ? "-" : "+"} ${T(Math.abs(c[1])) === "1" ? "" : T(Math.abs(c[1]))}i`;
+  // isto v besedilu: decimalna vejica in pravi minus (−0,5 − 0,5i)
+  const ztxt = (c) => ztex(c).replace(/\{,\}/g, ",").replace(/-/g, "−");
   const draw = () => {
     svg.replaceChildren();
     const A = axes(svg, { W: 340, H: 340, x: [-6, 6], y: [-6, 6], xStep: 1, yStep: 1, xLabel: "Re", yLabel: "Im" });
@@ -892,7 +898,7 @@ export function kompleksna(el) {
     const zero = op === ":" && !w[0] && !w[1];
     const nm = op === "z̄" ? "\\bar z" : op === "^" ? `z^{${npow}}` : `z ${{ "+": "+", "−": "-", "·": "\\cdot", ":": ":" }[op]} w`;
     out.innerHTML = (zero ? "<p><b>Z 0 ne delimo:</b> premakni w stran od izhodišča.</p>" : texBlock(`${nm} ${r.every((v) => Math.abs(v - Math.round(v * 100) / 100) < 1e-9) ? "=" : "\\approx"} ${ztex(r)}`)) +
-      `<p>z = ${ztex(z).replace(/\{,\}/g, ",")}: ${absTxt("z", z)}.${useW ? ` w = ${ztex(w).replace(/\{,\}/g, ",")}: ${absTxt("w", w)}.` : ""}</p>
+      `<p>z = ${ztxt(z)}: ${absTxt("z", z)}.${useW ? ` w = ${ztxt(w)}: ${absTxt("w", w)}.` : ""}</p>
        <p>${op === "+" || op === "−" ? "Seštevamo kot vektorje: realne dele posebej, imaginarne posebej (paralelogram)." : op === "·" ? `Množimo kot dvočlenika in upoštevamo i² = −1. Absolutni vrednosti se zmnožita: |z · w| = |z| · |w| ${eqA(abs(r))} ${fmt(abs(r))}. Množenje z i zavrti točko za 90° v pozitivni smeri.` : op === ":" ? (zero ? "" : `Ulomek razširimo s številom, konjugiranim imenovalcu, da imenovalec postane realen: ${tex("w \\cdot \\bar{w} = |w|^2")} = ${fmt(w[0] ** 2 + w[1] ** 2)}. Absolutni vrednosti se delita: |z : w| = |z| : |w| ${eqA(abs(r))} ${fmt(abs(r))}.`) : op === "z̄" ? `Konjugirano število je zrcalna slika čez realno os. ${tex("z \\cdot \\bar{z} = |z|^2")} je realno.` : `Potenco izračunamo z zaporednim množenjem: z${["²", "³", "⁴", "⁵", "⁶"][npow - 2]} = ${Array(npow).fill("z").join(" · ")}. Absolutne vrednosti se zmnožijo: |z${["²", "³", "⁴", "⁵", "⁶"][npow - 2]}| = |z|${["²", "³", "⁴", "⁵", "⁶"][npow - 2]} ${eqA(abs(z) ** npow)} ${fmt(abs(z) ** npow)}.`}</p>`;
   };
   layout(el, {

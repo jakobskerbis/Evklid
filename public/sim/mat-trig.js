@@ -503,7 +503,7 @@ export function stozernice(el, { mode = "kroznica" } = {}) {
     out.innerHTML = texBlock(`${sh("x", p)} + ${sh("y", q)} = ${T(r * r)}`) +
       `<p>Središče S(${p}, ${q}), polmer r = ${fmt(r)}. Krožnica je množica točk, ki so od S oddaljene za r.</p>` +
       texBlock(`x^2 + y^2${tm(D, "x")}${tm(E, "y")}${tm(F, "")} = 0`) +
-      `<p>Točka T(${fmt(Tp[0])}, ${fmt(Tp[1])}): (x − p)² + (y − q)² = ${fmt((Tp[0] - p) ** 2 + (Tp[1] - q) ** 2)} = r². ${tang ? `Tangenta v T je pravokotna na polmer ST.` : ""}</p>
+      `<p>Točka T(${ptTxt(fmt(Tp[0]), fmt(Tp[1]))}): (x − p)² + (y − q)² = ${fmt((Tp[0] - p) ** 2 + (Tp[1] - q) ** 2)} = r². ${tang ? `Tangenta v T je pravokotna na polmer ST.` : ""}</p>
        <p class="muted">Iz splošne oblike dobimo središče S(−D/2, −E/2) in r² = p² + q² − F.</p>`;
   };
   layout(el, {
