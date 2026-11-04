@@ -62,6 +62,19 @@ test("live check: a wrong calculation gets exactly one correction, streamed and 
   }
 });
 
+test("live check: after a correction the choice buttons are gone, also when the conversation is reopened", async () => {
+  const h = harness({ answers: ['Izračunajmo: $7 \\cdot 8 = 54$. Zdaj prištej še $2$.\n<<IZBIRE ["Prištejem 2", "Ne vem"]>>'], fixes: ["Popravek: $7 \\cdot 8 = 56$, ne $54$."] });
+  try {
+    const s = await h.student();
+    const r = await h.ask(s, "Koliko je 7 krat 8 plus 2?");
+    assert.equal(h.calls.length, 2, "odgovor in popravek");
+    assert.ok(!/"choices"/.test(r.sse), "brez gumbov ob popravku");
+    assert.ok(!r.messages.at(-1).api_content[0].text.includes("IZBIRE"), "blok se ne shrani");
+  } finally {
+    h.close();
+  }
+});
+
 test("live check: a correct answer gets no correction and no extra call", async () => {
   const h = harness({ answers: ["Velja $7 \\cdot 8 = 56$. Kaj pa $56 + 2$?"] });
   try {

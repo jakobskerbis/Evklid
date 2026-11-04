@@ -2877,5 +2877,6 @@
   "ai.buy": "설명 추가 구매",
   "ai.pool": "가족의 모든 프로필이 함께 사용합니다.",
   "gift.level": "단계",
-  "meter.levelsTitle": "단계별 가격"
+  "meter.levelsTitle": "단계별 가격",
+  "chat.choices": "빠른 답장"
 }

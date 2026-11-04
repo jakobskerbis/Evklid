@@ -2901,5 +2901,6 @@
   "ai.buy": "Acheter des explications",
   "ai.pool": "Commun à tous les profils de la famille.",
   "gift.level": "Niveau",
-  "meter.levelsTitle": "Prix par niveau"
+  "meter.levelsTitle": "Prix par niveau",
+  "chat.choices": "Réponses rapides"
 }

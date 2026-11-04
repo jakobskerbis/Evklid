@@ -2877,5 +2877,6 @@
   "ai.buy": "説明を追加購入",
   "ai.pool": "家族のすべてのプロフィールで共有します。",
   "gift.level": "段階",
-  "meter.levelsTitle": "段階別の料金"
+  "meter.levelsTitle": "段階別の料金",
+  "chat.choices": "クイック返信"
 }
