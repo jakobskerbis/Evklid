@@ -8,7 +8,7 @@ export const info = {
   predmet: "BIO",
   opis: "Od gena do beljakovine: v jedru RNA-polimeraza prepiše DNK v mRNA, v citoplazmi ribosom s pomočjo tRNA prevede mRNA v verigo aminokislin.",
   merilo: { m: 2e-8, oznaka: "≈ 20 nm" },
-  poskusi: "s »Naprej« sledi kodonom in pri vsakem preveri, katera aminokislina se doda verigi.",
+  poskusi: "z »Naprej« sledi kodonom in pri vsakem preveri, katera aminokislina se doda verigi.",
 };
 
 const PISAVA = '"Instrument Sans", system-ui, sans-serif';

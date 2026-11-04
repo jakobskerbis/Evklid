@@ -18,7 +18,7 @@ export const info = {
   predmet: "NAR",
   opis: "Zemlja kroži okoli Sonca z nagnjeno osjo, ki ves čas kaže proti Severnici. Izberi dan v letu in poglej, kako visoko je opoldne Sonce v Ljubljani in kako dolg je dan.",
   merilo: { m: 2.992e11, oznaka: "premer Zemljine tirnice ≈ 300 milijonov km" },
-  poskusi: "premakni »Dan v letu« na 21. junij in na 21. december ter primerjaj višino Sonca in dolžino dneva v Ljubljani.",
+  poskusi: "premakni »Dan v letu« na 21. junij in na 21. december ter primerjaj opoldansko višino Sonca in dolžino dneva v Ljubljani.",
 };
 
 const D = Math.PI / 180;

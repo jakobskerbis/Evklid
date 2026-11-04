@@ -7,7 +7,7 @@ export const info = {
   predmet: "MAT",
   opis: "Prizme, piramide, valj, stožec, krogla in prisekani telesi: spreminjaj mere, razpri mrežo in prereži telo z ravnino. Prostornina in površina se sproti izračunata.",
   merilo: { m: 0.1, oznaka: "10 cm" },
-  poskusi: "izberi valj in povleci »Razpri mrežo« do konca, nato vklopi »Prerez z ravnino« in nagni ravnino: kdaj dobiš elipso?",
+  poskusi: "izberi valj in povleci »Razpri mrežo« do konca: kakšen lik je plašč? Nato mrežo spet zloži, vklopi »Prerez z ravnino« in spreminjaj »Nagib ravnine«: kdaj je prerez elipsa?",
 };
 
 const MOZNOSTI = [

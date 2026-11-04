@@ -21,7 +21,7 @@ export const info = {
   predmet: "FIZ",
   opis: "Ko so Sonce, Luna in Zemlja v premici, pade senca enega telesa na drugo. Poglej, kdaj je sončni mrk popolni ali kolobarjasti, zakaj je Luna med mrkom rdeča in zakaj mrka ni vsak mesec.",
   merilo: { m: 4.25e7, oznaka: "≈ 42 000 km (le velikosti Zemlje in Lune)" },
-  poskusi: "pri sončnem mrku premakni Luno proti apogeju in opazuj, kdaj popolni mrk postane kolobarjasti.",
+  poskusi: "pri sončnem mrku povleci »Razdalja Luna–Zemlja« proti apogeju in opazuj, kdaj popolni mrk postane kolobarjasti.",
 };
 
 const D = Math.PI / 180;
