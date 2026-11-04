@@ -433,7 +433,7 @@ test("verjetnost: geometrijska in hipergeometrijska porazdelitev", () => {
 // ---------- preizkusi domnev, intervali, regresije, TVM, tabela vrednosti ----------
 
 import * as TC from "../public/graph/testcore.js";
-import { regression } from "../public/graph/model.js";
+import { regression, buildModel, emptyState } from "../public/graph/model.js";
 
 // neodvisen p: Simpson po gostoti t (ne uporablja probcore); Lanczos za ln Γ
 const lnG = (z) => {
@@ -603,4 +603,91 @@ test("tabela vrednosti: f(x), g(x), korak, omejitve", () => {
   assert.equal(TC.valueTable({ f: "x+a", start: 0, step: 1, rows: 3 }).error, "var");
   assert.equal(TC.valueTable({ f: "x", start: 0, step: 1, rows: 3 }).g, null);
   assert.ok(!Number.isFinite(TC.valueTable({ f: "1/x", start: 0, step: 1, rows: 2 }).f[0]));
+});
+
+test("ANOVA, F-test in F-porazdelitev (TI-84 ANOVA, 2-SampFTest)", () => {
+  const a = TC.anova([[3, 4, 5, 4], [6, 7, 6, 8], [5, 5, 6, 4]]);
+  assert.deepEqual([a.factor.df, a.error.df], [2, 9]);
+  assert.ok(Math.abs(a.factor.ss - 15.5) < 1e-9 && Math.abs(a.error.ss - 6.75) < 1e-9);
+  assert.ok(Math.abs(a.stat - 31 / 3) < 1e-9);
+  // F(2, d2): P(F > x) = (1 + 2x/d2)^(−d2/2)
+  assert.ok(Math.abs(a.p - (1 + (2 * a.stat) / 9) ** -4.5) < 1e-9, `p = ${a.p}`);
+  assert.equal(a.reject, true);
+  assert.ok(Math.abs(a.sxp - Math.sqrt(0.75)) < 1e-12);
+  assert.equal(TC.anova([[1, 2]]), null, "ena skupina");
+  assert.equal(TC.anova([[1], [2]]), null, "brez prostostnih stopenj znotraj skupin");
+  // F(d1, d2): gostota se integrira v cdf
+  const f = TC.fDist(3, 10);
+  let s = 0;
+  for (let i = 0; i < 10000; i++) s += f.pdf(1 + (i + 0.5) * 1e-4) * 1e-4;
+  assert.ok(Math.abs(s - (f.cdf(2) - f.cdf(1))) < 1e-5);
+  // F-test: F = s1²/s2², dvostranski p = 2·min(rep); F(1, 1) je simetričen okoli 1 v log merilu
+  const ft = TC.fTest2({ s: 2, n: 10 }, { s: 1.5, n: 12 });
+  assert.ok(Math.abs(ft.stat - 16 / 9) < 1e-12);
+  assert.deepEqual([ft.df1, ft.df2], [9, 11]);
+  assert.ok(ft.p > 0.3 && ft.p < 0.4 && !ft.reject);
+  assert.ok(Math.abs(TC.fTest2({ s: 3, n: 5 }, { s: 1, n: 5 }, "gt").p - (1 - TC.fDist(4, 4).cdf(9))) < 1e-12);
+  assert.ok(Math.abs(TC.fTest2({ s: 1, n: 5 }, { s: 1, n: 5 }).p - 1) < 1e-9);
+});
+
+test("Denarni tokovi: NPV, IRR, NFV, vračilna doba; amortizacija ΣInt, ΣPrn, bal kot TI-84", () => {
+  const cf = [-1000, 300, 400, 500];
+  assert.ok(Math.abs(TC.npv(10, cf) - (-1000 + 300 / 1.1 + 400 / 1.21 + 500 / 1.331)) < 1e-9);
+  const irr = TC.irr(cf);
+  assert.ok(Math.abs(TC.npv(irr, cf)) < 1e-7, `IRR ${irr}`);
+  assert.ok(Math.abs(irr - 8.896) < 0.001);
+  assert.equal(TC.irr([100, 200]), null, "isti predznak");
+  const r = TC.cashFlow(10, cf);
+  assert.ok(Math.abs(r.nfv - r.npv * 1.331) < 1e-9);
+  assert.ok(Math.abs(r.pbp - 2.6) < 1e-12, "−700, −300, +200 → 2 + 300/500");
+  assert.equal(r.dpbp, null, "z diskontiranjem se ne povrne");
+  assert.deepEqual(TC.readFlows([[-1000], [300, 3]]), [-1000, 300, 300, 300]);
+  assert.equal(TC.readFlows([[300, 0]]), null);
+  // posojilo 200 000, 30 let, 6 %: PMT = −1199,10; prvo plačilo 1000 obresti, ΣInt za 1. leto −11 933,19
+  const v = { N: 360, I: 6, PV: 200000, FV: 0, PY: 12, CY: 12, begin: false };
+  const pmt = TC.tvm({ ...v, PMT: NaN }, "PMT").PMT;
+  const rows = TC.amortize({ ...v, PMT: pmt });
+  assert.equal(rows.length, 360);
+  assert.ok(Math.abs(rows[0].int + 1000) < 1e-6 && Math.abs(rows[0].prn - (pmt + 1000)) < 1e-6);
+  assert.ok(Math.abs(rows[359].bal) < 1e-5, "na koncu ni dolga");
+  const y1 = TC.amortSum(rows, 1, 12);
+  assert.ok(Math.abs(y1.int + 11933.19) < 0.01 && Math.abs(y1.prn + 2456.02) < 0.01 && Math.abs(y1.bal - 197543.98) < 0.01);
+  assert.ok(Math.abs(y1.int + y1.prn - 12 * pmt) < 1e-6);
+  assert.equal(TC.amortSum(rows, 0, 12), null);
+  // plačilo na začetku obdobja: prvo plačilo je samo glavnica
+  const pb = TC.tvm({ ...v, begin: true, PMT: NaN }, "PMT").PMT;
+  const rb = TC.amortize({ ...v, begin: true, PMT: pb });
+  assert.equal(rb[0].int, 0);
+  assert.ok(Math.abs(rb[359].bal) < 1e-5);
+});
+
+test("Pol/Rec sredi izraza: vektorji, skalarni produkt, dolžina; Pol le zunaj", () => {
+  const env = { deg: true };
+  const pair = (s) => analyze(s, env).items.map((x) => x.v);
+  const near2 = (a, b) => a.every((x, i) => Math.abs(x - b[i]) < 1e-9);
+  assert.ok(near2(pair("Pol(3;4)"), [5, Math.atan2(4, 3) * (180 / Math.PI)]));
+  assert.ok(near2(pair("pol(3;4)"), [5, Math.atan2(4, 3) * (180 / Math.PI)]));
+  const c = Math.sqrt(3) / 2;
+  assert.ok(near2(pair("Rec(5;30)+Rec(3;120)"), [5 * c - 1.5, 2.5 + 3 * c]));
+  assert.ok(near2(pair("Pol(Rec(5;30)+Rec(3;120))"), [Math.sqrt(34), 30 + (Math.atan2(3, 5) * 180) / Math.PI]));
+  assert.ok(near2(pair("2Rec(2;30)-Rec(1;0)/2"), [4 * c - 0.5, 2]));
+  assert.ok(near2(pair("-Rec(2;90)"), [0, -2]));
+  assert.ok(Math.abs(analyze("Rec(2;0)·Rec(3;60)", env).value - 3) < 1e-9, "skalarni produkt");
+  assert.ok(Math.abs(analyze("|Rec(5;30)-Rec(3;120)|", env).value - Math.sqrt(34)) < 1e-9, "dolžina");
+  assert.ok(near2(pair("Rec(2;π/6)").slice(0, 1), [2 * Math.cos(Math.PI / 6 * Math.PI / 180)]), "v stopinjah je π/6 kot v stopinjah");
+  assert.ok(near2(analyze("Rec(2;π/6)", { deg: false }).items.map((x) => x.v), [Math.sqrt(3), 1]));
+  for (const [s, code] of [["2Pol(3;4)", "polInside"], ["√(Pol(3;4))", "polInside"], ["Pol(1;1)·Rec(2;0)", "polInside"], ["Rec(2;30)+1", "vecMix"], ["sin(Rec(1;2))", "vecOp"], ["1/Rec(1;2)", "vecOp"]]) assert.equal(analyze(s, env).error?.code, code, s);
+  assert.deepEqual(analyze("Pol(a;4)", env).error, { code: "missing", info: { names: ["a"] } });
+  assert.equal(analyze("Pol(a;4)", { ...env, vars: { a: 3 } }).items[0].v, 5);
+  // način graf: Rec je točka, z drsnikom ali t tudi krivulja
+  const m = (texts) => {
+    const s = emptyState();
+    s.items = texts.map((t, i) => ({ id: `i${i}`, type: "expr", text: t, color: i }));
+    return buildModel(s);
+  };
+  const g = m(["Rec(2, π/6)", "Rec(1, 0) + Rec(1, π/2)", "Rec(2, t)", "Rec(1, 0) + 1"]);
+  assert.deepEqual(g.items.map((o) => o.kind), ["points", "points", "param", "error"]);
+  assert.ok(near2(g.items[0].evalPoints()[0], [Math.sqrt(3), 1]));
+  assert.ok(near2(g.items[1].evalPoints()[0], [1, 1]));
+  assert.ok(Math.abs(g.items[2].fy(Math.PI / 2) - 2) < 1e-12);
 });

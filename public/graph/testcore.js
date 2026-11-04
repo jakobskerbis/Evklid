@@ -1,6 +1,7 @@
 // Preizkusi domnev, intervali zaupanja, finance (TVM) in tabela vrednosti. Brez DOM (preizkusi v test/tools.test.js).
-// Imena in izidi kot na TI-84 (Z-Test, T-Test, 2-SampTTest, 1-PropZTest, χ²-Test, LinRegTTest, TVM Solver).
-import { normal, studentT, chi2 } from "./probcore.js";
+// Imena in izidi kot na TI-84 (Z-Test, T-Test, 2-SampTTest, 2-SampFTest, 1-PropZTest, χ²-Test, LinRegTTest, ANOVA,
+// TVM Solver, npv/irr, amortizacija bal/ΣInt/ΣPrn).
+import { normal, studentT, chi2, betaI, lnGamma } from "./probcore.js";
 import { stats } from "./toolscore.js";
 import { fn as parseFn } from "./anacore.js";
 
@@ -177,6 +178,60 @@ export function propInt2({ x1, n1, x2, n2 }, level = 0.95) {
   return ci(p1 - p2, q * Math.sqrt((p1 * (1 - p1)) / n1 + (p2 * (1 - p2)) / n2), { crit: q });
 }
 
+// ---------- F-porazdelitev, F-test in ANOVA ----------
+
+/** Porazdelitev F(d1, d2): cdf(x) = I_{d1·x/(d1·x + d2)}(d1/2, d2/2). */
+export function fDist(d1, d2) {
+  const lc = (d1 / 2) * Math.log(d1) + (d2 / 2) * Math.log(d2) - (lnGamma(d1 / 2) + lnGamma(d2 / 2) - lnGamma((d1 + d2) / 2));
+  return {
+    cdf: (x) => (x <= 0 ? 0 : betaI((d1 * x) / (d1 * x + d2), d1 / 2, d2 / 2)),
+    pdf: (x) => (x <= 0 ? 0 : Math.exp(lc + (d1 / 2 - 1) * Math.log(x) - ((d1 + d2) / 2) * Math.log(d1 * x + d2))),
+  };
+}
+
+/** Porazdelitev testne statistike za graf p-ploščine: { pdf, cdf } za kind z, t, chi, F. */
+export function statDist(r) {
+  if (r.kind === "z") return Z;
+  if (r.kind === "t") return T(r.df);
+  if (r.kind === "chi") return chi2(r.df);
+  if (r.kind === "F") return fDist(r.df1, r.df2);
+  return null;
+}
+
+/** F-test za razmerje varianc (2-SampFTest), H0: σ1² = σ2². a, b: { s, n } */
+export function fTest2(a, b, alt = "ne", alpha = 0.05) {
+  if (!fin(a.s, a.n, b.s, b.n) || a.n < 2 || b.n < 2 || !(a.s > 0) || !(b.s > 0)) return null;
+  const F = sq(a.s) / sq(b.s);
+  const d1 = a.n - 1;
+  const d2 = b.n - 1;
+  const lo = fDist(d1, d2).cdf(F); // P(F' ≤ F)
+  const p = alt === "lt" ? lo : alt === "gt" ? 1 - lo : Math.min(1, 2 * Math.min(lo, 1 - lo));
+  return res({ kind: "F", stat: F, df1: d1, df2: d2, p, alt, alpha, est: F });
+}
+
+/**
+ * Enosmerna analiza variance (TI-84 ANOVA): groups = seznami podatkov, vsaj 2 skupini po vsaj 1 podatek
+ * in skupaj več podatkov kot skupin. Vrne F, p, faktor { df, SS, MS }, napaka { df, SS, MS }, Sxp (združeni σ).
+ */
+export function anova(groups, alpha = 0.05) {
+  const g = (groups || []).filter((x) => x.length);
+  if (g.length < 2 || !g.every((x) => x.every(Number.isFinite))) return null;
+  const N = g.reduce((s, x) => s + x.length, 0);
+  const k = g.length;
+  if (N <= k) return null;
+  const all = g.reduce((s, x) => s + x.reduce((a, v) => a + v, 0), 0) / N;
+  const means = g.map((x) => x.reduce((a, v) => a + v, 0) / x.length);
+  const ssb = g.reduce((s, x, i) => s + x.length * sq(means[i] - all), 0);
+  const ssw = g.reduce((s, x, i) => s + x.reduce((a, v) => a + sq(v - means[i]), 0), 0);
+  const dfb = k - 1;
+  const dfw = N - k;
+  const msb = ssb / dfb;
+  const msw = ssw / dfw;
+  if (!(msw > 0)) return null; // vse skupine brez raztrosa: F ni definiran
+  const F = msb / msw;
+  return res({ kind: "F", stat: F, df1: dfb, df2: dfw, p: 1 - fDist(dfb, dfw).cdf(F), alpha, factor: { df: dfb, ss: ssb, ms: msb }, error: { df: dfw, ss: ssw, ms: msw }, sxp: Math.sqrt(msw), means, n: g.map((x) => x.length) });
+}
+
 // ---------- TVM (finančni reševalnik kot TI-84) ----------
 
 export const TVM_FIELDS = ["N", "I", "PV", "PMT", "FV"];
@@ -249,6 +304,123 @@ export function tvm(v, solve) {
     out.I = 100 * CY * ((1 + r) ** (PY / CY) - 1);
   }
   return TVM_FIELDS.every((f) => Number.isFinite(out[f])) ? out : null;
+}
+
+// ---------- amortizacija (TI-84 Σ Int, Σ Prn, bal) ----------
+
+/**
+ * Načrt odplačevanja iz rešenega TVM: v = { N, I, PV, PMT, PY, CY, begin }. Vrstica k je stanje po k-tem plačilu:
+ * { k, int (obresti v plačilu), prn (glavnica v plačilu), bal (ostanek) }; predznaki kot TI (posojilo PV > 0, plačila < 0).
+ * Pri plačilu na začetku obdobja prvo plačilo nima obresti. Vrstic največ 1200.
+ */
+export function amortize(v) {
+  const { N, I, PV, PMT, PY, CY } = v;
+  if (!fin(N, I, PV, PMT, PY, CY) || PY <= 0 || CY <= 0 || !(N >= 1)) return null;
+  const n = Math.min(1200, Math.round(N));
+  const i = (1 + I / 100 / CY) ** (CY / PY) - 1;
+  const rows = [];
+  let bal = PV;
+  for (let k = 1; k <= n; k++) {
+    const accr = v.begin && k === 1 ? 0 : bal * i; // obresti od zadnjega plačila
+    const int = accr ? -accr : 0;
+    const prn = PMT - int;
+    bal = bal + accr + PMT;
+    rows.push({ k, int, prn, bal });
+  }
+  return rows;
+}
+
+/** Σ Int, Σ Prn in bal za plačila od p1 do p2 (TI ΣInt(p1, p2), ΣPrn(p1, p2), bal(p2)). */
+export function amortSum(rows, p1, p2) {
+  if (!rows?.length || !fin(p1, p2)) return null;
+  const a = Math.round(Math.min(p1, p2));
+  const b = Math.round(Math.max(p1, p2));
+  if (a < 1 || b > rows.length) return null;
+  let int = 0;
+  let prn = 0;
+  for (let k = a; k <= b; k++) {
+    int += rows[k - 1].int;
+    prn += rows[k - 1].prn;
+  }
+  return { p1: a, p2: b, int, prn, bal: rows[b - 1].bal };
+}
+
+// ---------- denarni tokovi (TI-84 npv, irr; Casio NPV, IRR, PBP, NFV) ----------
+
+/** Neto sedanja vrednost: flows[0] ob času 0, flows[j] ob koncu obdobja j; rate v %. */
+export function npv(rate, flows) {
+  const r = rate / 100;
+  if (!Number.isFinite(r) || r <= -1 || !flows?.length || !flows.every(Number.isFinite)) return NaN;
+  return flows.reduce((s, c, j) => s + c / (1 + r) ** j, 0);
+}
+
+/** Notranja stopnja donosa v % (ničla NPV, najbližja 0 %), ali null, če je ni (npr. tokovi istega predznaka). */
+export function irr(flows) {
+  if (!flows?.length || flows.length < 2 || !flows.every(Number.isFinite)) return null;
+  if (!flows.some((c) => c > 0) || !flows.some((c) => c < 0)) return null;
+  const f = (r) => flows.reduce((s, c, j) => s + c / (1 + r) ** j, 0);
+  let br = null;
+  for (const dir of [1, -1]) {
+    let prev = 0;
+    let fp = f(0);
+    if (fp === 0) return 0;
+    for (let j = 1; j <= 800; j++) {
+      const x = dir * (j < 400 ? j * 0.0025 : 1 + (j - 400) * 0.05);
+      if (x <= -0.999) break;
+      const fx = f(x);
+      if (Number.isFinite(fp) && Number.isFinite(fx) && fp * fx <= 0) {
+        if (!br || Math.abs(x) < Math.max(Math.abs(br[0]), Math.abs(br[1]))) br = [prev, x];
+        break;
+      }
+      prev = x;
+      fp = fx;
+    }
+  }
+  if (!br) return null;
+  let [lo, hi] = br;
+  let flo = f(lo);
+  for (let it = 0; it < 200; it++) {
+    const mid = (lo + hi) / 2;
+    const fm = f(mid);
+    if (flo * fm <= 0) hi = mid;
+    else {
+      lo = mid;
+      flo = fm;
+    }
+  }
+  return 100 * ((lo + hi) / 2);
+}
+
+/**
+ * Vse za denarne tokove: { npv, nfv, irr, pbp, dpbp }. pbp: vračilna doba (obdobja, linearno znotraj obdobja),
+ * dpbp: diskontirana vračilna doba; null, če se naložba ne povrne.
+ */
+export function cashFlow(rate, flows) {
+  const v = npv(rate, flows);
+  if (!Number.isFinite(v)) return null;
+  const r = rate / 100;
+  const back = (cs) => {
+    let cum = cs[0];
+    if (cum >= 0) return 0;
+    for (let j = 1; j < cs.length; j++) {
+      const next = cum + cs[j];
+      if (next >= 0) return j - 1 + (cs[j] > 0 ? -cum / cs[j] : 1);
+      cum = next;
+    }
+    return null;
+  };
+  return { npv: v, nfv: v * (1 + r) ** (flows.length - 1), irr: irr(flows), pbp: back(flows), dpbp: back(flows.map((c, j) => c / (1 + r) ** j)) };
+}
+
+/** Denarni tokovi iz besedila: vsaka vrstica »znesek« ali »znesek × kolikokrat« (frekvenca kot TI CFFreq). */
+export function readFlows(lines) {
+  const out = [];
+  for (const [c, f] of lines) {
+    const n = f === undefined ? 1 : Math.round(f);
+    if (!Number.isFinite(c) || !(n >= 1) || n > 1000 || out.length + n > 2000) return null;
+    for (let j = 0; j < n; j++) out.push(c);
+  }
+  return out.length ? out : null;
 }
 
 // ---------- tabela vrednosti ----------
