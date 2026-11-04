@@ -514,6 +514,13 @@ function enter(f) {
   if (m === "newline") return insertText(f, "\n");
   if (m === "check" || m === "send") {
     if (!submitForm(f)) pressEnter(f);
+    // po poslanem sporočilu je polje prazno: naslednje se začne z veliko začetnico
+    setTimeout(() => {
+      if (!S.open || S.layer !== "abc") return;
+      const was = S.shift;
+      autoShift();
+      if (was !== S.shift) render();
+    }, 0);
     return;
   }
   if (m === "calc" || m === "go") return pressEnter(f);
@@ -613,14 +620,16 @@ function act(a) {
 // Preslednica kot Gboard: samopopravek zadnje besede (le s predlogi), dva presledka = ». «.
 function space(f) {
   const b = before();
-  if (b !== null && prose()) {
+  const room = f.maxLength < 0 || f.value.length + 1 < f.maxLength; // pika ali popravek dodata znak
+  if (b !== null && prose() && room) {
     const ds = S.lastSpace && Date.now() - S.lastSpace < 1500 ? doubleSpaceAt(b) : -1;
     S.lastSpace = 0;
     if (ds >= 0) {
       f.setRangeText(". ", ds, ds + 1, "end");
       return fire(f, "insertText", ". ");
     }
-    const w = prefs.words && words ? currentWord() : "";
+    // sredi besede (za kazalcem so še črke) ne popravljamo
+    const w = prefs.words && words && !/^[\p{L}\p{M}]/u.test(f.value.charAt(b.length)) ? currentWord() : "";
     const fix = w && autocorrect(w, words);
     if (fix) {
       const end = b.length;

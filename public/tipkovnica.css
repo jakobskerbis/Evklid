@@ -108,6 +108,7 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
   .tk-k, .tk-chip, .tk-subtab, .tk-tab, .tk-pop button { border: 1px solid ButtonText; forced-color-adjust: auto; }
   .tk-tab.on, .tk-subtab.on, .tk-k.shift.on { outline: 2px solid Highlight; }
   .tk-k.go { background: ButtonText; color: ButtonFace; }
+  .tk-prev { border: 1px solid ButtonText; }
 }
 .tk-say { inset-inline: 8px; bottom: calc(100% + 6px); padding: 8px 12px; font-size: 0.86rem; color: var(--text); }
 .tk-chip.paste { font-weight: 800; color: var(--accent); }

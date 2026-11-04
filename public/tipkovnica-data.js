@@ -165,7 +165,6 @@ const PRETTY_TEXT = {
   "logb(@;)": "log_@()",
   "gcd(@;)": "D(@; )",
   "lcm(@;)": "v(@; )",
-  "d/dx(@;)": "f′(@)",
 };
 /** Kaj vstavi tipka: v poljih, ki jih bere človek ali inštruktor, matematični zapis namesto imena funkcije. */
 export function prettyIns(ins, parsed = false) {
