@@ -15,12 +15,10 @@ const EFFORT = env("EVKLID_EFFORT", "low");
 // »Razloži podrobneje« je druga razlaga snovi, ne težko sklepanje: Opus pri effort low
 // razloži enako dobro z manj razmišljanja (manj izhodnih žetonov). Prej: medium.
 const EFFORT_DEEP = env("EVKLID_EFFORT_DEEP", "low");
-// Čas v predpomnilniku za stalni del prompta (enak za vse učence): »auto« (privzeto) izbere po razmikih
-// med klici istega modela, »1h« ali »5m« ga določi. Zapis za 1 h stane 2× vhod, za 5 min 1,25×, branje
-// osveži čas pri obeh. 1 h se splača le, ko klici prihajajo v razmikih 5–60 min in se vnos prebere vsaj
-// dvakrat; redek posamezen klic (npr. nadgradnja na Opus enkrat na nekaj ur) bi z 1 h stal dvakrat več
-// kot brez predpomnilnika (merjeno na strežniku 4. 11.: 3 odgovori Opusa po ~11 centov, večinoma zapis).
-const CACHE_TTL = () => env("EVKLID_CACHE_TTL", env("EVKLID_DEEP_CACHE_TTL", "auto"));
+// Stalni del prompta za Opus in Sonnet ostane v predpomnilniku 1 uro (klici so redki, 5 minut bi pogosto
+// poteklo). Zapis za 1 h stane 2× vhod (5 min 1,25×); pregled 4. 11. (j: »nadaljuj kontrolo«): prilagodljiv
+// čas po razmikih med klici bi pri nekaj klicih Opusa na popoldne stal več, kot prihrani pri osamljenih klicih.
+const DEEP_CACHE_TTL = env("EVKLID_DEEP_CACHE_TTL", "1h");
 // Hitri model z več razmisleka: Tekmovanja in »Razloži podrobneje«, ko je dnevna
 // ali mesečna omejitev za zmogljivejši model porabljena.
 const EFFORT_THINK = env("EVKLID_EFFORT_THINK", "high");
@@ -128,25 +126,6 @@ export function quickParams(model) {
 // Strežniški nadomestni model ob zavrnitvi podpirajo modeli Opus/Sonnet/Fable, Haiku ne.
 const supportsFallback = (model) => !/haiku/.test(model);
 
-// Začetki zadnjih klicev s stalnim delom prompta po modelu (predpomnilnik je ločen za vsak model).
-const recentCalls = new Map();
-const HOUR = 3_600_000;
-export function cacheTtl(model, now = Date.now(), ttl = CACHE_TTL()) {
-  if (ttl === "1h") return "1h";
-  if (ttl !== "auto") return null; // »5m«: privzeti čas
-  const times = (recentCalls.get(model) || []).filter((t) => now - t < HOUR);
-  // Vsaj dva klica v zadnji uri in povprečni razmik (do zdaj) nad 5 min: vnos za 1 h bo prebran večkrat.
-  if (times.length < 2) return null;
-  const gap = (now - times[0]) / times.length;
-  return gap > 5 * 60_000 ? "1h" : null;
-}
-export function noteCacheCall(model, now = Date.now()) {
-  const times = (recentCalls.get(model) || []).filter((t) => now - t < HOUR);
-  times.push(now);
-  recentCalls.set(model, times.slice(-50));
-}
-export const resetCacheCalls = () => recentCalls.clear();
-
 /**
  * Pretoči odgovor modela.
  * @returns {Promise<{content, text, stopReason, usage, model}>}
@@ -160,7 +139,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     max_tokens,
     // Stalni del prompta (enak za vse učence) ima svojo oznako predpomnilnika,
     // zato se deli med vsemi pogovori; nastavitve učenca so v drugem bloku.
-    system: typeof system === "string" ? systemBlocks(system, { ttl: cacheTtl(model) }) : system,
+    system: typeof system === "string" ? systemBlocks(system, { ttl: (mode === "deep" || mode === "mid") && DEEP_CACHE_TTL === "1h" ? "1h" : null }) : system,
     messages,
     thinking: { type: "adaptive" },
     output_config: { effort },
@@ -171,8 +150,6 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   // Orodja (npr. nastavitve iz klepeta) so pred sistemskim promptom in enaka za vse učence,
   // zato ostanejo v istem predpomnjenem začetku.
   if (tools?.length) params.tools = tools;
-  // Razmike štejemo samo za klice s skupnim stalnim delom (pregledi in popravki imajo svoj kratek prompt).
-  if (Array.isArray(params.system) && params.system[0]?.cache_control) noteCacheCall(model);
   if (supportsFallback(model)) {
     params.betas = ["server-side-fallback-2026-07-01"];
     params.fallbacks = "default";

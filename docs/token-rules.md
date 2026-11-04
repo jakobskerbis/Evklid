@@ -82,6 +82,6 @@ Each tool call resends the thread's whole context, which is large in long-runnin
 
 ## 6. App runtime cost (the tutor)
 
-Already done in PR #26 and #47 (see `docs/stroski-ai.md`): Haiku by default, Opus only for »Razloži podrobneje«, static system prompt cached (1 h TTL only at 5–60 min gaps between calls, `server/claude.js` `cacheTtl`), history trimmed, reuse/hint answers without a model. When changing `prompts/system_prompt.md`, keep everything above `<!-- EVKLID:NASTAVITVE` byte-identical for all students, or the cache stops working.
+Already done in PR #26 and #47 (see `docs/stroski-ai.md`): Haiku by default, Opus only for »Razloži podrobneje«, static system prompt cached with 1 h TTL, history trimmed, reuse/hint answers without a model. When changing `prompts/system_prompt.md`, keep everything above `<!-- EVKLID:NASTAVITVE` byte-identical for all students, or the cache stops working.
 
 For new API calls: static instructions first, the per-request part last; add `cache_control` only where the static prefix is longer than the model's minimum cacheable length and repeats within the cache lifetime. Jobs on the API key that send many independent requests use the Message Batches API at half price, as `scripts/generate-lessons.js` and `scripts/generate-explanations.js` do; this does not replace the §2–§4 lesson pipeline and its three passes.
