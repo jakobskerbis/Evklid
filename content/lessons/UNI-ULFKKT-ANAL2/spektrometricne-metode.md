@@ -44,11 +44,15 @@ Za plasti iz tabele dobimo $A = 0{,}155$, $0{,}310$ in $0{,}465$. Absorbance se 
 
 *Hiter preizkus:* $T = 0{,}10$. Koliko je $A$? (Odgovor: $1{,}0$.)
 
-**4. Beer-Lambertov zakon.** Absorbanca je sorazmerna tudi s koncentracijo absorbirajoče snovi: dvakrat več molekul na isti poti vpije kot dvakrat debelejša plast. Oboje združi **Beer-Lambertov zakon**:
+**4. Beer-Lambertov zakon.** Absorbanca je sorazmerna tudi s koncentracijo absorbirajoče snovi: dvakrat bolj koncentrirana raztopina vpije enako kot dvakrat debelejša plast prvotne, saj svetloba v obeh primerih sreča dvakrat več molekul. Oboje združi **Beer-Lambertov zakon**:
 
 $$A = \varepsilon \, b \, c$$
 
 Tu je $b$ dolžina poti skozi vzorec (debelina kivete, običajno $1{,}00\,\mathrm{cm}$), $c$ množinska koncentracija v $\mathrm{mol/L}$ in $\varepsilon$ **molarni absorpcijski koeficient** v $\mathrm{L\,mol^{-1}\,cm^{-1}}$. Koeficient $\varepsilon$ je lastnost snovi pri izbrani valovni dolžini: velik $\varepsilon$ pomeni, da snov to svetlobo močno vpija.
+
+*Natančna izjava:* naj vzporeden snop monokromatske svetlobe pravokotno prehaja skozi homogeno, nesipajočo raztopino, v kateri svetlobo vpija snov s koncentracijo $c$, ki ne sodeluje v kemijskih ravnotežjih, in naj bo raztopina razredčena (navadno $c < 0{,}01\,\mathrm{mol/L}$). Potem je $A = \varepsilon\, b\, c$. *Izpeljava:* tanka plast debeline $\mathrm{d}x$ vpije delež svetlobe, sorazmeren s številom molekul na poti, $\mathrm{d}I = -k\,c\,I\,\mathrm{d}x$, kjer je $k$ konstanta sorazmernosti (ne naklon umeritvene premice iz točke 7). Ločimo spremenljivki in integriramo od $0$ do $b$: $\ln(I_0/I) = k\,c\,b$. Z desetiškim logaritmom je $A = \log_{10}(I_0/I) = \dfrac{k}{\ln 10}\,b\,c$, torej $\varepsilon = k/\ln 10$. Odstopanja so kemijska (ravnotežja, interakcije pri visokih $c$) ali instrumentalna (polikromatska in sipana svetloba). Sipana svetloba pride do detektorja mimo vzorca in se prišteje k $I_0$ in $I$; ker je $I$ manjši, ga relativno poveča bolj, zato je izmerjena $A$ manjša od prave.
+
+**Aditivnost absorbanc.** Če je v raztopini več absorbirajočih snovi, ki med seboj ne reagirajo, in za vsako velja Beer-Lambertov zakon, je pri vsaki valovni dolžini $A(\lambda) = b\sum_i \varepsilon_i(\lambda)\,c_i$. Dokaz: v izpeljavi je zdaj $\mathrm{d}I = -\big(\sum_i k_i c_i\big) I\,\mathrm{d}x$. Zmes dveh snovi zato določimo z meritvijo pri dveh valovnih dolžinah in rešimo sistem dveh linearnih enačb.
 
 :::premisli
 Raztopino razredčimo na polovico in jo izmerimo v dvakrat daljši kiveti. Kaj se zgodi z absorbanco?
@@ -107,10 +111,10 @@ $c = \dfrac{A}{\varepsilon\, b}$, nato $\gamma = c \cdot M$
 
 ### Primer 3 (težji): cink v potoku pod rudnikom
 
-Cink v potoku določamo z AAS pri $213{,}9\,\mathrm{nm}$. Standardi $0{,}20$, $0{,}40$ in $0{,}60\,\mathrm{mg/L}$ dajo absorbance $0{,}088$, $0{,}176$ in $0{,}264$. Vzorec je bil premočan, zato smo $5{,}00\,\mathrm{mL}$ vode razredčili na $50{,}0\,\mathrm{mL}$. Razredčeni vzorec ima $A = 0{,}143$. Koliko cinka je v potoku?
+Cink v potoku določamo z AAS pri $213{,}9\,\mathrm{nm}$. Standardi $0{,}20$, $0{,}40$ in $0{,}60\,\mathrm{mg/L}$ dajo absorbance $0{,}088$, $0{,}176$ in $0{,}264$. Vzorec je bil premočan, zato smo $5{,}00\,\mathrm{mL}$ vode razredčili na $50{,}0\,\mathrm{mL}$. Razredčeni vzorec ima $A = 0{,}143$. Koliko cinka je v potoku? Vzorec iz drugega dela potoka po enaki razredčitvi da $A = 0{,}350$. Kako ga pravilno izmeriš in kolikšno razredčitev izbereš?
 
-**Podatki:** standardi $(0{,}20;\,0{,}088)$, $(0{,}40;\,0{,}176)$, $(0{,}60;\,0{,}264)$ v $\mathrm{mg/L}$ in enotah $A$; $V_1 = 5{,}00\,\mathrm{mL}$, $V_2 = 50{,}0\,\mathrm{mL}$, $A_{\mathrm{vz}} = 0{,}143$
-**Iščemo:** masno koncentracijo cinka v potoku $\gamma_0$
+**Podatki:** standardi $(0{,}20;\,0{,}088)$, $(0{,}40;\,0{,}176)$, $(0{,}60;\,0{,}264)$ v $\mathrm{mg/L}$ in enotah $A$; $V_1 = 5{,}00\,\mathrm{mL}$, $V_2 = 50{,}0\,\mathrm{mL}$, $A_{\mathrm{vz}} = 0{,}143$; drugi vzorec $A = 0{,}350$
+**Iščemo:** masno koncentracijo cinka v potoku $\gamma_0$; primerno razredčitev drugega vzorca
 
 :::formula
 Umeritvena premica $A = k\,\gamma$; faktor razredčitve $f = \dfrac{V_2}{V_1}$; $\gamma_0 = f \cdot \gamma$
@@ -122,7 +126,9 @@ Umeritvena premica $A = k\,\gamma$; faktor razredčitve $f = \dfrac{V_2}{V_1}$; 
 2. Koncentracija v razredčenem vzorcu: $\gamma = \dfrac{0{,}143}{0{,}44}\,\mathrm{mg/L} = 0{,}325\,\mathrm{mg/L}$.
 3. Faktor razredčitve: $f = \dfrac{50{,}0}{5{,}00} = 10$, ker smo vzorec desetkrat razredčili.
 4. $\gamma_0 = 10 \cdot 0{,}325\,\mathrm{mg/L} = 3{,}25\,\mathrm{mg/L}$.
-5. Odgovor: v potoku je približno $3{,}3\,\mathrm{mg/L}$ cinka.
+5. Drugi vzorec: $A = 0{,}350$ je nad najvišjim standardom ($0{,}264$). Zunaj območja standardov linearnosti nismo preverili, zato rezultat služi le kot ocena: $\gamma \approx 0{,}350/0{,}44 \approx 0{,}80\,\mathrm{mg/L}$, v potoku okoli $8{,}0\,\mathrm{mg/L}$.
+6. Da bo razredčeni vzorec pod $0{,}60\,\mathrm{mg/L}$, potrebujemo $f \ge 7{,}95/0{,}60 \approx 13{,}3$ ($7{,}95\,\mathrm{mg/L} = 10 \cdot 0{,}795\,\mathrm{mg/L}$ je nezaokrožena ocena iz koraka 5). Izberemo $f = 20$ ($5{,}00\,\mathrm{mL}$ na $100{,}0\,\mathrm{mL}$): pričakovana koncentracija $\approx 0{,}40\,\mathrm{mg/L}$ in $A \approx 0{,}175$, sredina umeritvenega območja, kjer je negotovost najmanjša.
+7. Odgovor: v potoku je približno $3{,}3\,\mathrm{mg/L}$ cinka. Drugi vzorec ponovno razredčimo $20$-krat in izmerimo; prva ocena je okoli $8\,\mathrm{mg/L}$.
 
 ### Primer 4: zdaj ti – fosfat v jezeru
 
@@ -163,6 +169,53 @@ $A = -\log_{10} 0{,}316 \approx 0{,}500$ in $c = \dfrac{0{,}500}{2{,}0 \cdot 10^
 - UV-VIS: molekule, široki vrhovi, merimo pri $\lambda_{\max}$; za UV kremenova kiveta.
 - AAS: prosti atomi v plamenu ali grafitni kiveti, ostre črte, votla katodna žarnica za vsak element posebej; zelo selektivna metoda za kovine.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije prepustnosti, absorbance in molarnega absorpcijskega koeficienta z enotami;
+- Beer-Lambertov zakon z vsemi pogoji in izpeljavo iz $\mathrm{d}I = -k\,c\,I\,\mathrm{d}x$;
+- aditivnost absorbanc s pogojem in določitev dvokomponentne zmesi pri dveh valovnih dolžinah;
+- vzroke odstopanj (kemijske in instrumentalne) in zakaj sipana svetloba zniža izmerjeno $A$;
+- zgradbo UV-VIS spektrometra in AAS ter zakaj AAS potrebuje votlo katodno žarnico.
+
+### Naloga 1
+
+$1{,}000\,\mathrm{g}$ jekla raztopimo, mangan oksidiramo do $\mathrm{MnO_4^-}$, krom do $\mathrm{Cr_2O_7^{2-}}$ in raztopino razredčimo na $250{,}0\,\mathrm{mL}$. V kiveti $1{,}00\,\mathrm{cm}$ izmerimo $A_{545} = 0{,}698$ in $A_{440} = 0{,}385$. Molarni absorpcijski koeficienti v $\mathrm{L\,mol^{-1}\,cm^{-1}}$: $\mathrm{MnO_4^-}$: $\varepsilon_{545} = 2350$, $\varepsilon_{440} = 95$; $\mathrm{Cr_2O_7^{2-}}$: $\varepsilon_{545} = 11$, $\varepsilon_{440} = 370$. $M(\mathrm{Mn}) = 54{,}94\,\mathrm{g/mol}$, $M(\mathrm{Cr}) = 52{,}00\,\mathrm{g/mol}$. Izračunaj masna deleža Mn in Cr v jeklu.
+
+**Rešitev:**
+
+1. Ioni med seboj ne reagirajo, zato se absorbanci seštevata: $0{,}698 = 2350\,c_1 + 11\,c_2$ in $0{,}385 = 95\,c_1 + 370\,c_2$ ($c_1$ za $\mathrm{MnO_4^-}$, $c_2$ za $\mathrm{Cr_2O_7^{2-}}$, $b = 1{,}00\,\mathrm{cm}$).
+2. Determinanta sistema: $D = 2350 \cdot 370 - 11 \cdot 95 = 868\,455$.
+3. $c_1 = \dfrac{0{,}698 \cdot 370 - 11 \cdot 0{,}385}{868\,455}\,\mathrm{mol/L} \approx 2{,}925 \cdot 10^{-4}\,\mathrm{mol/L}$.
+4. $c_2 = \dfrac{2350 \cdot 0{,}385 - 95 \cdot 0{,}698}{868\,455}\,\mathrm{mol/L} \approx 9{,}654 \cdot 10^{-4}\,\mathrm{mol/L}$.
+5. Kontrola pri $545\,\mathrm{nm}$: $2350 \cdot 2{,}925 \cdot 10^{-4} + 11 \cdot 9{,}654 \cdot 10^{-4} \approx 0{,}687 + 0{,}011 = 0{,}698$.
+6. Mangan: $n = 2{,}925 \cdot 10^{-4} \cdot 0{,}2500\,\mathrm{mol} \approx 7{,}31 \cdot 10^{-5}\,\mathrm{mol}$, $m = 7{,}31 \cdot 10^{-5} \cdot 54{,}94\,\mathrm{g} \approx 4{,}02\,\mathrm{mg}$, $w = 0{,}402\,\%$.
+7. Krom: vsak $\mathrm{Cr_2O_7^{2-}}$ ima dva atoma Cr, zato $n(\mathrm{Cr}) = 2 \cdot 9{,}654 \cdot 10^{-4} \cdot 0{,}2500\,\mathrm{mol} \approx 4{,}83 \cdot 10^{-4}\,\mathrm{mol}$, $m \approx 25{,}1\,\mathrm{mg}$, $w \approx 2{,}51\,\%$.
+8. Odgovor: jeklo vsebuje okoli $0{,}40\,\%$ mangana in $2{,}51\,\%$ kroma.
+
+### Naloga 2
+
+Natančno navedi Beer-Lambertov zakon z vsemi pogoji in ga izpelji. Nato utemelji, ali sipana svetloba, ki doseže detektor mimo vzorca, povzroči pozitivno ali negativno odstopanje, in izračunaj izmerjeno absorbanco pri pravih $A = 0{,}50$ in $A = 2{,}00$, če sipana svetloba znaša $1{,}0\,\%$ od $I_0$.
+
+**Rešitev:**
+
+1. Pogoji: monokromatska, vzporedna svetloba pravokotno na kiveto; homogena, nesipajoča, razredčena raztopina; absorbirajoča snov ne sodeluje v ravnotežjih.
+2. Plast $\mathrm{d}x$ vpije delež, sorazmeren s koncentracijo: $\mathrm{d}I/I = -k\,c\,\mathrm{d}x$.
+3. Integracija od $I_0$ do $I$ in od $0$ do $b$: $\ln(I_0/I) = k\,c\,b$; z $\log_{10}$ je $A = \varepsilon\,b\,c$, $\varepsilon = k/\ln 10$.
+4. S sipano svetlobo $I_\mathrm{s}$ detektor meri $A_\mathrm{izm} = \log_{10}\dfrac{I_0 + I_\mathrm{s}}{I + I_\mathrm{s}}$. Ker je $I_\mathrm{s}$ v imenovalcu relativno pomembnejši ($I < I_0$), je $A_\mathrm{izm} < A$: odstopanje je negativno.
+5. Pri $A = 0{,}50$ je $I/I_0 = 0{,}316$: $A_\mathrm{izm} = \log_{10}(1{,}01/0{,}326) \approx 0{,}491$, napaka okoli $2\,\%$.
+6. Pri $A = 2{,}00$ je $I/I_0 = 0{,}0100$: $A_\mathrm{izm} = \log_{10}(1{,}01/0{,}0200) \approx 1{,}70$, napaka $15\,\%$.
+7. Odgovor: sipana svetloba zniža izmerjeno absorbanco, najbolj pri velikih $A$; zato umeritvena premica nad $A \approx 1$ zavije navzdol in tako močne vzorce razredčimo.
+
+## Drugače: Uporaba v stroki
+
+**Analiza voda.** Nitrat, amonij in fosfat (z molibdenovim modrilom, kot v Primeru 4) v pitni in odpadni vodi rutinsko določajo fotometrično po standardiziranih postopkih.
+
+**Farmacija in biotehnologija.** Vsebnost učinkovine v tabletah in sproščanje pri preizkusu raztapljanja merijo z UV pri $\lambda_{\max}$. Čistost izolirane DNA ocenijo z razmerjem $A_{260}/A_{280}$, ki je za čisto DNA okoli $1{,}8$.
+
+**Kovine v sledovih.** AAS z grafitno kiveto določa svinec v krvi in kadmij v živilih na ravni $\mathrm{µg/L}$; pri zahtevni matrici uporabimo metodo standardnega dodatka: znane količine kovine dodamo v alikvote samega vzorca, da standardi in vzorec delijo isto matrico.
+
 ## Drugače: Na sliki
 
 Pot svetlobe v obeh napravah si nariši kot verigo:
@@ -178,17 +231,13 @@ Graf $A$ proti $c$ je premica skozi izhodišče, ki se pri velikih $A$ ukrivi na
 
 ## Drugače: Bolj natančno
 
-Tanka plast debeline $\mathrm{d}x$ zmanjša jakost za delež, sorazmeren s koncentracijo: $\mathrm{d}I = -k\,c\,I\,\mathrm{d}x$. Z integracijo od $0$ do $b$ dobimo $\ln(I_0/I) = k\,c\,b$. Prehod na desetiški logaritem da $A = \varepsilon\, b\, c$ z $\varepsilon = k/\ln 10$.
-
-Izpeljava predpostavi monokromatsko svetlobo, razredčeno raztopino brez interakcij med molekulami in snov, ki ne sodeluje v ravnotežjih. Odstopanja nastanejo zaradi končne širine pasu monokromatorja, sipane svetlobe, ki doseže detektor mimo vzorca, in kemijskih ravnotežij (npr. protolize barvila).
-
-Za zmes snovi, ki ne reagirajo med sabo, se absorbance seštevajo: $A = b \sum_i \varepsilon_i c_i$. Z meritvijo pri več valovnih dolžinah tako določimo več snovi hkrati.
+Izpeljava v razlagi predpostavi monokromatsko svetlobo, razredčeno raztopino brez interakcij med molekulami in snov, ki ne sodeluje v ravnotežjih. Odstopanja nastanejo zaradi končne širine pasu monokromatorja, sipane svetlobe, ki doseže detektor mimo vzorca, in kemijskih ravnotežij (npr. protolize barvila).
 
 Pri AAS je absorpcijska črta široka le okoli $0{,}005\,\mathrm{nm}$, pas monokromatorja pa okoli $0{,}2\,\mathrm{nm}$. Iz zveznega vira bi atomi vpili le drobec svetlobe v tem pasu, zato bi se signal komaj spremenil. Votla katodna žarnica seva črto, ožjo od absorpcijske, zato Beer-Lambertov zakon velja tudi za atome. Grafitna kiveta zadrži atome dlje na poti žarka kot plamen, zato doseže $100$- do $1000$-krat nižje meje zaznave.
 
 ## Preveri se
 
-? Katera trditev o AAS je pravilna?
+? Laboratorij bi rad z AAS v istem vzorcu določil svinec in kadmij. Kaj od naslednjega velja?
 - Z eno žarnico z zveznim spektrom izmerimo več kovin hkrati.
 ~ To velja za UV-VIS. Atomske črte so tako ozke, da potrebujemo vir, ki seva prav črto izbranega elementa.
 + Za vsak element potrebujemo votlo katodno žarnico iz tega elementa.

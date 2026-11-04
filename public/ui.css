@@ -117,7 +117,7 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
 }
 
 /* ---------- Nastavitve → Videz (appearance.js) ---------- */
-.seg > button svg.i { width: 18px; height: 18px; margin-right: 6px; }
+.seg > button svg.i { width: 18px; height: 18px; margin-inline-end: 6px; }
 .seg > button { display: inline-flex; align-items: center; justify-content: center; }
 @media (max-width: 480px) { .seg > button svg.i { display: none; } }
 .ap-row { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }

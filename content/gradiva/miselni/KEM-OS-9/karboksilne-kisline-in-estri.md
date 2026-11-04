@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Karboksilna skupina
+  - $\mathrm{{-}COOH}$: dvojno vezan O in skupina OH
+  - dva kisika na istem ogljiku
+- Imena kislin
+  - alkan + -ojska kislina
+  - šteje tudi ogljik v $\mathrm{{-}COOH}$
+  - mravljinčna v mravljah, maslena v žarkem maslu
+- Ocetna kislina
+  - kis: $4$ do $9\,\%$ kisline
+  - $\mathrm{C_2H_5OH + O_2 \rightarrow CH_3COOH + H_2O}$
+  - $M = 60\,\text{g/mol}$
+- Šibka kislina
+  - odda le H iz $\mathrm{{-}COOH}$
+  - lakmus rdeč, raztopi vodni kamen
+  - napaka: odda vse štiri vodike
+- Esterifikacija
+  - kislina + alkohol $\rightarrow$ ester + voda
+  - katalizator koncentrirana $\mathrm{H_2SO_4}$
+  - napaka: pozabljena voda
+- Ime estra
+  - alkohol na -il, kislina na -oat
+  - metanol + etanojska: metil etanoat
+- Estri v naravi
+  - hlapni, nevtralni, sadni vonj
+  - etil butanoat: ananas; pentil etanoat: banana
+  - v toplem vremenu močneje dišijo

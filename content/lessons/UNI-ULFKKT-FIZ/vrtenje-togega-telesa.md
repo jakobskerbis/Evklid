@@ -47,11 +47,19 @@ Enota je $\mathrm{kg\,m^2}$. Vztrajnostni moment ni odvisen le od mase, ampak tu
 | tanka palica, dolžina $l$ | skozi središče, pravokotno | $\tfrac{1}{12}ml^2$ |
 | tanka palica, dolžina $l$ | skozi krajišče, pravokotno | $\tfrac{1}{3}ml^2$ |
 
-**Steinerjev izrek:** če poznamo $J_{ms}$ glede na os skozi masno središče, je vztrajnostni moment glede na vzporedno os na razdalji $d$ enak $J = J_{ms} + md^2$.
+Primer izračuna: za tanko palico z dolžinsko gostoto $\lambda = m/l$ in osjo skozi krajišče je $J = \int_0^l x^2\lambda\,\mathrm{d}x = \lambda l^3/3 = \tfrac13 ml^2$.
 
-**4. Osnovni zakon vrtenja.** Za vrtenje okoli stalne osi velja analog drugega Newtonovega zakona:
+**Steinerjev izrek.** Naj ima telo z maso $m$ vztrajnostni moment $J_{ms}$ glede na os skozi masno središče in naj bo druga os vzporedna z njo na razdalji $d$. Potem je vztrajnostni moment glede na drugo os
+
+$$J = J_{ms} + md^2.$$
+
+*Dokaz:* razdalje merimo v ravnini, pravokotni na osi. Naj bo $\vec{r}_i = \vec{d} + \vec{r}_i\,'$, kjer je $\vec{r}_i\,'$ merjen od osi skozi masno središče. Potem je $\sum m_ir_i^2 = md^2 + 2\vec{d}\cdot\sum m_i\vec{r}_i\,' + \sum m_ir_i'^2$; srednji člen je nič, ker je po definiciji masnega središča $\sum m_i\vec{r}_i\,' = 0$. Posledica: med vsemi vzporednimi osmi ima telo najmanjši $J$ okoli osi skozi masno središče.
+
+**4. Osnovni zakon vrtenja.** Naj se togo telo vrti okoli nepremične osi. Potem je vsota navorov zunanjih sil glede na to os enaka
 
 $$\sum M = J\alpha.$$
+
+*Dokaz:* delec $i$ kroži po krogu s polmerom $r_i$, zato tangentno velja $F_{i,t} = m_ia_{i,t} = m_ir_i\alpha$. Pomnožimo z $r_i$ in seštejemo: $\sum r_iF_{i,t} = \left(\sum m_ir_i^2\right)\alpha = J\alpha$. Notranje sile delujejo v parih, nasprotno enakih in na isti nosilki, zato je vsota njihovih navorov nič in na levi ostanejo le navori zunanjih sil.
 
 Primerjava z gibanjem naravnost: sila $\leftrightarrow$ navor, masa $\leftrightarrow$ vztrajnostni moment, pospešek $\leftrightarrow$ kotni pospešek.
 
@@ -63,15 +71,19 @@ Kolut. Obroč ima $J = mR^2$, kolut le $\tfrac{1}{2}mR^2$, ker je del njegove ma
 
 ### Energija in vrtilna količina
 
-**5. Energija in delo pri vrtenju.** Kinetična energija vrtenja je $W_k = \tfrac{1}{2}J\omega^2$, delo navora $A = \int M\,\mathrm{d}\varphi$ (pri stalnem navoru $A = M\varphi$), moč $P = M\omega$. Telo, ki se **kotali** brez spodrsavanja, ima obe vrsti kinetične energije:
+**5. Energija in delo pri vrtenju.** Kinetična energija vrtenja je $W_k = \tfrac{1}{2}J\omega^2$. Ko se telo zasuče za $\mathrm{d}\varphi$, se prijemališče sile premakne za $r\,\mathrm{d}\varphi$ in sila opravi delo $F_tr\,\mathrm{d}\varphi = M\,\mathrm{d}\varphi$. Zato je delo navora $A = \int M\,\mathrm{d}\varphi$ (pri stalnem navoru $A = M\varphi$), moč $P = M\omega$, iz $M = J\,\mathrm{d}\omega/\mathrm{d}t$ pa sledi $M\,\mathrm{d}\varphi = J\omega\,\mathrm{d}\omega$ (ker je $\mathrm{d}\varphi/\mathrm{d}t = \omega$) in po integraciji $A = \Delta\left(\tfrac12 J\omega^2\right)$. Telo, ki se **kotali** brez spodrsavanja (stična točka miruje), ima obe vrsti kinetične energije:
 
 $$W_k = \tfrac{1}{2}mv_{ms}^2 + \tfrac{1}{2}J_{ms}\omega^2, \qquad v_{ms} = \omega R.$$
+
+Izpeljava: v danem trenutku se telo vrti okoli stične točke, za katero je po Steinerjevem izreku $J = J_{ms} + mR^2$; zato je $W_k = \tfrac12(J_{ms} + mR^2)\omega^2$, z $\omega R = v_{ms}$ pa dobimo zgornji izraz.
 
 **6. Vrtilna količina.** Za točkasto telo je vrtilna količina $\vec{\Gamma} = \vec{r} \times m\vec{v}$, za togo telo, ki se vrti okoli simetrijske osi, pa $\vec{\Gamma} = J\vec{\omega}$. Enota je $\mathrm{kg\,m^2/s}$. Splošni zakon vrtenja je
 
 $$\sum\vec{M} = \frac{\mathrm{d}\vec{\Gamma}}{\mathrm{d}t}.$$
 
-Če je vsota zunanjih navorov nič, se vrtilna količina **ohranja**: $J_1\omega_1 = J_2\omega_2$. Telo, ki zmanjša vztrajnostni moment (drsalka pritegne roke), se zavrti hitreje.
+*Dokaz za delec:* $\dot{\vec{\Gamma}} = \dot{\vec{r}}\times m\vec{v} + \vec{r}\times m\dot{\vec{v}} = \vec{v}\times m\vec{v} + \vec{r}\times\vec{F} = \vec{M}$. Za sistem delcev seštejemo; navori notranjih sil se v parih odštejejo, zato je $\vec{M}$ vsota navorov zunanjih sil (glede na nepremično točko ali masno središče).
+
+**Izrek o ohranitvi vrtilne količine.** Če je vsota navorov zunanjih sil enaka nič, je vrtilna količina sistema stalna. Za telo, ki okoli stalne osi spremeni vztrajnostni moment, velja $J_1\omega_1 = J_2\omega_2$. Telo, ki zmanjša vztrajnostni moment (drsalka pritegne roke), se zavrti hitreje.
 
 :::premisli
 Mirno sediš na vrtljivem stolu in nad glavo držiš kolo s kolesa. Kolo zavrtiš v smeri urinega kazalca (gledano od zgoraj). Kaj naredi stol?
@@ -85,7 +97,7 @@ Zavrti se v nasprotno smer. Med teboj in kolesom delujejo le notranje sile, zato
 
 $$\sum\vec{F} = 0, \qquad \sum\vec{M} = 0.$$
 
-Navore lahko računamo glede na katero koli točko; najbolje je izbrati točko, skozi katero gre neznana sila, ker ta potem nima navora.
+Navore lahko računamo glede na katero koli točko: če je $\sum\vec{F} = 0$, je vsota navorov glede na točko $\vec{a}$ enaka $\sum(\vec{r}_i - \vec{a})\times\vec{F}_i = \sum\vec{r}_i\times\vec{F}_i - \vec{a}\times\sum\vec{F}_i = \sum\vec{r}_i\times\vec{F}_i$, torej neodvisna od izbire točke. Najbolje je izbrati točko, skozi katero gre neznana sila, ker ta potem nima navora.
 
 **8. Postopek.** (1) Nariši telo in vse sile z njihovimi prijemališči. (2) Izberi os in pozitivno smer vrtenja. (3) Za vsako silo določi ročico in predznak navora. (4) Za telesa, ki se gibljejo naravnost, zapiši $\sum F = ma$, za vrteča se $\sum M = J\alpha$. (5) Poveži enačbe s kinematično vezjo, na primer $a = \alpha R$ za vrv, ki ne drsi po kolutu.
 
@@ -132,13 +144,13 @@ Utež: $mg - F_v = ma$. Kolut: $F_vR = J\alpha$. Vez: $a = \alpha R$. Sledi $a =
 
 ### Primer 3 (težji)
 
-Študent sedi na vrtljivem stolu z utežema v iztegnjenih rokah. Skupni vztrajnostni moment je $6{,}0\,\mathrm{kg\,m^2}$, stol se vrti s $0{,}50$ obrata na sekundo. Študent pritegne roke k telesu, s čimer se vztrajnostni moment zmanjša na $2{,}0\,\mathrm{kg\,m^2}$. Kolikšna je nova frekvenca vrtenja? Kako se spremeni kinetična energija in od kod razlika? Trenje v ležaju zanemari.
+Študent sedi na vrtljivem stolu z utežema v iztegnjenih rokah. Skupni vztrajnostni moment je $6{,}0\,\mathrm{kg\,m^2}$, stol se vrti s $0{,}50$ obrata na sekundo. Študent pritegne roke k telesu, s čimer se vztrajnostni moment zmanjša na $2{,}0\,\mathrm{kg\,m^2}$. Kolikšna je nova frekvenca vrtenja? Kako se spremeni kinetična energija in od kod razlika? Na kolikšno vrednost bi moral študent zmanjšati vztrajnostni moment, da bi se vrtel z $2{,}0$ obrata na sekundo, in koliko dela bi pri tem opravil? Trenje v ležaju zanemari.
 
-**Podatki:** $J_1 = 6{,}0\,\mathrm{kg\,m^2}$, $\nu_1 = 0{,}50\,\mathrm{s^{-1}}$, $J_2 = 2{,}0\,\mathrm{kg\,m^2}$, zunanjih navorov ni
-**Iščemo:** $\nu_2$, $W_{k1}$, $W_{k2}$ in delo študenta
+**Podatki:** $J_1 = 6{,}0\,\mathrm{kg\,m^2}$, $\nu_1 = 0{,}50\,\mathrm{s^{-1}}$, $J_2 = 2{,}0\,\mathrm{kg\,m^2}$, $\nu_3 = 2{,}0\,\mathrm{s^{-1}}$, zunanjih navorov ni
+**Iščemo:** $\nu_2$, $W_{k1}$, $W_{k2}$ in delo študenta; $J_3$ za $\nu_3$ in delo za to spremembo
 
 :::formula
-$J_1\omega_1 = J_2\omega_2$, $\omega = 2\pi\nu$, $W_k = \tfrac{1}{2}J\omega^2$
+$J_1\omega_1 = J_2\omega_2$, $\omega = 2\pi\nu$, $W_k = \tfrac{1}{2}J\omega^2 = \dfrac{\Gamma^2}{2J}$, $A = \dfrac{\Gamma^2}{2}\left(\dfrac{1}{J_3} - \dfrac{1}{J_1}\right)$
 :::
 
 **Rešitev:**
@@ -148,7 +160,9 @@ $J_1\omega_1 = J_2\omega_2$, $\omega = 2\pi\nu$, $W_k = \tfrac{1}{2}J\omega^2$
 3. Za energijo potrebujemo kotni hitrosti v $\mathrm{s^{-1}}$, ne obratov na sekundo: $\omega_1 = 2\pi \cdot 0{,}50\,\mathrm{s^{-1}} = \pi\,\mathrm{s^{-1}} \approx 3{,}14\,\mathrm{s^{-1}}$, $\omega_2 = 3\pi\,\mathrm{s^{-1}} \approx 9{,}42\,\mathrm{s^{-1}}$.
 4. $W_{k1} = \tfrac{1}{2} \cdot 6{,}0 \cdot 3{,}14^2\,\mathrm{J} \approx 29{,}6\,\mathrm{J}$, $W_{k2} = \tfrac{1}{2} \cdot 2{,}0 \cdot 9{,}42^2\,\mathrm{J} \approx 88{,}8\,\mathrm{J}$.
 5. Kinetična energija se je povečala za približno $59{,}2\,\mathrm{J}$. Ker je $W_k = \Gamma^2/(2J)$ in se $\Gamma$ ohranja, se energija poveča za faktor $J_1/J_2 = 3$.
-6. Odgovor: stol se vrti s $1{,}5$ obrata na sekundo, kinetična energija naraste s $29{,}6\,\mathrm{J}$ na $88{,}8\,\mathrm{J}$; razliko, približno $59\,\mathrm{J}$, opravijo študentove mišice, ko vlečejo uteži proti osi.
+6. Obratno vprašanje: iz $J_1\nu_1 = J_3\nu_3$ je $J_3 = 6{,}0 \cdot 0{,}50/2{,}0\,\mathrm{kg\,m^2} = 1{,}5\,\mathrm{kg\,m^2}$.
+7. Delo mišic je sprememba kinetične energije: $\Gamma = J_1\omega_1 = 6{,}0 \cdot \pi\,\mathrm{kg\,m^2/s} \approx 18{,}85\,\mathrm{kg\,m^2/s}$, $W_{k3} = \Gamma^2/(2J_3) = 18{,}85^2/3{,}0\,\mathrm{J} \approx 118{,}4\,\mathrm{J}$, zato $A = 118{,}4\,\mathrm{J} - 29{,}6\,\mathrm{J} \approx 88{,}8\,\mathrm{J}$. Delo raste kot $1/J_3$, zato vsako nadaljnje zmanjšanje $J$ stane več.
+8. Odgovor: stol se vrti s $1{,}5$ obrata na sekundo, kinetična energija naraste s $29{,}6\,\mathrm{J}$ na $88{,}8\,\mathrm{J}$; razliko, približno $59\,\mathrm{J}$, opravijo študentove mišice, ko vlečejo uteži proti osi. Za $2{,}0$ obrata na sekundo bi moral $J$ zmanjšati na $1{,}5\,\mathrm{kg\,m^2}$ in opraviti približno $88{,}8\,\mathrm{J}$ dela.
 
 ### Primer 4 – zdaj ti
 
@@ -192,6 +206,56 @@ $\alpha = \omega/t = 1{,}57\,\mathrm{s^{-1}}/2{,}0\,\mathrm{s} \approx 0{,}785\,
 - Vrtilna količina $\Gamma = J\omega$ se brez zunanjih navorov ohranja: $J_1\omega_1 = J_2\omega_2$.
 - Ravnovesje: $\sum\vec{F} = 0$ in $\sum\vec{M} = 0$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije navora $\vec{M} = \vec{r}\times\vec{F}$, vztrajnostnega momenta $J = \int r^2\,\mathrm{d}m$ in vrtilne količine $\vec{\Gamma} = \vec{r}\times m\vec{v}$ z enotami;
+- izpeljavo $\sum M = J\alpha$ za togo telo okoli nepremične osi in zakaj notranji navori odpadejo;
+- Steinerjev izrek s pogoji in dokazom;
+- zakon $\sum\vec{M} = \mathrm{d}\vec{\Gamma}/\mathrm{d}t$ z dokazom in izrek o ohranitvi vrtilne količine s pogojem;
+- izpeljavo $A = \int M\,\mathrm{d}\varphi$, $P = M\omega$ in kinetične energije kotaljenja.
+
+### Naloga 1
+
+Klada z maso $m_1 = 2{,}0\,\mathrm{kg}$ leži na vodoravni mizi (koeficient trenja $k_\mathrm{tr} = 0{,}20$). Z lahko vrvico, ki teče čez škripec na robu mize, je povezana z utežjo $m_2 = 1{,}5\,\mathrm{kg}$, ki visi navpično. Škripec je poln homogen valj z maso $1{,}0\,\mathrm{kg}$ in polmerom $0{,}10\,\mathrm{m}$, ležaj je brez trenja, vrvica po škripcu ne drsi. Sistem spustimo iz mirovanja. Izračunaj pospešek, sili v obeh delih vrvice in hitrost uteži, ko se spusti za $0{,}80\,\mathrm{m}$; rezultat preveri z energijo. $g = 9{,}81\,\mathrm{m/s^2}$.
+
+**Rešitev:**
+
+1. Škripec: $J = \tfrac12 \cdot 1{,}0 \cdot 0{,}10^2\,\mathrm{kg\,m^2} = 0{,}0050\,\mathrm{kg\,m^2}$, torej $J/R^2 = 0{,}50\,\mathrm{kg}$.
+2. Enačbe: utež $m_2g - F_2 = m_2a$; klada $F_1 - k_\mathrm{tr}m_1g = m_1a$; škripec $(F_2 - F_1)R = J\alpha$; vez $a = \alpha R$, zato $F_2 - F_1 = (J/R^2)\,a$. Sili v vrvici sta različni, ker mora razlika navorov pospeševati škripec.
+3. Seštejemo vse tri enačbe: $m_2g - k_\mathrm{tr}m_1g = (m_1 + m_2 + J/R^2)\,a$.
+4. $a = \dfrac{1{,}5 \cdot 9{,}81 - 0{,}20 \cdot 2{,}0 \cdot 9{,}81}{2{,}0 + 1{,}5 + 0{,}50}\,\mathrm{m/s^2} = \dfrac{10{,}791}{4{,}0}\,\mathrm{m/s^2} \approx 2{,}70\,\mathrm{m/s^2}$.
+5. $F_2 = m_2(g - a) = 1{,}5 \cdot (9{,}81 - 2{,}698)\,\mathrm{N} \approx 10{,}67\,\mathrm{N}$; $F_1 = m_1a + k_\mathrm{tr}m_1g = 2{,}0 \cdot 2{,}698\,\mathrm{N} + 3{,}924\,\mathrm{N} \approx 9{,}32\,\mathrm{N}$. Preizkus: $F_2 - F_1 \approx 1{,}35\,\mathrm{N} = 0{,}50\,\mathrm{kg} \cdot 2{,}698\,\mathrm{m/s^2}$. ✓
+6. Hitrost: $v = \sqrt{2ah} = \sqrt{2 \cdot 2{,}698 \cdot 0{,}80}\,\mathrm{m/s} \approx 2{,}08\,\mathrm{m/s}$.
+7. Energija: $m_2gh - k_\mathrm{tr}m_1gh = 10{,}791 \cdot 0{,}80\,\mathrm{J} \approx 8{,}63\,\mathrm{J}$ in $\tfrac12(m_1 + m_2 + J/R^2)v^2 = \tfrac12 \cdot 4{,}0 \cdot 4{,}316\,\mathrm{J} \approx 8{,}63\,\mathrm{J}$. ✓
+8. Odgovor: $a \approx 2{,}70\,\mathrm{m/s^2}$, sila v navpičnem delu vrvice je $10{,}7\,\mathrm{N}$, v vodoravnem $9{,}32\,\mathrm{N}$, hitrost uteži po $0{,}80\,\mathrm{m}$ pa $2{,}08\,\mathrm{m/s}$.
+
+### Naloga 2
+
+Natančno navedi in dokaži Steinerjev izrek. Z integralom izračunaj vztrajnostni moment tanke palice okoli osi skozi središče, pravokotne na palico, in s Steinerjevim izrekom še okoli osi skozi krajišče. Utemelji, ali ima palica okoli kakšne vzporedne osi manjši vztrajnostni moment kot okoli osi skozi središče.
+
+**Rešitev:**
+
+1. Izrek: naj ima telo z maso $m$ vztrajnostni moment $J_{ms}$ okoli osi skozi masno središče; za vzporedno os na razdalji $d$ je $J = J_{ms} + md^2$.
+2. Dokaz: v ravnini, pravokotni na osi, je $\vec{r}_i = \vec{d} + \vec{r}_i\,'$, zato $r_i^2 = d^2 + 2\vec{d}\cdot\vec{r}_i\,' + r_i'^2$.
+3. Pomnožimo z $m_i$ in seštejemo: $J = md^2 + 2\vec{d}\cdot\sum m_i\vec{r}_i\,' + J_{ms}$; srednji člen je nič, ker je masno središče izhodišče za $\vec{r}_i\,'$.
+4. Palica okoli središča: $J_{ms} = \int_{-l/2}^{l/2} x^2\frac{m}{l}\,\mathrm{d}x = \frac{m}{l}\cdot\frac{2}{3}\left(\frac{l}{2}\right)^3 = \tfrac{1}{12}ml^2$.
+5. Okoli krajišča: $d = l/2$, $J = \tfrac{1}{12}ml^2 + \tfrac14 ml^2 = \tfrac13 ml^2$.
+6. Ker je $md^2 \geq 0$ in je enak nič le pri $d = 0$, je $J_{ms}$ najmanjši med vsemi vzporednimi osmi; manjšega ni.
+
+### Naloga 3
+
+Izpelji hitrost, ki jo ima telo z maso $m$, polmerom $R$ in vztrajnostnim momentom $J_{ms}$ na dnu klanca višine $h$, če se iz mirovanja skotali brez spodrsavanja. Utemelji, ali je vrstni red polne krogle, polnega valja in obroča odvisen od njihove mase in polmera, in izračunaj hitrosti za $h = 0{,}50\,\mathrm{m}$.
+
+**Rešitev:**
+
+1. Pri kotaljenju brez spodrsavanja stična točka miruje, zato sila lepenja ne opravlja dela in se mehanska energija ohranja: $mgh = \tfrac12 mv^2 + \tfrac12 J_{ms}\omega^2$.
+2. Z $\omega = v/R$: $mgh = \tfrac12 mv^2\left(1 + \dfrac{J_{ms}}{mR^2}\right)$, torej $v = \sqrt{\dfrac{2gh}{1 + J_{ms}/(mR^2)}}$.
+3. Razmerje $J_{ms}/(mR^2)$ je odvisno le od oblike: krogla $2/5$, valj $1/2$, obroč $1$. Masa in polmer se pokrajšata, zato vrstni red od njiju ni odvisen.
+4. Pri $h = 0{,}50\,\mathrm{m}$ ($2gh = 9{,}81\,\mathrm{m^2/s^2}$): krogla $v = \sqrt{9{,}81/1{,}4}\,\mathrm{m/s} \approx 2{,}65\,\mathrm{m/s}$, valj $\sqrt{9{,}81/1{,}5}\,\mathrm{m/s} \approx 2{,}56\,\mathrm{m/s}$, obroč $\sqrt{9{,}81/2}\,\mathrm{m/s} \approx 2{,}21\,\mathrm{m/s}$.
+5. Odgovor: najhitrejša je krogla, nato valj, nato obroč, ne glede na maso in polmer.
+
 ## Drugače: Na sliki
 
 Vrata gledamo od zgoraj. Tečaji so os, sila deluje na kljuko:
@@ -210,15 +274,13 @@ Vztrajnostni moment si predstavljaj z dvema enako težkima kolesoma: pri prvem j
 
 Tabela analogij: $x \leftrightarrow \varphi$, $v \leftrightarrow \omega$, $a \leftrightarrow \alpha$, $m \leftrightarrow J$, $F \leftrightarrow M$, $G = mv \leftrightarrow \Gamma = J\omega$, $\tfrac{1}{2}mv^2 \leftrightarrow \tfrac{1}{2}J\omega^2$.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Podlaket kot vzvod.** Ko v dlani držimo utež z maso $5{,}0\,\mathrm{kg}$ na razdalji $35\,\mathrm{cm}$ od komolca, biceps pa je pripet $4{,}0\,\mathrm{cm}$ od komolca, iz ravnovesja navorov dobimo silo mišice $F = 5{,}0 \cdot 9{,}81 \cdot 0{,}35/0{,}040\,\mathrm{N} \approx 430\,\mathrm{N}$ (težo podlakti zanemarimo). Mišica mora delovati s skoraj devetkrat večjo silo od teže uteži, zato pa se dlan premakne devetkrat dlje kot kita.
+**Laboratorijska centrifuga.** Pri $12\,000$ obratih na minuto je $\omega \approx 1257\,\mathrm{s^{-1}}$; na polmeru $8{,}0\,\mathrm{cm}$ je centripetalni pospešek $\omega^2r \approx 1{,}26 \cdot 10^5\,\mathrm{m/s^2}$, okoli $12\,900\,g$ (relativna centrifugalna sila). Rotor z $J = 0{,}020\,\mathrm{kg\,m^2}$ ima tedaj $\tfrac12 J\omega^2 \approx 16\,\mathrm{kJ}$ energije, zato je pokrov med vrtenjem zaklenjen. Epruvete morajo biti uravnotežene: pri neuravnoteženem rotorju masno središče ni na osi, zato ležaji čutijo veliko silo, ki se vrti skupaj z rotorjem.
 
-**Kotaljenje po klancu.** S klanca, visokega $1{,}0\,\mathrm{m}$, spustimo polno kroglo in poln valj. Na dnu ima krogla hitrost $\sqrt{10gh/7} \approx 3{,}74\,\mathrm{m/s}$, valj $\sqrt{4gh/3} \approx 3{,}62\,\mathrm{m/s}$, klada, ki bi drsela brez trenja, pa $\sqrt{2gh} \approx 4{,}43\,\mathrm{m/s}$. Masa in polmer se pokrajšata, pomembna je le oblika.
+**Vztrajniki.** Vztrajnik shrani energijo $\tfrac12 J\omega^2$: v batnih strojih zgladi sunkovit navor, v napravah za brezprekinitveno napajanje pa nekaj sekund nadomešča omrežje. Ker vsak del mase prispeva k $J$ sorazmerno s kvadratom razdalje od osi, je masa zbrana na obodu.
 
-**Pirueta in skok v vodo.** Drsalka in skakalec v vodo pritegneta roke in noge k telesu, da se zavrtita hitreje, ter jih iztegneta, da se upočasnita. Vrtilna količina se med skokom ohranja.
-
-**Vrtenje molekul.** Dvoatomna molekula, na primer $\mathrm{N_2}$, se lahko vrti okoli dveh osi, pravokotnih na vez. Energija vrtenja prispeva k notranji energiji plina, zato imajo dvoatomni plini večjo toplotno kapaciteto kot enoatomni. Vztrajnostni moment molekule določimo iz rotacijskih spektrov.
+**Rotacijski spektri molekul.** Dvoatomna molekula, na primer $\mathrm{CO}$, se vrti okoli osi, pravokotne na vez, z vztrajnostnim momentom $J = \mu_r r_0^2$ (reducirana masa $\mu_r$, dolžina vezi $r_0$). Iz razmika črt v mikrovalovnem spektru določimo $J$ in s tem dolžino vezi; energija vrtenja prispeva tudi k toplotni kapaciteti dvoatomnih plinov.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -232,13 +294,7 @@ Kolikšen je vztrajnostni moment palice z maso $1{,}2\,\mathrm{kg}$ in dolžino 
 
 ## Drugače: Bolj natančno
 
-**Izpeljava $\sum M = J\alpha$.** Za delec $i$ togega telesa velja tangentno $F_{i,t} = m_ia_{i,t} = m_ir_i\alpha$. Pomnožimo z $r_i$ in seštejemo: $\sum r_iF_{i,t} = \left(\sum m_ir_i^2\right)\alpha$. Na levi so navori zunanjih in notranjih sil; notranje sile delujejo v parih vzdolž zveznice, zato se njihovi navori odštejejo. Ostane $\sum M^{\text{zun}} = J\alpha$.
-
-**Zakon vrtilne količine.** Za delec je $\vec{\Gamma} = \vec{r}\times m\vec{v}$. Odvajamo: $\dot{\vec{\Gamma}} = \dot{\vec{r}}\times m\vec{v} + \vec{r}\times m\dot{\vec{v}} = \vec{v}\times m\vec{v} + \vec{r}\times\vec{F} = \vec{M}$, ker je vektorski produkt vektorja s samim seboj nič.
-
-**Izračun vztrajnostnega momenta z integralom.** Za palico z linearno gostoto $\lambda = m/l$ in osjo skozi krajišče je $J = \int_0^l x^2\lambda\,\mathrm{d}x = \lambda l^3/3 = \tfrac{1}{3}ml^2$. Za poln valj razdelimo telo na tanke cilindrične lupine s polmerom $r$ in maso $\mathrm{d}m = \frac{m}{\pi R^2}2\pi r\,\mathrm{d}r$; integral $\int_0^R r^2\,\mathrm{d}m$ da $\tfrac{1}{2}mR^2$.
-
-**Dokaz Steinerjevega izreka.** Naj bo $\vec{r}_i = \vec{d} + \vec{r}_i\,'$, kjer je $\vec{r}_i\,'$ merjen od masnega središča (pravokotno na os). Potem je $\sum m_ir_i^2 = md^2 + 2\vec{d}\cdot\sum m_i\vec{r}_i\,' + \sum m_ir_i'^2$. Srednji člen je nič po definiciji masnega središča, zato $J = md^2 + J_{ms}$.
+**Vztrajnostni moment valja z integralom.** Za poln valj razdelimo telo na tanke cilindrične lupine s polmerom $r$ in maso $\mathrm{d}m = \frac{m}{\pi R^2}2\pi r\,\mathrm{d}r$; integral $\int_0^R r^2\,\mathrm{d}m$ da $\tfrac{1}{2}mR^2$.
 
 **Tenzor vztrajnostnega momenta.** V splošnem $\vec{\Gamma}$ ni vzporeden z $\vec{\omega}$: velja $\vec{\Gamma} = \underline{J}\,\vec{\omega}$, kjer je $\underline{J}$ simetrična matrika $3\times 3$. V koordinatnem sistemu glavnih osi je matrika diagonalna. Če se telo vrti okoli glavne osi, je $\vec{\Gamma} \parallel \vec{\omega}$; sicer ležaji čutijo navor, kar se kaže kot opletanje neuravnoteženih koles.
 
@@ -295,6 +351,8 @@ F | sila | | N
 \varphi | kot med krajevnim vektorjem in silo | | rad | tudi kot zasuka pri vrtenju
 J | vztrajnostni moment | J = \sum_i m_ir_i^2 | kg\,m^2 | odvisen od razporeditve mase in osi
 J_{ms} | vztrajnostni moment glede na os skozi masno središče | | kg\,m^2
+d | razdalja med osjo skozi masno središče in vzporedno osjo | | m | Steinerjev izrek
+A | delo navora (mišic) | A = \int M\,\mathrm{d}\varphi | J
 J_1, J_2 | vztrajnostna momenta pred spremembo in po njej | | kg\,m^2
 J_p | vztrajnostni moment ploščadi | J_p = \tfrac{1}{2}m_pR^2 | kg\,m^2
 J_t | vztrajnostni moment telefona | | kg\,m^2

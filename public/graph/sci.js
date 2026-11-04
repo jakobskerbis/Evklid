@@ -3,7 +3,7 @@
 // Tipkovnica je vedno vidna (kot pri pravem kalkulatorju); na računalniku lahko tipkaš tudi s tipkovnico.
 import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
 import { analyze, previewTex, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
-import { commandName } from "./cas.js";
+import { commandName, parseCommand } from "./cas.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -61,13 +61,57 @@ const MORE = [
   ["alg", null], // poenostavi, razvij, razstavi, reši za (imena v jeziku vmesnika, glej renderMore)
   ["cmp", [["=", "="], ["<", "<"], [">", ">"], ["\\le", "≤"], ["\\ge", "≥"], [";", ";"]]],
   ["vars", [["x", "x"], ["y", "y"], ["z", "z"], ["a", "a"], ["b", "b"], ["c", "c"], ["n", "n"], ["t", "t"], ["f(x)=", "f(x)="], ["g(x)=", "g(x)="]]],
-  ["ana", [["\\tfrac{d}{dx}", "d/dx(@)"], ["\\tfrac{d}{dx}\\big|_{x=a}", "d/dx(@;)"], ["\\int_a^b", "∫(@;;)"], ["\\sum", "∑_(n=1)^(@) "], ["\\prod", "∏_(n=1)^(@) "], ["|x|", "abs("]]],
+  ["ana", null], // odvod, integral, vsota, produkt; integriraj, limita, taylor (imena v jeziku vmesnika, glej anaKeys)
   ["trig", [["\\sin", "sin("], ["\\cos", "cos("], ["\\tan", "tan("], ["\\cot", "cot("], ["\\arcsin", "arcsin("], ["\\arccos", "arccos("], ["\\arctan", "arctan("], ["\\sinh", "sinh("], ["\\cosh", "cosh("], ["\\tanh", "tanh("], ["\\text{°}", "°"], ["\\text{′}", "′"], ["\\text{″}", "″"]]],
   ["num", [["\\gcd", "gcd(@;)"], ["\\operatorname{lcm}", "lcm(@;)"], ["\\bmod", "mod(@;)"], ["\\operatorname{round}", "round(@;)"], ["\\lfloor x\\rfloor", "floor("], ["\\lceil x\\rceil", "ceil("], ["\\binom{n}{k}", "nCr(@;)"], ["n!", "!"], ["\\%", "%"], ["\\operatorname{sgn}", "sgn("], ["\\operatorname{Int}", "Int("], ["\\operatorname{frac}", "frac("], ["\\mathrm{Ran\\#}", "rand"], ["\\operatorname{RanInt}", "randint(@;)"], ["\\operatorname{Pol}", "Pol(@;)"], ["\\operatorname{Rec}", "Rec(@;)"]]],
   ["stat", [["\\operatorname{mean}", "mean(@)"], ["\\operatorname{median}", "median(@)"], ["\\sigma", "stdev(@)"], ["\\min", "min(@)"], ["\\max", "max(@)"], ["\\Sigma", "total(@)"]]],
   ["cplx", [["i", "i"], ["|z|", "abs("]]],
   ["mem", [["\\mathrm{M+}", "#m+"], ["\\mathrm{M-}", "#m-"], ["\\mathrm{MR}", "M"], ["\\mathrm{MC}", "#mc"]]],
 ];
+
+// gnezdeni \frac, \sqrt, ^{…} od znotraj navzven: √(E/m) ostane √((E)/(m)), ne √(E)/(m)
+function unnest(x) {
+  for (let prev = ""; prev !== x; ) {
+    prev = x;
+    x = x
+      .replace(/_\{([^{}]*)\}/g, "$1")
+      .replace(/\^\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `^${a}` : `^(${a})`))
+      .replace(/\\t?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)")
+      .replace(/\\sqrt\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `√${a}` : `√(${a})`));
+  }
+  return x;
+}
+/** Rezultat v TeX → besedilo za odložišče, ki ga razume vsak program (izvoženo za teste). */
+export function texPlain(tex) {
+  return unnest(String(tex).replace(/\{,\}/g, ","))
+    .replace(/\\Leftrightarrow/g, "⇔")
+    .replace(/\\(left|right)(?![a-z])/g, "")
+    .replace(/\\(quad|,|;)/g, " ")
+    .replace(/\\approx/g, "≈")
+    .replace(/\\le(?![a-z])/g, "≤")
+    .replace(/\\ge(?![a-z])/g, "≥")
+    .replace(/\\in(?![a-z])/g, "∈")
+    // funkcije in grške črke (integral, Taylor): ime ostane, sicer bi »\ln|x|« postal »|x|«
+    .replace(/\\(arcsin|arccos|arctan|arccot|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|exp)(?![a-z])/g, (_, f, i, str) => `${/[\w)|]/.test(str[i - 1] || "") ? " " : ""}${f}`)
+    .replace(/\\ldots/g, "…")
+    .replace(/\\(alpha|beta|gamma|delta|varepsilon|epsilon|vartheta|theta|lambda|mu|nu|xi|rho|sigma|tau|varphi|phi|psi|omega)(?![a-z])/g, (_, g) => ({ alpha: "α", beta: "β", gamma: "γ", delta: "δ", varepsilon: "ε", epsilon: "ε", vartheta: "θ", theta: "θ", lambda: "λ", mu: "μ", nu: "ν", xi: "ξ", rho: "ρ", sigma: "σ", tau: "τ", varphi: "φ", phi: "φ", psi: "ψ", omega: "ω" })[g])
+    .replace(/\\cup/g, "∪")
+    .replace(/\\infty/g, "∞")
+    .replace(/\\mathbb\{R\}/g, "ℝ")
+    .replace(/\\varnothing/g, "∅")
+    .replace(/\\pm/g, "±")
+    .replace(/\\pi/g, "π")
+    .replace(/\\cdot/g, "·")
+    .replace(/\{,\}/g, ",")
+    .replace(/\\\{/g, "\u0001")
+    .replace(/\\\}/g, "\u0002")
+    .replace(/\\[a-z]+/g, "")
+    .replace(/[{}\\]/g, "")
+    .replace(/\u0001/g, "{")
+    .replace(/\u0002/g, "}")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 /**
  * Znanstveni kalkulator v elementu root.
@@ -218,6 +262,18 @@ export function createScientific(root, opts) {
         return t("sc.cas.irrational");
       case "casEmpty":
         return t("sc.cas.empty");
+      case "casIntegral":
+        return t("sc.cas.integral");
+      case "casLimit":
+        return t("sc.cas.limit");
+      case "casTaylor":
+        return t("sc.cas.taylorFail");
+      case "casTaylorN":
+        return t("sc.cas.taylorN", { max: e.info.max ?? 10 });
+      case "casPoint":
+        return t("sc.cas.point");
+      case "casVarName":
+        return t("sc.cas.varName");
       case "other":
         return t("gc.errOther");
       default:
@@ -297,6 +353,7 @@ export function createScientific(root, opts) {
       case "expr":
         e.note = { key: "sc.exprHint", name: r.v };
         if (r.cas) e.cas = true;
+        if (r.v) e.ana = r.v; // nedoločeni integral in Taylorjev polinom
         break;
       case "sym":
         e.cas = true;
@@ -308,7 +365,10 @@ export function createScientific(root, opts) {
       case "cas":
         e.op = r.op;
         e.res = r.resTex;
+        if (r.approx) e.approx = true;
+        if (r.none && r.op === "limit") e.none = true; // limita ne obstaja (pri reši je none prazna množica)
         if (r.cond) e.note = { key: "sc.cas.cond", tex: r.cond };
+        else if (r.rad) e.note = { key: "sc.cas.radians" };
         if (r.steps) {
           e.steps = true;
           e.stepsText = r.inner;
@@ -348,7 +408,8 @@ export function createScientific(root, opts) {
       case "deriv":
         return texHtml(`= ${e.res}`);
       case "cas": {
-        if (e.op !== "solve") return texHtml(`= ${e.res}`);
+        if (e.none) return `<span class="sc-none">${esc(t("sc.cas.limitNone"))}</span>`;
+        if (e.op !== "solve") return texHtml(`${e.approx ? "\\approx" : "="} ${e.res}`);
         const parts = String(e.res || "").split(",\\quad ").filter(Boolean);
         return `<span class="sc-parts">${parts.map((x) => `<span>${texHtml(x)}</span>`).join("")}</span>`;
       }
@@ -400,11 +461,14 @@ export function createScientific(root, opts) {
     if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`= ${fmt(r.value).tex}`) : "";
     else if (r.kind === "complex") live.innerHTML = texHtml(`= ${complexTex(r.re, r.im)}`);
     else if (r.kind === "deriv") live.innerHTML = texHtml(`= ${r.resTex}`);
-    else if (r.kind === "cas") live.innerHTML = texHtml(r.op === "solve" ? r.resTex : `= ${r.resTex}`);
+    else if (r.kind === "cas") live.innerHTML = r.none && r.op === "limit" ? esc(t("sc.cas.limitNone")) : texHtml(r.op === "solve" ? r.resTex : `${r.approx ? "\\approx" : "="} ${r.resTex}`);
     else live.innerHTML = r.kind === "solve" || r.kind === "ineq" || r.kind === "system" ? `<span class="sc-live-hint">${esc(t("sc.pressSolve"))}</span>` : "";
   }
   // Sproten predogled ne rešuje enačb in neenačb (rešitev pride ob =): samo račun, odvod, kompleksno število.
   function analyzeLive(text) {
+    // limita(f; x; a), taylor(f; x; a; n): podpičje loči argumente, predogled kot pri vsakem ukazu
+    const cmd = parseCommand(text);
+    if (cmd && ["integrate", "limit", "taylor"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env(), live: true });
     if (/[=<>≤≥;]/.test(text) && !functionDef(text)) {
       const r = evaluate(text, env());
       if (r && !r.error) return { kind: "value", ...r };
@@ -491,6 +555,12 @@ export function createScientific(root, opts) {
     const btn = (act, ic, label) => `<button type="button" class="sc-act" data-act="${act}" data-i="${i}">${icon(ic)}<span>${esc(t(label))}</span></button>`;
     if (e.plot?.length && opts.openGraph) acts.push(btn("plot", "chart-spline", "sc.plot"));
     if (e.cas) for (const [op, ic] of [["simplify", "sparkles"], ["expand", "maximize-2"], ["factor", "blocks"]]) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="${op}" data-i="${i}">${icon(ic)}<span>${esc(t(`sc.cas.${op}`))}</span></button>`);
+    if (e.ana) {
+      // ∫ dx in Taylor: spremenljivko dopišemo le, če ni x
+      const v = e.ana === "x" ? "" : ` data-v="${esc(e.ana)}"`;
+      acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="integrate"${v} data-i="${i}" title="${esc(t("sc.cas.integrate"))}"><span aria-hidden="true" dir="ltr">∫ d${esc(e.ana)}</span><span class="sr-only">${esc(t("sc.cas.integrate"))}</span></button>`);
+      acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="taylor"${v} data-i="${i}" title="${esc(t("sc.cas.taylorPoly"))}">${icon("sigma")}<span>${esc(t("sc.cas.taylor"))}</span></button>`);
+    }
     if (e.solveFor) for (const v of e.solveFor) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="solve" data-v="${esc(v)}" data-i="${i}">${icon("square-function")}<span>${esc(t("sc.cas.solveFor", { v }))}</span></button>`);
     if (e.steps && opts.steps && opts.canSteps?.()) acts.push(btn("steps", "list-ordered", "sc.steps"));
     if ((e.kind || "value") === "value" && primeFactors(e.value)?.some(([, k], j, a) => a.length > 1 || k > 1) && !e.fact) acts.push(btn("fact", "grid-2x2", "sc.factor"));
@@ -556,12 +626,16 @@ export function createScientific(root, opts) {
   }
   function renderMore() {
     more.innerHTML = `<div class="sc-consts-h"><b>${esc(t("sc.functions"))}</b><button type="button" class="ghost icon-only sc-more-x" aria-label="${esc(t("pad.close"))}">${icon("x")}</button></div>
-      ${MORE.map(([g, keys]) => [g, keys || algKeys()]).map(([g, keys]) => `<div class="sc-more-g" data-g="${g}"><div class="sc-more-h">${esc(t(`sc.grp.${g}`))}</div><div class="sc-more-keys">${keys.map(([l, ins]) => `<button type="button" class="sc-mk" data-ins="${esc(ins)}"${g === "mem" ? ` title="${esc(t(MEM_LABEL[ins]))}" aria-label="${esc(t(MEM_LABEL[ins]))}"` : ""}>${texHtml(l)}</button>`).join("")}</div></div>`).join("")}`;
+      ${MORE.map(([g, keys]) => [g, keys || (g === "alg" ? algKeys() : anaKeys())]).map(([g, keys]) => `<div class="sc-more-g" data-g="${g}"><div class="sc-more-h">${esc(t(`sc.grp.${g}`))}</div><div class="sc-more-keys">${keys.map(([l, ins]) => `<button type="button" class="sc-mk" data-ins="${esc(ins)}"${g === "mem" ? ` title="${esc(t(MEM_LABEL[ins]))}" aria-label="${esc(t(MEM_LABEL[ins]))}"` : ""}>${texHtml(l)}</button>`).join("")}</div></div>`).join("")}`;
   }
   function algKeys() {
     const n = (op) => commandName(op, opts.locale?.());
     const nm = (op) => `\\operatorname{${n(op)}}`;
     return [[nm("simplify"), `${n("simplify")}(@)`], [nm("expand"), `${n("expand")}(@)`], [nm("factor"), `${n("factor")}(@)`], [`${nm("solve")}\\ (\\ldots;x)`, `${n("solve")}(@; x)`]];
+  }
+  function anaKeys() {
+    const n = (op) => commandName(op, opts.locale?.());
+    return [["\\tfrac{d}{dx}", "d/dx(@)"], ["\\tfrac{d}{dx}\\big|_{x=a}", "d/dx(@;)"], ["\\int_a^b", "∫(@;;)"], ["\\int\\!\\ldots\\,dx", `${n("integrate")}(@)`], ["\\lim\\limits_{x\\to a}", `${n("limit")}(@; x; )`], ["\\operatorname{taylor}", `${n("taylor")}(@; x; 0; 5)`], ["\\sum", "∑_(n=1)^(@) "], ["\\prod", "∏_(n=1)^(@) "], ["|x|", "abs("]];
   }
   // panel (konstante, funkcije) prekrije tipkovnico, zgodovina ostane vidna; največ en naenkrat
   function showPanel(which) {
@@ -583,15 +657,43 @@ export function createScientific(root, opts) {
   const touch = isTouch();
   if (touch) input.setAttribute("inputmode", "none");
   // tipke ne vzamejo fokusa polju (kazalec ostane na mestu)
+  // držanje ◀, ▶ ali ⌫ ponavlja (kazalec se premika ali briše, dokler je prst na tipki)
+  const hold = { t: 0, iv: 0, b: null };
+  const stopHold = () => {
+    clearTimeout(hold.t);
+    clearInterval(hold.iv);
+    hold.t = hold.iv = 0;
+  };
   root.querySelector(".sc-keys").addEventListener("pointerdown", (e) => {
-    if (e.target.closest(".sc-key")) e.preventDefault();
+    const b = e.target.closest(".sc-key");
+    if (!b) return;
+    e.preventDefault();
+    stopHold();
+    hold.b = null;
+    const step = { "#left": () => move(-1), "#right": () => move(1), "#del": () => del() }[b.dataset.ins];
+    if (!step || e.button > 0 || (second && b.dataset.ins2)) return;
+    // tipka skrita med držanjem (drugo orodje, zaprto okno) → ustavi
+    const tick = () => (b.getClientRects().length ? step() : stopHold());
+    hold.t = setTimeout(() => {
+      hold.b = b; // klik ob dvigu prsta ne doda še enega koraka
+      if (second) setSecond(false); // kot pri dotiku
+      tick();
+      hold.iv = setInterval(tick, 75);
+    }, 450);
   });
+  for (const ev of ["pointerup", "pointercancel", "pointerleave"]) root.querySelector(".sc-keys").addEventListener(ev, stopHold);
+  window.addEventListener("blur", stopHold);
+  root.querySelector(".sc-keys").addEventListener("contextmenu", (e) => e.target.closest(".sc-key") && e.preventDefault());
   more.addEventListener("pointerdown", (e) => {
     if (e.target.closest(".sc-mk")) e.preventDefault();
   });
   root.querySelector(".sc-keys").addEventListener("click", (e) => {
     const b = e.target.closest(".sc-key");
     if (!b) return;
+    const wasHeld = hold.b === b;
+    hold.b = null;
+    if (wasHeld && e.detail > 0) return; // tipka Enter (detail 0) ni del držanja
+
     const ins = second && b.dataset.ins2 ? b.dataset.ins2 : b.dataset.ins;
     if (ins === "#2nd") return setSecond(!second);
     if (ins === "#more") showPanel(more.hidden ? "more" : null);
@@ -712,42 +814,13 @@ export function createScientific(root, opts) {
     if (!it.im) return n(it.re);
     return `${it.re ? `${n(it.re)}${it.im < 0 ? "-" : "+"}` : it.im < 0 ? "-" : ""}${Math.abs(it.im) === 1 ? "" : n(Math.abs(it.im))}i`;
   };
-  // gnezdeni \frac, \sqrt, ^{…} od znotraj navzven: √(E/m) ostane √((E)/(m)), ne √(E)/(m)
-  function unnest(x) {
-    for (let prev = ""; prev !== x; ) {
-      prev = x;
-      x = x
-        .replace(/_\{([^{}]*)\}/g, "$1")
-        .replace(/\^\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `^${a}` : `^(${a})`))
-        .replace(/\\t?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)")
-        .replace(/\\sqrt\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `√${a}` : `√(${a})`));
-    }
-    return x;
-  }
   // besedilo za odložišče: število ali rešitev v zapisu, ki ga razume vsak program (brez TeX)
   function copyText(it) {
     const c = comma();
+    if (it.none) return t("sc.cas.limitNone");
     if ((it.kind || "value") === "value") return it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: c }).text : formatNumber(it.value, { mode: st.format, comma: c }).text;
     if (it.kind === "complex") return complexText(it);
-    return unnest(String(resTex(it)).replace(/\{,\}/g, ","))
-      .replace(/\\Leftrightarrow/g, "⇔")
-      .replace(/\\(quad|,|;|left|right)/g, " ")
-      .replace(/\\approx/g, "≈")
-      .replace(/\\le/g, "≤")
-      .replace(/\\ge/g, "≥")
-      .replace(/\\in/g, "∈")
-      .replace(/\\cup/g, "∪")
-      .replace(/\\infty/g, "∞")
-      .replace(/\\mathbb\{R\}/g, "ℝ")
-      .replace(/\\varnothing/g, "∅")
-      .replace(/\\pm/g, "±")
-      .replace(/\\pi/g, "π")
-      .replace(/\\cdot/g, "·")
-      .replace(/\{,\}/g, ",")
-      .replace(/\\[a-z]+/g, "")
-      .replace(/[{}]/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
+    return texPlain(String(resTex(it)));
   }
   root.querySelector(".sc-angle").addEventListener("click", (e) => {
     const b = e.target.closest("[data-angle]");

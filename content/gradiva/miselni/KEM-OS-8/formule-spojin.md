@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Naboji ionov
+  - iz skupine periodnega sistema
+  - $\mathrm{Al^{3+}}$, $\mathrm{O^{2-}}$, $\mathrm{N^{3-}}$
+- Vsota nabojev nič
+  - $2 \cdot 3 + 3 \cdot (-2) = 0$
+  - napaka: $\mathrm{Al_3O_2}$
+- Križno pravilo
+  - naboj enega je indeks drugega
+  - skrajšaj: $\mathrm{Mg_2O_2}$ v $\mathrm{MgO}$
+- Indeks
+  - velja za element pred njim
+  - $\mathrm{CaCl_2}$: en Ca, dva Cl
+- Ime ionske spojine
+  - kovina v pridevniški obliki
+  - nekovina s končnico -id
+  - brez števil: kalcijev klorid
+- Molekulske spojine
+  - dve nekovini, formula iz vezi
+  - predpone mono-, di-, tri-, tetra-
+  - $\mathrm{CO_2}$ ogljikov dioksid

@@ -137,6 +137,7 @@ export function openKeyboard(field, { layer } = {}) {
 export function hideKeyboard({ blur = false } = {}) {
   if (!S.open) return;
   S.open = false;
+  clearTimers(); // držanje ⌫ / ← / → se ustavi
   closePop();
   trailEnd(true);
   S.lastGlide = null;
@@ -374,10 +375,12 @@ function fxHtml() {
     <div class="tk-row">${toNum}${leftKey()}${rightKey()}${bsKey()}${goKey()}</div>`;
 }
 
-// skupina Algebra: v slovenščini poenostavi/razvij/razstavi/reši, drugje angleška imena (kot na kalkulatorjih CAS)
+// skupini Algebra in Analiza: v slovenščini poenostavi/razvij/razstavi/reši/integriraj/limita, drugje angleška imena
+// (kot na kalkulatorjih CAS)
 function fxKey(group, l, ins) {
-  const sl = group === "alg" && CAS_SL[l] && /^sl/.test(currentLang() || "sl");
-  const cls = group === "alg" && CAS_SL[l] ? "sm word" : "sm";
+  const cas = (group === "alg" || group === "ana") && CAS_SL[l];
+  const sl = cas && /^sl/.test(currentLang() || "sl");
+  const cls = cas ? "sm word" : "sm";
   return sl ? key(CAS_SL[l], { a: "ins", v: ins.replace(l, CAS_SL[l]) }, { cls }) : key(l, { a: "ins", v: ins }, { cls });
 }
 
@@ -932,7 +935,8 @@ function wireBoard() {
           if (down.pop) closePreview();
         }
       }, 380);
-    } else if (a?.a === "bs") {
+    } else if (a?.a === "bs" || a?.a === "l" || a?.a === "r") {
+      // držanje ⌫, ← ali → ponavlja (briše ali premika kazalec, dokler je prst na tipki)
       try {
         b.setPointerCapture(e.pointerId);
       } catch {}
@@ -944,6 +948,7 @@ function wireBoard() {
     }
   });
   board.addEventListener("mousedown", (e) => e.preventDefault());
+  window.addEventListener("blur", clearTimers);
   board.addEventListener("pointermove", (e) => {
     if (!down) return;
     if (down.a?.a === "char" && !down.pop && /^\p{L}$/u.test(down.a.v) && glideOn()) {

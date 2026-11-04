@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Glukoza
+  - $\mathrm{C_6H_{12}O_6}$, $M = 180\,\text{g/mol}$
+  - obroč s petimi skupinami $\mathrm{{-}OH}$
+  - nastane s fotosintezo
+- Ogljikovi hidrati
+  - spojine C, H in O
+  - v njih ni molekul vode
+- Povezovanje v verige
+  - pri vsaki vezi odide $\mathrm{H_2O}$
+  - člen $\mathrm{C_6H_{10}O_5}$, $162\,\text{g/mol}$
+  - mono-, di-, polisaharid
+  - škrob in celuloza: iste glukoze, drugače povezane
+- Škrob
+  - zavita veriga, zaloga hrane
+  - krompir, žita, riž
+  - jodovica se obarva temno modro
+- Celuloza
+  - ravne verige v vlaknih
+  - les, bombaž, papir
+  - človek je ne prebavi: vlaknina
+- Hidroliza
+  - prebava škroba do glukoze
+  - masa naraste: voda se doda
+  - glukozo dokaže Fehlingov reagent
