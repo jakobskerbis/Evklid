@@ -391,6 +391,14 @@
     <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
     <h1 data-i18n="prog.title">Napredek</h1>
     <div id="prog-goal" class="card goal-card" hidden></div>
+    <div class="card prog-akt">
+      <h2 data-i18n="akt.title">Aktivnost v zadnjem letu</h2>
+      <div id="prog-heatmap"></div>
+    </div>
+    <div class="card">
+      <h2 data-i18n="akt.weeks">XP po tednih</h2>
+      <div id="prog-weeks"></div>
+    </div>
     <div class="card">
       <h2 data-i18n="prog.weak">Šibke točke</h2>
       <p class="muted" data-i18n="prog.weakNote">Samodejno zaznane iz pogovorov (vsaj 3 poteze, vsaj 40 % napak v zadnjih 60 dneh) in ročno vnesene. Evklid jih upošteva pri razlagi.</p>
@@ -398,7 +406,7 @@
       <button type="button" class="secondary" id="weak-sheet" hidden><i data-icon="clipboard-check"></i><span data-i18n="gr.weakSheet">Delovni list iz šibkih tem</span></button>
       <p class="muted" id="weak-sheet-msg" role="status" hidden></p>
     </div>
-    <div class="card">
+    <div class="card" id="prog-turns">
       <h2 data-i18n="prog.activity">Aktivnost (30 dni)</h2>
       <div id="activity" class="activity"></div>
     </div>
@@ -444,6 +452,8 @@
       <button type="button" class="list-row" id="me-install" hidden><span class="ic"><i data-icon="smartphone"></i></span><span class="lr-text"><b data-i18n="inst.btn">Namesti aplikacijo</b><small data-i18n="inst.meSub">Na začetni zaslon telefona</small></span><i data-icon="chevron-right"></i></button>
       <button type="button" class="list-row" data-go="account" id="me-account" hidden><span class="ic"><i data-icon="user"></i></span><span class="lr-text"><b data-i18n="nav.account">Račun</b><small data-i18n="me.accountSub">Naročnina in otroci</small></span><i data-icon="chevron-right"></i></button>
     </div>
+    <!-- Pregled pod povezavami (app.js loadMeOverview): aktivnost v letu, Nadaljuj, testi in roki. -->
+    <div id="me-overview" class="me-overview"></div>
   </main>
 
   <!-- SKENIRAJ NALOGO (public/scan/) -->
