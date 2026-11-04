@@ -4,12 +4,12 @@ simulacija: ploscice
 moznosti: {"mode": "razstavi"}
 trajanje: 1:22
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
 
-Tričlenik $x^2 + 5x + 6$ so ploščice: en kvadrat $x^2$, pet trakov $x$ in šest kvadratkov $1$. Zložimo jih v pravokotnik, njegovi stranici sta $x + 2$ in $x + 3$.
+Tričlenik $x^2 + 5x + 6$ predstavimo s ploščicami: en kvadrat $x^2$, pet trakov $x$ in šest kvadratkov $1$. Zložimo jih v pravokotnik, njegovi stranici sta $x + 2$ in $x + 3$.
 
 - nastavi: p = 2
 - nastavi: q = 3
@@ -38,4 +38,4 @@ Podaljšaj jo na $x + 4$: stranici sta enaki in pravokotnik je kvadrat, $x^2 + 8
 
 ## 1:08
 
-Pravilo (Vietovo pravilo): $x^2 + px + q = (x + a)(x + b)$, kjer je $a + b = p$ in $a \cdot b = q$. Na koncu faktorja zmnoži nazaj in tako narediš preizkus.
+Pravilo (Vietovo pravilo): poišči števili $a$ in $b$, katerih vsota je koeficient pri $x$, produkt pa prosti člen; tričlenik je potem $(x + a)(x + b)$. Na koncu faktorja zmnoži nazaj in tako narediš preizkus.

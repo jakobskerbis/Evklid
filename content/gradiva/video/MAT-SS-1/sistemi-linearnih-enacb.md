@@ -3,7 +3,7 @@ naslov: Sistem dveh enačb in presečišče premic
 simulacija: sistem
 trajanje: 1:24
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -33,7 +33,7 @@ Nastavi še $k_2 = 1$: premici $y = x + 1$ in $y = x - 2$ imata enak smerni koef
 
 ## 0:54
 
-Pri $n_2 = 1$ sta obe enačbi $y = x + 1$, zato premici sovpadata. Vsaka točka premice je rešitev, sistem ima neskončno rešitev; računsko dobiš $0 = 0$.
+Pri $n_2 = 1$ sta obe enačbi $y = x + 1$, zato premici sovpadata. Vsaka točka premice je rešitev, sistem ima neskončno mnogo rešitev; računsko dobiš $0 = 0$.
 
 - nastavi: n₂ = 1
 

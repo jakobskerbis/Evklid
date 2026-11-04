@@ -4,7 +4,7 @@ simulacija: potence
 moznosti: {"mode": "cela"}
 trajanje: 1:34
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -22,7 +22,7 @@ Pojdi v levo: pri eksponentu $2$ je $2^2 = 4$. Vsak korak v levo zmanjša ekspon
 
 ## 0:26
 
-Nadaljuj z deljenjem: $4 : 2 = 2 = 2^1$ in $2 : 2 = 1$. Zato je $2^0 = 1$: to vrednost da vzorec deljenja, ne množenje faktorjev.
+Nadaljuj z deljenjem: $4 : 2 = 2 = 2^1$ in $2 : 2 = 1$. Zato je $2^0 = 1$: tega ne dobiš z množenjem faktorjev, ampak iz vzorca deljenja.
 
 - nastavi: eksponent = 0
 

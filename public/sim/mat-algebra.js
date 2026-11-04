@@ -163,8 +163,11 @@ export function neenacba(el, { mode = "neenacba" } = {}) {
       const finalRel = flip ? { "<": ">", ">": "<", "≤": "≥", "≥": "≤" }[rel] : rel;
       const dir = finalRel === "<" || finalRel === "≤" ? -1 : 1;
       if (Math.abs(k) <= 8) ray(k, dir, finalRel === "≤" || finalRel === "≥", "a");
-      const interval = dir < 0 ? `(-\\infty, ${tfmt(k)}${finalRel === "≤" ? "]" : ")"}` : `${finalRel === "≥" ? "[" : "("}${tfmt(k)}, \\infty)`;
-      const lines = [`${ax}${bt} ${T(rel)} ${c}`, `${ax} ${T(rel)} ${c - b}`, `x ${T(finalRel)} ${tfmt(k)}`].filter((l, i, L) => l !== L[i - 1]);
+      // Meja (c − b)/a točno: tretjine kot ulomek (7/3, ne zaokroženo 2,33), polovice in četrtine decimalno.
+      const g = gcd(c - b, a);
+      const kT = Number.isInteger(k * 4) ? tfmt(k) : `${k < 0 ? "-" : ""}\\frac{${Math.abs(c - b) / g}}{${Math.abs(a) / g}}`;
+      const interval = dir < 0 ? `(-\\infty, ${kT}${finalRel === "≤" ? "]" : ")"}` : `${finalRel === "≥" ? "[" : "("}${kT}, \\infty)`;
+      const lines = [`${ax}${bt} ${T(rel)} ${c}`, `${ax} ${T(rel)} ${c - b}`, `x ${T(finalRel)} ${kT}`].filter((l, i, L) => l !== L[i - 1]);
       out.innerHTML = texBlock(lines.join("\\\\ ")) +
         `<p>${flip ? `<b>Pozor:</b> delili smo z negativnim številom (${fmt(a)}), zato se je znak neenakosti obrnil.` : a === 1 ? "Koeficient pri x je 1, zato deliti ni treba." : `Delili smo s pozitivnim številom (${a}), znak ostane enak.`}</p>
          <p>Rešitev: ${tex(`x \\in ${interval}`)}. ${finalRel === "<" || finalRel === ">" ? "Prazen krožec: meja ne spada zraven." : "Poln krožec: meja spada zraven."}</p>
@@ -385,12 +388,18 @@ export function sistem(el) {
     // kx + n brez koeficienta 1 (x, −x), brez 0x in brez + 0.
     const L = (k, n) => (k ? `${k === 1 ? "" : k === -1 ? "-" : tfmt(k, 1)}x${n ? ` ${n < 0 ? "-" : "+"} ${tfmt(Math.abs(n), 1)}` : ""}` : tfmt(n, 1));
     const E = (k, n) => `y = ${L(k, n)}`;
-    if (k1 === k2) msg = n1 === n2 ? "<p>Premici se prekrivata: sistem ima <b>neskončno rešitev</b>.</p>" : "<p>Premici sta vzporedni (enak k, različen n): sistem <b>nima rešitve</b>.</p>";
+    if (k1 === k2) msg = n1 === n2 ? "<p>Premici sovpadata (enak k in enak n): sistem ima <b>neskončno rešitev</b>.</p>" : "<p>Premici sta vzporedni (enak k, različen n): sistem <b>nima rešitve</b>.</p>";
     else {
       const x = (n2 - n1) / (k1 - k2), y = k1 * x + n1;
       if (Math.abs(x) <= 8 && Math.abs(y) <= 8) s("circle", { cx: A.X(x), cy: A.Y(y), r: 7, class: "pt fill-c" }, svg);
-      msg = `<p>Premici se sekata v točki <b>(${fmt(x, 2)}, ${fmt(y, 2)})</b>: to je edina rešitev sistema, ker leži na obeh premicah.</p>
-        ${texBlock(`${L(k1, n1)} = ${L(k2, n2)} \\Rightarrow x = ${tfmt(x)}`)}`;
+      // Koordinate točno: k in n so večkratniki 0,5, zato x = P/Q in y = (2k₁P + 2n₁Q)/(2Q); tretjine ipd. kot ulomek, ne zaokroženo.
+      const fr = (p, q) => { const g = gcd(p, q) || 1; [p, q] = [(q < 0 ? -p : p) / g, Math.abs(q) / g]; return q === 1 ? `${p}` : `${p < 0 ? "-" : ""}\\frac{${Math.abs(p)}}{${q}}`; };
+      const P = 2 * (n2 - n1), Q = 2 * (k1 - k2);
+      const dec = (v) => Math.abs(v * 100 - Math.round(v * 100)) < 1e-9;
+      const exact = dec(x) && dec(y);
+      const xT = exact ? tfmt(x) : fr(P, Q), yT = exact ? tfmt(y) : fr(2 * k1 * P + 2 * n1 * Q, 2 * Q);
+      msg = `<p>Premici se sekata v točki <b>${exact ? `(${fmt(x, 2)}, ${fmt(y, 2)})` : tex(`\\left(${xT}, ${yT}\\right)`)}</b>: to je edina rešitev sistema, ker leži na obeh premicah.</p>
+        ${texBlock(`${L(k1, n1)} = ${L(k2, n2)} \\Rightarrow x = ${xT}`)}`;
     }
     out.innerHTML = `<p><span class="dot dot-a"></span> ${tex(E(k1, n1))} &nbsp; <span class="dot dot-b"></span> ${tex(E(k2, n2))}</p>${msg}
       <p class="muted">Grafično reševanje: narišemo obe premici in odčitamo presečišče. Računsko: metoda zamenjave ali nasprotnih koeficientov.</p>`;
