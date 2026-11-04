@@ -160,7 +160,7 @@
    "ime": "Spodnji reženj levih pljuč",
    "la": "Lobus inferior pulmonis sinistri",
    "barva": "#60a5fa",
-   "opis": "Spodnji in zadnji reženj levih pljuč, ločen s poševno pljučno špranjo.",
+   "opis": "Spodnji in zadnji reženj levih pljuč; od zgornjega ga loči poševna pljučna špranja.",
    "vozlisca": [
     "Inferior lobe of left lung"
    ]
@@ -330,7 +330,7 @@
   "odseki": [
    {
     "naslov": "Zgradba",
-    "besedilo": "Pljuča sta dve gobasti krili v prsnem košu, levo in desno od srca. Desna pljuča imajo tri režnje, leva le dva, ker je na levi strani prostor za srce. Zrak pride skozi grlo v sapnik, ki se razcepi v levi in desni glavni bronhij. Bronhiji se v pljučih delijo v vse tanjše vejice (bronhiole), ki se končajo s pljučnimi mešički. Obe pljuči obdaja tanka in gladka mrena, poprsnica."
+    "besedilo": "Pljuča sestavljata dve gobasti pljučni krili v prsnem košu, levo in desno od srca. Desna pljuča imajo tri režnje, leva le dva, ker je na levi strani prostor za srce. Zrak pride skozi grlo v sapnik, ki se razcepi v levi in desni glavni bronhij. Bronhiji se v pljučih delijo v vse tanjše vejice (bronhiole), ki se končajo s pljučnimi mešički. Obe pljučni krili obdaja tanka gladka mrena, poprsnica."
    },
    {
     "naslov": "Delovanje",
@@ -342,7 +342,7 @@
    },
    {
     "naslov": "Pogoste bolezni",
-    "besedilo": "Pri astmi se bronhiji ob dražljajih, kot so cvetni prah, prah ali hladen zrak, zožijo, zato težko dihaš in piskajoče izdihuješ. Pljučnico povzročijo bakterije ali virusi; pljučni mešički se napolnijo s tekočino, zato imaš vročino in kašelj. Kajenje povzroča kronično obstruktivno pljučno bolezen in pljučnega raka, za katerim pri nas umre največ ljudi med vsemi vrstami raka."
+    "besedilo": "Pri astmi se bronhiji ob dražljajih, kot so cvetni prah, prah ali hladen zrak, zožijo, zato težko dihaš in piskajoče izdihuješ. Pljučnico povzročijo bakterije ali virusi; pljučni mešički se napolnijo s tekočino, zato težje dihaš, imaš pa tudi vročino in kašelj. Kajenje povzroča kronično obstruktivno pljučno bolezen in pljučnega raka, za katerim pri nas umre največ ljudi med vsemi vrstami raka."
    },
    {
     "naslov": "Kako skrbiš zanje",

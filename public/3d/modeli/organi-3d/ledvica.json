@@ -188,12 +188,12 @@
   {
    "id": "meh",
    "vozlisca": [
-    "Kidney pelvis and calyces (lastno)"
+    "Evklid renal pelvis and calyces (lastno)"
    ],
    "ime": "Ledvični meh in čašice",
    "la": "Pelvis renalis, calices renales",
    "barva": "#f2d060",
-   "opis": "Čašice objamejo papile in zbirajo seč, ki se v ledvičnem mehu zlije v sečevod."
+   "opis": "Čašice objemajo papile in zbirajo seč, ki se steka v ledvični meh in naprej v sečevod."
   },
   {
    "id": "secevod",
@@ -290,7 +290,7 @@
    },
    {
     "naslov": "Delovanje",
-    "besedilo": "Osnovna enota ledvice je nefron; vsaka ledvica jih ima okoli milijon. V ledvičnem telescu v skorji se iz krvi precedi voda z raztopljenimi snovmi (primarni seč), v enem dnevu okoli 180 litrov. V ledvičnih cevkah se večina vode, glukoza in soli vrnejo v kri, v seču pa ostanejo odpadne snovi, kot je sečnina. Iz papil kaplja seč v čašice in ledvični meh, sečevod pa ga odvede v sečni mehur. Ledvice tako uravnavajo tudi količino vode in soli v telesu ter krvni tlak."
+    "besedilo": "Osnovna enota ledvice je nefron; vsaka ledvica jih ima okoli milijon. V ledvičnem telescu v skorji se iz krvi precedi voda z raztopljenimi snovmi (primarni seč), v enem dnevu okoli 180 litrov. V ledvičnih cevkah se večina vode, glukoza in soli vrnejo v kri, v seču pa ostanejo odpadne snovi, kot je sečnina. Iz papil kaplja seč v čašice in ledvični meh, sečevod pa ga odvede v sečni mehur. Ledvici tako uravnavata tudi količino vode in soli v telesu ter krvni tlak."
    },
    {
     "naslov": "Zanimivost",
@@ -298,11 +298,11 @@
    },
    {
     "naslov": "Pogoste bolezni",
-    "besedilo": "Ledvični kamni nastanejo, ko se snovi iz seča izločijo v trde kristale; ko kamen potuje po sečevodu, povzroči hude krčevite bolečine. Bakterije, ki pridejo po sečilih navzgor, lahko povzročijo vnetje ledvic z vročino in bolečino v ledvenem delu. Dolgotrajno povišan krvni tlak in sladkorna bolezen počasi okvarjata nefrone. Ko ledvici odpovesta, kri čisti naprava za dializo ali pa bolnik dobi presajeno ledvico."
+    "besedilo": "Ledvični kamni nastanejo, ko se snovi iz seča izločijo kot trdi kristali; ko kamen potuje po sečevodu, povzroči hude krčevite bolečine. Bakterije, ki pridejo po sečilih navzgor, lahko povzročijo vnetje ledvic z vročino in bolečino v ledvenem delu. Dolgotrajno povišan krvni tlak in sladkorna bolezen počasi okvarjata nefrone. Ko ledvici odpovesta, kri čisti naprava za dializo ali pa bolnik dobi presajeno ledvico."
    },
    {
-    "naslov": "Kako skrbiš zanje",
-    "besedilo": "Pij dovolj vode, največ navadne, posebej ko je vroče ali se veliko gibaš; svetel seč pomeni, da piješ dovolj. Jej manj soli in manj sladkih pijač, saj sol zvišuje krvni tlak. Seča ne zadržuj predolgo. Zdravila proti bolečinam jemlji samo po navodilih, ker jih ledvice izločajo in jih lahko preveliki odmerki okvarijo."
+    "naslov": "Kako skrbiš zanju",
+    "besedilo": "Pij dovolj vode, največ navadne, posebej ko je vroče ali se veliko gibaš; svetel seč pomeni, da piješ dovolj. Jej manj soli in manj sladkih pijač, saj sol zvišuje krvni tlak. Seča ne zadržuj predolgo. Zdravila proti bolečinam jemlji samo po navodilih, ker jih izločata ledvici, ki ju preveliki odmerki lahko okvarijo."
    }
   ]
  },

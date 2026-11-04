@@ -5,7 +5,7 @@ export const info = {
   naslov: "Pljuča",
   podrocje: "organi",
   predmet: "BIO",
-  opis: "Pet pljučnih režnjev, sapnik, bronhiji in pljučne žile; prerez pokaže bronhije in žile v pljučni gobi.",
+  opis: "Pet pljučnih režnjev, sapnik, bronhiji in pljučne žile; prerez pokaže bronhije in žile v pljučnem tkivu.",
   merilo: { m: 0.27, oznaka: "27 cm" },
 };
 export const organ = "pljuca";

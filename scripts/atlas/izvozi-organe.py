@@ -672,7 +672,7 @@ def ledvicni_meh(osnovni, cfg, tmp):
     t += _crta(C, C.lerp(vrh, 0.5), 0.0058 * k, 0.004 * k, 0.0012) + _crta(C.lerp(vrh, 0.5), vrh, 0.004 * k, ru, 0.001) + _crta(vrh, vrh2, ru, ru, 0.001)
     me = _metakroglice(t, "meh", tmp)
     print(f"[organi] ledvični meh: {len(pap)} malih čašic, {tris(me)} trikotnikov")
-    return [["Kidney pelvis and calyces (lastno)", me, "meh", "meh", "Kidney pelvis and calyces (lastno) / Evklid"]]
+    return [["Evklid renal pelvis and calyces (lastno)", me, "meh", "meh", "Evklid renal pelvis and calyces (lastno) / Evklid"]]
 
 
 def jetrne_zile(osnovni, cfg, tmp):

@@ -440,8 +440,9 @@ function materialPokrova(t, ravnine) {
           t.rezVlakna ? `\n diffuseColor.rgb *= 1.0 - 0.07 * smoothstep( 0.2, 0.9, 0.5 + 0.5 * sin( dot( vOrgPos, normalize( vec3( 0.4, 1.0, 0.25 ) ) ) * ${fl(t.rezVlakna)} + 5.0 * orgSum( vOrgPos * 18.0 ) ) ); // snopi mišičnih vlaken na rezu` : ""
         }${
           t.rezPore
-            ? `\n { float orgP = orgSum( vOrgPos * ${fl(t.rezPore)} ) * 0.65 + orgSum( vOrgPos * ${fl(t.rezPore * 2.3)} ) * 0.35; // pore (pljučna goba): temne luknjice in svetli pretini
- diffuseColor.rgb *= 1.0 - ${fl(t.rezPoreMoc ?? 0.4)} * smoothstep( 0.52, 0.66, orgP ) + 0.12 * smoothstep( 0.4, 0.2, orgP ); }`
+            ? `\n { float orgPw = length( fwidth( vOrgPos ) ) * 2.0; // pore (pljučna goba): temne luknjice in svetli pretini; manjše od ~2 px zbledijo (brez migetanja)
+ float orgP = mix( 0.5, orgSum( vOrgPos * ${fl(t.rezPore)} ), clamp( 1.5 - orgPw * ${fl(t.rezPore)}, 0.0, 1.0 ) ) * 0.65 + mix( 0.5, orgSum( vOrgPos * ${fl(t.rezPore * 2.3)} ), clamp( 1.5 - orgPw * ${fl(t.rezPore * 2.3)}, 0.0, 1.0 ) ) * 0.35;
+ diffuseColor.rgb *= 1.0 - ${fl(t.rezPoreMoc ?? 0.4)} * smoothstep( 0.52, 0.66, orgP ) + 0.12 * ( 1.0 - smoothstep( 0.2, 0.4, orgP ) ); }`
             : ""
         }`,
       );
