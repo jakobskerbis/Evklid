@@ -11,7 +11,7 @@ export const PRIVACY_VERSION = "2026-10-29";
 // Cene v centih (z DDV). lookup_key poveže ceno v Stripu s paketom.
 // Cene po stopnjah (j 2026-11-04, »Cene z najmanj 75 % dobička«, Predlog A): cena velja za profil in sledi
 // stopnji profila (public/stopnja.js): OŠ 9,99 € na mesec ali 99 € na leto, SŠ 13,99 / 139 €, faks 19,99 / 199 €.
-// Družina (2–4 profili OŠ ali SŠ) 19,99 / 199 €, Družina s študentom (2–4 profili, tudi faks) 27,99 / 269 €.
+// Družina (2–4 profili OŠ ali SŠ) 18,99 / 189 €, Družina s študentom (2–4 profili, tudi faks) 27,99 / 269 €.
 // Letna cena ≈ 10 mesečnih plačil. Pravilo j: vsak paket ima v najslabšem primeru (učenec porabi ves zajamčeni
 // AI) vsaj 75 % dobička (worstProfit spodaj). Prejšnje cene (1. 11.): OŠ 9,99 / 89, SŠ 12,99 / 119, faks
 // 16,99 / 149, Družina 17,99 / 159, s študentom 24,99 / 219 €.
@@ -24,7 +24,7 @@ export const LEVEL_PRICES = {
   FAKS: { month: 1999, year: 19900 },
 };
 export const FAMILY_PRICES = {
-  druzina: { month: 1999, year: 19900 },
+  druzina: { month: 1899, year: 18900 },
   druzina_student: { month: 2799, year: 26900 },
 };
 
@@ -272,7 +272,7 @@ export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find
 // ali do dokupa (server/usage.js studentBudget/overCeiling, server/accounts/index.js dailyLimitFor).
 export const AI_GUARANTEE_USD = { OS: 1.9, SS: 2.9, FAKS: 4.5 };
 export const AI_GUARANTEE_YEAR_USD = { OS: 1.7, SS: 2.6, FAKS: 3.8 };
-export const FAMILY_POOL_USD = { druzina: { month: 3.5, year: 2.9 }, druzina_student: { month: 5.5, year: 4.3 } };
+export const FAMILY_POOL_USD = { druzina: { month: 3.2, year: 2.6 }, druzina_student: { month: 5.5, year: 4.3 } };
 export const SCHOOL_PLAN_AI_USD = { month: 0.9, year: 0.6 };
 export const FAST_TAIL = 0.15;
 // Del meje za podrobne razlage (zmogljivejši model); ostanek do meje je hitri način.

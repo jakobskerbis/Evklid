@@ -79,7 +79,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 |---|---|---|
 | Kje | Android: APK na evklid.app/prenesi | App Store, Google Play |
 | Gradnja | `eas build --profile direct --platform android` | `eas build --profile production` |
-| Plačilo | Stripe na spletu po stopnjah (OŠ 9,99 / 99 €, SŠ 13,99 / 139 €, faks 19,99 / 199 €, Družina 19,99 / 199 €, Družina s študentom 27,99 / 269 €) | nakup v aplikaciji, vsak paket 2 € dražji kot na spletu (`STORE_PRICES_EUR` v `server/mobile/store-billing.js`: 11,99 / 101, 15,99 / 141, 21,99 / 201, 21,99 / 201, 29,99 / 271 €); izdelki `<predpona>.<month\|year>.<1\|ss\|faks\|druzina\|druzina_student>`, stari `.2` ostane za obstoječe naročnine |
+| Plačilo | Stripe na spletu po stopnjah (OŠ 9,99 / 99 €, SŠ 13,99 / 139 €, faks 19,99 / 199 €, Družina 18,99 / 189 €, Družina s študentom 27,99 / 269 €) | nakup v aplikaciji, vsak paket 2 € dražji kot na spletu (`STORE_PRICES_EUR` v `server/mobile/store-billing.js`: 11,99 / 101, 15,99 / 141, 21,99 / 201, 20,99 / 191, 29,99 / 271 €); izdelki `<predpona>.<month\|year>.<1\|ss\|faks\|druzina\|druzina_student>`, stari `.2` ostane za obstoječe naročnine |
 | Provizija | Stripe ~1,5 % + 0,25 € | 15 % (Apple Small Business Program, Google Play) |
 
 Cene v trgovinah so višje zaradi provizije. Aplikacija iz trgovine ne sme omenjati cenejših cen na

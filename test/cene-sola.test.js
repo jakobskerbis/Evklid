@@ -19,7 +19,7 @@ const SECRET = "whsec_test";
 test("cene: Osebno ob šolski licenci 5,99 €/49 €, redne cene po stopnjah, darilo po letni ceni stopnje", () => {
   assert.deepEqual(
     PLANS.map((p) => p.amount),
-    [999, 9900, 1399, 13900, 1999, 19900, 1999, 19900, 2799, 26900],
+    [999, 9900, 1399, 13900, 1999, 19900, 1899, 18900, 2799, 26900],
   );
   assert.deepEqual(
     SCHOOL_PLANS.map((p) => [p.interval, p.amount, p.seats]),

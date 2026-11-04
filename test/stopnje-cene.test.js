@@ -67,7 +67,7 @@ const SETTINGS = {
   FAKS: { educational_track: "UNIVERZA", curriculum_level: "1. letnik", study_program: listPrograms()[0].id },
 };
 
-test("cene po stopnjah (75 %): OŠ 9,99/99, SŠ 13,99/139, faks 19,99/199, Družina 19,99/199, s študentom 27,99/269", () => {
+test("cene po stopnjah (75 %): OŠ 9,99/99, SŠ 13,99/139, faks 19,99/199, Družina 18,99/189, s študentom 27,99/269", () => {
   const by = Object.fromEntries(PLANS.map((p) => [p.key, [p.amount, p.seats, p.level, !!p.family]]));
   assert.deepEqual(by, {
     evklid_1_month: [999, 1, "OS", false],
@@ -76,8 +76,8 @@ test("cene po stopnjah (75 %): OŠ 9,99/99, SŠ 13,99/139, faks 19,99/199, Druž
     evklid_ss_year: [13900, 1, "SS", false],
     evklid_faks_month: [1999, 1, "FAKS", false],
     evklid_faks_year: [19900, 1, "FAKS", false],
-    evklid_druzina_month: [1999, 4, "SS", true],
-    evklid_druzina_year: [19900, 4, "SS", true],
+    evklid_druzina_month: [1899, 4, "SS", true],
+    evklid_druzina_year: [18900, 4, "SS", true],
     evklid_druzina_student_month: [2799, 4, "FAKS", true],
     evklid_druzina_student_year: [26900, 4, "FAKS", true],
   });
@@ -108,8 +108,8 @@ test("cene po stopnjah (75 %): OŠ 9,99/99, SŠ 13,99/139, faks 19,99/199, Druž
   assert.deepEqual(GIFT_PRICES, { OS: 9900, SS: 13900, FAKS: 19900 });
   // Trgovine z aplikacijami: 2 € dražje kot splet.
   for (const p of PLANS) assert.equal(storeAmount(p), p.amount + 200);
-  assert.deepEqual(STORE_PRICES_EUR.month, { 1: 11.99, ss: 15.99, faks: 21.99, druzina: 21.99, druzina_student: 29.99 });
-  assert.deepEqual(STORE_PRICES_EUR.year, { 1: 101, ss: 141, faks: 201, druzina: 201, druzina_student: 271 });
+  assert.deepEqual(STORE_PRICES_EUR.month, { 1: 11.99, ss: 15.99, faks: 21.99, druzina: 20.99, druzina_student: 29.99 });
+  assert.deepEqual(STORE_PRICES_EUR.year, { 1: 101, ss: 141, faks: 201, druzina: 191, druzina_student: 271 });
   assert.equal(STORE_PRODUCTS.find((p) => p.id.endsWith(".month.2")).legacy, true, "stari izdelek ostane prepoznan");
 });
 
@@ -640,7 +640,7 @@ test("povezava za plačilo s starim paketom »2 otroka«: stran in plačilo po d
     const { sha256 } = await import("../server/accounts/auth.js");
     db.prepare("INSERT INTO pay_links (token_hash, parent_id, kind, plan_key, expires_at) VALUES (?, ?, 'sub', 'evklid_2_month', ?)").run(sha256("t".repeat(30)), pid, iso(5));
     const view = (await call(`/api/pay/${"t".repeat(30)}`)).body;
-    assert.equal(view.plan.amount, 1999);
+    assert.equal(view.plan.amount, 1899);
     const co = await call(`/api/pay/${"t".repeat(30)}/checkout`, { method: "POST", body: { email: "oce@p.si", adult: true, withdrawal: true } });
     assert.equal(co.status, 200, JSON.stringify(co.body));
     assert.equal(stripe.calls.filter((c) => c.path === "/v1/checkout/sessions").at(-1).body["line_items[0][price]"], "price_evklid_druzina_month");
@@ -710,8 +710,8 @@ test("75 %: zajamčeni AI po paketih, skupen delež družine, regijske cene po p
   const tot = (key) => [g(key).total, g(key).usd];
   assert.deepEqual(["evklid_1_month", "evklid_ss_month", "evklid_faks_month"].map(tot), [[1.9, 1.7], [2.9, 2.7], [4.5, 4.3]]);
   assert.deepEqual(["evklid_1_year", "evklid_ss_year", "evklid_faks_year"].map(tot), [[1.7, 1.5], [2.6, 2.4], [3.8, 3.6]]);
-  assert.deepEqual(g("evklid_druzina_month"), { usd: 2.7, total: 3.5, profiles: 4, pool: true });
-  assert.deepEqual(g("evklid_druzina_year"), { usd: 2.1, total: 2.9, profiles: 4, pool: true });
+  assert.deepEqual(g("evklid_druzina_month"), { usd: 2.4, total: 3.2, profiles: 4, pool: true });
+  assert.deepEqual(g("evklid_druzina_year"), { usd: 1.8, total: 2.6, profiles: 4, pool: true });
   assert.deepEqual(g("evklid_druzina_student_month"), { usd: 4.7, total: 5.5, profiles: 4, pool: true });
   assert.deepEqual(g("evklid_druzina_student_year"), { usd: 3.5, total: 4.3, profiles: 4, pool: true });
   assert.deepEqual(SCHOOL_PLANS.map((p) => [p.interval, planGuarantee(p).total, planGuarantee(p).usd]), [["month", 0.9, 0.7], ["year", 0.6, 0.4]]);
@@ -777,31 +777,31 @@ test("Družina: en skupen delež za ves račun; obvestila in »še N razlag« za
     const ana = kid("Ana", "OS", YEAR - 12);
     const bor = kid("Bor", "SS", YEAR - 16);
     subscribe("evklid_druzina_month");
-    assert.equal(api.guaranteeFor(ana), 2.7, "3,5 $ − brezplačni rep 4 × 0,2 $");
+    assert.equal(api.guaranteeFor(ana), 2.4, "3,2 $ − brezplačni rep 4 × 0,2 $");
     assert.deepEqual(api.poolFor(bor), [ana, bor]);
     const spend = (sid, usd) => db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku', 'chat', ?)").run(sid, usd);
     spend(ana, 1);
-    spend(bor, 1); // skupaj 2 $ od 2,7 / 1,15 = 2,35 $ podrobnega dela = 85 %
+    spend(bor, 1); // skupaj 2 $ od 2,4 / 1,15 = 2,09 $ podrobnega dela = 96 %
     const a = api.aiUsage.allowance(ana);
     const b = api.aiUsage.allowance(bor);
     assert.equal(a.pool, true);
     assert.equal(a.stage, "low");
     assert.deepEqual([b.stage, b.percent, b.explanations_left], [a.stage, a.percent, a.explanations_left], "oba profila vidita isti skupni delež");
-    assert.equal(a.explanations_left, explanationsFor(2.7 / 1.15 - 2));
-    assert.equal(a.explanations_month, explanationsFor(2.7 / 1.15), "prikazan je podrobni del (meja / 1,15)");
+    assert.equal(a.explanations_left, explanationsFor(2.4 / 1.15 - 2));
+    assert.equal(a.explanations_month, explanationsFor(2.4 / 1.15), "prikazan je podrobni del (meja / 1,15)");
     // Rezervacija v skupnem proračunu enkrat za vso družino.
     api.aiUsage.shareCache = null;
-    assert.ok(Math.abs(api.aiUsage.reservedUsd() - 2.7) < 1e-9);
+    assert.ok(Math.abs(api.aiUsage.reservedUsd() - 2.4) < 1e-9);
     // E-pošta staršu otroka pod 15 let: ena za skupni delež.
     const mails = () => stripe.calls.filter((c) => c.host === "api.resend.com" && /80 %/.test(c.body.subject || ""));
     await api.billing.allowanceMail(ana, "low");
     await api.billing.allowanceMail(bor, "low");
     assert.equal(mails().length, 1);
     assert.match(mails()[0].body.text, /Skupni delež družine/);
-    // Brezplačni rep družine: 0,2 $ na profil skupaj (2 profila = 0,4 $) nad mejo 2,7 $, nato oba profila čakata.
-    spend(ana, 1.09); // 3,09 $
+    // Brezplačni rep družine: 0,2 $ na profil skupaj (2 profila = 0,4 $) nad mejo 2,4 $, nato oba profila čakata.
+    spend(ana, 0.79); // 2,79 $
     assert.equal(api.aiUsage.blockReason(bor), null);
-    spend(bor, 0.01); // 3,10 $
+    spend(bor, 0.01); // 2,80 $
     assert.ok(api.aiUsage.blockReason(ana) && api.aiUsage.blockReason(bor));
     // Paket za en profil: delež po profilu.
     subscribe("evklid_ss_year");
