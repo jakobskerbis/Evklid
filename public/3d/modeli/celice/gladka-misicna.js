@@ -263,9 +263,9 @@ export function zgradi(THREE, ctx = {}) {
     const memOut = dodaj(meji(osX(v.odprta), new THREE.Mesh(v.odprta, memMat)));
     const pok = dodaj(meji(osX(v.pokrov), new THREE.Mesh(v.pokrov, memMat)));
     pok.visible = false;
-    const rg = osX(robVrtenine(prof, c.rob));
-    const memRob = dodaj(meji(rg, new THREE.Mesh(rg, memMat)));
-    const vin = vrtenina(prof.map(([x, r]) => [x, r * 0.975]), q(c.nKot));
+    const rg = osX(prerezVrtenine(prof, (y, r) => r * 0.972, DVOSLOJ(0xb4587c, 0xf4d9c4)));
+    const memRob = dodaj(meji(rg, new THREE.Mesh(rg, mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }))));
+    const vin = vrtenina(prof.map(([x, r]) => [x, r * 0.972]), q(c.nKot));
     const citMat = mat(0xf1c9b6, { roughness: 0.75, clearcoat: 0.1, sheen: 0.2, side: THREE.BackSide });
     const citIn = dodaj(meji(osX(vin.odprta), new THREE.Mesh(vin.odprta, citMat)));
     const citDeli = [citIn];
@@ -286,8 +286,8 @@ export function zgradi(THREE, ctx = {}) {
     const jOut = dodaj(meji(osX(jv.odprta), new THREE.Mesh(jv.odprta, jMat)));
     const jPok = dodaj(meji(osX(jv.pokrov), new THREE.Mesh(jv.pokrov, jMat)));
     jPok.visible = false;
-    const jrg = osX(robVrtenine(jp, c.rob * 0.6));
-    const jRob = dodaj(meji(jrg, new THREE.Mesh(jrg, jMat)));
+    const jrg = osX(prerezVrtenine(jp, (y, r) => r * 0.94, [[0, 0.32, 0x5a46b8], [0.32, 0.68, 0xd9cffb], [0.68, 1, 0x5a46b8]]));
+    const jRob = dodaj(meji(jrg, new THREE.Mesh(jrg, mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }))));
     const jiv = vrtenina(jp.map(([x, r]) => [x, r * 0.94]), q(c.nKot * 0.6));
     const jIn = dodaj(meji(osX(jiv.odprta), new THREE.Mesh(jiv.odprta, mat(0xb9a8ff, { roughness: 0.6, clearcoat: 0.3, side: THREE.BackSide }))));
     const jcx = c.jx[0] + (c.jx[1] - c.jx[0]) * 0.55;
@@ -456,7 +456,7 @@ export function zgradi(THREE, ctx = {}) {
     const naM = (x, a, f = 1.01) => V(x, Math.cos(a) * R(x) * f, Math.sin(a) * R(x) * f).toArray();
     const notri = vozli.filter((w) => !w.m && (w.p.y > 0 || w.p.z > 0)).sort((a, b) => Math.abs(a.p.x + 0.3) - Math.abs(b.p.x + 0.3));
     const gtT = (notri[0] || vozli[0]).p;
-    dl.push(["membrana", "Celična membrana", c.kaveole ? "Meja celice; drobne vdolbine v njej so kaveole, ki uravnavajo vstop kalcijevih ionov, ti pa sprožijo krčenje." : "Meja celice; na njeno notranjo stran so pripeti filamenti, zato se ob krčenju nagrbanči. Kaveole vidiš v povečanem izseku.", "#d88aa2", [memOut, memRob, pok], naM(c.tMem, -0.9)]);
+    dl.push(["membrana", "Celična membrana", c.kaveole ? "Meja celice iz dvosloja fosfolipidov (debelina povečana); drobne vdolbine v njej so kaveole, ki uravnavajo vstop kalcijevih ionov, ti pa sprožijo krčenje." : "Meja celice; na njeno notranjo stran so pripeti filamenti, zato se ob krčenju nagrbanči. Kaveole vidiš v povečanem izseku.", "#d88aa2", [memOut, memRob, pok], naM(c.tMem, -0.9)]);
     dl.push(["citoplazma", "Citoplazma", "Notranjost celice; skoraj vso zapolnjujejo aktinski in miozinski filamenti, zato je v mikroskopu enakomerno svetla, brez prog.", "#f1c9b6", citDeli, c.tCit]);
     dl.push(["jedro", "Jedro", "Eno samo podolgovato jedro leži v sredini celice; ko se celica skrči, se nagrbanči in zvije kot vijak.", "#7a68d8", [jOut, jRob, jPok], c.tJedro]);
     dl.push(["nukleoplazma", "Nukleoplazma", "Tekočina v notranjosti jedra z dednim zapisom (DNK).", "#b9a8ff", [jIn], c.tNuk]);
@@ -533,6 +533,29 @@ export function zgradi(THREE, ctx = {}) {
       for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
     });
   }
+
+  // Ploskvi prereza plasti vrtenine (kota 0 in 1,5π) med zunanjim polmerom r in notranjim rNot(y, r);
+  // pasovi [[t0, t1, barva], …] od zunaj (t = 0) navznoter (t = 1), npr. lipidni dvosloj membrane.
+  function prerezVrtenine(prof, rNot, pasovi) {
+    const pos = [], col = [], idx = [], c = new THREE.Color();
+    for (const f of [0, Math.PI * 1.5]) for (const [t0, t1, barva] of pasovi) {
+      c.set(barva);
+      const off = pos.length / 3;
+      prof.forEach(([y, r]) => {
+        const r0 = Math.min(rNot(y, r), r);
+        for (const t of [t0, t1]) { const rr = r + (r0 - r) * t; pos.push(rr * Math.sin(f), y, rr * Math.cos(f)); col.push(c.r, c.g, c.b); }
+      });
+      for (let i = 0; i < prof.length - 1; i++) { const a = off + i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+  // lipidni dvosloj: temni plasti glav fosfolipidov, svetlejša sredica iz repov
+  function DVOSLOJ(glave, repi) { return [[0, 0.3, glave], [0.3, 0.7, repi], [0.7, 1, glave]]; }
 
   return {
     group,

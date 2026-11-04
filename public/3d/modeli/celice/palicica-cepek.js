@@ -6,7 +6,7 @@ export const info = {
   naslov: "Paličica in čepek",
   podrocje: "celice",
   predmet: "BIO",
-  opis: "Čutnici v mrežnici očesa: paličice zaznavajo šibko svetlobo, čepki barve. Svetloba pride od spodaj, skozi celo mrežnico, do zunanjih členkov zgoraj. Celici sta narisani približno dvakrat širši, vlakni krajši, diskov pa je manj kot v resnici (paličica jih ima okoli 1000).",
+  opis: "Čutnici v mrežnici očesa: paličice zaznavajo šibko svetlobo, čepki barve. Svetloba pride od spodaj, skozi celo mrežnico, do zunanjih členkov zgoraj. Celici sta narisani približno dvakrat širši, vlakni krajši, diskov pa je manj kot v resnici (paličica jih ima okoli 1000). Debelina membrane je povečana.",
   merilo: { m: 64e-6, oznaka: "64 µm" },
 };
 
@@ -269,7 +269,9 @@ export function zgradi(THREE, ctx = {}) {
     const k = kos(P, y0, y1), v = vrtenina(k, nKot);
     const vin = vrtenina(k.filter((p, i) => i % 2 === 0 || i === k.length - 1).map(([y, r]) => [y, r * 0.92]), q(32));
     const e = kosi[id] || (kosi[id] = { odprta: [], pokrov: [], notranja: [] });
-    e.odprta.push(v.odprta.translate(x, 0, 0), robVrtenine(k, 0.0035).translate(x, 0, 0));
+    e.odprta.push(v.odprta.translate(x, 0, 0));
+    // prerez membrane: lipidni dvosloj (≈ 3 % polmera, povečano), navznoter citoplazma do notranje ploskve
+    (e.pasovi || (e.pasovi = [])).push(prerezVrtenine(k, (y, r) => r * 0.92, [[0, 0.11, 0xb4587c], [0.11, 0.27, 0xf4d9c4], [0.27, 0.38, 0xb4587c], [0.38, 1, 0xf1c9b6]]).translate(x, 0, 0));
     e.pokrov.push(v.pokrov.translate(x, 0, 0));
     e.notranja.push(vin.odprta.translate(x, 0, 0));
   }
@@ -286,6 +288,8 @@ export function zgradi(THREE, ctx = {}) {
     const pk = new THREE.Mesh(zdruzi(kosi[id].pokrov), m);
     pk.visible = false;
     memM[id].userData.pokrov = pk;
+    memM[id].userData.pas = new THREE.Mesh(zdruziBarvno(kosi[id].pasovi), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
+    group.add(memM[id].userData.pas);
     pokrovi.push(pk);
     vseNotr.push(...kosi[id].notranja);
     group.add(memM[id], pk);
@@ -344,17 +348,19 @@ export function zgradi(THREE, ctx = {}) {
   group.add(mit);
 
   // ---------- jedri (prerezani) ----------
-  const jedroG = [], jedroPk = [], jedroIn = [];
+  const jedroG = [], jedroPk = [], jedroIn = [], jedroRez = [];
   for (const [x, cy, h, r] of [[XP, -0.535, 0.066, 0.085], [XC, -0.458, 0.074, 0.106]]) {
     const pr = [];
     for (let i = 0; i <= 28; i++) { const t = -1 + (2 * i) / 28; pr.push([cy + t * h, r * Math.sqrt(Math.max(0, 1 - t * t)) * (1 + 0.03 * sum(t * 4, x * 9, 1))]); }
     const v = vrtenina(pr, q(40));
-    jedroG.push(v.odprta.translate(x, 0, 0), robVrtenine(pr, 0.003).translate(x, 0, 0));
+    jedroG.push(v.odprta.translate(x, 0, 0));
+    jedroRez.push(prerezVrtenine(pr, (y, rr) => rr * 0.94, [[0, 0.32, 0x5a46b8], [0.32, 0.68, 0xd9cffb], [0.68, 1, 0x5a46b8]]).translate(x, 0, 0));
     jedroPk.push(v.pokrov.translate(x, 0, 0));
     jedroIn.push(vrtenina(pr.map(([y, rr]) => [y, rr * 0.94]), q(40)).odprta.translate(x, 0, 0));
   }
   const jMat = mat(0x7a68d8, { roughness: 0.34 });
   const jedro = new THREE.Mesh(zdruzi(jedroG), jMat), jedroPok = new THREE.Mesh(zdruzi(jedroPk), jMat);
+  const jedroOvoj = new THREE.Mesh(zdruziBarvno(jedroRez), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide })); // dvojna jedrna ovojnica v prerezu
   jedroPok.visible = false;
   const nuk = new THREE.Mesh(zdruzi(jedroIn), mat(0xb9a8ff, { roughness: 0.6, clearcoat: 0.3, side: THREE.BackSide }));
   // kromatin: paličica ima gost, temen kromatin, čepek redkejšega in jedrce
@@ -368,7 +374,7 @@ export function zgradi(THREE, ctx = {}) {
   kromG.push(new THREE.IcosahedronGeometry(0.022, 2).translate(XC - 0.03, -0.45, 0.03));
   for (let i = 0; i < (hi ? 8 : 5); i++) { const a = rnd() * Math.PI * 2; kromG.push(new THREE.IcosahedronGeometry(0.01, 1).translate(XC + Math.sin(a) * 0.08, -0.458 + (rnd() - 0.5) * 0.08, Math.cos(a) * 0.08)); }
   const krom = new THREE.Mesh(zdruzi(kromG), mat(0x34268a, { roughness: 0.6, clearcoat: 0.3 }));
-  group.add(jedro, jedroPok, nuk, krom);
+  group.add(jedro, jedroPok, jedroOvoj, nuk, krom);
 
   // ---------- sinaptična končiča: mešički in sinaptični trakovi ----------
   const mesK = [], trakG = [];
@@ -388,7 +394,7 @@ export function zgradi(THREE, ctx = {}) {
   group.add(mes, trak);
 
   // ---------- deli ----------
-  const pk = (id) => [memM[id], memM[id].userData.pokrov];
+  const pk = (id) => [memM[id], memM[id].userData.pokrov, memM[id].userData.pas];
   del("zunanji-clenek-palicice", "Zunanji členek paličice", "Dolg valjast vrh paličice; v njem je kup diskov s svetlobnim barvilom.", "#c77fb0", pk("zunanji-pal"), [XP + 0.05, 0.75, 0.05]);
   del("diski-rodopsin", "Diski z rodopsinom", "Ploščati membranski mešički, ki prosto ležijo v paličici; rodopsin v njih zazna že zelo šibko svetlobo, a ne loči barv.", "#a854be", [diski], [XP - 0.03, 0.62, 0.03]);
   del("zunanji-clenek-cepka", "Zunanji členek čepka", "Stožčast vrh čepka; je krajši od zunanjega členka paličice.", "#d9a35e", pk("zunanji-cep"), [XC + 0.07, 0.33, 0.06]);
@@ -396,7 +402,7 @@ export function zgradi(THREE, ctx = {}) {
   del("cilij", "Povezovalni cilij", "Tanek most med notranjim in zunanjim členkom; po njem potujejo beljakovine za nove diske.", "#66d3f0", [cilij], [XP, 0.2, 0.012]);
   del("notranji-clenek", "Notranji členek", "Presnovni del čutnice, poln mitohondrijev; izdeluje beljakovine in daje energijo zunanjemu členku.", "#e39cb2", pk("notranji"), [XC + 0.12, -0.2, 0.12]);
   del("mitohondriji", "Mitohondriji", "Gosto zloženi v zgornjem delu notranjega členka; zaznavanje svetlobe porabi veliko energije (ATP).", "#e8743b", [mit], (mitK.find((m) => m.p.x > XC - 0.12 && m.p.x < XC - 0.03 && m.p.z > 0.04) || mitK[0]).p.toArray());
-  del("jedro", "Jedro", "Jedro čutnice; pri paličici je manjše in temnejše od jedra čepka.", "#7a68d8", [jedro, jedroPok, krom], [XC - 0.05, -0.44, 0.06]);
+  del("jedro", "Jedro", "Jedro čutnice; pri paličici je manjše in temnejše od jedra čepka.", "#7a68d8", [jedro, jedroPok, jedroOvoj, krom], [XC - 0.05, -0.44, 0.06]);
   del("nukleoplazma", "Nukleoplazma", "Notranjost jedra z DNK.", "#b9a8ff", [nuk], [XP - 0.03, -0.52, 0.03]);
   del("celicno-telo", "Celično telo in akson", "Del celice z jedrom; tanko vlakno (akson) ga povezuje s sinaptičnim končičem.", "#d88aa2", pk("telo"), [XP + 0.02, -0.72, 0.012]);
   del("sinapticni-koncic", "Sinaptični končič", "Končič odda signal naslednjim živčnim celicam mrežnice; paličica ima majhen okrogel končič, čepek širšo ploščico.", "#f2b45c", pk("koncic"), [XC + 0.14, -0.92, 0.07]);
@@ -407,7 +413,7 @@ export function zgradi(THREE, ctx = {}) {
   const nadzor = [
     {
       tip: "izbira", id: "prikaz", oznaka: "Prikaz", moznosti: [["prerez", "Prerez"], ["cela", "Celi celici"]], vrednost: "prerez",
-      ob: (v) => { const cela = v === "cela"; for (const p of pokrovi) p.visible = cela; jedroPok.visible = cela; },
+      ob: (v) => { const cela = v === "cela"; for (const p of pokrovi) p.visible = cela; jedroPok.visible = cela; jedroOvoj.visible = !cela; },
     },
   ];
   if (ctx.zacetek && ctx.zacetek.prikaz) { nadzor[0].vrednost = ctx.zacetek.prikaz; nadzor[0].ob(ctx.zacetek.prikaz); }
@@ -421,6 +427,46 @@ export function zgradi(THREE, ctx = {}) {
     });
   }
 
+  // Ploskvi prereza plasti vrtenine (kota 0 in 1,5π) med zunanjim polmerom r in notranjim rNot(y, r);
+  // pasovi [[t0, t1, barva], …] od zunaj (t = 0) navznoter (t = 1), npr. lipidni dvosloj membrane.
+  function prerezVrtenine(prof, rNot, pasovi) {
+    const pos = [], col = [], idx = [], c = new THREE.Color();
+    for (const f of [0, Math.PI * 1.5]) for (const [t0, t1, barva] of pasovi) {
+      c.set(barva);
+      const off = pos.length / 3;
+      prof.forEach(([y, r]) => {
+        const r0 = Math.min(rNot(y, r), r);
+        for (const t of [t0, t1]) { const rr = r + (r0 - r) * t; pos.push(rr * Math.sin(f), y, rr * Math.cos(f)); col.push(c.r, c.g, c.b); }
+      });
+      for (let i = 0; i < prof.length - 1; i++) { const a = off + i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+  // lipidni dvosloj: temni plasti glav fosfolipidov, svetlejša sredica iz repov
+  function DVOSLOJ(glave, repi) { return [[0, 0.3, glave], [0.3, 0.7, repi], [0.7, 1, glave]]; }
+
+  // Združi geometrije z barvami oglišč (ohrani atribut color).
+  function zdruziBarvno(geos) {
+    const pos = [], col = [], idx = [];
+    let off = 0;
+    for (const g of geos) {
+      pos.push(...g.attributes.position.array); col.push(...g.attributes.color.array);
+      for (let k = 0; k < g.index.count; k++) idx.push(g.index.getX(k) + off);
+      off += g.attributes.position.count;
+      g.dispose();
+    }
+    const out = new THREE.BufferGeometry();
+    out.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    out.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    out.setIndex(idx);
+    out.computeVertexNormals();
+    return out;
+  }
   return {
     group,
     deli,

@@ -260,18 +260,20 @@ export function zgradi(THREE, ctx = {}) {
   const sc = new THREE.Color(), s1 = new THREE.Color(0xd2b073), s2 = new THREE.Color(0x9c7b45);
   pobarvaj(stG.g, (v) => sc.copy(s1).lerp(s2, 0.5 + 0.5 * fbm(v.x * 30, v.y * 30, v.z * 30)));
   const stena = new THREE.Mesh(stG.g, mat(0xffffff, { vertexColors: true, roughness: 0.55, clearcoat: 0.5, sheen: 0.4 }));
-  const stRez = new THREE.Mesh(vrtRez(P, nK, rezI, 0, ZS, sumF), mat(0xe0c48c, { roughness: 0.7, clearcoat: 0.2, side: THREE.DoubleSide }));
+  // prerez ovojnice po plasteh: zunanja membrana, peptidoglikan, periplazemski prostor
+  const plasti = (meje, barve) => zdruzi(meje.slice(0, -1).map((a, i) => vrtRez(P, nK, rezI, a, meje[i + 1], sumF)), barve);
+  const stRez = new THREE.Mesh(plasti([0, 0.0025, 0.0045, 0.007, 0.016, ZS], [0xb4587c, 0xf0d2c2, 0xb4587c, 0xc99a4f, 0xf0e2c0]), mat(0xffffff, { vertexColors: true, roughness: 0.7, clearcoat: 0.2, side: THREE.DoubleSide }));
   group.add(stena, stRez);
-  del("celicna-stena", "Celična stena", "Čvrsta plast iz peptidoglikana (mureina), ki daje bakteriji obliko in jo varuje; pri E. coli jo obdaja še tanka zunanja membrana.", "#c8a66e",
+  del("celicna-stena", "Celična stena", "Čvrsta plast iz peptidoglikana (mureina, v prerezu rjava), ki daje bakteriji obliko in jo varuje; pri E. coli jo obdaja še tanka zunanja membrana. Debelina plasti je povečana.", "#c8a66e",
     [stena, stRez], tocka(0.2, Math.PI * 0.68, 0).toArray());
 
   // ---------- celična membrana in citoplazma ----------
   const memMat = mat(0xd88aa2, { roughness: 0.3, clearcoat: 1, side: THREE.DoubleSide });
-  const memRez = new THREE.Mesh(vrtRez(P, nK, rezI, ZS, ZM, sumF), memMat);
+  const memRez = new THREE.Mesh(plasti([ZS, ZS + 0.0025, ZM - 0.0025, ZM], [0xb4587c, 0xf4d9c4, 0xb4587c]), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   const cG = vrtenina(P, nK, rezI, ZC, sumF);
   const cit = new THREE.Mesh(cG.g, mat(0xeadcbc, { roughness: 0.7, clearcoat: 0.15, sheen: 0.3, side: THREE.BackSide }));
   group.add(memRez, cit);
-  del("membrana", "Celična membrana", "Tanka plast iz maščob in beljakovin pod steno; uravnava prehod snovi, na njej poteka tudi celično dihanje, saj bakterija nima mitohondrijev.", "#d88aa2",
+  del("membrana", "Celična membrana", "Dvosloj fosfolipidov z beljakovinami pod steno; uravnava prehod snovi, na njej poteka tudi celično dihanje, saj bakterija nima mitohondrijev. Debelina je povečana.", "#d88aa2",
     [memRez], tocka(-0.12, 0.02, (ZS + ZM) / 2).add(V(0, 0, 0.004)).toArray());
   del("citoplazma", "Citoplazma", "Gosta tekočina v celici z ribosomi, encimi in hranili; v njej ni organelov z membrano.", "#eadcbc", [cit], tocka(-0.25, Math.PI * 1.25, ZC + 0.002).toArray());
 

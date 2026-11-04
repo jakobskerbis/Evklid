@@ -266,14 +266,18 @@ export function zgradi(THREE, ctx = {}) {
   const stc = new THREE.Color(), st1 = new THREE.Color(0xd9be86), st2 = new THREE.Color(0xa88654);
   const barvaSt = (v) => stc.copy(st1).lerp(st2, 0.5 + 0.5 * fbm(v.x * 14, v.y * 14, v.z * 14));
   const stenaMat = mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.55, sheen: 0.5 });
-  const rezMat = mat(0xe7cf9c, { roughness: 0.7, clearcoat: 0.2, side: THREE.DoubleSide });
-  const memMat = mat(0xd88aa2, { roughness: 0.3, clearcoat: 1, side: THREE.DoubleSide });
+  const rezMat = mat(0xffffff, { vertexColors: true, roughness: 0.7, clearcoat: 0.2, side: THREE.DoubleSide });
+  const memMat = mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide });
+  // prerez po plasteh: stena (zunaj manoproteini, znotraj glukani s hitinom) in membrana (lipidni dvosloj)
+  const plasti = (PP, meje, barve) => zdruzi(meje.slice(0, -1).map((a, i) => vrtRez(PP, nK, n1, a, meje[i + 1], sumF)), barve);
+  const stenaRez = (PP, k = 1) => plasti(PP, [0, 0.01 * k, ZS * k], [0x9a7646, 0xe7cf9c]);
+  const memRez = (PP, k = 1) => plasti(PP, [ZS * k, (ZS + 0.0022) * k, (ZM - 0.0022) * k, ZM * k], [0xb4587c, 0xf4d9c4, 0xb4587c]);
   const citMat = mat(0xeee2c6, { roughness: 0.7, clearcoat: 0.15, sheen: 0.3, side: THREE.BackSide });
   const mS = vrtenina(P0, nK, n1, 0, sumF);
   pobarvaj(mS.g, barvaSt);
   const mStena = new THREE.Mesh(mS.g, stenaMat);
-  const mRez = new THREE.Mesh(vrtRez(P0, nK, n1, 0, ZS, sumF), rezMat);
-  const mMem = new THREE.Mesh(vrtRez(P0, nK, n1, ZS, ZM, sumF), memMat);
+  const mRez = new THREE.Mesh(stenaRez(P0), rezMat);
+  const mMem = new THREE.Mesh(memRez(P0), memMat);
   const mC = vrtenina(P0, nK, n1, ZC, sumF);
   const mCit = new THREE.Mesh(mC.g, citMat);
   group.add(mStena, mRez, mMem, mCit);
@@ -414,9 +418,9 @@ export function zgradi(THREE, ctx = {}) {
   brstG.add(bMit, bVak, bLip, bRib);
 
   // ---------- deli ----------
-  del("celicna-stena", "Celična stena", "Čvrsta plast iz glukanov, manoproteinov in nekaj hitina; celico ščiti in ji daje obliko.", "#c9a66c", [mStena, mRez, bRez, vrat],
+  del("celicna-stena", "Celična stena", "Čvrsta plast iz glukanov in nekaj hitina, na zunanji strani pa iz manoproteinov (v prerezu temnejši pas); celico ščiti in ji daje obliko. Debelina je povečana.", "#c9a66c", [mStena, mRez, bRez, vrat],
     vrtTocka(P0, n1 + 6, Math.PI * 0.62, 0, sumF, V()).toArray());
-  del("membrana", "Celična membrana", "Tanka plast pod steno, ki uravnava prehod snovi v celico in iz nje.", "#d88aa2", [mMem, bMem], vrtTocka(P0, Math.round(n1 * 0.55), 0.03, (ZS + ZM) / 2, sumF, V()).toArray());
+  del("membrana", "Celična membrana", "Dvosloj fosfolipidov tik pod steno, ki uravnava prehod snovi v celico in iz nje; tanjši je od stene. Debelina je povečana.", "#d88aa2", [mMem, bMem], vrtTocka(P0, Math.round(n1 * 0.55), 0.03, (ZS + ZM) / 2, sumF, V()).toArray());
   del("citoplazma", "Citoplazma", "Tekočina v celici z ribosomi in organeli; v njej poteka tudi alkoholno vrenje, pri katerem iz sladkorja nastaneta alkohol in ogljikov dioksid.", "#eee2c6", [mCit, bCit],
     vrtTocka(P0, Math.round(n1 * 0.6), Math.PI * 1.3, ZC + 0.003, sumF, V()).toArray());
   const brstDel = { id: "brst", ime: "Brst (hčerinska celica)", opis: "Izboklina, ki zraste iz matične celice; ko je dovolj velika in dobi svoje jedro, se odcepi kot nova kvasovka.", barva: "#eedcae", meshes: [bStena], tocka: [0, 0, 0] };
@@ -453,8 +457,8 @@ export function zgradi(THREE, ctx = {}) {
       const B = profBrst(Math.max(s, 0.02), rn);
       const zs = Math.min(1, s * 2.5);
       bS.posodobi(B.P, 0); bC.posodobi(B.P, ZC * zs);
-      bRez.geometry.dispose(); bRez.geometry = vrtRez(B.P, nK, n1, 0, ZS * zs, sumF);
-      bMem.geometry.dispose(); bMem.geometry = vrtRez(B.P, nK, n1, ZS * zs, ZM * zs, sumF);
+      bRez.geometry.dispose(); bRez.geometry = stenaRez(B.P, zs);
+      bMem.geometry.dispose(); bMem.geometry = memRez(B.P, zs);
       vrat.position.set(xt, 0, 0); vrat.scale.setScalar(rn / RNK);
       Bc.set(B.Bx, 0, 0);
       brstG.position.copy(Bc); brstG.scale.setScalar(Math.max(s, 0.02));

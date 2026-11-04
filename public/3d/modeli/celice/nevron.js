@@ -258,7 +258,7 @@ export function zgradi(THREE, ctx = {}) {
   const somaOut = new THREE.Mesh(soma.odprta, somaMat);
   const citMat = mat(0xf1c9b6, { roughness: 0.75, clearcoat: 0.1, sheen: 0.2, side: THREE.BackSide });
   const somaIn = new THREE.Mesh(soma.odprta.clone().scale(0.975, 0.975, 0.975), citMat);
-  const somaRob = new THREE.Mesh(rob(oblS, 0.008, q(48)), somaMat);
+  const somaRob = new THREE.Mesh(prerezPlasti(oblS, (d) => oblS(d) * 0.975, q(64), DVOSLOJ(0xb4587c, 0xf4d9c4)), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   const somaPokrov = new THREE.Mesh(soma.pokrov, somaMat);
   somaPokrov.visible = false;
   for (const m of [somaOut, somaIn, somaRob, somaPokrov]) { m.position.copy(S); group.add(m); }
@@ -271,8 +271,8 @@ export function zgradi(THREE, ctx = {}) {
   const jMat = mat(0x7a68d8, { roughness: 0.34 });
   const jOut = new THREE.Mesh(jl.odprta, jMat);
   const nukMat = mat(0xb9a8ff, { roughness: 0.6, clearcoat: 0.3, side: THREE.BackSide });
-  const jIn = new THREE.Mesh(jl.odprta.clone().scale(0.95, 0.95, 0.95), nukMat);
-  const jRob = new THREE.Mesh(rob(oblJ, 0.005, q(24)), jMat);
+  const jIn = new THREE.Mesh(jl.odprta.clone().scale(0.92, 0.92, 0.92), nukMat);
+  const jRob = new THREE.Mesh(prerezPlasti(oblJ, (d) => oblJ(d) * 0.92, q(32), [[0, 0.32, 0x5a46b8], [0.32, 0.68, 0xd9cffb], [0.68, 1, 0x5a46b8]]), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   const jPokrov = new THREE.Mesh(jl.pokrov, jMat);
   jPokrov.visible = false;
   for (const m of [jOut, jIn, jRob, jPokrov]) { m.position.copy(J); group.add(m); }
@@ -505,7 +505,7 @@ export function zgradi(THREE, ctx = {}) {
   postaviAP(-10, false);
 
   // ---------- deli ----------
-  del("celicno-telo", "Celično telo (soma)", "Najdebelejši del nevrona z jedrom; zbira signale iz dendritov in jih pošlje naprej v akson.", "#d88aa2", [somaOut, somaRob, somaPokrov], naS(0.35, -0.2, 0.92));
+  del("celicno-telo", "Celično telo (soma)", "Najdebelejši del nevrona z jedrom, obdan s celično membrano (v prerezu dvosloj, debelina povečana); zbira signale iz dendritov in jih pošlje naprej v akson.", "#d88aa2", [somaOut, somaRob, somaPokrov], naS(0.35, -0.2, 0.92));
   del("citoplazma", "Citoplazma", "Tekočina v celičnem telesu, v kateri so jedro, Nisslova telesca in mitohondriji.", "#f1c9b6", [somaIn], naS(-0.2, 0.25, -0.95, 0.95));
   del("jedro", "Jedro", "Veliko okroglo jedro z DNK, ki usmerja delovanje nevrona; nevroni se praviloma ne delijo več.", "#7a68d8", [jOut, jRob, jPokrov], J.clone().add(V(0.035, 0.04, 0.035)).toArray());
   del("nukleoplazma", "Nukleoplazma", "Tekočina v notranjosti jedra, v kateri sta kromatin in jedrce.", "#b9a8ff", [jIn], J.clone().add(V(-0.02, 0.01, -0.03)).toArray());
@@ -550,6 +550,34 @@ export function zgradi(THREE, ctx = {}) {
       for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
     });
   }
+
+  // Ploskev prereza plasti med zunanjo fZ in notranjo fN ploskvijo na treh ravninah izreza (x = 0, y = 0, z = 0).
+  // pasovi [[t0, t1, barva], …] od zunaj (t = 0) navznoter (t = 1) pokažejo zgradbo plasti, npr. lipidni dvosloj.
+  function prerezPlasti(fZ, fN, seg, pasovi) {
+    const loki = [
+      (t) => new THREE.Vector3(0, Math.cos(t * Math.PI / 2), Math.sin(t * Math.PI / 2)),
+      (t) => new THREE.Vector3(-Math.sin(t * Math.PI / 2), Math.cos(t * Math.PI / 2), 0),
+      (t) => new THREE.Vector3(-Math.cos(t * Math.PI / 2), 0, Math.sin(t * Math.PI / 2)),
+    ];
+    const pos = [], col = [], idx = [], c = new THREE.Color();
+    for (const L of loki) for (const [t0, t1, barva] of pasovi) {
+      c.set(barva);
+      const off = pos.length / 3;
+      for (let i = 0; i <= seg; i++) {
+        const d = L(i / seg).normalize(), rz = fZ(d), rn = fN(d);
+        for (const t of [t0, t1]) { const rr = rz + (rn - rz) * t; pos.push(d.x * rr, d.y * rr, d.z * rr); col.push(c.r, c.g, c.b); }
+      }
+      for (let i = 0; i < seg; i++) { const a = off + i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+  // lipidni dvosloj: temni plasti glav fosfolipidov, svetlejša sredica iz repov
+  function DVOSLOJ(glave, repi) { return [[0, 0.3, glave], [0.3, 0.7, repi], [0.7, 1, glave]]; }
 
   return {
     group,

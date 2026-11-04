@@ -335,8 +335,8 @@ export function zgradi(THREE, ctx = {}) {
       out.odprta = konci(vSvet(uvPoY(v1.odprta)));
       out.pokrov = konci(vSvet(uvPoY(v1.pokrov)));
       out.cela = konci(vSvet(uvPoY(v2.cela)));
-      out.notranja = konci(vSvet(vrtenina(pr.map(([y, r]) => [y, r * 0.975]), q(nKot)).odprta));
-      out.rob = nagubaj(vSvet(robVrtenine(pr, 0.005)), a, u);
+      out.notranja = konci(vSvet(vrtenina(pr.map(([y, r]) => [y, r * 0.972]), q(nKot)).odprta));
+      out.rob = nagubaj(vSvet(prerezVrtenine(pr, (y, r) => r * 0.972, DVOSLOJ(0xb4587c, 0xf4d9c4))), a, u);
       out.prof = pr;
     } else out.cela = konci(vSvet(uvPoY(vrtenina(prof(0, L), q(nKot), false).cela)));
     return out;
@@ -360,7 +360,7 @@ export function zgradi(THREE, ctx = {}) {
   const memCela = new THREE.Mesh(zdruzi([glavna.cela, veja.cela]), slMat);
   const memPokrov = new THREE.Mesh(glavna.pokrov, slMat);
   memPokrov.visible = false;
-  const memRob = new THREE.Mesh(glavna.rob, mat(0xd88aa2, { roughness: 0.32, clearcoat: 1 }));
+  const memRob = new THREE.Mesh(glavna.rob, mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   // lok roba na koncu okna in četrtinska ploskev prereza
   const lok = [];
   for (let i = 0; i <= 24; i++) { const a = (i / 24) * Math.PI / 2; lok.push(V(A.x + REZ, Y0 + Math.sin(a) * R * 0.99, Math.cos(a) * R * 0.99)); }
@@ -497,7 +497,7 @@ export function zgradi(THREE, ctx = {}) {
   telo.add(jedroM, jedroPok, nukM);
 
   // ---------- deli ----------
-  del("sarkolema", "Sarkolema", "Celična membrana srčne mišične celice; skozi njo vstopajo kalcijevi ioni, ki sprožijo vsak utrip.", "#d88aa2", [memOdprta, memCela, memPokrov, memRob, lokRob], [0.25, Y0 - 0.02, R * 1.02]);
+  del("sarkolema", "Sarkolema", "Celična membrana srčne mišične celice (v prerezu dvosloj, debelina povečana); skozi njo vstopajo kalcijevi ioni, ki sprožijo vsak utrip.", "#d88aa2", [memOdprta, memCela, memPokrov, memRob, lokRob], [0.25, Y0 - 0.02, R * 1.02]);
   del("sarkoplazma", "Sarkoplazma", "Citoplazma celice z glikogenom in mioglobinom; v prerezu se vidijo konci miofibril in mitohondriji.", "#f1c9b6", [spIn, prerez], [A.x + REZ + 0.002, Y0 + 0.06, 0.08]);
   del("jedro", "Jedro", "Eno ali dve jedri ležita v sredini celice (pri skeletni mišici so ob robu); celice srca se po rojstvu skoraj ne delijo več.", "#7a68d8", [jedroM, jedroPok], [jedra[0][0], Y0 + 0.03, 0.03]);
   del("nukleoplazma", "Nukleoplazma", "Notranjost jedra z dednim zapisom (DNK).", "#b9a8ff", [nukM], [jedra[1][0], Y0 + 0.015, 0.012]);
@@ -526,6 +526,29 @@ export function zgradi(THREE, ctx = {}) {
       for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
     });
   }
+
+  // Ploskvi prereza plasti vrtenine (kota 0 in 1,5π) med zunanjim polmerom r in notranjim rNot(y, r);
+  // pasovi [[t0, t1, barva], …] od zunaj (t = 0) navznoter (t = 1), npr. lipidni dvosloj membrane.
+  function prerezVrtenine(prof, rNot, pasovi) {
+    const pos = [], col = [], idx = [], c = new THREE.Color();
+    for (const f of [0, Math.PI * 1.5]) for (const [t0, t1, barva] of pasovi) {
+      c.set(barva);
+      const off = pos.length / 3;
+      prof.forEach(([y, r]) => {
+        const r0 = Math.min(rNot(y, r), r);
+        for (const t of [t0, t1]) { const rr = r + (r0 - r) * t; pos.push(rr * Math.sin(f), y, rr * Math.cos(f)); col.push(c.r, c.g, c.b); }
+      });
+      for (let i = 0; i < prof.length - 1; i++) { const a = off + i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+  // lipidni dvosloj: temni plasti glav fosfolipidov, svetlejša sredica iz repov
+  function DVOSLOJ(glave, repi) { return [[0, 0.3, glave], [0.3, 0.7, repi], [0.7, 1, glave]]; }
 
   return {
     group,

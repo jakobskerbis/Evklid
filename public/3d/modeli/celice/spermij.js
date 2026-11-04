@@ -348,7 +348,7 @@ export function zgradi(THREE, ctx = {}) {
   const memMat = mat(0xd88aa2, { roughness: 0.32, clearcoat: 1 });
   const memG = new THREE.Mesh(mg.odprta.translate(HC2.x, 0, 0), memMat);
   const memGP = new THREE.Mesh(mg.pokrov.translate(HC2.x, 0, 0), memMat);
-  const memGR = new THREE.Mesh(robK(fM, 0.006, q(48)).translate(HC2.x, 0, 0), memMat);
+  const memGR = new THREE.Mesh(prerezK(fM, (d) => fM(d) * 0.965, q(64), DVOSLOJ(0xb4587c, 0xf4d9c4)).translate(HC2.x, 0, 0), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   // akrosom: kapica na sprednjih ~ 60 % jedra
   const ak = lupinaK(fA, q(96), q(64)), sprednji = (c) => c.x < -0.12 * a2;
   const akMat = mat(0x5fd0b8, { roughness: 0.3, clearcoat: 1, side: THREE.DoubleSide });
@@ -361,7 +361,7 @@ export function zgradi(THREE, ctx = {}) {
   const jMat = mat(0x7a68d8, { roughness: 0.34 });
   const jM = new THREE.Mesh(jg.odprta.translate(HC2.x, 0, 0), jMat);
   const jP = new THREE.Mesh(jg.pokrov.translate(HC2.x, 0, 0), jMat);
-  const jR = new THREE.Mesh(robK(fJ, 0.004, q(40)).translate(HC2.x, 0, 0), jMat);
+  const jR = new THREE.Mesh(prerezK(fJ, (d) => fJ(d) * 0.97, q(56), [[0, 0.32, 0x5a46b8], [0.32, 0.68, 0xd9cffb], [0.68, 1, 0x5a46b8]]).translate(HC2.x, 0, 0), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   const kromTex = tekstura(64, 64, (u, v) => { const n = 0.5 + 0.5 * fbm(u * 12, v * 12, 3); return [60 + 50 * n, 40 + 30 * n, 140 + 50 * n]; });
   const jIn = new THREE.Mesh(jg.odprta.clone().translate(-HC2.x, 0, 0).scale(0.97, 0.97, 0.97).translate(HC2.x, 0, 0), mat(0xffffff, { map: kromTex, roughness: 0.6, clearcoat: 0.2, side: THREE.BackSide }));
   for (const m of [akP, memGP, jP]) m.visible = false;
@@ -379,7 +379,7 @@ export function zgradi(THREE, ctx = {}) {
     profB.push([x, r * (1 + 0.015 * sum(x * 20, 1, 2))]);
   }
   const vb = vrtenina(profB, q(56));
-  const memB = new THREE.Mesh(osX(vb.odprta), memMat), memBP = new THREE.Mesh(osX(vb.pokrov), memMat), memBR = new THREE.Mesh(osX(robVrtenine(profB, 0.005)), memMat);
+  const memB = new THREE.Mesh(osX(vb.odprta), memMat), memBP = new THREE.Mesh(osX(vb.pokrov), memMat), memBR = new THREE.Mesh(osX(prerezVrtenine(profB, (y, r) => r * 0.95, [[0, 0.12, 0xb4587c], [0.12, 0.28, 0xf4d9c4], [0.28, 0.4, 0xb4587c], [0.4, 1, 0xf1c9b6]])), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   memBP.visible = false;
   const vbIn = vrtenina(profB.map(([x, r]) => [x, r * 0.95]), q(40));
   const citM = new THREE.Mesh(osX(vbIn.odprta), mat(0xf1c9b6, { roughness: 0.75, clearcoat: 0.1, side: THREE.BackSide }));
@@ -433,7 +433,7 @@ export function zgradi(THREE, ctx = {}) {
   G2.add(aks, odf, vij, anulus, centM, konec);
 
   const naB = (x, a, f = 1.02) => { const r = profB.reduce((m, p) => (Math.abs(p[0] - x) < Math.abs(m[0] - x) ? p : m))[1]; return [x, Math.cos(a) * r * f, Math.sin(a) * r * f]; };
-  del("membrana", "Celična membrana", "Ovija vso semenčico; na glavi se ob oploditvi zlije z membrano jajčne celice.", "#d88aa2", [memG, memGP, memGR, memB, memBP, memBR, citM, konec], naB(-0.3, -0.9), deli2);
+  del("membrana", "Celična membrana", "Dvosloj fosfolipidov, ki ovija vso semenčico; na glavi se ob oploditvi zlije z membrano jajčne celice. Debelina je povečana.", "#d88aa2", [memG, memGP, memGR, memB, memBP, memBR, citM, konec], naB(-0.3, -0.9), deli2);
   del("akrosom", "Akrosom", "Kapica z encimi na sprednjih dveh tretjinah jedra; ob stiku z jajčno celico encime sprosti in prebavi pot skozi njeno ovojnico.", "#5fd0b8", [akM, akP, akR], [HC2.x + 0.18, 0.06, 0.05], deli2);
   del("jedro", "Jedro", "Zelo zgoščeno jedro s 23 kromosomi; DNK je stisnjena, da je glava čim manjša.", "#7a68d8", [jM, jP, jR, jIn], [HC2.x - 0.12, 0.04, 0.03], deli2);
   del("centriola", "Vrat s centriolama", "V vratu sta dve centrioli; ena je bazalno telesce, iz katerega raste bič, drugo semenčica prinese v jajčno celico.", "#66d3f0", [centM], [XG - 0.035, 0.03, 0.03], deli2);
@@ -464,6 +464,49 @@ export function zgradi(THREE, ctx = {}) {
   const z = ctx.zacetek || {};
   for (const n of nadzor) if (z[n.id] !== undefined) { n.vrednost = z[n.id]; n.ob(z[n.id]); }
 
+  // Ploskvi prereza plasti vrtenine (kota 0 in 1,5π) med zunanjim polmerom r in notranjim rNot(y, r);
+  // pasovi [[t0, t1, barva], …] od zunaj (t = 0) navznoter (t = 1), npr. lipidni dvosloj membrane.
+  function prerezVrtenine(prof, rNot, pasovi) {
+    const pos = [], col = [], idx = [], c = new THREE.Color();
+    for (const f of [0, Math.PI * 1.5]) for (const [t0, t1, barva] of pasovi) {
+      c.set(barva);
+      const off = pos.length / 3;
+      prof.forEach(([y, r]) => {
+        const r0 = Math.min(rNot(y, r), r);
+        for (const t of [t0, t1]) { const rr = r + (r0 - r) * t; pos.push(rr * Math.sin(f), y, rr * Math.cos(f)); col.push(c.r, c.g, c.b); }
+      });
+      for (let i = 0; i < prof.length - 1; i++) { const a = off + i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+  // lipidni dvosloj: temni plasti glav fosfolipidov, svetlejša sredica iz repov
+  function DVOSLOJ(glave, repi) { return [[0, 0.3, glave], [0.3, 0.7, repi], [0.7, 1, glave]]; }
+
+  // Ploskvi prereza plasti lupine z odrezano četrtino (y > 0, z > 0) med fZ in fN; pasovi kot pri prerezVrtenine.
+  function prerezK(fZ, fN, seg, pasovi) {
+    const loki = [(t) => V(Math.cos(t), Math.sin(t), 0), (t) => V(Math.cos(t), 0, Math.sin(t))];
+    const pos = [], col = [], idx = [], c = new THREE.Color();
+    for (const L of loki) for (const [t0, t1, barva] of pasovi) {
+      c.set(barva);
+      const off = pos.length / 3;
+      for (let i = 0; i <= seg; i++) {
+        const d = L((i / seg) * Math.PI).normalize(), rz = fZ(d), rn = fN(d);
+        for (const t of [t0, t1]) { const rr = rz + (rn - rz) * t; pos.push(d.x * rr, d.y * rr, d.z * rr); col.push(c.r, c.g, c.b); }
+      }
+      for (let i = 0; i < seg; i++) { const a = off + i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
   return {
     group,
     get deli() { return pogled === "glava" ? deli2 : deli1; },

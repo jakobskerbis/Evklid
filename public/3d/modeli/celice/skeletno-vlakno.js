@@ -306,8 +306,9 @@ export function zgradi(THREE, ctx = {}) {
   const vv = vrtenina(profV, q(72));
   const slMat = mat(0xffffff, { map: slTex, roughness: 0.3, clearcoat: 1, transparent: true, opacity: 0.42, depthWrite: false });
   const slOut = new THREE.Mesh(osX(vv.odprta), slMat);
-  const slRob = new THREE.Mesh(osX(robVrtenine(profV, 0.006)), mat(0xd88aa2, { roughness: 0.35, clearcoat: 1 }));
-  const vin = vrtenina(profV.map(([x, r]) => [x, r * 0.985]), q(72));
+  // prerez sarkoleme: lipidni dvosloj (debelina povečana)
+  const slRob = new THREE.Mesh(osX(prerezVrtenine(profV, (y, r) => r * 0.975, DVOSLOJ(0xb4587c, 0xf4d9c4))), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
+  const vin = vrtenina(profV.map(([x, r]) => [x, r * 0.975]), q(72));
   const spMat = mat(0xf1c9b6, { roughness: 0.75, clearcoat: 0.1, sheen: 0.2, side: THREE.BackSide });
   const spIn = new THREE.Mesh(osX(vin.odprta), spMat);
   const kapM = mat(0xe6b6a6, { roughness: 0.7, clearcoat: 0.15 });
@@ -398,7 +399,7 @@ export function zgradi(THREE, ctx = {}) {
   GV.add(mitV);
 
   const naRobu = robne.filter((m) => m.z > -0.001 && m.z < 0.01 && m.y > 0.1)[0] || robne[0];
-  del("sarkolema", "Sarkolema", "Celična membrana mišičnega vlakna; vanjo se odpirajo T-cevke, po katerih se električni signal razširi globoko v vlakno.", "#d88aa2", [slOut, slRob], [0.3, -0.2, RV * 0.98], deliV);
+  del("sarkolema", "Sarkolema", "Celična membrana mišičnega vlakna (v prerezu dvosloj, debelina povečana); vanjo se odpirajo T-cevke, po katerih se električni signal razširi globoko v vlakno.", "#d88aa2", [slOut, slRob], [0.3, -0.2, RV * 0.98], deliV);
   del("sarkoplazma", "Sarkoplazma", "Citoplazma mišičnega vlakna; vsebuje glikogen in mioglobin, ki hrani kisik.", "#f1c9b6", [spIn, ...kapi], [-XV - 0.005, -0.1, -0.36], deliV);
   del("jedra", "Jedra", "Vlakno nastane z zlitjem mnogih celic, zato ima na stotine jeder; ležijo ob robu, tik pod sarkolemo.", "#7a68d8", [jedra], (() => { const j = jedraKos.reduce((a, b) => (b.z - Math.abs(b.x) * 0.3 > a.z - Math.abs(a.x) * 0.3 ? b : a)); return [j.x, j.y * 1.08, j.z * 1.08]; })(), deliV);
   del("miofibrile", "Miofibrile", "Dolge niti iz zaporedja sarkomer; temni pasovi A in svetli pasovi I sosednjih miofibril se ujemajo, zato je vlakno prečno progasto.", "#9c3346", [mfM, mfKon], [-0.3, naRobu.y, naRobu.z + RF], deliV);
@@ -588,6 +589,29 @@ export function zgradi(THREE, ctx = {}) {
       for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
     });
   }
+
+  // Ploskvi prereza plasti vrtenine (kota 0 in 1,5π) med zunanjim polmerom r in notranjim rNot(y, r);
+  // pasovi [[t0, t1, barva], …] od zunaj (t = 0) navznoter (t = 1), npr. lipidni dvosloj membrane.
+  function prerezVrtenine(prof, rNot, pasovi) {
+    const pos = [], col = [], idx = [], c = new THREE.Color();
+    for (const f of [0, Math.PI * 1.5]) for (const [t0, t1, barva] of pasovi) {
+      c.set(barva);
+      const off = pos.length / 3;
+      prof.forEach(([y, r]) => {
+        const r0 = Math.min(rNot(y, r), r);
+        for (const t of [t0, t1]) { const rr = r + (r0 - r) * t; pos.push(rr * Math.sin(f), y, rr * Math.cos(f)); col.push(c.r, c.g, c.b); }
+      });
+      for (let i = 0; i < prof.length - 1; i++) { const a = off + i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+  // lipidni dvosloj: temni plasti glav fosfolipidov, svetlejša sredica iz repov
+  function DVOSLOJ(glave, repi) { return [[0, 0.3, glave], [0.3, 0.7, repi], [0.7, 1, glave]]; }
 
   return {
     group,

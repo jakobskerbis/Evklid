@@ -110,12 +110,14 @@ export function zgradi(THREE, ctx = {}) {
   const memMat = mat(0xd88aa2, { roughness: 0.32, clearcoat: 1, side: THREE.FrontSide });
   const memOut = new THREE.Mesh(mem.odprta, memMat);
   const citMat = mat(0xf1c9b6, { roughness: 0.75, clearcoat: 0.1, sheen: 0.2, side: THREE.BackSide });
-  const citIn = new THREE.Mesh(mem.odprta.clone().scale(0.985, 0.985, 0.985), citMat);
-  const memRob = new THREE.Mesh(rob(oblika, 0.018, q(40)), memMat);
+  const DM = 0.97; // notranja ploskev membrane (debelina ≈ 3 % polmera, povečano)
+  const citIn = new THREE.Mesh(mem.odprta.clone().scale(DM, DM, DM), citMat);
+  const memRob = new THREE.Mesh(prerezPlasti(oblika, (d) => oblika(d) * DM, q(72), DVOSLOJ(0xb4587c, 0xf4d9c4)),
+    mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   const pokrov = new THREE.Mesh(mem.pokrov, memMat);
   pokrov.visible = false;
   group.add(memOut, citIn, memRob, pokrov);
-  del("membrana", "Celična membrana", "Tanka prožna meja celice iz dveh plasti maščob; odloča, katere snovi vstopijo in izstopijo.", "#d88aa2", [memOut, memRob, pokrov], [-0.2, 0.45, 0.85]);
+  del("membrana", "Celična membrana", "Prožna meja celice iz dveh plasti fosfolipidov (v prerezu temni glavi in svetli repi); odloča, katere snovi vstopijo in izstopijo. Debelina membrane je povečana.", "#d88aa2", [memOut, memRob, pokrov], [-0.2, 0.45, 0.85]);
   del("citoplazma", "Citoplazma", "Želatinasta tekočina, ki napolnjuje celico; v njej plavajo organeli in poteka veliko kemijskih reakcij.", "#f1c9b6", [citIn], [0.55, -0.5, -0.35]);
 
   // ---------- jedro ----------
@@ -125,8 +127,10 @@ export function zgradi(THREE, ctx = {}) {
   const jMat = mat(0x7a68d8, { roughness: 0.34 });
   const jOut = new THREE.Mesh(jl.odprta, jMat);
   const nukMat = mat(0xb9a8ff, { roughness: 0.6, clearcoat: 0.3, side: THREE.BackSide });
-  const jIn = new THREE.Mesh(jl.odprta.clone().scale(0.95, 0.95, 0.95), nukMat);
-  const jRob = new THREE.Mesh(rob(oblJ, 0.012, q(28)), jMat);
+  const DJ = 0.93; // dvojna jedrna ovojnica: zunanja membrana, presledek, notranja membrana (povečano)
+  const jIn = new THREE.Mesh(jl.odprta.clone().scale(DJ, DJ, DJ), nukMat);
+  const jRob = new THREE.Mesh(prerezPlasti(oblJ, (d) => oblJ(d) * DJ, q(48), [[0, 0.32, 0x5a46b8], [0.32, 0.68, 0xd9cffb], [0.68, 1, 0x5a46b8]]),
+    mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   const jPokrov = new THREE.Mesh(jl.pokrov, jMat);
   jPokrov.visible = false;
   for (const m of [jOut, jIn, jRob, jPokrov]) m.position.copy(J);
@@ -147,8 +151,8 @@ export function zgradi(THREE, ctx = {}) {
     pore.setMatrixAt(k++, o.matrix);
   }
   group.add(pore);
-  del("jedro", "Jedro", "Največji organel; v njem je DNK z navodili za delovanje in delitev celice.", "#7a68d8", [jOut, jRob, jPokrov], [J.x - 0.2, J.y + 0.32, J.z + 0.12]);
-  del("jedrna-ovojnica", "Jedrna ovojnica in pore", "Dvojna membrana okoli jedra; skozi jedrne pore potujejo snovi med jedrom in citoplazmo.", "#5440b0", [pore], [J.x + 0.1, J.y + 0.2, J.z + 0.32]);
+  del("jedro", "Jedro", "Največji organel; v njem je DNK z navodili za delovanje in delitev celice.", "#7a68d8", [jOut, jPokrov], [J.x - 0.2, J.y + 0.32, J.z + 0.12]);
+  del("jedrna-ovojnica", "Jedrna ovojnica in pore", "Dvojna membrana okoli jedra (v prerezu dve temni plasti s presledkom); skozi jedrne pore potujejo snovi med jedrom in citoplazmo.", "#5440b0", [pore, jRob], [J.x + 0.1, J.y + 0.2, J.z + 0.32]);
   del("nukleoplazma", "Nukleoplazma", "Tekočina v notranjosti jedra, v kateri sta kromatin in jedrce.", "#b9a8ff", [jIn], [J.x - 0.12, J.y + 0.08, J.z + 0.1]);
 
   // kromatin: zvite niti DNK in beljakovin v jedru
@@ -331,7 +335,18 @@ export function zgradi(THREE, ctx = {}) {
       c.translate(i % 2 ? w * 0.25 : -w * 0.25, y, 0);
       kr.push(c);
     }
-    return zdruzi([zun, not, ...kr], [0xe8743b, 0xf5a96e, ...kr.map(() => 0xffc58a)]);
+    // ploskvi prereza na obeh robovih odprtine: zunanja membrana, medmembranski prostor, notranja membrana
+    const rez = [], rezB = [];
+    for (const a of [0.5 * Math.PI, 1.95 * Math.PI]) for (const [t0, t1, b] of [[0, 0.32, 0xc85a2a], [0.32, 0.62, 0xffe0c2], [0.62, 1, 0xf08a4a]]) {
+      const pos = [], idx = [];
+      prof.forEach((pt) => { for (const t of [t0, t1]) { const sx = 1 - 0.14 * t, sy = 1 - 0.07 * t; pos.push(pt.x * sx * Math.sin(a), pt.y * sy, pt.x * sx * Math.cos(a)); } });
+      for (let i = 0; i < prof.length - 1; i++) { const j = i * 2; idx.push(j, j + 2, j + 1, j + 1, j + 2, j + 3); }
+      const g = new THREE.BufferGeometry();
+      g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+      g.setIndex(idx); g.computeVertexNormals();
+      rez.push(g); rezB.push(b);
+    }
+    return zdruzi([zun, not, ...kr, ...rez], [0xe8743b, 0xf5a96e, ...kr.map(() => 0xffc58a), ...rezB]);
   }
   const nMit = hi ? 14 : 9;
   const mit = new THREE.InstancedMesh(mitohondrij(), mat(0xffffff, { vertexColors: true, roughness: 0.38, side: THREE.DoubleSide }), nMit);
@@ -346,7 +361,7 @@ export function zgradi(THREE, ctx = {}) {
   }
   group.add(mit);
   const mitT = mitPol.reduce((a, m) => (vIzrezu(m.p) || m.p.z > a.z ? m.p : a), mitPol[0].p);
-  del("mitohondrij", "Mitohondrij", "Elektrarna celice: pri celičnem dihanju iz glukoze in kisika pridobi energijo (ATP). Notranja membrana je nagubana v kriste.", "#e8743b", [mit], mitT.toArray());
+  del("mitohondrij", "Mitohondrij", "Elektrarna celice: pri celičnem dihanju iz glukoze in kisika pridobi energijo (ATP). Obdajata ga dve membrani; notranja je nagubana v kriste.", "#e8743b", [mit], mitT.toArray());
 
   // ---------- lizosomi in peroksisomi ----------
   function kroglice(n, polmer, barva, opcije, izogni) {
@@ -439,6 +454,34 @@ export function zgradi(THREE, ctx = {}) {
       for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
     });
   }
+
+  // Ploskev prereza plasti med zunanjo fZ in notranjo fN ploskvijo na treh ravninah izreza (x = 0, y = 0, z = 0).
+  // pasovi [[t0, t1, barva], …] od zunaj (t = 0) navznoter (t = 1) pokažejo zgradbo plasti, npr. lipidni dvosloj.
+  function prerezPlasti(fZ, fN, seg, pasovi) {
+    const loki = [
+      (t) => new THREE.Vector3(0, Math.cos(t * Math.PI / 2), Math.sin(t * Math.PI / 2)),
+      (t) => new THREE.Vector3(-Math.sin(t * Math.PI / 2), Math.cos(t * Math.PI / 2), 0),
+      (t) => new THREE.Vector3(-Math.cos(t * Math.PI / 2), 0, Math.sin(t * Math.PI / 2)),
+    ];
+    const pos = [], col = [], idx = [], c = new THREE.Color();
+    for (const L of loki) for (const [t0, t1, barva] of pasovi) {
+      c.set(barva);
+      const off = pos.length / 3;
+      for (let i = 0; i <= seg; i++) {
+        const d = L(i / seg).normalize(), rz = fZ(d), rn = fN(d);
+        for (const t of [t0, t1]) { const rr = rz + (rn - rz) * t; pos.push(d.x * rr, d.y * rr, d.z * rr); col.push(c.r, c.g, c.b); }
+      }
+      for (let i = 0; i < seg; i++) { const a = off + i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+  // lipidni dvosloj: temni plasti glav fosfolipidov, svetlejša sredica iz repov
+  function DVOSLOJ(glave, repi) { return [[0, 0.3, glave], [0.3, 0.7, repi], [0.7, 1, glave]]; }
 
   return {
     group,

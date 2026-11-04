@@ -248,20 +248,20 @@ export function zgradi(THREE, ctx = {}) {
   const oblE = (d) => RE * (1 + 0.012 * fbm(d.x * 3 + 2, d.y * 3, d.z * 3) - (ovulacija ? 0.1 * Math.pow(Math.max(0, d.dot(dPT)), 60) : 0));
   function jajce() {
     const l = lupina(oblE, q(96), q(64));
-    return { l, rob: rob(oblE, 0.009, q(48)) };
+    return { l, rob: prerezPlasti(oblE, (d) => oblE(d) * 0.975, q(64), DVOSLOJ(0xb4587c, 0xf4d9c4)) };
   }
   const memMat = mat(0xd88aa2, { roughness: 0.34, clearcoat: 0.9, sheen: 0.6 });
   const citMat = mat(0xf3dcae, { roughness: 0.75, clearcoat: 0.1, sheen: 0.2, side: THREE.BackSide });
   const memOut = new THREE.Mesh(new THREE.BufferGeometry(), memMat);
   const memPok = new THREE.Mesh(new THREE.BufferGeometry(), memMat);
-  const memRob = new THREE.Mesh(new THREE.BufferGeometry(), memMat);
+  const memRob = new THREE.Mesh(new THREE.BufferGeometry(), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   const citIn = new THREE.Mesh(new THREE.BufferGeometry(), citMat);
   memPok.visible = false;
   function postaviJajce() {
     const j = jajce();
     for (const m of [memOut, memPok, memRob, citIn]) m.geometry.dispose();
     memOut.geometry = j.l.odprta; memPok.geometry = j.l.pokrov; memRob.geometry = j.rob;
-    citIn.geometry = j.l.odprta.clone().scale(0.985, 0.985, 0.985);
+    citIn.geometry = j.l.odprta.clone().scale(0.975, 0.975, 0.975);
   }
   postaviJajce();
   group.add(memOut, memPok, memRob, citIn);
@@ -338,8 +338,8 @@ export function zgradi(THREE, ctx = {}) {
   const oblJ = (d) => RJ * (1 + 0.03 * sum(d.x * 2 + 7, d.y * 2, d.z * 2));
   const jl = lupina(oblJ, q(56), q(36));
   const jMat = mat(0x7a68d8, { roughness: 0.34 });
-  const jOut = new THREE.Mesh(jl.odprta, jMat), jPok = new THREE.Mesh(jl.pokrov, jMat), jRob = new THREE.Mesh(rob(oblJ, 0.005, q(32)), jMat);
-  const jIn = new THREE.Mesh(jl.odprta.clone().scale(0.95, 0.95, 0.95), mat(0xb9a8ff, { roughness: 0.6, clearcoat: 0.3, side: THREE.BackSide }));
+  const jOut = new THREE.Mesh(jl.odprta, jMat), jPok = new THREE.Mesh(jl.pokrov, jMat), jRob = new THREE.Mesh(prerezPlasti(oblJ, (d) => oblJ(d) * 0.93, q(40), [[0, 0.32, 0x5a46b8], [0.32, 0.68, 0xd9cffb], [0.68, 1, 0x5a46b8]]), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
+  const jIn = new THREE.Mesh(jl.odprta.clone().scale(0.93, 0.93, 0.93), mat(0xb9a8ff, { roughness: 0.6, clearcoat: 0.3, side: THREE.BackSide }));
   jPok.visible = false;
   for (const m of [jOut, jPok, jRob, jIn]) m.position.copy(JC);
   const jcG = new THREE.IcosahedronGeometry(0.04, hi ? 3 : 2);
@@ -447,7 +447,7 @@ export function zgradi(THREE, ctx = {}) {
   const D = {};
   const dd = (id, ime, opis, barva, meshes, tocka) => { const sez = []; del(id, ime, opis, barva, meshes, tocka, sez); D[id] = sez[0]; };
   const naE = (x, y, z, f = 1.01) => { const d = V(x, y, z).normalize(); return d.multiplyScalar(oblE(d) * f).toArray(); };
-  dd("membrana", "Celična membrana", "Meja jajčne celice; ko se z njo zlije membrana ene semenčice, se jajčna celica takoj zaščiti pred drugimi.", "#d88aa2", [memOut, memPok, memRob], naE(-0.55, 0.2, 0.8, 1.0));
+  dd("membrana", "Celična membrana", "Meja jajčne celice iz dveh plasti fosfolipidov; ko se z njo zlije membrana ene semenčice, se jajčna celica takoj zaščiti pred drugimi. Debelina je povečana.", "#d88aa2", [memOut, memPok, memRob], naE(-0.55, 0.2, 0.8, 1.0));
   dd("citoplazma", "Citoplazma", "Bogata zaloga snovi in organelov, iz katerih živi zarodek prve dni po oploditvi.", "#f3dcae", [citIn], naE(0.2, -0.3, -0.9, 0.96));
   dd("rumenjak", "Rumenjakova zrnca", "Zrnca s hranilnimi snovmi; človeška jajčna celica jih ima malo, ker zarodek kmalu dobi hrano od matere.", "#f2c94c", [rum], (rumK.find((v) => v.x < -0.15 && v.y > 0.15 && v.z > 0.15) || rumK[0]).toArray());
   dd("mitohondriji", "Mitohondriji", "Jajčna celica jih ima več sto tisoč; vsi mitohondriji zarodka so materini.", "#e8743b", [mit], (mitK.find((v) => v.x < -0.1 && v.y > 0.1 && v.z > 0.1) || mitK[0]).toArray());
@@ -491,6 +491,34 @@ export function zgradi(THREE, ctx = {}) {
       for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
     });
   }
+
+  // Ploskev prereza plasti med zunanjo fZ in notranjo fN ploskvijo na treh ravninah izreza (x = 0, y = 0, z = 0).
+  // pasovi [[t0, t1, barva], …] od zunaj (t = 0) navznoter (t = 1) pokažejo zgradbo plasti, npr. lipidni dvosloj.
+  function prerezPlasti(fZ, fN, seg, pasovi) {
+    const loki = [
+      (t) => new THREE.Vector3(0, Math.cos(t * Math.PI / 2), Math.sin(t * Math.PI / 2)),
+      (t) => new THREE.Vector3(-Math.sin(t * Math.PI / 2), Math.cos(t * Math.PI / 2), 0),
+      (t) => new THREE.Vector3(-Math.cos(t * Math.PI / 2), 0, Math.sin(t * Math.PI / 2)),
+    ];
+    const pos = [], col = [], idx = [], c = new THREE.Color();
+    for (const L of loki) for (const [t0, t1, barva] of pasovi) {
+      c.set(barva);
+      const off = pos.length / 3;
+      for (let i = 0; i <= seg; i++) {
+        const d = L(i / seg).normalize(), rz = fZ(d), rn = fN(d);
+        for (const t of [t0, t1]) { const rr = rz + (rn - rz) * t; pos.push(d.x * rr, d.y * rr, d.z * rr); col.push(c.r, c.g, c.b); }
+      }
+      for (let i = 0; i < seg; i++) { const a = off + i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+    g.setIndex(idx);
+    g.computeVertexNormals();
+    return g;
+  }
+  // lipidni dvosloj: temni plasti glav fosfolipidov, svetlejša sredica iz repov
+  function DVOSLOJ(glave, repi) { return [[0, 0.3, glave], [0.3, 0.7, repi], [0.7, 1, glave]]; }
 
   return {
     group,
