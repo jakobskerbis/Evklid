@@ -3779,7 +3779,7 @@ makeSplitter($("#view-path"), splitOpts("path"));
 makeSplitter($("#topic-content"), splitOpts("topic"));
 makeSplitter($("#view-textbook"), splitOpts("lesson"));
 
-initFlashcards({ api, renderRich, escapeHtml, toast, showView, getStudent: () => state.student, getPath: () => state.pathKey, onDue: setCardsDue });
+initFlashcards({ api, renderRich, escapeHtml, toast, showView, getStudent: () => state.student, getPath: () => state.pathKey, subjectName: () => SUBJECT_NAMES[(state.pathKey && state.pathSubject) || state.student?.settings.subject] || "", onDue: setCardsDue });
 
 // Urnik (public/schedule.js): po spremembi se osvežita kartica »Danes imaš …« in Priprava na test.
 function scheduleChanged() {

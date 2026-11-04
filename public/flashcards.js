@@ -4,7 +4,7 @@
 import { icon } from "./icons.js";
 import { t, locale } from "./i18n.js";
 
-let D = null; // { api, renderRich, escapeHtml, toast, showView, getStudent, getPath, onDue }
+let D = null; // { api, renderRich, escapeHtml, toast, showView, getStudent, getPath, subjectName, onDue }
 const $ = (sel) => document.querySelector(sel);
 const box = () => $("#view-cards");
 let session = null; // { queue, done, shown, total }
@@ -37,6 +37,7 @@ export async function showFlashcards() {
   session = { queue: due.map((c) => c.id), cards: new Map(data.cards.map((c) => [c.id, c])), done: 0, again: new Set(), shown: false, total: due.length };
   v.innerHTML = `
     <button type="button" class="ghost back fc-back"><i data-icon="arrow-left"></i><span>${t("topic.backPath")}</span></button>
+    ${D.subjectName?.() ? `<div class="eyebrow fc-subject">${D.escapeHtml(D.subjectName())}</div>` : ""}
     <h1 class="with-icon">${icon("layers")} ${t("cards.title")}</h1>
     <p class="muted">${t("cards.intro")}</p>
     <section id="fc-review" class="fc-review" aria-live="polite"></section>
