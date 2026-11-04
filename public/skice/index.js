@@ -10,6 +10,13 @@ export const SKICE = {
   "MAT-SS|Periodičnost": () => import("./periodicnost.js"),
   "MAT-SS|Sinusna krivulja": () => import("./sinusna.js"),
   "MAT-SS|Krožne funkcije": () => import("./krozne.js"),
+  "MAT-SS|Potenčna in korenska funkcija": () => import("./potencna.js"),
+  "MAT-SS|Temenska oblika": () => import("./kvadratna.js"),
+  "MAT-SS|Definicija": () => import("./eksponentna.js"),
+  "MAT-SS|Skalarni produkt": () => import("./vektorja.js"),
+  "MAT-SS|Razdalja točk": () => import("./tocke.js"),
+  "MAT-SS|Premica": () => import("./linearna.js"),
+  "MAT-OS|Linearna funkcija": () => import("./linearna-os.js"),
 };
 
 export function skicaZa(list, ime) {
