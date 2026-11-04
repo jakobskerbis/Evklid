@@ -40,7 +40,7 @@ export default function narisi(host, { binom = false } = {}) {
     const f = (k) => `${k}!`;
     const cipi = [
       { barva: "izbor", oznaka: `\\binom{n}{${c}} = \\frac{n!}{${c}!\\,(n - ${c})!}`, vrednost: `${f(n)} : (${f(r)} · ${f(n - r)}) = ${st(C(n, r), 0)}` },
-      { barva: "druga", oznaka: `\\binom{n}{n - ${c}}`, vrednost: st(C(n, n - r), 0) },
+      { barva: "druga", oznaka: `\\binom{n}{n - ${c}}`, vrednost: `${st(C(n, n - r), 0)}${2 * r === n ? " (isti člen)" : ""}` },
       stars
         ? { barva: "ploskev", oznaka: `\\binom{n - 1}{${c} - 1} + \\binom{n - 1}{${c}} = \\binom{n}{${c}}`, vrednost: `${st(C(n - 1, r - 1), 0)} + ${st(C(n - 1, r), 0)} = ${st(C(n, r), 0)}` }
         : { barva: "ploskev", oznaka: "\\binom{n}{0} = \\binom{n}{n} = 1", vrednost: "robni člen" },

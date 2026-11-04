@@ -21,7 +21,12 @@ export default function narisi(host) {
     if ([P.el, V.el][1 - i].contains(document.activeElement)) gumbi[i].querySelector(".on")?.focus();
   };
   const P = ploscinaSkica(), V = vrteninaSkica();
-  for (const S of [P, V]) gumbi.push(S.gumbi({ label: "Skica", options: VRSTE, value: VRSTE[0], onChange: preklop }));
+  for (const S of [P, V]) {
+    // Stikalo je prvo pod čipi v obeh skicah, da ostane na istem mestu ob preklopu.
+    const gb = S.gumbi({ label: "Skica", options: VRSTE, value: VRSTE[0], onChange: preklop });
+    gb.parentElement.prepend(gb);
+    gumbi.push(gb);
+  }
   V.el.hidden = true;
   ovoj.append(P.el, V.el);
   host.append(ovoj);
@@ -33,7 +38,8 @@ function ploscinaSkica() {
   const T = { a: 0.5, b: 3.8 };
   const vlecne = {};
   function izris() {
-    const [lo, hi] = [T.a, T.b];
+    // Vlečni točki se lahko prekrižata: leva je vedno a, desna b (∫ od a do b je ploščina).
+    const [lo, hi] = [Math.min(T.a, T.b), Math.max(T.a, T.b)];
     const g = S.plast("graf");
     if (hi > lo) {
       const nazaj = fnPath(g1, A, { from: hi, to: lo, n: 2 }).replace(/^M/, "L");
@@ -44,14 +50,15 @@ function ploscinaSkica() {
     s("path", { d: fnPath(g1, A, { from: -0.35, to: 4.35, n: 2 }), class: "sk-s-druga", "stroke-width": 2.5 }, g);
     napis(g, A.X(2) + 4, A.Y(f1(2)) - 7, "f", "glavna");
     napis(g, A.X(4.2), A.Y(g1(4.2)) + 16, "g", "druga", { "text-anchor": "middle" });
+    // Nad osjo (pod osjo sta oznaki osi in vlečni točki): a levo od svoje meje, b desno.
+    napis(g, A.X(lo) - 6, A.Y(0) - 8, "a", "glavna", { "text-anchor": "end" });
+    napis(g, A.X(hi) + 6, A.Y(0) - 8, "b", "glavna");
     for (const k of ["a", "b"]) {
-      // Nad osjo (pod osjo sta oznaki osi in vlečna točka): a levo od meje, b desno.
-      napis(g, A.X(T[k]) + (k === "a" ? -6 : 6), A.Y(0) - 8, k, "glavna", { "text-anchor": k === "a" ? "end" : "start" });
       vlecne[k]?.move(A.X(T[k]), A.Y(0));
     }
     S.cipi([
-      { barva: "glavna", oznaka: "a,\\ b", vrednost: `${st(T.a, 1)}; ${st(T.b, 1)}` },
-      { barva: "ploskev", oznaka: "S = \\int_a^b \\lvert f(x) - g(x) \\rvert\\,dx", vrednost: vr(ploscina(T.a, T.b), 3) },
+      { barva: "glavna", oznaka: "a,\\ b", vrednost: `${st(lo, 1)}; ${st(hi, 1)}` },
+      { barva: "ploskev", oznaka: "S = \\int_a^b \\lvert f(x) - g(x) \\rvert\\,dx", vrednost: vr(ploscina(lo, hi), 3) },
     ]);
   }
   izris();
@@ -59,11 +66,9 @@ function ploscinaSkica() {
     vlecne[k] = S.tocka({
       x: A.X(T[k]),
       y: A.Y(0),
-      label: `Meja ${k}: premikaj jo po osi x`,
+      label: `Meja ${k === "a" ? "1" : "2"}: premikaj jo po osi x`,
       onMove: (x) => {
-        // a ostane levo od b (vsaj 0,1 narazen), da je ∫ od a do b res ploščina.
-        const v = Math.round(A.inv(x, 0)[0] * 10) / 10;
-        T[k] = k === "a" ? Math.max(MEJA[0], Math.min(T.b - 0.1, v)) : Math.min(MEJA[1], Math.max(T.a + 0.1, v));
+        T[k] = Math.max(MEJA[0], Math.min(MEJA[1], Math.round(A.inv(x, 0)[0] * 10) / 10));
         izris();
       },
     });

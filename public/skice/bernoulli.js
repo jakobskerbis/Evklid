@@ -30,7 +30,7 @@ export default function narisi(host) {
     });
     const xk = L + sir * (k + 0.5), yk = B - (P[k] / mx) * (B - T);
     napis(g, Math.min(R - 20, Math.max(L + 20, xk)), Math.max(14, yk - 6), zapisP(P[k], 3), "izbor", { "text-anchor": "middle", style: "font-size: 11px; font-style: normal; paint-order: stroke; stroke: var(--sk-bg); stroke-width: 3px" });
-    napis(g, W - 1, B + 14, "k", "glavna", { "text-anchor": "end", style: "font-size: 11px" });
+    napis(g, W - 3, B + 14, "k", "glavna", { "text-anchor": "end", style: "font-size: 11px" });
     const vsota = P.reduce((a, v) => a + v, 0);
     S.cipi([
       { barva: "izbor", oznaka: "P_n(k) = \\binom{n}{k} p^k (1 - p)^{n - k}", vrednost: `${st(C(n, k), 0)} · ${st(p, 2)}${nad(k)} · ${st(1 - p, 2)}${nad(n - k)} ${/^[≈<]/.test(zapisP(P[k])) ? "" : "= "}${zapisP(P[k])}` },
