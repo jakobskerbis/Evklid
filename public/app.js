@@ -2043,6 +2043,9 @@ async function openTopic(topicId) {
   const tp = await api(`/api/topic?id=${encodeURIComponent(topicId)}&lang=${encodeURIComponent(state.student?.settings?.language || "")}`);
   state.topic = tp;
   showView("topic");
+  // Pogled teme se drsi sam in si zapomni mesto: nova tema se vedno odpre na vrhu (»Nova snov« drugič, #view-topic).
+  const vt = $("#view-topic");
+  if (vt) vt.scrollTop = 0;
   const units = (await api(`/api/students/${state.student.id}/path?key=${encodeURIComponent(tp.path)}`)).units;
   const unit = units.find((u) => u.topics.some((x) => x.id === tp.id));
   const hasPractice = unit?.topics.find((x) => x.id === tp.id);
