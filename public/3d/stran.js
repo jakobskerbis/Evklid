@@ -48,6 +48,17 @@ function izZbirke(e) {
   usmeri();
 }
 
+// Gumb »3D svet« ob napaki (model ne obstaja, ni WebGL): na zbirko, v okvirju aplikacije pa zapre okvir (zbirka v
+// okvirju nima poti nazaj, Esc tam ne deluje).
+function naZbirko(b) {
+  b.href = "#";
+  if (vgrajeno)
+    b.addEventListener("click", (e) => {
+      e.preventDefault();
+      starsu({ tip: "zapri3d" });
+    });
+}
+
 async function zbirka() {
   document.title = t("a3.hubTitle");
   const box = mk("div", "k3-hub");
@@ -125,7 +136,7 @@ async function model(id, param, moj) {
     const p = mk("div", "k3-napaka");
     p.append(mk("p", "", t("a3.notFound")));
     const b = mk("a", "a3-pill");
-    b.href = "#";
+    naZbirko(b);
     b.textContent = t("a3.hubTitle");
     p.append(b);
     glavni.replaceChildren(p);
@@ -170,7 +181,7 @@ async function usmeri() {
     const p = mk("div", "k3-napaka");
     p.append(mk("p", "", t(err?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError")));
     const b = mk("a", "a3-pill");
-    b.href = "#";
+    naZbirko(b);
     b.textContent = t("a3.hubTitle");
     p.append(b);
     glavni.replaceChildren(p);
