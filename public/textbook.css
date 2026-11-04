@@ -1395,3 +1395,23 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo-slider.as-choice .demo-choice { grid-column: 2 / -1; justify-self: start; max-width: 100%; }
 .demo .demo-choice .seg-btn { min-width: 44px; min-height: 40px; font-variant-numeric: tabular-nums; }
 @media (max-width: 520px) { .demo-slider.as-choice .demo-choice { grid-column: 1 / -1; } }
+
+/* Laboratorij: kemijske reakcije (lab-hitrost, lab-energija, lab-plamenska; public/sim/lab-reakcije.js) */
+.demo-svg .lab-rk-lcd { fill: #1d2414; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-weight: 700; }
+.demo-svg .lab-rk-lcdu { fill: #1d2414; font-size: 8px; font-weight: 700; }
+.demo-svg .lab-rk-panel { fill: #e9edf1; font-size: 7px; font-weight: 700; }
+.demo-svg .lab-rk-panel.w { fill: #ffffff; font-size: 8px; }
+.demo-svg .lab-rk-vata { fill: #fbfbf9; stroke: #c9cbc6; stroke-width: 0.5; }
+.demo-svg .lab-rk-pena { fill: rgb(120 128 135 / 0.55); }
+.demo-svg .lab-rk-skala { fill: #c9ced4; font-size: 9px; }
+.demo-svg .lab-rk-salt { stroke: none; }
+.lab-rk-eq { overflow-wrap: anywhere; }
+/* Plamen plapola (plast nad risbo se zamenja le, ko se plamen spremeni, zato animacija teče gladko); pri »manj gibanja« miruje. */
+.demo-svg .lab-rk-flame { animation: lab-rk-flick 0.22s ease-in-out infinite alternate; }
+.demo-svg .lab-rk-flame-s { animation-duration: 0.35s; }
+@keyframes lab-rk-flick { from { transform: scale(1, 1) skewX(0deg); } 50% { transform: scale(0.97, 1.03) skewX(1deg); } to { transform: scale(1.02, 0.96) skewX(-1.2deg); } }
+@media (prefers-reduced-motion: reduce) { .demo-svg .lab-rk-flame { animation: none; } }
+.lab-rk-tab .lab-table :is(td, th) { white-space: normal; overflow-wrap: normal; word-break: normal; hyphens: manual; } /* lomi le med besedami (ne »vzo|rec«); preširoka preglednica se pomika v .lab-table-wrap */
+.lab-rk-tab .lab-table td:first-child + td, .lab-rk-tab .lab-table th:first-child + th { min-width: 4.5em; }
+/* risba 4 : 3 na računalniku: zapolni levi stolpec (do 500 px) namesto splošnih 460 px */
+@container labtit (min-width: 800px) { .demo.lab .lab-tit-top > .demo-stage :is(.demo-svg.lab-rk, :has(> .demo-svg.lab-rk)) { max-width: none; } }

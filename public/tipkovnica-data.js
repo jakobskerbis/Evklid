@@ -110,7 +110,11 @@ export const KEM_ROWS = [
 export const NUM_TOP_MATH = [["x²", "²"], ["√", "√(@)"], ["xⁿ", "^(@)"], ["π", "π"], ["( )", "(@)"], ["a/b", "(@)/()"]];
 export const NUM_TOP_TEXT = [["( )", "(@)"], ["%", "%"], ["€", "€"], ["/", "/"], ["#", "#"], ["&", "&"]];
 // Pogosti znaki v klepetu z inštruktorjem (vrstica nad tipkami).
-export const TUTOR_CHIPS = [["x²", "²"], ["√", "√(@)"], ["a/b", "(@)/()"], ["π", "π"], ["→", "→"], ["≤", "≤"], ["≠", "≠"], ["·", "·"], ["°", "°"]];
+// Ulomek, potenca, indeks (zaporedja), integral in vsota se v poslanem sporočilu izrišejo kot formula (public/vnos-formul.js).
+export const TUTOR_CHIPS = [
+  ["a/b", "(@)/()"], ["x²", "²"], ["xⁿ", "^(@)"], ["√", "√(@)"], ["aₙ", "_(@)"], ["∫", "∫ (@) dx"], ["∫ₐᵇ", "∫_(@)^() () dx"], ["∑", "∑_(n=1)^(@) "],
+  ["π", "π"], ["∞", "∞"], ["→", "→"], ["≤", "≤"], ["≠", "≠"], ["·", "·"], ["°", "°"],
+];
 export const URL_CHIPS = [["https://", "https://"], [".com", ".com"], [".si", ".si"], ["/", "/"]];
 /** Ali je polje za povezavo (type=url ali inputmode=url): dobi tipko Prilepi in pripone. */
 export const isUrlField = (el) => String(el?.type || el?.getAttribute?.("type") || "").toLowerCase() === "url" || String(el?.getAttribute?.("inputmode") || "").toLowerCase() === "url";
@@ -275,6 +279,20 @@ export function wordsBack(value, pos, n = 1) {
   for (let k = 0; k < n && p > 0; k++) {
     while (p > 0 && /\s/u.test(v[p - 1])) p--;
     while (p > 0 && !/\s/u.test(v[p - 1])) p--;
+  }
+  return p;
+}
+
+/** Začetek povedi pred kazalcem (troklik na ⌫): za zadnjim ».«, »!«, »?« ali »…« s presledkom ali za novo vrstico. */
+export function sentenceBack(value, pos) {
+  const v = String(value ?? "");
+  let p = Math.max(0, Math.min(pos, v.length));
+  while (p > 0 && /[ \t]/u.test(v[p - 1])) p--; // presledki tik pred kazalcem gredo s povedjo
+  while (p > 0 && /[.!?…]/u.test(v[p - 1])) p--; // ločilo konca te povedi
+  while (p > 0) {
+    const c = v[p - 1];
+    if (c === "\n" || (/\s/u.test(c) && p > 1 && /[.!?…]/u.test(v[p - 2]))) break;
+    p--;
   }
   return p;
 }

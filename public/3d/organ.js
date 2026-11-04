@@ -438,10 +438,16 @@ function materialPokrova(t, ravnine) {
         "#include <color_fragment>",
         `#include <color_fragment>\n diffuseColor.rgb *= 0.9 + 0.2 * orgSum( vOrgPos * 60.0 ) * orgSum( vOrgPos * 13.0 );${
           t.rezVlakna ? `\n diffuseColor.rgb *= 1.0 - 0.07 * smoothstep( 0.2, 0.9, 0.5 + 0.5 * sin( dot( vOrgPos, normalize( vec3( 0.4, 1.0, 0.25 ) ) ) * ${fl(t.rezVlakna)} + 5.0 * orgSum( vOrgPos * 18.0 ) ) ); // snopi mišičnih vlaken na rezu` : ""
+        }${
+          t.rezPore
+            ? `\n { float orgPw = length( fwidth( vOrgPos ) ) * 2.0; // pore (pljučna goba): temne luknjice in svetli pretini; manjše od ~2 px zbledijo (brez migetanja)
+ float orgP = mix( 0.5, orgSum( vOrgPos * ${fl(t.rezPore)} ), clamp( 1.5 - orgPw * ${fl(t.rezPore)}, 0.0, 1.0 ) ) * 0.65 + mix( 0.5, orgSum( vOrgPos * ${fl(t.rezPore * 2.3)} ), clamp( 1.5 - orgPw * ${fl(t.rezPore * 2.3)}, 0.0, 1.0 ) ) * 0.35;
+ diffuseColor.rgb *= 1.0 - ${fl(t.rezPoreMoc ?? 0.4)} * smoothstep( 0.52, 0.66, orgP ) + 0.12 * ( 1.0 - smoothstep( 0.2, 0.4, orgP ) ); }`
+            : ""
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov-${t.rez || t.barva}-${t.rezVlakna || 0}`;
+  m.customProgramCacheKey = () => `org-pokrov-${t.rez || t.barva}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}`;
   return m;
 }
 
@@ -631,11 +637,13 @@ export async function zgradiOrgan(ime, ctx = {}) {
       .map((x) => ({
         id: x.d.id,
         ime: x.d.ime,
+        la: x.d.la,
         opis: x.d.opis,
         barva: x.d.barva || "#6E9BFF",
         meshes: x.moje.filter((m) => m.visible),
         tocka: tockaZa(x),
         skrijTocko: !tocke.has(x.d.id),
+        povecava: x.d.povecava, // id modela za »Poglej pod povečavo« (npr. mrežnica → organ-mreznica)
       }));
   };
   uporabi();

@@ -61,6 +61,12 @@
 .k3-oznaka b { display: block; font-size: 1rem; font-weight: 600; }
 .k3-oznaka span { display: block; color: var(--k3-muted); font-size: 0.88rem; line-height: 1.35; margin-top: 2px; }
 .k3-oznaka.skrita { opacity: 0; }
+.k3-oznaka .k3-la { display: block; color: var(--k3-muted); font-size: 0.8rem; margin-top: 1px; }
+/* »Poglej pod povečavo« na kartici dela (plast ne lovi dotikov, gumb jih). */
+.k3 .k3-oznaka .k3-povecava-gumb { pointer-events: auto; margin-top: 8px; min-height: 40px; padding: 0 14px; font-size: 0.9rem; }
+.k3-oznaka .k3-povecava-gumb svg { width: 18px; height: 18px; flex: none; }
+.k3-oznaka .k3-povecava-gumb span { display: inline; margin: 0; color: inherit; font-size: inherit; }
+.k3-oznaka.skrita .k3-povecava-gumb { pointer-events: none; }
 .k3-merilo { position: absolute; left: 16px; bottom: 12px; direction: ltr; display: flex; flex-direction: column; gap: 4px; font-size: 0.78rem; color: var(--k3-muted); font-variant-numeric: tabular-nums; }
 .k3-merilo-crta { display: block; height: 6px; border: 2px solid var(--k3-muted); border-top: 0; border-radius: 0 0 2px 2px; }
 
@@ -133,7 +139,7 @@
 
 /* ---------- stran /3d ---------- */
 html.k3-stran, html.k3-stran body { margin: 0; height: 100%; background: #0b0f16; color-scheme: dark; }
-html.k3-stran body { overflow: hidden; }
+html.k3-stran, html.k3-stran body { overflow: hidden; max-width: 100%; } /* nič čez desni rob (Android razširi postavitev) */
 .k3-glavni { position: fixed; inset: 0; overflow: auto; overscroll-behavior: contain; }
 /* Evklidova tipkovnica na strani /3d (tipkovnica-strani.js): barve plošče iz barv odra (stran nima style.css), odprta
    tipkovnica skrajša stran, da iskalnik in zadetki ostanejo nad njo. */
@@ -544,3 +550,10 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 /* Točke po mirovanju zbledijo (pregledovalnik.js), izbrana ostane; počasnejši prehod kot ob pojavu. */
 .k3-tocke-mirne .k3-tocka:not(.on) { opacity: 0; pointer-events: none; transition: opacity 0.9s; }
 @media (prefers-reduced-motion: reduce) { .k3-tocke-mirne .k3-tocka:not(.on) { transition: none; } }
+
+/* Obvestilo ob preklopu načina vrtenja (poveziGumbVrtenja v scena.js) */
+.k3-vrtenje-sporocilo {
+  position: absolute; z-index: 6; left: 50%; top: 50%; translate: -50% -50%; max-width: calc(100% - 32px); padding: 8px 14px; border-radius: 999px;
+  background: var(--k3-steklo, rgba(20, 26, 37, 0.85)); border: 1px solid var(--k3-rob, #273142); color: var(--k3-besedilo, #e8ecf3);
+  font-size: 0.9rem; font-weight: 600; text-align: center; pointer-events: none; animation: k3-pojav 0.2s both;
+}

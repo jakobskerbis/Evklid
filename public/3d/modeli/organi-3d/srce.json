@@ -116,6 +116,7 @@
    "id": "desni-prekat",
    "ime": "Desni prekat",
    "la": "Ventriculus dexter",
+   "povecava": "celica-srcna-misicna",
    "barva": "#38bdf8",
    "opis": "Potiska kri brez kisika po pljučnem deblu v pljuča.",
    "vozlisca": [
@@ -139,6 +140,7 @@
    "id": "levi-prekat",
    "ime": "Levi prekat",
    "la": "Ventriculus sinister",
+   "povecava": "celica-srcna-misicna",
    "barva": "#ff7a6b",
    "opis": "Ima najdebelejšo steno in stisne kri v aorto, od tam pa po vsem telesu.",
    "vozlisca": [

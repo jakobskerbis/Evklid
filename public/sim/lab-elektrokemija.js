@@ -27,12 +27,12 @@ const num = (x, d = 1) => fixed(x, d);
 const rgb = (c, a = 1) => `rgb(${c.join(" ")} / ${a})`;
 const cFmt = (c) => (c >= 0.1 ? num(c, 1) : String(c).replace(".", ","));
 // Štoparica: minute:sekunde,desetinke.
-const ura = (t) => {
+export const ura = (t) => {
   const m = Math.floor(t / 60), sec = t - 60 * m;
   return `${m}:${sec.toFixed(1).padStart(4, "0").replace(".", ",")}`;
 };
 // Zamik animacije iz ure: risba se nariše znova večkrat na sekundo, mehurčki pa tečejo gladko naprej.
-const faza = (T, d) => (-((performance.now() / 1000 + d) % T)).toFixed(2);
+export const faza = (T, d) => (-((performance.now() / 1000 + d) % T)).toFixed(2);
 const hitrostSeg = (opts, value, onChange) => row("hitrost časa", seg("hitrost časa", opts.map((v) => [String(v), `×${v}`]), String(value), (v) => onChange(+v)));
 
 // ---------------------------------------------------------------- skupni deli risbe
@@ -45,7 +45,7 @@ const KOV_BARVE = {
 // Barve prevlek, ki nastanejo pri izpodrivanju (gobast baker, temno sivo srebro, črno železo, temno siv cink).
 const PREVLEKA = { Cu: "#9c4a26", Ag: "#8d9196", Fe: "#2a2b2d", Zn: "#4e555c" };
 const u = (svg, id) => `url(#${svg.uid}-${id})`;
-function gradienti(svg) {
+export function gradienti(svg) {
   const d = s("defs", {}, svg);
   const lin = (id, stops, { x2 = 1, y2 = 0 } = {}) => {
     const g = s("linearGradient", { id: `${svg.uid}-${id}`, x1: 0, y1: 0, x2, y2 }, d);
@@ -75,7 +75,7 @@ function mehurGrad(svg, d) {
 // sličici riše le mehurčke, ne cele risbe z gradienti in obrezovanji (na telefonu je bila to glavnina dela).
 // Risba se obnovi večkrat na sekundo; mehurčki se zamenjajo le, ko se spremeni njihov opis (število, pot, velikost),
 // sicer tečejo naprej brez ponovnega zagona animacij.
-function plastMehurckov(svg, W, H) {
+export function plastMehurckov(svg, W, H) {
   const ov = svgBox(W, H, "lab-ek-ov");
   ov.removeAttribute("role");
   ov.setAttribute("aria-hidden", "true");
@@ -109,12 +109,12 @@ function plastMehurckov(svg, W, H) {
   return P;
 }
 // Steklena cev ali posoda: obris z debelino stekla in odsevom.
-function steklo(g, svg, x, y, w, hh, { rx = 2, dno = true } = {}) {
+export function steklo(g, svg, x, y, w, hh, { rx = 2, dno = true } = {}) {
   s("rect", { x, y, width: w, height: hh, rx, fill: u(svg, "steklo"), class: "lab-ek-glass" }, g);
   if (w > 6) s("rect", { x: x + w * 0.12, y: y + 2, width: Math.max(1, w * 0.07), height: Math.max(0, hh - 4), rx: 1, class: "lab-ek-hl" }, g);
   if (!dno) s("line", { x1: x + 0.6, y1: y + hh, x2: x + w - 0.6, y2: y + hh, class: "lab-ek-glass-in" }, g);
 }
-function tekocina(g, svg, x, y, w, hh, fill, { menisk = true, rx = 0 } = {}) {
+export function tekocina(g, svg, x, y, w, hh, fill, { menisk = true, rx = 0 } = {}) {
   if (hh <= 0.2) return;
   const m = Math.min(2.2, w * 0.12);
   s("path", { d: `M${x},${y - m} Q${x + w / 2},${y + m} ${x + w},${y - m} V${y + hh - rx} Q${x + w},${y + hh} ${x + w - rx},${y + hh} H${x + rx} Q${x},${y + hh} ${x},${y + hh - rx} Z`, fill, class: "lab-ek-liq" }, g);
@@ -122,7 +122,7 @@ function tekocina(g, svg, x, y, w, hh, fill, { menisk = true, rx = 0 } = {}) {
   if (menisk) s("path", { d: `M${x},${y - m} Q${x + w / 2},${y + m} ${x + w},${y - m}`, class: "lab-ek-menisk" }, g);
 }
 // Mehurčki: n mehurčkov od y0 navzgor do y1, širina pasu w. Hitrost dviganja v enotah risbe na sekundo.
-function mehurcki(g, { x, w, y0, y1, n, r = [0.7, 1.5], v = 90, key = 0 }) {
+export function mehurcki(g, { x, w, y0, y1, n, r = [0.7, 1.5], v = 90, key = 0 }) {
   const d = y1 - y0;
   if (n <= 0 || d > -2) return;
   g._sig?.push([x, w, y0, y1, n, ...r, v, key].map((q) => Math.round(q * 2)).join());
@@ -147,11 +147,11 @@ function krokodil(g, x, y, barva, kot = 90) {
   s("path", { d: "M-9,-2.6 L-7.5,-1.5 L-6,-2.4 L-4.5,-1.4 L-3,-2.4", fill: "none", stroke: "#7d848b", "stroke-width": 0.5 }, k);
 }
 // Laboratorijsko stojalo: podnožje, palica, mufa in prijemalo.
-function stojalo(g, svg, xRod, yTop, yBase, w = 90) {
+export function stojalo(g, svg, xRod, yTop, yBase, w = 90) {
   s("rect", { x: xRod - 14, y: yBase - 6, width: w, height: 6, rx: 1.5, fill: "#3d434a" }, g);
   s("rect", { x: xRod - 2.2, y: yTop, width: 4.4, height: yBase - yTop - 6, fill: u(svg, "palica") }, g);
 }
-function prijemalo(g, svg, xRod, y, xTo, w = 10) {
+export function prijemalo(g, svg, xRod, y, xTo, w = 10) {
   s("rect", { x: xRod - 5, y: y - 5, width: 10, height: 10, rx: 1.5, fill: "#5a626b" }, g);
   s("rect", { x: xRod, y: y - 1.6, width: xTo - xRod - w / 2 - 2, height: 3.2, fill: u(svg, "palica") }, g);
   s("path", { d: `M${xTo - w / 2 - 3},${y - 4} h${w + 6} v8 h${-(w + 6)} Z`, fill: "none", stroke: "#5a626b", "stroke-width": 2.2 }, g);

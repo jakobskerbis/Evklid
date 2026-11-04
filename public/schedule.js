@@ -79,6 +79,95 @@ export async function showSchedule() {
   render();
 }
 
+// Šolski zvonec: običajni začetek in konec ure (ročni vnos in mreža tedna).
+const BELLS = { 0: ["07:30", "08:15"], 1: ["08:20", "09:05"], 2: ["09:10", "09:55"], 3: ["10:15", "11:00"], 4: ["11:05", "11:50"], 5: ["11:55", "12:40"], 6: ["12:45", "13:30"], 7: ["13:35", "14:20"], 8: ["14:25", "15:10"] };
+const toMin = (x) => {
+  const [h, m] = String(x || "").split(":").map(Number);
+  return h * 60 + (m || 0);
+};
+const pad = (n) => String(n).padStart(2, "0");
+// Šolska ura, v katero spada ura z urnika (po številki ali po začetku), ali null.
+function bellOf(l) {
+  if (l.period != null) return l.period;
+  if (!l.start) return null;
+  const m = toMin(l.start);
+  const hit = Object.entries(BELLS).find(([, [a, b]]) => m >= toMin(a) - 10 && m < toMin(b));
+  return hit ? Number(hit[0]) : null;
+}
+
+// Teden kot urnik na steni (j, 4. 11. 2026: »prazen prostor naj bo izkoriščen«): dnevi v stolpcih, ure v vrsticah,
+// čez vso širino strani. Šola: vrstice so šolske ure; fakulteta ali ure, ki ne sledijo zvoncu: vrstice so polne ure in
+// predavanje zavzame toliko vrstic, kolikor traja. Prazno polje doda uro na ta dan in ob to uro.
+// V ozkem vsebniku (telefon, majhno okno) CSS namesto mreže pokaže dneve drugega pod drugim (.sch-week).
+function gridHtml(s, days) {
+  const L = s.lessons;
+  // Šolski zvonec samo, ko vse ure sledijo zvoncu in nobena ne traja dlje od ene šolske ure (dvourno predavanje → polne ure).
+  const short = (l) => l.period != null || !l.start || !l.end || toMin(l.end) - toMin(l.start) <= 60;
+  const school = !jeFaks(D.getStudent()?.settings) && L.every((l) => bellOf(l) != null && short(l));
+  let rows;
+  const place = new Map(); // "dan:vrstica" → { span, items }
+  if (school) {
+    const used = L.map(bellOf);
+    const lo = Math.min(1, ...used), hi = Math.max(7, ...used);
+    rows = [...Array(hi - lo + 1)].map((_, i) => lo + i);
+    for (const l of L) {
+      const k = `${l.day}:${bellOf(l)}`;
+      if (!place.has(k)) place.set(k, { span: 1, items: [] });
+      place.get(k).items.push(l);
+    }
+  } else {
+    const starts = L.filter((l) => l.start).map((l) => Math.floor(toMin(l.start) / 60));
+    const ends = L.filter((l) => l.end).map((l) => Math.ceil(toMin(l.end) / 60) - 1);
+    const lo = Math.min(8, ...starts), hi = Math.max(lo + 7, ...starts, ...ends);
+    rows = [...Array(hi - lo + 1)].map((_, i) => lo + i);
+    // Ura, ki se začne med daljšo uro istega dne (vzporedne skupine), gre v isto polje, ki se po potrebi podaljša.
+    for (const l of [...L].sort((a, b) => a.day - b.day || toMin(a.start) - toMin(b.start))) {
+      const h = l.start ? Math.floor(toMin(l.start) / 60) : lo;
+      const span = l.start && l.end ? Math.max(1, Math.min(hi + 1, Math.ceil(toMin(l.end) / 60)) - h) : 1;
+      let h0 = h;
+      for (const [k, c] of place) {
+        const [d, r] = k.split(":").map(Number);
+        if (d === l.day && r <= h && h < r + c.span) h0 = r;
+      }
+      const k = `${l.day}:${h0}`;
+      if (!place.has(k)) place.set(k, { span: 1, items: [] });
+      const c = place.get(k);
+      c.span = Math.max(c.span, h + span - h0);
+      c.items.push(l);
+    }
+  }
+  const row0 = rows[0];
+  let html = `<span class="sch-g-corner"></span>${days.map((d, i) => `<span class="sch-g-day ${d === s.now.day ? "today" : ""}" style="grid-column:${i + 2}">${esc(dayName(d))}</span>`).join("")}`;
+  html += rows
+    .map((r, i) => {
+      const label = school ? `<b>${t("sch.periodN", { n: r })}</b><small>${BELLS[r]?.[0] || ""}</small>` : `<b>${pad(r)}:00</b>`;
+      return `<span class="sch-g-row" style="grid-row:${i + 2}">${label}</span>`;
+    })
+    .join("");
+  for (const [ci, d] of days.entries()) {
+    let covered = -Infinity; // zadnja vrstica, ki jo prekriva že narisano polje (šolska ura 0 je prava vrstica)
+    for (const r of rows) {
+      const gr = r - row0 + 2;
+      const c = place.get(`${d}:${r}`);
+      if (c) {
+        const span = Math.min(c.span, rows.length - (r - row0));
+        covered = Math.max(covered, r + span - 1);
+        html += `<div class="sch-g-cell ${d === s.now.day ? "today" : ""}" style="grid-row:${gr} / span ${span};grid-column:${ci + 2}">${c.items
+          .sort((a, b) => toMin(a.start) - toMin(b.start))
+          .map((l) => `<button type="button" class="sch-lesson" data-lesson="${l.id}"><b>${esc(l.name)}</b><span class="sch-time">${l.start}–${l.end}</span>${
+            lessonLabel(l) || l.room ? `<small class="muted">${esc([lessonLabel(l), l.room].filter(Boolean).join(" · "))}</small>` : ""
+          }</button>`)
+          .join("")}</div>`;
+      } else if (r > covered) {
+        const at = school ? { day: d, period: r } : { day: d, start: `${pad(r)}:00`, end: `${pad(r + 1)}:00` };
+        const name = t("sch.addAt", { day: dayName(d), time: school ? t("sch.periodN", { n: r }) : `${pad(r)}:00` });
+        html += `<button type="button" class="sch-g-add ${d === s.now.day ? "today" : ""}" style="grid-row:${gr};grid-column:${ci + 2}" data-add='${JSON.stringify(at)}' aria-label="${esc(name)}" title="${esc(name)}">${icon("plus")}</button>`;
+      }
+    }
+  }
+  return `<div class="sch-grid" style="--sch-dni:${days.length}">${html}</div>`;
+}
+
 function render() {
   const s = data.schedule;
   const days = [1, 2, 3, 4, 5, ...[6, 7].filter((d) => s.lessons.some((l) => l.day === d))];
@@ -109,10 +198,13 @@ function render() {
   const plan = s.testPlan;
   const remind = ls.get(REMIND_KEY) === "1";
   box().innerHTML = `
+    <div class="sch-top">
+    <div class="sch-lead">
     <p class="muted sch-intro">${t("sch.intro")}</p>
     <div class="sch-add actions">
       <button type="button" class="primary" data-act="lesson">${icon("plus")} ${t("sch.addLesson")}</button>
       <button type="button" class="secondary" data-act="event">${icon("clipboard-check")} ${t("sch.addTest")}</button>
+    </div>
     </div>
     <div class="card list-card sch-import">
       <button type="button" class="list-row" data-act="photo"><span class="ic">${icon("camera")}</span><span class="lr-text"><b>${t("sch.photo")}</b><small>${t("sch.photoSub")}</small></span>${icon("chevron-right")}</button>
@@ -120,18 +212,26 @@ function render() {
     </div>
     <input type="file" accept="image/*" capture="environment" id="sch-photo" hidden>
     <div id="sch-panel"></div>
-    <h2 class="sch-h">${t("sch.week")}</h2>
-    ${week}
-    ${s.source?.url ? `<p class="muted sch-linked">${icon("link")} ${t("sch.linked", { label: esc(s.source.label || new URL(s.source.url).hostname) })} <button type="button" class="text-btn" data-act="refresh">${t("sch.refresh")}</button></p>` : ""}
+    <section class="sch-events">
     <h2 class="sch-h">${t("sch.upcoming")}</h2>
     ${evList}
     <div id="sch-pass"></div>
     ${plan && plan.daysLeft >= 0 ? `<p class="muted">${t("sch.planNote", { date: esc(fmtDate(plan.date)) })} <button type="button" class="text-btn" data-act="prep">${t("sch.prepare")}</button></p>` : ""}
+    </section>
+    <div class="sch-foot">
     <div class="card sch-remind">
       <label class="check"><input type="checkbox" id="sch-remind" ${remind ? "checked" : ""}> <span><b>${t("sch.remindersOn")}</b><br><small class="muted">${t("sch.remindersSub")}</small></span></label>
     </div>
     <p class="muted sch-private">${icon("lock")} ${t("sch.private")}</p>
-    ${s.lessons.length || s.events.length ? `<button type="button" class="ghost danger-text" data-act="clear">${icon("trash-2")} ${t("sch.clear")}</button>` : ""}`;
+    ${s.lessons.length || s.events.length ? `<button type="button" class="ghost danger-text" data-act="clear">${icon("trash-2")} ${t("sch.clear")}</button>` : ""}
+    </div>
+    </div>
+    <section class="sch-weekbox">
+    <h2 class="sch-h">${t("sch.week")}</h2>
+    ${gridHtml(s, days)}
+    <div class="sch-list">${week}</div>
+    ${s.source?.url ? `<p class="muted sch-linked">${icon("link")} ${t("sch.linked", { label: esc(s.source.label || new URL(s.source.url).hostname) })} <button type="button" class="text-btn" data-act="refresh">${t("sch.refresh")}</button></p>` : ""}
+    </section>`;
   hydrateIcons?.(box());
   wire();
   // Paket pred testom (samo z računi in brez naročnine; strežnik odloči, ali ga ponudi).
@@ -153,6 +253,7 @@ function wire() {
     D.onChange?.();
     showSchedule();
   });
+  b.querySelectorAll("[data-add]").forEach((x) => x.addEventListener("click", () => lessonForm(null, JSON.parse(x.dataset.add))));
   b.querySelectorAll("[data-lesson]").forEach((x) => x.addEventListener("click", () => lessonForm(data.schedule.lessons.find((l) => l.id === x.dataset.lesson))));
   b.querySelectorAll("[data-event]").forEach((x) => x.addEventListener("click", () => eventForm(data.schedule.events.find((e) => e.id === x.dataset.event))));
   b.querySelector("#sch-remind").addEventListener("change", async (e) => {
@@ -181,22 +282,21 @@ function subjectList() {
 }
 const datalist = () => `<datalist id="sch-subjects">${[...new Set([...subjectList(), ...data.schedule.lessons.map((l) => l.name)])].map((n) => `<option value="${esc(n)}">`).join("")}</datalist>`;
 
-function lessonForm(l = null) {
+function lessonForm(l = null, at = {}) {
   const periods = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   const p = panel(`<form class="card form sch-form" id="sch-lesson-form">
     <h2>${icon("calendar-clock")} ${t(l ? "sch.editLesson" : "sch.addLesson")}</h2>
     <label>${t("sch.subject")}<input name="name" list="sch-subjects" maxlength="60" required value="${esc(l?.name || "")}" autocomplete="off"></label>
     ${datalist()}
-    <label>${t("sch.day")}<select name="day">${[1, 2, 3, 4, 5, 6, 7].map((d) => `<option value="${d}" ${(l?.day || data.schedule.now.day) === d ? "selected" : ""}>${esc(dayName(d))}</option>`).join("")}</select></label>
-    <label>${t("sch.period")}<select name="period"><option value="">${t("sch.periodNone")}</option>${periods.map((n) => `<option value="${n}" ${l?.period === n ? "selected" : ""}>${t("sch.periodN", { n })}</option>`).join("")}</select></label>
-    <div class="sch-times"><label>${t("sch.start")}<input type="time" name="start" value="${l?.start || ""}"></label><label>${t("sch.end")}<input type="time" name="end" value="${l?.end || ""}"></label></div>
+    <label>${t("sch.day")}<select name="day">${[1, 2, 3, 4, 5, 6, 7].map((d) => `<option value="${d}" ${(l?.day || at.day || data.schedule.now.day) === d ? "selected" : ""}>${esc(dayName(d))}</option>`).join("")}</select></label>
+    <label>${t("sch.period")}<select name="period"><option value="">${t("sch.periodNone")}</option>${periods.map((n) => `<option value="${n}" ${(l ? l.period : at.period) === n ? "selected" : ""}>${t("sch.periodN", { n })}</option>`).join("")}</select></label>
+    <div class="sch-times"><label>${t("sch.start")}<input type="time" name="start" value="${l?.start || at.start || BELLS[at.period]?.[0] || ""}"></label><label>${t("sch.end")}<input type="time" name="end" value="${l?.end || at.end || BELLS[at.period]?.[1] || ""}"></label></div>
     <label>${t("sch.room")}<input name="room" maxlength="30" value="${esc(l?.room || "")}"></label>
     <p class="muted sch-err" role="alert"></p>
     <div class="actions"><button class="primary">${t("common.save")}</button><button type="button" class="secondary" data-x>${t("cards.cancel")}</button>${l ? `<button type="button" class="ghost danger-text" data-del>${icon("trash-2")} ${t("cards.delete")}</button>` : ""}</div>
   </form>`);
   const f = p.querySelector("form");
   // Šolska ura izpolni čase po običajnem zvoncu (učenec jih lahko popravi).
-  const BELLS = { 0: ["07:30", "08:15"], 1: ["08:20", "09:05"], 2: ["09:10", "09:55"], 3: ["10:15", "11:00"], 4: ["11:05", "11:50"], 5: ["11:55", "12:40"], 6: ["12:45", "13:30"], 7: ["13:35", "14:20"], 8: ["14:25", "15:10"] };
   f.period.addEventListener("change", () => {
     const b = BELLS[f.period.value];
     if (b) [f.start.value, f.end.value] = b;

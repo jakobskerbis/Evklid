@@ -65,3 +65,37 @@ test("/3d page loads the Evklid keyboard and its colours, the viewer page mode h
   const src = fs.readFileSync(path.join(D3, "stran.js"), "utf8");
   for (const k of [...src.matchAll(/t\("(a3\.[A-Za-z.]+)"/g)].map((m) => m[1])) assert.ok(sl[k], `stran.js uses unknown key ${k}`);
 });
+
+test("free rotation turns the camera over the pole around the target, keeping distance and an orthogonal up", async () => {
+  const THREE = await import("three");
+  const { zavrtiOkoli } = await import("../public/3d/vrtenje.js");
+  const cilj = new THREE.Vector3(0.2, -0.1, 0);
+  const poz = new THREE.Vector3(0.2, -0.1, 3);
+  const gor = new THREE.Vector3(0, 1, 0);
+  // drag down: camera moves up (sees the top), like OrbitControls
+  zavrtiOkoli(THREE, poz, gor, cilj, 0, 0.3);
+  assert.ok(poz.y > cilj.y, "camera goes up on a downward drag");
+  // drag right: camera moves left
+  const p2 = new THREE.Vector3(0, 0, 3), g2 = new THREE.Vector3(0, 1, 0);
+  zavrtiOkoli(THREE, p2, g2, new THREE.Vector3(), 0.3, 0);
+  assert.ok(p2.x < 0, "camera goes left on a rightward drag");
+  // 20 steps of 0.2 rad down = 4 rad: past the pole without stopping (an orbit would clamp at π)
+  const p3 = new THREE.Vector3(0, 0, 3), g3 = new THREE.Vector3(0, 1, 0), c3 = new THREE.Vector3();
+  for (let i = 0; i < 20; i++) zavrtiOkoli(THREE, p3, g3, c3, 0, 0.2);
+  assert.ok(Math.abs(p3.distanceTo(c3) - 3) < 1e-9, "distance kept");
+  assert.ok(Math.abs(g3.dot(p3.clone().normalize())) < 1e-9, "up stays perpendicular to the view");
+  const kot = Math.acos(new THREE.Vector3(0, 0, 1).dot(p3.clone().normalize()));
+  assert.ok(Math.abs(kot - (2 * Math.PI - 4)) < 1e-6, `turned 4 rad over the pole, angle from start ${kot}`);
+});
+
+test("every 3D stage (viewer and atlas) has the rotation mode button, with strings in every language", () => {
+  const scena = fs.readFileSync(path.join(D3, "scena.js"), "utf8");
+  assert.match(scena, /export function poveziGumbVrtenja/);
+  assert.match(scena, /nacinVrtenja,/, "kit exposes nacinVrtenja");
+  for (const f of ["pregledovalnik.js", "atlas.js"]) assert.match(fs.readFileSync(path.join(D3, f), "utf8"), /poveziGumbVrtenja\(btnVrtenje, kit, icon, t\)/, f);
+  const ui = path.join(ROOT, "public", "i18n", "ui");
+  for (const k of ["a3.rotFree", "a3.rotUpright"]) {
+    assert.ok(sl[k], `sl ${k}`);
+    for (const f of fs.readdirSync(ui)) assert.ok(JSON.parse(fs.readFileSync(path.join(ui, f), "utf8"))[k], `${f} ${k}`);
+  }
+});

@@ -2,7 +2,7 @@
 // točkami in seznamom gumbov (tipkovnica: Tab do seznama, Enter izbere), nadzor iz `nadzor` (drsnik, izbira, gumb,
 // stikalo, izpis), merilo iz `merilo`, »Ponastavi«, predvajaj/ustavi, ko ima model `korak`. Uporabljata ga stran /3d
 // in pogon simulacij »3d-<id>« v lekcijah (public/3d/sim.js).
-import { THREE, ustvariSceno, kakovostNaprave, gibanje } from "./scena.js";
+import { THREE, ustvariSceno, kakovostNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
 
@@ -103,7 +103,9 @@ export function odpriModel(el, mod, opts = {}) {
     b.addEventListener("click", () => kit?.priblizaj(f));
     return b;
   };
-  orodja.append(povecava(1 / 1.35, "zoom-out", "a3.zoomOut"), povecava(1.35, "zoom-in", "a3.zoomIn"), btnTeci, btnPonastavi);
+  const btnVrtenje = mk("button", "k3-krog k3-vrtenje");
+  btnVrtenje.type = "button";
+  orodja.append(btnVrtenje, povecava(1 / 1.35, "zoom-out", "a3.zoomOut"), povecava(1.35, "zoom-in", "a3.zoomIn"), btnTeci, btnPonastavi);
 
   function nastaviTek(on) {
     tece = on;
@@ -163,7 +165,17 @@ export function odpriModel(el, mod, opts = {}) {
       return;
     }
     const v = svetovnaTocka(d)(new THREE.Vector3());
-    kit.pokaziOznako(d.id, d.ime, d.opis, v);
+    const kartica = kit.pokaziOznako(d.id, d.ime, d.opis, v);
+    if (d.la && kartica) kartica.querySelector("b")?.after(mk("i", "k3-la", d.la)); // latinsko ime (organi, prerezi tkiv)
+    // Del s `povecava: "<id modela>"` (docs/3d.md): gumb na kartici odpre povečan prikaz (stran /3d da opts.povecava).
+    if (d.povecava && typeof opts.povecava === "function" && kartica) {
+      const b = mk("button", "k3-pill k3-povecava-gumb");
+      b.type = "button";
+      b.innerHTML = `${icon("zoom-in")}<span></span>`;
+      b.lastChild.textContent = t("a3.magnify");
+      b.addEventListener("click", () => opts.povecava(d.povecava));
+      kartica.append(b);
+    }
     if (leti && model.postavitev === "organ") {
       // Organ: ista smer pogleda, le rahlo bližje k točki (organ ostane v kadru, točka ostane vidna).
       const [c, r] = zacetniOkvir();
@@ -268,7 +280,7 @@ export function odpriModel(el, mod, opts = {}) {
           console.error("3D nadzor", c.id, err);
         }
         poSpremembi();
-        if (c.ponastaviPogled) kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7 });
+        if (c.ponastaviPogled) kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7, pokonci: true });
       };
       if (c.tip === "drsnik") {
         const lab = mk("label", "k3-drsnik");
@@ -390,7 +402,8 @@ export function odpriModel(el, mod, opts = {}) {
     } catch {}
     if (model?.group) kit?.scene.remove(model.group);
     if (!kit) {
-      kit = ustvariSceno(oder, { kakovost: opts.kakovost, oznaka: info.naslov, ponastavi: () => zgradiVse(true) });
+      kit = ustvariSceno(oder, { kakovost: opts.kakovost, oznaka: info.naslov, ponastavi: () => zgradiVse(true), prostoVrtenje: true });
+      poveziGumbVrtenja(btnVrtenje, kit, icon, t);
       oder.append(orodja);
       // Barvne točke po 4 s mirovanja zbledijo (j, 4. 11.) in se vrnejo ob dotiku, premiku kamere, koleščku ali tipki;
       // izbrana točka ostane vidna. Velja na strani /3d in v lekcijah.
@@ -615,7 +628,7 @@ export function odpriModel(el, mod, opts = {}) {
     if (ponastavi || !opts.ohraniPogled) {
       kit.controls.minDistance = 0.4;
       kit.controls.maxDistance = 12;
-      const leti = () => kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: ponastavi ? 0.6 : 0 });
+      const leti = () => kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: ponastavi ? 0.6 : 0, pokonci: true });
       leti();
       // Postavitev »organ« spremeni višino odra šele ob naslednji postavitvi strani (ResizeObserver): kader ponovimo,
       // da organ pade v ožji zorni kot (pokončen telefon).
