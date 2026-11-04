@@ -53,7 +53,8 @@ export function dataTable(cols, { empty = "Še ni meritev. Odčitaj merilnik in 
     none.hidden = rows.length > 0;
     table.hidden = rows.length === 0;
   };
-  el.add = (r) => (rows.push(r), draw(), el.querySelector("tbody tr:last-child")?.scrollIntoView?.({ block: "nearest" }));
+  // quiet: samodejni zapis (vsakih 30 s) premakne le okvir tabele, ne cele strani, da stran ne skače med delom.
+  el.add = (r, { quiet = false } = {}) => (rows.push(r), draw(), quiet ? (el.scrollTop = el.scrollHeight) : el.querySelector("tbody tr:last-child")?.scrollIntoView?.({ block: "nearest" }));
   el.clear = () => ((rows.length = 0), draw());
   el.rows = rows;
   draw();
