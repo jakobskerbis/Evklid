@@ -152,7 +152,7 @@ with three series, conclusion question (thermos, lid, evaporation). Tests: porce
 
 ### Forces: shared data (`lab-model-sile.js`)
 The model uses g = 9,806 m/s² (Ljubljana: GRS 80 formula at 46,05° plus free-air correction for 295 m), the student computes with 9,81. Liquids at 20 °C: water 0,9982,
-4 % NaCl 1,0268, ethanol 0,7893 (CRC), sunflower oil 0,920 (Engineering ToolBox); meniscus heights 1,3–2 mm (ocena). Analog scales are read in a magnifier (`lupa`).
+4 % NaCl 1,0268, ethanol 0,7893 (CRC), sunflower oil 0,920 (Engineering ToolBox); meniscus heights 1,3–2 mm (ocena). A data test checks every density, the M3 table, cylinder class B and the spring-scale budget against these sources. Analog scales are read in a magnifier (`lupa`).
 
 ### `lab-hooke` – spring, masses and Hooke's law (FIZ-OS-8 sila in merjenje sile; FIZ-SS-1 prožnost)
 Stand, 50 cm ruler (1 mm, read to 1 mm), three springs 15/30/60 N/m ±5 % with elastic limits 2,5/3/8 N (ocena), masses 10, 20, 20, 50, 100, 200 g within OIML R111 class M3.

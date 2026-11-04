@@ -764,6 +764,13 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .lab-table-wrap { max-width: 100%; contain: inline-size; }
 .demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .lab-table th { white-space: normal; }
 @media (max-width: 480px) { .demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .lab-table { font-size: 0.82rem; } .demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .lab-table :is(th, td) { padding: 6px 5px; } }
+/* ozek zaslon: tabela brez vodoravnega drsenja; skriti stolpci so izpeljani ali pa so v dnevniku (tabela: gostota iz literature, potopljeno: V_izp, levi/desni: Δh) */
+@container labtit (max-width: 480px) {
+  .demo:is(.demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) .lab-table td { white-space: normal; }
+  .demo-lab-gostota .lab-table :is(th, td):nth-child(8), .demo-lab-vzgon .lab-table :is(th, td):nth-child(4), .demo-lab-tlak .lab-table :is(th, td):is(:nth-child(4), :nth-child(5)) { display: none; }
+  .demo.demo-lab-vzgon .lab-table :is(th, td) { padding-inline: 3px; }
+}
+.demo:is(.demo-lab-hooke, .demo-lab-gostota, .demo-lab-vzgon, .demo-lab-tlak) select { background-color: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; }
 .lab-sil-uts { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; }
 .lab-sil-ut[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); border-color: var(--accent); font-weight: 800; }
 .demo-svg .lab-sil-lupa-bg { fill: var(--surface); }

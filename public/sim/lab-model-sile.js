@@ -255,7 +255,7 @@ export class GostotaBench {
 
 // ------------------------------------------------------------------ silomer in vzgon (lab-vzgon)
 // Silomer 0–5 N z razdelki po 0,05 N, skala dolga 10 cm (vzmet 50 N/m; ocena za šolske silomere, npr. Leybold 314 04).
-// Natančnost ±0,05 N (ena razdelek, ocena): naklon do ±0,5 % (pri 5 N 0,025 N), odčitek na pol razdelka (0,025 N, napaka ≤ 0,0125 N).
+// Natančnost ±0,05 N (en razdelek, ocena): naklon do ±0,5 % (pri 5 N 0,025 N), odčitek na pol razdelka (0,025 N, napaka ≤ 0,0125 N).
 // Če ničle pred meritvijo ne naravnaš, kaže silomer brez bremena 0,08–0,20 N (ocena: vzmet se usede, silomer je bil obrnjen).
 export const SILOMER = { max: 5, del: 0.05, branje: 0.025, k: 50, gain: 0.005, tol: 0.05, n0: 0.08, n1: 0.2 };
 // Valja s kavljem: aluminij 100 cm³ (premer 4,0 cm, višina 7,96 cm), jeklo 50 cm³ (premer 3,0 cm, višina 7,07 cm); ±0,5 % (ocena).
@@ -388,7 +388,7 @@ export const POENOSTAVITVE_SILE = {
     "Vzmet in uteži so ves čas pri sobni temperaturi; vzmet se s časom ne »utrudi«.",
     "Prožnostni koeficient k pove, koliko sile potrebuješ, da vzmet podaljšaš za 1 m (ali za 1 cm). Pri teh vzmeteh smo ga ocenili, vsaka vzmet odstopa za do 5 %.",
     "Meja prožnosti je največja sila, po kateri se vzmet še vrne na prvotno dolžino. Tu je nastavljena (ocena); prava vzmet se raztegne malo drugače.",
-    "Uteži tehtajo skoraj točno toliko, kot piše na njih (najmanj tako točno kot uteži razreda M3).",
+    "Masa uteži je skoraj točno taka, kot piše na njih: 100-gramska utež odstopa največ za 0,05 g (šolske uteži, razred M3).",
     "Teža uteži je izračunana s težnim pospeškom v Ljubljani (9,806 m/s²), ti pa računaš z 9,81 m/s². Razlika je manj kot 0,1 %.",
     "Kako močno vzmet zaniha in kako hitro se umiri, je ocena.",
   ],
@@ -397,7 +397,7 @@ export const POENOSTAVITVE_SILE = {
     "Kamen je nepravilne oblike, drugi vzorci so valjčki s premerom 2 cm.",
     "Merilni valj ima napako do 1 mL (razred B). Ker odšteješ dva odčitka, se večji del te napake odšteje.",
     "Višina meniska (ukrivljene gladine ob steni) in velikost zračnega mehurčka sta oceni.",
-    "Ko vzorec vzameš iz valja, nanj ne ostanejo kapljice; tekočina se ne izhlapeva.",
+    "Ko vzorec vzameš iz valja, nanj ne ostanejo kapljice; tekočina ne izhlapeva.",
   ],
   vzgon: [
     "Silomer je točen na ±0,05 N (en razdelek); odčitaš ga na pol razdelka.",
@@ -411,6 +411,6 @@ export const POENOSTAVITVE_SILE = {
     "Gumijasta opna malo tlaka »porabi« sama (ocena 1 %); pri pravi sondi je to lahko več.",
     "Voda v manometru se umiri v nekaj sekundah, ne niha.",
     "Ko spustiš sondo, se gladina v posodi ne dvigne (posoda je široka).",
-    "Koliko hitro zrak uhaja iz cevke, ki pušča, je ocena.",
+    "Kako hitro zrak uhaja iz cevke, ki pušča, je ocena.",
   ],
 };

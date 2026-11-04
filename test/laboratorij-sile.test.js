@@ -30,6 +30,21 @@ function hooke(seed, id, nabori, { oko = 0, cakaj = 6 } = {}) {
 // Uteži: 0:10 1:20 2:20 3:50 4:100 5:200 g
 const POD_MEJO = { mehka: [[3], [4], [3, 4], [5], [3, 5]], srednja: [[3], [4], [3, 4], [5], [4, 5]], trda: [[4], [5], [4, 5], [1, 4, 5], [0, 1, 2, 3, 4, 5]] };
 
+test("data: densities, M3 tolerances and cylinder class against literature", () => {
+  // CRC Handbook (20 °C): voda 0,99821, 4 % NaCl 1,0268, etanol 0,7893, Al 2,70, Cu 8,96; Engineering ToolBox: olje 0,919–0,925,
+  // jeklo 7,75–8,05, medenina 8,40–8,73, smreka 0,40–0,50, PVC 1,30–1,45, granit 2,60–2,80.
+  const lit = { voda: [0.9981, 0.9983], slana: [1.0263, 1.0273], etanol: [0.7888, 0.7898], olje: [0.919, 0.925] };
+  for (const [id, [a, b]] of Object.entries(lit)) assert.ok(TEKOCINE[id].rho >= a && TEKOCINE[id].rho <= b, id);
+  const litZ = { aluminij: [2.69, 2.71], baker: [8.94, 8.97], jeklo: [7.75, 8.05], medenina: [8.4, 8.73], les: [0.4, 0.5], plastika: [1.3, 1.45], kamen: [2.6, 2.8] };
+  for (const [id, [a, b]] of Object.entries(litZ)) assert.ok(VZORCI[id].rho >= a && VZORCI[id].rho <= b, id);
+  // OIML R111-1:2004, razred M3 (mg): 10 g 20, 20 g 25, 50 g 30, 100 g 50, 200 g 100
+  assert.deepEqual(Object.fromEntries(Object.entries(UTEZI_MPE).map(([n, v]) => [n, Math.round(v * 1000)])), { 10: 20, 20: 25, 50: 30, 100: 50, 200: 100 });
+  assert.equal(VALJ.tol, 1.0, "ISO 4788 100 mL razred B");
+  assert.ok(VALJ.a + VALJ.b <= VALJ.tol, "napaka skale ≤ razred B");
+  assert.ok(SILOMER.gain * SILOMER.max + SILOMER.branje / 2 <= SILOMER.tol, "silomer ±1 razdelek");
+  near(SILOMER.k, SILOMER.max / 0.1, 1e-9, "5 N na 10 cm");
+});
+
 test("g: school 9,81, Ljubljana 9,806 m/s² (GRS 80 + free air), within 0,1 %", () => {
   near(G_LJ, 9.806, 0.0005, "g Ljubljana");
   near(G_LJ / G_SOLA, 1, 0.001, "razlika");
@@ -170,7 +185,8 @@ test("density: measuring cylinder within ISO 4788 class B (±1,0 mL) and balance
 });
 
 test("buoyancy: 100 cm³ in water = 0,981 N ±2 %; salt water more, ethanol and oil less; student's readings ±0,06 N", () => {
-  near(vzgon(TEKOCINE.voda.rho, 100), 0.981, 0.02 * 0.981, "voda");
+  near(vzgon(TEKOCINE.voda.rho, 100), 0.9982 * 9.806 * 0.1, 1e-9, "voda: F = ρ g V (99,82 g · 9,806 m/s²)");
+  near(vzgon(TEKOCINE.voda.rho, 100), 0.981, 0.003 * 0.981, "voda ≈ 0,981 N (±0,3 %)");
   assert.ok(vzgon(TEKOCINE.slana.rho, 100) > vzgon(TEKOCINE.voda.rho, 100) * 1.02);
   assert.ok(vzgon(TEKOCINE.olje.rho, 100) < vzgon(TEKOCINE.voda.rho, 100));
   assert.ok(vzgon(TEKOCINE.etanol.rho, 100) < vzgon(TEKOCINE.olje.rho, 100));
@@ -229,6 +245,9 @@ test("pressure: p at 10 cm of water = 981 Pa (±0,5 %); water U-tube shows Δh =
   for (let seed = 1; seed <= 20; seed++) {
     near(dh("voda", 0.1, "dol", seed), 100, 3, "voda 10 cm");
     assert.ok(dh("olje", 0.1, "dol", seed) < 94);
+    // Δh = ρ_tekočine / ρ_vode · h (· 0,99 opna), na 1 mm
+    for (const tek of ["olje", "slana", "etanol"])
+      near(dh(tek, 0.1, "dol", seed), (100 * MANOMETER.opna * TEKOCINE[tek].rho) / MANOMETER.rho, 1, `${tek}: razmerje gostot`);
     assert.ok(dh("slana", 0.1, "dol", seed) > 101);
     assert.equal(dh("voda", 0.2, "gor", seed), dh("voda", 0.2, "stran", seed));
     assert.equal(dh("voda", 0.2, "gor", seed), dh("voda", 0.2, "dol", seed));
