@@ -534,6 +534,7 @@ function loadGlide() {
     } catch {
       glideList = null;
     }
+    if (!glideList) glideP = null; // naslednje drsenje poskusi znova
     return glideList;
   })();
   return glideP;
@@ -669,8 +670,8 @@ function act(a) {
   const lg = S.lastGlide && glideValid(f, S.lastGlide) ? S.lastGlide : null;
   if (a.a !== "gword") S.lastGlide = null;
   if (a.a === "gword") {
-    if (lg) {
-      const w = glideCase(a.v, lg.shift);
+    const w = lg && glideCase(a.v, lg.shift);
+    if (lg && (f.maxLength < 0 || f.value.length - (lg.end - lg.start) + w.length <= f.maxLength)) {
       f.setRangeText(w, lg.start, lg.end, "end");
       fire(f, "insertReplacementText", w);
       S.lastGlide = { ...lg, end: lg.start + w.length, text: w, cur: a.v };
@@ -686,7 +687,7 @@ function act(a) {
     const u = a.v.toLocaleUpperCase(currentLang());
     insertText(f, S.shift && u.length === 1 ? u : a.v);
     if (S.shift === 1) S.shift = 0;
-  } else if (a.a === "sp") space(f);
+  } else if (a.a === "sp") space(f, !!lg);
   else if (a.a === "bs") {
     if (!undoCorrection(f, corr)) backspace(f);
   }
@@ -718,7 +719,7 @@ function act(a) {
 }
 
 // Preslednica kot Gboard: samopopravek zadnje besede (le s predlogi), dva presledka = ». «.
-function space(f) {
+function space(f, afterGlide = false) {
   const b = before();
   const room = f.maxLength < 0 || f.value.length + 1 < f.maxLength; // pika ali popravek dodata znak
   if (b !== null && prose() && room) {
@@ -729,7 +730,7 @@ function space(f) {
       return fire(f, "insertText", ". ");
     }
     // sredi besede (za kazalcem so še črke) ne popravljamo
-    const w = prefs.words && words && !/^[\p{L}\p{M}]/u.test(f.value.charAt(b.length)) ? currentWord() : "";
+    const w = !afterGlide && prefs.words && words && !/^[\p{L}\p{M}]/u.test(f.value.charAt(b.length)) ? currentWord() : "";
     const fix = w && autocorrect(w, words);
     if (fix) {
       const end = b.length;

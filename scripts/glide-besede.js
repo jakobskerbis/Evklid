@@ -30,7 +30,8 @@ export function clean(text) {
     .replace(/\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/g, " ")
     .replace(/<[^>]*>/g, " ")
     .replace(/\]\([^)]*\)/g, " ")
-    .replace(/https?:\/\/\S+/g, " ");
+    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/\\[A-Za-z]+/g, " "); // ukazi LaTeX zunaj $…$
 }
 
 export function countWords(text, counts = new Map()) {
@@ -42,15 +43,24 @@ export function countWords(text, counts = new Map()) {
   return counts;
 }
 
+// enote, kratice, orodja (besede iz WORDS.sl ostanejo, ker so na začetku seznama)
+const STOP = ["mol", "kg", "cm", "mm", "km", "dm", "hz", "khz", "mhz", "kpa", "mpa", "hpa", "kwh", "kj", "kcal", "ml", "dl", "mg", "ms", "ns", "id", "approx", "python", "sql", "excel", "latex", "max", "min", "new", "by", "syn", "lys", "lacy", "frac", "cdot", "text", "sqrt", "lim", "int", "sum", "vec", "hat", "bar", "left", "right", "begin", "end", "partial", "infty", "times", "mathrm", "operatorname", "quad", "displaystyle", "tfrac", "dfrac", "overline", "underline", "ldots", "cdots", "dots", "leq", "geq", "neq", "pm", "deg", "sin", "cos", "tan", "cot", "log", "exp", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh", "alpha", "beta", "gamma", "delta", "theta", "lambda", "sigma", "omega", "epsilon", "mu", "rho", "phi", "psi", "tau", "eta", "kappa", "nu", "xi", "chi", "zeta", "overrightarrow", "mathbb", "boxed", "circ", "rightarrow", "leftarrow", "implies", "iff", "forall", "exists", "emptyset", "cup", "cap", "subset", "subseteq", "mathbf", "mathit", "ce", "pu", "si", "unit"].filter((w) => !WORDS.sl.includes(w));
+
 export function build() {
   const counts = new Map();
   const files = walk(path.join(ROOT, "content"));
-  for (const f of files) countWords(fs.readFileSync(f, "utf8"), counts);
+  // Ne-besede (pregled 3): imena ukazov LaTeX, enote, kratice in angleščina se ne smejo pojaviti pri drsenju.
+  const stop = new Set([...STOP, ...(WORDS.en || [])]);
+  for (const f of files) {
+    const src = fs.readFileSync(f, "utf8");
+    for (const m of src.matchAll(/\\([a-zA-Z]+)/g)) stop.add(m[1].toLowerCase());
+    countWords(src, counts);
+  }
   const seeds = WORDS.sl;
   const seen = new Set();
   const list = [];
   for (const w of seeds) if (!seen.has(w)) (seen.add(w), list.push(w));
-  const rest = [...counts].filter(([w, n]) => n >= MIN_COUNT && !seen.has(w)).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "sl"));
+  const rest = [...counts].filter(([w, n]) => n >= MIN_COUNT && !seen.has(w) && w.length > 2 && !stop.has(w)).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "sl"));
   let size = 300;
   for (const [w] of rest) {
     size += w.length + 4;
