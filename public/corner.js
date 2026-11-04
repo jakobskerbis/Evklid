@@ -118,7 +118,7 @@ function moreHtml(s) {
   const rest = INTERESTS.filter((i) => !have.has(i.id));
   if (!rest.length || have.size >= MAX_INTERESTS) return "";
   return `<section class="corner-more"><h2>${esc(t("corner.more"))}</h2><div class="corner-tiles">${rest
-    .map((i) => `<button type="button" class="card corner-tile" data-add-int="${esc(i.id)}"><span class="ct-emoji" aria-hidden="true">${i.emoji}</span><span>${esc(t(`int.${i.id}`))}</span>${icon("plus")}</button>`)
+    .map((i) => `<button type="button" class="card corner-tile" data-add-int="${esc(i.id)}"><span class="ct-emoji" aria-hidden="true">${i.emoji}</span>${icon("plus")}<span class="ct-name">${esc(t(`int.${i.id}`))}</span></button>`)
     .join("")}</div></section>`;
 }
 

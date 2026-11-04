@@ -107,9 +107,13 @@ body.corner-board-open { overflow: hidden; }
 
 /* Ko ni novic: področja, ki jih še nimaš, kot ploščice čez vso širino (klik doda področje). */
 .corner-more h2 { font-size: 1.05rem; margin: 18px 0 10px; }
-.corner-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(150px, 18vw, 240px)), 1fr)); /* telefon 2 stolpca, računalnik cela imena */ gap: 10px; }
-button.corner-tile { display: flex; align-items: center; gap: 10px; margin: 0; padding: 14px 16px; min-height: 64px; text-align: start; font-weight: 600; cursor: pointer; color: var(--text); }
-button.corner-tile > span:nth-child(2) { flex: 1; min-width: 0; }
+.corner-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(150px, 16vw, 220px)), 1fr)); gap: 10px; }
+/* Ploščica: znak in + zgoraj, ime pod njima čez vso širino ploščice (ime se ne lomi sredi besede). */
+button.corner-tile {
+  display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr; align-items: start; gap: 8px 6px;
+  margin: 0; padding: 12px 14px 14px; min-height: 96px; text-align: start; cursor: pointer; color: var(--text);
+}
 .corner-tile .ct-emoji { font-size: 26px; line-height: 1; }
 .corner-tile svg.i { width: 18px; height: 18px; color: var(--muted); }
+.corner-tile .ct-name { grid-column: 1 / -1; font-size: 0.95rem; font-weight: 600; line-height: 1.3; text-wrap: balance; overflow-wrap: normal; hyphens: manual; }
 @media (hover: hover) { button.corner-tile:hover { border-color: var(--accent); } button.corner-tile:hover svg.i { color: var(--accent); } }
