@@ -2789,7 +2789,6 @@
   "adm.rep.app": "Bug aplikasi (admin)",
   "adm.rep.more": "Detail",
   "adm.rep.question": "Pertanyaan:",
-  "adm.rep.answer": "Jawaban:",
   "adm.rep.fixed": "Sudah diperbaiki",
   "adm.rep.reopen": "Buka lagi",
   "adm.rep.none": "Tidak ada laporan.",
@@ -2842,5 +2841,10 @@
   "sc.tab.range": "Awal, langkah (bukan 0), dan jumlah baris (1–200) harus berupa angka.",
   "gc.reg.quart": "Kuartik",
   "gc.reg.logistic": "Logistik",
-  "gc.reg.sin": "Sinusoidal"
+  "gc.reg.sin": "Sinusoidal",
+  "chat.full": "Tampilkan seluruh penyelesaian",
+  "chat.fullMsg": "Tunjukkan seluruh penyelesaian soal ini.",
+  "adm.rep.shown": "Beginilah siswa melihat jawabannya:",
+  "adm.rep.rerendered": "Jawaban ditampilkan ulang (laporan lama tanpa cuplikan):",
+  "adm.rep.raw": "Teks asli tutor:"
 }

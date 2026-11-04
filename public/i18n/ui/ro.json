@@ -2840,7 +2840,6 @@
   "adm.rep.app": "Eroare a aplicației (administrator)",
   "adm.rep.more": "Detalii",
   "adm.rep.question": "Întrebare:",
-  "adm.rep.answer": "Răspuns:",
   "adm.rep.fixed": "Reparat",
   "adm.rep.reopen": "Redeschide",
   "adm.rep.none": "Niciun raport.",
@@ -2893,5 +2892,10 @@
   "sc.tab.range": "Începutul, pasul (nu 0) și numărul de rânduri (1–200) trebuie să fie numere.",
   "gc.reg.quart": "Cuartică",
   "gc.reg.logistic": "Logistică",
-  "gc.reg.sin": "Sinusoidală"
+  "gc.reg.sin": "Sinusoidală",
+  "chat.full": "Arată toată rezolvarea",
+  "chat.fullMsg": "Arată-mi toată rezolvarea acestei probleme.",
+  "adm.rep.shown": "Așa a văzut elevul răspunsul:",
+  "adm.rep.rerendered": "Răspunsul, afișat din nou (raport mai vechi fără instantaneu):",
+  "adm.rep.raw": "Textul brut al tutorelui:"
 }

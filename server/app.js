@@ -421,16 +421,33 @@ export function createApp(store, opts = {}) {
     if (req.body?.topic_id && !topic) return res.status(400).json({ error: "Tema ne obstaja." });
     res.status(201).json(store.createConversation(s.id, topic ? { pathTopic: topic.id, title: `Tema: ${topic.name}` } : {}));
   });
+  // »Pokaži celoten postopek«: po treh zaporednih odgovorih v načinu A (vodenje) učenec dobi gumb za celotno
+  // rešitev te naloge (enkratna prošnja, prompt: »Spremembe iz pogovora«). Odgovor v načinu B števec ponastavi.
+  const FULL_AFTER = 3;
+  const fullOffer = (convId) => {
+    const modes = store.db
+      .prepare("SELECT mode FROM events WHERE conversation_id = ? AND message_id IS NOT NULL ORDER BY id DESC LIMIT ?")
+      .all(convId, FULL_AFTER)
+      .map((r) => r.mode);
+    return modes.length === FULL_AFTER && modes.every((m) => m === "A");
+  };
+
   app.get("/api/conversations/:id", (req, res) => {
     const c = loadConversation(req, res);
     if (!c) return;
     const last = store.lastEvent(c.id);
     const reported = new Set(store.db.prepare("SELECT message_id FROM message_reports WHERE conversation_id = ?").all(c.id).map((r) => r.message_id));
+    const msgs = store.listMessages(c.id);
+    const lastMsg = msgs.at(-1);
+    // done ni v tabeli events: prebere se iz META zadnjega odgovora (kot v done ob pošiljanju).
+    const lastText = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
+    const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && last.flag === "none" && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
     res.json({
       ...c,
       state: last ? { subject: last.subject, mode: last.mode } : null,
       topic: c.path_topic ? { id: c.path_topic, name: getTopic(c.path_topic)?.name } : null,
-      messages: store.listMessages(c.id).map((m) => ({
+      messages: msgs.map((m) => ({
+        full_offer: (offerOn && m === lastMsg) || undefined,
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
         reported: reported.has(m.id) || undefined,
@@ -823,6 +840,7 @@ export function createApp(store, opts = {}) {
         // Brez ponovnega gumba »Razloži podrobneje«, tudi če je odgovor pripravil hitri model.
         deep: deep || req.body?.deep === true,
         settings: settingsTools.state.used || undefined,
+        full_offer: (meta?.mode === "A" && meta.flag === "none" && !meta.done && !settingsTools.state.used && fullOffer(conv.id)) || undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();

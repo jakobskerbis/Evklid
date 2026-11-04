@@ -2838,7 +2838,6 @@
   "adm.rep.app": "Greška u aplikaciji (administrator)",
   "adm.rep.more": "Detalji",
   "adm.rep.question": "Pitanje:",
-  "adm.rep.answer": "Odgovor:",
   "adm.rep.fixed": "Ispravljeno",
   "adm.rep.reopen": "Ponovo otvori",
   "adm.rep.none": "Nema prijava.",
@@ -2891,5 +2890,10 @@
   "sc.tab.range": "Početak, korak (ne 0) i broj redova (1–200) moraju biti brojevi.",
   "gc.reg.quart": "Kvartna",
   "gc.reg.logistic": "Logistička",
-  "gc.reg.sin": "Sinusoidna"
+  "gc.reg.sin": "Sinusoidna",
+  "chat.full": "Prikaži cijeli postupak",
+  "chat.fullMsg": "Pokaži mi cijeli postupak ovog zadatka.",
+  "adm.rep.shown": "Ovako je učenik vidio odgovor:",
+  "adm.rep.rerendered": "Odgovor, ponovo prikazan (starija prijava bez snimka):",
+  "adm.rep.raw": "Izvorni tekst instruktora:"
 }

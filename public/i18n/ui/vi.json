@@ -2789,7 +2789,6 @@
   "adm.rep.app": "Lỗi ứng dụng (quản trị viên)",
   "adm.rep.more": "Chi tiết",
   "adm.rep.question": "Câu hỏi:",
-  "adm.rep.answer": "Trả lời:",
   "adm.rep.fixed": "Đã sửa",
   "adm.rep.reopen": "Mở lại",
   "adm.rep.none": "Không có báo cáo.",
@@ -2842,5 +2841,10 @@
   "sc.tab.range": "Giá trị bắt đầu, bước (khác 0) và số hàng (1–200) phải là số.",
   "gc.reg.quart": "Bậc bốn",
   "gc.reg.logistic": "Logistic",
-  "gc.reg.sin": "Hình sin"
+  "gc.reg.sin": "Hình sin",
+  "chat.full": "Xem toàn bộ lời giải",
+  "chat.fullMsg": "Cho mình xem toàn bộ lời giải của bài này.",
+  "adm.rep.shown": "Học sinh đã thấy câu trả lời như thế này:",
+  "adm.rep.rerendered": "Câu trả lời được hiển thị lại (báo cáo cũ không có ảnh chụp):",
+  "adm.rep.raw": "Văn bản gốc của gia sư:"
 }

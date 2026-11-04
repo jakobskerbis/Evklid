@@ -2867,7 +2867,6 @@
   "adm.rep.app": "Błąd aplikacji (administrator)",
   "adm.rep.more": "Szczegóły",
   "adm.rep.question": "Pytanie:",
-  "adm.rep.answer": "Odpowiedź:",
   "adm.rep.fixed": "Poprawione",
   "adm.rep.reopen": "Otwórz ponownie",
   "adm.rep.none": "Brak zgłoszeń.",
@@ -2920,5 +2919,10 @@
   "sc.tab.range": "Początek, krok (nie 0) i liczba wierszy (1–200) muszą być liczbami.",
   "gc.reg.quart": "Czwartego stopnia",
   "gc.reg.logistic": "Logistyczna",
-  "gc.reg.sin": "Sinusoidalna"
+  "gc.reg.sin": "Sinusoidalna",
+  "chat.full": "Pokaż całe rozwiązanie",
+  "chat.fullMsg": "Pokaż mi całe rozwiązanie tego zadania.",
+  "adm.rep.shown": "Tak uczeń widział odpowiedź:",
+  "adm.rep.rerendered": "Odpowiedź wyświetlona ponownie (starsze zgłoszenie bez zrzutu):",
+  "adm.rep.raw": "Surowy tekst korepetytora:"
 }
