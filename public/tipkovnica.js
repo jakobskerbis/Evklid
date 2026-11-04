@@ -1041,7 +1041,11 @@ function wireBoard() {
     // črke in znaki se vpišejo že ob pritisku (j, 4. 11.: »takoj, brez zamika«); drsenje in dolg pritisk
     // za različice vpisani znak spodaj zamenjata (undoPress)
     down.shift = S.shift;
-    if (a?.a === "char" || a?.a === "ins" || a?.a === "lit") {
+    // Vrstice, ki se pomikajo (predloge nad zavihki, mreži f(x) in Σ): vpis šele ob čistem dotiku, ker je
+    // pritisk lahko začetek potega (j, 4. 11.: »naj se ta vrsta ne klikne, če podrsaš po njej«).
+    const scroller = b.closest(".tk-ctx, .tk-scroll, .tk-sub, .tk-tablist");
+    if (scroller) down.scroll = [scroller, scroller.scrollLeft, scroller.scrollTop];
+    if (!scroller && (a?.a === "char" || a?.a === "ins" || a?.a === "lit")) {
       down.done = true;
       down.f = S.field;
       down.len0 = vlen(S.field);
@@ -1194,6 +1198,9 @@ function wireBoard() {
         });
       return;
     }
+    // vrstica se je med dotikom pomaknila: to je bil poteg, ne dotik
+    const sc = d.scroll;
+    if (sc && (Math.abs(sc[0].scrollLeft - sc[1]) > 2 || Math.abs(sc[0].scrollTop - sc[2]) > 2)) return;
     if (d.done || d.moved || at?.closest("button") !== d.b) return;
     closePop();
     run(() => act(d.a));

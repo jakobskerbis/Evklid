@@ -371,9 +371,11 @@ html.lite[data-era] .view::before { display: none; }
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) { :root[data-era] .topbar { padding-bottom: calc(8px + var(--edge-h, var(--band-h))); } }
 :root[data-era] :is(.quick-pop, .profile-pop, .usage-pop, .dd-list, .overlay-card, .iq.card) { border-top: 3px solid var(--edge-c, var(--band-c)); }
 /* Žetoni (XP, niz dni, stanje pogovora) v odtenku poudarka. */
-/* Kartica Današnji trening: neobvezen tanek okvir v barvi obdobja (ERAS[…].light/dark.hero[2], Egipt zlato). */
-:root[data-era] .hero { outline: 1.5px solid var(--hero-line, transparent); outline-offset: -7px; }
-@media (forced-colors: active) { :root[data-era] .hero { outline: none; } }
+/* Kartica Današnji trening: neobvezen tanek okvir v barvi obdobja (ERAS[…].light/dark.hero[2], Egipt zlato).
+   Okvir je ::after in ne outline, ker outline ostane oglat; vogal je vzporeden z zaobljenim vogalom kartice (--radius). */
+:root[data-era] .hero { position: relative; }
+:root[data-era] .hero::after { content: ""; position: absolute; inset: 7px; border: 1.5px solid var(--hero-line, transparent); border-radius: max(calc(var(--radius) - 7px), 4px); pointer-events: none; }
+@media (forced-colors: active) { :root[data-era] .hero::after { content: none; } }
 :root[data-era] .stat { background: var(--accent-soft); }
 :root[data-era] .chip { background: var(--accent-soft); color: var(--accent); }
 /* Iskalnik v spustnem seznamu: privzeto belo polje bi na temnem meniju dobilo svetlo besedilo menija. */
