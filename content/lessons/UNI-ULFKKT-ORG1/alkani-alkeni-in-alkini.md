@@ -5,15 +5,17 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Dvojna vez $\mathrm{C{=}C}$ je močnejša od enojne $\mathrm{C{-}C}$. Pa vendar metan v jeklenki zemeljskega plina leta stoji nespremenjen, etilen (eten), ki ga oddajajo zoreče banane, pa z bromom v nekaj sekundah razbarva rdečerjavo bromovico in v tovarni z vodo ob kislinskem katalizatorju da etanol. Obe molekuli imata le ogljik in vodik. Na tej »šibki« dvojni vezi sloni celo glasba: gramofonske plošče so iz PVC, ki nastane, ko se molekule kloroetena (vinilklorida) prek dvojnih vezi povežejo v dolge verige. Od tod ime »vinilka«.
+Dvojna vez $\mathrm{C{=}C}$ je močnejša od enojne $\mathrm{C{-}C}$. Pa vendar metan v jeklenki zemeljskega plina leta stoji nespremenjen, etilen (eten), ki ga oddajajo zoreče banane, pa z bromom v nekaj sekundah razbarva rdečerjavo bromovico in v tovarni z vodo ob kislinskem katalizatorju da etanol. Gramofonske »vinilke« so iz PVC, ki nastane, ko se kloroeten (vinilklorid) prek dvojnih vezi poveže v dolge verige.
 
-Paradoks razreši zgradba vezi. Dvojna vez je ena vez $\sigma$ in ena vez $\pi$, vez $\pi$ pa je šibkejša in se pretrga prva. Alkani imajo samo vezi $\sigma$, alkeni in alkini pa tudi vezi $\pi$. Ko razumeš, kako reagira vez $\pi$ in kaj se dogaja z alkani na svetlobi, znaš napovedati **produkt** brez učenja na pamet: kateri izomer nastane pri adiciji $\mathrm{HBr}$, zakaj brom izbira drugače kot klor in kako iz alkina dobiš *cis*- ali *trans*-alken.
+Paradoks razreši zgradba vezi. Dvojna vez je ena vez $\sigma$ in ena vez $\pi$, vez $\pi$ pa je šibkejša in se pretrga prva. Ko razumeš, kako reagira vez $\pi$ in kaj se dogaja z alkani na svetlobi, znaš napovedati **produkt** brez učenja na pamet: kateri izomer nastane pri adiciji $\mathrm{HBr}$, zakaj brom izbira drugače kot klor in kako iz alkina dobiš *cis*- ali *trans*-alken.
 
 ## Razlaga
 
 ### Slika: kje ležijo elektroni
 
 **Dve vrsti reaktivnosti.** Vez $\sigma$ $\mathrm{C{-}H}$ je močna in nepolarna, elektroni so tesno med jedroma. Alkani zato ne reagirajo s kislinami, bazami ali oksidanti pri sobni temperaturi. Reagirajo šele z zelo reaktivnimi delci z enim neparnim elektronom, z **radikali**. Vez $\pi$ v alkenu je šibkejša, njeni elektroni ležijo nad in pod ravnino molekule in so lahko dosegljivi. Alken je zato **nukleofil**: daje elektronski par **elektrofilu**, delcu, ki elektrone išče (npr. $\mathrm{H^+}$, $\mathrm{Br_2}$).
+
+**Definicije.** Pri **homolitski** cepitvi vezi obdrži vsak atom po en elektron vezi in nastaneta radikala; pri **heterolitski** oba elektrona ostaneta pri enem atomu in nastaneta iona. **Elektrofil** je delec, ki v reakciji sprejme elektronski par in z njim tvori novo kovalentno vez (Lewisova kislina); **nukleofil** je delec, ki ta par odda (Lewisova baza). Reakcija je **regioselektivna**, če od več možnih konstitucijskih izomerov nastane pretežno eden, in **stereospecifična**, če stereoizomerni reaktanti dajo različne stereoizomerne produkte.
 
 ```
   alkan (le σ)                 alken (σ + π)
@@ -43,12 +45,20 @@ Prvi korak je počasen, ker nastane nabit delec. Ta korak določa hitrost in **o
 
 Enako zaporedje $3^\circ > 2^\circ > 1^\circ > \text{metil}$ velja za radikale.
 
-**Markovnikovo pravilo.** Pri propenu $\mathrm{CH_3CH{=}CH_2}$ se $\mathrm{H^+}$ lahko veže na C1 ali na C2:
+**Primer: propen in $\mathrm{HBr}$.** Pri propenu $\mathrm{CH_3CH{=}CH_2}$ se $\mathrm{H^+}$ lahko veže na C1 ali na C2:
 
 - $\mathrm{H}$ na C1 (končni $\mathrm{CH_2}$): pozitivni naboj ostane na C2, kation je **sekundarni**.
 - $\mathrm{H}$ na C2: naboj je na C1, kation je **primarni**.
 
-Hitreje nastane stabilnejši, sekundarni kation, zato je glavni produkt **2-bromopropan**. Klasična oblika pravila: *vodik se veže na tisti ogljik dvojne vezi, ki že ima več vodikov.* Sodobna oblika je splošnejša: *reakcija poteče prek najstabilnejšega karbokationa.* Produktu, ki ustreza pravilu, rečemo **markovnikovski**.
+Hitreje nastane stabilnejši, sekundarni kation, zato je glavni produkt **2-bromopropan**.
+
+**Markovnikovo pravilo.** *Če* na nesimetrično substituiran alken adiramo protonsko kislino $\mathrm{HX}$ (ali vodo ob kislinskem katalizatorju) po ionskem mehanizmu, torej brez peroksidov, *potem* se vodik veže na tisti ogljik dvojne vezi, ki že ima več vodikov, $\mathrm{X}$ pa na bolj substituiranega. Sodobna oblika je splošnejša: *elektrofil se veže tako, da nastane najstabilnejši karbokation.* Produktu, ki ustreza pravilu, rečemo **markovnikovski**.
+
+**Utemeljitev.**
+1. Drugi korak (ujetje kationa z $\mathrm{Br^-}$) je hiter in nepovraten, zato je razmerje produktov enako razmerju hitrosti obeh možnih protonacij (kinetična kontrola).
+2. **Hammondov postulat:** prehodno stanje je po zgradbi in energiji podobno tistemu sosednjemu delcu (reaktantu ali produktu koraka), ki mu je energijsko bližje. Protonacija je endotermna, zato je prehodno stanje podobno karbokationu.
+3. Kar stabilizira kation (hiperkonjugacija, induktivni učinek), zato zniža tudi prehodno stanje in aktivacijsko energijo $E_a$.
+4. Ker je $k = A\,e^{-E_a/RT}$, nastaja stabilnejši kation hitreje in njegov produkt prevlada.
 
 :::premisli
 Na 2-metilpropen $\mathrm{(CH_3)_2C{=}CH_2}$ adiramo $\mathrm{HCl}$. Napovej glavni produkt, preden bereš naprej.
@@ -59,7 +69,7 @@ Na 2-metilpropen $\mathrm{(CH_3)_2C{=}CH_2}$ adiramo $\mathrm{HCl}$. Napovej gla
 **Druge adicije na alkene.** Vse sledijo isti logiki ali pa imajo poseben razlog, da ji ne:
 
 - **Hidratacija** ($\mathrm{H_2O}$, kislinski katalizator $\mathrm{H_2SO_4}$): prek karbokationa, markovnikovski alkohol. Propen da propan-2-ol.
-- **Halogeniranje** ($\mathrm{Br_2}$ ali $\mathrm{Cl_2}$): namesto prostega karbokationa nastane trikotni **bromonijev ion**. $\mathrm{Br^-}$ ga napade z nasprotne strani, zato se atoma broma vežeta **anti** (na nasprotni strani ravnine). Iz ciklopentena nastane *trans*-1,2-dibromociklopentan kot racemat. Ta reakcija je test na dvojno vez: bromovica se razbarva.
+- **Halogeniranje** ($\mathrm{Br_2}$ ali $\mathrm{Cl_2}$): namesto prostega karbokationa nastane trikotni **bromonijev ion**: en atom broma je hkrati vezan na oba ogljika nekdanje dvojne vezi in nosi pozitivni naboj. $\mathrm{Br^-}$ ga napade z nasprotne strani, zato se atoma broma vežeta **anti** (na nasprotni strani ravnine). Iz ciklopentena nastane *trans*-1,2-dibromociklopentan kot racemat. Ta reakcija je test na dvojno vez: bromovica se razbarva.
 - **Hidrogeniranje** ($\mathrm{H_2}$, kovinski katalizator Pt, Pd ali Ni): oba vodika prideta s površine kovine na isto stran, adicija je **syn**. Nastane alkan.
 - **$\mathrm{HBr}$ s peroksidi** ($\mathrm{ROOR}$, svetloba): radikalski mehanizem, produkt je **antimarkovnikovski** (razlaga spodaj, pri radikalskih reakcijah).
 
@@ -96,7 +106,9 @@ Gre za **verižno reakcijo** v treh fazah:
    Drugi korak vrne $\mathrm{Cl\cdot}$, ki začne nov krog.
 3. **Terminacija:** dva radikala se srečata in združita, npr. $\mathrm{CH_3\cdot} + \mathrm{Cl\cdot} \rightarrow \mathrm{CH_3Cl}$ ali $2\,\mathrm{CH_3\cdot} \rightarrow \mathrm{C_2H_6}$. Veriga se prekine.
 
-Pri daljših alkanih se odločajo **vodiki**: odtrga se lahko primarni, sekundarni ali terciarni vodik. Terciarni radikal je najstabilnejši, zato se terciarni $\mathrm{H}$ odtrga najlaže. Relativna hitrost na en vodik:
+**Entalpija iz energij vezi.** Reakcijo v plinski fazi si v mislih razdelimo na pretrganje vezi reaktantov (energijo porabimo) in nastanek vezi produktov (energijo sprostimo), zato je približno $\Delta H \approx \sum E(\text{pretrgane vezi}) - \sum E(\text{nastale vezi})$. Računamo s povprečnimi energijami vezi, zato je rezultat le ocena. Veriga teče, če noben korak propagacije ni močno endotermen (Primer 2).
+
+Pri daljših alkanih je pomembno, **kateri vodik** se odtrga: primarni, sekundarni ali terciarni. Terciarni radikal je najstabilnejši, zato se terciarni $\mathrm{H}$ odtrga najlaže. Relativna hitrost na en vodik:
 
 | reagent | 1° H | 2° H | 3° H |
 |---|---|---|---|
@@ -104,6 +116,8 @@ Pri daljših alkanih se odločajo **vodiki**: odtrga se lahko primarni, sekundar
 | $\mathrm{Br_2}$ (125 °C) | 1 | 82 | 1600 |
 
 Delež produkta je sorazmeren s produktom **število vodikov $\times$ relativna hitrost**. Klor je hiter in malo izbirčen, brom počasen in zelo izbirčen.
+
+**Izpeljava deleža.** Naj ima alkan $n_i$ enakovrednih vodikov vrste $i$, vsak reagira s hitrostno konstanto $k_i$. Hitrost odtrganja vodikov vrste $i$ je $v_i = k_i\,n_i\,[\mathrm{X\cdot}][\mathrm{RH}]$. *Če* vsak radikal $\mathrm{R_i\cdot}$ da natanko en produkt $\mathrm{R_iX}$ in je pretvorba majhna (ni polihalogeniranja), *potem* je razmerje produktov enako razmerju hitrosti; $[\mathrm{X\cdot}][\mathrm{RH}]$ se pokrajša. Z $r_i = k_i/k_{1^\circ}$ dobimo $\text{delež}_i = \dfrac{n_i r_i}{\sum_j n_j r_j}$.
 
 :::premisli
 Zakaj je brom toliko bolj izbirčen od klora? Namig: korak $\mathrm{X\cdot} + \mathrm{R{-}H} \rightarrow \mathrm{HX} + \mathrm{R\cdot}$ je pri kloru eksotermen, pri bromu endotermen.
@@ -157,10 +171,10 @@ $\Delta H = \sum E(\text{pretrgane vezi}) - \sum E(\text{nastale vezi})$
 
 ### Primer 3 (težji): kloriranje ali bromiranje propana?
 
-Iz propana želimo čim več 2-halopropana. Izračunaj deleža monohalogeniranih produktov pri kloriranju (25 °C) in pri bromiranju (125 °C). Kateri reagent izbereš?
+Iz propana želimo čim več 2-halopropana. Izračunaj deleža monohalogeniranih produktov pri kloriranju (25 °C) in pri bromiranju (125 °C). Nato ugotovi, kolikšna mora biti najmanj relativna hitrost $r$ na sekundarni vodik (primarni $= 1$), da dobimo vsaj $90\,\%$ 2-halopropana. Kateri reagent izbereš?
 
 **Podatki:** propan $\mathrm{CH_3CH_2CH_3}$ ima $6$ primarnih in $2$ sekundarna vodika; relativni hitrosti na en H: klor $1 : 3{,}8$, brom $1 : 82$ (1° : 2°)
-**Iščemo:** deleža 1- in 2-halopropana za oba halogena; boljši reagent
+**Iščemo:** deleža 1- in 2-halopropana za oba halogena; najmanjši $r$ za $90\,\%$; boljši reagent
 
 :::formula
 $\text{delež}_i = \dfrac{n_i \cdot r_i}{\sum n_j \cdot r_j}$
@@ -174,7 +188,10 @@ $\text{delež}_i = \dfrac{n_i \cdot r_i}{\sum n_j \cdot r_j}$
 3. Deleža: 1-kloropropan $\dfrac{6}{13{,}6} = 0{,}441$, torej $44\,\%$; 2-kloropropan $\dfrac{7{,}6}{13{,}6} = 0{,}559$, torej $56\,\%$.
 4. Brom, primarni H: $6 \cdot 1 = 6$; sekundarni H: $2 \cdot 82 = 164$. Vsota: $6 + 164 = 170$.
 5. Deleža: 1-bromopropan $\dfrac{6}{170} = 0{,}035$, torej $3{,}5\,\%$; 2-bromopropan $\dfrac{164}{170} = 0{,}965$, torej $96{,}5\,\%$.
-6. Odgovor: izberemo brom, ki da približno $96{,}5\,\%$ 2-bromopropana; klor da le $56\,\%$ 2-kloropropana in zmes, ki jo je treba ločevati.
+6. Obratno vprašanje: pri neznanem $r$ je delež 2-halopropana $\dfrac{2r}{6 + 2r}$, ker je $6$ primarnih vodikov s hitrostjo $1$ in $2$ sekundarna s hitrostjo $r$.
+7. Pogoj $\dfrac{2r}{6 + 2r} = 0{,}90$ pomnožimo z imenovalcem: $2r = 5{,}4 + 1{,}8r$, torej $0{,}2r = 5{,}4$ in $r = 27$. Delež z $r$ narašča, zato potrebujemo $r \ge 27$.
+8. Klor ($r = 3{,}8$) je daleč pod mejo, brom ($r = 82$) jo preseže.
+9. Odgovor: izberemo brom, ki da približno $96{,}5\,\%$ 2-bromopropana; klor da le $56\,\%$ 2-kloropropana, za $90\,\%$ pa bi potrebovali $r \ge 27$.
 
 ### Primer 4 – zdaj ti
 
@@ -216,9 +233,46 @@ Koliko sta $\dfrac{9}{14}$ in $\dfrac{5}{14}$ v odstotkih? Kateri produkt prevla
 - Alkini adirajo dvakrat; Lindlar da *cis*-alken, $\mathrm{Na}/\mathrm{NH_3}$ *trans*-alken; hidratacija prek enola da keton.
 - Radikalsko halogeniranje: iniciacija, propagacija, terminacija. Delež produkta $\propto$ število H $\times$ relativna hitrost; brom je veliko bolj izbirčen od klora.
 
-## Drugače: Na sliki
+## Za izpit
 
-Propen nariši kot črto: levo $\mathrm{CH_3}$, na sredini C2, desno $\mathrm{CH_2}$, med C2 in C1 dvojna črta. Nad dvojno vezjo nariši oblak elektronov $\pi$.
+Znati moraš povedati:
+
+- definicije homolitske in heterolitske cepitve, elektrofila, nukleofila, regioselektivnosti in stereospecifičnosti;
+- Markovnikovo pravilo v klasični in sodobni obliki s pogoji in njegovo utemeljitev s Hammondovim postulatom;
+- mehanizme: elektrofilna adicija $\mathrm{HX}$, adicija $\mathrm{Br_2}$ prek bromonijevega iona (anti), radikalska adicija $\mathrm{HBr}$ s peroksidi, radikalsko halogeniranje v treh fazah;
+- izpeljavo deleža produkta $n_i r_i / \sum n_j r_j$ s pogoji in oceno $\Delta H$ iz energij vezi;
+- katalizatorje za alkin → alkan, *cis*-alken, *trans*-alken.
+
+### Naloga 1
+
+2-metilbutan $\mathrm{(CH_3)_2CH{-}CH_2{-}CH_3}$ monohalogeniramo (a) s klorom na svetlobi pri 25 °C in (b) z bromom pri 125 °C. Relativne hitrosti na en vodik (1° : 2° : 3°) so za klor $1 : 3{,}8 : 5$, za brom $1 : 82 : 1600$. Poimenuj vse monohalogenirane konstitucijske izomere, izračunaj njihove deleže za oba halogena in ugotovi, kateri produkti nastanejo kot racemati.
+
+**Rešitev:**
+
+1. Vrste vodikov: metilni skupini na C2 sta enakovredni, $6$ primarnih H (1-halo-2-metilbutan); C2 ima $1$ terciarni H (2-halo-2-metilbutan); C3 ima $2$ sekundarna H (2-halo-3-metilbutan); C4 ima $3$ primarne H (1-halo-3-metilbutan). Kontrola: $6 + 1 + 2 + 3 = 12$, kar ustreza $\mathrm{C_5H_{12}}$.
+2. Klor: $6 \cdot 1 = 6$, $1 \cdot 5 = 5$, $2 \cdot 3{,}8 = 7{,}6$, $3 \cdot 1 = 3$; vsota $6 + 5 + 7{,}6 + 3 = 21{,}6$.
+3. Deleži pri kloru: $\dfrac{6}{21{,}6} = 0{,}278$, $\dfrac{5}{21{,}6} = 0{,}231$, $\dfrac{7{,}6}{21{,}6} = 0{,}352$, $\dfrac{3}{21{,}6} = 0{,}139$.
+4. Brom: $6 \cdot 1 = 6$, $1 \cdot 1600 = 1600$, $2 \cdot 82 = 164$, $3 \cdot 1 = 3$; vsota $6 + 1600 + 164 + 3 = 1773$.
+5. Deleži pri bromu: $\dfrac{1600}{1773} = 0{,}902$, $\dfrac{164}{1773} = 0{,}0925$, $\dfrac{6}{1773} = 0{,}0034$, $\dfrac{3}{1773} = 0{,}0017$.
+6. Stereocenter dobita 1-halo-2-metilbutan (C2: H, $\mathrm{CH_3}$, $\mathrm{CH_2X}$, $\mathrm{C_2H_5}$) in 2-halo-3-metilbutan (C2: X, H, $\mathrm{CH_3}$, $\mathrm{CH(CH_3)_2}$). Pri 2-halo-2-metilbutanu sta na C2 dve metilni skupini, pri 1-halo-3-metilbutanu na C3 prav tako, zato nista kiralna.
+7. Reaktanti so akiralni, zato oba kiralna produkta nastaneta kot racemata: pri 2-halo-3-metilbutanu je ravninski radikal na stereocentru in ga $\mathrm{X_2}$ napade z obeh strani enako verjetno, pri 1-halo-2-metilbutanu pa halogen enako verjetno zamenja vodik na eni ali drugi od obeh enakovrednih metilnih skupin.
+8. Odgovor: s klorom nastane $27{,}8\,\%$ 1-kloro-2-metilbutana, $23{,}1\,\%$ 2-kloro-2-metilbutana, $35{,}2\,\%$ 2-kloro-3-metilbutana in $13{,}9\,\%$ 1-kloro-3-metilbutana; z bromom $90{,}2\,\%$ 2-bromo-2-metilbutana, $9{,}2\,\%$ 2-bromo-3-metilbutana in manj kot $1\,\%$ obeh primarnih bromidov. Racemata sta 1-halo-2-metilbutan in 2-halo-3-metilbutan.
+
+### Naloga 2
+
+Natančno navedi Markovnikovo pravilo s pogoji in ga utemelji z mehanizmom adicije $\mathrm{HBr}$ na propen. Utemelji, ali pravilo velja tudi, če reakcijo izvedemo ob dodatku peroksida, in napiši produkt.
+
+**Rešitev:**
+
+1. Pravilo: če na nesimetričen alken adiramo $\mathrm{HX}$ ali $\mathrm{H_2O}/\mathrm{H^+}$ po ionskem mehanizmu, se H veže na ogljik dvojne vezi z več vodiki, X na bolj substituiranega; splošno: elektrofil se veže tako, da nastane najstabilnejši karbokation.
+2. Mehanizem: elektroni $\pi$ napadejo $\mathrm{H^+}$ (počasi, nastane karbokation), nato $\mathrm{Br^-}$ napade kation (hitro). Produkt določi prvi korak.
+3. Dve možnosti: H na C1 da sekundarni kation $\mathrm{CH_3CH^+CH_3}$, H na C2 primarni $\mathrm{CH_3CH_2CH_2^+}$. Sekundarni je stabilnejši zaradi hiperkonjugacije in induktivnega učinka dveh alkilnih skupin.
+4. Protonacija je endotermna, zato je po Hammondovem postulatu prehodno stanje podobno kationu; stabilnejši kation ima nižjo $E_a$ in nastaja hitreje. Glavni produkt je 2-bromopropan.
+5. S peroksidom se mehanizem spremeni: $\mathrm{RO\cdot}$ odtrga H iz $\mathrm{HBr}$, nastane $\mathrm{Br\cdot}$, ki se prvi veže na alken. Pogoj »ionski mehanizem« ni izpolnjen, zato klasična oblika pravila ne velja.
+6. $\mathrm{Br\cdot}$ se veže na C1, ker nastane sekundarni radikal $\mathrm{CH_3\dot{C}HCH_2Br}$ ($3^\circ > 2^\circ > 1^\circ$ velja tudi za radikale); ta odtrga H iz $\mathrm{HBr}$ in obnovi $\mathrm{Br\cdot}$.
+7. Odgovor: brez peroksida nastane 2-bromopropan; s peroksidom poteče radikalska verižna reakcija in nastane antimarkovnikovski 1-bromopropan. V obeh primerih adicija poteče prek najstabilnejšega vmesnega delca: brez peroksida karbokationa, s peroksidom radikala.
+
+## Drugače: Na sliki
 
 ```
 A: H+ na C1
@@ -229,20 +283,19 @@ B: H+ na C2
    1°, manj stabilen
 ```
 
-Predstavljaj si, da je pozitivni naboj »breme«. Sekundarni ogljik ima dva soseda ($\mathrm{CH_3}$ in $\mathrm{CH_3}$ po adiciji), ki breme delita; primarni ima le enega. Reakcija gre po poti, kjer je breme lažje nositi, in $\mathrm{Br^-}$ pride tja, kjer je naboj ostal.
+Hitreje nastane kation A, $\mathrm{Br^-}$ pa pride tja, kjer je naboj.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-- **Margarina:** rastlinska olja imajo dvojne vezi $\mathrm{C{=}C}$ in so tekoča. Delno hidrogeniranje z $\mathrm{H_2}$ in nikljem jih nasiti, maščoba postane trda.
-- **Ozonska luknja:** freoni so stabilni alkanski derivati. V stratosferi jih UV-svetloba homolitsko razcepi, nastali $\mathrm{Cl\cdot}$ pa v verižni reakciji razgradi tisoče molekul ozona. Iniciacija in propagacija sta istega tipa kot pri kloriranju metana.
+- **Petrokemija:** propen iz krekinga industrijsko hidratirajo na kislinskem katalizatorju; po Markovnikovu nastane propan-2-ol (izopropanol).
+- **Živilska tehnologija:** olja hidrogenirajo z $\mathrm{H_2}$ na niklju; delno hidrogeniranje da tudi *trans*-maščobe, ki jih EU od 2021 omejuje na $2\,\mathrm{g}$ na $100\,\mathrm{g}$ maščobe.
+- **Analitika:** nenasičenost goriv in olj merijo z adicijo halogena (bromovo, jodovo število).
 
 ## Drugače: Bolj natančno
 
-**Hammondov postulat.** Prehodno stanje je po zgradbi podobno tistemu delcu (izhodnemu ali produktu), ki mu je energijsko bližje. Protonacija alkena je endotermna, zato je prehodno stanje podobno karbokationu in stabilnost kationa se prenese v hitrost. To utemelji Markovnikovo pravilo kinetično, ne le s stabilnostjo produkta.
+**Premestitve.** Karbokation se lahko z $1{,}2$-premikom hidrida ali metila pretvori v stabilnejšega: 3-metilbut-1-en s $\mathrm{HCl}$ da prek terciarnega kationa 2-kloro-2-metilbutan. Pri bromonijevem ionu premestitev ni.
 
-**Premestitve.** Karbokation se lahko s premikom hidrida ali metila ($1{,}2$-premik) pretvori v stabilnejšega. 3-metilbut-1-en s $\mathrm{HCl}$ da najprej sekundarni kation na C2; premik hidrida s C3 da terciarni kation, glavni produkt je 2-kloro-2-metilbutan. Premestitve so znak, da reakcija poteka prek prostega karbokationa; pri bromonijevem ionu jih ni.
-
-**Stereokemija.** Pri adiciji $\mathrm{Br_2}$ na *cis*-but-2-en nastane racemat (2*R*,3*R*)- in (2*S*,3*S*)-2,3-dibromobutana, na *trans*-but-2-en pa mezo spojina. Anti adicija je **stereospecifična**: stereokemija izhodne snovi določa stereokemijo produkta.
+**Stereokemija.** Pri adiciji $\mathrm{Br_2}$ na *cis*-but-2-en nastane racemat (2*R*,3*R*)- in (2*S*,3*S*)-2,3-dibromobutana, na *trans*-but-2-en pa mezo spojina. Anti adicija je torej **stereospecifična**.
 
 ## Preveri se
 

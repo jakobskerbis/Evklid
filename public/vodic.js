@@ -7,7 +7,7 @@ export const GUIDE = [
   { id: "daily", title: "daily.title", text: "tour.dailyText", icon: "flame", view: "path", app: "/" },
   { id: "path", title: "nav.path", text: "tour.pathText", icon: "map", view: "path", app: "/" },
   { id: "modes", title: "tour.modes", text: "tour.modesText", icon: "layers", view: "path" },
-  { id: "textbook", title: "nav.textbook", text: "tour.textbookText", icon: "book-open", view: "textbook", app: "/textbook" },
+  { id: "uci", title: "nav.learn", text: "tour.learnText", icon: "graduation-cap", view: "uci", app: "/textbook" },
   { id: "chat", title: "nav.chat", text: "tour.chatText", icon: "message-circle", view: "chat", app: "/tutor" },
   { id: "graph", title: "nav.graph", text: "tour.graphText", icon: "calculator", view: "graph", app: "/calculator" },
   { id: "competition", title: "nav.competition", text: "tour.competitionText", icon: "medal", view: "competition" },

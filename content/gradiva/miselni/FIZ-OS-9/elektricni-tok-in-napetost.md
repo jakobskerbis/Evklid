@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Električni tok
+  - elektrina v eni sekundi
+  - $I = \dfrac{e}{t}$, enota $\mathrm{A}$
+  - kuhalnik okoli $9\,\mathrm{A}$
+- Računanje s tokom
+  - $e = I \cdot t$, $t = \dfrac{e}{I}$
+  - pretvori $\mathrm{mA}$ v $\mathrm{A}$, minute v sekunde
+- Tok se ne porabi
+  - v krogu z eno potjo povsod enak
+- Ampermeter
+  - vežemo zaporedno, krog prekinemo
+  - začni z največjim območjem
+  - vzporedno: pregori varovalka
+- Električna napetost
+  - razlika med dvema točkama
+  - enota volt, $\mathrm{V}$
+  - na kosu žice skoraj $0\,\mathrm{V}$
+- Voltmeter
+  - vežemo vzporedno, ob porabnik
+  - zaporedno: žarnica ne sveti

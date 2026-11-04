@@ -13,21 +13,23 @@ Potrebuješ določeni integral, metode integriranja, parcialne odvode in determi
 
 ## Razlaga
 
-**1. Dvojni integral na pravokotniku.** Naj bo $f$ zvezna funkcija na pravokotniku $P = [a, b] \times [c, d]$. Pravokotnik razdelimo na majhne pravokotnike s ploščinami $\Delta A_{ij}$, v vsakem izberemo točko $(x_i^*, y_j^*)$ in sestavimo **Riemannovo vsoto** $\sum_{i,j} f(x_i^*, y_j^*)\, \Delta A_{ij}$. Ko gre največji premer delilnih pravokotnikov proti nič, gre vsota proti **dvojnemu integralu**
+**1. Dvojni integral na pravokotniku.** Naj bo $f$ zvezna funkcija na pravokotniku $P = [a, b] \times [c, d]$. Pravokotnik razdelimo na majhne pravokotnike s ploščinami $\Delta A_{ij}$, v vsakem izberemo točko $(x_i^*, y_j^*)$ in sestavimo **Riemannovo vsoto** $\sum_{i,j} f(x_i^*, y_j^*)\, \Delta A_{ij}$. Če imajo te vsote, ko gre največji premer delilnih pravokotnikov proti nič, limito, ki je neodvisna od izbire delitve in točk, je $f$ na $P$ **integrabilna**, limita pa je **dvojni integral**
 
 $$\iint_P f(x, y)\, dA.$$
 
-Če je $f \ge 0$, je to prostornina telesa pod grafom $z = f(x, y)$ nad $P$. Če je $f$ gostota (na primer v $\mathrm{kg/m^2}$), je integral masa.
+Vsaka zvezna funkcija na $P$ je integrabilna. Če je $f \ge 0$, je to prostornina telesa pod grafom $z = f(x, y)$ nad $P$. Če je $f$ gostota (na primer v $\mathrm{kg/m^2}$), je integral masa.
 
-**2. Fubinijev izrek.** Za zvezno $f$ na pravokotniku lahko dvojni integral izračunamo kot **dvakratni** integral, v poljubnem vrstnem redu:
+**Lastnosti.** Integral je linearen, aditiven glede na območje ($\iint_{D_1 \cup D_2} = \iint_{D_1} + \iint_{D_2}$, če se $D_1$ in $D_2$ prekrivata le v množici ploščine $0$) in monoton (iz $f \le g$ sledi $\iint_D f\, dA \le \iint_D g\, dA$). **Izrek o povprečni vrednosti:** naj bo $D$ zaprto, omejeno in povezano območje in $f$ zvezna na $D$. Potem obstaja točka $(\xi, \eta) \in D$, da je $\iint_D f\, dA = f(\xi, \eta)\, S(D)$, kjer je $S(D) = \iint_D 1\, dA$ ploščina $D$. *Dokaz:* z $m \le f \le M$ (najmanjša in največja vrednost na $D$) da monotonost $m\, S(D) \le \iint_D f\, dA \le M\, S(D)$; število $\frac{1}{S(D)}\iint_D f\, dA$ leži med $m$ in $M$, zato ga zvezna $f$ na povezanem $D$ zavzame. $\square$
+
+**2. Fubinijev izrek.** Naj bo $f$ zvezna na pravokotniku $P = [a, b] \times [c, d]$. Potem lahko dvojni integral izračunamo kot **dvakratni** integral, v poljubnem vrstnem redu:
 
 $$\iint_P f\, dA = \int_a^b \left(\int_c^d f(x, y)\, dy\right) dx = \int_c^d \left(\int_a^b f(x, y)\, dx\right) dy.$$
 
 Pri notranjem integralu je druga spremenljivka **konstanta**. Če je $f(x, y) = g(x)h(y)$, integral razpade na produkt $\int_a^b g\, dx \cdot \int_c^d h\, dy$.
 
 **3. Splošna območja.** Območje je **tipa I** (navpično preprosto), če ga lahko zapišemo kot
-$$D = \{(x, y) : a \le x \le b,\ \varphi_1(x) \le y \le \varphi_2(x)\}.$$
-Tedaj je
+$$D = \{(x, y) : a \le x \le b,\ \varphi_1(x) \le y \le \varphi_2(x)\},$$
+kjer sta $\varphi_1 \le \varphi_2$ zvezni na $[a, b]$. Za zvezno $f$ na $D$ je tedaj
 $$\iint_D f\, dA = \int_a^b \int_{\varphi_1(x)}^{\varphi_2(x)} f(x, y)\, dy\, dx.$$
 Meje notranjega integrala so funkcije zunanje spremenljivke, meje zunanjega integrala pa so vedno **konstante**. Območje **tipa II** je $\{c \le y \le d,\ \psi_1(y) \le x \le \psi_2(y)\}$ in pri njem najprej integriramo po $x$.
 
@@ -41,11 +43,11 @@ $$\iiint_T f(x, y, z)\, dV.$$
 $$\iiint_T f\, dV = \iint_D \left(\int_{g_1(x,y)}^{g_2(x,y)} f\, dz\right) dA.$$
 Prostornina telesa je $V = \iiint_T 1\, dV$, masa $m = \iiint_T \rho\, dV$, množina snovi pri koncentraciji $c(x, y, z)$ pa $n = \iiint_T c\, dV$.
 
-**5. Zamenjava spremenljivk in Jacobijeva determinanta.** Naj preslikava $x = x(u, v)$, $y = y(u, v)$ bijektivno in zvezno odvedljivo preslika območje $D'$ v ravnini $(u, v)$ na $D$. **Jacobijeva determinanta** je
+**5. Zamenjava spremenljivk in Jacobijeva determinanta.** Naj preslikava $x = x(u, v)$, $y = y(u, v)$ zvezno odvedljivo preslika območje $D'$ v ravnini $(u, v)$ na $D$ in naj bo $f$ zvezna na $D$. **Jacobijeva determinanta** preslikave je
 
-$$J = \frac{\partial(x, y)}{\partial(u, v)} = \begin{vmatrix} \dfrac{\partial x}{\partial u} & \dfrac{\partial x}{\partial v} \\[2mm] \dfrac{\partial y}{\partial u} & \dfrac{\partial y}{\partial v} \end{vmatrix}$$
+$$J = \frac{\partial(x, y)}{\partial(u, v)} = \begin{vmatrix} \dfrac{\partial x}{\partial u} & \dfrac{\partial x}{\partial v} \\[2mm] \dfrac{\partial y}{\partial u} & \dfrac{\partial y}{\partial v} \end{vmatrix}.$$
 
-in velja
+Če je preslikava bijektivna in $J \neq 0$ (oboje razen morda na množici ploščine $0$), velja
 
 $$\iint_D f(x, y)\, dx\, dy = \iint_{D'} f\big(x(u, v), y(u, v)\big)\, |J|\, du\, dv.$$
 
@@ -59,6 +61,8 @@ torej $dA = r\, dr\, d\varphi$. Polarne koordinate uporabimo, kadar je območje 
 $$V = \int_0^{2\pi}\int_0^2 (4 - r^2)\, r\, dr\, d\varphi = 2\pi \left[2r^2 - \tfrac{r^4}{4}\right]_0^2 = 2\pi(8 - 4) = 8\pi \approx 25{,}1.$$
 
 **8. Sferne koordinate.** $x = r\sin\vartheta\cos\varphi$, $y = r\sin\vartheta\sin\varphi$, $z = r\cos\vartheta$, kjer je $r \ge 0$ oddaljenost od izhodišča, $\vartheta \in [0, \pi]$ kot od pozitivne osi $z$ in $\varphi \in [0, 2\pi)$ kot v ravnini $xy$. Jacobijeva determinanta je $r^2 \sin\vartheta$:
+$$J = \begin{vmatrix} \sin\vartheta\cos\varphi & r\cos\vartheta\cos\varphi & -r\sin\vartheta\sin\varphi \\ \sin\vartheta\sin\varphi & r\cos\vartheta\sin\varphi & r\sin\vartheta\cos\varphi \\ \cos\vartheta & -r\sin\vartheta & 0 \end{vmatrix}.$$
+*Izpeljava:* razvoj po tretji vrstici da $\cos\vartheta \cdot r^2\sin\vartheta\cos\vartheta(\cos^2\varphi + \sin^2\varphi) + r\sin\vartheta \cdot r\sin^2\vartheta(\cos^2\varphi + \sin^2\varphi) = r^2\sin\vartheta(\cos^2\vartheta + \sin^2\vartheta) = r^2\sin\vartheta$. Ker je $\vartheta \in [0, \pi]$, je $J \ge 0$ in
 $$dV = r^2 \sin\vartheta\, dr\, d\vartheta\, d\varphi.$$
 Primerne so za krogle, krogelne lupine in funkcije, ki so odvisne le od $r$. Za prostornino krogle polmera $R$ dobimo $\int_0^{2\pi}\int_0^\pi\int_0^R r^2\sin\vartheta\, dr\, d\vartheta\, d\varphi = 2\pi \cdot 2 \cdot \frac{R^3}{3} = \frac{4}{3}\pi R^3$. Če je integrand odvisen le od $r$, integracija po kotih da $4\pi$ in $dV$ nadomestimo z $4\pi r^2\, dr$ (prostornina tanke krogelne lupine).
 
@@ -107,13 +111,13 @@ Tip I: $\iint_D f\, dA = \int_a^b \int_{\varphi_1(x)}^{\varphi_2(x)} f\, dy\, dx
 
 ### Primer 3 (težji)
 
-Krogla s polmerom $R = 0{,}10\,\mathrm{m}$ ima gostoto, ki od središča navzven linearno pada: $\rho(r) = \rho_0\left(1 - \frac{r}{R}\right)$, kjer je $\rho_0 = 3000\,\mathrm{kg/m^3}$. Izračunaj maso krogle in njeno povprečno gostoto.
+Krogla s polmerom $R = 0{,}10\,\mathrm{m}$ ima gostoto, ki od središča navzven linearno pada: $\rho(r) = \rho_0\left(1 - \frac{r}{R}\right)$, kjer je $\rho_0 = 3000\,\mathrm{kg/m^3}$. Izračunaj maso krogle in njeno povprečno gostoto. Kroglo nato prerežemo z ravnino skozi središče ($z = 0$). Kje leži težišče zgornje polkrogle?
 
-**Podatki:** $R = 0{,}10\,\mathrm{m}$, $\rho(r) = \rho_0\left(1 - \frac{r}{R}\right)$, $\rho_0 = 3000\,\mathrm{kg/m^3}$
-**Iščemo:** maso $m$ in povprečno gostoto $\bar\rho$
+**Podatki:** $R = 0{,}10\,\mathrm{m}$, $\rho(r) = \rho_0\left(1 - \frac{r}{R}\right)$, $\rho_0 = 3000\,\mathrm{kg/m^3}$, polkrogla $z \ge 0$
+**Iščemo:** maso $m$, povprečno gostoto $\bar\rho$ in koordinato težišča $z_T$ polkrogle
 
 :::formula
-$m = \iiint_T \rho\, dV$, sferne koordinate $dV = r^2\sin\vartheta\, dr\, d\vartheta\, d\varphi$; $\bar\rho = \frac{m}{V}$, $V = \frac{4}{3}\pi R^3$
+$m = \iiint_T \rho\, dV$, sferne koordinate $dV = r^2\sin\vartheta\, dr\, d\vartheta\, d\varphi$; $\bar\rho = \frac{m}{V}$, $V = \frac{4}{3}\pi R^3$; $z_T = \frac{1}{m_{1/2}}\iiint_{T_{1/2}} z\,\rho\, dV$
 :::
 
 **Rešitev:**
@@ -126,7 +130,11 @@ $m = \iiint_T \rho\, dV$, sferne koordinate $dV = r^2\sin\vartheta\, dr\, d\vart
 6. Številke: $m = \frac{\pi \cdot 3000\,\mathrm{kg/m^3} \cdot (0{,}10\,\mathrm{m})^3}{3} = \pi \cdot 1{,}0\,\mathrm{kg} = 3{,}14\,\mathrm{kg}$.
 7. Prostornina $V = \frac{4}{3}\pi (0{,}10\,\mathrm{m})^3 = 4{,}19 \cdot 10^{-3}\,\mathrm{m^3}$, povprečna gostota $\bar\rho = \frac{m}{V} = \frac{\pi\rho_0 R^3/3}{4\pi R^3/3} = \frac{\rho_0}{4} = 750\,\mathrm{kg/m^3}$.
 8. Preizkus smisla: povprečna gostota je med $0$ (na površju) in $\rho_0$ (v središču), bližje $0$, ker je večina prostornine krogle blizu površja.
-9. Odgovor: masa krogle je $3{,}14\,\mathrm{kg}$, povprečna gostota $750\,\mathrm{kg/m^3}$.
+9. Polkrogla: $\vartheta$ teče le od $0$ do $\frac{\pi}{2}$, $\int_0^{\pi/2}\sin\vartheta\, d\vartheta = 1$, zato je $m_{1/2} = \frac{m}{2} = \frac{\pi\rho_0 R^3}{6} = 1{,}57\,\mathrm{kg}$. Zaradi simetrije okoli osi $z$ je $x_T = y_T = 0$.
+10. Statični moment: $z = r\cos\vartheta$, torej $\iiint z\rho\, dV = \rho_0\int_0^{2\pi} d\varphi \int_0^{\pi/2}\cos\vartheta\sin\vartheta\, d\vartheta \int_0^R \left(r^3 - \frac{r^4}{R}\right) dr = \rho_0 \cdot 2\pi \cdot \frac{1}{2} \cdot \frac{R^4}{20} = \frac{\pi\rho_0 R^4}{20}$, ker je $\frac{R^4}{4} - \frac{R^4}{5} = \frac{R^4}{20}$.
+11. $z_T = \frac{\pi\rho_0 R^4/20}{\pi\rho_0 R^3/6} = \frac{6R}{20} = 0{,}3R = 0{,}030\,\mathrm{m}$.
+12. Preizkus smisla: homogena polkrogla ima težišče pri $\frac{3R}{8} = 0{,}375R$; naša je gostejša pri središču, zato je težišče nižje.
+13. Odgovor: masa krogle je $3{,}14\,\mathrm{kg}$, povprečna gostota $750\,\mathrm{kg/m^3}$; težišče zgornje polkrogle (masa $1{,}57\,\mathrm{kg}$) leži na osi $z$, $3{,}0\,\mathrm{cm}$ nad središčem.
 
 ## Pogoste napake
 
@@ -145,6 +153,44 @@ $m = \iiint_T \rho\, dV$, sferne koordinate $dV = r^2\sin\vartheta\, dr\, d\vart
 - Zamenjava spremenljivk: $dx\, dy = |J|\, du\, dv$, $J = \frac{\partial(x, y)}{\partial(u, v)}$.
 - Polarne: $dA = r\, dr\, d\varphi$; cilindrične: $dV = r\, dr\, d\varphi\, dz$; sferne: $dV = r^2\sin\vartheta\, dr\, d\vartheta\, d\varphi$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo dvojnega integrala z Riemannovimi vsotami in kdaj je funkcija integrabilna (zvezna na $P$ vedno je),
+- Fubinijev izrek s pogoji, za pravokotnik in za območji tipa I in II,
+- izrek o povprečni vrednosti s pogoji in dokazom,
+- izrek o zamenjavi spremenljivk (bijektivna, zvezno odvedljiva preslikava, $J \neq 0$) in zakaj nastopa $|J|$,
+- izpeljavo Jacobijeve determinante za polarne ($r$) in sferne ($r^2\sin\vartheta$) koordinate.
+
+### Naloga 1
+
+a) Izračunaj $\displaystyle \int_0^1 \int_y^1 e^{x^2}\, dx\, dy$.
+b) Izračunaj prostornino telesa, ki ga omejujeta paraboloid $z = x^2 + y^2$ in ravnina $z = 2y$.
+
+**Rešitev:**
+
+1. a) Notranjega integrala $\int e^{x^2}\, dx$ ne znamo izraziti z elementarnimi funkcijami, zato zamenjamo vrstni red. Območje je $\{0 \le y \le 1,\ y \le x \le 1\}$, to je trikotnik z oglišči $(0, 0)$, $(1, 0)$, $(1, 1)$; zapisan kot tip I: $\{0 \le x \le 1,\ 0 \le y \le x\}$.
+2. $\int_0^1 \int_0^x e^{x^2}\, dy\, dx = \int_0^1 x e^{x^2}\, dx = \left[\frac{e^{x^2}}{2}\right]_0^1 = \frac{e - 1}{2} \approx 0{,}859$.
+3. b) Presek ploskev: $x^2 + y^2 = 2y$, torej $x^2 + (y - 1)^2 = 1$. Projekcija telesa na ravnino $xy$ je krog $D$ s središčem $(0, 1)$ in polmerom $1$; v njem je $2y \ge x^2 + y^2$, ravnina je zgoraj.
+4. $V = \iint_D \left(2y - x^2 - y^2\right) dA = \iint_D \left(1 - x^2 - (y - 1)^2\right) dA$.
+5. Zamenjava $x = r\cos\varphi$, $y = 1 + r\sin\varphi$ (premik in polarne koordinate), $|J| = r$, meje $0 \le r \le 1$, $0 \le \varphi \le 2\pi$; integrand postane $1 - r^2$.
+6. $V = \int_0^{2\pi}\int_0^1 (1 - r^2)\, r\, dr\, d\varphi = 2\pi\left(\frac{1}{2} - \frac{1}{4}\right) = \frac{\pi}{2} \approx 1{,}571$.
+7. Odgovor: a) $\frac{e - 1}{2} \approx 0{,}859$; b) $V = \frac{\pi}{2} \approx 1{,}571$ (prostorninskih enot).
+
+### Naloga 2
+
+Natančno navedi izrek o zamenjavi spremenljivk v dvojnem integralu in izpelji ploščinski element v polarnih koordinatah. Nato utemelji, ali je $\displaystyle \iint_K \left(x^3 y^2 + \sin x\right) dA = 0$, kjer je $K$ krog $x^2 + y^2 \le 1$.
+
+**Rešitev:**
+
+1. Izrek: naj $\Phi\colon (u, v) \mapsto \big(x(u, v), y(u, v)\big)$ zvezno odvedljivo preslika $D'$ na $D$ in naj bo bijektivna ter $J = \frac{\partial(x, y)}{\partial(u, v)} \neq 0$ (oboje razen morda na množici ploščine $0$); $f$ naj bo zvezna na $D$. Potem je $\iint_D f\, dx\, dy = \iint_{D'} f\big(x(u, v), y(u, v)\big)\, |J|\, du\, dv$.
+2. Polarne koordinate: $\frac{\partial x}{\partial r} = \cos\varphi$, $\frac{\partial x}{\partial \varphi} = -r\sin\varphi$, $\frac{\partial y}{\partial r} = \sin\varphi$, $\frac{\partial y}{\partial \varphi} = r\cos\varphi$; $J = r\cos^2\varphi + r\sin^2\varphi = r \ge 0$, zato $dA = r\, dr\, d\varphi$. Pri $r = 0$ preslikava ni bijektivna in $J = 0$, a to je ena točka, ploščine $0$.
+3. Simetrija: zamenjava $x = -u$, $y = v$ preslika $K$ samo nase in ima $J = \begin{vmatrix} -1 & 0 \\ 0 & 1 \end{vmatrix} = -1$, torej $|J| = 1$.
+4. Za $f(x, y) = x^3y^2 + \sin x$ velja $f(-u, v) = -u^3v^2 - \sin u = -f(u, v)$ (funkcija je liha v $x$).
+5. Po izreku je $I = \iint_K f(-u, v)\, du\, dv = -I$, zato $2I = 0$.
+6. Odgovor: da, integral je enak $0$, ker je območje simetrično glede na os $y$, integrand pa lih v $x$.
+
 ## Drugače: Na sliki
 
 **Stolpci nad ploščicami.** Območje $D$ v ravnini $xy$ si predstavljaj kot tla, prekrita z drobnimi ploščicami. Nad vsako ploščico postavimo stolpec z višino $f(x, y)$. Vsota prostornin vseh stolpcev je približek dvojnega integrala, pri vedno drobnejših ploščicah pa točna prostornina telesa pod grafom.
@@ -155,17 +201,15 @@ $m = \iiint_T \rho\, dV$, sferne koordinate $dV = r^2\sin\vartheta\, dr\, d\vart
 
 **Sferna celica.** Pri sfernih koordinatah je celica približno kvader z robovi $dr$, $r\, d\vartheta$ (lok po poldnevniku) in $r\sin\vartheta\, d\varphi$ (lok po vzporedniku, katerega polmer je $r\sin\vartheta$). Produkt da $r^2\sin\vartheta\, dr\, d\vartheta\, d\varphi$.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
 **Množina snovi v reaktorju.** V valjastem reaktorju s polmerom $R$ in višino $h$ je koncentracija na sredini večja kot ob steni, na primer $c(r) = c_0\left(1 - \frac{r^2}{2R^2}\right)$. Množina snovi je $n = \int_0^h\int_0^{2\pi}\int_0^R c(r)\, r\, dr\, d\varphi\, dz = 2\pi h c_0\left(\frac{R^2}{2} - \frac{R^2}{8}\right) = \frac{3}{4}\pi R^2 h c_0$, torej $\frac{3}{4}$ vrednosti, ki bi jo dala konstantna koncentracija $c_0$.
 
-**Pretok v cevi.** Pri laminarnem toku je hitrost v cevi parabolična, $v(r) = v_{\max}\left(1 - \frac{r^2}{R^2}\right)$. Prostorninski pretok je $\Phi_V = \int_0^{2\pi}\int_0^R v(r)\, r\, dr\, d\varphi = \frac{\pi R^2 v_{\max}}{2}$: povprečna hitrost je polovica največje. To uporabljamo pri pretoku krvi v žilah in tekočin v ceveh.
+**Pretok v cevi.** Pri laminarnem toku je hitrost v cevi parabolična, $v(r) = v_{\max}\left(1 - \frac{r^2}{R^2}\right)$. Prostorninski pretok je $\Phi_V = \int_0^{2\pi}\int_0^R v(r)\, r\, dr\, d\varphi = \frac{\pi R^2 v_{\max}}{2}$: povprečna hitrost je polovica največje. Iz izmerjenega pretoka v cevovodu tako izračunamo največjo hitrost in strižno obremenitev ob steni.
 
-**Gozdarstvo in hidrologija.** Količino padavin na porečje izračunamo kot dvojni integral višine padavin po površini, prostornino lesa v deblu kot integral ploščin prečnih prerezov po višini.
+**Katalizatorska zrna.** V poroznem kroglastem zrnu katalizatorja reaktant difundira od površja navznoter in se sproti porablja, zato je koncentracija v notranjosti manjša. Povprečno hitrost reakcije v zrnu dobimo kot trojni integral v sfernih koordinatah, $\frac{1}{V}\int_0^R r_A(c(r))\, 4\pi r^2\, dr$, kjer je $r_A$ hitrost reakcije na enoto prostornine (ne polmer); njeno razmerje s hitrostjo pri površinski koncentraciji je faktor izkoristka zrna, s katerim inženir izbere velikost zrn.
 
-**Verjetnost.** Če je $f(x, y)$ skupna gostota dveh slučajnih spremenljivk, je verjetnost, da par pade v območje $D$, enaka $\iint_D f\, dA$.
-
-**Fizika.** Vztrajnostni moment telesa okoli osi $z$ je $J = \iiint_T (x^2 + y^2)\rho\, dV$, električni naboj oblaka $\iiint_T \rho_e\, dV$.
+**Mešala in vrtenje.** Vztrajnostni moment mešala okoli osi $z$ je $\iiint_T (x^2 + y^2)\rho\, dV$; od njega je odvisen zagonski navor motorja.
 
 ## Drugače: Korak za korakom s številkami
 

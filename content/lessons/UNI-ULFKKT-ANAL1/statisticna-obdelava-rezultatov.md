@@ -21,13 +21,15 @@ Ima Matic prav? Ob koncu lekcije boš znal to presoditi s številkami. Enako vpr
 | 4 | 2000 | $-2$ | 4 |
 | 5 | 2002 | $0$ | 0 |
 
-Najboljša ocena prave dolžine je **aritmetična sredina** ali povprečje: vsota meritev, deljena s številom meritev $n$.
+**Definicija.** Naj bodo $x_1, x_2, \dots, x_n$ rezultati $n$ ponovljenih meritev iste količine pod enakimi pogoji. Njihova **aritmetična sredina** ali povprečje je vsota meritev, deljena s številom meritev $n$:
 
 $$\bar x = \frac{1}{n}\sum_{i=1}^{n} x_i = \frac{10\,010\,\mathrm{mm}}{5} = 2002\,\mathrm{mm}$$
 
-Poglej stolpec z odmiki. Odmiki so pozitivni in negativni, njihova vsota je točno $0$. To velja vedno: povprečje leži tako, da se odmiki navzgor in navzdol izničijo. Zato povprečni odmik ne pove ničesar o raztrosu.
+Poglej stolpec z odmiki. Odmiki so pozitivni in negativni, njihova vsota je točno $0$. To velja vedno: $\sum (x_i - \bar x) = \sum x_i - n\bar x = n\bar x - n\bar x = 0$. Zato povprečni odmik ne pove ničesar o raztrosu.
 
-Rešitev je kvadriranje. Kvadrat odmika je vedno pozitiven, zato se ne izniči. Vsoto kvadratov delimo z $n-1$ in korenimo. Tako dobimo **standardni odklon** vzorca $s$, merilo za raztros posameznih meritev okoli povprečja:
+**Trditev.** Povprečje je najboljša ocena prave vrednosti v tem smislu, da je vsota kvadratov odmikov $\sum (x_i - a)^2$ najmanjša natanko pri $a = \bar x$. *Dokaz:* $\sum (x_i - a)^2 = \sum \big((x_i - \bar x) + (\bar x - a)\big)^2 = \sum (x_i - \bar x)^2 + 2(\bar x - a)\sum (x_i - \bar x) + n(\bar x - a)^2$. Srednji člen je $0$, zadnji je $\ge 0$ in enak $0$ le pri $a = \bar x$.
+
+Za raztros odmike kvadriramo. Kvadrat odmika je vedno pozitiven, zato se ne izniči. **Definicija:** za $n \ge 2$ meritev je **standardni odklon** vzorca $s$, merilo za raztros posameznih meritev okoli povprečja,
 
 $$s = \sqrt{\frac{\sum (x_i - \bar x)^2}{n-1}}$$
 
@@ -43,7 +45,7 @@ Tesar doda šesto meritev, ki je točno $2002\,\mathrm{mm}$, enaka povprečju. S
 Zmanjša se. Vsota kvadratov ostane $10\,\mathrm{mm^2}$, delimo pa s $5$ namesto s $4$: $s = \sqrt{2}\,\mathrm{mm} \approx 1{,}41\,\mathrm{mm}$. Meritev blizu povprečja kaže, da je raztros manjši, kot smo mislili.
 :::
 
-**Kaj se zgodi, ko meritev dodajamo.** Recimo, da tesar meri enako skrbno in dobi vedno $s \approx 1{,}58\,\mathrm{mm}$, enkrat s 3, enkrat s 5, enkrat z 10 meritvami. Poleg $s$ izračunamo še polovično širino intervala, v katerem s 95-% zaupanjem leži prava dolžina (kako, pove pravilo spodaj).
+**Kaj se zgodi, ko meritev dodajamo.** Recimo, da tesar meri enako skrbno in dobi vedno $s \approx 1{,}58\,\mathrm{mm}$, enkrat s 3, enkrat s 5, enkrat z 10 meritvami. Poleg $s$ izračunamo še polovično širino **intervala zaupanja**, v katerem s 95-% zaupanjem leži prava dolžina. Kako ga izračunamo in kaj je faktor $t$, pove izrek spodaj; zdaj samo glej zadnji stolpec.
 
 | $n$ | $s$ [mm] | faktor $t$ (95 %) | polovična širina [mm] |
 |---|---|---|---|
@@ -53,11 +55,17 @@ Zmanjša se. Vsota kvadratov ostane $10\,\mathrm{mm^2}$, delimo pa s $5$ namesto
 
 Opazi dvoje. Standardni odklon se z več meritvami ne spremeni: to je lastnost metode in skrbnosti, ne števila meritev. Interval pa se hitro oži. Matic se torej moti. Napake posameznih meritev se pri povprečju ne seštevajo, ampak se delno izničijo.
 
-**Pravilo: interval zaupanja.** Prava vrednost $\mu$ leži z izbrano verjetnostjo (navadno 95 %) v intervalu
+**Izrek (standardni odklon povprečja).** Če so meritve $x_1, \dots, x_n$ med seboj neodvisne in ima vsaka standardni odklon $\sigma$, potem ima povprečje standardni odklon $\sigma_{\bar x} = \sigma/\sqrt n$. *Dokaz:* **varianca** je kvadrat standardnega odklona; variance neodvisnih količin se seštevajo, zato je varianca vsote $\sum x_i$ enaka $n\sigma^2$. Deljenje s konstanto $n$ deli varianco z $n^2$: varianca $\bar x$ je $n\sigma^2/n^2 = \sigma^2/n$, koren da $\sigma/\sqrt n$.
+
+**Izrek: interval zaupanja.** Naj bodo meritve neodvisne in normalno porazdeljene okoli prave vrednosti $\mu$ (brez sistematske napake), $\bar x$ in $s$ pa izračunana iz istih $n$ meritev. Potem $\mu$ z izbrano verjetnostjo $P$ (navadno 95 %) leži v intervalu
 
 $$\mu = \bar x \pm \frac{t \cdot s}{\sqrt{n}}$$
 
-Količnik $s/\sqrt n$ je **standardni odklon povprečja**. Faktor $t$ je **Studentov faktor**. Odčitamo ga iz tabele za $n-1$ prostostnih stopenj in izbrano verjetnost. Za 95 %: $t = 4{,}303$ ($n=3$), $3{,}182$ ($n=4$), $2{,}776$ ($n=5$), $2{,}571$ ($n=6$), $2{,}262$ ($n=10$). Pri zelo velikem $n$ se $t$ približa $1{,}96$.
+Količnik $s/\sqrt n$ je ocena **standardnega odklona povprečja**. Faktor $t$ je **Studentov faktor**: ker $\sigma$ ne poznamo in ga nadomestimo s $s$, količina $(\bar x - \mu)\sqrt n/s$ ni normalno porazdeljena, ampak po Studentu z $n-1$ prostostnimi stopnjami. Odčitamo ga iz tabele za $n-1$ prostostnih stopenj in izbrano verjetnost. Za 95 %: $t = 4{,}303$ ($n=3$), $3{,}182$ ($n=4$), $2{,}776$ ($n=5$), $2{,}571$ ($n=6$), $2{,}447$ ($n=7$), $2{,}262$ ($n=10$). Pri zelo velikem $n$ se $t$ približa $1{,}96$.
+
+Interval zajame le naključne napake; sistematske (npr. napačno umerjena bireta) ne zmanjša nobeno število ponovitev. Raztros $s$ opisuje **natančnost** (preciznost), odmik povprečja od prave vrednosti pa **pravilnost**.
+
+**Primerjava z referenčno vrednostjo (t-test).** Če je prava vrednost $\mu_0$ znana (certificirani referenčni material), izračunamo $t_\mathrm{izr} = |\bar x - \mu_0|\sqrt n/s$. Če je $t_\mathrm{izr} > t$ iz tabele, je razlika statistično značilna in metoda ima sistematsko napako. To je isto kot vprašanje, ali $\mu_0$ leži zunaj intervala zaupanja, saj je $|\bar x - \mu_0| > ts/\sqrt n$ natanko tedaj, ko je $t_\mathrm{izr} > t$.
 
 :::premisli
 Med $n = 3$ in $n = 10$ se $\sqrt n$ poveča manj kot dvakrat, interval pa se zoži več kot trikrat. Zakaj?
@@ -116,24 +124,26 @@ $\mu = \bar x \pm \dfrac{t \cdot s}{\sqrt{n}}$
 5. Negotovost zaokrožimo na eno značilno števko, $0{,}2\,\%$; povprečje ima že eno decimalko, kar se ujema.
 6. Odgovor: masni delež CaO je $(63{,}3 \pm 0{,}2)\,\%$ pri 95-% zaupanju.
 
-### Primer 3: koliko meritev potrebuje mizar
+### Primer 3 (izpitna raven): preverjanje metode na referenčnem materialu
 
-Mizar iz izkušenj pričakuje, da bo standardni odklon njegovih meritev dolžine kuhinjskega pulta okoli $s = 1{,}6\,\mathrm{mm}$. Ker bo $s$ izračunal iz istih meritev, uporabi Studentov $t$. Za vgradnjo želi, da je 95-% interval zaupanja za povprečje ožji od $\pm 1\,\mathrm{mm}$. Ali zadostuje pet meritev? Najmanj koliko meritev potrebuje?
+Laboratorij uvaja novo metodo za določanje bakra v zemlji in jo preizkusi na certificiranem referenčnem materialu z vrednostjo $\mu_0 = 49{,}5\,\mathrm{mg/kg}$. Pet določitev da $51{,}8$; $49{,}9$; $52{,}6$; $50{,}7$ in $51{,}5\,\mathrm{mg/kg}$. Podaj rezultat s 95-% intervalom zaupanja, presodi, ali ima metoda sistematsko napako, in izračunaj, najmanj koliko ponovitev bi potrebovali za polovično širino intervala največ $1{,}0\,\mathrm{mg/kg}$ (privzemi, da se $s$ ne spremeni).
 
-**Podatki:** $s = 1{,}6\,\mathrm{mm}$, zahtevana polovična širina $\le 1\,\mathrm{mm}$, verjetnost $95\,\%$; $t = 2{,}776$ ($n=5$), $2{,}262$ ($n=10$), $2{,}201$ ($n=12$), $2{,}179$ ($n=13$)
-**Iščemo:** najmanjše število meritev $n$
+**Podatki:** pet meritev zgoraj ($n = 5$), $\mu_0 = 49{,}5\,\mathrm{mg/kg}$, $P = 95\,\%$; $t = 2{,}776$ ($n=5$), $2{,}571$ ($n=6$), $2{,}447$ ($n=7$); polovična širina $\le 1{,}0\,\mathrm{mg/kg}$
+**Iščemo:** interval zaupanja, odločitev o sistematski napaki, najmanjši $n$
 
 :::formula
-polovična širina $= \dfrac{t \cdot s}{\sqrt{n}} \le 1\,\mathrm{mm}$
+$\mu = \bar x \pm \dfrac{t \cdot s}{\sqrt{n}}$, $\quad t_\mathrm{izr} = \dfrac{|\bar x - \mu_0|\sqrt n}{s}$
 :::
 
 **Rešitev:**
 
-1. Pri $n = 5$: $\dfrac{2{,}776 \cdot 1{,}6}{\sqrt 5} \approx 1{,}99\,\mathrm{mm}$. To je skoraj dvakrat preveč, pet meritev ne zadostuje.
-2. Pri $n = 10$: $\dfrac{2{,}262 \cdot 1{,}6}{\sqrt{10}} \approx 1{,}14\,\mathrm{mm}$. Še vedno preširoko.
-3. Pri $n = 12$: $\dfrac{2{,}201 \cdot 1{,}6}{\sqrt{12}} \approx 1{,}02\,\mathrm{mm}$. Za las preveč.
-4. Pri $n = 13$: $\dfrac{2{,}179 \cdot 1{,}6}{\sqrt{13}} \approx 0{,}97\,\mathrm{mm}$. Pogoj je izpolnjen.
-5. Odgovor: pet meritev ne zadostuje; mizar potrebuje najmanj $13$ meritev. (Bolj praktično je izboljšati metodo, da se zmanjša $s$.)
+1. Povprečje: $\bar x = 256{,}5\,\mathrm{mg/kg} / 5 = 51{,}3\,\mathrm{mg/kg}$.
+2. Odmiki so $+0{,}5$, $-1{,}4$, $+1{,}3$, $-0{,}6$ in $+0{,}2$ (vsota $0$); vsota kvadratov je $0{,}25 + 1{,}96 + 1{,}69 + 0{,}36 + 0{,}04 = 4{,}30$.
+3. $s = \sqrt{4{,}30/4} \approx 1{,}037\,\mathrm{mg/kg}$, $\mathrm{RSD} \approx 2{,}0\,\%$.
+4. Polovična širina: $\dfrac{2{,}776 \cdot 1{,}037}{\sqrt 5} \approx 1{,}29\,\mathrm{mg/kg}$, zaokroženo $1{,}3$. Rezultat je $(51{,}3 \pm 1{,}3)\,\mathrm{mg/kg}$, interval sega od $50{,}0$ do $52{,}6\,\mathrm{mg/kg}$.
+5. Certificirana vrednost $49{,}5$ leži zunaj intervala. Enako pove t-test: $t_\mathrm{izr} = \dfrac{1{,}8 \cdot \sqrt 5}{1{,}037} \approx 3{,}88 > 2{,}776$. Razlika je značilna: metoda daje sistematsko previsoke rezultate, za okoli $1{,}8\,\mathrm{mg/kg}$ ($3{,}6\,\%$).
+6. Ožji interval: pri $n = 6$ je polovična širina $\dfrac{2{,}571 \cdot 1{,}037}{\sqrt 6} \approx 1{,}09\,\mathrm{mg/kg}$, še preveč; pri $n = 7$ je $\dfrac{2{,}447 \cdot 1{,}037}{\sqrt 7} \approx 0{,}96\,\mathrm{mg/kg}$, kar ustreza.
+7. Odgovor: baker v referenčnem materialu je $(51{,}3 \pm 1{,}3)\,\mathrm{mg/kg}$; metoda ima sistematsko napako, za polovično širino do $1{,}0\,\mathrm{mg/kg}$ pa potrebujemo najmanj $7$ ponovitev. Več ponovitev zoži interval, sistematske napake pa ne odpravi; najprej moramo najti njen vzrok.
 
 ### Primer 4: zdaj ti
 
@@ -173,6 +183,45 @@ $\rho = 3{,}482\,\mathrm{kg} / 0{,}00195\,\mathrm{m^3} \approx 1786\,\mathrm{kg/
 - Interval zaupanja: $\mu = \bar x \pm t s / \sqrt n$, $t$ iz tabele za $n-1$ prostostnih stopenj (95 %: $n=3$: $4{,}303$; $n=5$: $2{,}776$).
 - Več meritev ne zmanjša $s$, zoži pa interval zaupanja.
 - Značilne števke: vodilne ničle ne štejejo; pri $\pm$ decimalna mesta, pri $\cdot$ in $:$ značilne števke; negotovost na 1 števko, povprečje na isto mesto; zaokrožuj šele na koncu.
+- t-test: $t_\mathrm{izr} = |\bar x - \mu_0|\sqrt n/s > t$ pomeni značilno razliko od referenčne vrednosti (sistematska napaka).
+
+## Za izpit
+
+Znati moraš povedati:
+
+- natančne definicije aritmetične sredine, standardnega odklona vzorca, relativnega standardnega odklona in prostostnih stopenj;
+- dokaz, da je $\sum (x_i - \bar x) = 0$ in da je $\sum (x_i - a)^2$ najmanjša pri $a = \bar x$;
+- izrek o standardnem odklonu povprečja $\sigma/\sqrt n$ s pogojem neodvisnosti in njegov dokaz;
+- interval zaupanja z vsemi pogoji (neodvisne, normalno porazdeljene meritve brez sistematske napake), zakaj $t$ in ne $1{,}96$, in zvezo s t-testom;
+- pravila za značilne števke in zapis rezultata z negotovostjo.
+
+### Naloga 1
+
+Ocetno kislino v kisu preverjaš s titracijo; po specifikaciji proizvajalca je njena masna koncentracija $\gamma_0 = 90{,}5\,\mathrm{g/L}$. $25{,}00\,\mathrm{mL}$ kisa razredčiš v merilni bučki na $250{,}0\,\mathrm{mL}$, nato štirikrat odpipetiraš po $25{,}00\,\mathrm{mL}$ razredčene raztopine in titriraš z NaOH s $c = 0{,}1000\,\mathrm{mol/L}$. Porabe so $37{,}42$; $37{,}55$; $37{,}48$ in $37{,}39\,\mathrm{mL}$. $M(\mathrm{CH_3COOH}) = 60{,}05\,\mathrm{g/mol}$, $t = 3{,}182$ za $3$ prostostne stopnje (95 %). (a) Podaj masno koncentracijo ocetne kisline v kisu s 95-% intervalom zaupanja. (b) Ali se rezultat značilno razlikuje od specifikacije? (c) Kolikšno najmanjšo razliko od specifikacije bi s štirimi titracijami pri tej natančnosti še zaznal?
+
+**Rešitev:**
+
+1. Reakcija $\mathrm{CH_3COOH + NaOH \to CH_3COONa + H_2O}$ poteče v razmerju $1 : 1$, zato je v alikvotu $n = c\,V$.
+2. Alikvot $25{,}00\,\mathrm{mL}$ desetkrat razredčenega kisa vsebuje kislino iz $2{,}500\,\mathrm{mL}$ kisa. Zato je $\gamma = \dfrac{0{,}1000 \cdot V \cdot 10^{-3} \cdot 60{,}05}{2{,}500 \cdot 10^{-3}}\,\mathrm{g/L} = 2{,}402\,\mathrm{g\,L^{-1}\,mL^{-1}} \cdot V$.
+3. Povprečna poraba: $\bar V = 149{,}84\,\mathrm{mL}/4 = 37{,}46\,\mathrm{mL}$; odmiki $-0{,}04$, $+0{,}09$, $+0{,}02$, $-0{,}07$; vsota kvadratov $0{,}0150\,\mathrm{mL^2}$; $s_V = \sqrt{0{,}0150/3} \approx 0{,}0707\,\mathrm{mL}$.
+4. Ker je $\gamma$ sorazmerna z $V$, se s istim faktorjem pomnožita povprečje in standardni odklon: $\bar\gamma = 2{,}402 \cdot 37{,}46 \approx 89{,}98\,\mathrm{g/L}$, $s_\gamma = 2{,}402 \cdot 0{,}0707 \approx 0{,}170\,\mathrm{g/L}$.
+5. Polovična širina: $\dfrac{3{,}182 \cdot 0{,}170}{\sqrt 4} \approx 0{,}27\,\mathrm{g/L}$, zaokroženo $0{,}3$; rezultat (a) je $\gamma = (90{,}0 \pm 0{,}3)\,\mathrm{g/L}$.
+6. (b) $t_\mathrm{izr} = \dfrac{|89{,}98 - 90{,}5| \cdot \sqrt 4}{0{,}170} \approx 6{,}1 > 3{,}182$, zato je razlika značilna; kis vsebuje manj kisline, kot navaja specifikacija.
+7. (c) Najmanjša zaznavna razlika je ravno polovična širina intervala, $ts/\sqrt n \approx 0{,}27\,\mathrm{g/L}$.
+8. Odgovor: $\gamma = (90{,}0 \pm 0{,}3)\,\mathrm{g/L}$; od specifikacije $90{,}5\,\mathrm{g/L}$ se značilno razlikuje; zaznamo razlike, večje od okoli $0{,}3\,\mathrm{g/L}$.
+
+### Naloga 2
+
+Naj bodo $x_1, \dots, x_n$ neodvisne meritve iste količine, vsaka s standardnim odklonom $\sigma$. (a) Dokaži, da je standardni odklon povprečja $\sigma/\sqrt n$. (b) Natančno navedi pogoje, pod katerimi leži prava vrednost s 95-% verjetnostjo v intervalu $\bar x \pm ts/\sqrt n$, in pojasni, zakaj vzamemo $t$ in ne $1{,}96$. (c) Utemelji, ali se interval pri enakem $s$ zoži na polovico, če namesto $4$ meritev ($t = 3{,}182$) opravimo $16$ ($t = 2{,}131$).
+
+**Rešitev:**
+
+1. Za neodvisne količine je varianca vsote enaka vsoti varianc, zato ima $\sum x_i$ varianco $n\sigma^2$.
+2. Za konstanto $k$ ima $kX$ varianco $k^2$-krat večjo. S $k = 1/n$ dobimo varianco povprečja $n\sigma^2/n^2 = \sigma^2/n$, torej $\sigma_{\bar x} = \sigma/\sqrt n$.
+3. Pogoji: meritve so neodvisne, normalno porazdeljene okoli prave vrednosti $\mu$ (ni sistematske napake), $\bar x$ in $s$ sta izračunana iz istih $n$ meritev.
+4. $\sigma$ ne poznamo in ga nadomestimo z oceno $s$, ki je pri malo meritvah sama negotova. Količina $(\bar x - \mu)\sqrt n/s$ zato sledi Studentovi porazdelitvi z $n-1$ prostostnimi stopnjami, ki ima širše repe od normalne; $t > 1{,}96$ in se $1{,}96$ približa šele pri velikem $n$.
+5. Razmerje polovičnih širin: $\dfrac{2{,}131/\sqrt{16}}{3{,}182/\sqrt 4} = \dfrac{0{,}533}{1{,}591} \approx 0{,}335$.
+6. Odgovor: $\sigma_{\bar x} = \sigma/\sqrt n$; interval se ne zoži le na polovico (to bi dal sam $\sqrt n$), ampak na približno tretjino, ker se zmanjša tudi $t$.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -198,6 +247,14 @@ Drugi izmeri petkrat, dobi $74$, $76$, $75$, $73$ in $77\,\mathrm{mm}$ in se ust
 Tretji meri desetkrat. Njegove meritve se raztresejo enako kot pri drugem, saj ima isti meter in iste roke. Ko pa izračuna interval zaupanja, je ta skoraj za polovico ožji. Šef zato zaupa tretjemu: ne zato, ker meri bolje, ampak ker ve, koliko svojemu povprečju lahko verjame.
 
 Pri poročilu vsi trije zapišejo le toliko števk, kolikor jih znajo upravičiti. Kdor napiše $75{,}2834\,\mathrm{mm}$, pove le, kako dolg je zaslon kalkulatorja.
+
+## Drugače: Uporaba v stroki
+
+**Validacija metode.** Pred uvedbo nove metode laboratorij izmeri ponovljivost (RSD zaporednih določitev istega vzorca) in pravilnost s t-testom na certificiranem referenčnem materialu, kot v Primeru 3.
+
+**Poročilo o analizi.** Akreditirani laboratoriji (SIST EN ISO/IEC 17025) rezultat podajo z merilno negotovostjo, npr. $(12{,}4 \pm 0{,}3)\,\mathrm{mg/L}$. Ali voda presega mejno vrednost, presodimo glede na ta interval, ne glede na golo povprečje.
+
+**Kontrolne karte.** V proizvodnji cementa ali zdravil vsak dan analizirajo kontrolni vzorec in rezultat vpišejo v Shewhartovo karto z opozorilnima mejama $\bar x \pm 2s$ in ukrepnima $\bar x \pm 3s$. Točka zunaj ukrepne meje pomeni, da se je postopek spremenil.
 
 ## Preveri se
 

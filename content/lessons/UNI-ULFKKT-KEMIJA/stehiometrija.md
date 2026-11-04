@@ -25,7 +25,7 @@ Za pline velja še $n = pV/(RT)$, za raztopine $n = c\,V$ (glej lekciji o plinih
 
 $$w(\mathrm{X}) = \frac{N(\mathrm{X})\,A_\mathrm{r}(\mathrm{X})}{M_\mathrm{r}(\text{spojine})},$$
 
-kjer je $N(\mathrm{X})$ število atomov X v formuli. V vodi je $w(\mathrm{H}) = 2{,}016/18{,}02 \approx 0{,}112$.
+kjer je $N(\mathrm{X})$ število atomov X v formuli. *Izpeljava:* $1\,\mathrm{mol}$ spojine ima maso $M$ in vsebuje $N(\mathrm{X})\,\mathrm{mol}$ atomov X z maso $N(\mathrm{X})\,M(\mathrm{X})$; razmerje mas je neodvisno od količine vzorca. V vodi je $w(\mathrm{H}) = 2{,}016/18{,}02 \approx 0{,}112$.
 
 **4. Stehiometrični koeficienti.** Urejena enačba ima na obeh straneh enako število atomov vsakega elementa (in enak naboj). Koeficienti povedo razmerje **množin**, ne mas. Iz enačbe
 
@@ -33,7 +33,11 @@ $$\mathrm{C_6H_{12}O_6 + 6\,O_2 \longrightarrow 6\,CO_2 + 6\,H_2O}$$
 
 sledi $n(\mathrm{CO_2}) : n(\mathrm{C_6H_{12}O_6}) = 6 : 1$, masi pa sta v povsem drugem razmerju. Splošno za reaktant A in produkt B s koeficientoma $\nu_\mathrm{A}$ in $\nu_\mathrm{B}$:
 
-$$\frac{n(\mathrm{A})}{\nu_\mathrm{A}} = \frac{n(\mathrm{B})}{\nu_\mathrm{B}}.$$
+$$\frac{n(\mathrm{A})}{\nu_\mathrm{A}} = \frac{n(\mathrm{B})}{\nu_\mathrm{B}},$$
+
+kjer je $n(\mathrm{A})$ zreagirana množina reaktanta in $n(\mathrm{B})$ nastala množina produkta.
+
+**Utemeljitev z reakcijskim obsegom.** Naj poteka ena sama reakcija $\sum_i \nu_i \mathrm{B}_i = 0$ (stehiometrična števila $\nu_i$ produktov pozitivna, reaktantov negativna). Ker se vsak »obrat« reakcije zgodi z vsemi snovmi hkrati, se množina vsake snovi spremeni sorazmerno s svojim koeficientom: $n_i = n_{i,0} + \nu_i\,\xi$, kjer je $\xi$ **reakcijski obseg** (enota mol), enak za vse snovi. Od tod $\Delta n_i/\nu_i = \xi$ za vsak $i$, kar je zgornja zveza (za reaktant je $-\Delta n_i$ zreagirana množina, $|\nu_i|$ pa njegov koeficient). Če hkrati potekajo stranske reakcije, zveza za posamezno enačbo ne velja več.
 
 :::premisli
 Zmešaš $10\,\mathrm{g}$ vodika in $10\,\mathrm{g}$ kisika. Ali zreagirata brez ostanka, saj sta masi enaki?
@@ -47,13 +51,19 @@ Ne. $n(\mathrm{H_2}) = 10/2{,}016 = 4{,}96\,\mathrm{mol}$, $n(\mathrm{O_2}) = 10
 2. **množina A → množina B** (razmerje koeficientov),
 3. **množina B → masa B** ($m = n\,M$).
 
-**6. Omejujoči reaktant.** Kadar reaktanti niso zmešani v stehiometričnem razmerju, bo enega zmanjkalo prej. To je **omejujoči reaktant**: določa, koliko produkta lahko nastane. Drugi reaktanti so v **presežku**. Omejujoči reaktant najdemo tako, da za vsak reaktant izračunamo razmerje $n/\nu$; najmanjše razmerje pripada omejujočemu reaktantu. Enakovredno: izračunamo, koliko produkta bi dal vsak reaktant posebej, in vzamemo manjšo vrednost.
+**6. Omejujoči reaktant.** Kadar reaktanti niso zmešani v stehiometričnem razmerju (razmerju koeficientov), bo enega zmanjkalo prej. To je **omejujoči reaktant**: določa, koliko produkta lahko nastane. Drugi reaktanti so v **presežku**. Omejujoči reaktant najdemo tako, da za vsak reaktant izračunamo razmerje $n/\nu$; najmanjše razmerje pripada omejujočemu reaktantu. Enakovredno: izračunamo, koliko produkta bi dal vsak reaktant posebej, in vzamemo manjšo vrednost.
+
+*Dokaz:* za reaktant je $\nu_i < 0$, zato $n_i = n_{i,0} - |\nu_i|\,\xi \ge 0$ velja le pri $\xi \le n_{i,0}/|\nu_i|$. To mora veljati za vse reaktante hkrati, zato je največji možni obseg
+
+$$\xi_\text{max} = \min_{i\ \text{reaktanti}} \frac{n_{i,0}}{|\nu_i|},$$
+
+reaktant, pri katerem je dosežen minimum, pa se porabi prvi. Teoretična množina produkta P je $\nu_\mathrm{P}\,\xi_\text{max}$.
 
 **7. Izkoristek.** **Teoretični izkoristek** je masa (ali množina) produkta, izračunana iz omejujočega reaktanta, ob predpostavki, da reakcija poteče do konca in brez izgub. V praksi dobimo manj: reakcija lahko doseže ravnotežje, potekajo stranske reakcije, del produkta izgubimo pri filtriranju in prekristalizaciji. **Izkoristek** reakcije je
 
 $$\eta = \frac{m_\text{dejanska}}{m_\text{teoretična}} \cdot 100\,\%.$$
 
-Pri večstopenjski sintezi se izkoristki posameznih stopenj zmnožijo: tri stopnje po $80\,\%$ dajo skupaj le $0{,}8^3 \approx 51\,\%$.
+Pri večstopenjski sintezi se izkoristki posameznih stopenj zmnožijo: tri stopnje po $80\,\%$ dajo skupaj le $0{,}8^3 \approx 51\,\%$. *Dokaz* (za izkoristke, izražene z množinami, in stopnje, kjer je produkt prejšnje stopnje omejujoči reaktant naslednje): stopnja $k$ da $n_k = \eta_k \cdot \nu_k n_{k-1}$, kjer je $\nu_k$ stehiometrično razmerje te stopnje. Po $s$ stopnjah je $n_s = (\eta_1\eta_2\cdots\eta_s)(\nu_1\cdots\nu_s)\,n_0$, teoretično pa $(\nu_1\cdots\nu_s)\,n_0$; njuno razmerje je $\eta_1\eta_2\cdots\eta_s$.
 
 :::premisli
 Sošolec pri vajah izračuna izkoristek $108\,\%$ in je ponosen na zelo dobro reakcijo. Kaj mu poveš?
@@ -68,7 +78,7 @@ Več produkta, kot ga dopušča omejujoči reaktant, ne more nastati, zato izkor
 3. če razmerja niso cela, jih pomnoži z majhnim celim številom ($1{,}5 \to \cdot 2$, $1{,}33 \to \cdot 3$),
 4. molekulsko formulo dobiš iz molske mase: $k = M(\text{spojine})/M(\text{empirične formule})$.
 
-Pri **sežigni analizi** organske spojine ves ogljik preide v $\mathrm{CO_2}$, ves vodik v $\mathrm{H_2O}$. Iz mas teh produktov izračunamo maso C in H, kisik pa dobimo kot razliko do mase vzorca.
+Pri **sežigni analizi** organske spojine ves ogljik preide v $\mathrm{CO_2}$, ves vodik v $\mathrm{H_2O}$. Iz mas teh produktov izračunamo maso C in H, kisik pa dobimo kot razliko do mase vzorca. Pogoji: sežig je popoln, vzorec je čist in vsebuje le C, H in O (drugače moramo druge elemente določiti posebej); ker je del kisika v produktih prišel iz zraka, kisika iz produktov ne računamo. Iz same sežigne analize dobimo le empirično formulo, za molekulsko potrebujemo še neodvisno izmerjeno molsko maso, npr. iz gostote pare ($M = mRT/(pV)$) ali masne spektrometrije.
 
 ## Rešeni primeri
 
@@ -113,23 +123,24 @@ Omejujoči reaktant ima najmanjše razmerje $n/\nu$. $\quad \eta = \dfrac{m_\tex
 
 ### Primer 3 (težji)
 
-Pri sežigu $0{,}2500\,\mathrm{g}$ spojine, ki vsebuje le ogljik, vodik in kisik, nastane $0{,}3664\,\mathrm{g}$ $\mathrm{CO_2}$ in $0{,}1500\,\mathrm{g}$ $\mathrm{H_2O}$. Masna spektrometrija pokaže molsko maso približno $180\,\mathrm{g/mol}$. Določi empirično in molekulsko formulo. $M(\mathrm{CO_2}) = 44{,}01\,\mathrm{g/mol}$, $M(\mathrm{H_2O}) = 18{,}02\,\mathrm{g/mol}$, $A_\mathrm{r}$: C $12{,}01$, H $1{,}008$, O $16{,}00$.
+Pri sežigu $0{,}2000\,\mathrm{g}$ hlapne tekočine, ki vsebuje le ogljik, vodik in kisik, nastane $0{,}3565\,\mathrm{g}$ $\mathrm{CO_2}$ in $0{,}1460\,\mathrm{g}$ $\mathrm{H_2O}$. Ko $0{,}250\,\mathrm{g}$ iste snovi povsem uparimo pri $100{,}0\,^\circ\mathrm{C}$ in $101{,}3\,\mathrm{kPa}$, zavzame para $103{,}4\,\mathrm{mL}$. Določi empirično in molekulsko formulo. $M(\mathrm{CO_2}) = 44{,}01\,\mathrm{g/mol}$, $M(\mathrm{H_2O}) = 18{,}02\,\mathrm{g/mol}$, $A_\mathrm{r}$: C $12{,}01$, H $1{,}008$, O $16{,}00$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$.
 
-**Podatki:** $m(\text{vzorca}) = 0{,}2500\,\mathrm{g}$, $m(\mathrm{CO_2}) = 0{,}3664\,\mathrm{g}$, $m(\mathrm{H_2O}) = 0{,}1500\,\mathrm{g}$, $M(\text{spojine}) \approx 180\,\mathrm{g/mol}$, $M(\mathrm{CO_2}) = 44{,}01\,\mathrm{g/mol}$, $M(\mathrm{H_2O}) = 18{,}02\,\mathrm{g/mol}$, $A_\mathrm{r}(\mathrm{C}) = 12{,}01$, $A_\mathrm{r}(\mathrm{H}) = 1{,}008$, $A_\mathrm{r}(\mathrm{O}) = 16{,}00$
+**Podatki:** $m(\text{vzorca}) = 0{,}2000\,\mathrm{g}$, $m(\mathrm{CO_2}) = 0{,}3565\,\mathrm{g}$, $m(\mathrm{H_2O}) = 0{,}1460\,\mathrm{g}$, para: $m = 0{,}250\,\mathrm{g}$, $T = 373{,}15\,\mathrm{K}$, $p = 101{,}3\,\mathrm{kPa}$, $V = 103{,}4\,\mathrm{mL}$, $M(\mathrm{CO_2}) = 44{,}01\,\mathrm{g/mol}$, $M(\mathrm{H_2O}) = 18{,}02\,\mathrm{g/mol}$, $A_\mathrm{r}(\mathrm{C}) = 12{,}01$, $A_\mathrm{r}(\mathrm{H}) = 1{,}008$, $A_\mathrm{r}(\mathrm{O}) = 16{,}00$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$
 **Iščemo:** empirično in molekulsko formulo
 
 :::formula
-$n(\mathrm{C}) = n(\mathrm{CO_2})$, $\quad n(\mathrm{H}) = 2\,n(\mathrm{H_2O})$, $\quad m(\mathrm{O}) = m(\text{vzorca}) - m(\mathrm{C}) - m(\mathrm{H})$, $\quad k = \dfrac{M(\text{spojine})}{M(\text{empirične formule})}$
+$n(\mathrm{C}) = n(\mathrm{CO_2})$, $\quad n(\mathrm{H}) = 2\,n(\mathrm{H_2O})$, $\quad m(\mathrm{O}) = m(\text{vzorca}) - m(\mathrm{C}) - m(\mathrm{H})$, $\quad M = \dfrac{mRT}{pV}$, $\quad k = \dfrac{M(\text{spojine})}{M(\text{empirične formule})}$
 :::
 
 **Rešitev:**
 
-1. Ogljik (ves ogljik vzorca je v $\mathrm{CO_2}$, en atom C na molekulo): $n(\mathrm{C}) = 0{,}3664 / 44{,}01 = 0{,}008\,325\,\mathrm{mol}$, $m(\mathrm{C}) = 0{,}008\,325 \cdot 12{,}01 = 0{,}1000\,\mathrm{g}$.
-2. Vodik (dva atoma H na molekulo vode): $n(\mathrm{H}) = 2 \cdot 0{,}1500 / 18{,}02 = 0{,}016\,65\,\mathrm{mol}$, $m(\mathrm{H}) = 0{,}016\,65 \cdot 1{,}008 = 0{,}016\,78\,\mathrm{g}$.
-3. Kisik kot razlika, ker je del kisika v produktih prišel iz zraka: $m(\mathrm{O}) = 0{,}2500 - 0{,}1000 - 0{,}0168 = 0{,}1332\,\mathrm{g}$, $n(\mathrm{O}) = 0{,}1332/16{,}00 = 0{,}008\,326\,\mathrm{mol}$.
-4. Delimo z najmanjšo množino ($0{,}008\,325$): $\mathrm{C} : \mathrm{H} : \mathrm{O} = 1{,}000 : 2{,}000 : 1{,}000$. Empirična formula je $\mathrm{CH_2O}$.
-5. $M(\mathrm{CH_2O}) = 12{,}01 + 2{,}016 + 16{,}00 = 30{,}03\,\mathrm{g/mol}$, $k = 180/30{,}03 \approx 5{,}99 \approx 6$.
-6. Odgovor: empirična formula je $\mathrm{CH_2O}$, molekulska pa $\mathrm{C_6H_{12}O_6}$ (npr. glukoza ali fruktoza; sama formula izomerov ne loči).
+1. Ogljik (ves ogljik vzorca je v $\mathrm{CO_2}$, en atom C na molekulo): $n(\mathrm{C}) = 0{,}3565 / 44{,}01 = 0{,}008\,100\,\mathrm{mol}$, $m(\mathrm{C}) = 0{,}008\,100 \cdot 12{,}01 = 0{,}097\,29\,\mathrm{g}$.
+2. Vodik (dva atoma H na molekulo vode): $n(\mathrm{H}) = 2 \cdot 0{,}1460 / 18{,}02 = 0{,}016\,20\,\mathrm{mol}$, $m(\mathrm{H}) = 0{,}016\,20 \cdot 1{,}008 = 0{,}016\,33\,\mathrm{g}$.
+3. Kisik kot razlika, ker je del kisika v produktih prišel iz zraka: $m(\mathrm{O}) = 0{,}2000 - 0{,}097\,29 - 0{,}016\,33 = 0{,}086\,38\,\mathrm{g}$, $n(\mathrm{O}) = 0{,}086\,38/16{,}00 = 0{,}005\,399\,\mathrm{mol}$.
+4. Delimo z najmanjšo množino ($0{,}005\,399$): $\mathrm{C} : \mathrm{H} : \mathrm{O} = 1{,}500 : 3{,}001 : 1{,}000$. Razmerje $1{,}5$ ni zaokrožitvena napaka, zato vse pomnožimo z $2$: $3 : 6 : 2$. Empirična formula je $\mathrm{C_3H_6O_2}$.
+5. Molska masa iz plinske enačbe (para se pri teh pogojih obnaša približno idealno): $M = \dfrac{0{,}250\,\mathrm{g} \cdot 8{,}314\,\mathrm{J/(mol\,K)} \cdot 373{,}15\,\mathrm{K}}{101{,}3 \cdot 10^3\,\mathrm{Pa} \cdot 1{,}034 \cdot 10^{-4}\,\mathrm{m^3}} \approx 74{,}0\,\mathrm{g/mol}$.
+6. $M(\mathrm{C_3H_6O_2}) = 3 \cdot 12{,}01 + 6 \cdot 1{,}008 + 2 \cdot 16{,}00 = 74{,}08\,\mathrm{g/mol}$, $k = 74{,}0/74{,}08 \approx 1$.
+7. Odgovor: empirična in molekulska formula sta enaki, $\mathrm{C_3H_6O_2}$ (npr. metil acetat ali etil formiat; sama formula izomerov ne loči).
 
 ### Primer 4 – zdaj ti
 
@@ -174,6 +185,43 @@ $m(\mathrm{CO_2}) = 14{,}97\,\mathrm{mol} \cdot 44{,}01\,\mathrm{g/mol} \approx 
 - **Izkoristek** $\eta = m_\text{dejanska}/m_\text{teoretična} \cdot 100\,\%$; pri več stopnjah se izkoristki množijo.
 - **Empirična formula**: množine elementov, deli z najmanjšo, pomnoži do celih števil; **molekulska** je njen $k$-kratnik, $k = M/M_\text{emp}$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo mola (SI 2019), Avogadrove konstante in molske mase ter zvezo $n = m/M = N/N_\mathrm{A}$;
+- definicijo reakcijskega obsega $n_i = n_{i,0} + \nu_i\xi$ in iz nje izpeljavo, da so koeficienti razmerja množin;
+- definicijo omejujočega reaktanta in dokaz, da ima najmanjši $n_{i,0}/|\nu_i|$ ($\xi_\text{max}$);
+- definicijo teoretičnega izkoristka in izkoristka ter dokaz, da se izkoristki zaporednih stopenj množijo;
+- definiciji empirične in molekulske formule ter pogoje sežigne analize.
+
+### Naloga 1
+
+Acetilsalicilno kislino ($\mathrm{C_9H_8O_4}$, $M = 180{,}16\,\mathrm{g/mol}$) pripravimo iz salicilne kisline ($\mathrm{C_7H_6O_3}$, $M = 138{,}12\,\mathrm{g/mol}$) in acetanhidrida ($\mathrm{C_4H_6O_3}$, $M = 102{,}09\,\mathrm{g/mol}$, $\rho = 1{,}08\,\mathrm{g/mL}$): $\mathrm{C_7H_6O_3 + C_4H_6O_3 \to C_9H_8O_4 + CH_3COOH}$. Zmešamo $5{,}00\,\mathrm{g}$ salicilne kisline in $7{,}00\,\mathrm{mL}$ acetanhidrida in dobimo $5{,}20\,\mathrm{g}$ surovega produkta, v katerem je masni delež acetilsalicilne kisline $95{,}0\,\%$. a) Kateri reaktant je omejujoči in koliko reaktanta v presežku ostane? b) Kolikšen je izkoristek? c) Koliko salicilne kisline potrebujemo za $100\,\mathrm{g}$ čiste acetilsalicilne kisline pri enakem izkoristku?
+
+**Rešitev:**
+
+1. Množini: $n(\text{salicilne}) = 5{,}00/138{,}12\,\mathrm{mol} = 0{,}036\,20\,\mathrm{mol}$; acetanhidrid ima maso $7{,}00\,\mathrm{mL} \cdot 1{,}08\,\mathrm{g/mL} = 7{,}56\,\mathrm{g}$, torej $n = 7{,}56/102{,}09\,\mathrm{mol} = 0{,}074\,05\,\mathrm{mol}$.
+2. Oba koeficienta sta $1$, zato je $n/\nu$ manjši pri salicilni kislini: ta je **omejujoči reaktant**, $\xi_\text{max} = 0{,}036\,20\,\mathrm{mol}$.
+3. Presežek: $0{,}074\,05 - 0{,}036\,20 = 0{,}037\,85\,\mathrm{mol}$ acetanhidrida, kar je $0{,}037\,85 \cdot 102{,}09\,\mathrm{g} \approx 3{,}86\,\mathrm{g}$.
+4. Teoretična masa: $m_\text{teor} = 0{,}036\,20 \cdot 180{,}16\,\mathrm{g} = 6{,}522\,\mathrm{g}$.
+5. Dejanska masa čistega produkta (nečistoče ne štejemo): $5{,}20 \cdot 0{,}950\,\mathrm{g} = 4{,}94\,\mathrm{g}$; $\eta = 4{,}94/6{,}522 \cdot 100\,\% \approx 75{,}7\,\%$.
+6. c) Za $100\,\mathrm{g}$ produkta potrebujemo teoretično $100/180{,}16\,\mathrm{mol} = 0{,}5551\,\mathrm{mol}$; pri izkoristku $\eta = 0{,}7575$ moramo vzeti $0{,}5551/0{,}7575\,\mathrm{mol} = 0{,}7328\,\mathrm{mol}$ salicilne kisline, kar je $0{,}7328 \cdot 138{,}12\,\mathrm{g} \approx 101\,\mathrm{g}$.
+7. Odgovor: omejujoča je salicilna kislina, ostane okoli $3{,}86\,\mathrm{g}$ acetanhidrida, izkoristek je okoli $75{,}7\,\%$, za $100\,\mathrm{g}$ produkta potrebujemo okoli $101\,\mathrm{g}$ salicilne kisline.
+
+### Naloga 2
+
+Naj poteka ena sama reakcija $\sum_i \nu_i \mathrm{B}_i = 0$. a) Natančno definiraj reakcijski obseg in dokaži, da je masa sistema med reakcijo stalna, če je enačba urejena. b) Natančno definiraj omejujoči reaktant in dokaži, da je to reaktant z najmanjšim $n_{i,0}/|\nu_i|$. c) Utemelji, ali je reaktant z najmanjšo množino nujno omejujoči.
+
+**Rešitev:**
+
+1. a) Reakcijski obseg $\xi$ je količina z enoto mol, za katero velja $n_i = n_{i,0} + \nu_i\xi$ za vse snovi; pri $\xi = 1\,\mathrm{mol}$ reakcija poteče enkrat v molskem merilu, kot je zapisana.
+2. Masa sistema: $m = \sum_i n_i M_i = \sum_i n_{i,0}M_i + \xi\sum_i \nu_i M_i$.
+3. Urejena enačba ima na obeh straneh enako število atomov vsakega elementa; ker je $M_i$ vsota molskih mas atomov, je $\sum_i \nu_i M_i = 0$. Torej $m = \sum_i n_{i,0}M_i$ za vsak $\xi$: masa se ohranja.
+4. b) Omejujoči reaktant je reaktant, ki se ob popolnem poteku reakcije porabi prvi in zato določa največji obseg. Za reaktant je $\nu_i < 0$ in pogoj $n_i \ge 0$ da $\xi \le n_{i,0}/|\nu_i|$. Vsi pogoji hkrati dajo $\xi_\text{max} = \min_i n_{i,0}/|\nu_i|$; pri tem $\xi$ je množina reaktanta, kjer je dosežen minimum, enaka $0$, drugih pa še pozitivna.
+5. c) Ne. Pri $\mathrm{2\,H_2 + O_2 \to 2\,H_2O}$ z $1{,}0\,\mathrm{mol}$ $\mathrm{H_2}$ in $0{,}60\,\mathrm{mol}$ $\mathrm{O_2}$ je kisika manj, a $n/|\nu|$ je za vodik $0{,}50\,\mathrm{mol}$, za kisik $0{,}60\,\mathrm{mol}$: omejujoči je vodik, ostane $0{,}10\,\mathrm{mol}$ kisika.
+6. Odgovor: masa se ohranja, ker je $\sum_i \nu_i M_i = 0$; omejujoči reaktant je določen z najmanjšim $n_{i,0}/|\nu_i|$, ne z najmanjšo množino ali maso.
+
 ## Drugače: Na sliki
 
 Vsak stehiometrijski račun je pot po tem zemljevidu:
@@ -190,15 +238,17 @@ Vodoravna pot vedno teče skozi **množino**. Mase dveh različnih snovi nikoli 
 
 Omejujoči reaktant si predstavljaj kot sestavljanje koles: vsako kolo potrebuje $1$ okvir in $2$ obroča. Iz $10$ okvirjev in $14$ obročev sestaviš le $7$ koles (obroči so omejujoči, razmerje $14/2 = 7 < 10/1$), $3$ okvirji ostanejo. Pri reakciji v Primeru 2 so »okvirji« molekule $\mathrm{Fe_2O_3}$, »obroči« atomi Al, le da je tam omejujoči ravno $\mathrm{Fe_2O_3}$.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Zračna blazina v avtomobilu.** Ob trku se sproži razpad natrijevega azida: $\mathrm{2\,NaN_3 \to 2\,Na + 3\,N_2}$. Iz $65{,}0\,\mathrm{g}$ $\mathrm{NaN_3}$ ($M = 65{,}02\,\mathrm{g/mol}$, torej $1{,}000\,\mathrm{mol}$) nastane $1{,}500\,\mathrm{mol}$ dušika. Pri $25\,^\circ\mathrm{C}$ in $100\,\mathrm{kPa}$ je to $V = nRT/p \approx 37{,}2\,\mathrm{L}$ plina, kar napolni blazino v nekaj stotinkah sekunde. Konstruktor mora natanko izračunati maso azida: premalo pomeni mehko blazino, preveč pa nevarno trdo.
+**Farmacevtska industrija.** Sinteza zdravilne učinkovine ima pogosto deset in več stopenj. Če ima vsaka izkoristek $90\,\%$, je skupni izkoristek $0{,}9^{10} \approx 35\,\%$. Zato procesni kemiki iščejo krajše poti, dražji reaktant pa namenoma naredijo omejujočega, cenejšega dodajo v presežku (kot acetanhidrid v Nalogi 1).
 
-**Gnojila in prehrana rastlin.** Kmetijski svetovalec priporoči $120\,\mathrm{kg}$ dušika na hektar. Ker je v amonijevem nitratu $\mathrm{NH_4NO_3}$ masni delež dušika $2 \cdot 14{,}01 / 80{,}05 \approx 0{,}35$, je treba posuti približno $343\,\mathrm{kg}$ gnojila. Isti račun z masnimi deleži uporabljamo pri hrani za živali in pri sestavi gojišč za mikroorganizme.
+**Analitski laboratorij: elementna analiza.** Avtomatski analizator CHN vzorec nekaj miligramov sežge v kisiku, nastale $\mathrm{CO_2}$, $\mathrm{H_2O}$ in $\mathrm{N_2}$ pa loči in izmeri. Pri objavi nove spojine se izmerjeni masni deleži ne smejo razlikovati od izračunanih iz formule za več kot okoli $0{,}4$ odstotne točke, kar velja kot merilo čistosti.
 
-**Presnova.** Iz enačbe celičnega dihanja (Primer 1) vidimo, da se za vsak mol glukoze porabi $6\,\mathrm{mol}$ $\mathrm{O_2}$ in nastane $6\,\mathrm{mol}$ $\mathrm{CO_2}$. Razmerje $n(\mathrm{CO_2})/n(\mathrm{O_2})$, **respiracijski koeficient**, je za ogljikove hidrate $1$, za maščobe okoli $0{,}7$. Fiziologi ga merijo v izdihanem zraku in iz njega ocenijo, kaj telo »kuri«.
+**Inženirstvo: zračna blazina.** Ob trku razpade natrijev azid: $\mathrm{2\,NaN_3 \to 2\,Na + 3\,N_2}$. Iz $65{,}0\,\mathrm{g}$ $\mathrm{NaN_3}$ ($M = 65{,}02\,\mathrm{g/mol}$, torej $1{,}000\,\mathrm{mol}$) nastane $1{,}500\,\mathrm{mol}$ dušika, pri $25\,^\circ\mathrm{C}$ in $100\,\mathrm{kPa}$ okoli $37{,}2\,\mathrm{L}$. Premalo azida pomeni mehko blazino, preveč nevarno trdo.
 
-**Industrijska sinteza.** V farmacevtski industriji ima sinteza zdravilne učinkovine pogosto deset in več stopenj. Če ima vsaka izkoristek $90\,\%$, je skupni izkoristek $0{,}9^{10} \approx 35\,\%$. Zato kemiki iščejo krajše poti in dražji reaktant pogosto namenoma naredijo omejujočega, cenejšega pa dodajo v presežku.
+**Fiziologija in klinična prehrana.** Pri popolni oksidaciji glukoze (Primer 1) se za vsak mol porabi $6\,\mathrm{mol}$ $\mathrm{O_2}$ in nastane $6\,\mathrm{mol}$ $\mathrm{CO_2}$. Razmerje $n(\mathrm{CO_2})/n(\mathrm{O_2})$, **respiracijski koeficient**, je za ogljikove hidrate $1$, za maščobe okoli $0{,}7$; z merjenjem v izdihanem zraku (posredna kalorimetrija) ocenijo, kaj telo porablja.
+
+**Agronomija.** Za $120\,\mathrm{kg}$ dušika na hektar je pri masnem deležu dušika v $\mathrm{NH_4NO_3}$ $2 \cdot 14{,}01 / 80{,}05 \approx 0{,}35$ treba posuti približno $343\,\mathrm{kg}$ gnojila.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -214,19 +264,11 @@ Koliko gramov vode nastane, če zmešamo $3{,}00\,\mathrm{g}$ vodika in $16{,}0\
 
 **Definicija mola (SI, 2019).** Mol je definiran z dogovorjeno vrednostjo Avogadrove konstante: $N_\mathrm{A} = 6{,}022\,140\,76 \cdot 10^{23}\,\mathrm{mol^{-1}}$ natanko. Molska masa ogljika-12 zato ni več natanko $12\,\mathrm{g/mol}$, temveč je izmerjena količina, ki se od te vrednosti razlikuje šele okoli desetega značilnega mesta; za vse praktične račune je razlika zanemarljiva. Relativne atomske mase v periodnem sistemu so povprečja po naravni izotopski sestavi in zato ponekod podane kot intervali.
 
-**Reakcijski obseg.** Napredovanje reakcije $\sum_i \nu_i \mathrm{B}_i = 0$ (koeficienti produktov pozitivni, reaktantov negativni) opišemo z **reakcijskim obsegom** $\xi$ (enota mol):
-
-$$n_i = n_{i,0} + \nu_i\,\xi.$$
-
-Za vse snovi velja isti $\xi$, kar je natančen zapis stavka »koeficienti so razmerja množin«. Ker množine ne morejo biti negativne, je največji možni obseg
-
-$$\xi_\text{max} = \min_{i\ \text{reaktanti}} \frac{n_{i,0}}{|\nu_i|},$$
-
-reaktant, pri katerem je dosežen minimum, pa je omejujoči. Teoretični izkoristek produkta P je $n_\mathrm{P} = \nu_\mathrm{P}\,\xi_\text{max}$, izkoristek pa $\eta = \xi_\text{dejanski}/\xi_\text{max}$. V Primeru 2 je $\xi_\text{max} = 0{,}3131\,\mathrm{mol}$.
+**Reakcijski obseg in izkoristek.** Z reakcijskim obsegom $\xi$ iz Razlage je izkoristek preprosto $\eta = \xi_\text{dejanski}/\xi_\text{max}$, neodvisno od tega, ali ga merimo z maso ali množino produkta. V Primeru 2 je $\xi_\text{max} = 0{,}3131\,\mathrm{mol}$. Pri ravnotežnih reakcijah $\xi_\text{max}$ ni dosežen niti teoretično; največji obseg tam določa konstanta ravnotežja.
 
 **Ekonomičnost atomov.** V zeleni kemiji poleg izkoristka računamo še **atomsko ekonomičnost**: delež mase vseh reaktantov, ki konča v želenem produktu, $\mathrm{AE} = \nu_\mathrm{P}M_\mathrm{P} / \sum |\nu_i| M_i$ (po reaktantih). Za aluminotermijo z železom kot želenim produktom je $\mathrm{AE} = 2 \cdot 55{,}85/(159{,}70 + 2 \cdot 26{,}98) \approx 0{,}52$; skoraj polovica mase konča v $\mathrm{Al_2O_3}$.
 
-**Natančnost in značilna mesta.** Rezultat ne more biti natančnejši od najmanj natančnega podatka. V Primeru 3 so mase podane na štiri značilna mesta, zato dobimo razmerje $1{,}000 : 2{,}000 : 1{,}000$; pri realnih meritvah (napake okoli $0{,}3\,\%$) dobimo npr. $1{,}00 : 1{,}98 : 1{,}02$ in zaokrožimo. Razmerje $2{,}5$ ali $1{,}33$ pa nikoli ne zaokrožimo, ker pomeni empirično formulo z večkratniki ($\cdot 2$ ali $\cdot 3$).
+**Natančnost in značilna mesta.** Rezultat ne more biti natančnejši od najmanj natančnega podatka. V Primeru 3 so mase podane na štiri značilna mesta, zato dobimo razmerje $1{,}500 : 3{,}001 : 1{,}000$; pri realnih meritvah (napake okoli $0{,}3\,\%$) dobimo npr. $1{,}00 : 1{,}98 : 1{,}02$ in zaokrožimo. Razmerje $2{,}5$ ali $1{,}33$ pa nikoli ne zaokrožimo, ker pomeni empirično formulo z večkratniki ($\cdot 2$ ali $\cdot 3$).
 
 ## Preveri se
 
@@ -290,5 +332,9 @@ n_{i,0} | začetna množina snovi i | | mol
 \xi | reakcijski obseg | | mol | enak za vse snovi v reakciji
 \xi_\text{max} | največji reakcijski obseg | \xi_\text{max} = \min_{i\ \text{reaktanti}} \frac{n_{i,0}}{\lvert\nu_i\rvert} | mol | določa ga omejujoči reaktant
 i | oznaka snovi v reakciji | |
+R | splošna plinska konstanta | | J/(mol K) | 8,314 J/(mol K)
+T | absolutna temperatura | | K
+p | tlak plina | | Pa
+V | prostornina plina | V = \frac{nRT}{p} | m^3
 k | razmerje molekulske in empirične formule | k = M(\text{spojine})/M(\text{empirične formule}) | – | celo število
 :::

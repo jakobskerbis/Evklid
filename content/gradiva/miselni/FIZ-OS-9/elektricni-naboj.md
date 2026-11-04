@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Protoni in elektroni
+  - proton $+$, elektron $-$, enako velik naboj
+  - enako obojih: telo je nevtralno
+- Elektrenje z drgnjenjem
+  - premikajo se le elektroni
+  - prejme elektrone: $-$, odda: $+$
+  - napaka: protoni se ne premikajo
+- Ohranitev naboja
+  - naboj se le prerazporedi
+  - telesi enako močno, nasprotno nabiti
+- Elektrina
+  - $e = N \cdot e_0$, enota $\mathrm{As}$
+  - $e_0 = 1{,}6 \cdot 10^{-19}\,\mathrm{As}$
+- Sile med naboji
+  - istoimenska se odbijata, raznoimenska privlačita
+  - večja pri večjem naboju, manjši razdalji
+  - elektroskop: lističa se razmakneta
+- Influenca
+  - nabito telo privlači tudi nevtralno
+  - balon na steni, prah na zaslonu
+- Prevodniki in izolatorji
+  - kovine prevajajo, plastika in steklo ne
+  - ozemljitev: naboj odteče v zemljo

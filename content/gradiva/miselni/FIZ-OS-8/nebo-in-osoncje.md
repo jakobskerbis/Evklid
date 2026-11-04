@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vrtenje Zemlje
+  - en obrat v $24\,\mathrm{h}$: dan in noč
+  - $15^\circ$ na uro
+  - Sonce navidezno vzhaja na vzhodu
+- Kroženje okoli Sonca
+  - eno leto, približno $365$ dni
+  - nagib osi povzroča letne čase
+  - napaka: poleti nismo bliže Soncu
+- Luna
+  - kroži okoli Zemlje, sama ne sveti
+  - Sonce osvetljuje vedno njeno polovico
+- Lunine mene
+  - mlaj, prvi krajec, ščip, zadnji krajec
+  - od ščipa do ščipa $29{,}5$ dni
+  - napaka: mene niso Zemljina senca
+- Sončev mrk
+  - Luna med Soncem in Zemljo
+  - le ob mlaju, viden v ozkem pasu
+- Lunin mrk
+  - Luna v Zemljini senci, le ob ščipu
+  - vidi ga vsa nočna polovica Zemlje
+- Ni mrka vsak mesec
+  - Lunina tirnica nagnjena za približno $5^\circ$

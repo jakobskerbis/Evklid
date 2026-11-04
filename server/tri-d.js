@@ -54,9 +54,11 @@ export function modelList() {
   return listCache.body;
 }
 
-// CSP strani /3d: osnovna politika + WebAssembly za dekodirnik meshopt (nič drugega).
+// CSP strani /3d: osnovna politika + WebAssembly za dekodirnik meshopt. Okvir je dovoljen samo strani istega izvora
+// (»Uči se« → 3D svet odpre atlas ali model čez cel zaslon v okvirju, public/uci-se.js); drugi izvori ne.
 export function cspFor3d(base) {
   const d = { ...base, "script-src": [...base["script-src"], "'wasm-unsafe-eval'"] };
+  if (d["frame-ancestors"]) d["frame-ancestors"] = ["'self'"];
   return Object.entries(d)
     .map(([k, v]) => `${k} ${v.join(" ")}`)
     .join("; ");
@@ -112,6 +114,7 @@ export function mount3d(app, { csp, modules }) {
   const header = cspFor3d(csp);
   const send = (_req, res) => {
     res.set("Content-Security-Policy", header);
+    res.set("X-Frame-Options", "SAMEORIGIN"); // starejši brskalniki brez frame-ancestors: isto pravilo
     res.set("Cache-Control", "no-cache").type("html").sendFile(page);
   };
   app.get("/3d", send);
