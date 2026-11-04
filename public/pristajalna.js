@@ -104,7 +104,7 @@ export function landingHtml({ name, prices = null, money = (x) => String(x) } = 
       <h2 id="land-lv-h">${esc(t("land.lvTitle"))}</h2>
       <ul class="land-grid land-levels">${levels}</ul>
       ${lp.family ? `<p class="land-note">${esc(t("land.family", { price: lp.family }))}</p>` : ""}
-      <p class="land-note">${days ? `${esc(t("land.trial", { n: days }))} ` : ""}${esc(t("land.freeAfter"))}</p>
+      <p class="land-note">${esc(t("land.freeAfter"))}</p>
     </section>
     <section class="land-sec" aria-labelledby="land-how-h">
       <h2 id="land-how-h">${esc(t("land.howTitle"))}</h2>

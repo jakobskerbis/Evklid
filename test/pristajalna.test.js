@@ -43,6 +43,8 @@ test("account.js: nov obiskovalec dobi pristajalno stran, znana naprava prijavo;
   assert.match(src, /hashMode\(\) \|\| \(store\.get\(SEEN\) \? "login" : null\)/);
   assert.match(src, /store\.set\(SEEN, "1"\)/);
   assert.match(src, /addEventListener\("popstate"/);
+  // Pozabljeno geslo ima svoj zapis, da Nazaj z njega vrne na prijavo, ne na registracijo ali pristajalno stran.
+  assert.match(src, /"#pozabljeno-geslo": "forgot"/);
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
   assert.match(app, /popstate", \(\) => \{\n[^\n]*\n\s*if \(document\.body\.classList\.contains\("auth-mode"\)\) return;/);
 });

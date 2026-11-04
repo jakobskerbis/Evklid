@@ -306,7 +306,7 @@ export async function initAccount({ onReady }) {
   addEventListener("popstate", () => {
     if (status?.logged_in || !document.body.classList.contains("auth-mode")) return;
     const m = hashMode();
-    if (m) renderLogin(m);
+    if (m) renderAuthMode(m);
     else renderLanding();
   });
 
@@ -377,32 +377,41 @@ function guardLogoOnAuth() {
 
 // Naprava, na kateri je bil kdo že prijavljen: neprijavljen obiskovalec dobi takoj prijavo, ne pristajalne strani.
 const SEEN = "evklid.racun";
-const AUTH_HASH = { "#prijava": "login", "#registracija": "register" };
+const AUTH_HASH = { "#prijava": "login", "#registracija": "register", "#pozabljeno-geslo": "forgot" };
 const hashMode = () => AUTH_HASH[location.hash] || null;
+const hashOf = (mode) => Object.keys(AUTH_HASH).find((h) => AUTH_HASH[h] === mode) || "";
+const renderAuthMode = (mode) => (mode === "forgot" ? renderForgot() : renderLogin(mode));
 
 // Pristajalna stran ↔ prijava ↔ registracija, z zapisom v zgodovini (#prijava, #registracija), da Nazaj deluje.
 function goAuth(mode) {
-  const hash = Object.keys(AUTH_HASH).find((h) => AUTH_HASH[h] === mode) || "";
+  const hash = hashOf(mode);
   if (location.hash !== hash) history.pushState(null, "", hash || location.pathname + location.search);
-  if (mode) renderLogin(mode);
-  else renderLanding();
+  const shown = mode ? renderAuthMode(mode) : renderLanding();
   scrollTo(0, 0);
+  // Fokus na naslov novega zaslona (tipkovnica, bralnik zaslona); brez odpiranja tipkovnice na telefonu.
+  Promise.resolve(shown).then(() => {
+    const h = $("#view-auth h1");
+    if (!h) return;
+    h.tabIndex = -1;
+    h.focus({ preventScroll: true });
+  });
 }
 
 // Cene in preizkus za pristajalno stran (isti podatki kot na strani za starše); največ 1,5 s čakanja.
-let landingPrices;
+let landingPrices, landingReq;
 function loadLandingPrices() {
-  if (landingPrices) return landingPrices;
+  if (landingReq) return landingPrices;
   const region = deviceRegion();
-  const req = api(`/api/account/prices${region ? `?country=${region}` : ""}`).catch(() => null);
-  landingPrices = Promise.race([req, new Promise((r) => setTimeout(() => r(null), 1500))]);
-  req.then((p) => p && (landingPrices = Promise.resolve(p)));
+  landingReq = api(`/api/account/prices${region ? `?country=${region}` : ""}`).catch(() => null);
+  landingPrices = Promise.race([landingReq, new Promise((r) => setTimeout(() => r(null), 1500))]);
+  landingReq.then((p) => p && (landingPrices = Promise.resolve(p)));
   return landingPrices;
 }
 
 async function renderLanding() {
   const prices = await loadLandingPrices();
-  if (status?.logged_in) return;
+  // Med čakanjem na cene je obiskovalec morda že odšel na prijavo ali registracijo.
+  if (status?.logged_in || hashMode()) return;
   authMode(true);
   document.body.classList.add("land-mode");
   const name = document.querySelector(".topbar .brand-name")?.textContent || "";
@@ -416,13 +425,15 @@ async function renderLanding() {
     }),
   );
   // Cene so prišle po izrisu (počasna povezava): kartice stopenj dopolnimo, ko pridejo.
-  if (!prices) loadLandingPrices().then((p) => p && document.body.classList.contains("land-mode") && renderLanding());
+  if (!prices) landingReq.then((p) => p && document.body.classList.contains("land-mode") && renderLanding());
 }
 
 async function route() {
   if (!status.logged_in) {
     const mode = route.firstMode || hashMode() || (store.get(SEEN) ? "login" : null);
-    return (mode ? renderLogin(mode) : await renderLanding()), false;
+    // Prijava dobi svoj zapis (#prijava), da »Kaj je Evklid?« in nato Nazaj vrneta na prijavo.
+    if (mode && !hashMode()) history.replaceState(null, "", location.pathname + location.search + hashOf(mode));
+    return (mode ? renderAuthMode(mode) : await renderLanding()), false;
   }
   store.set(SEEN, "1");
   if (hashMode()) history.replaceState(null, "", location.pathname + location.search);
@@ -593,8 +604,7 @@ function bindLinks() {
     a.addEventListener("click", (e) => {
       e.preventDefault();
       const go = a.dataset.go;
-      if (go === "forgot") renderForgot();
-      else goAuth(go === "landing" ? null : go);
+      goAuth(go === "landing" ? null : go);
     }),
   );
 }
