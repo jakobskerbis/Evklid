@@ -3555,5 +3555,19 @@
   "akt.more": "Mai mult",
   "sch.addAt": "Adaugă o oră: {day}, {time}",
   "lg.free": "loc liber",
-  "corner.more": "Adaugă încă un domeniu"
+  "corner.more": "Adaugă încă un domeniu",
+  "open.group": "Deschide în aplicație",
+  "open.sim": "Experiment",
+  "open.3d": "3D",
+  "open.lesson": "Manual",
+  "open.game": "Joc",
+  "open.locked": "blocat",
+  "open.close": "Închide",
+  "open.preset": "Tutorele a setat aceste valori. Schimbă-le și observă ce se întâmplă.",
+  "open.failed": "Nu s-a putut încărca.",
+  "open.formula": "Formulă",
+  "open.formulas": "Culegere de formule",
+  "open.graph": "Grafic",
+  "open.inCalc": "Deschide în calculator",
+  "open.sketch": "Schiță"
 }

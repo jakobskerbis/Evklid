@@ -34,6 +34,7 @@ import { cleanText, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
 import { isHiddenNote } from "./skrite-opombe.js";
 import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
+import { resolveOpen } from "./odpri.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
 import { mountAccounts } from "./accounts/index.js";
 import { passwordGate, gateNeeded } from "./gate.js";
@@ -454,6 +455,13 @@ export function createApp(store, opts = {}) {
     return modes.length === FULL_AFTER && modes.every((m) => m === "A");
   };
 
+  // Gumbi za orodja aplikacije pod odgovorom; zaklep interaktivnih delov kot v učbeniku.
+  const openOf = async (raw, student) => {
+    if (!/<<\s*(?:ODPRI|GRAF|SKICA)\b/.test(raw || "")) return undefined;
+    const canOpen = accounts ? (topicId) => accounts.lessonInteractive(student.id, topicId) : null;
+    const list = await resolveOpen(raw, student.settings, { canOpen });
+    return list.length ? list : undefined;
+  };
   const choicesOf = (raw) => {
     const c = parseChoices(raw);
     return c.length ? c : undefined;
@@ -461,7 +469,7 @@ export function createApp(store, opts = {}) {
   // Surovo besedilo shranjenega odgovora (z bloki), za gumbe z izbirami ob ponovnem odprtju pogovora.
   const rawOf = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
 
-  app.get("/api/conversations/:id", (req, res) => {
+  app.get("/api/conversations/:id", async (req, res) => {
     const c = loadConversation(req, res);
     if (!c) return;
     const last = store.lastEvent(c.id);
@@ -471,6 +479,11 @@ export function createApp(store, opts = {}) {
     // done ni v tabeli events: prebere se iz META zadnjega odgovora (kot v done ob pošiljanju).
     const lastText = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
     const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && last.flag === "none" && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
+    const owner = store.getStudent(c.student_id);
+    const opens = new Map();
+    // Kot ob pošiljanju: brez orodij pri opozorilih (flag ni none).
+    const flagOk = (raw) => (parseMeta(raw)?.flag || "none") === "none";
+    if (owner) for (const m of msgs) if (m.role === "assistant" && flagOk(rawOf(m))) opens.set(m.id, await openOf(rawOf(m), owner).catch(() => undefined));
     res.json({
       ...c,
       state: last ? { subject: last.subject, mode: last.mode } : null,
@@ -478,6 +491,7 @@ export function createApp(store, opts = {}) {
       messages: msgs.map((m) => ({
         full_offer: (offerOn && m === lastMsg) || undefined,
         choices: m === lastMsg && m.role === "assistant" && (!last || last.message_id !== m.id || last.flag === "none") ? choicesOf(rawOf(m)) : undefined,
+        open: opens.get(m.id),
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
         reported: reported.has(m.id) || undefined,
@@ -897,6 +911,8 @@ export function createApp(store, opts = {}) {
         // Gumbi z izbirami (<<IZBIRE [...]>>): učenec tapne, odgovor se pošlje. Ne pri opozorilih in zavrnitvi.
         // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
         choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : ""),
+        // Gumbi za orodja aplikacije (<<ODPRI …>>, <<GRAF …>>, <<SKICA …>>; server/odpri.js).
+        open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student) : undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();

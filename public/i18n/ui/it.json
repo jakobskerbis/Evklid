@@ -3526,5 +3526,19 @@
   "akt.more": "Più",
   "sch.addAt": "Aggiungi un'ora: {day}, {time}",
   "lg.free": "posto libero",
-  "corner.more": "Aggiungi un altro argomento"
+  "corner.more": "Aggiungi un altro argomento",
+  "open.group": "Apri nell'app",
+  "open.sim": "Esperimento",
+  "open.3d": "3D",
+  "open.lesson": "Libro di testo",
+  "open.game": "Gioco",
+  "open.locked": "bloccato",
+  "open.close": "Chiudi",
+  "open.preset": "Il tutor ha impostato questi valori. Cambiali e osserva cosa succede.",
+  "open.failed": "Impossibile caricarlo.",
+  "open.formula": "Formula",
+  "open.formulas": "Formulario",
+  "open.graph": "Grafico",
+  "open.inCalc": "Apri nella calcolatrice",
+  "open.sketch": "Schizzo"
 }

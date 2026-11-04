@@ -199,9 +199,10 @@ async function show3d() {
   );
 }
 
-/** Odpre atlas (»atlas«) ali model z id-jem čez cel zaslon. */
-export function open3d(id, title = "") {
+/** Odpre atlas (»atlas«) ali model z id-jem čez cel zaslon; param npr. { izberi } (atlas) ali { del } (model). */
+export function open3d(id, title = "", param = null) {
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(id || "")) return;
+  const q = param ? new URLSearchParams(Object.entries(param).filter(([, v]) => v)).toString() : "";
   close3d();
   const el = document.createElement("div");
   el.className = "uci-3d-full";
@@ -211,7 +212,7 @@ export function open3d(id, title = "") {
   const frame = document.createElement("iframe");
   frame.title = title || t("a3.hubTitle");
   frame.allow = "fullscreen";
-  frame.src = `/3d?vgrajeno=1#${encodeURIComponent(id)}`;
+  frame.src = `/3d?vgrajeno=1#${encodeURIComponent(id)}${q ? `?${q}` : ""}`;
   el.append(frame);
   document.body.append(el);
   document.body.classList.add("uci-3d-open");

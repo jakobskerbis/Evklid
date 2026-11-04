@@ -3523,5 +3523,19 @@
   "akt.more": "ज़्यादा",
   "sch.addAt": "कक्षा जोड़ें: {day}, {time}",
   "lg.free": "खाली जगह",
-  "corner.more": "एक और विषय जोड़ें"
+  "corner.more": "एक और विषय जोड़ें",
+  "open.group": "ऐप में खोलें",
+  "open.sim": "प्रयोग",
+  "open.3d": "3D",
+  "open.lesson": "पाठ्यपुस्तक",
+  "open.game": "खेल",
+  "open.locked": "लॉक",
+  "open.close": "बंद करें",
+  "open.preset": "ट्यूटर ने ये मान सेट किए हैं। इन्हें बदलो और देखो क्या होता है।",
+  "open.failed": "इसे लोड नहीं किया जा सका।",
+  "open.formula": "सूत्र",
+  "open.formulas": "सूत्र संग्रह",
+  "open.graph": "ग्राफ़",
+  "open.inCalc": "कैलकुलेटर में खोलें",
+  "open.sketch": "रेखाचित्र"
 }

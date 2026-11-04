@@ -3523,5 +3523,19 @@
   "akt.more": "بیشتر",
   "sch.addAt": "افزودن کلاس: {day}، {time}",
   "lg.free": "جای خالی",
-  "corner.more": "افزودن یک حوزهٔ دیگر"
+  "corner.more": "افزودن یک حوزهٔ دیگر",
+  "open.group": "باز کردن در برنامه",
+  "open.sim": "آزمایش",
+  "open.3d": "سه‌بعدی",
+  "open.lesson": "کتاب درسی",
+  "open.game": "بازی",
+  "open.locked": "قفل",
+  "open.close": "بستن",
+  "open.preset": "معلم این مقادیر را تنظیم کرده است. آن‌ها را تغییر بده و ببین چه می‌شود.",
+  "open.failed": "بارگذاری نشد.",
+  "open.formula": "فرمول",
+  "open.formulas": "مجموعه فرمول‌ها",
+  "open.graph": "نمودار",
+  "open.inCalc": "باز کردن در ماشین‌حساب",
+  "open.sketch": "طرح"
 }

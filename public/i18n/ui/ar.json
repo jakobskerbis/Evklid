@@ -3641,5 +3641,19 @@
   "akt.more": "أكثر",
   "sch.addAt": "أضف حصة: {day}، {time}",
   "lg.free": "مكان شاغر",
-  "corner.more": "أضف مجالًا آخر"
+  "corner.more": "أضف مجالًا آخر",
+  "open.group": "افتح في التطبيق",
+  "open.sim": "تجربة",
+  "open.3d": "ثلاثي الأبعاد",
+  "open.lesson": "الكتاب المدرسي",
+  "open.game": "لعبة",
+  "open.locked": "مقفل",
+  "open.close": "إغلاق",
+  "open.preset": "ضبط المعلّم هذه القيم. غيّرها ولاحظ ما يحدث.",
+  "open.failed": "تعذّر تحميل هذا.",
+  "open.formula": "صيغة",
+  "open.formulas": "مجموعة الصيغ",
+  "open.graph": "رسم بياني",
+  "open.inCalc": "افتح في الآلة الحاسبة",
+  "open.sketch": "رسم توضيحي"
 }

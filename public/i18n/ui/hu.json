@@ -3523,5 +3523,19 @@
   "akt.more": "Több",
   "sch.addAt": "Óra hozzáadása: {day}, {time}",
   "lg.free": "szabad hely",
-  "corner.more": "Újabb téma hozzáadása"
+  "corner.more": "Újabb téma hozzáadása",
+  "open.group": "Megnyitás az appban",
+  "open.sim": "Kísérlet",
+  "open.3d": "3D",
+  "open.lesson": "Tankönyv",
+  "open.game": "Játék",
+  "open.locked": "zárolva",
+  "open.close": "Bezárás",
+  "open.preset": "Ezeket az értékeket a tanár állította be. Változtasd meg őket, és figyeld, mi történik.",
+  "open.failed": "Nem sikerült betölteni.",
+  "open.formula": "Képlet",
+  "open.formulas": "Képletgyűjtemény",
+  "open.graph": "Grafikon",
+  "open.inCalc": "Megnyitás a számológépben",
+  "open.sketch": "Vázlat"
 }

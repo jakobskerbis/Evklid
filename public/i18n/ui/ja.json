@@ -3498,5 +3498,19 @@
   "akt.more": "多",
   "sch.addAt": "授業を追加: {day} {time}",
   "lg.free": "空き",
-  "corner.more": "ほかの分野を追加"
+  "corner.more": "ほかの分野を追加",
+  "open.group": "アプリで開く",
+  "open.sim": "実験",
+  "open.3d": "3D",
+  "open.lesson": "教科書",
+  "open.game": "ゲーム",
+  "open.locked": "ロック中",
+  "open.close": "閉じる",
+  "open.preset": "チューターが値を設定しました。変えて、何が起こるか見てみよう。",
+  "open.failed": "読み込めませんでした。",
+  "open.formula": "公式",
+  "open.formulas": "公式集",
+  "open.graph": "グラフ",
+  "open.inCalc": "電卓で開く",
+  "open.sketch": "スケッチ"
 }

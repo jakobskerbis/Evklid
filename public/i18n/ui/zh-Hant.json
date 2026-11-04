@@ -3498,5 +3498,19 @@
   "akt.more": "多",
   "sch.addAt": "新增課程：{day}，{time}",
   "lg.free": "空位",
-  "corner.more": "再新增一個領域"
+  "corner.more": "再新增一個領域",
+  "open.group": "在應用程式中開啟",
+  "open.sim": "實驗",
+  "open.3d": "3D",
+  "open.lesson": "課本",
+  "open.game": "遊戲",
+  "open.locked": "已鎖定",
+  "open.close": "關閉",
+  "open.preset": "這些數值是導師設定的。改變它們，觀察會發生什麼。",
+  "open.failed": "無法載入。",
+  "open.formula": "公式",
+  "open.formulas": "公式表",
+  "open.graph": "圖形",
+  "open.inCalc": "在計算機中開啟",
+  "open.sketch": "草圖"
 }

@@ -3585,5 +3585,19 @@
   "akt.more": "Więcej",
   "sch.addAt": "Dodaj lekcję: {day}, {time}",
   "lg.free": "wolne miejsce",
-  "corner.more": "Dodaj kolejną dziedzinę"
+  "corner.more": "Dodaj kolejną dziedzinę",
+  "open.group": "Otwórz w aplikacji",
+  "open.sim": "Doświadczenie",
+  "open.3d": "3D",
+  "open.lesson": "Podręcznik",
+  "open.game": "Gra",
+  "open.locked": "zablokowane",
+  "open.close": "Zamknij",
+  "open.preset": "Te wartości ustawił korepetytor. Zmieniaj je i obserwuj, co się dzieje.",
+  "open.failed": "Nie udało się tego wczytać.",
+  "open.formula": "Wzór",
+  "open.formulas": "Zbiór wzorów",
+  "open.graph": "Wykres",
+  "open.inCalc": "Otwórz w kalkulatorze",
+  "open.sketch": "Szkic"
 }

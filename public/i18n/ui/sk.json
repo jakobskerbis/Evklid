@@ -3583,5 +3583,19 @@
   "akt.more": "Viac",
   "sch.addAt": "Pridať hodinu: {day}, {time}",
   "lg.free": "voľné miesto",
-  "corner.more": "Pridať ďalšiu oblasť"
+  "corner.more": "Pridať ďalšiu oblasť",
+  "open.group": "Otvoriť v aplikácii",
+  "open.sim": "Pokus",
+  "open.3d": "3D",
+  "open.lesson": "Učebnica",
+  "open.game": "Hra",
+  "open.locked": "zamknuté",
+  "open.close": "Zavrieť",
+  "open.preset": "Hodnoty nastavil lektor. Meň ich a sleduj, čo sa stane.",
+  "open.failed": "Nepodarilo sa to načítať.",
+  "open.formula": "Vzorec",
+  "open.formulas": "Zbierka vzorcov",
+  "open.graph": "Graf",
+  "open.inCalc": "Otvoriť v kalkulačke",
+  "open.sketch": "Náčrt"
 }

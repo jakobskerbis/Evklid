@@ -3530,5 +3530,19 @@
   "akt.more": "Mais",
   "sch.addAt": "Adicionar aula: {day}, {time}",
   "lg.free": "lugar livre",
-  "corner.more": "Adicionar outro tema"
+  "corner.more": "Adicionar outro tema",
+  "open.group": "Abrir na app",
+  "open.sim": "Experiência",
+  "open.3d": "3D",
+  "open.lesson": "Manual",
+  "open.game": "Jogo",
+  "open.locked": "bloqueado",
+  "open.close": "Fechar",
+  "open.preset": "O tutor definiu estes valores. Altera-os e observa o que acontece.",
+  "open.failed": "Não foi possível carregar.",
+  "open.formula": "Fórmula",
+  "open.formulas": "Formulário",
+  "open.graph": "Gráfico",
+  "open.inCalc": "Abrir na calculadora",
+  "open.sketch": "Esboço"
 }

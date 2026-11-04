@@ -3498,5 +3498,19 @@
   "akt.more": "多",
   "sch.addAt": "添加课程：{day}，{time}",
   "lg.free": "空位",
-  "corner.more": "再添加一个领域"
+  "corner.more": "再添加一个领域",
+  "open.group": "在应用中打开",
+  "open.sim": "实验",
+  "open.3d": "3D",
+  "open.lesson": "课本",
+  "open.game": "游戏",
+  "open.locked": "已锁定",
+  "open.close": "关闭",
+  "open.preset": "这些数值是导师设定的。改变它们，观察会发生什么。",
+  "open.failed": "无法加载。",
+  "open.formula": "公式",
+  "open.formulas": "公式表",
+  "open.graph": "图像",
+  "open.inCalc": "在计算器中打开",
+  "open.sketch": "草图"
 }

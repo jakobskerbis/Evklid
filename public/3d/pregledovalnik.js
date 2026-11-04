@@ -651,7 +651,15 @@ export function odpriModel(el, mod, opts = {}) {
       if (model.postavitev === "organ" && !ponastavi) requestAnimationFrame(() => requestAnimationFrame(() => !unicen && model === m && leti()));
     }
     kit.narisi();
+    // Del iz naslova (»#organ-srce?del=levi prekat«, gumb inštruktorja public/odpri.js): po id-ju ali imenu.
+    if (zacetek.del && !ponastavi) {
+      const want = fold(zacetek.del);
+      const vsi = Array.isArray(model.deli) ? model.deli : [];
+      const d = vsi.find((x) => x.id === zacetek.del || fold(x.ime) === want) || vsi.find((x) => fold(x.ime).startsWith(want) || want.startsWith(fold(x.ime)));
+      if (d) requestAnimationFrame(() => !unicen && model === m && izberi(d.id));
+    }
   }
+  const fold = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
 
   zgradiVse(false);
   return {
