@@ -277,22 +277,24 @@ export function ustvariMaterial(razred, kakovost, skupno) {
 // potisk (m): pokrov je narisan toliko bližje kameri (le globina, ne lega na zaslonu), da ga ne prekrije sosed, ki se
 // z delom v modelu prekriva za milimeter ali dva (preponska kupola v dnu pljuč, jetra); tanki deli (žile, živci) brez,
 // sicer bi neprerezani prosevali skozi polnilo.
+// nasicenost: barva reza bolj nasičena (žile); pljuca: svetlo rožnati deli (barva pljuč, tudi možganov) v rezu bolj
+// bledi in sivi kot drugi organi (gobasto tkivo z zrakom).
 // null = brez pokrova: prosojni razredi (ovojnica, steklo, koža) ostanejo dvostranski kot prej.
 export const REZ = {
-  kost: { k: 1, bela: 0.08, vzorec: "kost" },
+  kost: { k: 1, bela: 0.25, vzorec: "kost" },
   hrustanec: { k: 0.94, bela: 0.12, vzorec: "lise" },
   zob: { k: 1, bela: 0.2 },
   vlakno: { k: 0.94, bela: 0.18, vzorec: "vlakna" },
   ovojnica: null,
-  misica: { k: 0.74, vzorec: "vlakna" },
-  vlazno: { k: 0.8, vzorec: "lise" },
-  zila: { k: 0.82, potisk: 0 },
+  misica: { k: 0.62, vzorec: "vlakna" },
+  vlazno: { k: 0.8, vzorec: "lise", pljuca: true },
+  zila: { k: 0.82, nasicenost: 1.35, potisk: 0 },
   zivec: { k: 1, bela: 0.38, vzorec: "vlakna", potisk: 0 },
   steklo: null,
   koza: null,
 };
 // Polnilo telesa v prerezu: podkožno maščevje in vezivo (toplo bledo rumeno-rožnato, lisasto) med deli.
-export const POLNILO = { mascoba: "#e0bd85", vezivo: "#d6a690" };
+export const POLNILO = { mascoba: "#ecd6a8", vezivo: "#c98e7a" };
 
 // Skupno senčilom reza: točka na ravnini rezanja vzdolž žarka iz kamere (vzorec leži ravno v rezu, ne na oddaljeni
 // steni) in šum, ki zbledi, ko slikovni element pokrije več kot pol cikla (brez migetanja na daljavo).
@@ -310,12 +312,15 @@ const VZORCI = {
   kost: `float evkGr = evkSumL( evkR, vec3( 34.0 ), evkFw );
     float evkPo = evkSumL( evkR, vec3( 230.0 ), evkFw ) * 0.62 + evkSumL( evkR, vec3( 560.0 ), evkFw ) * 0.38;
     float evkMo = smoothstep( 0.46, 0.64, evkPo ) * smoothstep( 0.25, 0.6, evkGr );
-    diffuseColor.rgb = mix( diffuseColor.rgb, vec3( 0.74, 0.42, 0.26 ), evkMo * 0.7 );
+    diffuseColor.rgb = mix( diffuseColor.rgb, vec3( 0.82, 0.5, 0.3 ), evkMo * 0.7 );
     diffuseColor.rgb *= 0.95 + 0.1 * evkSumL( evkR, vec3( 900.0 ), evkFw );`,
   vlakna: `diffuseColor.rgb *= 0.86 + 0.26 * evkSumL( evkR, vec3( 420.0, 32.0, 420.0 ), evkFw );
     diffuseColor.rgb *= 0.95 + 0.1 * evkSumL( evkR, vec3( 95.0, 14.0, 95.0 ), evkFw );`,
   lise: `diffuseColor.rgb *= 0.9 + 0.2 * evkSumL( evkR, vec3( 60.0 ), evkFw ) * evkSumL( evkR, vec3( 13.0 ), evkFw );`,
 };
+// Pljuča (linearno ~0.63, 0.29, 0.27 po k): rdeča prevladuje, zelena ≈ modra (rožnato, ne oranžno kot črevo ali trebušna slinavka).
+const PLJUCA = `float evkPl = step( 0.45, diffuseColor.r ) * smoothstep( 0.2, 0.25, diffuseColor.g ) * ( 1.0 - smoothstep( 0.035, 0.06, abs( diffuseColor.g - diffuseColor.b ) ) );
+        diffuseColor.rgb = mix( diffuseColor.rgb, vec3( 0.62, 0.45, 0.44 ), evkPl * 0.75 );`;
 const POTISK = 0.003;
 function senciloReza(m, { uniforms, barva, kljuc, potisk = 0 }) {
   m.onBeforeCompile = (sh) => {
@@ -358,6 +363,8 @@ export function materialReza(razred, uniforms, ravnine) {
   });
   m.userData.rez = razred;
   const barva = `diffuseColor.rgb = mix( diffuseColor.rgb * ${fl(r.k)}, vec3( 0.97, 0.95, 0.9 ), ${fl(r.bela || 0)} );
+        ${r.nasicenost ? `diffuseColor.rgb = max( mix( vec3( dot( diffuseColor.rgb, vec3( 0.2126, 0.7152, 0.0722 ) ) ), diffuseColor.rgb, ${fl(r.nasicenost)} ), 0.0 );` : ""}
+        ${r.pljuca ? PLJUCA : ""}
         ${r.vzorec ? VZORCI[r.vzorec] : ""}`;
   return senciloReza(m, { uniforms, barva, kljuc: `evk-rez-${razred}`, potisk: r.potisk ?? POTISK });
 }
@@ -380,7 +387,7 @@ export function materialPolnila(uniforms) {
     return `vec3( ${fl(+x.r.toFixed(4))}, ${fl(+x.g.toFixed(4))}, ${fl(+x.b.toFixed(4))} )`;
   };
   const barva = `float evkLi = evkSumL( evkR, vec3( 60.0 ), evkFw ) * 0.55 + evkSumL( evkR, vec3( 170.0 ), evkFw ) * 0.45;
-        diffuseColor.rgb = mix( ${c(POLNILO.mascoba)}, ${c(POLNILO.vezivo)}, smoothstep( 0.38, 0.72, evkLi ) * 0.6 );
+        diffuseColor.rgb = mix( ${c(POLNILO.mascoba)}, ${c(POLNILO.vezivo)}, smoothstep( 0.38, 0.72, evkLi ) * 0.4 );
         diffuseColor.rgb *= 0.95 + 0.08 * evkSumL( evkR, vec3( 420.0 ), evkFw );`;
   return senciloReza(m, { uniforms, barva, kljuc: "evk-polnilo" });
 }

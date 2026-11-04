@@ -115,6 +115,117 @@ export function imeStrukture(row, im, jezik = "sl") {
   return row.stran === "l" || row.stran === "r" ? `${base} (${t(row.stran === "l" ? "a3.left" : "a3.right")})` : base;
 }
 
+// Zašije šive med deli kože za štetje prečkanj (polnilo prereza): sosednji deli imajo robove skoraj na istem mestu, a
+// z različnimi oglišči, in skozi razpoke (pod slikovno točko) žarek ne prečka kože: v prerezu ostanejo temne črte (hrbet,
+// vrat, prsti). Oglišča robov (robovi le enega trikotnika) v razdalji tol od tujega roba se primaknejo nanj: ob krajišču
+// se zlijeta, sicer se rob tam razdeli (brez T-stikov). Z del (oglišče → številka dela) se primika le del z višjo
+// številko k nižji (šivi so široki do ~6 mm, primikanje z obeh strani bi trikotnike prepognilo). Vrne nov seznam
+// indeksov; pos se spremeni na mestu.
+export function zasijSive(pos, idx, { tol = 0.0015, del = null } = {}) {
+  const nV = pos.length / 3;
+  const rep = new Int32Array(nV);
+  const tocno = new Map();
+  for (let i = 0; i < nV; i++) {
+    const k = `${Math.round(pos[3 * i] * 1e5)},${Math.round(pos[3 * i + 1] * 1e5)},${Math.round(pos[3 * i + 2] * 1e5)}`;
+    if (!tocno.has(k)) tocno.set(k, i);
+    rep[i] = tocno.get(k);
+  }
+  const zdruzi = (st) => {
+    for (let i = 0; i < nV; i++) while (st[rep[i]] !== rep[i]) rep[i] = st[rep[i]];
+  };
+  let I = Array.from(idx, (i) => rep[i]);
+  const kljuc = (a, b) => (a < b ? a * nV + b : b * nV + a);
+  const steviloRobov = new Map();
+  for (let t = 0; t < I.length; t += 3)
+    for (let s = 0; s < 3; s++) {
+      const k = kljuc(I[t + s], I[t + ((s + 1) % 3)]);
+      steviloRobov.set(k, (steviloRobov.get(k) || 0) + 1);
+    }
+  const robovi = [];
+  const ogl = new Set();
+  for (const [k, n] of steviloRobov)
+    if (n === 1) {
+      const a = Math.floor(k / nV), b = k % nV;
+      robovi.push(a, b);
+      ogl.add(a).add(b);
+    }
+  if (!robovi.length) return Uint32Array.from(I);
+  // Mreža celic za robove (vsak rob v vseh celicah svojega okvirja).
+  const C = Math.max(0.005, 2 * tol);
+  const celica = (x, y, z) => `${Math.floor(x / C)},${Math.floor(y / C)},${Math.floor(z / C)}`;
+  const mreza = new Map();
+  for (let e = 0; e < robovi.length; e += 2) {
+    const a = robovi[e], b = robovi[e + 1];
+    const lo = [0, 1, 2].map((d) => Math.floor((Math.min(pos[3 * a + d], pos[3 * b + d]) - tol) / C));
+    const hi = [0, 1, 2].map((d) => Math.floor((Math.max(pos[3 * a + d], pos[3 * b + d]) + tol) / C));
+    if ((hi[0] - lo[0] + 1) * (hi[1] - lo[1] + 1) * (hi[2] - lo[2] + 1) > 125) continue;
+    for (let x = lo[0]; x <= hi[0]; x++) for (let y = lo[1]; y <= hi[1]; y++) for (let z = lo[2]; z <= hi[2]; z++) {
+      const k = `${x},${y},${z}`;
+      (mreza.get(k) || mreza.set(k, []).get(k)).push(e);
+    }
+  }
+  const st = Int32Array.from({ length: nV }, (_, i) => i);
+  const koren = (x) => {
+    while (st[x] !== x) x = st[x] = st[st[x]];
+    return x;
+  };
+  const naRobu = new Map(); // ključ roba → [[t, oglišče], …]
+  for (const v of ogl) {
+    const vx = pos[3 * v], vy = pos[3 * v + 1], vz = pos[3 * v + 2];
+    let naj = null;
+    for (const e of mreza.get(celica(vx, vy, vz)) || []) {
+      const a = robovi[e], b = robovi[e + 1];
+      if (a === v || b === v || koren(a) === koren(v) || koren(b) === koren(v) || (del && del[a] >= del[v])) continue;
+      const dx = pos[3 * b] - pos[3 * a], dy = pos[3 * b + 1] - pos[3 * a + 1], dz = pos[3 * b + 2] - pos[3 * a + 2];
+      const l2 = dx * dx + dy * dy + dz * dz || 1e-12;
+      const t = Math.max(0, Math.min(1, ((vx - pos[3 * a]) * dx + (vy - pos[3 * a + 1]) * dy + (vz - pos[3 * a + 2]) * dz) / l2));
+      const d = Math.hypot(pos[3 * a] + t * dx - vx, pos[3 * a + 1] + t * dy - vy, pos[3 * a + 2] + t * dz - vz);
+      if (d < tol && (!naj || d < naj.d)) naj = { d, a, b, t, l: Math.sqrt(l2) };
+    }
+    if (!naj) continue;
+    const { a, b, t, l } = naj;
+    // Ob krajišču (do 0,5 mm ali onkraj roba) se oglišči zlijeta; širše bi zlilo več zaporednih oglišč v eno.
+    const ob = Math.min(tol, 0.0005);
+    if (t * l < ob) st[koren(v)] = koren(a);
+    else if ((1 - t) * l < ob) st[koren(v)] = koren(b);
+    else {
+      for (let d = 0; d < 3; d++) pos[3 * v + d] = pos[3 * a + d] + t * (pos[3 * b + d] - pos[3 * a + d]);
+      const k = kljuc(a, b);
+      (naRobu.get(k) || naRobu.set(k, []).get(k)).push([a < b ? t : 1 - t, v]);
+    }
+  }
+  for (let i = 0; i < nV; i++) st[i] = koren(i);
+  zdruzi(st);
+  const r = (i) => st[i];
+  // Razdelitev trikotnikov ob robovih z oglišči na njih (pahljača iz nasprotnega oglišča).
+  const tocke = new Map();
+  for (const [k, sez] of naRobu) {
+    const a = r(Math.floor(k / nV)), b = r(k % nV);
+    const s = sez.map(([t, v]) => [t, r(v)]).filter(([, v]) => v !== a && v !== b).sort((x, y) => x[0] - y[0]).map(([, v]) => v);
+    if (s.length) tocke.set(kljuc(a, b), Math.floor(k / nV) <= k % nV === a <= b ? s : s.reverse());
+  }
+  const izhod = [];
+  const vrsta = [];
+  for (let t = 0; t < I.length; t += 3) vrsta.push([r(I[t]), r(I[t + 1]), r(I[t + 2])]);
+  while (vrsta.length) {
+    const [p, q, w] = vrsta.pop();
+    if (p === q || q === w || w === p) continue;
+    let razdeljen = false;
+    for (const [a, b, c] of [[p, q, w], [q, w, p], [w, p, q]]) {
+      const s = tocke.get(kljuc(a, b));
+      if (!s) continue;
+      const vmes = a < b ? s : [...s].reverse(); // od a proti b
+      const verige = [a, ...vmes.filter((v) => v !== c), b];
+      for (let i = 0; i + 1 < verige.length; i++) vrsta.push([verige[i], verige[i + 1], c]);
+      tocke.delete(kljuc(a, b));
+      razdeljen = true;
+      break;
+    }
+    if (!razdeljen) izhod.push(p, q, w);
+  }
+  return Uint32Array.from(izhod);
+}
+
 export async function odpriAtlas(el, { zapri = null } = {}) {
   const jezik = currentLang();
   const kakovost = kakovostNaprave();
@@ -672,6 +783,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     p.raycast = () => {};
     p.onBeforeRender = (...a) => bm.onBeforeRender(...a);
     p.userData.pokrov = true;
+    p.userData.brezAO = true; // scena.js: neprosojni korak, brez GTAO
     p.visible = pokroviVkljuceni();
     bm.userData.pokrov = p;
     return p;
@@ -680,6 +792,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   const sijPokrov = new THREE.Mesh(new THREE.BufferGeometry(), brezPokrova);
   sijPokrov.renderOrder = 2.9;
   sijPokrov.raycast = () => {};
+  sijPokrov.userData.brezAO = true;
   sijPokrov.visible = false;
   sij.add(sijPokrov);
 
@@ -691,6 +804,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   const polnilo = new THREE.Mesh(new THREE.PlaneGeometry(3, 3), materialPolnila(rezSkupno));
   polnilo.renderOrder = 2.7;
   polnilo.raycast = () => {};
+  polnilo.userData.brezAO = true; // dvostransko, a v neprosojnem koraku (šablona)
   polnilo.visible = false;
   telo.add(polnilo);
   // Koža je iz zaprtih tankih plošč (vsak predel: zunanja in notranja ploskev, povezani z robom). Za parnost štejemo
@@ -745,6 +859,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       const nI = seznamK.reduce((a, k, i) => a + (trikotniki[i] ? trikotniki[i].length * 3 : k.g.index.count), 0);
       const pos = new Float32Array(nV * 3);
       const idx = new Uint32Array(nI);
+      const del = new Int32Array(nV);
       let o = 0, oi = 0;
       seznamK.forEach((k, ki) => {
         const P = k.g.attributes.position;
@@ -752,14 +867,19 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
         const tr = trikotniki[ki];
         if (tr) for (const t of tr) for (let s = 0; s < 3; s++) idx[oi++] = I.getX(3 * t + s) + o;
         else for (let i = 0; i < I.count; i++) idx[oi++] = I.getX(i) + o;
-        for (let i = 0; i < P.count; i++, o++) v.fromBufferAttribute(P, i).applyMatrix4(k.m0).toArray(pos, o * 3);
+        for (let i = 0; i < P.count; i++, o++) {
+          v.fromBufferAttribute(P, i).applyMatrix4(k.m0).toArray(pos, o * 3);
+          del[o] = ki;
+        }
       });
       const g = new THREE.BufferGeometry();
       g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-      g.setIndex(new THREE.BufferAttribute(idx, 1));
+      // Šivi med deli: najprej del k delu (do 6 mm), nato preostali T-stiki (oglišča, ki so zdaj na tujem robu).
+      g.setIndex(new THREE.BufferAttribute(zasijSive(pos, zasijSive(pos, idx, { tol: 0.006, del }), { tol: 0.0003 }), 1));
       const m = new THREE.Mesh(g, matParnosti);
       m.renderOrder = 2.6;
       m.raycast = () => {};
+      m.userData.brezAO = true;
       m.frustumCulled = false;
       m.visible = false;
       telo.add(m);

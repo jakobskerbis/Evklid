@@ -415,7 +415,10 @@ export function ustvariSceno(el, opts = {}) {
   let composer = null;
   let gtao = null;
   let aoVkljucen = false;
+  // userData.brezAO (atlas: polnilo prereza, mreže za štetje prečkanj in pokrovi): vedno v neprosojnem koraku (šablona in
+  // globina iz koraka 1), a ne v GTAO (ta riše z nadomestnim materialom, brez ravnin rezanja in šablone).
   const prosojen = (o) => {
+    if (o.userData.brezAO) return false;
     if (o.isSprite || o.isPoints || o.isLine) return true;
     const m = o.material;
     if (!m) return false;
@@ -425,11 +428,14 @@ export function ustvariSceno(el, opts = {}) {
   };
   const prosojni = [];
   const neprosojni = [];
+  const brezAO = [];
   function razvrsti() {
     prosojni.length = 0;
     neprosojni.length = 0;
+    brezAO.length = 0;
     scene.traverseVisible((o) => {
       if (o.isMesh || o.isSprite || o.isPoints || o.isLine) (prosojen(o) ? prosojni : neprosojni).push(o);
+      if (o.userData.brezAO) brezAO.push(o);
     });
   }
   const vidni = (seznam, v) => {
@@ -459,7 +465,9 @@ export function ustvariSceno(el, opts = {}) {
       class OkluzijaPass extends GTAOPass {
         render(r, writeBuffer, readBuffer) {
           vidni(prosojni, false);
+          vidni(brezAO, false);
           super.render(r, writeBuffer, readBuffer);
+          vidni(brezAO, true);
           vidni(prosojni, true);
         }
       }
@@ -487,7 +495,8 @@ export function ustvariSceno(el, opts = {}) {
           this.kvad.dispose();
         }
       }
-      const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
+      // Šablona tudi v ciljni sliki učinkov (opts.sablona), sicer polnilo prereza pokrije vse (kopija za drugi medpomnilnik jo prevzame).
+      const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4, depthBuffer: true, stencilBuffer: !!opts.sablona });
       composer = new EffectComposer(renderer, rt);
       composer.addPass(new NeprosojniPass(scene, camera));
       gtao = new OkluzijaPass(scene, camera, 1, 1);
