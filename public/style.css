@@ -320,7 +320,7 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 /* Tabela iz Markdowna: tako široka kot vsebina; na ozkem zaslonu se pomika vstran, ne stisne.
    Kratke celice in formule se ne prelamljajo (ulomki ostanejo celi), daljše besedilo se. */
 .md-table-wrap { max-width: 100%; overflow-x: auto; margin: 10px 0; -webkit-overflow-scrolling: touch; }
-.md-table-wrap > .md-table { margin: 0; }
+.md-table-wrap > :is(.md-table, .table) { margin: 0; }
 .md-table :is(th, td) { white-space: nowrap; }
 .md-table :is(th, td).wrap { white-space: normal; min-width: 11em; max-width: 26em; }
 .md-table .katex { white-space: nowrap; }
@@ -370,6 +370,15 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 .chat-head #chat-state .chip { display: inline-flex; align-items: center; gap: 5px; flex: none; }
 .chat-head .chat-lesson svg.i { width: 15px; height: 15px; flex: none; }
 .chip { background: var(--surface-2); border-radius: 999px; padding: 3px 11px; font-size: 0.82rem; color: var(--muted); white-space: nowrap; font-weight: 700; }
+/* Glava Inštruktorja bolj pregledna (j 2026-11-04): naslov, ob njem (na telefonu pod njim) tiha vrstica oznak
+   »Matematika · Vodenje · 1. letnik« brez sivih pilul, orodja (prijava, skeniraj, kalkulator) skupaj na desni. */
+.chat-head { justify-content: flex-start; }
+.chat-head h1 { flex: 0 1 auto; min-width: 0; }
+.chat-head #chat-state { flex: 1 1 auto; min-width: 0; gap: 0; overflow: hidden; }
+.chat-head #chat-state .chip:not(.chip-btn) { background: none; border-radius: 0; padding: 0; font-weight: 600; font-size: 0.85rem; }
+.chat-head #chat-state .chip:not(.chip-btn) ~ .chip:not(.chip-btn)::before { content: "·"; margin-inline: 6px 1px; } /* + 5 px razmika v oznaki = enako na obeh straneh */
+.chat-head #chat-state .chip-btn { margin-inline-end: 10px; }
+.chat-head > .icon-only + .icon-only { margin-inline-start: -6px; }
 .messages { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; }
 .empty { margin: auto; text-align: center; color: var(--muted); max-width: 440px; display: flex; flex-direction: column; align-items: center; }
 .empty p.big { font-size: 1.5rem; margin: 12px 0 4px; color: var(--text); font-weight: 800; }
@@ -736,7 +745,7 @@ label.check input { width: 18px; height: 18px; accent-color: var(--accent); }
 .topbar.tabs-tight .tabs { gap: 2px; }
 .topbar.tabs-tight .tab { padding: 9px 9px; gap: 6px; }
 .topbar.tabs-nobrand .brand-name { display: none; }
-.topbar.tabs-minor .tab:not(.active):not([data-view="path"], [data-view="textbook"], [data-view="chat"], [data-view="competition"]) span { display: none; }
+.topbar.tabs-minor .tab:not(.active):not([data-view="path"], [data-view="uci"], [data-view="chat"], [data-view="competition"]) span { display: none; }
 .topbar.tabs-compact .tab { padding: 9px 11px; }
 .topbar.tabs-compact .tab:not(.active) span { display: none; }
 /* Računalnik: vrstica zavihkov nikoli ne gre pod števce in profil (desno). Če zavihki tudi samo z ikonami
@@ -993,12 +1002,19 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
     flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px;
     padding: 4px 1px; border-radius: 14px; font-size: 0.72rem; font-weight: 800; line-height: 1.15; background: none;
   }
-  .tabbar .tab span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* Napis v eni vrstici; predolg (»Rruga e të mësuarit«, »Навчальний шлях«) gre v največ dve vrstici, ne v tropičje. */
+  .tabbar .tab span { max-width: 100%; overflow: hidden; overflow-wrap: break-word; text-align: center; text-wrap: balance; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
   .tabbar .tab svg.i { width: 46px; height: 30px; padding: 4px 12px; border-radius: 99px; transition: background 0.15s; }
   .tabbar .tab:hover { background: none; }
   .tabbar .tab.active { background: none; color: var(--accent); }
   .tabbar .tab.active svg.i { background: var(--accent-soft); }
   .topbar { flex-wrap: nowrap; padding: 8px 12px; }
+}
+/* Ozek telefon (360 px): pet napisov brez tropičja (»Tekmovanja«, »Inštruktor«). */
+@media (max-width: 400px) {
+  .tabbar { padding-inline: 2px; }
+  .tabbar .tab { padding-inline: 0; }
+  .tabbar .tab span { letter-spacing: -0.015em; }
 }
 body.pad-open .tabbar { display: none; }
 .pad-tabs button { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; }
@@ -1038,7 +1054,7 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .stat.usage-meter svg.i { color: var(--accent); }
 .stat.usage-meter:hover { background: var(--accent-soft); }
 .usage-pop {
-  position: fixed; z-index: 60; top: 64px; right: 16px; width: min(440px, calc(100vw - 32px));
+  position: fixed; z-index: 60; top: 64px; inset-inline-end: 16px; width: min(440px, calc(100vw - 32px));
   max-height: calc(100vh - 88px); overflow-y: auto; margin: 0; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
 }
 .usage-pop[hidden] { display: none; }
@@ -1050,7 +1066,7 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .um-totals b { font-size: 1.15rem; }
 .um-totals small, .um-totals span { font-size: 0.8rem; }
 .um-table { font-size: 0.88rem; }
-.um-table td:not(:first-child), .um-table th:not(:first-child) { text-align: right; }
+.um-table td:not(:first-child), .um-table th:not(:first-child) { text-align: end; }
 .um-table td:not(:first-child) { white-space: nowrap; }
 .um-table th { white-space: normal; vertical-align: bottom; }
 .um-table td:first-child { overflow-wrap: anywhere; }
@@ -1071,7 +1087,7 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .um-budget-form input { width: 100%; font-weight: 600; padding: 8px 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--bg); min-height: 44px; }
 .um-budget-form input:focus { border-color: var(--accent); outline: none; }
 @media (max-width: 760px) {
-  .usage-pop { top: 56px; right: 16px; }
+  .usage-pop { top: 56px; inset-inline-end: 16px; }
   .stat.usage-meter { font-size: 0.85rem; }
 }
 @media (max-width: 420px) {
@@ -1080,6 +1096,7 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 }
 @media (max-width: 400px) {
   .um-totals { grid-template-columns: 1fr 1fr; }
+  .um-table :is(th, td) { padding-inline: 7px; }
   .um-totals > div:last-child { grid-column: 1 / -1; }
 }
 

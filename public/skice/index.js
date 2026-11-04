@@ -18,7 +18,8 @@ export const SKICE = {
   "MAT-SS|Definicija": () => import("./eksponentna.js"), // edina kartica »Definicija« na listu (Eksponentna funkcija in logaritmi)
   "MAT-SS|Skalarni produkt": () => import("./vektorja.js"),
   "MAT-SS|Razdalja točk": () => import("./tocke.js"),
-  "MAT-SS|Krožnica": () => import("./kroznica.js"),
+  // Presek stožca je uvod v stožnice: nad skico krožnice na isti kartici (j-jeva naloga: »nad krožnico«).
+  "MAT-SS|Krožnica": z(() => import("./presek-stozca.js"), { potem: () => import("./kroznica.js") }),
   "MAT-SS|Elipsa": () => import("./elipsa.js"),
   "MAT-SS|Hiperbola": () => import("./hiperbola.js"),
   "MAT-SS|Parabola": () => import("./parabola.js"),
@@ -35,9 +36,9 @@ export const SKICE = {
   "MAT-SS|Aritmetično zaporedje": z(() => import("./zaporedje.js"), "aritmeticno"),
   "MAT-SS|Geometrijsko zaporedje": z(() => import("./zaporedje.js"), "geometrijsko"),
   "MAT-SS|Limita funkcije": () => import("./limita.js"),
-  "MAT-SS|Odvodi": () => import("./odvod.js"),
+  "MAT-SS|Definicija odvoda": () => import("./odvod.js"),
   "MAT-SS|Diferencial": () => import("./diferencial.js"),
-  "MAT-SS|Integrali": () => import("./riemann.js"),
+  "MAT-SS|Newton–Leibniz": () => import("./riemann.js"), // določeni integral kot limita Riemannovih vsot (j, 4. 11.)
   "MAT-SS|Trapezna metoda": () => import("./trapezna.js"),
   "MAT-SS|Ploščina, vrtenina": () => import("./vrtenina.js"),
   "MAT-SS|Kombinacije": () => import("./pascal.js"),

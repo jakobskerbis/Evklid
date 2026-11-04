@@ -2,16 +2,17 @@
 // računalniku, kjer teče Evklid, ali skrbniku z računom). Pokaže porabo vseh profilov
 // danes in ta mesec; klik odpre pregled po profilih.
 import { icon } from "./icons.js";
-import { t } from "./i18n.js";
+import { t, locale } from "./i18n.js";
 
 const $ = (sel) => document.querySelector(sel);
 let D = null; // { escapeHtml, showView, toast }
 let last = null;
 let timer = null;
 
+// Števila v jeziku aplikacije (sl: 0,00 €), ne v jeziku brskalnika.
 const eur = (x) => {
   const v = x || 0;
-  return v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: v && v < 1 ? 3 : 2 });
+  return v.toLocaleString(locale(), { minimumFractionDigits: 2, maximumFractionDigits: v && v < 1 ? 3 : 2 });
 };
 
 export function initUsageMeter(deps) {
@@ -85,7 +86,7 @@ function adviceHtml(a) {
 
 // Mesečni proračun API (server/proracun.js): poraba, raven modelov, znesek in dodani kredit.
 const LEVEL_KEY = { "-1": "meter.levelStop", 0: "meter.levelSave", 1: "meter.levelNormal", 2: "meter.levelMore", 3: "meter.levelMax" };
-const usd = (x) => (x || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const usd = (x) => (x || 0).toLocaleString(locale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 function budgetHtml(b) {
   if (!b) return "";
   const on = b.total > 0;

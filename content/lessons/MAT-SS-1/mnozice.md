@@ -5,9 +5,11 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že iz osnovne šole poznaš skupine stvari, ki jih obravnavamo kot celoto: učence v razredu, večkratnike števila $3$, delitelje števila $12$. V matematiki takšni skupini rečemo **množica**. Beseda je kratka, za njo pa stoji zelo natančen jezik. Z njim brez ugibanja odgovoriš na vprašanja, kot so: Katera števila so hkrati soda in deljiva s $3$? Kateri dijaki obiskujejo vsaj en krožek? Koliko jih ne obiskuje nobenega?
+Ana in Bojan primerjata aplikacije na prvem zaslonu telefona. Ana ima aplikacije za glasbo, vreme, zemljevid in igro, Bojan pa za vreme, igro in slovar. Razvrsti jih na tri kupčke: ki jih imata oba, ki jih ima samo Ana in ki jih ima samo Bojan.
 
-Jezik množic boš potreboval v skoraj vsaki temi, ki sledi. Rešitve enačb in neenačb zapisujemo kot množice, definicijsko območje funkcije je množica, števila razvrščamo v množice (naravna, cela, racionalna, realna števila), v verjetnosti pa so dogodki podmnožice. Vennov diagram je koristen tudi pri vsakdanjih problemih: pri anketah, pri filtriranju v spletni trgovini in pri iskanju po spletu. V tej lekciji se naučiš oznak, računskih operacij in tega, kako se lotiš besedilnih nalog s štetjem elementov.
+Koliko različnih aplikacij imata skupaj? Ne $4 + 3 = 7$, ampak $5$, saj vreme in igro prešteješ le enkrat. Takim skupinam rečemo **množice**. Z njihovim jezikom brez ugibanja odgovoriš na vprašanja, kot so: Katere aplikacije imata oba? Koliko dijakov ne uporablja nobene od dveh aplikacij?
+
+Jezik množic boš potreboval v skoraj vsaki temi, ki sledi. Rešitve enačb zapisujemo kot množice, števila razvrščamo v naravna, cela, racionalna in realna, v verjetnosti pa so dogodki podmnožice. Množice so sorodnice izjav iz logike, zato boš veliko že prepoznal.
 
 ## Razlaga
 
@@ -26,24 +28,40 @@ Oba zapisa opisujeta isto množico. Vrstni red in ponavljanje elementov ne štej
 - **Moč množice** $|A|$ je število njenih elementov, na primer $|\{a, b, c\}| = 3$ in $|\emptyset| = 0$. Množica je *končna*, če ima končno mnogo elementov, sicer je *neskončna* (na primer množica vseh sodih števil).
 - **Univerzalna množica** $\mathcal{U}$ vsebuje vse elemente, ki jih v dani nalogi sploh obravnavamo. Določena mora biti, preden računamo komplement.
 
-**3. Podmnožica.** Množica $A$ je **podmnožica** množice $B$, zapisano $A \subseteq B$, če je vsak element množice $A$ tudi element množice $B$. Če je $A \subseteq B$ in $A \neq B$, je $A$ **prava podmnožica** in pišemo $A \subset B$. Dve množici sta enaki, če imata iste elemente: $A = B$ natanko tedaj, ko velja $A \subseteq B$ in $B \subseteq A$.
+**3. Podmnožica.** Množica $A$ je **podmnožica** množice $B$, zapisano $A \subseteq B$, če je vsak element množice $A$ tudi element množice $B$. Če je $A \subseteq B$ in $A \neq B$, je $A$ **prava podmnožica** in pišemo $A \subset B$. Nekateri učbeniki pišejo $\subset$ tudi za navadno podmnožico, zato preveri, kateri zapis uporablja tvoj. Dve množici sta enaki, če imata iste elemente: $A = B$ natanko tedaj, ko velja $A \subseteq B$ in $B \subseteq A$.
 
 Vsaka množica je podmnožica same sebe ($A \subseteq A$), prazna množica pa je podmnožica vsake množice ($\emptyset \subseteq A$). Pazi na razliko: znak $\in$ povezuje *element* z množico, znak $\subseteq$ pa *množico* z množico. Zato je $2 \in \{1, 2, 3\}$, toda $\{2\} \subseteq \{1, 2, 3\}$.
 
 Množica z $n$ elementi ima natanko $2^n$ podmnožic. Množica $\{a, b\}$ ima podmnožice $\emptyset$, $\{a\}$, $\{b\}$ in $\{a, b\}$, torej $2^2 = 4$.
 
+:::premisli
+Zakaj je prazna množica podmnožica vsake množice $A$? Pomagaj si z implikacijo »če $x \in \emptyset$, potem $x \in A$«.
+---
+Predpostavka $x \in \emptyset$ je za vsak $x$ nepravilna, implikacija z nepravilno predpostavko pa je pravilna. Noben element prazne množice torej ne leži zunaj $A$.
+:::
+
 **4. Vennov diagram.** Univerzalno množico narišemo kot pravokotnik, vsako množico pa kot krog ali elipso v njem. Elementi so pike znotraj likov. Dva kroga, ki se delno prekrivata, razdelita pravokotnik na štiri območja: le v $A$, v obeh, le v $B$ in v nobeni od njiju.
 
-**5. Operacije z množicami.**
+**5. Operacije z množicami.** Iz logike poznaš veznike $\wedge$ (in), $\vee$ (ali) in $\neg$ (ne). Operacije z množicami so zgrajene natanko iz njih. Element $x$ spada v novo množico, ko je pravilna izjava v tretjem stolpcu:
 
-| Operacija | Zapis | Kateri elementi? |
-|---|---|---|
-| **Unija** | $A \cup B$ | tisti, ki so v $A$ ali v $B$ (ali v obeh) |
-| **Presek** | $A \cap B$ | tisti, ki so v $A$ in hkrati v $B$ |
-| **Razlika** | $A \setminus B$ | tisti, ki so v $A$, niso pa v $B$ |
-| **Komplement** | $A^c$ | tisti iz $\mathcal{U}$, ki niso v $A$ |
+| Operacija | Zapis | Pogoj za $x$ | Kateri elementi? |
+|---|---|---|---|
+| **Unija** | $A \cup B$ | $x \in A \vee x \in B$ | v $A$ ali v $B$ (ali v obeh) |
+| **Presek** | $A \cap B$ | $x \in A \wedge x \in B$ | v $A$ in hkrati v $B$ |
+| **Razlika** | $A \setminus B$ | $x \in A \wedge x \notin B$ | v $A$, ne pa v $B$ |
+| **Komplement** | $A^c$ | $x \in \mathcal{U} \wedge x \notin A$ | iz $\mathcal{U}$, niso v $A$ |
 
-Komplement pišemo tudi $\overline{A}$ ali $A'$. Besedica »ali« je v matematiki vključujoča in pomeni »vsaj eno od obeh«. Če je $A \cap B = \emptyset$, pravimo, da sta množici **disjunktni** (tuji): nimata skupnih elementov.
+Pri Ani in Bojanu je presek $\{\text{vreme}, \text{igra}\}$, unija ima $5$ elementov, razlika »Ana brez Bojana« pa je $\{\text{glasba}, \text{zemljevid}\}$.
+
+Kje se množice od logike razlikujejo? Prvič, veznik iz dveh izjav naredi izjavo, ki je pravilna (P) ali nepravilna (N). Operacija pa iz dveh množic naredi novo množico. Drugič, negacija ne potrebuje ničesar dodatnega, komplement pa je smiseln šele, ko poznamo $\mathcal{U}$. Tretjič, razlika nima lastnega veznika: je »in« z negacijo.
+
+Komplement pišemo tudi $\overline{A}$ ali $A'$. Besedica »ali« pri uniji je vključujoča, kot v logiki: v uniji so tudi elementi, ki so v obeh množicah. Če je $A \cap B = \emptyset$, sta množici **disjunktni** (tuji): nimata skupnih elementov.
+
+:::premisli
+V logiki velja $\neg(A \wedge B) \equiv \neg A \vee \neg B$. Napovej, čemu je za množici enak komplement preseka $(A \cap B)^c$.
+---
+$(A \cap B)^c = A^c \cup B^c$. Element ni v obeh hkrati natanko tedaj, ko manjka vsaj v eni. Konjunkcija se spremeni v disjunkcijo, presek v unijo.
+:::
 
 **6. Pravila.**
 
@@ -51,7 +69,7 @@ Komplement pišemo tudi $\overline{A}$ ali $A'$. Besedica »ali« je v matematik
 - Razliko lahko zapišemo s komplementom: $A \setminus B = A \cap B^c$.
 - Komplement komplementa je prvotna množica: $(A^c)^c = A$.
 - Distributivnost: $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ in $A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$.
-- De Morganovi pravili: $(A \cup B)^c = A^c \cap B^c$ in $(A \cap B)^c = A^c \cup B^c$. Komplement unije je presek komplementov, komplement preseka pa unija komplementov.
+- De Morganovi pravili: $(A \cup B)^c = A^c \cap B^c$ in $(A \cap B)^c = A^c \cup B^c$. Komplement unije je presek komplementov, komplement preseka pa unija komplementov. To sta De Morganova zakona iz logike, prepisana za množice.
 
 **7. Štetje elementov.** Za končni množici velja
 
@@ -106,26 +124,31 @@ Komplement: $X^c = \{x \in \mathcal{U} \mid x \notin X\}$. Presek in unija kot o
 7. Preverimo še s štetjem: $|A \cup B| = 6 + 4 - 2 = 8$, zato je $|(A \cup B)^c| = 12 - 8 = 4$. Res imamo štiri elemente.
 8. Odgovor: $A \cap B = \{6, 12\}$, $A \cup B = \{2, 3, 4, 6, 8, 9, 10, 12\}$ in $(A \cup B)^c = A^c \cap B^c = \{1, 5, 7, 11\}$.
 
-### Primer 3 (težji)
+### Primer 3 (težji, zdaj ti)
 
-V skupini dijakov vsak govori vsaj en tuji jezik: angleščino (množica $A$), nemščino (množica $N$) ali italijanščino (množica $I$). Angleško govori $22$ dijakov, nemško $18$ in italijansko $15$. Angleško in nemško govori $9$ dijakov, angleško in italijansko $7$, nemško in italijansko $6$ (v teh številkah so všteti tudi tisti, ki govorijo še tretji jezik). Vse tri jezike govorijo $3$ dijaki. Koliko dijakov je v skupini in koliko jih govori natanko en tuji jezik?
+V anketi je vsak dijak povedal, katere vrste aplikacij uporablja vsak dan: za klepet (množica $K$), za kratke videe (množica $V$) ali za glasbo (množica $G$). Vsak uporablja vsaj eno vrsto. Klepet uporablja $22$ dijakov, videe $18$ in glasbo $15$. Klepet in videe uporablja $9$ dijakov, klepet in glasbo $7$, videe in glasbo $6$ (všteti so tudi tisti, ki uporabljajo še tretjo vrsto). Vse tri vrste uporabljajo $3$ dijaki. Koliko dijakov je sodelovalo in koliko jih uporablja natanko eno vrsto?
 
-**Podatki:** $|A| = 22$, $|N| = 18$, $|I| = 15$, $|A \cap N| = 9$, $|A \cap I| = 7$, $|N \cap I| = 6$, $|A \cap N \cap I| = 3$, vsak dijak govori vsaj en jezik
-**Iščemo:** število dijakov $|A \cup N \cup I|$ in število dijakov, ki govorijo natanko en jezik
+**Podatki:** $|K| = 22$, $|V| = 18$, $|G| = 15$, $|K \cap V| = 9$, $|K \cap G| = 7$, $|V \cap G| = 6$, $|K \cap V \cap G| = 3$, vsak uporablja vsaj eno vrsto
+**Iščemo:** število dijakov $|K \cup V \cup G|$ in število dijakov, ki uporabljajo natanko eno vrsto
 
 :::formula
-$|A \cup N \cup I| = |A| + |N| + |I| - |A \cap N| - |A \cap I| - |N \cap I| + |A \cap N \cap I|$. Zanesljiveje: Vennov diagram izpolnjujemo od sredine navzven.
+$|K \cup V \cup G| = |K| + |V| + |G| - |K \cap V| - |K \cap G| - |V \cap G| + |K \cap V \cap G|$. Zanesljiveje: Vennov diagram izpolnjujemo od sredine navzven.
 :::
 
 **Rešitev:**
 
-1. Sredina: vse tri jezike govorijo $3$ dijaki.
-2. Natanko dva jezika: angleščina in nemščina brez italijanščine $9 - 3 = 6$, angleščina in italijanščina brez nemščine $7 - 3 = 4$, nemščina in italijanščina brez angleščine $6 - 3 = 3$.
-3. Natanko en jezik: samo angleščina $22 - (6 + 4 + 3) = 22 - 13 = 9$, samo nemščina $18 - (6 + 3 + 3) = 18 - 12 = 6$, samo italijanščina $15 - (4 + 3 + 3) = 15 - 10 = 5$.
+1. Sredina: vse tri vrste uporabljajo $3$ dijaki.
+2. Natanko dve vrsti: klepet in videe brez glasbe $9 - 3 = 6$, klepet in glasbo brez videov $7 - 3 = 4$, videe in glasbo brez klepeta $6 - 3 = 3$.
+3. Natanko ena vrsta: od vseh v krogu odštejemo že vpisana območja z dvema ali tremi vrstami. Samo klepet $22 - (6 + 4 + 3) = 22 - 13 = 9$, samo videi $18 - (6 + 3 + 3) = 18 - 12 = 6$, samo glasba $15 - (4 + 3 + 3) = 15 - 10 = 5$.
 4. Skupaj: $9 + 6 + 5 + 6 + 4 + 3 + 3 = 36$ dijakov.
 5. Preverimo s formulo: $22 + 18 + 15 - 9 - 7 - 6 + 3 = 55 - 22 + 3 = 36$.
-6. Natanko en jezik govori $9 + 6 + 5 = 20$ dijakov.
-7. Odgovor: v skupini je $36$ dijakov, natanko en tuji jezik jih govori $20$.
+6. Zdaj ti: iz tretjega koraka izračunaj, koliko dijakov uporablja natanko eno vrsto aplikacij.
+
+:::premisli
+Koliko dijakov uporablja natanko eno vrsto aplikacij?
+---
+$9 + 6 + 5 = 20$. Sodelovalo je $36$ dijakov, natanko eno vrsto aplikacij jih uporablja $20$.
+:::
 
 ## Pogoste napake
 
@@ -168,75 +191,68 @@ Pomisli na iskanje po spletu ali na filtre v spletni trgovini. Vsak filter dolo�
 - »kolo **ali** skiro« je unija: izdelki, ki so kolesa ali skiroji,
 - »kolo **ne** električno« je razlika: kolesa, od katerih odvzameš električna.
 
-Vsak filter, ki ga dodaš, ponavadi zmanjša število zadetkov, saj iščeš presek vedno več množic.
+Nov filter, dodan z »in«, števila zadetkov nikoli ne poveča: presek je del vsake od množic, iz katerih nastane.
 
-Še en primer je jedilnik. Na njem je $12$ jedi, od tega $5$ vegetarijanskih (množica $V$). Dve od teh vsebujeta oreščke (množica $O$). Ana je vegetarijanka in je alergična na oreščke. Ustrezajo ji jedi iz množice $V \setminus O$, torej vegetarijanske jedi brez oreščkov. Njihovo število je $|V| - |V \cap O| = 5 - 2 = 3$. Takšno razmišljanje uporabljajo tudi baze podatkov, ki iščejo po več pogojih hkrati.
-
-## Drugače: Korak za korakom s številkami
-
-Naloga: V razredu je $30$ dijakov. Nogomet trenira $18$ dijakov, košarko $14$, oba športa pa $7$. Koliko dijakov ne trenira nobenega od teh dveh športov?
-
-Naloga ima presek, zato Vennov diagram izpolnimo od sredine navzven:
-
-| Korak | Kaj izračunamo | Račun | Rezultat |
-|---|---|---|---|
-| 1 | trenirajo oba (presek) | podano | $7$ |
-| 2 | samo nogomet | $18 - 7$ | $11$ |
-| 3 | samo košarka | $14 - 7$ | $7$ |
-| 4 | vsaj en šport (unija) | $11 + 7 + 7$ | $25$ |
-| 5 | nobenega športa | $30 - 25$ | $5$ |
-
-Preverimo s formulo za moč unije: $18 + 14 - 7 = 25$, kar se ujema s četrtim korakom. Seštevek vseh štirih območij je $11 + 7 + 7 + 5 = 30$, kar je vsa skupina. Če bi pri četrtem koraku računal kar $18 + 14 = 32$, bi dobil več dijakov, kot jih je v razredu. To je znak, da si elemente preseka štel dvakrat.
-
-## Drugače: Bolj natančno
-
-Operacije se natančno definirajo z logičnimi vezniki, kjer $\lor$ pomeni »ali«, $\land$ pa »in«:
-
-$$A \cup B = \{x \mid x \in A \lor x \in B\}, \qquad A \cap B = \{x \mid x \in A \land x \in B\},$$
-
-$$A \setminus B = \{x \mid x \in A \land x \notin B\}, \qquad A^c = \{x \in \mathcal{U} \mid x \notin A\}.$$
-
-Prvo De Morganovo pravilo dokažemo z verigo ekvivalenc: $x \in (A \cup B)^c$ natanko tedaj, ko $x \notin A \cup B$, to je natanko tedaj, ko $x \notin A$ in $x \notin B$, in to je natanko tedaj, ko $x \in A^c \cap B^c$. Množici imata torej iste elemente, zato sta enaki.
-
-Formulo za moč unije utemeljimo tako: množica $A \cup B$ razpade na tri disjunktne dele $A \setminus B$, $A \cap B$ in $B \setminus A$. Velja $|A| = |A \setminus B| + |A \cap B|$ in $|B| = |B \setminus A| + |A \cap B|$. Vsota $|A| + |B|$ šteje presek dvakrat, moč unije pa enkrat, zato je razlika natanko $|A \cap B|$.
-
-Število podmnožic: pri vsakem od $n$ elementov se odločimo, ali ga vzamemo v podmnožico ali ne. Odločitve so neodvisne, zato je možnosti $2 \cdot 2 \cdots 2 = 2^n$. Prazna množica je primer, ko nismo vzeli nobenega elementa, cela množica pa primer, ko smo vzeli vse.
+Galerija na telefonu deluje enako. »Videi s tega leta« so presek dveh množic, »fotografije brez lokacije« pa komplement v množici vseh fotografij.
 
 ## Preveri se
 
-? Naj bo $A = \{1, 2, 3\}$. Katera trditev je pravilna?
-- $2 \subseteq A$
-- $\{2\} \in A$
-+ $\{2\} \subseteq A$
-- $4 \in A$
-> Znak $\subseteq$ povezuje množico z množico, zato je $\{2\} \subseteq A$ pravilno. Število $2$ je element in ga pišemo z $\in$ ($2 \in A$). Množica $\{2\}$ ni element množice $A$, število $4$ pa v $A$ ni.
-
-? Naj bo $A = \{1, 2, 3, 4, 5, 6\}$ in $B = \{4, 5, 6, 7, 8\}$. Kaj je $B \setminus A$?
-- $\{1, 2, 3\}$
-- $\{4, 5, 6\}$
-+ $\{7, 8\}$
-- $\{1, 2, 3, 7, 8\}$
-> Iz $B$ odstranimo elemente, ki so tudi v $A$ ($4$, $5$, $6$), ostaneta $7$ in $8$. Množica $\{1, 2, 3\}$ je $A \setminus B$, množica $\{4, 5, 6\}$ je presek.
-
-? Za množici velja $|A| = 20$, $|B| = 15$ in $|A \cap B| = 6$. Koliko elementov ima $A \cup B$?
-- $35$
-- $41$
-+ $29$
-- $14$
-> $|A \cup B| = |A| + |B| - |A \cap B| = 20 + 15 - 6 = 29$. Rezultat $35$ dobiš, če pozabiš odšteti presek, $41$, če ga prišteješ, $14$ pa je število elementov razlike $A \setminus B$.
-
-? Kateri izraz je enak $(A \cup B)^c$?
-- $A^c \cup B^c$
-+ $A^c \cap B^c$
+? Na Vennovem diagramu z dvema krogoma, $A$ levo in $B$ desno, je osenčen le del levega kroga, ki ne leži v desnem. Kateri zapis ustreza osenčenemu delu?
 - $A \cap B$
-- $A \setminus B$
-> Element zunaj unije ni v $A$ in ni v $B$, torej je v $A^c$ in v $B^c$. To je prvo De Morganovo pravilo. Izraz $A^c \cup B^c$ je enak $(A \cap B)^c$.
+~ Presek je samo prekrivanje obeh krogov, ta pa ni osenčen.
+- $B \setminus A$
+~ Razlika ni zamenljiva: $B \setminus A$ je del desnega kroga zunaj levega.
++ $A \setminus B$
+- $B^c$
+~ Komplement $B^c$ zajema tudi območje zunaj obeh krogov, ki ni osenčeno.
+> Osenčeni so elementi, ki so v $A$, niso pa v $B$. To je razlika $A \setminus B = A \cap B^c$.
+
+? V razredu je $30$ dijakov. Kolo ima $25$ dijakov, smuči $20$. Najmanj koliko dijakov ima oboje?
+- $0$
+~ Množici bi bili lahko disjunktni le, če bi bilo $25 + 20$ največ $30$. Ker je $45 > 30$, se morata prekrivati.
+- $20$
+~ To je največ, kolikor jih lahko ima oboje: tedaj ima vsak s smučmi tudi kolo.
++ $15$
+- $45$
+~ To je $|A| + |B|$, ki presek šteje dvakrat. V razredu sploh ni $45$ dijakov.
+> Naj bo $A$ množica dijakov s kolesom, $B$ pa s smučmi. V uniji je največ $30$ dijakov, zato je $|A \cap B| = |A| + |B| - |A \cup B| \ge 25 + 20 - 30 = 15$.
+
+? Zakaj v formuli $|A \cup B| = |A| + |B| - |A \cap B|$ odštejemo $|A \cap B|$?
+- Ker je unija vedno manjša od vsote moči.
+~ Pri disjunktnih množicah je unija enaka vsoti. Odšteti moramo natanko presek, ne poljubnega števila.
++ Ker vsota $|A| + |B|$ elemente preseka šteje dvakrat.
+- Ker odštejemo elemente, ki niso v nobeni od množic.
+~ Elementi zunaj obeh množic niso všteti ne v $|A|$ ne v $|B|$, zato jih ni treba odšteti.
+- Ker je $A \cap B$ enako $A \setminus B$.
+~ Presek in razlika sta različni množici: prvi so elementi v obeh, drugi elementi samo v $A$.
+> Vsak element preseka je v $A$ in v $B$, zato ga vsota $|A| + |B|$ prešteje dvakrat. Enkrat ga odštejemo.
+
+? Naj bo $A = \{1, 2, 3\}$. Za katero množico $B$ velja $A \cup B = \{1, 2, 3, 4, 5\}$ in $A \cap B = \{3\}$?
+- $\{4, 5\}$
+~ Potem bi bil presek $A \cap B = \emptyset$. Število $3$ mora biti tudi v $B$.
++ $\{3, 4, 5\}$
+- $\{1, 2, 3, 4, 5\}$
+~ Unija bi bila prava, presek pa bi bil cela množica $A = \{1, 2, 3\}$.
+- $\{3\}$
+~ Presek bi bil pravi, unija pa le $\{1, 2, 3\}$, brez $4$ in $5$.
+> $B$ mora vsebovati $4$ in $5$ (zaradi unije) in $3$ (zaradi preseka), ne sme pa vsebovati $1$ in $2$. Torej $B = \{3, 4, 5\}$.
+
+? Telefon ima v galeriji $120$ fotografij. Med priljubljene jih je označenih $45$, lokacijo jih ima $30$, oboje pa $12$. Koliko fotografij ni priljubljenih in nima lokacije?
+- $45$
+~ Izračunal si $120 - 45 - 30$ in fotografije z obema oznakama odštel dvakrat.
+- $63$
+~ To je število fotografij z vsaj eno oznako, torej unija. Vprašanje sprašuje po njenem komplementu.
++ $57$
+- $75$
+~ To so fotografije, ki niso priljubljene. Med njimi jih ima nekaj lokacijo.
+> Unija: $45 + 30 - 12 = 63$. Komplement v $\mathcal{U}$ s $120$ fotografijami: $120 - 63 = 57$.
 
 :::simboli
 A, B | množici | | | moč množice je število njenih elementov
 x | element množice | | |
 X | poljubna množica | | |
-c | oznaka komplementa (v A^c) | | | komplement: elementi univerzalne množice, ki niso v A
-N | množica dijakov, ki govorijo nemško | | | A angleško, I italijansko
-I | množica dijakov, ki govorijo italijansko | | |
+c | oznaka komplementa (v $A^c$) | | | elementi univerzalne množice, ki niso v $A$
+K | dijaki, ki uporabljajo aplikacije za klepet | | | Primer 3
+V | dijaki, ki uporabljajo aplikacije za kratke videe | | | Primer 3
+G | dijaki, ki uporabljajo aplikacije za glasbo | | | Primer 3
 :::

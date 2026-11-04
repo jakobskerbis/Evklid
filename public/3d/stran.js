@@ -4,6 +4,7 @@ import { t, applyI18n } from "/i18n.js";
 import { icon } from "/icons.js";
 import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
+import { vgrajeno, starsu } from "./vgrajeno.js";
 
 const glavni = document.getElementById("k3-glavni");
 const vAplikaciji = !!window.ReactNativeWebView;
@@ -33,8 +34,10 @@ function razberi() {
 }
 
 // Nazaj na zbirko: če smo prišli z nje, z zgodovino (tipka Nazaj ostane naravna), sicer zamenjamo naslov.
+// V okvirju aplikacije (3D svet v »Uči se«) je zbirka aplikacija sama: okvir se zapre.
 function nazaj() {
   if (history.state?.k3Iz === "hub") history.back();
+  else if (vgrajeno) starsu({ tip: "zapri3d" });
   else location.hash = "";
 }
 // Povezava z zbirke: oznako »prišel z zbirke« dobi nov vnos v zgodovini (pushState), da nazaj() ve, da sme nazaj.
@@ -44,6 +47,17 @@ function izZbirke(e) {
   e.preventDefault();
   history.pushState({ k3Iz: "hub" }, "", e.currentTarget.getAttribute("href"));
   usmeri();
+}
+
+// Gumb »3D svet« ob napaki (model ne obstaja, ni WebGL): na zbirko, v okvirju aplikacije pa zapre okvir (zbirka v
+// okvirju nima poti nazaj, Esc tam ne deluje).
+function naZbirko(b) {
+  b.href = "#";
+  if (vgrajeno)
+    b.addEventListener("click", (e) => {
+      e.preventDefault();
+      starsu({ tip: "zapri3d" });
+    });
 }
 
 // Področja v izbirniku zbirke: »telo« združi atlas, organe in organske sisteme; ikona za kartico brez sličice.
@@ -71,7 +85,7 @@ async function zbirka(param) {
   document.title = t("a3.hubTitle");
   const box = mk("div", "k3-hub");
   const vrh = mk("header", "k3-hub-vrh");
-  if (!vAplikaciji) {
+  if (!vAplikaciji && !vgrajeno) {
     const b = mk("a", "a3-krog");
     b.href = "/";
     b.innerHTML = icon("arrow-left");
@@ -331,7 +345,7 @@ async function model(id, param, moj) {
     const p = mk("div", "k3-napaka");
     p.append(mk("p", "", t("a3.notFound")));
     const b = mk("a", "a3-pill");
-    b.href = "#";
+    naZbirko(b);
     b.textContent = t("a3.hubTitle");
     p.append(b);
     glavni.replaceChildren(p);
@@ -374,7 +388,7 @@ async function model(id, param, moj) {
     const st = mk("span", "k3-model-stevec", t("a3.position", { i: sos.i + 1, n: sos.n }));
     desno.append(gumb(sos.prej, -1), st, gumb(sos.potem, 1));
   }
-  if (document.fullscreenEnabled && !vAplikaciji) {
+  if (document.fullscreenEnabled && !vAplikaciji && !vgrajeno) {
     const fs = mk("button", "a3-krog k3-cel-zaslon");
     fs.type = "button";
     const oznaci = () => {
@@ -418,7 +432,7 @@ async function usmeri() {
     const p = mk("div", "k3-napaka");
     p.append(mk("p", "", t(err?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError")));
     const b = mk("a", "a3-pill");
-    b.href = "#";
+    naZbirko(b);
     b.textContent = t("a3.hubTitle");
     p.append(b);
     glavni.replaceChildren(p);

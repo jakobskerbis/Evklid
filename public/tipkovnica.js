@@ -14,7 +14,7 @@ import { icon } from "./icons.js";
 import { GROUPS, groupOrder, chemFormat } from "./symbols.js";
 import { stopnja } from "./stopnja.js";
 import {
-  layoutFor, FX_GROUPS, KEM_ROWS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
+  layoutFor, FX_GROUPS, CAS_SL, KEM_ROWS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
   fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
 } from "./tipkovnica-data.js";
 
@@ -370,8 +370,15 @@ function fxHtml() {
   const g = FX_GROUPS.find(([id]) => id === S.fxg);
   const toNum = S.layers.some((l) => layerId(l) === "num") ? key("123", { a: "layer", v: "num" }, { cls: "fn sm w15" }) : "";
   return `${subtabs(FX_GROUPS.map(([id, k]) => [id, t(k)]), S.fxg, "fxg")}
-    <div class="tk-grid tk-scroll" style="--cols:5">${g[2].map(([l, ins]) => key(l, { a: "ins", v: ins }, { cls: "sm" })).join("")}</div>
+    <div class="tk-grid tk-scroll" style="--cols:5">${g[2].map(([l, ins]) => fxKey(g[0], l, ins)).join("")}</div>
     <div class="tk-row">${toNum}${leftKey()}${rightKey()}${bsKey()}${goKey()}</div>`;
+}
+
+// skupina Algebra: v slovenščini poenostavi/razvij/razstavi/reši, drugje angleška imena (kot na kalkulatorjih CAS)
+function fxKey(group, l, ins) {
+  const sl = group === "alg" && CAS_SL[l] && /^sl/.test(currentLang() || "sl");
+  const cls = group === "alg" && CAS_SL[l] ? "sm word" : "sm";
+  return sl ? key(CAS_SL[l], { a: "ins", v: ins.replace(l, CAS_SL[l]) }, { cls }) : key(l, { a: "ins", v: ins }, { cls });
 }
 
 function symName(g) {

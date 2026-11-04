@@ -1,5 +1,5 @@
 // Simulacija: geometrijska telesa v 3D (vrtenje s prstom), mreže, površina in prostornina.
-import { h, s, svgBox, slider, select, toggle, button, buttons, readout, layout, tex, texBlock, fmt, tfmt, clamp, label, animate, playButton, svgPoint } from "./kit.js";
+import { h, s, svgBox, slider, select, toggle, button, buttons, readout, layout, tex, texBlock, fmt, tfmt, clamp, label, animate, playButton, svgPoint, plural } from "./kit.js";
 
 const BODIES = {
   kocka: { name: "kocka", params: [["a", 1, 6, 3]] },
@@ -69,16 +69,16 @@ function formulas(kind, p) {
   const T = (x) => tfmt(x, 2);
   if (kind === "kocka") {
     const [a] = p;
-    return { P: `P = 6a^2 = 6\\cdot ${a}^2 = ${6 * a * a}`, V: `V = a^3 = ${a}^3 = ${a ** 3}`, note: `Kocka iz ${a ** 3} enotskih kock. Diagonala ploskve a√2 ≈ ${fmt(a * Math.SQRT2)}, telesna diagonala a√3 ≈ ${fmt(a * Math.sqrt(3))}.` };
+    return { P: `P = 6a^2 = 6\\cdot ${a}^2 = ${6 * a * a}`, V: `V = a^3 = ${a}^3 = ${a ** 3}`, note: `Kocka iz ${a ** 3} ${(a ** 3) % 100 === 1 ? "enotske kocke" : "enotskih kock"}. Diagonala ploskve a√2 ≈ ${fmt(a * Math.SQRT2)}, telesna diagonala a√3 ≈ ${fmt(a * Math.sqrt(3))}.` };
   }
   if (kind === "kvader") {
     const [a, b, c] = p;
-    return { P: `P = 2(ab + bc + ac) = 2(${a}\\cdot ${b} + ${b}\\cdot ${c} + ${a}\\cdot ${c}) = ${2 * (a * b + b * c + a * c)}`, V: `V = abc = ${a}\\cdot ${b}\\cdot ${c} = ${a * b * c}`, note: `V vsako plast gre ${a} · ${b} = ${a * b} enotskih kock, plasti je ${c}.` };
+    return { P: `P = 2(ab + bc + ac) = 2(${a}\\cdot ${b} + ${b}\\cdot ${c} + ${a}\\cdot ${c}) = ${2 * (a * b + b * c + a * c)}`, V: `V = abc = ${a}\\cdot ${b}\\cdot ${c} = ${a * b * c}`, note: `V vsako plast ${plural(a * b, ["gre", "gresta", "gredo", "gre"])} ${a} · ${b} = ${a * b} ${plural(a * b, ["enotska kocka", "enotski kocki", "enotske kocke", "enotskih kock"])}, ${plural(c, ["plast je", "plasti sta", "plasti so", "plasti je"])} ${c}.` };
   }
   if (kind === "prizma") {
     const [n, a, v] = p;
     const O = (n * a * a) / (4 * Math.tan(Math.PI / n));
-    return { P: `P = 2O + pl = 2\\cdot ${T(O)} + ${n}\\cdot ${a}\\cdot ${v} = ${T(2 * O + n * a * v)}`, V: `V = O\\cdot v = ${T(O)}\\cdot ${v} = ${T(O * v)}`, note: `Osnovna ploskev je pravilni ${n}-kotnik s ploščino O ≈ ${fmt(O)}. Plašč je ${n} pravokotnikov ${a} × ${v}.` };
+    return { P: `P = 2O + pl = 2\\cdot ${T(O)} + ${n}\\cdot ${a}\\cdot ${v} = ${T(2 * O + n * a * v)}`, V: `V = O\\cdot v = ${T(O)}\\cdot ${v} = ${T(O * v)}`, note: `Osnovna ploskev je pravilni ${n}-kotnik s ploščino O ≈ ${fmt(O)}. Plašč ${plural(n, ["sestavlja", "sestavljata", "sestavljajo", "sestavlja"])} ${n} ${plural(n, ["pravokotnik", "pravokotnika", "pravokotniki", "pravokotnikov"])} ${a} × ${v}.` };
   }
   if (kind === "valj") {
     const [r, v] = p;
@@ -239,7 +239,7 @@ export function telesa(el, { bodies = ["kocka", "kvader"] } = {}) {
       faces.forEach((f) => s("polygon", { points: f.P.map((q) => `${q[0].toFixed(1)},${q[1].toFixed(1)}`).join(" "), class: `face ${f.cls}`, style: `--lit:${f.lit}%` }, svg));
     }
     const f = formulas(kind, p);
-    out.innerHTML = texBlock(f.P) + texBlock(f.V) + `<p>${f.note}</p><p class="muted">${net ? "To je mreža telesa: iz nje ga zložimo. Ploščina mreže je površina telesa." : "Povleci telo s prstom ali miško, da ga zavrtiš."}</p>`;
+    out.innerHTML = texBlock(f.P) + texBlock(f.V) + `<p>${f.note}</p>${net && kind === "krogla" ? "" : `<p class="muted">${net ? "To je mreža telesa: iz nje ga zložimo. Ploščina mreže je površina telesa." : "Povleci telo s prstom ali miško, da ga zavrtiš."}</p>`}`;
   };
   const build = () => {
     p = BODIES[kind].params.map((q) => q[3]);

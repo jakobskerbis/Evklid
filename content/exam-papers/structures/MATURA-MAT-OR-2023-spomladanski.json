@@ -1,0 +1,376 @@
+{
+ "id": "MATURA-MAT-OR-2023-spomladanski",
+ "points": 120,
+ "minutes": 180,
+ "polas": [
+  {
+   "pola": 1,
+   "minutes": 90,
+   "calculator": false,
+   "points": 60
+  },
+  {
+   "pola": 2,
+   "minutes": 90,
+   "calculator": true,
+   "points": 60
+  }
+ ],
+ "tools": "Nalivno pero ali kemični svinčnik, svinčnik, radirka in geometrijsko orodje (šestilo, ravnilo, po želji trikotnik); zbirka zahtevnejših formul je v izpitni poli, priložena sta konceptna lista (osnutki se ne ocenjujejo). Pri izpitni poli 1 računalo ni dovoljeno, pri izpitni poli 2 je dovoljeno. Pot do rezultata mora biti zapisana z vmesnimi računi in sklepi.",
+ "sections": {
+  "A": "kratke naloge: 8 nalog po 1–3 točke (skupaj 20 točk na polo), priporočeno 30 minut; enostopenjske, brez delov",
+  "B": "krajše strukturirane naloge: 6 nalog po 5–8 točk (skupaj 40 točk na polo), priporočeno 60 minut; večinoma brez oštevilčenih delov, dve nalogi razdeljeni na dela (npr. 2.1, 2.2); del B je enak kot pri višji ravni"
+ },
+ "tasks": [
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 1,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "dve majhni končni množici, podani z naštevanjem: zapisati dve množici, dobljeni z množičnima operacijama (npr. unija, presek ali razlika)"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 2,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "recipročna vrednost kompleksnega števila v obliki a + bi (razširitev s konjugirano vrednostjo)"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 3,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "besedni opis računske operacije prevesti v algebrski izraz (kvadrat vsote, večkratnik kvadrata, razlika)"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 4,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "poenostaviti ulomek z vsotami potenc enakih osnov in eksponenti, odvisnimi od x (izpostavljanje skupne potence, krajšanje)"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 5,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "ploščina petkotnika z oglišči v točkah mreže koordinatnega sistema (razdelitev na trapeze, trikotnike)",
+   "figure": "petkotnik v koordinatni mreži"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 6,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "brez računala izračunati izraz s potenco z racionalnim eksponentom in logaritmom potence osnove"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 7,
+   "points": [
+    1
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "aditivnost določenega integrala glede na meje: iz dveh danih integralov iste funkcije izračunati integral na podintervalu"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 8,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "kvadratna enačba z negativno diskriminanto; rešitvi v kompleksnem"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 1,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "narisati vodoravno premico in poševno premico z dano enačbo ter izračunati ploščino trikotnika, ki ga premici oklepata z ordinatno osjo (presečišča)",
+   "figure": "prazen koordinatni sistem za risanje premic"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 2,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "določiti osnovo logaritemske funkcije, katere graf poteka skozi dano točko z ulomljenima koordinatama (prevedba na potenčno enačbo)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 3,
+   "points": [
+    8
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "racionalna funkcija s kvadratnim števcem in imenovalcem: ničle, poli, začetna vrednost, vodoravna asimptota in graf brez odvoda",
+   "figure": "prazen koordinatni sistem za risanje grafa"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 4,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "dana je vrednost kosinusa kota v danem intervalu (četrti kvadrant); natančno izračunati sinus kota in kosinus vsote kota s posebnim kotom (adicijski izrek, predznak v kvadrantu)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 5,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "polinom četrte stopnje s celimi koeficienti: preveriti, da je dano celo število dvojna ničla (Hornerjev algoritem dvakrat), in poiskati preostali ničli"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 6,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "ekstremalni problem: pravokotnik z enim ogliščem v izhodišču in nasprotnim ogliščem na grafu padajoče kvadratne funkcije v prvem kvadrantu; največja ploščina (odvod)",
+   "figure": "skica grafa s vrisanim pravokotnikom"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 1,
+   "points": [
+    2
+   ],
+   "format": [
+    "fill"
+   ],
+   "topic": "aritmetično zaporedje, podano s splošnim členom: vpisati diferenco in izračunan člen z velikim indeksom"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 2,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "tehtano povprečje ocen treh skupin različnih velikosti iz preglednice, na desetinko natančno",
+   "figure": "preglednica povprečij in števil članov skupin"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 3,
+   "points": [
+    2
+   ],
+   "format": [
+    "construct"
+   ],
+   "topic": "v mreži narisati dve linearni kombinaciji danih vektorjev (z ulomljenim koeficientom)",
+   "figure": "dva vektorja v kvadratni mreži"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 4,
+   "points": [
+    3
+   ],
+   "format": [
+    "choice"
+   ],
+   "topic": "v preglednici poenostaviti trigonometrični izraz (dvojni kot), racionalni izraz (razlika kvadratov) in izraz s fakultetami ter pri vsakem izbrati pravilno rešitev med ponujenimi; prvi primer je rešen",
+   "figure": "preglednica izrazov in ponujenih rešitev"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 5,
+   "points": [
+    3
+   ],
+   "format": [
+    "fill"
+   ],
+   "topic": "iz grafa parabole z označenima ničlama in začetno vrednostjo dopolniti manjkajoča koeficienta kvadratne funkcije in koordinati temena",
+   "figure": "graf parabole s celoštevilskimi označenimi točkami"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 6,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "permutacije z omejitvijo: na koliko načinov se v vrsto postavijo odrasli in otroci, če otroci stojijo skupaj (blok)"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 7,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "valj z dano prostornino in višino v različnih enotah: polmer osnovne ploskve v milimetrih (pretvorba enot)"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 8,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "ploščina trikotnika iz dveh stranic in vmesnega kota"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 1,
+   "points": [
+    8
+   ],
+   "format": [
+    "table"
+   ],
+   "topic": "preglednica funkcija / nedoločeni integral / odvod: za pet preprostih funkcij (potenca, linearna, sinus, eksponentna z linearnim eksponentom, recipročna) dopolniti manjkajoča stolpca; prva vrstica je rešena",
+   "figure": "preglednica s tremi stolpci"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 2,
+   "points": [
+    5,
+    2
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "elipsa: 1) enačba elipse iz gorišč na abscisni osi in temena na ordinatni osi; 2) enačba krožnice s središčem v gorišču, ki poteka skozi to teme"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 3,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "besedilna naloga o starostih: razmerja starosti dveh oseb pred leti in čez leta (ulomljeno razmerje); sistem dveh linearnih enačb in odgovor"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 4,
+   "points": [
+    2,
+    3
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "klasična verjetnost v razredu z dekleti in fanti: 1) verjetnost, da je naključno izbran en dijak fant; 2) verjetnost, da sta dva naključno izbrana dekleti (brez vračanja, kombinacije)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 5,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "geometrijsko zaporedje z danim količnikom in dano vsoto prvih členov: splošni člen in število členov, manjših od dane meje (eksponentna neenačba)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 6,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "višina stolpa: opazovalec na tleh vidi vrh in začetek zgornjega dela stolpa pod dvema kotoma dviga, dolžina zgornjega dela je dana; višina na desetinko metra (pravokotna trikotnika ali sinusni izrek)",
+   "figure": "skica stolpa z označenimi točkami"
+  }
+ ]
+}

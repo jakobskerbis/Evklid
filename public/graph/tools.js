@@ -4,7 +4,7 @@
 import { skicaZa } from "../skice/index.js";
 import { createUnits } from "./sci.js";
 import { formatNumber } from "./scicore.js";
-import { readList, evalComplex, polyRoots, readMatrix, M, convertBase, logic32, LOGIC_OPS, molarMass, readNumber } from "./toolscore.js";
+import { readList, evalComplex, polyRoots, readMatrix, M, convertBase, logic32, LOGIC_OPS, molarMass, readNumber, solveRatio } from "./toolscore.js";
 import { ELEMENTS, CATEGORIES, MASSES, shells, EXTRA } from "./pse-data.js";
 
 import { esc, texHtml, usesComma, remember } from "./tools-kit.js";
@@ -13,13 +13,15 @@ import { probTool } from "./tools-prob.js";
 import { anaTools } from "./tools-ana.js";
 import { testsTool, tvmTool, tableTool } from "./tools-test.js";
 import { statsTool } from "./tools-stats.js";
+import { sheetTool } from "./tools-sheet.js";
+import { trialsTool } from "./tools-trials.js";
 
-const TOOLS = ["units", "eq", "calc", "stats", "tests", "prob", "vec", "matrix", "plot3", "ode", "err", "complex", "base", "tvm", "table", "rxn", "conc", "solub"];
+const TOOLS = ["units", "eq", "calc", "stats", "sheet", "tests", "prob", "trials", "vec", "matrix", "plot3", "ode", "err", "complex", "base", "tvm", "table", "rxn", "conc", "solub"];
 // vrstni red čipov po predmetu: najprej orodja, ki jih predmet največ rabi
 const ORDER = {
   KEM: ["rxn", "conc", "solub", "units", "err", "stats", "eq"],
   FIZ: ["units", "err", "eq", "vec", "calc", "ode", "stats"],
-  MAT: ["eq", "calc", "table", "stats", "tests", "prob", "vec", "matrix", "plot3", "ode", "complex", "base", "tvm"],
+  MAT: ["eq", "calc", "table", "stats", "sheet", "tests", "prob", "trials", "vec", "matrix", "plot3", "ode", "complex", "base", "tvm"],
 };
 const toolOrder = (subj) => {
   const first = ORDER[subj] || ORDER.MAT;
@@ -64,14 +66,22 @@ export function createTools(root, opts) {
   // ---- enačbe ----
   function eq_(el) {
     const st = remember.get("evklid.tool.eq", { kind: "poly", deg: 2, poly: ["1", "-5", "6", "0", "0"], n: 2, sys: [] });
-    el.innerHTML = `<div class="seg tl-seg"><button type="button" data-kind="poly">${esc(t("sc.eq.poly"))}</button><button type="button" data-kind="sys">${esc(t("sc.eq.sys"))}</button></div><div class="tl-eq"></div><div class="tl-out" aria-live="polite"></div>`;
+    if (!Array.isArray(st.ratio) || st.ratio.length !== 4) st.ratio = ["2", "3", "4", ""];
+    el.innerHTML = `<div class="seg tl-seg"><button type="button" data-kind="poly">${esc(t("sc.eq.poly"))}</button><button type="button" data-kind="sys">${esc(t("sc.eq.sys"))}</button><button type="button" data-kind="ratio">${esc(t("sc.eq.ratio"))}</button></div><div class="tl-eq"></div><div class="tl-out" aria-live="polite"></div>`;
     const box = el.querySelector(".tl-eq");
     const out = el.querySelector(".tl-out");
     const save = () => remember.set("evklid.tool.eq", st);
     const LET = ["a", "b", "c", "d", "e"];
     function draw() {
       el.querySelectorAll(".tl-seg button").forEach((b) => b.classList.toggle("active", b.dataset.kind === st.kind));
-      if (st.kind === "poly") {
+      if (st.kind === "ratio") {
+        // a : b = c : d (Casio »Razmerje«): neznanka je lahko na katerem koli mestu
+        const L = ["a", "b", "c", "d"];
+        const sep = (x) => `<span class="tl-ratio-sep" aria-hidden="true">${x}</span>`;
+        box.innerHTML = card(`<div class="tl-formula">${texHtml("a : b = c : d")}</div>
+          <div class="tl-ratio">${L.map((l, i) => `<label class="tl-field"><span>${texHtml(l)}</span><input class="tl-ra" data-i="${i}" inputmode="decimal" autocomplete="off" placeholder="x" value="${esc(st.ratio[i])}"></label>${i === 1 ? sep("=") : i < 3 ? sep(":") : ""}`).join("")}</div>
+          <p class="muted tl-note">${esc(t("sc.eq.ratioHint"))}</p>`);
+      } else if (st.kind === "poly") {
         const d = st.deg;
         const terms = LET.slice(0, d + 1).map((l, i) => (d - i > 1 ? `${l}x^{${d - i}}` : d - i === 1 ? `${l}x` : l));
         box.innerHTML = card(`<label class="tl-field tl-inline"><span>${esc(t("sc.eq.degree"))}</span><select class="tl-deg">${[1, 2, 3, 4].map((k) => `<option${k === d ? " selected" : ""}>${k}</option>`).join("")}</select></label>
@@ -89,6 +99,31 @@ export function createTools(root, opts) {
       solve();
     }
     function solve() {
+      if (st.kind === "ratio") {
+        const L = ["a", "b", "c", "d"];
+        // prazno polje ali »x« je neznanka
+        const vals = st.ratio.map((x) => (/^\s*x?\s*$/i.test(x) ? NaN : readNumber(x)));
+        if (st.ratio.some((x, i) => !/^\s*x?\s*$/i.test(x) && !Number.isFinite(vals[i]))) return (out.innerHTML = err(t("gc.errSyntax")));
+        const r = solveRatio(vals);
+        if (r.error) return (out.innerHTML = err(t(r.error === "zero" ? "sc.eq.ratioZero" : "sc.eq.ratioHint")));
+        const v = (j) => (vals[j] < 0 && j !== den ? `(${num(vals[j]).tex})` : num(vals[j]).tex); // 3 · (−2), ne 3 · −2
+        // za neznanko: produkt zunanjih (a·d) = produkt notranjih (b·c)
+        const [p, q, den] = [
+          [1, 2, 3],
+          [0, 3, 2],
+          [0, 3, 1],
+          [1, 2, 0],
+        ][r.i];
+        const x = L[r.i];
+        // neskončna decimalka (2,333…) dobi ≈, ne =
+        const eq = Number(r.value.toPrecision(8)) === r.value ? "=" : "\\approx";
+        const steps = [`a \\cdot d = b \\cdot c`, `${x} = \\dfrac{${L[p]} \\cdot ${L[q]}}{${L[den]}} = \\dfrac{${v(p)} \\cdot ${v(q)}}{${v(den)}} ${eq} ${num(r.value).tex}`];
+        const full = vals.map((w, j) => (j === r.i ? `\\mathbf{${num(r.value).tex}}` : num(w).tex));
+        out.innerHTML = card(`<div class="tl-row"><span class="tl-v">${texHtml(`${x} ${eq} ${num(r.value).tex}`)}</span>${insertBtn(r.value)}</div>
+          ${steps.map((sx) => `<div class="tl-mx-line">${texHtml(sx)}</div>`).join("")}
+          <div class="tl-mx-line">${texHtml(`${full[0]} : ${full[1]} = ${full[2]} : ${full[3]}`)}</div>`);
+        return;
+      }
       if (st.kind === "poly") {
         const co = st.poly.slice(0, st.deg + 1).map(readNumber);
         if (co.some((v) => !Number.isFinite(v)) || co[0] === 0) return (out.innerHTML = co[0] === 0 ? err(t("sc.eq.leadZero")) : "");
@@ -127,6 +162,7 @@ export function createTools(root, opts) {
     el.addEventListener("input", (e) => {
       const x = e.target;
       if (x.matches(".tl-co")) st.poly[Number(x.dataset.i)] = x.value;
+      else if (x.matches(".tl-ra")) st.ratio[Number(x.dataset.i)] = x.value;
       else if (x.matches(".tl-sc")) {
         st.sys ||= [];
         st.sys[x.dataset.i] ||= [];
@@ -174,19 +210,29 @@ export function createTools(root, opts) {
   // ---- matrike ----
   function matrix_(el) {
     const st = remember.get("evklid.tool.mx", { A: "2 1\n1 3", B: "3\n5" });
+    st.n ??= "3";
     el.innerHTML =
       card(`<div class="tl-mx"><label class="tl-field"><span>${texHtml("A")}</span><textarea class="tl-A" rows="3" spellcheck="false">${esc(st.A)}</textarea></label><label class="tl-field"><span>${texHtml("B")}</span><textarea class="tl-B" rows="3" spellcheck="false">${esc(st.B)}</textarea></label></div>
       <p class="muted tl-note">${esc(t("sc.mx.hint"))}</p>
-      <div class="chip-row tl-ops">${["\\det A", "A^{-1}", "A^T", "\\operatorname{rref} A", "A + B", "A - B", "A \\cdot B", "A x = B", "\\operatorname{sl} A", "A^2", "\\lambda"].map((o, i) => `<button type="button" data-op="${i}">${texHtml(o)}</button>`).join("")}</div>`) + `<div class="tl-out" aria-live="polite"></div>`;
+      <div class="chip-row tl-ops">${["\\det A", "A^{-1}", "A^T", "\\operatorname{rref} A", "A + B", "A - B", "A \\cdot B", "A x = B", "\\operatorname{sl} A", "A^2", "\\lambda", "I_n", "A^n"].map((o, i) => `<button type="button" data-op="${i}">${texHtml(o)}</button>`).join("")}</div>
+      <label class="tl-field tl-inline tl-mx-n" hidden><span>${texHtml("n")}</span><input class="tl-n-in" inputmode="numeric" autocomplete="off" value="${esc(st.n)}"></label>`) + `<div class="tl-out" aria-live="polite"></div>`;
     const out = el.querySelector(".tl-out");
     let op = 0;
     const run = () => {
       st.A = el.querySelector(".tl-A").value;
       st.B = el.querySelector(".tl-B").value;
+      st.n = el.querySelector(".tl-n-in").value;
       remember.set("evklid.tool.mx", st);
       el.querySelectorAll(".tl-ops button").forEach((b) => b.classList.toggle("active", Number(b.dataset.op) === op));
+      el.querySelector(".tl-mx-n").hidden = op < 11;
       const A = readMatrix(st.A);
       const B = readMatrix(st.B);
+      const n = readNumber(st.n);
+      if (op === 11) {
+        // enotska matrika I_n (ne rabi A)
+        if (!Number.isInteger(n) || n < 1 || n > 10) return (out.innerHTML = err(t("sc.mx.nHint")));
+        return (out.innerHTML = card(`<div class="tl-mx-res">${texHtml(`I_{${n}} = ${mTex(M.identity(n))}`, true)}</div>`));
+      }
       if (!A) return (out.innerHTML = err(t("sc.mx.hint")));
       const needB = op >= 4 && op <= 7;
       if (needB && !B) return (out.innerHTML = err(t("sc.mx.hint")));
@@ -238,6 +284,13 @@ export function createTools(root, opts) {
           const poly = cp.map((c, i) => term(c, n - i)).join("").replace(/^\+/, "");
           // vsaka vrstica posebej, da se na telefonu nič ne pomika vstran
           res = [`\\det(\\lambda I - A) = ${poly}`, ...ev.map((e, i) => `\\lambda_{${i + 1}} = ${z(e)}`)];
+          break;
+        }
+        case 12: {
+          if (!Number.isInteger(n) || Math.abs(n) > 99) return (out.innerHTML = err(t("sc.mx.nHint")));
+          if (!sq) break;
+          const r = M.pow(A, n);
+          res = r ? `A^{${n}} = ${mTex(r)}` : "!" + t("sc.mx.singular");
           break;
         }
         case 7: {
@@ -324,6 +377,8 @@ export function createTools(root, opts) {
     plot3: ana.plot3,
     units: (el) => createUnits(el, { t, icon, locale: opts.locale, onInsert: opts.onInsert }),
     stats: (el) => statsTool(el, ctx),
+    sheet: (el) => sheetTool(el, ctx),
+    trials: (el) => trialsTool(el, ctx),
     eq: eq_,
     complex: complex_,
     matrix: matrix_,
@@ -696,26 +751,10 @@ export function createFormulas(root, opts) {
     toc.innerHTML = secs.map((x) => `<button type="button" data-sec="${x.id}">${esc(x.querySelector("h2").textContent)}</button>`).join("");
     toc.hidden = secs.length < 2;
     root.scrollTop = 0;
-    fit();
     spy();
   }
 
-  // formula, širša od zaslona, se pomanjša (največ na 78 %); šele potem se pomika vodoravno
-  function fit() {
-    for (const k of body.querySelectorAll(".fm-f .katex")) {
-      k.style.fontSize = "";
-      const cw = k.closest(".fm-f").clientWidth;
-      const w = k.getBoundingClientRect().width;
-      if (!cw || w <= cw) continue;
-      const fs = parseFloat(getComputedStyle(k).fontSize);
-      k.style.fontSize = `${Math.max(fs * 0.78, (fs * cw * 0.98) / w).toFixed(2)}px`;
-    }
-  }
-  let fitTimer = 0;
-  window.addEventListener("resize", () => {
-    clearTimeout(fitTimer);
-    fitTimer = setTimeout(fit, 150);
-  });
+  // Formulo, širšo od zaslona, sirina.js (initSirina) zloži pri enačajih in malo pomanjša; šele potem se pomika.
 
   // čip poglavja, ki je trenutno na vrhu, je označen
   function spy() {
@@ -751,7 +790,7 @@ export function createFormulas(root, opts) {
   });
   return {
     root,
-    resize: fit,
+    resize() {}, // širino formul ob spremembi okna ureja sirina.js
     reload() {
       show(opts.bookKey?.() || book);
     },

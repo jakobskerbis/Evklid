@@ -999,3 +999,19 @@ test("games: »Sestavi enačbo« and »Razvrsti po velikosti« engines – keys 
   const sl = (await import("../public/i18n/sl.js")).default;
   for (const k of ["games.undo", "games.fillAll", "games.e.tiles.ask", "games.e.tiles.build", "games.e.tiles.sides", "games.e.tiles.pieces", "games.e.order.up", "games.e.order.down", "games.e.order.small", "games.e.order.big", "games.e.order.right"]) assert.ok(sl[k], k);
 });
+
+// Arabščina: imena pojmov in področij iz names-ar.js (prej angleška), vsak pojem ima ime.
+test("games: Arabic concept and area names cover every concept", async () => {
+  const T = await import("../public/games/topics.js");
+  const { NAMES } = await import("../public/games/names-ar.js");
+  const ids = [...T.AREAS.map((a) => `area:${a[0]}`), ...T.CONCEPTS.map((c) => c.id)];
+  assert.deepEqual(ids.filter((id) => !NAMES[id]), [], "manjka arabsko ime");
+  assert.deepEqual(Object.keys(NAMES).filter((id) => !ids.includes(id)), [], "odvečno ime");
+  for (const id of ids) assert.match(NAMES[id], /[؀-ۿ]/, id);
+  await T.loadConceptNames("ar");
+  assert.equal(T.conceptName(T.CONCEPTS[0]), NAMES[T.CONCEPTS[0].id]);
+  assert.equal(T.areaName(T.AREAS[0][0]), NAMES[`area:${T.AREAS[0][0]}`]);
+  await T.loadConceptNames("de");
+  assert.ok([T.CONCEPTS[0].name.sl, T.CONCEPTS[0].name.en].includes(T.conceptName(T.CONCEPTS[0])));
+  await T.loadConceptNames("sl");
+});

@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kompleksna ravnina
+  - $z = a + bi$ je točka $(a, b)$
+  - realna os vodoravno, imaginarna navpično
+  - napaka: $\mathrm{Im}\,(4 - 7i) = -7i$, pravilno $-7$
+- Imaginarna enota
+  - $i^2 = -1$
+  - množenje z $i$: zasuk za pravi kot v levo
+  - potence s periodo $4$: $i^{27} = -i$
+- Seštevanje
+  - premik za premikom
+  - $(3 + 4i) + (-1 + 2i) = 2 + 6i$
+- Množenje
+  - kot dvočlenika, nato $i^2 = -1$
+  - $(3 + 2i)(1 - 4i) = 11 - 10i$
+- Konjugirano število
+  - $\bar{z} = a - bi$, zrcaljenje čez realno os
+  - $z \cdot \bar{z} = a^2 + b^2$
+- Absolutna vrednost
+  - $|z| = \sqrt{a^2 + b^2}$, razdalja od izhodišča
+  - $|-6 + 8i| = 10$
+- Deljenje
+  - razširi s konjugiranim imenovalcu
+  - $\dfrac{1 + 8i}{2 + i} = 2 + 3i$

@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ulomljeni izraz
+  - spremenljivka v imenovalcu, npr. $\dfrac{60}{t}$
+  - z $0$ ne delimo
+  - pravila kot pri ulomkih s števili
+- Pogoji
+  - razstavi imenovalec, izloči vrednosti, pri katerih je faktor $0$
+  - $\dfrac{x}{x^2-4}$: $x \neq 2$ in $x \neq -2$
+  - beri jih iz prvotnega imenovalca
+- Krajšanje
+  - $\dfrac{A \cdot C}{B \cdot C} = \dfrac{A}{B}$ za $C \neq 0$
+  - krajšaj faktorje, nikoli členov
+  - $\dfrac{x-3}{3-x} = -1$ za $x \neq 3$
+- Množenje in deljenje
+  - $\dfrac{A}{B} \cdot \dfrac{C}{D} = \dfrac{A \cdot C}{B \cdot D}$
+  - deljenje je množenje z obratno vrednostjo
+  - najprej razstavi, okrajšaj navzkriž
+- Seštevanje in odštevanje
+  - skupni imenovalec je najmanjši skupni večkratnik
+  - drugi števec v oklepaju
+  - napaka: $\dfrac{1}{x} + \dfrac{1}{y} = \dfrac{2}{x+y}$
+- Preizkus
+  - vstavi isto število v oba izraza

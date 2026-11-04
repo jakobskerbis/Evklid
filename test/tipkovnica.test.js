@@ -6,7 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, digitFor,
-  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, KEM_ROWS,
+  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS,
   NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest, glideDecode,
 } from "../public/tipkovnica-data.js";
 import { WORDS } from "../public/tipkovnica-besede.js";
@@ -14,6 +14,7 @@ import { GROUPS } from "../public/symbols.js";
 import { DEVICE_SETTINGS, deviceValue } from "../public/settings-registry.js";
 import { BUILTINS } from "../public/graph/math.js";
 import { evaluate } from "../public/graph/scicore.js";
+import { parseCommand, runCas } from "../public/graph/cas.js";
 import { UI_LANGUAGES } from "../public/i18n/languages.js";
 import SL from "../public/i18n/sl.js";
 
@@ -140,8 +141,17 @@ test("letter layouts per app language", () => {
 
 test("f(x) keys only insert what the calculator understands; ℂ is among the sets", () => {
   const extra = new Set(["d", "dx", "x", "y", "e", "f", "g", "n", "i", "Ans", "π"]);
-  for (const [, , list] of FX_GROUPS) {
+  for (const [group, , list] of FX_GROUPS) {
     for (const [label, ins] of list) {
+      // Algebra: ukazi CAS (public/graph/cas.js), v slovenščini z imeni iz CAS_SL
+      if (group === "alg" && /\(/.test(ins) && /^[a-z]+\(/.test(ins)) {
+        for (const txt of [ins, ins.replace(label, CAS_SL[label] || label)]) {
+          const cmd = parseCommand(txt.replace("@", /^(solve|reši)/.test(txt) ? "x² − 1 = 0" : "x² − 1"));
+          assert.ok(cmd, `${label}: ${txt} ni ukaz CAS`);
+          assert.ok(!runCas(cmd).error, `${label}: ${txt} → ${JSON.stringify(runCas(cmd).error)}`);
+        }
+        continue;
+      }
       for (const name of ins.match(/[a-zA-Z]{2,}(?=\()/g) || []) assert.ok(BUILTINS.has(name) || extra.has(name), `${label}: ${name} ni funkcija kalkulatorja`);
       // znanstveni kalkulator zapis prebere (»@« in prazni argumenti dobijo število); znaki za enačbe so samo delčki
       if (/^(=|;|<|>|≤|≥|[fg]\(x\)=|[∑∏]_)/.test(ins)) continue;

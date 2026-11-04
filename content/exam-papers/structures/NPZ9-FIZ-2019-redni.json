@@ -1,0 +1,28 @@
+{
+ "id": "NPZ9-FIZ-2019-redni",
+ "points": 36,
+ "minutes": 60,
+ "tools": "nalivno pero ali kemični svinčnik, svinčnik HB ali B, geotrikotnik, šestilo, radirka, šilček in žepno računalo; list s fizikalnimi konstantami in osnovnimi obrazci je sestavni del preizkusa",
+ "tasks": [
+  {"n": 1, "points": [1], "format": ["construct"], "topic": "optika: narisati shematski simbol za izbrano vrsto leče (zbiralna/razpršilna)"},
+  {"n": 2, "points": [1], "format": ["choice"], "topic": "sile na plavajoče telo: med štirimi skicami izbrati tisto, ki pravilno prikazuje sile na telo, ki plava na vodi (teža in vzgon, enako veliki, nasprotni smeri)", "figure": "slika plavajočega telesa in štiri skice z vektorji sil"},
+  {"n": 3, "points": [1], "format": ["choice"], "topic": "merjenje prostornine: z merilnega valja odčitati gladino po potopitvi več majhnih teles in iz razlike z začetno prostornino določiti skupno prostornino teles (pasti: pozabljena razlika, napačno odčitavanje skale)", "figure": "slika merilnega valja s skalo in potopljenimi telesi"},
+  {"n": 4, "points": [1], "format": ["choice"], "topic": "tlak in ploščina: kako se spremeni tlak pod človekom, ko se ploščina stika s tlemi podvoji (obratno sorazmerje, teža ostane enaka)"},
+  {"n": 5, "points": [1], "format": ["choice"], "topic": "moč: primerjati moč dveh oseb, ki opravita različno delo v različnih časih (pretvorba enot kJ/J in min/s, nato A/t); možnost »ni mogoče določiti« kot past"},
+  {"n": 6, "points": [1], "format": ["choice"], "topic": "notranja energija in temperatura: kaj se dogaja z vodo, ki jo segrevamo na štedilniku (obe veličini naraščata); pasti z zamenjanimi trditvami"},
+  {"n": 7, "points": [1], "format": ["choice"], "topic": "enostavna orodja: med naštetimi napravami prepoznati tisto, ki ni enostavno orodje (vzvod, klanec, škripec vs. merilna naprava)"},
+  {"n": 8, "points": [1], "format": ["open"], "topic": "enakomerno gibanje: iz izmerjenega časa in razdalje med dvema točkama na vsakdanji napravi izračunati hitrost (v = s/t, z enoto)"},
+  {"n": 9, "points": [1], "format": ["choice"], "topic": "graf gibanja: v istem koordinatnem sistemu sta grafa dveh teles; določiti, katero je hitrejše (strmina premice)", "figure": "graf z dvema premicama za dve gibajoči se telesi"},
+  {"n": 10, "points": [1], "format": ["choice"], "topic": "astronomija: pomen enote svetlobno leto (razdalja, ne čas) med zamenljivimi pojmi"},
+  {"n": 11, "points": [1], "format": ["choice"], "topic": "astronomija: kaj je galaksija (pasti: ozvezdje, najbližja zvezda, osončje)"},
+  {"n": 12, "points": [1, 1], "format": ["choice", "choice"], "topic": "svetila in zvočila: a) med vsakdanjimi predmeti izbrati telo, ki samo oddaja svetlobo (past: osvetljena telesa); b) med napravami izbrati oddajnik zvoka (past: sprejemniki)"},
+  {"n": 13, "points": [1, 1], "format": ["choice", "construct"], "topic": "odboj svetlobe in senca: skica dveh čolnov na vodi in smer sončnih žarkov; a) izbrati nagib zrcala, ki odbije svetlobo v dano točko (odbojni zakon); b) na vodni gladini označiti točko sence vrha jambora (premočrtno širjenje svetlobe)", "figure": "skica dveh čolnov s sončnimi žarki in štiri skice različno nagnjenih zrcal"},
+  {"n": 14, "points": [1, 1, 1, 1], "format": ["choice", "open", "open", "open"], "topic": "sile in vzmet: mirujoč voziček je z vzmetjo pripet na steno in ga vlečemo s silomerom; a) katera od naštetih sil deluje na voziček (past: sile, ki delujejo na drugo telo); b) odčitati silo silomera; c) sila vzmeti (ravnovesje); d) za koliko se poveča raztezek ob povečanju sile (premo sorazmerje)", "figure": "slika vozička, vzmeti in silomera s skalo"},
+  {"n": 15, "points": [1, 1, 1], "format": ["choice", "choice", "choice"], "topic": "gostota: stolpčni prikaz gostot oštevilčenih snovi, ena je voda; a) katera snov plava na vodi; b) kateri dve snovi imata enako gostoto; c) za katero uporabo snov majhne gostote in velike trdnosti ni primerna (sklepanje)", "figure": "stolpčni diagram gostot več oštevilčenih snovi"},
+  {"n": 16, "points": [1, 1, 1, 1], "format": ["choice", "construct", "open", "choice"], "topic": "zaviranje – preglednica hitrosti več vozil v prvih sekundah zaviranja; a) katero vozilo se prvo ustavi (največji pojemek); b) zanj narisati graf v(t) v dani koordinatni sistem; c) iz enakomernega zmanjševanja hitrosti ekstrapolirati čas ustavljanja drugega vozila; d) primerjati čase ustavljanja dveh vozil (razmerje)", "figure": "preglednica hitrosti v odvisnosti od časa za štiri vozila in prazen koordinatni sistem v(t)"},
+  {"n": 17, "points": [1, 1], "format": ["open", "open"], "topic": "potencialna in kinetična energija: predmet z dano maso pade z dane višine; a) sprememba potencialne energije (mgh); b) katera energija med padanjem narašča"},
+  {"n": 18, "points": [1, 1], "format": ["open", "open"], "topic": "temperatura: a) odčitati temperaturo s skale termometra; b) iz podane spremembe temperature izračunati začetno temperaturo", "figure": "slika skale termometra"},
+  {"n": 19, "points": [1, 1, 1], "format": ["construct", "open", "open"], "topic": "zaporedna vezava: več enakih upornikov zaporedno na viru napetosti; a) narisati shemo vezja s simboli; b) napetost na enem uporniku (enakomerna razdelitev); c) zapisati Ohmov zakon"},
+  {"n": 20, "points": [1, 1, 1], "format": ["open", "open", "choice"], "topic": "mešana vezava žarnic: ena žarnica zaporedno z dvema vzporednima, znan skupni tok; a) tok skozi eno od vzporednih žarnic (delitev toka); b) katera žarnica najbolj sveti; c) kako se spremeni tok skozi vir, ko vzporedno dodamo še eno enako žarnico", "figure": "shema vezja s tremi žarnicami in virom"}
+ ]
+}

@@ -152,8 +152,8 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     if (!s) return;
     const m = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(String(req.body?.image || ""));
     if (!m || m[2].length > MAX_IMAGE) return res.status(400).json({ error: "Slika manjka ali je prevelika." });
-    const blocked = usage?.blockReason(s.id);
-    if (blocked) return res.status(429).json({ error: blocked });
+    const blocked = usage?.blockInfo(s.id);
+    if (blocked) return res.status(429).json(blocked);
     try {
       const out = await readFn({ imageBase64: m[2], mediaType: m[1] });
       if (out.mock) return res.json({ problems: [], mock: true });
@@ -172,8 +172,8 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     if (!text || text.length > MAX_TEXT) return res.status(400).json({ error: "Naloga manjka ali je predolga." });
     const goal = req.body?.goal ?? null;
     if (goal !== null && !GOALS.includes(goal)) return res.status(400).json({ error: "Neznan cilj naloge." });
-    const blocked = usage?.blockReason(s.id);
-    if (blocked) return res.status(429).json({ error: blocked });
+    const blocked = usage?.blockInfo(s.id);
+    if (blocked) return res.status(429).json(blocked);
     try {
       const out = await solveFn({ text, goal, lang: s.settings?.language || "sl" });
       if (out.mock) return res.json({ solution: null, mock: true });

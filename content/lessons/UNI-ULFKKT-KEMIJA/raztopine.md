@@ -17,7 +17,7 @@ Znal boš:
 
 ## Razlaga
 
-**1. Osnovni pojmi.** **Raztopina** je homogena zmes; snov, ki je je več (običajno voda), je **topilo**, raztopljena snov je **topljenec**. **Nasičena** raztopina vsebuje največjo množino topljenca, ki se pri dani temperaturi še raztopi; to je **topnost**.
+**1. Osnovni pojmi.** **Raztopina** je homogena zmes; snov, ki je je več (običajno voda), je **topilo**, raztopljena snov je **topljenec**. **Nasičena** raztopina vsebuje največjo množino topljenca, ki se pri dani temperaturi še raztopi; sestavo nasičene raztopine imenujemo **topnost**.
 
 **2. Načini izražanja sestave.**
 
@@ -37,7 +37,9 @@ Količini s prostornino v imenovalcu ($c$, $\gamma$) sta odvisni od temperature,
 
 $$c = \frac{w\,\rho}{M}.$$
 
-(Pri $\rho$ v $\mathrm{g/L}$ in $M$ v $\mathrm{g/mol}$ dobimo $c$ v $\mathrm{mol/L}$; gostota $1{,}18\,\mathrm{g/mL}$ je $1180\,\mathrm{g/L}$.) Varna pot pri vsaki pretvorbi: izberi preprosto osnovo (npr. $1\,\mathrm{L}$ ali $100\,\mathrm{g}$ raztopine), izračunaj maso, množino in prostornino vsake komponente, nato sestavi želeno koncentracijo.
+*Izpeljava:* vzemimo prostornino $V$ raztopine. Njena masa je $\rho V$, masa topljenca $w\rho V$, množina topljenca $w\rho V/M$; deljeno z $V$ da $c = w\rho/M$. Rezultat ni odvisen od izbrane $V$, ker sta $c$ in $w$ intenzivni količini. (Pri $\rho$ v $\mathrm{g/L}$ in $M$ v $\mathrm{g/mol}$ dobimo $c$ v $\mathrm{mol/L}$; gostota $1{,}18\,\mathrm{g/mL}$ je $1180\,\mathrm{g/L}$.)
+
+Varna pot pri vsaki pretvorbi: izberi preprosto osnovo (npr. $1\,\mathrm{L}$ ali $100\,\mathrm{g}$ raztopine), izračunaj maso, množino in prostornino vsake komponente, nato sestavi želeno koncentracijo.
 
 **4. Priprava raztopine iz trdne snovi.** Za prostornino $V$ s koncentracijo $c$ potrebujemo $n = cV$ in $m = cVM$. Snov natehtamo, raztopimo v manj topila, prenesemo v **merilno bučko** in dopolnimo do oznake. (Ne dodajamo $V$ topila, ker se prostornina pri raztapljanju spremeni.)
 
@@ -62,14 +64,22 @@ Koncentrat športnega napitka razredčiš na dva načina: (a) $50\,\mathrm{mL}$ 
 | $\mathrm{NaCl}$ | $2$ (idealno) | okoli $-1{,}86\,^\circ\mathrm{C}$ |
 | $\mathrm{CaCl_2}$ | $3$ (idealno) | okoli $-2{,}79\,^\circ\mathrm{C}$ |
 
-Dvakrat več delcev, dvakrat večje znižanje. Vrsta delcev ni pomembna, šteje le njihovo število: raztopljeni delci (molekule ali ioni) zmanjšajo »delež« topila v raztopini. Posledice:
+Dvakrat več delcev, dvakrat večje znižanje. Vrsta delcev ni pomembna, šteje le njihovo število: raztopljeni delci (molekule ali ioni) zmanjšajo »delež« topila v raztopini. **Koligativne lastnosti** so lastnosti razredčene raztopine, ki so odvisne le od števila raztopljenih delcev na količino topila, ne od njihove vrste. Veljajo ob teh pogojih: raztopina je razredčena (idealna), topljenec je **nehlapen**, pri zmrzovanju pa iz raztopine izkristalizira **čisto topilo**.
 
-- **Znižanje parnega tlaka** (Raoultov zakon): $p = x_{\text{topila}}\,p^*$, kjer je $p^*$ parni tlak čistega topila.
+- **Raoultov zakon.** Naj bo raztopina idealna in topljenec nehlapen. Potem je parni tlak nad raztopino $p = x_1\,p^*$, kjer je $x_1$ množinski delež topila in $p^*$ parni tlak čistega topila. Ker je $x_1 = 1 - x_2$, je znižanje parnega tlaka $\Delta p = p^* - p = x_2\,p^*$: relativno znižanje $\Delta p/p^*$ je enako množinskemu deležu topljenca.
 - **Zvišanje vrelišča:** $\Delta T_v = i\,K_e\,b$, za vodo je ebulioskopska konstanta $K_e = 0{,}512\,\mathrm{K\,kg/mol}$.
 - **Znižanje tališča (zmrzišča):** $\Delta T_t = i\,K_k\,b$, za vodo je krioskopska konstanta $K_k = 1{,}86\,\mathrm{K\,kg/mol}$.
 - **Osmozni tlak:** $\Pi = i\,c\,RT$ (van 't Hoffova enačba).
 
-**Van 't Hoffov faktor** $i$ pove, na koliko delcev razpade formulska enota: za neelektrolite (glukoza, saharoza, sečnina) je $i = 1$, za $\mathrm{NaCl}$ idealno $2$, za $\mathrm{CaCl_2}$ idealno $3$. V resnici je zaradi privlaka med ioni nekoliko manjši od idealnega.
+**Zakaj nastopa molalnost.** Termodinamika da $\Delta T$ sorazmerno z $x_2$ (glej Bolj natančno). Če je $n_2 \ll n_1$, je $x_2 = \dfrac{n_2}{n_1 + n_2} \approx \dfrac{n_2}{n_1} = \dfrac{n_2 M_1}{m_1} = M_1\,b$, kjer sta $M_1$ in $m_1$ molska masa in masa topila. Zato je $\Delta T$ sorazmeren z $b$, konstanta $K_k = RT_t^{*2}M_1/\Delta_{\mathrm{tal}}H$ pa je lastnost **topila** ($T_t^*$ je tališče čistega topila, $\Delta_{\mathrm{tal}}H$ njegova talilna entalpija).
+
+**Molska masa iz krioskopije.** Iz $\Delta T_t = K_k b$ in $b = m_2/(M\,m_1)$ sledi $M = \dfrac{K_k\,m_2}{\Delta T_t\,m_1}$, kjer je $m_2$ masa topljenca (za neelektrolit, $i = 1$).
+
+**Van 't Hoffov faktor** $i$ je razmerje med številom delcev v raztopini in številom raztopljenih formulskih enot: za neelektrolite (glukoza, saharoza, sečnina) je $i = 1$, za $\mathrm{NaCl}$ idealno $2$, za $\mathrm{CaCl_2}$ idealno $3$. Naj formulska enota razpade na $\nu$ ionov in naj bo $\alpha$ stopnja disociacije. Od vsake enote ostane nerazpadlih $1 - \alpha$ delcev, nastane pa $\nu\alpha$ ionov, zato je
+
+$$i = 1 + \alpha(\nu - 1).$$
+
+Pri močnih elektrolitih je zaradi privlaka med ioni izmerjeni $i$ nekoliko manjši od $\nu$; iz njega izračunani $\alpha$ je **navidezna** stopnja disociacije.
 
 :::premisli
 Katera raztopina ima nižje tališče: sečnina ($M = 60\,\mathrm{g/mol}$) ali saharoza ($M = 342\,\mathrm{g/mol}$), obe z molalnostjo $0{,}10\,\mathrm{mol/kg}$?
@@ -77,7 +87,7 @@ Katera raztopina ima nižje tališče: sečnina ($M = 60\,\mathrm{g/mol}$) ali s
 Tališči sta enaki. Obe snovi sta neelektrolita ($i = 1$), zato je v kilogramu vode pri obeh enako število delcev. Velikost in masa molekule pri koligativnih lastnostih nista pomembni; saharoze je sicer po masi več kot petkrat več.
 :::
 
-**Osmoza** je prehajanje topila skozi polprepustno membrano iz razredčene v koncentriranejšo raztopino. Osmozni tlak je tlak, ki ga moramo pritisniti na raztopino, da osmozo ustavimo. Raztopini z enakim osmoznim tlakom sta **izotonični**.
+**Osmoza** je prehajanje topila skozi polprepustno membrano iz razredčene v koncentriranejšo raztopino. Osmozni tlak je tlak, ki ga moramo pritisniti na raztopino, da osmozo ustavimo. Raztopini z enakim osmoznim tlakom sta **izotonični**. Van 't Hoffova enačba velja za razredčeno raztopino in membrano, ki prepušča le topilo. *Izpeljava v treh vrsticah:* v ravnovesju ima topilo na obeh straneh enak kemijski potencial (molsko Gibbsovo energijo topila, glej Bolj natančno), zato dodatni tlak $\Pi$ ravno nadomesti znižanje zaradi topljenca: $\Pi V_{\mathrm{m},1} = -RT\ln x_1 \approx RT\,x_2$, kjer je $V_{\mathrm{m},1}$ molska prostornina topila. Z $x_2 \approx n_2/n_1$ in $n_1V_{\mathrm{m},1} \approx V$ (prostornina razredčene raztopine) dobimo $\Pi V = n_2RT$, torej $\Pi = cRT$, pri elektrolitih pa $icRT$.
 
 ## Rešeni primeri
 
@@ -122,23 +132,26 @@ $c = \dfrac{w\,\rho}{M}$, $c_1V_1 = c_2V_2$
 
 ### Primer 3 (težji)
 
-V $50{,}0\,\mathrm{g}$ vode raztopimo $2{,}50\,\mathrm{g}$ neznanega neelektrolita. Raztopina zmrzne pri $-0{,}930\,^\circ\mathrm{C}$. Izračunaj molsko maso snovi in vrelišče raztopine pri normalnem tlaku. Za vodo je $K_k = 1{,}86\,\mathrm{K\,kg/mol}$, $K_e = 0{,}512\,\mathrm{K\,kg/mol}$, tališče $0{,}00\,^\circ\mathrm{C}$ in vrelišče $100{,}00\,^\circ\mathrm{C}$.
+Vodna raztopina neznanega neelektrolita ima masni delež topljenca $4{,}76\,\%$ in gostoto $1{,}016\,\mathrm{g/mL}$. Zmrzne pri $-0{,}930\,^\circ\mathrm{C}$. Izračunaj molsko maso snovi, vrelišče raztopine pri normalnem tlaku in njen osmozni tlak pri $25\,^\circ\mathrm{C}$. Za vodo je $K_k = 1{,}86\,\mathrm{K\,kg/mol}$, $K_e = 0{,}512\,\mathrm{K\,kg/mol}$, tališče $0{,}00\,^\circ\mathrm{C}$ in vrelišče $100{,}00\,^\circ\mathrm{C}$; $R = 8{,}314\,\mathrm{J/(mol\,K)}$.
 
-**Podatki:** $m(\text{topljenca}) = 2{,}50\,\mathrm{g}$, $m(\text{vode}) = 50{,}0\,\mathrm{g}$, $t_t = -0{,}930\,^\circ\mathrm{C}$, $i = 1$, $K_k = 1{,}86\,\mathrm{K\,kg/mol}$, $K_e = 0{,}512\,\mathrm{K\,kg/mol}$, tališče vode $0{,}00\,^\circ\mathrm{C}$, vrelišče vode $100{,}00\,^\circ\mathrm{C}$
-**Iščemo:** molsko maso $M$ in vrelišče raztopine $t_v$
+**Podatki:** $w = 0{,}0476$, $\rho = 1{,}016\,\mathrm{g/mL}$, $t_t = -0{,}930\,^\circ\mathrm{C}$, $i = 1$, $K_k = 1{,}86\,\mathrm{K\,kg/mol}$, $K_e = 0{,}512\,\mathrm{K\,kg/mol}$, tališče vode $0{,}00\,^\circ\mathrm{C}$, vrelišče vode $100{,}00\,^\circ\mathrm{C}$, $T = 298{,}15\,\mathrm{K}$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$
+**Iščemo:** molsko maso $M$, vrelišče raztopine $t_v$ in osmozni tlak $\Pi$
 
 :::formula
-$\Delta T_t = K_k\,b$, $b = \dfrac{n}{m(\text{topila})}$, $M = \dfrac{m}{n}$, $\Delta T_v = K_e\,b$
+$\Delta T_t = K_k\,b$, $b = \dfrac{n}{m(\text{topila})}$, $M = \dfrac{m}{n}$, $\Delta T_v = K_e\,b$, $V = \dfrac{m}{\rho}$, $\Pi = cRT$
 :::
 
 **Rešitev:**
 
-1. Znižanje tališča: $\Delta T_t = 0{,}00 - (-0{,}930) = 0{,}930\,\mathrm{K}$.
-2. Molalnost (za neelektrolit je $i = 1$): $b = \dfrac{0{,}930\,\mathrm{K}}{1{,}86\,\mathrm{K\,kg/mol}} = 0{,}500\,\mathrm{mol/kg}$.
-3. Množina topljenca: $n = 0{,}500\,\mathrm{mol/kg} \cdot 0{,}0500\,\mathrm{kg} = 0{,}0250\,\mathrm{mol}$.
-4. Molska masa: $M = \dfrac{2{,}50\,\mathrm{g}}{0{,}0250\,\mathrm{mol}} = 100\,\mathrm{g/mol}$.
-5. Zvišanje vrelišča: $\Delta T_v = 0{,}512 \cdot 0{,}500\,\mathrm{K} = 0{,}256\,\mathrm{K}$, torej $t_v \approx 100{,}26\,^\circ\mathrm{C}$.
-6. Odgovor: molska masa snovi je $100\,\mathrm{g/mol}$, raztopina vre pri približno $100{,}26\,^\circ\mathrm{C}$. Znižanje tališča je več kot trikrat večje od zvišanja vrelišča, zato je krioskopija natančnejša metoda.
+1. Osnova: $100{,}0\,\mathrm{g}$ raztopine, ker je podan masni delež. V njej je $4{,}76\,\mathrm{g}$ topljenca in $95{,}24\,\mathrm{g}$ vode.
+2. Znižanje tališča: $\Delta T_t = 0{,}00 - (-0{,}930) = 0{,}930\,\mathrm{K}$.
+3. Molalnost (za neelektrolit je $i = 1$): $b = \dfrac{0{,}930\,\mathrm{K}}{1{,}86\,\mathrm{K\,kg/mol}} = 0{,}500\,\mathrm{mol/kg}$.
+4. Množina topljenca v osnovi: $n = 0{,}500\,\mathrm{mol/kg} \cdot 0{,}09524\,\mathrm{kg} = 0{,}04762\,\mathrm{mol}$.
+5. Molska masa: $M = \dfrac{4{,}76\,\mathrm{g}}{0{,}04762\,\mathrm{mol}} \approx 100\,\mathrm{g/mol}$.
+6. Zvišanje vrelišča (ista molalnost): $\Delta T_v = 0{,}512 \cdot 0{,}500\,\mathrm{K} = 0{,}256\,\mathrm{K}$, torej $t_v \approx 100{,}26\,^\circ\mathrm{C}$.
+7. Za osmozni tlak potrebujemo $c$, ne $b$. Prostornina osnove: $V = 100{,}0\,\mathrm{g} / 1{,}016\,\mathrm{g/mL} = 98{,}43\,\mathrm{mL}$, zato $c = 0{,}04762\,\mathrm{mol} / 0{,}09843\,\mathrm{L} = 0{,}4838\,\mathrm{mol/L} = 483{,}8\,\mathrm{mol/m^3}$.
+8. $\Pi = 483{,}8\,\mathrm{mol/m^3} \cdot 8{,}314\,\mathrm{J/(mol\,K)} \cdot 298{,}15\,\mathrm{K} \approx 1{,}20 \cdot 10^6\,\mathrm{Pa}$.
+9. Odgovor: molska masa snovi je $100\,\mathrm{g/mol}$, raztopina vre pri približno $100{,}26\,^\circ\mathrm{C}$, njen osmozni tlak pri $25\,^\circ\mathrm{C}$ je okoli $1{,}20\,\mathrm{MPa}$. Znižanje tališča je več kot trikrat večje od zvišanja vrelišča, zato je krioskopija natančnejša metoda; $c$ in $b$ se tu razlikujeta že za okoli $3\,\%$.
 
 ### Primer 4 – zdaj ti
 
@@ -182,6 +195,42 @@ $307\,\mathrm{mol/m^3} = 0{,}307\,\mathrm{mol/L}$, ker je v kubičnem metru $100
 - Za vodo: $K_k = 1{,}86\,\mathrm{K\,kg/mol}$, $K_e = 0{,}512\,\mathrm{K\,kg/mol}$.
 - Iz znižanja tališča ali osmoznega tlaka določimo molsko maso topljenca.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- natančne definicije $c$, $\gamma$, $w$, $b$ in $x_i$, katere so odvisne od temperature in zakaj, ter izpeljavo $c = w\rho/M$;
+- Raoultov zakon s pogoji (idealna raztopina, nehlapen topljenec) in izpeljavo $\Delta p/p^* = x_2$;
+- definicijo koligativnih lastnosti, formule $\Delta T = iKb$ s pogoji in izpeljavo $x_2 \approx M_1 b$ (zakaj nastopa molalnost in zakaj je $K$ lastnost topila);
+- definicijo osmoze, osmoznega tlaka in izotoničnosti ter van 't Hoffovo enačbo s pogoji;
+- definicijo van 't Hoffovega faktorja in izpeljavo $i = 1 + \alpha(\nu - 1)$.
+
+### Naloga 1
+
+V $100{,}0\,\mathrm{g}$ vode raztopimo $2{,}41\,\mathrm{g}$ magnezijevega sulfata ($M = 120{,}37\,\mathrm{g/mol}$). Raztopina zmrzne pri $-0{,}484\,^\circ\mathrm{C}$. a) Izračunaj van 't Hoffov faktor in navidezno stopnjo disociacije. b) Koliko glukoze ($M = 180{,}16\,\mathrm{g/mol}$) moramo raztopiti v $100{,}0\,\mathrm{g}$ vode, da raztopina zmrzne pri isti temperaturi? c) Oceni osmozni tlak raztopine $\mathrm{MgSO_4}$ pri $25\,^\circ\mathrm{C}$, če je raztopina tako razredčena, da velja $c \approx b \cdot 1{,}00\,\mathrm{kg/L}$. $K_k = 1{,}86\,\mathrm{K\,kg/mol}$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$.
+
+**Rešitev:**
+
+1. Množina in molalnost: $n = 2{,}41/120{,}37\,\mathrm{mol} = 0{,}02002\,\mathrm{mol}$, $b = 0{,}02002\,\mathrm{mol}/0{,}1000\,\mathrm{kg} = 0{,}2002\,\mathrm{mol/kg}$.
+2. Van 't Hoffov faktor: $i = \dfrac{\Delta T_t}{K_k b} = \dfrac{0{,}484}{1{,}86 \cdot 0{,}2002} \approx 1{,}30$.
+3. $\mathrm{MgSO_4}$ razpade na $\nu = 2$ iona, zato iz $i = 1 + \alpha(\nu - 1)$ sledi $\alpha = i - 1 \approx 0{,}30$. Dvakrat nabita iona tvorita veliko ionskih parov $\mathrm{Mg^{2+}SO_4^{2-}}$, zato je $i$ daleč od $2$.
+4. b) Za glukozo je $i = 1$: $b = 0{,}484/1{,}86\,\mathrm{mol/kg} = 0{,}2602\,\mathrm{mol/kg}$, $n = 0{,}02602\,\mathrm{mol}$, $m = 0{,}02602 \cdot 180{,}16\,\mathrm{g} \approx 4{,}69\,\mathrm{g}$.
+5. c) $c \approx 0{,}2002\,\mathrm{mol/L} = 200{,}2\,\mathrm{mol/m^3}$; $\Pi = i\,cRT = 1{,}30 \cdot 200{,}2 \cdot 8{,}314 \cdot 298{,}15\,\mathrm{Pa} \approx 6{,}45 \cdot 10^5\,\mathrm{Pa}$.
+6. Odgovor: $i \approx 1{,}30$, navidezna stopnja disociacije je okoli $0{,}30$; potrebujemo okoli $4{,}69\,\mathrm{g}$ glukoze; osmozni tlak je okoli $0{,}65\,\mathrm{MPa}$.
+
+### Naloga 2
+
+Izpelji, da je za razredčeno raztopino nehlapnega topljenca relativno znižanje parnega tlaka sorazmerno z molalnostjo, in iz $\Delta T_t = K_k b$ izpelji izraz za molsko maso topljenca. Nato utemelji, ali je krioskopija primerna za določanje molske mase beljakovine z $M \approx 50\,000\,\mathrm{g/mol}$, če raztopimo $1{,}00\,\mathrm{g}$ beljakovine v $100\,\mathrm{g}$ vode; primerjaj z osmometrijo pri $25\,^\circ\mathrm{C}$ (vzemi $c \approx b \cdot 1{,}00\,\mathrm{kg/L}$, $g = 9{,}81\,\mathrm{m/s^2}$, gostota vode $1000\,\mathrm{kg/m^3}$).
+
+**Rešitev:**
+
+1. Raoultov zakon (idealna raztopina, nehlapen topljenec): $p = x_1 p^* = (1 - x_2)p^*$, zato $\Delta p/p^* = x_2$.
+2. Za razredčeno raztopino je $n_2 \ll n_1$: $x_2 \approx n_2/n_1 = n_2 M_1/m_1 = M_1 b$. Torej $\Delta p/p^* \approx M_1 b$, sorazmerno z molalnostjo.
+3. Iz $\Delta T_t = K_k b$ in $b = m_2/(M\,m_1)$: $M = \dfrac{K_k\,m_2}{\Delta T_t\,m_1}$.
+4. Beljakovina: $n = 1{,}00/50\,000\,\mathrm{mol} = 2{,}0 \cdot 10^{-5}\,\mathrm{mol}$, $b = 2{,}0 \cdot 10^{-4}\,\mathrm{mol/kg}$, $\Delta T_t = 1{,}86 \cdot 2{,}0 \cdot 10^{-4}\,\mathrm{K} \approx 3{,}7 \cdot 10^{-4}\,\mathrm{K}$. To je pod natančnostjo običajnega krioskopa (okoli $10^{-3}\,\mathrm{K}$), poleg tega bi majhna nečistoča z majhno molsko maso povsem pokvarila rezultat.
+5. Osmometrija: $c \approx 0{,}20\,\mathrm{mol/m^3}$, $\Pi = 0{,}20 \cdot 8{,}314 \cdot 298{,}15\,\mathrm{Pa} \approx 496\,\mathrm{Pa}$, kar ustreza vodnemu stolpcu $h = \Pi/(\rho g) \approx 5{,}1\,\mathrm{cm}$, ki ga zlahka izmerimo. Membrana, ki ne prepušča beljakovine, majhne nečistoče pa prepušča, je zanje »slepa«.
+6. Odgovor: krioskopija za beljakovino ni primerna, ker je $\Delta T_t$ premajhen; osmometrija da merljiv tlak okoli $0{,}5\,\mathrm{kPa}$, zato molske mase makromolekul določamo z osmoznim tlakom.
+
 ## Drugače: Na sliki
 
 Redčenje si predstavljaj kot isto število »kroglic« topljenca v večji posodi:
@@ -200,15 +249,15 @@ Kroglic je enako ($n = c_1V_1 = c_2V_2$), prostornina je desetkrat večja, zato 
 
 Osmozo si predstavljaj kot U-cev s polprepustno membrano na dnu. Na levi je čista voda, na desni raztopina sladkorja. Molekule vode prehajajo v obe smeri, a v desno pogosteje, zato gladina na desni naraste. Višinska razlika ustvari hidrostatski tlak, ki je v ravnovesju enak osmoznemu tlaku.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Fiziološka raztopina.** Infuzijska raztopina $\mathrm{NaCl}$ z masno koncentracijo $9\,\mathrm{g/L}$ ima $c = 9/58{,}44\,\mathrm{mol/L} \approx 0{,}154\,\mathrm{mol/L}$. Z $i \approx 2$ je pri telesni temperaturi ($310\,\mathrm{K}$) osmozni tlak $\Pi \approx 2 \cdot 154\,\mathrm{mol/m^3} \cdot 8{,}314 \cdot 310\,\mathrm{Pa} \approx 7{,}9 \cdot 10^5\,\mathrm{Pa}$, kar je približno enako kot v krvni plazmi. Raztopina je izotonična: eritrociti v njej ne nabreknejo in se ne skrčijo. V čisti vodi (hipotonični) bi popokali, v koncentrirani soli (hipertonični) bi se nagubali.
+**Farmacija: izotonične raztopine.** Infuzijska raztopina $\mathrm{NaCl}$ z masno koncentracijo $9\,\mathrm{g/L}$ ima $c = 9/58{,}44\,\mathrm{mol/L} \approx 0{,}154\,\mathrm{mol/L}$. Z $i \approx 2$ je pri telesni temperaturi ($310\,\mathrm{K}$) osmozni tlak $\Pi \approx 2 \cdot 154\,\mathrm{mol/m^3} \cdot 8{,}314 \cdot 310\,\mathrm{Pa} \approx 7{,}9 \cdot 10^5\,\mathrm{Pa}$, približno enako kot v krvni plazmi, zato eritrociti v njej ne nabreknejo in se ne skrčijo; v hipotonični raztopini (čista voda) bi nabrekli in popokali, v hipertonični bi se nagubali. Farmacevt kapljice za oči in injekcije z dodatkom $\mathrm{NaCl}$ ali glukoze uravna na isto vrednost.
 
-**Soljenje cest.** Sol zniža zmrzišče vode, zato se led na cesti stali tudi pod $0\,^\circ\mathrm{C}$. $\mathrm{CaCl_2}$ ($i \approx 3$) je pri nizkih temperaturah učinkovitejši od $\mathrm{NaCl}$.
+**Klinični laboratorij: osmometer.** Osmolalnost plazme (okoli $0{,}290\,\mathrm{mol}$ delcev na kilogram vode) merijo s krioskopskim osmometrom: vzorec zmrzne pri okoli $-1{,}86 \cdot 0{,}290\,^\circ\mathrm{C} \approx -0{,}54\,^\circ\mathrm{C}$. Razlika med izmerjeno osmolalnostjo in osmolalnostjo, izračunano iz koncentracij natrija, glukoze in sečnine (osmolalna vrzel), razkrije npr. zastrupitev z etanolom ali metanolom.
 
-**Rastline in konzerviranje.** Korenine črpajo vodo z osmozo, ker je v celicah koncentracija raztopljenih snovi večja kot v talni vodi. Zasoljena tla (npr. ob morju ali po namakanju) obrnejo smer osmoze in rastline uvenejo. Iz istega razloga sladkor v marmeladi in sol v suhem mesu odtegneta vodo mikroorganizmom in hrano konzervirata.
+**Industrija: obratna osmoza in hladilne tekočine.** Pri razsoljevanju na morsko vodo pritisnemo z večjim tlakom od osmoznega (za morsko vodo okoli $2{,}5$ do $3\,\mathrm{MPa}$), da voda teče skozi membrano iz slane v sladko stran; tako pripravljajo tudi ultračisto vodo za farmacijo in elektroniko. Hladilne tekočine z etilenglikolom zmrzujejo globoko pod $0\,^\circ\mathrm{C}$; pri teh koncentracijah enačba $\Delta T_t = K_kb$ da le oceno.
 
-**Razsoljevanje morske vode.** Pri obratni osmozi na morsko vodo pritisnemo z večjim tlakom od osmoznega (za morsko vodo okoli $2{,}5$ do $3\,\mathrm{MPa}$), da voda teče skozi membrano iz slane v sladko stran.
+**Raziskave: molske mase polimerov.** Z membransko osmometrijo določajo številsko povprečno molsko maso polimerov in beljakovin (Naloga 2).
 
 ## Drugače: Korak za korakom s številkami
 
@@ -300,7 +349,9 @@ b | molalnost | b = \frac{n}{m(\text{topila})} | mol/kg
 \Delta T | sprememba tališča ali vrelišča raztopine | | K
 K_k | krioskopska konstanta topila | | K\,kg/mol | za vodo 1,86 K kg/mol
 K_e | ebulioskopska konstanta topila | | K\,kg/mol | za vodo 0,512 K kg/mol
-i | van 't Hoffov faktor | | – | število delcev, na katere razpade formulska enota
+i | van 't Hoffov faktor | i = 1 + \alpha(\nu - 1) | – | število delcev, na katere razpade formulska enota
+\alpha | stopnja disociacije | | – | delež razpadlih formulskih enot
+\nu | število ionov iz ene formulske enote | | – | za MgSO₄ 2, za CaCl₂ 3
 T | absolutna temperatura | | K
 R | splošna plinska konstanta | | J/(mol K)
 T_t | tališče čistega topila | | K | v formuli z zvezdico; za vodo 273,15 K

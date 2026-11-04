@@ -11,6 +11,7 @@ import { seznamDatotek, mapaTelesaNaprave } from "./modeli.js";
 import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
+import { vgrajeno, starsu } from "./vgrajeno.js";
 
 export const SLOJI = [
   { id: "koza", ikona: "user", barva: "#e5b79e" },
@@ -849,10 +850,15 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     kartica.hidden = false;
   }
 
-  // »Vprašaj inštruktorja«: v aplikaciji (WebView) sporočilo aplikaciji, na spletu klepet z vnaprej vpisanim vprašanjem.
+  // »Vprašaj inštruktorja«: v okvirju aplikacije (3D svet v »Uči se«) sporočilo strani okoli okvirja, v aplikaciji
+  // (WebView) sporočilo aplikaciji, na spletu klepet z vnaprej vpisanim vprašanjem.
   function vprasaj(r) {
     const ime = r.la ? `${r.prikaz} (${r.la})` : r.prikaz;
     const besedilo = t("a3.askText", { ime });
+    if (vgrajeno) {
+      starsu({ tip: "vprasaj", besedilo });
+      return;
+    }
     if (window.ReactNativeWebView?.postMessage) {
       window.ReactNativeWebView.postMessage(JSON.stringify({ tip: "vprasaj", besedilo }));
       return;

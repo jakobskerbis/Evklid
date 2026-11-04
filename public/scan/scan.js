@@ -70,7 +70,7 @@ function tr(item) {
 
 // ---------------------------------------------------------------------------
 
-export function showScan({ text = null } = {}) {
+export function showScan({ text = null, goal = null } = {}) {
   if (owner !== sid()) {
     owner = sid();
     Object.assign(S, fresh());
@@ -80,7 +80,7 @@ export function showScan({ text = null } = {}) {
   if (text) {
     S.text = text;
     S.problems = [];
-    S.goal = null;
+    S.goal = goal; // npr. »factor« iz kalkulatorja (razstavi)
     return solveNow();
   }
   if (S.mode === "reading") S.mode = "capture";

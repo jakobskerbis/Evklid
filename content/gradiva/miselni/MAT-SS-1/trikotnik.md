@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Koti
+  - $\alpha + \beta + \gamma = 180^\circ$
+  - zunanji kot $\gamma' = \alpha + \beta$
+- Trikotniška neenakost
+  - $|a - b| < c < a + b$
+  - preveri najdaljšo stranico
+  - napaka: enakost $3 + 4 = 7$ ni trikotnik
+- Skladnost
+  - SSS, SKS, KSK, SsK
+  - SKS: kot med stranicama
+  - SsK: kot nasproti daljše stranice
+- Očrtana krožnica
+  - presečišče simetral stranic
+  - enako daleč od oglišč
+  - pravokotni: sredina hipotenuze, $R = \dfrac{c}{2}$
+- Včrtana krožnica
+  - presečišče simetral kotov
+  - enako daleč od stranic, $r = \dfrac{S}{s}$
+- Težišče
+  - presečišče težiščnic
+  - deli težiščnico $2:1$ od oglišča
+- Višinska točka
+  - presečišče nosilk višin
+  - topokotni: zunaj trikotnika

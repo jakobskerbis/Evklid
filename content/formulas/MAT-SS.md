@@ -236,6 +236,7 @@ x_i | posamezni podatki | | |
 | | |
 |---|---|
 | Limita funkcije | $\lim\limits_{x \to a} f(x) = b$: za vsak $\varepsilon > 0$ obstaja tak $\delta > 0$, da je $\lvert f(x) - b \rvert < \varepsilon$ za vsak $x \in D_f$, za katerega je $0 < \lvert x - a \rvert < \delta$ |
+| Definicija odvoda | $f'(x) = \lim\limits_{\Delta x \to 0} \dfrac{f(x + \Delta x) - f(x)}{\Delta x}$ |
 | Odvodi | $(x^n)' = n x^{n-1}$, $(\sin x)' = \cos x$, $(\cos x)' = -\sin x$, $(\tan x)' = \dfrac{1}{\cos^2 x}$ |
 | | $(e^x)' = e^x$, $(a^x)' = a^x \ln a$, $(\ln x)' = \dfrac{1}{x}$, $(\log_a x)' = \dfrac{1}{x \ln a}$ |
 | Pravila | $(u v)' = u' v + u v'$, $\; \left(\dfrac{u}{v}\right)' = \dfrac{u' v - u v'}{v^2}$, $\; (f(g(x)))' = f'(g(x))\, g'(x)$ |

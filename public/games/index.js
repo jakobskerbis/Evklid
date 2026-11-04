@@ -2,7 +2,7 @@
 // igra se odpre v istem pogledu. Igra = vrsta igre (engines.js) × matematični pojem (topics.js).
 import { t, locale } from "../i18n.js";
 import { icon } from "../icons.js";
-import { CONCEPTS, AREAS, SUBJECTS, conceptName, areaName, setNumberStyle, makeQuestion, shuffle } from "./topics.js";
+import { CONCEPTS, AREAS, SUBJECTS, conceptName, areaName, setNumberStyle, loadConceptNames, makeQuestion, shuffle } from "./topics.js";
 import { gameLock as ruleLock, clearedPace, lessonsOf, PACE, CLEAR_CORRECT, CHECK_TASKS, CHECK_PASS, LOCKS_ON } from "./unlock.js";
 // Zapora iger je izklopljena (LOCKS_ON v unlock.js): vse igre so odprte.
 const gameLock = (...a) => (LOCKS_ON ? ruleLock(...a) : null);
@@ -23,6 +23,8 @@ import { seasonOf } from "../zbirke.js";
 import { unlockedText } from "../zbirke-view.js";
 import { pageSlice, pageNums } from "./pages.js";
 import { STAGES, stageOf, startTierFor } from "./stage.js";
+import { dailyCard, openDaily, pickLevel, saveLevel } from "./daily-view.js";
+import { suggestedLevel } from "./daily.js";
 import { gameFor, rewardGame, WEAK_MAX } from "./learn-link.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -77,6 +79,8 @@ let trends = null; // glasovi tedna (samo skrbnik ali računalnik s strežnikom,
 let pilot = null; // merjenje v pilotu (enako zaščiteno kot glasovi)
 let loaded = null; // nalaganje podatkov iger (openReward počaka nanj)
 let root = null;
+let daily = null; // dnevna uganka: stanje stopenj in niz (server/daily-puzzle.js)
+let dailyLevel = null; // izbrana stopnja na kartici (shranjena na napravi, sicer predlog po stopnji šolanja)
 
 const kindName = (e) => t(`games.e.${e.id}`);
 const gameId = (e, c) => `${e.id}:${c.id}`;
@@ -104,13 +108,14 @@ export async function showGames() {
   root = document.querySelector("#games-content");
   if (!root || !ctx) return;
   setNumberStyle(ctx.currentLang());
+  await loadConceptNames(ctx.currentLang());
   applyStageLook();
   if (game) return; // igra ostane odprta
   renderPortal();
   loaded = (async () => {
     try {
       const s = ctx.getStudent();
-      if (s) [data, av, trends] = await Promise.all([ctx.api(`/api/students/${s.id}/games`), ctx.api(`/api/students/${s.id}/avatar`).catch(() => av), ctx.api("/api/games/trends").catch(() => null)]);
+      if (s) [data, av, trends, daily] = await Promise.all([ctx.api(`/api/students/${s.id}/games`), ctx.api(`/api/students/${s.id}/avatar`).catch(() => av), ctx.api("/api/games/trends").catch(() => null), ctx.api(`/api/students/${s.id}/daily`).catch(() => null)]);
       if (trends) pilot = await ctx.api("/api/games/pilot").catch(() => null);
       LS = lockState();
       if (!game) renderPortal();
@@ -317,6 +322,7 @@ function renderPortal() {
         <button type="button" class="gm-me gm-zb" data-act="zbirke" title="${esc(t("zb.title"))}"><span class="gm-zb-ic">${icon("award")}</span><span><b>${esc(t("games.zbirke"))}</b><small>${esc(t("zb.pass"))}</small></span></button></span>
         <label class="gm-search">${icon("search")}<input type="search" value="${esc(filter.q)}" placeholder="${esc(t("games.search"))}" aria-label="${esc(t("games.search"))}"></label>
       </div>
+      ${ctx.getStudent() && !q ? dailyCard(daily, { t, lang: ctx.currentLang(), level: curDailyLevel(), suggested: suggestedDaily() }) : ""}
       ${SUBJECTS.length > 1 ? `<div class="chip-row gm-subjects" role="group" aria-label="${esc(t("games.subjects"))}">${SUBJECTS.map((x) => chip(x, t(`subj.${x}`), filter.subject === x)).join("")}</div>` : ""}
       <div class="chip-row gm-areas" role="group" aria-label="${esc(t("games.areas"))}">
         ${chip("you", t("games.forYou"), filter.area === "you")}${chip("all", t("games.all"), filter.area === "all")}
@@ -377,6 +383,15 @@ function renderPortal() {
     root.querySelector(".gm-sec .gm-tile")?.focus({ preventScroll: true });
   });
   root.querySelector('[data-act="shop"]').addEventListener("click", () => renderShop("", true));
+  root.querySelector(".gm-daily")?.addEventListener("click", (ev) => {
+    const lv = ev.target.closest("button[data-lv]");
+    if (lv) {
+      dailyLevel = lv.dataset.lv;
+      saveLevel(dailyLevel);
+      return renderPortal();
+    }
+    if (ev.target.closest('[data-act="daily"]')) openDailyPuzzle();
+  });
   root.querySelector('[data-act="wish"]')?.addEventListener("click", askWish);
   root.querySelector(".gm-trends:not(.gm-pilot)")?.addEventListener("toggle", (e) => (trOpen = e.target.open));
   root.querySelector(".gm-pilot")?.addEventListener("toggle", (e) => (plOpen = e.target.open));
@@ -876,6 +891,32 @@ function renderShop(msg = "", top = false) {
   });
   if (top) window.scrollTo(0, 0);
   else window.scrollTo(0, y);
+}
+
+// Dnevna uganka: predlagana stopnja po stopnji šolanja, izbrana na napravi.
+const suggestedDaily = () => suggestedLevel(stage(), data.year);
+const curDailyLevel = () => dailyLevel || pickLevel(stage(), data.year);
+// Odpre dnevno uganko (s kartice v Igrah ali z vrstice na Učni poti). Brez profila ni lestvice: nič.
+export function openDailyPuzzle() {
+  const s = ctx?.getStudent();
+  root = document.querySelector("#games-content");
+  if (!s || !root) return;
+  game?.destroy();
+  document.body.classList.remove("gm-on");
+  applyStageLook();
+  game = openDaily(root, {
+    api: ctx.api,
+    student: s,
+    t,
+    lang: ctx.currentLang(),
+    level: curDailyLevel(),
+    suggested: suggestedDaily(),
+    toast: ctx.toast,
+    onLevel: (lv) => (dailyLevel = lv),
+    onChange: (info) => (daily = { ...info, board: null }),
+    onClose: closeGame,
+  });
+  root.closest(".view")?.scrollTo?.(0, 0);
 }
 
 function closeGame() {

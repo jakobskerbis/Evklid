@@ -95,3 +95,13 @@ button.sch-lesson { justify-content: flex-start; }
   .pass-card .form-actions button { flex: 1 1 100%; }
 }
 .pass-active { margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+
+/* kartica stopnje na Učni poti (public/zacetna.js): OŠ igre, SŠ matura, faks Moj študij z izpitnimi roki */
+.stage-exams-box { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid var(--border); }
+.stage-exams { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.stage-exams li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.stage-exams .se-name { font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.stage-exams .se-when { flex: none; color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+.stage-note { margin: 0; font-size: 0.92rem; }
+.stage-exams-box > button.secondary { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 40px !important; }
+.stage-exams-box > button.sch-card-head { min-height: 40px; }

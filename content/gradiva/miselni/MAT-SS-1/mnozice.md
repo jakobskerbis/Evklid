@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Množica in elementi
+  - $a \in A$ ali $a \notin A$
+  - vrstni red in ponavljanje ne štejeta
+- Posebne množice
+  - prazna $\emptyset$ ima moč $0$
+  - $\mathcal{U}$ določi pred komplementom
+- Podmnožica
+  - $A \subseteq B$: vsak element $A$ je v $B$
+  - $\in$ za element, $\subseteq$ za množico
+  - $n$ elementov da $2^n$ podmnožic
+- Operacije kot logika
+  - unija je »ali« $\vee$, presek »in« $\wedge$
+  - razlika $A \setminus B$ ni zamenljiva
+  - komplement $A^c$: v $\mathcal{U}$, ne v $A$
+- Vennov diagram
+  - dva kroga, štiri območja
+  - tri množice: izpolnjuj od sredine navzven
+- De Morgan
+  - $(A \cup B)^c = A^c \cap B^c$
+  - $(A \cap B)^c = A^c \cup B^c$
+- Moč unije
+  - $|A \cup B| = |A| + |B| - |A \cap B|$
+  - napaka: presek šteješ dvakrat

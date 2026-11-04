@@ -593,9 +593,11 @@ export function odpriModel(el, mod, opts = {}) {
     // Začetne vrednosti kontrol (katalog ali naslov): nastavimo in pokličemo ob().
     for (const c of Array.isArray(model.nadzor) ? model.nadzor : []) {
       if (c.id in zacetek && c.tip !== "gumb" && c.tip !== "izpis") {
-        c.vrednost = pretvori(c, zacetek[c.id]);
+        // ob() dobi pretvorjeno vrednost neposredno: getter lahko vrne staro stanje, dokler ob() ne teče.
+        const v = pretvori(c, zacetek[c.id]);
+        c.vrednost = v;
         try {
-          c.ob?.(c.vrednost);
+          c.ob?.(v);
         } catch (err) {
           console.error("3D nadzor", c.id, err);
         }

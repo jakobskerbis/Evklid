@@ -5,15 +5,17 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Iz geometrije in fizike že poznaš formule, v katerih črke predstavljajo števila: $p = a \cdot b$ za ploščino pravokotnika, $s = v \cdot t$ za pot, $V = a^3$ za prostornino kocke. **Algebrski izraz** je naslednji korak: izraz s črkami, v katerega lahko vstaviš poljubna števila, in pravila, po katerih ga smeš preoblikovati, ne da bi se mu spremenila vrednost. Za to že imaš orodje iz prejšnje teme, saj črke potenciramo in množimo po istih pravilih kot števila.
+Doma poišči kvadraten pekač in mu z ravnilom izmeri stranico. Recimo, da meri $20\,\text{cm}$. Za dno potrebuješ $20 \cdot 20 = 400\,\text{cm}^2$ peki papirja. Zdaj si zamisli večji pekač, ki ima stranico daljšo za $5\,\text{cm}$. Koliko papirja potrebuješ zanj?
 
-Zakaj je to uporabno? Z enim izrazom opišeš cel razred računov hkrati. Namesto da posebej računaš ploščino vrta, ki je dolg $12\,\text{m}$ in širok $13\,\text{m}$, in posebej vrta, ki je dolg $22\,\text{m}$ in širok $23\,\text{m}$, napišeš en izraz in vstaviš. Posebni zmnožki, ki jih spoznaš v tej lekciji, pa ti omogočajo tudi računanje na pamet, na primer $99^2$ ali $51 \cdot 49$. Znanje potrebuješ tudi naprej: pri razstavljanju izrazov, pri ulomljenih izrazih in pri linearni funkciji moraš izraze z oklepaji hitro in brez napak poenostavljati.
+Marsikdo hitro reče $400 + 5^2 = 425\,\text{cm}^2$. Izmeri ali izračunaj: $25 \cdot 25 = 625\,\text{cm}^2$. Manjka kar $200\,\text{cm}^2$. Položi mali list papirja v kot velikega pekača in odgovor vidiš: ob dveh robovih ostaneta prosta trakova, vsak meri $20\,\text{cm} \times 5\,\text{cm}$.
+
+S črkami tak premislek naredimo za vse pekače naenkrat. Črke potenciramo in množimo po istih pravilih kot števila, zato ti pri tem pomaga znanje o potencah. Pravila za množenje izrazov boš potreboval pri razstavljanju, pri ulomljenih izrazih in pri reševanju enačb.
 
 ## Razlaga
 
 **1. Algebrski izraz in njegova vrednost.** Algebrski izraz je izraz iz števil in črk (**spremenljivk**), povezanih z računskimi operacijami. Njegovo **vrednost** dobimo, če namesto črk vstavimo števila. Vzemimo izraz $3x^2 - 5x + 2$. Pri $x = 2$ je njegova vrednost $3 \cdot 4 - 10 + 2 = 4$. Pri $x = -1$ je $3 \cdot (-1)^2 - 5 \cdot (-1) + 2 = 3 + 5 + 2 = 10$. Negativno število pri vstavljanju vedno zapiši v oklepaju.
 
-**2. Enočlenik.** Enočlenik je zmnožek števila in potenc spremenljivk, na primer $-4a^2b^3$. Število $-4$ je **koeficient**, **stopnja** enočlenika pa je vsota eksponentov: $2 + 3 = 5$. Enočlenika sta **podobna**, če imata enak spremenljivi del: $5ab$ in $-2ab$ sta podobna, $5ab$ in $5a^2b$ pa nista.
+**2. Enočlenik.** Enočlenik je zmnožek števila in potenc spremenljivk, na primer $-4a^2b^3$. Število $-4$ je **koeficient**, **stopnja** enočlenika pa je vsota eksponentov: $2 + 3 = 5$. Enočlenika sta **podobna**, če imata enak **spremenljivi del** (vse, kar ostane, ko odmisliš koeficient): $5ab$ in $-2ab$ sta podobna, $5ab$ in $5a^2b$ pa nista.
 
 - Podobne enočlenike seštejemo tako, da seštejemo koeficiente, spremenljivi del pa ostane: $5ab - 2ab = 3ab$. Nepodobnih enočlenikov ne moremo združiti.
 - Enočlenike pomnožimo tako, da zmnožimo koeficiente in potence iste spremenljivke po pravilu $a^m \cdot a^n = a^{m+n}$: $(-3a^2b) \cdot (4ab^3) = -12a^3b^4$.
@@ -34,11 +36,37 @@ $$(a + b)(c + d) = ac + ad + bc + bd.$$
 
 Na primer $(2x + 3)(x - 5) = 2x^2 - 10x + 3x - 15 = 2x^2 - 7x - 15$. Če ima prvi mnogočlenik $m$ členov, drugi pa $n$, je pred združevanjem $m \cdot n$ členov; pri dveh dvočlenikih jih je torej štiri.
 
-**6. Kvadrat dvočlenika.** Kvadrat pomeni množenje s samim seboj: $(a + b)^2 = (a + b)(a + b) = a^2 + ab + ba + b^2$. Ker je $ba = ab$, dobimo
+**6. Kvadrat dvočlenika.** Vrnimo se k pekaču. Primerjajmo kvadrat vsote z vsoto kvadratov pri nekaj parih števil:
 
-$$(a + b)^2 = a^2 + 2ab + b^2, \qquad (a - b)^2 = a^2 - 2ab + b^2.$$
+| $a + b$ | $(a + b)^2$ | $a^2 + b^2$ | razlika |
+|---|---|---|---|
+| $3 + 2$ | $25$ | $13$ | $12$ |
+| $5 + 1$ | $36$ | $26$ | $10$ |
+| $4 + 3$ | $49$ | $25$ | $24$ |
+| $20 + 5$ | $625$ | $425$ | $200$ |
 
-Z besedami: kvadrat prvega člena, dvakratni zmnožek obeh členov in kvadrat drugega člena. Pri razliki je predznak minus le pri srednjem členu, saj je $(-b)^2 = b^2$. Primera: $(x + 4)^2 = x^2 + 8x + 16$ in $(3x - 2)^2 = (3x)^2 - 2 \cdot 3x \cdot 2 + 2^2 = 9x^2 - 12x + 4$.
+Razlika ni naključna. Pri $3 + 2$ je $12 = 2 \cdot 3 \cdot 2$, pri $5 + 1$ je $10 = 2 \cdot 5 \cdot 1$. Preveri, da enak vzorec velja tudi v drugih dveh vrsticah.
+
+:::premisli
+Kateri vzorec vidiš v razlikah? Po njem napovej razliko $(10 + 3)^2 - (10^2 + 3^2)$, preden računaš. Nato preveri.
+---
+Po vzorcu je $2 \cdot 10 \cdot 3 = 60$. Preverba: $169 - 109 = 60$.
+:::
+
+Razlika je torej vedno $2ab$. Zakaj ravno $2ab$? Kvadrat s stranico $a + b$ (dno pekača) razrežemo z enim vodoravnim in enim navpičnim rezom:
+
+| | $a$ | $b$ |
+|---|---|---|
+| $a$ | kvadrat $a^2$ | pravokotnik $ab$ |
+| $b$ | pravokotnik $ab$ | kvadrat $b^2$ |
+
+Isto da račun: $(a + b)^2 = (a + b)(a + b) = a^2 + ab + ba + b^2$. Ker je $ba = ab$, velja pravilo za **kvadrat dvočlenika**:
+
+$$(a + b)^2 = a^2 + 2ab + b^2$$
+
+$$(a - b)^2 = a^2 - 2ab + b^2$$
+
+Z besedami: kvadrat prvega člena, dvakratni zmnožek obeh členov in kvadrat drugega člena. Pri razliki je minus le pri srednjem členu, saj je $(-b)^2 = b^2$. Primera: $(x + 4)^2 = x^2 + 8x + 16$ in $(3x - 2)^2 = (3x)^2 - 2 \cdot 3x \cdot 2 + 2^2 = 9x^2 - 12x + 4$.
 
 **7. Zmnožek vsote in razlike.** Pri $(a + b)(a - b) = a^2 - ab + ab - b^2$ se srednja člena uničita:
 
@@ -46,11 +74,21 @@ $$(a + b)(a - b) = a^2 - b^2.$$
 
 Rezultat je razlika kvadratov. Primer: $(2x + 5)(2x - 5) = 4x^2 - 25$.
 
-**8. Kub dvočlenika.** Izpeljemo ga iz kvadrata: $(a + b)^3 = (a + b)^2(a + b) = (a^2 + 2ab + b^2)(a + b)$. Pomnožimo vsak člen z vsakim: $a^3 + a^2b + 2a^2b + 2ab^2 + ab^2 + b^3$. Podobne člene združimo:
+**8. Kub dvočlenika.** Iz kock sladkorja sestavi veliko kocko z robom $3$ kocke. Potrebuješ $3^3 = 27$ kock, ne pa $2^3 + 1^3 = 9$. Rob razdeli na $2 + 1$ in razstavi kocko: dobiš kocko $2 \cdot 2 \cdot 2 = 8$, tri plošče $2 \cdot 2 \cdot 1$ (skupaj $12$), tri palčke $2 \cdot 1 \cdot 1$ (skupaj $6$) in eno samo kocko. Res je $8 + 12 + 6 + 1 = 27$.
 
-$$(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3, \qquad (a - b)^3 = a^3 - 3a^2b + 3ab^2 - b^3.$$
+Enako da račun. Kub izpeljemo iz kvadrata: $(a + b)^3 = (a + b)^2(a + b) = (a^2 + 2ab + b^2)(a + b)$. Pomnožimo vsak člen z vsakim: $a^3 + a^2b + 2a^2b + 2ab^2 + ab^2 + b^3$. Podobne člene združimo:
+
+$$(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$$
+
+$$(a - b)^3 = a^3 - 3a^2b + 3ab^2 - b^3$$
 
 Koeficienti so $1, 3, 3, 1$. Potence prvega člena od leve proti desni padajo, potence drugega naraščajo. Pri razliki se predznaki izmenjujejo: $+, -, +, -$. Primera: $(x + 2)^3 = x^3 + 6x^2 + 12x + 8$ in $(x - 2)^3 = x^3 - 6x^2 + 12x - 8$.
+
+:::premisli
+Kocko z robom $4 = 3 + 1$ razstaviš na enak način. Koliko kock sladkorja je v treh ploščah in koliko v treh palčkah?
+---
+Plošče so $3 \cdot 3 \cdot 1$, skupaj $3 \cdot 9 = 27$ kock. Palčke so $3 \cdot 1 \cdot 1$, skupaj $9$ kock. Z veliko kocko $27$ in eno samo kocko je to $27 + 27 + 9 + 1 = 64 = 4^3$.
+:::
 
 **9. Pregled.**
 
@@ -108,27 +146,30 @@ $(a + b)(c + d) = ac + ad + bc + bd$ in $(a + b)(a - b) = a^2 - b^2$
 5. Preizkus pri $x = 1$: izvirni izraz je $(1) \cdot (7) - (-3) \cdot (5) = 7 + 15 = 22$, rezultat pa $5 + 11 + 6 = 22$.
 6. Odgovor: izraz je enak $5x^2 + 11x + 6$.
 
-### Primer 3 (težji)
+### Primer 3 (težji, zdaj ti)
 
-Razvij kub dvočlenika $(2a - 3b)^3$. Rezultat preveri za $a = 2$ in $b = 1$.
+Kocka sira ima rob $x$ centimetrov. Kuhar z vseh šestih ploskev odreže skorjo, debelo $1\,\text{cm}$. Zapiši prostornino odrezane skorje kot mnogočlenik. Nato jo izračunaj za $x = 10$.
 
-**Podatki:** izraz $(2a - 3b)^3$, vrednosti za preizkus $a = 2$ in $b = 1$
-**Iščemo:** razvit izraz in preizkus pri $a = 2$, $b = 1$
+**Podatki:** rob kocke $x$ (v cm), debelina skorje $1\,\text{cm}$ na vsaki ploskvi, za račun $x = 10$
+**Iščemo:** prostornino skorje $V$ kot mnogočlenik in njeno vrednost pri $x = 10$
 
 :::formula
-$(p - q)^3 = p^3 - 3p^2q + 3pq^2 - q^3$, kjer sta $p$ prvi in $q$ drugi člen dvočlenika
+Prostornina kocke z robom $a$ je $a^3$. Kub razlike: $(a - b)^3 = a^3 - 3a^2b + 3ab^2 - b^3$
 :::
 
 **Rešitev:**
 
-1. Prvi člen je $p = 2a$, drugi člen je $q = 3b$.
-2. Kub prvega člena: $p^3 = (2a)^3 = 8a^3$.
-3. Drugi člen formule: $3p^2q = 3 \cdot (2a)^2 \cdot 3b = 3 \cdot 4a^2 \cdot 3b = 36a^2b$.
-4. Tretji člen formule: $3pq^2 = 3 \cdot 2a \cdot (3b)^2 = 3 \cdot 2a \cdot 9b^2 = 54ab^2$.
-5. Kub drugega člena: $q^3 = (3b)^3 = 27b^3$.
-6. Sestavimo s predznaki $+, -, +, -$: $(2a - 3b)^3 = 8a^3 - 36a^2b + 54ab^2 - 27b^3$.
-7. Preizkus pri $a = 2$, $b = 1$: leva stran je $(4 - 3)^3 = 1$, desna stran pa $8 \cdot 8 - 36 \cdot 4 + 54 \cdot 2 - 27 = 64 - 144 + 108 - 27 = 1$.
-8. Odgovor: $(2a - 3b)^3 = 8a^3 - 36a^2b + 54ab^2 - 27b^3$.
+1. Sredica je kocka. Njen rob je krajši za $1\,\text{cm}$ na vsaki strani, torej meri $x - 2$.
+2. Skorja je cela kocka brez sredice: $V = x^3 - (x - 2)^3$.
+3. Razvijemo kub razlike z $a = x$ in $b = 2$: $(x - 2)^3 = x^3 - 6x^2 + 12x - 8$.
+4. Odštejemo. Minus pred oklepajem obrne vse predznake: $V = x^3 - x^3 + 6x^2 - 12x + 8 = 6x^2 - 12x + 8$.
+5. Zdaj ti: izračunaj $V$ pri $x = 10$ in rezultat preveri z razliko $10^3 - 8^3$.
+
+:::premisli
+Koliko kubičnih centimetrov sira odreže kuhar pri $x = 10$?
+---
+$6 \cdot 100 - 12 \cdot 10 + 8 = 600 - 120 + 8 = 488$. Preizkus: $1000 - 512 = 488$. Kuhar odreže $488\,\text{cm}^3$ skorje, skoraj polovico kocke.
+:::
 
 ## Pogoste napake
 
@@ -148,33 +189,6 @@ $(p - q)^3 = p^3 - 3p^2q + 3pq^2 - q^3$, kjer sta $p$ prvi in $q$ drugi člen dv
 - Kub dvočlenika: $(a \pm b)^3 = a^3 \pm 3a^2b + 3ab^2 \pm b^3$, koeficienti so $1, 3, 3, 1$.
 - Razvit izraz preveri tako, da v oba izraza vstaviš isto majhno število, ki ni $0$.
 
-## Drugače: Na sliki
-
-Formule za dvočlenik se da prebrati s ploščinami in prostorninami. Kvadrat s stranico $a + b$ razdelimo z eno vodoravno in eno navpično črto na štiri dele:
-
-| | $a$ | $b$ |
-|---|---|---|
-| $a$ | kvadrat, ploščina $a^2$ | pravokotnik, ploščina $ab$ |
-| $b$ | pravokotnik, ploščina $ab$ | kvadrat, ploščina $b^2$ |
-
-Celotna ploščina je $(a + b)^2$ in je enaka vsoti štirih delov: $a^2 + ab + ab + b^2 = a^2 + 2ab + b^2$. S števili: pri $a = 3$ in $b = 2$ je stranica $5$ in ploščina $25$, deli pa imajo ploščine $9 + 6 + 6 + 4 = 25$.
-
-Kvadrat razlike je slika odrezovanja. Vzemimo kvadrat s stranico $a$ in ploščino $a^2$. Ob desnem robu odrežemo trak širine $b$ (ploščina $ab$) in ob zgornjem robu še enega (ploščina $ab$). V zgornjem desnem kotu smo kvadratek $b^2$ odrezali dvakrat, zato ga enkrat vrnemo: $(a - b)^2 = a^2 - 2ab + b^2$. S števili: pri $a = 5$, $b = 2$ je $25 - 20 + 4 = 9 = 3^2$.
-
-Kocko z robom $a + b$ z ravnimi rezi razdelimo na osem delov: ena kocka $a^3$, trije kvadri $a^2b$, trije kvadri $ab^2$ in ena kocka $b^3$. Skupaj $1 + 3 + 3 + 1 = 8$ delov, prostornina je $a^3 + 3a^2b + 3ab^2 + b^3$.
-
-## Drugače: Iz vsakdanjega življenja
-
-**Računanje na pamet.** Posebni zmnožki so trik za hitro računanje:
-
-- $52^2 = (50 + 2)^2 = 2500 + 200 + 4 = 2704$,
-- $98^2 = (100 - 2)^2 = 10\,000 - 400 + 4 = 9604$,
-- $51 \cdot 49 = (50 + 1)(50 - 1) = 2500 - 1 = 2499$.
-
-**Vrt.** Kvadratni vrt ima stranico $x$ metrov. Eno stranico podaljšamo za $2\,\text{m}$, drugo za $3\,\text{m}$. Nova ploščina je $(x + 2)(x + 3) = x^2 + 5x + 6$. Pri $x = 10$ dobimo vrt $12\,\text{m} \times 13\,\text{m}$, torej $156\,\text{m}^2$, in res je $100 + 50 + 6 = 156$. Izraz $5x + 6$ pove, za koliko se ploščina poveča. Lepo je vidno, da dodatek ni stalen, ampak je odvisen od stranice $x$ prvotnega vrta.
-
-**Računski trik z izrazom.** Pomisli si poljubno število, mu prištej $3$, vsoto pomnoži z $2$, odštej $6$ in rezultat deli z $2$. Dobiš začetno število. Zakaj? Če je število $n$, je $(n + 3) \cdot 2 - 6 = 2n + 6 - 6 = 2n$, polovica tega pa je $n$. Izraz s črko dokaže trik za vsa števila hkrati, česar s poskušanjem ne bi mogel.
-
 ## Drugače: Korak za korakom s številkami
 
 Razvijmo $(2x - 5)^2$ po korakih in rezultat preverimo.
@@ -190,50 +204,71 @@ Razvijmo $(2x - 5)^2$ po korakih in rezultat preverimo.
 
 Pri kubu je postopek podoben. Za $(x - 1)^3$ je $a = x$ in $b = 1$. Zapišemo koeficiente $1, 3, 3, 1$ in predznake $+, -, +, -$. Potence prvega člena so $x^3, x^2, x, 1$, potence drugega pa $1$ povsod, saj je $1^k = 1$. Dobimo $x^3 - 3x^2 + 3x - 1$. Preizkus pri $x = 2$: leva stran je $(2 - 1)^3 = 1$, desna pa $8 - 12 + 6 - 1 = 1$.
 
-## Drugače: Bolj natančno
+## Drugače: Kot zgodba
 
-**Vse izhaja iz razčlenjevalnega zakona.** Pravilo za zmnožek mnogočlenikov dobimo z dvakratno uporabo zakona $a(b + c) = ab + ac$: $(a + b)(c + d) = a(c + d) + b(c + d) = ac + ad + bc + bd$. Vse posebne zmnožke dobimo iz tega pravila s posebnimi izbirami členov. Stopnja zmnožka je vsota stopenj faktorjev: $(x^2 + 1)(x^3 - x)$ ima stopnjo $2 + 3 = 5$.
+Pek Marko peče pogačo v kvadratnem pekaču s stranico $30\,\text{cm}$. Za praznik ga prosijo za večjo, s stranico $40\,\text{cm}$. »Pekač je daljši za $10\,\text{cm}$, torej dodam malo testa,« si misli. Vajenka ga ustavi in na mizo položi stari pekač v kot novega.
 
-**Kvadrat in kub razlike sta posebna primera vsote.** Če v formuli za vsoto zamenjamo $b$ z $-b$, dobimo $(a + (-b))^2 = a^2 + 2a(-b) + (-b)^2 = a^2 - 2ab + b^2$. Enako velja za kub: $(a + (-b))^3 = a^3 + 3a^2(-b) + 3a(-b)^2 + (-b)^3 = a^3 - 3a^2b + 3ab^2 - b^3$. Predznaki se izmenjujejo, ker lihe potence števila $-b$ ostanejo negativne, sode pa postanejo pozitivne.
+Ob desnem robu ostane prazen trak $30\,\text{cm} \times 10\,\text{cm}$. Enak trak ostane ob spodnjem robu. V kotu med njima je še kvadratek $10\,\text{cm} \times 10\,\text{cm}$. Marko sešteje: $900 + 300 + 300 + 100 = 1600$. Dno se ni povečalo za $100\,\text{cm}^2$, ampak za $700\,\text{cm}^2$.
 
-**Vzorec koeficientov.** Koeficienti v $(a + b)^n$ tvorijo Pascalov trikotnik: $1, 2, 1$ za $n = 2$ in $1, 3, 3, 1$ za $n = 3$. Vsako število je vsota dveh števil nad njim, zato je naslednja vrstica $1, 4, 6, 4, 1$ in $(a + b)^4 = a^4 + 4a^3b + 6a^2b^2 + 4ab^3 + b^4$. Izraz $(a + b)^n$ ima $n + 1$ členov, vsak pa je stopnje $n$.
-
-**Enakost izrazov in enačba.** Zapis $(a + b)^2 = a^2 + 2ab + b^2$ je enakost izrazov: velja za vse vrednosti $a$ in $b$. Enačba, na primer $x^2 = 4$, velja le za nekatere vrednosti ($x = 2$ in $x = -2$). Preizkus z nekaj števili enakosti ne dokaže, napako pa odkrije: če se vrednosti pri eni izbiri ne ujemata, enakost ne velja.
+Vajenka zapiše še s črkami. Stari pekač ima stranico $a$, podaljšek je $b$. Novo dno je $a^2$ (staro dno), $2ab$ (oba trakova) in $b^2$ (kotiček). Trakova sta tista, ki ju Marko skoraj pozabi. Prav tako ju pozabi, kdor napačno napiše $(a + b)^2 = a^2 + b^2$.
 
 ## Preveri se
 
-? Razvij $(x - 4)^2$.
-- $x^2 - 16$
-+ $x^2 - 8x + 16$
-- $x^2 - 8x - 16$
-- $x^2 + 8x + 16$
-> Kvadrat razlike: $x^2 - 2 \cdot x \cdot 4 + 4^2 = x^2 - 8x + 16$. Izraz $x^2 - 16$ je rezultat zmnožka $(x - 4)(x + 4)$, $x^2 + 8x + 16$ pa je razvoj za $(x + 4)^2$. Zadnji člen kvadrata je vedno pozitiven.
+? Kvadraten kos torte s stranico $x + 3$ razrežemo z enim vodoravnim in enim navpičnim rezom na štiri dele. Katere ploščine imajo deli?
+- $x^2$ in $9$
+~ Zdi se, da je $(x + 3)^2 = x^2 + 9$, a ob dveh robovih ostaneta še dva pravokotnika.
++ $x^2$, $3x$, $3x$ in $9$
+- $x^2$, $3x$ in $9$
+~ Pravokotnika sta dva, en ob desnem in en ob spodnjem robu, zato je srednji člen $2 \cdot 3x = 6x$.
+- $x^2$, $6$, $6$ in $9$
+~ Pravokotnik ima stranici $x$ in $3$, zato je njegova ploščina $3x$, ne $2 \cdot 3$.
+> Deli so kvadrat $x \cdot x$, dva pravokotnika $x \cdot 3$ in kvadratek $3 \cdot 3$. Skupaj $(x + 3)^2 = x^2 + 6x + 9$.
 
-? Zmnoži $(2x + 3)(x - 1)$.
-- $2x^2 - 3$
-- $2x^2 + 5x - 3$
-+ $2x^2 + x - 3$
-- $2x^2 - x - 3$
-> Pomnožimo vsak člen z vsakim: $2x \cdot x + 2x \cdot (-1) + 3 \cdot x + 3 \cdot (-1) = 2x^2 - 2x + 3x - 3 = 2x^2 + x - 3$. Rezultat $2x^2 - 3$ dobiš, če pomnožiš samo prva in zadnja člena.
+? Izračunaj $98^2$ s pomočjo $(100 - 2)^2$. Kateri rezultat je pravilen?
+- $9996$
+~ To je $100^2 - 2^2$, kot da bi bil kvadrat razlike enak razliki kvadratov. Manjka člen $-2 \cdot 100 \cdot 2$.
+- $10\,004$
+~ To je $100^2 + 2^2$. Ker je $98 < 100$, mora biti $98^2$ manj kot $10\,000$.
++ $9604$
+- $9600$
+~ Pravilno si odštel $400$, pozabil pa si prišteti kvadrat drugega člena $2^2 = 4$.
+> $(100 - 2)^2 = 10\,000 - 400 + 4 = 9604$. Ocena: $98^2$ je malo pod $10\,000$, za približno $2 \cdot 100 \cdot 2 = 400$.
 
-? Razvij $(a - 2)^3$.
-- $a^3 - 8$
-+ $a^3 - 6a^2 + 12a - 8$
-- $a^3 - 6a^2 - 12a - 8$
-- $a^3 + 6a^2 + 12a + 8$
-> Po formuli $(a - b)^3 = a^3 - 3a^2b + 3ab^2 - b^3$ z $b = 2$ dobimo $a^3 - 3a^2 \cdot 2 + 3a \cdot 4 - 8 = a^3 - 6a^2 + 12a - 8$. Predznaki se izmenjujejo $+, -, +, -$. Rezultat $a^3 + 6a^2 + 12a + 8$ je razvoj za $(a + 2)^3$.
+? Zakaj je zadnji člen v razvoju $(x - 4)^2$ pozitiven?
+- Ker pri kvadratu vse člene pišemo s plusom.
+~ Potem bi bil tudi srednji člen pozitiven in bi dobil $(x + 4)^2$. Srednji člen $-8x$ je negativen.
++ Ker je $(-4)^2 = (-4) \cdot (-4) = 16$.
+- Ni pozitiven, pravilno je $x^2 - 8x - 16$.
+~ Minus je le pri srednjem členu. Kvadrat negativnega števila je pozitiven.
+- Ker je $(x - 4)^2$ zmnožek vsote in razlike.
+~ Zmnožek vsote in razlike je $(x - 4)(x + 4) = x^2 - 16$, tam je zadnji člen negativen.
+> Zadnji člen je kvadrat drugega člena $-4$. Zmnožek dveh negativnih števil je pozitiven, zato $(x - 4)^2 = x^2 - 8x + 16$.
 
-? Kolikšen je zmnožek $51 \cdot 49$, če ga zapišeš kot $(50 + 1)(50 - 1)$?
-- $2500$
-- $2501$
-+ $2499$
-- $2599$
-> Zmnožek vsote in razlike: $(50 + 1)(50 - 1) = 50^2 - 1^2 = 2500 - 1 = 2499$. Rezultat $2500$ dobiš, če pozabiš odšteti $1^2$, rezultat $2501$ pa, če kvadrat drugega člena prišteješ, namesto da bi ga odštel.
+? Kvadrat katerega dvočlenika je $9x^2 - 12x + 4$?
+- $(9x - 2)^2$
+~ Prvi člen v oklepaju je tisti, ki da na kvadrat $9x^2$, torej $3x$. Iz $(9x)^2$ dobiš $81x^2$.
+- $(3x + 2)^2$
+~ Pri plusu bi bil srednji člen $+12x$. Negativni srednji člen pomeni kvadrat razlike.
++ $(3x - 2)^2$
+- $(3x - 4)^2$
+~ Zadnji člen $4$ je kvadrat drugega člena, zato je drugi člen $2$. Iz $(3x - 4)^2$ dobiš $9x^2 - 24x + 16$.
+> $(3x - 2)^2 = 9x^2 - 2 \cdot 3x \cdot 2 + 4 = 9x^2 - 12x + 4$. Preveri še srednji člen, ne le prvega in zadnjega.
+
+? Kocka iz kock sladkorja ima rob $n$ kock. Koliko kock moraš dodati, da dobiš kocko z robom $n + 1$?
+- $1$
+~ To bi veljalo, če bi bilo $(n + 1)^3 = n^3 + 1$. Kub vsote ima še dva srednja člena.
+- $n^3 + 3n^2 + 3n + 1$
+~ To je cela nova kocka $(n + 1)^3$. Vprašanje sprašuje, koliko kock dodaš k obstoječim.
++ $3n^2 + 3n + 1$
+- $3n^2 + 1$
+~ Dodal si tri plošče, pozabil pa tri palčke. Člen $3ab^2$ da pri $b = 1$ še $3n$.
+> Dodati moraš $(n + 1)^3 - n^3 = 3n^2 + 3n + 1$: tri plošče $n \cdot n$, tri palčke dolžine $n$ in eno kocko v kotu. Pri $n = 2$ je to $12 + 6 + 1 = 19$, res $27 - 8 = 19$.
 
 :::simboli
 x | spremenljivka | | |
-a, b, c, d | členi v obrazcih (števila ali izrazi) | | |
-p, q, r | členi izraza v oklepaju | | | v (p − q)³ sta p in q člena dvočlenika
-m, n | koeficienta podobnih enočlenikov | | | drugje tudi eksponenta ali število členov
+a, b, c, d | členi v obrazcih (števila ali izrazi) | | | v Primeru 3 je $a$ tudi rob kocke
+p, q, r | členi izraza v oklepaju | | | pravilo za minus pred oklepajem
+V | prostornina skorje (Primer 3) | V = x^3 - (x - 2)^3 | cm^3 | $x$ je rob kocke sira v cm
+m, n | koeficienta podobnih enočlenikov | | | drugje tudi eksponenta, število členov ali rob kocke iz kock sladkorja
 k | eksponent spremenljivke | | | podobni enočleniki imajo enak eksponent
 :::
