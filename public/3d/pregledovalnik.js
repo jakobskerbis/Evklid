@@ -593,7 +593,8 @@ export function odpriModel(el, mod, opts = {}) {
           }
           if (!model?.korak || !tece) return false;
           try {
-            model.korak(cas, dt);
+            // korak lahko vrne false, ko ni več česa premikati (prizor se tedaj ne riše vsako sličico)
+            if (model.korak(cas, dt) === false) return false;
           } catch (err) {
             console.error("3D korak", err);
             tece = false;
@@ -762,7 +763,7 @@ export function odpriModel(el, mod, opts = {}) {
         }
       }
     }
-    btnTeci.hidden = typeof model.korak !== "function";
+    btnTeci.hidden = typeof model.korak !== "function" || model.korakBrezGumba === true;
     nastaviTek(typeof model.korak === "function" && kit.gibanje);
     cas = 0;
     nadzor();

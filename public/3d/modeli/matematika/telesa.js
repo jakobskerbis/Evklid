@@ -555,7 +555,9 @@ export function zgradi(THREE, ctx) {
 
     // ----- merilo in središčenje -----
     if (zacetek?.telo !== S.telo) zacetek = null;
-    let obrisViden = !!zacetek && e <= 1e-4 && zacetek.mere !== kljucMer();
+    // obris začetne velikosti (»hologram«) ostane v prizoru, tudi ko je večji od telesa (j, 4. 11.)
+    const obrisViden = !!zacetek && e <= 1e-4 && zacetek.mere !== kljucMer();
+    if (obrisViden) for (const p of zacetek.tocke) lokTocke.push(p);
     const R = meje(lokTocke, sred);
     let D0;
     { // zloženo telo: lepa (okrogla) dolžina merila
@@ -580,10 +582,13 @@ export function zgradi(THREE, ctx) {
       Dfiks = OHRANI.includes(zadnja) && Dfiks > 0 ? Math.max(Dfiks, Dt) : Dt;
       D = Dfiks;
     }
+    // Iluzija rasti (j, 4. 11.): ob spremembi mer prizor najprej obdrži staro merilo, zato telo vidno zraste ali se
+    // skrči (»se približa ali oddalji«), nato se kamera mehko umakne ali približa na novo merilo (korak).
+    const sPrej = s * group.scale.x;
     s = 2 / D;
+    if (ctx.gibanje !== false && MERE.includes(zadnja) && sPrej > 0) group.scale.setScalar(Math.min(1.6, Math.max(0.6, sPrej / s)));
+    else group.scale.setScalar(1);
     telo.scale.setScalar(s); telo.position.copy(sred).multiplyScalar(-s);
-    // obris začetne velikosti (v pravih cm) le, ko ostane v prizoru (pri skrčenem telesu bi segel ven)
-    if (obrisViden) for (const p of zacetek.tocke) if (p.distanceTo(sred) * s > 1) { obrisViden = false; break; }
     telo.updateMatrix();
     const debRob = (visoka ? 0.0062 : 0.0075) / s;
 
@@ -900,7 +905,7 @@ export function zgradi(THREE, ctx) {
     napisOs("0", SV, O.clone().add(V(-0.055 * u, 0.012 * u, -0.055 * u)), 0.1);
     osiCev.count = nc; osiCev.instanceMatrix.needsUpdate = true; if (osiCev.instanceColor) osiCev.instanceColor.needsUpdate = true;
     osiKon.count = 3; osiKon.instanceMatrix.needsUpdate = true; if (osiKon.instanceColor) osiKon.instanceColor.needsUpdate = true;
-    osiCev.computeBoundingSphere?.(); osiKon.computeBoundingSphere?.();
+    for (const m of [osiCev, osiKon]) { m.computeBoundingSphere?.(); m.computeBoundingBox?.(); }
     for (let i = nn; i < osNapisi.length; i++) osNapisi[i].visible = false;
   }
 
@@ -1214,6 +1219,14 @@ export function zgradi(THREE, ctx) {
       } },
     ],
     merilo: () => ({ m: D / 100, oznaka: kratko(D) + NB + "cm" }),
+    // mehak prehod merila po spremembi mer (glej obnovi); false, ko miruje
+    korakBrezGumba: true,
+    korak(t, dt) {
+      const k = group.scale.x;
+      if (Math.abs(k - 1) < 1e-3) { if (k !== 1) group.scale.setScalar(1); return false; }
+      group.scale.setScalar(1 + (k - 1) * Math.exp(-Math.min(dt, 0.1) * 4));
+      return true;
+    },
     // prostornina in površina na odru, vidni tudi med vlečenjem drsnika (j, 4. 11.)
     povzetek: () => { const k = kolicine(); return `V = ${cm3(k.V[1])}\nP = ${cm2(k.P[1])}`; },
     dispose() {
