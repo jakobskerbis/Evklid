@@ -10,7 +10,7 @@ import { audit, detachAudit } from "../dnevnik-dostopov.js";
 import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
-import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
+import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
@@ -35,6 +35,7 @@ import { mountGifts } from "../placila/darila.js";
 import { mountGuarantee } from "../placila/garancija.js";
 import { mountPodari } from "../placila/podari.js";
 import { Schedules, nowParts } from "../schedule.js";
+import { setSource } from "../rast.js";
 
 export const CONSENT_TEXT =
   "Izjavljam, da sem starš ali zakoniti zastopnik tega otroka in soglašam, da Evklid obdeluje otrokove osebne podatke " +
@@ -255,7 +256,12 @@ export function mountAccounts(app, store, opts = {}) {
     const owner = ownerOf(studentId);
     if (r.personalTier === "gift") return giftGuarantee(getParent(owner)?.gift_level, r.useLevel);
     if (r.personalTier !== "paid") return null;
-    return planGuarantee(planByKey(getParent(owner)?.sub_plan)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
+    const g = planGuarantee(planByKey(getParent(owner)?.sub_plan)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
+    // Nadgradnja ta mesec (applySubscription): stari paket za pretekle dni, novi za preostale (plans.js upgradeMonthUsd).
+    // Zapis velja samo za isto naročnino (id računa se po izbrisu lahko ponovno uporabi, nova naročnina začne znova).
+    const up = JSON.parse(kv.get(`ai_upgrade_${owner}`) || "null");
+    const was = up && up.sub && up.sub === getParent(owner)?.sub_id ? (up.usd ?? planGuarantee(planByKey(up.from))?.usd) : null;
+    return was != null ? { ...g, usd: upgradeMonthUsd(was || 0, g.usd || 0, up.at) } : g;
   }
   // Meja paketa (brez brezplačnega repa, plans.js subscriptionCeiling); naročnik z mejo 0 ostane zajamčen (MIN_CEILING_USD).
   const guaranteeFor = (studentId) => {
@@ -967,6 +973,7 @@ export function mountAccounts(app, store, opts = {}) {
       consents: q("SELECT * FROM consents WHERE parent_id = ?", p.id),
       children: children(p.id).map((c) => ({
         ...c,
+        vir: db.prepare("SELECT vir FROM students WHERE id = ?").get(c.id)?.vir ?? null, // od kod je profil prišel (server/rast.js)
         conversations: store.listConversations(c.id).map((conv) => ({
           ...conv,
           // Šifrirana besedila (server/crypto-polje.js) gredo v izvoz odšifrirana.
@@ -997,6 +1004,30 @@ export function mountAccounts(app, store, opts = {}) {
             return [];
           }
         })(),
+        // Igre (server/games.js, server/daily-puzzle.js); tabele morda še ne obstajajo.
+        games: Object.fromEntries(
+          [
+            ["scores", "SELECT game, best, plays, tier, correct, wrong, cleared, updated_at FROM game_scores WHERE student_id = ?"],
+            ["ratings", "SELECT engine, up, updated_at FROM game_ratings WHERE student_id = ?"],
+            ["wishes", "SELECT week, genre FROM game_wishes WHERE student_id = ?"],
+            ["unlocks", "SELECT concept, created_at FROM game_unlocks WHERE student_id = ?"],
+            ["days", "SELECT day, plays, returns, pending, last_end FROM game_days WHERE student_id = ?"],
+            ["concept_days", "SELECT day, concept, weak, correct, wrong FROM game_concept_days WHERE student_id = ?"],
+            // Vzdevek na lestvicah (tudi pri dnevni uganki), lige, avatar in kovanci.
+            ["league_profile", "SELECT nickname, tier, created_at FROM league_profiles WHERE student_id = ?"],
+            ["leagues", "SELECT week, final_rank, final_xp, outcome FROM league_members WHERE student_id = ?"],
+            ["avatar", "SELECT equipped FROM avatar_state WHERE student_id = ?"],
+            ["avatar_items", "SELECT item, bought_at FROM avatar_items WHERE student_id = ?"],
+            ["coins", "SELECT amount, reason, created_at FROM coin_events WHERE student_id = ?"],
+            ["daily_puzzle", "SELECT day, level, started_at, finished_at, hints, wrong, solved, time_ms, total_ms FROM daily_puzzle WHERE student_id = ?"],
+          ].map(([k, sql]) => {
+            try {
+              return [k, q(sql, c.id)];
+            } catch {
+              return [k, []];
+            }
+          }),
+        ),
         schedule: (() => {
           try {
             const r = db.prepare("SELECT data FROM schedules WHERE student_id = ?").get(c.id);
@@ -1195,6 +1226,7 @@ export function mountAccounts(app, store, opts = {}) {
     const under15 = now - year <= 15; // previdno: v letu 15. rojstnega dne še štejemo kot mlajšega od 15
     const s = store.createStudent(name, req.body?.settings);
     db.prepare("UPDATE students SET parent_id = ?, birth_year = ? WHERE id = ?").run(p.id, year, s.id);
+    setSource(db, s.id, req.body?.vir); // od kod je prišel (server/rast.js)
     db.prepare("INSERT INTO consents (parent_id, student_id, child_birth_year, under_15, version, text, parent_email) VALUES (?, ?, ?, ?, ?, ?, ?)").run(
       p.id,
       s.id,
@@ -1347,6 +1379,16 @@ export function mountAccounts(app, store, opts = {}) {
     if (before?.sub_provider && before.sub_provider !== "stripe" && paidActive(before) && sub.id !== before.sub_id) {
       log.error?.("[evklid] Stripe naročnina prezrta: račun ima veljavno naročnino", before.sub_provider, parentId);
       return;
+    }
+    // Zamenjava paketa med veljavno naročnino: zapomnimo si stari paket za zajamčeni AI tega meseca (subGuarantee).
+    const planKey = plan?.key || price.lookup_key || price.id || null;
+    const fromG = before?.sub_plan && planGuarantee(planByKey(before.sub_plan));
+    if (fromG && planKey && planKey !== (planByKey(before.sub_plan)?.key || before.sub_plan) && paidActive(before) && before.sub_id === sub.id) {
+      // Druga zamenjava v istem mesecu: dnevi pred prvo ostanejo pri prvotnem deležu (plans.js upgradeFromUsd).
+      const prev = JSON.parse(kv.get(`ai_upgrade_${parentId}`) || "null");
+      const now = Date.now();
+      const usd = upgradeFromUsd(prev?.sub === sub.id ? prev : null, fromG.usd || 0, now);
+      kv.set(`ai_upgrade_${parentId}`, JSON.stringify({ from: before.sub_plan, usd, at: now, sub: sub.id }));
     }
     update(parentId, {
       // Prvo neuspelo plačilo začne odlog (GRACE_DAYS); ob uspešnem plačilu se ponastavi.

@@ -1,5 +1,5 @@
-// Definicija integrala (SŠ kartica Integrali): n pravokotnikov (1–40) z višino f v sredini podintervala,
-// srednji pravokotnik je poudarjen z f_i in Δx_i. Čipi: Σ f_i Δx_i, ∫ f dx = 82/15 in razlika.
+// Določeni integral kot limita Riemannovih vsot (SŠ kartica Newton–Leibniz): n pravokotnikov (1–40) z višino f v sredini podintervala,
+// srednji pravokotnik je poudarjen z f_i in Δx_i. Čipi: Σ f_i Δx_i, ∫ f dx = F(4) − F(0) = 82/15 in razlika.
 import { skica, st, crta, napis, osi, vr } from "./skica.js";
 import { s, fnPath } from "../sim/kit.js";
 import { f, riemann, TOCNO, A_INT, B_INT } from "./integral.js";
@@ -41,7 +41,7 @@ export default function narisi(host) {
       { barva: "ploskev", oznaka: "n", vrednost: st(n, 0) },
       { barva: "izbor", oznaka: "\\Delta x_i = \\frac{b - a}{n}", vrednost: vr(q.dx, 3) },
       { barva: "ploskev", oznaka: "\\sum f_i \\Delta x_i", vrednost: vr(q.vsota, 4) },
-      { barva: "glavna", oznaka: "\\int_0^4 f(x)\\,dx", vrednost: `82/15 ${vr(TOCNO, 4)}` },
+      { barva: "glavna", oznaka: "\\int_0^4 f(x)\\,dx = F(4) - F(0)", vrednost: `82/15 ${vr(TOCNO, 4)}` },
       { barva: "napaka", oznaka: "\\text{razlika}", vrednost: vr(q.vsota - TOCNO, 4) },
     ]);
   }

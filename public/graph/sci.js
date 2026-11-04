@@ -1,14 +1,15 @@
 // Znanstveni kalkulator in pretvornik enot (vmesnik). Računa scicore.js (+ scisolve.js za enačbe,
 // neenačbe, sisteme, funkcije, odvode in kompleksna števila), brez API in brez knjižnic.
 // Tipkovnica je vedno vidna (kot pri pravem kalkulatorju); na računalniku lahko tipkaš tudi s tipkovnico.
-import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
-import { analyze, previewTex, solutionTex, intervalsTex, systemTex } from "./scisolve.js";
+import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
+import { analyze, previewTex, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName } from "./cas.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
 const MAX_HISTORY = 60;
 const FORMATS = ["auto", "sci", "eng", "fix2", "fix3", "fix4", "sig2", "sig3", "sig4"];
+const ANGLES = ["deg", "rad", "grad"]; // stopinje, radiani, gradi (400 v polnem krogu)
 
 const texHtml = (s, display = false) => {
   try {
@@ -43,26 +44,29 @@ const store = {
 const FN_KEYS = [
   ["2nd", "#2nd"], ["x²", "²", "x³", "³"], ["xʸ", "^(", "ⁿ√x", "root(@;)"], ["√", "√(", "∛", "∛("], ["x⁻¹", "⁻¹", "|x|", "abs("], ["◀", "#left"],
   ["sin", "sin(", "sin⁻¹", "arcsin("], ["cos", "cos(", "cos⁻¹", "arccos("], ["tan", "tan(", "tan⁻¹", "arctan("], ["ln", "ln(", "eˣ", "e^("], ["log", "log(", "10ˣ", "10^("], ["▶", "#right"],
-  ["(", "("], [")", ")"], ["π", "π", "e", "e"], ["n!", "!", "nCr", "nCr(@;)"], ["°", "°", "nPr", "nPr(@;)"], ["%", "%", "logₐ", "logb(@;)"],
+  ["(", "(", "M+", "#m+"], [")", ")", "M−", "#m-"], ["π", "π", "e", "e"], ["n!", "!", "nCr", "nCr(@;)"], ["°′″", "#dms", "nPr", "nPr(@;)"], ["%", "%", "logₐ", "logb(@;)"],
   ["x", "x", "y", "y"], ["=", "=", "<", "<"], ["d/dx", "d/dx(@)", "f(x)=", "f(x)="], ["∫", "∫(@;;)", "i", "i"], [";", ";", ">", ">"], ["⋯", "#more"],
 ];
 const NUM_KEYS = [
   ["7", "7"], ["8", "8"], ["9", "9"], ["⌫", "#del"], ["AC", "#ac"],
   ["4", "4"], ["5", "5"], ["6", "6"], ["×", "×"], ["÷", "÷"],
   ["1", "1"], ["2", "2"], ["3", "3"], ["+", "+"], ["−", "−"],
-  ["0", "0"], [",", "#dec"], ["×10ˣ", "×10^("], ["Ans", "Ans"], ["=", "#eq"],
+  ["0", "0"], [",", "#dec"], ["×10ˣ", "×10^("], ["Ans", "Ans", "MR", "M"], ["=", "#eq"],
 ];
 const KEY_LABEL = { "#2nd": "sc.second", "#left": "sc.left", "#right": "sc.right", "#del": "sc.del", "#ac": "sc.ac", "#eq": "sc.equals", "#more": "sc.more" };
+// spomin M (kot na kalkulatorju): M+ prišteje rezultat, M− ga odšteje, MR vstavi M, MC izbriše
+const MEM_LABEL = { "#m+": "sc.mPlus", "#m-": "sc.mMinus", M: "sc.mRecall", "#mc": "sc.mClear" };
 // Meni »⋯«: vse funkcije po skupinah. [napis (TeX), vstavi]
 const MORE = [
   ["alg", null], // poenostavi, razvij, razstavi, reši za (imena v jeziku vmesnika, glej renderMore)
   ["cmp", [["=", "="], ["<", "<"], [">", ">"], ["\\le", "≤"], ["\\ge", "≥"], [";", ";"]]],
   ["vars", [["x", "x"], ["y", "y"], ["z", "z"], ["a", "a"], ["b", "b"], ["c", "c"], ["n", "n"], ["t", "t"], ["f(x)=", "f(x)="], ["g(x)=", "g(x)="]]],
   ["ana", [["\\tfrac{d}{dx}", "d/dx(@)"], ["\\tfrac{d}{dx}\\big|_{x=a}", "d/dx(@;)"], ["\\int_a^b", "∫(@;;)"], ["\\sum", "∑_(n=1)^(@) "], ["\\prod", "∏_(n=1)^(@) "], ["|x|", "abs("]]],
-  ["trig", [["\\sin", "sin("], ["\\cos", "cos("], ["\\tan", "tan("], ["\\cot", "cot("], ["\\arcsin", "arcsin("], ["\\arccos", "arccos("], ["\\arctan", "arctan("], ["\\sinh", "sinh("], ["\\cosh", "cosh("], ["\\tanh", "tanh("]]],
+  ["trig", [["\\sin", "sin("], ["\\cos", "cos("], ["\\tan", "tan("], ["\\cot", "cot("], ["\\arcsin", "arcsin("], ["\\arccos", "arccos("], ["\\arctan", "arctan("], ["\\sinh", "sinh("], ["\\cosh", "cosh("], ["\\tanh", "tanh("], ["\\text{°}", "°"], ["\\text{′}", "′"], ["\\text{″}", "″"]]],
   ["num", [["\\gcd", "gcd(@;)"], ["\\operatorname{lcm}", "lcm(@;)"], ["\\bmod", "mod(@;)"], ["\\operatorname{round}", "round(@;)"], ["\\lfloor x\\rfloor", "floor("], ["\\lceil x\\rceil", "ceil("], ["\\binom{n}{k}", "nCr(@;)"], ["n!", "!"], ["\\%", "%"], ["\\operatorname{sgn}", "sgn("], ["\\operatorname{Int}", "Int("], ["\\operatorname{frac}", "frac("], ["\\mathrm{Ran\\#}", "rand"], ["\\operatorname{RanInt}", "randint(@;)"], ["\\operatorname{Pol}", "Pol(@;)"], ["\\operatorname{Rec}", "Rec(@;)"]]],
   ["stat", [["\\operatorname{mean}", "mean(@)"], ["\\operatorname{median}", "median(@)"], ["\\sigma", "stdev(@)"], ["\\min", "min(@)"], ["\\max", "max(@)"], ["\\Sigma", "total(@)"]]],
   ["cplx", [["i", "i"], ["|z|", "abs("]]],
+  ["mem", [["\\mathrm{M+}", "#m+"], ["\\mathrm{M-}", "#m-"], ["\\mathrm{MR}", "M"], ["\\mathrm{MC}", "#mc"]]],
 ];
 
 /**
@@ -84,7 +88,7 @@ export function createScientific(root, opts) {
       vars: s.vars && typeof s.vars === "object" ? s.vars : {},
       funcs: s.funcs && typeof s.funcs === "object" ? s.funcs : {},
       ans: Number.isFinite(s.ans) ? s.ans : 0,
-      deg: s.deg !== false,
+      angle: ANGLES.includes(s.angle) ? s.angle : s.deg === false ? "rad" : "deg", // »deg« iz starejših različic
       format: FORMATS.includes(s.format) ? s.format : "auto",
     };
   }
@@ -95,7 +99,7 @@ export function createScientific(root, opts) {
     <div class="sc-screen">
       <div class="sc-bar">
         <div class="seg sc-angle" role="group" aria-label="${esc(t("gc.angles"))}">
-          <button type="button" data-deg="1" title="${esc(t("gc.deg"))}">DEG</button><button type="button" data-deg="0" title="${esc(t("gc.rad"))}">RAD</button>
+          <button type="button" data-angle="deg" title="${esc(t("gc.deg"))}">DEG</button><button type="button" data-angle="rad" title="${esc(t("gc.rad"))}">RAD</button><button type="button" data-angle="grad" title="${esc(t("sc.grad"))}">GRA</button>
         </div>
         <label class="sc-format-l"><span class="sr-only">${esc(t("sc.format"))}</span><select class="sc-format" aria-label="${esc(t("sc.format"))}"></select></label>
         <div class="sc-vars" hidden></div>
@@ -175,7 +179,7 @@ export function createScientific(root, opts) {
     input.setSelectionRange(p, p);
   }
 
-  const env = () => ({ vars: st.vars, funcs: st.funcs, ans: st.ans, deg: st.deg, comma: comma() });
+  const env = () => ({ vars: st.vars, funcs: st.funcs, ans: st.ans, deg: st.angle === "deg", grad: st.angle === "grad", comma: comma() });
   const fmt = (v) => formatNumber(v, { mode: st.format, comma: comma() });
 
   function errorText(e) {
@@ -251,7 +255,7 @@ export function createScientific(root, opts) {
         break;
       case "solve":
         e.res = solutionTex(r, c, st.format);
-        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg"]);
+        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad"]);
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
         e.steps = true;
@@ -275,7 +279,7 @@ export function createScientific(root, opts) {
         break;
       case "pair":
         // Pol/Rec: dva rezultata, vsak v svojem delu (r = …, θ = …)
-        e.res = r.items.map((x) => `${x.name} = ${valueTex(x.v)}${x.angle && r.deg ? "^{\\circ}" : ""}`).join(",\\quad ");
+        e.res = r.items.map((x) => `${x.name} = ${valueTex(x.v)}${x.angle ? ANGLE_SUP[r.grad ? "grad" : r.deg ? "deg" : "rad"] : ""}`).join(",\\quad ");
         e.first = r.items[0].v;
         break;
       case "deriv":
@@ -333,8 +337,10 @@ export function createScientific(root, opts) {
   function resultHtml(e) {
     const icon2 = (n) => icon(n);
     switch (e.kind || "value") {
-      case "value":
-        return texHtml(`${e.assign ? `${e.assign} ` : ""}= ${valueTex(e.value)}`);
+      case "value": {
+        const d = e.dms ? dmsOf(e.value, { comma: comma() }) : null;
+        return texHtml(`${e.assign ? `${e.assign} ` : ""}= ${d ? `${fmt(e.value).tex} = ${d.tex}` : valueTex(e.value)}`);
+      }
       case "complex":
         return texHtml(`= ${complexTex(e.re, e.im)}`);
       case "bool":
@@ -426,6 +432,8 @@ export function createScientific(root, opts) {
     } else if (r.kind === "complex") st.ans = r.im ? st.ans : r.re;
     else if (r.kind === "func") st.funcs[r.name] = { param: r.param, body: r.body };
     const e = entryOf(text, r);
+    // vnos v minutah in sekundah (v DEG): tudi rezultat v °′″; f′(2) je odvod, ne minuta
+    if (e.kind === "value" && st.angle === "deg" && /\d\s*[′″]/.test(text) && dmsOf(e.value)) e.dms = true;
     if (e.first !== undefined) {
       st.ans = e.first;
       delete e.first;
@@ -438,6 +446,44 @@ export function createScientific(root, opts) {
     update();
     renderVars();
     renderHistory(true);
+    return true;
+  }
+
+  // spomin M: M+ / M− najprej izračunata vnos (če ga je), nato rezultatu prištejeta ali odštejeta M
+  function memory(op) {
+    if (op === "M") {
+      // MR: prazen spomin je 0 (kot na kalkulatorju), sicer bi bil M neznanka
+      if (!Number.isFinite(st.vars.M)) {
+        st.vars.M = 0;
+        save();
+        renderVars();
+      }
+      return insert("M");
+    }
+    if (op === "#mc") delete st.vars.M;
+    else {
+      if (input.value.trim() && !compute()) return;
+      const m = (Number.isFinite(st.vars.M) ? st.vars.M : 0) + (op === "#m+" ? st.ans : -st.ans);
+      st.vars.M = Number(m.toPrecision(15)); // brez šuma 0,1 + 0,2
+    }
+    save();
+    renderVars();
+    const live = $(".sc-live");
+    live.className = "sc-live muted";
+    live.innerHTML = "M" in st.vars ? texHtml(`\\mathrm{M} = ${fmt(st.vars.M).tex}`) : esc(t("sc.mCleared"));
+  }
+  // tipka °′″: za številom za ° vstavi ′, za ′ pa ″ (30°15′20″); po izračunu (prazen vnos) pokaže rezultat v °′″
+  function dmsKey() {
+    const last = st.history[st.history.length - 1];
+    if (!input.value && last && (last.kind || "value") === "value" && dmsOf(last.value)) {
+      last.dms = !last.dms;
+      save();
+      return renderHistory(true);
+    }
+    const before = input.value.slice(0, input.selectionStart ?? input.value.length);
+    if (/[°′″]\s*$/.test(before)) return; // brez 30°° (oznaka je že tam)
+    const m = /([°′])\s*\d+(?:[.,]\d*)?$/.exec(before);
+    insert(m ? (m[1] === "°" ? "′" : "″") : "°");
   }
 
   function actionsHtml(e, i) {
@@ -448,6 +494,9 @@ export function createScientific(root, opts) {
     if (e.solveFor) for (const v of e.solveFor) acts.push(`<button type="button" class="sc-act" data-act="cas" data-op="solve" data-v="${esc(v)}" data-i="${i}">${icon("square-function")}<span>${esc(t("sc.cas.solveFor", { v }))}</span></button>`);
     if (e.steps && opts.steps && opts.canSteps?.()) acts.push(btn("steps", "list-ordered", "sc.steps"));
     if ((e.kind || "value") === "value" && primeFactors(e.value)?.some(([, k], j, a) => a.length > 1 || k > 1) && !e.fact) acts.push(btn("fact", "grid-2x2", "sc.factor"));
+    // kot v stopinjah → stopinje, minute, sekunde (in nazaj), kot tipka °′″ na kalkulatorju
+    if ((e.kind || "value") === "value" && st.angle === "deg" && /°|\d\s*[′″]|arc(?:sin|cos|tan|cot)/.test(e.text) && !Number.isInteger(e.value) && dmsOf(e.value))
+      acts.push(`<button type="button" class="sc-act" data-act="dms" data-i="${i}" aria-pressed="${!!e.dms}" title="${esc(t("sc.toDms"))}"><span aria-hidden="true">°′″</span><span class="sr-only">${esc(t("sc.toDms"))}</span></button>`);
     if (["value", "solve", "ineq", "system", "deriv", "complex", "pair", "cas"].includes(e.kind || "value")) acts.push(btn("copy", "copy", "sc.copy"));
     return acts.length ? `<div class="sc-acts">${acts.join("")}</div>` : "";
   }
@@ -488,7 +537,10 @@ export function createScientific(root, opts) {
   }
 
   function syncBar() {
-    root.querySelectorAll(".sc-angle button").forEach((b) => b.classList.toggle("active", (b.dataset.deg === "1") === st.deg));
+    root.querySelectorAll(".sc-angle button").forEach((b) => {
+      b.classList.toggle("active", b.dataset.angle === st.angle);
+      b.setAttribute("aria-pressed", String(b.dataset.angle === st.angle));
+    });
     const sel = $(".sc-format");
     const lbl = (f) => (f === "auto" ? t("sc.fmtAuto") : f === "sci" ? t("sc.fmtSci") : f === "eng" ? t("sc.fmtEng") : f.startsWith("fix") ? t("sc.fmtFix", { n: f.slice(3) }) : t("sc.fmtSig", { n: f.slice(3) }));
     sel.innerHTML = FORMATS.map((f) => `<option value="${f}"${f === st.format ? " selected" : ""}>${esc(lbl(f))}</option>`).join("");
@@ -504,7 +556,7 @@ export function createScientific(root, opts) {
   }
   function renderMore() {
     more.innerHTML = `<div class="sc-consts-h"><b>${esc(t("sc.functions"))}</b><button type="button" class="ghost icon-only sc-more-x" aria-label="${esc(t("pad.close"))}">${icon("x")}</button></div>
-      ${MORE.map(([g, keys]) => [g, keys || algKeys()]).map(([g, keys]) => `<div class="sc-more-g" data-g="${g}"><div class="sc-more-h">${esc(t(`sc.grp.${g}`))}</div><div class="sc-more-keys">${keys.map(([l, ins]) => `<button type="button" class="sc-mk" data-ins="${esc(ins)}">${texHtml(l)}</button>`).join("")}</div></div>`).join("")}`;
+      ${MORE.map(([g, keys]) => [g, keys || algKeys()]).map(([g, keys]) => `<div class="sc-more-g" data-g="${g}"><div class="sc-more-h">${esc(t(`sc.grp.${g}`))}</div><div class="sc-more-keys">${keys.map(([l, ins]) => `<button type="button" class="sc-mk" data-ins="${esc(ins)}"${g === "mem" ? ` title="${esc(t(MEM_LABEL[ins]))}" aria-label="${esc(t(MEM_LABEL[ins]))}"` : ""}>${texHtml(l)}</button>`).join("")}</div></div>`).join("")}`;
   }
   function algKeys() {
     const n = (op) => commandName(op, opts.locale?.());
@@ -552,6 +604,8 @@ export function createScientific(root, opts) {
     else if (ins === "#left") move(-1);
     else if (ins === "#right") move(1);
     else if (ins === "#dec") insert(comma() ? "," : ".");
+    else if (ins === "#dms") dmsKey();
+    else if (MEM_LABEL[ins]) memory(ins);
     else insert(ins);
     if (second && ins !== "#2nd") setSecond(false);
     if (!touch) input.focus({ preventScroll: true });
@@ -560,7 +614,8 @@ export function createScientific(root, opts) {
     if (e.target.closest(".sc-more-x")) return showPanel(null);
     const b = e.target.closest(".sc-mk");
     if (!b) return;
-    insert(b.dataset.ins);
+    if (MEM_LABEL[b.dataset.ins]) memory(b.dataset.ins);
+    else insert(b.dataset.ins);
     showPanel(null);
     if (!touch) input.focus({ preventScroll: true });
   });
@@ -628,6 +683,10 @@ export function createScientific(root, opts) {
         it.fact = true;
         save();
         renderHistory(false);
+      } else if (act === "dms") {
+        it.dms = !it.dms;
+        save();
+        renderHistory(false);
       } else if (act === "copy") {
         const txt = copyText(it);
         try {
@@ -643,7 +702,7 @@ export function createScientific(root, opts) {
       input.value = it.text;
       input.setSelectionRange(it.text.length, it.text.length);
       update();
-    } else if ((it.kind || "value") === "value") insert(formatNumber(it.value, { mode: "auto", comma: comma() }).text.replace(" · 10^", "E").replace("−", "-"));
+    } else if ((it.kind || "value") === "value") insert(it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: comma() }).text.replace("−", "-") : formatNumber(it.value, { mode: "auto", comma: comma() }).text.replace(" · 10^", "E").replace("−", "-"));
     else if (it.kind === "complex") insert(`(${complexText(it)})`);
     if (!touch) input.focus({ preventScroll: true });
   });
@@ -668,7 +727,7 @@ export function createScientific(root, opts) {
   // besedilo za odložišče: število ali rešitev v zapisu, ki ga razume vsak program (brez TeX)
   function copyText(it) {
     const c = comma();
-    if ((it.kind || "value") === "value") return formatNumber(it.value, { mode: st.format, comma: c }).text;
+    if ((it.kind || "value") === "value") return it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: c }).text : formatNumber(it.value, { mode: st.format, comma: c }).text;
     if (it.kind === "complex") return complexText(it);
     return unnest(String(resTex(it)).replace(/\{,\}/g, ","))
       .replace(/\\Leftrightarrow/g, "⇔")
@@ -691,9 +750,9 @@ export function createScientific(root, opts) {
       .trim();
   }
   root.querySelector(".sc-angle").addEventListener("click", (e) => {
-    const b = e.target.closest("[data-deg]");
+    const b = e.target.closest("[data-angle]");
     if (!b) return;
-    st.deg = b.dataset.deg === "1";
+    st.angle = b.dataset.angle;
     save();
     syncBar();
     update();

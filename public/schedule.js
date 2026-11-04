@@ -9,6 +9,7 @@ import { jeFaks } from "./stopnja.js";
 
 let D = null; // { api, getStudent, showView, startSession, toast, escapeHtml, onChange }
 let data = null; // zadnji odgovor strežnika { schedule, courses }
+let dataFor = null; // id profila, za katerega je data (pozen odgovor prejšnjega profila ga prepiše)
 let preview = null; // uvoz, ki ga učenec še preverja { lessons, events, source }
 
 const REMIND_KEY = "evklid.scheduleReminders";
@@ -29,6 +30,10 @@ const ls = {
   },
 };
 
+// Zadnji pogled Urnika (po renderScheduleCard), za kartico stopnje na Učni poti (public/zacetna.js).
+// Le za podani profil: odgovor, ki je prispel za drug (prejšnji) profil, vrne null.
+export const lastSchedule = (studentId) => (data && dataFor === studentId ? data.schedule : null);
+
 export function initSchedule(deps) {
   D = deps;
 }
@@ -45,11 +50,15 @@ const when = (n) => (n === 0 ? t("test.today") : n === 1 ? t("test.tomorrow") : 
 const lessonLabel = (l) => [l.kind, l.group ? t("sch.group", { g: l.group }) : ""].filter(Boolean).join(" · ");
 
 async function load() {
-  data = await D.api(`/api/students/${sid()}/schedule`);
+  const id = sid();
+  data = await D.api(`/api/students/${id}/schedule`);
+  dataFor = id;
   return data;
 }
 async function save(body) {
-  data = await D.api(`/api/students/${sid()}/schedule`, { method: "PUT", body });
+  const id = sid();
+  data = await D.api(`/api/students/${id}/schedule`, { method: "PUT", body });
+  dataFor = id;
   D.onChange?.();
   return data;
 }
@@ -421,6 +430,7 @@ export async function renderScheduleCard(el) {
   try {
     d = await load();
   } catch {
+    data = null; // kartica stopnje (lastSchedule) ne sme pokazati urnika prejšnjega profila
     el.hidden = true;
     return;
   }
@@ -447,7 +457,8 @@ export async function renderScheduleCard(el) {
   const cls = nextL || pastL;
   const after = !nextL && pastL;
   const rem = s.reminders.filter((e) => TEST_KINDS.includes(e.kind) || e.kind === "naloga");
-  const next = s.upcoming.find((e) => TEST_KINDS.includes(e.kind) && e.daysLeft > 1 && e.daysLeft <= 14);
+  // Faks: izpitne roke kaže kartica »Moj študij« (public/zacetna.js), tu ne še enkrat.
+  const next = jeFaks(D.getStudent()?.settings) ? null : s.upcoming.find((e) => TEST_KINDS.includes(e.kind) && e.daysLeft > 1 && e.daysLeft <= 14);
   el.hidden = false;
   el.innerHTML = `<div class="card sch-card">
     ${rem

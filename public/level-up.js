@@ -113,7 +113,7 @@ export function renderSuggestion(box, o) {
   box.innerHTML = `
     <div class="card level-card">
       <div class="lc-head"><span class="lc-ic">${icon("circle-arrow-up")}</span>
-        <div><span class="eyebrow">Novo šolsko leto ${esc(s.schoolYear)}</span><h2>${q}</h2></div></div>
+        <div><span class="eyebrow">${s.study ? "Novo študijsko leto" : "Novo šolsko leto"} ${esc(s.schoolYear)}</span><h2>${q}</h2></div></div>
       <p class="muted">Zdaj imaš nastavljeno: ${esc(s.current)}. ${note}</p>
       <div class="actions">
         <button type="button" class="primary" data-lc="yes">${yes}</button>
