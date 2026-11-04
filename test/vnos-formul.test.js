@@ -59,6 +59,8 @@ test("»Razloži« in a lesson sends the original TeX, not the clickable-symbol 
   assert.equal(plainTex(shown), euler);
   assert.equal(plainTex("\\htmlData{fx=a}{\\frac{1}{2}}x"), "\\frac{1}{2}x");
   assert.equal(plainTex("x^2"), "x^2");
+  assert.equal(plainTex("\\htmlData{fx=a} x \\htmlData{fx=b}{y}"), "\\htmlData{fx=a} x y", "pokvarjena oznaka ne ustavi ostalih");
+  assert.equal(plainTex("\\htmlData{fx=a}{\\varphi}x"), "\\varphi x");
   const tb = readFileSync(new URL("../public/textbook.js", import.meta.url), "utf8");
   assert.match(tb, /\$\$\{plainTex\(tex\)\.trim\(\)\}\$/);
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
@@ -67,6 +69,13 @@ test("»Razloži« in a lesson sends the original TeX, not the clickable-symbol 
 
 test("tutor: a dropped connection shows a clear message, not the browser's »network error«", () => {
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
-  assert.match(app, /err instanceof TypeError && \/network\|fetch\|load failed\/i/);
+  assert.match(app, /err instanceof TypeError && \/\^\(network \?error\|failed to fetch\|load failed\|networkerror\)\/i/);
   assert.match(app, /dropped \? t\("off\.serverBusy"\) : err\.message/);
+});
+
+test("tutor: a reply cut off mid-stream keeps what arrived and loses the typing dot", () => {
+  const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  const c = app.slice(app.indexOf("  } catch (err) {\n    // Odgovor, prekinjen sredi izpisa"));
+  assert.ok(c.length > 0 && c.indexOf('bubble.classList.remove("typing")') < c.indexOf("err.chatOff"));
+  assert.match(c, /pacer\.finish\(\);\s*pacer\.skip\(\);/);
 });

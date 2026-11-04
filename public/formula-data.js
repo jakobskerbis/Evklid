@@ -409,10 +409,15 @@ export function plainTex(tex) {
       return -1;
     };
     const a = close(i + 9); // konec {fx=…}
-    if (a < 0 || s[a + 1] !== "{") break;
-    const b = close(a + 1); // konec {telo}
-    if (b < 0) break;
-    s = s.slice(0, i) + s.slice(a + 2, b) + s.slice(b + 1);
+    const b = a >= 0 && s[a + 1] === "{" ? close(a + 1) : -1; // konec {telo}
+    if (b < 0) {
+      i += 10; // pokvarjena oznaka ostane, naslednje se vseeno odstranijo
+      continue;
+    }
+    const body = s.slice(a + 2, b);
+    // \varphi pred črko ostane ločen ukaz (\varphi x, ne \varphix).
+    const gap = /\\[a-zA-Z]+$/.test(body) && /[a-zA-Z]/.test(s[b + 1] || "") ? " " : "";
+    s = s.slice(0, i) + body + gap + s.slice(b + 1);
   }
   return s;
 }
