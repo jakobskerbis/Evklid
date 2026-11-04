@@ -23,6 +23,8 @@ import { seasonOf } from "../zbirke.js";
 import { unlockedText } from "../zbirke-view.js";
 import { pageSlice, pageNums } from "./pages.js";
 import { STAGES, stageOf, startTierFor } from "./stage.js";
+import { dailyCard, openDaily, pickLevel, saveLevel } from "./daily-view.js";
+import { suggestedLevel } from "./daily.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const FILTER_KEY = "evklid.gamesFilter";
@@ -74,6 +76,8 @@ let trOpen = false;
 let page = 0; // stran mreže iger (pages.js); ob vsaki spremembi izbire ali iskanja spet prva
 let trends = null; // glasovi tedna (samo skrbnik ali računalnik s strežnikom, server/games.js)
 let root = null;
+let daily = null; // dnevna uganka: stanje stopenj in niz (server/daily-puzzle.js)
+let dailyLevel = null; // izbrana stopnja na kartici (shranjena na napravi, sicer predlog po stopnji šolanja)
 
 const kindName = (e) => t(`games.e.${e.id}`);
 const gameId = (e, c) => `${e.id}:${c.id}`;
@@ -106,7 +110,7 @@ export async function showGames() {
   renderPortal();
   try {
     const s = ctx.getStudent();
-    if (s) [data, av, trends] = await Promise.all([ctx.api(`/api/students/${s.id}/games`), ctx.api(`/api/students/${s.id}/avatar`).catch(() => av), ctx.api("/api/games/trends").catch(() => null)]);
+    if (s) [data, av, trends, daily] =await Promise.all([ctx.api(`/api/students/${s.id}/games`), ctx.api(`/api/students/${s.id}/avatar`).catch(() => av), ctx.api("/api/games/trends").catch(() => null), ctx.api(`/api/students/${s.id}/daily`).catch(() => null)]);
     LS = lockState();
     if (!game) renderPortal();
   } catch {}
@@ -255,6 +259,7 @@ function renderPortal() {
         <button type="button" class="gm-me gm-zb" data-act="zbirke" title="${esc(t("zb.title"))}"><span class="gm-zb-ic">${icon("award")}</span><span><b>${esc(t("games.zbirke"))}</b><small>${esc(t("zb.pass"))}</small></span></button></span>
         <label class="gm-search">${icon("search")}<input type="search" value="${esc(filter.q)}" placeholder="${esc(t("games.search"))}" aria-label="${esc(t("games.search"))}"></label>
       </div>
+      ${ctx.getStudent() && !q ? dailyCard(daily, { t, lang: ctx.currentLang(), level: curDailyLevel(), suggested: suggestedDaily() }) : ""}
       ${SUBJECTS.length > 1 ? `<div class="chip-row gm-subjects" role="group" aria-label="${esc(t("games.subjects"))}">${SUBJECTS.map((x) => chip(x, t(`subj.${x}`), filter.subject === x)).join("")}</div>` : ""}
       <div class="chip-row gm-areas" role="group" aria-label="${esc(t("games.areas"))}">
         ${chip("you", t("games.forYou"), filter.area === "you")}${chip("all", t("games.all"), filter.area === "all")}
@@ -315,6 +320,15 @@ function renderPortal() {
     root.querySelector(".gm-sec .gm-tile")?.focus({ preventScroll: true });
   });
   root.querySelector('[data-act="shop"]').addEventListener("click", () => renderShop("", true));
+  root.querySelector(".gm-daily")?.addEventListener("click", (ev) => {
+    const lv = ev.target.closest("button[data-lv]");
+    if (lv) {
+      dailyLevel = lv.dataset.lv;
+      saveLevel(dailyLevel);
+      return renderPortal();
+    }
+    if (ev.target.closest('[data-act="daily"]')) openDailyPuzzle();
+  });
   root.querySelector('[data-act="wish"]')?.addEventListener("click", askWish);
   root.querySelector(".gm-trends")?.addEventListener("toggle", (e) => (trOpen = e.target.open));
   root.querySelector('[data-act="trcopy"]')?.addEventListener("click", async () => {
@@ -813,6 +827,32 @@ function renderShop(msg = "", top = false) {
   });
   if (top) window.scrollTo(0, 0);
   else window.scrollTo(0, y);
+}
+
+// Dnevna uganka: predlagana stopnja po stopnji šolanja, izbrana na napravi.
+const suggestedDaily = () => suggestedLevel(stage(), data.year);
+const curDailyLevel = () => dailyLevel || pickLevel(stage(), data.year);
+// Odpre dnevno uganko (s kartice v Igrah ali z vrstice na Učni poti). Brez profila ni lestvice: nič.
+export function openDailyPuzzle() {
+  const s = ctx?.getStudent();
+  root = document.querySelector("#games-content");
+  if (!s || !root) return;
+  game?.destroy();
+  document.body.classList.remove("gm-on");
+  applyStageLook();
+  game = openDaily(root, {
+    api: ctx.api,
+    student: s,
+    t,
+    lang: ctx.currentLang(),
+    level: curDailyLevel(),
+    suggested: suggestedDaily(),
+    toast: ctx.toast,
+    onLevel: (lv) => (dailyLevel = lv),
+    onChange: (info) => (daily = { ...info, board: null }),
+    onClose: closeGame,
+  });
+  root.closest(".view")?.scrollTo?.(0, 0);
 }
 
 function closeGame() {

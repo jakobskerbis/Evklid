@@ -2139,7 +2139,18 @@ async function loadPath(key = state.pathKey) {
         ? `<button class="next-row" data-open="${p.next.id}"><span class="eyebrow">${t("path.next")}</span><span class="next-name">${escapeHtml(p.next.name)}</span>${icon("chevron-right")}</button>`
         : `<div class="next-row done">${icon("trophy")}<span class="next-name">${t("path.allDone")}</span></div>`
     }
+    ${gamesOn(state.student.settings) ? `<button type="button" class="next-row dz-path-row" data-dnevna><span class="eyebrow">${t("dz.title")}</span><span class="next-name">${t("dz.statusNew")}</span>${icon("puzzle")}</button>` : ""}
     <div class="xp-stats">${xpStatsHtml(x)}</div>`;
+  // Dnevna uganka (public/games/daily.js): stanje v ozadju; rešena danes → niz dni.
+  if (gamesOn(state.student.settings)) {
+    const sid = state.student.id;
+    api(`/api/students/${sid}/daily`)
+      .then((d) => {
+        const el = $("#xp-card .dz-path-row .next-name");
+        if (el && state.student?.id === sid && d?.streak?.today) el.textContent = t("dz.streak", { n: d.streak.days });
+      })
+      .catch(() => {});
+  }
 
   content.innerHTML =
     `<div class="legend">${["mastered", "learning", "due"].map((k) => `<span class="lg ${k}">${icon(NODE[k][0])}${NODE[k][1]}</span>`).join("")}</div>` +
@@ -2198,6 +2209,10 @@ document.addEventListener("click", (e) => {
   const un = e.target.closest("[data-unit]");
   if (un) startSession("unit-practice", { path: state.pathKey, unit: Number(un.dataset.unit) });
   if (e.target.closest("[data-daily]")) startSession("daily", { path: state.pathKey });
+  if (e.target.closest("[data-dnevna]")) {
+    showView("games");
+    loadGames().then((m) => m.openDailyPuzzle()).catch(() => {});
+  }
 });
 $("#back-to-path").addEventListener("click", () => showView(state.backTo || "path"));
 // Tekmovanja so za osnovno in srednjo šolo; fakulteta zavihka nima.
