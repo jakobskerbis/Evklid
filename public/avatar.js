@@ -51,8 +51,8 @@ export const ITEMS = [
   it("hat_beanie", "hat", 30, "Zimska kapa", "Beanie"),
   it("hat_party", "hat", 40, "Zabavna kapa", "Party hat"),
   it("hat_flower", "hat", 40, "Rožica", "Flower"),
-  it("hat_phones", "hat", 60, "Slušalke", "Headphones"),
   it("hat_chef", "hat", 40, "Kuharska kapa", "Chef's hat"),
+  it("hat_phones", "hat", 60, "Slušalke", "Headphones"),
   it("hat_grad", "hat", 80, "Diplomska kapa", "Graduation cap"),
   it("hat_viking", "hat", 110, "Vikinška čelada", "Viking helmet"),
   it("hat_wizard", "hat", 140, "Čarovniški klobuk", "Wizard hat"),
@@ -76,7 +76,7 @@ export const ITEMS = [
   it("acc_monocle", "acc", 60, "Monokel", "Monocle"),
   it("acc_goggles", "acc", 90, "Zaščitna očala", "Lab goggles"),
   it("acc_blush", "acc", 20, "Rdeča lička", "Blush"),
-  it("acc_bubble", "acc", 25, "Žvečilni balonček", "Bubble gum"),
+  it("acc_bubble", "acc", 25, "Balonček iz žvečilke", "Bubble gum"),
   // ozadje
   it("bg_sky", "bg", 0, "Nebo", "Sky"),
   it("bg_mint", "bg", 0, "Meta", "Mint"),
@@ -84,8 +84,8 @@ export const ITEMS = [
   it("bg_sun", "bg", 40, "Sonce", "Sunburst"),
   it("bg_ocean", "bg", 60, "Morje", "Ocean"),
   it("bg_stars", "bg", 90, "Zvezdna noč", "Starry night"),
-  it("bg_space", "bg", 150, "Vesolje", "Space"),
   it("bg_pyramids", "bg", 120, "Piramide", "Pyramids"),
+  it("bg_space", "bg", 150, "Vesolje", "Space"),
   it("bg_lava", "bg", 260, "Vulkan", "Volcano"),
   it("bg_nebula", "bg", 2000, "Meglica", "Nebula"),
   // značka in efekt (predmeti zanje so samo za znanje, public/zbirke.js)
@@ -261,7 +261,7 @@ const MOUTH = {
 
 const ACC = {
   acc_none: () => "",
-  acc_bubble: () => `<circle cx="50" cy="70" r="9" fill="#f9a8d4" fill-opacity=".92" stroke="#db2777" stroke-width="1.8"/><path d="M45 66q2-3 5-3" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
+  acc_bubble: () => `<circle cx="50" cy="69" r="8.5" fill="#f9a8d4" fill-opacity=".92" stroke="#db2777" stroke-width="1.8"/><path d="M45.5 65.5q2-3 5-3" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
   acc_blush: () => `<ellipse cx="32" cy="62" rx="5" ry="3" fill="#fb7185" opacity=".6"/><ellipse cx="68" cy="62" rx="5" ry="3" fill="#fb7185" opacity=".6"/>`,
   acc_glasses: () => `<g fill="none" stroke="${INK}" stroke-width="2.5"><circle cx="40" cy="52" r="8"/><circle cx="60" cy="52" r="8"/><path d="M48 52h4M32 50l-8-3M68 50l8-3"/></g>`,
   acc_shades: () => `<path d="M30 46h18v7q0 7-9 7t-9-7zM52 46h18v7q0 7-9 7t-9-7z" fill="#111827" stroke="${INK}" stroke-width="2"/><path d="M48 49h4M30 48l-6-2M70 48l6-2" stroke="${INK}" stroke-width="2.5"/><path d="M34 50l4-2" stroke="#fff" stroke-width="1.5" opacity=".7"/>`,
