@@ -48,6 +48,8 @@ export function odpriModel(el, mod, opts = {}) {
   el.replaceChildren();
   el.classList.add("k3", "k3-pregled");
   const oder = mk("div", "k3-oder-ovoj");
+  const povzetekEl = mk("div", "k3-povzetek");
+  povzetekEl.hidden = true;
   const orodja = mk("div", "k3-orodja");
   const spodaj = mk("div", "k3-spodaj");
   const nadzorEl = mk("div", "k3-nadzor");
@@ -218,6 +220,13 @@ export function odpriModel(el, mod, opts = {}) {
   const merilo = () => {
     const m = model && "merilo" in model && model.merilo !== undefined ? (typeof model.merilo === "function" ? model.merilo() : model.merilo) : info.merilo;
     kit.nastaviMerilo(m || null, 2);
+    // model.povzetek(): kratka vrstica na odru (npr. prostornina in površina), vidna tudi med vlečenjem drsnika
+    let p = "";
+    try {
+      p = typeof model?.povzetek === "function" ? String(model.povzetek() || "") : "";
+    } catch {}
+    povzetekEl.textContent = p;
+    povzetekEl.hidden = !p;
   };
   // Smer kamere ob odprtju in »Ponastavi«: model.pogled ([x, y, z] ali funkcija, ki ga vrne), sicer privzeto.
   const zacetnaSmer = () => {
@@ -325,23 +334,73 @@ export function odpriModel(el, mod, opts = {}) {
         box.append(mk("span", "k3-izbira-oznaka", c.oznaka));
         // Dolg seznam (npr. 44 molekul): spustni meni namesto stene gumbov.
         if ((c.moznosti || []).length > 8) {
-          const sel = mk("select", "k3-izbor");
+          // Lasten spustni seznam v slogu 3D strani (j, 4. 11.: ne sistemskega sivega okna na telefonu).
+          const sel = mk("button", "k3-izbor");
+          sel.type = "button";
+          sel.setAttribute("aria-haspopup", "listbox");
+          sel.setAttribute("aria-expanded", "false");
           sel.setAttribute("aria-label", c.oznaka);
-          for (const [k, ime] of c.moznosti) {
-            const o = mk("option", "", ime);
-            o.value = String(k);
-            sel.append(o);
-          }
-          sel.value = String(c.vrednost);
-          const si = { c, zadnja: c.vrednost, nastavi: (v) => (sel.value = String(v)) };
-          sinh.push(si);
-          sel.addEventListener("change", () => {
-            const k = c.moznosti.find(([x]) => String(x) === sel.value)?.[0];
-            if (k === undefined) return;
-            c.vrednost = si.zadnja = k;
-            klic(k);
+          const seznam = mk("div", "k3-izbor-seznam");
+          seznam.setAttribute("role", "listbox");
+          seznam.setAttribute("aria-label", c.oznaka);
+          seznam.hidden = true;
+          const moznosti = c.moznosti.map(([k, ime]) => {
+            const o = mk("button", "k3-izbor-moznost", ime);
+            o.type = "button";
+            o.setAttribute("role", "option");
+            o.tabIndex = -1;
+            o.addEventListener("click", () => {
+              zapri(true);
+              if (String(k) === String(c.vrednost)) return;
+              c.vrednost = si.zadnja = k;
+              oznaci(k);
+              klic(k);
+            });
+            return [k, o];
           });
-          box.append(sel);
+          seznam.append(...moznosti.map(([, o]) => o));
+          const oznaci = (v) => {
+            for (const [k, o] of moznosti) o.setAttribute("aria-selected", String(String(k) === String(v)));
+            sel.textContent = c.moznosti.find(([k]) => String(k) === String(v))?.[1] ?? "";
+          };
+          const zunaj = (ev) => { if (!box.contains(ev.target)) zapri(false); };
+          const zapri = (fokus) => {
+            if (seznam.hidden) return;
+            seznam.hidden = true;
+            box.classList.remove("k3-odprt");
+            sel.setAttribute("aria-expanded", "false");
+            document.removeEventListener("pointerdown", zunaj, true);
+            if (fokus) sel.focus();
+          };
+          const odpri = () => {
+            seznam.hidden = false;
+            box.classList.add("k3-odprt");
+            sel.setAttribute("aria-expanded", "true");
+            const izbrana = moznosti.find(([k]) => String(k) === String(c.vrednost))?.[1] || moznosti[0]?.[1];
+            izbrana?.focus({ preventScroll: true });
+            if (izbrana) seznam.scrollTop = izbrana.offsetTop - seznam.clientHeight / 2 + izbrana.offsetHeight / 2;
+            seznam.scrollIntoView?.({ block: "nearest" });
+            document.addEventListener("pointerdown", zunaj, true);
+          };
+          sel.addEventListener("click", () => (seznam.hidden ? odpri() : zapri(false)));
+          sel.addEventListener("keydown", (ev) => {
+            if (ev.key === "ArrowDown" || ev.key === "ArrowUp") { ev.preventDefault(); odpri(); }
+          });
+          seznam.addEventListener("keydown", (ev) => {
+            const gumbi = moznosti.map(([, o]) => o), i = gumbi.indexOf(document.activeElement);
+            if (ev.key === "Escape") { ev.preventDefault(); zapri(true); }
+            else if (ev.key === "Tab") zapri(false);
+            else if (ev.key === "ArrowDown" || ev.key === "ArrowUp" || ev.key === "Home" || ev.key === "End") {
+              ev.preventDefault();
+              const n = ev.key === "Home" ? 0 : ev.key === "End" ? gumbi.length - 1 : Math.max(0, Math.min(gumbi.length - 1, i + (ev.key === "ArrowDown" ? 1 : -1)));
+              gumbi[n]?.focus();
+            }
+          });
+          const si = { c, zadnja: c.vrednost, nastavi: (v) => oznaci(v) };
+          sinh.push(si);
+          oznaci(c.vrednost);
+          box.classList.add("k3-izbira-meni");
+          box.append(sel, seznam);
           nadzorEl.append(box);
           if (typeof c.vidno === "function") vidni.push([c, box]);
           continue;
@@ -420,7 +479,7 @@ export function odpriModel(el, mod, opts = {}) {
     if (!kit) {
       kit = ustvariSceno(oder, { kakovost: opts.kakovost, oznaka: info.naslov, ponastavi: () => zgradiVse(true), prostoVrtenje: true });
       poveziGumbVrtenja(btnVrtenje, kit, icon, t);
-      oder.append(orodja);
+      oder.append(orodja, povzetekEl);
       // Barvne točke po 4 s mirovanja zbledijo (j, 4. 11.) in se vrnejo ob dotiku, premiku kamere, koleščku ali tipki;
       // izbrana točka ostane vidna. Velja na strani /3d in v lekcijah.
       let mir = 0;

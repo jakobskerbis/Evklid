@@ -198,6 +198,39 @@ export function zgradi(THREE, ctx) {
   telo.add(obrisZac);
   let zacetek = null; // { telo, mere, tocke }
 
+  // Koordinatni sistem na podlagi (j, 4. 11.): izhodišče v zadnjem levem spodnjem kotu telesa (pri okroglih in
+  // trikotnih/šestkotnih osnovnih ploskvah v središču osnovne ploskve), x proti gledalcu,
+  // y v desno, z navzgor (desnosučni sistem kot v učbeniku), telo leži v prvem oktantu. Številke so v cm, na koncih
+  // telesa so poudarjene črtice z mero (npr. 4 na osi x), zato se ob drsnikih spreminjajo skupaj s telesom.
+  const OS_BARVE = [new THREE.Color("#FF8A7A"), new THREE.Color("#7CE0B5"), new THREE.Color("#7FA8FF")]; // x, y, z
+  const OS_HEX = ["#FF8A7A", "#7CE0B5", "#7FA8FF"];
+  const mOs = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false, transparent: true, opacity: 0.95 });
+  const osiCev = new THREE.InstancedMesh(cevGeo, mOs, 96); osiCev.count = 0; osiCev.frustumCulled = false; osiCev.renderOrder = 2; osiCev.name = "koordinatne-osi";
+  const osiKonGeo = new THREE.ConeGeometry(1, 1, visoka ? 14 : 10);
+  const osiKon = new THREE.InstancedMesh(osiKonGeo, mOs, 3); osiKon.count = 0; osiKon.frustumCulled = false; osiKon.renderOrder = 2;
+  telo.add(osiCev, osiKon);
+  const osNapisi = []; // bazen spritov za številke in imena osi
+  const osTeksture = new Map(); // besedilo|barva -> SpriteMaterial
+  function osMaterial(besedilo, barva, ime) {
+    const kljuc = besedilo + "|" + barva + "|" + (ime ? 1 : 0);
+    if (osTeksture.has(kljuc)) return osTeksture.get(kljuc);
+    const c = document.createElement("canvas"), g = c.getContext("2d");
+    const fs = ime ? 48 : 40, h = 58, pad = 8;
+    let w = 40;
+    if (g) { g.font = `${ime ? "italic 700" : "700"} ${fs}px ${PISAVA}`; w = Math.max(h * 0.8, Math.ceil(g.measureText(besedilo).width + 2 * pad)); }
+    c.width = w; c.height = h;
+    if (g) {
+      g.font = `${ime ? "italic 700" : "700"} ${fs}px ${PISAVA}`; g.textAlign = "center"; g.textBaseline = "middle";
+      g.lineJoin = "round"; g.lineWidth = 8; g.strokeStyle = "rgba(11,15,22,0.9)"; g.strokeText(besedilo, w / 2, h / 2 + 2);
+      g.fillStyle = barva; g.fillText(besedilo, w / 2, h / 2 + 2);
+    }
+    const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+    const mat = new THREE.SpriteMaterial({ map: tex, depthTest: false, depthWrite: false, transparent: true });
+    mat.userData.razmerje = w / h;
+    osTeksture.set(kljuc, mat);
+    return mat;
+  }
+
   // nevidni »ročaji« za tanke dele (višina, polmer ...), da jih lahko tapneš
   const proxyCev = {}, proxyKr = {};
   for (const k of ["visina", "polmer", "stranska", "polmer2"]) { proxyCev[k] = mesh(cevGeo, mNevidno, 0); telo.add(proxyCev[k]); }
@@ -444,7 +477,6 @@ export function zgradi(THREE, ctx) {
   let Dfiks = 0, zadnja = "";
   const OHRANI = ["prosojno", "prerez", "lega", "nagib", "zasuk", "razpri"];
   const kljucMer = () => MERE.filter((k) => rabi(k)()).map((k) => S[k]).join(); // le mere izbranega telesa
-  const naslednjaLepa = (x) => LEPA.find((l) => l >= x - 1e-9) ?? x;
   const robSeg = []; // [x1,y1,z1,x2,y2,z2] ...
   const tocke = []; // oglišča (v cm, trenutno)
   const lokTocke = []; // za meje
@@ -520,16 +552,15 @@ export function zgradi(THREE, ctx) {
       napolniMnogokotnike(plB.geometry, stranske);
     }
 
-    // ----- merilo in središčenje ----- (z obrisom začetne velikosti, da tudi ta ostane v prizoru)
+    // ----- merilo in središčenje -----
     if (zacetek?.telo !== S.telo) zacetek = null;
-    const obrisViden = !!zacetek && e <= 1e-4 && zacetek.mere !== kljucMer();
-    if (obrisViden) for (const p of zacetek.tocke) lokTocke.push(p);
+    let obrisViden = !!zacetek && e <= 1e-4 && zacetek.mere !== kljucMer();
     const R = meje(lokTocke, sred);
     let D0;
     { // zloženo telo: lepa (okrogla) dolžina merila
       const T0 = e > 0 ? (() => { izracunajMatrike(T, 0); const t0 = []; for (const F of T.F) for (const p of F.p) t0.push(p.clone().applyMatrix4(F.M)); if (T.plasc) for (let i = 0; i <= 16; i++) { t0.push(plascTocka(T.plasc, -1 + i / 8, 0, 0, new Vector3()), plascTocka(T.plasc, -1 + i / 8, 1, 0, new Vector3())); } izracunajMatrike(T, e); return t0; })() : lokTocke;
       D0 = lepD(meje(T0, _d), 0.9);
-      if (e > 0 && Dfiks > 0) D0 = Math.max(D0, Dfiks); // razpiranje začne pri trenutnem merilu (brez skoka)
+      if (e > 0 && Dfiks > 0) D0 = Dfiks; // razpiranje začne pri trenutnem merilu (brez skoka)
       if (e > 0) {
         izracunajMatrike(T, 1);
         const t1 = []; for (const F of T.F) for (const p of F.p) t1.push(p.clone().applyMatrix4(F.M));
@@ -541,15 +572,17 @@ export function zgradi(THREE, ctx) {
       } else D = D0;
     }
     if (e <= 1e-4) {
-      // merilo ostane tudi ob stikalih, ravnini in zložitvi mreže; na novo se prilagodi ob novem telesu
-      if ((MERE.includes(zadnja) || OHRANI.includes(zadnja)) && Dfiks > 0) {
-        if (D > Dfiks) Dfiks = naslednjaLepa(D * 1.25); // preraslo: večji korak, da naslednji premiki spet vidno rastejo
-        else if (MERE.includes(zadnja) && D < Dfiks * 0.45) Dfiks = D;
-      } else Dfiks = D;
+      // merilo ostane ob stikalih, ravnini in zložitvi mreže. Ob spremembi mer ali novem telesu (j, 4. 11.) pa telo
+      // na zaslonu obdrži velikost, spremeni se »hologram«: podlaga s kvadratki in osi se zvezno povečata ali
+      // skrčita skupaj s pogledom, številke na oseh pa vedno kažejo prave mere iz drsnikov.
+      const Dt = (2 * R) / 0.9;
+      Dfiks = OHRANI.includes(zadnja) && Dfiks > 0 ? Math.max(Dfiks, Dt) : Dt;
       D = Dfiks;
     }
     s = 2 / D;
     telo.scale.setScalar(s); telo.position.copy(sred).multiplyScalar(-s);
+    // obris začetne velikosti (v pravih cm) le, ko ostane v prizoru (pri skrčenem telesu bi segel ven)
+    if (obrisViden) for (const p of zacetek.tocke) if (p.distanceTo(sred) * s > 1) { obrisViden = false; break; }
     telo.updateMatrix();
     const debRob = (visoka ? 0.0062 : 0.0075) / s;
 
@@ -605,6 +638,7 @@ export function zgradi(THREE, ctx) {
     prerez(T, e);
     // ----- podlaga in senca -----
     podlaga(T, e);
+    osi(T);
     // ----- prosojnost -----
     // izklopljeno: neprosojno telo, skriti robovi črtkano (kot v učbeniku);
     // vklopljeno: prosojne ploskve, vsi robovi vidni (robove rišemo prej, ploskve jih le obarvajo)
@@ -787,6 +821,81 @@ export function zgradi(THREE, ctx) {
       h.save(); h.shadowColor = `rgba(0,0,0,${alfa})`; h.shadowBlur = blur; h.shadowOffsetX = OD; h.drawImage(obrisPlatno, -OD, 0); h.restore();
     }
     sencaTex.needsUpdate = true;
+  }
+
+  // ---------- koordinatni sistem ----------
+  let osInfo = null; // { mere: [x, y, z], korak }
+  const osiTocka = new Vector3();
+  function osi(T) {
+    // tloris zloženega telesa (mreža se razpira po podlagi, sistem ostane, kjer je)
+    let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+    if (T.krogla || T.plasc || !T.B) { const r = T.krogla || T.r1; x0 = z0 = -r; x1 = z1 = r; }
+    else for (const p of T.B) { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); z0 = Math.min(z0, p.z); z1 = Math.max(z1, p.z); }
+    // pravokotna osnovna ploskev: izhodišče v kotu (oglišče telesa); sicer v središču osnovne ploskve
+    const kot = ["kocka", "kvader", "piramida4", "prisekana"].includes(T.vrsta);
+    const O = kot ? V(x0, 0, z0) : V(0, 0, 0), smeri = [V(0, 0, 1), V(1, 0, 0), Y];
+    const mere = [z1 - O.z, x1 - O.x, T.H]; // do kod seže telo po x (proti gledalcu), y (v desno) in z (navzgor)
+    // osi na podlagi segajo do roba kroga (polmer R okrog središča sred)
+    const R = tla.scale.x, cx = sred.x - O.x, cz = sred.z - O.z;
+    const tetiva = (d, r) => { const b = d.x * cx + d.z * cz, q = b * b - (cx * cx + cz * cz) + r * r; return q < 0 ? null : [b - Math.sqrt(q), b + Math.sqrt(q)]; };
+    const u = 1 / s; // ena enota prizora v cm
+    // vrh osi z: nad telesom, a v krogli prizora (polmer 1)
+    const zMeja = sred.y + Math.sqrt(Math.max(0, (1.0 * u) ** 2 - (O.x - sred.x) ** 2 - (O.z - sred.z) ** 2));
+    const konci = [0, 1].map((i) => {
+      const t = tetiva(smeri[i], 0.88 * R), t2 = tetiva(smeri[i], 0.97 * R);
+      if (!t) return [0, mere[i] + 0.16 * u];
+      return [Math.min(-0.04 * u, t[0]), Math.min(t2 ? t2[1] : t[1], Math.max(t[1], mere[i] + 0.16 * u))];
+    });
+    konci.push([0, Math.min(zMeja, Math.max(T.H + 0.2 * u, T.H * 1.12))]);
+    // korak številk: ~4–5 številk na najdaljši osi, večkratnik kvadratka podlage
+    const dolg = Math.max(...konci.map((k) => k[1]));
+    const korak = [1, 2, 5, 10, 20, 50, 100].find((k) => k % korakTal === 0 && dolg / k <= 5.5) ?? 100;
+    osInfo = { mere, korak, kot }; osiTocka.copy(O).addScaledVector(Y, Math.min(konci[2][1] * 0.8, T.H + 0.08 * u));
+
+    const rOs = (visoka ? 0.0032 : 0.0042) * u, lKon = 0.055 * u, rKon = 0.016 * u;
+    let nc = 0, nn = 0;
+    const cev = (a, b, r, barva) => {
+      if (nc >= osiCev.instanceMatrix.count) return;
+      _d.subVectors(b, a); const L = Math.max(1e-6, _d.length());
+      _q.setFromUnitVectors(Y, _d.divideScalar(L));
+      _m.compose(_c.addVectors(a, b).multiplyScalar(0.5), _q, _sk.set(r, L, r));
+      osiCev.setMatrixAt(nc, _m); osiCev.setColorAt(nc, barva); nc++;
+    };
+    const napisOs = (besedilo, barva, p, vis, ime = false) => {
+      let sp = osNapisi[nn];
+      if (!sp) { sp = new THREE.Sprite(); sp.renderOrder = 9; telo.add(sp); osNapisi.push(sp); }
+      sp.material = osMaterial(besedilo, barva, ime); sp.visible = true;
+      const h = vis * u; sp.scale.set(h * sp.material.userData.razmerje, h, 1); sp.position.copy(p); nn++;
+    };
+    // odmik številk od osi: x levo od osi, y za osjo, z levo od osi
+    const odmik = [V(-1, 0, 0), V(0, 0, -1), V(-0.7, 0, -0.7)].map((v) => v.multiplyScalar(0.085 * u));
+    const SV = "#E8EEFF";
+    for (let i = 0; i < 3; i++) {
+      const d = smeri[i], [ta, tb] = konci[i], barva = OS_BARVE[i];
+      const A = O.clone().addScaledVector(d, ta), B = O.clone().addScaledVector(d, tb - lKon * 0.6);
+      cev(A, B, rOs, barva);
+      _m.compose(_c.copy(O).addScaledVector(d, tb - lKon / 2), _q.setFromUnitVectors(Y, d), _sk.set(rKon, lKon, rKon));
+      osiKon.setMatrixAt(i, _m); osiKon.setColorAt(i, barva);
+      napisOs(["x", "y", "z"][i], OS_HEX[i], O.clone().addScaledVector(d, tb + 0.09 * u).add(i === 2 ? V(0, 0.02 * u, 0) : V(0, 0.03 * u, 0)), 0.13, true);
+      // črtica pravokotno na os (na podlagi v ravnini podlage, na osi z vodoravno)
+      const pr = i === 0 ? V(1, 0, 0) : i === 1 ? V(0, 0, 1) : V(1, 0, 0);
+      const crtica = (t, dl, b) => { const p = O.clone().addScaledVector(d, t); cev(p.clone().addScaledVector(pr, -dl), p.clone().addScaledVector(pr, dl), rOs * 0.9, b); };
+      const m = mere[i], blizu = (t) => Math.abs(t - m) < 0.6 * korak;
+      for (let t = korak; t < tb - lKon * 1.2; t += korak) {
+        if (blizu(t) && m <= tb - 0.5 * lKon) continue;
+        crtica(t, 0.016 * u, barva);
+        napisOs(st(t, 0), SV, O.clone().addScaledVector(d, t).add(odmik[i]).add(V(0, 0.012 * u, 0)), 0.1);
+      }
+      // konec telesa: poudarjena črtica in mera (če je še na osi; npr. krogla sega čez majhno podlago)
+      if (m > tb - 0.5 * lKon) continue;
+      crtica(m, 0.03 * u, barva);
+      napisOs(st(m, Number.isInteger(Math.round(m * 10) / 10) ? 0 : 1), OS_HEX[i], O.clone().addScaledVector(d, m).add(odmik[i].clone().multiplyScalar(1.15)).add(V(0, 0.012 * u, 0)), 0.115);
+    }
+    napisOs("0", SV, O.clone().add(V(-0.055 * u, 0.012 * u, -0.055 * u)), 0.1);
+    osiCev.count = nc; osiCev.instanceMatrix.needsUpdate = true; if (osiCev.instanceColor) osiCev.instanceColor.needsUpdate = true;
+    osiKon.count = 3; osiKon.instanceMatrix.needsUpdate = true; if (osiKon.instanceColor) osiKon.instanceColor.needsUpdate = true;
+    osiCev.computeBoundingSphere?.(); osiKon.computeBoundingSphere?.();
+    for (let i = nn; i < osNapisi.length; i++) osNapisi[i].visible = false;
   }
 
   // ---------- prerez z ravnino ----------
@@ -1045,6 +1154,10 @@ export function zgradi(THREE, ctx) {
     {
       const R = tla.scale.x, k = korakTal, K = k === 1 ? 5 : 10;
       d.push({ id: "podlaga", ime: "Karirasta podlaga", opis: `Podlaga je razdeljena na kvadratke s stranico ${k} cm (debelejše črte so na vsakih ${K} cm) kot v karirastem zvezku; z njimi oceniš velikost telesa in njegove mreže.`, barva: "#A9BCE8", meshes: [tla], tocka: tk(V(sred.x - 0.6 * R, 0, sred.z + 0.6 * R)) });
+      if (osInfo) {
+        const [mx, my, mz] = osInfo.mere.map((m) => cm(m));
+        d.push({ id: "osi", ime: "Koordinatni sistem", opis: `Osi x (proti tebi), y (v desno) in z (navzgor) imajo izhodišče 0 ${osInfo.kot ? "v zadnjem levem spodnjem kotu telesa" : "v središču osnovne ploskve"}; številke so v cm na vsakih ${osInfo.korak} cm. Telo sega do x = ${mx}, y = ${my} in z = ${mz} (poudarjene črtice). Ko spreminjaš mere, telo na zaslonu ostane enako veliko, podlaga in osi pa se povečajo ali skrčijo, zato številke vedno kažejo prave mere.`, barva: "#7FA8FF", meshes: [osiCev, osiKon], tocka: tk(osiTocka) });
+      }
     }
     if (prerezInfo) {
       d.push({ id: "prerez", ime: "Prerez", opis: `Presek telesa z ravnino: ${prerezInfo.ime}. Odrezani del je prikazan prosojno.`, barva: "#E4577F", meshes: [prerezM], tocka: tk(T.prerezSred) });
@@ -1095,10 +1208,13 @@ export function zgradi(THREE, ctx) {
       } },
     ],
     merilo: () => ({ m: D / 100, oznaka: kratko(D) + NB + "cm" }),
+    // prostornina in površina na odru, vidni tudi med vlečenjem drsnika (j, 4. 11.)
+    povzetek: () => { const k = kolicine(); return `V = ${cm3(k.V[1])}\nP = ${cm2(k.P[1])}`; },
     dispose() {
       const geos = new Set(), mats = new Set();
       group.traverse((o) => { if (o.geometry) geos.add(o.geometry); const m = o.material; if (m) (Array.isArray(m) ? m : [m]).forEach((x) => mats.add(x)); });
-      geos.add(cevGeo); geos.add(kroglicaGeo); if (enotaKrogla) geos.add(enotaKrogla);
+      geos.add(cevGeo); geos.add(kroglicaGeo); geos.add(osiKonGeo); if (enotaKrogla) geos.add(enotaKrogla);
+      for (const m of osTeksture.values()) mats.add(m);
       for (const g of geos) g.dispose();
       for (const m of mats) { if (m.map) m.map.dispose(); m.dispose(); }
       pikaTex.dispose(); sencaTex.dispose();
