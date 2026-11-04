@@ -53,14 +53,17 @@
   //   chat (neobvezno; ui.css → »Klepet obdobja«): videz klepeta, vsak ključ postane atribut na <html>, ki ga ui.css
   //     pozna po imenu (drug slog lahko vzame isto ali doda svojo vrednost): tutor → data-tutor-surface (npr. »papirus«:
   //     mehurček inštruktorja na light/dark.paper), user → data-user-shape (»ostrakon«), frame → data-chat-frame
-  //     (»stebri«: stebri ob pozdravu praznega klepeta iz arch), composer → data-composer (»vosek«: polje v okvirju
+  //     (»stebri«: pročelje templa ob pozdravu praznega klepeta iz arch.temple, samo antika, j 2026-11-04; »pilon«:
+  //     egipčanski pilon iz building), composer → data-composer (»vosek«: polje v okvirju
   //     light/dark.wood). Barve paper in wood preveri check() (besedilo 7:1 tudi na vlaknih, okvir 3:1).
   //   arch (neobvezno; ui.css → »Arhitektura«): steber kot nosilni del okvirja (seznam pogovorov, rob klepeta, stranski
   //     stolpec Učne poti, kapitel na okencih). Deli so notranjost SVG ([širina, višina, oznake]; S = barva črte,
   //     F = polnilo): cap (kapitel), shaft (ploščica debla, ponavlja se navpično), base (baza); theme.js jih obarva za
   //     ozadje (--arch-*) in za meni (--arch-*-m). temple: pročelje ob pozdravu praznega klepeta (pediment, entablature,
-  //     column = [kapitel, deblo, baza], stylobate, neobvezno badge = zaobljenost ikone inštruktorja, privzeto krog),
-  //     glej temple() spodaj.
+  //     column = [kapitel, deblo, baza], stylobate; samo s frame »stebri«), glej temple() spodaj. Brez »stebri« ni
+  //     stebrov ob klepetu (seznam pogovorov, rob klepeta), ostanejo okenca in Učna pot.
+  //   building (neobvezno, za okvir pozdrava, ki ni »stebri«): stavba iz obdobja z istimi deli kot arch.temple (pediment
+  //     = vrh, entablature, column = [vrh, telo, podnožje] stranskega dela, stylobate), npr. Egipt: pilon.
   const ERAS = {
     antik: {
       light: { bg: "#f5f0e8", surface: "#fffcf7", menu: "#efe2d2", text: "#241c15", accent: "#973f1c", bar: "#f6ece0", banner: "#f6e2d1", paper: "#f4e6cb", wood: "#8a5b36" },
@@ -117,27 +120,43 @@
       font: ["El Messiri Variable", "el-messiri"], hero: 10, band: ["kheker", 36, 16], edge: 1, glyph: "ikona",
       motifs: ["piramide", "papirus", "ladja", "lotos", "paleta", "gos", "vrv", "steber"],
       facts: ["era.egipt", 6], icons: "ikone",
-      chat: { tutor: "papirus", user: "ostrakon", frame: "stebri", composer: "vosek" },
+      chat: { tutor: "papirus", user: "ostrakon", frame: "pilon", composer: "vosek" },
       // Friz kheker (pas, polna barva; theme.js → friezeUrl): trije snopi trstja (glava, vez, telo) in pas pravokotnikov.
       // Barve K (obroba), B, R, G, Y iz light/dark.frieze; public/eras/egipt/kheker.svg je ista oblika kot maska.
       frieze: [36, 16, '<g stroke="K" stroke-width=".9" stroke-linejoin="round"><path fill="R" d="M0 12.6h9v3.4H0z"/><path fill="G" d="M9 12.6h9v3.4H9z"/><path fill="Y" d="M18 12.6h9v3.4h-9z"/><path fill="B" d="M27 12.6h9v3.4h-9z"/>' +
         [["B", 6], ["R", 18], ["G", 30]].map(([c, x]) => `<path fill="${c}" d="M${x} .3C${x + .6} 1.6 ${x + 2.2} 2.2 ${x + 2} 3.6L${x + 1.5} 4.4H${x - 1.5}L${x - 2} 3.6C${x - 2.2} 2.2 ${x - .6} 1.6 ${x} .3z"/><path fill="Y" d="M${x - 1.9} 4.4h3.8v1.8h-3.8z"/><path stroke-width=".5" d="M${x - 1.9} 5.3h3.8"/><path fill="${c}" d="M${x - 1.2} 6.2h2.4c.6.6 1 2.6.9 4-.1 1-.4 1.8-.7 2.4h-2.8c-.3-.6-.6-1.4-.7-2.4-.1-1.4.3-3.4.9-4z"/>`).join("") + "</g>"],
-      // Papirusov steber: odprt kapitel (zvon s čašnimi listi, abak), deblo iz snopa stebel, odebeljeno vznožje
-      // z listi in okrogla baza. Pročelje ob pozdravu: venec (kavetto z navpičnimi listi in torus), arhitrav s
-      // frizom kheker, papirusovi stebri, ploščad. Ikona inštruktorja v vencu kot pravokotna ploščica (badge), ne krog.
+      // Pilon ob pozdravu (chat.frame »pilon«, ui.css → »Pilon«; j 2026-11-04: stavba iz obdobja, stebri samo v antiki):
+      // masivna stolpa s poševnim zunanjim robom (nagib), venec kavetto z navpičnimi listi nad torusom, torus po
+      // zunanjem robu; vmes nižja vrata z vencem, preklada s frizom kheker (entablature), pozdrav v odprtini vrat. Brez stebrov, krilatega diska in drugih verskih znamenj, brez reliefov in hieroglifov.
+      // Deli kot arch.temple (pediment = vrh stolpov in vrat, column = [-, telo stolpa, podnožje], stylobate = ploščad),
+      // temple() jih sestavi; desni stolp je zrcalna slika (ui.css).
+      building: (() => {
+        // Stolp je 114 enot od 600 (19 % širine = stolpca mreže v ui.css), notranji rob navpičen, zunanji poševen
+        // (x = 17 pod vencem, 12 na dnu pročelja, v telesu stolpa od 12 do 0).
+        const tower = (X) => {
+          const r = (x0, x1, y, h, cls, rx) => `<rect class="${cls}" x="${Math.min(X(x0), X(x1))}" y="${y}" width="${Math.abs(x1 - x0)}" height="${h}"${rx ? ` rx="${rx}"` : ""}/>`;
+          return r(6, 122, 2, 6, "f") + `<path class="f" d="M${X(6)} 8H${X(122)}Q${X(116)} 11 ${X(116)} 25H${X(14)}Q${X(14)} 11 ${X(6)} 8z"/>` +
+            `<path class="l" d="${Array.from({ length: 12 }, (_, i) => `M${X(21 + i * 8)} 11v13`).join("")}"/>` + r(12, 118, 25, 5, "f", 2.5) +
+            `<path class="l" d="${Array.from({ length: 13 }, (_, i) => `M${X(17 + i * 8)} 25.5l${X(3) - X(0)} 4`).join("")}"/>` +
+            `<path class="t n" d="M${X(17)} 30H${X(114)}V100H${X(12)}z"/><path class="f" d="M${X(17)} 30H${X(21)}L${X(16)} 100H${X(12)}z"/>` +
+            `<path d="M${X(17)} 30 ${X(12)} 100M${X(114)} 30V100"/>`;
+        };
+        const gate = '<rect class="f" x="114" y="68" width="372" height="4"/><path class="f" d="M114 72h372q-4 2-4 14H118q0-12-4-14z"/><path class="l" d="' +
+          Array.from({ length: 36 }, (_, i) => `M${125 + i * 10} 74v11`).join("") + '"/><rect class="f" x="116" y="86" width="368" height="5" rx="2.5"/><path class="l" d="' +
+          Array.from({ length: 46 }, (_, i) => `M${120 + i * 8} 86.5l3 4`).join("") + '"/><path class="f n" d="M114 91h372v9H114z"/><path d="M114 100V91h372v9"/>';
+        return {
+          pediment: [600, 100, tower((x) => x) + tower((x) => 600 - x) + gate],
+          entablature: [372, 24, '<path class="f n" d="M0 0h372v24H0z"/><path class="l" d="M0 2.5h372M0 21.5h372"/>'],
+          column: [[114, 1, ""], [114, 100, '<path class="t n" d="M12 0h102v100H0z"/><path class="f" d="M12 0h4L4 100H0z"/><path d="M12 0 0 100M114 0v100"/>'], [114, 8, '<path class="f" d="M.75 .75h112.5v6.5H.75z"/><path class="l" d="M.75 3.5h112.5"/>']],
+          stylobate: [600, 14, '<path class="f" d="M.75 .75h598.5v12.5H.75z"/><path class="l" d="M.75 4.5h598.5"/>'],
+        };
+      })(),
+      // Papirusov steber (okenca, Učna pot; ne v Inštruktorju, j 2026-11-04: stebri v klepetu samo za antiko): odprt
+      // kapitel (zvon s čašnimi listi, abak), deblo iz snopa stebel, odebeljeno vznožje z listi in okrogla baza.
       arch: {
         cap: [20, 13, '<path fill="F" d="M7 .5h6v2H7z"/><path fill="F" d="M1 2.5h18c-.9 3.6-3.3 6.3-5.5 7.5h-7C4.3 8.8 1.9 6.1 1 2.5z"/><path stroke-opacity=".5" d="M5.3 3.2 8.4 10M14.7 3.2 11.6 10M10 2.5V10"/><path fill="F" d="M6.5 10h7v3h-7z"/><path d="M6.5 11.5h7"/>'],
         shaft: [20, 8, '<path fill="F" stroke="none" d="M6.5 0h7v8h-7z"/><path d="M6.5 0v8M13.5 0v8"/><path stroke-opacity=".5" d="M8.8 0v8M11.2 0v8"/>'],
         base: [20, 10, '<path fill="F" d="M6.5 0h7c1.4 1.8 1.6 3.4.9 4.8H5.6c-.7-1.4-.5-3 .9-4.8z"/><path stroke-opacity=".5" d="M7.6 4.8 10 1.4l2.4 3.4"/><rect fill="F" x="2.5" y="5.6" width="15" height="3.6" rx="1.8"/>'],
-        temple: {
-          pediment: [600, 90, '<path class="f" d="M.75.75h598.5v6H.75z"/><path class="t" d="M.75 6.75h598.5C590 12 585 40 585 72.75H15C15 40 10 12 .75 6.75z"/><path class="l" d="' +
-            Array.from({ length: 37 }, (_, i) => `M${23 + i * 15} 69V19q3.5-6 7 0v50`).join("") + '"/><rect class="f" x="9" y="72.75" width="582" height="10" rx="5"/><path class="l" d="' +
-            Array.from({ length: 41 }, (_, i) => `M${18 + i * 14} 73.5l-4 8.5`).join("") + '"/><path class="f" d="M15 82.75h570v6.5H15z"/>'],
-          entablature: [600, 28, '<path class="f" d="M.75.75h598.5v26.5H.75z"/><path class="l" d="M.75 3.75h598.5M.75 24.25h598.5"/>'],
-          column: [[50, 30, '<path class="f" d="M18 .75h14v4H18z"/><path class="f" d="M2 4.75h46c-1.6 9.2-8.6 16.4-13.5 19.5h-19C10.6 21.15 3.6 13.95 2 4.75z"/><path class="l" d="M9.5 6.5q6 8 9.5 17.5M40.5 6.5q-6 8-9.5 17.5M25 4.75v19.5M17 5.5q3.5 9 5 18.5M33 5.5q-3.5 9-5 18.5"/><path class="f" d="M15.5 24.25h19v5h-19z"/><path class="l" d="M15.5 26.75h19"/>'], [22, 100, '<path class="f" d="M1.5 0h19l.75 100H.75z"/><path class="l" d="M6.25 0 5.9 100M11 0v100M15.75 0l.35 100"/>'], [40, 17, '<path class="f" d="M9.75.75h20.5c2.6 3 3.2 6 2.2 8.75h-24.9c-1-2.75-.4-5.75 2.2-8.75z"/><path class="l" d="M11.5 9.5 15 3l3.5 6.5M21.5 9.5 25 3l3.5 6.5"/><rect class="f" x="2" y="10.25" width="36" height="6" rx="3"/>']],
-          stylobate: [600, 18, '<path class="f" d="M8 .75h584v8H8zM.75 8.75h598.5v8.5H.75z"/>'],
-          badge: "22%",
-        },
       },
     },
   };
@@ -393,12 +412,13 @@
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" fill="none" stroke="${S}" stroke-width="1" stroke-linejoin="round"><style>*{vector-effect:non-scaling-stroke}</style>${body.replace(/"S"/g, `"${S}"`).replace(/"F"/g, `"${F}"`)}</svg>`;
     return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
   }
-  // Pročelje (ERAS[…].arch.temple) okrog pozdrava praznega klepeta (app.js, ui.css → »Klepet obdobja«): deli kot
+  // Pročelje (ERAS[…].arch.temple ali ERAS[…].building) okrog pozdrava praznega klepeta (app.js, ui.css → »Klepet obdobja«): deli kot
   // vrstični SVG, barve iz ui.css po razredih (f polnilo, t timpanon, l tanka črta, s pika, d zobci), zato sledijo
   // načinu in lastnim barvam. Zatrep (pediment) se veča enakomerno s širino, entablatura in stopnice (stylobate) se
   // raztegnejo po širini, deblo stebra (column[1]) po višini; kapitel in baza ostaneta v naravni velikosti.
   function temple(id) {
-    const t = ERAS[id] && ERAS[id].arch && ERAS[id].arch.temple;
+    const e = ERAS[id];
+    const t = e && ((e.arch && e.arch.temple) || e.building);
     if (!t) return null;
     const svg = (cls, [w, h, body], fit) =>
       `<svg class="${cls}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="${fit || "none"}"${fit ? ` width="${w}" height="${h}"` : ""} aria-hidden="true" focusable="false">${body}</svg>`;
@@ -411,7 +431,7 @@
   }
   const ARCH_VARS = ["cap", "shaft", "base"].flatMap((k) => [`--arch-${k}`, `--arch-${k}-m`]);
   const ALL_VARS = [...ARCH_VARS, "--frieze", "--hero-line", "--paper", "--paper-2", "--paper-fibre", "--wood", "--bg", "--surface", "--text", "--muted", "--surface-2", "--border", "--accent", "--accent-2", "--accent-grad", "--accent-soft", "--accent-text", "--hero-a", "--hero-b", "--user-bubble", "--user-text", "--menu", "--menu-text", "--menu-muted", "--menu-2", "--menu-border", "--menu-accent", "--menu-accent-soft", "--menu-accent-text", "--band-c", "--edge-c", "--bar", "--banner"];
-  const ERA_VARS = ["--era-font", "--band", "--band-w", "--band-h", "--edge-w", "--edge-h", "--glyph", "--tapeta", "--t-badge-r"];
+  const ERA_VARS = ["--era-font", "--band", "--band-w", "--band-h", "--edge-w", "--edge-h", "--glyph", "--tapeta"];
   const CHAT_ATTRS = { tutor: "data-tutor-surface", user: "data-user-shape", frame: "data-chat-frame", composer: "data-composer", arch: "data-arch" };
   const eraUrl = (id, f) => `url("/eras/${id}/${f}.svg")`;
   // Pisava sloga (/vendor/<paket>/index.css) se doda le enkrat; brskalnik prenese datoteke šele, ko jih rabi.
@@ -455,8 +475,6 @@
       root.style.setProperty("--edge-h", era.band[2] * (era.edge || 1) + "px");
       root.style.setProperty("--glyph", eraUrl(id, era.glyph));
       root.style.setProperty("--tapeta", eraUrl(id, "tapeta"));
-      const badge = era.arch && era.arch.temple && era.arch.temple.badge;
-      if (badge) root.style.setProperty("--t-badge-r", badge);
     } else root.removeAttribute("data-era");
     // Menjava sloga brez ponovnega nalaganja: icons.js zamenja ikone.
     if (prev !== (era ? id : "")) window.dispatchEvent(new CustomEvent("evklid:era", { detail: era ? id : "" }));
