@@ -775,7 +775,7 @@ export function createApp(store, opts = {}) {
         });
       }
       // Nepreverjenih kartic učenec še ne vidi (tudi ne v obvestilu »dodane kartice«).
-      if (cards.length && !liveCards) send("cards", { cards: cards.map((c) => ({ id: c.id, front: c.front })), due: store.cards.dueCount(student.id) });
+      if (cards.length && !liveCards) send("cards", { cards: cards.map((c) => ({ id: c.id, front: c.front })), due: store.cards.dueCount(student.id, student.settings.subject || null) });
       if (meta) {
         store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: assistantId, ...meta });
         if (meta.done && conv.path_topic && progress.markMastered(student.id, conv.path_topic, "chat")) {
@@ -929,10 +929,12 @@ export function createApp(store, opts = {}) {
     const results = Array.isArray(req.body?.results) ? req.body.results : [];
     res.json({ ...progress.offlineSync(s.id, results), xp: progress.xpSummary(s.id) });
   });
+  // Predmet snovi pod gumbi učne poti: predmet izbrane poti (fakulteta: predmet), sicer predmet iz profila.
+  const subjectFor = (s, key) => getPath(String(key || ""))?.subject || s.settings.subject || null;
   app.post("/api/students/:id/review", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = progress.startReview(s.id, { quick: !!req.body?.quick });
+    const out = progress.startReview(s.id, { quick: !!req.body?.quick, subject: subjectFor(s, req.body?.path) });
     if (!out) return res.json({ finished: true, empty: true });
     res.json(out);
   });
@@ -942,14 +944,15 @@ export function createApp(store, opts = {}) {
     if (!s) return;
     // Priprava na test sledi najbližjemu testu iz urnika (če je učenec ni nastavil sam).
     syncTestPlan(progress, s.id, scheduleView(schedules.get(s.id), s.settings));
-    res.json({ ...progress.modes(s.id, getPath(String(req.query.path || "")) ? String(req.query.path) : pathKeyFor(s.settings)), cardsDue: store.cards.dueCount(s.id) });
+    const key = getPath(String(req.query.path || "")) ? String(req.query.path) : pathKeyFor(s.settings);
+    res.json({ ...progress.modes(s.id, key), cardsDue: store.cards.dueCount(s.id, subjectFor(s, key)) });
   });
 
   // --- kartice za ponavljanje ---
   const cardId = (req) => intParam(req.params.cardId);
   app.get("/api/students/:id/flashcards", (req, res) => {
     const s = loadStudent(req, res);
-    if (s) res.json(store.cards.list(s.id));
+    if (s) res.json(store.cards.list(s.id, subjectFor(s, req.query.path)));
   });
   app.post("/api/students/:id/flashcards", (req, res) => {
     const s = loadStudent(req, res);
@@ -957,7 +960,7 @@ export function createApp(store, opts = {}) {
     const front = typeof req.body?.front === "string" ? req.body.front : "";
     const back = typeof req.body?.back === "string" ? req.body.back : "";
     if (!front.trim() || !back.trim()) return res.status(400).json({ error: "Kartica potrebuje vprašanje in odgovor." });
-    const [card] = store.cards.add(s.id, [{ front, back }], { source: "own", subject: s.settings.subject });
+    const [card] = store.cards.add(s.id, [{ front, back }], { source: "own", subject: subjectFor(s, req.body?.path) });
     if (!card) return res.status(409).json({ error: "Kartico s tem vprašanjem že imaš." });
     res.status(201).json(card);
   });
@@ -981,7 +984,7 @@ export function createApp(store, opts = {}) {
     if (!s) return;
     const c = store.cards.review(s.id, cardId(req), req.body?.ok === true);
     if (!c) return res.status(404).json({ error: "Kartica ne obstaja." });
-    res.json({ card: c, due: store.cards.dueCount(s.id) });
+    res.json({ card: c, due: store.cards.dueCount(s.id, subjectFor(s, req.body?.path)) });
   });
   app.post("/api/students/:id/daily", (req, res) => {
     const s = loadStudent(req, res);
