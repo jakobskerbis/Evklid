@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Monomer in polimer
+  - kroglice na vrvici
+  - tisoče ponavljajočih se členov
+- Naravni polimeri
+  - celuloza, škrob, beljakovine
+  - naravni kavčuk
+- Sintetični polimeri
+  - PE, PP, PVC, PET, najlon
+  - večinoma iz nafte
+- Adicija in kondenzacija
+  - adicija: odpre se dvojna vez
+  - kondenzacija: odide voda
+  - $M_\text{p} = n \cdot M_\text{m}$
+- Termoplasti in duroplasti
+  - termoplasti se zmehčajo, recikliramo
+  - bakelit se ne stali
+- Plastika v okolju
+  - več sto let, mikroplastika
+  - ni encimov za razgradnjo
+- Recikliranje
+  - oznake 1–7, ločeno zbiranje
+  - PVC pri sežiganju: vodikov klorid

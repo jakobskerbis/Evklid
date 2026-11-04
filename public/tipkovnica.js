@@ -13,6 +13,7 @@ import { t, currentLang } from "./i18n.js";
 import { icon } from "./icons.js";
 import { GROUPS, groupOrder, chemFormat } from "./symbols.js";
 import { stopnja } from "./stopnja.js";
+import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
 import {
   layoutFor, FX_GROUPS, CAS_SL, KEM_ROWS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
   fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
@@ -38,6 +39,8 @@ const configs = new WeakMap(); // polje ali okvir → nastavitve
 const origMode = new WeakMap(); // polje → izvirni inputmode (null: ga ni bilo)
 const numShadow = new WeakMap(); // type=number: vpisano besedilo (brskalnik »3.« ne sprejme kot vrednost)
 let studentSettings = () => null;
+let chapterOf = () => null; // poglavje, iz katerega je odprt kalkulator (tipke-poglavja.js)
+let lastProfile; // f(x) odpre skupino poglavja samo ob novem poglavju; učenčeva izbira potem ostane
 let words = null; // seznam za predloge (naloži se, ko so predlogi vklopljeni)
 let starts = null; // predlogi, ko se beseda še ne piše
 
@@ -52,8 +55,9 @@ export function configureKeyboard(el, cfg) {
   if (el) configs.set(el, cfg || {});
 }
 /** Nastavitve učenca za vrstni red skupin Σ (raven, predmet). */
-export function setKeyboardContext({ settings } = {}) {
+export function setKeyboardContext({ settings, chapter } = {}) {
   if (settings) studentSettings = settings;
+  if (chapter) chapterOf = chapter;
 }
 export const keyboardPrefs = () => ({ ...prefs });
 
@@ -120,6 +124,16 @@ export function openKeyboard(field, { layer } = {}) {
   if (layer || !same || !S.layers.some((l) => layerId(l) === S.layer)) S.layer = startLayer(layer);
   S.shift = 0;
   S.corr = null;
+  // novo poglavje: plast f(x) začne s skupino tega poglavja (kotne funkcije, potence, statistika …)
+  let prof = null;
+  try {
+    prof = chapterProfile(chapterOf());
+  } catch {}
+  if (prof !== lastProfile) {
+    lastProfile = prof;
+    const g = fxGroupFor(prof);
+    if (g) S.fxg = g;
+  }
   if (S.layer === "abc") autoShift();
   prepare(field);
   if (document.activeElement !== field) field.focus({ preventScroll: true });
@@ -137,6 +151,7 @@ export function openKeyboard(field, { layer } = {}) {
 export function hideKeyboard({ blur = false } = {}) {
   if (!S.open) return;
   S.open = false;
+  clearTimers(); // držanje ⌫ / ← / → se ustavi
   closePop();
   trailEnd(true);
   S.lastGlide = null;
@@ -374,10 +389,12 @@ function fxHtml() {
     <div class="tk-row">${toNum}${leftKey()}${rightKey()}${bsKey()}${goKey()}</div>`;
 }
 
-// skupina Algebra: v slovenščini poenostavi/razvij/razstavi/reši, drugje angleška imena (kot na kalkulatorjih CAS)
+// skupini Algebra in Analiza: v slovenščini poenostavi/razvij/razstavi/reši/integriraj/limita, drugje angleška imena
+// (kot na kalkulatorjih CAS)
 function fxKey(group, l, ins) {
-  const sl = group === "alg" && CAS_SL[l] && /^sl/.test(currentLang() || "sl");
-  const cls = group === "alg" && CAS_SL[l] ? "sm word" : "sm";
+  const cas = (group === "alg" || group === "ana") && CAS_SL[l];
+  const sl = cas && /^sl/.test(currentLang() || "sl");
+  const cls = cas ? "sm word" : "sm";
   return sl ? key(CAS_SL[l], { a: "ins", v: ins.replace(l, CAS_SL[l]) }, { cls }) : key(l, { a: "ins", v: ins }, { cls });
 }
 
@@ -932,7 +949,8 @@ function wireBoard() {
           if (down.pop) closePreview();
         }
       }, 380);
-    } else if (a?.a === "bs") {
+    } else if (a?.a === "bs" || a?.a === "l" || a?.a === "r") {
+      // držanje ⌫, ← ali → ponavlja (briše ali premika kazalec, dokler je prst na tipki)
       try {
         b.setPointerCapture(e.pointerId);
       } catch {}
@@ -944,6 +962,7 @@ function wireBoard() {
     }
   });
   board.addEventListener("mousedown", (e) => e.preventDefault());
+  window.addEventListener("blur", clearTimers);
   board.addEventListener("pointermove", (e) => {
     if (!down) return;
     if (down.a?.a === "char" && !down.pop && /^\p{L}$/u.test(down.a.v) && glideOn()) {
@@ -1140,7 +1159,7 @@ export function initKeyboard() {
       if (!autoEligible(f)) return;
       prepare(f);
       // Fokus iz dotika (oznaka, vrstica kalkulatorja, ki odpre urejanje), ne iz kode ali gumba.
-      if (Date.now() - lastTap.t < 600 && !lastTap.el?.closest?.("button, a, [role='button'], select")) openKeyboard(f);
+      if (Date.now() - lastTap.t < 600 && !lastTap.el?.closest?.("button, a, [role='button'], [role='option'], select")) openKeyboard(f);
       return;
     }
     if (f === S.field) return;

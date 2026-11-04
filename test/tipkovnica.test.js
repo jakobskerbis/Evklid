@@ -143,10 +143,11 @@ test("f(x) keys only insert what the calculator understands; ℂ is among the se
   const extra = new Set(["d", "dx", "x", "y", "e", "f", "g", "n", "i", "Ans", "π"]);
   for (const [group, , list] of FX_GROUPS) {
     for (const [label, ins] of list) {
-      // Algebra: ukazi CAS (public/graph/cas.js), v slovenščini z imeni iz CAS_SL
-      if (group === "alg" && /\(/.test(ins) && /^[a-z]+\(/.test(ins)) {
+      // Algebra in Analiza: ukazi CAS (public/graph/cas.js, calculus.js), v slovenščini z imeni iz CAS_SL
+      if ((group === "alg" || group === "ana") && /^[a-z]{4,}\(/.test(ins)) {
+        assert.ok(CAS_SL[label], `${label}: ni v CAS_SL`);
         for (const txt of [ins, ins.replace(label, CAS_SL[label] || label)]) {
-          const cmd = parseCommand(txt.replace("@", /^(solve|reši)/.test(txt) ? "x² − 1 = 0" : "x² − 1"));
+          const cmd = parseCommand(txt.replace("@", /^(solve|reši)/.test(txt) ? "x² − 1 = 0" : "x² − 1").replace(/;\s*\)$/, "; 2)"));
           assert.ok(cmd, `${label}: ${txt} ni ukaz CAS`);
           assert.ok(!runCas(cmd).error, `${label}: ${txt} → ${JSON.stringify(runCas(cmd).error)}`);
         }

@@ -1,0 +1,461 @@
+{
+ "id": "POKLICNA-MAT-2024-spomladanski",
+ "exam": "POKLICNA",
+ "subject": "MAT",
+ "minutes": 120,
+ "points": 80,
+ "maxPoints": 70,
+ "author": "AI",
+ "tools": "Pri sebi imaš nalivno pero ali kemični svinčnik, svinčnik (za grafe, skice in risbe), radirko, računalo in geometrijsko orodje; dobiš dva konceptna lista in prilogo s formulami. Pot do rezultata zapiši z vmesnimi računi in sklepi.",
+ "sections": {
+  "A": "1. del (50 točk): rešiš vse naloge",
+  "B": "2. del (20 točk): izberi in reši dve od treh nalog po 10 točk. Ocenita se le dve; izbrani nalogi označi, sicer se ocenita prvi dve rešeni"
+ },
+ "tasks": [
+  {
+   "section": "A",
+   "n": 1,
+   "parts": [
+    {
+     "id": "",
+     "points": 4,
+     "format": "open",
+     "text": "Brez računala izračunaj vrednost izraza $-0{,}6 \\cdot \\frac{5}{9} + \\left(\\frac{1}{2} - \\frac{5}{4}\\right)^2$. Rezultat zapiši kot okrajšan ulomek.",
+     "answer": "$\\frac{11}{48}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** izraz $-0{,}6 \\cdot \\frac{5}{9} + \\left(\\frac{1}{2} - \\frac{5}{4}\\right)^2$, računaš brez računala.\n\n**Iščemo:** vrednost izraza kot okrajšan ulomek.\n\n**1. Decimalno število zapišeš z ulomkom:** $-0{,}6 = -\\frac{6}{10} = -\\frac{3}{5}$.\n\n**2. Vrstni red računanja:** najprej oklepaj, nato potenca, nato množenje, seštevanje pa na koncu.\n\n**3. Oklepaj:** ulomka razširiš na skupni imenovalec $4$: $\\frac{1}{2} - \\frac{5}{4} = \\frac{2}{4} - \\frac{5}{4} = -\\frac{3}{4}$.\n\n**4. Potenca:** $\\left(-\\frac{3}{4}\\right)^2 = \\frac{9}{16}$ – kvadrat negativnega števila je pozitiven.\n\n**5. Množenje:** $-\\frac{3}{5} \\cdot \\frac{5}{9} = -\\frac{15}{45} = -\\frac{1}{3}$.\n\n**6. Seštevanje:** skupni imenovalec števil $3$ in $16$ je $48$: $-\\frac{1}{3} + \\frac{9}{16} = -\\frac{16}{48} + \\frac{27}{48} = \\frac{11}{48}$.\n\nUlomek $\\frac{11}{48}$ je okrajšan, ker je $11$ praštevilo in ne deli $48$."
+      },
+      {
+       "title": "Drugače: krajšanje pred množenjem in preizkus",
+       "text": "Pri množenju lahko krajšaš že pred množenjem: v $-\\frac{3}{5} \\cdot \\frac{5}{9}$ se petici pokrajšata, ostane $-\\frac{3}{9} = -\\frac{1}{3}$.\n\nKvadrat oklepaja lahko izračunaš tudi z decimalnimi števili: $\\frac{1}{2} - \\frac{5}{4} = 0{,}5 - 1{,}25 = -0{,}75$ in $(-0{,}75)^2 = 0{,}5625 = \\frac{5625}{10000} = \\frac{9}{16}$.\n\nTorej je vrednost $-\\frac{1}{3} + \\frac{9}{16} = \\frac{-16 + 27}{48} = \\frac{11}{48}$.\n\n**Preizkus s približki:** $-\\frac{1}{3}$ je približno $-0{,}3333$, $\\frac{9}{16} = 0{,}5625$, vsota je približno $0{,}2292$. Tudi $\\frac{11}{48}$ je približno $0{,}2292$, zato se rezultat ujema."
+      }
+     ],
+     "scoring": "- 1 točka: $-0{,}6 = -\\frac{3}{5}$ (pretvorba v ulomek)\n- 1 točka: $\\left(\\frac{1}{2} - \\frac{5}{4}\\right)^2 = \\frac{9}{16}$\n- 1 točka: $-\\frac{3}{5} \\cdot \\frac{5}{9} = -\\frac{1}{3}$\n- 1 točka: rezultat $\\frac{11}{48}$",
+     "mistake": "Pogosta napaka je kvadrirati vsak člen posebej: $\\left(\\frac{1}{2} - \\frac{5}{4}\\right)^2$ ni enako $\\frac{1}{4} - \\frac{25}{16}$. Kvadrat razlike ni razlika kvadratov; najprej izračunaš razliko v oklepaju in šele nato kvadriraš. Napačno je tudi računati od leve proti desni in seštevati pred množenjem."
+    }
+   ]
+  },
+  {
+   "section": "A",
+   "n": 2,
+   "parts": [
+    {
+     "id": "",
+     "points": 4,
+     "format": "choice",
+     "text": "Za vsako od štirih trditev presodi, ali je pravilna (DA) ali nepravilna (NE). Označi **vse pravilne** trditve; neoznačene štejejo kot NE.",
+     "choices": [
+      "Število $91$ je praštevilo.",
+      "Število $57$ je sestavljeno število.",
+      "Števili $35$ in $48$ sta tuji števili.",
+      "Zapis $180 = 2^2 \\cdot 3 \\cdot 15$ je praštevilski razcep števila $180$."
+     ],
+     "correct": [
+      1,
+      2
+     ],
+     "answer": "DA: $57$ je sestavljeno, $35$ in $48$ sta tuji. NE: $91$ ni praštevilo, $2^2 \\cdot 3 \\cdot 15$ ni praštevilski razcep.",
+     "ways": [
+      {
+       "title": "Po trditvah",
+       "text": "**1. trditev – NE.** $91 = 7 \\cdot 13$, zato ima $91$ delitelja $7$ in $13$ in je sestavljeno število. Na prvi pogled je videti kot praštevilo, ker ni deljivo z $2$, $3$ in $5$, vendar je deljivo s $7$.\n\n**2. trditev – DA.** Vsota števk števila $57$ je $5 + 7 = 12$, kar je deljivo s $3$, zato je tudi $57$ deljivo s $3$: $57 = 3 \\cdot 19$. Število ima torej več kot dva delitelja in je sestavljeno.\n\n**3. trditev – DA.** Razcepa sta $35 = 5 \\cdot 7$ in $48 = 2^4 \\cdot 3$. Števili nimata nobenega skupnega praštevilskega faktorja, zato je njun največji skupni delitelj $D(35, 48) = 1$ in sta tuji. Tuji števili ni treba, da bi bili praštevili.\n\n**4. trditev – NE.** Zmnožek $2^2 \\cdot 3 \\cdot 15$ je res enak $180$, vendar $15$ ni praštevilo ($15 = 3 \\cdot 5$). V praštevilskem razcepu so lahko le praštevila; pravilni razcep je $180 = 2^2 \\cdot 3^2 \\cdot 5$."
+      },
+      {
+       "title": "Drugače: preizkus deliteljev in Evklidov algoritem",
+       "text": "**Praštevilo ali ne:** število je sestavljeno, če ima kak delitelj med $2$ in svojim kvadratnim korenom. Ker je $9^2 = 81$ in $10^2 = 100$, za $91$ zadošča preizkusiti praštevila $2, 3, 5, 7$: $91 : 7 = 13$, torej $91$ ni praštevilo. Za $57$ zadoščajo $2, 3, 5, 7$: že $57 : 3 = 19$, torej je sestavljeno.\n\n**Tuji števili:** največji skupni delitelj poiščeš z Evklidovim algoritmom:\n$48 = 1 \\cdot 35 + 13$, $35 = 2 \\cdot 13 + 9$, $13 = 1 \\cdot 9 + 4$, $9 = 2 \\cdot 4 + 1$, $4 = 4 \\cdot 1 + 0$.\nZadnji neničelni ostanek je $1$, zato je $D(35, 48) = 1$ – števili sta tuji.\n\n**Razcep:** razcepljaš, dokler ostanejo le praštevila: $180 = 2 \\cdot 90 = 2 \\cdot 2 \\cdot 45 = 2 \\cdot 2 \\cdot 3 \\cdot 15 = 2 \\cdot 2 \\cdot 3 \\cdot 3 \\cdot 5$. Zapis s faktorjem $15$ je ostal nedokončan."
+      }
+     ],
+     "scoring": "Po 1 točka za vsako pravilno presojeno trditev (4 trditve, skupaj 4 točke).",
+     "mistake": "Napačno je misliti, da sta tuji le števili, ki sta obe praštevili: $35$ in $48$ sta sestavljeni, pa vseeno tuji, ker nimata skupnega delitelja, večjega od $1$. Napačno je tudi sprejeti razcep samo zato, ker se zmnožek izide – preveriti moraš, da je vsak faktor praštevilo."
+    }
+   ]
+  },
+  {
+   "section": "A",
+   "n": 3,
+   "parts": [
+    {
+     "id": "",
+     "points": 4,
+     "format": "open",
+     "text": "Keramična ploščica ima obliko romba s stranico $a = 7{,}5\\,\\mathrm{cm}$ in ostrim kotom $\\alpha = 38^\\circ$. V zvezek nariši skico romba in nanjo označi stranico $a$, kot $\\alpha$ in višino $v$. Izračunaj višino in ploščino romba. Rezultata zaokroži na dve decimalni mesti.",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 132\" font-size=\"11\" font-family=\"sans-serif\"><title>Skica romba z višino na stranico</title><polygon points=\"20,112 170,112 288.2,19.7 138.2,19.7\" fill=\"currentColor\" fill-opacity=\"0.08\" stroke=\"currentColor\" stroke-width=\"1.6\"/><path d=\"M138.2 19.7V112\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-dasharray=\"4 3\"/><path d=\"M130.2 112V104H138.2\" stroke=\"currentColor\" stroke-width=\"0.9\" fill=\"none\"/><path d=\"M42 112A22 22 0 0 0 37.3 98.5\" stroke=\"currentColor\" fill=\"none\"/><text x=\"16\" y=\"124\" text-anchor=\"middle\" fill=\"currentColor\">A</text><text x=\"174\" y=\"124\" text-anchor=\"middle\" fill=\"currentColor\">B</text><text x=\"296.2\" y=\"23.7\" fill=\"currentColor\">C</text><text x=\"134.2\" y=\"15.7\" text-anchor=\"end\" fill=\"currentColor\">D</text><text x=\"48\" y=\"106\" fill=\"currentColor\">α</text><text x=\"143.2\" y=\"70\" fill=\"currentColor\">v</text><text x=\"80\" y=\"126\" text-anchor=\"middle\" fill=\"currentColor\">a = 7,5 cm</text><text x=\"138.2\" y=\"126\" text-anchor=\"middle\" fill=\"currentColor\">D′</text></svg>",
+     "answer": "$v \\approx 4{,}62\\,\\mathrm{cm}$, $S \\approx 34{,}63\\,\\mathrm{cm^2}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $a = 7{,}5\\,\\mathrm{cm}$, $\\alpha = 38^\\circ$.\n\n**Iščemo:** višino $v$ in ploščino $S$.\n\n**Skica:** romb $ABCD$, iz oglišča $D$ spustiš pravokotnico na stranico $AB$; nožišče označiš z $D'$. Daljica $DD'$ je višina $v$ (glej sliko v rešitvi).\n\n**Višina:** trikotnik $AD'D$ je pravokoten s pravim kotom pri $D'$. Hipotenuza je stranica $AD = a$, višina $v$ pa je kateta nasproti kota $\\alpha$. Zato velja\n$\\sin\\alpha = \\frac{v}{a}$ in $v = a \\cdot \\sin\\alpha$.\n\n$v = 7{,}5\\,\\mathrm{cm} \\cdot \\sin 38^\\circ$, kjer je $\\sin 38^\\circ \\approx 0{,}61566$, torej $v \\approx 7{,}5 \\cdot 0{,}61566 \\approx 4{,}62\\,\\mathrm{cm}$.\n\n**Ploščina:** ploščina romba je stranica krat višina na to stranico:\n$S = a \\cdot v \\approx 7{,}5 \\cdot 4{,}6175 \\approx 34{,}63\\,\\mathrm{cm^2}$. Računaš z nezaokroženo višino $4{,}6175\\,\\mathrm{cm}$, da se napaka zaokroževanja ne prenese v ploščino."
+      },
+      {
+       "title": "Drugače: formula s kotom",
+       "text": "Ko v $S = a \\cdot v$ vstaviš $v = a \\sin\\alpha$, dobiš formulo za ploščino romba (in paralelograma) s kotom:\n\n$S = a^2 \\sin\\alpha$.\n\n$a^2 = 7{,}5^2 = 56{,}25$, zato $S \\approx 56{,}25 \\cdot 0{,}61566 \\approx 34{,}63\\,\\mathrm{cm^2}$.\n\nVišino nato dobiš iz $v = \\frac{S}{a} \\approx \\frac{34{,}631}{7{,}5} \\approx 4{,}62\\,\\mathrm{cm}$.\n\n**Preizkus z oceno:** višina mora biti manjša od stranice ($4{,}62 < 7{,}5$), ploščina pa manjša od ploščine kvadrata s stranico $7{,}5\\,\\mathrm{cm}$, ki meri $56{,}25\\,\\mathrm{cm^2}$. Oboje drži."
+      }
+     ],
+     "scoring": "- 1 točka: skica romba z označenimi $a$, $\\alpha$ in višino $v$ (pravokotno na stranico)\n- 1 točka: zveza $\\sin\\alpha = \\frac{v}{a}$ oziroma $v = a\\sin\\alpha$\n- 1 točka: $v \\approx 4{,}62\\,\\mathrm{cm}$\n- 1 točka: $S \\approx 34{,}63\\,\\mathrm{cm^2}$ (prizna se tudi $34{,}65\\,\\mathrm{cm^2}$, če računaš z zaokroženo višino $4{,}62\\,\\mathrm{cm}$)",
+     "mistake": "Napačno je vzeti kosinus: $a\\cos\\alpha \\approx 5{,}91\\,\\mathrm{cm}$ je dolžina daljice $AD'$, ne višina, ker je višina kateta **nasproti** kota $\\alpha$. Pazi tudi, da je računalo nastavljeno na stopinje (DEG); v radianih bi dobil napačen $\\sin 38 \\approx 0{,}30$."
+    }
+   ]
+  },
+  {
+   "section": "A",
+   "n": 4,
+   "parts": [
+    {
+     "id": "",
+     "points": 4,
+     "format": "open",
+     "text": "Tina je na varčevalni račun vložila $6\\,500$ €. Banka ji na koncu vsakega leta pripiše $3{,}2\\,\\%$ obresti od stanja na računu (obrestno obrestovanje z letno kapitalizacijo). Tina denarja ne dviguje in ne vlaga dodatno. Po koliko letih bo na računu prvič več kot $8\\,000$ €? Zapiši postopek.",
+     "answer": "po $7$ letih (takrat bo na računu približno $8\\,103{,}47$ €)",
+     "ways": [
+      {
+       "title": "Po korakih (logaritem)",
+       "text": "**Podatki:** začetna glavnica $G_0 = 6\\,500$ €, obrestna mera $p = 3{,}2\\,\\%$, letna kapitalizacija, želeno stanje več kot $8\\,000$ €.\n\n**Iščemo:** najmanjše celo število let $n$.\n\n**Obrestovalni faktor:** $r = 1 + \\frac{3{,}2}{100} = 1{,}032$. Po $n$ letih je stanje $G_n = G_0 \\cdot r^n = 6\\,500 \\cdot 1{,}032^n$.\n\n**Neenačba:** $6\\,500 \\cdot 1{,}032^n > 8\\,000$, deliš s $6\\,500$:\n$1{,}032^n > \\frac{8\\,000}{6\\,500} \\approx 1{,}2308$.\n\n**Logaritmiraš** (naravni logaritem je naraščajoča funkcija, zato se znak neenakosti ohrani):\n$n \\cdot \\ln 1{,}032 > \\ln 1{,}2308$, torej $n > \\frac{\\ln 1{,}2308}{\\ln 1{,}032} \\approx \\frac{0{,}20766}{0{,}03150} \\approx 6{,}59$.\n\n**Zaokrožitev:** obresti se pripišejo le enkrat na leto, zato mora biti $n$ celo število. Najmanjše celo število, večje od $6{,}59$, je $7$.\n\nTina bo imela več kot $8\\,000$ € po $7$ letih."
+      },
+      {
+       "title": "Drugače: preizkus z zaporednimi leti",
+       "text": "Stanje po vsakem letu dobiš z množenjem s faktorjem $1{,}032$. Z računalom preveriš okolico rezultata:\n\n- po $6$ letih: $6\\,500 \\cdot 1{,}032^6 \\approx 7\\,852{,}20$ € – še manj kot $8\\,000$ €,\n- po $7$ letih: $6\\,500 \\cdot 1{,}032^7 \\approx 8\\,103{,}47$ € – prvič več kot $8\\,000$ €.\n\nKer po $6$ letih meja še ni dosežena, po $7$ pa je presežena, je odgovor $7$ let. Ta preizkus potrdi tudi, da je rezultat $6{,}59$ treba zaokrožiti **navzgor**."
+      }
+     ],
+     "scoring": "- 1 točka: zapis $6\\,500 \\cdot 1{,}032^n > 8\\,000$ (ali enačbe z $=$)\n- 1 točka: logaritmiranje oziroma zapis $n = \\frac{\\ln 1{,}2308}{\\ln 1{,}032}$ ali $n = \\log_{1{,}032} 1{,}2308$\n- 1 točka: $n \\approx 6{,}59$\n- 1 točka: odgovor $7$ let (zaokrožitev navzgor)",
+     "mistake": "Napačno je zaokrožiti $6{,}59$ na $6$ let: po $6$ letih je na računu šele približno $7\\,852{,}20$ €. Napačno je tudi vzeti faktor $3{,}2$ ali $0{,}032$ namesto $1{,}032$ – faktor mora vsebovati tudi glavnico ($100\\,\\% + 3{,}2\\,\\%$)."
+    }
+   ]
+  },
+  {
+   "section": "A",
+   "n": 5,
+   "parts": [
+    {
+     "id": "",
+     "points": 4,
+     "format": "open",
+     "text": "Poenostavi izraz $\\frac{x^2 + 2x - 15}{x^2 - 4} \\cdot \\left(\\frac{x + 5}{x + 2}\\right)^{-1}$. Privzemi, da je $x$ tak, da so vsi ulomki definirani.",
+     "answer": "$\\frac{x - 3}{x - 2}$ (za $x \\ne 2$, $x \\ne -2$, $x \\ne -5$)",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** izraz $\\frac{x^2 + 2x - 15}{x^2 - 4} \\cdot \\left(\\frac{x + 5}{x + 2}\\right)^{-1}$.\n\n**Iščemo:** čim enostavnejši zapis.\n\n**1. Obratna vrednost:** potenca z eksponentom $-1$ obrne ulomek: $\\left(\\frac{x + 5}{x + 2}\\right)^{-1} = \\frac{x + 2}{x + 5}$.\n\n**2. Razcep tričlenika:** iščeš števili, katerih zmnožek je $-15$ in vsota $2$. To sta $5$ in $-3$, zato $x^2 + 2x - 15 = (x + 5)(x - 3)$.\n\n**3. Razlika kvadratov:** $x^2 - 4 = x^2 - 2^2 = (x - 2)(x + 2)$.\n\n**4. Zmnožek in krajšanje:**\n$\\frac{(x + 5)(x - 3)}{(x - 2)(x + 2)} \\cdot \\frac{x + 2}{x + 5}$.\nFaktorja $x + 5$ in $x + 2$ sta v števcu in v imenovalcu, zato ju pokrajšaš. Ostane $\\frac{x - 3}{x - 2}$.\n\nIzraz ni definiran za $x = 2$, $x = -2$ (imenovalec $x^2 - 4$) in $x = -5$ (pri obratni vrednosti bi delil z nič)."
+      },
+      {
+       "title": "Drugače: razcep z ničlami in preizkus",
+       "text": "Tričlenik lahko razcepiš tudi prek ničel: enačba $x^2 + 2x - 15 = 0$ ima diskriminanto $D = 2^2 + 4 \\cdot 15 = 64$ in rešitvi $x = \\frac{-2 \\pm 8}{2}$, torej $x_1 = 3$ in $x_2 = -5$. Zato $x^2 + 2x - 15 = (x - 3)(x + 5)$, kar je isti razcep kot prej.\n\n**Preizkus z izbrano vrednostjo** $x = 4$ (kjer je vse definirano):\n- začetni izraz: $\\frac{16 + 8 - 15}{16 - 4} = \\frac{9}{12} = \\frac{3}{4}$ in $\\left(\\frac{9}{6}\\right)^{-1} = \\frac{6}{9} = \\frac{2}{3}$, zmnožek je $\\frac{3}{4} \\cdot \\frac{2}{3} = \\frac{1}{2}$;\n- poenostavljeni izraz: $\\frac{4 - 3}{4 - 2} = \\frac{1}{2}$.\n\nVrednosti se ujemata, kar potrdi poenostavitev."
+      }
+     ],
+     "scoring": "- 1 točka: $\\left(\\frac{x + 5}{x + 2}\\right)^{-1} = \\frac{x + 2}{x + 5}$\n- 1 točka: $x^2 + 2x - 15 = (x + 5)(x - 3)$\n- 1 točka: $x^2 - 4 = (x - 2)(x + 2)$\n- 1 točka: pravilno okrajšan rezultat $\\frac{x - 3}{x - 2}$",
+     "mistake": "Napačno je krajšati člene vsote, npr. $x^2$ v števcu in imenovalcu ulomka $\\frac{x^2 + 2x - 15}{x^2 - 4}$. Krajšaš lahko le **faktorje**, zato moraš števec in imenovalec najprej razcepiti."
+    }
+   ]
+  },
+  {
+   "section": "A",
+   "n": 6,
+   "parts": [
+    {
+     "id": "",
+     "points": 4,
+     "format": "open",
+     "text": "V finalu tekme v hitrostnem plezanju nastopijo štiri plezalke: Ajda, Brina, Lara in Vita. Vse so enako dobre in nobeni dve ne dosežeta enakega časa, zato je vsak vrstni red na končni lestvici enako verjeten. Izračunaj verjetnost, da Lara zasede drugo mesto.",
+     "answer": "$P = \\frac{1}{4} = 0{,}25$",
+     "ways": [
+      {
+       "title": "Po korakih (permutacije)",
+       "text": "**Podatki:** $4$ plezalke, vsi vrstni redi so enako verjetni.\n\n**Iščemo:** verjetnost dogodka »Lara je druga«.\n\n**Vsi izidi:** izid je vrstni red vseh štirih plezalk. Teh je $4! = 4 \\cdot 3 \\cdot 2 \\cdot 1 = 24$.\n\n**Ugodni izidi:** Lara stoji na 2. mestu, preostale tri plezalke pa razporediš na 1., 3. in 4. mesto na $3! = 3 \\cdot 2 \\cdot 1 = 6$ načinov.\n\n**Verjetnost:** $P = \\frac{6}{24} = \\frac{1}{4} = 0{,}25$."
+      },
+      {
+       "title": "Drugače: simetrija",
+       "text": "Ker so vse plezalke enako dobre, je Lara z enako verjetnostjo na kateremkoli od štirih mest. Dogodki »Lara je prva«, »druga«, »tretja«, »četrta« se med seboj izključujejo in skupaj zajamejo vse možnosti, zato je vsota njihovih verjetnosti $1$.\n\nŠtiri enake verjetnosti s vsoto $1$: vsaka je $\\frac{1}{4}$.\n\n**Preizkus s seznamom** (A = Ajda, B = Brina, L = Lara, V = Vita): ugodni vrstni redi (Lara druga) so A L B V, A L V B, B L A V, B L V A, V L A B, V L B A – teh je $6$, kar se ujema s $3! = 6$."
+      }
+     ],
+     "scoring": "- 1 točka: število vseh izidov $24$\n- 1 točka: število ugodnih izidov $6$\n- 1 točka: zapis $P = \\frac{6}{24}$\n- 1 točka: rezultat $\\frac{1}{4}$\n\nPri utemeljitvi s simetrijo: 2 točki za utemeljitev, da je Lara na vsakem mestu enako verjetno, 2 točki za rezultat $\\frac{1}{4}$.",
+     "mistake": "Napačen rezultat je $\\frac{1}{24}$: to je verjetnost enega samega celotnega vrstnega reda (npr. A L B V), ne pa verjetnost, da je Lara druga ne glede na to, kako so razvrščene ostale."
+    }
+   ]
+  },
+  {
+   "section": "A",
+   "n": 7,
+   "parts": [
+    {
+     "id": "",
+     "points": 4,
+     "format": "open",
+     "text": "Reši enačbo $3x(2x + 1) = 2(x + 1)$.",
+     "answer": "$x_1 = \\frac{1}{2}$, $x_2 = -\\frac{2}{3}$",
+     "ways": [
+      {
+       "title": "Po korakih (diskriminanta)",
+       "text": "**Podatki:** enačba $3x(2x + 1) = 2(x + 1)$.\n\n**Iščemo:** vse rešitve $x$.\n\n**1. Odpraviš oklepaje:** $6x^2 + 3x = 2x + 2$.\n\n**2. Vse člene prestaviš na levo** (standardna oblika $ax^2 + bx + c = 0$):\n$6x^2 + 3x - 2x - 2 = 0$, torej $6x^2 + x - 2 = 0$.\n\n**3. Diskriminanta:** $a = 6$, $b = 1$, $c = -2$:\n$D = b^2 - 4ac = 1 - 4 \\cdot 6 \\cdot (-2) = 1 + 48 = 49$.\n\n**4. Rešitvi:** $x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a} = \\frac{-1 \\pm 7}{12}$, torej\n$x_1 = \\frac{6}{12} = \\frac{1}{2}$ in $x_2 = \\frac{-8}{12} = -\\frac{2}{3}$."
+      },
+      {
+       "title": "Drugače: razcep",
+       "text": "Iz standardne oblike $6x^2 + x - 2 = 0$ razcepiš levo stran. Iščeš števili z zmnožkom $6 \\cdot (-2) = -12$ in vsoto $1$: to sta $4$ in $-3$. Srednji člen razdeliš:\n\n$6x^2 + 4x - 3x - 2 = 2x(3x + 2) - (3x + 2) = (2x - 1)(3x + 2)$.\n\nZmnožek je enak nič, ko je eden od faktorjev enak nič:\n- $2x - 1 = 0$, torej $x = \\frac{1}{2}$,\n- $3x + 2 = 0$, torej $x = -\\frac{2}{3}$.\n\n**Preizkus:** za $x = \\frac{1}{2}$ je leva stran $3 \\cdot \\frac{1}{2} \\cdot 2 = 3$, desna $2 \\cdot \\frac{3}{2} = 3$. Za $x = -\\frac{2}{3}$ je leva stran $3 \\cdot \\left(-\\frac{2}{3}\\right) \\cdot \\left(-\\frac{1}{3}\\right) = \\frac{2}{3}$, desna $2 \\cdot \\frac{1}{3} = \\frac{2}{3}$. Obe rešitvi ustrezata."
+      }
+     ],
+     "scoring": "- 1 točka: standardna oblika $6x^2 + x - 2 = 0$\n- 1 točka: diskriminanta $D = 49$ ali razcep $(2x - 1)(3x + 2) = 0$\n- 1 točka: $x_1 = \\frac{1}{2}$\n- 1 točka: $x_2 = -\\frac{2}{3}$",
+     "mistake": "Napačno je sklepati iz $3x(2x + 1) = 2(x + 1)$, da je $3x = 2$ ali $2x + 1 = x + 1$. Pravilo »zmnožek je nič, ko je en faktor nič« velja le, kadar je na desni strani $0$, zato moraš enačbo najprej preoblikovati v standardno obliko."
+    }
+   ]
+  },
+  {
+   "section": "A",
+   "n": 8,
+   "parts": [
+    {
+     "id": "",
+     "points": 5,
+     "format": "open",
+     "text": "Dana je funkcija $f(x) = 2x^3 - 5x + 4\\ln x$, kjer je $x > 0$. Izračunaj odvod $f'(x)$ in vrednost odvoda $f'(2)$.",
+     "answer": "$f'(x) = 6x^2 - 5 + \\frac{4}{x}$, $f'(2) = 21$",
+     "ways": [
+      {
+       "title": "Po korakih (odvod po členih)",
+       "text": "**Podatki:** $f(x) = 2x^3 - 5x + 4\\ln x$, $x_0 = 2$.\n\n**Iščemo:** $f'(x)$ in $f'(2)$.\n\nOdvod vsote je vsota odvodov, konstantni faktor ostane pred odvodom. Uporabiš pravili $(x^n)' = n x^{n - 1}$ in $(\\ln x)' = \\frac{1}{x}$:\n\n- $(2x^3)' = 2 \\cdot 3x^2 = 6x^2$,\n- $(-5x)' = -5$,\n- $(4\\ln x)' = 4 \\cdot \\frac{1}{x} = \\frac{4}{x}$.\n\nTorej $f'(x) = 6x^2 - 5 + \\frac{4}{x}$.\n\n**Vrednost v točki** $x = 2$: $f'(2) = 6 \\cdot 2^2 - 5 + \\frac{4}{2} = 24 - 5 + 2 = 21$."
+      },
+      {
+       "title": "Drugače: skupni ulomek in preizkus",
+       "text": "Odvod lahko zapišeš kot en ulomek: $f'(x) = \\frac{6x^3 - 5x + 4}{x}$. Za $x = 2$:\n\n$f'(2) = \\frac{6 \\cdot 8 - 10 + 4}{2} = \\frac{42}{2} = 21$.\n\n**Preizkus z diferenčnim kvocientom:** odvod je naklon tangente, zato mora biti blizu naklona sekante skozi bližnji točki. Z računalom: $f(2{,}001) \\approx 8{,}79360$ in $f(1{,}999) \\approx 8{,}75160$, naklon sekante je približno $\\frac{8{,}79360 - 8{,}75160}{0{,}002} = 21{,}0$, kar se ujema z $f'(2) = 21$."
+      }
+     ],
+     "scoring": "- 1 točka: $(2x^3)' = 6x^2$\n- 1 točka: $(-5x)' = -5$\n- 1 točka: $(4\\ln x)' = \\frac{4}{x}$\n- 1 točka: vstavljanje $x = 2$ v odvod\n- 1 točka: $f'(2) = 21$",
+     "mistake": "Napačno je najprej izračunati $f(2)$ in nato odvajati dobljeno število – odvod konstante je $0$. Najprej odvajaš funkcijo, šele nato vstaviš $x = 2$. Pogosta napaka je tudi $(\\ln x)' = \\ln x$ ali $(-5x)' = 0$."
+    }
+   ]
+  },
+  {
+   "section": "A",
+   "n": 9,
+   "parts": [
+    {
+     "id": "",
+     "points": 5,
+     "format": "open",
+     "text": "Stavba vrtca ima obliko kvadra z ravno streho. Tloris stavbe ima ploščino $252\\,\\mathrm{m^2}$, ena stranica tlorisa je dolga $18\\,\\mathrm{m}$, stavba pa je visoka $9{,}5\\,\\mathrm{m}$. Obnoviti želijo fasado, to je vse štiri stranske stene, razen oken in vrat, ki zavzemajo $22\\,\\%$ ploščine stranskih sten. Izračunaj, koliko kvadratnih metrov fasade bodo obnovili.",
+     "answer": "$474{,}24\\,\\mathrm{m^2}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** ploščina tlorisa $S_t = 252\\,\\mathrm{m^2}$, stranica $a = 18\\,\\mathrm{m}$, višina $v = 9{,}5\\,\\mathrm{m}$, okna in vrata $22\\,\\%$ stranskih sten.\n\n**Iščemo:** ploščino fasade za obnovo.\n\n**1. Druga stranica tlorisa:** tloris je pravokotnik, zato $S_t = a \\cdot b$ in $b = \\frac{252}{18} = 14\\,\\mathrm{m}$.\n\n**2. Ploščina stranskih sten:** stranske stene so štirje pravokotniki – dva z merami $a \\times v$ in dva z merami $b \\times v$. Skupaj so to plašč kvadra:\n$S_{pl} = 2(a + b) \\cdot v = 2 \\cdot (18 + 14) \\cdot 9{,}5 = 64 \\cdot 9{,}5 = 608\\,\\mathrm{m^2}$.\n\n**3. Brez oken in vrat:** obnovijo $100\\,\\% - 22\\,\\% = 78\\,\\%$ stranskih sten:\n$0{,}78 \\cdot 608 = 474{,}24\\,\\mathrm{m^2}$.\n\nObnovili bodo $474{,}24\\,\\mathrm{m^2}$ fasade."
+      },
+      {
+       "title": "Drugače: stene posebej in odštevanje",
+       "text": "Daljši steni: $2 \\cdot 18 \\cdot 9{,}5 = 342\\,\\mathrm{m^2}$. Krajši steni: $2 \\cdot 14 \\cdot 9{,}5 = 266\\,\\mathrm{m^2}$. Skupaj $342 + 266 = 608\\,\\mathrm{m^2}$.\n\nOkna in vrata: $22\\,\\%$ od $608\\,\\mathrm{m^2}$ je $0{,}22 \\cdot 608 = 133{,}76\\,\\mathrm{m^2}$.\n\nFasada za obnovo: $608 - 133{,}76 = 474{,}24\\,\\mathrm{m^2}$.\n\n**Z oceno:** približno četrtino ($25\\,\\%$) od približno $600\\,\\mathrm{m^2}$ odšteješ in ostane približno $450\\,\\mathrm{m^2}$ – rezultat $474{,}24\\,\\mathrm{m^2}$ je smiseln."
+      }
+     ],
+     "scoring": "- 1 točka: druga stranica $b = 14\\,\\mathrm{m}$\n- 1 točka: postopek za ploščino stranskih sten ($2(a + b) \\cdot v$ ali vsota štirih sten)\n- 1 točka: $608\\,\\mathrm{m^2}$\n- 1 točka: upoštevanje $22\\,\\%$ ($78\\,\\%$ ali $133{,}76\\,\\mathrm{m^2}$)\n- 1 točka: rezultat $474{,}24\\,\\mathrm{m^2}$ z enoto",
+     "mistake": "Napačno je računati celotno površino kvadra $2 \\cdot 252 + 608 = 1112\\,\\mathrm{m^2}$: tla in streha nista fasada. Napačno je tudi od $608$ odšteti kar $22$ (namesto $22\\,\\%$ od $608$)."
+    }
+   ]
+  },
+  {
+   "section": "A",
+   "n": 10,
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 200\" font-size=\"10\" font-family=\"sans-serif\"><title>Graf funkcije f(x) = a tan x z asimptotami</title><path d=\"M30 10V190M60 10V190M90 10V190M120 10V190M150 10V190M180 10V190M210 10V190M240 10V190M270 10V190M30 20H270M30 40H270M30 60H270M30 80H270M30 100H270M30 120H270M30 140H270M30 160H270M30 180H270\" stroke=\"currentColor\" stroke-opacity=\"0.18\" stroke-width=\"0.8\" fill=\"none\"/><path d=\"M24 100H288M90 196V8\" stroke=\"currentColor\" stroke-width=\"1.2\"/><polygon points=\"290,100 283,97 283,103\" fill=\"currentColor\"/><polygon points=\"90,6 87,13 93,13\" fill=\"currentColor\"/><path d=\"M30 8V192M150 8V192M270 8V192\" stroke=\"currentColor\" stroke-width=\"1\" stroke-dasharray=\"4 3\" fill=\"none\"/><path d=\"M46 190L47.8 179.5L49.6 170.8L51.5 163.5L53.3 157.2L55.1 151.7L57 146.9L58.8 142.6L60.6 138.7L62.5 135.1L64.3 131.8L66.2 128.8L68 126L69.8 123.3L71.7 120.8L73.5 118.5L75.3 116.2L77.2 114L79 111.9L80.8 109.8L82.7 107.8L84.5 105.8L86.3 103.9L88.2 101.9L90 100L91.8 98.1L93.7 96.1L95.5 94.2L97.3 92.2L99.2 90.2L101 88.1L102.8 86L104.7 83.8L106.5 81.5L108.3 79.2L110.2 76.7L112 74L113.8 71.2L115.7 68.2L117.5 64.9L119.4 61.3L121.2 57.4L123 53.1L124.9 48.3L126.7 42.8L128.5 36.5L130.4 29.2L132.2 20.5L134 10\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\"/><path d=\"M166 190L167.8 179.5L169.6 170.8L171.5 163.5L173.3 157.2L175.1 151.7L177 146.9L178.8 142.6L180.6 138.7L182.5 135.1L184.3 131.8L186.2 128.8L188 126L189.8 123.3L191.7 120.8L193.5 118.5L195.3 116.2L197.2 114L199 111.9L200.8 109.8L202.7 107.8L204.5 105.8L206.3 103.9L208.2 101.9L210 100L211.8 98.1L213.7 96.1L215.5 94.2L217.3 92.2L219.2 90.2L221 88.1L222.8 86L224.7 83.8L226.5 81.5L228.3 79.2L230.2 76.7L232 74L233.8 71.2L235.7 68.2L237.5 64.9L239.4 61.3L241.2 57.4L243 53.1L244.9 48.3L246.7 42.8L248.5 36.5L250.4 29.2L252.2 20.5L254 10\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\"/><circle cx=\"120\" cy=\"60\" r=\"2.6\" fill=\"currentColor\"/><text x=\"126\" y=\"70\" fill=\"currentColor\">T</text><text x=\"30\" y=\"112\" text-anchor=\"middle\" fill=\"currentColor\">−π/2</text><text x=\"146\" y=\"112\" text-anchor=\"end\" fill=\"currentColor\">π/2</text><text x=\"214\" y=\"112\" fill=\"currentColor\">π</text><text x=\"266\" y=\"112\" text-anchor=\"end\" fill=\"currentColor\">3π/2</text><text x=\"94\" y=\"111\" fill=\"currentColor\">0</text><text x=\"86\" y=\"183.5\" text-anchor=\"end\" fill=\"currentColor\">−4</text><text x=\"86\" y=\"163.5\" text-anchor=\"end\" fill=\"currentColor\">−3</text><text x=\"86\" y=\"143.5\" text-anchor=\"end\" fill=\"currentColor\">−2</text><text x=\"86\" y=\"123.5\" text-anchor=\"end\" fill=\"currentColor\">−1</text><text x=\"86\" y=\"83.5\" text-anchor=\"end\" fill=\"currentColor\">1</text><text x=\"86\" y=\"63.5\" text-anchor=\"end\" fill=\"currentColor\">2</text><text x=\"86\" y=\"43.5\" text-anchor=\"end\" fill=\"currentColor\">3</text><text x=\"86\" y=\"23.5\" text-anchor=\"end\" fill=\"currentColor\">4</text><text x=\"286\" y=\"94\" text-anchor=\"end\" fill=\"currentColor\">x</text><text x=\"95\" y=\"14\" fill=\"currentColor\">y</text></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 6,
+     "format": "fill",
+     "text": "Na sliki je graf funkcije $f(x) = a \\tan x$ na intervalu $\\left(-\\frac{\\pi}{2}, \\frac{3\\pi}{2}\\right)$. Navpične črtkane premice so asimptote. Graf poteka skozi točko $T\\left(\\frac{\\pi}{4}, 2\\right)$. Dopolni:\n\n- $a = \\underline{\\qquad}$\n- zaloga vrednosti: $Z_f = \\underline{\\qquad}$\n- začetna vrednost: $f(0) = \\underline{\\qquad}$\n- funkcija je pozitivna za $x \\in \\underline{\\qquad\\qquad}$\n- natančna vrednost: $f\\left(\\frac{\\pi}{6}\\right) = \\underline{\\qquad}$",
+     "answer": "$a = 2$; $Z_f = \\mathbb{R}$; $f(0) = 0$; $f(x) > 0$ za $x \\in \\left(0, \\frac{\\pi}{2}\\right) \\cup \\left(\\pi, \\frac{3\\pi}{2}\\right)$; $f\\left(\\frac{\\pi}{6}\\right) = \\frac{2\\sqrt{3}}{3}$",
+     "ways": [
+      {
+       "title": "Branje z grafa in računanje",
+       "text": "**Podatki:** $f(x) = a\\tan x$, graf skozi $T\\left(\\frac{\\pi}{4}, 2\\right)$, interval $\\left(-\\frac{\\pi}{2}, \\frac{3\\pi}{2}\\right)$, asimptote pri $-\\frac{\\pi}{2}$, $\\frac{\\pi}{2}$ in $\\frac{3\\pi}{2}$.\n\n**Iščemo:** $a$, $Z_f$, $f(0)$, kje je $f$ pozitivna, $f\\left(\\frac{\\pi}{6}\\right)$.\n\n**Raztezni faktor $a$:** koordinati točke $T$ vstaviš v predpis: $2 = a \\tan\\frac{\\pi}{4} = a \\cdot 1$, zato $a = 2$ in $f(x) = 2\\tan x$.\n\n**Zaloga vrednosti:** vsaka veja grafa se ob levi asimptoti spusti poljubno globoko, ob desni pa dvigne poljubno visoko. Funkcija zavzame vsa realna števila: $Z_f = \\mathbb{R}$.\n\n**Začetna vrednost:** $f(0) = 2\\tan 0 = 0$ – graf gre skozi koordinatno izhodišče.\n\n**Pozitivnost:** graf leži nad osjo $x$ desno od ničle na vsaki veji: na prvi veji med ničlo $0$ in asimptoto $\\frac{\\pi}{2}$, na drugi med ničlo $\\pi$ in asimptoto $\\frac{3\\pi}{2}$. Torej $x \\in \\left(0, \\frac{\\pi}{2}\\right) \\cup \\left(\\pi, \\frac{3\\pi}{2}\\right)$; krajišča niso vključena (v ničlah je $f = 0$, v asimptotah $f$ ni definirana).\n\n**Natančna vrednost:** $\\tan\\frac{\\pi}{6} = \\frac{\\sqrt{3}}{3}$, zato $f\\left(\\frac{\\pi}{6}\\right) = 2 \\cdot \\frac{\\sqrt{3}}{3} = \\frac{2\\sqrt{3}}{3}$, približno $1{,}15$. To se ujema z grafom: pri $\\frac{\\pi}{6}$ (malo levo od $T$) je graf nekoliko nad $1$."
+      },
+      {
+       "title": "Drugače: s sinusom in kosinusom",
+       "text": "Tangens je količnik $\\tan x = \\frac{\\sin x}{\\cos x}$.\n\n**Pozitivnost:** $f(x) = 2\\tan x > 0$ natanko tedaj, ko imata $\\sin x$ in $\\cos x$ enak predznak. To je v 1. kvadrantu, $x \\in \\left(0, \\frac{\\pi}{2}\\right)$ (oba pozitivna), in v 3. kvadrantu, $x \\in \\left(\\pi, \\frac{3\\pi}{2}\\right)$ (oba negativna).\n\n**Natančna vrednost:** $\\sin\\frac{\\pi}{6} = \\frac{1}{2}$ in $\\cos\\frac{\\pi}{6} = \\frac{\\sqrt{3}}{2}$, zato\n$\\tan\\frac{\\pi}{6} = \\frac{1}{2} : \\frac{\\sqrt{3}}{2} = \\frac{1}{\\sqrt{3}} = \\frac{\\sqrt{3}}{3}$ (racionaliziraš imenovalec) in $f\\left(\\frac{\\pi}{6}\\right) = \\frac{2\\sqrt{3}}{3}$.\n\n**Asimptote** so tam, kjer je $\\cos x = 0$: $x = -\\frac{\\pi}{2}, \\frac{\\pi}{2}, \\frac{3\\pi}{2}$ – tam funkcija ni definirana, kar potrdi sliko."
+      }
+     ],
+     "scoring": "- 1 točka: $a = 2$\n- 1 točka: $Z_f = \\mathbb{R}$\n- 1 točka: $f(0) = 0$\n- 2 točki: intervala pozitivnosti $\\left(0, \\frac{\\pi}{2}\\right)$ in $\\left(\\pi, \\frac{3\\pi}{2}\\right)$ (po 1 točka za vsak interval)\n- 1 točka: $f\\left(\\frac{\\pi}{6}\\right) = \\frac{2\\sqrt{3}}{3}$ (ali $\\frac{2}{\\sqrt{3}}$)",
+     "mistake": "Napačno je zapisati $Z_f = [-2, 2]$ ali $(-2, 2)$ – tako je pri funkciji $2\\sin x$, tangens pa ni omejen. Pogosto se zamenja tudi $\\tan\\frac{\\pi}{6}$ s $\\tan\\frac{\\pi}{3} = \\sqrt{3}$; pri $\\frac{\\pi}{6}$ je vrednost tangensa manjša od $1$."
+    }
+   ]
+  },
+  {
+   "section": "A",
+   "n": 11,
+   "intro": "Cena vožnje s taksijem je linearna funkcija dolžine poti. Graf na sliki prikazuje ceno $c$ (v evrih) v odvisnosti od dolžine poti $s$ (v kilometrih). Na grafu sta označeni točki $A(5, 10)$ in $B(15, 22)$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 310 240\" font-size=\"10\" font-family=\"sans-serif\"><title>Graf cene vožnje v odvisnosti od dolžine poti</title><path d=\"M40 14V210M52 14V210M64 14V210M76 14V210M88 14V210M100 14V210M112 14V210M124 14V210M136 14V210M148 14V210M160 14V210M172 14V210M184 14V210M196 14V210M208 14V210M220 14V210M232 14V210M244 14V210M256 14V210M268 14V210M280 14V210M40 210H280M40 196H280M40 182H280M40 168H280M40 154H280M40 140H280M40 126H280M40 112H280M40 98H280M40 84H280M40 70H280M40 56H280M40 42H280M40 28H280M40 14H280\" stroke=\"currentColor\" stroke-opacity=\"0.18\" stroke-width=\"0.8\" fill=\"none\"/><path d=\"M40 210H294M40 210V8\" stroke=\"currentColor\" stroke-width=\"1.2\"/><polygon points=\"296,210 289,207 289,213\" fill=\"currentColor\"/><polygon points=\"40,6 37,13 43,13\" fill=\"currentColor\"/><path d=\"M100 140V210M40 140H100M220 56V210M40 56H220\" stroke=\"currentColor\" stroke-width=\"0.9\" stroke-dasharray=\"3 3\" fill=\"none\"/><path d=\"M40 182L280 14\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"100\" cy=\"140\" r=\"2.6\" fill=\"currentColor\"/><circle cx=\"220\" cy=\"56\" r=\"2.6\" fill=\"currentColor\"/><text x=\"105\" y=\"153\" fill=\"currentColor\">A</text><text x=\"225\" y=\"69\" fill=\"currentColor\">B</text><text x=\"40\" y=\"222\" text-anchor=\"middle\" fill=\"currentColor\">0</text><text x=\"100\" y=\"222\" text-anchor=\"middle\" fill=\"currentColor\">5</text><text x=\"160\" y=\"222\" text-anchor=\"middle\" fill=\"currentColor\">10</text><text x=\"220\" y=\"222\" text-anchor=\"middle\" fill=\"currentColor\">15</text><text x=\"280\" y=\"222\" text-anchor=\"middle\" fill=\"currentColor\">20</text><text x=\"35\" y=\"213.5\" text-anchor=\"end\" fill=\"currentColor\">0</text><text x=\"35\" y=\"185.5\" text-anchor=\"end\" fill=\"currentColor\">4</text><text x=\"35\" y=\"157.5\" text-anchor=\"end\" fill=\"currentColor\">8</text><text x=\"35\" y=\"129.5\" text-anchor=\"end\" fill=\"currentColor\">12</text><text x=\"35\" y=\"101.5\" text-anchor=\"end\" fill=\"currentColor\">16</text><text x=\"35\" y=\"73.5\" text-anchor=\"end\" fill=\"currentColor\">20</text><text x=\"35\" y=\"45.5\" text-anchor=\"end\" fill=\"currentColor\">24</text><text x=\"35\" y=\"17.5\" text-anchor=\"end\" fill=\"currentColor\">28</text><text x=\"304\" y=\"234\" text-anchor=\"end\" fill=\"currentColor\">s (km)</text><text x=\"46\" y=\"10\" fill=\"currentColor\">c (€)</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 4,
+     "format": "open",
+     "text": "Zapiši enačbo premice skozi točki $A$ in $B$, torej predpis funkcije $c(s)$.",
+     "answer": "$c(s) = 1{,}2s + 4$",
+     "ways": [
+      {
+       "title": "Po korakih (smerni koeficient in začetna vrednost)",
+       "text": "**Podatki:** $A(5, 10)$, $B(15, 22)$; $s$ v km, $c$ v €.\n\n**Iščemo:** enačbo $c = ks + n$.\n\n**Smerni koeficient:** $k = \\frac{c_2 - c_1}{s_2 - s_1} = \\frac{22 - 10}{15 - 5} = \\frac{12}{10} = 1{,}2$.\n\n**Začetna vrednost:** v enačbo $c = 1{,}2s + n$ vstaviš točko $A$: $10 = 1{,}2 \\cdot 5 + n = 6 + n$, torej $n = 4$.\n\n**Enačba:** $c(s) = 1{,}2s + 4$.\n\n**Pomen:** vsak kilometer stane $1{,}2$ € (smerni koeficient), $4$ € pa je začetnina, ki jo plačaš ne glede na dolžino poti (začetna vrednost; na grafu presečišče z osjo $c$)."
+      },
+      {
+       "title": "Drugače: enačba premice skozi dve točki in preizkus",
+       "text": "Formula za premico skozi dve točki: $c - c_1 = \\frac{c_2 - c_1}{s_2 - s_1}(s - s_1)$.\n\n$c - 10 = 1{,}2(s - 5)$, torej $c = 1{,}2s - 6 + 10 = 1{,}2s + 4$.\n\n**Preizkus s točko $B$:** $1{,}2 \\cdot 15 + 4 = 18 + 4 = 22$ ✓.\n\n**Preizkus z grafom:** premica seka navpično os pri $c = 4$, kar se ujema z začetno vrednostjo $n = 4$."
+      }
+     ],
+     "scoring": "- 1 točka: zapis formule za smerni koeficient (ali sistem dveh enačb)\n- 1 točka: $k = 1{,}2$\n- 1 točka: $n = 4$\n- 1 točka: enačba $c(s) = 1{,}2s + 4$",
+     "mistake": "Napačno je deliti v obratnem vrstnem redu, $k = \\frac{15 - 5}{22 - 10} \\approx 0{,}83$: v števcu je sprememba cene (odvisne spremenljivke), v imenovalcu sprememba poti."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Jure ima za vožnjo s taksijem na voljo $19$ €. Izračunaj, koliko kilometrov se lahko največ pelje.",
+     "answer": "največ $12{,}5\\,\\mathrm{km}$",
+     "ways": [
+      {
+       "title": "Z neenačbo",
+       "text": "**Podatki:** $c(s) = 1{,}2s + 4$, na voljo $19$ €.\n\n**Iščemo:** največjo dolžino poti $s$.\n\nCena ne sme preseči $19$ €: $1{,}2s + 4 \\le 19$, torej $1{,}2s \\le 15$ in $s \\le \\frac{15}{1{,}2} = 12{,}5$.\n\nJure se lahko pelje največ $12{,}5\\,\\mathrm{km}$."
+      },
+      {
+       "title": "Drugače: prek začetnine in preizkus",
+       "text": "Od $19$ € gre najprej $4$ € za začetnino, za kilometre ostane $19 - 4 = 15$ €. Vsak kilometer stane $1{,}2$ €, zato $15 : 1{,}2 = 12{,}5$ kilometra.\n\n**Preizkus:** $1{,}2 \\cdot 12{,}5 + 4 = 15 + 4 = 19$ ✓. Na grafu je to točka med $12$ in $13\\,\\mathrm{km}$ na višini $19$ €, kar se ujema."
+      }
+     ],
+     "scoring": "- 1 točka: enačba ali neenačba $1{,}2s + 4 = 19$ (oziroma $\\le 19$)\n- 1 točka: $s = 12{,}5\\,\\mathrm{km}$",
+     "mistake": "Napačno je deliti kar $19 : 1{,}2 \\approx 15{,}8\\,\\mathrm{km}$ in pozabiti na začetnino $4$ €."
+    }
+   ]
+  },
+  {
+   "section": "B",
+   "n": 1,
+   "intro": "Dan je polinom $p(x) = \\frac{1}{2}x^3 - \\frac{7}{2}x + 3$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 4,
+     "format": "fill",
+     "text": "Dopolni:\n\n- stopnja polinoma $p$: $\\underline{\\qquad}$\n- prosti člen: $\\underline{\\qquad}$\n- vodilni člen: $\\underline{\\qquad}$\n- $p(-2) = \\underline{\\qquad}$",
+     "answer": "stopnja $3$; prosti člen $3$; vodilni člen $\\frac{1}{2}x^3$; $p(-2) = 6$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $p(x) = \\frac{1}{2}x^3 - \\frac{7}{2}x + 3$.\n\n**Iščemo:** stopnjo, prosti člen, vodilni člen in $p(-2)$.\n\n**Stopnja** je najvišji eksponent spremenljivke z neničelnim koeficientom: $3$.\n\n**Prosti člen** je člen brez spremenljivke: $3$.\n\n**Vodilni člen** je člen z najvišjo potenco, skupaj s koeficientom: $\\frac{1}{2}x^3$ (vodilni koeficient je $\\frac{1}{2}$).\n\n**Vrednost** $p(-2)$: namesto $x$ vstaviš $-2$ (v oklepaju):\n$p(-2) = \\frac{1}{2} \\cdot (-8) - \\frac{7}{2} \\cdot (-2) + 3 = -4 + 7 + 3 = 6$."
+      },
+      {
+       "title": "Drugače: Hornerjev algoritem za p(−2)",
+       "text": "Koeficiente zapišeš od najvišje potence navzdol; člena z $x^2$ ni, zato je njegov koeficient $0$: $\\frac{1}{2}$, $0$, $-\\frac{7}{2}$, $3$.\n\n| | $\\frac{1}{2}$ | $0$ | $-\\frac{7}{2}$ | $3$ |\n|---|---|---|---|---|\n| $-2$ | | $-1$ | $2$ | $3$ |\n| | $\\frac{1}{2}$ | $-1$ | $-\\frac{3}{2}$ | $6$ |\n\nPostopek: $\\frac{1}{2}$ prepišeš; $\\frac{1}{2} \\cdot (-2) = -1$ in $0 + (-1) = -1$; $(-1) \\cdot (-2) = 2$ in $-\\frac{7}{2} + 2 = -\\frac{3}{2}$; $\\left(-\\frac{3}{2}\\right) \\cdot (-2) = 3$ in $3 + 3 = 6$.\n\nZadnje število je vrednost polinoma: $p(-2) = 6$."
+      }
+     ],
+     "scoring": "Po 1 točka za vsak pravilen vpis: stopnja $3$, prosti člen $3$, vodilni člen $\\frac{1}{2}x^3$, $p(-2) = 6$.",
+     "mistake": "Vodilni člen ni le koeficient $\\frac{1}{2}$, ampak cel člen $\\frac{1}{2}x^3$. Pri vstavljanju negativnega števila pazi na predznake: $-\\frac{7}{2} \\cdot (-2) = +7$."
+    },
+    {
+     "id": "b",
+     "points": 6,
+     "format": "construct",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 190 300\" font-size=\"9\" font-family=\"sans-serif\"><title>Prazen koordinatni sistem z enoto 1</title><path d=\"M20 16V286M38 16V286M56 16V286M74 16V286M92 16V286M110 16V286M128 16V286M146 16V286M164 16V286M20 286H164M20 268H164M20 250H164M20 232H164M20 214H164M20 196H164M20 178H164M20 160H164M20 142H164M20 124H164M20 106H164M20 88H164M20 70H164M20 52H164M20 34H164M20 16H164\" stroke=\"currentColor\" stroke-opacity=\"0.18\" stroke-width=\"0.8\" fill=\"none\"/><path d=\"M14 160H176M92 292V6\" stroke=\"currentColor\" stroke-width=\"1.2\"/><polygon points=\"178,160 171,157 171,163\" fill=\"currentColor\"/><polygon points=\"92,4 89,11 95,11\" fill=\"currentColor\"/><text x=\"20\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">−4</text><text x=\"38\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">−3</text><text x=\"56\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">−2</text><text x=\"74\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">−1</text><text x=\"110\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">1</text><text x=\"128\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">2</text><text x=\"146\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">3</text><text x=\"164\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">4</text><text x=\"95\" y=\"289\" fill=\"currentColor\">−7</text><text x=\"95\" y=\"271\" fill=\"currentColor\">−6</text><text x=\"95\" y=\"253\" fill=\"currentColor\">−5</text><text x=\"95\" y=\"235\" fill=\"currentColor\">−4</text><text x=\"95\" y=\"217\" fill=\"currentColor\">−3</text><text x=\"95\" y=\"199\" fill=\"currentColor\">−2</text><text x=\"95\" y=\"181\" fill=\"currentColor\">−1</text><text x=\"95\" y=\"145\" fill=\"currentColor\">1</text><text x=\"95\" y=\"127\" fill=\"currentColor\">2</text><text x=\"95\" y=\"109\" fill=\"currentColor\">3</text><text x=\"95\" y=\"91\" fill=\"currentColor\">4</text><text x=\"95\" y=\"73\" fill=\"currentColor\">5</text><text x=\"95\" y=\"55\" fill=\"currentColor\">6</text><text x=\"95\" y=\"37\" fill=\"currentColor\">7</text><text x=\"95\" y=\"19\" fill=\"currentColor\">8</text><text x=\"182\" y=\"156\" text-anchor=\"end\" fill=\"currentColor\">x</text><text x=\"87\" y=\"12\" text-anchor=\"end\" fill=\"currentColor\">y</text></svg>",
+     "text": "Izračunaj vse ničle polinoma $p$. Nato v zvezek nariši graf polinoma v koordinatni sistem, kot je na sliki (enota je en kvadratek), in na grafu označi presečišča z obema koordinatnima osema.",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 190 300\" font-size=\"9\" font-family=\"sans-serif\"><title>Graf polinoma p(x) = x³/2 − 7x/2 + 3</title><path d=\"M20 16V286M38 16V286M56 16V286M74 16V286M92 16V286M110 16V286M128 16V286M146 16V286M164 16V286M20 286H164M20 268H164M20 250H164M20 232H164M20 214H164M20 196H164M20 178H164M20 160H164M20 142H164M20 124H164M20 106H164M20 88H164M20 70H164M20 52H164M20 34H164M20 16H164\" stroke=\"currentColor\" stroke-opacity=\"0.18\" stroke-width=\"0.8\" fill=\"none\"/><path d=\"M14 160H176M92 292V6\" stroke=\"currentColor\" stroke-width=\"1.2\"/><polygon points=\"178,160 171,157 171,163\" fill=\"currentColor\"/><polygon points=\"92,4 89,11 95,11\" fill=\"currentColor\"/><text x=\"20\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">−4</text><text x=\"36\" y=\"157\" text-anchor=\"end\" fill=\"currentColor\">−3</text><text x=\"56\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">−2</text><text x=\"74\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">−1</text><text x=\"112\" y=\"157\" fill=\"currentColor\">1</text><text x=\"126\" y=\"157\" text-anchor=\"end\" fill=\"currentColor\">2</text><text x=\"146\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">3</text><text x=\"164\" y=\"171\" text-anchor=\"middle\" fill=\"currentColor\">4</text><text x=\"95\" y=\"289\" fill=\"currentColor\">−7</text><text x=\"95\" y=\"271\" fill=\"currentColor\">−6</text><text x=\"95\" y=\"253\" fill=\"currentColor\">−5</text><text x=\"95\" y=\"235\" fill=\"currentColor\">−4</text><text x=\"95\" y=\"217\" fill=\"currentColor\">−3</text><text x=\"95\" y=\"199\" fill=\"currentColor\">−2</text><text x=\"95\" y=\"181\" fill=\"currentColor\">−1</text><text x=\"89\" y=\"145\" text-anchor=\"end\" fill=\"currentColor\">1</text><text x=\"89\" y=\"127\" text-anchor=\"end\" fill=\"currentColor\">2</text><text x=\"95\" y=\"109\" fill=\"currentColor\">3</text><text x=\"95\" y=\"91\" fill=\"currentColor\">4</text><text x=\"95\" y=\"73\" fill=\"currentColor\">5</text><text x=\"95\" y=\"55\" fill=\"currentColor\">6</text><text x=\"95\" y=\"37\" fill=\"currentColor\">7</text><text x=\"95\" y=\"19\" fill=\"currentColor\">8</text><text x=\"182\" y=\"156\" text-anchor=\"end\" fill=\"currentColor\">x</text><text x=\"87\" y=\"12\" text-anchor=\"end\" fill=\"currentColor\">y</text><path d=\"M29.9 258.2L31.3 238.7L32.7 220.2L34.1 202.8L35.5 186.5L36.9 171.2L38.3 156.9L39.7 143.6L41.1 131.2L42.5 119.8L43.9 109.3L45.3 99.6L46.7 90.8L48.1 82.8L49.5 75.6L50.9 69.2L52.3 63.5L53.7 58.6L55.1 54.3L56.5 50.7L57.9 47.8L59.3 45.5L60.7 43.7L62.1 42.6L63.5 42L64.9 41.9L66.3 42.3L67.7 43.1L69.1 44.4L70.6 46.2L72 48.3L73.4 50.7L74.8 53.6L76.2 56.7L77.6 60.1L79 63.8L80.4 67.7L81.8 71.8L83.2 76.1L84.6 80.6L86 85.2L87.4 90L88.8 94.8L90.2 99.6L91.6 104.5L93 109.4L94.4 114.3L95.8 119.2L97.2 123.9L98.6 128.6L100 133.2L101.4 137.6L102.8 141.8L104.2 145.9L105.6 149.7L107 153.3L108.4 156.6L109.8 159.6L111.2 162.3L112.6 164.6L114 166.6L115.4 168.1L116.8 169.3L118.2 169.9L119.6 170.2L121 169.9L122.4 169L123.8 167.7L125.2 165.7L126.6 163.1L128 159.9L129.4 156.1L130.8 151.6L132.2 146.3L133.6 140.4L135 133.6L136.4 126.1L137.8 117.8L139.2 108.7L140.6 98.7L142 87.8\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\"/><circle cx=\"38\" cy=\"160\" r=\"2.6\" fill=\"currentColor\"/><circle cx=\"110\" cy=\"160\" r=\"2.6\" fill=\"currentColor\"/><circle cx=\"128\" cy=\"160\" r=\"2.6\" fill=\"currentColor\"/><circle cx=\"92\" cy=\"106\" r=\"2.6\" fill=\"currentColor\"/><circle cx=\"56\" cy=\"52\" r=\"2.6\" fill=\"currentColor\"/><text x=\"51\" y=\"55\" text-anchor=\"end\" fill=\"currentColor\">(−2, 6)</text></svg>",
+     "answer": "ničle $x_1 = -3$, $x_2 = 1$, $x_3 = 2$, torej $p(x) = \\frac{1}{2}(x + 3)(x - 1)(x - 2)$; presečišča z osjo $x$: $(-3, 0)$, $(1, 0)$, $(2, 0)$; z osjo $y$: $(0, 3)$",
+     "ways": [
+      {
+       "title": "Po korakih (uganjena ničla in Hornerjev algoritem)",
+       "text": "**Podatki:** $p(x) = \\frac{1}{2}x^3 - \\frac{7}{2}x + 3$.\n\n**Iščemo:** ničle, presečišča z osema in graf.\n\n**1. Ulomkov se znebiš:** $p(x) = 0$ pomnožiš z $2$: $x^3 - 7x + 6 = 0$. Ničle se ne spremenijo.\n\n**2. Kandidati za cele ničle** so delitelji prostega člena $6$: $\\pm 1, \\pm 2, \\pm 3, \\pm 6$. Preizkusiš $x = 1$: $1 - 7 + 6 = 0$, torej je $x_2 = 1$ ničla.\n\n**3. Hornerjev algoritem** za $x^3 + 0x^2 - 7x + 6$ in $x = 1$:\n\n| | $1$ | $0$ | $-7$ | $6$ |\n|---|---|---|---|---|\n| $1$ | | $1$ | $1$ | $-6$ |\n| | $1$ | $1$ | $-6$ | $0$ |\n\nOstanek je $0$, količnik je $x^2 + x - 6$.\n\n**4. Kvadratna enačba:** $x^2 + x - 6 = 0$, razcep $(x + 3)(x - 2) = 0$, torej $x_1 = -3$ in $x_3 = 2$.\n\n**5. Presečišča:** z osjo $x$ v ničlah $(-3, 0)$, $(1, 0)$, $(2, 0)$; z osjo $y$ pri $x = 0$: $p(0) = 3$, točka $(0, 3)$.\n\n**6. Graf:** stopnja je liha in vodilni koeficient $\\frac{1}{2}$ pozitiven, zato graf prihaja iz $-\\infty$ (levo spodaj) in gre proti $+\\infty$ (desno zgoraj). Vse ničle so enostavne, zato graf v vsaki seka os $x$: pod osjo za $x < -3$, nad osjo na $(-3, 1)$, pod osjo na $(1, 2)$ in nad osjo za $x > 2$. Za boljšo obliko pomagata točki $p(-2) = 6$ (iz prejšnjega dela) in $p(1{,}5) = \\frac{1}{2} \\cdot 3{,}375 - 5{,}25 + 3 = -0{,}5625$ – med $1$ in $2$ se graf le malo spusti pod os."
+      },
+      {
+       "title": "Drugače: Horner kar z ulomki in diskriminanta",
+       "text": "Hornerjev algoritem lahko narediš tudi neposredno s koeficienti $\\frac{1}{2}$, $0$, $-\\frac{7}{2}$, $3$ in ničlo $1$:\n\n| | $\\frac{1}{2}$ | $0$ | $-\\frac{7}{2}$ | $3$ |\n|---|---|---|---|---|\n| $1$ | | $\\frac{1}{2}$ | $\\frac{1}{2}$ | $-3$ |\n| | $\\frac{1}{2}$ | $\\frac{1}{2}$ | $-3$ | $0$ |\n\nKoličnik je $\\frac{1}{2}x^2 + \\frac{1}{2}x - 3$. Enačbo $\\frac{1}{2}x^2 + \\frac{1}{2}x - 3 = 0$ pomnožiš z $2$: $x^2 + x - 6 = 0$. Diskriminanta $D = 1 + 24 = 25$, $x = \\frac{-1 \\pm 5}{2}$, torej $x = 2$ ali $x = -3$.\n\nPolinom v razcepljeni obliki: $p(x) = \\frac{1}{2}(x - 1)(x + 3)(x - 2)$.\n\n**Preizkus:** $p(2) = \\frac{1}{2} \\cdot 8 - 7 + 3 = 0$ in $p(-3) = -\\frac{27}{2} + \\frac{21}{2} + 3 = -3 + 3 = 0$ ✓.\n\n**S preglednico predznakov** za graf: faktorji $x + 3$, $x - 1$, $x - 2$ zamenjajo predznak v svojih ničlah; za $x > 2$ so vsi pozitivni, zato je $p > 0$, in vsakič, ko greš levo čez ničlo, se predznak zamenja: $(1, 2)$ negativno, $(-3, 1)$ pozitivno, $x < -3$ negativno."
+      }
+     ],
+     "scoring": "- 1 točka: uganjena ničla (npr. $x = 1$) s preizkusom\n- 1 točka: Hornerjev algoritem ali deljenje s količnikom $x^2 + x - 6$ (oziroma $\\frac{1}{2}x^2 + \\frac{1}{2}x - 3$)\n- 1 točka: preostali ničli $-3$ in $2$\n- 1 točka: presečišče z osjo $y$: $(0, 3)$\n- 2 točki: graf v zvezku (1 točka: vsa presečišča z osema pravilno vrisana in označena; 1 točka: pravilna oblika – iz $-\\infty$ proti $+\\infty$, graf seka os v vseh treh ničlah, nad osjo na $(-3, 1)$ in pod osjo na $(1, 2)$)",
+     "mistake": "Pri Hornerjevem algoritmu ne smeš izpustiti koeficienta $0$ pri $x^2$: z zapisom $\\frac{1}{2}, -\\frac{7}{2}, 3$ bi računal s polinomom druge stopnje in dobil napačen količnik."
+    }
+   ]
+  },
+  {
+   "section": "B",
+   "n": 2,
+   "intro": "V preglednici je lesna zaloga (prostornina lesa vseh dreves) v šestih gozdnogospodarskih območjih neke države, v milijonih kubičnih metrov. Podatki so prirejeni.\n\n| območje | A | B | C | D | E | F |\n|---|---|---|---|---|---|---|\n| lesna zaloga (v milijonih $\\mathrm{m^3}$) | $48{,}6$ | $31{,}2$ | $55{,}8$ | $22{,}4$ | $39{,}4$ | $27{,}6$ |",
+   "parts": [
+    {
+     "id": "a",
+     "points": 5,
+     "format": "open",
+     "text": "Izračunaj aritmetično sredino in mediano lesne zaloge teh šestih območij. Katera območja imajo lesno zalogo večjo od aritmetične sredine?",
+     "answer": "aritmetična sredina $37{,}5$ milijona $\\mathrm{m^3}$; mediana $35{,}3$ milijona $\\mathrm{m^3}$; nad sredino so območja A, C in E",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** šest vrednosti (v milijonih $\\mathrm{m^3}$): $48{,}6$; $31{,}2$; $55{,}8$; $22{,}4$; $39{,}4$; $27{,}6$.\n\n**Iščemo:** aritmetično sredino $\\bar{x}$, mediano $Me$ in območja nad sredino.\n\n**Aritmetična sredina:** vsoto deliš s številom podatkov:\n$48{,}6 + 31{,}2 + 55{,}8 + 22{,}4 + 39{,}4 + 27{,}6 = 225$, zato $\\bar{x} = \\frac{225}{6} = 37{,}5$ milijona $\\mathrm{m^3}$ (to je $37\\,500\\,000\\,\\mathrm{m^3}$).\n\n**Mediana:** podatke urediš po velikosti:\n$22{,}4 < 27{,}6 < 31{,}2 < 39{,}4 < 48{,}6 < 55{,}8$.\nPodatkov je sodo mnogo, zato je mediana povprečje 3. in 4. podatka:\n$Me = \\frac{31{,}2 + 39{,}4}{2} = \\frac{70{,}6}{2} = 35{,}3$ milijona $\\mathrm{m^3}$.\n\n**Nad sredino** $37{,}5$: A ($48{,}6$), C ($55{,}8$) in E ($39{,}4$)."
+      },
+      {
+       "title": "Drugače: z odmiki od ocenjene sredine",
+       "text": "Za ocenjeno sredino vzameš okroglo število $40$ in izračunaš odmike posameznih vrednosti:\n$48{,}6 - 40 = 8{,}6$; $31{,}2 - 40 = -8{,}8$; $55{,}8 - 40 = 15{,}8$; $22{,}4 - 40 = -17{,}6$; $39{,}4 - 40 = -0{,}6$; $27{,}6 - 40 = -12{,}4$.\n\nVsota odmikov: $8{,}6 - 8{,}8 + 15{,}8 - 17{,}6 - 0{,}6 - 12{,}4 = -15$. Povprečni odmik je $\\frac{-15}{6} = -2{,}5$, zato $\\bar{x} = 40 - 2{,}5 = 37{,}5$.\n\n**Mediana s črtanjem:** iz urejenega seznama prečrtaš najmanjšo in največjo vrednost, dokler ne ostaneta sredinski dve: najprej $22{,}4$ in $55{,}8$, nato $27{,}6$ in $48{,}6$. Ostaneta $31{,}2$ in $39{,}4$, njuno povprečje je $35{,}3$.\n\n**Primerjava:** mediana ($35{,}3$) je manjša od sredine ($37{,}5$), ker dve veliki vrednosti (C in A) povlečeta povprečje navzgor."
+      }
+     ],
+     "scoring": "- 1 točka: vsota $225$ (ali pravilen zapis izraza za sredino)\n- 1 točka: $\\bar{x} = 37{,}5$ milijona $\\mathrm{m^3}$\n- 1 točka: podatki, urejeni po velikosti\n- 1 točka: mediana $35{,}3$ milijona $\\mathrm{m^3}$\n- 1 točka: območja A, C in E",
+     "mistake": "Napačno je mediano računati iz neurejenih podatkov: povprečje 3. in 4. vrednosti v preglednici, $\\frac{55{,}8 + 22{,}4}{2} = 39{,}1$, ni mediana. Podatke moraš najprej urediti po velikosti."
+    },
+    {
+     "id": "b",
+     "points": 5,
+     "format": "table",
+     "text": "Privzemi, da skupno lesno zalogo vseh šestih območij opisuje model $V(t) = 225 \\cdot e^{0{,}006t}$, kjer je $t$ število let po letu $2020$, $V(t)$ pa lesna zaloga v milijonih $\\mathrm{m^3}$.\n\nDopolni preglednico (vrednosti $V(t)$ zaokroži na eno decimalno mesto):\n\n| leto | $2020$ | $2070$ | $2120$ |\n|---|---|---|---|\n| $t$ | $0$ | | |\n| $V(t)$ | | | |\n\nNato izračunaj odvod $V'(t)$ in vrednost $V'(0)$. Kaj pove $V'(0)$?",
+     "answer": "$V(0) = 225{,}0$, $V(50) \\approx 303{,}7$, $V(100) \\approx 410{,}0$ (milijonov $\\mathrm{m^3}$); $V'(t) = 1{,}35 \\cdot e^{0{,}006t}$, $V'(0) = 1{,}35$ – leta 2020 lesna zaloga narašča s hitrostjo približno $1{,}35$ milijona $\\mathrm{m^3}$ na leto",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $V(t) = 225 \\cdot e^{0{,}006t}$, $t$ v letih po $2020$, $V$ v milijonih $\\mathrm{m^3}$; leta $2020$, $2070$, $2120$.\n\n**Iščemo:** $V(0)$, $V(50)$, $V(100)$, $V'(t)$ in $V'(0)$.\n\n**Vrednosti $t$:** $2070 - 2020 = 50$ in $2120 - 2020 = 100$.\n\n**Vrednosti modela** (z računalom, tipka $e^x$):\n- $V(0) = 225 \\cdot e^{0} = 225 \\cdot 1 = 225{,}0$,\n- $V(50) = 225 \\cdot e^{0{,}3}$, kjer je $e^{0{,}3} \\approx 1{,}34986$, torej $V(50) \\approx 303{,}7$,\n- $V(100) = 225 \\cdot e^{0{,}6}$, kjer je $e^{0{,}6} \\approx 1{,}82212$, torej $V(100) \\approx 410{,}0$.\n\n| leto | $2020$ | $2070$ | $2120$ |\n|---|---|---|---|\n| $t$ | $0$ | $50$ | $100$ |\n| $V(t)$ | $225{,}0$ | $303{,}7$ | $410{,}0$ |\n\n**Odvod:** konstantni faktor $225$ ostane, $\\left(e^{kx}\\right)' = k e^{kx}$ (odvod sestavljene funkcije), zato\n$V'(t) = 225 \\cdot 0{,}006 \\cdot e^{0{,}006t} = 1{,}35 \\cdot e^{0{,}006t}$.\n\n**Vrednost:** $V'(0) = 1{,}35 \\cdot e^{0} = 1{,}35$.\n\n**Pomen:** odvod je hitrost spreminjanja. Leta $2020$ lesna zaloga po modelu narašča s hitrostjo približno $1{,}35$ milijona $\\mathrm{m^3}$ na leto."
+      },
+      {
+       "title": "Drugače: rastni faktor za 50 let in preizkus odvoda",
+       "text": "V vsakih $50$ letih se zaloga pomnoži z istim faktorjem $e^{0{,}006 \\cdot 50} = e^{0{,}3} \\approx 1{,}34986$ (rast za približno $35\\,\\%$). Zato:\n- $V(50) \\approx 225 \\cdot 1{,}34986 \\approx 303{,}72$, zaokroženo $303{,}7$,\n- $V(100) \\approx 303{,}72 \\cdot 1{,}34986 \\approx 409{,}98$, zaokroženo $410{,}0$.\n\n**Preizkus odvoda z razliko v enem letu:** $V(1) - V(0) = 225 \\cdot (e^{0{,}006} - 1)$, kjer je $e^{0{,}006} - 1 \\approx 0{,}006018$, torej je razlika približno $225 \\cdot 0{,}006018 \\approx 1{,}354$ milijona $\\mathrm{m^3}$. To je zelo blizu $V'(0) = 1{,}35$, kot pričakuješ, saj je odvod hitrost spremembe v trenutku, razlika v enem letu pa povprečna hitrost v tem letu."
+      }
+     ],
+     "scoring": "- 1 točka: $V(0) = 225{,}0$ (leto $2020$)\n- 1 točka: $V(50) \\approx 303{,}7$ (leto $2070$)\n- 1 točka: $V(100) \\approx 410{,}0$ (leto $2120$)\n- 1 točka: $V'(t) = 1{,}35 \\cdot e^{0{,}006t}$\n- 1 točka: $V'(0) = 1{,}35$ s pomenom (približno $1{,}35$ milijona $\\mathrm{m^3}$ prirastka na leto)",
+     "mistake": "Napačno je za leto $2070$ vstaviti $t = 2070$: $t$ šteje leta **po** letu $2020$, zato je $t = 50$. Pri odvodu ne smeš pozabiti notranjega odvoda: $\\left(e^{0{,}006t}\\right)' = 0{,}006 \\cdot e^{0{,}006t}$, ne $e^{0{,}006t}$."
+    }
+   ]
+  },
+  {
+   "section": "B",
+   "n": 3,
+   "intro": "Števila $5$, $x$ in $45$ so v tem vrstnem redu trije zaporedni členi zaporedja.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 5,
+     "format": "open",
+     "text": "Izračunaj vse vrednosti $x$, pri katerih so $5$, $x$ in $45$ zaporedni členi geometrijskega zaporedja. Za naraščajoče geometrijsko zaporedje zapiši še količnik $q$.",
+     "answer": "$x = 15$ ali $x = -15$; naraščajoče zaporedje ima $x = 15$ in $q = 3$",
+     "ways": [
+      {
+       "title": "Po korakih (enaka količnika)",
+       "text": "**Podatki:** zaporedni členi $5$, $x$, $45$.\n\n**Iščemo:** vse $x$, da je zaporedje geometrijsko, in količnik naraščajočega zaporedja.\n\nV geometrijskem zaporedju je količnik zaporednih členov stalen:\n$\\frac{x}{5} = \\frac{45}{x}$.\n\nNavzkrižno množiš: $x^2 = 5 \\cdot 45 = 225$.\n\nRešitvi: $x = 15$ ali $x = -15$.\n\n- Za $x = 15$: $q = \\frac{15}{5} = 3$, zaporedje $5, 15, 45, \\ldots$ je naraščajoče.\n- Za $x = -15$: $q = \\frac{-15}{5} = -3$, zaporedje $5, -15, 45, \\ldots$ alternira (predznaki se menjajo), zato ni naraščajoče.\n\nNaraščajoče zaporedje: $x = 15$, $q = 3$."
+      },
+      {
+       "title": "Drugače: prek splošnega člena",
+       "text": "Če je $a_1 = 5$, je tretji člen $a_3 = a_1 q^2$:\n\n$45 = 5q^2$, torej $q^2 = 9$ in $q = 3$ ali $q = -3$.\n\nSrednji člen je $x = a_2 = a_1 q$: za $q = 3$ je $x = 15$, za $q = -3$ je $x = -15$.\n\nZaporedje je naraščajoče le, če je $q > 1$ (in $a_1 > 0$), torej pri $q = 3$.\n\n**Preizkus:** $15 \\cdot 3 = 45$ ✓ in $(-15) \\cdot (-3) = 45$ ✓."
+      }
+     ],
+     "scoring": "- 1 točka: pogoj $\\frac{x}{5} = \\frac{45}{x}$ (ali $45 = 5q^2$)\n- 1 točka: $x^2 = 225$ (ali $q^2 = 9$)\n- 1 točka: $x = 15$\n- 1 točka: $x = -15$\n- 1 točka: $q = 3$ za naraščajoče zaporedje",
+     "mistake": "Pogosto se pozabi negativna rešitev: iz $x^2 = 225$ sledi $x = 15$ **ali** $x = -15$. Napačno je tudi vzeti aritmetično sredino števil $5$ in $45$ – ta velja za aritmetično, ne za geometrijsko zaporedje."
+    },
+    {
+     "id": "b",
+     "points": 5,
+     "format": "open",
+     "text": "Zdaj naj bodo $5$, $x$ in $45$ prvi trije členi aritmetičnega zaporedja z diferenco $d = 20$. Izračunaj $x$ in ugotovi, koliko členov tega zaporedja je manjših od $10\\,000$.",
+     "answer": "$x = 25$; manjših od $10\\,000$ je $500$ členov",
+     "ways": [
+      {
+       "title": "Po korakih (neenačba za n)",
+       "text": "**Podatki:** $a_1 = 5$, $d = 20$, meja $10\\,000$.\n\n**Iščemo:** $x = a_2$ in število členov, manjših od $10\\,000$.\n\n**Srednji člen:** $x = a_1 + d = 5 + 20 = 25$. (Preveriš še: $25 + 20 = 45$ ✓.)\n\n**Splošni člen:** $a_n = a_1 + (n - 1)d = 5 + (n - 1) \\cdot 20 = 20n - 15$.\n\n**Neenačba:** $20n - 15 < 10\\,000$, torej $20n < 10\\,015$ in $n < 500{,}75$.\n\nKer je $n$ naravno število, pogoju ustrezajo $n = 1, 2, \\ldots, 500$. Zaporedje narašča, zato so vsi naslednji členi večji.\n\nManjših od $10\\,000$ je $500$ členov. **Preizkus:** $a_{500} = 20 \\cdot 500 - 15 = 9\\,985 < 10\\,000$ in $a_{501} = 20 \\cdot 501 - 15 = 10\\,005 > 10\\,000$."
+      },
+      {
+       "title": "Drugače: največji člen pod mejo",
+       "text": "Srednji člen aritmetičnega zaporedja je aritmetična sredina sosedov: $x = \\frac{5 + 45}{2} = 25$, kar se ujema z $d = 25 - 5 = 20$.\n\nVsi členi so oblike $5 + 20k$ ($k = 0, 1, 2, \\ldots$), torej dajo pri deljenju z $20$ ostanek $5$. Ker je $10\\,000 = 20 \\cdot 500$ deljivo z $20$, je največje število pod $10\\,000$ z ostankom $5$ enako $20 \\cdot 499 + 5 = 9\\,985$ – to je zadnji člen pod mejo.\n\nŠtevilo členov od $5$ do $9\\,985$ s korakom $20$: $\\frac{9\\,985 - 5}{20} + 1 = 499 + 1 = 500$."
+      }
+     ],
+     "scoring": "- 1 točka: $x = 25$\n- 1 točka: splošni člen $a_n = 5 + (n - 1) \\cdot 20$\n- 1 točka: neenačba $5 + (n - 1) \\cdot 20 < 10\\,000$\n- 1 točka: $n < 500{,}75$\n- 1 točka: odgovor $500$ členov",
+     "mistake": "Napačno je $n < 500{,}75$ zaokrožiti na $501$: člen $a_{501} = 10\\,005$ je že večji od meje. Napačen je tudi splošni člen $a_n = 5 + 20n$ (brez $n - 1$), ki da za prvi člen $25$ namesto $5$."
+    }
+   ]
+  }
+ ]
+}

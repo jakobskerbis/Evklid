@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Ioni kisline
+  - kislina odda $\mathrm{H^+}$ (oziroma $\mathrm{H_3O^+}$)
+  - $\mathrm{HCl}$: $\mathrm{H^+}$ in $\mathrm{Cl^-}$
+- Ioni baze
+  - hidroksid odda $\mathrm{OH^-}$
+  - ostane kation kovine, npr. $\mathrm{Na^+}$
+- Nevtralizacija
+  - $\mathrm{H^+ + OH^- \longrightarrow H_2O}$
+  - eksotermna, raztopina se segreje
+- Nastanek soli
+  - kation iz baze, anion iz kisline
+  - po izhlapevanju ostanejo kristali
+- Imena soli
+  - klorid, sulfat, nitrat
+  - $\mathrm{K_2SO_4}$, ne $\mathrm{KSO_4}$
+- Urejanje enačbe
+  - en $\mathrm{H^+}$ za en $\mathrm{OH^-}$
+  - $\mathrm{H_2SO_4 + 2\,KOH \longrightarrow K_2SO_4 + 2\,H_2O}$
+- pH in prebitek
+  - ujemajoči se količini: $\mathrm{pH} = 7$
+  - preveč baze: bazično

@@ -20,9 +20,9 @@ Od takrat jekla ne kupujemo le po ceni na kilogram. Na atestu (certifikatu) so n
 | največja sila | $41{,}6$ | na enem mestu nastane zožitev (vrat) |
 | lom | – | $L_u = 61{,}0\,\mathrm{mm}$, premer v vratu $6{,}0\,\mathrm{mm}$ |
 
-**Od sile k napetosti.** Debelejša epruveta prenese večjo silo, zato silo delimo s prvotnim presekom $S_0 = \pi d_0^2/4 = 78{,}54\,\mathrm{mm^2}$. Dobimo **napetost** $\sigma = F/S_0$ v $\mathrm{MPa}$ ($1\,\mathrm{MPa} = 1\,\mathrm{N/mm^2}$). Pri $12{,}0\,\mathrm{kN}$ je $\sigma \approx 152{,}8\,\mathrm{MPa}$. Podaljšek delimo z $L_0$ in dobimo **raztezek** $\varepsilon = \Delta L/L_0 = 7{,}28 \cdot 10^{-4}$. Tako rezultat ni odvisen od velikosti epruvete.
+**Od sile k napetosti.** Debelejša epruveta prenese večjo silo, zato silo delimo s prvotnim presekom $S_0 = \pi d_0^2/4 = 78{,}54\,\mathrm{mm^2}$. Dobimo **inženirsko (nazivno) napetost** $\sigma = F/S_0$ v $\mathrm{MPa}$ ($1\,\mathrm{MPa} = 1\,\mathrm{N/mm^2}$). Pri $12{,}0\,\mathrm{kN}$ je $\sigma \approx 152{,}8\,\mathrm{MPa}$. Podaljšek delimo z $L_0$ in dobimo **raztezek** (relativni podaljšek) $\varepsilon = \Delta L/L_0 = 7{,}28 \cdot 10^{-4}$. Tako rezultat ni odvisen od velikosti epruvete.
 
-**Prožnost.** V prožnem območju je napetost sorazmerna z raztezkom, $\sigma = E\,\varepsilon$ (Hookov zakon). Za našo epruveto je $E = 152{,}8\,\mathrm{MPa} / 7{,}28 \cdot 10^{-4} \approx 2{,}10 \cdot 10^5\,\mathrm{MPa} = 210\,\mathrm{GPa}$. **Modul elastičnosti** $E$ pove togost: odvisen je od vezi med atomi, zato imajo skoraj vsa jekla približno $210\,\mathrm{GPa}$.
+**Prožnost.** *Hookov zakon:* naj bo palica obremenjena enoosno (sila vzdolž osi, enakomerno po preseku) in naj napetost ne preseže **meje sorazmernosti** (največje napetosti, do katere je $\sigma$ še sorazmerna z $\varepsilon$). Potem je napetost sorazmerna z raztezkom, $\sigma = E\,\varepsilon$, deformacija pa po razbremenitvi izgine. Za našo epruveto je $E = 152{,}8\,\mathrm{MPa} / 7{,}28 \cdot 10^{-4} \approx 2{,}10 \cdot 10^5\,\mathrm{MPa} = 210\,\mathrm{GPa}$. **Modul elastičnosti** $E$ pove togost: odvisen je od vezi med atomi, zato imajo skoraj vsa jekla približno $210\,\mathrm{GPa}$. Iz $\dfrac{F}{S_0} = E\dfrac{\Delta L}{L_0}$ sledi podaljšek palice $\Delta L = \dfrac{F L_0}{E S_0}$. Palica se hkrati prečno skrči; prečni raztezek je $\varepsilon_\mathrm{q} = -\nu\,\varepsilon$; Poissonovo število $\nu$ je za jekla okoli $0{,}3$.
 
 :::premisli
 Konstruktor želi, da se natezna palica pod isto majhno obremenitvijo manj podaljša. Zato navadno žarjeno jeklo zamenja s kaljenim, ki je precej trdnejše. Bo palica res manj podaljšana?
@@ -30,15 +30,19 @@ Konstruktor želi, da se natezna palica pod isto majhno obremenitvijo manj podal
 Ne. Podaljšek v prožnem območju določa $E$, ta pa je pri obeh približno $210\,\mathrm{GPa}$. Toplotna obdelava premakne mejo tečenja, togosti pa skoraj ne spremeni.
 :::
 
-**Meja tečenja in natezna trdnost.** Ko **dislokacije** (črtne napake v kristalni mreži) začnejo drseti, se kovina trajno deformira. Napetost, pri kateri se to zgodi, je **meja tečenja** $R_e = 28\,300\,\mathrm{N}/78{,}54\,\mathrm{mm^2} \approx 360\,\mathrm{MPa}$. Pri jeklih brez izrazite meje tečenja namesto nje odčitamo $R_{p0,2}$, napetost pri $0{,}2\,\%$ trajnega raztezka. Največja sila da **natezno trdnost** $R_m = 41\,600\,\mathrm{N}/78{,}54\,\mathrm{mm^2} \approx 530\,\mathrm{MPa}$. Konstrukcije dimenzioniramo po $R_e$, saj trajno upognjen nosilec ni več uporaben.
+**Meja tečenja in natezna trdnost.** Ko **dislokacije** (črtne napake v kristalni mreži) začnejo drseti, se kovina trajno deformira. Napetost, pri kateri se to zgodi, je **meja tečenja** $R_e = 28\,300\,\mathrm{N}/78{,}54\,\mathrm{mm^2} \approx 360\,\mathrm{MPa}$. Pri jeklih brez izrazite meje tečenja namesto nje odčitamo **dogovorno mejo tečenja** $R_{p0,2}$: napetost, pri kateri bi po razbremenitvi ostalo $0{,}2\,\%$ trajnega raztezka. Na diagramu jo dobimo kot presečišče krivulje s premico, vzporedno prožni premici in premaknjeno za $\varepsilon = 0{,}002$. Največja sila da **natezno trdnost** $R_m = 41\,600\,\mathrm{N}/78{,}54\,\mathrm{mm^2} \approx 530\,\mathrm{MPa}$. Konstrukcije dimenzioniramo po $R_e$, saj trajno upognjen nosilec ni več uporaben.
 
-**Duktilnost.** Kako zelo se material raztegne pred lomom, povesta **raztezek po pretrgu** $A = (L_u - L_0)/L_0 = 22{,}0\,\%$ in **kontrakcija** $Z = (S_0 - S_u)/S_0 = 64{,}0\,\%$, kjer je $S_u = 28{,}27\,\mathrm{mm^2}$ presek v vratu. Velika $A$ in $Z$ pomenita, da material pred lomom opozori z vidno deformacijo.
+**Prožna energija.** Če je krivulja do meje tečenja premica (meja sorazmernosti je pri jeklih skoraj enaka $R_e$), material do $R_e$ shrani delo na enoto prostornine, ki je enako ploščini trikotnika pod premico: $U_\mathrm{p} = \tfrac12 R_e\,\varepsilon_e = \dfrac{R_e^2}{2E}$, ker je $\varepsilon_e = R_e/E$. Enota $\mathrm{MPa} = \mathrm{MJ/m^3}$.
+
+**Duktilnost.** Kako zelo se material raztegne pred lomom, povesta **raztezek po pretrgu** $A = (L_u - L_0)/L_0 = 22{,}0\,\%$ in **kontrakcija** $Z = (S_0 - S_u)/S_0 = 64{,}0\,\%$, kjer je $S_u = 28{,}27\,\mathrm{mm^2}$ presek v vratu. Pri okroglem preseku je $S = \pi d^2/4$, zato se $\pi/4$ pokrajša in $Z = 1 - \dfrac{d_u^2}{d_0^2}$. Velika $A$ in $Z$ pomenita, da material pred lomom opozori z vidno deformacijo.
 
 **Posplošitev: krivulja $\sigma$–$\varepsilon$.** Vse te točke ležijo na eni krivulji: najprej strma premica (naklon $E$), nato tečenje, utrjevanje (napetost spet raste, ker se dislokacije ovirajo) do $R_m$ in padec po nastanku vratu do loma. Krhek material, npr. siva litina, se zlomi že na koncu premice, skoraj brez trajne deformacije.
 
-**Trdota.** Natezni preizkus uniči epruveto, zato v praksi pogosto merimo **trdoto**, odpornost proti vtiskovanju. Pri **Vickersovi** metodi vtisnemo diamantno piramido s silo $F$ in izmerimo diagonali vtiska. Pri **Brinellovi** vtisnemo kroglico iz trdine, pri **Rockwellovi** merimo globino vtiska. Večji vtisk pomeni mehkejši material. Za jekla velja približno $R_m \approx 3{,}3 \cdot \mathrm{HV}$ (v $\mathrm{MPa}$), zato trdota hitro oceni trdnost brez razreza dela.
+**Prava napetost.** Prava napetost deli s trenutnim presekom: $\sigma_\mathrm{p} = F/S$. Naj se epruveta deformira enakomerno (pred nastankom vratu) in naj se prostornina pri plastični deformaciji ohranja. Potem je $\sigma_\mathrm{p} = \sigma(1 + \varepsilon)$. *Dokaz:* iz $S L = S_0 L_0$ in $L = L_0(1 + \varepsilon)$ sledi $S = \dfrac{S_0}{1 + \varepsilon}$, torej $\sigma_\mathrm{p} = \dfrac{F(1+\varepsilon)}{S_0} = \sigma(1 + \varepsilon)$. Po $R_m$ se deformacija zbere v vratu in ta zveza ne velja več: sila pada, inženirska napetost (padajoča sila, deljena s stalnim $S_0$) zato pade, prava pa raste vse do loma, ker se presek v vratu manjša še hitreje od sile.
 
-**Žilavost.** **Udarna žilavost** pove, koliko energije material porabi, ko ga zlomi udarec. Pri **Charpyjevem** preizkusu nihalo z višine $h_1$ zlomi epruveto z zarezo V in se dvigne le do $h_2$. Porabljena energija je $\mathrm{KV} = m g (h_1 - h_2)$ v joulih. Jekla s prostorsko centrirano kubično mrežo (ferit) imajo **prehodno temperaturo**: nad njo se lomijo žilavo z veliko energije, pod njo krhko z malo. Kovine s ploskovno centrirano mrežo (avstenitno nerjavno jeklo, aluminij, baker) tega prehoda nimajo. To je razložilo ladje Liberty.
+**Trdota.** Natezni preizkus uniči epruveto, zato v praksi pogosto merimo **trdoto**, odpornost proti vtiskovanju. Pri **Vickersovi** metodi vtisnemo diamantno piramido s silo $F$ in izmerimo diagonali vtiska. Pri **Brinellovi** vtisnemo kroglico iz trdine (volframovega karbida), pri **Rockwellovi** merimo globino vtiska. Večji vtisk pomeni mehkejši material. Za jekla velja približno $R_m \approx 3{,}3 \cdot \mathrm{HV}$ (v $\mathrm{MPa}$), zato trdota hitro oceni trdnost brez razreza dela.
+
+**Žilavost.** **Udarna žilavost** pove, koliko energije material porabi, ko ga zlomi udarec. Pri **Charpyjevem** preizkusu nihalo z višine $h_1$ zlomi epruveto z zarezo V in se dvigne le do $h_2$. Porabljena energija je $\mathrm{KV} = m g (h_1 - h_2)$ v joulih. *Izpeljava:* v skrajnih legah nihalo miruje, zato je razlika njegovih potencialnih energij $mgh_1 - mgh_2$ enaka energiji, ki jo je oddalo epruveti; pri tem $h$ merimo za težišče nihala in zanemarimo trenje in upor zraka. Te izgube v praksi izmerimo z nihajem brez epruvete in jih odštejemo. Jekla s prostorsko (telesno) centrirano kubično mrežo BCC (ferit) imajo **prehodno temperaturo**: nad njo se lomijo žilavo z veliko energije, pod njo krhko z malo. Kovine s ploskovno centrirano kubično mrežo FCC (avstenitno nerjavno jeklo, aluminij, baker) tega prehoda nimajo. To je razložilo ladje Liberty.
 
 :::premisli
 Pri kaljenju jeklo hitro ohladimo in nastane **martenzit**, mreža, prenasičena z ogljikom in močno napeta. Kako se spremenita trdota in žilavost in zakaj jeklo nato popuščamo (ponovno segrejemo na zmerno temperaturo)?
@@ -56,7 +60,7 @@ Na vzorcu jekla s silo $294{,}2\,\mathrm{N}$ (HV30) izmerimo diagonali vtiska $0
 **Iščemo:** trdoto $\mathrm{HV}$
 
 :::formula
-$\mathrm{HV} = 0{,}1891\,\dfrac{F}{d^2}$, $F$ v N, $d = \dfrac{d_1 + d_2}{2}$ v mm
+$\mathrm{HV} = 0{,}1891\,\dfrac{F}{d^2}$, $F$ v N, $d = \dfrac{d_1 + d_2}{2}$ v mm (izvor konstante: razdelek »Bolj natančno«)
 :::
 
 **Rešitev:**
@@ -87,22 +91,24 @@ $F = R_e \cdot S$, $S = \dfrac{\pi d^2}{4}$; cena na kN $= \dfrac{\text{cena}}{F
 
 ### Primer 3 (težji): je cenejša ponudba res cenejša?
 
-Za zunanji žerjav, ki bo delal pozimi do $-20\,^\circ\mathrm{C}$, potrebujemo $2400\,\mathrm{kg}$ pločevine. Ponudnik A prodaja S355JR po $1{,}10$ €/kg, ponudnik B S355J2 po $1{,}18$ €/kg. Charpyjevo nihalo z maso $20{,}0\,\mathrm{kg}$ spustimo z višine $1{,}50\,\mathrm{m}$. Epruveta iz ponudbe A, ohlajena na $-20\,^\circ\mathrm{C}$, ga po lomu pusti dvigniti do $1{,}38\,\mathrm{m}$. Zahteva je vsaj $27\,\mathrm{J}$. Katero ponudbo izberemo in koliko več plačamo?
+Za zunanji žerjav, ki bo delal pozimi do $-20\,^\circ\mathrm{C}$, potrebujemo $2400\,\mathrm{kg}$ pločevine. Ponudnik A prodaja S355JR po $1{,}10$ €/kg, ponudnik B S355J2 po $1{,}18$ €/kg. Charpyjevo nihalo z maso $20{,}0\,\mathrm{kg}$ (višine merimo za težišče) spustimo z višine $1{,}50\,\mathrm{m}$. Brez epruvete se zaradi trenja in upora zraka dvigne do $1{,}49\,\mathrm{m}$. Epruveta iz ponudbe A, ohlajena na $-20\,^\circ\mathrm{C}$, ga po lomu pusti dvigniti do $1{,}38\,\mathrm{m}$. Zahteva je vsaj $27\,\mathrm{J}$. (a) Kolikšna je udarna žilavost jekla A, popravljena za izgube? (b) Do katere višine bi se nihalo smelo največ dvigniti, da bi epruveta ustrezala? (c) Katero ponudbo izberemo in koliko več plačamo?
 
-**Podatki:** $m_{\text{pl}} = 2400\,\mathrm{kg}$, $1{,}10$ €/kg in $1{,}18$ €/kg, $m = 20{,}0\,\mathrm{kg}$, $h_1 = 1{,}50\,\mathrm{m}$, $h_2 = 1{,}38\,\mathrm{m}$, $g = 9{,}81\,\mathrm{m/s^2}$, zahteva $\mathrm{KV} \ge 27\,\mathrm{J}$ pri $-20\,^\circ\mathrm{C}$
-**Iščemo:** $\mathrm{KV}$ jekla A pri $-20\,^\circ\mathrm{C}$, izbiro in razliko v ceni
+**Podatki:** $m_{\text{pl}} = 2400\,\mathrm{kg}$, $1{,}10$ €/kg in $1{,}18$ €/kg, $m = 20{,}0\,\mathrm{kg}$, $h_1 = 1{,}50\,\mathrm{m}$, $h_0 = 1{,}49\,\mathrm{m}$ (prosti nihaj), $h_2 = 1{,}38\,\mathrm{m}$, $g = 9{,}81\,\mathrm{m/s^2}$, zahteva $\mathrm{KV} \ge 27\,\mathrm{J}$ pri $-20\,^\circ\mathrm{C}$
+**Iščemo:** $\mathrm{KV}$ jekla A pri $-20\,^\circ\mathrm{C}$, največjo dopustno $h_2$, izbiro in razliko v ceni
 
 :::formula
-$\mathrm{KV} = m g (h_1 - h_2)$; razlika v ceni $= m_{\text{pl}} \cdot \Delta(\text{cena na kg})$
+$\mathrm{KV} = m g (h_0 - h_2)$, kjer $h_0$ upošteva izgube; $h_{2,\max} = h_0 - \dfrac{\mathrm{KV}_{\min}}{m g}$; razlika v ceni $= m_{\text{pl}} \cdot \Delta(\text{cena na kg})$
 :::
 
 **Rešitev:**
 
-1. Višinska razlika: $h_1 - h_2 = 1{,}50 - 1{,}38 = 0{,}12\,\mathrm{m}$.
-2. $\mathrm{KV} = 20{,}0 \cdot 9{,}81 \cdot 0{,}12\,\mathrm{J} \approx 23{,}5\,\mathrm{J}$, kar je manj od $27\,\mathrm{J}$: jeklo A je pri tej temperaturi pod prehodno temperaturo in se lomi krhko.
-3. Jeklo B ima oznako J2, ki zagotavlja $27\,\mathrm{J}$ prav pri $-20\,^\circ\mathrm{C}$.
-4. Razlika v ceni: $2400 \cdot (1{,}18 - 1{,}10) = 192$ €.
-5. Odgovor: izberemo ponudbo B; zanesljivost pozimi stane $192$ € več, kar je malo v primerjavi s posledicami krhkega loma.
+1. Višinska razlika: $h_1 - h_2 = 1{,}50 - 1{,}38 = 0{,}12\,\mathrm{m}$, kar brez popravka da $20{,}0 \cdot 9{,}81 \cdot 0{,}12\,\mathrm{J} \approx 23{,}5\,\mathrm{J}$.
+2. Izgube: prosti nihaj izgubi $20{,}0 \cdot 9{,}81 \cdot 0{,}01\,\mathrm{J} \approx 1{,}96\,\mathrm{J}$, ki jih epruveta ni porabila.
+3. Popravljena vrednost: $\mathrm{KV} = 20{,}0 \cdot 9{,}81 \cdot (1{,}49 - 1{,}38)\,\mathrm{J} \approx 21{,}6\,\mathrm{J}$, kar je manj od $27\,\mathrm{J}$: jeklo A je pri tej temperaturi pod prehodno temperaturo in se lomi krhko.
+4. Obratno: epruveta bi morala porabiti vsaj $27\,\mathrm{J}$, kar ustreza višini $\dfrac{27}{20{,}0 \cdot 9{,}81}\,\mathrm{m} \approx 0{,}138\,\mathrm{m}$, zato $h_{2,\max} = 1{,}49 - 0{,}1376 \approx 1{,}35\,\mathrm{m}$.
+5. Jeklo B ima oznako J2, ki zagotavlja $27\,\mathrm{J}$ prav pri $-20\,^\circ\mathrm{C}$.
+6. Razlika v ceni: $2400 \cdot (1{,}18 - 1{,}10) = 192$ €.
+7. Odgovor: jeklo A ima pri $-20\,^\circ\mathrm{C}$ le okoli $21{,}6\,\mathrm{J}$ (nihalo bi se smelo dvigniti največ do $1{,}35\,\mathrm{m}$), zato izberemo ponudbo B; zanesljivost pozimi stane $192$ € več, kar je malo v primerjavi s posledicami krhkega loma.
 
 ### Primer 4: zdaj ti – duktilnost iz nateznega preizkusa
 
@@ -144,6 +150,47 @@ $A = \dfrac{12{,}0}{80{,}0} \cdot 100\,\% = 15{,}0\,\%$ in $Z = (1 - 0{,}64) \cd
 - Udarna žilavost (Charpy) $\mathrm{KV} = m g (h_1 - h_2)$; feritna jekla imajo prehodno temperaturo žilavo–krhko, avstenitna in druge kovine s ploskovno centrirano mrežo je nimajo.
 - Kaljenje poveča trdoto in zmanjša žilavost, popuščanje del žilavosti vrne.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- Definicije inženirske napetosti, raztezka, $R_e$, $R_{p0,2}$, $R_m$, $A$ in $Z$ ter kako jih odčitamo s krivulje $\sigma$–$\varepsilon$.
+- Hookov zakon s pogoji (enoosno, pod mejo sorazmernosti), izpeljavo $\Delta L = \dfrac{F L_0}{E S_0}$ in prožne energije $\dfrac{R_e^2}{2E}$; zakaj toplotna obdelava $E$ skoraj ne spremeni.
+- Dokaz $\sigma_\mathrm{p} = \sigma(1 + \varepsilon)$ s pogoji in razlago padca inženirske krivulje po $R_m$.
+- Principe meritev trdote (Vickers, Brinell, Rockwell) in izpeljavo $\mathrm{KV} = mg(h_1 - h_2)$ s popravkom za izgube.
+- Prehodno temperaturo žilavo–krhko: pri katerih mrežah nastopi in zakaj.
+
+### Naloga 1
+
+Jekleno epruveto z $d_0 = 12{,}0\,\mathrm{mm}$ in $L_0 = 60{,}0\,\mathrm{mm}$ preizkusimo natezno. Pri sili $15{,}0\,\mathrm{kN}$ (prožno območje) je podaljšek $0{,}0379\,\mathrm{mm}$, dogovorni meji tečenja ustreza sila $39{,}6\,\mathrm{kN}$, največja sila je $56{,}5\,\mathrm{kN}$. Po pretrgu je $L_u = 73{,}2\,\mathrm{mm}$, premer v vratu $7{,}8\,\mathrm{mm}$. (a) Določi $E$, $R_{p0,2}$, $R_m$, $A$ in $Z$. (b) Kolikšna je prava napetost pri največji sili, če je tedaj inženirski raztezek $0{,}15$? (c) Iz tega jekla naredimo okroglo natezno palico dolžine $2{,}0\,\mathrm{m}$, ki nosi $80\,\mathrm{kN}$, z varnostnim faktorjem $1{,}5$ glede na $R_{p0,2}$. Izberi najmanjši celi premer v milimetrih in izračunaj podaljšek palice.
+
+**Rešitev:**
+
+1. $S_0 = \dfrac{\pi \cdot 12{,}0^2}{4} \approx 113{,}1\,\mathrm{mm^2}$.
+2. $\sigma = \dfrac{15\,000}{113{,}1}\,\mathrm{MPa} \approx 132{,}6\,\mathrm{MPa}$, $\varepsilon = \dfrac{0{,}0379}{60{,}0} \approx 6{,}317 \cdot 10^{-4}$, $E = \dfrac{132{,}6}{6{,}317 \cdot 10^{-4}}\,\mathrm{MPa} \approx 2{,}10 \cdot 10^5\,\mathrm{MPa} = 210\,\mathrm{GPa}$.
+3. $R_{p0,2} = \dfrac{39\,600}{113{,}1}\,\mathrm{MPa} \approx 350\,\mathrm{MPa}$, $R_m = \dfrac{56\,500}{113{,}1}\,\mathrm{MPa} \approx 500\,\mathrm{MPa}$ (oboje s prvotnim presekom).
+4. $A = \dfrac{73{,}2 - 60{,}0}{60{,}0} \cdot 100\,\% = 22{,}0\,\%$, $Z = \left(1 - \dfrac{7{,}8^2}{12{,}0^2}\right) \cdot 100\,\% = (1 - 0{,}4225) \cdot 100\,\% \approx 57{,}8\,\%$.
+5. Do $R_m$ je deformacija enakomerna, zato velja $\sigma_\mathrm{p} = R_m(1 + \varepsilon) = 499{,}6 \cdot 1{,}15\,\mathrm{MPa} \approx 575\,\mathrm{MPa}$.
+6. Dopustna napetost: $\sigma_\mathrm{dop} = \dfrac{350{,}1}{1{,}5}\,\mathrm{MPa} \approx 233{,}4\,\mathrm{MPa}$.
+7. Potrebni presek $S = \dfrac{80\,000}{233{,}4}\,\mathrm{mm^2} \approx 342{,}7\,\mathrm{mm^2}$, premer $d = \sqrt{\dfrac{4S}{\pi}} \approx 20{,}9\,\mathrm{mm}$, zato izberemo $21\,\mathrm{mm}$.
+8. S $d = 21\,\mathrm{mm}$: $S = \dfrac{\pi \cdot 21^2}{4} \approx 346{,}4\,\mathrm{mm^2}$, napetost $\dfrac{80\,000}{346{,}4}\,\mathrm{MPa} \approx 231\,\mathrm{MPa}$ je pod mejo tečenja, zato velja Hookov zakon.
+9. $\Delta L = \dfrac{F L_0}{E S} = \dfrac{80\,000 \cdot 2000}{210\,000 \cdot 346{,}4}\,\mathrm{mm} \approx 2{,}20\,\mathrm{mm}$.
+10. Odgovor: $E \approx 210\,\mathrm{GPa}$, $R_{p0,2} \approx 350\,\mathrm{MPa}$, $R_m \approx 500\,\mathrm{MPa}$, $A = 22\,\%$, $Z \approx 58\,\%$; prava napetost pri največji sili je okoli $575\,\mathrm{MPa}$; palica mora imeti premer $21\,\mathrm{mm}$ in se podaljša za okoli $2{,}2\,\mathrm{mm}$.
+
+### Naloga 2
+
+Natančno definiraj inženirsko in pravo napetost. Dokaži, da pri enakomerni deformaciji s stalno prostornino velja $\sigma_\mathrm{p} = \sigma(1 + \varepsilon)$, in utemelji, zakaj inženirska krivulja po $R_m$ pade, čeprav se material še utrjuje. Izpelji, koliko prožne energije na enoto prostornine sprejme material do meje tečenja, in jo izračunaj za jeklo z $R_e = 355\,\mathrm{MPa}$ in $E = 210\,\mathrm{GPa}$.
+
+**Rešitev:**
+
+1. Inženirska napetost je $\sigma = F/S_0$ (prvotni presek), prava $\sigma_\mathrm{p} = F/S$ (trenutni presek).
+2. Stalna prostornina: $S L = S_0 L_0$; z $L = L_0(1 + \varepsilon)$ dobimo $S = \dfrac{S_0}{1 + \varepsilon}$.
+3. $\sigma_\mathrm{p} = \dfrac{F}{S} = \dfrac{F(1 + \varepsilon)}{S_0} = \sigma(1 + \varepsilon)$; pogoj je enakomerna deformacija, torej velja le do nastanka vratu.
+4. Po $R_m$ se deformacija zbere v vratu, presek tam hitro pada. Utrjevanje ne nadomesti več zmanjšanja preseka, zato sila $F$ pada; inženirska napetost deli padajočo silo s stalnim $S_0$ in pade, prava pa deli s še hitreje padajočim $S$ in raste.
+5. Do meje tečenja je $\sigma = E\varepsilon$, delo na enoto prostornine je ploščina pod premico: $U_\mathrm{p} = \int_0^{\varepsilon_e} E\varepsilon\,\mathrm{d}\varepsilon = \tfrac12 E\varepsilon_e^2 = \dfrac{R_e^2}{2E}$.
+6. $U_\mathrm{p} = \dfrac{355^2}{2 \cdot 210\,000}\,\mathrm{MPa} \approx 0{,}300\,\mathrm{MJ/m^3}$.
+7. Odgovor: $\sigma_\mathrm{p} = \sigma(1 + \varepsilon)$ do nastanka vratu; inženirska krivulja pade, ker pada sila; jeklo do meje tečenja shrani okoli $0{,}30\,\mathrm{MJ/m^3}$ prožne energije.
+
 ## Drugače: Z analogijo
 
 Predstavljaj si tri stvari iz trgovine: gumico, žvečilni gumi in prepečenec.
@@ -156,7 +203,7 @@ Predstavljaj si tri stvari iz trgovine: gumico, žvečilni gumi in prepečenec.
 
 ## Drugače: Bolj natančno
 
-**Inženirska in prava napetost.** Inženirska napetost deli s $S_0$, prava s trenutnim presekom: $\sigma_{\text{p}} = F/S$. Ker se ob nastanku vratu presek hitro manjša, inženirska krivulja po $R_m$ pade, prava pa raste vse do loma. Pri enakomerni deformaciji (stalna prostornina) velja $\sigma_{\text{p}} = \sigma(1 + \varepsilon)$.
+**Prava deformacija.** Tako kot napetost lahko tudi raztezek računamo glede na trenutno dolžino: $\mathrm{d}\varepsilon_\mathrm{p} = \mathrm{d}L/L$, z integracijo $\varepsilon_\mathrm{p} = \ln(L/L_0) = \ln(1 + \varepsilon)$. Pri majhnih raztezkih sta obe meri skoraj enaki, pri velikih (preoblikovanje, valjanje) pa računamo s pravimi vrednostmi, ker se seštevajo.
 
 **Energija.** Ploščina pod krivuljo $\sigma$–$\varepsilon$ je delo na enoto prostornine, ki ga material sprejme do loma, v $\mathrm{J/m^3}$. Material z veliko $R_m$ in veliko $A$ ima veliko ploščino in je žilav. Charpyjev $\mathrm{KV}$ to meri pri udarcu in z zarezo, kar je strožje.
 
@@ -214,12 +261,22 @@ F | sila | | N | pri meji tečenja F = Rₑ · S
 d | povprečna diagonala vtiska | d = \dfrac{d_1 + d_2}{2} | mm | v S = πd²/4 premer palice
 d_1, d_2 | izmerjeni diagonali vtiska | | mm
 R_e | meja tečenja | | MPa |
+R_{p0,2} | dogovorna meja tečenja | | MPa | 0,2 % trajnega raztezka
+R_m | natezna trdnost | R_m = \dfrac{F_{\max}}{S_0} | MPa |
+\sigma | inženirska napetost | \sigma = \dfrac{F}{S_0} | MPa |
+\sigma_\mathrm{p} | prava napetost | \sigma_\mathrm{p} = \dfrac{F}{S} | MPa | enakomerna deformacija: σ(1 + ε)
+\varepsilon | raztezek (relativni podaljšek) | \varepsilon = \dfrac{\Delta L}{L_0} | – |
+E | modul elastičnosti | \sigma = E\,\varepsilon | MPa | jekla ≈ 210 GPa
+\nu | Poissonovo število | \varepsilon_\mathrm{q} = -\nu\,\varepsilon | – | jekla ≈ 0,3
+U_\mathrm{p} | prožna energija na enoto prostornine | U_\mathrm{p} = \dfrac{R_e^2}{2E} | MJ/m^3 | 1 MPa = 1 MJ/m³
 S | ploščina prečnega prereza | S = \dfrac{\pi d^2}{4} | mm^2 |
 \mathrm{KV} | udarna žilavost (porabljena energija po Charpyju) | \mathrm{KV} = m g (h_1 - h_2) | J |
 m | masa nihala | | kg |
 g | težni pospešek | | m/s^2 | 9,81 m/s²
 h_1 | začetna višina nihala | | m |
 h_2 | višina, do katere se nihalo dvigne po lomu | | m |
+h_0 | višina, do katere se nihalo dvigne brez epruvete (prosti nihaj) | | m | h₁ − h₀ so izgube trenja in upora zraka
+h_{2,\max} | največja dopustna višina po lomu | h_{2,\max} = h_0 - \dfrac{\mathrm{KV}_{\min}}{m g} | m |
 m_{\text{pl}} | masa pločevine | | kg |
 A | raztezek po pretrgu | A = \dfrac{L_u - L_0}{L_0} \cdot 100\,\% | \% |
 L_u | merilna dolžina po pretrgu | | mm |
