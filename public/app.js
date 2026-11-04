@@ -1389,7 +1389,10 @@ $("#settings-form").addEventListener("submit", async (e) => {
   fillDeleteCard();
   refreshProfileButton();
   renderState(null);
-  if (levelChanged(before, updated.settings)) state.pathKey = null;
+  if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
+    state.pathKey = null; // Ponavljanje in Kartice (state.pathKey) za novi predmet, ne za prejšnjega
+    refreshModes();
+  }
   // Prehod OŠ → SŠ ali SŠ → fakulteta: na Učni poti pokažemo, kaj je novega.
   const up = stageUp(before, updated.settings);
   if (up) {
