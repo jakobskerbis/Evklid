@@ -127,6 +127,9 @@ export default async function narisi(host, { potem } = {}) {
     sl.querySelector("output").replaceWith(vnos); // vnosno polje namesto izpisa vrednosti
     const pokazi = () => (vnos.value = st(Number(sl.get()), d));
     sl.input.addEventListener("input", pokazi);
+    // set (pripenjanje ob vlečenju, puščice finega drsnika) ne sproži dogodka input: polje osveži tu.
+    const set = sl.set;
+    sl.set = (v, tiho) => (set(v, tiho), pokazi());
     vnos.addEventListener("keydown", (e) => e.key === "Enter" && vnos.blur());
     vnos.addEventListener("focus", () => ustavi()); // predvajanje ne prepisuje vnosa
     vnos.addEventListener("change", () => {

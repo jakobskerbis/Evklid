@@ -26,8 +26,8 @@ export default function narisi(host, vrsta = "aritmeticno") {
   let a1 = ar ? 2 : 1, k = ar ? 1.5 : 1.5, n = 5;
   const sA = S.drsnik({ label: "a₁", min: -4, max: 4, step: 0.5, value: a1, digits: 1, barva: "ploskev", onInput: (v) => ((a1 = ar ? v : brezNic(v, a1, 0.1)), a1 !== v && sA.set(a1, true), izris()) });
   const sK = ar
-    ? S.drsnik({ label: "d", min: -2, max: 2, step: 0.5, value: k, digits: 1, barva: "izbor", onInput: (v) => ((k = v), izris()) })
-    : S.drsnik({ label: "q", min: -2, max: 2, step: 0.25, value: k, digits: 2, barva: "izbor", onInput: (v) => ((k = brezNic(v, k, 0.01)), k !== v && sK.set(k, true), izris()) });
+    ? S.drsnik({ pripni: [0], label: "d", min: -2, max: 2, step: 0.5, value: k, digits: 1, barva: "izbor", onInput: (v) => ((k = v), izris()) })
+    : S.drsnik({ pripni: [-1, 1], label: "q", min: -2, max: 2, step: 0.25, value: k, digits: 2, barva: "izbor", onInput: (v) => ((k = brezNic(v, k, 0.01)), k !== v && sK.set(k, true), izris()) });
   S.drsnik({ zvezno: false, label: "n", min: 1, max: N_MAX, step: 1, value: n, digits: 0, barva: "glavna", onInput: (v) => ((n = v), izris()) });
 
   function izris() {

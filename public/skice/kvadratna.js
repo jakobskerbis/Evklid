@@ -22,7 +22,7 @@ export default function narisi(host) {
   let a = 1, p = 1, q = -2;
   const slA = S.drsnik({ label: "a", min: -2, max: 2, step: 0.5, value: a, digits: 1, barva: "glavna", onInput: (v) => ((a = brezNic(v, a)), a !== v && slA.set(a, true), izris()) });
   S.drsnik({ label: "p", min: -3, max: 3, step: 0.5, value: p, digits: 1, barva: "izbor", onInput: (v) => ((p = v), izris()) });
-  S.drsnik({ label: "q", min: -3, max: 3, step: 0.5, value: q, digits: 1, barva: "druga", onInput: (v) => ((q = v), izris()) });
+  S.drsnik({ pripni: [0], label: "q", min: -3, max: 3, step: 0.5, value: q, digits: 1, barva: "druga", onInput: (v) => ((q = v), izris()) });
 
   function izris() {
     const k = kvadratna(a, p, q);
