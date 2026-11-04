@@ -2740,5 +2740,9 @@
   "pp.taskN": "Swali {n}",
   "pp.taskMsg": "Ninafanya mtihani wa zamani {paper}, swali {n}. Ninatuma picha ya swali. Niongoze kwa vidokezo kwa mtindo wa mtihani huu na usinifunulie jibu mpaka nijaribu mwenyewe.",
   "pp.boxMsg": "Ninafanya mtihani wa zamani {paper}, ukurasa {page}. Ninatuma picha ya swali. Niongoze kwa vidokezo kwa mtindo wa mtihani huu na usinifunulie jibu mpaka nijaribu mwenyewe.",
-  "pp.taskText": "Maandishi ya swali kutoka kwenye mtihani (fomula zinaweza kuharibika; picha ndiyo sahihi):"
+  "pp.taskText": "Maandishi ya swali kutoka kwenye mtihani (fomula zinaweza kuharibika; picha ndiyo sahihi):",
+  "task.checkLeft": "zimebaki sekunde {n} hivi",
+  "task.checkAlmost": "karibu tayari",
+  "guide.title": "Mwongozo wa programu",
+  "guide.intro": "Nini kiko wapi kwenye programu. Gusa sehemu ili kuifungua."
 }

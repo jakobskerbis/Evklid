@@ -2742,5 +2742,9 @@
   "pp.taskN": "Aufgabe {n}",
   "pp.taskMsg": "Ich bearbeite die frühere Prüfung {paper}, Aufgabe {n}. Ich schicke ein Bild der Aufgabe. Führe mich mit Hinweisen im Stil dieser Prüfung und verrate die Lösung nicht, bevor ich es selbst versucht habe.",
   "pp.boxMsg": "Ich bearbeite die frühere Prüfung {paper}, Seite {page}. Ich schicke ein Bild der Aufgabe. Führe mich mit Hinweisen im Stil dieser Prüfung und verrate die Lösung nicht, bevor ich es selbst versucht habe.",
-  "pp.taskText": "Aufgabentext aus der Prüfung (Formeln können fehlerhaft sein, maßgeblich ist das Bild):"
+  "pp.taskText": "Aufgabentext aus der Prüfung (Formeln können fehlerhaft sein, maßgeblich ist das Bild):",
+  "task.checkLeft": "noch etwa {n} s",
+  "task.checkAlmost": "gleich fertig",
+  "guide.title": "App-Anleitung",
+  "guide.intro": "Was wo in der App ist. Tippe auf einen Bereich, um ihn zu öffnen."
 }
