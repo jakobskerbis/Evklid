@@ -108,3 +108,17 @@ details .card { margin-top: 8px; }
 .plan-upgrade .form-actions {
   flex-wrap: wrap;
 }
+/* Garancija »Boljša ocena ali vrnemo denar« in »Podari Evklid« (garancija-ui.js) */
+.guarantee-line { display: flex; gap: 8px; align-items: flex-start; margin: 4px 0; }
+.guarantee-line svg { flex: none; color: var(--ok); margin-top: 3px; }
+.podari-addon { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; margin: 0; min-width: 0; }
+.podari-addon legend { padding: 0 4px; font-weight: 600; }
+.podari-opts { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.podari-opts .check { min-height: 40px; align-items: center; }
+.podari-count { font-weight: 600; }
+.gar-weeks { list-style: none; padding: 0; margin: 8px 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; max-width: 420px; }
+.gar-week { display: flex; align-items: center; justify-content: center; min-height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85em; color: var(--muted); }
+.gar-week.ok { color: var(--ok); border-color: currentColor; }
+.gar-week.miss { color: var(--danger); border-color: currentColor; }
+.gar-week.now { color: var(--text); border-color: var(--accent); border-width: 2px; }
+.gar-week svg { width: 18px; height: 18px; }
