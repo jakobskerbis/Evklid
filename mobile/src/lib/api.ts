@@ -53,6 +53,8 @@ export async function loadSession() {
 }
 
 export const hasSession = () => !!session;
+// Za spletno stran v aplikaciji (src/app/web.tsx): ista seja in naprava kot zahteve aplikacije.
+export const appHeaders = (): Record<string, string> => ({ "x-app-client": APP_HEADER, "x-app-device": device || "", ...(session ? { authorization: `Bearer ${session}` } : {}) });
 export const onSessionChange = (fn: () => void) => {
   listeners.add(fn);
   return () => {

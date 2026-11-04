@@ -12,7 +12,7 @@ import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
-import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail } from "./email.js";
+import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
 import { buildWeeklyReport, weekKey, isSendTime } from "./weekly.js";
 import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-reminder.js";
@@ -90,6 +90,11 @@ export function mountAccounts(app, store, opts = {}) {
   // Povezava za potrditev ali novo geslo v odgovoru (ko e-pošta ni nastavljena) samo na računalniku s strežnikom
   // ali za skupnim geslom; sicer bi kdorkoli prevzel tuj račun (»pozabljeno geslo«) ali potrdil izmišljen e-naslov.
   const forgotThrottle = new Throttle(5, 3600000); // pošiljanje povezav za novo geslo: 5 na uro
+  // Prošnja za starše (premlad za lasten račun): z enega naslova IP 3 na uro, na isti e-naslov 2 na dan.
+  const inviteIpThrottle = new Throttle(3, 3600000);
+  const inviteToThrottle = new Throttle(2, 24 * 3600000);
+  // Skupaj največ 30 na dan za ves strežnik, da prošnje ne porabijo kvote Resend za potrditve in gesla.
+  const inviteAllThrottle = new Throttle(30, 24 * 3600000);
   const devLinks = (req) => !mailer.enabled && (isLocalRequest(req) || gateNeeded(env));
   const locks = new ProfileLocks(db);
   // Geslo profila ločuje profile na istem računu (brat ne odpre sestrinega). Račun z enim profilom ga ne
@@ -209,6 +214,16 @@ export function mountAccounts(app, store, opts = {}) {
   // Brezplačni profil nad mejo paketa: s kreditom nadaljuje, strošek gre iz kredita (server/usage.js chargeCredit).
   const freeOver = (studentId) => !premiumFor(studentId) && !!freeBudgetReason(studentId);
   aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver });
+
+  // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
+  // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
+  // null = brez meje (stari profili, meja 0 v nastavitvah). Mesečni delež še vedno omeji usage.blockReason.
+  const dailyLimitFor = (studentId, r = rightsFor(studentId)) => {
+    if (r.dailyQuestions === null) return null;
+    const owner = ownerOf(studentId);
+    const credit = owner ? credits.balance(owner) / Math.max(1, childIds(owner).length) : 0;
+    return Math.max(r.dailyQuestions, aiUsage.dailyLimit(studentId, { credit }) ?? 0);
+  };
 
   // Interaktivni del lekcije: Osebno za vse teme, šolska licenca za svoje predmete in razrede.
   const lessonInteractive = (studentId, topicId) => lessonOpen(rightsFor(studentId), topicId);
@@ -359,7 +374,8 @@ export function mountAccounts(app, store, opts = {}) {
       }
     }
 
-    // Vprašanja inštruktorju na dan: brezplačni paket (10) ali vsota šolske licence (15) in Osebno (60).
+    // Vprašanja inštruktorju na dan: brezplačni paket (10); plačljivi paketi in šolska licenca vsaj vsota
+    // šolske licence (15) in Osebno (60), s proračunom AI več (dailyLimitFor).
     if (c && req.method === "POST" && /\/messages$/i.test(req.path)) {
       const r = rightsFor(studentId);
       if (!r.personal && !r.school) {
@@ -371,11 +387,14 @@ export function mountAccounts(app, store, opts = {}) {
             upgrade: !!guests.netOf(studentId) || upsell(studentId),
           });
         }
-      } else if (r.dailyQuestions && questionsToday(studentId) >= r.dailyQuestions) {
-        return res.status(429).json({
-          error: `Danes si porabil vseh ${r.dailyQuestions} vprašanj za inštruktorja. Jutri jih spet dobiš. Vadnica in lekcije delujejo naprej neomejeno.`,
-          limit: true,
-        });
+      } else {
+        const limit = dailyLimitFor(studentId, r);
+        if (limit && questionsToday(studentId) >= limit) {
+          return res.status(429).json({
+            error: `Danes si porabil vseh ${limit} vprašanj za inštruktorja. Jutri dobiš nova. Vadnica in lekcije delujejo naprej neomejeno.`,
+            limit: true,
+          });
+        }
       }
     }
     // Mesečna meja porabe brezplačnega paketa velja za vse klice AI (inštruktor, branje zapisa, fotografija urnika).
@@ -611,6 +630,24 @@ export function mountAccounts(app, store, opts = {}) {
     res.json({ ok: true });
   });
 
+  // Premlad za lasten račun (checkAge): Evklid pošlje staršu povezavo na stran za starše.
+  // Naslova ne shranimo; besedilo je stalno, zato ga ni mogoče zlorabiti za poljubna sporočila.
+  app.post("/api/auth/ask-parent", json, async (req, res) => {
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    if (!EMAIL_RE.test(email) || email.length > 200) return res.status(400).json({ error: "Vpiši veljaven e-naslov starša." });
+    const net = netKey(req.ip);
+    if (inviteIpThrottle.blocked(net) || inviteToThrottle.blocked(email) || inviteAllThrottle.blocked("*")) return res.status(429).json({ error: "Preveč sporočil. Poskusi čez eno uro ali pošlji povezavo drugače." });
+    if (!mailer.enabled && !devLinks(req)) return res.status(503).json({ error: "Pošiljanje e-pošte trenutno ne deluje. Pošlji povezavo drugače.", mail: false });
+    inviteIpThrottle.fail(net);
+    inviteToThrottle.fail(email);
+    inviteAllThrottle.fail("*");
+    const name = String(req.body?.name || "").replace(/[^\p{L}\p{M} '-]/gu, "").replace(/\s+/g, " ").trim().slice(0, 30);
+    const url = `${baseUrl(req)}/starsi.html${name ? `?ime=${encodeURIComponent(name)}` : ""}`;
+    const sent = await sendMail(email, parentInviteEmail(url, name));
+    if (!sent) return res.status(502).json({ error: "Sporočila ni bilo mogoče poslati. Pošlji povezavo drugače.", mail: false });
+    res.json({ ok: true });
+  });
+
   app.post("/api/auth/forgot", json, async (req, res) => {
     const email = String(req.body?.email || "").trim().toLowerCase();
     if (forgotThrottle.blocked(email) || forgotThrottle.blocked(req.ip)) return res.status(429).json({ error: "Preveč poskusov. Poskusi čez eno uro." });
@@ -820,13 +857,15 @@ export function mountAccounts(app, store, opts = {}) {
             const { display_text, ...rest } = openMessage(m);
             return { role: rest.role, text: display_text, has_image: rest.has_image, created_at: rest.created_at };
           }),
+          // Sprotni povzetek starejšega dela pogovora (server/povzetek.js), ki ga vidi le inštruktor.
+          summary: store.getSummary(conv.id)?.text || null,
         })),
         events: q("SELECT subject, topic, error, mode, flag, created_at FROM events WHERE student_id = ?", c.id),
         topics: q("SELECT * FROM topic_state WHERE student_id = ?", c.id),
         tasks: q("SELECT topic_id, mode, level, attempts, hint_used, solved, first_try_correct, last_answer, created_at FROM tasks WHERE student_id = ?", c.id),
         xp: q("SELECT amount, reason, created_at FROM xp_events WHERE student_id = ?", c.id),
         // Prijave napak (server/reports.js): tudi opomba učenca so njegovi podatki.
-        reports: q("SELECT message_id, reason, note, question, answer, created_at FROM message_reports WHERE student_id = ?", c.id).map(openReport),
+        reports: q("SELECT message_id, reason, note, question, answer, device, created_at FROM message_reports WHERE student_id = ?", c.id).map(openReport),
         lesson_reports: (() => {
           try {
             return q("SELECT kind, topic_id, step, reason, note, created_at FROM bug_reports WHERE student_id = ? AND kind = 'lesson'", c.id).map((r) => ({ ...r, note: unseal(r.note) }));

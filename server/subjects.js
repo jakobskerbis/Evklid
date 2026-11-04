@@ -30,3 +30,13 @@ export const SUBJECT_NAMES = {
   RAC: "Računalništvo",
   EKO: "Ekonomija",
 };
+
+// Snov za izbrani predmet (ponavljanje, kartice pod gumbi učne poti, j 4. 11.). Naravoslovje
+// v 6./7. razredu zajema fiziko, kemijo in biologijo, zato se ti predmeti ujemajo z njim
+// (in obratno, da osvojene teme iz naravoslovja v 8. razredu ne izginejo iz ponavljanja).
+// Brez izbranega predmeta ali brez predmeta pri snovi (stare kartice) se ujema vse.
+const NAR_GROUP = ["NAR", "FIZ", "KEM", "BIO"];
+export function sameSubject(subject, selected) {
+  if (!selected || !subject || subject === selected) return true;
+  return NAR_GROUP.includes(subject) && NAR_GROUP.includes(selected) && (subject === "NAR" || selected === "NAR");
+}

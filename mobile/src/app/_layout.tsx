@@ -1,5 +1,6 @@
-// Korenska postavitev: prijava → izbira profila → zavihki. Zasloni nad zavihki (lekcija, vaje,
-// pogovor, naročnina) se odprejo kot naravni sklad (iOS: potisk z robu nazaj, Android: gumb nazaj).
+// Korenska postavitev: prijava → spletna stran Evklida v aplikaciji (src/app/web.tsx, j 2026-11-04: splet in
+// aplikacija vedno enaka). Naravni zavihki (učna pot, vaje, pogovor …) ostanejo za vaje brez povezave in se
+// odprejo iz zaslona »Ni povezave«; zasloni nad njimi so naravni sklad (iOS: potisk z robu, Android: nazaj).
 import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Modal, Text, View } from "react-native";
 import { Stack, router } from "expo-router";
@@ -69,15 +70,22 @@ function Root() {
   // Dotik obvestila odpre učno pot.
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener(() => {
-      if (signedIn && student) router.navigate("/");
+      if (signedIn) router.navigate("/web");
     });
     return () => sub.remove();
-  }, [signedIn, student]);
+  }, [signedIn]);
+
+  // Po prijavi (in ob zagonu prijavljene aplikacije) se odpre spletna stran; tudi po »Nadaljuj tukaj« (epoch
+  // znova izriše Stack, ki se sicer odpre na prvem zaslonu, naravni učni poti).
+  // fontsDone: Stack je že izrisan (prej navigacija ne gre).
+  useEffect(() => {
+    if (ready && fontsDone && signedIn) router.replace("/web");
+  }, [ready, fontsDone, signedIn, epoch]);
 
   if (!ready || !fontsDone) return null;
   // Kam gre zaščiten zaslon, ki ga ni mogoče odpreti. Brez tega Expo Router izbere prvi prosti zaslon
   // po abecedi: ob prvem zagonu se je odprlo »Pozabljeno geslo« namesto prijave.
-  const home = !signedIn ? "/sign-in" : !student ? "/profiles" : "/";
+  const home = !signedIn ? "/sign-in" : "/web";
   const header = { headerTintColor: th.accent, headerStyle: { backgroundColor: th.bg }, headerTitleStyle: { color: th.text, ...(font(700) as { fontFamily?: string; fontWeight?: "700" }) }, contentStyle: { backgroundColor: th.bg }, headerBackButtonDisplayMode: "minimal" as const };
   return (
     <>
@@ -89,6 +97,9 @@ function Root() {
           <Stack.Screen name="sign-in" options={{ headerShown: false }} />
           <Stack.Screen name="register" options={{ title: t("mob.register") }} />
           <Stack.Screen name="forgot" options={{ title: t("mob.forgot"), presentation: "modal" }} />
+        </Stack.Protected>
+        <Stack.Protected guard={signedIn} redirectTo={home}>
+          <Stack.Screen name="web" options={{ headerShown: false }} />
         </Stack.Protected>
         <Stack.Protected guard={signedIn && !student} redirectTo={home}>
           <Stack.Screen name="profiles" options={{ title: t("mob.profiles"), headerLargeTitle: true }} />

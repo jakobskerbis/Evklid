@@ -81,6 +81,20 @@ export function verifyEmail(url) {
   };
 }
 
+// Prošnja otroka, mlajšega od starosti digitalne privolitve: starš dobi povezavo na stran za starše.
+// Naslova starša ne shranimo; ime je neobvezno in že očiščeno (samo črke, presledki, vezaji).
+export function parentInviteEmail(url, name = "") {
+  const who = name ? esc(name) : "Vaš otrok";
+  return {
+    subject: "Prošnja za dovoljenje za Evklid", // stalna zadeva: ime, ki ga vpiše obiskovalec, je samo v besedilu
+    html: layout(
+      "Prošnja za dovoljenje",
+      `<p>${who} bi rad(a) uporabljal(a) Evklid, inštruktorja AI za matematiko, fiziko in kemijo. Za otroke račun ustvari starš ali skrbnik.</p><p>Na spodnji povezavi piše, kaj je Evklid, katere podatke hranimo in koliko stane. Ko ustvarite račun in dodate otrokov profil, se lahko začne učiti.</p>${button(url, "Preberite več in ustvarite račun")}<p style="font-size:13px;color:#5f6779">Če otroka ne poznate, sporočilo prezrite. Vašega e-naslova nismo shranili.</p>`,
+    ),
+    text: `${name || "Vaš otrok"} bi rad(a) uporabljal(a) Evklid, inštruktorja AI za matematiko, fiziko in kemijo. Za otroke račun ustvari starš ali skrbnik. Več in registracija: ${url}`,
+  };
+}
+
 export function resetEmail(url) {
   return {
     subject: "Novo geslo za Evklid",

@@ -6,7 +6,9 @@
 //   node scripts/primerjava-modelov.js --dry          izpiše izbrane naloge in oceno stroška, brez klicev
 //   node scripts/primerjava-modelov.js                zažene (potrebuje ANTHROPIC_API_KEY)
 // Možnosti: --n 50 (število nalog), --modes chat,mid (tudi think, deep), --max-usd 5 (ustavi se pred mejo),
-//           --out data/primerjava-modelov.md, --seed 1
+//           --out data/primerjava-modelov.md, --seed 1,
+//           --groups ss,tek (le te stopnje: os, ss, tek, uni),
+//           --from data/primerjava-modelov.json (iste naloge kot prejšnji zagon, npr. za primerjavo z drugim načinom)
 // Brez ključa (ali z EVKLID_MOCK=1) teče v preizkusnem načinu: odgovori in ocene so izmišljeni, strošek 0.
 import "../server/env.js";
 import fs from "node:fs";
@@ -31,6 +33,11 @@ const MODES = arg("modes", "chat,mid").split(",").filter((m) => ["chat", "think"
 const MAX_USD = Number(arg("max-usd", 5));
 const OUT = path.resolve(root, arg("out", "data/primerjava-modelov.md"));
 const MOCK = isMockMode();
+const GROUP_KEYS = { os: "osnovna šola", ss: "srednja šola", tek: "tekmovanja", uni: "fakulteta" };
+const GROUPS = arg("groups", "")
+  .split(",")
+  .map((g) => GROUP_KEYS[g.trim()])
+  .filter(Boolean);
 const LABEL = { chat: "Haiku", think: "Haiku (več razmisleka)", mid: "Sonnet", deep: "Opus" };
 
 // --- 1. Naloge iz lekcij --------------------------------------------------
@@ -170,7 +177,15 @@ async function grade(ex, answer) {
 }
 
 // --- 4. Zagon ----------------------------------------------------------------
-const tasks = pick();
+// --from: naloge iz prejšnjega poročila (lekcije se medtem spreminjajo, zato izbor s semenom ni nujno enak).
+const FROM = arg("from", "");
+const fromRows = () => {
+  const seen = new Set();
+  return JSON.parse(fs.readFileSync(path.resolve(root, FROM), "utf8"))
+    .filter((r) => !seen.has(r.id) && seen.add(r.id))
+    .map(({ id, path: p, title, task, solution, hard }) => ({ id, path: p, title, task, solution, hard }));
+};
+const tasks = (FROM ? fromRows() : pick()).filter((t) => !GROUPS.length || GROUPS.includes(group(t.path)));
 const est = estimate(tasks.length);
 const eur = EUR_PER_USD();
 console.log(`Naloge: ${tasks.length} (${Object.entries(tasks.reduce((a, t) => ((a[group(t.path)] = (a[group(t.path)] || 0) + 1), a), {})).map(([k, v]) => `${k} ${v}`).join(", ")})`);
@@ -211,8 +226,10 @@ for (const [i, t] of tasks.entries()) {
       // Napaka klica ne sme zavreči že plačanih rezultatov.
       g = { ocena: "neocenjeno", rezultat_podan: false, razlog: `napaka klica: ${String(err?.message || err).slice(0, 200)}`, usd: 0 };
     }
-    spent += usd + g.usd;
-    rows.push({ ...t, mode: m, answer, usd, ...g });
+    // Cena ocene (Opus) je ločena od cene odgovora, sicer bi stolpec »Cena na odgovor« kazal ceno ocenjevanja.
+    const { usd: gradeUsd = 0, ...verdict } = g;
+    spent += usd + gradeUsd;
+    rows.push({ ...t, mode: m, answer, usd, grade_usd: gradeUsd, ...verdict });
     console.log(`[${i + 1}/${tasks.length}] ${LABEL[m].padEnd(8)} ${String(g.ocena).padEnd(13)} ${t.id}  (skupaj ${spent.toFixed(2)} $)`);
   }
   if (stopped) {

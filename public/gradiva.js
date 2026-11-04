@@ -38,8 +38,11 @@ function say(root, msg) {
 // Stran za tisk odpremo v novem oknu: okno odpremo takoj (sicer ga brskalnik blokira), vsebino
 // naložimo s prijavo trenutne seje in jo zapišemo vanj (base: poti do slogov in KaTeX).
 export async function openPrintable(url, onError, headers = {}) {
-  const w = window.open("", "_blank");
-  if (!w) return onError(t("gr.popup"));
+  // V aplikaciji (spletna stran v WebView, mobile/src/app/web.tsx) novih oken ni: window.open bi izpraznil
+  // stran. Preverimo dostop (napake kot na spletu) in stran odpremo kar tu; nazaj z gumbom nazaj ali potegom.
+  const inApp = / EvklidApp\//.test(navigator.userAgent) && !Object.keys(headers).length;
+  const w = inApp ? null : window.open("", "_blank");
+  if (!w && !inApp) return onError(t("gr.popup"));
   try {
     w.document.title = "Evklid";
     w.document.body.textContent = "…";
@@ -48,15 +51,16 @@ export async function openPrintable(url, onError, headers = {}) {
   try {
     r = await fetch(url, { headers });
   } catch {
-    w.close();
+    w?.close();
     return onError(t("off.noConnection"));
   }
-  if (w.closed) return; // uporabnik je okno zaprl, preden je stran prišla
+  if (w?.closed) return; // uporabnik je okno zaprl, preden je stran prišla
   if (!r.ok) {
     const e = await r.json().catch(() => ({}));
-    w.close();
+    w?.close();
     return onError(e.code && t(e.code) !== e.code ? t(e.code) : e.error || t("common.error", { status: r.status }));
   }
+  if (!w) return location.assign(url); // v aplikaciji: dostop je preverjen, stran odpremo tu
   const html = (await r.text()).replace("<head>", `<head><base href="${location.origin}/">`);
   w.document.open();
   w.document.write(html);

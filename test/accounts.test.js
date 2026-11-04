@@ -215,6 +215,46 @@ test("free tier limits tutor questions; subscription via webhook lifts it", asyn
   }
 });
 
+test("daily tutor questions: the plan's limit is the floor, the AI budget raises it; the free plan keeps its own", async () => {
+  process.env.EVKLID_FREE_DAILY_QUESTIONS = "2";
+  process.env.EVKLID_OSEBNO_DAILY_QUESTIONS = "3";
+  process.env.EVKLID_DAILY_QUESTIONS_MAX = "5";
+  try {
+    await withServer(async ({ client, calls, store }) => {
+      const askAll = async (a, n) => {
+        const kid = (await a("/api/students", { method: "POST", body: { name: "Lan", birth_year: YEAR - 10, consent: true } })).body;
+        const conv = (await a(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
+        const out = [];
+        for (let i = 0; i < n; i++) out.push((await a(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: `vprašanje ${i}` } })).status);
+        return out;
+      };
+      // Brez proračuna: stalna meja Osebno (tu 3).
+      const trial = client();
+      await registerVerified(trial, calls, "meja@preizkus.si");
+      const first = await askAll(trial, 4);
+      assert.deepEqual(first, [200, 200, 200, 429]);
+      // S proračunom (200 $, malo učencev): meja zraste do zgornje meje (tu 5); brezplačni paket ostane 2.
+      store.db.prepare("INSERT INTO kv (key, value) VALUES ('budget_base_usd', '200') ON CONFLICT(key) DO UPDATE SET value = excluded.value").run();
+      const trial2 = client();
+      await registerVerified(trial2, calls, "meja2@preizkus.si");
+      assert.deepEqual(await askAll(trial2, 6), [200, 200, 200, 200, 200, 429]);
+      const free = client();
+      const p = await registerVerified(free, calls, "meja@brezplacno.si");
+      store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(p.id);
+      assert.deepEqual(await askAll(free, 3), [200, 200, 429]);
+      // Zgornja meja pod stalno mejo paketa: velja stalna meja (proračun meje nikoli ne zniža).
+      process.env.EVKLID_DAILY_QUESTIONS_MAX = "1";
+      const trial3 = client();
+      await registerVerified(trial3, calls, "meja3@preizkus.si");
+      assert.deepEqual(await askAll(trial3, 4), [200, 200, 200, 429]);
+    });
+  } finally {
+    delete process.env.EVKLID_FREE_DAILY_QUESTIONS;
+    delete process.env.EVKLID_OSEBNO_DAILY_QUESTIONS;
+    delete process.env.EVKLID_DAILY_QUESTIONS_MAX;
+  }
+});
+
 test("free tier stops at the monthly AI budget (all free students and per student)", async () => {
   process.env.EVKLID_FREE_POOL_USD = "0.5";
   process.env.EVKLID_FREE_STUDENT_USD = "0";
@@ -317,12 +357,15 @@ test("weekly report, export and account deletion", async () => {
     assert.equal(consent.under_15, 1);
     assert.equal(consent.parent_email, "gal@primer.si");
 
+    const kidConv = store.createConversation(kid.id);
+    store.setSummary(kidConv.id, "Rešujeta 2x = 10", 20);
     assert.equal((await a("/api/account/export")).status, 404);
     assert.equal((await a("/api/account/export", { method: "POST", body: { password: "narobe123" } })).status, 401);
     const exp = await a("/api/account/export", { method: "POST", body: { password: "geslo1234" } });
     assert.equal(exp.body.children[0].name, "Zala");
     assert.equal(exp.body.parent.password_hash, undefined);
     assert.deepEqual(exp.body.children[0].reports, [], "prijave napak so v izvozu");
+    assert.equal(exp.body.children[0].conversations.find((c) => c.id === kidConv.id).summary, "Rešujeta 2x = 10", "povzetek pogovora je v izvozu");
 
     assert.equal((await a("/api/account", { method: "DELETE", body: { password: "narobe123" } })).status, 401);
     assert.equal((await a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
@@ -1234,3 +1277,23 @@ test("pošta: /healthz/stanje pove, ali Resend sprejema sporočila, brez e-naslo
     server.close();
   }
 });
+
+test("premlad za račun: Evklid pošlje staršu povezavo, naslova ne shrani, omejitve proti zlorabi", () =>
+  withServer(async ({ client, calls, store }) => {
+    const c = client();
+    const r = await c("/api/auth/ask-parent", { method: "POST", body: { email: "Mama@Primer.si", name: "Miha<script>" } });
+    assert.equal(r.status, 200);
+    const mail = calls.filter((x) => x.host === "api.resend.com").at(-1);
+    assert.deepEqual(mail.body.to, ["mama@primer.si"]);
+    assert.equal(mail.body.subject, "Prošnja za dovoljenje za Evklid");
+    assert.match(mail.body.text, /^Mihascript bi rad/);
+    assert.match(mail.body.text, /\/starsi\.html\?ime=Mihascript/);
+    assert.doesNotMatch(mail.body.html, /<script/);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM parents").get().n, 0);
+    assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "ni-naslov" } })).status, 400);
+    // Na isti naslov največ 2 na dan, z istega omrežja 3 na uro.
+    assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "mama@primer.si" } })).status, 200);
+    assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "mama@primer.si" } })).status, 429);
+    assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "oce@primer.si" } })).status, 200);
+    assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "teta@primer.si" } })).status, 429);
+  }));

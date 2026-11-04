@@ -8,6 +8,7 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "./prompt.js";
 import { createStreamFilter, parseMeta, parseCards, stripMeta, stripLeadPhrase } from "./meta.js";
+import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
 import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams } from "./claude.js";
 import { Usage, LIMITS, NOTES, windowHistory, recentHistory } from "./usage.js";
@@ -28,7 +29,9 @@ import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
 import { detectWeakTopics, weaknessesForPrompt } from "./weaknesses.js";
 import { cleanText, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
-import { paperContext, PAPER_NOTE_HEAD } from "./paper-context.js";
+import { paperContext } from "./paper-context.js";
+import { isHiddenNote } from "./skrite-opombe.js";
+import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
 import { mountAccounts } from "./accounts/index.js";
 import { passwordGate, gateNeeded } from "./gate.js";
@@ -55,6 +58,7 @@ import { appVersion, vendorVersion } from "./razlicica.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
+import { startBackups } from "./kopije.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -193,9 +197,10 @@ export function createApp(store, opts = {}) {
   // (scripts/nadzor.js) pa strežnik znova zažene, ko nihče ne čaka na odgovor.
   const version = appVersion();
   const activity = { active: 0, lastSend: 0 };
+  let backups = null; // dnevne varnostne kopije baze (server/kopije.js), nastavljene spodaj
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null });
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
@@ -416,16 +421,33 @@ export function createApp(store, opts = {}) {
     if (req.body?.topic_id && !topic) return res.status(400).json({ error: "Tema ne obstaja." });
     res.status(201).json(store.createConversation(s.id, topic ? { pathTopic: topic.id, title: `Tema: ${topic.name}` } : {}));
   });
+  // »Pokaži celoten postopek«: po treh zaporednih odgovorih v načinu A (vodenje) učenec dobi gumb za celotno
+  // rešitev te naloge (enkratna prošnja, prompt: »Spremembe iz pogovora«). Odgovor v načinu B števec ponastavi.
+  const FULL_AFTER = 3;
+  const fullOffer = (convId) => {
+    const modes = store.db
+      .prepare("SELECT mode FROM events WHERE conversation_id = ? AND message_id IS NOT NULL ORDER BY id DESC LIMIT ?")
+      .all(convId, FULL_AFTER)
+      .map((r) => r.mode);
+    return modes.length === FULL_AFTER && modes.every((m) => m === "A");
+  };
+
   app.get("/api/conversations/:id", (req, res) => {
     const c = loadConversation(req, res);
     if (!c) return;
     const last = store.lastEvent(c.id);
     const reported = new Set(store.db.prepare("SELECT message_id FROM message_reports WHERE conversation_id = ?").all(c.id).map((r) => r.message_id));
+    const msgs = store.listMessages(c.id);
+    const lastMsg = msgs.at(-1);
+    // done ni v tabeli events: prebere se iz META zadnjega odgovora (kot v done ob pošiljanju).
+    const lastText = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
+    const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && last.flag === "none" && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
     res.json({
       ...c,
       state: last ? { subject: last.subject, mode: last.mode } : null,
       topic: c.path_topic ? { id: c.path_topic, name: getTopic(c.path_topic)?.name } : null,
-      messages: store.listMessages(c.id).map((m) => ({
+      messages: msgs.map((m) => ({
+        full_offer: (offerOn && m === lastMsg) || undefined,
         id: m.id,
         code: m.role === "assistant" ? messageCode(m.id) : undefined,
         reported: reported.has(m.id) || undefined,
@@ -486,6 +508,7 @@ export function createApp(store, opts = {}) {
       wantDeep: againStreak >= 2,
       wantThink: againStreak === 1,
       competition: student.settings.track === "COMPETITION",
+      secondary: student.settings.educational_track === "SREDNJA_SOLA",
       lite,
       free: !!accounts && !accounts.premiumFor(student.id),
       deepModel: capped ? MODEL_MID : MODEL_DEEP,
@@ -507,8 +530,17 @@ export function createApp(store, opts = {}) {
     // Naloga iz pretekle pole: navodilo za inštruktorja kot skrit blok (server/paper-context.js), učenec vidi le text.
     const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper });
     if (paperNote) userContent.push({ type: "text", text: paperNote });
-    userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     const isFirst = store.listMessages(conv.id).length === 0;
+    // Prvo vprašanje prostega pogovora: povzetek ujemajoče se lekcije iz učbenika kot skrita opomba
+    // (server/lekcija-za-vprasanje.js). Shranjen s sporočilom, zato se začetek zgodovine ne spreminja.
+    let lesson = null;
+    try {
+      if (isFirst && !conv.path_topic && !paperNote && text) lesson = lessonForQuestion(text, student.settings);
+    } catch (err) {
+      console.warn(`[evklid] iskanje lekcije ni uspelo: ${err?.message || err}`);
+    }
+    if (lesson) userContent.push({ type: "text", text: lessonNote(lesson) });
+    userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     const userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
     const help = isFirst && !image ? helpTasks.get(conv.id) : null;
     if (help) helpTasks.delete(conv.id);
@@ -585,7 +617,21 @@ export function createApp(store, opts = {}) {
       // Naloga, ki jo reši naš preverjeni reševalnik: model dobi pravilen rezultat v skriti opombi.
       const pre = liveCheckOn() && !cached && !image && !win && !hinted ? presolve(text, { first: isFirst }) : null;
       const fullHistory = store.apiHistory(conv.id);
-      const history = deep && !routed.boosted ? recentHistory(fullHistory) : windowHistory(fullHistory);
+      const shortDeep = deep && !routed.boosted;
+      let history = shortDeep ? recentHistory(fullHistory) : windowHistory(fullHistory);
+      // Odrezani starejši del dolgega pogovora: kratek povzetek pred oknom (server/povzetek.js).
+      // V načinu brez API-ja (mock) ne, razen v testih z lastnim streamFn.
+      if (!shortDeep && !cached && !win && !hinted && (!isMockMode() || opts.streamFn)) {
+        history = await summarizedHistory({
+          store,
+          conversationId: conv.id,
+          fullHistory,
+          history,
+          streamFn,
+          signal: controller.signal,
+          log: (r) => r?.usage && usage.log(student.id, r.model || modeParams("lite").model, r.usage, "povzetek"),
+        });
+      }
       // Učenčev rezultat ali trditev: sodbo inštruktorja preveri koda (naloga iz prvega sporočila) ali model,
       // preden učenec odgovor vidi (server/live-check.js, 4). Zato se tak odgovor ne pretaka sproti.
       const textOf = (m) => (Array.isArray(m.content) ? m.content : [{ text: m.content }]).map((b) => b.text || "").join("\n");
@@ -598,7 +644,7 @@ export function createApp(store, opts = {}) {
       let firstPre = null;
       if (claim) {
         // Brez skrite opombe pole (server/paper-context.js), sicer reševalnik prve naloge ne prepozna.
-        const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !x.text?.startsWith(PAPER_NOTE_HEAD)) } : m);
+        const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !isHiddenNote(x.text)) } : m);
         const earlier = fullHistory.filter((m) => m.role === "user").slice(0, -1).map(ownText);
         let at = -1;
         for (let i = earlier.length - 1; i >= 0 && !firstPre; i--) {
@@ -775,7 +821,7 @@ export function createApp(store, opts = {}) {
         });
       }
       // Nepreverjenih kartic učenec še ne vidi (tudi ne v obvestilu »dodane kartice«).
-      if (cards.length && !liveCards) send("cards", { cards: cards.map((c) => ({ id: c.id, front: c.front })), due: store.cards.dueCount(student.id) });
+      if (cards.length && !liveCards) send("cards", { cards: cards.map((c) => ({ id: c.id, front: c.front })), due: store.cards.dueCount(student.id, student.settings.subject || null) });
       if (meta) {
         store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: assistantId, ...meta });
         if (meta.done && conv.path_topic && progress.markMastered(student.id, conv.path_topic, "chat")) {
@@ -794,6 +840,7 @@ export function createApp(store, opts = {}) {
         // Brez ponovnega gumba »Razloži podrobneje«, tudi če je odgovor pripravil hitri model.
         deep: deep || req.body?.deep === true,
         settings: settingsTools.state.used || undefined,
+        full_offer: (meta?.mode === "A" && meta.flag === "none" && !meta.done && !settingsTools.state.used && fullOffer(conv.id)) || undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();
@@ -929,10 +976,12 @@ export function createApp(store, opts = {}) {
     const results = Array.isArray(req.body?.results) ? req.body.results : [];
     res.json({ ...progress.offlineSync(s.id, results), xp: progress.xpSummary(s.id) });
   });
+  // Predmet snovi pod gumbi učne poti: predmet izbrane poti (fakulteta: predmet), sicer predmet iz profila.
+  const subjectFor = (s, key) => getPath(String(key || ""))?.subject || s.settings.subject || null;
   app.post("/api/students/:id/review", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = progress.startReview(s.id, { quick: !!req.body?.quick });
+    const out = progress.startReview(s.id, { quick: !!req.body?.quick, subject: subjectFor(s, req.body?.path) });
     if (!out) return res.json({ finished: true, empty: true });
     res.json(out);
   });
@@ -942,14 +991,15 @@ export function createApp(store, opts = {}) {
     if (!s) return;
     // Priprava na test sledi najbližjemu testu iz urnika (če je učenec ni nastavil sam).
     syncTestPlan(progress, s.id, scheduleView(schedules.get(s.id), s.settings));
-    res.json({ ...progress.modes(s.id, getPath(String(req.query.path || "")) ? String(req.query.path) : pathKeyFor(s.settings)), cardsDue: store.cards.dueCount(s.id) });
+    const key = getPath(String(req.query.path || "")) ? String(req.query.path) : pathKeyFor(s.settings);
+    res.json({ ...progress.modes(s.id, key), cardsDue: store.cards.dueCount(s.id, subjectFor(s, key)) });
   });
 
   // --- kartice za ponavljanje ---
   const cardId = (req) => intParam(req.params.cardId);
   app.get("/api/students/:id/flashcards", (req, res) => {
     const s = loadStudent(req, res);
-    if (s) res.json(store.cards.list(s.id));
+    if (s) res.json(store.cards.list(s.id, subjectFor(s, req.query.path)));
   });
   app.post("/api/students/:id/flashcards", (req, res) => {
     const s = loadStudent(req, res);
@@ -957,7 +1007,7 @@ export function createApp(store, opts = {}) {
     const front = typeof req.body?.front === "string" ? req.body.front : "";
     const back = typeof req.body?.back === "string" ? req.body.back : "";
     if (!front.trim() || !back.trim()) return res.status(400).json({ error: "Kartica potrebuje vprašanje in odgovor." });
-    const [card] = store.cards.add(s.id, [{ front, back }], { source: "own", subject: s.settings.subject });
+    const [card] = store.cards.add(s.id, [{ front, back }], { source: "own", subject: subjectFor(s, req.body?.path) });
     if (!card) return res.status(409).json({ error: "Kartico s tem vprašanjem že imaš." });
     res.status(201).json(card);
   });
@@ -981,7 +1031,7 @@ export function createApp(store, opts = {}) {
     if (!s) return;
     const c = store.cards.review(s.id, cardId(req), req.body?.ok === true);
     if (!c) return res.status(404).json({ error: "Kartica ne obstaja." });
-    res.json({ card: c, due: store.cards.dueCount(s.id) });
+    res.json({ card: c, due: store.cards.dueCount(s.id, subjectFor(s, req.body?.path)) });
   });
   app.post("/api/students/:id/daily", (req, res) => {
     const s = loadStudent(req, res);
@@ -1235,5 +1285,6 @@ export function createApp(store, opts = {}) {
 
   // Šifriranje obstoječih vrstic in dnevno čiščenje po rokih hrambe (server/zasebnost.js).
   startPrivacyJobs(store.db, { scheduler: opts.scheduler !== false && opts.privacyJobs !== false });
+  backups = startBackups(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false });
   return app;
 }

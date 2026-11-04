@@ -29,7 +29,7 @@ import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
 import { offlineApi, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback } from "./feedback.js";
-import { openAdminBug } from "./prijave.js";
+import { openAdminBug, deviceInfo, shownHtml } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
 import { initGames, showGames, gamesBack, leaveGames } from "./games/index.js";
@@ -638,8 +638,8 @@ function renderEmptyChat() {
   state.chatFx = null; // nov pogovor (tudi po brisanju odprtega ali menjavi profila): predmet iz nastavitev
   $("#chat-title").textContent = t("chat.new");
   const ideas = [t("chat.idea1"), t("chat.idea2"), t("chat.idea3")];
-  // .empty-hall: okvir pozdrava (v slogu s chat.frame »stebri« pročelje templa iz ERAS[…].arch.temple, ui.css →
-  // »Klepet obdobja«; templeParts doda dele, ob menjavi sloga jih zamenja).
+  // .empty-hall: okvir pozdrava (ui.css → »Klepet obdobja«: s chat.frame »stebri« pročelje templa iz
+  // ERAS[…].arch.temple, templeParts doda dele in jih ob menjavi sloga zamenja; »pilon« iz ERAS[…].building enako).
   $("#messages").innerHTML = `<div class="empty"><div class="empty-hall">
     <div class="tutor-avatar big" aria-hidden="true">${icon("sparkles")}</div>
     <p class="big">${t("chat.hello", { name: escapeHtml(state.student.name) })}</p>
@@ -784,6 +784,7 @@ function addMessage(role, text, hasImage = false, info = null) {
   } else {
     el.innerHTML = chatRich(text);
     if (text) addDeepButton(el, false);
+    if (text && info?.full_offer) addFullButton(el);
     if (text) addGraphButton(el, text);
     if (text && info?.id) addMsgFoot(el, info);
   }
@@ -811,6 +812,7 @@ async function send(text, { deep = false } = {}) {
     const sentTo = state.conversationId;
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
     const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
+    document.querySelectorAll(".full-btn").forEach((x) => x.remove());
     userEl = addMessage("user", text, !!image);
     $("#input").value = "";
     autoGrow();
@@ -892,6 +894,8 @@ async function send(text, { deep = false } = {}) {
       bubble.removeAttribute("title");
       // Odgovor, ki samo spremeni nastavitve, ne potrebuje »Razloži podrobneje«.
       if (doneData && !doneData.settings) addDeepButton(bubble, doneData.deep);
+      // Ne, če je učenec med počasnim izpisom že poslal novo sporočilo (gumb samo pri zadnjem odgovoru).
+      if (doneData?.full_offer && !bubble.nextElementSibling) addFullButton(bubble);
       if (doneData?.text) addGraphButton(bubble, doneData.text);
       if (cardsData) addCardsNote(bubble, cardsData);
       if (doneData?.id) addMsgFoot(bubble, doneData);
@@ -1245,6 +1249,7 @@ async function pickSubject(item) {
   else if (currentView === "me") renderMe();
   else if (currentView === "exams") loadExams();
   else if (currentView === "competition") regionalExams() ? loadExams() : loadCompetition();
+  else if (currentView === "cards") showFlashcards();
 }
 
 async function fillCourseOptions() {
@@ -1388,7 +1393,10 @@ $("#settings-form").addEventListener("submit", async (e) => {
   fillDeleteCard();
   refreshProfileButton();
   renderState(null);
-  if (levelChanged(before, updated.settings)) state.pathKey = null;
+  if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
+    state.pathKey = null; // Ponavljanje in Kartice (state.pathKey) za novi predmet, ne za prejšnjega
+    refreshModes();
+  }
   // Prehod OŠ → SŠ ali SŠ → fakulteta: na Učni poti pokažemo, kaj je novega.
   const up = stageUp(before, updated.settings);
   if (up) {
@@ -1414,7 +1422,10 @@ function studentUpdated(updated) {
   leaveHiddenGames();
   refreshProfileButton();
   renderState(null);
-  if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) state.pathKey = null;
+  if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
+    state.pathKey = null;
+    refreshModes(); // številki na gumbih Ponavljanje in Kartice za novi predmet
+  }
   const up = stageUp(before, updated.settings);
   if (up) state.welcome = { stage: up };
   if (!$("#view-settings").hidden) fillSettingsForm();
@@ -1693,7 +1704,8 @@ function openReport(el, foot, btn, id, done) {
     }
     sendBtn.disabled = true;
     try {
-      await api(`/api/conversations/${convId}/messages/${id}/report`, { method: "POST", body: { reason, note: area.value } });
+      // Zraven gre, kar je učenec videl: izrisan HTML sporočila in naprava (napaka v izpisu formule).
+      await api(`/api/conversations/${convId}/messages/${id}/report`, { method: "POST", body: { reason, note: area.value, shown: shownHtml(el), ...deviceInfo() } });
       box.remove();
       done();
       toast(t("rep.thanks"), "check");
@@ -1710,8 +1722,8 @@ function openReport(el, foot, btn, id, done) {
 // Gumb »Razloži podrobneje« uporabi zmogljivejši (dražji) model samo na zahtevo.
 function addDeepButton(el, wasDeep) {
   // Ponovna razlaga je vedno na voljo (tudi po ponovni razlagi); strežnik izbere najcenejši model.
-  if (el.classList.contains("error") || el.querySelector(".deep-btn")) return;
-  document.querySelectorAll(".deep-btn").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
+  if (el.classList.contains("error") || el.querySelector(".deep-btn:not(.full-btn)")) return;
+  document.querySelectorAll(".deep-btn:not(.full-btn)").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
   const b = document.createElement("button");
   b.className = "deep-btn";
   b.type = "button";
@@ -1721,6 +1733,23 @@ function addDeepButton(el, wasDeep) {
     send(t("chat.deeperMsg"), { deep: true });
   });
   el.appendChild(b);
+}
+
+// »Pokaži celoten postopek«: strežnik ga ponudi po treh zaporednih korakih vodenja (način A) v istem pogovoru.
+// Je enkratna prošnja: inštruktor pokaže celotno rešitev te naloge, nato se vrne v vodenje.
+function addFullButton(el) {
+  if (el.classList.contains("error") || el.querySelector(".full-btn")) return;
+  document.querySelectorAll(".full-btn").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
+  const b = document.createElement("button");
+  b.className = "deep-btn full-btn";
+  b.type = "button";
+  b.innerHTML = `${icon("list-checks")} ${t("chat.full")}`;
+  b.addEventListener("click", () => {
+    b.remove();
+    send(t("chat.fullMsg"));
+  });
+  (el.querySelector(".deep-btn:not(.full-btn)") || el.lastElementChild)?.after(b);
+  if (!b.isConnected) el.appendChild(b);
 }
 
 // Tiha napaka (npr. prekinjena povezava) se pokaže kot obvestilo, ne pa kot »nič se ne zgodi«.
@@ -1873,7 +1902,7 @@ async function showTestPrep(edit = false) {
     const when = plan.daysLeft === 0 ? t("test.today") : plan.daysLeft === 1 ? t("test.tomorrow") : t("test.inDays", { n: plan.daysLeft });
     box.innerHTML = `<h1 class="with-icon">${icon("clipboard-check")} ${t("mode.test")}</h1>
       <div class="card"><p>${t("test.when", { when, date: escapeHtml(new Date(plan.date).toLocaleDateString(locale())) })}</p>
-      <p class="muted">${t("test.material", { list: plan.unitTitles.map(escapeHtml).join(", ") })}</p>
+      <p class="muted">${t("test.material", { list: (plan.subject && state.pathSubject && plan.subject !== state.pathSubject ? `${escapeHtml(SUBJECT_NAMES[plan.subject] || plan.subject)} – ` : "") + plan.unitTitles.map(escapeHtml).join(", ") })}</p>
       <p class="muted">${t("test.howto")}</p>
       <div class="actions"><button class="primary" id="tp-start">${t("test.startToday")}</button><button id="tp-edit">${t("common.change")}</button></div></div>`;
     $("#tp-start").addEventListener("click", () => startSession("test-prep"));
@@ -1960,7 +1989,10 @@ async function loadPath(key = state.pathKey) {
     content.innerHTML = `<p class="muted">${escapeHtml(p.message)}</p>`;
     return;
   }
+  const changed = state.pathKey !== p.key;
   state.pathKey = p.key;
+  state.pathSubject = paths.find((x) => x.key === p.key)?.subject || state.student.settings.subject;
+  if (changed) refreshModes(); // fakulteta: drug predmet iz seznama poti
   showLevelCard();
   renderScheduleCard($("#schedule-card"));
   syncOfflineBanner();
@@ -2254,6 +2286,7 @@ async function startSession(kind, body = {}) {
   if (examMode() && kind === "tek") cfg = { ...cfg, icon: "target", title: t("exam.train"), intro: t("exam.trainText") };
   if (examMode() && kind === "contest") cfg = { ...cfg, title: t("exam.mock"), intro: t("exam.mockIntro") };
   setActiveMode({ review: "review", daily: "daily", "test-prep": "test" }[kind] || null);
+  if (kind === "review" && state.pathKey) body = { path: state.pathKey, ...body }; // le izbrani predmet
   let out;
   try {
     out = await api(`/api/students/${state.student.id}/${cfg.endpoint || kind}`, { method: "POST", body });
@@ -3768,7 +3801,7 @@ makeSplitter($("#view-path"), splitOpts("path"));
 makeSplitter($("#topic-content"), splitOpts("topic"));
 makeSplitter($("#view-textbook"), splitOpts("lesson"));
 
-initFlashcards({ api, renderRich, escapeHtml, toast, showView, getStudent: () => state.student, onDue: setCardsDue });
+initFlashcards({ api, renderRich, escapeHtml, toast, showView, getStudent: () => state.student, getPath: () => state.pathKey, subjectName: () => SUBJECT_NAMES[(state.pathKey && state.pathSubject) || state.student?.settings.subject] || "", onDue: setCardsDue });
 
 // Urnik (public/schedule.js): po spremembi se osvežita kartica »Danes imaš …« in Priprava na test.
 function scheduleChanged() {

@@ -3,12 +3,34 @@
 // inštruktorja (style.css .report-box).
 import { icon, hydrateIcons } from "./icons.js";
 import { t } from "./i18n.js";
+import { createRenderer } from "./rich.js";
+import { annotateTex } from "./formula-info.js";
 
 // Naprava ob prijavi (kot pri mnenjih, feedback.js): telefon / tablica / računalnik in velikost zaslona.
-function deviceInfo() {
+export function deviceInfo() {
   const w = window.innerWidth;
   const touch = matchMedia("(hover: none) and (pointer: coarse)").matches;
-  return { device: w <= 760 ? "phone" : touch && w <= 1240 ? "tablet" : "desktop", screen: `${w}x${window.innerHeight}` };
+  return { device: `web-${w <= 760 ? "phone" : touch && w <= 1240 ? "tablet" : "desktop"}`, screen: `${w}x${window.innerHeight}` };
+}
+
+/** Izrisan HTML sporočila, kot ga vidi učenec (brez gumbov, noge in okvirja prijave), za prijavo napake. */
+export function shownHtml(el) {
+  const c = el.cloneNode(true);
+  // .katex-mathml je skrit (za bralnike zaslona) in polovica velikosti; skrbnik ga ne vidi.
+  c.querySelectorAll(".msg-foot, .report-box, button, .cards-note, .katex-mathml").forEach((x) => x.remove());
+  const html = c.innerHTML.trim();
+  return html.length <= 200000 ? html : undefined;
+}
+
+// HTML posnetka pošlje učenec, zato pri skrbniku le oblikovanje besedila in formul: brez slik, povezav,
+// obrazcev, <style>, id-jev in slogov, ki bi kaj prekrili ali naložili (position, url()).
+const SHOWN_FORBID = ["style", "img", "a", "form", "input", "textarea", "select", "button", "iframe", "video", "audio", "link", "image", "use", "foreignObject"];
+export function safeShown(html) {
+  const frag = window.DOMPurify.sanitize(html, { FORBID_TAGS: SHOWN_FORBID, FORBID_ATTR: ["id", "name", "href", "xlink:href", "src", "srcset", "action"], RETURN_DOM_FRAGMENT: true });
+  for (const el of frag.querySelectorAll("[style]")) if (/position|url\s*\(|@import|expression/i.test(el.getAttribute("style"))) el.removeAttribute("style");
+  const box = document.createElement("div");
+  box.append(frag);
+  return box.innerHTML;
 }
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -152,6 +174,29 @@ function reasonText(r) {
   return r.kind === "lesson" ? lessonReason(r.reason) : t(`rep.${r.reason}`);
 }
 
+// Odgovor, kot ga je videl učenec: izrisan HTML s spleta (očiščen) ali, pri prijavah iz aplikacije in starejših
+// prijavah, besedilo znova izrisano z istim izrisovalnikom kot v klepetu.
+let rich = null;
+function shownBlock(r) {
+  if (r.kind !== "message" || !(r.shown || r.answer)) return "";
+  let html = "";
+  let label = t("adm.rep.shown");
+  try {
+    if (r.shown) html = safeShown(r.shown);
+    else {
+      rich ||= createRenderer({ annotate: (tex) => annotateTex(tex) });
+      html = rich.renderRich(r.answer);
+      label = t("adm.rep.rerendered");
+    }
+  } catch {
+    return "";
+  }
+  // Širina kot pri učencu (zaslon iz naprave, manj robov), da se prelomi in odrezane formule ponovijo.
+  const w = Number(/(\d+)x\d+/.exec(r.device || "")?.[1]);
+  const width = w >= 240 && w < 760 ? ` style="max-width: min(100%, ${w - 48}px)"` : "";
+  return `<div class="adm-rep-shown"><small class="muted">${esc(label)}</small><div class="msg assistant"${width}>${html}</div></div>`;
+}
+
 /** Izriše prijave v box (Račun skrbnika ali stran z mnenji na računalniku s strežnikom). */
 export async function renderAdminReports(box, { api, toast, showAll = false }) {
   let data;
@@ -167,7 +212,8 @@ export async function renderAdminReports(box, { api, toast, showAll = false }) {
         <div class="adm-rep-head">${icon(KIND_ICON[r.kind] || "flag")}<b>${esc(reportTitle(r))}</b>${reasonText(r) ? `<span class="pill">${esc(reasonText(r))}</span>` : ""}</div>
         <small class="muted" dir="auto">${esc(r.created_at)} UTC${r.device ? ` · ${esc(r.device)}` : ""}</small>
         ${r.note ? `<p class="adm-rep-note" dir="auto">${esc(r.note)}</p>` : ""}
-        ${r.question || r.answer || r.context ? `<details><summary>${esc(t("adm.rep.more"))}</summary>${r.question ? `<p dir="auto"><b>${esc(t("adm.rep.question"))}</b> ${esc(r.question)}</p>` : ""}${r.answer ? `<p dir="auto"><b>${esc(t("adm.rep.answer"))}</b> ${esc(r.answer)}</p>` : ""}${r.context ? `<pre dir="auto">${esc(r.context)}</pre>` : ""}</details>` : ""}
+        ${shownBlock(r)}
+        ${r.question || r.raw || r.answer || r.context ? `<details><summary>${esc(t("adm.rep.more"))}</summary>${r.question ? `<p dir="auto"><b>${esc(t("adm.rep.question"))}</b> ${esc(r.question)}</p>` : ""}${r.raw || r.answer ? `<p><b>${esc(t("adm.rep.raw"))}</b></p><pre dir="auto">${esc(r.raw || r.answer)}</pre>` : ""}${r.context ? `<pre dir="auto">${esc(r.context)}</pre>` : ""}</details>` : ""}
         <button type="button" class="secondary small" data-rep-status="${r.status === "fixed" ? "open" : "fixed"}">${icon(r.status === "fixed" ? "rotate-ccw" : "check")}<span>${esc(t(r.status === "fixed" ? "adm.rep.reopen" : "adm.rep.fixed"))}</span></button>
       </li>`,
     )
@@ -179,8 +225,8 @@ export async function renderAdminReports(box, { api, toast, showAll = false }) {
       <button type="button" class="ghost" data-rep-all>${esc(t(showAll ? "adm.rep.onlyOpen" : "adm.rep.showAll"))}</button>
     </div>`;
   hydrateIcons(box);
-  box.querySelector("[data-rep-all]").addEventListener("click", () => renderAdminReports(box, { api, toast, showAll: !showAll }));
-  box.querySelectorAll("[data-rep-status]").forEach((b) =>
+  box.querySelector(":scope > .actions > [data-rep-all]").addEventListener("click", () => renderAdminReports(box, { api, toast, showAll: !showAll }));
+  box.querySelectorAll(".adm-rep > button[data-rep-status]").forEach((b) =>
     b.addEventListener("click", async () => {
       const li = b.closest("li");
       b.disabled = true;
