@@ -1509,7 +1509,7 @@ export function plottableFromText(text) {
     }
   }
   // Ob krivulji je samostojen pogoj »x > 0« (definicijsko območje) le opomba: graf naj pokaže funkcijo, ne polravnine.
-  const curve = out.some((s) => /=/.test(s) && /y|^\s*[a-hk-wz]\s*\(\s*x\s*\)/.test(s));
+  const curve = out.some((s) => /(^|[^<>!])=/.test(s) && /y|^\s*[a-hk-wz]\s*\(\s*x\s*\)/.test(s)); // y >= x^2 je območje, ne krivulja
   return curve ? out.filter((s) => !/^\s*x\s*(<=|>=|<|>|≤|≥)[^xy=]*$/.test(s)) : out;
 }
 

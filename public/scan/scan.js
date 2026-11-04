@@ -54,11 +54,10 @@ const coarse = () => window.matchMedia?.("(pointer: coarse)").matches;
 
 // leva in desna stran pri preizkusu (\\sideL, \\sideR iz solvecore.js) v jeziku vmesnika
 const sideMacros = () => ({ "\\sideL": `\\text{${t("scan.sideL")}}`, "\\sideR": `\\text{${t("scan.sideR")}}` });
-const plainSides = (tx) => String(tx ?? "").replace(/\\sideL/g, t("scan.sideL")).replace(/\\sideR/g, t("scan.sideR"));
 // formula za sporočilo inštruktorju: v $…$, da jo klepet izriše (prej je ostal surov LaTeX, npr. \iff; j 4. 11.)
 const texSides = (tx) => String(tx ?? "").replace(/\\sideL/g, `\\text{${t("scan.sideL")}}`).replace(/\\sideR/g, `\\text{${t("scan.sideR")}}`);
 const dollars = (tx) => {
-  const s = texSides(tx).replace(/\$/g, "").trim();
+  const s = texSides(tx).replace(/\\?\$/g, "").replace(/\s+/g, " ").trim(); // klepet loči $…$ brez \n; \$ bi ubežal zaključnemu $
   return s ? `$${s}$` : "";
 };
 // odgovor: ena formula prikazno; seznam dejstev po eno v vrstico, v besedilni velikosti, da se dolgo dejstvo prelomi
