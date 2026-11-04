@@ -113,6 +113,8 @@ export async function preveriGradnik(mod, pricakovanId) {
         if (m !== null && (!(m?.m > 0) || !besedilo(m?.oznaka))) n(`${oznaka} ${kje}: merilo() ${JSON.stringify(m)}`);
       };
       const preveriMere = (kje) => {
+        // korak, ki le umiri prehod (korakBrezGumba, npr. kamera pri telesih), naj se najprej izteče
+        if (r.korakBrezGumba && typeof r.korak === "function") for (let i = 0; i < 90; i++) r.korak(i / 30, 1 / 30);
         const x = izmeri(r.group);
         if (x.tri > meja) n(`${oznaka} ${kje}: ${x.tri} trikotnikov > ${meja}`);
         if (x.klici > MEJE.klici) n(`${oznaka} ${kje}: ${x.klici} klicev risanja > ${MEJE.klici}`);
