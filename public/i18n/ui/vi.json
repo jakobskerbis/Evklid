@@ -2718,5 +2718,7 @@
   "pp.boxMsg": "Mình đang làm đề cũ {paper}, trang {page}. Mình gửi ảnh của câu. Hãy hướng dẫn mình bằng gợi ý theo phong cách kỳ thi này và đừng tiết lộ lời giải cho đến khi mình tự thử.",
   "pp.taskText": "Nội dung câu lấy từ đề (công thức có thể bị lỗi, hãy dựa vào ảnh):",
   "task.checkLeft": "còn khoảng {n} giây",
-  "task.checkAlmost": "sắp xong"
+  "task.checkAlmost": "sắp xong",
+  "guide.title": "Hướng dẫn ứng dụng",
+  "guide.intro": "Mỗi phần của ứng dụng có gì. Chạm vào một phần để mở."
 }

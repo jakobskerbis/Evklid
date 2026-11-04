@@ -2718,5 +2718,7 @@
   "pp.boxMsg": "我在做往年試卷 {paper}，第 {page} 頁。我傳送這道題的圖片。請按這場考試的風格用提示引導我，在我自己嘗試之前不要透露答案。",
   "pp.taskText": "從試卷中擷取的題目文字（公式可能有誤，以圖片為準）：",
   "task.checkLeft": "還需約 {n} 秒",
-  "task.checkAlmost": "馬上就好"
+  "task.checkAlmost": "馬上就好",
+  "guide.title": "應用程式指南",
+  "guide.intro": "應用程式各部分是做什麼的。點一下即可開啟。"
 }

@@ -2794,5 +2794,7 @@
   "pp.boxMsg": "Riešim staršiu písomku {paper}, strana {page}. Posielam obrázok úlohy. Veď ma nápovedami v štýle tejto skúšky a neprezraď riešenie, kým sa oň nepokúsim.",
   "pp.taskText": "Text úlohy z písomky (vzorce môžu byť poškodené, platí obrázok):",
   "task.checkLeft": "ešte asi {n} s",
-  "task.checkAlmost": "takmer hotovo"
+  "task.checkAlmost": "takmer hotovo",
+  "guide.title": "Sprievodca aplikáciou",
+  "guide.intro": "Čo je v aplikácii kde. Ťukni na časť a otvorí sa."
 }

@@ -152,13 +152,13 @@ export default function Practice() {
           return;
         }
       if (!r) return;
+      if (!offline) saveCheckTime(Date.now() - started);
       setResult(r);
       if (r.retry) failure();
       else if (r.correct) (r.mastered || r.next?.finished ? celebrate : success)();
       else failure();
     } finally {
       setChecking(false);
-      if (!offline) saveCheckTime(Date.now() - started);
     }
   };
 
@@ -461,7 +461,11 @@ const checkTimes = (): number[] => {
     return [];
   }
 };
-const saveCheckTime = (ms: number) => Storage.setItemSync(CHECK_TIMES, JSON.stringify(addDuration(checkTimes(), ms)));
+const saveCheckTime = (ms: number) => {
+  try {
+    Storage.setItemSync(CHECK_TIMES, JSON.stringify(addDuration(checkTimes(), ms)));
+  } catch {}
+};
 
 function CheckWait() {
   const th = useTheme();

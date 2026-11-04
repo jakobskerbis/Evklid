@@ -2740,5 +2740,7 @@
   "pp.boxMsg": "Geçmiş sınavı çözüyorum: {paper}, sayfa {page}. Sorunun resmini gönderiyorum. Bu sınavın tarzında ipuçlarıyla bana yol göster ve kendim denemeden çözümü söyleme.",
   "pp.taskText": "Sınavdan alınan soru metni (formüller bozuk olabilir, esas olan resimdir):",
   "task.checkLeft": "yaklaşık {n} sn kaldı",
-  "task.checkAlmost": "neredeyse bitti"
+  "task.checkAlmost": "neredeyse bitti",
+  "guide.title": "Uygulama rehberi",
+  "guide.intro": "Uygulamada ne nerede. Açmak için bir bölüme dokun."
 }

@@ -2742,5 +2742,7 @@
   "pp.boxMsg": "Je travaille sur l'ancienne épreuve {paper}, page {page}. J'envoie une image de l'exercice. Guide-moi avec des indices dans le style de cet examen et ne me donne pas la solution tant que je n'ai pas essayé moi-même.",
   "pp.taskText": "Texte de l'exercice tiré de l'épreuve (les formules peuvent être abîmées ; l'image fait foi) :",
   "task.checkLeft": "encore environ {n} s",
-  "task.checkAlmost": "presque fini"
+  "task.checkAlmost": "presque fini",
+  "guide.title": "Guide de l'appli",
+  "guide.intro": "Ce qui se trouve où dans l'appli. Touche une partie pour l'ouvrir."
 }

@@ -2790,5 +2790,7 @@
   "pp.boxMsg": "Řeším starší písemku {paper}, strana {page}. Posílám obrázek úlohy. Veď mě nápovědami ve stylu této zkoušky a neprozrazuj řešení, dokud se o něj nepokusím.",
   "pp.taskText": "Text úlohy z písemky (vzorce mohou být poškozené, platí obrázek):",
   "task.checkLeft": "ještě asi {n} s",
-  "task.checkAlmost": "skoro hotovo"
+  "task.checkAlmost": "skoro hotovo",
+  "guide.title": "Průvodce aplikací",
+  "guide.intro": "Co je v aplikaci kde. Klepni na část a otevře se."
 }

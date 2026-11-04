@@ -2742,5 +2742,7 @@
   "pp.boxMsg": "Po zgjidh provimin e kaluar {paper}, faqja {page}. Po dërgoj një foto të detyrës. Më udhëhiq me sugjerime në stilin e këtij provimi dhe mos ma zbulo zgjidhjen derisa ta provoj vetë.",
   "pp.taskText": "Teksti i detyrës nga provimi (formulat mund të jenë të dëmtuara; vlen fotoja):",
   "task.checkLeft": "edhe rreth {n} s",
-  "task.checkAlmost": "pothuajse gati"
+  "task.checkAlmost": "pothuajse gati",
+  "guide.title": "Udhëzuesi i aplikacionit",
+  "guide.intro": "Çfarë ka ku në aplikacion. Prek një pjesë për ta hapur."
 }

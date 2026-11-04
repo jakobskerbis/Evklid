@@ -2742,5 +2742,7 @@
   "pp.boxMsg": "I'm working on the past paper {paper}, page {page}. I'm sending a picture of the task. Guide me with hints in the style of this exam and don't give away the solution until I've tried it myself.",
   "pp.taskText": "Task text from the paper (formulas may be garbled; the picture is what counts):",
   "task.checkLeft": "about {n} s left",
-  "task.checkAlmost": "almost done"
+  "task.checkAlmost": "almost done",
+  "guide.title": "App guide",
+  "guide.intro": "What is where in the app. Tap a part to open it."
 }

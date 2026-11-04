@@ -161,6 +161,11 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
 .list-row .lr-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .list-row .lr-text small { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
 .list-row > svg.i { color: var(--muted); }
+/* Vodič po aplikaciji v Nastavitvah (app.js, public/vodic.js): seznam v kartici Pomoč. */
+.help-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.guide-list { margin-top: 12px; padding: 0; }
+.guide-list .guide-intro { margin: 0 0 6px; }
+.guide-list .list-row .lr-text small { font-weight: 500; line-height: 1.4; }
 
 /* ---------- Jaz (profil na telefonu) ---------- */
 /* Kartica s profilom je gumb: odpre Nastavitve (šola in letnik, račun). */

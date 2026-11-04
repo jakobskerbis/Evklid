@@ -49,6 +49,7 @@ import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS }
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
 import { initDrsniki } from "./drsniki.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
+import { GUIDE } from "./vodic.js";
 
 const $ = (sel) => document.querySelector(sel);
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
@@ -2571,9 +2572,10 @@ function checkBar(fb) {
     fb.querySelector(".check-label").textContent = `${t("task.checking")} ${p.left ? t("task.checkLeft", { n: p.left }) : t("task.checkAlmost")}`;
   };
   const timer = setInterval(tick, 250);
-  return () => {
+  // Trajanje shranimo samo, ko je izid prišel (napaka povezave bi pokvarila oceno).
+  return (ok) => {
     clearInterval(timer);
-    lsSet(CHECK_TIMES_KEY, JSON.stringify(addDuration(hist, Date.now() - start)));
+    if (ok) lsSet(CHECK_TIMES_KEY, JSON.stringify(addDuration(hist, Date.now() - start)));
   };
 }
 
@@ -2586,7 +2588,7 @@ async function checkTask(task, ctx, value) {
     try {
       r = await api(`/api/students/${state.student.id}/tasks/${task.id}/answer`, { method: "POST", body: { answer: value } });
     } finally {
-      stop();
+      stop(!!r);
     }
   } catch (err) {
     // Učenec napako vidi, namesto da se ne zgodi nič. Z »Preveri povezavo« samo, ko strežnik ni odgovoril.
@@ -3290,6 +3292,23 @@ function maybeTour() {
 $("#tour-again").addEventListener("click", () => {
   showView("path");
   setTimeout(startTour, 500);
+});
+
+// Vodič po aplikaciji (Nastavitve → Pomoč): opis vsakega dela, tapni vrstico in odpre se ta del.
+$("#guide-open").addEventListener("click", (e) => {
+  const list = $("#guide-list");
+  const open = list.hidden;
+  if (open && !list.childElementCount) {
+    list.innerHTML = `<p class="muted guide-intro">${escapeHtml(t("guide.intro"))}</p>${GUIDE.map(
+      (g) => `<button type="button" class="list-row" data-guide-view="${g.view || ""}"><span class="ic">${icon(g.icon)}</span><span class="lr-text"><b>${escapeHtml(t(g.title))}</b><small>${escapeHtml(t(g.text))}</small></span>${g.view ? icon("chevron-right") : ""}</button>`,
+    ).join("")}`;
+  }
+  list.hidden = !open;
+  e.currentTarget.setAttribute("aria-expanded", String(open));
+});
+$("#guide-list").addEventListener("click", (e) => {
+  const row = e.target.closest("[data-guide-view]");
+  if (row?.dataset.guideView) showView(row.dataset.guideView);
 });
 
 // ---------- kalkulatorji (public/graph/): znanstveni, grafični, pretvornik enot ----------

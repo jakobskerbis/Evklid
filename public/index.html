@@ -325,7 +325,12 @@
     <div class="card">
       <h2 data-i18n="set.help">Pomoč</h2>
       <p class="muted" data-i18n="set.helpText">Kratek ogled pokaže, kje je kaj v aplikaciji.</p>
-      <button id="tour-again" type="button" class="secondary"><i data-icon="circle-help"></i><span data-i18n="set.tourAgain">Ponovi uvodni ogled</span></button>
+      <div class="actions help-actions">
+        <button id="tour-again" type="button" class="secondary"><i data-icon="circle-help"></i><span data-i18n="set.tourAgain">Ponovi uvodni ogled</span></button>
+        <button id="guide-open" type="button" class="secondary" aria-expanded="false" aria-controls="guide-list"><i data-icon="book-open"></i><span data-i18n="guide.title">Vodič po aplikaciji</span></button>
+      </div>
+      <!-- Vodič po aplikaciji (public/vodic.js): isti seznam kot v aplikaciji (Jaz → Vodič). -->
+      <div id="guide-list" class="list-card guide-list" hidden></div>
     </div>
 
     <div class="card" id="new-student-card">

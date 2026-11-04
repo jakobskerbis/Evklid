@@ -2742,5 +2742,7 @@
   "pp.boxMsg": "Sto risolvendo la prova passata {paper}, pagina {page}. Invio un'immagine dell'esercizio. Guidami con suggerimenti nello stile di questo esame e non svelarmi la soluzione finché non ci provo da me.",
   "pp.taskText": "Testo dell'esercizio dalla prova (le formule possono essere rovinate; vale l'immagine):",
   "task.checkLeft": "ancora circa {n} s",
-  "task.checkAlmost": "quasi fatto"
+  "task.checkAlmost": "quasi fatto",
+  "guide.title": "Guida all'app",
+  "guide.intro": "Cosa trovi in ogni parte dell'app. Tocca una parte per aprirla."
 }

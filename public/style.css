@@ -579,7 +579,7 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .fb > span, .fb > div { flex: 1; }
 .check-wait > div { display: grid; gap: 8px; }
 /* Vrstica napredka pri preverjanju nad 2 s (app.js checkBar); enako v aplikaciji (practice.tsx). */
-.check-bar { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.check-bar { height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--text) 12%, transparent); overflow: hidden; }
 .check-bar > div { height: 100%; width: 0; border-radius: inherit; background: var(--accent); transition: width 0.25s linear; }
 .fb.ok { background: var(--ok-bg); color: var(--ok); }
 .fb.ok b { font-size: 1.05rem; }

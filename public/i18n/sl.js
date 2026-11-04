@@ -654,6 +654,8 @@ export default {
   "tour.profileText": "Tu zamenjaš ali dodaš profil in odpreš nastavitve.",
   "tour.end": "To je vse",
   "tour.endText": "Ogled lahko kadar koli ponoviš v Nastavitvah (»Ponovi uvodni ogled«). Če česa ne najdeš, vprašaj inštruktorja.",
+  "guide.title": "Vodič po aplikaciji",
+  "guide.intro": "Kaj je kje v aplikaciji. Tapni del, da ga odpreš.",
 
   // videz
   "ap.title": "Videz",
