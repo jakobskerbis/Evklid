@@ -1,7 +1,8 @@
 // Telefon v pravem brskalniku (Playwright, če je nameščen):
 // 1) grafični kalkulator piše z Evklidovo tipkovnico (ABC, 123, predloge z @, polje ne izgubi fokusa);
 //    tipka 🌐 (japonščina) da polju telefonovo tipkovnico, ki ostane tudi po izgubi fokusa (#247);
-// 2) dolg spustni meni se odpre čez gumb: izbrana možnost je v iskalnem okencu, seznam se začne za njo.
+// 2) dolg spustni meni se odpre čez gumb: izbrana možnost je v iskalnem okencu, seznam se začne za njo;
+//    iskalnik piše z Evklidovo tipkovnico, seznam ostane odprt in nad njo.
 import test from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
@@ -24,10 +25,11 @@ import { createCalculator } from "/graph/calc.js";
 window.calc = createCalculator(document.getElementById("g"), { t: (k) => k, icon: () => "", locale: () => "sl", storageKey: () => "t-calc", studentId: () => "", toast() {}, askTutor() {} });
 window.ready = true;
 </script>`,
-  "/t-dd.html": `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css">
+  "/t-dd.html": `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css"><link rel="stylesheet" href="/tipkovnica.css">
 <div style="padding:120px 16px"><select id="dolg">${Array.from({ length: 30 }, (_, i) => `<option value="${i}"${i === 10 ? " selected" : ""}>Možnost ${i}</option>`).join("")}</select>
 <select id="kratek"><option>Ena</option><option selected>Dve</option><option>Tri</option></select></div>
-<script type="module">import "/dropdown.js"; window.ready = true;</script>`,
+<div style="height:1200px"></div><select id="spodaj">${Array.from({ length: 30 }, (_, i) => `<option value="${i}">Jezik ${i}</option>`).join("")}</select><div style="height:400px"></div>
+<script type="module">import "/dropdown.js"; import { initKeyboard } from "/tipkovnica.js"; initKeyboard(); window.ready = true;</script>`,
 };
 
 function serve() {
@@ -173,10 +175,51 @@ test("touch-browser checks", { skip }, async (t) => {
     assert.equal(await page.$eval("#dolg", (s) => s.value), "25");
   });
 
+  await t.test("dropdown search types with Evklid's keyboard, never the phone's", async () => {
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on("pageerror", (e) => errors.push(String(e)));
+    await page.goto(`${base}/t-dd.html`);
+    await page.waitForFunction(() => window.ready && document.querySelectorAll(".dd-btn").length === 3);
+    const kb = "#tipkovnica";
+    for (const which of [0, 2]) {
+      const btn = page.locator(".dd-btn").nth(which);
+      await btn.scrollIntoViewIfNeeded();
+      if (which === 2) await page.evaluate(() => scrollBy(0, 300)); // gumb nizko na zaslonu
+      await btn.tap();
+      const input = page.locator(".dd-search input");
+      assert.equal(await input.getAttribute("data-system-kb"), null);
+      await input.tap();
+      await page.waitForSelector(`${kb}:not([hidden])`);
+      assert.equal(await input.getAttribute("inputmode"), "none", "telefonova tipkovnica se ne odpre");
+      const i = await page.evaluate(() => [...document.querySelectorAll("#tipkovnica .tk-k")].findIndex((b) => b.firstChild?.textContent.toLowerCase() === "z"));
+      assert.ok(i >= 0, "tipka z");
+      await page.locator(`${kb} .tk-k`).nth(i).tap();
+      await page.waitForTimeout(20);
+      assert.equal((await input.inputValue()).toLowerCase(), "z");
+      assert.equal(await page.locator(".dd-list").count(), 1, "tipka ne zapre seznama");
+      // Iskalnik in seznam sta nad tipkovnico.
+      const [top, sb, lb] = await page.evaluate(() => [
+        document.getElementById("tipkovnica").getBoundingClientRect().top,
+        document.querySelector(".dd-search input").getBoundingClientRect().bottom,
+        document.querySelector(".dd-list").getBoundingClientRect().bottom,
+      ]);
+      assert.ok(sb <= top && lb <= top + 1, `nad tipkovnico (${sb}, ${lb} vs ${top})`);
+      const opt = page.locator(".dd-opt:not([hidden])").first();
+      const v = which === 2 ? await opt.getAttribute("data-i") : null;
+      await opt.tap();
+      assert.equal(await page.locator(".dd-list").count(), 0);
+      await page.waitForSelector(kb, { state: "hidden" });
+      if (which === 2) assert.equal(await page.$eval("#spodaj", (s) => s.value), v);
+    }
+    assert.deepEqual(errors, []);
+    await page.close();
+  });
+
   await t.test("short dropdown stays a plain list under the button", async () => {
     const page = await ctx.newPage();
     await page.goto(`${base}/t-dd.html`);
-    await page.waitForFunction(() => window.ready && document.querySelectorAll(".dd-btn").length === 2);
+    await page.waitForFunction(() => window.ready && document.querySelectorAll(".dd-btn").length === 3);
     await page.locator(".dd-btn").nth(1).tap();
     const list = page.locator(".dd-list");
     assert.equal(await list.locator(".dd-search").count(), 0);

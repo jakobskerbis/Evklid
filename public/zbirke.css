@@ -103,7 +103,7 @@ button.ghost.zb-x { position: absolute; inset-inline-end: 4px; top: 4px; min-wid
 /* Spodnja vrstica (#tabbar) je vidna do 760 px in na tablici na dotik: »preglej« nad njo. */
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
   #zbirke-content:has(> .zb-inspect) { padding-bottom: 380px; }
-  .zb-inspect { bottom: calc(76px + env(safe-area-inset-bottom)); max-height: calc(100dvh - 160px); overflow-y: auto; }
+  .zb-inspect { bottom: calc(76px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); max-height: calc(100dvh - 160px); overflow-y: auto; }
 }
 
 /* Pot znanja (okvirji redkosti so v games.css) */

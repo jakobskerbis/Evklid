@@ -2,6 +2,7 @@
 // kompleksna števila. Vse brez DOM in brez API (preizkusi v test/tools.test.js).
 // Koraki rešitve niso tukaj: »Po korakih« odpre zaslon Skeniraj (public/scan/), ki ima svoj reševalnik.
 import { simplify, diff, toTex, MathError } from "./math.js";
+import { vectorLine } from "./vektor.js";
 import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prepare, exactTex, toFraction, formatNumber } from "./scicore.js";
 import { evalComplex, polyRoots } from "./toolscore.js";
 
@@ -439,24 +440,42 @@ export function previewTex(text, env = {}) {
 
 /**
  * Pol(x; y) → r, θ in Rec(r; θ) → x, y (Casio Pol/Rec); kot je v trenutni enoti (stopinje ali radiani).
- * @returns {{ kind:"pair", tex, deg, items:[{name, v, angle?}] } | { error } | null} null, če vrstica ni Pol/Rec.
+ * Tudi sredi izraza (public/graph/vektor.js): Rec(5; 30) + Rec(3; 120), 2·Rec(…), Pol(Rec(…) + Rec(…)),
+ * Rec(…)·Rec(…) (skalarni produkt), |Rec(…) − Rec(…)|.
+ * @returns {{ kind:"pair", tex, deg, items:[{name, v, angle?}] } | { kind:"value", value, tex } | { error } | null}
+ *   null, če v vrstici ni Pol/Rec.
  */
 export function polRec(text, env = {}) {
-  const m = /^\s*(pol|rec)\s*\(([\s\S]*)\)\s*$/i.exec(String(text ?? ""));
-  if (!m) return null;
-  const args = splitTop(m[2], ";").map((x) => x.trim());
-  if (args.length !== 2 || args.some((a) => !a)) return { error: { code: "other", info: {} } };
-  const rs = args.map((a) => evaluate(a, env));
-  const bad = rs.find((r) => !r || r.error || !Number.isFinite(r.value));
-  if (bad) return bad.error ? bad : { error: { code: "other", info: {} } };
-  const [a, b] = rs.map((r) => r.value);
-  const k = env.deg ? Math.PI / 180 : 1; // enota kota → radiani
-  const pol = m[1].toLowerCase() === "pol";
-  const tex = `\\mathrm{${pol ? "Pol" : "Rec"}}\\left(${rs.map((r) => r.tex).join(env.comma === false ? ",\\ " : ";\\ ")}\\right)`;
-  const items = pol
-    ? [{ name: "r", v: clean(Math.hypot(a, b)) }, { name: "\\theta", v: clean(Math.atan2(b, a) / k), angle: true }]
-    : [{ name: "x", v: clean(a * Math.cos(b * k)) }, { name: "y", v: clean(a * Math.sin(b * k)) }];
-  return { kind: "pair", tex, deg: !!env.deg, items };
+  const src = String(text ?? "").replace(/(^|[^A-Za-z_])(pol|rec)(?=\s*\()/gi, (m, p, f) => p + (f.toLowerCase() === "pol" ? "Pol" : "Rec"));
+  if (!/(Pol|Rec)\s*\(/.test(src)) return null;
+  let line, vl;
+  try {
+    line = compileLine(src, env);
+    vl = line && vectorLine(line.ast);
+    if (!vl) return null;
+    const miss = unknownsOf(line.rw(line.ast), env.vars || {});
+    if (miss.length) return { error: { code: "missing", info: { names: miss } } };
+    const ev = (n) => {
+      const v = line.run(n)(line.scope);
+      return Array.isArray(v) ? NaN : Number(v);
+    };
+    const tex = lineTex(line.ast, env.comma !== false);
+    if (vl.kind === "num") {
+      const value = ev(vl.s);
+      return Number.isFinite(value) ? { kind: "value", value: clean(value), tex } : { error: { code: "undef", info: {} } };
+    }
+    const a = ev(vl.x);
+    const b = ev(vl.y);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return { error: { code: "undef", info: {} } };
+    const k = env.deg ? Math.PI / 180 : 1; // enota kota → radiani
+    const items =
+      vl.kind === "pol"
+        ? [{ name: "r", v: clean(Math.hypot(a, b)) }, { name: "\\theta", v: clean(Math.atan2(b, a) / k), angle: true }]
+        : [{ name: "x", v: clean(a) }, { name: "y", v: clean(b) }];
+    return { kind: "pair", tex, deg: !!env.deg, items };
+  } catch (e) {
+    return { error: { code: e.code || "other", info: e.info || {} } };
+  }
 }
 
 /**
