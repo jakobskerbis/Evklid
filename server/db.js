@@ -191,6 +191,8 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   const studentCols = db.prepare("PRAGMA table_info(students)").all().map((c) => c.name);
   // Kdaj je učenec nazadnje spremenil šolo ali letnik (za predlog prehoda na začetku šolskega leta).
   if (!studentCols.includes("level_changed_at")) db.exec("ALTER TABLE students ADD COLUMN level_changed_at TEXT");
+  // Od kod je profil prišel (server/rast.js): kratka oznaka iz povezave, »priporocilo« ali »razred«; brez piškotkov in IP.
+  if (!studentCols.includes("vir")) db.exec("ALTER TABLE students ADD COLUMN vir TEXT");
   // Začetni test predznanja teme: koliko stopenj (0–3) je učenec rešil zapored od lažje proti težji.
   const stateCols = db.prepare("PRAGMA table_info(topic_state)").all().map((c) => c.name);
   if (!stateCols.includes("pretest")) db.exec("ALTER TABLE topic_state ADD COLUMN pretest INTEGER");

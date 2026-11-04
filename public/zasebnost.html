@@ -33,7 +33,7 @@
   <table>
     <tr><th>Kdo</th><th>Podatki</th></tr>
     <tr><td>Starš</td><td>e-naslov, ime (neobvezno), datum rojstva (za preverjanje starosti), geslo (shranjeno samo kot zgoščena vrednost), čas potrditve e-naslova in soglasij, stanje naročnine. Podatke o plačilni kartici obdeluje izključno Stripe (pri nakupu v mobilni aplikaciji pa Apple ali Google); mi jih ne vidimo in ne hranimo. Pri Prijavi z Apple še Applov anonimni identifikator uporabnika in e-naslov, ki ga Apple posreduje (lahko je skrit naslov za posredovanje).</td></tr>
-    <tr><td>Otrok</td><td>ime ali vzdevek, letnica rojstva, šola in razred, nastavitve učenja, pogovori z inštruktorjem AI, fotografije nalog, ki jih otrok naloži, rešene naloge, napredek, točke in šibke točke.</td></tr>
+    <tr><td>Otrok</td><td>ime ali vzdevek, letnica rojstva, šola in razred, nastavitve učenja, pogovori z inštruktorjem AI, fotografije nalog, ki jih otrok naloži, rešene naloge, napredek, točke in šibke točke, oznaka, od kod je profil prišel (npr. priporočilo, koda razreda ali oznaka v povezavi).</td></tr>
   </table>
   <p>Priporočamo, da otrok uporablja vzdevek in da na fotografijah nalog ni obrazov ali drugih osebnih podatkov.</p>
 
@@ -41,6 +41,7 @@
   <ul>
     <li><b>Delovanje storitve in naročnina</b> (račun starša, plačila): izvajanje pogodbe, člen 6(1)(b) GDPR.</li>
     <li><b>Učenje otroka</b> (profil, pogovori, napredek): soglasje starša, člen 6(1)(a) in člen 8 GDPR. V Sloveniji lahko otrok sam privoli šele od 15. leta (ZVOP-2), zato soglasje za mlajše otroke da starš. Soglasje zabeležimo ob dodajanju profila, skupaj s potrjenim e-naslovom starša.</li>
+    <li><b>Merjenje uporabe</b> (ali učenci rešijo prvo nalogo, se vračajo in od kod pridejo): zakoniti interes za izboljšanje storitve, člen 6(1)(f) GDPR. Uporabljamo samo podatke, ki jih aplikacija že ima (dneve dejavnosti in oznako vira); skrbnik vidi le skupna števila, brez imen. Brez piškotkov, naslovov IP in zunanjih sledilnikov.</li>
     <li><b>Preverjanje starosti</b>: ob registraciji vprašamo za datum rojstva. Kdor je mlajši od starosti za lastno privolitev, računa ne more ustvariti sam; dobi povezavo za starše (<a href="/starsi.html">stran za starše</a>). Pri zavrnjeni registraciji datuma rojstva ne shranimo; naprava dobi le piškotek za 24 ur, ki prepreči ponovni poskus z drugim datumom. Osebnih dokumentov ne zbiramo, ker bi to pomenilo veliko več občutljivih podatkov, kot je za ta namen potrebno (načelo najmanjšega obsega podatkov, člen 5(1)(c) GDPR).</li>
     <li><b>Tedensko poročilo staršem</b>: zakoniti interes in vaša izbira; odjavite se lahko s povezavo v vsakem sporočilu ali v zavihku Račun.</li>
     <li><b>Računovodstvo</b> (izdani računi): zakonska obveznost, člen 6(1)(c) GDPR.</li>

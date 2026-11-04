@@ -10,6 +10,7 @@ import { dialectsFor } from "./dialects.js";
 
 hydrateIcons();
 import { initAccount, accountsOn, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
+import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
 import { initOkna, isFloating, openWindow, closeWindow, focusWindow, refreshBubble, chatReply, restoreWindows, windowsOn, tabHint, floatingViews, syncTabbarH } from "./okna.js";
@@ -539,7 +540,7 @@ async function onboard(name = "") {
       err.hidden = true;
       let s;
       try {
-        s = await api("/api/students", { method: "POST", body: { name: f.name.value, settings } });
+        s = await api("/api/students", { method: "POST", body: { name: f.name.value, settings, vir: currentSource() } });
       } catch (ex) {
         err.textContent = ex.message;
         err.hidden = false;
@@ -4103,6 +4104,7 @@ initFormulaInfo();
     if (first) restoreWindows();
     first = false;
   };
+  captureSource(); // oznaka vira iz povezave (public/vir.js), pred prijavo, ki lahko preusmeri
   if (await initAccount({ onReady: start })) await start();
 })().catch(bootFailed);
 
