@@ -144,10 +144,12 @@ test("f(x) keys only insert what the calculator understands; ℂ is among the se
   for (const [group, , list] of FX_GROUPS) {
     for (const [label, ins] of list) {
       // Algebra in Analiza: ukazi CAS (public/graph/cas.js, calculus.js), v slovenščini z imeni iz CAS_SL
-      if ((group === "alg" || group === "ana") && /^[a-z]{4,}\(/.test(ins)) {
+      if ((group === "alg" || group === "ana") && /^[a-z]{3,}\(/.test(ins)) {
         assert.ok(CAS_SL[label], `${label}: ni v CAS_SL`);
         for (const txt of [ins, ins.replace(label, CAS_SL[label] || label)]) {
-          const cmd = parseCommand(txt.replace("@", /^(solve|reši)/.test(txt) ? "x² − 1 = 0" : "x² − 1").replace(/;\s*\)$/, "; 2)"));
+          // det, inverz: predloga matrike 2 × 2 → [[a; b]; [c; d]]
+          const filled = /\[\[/.test(txt) ? txt.replace("@", "a").replace("[; ]", "[c; d]").replace("; ]", "; b]") : txt.replace("@", /^(solve|reši)/.test(txt) ? "x² − 1 = 0" : "x² − 1").replace(/;\s*\)$/, "; 2)");
+          const cmd = parseCommand(filled);
           assert.ok(cmd, `${label}: ${txt} ni ukaz CAS`);
           assert.ok(!runCas(cmd).error, `${label}: ${txt} → ${JSON.stringify(runCas(cmd).error)}`);
         }
@@ -162,6 +164,10 @@ test("f(x) keys only insert what the calculator understands; ℂ is among the se
     }
   }
   assert.ok(GROUPS.funkcije.keys.some((k) => k.label === "ℂ"), "ℂ v skupini množic");
+  // 3. faza CAS: determinanta in inverz matrike s predlogo 2 × 2 v skupini Algebra
+  const alg = FX_GROUPS.find(([g]) => g === "alg")[2].map(([l]) => l);
+  assert.ok(alg.includes("det") && alg.includes("inverse"));
+  assert.equal(CAS_SL.inverse, "inverz");
   assert.ok(KEM_ROWS.flat().includes("(aq)") && KEM_ROWS.flat().includes("₂") && KEM_ROWS.flat().includes("⇌"));
 });
 

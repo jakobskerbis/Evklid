@@ -81,8 +81,9 @@ test("reši za izbrano črko: linearne in kvadratne enačbe, formule iz fizike",
 });
 
 test("česar še ne znamo, ne ugibamo; shranjene spremenljivke so števila", () => {
-  assert.equal(cas("poenostavi(sin(x)/x)").error.code, "casUnsupported");
-  assert.equal(cas("razstavi(√(x)−1)").error.code, "casUnsupported");
+  // 3. faza zna korene, kotne funkcije in logaritme (test/cas3.test.js), krožnih funkcij in fakultete pa ne
+  assert.equal(cas("poenostavi(arcsin(x)/x)").error.code, "casUnsupported");
+  assert.equal(cas("razstavi(x!−1)").error.code, "casUnsupported");
   assert.equal(cas("razstavi(x=1)").error.code, "casEquation");
   assert.equal(res("razstavi(x²−a²)", { vars: { a: 2 } }), "\\left(x + 2\\right)\\left(x - 2\\right)");
   assert.equal(parseCommand("factor(x) + 1"), null);
@@ -99,7 +100,8 @@ test("česar še ne znamo, ne ugibamo; shranjene spremenljivke so števila", () 
 
 test("kalkulator ponudi gumbe za izraze in enačbe s črkami", () => {
   assert.equal(analyze("x²−1").cas, true);
-  assert.equal(analyze("sin(x)").cas, undefined);
+  assert.equal(analyze("sin(x)").cas, true); // 3. faza
+  assert.equal(analyze("arcsin(x)").cas, undefined);
   assert.equal(analyze("(a+b)²").kind, "sym");
   const eq = analyze("pV=nRT");
   assert.equal(eq.kind, "symeq");

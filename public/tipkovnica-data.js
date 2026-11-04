@@ -90,14 +90,14 @@ export const FX_GROUPS = [
   ["pow", "tk.fx.pow", [["x²", "²"], ["x³", "³"], ["xⁿ", "^(@)"], ["x⁻¹", "⁻¹"], ["√", "√(@)"], ["∛", "∛(@)"], ["ⁿ√", "root(@;)"], ["eˣ", "e^(@)"], ["10ˣ", "10^(@)"], ["log", "log(@)"], ["ln", "ln(@)"], ["logₐ", "logb(@;)"], ["|x|", "abs(@)"], ["a/b", "(@)/()"], ["×10ⁿ", "×10^(@)"]]],
   ["ana", "sc.grp.ana", [["d/dx", "d/dx(@)"], ["f′(a)", "d/dx(@;)"], ["∫ₐᵇ", "∫(@;;)"], ["integrate", "integrate(@)"], ["limit", "limit(@; x; )"], ["taylor", "taylor(@; x; 0; 5)"], ["∑", "∑_(n=1)^(@) "], ["∏", "∏_(n=1)^(@) "], ["f(x)=", "f(x)="], ["g(x)=", "g(x)="], ["x", "x"], ["y", "y"], ["=", "="], [";", ";"], ["<", "<"], [">", ">"], ["≤", "≤"], ["≥", "≥"]]],
   // simbolno računanje (public/graph/cas.js, calculus.js); v slovenščini se napisi in ukazi zamenjajo s CAS_SL
-  ["alg", "sc.grp.alg", [["simplify", "simplify(@)"], ["expand", "expand(@)"], ["factor", "factor(@)"], ["solve", "solve(@; x)"], ["x", "x"], ["y", "y"], ["a", "a"], ["b", "b"], ["c", "c"], ["=", "="], [";", ";"], ["²", "²"], ["a/b", "(@)/()"]]],
+  ["alg", "sc.grp.alg", [["simplify", "simplify(@)"], ["expand", "expand(@)"], ["factor", "factor(@)"], ["solve", "solve(@; x)"], ["det", "det([[@; ]; [; ]])"], ["inverse", "inverse([[@; ]; [; ]])"], ["x", "x"], ["y", "y"], ["a", "a"], ["b", "b"], ["c", "c"], ["=", "="], [";", ";"], ["²", "²"], ["a/b", "(@)/()"]]],
   ["num", "sc.grp.num", [["n!", "!"], ["nCr", "nCr(@;)"], ["nPr", "nPr(@;)"], ["gcd", "gcd(@;)"], ["lcm", "lcm(@;)"], ["mod", "mod(@;)"], ["round", "round(@;)"], ["⌊x⌋", "floor(@)"], ["⌈x⌉", "ceil(@)"], ["sgn", "sgn(@)"], ["Int", "Int(@)"], ["frac", "frac(@)"], ["Ran#", "rand"], ["RanInt", "randint(@;)"], ["Pol", "Pol(@;)"], ["Rec", "Rec(@;)"], ["%", "%"], ["Ans", "Ans"]]],
   ["stat", "sc.grp.stat", [["mean", "mean(@)"], ["median", "median(@)"], ["σ", "stdev(@)"], ["min", "min(@)"], ["max", "max(@)"], ["Σ", "total(@)"], [";", ";"]]],
   ["cplx", "sc.grp.cplx", [["i", "i"], ["|z|", "abs(@)"]]],
 ];
 
 // Imena ukazov CAS v slovenščini (enako kot commandName v public/graph/cas.js; kalkulator razume oboje).
-export const CAS_SL = { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši", integrate: "integriraj", limit: "limita", taylor: "taylor" };
+export const CAS_SL = { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši", integrate: "integriraj", limit: "limita", taylor: "taylor", det: "det", inverse: "inverz" };
 
 // Kemija: elementi, indeksi, naboji, puščice, agregatna stanja.
 export const KEM_ROWS = [

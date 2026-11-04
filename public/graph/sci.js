@@ -6,6 +6,7 @@ import { analyze, previewTex, solutionTex, intervalsTex, systemTex, ANGLE_SUP } 
 import { commandName, parseCommand } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 import { chemSub, chemNumbers } from "./molska.js";
+import { pomanjsaj } from "../sirina.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -20,6 +21,8 @@ const texHtml = (s, display = false) => {
     return esc(s);
   }
 };
+// 1/det A pred matriko: na ozkem zaslonu se matrika prelomi v svojo vrstico, ne pomika vstran
+const matBreak = (tex) => String(tex ?? "").replace(/\}\\begin\{pmatrix\}/g, "}\\allowbreak\\begin{pmatrix}");
 const usesComma = (locale) => {
   try {
     return (1.5).toLocaleString(locale || "sl").includes(",");
@@ -72,20 +75,31 @@ const MORE = [
 ];
 
 // gnezdeni \frac, \sqrt, ^{…} od znotraj navzven: √(E/m) ostane √((E)/(m)), ne √(E)/(m)
+// brez oklepaja samo eno število ali ena črka: √2x bi kalkulator prebral kot √2·x, e^3x kot e³·x
+const bareTok = (a) => /^(?:\d+(?:[.,]\d+)?|[A-Za-zα-ωπ])$/.test(a);
 function unnest(x) {
   for (let prev = ""; prev !== x; ) {
     prev = x;
     x = x
       .replace(/_\{([^{}]*)\}/g, "$1")
-      .replace(/\^\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `^${a}` : `^(${a})`))
+      .replace(/\^\{([^{}]*)\}/g, (_, a) => (bareTok(a) ? `^${a}` : `^(${a})`))
       .replace(/\\t?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)")
-      .replace(/\\sqrt\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `√${a}` : `√(${a})`));
+      // x²·⁶√(x⁵): pred root( in za njim pišemo ·, sicer bi bilo x^2root(…)
+      .replace(/(\S?)\\sqrt\[(\d+)\]\{([^{}]*)\}(?=(.?))/g, (_, pre, n, a, post) => (n === "3" ? `${pre}${bareTok(a) ? `∛${a}` : `∛(${a})`}` : `${pre}${pre && !/[\s({[+\-·=,;]/.test(pre) ? "·" : ""}root(${a}; ${n})${post && /[\w\\√∛(|]/.test(post) ? "·" : ""}`))
+      .replace(/\\sqrt\{([^{}]*)\}/g, (_, a) => (bareTok(a) ? `√${a}` : `√(${a})`));
   }
   return x;
 }
 /** Rezultat v TeX → besedilo za odložišče, ki ga razume vsak program (izvoženo za teste). */
 export function texPlain(tex) {
-  return unnest(String(tex).replace(/\{,\}/g, ","))
+  const pre = String(tex)
+    // matrika → [[a; b]; [c; d]] (zapis, ki ga kalkulator prebere v obeh načinih)
+    .replace(/\}\\begin\{pmatrix\}/g, "}\\cdot\\begin{pmatrix}")
+    .replace(/\\begin\{pmatrix\}([\s\S]*?)\\end\{pmatrix\}/g, (_, body) => `[${body.split("\\\\").map((r) => `[${r.split("&").map((x) => x.trim()).join("; ")}]`).join("; ")}]`)
+    .replace(/\\log_\{([^{}]*)\}/g, "log_$1")
+    // sin²(x/2): \sin^{2}\frac{x}{2} → sin^2((x)/(2)), ne sin^2(x)/(2)
+    .replace(/(\\(?:sin|cos|tan|cot|ln|log)(?:\^\{\d+\})?)\\frac(\{[^{}]*\}\{[^{}]*\})/g, "$1\\left(\\frac$2\\right)");
+  return unnest(pre.replace(/\{,\}/g, ","))
     .replace(/\\Leftrightarrow/g, "⇔")
     .replace(/\\(left|right)(?![a-z])/g, "")
     .replace(/\\(quad|,|;)/g, " ")
@@ -305,6 +319,10 @@ export function createScientific(root, opts) {
         return t("sc.cas.irrational");
       case "casEmpty":
         return t("sc.cas.empty");
+      case "casSingular":
+        return t("sc.cas.singular");
+      case "casMatrix":
+        return t("sc.cas.matrix");
       case "casIntegral":
         return t("sc.cas.integral");
       case "casLimit":
@@ -453,7 +471,7 @@ export function createScientific(root, opts) {
         return texHtml(`= ${e.res}`);
       case "cas": {
         if (e.none) return `<span class="sc-none">${esc(t("sc.cas.limitNone"))}</span>`;
-        if (e.op !== "solve") return texHtml(`${e.approx ? "\\approx" : "="} ${e.res}`);
+        if (e.op !== "solve") return texHtml(`${e.approx ? "\\approx" : "="} ${matBreak(e.res)}`);
         const parts = String(e.res || "").split(",\\quad ").filter(Boolean);
         return `<span class="sc-parts">${parts.map((x) => `<span>${texHtml(x)}</span>`).join("")}</span>`;
       }
@@ -473,7 +491,9 @@ export function createScientific(root, opts) {
   function noteHtml(e) {
     if (!e.note) return "";
     const txt = esc(t(e.note.key, { name: e.note.name || "", fn: e.note.fn || "" }));
-    return `<div class="sc-h-note muted">${txt}${e.note.tex ? ` ${texHtml(e.note.tex)}` : ""}</div>`;
+    // »Velja za … ≠ 0«: dolg pogoj se prelomi pri + ali −, nikoli tik za ≠ (sicer ostane 0 sama v vrstici)
+    const cond = e.note.tex ? String(e.note.tex).replace(/(\\ne|\\neq|\\ge|\\le|>|<)(?![a-z])\s*/g, "$1\\nobreak ") : "";
+    return `<div class="sc-h-note muted">${txt}${cond ? ` ${texHtml(cond)}` : ""}</div>`;
   }
 
   // sproti: lep zapis izraza in predogled rezultata
@@ -506,14 +526,14 @@ export function createScientific(root, opts) {
     if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`= ${fmt(r.value).tex}`) : "";
     else if (r.kind === "complex") live.innerHTML = texHtml(`= ${complexTex(r.re, r.im)}`);
     else if (r.kind === "deriv") live.innerHTML = texHtml(`= ${r.resTex}`);
-    else if (r.kind === "cas") live.innerHTML = r.none && r.op === "limit" ? esc(t("sc.cas.limitNone")) : texHtml(r.op === "solve" ? r.resTex : `${r.approx ? "\\approx" : "="} ${r.resTex}`);
+    else if (r.kind === "cas") live.innerHTML = r.none && r.op === "limit" ? esc(t("sc.cas.limitNone")) : texHtml(r.op === "solve" ? r.resTex : `${r.approx ? "\\approx" : "="} ${matBreak(r.resTex)}`);
     else live.innerHTML = r.kind === "solve" || r.kind === "ineq" || r.kind === "system" ? `<span class="sc-live-hint">${esc(t("sc.pressSolve"))}</span>` : "";
   }
   // Sproten predogled ne rešuje enačb in neenačb (rešitev pride ob =): samo račun, odvod, kompleksno število.
   function analyzeLive(text) {
-    // limita(f; x; a), taylor(f; x; a; n): podpičje loči argumente, predogled kot pri vsakem ukazu
+    // limita(f; x; a), taylor(f; x; a; n), det([[a; b]; [c; d]]): podpičje loči argumente oziroma elemente, predogled kot pri vsakem ukazu
     const cmd = parseCommand(text);
-    if (cmd && ["integrate", "limit", "taylor"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env(), live: true });
+    if (cmd && ["integrate", "limit", "taylor", "det", "inverse"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env(), live: true });
     if (/[=<>≤≥;]/.test(text) && !functionDef(text)) {
       const r = withChem(text, evaluate);
       if (r && !r.error) return { kind: "value", ...r };
@@ -637,6 +657,8 @@ export function createScientific(root, opts) {
         </div>`;
       })
       .join("");
+    // matrika se ne prelomi: preširok rezultat najprej malo pomanjšamo (do 80 %, sirina.js), šele nato se pomika
+    hist.querySelectorAll(".sc-h-res").forEach((b) => b.querySelector(".mtable") && pomanjsaj(b, b.clientWidth, () => b.scrollWidth));
     if (scroll) hist.scrollTop = hist.scrollHeight;
   }
 
@@ -677,7 +699,8 @@ export function createScientific(root, opts) {
   function algKeys() {
     const n = (op) => commandName(op, opts.locale?.());
     const nm = (op) => `\\operatorname{${n(op)}}`;
-    return [[nm("simplify"), `${n("simplify")}(@)`], [nm("expand"), `${n("expand")}(@)`], [nm("factor"), `${n("factor")}(@)`], [`${nm("solve")}\\ (\\ldots;x)`, `${n("solve")}(@; x)`]];
+    // det in inverz s predlogo 2 × 2 (»;« loči elemente v obeh načinih decimalnega ločila)
+    return [[nm("simplify"), `${n("simplify")}(@)`], [nm("expand"), `${n("expand")}(@)`], [nm("factor"), `${n("factor")}(@)`], [`${nm("solve")}\\ (\\ldots;x)`, `${n("solve")}(@; x)`], ["\\det", `${n("det")}([[@; ]; [; ]])`], ["A^{-1}", `${n("inverse")}([[@; ]; [; ]])`]];
   }
   function anaKeys() {
     const n = (op) => commandName(op, opts.locale?.());
