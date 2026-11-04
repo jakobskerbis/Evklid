@@ -45,7 +45,12 @@ function strings(lang) {
   return out;
 }
 
-export function manifest(lang = "sl") {
+// Barva sistemske vrstice nameščene aplikacije (Android jo pobarva s theme_color, tudi spodnjo vrstico
+// pod menijem) sledi slogu vmesnika: theme.js v povezavo do manifesta doda ?barva= (meni) in ?ozadje=.
+const HEX = /^#[0-9a-f]{6}$/i;
+const hexOr = (v, fallback) => (typeof v === "string" && HEX.test(v) ? v.toLowerCase() : fallback);
+
+export function manifest(lang = "sl", { barva, ozadje } = {}) {
   const s = strings(lang);
   const shortcut = (key, view, file) => ({
     name: s[key],
@@ -62,8 +67,8 @@ export function manifest(lang = "sl") {
     start_url: "/",
     scope: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#2563eb",
+    background_color: hexOr(ozadje, "#f6f7f9"),
+    theme_color: hexOr(barva, "#ffffff"),
     categories: ["education"],
     // Klik na ikono, ko je Evklid že odprt, ga prikaže (brez drugega okna).
     launch_handler: { client_mode: ["navigate-existing", "auto"] },
@@ -90,7 +95,7 @@ export function manifestLang(query, acceptLanguages = []) {
 export function mountWebApp(app) {
   app.get("/manifest.webmanifest", (req, res) => {
     const lang = manifestLang(req.query.lang, req.acceptsLanguages());
-    res.set("Cache-Control", "no-cache").type("application/manifest+json").send(JSON.stringify(manifest(lang)));
+    res.set("Cache-Control", "no-cache").type("application/manifest+json").send(JSON.stringify(manifest(lang, req.query)));
   });
   app.get("/.well-known/assetlinks.json", (_req, res) => {
     const pkg = process.env.ANDROID_PACKAGE;

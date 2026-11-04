@@ -222,7 +222,12 @@ export function initInstall(opts = {}) {
   ctx = { ...ctx, ...opts };
   // Manifest v jeziku vmesnika (ime bližnjic ob dolgem pritisku na ikono).
   const link = $('link[rel="manifest"]');
-  if (link) link.href = `/manifest.webmanifest?lang=${encodeURIComponent(currentLang())}`;
+  if (link) {
+    // Samo jezik; barvi (?barva=, ?ozadje=) doda theme.js.
+    const u = new URL(link.getAttribute("href") || "/manifest.webmanifest", location.href);
+    u.searchParams.set("lang", currentLang());
+    link.setAttribute("href", u.pathname + u.search);
+  }
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault(); // namesto pasice brskalnika ponudimo svoj gumb
     deferred = e;
