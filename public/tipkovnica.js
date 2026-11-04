@@ -431,7 +431,7 @@ function render() {
   S.layer = layerId(L);
   const body = typeof L === "object" ? customHtml(L) : { abc: abcHtml, num: numHtml, fx: fxHtml, sym: symHtml, kem: kemHtml }[S.layer]?.() || abcHtml();
   const c = ctxChips();
-  const ctx = c.html || (prefs.words && S.layer === "abc" && words) ? `<div class="tk-ctx${c.words ? " words" : ""}"${c.glide ? ' data-g="1"' : ""}>${c.html}</div>` : "";
+  const ctx = c.html || (prefs.words && S.layer === "abc" && words) || reserveCtx() ? `<div class="tk-ctx${c.words ? " words" : ""}"${c.glide ? ' data-g="1"' : ""}>${c.html}</div>` : "";
   board.innerHTML = `<div class="tk-in${S.layers.length > 1 ? " tk-multi" : ""}">${ctx}${tabsHtml()}<div class="tk-rows" data-layer="${esc(S.layer)}">${body}</div></div>`;
   // razred namesto ».tk:has(…)«: :has na plošči je ob vsakem pritisku na novo preračunal slog vseh tipk
   board.classList.toggle("tk-abc", S.layer === "abc");
@@ -445,13 +445,24 @@ function render() {
   }
   if (S.layer === "abc" && prefs.glide) loadGlide();
 }
+// Na dotik je vrstica nad zavihki v poljih z drsenjem ali predlogi vedno na mestu (tudi prazna, kot pas
+// predlogov pri Gboard): besede po drsenju se pokažejo, ne da bi tipkovnica zrasla in stran poskočila.
+function reserveCtx() {
+  return touch() && S.layers.some((l) => layerId(l) === "abc") && (prefs.words || glideAllowed(S.field));
+}
 function renderCtx() {
   const box = board?.querySelector(".tk-ctx");
   const c = ctxChips();
   const was = box?.dataset.g === "1";
   if (c.glide || was) {
-    if (box && c.glide && was) box.innerHTML = c.html;
-    else render(); // vrstica se pojavi ali izgine
+    if (box && (was || reserveCtx())) {
+      box.innerHTML = c.html;
+      box.classList.toggle("words", !!c.words);
+      if (c.glide) box.dataset.g = "1";
+      else delete box.dataset.g;
+      if (c.html || reserveCtx()) return;
+    }
+    render(); // vrstica se pojavi ali izgine
     return;
   }
   if (!box || !(prefs.words && S.layer === "abc")) return;
@@ -595,8 +606,11 @@ function loadGlide() {
 }
 /** Ali se tu sme drsati: ABC, vklopljeno, ne v e-pošti in povezavah, ne v poljih brez kazalca. */
 function glideOn() {
-  const f = S.field;
-  if (!prefs.glide || S.layer !== "abc" || !f || f.isContentEditable || sel(f) === null || S.kind !== "text") return false;
+  return S.layer === "abc" && glideAllowed(S.field);
+}
+/** Polje dovoli drsenje po črkah (ne glede na trenutno plast). */
+function glideAllowed(f) {
+  if (!prefs.glide || !f || f.isContentEditable || sel(f) === null || S.kind !== "text") return false;
   const lay = layoutFor(currentLang());
   if (lay.globe || lay.id === "ime") return false;
   const auto = String(f.getAttribute("autocomplete") || "") + " " + String(orig(f) || "") + " " + String(f.type || "");

@@ -1,7 +1,8 @@
 // Evklidova tipkovnica brez zatikanja (j, 4. 11.: »tipkovnica is feeling too clunky«):
 // 1) pritisk tipke ne pregleda in ne preračuna vse strani (drsniki.js samo v tipkovnici, brez »:has« na plošči/telu);
 // 2) ⇧ zamenja napise na mestu (iste tipke, brez ponovnega risanja plošče);
-// 3) vse plasti (ABC, 123, f(x), Σ, Kem) so enako visoke, zato stran ob menjavi ne poskoči.
+// 3) vse plasti (ABC, 123, f(x), Σ, Kem) so enako visoke in pas za predloge je na dotik vedno na mestu,
+//    zato stran ob menjavi plasti ali po drsenju ne poskoči.
 import test from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
@@ -123,6 +124,8 @@ for (const [name, opts] of [
       await press(`#tipkovnica .tk-tab >> nth=${i}`);
       assert.equal(await page.getAttribute("#tipkovnica .tk-rows", "data-layer"), layer);
       heights[layer] = await page.evaluate(() => document.getElementById("tipkovnica").offsetHeight);
+      // na dotik je pas za besede po drsenju vedno na mestu (sicer bi tipkovnica po drsenju zrasla)
+      assert.equal(await page.locator("#tipkovnica .tk-ctx").count(), touch ? 1 : 0, `pas predlogov (${layer})`);
     }
     assert.equal(new Set(Object.values(heights)).size, 1, `višine: ${JSON.stringify(heights)}`);
     assert.deepEqual(errors, []);
