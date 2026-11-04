@@ -558,7 +558,7 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   font-size: 0.9rem; font-weight: 600; text-align: center; pointer-events: none; animation: k3-pojav 0.2s both;
 }
 /* Hoja (prvoosebni način, poveziGumbVrtenja v scena.js): gumba Naprej/Nazaj ob desnem robu odra, držiš za hojo */
-.k3-hoja { position: absolute; z-index: 4; inset-inline-end: 12px; top: 50%; translate: 0 -50%; display: flex; flex-direction: column; gap: 10px; }
+.k3-hoja { position: absolute; z-index: 4; inset-inline-end: max(12px, env(safe-area-inset-right)); top: 50%; translate: 0 -50%; display: flex; flex-direction: column; gap: 10px; }
 .k3-hoja[hidden] { display: none; }
 .k3-hoja-gumb {
   width: 52px; height: 52px; display: grid; place-items: center; padding: 0; border-radius: 50%; cursor: pointer;
@@ -569,3 +569,9 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .k3-hoja-gumb:active { background: var(--k3-accent-soft, #1a2540); }
 /* pri hoji namig za vrtenje ne velja (navodilo za hojo pokaže obvestilo ob preklopu) */
 .k3-oder-ovoj:has(.k3-hoja:not([hidden])) .k3-namig, .a3:has(.k3-hoja:not([hidden])) .a3-namig { visibility: hidden; }
+/* atlas: desno sta kompas in zapri na kartici, zato gumba za hojo levo */
+.a3 .k3-hoja { inset-inline-end: auto; inset-inline-start: max(12px, env(safe-area-inset-left)); }
+/* Vlečenje drsnika (pregledovalnik.js): vse razen gumba in tirnice tega drsnika je prosojno, da se vidi telo */
+.k3-drsam .k3-spodaj, .k3-drsam .k3-nadzor, .k3-drsam .k3-orodja, .k3-drsam .k3-plast, .k3-drsam .k3-namig, .k3-drsam .k3-merilo,
+.k3-drsam .k3-hoja, html:has(.k3-stran-pregled.k3-drsam) .k3-model-vrh { visibility: hidden; }
+.k3-drsam .k3-aktiven input[type="range"] { visibility: visible; }
