@@ -263,6 +263,8 @@ export function createCalculator(root, opts) {
         return t("gc.errChar", { ch: e.info.f });
       case "polInside":
         return t("sc.errPolInside");
+      case "seqStart":
+        return t("gc.errSeqStart", { name: e.info.name });
       case "vecMix":
       case "vecOp":
         return t("sc.errVec");
@@ -336,6 +338,11 @@ export function createCalculator(root, opts) {
       const v = o.kind === "param" ? "t" : "θ";
       const [a, b] = it.domain || DEFAULT_DOMAIN[o.kind];
       return `<div class="gc-domain"><input class="gc-lim" data-dom="0" value="${esc(piFmt(a))}" aria-label="${esc(t("gc.min"))}"><span>${tex(`\\le ${v === "θ" ? "\\theta" : v} \\le`)}</span><input class="gc-lim" data-dom="1" value="${esc(piFmt(b))}" aria-label="${esc(t("gc.max"))}"></div>`;
+    }
+    if (o.plot === "seq") {
+      // prvih šest členov; vsak v svojem okvirčku, da se na ozkem zaslonu prelomijo
+      const terms = o.seq.range(o.seq.n0, o.seq.n0 + 5).map(([k, v]) => `<span>${tex(`${o.fname}(${k}) = ${Number.isFinite(v) ? fmt(v, 6).replace("−", "-").replace(",", "{,}") : "\\text{—}"}`)}</span>`);
+      return `<div class="gc-val gc-seq">${terms.join("")}<span>${tex("\\ldots")}</span></div>`;
     }
     const parts = [];
     if ((o.kind === "y" || o.plot === "y") && o.deriv && it.tools?.deriv && o.deriv.tex) {
@@ -818,6 +825,7 @@ export function createCalculator(root, opts) {
       html += tog("area", t("gc.area"), !!tools.area);
       html += `<button type="button" class="gc-menu-row" data-tool="table">${icon("table")}<span>${esc(t("gc.valueTable"))}</span></button>`;
     }
+    if (o?.plot === "seq") html += `<div class="gc-pop-h">${esc(t("gc.tools"))}</div><button type="button" class="gc-menu-row" data-tool="table">${icon("table")}<span>${esc(t("gc.valueTable"))}</span></button>`;
     if (o?.kind === "points") html += tog("label", t("gc.label"), it.label !== false);
     html += `<div class="gc-pop-sep"></div><button type="button" class="gc-menu-row" data-tool="dup">${icon("copy")}<span>${esc(t("gc.duplicate"))}</span></button>`;
     html += `<button type="button" class="gc-menu-row danger" data-tool="del">${icon("trash-2")}<span>${esc(t("gc.delete"))}</span></button>`;
@@ -839,7 +847,9 @@ export function createCalculator(root, opts) {
       if (tool === "table") {
         const idx = state.items.indexOf(it);
         closePop();
-        state.items.splice(idx + 1, 0, { id: newId(), type: "table", ref: it.id, color: it.color, cols: [{ name: "x", values: [-2, -1, 0, 1, 2] }, { name: "y", values: [] }] });
+        const seq = o?.plot === "seq" ? o.seq : null;
+        const cols = seq ? [{ name: o.varName, values: Array.from({ length: 10 }, (_, i) => seq.n0 + i) }, { name: o.fname, values: [] }] : [{ name: "x", values: [-2, -1, 0, 1, 2] }, { name: "y", values: [] }];
+        state.items.splice(idx + 1, 0, { id: newId(), type: "table", ref: it.id, color: it.color, cols });
         commit();
         renderList();
         refresh();

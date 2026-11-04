@@ -115,6 +115,8 @@
 .gc-extra { display: grid; gap: 6px; padding: 0 2px 4px; }
 .gc-val { display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--text); overflow-x: auto; font-size: 1rem; }
 .gc-val svg.i { color: var(--muted); }
+.gc-seq { flex-wrap: wrap; gap: 2px 14px; overflow: visible; font-weight: 600; } /* členi zaporedja: prelom med členi, ne drsenje */
+[dir="rtl"] .gc-seq { direction: ltr; justify-content: flex-end; } /* u(1), u(2), … od leve proti desni kot drugi seznami števil */
 .gc-deriv { color: var(--muted); font-weight: 700; }
 .gc-err { display: flex; gap: 6px; align-items: flex-start; color: var(--danger); font-weight: 700; font-size: 0.88rem; line-height: 1.35; }
 .gc-err svg.i { margin-top: 2px; }
@@ -732,3 +734,81 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 /* drsni izrazi: v RTL bi bil desni del zunaj dosega drsnika (odrezan), »-2025« bi se izpisal »2025-« */
 [dir="rtl"] :is(.tl-v, .tl-mx-res) { direction: ltr; }
 [dir="rtl"] .tl-formula { direction: ltr; text-align: right; }
+
+/* Preglednica (tools-sheet.js): 5 stolpcev brez drsenja vstran tudi na 360 px */
+.tl-sh-edit { display: flex; gap: 8px; align-items: center; }
+.tl-sh-name { flex: 0 0 auto; min-width: 2.6em; font-weight: 800; color: var(--accent); text-align: center; }
+.tl-sh-in { flex: 1; min-width: 0; min-height: 44px; font-size: 1.05rem; color: var(--text); background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 6px 10px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.tl-sh-ok { flex: none; }
+.tl-sh-val { display: flex; align-items: center; gap: 8px; min-height: 40px; font-weight: 700; }
+.tl-sh-val .tl-v { flex: 1; overflow-wrap: anywhere; }
+.tl-sh-val:empty { display: none; }
+.tl-sh-acts { flex-wrap: wrap; }
+.tl-sh-acts .danger { color: var(--danger); border-color: var(--danger); }
+.tl-sh-fill { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.tl-sh-fill[hidden] { display: none; }
+.tl-sh-fill .tl-field { flex: 1 1 200px; }
+.tl-sh-to { max-width: 90px; }
+.tl-sh-wrap { max-height: 62vh; overflow-y: auto; border: 1.5px solid var(--border); border-radius: 12px; background: var(--surface); }
+.tl-sh { width: 100%; border-collapse: collapse; table-layout: fixed; font-variant-numeric: tabular-nums; font-size: 0.9rem; direction: ltr; }
+.tl-sh col:first-child, .tl-sh th:first-child { width: 34px; }
+.tl-sh th { background: var(--surface-2); color: var(--muted); font-weight: 800; font-size: 0.8rem; padding: 0 2px; height: 32px; }
+.tl-sh thead th { position: sticky; top: 0; z-index: 1; }
+.tl-sh tfoot th, .tl-sh tfoot td { position: sticky; z-index: 1; background: var(--surface-2); font-weight: 700; }
+.tl-sh tfoot tr:nth-child(1) > * { bottom: 96px; } .tl-sh tfoot tr:nth-child(2) > * { bottom: 64px; }
+.tl-sh tfoot tr:nth-child(3) > * { bottom: 32px; } .tl-sh tfoot tr:nth-child(4) > * { bottom: 0; }
+.tl-sh tfoot tr:first-child > * { border-top: 2px solid var(--border); }
+.tl-sh td { height: 40px; padding: 0 4px; text-align: right; border: 1px solid var(--border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: cell; }
+.tl-sh tfoot td { height: 32px; cursor: default; }
+.tl-sh td.tl-sh-txt { text-align: left; color: var(--muted); font-weight: 700; }
+.tl-sh td.tl-sh-err { color: var(--danger); font-weight: 800; text-align: center; font-size: 0.75rem; }
+.tl-sh td[aria-selected="true"] { outline: 2.5px solid var(--accent); outline-offset: -2px; background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.tl-sh td:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+@media (max-width: 420px) { .tl-sh { font-size: 0.8rem; } .tl-sh col:first-child, .tl-sh th:first-child { width: 28px; } .tl-sh td { padding: 0 3px; } }
+.tl-sh-wrap:has(.tl-sh td:focus) { scroll-padding: 40px 0 136px; }
+/* gumbi pod vrstico za pisanje: dotik vsaj 44 px (žetoni so sicer 36 px) */
+.chip-row.tl-sh-acts > button, .chip-row.tl-tacts > button { min-height: 44px; }
+/* telefon z odprto Evklidovo tipkovnico: vrstica za pisanje ostane vidna nad mrežo (sicer jo tipkovnica
+   ali drsenje do celic skrije), gumbi pod njo se med pisanjem umaknejo, da je vidnih več vrstic */
+@media (pointer: coarse) {
+  body.tk-open .tl-sh-bar:has(.tl-sh-in:focus) { position: sticky; top: 0; z-index: 3; }
+  body.tk-open .tl-sh-bar:has(.tl-sh-in:focus) .tl-sh-acts { display: none; }
+}
+
+/* Poskusi (tools-trials.js) */
+.tl-tacts { flex-wrap: wrap; }
+.tl-faces { font-size: 2rem; line-height: 1; letter-spacing: 4px; }
+.tl-last .tl-k { flex: 0 1 auto; }
+.tl-last { justify-content: space-between; }
+.tl-tp { stroke: var(--g-orange); stroke-width: 3; }
+.tl-legend { display: flex; gap: 16px; flex-wrap: wrap; }
+.tl-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.tl-legend i { display: inline-block; width: 14px; height: 10px; }
+.tl-lg-bar { background: var(--g-blue); border-radius: 2px; }
+.tl-lg-p { height: 3px !important; background: var(--g-orange); }
+.tl-verdict { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0; padding: 10px; border-radius: 12px; font-size: 1.3rem; font-weight: 800; }
+.tl-verdict svg.i { width: 26px; height: 26px; }
+.tl-verdict.ok { color: var(--g-green); background: color-mix(in srgb, var(--g-green) 12%, var(--surface)); }
+.tl-verdict.no { color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, var(--surface)); }
+.tl-nl { max-height: none; margin-bottom: 4px; }
+.tl-nl-seg { stroke-width: 4; stroke-linecap: butt; }
+.tl-nl-dot { stroke-width: 2.5; fill: var(--surface); }
+.tl-nl-dot.in { fill: currentColor; }
+.tl-nl-arr { stroke: none; fill: currentColor; }
+.tl-nl .c0, .tl-tn-dot.c0 { color: var(--g-blue); stroke: var(--g-blue); }
+.tl-nl .c1, .tl-tn-dot.c1 { color: var(--g-red); stroke: var(--g-red); }
+.tl-nl .c2, .tl-tn-dot.c2 { color: var(--g-green); stroke: var(--g-green); }
+.tl-nl .all, .tl-tn-dot.all { color: var(--g-purple); stroke: var(--g-purple); }
+.tl-nl-arr { stroke: none !important; }
+.tl-tn-dot { flex: none; display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; border: 2px solid currentColor; font-weight: 800; font-size: 0.8rem; }
+[dir="rtl"] .tl-sh-in, [dir="rtl"] .tl-tl, [dir="rtl"] .tl-tv { direction: ltr; text-align: right; }
+.tl-lastv { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; }
+.tl-nl, .tl-tchart svg { direction: ltr; }
+.tl-tchart .pr-svg { max-height: none; }
+/* Vrzi je glavni gumb (ne žeton); tabela frekvenc: glave se prelomijo, da so vsi 4 stolpci vidni na 360 px */
+.chip-row.tl-tacts > button.primary { background: var(--accent) !important; border-color: var(--accent) !important; color: var(--accent-text); }
+.tl-tchart + .tl-vt-wrap .tl-vt thead th { white-space: normal; vertical-align: bottom; hyphens: auto; }
+@media (max-width: 480px) { .tl-tchart + .tl-vt-wrap .tl-vt { font-size: 13px; } }
+/* zadnji met: kocke in vsota »5 + 2 + 1 = 8« ostanejo od leve proti desni (v RTL bi se obrnile) */
+[dir="rtl"] .tl-lastv { direction: ltr; }
+.tl-nl-lab { font-size: 12px; font-weight: 800; text-anchor: middle; fill: currentColor; stroke: none !important; }

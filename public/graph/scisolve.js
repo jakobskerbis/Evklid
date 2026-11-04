@@ -8,7 +8,7 @@ import { evalComplex, polyRoots } from "./toolscore.js";
 
 const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE]
 const SAMPLES = 20000;
-const TRIG = /(sin|cos|tan|cot|sec|csc)\(/;
+const TRIG = /(sin|cos|tan|cot|sec|csc)(?![a-z])/; // tudi »sin x« brez oklepaja
 // Iskanje rešitev ne sme zamrzniti vmesnika (∑ s 10 000 členi): po 1,5 s odnehamo (»ne znam rešiti«).
 const BUDGET_MS = 1500;
 let deadline = Infinity;
