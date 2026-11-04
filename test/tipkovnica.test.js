@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import {
+  prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, digitFor,
   fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, KEM_ROWS,
   NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest,
 } from "../public/tipkovnica-data.js";
@@ -235,4 +236,32 @@ test("tablica: tipkovnica čez celo širino, ⌄ v vrstici zavihkov (j, 2. 11.)"
   const blk = css.slice(i, css.indexOf("\n}\n", i));
   assert.match(blk, /\.tk-in \{[^}]*max-width: none/);
   assert.match(blk, /\.tk-hide \{[^}]*position: static/);
+});
+
+test("tipke v poljih za ljudi: |x| namesto abs(), ⌊x⌋, σ … (j, 2. 11.); kalkulator dobi imena funkcij", () => {
+  const raw = /\b(abs|floor|ceil|stdev|total|root|logb|gcd|lcm)\(/;
+  const all = [...FX_GROUPS.flatMap((g) => g[2].map((k) => k[1])), ...Object.values(GROUPS).flatMap((g) => g.keys.map((k) => k.ins))];
+  for (const ins of all) assert.doesNotMatch(prettyIns(ins, false), raw, ins);
+  assert.equal(prettyIns("abs(@)", true), "|@|"); // math.js razume |x|
+  assert.equal(prettyIns("floor(@)", true), "floor(@)");
+  assert.equal(prettyIns("sin(@)", false), "sin(@)");
+});
+
+test("črke kot Gboard: velika začetnica, dva presledka, poteg po ⌫, številke v zgornji vrsti, samopopravek", () => {
+  assert.ok(autoCapNeeded("") && autoCapNeeded("Ok. ") && autoCapNeeded("Kaj? ") && autoCapNeeded("a\n"));
+  assert.ok(!autoCapNeeded("ok ") && !autoCapNeeded("3.5"));
+  assert.equal(doubleSpaceAt("ok "), 2);
+  assert.equal(doubleSpaceAt("ok. "), -1);
+  assert.equal(wordsBack("ena dve  tri", 12, 2), 4);
+  assert.equal(wordsBack("ena", 3, 5), 0);
+  assert.equal(digitFor([[..."qwertzuiopš"]], "q"), "1");
+  assert.equal(digitFor([[..."qwertzuiopš"]], "p"), "0");
+  assert.equal(digitFor([[..."qwertzuiopš"]], "š"), "");
+  const w = ["rešitev", "koliko", "enačba", "kako"];
+  assert.equal(autocorrect("resitev", w), "rešitev");
+  assert.equal(autocorrect("Resitev", w), "Rešitev");
+  assert.equal(autocorrect("koilko", w), "koliko");
+  assert.equal(autocorrect("kako", w), null);
+  assert.equal(autocorrect("mačka", w), null); // neznane besede ostanejo
+  assert.equal(autocorrect("NASA", w), null);
 });
