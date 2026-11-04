@@ -74,8 +74,14 @@ function pokukaj(el) {
 
 function preglej() {
   caka = false;
+  // Spremembe le v Evklidovi tipkovnici (pritisk tipke, povečana črka, predlogi): pregledamo samo njo,
+  // ne vse strani (getComputedStyle in scrollWidth za vsako vrstico sta ob vsakem pritisku zavirala tipkanje).
+  const o = obmocje || document;
+  const kje = o === document || o.isConnected ? o : null;
+  obmocje = null;
+  if (!kje) return;
   sledeni.forEach((el) => el.isConnected || (ro.unobserve(el), io?.unobserve(el), sledeni.delete(el)));
-  document.querySelectorAll(SEL).forEach((el) => {
+  kje.querySelectorAll(SEL).forEach((el) => {
     if (NI && el.matches(NI)) return;
     if (!sledeni.has(el)) {
       sledeni.add(el);
@@ -85,11 +91,16 @@ function preglej() {
   });
 }
 
-const kmalu = () => {
+// Kaj pregledati v naslednjem okvirju: document (vse) ali le tipkovnico.
+let obmocje = null;
+const kmalu = (kje = document) => {
+  obmocje = !obmocje || obmocje === kje ? kje : document;
   if (caka) return;
   caka = true;
   requestAnimationFrame(preglej);
 };
+// Vnosno polje samo ne vsebuje drsnih vrstic; višino (app.js autoGrow) mu nastavljamo ob vsakem znaku.
+const polje = (m) => m.type === "attributes" && m.attributeName === "style" && /^(INPUT|TEXTAREA)$/.test(m.target.nodeName);
 
 export function initDrsniki() {
   if (ro || typeof ResizeObserver === "undefined") return;
@@ -103,7 +114,13 @@ export function initDrsniki() {
   // Lastnih zapisov --drs-d/--drs-x (ob vsakem pomiku) ne štejemo, sicer bi vsak pomik pregledal vso stran.
   const brez = (s) => (s || "").replace(/--drs-[dx]:[^;]*;?\s*/g, "").trim();
   const nase = (m) => m.type === "attributes" && m.attributeName === "style" && sledeni.has(m.target) && brez(m.oldValue) === brez(m.target.getAttribute("style"));
-  new MutationObserver((ms) => ms.every(nase) || kmalu()).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeOldValue: true, attributeFilter: ["style", "hidden", "open"] });
-  document.fonts?.ready?.then(kmalu);
+  new MutationObserver((ms) => {
+    const vse = ms.filter((m) => !nase(m) && !polje(m));
+    if (!vse.length) return;
+    const tk = document.getElementById("tipkovnica");
+    // odpiranje ali zapiranje tipkovnice (hidden) spremeni prostor za stran, zato takrat pregledamo vse
+    kmalu(tk && vse.every((m) => tk.contains(m.target) && !(m.target === tk && m.type === "attributes")) ? tk : document);
+  }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeOldValue: true, attributeFilter: ["style", "hidden", "open"] });
+  document.fonts?.ready?.then(() => kmalu());
   kmalu();
 }

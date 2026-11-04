@@ -855,8 +855,10 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .boot-down .card { max-width: 360px; text-align: center; display: grid; gap: 14px; justify-items: center; }
 .boot-down .card svg { width: 40px; height: 40px; color: var(--muted, #8b949e); }
 .boot-down p { margin: 0; }
-/* prazna aplikacija pod sporočilom: ne sprejme fokusa (Tab) in je bralnik zaslona ne bere */
-body:has(> #boot-down) > :not(#boot-down) { visibility: hidden; }
+/* prazna aplikacija pod sporočilom: ne sprejme fokusa (Tab) in je bralnik zaslona ne bere.
+   Razred na <body> namesto »body:has(> #boot-down)«: tak :has je ob vsakem pritisku tipke na novo
+   preračunal slog vse strani (zaviralo je Evklidovo tipkovnico). */
+body.boot-down-on > :not(#boot-down) { visibility: hidden; }
 
 /* ---------- besedilo vedno vidno (public/razpri.js) ----------
    Vnos, naloga ali odgovor, ki nima prostora, se pokaže v celoti v oknu nad vsebino (mirno: rahel dvig in prikaz). */
