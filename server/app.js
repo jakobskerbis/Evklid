@@ -310,6 +310,10 @@ export function createApp(store, opts = {}) {
   mountFeedback(app, store, { usage, file: opts.feedbackFile ?? null, createFn: opts.feedbackCreateFn });
   mountReports(app, store, {
     loadConversation,
+    loadStudent,
+    // Skrbnik: račun skrbnika (z računi) ali računalnik, kjer teče strežnik.
+    isAdmin: (req) => !!req.parent?.is_admin || isLocalRequest(req),
+    topicName: (id) => lessonView(id)?.name || null,
     localOnly: (req, res, next) => (isLocalRequest(req) ? next() : res.status(403).json({ error: "Samo na računalniku, kjer teče Evklid." })),
   });
 
@@ -331,6 +335,8 @@ export function createApp(store, opts = {}) {
       defaults: DEFAULT_SETTINGS,
       daily_questions: LIMITS.dailyQuestions() || null,
       feedback: { prompt: feedbackPromptOn(), ai: feedbackAiOn(), admin: isLocalRequest(req) },
+      // Skrbnik vidi »Prijavi napako« v klepetu in seznam prijav (server/reports.js).
+      admin: !!req.parent?.is_admin || isLocalRequest(req),
       chat_off: chatOff(),
       test_notice: testNotice(),
     });
@@ -433,6 +439,7 @@ export function createApp(store, opts = {}) {
     if (!c) return;
     // Prijava napake ostane kot zapis dogodka (odgovor inštruktorja), učenčevo vprašanje in opomba pa se izbrišeta.
     store.db.prepare("UPDATE message_reports SET question = NULL, note = NULL WHERE conversation_id = ?").run(c.id);
+    store.db.prepare("UPDATE bug_reports SET context = NULL WHERE conversation_id = ?").run(c.id);
     res.json({ ok: store.deleteConversation(c.id) });
   });
 

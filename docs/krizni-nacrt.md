@@ -16,7 +16,12 @@ Dogodek javi v projektni niti »Pripravi krizni načrt za neljube dogodke«. Jav
 - **Prijavi napako** pod vsakim odgovorom inštruktorja: učenec izbere razlog (napačen odgovor, neprimerna
   vsebina, drugo) in po želji napiše, kaj bi moralo pisati. Prijava se shrani v tabelo `message_reports`
   in odgovor se takoj izbriše iz predpomnilnika (`answer_cache`), da ga ne dobi noben drug učenec.
-  Seznam: `GET /api/reports` (samo na računalniku, kjer teče Evklid).
+  Seznam: skrbnik v Računu → »Prijave napak« (`GET /api/admin/reports`, prenos v Markdownu
+  `/api/admin/reports/export` za popravke, gumb »Popravljeno«); na računalniku s strežnikom tudi `GET /api/reports`.
+- **Prijavi napako v vsaki lekciji** (splet in aplikacija): razlog (napaka v besedilu ali računu, nejasno,
+  nekaj ne deluje, drugo), opomba in korak lekcije; tabela `bug_reports` (`kind = lesson`). Skrbnik ima v
+  glavi klepeta še svoj gumb za napako v aplikaciji ali pri inštruktorju (`kind = app`, priloži zadnjih
+  10 sporočil pogovora). Prijave pregledamo in popravimo v nekaj dneh, nato jih označimo »Popravljeno«.
 - **Koda sporočila** (npr. `#00YA`) pod vsakim odgovorom. Če kroži posnetek zaslona, s kodo takoj najdemo
   sporočilo v bazi; če ga ni, je posnetek ponarejen ali iz druge aplikacije.
 - **Opozorilo** pod poljem za pisanje: »Evklid se lahko zmoti. Pomembne rezultate preveri.«
