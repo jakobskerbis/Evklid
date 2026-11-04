@@ -294,8 +294,8 @@ function initView(name) {
 }
 // ---------- spodnja vrstica se pri branju umakne (telefon, tablica na dotik; touch.css) ----------
 // Kje se umakne, določa touch.css (vrstica je takrat position: fixed in skrita pod robom). Poteg navzdol (drsenje
-// nazaj gor) ali kolešček gor jo pokaže (body.tb-peek), poteg navzgor jo spet skrije. Med pisanjem (odprta
-// tipkovnica) se ne pokaže. Na vseh teh zaslonih je v glavi gumb Nazaj.
+// nazaj gor) ali kolešček gor jo pokaže (body.tb-peek), poteg navzgor jo spet skrije; v lekciji Učbenika samo ob
+// robu (lessonEdge). Med pisanjem (odprta tipkovnica) se ne pokaže. Na vseh teh zaslonih je v glavi gumb Nazaj.
 const tabbarEl = $("#tabbar");
 const barAuto = () => !!tabbarEl && getComputedStyle(tabbarEl).position === "fixed";
 const typing = () => !!document.activeElement?.matches?.('textarea, [contenteditable="true"], input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"])');
@@ -305,26 +305,38 @@ function peekBar(on) {
   if (document.body.classList.contains("tb-peek") !== on) document.body.classList.toggle("tb-peek", on);
   syncTabbarH();
 }
+// Odprta lekcija v Učbeniku (j 2026-11-04): vrstica ostane skrita med branjem in se pokaže šele ob robu, torej s
+// potegom navzgor, ko je lekcija že na dnu, ali s potegom navzdol, ko je že na vrhu. Rob šteje ob začetku potega,
+// zato isti poteg, ki pripelje do dna, vrstice še ne pokaže. Drugje se pokaže ob vsakem drsenju nazaj gor.
+const lessonEdge = (target) => {
+  const v = target?.closest?.("#view-textbook");
+  if (!v || !v.querySelector(".tb-lesson-grid")) return null;
+  return { top: v.scrollTop <= 1, bottom: v.scrollTop + v.clientHeight >= v.scrollHeight - 2 };
+};
+// up = drsenje proti vrhu (poteg prsta navzdol, kolešček gor). Lekcija, ki se ne drsi (kratek korak), je na obeh
+// robovih hkrati: vsak navpični poteg vrstico pokaže (skrije jo šele poteg sredi daljšega koraka).
+const barWanted = (up, edge) => (edge ? (up ? edge.top : edge.bottom) : up);
 let swipe = null;
 document.addEventListener("touchstart", (e) => {
   const t = e.touches[0];
-  swipe = e.touches.length === 1 && !e.target.closest?.(NO_SWIPE) ? { x: t.clientX, y: t.clientY } : null;
+  swipe = e.touches.length === 1 && !e.target.closest?.(NO_SWIPE) ? { x: t.clientX, y: t.clientY, edge: lessonEdge(e.target) } : null;
 }, { passive: true });
 document.addEventListener("touchmove", (e) => {
   if (!swipe) return;
   const t = e.touches[0];
   const dy = t.clientY - swipe.y;
   if (Math.abs(dy) < 24 || Math.abs(t.clientX - swipe.x) > Math.abs(dy)) return;
+  const on = barWanted(dy > 0, swipe.edge);
   swipe = null;
-  requestAnimationFrame(() => barAuto() && peekBar(dy > 0));
+  requestAnimationFrame(() => barAuto() && peekBar(on));
 }, { passive: true });
 let wheelFrame = 0;
 document.addEventListener("wheel", (e) => {
   if (wheelFrame || Math.abs(e.deltaY) < 4 || e.target.closest?.(NO_SWIPE)) return;
-  const up = e.deltaY < 0;
+  const on = barWanted(e.deltaY < 0, lessonEdge(e.target));
   wheelFrame = requestAnimationFrame(() => {
     wheelFrame = 0;
-    if (barAuto()) peekBar(up);
+    if (barAuto()) peekBar(on);
   });
 }, { passive: true });
 document.addEventListener("focusin", () => document.body.classList.contains("tb-peek") && typing() && peekBar(false));
