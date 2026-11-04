@@ -41,7 +41,7 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       .replace(/\\\[([\s\S]+?)\\\]/g, (_, t) => stash(t, true))
       .replace(/\\\((.+?)\\\)/g, (_, t) => stash(t, false))
       .replace(/(^|[^\\$])\$([^$\n]+?)\$/g, (_, pre, t) => pre + stash(t, false));
-    if (annotate) for (let i = 0; i < math.length; i++) math[i].sentence = sentenceAt(src, `@@MATH${i}@@`);
+    if (annotate) for (const m of src.matchAll(/@@MATH(\d+)@@/g)) if (math[m[1]]) math[m[1]].sentence = sentenceAt(src, m[0], m.index);
     let html = clean(marked.parse(splitFormulaCells(fixTables(src), math), { breaks: true, gfm: true }));
     // Tabela dobi svoj razred (oblika v style.css velja povsod, ne glede na okvir okoli nje);
     // ulomki in potence v njej so v polni velikosti (\displaystyle), sicer so premajhni za branje.
@@ -59,14 +59,28 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
 }
 
 // Poved, v kateri stoji formula (do pike, klicaja, vprašaja ali nove vrstice), brez drugih formul in Markdowna.
-export function sentenceAt(src, mark) {
-  const i = src.indexOf(mark);
-  if (i < 0) return "";
-  const before = src.slice(Math.max(0, i - 300), i);
-  const after = src.slice(i + mark.length, i + mark.length + 300);
-  const a = before.split(/[.!?\n](?=\s|$)|\n/).pop();
-  const b = after.split(/[.!?](?=\s|$)|\n/)[0];
-  return `${a} ${b}`.replace(/@@MATH\d+@@/g, " ").replace(/[*_#>`|]/g, " ").replace(/\s+/g, " ").trim();
+// »npr.«, »oz.«, »1. Newtonov« ne končajo povedi; formula sama v vrstici ($$…$$) vzame vrstico pred njo.
+const NOT_END = /(?:\d|\b(?:npr|oz|tj|t\. i|prim|str|št|itn|ipd|gl|pribl|cca|e\.g|i\.e|vs))$/i;
+function splitSentences(text) {
+  const out = [];
+  let from = 0;
+  for (const m of text.matchAll(/[.!?](?=\s|$)|\n/g)) {
+    if (m[0] !== "\n" && NOT_END.test(text.slice(Math.max(from, m.index - 8), m.index))) continue;
+    out.push(text.slice(from, m.index));
+    from = m.index + 1;
+  }
+  out.push(text.slice(from));
+  return out;
+}
+const cleanSentence = (s) => s.replace(/@@MATH\d+@@/g, " ").replace(/[*_#>`|]/g, " ").replace(/\s+/g, " ").trim();
+export function sentenceAt(src, mark, at = src.indexOf(mark)) {
+  if (at < 0) return "";
+  const before = splitSentences(src.slice(Math.max(0, at - 300), at));
+  const after = splitSentences(src.slice(at + mark.length, at + mark.length + 300));
+  const own = cleanSentence(`${before[before.length - 1]} ${after[0]}`);
+  if (own) return own;
+  for (let i = before.length - 2; i >= 0; i--) if (cleanSentence(before[i])) return cleanSentence(before[i]);
+  return "";
 }
 
 // Oštevilčen podnaslov na začetku odstavka (»**1. Imaginarna enota.** Vpeljemo …«) postane svoj

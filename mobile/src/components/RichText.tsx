@@ -4,23 +4,24 @@
 // prihaja sproti), WebView ostane naložen in se zamenja le vsebina, brez utripanja.
 // onExplain (samo besedilo lekcije, ne klepet): v meniju označenega besedila je »Razloži«, kot na spletu
 // gumb ob izboru v public/textbook.js. Android ob lastnih postavkah skrije sistemske, zato tam še »Kopiraj«.
-import React, { memo, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Clipboard, Modal, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { WebView } from "react-native-webview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
-import { docHtml, formulaCard, isPlain, MEASURE_JS, releaseHtmlMarks, toHtml } from "@/lib/rich";
+import { docHtml, formulaCard, isPlain, marksVersion, MEASURE_JS, releaseHtmlMarks, subscribeMarks, toHtml } from "@/lib/rich";
 import { FormulaCtx } from "@/lib/formula-ctx";
 import { API_URL } from "@/lib/api";
 import { font, useTheme } from "@/lib/theme";
 import { isRtl, t } from "@/lib/i18n";
 
 // noFx: brez klikljivih črk (izbire v nalogah in kvizu: dotik izbere odgovor, kartica bi izdala rešitev).
-type Props = { text: string; html?: string; ai?: boolean; streaming?: boolean; size?: number; center?: boolean; minHeight?: number; onExplain?: (selected: string) => void; noFx?: boolean };
+// ownPage: besedilo je svoja stran za klikljive črke (sporočilo v klepetu), sicer si jih deli z zaslonom.
+type Props = { text: string; html?: string; ai?: boolean; streaming?: boolean; size?: number; center?: boolean; minHeight?: number; onExplain?: (selected: string) => void; noFx?: boolean; ownPage?: boolean };
 
 const replaceJs = (body: string) => `(function(){var c=document.getElementById('c');if(c)c.innerHTML=${JSON.stringify(body)};if(window.__fit)window.__fit();})();true;`;
 
-function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size = 17, center = false, minHeight = 0, onExplain, noFx = false }: Props) {
+function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size = 17, center = false, minHeight = 0, onExplain, noFx = false, ownPage = false }: Props) {
   const th = useTheme();
   const ctxFx = useContext(FormulaCtx);
   const fx = noFx ? null : ctxFx;
@@ -31,8 +32,14 @@ function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size
   const plain = !rawHtml && !onExplain && isPlain(text);
   // owner: to besedilo na zaslonu; prva pojavitev pomena črke na zaslonu je klikljiva (lib/rich.ts markHtml).
   const owner = useRef({}).current;
-  const body = useMemo(() => (plain ? "" : (rawHtml ?? toHtml(text, { ai, streaming, fx, owner }))), [plain, rawHtml, text, ai, streaming, fx, owner]);
-  useEffect(() => () => releaseHtmlMarks(fx, owner), [fx, owner]);
+  const shared = ownPage ? null : fx;
+  const version = useSyncExternalStore(useCallback((cb: () => void) => subscribeMarks(shared, cb), [shared]), () => marksVersion(shared));
+  const body = useMemo(
+    () => (plain ? "" : (rawHtml ?? toHtml(text, { ai, streaming, fx, owner, ownPage }))),
+    // version: drugo besedilo je sprostilo oznake, to jih morda prevzame
+    [plain, rawHtml, text, ai, streaming, fx, owner, ownPage, version],
+  );
+  useEffect(() => () => releaseHtmlMarks(shared, owner), [shared, owner]);
   const [height, setHeight] = useState(minHeight || size * 1.6);
   const ref = useRef<React.ComponentRef<typeof WebView>>(null);
   const loaded = useRef(false);

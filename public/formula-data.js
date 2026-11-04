@@ -252,21 +252,28 @@ export function subjectWithGlossary(subject, glossary) {
   return glossary?.length ? registerGlossary(subject, glossary) : subject;
 }
 
-// Poved okoli formule (rich.js): če imenuje enega od pomenov dvoumne črke (»… gibalno količino p …«),
-// velja ta pomen, sicer odloči formula (ctx). Besede imena primerjamo po korenu (skloni).
+// Pomen dvoumne črke: najprej formula (ctx, npr. G v F = G m₁m₂/r²), nato poved okoli nje (rich.js), če
+// imenuje natanko enega od pomenov (»Planckova konstanta h = 6,63·10⁻³⁴ J s«), sicer privzeti pomen.
+// Besede imena primerjamo po korenu (skloni: »gibalno količino«).
 let sentence = "";
-const stem = (w) => w.slice(0, Math.max(4, w.length - 2));
+const escRe = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const stem = (w) => escRe(w.slice(0, Math.max(4, w.length - 1)));
+const nameWords = (n) => String(n || "").replace(/\s*\(.*?\)/g, "").replace(/\$[^$]*\$/g, " ").toLowerCase().split(/[\s,]+/).filter((w) => w.length > 2);
 function namedIn(e, s) {
-  const words = String(e.n || "").replace(/\s*\(.*?\)/g, "").toLowerCase().split(/[\s,]+/).filter((w) => w.length > 2);
-  return words.length > 0 && words.every((w) => new RegExp(`(^|[^\\p{L}])${stem(w)}`, "u").test(s));
+  return [e.n, e.en].some((n) => {
+    const words = nameWords(n);
+    return words.length > 0 && words.every((w) => new RegExp(`(^|[^\\p{L}])${stem(w)}`, "u").test(s));
+  });
 }
 function pickIndex(list, tex) {
+  const k = list.findIndex((e) => !e.ctx || new RegExp(e.ctx).test(tex));
+  if (k >= 0 && list[k].ctx) return k;
   if (sentence && list.length > 1) {
     const s = sentence.toLowerCase();
-    const k = list.findIndex((e) => namedIn(e, s));
-    if (k >= 0) return k;
+    const named = list.map((e, i) => (namedIn(e, s) ? i : -1)).filter((i) => i >= 0);
+    if (named.length === 1) return named[0];
   }
-  return list.findIndex((e) => !e.ctx || new RegExp(e.ctx).test(tex));
+  return k;
 }
 function pick(entry, tex) {
   if (!entry) return null;
@@ -279,7 +286,7 @@ function variantOf(key, subject, tex) {
   for (const tb of SUBJECT_TABLES[subject] || ["MAT"]) {
     const v = SYMBOLS[tb][key];
     if (!v) continue;
-    const k = Array.isArray(v) ? pickIndex(v, tex) : 0;
+    const k = pickIndex(Array.isArray(v) ? v : [v], tex);
     if (k >= 0) return Array.isArray(v) && v.length > 1 ? `${tb}.${k}` : "";
   }
   return "";

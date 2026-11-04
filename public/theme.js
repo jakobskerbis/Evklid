@@ -281,6 +281,16 @@
     }
     return darkBg ? "#ffffff" : "#000000";
   }
+  // Barve za drug, tretji in četrti pomen iste črke na strani (formula-info.js data-fx-tone, ui.css --fx-tone-N):
+  // prvi ton leži na osi modra–oranžna nasproti poudarka (ločita ju tudi barvno slepi), nato vijolična in zelena,
+  // vsak z vsaj 4,5 kontrasta na vseh podlagah (tudi na --accent-soft ob dotiku).
+  function tonesOf(accent, on, dark) {
+    const [h] = toHsl(accent);
+    const far = (a, b) => Math.min(Math.abs(a - b), 360 - Math.abs(a - b)) >= 45;
+    const hues = [h < 100 || h > 300 ? 215 : 28];
+    for (const x of [320, 145, 270, 28, 215]) if (hues.length < 3 && far(x, h) && hues.every((y) => far(x, y))) hues.push(x);
+    return hues.map((x) => fit(hsl(x, 85, dark ? 66 : 36), on, MIN.accent));
+  }
   // Barva besedila, ki je dobro berljiva na vseh podlagah: najprej poskusi želeno, sicer temno ali svetlo.
   function readable(on, wish, min = MIN.text) {
     if (wish) {
@@ -380,6 +390,7 @@
       "--user-text": accentText,
     };
     if (heroPair && hexToRgb(heroPair[2])) vars["--hero-line"] = heroPair[2];
+    tonesOf(accent, [...onBg, vars["--accent-soft"]], dark).forEach((c, i) => (vars[`--fx-tone-${i + 1}`] = c));
     // Pas na kartici dejstev v barvi obdobja (zlato, žafran …), malo potopljen v okno, da ne vpije.
     if (era && base.band && !s.accent) vars["--band-c"] = mix(surface, base.band, 0.75);
     if (chrome.length) {
@@ -472,7 +483,7 @@
     };
   }
   const ARCH_VARS = ["cap", "shaft", "base"].flatMap((k) => [`--arch-${k}`, `--arch-${k}-m`]);
-  const ALL_VARS = [...ARCH_VARS, "--frieze", "--hero-line", "--paper", "--paper-2", "--paper-fibre", "--wood", "--bg", "--surface", "--text", "--muted", "--surface-2", "--border", "--accent", "--accent-2", "--accent-grad", "--accent-soft", "--accent-text", "--hero-a", "--hero-b", "--user-bubble", "--user-text", "--menu", "--menu-text", "--menu-muted", "--menu-2", "--menu-border", "--menu-accent", "--menu-accent-soft", "--menu-accent-text", "--band-c", "--edge-c", "--bar", "--banner"];
+  const ALL_VARS = [...ARCH_VARS, "--frieze", "--hero-line", "--paper", "--paper-2", "--paper-fibre", "--wood", "--bg", "--surface", "--text", "--muted", "--surface-2", "--border", "--accent", "--accent-2", "--accent-grad", "--accent-soft", "--accent-text", "--hero-a", "--hero-b", "--user-bubble", "--user-text", "--menu", "--menu-text", "--menu-muted", "--menu-2", "--menu-border", "--menu-accent", "--menu-accent-soft", "--menu-accent-text", "--band-c", "--edge-c", "--bar", "--banner", "--fx-tone-1", "--fx-tone-2", "--fx-tone-3"];
   const ERA_VARS = ["--era-font", "--band", "--band-w", "--band-h", "--edge-w", "--edge-h", "--glyph", "--tapeta"];
   const CHAT_ATTRS = { tutor: "data-tutor-surface", user: "data-user-shape", frame: "data-chat-frame", composer: "data-composer", arch: "data-arch" };
   const eraUrl = (id, f) => `url("/eras/${id}/${f}.svg")`;
@@ -616,7 +627,7 @@
     return pairs.every(([a, b, m]) => contrast(a, b) >= m - 0.01);
   }
 
-  window.STEMTheme = { load, save, apply, compute, check, contrast, randomAccent, randomPalette, isDarkMode, BASE, BASES, STYLES, ERAS, baseOf, MIN, MOTIF, PAPER, readable, loadFont, iconSet, temple };
+  window.STEMTheme = { load, save, apply, compute, tonesOf, check, contrast, randomAccent, randomPalette, isDarkMode, BASE, BASES, STYLES, ERAS, baseOf, MIN, MOTIF, PAPER, readable, loadFont, iconSet, temple };
   apply();
   mq.addEventListener?.("change", () => apply());
 })();

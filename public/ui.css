@@ -792,11 +792,8 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 [data-fx][role="button"]:hover, [data-fx].fx-open { background: var(--accent-soft); }
 [data-fx][role="button"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
 /* Ista črka z drugim pomenom na isti strani (a kot realni del z in a kot pospešek) ima svojo barvo,
-   da se pred dotikom vidi, katera je katera (formula-card.js claimMarks). Ton ohrani svetlost barve poudarka. */
-:root { --fx-tone-1: #b4530a; --fx-tone-2: #15803d; --fx-tone-3: #a21caf; }
-@supports (color: oklch(from red l c h)) {
-  :root { --fx-tone-1: oklch(from var(--accent) l c calc(h + 150)); --fx-tone-2: oklch(from var(--accent) l c calc(h + 250)); --fx-tone-3: oklch(from var(--accent) l c calc(h + 70)); }
-}
+   da se pred dotikom vidi, katera je katera (formula-card.js claimMarks). Barve --fx-tone-N so v style.css
+   (Čist) in theme.js tonesOf (drugi slogi, lasten poudarek): kontrast ≥ 4,5, prvi ton nasproti poudarka. */
 [data-fx][role="button"][data-fx-tone="1"], .fx-pop[data-tone="1"] .fx-title .katex { color: var(--fx-tone-1); }
 [data-fx][role="button"][data-fx-tone="2"], .fx-pop[data-tone="2"] .fx-title .katex { color: var(--fx-tone-2); }
 [data-fx][role="button"][data-fx-tone="3"], .fx-pop[data-tone="3"] .fx-title .katex { color: var(--fx-tone-3); }

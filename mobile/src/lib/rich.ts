@@ -28,12 +28,14 @@ const untrustedFx = make({ marked: safeMarked, katex, sanitize: (h: string) => h
 
 // owner: besedilo (RichText) na zaslonu. Kot na spletu je na zaslonu klikljiva le prva pojavitev vsakega pomena
 // črke (ostale dobijo data-fxd in so navadno besedilo), ista črka z drugim pomenom pa ima svoj ton barve.
-export function toHtml(md: string, { ai = false, streaming = false, fx = null as Fx, owner = null as object | null } = {}) {
+// ownPage: besedilo je samo svoja stran (sporočilo v klepetu, kot .msg na spletu).
+export function toHtml(md: string, { ai = false, streaming = false, fx = null as Fx, owner = null as object | null, ownPage = false } = {}) {
   const src = streaming ? streamSafe(md) : md;
   if (!fx) return (ai ? untrusted : trusted).renderRich(src) as string;
   const r = ai ? untrustedFx : trustedFx;
   const html = withFormulaSubject(fx.subject || "MAT", () => r.renderRich(src), fx.symbols as never) as string;
-  return owner ? markHtml(html, pageOf(fx), owner) : html;
+  if (!owner) return html;
+  return markHtml(html, ownPage ? createMarkPage() : pageOf(fx), owner);
 }
 
 type MarkPage = ReturnType<typeof createMarkPage>;
@@ -58,6 +60,14 @@ export function markHtml(html: string, page: MarkPage, owner: object) {
 export const releaseHtmlMarks = (fx: Fx, owner: object) => {
   if (fx && pages.has(fx)) releaseMarks(pages.get(fx)!, owner);
 };
+// Ko drugo besedilo na zaslonu sprosti oznake (zapre se, odide s seznama), se besedila znova označijo.
+export const marksVersion = (fx: Fx) => (fx ? pageOf(fx).version : 0);
+export function subscribeMarks(fx: Fx, cb: () => void) {
+  if (!fx) return () => {};
+  const subs = pageOf(fx).subs as Set<() => void>;
+  subs.add(cb);
+  return () => void subs.delete(cb);
+}
 
 // Kartica dotaknjene oznake (koda iz data-fx): { label, html } ali null; isto besedilo kot na spletu.
 configureCard({ t, lang: currentLanguage, katex });
@@ -71,6 +81,11 @@ export function formulaCard(code: string): { label: string; html: string } | nul
 
 // Kratko besedilo brez formul in Markdowna se izriše kar z naravnim besedilom (brez WebView).
 export const isPlain = (s: string) => !/[$*_`|#<>\\[\]]|^\s*[-+]\s|^\s*\d+\.\s/m.test(s);
+
+// Barve drugega, tretjega in četrtega pomena iste črke (kot na spletu style.css --fx-tone-N za slog Čist).
+const TONES = { light: ["#a1520d", "#aa0e76", "#0a7b39"], dark: ["#f2a35f", "#f25fc1", "#5ff29c"] };
+const toneCss = (th: Theme) =>
+  (th.dark ? TONES.dark : TONES.light).map((c, i) => `[data-fx-tone="${i + 1}"],.fx-card[data-tone="${i + 1}"] .fx-title .katex{color:${c}}`).join("");
 
 // Celoten dokument za WebView: barve teme, pisava Instrument Sans, formule kot na spletu (KaTeX + sirina.js
 // s strežnika; RichText naloži dokument z baseUrl API_URL), tabele, »Pokaži formulo«.
@@ -126,9 +141,8 @@ img,svg{max-width:100%;height:auto}
 .katex .vlist{pointer-events:none}.katex [data-fx],.katex [data-fx] *{pointer-events:auto}.katex .pstrut{pointer-events:none!important}
 [data-fx]{cursor:pointer;color:${th.accent};border-radius:3px;padding:0 .08em;margin:0 -.08em}
 [data-fx].fx-open{background:${th.accentSoft}}
-[data-fx-tone="1"]{color:#b4530a;color:oklch(from ${th.accent} l c calc(h + 150))}[data-fx-tone="2"]{color:#15803d;color:oklch(from ${th.accent} l c calc(h + 250))}[data-fx-tone="3"]{color:#a21caf;color:oklch(from ${th.accent} l c calc(h + 70))}
+${toneCss(th)}
 [data-fx-tone].fx-open{background:color-mix(in srgb,currentColor 14%,transparent)}
-.fx-card[data-tone="1"] .fx-title .katex{color:#b4530a;color:oklch(from ${th.accent} l c calc(h + 150))}.fx-card[data-tone="2"] .fx-title .katex{color:#15803d;color:oklch(from ${th.accent} l c calc(h + 250))}.fx-card[data-tone="3"] .fx-title .katex{color:#a21caf;color:oklch(from ${th.accent} l c calc(h + 70))}
 .fx-title{display:flex;align-items:baseline;gap:8px;color:${th.accent}}.fx-title b{color:${th.text};min-width:0}
 .fx-title .katex{font-size:1.25em;color:${th.accent};flex:none}
 .fx-card{display:grid;gap:6px}.fx-line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}

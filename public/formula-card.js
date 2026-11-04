@@ -124,20 +124,24 @@ function lookupSymbolAny(key, subject) {
 // del z in a kot pospešek) dobi svojo oznako v drugi barvi (ton 1–3), da se pred dotikom vidi, katera je katera.
 // Spletna stran (formula-info.js) in aplikacija (mobile/src/lib/rich.ts) uporabljata isti claimMarks.
 const meanings = new Map();
+const normName = (n) => String(n || "").replace(/\$/g, "").replace(/\s+/g, " ").trim().toLowerCase();
 export function meaningOf(code) {
   if (meanings.has(code)) return meanings.get(code);
   const [kind, subject, key, vi] = String(code).split(":");
+  const unit = String(code).split(":").slice(1).join(":");
   let m = null;
   if (kind === "s" || kind === "d") {
     const e = symbolVariant(key, vi) || lookupSymbol(key, subject, "") || lookupSymbolAny(key, subject);
-    if (e) m = { letter: `${kind === "d" ? "Δ" : ""}${key}`, id: `${kind}|${key}|${e.n}|${e.r || ""}` };
-  } else if (kind === "u" && lookupUnit(rest(code))) m = { letter: `u|${rest(code)}`, id: `u|${rest(code)}` };
+    // Isto ime = isti pomen (oznaka lekcije »hitrost« in slovar »hitrost« sta ena oznaka).
+    if (e) m = { letter: `${kind === "d" ? "Δ" : ""}${key}`, id: `${kind}|${key}|${normName(e.n)}` };
+  } else if (kind === "u" && lookupUnit(unit)) m = { letter: `u|${unit}`, id: `u|${unit}` };
   if (meanings.size > 5000) meanings.clear();
   meanings.set(code, m);
   return m;
 }
-const rest = (code) => String(code).split(":").slice(1).join(":");
-export const createMarkPage = () => ({ owners: new Map(), tones: new Map() });
+// Stran: kdo ima oznako pomena (owners) in ton vsakega pomena; ton ostane, dokler stran živi, da barva
+// pomena ne skače. version se poveča, ko lastnik sprosti oznake (aplikacija: druga besedila jih prevzamejo).
+export const createMarkPage = () => ({ owners: new Map(), tones: new Map(), next: new Map(), version: 0, subs: new Set() });
 const TONES = 4;
 // codes: kode data-fx enega lastnika (spletna stran, besedilo v aplikaciji) po vrsti; vrne { dup, tone } za vsako.
 export function claimMarks(page, owner, codes) {
@@ -149,17 +153,19 @@ export function claimMarks(page, owner, codes) {
     if ((own !== undefined && own !== owner) || mine.has(m.id)) return { dup: true, tone: 0 };
     mine.add(m.id);
     page.owners.set(m.id, owner);
-    let list = page.tones.get(m.letter);
-    if (!list) page.tones.set(m.letter, (list = []));
-    if (!list.includes(m.id)) list.push(m.id);
-    return { dup: false, tone: list.indexOf(m.id) % TONES };
+    if (!page.tones.has(m.id)) {
+      const n = page.next.get(m.letter) || 0;
+      page.next.set(m.letter, n + 1);
+      page.tones.set(m.id, Math.min(n, TONES - 1));
+    }
+    return { dup: false, tone: page.tones.get(m.id) };
   });
 }
 export function releaseMarks(page, owner) {
-  for (const [id, o] of page.owners) if (o === owner) page.owners.delete(id);
-  for (const [letter, list] of page.tones) {
-    const left = list.filter((id) => page.owners.has(id));
-    if (left.length) page.tones.set(letter, left);
-    else page.tones.delete(letter);
+  let freed = false;
+  for (const [id, o] of page.owners) if (o === owner) { page.owners.delete(id); freed = true; }
+  if (freed) {
+    page.version++;
+    for (const f of page.subs) f();
   }
 }

@@ -47,3 +47,30 @@ test("izris besedila poda poved v označevanje", () => {
   r.renderRich("Hitrost $v$ merimo v m/s. Čas $t$ v sekundah.");
   assert.deepEqual(seen, ["Hitrost merimo v m/s", "Čas v sekundah"]);
 });
+
+test("formula ima prednost pred povedjo; poved odloči le, če imenuje natanko en pomen", () => {
+  const label = (tex, sentence) => cardFor(codes(annotateTex(tex, "FIZ", { sentence })).find((c) => /:(G|h|c|p)(:|$)/.test(c))).label;
+  assert.match(label("F = G\\frac{m_1 m_2}{r^2}", "Gibalna količina se ohranja, gravitacijska sila pa je"), /gravitacijska konstanta/);
+  assert.match(label("E = h f", "višina ni pomembna"), /Planckova/);
+  assert.doesNotMatch(label("Q = m c \\Delta T", "Svetloba se hitro segreje"), /svetlobe/);
+  assert.match(label("G = 6{,}67\\cdot 10^{-11}", "Gravitacijska konstanta je"), /gravitacijska konstanta/);
+  assert.match(label("h = 6{,}63\\cdot 10^{-34}", "Planck constant is"), /Planckova/);
+});
+
+test("ton pomena ostane, ko drugo besedilo sprosti oznake", () => {
+  const sym = parseSymbolsBlock("a | realni del kompleksnega števila $z$ | | –").list;
+  const az = withFormulaSubject("MAT", () => codes(annotateTex("z = a + bi")), sym).find((c) => c.endsWith(":a"));
+  const fa = codes(annotateTex("F = m a", "FIZ")).find((c) => c.endsWith(":a"));
+  const page = createMarkPage();
+  const A = {}, B = {}, C = {};
+  claimMarks(page, A, [az]);
+  assert.equal(claimMarks(page, B, [fa])[0].tone, 1);
+  releaseMarks(page, A);
+  assert.equal(page.version, 1);
+  assert.equal(claimMarks(page, C, [az])[0].tone, 0, "realni del ostane modre barve");
+});
+
+test("poved: okrajšave in formula sama v vrstici", () => {
+  assert.equal(sentenceAt("Npr. sila @@MATH0@@ je 1. Newtonov zakon. Drugo.", "@@MATH0@@"), "Npr. sila je 1. Newtonov zakon");
+  assert.equal(sentenceAt("Planckova konstanta:\n\n@@MATH0@@\n\nNaprej.", "@@MATH0@@"), "Planckova konstanta:");
+});

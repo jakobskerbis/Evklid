@@ -89,9 +89,11 @@ function enhance(root) {
   }
 }
 
-// Na strani (pogled, okno, razdelek lista formul) je klikljiva le prva vidna pojavitev vsakega pomena;
-// ostale so navadno besedilo (fx-dup). Ista črka z več pomeni dobi ton barve (data-fx-tone) za vsak pomen.
-const PAGE = ".fm-sec, .fx-page, [role=dialog], dialog, .view";
+// Na strani (pogled, okno, razdelek lista formul, sporočilo v klepetu) je klikljiva le prva vidna pojavitev
+// vsakega pomena; ostale so navadno besedilo (fx-dup). Ista črka z več pomeni dobi ton barve (data-fx-tone)
+// za vsak pomen; ton ostane pomenu, dokler stran obstaja. .fx-page označi lastno stran.
+const PAGE = ".msg, .fm-sec, .fx-page, [role=dialog], dialog, .view";
+const pages = new WeakMap();
 let marksQueued = false;
 function queueMarks() {
   if (marksQueued) return;
@@ -101,32 +103,45 @@ function queueMarks() {
     refreshMarks();
   });
 }
+// Zaprt <details> (content-visibility) in hidden="until-found" imata okvirje, a nista vidna.
+const visible = (el) => (el.checkVisibility ? el.checkVisibility() : el.getClientRects().length > 0);
 function refreshMarks() {
-  const pages = new Map();
+  const groups = new Map();
   for (const el of document.querySelectorAll("[data-fx][tabindex]")) {
     if (el.classList.contains("fx-off")) continue;
     const root = el.closest(PAGE) || document.body;
-    if (!pages.has(root)) pages.set(root, []);
-    pages.get(root).push(el);
+    if (!groups.has(root)) groups.set(root, []);
+    groups.get(root).push(el);
   }
-  for (const [root, els] of pages) {
-    // Skrita pojavitev (zaprt razdelek, drug zavihek) ne sme vzeti oznake vidni.
-    const shown = els.filter((el) => el.getClientRects().length > 0);
-    const plan = claimMarks(createMarkPage(), root, shown.map((el) => decode(el.dataset.fx)));
-    const set = new Map(shown.map((el, i) => [el, plan[i]]));
+  // Najprej vsa branja (vidnost), nato pisanje, da brskalnik ne preračunava postavitve za vsak razdelek.
+  const plans = [];
+  for (const [root, els] of groups) {
+    const shown = els.filter(visible);
+    let page = pages.get(root);
+    if (!page) pages.set(root, (page = createMarkPage()));
+    page.owners.clear();
+    const plan = claimMarks(page, root, shown.map((el) => decode(el.dataset.fx)));
+    plans.push([els, new Map(shown.map((el, i) => [el, plan[i]]))]);
+  }
+  for (const [els, plan] of plans) {
     for (const el of els) {
-      const p = set.get(el) || { dup: false, tone: 0 };
+      const p = plan.get(el) || { dup: false, tone: 0 };
       const dup = p.dup && el !== openEl;
-      el.classList.toggle("fx-dup", dup);
-      if (dup) {
-        el.removeAttribute("role");
-        el.setAttribute("tabindex", "-1");
-      } else if (!el.hasAttribute("role")) {
-        el.setAttribute("role", "button");
-        el.setAttribute("tabindex", "0");
+      if (el.classList.contains("fx-dup") !== dup) {
+        el.classList.toggle("fx-dup", dup);
+        if (dup) {
+          el.removeAttribute("role");
+          el.setAttribute("tabindex", "-1");
+        } else {
+          el.setAttribute("role", "button");
+          el.setAttribute("tabindex", "0");
+        }
       }
-      if (p.tone && !dup) el.dataset.fxTone = String(p.tone);
-      else delete el.dataset.fxTone;
+      const tone = p.tone && !dup ? String(p.tone) : null;
+      if ((el.dataset.fxTone ?? null) !== tone) {
+        if (tone) el.dataset.fxTone = tone;
+        else delete el.dataset.fxTone;
+      }
     }
   }
 }
