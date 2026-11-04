@@ -36,9 +36,14 @@
   //     (v barvi obdobja, lahko tudi temen v svetlem načinu), menuAccent = poudarek na njih (neobvezno, sicer accent),
   //     bar = glave zaslonov in vrstica za pisanje, banner = obvestila (Preizkusni način, Testna verzija, brez povezave)
   //   font: [ime pisave, paket @fontsource-variable/<paket>] samo za h1 in naslove sklopov (besedilo ostane --font)
-  //   hero: zasuk odtenka preliva logotipa in kartice Današnji trening (drugi slogi 28°)
+  //   hero: zasuk odtenka preliva logotipa in kartice Današnji trening (drugi slogi 28°); light/dark.hero = [a, b]
+  //     (neobvezno) sta barvi preliva neposredno (npr. lapis → egipčanska modra, ne glede na poudarek), tretja
+  //     (neobvezno) je tanek okvir v kartici (zlato; ui.css → --hero-line)
   //   band: [datoteka, širina, višina] vzorca v pasu na vrhu kartice dejstev (public/eras/<slog>/<datoteka>.svg);
   //     isti pas teče ob robovih okvirja, povečan za edge (1 = enako, npr. 1.25)
+  //   frieze (neobvezno; ui.css → »Pisani pas«): pas v več barvah namesto enobarvne maske ([širina, višina, oznake] kot
+  //     band, barve K B R G Y iz light/dark.frieze, K = obroba z vsaj 3:1 na meniju in vrstici); band ostane ista
+  //     oblika kot maska (lastni poudarek, visok kontrast)
   //   glyph: majhna ikona ob naslovu kartice dejstev; motifs: 6–8 risb (črte, viewBox 0 0 64 64), iz katerih
   //     scripts/tapeta.js sestavi tapeta.svg za ozadje zaslonov (ui.css → »Tapeta«); vse datoteke so v public/eras/<slog>/
   //   facts: [predpona ključev i18n, število]: <predpona>.title in <predpona>.f1 … .fN
@@ -48,16 +53,19 @@
   //   chat (neobvezno; ui.css → »Klepet obdobja«): videz klepeta, vsak ključ postane atribut na <html>, ki ga ui.css
   //     pozna po imenu (drug slog lahko vzame isto ali doda svojo vrednost): tutor → data-tutor-surface (npr. »papirus«:
   //     mehurček inštruktorja na light/dark.paper), user → data-user-shape (»ostrakon«), frame → data-chat-frame
-  //     (»stebri«: stebri ob pozdravu praznega klepeta iz arch), composer → data-composer (»vosek«: polje v okvirju
+  //     (»stebri«: pročelje templa ob pozdravu praznega klepeta iz arch.temple, samo antika, j 2026-11-04; »pilon«:
+  //     egipčanski pilon iz building), composer → data-composer (»vosek«: polje v okvirju
   //     light/dark.wood). Barve paper in wood preveri check() (besedilo 7:1 tudi na vlaknih, okvir 3:1).
   //   arch (neobvezno; ui.css → »Arhitektura«): steber kot nosilni del okvirja (seznam pogovorov, rob klepeta, stranski
   //     stolpec Učne poti, kapitel na okencih). Deli so notranjost SVG ([širina, višina, oznake]; S = barva črte,
   //     F = polnilo): cap (kapitel), shaft (ploščica debla, ponavlja se navpično), base (baza); theme.js jih obarva za
   //     ozadje (--arch-*) in za meni (--arch-*-m). temple: pročelje ob pozdravu praznega klepeta (pediment, entablature,
-  //     column = [kapitel, deblo, baza], stylobate), glej temple() spodaj.
+  //     column = [kapitel, deblo, baza], stylobate; samo s frame »stebri«), glej temple() spodaj. Brez »stebri« ni
+  //     stebrov ob klepetu (seznam pogovorov, rob klepeta), ostanejo okenca in Učna pot.
   //   frame: "stavba" + building (za slog brez chat.frame): pozdrav praznega klepeta v stavbi iz obdobja (isti deli kot
   //     arch.temple: pediment = streha, entablature ali null, column = [vrh, deblo, baza] stolpa, stylobate = podstavek);
-  //     stebri so samo za Antični (j, 4. 11.: »v stilu Tadž Mahala za Indijo itd.«).
+  //     stebri so samo za Antični (j, 4. 11.: »v stilu Tadž Mahala za Indijo itd.«). Izjema: chat.frame »pilon« (Egipt)
+  //     ima building.front = [širina, višina, oznake], eno risbo z nespremenljivim razmerjem (o = odprtina vrat).
   const ERAS = {
     antik: {
       light: { bg: "#f5f0e8", surface: "#fffcf7", menu: "#efe2d2", text: "#241c15", accent: "#973f1c", bar: "#f6ece0", banner: "#f6e2d1", paper: "#f4e6cb", wood: "#8a5b36" },
@@ -127,6 +135,55 @@
         entablature: null,
         column: [[40, 44, "<path class=\"f\" d=\"M10 30c-1-12 6-19 10-22 4 3 11 10 10 22z\"/><path d=\"M20 8V2\"/><path class=\"f\" d=\"M6 30h28v4H6z\"/><path d=\"M10 34v6M30 34v6M20 34v6\"/><path class=\"f\" d=\"M4 40h32v4H4z\"/>"], [22, 100, "<path class=\"f\" d=\"M3 0h16v100H3z\"/><path class=\"l\" d=\"M11 0v100\"/>"], [34, 16, "<path class=\"f\" d=\"M6 .75h22v6H6z\"/><path class=\"f\" d=\"M2 6.75h30v8.5H2z\"/>"]],
         stylobate: [600, 18, "<path class=\"f\" d=\"M8 .75h584v7H8zM.75 7.75h598.5v9.5H.75z\"/><path class=\"l\" d=\"M8 4h584\"/>"],
+      },
+    },
+    // Stari Egipt: barve grobnih poslikav. Svetlo papirus in pesek, meni v zlatem peščenjaku, poudarek lapis lazuli;
+    // temno nočno nebo nad Nilom (globok lapis), zlat poudarek (zlato na lapisu). Pisani pas: friz kheker (zvezani
+    // snopi trstja) nad pasom pisanih pravokotnikov: svetlo črne obrobe (poslikava), temno zlate (vložki v nakitu).
+    // Brez verskih simbolov (ne oko, ankh, skarabej, sončni disk, krilati disk, božanstva) in brez hieroglifov.
+    egipt: {
+      light: { bg: "#f4ead3", surface: "#fffaf0", menu: "#e6cb8e", menuAccent: "#1b3f86", text: "#24190d", accent: "#1d4796", band: "#a2401f", bar: "#f7ecd3", banner: "#f2ddac", paper: "#f4e4bf", wood: "#8c5a26", soft: "#dfe6f4", menuSoft: "#f0dfb5",
+        hero: ["#183a82", "#1d5bb4", "#e2b65a"], frieze: { K: "#2a1d10", B: "#2351a8", R: "#b5452a", G: "#2c8a6e", Y: "#dcaa3e" } },
+      dark: { bg: "#0c1430", surface: "#141f42", menu: "#13285a", menuAccent: "#ecc25f", text: "#f4ecd9", accent: "#e6b955", band: "#d6a64a", bar: "#101a39", banner: "#1c2852", paper: "#18244a", wood: "#b88a45", soft: "#3a3320", menuSoft: "#3a3320",
+        hero: ["#1b3a86", "#2154b0", "#e8c063"], frieze: { K: "#e2b65a", B: "#3466c8", R: "#c55a3c", G: "#38ae9a", Y: "#e2b65a" } },
+      font: ["El Messiri Variable", "el-messiri"], hero: 10, band: ["kheker", 36, 16], edge: 1, glyph: "ikona",
+      motifs: ["piramide", "papirus", "ladja", "lotos", "paleta", "gos", "vrv", "shaduf"],
+      facts: ["era.egipt", 6], icons: "ikone",
+      chat: { tutor: "papirus", user: "ostrakon", frame: "pilon", composer: "vosek" },
+      // Friz kheker (pas, polna barva; theme.js → friezeUrl): trije snopi trstja (glava, vez, telo) in pas pravokotnikov.
+      // Barve K (obroba), B, R, G, Y iz light/dark.frieze; public/eras/egipt/kheker.svg je ista oblika kot maska.
+      frieze: [36, 16, '<g stroke="K" stroke-width=".9" stroke-linejoin="round"><path fill="R" d="M0 12.6h9v3.4H0z"/><path fill="G" d="M9 12.6h9v3.4H9z"/><path fill="Y" d="M18 12.6h9v3.4h-9z"/><path fill="B" d="M27 12.6h9v3.4h-9z"/>' +
+        [["B", 6], ["R", 18], ["G", 30]].map(([c, x]) => `<path fill="${c}" d="M${x} .3C${x + .6} 1.6 ${x + 2.2} 2.2 ${x + 2} 3.6L${x + 1.5} 4.4H${x - 1.5}L${x - 2} 3.6C${x - 2.2} 2.2 ${x - .6} 1.6 ${x} .3z"/><path fill="Y" d="M${x - 1.9} 4.4h3.8v1.8h-3.8z"/><path stroke-width=".5" d="M${x - 1.9} 5.3h3.8"/><path fill="${c}" d="M${x - 1.2} 6.2h2.4c.6.6 1 2.6.9 4-.1 1-.4 1.8-.7 2.4h-2.8c-.3-.6-.6-1.4-.7-2.4-.1-1.4.3-3.4.9-4z"/>`).join("") + "</g>"],
+      // Pilon ob pozdravu (chat.frame »pilon«, ui.css → »Pilon«; j 2026-11-04: stavba iz obdobja, stebri samo v antiki):
+      // ena risba z nespremenljivim razmerjem (kot Edfu): stolpa 190 enot široka spodaj in 165 zgoraj (poševni zunanji
+      // rob), visoka 213 (venec kavetto z listi, torus zgoraj in po zunanjem robu), na vsakem dve vdolbini z drogovoma in
+      // zastavicama; vmes nižji portal (180) z vencem, podboji in preklado, v odprtini vrat ikona inštruktorja; spodaj
+      // ploščad. Pozdrav in predlogi pod stavbo. Razred o = odprtina vrat (ui.css). Brez stebrov, krilatega diska in
+      // drugih verskih znamenj, brez reliefov in hieroglifov.
+      building: (() => {
+        const tower = (X) => {
+          const r = (x0, x1, y, h, cls, rx) => `<rect class="${cls}" x="${Math.min(X(x0), X(x1))}" y="${y}" width="${Math.abs(x1 - x0)}" height="${h}"${rx ? ` rx="${rx}"` : ""}/>`;
+          return `<path class="f" d="M${X(37)} 72H${X(202)}V248H${X(12)}z"/><path class="t" d="M${X(37)} 72H${X(42)}L${X(17)} 248H${X(12)}z"/>` +
+            r(70, 80, 86, 162, "t") + r(150, 160, 86, 162, "t") + r(25, 212, 35, 5, "f") +
+            `<path class="f" d="M${X(25)} 40H${X(212)}Q${X(204)} 44 ${X(204)} 66H${X(33)}Q${X(33)} 44 ${X(25)} 40z"/>` +
+            `<path class="l" d="${Array.from({ length: 18 }, (_, i) => `M${X(42 + i * 9)} 44v21`).join("")}"/>` + r(31, 206, 66, 6, "f", 3) +
+            `<path class="l" d="${Array.from({ length: 21 }, (_, i) => `M${X(36 + i * 8.3)} 66.5l${X(3) - X(0)} 5`).join("")}"/>` +
+            [75, 155].map((x) => `<path d="M${X(x)} 247V12"/><path class="t" d="M${X(x)} 13l13 4-13 4z"/>`).join("");
+        };
+        const portal = '<rect class="t" x="202" y="118" width="196" height="130"/><rect class="f" x="206" y="100" width="188" height="4"/>' +
+          '<path class="f" d="M206 104h188q-6 3-6 18H212q0-15-6-18z"/><path class="l" d="' + Array.from({ length: 19 }, (_, i) => `M${219 + i * 9} 107v14`).join("") + '"/>' +
+          '<rect class="f" x="210" y="122" width="180" height="5" rx="2.5"/><rect class="f" x="214" y="127" width="172" height="121"/>' +
+          '<path class="l" d="M256 248V150h88v98"/><rect class="o" x="262" y="156" width="76" height="92"/>';
+        return {
+          front: [600, 262, tower((x) => x) + tower((x) => 600 - x) + portal + '<rect class="f" x="2" y="248" width="596" height="13"/><path class="l" d="M2 252h596"/>'],
+        };
+      })(),
+      // Papirusov steber (okenca, Učna pot; ne v Inštruktorju, j 2026-11-04: stebri v klepetu samo za antiko): odprt
+      // kapitel (zvon s čašnimi listi, abak), deblo iz snopa stebel, odebeljeno vznožje z listi in okrogla baza.
+      arch: {
+        cap: [20, 13, '<path fill="F" d="M7 .5h6v2H7z"/><path fill="F" d="M1 2.5h18c-.9 3.6-3.3 6.3-5.5 7.5h-7C4.3 8.8 1.9 6.1 1 2.5z"/><path stroke-opacity=".5" d="M5.3 3.2 8.4 10M14.7 3.2 11.6 10M10 2.5V10"/><path fill="F" d="M6.5 10h7v3h-7z"/><path d="M6.5 11.5h7"/>'],
+        shaft: [20, 8, '<path fill="F" stroke="none" d="M6.5 0h7v8h-7z"/><path d="M6.5 0v8M13.5 0v8"/><path stroke-opacity=".5" d="M8.8 0v8M11.2 0v8"/>'],
+        base: [20, 10, '<path fill="F" d="M6.5 0h7c1.4 1.8 1.6 3.4.9 4.8H5.6c-.7-1.4-.5-3 .9-4.8z"/><path stroke-opacity=".5" d="M7.6 4.8 10 1.4l2.4 3.4"/><rect fill="F" x="2.5" y="5.6" width="15" height="3.6" rx="1.8"/>'],
       },
     },
   };
@@ -286,9 +343,11 @@
     const onBg = [surface, bg, ...chrome, ...motifBg, ...paperBg];
     const accent = fit(s.accent || base.accent, onBg, MIN.accent);
     const [ah, as] = toHsl(accent);
-    const heroA = fit(accent, ["#ffffff"], MIN.onAccent, -1);
-    // Zgodovinski slogi zasukajo odtenek preliva za svoj »hero« (Antični 6°: ostane v terakoti), drugi za 28°.
-    const heroB = fit(hsl(ah + (era ? era.hero : 28), Math.max(as, 60), toHsl(heroA)[2] + 6), ["#ffffff"], MIN.onAccent, -1);
+    // Zgodovinski slogi zasukajo odtenek preliva za svoj »hero« (Antični 6°: ostane v terakoti), drugi za 28°;
+    // light/dark.hero = [a, b] določi preliv neposredno (z lastnim poudarkom spet poudarek).
+    const heroPair = era && !s.accent && Array.isArray(base.hero) && base.hero.slice(0, 2).every(hexToRgb) ? base.hero : null;
+    const heroA = fit(heroPair ? heroPair[0] : accent, ["#ffffff"], MIN.onAccent, -1);
+    const heroB = heroPair ? fit(heroPair[1], ["#ffffff"], MIN.onAccent, -1) : fit(hsl(ah + (era ? era.hero : 28), Math.max(as, 60), toHsl(heroA)[2] + 6), ["#ffffff"], MIN.onAccent, -1);
     const accentText = onColor(accent);
     const vars = {
       "--bg": bg,
@@ -300,13 +359,14 @@
       "--accent": accent,
       "--accent-2": mix(accent, surface, 0.2),
       "--accent-grad": hsl(ah + 28, as, toHsl(accent)[2]),
-      "--accent-soft": softOf(surface, accent, dark ? 0.22 : 0.13, era && text),
+      "--accent-soft": (era && !s.accent && hexToRgb(base.soft)) ? base.soft : softOf(surface, accent, dark ? 0.22 : 0.13, era && text),
       "--accent-text": accentText,
       "--hero-a": heroA,
       "--hero-b": heroB,
       "--user-bubble": accent,
       "--user-text": accentText,
     };
+    if (heroPair && hexToRgb(heroPair[2])) vars["--hero-line"] = heroPair[2];
     // Pas na kartici dejstev v barvi obdobja (zlato, žafran …), malo potopljen v okno, da ne vpije.
     if (era && base.band && !s.accent) vars["--band-c"] = mix(surface, base.band, 0.75);
     if (chrome.length) {
@@ -315,6 +375,15 @@
     }
     // Pas ob robovih okvirja: barva pasu obdobja (z lastnim poudarkom poudarek), dovolj izrazita na meniju in glavi.
     if (era) vars["--edge-c"] = fit(base.band && !s.accent ? base.band : accent, [menu, vars["--bar"] || surface], 3);
+    // Pisani pas (ERAS[…].frieze): barve obdobja; obroba K mora biti vidna (3:1) na meniju in vrstici. Z lastnim
+    // poudarkom ostane enobarvni pas v poudarku.
+    let frieze = null;
+    if (era && era.frieze && base.frieze && !s.accent) {
+      frieze = {};
+      for (const k of ["K", "B", "R", "G", "Y"]) frieze[k] = hexToRgb(base.frieze[k]) ? base.frieze[k] : vars["--edge-c"];
+      frieze.K = fit(frieze.K, [menu, vars["--bar"] || surface], 3);
+      vars["--frieze"] = friezeUrl(era.frieze, frieze);
+    }
     if (paper) Object.assign(vars, { "--paper": paper, "--paper-2": paperBg[2], "--paper-fibre": paperBg[1] });
     // Les (okvir voščene tablice, zvitka papirusa): kot rob vnosnega polja vsaj 3:1 na vrstici in oknu.
     if (era && era.chat) vars["--wood"] = fit(hexToRgb(base.wood) && !ownWin ? base.wood : accent, [vars["--bar"] || surface, surface], 3);
@@ -333,7 +402,8 @@
       const mOn = [menu, ...menuMotif];
       const mWish = era && base.menuAccent && !s.accent && !hexToRgb(pal.menu) ? base.menuAccent : accent;
       const mAccent = fit(mWish, mOn, MIN.accent);
-      const mSoft = softOf(menu, mAccent, lum(menu) < 0.18 ? 0.24 : 0.14, era && mText);
+      // Neobvezna lastna podlaga izbranega (ERAS[…].light/dark.soft, menuSoft), kadar mešanica poudarka in podlage posivi (Egipt).
+      const mSoft = era && !s.accent && !hexToRgb(pal.menu) && hexToRgb(base.menuSoft) ? base.menuSoft : softOf(menu, mAccent, lum(menu) < 0.18 ? 0.24 : 0.14, era && mText);
       Object.assign(vars, {
         "--menu": menu,
         "--menu-text": mText,
@@ -355,7 +425,13 @@
       paint(bg, "");
       paint(vars["--menu"] || menu, "-m");
     }
-    return { vars, dark, menu, text, bg, surface, accent, motifBg, chrome, menuMotif, paperBg, era: !!era };
+    return { vars, dark, menu, text, bg, surface, accent, motifBg, chrome, menuMotif, paperBg, frieze, era: !!era };
+  }
+
+  // Pisani pas kot slika: oznake K B R G Y v risbi (fill="B", stroke="K") postanejo barve načina.
+  function friezeUrl([w, h, body], colors) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">${body.replace(/"([KBRGY])"/g, (m, k) => `"${colors[k]}"`)}</svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
   }
 
   // Del stebra kot slika: preserveAspectRatio="none" in črta, ki se ne razteguje.
@@ -373,6 +449,8 @@
     if (!t) return null;
     const svg = (cls, [w, h, body], fit) =>
       `<svg class="${cls}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="${fit || "none"}"${fit ? ` width="${w}" height="${h}"` : ""} aria-hidden="true" focusable="false">${body}</svg>`;
+    // Stavba kot ena risba (building.front, npr. pilon): nespremenljivo razmerje, brez stebrov in stopnic.
+    if (t.front) return { top: svg("t-part t-front", t.front, "xMidYMax meet"), bottom: "" };
     const [cap, shaft, base] = t.column;
     const col = (n) => `<div class="t-part t-col t${n}" aria-hidden="true">${svg("t-cap", cap, "xMidYMin")}${svg("t-shaft", shaft)}${svg("t-base", base, "xMidYMax")}</div>`;
     return {
@@ -381,7 +459,7 @@
     };
   }
   const ARCH_VARS = ["cap", "shaft", "base"].flatMap((k) => [`--arch-${k}`, `--arch-${k}-m`]);
-  const ALL_VARS = [...ARCH_VARS, "--paper", "--paper-2", "--paper-fibre", "--wood", "--bg", "--surface", "--text", "--muted", "--surface-2", "--border", "--accent", "--accent-2", "--accent-grad", "--accent-soft", "--accent-text", "--hero-a", "--hero-b", "--user-bubble", "--user-text", "--menu", "--menu-text", "--menu-muted", "--menu-2", "--menu-border", "--menu-accent", "--menu-accent-soft", "--menu-accent-text", "--band-c", "--edge-c", "--bar", "--banner"];
+  const ALL_VARS = [...ARCH_VARS, "--frieze", "--hero-line", "--paper", "--paper-2", "--paper-fibre", "--wood", "--bg", "--surface", "--text", "--muted", "--surface-2", "--border", "--accent", "--accent-2", "--accent-grad", "--accent-soft", "--accent-text", "--hero-a", "--hero-b", "--user-bubble", "--user-text", "--menu", "--menu-text", "--menu-muted", "--menu-2", "--menu-border", "--menu-accent", "--menu-accent-soft", "--menu-accent-text", "--band-c", "--edge-c", "--bar", "--banner"];
   const ERA_VARS = ["--era-font", "--band", "--band-w", "--band-h", "--edge-w", "--edge-h", "--glyph", "--tapeta"];
   const CHAT_ATTRS = { tutor: "data-tutor-surface", user: "data-user-shape", frame: "data-chat-frame", composer: "data-composer", arch: "data-arch" };
   const eraUrl = (id, f) => `url("/eras/${id}/${f}.svg")`;
@@ -441,6 +519,8 @@
     root.classList.toggle("dark", dark);
     root.style.colorScheme = dark ? "dark" : "light";
     if (c) for (const [k, v] of Object.entries(c.vars)) root.style.setProperty(k, v);
+    // Pisani pas (ui.css → »Pisani pas«): slika namesto maske samo, ko jo compute() nastavi.
+    if (c && c.vars["--frieze"]) root.setAttribute("data-frieze", ""); else root.removeAttribute("data-frieze");
     const meta = document.querySelector('meta[name="theme-color"]');
     const top = c ? c.menu : isDarkMode(s) ? baseOf(s).dark.menu : baseOf(s).light.menu;
     if (meta) meta.setAttribute("content", top);
@@ -499,6 +579,8 @@
     for (const b of c.chrome || []) pairs.push([v["--text"], b, MIN.text], [v["--muted"], b, MIN.muted], [v["--accent"], b, MIN.accent]);
     // Papirus pod odgovori (tudi vlakna in koda/glava tabele) in les okvirja polja za pisanje.
     for (const p of c.paperBg || []) pairs.push([v["--text"], p, MIN.text], [v["--muted"], p, MIN.muted], [v["--accent"], p, MIN.accent]);
+    // Pisani pas: obroba (črna poslikava, zlati vložki) vidna na meniju in vrstici.
+    if (c.frieze && v["--menu"]) pairs.push([c.frieze.K, v["--menu"], 3], [c.frieze.K, v["--bar"] || c.surface, 3]);
     if (v["--wood"]) pairs.push([v["--wood"], v["--bar"] || c.surface, 3], [v["--wood"], c.surface, 3]);
     if (c.era) {
       pairs.push([v["--accent"], v["--accent-soft"], MIN.accent], [v["--text"], v["--accent-soft"], MIN.text]);

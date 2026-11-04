@@ -265,12 +265,13 @@ export function zgradi(THREE, ctx = {}) {
   group.add(vsebina);
 
   // materiali (skupni)
-  const matPlus = new THREE.MeshPhysicalMaterial({ color: BARVA_PLUS, roughness: 0.42, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.35 });
-  const matMinus = new THREE.MeshPhysicalMaterial({ color: BARVA_MINUS, roughness: 0.42, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.35 });
+  // ploskvi faz: gladek lak in svetel rob (sheen), da se oblika bere tudi pri šibki svetlobi
+  const fazaMat = (barva, rob) => new THREE.MeshPhysicalMaterial({ color: barva, roughness: 0.34, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.2, sheen: 0.4, sheenRoughness: 0.28, sheenColor: rob });
+  const matPlus = fazaMat(BARVA_PLUS, "#c4d5ff"), matMinus = fazaMat(BARVA_MINUS, "#ffd6b8");
   const matPlusT = new THREE.MeshPhysicalMaterial({ color: BARVA_PLUS, roughness: 0.4, transparent: true, opacity: 0.16, depthWrite: false });
   const matMinusT = new THREE.MeshPhysicalMaterial({ color: BARVA_MINUS, roughness: 0.4, transparent: true, opacity: 0.16, depthWrite: false });
   const matVozel = new THREE.MeshBasicMaterial({ color: "#e4ebf7", vertexColors: true, transparent: true, depthWrite: false, side: THREE.DoubleSide, forceSinglePass: true });
-  const matJedro = new THREE.MeshPhysicalMaterial({ color: "#f4f1ea", emissive: "#6b6458", roughness: 0.3, clearcoat: 0.6 });
+  const matJedro = new THREE.MeshPhysicalMaterial({ color: "#f4f1ea", emissive: "#8a8070", roughness: 0.32, clearcoat: 0.7, clearcoatRoughness: 0.14 });
   const matPrerez = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false, side: THREE.DoubleSide, forceSinglePass: true });
   const matObroba = new THREE.LineBasicMaterial({ color: "#5a6680", transparent: true, opacity: 0.6 });
   let sprite = null;
@@ -316,8 +317,11 @@ export function zgradi(THREE, ctx = {}) {
         g2.font = "italic 600 44px 'Instrument Sans', system-ui, sans-serif"; g2.textAlign = "center"; g2.textBaseline = "middle";
         g2.fillStyle = b; g2.fillText(t, 32, 30);
         const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
-        const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
-        sp.scale.set(0.07, 0.07, 0.07); sp.position.set(...vT(...d, 0.9));
+        // točka namesto Sprite: senčenje okolice (GTAO) točke izpusti, Sprite pa bi dobil temen kvadrat
+        const gs = new THREE.BufferGeometry();
+        gs.setAttribute("position", new THREE.BufferAttribute(new Float32Array(vT(...d, 0.9)), 3));
+        const sp = new THREE.Points(gs, new THREE.PointsMaterial({ map: tex, size: 0.07 * 2.7, sizeAttenuation: true, transparent: true, depthWrite: false }));
+        sp.raycast = () => {}; // oznaka osi ni tarča tapa
         osi.add(sp);
       }
     }
