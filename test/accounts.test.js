@@ -357,12 +357,15 @@ test("weekly report, export and account deletion", async () => {
     assert.equal(consent.under_15, 1);
     assert.equal(consent.parent_email, "gal@primer.si");
 
+    const kidConv = store.createConversation(kid.id);
+    store.setSummary(kidConv.id, "Rešujeta 2x = 10", 20);
     assert.equal((await a("/api/account/export")).status, 404);
     assert.equal((await a("/api/account/export", { method: "POST", body: { password: "narobe123" } })).status, 401);
     const exp = await a("/api/account/export", { method: "POST", body: { password: "geslo1234" } });
     assert.equal(exp.body.children[0].name, "Zala");
     assert.equal(exp.body.parent.password_hash, undefined);
     assert.deepEqual(exp.body.children[0].reports, [], "prijave napak so v izvozu");
+    assert.equal(exp.body.children[0].conversations.find((c) => c.id === kidConv.id).summary, "Rešujeta 2x = 10", "povzetek pogovora je v izvozu");
 
     assert.equal((await a("/api/account", { method: "DELETE", body: { password: "narobe123" } })).status, 401);
     assert.equal((await a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);

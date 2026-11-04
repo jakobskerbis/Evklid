@@ -11,7 +11,7 @@ export const DRSNE = [
   ".formula-body", ".pad-value", ".fb-summary", ".pilot-scroll", ".tc-scroll", ".lab-bench",
   // kalkulator, grafi, formule
   ".gc-math", ".gc-preview", ".gc-val", ".gc-tbl", ".gc .gc-ex", ".sc-h-expr", ".sc-h-res", ".sc-preview",
-  ".sc-live", ".sc-c-val", ".un-result", ".tl-v", ".tl-formula", ".tl-mx-res", ".pse-mm-res", ".pse-scroll",
+  ".sc-live", ".sc-c-val", ".un-result", ".tl-v", ".tl-formula", ".tl-mx-res", ".tl-vt-wrap", ".pse-mm-res", ".pse-scroll",
   ".fm-toc", ".fm-f", ".calc-modes", ".tl-rx-sp", ".sol-scroll", ".sc-vars", ".sc-h-note", ".sc-examples",
   // skeniranje
   ".scan-hist .lr-text b", ".scan-hist .lr-text small", ".scan-pick", ".scan-preview", ".scan-problem-tex",

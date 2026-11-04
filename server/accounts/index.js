@@ -857,6 +857,8 @@ export function mountAccounts(app, store, opts = {}) {
             const { display_text, ...rest } = openMessage(m);
             return { role: rest.role, text: display_text, has_image: rest.has_image, created_at: rest.created_at };
           }),
+          // Sprotni povzetek starejšega dela pogovora (server/povzetek.js), ki ga vidi le inštruktor.
+          summary: store.getSummary(conv.id)?.text || null,
         })),
         events: q("SELECT subject, topic, error, mode, flag, created_at FROM events WHERE student_id = ?", c.id),
         topics: q("SELECT * FROM topic_state WHERE student_id = ?", c.id),

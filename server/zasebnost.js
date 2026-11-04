@@ -9,6 +9,7 @@ import { audit, ensureAuditTable } from "./dnevnik-dostopov.js";
 export const SEALED = [
   { table: "messages", cols: ["api_content", "display_text"] },
   { table: "conversations", cols: ["title"] },
+  { table: "conversation_summaries", cols: ["text"] },
   { table: "message_reports", cols: ["note", "question", "answer"] },
   { table: "bug_reports", cols: ["note", "context"] },
   { table: "feedback", cols: ["name", "good", "bad", "ideas", "interview"] },

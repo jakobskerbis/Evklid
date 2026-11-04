@@ -19,8 +19,8 @@ worksheet is Osebno only. Locked materials are hidden in the lesson; offers belo
 | Printable worksheet with solutions (`delovni-list`) | built | task generators (already reviewed), seeded: same »koda lista« = same sheet | paid; teachers free on the teacher page (class code + key or class owner), with or without the solutions page |
 | Weak-topic worksheet | built | tasks of the last 60 days, ≥3 tasks and ≥40 % wrong at first try | paid, button on Napredek |
 | Past NPZ / matura | links only | RIC holds all rights (»© Državni izpitni center, vse pravice pridržane« on every paper), so papers are linked on ric.si, never copied. The timed mock exam (PR #125) uses our own tasks in the RIC format | everyone |
-| Home experiment (`poskus`), real-life project (`projekt`) | format + print page built, no content yet | `content/gradiva/<vrsta>/<POT>/<tema>.md` | as topic materials |
-| Short video from a simulation (`video`) | format + in-app player built, no content yet | script `content/gradiva/video/<POT>/<tema>.md` drives an existing simulation, captions read aloud | as topic materials |
+| Home experiment (`poskus`), real-life project (`projekt`) | built; first batch 6 experiments + 4 projects (FIZ/KEM/NAR, 2026-11-04) | `content/gradiva/<vrsta>/<POT>/<tema>.md` | as topic materials |
+| Short video from a simulation (`video`) | built; first batch 4 videos (2026-11-04) | script `content/gradiva/video/<POT>/<tema>.md` drives an existing simulation, captions read aloud | as topic materials |
 | Live class quiz (`server/kviz.js`, `public/kviz.js`) | built | same task generators; teacher runs it on the projector from the class card, class members join in Lige | teachers free, only members of that class can join |
 
 ## Live class quiz
@@ -79,7 +79,7 @@ product: table, graph, short report) and `## Merila` (3–5 bullets the teacher 
 topic in `public/sim/katalog.js`), optional `moznosti` (JSON options for the simulation), `trajanje` m:ss
 between 0:45 and 2:30. Each scene is `## m:ss` (first 0:00, increasing), one or two sentences of caption
 (≤ 260 characters, read aloud), and action lines `- nastavi: <slider aria-label> = <value>` or
-`- klikni: <button text or aria-label>`. Slider labels are the `label` of `kit.slider` in the simulation's source; for a `kit.select` the value is the option value or its text. A bullet line that is not an action is an error (usually a typo). The
+`- klikni: <button text or aria-label>`. Slider labels are the `label` of `kit.slider` in the simulation's source; for a `kit.select` the value is the option value or its text (use the value when the text contains »=«, e.g. »Zemlja (g = 9,81 m/s²)«: the line is split at the last »=«). A bullet line that is not an action is an error (usually a typo). The
 player waits for the voice to finish a caption before the next scene, so keep captions short. One idea per
 video, 4–8 scenes: each scene changes one thing and its caption says what to watch; the last scene states the
 rule. A caption never names a value the simulation does not show at that moment.
