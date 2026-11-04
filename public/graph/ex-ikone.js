@@ -40,9 +40,11 @@ export function curveIcon({ view, parts }, cls = "") {
     const st = `${p.dash ? ` stroke-dasharray="2 2.2" stroke-width="1.5"` : p.w ? ` stroke-width="${p.w}"` : ""}${p.faint ? ` opacity=".55"` : ""}`;
     if (p.fill) {
       const { top, bot = () => 0, from, to } = p.fill;
-      const clamp = (y) => Math.max(y0, Math.min(y1, y));
-      const up = sample(top, from, to).map(([x, y]) => `${r1(sx(x))} ${r1(sy(clamp(y)))}`);
-      const dn = sample(bot, from, to).reverse().map(([x, y]) => `${r1(sx(x))} ${r1(sy(clamp(y)))}`);
+      const clamp = (y) => (Number.isFinite(y) ? Math.max(y0, Math.min(y1, y)) : Math.max(y0, Math.min(y1, 0)));
+      const a = Math.max(x0, from);
+      const b = Math.min(x1, to);
+      const up = sample(top, a, b).map(([x, y]) => `${r1(sx(x))} ${r1(sy(clamp(y)))}`);
+      const dn = sample(bot, a, b).reverse().map(([x, y]) => `${r1(sx(x))} ${r1(sy(clamp(y)))}`);
       out += `<path d="M${up.join("L")}L${dn.join("L")}Z" fill="currentColor" stroke="none" opacity=".28"/>`;
     } else if (p.pts) {
       out += p.pts.filter(([x, y]) => inside(x, y)).map(([x, y]) => `<circle cx="${r1(sx(x))}" cy="${r1(sy(y))}" r="${p.r || 1.4}" fill="currentColor" stroke="none"${st}/>`).join("");
@@ -85,7 +87,7 @@ export const IKONE = {
   },
   "y = ax + b\\ (R^2)": {
     view: [-0.5, 8, -1, 15.5],
-    parts: [{ fn: (x) => 1.98 * x + 0.03, faint: true }, { pts: [[1, 2.1], [2, 3.8], [3, 6.3], [4, 7.9], [5, 9.7], [6, 12.4], [7, 13.8]], r: 1.3 }],
+    parts: [{ fn: (x) => 1.989 * x + 0.043, faint: true }, { pts: [[1, 2.1], [2, 3.8], [3, 6.3], [4, 7.9], [5, 9.7], [6, 12.4], [7, 13.8]], r: 1.3 }],
   },
   "a_n = a_{n-1} + d,\\ a_1 = 2": {
     view: [-0.5, 8.5, -11, 13],
@@ -93,7 +95,7 @@ export const IKONE = {
   },
   "\\sum_{n=1}^{k} \\frac{\\sin(nx)}{n}": {
     view: [-9.5, 9.5, -2.2, 2.2],
-    parts: [{ fn: (x) => [1, 2, 3, 4, 5, 6].reduce((s, n) => s + sin(n * x) / n, 0), w: 1.6 }],
+    parts: [{ fn: (x) => [1, 2, 3, 4, 5].reduce((s, n) => s + sin(n * x) / n, 0), w: 1.6 }],
   },
 };
 
