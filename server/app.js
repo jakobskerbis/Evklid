@@ -527,6 +527,7 @@ export function createApp(store, opts = {}) {
       wantThink: againStreak === 1,
       competition: student.settings.track === "COMPETITION",
       secondary: jeSs(student.settings),
+      university: jeFaks(student.settings),
       lite,
       free: !!accounts && !accounts.premiumFor(student.id),
       deepModel: capped ? MODEL_MID : MODEL_DEEP,

@@ -65,7 +65,8 @@ import { initCorner, showCorner, cornerBack, closeBoard, askInterests, maybeAskI
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
 import { initFullscreen } from "./fullscreen.js";
 import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-settings.js";
-import { initSchedule, showSchedule, renderScheduleCard } from "./schedule.js";
+import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./schedule.js";
+import { stageCardHtml, vrstniRed, uvrstiKartice } from "./zacetna.js";
 import { initScan, showScan, leaveScan, scanBack } from "./scan/scan.js";
 import { initLab, showLab, labBack } from "./laboratorij.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
@@ -2108,7 +2109,7 @@ async function loadPath(key = state.pathKey) {
   state.pathSubject = paths.find((x) => x.key === p.key)?.subject || state.student.settings.subject;
   if (changed) refreshModes(); // fakulteta: drug predmet iz seznama poti
   showLevelCard();
-  renderScheduleCard($("#schedule-card"));
+  renderStageHome();
   syncOfflineBanner();
   // Naloge za vadbo brez povezave (enkrat na dan, v ozadju).
   if (!p.offline) refreshPack(api, state.student.id, p.key).then(syncOfflineBanner);
@@ -3919,10 +3920,29 @@ initFlashcards({ api, renderRich, escapeHtml, toast, showView, getStudent: () =>
 // Urnik (public/schedule.js): po spremembi se osvežita kartica »Danes imaš …« in Priprava na test.
 function scheduleChanged() {
   if (currentView === "schedule") showSchedule();
-  renderScheduleCard($("#schedule-card"));
+  renderStageHome();
   refreshModes();
 }
-initSchedule({ api, escapeHtml, toast, showView, startSession, getStudent: () => state.student, onChange: () => (renderScheduleCard($("#schedule-card")), refreshModes()) });
+initSchedule({ api, escapeHtml, toast, showView, startSession, getStudent: () => state.student, onChange: () => (renderStageHome(), refreshModes()) });
+
+// Začetna stran po stopnji (public/zacetna.js, j 2026-11-01): kartica »Danes imaš …«, kartica stopnje
+// (OŠ igre, SŠ matura, faks Moj študij z izpitnimi roki) in vrstni red kartic na Učni poti.
+async function renderStageHome() {
+  if (!state.student) return;
+  const sid = state.student.id;
+  await renderScheduleCard($("#schedule-card"));
+  if (state.student?.id !== sid) return; // med nalaganjem zamenjan profil
+  const level = stopnja(state.student.settings);
+  const schedule = lastSchedule();
+  const box = $("#stage-card");
+  box.innerHTML = stageCardHtml(level, { games: gamesOn(state.student.settings), exams: siExams(), schedule, t, esc: escapeHtml });
+  box.hidden = !box.innerHTML;
+  uvrstiKartice($("#view-path .path-side"), vrstniRed(level, schedule));
+}
+$("#stage-card").addEventListener("click", (e) => {
+  const go = e.target.closest("[data-home-go]")?.dataset.homeGo;
+  if (go) showView(go);
+});
 // Skeniranje nalog (public/scan/): fotografija ali vpis → rešitev po korakih.
 initScan({
   api,

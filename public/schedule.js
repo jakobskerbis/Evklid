@@ -29,6 +29,9 @@ const ls = {
   },
 };
 
+// Zadnji pogled Urnika (po renderScheduleCard), za kartico stopnje na Učni poti (public/zacetna.js).
+export const lastSchedule = () => data?.schedule || null;
+
 export function initSchedule(deps) {
   D = deps;
 }
@@ -421,6 +424,7 @@ export async function renderScheduleCard(el) {
   try {
     d = await load();
   } catch {
+    data = null; // kartica stopnje (lastSchedule) ne sme pokazati urnika prejšnjega profila
     el.hidden = true;
     return;
   }
@@ -447,7 +451,8 @@ export async function renderScheduleCard(el) {
   const cls = nextL || pastL;
   const after = !nextL && pastL;
   const rem = s.reminders.filter((e) => TEST_KINDS.includes(e.kind) || e.kind === "naloga");
-  const next = s.upcoming.find((e) => TEST_KINDS.includes(e.kind) && e.daysLeft > 1 && e.daysLeft <= 14);
+  // Faks: izpitne roke kaže kartica »Moj študij« (public/zacetna.js), tu ne še enkrat.
+  const next = jeFaks(D.getStudent()?.settings) ? null : s.upcoming.find((e) => TEST_KINDS.includes(e.kind) && e.daysLeft > 1 && e.daysLeft <= 14);
   el.hidden = false;
   el.innerHTML = `<div class="card sch-card">
     ${rem

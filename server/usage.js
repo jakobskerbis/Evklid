@@ -36,6 +36,9 @@ export const LIMITS = {
   // Srednja šola: hitri model z več razmisleka namesto navadnega (j 2026-11-04 po primerjavi modelov:
   // napake Haikuja pri SŠ 27 % → 7 %, Sonnet 0 %, a ~15× dražji). 0 = navadni hitri model.
   secondaryThink: () => process.env.EVKLID_SS_THINK !== "0",
+  // Fakulteta (j 2026-11-01, načrt stopenj: »daljše razlage, več dokazov, pogosteje Sonnet«): privzeto hitri model z
+  // več razmisleka kot SŠ, prva »Razloži podrobneje« pri naročnini Sonnet. 0 = kot drugi učenci.
+  universityMid: () => process.env.EVKLID_UNI_MID !== "0",
 };
 
 // Za prikaz v evrih (Claude API zaračunava v dolarjih).
@@ -341,10 +344,14 @@ export class Usage {
   // free: brezplačni paket (brez naročnine, preizkusa ali kode) nikoli ne dobi zmogljivejšega modela.
   // capped: namesto Opusa Sonnet (šolska licenca vedno; Osebno in aktivacijska koda pred 3. zaporedno prošnjo, glej app.js).
   // secondary: srednješolec (privzeto Haiku z več razmisleka, LIMITS.secondaryThink).
-  chooseMode(studentId, { wantDeep = false, wantThink = false, competition = false, secondary = false, lite = false, free = false, deepModel = "claude-opus", capped = false } = {}) {
+  // university: študent; brez lahkega načina in brezplačnega paketa privzeto Haiku z več razmisleka, prva
+  // »Razloži podrobneje« Sonnet (»mid«) z istimi mejami kot podrobna razlaga (LIMITS.universityMid).
+  chooseMode(studentId, { wantDeep = false, wantThink = false, competition = false, secondary = false, university = false, lite = false, free = false, deepModel = "claude-opus", capped = false } = {}) {
     if (competition && !wantDeep && !LIMITS.competitionDeep()) return { mode: "think", note: null };
     if (free && (wantDeep || competition)) return { mode: "think", note: wantDeep ? NOTES.free : null };
-    if (wantDeep || competition) {
+    const uni = university && !free && !lite && LIMITS.universityMid();
+    const uniMid = uni && wantThink && !wantDeep;
+    if (wantDeep || competition || uniMid) {
       const daily = LIMITS.dailyDeep();
       if (daily && this.deepToday(studentId, deepModel) >= daily) return { mode: "think", note: NOTES.dailyDeep(daily) };
       // S proračunom: blizu svojega dela proračuna (brez dokupljenega kredita); brez njega mehka meja v $.
@@ -353,7 +360,7 @@ export class Usage {
       const sb = this.studentBudget(studentId, state);
       if (sb.guaranteed) {
         if (sb.spent >= sb.allowance && sb.credit <= 0) return { mode: "think", note: null, fast: true };
-        return { mode: capped ? "mid" : "deep", note: null };
+        return { mode: capped || uniMid ? "mid" : "deep", note: null };
       }
       if (state.cap) {
         const sb = this.studentBudget(studentId, state);
@@ -362,13 +369,14 @@ export class Usage {
         const soft = LIMITS.studentSoftUsd();
         if (soft && this.monthTotal(studentId) >= soft) return { mode: "think", note: NOTES.softBudget };
       }
-      // Aktivacijska koda (capped): Sonnet (mode "mid") namesto Opusa.
-      return { mode: capped ? "mid" : "deep", note: null };
+      // Aktivacijska koda (capped) in prva podrobna razlaga na faksu: Sonnet (mode "mid") namesto Opusa.
+      return { mode: capped || uniMid ? "mid" : "deep", note: null };
     }
     if (wantThink) return { mode: "think", note: null };
     // Brezplačni paket ostane pri navadnem Haikuju (0,2 $ na mesec bi sicer zadoščalo za ~3× manj odgovorov).
     // Prva »Razloži podrobneje« je pri SŠ isti model z novo, podrobnejšo prošnjo; druga gre višje kot doslej.
     if (secondary && !lite && !free && LIMITS.secondaryThink()) return { mode: "think", note: null };
+    if (uni) return { mode: "think", note: null };
     return { mode: lite ? "lite" : "chat", note: null };
   }
   // Odgovor brez klica modela (ponovna raba ali namig iz generatorja): zapišemo, da je viden prihranek.

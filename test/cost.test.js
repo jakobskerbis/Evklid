@@ -102,6 +102,31 @@ test("daily deep cap and monthly soft budget fall back to the thinking Haiku wit
   assert.equal(u.studentMonth(t.id).hard_reached, true);
 });
 
+test("faks: Haiku z več razmisleka, prva »Razloži podrobneje« Sonnet, druga Opus; brezplačno in lahki način ne", () => {
+  const store = openDb(":memory:");
+  const s = store.createStudent("Eva", { educational_track: "UNIVERZA" });
+  const u = new Usage(store.db);
+  assert.equal(u.chooseMode(s.id, { university: true }).mode, "think");
+  assert.equal(u.chooseMode(s.id, { university: true, wantThink: true, deepModel: MODEL_DEEP }).mode, "mid");
+  assert.equal(u.chooseMode(s.id, { university: true, wantDeep: true, deepModel: MODEL_DEEP }).mode, "deep");
+  assert.equal(u.chooseMode(s.id, { university: true, wantThink: true, free: true }).mode, "think", "brezplačni paket: Haiku");
+  assert.equal(u.chooseMode(s.id, { university: true, free: true }).mode, "chat");
+  assert.equal(u.chooseMode(s.id, { university: true, lite: true }).mode, "lite");
+  assert.equal(u.chooseMode(s.id, { university: true, lite: true, wantThink: true }).mode, "think");
+  // Nad mehko mejo meseca (brez proračuna) tudi prva podrobna razlaga ostane Haiku z opombo.
+  u.log(s.id, MODEL, { input_tokens: 0, output_tokens: 2_100_000 });
+  const soft = u.chooseMode(s.id, { university: true, wantThink: true, deepModel: MODEL_DEEP });
+  assert.equal(soft.mode, "think");
+  assert.ok(soft.note);
+  process.env.EVKLID_UNI_MID = "0";
+  try {
+    assert.equal(u.chooseMode(s.id, { university: true }).mode, "chat");
+    assert.equal(u.chooseMode(s.id, { university: true, wantThink: true }).mode, "think");
+  } finally {
+    delete process.env.EVKLID_UNI_MID;
+  }
+});
+
 test("competition track: thinking Haiku by default, Opus only on request", () => {
   const store = openDb(":memory:");
   const s = store.createStudent("Ana");
