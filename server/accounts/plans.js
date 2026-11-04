@@ -327,6 +327,19 @@ export function upgradeMonthUsd(oldUsd, newUsd, upgradedAt, now = Date.now()) {
   return Math.round((oldUsd * (days - left) + newUsd * left) / days * 1000) / 1000;
 }
 // Učencu in staršu pokažemo porabo kot število preostalih podrobnih razlag (nikoli € ali $).
+// Druga zamenjava paketa v istem mesecu: »stari« delež za dneve do nje je povprečje po dnevih prejšnje
+// zamenjave (prev = { usd, at }: stari delež, če je bila nadgradnja, sicer takoj sedanji) in sedanjega paketa
+// (curUsd), da dnevi pred prvo nadgradnjo ne dobijo vmesnega paketa. Brez prev ali iz prejšnjega meseca: curUsd.
+export function upgradeFromUsd(prev, curUsd, now = Date.now()) {
+  const d = new Date(now);
+  const start = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
+  const end = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
+  if (!prev || !(prev.at >= start && prev.at < end) || !(prev.usd >= 0)) return curUsd;
+  const d1 = Math.floor((prev.at - start) / 86400000);
+  const d2 = Math.floor((now - start) / 86400000);
+  if (!(d2 > 0)) return curUsd;
+  return Math.round((Math.min(prev.usd, curUsd) * d1 + curUsd * (d2 - d1)) / d2 * 1000) / 1000;
+}
 // Ocena za eno podrobno razlago (zmogljivejši model, kratka zgodovina); zaokroženo navzdol.
 export const usdPerExplanation = () => {
   const v = Number(process.env.EVKLID_USD_PER_EXPLANATION);

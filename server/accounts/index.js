@@ -10,7 +10,7 @@ import { audit, detachAudit } from "../dnevnik-dostopov.js";
 import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
-import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
+import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
@@ -257,9 +257,10 @@ export function mountAccounts(app, store, opts = {}) {
     if (r.personalTier !== "paid") return null;
     const g = planGuarantee(planByKey(getParent(owner)?.sub_plan)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
     // Nadgradnja ta mesec (applySubscription): stari paket za pretekle dni, novi za preostale (plans.js upgradeMonthUsd).
+    // Zapis velja samo za isto naročnino (id računa se po izbrisu lahko ponovno uporabi, nova naročnina začne znova).
     const up = JSON.parse(kv.get(`ai_upgrade_${owner}`) || "null");
-    const was = up && planGuarantee(planByKey(up.from));
-    return was ? { ...g, usd: upgradeMonthUsd(was.usd || 0, g.usd || 0, up.at) } : g;
+    const was = up && up.sub && up.sub === getParent(owner)?.sub_id ? (up.usd ?? planGuarantee(planByKey(up.from))?.usd) : null;
+    return was != null ? { ...g, usd: upgradeMonthUsd(was || 0, g.usd || 0, up.at) } : g;
   }
   // Meja paketa (brez brezplačnega repa, plans.js subscriptionCeiling); naročnik z mejo 0 ostane zajamčen (MIN_CEILING_USD).
   const guaranteeFor = (studentId) => {
@@ -1354,8 +1355,13 @@ export function mountAccounts(app, store, opts = {}) {
     }
     // Zamenjava paketa med veljavno naročnino: zapomnimo si stari paket za zajamčeni AI tega meseca (subGuarantee).
     const planKey = plan?.key || price.lookup_key || price.id || null;
-    if (before?.sub_plan && planKey && planKey !== (planByKey(before.sub_plan)?.key || before.sub_plan) && paidActive(before)) {
-      kv.set(`ai_upgrade_${parentId}`, JSON.stringify({ from: before.sub_plan, at: Date.now() }));
+    const fromG = before?.sub_plan && planGuarantee(planByKey(before.sub_plan));
+    if (fromG && planKey && planKey !== (planByKey(before.sub_plan)?.key || before.sub_plan) && paidActive(before) && before.sub_id === sub.id) {
+      // Druga zamenjava v istem mesecu: dnevi pred prvo ostanejo pri prvotnem deležu (plans.js upgradeFromUsd).
+      const prev = JSON.parse(kv.get(`ai_upgrade_${parentId}`) || "null");
+      const now = Date.now();
+      const usd = upgradeFromUsd(prev?.sub === sub.id ? prev : null, fromG.usd || 0, now);
+      kv.set(`ai_upgrade_${parentId}`, JSON.stringify({ from: before.sub_plan, usd, at: now, sub: sub.id }));
     }
     update(parentId, {
       // Prvo neuspelo plačilo začne odlog (GRACE_DAYS); ob uspešnem plačilu se ponastavi.

@@ -38,6 +38,7 @@ import {
   monthlyOf,
   passLevel,
   upgradeMonthUsd,
+  upgradeFromUsd,
 } from "../server/accounts/plans.js";
 import { STORE_PRICES_EUR, STORE_PRODUCTS } from "../server/mobile/store-billing.js";
 import { rights, lessonInteractive } from "../server/placila/pravice.js";
@@ -388,6 +389,42 @@ test("nadgradnja med mesecem: zajamčeni AI ta mesec po dnevih (stari paket do n
 
 test("nadgradnja: višja stopnja takoj z doplačilom razlike (proracija Stripa), samo v testnem načinu", async () => {
   await withAccounts(async ({ call, stripe, kid, subscribe, api, db, pid }) => {
+test("nadgradnja dvakrat v mesecu: dnevi pred prvo ostanejo pri prvotnem deležu; zapis velja samo za isto naročnino", async () => {
+  // Pure: 1 $ do 11., 4 $ do 21., 7 $ do konca (30 dni) = (10 + 40 + 70) / 30 = 4 $, ne (4 · 20 + 7 · 10) / 30.
+  const at1 = Date.UTC(2026, 10, 11, 9);
+  const at2 = Date.UTC(2026, 10, 21, 9);
+  const from2 = upgradeFromUsd({ usd: 1, at: at1 }, 4, at2);
+  assert.equal(from2, 2.5);
+  assert.equal(upgradeMonthUsd(from2, 7, at2, Date.UTC(2026, 10, 25)), 4);
+  assert.equal(upgradeFromUsd({ usd: 4, at: at1 }, 1, at2), 1, "prejšnja zamenjava je bila nižji paket: takoj nižji");
+  assert.equal(upgradeFromUsd({ usd: 1, at: Date.UTC(2026, 9, 31) }, 4, at2), 4, "prejšnji mesec: sedanji paket");
+  assert.equal(upgradeFromUsd(null, 4, at2), 4);
+  assert.equal(upgradeFromUsd({ usd: 1, at: Date.UTC(2026, 10, 1, 3) }, 4, Date.UTC(2026, 10, 1, 9)), 4, "1. v mesecu");
+  await withAccounts(async ({ call, kid, subscribe, api, db, pid }) => {
+    const ana = kid("Ana", "OS");
+    subscribe("evklid_1_month");
+    const os = api.guaranteeFor(ana);
+    const ss = planGuarantee(planByKey("evklid_ss_month")).usd;
+    const faks = planGuarantee(planByKey("evklid_faks_month")).usd;
+    const rec = () => JSON.parse(db.prepare("SELECT value FROM kv WHERE key = ?").get(`ai_upgrade_${pid}`).value);
+    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month" } })).status, 200);
+    const first = rec();
+    assert.equal(first.usd, os);
+    assert.equal(first.sub, "sub_a");
+    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_faks_month" } })).status, 200);
+    const second = rec();
+    assert.equal(second.from, "evklid_ss_month");
+    assert.equal(second.usd, upgradeFromUsd(first, ss, second.at));
+    assert.ok(second.usd >= os && second.usd <= ss);
+    const g = api.guaranteeFor(ana);
+    assert.equal(g, upgradeMonthUsd(second.usd, faks, second.at));
+    assert.ok(g <= faks);
+    // Druga naročnina (ali nov račun s ponovno uporabljenim id): zapis ne velja več.
+    db.prepare("UPDATE parents SET sub_id = 'sub_b' WHERE id = ?").run(pid);
+    assert.equal(api.guaranteeFor(ana), faks);
+  });
+});
+
     const ana = kid("Ana", "OS");
     kid("Bor", "SS");
     subscribe("evklid_1_month");
