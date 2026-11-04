@@ -5,6 +5,7 @@ import { withFormulaSubject } from "./formula-data.js";
 import { lessonSteps } from "./lesson-steps.js";
 import { gradivaHtml, wireGradiva, stopReading } from "./gradiva.js";
 import { prilagodiSirino } from "./sirina.js";
+import { wireLessonReport } from "./prijave.js";
 
 let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView }
 const $ = (sel) => document.querySelector(sel);
@@ -507,6 +508,8 @@ async function renderLesson(topicId) {
     ? `<button type="button" class="ghost tb-mode-btn" id="tb-mode">${ic(stepMode ? "file-text" : "layers")}${esc(t(stepMode ? "tb.steps.all" : "tb.steps.byStep"))}</button>`
     : "";
 
+  // »Prijavi napako« v vsaki lekciji (tudi brez besedila lekcije): prijava gre skrbniku (server/reports.js).
+  const reportBtn = `<button type="button" class="ghost tb-report-btn" id="tb-report" aria-expanded="false">${ic("flag")}<span>${esc(t("rep.btn"))}</span></button>`;
   // »Kaj zdaj?«: po korakih je del zadnjega koraka, nad krogi Nazaj · 1/12 · Naprej (ti plavajo na dnu nad
   // vsebino; vrstica zavzame svojo višino na koncu, zato zadnje vrstice odpeljemo nadnjo). Krogi so za mrežo,
   // ne v levem stolpcu: na računalniku s poskusi desno je ← levo spodaj, številka na sredini in → desno spodaj.
@@ -525,11 +528,11 @@ async function renderLesson(topicId) {
     <button type="button" class="ghost back tb-back" id="tb-back">${ic("arrow-left")}${esc(t("nav.textbook"))}</button>
     <p class="muted tb-crumb">${esc(L.pathLabel)} · ${esc(L.unit)}</p>
     <h1 class="tb-title">${esc(L.name)}</h1>
-    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="/ucbenik/${L.path}/${L.id.split("/")[1]}#natisni" target="_blank" rel="noopener">${ic("download")}PDF lekcije</a>${modeBtn}<span class="tb-gradiva"></span></div>` : ""}
+    ${lesson ? `<div class="tb-tools"><a class="tb-pdf" href="/ucbenik/${L.path}/${L.id.split("/")[1]}#natisni" target="_blank" rel="noopener">${ic("download")}PDF lekcije</a>${modeBtn}<span class="tb-gradiva"></span>${reportBtn}</div>` : `<div class="tb-tools">${reportBtn}</div>`}
     <p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>
     ${L.goals ? `<p class="tb-goals"><b>Cilji:</b> ${esc(L.goals)}</p>` : ""}
     ${L.pretest_due ? `<section class="card tb-pretest"><h2>${ic("target")}${esc(t("pretest.title"))}</h2><p>${esc(t("pretest.lessonIntro"))}</p><button type="button" class="primary" id="tb-pretest">${ic("play")}${esc(t("pretest.start"))}</button></section>` : ""}
-    ${lesson && lesson.status !== "pregledano" ? `<p class="tb-draft">Osnutek: lekcijo mora še pregledati učitelj. Če opaziš napako, povej inštruktorju.</p>` : ""}
+    ${lesson && lesson.status !== "pregledano" ? `<p class="tb-draft">Osnutek: lekcijo mora še pregledati učitelj. Če opaziš napako, pritisni »Prijavi napako«.</p>` : ""}
     ${stepMode ? `<div class="tb-progress" role="progressbar" aria-valuemin="1" aria-valuemax="${steps.length}"><span></span></div>${stepsHtml}${nextHtml}` : `${sectionHtml}${fallback}${checksHtml}${nextHtml}`}
     </div><aside class="tb-side">${demoHtml}</aside></div>${stepper}`;
   placeDemos(box);
@@ -552,6 +555,17 @@ async function renderLesson(topicId) {
   });
   wireFormulas(box);
   prilagodiSirino(box);
+  wireLessonReport($("#tb-report"), {
+    api: ctx.api,
+    studentId: ctx.getStudent().id,
+    topic: L.id,
+    // Korak lekcije po korakih (1, 2 …), sicer brez.
+    step: () => {
+      const st = box.querySelector(".tb-step:not([hidden])");
+      return st ? Number(st.dataset.step) + 1 : null;
+    },
+    toast: ctx.toast,
+  });
   box.querySelectorAll(".tb-demo-mount").forEach((m) => {
     const d = demos[Number(m.dataset.sim)];
     mountSim(d.id, m, d.opts);

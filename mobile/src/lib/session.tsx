@@ -12,6 +12,7 @@ export type Parent = {
   name: string;
   minor: boolean;
   verified: boolean;
+  is_admin?: boolean;
   trial_ends_at: string | null;
   subscription: { status: string; plan: string; seats: number; period_end: string | null; cancel_at_period_end: boolean } | null;
 };

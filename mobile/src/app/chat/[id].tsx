@@ -14,6 +14,7 @@ import { celebrate, failure, success, tap } from "@/lib/haptics";
 import { pickPhoto, takePendingPhoto, type Photo } from "@/lib/images";
 import { RichText } from "@/components/RichText";
 import { Banner, Button, Card, ErrorView, Icon, Loading } from "@/components/ui";
+import { ReportSheet } from "@/components/ReportSheet";
 
 type Msg = { id: number | string; role: "user" | "assistant"; text: string; has_image?: boolean; photo?: string; error?: boolean; streaming?: boolean };
 type Proposal = { settings: Record<string, string>; from: Desc; to: Desc; state?: "done" | "kept" };
@@ -31,7 +32,9 @@ export default function Chat() {
   const insets = useSafeAreaInsets();
   const { id, send: initial } = useLocalSearchParams<{ id: string; send?: string }>();
   const student = useStudent();
-  const { refresh, updateStudent } = useSession();
+  const { refresh, updateStudent, parent } = useSession();
+  // Skrbnik: »Prijavi napako« v glavi klepeta (kot na spletu, public/prijave.js).
+  const [bugOpen, setBugOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [messages, setMessages] = useState<Msg[]>([]);
   const [loading, setLoading] = useState(true);
@@ -185,7 +188,29 @@ export default function Chat() {
     // Odmik tipkovnice = kje se zaslon začne (pod naslovno vrstico); izmerjen, ker se višina vrstice razlikuje.
     <View ref={root} onLayout={() => root.current?.measureInWindow((_x: number, y: number) => setTop(y))} style={{ flex: 1, backgroundColor: th.bg }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={top}>
-        <Stack.Screen options={{ title: title || t("nav.chat") }} />
+        <Stack.Screen
+          options={{
+            title: title || t("nav.chat"),
+            headerRight: parent?.is_admin
+              ? () => (
+                  <Pressable onPress={() => setBugOpen(true)} accessibilityRole="button" accessibilityLabel={t("bug.btn")} hitSlop={10} style={{ padding: 6 }}>
+                    <Icon name={{ ios: "flag", android: "flag" }} size={20} color={th.accent} />
+                  </Pressable>
+                )
+              : undefined,
+          }}
+        />
+        <ReportSheet
+          visible={bugOpen}
+          ask={t("bug.ask")}
+          notePh={t("bug.notePh")}
+          needNote
+          onClose={() => setBugOpen(false)}
+          onSend={async ({ note }) => {
+            await api(`/api/students/${student.id}/bug`, { body: { note, conversation_id: Number(id), view: "chat", device: "app" } });
+            Alert.alert(t("bug.thanks"));
+          }}
+        />
         <FlatList
           ref={list}
           data={messages}

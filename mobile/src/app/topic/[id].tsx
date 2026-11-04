@@ -14,6 +14,7 @@ import { failure, success, tap } from "@/lib/haptics";
 import { useLoad } from "@/lib/useLoad";
 import { RichText } from "@/components/RichText";
 import { Banner, Body, Button, Card, Chip, ErrorView, Icon, Loading, ProgressBar, Screen, Title } from "@/components/ui";
+import { ReportSheet } from "@/components/ReportSheet";
 
 type Check = { q: string; options: string[]; correct: number; why?: string; optionWhy?: string[] };
 type Section = { title: string; md: string };
@@ -45,6 +46,8 @@ export default function Topic() {
   const [step, setStep] = useState(0);
   const [alt, setAlt] = useState<number | null>(null);
   const [starting, setStarting] = useState(false);
+  const [reporting, setReporting] = useState(false);
+  const [reported, setReported] = useState(false);
 
   const steps = useMemo<Step[]>(() => (L?.lesson ? (lessonSteps(L.lesson.sections, L.lesson.checks?.length || 0) as Step[]) : []), [L]);
 
@@ -98,7 +101,32 @@ export default function Topic() {
         {L.unit ? <Text style={{ color: th.muted, fontWeight: "600" }}>{L.unit}</Text> : null}
         <Title size={26}>{L.name}</Title>
         {L.goals ? <Body muted>{L.goals}</Body> : null}
+        {/* »Prijavi napako« v vsaki lekciji (kot na spletu): prijava gre skrbniku (server/reports.js). */}
+        <Pressable
+          onPress={() => setReporting(true)}
+          disabled={reported}
+          accessibilityRole="button"
+          hitSlop={8}
+          style={{ alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 6, minHeight: 40 }}
+        >
+          <Icon name={{ ios: reported ? "checkmark" : "flag", android: reported ? "check" : "flag" }} size={15} color={th.accent} />
+          <Text style={{ color: th.accent, fontWeight: "600" }}>{reported ? t("rep.done") : t("rep.btn")}</Text>
+        </Pressable>
       </View>
+      <ReportSheet
+        visible={reporting}
+        ask={t("rep.ask")}
+        reasons={[["wrong", t("lrep.wrong")], ["unclear", t("lrep.unclear")], ["broken", t("lrep.broken")], ["other", t("rep.other")]]}
+        notePh={t("lrep.notePh")}
+        onClose={() => setReporting(false)}
+        onSend={async ({ reason, note }) => {
+          await api(`/api/students/${student.id}/lesson-report`, {
+            body: { topic: L.id, reason, note, step: lesson && byStep && steps.length > 1 ? Math.min(step, steps.length - 1) + 1 : null, device: "app" },
+          });
+          setReported(true);
+          Alert.alert(t("lrep.thanks"));
+        }}
+      />
 
       {lesson && steps.length > 1 ? (
         <View style={{ flexDirection: "row", gap: 8 }}>
