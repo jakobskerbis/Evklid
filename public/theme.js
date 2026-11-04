@@ -99,6 +99,15 @@
       motifs: ["lotos", "sunja", "kolo", "steber", "stopnice", "palmov-list", "pav", "rangoli"],
       facts: ["era.indija", 6], icons: "ikone",
     },
+    // Stari Egipt: svetlo pesek in papirus, meni v peščenjaku, poudarek lapis lazuli; temno nočna puščava pod
+    // modrim nebom, poudarek turkizna fajansa, meni lapis z zlatom. Brez verskih simbolov (ne oko, ankh, skarabej, sončni disk).
+    egipt: {
+      light: { bg: "#f5eedb", surface: "#fffcf3", menu: "#e2cb94", text: "#271e12", accent: "#1d4a8a", band: "#b8862c", bar: "#f3e8cc", banner: "#f2e0b4" },
+      dark: { bg: "#0f1422", surface: "#171e30", menu: "#16294a", menuAccent: "#e6b85c", text: "#f2ead8", accent: "#5cc4b6", band: "#c99d48", bar: "#131a2a", banner: "#2e2918" },
+      font: ["El Messiri Variable", "el-messiri"], hero: 24, band: ["papirusi", 16, 10], edge: 1.25, glyph: "ikona",
+      motifs: ["piramide", "papirus", "zvitek", "vrv", "libela", "ladja", "steber", "hekat"],
+      facts: ["era.egipt", 6], icons: "ikone",
+    },
   };
   const STYLES = ["cist", "igriv", "temen", ...Object.keys(ERAS)];
   // Osnovne barve slogov. Čist je enak privzetim barvam v style.css (brez izračuna).
