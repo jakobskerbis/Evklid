@@ -32,7 +32,7 @@ import { Credits } from "../placila/krediti.js";
 import { SHARE } from "../proracun.js";
 import { stopnja, rang, STOPNJE } from "../../public/stopnja.js";
 import { mountGifts } from "../placila/darila.js";
-import { mountGuarantee } from "../placila/garancija.js";
+import { mountGuarantee, purgeOldGuarantees } from "../placila/garancija.js";
 import { mountPodari } from "../placila/podari.js";
 import { Schedules, nowParts } from "../schedule.js";
 import { setSource } from "../rast.js";
@@ -1696,6 +1696,11 @@ export function mountAccounts(app, store, opts = {}) {
         guests.cleanup();
       } catch (e) {
         log.error?.("[evklid] čiščenje gostov:", e.message);
+      }
+      try {
+        purgeOldGuarantees(db); // zapisi garancije 10 let po odločitvi
+      } catch (e) {
+        log.error?.("[evklid] brisanje starih garancij:", e.message);
       }
     }, 30 * 60000);
     timer.unref();
