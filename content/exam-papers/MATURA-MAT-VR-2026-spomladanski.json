@@ -1,0 +1,826 @@
+{
+ "id": "MATURA-MAT-VR-2026-spomladanski",
+ "exam": "MATURA",
+ "subject": "MAT",
+ "minutes": 180,
+ "points": 120,
+ "author": "AI",
+ "tools": "Nalivno pero ali kemični svinčnik, svinčnik, radirka, šilček in geometrijsko orodje (ravnilo, šestilo, trikotnik); dobiš zbirko formul in dva konceptna lista. Pri izpitni poli 1 računalo ni dovoljeno, pri izpitni poli 2 je dovoljeno. Pot do rezultata mora biti zapisana z vmesnimi računi.",
+ "polas": [
+  {
+   "pola": 1,
+   "minutes": 90,
+   "tools": "Računala ne smeš uporabljati. Uporabiš lahko nalivno pero ali kemični svinčnik, svinčnik, radirko, šilček, geometrijsko orodje in zbirko formul."
+  },
+  {
+   "pola": 2,
+   "minutes": 90,
+   "tools": "Uporabiš lahko nalivno pero ali kemični svinčnik, svinčnik, radirko, šilček, geometrijsko orodje, zbirko formul in računalo."
+  }
+ ],
+ "sections": {
+  "B": "Strukturirane naloge",
+  "C": "Naloge višje ravni"
+ },
+ "tasks": [
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 1,
+   "intro": "Na sliki je Vennov diagram univerzalne množice $U$ in njenih podmnožic $A$ in $B$. Vsako število je vpisano v tisto območje diagrama, v katero spada. Oznaka $m(X)$ pomeni moč množice $X$ (število njenih elementov), $X^C$ pa komplement množice $X$ glede na $U$.",
+   "figure": "<svg viewBox=\"0 0 320 200\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"14\" fill=\"currentColor\"><title>Vennov diagram množic A in B v univerzalni množici U</title><rect x=\"5\" y=\"5\" width=\"310\" height=\"190\" rx=\"6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"/><circle cx=\"125\" cy=\"105\" r=\"75\" fill=\"currentColor\" fill-opacity=\"0.06\" stroke=\"currentColor\" stroke-width=\"1.5\"/><circle cx=\"200\" cy=\"105\" r=\"75\" fill=\"currentColor\" fill-opacity=\"0.06\" stroke=\"currentColor\" stroke-width=\"1.5\"/><text x=\"18\" y=\"26\" font-style=\"italic\" font-size=\"16\">U</text><text x=\"70\" y=\"38\" font-style=\"italic\" font-size=\"16\">A</text><text x=\"250\" y=\"38\" font-style=\"italic\" font-size=\"16\">B</text><text x=\"88\" y=\"80\" text-anchor=\"middle\">2</text><text x=\"78\" y=\"115\" text-anchor=\"middle\">5</text><text x=\"102\" y=\"148\" text-anchor=\"middle\">8</text><text x=\"162\" y=\"92\" text-anchor=\"middle\">4</text><text x=\"162\" y=\"128\" text-anchor=\"middle\">7</text><text x=\"232\" y=\"80\" text-anchor=\"middle\">1</text><text x=\"245\" y=\"118\" text-anchor=\"middle\">9</text><text x=\"222\" y=\"150\" text-anchor=\"middle\">11</text><text x=\"298\" y=\"30\" text-anchor=\"middle\">3</text><text x=\"24\" y=\"182\" text-anchor=\"middle\">6</text><text x=\"296\" y=\"182\" text-anchor=\"middle\">10</text></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 7,
+     "format": "choice",
+     "text": "Za vsako od sedmih trditev presodi, ali je pravilna (DA) ali nepravilna (NE). Označi **vse pravilne** trditve; neoznačene štejejo kot NE.\n\nRešen primer: $4 \\in A \\cap B$ – **DA**, ker je število $4$ v skupnem delu obeh krogov.",
+     "choices": [
+      "$7 \\in A \\setminus B$",
+      "$m(A \\cup B) = 8$",
+      "$(A \\cup B)^C = \\{3, 6, 10\\}$",
+      "$\\{2, 5\\} \\subset A \\setminus B$",
+      "$A^C \\cap B = \\{1, 3, 9, 11\\}$",
+      "$m(A^C) = 6$",
+      "$9 \\notin A \\cup B$"
+     ],
+     "correct": [
+      1,
+      2,
+      3,
+      5
+     ],
+     "answer": "DA: $m(A \\cup B) = 8$, $(A \\cup B)^C = \\{3, 6, 10\\}$, $\\{2, 5\\} \\subset A \\setminus B$, $m(A^C) = 6$. NE: $7 \\in A \\setminus B$, $A^C \\cap B = \\{1, 3, 9, 11\\}$, $9 \\notin A \\cup B$.",
+     "ways": [
+      {
+       "title": "Po korakih: najprej zapišemo množice",
+       "text": "Iz diagrama preberemo:\n\n- $U = \\{1, 2, 3, \\ldots, 11\\}$ (vseh $11$ števil),\n- $A = \\{2, 4, 5, 7, 8\\}$, $B = \\{1, 4, 7, 9, 11\\}$,\n- $A \\cap B = \\{4, 7\\}$, $A \\setminus B = \\{2, 5, 8\\}$, $B \\setminus A = \\{1, 9, 11\\}$,\n- $A \\cup B = \\{1, 2, 4, 5, 7, 8, 9, 11\\}$, $(A \\cup B)^C = \\{3, 6, 10\\}$,\n- $A^C = U \\setminus A = \\{1, 3, 6, 9, 10, 11\\}$.\n\nZdaj presodimo trditve:\n\n1. $7 \\in A \\setminus B$ – **NE**: $7$ je v obeh množicah, razlika $A \\setminus B$ pa vsebuje le elemente, ki so v $A$ in **niso** v $B$.\n2. $m(A \\cup B) = 8$ – **DA**: unija ima elemente $1, 2, 4, 5, 7, 8, 9, 11$, to je $8$ elementov.\n3. $(A \\cup B)^C = \\{3, 6, 10\\}$ – **DA**: to so natanko števila zunaj obeh krogov.\n4. $\\{2, 5\\} \\subset A \\setminus B$ – **DA**: oba elementa sta v $A$ in nista v $B$.\n5. $A^C \\cap B = \\{1, 3, 9, 11\\}$ – **NE**: $A^C \\cap B = B \\setminus A = \\{1, 9, 11\\}$; število $3$ ni v $B$.\n6. $m(A^C) = 6$ – **DA**: $m(A^C) = m(U) - m(A) = 11 - 5 = 6$.\n7. $9 \\notin A \\cup B$ – **NE**: $9 \\in B$, zato je $9$ tudi v uniji $A \\cup B$."
+      },
+      {
+       "title": "Drugače: po območjih diagrama",
+       "text": "Diagram razdeli $U$ na štiri območja:\n\n| območje | pomen | elementi |\n|---|---|---|\n| I | samo v $A$ | $2, 5, 8$ |\n| II | v $A$ in v $B$ | $4, 7$ |\n| III | samo v $B$ | $1, 9, 11$ |\n| IV | zunaj $A$ in $B$ | $3, 6, 10$ |\n\nVsaka množica v trditvah je unija nekaterih območij:\n\n- $A \\setminus B$ = I; $7$ je v II, zato trditev 1 ne velja (NE), $\\{2, 5\\}$ pa leži v I (trditev 4: DA).\n- $A \\cup B$ = I + II + III, to je $3 + 2 + 3 = 8$ elementov (trditev 2: DA); $9$ leži v III, torej v uniji (trditev 7: NE).\n- $(A \\cup B)^C$ = IV $= \\{3, 6, 10\\}$ (trditev 3: DA).\n- $A^C \\cap B$ = (III + IV) $\\cap$ (II + III) = III $= \\{1, 9, 11\\}$, brez števila $3$ (trditev 5: NE).\n- $A^C$ = III + IV, to je $3 + 3 = 6$ elementov (trditev 6: DA)."
+      }
+     ],
+     "scoring": "Za vsako pravilno presojeno trditev 1 točka (7 trditev, skupaj 7 točk). Rešeni primer se ne točkuje.",
+     "mistake": "Pogosta napaka je, da v komplement $A^C$ šteješ le števila zunaj obeh krogov ($3, 6, 10$). Komplement $A^C$ vsebuje **vse**, kar ni v $A$, torej tudi števila, ki so samo v $B$ ($1, 9, 11$)."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 2,
+   "figure": "<svg viewBox=\"0 0 276 286\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"10\" fill=\"currentColor\"><title>Koordinatni sistem</title><path d=\"M22 22V264M44 22V264M66 22V264M88 22V264M110 22V264M132 22V264M154 22V264M176 22V264M198 22V264M220 22V264M242 22V264M22 264H242M22 242H242M22 220H242M22 198H242M22 176H242M22 154H242M22 132H242M22 110H242M22 88H242M22 66H242M22 44H242M22 22H242\" stroke=\"currentColor\" stroke-opacity=\"0.18\" stroke-width=\"0.7\" fill=\"none\"/><path d=\"M16 154H254M110 270V10\" stroke=\"currentColor\" stroke-width=\"1.3\" fill=\"none\"/><polygon points=\"256,154 248,150.5 248,157.5\"/><polygon points=\"110,8 106.5,16 113.5,16\"/><text x=\"252\" y=\"147\" font-style=\"italic\" font-size=\"12\">x</text><text x=\"117\" y=\"16\" font-style=\"italic\" font-size=\"12\">y</text><text x=\"106\" y=\"167\" text-anchor=\"end\">0</text><text x=\"22\" y=\"167\" text-anchor=\"middle\">−4</text><text x=\"44\" y=\"167\" text-anchor=\"middle\">−3</text><text x=\"66\" y=\"167\" text-anchor=\"middle\">−2</text><text x=\"88\" y=\"167\" text-anchor=\"middle\">−1</text><text x=\"132\" y=\"167\" text-anchor=\"middle\">1</text><text x=\"154\" y=\"167\" text-anchor=\"middle\">2</text><text x=\"176\" y=\"167\" text-anchor=\"middle\">3</text><text x=\"198\" y=\"167\" text-anchor=\"middle\">4</text><text x=\"220\" y=\"167\" text-anchor=\"middle\">5</text><text x=\"242\" y=\"167\" text-anchor=\"middle\">6</text><text x=\"106\" y=\"267.5\" text-anchor=\"end\">−5</text><text x=\"106\" y=\"245.5\" text-anchor=\"end\">−4</text><text x=\"106\" y=\"223.5\" text-anchor=\"end\">−3</text><text x=\"106\" y=\"201.5\" text-anchor=\"end\">−2</text><text x=\"106\" y=\"179.5\" text-anchor=\"end\">−1</text><text x=\"106\" y=\"135.5\" text-anchor=\"end\">1</text><text x=\"106\" y=\"113.5\" text-anchor=\"end\">2</text><text x=\"106\" y=\"91.5\" text-anchor=\"end\">3</text><text x=\"106\" y=\"69.5\" text-anchor=\"end\">4</text><text x=\"106\" y=\"47.5\" text-anchor=\"end\">5</text><text x=\"106\" y=\"25.5\" text-anchor=\"end\">6</text></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 7,
+     "format": "open",
+     "text": "Dana je kvadratna funkcija $f(x) = -\\frac{1}{2}x^2 + x + 4$.\n\nIzračunaj ničli funkcije $f$, koordinati temena in začetno vrednost. V dani koordinatni sistem nariši graf funkcije $f$ in zapiši funkcijo v temenski obliki.",
+     "answer": "Ničli $x_1 = -2$, $x_2 = 4$; teme $T\\left(1, \\frac{9}{2}\\right)$; začetna vrednost $f(0) = 4$; temenska oblika $f(x) = -\\frac{1}{2}(x - 1)^2 + \\frac{9}{2}$. Graf je parabola, odprta navzdol, skozi točke $(-2, 0)$, $(4, 0)$, $(0, 4)$ in $T\\left(1, \\frac{9}{2}\\right)$.",
+     "ways": [
+      {
+       "title": "Po korakih: s formulama za teme",
+       "text": "**Podatki:** $a = -\\frac{1}{2}$, $b = 1$, $c = 4$.\n**Iščemo:** ničli, teme $T(p, q)$, začetno vrednost, graf, temensko obliko.\n\n**Ničli.** Rešimo $-\\frac{1}{2}x^2 + x + 4 = 0$. Enačbo pomnožimo z $-2$, da se znebimo ulomka in negativnega vodilnega koeficienta:\n\n$x^2 - 2x - 8 = 0$\n\nIščemo števili z zmnožkom $-8$ in vsoto $-2$: to sta $-4$ in $2$. Torej $(x - 4)(x + 2) = 0$, ničli sta $x_1 = -2$ in $x_2 = 4$.\n\n**Teme.** $p = -\\frac{b}{2a} = -\\frac{1}{2 \\cdot \\left(-\\frac{1}{2}\\right)} = 1$ in $q = f(1) = -\\frac{1}{2} + 1 + 4 = \\frac{9}{2}$.\n\nPreverimo še z diskriminanto: $D = b^2 - 4ac = 1 + 8 = 9$, $q = -\\frac{D}{4a} = -\\frac{9}{-2} = \\frac{9}{2}$.\n\n**Začetna vrednost** je $f(0) = c = 4$, graf seka ordinatno os v $(0, 4)$.\n\n**Graf.** Ker je $a < 0$, je parabola odprta navzdol. Vrišemo ničli, teme in začetno vrednost; zaradi simetrije glede na premico $x = 1$ je na grafu tudi točka $(2, 4)$. Za lepšo krivuljo dodamo še $f(-3) = -\\frac{9}{2} - 3 + 4 = -\\frac{7}{2}$ in $f(5) = -\\frac{25}{2} + 5 + 4 = -\\frac{7}{2}$.\n\n**Temenska oblika** $f(x) = a(x - p)^2 + q$: $f(x) = -\\frac{1}{2}(x - 1)^2 + \\frac{9}{2}$."
+      },
+      {
+       "title": "Drugače: z dopolnjevanjem do popolnega kvadrata",
+       "text": "Iz prvih dveh členov izpostavimo $-\\frac{1}{2}$ in dopolnimo do kvadrata:\n\n$f(x) = -\\frac{1}{2}(x^2 - 2x) + 4 = -\\frac{1}{2}\\left((x - 1)^2 - 1\\right) + 4 = -\\frac{1}{2}(x - 1)^2 + \\frac{1}{2} + 4$\n\nDobimo temensko obliko $f(x) = -\\frac{1}{2}(x - 1)^2 + \\frac{9}{2}$ in iz nje kar preberemo teme $T\\left(1, \\frac{9}{2}\\right)$.\n\nNičli: $-\\frac{1}{2}(x - 1)^2 + \\frac{9}{2} = 0$ da $(x - 1)^2 = 9$, torej $x - 1 = 3$ ali $x - 1 = -3$, $x_1 = -2$, $x_2 = 4$.\n\n**Preizkus:** $f(-2) = -2 - 2 + 4 = 0$ in $f(4) = -8 + 4 + 4 = 0$. Teme leži na sredini med ničlama: $\\frac{-2 + 4}{2} = 1$, kar se ujema s $p = 1$. Začetna vrednost $f(0) = 4$."
+      }
+     ],
+     "solutionFigure": "<svg viewBox=\"0 0 276 286\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"10\" fill=\"currentColor\"><title>Koordinatni sistem</title><path d=\"M22 22V264M44 22V264M66 22V264M88 22V264M110 22V264M132 22V264M154 22V264M176 22V264M198 22V264M220 22V264M242 22V264M22 264H242M22 242H242M22 220H242M22 198H242M22 176H242M22 154H242M22 132H242M22 110H242M22 88H242M22 66H242M22 44H242M22 22H242\" stroke=\"currentColor\" stroke-opacity=\"0.18\" stroke-width=\"0.7\" fill=\"none\"/><path d=\"M16 154H254M110 270V10\" stroke=\"currentColor\" stroke-width=\"1.3\" fill=\"none\"/><polygon points=\"256,154 248,150.5 248,157.5\"/><polygon points=\"110,8 106.5,16 113.5,16\"/><text x=\"252\" y=\"147\" font-style=\"italic\" font-size=\"12\">x</text><text x=\"117\" y=\"16\" font-style=\"italic\" font-size=\"12\">y</text><text x=\"106\" y=\"167\" text-anchor=\"end\">0</text><text x=\"22\" y=\"167\" text-anchor=\"middle\">−4</text><text x=\"44\" y=\"167\" text-anchor=\"middle\">−3</text><text x=\"66\" y=\"167\" text-anchor=\"middle\">−2</text><text x=\"88\" y=\"167\" text-anchor=\"middle\">−1</text><text x=\"132\" y=\"167\" text-anchor=\"middle\">1</text><text x=\"154\" y=\"167\" text-anchor=\"middle\">2</text><text x=\"176\" y=\"167\" text-anchor=\"middle\">3</text><text x=\"198\" y=\"167\" text-anchor=\"middle\">4</text><text x=\"220\" y=\"167\" text-anchor=\"middle\">5</text><text x=\"242\" y=\"167\" text-anchor=\"middle\">6</text><text x=\"106\" y=\"267.5\" text-anchor=\"end\">−5</text><text x=\"106\" y=\"245.5\" text-anchor=\"end\">−4</text><text x=\"106\" y=\"223.5\" text-anchor=\"end\">−3</text><text x=\"106\" y=\"201.5\" text-anchor=\"end\">−2</text><text x=\"106\" y=\"179.5\" text-anchor=\"end\">−1</text><text x=\"106\" y=\"135.5\" text-anchor=\"end\">1</text><text x=\"106\" y=\"113.5\" text-anchor=\"end\">2</text><text x=\"106\" y=\"91.5\" text-anchor=\"end\">3</text><text x=\"106\" y=\"69.5\" text-anchor=\"end\">4</text><text x=\"106\" y=\"47.5\" text-anchor=\"end\">5</text><text x=\"106\" y=\"25.5\" text-anchor=\"end\">6</text><path d=\"M132 264V22\" stroke=\"currentColor\" stroke-dasharray=\"4 3\" stroke-opacity=\"0.6\" fill=\"none\"/><polyline points=\"39.6,249 44,231 48.4,213.8 52.8,197.6 57.2,182.2 61.6,167.6 66,154 70.4,141.2 74.8,129.4 79.2,118.4 83.6,108.2 88,99 92.4,90.6 96.8,83.2 101.2,76.6 105.6,70.8 110,66 114.4,62 118.8,59 123.2,56.8 127.6,55.4 132,55 136.4,55.4 140.8,56.8 145.2,59 149.6,62 154,66 158.4,70.8 162.8,76.6 167.2,83.2 171.6,90.6 176,99 180.4,108.2 184.8,118.4 189.2,129.4 193.6,141.2 198,154 202.4,167.6 206.8,182.2 211.2,197.6 215.6,213.8 220,231 224.4,249\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"66\" cy=\"154\" r=\"3\"/><circle cx=\"198\" cy=\"154\" r=\"3\"/><circle cx=\"132\" cy=\"55\" r=\"3\"/><text x=\"138\" y=\"49\">T(1, 9/2)</text><circle cx=\"110\" cy=\"66\" r=\"3\"/></svg>",
+     "scoring": "Ničli: 1 t. za postopek (npr. razcep ali formula), 1 t. za obe pravilni ničli. Teme: 1 t. za $p = 1$, 1 t. za $q = \\frac{9}{2}$. Začetna vrednost: 1 t. Graf (parabola, odprta navzdol, skozi ničli, teme in začetno vrednost): 1 t. Temenska oblika: 1 t. Skupaj 7 t.",
+     "mistake": "Pri formuli $p = -\\frac{b}{2a}$ se pogosto izgubi minus: $\\frac{1}{2 \\cdot \\left(-\\frac{1}{2}\\right)} = -1$ bi dalo napačno teme $(-1, \\ldots)$. Preveri, da je teme na sredini med ničlama."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 3,
+   "intro": "Dana je družina linearnih funkcij $f(x) = (m - 2)x + 2m - 1$, kjer je $m$ realno število. Za vsak pogoj posebej določi vse vrednosti parametra $m$, pri katerih je pogoj izpolnjen.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Graf funkcije $f$ seka ordinatno os v točki $N(0, 5)$.",
+     "answer": "$m = 3$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Graf seka ordinatno os pri $x = 0$, tam je vrednost funkcije enaka začetni vrednosti $n = 2m - 1$.\n\n$f(0) = 2m - 1 = 5$, zato $2m = 6$ in $m = 3$.\n\nPreizkus: pri $m = 3$ je $f(x) = x + 5$ in $f(0) = 5$."
+      }
+     ],
+     "mistake": "Napačno je vstaviti $x = 5$ namesto $x = 0$: v točki $N(0, 5)$ je $5$ ordinata, ne abscisa."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Funkcija $f$ strogo narašča.",
+     "answer": "$m > 2$, torej $m \\in (2, \\infty)$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Linearna funkcija $f(x) = kx + n$ strogo narašča natanko tedaj, ko je smerni koeficient pozitiven: $k > 0$.\n\nTu je $k = m - 2$, zato $m - 2 > 0$ in $m > 2$."
+      }
+     ],
+     "mistake": "Pri $m = 2$ je $k = 0$ in $f(x) = 3$ je konstantna, zato ne narašča. Neenakost mora biti stroga: $m > 2$, ne $m \\geq 2$."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Število $3$ je ničla funkcije $f$.",
+     "answer": "$m = \\frac{7}{5}$",
+     "ways": [
+      {
+       "title": "Po korakih: vstavimo ničlo",
+       "text": "Število $3$ je ničla, če je $f(3) = 0$:\n\n$(m - 2) \\cdot 3 + 2m - 1 = 0$\n\n$3m - 6 + 2m - 1 = 0$\n\n$5m - 7 = 0$, torej $m = \\frac{7}{5}$.\n\n**Preizkus:** pri $m = \\frac{7}{5}$ je $k = \\frac{7}{5} - 2 = -\\frac{3}{5}$ in $n = \\frac{14}{5} - 1 = \\frac{9}{5}$, zato $f(3) = -\\frac{9}{5} + \\frac{9}{5} = 0$."
+      },
+      {
+       "title": "Drugače: s formulo za ničlo",
+       "text": "Ničla linearne funkcije $f(x) = kx + n$ (za $k \\neq 0$) je $x_0 = -\\frac{n}{k}$. Zahtevamo\n\n$-\\frac{2m - 1}{m - 2} = 3$, pri čemer je $m \\neq 2$.\n\nPomnožimo z $m - 2$: $-(2m - 1) = 3(m - 2)$, torej $-2m + 1 = 3m - 6$ in $7 = 5m$, $m = \\frac{7}{5}$. Vrednost $\\frac{7}{5}$ je različna od $2$, zato je rešitev veljavna."
+      }
+     ],
+     "scoring": "1 t. za enačbo $3(m - 2) + 2m - 1 = 0$ (ali enakovredno), 1 t. za $m = \\frac{7}{5}$."
+    },
+    {
+     "id": "d",
+     "points": 2,
+     "format": "open",
+     "text": "Graf funkcije $f$ je vzporeden s simetralo sodih kvadrantov.",
+     "answer": "$m = 1$ (takrat je $f(x) = -x + 1$)",
+     "ways": [
+      {
+       "title": "Po korakih: enaka smerna koeficienta",
+       "text": "Simetrala sodih kvadrantov (2. in 4. kvadranta) je premica $y = -x$, njen smerni koeficient je $-1$. Vzporedni premici imata enak smerni koeficient:\n\n$m - 2 = -1$, torej $m = 1$.\n\nPri $m = 1$ je $f(x) = -x + 1$. Začetna vrednost $1$ se razlikuje od $0$, zato graf ni ista premica kot simetrala, ampak je z njo vzporeden (premaknjen za $1$ navzgor)."
+      },
+      {
+       "title": "Drugače: razlika vzporednih premic je konstantna",
+       "text": "Premici sta vzporedni natanko tedaj, ko je navpična razdalja med njima povsod enaka, torej ko je razlika predpisov konstantna:\n\n$f(x) - (-x) = (m - 2)x + 2m - 1 + x = (m - 1)x + 2m - 1$\n\nTo je konstanta za vse $x$ le, če je koeficient pri $x$ enak $0$: $m - 1 = 0$, torej $m = 1$. Razlika je tedaj $2 \\cdot 1 - 1 = 1$, premici se torej ne prekrivata."
+      }
+     ],
+     "scoring": "1 t. za smerni koeficient simetrale $-1$ (oz. pogoj $m - 2 = -1$), 1 t. za $m = 1$.",
+     "mistake": "Zamenjava simetral: simetrala **lihih** kvadrantov je $y = x$ (dala bi $m = 3$), simetrala **sodih** kvadrantov pa $y = -x$."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 4,
+   "intro": "Reši enačbi. Pri vsaki upoštevaj, kje so logaritmi definirani.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "$\\log_2(4x + 5) = -1$",
+     "answer": "$x = -\\frac{9}{8}$",
+     "ways": [
+      {
+       "title": "Po korakih: po definiciji logaritma",
+       "text": "Logaritem je definiran za $4x + 5 > 0$, torej $x > -\\frac{5}{4}$.\n\nPo definiciji je $\\log_2 y = -1$ natanko tedaj, ko je $y = 2^{-1} = \\frac{1}{2}$:\n\n$4x + 5 = \\frac{1}{2}$, $4x = \\frac{1}{2} - 5 = -\\frac{9}{2}$, $x = -\\frac{9}{8}$.\n\nKer je $-\\frac{9}{8} = -\\frac{18}{16}$ večje od $-\\frac{5}{4} = -\\frac{20}{16}$, rešitev leži v definicijskem območju."
+      },
+      {
+       "title": "Drugače: obe strani zapišemo kot logaritem",
+       "text": "Desno stran zapišemo kot logaritem z isto osnovo: $-1 = \\log_2 \\frac{1}{2}$. Logaritemska funkcija je injektivna (različnima argumentoma priredi različni vrednosti), zato enačba $\\log_2(4x + 5) = \\log_2 \\frac{1}{2}$ velja natanko tedaj, ko je $4x + 5 = \\frac{1}{2}$, od tod $x = -\\frac{9}{8}$.\n\n**Preizkus:** $4 \\cdot \\left(-\\frac{9}{8}\\right) + 5 = -\\frac{9}{2} + 5 = \\frac{1}{2}$ in $\\log_2 \\frac{1}{2} = -1$."
+      }
+     ],
+     "scoring": "1 t. za $4x + 5 = 2^{-1}$, 1 t. za $x = -\\frac{9}{8}$.",
+     "mistake": "Rešitve ne zavrzi samo zato, ker je negativna: pogoj je, da je **argument** logaritma pozitiven ($4x + 5 = \\frac{1}{2} > 0$), ne $x$. Napačno je tudi $4x + 5 = -2$ (zamenjana osnova in eksponent)."
+    },
+    {
+     "id": "b",
+     "points": 6,
+     "format": "open",
+     "text": "$\\log(x - 2) + \\log(2x - 2) - 2\\log(x - 4) = 2\\log 2$",
+     "answer": "$x = 10$ (rešitev $x = 3$ kvadratne enačbe ni v definicijskem območju)",
+     "ways": [
+      {
+       "title": "Po korakih: združimo logaritme",
+       "text": "**Definicijsko območje.** Vsi argumenti morajo biti pozitivni: $x - 2 > 0$, $2x - 2 > 0$, $x - 4 > 0$. Najstrožji je zadnji pogoj, torej $x > 4$.\n\n**Pravila za logaritme.** $\\log a + \\log b = \\log(ab)$, $\\log a - \\log b = \\log \\frac{a}{b}$ in $2\\log a = \\log a^2$:\n\n$\\log \\frac{(x - 2)(2x - 2)}{(x - 4)^2} = \\log 4$\n\nDesetiški logaritem je injektiven, zato sta argumenta enaka:\n\n$(x - 2)(2x - 2) = 4(x - 4)^2$\n\n$2x^2 - 6x + 4 = 4x^2 - 32x + 64$\n\n$0 = 2x^2 - 26x + 60$, delimo z $2$: $x^2 - 13x + 30 = 0$\n\n$(x - 3)(x - 10) = 0$, torej $x = 3$ ali $x = 10$.\n\n**Izbira rešitve.** $x = 3$ ne izpolnjuje pogoja $x > 4$ (pri njem bi bil $\\log(x - 4) = \\log(-1)$ nedefiniran), zato ga zavržemo. Ostane $x = 10$.\n\n**Preizkus:** $\\log 8 + \\log 18 - 2\\log 6 = \\log \\frac{8 \\cdot 18}{36} = \\log 4 = 2\\log 2$."
+      },
+      {
+       "title": "Drugače: najprej poenostavimo člen z 2x − 2",
+       "text": "Pogoj je spet $x > 4$. Ker je $2x - 2 = 2(x - 1)$, je $\\log(2x - 2) = \\log 2 + \\log(x - 1)$. Enačba se glasi\n\n$\\log(x - 2) + \\log 2 + \\log(x - 1) - 2\\log(x - 4) = 2\\log 2$\n\nNa obeh straneh odštejemo $\\log 2$ in člen $2\\log(x - 4)$ prenesemo na desno:\n\n$\\log\\big((x - 2)(x - 1)\\big) = \\log\\big(2(x - 4)^2\\big)$\n\n$x^2 - 3x + 2 = 2x^2 - 16x + 32$\n\n$x^2 - 13x + 30 = 0$, rešitvi $x = 3$ in $x = 10$ (po Vietovih pravilih: $3 + 10 = 13$, $3 \\cdot 10 = 30$).\n\nPogoju $x > 4$ ustreza le $x = 10$."
+      }
+     ],
+     "scoring": "1 t. za definicijsko območje ($x > 4$) ali za preverjanje rešitev, 1 t. za pravilno uporabo pravil za logaritme, 1 t. za enačbo brez logaritmov, 1 t. za urejeno kvadratno enačbo $x^2 - 13x + 30 = 0$, 1 t. za rešitvi $3$ in $10$, 1 t. za zavrnitev $x = 3$ in končni odgovor $x = 10$.",
+     "mistake": "Napačno je $2\\log(x - 4) = \\log\\big(2(x - 4)\\big)$: koeficient pred logaritmom gre v **eksponent** argumenta, $2\\log(x - 4) = \\log(x - 4)^2$. Pogosta napaka je tudi, da ostane rešitev $x = 3$, čeprav za njo $\\log(x - 4)$ ne obstaja."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 5,
+   "parts": [
+    {
+     "id": "",
+     "points": 6,
+     "format": "open",
+     "text": "V množici kompleksnih števil reši enačbo $|z|^2 - i\\,z = 10 + 2i$.",
+     "answer": "$z_1 = -2 + 2i$, $z_2 = -2 - 3i$",
+     "ways": [
+      {
+       "title": "Po korakih: z = x + iy",
+       "text": "**Podatki:** $|z|^2 - i\\,z = 10 + 2i$, $i^2 = -1$.\n**Iščemo:** vsa kompleksna števila $z$, ki enačbi zadoščajo.\n\nPišemo $z = x + iy$, kjer sta $x, y$ realni števili. Potem je $|z|^2 = x^2 + y^2$ in\n\n$i\\,z = i(x + iy) = ix + i^2y = -y + ix$.\n\nLeva stran: $x^2 + y^2 - (-y + ix) = (x^2 + y^2 + y) - ix$.\n\nKompleksni števili sta enaki, ko se ujemata realna in imaginarna dela:\n\n- imaginarni del: $-x = 2$, torej $x = -2$;\n- realni del: $x^2 + y^2 + y = 10$.\n\nVstavimo $x = -2$: $4 + y^2 + y = 10$, torej $y^2 + y - 6 = 0$ in $(y + 3)(y - 2) = 0$, $y = 2$ ali $y = -3$.\n\nRešitvi sta $z_1 = -2 + 2i$ in $z_2 = -2 - 3i$.\n\n**Preizkus** za $z_1$: $|z_1|^2 = 4 + 4 = 8$, $i\\,z_1 = -2i + 2i^2 = -2 - 2i$, zato $8 - (-2 - 2i) = 10 + 2i$.\nZa $z_2$: $|z_2|^2 = 4 + 9 = 13$, $i\\,z_2 = -2i - 3i^2 = 3 - 2i$, zato $13 - (3 - 2i) = 10 + 2i$."
+      },
+      {
+       "title": "Drugače: izrazimo z in izkoristimo, da je |z|² realno",
+       "text": "Označimo realno število $r = |z|^2 \\geq 0$. Iz enačbe izrazimo $z$:\n\n$i\\,z = r - 10 - 2i$, zato $z = \\frac{r - 10 - 2i}{i}$.\n\nDeljenje z $i$ je množenje z $-i$ (ker je $\\frac{1}{i} = -i$):\n\n$z = -i(r - 10) + 2i^2 = -2 + (10 - r)\\,i$.\n\nRealni del vsake rešitve je torej $-2$, imaginarni del pa $y = 10 - r$. Ker je $r = |z|^2 = 4 + y^2$, velja\n\n$y = 10 - 4 - y^2$, torej $y^2 + y - 6 = 0$, $y = 2$ ali $y = -3$.\n\nSpet dobimo $z_1 = -2 + 2i$ ($r = 8$) in $z_2 = -2 - 3i$ ($r = 13$)."
+      }
+     ],
+     "scoring": "1 t. za nastavek $z = x + iy$ in $|z|^2 = x^2 + y^2$, 1 t. za $i\\,z = -y + ix$, 1 t. za enačenje realnih in imaginarnih delov, 1 t. za $x = -2$, 1 t. za kvadratno enačbo $y^2 + y - 6 = 0$, 1 t. za obe rešitvi.",
+     "mistake": "Pogosta napaka je $i \\cdot iy = +y$; pravilno je $i^2 y = -y$. Napačno je tudi $|z|^2 = x^2 + (iy)^2 = x^2 - y^2$: absolutna vrednost uporablja realni števili $x$ in $y$, $|z|^2 = x^2 + y^2$."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 6,
+   "intro": "Funkcija $f$ je na intervalu $[-2\\pi, 2\\pi]$ dana s predpisom\n$$f(x) = \\begin{cases} -\\sin x, & -2\\pi \\leq x < 0,\\\\ 2\\sin x, & 0 \\leq x \\leq 2\\pi. \\end{cases}$$",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "construct",
+     "text": "V dani koordinatni sistem nariši graf funkcije $f$.",
+     "figure": "<svg viewBox=\"0 0 328 164\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"10\" fill=\"currentColor\"><title>Koordinatni sistem, abscisna os v večkratnikih π/2</title><path d=\"M22 22V142M56 22V142M90 22V142M124 22V142M158 22V142M192 22V142M226 22V142M260 22V142M294 22V142M22 142H294M22 112H294M22 82H294M22 52H294M22 22H294\" stroke=\"currentColor\" stroke-opacity=\"0.18\" stroke-width=\"0.7\" fill=\"none\"/><path d=\"M16 82H306M158 148V10\" stroke=\"currentColor\" stroke-width=\"1.3\" fill=\"none\"/><polygon points=\"308,82 300,78.5 300,85.5\"/><polygon points=\"158,8 154.5,16 161.5,16\"/><text x=\"304\" y=\"75\" font-style=\"italic\" font-size=\"12\">x</text><text x=\"165\" y=\"16\" font-style=\"italic\" font-size=\"12\">y</text><text x=\"154\" y=\"95\" text-anchor=\"end\">0</text><text x=\"22\" y=\"95\" text-anchor=\"middle\">−2π</text><text x=\"56\" y=\"95\" text-anchor=\"middle\">−3π/2</text><text x=\"90\" y=\"95\" text-anchor=\"middle\">−π</text><text x=\"124\" y=\"95\" text-anchor=\"middle\">−π/2</text><text x=\"192\" y=\"95\" text-anchor=\"middle\">π/2</text><text x=\"226\" y=\"95\" text-anchor=\"middle\">π</text><text x=\"260\" y=\"95\" text-anchor=\"middle\">3π/2</text><text x=\"294\" y=\"95\" text-anchor=\"middle\">2π</text><text x=\"154\" y=\"145.5\" text-anchor=\"end\">−2</text><text x=\"154\" y=\"115.5\" text-anchor=\"end\">−1</text><text x=\"154\" y=\"55.5\" text-anchor=\"end\">1</text><text x=\"154\" y=\"25.5\" text-anchor=\"end\">2</text></svg>",
+     "answer": "Na $[-2\\pi, 0)$ je graf zrcalna slika sinusoide čez abscisno os: ničli $-2\\pi$, $-\\pi$, maksimum $\\left(-\\frac{\\pi}{2}, 1\\right)$, minimum $\\left(-\\frac{3\\pi}{2}, -1\\right)$. Na $[0, 2\\pi]$ je sinusoida z amplitudo $2$: ničle $0$, $\\pi$, $2\\pi$, maksimum $\\left(\\frac{\\pi}{2}, 2\\right)$, minimum $\\left(\\frac{3\\pi}{2}, -2\\right)$.",
+     "ways": [
+      {
+       "title": "Po korakih: z značilnimi točkami",
+       "text": "Izračunamo vrednosti v večkratnikih $\\frac{\\pi}{2}$:\n\n| $x$ | $-2\\pi$ | $-\\frac{3\\pi}{2}$ | $-\\pi$ | $-\\frac{\\pi}{2}$ | $0$ | $\\frac{\\pi}{2}$ | $\\pi$ | $\\frac{3\\pi}{2}$ | $2\\pi$ |\n|---|---|---|---|---|---|---|---|---|---|\n| $f(x)$ | $0$ | $-1$ | $0$ | $1$ | $0$ | $2$ | $0$ | $-2$ | $0$ |\n\nNa primer $f\\left(-\\frac{\\pi}{2}\\right) = -\\sin\\left(-\\frac{\\pi}{2}\\right) = -(-1) = 1$ in $f\\left(\\frac{3\\pi}{2}\\right) = 2\\sin\\frac{3\\pi}{2} = -2$.\n\nTočke povežemo z gladkima valovoma: levo dva polvala višine $1$ (najprej dol, nato gor), desno en val višine $2$ (najprej gor, nato dol). V točki $(0, 0)$ se oba dela stikata, graf je tam neprekinjen."
+      },
+      {
+       "title": "Drugače: s premiki in raztegi grafa sinusa",
+       "text": "- $y = -\\sin x$ dobimo iz $y = \\sin x$ z zrcaljenjem čez abscisno os: kjer ima sinus vrh, ima $-\\sin x$ dolino. Narišemo ga le za $x < 0$.\n- $y = 2\\sin x$ dobimo iz $y = \\sin x$ z raztegom v smeri ordinatne osi s faktorjem $2$: ničle ostanejo, vrhovi so pri $2$ in $-2$. Narišemo ga za $x \\geq 0$.\n\nKer je $-\\sin x = \\sin(-x)$, je levi del graf sinusa, zrcaljen čez ordinatno os: levi del je »ogledalna slika« grafa $y = \\sin x$ na $[0, 2\\pi]$, desni pa isti graf, raztegnjen dvakrat v višino."
+      }
+     ],
+     "solutionFigure": "<svg viewBox=\"0 0 328 164\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"10\" fill=\"currentColor\"><title>Koordinatni sistem, abscisna os v večkratnikih π/2</title><path d=\"M22 22V142M56 22V142M90 22V142M124 22V142M158 22V142M192 22V142M226 22V142M260 22V142M294 22V142M22 142H294M22 112H294M22 82H294M22 52H294M22 22H294\" stroke=\"currentColor\" stroke-opacity=\"0.18\" stroke-width=\"0.7\" fill=\"none\"/><path d=\"M16 82H306M158 148V10\" stroke=\"currentColor\" stroke-width=\"1.3\" fill=\"none\"/><polygon points=\"308,82 300,78.5 300,85.5\"/><polygon points=\"158,8 154.5,16 161.5,16\"/><text x=\"304\" y=\"75\" font-style=\"italic\" font-size=\"12\">x</text><text x=\"165\" y=\"16\" font-style=\"italic\" font-size=\"12\">y</text><text x=\"154\" y=\"95\" text-anchor=\"end\">0</text><text x=\"20\" y=\"95\" text-anchor=\"end\">−2π</text><text x=\"56\" y=\"95\" text-anchor=\"middle\">−3π/2</text><text x=\"92\" y=\"95\" text-anchor=\"start\">−π</text><text x=\"124\" y=\"95\" text-anchor=\"middle\">−π/2</text><text x=\"192\" y=\"95\" text-anchor=\"middle\">π/2</text><text x=\"224\" y=\"95\" text-anchor=\"end\">π</text><text x=\"260\" y=\"95\" text-anchor=\"middle\">3π/2</text><text x=\"296\" y=\"95\" text-anchor=\"start\">2π</text><text x=\"154\" y=\"145.5\" text-anchor=\"end\">−2</text><text x=\"154\" y=\"115.5\" text-anchor=\"end\">−1</text><text x=\"154\" y=\"55.5\" text-anchor=\"end\">1</text><text x=\"154\" y=\"25.5\" text-anchor=\"end\">2</text><polyline points=\"22,82 25.4,86.7 28.8,91.3 32.2,95.6 35.6,99.6 39,103.2 42.4,106.3 45.8,108.7 49.2,110.5 52.6,111.6 56,112 59.4,111.6 62.8,110.5 66.2,108.7 69.6,106.3 73,103.2 76.4,99.6 79.8,95.6 83.2,91.3 86.6,86.7 90,82 93.4,77.3 96.8,72.7 100.2,68.4 103.6,64.4 107,60.8 110.4,57.7 113.8,55.3 117.2,53.5 120.6,52.4 124,52 127.4,52.4 130.8,53.5 134.2,55.3 137.6,57.7 141,60.8 144.4,64.4 147.8,68.4 151.2,72.7 154.6,77.3 158,82\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><polyline points=\"158,82 161.4,72.6 164.8,63.5 168.2,54.8 171.6,46.7 175,39.6 178.4,33.5 181.8,28.5 185.2,24.9 188.6,22.7 192,22 195.4,22.7 198.8,24.9 202.2,28.5 205.6,33.5 209,39.6 212.4,46.7 215.8,54.8 219.2,63.5 222.6,72.6 226,82 229.4,91.4 232.8,100.5 236.2,109.2 239.6,117.3 243,124.4 246.4,130.5 249.8,135.5 253.2,139.1 256.6,141.3 260,142 263.4,141.3 266.8,139.1 270.2,135.5 273.6,130.5 277,124.4 280.4,117.3 283.8,109.2 287.2,100.5 290.6,91.4 294,82\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"158\" cy=\"82\" r=\"3\"/></svg>",
+     "scoring": "1 t. za pravilen levi del (oblika, ničle, ekstrema $\\pm 1$), 1 t. za pravilen desni del (oblika, ničle, ekstrema $\\pm 2$).",
+     "mistake": "Pogosto se levi del nariše kot navaden sinus. Za $x = -\\frac{\\pi}{2}$ je $-\\sin\\left(-\\frac{\\pi}{2}\\right) = 1$, graf je tam nad abscisno osjo."
+    },
+    {
+     "id": "b",
+     "points": 4,
+     "format": "open",
+     "text": "Zapiši predpis funkcije $g$, definirane na $[-2\\pi, 2\\pi]$, za katero velja $g'(x) = f(x)$ za vsak $x$ in $g(0) = 3$.",
+     "answer": "$$g(x) = \\begin{cases} \\cos x + 2, & -2\\pi \\leq x < 0,\\\\ 5 - 2\\cos x, & 0 \\leq x \\leq 2\\pi. \\end{cases}$$",
+     "ways": [
+      {
+       "title": "Po korakih: nedoločena integrala po odsekih",
+       "text": "**Podatki:** $g' = f$, $g(0) = 3$.\n**Iščemo:** predpis za $g$ na obeh odsekih.\n\nNa vsakem odseku poiščemo nedoločeni integral:\n\n- za $x < 0$: $\\int (-\\sin x)\\,dx = \\cos x + C_1$,\n- za $x \\geq 0$: $\\int 2\\sin x\\,dx = -2\\cos x + C_2$.\n\nKonstanti sta lahko različni, določimo ju posebej.\n\n**Desni odsek** vsebuje $x = 0$: $g(0) = -2\\cos 0 + C_2 = -2 + C_2 = 3$, zato $C_2 = 5$.\n\n**Levi odsek.** Funkcija $g$ je odvedljiva, zato je zvezna, tudi v $x = 0$. Limita levega predpisa v $0$ mora biti $g(0) = 3$: $\\cos 0 + C_1 = 1 + C_1 = 3$, zato $C_1 = 2$.\n\n**Preverimo odvod v 0:** levi predpis ima odvod $-\\sin 0 = 0$, desni $2\\sin 0 = 0$, oba sta enaka $f(0) = 0$, zato je $g'(0) = f(0)$.\n\n$g(x) = \\cos x + 2$ za $x < 0$ in $g(x) = 5 - 2\\cos x$ za $x \\geq 0$."
+      },
+      {
+       "title": "Drugače: z določenim integralom od 0 do x",
+       "text": "Po osnovnem izreku analize je $g(x) = g(0) + \\int_0^x f(t)\\,dt$. To samodejno da zvezno funkcijo z $g(0) = 3$.\n\nZa $x \\geq 0$: $g(x) = 3 + \\int_0^x 2\\sin t\\,dt = 3 + \\big[-2\\cos t\\big]_0^x = 3 - 2\\cos x + 2 = 5 - 2\\cos x$.\n\nZa $x < 0$: $g(x) = 3 + \\int_0^x (-\\sin t)\\,dt = 3 + \\big[\\cos t\\big]_0^x = 3 + \\cos x - 1 = 2 + \\cos x$.\n\n**Preizkus:** $(2 + \\cos x)' = -\\sin x$, $(5 - 2\\cos x)' = 2\\sin x$; v $0$ dobimo $5 - 2 = 3$."
+      }
+     ],
+     "scoring": "1 t. za nedoločeni integral na levem odseku, 1 t. za nedoločeni integral na desnem odseku, 1 t. za $C_2 = 5$ iz $g(0) = 3$, 1 t. za $C_1 = 2$ (zveznost v $0$).",
+     "mistake": "Napačno je vzeti isto konstanto za oba odseka ali levo konstanto izpustiti ($C_1 = 0$): potem bi $g$ v $0$ skočila z $1$ na $3$ in ne bi bila odvedljiva. Pazi tudi na predznak: $\\int \\sin x\\,dx = -\\cos x + C$."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "section": "C",
+   "n": 1,
+   "intro": "Dana je funkcija $f(x) = \\dfrac{x^3 - x^2 - 5x + 5}{(x - 2)^2}$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 9,
+     "format": "open",
+     "text": "Izračunaj ničle in pole funkcije $f$, njene stacionarne točke (in za vsako določi, ali je ekstrem), prevoje ter enačbo poševne asimptote.",
+     "answer": "Ničle $-\\sqrt{5}$, $1$, $\\sqrt{5}$; pol $x = 2$ (sode stopnje). $f'(x) = \\frac{x(x - 3)^2}{(x - 2)^3}$: $T_1\\left(0, \\frac{5}{4}\\right)$ je lokalni maksimum, $T_2(3, 8)$ je stacionarna točka, ki ni ekstrem. $f''(x) = \\frac{6(x - 3)}{(x - 2)^4}$: prevoj $P(3, 8)$ (z vodoravno tangento). Poševna asimptota $y = x + 3$.",
+     "ways": [
+      {
+       "title": "Po korakih: s pravilom za odvod kvocienta",
+       "text": "**Definicijsko območje:** $x \\neq 2$.\n\n**Ničle.** Števec razstavimo z združevanjem členov:\n\n$x^3 - x^2 - 5x + 5 = x^2(x - 1) - 5(x - 1) = (x - 1)(x^2 - 5) = (x - 1)(x - \\sqrt{5})(x + \\sqrt{5})$\n\nNičle so $x_1 = -\\sqrt{5}$, $x_2 = 1$, $x_3 = \\sqrt{5}$.\n\n**Pol.** Imenovalec je $0$ pri $x = 2$, števec pa tam ni nič: $8 - 4 - 10 + 5 = -1$. Zato je $x = 2$ pol druge (sode) stopnje; ker je števec pri $x = 2$ negativen in $(x - 2)^2 > 0$, gre $f(x) \\to -\\infty$ z obeh strani.\n\n**Prvi odvod.** $\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$, kjer je $u' = 3x^2 - 2x - 5$ in $v' = 2(x - 2)$. Po krajšanju z $(x - 2)$:\n\n$f'(x) = \\frac{(3x^2 - 2x - 5)(x - 2) - 2(x^3 - x^2 - 5x + 5)}{(x - 2)^3}$\n\nŠtevec: $(3x^3 - 8x^2 - x + 10) - (2x^3 - 2x^2 - 10x + 10) = x^3 - 6x^2 + 9x = x(x - 3)^2$.\n\n$f'(x) = \\frac{x(x - 3)^2}{(x - 2)^3}$\n\n**Stacionarne točke** ($f' = 0$): $x = 0$ in $x = 3$. $f(0) = \\frac{5}{4}$, $f(3) = \\frac{27 - 9 - 15 + 5}{1} = 8$.\n\nPredznak $f'$: faktor $(x - 3)^2$ predznaka ne spreminja, zato odloča $\\frac{x}{(x - 2)^3}$:\n\n| interval | $(-\\infty, 0)$ | $(0, 2)$ | $(2, 3)$ | $(3, \\infty)$ |\n|---|---|---|---|---|\n| $f'$ | $+$ | $-$ | $+$ | $+$ |\n| $f$ | narašča | pada | narašča | narašča |\n\nV $x = 0$ se naraščanje spremeni v padanje: $T_1\\left(0, \\frac{5}{4}\\right)$ je **lokalni maksimum**. V $x = 3$ funkcija narašča na obeh straneh: $T_2(3, 8)$ **ni ekstrem**.\n\n**Drugi odvod.** Odvajamo $f' = \\frac{x^3 - 6x^2 + 9x}{(x - 2)^3}$ in krajšamo z $(x - 2)^2$:\n\n$f''(x) = \\frac{(3x^2 - 12x + 9)(x - 2) - 3(x^3 - 6x^2 + 9x)}{(x - 2)^4} = \\frac{6x - 18}{(x - 2)^4} = \\frac{6(x - 3)}{(x - 2)^4}$\n\nImenovalec je pozitiven, zato $f''$ spremeni predznak le pri $x = 3$: **prevoj** $P(3, 8)$. Tam je $f'(3) = 0$, torej je to prevoj z vodoravno tangento.\n\n**Poševna asimptota.** Delimo števec z $(x - 2)^2 = x^2 - 4x + 4$:\n\n$(x^3 - x^2 - 5x + 5) : (x^2 - 4x + 4) = x + 3$, ostanek $3x - 7$.\n\nTorej $f(x) = x + 3 + \\frac{3x - 7}{(x - 2)^2}$ in asimptota je $y = x + 3$."
+      },
+      {
+       "title": "Drugače: razcep na delne ulomke",
+       "text": "Zapišimo $f$ kot vsoto polinoma in preprostih ulomkov. Iz deljenja dobimo ostanek $3x - 7 = 3(x - 2) - 1$, zato\n\n$f(x) = x + 3 + \\frac{3}{x - 2} - \\frac{1}{(x - 2)^2}$\n\nIz tega zapisa takoj vidimo asimptoto $y = x + 3$ (ulomka gresta proti $0$) in pol pri $x = 2$, kjer prevlada $-\\frac{1}{(x - 2)^2} \\to -\\infty$.\n\nOdvajamo člen za členom (brez pravila za kvocient):\n\n$f'(x) = 1 - \\frac{3}{(x - 2)^2} + \\frac{2}{(x - 2)^3} = \\frac{(x - 2)^3 - 3(x - 2) + 2}{(x - 2)^3}$\n\nZ novo spremenljivko $t = x - 2$ je števec $t^3 - 3t + 2$. Ena ničla je $t = 1$ ($1 - 3 + 2 = 0$), Hornerjev algoritem da $t^3 - 3t + 2 = (t - 1)(t^2 + t - 2) = (t - 1)^2(t + 2)$. Nazaj: $(x - 3)^2 \\cdot x$, torej spet $f'(x) = \\frac{x(x - 3)^2}{(x - 2)^3}$.\n\nDvojna ničla $x = 3$ pomeni, da $f'$ tam ne spremeni predznaka (ni ekstrem), enojna ničla $x = 0$ pa da ga spremeni ($T_1\\left(0, \\frac{5}{4}\\right)$ je maksimum, ker je $f'$ levo pozitiven).\n\n$f''(x) = \\frac{6}{(x - 2)^3} - \\frac{6}{(x - 2)^4} = \\frac{6(x - 2) - 6}{(x - 2)^4} = \\frac{6(x - 3)}{(x - 2)^4}$, prevoj v $P(3, 8)$.\n\n**Preizkus vrednosti:** $f(0) = 3 - \\frac{3}{2} - \\frac{1}{4} = \\frac{5}{4}$ in $f(3) = 6 + 3 - 1 = 8$."
+      }
+     ],
+     "scoring": "Ničle: 1 t. Pol: 1 t. Prvi odvod: 2 t. (1 t. za uporabo pravila, 1 t. za poenostavljen $f'$). Stacionarni točki z vrsto: 2 t. (po 1 t. za $T_1$ – maksimum in $T_2$ – ni ekstrem). Drugi odvod: 1 t. Prevoj: 1 t. Poševna asimptota: 1 t. Skupaj 9 t.",
+     "mistake": "Iz $f'(3) = 0$ še ne sledi ekstrem. Ker je $x = 3$ dvojna ničla odvoda, $f'$ tam ne spremeni predznaka in je $T_2(3, 8)$ prevoj z vodoravno tangento, ne minimum. Pri odvodu kvocienta pa pazi na verižno pravilo: $\\left((x - 2)^2\\right)' = 2(x - 2)$."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "construct",
+     "text": "V dani koordinatni sistem nariši graf funkcije $f$.",
+     "figure": "<svg viewBox=\"0 0 264 332\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"10\" fill=\"currentColor\"><title>Koordinatni sistem</title><path d=\"M22 22V310M38 22V310M54 22V310M70 22V310M86 22V310M102 22V310M118 22V310M134 22V310M150 22V310M166 22V310M182 22V310M198 22V310M214 22V310M230 22V310M22 310H230M22 294H230M22 278H230M22 262H230M22 246H230M22 230H230M22 214H230M22 198H230M22 182H230M22 166H230M22 150H230M22 134H230M22 118H230M22 102H230M22 86H230M22 70H230M22 54H230M22 38H230M22 22H230\" stroke=\"currentColor\" stroke-opacity=\"0.18\" stroke-width=\"0.7\" fill=\"none\"/><path d=\"M16 198H242M118 316V10\" stroke=\"currentColor\" stroke-width=\"1.3\" fill=\"none\"/><polygon points=\"244,198 236,194.5 236,201.5\"/><polygon points=\"118,8 114.5,16 121.5,16\"/><text x=\"240\" y=\"191\" font-style=\"italic\" font-size=\"12\">x</text><text x=\"125\" y=\"16\" font-style=\"italic\" font-size=\"12\">y</text><text x=\"114\" y=\"211\" text-anchor=\"end\">0</text><text x=\"22\" y=\"211\" text-anchor=\"middle\">−6</text><text x=\"54\" y=\"211\" text-anchor=\"middle\">−4</text><text x=\"86\" y=\"211\" text-anchor=\"middle\">−2</text><text x=\"150\" y=\"211\" text-anchor=\"middle\">2</text><text x=\"182\" y=\"211\" text-anchor=\"middle\">4</text><text x=\"214\" y=\"211\" text-anchor=\"middle\">6</text><text x=\"114\" y=\"297.5\" text-anchor=\"end\">−6</text><text x=\"114\" y=\"265.5\" text-anchor=\"end\">−4</text><text x=\"114\" y=\"233.5\" text-anchor=\"end\">−2</text><text x=\"114\" y=\"169.5\" text-anchor=\"end\">2</text><text x=\"114\" y=\"137.5\" text-anchor=\"end\">4</text><text x=\"114\" y=\"105.5\" text-anchor=\"end\">6</text><text x=\"114\" y=\"73.5\" text-anchor=\"end\">8</text><text x=\"114\" y=\"41.5\" text-anchor=\"end\">10</text></svg>",
+     "answer": "Graf ima navpično asimptoto $x = 2$ (na obeh straneh gre proti $-\\infty$) in poševno asimptoto $y = x + 3$; levo od pola narašča do maksimuma $\\left(0, \\frac{5}{4}\\right)$ in nato pada, desno od pola ves čas narašča in ima v $(3, 8)$ vodoravno tangento.",
+     "ways": [
+      {
+       "title": "Po korakih: iz rezultatov dela a",
+       "text": "1. Vrišemo asimptoti: navpično $x = 2$ in poševno $y = x + 3$ (črtkano).\n2. Vrišemo ničle $-\\sqrt{5}$, $1$, $\\sqrt{5}$ (približno $-2{,}2$; $1$; $2{,}2$), maksimum $T_1\\left(0, \\frac{5}{4}\\right)$ in prevoj $P(3, 8)$ z vodoravno tangento.\n3. Nekaj kontrolnih vrednosti: $f(-3) = -\\frac{16}{25}$, $f(-5) = -\\frac{120}{49}$, $f\\left(\\frac{3}{2}\\right) = -\\frac{11}{2}$, $f\\left(\\frac{5}{2}\\right) = \\frac{15}{2}$, $f(4) = \\frac{33}{4}$.\n4. Graf seka poševno asimptoto tam, kjer je ostanek $3x - 7 = 0$, torej pri $x = \\frac{7}{3}$. Za $x < \\frac{7}{3}$ je graf pod asimptoto, za $x > \\frac{7}{3}$ nad njo.\n\nLevo od pola: od spodaj ob asimptoti $y = x + 3$, skozi $-\\sqrt{5}$ do $T_1$, nato navzdol skozi $1$ proti $-\\infty$ ob $x = 2$. Desno od pola: od $-\\infty$ strmo navzgor skozi $\\sqrt{5}$, sploščeno skozi $P(3, 8)$ in nato nad asimptoto, ki se ji približuje."
+      }
+     ],
+     "solutionFigure": "<svg viewBox=\"0 0 264 332\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"10\" fill=\"currentColor\"><title>Koordinatni sistem</title><path d=\"M22 22V310M38 22V310M54 22V310M70 22V310M86 22V310M102 22V310M118 22V310M134 22V310M150 22V310M166 22V310M182 22V310M198 22V310M214 22V310M230 22V310M22 310H230M22 294H230M22 278H230M22 262H230M22 246H230M22 230H230M22 214H230M22 198H230M22 182H230M22 166H230M22 150H230M22 134H230M22 118H230M22 102H230M22 86H230M22 70H230M22 54H230M22 38H230M22 22H230\" stroke=\"currentColor\" stroke-opacity=\"0.18\" stroke-width=\"0.7\" fill=\"none\"/><path d=\"M16 198H242M118 316V10\" stroke=\"currentColor\" stroke-width=\"1.3\" fill=\"none\"/><polygon points=\"244,198 236,194.5 236,201.5\"/><polygon points=\"118,8 114.5,16 121.5,16\"/><text x=\"240\" y=\"191\" font-style=\"italic\" font-size=\"12\">x</text><text x=\"125\" y=\"16\" font-style=\"italic\" font-size=\"12\">y</text><text x=\"114\" y=\"211\" text-anchor=\"end\">0</text><text x=\"22\" y=\"211\" text-anchor=\"middle\">−6</text><text x=\"54\" y=\"211\" text-anchor=\"middle\">−4</text><text x=\"86\" y=\"211\" text-anchor=\"middle\">−2</text><text x=\"150\" y=\"211\" text-anchor=\"middle\">2</text><text x=\"182\" y=\"211\" text-anchor=\"middle\">4</text><text x=\"214\" y=\"211\" text-anchor=\"middle\">6</text><text x=\"114\" y=\"297.5\" text-anchor=\"end\">−6</text><text x=\"114\" y=\"265.5\" text-anchor=\"end\">−4</text><text x=\"114\" y=\"233.5\" text-anchor=\"end\">−2</text><text x=\"114\" y=\"169.5\" text-anchor=\"end\">2</text><text x=\"114\" y=\"137.5\" text-anchor=\"end\">4</text><text x=\"114\" y=\"105.5\" text-anchor=\"end\">6</text><text x=\"114\" y=\"73.5\" text-anchor=\"end\">8</text><text x=\"114\" y=\"41.5\" text-anchor=\"end\">10</text><path d=\"M150 310V22M22 246L230 38\" stroke=\"currentColor\" stroke-dasharray=\"5 3\" stroke-opacity=\"0.7\" fill=\"none\"/><polyline points=\"22,252.3 26,248.5 30,244.7 34,240.9 38,237.2 42,233.5 46,229.8 50,226.1 54,222.4 58,218.8 62,215.3 66,211.7 70,208.2 74,204.8 78,201.5 82,198.2 86,195 90,191.9 94,189 98,186.3 102,183.8 106,181.6 110,179.8 114,178.5 118,178 122,178.7 126,181.1 130,186.6 134,198 134,198 134.9,201.8 135.8,206.3 136.6,211.7 137.5,218.2 138.4,226.1 139.3,235.8 140.1,247.9 141,263.3 141.9,283.3 142.8,310\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><polyline points=\"153,310 153.5,227.2 154,176.8 154.5,144.4 155,122.8 155.5,108 156,97.6 156.5,90.2 157,84.8 157.5,80.9 158,78 159.6,72.8 162.8,70.2 166,70 169.2,69.9 172.4,69.5 175.6,68.7 178.8,67.5 182,66 185.2,64.3 188.4,62.4 191.6,60.3 194.8,58.1 198,55.8 201.2,53.4 204.4,50.9 207.6,48.3 210.8,45.7 214,43 217.2,40.3 220.4,37.5 223.6,34.7 226.8,31.9 230,29\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><circle cx=\"118\" cy=\"178\" r=\"3\"/><text x=\"123\" y=\"171\">T₁</text><circle cx=\"166\" cy=\"70\" r=\"3\"/><text x=\"154\" y=\"60\">T₂ = P</text><circle cx=\"134\" cy=\"198\" r=\"3\"/><circle cx=\"153.8\" cy=\"198\" r=\"3\"/><circle cx=\"82.2\" cy=\"198\" r=\"3\"/><text x=\"185.2\" y=\"111.6\" font-style=\"italic\">y = x + 3</text><text x=\"144\" y=\"298.8\" text-anchor=\"end\" font-style=\"italic\">x = 2</text></svg>",
+     "scoring": "1 t. za graf, ki upošteva asimptoti, ničle, maksimum in prevoj."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "section": "C",
+   "n": 2,
+   "intro": "Notranji koti $\\alpha$, $\\beta$ in $\\gamma$ trikotnika $ABC$ v tem vrstnem redu tvorijo naraščajoče aritmetično zaporedje, kot $\\gamma$ pri oglišču $C$ je pravi. Hipotenuza $AB$ ima dolžino $c$.\n\nV trikotnik včrtamo lomljeno črto: iz oglišča $C$ spustimo pravokotnico na hipotenuzo $AB$ z nožiščem $D_1$, iz $D_1$ pravokotnico na kateto $AC$ z nožiščem $D_2$, iz $D_2$ pravokotnico na hipotenuzo z nožiščem $D_3$ in tako naprej v nedogled. Dolžine daljic $CD_1$, $D_1D_2$, $D_2D_3$, … označimo z $d_1$, $d_2$, $d_3$, …",
+   "figure": "<svg viewBox=\"0 0 350 215\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"13\" fill=\"currentColor\"><title>Skica pravokotnega trikotnika z lomljeno črto (ni v merilu)</title><polygon points=\"20,190 330,190 252.5,55.8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"/><polyline points=\"252.5,55.8 252.5,190 194.4,89.3 194.4,190 150.8,114.5 150.8,190 118.1,133.4 118.1,190 93.6,147.5 93.6,190\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-dasharray=\"none\" stroke-opacity=\"0.85\"/><text x=\"6\" y=\"194\" font-style=\"italic\">A</text><text x=\"335\" y=\"194\" font-style=\"italic\">B</text><text x=\"248.5\" y=\"47.8\" font-style=\"italic\">C</text><text x=\"246.5\" y=\"206\" font-style=\"italic\">D₁</text><text x=\"180.4\" y=\"83.3\" font-style=\"italic\">D₂</text><text x=\"188.4\" y=\"206\" font-style=\"italic\">D₃</text><text x=\"136.8\" y=\"108.5\" font-style=\"italic\">D₄</text><text x=\"256.5\" y=\"126.9\" font-style=\"italic\">d₁</text><text x=\"226.4\" y=\"136.7\" font-style=\"italic\">d₂</text><text x=\"197.4\" y=\"145.7\" font-style=\"italic\">d₃</text><text x=\"135\" y=\"206\" font-style=\"italic\">c</text><text x=\"52\" y=\"185\" font-style=\"italic\">α</text><text x=\"300\" y=\"182\" font-style=\"italic\">β</text><path d=\"M244.7 60.3l4.5 7.8l7.8 -4.5\" fill=\"none\" stroke=\"currentColor\"/><text x=\"345\" y=\"210\" text-anchor=\"end\" font-size=\"10\" fill-opacity=\"0.7\">ni v merilu</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj velikosti ostrih kotov $\\alpha$ in $\\beta$.",
+     "answer": "$\\alpha = 30^\\circ$, $\\beta = 60^\\circ$",
+     "ways": [
+      {
+       "title": "Po korakih: srednji člen",
+       "text": "**Podatki:** $\\alpha < \\beta < \\gamma$ je aritmetično zaporedje, $\\gamma = 90^\\circ$, $\\alpha + \\beta + \\gamma = 180^\\circ$.\n**Iščemo:** $\\alpha$, $\\beta$.\n\nV aritmetičnem zaporedju je srednji člen povprečje sosednjih: $\\beta = \\frac{\\alpha + \\gamma}{2}$, torej $\\alpha + \\gamma = 2\\beta$.\n\nVstavimo v vsoto kotov: $2\\beta + \\beta = 180^\\circ$, $\\beta = 60^\\circ$. Nato $\\alpha = 2\\beta - \\gamma = 120^\\circ - 90^\\circ = 30^\\circ$."
+      },
+      {
+       "title": "Drugače: z diferenco",
+       "text": "Kote zapišemo z diferenco $d > 0$: $\\gamma = 90^\\circ$, $\\beta = 90^\\circ - d$, $\\alpha = 90^\\circ - 2d$.\n\nVsota: $270^\\circ - 3d = 180^\\circ$, zato $d = 30^\\circ$ in $\\beta = 60^\\circ$, $\\alpha = 30^\\circ$.\n\nPreizkus: $30^\\circ + 60^\\circ + 90^\\circ = 180^\\circ$ in razlike so enake ($30^\\circ$)."
+      }
+     ],
+     "scoring": "1 t. za enačbo (npr. $3\\beta = 180^\\circ$ ali $270^\\circ - 3d = 180^\\circ$), 1 t. za oba kota."
+    },
+    {
+     "id": "b",
+     "points": 4,
+     "format": "open",
+     "text": "Izrazi $d_1$, $d_2$ in $d_3$ s hipotenuzo $c$. Pokaži, da so $d_1$, $d_2$, $d_3$, … zaporedni členi geometrijskega zaporedja, in zapiši njegov količnik $q$.",
+     "answer": "$d_1 = \\frac{\\sqrt{3}}{4}c$, $d_2 = \\frac{3}{8}c$, $d_3 = \\frac{3\\sqrt{3}}{16}c$; $q = \\frac{\\sqrt{3}}{2}$.",
+     "ways": [
+      {
+       "title": "Po korakih: kotne funkcije v pravokotnih trikotnikih",
+       "text": "**Podatki:** $\\alpha = 30^\\circ$, $\\beta = 60^\\circ$, $\\gamma = 90^\\circ$, hipotenuza $c$.\n**Iščemo:** $d_1$, $d_2$, $d_3$ in količnik $q$.\n\nKateti: $b = AC = c\\cos\\alpha = \\frac{\\sqrt{3}}{2}c$ in $a = BC = c\\sin\\alpha = \\frac{c}{2}$.\n\n**$d_1$.** Trikotnik $AD_1C$ je pravokoten pri $D_1$, kot pri $A$ je $30^\\circ$, hipotenuza je $AC$:\n\n$d_1 = AC \\cdot \\sin 30^\\circ = \\frac{\\sqrt{3}}{2}c \\cdot \\frac{1}{2} = \\frac{\\sqrt{3}}{4}c$.\n\n**$d_2$.** V trikotniku $AD_1C$ je kot pri $C$ enak $90^\\circ - 30^\\circ = 60^\\circ$. Trikotnik $CD_2D_1$ je pravokoten pri $D_2$, njegova hipotenuza je $CD_1$:\n\n$d_2 = d_1 \\cdot \\sin 60^\\circ = \\frac{\\sqrt{3}}{4}c \\cdot \\frac{\\sqrt{3}}{2} = \\frac{3}{8}c$.\n\n**$d_3$.** Trikotnik $AD_2D_1$ je pravokoten pri $D_2$ s kotom $30^\\circ$ pri $A$, zato je kot pri $D_1$ enak $60^\\circ$. Trikotnik $D_1D_3D_2$ je pravokoten pri $D_3$, hipotenuza je $D_1D_2$:\n\n$d_3 = d_2 \\cdot \\sin 60^\\circ = \\frac{3}{8}c \\cdot \\frac{\\sqrt{3}}{2} = \\frac{3\\sqrt{3}}{16}c$.\n\n**Geometrijsko zaporedje.** Vsak korak ponovi isto sliko (pravokotni trikotnik s kotom $30^\\circ$ pri $A$), zato je vsaka naslednja daljica $\\sin 60^\\circ$-krat daljša od prejšnje: $\\frac{d_2}{d_1} = \\frac{d_3}{d_2} = \\frac{\\sqrt{3}}{2}$. Količnik je $q = \\frac{\\sqrt{3}}{2}$."
+      },
+      {
+       "title": "Drugače: višina in podobni trikotniki",
+       "text": "**$d_1$ iz ploščine.** Ploščino trikotnika $ABC$ zapišemo na dva načina: $\\frac{ab}{2} = \\frac{c \\cdot d_1}{2}$, ker je $d_1$ višina na hipotenuzo. Z $a = \\frac{c}{2}$ in $b = \\frac{\\sqrt{3}}{2}c$:\n\n$d_1 = \\frac{ab}{c} = \\frac{\\frac{c}{2} \\cdot \\frac{\\sqrt{3}}{2}c}{c} = \\frac{\\sqrt{3}}{4}c$.\n\n**Podobnost.** Trikotnik $AD_1C$ je podoben trikotniku $ABC$ (pravi kot in skupni kot $30^\\circ$ pri $A$). Njegova hipotenuza je $AC = \\frac{\\sqrt{3}}{2}c$, torej je pomanjšan s faktorjem $k = \\frac{AC}{AB} = \\frac{\\sqrt{3}}{2}$. Daljica $d_2 = D_1D_2$ je v njem višina na hipotenuzo $AC$, torej ustreza višini $d_1$ v trikotniku $ABC$: $d_2 = k \\cdot d_1$.\n\nEnako je trikotnik $AD_2D_1$ podoben trikotniku $AD_1C$ s faktorjem $\\frac{\\sqrt{3}}{2}$ in $d_3$ je v njem višina na hipotenuzo, zato $d_3 = k \\cdot d_2$. Tako se nadaljuje v nedogled:\n\n$d_2 = \\frac{\\sqrt{3}}{2} \\cdot \\frac{\\sqrt{3}}{4}c = \\frac{3}{8}c$, $d_3 = \\frac{\\sqrt{3}}{2} \\cdot \\frac{3}{8}c = \\frac{3\\sqrt{3}}{16}c$, $q = \\cos 30^\\circ = \\frac{\\sqrt{3}}{2}$."
+      }
+     ],
+     "scoring": "1 t. za $d_1$, 1 t. za $d_2$, 1 t. za $d_3$, 1 t. za utemeljitev, da je zaporedje geometrijsko, s $q = \\frac{\\sqrt{3}}{2}$.",
+     "mistake": "Pogosta napaka je $q = \\frac{1}{2}$ (sinus kota $30^\\circ$). Daljice se krajšajo s faktorjem $\\sin 60^\\circ = \\cos 30^\\circ = \\frac{\\sqrt{3}}{2}$, kar potrdi tudi $\\frac{d_2}{d_1} = \\frac{3}{8} : \\frac{\\sqrt{3}}{4} = \\frac{3}{2\\sqrt{3}} = \\frac{\\sqrt{3}}{2}$."
+    },
+    {
+     "id": "c",
+     "points": 4,
+     "format": "open",
+     "text": "Vsota dolžin vseh daljic lomljene črte je $15\\,\\mathrm{cm}$. Natančno izračunaj dolžino hipotenuze $c$.",
+     "answer": "$c = (20\\sqrt{3} - 30)\\,\\mathrm{cm}$ (približno $4{,}6\\,\\mathrm{cm}$)",
+     "ways": [
+      {
+       "title": "Po korakih: vsota geometrijske vrste",
+       "text": "**Podatki:** $d_1 = \\frac{\\sqrt{3}}{4}c$, $q = \\frac{\\sqrt{3}}{2}$, $d_1 + d_2 + d_3 + \\ldots = 15\\,\\mathrm{cm}$.\n**Iščemo:** $c$.\n\nKer je $0 < q < 1$, vrsta konvergira in njena vsota je $s = \\frac{d_1}{1 - q}$:\n\n$\\frac{\\frac{\\sqrt{3}}{4}c}{1 - \\frac{\\sqrt{3}}{2}} = 15$\n\nImenovalec: $1 - \\frac{\\sqrt{3}}{2} = \\frac{2 - \\sqrt{3}}{2}$, zato je leva stran $\\frac{\\sqrt{3}}{4}c \\cdot \\frac{2}{2 - \\sqrt{3}} = \\frac{\\sqrt{3}\\,c}{2(2 - \\sqrt{3})}$.\n\n$\\sqrt{3}\\,c = 30(2 - \\sqrt{3})$, $c = \\frac{30(2 - \\sqrt{3})}{\\sqrt{3}}$.\n\nRacionaliziramo s $\\sqrt{3}$: $c = \\frac{30(2 - \\sqrt{3})\\sqrt{3}}{3} = 10(2\\sqrt{3} - 3) = 20\\sqrt{3} - 30$.\n\n$c = (20\\sqrt{3} - 30)\\,\\mathrm{cm}$."
+      },
+      {
+       "title": "Drugače: najprej vsota v odvisnosti od c, nato racionalizacija",
+       "text": "Vsoto izrazimo s $c$ in jo takoj racionaliziramo (razširimo z $2 + \\sqrt{3}$, ker je $(2 - \\sqrt{3})(2 + \\sqrt{3}) = 4 - 3 = 1$):\n\n$s = \\frac{\\sqrt{3}\\,c}{2(2 - \\sqrt{3})} = \\frac{\\sqrt{3}(2 + \\sqrt{3})}{2}c = \\frac{2\\sqrt{3} + 3}{2}c$.\n\nIz $\\frac{3 + 2\\sqrt{3}}{2}c = 15$ dobimo $c = \\frac{30}{3 + 2\\sqrt{3}}$. Razširimo z $2\\sqrt{3} - 3$; ker je $(2\\sqrt{3})^2 - 3^2 = 12 - 9 = 3$:\n\n$c = \\frac{30(2\\sqrt{3} - 3)}{3} = 10(2\\sqrt{3} - 3) = 20\\sqrt{3} - 30$.\n\n**Z oceno:** s $\\sqrt{3} \\approx 1{,}73$ je $c \\approx 34{,}6 - 30 = 4{,}6$, torej $c \\approx 4{,}6\\,\\mathrm{cm}$. Smiselno: že $d_1 = \\frac{\\sqrt{3}}{4}c \\approx 2\\,\\mathrm{cm}$, ostale daljice pa se počasi krajšajo ($q \\approx 0{,}87$), zato je vsota precej večja od $c$."
+      }
+     ],
+     "scoring": "1 t. za formulo vsote $s = \\frac{d_1}{1 - q}$ (z ugotovitvijo $|q| < 1$), 1 t. za enačbo s $c$, 1 t. za izražen $c$, 1 t. za natančen racionaliziran rezultat $c = (20\\sqrt{3} - 30)\\,\\mathrm{cm}$.",
+     "mistake": "Napačno je seštevati s formulo za končno vsoto ali deliti z $1 + q$. Za neskončno geometrijsko vrsto z $|q| < 1$ velja $s = \\frac{a_1}{1 - q}$. Natančen rezultat ostane s korenom; decimalni približek ni dovolj."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 1,
+   "intro": "V koordinatnem sistemu so dana tri oglišča paralelograma $ABCD$: $A(-3, -2)$, $B(4, -1)$ in $C(6, 4)$. Oglišča si sledijo v nasprotni smeri urinega kazalca. Enota na obeh koordinatnih oseh meri $1\\,\\mathrm{cm}$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 219 160\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"ar-2b1\" viewBox=\"0 0 6 6\" refX=\"5\" refY=\"3\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L6 3L0 6z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><path d=\"M12 12V148M29 12V148M46 12V148M63 12V148M80 12V148M97 12V148M114 12V148M131 12V148M148 12V148M165 12V148M182 12V148M199 12V148M12 148H199M12 131H199M12 114H199M12 97H199M12 80H199M12 63H199M12 46H199M12 29H199M12 12H199\" stroke-width=\"0.5\" stroke-opacity=\"0.3\"/><path d=\"M12 97H207\" stroke-width=\"1.1\" marker-end=\"url(#ar-2b1)\"/><path d=\"M80 148V4\" stroke-width=\"1.1\" marker-end=\"url(#ar-2b1)\"/><text x=\"201\" y=\"109\" fill=\"currentColor\" stroke=\"none\">x</text><text x=\"85\" y=\"10\" fill=\"currentColor\" stroke=\"none\">y</text><text x=\"94.5\" y=\"108\" fill=\"currentColor\" stroke=\"none\">1</text><text x=\"71\" y=\"83.5\" fill=\"currentColor\" stroke=\"none\">1</text><text x=\"71\" y=\"108\" fill=\"currentColor\" stroke=\"none\">0</text><path d=\"M29 131L148 114L182 29\" stroke-width=\"1.6\"/><circle cx=\"29\" cy=\"131\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"18\" y=\"135\" fill=\"currentColor\" stroke=\"none\">A</text><circle cx=\"148\" cy=\"114\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"150\" y=\"126\" fill=\"currentColor\" stroke=\"none\">B</text><circle cx=\"182\" cy=\"29\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"186\" y=\"25\" fill=\"currentColor\" stroke=\"none\">C</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "fill",
+     "text": "Zapiši koordinati oglišča $D$: $D(\\underline{\\qquad}, \\underline{\\qquad})$",
+     "answer": "$D(-1, 3)$",
+     "ways": [
+      {
+       "title": "Z vektorji",
+       "text": "**Podatki:** $A(-3, -2)$, $B(4, -1)$, $C(6, 4)$, paralelogram $ABCD$.\n\n**Iščemo:** koordinati oglišča $D$.\n\nV paralelogramu sta nasprotni stranici vzporedni in enako dolgi, zato je $\\overrightarrow{AD} = \\overrightarrow{BC}$.\n\n$\\overrightarrow{BC} = (6 - 4, 4 + 1) = (2, 5)$.\n\nOglišče $D$ dobimo tako, da iz $A$ naredimo »korak« $\\overrightarrow{BC}$: $x_D = -3 + 2 = -1$, $y_D = -2 + 5 = 3$.\n\nTorej $D(-1, 3)$."
+      },
+      {
+       "title": "Drugače: z diagonalama, ki se razpolavljata",
+       "text": "Diagonali paralelograma se razpolavljata, zato imata $AC$ in $BD$ isto razpolovišče. Iz $\\frac{A + C}{2} = \\frac{B + D}{2}$ sledi $A + C = B + D$ (seštevamo istoležne koordinate), torej $D = A + C - B$:\n\n$x_D = -3 + 6 - 4 = -1$, $y_D = -2 + 4 - (-1) = 3$. Spet $D(-1, 3)$."
+      }
+     ],
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 219 160\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"ar-2b1a\" viewBox=\"0 0 6 6\" refX=\"5\" refY=\"3\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L6 3L0 6z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><path d=\"M12 12V148M29 12V148M46 12V148M63 12V148M80 12V148M97 12V148M114 12V148M131 12V148M148 12V148M165 12V148M182 12V148M199 12V148M12 148H199M12 131H199M12 114H199M12 97H199M12 80H199M12 63H199M12 46H199M12 29H199M12 12H199\" stroke-width=\"0.5\" stroke-opacity=\"0.3\"/><path d=\"M12 97H207\" stroke-width=\"1.1\" marker-end=\"url(#ar-2b1a)\"/><path d=\"M80 148V4\" stroke-width=\"1.1\" marker-end=\"url(#ar-2b1a)\"/><text x=\"201\" y=\"109\" fill=\"currentColor\" stroke=\"none\">x</text><text x=\"85\" y=\"10\" fill=\"currentColor\" stroke=\"none\">y</text><text x=\"94.5\" y=\"108\" fill=\"currentColor\" stroke=\"none\">1</text><text x=\"71\" y=\"83.5\" fill=\"currentColor\" stroke=\"none\">1</text><text x=\"71\" y=\"108\" fill=\"currentColor\" stroke=\"none\">0</text><path d=\"M29 131L148 114L182 29L63 46Z\" stroke-width=\"1.6\" fill=\"currentColor\" fill-opacity=\"0.12\"/><circle cx=\"63\" cy=\"46\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"59\" y=\"40\" fill=\"currentColor\" stroke=\"none\">D</text><circle cx=\"29\" cy=\"131\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"18\" y=\"135\" fill=\"currentColor\" stroke=\"none\">A</text><circle cx=\"148\" cy=\"114\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"150\" y=\"126\" fill=\"currentColor\" stroke=\"none\">B</text><circle cx=\"182\" cy=\"29\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"186\" y=\"25\" fill=\"currentColor\" stroke=\"none\">C</text></svg>",
+     "mistake": "Napačno je $D = B + C - A = (13, 5)$: tako dobimo četrto oglišče paralelograma $ABDC$ (z diagonalo $BC$), ne paralelograma $ABCD$, v katerem je $D$ nasproti $B$."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Izračunaj ploščino paralelograma $ABCD$.",
+     "answer": "$S = 33\\,\\mathrm{cm}^2$",
+     "ways": [
+      {
+       "title": "Z obrazcem za ploščino trikotnika",
+       "text": "**Podatki:** $A(-3, -2)$, $B(4, -1)$, $C(6, 4)$.\n\n**Iščemo:** ploščino $S$ paralelograma.\n\nDiagonala $AC$ razdeli paralelogram na dva skladna trikotnika, zato je $S = 2 S_{ABC}$. Za trikotnik velja\n\n$S_{ABC} = \\frac{1}{2}\\left|(x_B - x_A)(y_C - y_A) - (x_C - x_A)(y_B - y_A)\\right|$.\n\n$(x_B - x_A)(y_C - y_A) = 7 \\cdot 6 = 42$, $(x_C - x_A)(y_B - y_A) = 9 \\cdot 1 = 9$.\n\n$S_{ABC} = \\frac{1}{2} \\cdot |42 - 9| = \\frac{33}{2}$, zato $S = 2 \\cdot \\frac{33}{2} = 33$, torej $S = 33\\,\\mathrm{cm}^2$."
+      },
+      {
+       "title": "Drugače: osnovnica krat višina",
+       "text": "Premica $AB$ ima smerni koeficient $k = \\frac{-1 + 2}{4 + 3} = \\frac{1}{7}$, njena enačba je $y = \\frac{1}{7}(x + 3) - 2$ oziroma $x - 7y - 11 = 0$.\n\nVišina na stranico $AB$ je razdalja točke $D(-1, 3)$ do te premice:\n\n$v = \\frac{|-1 - 21 - 11|}{\\sqrt{1 + 49}} = \\frac{33}{\\sqrt{50}}$.\n\nOsnovnica: $|AB| = \\sqrt{7^2 + 1^2} = \\sqrt{50}$. Ploščina: $S = |AB| \\cdot v = \\sqrt{50} \\cdot \\frac{33}{\\sqrt{50}} = 33$, torej $33\\,\\mathrm{cm}^2$."
+      }
+     ],
+     "mistake": "Napačno je ostati pri $\\frac{33}{2}\\,\\mathrm{cm}^2$: to je ploščina le trikotnika $ABC$, paralelogram je dvakrat večji."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj obseg paralelograma $ABCD$. Rezultat zaokroži na dve decimalni mesti.",
+     "answer": "$o = 2\\left(5\\sqrt{2} + \\sqrt{29}\\right)\\,\\mathrm{cm} \\approx 24{,}91\\,\\mathrm{cm}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $A(-3, -2)$, $B(4, -1)$, $C(6, 4)$, $D(-1, 3)$.\n\n**Iščemo:** obseg $o = 2(a + b)$.\n\nRazdalja točk: $d(T_1, T_2) = \\sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$.\n\n$a = |AB| = \\sqrt{7^2 + 1^2} = \\sqrt{50} = 5\\sqrt{2} \\approx 7{,}071\\,\\mathrm{cm}$\n\n$b = |BC| = \\sqrt{2^2 + 5^2} = \\sqrt{29} \\approx 5{,}385\\,\\mathrm{cm}$\n\n$o = 2(a + b) \\approx 2 \\cdot (7{,}071 + 5{,}385) = 2 \\cdot 12{,}456 \\approx 24{,}91$, torej $o \\approx 24{,}91\\,\\mathrm{cm}$."
+      },
+      {
+       "title": "Drugače: vse štiri stranice (preizkus)",
+       "text": "Izračunamo vse štiri stranice in jih seštejemo – hkrati preverimo, da je $D$ pravilen:\n\n- $|AB| = \\sqrt{49 + 1} = \\sqrt{50}$, $|CD| = \\sqrt{(-1 - 6)^2 + (3 - 4)^2} = \\sqrt{50}$,\n- $|BC| = \\sqrt{4 + 25} = \\sqrt{29}$, $|DA| = \\sqrt{(-3 + 1)^2 + (-2 - 3)^2} = \\sqrt{29}$.\n\nNasprotni stranici sta res enako dolgi. $o = 2\\sqrt{50} + 2\\sqrt{29} \\approx 14{,}142 + 10{,}770 \\approx 24{,}91\\,\\mathrm{cm}$."
+      }
+     ],
+     "scoring": "1 t. za dolžini stranic $\\sqrt{50}\\,\\mathrm{cm}$ in $\\sqrt{29}\\,\\mathrm{cm}$, 1 t. za obseg $24{,}91\\,\\mathrm{cm}$.",
+     "mistake": "Napačno je sešteti le $|AB| + |BC| \\approx 12{,}46\\,\\mathrm{cm}$: obseg zajema vse štiri stranice, torej obe dolžini dvakrat."
+    },
+    {
+     "id": "d",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj velikost notranjega kota paralelograma pri oglišču $A$. Rezultat zapiši na minuto natančno.",
+     "answer": "$\\alpha \\approx 60^\\circ\\,4'$",
+     "ways": [
+      {
+       "title": "S skalarnim produktom",
+       "text": "**Podatki:** $\\overrightarrow{AB} = (7, 1)$, $\\overrightarrow{AD} = (2, 5)$.\n\n**Iščemo:** kot $\\alpha = \\angle BAD$.\n\nKot pri $A$ oklepata vektorja, ki iz $A$ kažeta proti sosednjima ogliščema:\n\n$\\cos\\alpha = \\frac{\\overrightarrow{AB} \\cdot \\overrightarrow{AD}}{|\\overrightarrow{AB}| \\cdot |\\overrightarrow{AD}|} = \\frac{7 \\cdot 2 + 1 \\cdot 5}{\\sqrt{50} \\cdot \\sqrt{29}} = \\frac{19}{\\sqrt{1450}} \\approx 0{,}49896$\n\n$\\alpha \\approx 60{,}0685^\\circ$. Decimalni del pretvorimo v minute: $0{,}0685 \\cdot 60 \\approx 4{,}1$, zato $\\alpha \\approx 60^\\circ\\,4'$."
+      },
+      {
+       "title": "Drugače: s smernima kotoma stranic",
+       "text": "Stranica $AB$ oklepa z abscisno osjo kot $\\varphi_1$, za katerega je $\\tan\\varphi_1 = \\frac{1}{7}$, torej $\\varphi_1 \\approx 8{,}1301^\\circ$.\n\nStranica $AD$: $\\tan\\varphi_2 = \\frac{5}{2}$, torej $\\varphi_2 \\approx 68{,}1986^\\circ$.\n\nKot med stranicama je razlika: $\\alpha = \\varphi_2 - \\varphi_1 \\approx 68{,}1986^\\circ - 8{,}1301^\\circ = 60{,}0685^\\circ \\approx 60^\\circ\\,4'$."
+      },
+      {
+       "title": "Preizkus s ploščino",
+       "text": "Ploščina paralelograma je $S = |AB| \\cdot |AD| \\cdot \\sin\\alpha$, zato $\\sin\\alpha = \\frac{33}{\\sqrt{1450}} \\approx 0{,}8666$, kar da $\\alpha \\approx 60^\\circ\\,4'$ (kot je oster, ker je skalarni produkt $19$ pozitiven). Ujema se."
+      }
+     ],
+     "scoring": "1 t. za pravilen nastavek s skalarnim produktom (ali enakovreden), npr. $\\cos\\alpha = \\frac{19}{\\sqrt{1450}}$, 1 t. za kot $60^\\circ\\,4'$.",
+     "mistake": "Napačno je vzeti vektorja $\\overrightarrow{AB}$ in $\\overrightarrow{DA}$ (eden kaže proti $A$): dobimo $\\cos = -0{,}499$ in kot $119^\\circ\\,56'$, to je kot pri $B$. Napaka je tudi zapis $60{,}07^\\circ = 60^\\circ\\,7'$: stotinke stopinje niso minute, $0{,}07^\\circ \\approx 4'$."
+    },
+    {
+     "id": "e",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj koordinati presečišča diagonal paralelograma $ABCD$.",
+     "answer": "$M\\left(\\frac{3}{2}, 1\\right)$",
+     "ways": [
+      {
+       "title": "Z razpoloviščem",
+       "text": "**Podatki:** $A(-3, -2)$, $C(6, 4)$ (in $B(4, -1)$, $D(-1, 3)$).\n\n**Iščemo:** presečišče $M$ diagonal $AC$ in $BD$ (črko $S$ smo v tej nalogi že porabili za ploščino).\n\nDiagonali paralelograma se razpolavljata, zato je $M$ razpolovišče daljice $AC$:\n\n$M = \\left(\\frac{x_A + x_C}{2}, \\frac{y_A + y_C}{2}\\right) = \\left(\\frac{-3 + 6}{2}, \\frac{-2 + 4}{2}\\right) = \\left(\\frac{3}{2}, 1\\right)$.\n\nPreverimo še z $BD$: $\\left(\\frac{4 - 1}{2}, \\frac{-1 + 3}{2}\\right) = \\left(\\frac{3}{2}, 1\\right)$. ✓"
+      },
+      {
+       "title": "Drugače: kot presečišče dveh premic",
+       "text": "Premica $AC$: $k = \\frac{4 + 2}{6 + 3} = \\frac{2}{3}$, $y = \\frac{2}{3}(x + 3) - 2 = \\frac{2}{3}x$.\n\nPremica $BD$: $k = \\frac{3 + 1}{-1 - 4} = -\\frac{4}{5}$, $y = -\\frac{4}{5}(x - 4) - 1 = -\\frac{4}{5}x + \\frac{11}{5}$.\n\nIzenačimo: $\\frac{2}{3}x = -\\frac{4}{5}x + \\frac{11}{5}$, pomnožimo s $15$: $10x = -12x + 33$, $22x = 33$, $x = \\frac{3}{2}$, $y = \\frac{2}{3} \\cdot \\frac{3}{2} = 1$.\n\nPresečišče je $M\\left(\\frac{3}{2}, 1\\right)$."
+      }
+     ],
+     "scoring": "1 t. za pravilen postopek (razpolovišče diagonale ali presečišče premic), 1 t. za koordinati $M\\left(\\frac{3}{2}, 1\\right)$."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 2,
+   "intro": "Zaporedje $(a_n)$ ima splošni člen $a_n = \\frac{3n + 11}{4}$. Zaporedje $(b_n)$ je aritmetično s prvim členom $b_1 = \\frac{1}{2}$ in diferenco $d = \\frac{5}{6}$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj razliko $a_{25} - a_9$.",
+     "answer": "$a_{25} - a_9 = 12$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $a_n = \\frac{3n + 11}{4}$.\n\n**Iščemo:** $a_{25} - a_9$.\n\nV splošni člen vstavimo $n = 25$ in $n = 9$:\n\n$a_{25} = \\frac{3 \\cdot 25 + 11}{4} = \\frac{86}{4} = \\frac{43}{2}$, $a_9 = \\frac{3 \\cdot 9 + 11}{4} = \\frac{38}{4} = \\frac{19}{2}$.\n\n$a_{25} - a_9 = \\frac{43}{2} - \\frac{19}{2} = \\frac{24}{2} = 12$."
+      },
+      {
+       "title": "Drugače: z diferenco",
+       "text": "Zaporedje $(a_n)$ je aritmetično, saj je $a_{n+1} - a_n = \\frac{3(n + 1) + 11 - 3n - 11}{4} = \\frac{3}{4}$ za vsak $n$. Od $a_9$ do $a_{25}$ je $25 - 9 = 16$ korakov po $\\frac{3}{4}$:\n\n$a_{25} - a_9 = 16 \\cdot \\frac{3}{4} = 12$."
+      }
+     ],
+     "scoring": "1 t. za izračun členov ali diferenco $\\frac{3}{4}$, 1 t. za rezultat $12$.",
+     "mistake": "Napačno je $a_{25} - a_9 = a_{16} = \\frac{59}{4}$: razlika členov ni člen z razliko indeksov, temveč $(25 - 9) \\cdot d$."
+    },
+    {
+     "id": "b",
+     "points": 4,
+     "format": "open",
+     "text": "Za katero naravno število $n$ sta $n$-ta člena obeh zaporedij enaka? Izračunaj tudi vrednost tega člena.",
+     "answer": "$n = 37$, $a_{37} = b_{37} = \\frac{61}{2}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $a_n = \\frac{3n + 11}{4}$, $b_1 = \\frac{1}{2}$, $d = \\frac{5}{6}$.\n\n**Iščemo:** $n$, za katerega je $a_n = b_n$, in vrednost tega člena.\n\nSplošni člen aritmetičnega zaporedja: $b_n = b_1 + (n - 1)d = \\frac{1}{2} + \\frac{5(n - 1)}{6} = \\frac{3 + 5n - 5}{6} = \\frac{5n - 2}{6}$.\n\nEnačba: $\\frac{3n + 11}{4} = \\frac{5n - 2}{6}$. Pomnožimo s $12$:\n\n$3(3n + 11) = 2(5n - 2)$\n\n$9n + 33 = 10n - 4$\n\n$n = 37$\n\nVrednost: $a_{37} = \\frac{3 \\cdot 37 + 11}{4} = \\frac{122}{4} = \\frac{61}{2}$, preizkus $b_{37} = \\frac{5 \\cdot 37 - 2}{6} = \\frac{183}{6} = \\frac{61}{2}$. ✓"
+      },
+      {
+       "title": "Drugače: zaporedje razlik",
+       "text": "Razlika dveh aritmetičnih zaporedij $c_n = b_n - a_n$ je spet aritmetično zaporedje.\n\n$c_1 = b_1 - a_1 = \\frac{1}{2} - \\frac{14}{4} = -3$, diferenca $\\frac{5}{6} - \\frac{3}{4} = \\frac{10 - 9}{12} = \\frac{1}{12}$.\n\nČlena sta enaka, ko je $c_n = 0$: $-3 + (n - 1) \\cdot \\frac{1}{12} = 0$, torej $n - 1 = 36$ in $n = 37$.\n\nRazmislek: $(b_n)$ narašča hitreje (za $\\frac{1}{12}$ na korak več), a začne za $3$ niže, zato ujame $(a_n)$ po $3 : \\frac{1}{12} = 36$ korakih. Vrednost člena: $a_{37} = \\frac{61}{2} = 30{,}5$."
+      }
+     ],
+     "scoring": "1 t. za splošni člen $b_n = \\frac{5n - 2}{6}$ (ali enakovreden zapis), 1 t. za enačbo $a_n = b_n$, 1 t. za $n = 37$, 1 t. za vrednost člena $\\frac{61}{2}$.",
+     "mistake": "Pogosta napaka je $b_n = b_1 + n d$ namesto $b_1 + (n - 1)d$: dobimo $b_n = \\frac{5n + 3}{6}$ in enačbo $9n + 33 = 10n + 6$, $n = 27$, kar ni prav (preizkus: $a_{27} = \\frac{92}{4} = 23$, pravi $b_{27} = \\frac{133}{6} \\ne 23$)."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 3,
+   "intro": "Dani so vektorji $\\vec{a} = (2, -1, 3)$, $\\vec{b} = (1, 4, -2)$ in $\\vec{c} = (2m, m - 3, 1)$, kjer je $m$ realno število.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 4,
+     "format": "open",
+     "text": "Izračunaj velikost kota med vektorjema $\\vec{a}$ in $\\vec{b}$. Rezultat zaokroži na stotinko stopinje.",
+     "answer": "$\\varphi \\approx 117{,}81^\\circ$",
+     "ways": [
+      {
+       "title": "S skalarnim produktom",
+       "text": "**Podatki:** $\\vec{a} = (2, -1, 3)$, $\\vec{b} = (1, 4, -2)$.\n\n**Iščemo:** kot $\\varphi$ med vektorjema.\n\nSkalarni produkt: $\\vec{a} \\cdot \\vec{b} = 2 \\cdot 1 + (-1) \\cdot 4 + 3 \\cdot (-2) = 2 - 4 - 6 = -8$.\n\nDolžini: $|\\vec{a}| = \\sqrt{4 + 1 + 9} = \\sqrt{14}$, $|\\vec{b}| = \\sqrt{1 + 16 + 4} = \\sqrt{21}$.\n\n$\\cos\\varphi = \\frac{\\vec{a} \\cdot \\vec{b}}{|\\vec{a}| \\cdot |\\vec{b}|} = \\frac{-8}{\\sqrt{14} \\cdot \\sqrt{21}} = \\frac{-8}{\\sqrt{294}} \\approx -0{,}46657$\n\n$\\varphi \\approx 117{,}81^\\circ$. Kot je top, ker je skalarni produkt negativen."
+      },
+      {
+       "title": "Drugače: s kosinusnim izrekom",
+       "text": "Vektorja $\\vec{a}$ in $\\vec{b}$ nanesemo iz iste točke; tretja stranica trikotnika je $\\vec{a} - \\vec{b} = (1, -5, 5)$ z $|\\vec{a} - \\vec{b}|^2 = 1 + 25 + 25 = 51$.\n\nKosinusni izrek: $|\\vec{a} - \\vec{b}|^2 = |\\vec{a}|^2 + |\\vec{b}|^2 - 2|\\vec{a}||\\vec{b}|\\cos\\varphi$, torej\n\n$51 = 14 + 21 - 2\\sqrt{294}\\cos\\varphi$, $\\cos\\varphi = \\frac{35 - 51}{2\\sqrt{294}} = \\frac{-8}{\\sqrt{294}}$,\n\nkar je isti rezultat: $\\varphi \\approx 117{,}81^\\circ$."
+      }
+     ],
+     "scoring": "1 t. za skalarni produkt $-8$, 1 t. za dolžini $\\sqrt{14}$ in $\\sqrt{21}$, 1 t. za $\\cos\\varphi = \\frac{-8}{\\sqrt{294}}$, 1 t. za kot $117{,}81^\\circ$.",
+     "mistake": "Napačno je izpustiti minus in dobiti $\\cos\\varphi \\approx 0{,}46657$, $\\varphi \\approx 62{,}19^\\circ$: to je suplementarni kot. Negativen skalarni produkt pomeni top kot."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Določi število $m$ tako, da bosta vektorja $\\vec{a}$ in $\\vec{c}$ pravokotna.",
+     "answer": "$m = -2$",
+     "ways": [
+      {
+       "title": "S skalarnim produktom",
+       "text": "**Podatki:** $\\vec{a} = (2, -1, 3)$, $\\vec{c} = (2m, m - 3, 1)$.\n\n**Iščemo:** $m$, pri katerem je $\\vec{a} \\perp \\vec{c}$.\n\nNeničelna vektorja sta pravokotna natanko takrat, ko je njun skalarni produkt $0$:\n\n$\\vec{a} \\cdot \\vec{c} = 2 \\cdot 2m + (-1)(m - 3) + 3 \\cdot 1 = 4m - m + 3 + 3 = 3m + 6$\n\n$3m + 6 = 0$, torej $m = -2$.\n\nPreizkus: $\\vec{c} = (-4, -5, 1)$, $\\vec{a} \\cdot \\vec{c} = -8 + 5 + 3 = 0$. ✓"
+      },
+      {
+       "title": "Drugače: s Pitagorovim izrekom",
+       "text": "Vektorja sta pravokotna, ko za trikotnik z njima kot katetama velja Pitagorov izrek: $|\\vec{a} + \\vec{c}|^2 = |\\vec{a}|^2 + |\\vec{c}|^2$.\n\n$\\vec{a} + \\vec{c} = (2 + 2m, m - 4, 4)$, $|\\vec{a} + \\vec{c}|^2 = (2 + 2m)^2 + (m - 4)^2 + 16 = 5m^2 + 36$.\n\n$|\\vec{a}|^2 + |\\vec{c}|^2 = 14 + 4m^2 + (m - 3)^2 + 1 = 5m^2 - 6m + 24$.\n\n$5m^2 + 36 = 5m^2 - 6m + 24$, torej $6m = -12$ in $m = -2$."
+      }
+     ],
+     "scoring": "1 t. za pogoj $\\vec{a} \\cdot \\vec{c} = 0$ z izračunanim izrazom $3m + 6$, 1 t. za $m = -2$.",
+     "mistake": "Napačno je zahtevati $\\vec{a} \\cdot \\vec{c} = 1$ ali enačiti komponente: pravokotnost pomeni skalarni produkt $0$, enake komponente bi pomenile enaka vektorja."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 4,
+   "parts": [
+    {
+     "id": "",
+     "points": 7,
+     "format": "open",
+     "text": "Dana je funkcija $f(x) = \\frac{1}{2}x^3 + 2x^2 - 4x + 2$. Zapiši enačbi tangent na graf funkcije $f$ v točkah z abscisama $x_1 = -2$ in $x_2 = 2$. Izračunaj koordinati presečišča teh dveh tangent.",
+     "answer": "$t_1\\colon y = -6x + 2$, $t_2\\colon y = 10x - 14$, presečišče $P(1, -4)$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $f(x) = \\frac{1}{2}x^3 + 2x^2 - 4x + 2$, $x_1 = -2$, $x_2 = 2$.\n\n**Iščemo:** enačbi tangent $t_1$, $t_2$ in njuno presečišče $P$.\n\n**1. Odvod.** $f'(x) = \\frac{3}{2}x^2 + 4x - 4$.\n\n**2. Dotikališči.** $f(-2) = \\frac{1}{2} \\cdot (-8) + 2 \\cdot 4 + 8 + 2 = 14$, torej $T_1(-2, 14)$.\n$f(2) = \\frac{1}{2} \\cdot 8 + 2 \\cdot 4 - 8 + 2 = 6$, torej $T_2(2, 6)$.\n\n**3. Smerna koeficienta** sta vrednosti odvoda v dotikališčih:\n$k_1 = f'(-2) = \\frac{3}{2} \\cdot 4 - 8 - 4 = -6$, $k_2 = f'(2) = \\frac{3}{2} \\cdot 4 + 8 - 4 = 10$.\n\n**4. Tangenti** z enačbo premice skozi točko $y - y_0 = k(x - x_0)$:\n$t_1\\colon y - 14 = -6(x + 2)$, torej $y = -6x + 2$;\n$t_2\\colon y - 6 = 10(x - 2)$, torej $y = 10x - 14$.\n\n**5. Presečišče.** $-6x + 2 = 10x - 14$, $16 = 16x$, $x = 1$ in $y = -6 \\cdot 1 + 2 = -4$.\n\nPresečišče tangent je $P(1, -4)$."
+      },
+      {
+       "title": "Drugače: tangenta v obliki y = kx + n",
+       "text": "Tangento zapišemo kot $y = kx + n$, kjer je $k = f'(x_0)$, začetno vrednost $n$ pa dobimo, ker tangenta poteka skozi dotikališče.\n\n- $t_1$: $k_1 = -6$, skozi $T_1(-2, 14)$: $14 = -6 \\cdot (-2) + n$, $n = 2$, torej $y = -6x + 2$.\n- $t_2$: $k_2 = 10$, skozi $T_2(2, 6)$: $6 = 10 \\cdot 2 + n$, $n = -14$, torej $y = 10x - 14$.\n\nPresečišče rešimo z odštevanjem enačb: $0 = -16x + 16$, $x = 1$, $y = 10 - 14 = -4$. Torej $P(1, -4)$."
+      },
+      {
+       "title": "Preizkus",
+       "text": "Točka $P(1, -4)$ mora ležati na obeh tangentah: $-6 \\cdot 1 + 2 = -4$ ✓ in $10 \\cdot 1 - 14 = -4$ ✓.\n\nSmiselnost: $P$ ne leži na grafu ($f(1) = \\frac{1}{2} + 2 - 4 + 2 = \\frac{1}{2} \\ne -4$), kar je pričakovano, saj se tangenti grafa dotikata v točkah $T_1$ in $T_2$, ne v $P$. Na skici rešitve vidimo, da se tangenti sekata pod grafom, med abscisama dotikališč."
+      }
+     ],
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 244 208\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"ar-2b4\" viewBox=\"0 0 6 6\" refX=\"5\" refY=\"3\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L6 3L0 6z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><path d=\"M14 144v4M40 144v4M66 144v4M92 144v4M118 144v4M144 144v4M170 144v4M196 144v4M222 144v4M142 176h4M142 146h4M142 116h4M142 86h4M142 56h4M142 26h4\" stroke-width=\"0.8\"/><path d=\"M14 146H230\" stroke-width=\"1.1\" marker-end=\"url(#ar-2b4)\"/><path d=\"M144 194V6\" stroke-width=\"1.1\" marker-end=\"url(#ar-2b4)\"/><text x=\"224\" y=\"158\" fill=\"currentColor\" stroke=\"none\">x</text><text x=\"149\" y=\"12\" fill=\"currentColor\" stroke=\"none\">y</text><text x=\"167\" y=\"158\" fill=\"currentColor\" stroke=\"none\">1</text><text x=\"193\" y=\"158\" fill=\"currentColor\" stroke=\"none\">2</text><text x=\"87\" y=\"158\" fill=\"currentColor\" stroke=\"none\">−2</text><text x=\"129\" y=\"89.5\" fill=\"currentColor\" stroke=\"none\">10</text><text x=\"129\" y=\"29.5\" fill=\"currentColor\" stroke=\"none\">20</text><text x=\"131\" y=\"179.5\" fill=\"currentColor\" stroke=\"none\">−5</text><polyline points=\"14 89 16.6 81.2 19.2 74.1 21.8 67.6 24.4 61.7 27 56.4 29.6 51.6 32.2 47.4 34.8 43.8 37.4 40.6 40 38 42.6 35.8 45.2 34.1 47.8 32.9 50.4 32 53 31.6 55.6 31.6 58.2 31.9 60.8 32.6 63.4 33.7 66 35 68.6 36.6 71.2 38.6 73.8 40.8 76.4 43.2 79 45.9 81.6 48.8 84.2 51.8 86.8 55.1 89.4 58.5 92 62 94.6 65.7 97.2 69.4 99.8 73.3 102.4 77.2 105 81.1 107.6 85.1 110.2 89.1 112.8 93.1 115.4 97.1 118 101 120.6 104.9 123.2 108.7 125.8 112.3 128.4 115.9 131 119.4 133.6 122.7 136.2 125.8 138.8 128.7 141.4 131.5 144 134 146.6 136.3 149.2 138.3 151.8 140 154.4 141.5 157 142.6 159.6 143.4 162.2 143.9 164.8 144 167.4 143.7 170 143 172.6 141.9 175.2 140.3 177.8 138.3 180.4 135.8 183 132.9 185.6 129.4 188.2 125.4 190.8 120.8 193.4 115.7 196 110 198.6 103.7 201.2 96.8 203.8 89.2 206.4 81 209 72.1 211.6 62.6 214.2 52.3 216.8 41.3\" stroke-width=\"1.6\"/><path d=\"M58.2 15.2L201.2 213.2M159.6 194L222 50\" stroke-width=\"1\" stroke-dasharray=\"5 3\"/><circle cx=\"92\" cy=\"62\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"196\" cy=\"110\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"170\" cy=\"170\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"96\" y=\"58\" fill=\"currentColor\" stroke=\"none\">T₁</text><text x=\"178\" y=\"107\" fill=\"currentColor\" stroke=\"none\">T₂</text><text x=\"175\" y=\"178\" fill=\"currentColor\" stroke=\"none\">P(1, −4)</text><text x=\"16.6\" y=\"55.7\" fill=\"currentColor\" stroke=\"none\">f</text><text x=\"45.2\" y=\"21.2\" fill=\"currentColor\" stroke=\"none\">t₁</text><text x=\"201.5\" y=\"65\" fill=\"currentColor\" stroke=\"none\">t₂</text></svg>",
+     "scoring": "1 t. za odvod $f'(x) = \\frac{3}{2}x^2 + 4x - 4$, 1 t. za ordinati dotikališč $14$ in $6$, 1 t. za smerna koeficienta $-6$ in $10$, 1 t. za enačbo $t_1$, 1 t. za enačbo $t_2$, 1 t. za pravilno nastavljen sistem (izenačenje tangent), 1 t. za presečišče $P(1, -4)$.",
+     "mistake": "Pogosta napaka je, da v enačbo tangente namesto $f(x_0)$ vstavimo $f'(x_0)$ kot ordinato točke ali za smerni koeficient vzamemo $f(x_0)$. Smerni koeficient je vrednost **odvoda**, točka pa leži na **grafu** funkcije."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 5,
+   "parts": [
+    {
+     "id": "",
+     "points": 6,
+     "format": "open",
+     "text": "V cvetličarni stane vrtnica $2{,}40$ €, gerbera $1{,}60$ € in lilija $4{,}35$ €. Za vsak cvet v šopku cvetličarka zaračuna še $0{,}25$ € za pripravo in ovijanje.\n\nNina je kupila šopek iz $16$ cvetov, v katerem so bile samo vrtnice in gerbere. Za šopek je plačala natanko toliko, kot bi plačala za šopek iz $8$ lilij. Koliko vrtnic in koliko gerber je bilo v Nininem šopku? Zapiši in reši sistem enačb.",
+     "answer": "$9$ vrtnic in $7$ gerber",
+     "ways": [
+      {
+       "title": "S sistemom enačb",
+       "text": "**Podatki:** vrtnica $2{,}40$ €, gerbera $1{,}60$ €, lilija $4{,}35$ €, pribitek $0{,}25$ € na cvet, Ninin šopek ima $16$ cvetov, cena je enaka ceni šopka iz $8$ lilij.\n\n**Iščemo:** število vrtnic $x$ in število gerber $y$.\n\nCena enega cveta s pribitkom: vrtnica $2{,}40 + 0{,}25 = 2{,}65$ €, gerbera $1{,}60 + 0{,}25 = 1{,}85$ €, lilija $4{,}35 + 0{,}25 = 4{,}60$ €.\n\nŠopek iz $8$ lilij stane $8 \\cdot 4{,}60 = 36{,}80$ €.\n\nSistem:\n$$x + y = 16$$\n$$2{,}65x + 1{,}85y = 36{,}80$$\n\nIz prve enačbe $y = 16 - x$ vstavimo v drugo:\n\n$2{,}65x + 1{,}85(16 - x) = 36{,}80$\n\n$2{,}65x + 29{,}60 - 1{,}85x = 36{,}80$\n\n$0{,}80x = 7{,}20$, torej $x = 9$ in $y = 16 - 9 = 7$.\n\nPreizkus: $9 \\cdot 2{,}65 + 7 \\cdot 1{,}85 = 23{,}85 + 12{,}95 = 36{,}80$ €. ✓\n\nV šopku je bilo $9$ vrtnic in $7$ gerber."
+      },
+      {
+       "title": "Drugače: pribitek obračunamo posebej",
+       "text": "Ker ima Ninin šopek $16$ cvetov, je pribitek $16 \\cdot 0{,}25 = 4{,}00$ €. Šopek iz $8$ lilij stane $8 \\cdot 4{,}35 + 8 \\cdot 0{,}25 = 34{,}80 + 2{,}00 = 36{,}80$ €.\n\nZa same cvetove je Nina torej plačala $36{,}80 - 4{,}00 = 32{,}80$ €. Sistem:\n$$x + y = 16, \\qquad 2{,}40x + 1{,}60y = 32{,}80$$\n\nPrvo enačbo pomnožimo z $1{,}60$ in jo odštejemo od druge: $2{,}40x - 1{,}60x = 32{,}80 - 25{,}60$, $0{,}80x = 7{,}20$, $x = 9$, $y = 7$."
+      },
+      {
+       "title": "Drugače: z razmislekom (zamenjava cvetov)",
+       "text": "Če bi bilo v šopku $16$ gerber, bi stal $16 \\cdot 1{,}85 = 29{,}60$ €. Do $36{,}80$ € manjka $7{,}20$ €. Vsaka vrtnica namesto gerbere podraži šopek za $2{,}65 - 1{,}85 = 0{,}80$ €, zato je vrtnic $7{,}20 : 0{,}80 = 9$, gerber pa $16 - 9 = 7$."
+      }
+     ],
+     "scoring": "1 t. za cene s pribitkom ($2{,}65$ €, $1{,}85$ €, $4{,}60$ €) ali pravilno upoštevan pribitek $0{,}25$ € na cvet, 1 t. za enačbo $x + y = 16$, 1 t. za enačbo $2{,}65x + 1{,}85y = 36{,}80$ (ali enakovredno), 1 t. za $x = 9$, 1 t. za $y = 7$, 1 t. za odgovor (9 vrtnic, 7 gerber).",
+     "mistake": "Napačno je pribitek prišteti le Nininemu šopku in ne lilijam (ali obratno): pribitek se plača za vsak cvet v vsakem šopku. Prav tako ni prav pribitek $0{,}25$ € prišteti samo enkrat na šopek – odvisen je od števila cvetov."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 6,
+   "intro": "V škatli je $16$ bonbonov: $6$ čokoladnih in $10$ sadnih. Bonbone jemljemo naključno in brez vračanja.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 3,
+     "format": "open",
+     "text": "Iz škatle naključno vzamemo $3$ bonbone. Izračunaj verjetnost, da je med njimi vsaj en čokoladni bonbon. Rezultat zapiši z okrajšanim ulomkom.",
+     "answer": "$P = \\frac{11}{14} \\approx 0{,}786$",
+     "ways": [
+      {
+       "title": "Z nasprotnim dogodkom",
+       "text": "**Podatki:** $6$ čokoladnih, $10$ sadnih, skupaj $16$ bonbonov; izberemo $3$ brez vračanja.\n\n**Iščemo:** $P(A)$, $A$ = »vsaj en čokoladni«.\n\nNasprotni dogodek $A'$ = »vsi trije so sadni«.\n\nVseh izbir: $\\binom{16}{3} = \\frac{16 \\cdot 15 \\cdot 14}{6} = 560$. Ugodnih za $A'$: $\\binom{10}{3} = \\frac{10 \\cdot 9 \\cdot 8}{6} = 120$.\n\n$P(A') = \\frac{120}{560} = \\frac{3}{14}$, zato $P(A) = 1 - \\frac{3}{14} = \\frac{11}{14} \\approx 0{,}786$."
+      },
+      {
+       "title": "Drugače: zaporedno jemanje",
+       "text": "Verjetnost, da so vsi trije sadni, izračunamo po vrsti: prvi sadni $\\frac{10}{16}$, drugi (ostalo je $9$ sadnih od $15$) $\\frac{9}{15}$, tretji $\\frac{8}{14}$:\n\n$P(A') = \\frac{10}{16} \\cdot \\frac{9}{15} \\cdot \\frac{8}{14} = \\frac{720}{3360} = \\frac{3}{14}$, $P(A) = \\frac{11}{14}$."
+      },
+      {
+       "title": "Preizkus: po primerih",
+       "text": "Natanko en čokoladni: $6 \\cdot \\binom{10}{2} = 6 \\cdot 45 = 270$; natanko dva: $\\binom{6}{2} \\cdot 10 = 150$; vsi trije: $\\binom{6}{3} = 20$.\n\nSkupaj $270 + 150 + 20 = 440$ ugodnih izbir, $P(A) = \\frac{440}{560} = \\frac{11}{14}$. ✓"
+      }
+     ],
+     "scoring": "1 t. za nasprotni dogodek ali število $\\binom{10}{3} = 120$, 1 t. za $\\binom{16}{3} = 560$, 1 t. za verjetnost $\\frac{11}{14}$.",
+     "mistake": "Napačno je računati z vračanjem: $1 - \\left(\\frac{10}{16}\\right)^3 \\approx 0{,}756$. Pri jemanju brez vračanja se število bonbonov v škatli po vsakem jemanju zmanjša."
+    },
+    {
+     "id": "b",
+     "points": 4,
+     "format": "open",
+     "text": "Škatlo spet napolnimo s $6$ čokoladnimi in $10$ sadnimi bonboni. Nato $n$ sadnih bonbonov zamenjamo z $n$ čokoladnimi, tako da je v škatli še vedno $16$ bonbonov. Če zdaj naključno vzamemo $2$ bonbona, je verjetnost, da sta oba čokoladna, enaka $\\frac{3}{8}$. Izračunaj $n$.",
+     "answer": "$n = 4$",
+     "ways": [
+      {
+       "title": "S kombinacijami",
+       "text": "**Podatki:** po zamenjavi je $6 + n$ čokoladnih in $10 - n$ sadnih, skupaj $16$; izberemo $2$; $P = \\frac{3}{8}$.\n\n**Iščemo:** $n$ (naravno število, $n \\le 10$).\n\n$P = \\frac{\\binom{6 + n}{2}}{\\binom{16}{2}} = \\frac{\\frac{(6 + n)(5 + n)}{2}}{120} = \\frac{(6 + n)(5 + n)}{240}$.\n\n$\\frac{(6 + n)(5 + n)}{240} = \\frac{3}{8}$, torej $(6 + n)(5 + n) = 90$.\n\n$n^2 + 11n + 30 = 90$, $n^2 + 11n - 60 = 0$, $(n + 15)(n - 4) = 0$.\n\nRešitev $n = -15$ ni smiselna, zato $n = 4$ (v škatli je tedaj $10$ čokoladnih in $6$ sadnih bonbonov)."
+      },
+      {
+       "title": "Drugače: zaporedno jemanje",
+       "text": "Prvi bonbon je čokoladen z verjetnostjo $\\frac{6 + n}{16}$, drugi (ostane $5 + n$ čokoladnih od $15$) z verjetnostjo $\\frac{5 + n}{15}$:\n\n$\\frac{6 + n}{16} \\cdot \\frac{5 + n}{15} = \\frac{3}{8}$, torej $(6 + n)(5 + n) = \\frac{3}{8} \\cdot 240 = 90$.\n\nIščemo dve zaporedni naravni števili s produktom $90$: $9 \\cdot 10 = 90$, zato $6 + n = 10$ in $n = 4$.\n\nPreizkus: $\\frac{10}{16} \\cdot \\frac{9}{15} = \\frac{90}{240} = \\frac{3}{8}$. ✓"
+      }
+     ],
+     "scoring": "1 t. za število čokoladnih bonbonov $6 + n$ (sestava po zamenjavi), 1 t. za enačbo $\\frac{(6 + n)(5 + n)}{240} = \\frac{3}{8}$ (ali enakovredno), 1 t. za kvadratno enačbo $n^2 + 11n - 60 = 0$, 1 t. za $n = 4$ z izločeno negativno rešitvijo.",
+     "mistake": "Napačno je zapisati $\\left(\\frac{6 + n}{16}\\right)^2 = \\frac{3}{8}$ (kot z vračanjem): dobimo $6 + n = 16\\sqrt{0{,}375} \\approx 9{,}8$, kar ni celo število – znak, da je nastavek napačen."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "section": "C",
+   "n": 1,
+   "intro": "Dana je kocka z robom $a$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 3,
+     "format": "open",
+     "text": "Izračunaj razmerje med površino kocki včrtane krogle in površino kocki očrtane krogle.",
+     "answer": "$P_{\\mathrm{v}} : P_{\\mathrm{o}} = 1 : 3$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** kocka z robom $a$.\n\n**Iščemo:** $P_{\\mathrm{v}} : P_{\\mathrm{o}}$ (površina krogle je $4\\pi r^2$).\n\nVčrtana krogla se dotika vseh šestih ploskev, njen premer je enak robu: $r = \\frac{a}{2}$.\n\nOčrtana krogla poteka skozi vsa oglišča, njen premer je telesna diagonala $D = a\\sqrt{3}$: $R = \\frac{a\\sqrt{3}}{2}$.\n\n$P_{\\mathrm{v}} : P_{\\mathrm{o}} = 4\\pi r^2 : 4\\pi R^2 = \\frac{a^2}{4} : \\frac{3a^2}{4} = 1 : 3$."
+      },
+      {
+       "title": "Drugače: s podobnostjo",
+       "text": "Vse krogle so si podobne. Razmerje polmerov je $r : R = \\frac{a}{2} : \\frac{a\\sqrt{3}}{2} = 1 : \\sqrt{3}$.\n\nPovršine podobnih teles so v razmerju kvadratov dolžin, zato je $P_{\\mathrm{v}} : P_{\\mathrm{o}} = 1^2 : \\left(\\sqrt{3}\\right)^2 = 1 : 3$. Razmerje ni odvisno od $a$."
+      }
+     ],
+     "scoring": "1 t. za polmer včrtane krogle $\\frac{a}{2}$, 1 t. za polmer očrtane krogle $\\frac{a\\sqrt{3}}{2}$, 1 t. za razmerje $1 : 3$.",
+     "mistake": "Napačno je za polmer očrtane krogle vzeti polovico ploskovne diagonale $\\frac{a\\sqrt{2}}{2}$: taka krogla se le dotika robov kocke, skozi oglišča pa poteka krogla s premerom telesne diagonale $a\\sqrt{3}$."
+    },
+    {
+     "id": "b",
+     "points": 4,
+     "format": "open",
+     "text": "Kocki včrtamo največji pokončni stožec: njegova osnovna ploskev leži na spodnji ploskvi kocke, vrh pa je v središču zgornje ploskve. Plašč stožca razgrnemo v ravnino in dobimo krožni izsek. Izračunaj središčni kot tega krožnega izseka na stopinjo natančno.",
+     "answer": "$\\varphi = \\frac{360^\\circ}{\\sqrt{5}} \\approx 161^\\circ$",
+     "ways": [
+      {
+       "title": "Z dolžino loka",
+       "text": "**Podatki:** kocka z robom $a$, stožec z $r = \\frac{a}{2}$ (krog, včrtan spodnji ploskvi) in višino $v = a$.\n\n**Iščemo:** središčni kot $\\varphi$ razgrnjenega plašča.\n\nStranica stožca (Pitagorov izrek v osnem preseku): $s = \\sqrt{v^2 + r^2} = \\sqrt{a^2 + \\frac{a^2}{4}} = \\frac{a\\sqrt{5}}{2}$.\n\nRazgrnjeni plašč je krožni izsek s polmerom $s$, njegov lok je obseg osnovne ploskve $2\\pi r$:\n\n$\\frac{\\varphi}{360^\\circ} \\cdot 2\\pi s = 2\\pi r$, torej $\\varphi = 360^\\circ \\cdot \\frac{r}{s} = 360^\\circ \\cdot \\frac{a/2}{a\\sqrt{5}/2} = \\frac{360^\\circ}{\\sqrt{5}}$.\n\n$\\varphi \\approx 160{,}997^\\circ \\approx 161^\\circ$."
+      },
+      {
+       "title": "Drugače: s ploščino plašča",
+       "text": "Plašč stožca ima ploščino $P_{\\mathrm{pl}} = \\pi r s$, krožni izsek s polmerom $s$ in kotom $\\varphi$ pa $\\frac{\\varphi}{360^\\circ} \\cdot \\pi s^2$. Izenačimo:\n\n$\\frac{\\varphi}{360^\\circ} \\cdot \\pi s^2 = \\pi r s$, torej $\\varphi = 360^\\circ \\cdot \\frac{r}{s}$.\n\nZ $r = \\frac{a}{2}$ in $s = \\frac{a\\sqrt{5}}{2}$: $\\frac{r}{s} = \\frac{1}{\\sqrt{5}} \\approx 0{,}4472$, $\\varphi \\approx 360^\\circ \\cdot 0{,}4472 \\approx 161^\\circ$.\n\nSmiselnost: $\\varphi < 180^\\circ$, ker je $s > 2r$ (stožec je razmeroma visok)."
+      }
+     ],
+     "scoring": "1 t. za $r = \\frac{a}{2}$ in $v = a$, 1 t. za $s = \\frac{a\\sqrt{5}}{2}$, 1 t. za zvezo $\\varphi = 360^\\circ \\cdot \\frac{r}{s}$ (enakost loka in obsega osnovne ploskve ali ploščin), 1 t. za $\\varphi \\approx 161^\\circ$.",
+     "mistake": "Napačno je za polmer izseka vzeti višino $v = a$ namesto stranice $s$: dobimo $\\varphi = 360^\\circ \\cdot \\frac{1}{2} = 180^\\circ$. Pri razgrnitvi plašča je polmer izseka stranica stožca, ki je daljša od višine."
+    },
+    {
+     "id": "c",
+     "points": 3,
+     "format": "open",
+     "text": "Kocka z robom $a = 1$ stoji na osnovni ploskvi pravilne štiristrane piramide. Robovi spodnje ploskve kocke so vzporedni z osnovnimi robovi piramide, štiri oglišča zgornje ploskve kocke pa ležijo na stranskih robovih piramide (piramida je kocki očrtana, glej skico; skica ni v merilu). Stranski rob piramide oklepa z osnovno ploskvijo kot $\\alpha = 60^\\circ$. Izračunaj natančno dolžino osnovnega roba $b$ piramide.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 217.7 209.8\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><path d=\"M146.8 193.8L201.7 158.5M146.8 193.8L16 193.8M146.8 193.8L108.9 16M201.7 158.5L108.9 16M16 193.8L108.9 16\" stroke-width=\"1.5\"/><path d=\"M70.9 158.5L201.7 158.5M70.9 158.5L16 193.8M70.9 158.5L108.9 16\" stroke-width=\"1\" stroke-dasharray=\"4 3\"/><path d=\"M129.7 113.9L160 94.5M160 94.5L88 94.5M88 94.5L57.7 113.9M57.7 113.9L129.7 113.9M129.7 185.9L160 166.5M129.7 185.9L57.7 185.9M129.7 185.9L129.7 113.9M160 166.5L160 94.5M57.7 185.9L57.7 113.9\" stroke-width=\"1.3\"/><path d=\"M88 166.5L160 166.5M88 166.5L57.7 185.9M88 166.5L88 94.5\" stroke-width=\"0.9\" stroke-dasharray=\"3 2.5\"/><path d=\"M108.9 176.2L201.7 158.5M108.9 176.2L108.9 16\" stroke-width=\"0.8\" stroke-dasharray=\"2 2\" stroke-opacity=\"0.7\"/><path d=\"M182.1 162.3A20 20 0 0 1 190.8 141.8\" stroke-width=\"0.9\"/><text x=\"171\" y=\"151.2\" fill=\"currentColor\" stroke=\"none\">α</text><text x=\"105.9\" y=\"11\" fill=\"currentColor\" stroke=\"none\">V</text><text x=\"95.9\" y=\"180.2\" fill=\"currentColor\" stroke=\"none\">O</text><text x=\"61.7\" y=\"152.9\" fill=\"currentColor\" stroke=\"none\">1</text><text x=\"78.4\" y=\"206.8\" fill=\"currentColor\" stroke=\"none\">b</text></svg>",
+     "answer": "$b = 1 + \\frac{\\sqrt{6}}{3} = \\frac{3 + \\sqrt{6}}{3}$",
+     "ways": [
+      {
+       "title": "Z diagonalnim presekom in tangensom",
+       "text": "**Podatki:** rob kocke $1$, $\\alpha = 60^\\circ$ (kot med stranskim robom in osnovno ploskvijo).\n\n**Iščemo:** osnovni rob $b$ piramide.\n\nOpazujmo presek skozi vrh $V$ in dve nasprotni oglišči osnovne ploskve (diagonalni presek). V njem leži stranski rob, ki oklepa z diagonalo osnovne ploskve kot $\\alpha$, in tudi diagonalni presek kocke – pravokotnik s širino $\\sqrt{2}$ (diagonala ploskve kocke) in višino $1$.\n\nNaj bo $A$ oglišče osnovne ploskve piramide, $T$ zgornje oglišče kocke na robu $AV$ in $T'$ njegova pravokotna projekcija na osnovno ploskev. Točka $T'$ je oglišče spodnje ploskve kocke in leži na diagonali osnovne ploskve, od središča $O$ je oddaljena $\\frac{\\sqrt{2}}{2}$, oglišče $A$ pa $\\frac{b\\sqrt{2}}{2}$.\n\nV pravokotnem trikotniku $AT'T$ je $|TT'| = 1$, $|AT'| = \\frac{b\\sqrt{2}}{2} - \\frac{\\sqrt{2}}{2} = \\frac{(b - 1)\\sqrt{2}}{2}$ in kot pri $A$ je $60^\\circ$:\n\n$\\tan 60^\\circ = \\frac{|TT'|}{|AT'|}$, $\\sqrt{3} = \\frac{2}{(b - 1)\\sqrt{2}}$, $b - 1 = \\frac{2}{\\sqrt{6}} = \\frac{\\sqrt{6}}{3}$.\n\n$b = 1 + \\frac{\\sqrt{6}}{3} = \\frac{3 + \\sqrt{6}}{3} \\approx 1{,}816$."
+      },
+      {
+       "title": "Drugače: s podobnima trikotnikoma",
+       "text": "Višina piramide: iz pravokotnega trikotnika $AOV$ je $h = \\frac{b\\sqrt{2}}{2} \\cdot \\tan 60^\\circ = \\frac{b\\sqrt{6}}{2}$.\n\nDiagonalni presek piramide je enakokrak trikotnik z osnovnico $b\\sqrt{2}$ in višino $h$. Zgornji rob pravokotnika (diagonala zgornje ploskve kocke, dolžine $\\sqrt{2}$) odreže na vrhu manjši, podoben trikotnik z višino $h - 1$:\n\n$\\frac{\\sqrt{2}}{b\\sqrt{2}} = \\frac{h - 1}{h}$, torej $b(h - 1) = h$.\n\nVstavimo $h = \\frac{b\\sqrt{6}}{2}$ in delimo z $b$: $\\frac{b\\sqrt{6}}{2} - 1 = \\frac{\\sqrt{6}}{2}$, $b = \\frac{2}{\\sqrt{6}}\\left(1 + \\frac{\\sqrt{6}}{2}\\right) = \\frac{2}{\\sqrt{6}} + 1 = 1 + \\frac{\\sqrt{6}}{3}$.\n\nPreizkus: $h = \\frac{b\\sqrt{6}}{2} \\approx 2{,}225$ in $\\frac{h}{h - 1} \\approx 1{,}816 = b$. ✓"
+      }
+     ],
+     "scoring": "1 t. za pravokotni trikotnik s kotom $60^\\circ$ v diagonalnem preseku (ali podobna trikotnika) s pravilno uporabo polovice diagonale, 1 t. za enačbo, npr. $\\sqrt{3} = \\frac{2}{(b - 1)\\sqrt{2}}$, 1 t. za natančen rezultat $b = 1 + \\frac{\\sqrt{6}}{3}$.",
+     "mistake": "Napačno je delati v preseku, vzporednem z osnovnim robom (s polovico roba $\\frac{b}{2}$ namesto polovice diagonale $\\frac{b\\sqrt{2}}{2}$): tako dobimo kot med stransko ploskvijo in osnovno ploskvijo, ne kot stranskega roba, in napačen $b = 1 + \\frac{2\\sqrt{3}}{3}$."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "section": "C",
+   "n": 2,
+   "intro": "Pravokotnik $OBCD$ ima oglišča $O(0, 0)$, $B(2d, 0)$, $C(2d, 3d)$ in $D(0, 3d)$, kjer je $d > 0$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 206 244\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"ar-2c2\" viewBox=\"0 0 6 6\" refX=\"5\" refY=\"3\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L6 3L0 6z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><path d=\"M28 24Q90 24 152 210L28 210Z\" fill=\"currentColor\" fill-opacity=\"0.15\" stroke=\"none\"/><path d=\"M15.6 210H182\" stroke-width=\"1.1\" marker-end=\"url(#ar-2c2)\"/><path d=\"M28 222.4V10\" stroke-width=\"1.1\" marker-end=\"url(#ar-2c2)\"/><path d=\"M28 24H152V210\" stroke-width=\"1.2\"/><path d=\"M28 24Q90 24 152 210\" stroke-width=\"1.6\"/><circle cx=\"28\" cy=\"210\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"152\" cy=\"210\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"152\" cy=\"24\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"28\" cy=\"24\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"16\" y=\"222\" fill=\"currentColor\" stroke=\"none\">O</text><text x=\"149\" y=\"223\" fill=\"currentColor\" stroke=\"none\">B</text><text x=\"156\" y=\"21\" fill=\"currentColor\" stroke=\"none\">C</text><text x=\"16\" y=\"21\" fill=\"currentColor\" stroke=\"none\">D</text><text x=\"180\" y=\"222\" fill=\"currentColor\" stroke=\"none\">x</text><text x=\"33\" y=\"16\" fill=\"currentColor\" stroke=\"none\">y</text><text x=\"84\" y=\"19\" fill=\"currentColor\" stroke=\"none\">2d</text><text x=\"157\" y=\"121\" fill=\"currentColor\" stroke=\"none\">3d</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 4,
+     "format": "open",
+     "text": "Graf kvadratne funkcije $p$ ima teme v oglišču $D$ in poteka skozi oglišče $B$. Lik, ki ga omejujejo graf funkcije $p$ in obe koordinatni osi (na skici osenčen), zavrtimo za $360^\\circ$ okoli abscisne osi. Prostornina nastale vrtenine je $\\frac{384\\pi}{5}$. Izračunaj $d$.",
+     "answer": "$d = 2$",
+     "ways": [
+      {
+       "title": "Z določenim integralom",
+       "text": "**Podatki:** teme $D(0, 3d)$, točka $B(2d, 0)$ na grafu, $V = \\frac{384\\pi}{5}$.\n\n**Iščemo:** $d$.\n\n**Predpis.** Teme je na ordinatni osi, zato $p(x) = kx^2 + 3d$. Iz $p(2d) = 0$: $4d^2 k + 3d = 0$, $k = -\\frac{3}{4d}$, torej $p(x) = 3d - \\frac{3x^2}{4d}$.\n\n**Prostornina vrtenine** okoli abscisne osi: $V = \\pi \\int_0^{2d} p(x)^2\\,dx$.\n\n$p(x)^2 = 9d^2 - \\frac{9x^2}{2} + \\frac{9x^4}{16d^2}$\n\n$V = \\pi\\left[9d^2 x - \\frac{3x^3}{2} + \\frac{9x^5}{80d^2}\\right]_0^{2d} = \\pi\\left(18d^3 - 12d^3 + \\frac{18d^3}{5}\\right) = \\frac{48\\pi d^3}{5}$.\n\n**Enačba.** $\\frac{48\\pi d^3}{5} = \\frac{384\\pi}{5}$, torej $d^3 = 8$ in $d = 2$."
+      },
+      {
+       "title": "Drugače: z razstavljenim predpisom in uvedbo nove spremenljivke",
+       "text": "Predpis zapišemo v obliki z ničlama $\\pm 2d$: $p(x) = \\frac{3d}{4d^2}(4d^2 - x^2) = 3d\\left(1 - \\left(\\frac{x}{2d}\\right)^2\\right)$.\n\nVpeljemo $u = \\frac{x}{2d}$, $dx = 2d\\,du$, meje $0$ in $1$:\n\n$V = \\pi \\int_0^{1} 9d^2 (1 - u^2)^2 \\cdot 2d\\,du = 18\\pi d^3 \\int_0^1 (1 - 2u^2 + u^4)\\,du = 18\\pi d^3 \\left(1 - \\frac{2}{3} + \\frac{1}{5}\\right) = 18\\pi d^3 \\cdot \\frac{8}{15} = \\frac{48\\pi d^3}{5}$.\n\nIz $\\frac{48\\pi d^3}{5} = \\frac{384\\pi}{5}$ dobimo $d^3 = 8$, $d = 2$.\n\nPreizkus smiselnosti: vrtenina je del valja s polmerom $3d = 6$ in višino $2d = 4$, ki ima prostornino $\\pi \\cdot 36 \\cdot 4 = 144\\pi$; dobljena $\\frac{384\\pi}{5} = 76{,}8\\pi$ je manjša. ✓"
+      }
+     ],
+     "scoring": "1 t. za predpis $p(x) = -\\frac{3}{4d}x^2 + 3d$, 1 t. za nastavek $V = \\pi \\int_0^{2d} p(x)^2\\,dx$, 1 t. za izračunan integral $\\frac{48\\pi d^3}{5}$, 1 t. za $d = 2$.",
+     "mistake": "Napačno je vrteti »brez kvadrata«, $V = \\pi \\int_0^{2d} p(x)\\,dx$: pri vrtenju okoli abscisne osi je prerez krog s polmerom $p(x)$ in ploščino $\\pi p(x)^2$. Pogosta je tudi napaka pri kvadriranju, ko srednji člen $2 \\cdot 3d \\cdot \\frac{3x^2}{4d} = \\frac{9x^2}{2}$ izpustimo."
+    },
+    {
+     "id": "b",
+     "points": 6,
+     "format": "open",
+     "text": "Naj bo $d = 2$. Zapiši enačbo elipse, ki poteka skozi vsa štiri oglišča pravokotnika $OBCD$, ima osi vzporedni s koordinatnima osema in eno od gorišč na ordinatni osi.",
+     "answer": "$\\frac{(x - 2)^2}{16} + \\frac{(y - 3)^2}{12} = 1$ oziroma $3x^2 + 4y^2 - 12x - 24y = 0$",
+     "ways": [
+      {
+       "title": "Z enačbo elipse in pogojem za gorišče",
+       "text": "**Podatki:** $O(0, 0)$, $B(4, 0)$, $C(4, 6)$, $D(0, 6)$; osi elipse sta vzporedni s koordinatnima osema; eno gorišče je na ordinatni osi.\n\n**Iščemo:** enačbo elipse $\\frac{(x - p)^2}{a^2} + \\frac{(y - q)^2}{b^2} = 1$.\n\n**Središče.** Elipsa poteka skozi $O$ in $B$, ki imata isto ordinato, zato je $p$ razpolovišče abscis: $p = 2$. Enako iz $O$ in $D$: $q = 3$. Središče je $S(2, 3)$, središče pravokotnika.\n\n**Gorišči.** Ležita na veliki osi, simetrično glede na $S$. Če bi bila velika os navpična, bi bili gorišči na premici $x = 2$, ne na ordinatni osi. Velika os je torej vodoravna, gorišči sta $F_{1,2}(2 \\mp e, 3)$, in iz $2 - e = 0$ sledi $e = 2$: $F_1(0, 3)$, $F_2(4, 3)$.\n\n**Polosi.** Velja $a^2 - b^2 = e^2 = 4$, točka $O(0, 0)$ pa leži na elipsi: $\\frac{4}{a^2} + \\frac{9}{b^2} = 1$.\n\nVstavimo $a^2 = b^2 + 4$ in pomnožimo z $b^2(b^2 + 4)$:\n\n$4b^2 + 9(b^2 + 4) = b^2(b^2 + 4)$, $b^4 - 9b^2 - 36 = 0$, $(b^2 - 12)(b^2 + 3) = 0$.\n\nKer je $b^2 > 0$, je $b^2 = 12$ in $a^2 = 16$.\n\n**Enačba:** $\\frac{(x - 2)^2}{16} + \\frac{(y - 3)^2}{12} = 1$."
+      },
+      {
+       "title": "Drugače: z definicijo elipse",
+       "text": "Kot zgoraj ugotovimo, da je središče $S(2, 3)$ in sta gorišči $F_1(0, 3)$, $F_2(4, 3)$.\n\nElipsa je množica točk, ki imajo vsoto razdalj do gorišč enako $2a$. Za oglišče $O$:\n\n$|OF_1| = 3$, $|OF_2| = \\sqrt{4^2 + 3^2} = 5$, zato $2a = 3 + 5 = 8$ in $a = 4$.\n\n$b^2 = a^2 - e^2 = 16 - 4 = 12$. Enačba: $\\frac{(x - 2)^2}{16} + \\frac{(y - 3)^2}{12} = 1$.\n\nPomnožimo z $48$ in razvijemo: $3(x - 2)^2 + 4(y - 3)^2 = 48$, $3x^2 + 4y^2 - 12x - 24y = 0$."
+      },
+      {
+       "title": "Preizkus",
+       "text": "Vstavimo oglišča v $3x^2 + 4y^2 - 12x - 24y = 0$:\n\n- $O(0, 0)$: $0 = 0$ ✓\n- $B(4, 0)$: $48 - 48 = 0$ ✓\n- $C(4, 6)$: $48 + 144 - 48 - 144 = 0$ ✓\n- $D(0, 6)$: $144 - 144 = 0$ ✓\n\nKer je $a^2 = 16 > b^2 = 12$, je velika os res vodoravna, $e = \\sqrt{16 - 12} = 2$, gorišče $F_1(0, 3)$ je na ordinatni osi."
+      }
+     ],
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 205 180\" font-family=\"sans-serif\" font-size=\"10\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"ar-2c2b\" viewBox=\"0 0 6 6\" refX=\"5\" refY=\"3\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L6 3L0 6z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><path d=\"M14 147H191\" stroke-width=\"1.1\" marker-end=\"url(#ar-2c2b)\"/><path d=\"M61.5 166V8\" stroke-width=\"1.1\" marker-end=\"url(#ar-2c2b)\"/><rect x=\"61.5\" y=\"33\" width=\"76\" height=\"114\" stroke-width=\"1.2\" fill=\"currentColor\" fill-opacity=\"0.1\"/><ellipse cx=\"99.5\" cy=\"90\" rx=\"76\" ry=\"65.8\" stroke-width=\"1.6\"/><path d=\"M23.5 90H175.5\" stroke-width=\"0.7\" stroke-dasharray=\"3 3\"/><circle cx=\"61.5\" cy=\"90\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"137.5\" cy=\"90\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"99.5\" cy=\"90\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"64.5\" y=\"86\" fill=\"currentColor\" stroke=\"none\">F₁</text><text x=\"140.5\" y=\"86\" fill=\"currentColor\" stroke=\"none\">F₂</text><text x=\"96.5\" y=\"85\" fill=\"currentColor\" stroke=\"none\">S</text><text x=\"49.5\" y=\"159\" fill=\"currentColor\" stroke=\"none\">O</text><text x=\"140.5\" y=\"159\" fill=\"currentColor\" stroke=\"none\">B</text><text x=\"140.5\" y=\"29\" fill=\"currentColor\" stroke=\"none\">C</text><text x=\"50.5\" y=\"29\" fill=\"currentColor\" stroke=\"none\">D</text><text x=\"187\" y=\"159\" fill=\"currentColor\" stroke=\"none\">x</text><text x=\"66.5\" y=\"12\" fill=\"currentColor\" stroke=\"none\">y</text></svg>",
+     "scoring": "1 t. za središče $S(2, 3)$, 1 t. za linearno ekscentričnost $e = 2$ (gorišči $(0, 3)$ in $(4, 3)$, vodoravna velika os), 1 t. za zvezo $a^2 - b^2 = 4$ ali $2a = |OF_1| + |OF_2|$, 1 t. za enačbo s koordinatami oglišča (npr. $\\frac{4}{a^2} + \\frac{9}{b^2} = 1$), 1 t. za $a^2 = 16$ in $b^2 = 12$, 1 t. za enačbo elipse.",
+     "mistake": "Napačno je postaviti središče elipse v izhodišče ($\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1$): elipsa skozi vsa štiri oglišča pravokotnika ima središče v središču pravokotnika $S(2, 3)$. Napaka je tudi $b^2 - a^2 = 4$: pri vodoravni veliki osi je $a > b$ in $e^2 = a^2 - b^2$."
+    }
+   ]
+  }
+ ]
+}

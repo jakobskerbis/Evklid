@@ -38,3 +38,25 @@ export function goalPrompt(settings = {}, today = null) {
   const when = n === null ? "" : n < 0 ? ` (${fmtDateSl(settings.goal_date)}, že mimo)` : ` (${fmtDateSl(settings.goal_date)}, še ${n} dni)`;
   return `; cilj učenca: ${NAMES_SL[g]}${when}`;
 }
+
+// Domači zaslon po cilju (j, 1. 11.): ena aplikacija, isti videz; cilj določi le dve bližnjici na Učni poti
+// in ali sta nad načini učenja (first) ali pod njimi. Nič se ne skrije, vse ostane tudi v meniju.
+// Bližnjice: scan, games, chat, textbook, exams (NPZ in matura), izpiti (regijski izpiti), tek (tekmovalni trening), contest.
+export function goalShortcuts(settings = {}) {
+  const g = GOALS.includes(settings.goal) ? settings.goal : DEFAULT_GOAL;
+  if (jeFaks(settings)) return { first: g === "izpit", items: ["textbook", "chat"] };
+  if (settings.school_system && settings.school_system !== "SI")
+    return g === "izpit" ? { first: true, items: ["izpiti", "scan"] } : { first: false, items: ["scan", "chat"] };
+  if (g === "npz" || g === "matura") return { first: true, items: ["exams", "scan"] };
+  if (g === "tekmovanje") return { first: true, items: ["tek", "contest"] };
+  if (g === "test") return { first: false, items: ["scan", "chat"] };
+  return { first: false, items: ["scan", "games"] };
+}
+
+// Telefon: četrti zavihek spodnje vrstice po cilju (lab, exams ali competition); kar ni tam, je pod »Jaz«.
+export function goalTabbarView(settings = {}, { siExams = false } = {}) {
+  if (jeFaks(settings) || (settings.school_system && settings.school_system !== "SI")) return "lab";
+  if (siExams && (settings.goal === "npz" || settings.goal === "matura")) return "exams";
+  if (settings.goal === "tekmovanje") return "competition";
+  return "lab";
+}

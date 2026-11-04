@@ -13,6 +13,7 @@ export const info = {
   predmet: "NAR",
   opis: "Sonce vedno osvetljuje polovico Lune, z Zemlje pa vidimo različno velik del te polovice. Premikaj Luno po tirnici in poglej, kako jo vidimo z Zemlje.",
   merilo: { m: 7.5e7, oznaka: "premer prikaza ≈ 75 000 km (le velikosti teles)" },
+  poskusi: "premikaj »Dan od mlaja« in poišči dan, ko vidimo prvi krajec; kje je takrat Luna glede na Sonce?",
 };
 
 const D = Math.PI / 180;

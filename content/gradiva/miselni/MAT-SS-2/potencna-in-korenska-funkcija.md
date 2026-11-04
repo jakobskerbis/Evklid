@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Potenčna funkcija
+  - $f(x) = x^n$, $n \in \mathbb{Z}$
+  - kocka iz kock: $V = a^3$
+- Sodi eksponent
+  - soda funkcija, $Z_f = [0, \infty)$
+  - skozi $(-1, 1)$ in $(1, 1)$
+- Lihi eksponent
+  - liha funkcija, narašča, $Z_f = \mathbb{R}$
+  - skozi $(-1, -1)$ in $(1, 1)$
+- Večji eksponent
+  - na $(-1, 1)$ bolj sploščen graf
+  - zunaj intervala strmejši
+- Negativni eksponent
+  - $x^{-n} = \frac{1}{x^n}$, $D_f = \mathbb{R} \setminus \{0\}$
+  - hiperbola, asimptoti $x = 0$ in $y = 0$
+  - napaka: $2^{-2}$ ni $-4$
+- Korenska funkcija
+  - $\sqrt[n]{x}$ je inverz od $x^n$
+  - graf zrcaljen čez $y = x$
+  - sodi $n$: le za $x \ge 0$
+- Modeliranje
+  - rob kocke $a = \sqrt[3]{V}$
+  - dvojna prostornina: rob $\sqrt[3]{2} \approx 1{,}26$-krat

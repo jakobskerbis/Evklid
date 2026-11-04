@@ -1,0 +1,1931 @@
+{
+ "id": "MATURA-KEM-2025-spomladanski",
+ "exam": "MATURA",
+ "subject": "KEM",
+ "minutes": 180,
+ "points": 80,
+ "author": "AI",
+ "tools": "pisalo, svinčnik, radirka, šilček in računalo; periodni sistem (z relativnimi atomskimi masami) je priložen na perforiranem listu; pri poli 1 tudi list za odgovore",
+ "polas": [
+  {
+   "pola": 1,
+   "minutes": 90,
+   "tools": "Dovoljeni so pisalo, svinčnik, radirka, šilček in računalo; priložen je periodni sistem, odgovore vpišeš na list za odgovore."
+  },
+  {
+   "pola": 2,
+   "minutes": 90,
+   "tools": "Dovoljeni so pisalo, svinčnik, radirka, šilček in računalo; priložen je periodni sistem, pri računskih nalogah zapiši celotno pot do rezultata."
+  }
+ ],
+ "tasks": [
+  {
+   "pola": 1,
+   "n": 1,
+   "intro": "Kofein je naravna spojina iz kavnih zrn, čajnih listov in kakava. V preglednici so ponazoritvene (zaokrožene) vrednosti $\\mathrm{LD_{50}}$ kofeina pri poskusnih živalih. $\\mathrm{LD_{50}}$ je odmerek na kilogram telesne mase, pri katerem pogine polovica živali v poskusu.\n\n| Žival | Spol | Način vnosa | $\\mathrm{LD_{50}}$ / (mg/kg) |\n|---|---|---|---|\n| miš | samec | oralno | 130 |\n| miš | samica | oralno | 160 |\n| podgana | samec | oralno | 200 |\n| podgana | samica | oralno | 250 |\n| podgana | samec | intravensko | 105 |",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Kateri sklep je na podlagi podatkov v preglednici pravilen?",
+     "choices": [
+      "Za podgane samce je kofein bolj strupen, če ga zaužijejo (oralno), kot če ga dobijo v žilo (intravensko).",
+      "Za miši samice je kofein bolj strupen kot za miši samce.",
+      "Odmerek $50\\,\\mathrm{mg}$ kofeina, zaužit oralno, bi povzročil smrt približno polovice podgan samcev z maso $250\\,\\mathrm{g}$.",
+      "Za miš samca z maso $20\\,\\mathrm{g}$ je oralni odmerek $\\mathrm{LD_{50}}$ enak $2{,}6\\,\\mathrm{g}$ kofeina."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: $0{,}250\\,\\mathrm{kg} \\cdot 200\\,\\mathrm{mg/kg} = 50\\,\\mathrm{mg}$, kar je ravno odmerek $\\mathrm{LD_{50}}$ za tako podgano.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $\\mathrm{LD_{50}}$ (podgana, samec, oralno) $= 200\\,\\mathrm{mg/kg}$; $m(\\text{podgana}) = 250\\,\\mathrm{g} = 0{,}250\\,\\mathrm{kg}$; $\\mathrm{LD_{50}}$ (miš, samec, oralno) $= 130\\,\\mathrm{mg/kg}$; $m(\\text{miš}) = 20\\,\\mathrm{g} = 0{,}020\\,\\mathrm{kg}$.\n\n**Iščemo:** kateri sklep se ujema s preglednico.\n\nPomembno: **manjša** vrednost $\\mathrm{LD_{50}}$ pomeni, da je za smrt polovice živali potreben manjši odmerek, torej je snov **bolj strupena**.\n\n- **A ni pravilen.** Intravensko je $\\mathrm{LD_{50}} = 105\\,\\mathrm{mg/kg}$, oralno $200\\,\\mathrm{mg/kg}$. Intravenski odmerek je manjši, zato je kofein bolj strupen, če ga podgana dobi v žilo (snov pride neposredno v kri, nič se je ne izgubi pri prebavi).\n- **B ni pravilen.** Za samice je $\\mathrm{LD_{50}} = 160\\,\\mathrm{mg/kg}$, za samce $130\\,\\mathrm{mg/kg}$. Samice prenesejo večji odmerek, zato je kofein zanje *manj* strupen.\n- **C je pravilen.** Smrtni odmerek za polovico podgan samcev z maso $250\\,\\mathrm{g}$: $0{,}250\\,\\mathrm{kg} \\cdot 200\\,\\mathrm{mg/kg} = 50\\,\\mathrm{mg}$.\n- **D ni pravilen.** $0{,}020\\,\\mathrm{kg} \\cdot 130\\,\\mathrm{mg/kg} = 2{,}6\\,\\mathrm{mg}$, ne $2{,}6\\,\\mathrm{g}$ (napaka v enoti, tisočkrat preveč)."
+      }
+     ],
+     "mistake": "Pogosto se misli, da večja vrednost $\\mathrm{LD_{50}}$ pomeni bolj strupeno snov. Res je obratno: večji kot je smrtni odmerek, manj strupena je snov. Pozor tudi na enote: $\\mathrm{LD_{50}}$ je podan v mg na kg telesne mase, maso živali je treba pretvoriti v kilograme."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 2,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Kateri od naštetih delcev ima največjo maso?",
+     "choices": [
+      "atom $\\mathrm{^{3}_{2}He}$",
+      "ion $\\mathrm{^{4}_{2}He^{2+}}$",
+      "atom $\\mathrm{^{3}_{1}H}$",
+      "ion $\\mathrm{^{2}_{1}H^{-}}$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "**B**: ion $\\mathrm{^{4}_{2}He^{2+}}$ ima 4 nukleone (2 protona in 2 nevtrona), drugi delci le 3 ali 2.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Masa delca je skoraj v celoti v jedru. Proton in nevtron imata vsak maso približno $1\\,\\mathrm{u}$, elektron pa le približno $\\frac{1}{1836}$ mase protona, zato elektroni k masi skoraj nič ne prispevajo. Maso delca torej v grobem določa **masno število** $A$ (zgornja številka), ne vrstno število in ne naboj.\n\n| Delec | protoni | nevtroni | elektroni | masa ≈ |\n|---|---|---|---|---|\n| $\\mathrm{^{3}_{2}He}$ | 2 | 1 | 2 | $3\\,\\mathrm{u}$ |\n| $\\mathrm{^{4}_{2}He^{2+}}$ | 2 | 2 | 0 | $4\\,\\mathrm{u}$ |\n| $\\mathrm{^{3}_{1}H}$ | 1 | 2 | 1 | $3\\,\\mathrm{u}$ |\n| $\\mathrm{^{2}_{1}H^{-}}$ | 1 | 1 | 2 | $2\\,\\mathrm{u}$ |\n\n- **A ni pravilen:** atom $\\mathrm{^{3}_{2}He}$ ima sicer največ vseh delcev skupaj (5), a dva od njih sta elektrona, ki sta skoraj brez mase.\n- **B je pravilen:** ion helija ima 4 nukleone; to, da je izgubil oba elektrona, maso zmanjša le za zanemarljivo malo.\n- **C ni pravilen:** tritij ima največ nevtronov (2), a skupaj le 3 nukleone.\n- **D ni pravilen:** ion devterija ima dodaten elektron, ki mase skoraj ne poveča; ima le 2 nukleona."
+      }
+     ],
+     "mistake": "Napačno je sklepati po številu vseh delcev ali po naboju. Elektroni so tako lahki, da se masa iona skoraj ne razlikuje od mase atoma."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 3,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Delci $\\mathrm{P^{3-}}$, $\\mathrm{Cl^{-}}$, $\\mathrm{Ar}$, $\\mathrm{K^{+}}$ in $\\mathrm{Ca^{2+}}$ imajo enako elektronsko konfiguracijo. Katera trditev o teh delcih je pravilna?",
+     "choices": [
+      "Vsi delci imajo v jedru enako število protonov.",
+      "Ion $\\mathrm{P^{3-}}$ ima v jedru 18 protonov.",
+      "Vsak delec ima 18 elektronov z razporeditvijo $1s^2\\,2s^2\\,2p^6\\,3s^2\\,3p^6$.",
+      "Ion $\\mathrm{K^{+}}$ ima en elektron v orbitali $4s$."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: vsi delci imajo 18 elektronov in konfiguracijo argona $1s^2\\,2s^2\\,2p^6\\,3s^2\\,3p^6$.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Število elektronov dobimo iz vrstnega števila $Z$ (število protonov) in naboja: $N(e^-) = Z - \\text{naboj}$.\n\n- $\\mathrm{P^{3-}}$: $Z = 15$, elektronov $15 + 3 = 18$\n- $\\mathrm{Cl^{-}}$: $Z = 17$, elektronov $17 + 1 = 18$\n- $\\mathrm{Ar}$: $Z = 18$, elektronov $18$\n- $\\mathrm{K^{+}}$: $Z = 19$, elektronov $19 - 1 = 18$\n- $\\mathrm{Ca^{2+}}$: $Z = 20$, elektronov $20 - 2 = 18$\n\nTakim delcem pravimo **izoelektronski** delci; vsi imajo konfiguracijo žlahtnega plina argona.\n\n- **A ni pravilen:** število protonov je različno (od 15 do 20); prav zato so to različni elementi.\n- **B ni pravilen:** fosfor ima vedno 15 protonov. Ko atom sprejme 3 elektrone, se spremeni le število elektronov (18), jedro ostane enako.\n- **C je pravilen:** $2 + 2 + 6 + 2 + 6 = 18$ elektronov.\n- **D ni pravilen:** kalijev atom ima konfiguracijo $[\\mathrm{Ar}]\\,4s^1$; ko nastane ion $\\mathrm{K^{+}}$, odda prav ta elektron $4s$. Ion $\\mathrm{K^{+}}$ zato nima elektrona v orbitali $4s$."
+      }
+     ],
+     "mistake": "Pri anionih se pogosto zamenja število elektronov s številom protonov. Naboj iona nastane le s sprejemom ali oddajo elektronov; število protonov (in s tem element) ostane enako."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 4,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera primerjava polmerov delcev je pravilna?",
+     "choices": [
+      "$r(\\mathrm{Na^{+}}) > r(\\mathrm{Na})$",
+      "$r(\\mathrm{F^{-}}) < r(\\mathrm{F})$",
+      "$r(\\mathrm{Mg^{2+}}) < r(\\mathrm{Na^{+}}) < r(\\mathrm{F^{-}})$",
+      "$r(\\mathrm{O^{2-}}) < r(\\mathrm{F^{-}})$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: izoelektronski delci (10 elektronov) – večji kot je naboj jedra, manjši je delec.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "- **A ni pravilen.** Atom natrija ($[\\mathrm{Ne}]\\,3s^1$) pri nastanku iona $\\mathrm{Na^{+}}$ izgubi edini elektron v tretji lupini. Ion ima eno lupino manj, zato je **manjši** od atoma: $r(\\mathrm{Na^{+}}) < r(\\mathrm{Na})$.\n- **B ni pravilen.** Atom fluora sprejme elektron, število protonov (9) pa ostane enako. Med elektroni je več odboja, jedro jih privlači šibkeje (na elektron), zato je anion **večji** od atoma: $r(\\mathrm{F^{-}}) > r(\\mathrm{F})$.\n- **C je pravilen.** $\\mathrm{Mg^{2+}}$, $\\mathrm{Na^{+}}$ in $\\mathrm{F^{-}}$ imajo vsi 10 elektronov (konfiguracija neona). Pri enakem številu elektronov je delec tem manjši, čim več protonov ima v jedru, saj jedro elektrone močneje privlači: $Z(\\mathrm{Mg}) = 12$, $Z(\\mathrm{Na}) = 11$, $Z(\\mathrm{F}) = 9$. Zato je $r(\\mathrm{Mg^{2+}}) < r(\\mathrm{Na^{+}}) < r(\\mathrm{F^{-}})$.\n- **D ni pravilen.** Tudi $\\mathrm{O^{2-}}$ in $\\mathrm{F^{-}}$ sta izoelektronska (10 elektronov). Kisik ima 8 protonov, fluor 9, zato je $\\mathrm{O^{2-}}$ **večji**: $r(\\mathrm{O^{2-}}) > r(\\mathrm{F^{-}})$."
+      }
+     ],
+     "mistake": "Napačno je misliti, da je delec z več protoni večji, ker je »težji«. Pri izoelektronskih delcih velja ravno obratno: več protonov močneje pritegne enako število elektronov."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 5,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "V kateri od naštetih molekul je vezni kot največji?",
+     "choices": [
+      "$\\mathrm{H_2S}$",
+      "$\\mathrm{NCl_3}$",
+      "$\\mathrm{BCl_3}$",
+      "$\\mathrm{SiCl_4}$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: $\\mathrm{BCl_3}$ je trikotna planarna molekula z veznim kotom $120°$.",
+     "ways": [
+      {
+       "title": "Po teoriji VSEPR",
+       "text": "Obliko molekule določa število elektronskih skupin (veznih in neveznih parov) okoli osrednjega atoma. Elektronske skupine se razporedijo čim dlje druga od druge, nevezni pari pa se odbijajo močneje kot vezni in vezne kote zmanjšajo.\n\n| Molekula | vezni pari | nevezni pari | oblika | vezni kot |\n|---|---|---|---|---|\n| $\\mathrm{H_2S}$ | 2 | 2 | kotna | manj kot $109{,}5°$ (približno $92°$) |\n| $\\mathrm{NCl_3}$ | 3 | 1 | trigonalna piramida | manj kot $109{,}5°$ (približno $107°$) |\n| $\\mathrm{BCl_3}$ | 3 | 0 | trikotna planarna | $120°$ |\n| $\\mathrm{SiCl_4}$ | 4 | 0 | tetraedrična | $109{,}5°$ |\n\n- **A ni pravilen:** žveplo ima dva nevezna para, ki vezi stisneta skupaj.\n- **B ni pravilen:** dušik ima en nevezni par, kot je manjši od tetraedričnega.\n- **C je pravilen:** bor ima v $\\mathrm{BCl_3}$ le tri elektronske skupine (tri vezne pare, brez neveznega para); te ležijo v ravnini pod kotom $120°$.\n- **D ni pravilen:** $\\mathrm{SiCl_4}$ ima sicer največ vezi, a štiri skupine se razporedijo v tetraeder s kotom $109{,}5°$, kar je manj kot $120°$."
+      }
+     ],
+     "mistake": "Več vezanih atomov ne pomeni večjega kota: več kot je elektronskih skupin okoli osrednjega atoma, manjši je kot med njimi (2 skupini $180°$, 3 skupine $120°$, 4 skupine $109{,}5°$)."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 6,
+   "figure": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" fill=\"currentColor\"><title>Strukturna formula kisline</title><g stroke=\"currentColor\" stroke-width=\"2\"><line x1=\"24\" y1=\"60\" x2=\"40\" y2=\"60\"/><line x1=\"60\" y1=\"60\" x2=\"90\" y2=\"60\"/><line x1=\"96\" y1=\"47\" x2=\"96\" y2=\"27\"/><line x1=\"104\" y1=\"47\" x2=\"104\" y2=\"27\"/><line x1=\"100\" y1=\"73\" x2=\"100\" y2=\"93\"/><line x1=\"110\" y1=\"60\" x2=\"139\" y2=\"60\"/><line x1=\"159\" y1=\"60\" x2=\"175\" y2=\"60\"/><line x1=\"100\" y1=\"115\" x2=\"100\" y2=\"127\"/></g><g font-size=\"16\" text-anchor=\"middle\"><text x=\"15\" y=\"66\">H</text><text x=\"50\" y=\"66\">O</text><text x=\"100\" y=\"66\">P</text><text x=\"100\" y=\"22\">O</text><text x=\"100\" y=\"110\">O</text><text x=\"149\" y=\"66\">O</text><text x=\"185\" y=\"66\">H</text><text x=\"100\" y=\"144\">H</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Na sliki je strukturna formula ene od kislin fosforja (nevezni elektronski pari niso narisani). Katera trditev o tej molekuli je pravilna?",
+     "choices": [
+      "Vezi okoli atoma fosforja so usmerjene proti ogliščem kvadrata.",
+      "Atomi vodika so vezani neposredno na atom fosforja.",
+      "V molekuli so tri dvojne vezi.",
+      "Oksidacijsko število fosforja je $+\\mathrm{V}$."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "**D**: to je $\\mathrm{H_3PO_4}$ (fosforjeva(V) kislina); oksidacijsko število fosforja je $+\\mathrm{V}$.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Iz formule preberemo: trije atomi H, en atom P in štirje atomi O, torej $\\mathrm{H_3PO_4}$. Fosfor je s tremi atomi kisika povezan z enojnimi vezmi (vsak od teh kisikov nosi vodik, skupina $\\mathrm{-OH}$), z enim atomom kisika pa z dvojno vezjo.\n\n**Oksidacijsko število fosforja:** vsota oksidacijskih števil v nevtralni molekuli je $0$; vodik ima $+\\mathrm{I}$, kisik $-\\mathrm{II}$:\n\n$3 \\cdot (+1) + x + 4 \\cdot (-2) = 0 \\Rightarrow x = +5$, torej $+\\mathrm{V}$\n\n- **A ni pravilen:** okoli fosforja so štiri vezane skupine (štirje atomi O) in noben nevezni par, zato so vezi usmerjene proti ogliščem **tetraedra**, ne kvadrata (na sliki je molekula le narisana v ravnini).\n- **B ni pravilen:** vsi trije vodiki so vezani na kisik (skupine $\\mathrm{O{-}H}$). Prav ti vodiki se v vodi odcepijo kot $\\mathrm{H^{+}}$, zato je spojina kislina.\n- **C ni pravilen:** na sliki je le ena dvojna vez ($\\mathrm{P{=}O}$); preostale vezi ($\\mathrm{P{-}O}$ in $\\mathrm{O{-}H}$) so enojne.\n- **D je pravilen** (izračun zgoraj)."
+      }
+     ],
+     "mistake": "Oksidacijsko število ni enako številu vezi, ki jih atom tvori. Izračunamo ga iz vsote oksidacijskih števil, pri čemer ima kisik $-\\mathrm{II}$ in vodik $+\\mathrm{I}$."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 7,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "V katerem paru se med molekulami **vsake** od obeh spojin (v čisti tekoči snovi) tvorijo vodikove vezi?",
+     "choices": [
+      "$\\mathrm{CH_3OH}$ in $\\mathrm{CH_3NH_2}$",
+      "$\\mathrm{HF}$ in $\\mathrm{CH_3F}$",
+      "$\\mathrm{H_2O}$ in $\\mathrm{H_2S}$",
+      "$\\mathrm{CH_3OCH_3}$ in $\\mathrm{CH_3CHO}$"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "**A**: metanol ima vez $\\mathrm{O{-}H}$, metilamin vez $\\mathrm{N{-}H}$.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Vodikova vez med molekulami nastane, če ima molekula atom vodika, vezan na **zelo elektronegativen majhen atom** (F, O ali N), in hkrati atom F, O ali N z neveznim elektronskim parom, ki ta vodik sosednje molekule privlači.\n\n- **A je pravilen:** v $\\mathrm{CH_3OH}$ je vez $\\mathrm{O{-}H}$, v $\\mathrm{CH_3NH_2}$ sta vezi $\\mathrm{N{-}H}$. Obe snovi tvorita vodikove vezi.\n- **B ni pravilen:** $\\mathrm{HF}$ jih tvori, v $\\mathrm{CH_3F}$ pa so vsi vodiki vezani na ogljik. Vez $\\mathrm{C{-}H}$ je skoraj nepolarna, zato med molekulami $\\mathrm{CH_3F}$ ni vodikovih vezi (le dipol-dipol in disperzijske sile).\n- **C ni pravilen:** voda jih tvori, žveplo pa je premalo elektronegativno in prevelik atom, zato med molekulami $\\mathrm{H_2S}$ ni (pomembnih) vodikovih vezi; prav zato je $\\mathrm{H_2S}$ pri sobnih pogojih plin.\n- **D ni pravilen:** dimetil eter in etanal imata atom kisika, a noben vodik ni vezan na kisik (vsi so na ogljiku). Z vodo bi lahko tvorila vodikove vezi, med lastnimi molekulami pa ne."
+      }
+     ],
+     "mistake": "Ni dovolj, da molekula vsebuje O, N ali F. Vodik mora biti vezan prav na tak atom; vodik na ogljiku vodikove vezi ne tvori."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 8,
+   "figure": "<svg viewBox=\"0 0 260 110\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" fill=\"currentColor\"><title>Modela dveh molekul istega elementa</title><g fill-opacity=\"0.25\" stroke=\"currentColor\" stroke-width=\"1.5\"><circle cx=\"45\" cy=\"52\" r=\"20\"/><circle cx=\"75\" cy=\"52\" r=\"20\"/><circle cx=\"160\" cy=\"62\" r=\"20\"/><circle cx=\"185\" cy=\"40\" r=\"20\"/><circle cx=\"210\" cy=\"62\" r=\"20\"/></g><g font-size=\"13\" text-anchor=\"middle\"><text x=\"60\" y=\"102\">molekula X</text><text x=\"185\" y=\"102\">molekula Y</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Na sliki sta modela dveh molekul, ki sta obe zgrajeni samo iz atomov kisika. Kako imenujemo pojav, ko element tvori različne enostavne snovi, in pri katerem elementu ga prav tako poznamo?",
+     "choices": [
+      "izotopija; pri vodiku (protij, devterij)",
+      "alotropija; pri ogljiku (diamant, grafit)",
+      "izomerija; pri butanu in 2-metilpropanu",
+      "alotropija; pri vodi (led, tekoča voda)"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "**B**: $\\mathrm{O_2}$ in $\\mathrm{O_3}$ sta alotropni modifikaciji kisika; tudi diamant in grafit sta alotropni modifikaciji ogljika.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Molekula X je $\\mathrm{O_2}$ (kisik), molekula Y je $\\mathrm{O_3}$ (ozon). Isti element tvori dve različni enostavni snovi z različnimi lastnostmi (ozon ima značilen vonj in je močnejši oksidant). Ta pojav je **alotropija**, snovi pa sta alotropni modifikaciji.\n\n- **A ni pravilen:** izotopi so atomi istega elementa z različnim številom nevtronov. Na sliki se atomi ne razlikujejo, razlikuje se število atomov v molekuli.\n- **B je pravilen:** diamant in grafit sta obe iz samih atomov ogljika, a z različno razporeditvijo atomov in zato zelo različnimi lastnostmi (diamant je trd in ne prevaja toka, grafit je mehak in prevaja).\n- **C ni pravilen:** izomerija velja za *spojine* z enako molekulsko formulo in različno zgradbo; butan in 2-metilpropan sta izomera, ne alotropni modifikaciji.\n- **D ni pravilen:** voda je spojina, ne element, led in tekoča voda pa sta le različni agregatni stanji iste snovi (enake molekule $\\mathrm{H_2O}$)."
+      }
+     ],
+     "mistake": "Alotropije ne zamenjaj z agregatnimi stanji: pri alotropiji so snovi različne (različna zgradba), pri spremembi agregatnega stanja pa je snov ista."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 9,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "V kateri od naštetih količin snovi je največ atomov kisika?",
+     "choices": [
+      "$0{,}40\\,\\mathrm{mol}$ $\\mathrm{SO_3}$",
+      "$22\\,\\mathrm{g}$ $\\mathrm{CO_2}$",
+      "$50\\,\\mathrm{g}$ $\\mathrm{CaCO_3}$",
+      "$39{,}2\\,\\mathrm{g}$ $\\mathrm{H_3PO_4}$"
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "**D**: $n(\\mathrm{O}) = 1{,}60\\,\\mathrm{mol}$, kar je največ.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $n(\\mathrm{SO_3}) = 0{,}40\\,\\mathrm{mol}$; $m(\\mathrm{CO_2}) = 22\\,\\mathrm{g}$, $M(\\mathrm{CO_2}) = 44\\,\\mathrm{g/mol}$; $m(\\mathrm{CaCO_3}) = 50\\,\\mathrm{g}$, $M(\\mathrm{CaCO_3}) = 100\\,\\mathrm{g/mol}$; $m(\\mathrm{H_3PO_4}) = 39{,}2\\,\\mathrm{g}$, $M(\\mathrm{H_3PO_4}) = 98{,}0\\,\\mathrm{g/mol}$.\n\n**Iščemo:** $n(\\mathrm{O})$ v vsaki količini. Ker je število atomov $N = n \\cdot N_\\mathrm{A}$, ima največ atomov tista, ki ima največjo množino atomov O.\n\nZa vsako snov izračunamo $n = \\frac{m}{M}$ in pomnožimo s številom atomov O v formuli:\n\n- A: $n(\\mathrm{O}) = 3 \\cdot 0{,}40\\,\\mathrm{mol} = 1{,}20\\,\\mathrm{mol}$\n- B: $n(\\mathrm{CO_2}) = \\frac{22\\,\\mathrm{g}}{44\\,\\mathrm{g/mol}} = 0{,}50\\,\\mathrm{mol}$, $n(\\mathrm{O}) = 2 \\cdot 0{,}50\\,\\mathrm{mol} = 1{,}00\\,\\mathrm{mol}$\n- C: $n(\\mathrm{CaCO_3}) = \\frac{50\\,\\mathrm{g}}{100\\,\\mathrm{g/mol}} = 0{,}50\\,\\mathrm{mol}$, $n(\\mathrm{O}) = 3 \\cdot 0{,}50\\,\\mathrm{mol} = 1{,}50\\,\\mathrm{mol}$\n- D: $n(\\mathrm{H_3PO_4}) = \\frac{39{,}2\\,\\mathrm{g}}{98{,}0\\,\\mathrm{g/mol}} = 0{,}400\\,\\mathrm{mol}$, $n(\\mathrm{O}) = 4 \\cdot 0{,}400\\,\\mathrm{mol} = 1{,}60\\,\\mathrm{mol}$\n\nNajveč atomov kisika je v D: $N(\\mathrm{O}) = 1{,}60\\,\\mathrm{mol} \\cdot 6{,}02 \\cdot 10^{23}\\,\\mathrm{mol^{-1}} \\approx 9{,}63 \\cdot 10^{23}$.\n\nA, B in C imajo manj atomov O. Pri C je masa snovi sicer največja ($50\\,\\mathrm{g}$), a velika molska masa kalcijevega karbonata pomeni manjšo množino."
+      },
+      {
+       "title": "Drugače: primerjamo množine molekul",
+       "text": "Najprej izračunamo množino molekul (formulskih enot): A $0{,}40\\,\\mathrm{mol}$, B $0{,}50\\,\\mathrm{mol}$, C $0{,}50\\,\\mathrm{mol}$, D $0{,}40\\,\\mathrm{mol}$. Nato upoštevamo, koliko atomov O je v eni enoti: $\\mathrm{SO_3}$ 3, $\\mathrm{CO_2}$ 2, $\\mathrm{CaCO_3}$ 3, $\\mathrm{H_3PO_4}$ 4.\n\nMed B in C ima C več (3 namesto 2 atomov O pri enaki množini). Med A in D ima D več (4 namesto 3 pri enaki množini). Ostane primerjava C in D: $1{,}5 < 1{,}6$, zato zmaga D."
+      }
+     ],
+     "mistake": "Največja masa ne pomeni največjega števila delcev. Vedno je treba maso pretvoriti v množino ($n = m/M$) in upoštevati število atomov O v formuli."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 10,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera od enačb je pravilno urejena?",
+     "choices": [
+      "$\\mathrm{Cu + Ag^{+} \\rightarrow Cu^{2+} + Ag}$",
+      "$\\mathrm{C_3H_8 + 5\\,O_2 \\rightarrow 3\\,CO_2 + 3\\,H_2O}$",
+      "$\\mathrm{Al + 3\\,HCl \\rightarrow AlCl_3 + H_2}$",
+      "$\\mathrm{2\\,Fe^{3+} + Cu \\rightarrow 2\\,Fe^{2+} + Cu^{2+}}$"
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "**D**: atomi (2 Fe, 1 Cu) in naboj ($+6$ na obeh straneh) so urejeni.",
+     "ways": [
+      {
+       "title": "Preverimo atome in naboj",
+       "text": "Urejena enačba mora imeti na obeh straneh enako število atomov vsakega elementa, ionska enačba pa tudi **enak skupni naboj**.\n\n- **A ni pravilen:** atomi se ujemajo (1 Cu, 1 Ag), naboj pa ne: levo $+1$, desno $+2$. Pravilno: $\\mathrm{Cu + 2\\,Ag^{+} \\rightarrow Cu^{2+} + 2\\,Ag}$ (baker odda 2 elektrona, vsak srebrov ion sprejme enega).\n- **B ni pravilen:** levo je 8 atomov H, desno 6; atomov O je levo 10, desno $6 + 3 = 9$. Pravilno: $\\mathrm{C_3H_8 + 5\\,O_2 \\rightarrow 3\\,CO_2 + 4\\,H_2O}$.\n- **C ni pravilen:** levo so 3 atomi H, desno 2. Pravilno: $\\mathrm{2\\,Al + 6\\,HCl \\rightarrow 2\\,AlCl_3 + 3\\,H_2}$.\n- **D je pravilen:** atomi: 2 Fe in 1 Cu na obeh straneh. Naboj levo $2 \\cdot (+3) = +6$, desno $2 \\cdot (+2) + 2 = +6$. Tudi elektroni se ujemajo: baker odda 2 elektrona, vsak od dveh ionov $\\mathrm{Fe^{3+}}$ sprejme enega."
+      }
+     ],
+     "mistake": "Pri ionskih in redoks enačbah ne zadošča, da se ujemajo atomi; preveriti je treba še naboj (oziroma število oddanih in sprejetih elektronov)."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 11,
+   "figure": "<svg viewBox=\"0 0 320 235\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" fill=\"currentColor\"><title>Energijski diagram poteka reakcije</title><g stroke=\"currentColor\" fill=\"none\"><path d=\"M50 20 V200 H305\" stroke-width=\"1.5\"/><line x1=\"50\" y1=\"182\" x2=\"300\" y2=\"182\" stroke-opacity=\"0.3\" stroke-dasharray=\"3 3\"/><line x1=\"50\" y1=\"128\" x2=\"300\" y2=\"128\" stroke-opacity=\"0.3\" stroke-dasharray=\"3 3\"/><line x1=\"50\" y1=\"92\" x2=\"300\" y2=\"92\" stroke-opacity=\"0.3\" stroke-dasharray=\"3 3\"/><line x1=\"50\" y1=\"44\" x2=\"300\" y2=\"44\" stroke-opacity=\"0.3\" stroke-dasharray=\"3 3\"/><path d=\"M60 128 H100 C130 128 145 44 170 44 C195 44 210 182 240 182 H295\" stroke-width=\"2\"/><path d=\"M100 128 C130 128 145 92 170 92 C195 92 210 182 240 182\" stroke-width=\"2\" stroke-dasharray=\"6 4\"/><line x1=\"185\" y1=\"222\" x2=\"205\" y2=\"222\" stroke-width=\"2\"/><line x1=\"60\" y1=\"222\" x2=\"80\" y2=\"222\" stroke-width=\"2\" stroke-dasharray=\"6 4\"/></g><g font-size=\"11\"><text x=\"44\" y=\"204\" text-anchor=\"end\">0</text><text x=\"44\" y=\"186\" text-anchor=\"end\">30</text><text x=\"44\" y=\"132\" text-anchor=\"end\">120</text><text x=\"44\" y=\"96\" text-anchor=\"end\">180</text><text x=\"44\" y=\"48\" text-anchor=\"end\">260</text><text x=\"54\" y=\"14\">E / (kJ/mol)</text><text x=\"300\" y=\"214\" text-anchor=\"end\">potek reakcije</text><text x=\"62\" y=\"122\">reaktanti</text><text x=\"245\" y=\"176\">produkti</text><text x=\"84\" y=\"226\">s katalizatorjem</text><text x=\"209\" y=\"226\">brez katalizatorja</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Diagram prikazuje spreminjanje energije med potekom iste reakcije brez katalizatorja (polna črta) in s katalizatorjem (črtkana črta). Katera trditev je pravilna?",
+     "choices": [
+      "Katalizator zniža reakcijsko entalpijo za $80\\,\\mathrm{kJ/mol}$.",
+      "Reakcijska entalpija je $+90\\,\\mathrm{kJ/mol}$.",
+      "Aktivacijska energija katalizirane reakcije je $60\\,\\mathrm{kJ/mol}$.",
+      "Aktivacijska energija nekatalizirane reakcije je $260\\,\\mathrm{kJ/mol}$."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: $E_\\mathrm{a} = 180\\,\\mathrm{kJ/mol} - 120\\,\\mathrm{kJ/mol} = 60\\,\\mathrm{kJ/mol}$.",
+     "ways": [
+      {
+       "title": "Odčitamo z diagrama",
+       "text": "**Podatki (z diagrama):** energija reaktantov $120\\,\\mathrm{kJ/mol}$, energija produktov $30\\,\\mathrm{kJ/mol}$, vrh brez katalizatorja $260\\,\\mathrm{kJ/mol}$, vrh s katalizatorjem $180\\,\\mathrm{kJ/mol}$.\n\n**Iščemo:** $E_\\mathrm{a}$ obeh poti in $\\Delta H$.\n\n- Aktivacijska energija je razlika med vrhom (prehodnim stanjem) in energijo **reaktantov**:\n  - brez katalizatorja: $260 - 120 = 140$, torej $E_\\mathrm{a} = 140\\,\\mathrm{kJ/mol}$\n  - s katalizatorjem: $180 - 120 = 60$, torej $E_\\mathrm{a} = 60\\,\\mathrm{kJ/mol}$\n- Reakcijska entalpija je razlika med produkti in reaktanti: $\\Delta H = 30 - 120 = -90$, torej $\\Delta H = -90\\,\\mathrm{kJ/mol}$ (eksotermna reakcija).\n\nPresoja:\n- **A ni pravilen:** katalizator zniža **aktivacijsko energijo** (za $140 - 60 = 80$ kJ/mol), reakcijske entalpije pa ne spremeni: obe poti se začneta in končata na isti energiji.\n- **B ni pravilen:** produkti imajo manj energije kot reaktanti, zato je $\\Delta H$ negativna ($-90\\,\\mathrm{kJ/mol}$).\n- **C je pravilen.**\n- **D ni pravilen:** $260\\,\\mathrm{kJ/mol}$ je energija prehodnega stanja, merjena od ničle osi; aktivacijska energija se meri od reaktantov in je $140\\,\\mathrm{kJ/mol}$."
+      }
+     ],
+     "mistake": "Aktivacijske energije ne beremo kot višino vrha od ničle osi, ampak kot razliko med vrhom in energijo reaktantov."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 12,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Iz $200\\,\\mathrm{g}$ raztopine natrijevega klorida z masnim deležem $10\\,\\%$ izpari $100\\,\\mathrm{g}$ vode. Sol se pri tem ne izloči. Katera trditev je pravilna?",
+     "choices": [
+      "Masa $\\mathrm{NaCl}$ v raztopini se zmanjša na $10\\,\\mathrm{g}$.",
+      "Masni delež $\\mathrm{NaCl}$ se poveča na $20\\,\\%$.",
+      "Masni delež $\\mathrm{NaCl}$ se poveča na $25\\,\\%$.",
+      "Množina $\\mathrm{NaCl}$ v raztopini se podvoji."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "**B**: $w = \\frac{20\\,\\mathrm{g}}{100\\,\\mathrm{g}} = 0{,}20 = 20\\,\\%$.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $m(\\text{raztopine}) = 200\\,\\mathrm{g}$, $w(\\mathrm{NaCl}) = 10\\,\\% = 0{,}10$, $m(\\text{izparele vode}) = 100\\,\\mathrm{g}$.\n\n**Iščemo:** kaj se zgodi z maso, množino in masnim deležem soli.\n\n1. Masa soli: $m(\\mathrm{NaCl}) = 0{,}10 \\cdot 200\\,\\mathrm{g} = 20\\,\\mathrm{g}$. Pri izparevanju odhaja le voda, zato masa (in množina) soli ostane $20\\,\\mathrm{g}$.\n2. Masa raztopine po izparevanju: $200\\,\\mathrm{g} - 100\\,\\mathrm{g} = 100\\,\\mathrm{g}$.\n3. Nov masni delež: $w = \\frac{20\\,\\mathrm{g}}{100\\,\\mathrm{g}} = 0{,}20 = 20\\,\\%$.\n\n- **A ni pravilen:** sol ne izhlapeva, njena masa ostane $20\\,\\mathrm{g}$.\n- **B je pravilen.**\n- **C ni pravilen:** $25\\,\\%$ dobi, kdor deli maso soli z maso preostale **vode** (prvotnih $180\\,\\mathrm{g} - 100\\,\\mathrm{g} = 80\\,\\mathrm{g}$). Masni delež pa je masa topljenca deljena z maso celotne **raztopine** (sol + voda).\n- **D ni pravilen:** koncentracija (in masni delež) se poveča, ker je manj topila; množina soli pa ostane enaka."
+      },
+      {
+       "title": "Drugače: s sklepanjem",
+       "text": "Masa raztopine se zmanjša s $200\\,\\mathrm{g}$ na $100\\,\\mathrm{g}$, torej na polovico, masa soli pa ostane enaka. Ko isto maso topljenca razdelimo na pol manjšo maso raztopine, se masni delež podvoji: z $10\\,\\%$ na $20\\,\\%$."
+      }
+     ],
+     "mistake": "Masni delež se računa glede na maso raztopine, ne glede na maso topila."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 13,
+   "figure": "<svg viewBox=\"0 -14 310 239\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" fill=\"currentColor\"><title>Graf koncentracije reaktanta v odvisnosti od časa</title><g stroke=\"currentColor\" stroke-opacity=\"0.25\"><line x1=\"50\" y1=\"190\" x2=\"290\" y2=\"190\"/><line x1=\"50\" y1=\"170\" x2=\"290\" y2=\"170\"/><line x1=\"50\" y1=\"150\" x2=\"290\" y2=\"150\"/><line x1=\"50\" y1=\"130\" x2=\"290\" y2=\"130\"/><line x1=\"50\" y1=\"110\" x2=\"290\" y2=\"110\"/><line x1=\"50\" y1=\"90\" x2=\"290\" y2=\"90\"/><line x1=\"50\" y1=\"70\" x2=\"290\" y2=\"70\"/><line x1=\"50\" y1=\"50\" x2=\"290\" y2=\"50\"/><line x1=\"50\" y1=\"30\" x2=\"290\" y2=\"30\"/><line x1=\"50\" y1=\"10\" x2=\"290\" y2=\"10\"/><line x1=\"50\" y1=\"10\" x2=\"50\" y2=\"190\"/><line x1=\"98\" y1=\"10\" x2=\"98\" y2=\"190\"/><line x1=\"146\" y1=\"10\" x2=\"146\" y2=\"190\"/><line x1=\"194\" y1=\"10\" x2=\"194\" y2=\"190\"/><line x1=\"242\" y1=\"10\" x2=\"242\" y2=\"190\"/><line x1=\"290\" y1=\"10\" x2=\"290\" y2=\"190\"/></g><path d=\"M50 10 V190 H295\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"1.5\"/><path d=\"M50 30 C58 40 82 74 98 90 C114 106 130 116 146 126 C162 136 178 143.7 194 150 C210 156.3 226 160 242 164 C258 168 282 172.3 290 174\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\"/><circle cx=\"50\" cy=\"30\" r=\"3\"/><circle cx=\"98\" cy=\"90\" r=\"3\"/><circle cx=\"146\" cy=\"126\" r=\"3\"/><circle cx=\"194\" cy=\"150\" r=\"3\"/><circle cx=\"242\" cy=\"164\" r=\"3\"/><circle cx=\"290\" cy=\"174\" r=\"3\"/><g font-size=\"11\"><g text-anchor=\"end\"><text x=\"45\" y=\"194\">0</text><text x=\"45\" y=\"174\">0,1</text><text x=\"45\" y=\"154\">0,2</text><text x=\"45\" y=\"134\">0,3</text><text x=\"45\" y=\"114\">0,4</text><text x=\"45\" y=\"94\">0,5</text><text x=\"45\" y=\"74\">0,6</text><text x=\"45\" y=\"54\">0,7</text><text x=\"45\" y=\"34\">0,8</text><text x=\"45\" y=\"14\">0,9</text></g><g text-anchor=\"middle\"><text x=\"50\" y=\"205\">0</text><text x=\"98\" y=\"205\">10</text><text x=\"146\" y=\"205\">20</text><text x=\"194\" y=\"205\">30</text><text x=\"242\" y=\"205\">40</text><text x=\"290\" y=\"205\">50</text></g><text x=\"295\" y=\"220\" text-anchor=\"end\">t / min</text><text x=\"8\" y=\"-3\" font-size=\"11\">c(A) / (mol/L)</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Graf prikazuje, kako se med reakcijo spreminja koncentracija reaktanta A. Kolikšna je povprečna hitrost razpada A med $10.$ in $30.$ minuto?",
+     "choices": [
+      "$0{,}015\\,\\mathrm{mol/(L\\cdot min)}$",
+      "$0{,}030\\,\\mathrm{mol/(L\\cdot min)}$",
+      "$0{,}020\\,\\mathrm{mol/(L\\cdot min)}$",
+      "$0{,}0067\\,\\mathrm{mol/(L\\cdot min)}$"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "**A**: $v = \\frac{0{,}50 - 0{,}20}{30 - 10}\\,\\mathrm{\\frac{mol}{L\\cdot min}} = 0{,}015\\,\\mathrm{mol/(L\\cdot min)}$.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki (z grafa):** $t_1 = 10\\,\\mathrm{min}$, $c_1(\\mathrm{A}) = 0{,}50\\,\\mathrm{mol/L}$; $t_2 = 30\\,\\mathrm{min}$, $c_2(\\mathrm{A}) = 0{,}20\\,\\mathrm{mol/L}$.\n\n**Iščemo:** povprečno hitrost razpada $v = -\\frac{\\Delta c(\\mathrm{A})}{\\Delta t}$.\n\n1. Sprememba koncentracije: $\\Delta c = 0{,}20 - 0{,}50 = -0{,}30$, torej $\\Delta c = -0{,}30\\,\\mathrm{mol/L}$ (koncentracija reaktanta pada, zato je hitrost razpada pozitivna, ko upoštevamo minus).\n2. Časovni interval: $\\Delta t = 30 - 10 = 20$, torej $\\Delta t = 20\\,\\mathrm{min}$.\n3. $v = \\frac{0{,}30}{20} = 0{,}015$, torej $v = 0{,}015\\,\\mathrm{mol/(L\\cdot min)}$.\n\n- **A je pravilen.**\n- **B ni pravilen:** $0{,}030$ dobimo, če spremembo $0{,}30\\,\\mathrm{mol/L}$ delimo z $10\\,\\mathrm{min}$ namesto z dejanskim intervalom $20\\,\\mathrm{min}$.\n- **C ni pravilen:** $0{,}020 = \\frac{0{,}80 - 0{,}20}{30}$ je povprečna hitrost od začetka ($t = 0$) do $30.$ minute, ne od $10.$ minute.\n- **D ni pravilen:** $0{,}0067 \\approx \\frac{0{,}20}{30}$ je le koncentracija, deljena s časom, ne sprememba koncentracije v intervalu."
+      }
+     ],
+     "mistake": "Povprečna hitrost je vedno *sprememba* koncentracije, deljena s *trajanjem* intervala; ne deli same koncentracije s časom."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 14,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "V zaprto posodo s prostornino $2{,}0\\,\\mathrm{L}$ damo $0{,}60\\,\\mathrm{mol}$ plinastega $\\mathrm{PCl_5}$ in posodo segrejemo. Plin delno razpade po enačbi\n$$\\mathrm{PCl_5(g) \\rightleftharpoons PCl_3(g) + Cl_2(g)}$$\nKo se vzpostavi ravnotežje, ostane nerazpadlih $40\\,\\%$ začetne množine $\\mathrm{PCl_5}$. Kolikšna je konstanta ravnotežja $K_c$ pri tej temperaturi?",
+     "choices": [
+      "$0{,}27\\,\\mathrm{mol/L}$",
+      "$0{,}54\\,\\mathrm{mol/L}$",
+      "$0{,}080\\,\\mathrm{mol/L}$",
+      "$1{,}5\\,\\mathrm{mol/L}$"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "**A**: $K_c = \\frac{0{,}18 \\cdot 0{,}18}{0{,}12}\\,\\mathrm{mol/L} = 0{,}27\\,\\mathrm{mol/L}$.",
+     "ways": [
+      {
+       "title": "Po korakih (preglednica množin)",
+       "text": "**Podatki:** $V = 2{,}0\\,\\mathrm{L}$, $n_0(\\mathrm{PCl_5}) = 0{,}60\\,\\mathrm{mol}$, v ravnotežju ostane $40\\,\\%$ $\\mathrm{PCl_5}$.\n\n**Iščemo:** $K_c = \\frac{[\\mathrm{PCl_3}]\\,[\\mathrm{Cl_2}]}{[\\mathrm{PCl_5}]}$.\n\n1. Ostane: $n(\\mathrm{PCl_5}) = 0{,}40 \\cdot 0{,}60\\,\\mathrm{mol} = 0{,}24\\,\\mathrm{mol}$.\n2. Razpade: $0{,}60\\,\\mathrm{mol} - 0{,}24\\,\\mathrm{mol} = 0{,}36\\,\\mathrm{mol}$. Po enačbi iz $1\\,\\mathrm{mol}$ $\\mathrm{PCl_5}$ nastane $1\\,\\mathrm{mol}$ $\\mathrm{PCl_3}$ in $1\\,\\mathrm{mol}$ $\\mathrm{Cl_2}$, zato $n(\\mathrm{PCl_3}) = n(\\mathrm{Cl_2}) = 0{,}36\\,\\mathrm{mol}$.\n\n| | $\\mathrm{PCl_5}$ | $\\mathrm{PCl_3}$ | $\\mathrm{Cl_2}$ |\n|---|---|---|---|\n| začetek / mol | 0,60 | 0 | 0 |\n| sprememba / mol | −0,36 | +0,36 | +0,36 |\n| ravnotežje / mol | 0,24 | 0,36 | 0,36 |\n| ravnotežje / (mol/L) | 0,12 | 0,18 | 0,18 |\n\n3. Koncentracije ($c = n/V$): $[\\mathrm{PCl_5}] = \\frac{0{,}24\\,\\mathrm{mol}}{2{,}0\\,\\mathrm{L}} = 0{,}12\\,\\mathrm{mol/L}$, $[\\mathrm{PCl_3}] = [\\mathrm{Cl_2}] = \\frac{0{,}36\\,\\mathrm{mol}}{2{,}0\\,\\mathrm{L}} = 0{,}18\\,\\mathrm{mol/L}$.\n4. $K_c = \\frac{0{,}18 \\cdot 0{,}18}{0{,}12} = 0{,}27$, torej $K_c = 0{,}27\\,\\mathrm{mol/L}$.\n\n- **A je pravilen.**\n- **B ni pravilen:** $0{,}54 = \\frac{0{,}36 \\cdot 0{,}36}{0{,}24}$ dobimo, če v izraz vstavimo množine namesto koncentracij (pozabimo deliti s prostornino).\n- **C ni pravilen:** $0{,}080 = \\frac{0{,}12 \\cdot 0{,}12}{0{,}18}$ dobimo, če $40\\,\\%$ napačno razumemo kot delež, ki je *razpadel*.\n- **D ni pravilen:** $1{,}5 = \\frac{0{,}18}{0{,}12}$ dobimo, če v števcu upoštevamo le en produkt."
+      },
+      {
+       "title": "Drugače: takoj s koncentracijami",
+       "text": "Začetna koncentracija: $c_0(\\mathrm{PCl_5}) = \\frac{0{,}60\\,\\mathrm{mol}}{2{,}0\\,\\mathrm{L}} = 0{,}30\\,\\mathrm{mol/L}$.\n\nV ravnotežju ostane $40\\,\\%$: $0{,}40 \\cdot 0{,}30 = 0{,}12$, torej $[\\mathrm{PCl_5}] = 0{,}12\\,\\mathrm{mol/L}$. Razpadlo je $0{,}30 - 0{,}12 = 0{,}18$, zato $[\\mathrm{PCl_3}] = [\\mathrm{Cl_2}] = 0{,}18\\,\\mathrm{mol/L}$.\n\n$K_c = \\frac{0{,}18^2}{0{,}12} = \\frac{0{,}0324}{0{,}12} = 0{,}27$, torej $K_c = 0{,}27\\,\\mathrm{mol/L}$. Rezultat je enak, ker je deljenje s prostornino samo prestavljeno na začetek."
+      }
+     ],
+     "mistake": "V izraz za $K_c$ vstavljamo ravnotežne **koncentracije**, ne množine; pri reakciji, kjer se število delcev plina spremeni, dajo množine napačen rezultat."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 15,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "V zaprti posodi se vzpostavi ravnotežje\n$$\\mathrm{2\\,SO_2(g) + O_2(g) \\rightleftharpoons 2\\,SO_3(g)} \\qquad \\Delta H = -198\\,\\mathrm{kJ}$$\nKatera trditev je pravilna?",
+     "choices": [
+      "Če zmes segrejemo, se ravnotežna množina $\\mathrm{SO_3}$ poveča.",
+      "Če dodamo katalizator, se ravnotežna množina $\\mathrm{SO_3}$ poveča.",
+      "Če pri stalni temperaturi in prostornini dodamo kisik, se množina $\\mathrm{SO_3}$ poveča, vrednost $K_c$ pa ostane enaka.",
+      "Ravnotežje je heterogeno, ker v njem sodelujejo različne snovi."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: dodatek reaktanta premakne ravnotežje v smer produkta; $K_c$ je odvisna le od temperature.",
+     "ways": [
+      {
+       "title": "Po Le Chatelierjevem načelu",
+       "text": "Le Chatelierjevo načelo: če ravnotežje motimo, se premakne v smer, ki motnjo zmanjša.\n\n- **A ni pravilen:** napredna reakcija je eksotermna ($\\Delta H < 0$). Pri segrevanju se ravnotežje premakne v smer, ki toploto porablja, torej v endotermno smer, k $\\mathrm{SO_2}$ in $\\mathrm{O_2}$. Množina $\\mathrm{SO_3}$ se *zmanjša*, zmanjša se tudi $K_c$.\n- **B ni pravilen:** katalizator enako pospeši napredno in povratno reakcijo. Ravnotežje se vzpostavi hitreje, njegova sestava pa se ne spremeni.\n- **C je pravilen:** z dodatkom $\\mathrm{O_2}$ povečamo koncentracijo reaktanta; sistem ga deloma porabi, zato nastane več $\\mathrm{SO_3}$. Ker se temperatura ne spremeni, ostane $K_c = \\frac{[\\mathrm{SO_3}]^2}{[\\mathrm{SO_2}]^2\\,[\\mathrm{O_2}]}$ enaka; spremenijo se le posamezne koncentracije.\n- **D ni pravilen:** ravnotežje je **homogeno**, ker so vse snovi v isti fazi (vse so plini). Heterogeno je ravnotežje, v katerem so snovi v različnih fazah (npr. trdna snov in plin)."
+      }
+     ],
+     "mistake": "Katalizator ne premakne ravnotežja; vpliva le na to, kako hitro se ravnotežje vzpostavi."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 16,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Pripravimo vodno raztopino žveplove(VI) kisline s koncentracijo $c(\\mathrm{H_2SO_4}) = 0{,}050\\,\\mathrm{mol/L}$. Predpostavi, da kislina v obeh stopnjah popolnoma protolizira. Katera trditev je pravilna?",
+     "choices": [
+      "$[\\mathrm{H_3O^{+}}] = 0{,}050\\,\\mathrm{mol/L}$",
+      "V $200\\,\\mathrm{mL}$ raztopine je $0{,}010\\,\\mathrm{mol}$ oksonijevih ionov.",
+      "$[\\mathrm{SO_4^{2-}}] = 0{,}10\\,\\mathrm{mol/L}$",
+      "pH raztopine je $1{,}00$."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "**D**: $[\\mathrm{H_3O^{+}}] = 2 \\cdot 0{,}050\\,\\mathrm{mol/L} = 0{,}10\\,\\mathrm{mol/L}$, $\\mathrm{pH} = -\\log 0{,}10 = 1{,}00$.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $c(\\mathrm{H_2SO_4}) = 0{,}050\\,\\mathrm{mol/L}$, popolna protoliza v obeh stopnjah.\n\n**Iščemo:** koncentracije ionov, pH, množino $\\mathrm{H_3O^{+}}$ v $200\\,\\mathrm{mL}$.\n\nEnačba: $\\mathrm{H_2SO_4 + 2\\,H_2O \\rightarrow 2\\,H_3O^{+} + SO_4^{2-}}$\n\nIz ene molekule kisline nastaneta dva oksonijeva iona in en sulfatni ion:\n- $[\\mathrm{H_3O^{+}}] = 2 \\cdot 0{,}050\\,\\mathrm{mol/L} = 0{,}10\\,\\mathrm{mol/L}$\n- $[\\mathrm{SO_4^{2-}}] = 0{,}050\\,\\mathrm{mol/L}$\n- $\\mathrm{pH} = -\\log 0{,}10 = 1{,}00$\n\n- **A ni pravilen:** pozabljen je faktor 2 (diprotna kislina).\n- **B ni pravilen:** $n(\\mathrm{H_3O^{+}}) = 0{,}10\\,\\mathrm{mol/L} \\cdot 0{,}200\\,\\mathrm{L} = 0{,}020\\,\\mathrm{mol}$. Vrednost $0{,}010\\,\\mathrm{mol}$ je množina *kisline* ($0{,}050 \\cdot 0{,}200 = 0{,}010$), ne oksonijevih ionov.\n- **C ni pravilen:** sulfatnih ionov je toliko kot molekul kisline, $0{,}050\\,\\mathrm{mol/L}$; dvojna je koncentracija $\\mathrm{H_3O^{+}}$.\n- **D je pravilen.**"
+      }
+     ],
+     "mistake": "Pri diprotni kislini je koncentracija oksonijevih ionov (ob popolni protolizi) dvakrat večja od koncentracije kisline."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 17,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Zmešamo $50{,}0\\,\\mathrm{mL}$ raztopine $\\mathrm{NaOH}$ s koncentracijo $0{,}20\\,\\mathrm{mol/L}$ in $50{,}0\\,\\mathrm{mL}$ raztopine $\\mathrm{H_2SO_4}$ s koncentracijo $0{,}12\\,\\mathrm{mol/L}$. Kislina popolnoma protolizira v obeh stopnjah, prostornini se seštejeta. Katera trditev o nastali zmesi je pravilna?",
+     "choices": [
+      "V presežku je $\\mathrm{NaOH}$, zato je pH zmesi večji od 7.",
+      "V presežku so oksonijevi ioni, $[\\mathrm{H_3O^{+}}] = 0{,}020\\,\\mathrm{mol/L}$.",
+      "V presežku so oksonijevi ioni, $[\\mathrm{H_3O^{+}}] = 0{,}040\\,\\mathrm{mol/L}$.",
+      "Kislina in baza sta v ekvivalentnem razmerju, zmes je nevtralna."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "**B**: ostane $0{,}0020\\,\\mathrm{mol}$ $\\mathrm{H_3O^{+}}$ v $0{,}100\\,\\mathrm{L}$, torej $0{,}020\\,\\mathrm{mol/L}$ (pH $\\approx 1{,}70$).",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $V(\\mathrm{NaOH}) = 50{,}0\\,\\mathrm{mL}$, $c(\\mathrm{NaOH}) = 0{,}20\\,\\mathrm{mol/L}$; $V(\\mathrm{H_2SO_4}) = 50{,}0\\,\\mathrm{mL}$, $c(\\mathrm{H_2SO_4}) = 0{,}12\\,\\mathrm{mol/L}$.\n\n**Iščemo:** kaj je v presežku in koncentracijo presežnih ionov.\n\nIonska enačba nevtralizacije: $\\mathrm{H_3O^{+} + OH^{-} \\rightarrow 2\\,H_2O}$ (ioni reagirajo v razmerju $1 : 1$).\n\n1. $n(\\mathrm{OH^{-}}) = 0{,}20\\,\\mathrm{mol/L} \\cdot 0{,}0500\\,\\mathrm{L} = 0{,}010\\,\\mathrm{mol}$\n2. $n(\\mathrm{H_2SO_4}) = 0{,}12\\,\\mathrm{mol/L} \\cdot 0{,}0500\\,\\mathrm{L} = 0{,}0060\\,\\mathrm{mol}$, iz vsake molekule 2 iona: $n(\\mathrm{H_3O^{+}}) = 2 \\cdot 0{,}0060\\,\\mathrm{mol} = 0{,}012\\,\\mathrm{mol}$\n3. Presežek: $0{,}012\\,\\mathrm{mol} - 0{,}010\\,\\mathrm{mol} = 0{,}0020\\,\\mathrm{mol}$ $\\mathrm{H_3O^{+}}$\n4. Skupna prostornina: $50{,}0\\,\\mathrm{mL} + 50{,}0\\,\\mathrm{mL} = 100{,}0\\,\\mathrm{mL}$, zato $[\\mathrm{H_3O^{+}}] = \\frac{0{,}0020\\,\\mathrm{mol}}{0{,}100\\,\\mathrm{L}} = 0{,}020\\,\\mathrm{mol/L}$ in $\\mathrm{pH} = -\\log 0{,}020 \\approx 1{,}70$.\n\n- **A ni pravilen:** ta sklep dobimo, če primerjamo $0{,}010\\,\\mathrm{mol}$ $\\mathrm{NaOH}$ z $0{,}0060\\,\\mathrm{mol}$ kisline in pozabimo, da vsaka molekula $\\mathrm{H_2SO_4}$ odda dva protona.\n- **B je pravilen.**\n- **C ni pravilen:** $0{,}040\\,\\mathrm{mol/L}$ dobimo, če presežek delimo le s prostornino kisline ($0{,}0500\\,\\mathrm{L}$) namesto s prostornino celotne zmesi.\n- **D ni pravilen:** za ekvivalentno razmerje bi moralo veljati $n(\\mathrm{OH^{-}}) = 2 \\cdot n(\\mathrm{H_2SO_4})$, tu pa je $0{,}010\\,\\mathrm{mol} \\ne 0{,}012\\,\\mathrm{mol}$."
+      },
+      {
+       "title": "Drugače: z enačbo reakcije",
+       "text": "$\\mathrm{H_2SO_4 + 2\\,NaOH \\rightarrow Na_2SO_4 + 2\\,H_2O}$\n\nZa $0{,}010\\,\\mathrm{mol}$ $\\mathrm{NaOH}$ potrebujemo $\\frac{0{,}010}{2} = 0{,}0050$, torej $0{,}0050\\,\\mathrm{mol}$ $\\mathrm{H_2SO_4}$. Dodali smo $0{,}0060\\,\\mathrm{mol}$, zato ostane $0{,}0060 - 0{,}0050 = 0{,}0010$, torej $0{,}0010\\,\\mathrm{mol}$ kisline, ki da $2 \\cdot 0{,}0010 = 0{,}0020$, torej $0{,}0020\\,\\mathrm{mol}$ $\\mathrm{H_3O^{+}}$. V $0{,}100\\,\\mathrm{L}$ je to $0{,}020\\,\\mathrm{mol/L}$; kislina je v presežku, zmes je kisla."
+      }
+     ],
+     "mistake": "Pri diprotni kislini je treba množino kisline pomnožiti z 2, preden jo primerjamo z množino $\\mathrm{OH^{-}}$. Pri računanju koncentracije po mešanju vzamemo skupno prostornino."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 18,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Zmešamo enaki prostornini vodnih raztopin dveh snovi s koncentracijo $0{,}1\\,\\mathrm{mol/L}$. Pri katerem paru poteče kemijska reakcija?",
+     "choices": [
+      "$\\mathrm{Ca(NO_3)_2(aq)}$ in $\\mathrm{KCl(aq)}$",
+      "$\\mathrm{NaCl(aq)}$ in $\\mathrm{HNO_3(aq)}$",
+      "$\\mathrm{BaCl_2(aq)}$ in $\\mathrm{Na_2SO_4(aq)}$",
+      "$\\mathrm{NH_4NO_3(aq)}$ in $\\mathrm{KCl(aq)}$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: nastane bela oborina $\\mathrm{BaSO_4}$: $\\mathrm{Ba^{2+}(aq) + SO_4^{2-}(aq) \\rightarrow BaSO_4(s)}$.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Med ioni v raztopini poteče reakcija, če nastane **oborina** (slabo topna snov), **plin** ali **šibek elektrolit** (npr. voda ali šibka kislina). Če vsi možni produkti ostanejo raztopljeni kot ioni, se ne zgodi nič, dobimo le zmes ionov.\n\n- **A ni pravilen:** možna nova produkta sta $\\mathrm{CaCl_2}$ in $\\mathrm{KNO_3}$. Obe soli sta dobro topni (vsi nitrati in soli kalija so topni, tudi kalcijev klorid), zato ioni $\\mathrm{Ca^{2+}}$, $\\mathrm{NO_3^{-}}$, $\\mathrm{K^{+}}$ in $\\mathrm{Cl^{-}}$ ostanejo v raztopini.\n- **B ni pravilen:** $\\mathrm{HCl}$ in $\\mathrm{HNO_3}$ sta obe močni kislini, $\\mathrm{NaNO_3}$ je topna sol; v razredčeni raztopini ne nastane ne plin ne šibek elektrolit.\n- **C je pravilen:** barijev sulfat je v vodi praktično netopen in se izloči kot bela oborina. Natrijevi in kloridni ioni ostanejo v raztopini (so ioni opazovalci).\n- **D ni pravilen:** amonijeve in kalijeve soli, nitrati in kloridi (razen redkih izjem, npr. $\\mathrm{AgCl}$) so topni; plin $\\mathrm{NH_3}$ bi nastal le ob dodatku močne baze."
+      }
+     ],
+     "mistake": "Mešanje dveh raztopin soli še ne pomeni reakcije. Ugotoviti je treba, ali katera od možnih kombinacij ionov tvori oborino, plin ali šibek elektrolit."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 19,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Del redoks vrste kovin, urejen od najmočnejšega do najšibkejšega reducenta, je:\n$$\\mathrm{Mg,\\ Zn,\\ Fe,\\ Ni,\\ Sn,\\ Pb,\\ Cu,\\ Ag}$$\nKatero kovino moramo dodati v raztopino nikljevega(II) nitrata, da se bo na njej izločal nikelj?",
+     "choices": [
+      "baker",
+      "cink",
+      "srebro",
+      "svinec"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "**B**: cink je močnejši reducent od niklja: $\\mathrm{Zn + Ni^{2+} \\rightarrow Zn^{2+} + Ni}$.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Kovina izpodrine (reducira) ione druge kovine iz raztopine le, če je **močnejši reducent**, torej stoji v redoks vrsti **pred** to kovino. Pri tem se sama oksidira v ione, ioni druge kovine pa se reducirajo v kovino.\n\nPred nikljem stojijo Mg, Zn in Fe; za njim Sn, Pb, Cu in Ag.\n\n- **A ni pravilen:** baker stoji za nikljem, je šibkejši reducent; ioni $\\mathrm{Ni^{2+}}$ ga ne morejo oksidirati in reakcija ne poteče.\n- **B je pravilen:** cink stoji pred nikljem: $\\mathrm{Zn(s) + Ni^{2+}(aq) \\rightarrow Zn^{2+}(aq) + Ni(s)}$. Cink se raztaplja, na njem se izloča nikelj.\n- **C ni pravilen:** srebro je med naštetimi najšibkejši reducent; reakcija ne poteče.\n- **D ni pravilen:** svinec stoji za nikljem (in tudi za kositrom), zato je šibkejši reducent od niklja; reakcija ne poteče."
+      }
+     ],
+     "mistake": "Ni pomembno, ali je kovina »bolj ali manj žlahtna« po občutku; odloča le njen položaj v redoks vrsti glede na kovino, katere ioni so v raztopini."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 20,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Vodno raztopino kalijevega jodida $\\mathrm{KI}$ elektroliziramo z grafitnima elektrodama. Kaj nastaja na elektrodah?",
+     "choices": [
+      "na katodi kalij, na anodi jod",
+      "na katodi jod, na anodi kalij",
+      "na katodi vodik, na anodi kisik",
+      "na katodi vodik, na anodi jod"
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "**D**: katoda: $\\mathrm{2\\,H_2O + 2\\,e^{-} \\rightarrow H_2 + 2\\,OH^{-}}$; anoda: $\\mathrm{2\\,I^{-} \\rightarrow I_2 + 2\\,e^{-}}$.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Na **katodi** (negativna elektroda) poteka redukcija, na **anodi** (pozitivna elektroda) oksidacija. V raztopini so ioni $\\mathrm{K^{+}}$, $\\mathrm{I^{-}}$ in molekule vode, zato na vsaki elektrodi »tekmujeta« ion in voda.\n\n- **Katoda:** ioni $\\mathrm{K^{+}}$ se reducirajo zelo težko (kalij je zelo močan reducent, njegovi ioni zelo šibek oksidant). Lažje se reducira voda: $\\mathrm{2\\,H_2O + 2\\,e^{-} \\rightarrow H_2 + 2\\,OH^{-}}$. Nastaja vodik, raztopina ob katodi postane bazična.\n- **Anoda:** jodidni ioni se oksidirajo lažje kot voda: $\\mathrm{2\\,I^{-} \\rightarrow I_2 + 2\\,e^{-}}$. Raztopina ob anodi porjavi.\n\n- **A ni pravilen:** kalij se iz vodne raztopine ne izloča; tudi če bi nastal, bi takoj reagiral z vodo. Kalij pridobivajo z elektrolizo **taline**.\n- **B ni pravilen:** elektrodi sta zamenjani: anioni $\\mathrm{I^{-}}$ potujejo k pozitivni anodi, kationi k negativni katodi.\n- **C ni pravilen:** kisik bi nastajal, če bi v raztopini bili le težko oksidirljivi anioni (npr. $\\mathrm{SO_4^{2-}}$, $\\mathrm{NO_3^{-}}$). Jodidni ioni se oksidirajo lažje kot voda.\n- **D je pravilen.**"
+      }
+     ],
+     "mistake": "Pri elektrolizi vodne raztopine ne nastajata samodejno kovina in nekovina iz soli; vedno preveri, ali se lažje reducira (oksidira) ion ali voda."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 21,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera trditev o prehodnih elementih in njihovih spojinah je pravilna?",
+     "choices": [
+      "Mangan ima v kalijevem permanganatu $\\mathrm{KMnO_4}$ oksidacijsko število $+\\mathrm{IV}$.",
+      "V kompleksnem ionu $\\mathrm{[Cu(NH_3)_4]^{2+}}$ je oksidacijsko število bakra $+\\mathrm{II}$, koordinacijsko število pa $4$.",
+      "Vodne raztopine cinkovih soli, npr. $\\mathrm{ZnSO_4}$, so modre.",
+      "V kompleksnem ionu $\\mathrm{[Fe(CN)_6]^{3-}}$ ima železo oksidacijsko število $-\\mathrm{III}$."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "**B**: ligandi $\\mathrm{NH_3}$ so nevtralni, zato je naboj iona enak oksidacijskemu številu bakra ($+\\mathrm{II}$); vezani so štirje ligandi.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "- **A ni pravilen:** v $\\mathrm{KMnO_4}$: $+1 + x + 4 \\cdot (-2) = 0$, zato $x(\\mathrm{Mn}) = +7$, torej $+\\mathrm{VII}$. Oksidacijsko število $+\\mathrm{IV}$ ima mangan v $\\mathrm{MnO_2}$.\n- **B je pravilen:** amonijak je nevtralen ligand, zato velja $x(\\mathrm{Cu}) + 4 \\cdot 0 = +2$, torej $x(\\mathrm{Cu}) = +2$ ($+\\mathrm{II}$). Koordinacijsko število je število veznih mest (ligandov), vezanih na osrednji ion: štiri molekule $\\mathrm{NH_3}$. Ion je temno moder.\n- **C ni pravilen:** ion $\\mathrm{Zn^{2+}}$ ima popolnoma zapolnjene orbitale $3d$ ($3d^{10}$), zato ne absorbira vidne svetlobe in so raztopine njegovih soli brezbarvne. Modre so npr. raztopine bakrovih(II) soli.\n- **D ni pravilen:** cianidni ligand ima naboj $-1$: $x(\\mathrm{Fe}) + 6 \\cdot (-1) = -3$, zato $x(\\mathrm{Fe}) = +3$ ($+\\mathrm{III}$). Naboj kompleksa ni oksidacijsko število osrednjega atoma."
+      }
+     ],
+     "mistake": "Naboj kompleksnega iona je vsota oksidacijskega števila osrednjega iona in nabojev ligandov; pri nabitih ligandih (npr. $\\mathrm{CN^{-}}$, $\\mathrm{Cl^{-}}$) se ne ujema z oksidacijskim številom."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 22,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera trditev o alkalijskih kovinah je pravilna?",
+     "choices": [
+      "Reaktivnost alkalijskih kovin v skupini od zgoraj navzdol pada.",
+      "Prva ionizacijska energija alkalijskih kovin v skupini od zgoraj navzdol narašča.",
+      "Alkalijske kovine imajo v spojinah oksidacijsko število $+\\mathrm{II}$.",
+      "Pri reakciji natrija z vodo nastaneta natrijev hidroksid in vodik."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "**D**: $\\mathrm{2\\,Na + 2\\,H_2O \\rightarrow 2\\,NaOH + H_2}$.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Alkalijske kovine (1. skupina) imajo v zunanji lupini en elektron ($ns^1$), ki ga zlahka oddajo; zato so močni reducenti.\n\n- **A ni pravilen:** navzdol po skupini se atomski polmer veča, zunanji elektron je dlje od jedra in ga atom lažje odda. Reaktivnost zato **narašča** (Li reagira z vodo počasi, K burno, Cs eksplozivno).\n- **B ni pravilen:** ker je zunanji elektron navzdol po skupini vse dlje od jedra, je za njegovo odstranitev potrebne vse manj energije: ionizacijska energija **pada**.\n- **C ni pravilen:** atom odda en elektron, zato je oksidacijsko število v spojinah $+\\mathrm{I}$ (npr. $\\mathrm{NaCl}$, $\\mathrm{K_2O}$). $+\\mathrm{II}$ imajo zemeljskoalkalijske kovine (2. skupina).\n- **D je pravilen:** $\\mathrm{2\\,Na + 2\\,H_2O \\rightarrow 2\\,NaOH + H_2}$. Natrij plava na vodi, se tali, nastaja plin vodik, raztopina je bazična."
+      }
+     ],
+     "mistake": "Ne zamenjaj trendov: večji atom lažje odda elektron, zato manjša ionizacijska energija pomeni večjo reaktivnost kovine."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 23,
+   "figure": "<svg viewBox=\"0 0 200 125\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" fill=\"currentColor\"><title>Skeletna formula alkena</title><g stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\" stroke-linejoin=\"round\"><polyline points=\"20,75 60,52 100,75 140,52 180,75\"/><line x1=\"100\" y1=\"75\" x2=\"100\" y2=\"118\"/><line x1=\"63\" y1=\"60.7\" x2=\"91\" y2=\"76.8\"/></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Na sliki je skeletna formula alkena. Katera trditev o tej spojini je pravilna?",
+     "choices": [
+      "Spojina se imenuje 3-metilpent-2-en in tvori geometrijska (cis-trans) izomera.",
+      "V molekuli so trije atomi ogljika s hibridizacijo $sp^2$.",
+      "V molekuli sta dva terciarna atoma ogljika.",
+      "Spojina in cikloheksan nista izomera, ker ima cikloheksan obroč."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "**A**: $\\mathrm{CH_3{-}CH{=}C(CH_3){-}CH_2{-}CH_3}$ je 3-metilpent-2-en; na obeh atomih C dvojne vezi sta različni skupini, zato obstajata izomera cis in trans (Z in E).",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Iz skeletne formule zapišemo racionalno: $\\mathrm{CH_3{-}CH{=}C(CH_3){-}CH_2{-}CH_3}$, molekulska formula $\\mathrm{C_6H_{12}}$.\n\n**Ime:** najdaljša veriga z dvojno vezjo ima 5 atomov C (pent-), dvojna vez se začne pri C-2 (številčimo z leve, da ima dvojna vez najmanjši lokant), metilna skupina je na C-3: **3-metilpent-2-en**.\n\n**Geometrijska izomerija:** na C-2 sta vezana $\\mathrm{H}$ in $\\mathrm{CH_3}$ (različni skupini), na C-3 pa $\\mathrm{CH_3}$ in $\\mathrm{CH_2CH_3}$ (različni skupini). Ker okoli dvojne vezi ni proste vrtljivosti, obstajata dva geometrijska izomera.\n\n- **A je pravilen.**\n- **B ni pravilen:** hibridizacijo $sp^2$ imata le **dva** atoma ogljika, ki sta povezana z dvojno vezjo (C-2 in C-3); ostali štirje so $sp^3$.\n- **C ni pravilen:** terciarni atom C je vezan na tri druge atome C. To velja le za C-3 (vezan na C-2, C-4 in metilno skupino). C-2 je vezan na dva atoma C (C-1 in C-3), zato je sekundaren; C-4 je sekundaren; C-1, C-5 in metilni ogljik so primarni.\n- **D ni pravilen:** cikloheksan ima formulo $\\mathrm{C_6H_{12}}$, enako kot ta alken. Spojini z enako molekulsko formulo in različno zgradbo **sta** strukturna izomera, ne glede na to, da ima ena obroč."
+      }
+     ],
+     "mistake": "Pri skeletni formuli je vsak konec in vsak pregib črte atom ogljika; vodikovi atomi niso narisani, dopolnimo jih tako, da ima vsak C štiri vezi."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 24,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Dana je reakcijska shema s propenom kot izhodno spojino:\n$$\\mathrm{CH_2{=}CH{-}CH_3 \\xrightarrow{HBr} A}$$\n$$\\mathrm{CH_2{=}CH{-}CH_3 \\xrightarrow{H_2,\\ Ni} B \\xrightarrow{Cl_2,\\ svetloba} C}$$\nKatera trditev je pravilna?",
+     "choices": [
+      "Glavni produkt A je 1-bromopropan.",
+      "Pretvorba propena v A je elektrofilna adicija, glavni produkt A je 2-bromopropan.",
+      "Pretvorba B v C je elektrofilna adicija.",
+      "Spojina B razbarva bromovico."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "**B**: $\\mathrm{HBr}$ se adira na dvojno vez po Markovnikovem pravilu, nastane $\\mathrm{CH_3{-}CHBr{-}CH_3}$.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "**Propen → A:** dvojna vez je bogata z elektroni in jo napade elektrofil $\\mathrm{H^{+}}$ iz $\\mathrm{HBr}$ – to je **elektrofilna adicija**. Po **Markovnikovem pravilu** se vodik veže na tisti atom C dvojne vezi, ki ima že več vodikov (C-1, skupina $\\mathrm{CH_2}$), brom pa na C-2. Nastane 2-bromopropan $\\mathrm{CH_3{-}CHBr{-}CH_3}$ (prek stabilnejšega sekundarnega karbokationa).\n\n**Propen → B:** adicija vodika ob katalizatorju nikelju (hidrogenacija) da propan $\\mathrm{CH_3{-}CH_2{-}CH_3}$.\n\n**B → C:** propan je nasičen; s klorom na svetlobi poteče **radikalska substitucija** (nastaneta 1-kloropropan in 2-kloropropan ter $\\mathrm{HCl}$).\n\n- **A ni pravilen:** 1-bromopropan bi bil produkt proti Markovnikovemu pravilu; pri navadni adiciji $\\mathrm{HBr}$ je glavni produkt 2-bromopropan.\n- **B je pravilen.**\n- **C ni pravilen:** propan nima dvojne vezi, zato adicija ni mogoča; svetloba je značilna za radikalsko substitucijo.\n- **D ni pravilen:** propan (B) je alkan in bromovice ne razbarva (to je dokaz za nenasičenost, npr. za propen)."
+      }
+     ],
+     "mistake": "Svetloba v pogojih reakcije alkana s halogenom pomeni radikalsko substitucijo, ne adicije; adicija je značilna za spojine z dvojno ali trojno vezjo."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 25,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera trditev o ogljikovodikih je pravilna?",
+     "choices": [
+      "Alkani so dobro topni v vodi.",
+      "Benzen pri sobni temperaturi z bromovico zlahka reagira z adicijo in jo razbarva.",
+      "Pri popolnem gorenju alkanov nastaneta ogljikov monoksid in vodik.",
+      "Tekoči alkani imajo manjšo gostoto od vode, zato plavajo na njej."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "**D**: npr. heksan ali bencin plavata na vodi, ker imata gostoto manjšo od $1\\,\\mathrm{g/cm^3}$ in se z vodo ne mešata.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "- **A ni pravilen:** alkani so nepolarni, med molekulami delujejo le disperzijske sile. Z vodo ne morejo tvoriti vodikovih vezi, zato se v njej praktično ne topijo (»podobno se topi v podobnem«).\n- **B ni pravilen:** benzen je aromatski; obroč z delokaliziranimi elektroni je zelo stabilen, zato benzen bromovice ne razbarva. Z bromom reagira šele ob katalizatorju (npr. $\\mathrm{FeBr_3}$), in sicer s **substitucijo**, ne z adicijo.\n- **C ni pravilen:** pri **popolnem** gorenju nastaneta ogljikov dioksid in voda, npr. $\\mathrm{CH_4 + 2\\,O_2 \\rightarrow CO_2 + 2\\,H_2O}$. Ogljikov monoksid (in saje) nastajajo pri nepopolnem gorenju, ko kisika ni dovolj; vodik pri gorenju ne nastaja.\n- **D je pravilen:** tekoči alkani (npr. heksan, oktan) imajo gostoto približno $0{,}65$ do $0{,}75\\,\\mathrm{g/cm^3}$, kar je manj od gostote vode. Ker se z vodo ne mešajo, tvorijo zgornjo plast (zato razlito nafto vidimo na gladini morja)."
+      }
+     ],
+     "mistake": "Benzena ne obravnavaj kot alkena s tremi dvojnimi vezmi: zaradi delokaliziranih elektronov zanj niso značilne adicije, ampak elektrofilne substitucije."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 26,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera od zapisanih reakcij dejansko poteče?",
+     "choices": [
+      "$\\mathrm{CH_3CH_2OH + NaOH(aq) \\rightarrow CH_3CH_2ONa + H_2O}$",
+      "$\\mathrm{C_6H_5OH + NaHCO_3(aq) \\rightarrow C_6H_5ONa + H_2O + CO_2}$",
+      "$\\mathrm{CH_3COOH + NaHCO_3(aq) \\rightarrow CH_3COONa + H_2O + CO_2}$",
+      "$\\mathrm{CH_3{-}CH_3 + HBr \\rightarrow CH_3{-}CH_2Br + H_2}$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: etanojska kislina je močnejša kislina od ogljikove(IV) kisline, zato iz hidrogenkarbonata sprosti $\\mathrm{CO_2}$.",
+     "ways": [
+      {
+       "title": "Razlaga: primerjamo kislost",
+       "text": "Kislost spojin s skupino $\\mathrm{-OH}$ narašča v vrsti: alkoholi $<$ voda $<$ fenoli $<$ ogljikova(IV) kislina $<$ karboksilne kisline. Kislina reagira z bazo (anionom šibkejše kisline) tako, da nastane šibkejša kislina.\n\n- **A ni pravilen:** etanol je šibkejša kislina od vode, zato z vodno raztopino $\\mathrm{NaOH}$ ne nastane opazna količina etoksida. (Natrijev etoksid nastane šele z natrijem: $\\mathrm{2\\,CH_3CH_2OH + 2\\,Na \\rightarrow 2\\,CH_3CH_2ONa + H_2}$.)\n- **B ni pravilen:** fenol je sicer šibka kislina in reagira z $\\mathrm{NaOH}$, a je **šibkejši** od ogljikove(IV) kisline. Zato iz $\\mathrm{NaHCO_3}$ ne izpodrine $\\mathrm{CO_2}$ (ne opazimo mehurčkov).\n- **C je pravilen:** etanojska kislina je močnejša od ogljikove(IV) kisline; nastala $\\mathrm{H_2CO_3}$ razpade na $\\mathrm{H_2O}$ in $\\mathrm{CO_2}$, ki se sprošča v mehurčkih. To je dokazna reakcija za karboksilno skupino.\n- **D ni pravilen:** etan je nasičen ogljikovodik in nima dvojne vezi, na katero bi se lahko adiral $\\mathrm{HBr}$. (Bromoetan nastane z adicijo $\\mathrm{HBr}$ na **eten**.)"
+      }
+     ],
+     "mistake": "Fenoli in karboksilne kisline so oboji kisli, a le karboksilne kisline so dovolj močne, da z $\\mathrm{NaHCO_3}$ sproščajo $\\mathrm{CO_2}$; s tem ju razlikujemo."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 27,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera trditev o bromocikloheksanu je pravilna?",
+     "choices": [
+      "Pri segrevanju z vodno raztopino $\\mathrm{NaOH}$ nastane pretežno cikloheksanol.",
+      "Pri segrevanju z raztopino $\\mathrm{KOH}$ v etanolu nastane pretežno cikloheksanol.",
+      "Nastane z adicijo vodikovega bromida na cikloheksan.",
+      "Je sekundarni halogenoalkan z molekulsko formulo $\\mathrm{C_6H_{12}Br}$."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "**A**: v vodni raztopini hidroksidni ion nadomesti brom (nukleofilna substitucija): $\\mathrm{C_6H_{11}Br + OH^{-} \\rightarrow C_6H_{11}OH + Br^{-}}$.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Halogenoalkani s hidroksidi reagirajo na dva načina, odvisno od pogojev:\n- v **vodni** raztopini prevladuje **nukleofilna substitucija** (nastane alkohol),\n- v **etanolni** raztopini ob segrevanju prevladuje **eliminacija** (nastane alken in $\\mathrm{HBr}$, ki ga baza veže).\n\n- **A je pravilen:** $\\mathrm{C_6H_{11}Br + OH^{-} \\xrightarrow{H_2O} C_6H_{11}OH + Br^{-}}$, nastane cikloheksanol.\n- **B ni pravilen:** v etanolu poteče eliminacija: $\\mathrm{C_6H_{11}Br + KOH \\xrightarrow{etanol} C_6H_{10} + KBr + H_2O}$; glavni produkt je **cikloheksen**.\n- **C ni pravilen:** cikloheksan je nasičen in adicija ni mogoča. Bromocikloheksan nastane z adicijo $\\mathrm{HBr}$ na **cikloheksen** (ali z radikalsko substitucijo cikloheksana z bromom na svetlobi).\n- **D ni pravilen:** halogenoalkan je res sekundaren (atom C z bromom je vezan na dva atoma C), a formula je $\\mathrm{C_6H_{11}Br}$: en atom H cikloheksana $\\mathrm{C_6H_{12}}$ je zamenjan z Br."
+      }
+     ],
+     "mistake": "Topilo ni postranska podrobnost: isti reagent ($\\mathrm{OH^{-}}$) da v vodi alkohol, v etanolu pa alken."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 28,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Etanojska kislina $\\mathrm{CH_3COOH}$ in metil metanoat $\\mathrm{HCOOCH_3}$ imata enako molsko maso. Katera trditev je pravilna?",
+     "choices": [
+      "Spojini sta (funkcionalna) izomera.",
+      "Metil metanoat ima višje vrelišče od etanojske kisline.",
+      "Med molekulami metil metanoata nastajajo vodikove vezi.",
+      "Etanojska kislina je v vodi slabše topna kot metil metanoat."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "**A**: obe imata molekulsko formulo $\\mathrm{C_2H_4O_2}$, a različni funkcionalni skupini (karboksilna, estrska).",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Molekulski formuli: etanojska kislina $\\mathrm{C_2H_4O_2}$, metil metanoat $\\mathrm{C_2H_4O_2}$; $M = 60\\,\\mathrm{g/mol}$.\n\n- **A je pravilen:** enaka molekulska formula, različna zgradba in različni funkcionalni skupini – to so funkcionalni izomeri.\n- **B ni pravilen:** molekule karboksilne kisline se povezujejo z **vodikovimi vezmi** (skupina $\\mathrm{-COOH}$ ima vez $\\mathrm{O{-}H}$), pogosto v dimere. Ester nima vodika na kisiku, med njegovimi molekulami delujejo le dipol-dipol in disperzijske sile. Zato ima kislina mnogo višje vrelišče (okoli $118\\,°\\mathrm{C}$) kot ester (okoli $32\\,°\\mathrm{C}$).\n- **C ni pravilen:** v metil metanoatu so vsi vodiki vezani na ogljik; ester lahko z vodo tvori vodikove vezi (kot sprejemnik), med lastnimi molekulami pa ne.\n- **D ni pravilen:** etanojska kislina tvori z vodo vodikove vezi kot dajalec in sprejemnik ter se z vodo meša v vsakem razmerju; metil metanoat je le omejeno topen. Kislina je torej **bolje** topna."
+      }
+     ],
+     "mistake": "Pri enaki molski masi o vrelišču odločajo medmolekulske sile; snov z vodikovimi vezmi med molekulami vre pri višji temperaturi."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 29,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "3-metilbutan-2-ol $\\mathrm{CH_3{-}CH(OH){-}CH(CH_3){-}CH_3}$ segrevamo z zakisano raztopino kalijevega dikromata. Kateri je glavni organski produkt?",
+     "choices": [
+      "$\\mathrm{(CH_3)_2CH{-}CH_2{-}CHO}$",
+      "$\\mathrm{(CH_3)_2CH{-}CO{-}CH_3}$",
+      "$\\mathrm{(CH_3)_2C{=}CH{-}CH_3}$",
+      "$\\mathrm{(CH_3)_2CH{-}COOH}$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "**B**: sekundarni alkohol se oksidira v keton, 3-metilbutan-2-on.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Skupina $\\mathrm{-OH}$ je na C-2, ki je vezan na dva atoma ogljika (C-1 in C-3), zato je 3-metilbutan-2-ol **sekundarni alkohol**. Oksidant (oranžni $\\mathrm{Cr_2O_7^{2-}}$, ki se pri tem reducira v zelene ione $\\mathrm{Cr^{3+}}$) odvzame vodik s skupine $\\mathrm{-OH}$ in vodik z istega atoma C; nastane karbonilna skupina na C-2, torej **keton**:\n\n$\\mathrm{CH_3{-}CH(OH){-}CH(CH_3){-}CH_3 \\rightarrow CH_3{-}CO{-}CH(CH_3){-}CH_3}$ (3-metilbutan-2-on)\n\n- **A ni pravilen:** aldehid nastane le iz **primarnega** alkohola (skupina $\\mathrm{-OH}$ na koncu verige); ta aldehid (3-metilbutanal) bi nastal iz 3-metilbutan-1-ola.\n- **B je pravilen.**\n- **C ni pravilen:** 2-metilbut-2-en je produkt **dehidratacije** (eliminacije vode), npr. s koncentrirano žveplovo(VI) kislino, ne oksidacije.\n- **D ni pravilen:** keton se z dikromatom ne oksidira naprej, ker bi se morala pretrgati vez $\\mathrm{C{-}C}$; karboksilna kislina nastane pri oksidaciji primarnega alkohola. Poleg tega ima ta formula le 4 atome C, izhodna spojina pa 5."
+      }
+     ],
+     "mistake": "Ne oksidiraj vsakega alkohola do kisline: primarni → aldehid → karboksilna kislina, sekundarni → keton, terciarni se v teh pogojih ne oksidira."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 30,
+   "figure": "<svg viewBox=\"0 0 340 135\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" fill=\"currentColor\"><title>Strukturni formuli mentola in mentona</title><g stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\" stroke-linejoin=\"round\"><polygon points=\"75,44 99.2,58 99.2,86 75,100 50.8,86 50.8,58\"/><line x1=\"75\" y1=\"44\" x2=\"75\" y2=\"24\"/><polyline points=\"99.2,58 123.4,44 123.4,18\"/><line x1=\"123.4\" y1=\"44\" x2=\"147.6\" y2=\"58\"/><line x1=\"50.8\" y1=\"86\" x2=\"26.6\" y2=\"100\"/><polygon points=\"250,44 274.2,58 274.2,86 250,100 225.8,86 225.8,58\"/><line x1=\"246\" y1=\"44\" x2=\"246\" y2=\"24\"/><line x1=\"254\" y1=\"44\" x2=\"254\" y2=\"24\"/><polyline points=\"274.2,58 298.4,44 298.4,18\"/><line x1=\"298.4\" y1=\"44\" x2=\"322.6\" y2=\"58\"/><line x1=\"225.8\" y1=\"86\" x2=\"201.6\" y2=\"100\"/></g><g font-size=\"14\" text-anchor=\"middle\"><text x=\"75\" y=\"20\">OH</text><text x=\"250\" y=\"20\">O</text><text x=\"75\" y=\"128\">mentol</text><text x=\"250\" y=\"128\">menton</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Eterično olje poprove mete vsebuje mentol in menton (strukturni formuli sta na sliki). S katerim reagentom nastane oborina samo z eno od obeh spojin?",
+     "choices": [
+      "s Tollensovim reagentom",
+      "z zakisano raztopino kalijevega dikromata",
+      "z 2,4-dinitrofenilhidrazinom",
+      "z bromovico"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: 2,4-dinitrofenilhidrazin z mentonom (ketonom) tvori rumeno do oranžno oborino, z mentolom (alkoholom) ne reagira.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Mentol ima hidroksilno skupino na sekundarnem atomu C (sekundarni alkohol), menton pa na istem mestu karbonilno skupino (keton). Ostali del molekule je enak in nasičen.\n\n- **A ni pravilen:** Tollensov reagent (amoniakalna raztopina srebrovih ionov) dokazuje **aldehide**; ketoni (menton) in alkoholi (mentol) z njim ne dajo srebrnega ogledala. Poleg tega se pri tej reakciji izloča srebro, ne spojina iz zmesi.\n- **B ni pravilen:** dikromat oksidira mentol (sekundarni alkohol) v menton; barva se spremeni iz oranžne v zeleno, oborina pa ne nastane. Menton se ne oksidira.\n- **C je pravilen:** 2,4-dinitrofenilhidrazin reagira s karbonilno skupino aldehidov in ketonov; nastane slabo topen 2,4-dinitrofenilhidrazon, ki se izloči kot rumena do oranžna oborina. Mentol karbonilne skupine nima in ostane v raztopini.\n- **D ni pravilen:** bromovico razbarvajo spojine z dvojno ali trojno vezjo $\\mathrm{C{=}C}$, $\\mathrm{C{\\equiv}C}$. Obe spojini sta nasičeni, zato ne reagira nobena."
+      }
+     ],
+     "mistake": "Tollensov in Fehlingov reagent razlikujeta aldehide od ketonov; za vse karbonilne spojine (tudi ketone) je značilna oborina z 2,4-dinitrofenilhidrazinom."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 31,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera spojina pri segrevanju v kisli vodni raztopini (kisla hidroliza) da propanojsko kislino $\\mathrm{CH_3CH_2COOH}$?",
+     "choices": [
+      "$\\mathrm{CH_3CH_2CONH_2}$",
+      "$\\mathrm{CH_3CH_2CH_2Cl}$",
+      "$\\mathrm{CH_3COOCH_3}$",
+      "$\\mathrm{CH_3CH_2CH_2NH_2}$"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "**A**: propanamid: $\\mathrm{CH_3CH_2CONH_2 + H_2O + H^{+} \\rightarrow CH_3CH_2COOH + NH_4^{+}}$.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Pri hidrolizi se vez razcepi z vodo. Karboksilna kislina nastane le iz **derivata karboksilne kisline**, ki ima skupino $\\mathrm{-CO{-}}$ že na koncu verige s tremi atomi C (amid, ester, kislinski klorid ...).\n\n- **A je pravilen:** propanamid je amid propanojske kisline. V kislem se vez $\\mathrm{C{-}N}$ hidrolizira: nastaneta propanojska kislina in amonijev ion (amonijak se v kislem protonira).\n- **B ni pravilen:** 1-kloropropan je halogenoalkan; s hidrolizo (substitucijo s $\\mathrm{OH}$) bi nastal propan-1-ol, alkohol, ne kislina.\n- **C ni pravilen:** metil etanoat ima sicer tri atome C, a hidroliza estra da kislino in alkohol, ki ju ester povezuje: **etanojsko** kislino $\\mathrm{CH_3COOH}$ in metanol $\\mathrm{CH_3OH}$.\n- **D ni pravilen:** propan-1-amin nima karbonilne skupine; amini ne hidrolizirajo, v kislem se le protonirajo v $\\mathrm{CH_3CH_2CH_2NH_3^{+}}$."
+      }
+     ],
+     "mistake": "Pri estru ne štej vseh atomov C skupaj: kislinski del je tisti s karbonilno skupino ($\\mathrm{CH_3CO{-}}$ v metil etanoatu), alkoholni del pa je vezan na kisik."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 32,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Škrob in celuloza sta oba zgrajena iz enot glukoze, vendar je škrob za človeka prebavljiv in tvori zrnca, celuloza pa je neprebavljiva in tvori trdna vlakna. Kaj je glavni vzrok za razliko?",
+     "choices": [
+      "Škrob je zgrajen iz glukoze, celuloza pa iz fruktoze.",
+      "Celuloza je močno razvejana, škrob pa je sestavljen le iz nerazvejanih verig.",
+      "V celulozi so enote glukoze povezane s peptidnimi vezmi.",
+      "Enote glukoze so v škrobu povezane z $\\alpha$-glikozidnimi vezmi, v celulozi pa z $\\beta$-1,4-glikozidnimi vezmi."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "**D**: različna vrsta glikozidne vezi ($\\alpha$ v škrobu, $\\beta$ v celulozi) da različno obliko verig in s tem različne lastnosti.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "- **A ni pravilen:** oba polisaharida sta zgrajena iz **glukoze**; to je navedeno tudi v besedilu naloge.\n- **B ni pravilen:** je ravno obratno: celuloza je nerazvejana (linearne verige), razvejan je amilopektin v škrobu (in glikogen).\n- **C ni pravilen:** peptidne vezi povezujejo aminokisline v beljakovinah; monosaharidi so v polisaharidih povezani z glikozidnimi vezmi.\n- **D je pravilen:** v škrobu (amiloza, amilopektin) so enote $\\alpha$-glukoze povezane z $\\alpha$-1,4-glikozidnimi vezmi (v amilopektinu na razvejiščih še z $\\alpha$-1,6). Verige amiloze se zvijejo v vijačnico, škrob tvori zrnca. V celulozi so enote $\\beta$-glukoze povezane z $\\beta$-1,4-glikozidnimi vezmi; verige so iztegnjene in se med seboj povezujejo s številnimi vodikovimi vezmi v trdna vlakna. Človeški encimi (amilaze) cepijo le $\\alpha$-glikozidne vezi, zato celuloze ne prebavimo."
+      }
+     ],
+     "mistake": "Ne zadostuje vedeti, iz katerega monomera je polimer; lastnosti polisaharida določa tudi način povezave enot (vrsta glikozidne vezi in razvejanost)."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 33,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera trditev o lipidih je pravilna?",
+     "choices": [
+      "Olja so pri sobni temperaturi tekoča, ker vsebujejo večji delež nenasičenih maščobnih kislin kot trdne maščobe.",
+      "Maščobe so estri etanola in maščobnih kislin.",
+      "Pri hidrogenaciji olj nastanejo bolj nenasičene maščobe z nižjim tališčem.",
+      "Molekule fosfolipidov so v celoti nepolarne, zato tvorijo celične membrane."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "**A**: dvojne vezi (cis) ukrivijo verige, molekule se ne morejo tesno zložiti, zato je tališče olj nižje.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "- **A je pravilen:** v nenasičenih maščobnih kislinah so dvojne vezi (v naravi pretežno cis), ki naredijo v verigi pregib. Takšne molekule se slabše zlagajo druga ob drugo, disperzijske sile med njimi so šibkejše, zato je tališče nižje in so olja pri sobni temperaturi tekoča. Nasičene verige so ravne in se tesno zložijo – maščobe so trdne.\n- **B ni pravilen:** maščobe in olja so **triacilgliceroli**: estri trivalentnega alkohola **glicerola** (propan-1,2,3-triola) in treh maščobnih kislin, ne etanola.\n- **C ni pravilen:** pri hidrogenaciji se vodik adira na dvojne vezi, zato nastanejo **bolj nasičene** maščobe z **višjim** tališčem (tako iz olja dobimo trdno margarino).\n- **D ni pravilen:** fosfolipidi so **amfifilni**: imajo polarno (hidrofilno) glavo s fosfatno skupino in dva nepolarna (hidrofobna) repa. Prav zato se v vodi uredijo v dvosloj, kjer so glave obrnjene proti vodi, repi pa v notranjost membrane."
+      }
+     ],
+     "mistake": "Hidrogenacija zmanjša število dvojnih vezi; maščoba postane bolj nasičena in bolj trdna, ne obratno."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 34,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera od formul predstavlja sekundarni amin?",
+     "choices": [
+      "$\\mathrm{CH_3{-}CO{-}NH{-}CH_3}$",
+      "$\\mathrm{(CH_3)_3N}$",
+      "$\\mathrm{CH_3{-}CH_2{-}NH{-}CH_3}$",
+      "$\\mathrm{(CH_3)_2CH{-}NH_2}$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: N-metiletanamin; na dušik sta vezani dve alkilni skupini (etilna in metilna) in en vodik.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Amine razvrščamo po tem, **koliko alkilnih (ali arilnih) skupin je vezanih na atom dušika**: primarni $\\mathrm{R{-}NH_2}$, sekundarni $\\mathrm{R_2NH}$, terciarni $\\mathrm{R_3N}$. (Pri alkoholih pa gledamo atom C s skupino $\\mathrm{-OH}$ – to je drugačno pravilo.)\n\n- **A ni pravilen:** dušik je vezan na karbonilni ogljik ($\\mathrm{-CO{-}NH{-}}$), zato je to **amid** (N-metiletanamid), ne amin. Amidi niso bazični kot amini.\n- **B ni pravilen:** trimetilamin ima na dušiku tri metilne skupine in nobenega vodika – je **terciarni** amin.\n- **C je pravilen:** na dušik sta vezani dve alkilni skupini in en atom H – sekundarni amin.\n- **D ni pravilen:** propan-2-amin ima na dušiku le eno alkilno skupino in dva vodika – je **primarni** amin, čeprav je skupina $\\mathrm{-NH_2}$ vezana na sekundarni atom ogljika."
+      }
+     ],
+     "mistake": "Pri aminih ne gledamo atoma C, na katerega je vezan dušik, ampak število ogljikovih skupin na dušiku. Skupina $\\mathrm{-CO{-}N}$ ni amin, ampak amid."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 35,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "V kateri vrsti so navedeni **samo** adicijski polimeri?",
+     "choices": [
+      "polieten (PE), poli(vinil klorid) (PVC), polistiren (PS)",
+      "polieten (PE), najlon (poliamid), poli(vinil klorid) (PVC)",
+      "polipropen (PP), poli(etilen tereftalat) (PET), politetrafluoroeten (PTFE)",
+      "celuloza, polistiren (PS), poli(vinil klorid) (PVC)"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "**A**: PE, PVC in PS nastanejo z adicijsko polimerizacijo monomerov z dvojno vezjo (eten, kloroeten, stiren).",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "**Adicijski polimeri** nastanejo iz monomerov z dvojno vezjo $\\mathrm{C{=}C}$: dvojne vezi se odpirajo, monomeri se povezujejo v verigo, stranski produkt ne nastaja. **Kondenzacijski polimeri** nastanejo iz monomerov z dvema funkcionalnima skupinama, pri vsaki povezavi se odcepi majhna molekula (najpogosteje voda).\n\n- **A je pravilen:** polieten iz etena $\\mathrm{CH_2{=}CH_2}$, PVC iz kloroetena (vinil klorida) $\\mathrm{CH_2{=}CHCl}$, polistiren iz stirena (feniletena) $\\mathrm{CH_2{=}CH{-}C_6H_5}$ – vsi so adicijski.\n- **B ni pravilen:** najlon je poliamid, nastane s kondenzacijo diamina in dikarboksilne kisline (amidne vezi, odcepi se voda).\n- **C ni pravilen:** PP in PTFE (teflon) sta adicijska, PET pa je poliester, ki nastane s kondenzacijo etan-1,2-diola in benzen-1,4-dikarboksilne (tereftalne) kisline.\n- **D ni pravilen:** celuloza je naraven polisaharid; enote glukoze so povezane z glikozidnimi vezmi, pri nastanku katerih se odcepi voda, zato jo uvrščamo med kondenzacijske polimere."
+      }
+     ],
+     "mistake": "Za vsak polimer se vprašaj, ali ima monomer dvojno vez $\\mathrm{C{=}C}$ (adicija) ali dve funkcionalni skupini, pri povezavi katerih se odcepi voda (kondenzacija)."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 1,
+   "intro": "Tina mora iz založne raztopine bakrovega(II) sulfata s koncentracijo $c = 0{,}500\\,\\mathrm{mol/L}$ pripraviti $250{,}0\\,\\mathrm{mL}$ raztopine s koncentracijo $0{,}0400\\,\\mathrm{mol/L}$. Na pultu ima pripomočke, prikazane na sliki.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 205\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M28,120 L85,120 L86,172 Q86,178 80,178 L34,178 Q28,178 28,172 Z\" fill=\"currentColor\" fill-opacity=\"0.12\" stroke=\"none\"/><path d=\"M18,48 L24,50 L28,172 Q28,178 34,178 L80,178 Q86,178 86,172 L90,50 L94,48\"/><path d=\"M34,140 L44,140 M34,110 L44,110 M34,80 L44,80\" stroke-width=\"1.2\"/><path d=\"M138,50 L138,108 C104,116 100,176 122,178 L166,178 C188,176 184,116 150,108 L150,50 Z\" fill=\"currentColor\" fill-opacity=\"0.12\" stroke=\"none\"/><path d=\"M138,20 L138,108 C104,116 100,176 122,178 L166,178 C188,176 184,116 150,108 L150,20\"/><path d=\"M134,50 L154,50\" stroke-width=\"1.2\"/><path d=\"M227,8 L227,79 M233,8 L233,79 M227,121 L227,168 L229,184 M233,121 L233,168 L231,184\"/><ellipse cx=\"230\" cy=\"100\" rx=\"10\" ry=\"22\"/><path d=\"M222,34 L238,34\" stroke-width=\"1.2\"/><rect x=\"300\" y=\"90\" width=\"30\" height=\"80\" fill=\"currentColor\" fill-opacity=\"0.12\" stroke=\"none\"/><path d=\"M296,27 L300,30 L300,170 M330,170 L330,30 L334,27\"/><path d=\"M288,170 L342,170 L342,178 L288,178 Z\"/><path d=\"M300,50 L312,50\" stroke-width=\"1\"/><path d=\"M300,60 L306,60\" stroke-width=\"1\"/><path d=\"M300,70 L306,70\" stroke-width=\"1\"/><path d=\"M300,80 L306,80\" stroke-width=\"1\"/><path d=\"M300,90 L306,90\" stroke-width=\"1\"/><path d=\"M300,100 L312,100\" stroke-width=\"1\"/><path d=\"M300,110 L306,110\" stroke-width=\"1\"/><path d=\"M300,120 L306,120\" stroke-width=\"1\"/><path d=\"M300,130 L306,130\" stroke-width=\"1\"/><path d=\"M300,140 L306,140\" stroke-width=\"1\"/><path d=\"M300,150 L312,150\" stroke-width=\"1\"/><path d=\"M300,160 L306,160\" stroke-width=\"1\"/><text x=\"57\" y=\"199\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">A</text><text x=\"144\" y=\"199\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">B</text><text x=\"230\" y=\"199\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">C</text><text x=\"315\" y=\"199\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">D</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "V katerem od prikazanih pripomočkov Tina najnatančneje pripravi $250{,}0\\,\\mathrm{mL}$ končne raztopine? Napiši črko in pripomoček natančno poimenuj.",
+     "answer": "B – merilna bučka (z oznako za $250\\,\\mathrm{mL}$).",
+     "ways": [
+      {
+       "title": "Po namenu pripomočka",
+       "text": "Raztopino z natančno znano prostornino pripravimo v **merilni bučki** (B). Ima ozek vrat z eno samo oznako (umeritveno črto); ko spodnji rob meniskusa doseže to črto, je v bučki točno $250{,}0\\,\\mathrm{mL}$ raztopine pri temperaturi, ki je zapisana na bučki.\n\nKer je vrat ozek, majhna napaka pri višini tekočine pomeni zelo majhno napako prostornine – zato je merilna bučka natančnejša od merilnega valja."
+      },
+      {
+       "title": "Z izločanjem",
+       "text": "- A je **čaša**: oznake na njej so le približne, za natančne prostornine ni primerna.\n- C je **polnilna (trbušasta) pipeta**: z njo natančno odmerimo manjšo prostornino (npr. založne raztopine), ne pripravimo pa v njej končne raztopine.\n- D je **merilni valj**: meri prostornino na približno $1\\,\\%$, kar je manj natančno od merilne bučke.\n\nOstane B, merilna bučka."
+      }
+     ],
+     "mistake": "Odgovor »bučka« ni dovolj natančen, »erlenmajerica« pa je napačen: erlenmajerica nima umeritvene oznake, merilna bučka pa ima eno samo oznako za točno prostornino."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Izračunaj, koliko mililitrov založne raztopine mora Tina odmeriti.",
+     "answer": "$V = 20{,}0\\,\\mathrm{mL}$ založne raztopine.",
+     "ways": [
+      {
+       "title": "Z enačbo redčenja",
+       "text": "**Podatki:** $c_1 = 0{,}500\\,\\mathrm{mol/L}$ (založna raztopina), $c_2 = 0{,}0400\\,\\mathrm{mol/L}$, $V_2 = 250{,}0\\,\\mathrm{mL}$.\n**Iščemo:** $V_1$.\n\nPri redčenju se množina topljenca ne spremeni: $c_1 V_1 = c_2 V_2$.\n\n$V_1 = \\frac{c_2 V_2}{c_1} = \\frac{0{,}0400\\,\\mathrm{mol/L} \\cdot 250{,}0\\,\\mathrm{mL}}{0{,}500\\,\\mathrm{mol/L}} = 20{,}0\\,\\mathrm{mL}$"
+      },
+      {
+       "title": "Drugače: prek množine",
+       "text": "V končni raztopini mora biti\n$n(\\mathrm{CuSO_4}) = c_2 V_2 = 0{,}0400\\,\\mathrm{mol/L} \\cdot 0{,}2500\\,\\mathrm{L} = 0{,}0100\\,\\mathrm{mol}$.\n\nTo množino vzamemo iz založne raztopine:\n$V_1 = \\frac{n}{c_1} = \\frac{0{,}0100\\,\\mathrm{mol}}{0{,}500\\,\\mathrm{mol/L}} = 0{,}0200\\,\\mathrm{L} = 20{,}0\\,\\mathrm{mL}$.\n\nPreizkus: raztopino redčimo $\\frac{0{,}500}{0{,}0400} = 12{,}5$-krat, in res je $250{,}0 : 20{,}0 = 12{,}5$."
+      }
+     ],
+     "mistake": "Kdor zamenja koncentraciji ($V_1 = \\frac{c_1 V_2}{c_2}$), dobi $3125\\,\\mathrm{mL}$ – več kot je končne raztopine, kar ne more biti res."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "choice",
+     "text": "Tina odmerja prostornino brezbarvne vodne raztopine. Na kateri sliki je prikazano pravilno odčitavanje prostornine? Obkroži črko.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 150\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M40,58 Q55,86 70,58 L70,128 L40,128 Z\" fill=\"currentColor\" fill-opacity=\"0.12\" stroke=\"none\"/><path d=\"M40,18 L40,128 M70,18 L70,128\"/><path d=\"M40,58 Q55,86 70,58\" stroke-width=\"1.3\"/><path d=\"M70,72 L80,72\" stroke-width=\"1.2\"/><ellipse cx=\"14\" cy=\"34\" rx=\"8\" ry=\"4.5\"/><circle cx=\"16\" cy=\"34\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M24,34 L55,72\" stroke-width=\"1\" stroke-dasharray=\"3 3\"/><text x=\"55\" y=\"146\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">A</text><path d=\"M140,58 Q155,86 170,58 L170,128 L140,128 Z\" fill=\"currentColor\" fill-opacity=\"0.12\" stroke=\"none\"/><path d=\"M140,18 L140,128 M170,18 L170,128\"/><path d=\"M140,58 Q155,86 170,58\" stroke-width=\"1.3\"/><path d=\"M170,72 L180,72\" stroke-width=\"1.2\"/><ellipse cx=\"114\" cy=\"72\" rx=\"8\" ry=\"4.5\"/><circle cx=\"116\" cy=\"72\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M124,72 L155,72\" stroke-width=\"1\" stroke-dasharray=\"3 3\"/><text x=\"155\" y=\"146\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">B</text><path d=\"M240,58 Q255,86 270,58 L270,128 L240,128 Z\" fill=\"currentColor\" fill-opacity=\"0.12\" stroke=\"none\"/><path d=\"M240,18 L240,128 M270,18 L270,128\"/><path d=\"M240,58 Q255,86 270,58\" stroke-width=\"1.3\"/><path d=\"M270,72 L280,72\" stroke-width=\"1.2\"/><ellipse cx=\"214\" cy=\"58\" rx=\"8\" ry=\"4.5\"/><circle cx=\"216\" cy=\"58\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M224,58 L270,58\" stroke-width=\"1\" stroke-dasharray=\"3 3\"/><text x=\"255\" y=\"146\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">C</text><path d=\"M340,58 Q355,86 370,58 L370,128 L340,128 Z\" fill=\"currentColor\" fill-opacity=\"0.12\" stroke=\"none\"/><path d=\"M340,18 L340,128 M370,18 L370,128\"/><path d=\"M340,58 Q355,86 370,58\" stroke-width=\"1.3\"/><path d=\"M370,72 L380,72\" stroke-width=\"1.2\"/><ellipse cx=\"314\" cy=\"110\" rx=\"8\" ry=\"4.5\"/><circle cx=\"316\" cy=\"110\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M324,110 L355,72\" stroke-width=\"1\" stroke-dasharray=\"3 3\"/><text x=\"355\" y=\"146\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">D</text></svg>",
+     "choices": [
+      "A",
+      "B",
+      "C",
+      "D"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – oko je v višini najnižje točke meniskusa.",
+     "ways": [
+      {
+       "title": "Pravilo odčitavanja",
+       "text": "Vodne raztopine v stekleni posodi tvorijo konkaven (vbočen) meniskus. Prostornino odčitamo pri **najnižji točki meniskusa**, oko pa mora biti **v isti višini** kot ta točka, da ni paralakse. To je slika **B**.\n\n- A: oko je nad meniskusom – zaradi paralakse je odčitek napačen (pri merilnem valju prevelik).\n- C: oko je sicer v višini, vendar gleda zgornji rob meniskusa ob steni – ta je višje od najnižje točke.\n- D: oko je pod meniskusom – spet paralaksa (pri merilnem valju je odčitek premajhen)."
+      },
+      {
+       "title": "Z ravnilom",
+       "text": "Predstavljaj si vodoravno ravnilo, položeno na najnižjo točko meniskusa. Pravilno je takrat, ko je smer pogleda ravno vzdolž tega ravnila: pogled ne sme biti nagnjen (A, D) in ne sme meriti roba ob steni (C). Vse to izpolnjuje samo **B**."
+      }
+     ],
+     "mistake": "Odčitavanje zgornjega roba (C) je navada iz vsakdanjega življenja; pri brezbarvnih vodnih raztopinah pa velja spodnji rob meniskusa."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 2,
+   "intro": "Dane so štiri snovi, ki vsebujejo klor: $\\mathrm{HCl}$, $\\mathrm{CCl_4}$, $\\mathrm{NaClO_3}$ in $\\mathrm{Cl_2O_7}$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Katera od naštetih snovi ima najnižje vrelišče? Napiši formulo.",
+     "answer": "$\\mathrm{HCl}$ (klorovodik; vrelišče okoli $-85\\,^\\circ\\mathrm{C}$).",
+     "ways": [
+      {
+       "title": "Primerjava sil med delci",
+       "text": "- $\\mathrm{NaClO_3}$ je ionska snov – med ioni so močne ionske vezi, zato ima zelo visoko tališče in vrelišče.\n- $\\mathrm{CCl_4}$ ($M = 153{,}8\\,\\mathrm{g/mol}$) in $\\mathrm{Cl_2O_7}$ ($M = 182{,}9\\,\\mathrm{g/mol}$) sta molekulski snovi z velikimi molekulami in številnimi elektroni, zato so disperzijske sile med njimi močne; obe sta pri sobni temperaturi tekočini.\n- $\\mathrm{HCl}$ ($M = 36{,}46\\,\\mathrm{g/mol}$) ima majhne molekule. Čeprav je molekula polarna, so dipol-dipol in disperzijske sile šibkejše od disperzijskih sil med velikimi molekulami $\\mathrm{CCl_4}$. $\\mathrm{HCl}$ je pri sobni temperaturi plin.\n\nNajnižje vrelišče ima $\\mathrm{HCl}$."
+      },
+      {
+       "title": "Iz agregatnega stanja",
+       "text": "Pri sobnih pogojih je $\\mathrm{HCl}$ plin, $\\mathrm{CCl_4}$ in $\\mathrm{Cl_2O_7}$ sta tekočini, $\\mathrm{NaClO_3}$ je trdna snov. Snov, ki je pri sobni temperaturi plin, ima vrelišče pod sobno temperaturo – najnižje med naštetimi je torej vrelišče $\\mathrm{HCl}$."
+      }
+     ],
+     "mistake": "Kdor sklepa »nepolarna molekula → najšibkejše sile«, izbere $\\mathrm{CCl_4}$. Velikost molekule (število elektronov) pa je tu pomembnejša od polarnosti."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Katera snov ni zgrajena iz molekul? Napiši formulo in ime snovi.",
+     "answer": "$\\mathrm{NaClO_3}$, natrijev klorat – ionski kristal iz ionov $\\mathrm{Na^+}$ in $\\mathrm{ClO_3^-}$.",
+     "ways": [
+      {
+       "title": "Vrsta vezi",
+       "text": "$\\mathrm{HCl}$, $\\mathrm{CCl_4}$ in $\\mathrm{Cl_2O_7}$ so zgrajeni samo iz nekovin, atomi so povezani s kovalentnimi vezmi v molekule.\n\n$\\mathrm{NaClO_3}$ vsebuje kovino natrij. Zgrajen je iz kationov $\\mathrm{Na^+}$ in kloratnih anionov $\\mathrm{ClO_3^-}$, ki jih v kristalu povezujejo ionske vezi. Kovalentne vezi so le znotraj iona $\\mathrm{ClO_3^-}$, celotna snov pa ni iz molekul – je **ionska spojina**."
+      }
+     ],
+     "mistake": "Zaradi kovalentnih vezi med Cl in O v kloratnem ionu nekateri mislijo, da je $\\mathrm{NaClO_3}$ molekulski. Molekul pa ni – osnovni gradniki kristala so ioni."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "V kateri snovi ima klor najvišje oksidacijsko število? Napiši formulo in oksidacijsko število klora v njej.",
+     "answer": "$\\mathrm{Cl_2O_7}$, oksidacijsko število klora je $+\\mathrm{VII}$.",
+     "ways": [
+      {
+       "title": "Izračun za vsako snov",
+       "text": "Kisik ima $-\\mathrm{II}$, vodik $+\\mathrm{I}$, natrij $+\\mathrm{I}$, ogljik v $\\mathrm{CCl_4}$ $+\\mathrm{IV}$; vsota oksidacijskih števil v spojini je $0$.\n\n- $\\mathrm{HCl}$: $1 + x = 0$, torej $x = -1$.\n- $\\mathrm{CCl_4}$: $4 + 4x = 0$, torej $x = -1$.\n- $\\mathrm{NaClO_3}$: $1 + x + 3 \\cdot (-2) = 0$, torej $x = +5$.\n- $\\mathrm{Cl_2O_7}$: $2x + 7 \\cdot (-2) = 0$, torej $x = +7$.\n\nNajvišje je v $\\mathrm{Cl_2O_7}$: $+\\mathrm{VII}$."
+      },
+      {
+       "title": "Drugače: največje možno",
+       "text": "Klor je v 17. skupini in ima 7 valenčnih elektronov. Najvišje možno oksidacijsko število je zato $+\\mathrm{VII}$, ki ga doseže le v spojinah z zelo elektronegativnim kisikom. V $\\mathrm{Cl_2O_7}$ je na 2 atoma klora 7 atomov kisika; vsak kisik »vzame« 2 elektrona, skupaj $7 \\cdot 2 = 14$, to je $7$ na vsak atom klora."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 3,
+   "intro": "Aluminij kristalizira v ploskovno centrirani kubični mreži. Slika prikazuje model osnovne celice.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 215\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M100,140 L200,140 M100,140 L100,40 M100,140 L60,180\" stroke-dasharray=\"4 4\" stroke-width=\"1.1\"/><polygon points=\"60,80 160,80 160,180 60,180\"/><path d=\"M60,80 L100,40 L200,40 L160,80 M200,40 L200,140 L160,180\"/><circle cx=\"60\" cy=\"80\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"160\" cy=\"80\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"160\" cy=\"180\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"60\" cy=\"180\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"100\" cy=\"40\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"200\" cy=\"40\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"200\" cy=\"140\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"100\" cy=\"140\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"110\" cy=\"130\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"150\" cy=\"90\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"80\" cy=\"110\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"180\" cy=\"110\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"130\" cy=\"60\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"130\" cy=\"160\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.3\"/><text x=\"120\" y=\"208\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">osnovna celica aluminija</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko atomov aluminija pripada eni osnovni celici?",
+     "answer": "$4$ atomi.",
+     "ways": [
+      {
+       "title": "Deleži atomov",
+       "text": "- Atom v oglišču si deli 8 osnovnih celic, celici pripada $\\frac{1}{8}$ atoma. Oglišč je 8.\n- Atom v središču ploskve si delita 2 celici, celici pripada $\\frac{1}{2}$ atoma. Ploskev je 6.\n\n$N = 8 \\cdot \\frac{1}{8} + 6 \\cdot \\frac{1}{2} = 1 + 3 = 4$"
+      },
+      {
+       "title": "S sliko",
+       "text": "Na sliki je 14 krogel, vendar nobena ne leži v celoti v celici. Če celico »izrežemo«, iz vsakega oglišča ostane osmina krogle (skupaj ena cela krogla), iz vsake ploskve polovica (skupaj tri cele krogle). Skupaj $1 + 3 = 4$."
+      }
+     ],
+     "mistake": "Prešteti vse narisane krogle (14) ali ne upoštevati deljenja med celicami."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera kombinacija lastnosti velja za kovinske kristale? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Prevajajo električni tok v trdnem in v talini, so kovni in vlečni, gradniki so kovinski kationi med prosto gibljivimi elektroni.",
+      "Električni tok prevajajo le v talini in raztopini, so trdi in krhki, gradniki so kationi in anioni.",
+      "Električnega toka ne prevajajo, so mehki in imajo nizko tališče, gradniki so molekule.",
+      "Električnega toka ne prevajajo, so zelo trdi in imajo zelo visoko tališče, gradniki so atomi, povezani s kovalentnimi vezmi."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "**A**: prevajajo tok v trdnem in talini, so kovni, gradniki so kationi v »morju« elektronov.",
+     "ways": [
+      {
+       "title": "Model kovinske vezi",
+       "text": "V kovinskem kristalu so kovinski kationi, valenčni elektroni pa so delokalizirani po vsem kristalu. Prosto gibljivi elektroni prevajajo tok v trdnem stanju in v talini. Ker kovinska vez ni usmerjena, se plasti kationov lahko premaknejo, ne da bi se kristal razbil – kovine so kovne in vlečne. Pravilna je možnost **A**.\n\n- **B** opisuje **ionske** kristale (npr. $\\mathrm{NaCl}$): ioni se gibljejo šele v talini ali raztopini, premik plasti privede istoimensko nabite ione drug ob drugega, zato so krhki.\n- **C** opisuje **molekulske** kristale (npr. jod, led).\n- **D** opisuje **kovalentne** (atomske) kristale, npr. diamant ali $\\mathrm{SiO_2}$."
+      }
+     ]
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko atomov aluminija je v kosu aluminijaste folije z dolžino $20{,}0\\,\\mathrm{cm}$, širino $10{,}0\\,\\mathrm{cm}$ in debelino $15{,}0\\,\\mathrm{\\mu m}$? Gostota aluminija je $2{,}70\\,\\mathrm{g/cm^3}$, $N_A = 6{,}022 \\cdot 10^{23}\\,\\mathrm{mol^{-1}}$.",
+     "answer": "$N \\approx 1{,}81 \\cdot 10^{22}$ atomov.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $a = 20{,}0\\,\\mathrm{cm}$, $b = 10{,}0\\,\\mathrm{cm}$, $d = 15{,}0\\,\\mathrm{\\mu m} = 0{,}00150\\,\\mathrm{cm}$, $\\rho = 2{,}70\\,\\mathrm{g/cm^3}$, $M(\\mathrm{Al}) = 26{,}98\\,\\mathrm{g/mol}$.\n**Iščemo:** število atomov $N$.\n\n1. Prostornina: $V = 20{,}0\\,\\mathrm{cm} \\cdot 10{,}0\\,\\mathrm{cm} \\cdot 0{,}00150\\,\\mathrm{cm} = 0{,}300\\,\\mathrm{cm^3}$\n2. Masa: $m = \\rho V = 2{,}70\\,\\mathrm{g/cm^3} \\cdot 0{,}300\\,\\mathrm{cm^3} = 0{,}810\\,\\mathrm{g}$\n3. Množina: $n = \\frac{m}{M} = \\frac{0{,}810\\,\\mathrm{g}}{26{,}98\\,\\mathrm{g/mol}} = 0{,}03002\\,\\mathrm{mol}$\n4. Število atomov: $N = n N_A = 0{,}03002\\,\\mathrm{mol} \\cdot 6{,}022 \\cdot 10^{23}\\,\\mathrm{mol^{-1}} = 1{,}81 \\cdot 10^{22}$"
+      },
+      {
+       "title": "Drugače: v enem računu",
+       "text": "Vse korake združimo:\n\n$N = \\frac{\\rho V N_A}{M} = \\frac{2{,}70 \\cdot 0{,}300 \\cdot 6{,}022 \\cdot 10^{23}}{26{,}98} = 1{,}81 \\cdot 10^{22}$\n\nZ oceno: folija tehta slabo gram, to je približno $\\frac{1}{30}$ mola, in $\\frac{6 \\cdot 10^{23}}{30} = 2 \\cdot 10^{22}$ – rezultat je smiseln."
+      }
+     ],
+     "mistake": "Najpogostejša napaka je pretvorba debeline: $15{,}0\\,\\mathrm{\\mu m} = 15{,}0 \\cdot 10^{-4}\\,\\mathrm{cm} = 0{,}00150\\,\\mathrm{cm}$, ne $0{,}015\\,\\mathrm{cm}$ (to bi dalo desetkrat preveč atomov)."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 4,
+   "intro": "Kisik lahko v laboratoriju pripravimo s termičnim razkrojem kalijevega klorata ali natrijevega nitrata:\n\n$\\mathrm{2\\,KClO_3(s) \\rightarrow 2\\,KCl(s) + 3\\,O_2(g)}$\n\n$\\mathrm{2\\,NaNO_3(s) \\rightarrow 2\\,NaNO_2(s) + O_2(g)}$",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Izračunaj maso kisika, ki nastane pri popolnem razkroju $4{,}90\\,\\mathrm{g}$ kalijevega klorata.",
+     "answer": "$m(\\mathrm{O_2}) = 1{,}92\\,\\mathrm{g}$",
+     "ways": [
+      {
+       "title": "Prek množin",
+       "text": "**Podatki:** $m(\\mathrm{KClO_3}) = 4{,}90\\,\\mathrm{g}$, $M(\\mathrm{KClO_3}) = 122{,}55\\,\\mathrm{g/mol}$, $M(\\mathrm{O_2}) = 32{,}00\\,\\mathrm{g/mol}$.\n**Iščemo:** $m(\\mathrm{O_2})$.\n\n$n(\\mathrm{KClO_3}) = \\frac{4{,}90\\,\\mathrm{g}}{122{,}55\\,\\mathrm{g/mol}} = 0{,}03998\\,\\mathrm{mol}$\n\nPo enačbi: $n(\\mathrm{O_2}) : n(\\mathrm{KClO_3}) = 3 : 2$, torej $n(\\mathrm{O_2}) = \\frac{3}{2} \\cdot 0{,}03998\\,\\mathrm{mol} = 0{,}05998\\,\\mathrm{mol}$.\n\n$m(\\mathrm{O_2}) = 0{,}05998\\,\\mathrm{mol} \\cdot 32{,}00\\,\\mathrm{g/mol} = 1{,}92\\,\\mathrm{g}$"
+      },
+      {
+       "title": "Drugače: s sklepnim računom",
+       "text": "Iz enačbe: $2 \\cdot 122{,}55\\,\\mathrm{g} = 245{,}1\\,\\mathrm{g}$ $\\mathrm{KClO_3}$ da $3 \\cdot 32{,}00\\,\\mathrm{g} = 96{,}00\\,\\mathrm{g}$ kisika.\n\n$m(\\mathrm{O_2}) = 4{,}90\\,\\mathrm{g} \\cdot \\frac{96{,}00}{245{,}1} = 1{,}92\\,\\mathrm{g}$\n\nPreizkus: masni delež kisika v $\\mathrm{KClO_3}$ je $\\frac{48{,}00}{122{,}55} = 0{,}392$, in $0{,}392 \\cdot 4{,}90\\,\\mathrm{g} = 1{,}92\\,\\mathrm{g}$ – ves kisik iz klorata res preide v $\\mathrm{O_2}$."
+      }
+     ],
+     "mistake": "Pozabiti razmerje $3 : 2$ in vzeti $n(\\mathrm{O_2}) = n(\\mathrm{KClO_3})$ – dobimo $1{,}28\\,\\mathrm{g}$."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko gramov natrijevega nitrata se mora razkrojiti, da nastane $0{,}600\\,\\mathrm{L}$ kisika pri $25\\,^\\circ\\mathrm{C}$ in $101{,}3\\,\\mathrm{kPa}$? $R = 8{,}314\\,\\mathrm{J\\,mol^{-1}\\,K^{-1}}$.",
+     "answer": "$m(\\mathrm{NaNO_3}) = 4{,}17\\,\\mathrm{g}$",
+     "ways": [
+      {
+       "title": "S splošno plinsko enačbo",
+       "text": "**Podatki:** $V(\\mathrm{O_2}) = 0{,}600\\,\\mathrm{L} = 6{,}00 \\cdot 10^{-4}\\,\\mathrm{m^3}$, $T = 298{,}15\\,\\mathrm{K}$, $p = 101{,}3\\,\\mathrm{kPa} = 101\\,300\\,\\mathrm{Pa}$, $M(\\mathrm{NaNO_3}) = 85{,}00\\,\\mathrm{g/mol}$.\n**Iščemo:** $m(\\mathrm{NaNO_3})$.\n\n$n(\\mathrm{O_2}) = \\frac{pV}{RT} = \\frac{101\\,300 \\cdot 0{,}000600}{8{,}314 \\cdot 298{,}15}\\,\\mathrm{mol} = 0{,}02452\\,\\mathrm{mol}$\n\nPo enačbi: $n(\\mathrm{NaNO_3}) = 2\\,n(\\mathrm{O_2}) = 0{,}04904\\,\\mathrm{mol}$\n\n$m(\\mathrm{NaNO_3}) = 0{,}04904\\,\\mathrm{mol} \\cdot 85{,}00\\,\\mathrm{g/mol} = 4{,}17\\,\\mathrm{g}$"
+      },
+      {
+       "title": "Drugače: z molsko prostornino pri danih pogojih",
+       "text": "Molska prostornina plina pri $25\\,^\\circ\\mathrm{C}$ in $101{,}3\\,\\mathrm{kPa}$:\n\n$V_m = \\frac{RT}{p} = \\frac{8{,}314 \\cdot 298{,}15}{101\\,300}\\,\\mathrm{m^3/mol} = 0{,}02447\\,\\mathrm{m^3/mol} = 24{,}47\\,\\mathrm{L/mol}$\n\n$n(\\mathrm{O_2}) = \\frac{0{,}600\\,\\mathrm{L}}{24{,}47\\,\\mathrm{L/mol}} = 0{,}02452\\,\\mathrm{mol}$, $n(\\mathrm{NaNO_3}) = 0{,}04904\\,\\mathrm{mol}$, $m = 4{,}17\\,\\mathrm{g}$."
+      }
+     ],
+     "mistake": "Uporaba $22{,}4\\,\\mathrm{L/mol}$ velja le pri $0\\,^\\circ\\mathrm{C}$ in $101{,}3\\,\\mathrm{kPa}$; pri $25\\,^\\circ\\mathrm{C}$ je molska prostornina večja. Pogosta je tudi napaka z enotami v $pV = nRT$ (tlak v Pa in prostornina v $\\mathrm{m^3}$ ali tlak v kPa in prostornina v L, temperatura vedno v K)."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "V kakšnem masnem razmerju $m(\\mathrm{KClO_3}) : m(\\mathrm{NaNO_3})$ moramo razkrojiti obe snovi, da nastane enaka množina kisika?",
+     "answer": "$m(\\mathrm{KClO_3}) : m(\\mathrm{NaNO_3}) = 245{,}1 : 510{,}0 \\approx 0{,}481 : 1$ (približno $1 : 2{,}08$).",
+     "ways": [
+      {
+       "title": "Za enako množino kisika",
+       "text": "**Podatki:** enačbi razkroja, $M(\\mathrm{KClO_3}) = 122{,}55\\,\\mathrm{g/mol}$, $M(\\mathrm{NaNO_3}) = 85{,}00\\,\\mathrm{g/mol}$.\n**Iščemo:** $m(\\mathrm{KClO_3}) : m(\\mathrm{NaNO_3})$ pri enaki $n(\\mathrm{O_2})$.\n\nIzberemo $n(\\mathrm{O_2}) = 3\\,\\mathrm{mol}$:\n\n- iz prve enačbe potrebujemo $2\\,\\mathrm{mol}$ $\\mathrm{KClO_3}$: $m = 2 \\cdot 122{,}55\\,\\mathrm{g} = 245{,}1\\,\\mathrm{g}$,\n- iz druge enačbe potrebujemo $6\\,\\mathrm{mol}$ $\\mathrm{NaNO_3}$: $m = 6 \\cdot 85{,}00\\,\\mathrm{g} = 510{,}0\\,\\mathrm{g}$.\n\n$\\frac{m(\\mathrm{KClO_3})}{m(\\mathrm{NaNO_3})} = \\frac{245{,}1}{510{,}0} = 0{,}481$"
+      },
+      {
+       "title": "Drugače: na 1 mol kisika",
+       "text": "Za $1\\,\\mathrm{mol}$ $\\mathrm{O_2}$ potrebujemo $\\frac{2}{3}\\,\\mathrm{mol}$ $\\mathrm{KClO_3}$ in $2\\,\\mathrm{mol}$ $\\mathrm{NaNO_3}$:\n\n$\\frac{2}{3} \\cdot 122{,}55\\,\\mathrm{g} = 81{,}70\\,\\mathrm{g}$ in $2 \\cdot 85{,}00\\,\\mathrm{g} = 170{,}0\\,\\mathrm{g}$\n\n$81{,}70 : 170{,}0 = 0{,}481$, kar je isto kot $1 : 2{,}08$.\n\nPreverimo z delom a: $4{,}90\\,\\mathrm{g}$ $\\mathrm{KClO_3}$ da $0{,}05998\\,\\mathrm{mol}$ kisika; enako množino da $2 \\cdot 0{,}05998 \\cdot 85{,}00\\,\\mathrm{g} = 10{,}2\\,\\mathrm{g}$ $\\mathrm{NaNO_3}$, in $4{,}90 : 10{,}2 = 0{,}480$."
+      }
+     ],
+     "mistake": "Primerjati le molske mase ($122{,}55 : 85{,}00$) brez stehiometrijskih koeficientov – iz $\\mathrm{KClO_3}$ nastane na mol reaktanta trikrat več kisika kot iz $\\mathrm{NaNO_3}$."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 5,
+   "intro": "Na sliki so delčni modeli štirih vodnih raztopin iste snovi pri enaki temperaturi. Vsaka pika predstavlja enako množino raztopljene snovi; molekul vode ne prikazujemo. Pod vsako čašo je zapisana prostornina raztopine. V čaši C je na dnu tudi nekaj neraztopljene snovi.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 195\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M15,120 L85,120 L85,150 Q85,156 79,156 L21,156 Q15,156 15,150 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke=\"none\"/><path d=\"M11,28 L15,30 L15,150 Q15,156 21,156 L79,156 Q85,156 85,150 L85,30 L89,28\"/><g fill=\"currentColor\" stroke=\"none\"><circle cx=\"24.3\" cy=\"131\" r=\"3.2\"/><circle cx=\"38.8\" cy=\"131\" r=\"3.2\"/><circle cx=\"53.3\" cy=\"131\" r=\"3.2\"/><circle cx=\"67.8\" cy=\"131\" r=\"3.2\"/><circle cx=\"32.3\" cy=\"145\" r=\"3.2\"/><circle cx=\"46.8\" cy=\"145\" r=\"3.2\"/></g><text x=\"50\" y=\"175\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-weight=\"bold\">A</text><text x=\"50\" y=\"191\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">100 mL</text><path d=\"M113,84 L183,84 L183,150 Q183,156 177,156 L119,156 Q113,156 113,150 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke=\"none\"/><path d=\"M109,28 L113,30 L113,150 Q113,156 119,156 L177,156 Q183,156 183,150 L183,30 L187,28\"/><g fill=\"currentColor\" stroke=\"none\"><circle cx=\"129.5\" cy=\"98.7\" r=\"3.2\"/><circle cx=\"158.5\" cy=\"98.7\" r=\"3.2\"/><circle cx=\"137.5\" cy=\"120\" r=\"3.2\"/><circle cx=\"166.5\" cy=\"120\" r=\"3.2\"/><circle cx=\"129.5\" cy=\"141.3\" r=\"3.2\"/><circle cx=\"158.5\" cy=\"141.3\" r=\"3.2\"/></g><text x=\"148\" y=\"175\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-weight=\"bold\">B</text><text x=\"148\" y=\"191\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">200 mL</text><path d=\"M211,120 L281,120 L281,150 Q281,156 275,156 L217,156 Q211,156 211,150 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke=\"none\"/><path d=\"M207,28 L211,30 L211,150 Q211,156 217,156 L275,156 Q281,156 281,150 L281,30 L285,28\"/><g fill=\"currentColor\" stroke=\"none\"><circle cx=\"217.8\" cy=\"129.5\" r=\"3.2\"/><circle cx=\"227.5\" cy=\"129.5\" r=\"3.2\"/><circle cx=\"237.2\" cy=\"129.5\" r=\"3.2\"/><circle cx=\"246.8\" cy=\"129.5\" r=\"3.2\"/><circle cx=\"256.5\" cy=\"129.5\" r=\"3.2\"/><circle cx=\"266.2\" cy=\"129.5\" r=\"3.2\"/><circle cx=\"225.8\" cy=\"140.5\" r=\"3.2\"/><circle cx=\"235.5\" cy=\"140.5\" r=\"3.2\"/><circle cx=\"245.2\" cy=\"140.5\" r=\"3.2\"/><circle cx=\"254.8\" cy=\"140.5\" r=\"3.2\"/><circle cx=\"264.5\" cy=\"140.5\" r=\"3.2\"/><circle cx=\"274.2\" cy=\"140.5\" r=\"3.2\"/></g><path d=\"M223,156 L225,149 L233,148 L236,156 Z M241,156 L244,151 L251,152 L252,156 Z M258,156 L261,148 L268,150 L269,156 Z\" fill=\"currentColor\" fill-opacity=\"0.55\" stroke=\"none\"/><text x=\"246\" y=\"175\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-weight=\"bold\">C</text><text x=\"246\" y=\"191\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">100 mL</text><path d=\"M309,48 L379,48 L379,150 Q379,156 373,156 L315,156 Q309,156 309,150 Z\" fill=\"currentColor\" fill-opacity=\"0.1\" stroke=\"none\"/><path d=\"M305,28 L309,30 L309,150 Q309,156 315,156 L373,156 Q379,156 379,150 L379,30 L383,28\"/><g fill=\"currentColor\" stroke=\"none\"><circle cx=\"325.5\" cy=\"62\" r=\"3.2\"/><circle cx=\"354.5\" cy=\"62\" r=\"3.2\"/><circle cx=\"333.5\" cy=\"82\" r=\"3.2\"/><circle cx=\"362.5\" cy=\"82\" r=\"3.2\"/><circle cx=\"325.5\" cy=\"102\" r=\"3.2\"/><circle cx=\"354.5\" cy=\"102\" r=\"3.2\"/><circle cx=\"333.5\" cy=\"122\" r=\"3.2\"/><circle cx=\"362.5\" cy=\"122\" r=\"3.2\"/><circle cx=\"325.5\" cy=\"142\" r=\"3.2\"/></g><text x=\"344\" y=\"175\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-weight=\"bold\">D</text><text x=\"344\" y=\"191\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">300 mL</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Katera raztopina ima dvakrat večjo množinsko koncentracijo kot raztopina A? Odgovor utemelji.",
+     "answer": "Raztopina C ($12$ delcev v $100\\,\\mathrm{mL}$, raztopina A pa $6$ delcev v $100\\,\\mathrm{mL}$).",
+     "ways": [
+      {
+       "title": "Delci na 100 mL",
+       "text": "Koncentracija je sorazmerna s številom delcev na enoto prostornine. Preračunamo na $100\\,\\mathrm{mL}$:\n\n| raztopina | delci | $V$ | delci na $100\\,\\mathrm{mL}$ |\n|---|---|---|---|\n| A | 6 | $100\\,\\mathrm{mL}$ | 6 |\n| B | 6 | $200\\,\\mathrm{mL}$ | 3 |\n| C | 12 | $100\\,\\mathrm{mL}$ | 12 |\n| D | 9 | $300\\,\\mathrm{mL}$ | 3 |\n\nNeraztopljene snovi na dnu čaše C ne štejemo, ker ni v raztopini. Dvakrat večjo koncentracijo kot A ($6$) ima **C** ($12$)."
+      },
+      {
+       "title": "Drugače: razmerja",
+       "text": "Koncentracija A je $\\frac{6}{100}$. Dvakrat večja bi bila $\\frac{12}{100}$ ali npr. $\\frac{24}{200}$ ali $\\frac{36}{300}$. Od narisanih to izpolnjuje le C. B in D imata ravno polovično koncentracijo glede na A ($\\frac{6}{200} = \\frac{9}{300} = \\frac{3}{100}$)."
+      }
+     ],
+     "mistake": "Kdor primerja samo število pik, bi mislil, da ima D (9 pik) večjo koncentracijo kot A (6 pik); šteje pa razmerje med številom delcev in prostornino."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "choice",
+     "text": "S katerim postopkom dobimo raztopino z enako koncentracijo, kot jo ima raztopina v čaši C? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Raztopini A dolijemo $100\\,\\mathrm{mL}$ vode.",
+      "Iz raztopine B odparimo vodo, da ostane $50\\,\\mathrm{mL}$ raztopine.",
+      "Zmešamo raztopini A in C (brez neraztopljene snovi).",
+      "Iz raztopine D odparimo vodo, da ostane $150\\,\\mathrm{mL}$ raztopine."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "**B**: iz raztopine B odparimo vodo do $50\\,\\mathrm{mL}$ (6 delcev v $50\\,\\mathrm{mL}$ = 12 delcev na $100\\,\\mathrm{mL}$).",
+     "ways": [
+      {
+       "title": "Izračun za vsako možnost",
+       "text": "Cilj: 12 delcev na $100\\,\\mathrm{mL}$.\n\n- A + $100\\,\\mathrm{mL}$ vode: 6 delcev v $200\\,\\mathrm{mL}$ = 3 na $100\\,\\mathrm{mL}$ – razredčimo, koncentracija se zmanjša.\n- B odparimo do $50\\,\\mathrm{mL}$: 6 delcev v $50\\,\\mathrm{mL}$ = **12 na $100\\,\\mathrm{mL}$** ✓.\n- A + C: $6 + 12 = 18$ delcev v $200\\,\\mathrm{mL}$ = 9 na $100\\,\\mathrm{mL}$ – mešanica ima koncentracijo med obema.\n- D odparimo do $150\\,\\mathrm{mL}$: 9 delcev v $150\\,\\mathrm{mL}$ = 6 na $100\\,\\mathrm{mL}$ – to je koncentracija A, ne C."
+      },
+      {
+       "title": "Drugače: kolikokrat zgostiti",
+       "text": "B ima 3 delce na $100\\,\\mathrm{mL}$, C pa 12 – B moramo zgostiti štirikrat, torej prostornino zmanjšati s $200\\,\\mathrm{mL}$ na $\\frac{200}{4} = 50\\,\\mathrm{mL}$. To je možnost B.\n\nKer je raztopina C nasičena, ima tudi zgoščena raztopina B ravno nasičeno koncentracijo – več vode ne smemo odpariti, sicer bi se začela izločati trdna snov."
+      }
+     ]
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Kaj moramo storiti, da se pri nespremenjeni temperaturi raztopi tudi snov na dnu čaše C? Odgovor utemelji.",
+     "answer": "V čašo dolijemo vodo (topilo) in premešamo; raztopina C je nasičena, zato se brez dodatnega topila pri isti temperaturi ne raztopi nič več snovi.",
+     "ways": [
+      {
+       "title": "Nasičena raztopina",
+       "text": "Ker na dnu ostaja neraztopljena snov, je raztopina C **nasičena**: pri tej temperaturi vsebuje največjo možno množino raztopljene snovi v dani prostornini (topnost je dosežena). Mešanje ali drobljenje kristalov pospeši raztapljanje, ne poveča pa topnosti.\n\nKer temperature ne smemo spremeniti, moramo **doliti vodo**. V večji prostornini topila se lahko raztopi več snovi."
+      },
+      {
+       "title": "Z dinamičnim ravnotežjem",
+       "text": "V nasičeni raztopini se vzpostavi dinamično ravnotežje: v enakem času se toliko delcev s kristalov raztopi, kot se jih iz raztopine izloči nazaj na kristale. Zato se količina snovi na dnu ne spreminja.\n\nKo dolijemo vodo, se koncentracija raztopine zmanjša pod nasičeno. Raztapljanje je zdaj hitrejše od izločanja in kristali se raztapljajo, dokler ne izginejo ali dokler raztopina spet ni nasičena. Vode moramo torej doliti dovolj, da se raztopi vsa snov."
+      }
+     ],
+     "mistake": "Odgovor »premešamo« ali »počakamo« ni pravilen: v nasičeni raztopini se raztapljanje in izločanje dogajata enako hitro, količina neraztopljene snovi se ne zmanjša."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 6,
+   "intro": "V zaprto posodo s stalno prostornino smo pri določeni temperaturi uvedli brezbarvni plin didušikov tetraoksid. Del ga razpade v rdečerjavi dušikov dioksid in vzpostavi se ravnotežje:\n\n$\\mathrm{N_2O_4(g) \\rightleftharpoons 2\\,NO_2(g)}$, $\\quad \\Delta H = +57\\,\\mathrm{kJ/mol}$\n\nGraf prikazuje množinski koncentraciji obeh plinov v odvisnosti od časa.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 245\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M55,170 L310,170\" stroke-width=\"0.8\" stroke-opacity=\"0.35\" stroke-dasharray=\"3 3\"/><text x=\"49\" y=\"174\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"end\" font-size=\"11\">0,02</text><path d=\"M55,140 L310,140\" stroke-width=\"0.8\" stroke-opacity=\"0.35\" stroke-dasharray=\"3 3\"/><text x=\"49\" y=\"144\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"end\" font-size=\"11\">0,04</text><path d=\"M55,110 L310,110\" stroke-width=\"0.8\" stroke-opacity=\"0.35\" stroke-dasharray=\"3 3\"/><text x=\"49\" y=\"114\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"end\" font-size=\"11\">0,06</text><path d=\"M55,80 L310,80\" stroke-width=\"0.8\" stroke-opacity=\"0.35\" stroke-dasharray=\"3 3\"/><text x=\"49\" y=\"84\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"end\" font-size=\"11\">0,08</text><path d=\"M55,50 L310,50\" stroke-width=\"0.8\" stroke-opacity=\"0.35\" stroke-dasharray=\"3 3\"/><text x=\"49\" y=\"54\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"end\" font-size=\"11\">0,10</text><path d=\"M55,200 L55,205\" stroke-width=\"1\"/><text x=\"55\" y=\"218\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">0</text><path d=\"M105,200 L105,205\" stroke-width=\"1\"/><text x=\"105\" y=\"218\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">2</text><path d=\"M155,200 L155,205\" stroke-width=\"1\"/><text x=\"155\" y=\"218\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">4</text><path d=\"M205,200 L205,205\" stroke-width=\"1\"/><text x=\"205\" y=\"218\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">6</text><path d=\"M255,200 L255,205\" stroke-width=\"1\"/><text x=\"255\" y=\"218\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">8</text><path d=\"M305,200 L305,205\" stroke-width=\"1\"/><text x=\"305\" y=\"218\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">10</text><path d=\"M55,40 L55,200 L318,200\"/><path d=\"M51,46 L55,38 L59,46 M310,196 L318,200 L310,204\"/><polyline points=\"55,50 61.3,63.3 67.5,73.7 73.8,81.9 80,88.2 86.3,93.2 92.5,97 98.8,100.1 105,102.4 111.3,104.3 117.5,105.8 123.8,106.9 130,107.8 136.3,108.6 142.5,109.1 148.8,109.6 155,110 161.3,110 167.5,110 173.8,110 180,110 186.3,110 192.5,110 198.8,110 205,110 211.3,110 217.5,110 223.8,110 230,110 236.3,110 242.5,110 248.8,110 255,110 261.3,110 267.5,110 273.8,110 280,110 286.3,110 292.5,110 298.8,110 305,110\" stroke-width=\"2\"/><polyline points=\"55,200 61.3,173.3 67.5,152.5 73.8,136.3 80,123.6 86.3,113.7 92.5,106 98.8,99.9 105,95.1 111.3,91.4 117.5,88.5 123.8,86.2 130,84.3 136.3,82.9 142.5,81.7 148.8,80.8 155,80 161.3,80 167.5,80 173.8,80 180,80 186.3,80 192.5,80 198.8,80 205,80 211.3,80 217.5,80 223.8,80 230,80 236.3,80 242.5,80 248.8,80 255,80 261.3,80 267.5,80 273.8,80 280,80 286.3,80 292.5,80 298.8,80 305,80\" stroke-width=\"2\" stroke-dasharray=\"7 4\"/><text x=\"240\" y=\"126\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">N₂O₄</text><text x=\"240\" y=\"73\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">NO₂</text><text x=\"62\" y=\"34\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">c / (mol/L)</text><text x=\"318\" y=\"236\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"end\" font-size=\"12\">t / min</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Zapiši izraz za konstanto ravnotežja $K_c$ te reakcije.",
+     "answer": "$K_c = \\frac{[\\mathrm{NO_2}]^2}{[\\mathrm{N_2O_4}]}$",
+     "ways": [
+      {
+       "title": "Po zakonu o vplivu koncentracij",
+       "text": "V števcu so ravnotežne koncentracije produktov, v imenovalcu reaktantov, vsaka potencirana s svojim stehiometrijskim koeficientom. $\\mathrm{NO_2}$ ima koeficient $2$, $\\mathrm{N_2O_4}$ koeficient $1$:\n\n$K_c = \\frac{[\\mathrm{NO_2}]^2}{[\\mathrm{N_2O_4}]}$"
+      }
+     ],
+     "mistake": "Pozabljen kvadrat pri $[\\mathrm{NO_2}]$ ali obrnjen ulomek (reaktanti v števcu)."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Z grafa odčitaj ravnotežni koncentraciji in izračunaj vrednost $K_c$ pri tej temperaturi.",
+     "answer": "$[\\mathrm{N_2O_4}] = 0{,}060\\,\\mathrm{mol/L}$, $[\\mathrm{NO_2}] = 0{,}080\\,\\mathrm{mol/L}$; $K_c = 0{,}107\\,\\mathrm{mol/L}$",
+     "ways": [
+      {
+       "title": "Odčitek in izračun",
+       "text": "**Podatki (z grafa):** po približno 4 minutah se koncentraciji ne spreminjata več – nastopilo je ravnotežje. $[\\mathrm{N_2O_4}] = 0{,}060\\,\\mathrm{mol/L}$, $[\\mathrm{NO_2}] = 0{,}080\\,\\mathrm{mol/L}$.\n**Iščemo:** $K_c$.\n\n$K_c = \\frac{(0{,}080)^2}{0{,}060}\\,\\mathrm{mol/L} = \\frac{0{,}0064}{0{,}060}\\,\\mathrm{mol/L} = 0{,}107\\,\\mathrm{mol/L}$"
+      },
+      {
+       "title": "Preizkus s stehiometrijo",
+       "text": "Na začetku je bilo $0{,}100\\,\\mathrm{mol/L}$ $\\mathrm{N_2O_4}$, razpadlo ga je $0{,}100 - 0{,}060 = 0{,}040\\,\\mathrm{mol/L}$. Iz vsakega mola $\\mathrm{N_2O_4}$ nastaneta 2 mola $\\mathrm{NO_2}$, torej $2 \\cdot 0{,}040 = 0{,}080\\,\\mathrm{mol/L}$ – kar se ujema z odčitkom. Odčitka sta pravilna, $K_c = 0{,}107\\,\\mathrm{mol/L}$ (pogosto zapisano brez enote)."
+      }
+     ],
+     "mistake": "Za računanje vzeti začetne koncentracije ($0{,}100$ in $0$) namesto ravnotežnih ali pozabiti kvadrat ($\\frac{0{,}080}{0{,}060} = 1{,}33$)."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Posodo z ravnotežno zmesjo segrejemo. Kako se spremeni barva zmesi? Odgovor utemelji.",
+     "answer": "Zmes postane temnejša (bolj rjava): reakcija v desno je endotermna, zato se pri višji temperaturi ravnotežje premakne v smer nastanka $\\mathrm{NO_2}$.",
+     "ways": [
+      {
+       "title": "Le Chatelierjevo načelo",
+       "text": "$\\Delta H > 0$ pomeni, da je razpad $\\mathrm{N_2O_4}$ v $\\mathrm{NO_2}$ endotermen. Ko sistemu dovedemo toploto, se ravnotežje premakne v smer, ki toploto porablja – **v desno**. Koncentracija rjavega $\\mathrm{NO_2}$ se poveča, koncentracija brezbarvnega $\\mathrm{N_2O_4}$ zmanjša, zato zmes **potemni**."
+      },
+      {
+       "title": "Drugače: s konstanto ravnotežja",
+       "text": "Pri endotermni reakciji se $K_c$ s temperaturo poveča. Da bo ulomek $\\frac{[\\mathrm{NO_2}]^2}{[\\mathrm{N_2O_4}]}$ večji, se mora $[\\mathrm{NO_2}]$ povečati in $[\\mathrm{N_2O_4}]$ zmanjšati – več rjavega plina, temnejša barva."
+      }
+     ],
+     "mistake": "»Barva se ne spremeni, ker je posoda zaprta« – zaprta posoda prepreči izmenjavo snovi, ne pa premika ravnotežja ob spremembi temperature."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 7,
+   "intro": "Pri $25\\,^\\circ\\mathrm{C}$ imamo tri vodne raztopine z enako množinsko koncentracijo $0{,}010\\,\\mathrm{mol/L}$: natrijev hidroksid, barijev hidroksid in amoniak.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "$50{,}0\\,\\mathrm{mL}$ raztopine natrijevega hidroksida zmešamo s $50{,}0\\,\\mathrm{mL}$ raztopine amoniaka. Kako se spremeni pH v primerjavi s pH raztopine natrijevega hidroksida? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "pH se poveča, ker dodamo še eno bazo.",
+      "pH se ne spremeni, ker imata raztopini enako koncentracijo.",
+      "pH se zmanjša, ker se koncentracija hidroksidnih ionov zmanjša.",
+      "pH se zmanjša na $7$, ker se bazi nevtralizirata."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: pH se zmanjša (z $12{,}00$ na približno $11{,}70$), ker se $[\\mathrm{OH^-}]$ zaradi razredčenja zmanjša, amoniak pa skoraj ne prispeva ionov $\\mathrm{OH^-}$.",
+     "ways": [
+      {
+       "title": "Izračun",
+       "text": "Raztopina $\\mathrm{NaOH}$: $[\\mathrm{OH^-}] = 0{,}010\\,\\mathrm{mol/L}$, pOH $= 2{,}00$, pH $= 12{,}00$.\n\nPo mešanju je prostornina dvakrat večja: $[\\mathrm{OH^-}]$ iz $\\mathrm{NaOH}$ je $0{,}0050\\,\\mathrm{mol/L}$. Amoniak je šibka baza; v raztopini, kjer je že veliko ionov $\\mathrm{OH^-}$, je njegova protoliza še dodatno potisnjena v levo, zato prispeva zanemarljivo malo ionov $\\mathrm{OH^-}$.\n\npOH $= -\\log 0{,}0050 = 2{,}30$, pH $= 14{,}00 - 2{,}30 = 11{,}70$. pH se **zmanjša**.\n\n- »Poveča« ne drži: dodana šibka baza ima manjšo $[\\mathrm{OH^-}]$ kot raztopina $\\mathrm{NaOH}$ in jo razredči.\n- »Ne spremeni« bi veljalo le pri mešanju dveh enakih raztopin; enaka množinska koncentracija ne pomeni enake $[\\mathrm{OH^-}]$.\n- Bazi se med seboj ne nevtralizirata."
+      },
+      {
+       "title": "Drugače: mešanje dveh raztopin",
+       "text": "pH zmesi je vedno med pH-jema obeh raztopin (če snovi med seboj ne reagirata). Raztopina amoniaka s koncentracijo $0{,}010\\,\\mathrm{mol/L}$ ima pH okoli $10{,}6$, raztopina $\\mathrm{NaOH}$ pa $12{,}00$. Zmes mora imeti pH pod $12{,}00$ – pH se zmanjša."
+      }
+     ]
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Napiši urejeno enačbo protolitske reakcije amoniaka z vodo.",
+     "answer": "$\\mathrm{NH_3(aq) + H_2O(l) \\rightleftharpoons NH_4^+(aq) + OH^-(aq)}$",
+     "ways": [
+      {
+       "title": "Brønsted-Lowryjeva teorija",
+       "text": "Amoniak je baza – od molekule vode sprejme proton (vodikov ion). Nastaneta amonijev ion in hidroksidni ion:\n\n$\\mathrm{NH_3 + H_2O \\rightleftharpoons NH_4^+ + OH^-}$\n\nKer je amoniak šibka baza, reakcija poteka le delno – zapišemo ravnotežno puščico. Konjugirana para sta $\\mathrm{NH_4^+/NH_3}$ in $\\mathrm{H_2O/OH^-}$."
+      }
+     ],
+     "mistake": "Zapis z enojno puščico (kot pri močni bazi) ali formula $\\mathrm{NH_4OH}$ kot produkt – v raztopini so ioni $\\mathrm{NH_4^+}$ in $\\mathrm{OH^-}$."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Izračunaj pH tiste od treh raztopin, ki ima največjo koncentracijo hidroksidnih ionov.",
+     "answer": "Raztopina barijevega hidroksida: $[\\mathrm{OH^-}] = 0{,}020\\,\\mathrm{mol/L}$, pH $= 12{,}30$.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $c(\\mathrm{Ba(OH)_2}) = 0{,}010\\,\\mathrm{mol/L}$, $25\\,^\\circ\\mathrm{C}$ (pH + pOH $= 14{,}00$).\n**Iščemo:** pH.\n\n$\\mathrm{Ba(OH)_2}$ je močna baza in iz vsake formulske enote sprosti dva iona $\\mathrm{OH^-}$:\n$\\mathrm{Ba(OH)_2 \\rightarrow Ba^{2+} + 2\\,OH^-}$, zato je $[\\mathrm{OH^-}] = 2 \\cdot 0{,}010\\,\\mathrm{mol/L} = 0{,}020\\,\\mathrm{mol/L}$ – največ od vseh treh raztopin ($\\mathrm{NaOH}$: $0{,}010\\,\\mathrm{mol/L}$, $\\mathrm{NH_3}$: veliko manj).\n\npOH $= -\\log 0{,}020 = 1{,}70$\n\npH $= 14{,}00 - 1{,}70 = 12{,}30$"
+      },
+      {
+       "title": "Drugače: prek $[\\mathrm{H_3O^+}]$",
+       "text": "$[\\mathrm{H_3O^+}] = \\frac{K_w}{[\\mathrm{OH^-}]} = \\frac{1{,}0 \\cdot 10^{-14}}{0{,}020}\\,\\mathrm{mol/L} = 5{,}0 \\cdot 10^{-13}\\,\\mathrm{mol/L}$\n\npH $= -\\log(5{,}0 \\cdot 10^{-13}) = 12{,}30$"
+      }
+     ],
+     "mistake": "Za $[\\mathrm{OH^-}]$ vzeti $0{,}010\\,\\mathrm{mol/L}$ (pH $12{,}00$) – pozabljen indeks 2 v $\\mathrm{Ba(OH)_2}$."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 8,
+   "intro": "Sok kislega zelja vsebuje mlečno kislino (2-hidroksipropanojsko kislino, $\\mathrm{CH_3CH(OH)COOH}$), ki je šibka enoprotonska kislina. $25{,}00\\,\\mathrm{mL}$ soka smo titrirali z raztopino natrijevega hidroksida s koncentracijo $0{,}1000\\,\\mathrm{mol/L}$. Do ekvivalentne točke smo porabili $31{,}20\\,\\mathrm{mL}$ raztopine $\\mathrm{NaOH}$. Predpostavimo, da v soku ni drugih kislin.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Napiši urejeno enačbo reakcije mlečne kisline z natrijevim hidroksidom.",
+     "answer": "$\\mathrm{CH_3CH(OH)COOH + NaOH \\rightarrow CH_3CH(OH)COONa + H_2O}$",
+     "ways": [
+      {
+       "title": "Nevtralizacija",
+       "text": "Kislina odda proton s karboksilne skupine, hidroksidni ion ga sprejme. Nastaneta sol (natrijev 2-hidroksipropanoat, natrijev laktat) in voda:\n\n$\\mathrm{CH_3CH(OH)COOH + NaOH \\rightarrow CH_3CH(OH)COONa + H_2O}$\n\nHidroksilna skupina na 2. ogljikovem atomu je alkoholna in z $\\mathrm{NaOH}$ v vodni raztopini ne reagira."
+      },
+      {
+       "title": "Drugače: ionski zapis",
+       "text": "Ioni $\\mathrm{Na^+}$ v reakciji ne sodelujejo, zato lahko zapišemo:\n\n$\\mathrm{CH_3CH(OH)COOH + OH^- \\rightarrow CH_3CH(OH)COO^- + H_2O}$\n\nRazmerje množin kisline in baze je $1 : 1$ – to potrebujemo v delu c."
+      }
+     ],
+     "mistake": "Zapisati, da reagira tudi skupina $\\mathrm{-OH}$ (razmerje $1 : 2$) – alkoholna skupina je mnogo šibkejša kislina od vode."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "choice",
+     "text": "Kakšna je raztopina v ekvivalentni točki? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Kisla, ker v raztopini ostane del šibke kisline, ki ne zreagira.",
+      "Nevtralna, ker sta zreagirali ekvivalentni množini kisline in baze.",
+      "Bazična, ker laktatni ioni reagirajo z vodo, pri čemer nastajajo hidroksidni ioni.",
+      "Bazična, ker je v ekvivalentni točki v presežku natrijev hidroksid."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "**C**: bazična; laktatni ion je konjugirana baza šibke kisline in z vodo tvori ione $\\mathrm{OH^-}$.",
+     "ways": [
+      {
+       "title": "Hidroliza soli",
+       "text": "V ekvivalentni točki je v raztopini sol natrijev laktat. Ion $\\mathrm{Na^+}$ ne reagira z vodo, laktatni ion pa je konjugirana baza **šibke** kisline in delno sprejme proton od vode:\n\n$\\mathrm{CH_3CH(OH)COO^- + H_2O \\rightleftharpoons CH_3CH(OH)COOH + OH^-}$\n\nNastajajo ioni $\\mathrm{OH^-}$, raztopina je **bazična** (pH nad 7).\n\n- Kisla ne more biti: v ekvivalentni točki je vsa kislina zreagirala; malo kisline sicer nastane pri hidrolizi, a hkrati z ioni $\\mathrm{OH^-}$.\n- Nevtralna je raztopina v ekvivalentni točki le pri titraciji močne kisline z močno bazo.\n- $\\mathrm{NaOH}$ v ekvivalentni točki ni v presežku – presežek nastopi šele po njej."
+      },
+      {
+       "title": "Drugače: izbira indikatorja",
+       "text": "Pri titraciji šibkih kislin z močno bazo uporabljamo fenolftalein, ki spremeni barvo v območju pH okoli $8$–$10$. Metiloranž (prehod okoli pH $4$) bi pokazal konec prezgodaj. To je v skladu s tem, da je pH v ekvivalentni točki nad $7$ – bazičen."
+      }
+     ]
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Izračunaj masno koncentracijo mlečne kisline v soku v $\\mathrm{g/L}$.",
+     "answer": "$\\gamma = 11{,}2\\,\\mathrm{g/L}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $V(\\mathrm{soka}) = 25{,}00\\,\\mathrm{mL}$, $c(\\mathrm{NaOH}) = 0{,}1000\\,\\mathrm{mol/L}$, $V(\\mathrm{NaOH}) = 31{,}20\\,\\mathrm{mL}$, $M(\\mathrm{C_3H_6O_3}) = 90{,}08\\,\\mathrm{g/mol}$.\n**Iščemo:** $\\gamma$(mlečne kisline).\n\n$n(\\mathrm{NaOH}) = 0{,}1000\\,\\mathrm{mol/L} \\cdot 0{,}03120\\,\\mathrm{L} = 0{,}003120\\,\\mathrm{mol}$\n\nRazmerje $1 : 1$: $n(\\mathrm{kisline}) = 0{,}003120\\,\\mathrm{mol}$\n\n$m = 0{,}003120\\,\\mathrm{mol} \\cdot 90{,}08\\,\\mathrm{g/mol} = 0{,}2810\\,\\mathrm{g}$\n\n$\\gamma = \\frac{m}{V} = \\frac{0{,}2810\\,\\mathrm{g}}{0{,}02500\\,\\mathrm{L}} = 11{,}2\\,\\mathrm{g/L}$"
+      },
+      {
+       "title": "Drugače: prek množinske koncentracije",
+       "text": "$c(\\mathrm{kisline}) = \\frac{c(\\mathrm{NaOH}) \\cdot V(\\mathrm{NaOH})}{V(\\mathrm{soka})} = \\frac{0{,}1000 \\cdot 31{,}20}{25{,}00}\\,\\mathrm{mol/L} = 0{,}1248\\,\\mathrm{mol/L}$\n\n$\\gamma = c \\cdot M = 0{,}1248\\,\\mathrm{mol/L} \\cdot 90{,}08\\,\\mathrm{g/mol} = 11{,}2\\,\\mathrm{g/L}$"
+      }
+     ],
+     "mistake": "Deliti z vsoto prostornin ($25{,}00 + 31{,}20\\,\\mathrm{mL}$) – kislina je bila v $25{,}00\\,\\mathrm{mL}$ soka, prostornina raztopine $\\mathrm{NaOH}$ za koncentracijo v soku ni pomembna."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 9,
+   "intro": "Magnezij industrijsko pridobivajo z elektrolizo taline magnezijevega klorida. Na katodi nastaja tekoči magnezij, na anodi klor. $F = 96\\,485\\,\\mathrm{C/mol}$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Napiši urejeno enačbo reakcije na katodi.",
+     "answer": "$\\mathrm{Mg^{2+} + 2\\,e^- \\rightarrow Mg}$",
+     "ways": [
+      {
+       "title": "Ioni v talini",
+       "text": "Talina $\\mathrm{MgCl_2}$ vsebuje ione $\\mathrm{Mg^{2+}}$ in $\\mathrm{Cl^-}$. Katoda je negativna elektroda; k njej potujejo kationi $\\mathrm{Mg^{2+}}$ in sprejmejo po dva elektrona:\n\n$\\mathrm{Mg^{2+}(l) + 2\\,e^- \\rightarrow Mg(l)}$\n\n(Na anodi: $\\mathrm{2\\,Cl^- \\rightarrow Cl_2 + 2\\,e^-}$.)"
+      }
+     ],
+     "mistake": "Zamenjati elektrodi in na katodo zapisati nastanek klora; ali pa ne urediti naboja ($\\mathrm{Mg^{2+} + e^-}$)."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Katera vrsta reakcije poteka na katodi? Odgovor utemelji.",
+     "answer": "Redukcija – magnezijevi ioni sprejmejo elektrone, oksidacijsko število magnezija se zmanjša s $+\\mathrm{II}$ na $0$.",
+     "ways": [
+      {
+       "title": "Sprejem elektronov",
+       "text": "Redukcija je sprejem elektronov (zmanjšanje oksidacijskega števila). Na katodi ion $\\mathrm{Mg^{2+}}$ sprejme 2 elektrona, oksidacijsko število se zmanjša s $+\\mathrm{II}$ na $0$ – to je **redukcija**. Pri elektrolizi poteka na katodi vedno redukcija, na anodi oksidacija."
+      }
+     ]
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Izračunaj, koliko naboja je potrebnega za pridobitev $1{,}00\\,\\mathrm{t}$ magnezija.",
+     "answer": "$Q = 7{,}94 \\cdot 10^{9}\\,\\mathrm{C}$",
+     "ways": [
+      {
+       "title": "S Faradayevim zakonom",
+       "text": "**Podatki:** $m(\\mathrm{Mg}) = 1{,}00\\,\\mathrm{t} = 1{,}00 \\cdot 10^{6}\\,\\mathrm{g}$, $M(\\mathrm{Mg}) = 24{,}31\\,\\mathrm{g/mol}$, $z = 2$, $F = 96\\,485\\,\\mathrm{C/mol}$.\n**Iščemo:** $Q$.\n\n$n(\\mathrm{Mg}) = \\frac{1{,}00 \\cdot 10^{6}\\,\\mathrm{g}}{24{,}31\\,\\mathrm{g/mol}} = 41\\,135\\,\\mathrm{mol}$\n\nZa vsak mol magnezija sta potrebna 2 mola elektronov: $n(\\mathrm{e^-}) = 2 \\cdot 41\\,135\\,\\mathrm{mol} = 82\\,271\\,\\mathrm{mol}$\n\n$Q = n(\\mathrm{e^-}) \\cdot F = 82\\,271\\,\\mathrm{mol} \\cdot 96\\,485\\,\\mathrm{C/mol} = 7{,}94 \\cdot 10^{9}\\,\\mathrm{C}$"
+      },
+      {
+       "title": "Drugače: sklepni račun",
+       "text": "Za $24{,}31\\,\\mathrm{g}$ magnezija (1 mol) potrebujemo $2 \\cdot 96\\,485\\,\\mathrm{C} = 192\\,970\\,\\mathrm{C}$.\n\nZa $1{,}00 \\cdot 10^{6}\\,\\mathrm{g}$ potrebujemo $\\frac{1{,}00 \\cdot 10^{6}}{24{,}31} \\cdot 192\\,970\\,\\mathrm{C} = 7{,}94 \\cdot 10^{9}\\,\\mathrm{C}$.\n\nZa predstavo: pri toku $100\\,\\mathrm{kA}$ bi elektroliza trajala $\\frac{7{,}94 \\cdot 10^{9}}{1{,}00 \\cdot 10^{5}}\\,\\mathrm{s} = 79\\,400\\,\\mathrm{s}$, to je približno 22 ur."
+      }
+     ],
+     "mistake": "Pozabiti faktor $z = 2$ (dobimo polovico naboja) ali ne pretvoriti ton v grame ($1\\,\\mathrm{t} = 10^{6}\\,\\mathrm{g}$)."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 10,
+   "intro": "Naloga obravnava halogene in njihove spojine.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Bromovo vodo dodamo v tri epruvete z vodnimi raztopinami natrijevega fluorida, natrijevega klorida in natrijevega jodida. V kateri epruveti poteče reakcija? Napiši urejeno enačbo te reakcije.",
+     "answer": "V epruveti z natrijevim jodidom: $\\mathrm{Br_2 + 2\\,NaI \\rightarrow 2\\,NaBr + I_2}$",
+     "ways": [
+      {
+       "title": "Oksidativnost halogenov",
+       "text": "Oksidativnost halogenov pada po skupini navzdol: $\\mathrm{F_2 > Cl_2 > Br_2 > I_2}$. Halogen oksidira le halogenidne ione halogenov, ki so v skupini **pod** njim. Brom zato oksidira jodidne ione, fluoridnih in kloridnih pa ne.\n\n$\\mathrm{Br_2(aq) + 2\\,NaI(aq) \\rightarrow 2\\,NaBr(aq) + I_2(aq)}$\n\nRaztopina se obarva rjavo zaradi izločenega joda."
+      },
+      {
+       "title": "Drugače: ionski zapis in prenos elektronov",
+       "text": "$\\mathrm{Br_2 + 2\\,I^- \\rightarrow 2\\,Br^- + I_2}$\n\nBrom sprejme 2 elektrona (redukcija, $0 \\rightarrow -\\mathrm{I}$), dva jodidna iona oddata po en elektron (oksidacija, $-\\mathrm{I} \\rightarrow 0$). Število oddanih in sprejetih elektronov je enako, naboj na obeh straneh je $-2$."
+      }
+     ],
+     "mistake": "Misliti, da brom »izpodrine« klor iz $\\mathrm{NaCl}$ – klor je močnejši oksidant od broma, zato reakcija ne poteče."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Fluorovodikova kislina reagira s silicijevim dioksidom, glavno sestavino stekla. Nastaneta spojina s tetraedričnimi molekulami, ki je pri sobnih pogojih plin, in spojina s kotnimi (upognjenimi) molekulami. Napiši urejeno enačbo reakcije.",
+     "answer": "$\\mathrm{SiO_2 + 4\\,HF \\rightarrow SiF_4 + 2\\,H_2O}$",
+     "ways": [
+      {
+       "title": "Iz oblike molekul",
+       "text": "Silicij ima v $\\mathrm{SiO_2}$ oksidacijsko število $+\\mathrm{IV}$ in se veže s štirimi atomi fluora: $\\mathrm{SiF_4}$ ima okoli Si štiri vezne pare in nobenega neveznega – oblika je **tetraedrična**. Kisik se z vodikom poveže v vodo, ki ima dva vezna in dva nevezna para – molekula je **kotna**.\n\nUrejanje: 1 Si, 2 O $\\rightarrow$ 2 $\\mathrm{H_2O}$ potrebujeta 4 H, $\\mathrm{SiF_4}$ potrebuje 4 F, torej 4 HF:\n\n$\\mathrm{SiO_2(s) + 4\\,HF(aq) \\rightarrow SiF_4(g) + 2\\,H_2O(l)}$"
+      },
+      {
+       "title": "Preizkus s štetjem atomov",
+       "text": "Levo: 1 Si, 2 O, 4 H, 4 F. Desno: 1 Si, 4 F, 4 H, 2 O. Enačba je urejena. To je reakcija, s katero jedkamo steklo – zato fluorovodikove kisline ne hranimo v steklenicah."
+      }
+     ]
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "V laboratoriju pripravimo klor tako, da na kalijev permanganat kapljamo koncentrirano klorovodikovo kislino. Nastanejo klor, manganov(II) klorid, kalijev klorid in voda. Napiši urejeno enačbo reakcije.",
+     "answer": "$\\mathrm{2\\,KMnO_4 + 16\\,HCl \\rightarrow 2\\,KCl + 2\\,MnCl_2 + 5\\,Cl_2 + 8\\,H_2O}$",
+     "ways": [
+      {
+       "title": "Z oksidacijskimi števili",
+       "text": "- Mn: $+\\mathrm{VII}$ (v $\\mathrm{KMnO_4}$) $\\rightarrow$ $+\\mathrm{II}$ (v $\\mathrm{MnCl_2}$): sprejme 5 elektronov.\n- Cl: $-\\mathrm{I}$ $\\rightarrow$ $0$; za eno molekulo $\\mathrm{Cl_2}$ oddata dva kloridna iona 2 elektrona.\n\nNajmanjši skupni večkratnik 5 in 2 je 10: 2 $\\mathrm{KMnO_4}$ sprejmeta 10 elektronov, 5 $\\mathrm{Cl_2}$ jih odda 10.\n\nNato uredimo še ostale atome: 2 K $\\rightarrow$ 2 KCl; klora je na desni $2 + 2 \\cdot 2 + 5 \\cdot 2 = 16$, torej 16 HCl; 16 H da 8 $\\mathrm{H_2O}$; kisik: levo $2 \\cdot 4 = 8$, desno 8 ✓.\n\n$\\mathrm{2\\,KMnO_4 + 16\\,HCl \\rightarrow 2\\,KCl + 2\\,MnCl_2 + 5\\,Cl_2 + 8\\,H_2O}$"
+      },
+      {
+       "title": "Drugače: z ionsko-elektronskima polreakcijama",
+       "text": "Redukcija: $\\mathrm{MnO_4^- + 8\\,H^+ + 5\\,e^- \\rightarrow Mn^{2+} + 4\\,H_2O}$ $\\quad | \\cdot 2$\n\nOksidacija: $\\mathrm{2\\,Cl^- \\rightarrow Cl_2 + 2\\,e^-}$ $\\quad | \\cdot 5$\n\nSeštejemo: $\\mathrm{2\\,MnO_4^- + 16\\,H^+ + 10\\,Cl^- \\rightarrow 2\\,Mn^{2+} + 5\\,Cl_2 + 8\\,H_2O}$\n\nDodamo ione, ki ne sodelujejo (2 $\\mathrm{K^+}$ in 6 $\\mathrm{Cl^-}$ na obeh straneh), in dobimo isto molekulsko enačbo z 16 HCl. Le 10 od 16 kloridnih ionov se oksidira, 6 jih ostane v solih $\\mathrm{KCl}$ in $\\mathrm{MnCl_2}$."
+      }
+     ],
+     "mistake": "Urediti le elektrone in zapisati 10 HCl – pozabljeni so kloridni ioni, ki ostanejo v $\\mathrm{KCl}$ in $\\mathrm{MnCl_2}$."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 11,
+   "intro": "Dane so racionalne formule štirih organskih spojin s kisikom:\n\n| oznaka | formula |\n|---|---|\n| A | $\\mathrm{CH_3CH_2CH_2COOH}$ |\n| B | $\\mathrm{CH_3CH_2COOCH_3}$ |\n| C | $\\mathrm{CH_3COCH(OH)CH_3}$ |\n| D | $\\mathrm{(CH_3)_2CHCOOH}$ |",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Katere od spojin B, C in D so funkcionalni izomeri spojine A? Napiši oznake.",
+     "answer": "B in C.",
+     "ways": [
+      {
+       "title": "Molekulske formule in funkcionalne skupine",
+       "text": "Vse štiri spojine imajo molekulsko formulo $\\mathrm{C_4H_8O_2}$, so torej izomeri. Funkcionalni izomeri imajo **različne funkcionalne skupine**:\n\n- A: butanojska kislina – karboksilna skupina.\n- B: metil propanoat – estrska skupina → funkcionalni izomer ✓.\n- C: 3-hidroksibutan-2-on – karbonilna (ketonska) in hidroksilna skupina → funkcionalni izomer ✓.\n- D: 2-metilpropanojska kislina – prav tako karboksilna skupina, razlikuje se le razvejanost verige. D je **verižni** (skeletni) izomer, ne funkcionalni."
+      },
+      {
+       "title": "Preizkus s štetjem atomov",
+       "text": "B: $\\mathrm{CH_3CH_2COOCH_3}$ – C: $1 + 1 + 1 + 1 = 4$, H: $3 + 2 + 3 = 8$, O: 2.\nC: $\\mathrm{CH_3COCH(OH)CH_3}$ – C: 4, H: $3 + 1 + 1 + 3 = 8$, O: 2.\n\nObe imata res $\\mathrm{C_4H_8O_2}$ kot A, funkcionalni skupini pa sta drugačni."
+      }
+     ],
+     "mistake": "Zraven šteti tudi D – enaka molekulska formula ni dovolj, funkcionalna skupina mora biti drugačna."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Katera od spojin A–D ima najvišje vrelišče? Napiši njeno ime po IUPAC.",
+     "answer": "Spojina A, butanojska kislina (vrelišče približno $164\\,^\\circ\\mathrm{C}$).",
+     "ways": [
+      {
+       "title": "Sile med molekulami",
+       "text": "Vse spojine imajo enako molsko maso ($88{,}1\\,\\mathrm{g/mol}$), zato odločajo vrste medmolekulskih sil:\n\n- B (ester) nima vodika na kisiku – med molekulami ni vodikovih vezi, vrelišče je najnižje.\n- C ima eno skupino $\\mathrm{-OH}$ – tvori vodikove vezi, a manj kot kislini.\n- A in D sta karboksilni kislini – tvorita močne vodikove vezi (dimere), zato imata najvišji vrelišči.\n\nMed A in D ima višje vrelišče **nerazvejana** A: njene molekule imajo večjo stično površino in močnejše disperzijske sile kot razvejana D. Najvišje vrelišče ima **butanojska kislina**."
+      },
+      {
+       "title": "Drugače: primerjava z znanimi pari",
+       "text": "Podobno kot ima pentan višje vrelišče od 2-metilbutana, ima tudi nerazvejana kislina višje vrelišče od razvejane. Karboksilne kisline pa vrejo višje od alkoholov, ketonov in estrov s podobno molsko maso. Vrstni red: B < C < D < A."
+      }
+     ],
+     "mistake": "Izbrati D, ker je »kompaktnejša« – razvejanje stično površino zmanjša in vrelišče zniža."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Katera od spojin A–D ima kiralni ogljikov atom? Koliko optičnih izomerov ima ta spojina?",
+     "answer": "Spojina C (3-hidroksibutan-2-on); ima en kiralni center, zato 2 optična izomera (enantiomera).",
+     "ways": [
+      {
+       "title": "Iskanje kiralnega centra",
+       "text": "Kiralni ogljikov atom ima štiri **različne** substituente.\n\n- V C ima 3. ogljikov atom substituente $\\mathrm{-H}$, $\\mathrm{-OH}$, $\\mathrm{-CH_3}$ in $\\mathrm{-COCH_3}$ – vsi so različni, to je kiralni center.\n- V D ima 2. ogljikov atom dve enaki skupini $\\mathrm{-CH_3}$ – ni kiralen.\n- V A in B ni ogljikovega atoma s štirimi različnimi substituenti.\n\nSpojina z $n$ kiralnimi centri ima največ $2^n$ optičnih izomerov; pri $n = 1$ sta to **2** enantiomera, ki sta si zrcalni sliki."
+      }
+     ],
+     "mistake": "Za kiralnega šteti karbonilni ogljik ali 2. ogljik v D – karbonilni ogljik ima le tri substituente, v D pa sta dva substituenta enaka."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 12,
+   "intro": "Dane so štiri aromatske spojine: benzen, 1,4-dimetilbenzen, fenol in benzojska kislina.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Razvrsti spojine po naraščajočem vrelišču.",
+     "answer": "benzen < 1,4-dimetilbenzen < fenol < benzojska kislina",
+     "ways": [
+      {
+       "title": "Medmolekulske sile in molske mase",
+       "text": "- Benzen ($78\\,\\mathrm{g/mol}$) in 1,4-dimetilbenzen ($106\\,\\mathrm{g/mol}$) sta nepolarna ogljikovodika, med molekulami delujejo le disperzijske sile. Večja molekula ima močnejše disperzijske sile, zato ima 1,4-dimetilbenzen višje vrelišče (okoli $138\\,^\\circ\\mathrm{C}$) kot benzen (okoli $80\\,^\\circ\\mathrm{C}$).\n- Fenol ($94\\,\\mathrm{g/mol}$) ima skupino $\\mathrm{-OH}$ in tvori vodikove vezi – vrelišče okoli $182\\,^\\circ\\mathrm{C}$, kljub manjši molski masi od dimetilbenzena.\n- Benzojska kislina ($122\\,\\mathrm{g/mol}$) tvori s karboksilno skupino še močnejše vodikove vezi (dimere) in ima največjo molsko maso – vrelišče okoli $249\\,^\\circ\\mathrm{C}$."
+      },
+      {
+       "title": "Drugače: najprej vrsta sil, nato velikost",
+       "text": "Najprej ločimo spojine brez vodikovih vezi (benzen, dimetilbenzen) od spojin z vodikovimi vezmi (fenol, benzojska kislina) – prve vrejo niže. Znotraj vsake skupine odloči velikost molekule oziroma moč vodikovih vezi: benzen < dimetilbenzen in fenol < benzojska kislina."
+      }
+     ],
+     "mistake": "Razvrstiti samo po molski masi (benzen < fenol < dimetilbenzen < benzojska kislina) – vodikove vezi fenola so pomembnejše od razlike 12 g/mol."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "construct",
+     "text": "Nariši skeletno formulo 1,4-dimetilbenzena.",
+     "answer": "Benzenov obroč z dvema metilnima skupinama na nasprotnih ogljikovih atomih (položaja 1 in 4); racionalna formula $\\mathrm{CH_3C_6H_4CH_3}$.",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 180 160\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><polygon points=\"90,48 117.7,64 117.7,96 90,112 62.3,96 62.3,64\"/><path d=\"M92.6,56.5 L109,66\"/><path d=\"M109,94 L92.6,103.5\"/><path d=\"M68.4,89.5 L68.4,70.5\"/><path d=\"M90,48 L90,18 M90,112 L90,142\"/></svg>",
+     "ways": [
+      {
+       "title": "Iz imena",
+       "text": "»Benzen« pomeni šestčlenski aromatski obroč (narišemo šestkotnik s tremi izmeničnimi dvojnimi vezmi ali krogom v sredini). »1,4-dimetil« pomeni dve skupini $\\mathrm{-CH_3}$ na ogljikovih atomih 1 in 4 – ta sta si v obroču nasproti. V skeletni formuli metilno skupino narišemo kot črtico iz oglišča."
+      }
+     ],
+     "mistake": "Metilni skupini na sosednjih ogljikih (to je 1,2-dimetilbenzen) ali obroč brez dvojnih vezi (to bi bil 1,4-dimetilcikloheksan)."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Katere od naštetih spojin reagirajo z vodno raztopino natrijevega hidroksida?",
+     "answer": "Fenol in benzojska kislina.",
+     "ways": [
+      {
+       "title": "Kislost",
+       "text": "Z $\\mathrm{NaOH}$ reagirajo kisline. Benzojska kislina je karboksilna kislina, fenol pa je šibka kislina, ker se fenoksidni ion stabilizira z delokalizacijo naboja v obroč:\n\n$\\mathrm{C_6H_5COOH + NaOH \\rightarrow C_6H_5COONa + H_2O}$\n\n$\\mathrm{C_6H_5OH + NaOH \\rightarrow C_6H_5ONa + H_2O}$\n\nBenzen in 1,4-dimetilbenzen sta ogljikovodika brez kislih vodikovih atomov in z $\\mathrm{NaOH}$ ne reagirata."
+      },
+      {
+       "title": "Poskus",
+       "text": "Če fenol ali benzojsko kislino stresamo z vodo, se slabo raztapljata. Ko dodamo raztopino $\\mathrm{NaOH}$, se raztopita, ker nastaneta topni natrijevi soli. Benzen in dimetilbenzen ostaneta kot ločena plast nad vodno raztopino."
+      }
+     ],
+     "mistake": "Izpustiti fenol, ker »ni kislina, ampak alkohol« – fenol je kislejši od alkoholov in z $\\mathrm{NaOH}$ reagira, z $\\mathrm{NaHCO_3}$ pa ne."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 13,
+   "intro": "Dana je reakcijska shema zaporednih pretvorb but-1-ena.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 150\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><text x=\"8\" y=\"45\" fill=\"currentColor\" stroke=\"none\">CH₂=CH–CH₂–CH₃</text><path d=\"M128,40 L182,40\"/><polygon points=\"190,40 181,36 181,44\" fill=\"currentColor\" stroke=\"none\"/><text x=\"158\" y=\"32\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">HBr</text><rect x=\"194\" y=\"23\" width=\"46\" height=\"34\" rx=\"4\"/><text x=\"217\" y=\"45\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-weight=\"bold\">A</text><path d=\"M246,40 L330,40 Q345,40 345,55 L345,70 Q345,82 333,82 L60,82 Q48,82 48,94 L48,100\"/><polygon points=\"48,107 44,98 52,98\" fill=\"currentColor\" stroke=\"none\"/><text x=\"292\" y=\"32\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">NaOH(aq), Δ</text><rect x=\"25\" y=\"108\" width=\"46\" height=\"34\" rx=\"4\"/><text x=\"48\" y=\"130\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-weight=\"bold\">B</text><path d=\"M77,125 L228,125\"/><polygon points=\"236,125 227,121 227,129\" fill=\"currentColor\" stroke=\"none\"/><text x=\"155\" y=\"117\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">K₂Cr₂O₇, H₂SO₄(aq)</text><rect x=\"238\" y=\"108\" width=\"46\" height=\"34\" rx=\"4\"/><text x=\"261\" y=\"130\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-weight=\"bold\">C</text></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 3,
+     "format": "construct",
+     "text": "Nariši racionalne ali skeletne formule glavnih organskih produktov A, B in C.",
+     "answer": "A: $\\mathrm{CH_3CHBrCH_2CH_3}$ (2-bromobutan); B: $\\mathrm{CH_3CH(OH)CH_2CH_3}$ (butan-2-ol); C: $\\mathrm{CH_3COCH_2CH_3}$ (butanon).",
+     "scoring": "- 1 točka: pravilna formula A (2-bromobutan).\n- 1 točka: pravilna formula B (butan-2-ol).\n- 1 točka: pravilna formula C (butanon).\n\nSprejme se racionalna, skeletna ali strukturna formula. Če je A napačna, se točkujeta B in C, kadar pravilno sledita iz zapisane formule A.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**1. but-1-en + HBr → A (elektrofilna adicija).** Po Markovnikovem pravilu se vodik veže na ogljikov atom dvojne vezi z več vodikovimi atomi (C1), brom pa na C2:\n\nA: $\\mathrm{CH_3{-}CHBr{-}CH_2{-}CH_3}$, 2-bromobutan.\n\n**2. A + NaOH(aq), segrevanje → B (nukleofilna substitucija).** Hidroksidni ion zamenja bromov atom:\n\nB: $\\mathrm{CH_3{-}CH(OH){-}CH_2{-}CH_3}$, butan-2-ol (sekundarni alkohol).\n\n**3. B + $\\mathrm{K_2Cr_2O_7}$/$\\mathrm{H_2SO_4}$ → C (oksidacija).** Sekundarni alkohol se oksidira v keton:\n\nC: $\\mathrm{CH_3{-}CO{-}CH_2{-}CH_3}$, butanon (butan-2-on). Oranžna raztopina dikromata se obarva zeleno."
+      },
+      {
+       "title": "Drugače: od konca nazaj",
+       "text": "Kisla raztopina dikromata oksidira primarne alkohole v aldehide oziroma kisline, sekundarne v ketone. Da ugotovimo, kateri alkohol je B, moramo vedeti, kam se je vezal brom v A.\n\nHBr se na nesimetrični alken veže po Markovnikovu – nastane stabilnejši sekundarni karbokation na C2. Brom je torej na C2, alkohol B je sekundaren in C mora biti keton s karbonilno skupino na C2.\n\nPreizkus z molekulskimi formulami: $\\mathrm{C_4H_8} \\rightarrow \\mathrm{C_4H_9Br} \\rightarrow \\mathrm{C_4H_{10}O} \\rightarrow \\mathrm{C_4H_8O}$ – vsak korak ustreza adiciji, substituciji in oksidaciji (odvzem dveh vodikovih atomov)."
+      }
+     ],
+     "mistake": "Brom na C1 (1-bromobutan, proti Markovnikovu) vodi do butan-1-ola in nato butanala ali butanojske kisline namesto ketona."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 14,
+   "intro": "Dana je reakcijska shema z etanom kot izhodno spojino.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 110\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><text x=\"40\" y=\"60\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">CH₃–CH₃</text><path d=\"M80,55 L174,55\"/><polygon points=\"182,55 173,51 173,59\" fill=\"currentColor\" stroke=\"none\"/><text x=\"130\" y=\"46\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">Cl₂, svetloba</text><text x=\"130\" y=\"72\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">(presežek C₂H₆)</text><rect x=\"186\" y=\"38\" width=\"46\" height=\"34\" rx=\"4\"/><text x=\"209\" y=\"60\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-weight=\"bold\">A</text><path d=\"M238,55 L346,55\"/><polygon points=\"354,55 345,51 345,59\" fill=\"currentColor\" stroke=\"none\"/><text x=\"295\" y=\"46\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">KOH, etanol</text><text x=\"295\" y=\"72\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">segrevanje</text><rect x=\"358\" y=\"38\" width=\"46\" height=\"34\" rx=\"4\"/><text x=\"381\" y=\"60\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-weight=\"bold\">B</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "construct",
+     "text": "Nariši formuli glavnih organskih produktov A in B.",
+     "answer": "A: kloroetan ($\\mathrm{CH_3CH_2Cl}$); B: eten ($\\mathrm{CH_2{=}CH_2}$).",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 250 80\" font-family=\"sans-serif\" font-size=\"14\" fill=\"currentColor\"><text x=\"62\" y=\"38\" text-anchor=\"middle\">CH₃–CH₂–Cl</text><text x=\"62\" y=\"70\" text-anchor=\"middle\" font-weight=\"bold\">A</text><text x=\"185\" y=\"38\" text-anchor=\"middle\">CH₂=CH₂</text><text x=\"185\" y=\"70\" text-anchor=\"middle\" font-weight=\"bold\">B</text></svg>",
+     "scoring": "- 1 točka: pravilna formula A (kloroetan).\n- 1 točka: pravilna formula B (eten); točka se prizna tudi, če B pravilno sledi iz napačne, a smiselne formule A.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Etan + $\\mathrm{Cl_2}$ na svetlobi:** alkani s halogeni na svetlobi reagirajo s substitucijo. En vodikov atom se zamenja s klorovim, nastane še $\\mathrm{HCl}$:\n\n$\\mathrm{C_2H_6 + Cl_2 \\rightarrow C_2H_5Cl + HCl}$ – A je **kloroetan**.\n\nKer so v etanu vsi vodikovi atomi enakovredni, nastane en sam monosubstituiran produkt; presežek etana zmanjša nastanek di- in polikloriranih produktov.\n\n**A + KOH v etanolu, segrevanje:** v etanolni raztopini močne baze poteče eliminacija – odcepi se $\\mathrm{HCl}$ (Cl z enega in H s sosednjega ogljika), nastane dvojna vez:\n\n$\\mathrm{C_2H_5Cl + KOH \\rightarrow C_2H_4 + KCl + H_2O}$ – B je **eten**."
+      },
+      {
+       "title": "Drugače: primerjava pogojev",
+       "text": "Z enakim halogenoalkanom lahko potečeta dve reakciji, odvisno od pogojev:\n\n- KOH ali NaOH v **vodi** → substitucija → alkohol (tu bi nastal etanol, $\\mathrm{C_2H_5OH}$).\n- KOH v **etanolu**, segrevanje → eliminacija → alken.\n\nV shemi je zapisano »KOH, etanol, segrevanje«, zato je B alken eten. Preizkus: $\\mathrm{C_2H_5Cl}$ minus $\\mathrm{HCl}$ je $\\mathrm{C_2H_4}$."
+      }
+     ],
+     "mistake": "Za B narisati etanol – ta bi nastal z vodno raztopino baze; etanol v shemi je le topilo."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Opredeli vrsto (mehanizem) prve pretvorbe.",
+     "answer": "Radikalska substitucija.",
+     "ways": [
+      {
+       "title": "Potek reakcije",
+       "text": "Svetloba homolitsko cepi molekulo klora na dva klorova radikala ($\\mathrm{Cl_2 \\rightarrow 2\\,Cl^\\bullet}$). Radikal odvzame vodikov atom etanu, nastali etilni radikal pa reagira z novo molekulo $\\mathrm{Cl_2}$ – verižna reakcija. Ker se vodik zamenja s klorom, je to **substitucija**, ki poteka prek **radikalov**: radikalska substitucija."
+      }
+     ],
+     "mistake": "Odgovor »elektrofilna adicija« – etan nima dvojne vezi, na katero bi se lahko kaj adiralo."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 15,
+   "intro": "Na sliki je ponavljajoča se enota polimera, ki nastane iz dveh monomerov.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 450 120\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M30,48 L24,48 L24,102 L30,102 M420,48 L426,48 L426,102 L420,102\"/><text x=\"432\" y=\"108\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\" font-style=\"italic\">n</text><path d=\"M18,80 L44,80\"/><text x=\"52\" y=\"85\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">O</text><path d=\"M59,80 L77,80\"/><text x=\"92\" y=\"85\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">CH₂</text><path d=\"M107,80 L123,80\"/><text x=\"138\" y=\"85\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">CH₂</text><path d=\"M153,80 L169,80\"/><text x=\"184\" y=\"85\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">CH₂</text><path d=\"M199,80 L219,80\"/><text x=\"226\" y=\"85\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">O</text><path d=\"M233,80 L255,80\"/><text x=\"262\" y=\"85\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">C</text><path d=\"M269,80 L287,80\"/><path d=\"M259,70 L259,48 M265,70 L265,48\"/><text x=\"262\" y=\"42\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">O</text><text x=\"302\" y=\"85\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">CH₂</text><path d=\"M317,80 L333,80\"/><text x=\"348\" y=\"85\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">CH₂</text><path d=\"M363,80 L383,80\"/><text x=\"390\" y=\"85\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">C</text><path d=\"M387,70 L387,48 M393,70 L393,48\"/><text x=\"390\" y=\"42\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">O</text><path d=\"M398,80 L432,80\"/></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "construct",
+     "text": "Nariši racionalno ali strukturno formulo tistega monomera, ki ima molekulsko formulo $\\mathrm{C_4H_6O_4}$.",
+     "answer": "Butandiojska kislina: $\\mathrm{HOOC{-}CH_2{-}CH_2{-}COOH}$",
+     "ways": [
+      {
+       "title": "Razstavimo estrsko vez",
+       "text": "V ponavljajoči se enoti sta dve estrski skupini $\\mathrm{-CO{-}O-}$. Če ju »razstavimo« (hidroliza), skupina $\\mathrm{-CO-}$ dobi $\\mathrm{-OH}$, kisik pa $\\mathrm{-H}$.\n\nDel $\\mathrm{-CO{-}CH_2{-}CH_2{-}CO-}$ postane $\\mathrm{HOOC{-}CH_2{-}CH_2{-}COOH}$, butandiojska kislina.\n\nPreizkus: C: $1 + 2 + 1 = 4$, H: $1 + 4 + 1 = 6$, O: $2 + 2 = 4$ – res $\\mathrm{C_4H_6O_4}$."
+      },
+      {
+       "title": "Drugače: s štetjem atomov",
+       "text": "Drugi del enote, $\\mathrm{-O{-}CH_2{-}CH_2{-}CH_2{-}O-}$, ima 3 ogljikove atome – iz njega nastane diol s tremi C (formula $\\mathrm{C_3H_8O_2}$). Monomer s štirimi C mora torej vsebovati del s karbonilnima skupinama: dikarboksilna kislina s 4 C in dvema skupinama $\\mathrm{-COOH}$."
+      }
+     ],
+     "mistake": "Narisati del verige brez končnih $\\mathrm{-OH}$ (npr. $\\mathrm{OC{-}CH_2CH_2{-}CO}$) – monomer je samostojna molekula s celima karboksilnima skupinama."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Napiši ime drugega monomera po IUPAC.",
+     "answer": "Propan-1,3-diol ($\\mathrm{HO{-}CH_2{-}CH_2{-}CH_2{-}OH}$).",
+     "ways": [
+      {
+       "title": "Iz dela verige",
+       "text": "Del $\\mathrm{-O{-}CH_2{-}CH_2{-}CH_2{-}O-}$ dopolnimo z vodikoma na kisikovih atomih: $\\mathrm{HO{-}CH_2{-}CH_2{-}CH_2{-}OH}$. Veriga ima 3 ogljikove atome (propan), hidroksilni skupini sta na C1 in C3: **propan-1,3-diol**."
+      }
+     ],
+     "mistake": "Ime »propan-1,2-diol« ali »propanol« – skupini $\\mathrm{-OH}$ sta na koncih verige in sta dve."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "S katero vrsto polimerizacije nastane ta polimer? Odgovor utemelji.",
+     "answer": "S kondenzacijsko polimerizacijo (polikondenzacijo): pri nastanku vsake estrske vezi se odcepi molekula vode; nastane poliester.",
+     "ways": [
+      {
+       "title": "Značilnosti polikondenzacije",
+       "text": "Monomera imata vsak po dve funkcionalni skupini ($\\mathrm{-COOH}$ oziroma $\\mathrm{-OH}$). Pri reakciji karboksilne skupine z alkoholno nastane estrska vez in se odcepi majhna molekula – **voda**. Takšna polimerizacija je **kondenzacijska** (polikondenzacija), nastali polimer je poliester."
+      },
+      {
+       "title": "Drugače: primerjava z adicijsko",
+       "text": "Pri adicijski polimerizaciji se povezujejo monomeri z dvojno vezjo $\\mathrm{C{=}C}$, glavna veriga je iz samih ogljikovih atomov in stranski produkt ne nastane. V našem polimeru so v glavni verigi tudi kisikovi atomi, monomera nimata dvojne vezi $\\mathrm{C{=}C}$, zato to ne more biti adicijska polimerizacija."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -14,6 +14,7 @@ export const info = {
     "Biot–Savartovem zakonu, s kompasi in gostoto magnetnega polja B. Poenostavitve: ovoji tuljave so krožne zanke, " +
     "magnet je enakomerno magneten, ravni vodnik je dolg 2 m.",
   merilo: { m: 0.2, oznaka: "20 cm" },
+  poskusi: "Vklopi kompase in poglej, kam kažejo; pri tuljavi zamenjaj smer toka in poišči severni pol.",
 };
 
 // ---------------------------------------------------------------- fizika (SI) --

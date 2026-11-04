@@ -2,9 +2,9 @@
 /* Videz »stare flash igre«: debele temne obrobe, risankasti prelivi, krepka pisava, izbočeni gumbi. */
 :root { --gm-ink: #1b1b2f; --gm-font: "Arial Rounded MT Bold", "Trebuchet MS", "Arial Black", system-ui, sans-serif; }
 /* Ploščice in prizori iger imajo svoje barve (kot simulacije in lige); okvir in gumbi so iz spremenljivk. */
-#view-games { width: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 20px 16px 40px; }
+#view-games { width: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 20px var(--rob-strani) 40px; }
 #view-games > .me-back { margin-bottom: 8px; }
-.gm-portal { max-width: 1280px; margin: 0 auto; }
+.gm-portal { margin: 0 auto; }
 .gm-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
 .gm-top h1 { display: flex; align-items: center; gap: 10px; margin: 0 0 4px; }
 .gm-top h1 svg.i { width: 30px; height: 30px; color: var(--accent); }
@@ -112,7 +112,7 @@
 .gm-own-list small { color: var(--muted); font-weight: 600; }
 .gm-own-list button { flex: none; padding: 4px 8px; }
 .gm-trends { margin: 0 0 12px; padding: 10px 14px; }
-.gm-trends summary { cursor: pointer; font-weight: 800; }
+.gm-trends summary { cursor: pointer; font-weight: 800; padding: 8px 0; }
 .gm-trends h3 { margin: 12px 0 4px; font-size: 0.95rem; }
 .gm-trends ol { margin: 0; padding-inline-start: 22px; }
 .gm-trends button { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; }
@@ -207,7 +207,7 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-mist li:first-child { border-top: 0; }
 .gm-mist li b { color: var(--ok); white-space: nowrap; }
 /* Gumbi igre pod prizorom (engine.ui: številčnica, premikanje po premici); premica in številke ostanejo LTR. */
-.gm-ui { padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(90deg, var(--gm-a), var(--gm-b)); border-top: 3px solid var(--gm-ink); font-family: var(--gm-font); }
+.gm-ui { padding: 8px 10px calc(8px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); background: linear-gradient(90deg, var(--gm-a), var(--gm-b)); border-top: 3px solid var(--gm-ink); font-family: var(--gm-font); }
 .gm-ui[inert] { opacity: 0.55; }
 .gm-key { min-width: 0; min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 8px; border: 3px solid var(--gm-ink); border-radius: 14px; background: linear-gradient(#fff, #fef3c7); color: #1b1b2f; font: 900 1.5rem/1 var(--gm-font); box-shadow: 0 4px 0 var(--gm-ink); cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
 .gm-key:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gm-ink); }
@@ -387,3 +387,15 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-calm .gm-title::before { display: none; }
 .gm-calm .gm-big { font-weight: 700; }
 .gm-calm .gm-kidnew .gm-tile { animation: none; }
+/* »Ponovi šibke teme« (index.js weakSec) in merjenje v pilotu (pilotCard) */
+.gm-weak-ic { display: inline-grid; place-items: center; color: var(--accent); }
+.gm-weak-ic svg.i { width: 22px; height: 22px; }
+.gm-weaknote { margin: -4px 0 10px; font-size: 0.9rem; }
+.gm-weakitem { display: flex; flex-direction: column; min-width: 0; }
+.gm-weakitem .gm-tile { width: 100%; }
+.gm-why { margin: 8px 2px 0; color: var(--muted); font-size: 0.8rem; font-weight: 700; line-height: 1.25; text-align: center; overflow-wrap: anywhere; }
+.gm-plsum { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; margin: 10px 0; padding: 0; }
+.gm-plsum li { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm, 12px); background: var(--surface); }
+.gm-plsum b { font-size: 1.25rem; }
+.gm-plsum span { color: var(--muted); font-size: 0.82rem; font-weight: 600; line-height: 1.25; }
+.gm-pltable { width: 100%; font-size: 0.88rem; }

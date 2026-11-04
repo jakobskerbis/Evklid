@@ -45,6 +45,8 @@ export const SKICE = {
   "MAT-SS|Bernoullijevo zaporedje": () => import("./bernoulli.js"),
   "MAT-SS|Povprečje, odklon": () => import("./odklon.js"),
   "MAT-UNI|Definicija": z(() => import("./odvod.js"), "h"), // edina kartica »Definicija« na listu za faks (Odvodi)
+  ...Object.fromEntries(Object.entries({ Kocka: "kocka", Kvader: "kvader", Prizma: "prizma", Valj: "valj", Piramida: "piramida", Stožec: "stozec" }).map(([ime, telo]) => [`MAT-OS|${ime}`, z(() => import("./telesa.js"), { telo })])),
+  ...Object.fromEntries(Object.entries({ Prizma: "prizma", Piramida: "piramida", "Prisekana piramida": "prisekana", Valj: "valj", Stožec: "stozec" }).map(([ime, telo]) => [`MAT-SS|${ime}`, z(() => import("./telesa.js"), { telo, ss: true })])),
   ...Object.fromEntries(["Kvadrat", "Pravokotnik", "Paralelogram", "Romb", "Trapez", "Deltoid"].map((ime) => [`MAT-OS|${ime}`, z(() => import("./liki.js"), ime.toLowerCase())])),
 };
 

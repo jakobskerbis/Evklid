@@ -60,7 +60,7 @@ export function logika(el) {
       const on = x === a && y === b;
       return `<tr data-a="${x}" data-b="${y}" tabindex="0" role="button" aria-label="Vrstica A = ${PN(x)}, B = ${PN(y)}" style="cursor:pointer${on ? ";background:var(--surface-2);outline:2px solid var(--accent)" : ""}">${cell(x)}${cell(y)}${cell(f1(x, y))}${cell(f2(x, y))}</tr>`;
     }).join("");
-    box.innerHTML = `<table class="demo-table"><tr><th>A</th><th>B</th><th>${tex(t1)}</th><th>${tex(t2)}</th></tr>${rows}</table>`;
+    box.innerHTML = `<table class="demo-table"><tr><th style="text-align:center">A</th><th style="text-align:center">B</th><th style="text-align:center">${tex(t1)}</th><th style="text-align:center">${tex(t2)}</th></tr>${rows}</table>`;
     const col1 = ROWS.map(([x, y]) => f1(x, y)), col2 = ROWS.map(([x, y]) => f2(x, y));
     const kind = (col) => (col.every(Boolean) ? "<b>tavtologija</b> (pravilna v vseh vrsticah)" : col.every((v) => !v) ? "<b>protislovje</b> (nepravilna v vseh vrsticah)" : "ni ne tavtologija ne protislovje");
     const diff = ROWS.filter((_, k) => col1[k] !== col2[k]);

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Paradoks rojstnih dni
+  - $23$ ljudi: verjetnost približno $0{,}507$
+  - šteje pare: $\binom{23}{2} = 253$
+- Štirje koraki
+  - ključna beseda, orodje
+  - račun, preverba smiselnosti
+- Vsaj eden
+  - nasprotni dogodek $1 - P(\overline{A})$
+  - napaka: seštevanje verjetnosti
+- Največ in najmanj
+  - $f'(x) = 0$, nato vrednost $f(x)$
+  - napaka: čas namesto višine
+- Pot in ploščina
+  - $s = \int_a^b v(t)\,dt$
+  - kolesar: $72\,\mathrm{m}$
+- Štetje tekem
+  - doma in v gosteh: $V_n^2$
+  - enkrat: $\binom{n}{2}$
+- Rast za odstotek
+  - $a_n = a_1 q^{n-1}$, $q = 1{,}05$
+  - napaka: eksponent $n$ namesto $n - 1$
+- Veriga orodij
+  - vsak člen reši posebej
+  - žoga: odvod, nato kvadratna enačba

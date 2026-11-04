@@ -3,10 +3,11 @@
 // Na kartici so samo avatar, do trije predmeti iz vitrine z okvirjem redkosti, števila zbranih predmetov po zbirkah
 // in znak aplikacije: nikoli ime, vzdevek, šola, razred, e-naslov ali id. Zato shareCardModel podatke vzame
 // po seznamu dovoljenih polj (ne odstrani prepovedanih), shareCardSvg pa riše samo model.
-// Modul ne uporablja DOM-a (razen shareCardPng in shareCardFile), da ga preizkusi test/vitrina.test.js.
+// Modul ne uporablja DOM-a (razen shareCardPng, shareCardFile in shareCardNative), da ga preizkusi test/vitrina.test.js.
 import { avatarSvg, itemOf, itemName, itemRarity, cleanAvatar, DEFAULT_AVATAR } from "./avatar.js";
 import { COLLECTIONS, KNOWLEDGE, elementTile } from "./zbirke.js";
 import { icon } from "./icons.js";
+import { SHARE_IMAGE, SHARE_IMAGE_RESULT, SHARE_IMAGE_TIMEOUT } from "./deli-most.js";
 
 export const CARD_W = 1080;
 export const CARD_H = 1350; // 4 : 5, kot objava na družbenih omrežjih
@@ -160,4 +161,35 @@ export async function shareCardFile(blob, { name = "zbirka.png", title = "" } = 
   a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   return "downloaded";
+}
+
+// V aplikaciji z mostom (public/deli-most.js): PNG kot base64 aplikaciji, ki odpre sistemski meni za deljenje.
+// Vrne odgovor aplikacije { ok, error }; ok pomeni samo, da se je meni odprl.
+export async function shareCardNative(blob, { name = "zbirka.png", timeout = SHARE_IMAGE_TIMEOUT } = {}) {
+  const url = await new Promise((ok, fail) => {
+    const r = new FileReader();
+    r.onload = () => ok(String(r.result || ""));
+    r.onerror = () => fail(new Error("read"));
+    r.readAsDataURL(blob);
+  });
+  const dataBase64 = url.slice(url.indexOf(",") + 1);
+  const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  return new Promise((ok) => {
+    let timer = null;
+    const done = (r) => {
+      clearTimeout(timer);
+      window.removeEventListener(SHARE_IMAGE_RESULT, on);
+      ok(r);
+    };
+    const on = (e) => {
+      if (e.detail?.id === id) done({ ok: e.detail.ok === true, error: String(e.detail.error || "") });
+    };
+    window.addEventListener(SHARE_IMAGE_RESULT, on);
+    timer = setTimeout(() => done({ ok: false, error: "timeout" }), timeout);
+    try {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: SHARE_IMAGE, id, name, dataBase64 }));
+    } catch (e) {
+      done({ ok: false, error: String(e?.message || "post") });
+    }
+  });
 }
