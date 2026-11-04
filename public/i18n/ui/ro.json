@@ -2746,7 +2746,7 @@
   "sim.color.muted": "Gri",
   "gift.tier": "Acces complet cu cod cadou până la {date}.",
   "gift.title": "Cod cadou",
-  "gift.text": "Cumpără un an de Osebno pentru un profil ({price}, plată unică) și oferă codul cadou. Destinatarul îl introduce în fila Cont, la „Ai un cod de activare sau un cod cadou?”.",
+  "gift.text": "Cumpără un pachet de un an pentru un profil de nivelul ales ({price}, plată unică) și oferă codul cadou. Destinatarul îl introduce în fila Cont, la „Ai un cod de activare sau un cod cadou?”.",
   "gift.buy": "Cumpără un cod cadou",
   "gift.copy": "Copiază",
   "gift.copied": "Codul a fost copiat.",
@@ -2762,7 +2762,7 @@
   "school.planNote": "Preț mai mic pentru un profil cu licență școlară: școala plătește deja materiile școlare, iar Osebno adaugă toate celelalte materii și niveluri, mai multe întrebări pentru tutor și explicații mai detaliate.",
   "pay.giftAdult": "Sunt major(ă) și cumpăr un cod cadou pentru Evklid.",
   "pay.giftWithdrawal": "Știu că mă pot retrage în 14 zile de la cumpărare și primesc rambursarea integrală dacă codul nu a fost folosit. Odată folosit codul, utilizarea începe și dreptul de retragere încetează.",
-  "pay.howMany": "Pentru câți copii?",
+  "pay.howMany": "Pentru câte profiluri?",
   "pay.seats1": "1 copil",
   "pay.seats2": "2 copii",
   "win.dragHint": "Trage pe pagină pentru o fereastră",
@@ -2857,6 +2857,7 @@
   "ai.low": "Luna aceasta s-au folosit 80 % din explicațiile detaliate.",
   "ai.out": "Explicațiile detaliate pentru luna aceasta s-au terminat. Tutorele răspunde în continuare în modul rapid.",
   "ai.buy": "Cumpără explicații",
+  "ai.pool": "Comun pentru toate profilurile familiei.",
   "gift.level": "Nivel",
   "meter.levelsTitle": "Prețuri pe niveluri"
 }

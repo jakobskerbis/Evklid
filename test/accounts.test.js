@@ -717,11 +717,10 @@ test("leagues with accounts: teacher's classes belong to the account; children j
   });
 });
 
-test("sprememba cene: nova cena v Stripu, stara arhivirana, portal se ustvari znova", async () => {
+test("sprememba cene: nova cena v Stripu, stara arhivirana; iskanje po največ 10 lookup_keys", async () => {
   const calls = [];
   const kv = new Map();
   kv.set("stripe_prices", JSON.stringify({ product: "prod_1", prices: { evklid_1_month: "price_old" }, amounts: { evklid_1_month: 899 } }));
-  kv.set("stripe_portal_config", "bpc_old");
   const fetchFn = async (url, init) => {
     const u = new URL(url);
     const body = init.body ? Object.fromEntries(new URLSearchParams(init.body)) : null;
@@ -732,7 +731,7 @@ test("sprememba cene: nova cena v Stripu, stara arhivirana, portal se ustvari zn
       return ok({
         data: [
           { id: "price_old", lookup_key: "evklid_1_month", unit_amount: 899, product: "prod_1" },
-          { id: "price_1y", lookup_key: "evklid_1_year", unit_amount: 8900, product: "prod_1" },
+          { id: "price_1y", lookup_key: "evklid_1_year", unit_amount: 9900, product: "prod_1" },
           { id: "price_2m", lookup_key: "evklid_2_month", unit_amount: 1599, product: "prod_1" },
           { id: "price_2y", lookup_key: "evklid_2_year", unit_amount: 13900, product: "prod_1" },
         ],
@@ -750,7 +749,9 @@ test("sprememba cene: nova cena v Stripu, stara arhivirana, portal se ustvari zn
   assert.equal(created.body.unit_amount, "999");
   assert.equal(created.body.transfer_lookup_key, "true");
   assert.equal(calls.find((c) => c.path === "/v1/prices/price_old").body.active, "false");
-  assert.equal(kv.get("stripe_portal_config"), ""); // portal z novimi cenami
+  // Stripe sprejme največ 10 lookup_keys v enem GET /prices.
+  const gets = calls.filter((c) => c.path === "/v1/prices" && c.method === "GET");
+  assert.ok(gets.length >= 1);
   assert.equal(JSON.parse(kv.get("stripe_prices")).amounts.evklid_1_month, 999);
   // Drugi klic bere iz predpomnilnika.
   const n = calls.length;

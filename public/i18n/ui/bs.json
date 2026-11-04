@@ -2744,7 +2744,7 @@
   "sim.color.muted": "Siva",
   "gift.tier": "Pun pristup s poklon-kodom do {date}.",
   "gift.title": "Poklon-kod",
-  "gift.text": "Kupi jednu godinu Osebno za jedan profil ({price}, jednokratna uplata) i pokloni kod. Primalac ga upisuje u kartici Račun pod „Imaš li aktivacijski ili poklon-kod?“.",
+  "gift.text": "Kupi jednogodišnji paket za jedan profil odabranog nivoa ({price}, jednokratna uplata) i pokloni kod. Primalac ga upisuje u kartici Račun pod „Imaš li aktivacijski ili poklon-kod?“.",
   "gift.buy": "Kupi poklon-kod",
   "gift.copy": "Kopiraj",
   "gift.copied": "Kod je kopiran.",
@@ -2760,7 +2760,7 @@
   "school.planNote": "Niža cijena za profil sa školskom licencom: škola već plaća školske predmete, a Osebno dodaje sve ostale predmete i nivoe, više pitanja instruktoru i detaljnija objašnjenja.",
   "pay.giftAdult": "Punoljetna sam osoba i kupujem poklon-kod za Evklid.",
   "pay.giftWithdrawal": "Znam da mogu odustati u roku od 14 dana od kupovine i dobiti povrat cijelog iznosa ako kod još nije unesen. Kada se kod unese, korištenje počinje i pravo na odustajanje prestaje.",
-  "pay.howMany": "Za koliko djece?",
+  "pay.howMany": "Za koliko profila?",
   "pay.seats1": "1 dijete",
   "pay.seats2": "2 djece",
   "win.dragHint": "Povuci na stranicu za prozor",
@@ -2855,6 +2855,7 @@
   "ai.low": "Ovaj mjesec potrošeno je 80 % detaljnih objašnjenja.",
   "ai.out": "Detaljna objašnjenja za ovaj mjesec su potrošena. Instruktor nastavlja odgovarati u brzom načinu.",
   "ai.buy": "Dokupi objašnjenja",
+  "ai.pool": "Zajedničko za sve profile porodice.",
   "gift.level": "Nivo",
   "meter.levelsTitle": "Cijene po nivoima"
 }

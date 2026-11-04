@@ -2717,7 +2717,7 @@
   "sim.color.muted": "Szürke",
   "gift.tier": "Teljes hozzáférés ajándékkóddal eddig: {date}.",
   "gift.title": "Ajándékkód",
-  "gift.text": "Vásárolj egy évre szóló Osebno hozzáférést egy profilra ({price}, egyszeri fizetés), és ajándékozd el a kódot. A megajándékozott a Fiók fülön, a „Van aktiváló- vagy ajándékkódod?” résznél adja meg.",
+  "gift.text": "Vásárolj egyéves csomagot egy profilra a választott szinten ({price}, egyszeri fizetés), és ajándékozd el a kódot. A megajándékozott a Fiók fülön, a „Van aktiváló- vagy ajándékkódod?” résznél adja meg.",
   "gift.buy": "Ajándékkód vásárlása",
   "gift.copy": "Másolás",
   "gift.copied": "Kód kimásolva.",
@@ -2733,7 +2733,7 @@
   "school.planNote": "Kedvezőbb ár iskolai licenccel rendelkező profilnak: az iskola már fizeti az iskolai tantárgyakat, az Osebno pedig hozzáadja az összes többi tantárgyat és szintet, több kérdést az oktatónak és részletesebb magyarázatokat.",
   "pay.giftAdult": "Nagykorú vagyok, és ajándékkódot vásárolok az Evklidhez.",
   "pay.giftWithdrawal": "Tudom, hogy a vásárlástól számított 14 napon belül elállhatok, és a teljes összeget visszakapom, ha a kódot még nem váltották be. A kód beváltásával a használat megkezdődik, és az elállási jog megszűnik.",
-  "pay.howMany": "Hány gyereknek?",
+  "pay.howMany": "Hány profilra?",
   "pay.seats1": "1 gyerek",
   "pay.seats2": "2 gyerek",
   "win.dragHint": "Húzd az oldalra, hogy ablakban nyíljon meg",
@@ -2828,6 +2828,7 @@
   "ai.low": "Ebben a hónapban a részletes magyarázatok 80 %-a elfogyott.",
   "ai.out": "Az e havi részletes magyarázatok elfogytak. A tanár gyors módban válaszol tovább.",
   "ai.buy": "Magyarázatok vásárlása",
+  "ai.pool": "Közös a család összes profiljának.",
   "gift.level": "Szint",
   "meter.levelsTitle": "Árak szintenként"
 }

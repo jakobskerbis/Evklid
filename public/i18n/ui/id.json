@@ -2695,7 +2695,7 @@
   "sim.color.muted": "Abu-abu",
   "gift.tier": "Akses penuh dengan kode hadiah sampai {date}.",
   "gift.title": "Kode hadiah",
-  "gift.text": "Beli satu tahun Osebno untuk satu profil ({price}, bayar sekali) lalu hadiahkan kodenya. Penerima memasukkannya di tab Akun, pada “Punya kode aktivasi atau kode hadiah?”.",
+  "gift.text": "Beli paket satu tahun untuk satu profil di jenjang yang dipilih ({price}, bayar sekali) lalu hadiahkan kodenya. Penerima memasukkannya di tab Akun, pada “Punya kode aktivasi atau kode hadiah?”.",
   "gift.buy": "Beli kode hadiah",
   "gift.copy": "Salin",
   "gift.copied": "Kode disalin.",
@@ -2711,7 +2711,7 @@
   "school.planNote": "Harga lebih rendah untuk profil dengan lisensi sekolah: sekolah sudah membayar mata pelajaran sekolah, dan Osebno menambahkan semua mata pelajaran dan jenjang lainnya, lebih banyak pertanyaan ke tutor, serta penjelasan yang lebih rinci.",
   "pay.giftAdult": "Saya sudah dewasa dan membeli kode hadiah untuk Evklid.",
   "pay.giftWithdrawal": "Saya tahu bahwa saya dapat membatalkan dalam 14 hari sejak pembelian dan mendapat pengembalian penuh jika kode belum ditukarkan. Setelah kode ditukarkan, penggunaan dimulai dan hak pembatalan berakhir.",
-  "pay.howMany": "Untuk berapa anak?",
+  "pay.howMany": "Untuk berapa profil?",
   "pay.seats1": "1 anak",
   "pay.seats2": "2 anak",
   "win.dragHint": "Seret ke halaman untuk membuka jendela",
@@ -2806,6 +2806,7 @@
   "ai.low": "80 % penjelasan rinci bulan ini sudah terpakai.",
   "ai.out": "Penjelasan rinci bulan ini sudah habis. Tutor tetap menjawab dalam mode cepat.",
   "ai.buy": "Beli penjelasan lagi",
+  "ai.pool": "Dipakai bersama oleh semua profil keluarga.",
   "gift.level": "Jenjang",
   "meter.levelsTitle": "Harga per jenjang"
 }

@@ -23,7 +23,7 @@ export const BUDGET = {
 };
 
 // Uteži za delitev proračuna po profilih (j 2026-10-30: plačljivi sorazmerno s ceno več kot brezplačni).
-// Plačljiva naročnina: mesečna cena na otroka v € (9,99 € → 9,99); preizkus, koda, bonus in paket pred
+// Plačljiva naročnina: mesečna cena na profil v € (9,99 € → 9,99); preizkus, koda, bonus in paket pred
 // testom kot mesečna naročnina za enega otroka; šolska licenca in brezplačni paket po spodnjih utežeh.
 export const SHARE = {
   free: () => Math.max(0, num("EVKLID_SHARE_FREE", 1)),

@@ -705,7 +705,8 @@ const STATUS_TEXT = {
 // j 2026-11-01): preostale podrobne razlage; ko so porabljene, inštruktor odgovarja v hitrem načinu.
 function aiPill(a) {
   if (!a || a.percent == null) return "";
-  if (a.guaranteed) return `<span class="pill${a.stage === "out" ? " warn" : ""}" title="${esc(a.stage === "out" ? t("ai.out") : t("ai.left", { n: a.explanations_left }))}">${esc(t("ai.left", { n: a.explanations_left }))}</span>`;
+  // Družina: skupen delež za vse profile (enak preostanek pri vsakem otroku, ai.pool v opisu).
+  if (a.guaranteed) return `<span class="pill${a.stage === "out" ? " warn" : ""}" title="${esc((a.stage === "out" ? t("ai.out") : t("ai.left", { n: a.explanations_left })) + (a.pool ? " " + t("ai.pool") : ""))}">${esc(t("ai.left", { n: a.explanations_left }))}</span>`;
   if (a.hard_reached) return `<span class="pill warn" title="Inštruktor bo spet na voljo 1. v mesecu. Vadnica deluje naprej.">inštruktor ta mesec porabljen</span>`;
   const extra = a.soft_reached ? " · razlage so do konca meseca manj podrobne" : "";
   return `<span class="pill" title="Delež mesečne omejitve za inštruktorja AI">inštruktor ta mesec ${a.percent} %${extra}</span>`;
@@ -714,7 +715,7 @@ function aiPill(a) {
 // Ime stopnje (OŠ, SŠ, faks) iz public/stopnja.js za izbiro paketa.
 const levelName = (l) => t(l === "FAKS" ? "lp.uni" : l === "SS" ? "lp.ss" : "lp.os");
 const planName = (p) => (p.family ? t(p.level === "FAKS" ? "pay.familyStudent" : "pay.family") : levelName(p.level));
-// Brez »(2–4 profili)«, kadar je ime že v oklepaju (»17,99 € (Družina)«); »2–4« se ne prelomi.
+// Brez »(2–4 profili)«, kadar je ime že v oklepaju (»19,99 € (Družina)«); »2–4« se ne prelomi.
 const shortName = (s) => s.replace(/\s*[（(][^()（）]*[)）]$/, "");
 const keepRange = (s) => s.replace(/(\d)([–〜-])(\d)/g, "$1$2\u2060$3");
 
@@ -804,7 +805,7 @@ const planBody = (v) => {
   return a === "s" ? { school: true, interval } : { seats: Number(a), interval };
 };
 
-// Darilna koda: polnoletna oseba kupi eno leto za en profil izbrane stopnje (letna cena stopnje: 89 / 119 / 149 €).
+// Darilna koda: polnoletna oseba kupi eno leto za en profil izbrane stopnje (letna cena stopnje: 99 / 139 / 199 €).
 function giftBox(acc) {
   if (!acc.billing || acc.parent.minor || acc.parent.guest) return "";
   const list = (acc.gifts || [])
@@ -812,7 +813,7 @@ function giftBox(acc) {
     .join("");
   // Cena v obliki jezika vmesnika (sl: 49,00 €, en: €49.00), ker je kartica v celoti prevedena.
   const fmt = (c) => (c / 100).toLocaleString(locale(), { style: "currency", currency: "EUR" });
-  const prices = acc.gift_prices || { OS: acc.gift_price || 8900 };
+  const prices = acc.gift_prices || { OS: acc.gift_price || 9900 };
   const vals = Object.values(prices);
   const price = vals.length > 1 ? `${fmt(Math.min(...vals))} – ${fmt(Math.max(...vals))}` : fmt(vals[0]);
   const levelSel = Object.keys(prices).length > 1

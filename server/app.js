@@ -732,10 +732,12 @@ export function createApp(store, opts = {}) {
       // Obvestilo pri 80 % in opomba pri 100 % (inštruktor nadaljuje v hitrem načinu): kot preostale podrobne razlage,
       // nikoli € ali $. Gumb za dokup samo, če ga sme videti (polnoleten imetnik, profil 15+, ena ponudba naenkrat);
       // pri profilu pod 15 let dobi starš e-pošto (billing.allowanceMail).
+      let aiOut = false; // ves zajamčeni delež porabljen: brez gumba »Razloži podrobneje« (hitri način)
       if (allowBefore?.guaranteed) {
         const after = usage.allowance(student.id);
+        aiOut = after.stage === "out";
         if (after.stage !== allowBefore.stage && (after.stage === "low" || after.stage === "out")) {
-          send("allowance", { stage: after.stage, percent: after.percent, left: after.explanations_left, buy: !!accounts.topupButton?.(student.id) });
+          send("allowance", { stage: after.stage, percent: after.percent, left: after.explanations_left, pool: after.pool || undefined, buy: !!accounts.topupButton?.(student.id) });
         }
         // E-pošta staršu ob vsakem odgovoru nad mejo (enkrat na mesec za mejo, email_log): mejo lahko prestopi tudi
         // strošek zunaj tega odgovora (preverjanje, skeniranje), zato ne samo ob prehodu v tem odgovoru.
@@ -811,6 +813,7 @@ export function createApp(store, opts = {}) {
         title: store.getConversation(conv.id).title,
         // Brez ponovnega gumba »Razloži podrobneje«, tudi če je odgovor pripravil hitri model.
         deep: deep || req.body?.deep === true,
+        ai_out: aiOut || undefined,
         settings: settingsTools.state.used || undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
       });

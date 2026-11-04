@@ -79,11 +79,16 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 |---|---|---|
 | Kje | Android: APK na evklid.app/prenesi | App Store, Google Play |
 | Gradnja | `eas build --profile direct --platform android` | `eas build --profile production` |
-| Plačilo | Stripe na spletu po stopnjah (OŠ 9,99 / 89 €, SŠ 12,99 / 119 €, faks 16,99 / 149 €, Družina 17,99 / 159 €, Družina s študentom 24,99 / 219 €) | nakup v aplikaciji, vsak paket 2 € dražji kot na spletu (`STORE_PRICES_EUR` v `server/mobile/store-billing.js`: 11,99 / 91, 14,99 / 121, 18,99 / 151, 19,99 / 161, 26,99 / 221 €); izdelki `<predpona>.<month\|year>.<1\|ss\|faks\|druzina\|druzina_student>`, stari `.2` ostane za obstoječe naročnine |
+| Plačilo | Stripe na spletu po stopnjah (OŠ 9,99 / 99 €, SŠ 13,99 / 139 €, faks 19,99 / 199 €, Družina 19,99 / 199 €, Družina s študentom 27,99 / 269 €) | nakup v aplikaciji, vsak paket 2 € dražji kot na spletu (`STORE_PRICES_EUR` v `server/mobile/store-billing.js`: 11,99 / 101, 15,99 / 141, 21,99 / 201, 21,99 / 201, 29,99 / 271 €); izdelki `<predpona>.<month\|year>.<1\|ss\|faks\|druzina\|druzina_student>`, stari `.2` ostane za obstoječe naročnine |
 | Provizija | Stripe ~1,5 % + 0,25 € | 15 % (Apple Small Business Program, Google Play) |
 
 Cene v trgovinah so višje zaradi provizije. Aplikacija iz trgovine ne sme omenjati cenejših cen na
 spletu (pravila Apple 3.1.1 in Google Play), zato jih ne omenja.
+
+**TODO pred zagonom trgovin** (j 2026-11-04, »Cene z najmanj 75 % dobička«): +2 € (`STORE_MARKUP_CENTS` v
+`server/accounts/plans.js`) ob 15 % provizije ne drži pravila 75 % v najslabšem primeru. Cene v trgovinah morajo
+biti ~25 % višje od spletnih (in zajamčeni AI za nakupe iz trgovine približno pol manjši). Zdaj ostane +2 €, ker
+trgovini še ne delujeta (brez s.p.); splet je privzet način plačila.
 
 **iPhone zdaj:** brez Applovega razvijalskega računa (99 $ na leto) aplikacije na iPhone ni mogoče
 namestiti mimo trgovine. Do takrat iPhone uporablja spletno aplikacijo (Safari → Deli → Dodaj na
@@ -144,7 +149,8 @@ namesto spletne različice, prav tako stran https://evklid.app/prenesi. Ob novi 
 1. Apple Developer Program, 99 $ na leto, kot posameznik: https://developer.apple.com/programs/enroll/
 2. Prijava v [App Store Small Business Program](https://developer.apple.com/app-store/small-business-program/) (provizija 15 % namesto 30 %).
 3. V App Store Connect: nova aplikacija z id-jem `app.evklid`, skupina naročnin z izdelki
-   `evklid.month.1` (11,99 €), `evklid.year.1` (104,99 €), `evklid.month.2` (18,99 €), `evklid.year.2` (159,99 €).
+   `evklid.<month|year>.<1|ss|faks|druzina|druzina_student>` po cenah iz `STORE_PRICES_EUR` (tabela zgoraj; glej TODO
+   o +25 % pred zagonom); stari `evklid.<month|year>.2` samo za obstoječe naročnine.
 4. App Store Server Notifications V2: `https://evklid.app/webhooks/app-store` (produkcija in sandbox).
 5. Ključ za Prijavo z Apple (Keys → Sign in with Apple) in v `.env` strežnika:
    `EVKLID_APPLE_TEAM_ID`, `EVKLID_APPLE_KEY_ID`, `EVKLID_APPLE_PRIVATE_KEY` (vsebina datoteke .p8).

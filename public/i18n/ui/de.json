@@ -2719,7 +2719,7 @@
   "sim.color.muted": "Grau",
   "gift.tier": "Voller Zugang mit Geschenkcode bis {date}.",
   "gift.title": "Geschenkcode",
-  "gift.text": "Kauf ein Jahr Osebno für ein Profil ({price}, einmalige Zahlung) und verschenke den Code. Die beschenkte Person gibt ihn im Tab Konto unter „Hast du einen Aktivierungs- oder Geschenkcode?“ ein.",
+  "gift.text": "Kauf ein Jahrespaket für ein Profil der gewählten Stufe ({price}, einmalige Zahlung) und verschenke den Code. Die beschenkte Person gibt ihn im Tab Konto unter „Hast du einen Aktivierungs- oder Geschenkcode?“ ein.",
   "gift.buy": "Geschenkcode kaufen",
   "gift.copy": "Kopieren",
   "gift.copied": "Code kopiert.",
@@ -2735,7 +2735,7 @@
   "school.planNote": "Günstigerer Preis für ein Profil mit Schullizenz: Die Schule bezahlt bereits die Schulfächer, Osebno ergänzt alle weiteren Fächer und Stufen, mehr Fragen an den Tutor und ausführlichere Erklärungen.",
   "pay.giftAdult": "Ich bin volljährig und kaufe einen Geschenkcode für Evklid.",
   "pay.giftWithdrawal": "Ich weiß, dass ich innerhalb von 14 Tagen nach dem Kauf widerrufen kann und den vollen Betrag zurückerhalte, solange der Code nicht eingelöst ist. Sobald der Code eingelöst ist, beginnt die Nutzung und das Widerrufsrecht erlischt.",
-  "pay.howMany": "Für wie viele Kinder?",
+  "pay.howMany": "Für wie viele Profile?",
   "pay.seats1": "1 Kind",
   "pay.seats2": "2 Kinder",
   "win.dragHint": "Auf die Seite ziehen für ein Fenster",
@@ -2830,6 +2830,7 @@
   "ai.low": "80 % der ausführlichen Erklärungen dieses Monats sind verbraucht.",
   "ai.out": "Die ausführlichen Erklärungen für diesen Monat sind verbraucht. Der Tutor antwortet im schnellen Modus weiter.",
   "ai.buy": "Erklärungen nachkaufen",
+  "ai.pool": "Gemeinsam für alle Profile der Familie.",
   "gift.level": "Stufe",
   "meter.levelsTitle": "Preise nach Stufe"
 }

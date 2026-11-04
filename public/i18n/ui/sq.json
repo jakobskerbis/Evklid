@@ -2719,7 +2719,7 @@
   "sim.color.muted": "Gri",
   "gift.tier": "Qasje e plotë me kod dhuratë deri më {date}.",
   "gift.title": "Kod dhuratë",
-  "gift.text": "Bli një vit Osebno për një profil ({price}, pagesë e njëhershme) dhe dhuro kodin. Marrësi e shkruan te skeda Llogaria, te «Ke kod aktivizimi ose kod dhuratë?».",
+  "gift.text": "Bli një paketë njëvjeçare për një profil të nivelit të zgjedhur ({price}, pagesë e njëhershme) dhe dhuro kodin. Marrësi e shkruan te skeda Llogaria, te «Ke kod aktivizimi ose kod dhuratë?».",
   "gift.buy": "Bli kod dhuratë",
   "gift.copy": "Kopjo",
   "gift.copied": "Kodi u kopjua.",
@@ -2735,7 +2735,7 @@
   "school.planNote": "Çmim më i ulët për një profil me licencë shkolle: shkolla i paguan tashmë lëndët shkollore, ndërsa Osebno shton të gjitha lëndët dhe nivelet e tjera, më shumë pyetje për tutorin dhe shpjegime më të hollësishme.",
   "pay.giftAdult": "Jam madhor/e dhe po blej një kod dhuratë për Evklid.",
   "pay.giftWithdrawal": "E di se mund të tërhiqem brenda 14 ditëve nga blerja dhe të marr rimbursim të plotë nëse kodi nuk është përdorur ende. Pasi kodi përdoret, përdorimi fillon dhe e drejta e tërheqjes përfundon.",
-  "pay.howMany": "Për sa fëmijë?",
+  "pay.howMany": "Për sa profile?",
   "pay.seats1": "1 fëmijë",
   "pay.seats2": "2 fëmijë",
   "win.dragHint": "Tërhiqe në faqe për një dritare",
@@ -2830,6 +2830,7 @@
   "ai.low": "Këtë muaj është përdorur 80 % e shpjegimeve të hollësishme.",
   "ai.out": "Shpjegimet e hollësishme për këtë muaj janë mbaruar. Tutori vazhdon të përgjigjet në mënyrën e shpejtë.",
   "ai.buy": "Bli më shumë shpjegime",
+  "ai.pool": "E përbashkët për të gjitha profilet e familjes.",
   "gift.level": "Niveli",
   "meter.levelsTitle": "Çmimet sipas nivelit"
 }

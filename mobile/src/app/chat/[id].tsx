@@ -83,7 +83,8 @@ export default function Chat() {
               if (e.data.title) setTitle(e.data.title);
               // Predmet, ki ga je inštruktor pravkar določil (nov pogovor brez teme), kot na spletu.
               if (e.data.state?.subject) setConvFx((c) => (c.subject === e.data.state.subject ? c : { ...c, subject: e.data.state.subject }));
-              setDeepOk(!e.data.deep);
+              // Ves delež podrobnih razlag porabljen (ai_out): brez »Razloži podrobneje«, kot na spletu.
+              setDeepOk(!e.data.deep && !e.data.ai_out);
               if (e.data.settings) refresh().catch(() => {});
             } else if (e.event === "error") {
               patch((m) => ({ ...m, text: e.data.error, error: true, streaming: false }));
@@ -95,7 +96,9 @@ export default function Chat() {
               setNotes((n) => [...n, { key: `c${Date.now()}`, text: t("mob.cardsAdded", { n: e.data.cards?.length || 0 }) }]);
             } else if (e.event === "allowance") {
               // Zajamčena poraba naročnika (kot na spletu): 80 % obvestilo, 100 % hitri način; brez zneskov.
-              const text = e.data.stage === "out" ? t("ai.out") : `${t("ai.low")}\n${t("ai.left", { n: e.data.left ?? 0 })}`;
+              // Družina: skupen delež za vse profile (ai.pool).
+              const base = e.data.stage === "out" ? t("ai.out") : `${t("ai.low")}\n${t("ai.left", { n: e.data.left ?? 0 })}`;
+              const text = e.data.pool ? `${base}\n${t("ai.pool")}` : base;
               setNotes((n) => [...n, { key: `a${Date.now()}`, text, tone: "info" }]);
             } else if (e.event === "proposal") setProposal(e.data);
           },

@@ -159,8 +159,10 @@ export function planChangeEmail({ planText, amountText, dateText, up }, appUrl) 
 
 // Poraba podrobnih razlag pri profilu otroka, mlajšega od 15 let (j 2026-11-01): starš dobi e-pošto pri 80 % in
 // 100 %. Brez zneskov: samo, koliko razlag je še ostalo. Inštruktor odgovarja naprej v hitrem načinu.
-export function allowanceEmail({ childName, stage, left, untilText }, appUrl) {
+// Družina (pool): skupen delež vseh profilov, zato brez imena otroka.
+export function allowanceEmail({ childName, stage, left, untilText, pool = false }, appUrl) {
   const n = BRAND.name;
+  if (pool) childName = "Skupni delež družine";
   const body =
     stage === "out"
       ? `${childName}: podrobne razlage za ta mesec so porabljene. Inštruktor odgovarja naprej v hitrem načinu, nove razlage so na voljo ${untilText}.`

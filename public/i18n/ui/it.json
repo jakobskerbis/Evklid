@@ -2719,7 +2719,7 @@
   "sim.color.muted": "Grigio",
   "gift.tier": "Accesso completo con codice regalo fino al {date}.",
   "gift.title": "Codice regalo",
-  "gift.text": "Acquista un anno di Osebno per un profilo ({price}, pagamento unico) e regala il codice. Chi lo riceve lo inserisce nella scheda Account, alla voce «Hai un codice di attivazione o un codice regalo?».",
+  "gift.text": "Acquista un pacchetto di un anno per un profilo del livello scelto ({price}, pagamento unico) e regala il codice. Chi lo riceve lo inserisce nella scheda Account, alla voce «Hai un codice di attivazione o un codice regalo?».",
   "gift.buy": "Acquista un codice regalo",
   "gift.copy": "Copia",
   "gift.copied": "Codice copiato.",
@@ -2735,7 +2735,7 @@
   "school.planNote": "Prezzo ridotto per un profilo con licenza scolastica: la scuola paga già le materie scolastiche, mentre Osebno aggiunge tutte le altre materie e livelli, più domande al tutor e spiegazioni più dettagliate.",
   "pay.giftAdult": "Sono maggiorenne e acquisto un codice regalo per Evklid.",
   "pay.giftWithdrawal": "So che posso recedere entro 14 giorni dall'acquisto e ottenere il rimborso completo se il codice non è stato riscattato. Una volta riscattato il codice, l'uso inizia e il diritto di recesso termina.",
-  "pay.howMany": "Per quanti figli?",
+  "pay.howMany": "Per quanti profili?",
   "pay.seats1": "1 figlio",
   "pay.seats2": "2 figli",
   "win.dragHint": "Trascina sulla pagina per aprire una finestra",
@@ -2830,6 +2830,7 @@
   "ai.low": "Questo mese hai usato l'80 % delle spiegazioni dettagliate.",
   "ai.out": "Le spiegazioni dettagliate di questo mese sono finite. Il tutor continua a rispondere in modalità veloce.",
   "ai.buy": "Acquista altre spiegazioni",
+  "ai.pool": "Condiviso da tutti i profili della famiglia.",
   "gift.level": "Livello",
   "meter.levelsTitle": "Prezzi per livello"
 }

@@ -2717,7 +2717,7 @@
   "sim.color.muted": "Gri",
   "gift.tier": "{date} tarihine kadar hediye koduyla tam erişim.",
   "gift.title": "Hediye kodu",
-  "gift.text": "Bir profil için bir yıllık Osebno satın al ({price}, tek seferlik ödeme) ve kodu hediye et. Alıcı kodu Hesap sekmesinde “Etkinleştirme veya hediye kodun var mı?” bölümüne girer.",
+  "gift.text": "Seçilen seviyede bir profil için bir yıllık paket satın al ({price}, tek seferlik ödeme) ve kodu hediye et. Alıcı kodu Hesap sekmesinde “Etkinleştirme veya hediye kodun var mı?” bölümüne girer.",
   "gift.buy": "Hediye kodu satın al",
   "gift.copy": "Kopyala",
   "gift.copied": "Kod kopyalandı.",
@@ -2733,7 +2733,7 @@
   "school.planNote": "Okul lisansı olan profil için daha düşük fiyat: okul, okul derslerinin ücretini zaten ödüyor; Osebno ise diğer tüm dersleri ve kademeleri, özel öğretmene daha fazla soru ve daha ayrıntılı açıklamalar ekler.",
   "pay.giftAdult": "Reşit olduğumu ve Evklid için bir hediye kodu satın aldığımı onaylıyorum.",
   "pay.giftWithdrawal": "Kod henüz kullanılmadıysa satın alma tarihinden itibaren 14 gün içinde cayabileceğimi ve tam iade alacağımı biliyorum. Kod kullanıldığında kullanım başlar ve cayma hakkı sona erer.",
-  "pay.howMany": "Kaç çocuk için?",
+  "pay.howMany": "Kaç profil için?",
   "pay.seats1": "1 çocuk",
   "pay.seats2": "2 çocuk",
   "win.dragHint": "Pencere için sayfaya sürükle",
@@ -2828,6 +2828,7 @@
   "ai.low": "Bu ayki ayrıntılı açıklamaların % 80'i kullanıldı.",
   "ai.out": "Bu ayki ayrıntılı açıklamalar bitti. Öğretmen hızlı modda yanıt vermeye devam ediyor.",
   "ai.buy": "Açıklama satın al",
+  "ai.pool": "Ailedeki tüm profiller için ortak.",
   "gift.level": "Seviye",
   "meter.levelsTitle": "Seviyeye göre fiyatlar"
 }

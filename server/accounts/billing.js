@@ -94,6 +94,16 @@ export function migrateBilling(db) {
       notified_at TEXT,
       applied_at TEXT
     );
+    -- Naročnina iz trgovine (Apple, Google) za en profil: cene ob podaljšanju ne moremo zamenjati sami, zato je višja
+    -- stopnja profila odprta samo do konca obdobja, v katerem je profil prešel nanjo (until), nato le stopnja
+    -- izdelka in nižje (server/accounts/index.js storeGrace).
+    CREATE TABLE IF NOT EXISTS store_level_grace (
+      parent_id INTEGER NOT NULL REFERENCES parents(id) ON DELETE CASCADE,
+      sub_id TEXT NOT NULL,
+      level TEXT NOT NULL,
+      until TEXT NOT NULL,
+      PRIMARY KEY (parent_id, sub_id, level)
+    );
   `);
 }
 
@@ -233,7 +243,7 @@ export function mountBilling(app, ctx) {
   function checkPass(req, parent, body) {
     const studentId = Number(body?.student_id);
     if (!Number.isInteger(studentId) || ownerOf(studentId) !== parent.id) return { status: 404, body: { error: "Učenec ne obstaja." } };
-    // Faks ima svoje pakete (6,99 / 9,99 / 14,99 €, meja AI ×1,5), OŠ in SŠ kot doslej.
+    // Faks ima svoje pakete (6,99 / 11,49 / 19,99 €), OŠ in SŠ skupne (plans.js PASSES).
     const plan = passByDays(body?.days, levelOf(studentId));
     if (!plan) return { status: 400, body: { error: "Neznan paket." } };
     // j 2026-10-30: paket se ponudi samo učencu brez aktivne naročnine na Evklid.
@@ -786,12 +796,14 @@ export function mountBilling(app, ctx) {
     const p = getParent(ownerOf(studentId));
     if (!p || p.is_guest || !p.email_verified_at || isMinor(p)) return 0;
     const month = now.toISOString().slice(0, 7);
-    if (db.prepare("SELECT 1 FROM email_log WHERE parent_id = ? AND kind = ? AND period = ?").get(p.id, `ai_${stage}:${studentId}`, month)) return 0; // že poslano ta mesec
-    const st = store.getStudent(studentId);
     const a = aiUsage?.studentMonth(studentId);
+    // Skupen delež družine: ena e-pošta za ves račun (ne za vsak profil posebej).
+    const kind = a?.pool ? `ai_${stage}:pool` : `ai_${stage}:${studentId}`;
+    if (db.prepare("SELECT 1 FROM email_log WHERE parent_id = ? AND kind = ? AND period = ?").get(p.id, kind, month)) return 0; // že poslano ta mesec
+    const st = store.getStudent(studentId);
     const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
-    const msg = allowanceEmail({ childName: st?.name || "", stage, left: a?.explanations_left ?? 0, untilText: fmtDate(next.toISOString()) }, baseUrl(null) + "/");
-    return remind(p, `ai_${stage}:${studentId}`, month, msg);
+    const msg = allowanceEmail({ childName: st?.name || "", stage, left: a?.explanations_left ?? 0, untilText: fmtDate(next.toISOString()), pool: !!a?.pool }, baseUrl(null) + "/");
+    return remind(p, kind, month, msg);
   }
 
   // Osebno ob šolski licenci po izteku licence (j 2026-10-30: »naj se naročnina ob poteku šolske licence

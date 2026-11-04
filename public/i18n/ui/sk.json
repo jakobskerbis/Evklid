@@ -2771,7 +2771,7 @@
   "sim.color.muted": "Sivá",
   "gift.tier": "Plný prístup s darčekovým kódom do {date}.",
   "gift.title": "Darčekový kód",
-  "gift.text": "Kúp jeden rok Osebno pre jeden profil ({price}, jednorazová platba) a kód daruj. Obdarovaný ho zadá na karte Účet v časti „Máš aktivačný alebo darčekový kód?“.",
+  "gift.text": "Kúp ročný balík pre jeden profil zvoleného stupňa ({price}, jednorazová platba) a kód daruj. Obdarovaný ho zadá na karte Účet v časti „Máš aktivačný alebo darčekový kód?“.",
   "gift.buy": "Kúpiť darčekový kód",
   "gift.copy": "Kopírovať",
   "gift.copied": "Kód je skopírovaný.",
@@ -2787,7 +2787,7 @@
   "school.planNote": "Nižšia cena pre profil so školskou licenciou: škola už platí školské predmety a Osebno pridá všetky ostatné predmety a stupne, viac otázok pre tútora a podrobnejšie vysvetlenia.",
   "pay.giftAdult": "Som plnoletá osoba a kupujem darčekový kód pre Evklid.",
   "pay.giftWithdrawal": "Viem, že môžem do 14 dní od nákupu odstúpiť a dostať späť celú sumu, ak kód ešte nebol uplatnený. Po uplatnení kódu sa začína používanie a právo na odstúpenie zaniká.",
-  "pay.howMany": "Pre koľko detí?",
+  "pay.howMany": "Pre koľko profilov?",
   "pay.seats1": "1 dieťa",
   "pay.seats2": "2 deti",
   "win.dragHint": "Potiahni na stránku pre okno",
@@ -2882,6 +2882,7 @@
   "ai.low": "Tento mesiac je využitých 80 % podrobných vysvetlení.",
   "ai.out": "Podrobné vysvetlenia na tento mesiac sú minuté. Doučovateľ odpovedá ďalej v rýchlom režime.",
   "ai.buy": "Dokúpiť vysvetlenia",
+  "ai.pool": "Spoločné pre všetky profily rodiny.",
   "gift.level": "Stupeň",
   "meter.levelsTitle": "Ceny podľa stupňa"
 }

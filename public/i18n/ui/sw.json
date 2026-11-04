@@ -2717,7 +2717,7 @@
   "sim.color.muted": "Kijivu",
   "gift.tier": "Ufikiaji kamili kwa msimbo wa zawadi hadi {date}.",
   "gift.title": "Msimbo wa zawadi",
-  "gift.text": "Nunua mwaka mmoja wa Osebno kwa wasifu mmoja ({price}, malipo ya mara moja) kisha toa msimbo kama zawadi. Mpokeaji anauandika kwenye kichupo cha Akaunti, chini ya “Una msimbo wa kuwezesha au wa zawadi?”.",
+  "gift.text": "Nunua kifurushi cha mwaka mmoja kwa wasifu mmoja wa ngazi uliyochagua ({price}, malipo ya mara moja) kisha toa msimbo kama zawadi. Mpokeaji anauandika kwenye kichupo cha Akaunti, chini ya “Una msimbo wa kuwezesha au wa zawadi?”.",
   "gift.buy": "Nunua msimbo wa zawadi",
   "gift.copy": "Nakili",
   "gift.copied": "Msimbo umenakiliwa.",
@@ -2733,7 +2733,7 @@
   "school.planNote": "Bei ya chini kwa wasifu wenye leseni ya shule: shule tayari inalipia masomo ya shule, na Osebno inaongeza masomo na ngazi nyingine zote, maswali zaidi kwa mwalimu na maelezo ya kina zaidi.",
   "pay.giftAdult": "Mimi ni mtu mzima na ninanunua msimbo wa zawadi wa Evklid.",
   "pay.giftWithdrawal": "Najua kwamba ninaweza kujiondoa ndani ya siku 14 tangu ununuzi na kurudishiwa pesa zote ikiwa msimbo bado haujatumika. Msimbo ukishatumika, matumizi huanza na haki ya kujiondoa inaisha.",
-  "pay.howMany": "Kwa watoto wangapi?",
+  "pay.howMany": "Kwa wasifu wangapi?",
   "pay.seats1": "Mtoto 1",
   "pay.seats2": "Watoto 2",
   "win.dragHint": "Buruta kwenye ukurasa ili kufungua dirisha",
@@ -2828,6 +2828,7 @@
   "ai.low": "Mwezi huu umetumia 80 % ya maelezo ya kina.",
   "ai.out": "Maelezo ya kina ya mwezi huu yameisha. Mwalimu anaendelea kujibu kwa hali ya haraka.",
   "ai.buy": "Nunua maelezo zaidi",
+  "ai.pool": "Kinashirikiwa na wasifu wote wa familia.",
   "gift.level": "Ngazi",
   "meter.levelsTitle": "Bei kwa ngazi"
 }

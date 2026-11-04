@@ -2773,7 +2773,7 @@
   "sim.color.muted": "Szary",
   "gift.tier": "Pełny dostęp z kodem podarunkowym do {date}.",
   "gift.title": "Kod podarunkowy",
-  "gift.text": "Kup jeden rok Osebno dla jednego profilu ({price}, płatność jednorazowa) i podaruj kod. Obdarowana osoba wpisuje go w zakładce Konto w sekcji „Masz kod aktywacyjny lub podarunkowy?”.",
+  "gift.text": "Kup roczny pakiet dla jednego profilu wybranego poziomu ({price}, płatność jednorazowa) i podaruj kod. Obdarowana osoba wpisuje go w zakładce Konto w sekcji „Masz kod aktywacyjny lub podarunkowy?”.",
   "gift.buy": "Kup kod podarunkowy",
   "gift.copy": "Kopiuj",
   "gift.copied": "Kod skopiowany.",
@@ -2789,7 +2789,7 @@
   "school.planNote": "Niższa cena dla profilu z licencją szkolną: szkoła już płaci za przedmioty szkolne, a Osebno dodaje wszystkie pozostałe przedmioty i poziomy, więcej pytań do korepetytora i dokładniejsze wyjaśnienia.",
   "pay.giftAdult": "Jestem osobą pełnoletnią i kupuję kod podarunkowy do Evklid.",
   "pay.giftWithdrawal": "Wiem, że mogę odstąpić w ciągu 14 dni od zakupu i otrzymać pełny zwrot, jeśli kod nie został jeszcze wykorzystany. Po wykorzystaniu kodu korzystanie się rozpoczyna, a prawo do odstąpienia wygasa.",
-  "pay.howMany": "Dla ilu dzieci?",
+  "pay.howMany": "Dla ilu profili?",
   "pay.seats1": "1 dziecko",
   "pay.seats2": "2 dzieci",
   "win.dragHint": "Przeciągnij na stronę, aby otworzyć okno",
@@ -2884,6 +2884,7 @@
   "ai.low": "W tym miesiącu wykorzystano 80 % szczegółowych wyjaśnień.",
   "ai.out": "Szczegółowe wyjaśnienia na ten miesiąc się skończyły. Korepetytor odpowiada dalej w trybie szybkim.",
   "ai.buy": "Dokup wyjaśnienia",
+  "ai.pool": "Wspólne dla wszystkich profili rodziny.",
   "gift.level": "Poziom",
   "meter.levelsTitle": "Ceny według poziomu"
 }

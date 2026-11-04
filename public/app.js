@@ -858,7 +858,10 @@ async function send(text, { deep = false } = {}) {
     let allowanceData = null;
     await readSse(res, {
       // Zajamčena poraba naročnika: obvestilo pri 80 %, opomba pri 100 % (server/app.js, j 2026-11-01).
-      allowance: (d) => (allowanceData = d),
+      allowance: (d) => {
+        allowanceData = d;
+        if (d.stage === "out") state.aiOut = true;
+      },
       delta: (d) => pacer.push(d.text),
       cards: (d) => (cardsData = d),
       // Inštruktor je spremenil nastavitve (server/chat-settings.js).
@@ -875,6 +878,8 @@ async function send(text, { deep = false } = {}) {
       mastered: (d) => toast(d.unlocked?.length ? `${t("chat.mastered", { topic: d.topic })} ${unlockedText(d.unlocked)}` : t("chat.mastered", { topic: d.topic }), "trophy"),
       done: (d) => {
         doneData = d;
+        // Ves delež podrobnih razlag porabljen (strežnik, ai_out): gumba »Razloži podrobneje« ne kažemo več.
+        state.aiOut = !!d.ai_out;
         // Predmet pogovora, ki ga je inštruktor pravkar določil (nov pogovor brez teme): formule v tem in naslednjih odgovorih.
         if (d.state?.subject && state.conversationId === sentTo && !state.chatFx?.symbols) state.chatFx = { subject: d.state.subject, symbols: null };
         pacer.finish(d.text);
@@ -945,7 +950,9 @@ function addAllowanceNote(bubble, d) {
   const el = document.createElement("div");
   el.className = "cards-note allowance-note";
   // Pri 80 % dve vrstici: obvestilo, pod njim preostanek (»Podrobne razlage ta mesec: še 6«).
-  const text = d.stage === "out" ? escapeHtml(t("ai.out")) : `${escapeHtml(t("ai.low"))}<br><small>${escapeHtml(t("ai.left", { n: d.left }))}</small>`;
+  const base = d.stage === "out" ? escapeHtml(t("ai.out")) : `${escapeHtml(t("ai.low"))}<br><small>${escapeHtml(t("ai.left", { n: d.left }))}</small>`;
+  // Družina: obvestilo velja za skupen delež vseh profilov.
+  const text = d.pool ? `${base}<br><small>${escapeHtml(t("ai.pool"))}</small>` : base;
   el.innerHTML = `<div class="cn-head">${icon("info")} <span>${text}</span></div>${d.buy ? `<button type="button" class="text-btn">${escapeHtml(t("ai.buy"))} ${icon("chevron-right")}</button>` : ""}`;
   el.querySelector("button")?.addEventListener("click", () => $("#account-tab").click());
   bubble.appendChild(el);
@@ -1736,6 +1743,7 @@ function addDeepButton(el, wasDeep) {
   // Ponovna razlaga je vedno na voljo (tudi po ponovni razlagi); strežnik izbere najcenejši model.
   if (el.classList.contains("error") || el.querySelector(".deep-btn")) return;
   document.querySelectorAll(".deep-btn").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
+  if (state.aiOut) return; // 100 % deleža: inštruktor odgovarja v hitrem načinu, podrobne razlage ni
   const b = document.createElement("button");
   b.className = "deep-btn";
   b.type = "button";

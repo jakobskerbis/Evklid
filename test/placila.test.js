@@ -105,9 +105,8 @@ async function registerVerified(call, stripe, email, extra = {}) {
 const addTest = (call, kidId, date, name = "Test iz ulomkov") =>
   call(`/api/students/${kidId}/schedule`, { method: "PUT", body: { events: [{ date, kind: "test", name }] } });
 
-test("helpers: pass prices are 30 % above the first proposal, pass length, grace period, code form", () => {
-  assert.deepEqual(PASSES.map((p) => [p.days, p.amount]), [[7, 519], [14, 779], [30, 1169]]);
-  for (const [p, first] of PASSES.map((p, i) => [p, [399, 599, 899][i]])) assert.ok(Math.abs(p.amount - first * 1.3) < 1, p.key);
+test("helpers: pass prices (j 2026-11-04, 75 % rule), pass length, grace period, code form", () => {
+  assert.deepEqual(PASSES.map((p) => [p.days, p.amount]), [[7, 549], [14, 849], [30, 1399]]);
   assert.equal(passForDaysLeft(0).days, 7);
   assert.equal(passForDaysLeft(6).days, 7);
   assert.equal(passForDaysLeft(7).days, 14);
@@ -194,7 +193,7 @@ test("paket pred testom: ponudba samo brez naročnine, potrditve, plačilo, poln
       // Brez testa v urniku ni ponudbe.
       let offer = (await a(`/api/students/${kid.id}/pass-offer`)).body;
       assert.equal(offer.offer, null);
-      assert.deepEqual(offer.passes.map((p) => p.amount), [519, 779, 1169]);
+      assert.deepEqual(offer.passes.map((p) => p.amount), [549, 849, 1399]);
       // Test čez 9 dni: predlog je paket za 14 dni.
       await addTest(a, kid.id, day(9));
       offer = (await a(`/api/students/${kid.id}/pass-offer`)).body;
@@ -214,7 +213,7 @@ test("paket pred testom: ponudba samo brez naročnine, potrditve, plačilo, poln
       assert.equal(co.status, 200, JSON.stringify(co.body));
       const session = stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1);
       assert.equal(session.body.mode, "payment");
-      assert.equal(session.body["line_items[0][price_data][unit_amount]"], "779");
+      assert.equal(session.body["line_items[0][price_data][unit_amount]"], "849");
       assert.equal(session.body["line_items[0][price_data][currency]"], "eur");
       assert.equal(session.body["metadata[kind]"], "pass");
       const passId = Number(session.body["metadata[pass_id]"]);
@@ -373,7 +372,7 @@ test("povezava za starše: paket pred testom", async () => {
     const token = new URL(link.body.url).searchParams.get("t");
     const dad = client();
     const view = (await dad(`/api/pay/${token}`)).body;
-    assert.deepEqual([view.kind, view.name, view.plan.amount, view.test.name], ["pass", "Ema", 519, "Kontrolna iz kemije"]);
+    assert.deepEqual([view.kind, view.name, view.plan.amount, view.test.name], ["pass", "Ema", 549, "Kontrolna iz kemije"]);
     await dad(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", adult: true, withdrawal: true } });
     const first = stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1);
     // Drugi klik (npr. v drugem zavihku) uporabi isti neplačan paket: dve plačili ne dasta dveh paketov.
