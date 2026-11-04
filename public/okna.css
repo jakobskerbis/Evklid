@@ -31,7 +31,7 @@
 .okno-x:hover, .okno-x:focus-visible { background: var(--danger-bg); color: var(--danger); }
 .okno-body { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; container: okno / inline-size; }
 .okno-body > .view { flex: 1; min-height: 0; width: 100%; max-width: 100%; margin: 0; overflow-y: auto; overscroll-behavior: contain; }
-.okno-body > .view.narrow { max-width: none; padding-inline: max(16px, calc((100% - 780px) / 2)); }
+.okno-body > .view.narrow { max-width: none; padding-inline: 16px; }
 /* Med premikom in spreminjanjem velikosti vsebina ne lovi kazalca (platna, izbire besedila). */
 .okno.moving .okno-body { pointer-events: none; user-select: none; }
 /* »← Jaz« je za telefonski meni; v oknu ga ne potrebujemo. */
@@ -104,8 +104,14 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
   button.send span { display: none; }
   /* Kot na telefonu (style.css, ui.css do 760 px): naslov dobi prostor, en čip, daljši vnos čez celo vrstico. */
   .chat-head h1 { flex: 1; min-width: 0; }
-  .chips .chip:nth-child(n+2) { display: none; }
-  .msg.assistant { margin-inline-start: 40px; }
+  /* Oznake pogovora v svoji vrstici pod naslovom (kot na telefonu, touch.css). */
+  .chat-head { flex-wrap: wrap; row-gap: 2px; }
+  .chat-head #chat-state { order: 10; flex: 1 1 100%; max-width: none; min-width: 0; overflow-x: auto; scrollbar-width: none; margin-inline: -12px; padding: 0 12px 4px; }
+  .chat-head #chat-state .chip { display: inline-flex; max-width: none; overflow: visible; }
+  .chat-head #chat-state .chip-btn { order: -1; }
+  .chat-head #chat-state:empty, .chat-view:has(.sidebar.open) #chat-state { display: none; }
+  .msg.assistant { margin-inline-start: 0; max-width: 100%; }
+  .msg.assistant::before, .msg.assistant::after { display: none; }
   .composer { padding: 8px 10px 10px; }
   .ai-note { margin-top: 4px; font-size: 0.7rem; }
   .composer-row.multi { flex-wrap: wrap; row-gap: 2px; }
@@ -129,7 +135,7 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
   border-radius: var(--radius) var(--radius) 0 0; border-block-end: 0;
   /* Stoji nad spodnjo vrstico zavihkov (--tabbar-h, okna.js), ki ima svoj odmik za varno območje;
      brez nje (npr. odprta plošča za vnos) list sega do roba zaslona. */
-  padding-bottom: max(0px, env(safe-area-inset-bottom) - var(--tabbar-h, 0px));
+  padding-bottom: max(0px, var(--varno-sp, env(safe-area-inset-bottom, 0px)) - var(--tabbar-h, 0px));
   box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.18);
 }
 .okno-sheet:not(.moving) { transition: height 0.15s ease-out; }
@@ -183,7 +189,7 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
 
 /* Spusti sem, da mehurček izgine (kot pri Messengerju). */
 .cb-drop {
-  position: fixed; z-index: 45; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+  position: fixed; z-index: 45; left: 50%; bottom: calc(28px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); transform: translateX(-50%);
   width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; pointer-events: none;
   background: color-mix(in srgb, var(--text) 70%, transparent); color: var(--bg); transition: transform 0.15s, background 0.15s;
 }

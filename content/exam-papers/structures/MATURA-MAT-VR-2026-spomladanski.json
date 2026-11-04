@@ -1,0 +1,261 @@
+{
+ "id": "MATURA-MAT-VR-2026-spomladanski",
+ "points": 120,
+ "minutes": 180,
+ "polas": [
+  {
+   "pola": 1,
+   "minutes": 90,
+   "calculator": false,
+   "points": 60
+  },
+  {
+   "pola": 2,
+   "minutes": 90,
+   "calculator": true,
+   "points": 60
+  }
+ ],
+ "tools": "Nalivno pero ali kemični svinčnik, svinčnik, radirka, šilček in geometrijsko orodje (ravnilo, šestilo, trikotnik); kandidat dobi zbirko formul in konceptna lista. Pri izpitni poli 1 računalo ni dovoljeno, pri izpitni poli 2 je dovoljeno. Pot do rezultata mora biti zapisana z vmesnimi računi.",
+ "sections": {
+  "B": "krajše strukturirane naloge: 6 nalog po 6–8 točk (skupaj 40 točk na polo), priporočeno 45 minut; enake kot del B osnovne ravni",
+  "C": "strukturirane naloge: 2 nalogi po 10 točk (skupaj 20 točk na polo), priporočeno 45 minut; večstopenjske, z deli 1.1, 1.2 …, zahtevnejša vsebina višje ravni"
+ },
+ "tasks": [
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 1,
+   "points": [
+    7
+   ],
+   "format": [
+    "choice"
+   ],
+   "topic": "množice: iz Vennovega diagrama univerzalne množice in dveh podmnožic s številskimi elementi presoditi pravilnost trditev (DA/NE) o preseku, uniji, razliki, komplementu, moči in pripadnosti; en primer je rešen",
+   "figure": "Vennov diagram z vpisanimi elementi in preglednica trditev DA/NE"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 2,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "kvadratna funkcija v splošni obliki z negativnim vodilnim koeficientom: ničli, teme, začetna vrednost, graf in zapis v temenski obliki",
+   "figure": "prazen koordinatni sistem za risanje parabole"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 3,
+   "points": [
+    1,
+    1,
+    2,
+    2
+   ],
+   "format": [
+    "open",
+    "open",
+    "open",
+    "open"
+   ],
+   "topic": "linearna funkcija s parametrom m v smernem koeficientu in začetni vrednosti; za vsak pogoj posebej določiti m: 1) dano presečišče z ordinatno osjo; 2) funkcija strogo narašča (neenačba); 3) dana ničla; 4) graf vzporeden s simetralo sodih kvadrantov"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 4,
+   "points": [
+    2,
+    6
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "logaritemski enačbi: 1) logaritem z osnovo 2 linearnega izraza je enak celemu številu; 2) vsota in razlika desetiških logaritmov linearnih izrazov z ustreznima koeficientoma (uporaba pravil za logaritme, prevedba na kvadratno enačbo, preverjanje definicijskega območja)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 5,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "enačba v kompleksnih številih, v kateri nastopajo z, imaginarna enota in absolutna vrednost |z|; zapis z = x + iy, enačenje realnih in imaginarnih delov, kvadratna enačba z dvema rešitvama (dve kompleksni rešitvi)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 6,
+   "points": [
+    2,
+    4
+   ],
+   "format": [
+    "construct",
+    "open"
+   ],
+   "topic": "odsekoma definirana funkcija iz sinusa (različen predpis za negativne in nenegativne x): 1) narisati graf; 2) zapisati predpis funkcije g z dano vrednostjo v 0, katere odvod je enak f (iskanje nedoločenega integrala po odsekih)",
+   "figure": "koordinatni sistem z abscisno osjo, označeno v večkratnikih π"
+  },
+  {
+   "pola": 1,
+   "section": "C",
+   "n": 1,
+   "points": [
+    9,
+    1
+   ],
+   "format": [
+    "open",
+    "construct"
+   ],
+   "topic": "racionalna funkcija s kubičnim števcem in kvadratom linearnega izraza v imenovalcu: 1) ničle, poli, stacionarne točke, prevoji in poševna asimptota (odvod in drugi odvod kvocienta); 2) graf",
+   "figure": "prazen koordinatni sistem za risanje grafa"
+  },
+  {
+   "pola": 1,
+   "section": "C",
+   "n": 2,
+   "points": [
+    2,
+    4,
+    4
+   ],
+   "format": [
+    "open",
+    "open",
+    "open"
+   ],
+   "topic": "pravokotni trikotnik, katerega notranji koti tvorijo naraščajoče aritmetično zaporedje, in vanj včrtana lomljena črta iz pravokotnic, ki se izmenično spuščajo na nasprotni stranici: 1) velikosti ostrih kotov; 2) dolžine prvih daljic lomljene črte izraziti s hipotenuzo (kotne funkcije); 3) iz dane vsote neskončne geometrijske vrste dolžin daljic natančno izračunati hipotenuzo",
+   "figure": "skica pravokotnega trikotnika z vrisano lomljeno črto (ni v merilu)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 1,
+   "points": [
+    1,
+    1,
+    2,
+    2,
+    2
+   ],
+   "format": [
+    "fill",
+    "open",
+    "open",
+    "open",
+    "open"
+   ],
+   "topic": "paralelogram v koordinatnem sistemu s tremi danimi oglišči: 1) koordinate četrtega oglišča; 2) ploščina; 3) obseg (razdalja točk); 4) notranji kot pri oglišču na minuto natančno; 5) presečišče diagonal (razpolovišče)",
+   "figure": "paralelogram v mreži koordinatnega sistema"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 2,
+   "points": [
+    2,
+    4
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "dve aritmetični zaporedji, eno podano s splošnim členom, drugo s prvim členom in diferenco (ulomki): 1) razlika dveh členov prvega zaporedja; 2) indeks n, pri katerem sta n-ta člena obeh zaporedij enaka"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 3,
+   "points": [
+    4,
+    2
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "vektorji v prostoru s celoštevilskimi komponentami, eden s parametrom: 1) kot med dvema vektorjema na stotinko stopinje (skalarni produkt, dolžini); 2) parameter, pri katerem sta vektorja pravokotna"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 4,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "tangenti na graf kubične funkcije v dveh danih abscisah (odvod, enačbi tangent) in presečišče teh tangent"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 5,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "besedilna naloga s cenami treh vrst izdelkov in pribitkom, ki je odvisen od števila kosov; postaviti in rešiti sistem dveh linearnih enačb za število kosov dveh vrst, ko je skupna cena enaka ceni nakupa tretje vrste"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 6,
+   "points": [
+    3,
+    4
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "verjetnost pri izbiri brez vračanja iz skupine dveh vrst: 1) verjetnost, da je med tremi izbranimi vsaj en element prve vrste (nasprotni dogodek, kombinacije); 2) po zamenjavi n elementov ene vrste z drugo je dana verjetnost, da sta oba izbrana prve vrste; izračunati n (kvadratna enačba)"
+  },
+  {
+   "pola": 2,
+   "section": "C",
+   "n": 1,
+   "points": [
+    3,
+    4,
+    3
+   ],
+   "format": [
+    "open",
+    "open",
+    "open"
+   ],
+   "topic": "kocka z robom a: 1) razmerje površin včrtane in očrtane krogle; 2) kocki včrtan največji pokončni stožec, središčni kot razgrnjenega plašča na stopinjo natančno; 3) pri robu 1 kocki očrtana pravilna štiristrana piramida z danim kotom med stranskim robom in osnovno ploskvijo, natančen osnovni rob piramide (podobni trikotniki, kotne funkcije)",
+   "figure": "skica kocke v piramidi"
+  },
+  {
+   "pola": 2,
+   "section": "C",
+   "n": 2,
+   "points": [
+    4,
+    6
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "pravokotnik v koordinatnem sistemu z oglišči, ki so odvisna od parametra d: 1) parabola s temenom v oglišču pravokotnika, lik med parabolo in osema zavrtimo okoli abscisne osi; iz dane prostornine vrtenine izračunati d (določeni integral); 2) za dani d zapisati enačbo elipse, ki je pravokotniku očrtana in ima gorišče na ordinatni osi (središče elipse ni v izhodišču)"
+  }
+ ]
+}

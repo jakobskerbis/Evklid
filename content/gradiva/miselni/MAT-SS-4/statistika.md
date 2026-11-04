@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Srednje vrednosti
+  - $\bar x = \frac{x_1 + \dots + x_N}{N}$
+  - mediana: srednji podatek urejenega niza
+  - modus: najpogostejši podatek
+- Osamelci
+  - premaknejo sredino, mediane ne
+  - igrice: $\bar x = 80$, $\mathrm{Me} = 40$
+- Razpršenost
+  - variacijski razmik $x_{\max} - x_{\min}$
+  - $\sigma = \sqrt{\sigma^2}$, $\sigma^2$ je varianca
+  - napaka: vsota odklonov je vedno $0$
+- Škatla z brki
+  - min, $Q_1$, $\mathrm{Me}$, $Q_3$, max
+  - medkvartilni razmik $Q_3 - Q_1$
+- Normalna porazdelitev
+  - zvonasta, simetrična okoli $\mu$
+  - ploščina pod krivuljo je verjetnost
+  - prevoja pri $\mu \pm \sigma$
+- Pravilo 68–95–99,7
+  - $\mu \pm \sigma$: $68\,\%$, $\mu \pm 2\sigma$: $95\,\%$
+  - $\mu \pm 3\sigma$: $99{,}7\,\%$
+- Standardizacija
+  - $z = \frac{x - \mu}{\sigma}$
+  - $P(X < x) = 0{,}5 + \Phi(z)$
+  - napaka: $\Phi(z)$ brez $0{,}5$

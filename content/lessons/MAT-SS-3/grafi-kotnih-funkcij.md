@@ -5,9 +5,11 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Na morju gladina dvakrat na dan naraste in dvakrat upade. Sedež na panoramskem kolesu se dviga in spušča, vsak obrat enako. Dnevna temperatura je čez dan višja, ponoči nižja, in tako dan za dnem. Vsi ti pojavi se **ponavljajo**.
+Odpri na telefonu aplikacijo, ki snema zvok, in zažvižgaj. Na zaslonu se izriše val. Ko žvižgaš glasneje, je val višji. Ko žvižgaš višji ton, je val gostejši: v enakem času je valov več.
 
-Iz prejšnje lekcije veš, da se vrednosti sinusa in kosinusa ponovijo po vsakem polnem obratu. Če jih narišemo kot graf, dobimo val. Ko znaš ta val raztegniti, skrčiti in premakniti, lahko z eno formulo opišeš plimo, kolo ali nihanje vzmeti.
+**Napoved.** Graf $y = \sin x$ je tak val. Eden od zapisov $y = 2\sin x$ in $y = \sin 2x$ opiše glasnejši žvižg, drugi višji ton. Kateri je kateri? Zapiši si odgovor; v 5. razdelku ga preveriš.
+
+Iz prejšnje lekcije veš, da se vrednosti sinusa in kosinusa ponovijo po vsakem polnem obratu. Ko znaš njun val raztegniti, skrčiti in premakniti, z eno formulo opišeš zvok, utripanje lučke na telefonu ali nihanje vzmeti.
 
 ## Razlaga
 
@@ -25,7 +27,11 @@ Točke povežemo z gladko krivuljo. Dobimo **sinusoido**: val, ki se dvigne do $
 
 V simulaciji spodaj (»Od enotske krožnice do grafa«) počasi povečuj kot od $0$ do $2\pi$. Opazuj, kako višina točke na krožnici sproti riše graf. Pri katerem kotu je graf najvišje?
 
+*Preveri:* pri katerem $x$ med $0$ in $2\pi$ je $\sin x$ najmanjši? *Odgovor:* pri $\frac{3\pi}{2}$, kjer je $\sin x = -1$.
+
 **2. Perioda.** Funkcija je **periodična**, če se njene vrednosti ponavljajo: obstaja število $T > 0$, da je $f(x + T) = f(x)$ za vsak $x$. Najmanjše tako število je **osnovna perioda**. Za sinus in kosinus je osnovna perioda $2\pi$, ker je to en poln obrat.
+
+*Preveri:* ali je $4\pi$ tudi perioda sinusa? *Odgovor:* je, ker sta to dva obrata, a ni osnovna perioda.
 
 **3. Lastnosti osnovnih grafov.**
 
@@ -35,7 +41,7 @@ V simulaciji spodaj (»Od enotske krožnice do grafa«) počasi povečuj kot od 
 | ničle | $k\pi$ | $\frac{\pi}{2} + k\pi$ |
 | maksimum $1$ pri | $\frac{\pi}{2} + 2k\pi$ | $2k\pi$ |
 
-Tu je $k$ poljubno celo število. Graf kosinusa ima enako obliko kot graf sinusa, le premaknjen je za $\frac{\pi}{2}$ v levo.
+Tu je $k$ poljubno celo število. Graf kosinusa ima enako obliko kot graf sinusa, le premaknjen je za $\frac{\pi}{2}$ v levo: vrh ima pri $0$, sinus pa šele pri $\frac{\pi}{2}$.
 
 Graf **tangensa** je drugačen. Tangens ni definiran tam, kjer je $\cos x = 0$, torej pri $x = \frac{\pi}{2} + k\pi$. Tam ima graf **navpične asimptote**: premice, ki se jim graf vse bolj približuje, a jih ne doseže. Zaloga vrednosti tangensa so vsa realna števila, osnovna perioda pa je $\pi$.
 
@@ -45,30 +51,48 @@ Ali je $\sin 4$ pozitiven ali negativen? Pomagaj si z grafom, ne s kalkulatorjem
 Negativen. Velja $\pi \approx 3{,}14 < 4 < \frac{3\pi}{2} \approx 4{,}71$, na tem delu pa je graf sinusa pod osjo $x$ (padajoč proti $-1$).
 :::
 
-**4. Splošna sinusna funkcija.** Graf lahko spreminjamo s štirimi parametri:
+**4. Amplituda: število pred sinusom.** Graf $y = 2\sin x$ dobiš tako, da vsako vrednost sinusa podvojiš. Val sega od $-2$ do $2$, ničle ostanejo na mestu. **Amplituda** je razdalja od srednje črte vala do vrha. Srednja črta je vodoravna premica, okoli katere val niha; pri $y = 2\sin x$ je to kar os $x$. Pri $y = A\sin x$ je to $|A|$. Če je $A < 0$, se graf še zrcali čez os $x$.
 
-$$f(x) = A\sin\big(b(x - c)\big) + d$$
+*Preveri:* kolikšna je amplituda $y = -3\sin x$? *Odgovor:* $3$; graf je še zrcaljen čez os $x$.
 
-| parameter | kaj naredi | pravilo |
-|---|---|---|
-| $A$ | raztegne v smeri osi $y$ | amplituda $\lvert A\rvert$ |
-| $b$ | skrči ali raztegne v smeri osi $x$ | $T = \frac{2\pi}{\lvert b\rvert}$ |
-| $c$ | premakne levo ali desno | za $c$ v smeri osi $x$ |
-| $d$ | premakne gor ali dol | srednja črta $y = d$ |
+**5. Perioda: število ob $x$.** Pri $y = \sin 2x$ se kot $2x$ spreminja dvakrat hitreje kot $x$. Val se zato ponovi dvakrat pogosteje, njegova višina pa ostane enaka. Pri $y = \sin(bx)$ je osnovna perioda
 
-**Amplituda** je razdalja od srednje črte do vrha vala, torej $|A|$. Če je $A < 0$, se graf še zrcali čez srednjo črto. Največja vrednost funkcije je $d + |A|$, najmanjša $d - |A|$.
+$$T = \frac{2\pi}{|b|}$$
 
-Premik $c$ preberi previdno. Pri $\sin(x - c)$ se graf premakne **v desno** za $c$, če je $c > 0$. Razlog: vrednost, ki jo je $\sin$ imel pri $0$, ima zdaj $f$ pri $x = c$.
-
-V simulaciji spodaj (»Graf A sin(b(x − c)) + d«) nastavi $A = 1$, $b = 1$, $c = 0$, $d = 0$. Nato spremeni $b$ na $2$. Preštej, koliko celih valov je zdaj med $0$ in $2\pi$. Potem nastavi $c = 1$ in opazi, v katero smer se val premakne.
+Zdaj lahko preveriš napoved: $y = 2\sin x$ je višji val, torej glasnejši žvižg. $y = \sin 2x$ je gostejši val, torej višji ton.
 
 :::premisli
-Zakaj ima $\sin 2x$ periodo $\pi$ in ne $4\pi$?
+Sošolec sklepa: »Pri $\sin 2x$ je kot dvakrat večji, zato je val dvakrat širši in perioda je $4\pi$.« Zakaj ima $\sin 2x$ v resnici periodo $\pi$?
 ---
 Ker kot $2x$ teče dvakrat hitreje kot $x$. Ko $x$ naraste za $\pi$, naraste $2x$ že za $2\pi$, kar je cel obrat. Graf se zato v smeri osi $x$ skrči na polovico: $T = \frac{2\pi}{2} = \pi$.
 :::
 
-**5. Pazi na obliko.** Če je funkcija zapisana kot $\sin(2x - \frac{\pi}{2})$, najprej izpostavi $b$: $2x - \frac{\pi}{2} = 2\left(x - \frac{\pi}{4}\right)$. Premik je $c = \frac{\pi}{4}$, ne $\frac{\pi}{2}$.
+*Preveri:* kolikšna je osnovna perioda $y = \sin\frac{x}{3}$? *Odgovor:* $6\pi$, graf je raztegnjen.
+
+**6. Premik v smeri osi $x$.** Pri $y = \sin(x - c)$ se graf premakne **v desno** za $c$, če je $c > 0$. Razlog: vrednost, ki jo je $\sin$ imel pri $0$, ima nova funkcija šele pri $x = c$, saj je $\sin(c - c) = \sin 0$. Če je $c < 0$, gre graf v levo.
+
+*Preveri:* kam je premaknjen $y = \sin(x + 1)$? *Odgovor:* za $1$ v levo, ker je $x + 1 = x - (-1)$.
+
+**7. Premik v smeri osi $y$.** Pri $y = \sin x + d$ se ves graf dvigne za $d$, pri $d < 0$ pa spusti. Vodoravna premica $y = d$ je **srednja črta**: val niha okoli nje.
+
+*Preveri:* med katerima vrednostma niha $y = \sin x + 3$? *Odgovor:* med $2$ in $4$.
+
+**8. Vse skupaj.** Vse štiri spremembe združi **splošna sinusna funkcija**:
+
+$$f(x) = A\sin\big(b(x - c)\big) + d$$
+
+| | kaj naredi | pravilo |
+|---|---|---|
+| $A$ | raztegne navpično | amplituda $\lvert A\rvert$ |
+| $b$ | skrči ali raztegne vodoravno | $T = \frac{2\pi}{\lvert b\rvert}$ |
+| $c$ | premakne vodoravno | za $c$ (pri $c > 0$ desno) |
+| $d$ | premakne navpično | srednja črta $y = d$ |
+
+Največja vrednost funkcije je $d + |A|$, najmanjša $d - |A|$. Če je $A < 0$, se graf zrcali čez srednjo črto.
+
+V simulaciji spodaj (»Graf A sin(b(x − c)) + d«) nastavi $A = 1$, $b = 1$, $c = 0$, $d = 0$. Nato spremeni $b$ na $2$. Preštej, koliko celih valov je zdaj med $0$ in $2\pi$. Potem nastavi $c = 1$ in opazi, v katero smer se val premakne.
+
+**Pazi na obliko.** Če je funkcija zapisana kot $\sin(2x - \frac{\pi}{2})$, najprej izpostavi $b$: $2x - \frac{\pi}{2} = 2\left(x - \frac{\pi}{4}\right)$. Premik je $c = \frac{\pi}{4}$, ne $\frac{\pi}{2}$.
 
 Enako velja za kosinus: $f(x) = A\cos\big(b(x - c)\big) + d$ ima amplitudo $|A|$, periodo $\frac{2\pi}{|b|}$ in enaka premika.
 
@@ -118,24 +142,25 @@ $f(x) = A\sin\big(b(x - c)\big) + d$, $\quad T = \dfrac{2\pi}{|b|}$; $\sin u = 1
 
 ### Primer 3 (težji)
 
-Sedež na panoramskem kolesu se giblje med višino $2\,\text{m}$ in $42\,\text{m}$. En obrat traja $20\,\text{min}$. Ob času $t = 0$ je sedež na višini osi kolesa in se dviga. Zapiši višino $h(t)$ v obliki $h(t) = A\sin(bt) + d$ in izračunaj višino po $5\,\text{min}$.
+Aplikacija za dihalne vaje na telefonu kaže krog, ki se počasi veča in manjša. Njegov polmer niha med $10\,\text{mm}$ in $30\,\text{mm}$, en vdih in izdih skupaj trajata $8\,\text{s}$. Ob $t = 0$ ima krog srednji polmer in se veča. Zapiši polmer v obliki $r(t) = A\sin(bt) + d$ in izračunaj polmer po $1\,\text{s}$ in po $6\,\text{s}$.
 
-**Podatki:** $h_{\min} = 2\,\text{m}$, $h_{\max} = 42\,\text{m}$, $T = 20\,\text{min}$, ob $t = 0$ višina osi in dviganje
-**Iščemo:** $A$, $b$, $d$ in $h(5\,\text{min})$
+**Podatki:** $r_{\min} = 10\,\text{mm}$, $r_{\max} = 30\,\text{mm}$, $T = 8\,\text{s}$, ob $t = 0$ srednji polmer in večanje
+**Iščemo:** $A$, $b$, $d$ ter $r(1\,\text{s})$ in $r(6\,\text{s})$
 
 :::formula
-$A = \dfrac{h_{\max} - h_{\min}}{2}$, $\quad d = \dfrac{h_{\max} + h_{\min}}{2}$, $\quad b = \dfrac{2\pi}{T}$
+$A = \dfrac{r_{\max} - r_{\min}}{2}$, $\quad d = \dfrac{r_{\max} + r_{\min}}{2}$, $\quad b = \dfrac{2\pi}{T}$
 :::
 
 **Rešitev:**
 
-1. Srednja črta je na sredini med skrajnima legama: $d = \frac{42 + 2}{2} = 22\,\text{m}$. To je višina osi.
-2. Amplituda je polovica razlike: $A = \frac{42 - 2}{2} = 20\,\text{m}$. To je polmer kolesa.
-3. Iz periode: $b = \frac{2\pi}{20} = \frac{\pi}{10}$ (na minuto).
-4. Premika $c$ ne potrebujemo: $\sin$ pri $0$ je na srednji črti in narašča, tako kot sedež.
-5. Torej $h(t) = 20\sin\left(\frac{\pi}{10}t\right) + 22$.
-6. $h(5) = 20\sin\frac{\pi}{2} + 22 = 42$, ker je po četrtini obrata sedež na vrhu.
-7. Odgovor: $h(t) = 20\sin\left(\frac{\pi}{10}t\right) + 22$ (v metrih, $t$ v minutah); po $5\,\text{min}$ je sedež na višini $42\,\text{m}$.
+1. Srednja črta je na sredini med skrajnima vrednostma: $d = \frac{30 + 10}{2} = 20\,\text{mm}$.
+2. Amplituda je polovica razlike: $A = \frac{30 - 10}{2} = 10\,\text{mm}$.
+3. Iz periode: $b = \frac{2\pi}{8} = \frac{\pi}{4}$ (na sekundo).
+4. Premika $c$ ne potrebujemo: $\sin$ je pri $0$ na srednji črti in narašča, tako kot polmer kroga.
+5. Torej $r(t) = 10\sin\left(\frac{\pi}{4}t\right) + 20$.
+6. Po $1\,\text{s}$: $r(1) = 10\sin\frac{\pi}{4} + 20 = 10 \cdot \frac{\sqrt2}{2} + 20 = 5\sqrt2 + 20 \approx 27{,}1$, ker je $\frac{\pi}{4} = 45^\circ$.
+7. Po $6\,\text{s}$: $r(6) = 10\sin\frac{3\pi}{2} + 20 = -10 + 20 = 10$. Minili sta tri četrtine periode, krog je najmanjši.
+8. Odgovor: $r(t) = 10\sin\left(\frac{\pi}{4}t\right) + 20$ (v milimetrih, $t$ v sekundah); po $1\,\text{s}$ je polmer približno $27{,}1\,\text{mm}$, po $6\,\text{s}$ pa $10\,\text{mm}$.
 
 ### Primer 4: zdaj ti
 
@@ -163,10 +188,10 @@ $b = \frac{2\pi}{4\pi} = \frac12$, torej $f(x) = 3\sin\frac{x}{2} + 2$. Perioda 
 ## Pogoste napake
 
 - **Perioda pomnožena namesto deljena.** »Pri $\sin 2x$ je perioda $2 \cdot 2\pi = 4\pi$.« Večji $b$ pomeni hitrejše ponavljanje, torej krajšo periodo. Pravilno: $T = \frac{2\pi}{|b|}$, pri $\sin 2x$ je $T = \pi$.
+- **Zamenjani vlogi števil.** »$y = \sin 2x$ je dvakrat višji val.« Število ob $x$ v oklepaju spremeni periodo, višino pa le število pred sinusom. Dvojke iz oklepaja tudi ne smeš prestaviti pred sinus: $\sin\left(2 \cdot \frac{\pi}{2}\right) = \sin\pi = 0$, a $2\sin\frac{\pi}{2} = 2$.
 - **Napačna smer premika.** »$\sin\left(x - \frac{\pi}{3}\right)$ je premaknjen v levo, ker je tam minus.« Vrednost, ki jo ima $\sin$ pri $0$, ima nova funkcija pri $x = \frac{\pi}{3}$, torej desno. Minus v oklepaju pomeni premik v desno.
 - **Premik brez izpostavljanja.** »Pri $\sin\left(2x - \frac{\pi}{3}\right)$ je premik $\frac{\pi}{3}$.« Najprej izpostavi $b$: $2\left(x - \frac{\pi}{6}\right)$. Premik je $\frac{\pi}{6}$.
-- **Amplituda je največja vrednost.** »Pri $3\sin x - 1$ je amplituda $2$, ker je največja vrednost $2$.« Amplituda se meri od srednje črte $y = d$, ne od osi $x$. Amplituda je $3$, največja vrednost pa $d + |A| = 2$.
-- **Premik $d$ prezrt.** »$Z_f$ funkcije $4\cos x + 1$ je $[-4, 4]$.« Ves graf je dvignjen za $1$, zato $Z_f = [-3, 5]$.
+- **Srednja črta prezrta.** »Pri $3\sin x - 1$ je amplituda $2$, ker je največja vrednost $2$.« ali »$Z_f$ funkcije $4\cos x + 1$ je $[-4, 4]$.« Amplitudo merimo od srednje črte $y = d$, ne od osi $x$, in ves val se premakne z njo. Pri $3\sin x - 1$ je amplituda $3$, pri $4\cos x + 1$ pa $Z_f = [-3, 5]$.
 
 ## Povzetek
 
@@ -189,16 +214,6 @@ Zdaj si nariši vodoravno črtkano črto, **srednjo črto**. Val niha okoli nje:
 - Če spremeniš $c$, se cel val zdrsne levo ali desno.
 
 Kosinus je isti val, le da se začne na vrhu: **vrh, ničla, dno, ničla, vrh**. Tangens nima vrhov: med dvema navpičnima asimptotama raste od zelo negativnih do zelo pozitivnih vrednosti.
-
-## Drugače: Iz vsakdanjega življenja
-
-Vzemi zvok kitare. Struna niha in potiska zrak sem ter tja; tlak zraka se spreminja približno kot sinusoida.
-
-- **Amplituda** je glasnost. Močneje udariš po struni, večji je odklon, glasnejši je ton. Višina tona ostane enaka.
-- **Perioda** določa višino tona. Krajša struna niha hitreje, perioda je krajša, ton je višji. To ustreza večjemu $b$.
-- **Premik $c$** pomeni, da je drug zvok enak, le da se začne kasneje, kot odmev.
-
-Še plima: gladina morja niha okoli povprečne gladine (to je $d$), razlika med plimo in oseko je dvakratna amplituda. Ker se gladina ponovi v približno $12{,}4$ urah, je to perioda. Tako lahko z eno formulo napoveš, kdaj bo voda dovolj visoka za ladjo.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -226,9 +241,9 @@ Zakaj je perioda funkcije $g(x) = \sin(bx)$ ravno $\frac{2\pi}{|b|}$? Iščemo n
 
 Vrstni red transformacij šteje. Graf $f(x) = A\sin\big(b(x - c)\big) + d$ dobiš iz grafa $\sin x$ tako:
 
-1. skrčiš v smeri osi $x$ s faktorjem $\frac{1}{b}$,
+1. skrčiš v smeri osi $x$ s faktorjem $\frac{1}{|b|}$ (pri $b < 0$ še zrcališ čez os $y$),
 2. premakneš za $c$ v smeri osi $x$,
-3. raztegneš v smeri osi $y$ s faktorjem $A$,
+3. raztegneš v smeri osi $y$ s faktorjem $|A|$ (pri $A < 0$ še zrcališ čez os $x$),
 4. premakneš za $d$ v smeri osi $y$.
 
 Če bi premik naredil pred krčenjem, bi dobil napačen premik $\frac{c}{b}$ namesto $c$. Zato je pomembno, da $b$ izpostaviš.
@@ -237,59 +252,69 @@ Iz simetrije enotske krožnice velja $\sin(-x) = -\sin x$, zato je sinus **liha*
 
 ## Preveri se
 
-? Kolikšna je osnovna perioda funkcije $y = \sin x$?
-- $\pi$
-~ Na razdalji $\pi$ si sledita dve ničli, a vmes je le en vrh. Za cel val potrebuješ še dno. Periodo $\pi$ ima tangens.
-+ $2\pi$
-- $\frac{\pi}{2}$
-~ To je razdalja od ničle do vrha, le četrtina vala.
-> En cel obrat na enotski krožnici je $2\pi$; po njem se vrednosti sinusa ponovijo.
+? Kaj velja za funkcijo $y = \sin x$?
+- Njena osnovna perioda je $\pi$.
+~ Na razdalji $\pi$ si sledita dve ničli, vmes pa je le vrh. Za cel val potrebuješ še dno. Periodo $\pi$ ima tangens.
+- Največjo vrednost doseže pri $x = 0$.
+~ Pri $x = 0$ je največji kosinus. Sinus je tam $0$, največji je pri $x = \frac{\pi}{2}$.
++ Njena osnovna perioda je $2\pi$, zaloga vrednosti pa $[-1, 1]$.
+- Njena zaloga vrednosti so vsa realna števila.
+~ To velja za tangens. Sinus je navpična koordinata točke na enotski krožnici, zato je med $-1$ in $1$.
+> En cel obrat je $2\pi$; po njem se vrednosti ponovijo. Navpična koordinata točke na enotski krožnici je med $-1$ in $1$.
 
 ? Kolikšna je osnovna perioda funkcije $f(x) = \sin 4x$?
 - $8\pi$
-~ Periodo si pomnožil z $4$. Večji $b$ pomeni hitrejše ponavljanje, zato krajšo periodo.
+~ Periodo si pomnožil s $4$. Večji $b$ pomeni hitrejše ponavljanje, zato krajšo periodo.
 + $\frac{\pi}{2}$
 - $2\pi$
 ~ Število pred $x$ v oklepaju vpliva na periodo. Amplitudo spremeni le $A$ pred sinusom, tu je $A = 1$.
 > $T = \dfrac{2\pi}{|b|} = \dfrac{2\pi}{4} = \dfrac{\pi}{2}$.
 
-? Kako iz grafa $y = \sin x$ dobiš graf $y = \sin\left(x - \frac{\pi}{3}\right)$?
-- Premakneš ga za $\frac{\pi}{3}$ v levo.
-~ Minus te zavede. Vrednost, ki jo ima $\sin$ pri $0$, ima nova funkcija pri $x = \frac{\pi}{3}$, torej desno.
-+ Premakneš ga za $\frac{\pi}{3}$ v desno.
-- Premakneš ga za $\frac{\pi}{3}$ navzdol.
-~ Navpični premik je $d$, ki je zunaj sinusa. Število v oklepaju premika v smeri osi $x$.
-> Pri $\sin(x - c)$ s $c > 0$ se graf premakne za $c$ v desno.
+? Maja je za $f(x) = \sin\left(2x - \frac{\pi}{3}\right)$ zapisala: »(1) $b = 2$, zato je osnovna perioda $\pi$. (2) Graf je glede na $y = \sin 2x$ premaknjen za $\frac{\pi}{3}$ v desno.« Kaj je narobe?
+- Korak (1): perioda je $4\pi$.
+~ Periodo si pomnožil z $2$. Korak (1) je pravilen: $T = \frac{2\pi}{2} = \pi$.
+- Korak (2): premik je za $\frac{\pi}{3}$ v levo.
+~ Minus te zavede. Pri $x - c$ s $c > 0$ gre graf v desno; napaka je v velikosti premika, ne v smeri.
++ Korak (2): premik je $\frac{\pi}{6}$ v desno, ker je treba najprej izpostaviti $2$.
+- Napake ni.
+~ Premik prebereš šele iz oblike $2(x - c)$. Brez izpostavljanja dobiš $\frac{\pi}{3}$, kar je dvakrat preveč.
+> $2x - \frac{\pi}{3} = 2\left(x - \frac{\pi}{6}\right)$, zato je $c = \frac{\pi}{6}$: premik za $\frac{\pi}{6}$ v desno. Korak (1) je pravilen.
 
-? Kolikšna sta amplituda in zaloga vrednosti funkcije $f(x) = 4\cos x + 1$?
-- Amplituda $5$, $Z_f = [-5, 5]$.
-~ Amplitudo si izenačil z največjo vrednostjo. Amplituda se meri od srednje črte $y = 1$.
-- Amplituda $4$, $Z_f = [-4, 4]$.
-~ Amplituda je prava, a si prezrl premik $d = 1$: ves graf je dvignjen za $1$.
-+ Amplituda $4$, $Z_f = [-3, 5]$.
-> $|A| = 4$, $d = 1$, zato $Z_f = [1 - 4,\ 1 + 4] = [-3, 5]$.
+? Primerjaj funkciji $f(x) = 2\sin x$ in $g(x) = \sin 2x$. Kaj velja?
++ $f$ ima večjo amplitudo, $g$ krajšo periodo.
+- $f$ ima krajšo periodo, $g$ večjo amplitudo.
+~ Zamenjal si vlogi števil. Število pred sinusom raztegne val v višino, število ob $x$ v oklepaju ga stisne v širino.
+- Obe imata amplitudo $2$ in periodo $\pi$.
+~ Vsako število spremeni le eno lastnost: $2$ pred sinusom samo amplitudo, $2$ ob $x$ samo periodo.
+- Funkciji sta enaki, ker lahko $2$ prestaviš pred sinus.
+~ Sinus ni množenje: $f\left(\frac{\pi}{2}\right) = 2$, a $g\left(\frac{\pi}{2}\right) = \sin\pi = 0$.
+> $f$ ima amplitudo $2$ in periodo $2\pi$, $g$ amplitudo $1$ in periodo $\frac{2\pi}{2} = \pi$. Val $f$ je višji, val $g$ gostejši.
 
-? Za koliko je graf $f(x) = \sin\left(2x - \frac{\pi}{3}\right)$ premaknjen glede na graf $y = \sin 2x$?
-- Za $\frac{\pi}{3}$ v desno.
-~ Pozabil si izpostaviti $b = 2$. Premik prebereš šele iz oblike $2(x - c)$.
-+ Za $\frac{\pi}{6}$ v desno.
-- Za $\frac{\pi}{6}$ v levo.
-~ Izpostavljanje je pravo, smer pa ne: $x - \frac{\pi}{6}$ pomeni premik v desno.
-> $2x - \frac{\pi}{3} = 2\left(x - \frac{\pi}{6}\right)$, torej $c = \frac{\pi}{6}$ in premik v desno.
+? Lučka za obvestila na telefonu »diha«: njena svetlost je $s(t) = 40\cos(\pi t) + 50$ (v odstotkih, $t$ v sekundah). Med katerima vrednostma niha svetlost in koliko traja en utrip?
++ Svetlost niha med $10\,\%$ in $90\,\%$, en utrip traja $2\,\text{s}$.
+- Svetlost niha med $-40\,\%$ in $40\,\%$, en utrip traja $2\,\text{s}$.
+~ Prezrl si premik $d = 50$: ves val je dvignjen za $50$. Negativne svetlosti tudi ni.
+- Svetlost niha med $10\,\%$ in $90\,\%$, en utrip traja $2\pi^2\,\text{s}$.
+~ Periodo si pomnožil z $b = \pi$. Pravilno je deliti: $T = \frac{2\pi}{\pi} = 2\,\text{s}$.
+- Svetlost niha med $50\,\%$ in $90\,\%$, en utrip traja $2\,\text{s}$.
+~ Val niha na obe strani srednje črte $y = 50$: za $40$ nad njo in za $40$ pod njo.
+> $|A| = 40$ in $d = 50$, zato svetlost niha od $50 - 40 = 10$ do $50 + 40 = 90$ odstotkov. Perioda je $T = \frac{2\pi}{\pi} = 2\,\text{s}$.
 
 :::simboli
 f | sinusna funkcija | f(x) = A\sin\big(b(x - c)\big) + d | |
 x | kot v radianih (neodvisna spremenljivka) | | |
-A | raztezek v smeri osi y | A = \frac{f_{\max} - f_{\min}}{2} | | amplituda je absolutna vrednost A
-b | raztezek v smeri osi x | b = \frac{2\pi}{T} | | pri b > 0
+A | raztezek v smeri osi y | A = \frac{f_{\max} - f_{\min}}{2} | | pri $A > 0$; amplituda je $\lvert A \rvert$
+b | koeficient ob x, ki določa periodo | b = \frac{2\pi}{T} | | pri $b > 0$; graf se vodoravno skrči s faktorjem $\frac{1}{\lvert b \rvert}$
 c | premik grafa v smeri osi x | | |
-d | premik grafa v smeri osi y | d = \frac{f_{\max} + f_{\min}}{2} | | srednja črta je y = d
-T | osnovna perioda | T = \frac{2\pi}{\lvert b \rvert} | | drugje T točka na enotski krožnici
+d | premik grafa v smeri osi y | d = \frac{f_{\max} + f_{\min}}{2} | | srednja črta je $y = d$
+T | osnovna perioda | T = \frac{2\pi}{\lvert b \rvert} | | v 1. razdelku $T$ točka na enotski krožnici
 Z_f | zaloga vrednosti funkcije | Z_f = [d - \lvert A \rvert,\ d + \lvert A \rvert] | |
 u | argument sinusa | | |
 k | poljubno celo število | | |
-h_{\max} | največja višina sedeža | | m | pri panoramskem kolesu
-h_{\min} | najmanjša višina sedeža | | m |
+r | polmer kroga v aplikaciji | r(t) = A\sin(bt) + d | mm |
+t | čas | | s |
+r_{\max} | največji polmer kroga | | mm |
+r_{\min} | najmanjši polmer kroga | | mm |
 f_{\max} | največja vrednost funkcije | | |
 f_{\min} | najmanjša vrednost funkcije | | |
 :::

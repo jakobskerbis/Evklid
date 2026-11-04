@@ -176,13 +176,19 @@ export class Knowledge {
     return clean;
   }
 
+  // Ime teme in učne poti (predmet, letnik), ki je prinesla predmet; tudi za vitrino v razredu (server/vitrina.js).
+  topicLabel(topicId) {
+    const t = getTopic(topicId);
+    return t ? { name: t.name, path: getPath(t.path)?.label || "" } : null;
+  }
+
   view(id) {
     const fresh = this.sync(id);
     const items = this.rows(id)
       .filter((r) => !r.revoked_at)
       .map((r) => {
-        const t = r.topic_id ? getTopic(r.topic_id) : null;
-        return { id: r.item, at: r.earned_at, source: r.source, topic: t ? { id: r.topic_id, name: t.name, path: getPath(t.path)?.label || "" } : null };
+        const topic = r.topic_id ? this.topicLabel(r.topic_id) : null;
+        return { id: r.item, at: r.earned_at, source: r.source, topic: topic && { id: r.topic_id, ...topic } };
       });
     // Zgled teme za pogoj vsakega zaklenjenega predmeta (ime in pot), da so pogoji vnaprej vidni.
     const hints = {};

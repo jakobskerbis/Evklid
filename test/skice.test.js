@@ -449,3 +449,143 @@ test("skice: »≈« je vedno pred nedeljivim presledkom (v ozkem čipu se ne lo
     koda.forEach((l, i) => assert.ok(!/≈ /.test(l.replace(/\/\/.*$/, "")), `${ime}:${i + 1}`));
   }
 });
+
+test("integral: pri velikem n se Riemannova vsota in trapezna metoda ujemata z integralom na dve decimalki", async () => {
+  const { riemann, trapez, TOCNO, f, F, simpson } = await import("../public/skice/integral.js");
+  assert.ok(Math.abs(TOCNO - 82 / 15) < 1e-12);
+  for (const x of [0, 0.7, 2, 3.3]) assert.ok(Math.abs((F(x + 1e-6) - F(x - 1e-6)) / 2e-6 - f(x)) < 1e-6, "F′ = f");
+  assert.ok(Math.abs(simpson(f, 0, 4) - 82 / 15) < 1e-10);
+  // Največji n na drsniku: razlika pod pol stotinke.
+  assert.ok(Math.abs(riemann(40).vsota - TOCNO) < 0.005);
+  assert.ok(Math.abs(trapez(12).T - TOCNO) < 0.005);
+  // Pri majhnem n je napaka vidna (skica ima kaj pokazati).
+  assert.ok(Math.abs(trapez(1).T - TOCNO) > 0.3 && Math.abs(riemann(1).vsota - TOCNO) > 0.1);
+  // Približka se z večjim n približujeta točni vrednosti; trapez pri n = 1 je (f(0) + f(4))·2.
+  assert.ok(Math.abs(riemann(40).vsota - TOCNO) < Math.abs(riemann(4).vsota - TOCNO));
+  assert.ok(Math.abs(trapez(12).T - TOCNO) < Math.abs(trapez(2).T - TOCNO));
+  assert.ok(Math.abs(trapez(1).T - (f(0) + f(4)) * 2) < 1e-12);
+  assert.equal(riemann(5).pr.length, 5);
+});
+
+test("ploščina in vrtenina: S = ∫|f − g| dx in V = π∫f² dx se ujemata z znanima vrednostma", async () => {
+  const { ploscina, vrtenina, f1, g1 } = await import("../public/skice/integral.js");
+  // f₁ − g = 1 + 1,5x − x²/2, nedoločeni integral x + 0,75x² − x³/6.
+  const P = (x) => x + 0.75 * x * x - x ** 3 / 6;
+  assert.ok(Math.abs(ploscina(0, 3) - 5.25) < 1e-9);
+  assert.ok(Math.abs(ploscina(3, 0) - 5.25) < 1e-9, "meji v obratnem vrstnem redu");
+  assert.equal(ploscina(2, 2), 0);
+  // Čez presečišče x = (3 + √17)/2 se ploščina sešteva po absolutni vrednosti.
+  const r = (3 + Math.sqrt(17)) / 2;
+  assert.ok(Math.abs(f1(r) - g1(r)) < 1e-12);
+  assert.ok(Math.abs(ploscina(0, 4) - (P(r) - P(0) + P(r) - P(4))) < 1e-6);
+  assert.ok(Math.abs(vrtenina() - 6.272 * Math.PI) < 1e-9);
+});
+
+test("kombinatorika: C(n, r) = C(n, n − r) in Pascalovo pravilo za vse n in r; vsota vseh P_n(k) je 1", async () => {
+  const { C, bernoulli } = await import("../public/skice/integral.js");
+  const { clen, N_MAX } = await import("../public/skice/pascal.js");
+  const fak = (n) => (n < 2 ? 1 : n * fak(n - 1));
+  for (let n = 0; n <= N_MAX; n++)
+    for (let r = 0; r <= n; r++) {
+      assert.equal(C(n, r), fak(n) / (fak(r) * fak(n - r)));
+      assert.equal(C(n, r), C(n, n - r));
+      if (r > 0 && r < n) assert.equal(C(n - 1, r - 1) + C(n - 1, r), C(n, r));
+    }
+  assert.equal(C(3, 5), 0);
+  assert.equal(C(30, 15), 155117520);
+  assert.deepEqual([0, 1, 2, 4, 5].map((k) => clen(5, k)), ["a⁵", "5a⁴b", "10a³b²", "5ab⁴", "b⁵"]);
+  assert.equal(clen(0, 0), "1");
+  for (let n = 1; n <= 12; n++)
+    for (const p of [0.05, 0.3, 0.5, 0.95]) {
+      const P = Array.from({ length: n + 1 }, (_, k) => bernoulli(n, p, k));
+      assert.ok(Math.abs(P.reduce((a, v) => a + v, 0) - 1) < 1e-12);
+      assert.ok(Math.abs(P.reduce((a, v, k) => a + k * v, 0) - n * p) < 1e-12, "E = np");
+    }
+});
+
+test("povprečje in odklon: σ se računa z delitvijo z N", async () => {
+  const { statistika } = await import("../public/skice/integral.js");
+  const q = statistika([2, 4, 4, 4, 5, 5, 7, 9]);
+  assert.equal(q.x, 5);
+  assert.equal(q.sigma, 2); // z delitvijo z N − 1 bi bil ≈ 2,14
+  assert.equal(q.var, 4);
+  const e = statistika([3, 3, 3]);
+  assert.equal(e.sigma, 0);
+  const d = statistika([2, 3.5, 5, 6, 8.5]);
+  assert.ok(Math.abs(d.x - 5) < 1e-12 && Math.abs(d.var - (9 + 2.25 + 0 + 1 + 12.25) / 5) < 1e-12);
+});
+
+test("Bernoulli: zelo majhna verjetnost ni »= 0« (n = 12, p = 0,05, k = 12)", async () => {
+  const { bernoulli } = await import("../public/skice/integral.js");
+  const { zapisP } = await import("../public/skice/bernoulli.js");
+  for (let k = 0; k <= 12; k++)
+    for (const p of [0.05, 0.95]) {
+      const z = zapisP(bernoulli(12, p, k));
+      assert.ok(z !== "0" && !/^≈ 0$/.test(z), `k=${k} p=${p}: ${z}`);
+    }
+  assert.equal(zapisP(bernoulli(12, 0.05, 12)), "< 0,0001");
+  assert.equal(zapisP(0.25), "0,25");
+});
+
+test("telesa: ploščina razgrnjene mreže je površina P, prostornine se ujemajo z računom", async () => {
+  const { telo, mreza, ploscinaLika } = await import("../public/skice/telesa.js");
+  for (const ime of ["kocka", "kvader", "prizma", "valj", "stozec", "piramida", "prisekana"]) {
+    const T = telo(ime), M = mreza(T);
+    const vsota = M.liki.reduce((a, l) => a + ploscinaLika(l.tocke), 0);
+    assert.ok(Math.abs(vsota - T.P) / T.P < 1e-3, `${ime}: mreža ${vsota} ≠ P ${T.P}`);
+    assert.equal(M.liki.filter((l) => l.vrsta === "osnova").length, ime === "stozec" || ime === "piramida" ? 1 : 2, ime);
+  }
+  const K = telo("kocka");
+  assert.equal(K.P, 24);
+  assert.equal(K.Vol, 8);
+  assert.ok(Math.abs(K.D - 2 * Math.sqrt(3)) < 1e-12);
+  // Prisekana piramida = velika piramida brez male (višina vrha H iz podobnosti).
+  const Q = telo("prisekana"), Hv = (Q.v * Q.a1) / (Q.a1 - Q.a2);
+  assert.ok(Math.abs(Q.Vol - (Q.a1 ** 2 * Hv - Q.a2 ** 2 * (Hv - Q.v)) / 3) < 1e-12);
+  const S = telo("stozec");
+  assert.ok(Math.abs(S.s ** 2 - (S.r ** 2 + S.v ** 2)) < 1e-12);
+});
+
+test("telesa: pri vsakem zasuku so pri kocki zakriti 3 robovi, valj in stožec imata 2 tvorilki na obrisu", async () => {
+  const { telo, robovi } = await import("../public/skice/telesa.js");
+  const K = telo("kocka"), V = telo("valj"), S = telo("stozec"), P = telo("prizma");
+  for (let phi = 0.05; phi < 2 * Math.PI; phi += 0.21) {
+    const k = robovi(K, phi).robovi;
+    assert.equal(k.length, 12);
+    assert.equal(k.filter((e) => !e.vidno).length, 3, `kocka φ=${phi}`);
+    for (const T of [V, S]) assert.equal(robovi(T, phi).robovi.filter((e) => e.obris).length, 2, `${T.ime} φ=${phi}`);
+    // Zgornja osnova prizme je pri pogledu od zgoraj vsa vidna, spodnja na zadnji strani zakrita.
+    const p = robovi(P, phi).robovi;
+    assert.ok(p.filter((e) => P.V[e.a][1] > 0 && P.V[e.b][1] > 0).every((e) => e.vidno));
+    assert.ok(p.some((e) => !e.vidno));
+  }
+});
+
+test("telesa: prizma ima 5 zakritih robov, deli mreže se ne prekrivajo, P in V v čipih sta kot na kartici", async () => {
+  const { telo, robovi, mreza, cipi, verige } = await import("../public/skice/telesa.js");
+  const P = telo("prizma");
+  for (let phi = 0.05; phi < 2 * Math.PI; phi += 0.21) assert.equal(robovi(P, phi).robovi.filter((e) => !e.vidno).length, 5, `φ=${phi}`);
+  // Zakriti lok osnove valja je ena veriga (enakomerno črtkanje).
+  const V = telo("valj");
+  assert.equal(verige(robovi(V, 0.5).robovi.filter((e) => !e.vidno)).length, 1);
+  // Težišče vsakega dela mreže ne leži v nobenem drugem delu.
+  const notri = ([x, y], t) => t.reduce((c, p, i) => {
+    const q = t[(i + 1) % t.length];
+    return (p[1] > y) !== (q[1] > y) && x < ((q[0] - p[0]) * (y - p[1])) / (q[1] - p[1]) + p[0] ? !c : c;
+  }, false);
+  for (const ime of ["kocka", "kvader", "prizma", "valj", "stozec", "piramida", "prisekana"]) {
+    const L = mreza(telo(ime)).liki;
+    L.forEach((a, i) => {
+      const c = a.tocke.reduce((s, p) => [s[0] + p[0] / a.tocke.length, s[1] + p[1] / a.tocke.length], [0, 0]);
+      L.forEach((b, j) => i !== j && assert.ok(!notri(c, b.tocke), `${ime}: del ${i} v delu ${j}`));
+    });
+  }
+  const norm = (t) => t.replace(/\\dfrac/g, "\\frac").replace(/\s+/g, "");
+  for (const [list, ss, vrste] of [["MAT-OS", false, { Kocka: "kocka", Kvader: "kvader", Prizma: "prizma", Valj: "valj", Piramida: "piramida", Stožec: "stozec" }], ["MAT-SS", true, { Prizma: "prizma", Piramida: "piramida", "Prisekana piramida": "prisekana", Valj: "valj", Stožec: "stozec" }]]) {
+    const md = fs.readFileSync(new URL(`../content/formulas/${list}.md`, import.meta.url), "utf8").split("\n");
+    for (const [ime, t] of Object.entries(vrste)) {
+      const vrstica = norm(md.find((l) => l.startsWith(`| ${ime} |`)));
+      for (const c of cipi(telo(t), ss).filter((c) => /^[PV] =/.test(c.oznaka))) assert.ok(vrstica.includes(norm(c.oznaka)), `${list} ${ime}: ${c.oznaka}`);
+    }
+  }
+});

@@ -9,7 +9,7 @@
 .kv-timer.low { color: var(--danger); }
 .kv-x { min-width: 44px; min-height: 44px; }
 .kv-body { flex: 1; overflow-y: auto; width: min(1100px, 100%); margin: 0 auto; padding: 16px; box-sizing: border-box; }
-.kv-foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: var(--surface); }
+.kv-foot { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 10px 16px calc(10px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); border-top: 1px solid var(--border); background: var(--surface); }
 .kv-foot:empty { display: none; }
 .kv-foot button { min-height: 44px; }
 .kv-qn { margin: 0 0 6px; color: var(--muted); font-weight: 700; }
@@ -45,8 +45,9 @@
 .kv-host .kv-ans { text-align: start; }
 .kv-sol { margin: 10px 0; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
 .kv-sol summary { cursor: pointer; font-weight: 700; padding: 8px 0; }
-.kv-board { list-style: none; margin: 8px auto; padding: 0; max-width: 640px; }
-.kv-board li { display: flex; align-items: baseline; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 1.1rem; }
+/* Lestvica v stolpcih po širini zaslona (projektor v razredu: brez praznih robov, j 2026-11-04). */
+.kv-board { list-style: none; margin: 8px auto; padding: 0; column-width: 360px; column-gap: 24px; }
+.kv-board li { break-inside: avoid; display: flex; align-items: baseline; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 1.1rem; }
 .kv-board li bdi { flex: 1; }
 .kv-board li.me { background: var(--accent-soft); border-radius: var(--radius-sm); }
 .kv-board small { color: var(--muted); }

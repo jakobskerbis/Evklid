@@ -8,6 +8,7 @@ export const info = {
   predmet: "BIO",
   opis: "Kako rastlina s svetlobo iz CO₂ in vode naredi sladkor in kisik: kloroplast, svetlobne reakcije na tilakoidni membrani in Calvinov cikel, korak za korakom.",
   merilo: { m: 6e-6, oznaka: "6 µm" },
+  poskusi: "izberi »Tilakoidna membrana« in sledi elektronu od fotosistema II do NADPH.",
 };
 
 const PISAVA = '"Instrument Sans", system-ui, sans-serif';
