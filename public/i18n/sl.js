@@ -998,6 +998,7 @@ export default {
   "pp.oursScoring": "Točkovanje:",
   "pp.oursMistake": "Pogosta napaka:",
   "pp.oursScore": "{got} / {max} t.",
+  "pp.oursPola": "{n}. izpitna pola",
   "pp.more": "Pokaži starejše ({n})",
   "pp.tutor": "Rešuj z inštruktorjem",
   "pp.tutorMsg": "Rešujem preteklo polo: {paper}.",

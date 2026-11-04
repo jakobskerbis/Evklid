@@ -607,6 +607,7 @@
   "pp.oursScoring": "评分标准：",
   "pp.oursMistake": "常见错误：",
   "pp.oursScore": "{got} / {max} 分",
+  "pp.oursPola": "试卷 {n}",
   "pp.more": "显示更早的（{n}）",
   "pp.empty": "此选择在 ric.si 上没有已发布的试卷。",
   "exam.train": "考试练习",

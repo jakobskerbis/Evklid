@@ -613,6 +613,7 @@
   "pp.oursScoring": "নম্বর বণ্টন:",
   "pp.oursMistake": "সাধারণ ভুল:",
   "pp.oursScore": "{got} / {max} নম্বর",
+  "pp.oursPola": "প্রশ্নপত্র {n}",
   "pp.more": "পুরনোগুলো দেখাও ({n})",
   "pp.empty": "এই নির্বাচনের জন্য ric.si-তে কোনো প্রশ্নপত্র প্রকাশিত হয়নি।",
   "exam.train": "পরীক্ষার অনুশীলন",

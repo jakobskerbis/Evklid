@@ -613,6 +613,7 @@
   "pp.oursScoring": "Scoring:",
   "pp.oursMistake": "Common mistake:",
   "pp.oursScore": "{got} / {max} pts",
+  "pp.oursPola": "Paper {n}",
   "pp.more": "Show older ({n})",
   "pp.empty": "No papers have been published on ric.si for this choice.",
   "exam.train": "Exam practice",

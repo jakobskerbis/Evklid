@@ -613,6 +613,7 @@
   "pp.oursScoring": "अंक योजना:",
   "pp.oursMistake": "आम गलती:",
   "pp.oursScore": "{got} / {max} अंक",
+  "pp.oursPola": "प्रश्नपत्र {n}",
   "pp.more": "पुराने दिखाएँ ({n})",
   "pp.empty": "इस चयन के लिए ric.si पर कोई प्रश्नपत्र प्रकाशित नहीं है।",
   "exam.train": "परीक्षा अभ्यास",

@@ -613,6 +613,7 @@
   "pp.oursScoring": "بارم‌بندی:",
   "pp.oursMistake": "اشتباه رایج:",
   "pp.oursScore": "{got} / {max} امتیاز",
+  "pp.oursPola": "برگهٔ {n}",
   "pp.more": "نمایش قدیمی‌ترها ({n})",
   "pp.empty": "برای این انتخاب برگه‌ای در ric.si منتشر نشده است.",
   "exam.train": "تمرین آزمون",

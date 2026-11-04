@@ -1,0 +1,32 @@
+{
+ "id": "NPZ9-BIO-2025-redni",
+ "points": 35,
+ "minutes": 60,
+ "tools": "samo pisalo (nalivno pero ali kemični svinčnik); računalo in druga gradiva niso dovoljeni",
+ "tasks": [
+  {"n": 1, "points": [1], "format": ["choice"], "topic": "zdravje: zakaj določeno zdravilo ne deluje proti določeni vrsti povzročiteljev (antibiotiki in virusi)"},
+  {"n": 2, "points": [1], "format": ["choice"], "topic": "primerjava organskih sistemov vretenčarjev: iz poenostavljenih shem izbrati tisto, ki ustreza človeku", "figure": "tri poenostavljene sheme krvožilja (srce in krvni obtok)"},
+  {"n": 3, "points": [1], "format": ["choice"], "topic": "ekologija: ravni organizacije (organizem, populacija, združba, ekosistem) – poimenovati skupino osebkov ene vrste na določenem območju"},
+  {"n": 4, "points": [1], "format": ["choice"], "topic": "branje grafa o prehrani živali skozi letne čase in uvrstitev živali glede na način prehranjevanja (rastlinojedec, mesojedec, vsejedec)", "figure": "stolpčni graf deležev vrst hrane po letnih časih"},
+  {"n": 5, "points": [1], "format": ["choice"], "topic": "zgradba celice: katere strukture prokariontska celica nima"},
+  {"n": 6, "points": [1], "format": ["choice"], "topic": "fotosinteza in celično dihanje: kateri procesi potekajo v zelenih delih rastline (past: rastline tudi dihajo)"},
+  {"n": 7, "points": [1], "format": ["choice"], "topic": "sistematika nevretenčarjev: primerjava slik več členonožcev in izbira lastnosti, ki je značilna samo za eno skupino", "figure": "štiri slike različnih členonožcev"},
+  {"n": 8, "points": [1], "format": ["choice"], "topic": "izločala: kateri organ filtrira kri in izloča presnovne odpadke"},
+  {"n": 9, "points": [1], "format": ["choice"], "topic": "biotehnologija: med vsakdanjimi postopki pridelave hrane prepoznati tistega, ki uporablja mikroorganizme"},
+  {"n": 10, "points": [1], "format": ["choice"], "topic": "kri: naloga ene vrste krvnih celic (strjevanje, prenos plinov, obramba)"},
+  {"n": 11, "points": [1], "format": ["choice"], "topic": "evolucija in varstvo narave: kratek opis izumrle živalske vrste in njenih prilagoditev; izbrati najverjetnejši vzrok izumrtja (vpliv človeka)", "figure": "slika živali in zemljevid njenega območja"},
+  {"n": 12, "points": [1], "format": ["choice"], "topic": "presnova: iz opisne trditve prepoznati proces (celično dihanje, fotosinteza, pljučno dihanje, transpiracija)"},
+  {"n": 13, "points": [1], "format": ["choice"], "topic": "razmnoževanje semenk: kako nastane seme (oploditev vs. opraševanje)"},
+  {"n": 14, "points": [1, 1], "format": ["choice", "open"], "topic": "živčevje: slika možganov z označenimi deli; a) označiti del, ki skrbi za ravnotežje pri opisani dejavnosti; b) kako se informacije prenašajo med označenim delom in drugimi celicami (živčni impulzi)", "figure": "slika možganov s črkami označenimi deli"},
+  {"n": 15, "points": [1, 1], "format": ["open", "open"], "topic": "gibala: a) poimenovati del gibal, ki poleg okostja omogoča gibanje (mišice); b) iz slike poškodbe med vretenci sklepati o posledicah pritiska na živce", "figure": "slika zdravega in poškodovanega dela hrbtenice"},
+  {"n": 16, "points": [1, 1], "format": ["open", "open"], "topic": "zgradba cvetnice: slika pogoste travniške rastline; a) DA/NE o načinu opraševanja z utemeljitvijo; b) čemu služi povečan organ (razširjanje plodov/semen)", "figure": "slika rastline s povečanim organom v krogu"},
+  {"n": 17, "points": [1, 1], "format": ["open", "open"], "topic": "dva nevretenčarja z različnim načinom življenja (prostoživeč, zajedavec); a) razložiti, zakaj sta oba potrošnika; b) navesti dva organska sistema za oskrbo celic z energijo in kako delujeta skupaj", "figure": "sliki dveh organizmov"},
+  {"n": 18, "points": [1, 1], "format": ["choice", "construct"], "topic": "prebavila: a) vloga snovi, ki jo izločajo žleze v želodcu; b) na sliki notranjih organov s puščicami označiti in poimenovati več prebavnih organov", "figure": "slika notranjih organov človeka z nekaj že označenimi organi"},
+  {"n": 19, "points": [1, 1], "format": ["open", "open"], "topic": "načrtovanje poskusa: opisan šolski poskus o vplivu enega dejavnika na rast rastlin s hipotezo, slikami in preglednico meritev; a) zakaj so konstante enake (ista vrsta); b) DA/NE ali bi z istim postopkom lahko preučevali drug dejavnik, z utemeljitvijo (ena spremenljivka)", "figure": "slike rastlin po poskusu in preglednica meritev"},
+  {"n": 20, "points": [1, 1], "format": ["choice", "open"], "topic": "delitev celic: a) način razmnoževanja bakterij s slike; b) po čem iz slike sklepamo, da gre za mitozo", "figure": "sliki delitve bakterije in delitve telesne celice"},
+  {"n": 21, "points": [1, 1], "format": ["open", "open"], "topic": "dedovanje: rodovnik recesivno dedne lastnosti čez več generacij z legendo; a) prešteti osebe z lastnostjo v izbrani generaciji; b) utemeljiti, kje v rodovniku se vidi recesivnost (zdravi starši, prizadet otrok)", "figure": "rodovnik z legendo (moški, ženska, prenašalec, prizadet)"},
+  {"n": 22, "points": [1, 1], "format": ["choice", "choice"], "topic": "DNA: a) število molekul DNA v genomu glede na kromosome; b) izbrati model pravilnega (semikonzervativnega) podvojevanja DNA", "figure": "trije modeli podvojevanja DNA"},
+  {"n": 23, "points": [1, 1], "format": ["open", "open"], "topic": "Mendlovo dedovanje (monohibridno križanje pri domači živali, dominantna/recesivna lastnost): a) fenotip potomcev dveh homozigotov; b) DA/NE ali dva heterozigota lahko dobita recesivnega potomca, utemeljiti s križanjem (Punnettova tabela)", "figure": "sliki živali z obema oblikama lastnosti"},
+  {"n": 24, "points": [1, 1], "format": ["choice", "fill"], "topic": "plodovi: a) način razširjanja plodov pri dani rastlini z utemeljitvijo; b) z dihotomnim ključem določiti skupino štirih plodov in vpisati pod slike", "figure": "slike rastline in štirih plodov ter dihotomni določevalni ključ"}
+ ]
+}

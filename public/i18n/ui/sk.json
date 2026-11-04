@@ -625,6 +625,7 @@
   "pp.oursScoring": "Bodovanie:",
   "pp.oursMistake": "Častá chyba:",
   "pp.oursScore": "{got} / {max} b.",
+  "pp.oursPola": "{n}. časť skúšky",
   "pp.more": "Zobraziť staršie ({n})",
   "pp.empty": "Pre tento výber nie sú na ric.si zverejnené žiadne zadania.",
   "exam.train": "Tréning na skúšku",

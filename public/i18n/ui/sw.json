@@ -613,6 +613,7 @@
   "pp.oursScoring": "Utoaji wa pointi:",
   "pp.oursMistake": "Kosa la kawaida:",
   "pp.oursScore": "Pointi {got} / {max}",
+  "pp.oursPola": "Karatasi ya {n}",
   "pp.more": "Onyesha za zamani ({n})",
   "pp.empty": "Hakuna karatasi zilizochapishwa kwenye ric.si kwa chaguo hili.",
   "exam.train": "Mazoezi ya mtihani",

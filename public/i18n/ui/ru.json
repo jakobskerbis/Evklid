@@ -625,6 +625,7 @@
   "pp.oursScoring": "Оценивание:",
   "pp.oursMistake": "Частая ошибка:",
   "pp.oursScore": "{got} / {max} б.",
+  "pp.oursPola": "Часть {n}",
   "pp.more": "Показать более ранние ({n})",
   "pp.empty": "Для этого выбора на ric.si нет опубликованных заданий.",
   "exam.train": "Тренировка к экзамену",

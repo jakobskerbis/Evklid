@@ -613,6 +613,7 @@
   "pp.oursScoring": "Puanlama:",
   "pp.oursMistake": "Sık yapılan hata:",
   "pp.oursScore": "{got} / {max} p",
+  "pp.oursPola": "{n}. sınav kitapçığı",
   "pp.more": "Eskileri göster ({n})",
   "pp.empty": "Bu seçim için ric.si'de yayımlanmış sınav yok.",
   "exam.train": "Sınav alıştırması",

@@ -637,6 +637,7 @@
   "pp.oursScoring": "توزيع النقاط:",
   "pp.oursMistake": "خطأ شائع:",
   "pp.oursScore": "{got} / {max} ن",
+  "pp.oursPola": "الورقة {n}",
   "pp.more": "عرض الأقدم ({n})",
   "pp.empty": "لا توجد أوراق منشورة على ric.si لهذا الاختيار.",
   "exam.train": "تدريب على الامتحان",

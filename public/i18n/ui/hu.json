@@ -613,6 +613,7 @@
   "pp.oursScoring": "Pontozás:",
   "pp.oursMistake": "Gyakori hiba:",
   "pp.oursScore": "{got} / {max} p",
+  "pp.oursPola": "{n}. feladatlap",
   "pp.more": "Régebbiek ({n})",
   "pp.empty": "Ehhez a választáshoz nincs közzétett feladatsor a ric.si oldalon.",
   "exam.train": "Vizsgagyakorlás",

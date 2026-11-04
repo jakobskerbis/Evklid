@@ -613,6 +613,7 @@
   "pp.oursScoring": "Pikëzimi:",
   "pp.oursMistake": "Gabim i shpeshtë:",
   "pp.oursScore": "{got} / {max} p.",
+  "pp.oursPola": "Fleta e provimit {n}",
   "pp.more": "Shfaq më të vjetrat ({n})",
   "pp.empty": "Për këtë zgjedhje nuk ka provime të publikuara në ric.si.",
   "exam.train": "Ushtrim për provimin",

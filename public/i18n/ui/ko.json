@@ -607,6 +607,7 @@
   "pp.oursScoring": "채점 기준:",
   "pp.oursMistake": "자주 하는 실수:",
   "pp.oursScore": "{got} / {max}점",
+  "pp.oursPola": "시험지 {n}",
   "pp.more": "이전 것 보기 ({n})",
   "pp.empty": "이 선택에 대해 ric.si에 공개된 시험지가 없습니다.",
   "exam.train": "시험 연습",
