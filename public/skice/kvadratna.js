@@ -11,7 +11,8 @@ export function kvadratna(a, p, q) {
 }
 
 // a = 0 ni kvadratna funkcija: drsnik ga preskoči.
-export const brezNic = (v, prej) => (Math.abs(v) < 1e-9 ? (prej > 0 ? -0.5 : 0.5) : v);
+// Drsnik je skoraj zvezen: |a| < 0,1 (izpis bi bil 0) se pripne na ±0,1; pri a = 0 (puščica) skoči na drugo stran.
+export const brezNic = (v, prej) => (Math.abs(v) >= 0.1 - 1e-9 ? v : v > 0 ? 0.1 : v < 0 ? -0.1 : prej > 0 ? -0.1 : 0.1);
 
 export default function narisi(host) {
   const W = 300, H = 240;

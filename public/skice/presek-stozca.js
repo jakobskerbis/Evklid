@@ -139,9 +139,12 @@ export default async function narisi(host, { potem } = {}) {
     pokazi();
     return sl;
   };
-  const sTau = polje(S.drsnik({ label: "naklon τ (°)", min: 0, max: 90, step: 1, value: tau, digits: 0, barva: "izbor", onInput: (v) => (ustavi(), (tau = v), posodobi()) }), 0, 90, 1, 0);
-  const sH = polje(S.drsnik({ label: "višina h", min: -1, max: 1, step: 0.1, value: hh, digits: 1, barva: "ploskev", onInput: (v) => (ustavi(), (hh = Math.round(v * 10) / 10), posodobi()) }), -1, 1, 0.1, 1);
-  const sA = polje(S.drsnik({ label: "polovični kot α (°)", min: 15, max: 60, step: 1, value: alfa, digits: 0, barva: "ploskev", onInput: (v) => (ustavi(), (alfa = v), gotovo && zgradiStozec(), posodobi()) }), 15, 60, 1, 0);
+  // Drsniki so skoraj zvezni: τ se pripne na 0° (krožnica) in na 90° − α (parabola), h na 0 (skozi vrh),
+  // ko so manj kot pol stopinje oz. 0,05 stran, sicer bi teh posebnih presekov z drsnikom ne mogel zadeti.
+  const pripni = (v, cilji, d) => cilji.find((c) => Math.abs(v - c) < d) ?? v;
+  const sTau = polje(S.drsnik({ label: "naklon τ (°)", min: 0, max: 90, step: 1, value: tau, digits: 1, barva: "izbor", onInput: (v) => (ustavi(), (tau = pripni(v, [0, 90 - alfa], 0.5)), tau !== v && sTau.set(tau, true), posodobi()) }), 0, 90, 0.1, 1);
+  const sH = polje(S.drsnik({ label: "višina h", min: -1, max: 1, step: 0.1, value: hh, digits: 2, barva: "ploskev", onInput: (v) => (ustavi(), (hh = pripni(v, [0], 0.05)), hh !== v && sH.set(hh, true), posodobi()) }), -1, 1, 0.01, 2);
+  const sA = polje(S.drsnik({ label: "polovični kot α (°)", min: 15, max: 60, step: 1, value: alfa, digits: 1, barva: "ploskev", onInput: (v) => (ustavi(), (alfa = pripni(v, [90 - tau], 0.5)), alfa !== v && sA.set(alfa, true), gotovo && zgradiStozec(), posodobi()) }), 15, 60, 0.1, 1);
 
   cipi(); // oznaka in čipi že med nalaganjem Three.js
 
@@ -159,7 +162,7 @@ export default async function narisi(host, { potem } = {}) {
     napis.textContent = v.toUpperCase();
     seg.set(hh === 0 || skoziVrh(tau, hh) ? "Skozi vrh" : VRSTE.find((x) => x.toLowerCase() === v) || "", true);
     S.cipi([
-      { barva: "izbor", oznaka: `\\tau ${znak} 90^\\circ - \\alpha`, vrednost: `${st(tau, 0)}° ${znak} ${st(90 - alfa, 0)}°` },
+      { barva: "izbor", oznaka: `\\tau ${znak} 90^\\circ - \\alpha`, vrednost: `${st(tau, 1)}° ${znak} ${st(90 - alfa, 1)}°` },
       { barva: "glavna", oznaka: "e = \\frac{\\sin \\tau}{\\cos \\alpha}", vrednost: skoziVrh(tau, hh) ? "–" : vr(e, 3) },
     ]);
   }
@@ -314,8 +317,9 @@ export default async function narisi(host, { potem } = {}) {
       const i = Math.floor((t - t0) / 1800);
       if (koraki && i >= koraki.length) return ustavi();
       const v = koraki ? koraki[i] : Math.min(89, od + ((t - t0) / 9000) * 89);
-      if (Math.round(v) !== tau) {
-        tau = Math.round(v);
+      const nov = pripni(Math.round(v), [0, meja], 0.5);
+      if (nov !== tau) {
+        tau = nov;
         sTau.set(tau, true), sTau.pokazi();
         posodobi();
       }

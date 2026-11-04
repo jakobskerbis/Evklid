@@ -13,7 +13,7 @@ export default function narisi(host) {
   const W = 300, H = 212, L = 14, R = 290, T = 26, B = 184;
   const S = skica({ w: W, h: H, navodilo: "Spreminjaj n, p in k.", oznaka: "Bernoullijevo zaporedje: verjetnosti P_n(k)" });
   let n = 6, p = 0.5, k = 2;
-  S.drsnik({ label: "n", min: 1, max: N_MAX, step: 1, value: n, digits: 0, barva: "glavna", onInput: (v) => ((n = v), sK.meje(0, n), (k = sK.get()), izris()) });
+  S.drsnik({ zvezno: false, label: "n", min: 1, max: N_MAX, step: 1, value: n, digits: 0, barva: "glavna", onInput: (v) => ((n = v), sK.meje(0, n), (k = sK.get()), izris()) });
   S.drsnik({ label: "p", min: 0.05, max: 0.95, step: 0.05, value: p, digits: 2, barva: "ploskev", onInput: (v) => ((p = v), izris()) });
   const sK = S.stevec({ label: "k", min: 0, max: n, value: k, barva: "izbor", onInput: (v) => ((k = v), izris()) });
 

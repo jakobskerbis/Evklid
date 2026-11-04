@@ -34,7 +34,8 @@ export function diferencial(x0, dx) {
 }
 
 // Drsnik brez vrednosti 0 (h, dx, a₁, q): preskoči jo v smeri premika.
-export const brezNic = (v, prej, korak) => (Math.abs(v) < 1e-9 ? (prej > 0 ? -korak : korak) : v);
+// Drsnik je skoraj zvezen: |v| < korak (izpis bi bil 0) se pripne na ±korak na strani v; pri v = 0 (puščica) skoči čez.
+export const brezNic = (v, prej, korak) => (Math.abs(v) >= korak - 1e-9 ? v : v > 0 ? korak : v < 0 ? -korak : prej > 0 ? -korak : korak);
 
 // Skupni okvir za skice s funkcijo x²/2: x ∈ [−3,5; 3,5], y ∈ [−1,2; 5,6].
 export function okvir(navodilo, oznaka) {

@@ -50,8 +50,9 @@ export function skica({ w = 320, h: hgt = 220, navodilo = "", oznaka = "Interakt
         ),
       );
     },
-    drsnik({ barva = "ploskev", ...opts }) {
-      const sl = slider(opts);
+    // Drsnik je 10000-krat drobnejši od step (skoraj zvezen, j 2026-11-04); zvezno: false za cela števila (n).
+    drsnik({ barva = "ploskev", zvezno = true, ...opts }) {
+      const sl = slider({ ...opts, fino: zvezno ? 10000 : 0 });
       sl.classList.add("sk-slider", `sk-${barva}`);
       const fill = () => {
         const i = sl.input;
