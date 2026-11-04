@@ -6,7 +6,7 @@
 import { THREE, ustvariSceno, kakovostNaprave, poveziGumbVrtenja } from "./scena.js";
 import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "/vendor/three/examples/jsm/libs/meshopt_decoder.module.js";
-import { tkivo, ustvariMaterial } from "./tkiva.js";
+import { tkivo, ustvariMaterial, materialReza, materialPolnila, materialParnosti } from "./tkiva.js";
 import { seznamDatotek, mapaTelesaNaprave } from "./modeli.js";
 import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
@@ -289,9 +289,14 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   const materialiSij = new Map();
   const ravnina = new THREE.Plane(new THREE.Vector3(0, -1, 0), 1);
   const meje = new THREE.Box3(new THREE.Vector3(-0.45, 0, -0.2), new THREE.Vector3(0.45, 1.8, 0.2));
+  // Prerez kot pravi rez telesa: pokrovi delov (hrbtne ploskve v barvi reza, tkiva.js REZ) in polnilo (maščevje in
+  // vezivo na ravnini rezanja znotraj kože, med deli). uRez = ravnina (normala, konstanta) za vzorec v senčilnikih.
+  const rezSkupno = { uSvetlost: skupno.uSvetlost, uRez: { value: new THREE.Vector4(0, -1, 0, 1) } };
+  const materialiReza = new Map(); // razred → material pokrova (BatchedMesh) ali null
+  const materialiRezaSij = new Map(); // razred → material pokrova izbranega dela (navadna mreža)
 
   // ---------- prizor ----------
-  const kit = ustvariSceno(oder, { kakovost, oznaka: t("a3.title"), fov: 32, ponastavi: () => ponastaviPogled(), preveriZakritje: false });
+  const kit = ustvariSceno(oder, { kakovost, oznaka: t("a3.title"), fov: 32, ponastavi: () => ponastaviPogled(), preveriZakritje: false, sablona: true });
   kit.controls.minDistance = 0.08;
   kit.controls.maxDistance = 6;
 
@@ -638,9 +643,149 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
         deli.set(k.row.id, del);
         sloj.deli.push(del);
       }
+      const mr = materialPokrova(seznamK[0].razred);
+      if (mr) bm.add(pokrovSkupine(bm, mr));
       sloj.skupine.push(bm);
       telo.add(bm);
     }
+    if (sloj.id === "koza") zgradiPolnilo(kandidati);
+  }
+
+  // ---------- prerez: pokrovi in polnilo ----------
+  const pokroviVkljuceni = () => prerez.on && !rentgen;
+  function materialPokrova(razred, zaSij = false) {
+    const mapa = zaSij ? materialiRezaSij : materialiReza;
+    // Pokrov izbranega dela ni zatemnjen (svetlost kot sij), ostali kot svoj sloj.
+    if (!mapa.has(razred)) mapa.set(razred, materialReza(razred, zaSij ? { ...rezSkupno, uSvetlost: svetSkupno.uSvetlost } : rezSkupno, [ravnina]));
+    return mapa.get(razred);
+  }
+  // Pokrov skupine: druga mreža z isto geometrijo in podatki primerkov (matrike, barve, vidnost, izbor za risanje) kot
+  // njen BatchedMesh, le z materialom pokrova; en klic risanja več na skupino, nič dodatnega pomnilnika.
+  const POLJA_SKUPINE = ["_multiDrawStarts", "_multiDrawCounts", "_multiDrawCount", "_matricesTexture", "_indirectTexture", "_colorsTexture"];
+  function pokrovSkupine(bm, mat) {
+    const p = new THREE.Mesh(bm.geometry, mat);
+    for (const k of POLJA_SKUPINE) Object.defineProperty(p, k, { get: () => bm[k] });
+    p.isBatchedMesh = true;
+    p.frustumCulled = false; // izbor primerkov naredi onBeforeRender skupine
+    p.matrixAutoUpdate = false;
+    p.renderOrder = 2.8; // za polnilom (2.7), ki ga pokrov prerezanega dela prekrije
+    p.raycast = () => {};
+    p.onBeforeRender = (...a) => bm.onBeforeRender(...a);
+    p.userData.pokrov = true;
+    p.visible = pokroviVkljuceni();
+    bm.userData.pokrov = p;
+    return p;
+  }
+  const brezPokrova = new THREE.MeshBasicMaterial({ visible: false });
+  const sijPokrov = new THREE.Mesh(new THREE.BufferGeometry(), brezPokrova);
+  sijPokrov.renderOrder = 2.9;
+  sijPokrov.raycast = () => {};
+  sijPokrov.visible = false;
+  sij.add(sijPokrov);
+
+  // Polnilo: koža (zunanja ovojnica) določi, kje je ravnina znotraj telesa (štetje prečkanj v šabloni, tkiva.js), tam se
+  // nariše ravnina v barvi maščevja in veziva; pokrovi prerezanih delov so narisani čeznjo. Koža je lahko skrita (uporabi se njena
+  // kopija brez vidnosti), dlake, nohti in uhlji (odprte ploskve) niso del ovojnice. Moška spolovila posebej (Žensko).
+  const parnost = { osnova: null, mosko: null };
+  const matParnosti = materialParnosti([ravnina]);
+  const polnilo = new THREE.Mesh(new THREE.PlaneGeometry(3, 3), materialPolnila(rezSkupno));
+  polnilo.renderOrder = 2.7;
+  polnilo.raycast = () => {};
+  polnilo.visible = false;
+  telo.add(polnilo);
+  // Koža je iz zaprtih tankih plošč (vsak predel: zunanja in notranja ploskev, povezani z robom). Za parnost štejemo
+  // le zunanjo ploskev: sicer bi žarek, ki oplazi ploskev ob obrisu (2 prečkanji), štel kot notranjost (2 prečkanji
+  // skozi zunanjo in notranjo plast) in ob vsakem obrisu bi ostala črta. Ploskvi sta največji gladko povezani skupini
+  // trikotnikov (sosednja z normalama pod manj kot 60°); zunanja je večja (telo je pretežno izbočeno).
+  function zunanjiTrikotniki(g) {
+    const P = g.attributes.position;
+    const I = g.index;
+    const T = I.count / 3;
+    const n = new Float32Array(T * 3);
+    const ploscina = new Float32Array(T);
+    const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3();
+    for (let t = 0; t < T; t++) {
+      a.fromBufferAttribute(P, I.getX(3 * t));
+      b.fromBufferAttribute(P, I.getX(3 * t + 1));
+      c.fromBufferAttribute(P, I.getX(3 * t + 2));
+      c.sub(a).cross(b.sub(a));
+      const l = c.length();
+      ploscina[t] = l / 2;
+      c.divideScalar(l || 1).toArray(n, 3 * t);
+    }
+    const stars = new Int32Array(T).map((_, i) => i);
+    const koren = (x) => {
+      while (stars[x] !== x) x = stars[x] = stars[stars[x]];
+      return x;
+    };
+    const robovi = new Map();
+    for (let t = 0; t < T; t++)
+      for (let s = 0; s < 3; s++) {
+        const i = I.getX(3 * t + s), j = I.getX(3 * t + ((s + 1) % 3));
+        const kl = i < j ? i * P.count + j : j * P.count + i;
+        const u = robovi.get(kl);
+        if (u === undefined) robovi.set(kl, t);
+        else if (n[3 * u] * n[3 * t] + n[3 * u + 1] * n[3 * t + 1] + n[3 * u + 2] * n[3 * t + 2] > 0.5) stars[koren(u)] = koren(t);
+      }
+    const vsota = new Map();
+    for (let t = 0; t < T; t++) vsota.set(koren(t), (vsota.get(koren(t)) || 0) + ploscina[t]);
+    const [prva, druga] = [...vsota].sort((x, y) => y[1] - x[1]);
+    // Ni plošča (ena sama ploskev ali neenaki ploskvi): vsi trikotniki.
+    if (!druga || druga[1] < 0.6 * prva[1]) return null;
+    const izbor = [];
+    for (let t = 0; t < T; t++) if (koren(t) === prva[0]) izbor.push(t);
+    return izbor;
+  }
+  function zgradiPolnilo(kandidati) {
+    const v = new THREE.Vector3();
+    const zdruzi = (seznamK) => {
+      if (!seznamK.length) return null;
+      const trikotniki = seznamK.map((k) => zunanjiTrikotniki(k.g));
+      const nV = seznamK.reduce((a, k) => a + k.g.attributes.position.count, 0);
+      const nI = seznamK.reduce((a, k, i) => a + (trikotniki[i] ? trikotniki[i].length * 3 : k.g.index.count), 0);
+      const pos = new Float32Array(nV * 3);
+      const idx = new Uint32Array(nI);
+      let o = 0, oi = 0;
+      seznamK.forEach((k, ki) => {
+        const P = k.g.attributes.position;
+        const I = k.g.index;
+        const tr = trikotniki[ki];
+        if (tr) for (const t of tr) for (let s = 0; s < 3; s++) idx[oi++] = I.getX(3 * t + s) + o;
+        else for (let i = 0; i < I.count; i++) idx[oi++] = I.getX(i) + o;
+        for (let i = 0; i < P.count; i++, o++) v.fromBufferAttribute(P, i).applyMatrix4(k.m0).toArray(pos, o * 3);
+      });
+      const g = new THREE.BufferGeometry();
+      g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+      g.setIndex(new THREE.BufferAttribute(idx, 1));
+      const m = new THREE.Mesh(g, matParnosti);
+      m.renderOrder = 2.6;
+      m.raycast = () => {};
+      m.frustumCulled = false;
+      m.visible = false;
+      telo.add(m);
+      return m;
+    };
+    const ovojnica = kandidati.filter((k) => /^Skin/.test(k.row.material || "") && !/^Skin-2/.test(k.row.material));
+    parnost.osnova = zdruzi(ovojnica.filter((k) => !MOSKO.test(k.row.ime)));
+    parnost.mosko = zdruzi(ovojnica.filter((k) => MOSKO.test(k.row.ime)));
+    osveziPolnilo();
+  }
+  function osveziPolnilo() {
+    const on = pokroviVkljuceni();
+    for (const s of sloji.values()) for (const bm of s.skupine) if (bm.userData.pokrov) bm.userData.pokrov.visible = on;
+    sijPokrov.visible = on && !!sijPokrov.material.userData.rez;
+    // Razmaknjeni deli niso več ena gmota: polnilo samo pri razmiku 0.
+    const telesno = on && razmik === 0 && !!parnost.osnova;
+    polnilo.visible = telesno;
+    if (parnost.osnova) parnost.osnova.visible = telesno;
+    if (parnost.mosko) parnost.mosko.visible = telesno && spol === "m";
+    if (on) {
+      rezSkupno.uRez.value.set(ravnina.normal.x, ravnina.normal.y, ravnina.normal.z, ravnina.constant);
+      polnilo.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), ravnina.normal);
+      // Projekcija središča telesa na ravnino: kvadrat 3 × 3 m pokrije vse telo pri vsaki osi.
+      polnilo.position.copy(ravnina.projectPoint(new THREE.Vector3(0, 0.9, 0), new THREE.Vector3()));
+    }
+    if (on && !sloji.get("koza").nalozen) naloziSloj("koza");
   }
 
   async function naloziSloj(id) {
@@ -721,6 +866,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       d.batch.setVisibleAt(d.inst, v && d.row.id !== izbran);
     }
     stVidnih = n;
+    osveziPolnilo();
     stevec.textContent = t("a3.visible", { n });
     stevec.classList.toggle("on", !!(samo || skrit.size || skriteSkupine.size));
     btnVse.hidden = !(samo || skrit.size || skriteSkupine.size);
@@ -750,6 +896,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     }
     if (izbran && deli.has(izbran)) sij.matrix.copy(deli.get(izbran).m);
     sij.matrixWorldNeedsUpdate = true;
+    osveziPolnilo();
     kit.narisi();
   }
   const sredisceDela = (d) => odmik(d.row, razmik, new THREE.Vector3()).add(new THREE.Vector3(...d.row.c));
@@ -771,7 +918,8 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       const osnova = m.userData.osnovaProsojnost;
       const jeSij = m.userData.sij;
       const prosojen = (rentgen && !jeSij) || osnova < 1;
-      const strani = prerez.on || m.userData.dvostransko ? THREE.DoubleSide : THREE.FrontSide;
+      // Prerez: razredi s pokrovom ostanejo enostranski (notranjost pokaže pokrov), ostali in rentgen dvostranski.
+      const strani = m.userData.dvostransko || (prerez.on && (rentgen || !materialPokrova(m.userData.razred))) ? THREE.DoubleSide : THREE.FrontSide;
       if (m.transparent !== prosojen || m.side !== strani || (m.clippingPlanes?.length || 0) !== (ravnine?.length || 0)) {
         m.transparent = prosojen;
         m.depthWrite = !prosojen;
@@ -782,6 +930,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       if (!jeSij) m.opacity = osnova;
     }
     for (const s of sloji.values()) for (const bm of s.skupine) bm.sortObjects = bm.material.transparent;
+    osveziPolnilo();
     vidiAO();
     kit.narisi();
   }
@@ -838,6 +987,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     sij.matrix.copy(d.m);
     sij.matrixWorldNeedsUpdate = true;
     sij.visible = true;
+    sijPokrov.geometry = d.geo;
+    sijPokrov.material = materialPokrova(d.razred, true) || brezPokrova;
+    sijPokrov.material.color.copy(d.barva);
     uporabiMateriale();
     if (!tiho) pokaziKartico(d.row);
     statusEl.textContent = tiho ? "" : d.row.prikaz;
@@ -932,10 +1084,33 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
 
   // Tap na model: izbira (ali odgovor v kvizu »Najdi strukturo«).
   const vidniObjekti = () => [...[...sloji.values()].flatMap((s) => (s.viden ? s.skupine : [])), ...(sij.visible ? [sij] : [])];
+  const _n = new THREE.Vector3();
+  const _mi = new THREE.Matrix4();
   function zadetek(ndc) {
-    const hits = kit.zadetki(ndc, vidniObjekti(), (h) => !prerez.on || ravnina.distanceToPoint(h.point) >= 0);
+    const zaRavnino = (h) => !prerez.on || ravnina.distanceToPoint(h.point) >= 0;
+    // S pokrovi so materiali enostranski, prerezan del pa je viden le s hrbtno ploskvijo: žarek preizkusi obe strani
+    // (side prebere le raycast; risanje ga ne opazi, ker material ni označen za posodobitev).
+    const enostranski = pokroviVkljuceni() ? [...materiali.values(), ...materialiSij.values()].filter((m) => m.side === THREE.FrontSide) : [];
+    for (const m of enostranski) m.side = THREE.DoubleSide;
+    let hits;
+    try {
+      hits = kit.zadetki(ndc, vidniObjekti(), zaRavnino);
+    } finally {
+      for (const m of enostranski) m.side = THREE.FrontSide;
+    }
     const h = hits[0];
     if (!h) return null;
+    // Pod polnilom (točka ravnine je v telesu) se vidi le prerezan del (hrbtna ploskev), globlji deli so skriti.
+    if (polnilo.visible && h.face) {
+      _n.copy(h.face.normal);
+      if (h.object.isBatchedMesh) _n.transformDirection(h.object.getMatrixAt(h.batchId, _mi));
+      else _n.transformDirection(h.object.matrixWorld);
+      if (_n.dot(kit.raycaster.ray.direction) < 0) {
+        const koza = [];
+        for (const m of [parnost.osnova, parnost.mosko]) if (m?.visible) THREE.Mesh.prototype.raycast.call(m, kit.raycaster, koza);
+        if (koza.filter(zaRavnino).length % 2) return null;
+      }
+    }
     if (h.object === sij) return izbran;
     return h.object.userData[h.batchId]?.row.id || null;
   }
@@ -1768,6 +1943,8 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       kit.unici();
       for (const s of sloji.values()) for (const bm of s.skupine) bm.dispose();
       for (const m of [...materiali.values(), ...materialiSij.values(), ...obrisi.map((o) => o.material)]) m.dispose();
+      for (const m of [...materialiReza.values(), ...materialiRezaSij.values(), brezPokrova, matParnosti, polnilo.material]) m?.dispose();
+      for (const o of [polnilo, parnost.osnova, parnost.mosko]) o?.geometry.dispose();
       senca.material.map.dispose();
       senca.material.dispose();
       senca.geometry.dispose();
