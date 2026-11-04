@@ -19,7 +19,7 @@ import { checkArithmetic } from "./lesson-math.js";
 export const OUR_PAPERS_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), "..", "content", "exam-papers");
 const FORMATS = ["open", "choice", "fill", "construct", "table"];
 const ID = /^(NPZ6|NPZ9|MATURA|POKLICNA)-(MAT|FIZ|KEM|BIO)-(?:(?:OR|VR)-)?\d{4}-[a-z0-9-]+$/;
-const SVG_BAD_RE = /<script|[\s/"']on\w+\s*=|javascript:|<foreignObject|xlink:href\s*=\s*["']?(?!#)|href\s*=\s*["']?(?!#)/i;
+const SVG_BAD_RE = /<script|[\s/"']on\w+\s*=|javascript:|<foreignObject|href\s*=\s*(?!["']?#)/i; // samo notranje povezave (<use href="#oznaka">)
 // Samo risarske oznake: <img>, <iframe>, <embed>, <style>, <set>/<animate> (href → javascript:) ipd. niso dovoljene.
 const SVG_TAGS = new Set(["svg", "g", "path", "circle", "ellipse", "line", "polyline", "polygon", "rect", "text", "tspan", "title", "desc", "defs", "marker", "use", "lineargradient", "stop", "clippath", "pattern"]);
 const SVG_BAD = { test: (s) => SVG_BAD_RE.test(s) || [...String(s).matchAll(/<\s*([a-zA-Z][\w:-]*)/g)].some((m) => !SVG_TAGS.has(m[1].toLowerCase())) };

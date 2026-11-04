@@ -42,7 +42,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
       const info = (paper.polas || []).find((x) => x.pola === tk.pola);
       h += `<h2 class="op-pola">${esc(t("pp.oursPola", { n: tk.pola }))}${info?.minutes ? ` <small>${esc(`${info.minutes} min`)}</small>` : ""}</h2>${info?.tools ? `<p class="op-tools">${esc(info.tools)}</p>` : ""}`;
     }
-    if (tk.section && (tk.section !== prev?.section || tk.pola !== prev?.pola)) h += `<h3 class="op-section">${esc(`${tk.section}) ${paper.sections?.[tk.section] || ""}`.trim())}</h3>`;
+    if (tk.section && (tk.section !== prev?.section || tk.pola !== prev?.pola)) h += `<h3 class="op-section">${esc(paper.sections?.[tk.section] || `${tk.section})`)}</h3>`;
     return h;
   };
   const partHtml = (tk, p) => {
