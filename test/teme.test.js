@@ -231,6 +231,7 @@ test("every history chat look and column set is styled in ui.css, readable and s
       assert.ok(/t-steps/.test(html.bottom), `${id}: temple().bottom`);
       assert.ok([html.top, html.bottom].every((s) => (s.match(/<svg/g) || []).length === (s.match(/aria-hidden="true"/g) || []).length - (s.match(/<div/g) || []).length), `${id}: deli pročelja so aria-hidden`);
       for (const k of ["t-roof", "t-ent", "t-col", "t-steps"]) assert.ok(css.includes(`.${k}`), `${id}: ui.css nima .${k}`);
+      assert.ok(e.chat && css.includes(`[data-chat-frame="${e.chat.frame}"]:not(.lite) .empty-hall > .t-roof`), `${id}: ui.css razporedi pročelje za chat.frame »${e.chat && e.chat.frame}«`);
     }
     // Stavba iz obdobja (building.front, npr. egipčanski pilon): ena risba z nespremenljivim razmerjem, aria-hidden,
     // brez stebrov in stopnic; ui.css jo razporedi za svoj chat.frame.
