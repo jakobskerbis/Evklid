@@ -330,7 +330,7 @@ export const SIM_TOPICS = {
   "KEM-OS-8/zgradba-atoma": ["atom", "Sestavi atom", { mode: "sestavi" }],
   "KEM-OS-8/periodni-sistem": ["periodni", "Periodni sistem elementov", { highlight: "skupine" }],
   "KEM-OS-8/razporeditev-elektronov": ["atom", "Razporeditev elektronov po lupinah", { mode: "lupine" }],
-  "KEM-OS-8/ionska-vez": [["vezi", "Ionska vez", { mode: "ionska" }], ["lab-elektroliza", "Laboratorij: ioni prevajajo tok (elektroliza)"]],
+  "KEM-OS-8/ionska-vez": [["vezi", "Ionska vez", { mode: "ionska" }], ["lab-prevodnost", "Laboratorij: raztopine ionskih spojin prevajajo tok"], ["lab-elektroliza", "Laboratorij: ioni prevajajo tok (elektroliza)"]],
   "KEM-OS-8/kovalentna-vez": ["vezi", "Kovalentna vez", { mode: "kovalentna" }],
   "KEM-OS-8/formule-spojin": ["formule", "Sestavljanje formul iz ionov"],
   "KEM-OS-8/kemijska-reakcija": [["enacbe", "Kemijska reakcija: atomi se preuredijo"], ["lab-elektroliza", "Laboratorij: razkroj vode na vodik in kisik"]],

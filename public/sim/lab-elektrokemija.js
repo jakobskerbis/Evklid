@@ -13,7 +13,7 @@ import {
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const seme = () => (Math.random() * 2 ** 31) | 0;
-const nb = " ";
+const nb = "\u00a0"; // nedeljiv presledek (število in enota v isti vrstici)
 const grp = (title, ...kids) => h("fieldset", { class: "lab-tit-grp" }, h("legend", {}, title), ...kids);
 const buttons = (...k) => h("div", { class: "demo-buttons" }, ...k);
 const row = (lab, ...kids) => h("div", { class: "lab-row" }, h("span", { class: "demo-slider-label" }, lab), ...kids);
@@ -63,7 +63,50 @@ function gradienti(svg) {
   lin("palica", [[0, "#7c838b"], [0.45, "#e1e5e9"], [1, "#6f767e"]]);
   lin("papir", [[0, "#cdbf9f"], [1, "#e9dfc4"]], { x2: 0, y2: 1 });
   lin("sonda", [[0, "#8f969d"], [0.5, "#eef1f3"], [1, "#7d848b"]]);
+  mehurGrad(svg, d);
   return d;
+}
+// Mehurček: skoraj prozorna sredina, temnejši rob (lom svetlobe na meji plin–tekočina), bel odsev zgoraj levo.
+function mehurGrad(svg, d) {
+  const mh = s("radialGradient", { id: `${svg.uid}-mehur`, cx: 0.5, cy: 0.5, r: 0.5, fx: 0.36, fy: 0.32 }, d);
+  for (const [o, c, a] of [[0, "#ffffff", 0.95], [0.28, "#ffffff", 0.3], [0.72, "#e6eef4", 0.12], [0.9, "#6d8aa3", 0.55], [1, "#4a6780", 0.85]]) s("stop", { offset: o, "stop-color": c, "stop-opacity": a }, mh);
+}
+// Plast za gibljive mehurčke: ločen SVG z istim viewBox nad risbo, v svoji plasti (will-change). Animacija tako v vsaki
+// sličici riše le mehurčke, ne cele risbe z gradienti in obrezovanji (na telefonu je bila to glavnina dela).
+// Risba se obnovi večkrat na sekundo; mehurčki se zamenjajo le, ko se spremeni njihov opis (število, pot, velikost),
+// sicer tečejo naprej brez ponovnega zagona animacij.
+function plastMehurckov(svg, W, H) {
+  const ov = svgBox(W, H, "lab-ek-ov");
+  ov.removeAttribute("role");
+  ov.setAttribute("aria-hidden", "true");
+  mehurGrad(ov, s("defs", {}, ov));
+  let cur = s("g", {}, ov), sig = "", n = 0;
+  const P = {
+    wrap: h("div", { class: "lab-ek-risba" }, svg, ov),
+    g: cur,
+    begin() {
+      n = 0;
+      P.g = s("g", {});
+      P.g._sig = [];
+      P.g._uid = ov.uid;
+    },
+    commit() {
+      const nov = P.g, ns = nov._sig.join(";");
+      if (ns !== sig) (cur.replaceWith(nov), (cur = nov), (sig = ns));
+      P.g = cur;
+    },
+    // obrezan del plasti (krog povečave)
+    krog(cx, cy, r) {
+      const id = `${ov.uid}-k${n++}`;
+      P.g._sig.push(`k${cx},${cy},${r}`);
+      s("circle", { cx, cy, r }, s("clipPath", { id }, P.g));
+      const c = s("g", { "clip-path": `url(#${id})` }, P.g);
+      c._sig = P.g._sig;
+      c._uid = ov.uid;
+      return c;
+    },
+  };
+  return P;
 }
 // Steklena cev ali posoda: obris z debelino stekla in odsevom.
 function steklo(g, svg, x, y, w, hh, { rx = 2, dno = true } = {}) {
@@ -82,11 +125,13 @@ function tekocina(g, svg, x, y, w, hh, fill, { menisk = true, rx = 0 } = {}) {
 function mehurcki(g, { x, w, y0, y1, n, r = [0.7, 1.5], v = 90, key = 0 }) {
   const d = y1 - y0;
   if (n <= 0 || d > -2) return;
+  g._sig?.push([x, w, y0, y1, n, ...r, v, key].map((q) => Math.round(q * 2)).join());
+  const fill = `url(#${g._uid ?? g.ownerSVGElement?.uid}-mehur)`;
   const dur = Math.abs(d) / v;
   for (let i = 0; i < n; i++) {
     const f = (i * 0.618 + key * 0.13) % 1, q = (i * 0.37 + key * 0.21) % 1;
     const T = dur * (0.8 + 0.4 * q);
-    s("circle", { cx: (x - w / 2 + ((i * 0.53 + 0.2 + key * 0.07) % 1) * w).toFixed(1), cy: y0.toFixed(1), r: (r[0] + q * (r[1] - r[0])).toFixed(2), class: "lab-ek-bub", style: `--d:${d.toFixed(1)}px;--dx:${((((i * 0.29) % 1) - 0.5) * 2.5).toFixed(1)}px;--f:${f.toFixed(2)};animation-duration:${T.toFixed(2)}s;animation-delay:${faza(T, f * T)}s` }, g);
+    s("circle", { cx: (x - w / 2 + ((i * 0.53 + 0.2 + key * 0.07) % 1) * w).toFixed(1), cy: y0.toFixed(1), r: (r[0] + q * (r[1] - r[0])).toFixed(2), fill, class: "lab-ek-bub", style: `--d:${d.toFixed(1)}px;--dx:${((((i * 0.29) % 1) - 0.5) * 2.5).toFixed(1)}px;--f:${f.toFixed(2)};animation-duration:${T.toFixed(2)}s;animation-delay:${faza(T, f * T)}s` }, g);
   }
 }
 // Vodnik z izolacijo (rdeča ali črna) in odsevom.
@@ -145,6 +190,7 @@ export function labElektroliza(el) {
   const svg = svgBox(W, H, "lab-bench lab-ek lab-ek-hof");
   gradienti(svg);
   const gBack = s("g", {}, svg), gLiq = s("g", {}, svg), gGlass = s("g", {}, svg), gTop = s("g", {}, svg);
+  const P = plastMehurckov(svg, W, H);
   const log = eventLog();
   const supL = lcd("napajalnik"), amL = lcd("ampermeter"), swL = lcd("štoparica"), thL = lcd("termometer v bučki"), baL = lcd("barometer"), vLL = lcd("cev levo"), vRL = lcd("cev desno");
   const table = dataTable([
@@ -188,7 +234,7 @@ export function labElektroliza(el) {
 
   layout(el, {
     extra: [
-      h("div", { class: "lab-tit-top" }, stageBox(svg, h("div", { class: "lab-meters" }, supL, amL, swL, vLL, vRL, thL, baL)), controlsBox(
+      h("div", { class: "lab-tit-top" }, stageBox(P.wrap, h("div", { class: "lab-meters" }, supL, amL, swL, vLL, vRL, thL, baL)), controlsBox(
         grp("1. Priprava", hint("Pipi naj bosta pri polnjenju odprti, da zrak uide iz cevi; ko tekočina pride do pip, ju zapri. Žveplova kislina in natrijev hidroksid sta jedka: zaščitna očala."), tekSel, cSel, elSeg, indT, buttons(fillBtn, emptyBtn), ...pipaT),
         grp("2. Električni krog", hint("Napajalnik, ampermeter in elektrodi so vezani zaporedno. Omejitev toka ščiti napajalnik; ampermeter ima na vhodu mA varovalko F 200 mA."), polSeg, amSel, uSl, iSl, onT, buttons(fuseBtn)),
         grp("3. Merjenje", hitrostSeg([1, 10, 60], 1, (v) => (speed = v)), buttons(swStart, swZero), autoT, buttons(recBtn, clrBtn)),
@@ -210,8 +256,8 @@ export function labElektroliza(el) {
     if (B.tek) return log.push("Aparat je že poln. Najprej ga izprazni in speri.", "warn");
     const r = B.napolni(tekId, conc);
     const ime = TEKOCINE_EL[tekId].name + (TEKOCINE_EL[tekId].konc ? ` ${cFmt(conc)} mol/L` : "");
-    if (r.ujet.some(Boolean)) log.push(`Natočil si ${ime}, a ${r.ujet.every(Boolean) ? "obe pipi sta bili zaprti" : "ena pipa je bila zaprta"}: zrak je ostal ujet v cevi. Odpri pipo, da zrak uide, in jo nato zapri.`, "warn");
-    else log.push(`V aparat si natočil ${ime}. Ko je tekočina do pip, pipi zapri.`, "ok");
+    if (r.ujet.some(Boolean)) log.push(`Natočil si tekočino (${ime}), a ${r.ujet.every(Boolean) ? "obe pipi sta bili zaprti" : "ena pipa je bila zaprta"}: zrak je ostal ujet v cevi. Odpri pipo, da zrak uide, in jo nato zapri.`, "warn");
+    else log.push(`V aparat si natočil tekočino: ${ime}. Ko je tekočina do pip, pipi zapri.`, "ok");
     if (TEKOCINE_EL[tekId].jedko || tekId === "h2so4") log.push("Pazi: tekočina je jedka. Nosi zaščitna očala.", "info");
     draw(true);
   }
@@ -262,9 +308,9 @@ export function labElektroliza(el) {
     if (!last || !(last.Vk > 2) || !(Q[Q.length - 1] > 0)) return calc.replaceChildren(h("p", { class: "muted" }, "Ko zapišeš nekaj meritev z vsaj 2 mL plina, se tu izračunajo naboj, množina vodika in Faradayeva konstanta iz tvojih podatkov. Premici na grafu sta napoved po Faradayevem zakonu (H₂: Q/2F, O₂: Q/4F) pri izmerjenem tlaku in temperaturi."));
     const Qs = Q[Q.length - 1], pw = pNas(T), n = ((p - pw) * last.Vk * 1e-6) / (R_PLIN * (T + 273.15)), Fx = Qs / (2 * n);
     calc.replaceChildren(
-      h("p", { html: `<b>Naboj:</b> <i>Q</i> = Σ <i>Ī</i>·Δ<i>t</i> = ${num(Qs, 1)} C (iz tvojih odčitkov toka in časa).` }),
-      h("p", { html: `<b>Vodik:</b> zračni tlak ${num(p / 1000, 1)} kPa, parni tlak vode pri ${num(T, 1)} °C ${num(pw / 1000, 2)} kPa, zato <i>n</i>(H₂) = (<i>p</i> − <i>p</i><sub>H₂O</sub>)·<i>V</i>/(<i>RT</i>) = ${num(n * 1000, 3)} mmol.` }),
-      h("p", { html: `<b>Faradayeva konstanta:</b> <i>F</i> = <i>Q</i>/(2<i>n</i>) = ${num(Fx, 0).replace(/\B(?=(\d{3})+(?!\d))/g, nb)} C/mol (literatura 96${nb}485 C/mol, odstopanje ${num(((Fx - F) / F) * 100, 1)} %).` }),
+      h("p", { html: `<b>Naboj:</b> <i>Q</i> = Σ <i>Ī</i>·Δ<i>t</i> = ${num(Qs, 1)}${nb}C (iz tvojih odčitkov toka in časa).` }),
+      h("p", { html: `<b>Vodik:</b> zračni tlak je ${num(p / 1000, 1)}${nb}kPa, parni tlak vode pri ${num(T, 1)}${nb}°C pa ${num(pw / 1000, 2)}${nb}kPa, zato je <i>n</i>(H₂) = (<i>p</i> − <i>p</i><sub>H₂O</sub>)·<i>V</i>/(<i>RT</i>) = ${num(n * 1000, 3)}${nb}mmol.` }),
+      h("p", { html: `<b>Faradayeva konstanta:</b> <i>F</i> = <i>Q</i>/(2<i>n</i>) = ${num(Fx, 0).replace(/\B(?=(\d{3})+(?!\d))/g, nb)}${nb}C/mol (literatura 96${nb}485${nb}C/mol, odstopanje ${num(((Fx - F) / F) * 100, 1)}${nb}%).` }),
       Number.isFinite(last.Va) && last.Va > 0.5 ? h("p", { html: `<b>Razmerje:</b> <i>V</i>(katoda) : <i>V</i>(anoda) = ${num(last.Vk / last.Va, 2)} : 1.` }) : null,
     );
     if (!asked && rows.length >= 3 && last.Vk >= 10 && ["h2so4", "na2so4", "naoh"].includes(B.tek?.id)) {
@@ -310,13 +356,13 @@ export function labElektroliza(el) {
   }
   function readouts() {
     const sp = B.readSupply();
-    supL.set(B.vklop ? num(sp.U, 1) : "", "V", B.vklop ? `${num(sp.I, 2)} A · ${sp.cc ? "CC (omejitev toka)" : "CV"}` : "izklopljen");
+    supL.set(B.vklop ? num(sp.U, 1) : "", "V", B.vklop ? `${num(sp.I, 2)}${nb}A · ${sp.cc ? "CC" : "CV"}` : "izklopljen");
     const a = B.readA(), r = AM_RANGES[B.amRange];
-    amL.set(a.over ? "OL" : a.text, r.unit, B.fuseOf().blown ? "varovalka pregorela" : `območje ${r.unit === "A" ? "10 A" : `${r.max * 1000} mA`}`);
+    amL.set(a.over ? "OL" : a.text, r.unit, B.fuseOf().blown ? "varovalka pregorela" : `območje ${r.unit === "A" ? `10${nb}A` : `${r.max * 1000}${nb}mA`}`);
     swL.set(ura(st.t), "", st.ura ? "teče" : "ustavljena");
     const T = B.readT();
     thL.set(B.tek ? T.text : "", "°C");
-    baL.set(num(barometerRead(B.lab.p, B.r), 1), "kPa", `v prostoru ${num(B.lab.T, 0)} °C`);
+    baL.set(num(barometerRead(B.lab.p, B.r), 1), "kPa", `v prostoru ${num(B.lab.T, 0)}${nb}°C`);
     for (const [i, L] of [[0, vLL], [1, vRL]]) {
       const o = B.odcitek(i);
       L.set(B.tek ? o.text : "", "mL", !B.tek ? "prazno" : B.pipa[i] ? "pipa odprta" : i === B.katoda ? "katoda (−)" : "anoda (+)");
@@ -347,12 +393,14 @@ export function labElektroliza(el) {
     // gumijasta zamaška z elektrodama spodaj
     for (const x of xs) s("rect", { x: x - wT / 2 - 0.5, y: yBot - 4, width: wT + 1, height: 9, rx: 1.5, fill: u(svg, "guma") }, gGlass);
     // merilna črta
-    s("path", { d: `M${44},${H - 8} v-4 h${5 * S} v4`, class: "lab-scale lab-ek-mizacrta" }, gGlass);
-    label(gGlass, 44 + 2.5 * S, H - 16, "5 cm", "lab-ek-miza");
+    // merilna črta na sprednjem robu mize (desno od podnožja stojala)
+    s("path", { d: `M${150},${H - 5} v-4 h${5 * S} v4`, class: "lab-scale lab-ek-mizacrta" }, gGlass);
+    label(gGlass, 150 + 5 * S + 4, H - 8, "5 cm", "lab-ek-miza", "start");
   }
   function draw(force) {
     if (force === true || !gBack.firstChild) drawStatic();
     gLiq.replaceChildren();
+    P.begin();
     gTop.replaceChildren();
     const tek = B.tek, Vs = B.volumni(), sp = B.readSupply(), s0 = B.last;
     const base = tek ? VODA_BARVA : null;
@@ -378,21 +426,22 @@ export function labElektroliza(el) {
       if (B.elektrode === "pt") s("rect", { x: x - 2.4, y: yE - 3, width: 4.8, height: 6.4, rx: 0.4, fill: u(svg, "m-Pt"), stroke: "#7d848b", "stroke-width": 0.4 }, gLiq);
       else s("rect", { x: x - 1.9, y: yE - 7, width: 3.8, height: 13, rx: 0.8, fill: u(svg, "m-C") }, gLiq);
       s("line", { x1: x, y1: yE + 3, x2: x, y2: yBot + 8, stroke: "#9aa1a8", "stroke-width": 1 }, gLiq);
-      // mehurčki od elektrode navzgor; več jih je pri večji gostoti toka
+      // mehurčki od elektrode navzgor; več jih je pri večji gostoti toka. Mehurčki pri elektrolizi so drobni (0,05–0,5 mm),
+      // v risbi so povečani, da se vidijo (vodikovi ~0,6 mm, kisikovi ~1 mm); roj se dviga s ~8 cm/s (ocena).
       const I = s0.If || 0;
       if (tek && I > 2e-4) {
         const iDen = (I / ELEKTRODE[B.elektrode].A) * (kat ? 1 : s0.fO2 * 0.5 + s0.fCl2 * 0.6 + s0.fCO2 * 0.5);
-        const n = Math.round(clamp(4 + 6 * Math.log10(iDen / 1e-4), 1, 22));
+        const n = Math.round(clamp(3 + 5 * Math.log10(iDen / 1e-4), 1, 16));
         const top = Math.max(ym + 2, y0 - 14);
-        if (yE - 4 > top) mehurcki(gLiq, { x, w: 5.5, y0: yE - 3, y1: top, n, r: kat ? [0.5, 1.1] : [0.7, 1.5], v: 15 * S, key: i });
-        if (B.arms[i].polna) mehurcki(gLiq, { x: xc, w: 3, y0: yCon, y1: yr + 2, n: Math.round(n / 2), r: [1, 1.8], v: 18 * S, key: 3 + i });
+        if (yE - 4 > top) mehurcki(P.g, { x, w: 4.5, y0: yE - 3, y1: top, n, r: kat ? [0.35, 0.7] : [0.5, 1], v: 8 * S, key: i });
+        if (B.arms[i].polna) mehurcki(P.g, { x: xc, w: 3, y0: yCon, y1: yr + 2, n: Math.round(n / 2), r: [0.9, 1.6], v: 14 * S, key: 3 + i });
       }
       // pipa: ročaj vzdolž cevi = odprta, prečno = zaprta
       const yt = y0 - 14;
       s("rect", { x: x - wT / 2 - 3, y: yt - 3, width: wT + 6, height: 6, rx: 3, fill: u(svg, "steklo"), class: "lab-ek-glass" }, gTop);
       s("path", { d: B.pipa[i] ? `M${x},${yt - 9} V${yt + 9}` : `M${x - 10},${yt} H${x + 10}`, class: "lab-ek-tap" }, gTop);
-      if (x < xc) label(gTop, x - 4, yBot + 22, kat ? "katoda (−)" : "anoda (+)", "tick small", "end");
-      else label(gTop, x, yBot + 44, kat ? "katoda (−)" : "anoda (+)", "tick small");
+      if (x < xc) label(gTop, x - 4, yBot + 22, kat ? "katoda (−)" : "anoda (+)", "tick small lab-ek-halo-bg", "end");
+      else label(gTop, x + 2, yBot + 44, kat ? "katoda (−)" : "anoda (+)", "tick small lab-ek-halo-bg");
       // krokodilček na priključku elektrode
       krokodil(gTop, x, yBot + 9, kat ? "k" : "r", 90);
     });
@@ -450,8 +499,9 @@ export function labElektroliza(el) {
     // povečani skali (lupa) ob meniskih in povečava elektrod
     for (const i of [0, 1]) lupaCev(gTop, svg, 176 + i * 112, 14, 104, 150, i);
     lupaElektrod(gTop, svg, 322, 262, 50);
+    P.commit();
     if (speed > 1) label(gTop, 320, H - 9, `čas teče ×${speed}`, "lab-warn small");
-    svg.setAttribute("aria-label", `Hofmannov aparat${tek ? ` s tekočino ${TEKOCINE_EL[tek.id].name}` : ", prazen"}. Levo ${B.katoda === 0 ? "katoda" : "anoda"}, desno ${B.katoda === 1 ? "katoda" : "anoda"}. Plin levo ${num(Vs[0], 1)} mL, desno ${num(Vs[1], 1)} mL. Pipi: ${B.pipa.map((p) => (p ? "odprta" : "zaprta")).join(", ")}. Napajalnik ${B.vklop ? "vklopljen" : "izklopljen"}.`);
+    svg.setAttribute("aria-label", `Hofmannov aparat${tek ? `, tekočina: ${TEKOCINE_EL[tek.id].name}` : ", prazen"}. Levo ${B.katoda === 0 ? "katoda" : "anoda"}, desno ${B.katoda === 1 ? "katoda" : "anoda"}. Plin levo ${num(Vs[0], 1)} mL, desno ${num(Vs[1], 1)} mL. Pipi: ${B.pipa.map((p) => (p ? "odprta" : "zaprta")).join(", ")}. Napajalnik ${B.vklop ? "vklopljen" : "izklopljen"}.`);
   }
   // Povečava elektrod (~4×): mehurčki vodika so drobnejši in jih je več, kisikovi večji (mehurčki 0,1–0,5 mm, ocena po fotografijah).
   function lupaElektrod(g, svg, cx, cy, r) {
@@ -469,9 +519,9 @@ export function labElektroliza(el) {
       if (I > 2e-4 && B.tek) {
         const iDen = (I / ELEKTRODE[B.elektrode].A) * (kat ? 1 : s0.fO2 * 0.5 + s0.fCl2 * 0.6 + s0.fCO2 * 0.5);
         const n = Math.round(clamp(6 + 9 * Math.log10(iDen / 1e-4), 2, 34));
-        mehurcki(c, { x: ex, w: (B.elektrode === "pt" ? 1 : 0.6) * M, y0: yE - (B.elektrode === "pt" ? 0.5 : 0.7) * M, y1: cy - r, n, r: kat ? [0.6, 1.4] : [1.1, 2.4], v: 15 * M, key: 5 + j });
+        mehurcki(P.krog(cx, cy, r), { x: ex, w: (B.elektrode === "pt" ? 1 : 0.6) * M, y0: yE - (B.elektrode === "pt" ? 0.5 : 0.7) * M, y1: cy - r, n, r: kat ? [0.6, 1.4] : [1.1, 2.4], v: 8 * M, key: 5 + j });
       }
-      label(c, ex, cy - r * 0.42, kat ? "katoda (−)" : "anoda (+)", "lab-ek-miza small lab-ek-halo");
+      label(c, ex + (kat ? 1.5 : -1.5), cy - 9, kat ? "katoda (−)" : "anoda (+)", "lab-ek-miza small lab-ek-halo");
     });
     s("line", { x1: cx, y1: cy - r, x2: cx, y2: cy + r, stroke: "var(--muted)", "stroke-width": 1, "stroke-dasharray": "3 3" }, g);
     s("circle", { cx, cy, r, class: "lab-sil-lupa-frame" }, g);
@@ -523,6 +573,7 @@ export function labGalvanski(el) {
   const svg = svgBox(W, H, "lab-bench lab-ek lab-ek-gal");
   gradienti(svg);
   const gBack = s("g", {}, svg), gD = s("g", {}, svg);
+  const P = plastMehurckov(svg, W, H);
   const log = eventLog();
   const vmL = lcd("voltmeter"), amL = lcd("ampermeter"), thL = lcd("temperatura raztopin");
   const table = dataTable([
@@ -558,7 +609,7 @@ export function labGalvanski(el) {
 
   layout(el, {
     extra: [
-      h("div", { class: "lab-tit-top" }, stageBox(svg, h("div", { class: "lab-meters" }, vmL, amL, thL)), controlsBox(
+      h("div", { class: "lab-tit-top" }, stageBox(P.wrap, h("div", { class: "lab-meters" }, vmL, amL, thL)), controlsBox(
         grp("1. Leva čaša", C[0].kSel, C[0].sSel, C[0].cSel, buttons(C[0].brus)),
         grp("2. Desna čaša", C[1].kSel, C[1].sSel, C[1].cSel, buttons(C[1].brus)),
         grp("3. Povezava", hint("Solni most sklene krog med raztopinama: po njem potujejo ioni. Brez njega tok ne more teči."), mostSeg),
@@ -567,8 +618,8 @@ export function labGalvanski(el) {
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table,
       h("h4", { class: "lab-h" }, "Napetost člena in vrsta potencialov"), graph,
-      h("h4", { class: "lab-h" }, "Koncentracijski člen"), graphK, qBox,
-      notes(POENOSTAVITVE_ELEKTROKEMIJA.galvanski, "Standardni elektrodni potenciali: CRC Handbook, »Electrochemical series« (Mg −2,372, Zn −0,762, Fe −0,447, Pb −0,126, Cu +0,342, Ag +0,800 V). Nernstova enačba <i>E</i> = <i>E</i>° + (<i>RT</i>/<i>zF</i>) ln <i>c</i>. Magnezij: mešani potencial ~−1,55 V (Song & Atrens 1999). Voltmeter ±(0,5 % + 2 digita), 10 MΩ. Ocene: upor solnega mostu (papir ~8 kΩ, U-cev ~0,4 kΩ), upor raztopin, oksidne plasti, nihanje potenciala."),
+      h("h4", { class: "lab-h" }, "Koncentracijski člen"), hint("Daj v obe čaši isto kovino v raztopini njene soli z različnima koncentracijama. Premica je idealna Nernstova napoved s koncentracijami, trikotniki so napoved z aktivnostmi (»dejavnimi« koncentracijami). Primerjaj, kam padejo tvoje meritve."), graphK, qBox,
+      notes(POENOSTAVITVE_ELEKTROKEMIJA.galvanski, "Standardni elektrodni potenciali: CRC Handbook, »Electrochemical series« (Mg −2,372, Zn −0,762, Fe −0,447, Pb −0,126, Cu +0,342, Ag +0,800 V). Nernstova enačba <i>E</i> = <i>E</i>° + (<i>RT</i>/<i>zF</i>) ln <i>c</i>. Aktivnostni koeficienti γ± pri 25 °C: Robinson & Stokes (1959), CRC Handbook (npr. CuSO₄ 0,41 pri 0,01 mol/L, 0,042 pri 1 mol/L). Magnezij: mešani potencial ~−1,55 V (ocena po Song & Atrens 1999). Voltmeter ±(0,5 % + 2 digita), 10 MΩ. Ocene: upor solnega mostu (papir ~8 kΩ, U-cev ~0,4 kΩ), upor raztopin, oksidne plasti, nihanje potenciala."),
     ],
     tryText: "Sestavi Daniellov člen (cink v ZnSO₄, baker v CuSO₄) in izmeri napetost brez solnega mostu in z njim. Napovej, kateri pari kovin dajo največjo napetost. Razredči eno raztopino: za koliko se spremeni napetost? Kaj pokaže člen iz dveh bakrovih elektrod v različno koncentriranih raztopinah?",
   });
@@ -594,7 +645,7 @@ export function labGalvanski(el) {
     table.add({ l: opis(B.casi[0]), d: opis(B.casi[1]), m: `${MOST_OPTS.find((m) => m[0] === B.most)[1].replace("trak filtrirnega papirja s KNO₃", "papir s KNO₃").replace("U-cev z agarjem in KNO₃", "U-cev")}${B.breme !== "brez" ? `, ${BREME[B.breme].name}${a && !a.over ? ` (${a.text.replace(".", ",")} ${Ir.unit})` : ""}` : ""}`, U: num(v.value, r.dec), E: num(dE, 2) });
     const [L, R] = B.casi;
     if (B.most === "papir" || B.most === "ucev") {
-      if (L.kovina === R.kovina && SOLI[L.sol].ion === L.kovina && SOLI[R.sol].ion === R.kovina) ptsK.push([Math.log10(B.casi[B.rdeca].c / B.casi[B.com].c), v.value * 1000]);
+      if (L.kovina === R.kovina && SOLI[L.sol].ion === L.kovina && SOLI[R.sol].ion === R.kovina) ptsK.push([Math.log10(B.casi[B.rdeca].c / B.casi[B.com].c), v.value * 1000, B.napovedAktivnost() * 1000]);
       else if (B.breme === "brez") pts.push([dE, v.value, L.kovina === "Mg" || R.kovina === "Mg"]);
     }
     if (B.most === "brez" || B.most === "suh") once("odprt", "Brez prevodne povezave med raztopinama krog ni sklenjen: voltmeter kaže le nekaj milivoltov, ki se spreminjajo.", "info");
@@ -606,7 +657,11 @@ export function labGalvanski(el) {
       { id: "mg", pts: pts.filter((p) => p[2]).map((p) => [p[0], p[1]]), cls: "c", shape: "^", label: "z magnezijem" },
     ].filter((x) => x.pts.length || x.id === "p"));
     const k = naklonDekada(B.lab.T, 2) * 1000;
-    graphK.draw([{ id: "k", pts: [...ptsK], cls: "b", shape: "o", label: "koncentracijski členi", line: (x) => k * x }]);
+    graphK.draw([
+      { id: "ideal", pts: [], cls: "a", label: "idealna Nernstova premica (koncentracije)", line: (x) => k * x },
+      { id: "akt", pts: ptsK.map((p) => [p[0], p[2]]), cls: "c", shape: "^", label: "napoved z aktivnostmi" },
+      { id: "k", pts: ptsK.map((p) => [p[0], p[1]]), cls: "b", shape: "o", label: "izmerjeno" },
+    ].filter((x) => x.pts.length || x.id === "ideal"));
     if (!asked && pts.length >= 3 && new Set(table.rows.map((r) => r.l + r.d)).size >= 3) {
       asked = true;
       qBox.append(conclusion({
@@ -622,12 +677,12 @@ export function labGalvanski(el) {
     if (!askedK && ptsK.some((p) => Math.abs(p[0]) >= 1)) {
       askedK = true;
       qBox.append(conclusion({
-        text: "Zakaj ima člen iz dveh bakrovih elektrod napetost, ko sta raztopini različno koncentrirani?",
+        text: "Zakaj ima člen iz dveh enakih elektrod napetost, ko sta raztopini različno koncentrirani, in zakaj je izmerjena napetost manjša od idealne Nernstove premice?",
         options: [
-          { t: "Potencial elektrode je odvisen od koncentracije ionov (Nernstova enačba): pri bakru se spremeni za 0,0296 V na desetkratno spremembo koncentracije, zato je elektroda v bolj koncentrirani raztopini pozitivni pol.", ok: true, why: "<i>E</i> = <i>E</i>° + (0,0592 V/2)·lg <i>c</i>. Pri razmerju 1 : 100 je razlika 2 · 0,0296 V = 0,059 V. V razredčeni raztopini se baker raztaplja, v koncentrirani se izloča, dokler se koncentraciji ne izenačita." },
-          { t: "Ker se ena elektroda segreje.", ok: false, why: "Obe raztopini imata enako temperaturo. Napetost nastane zaradi različnih koncentracij." },
-          { t: "Napetost je napaka merilnika; prava napetost je 0 V.", ok: false, why: "Pri enakih koncentracijah je napetost res skoraj 0 V, pri različnih pa je izmerjena napetost resnična in se ujema z Nernstovo enačbo." },
-          { t: "Ker je v bolj koncentrirani raztopini več vode.", ok: false, why: "Ravno obratno: v bolj koncentrirani je več bakrovih ionov. Prav število ionov Cu²⁺ v litru določa potencial." },
+          { t: "Potencial elektrode je odvisen od koncentracije ionov (Nernstova enačba), zato je elektroda v bolj koncentrirani raztopini pozitivni pol. V bolj koncentrirani raztopini ioni drug drugega ovirajo, zato je njihova »dejavna« koncentracija (aktivnost) manjša od prave in napetost manjša od idealne.", ok: true, why: "Idealno <i>E</i> = <i>E</i>° + (0,0592 V/2)·lg <i>c</i>: pri razmerju bakrovih raztopin 1 : 100 bi dobili 2 · 0,0296 V = 0,059 V. Natančneje velja <i>E</i> = <i>E</i>° + (0,0592 V/2)·lg <i>a</i>, <i>a</i> = γ·<i>c</i>. V 1 mol/L CuSO₄ je γ ≈ 0,04, v 0,01 mol/L pa ≈ 0,41, zato je razmerje aktivnosti le ~1 : 10 in napetost ~0,03 V. V razredčeni raztopini se baker raztaplja, v koncentrirani se izloča, dokler se raztopini ne izenačita." },
+          { t: "Napetost je napaka merilnika; prava napetost je 0 V.", ok: false, why: "Pri enakih koncentracijah je napetost res skoraj 0 V, pri različnih pa je resnična. Da je manjša od idealne, ni napaka: ujema se z Nernstovo enačbo, ko namesto koncentracij vzamemo aktivnosti." },
+          { t: "Del napetosti se porabi v solnem mostu, zato je manjša od idealne.", ok: false, why: "Voltmeter ima upor 10 MΩ, solni most le nekaj kΩ: na mostu ostane manj kot desetinka odstotka napetosti. Napetost je manjša, ker so aktivnosti ionov manjše od koncentracij." },
+          { t: "Ker je v bolj koncentrirani raztopini več vode.", ok: false, why: "Ravno obratno: v bolj koncentrirani je več bakrovih ionov. Potencial določa aktivnost ionov Cu²⁺, ki raste s koncentracijo, a počasneje kot koncentracija." },
         ],
       }));
     }
@@ -653,6 +708,7 @@ export function labGalvanski(el) {
   function draw() {
     gBack.replaceChildren();
     gD.replaceChildren();
+    P.begin();
     s("rect", { x: 0, y: yB, width: W, height: H - yB, fill: u(svg, "miza") }, gBack);
     const ex = (i) => bx[i] + bw / 2 - (i ? 8 : -8);
     B.casi.forEach((b, i) => {
@@ -665,7 +721,7 @@ export function labGalvanski(el) {
       s("rect", { x: sx, y: sy, width: sw, height: sh, rx: 1, fill: u(svg, `m-${b.kovina}`), stroke: "#555b62", "stroke-width": 0.5 }, gD);
       if (!b.obrusen) s("rect", { x: sx, y: sy, width: sw, height: sh, rx: 1, class: "lab-ek-oxid" }, gD);
       if (b.dep > 0.02) s("rect", { x: sx, y: yLiq, width: sw, height: sy + sh - yLiq, rx: 1, fill: PREVLEKA[SOLI[b.sol].ion] ?? "#555", opacity: (0.92 * b.dep).toFixed(2) }, gD);
-      if (b.kovina === "Mg" && B.most !== "brez") mehurcki(gD, { x: sx + sw / 2, w: sw, y0: sy + sh - 4, y1: yLiq + 2, n: 5, r: [0.6, 1.2], v: 12 * S, key: i });
+      if (b.kovina === "Mg" && B.most !== "brez") mehurcki(P.g, { x: sx + sw / 2, w: sw, y0: sy + sh - 4, y1: yLiq + 2, n: 5, r: [0.6, 1.2], v: 12 * S, key: i });
       steklo(gD, svg, x0, yB - bh, bw, bh, { rx: 4 });
       s("path", { d: `M${x0 - 3},${yB - bh} q3,0 3,3`, class: "lab-ek-glass-in" }, gD);
       for (let m = 20; m <= 80; m += 20) {
@@ -694,11 +750,15 @@ export function labGalvanski(el) {
     const jV = dm.jack("VΩ"), jC = dm.jack("COM");
     const top = (i) => [ex(i), yB - 10 * S - 10];
     const [rx, ry] = top(B.rdeca), [kx, ky] = top(B.com);
-    zica(gD, `M${rx},${ry} C${rx},${ry - 40} ${jV[0] - 10},${jV[1] + 60} ${jV[0]},${jV[1]}`, "r");
-    zica(gD, `M${kx},${ky} C${kx},${ky - 52} ${jC[0] - 30},${jC[1] + 72} ${jC[0]},${jC[1]}`, "k");
-    // porabnik na ploščici nad čašama
+    // vodnika gresta od krokodilčkov navzgor, čez čaši in mimo desne čaše navzdol do vtičnic (ne čez elektrodo)
+    const vod = (x, y, j, dy, k) => `M${x},${y} C${x},${y - dy} ${250 + k},${y - dy} ${256 + k},${j[1] - 4} S${j[0] - 14},${j[1] + 30} ${j[0]},${j[1]}`;
+    zica(gD, vod(rx, ry, jV, B.rdeca ? 34 : 48, 8), "r");
+    zica(gD, vod(kx, ky, jC, B.rdeca ? 48 : 34, 0), "k");
+    // porabnik na ploščici nad čašama, zaporedno z ampermetrom (multimeter na območju mA)
     if (B.breme !== "brez") {
-      const px = 98, py = 22, pw = 78, ph = 34, a = B.readA();
+      const px = 92, py = 22, pw = 78, ph = 34, a = B.readA(), Ir = AM_RANGES[B.amRange];
+      const am = multimeter(gD, svg, 196, 14, 46, 92, { text: a ? (a.over ? "OL" : a.text) : "", unit: Ir.unit, kot: B.amRange === "20m" ? 20 : 45, ime: "ampermeter" });
+      const jA = am.jack("mA"), jAc = am.jack("COM");
       s("rect", { x: px, y: py, width: pw, height: ph, rx: 3, fill: "#2e6b4a", stroke: "#1d4a32" }, gD);
       if (B.breme === "led") {
         s("path", { d: `M${px + 34},${py + 24} v-10 a5,5 0 0 1 10,0 v10 Z`, fill: B.last.sveti ? "#ff3b30" : "#d98b8b", stroke: "#8c1d18", "stroke-width": 0.8 }, gD);
@@ -710,12 +770,14 @@ export function labGalvanski(el) {
         s("rect", { x: px + 24, y: py + 13, width: 30, height: 8, rx: 3, fill: "#d9c79e", stroke: "#8a7650", "stroke-width": 0.8 }, gD);
         label(gD, px + pw / 2, py + 30, BREME[B.breme].name.replace("upornik ", ""), "lab-ek-panel");
       }
-      label(gD, px + pw / 2, py - 5, `${BREME[B.breme].name}${a ? `: ${a.over ? "OL" : a.text.replace(".", ",")} ${AM_RANGES[B.amRange].unit}` : ""}`, "tick small");
+      label(gD, px + pw / 2, py - 5, BREME[B.breme].name, "tick small");
       zica(gD, `M${px + 4},${py + ph / 2} C${px - 20},${py + ph / 2} ${ex(0)},${py + 60} ${ex(0)},${yB - 10 * S - 10}`, B.rdeca === 0 ? "r" : "k");
-      zica(gD, `M${px + pw - 4},${py + ph / 2} C${px + pw + 20},${py + ph / 2} ${ex(1)},${py + 60} ${ex(1)},${yB - 10 * S - 10}`, B.rdeca === 1 ? "r" : "k");
+      zica(gD, `M${px + pw - 4},${py + ph / 2} C${px + pw + 14},${py + ph / 2} ${jA[0] - 6},${jA[1] + 22} ${jA[0]},${jA[1]}`, B.rdeca === 1 ? "r" : "k");
+      zica(gD, `M${jAc[0]},${jAc[1]} C${jAc[0]},${jAc[1] + 26} ${ex(1)},${py + 64} ${ex(1)},${yB - 10 * S - 10}`, B.rdeca === 1 ? "r" : "k");
     }
     s("path", { d: `M${352},${H - 8} v-4 h${2 * S} v4`, class: "lab-scale lab-ek-mizacrta" }, gD);
     label(gD, 352 + S, H - 15, "2 cm", "lab-ek-miza");
+    P.commit();
     svg.setAttribute("aria-label", `Galvanski člen: levo ${opis(B.casi[0])}, desno ${opis(B.casi[1])}, ${MOST_OPTS.find((m) => m[0] === B.most)[1]}. Voltmeter kaže ${v.over ? "OL" : v.text.replace(".", ",") + " V"}.`);
   }
   redraw();
@@ -732,6 +794,7 @@ export function labKovine(el) {
   const svg = svgBox(W, H, "lab-bench lab-ek lab-ek-kov");
   gradienti(svg);
   const gD = s("g", {}, svg);
+  const P = plastMehurckov(svg, W, H);
   const log = eventLog();
   const swL = lcd("štoparica"), brL = lcd("plinska brizga"), thL = lcd("termometer"), baL = lcd("tehtnica");
   const table = dataTable([
@@ -766,7 +829,7 @@ export function labKovine(el) {
 
   layout(el, {
     extra: [
-      h("div", { class: "lab-tit-top" }, stageBox(svg, h("div", { class: "lab-meters" }, swL, brL, thL, baL)), controlsBox(
+      h("div", { class: "lab-tit-top" }, stageBox(P.wrap, h("div", { class: "lab-meters" }, swL, brL, thL, baL)), controlsBox(
         grp("1. Varnost", hint("Kisline so jedke, srebrov nitrat obarva kožo, pri reakciji nastaja vnetljiv vodik: zaščitna očala, brez ognja v bližini."), goggles),
         grp("2. Raztopina", rSel, cSel, brT, mesT, buttons(pourBtn)),
         grp("3. Kovina", kSel, oSel, mSel, buttons(addBtn, outBtn)),
@@ -784,7 +847,7 @@ export function labKovine(el) {
 
   function syncC() {
     const R = RAZTOPINE_K[rId];
-    cSel.sel.replaceChildren(...R.konc.map((c) => h("option", { value: String(c) }, `${cFmt(c)} mol/L${R.kislina && c >= 6 ? " (koncentrirana)" : ""}`)));
+    cSel.sel.replaceChildren(...R.konc.map((c) => h("option", { value: String(c) }, `${cFmt(c)} mol/L${R.kislina && c >= 6 ? " (jedka)" : ""}`)));
     rC = R.konc.includes(1) ? 1 : R.konc[R.konc.length - 1];
     cSel.sel.value = String(rC);
   }
@@ -798,7 +861,7 @@ export function labKovine(el) {
     run = null;
     tRun = 0;
     log.push(`Natočil si 50 mL: ${RAZTOPINE_K[rId].name} ${cFmt(rC)} mol/L${kis ? (B.brizga ? " v erlenmajerico z brizgo" : " v erlenmajerico (brez brizge)") : " v čašo"}.`, "ok");
-    if (r.dim) log.push("Koncentrirana klorovodikova kislina se kadi: hlapi HCl dražijo oči in dihala. Z njo se dela le v digestoriju; za ta poskus zadošča 1–2 mol/L.", "bad");
+    if (r.dim) log.push("Klorovodikova kislina 6 mol/L (~20 %) je jedka in ostro diši: hlapi HCl dražijo oči in dihala (vidno se kadi šele koncentrirana, ~37 %, 12 mol/L). Delaj v digestoriju; za ta poskus zadošča 1–2 mol/L.", "bad");
     if (rId === "AgNO3") log.push("Srebrov nitrat na koži pusti temne madeže: rokavice.", "info");
     draw();
   }
@@ -854,7 +917,7 @@ export function labKovine(el) {
   const mesta = [0, 1, 2, 3, 4].map((i) => select({ label: `${i + 1}. (${i === 0 ? "najbolj reaktivna" : i === 4 ? "najmanj reaktivna" : "…"})`, options: [["", "izberi"], ...VRSTA.map((k) => [k, `${KOVINE[k].name} (${k})`])], value: "" }));
   const checkBtn = button("Preveri vrstni red", () => checkOrder(), "primary small");
   const orderOut = h("p", { class: "lab-status", "aria-live": "polite" });
-  orderBox.append(hint("Iz preglednice razvrsti kovine od najbolj do najmanj reaktivne. Srebro sam ne preizkusiš, a iz poskusa z bakrom in raztopino srebrovega nitrata veš, kje je."), h("div", { class: "lab-ek-mesta" }, ...mesta), buttons(checkBtn), orderOut);
+  orderBox.append(hint("Iz preglednice razvrsti kovine od najbolj do najmanj reaktivne. Srebra ne preizkusiš sam, a iz poskusa z bakrom in raztopino srebrovega nitrata veš, kje je."), h("div", { class: "lab-ek-mesta" }, ...mesta), buttons(checkBtn), orderOut);
   function checkOrder() {
     const izb = mesta.map((m) => m.get());
     if (izb.some((x) => !x) || new Set(izb).size < 5) return (orderOut.textContent = "Vsako kovino izberi enkrat.");
@@ -892,6 +955,7 @@ export function labKovine(el) {
       if (B.batIzpadel) once(`bat-${run}`, "Bat je izpadel iz brizge: plina je bilo več kot 100 mL in je ušel. Uporabi manjšo maso kovine.", "bad");
       if (B.T > B.lab.T + 15) once(`vroce-${run}`, `Raztopina je vroča (${num(B.T, 0)} °C). Bučke ne drži v roki.`, "warn");
       if (B.tek && !RAZTOPINE_K[B.tek.id].kislina && B.prevleka() > 0.5) once(`prev-${run}`, prevlekaOpis(), "info");
+      if (B.kos.kovina === "Mg" && B.tek && !RAZTOPINE_K[B.tek.id].kislina && B.mehurcki() >= 2) once(`mgH2-${run}`, "Na magneziju se razvijajo mehurčki vodika: izločena kovina in magnezij tvorita drobne galvanske člene, na izločeni kovini se voda reducira do vodika (Mg + 2H₂O → Mg²⁺ + 2OH⁻ + H₂). Raztopina se segreva.", "info");
       if (B.tek && RAZTOPINE_K[B.tek.id].kislina && B.kos.m <= 1e-6) once(`konec-${run}`, "Kovina se je popolnoma raztopila; plin ne nastaja več.", "info");
       if (B.tek?.id === "HCl" && B.tek.nH < 1e-5 && B.kos.m > 0) once(`kis-${run}`, "Kislina je porabljena, del kovine je ostal: kislina je bila omejitveni reaktant.", "info");
     }
@@ -911,6 +975,7 @@ export function labKovine(el) {
   const yB = 268;
   function draw() {
     gD.replaceChildren();
+    P.begin();
     s("rect", { x: 0, y: yB, width: W, height: H - yB, fill: u(svg, "miza") }, gD);
     const t = B.tek, kis = t ? RAZTOPINE_K[t.id].kislina : rId in RAZTOPINE_K && RAZTOPINE_K[rId].kislina;
     const fx = 50, col = t ? B.barva() : null;
@@ -932,6 +997,7 @@ export function labKovine(el) {
         const foam = Math.min(B.pena, 120);
         liqTop = hAt(t.V);
         s("path", { d: `M${fx - wAt(liqTop) / 2},${liqTop} H${fx + wAt(liqTop) / 2} L${x0 + bw - 2},${yB - 3} Q${x0 + bw},${yB} ${x0 + bw - 4},${yB} H${x0 + 4} Q${x0},${yB} ${x0 + 2},${yB - 3} Z`, fill: liqCol, class: "lab-ek-liq" }, gD);
+        s("path", { d: `M${fx - wAt(liqTop) / 2 + 0.5},${liqTop - 1.2} Q${fx},${liqTop + 1.2} ${fx + wAt(liqTop) / 2 - 0.5},${liqTop - 1.2}`, class: "lab-ek-menisk" }, gD);
         if (foam > 2) {
           const yf = Math.max(yB - hh, hAt(t.V + foam));
           s("path", { d: `M${fx - wAt(yf) / 2},${yf} Q${fx},${yf - 4} ${fx + wAt(yf) / 2},${yf} L${fx + wAt(liqTop) / 2},${liqTop} H${fx - wAt(liqTop) / 2} Z`, class: "lab-ek-foam" }, gD);
@@ -948,6 +1014,7 @@ export function labKovine(el) {
       }
       kos(fx, liqTop, bw * 0.7);
       s("path", { d: body, fill: u(svg, "steklo"), class: "lab-ek-glass" }, gD);
+      if (t && B.kos && B.kos.m > 1e-6) povecavaKis(54, 58, 44, liqCol);
       s("path", { d: `M${fx - nw / 2 + 3},${yB - hh + 4} V${yN + 2} L${x0 + 8},${yB - 10}`, class: "lab-ek-hl-line" }, gD);
       label(gD, 4, yB + 12, "erlenmajerica 100 mL", "lab-ek-miza", "start");
       // zamašek s cevko in sondo termometra
@@ -979,6 +1046,7 @@ export function labKovine(el) {
     if (speed > 1) label(gD, 340, 14, `čas teče ×${speed}`, "lab-warn small");
     s("path", { d: `M${340},${H - 8} v-4 h${5 * S} v4`, class: "lab-scale lab-ek-mizacrta" }, gD);
     label(gD, 340 + 2.5 * S, H - 15, "5 cm", "lab-ek-miza");
+    P.commit();
     svg.setAttribute("aria-label", `${t ? `${RAZTOPINE_K[t.id].name} ${cFmt(t.c)} mol/L` : "Prazna posoda"}${B.kos ? `, v njej ${KOVINE[B.kos.kovina].name} (${OBLIKE[B.kos.oblika].name}), mehurčki: ${["ni", "posamezni", "zmerno", "živahno", "burno"][B.mehurcki()]}${B.prevleka() > 0.3 ? ", kovina je prevlečena" : ""}` : ""}${B.brizga && t ? `, v brizgi ${B.odcitekBrizge().text.replace(".", ",")} mL` : ""}.`);
   }
   // Kovina v posodi: trak (pri Mg ob burni reakciji priplava na gladino), granule ali prah; prevleka po izpodrivanju.
@@ -995,7 +1063,7 @@ export function labKovine(el) {
         s("rect", { x: x0, y: y0, width: wS, height: L * f + (1 - f) * 0, fill: u(svg, `m-${k.kovina}`), stroke: "#555b62", "stroke-width": 0.4, transform: `rotate(-12 ${x0} ${y1})` }, gD);
         if (over) s("rect", { x: x0, y: yTop - 1, width: wS, height: y1 - yTop + 1, ...over, transform: `rotate(-12 ${x0} ${y1})` }, gD);
         if (pr > 0.4 && ion === "Ag") for (let i = 0; i < 6; i++) s("path", { d: `M${x0 + 2 + i * 1.2},${yTop + 3 + (i % 3) * 2} l-3,-${3 + (i % 2) * 2} M${x0 + 2 + i * 1.2},${yTop + 3 + (i % 3) * 2} l3,-${2 + (i % 3)}`, stroke: "#e8ecef", "stroke-width": 0.8, transform: `rotate(-12 ${x0} ${y1})` }, gD);
-        if (m > 0) mehurcki(gD, { x: x0 + wS / 2, w: wS, y0: y1 - 2, y1: yTop + 1, n: [0, 2, 5, 9, 14][m], r: [0.6, 1.2], v: 15 * S });
+        if (m > 0) mehurcki(P.g, { x: x0 + wS / 2, w: wS, y0: y1 - 2, y1: yTop + 1, n: [0, 2, 5, 9, 14][m], r: [0.6, 1.2], v: 15 * S });
         return;
       }
       // magnezijev trak mehurčki dvignejo s dna (ocena), sicer leži na dnu
@@ -1019,7 +1087,7 @@ export function labKovine(el) {
       parts.push([x - w / 2.6, x + w / 2.6, yb - hP]);
     }
     if (m >= 3) for (let i = 0; i < (m >= 4 ? 18 : 9); i++) s("circle", { cx: x - w / 2 + ((i * 0.618) % 1) * w, cy: yTop - 0.5 - ((i * 0.37) % 1) * 1.5, r: 0.8 + ((i * 0.29) % 1), class: "lab-ek-foam-b" }, gD); // pena na gladini
-    if (m > 0) for (const [a, b, y] of parts) mehurcki(gD, { x: (a + b) / 2, w: Math.max(3, b - a), y0: y, y1: yTop + 1, n: Math.ceil([0, 1, 3, 6, 12][m] / Math.max(1, parts.length / 2)), r: m >= 4 ? [0.7, 1.8] : [0.5, 1.2], v: 15 * S, key: Math.round(a) });
+    if (m > 0) for (const [a, b, y] of parts) mehurcki(P.g, { x: (a + b) / 2, w: Math.max(3, b - a), y0: y, y1: yTop + 1, n: Math.ceil([0, 1, 3, 6, 12][m] / Math.max(1, parts.length / 2)), r: m >= 4 ? [0.7, 1.8] : [0.5, 1.2], v: 15 * S, key: Math.round(a) });
   }
   // Povečava (~4×) kovine v raztopini soli: prevleka raste na potopljenem delu (gobast baker, iglice srebra, temno železo ali cink).
   function povecava(cx, cy, r, liqCol) {
@@ -1047,7 +1115,7 @@ export function labKovine(el) {
         s("rect", { x: x0, y: cy - r, width: w, height: 2 * r, fill: u(svg, `m-${k.kovina}`) }, c);
         s("rect", { x: x0 + w * 0.3, y: cy - r, width: 3, height: 2 * r, fill: "rgb(255 255 255 / 0.35)" }, c);
         drawCoat(x0, yl, w, cy + r - yl);
-        if (m > 0) mehurcki(c, { x: cx, w: w + 10, y0: cy + r, y1: yl + 3, n: [0, 3, 6, 10, 16][m], r: [1.5, 3.5], v: 15 * S * 4, key: 7 });
+        if (m > 0) mehurcki(P.krog(cx, cy, r), { x: cx, w: w + 10, y0: cy + r, y1: yl + 3, n: [0, 3, 6, 10, 16][m], r: [1.5, 3.5], v: 15 * S * 4, key: 7 });
       } else {
         const n = k.oblika === "prah" ? 26 : 5, yb = cy + r * 0.85;
         for (let i = 0; i < n; i++) {
@@ -1055,12 +1123,45 @@ export function labKovine(el) {
           s("ellipse", { cx: gx, cy: gy, rx: rr * 1.15, ry: rr * 0.8, fill: u(svg, `m-${k.kovina}`), stroke: "#4d535a", "stroke-width": 0.5 }, c);
           if (pr > 0.02 && PREVLEKA[ion]) s("ellipse", { cx: gx, cy: gy, rx: rr * 1.15, ry: rr * 0.8, fill: PREVLEKA[ion], opacity: (0.85 * pr).toFixed(2) }, c);
         }
-        if (m > 0) mehurcki(c, { x: cx, w: r * 1.2, y0: yb - 10, y1: yl + 3, n: [0, 3, 6, 10, 16][m], r: [1.5, 3.5], v: 15 * S * 4, key: 8 });
+        if (m > 0) mehurcki(P.krog(cx, cy, r), { x: cx, w: r * 1.2, y0: yb - 10, y1: yl + 3, n: [0, 3, 6, 10, 16][m], r: [1.5, 3.5], v: 15 * S * 4, key: 8 });
       }
     }
     s("circle", { cx, cy, r, class: "lab-sil-lupa-frame" }, gD);
     s("line", { x1: cx - r * 0.72, y1: cy + r * 0.72, x2: cx - r * 1.1, y2: cy + r * 1.1, stroke: "#4a4f55", "stroke-width": 7, "stroke-linecap": "round" }, gD);
     label(gD, cx, cy - r - 8, "povečava ~4× (kovina v raztopini)", "tick small");
+  }
+  // Povečava (~4×, 1 cm = 32 enot) dna erlenmajerice: kovina in mehurčki vodika, ki so v pravem merilu komaj vidni.
+  // Mehurčki vodika ob kovini merijo 0,1–1 mm in se dvigajo s ~4 cm/s (ocena po Stokesovem zakonu).
+  function povecavaKis(cx, cy, r, liqCol) {
+    const id = `${svg.uid}-povk`, k = B.kos, m = B.mehurcki(), M = 4 * S, yDno = cy + r * 0.6;
+    const pseudo = (i, a) => ((Math.sin(i * 12.9898 + a * 78.233) * 43758.5453) % 1 + 1) % 1;
+    s("circle", { cx, cy, r }, s("clipPath", { id }, s("defs", {}, gD)));
+    const c = s("g", { "clip-path": `url(#${id})` }, gD);
+    s("rect", { x: cx - r, y: cy - r, width: 2 * r, height: 2 * r, fill: liqCol }, c);
+    s("rect", { x: cx - r, y: yDno, width: 2 * r, height: r, fill: u(svg, "steklo"), class: "lab-ek-glass" }, c);
+    const f = Math.max(0.15, (k.m / k.m0) ** 0.5), parts = [];
+    if (k.oblika === "trak") {
+      const L = (2 * r - 12) * Math.min(1, 1.3 * f), yS = k.kovina === "Mg" && m >= 3 ? cy - r * 0.15 : yDno - 3;
+      s("path", { d: `M${cx - L / 2},${yS} q${L / 4},-7 ${L / 2},0 t${L / 2},0`, fill: "none", stroke: u(svg, `m-${k.kovina}`), "stroke-width": 4.5, "stroke-linecap": "round" }, c);
+      // mehurčki, ki se še držijo traku
+      for (let i = 0; i < [0, 3, 7, 12, 18][m]; i++) {
+        const q = pseudo(i, 11), x = cx - L / 2 + q * L, rr = 0.7 + 1.1 * pseudo(i, 12);
+        s("circle", { cx: x.toFixed(1), cy: (yS - 3.5 * Math.sin(2 * Math.PI * q) + (i % 2 ? -2.6 : 2.6) - (i % 2 ? rr : -rr) * 0.6).toFixed(1), r: rr.toFixed(2), fill: u(svg, "mehur"), class: "lab-ek-bubst" }, c);
+      }
+      parts.push([cx - L / 2, cx + L / 2, yS - 2]);
+    } else {
+      const prah = k.oblika === "prah", n = prah ? Math.max(6, Math.round(34 * f)) : Math.max(1, Math.round(4 * f));
+      for (let i = 0; i < n; i++) {
+        const rr = prah ? 1.4 + 1.2 * pseudo(i, 9) : (6 + 3 * pseudo(i, 9)) * Math.max(0.5, f), gx = cx - r * 0.6 + pseudo(i, 8) * r * 1.2, gy = yDno - rr * 0.7 - (prah ? pseudo(i, 10) * 5 * f : 0);
+        s("ellipse", { cx: gx, cy: gy, rx: rr * 1.15, ry: rr * 0.8, fill: u(svg, `m-${k.kovina}`), stroke: "#4d535a", "stroke-width": 0.4 }, c);
+        if (!prah) parts.push([gx - rr, gx + rr, gy - rr * 0.6]);
+      }
+      if (prah) parts.push([cx - r * 0.6, cx + r * 0.6, yDno - 4]);
+    }
+    const pc = m > 0 ? P.krog(cx, cy, r) : null;
+    if (m > 0) for (const [a, b, y] of parts) mehurcki(pc, { x: (a + b) / 2, w: b - a, y0: y, y1: cy - r, n: Math.ceil([0, 3, 6, 10, 16][m] / Math.max(1, parts.length / 2)), r: m >= 4 ? [1, 2.6] : [0.7, 1.8], v: 4 * M, key: 9 + Math.round(a) });
+    s("circle", { cx, cy, r, class: "lab-sil-lupa-frame" }, gD);
+    label(gD, 4, cy - r - 6, "kovina, povečano ~4×", "tick small", "start");
   }
   // Plinska brizga 100 mL: valj 15 cm za 100 mL, bat in drog, prijemalo na stojalu; povečava ob robu bata.
   function brizga(sy) {
@@ -1071,10 +1172,10 @@ export function labKovine(el) {
     s("rect", { x: x0 - 6, y: sy - 3, width: 8, height: 6, fill: u(svg, "steklo"), class: "lab-ek-glass" }, gD);
     // bat in drog
     if (!B.batIzpadel) {
-      s("rect", { x: xp, y: sy - d / 2 + 2, width: 5, height: d - 4, rx: 1, fill: "#3b3f45" }, gD);
+      s("rect", { x: xp, y: sy - d / 2 + 2, width: 5, height: d - 4, rx: 1, fill: "#3b3f45", stroke: "#8a929b", "stroke-width": 0.5 }, gD);
       s("rect", { x: xp + 5, y: sy - 2.5, width: L + 10, height: 5, fill: u(svg, "steklo"), class: "lab-ek-glass" }, gD);
       s("rect", { x: xp + L + 12, y: sy - d / 2 - 2, width: 4, height: d + 4, rx: 1.5, fill: u(svg, "steklo"), class: "lab-ek-glass" }, gD);
-    } else s("rect", { x: 330, y: yB - 6, width: L * 0.6, height: 6, rx: 2, fill: u(svg, "steklo"), class: "lab-ek-glass", transform: `rotate(-6 330 ${yB})` }, gD);
+    } else s("rect", { x: 298, y: yB - 6, width: L * 0.6, height: 6, rx: 2, fill: u(svg, "steklo"), class: "lab-ek-glass", transform: `rotate(-6 298 ${yB})` }, gD);
     s("rect", { x: x0, y: sy - d / 2, width: L + 8, height: d, rx: 3, fill: u(svg, "steklo"), class: "lab-ek-glass" }, gD);
     s("rect", { x: x0 + 2, y: sy - d / 2 + 3, width: L + 4, height: 2.5, class: "lab-ek-hl" }, gD);
     s("path", { d: `M${236 - 6},${sy - d / 2 - 2} h12 M${236 - 6},${sy + d / 2 + 2} h12`, stroke: "#5a626b", "stroke-width": 3, "stroke-linecap": "round" }, gD);
@@ -1091,7 +1192,7 @@ export function labKovine(el) {
     const c = s("g", { "clip-path": `url(#${id})` }, gD);
     s("rect", { x: lx, y: ly + 8, width: lw, height: lh - 16, fill: u(svg, "steklo") }, c);
     if (!B.batIzpadel) {
-      s("rect", { x: X(vc), y: ly + 24, width: 26, height: lh - 34, rx: 2, fill: "#3b3f45" }, c);
+      s("rect", { x: X(vc), y: ly + 24, width: 26, height: lh - 34, rx: 2, fill: "#3b3f45", stroke: "#8a929b", "stroke-width": 1 }, c);
       s("line", { x1: X(vc), y1: ly + 20, x2: X(vc), y2: ly + lh - 8, class: "lab-tit-sight" }, c);
     }
     for (let n = Math.ceil(vc - 5); n <= Math.floor(vc + 5); n++) {
@@ -1101,7 +1202,7 @@ export function labKovine(el) {
       if (mid) label(c, x, ly + 15, String(n), "tick b");
     }
     s("rect", { x: lx, y: ly, width: lw, height: lh, rx: 8, class: "lab-sil-lupa-frame" }, gD);
-    label(gD, lx + lw / 2, ly + lh + 11, "povečano: rob bata pokaže prostornino", "tick small");
+    label(gD, lx + lw / 2, ly + lh + 11, "povečano: rob bata pokaže prostornino", "tick small lab-ek-halo-bg");
   }
   syncC();
   drawGrid();

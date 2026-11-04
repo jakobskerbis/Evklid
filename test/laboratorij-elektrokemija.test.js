@@ -4,7 +4,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   F, nernst, naklonDekada, faradayMol, prostorninaPlina, hH2SO4, phIzX, ElektrolizaBench, TEKOCINE_EL, HOFMANN,
-  GalvanBench, KOVINE, SOLI, BREME, KovineBench, KINETIKA, reagiraS, VRSTA, barvaRaztopine, meterSpec, POENOSTAVITVE_ELEKTROKEMIJA,
+  GalvanBench, KOVINE, SOLI, BREME, KovineBench, KINETIKA, reagiraS, VRSTA, barvaRaztopine, meterSpec, POENOSTAVITVE_ELEKTROKEMIJA, U_TN_CL2,
 } from "../public/sim/lab-model-elektrokemija.js";
 import { AM_RANGES, VM_RANGES } from "../public/sim/lab-model.js";
 import { pNas } from "../public/sim/lab-model-toplota.js";
@@ -121,6 +121,8 @@ test("mistake: too high current warms the liquid (Joule heating) and the 200 mA 
   const S = hofmann({ id: "h2so4", c: 0.5, Ilim: 0.05 });
   S.step(600);
   assert.ok(S.T - 22 < 0.6, "pri 50 mA skoraj nič");
+  assert.ok(S.last.cc && Math.abs(S.last.If - 0.05) < 1e-9, "napajalnik omeji tok (CC)");
+  assert.ok(S.readSupply().U < 12, "v CC napajalnik zniža napetost");
   const P = hofmann({ id: "h2so4", c: 1, Ilim: 1, range: "200m" });
   P.step(5);
   assert.ok(P.fuseOf().blown, "varovalka F 200 mA pregori pri ~0,5 A");
@@ -137,6 +139,8 @@ test("NaCl: chlorine at the anode (partly dissolves), volume ratio far from 2 : 
   assert.ok(B.sestava(B.anoda).Cl2 > 0.5);
   assert.ok(B.pH(B.katoda) > 11 && B.pH(B.anoda) < 4, "pH ob katodi in anodi");
   assert.ok(B.preskus(B.anoda, "lakmus").plin === "Cl2" || B.volumni()[B.anoda] < 1.5);
+  // termonevtralna napetost za Cl₂ je 2,311 V (ΔfH NBS), zato pri istem toku in napetosti greje manj kot elektroliza vode
+  near(((-2 * 470.11 + 2 * 407.27 + 2 * 285.83) * 1000) / (2 * F), U_TN_CL2, 0.001, "ΔH(2NaCl + 2H₂O → Cl₂ + H₂ + 2NaOH)/2F");
   // pri 0,1 mol/L več kisika (manj kloridov ob anodi)
   const D = hofmann({ id: "nacl", c: 0.1, Ilim: 0.3 });
   D.step(900);
@@ -198,19 +202,28 @@ test("Daniell cell Zn | Cu 1 mol/L at 25 °C: 1,10 V ± 0,01", () => {
   near(G.last.U, 1.1, 0.01, "na sponkah voltmetra 10 MΩ");
 });
 
-test("Nernst slope 0,0296 V per decade for n = 2 at 25 °C (±0,5 mV), 0,0592 for Ag", () => {
+test("Nernst: ideal slope 0,0296 V per decade (n = 2) and 0,0592 (Ag); the real cell follows activities (γ±, Robinson & Stokes)", () => {
   near(naklonDekada(25, 2), 0.0296, 0.0005, "RT ln10 / 2F");
-  const e = (c) => clen("Zn", 1, "Cu", c).emf();
-  near((e(1) - e(0.001)) / 3, 0.0296, 0.0005, "Daniell z redčenjem CuSO₄");
-  const a = (c) => clen("Cu", 1, "Ag", c).emf();
-  near((a(1) - a(0.01)) / 2, 0.0592, 0.0005, "srebro, n = 1");
   near(nernst(25, 1), 0.025693, 1e-6, "RT/F pri 25 °C");
+  const e = (c) => clen("Zn", 1, "Cu", c);
+  near((e(1).napovedNernst() - e(0.001).napovedNernst()) / 3, 0.0296, 0.0005, "idealna premica: Daniell z redčenjem CuSO₄");
+  // z aktivnostmi: lg(0,0423 · 1 / (0,74 · 0,001)) = 1,757 dekade namesto 3 → 0,0520 V (γ± CuSO₄ R&S/CRC, ±10 % → ±3 mV)
+  near(e(1).emf() - e(0.001).emf(), 0.052, 0.003, "resnični člen: manjša sprememba od idealne");
+  assert.ok(e(1).emf() - e(0.001).emf() < 0.8 * (e(1).napovedNernst() - e(0.001).napovedNernst()), "izmerjeno pod idealno premico");
+  const a = (c) => clen("Cu", 1, "Ag", c);
+  near((a(1).napovedNernst() - a(0.01).napovedNernst()) / 2, 0.0592, 0.0005, "srebro, n = 1, idealno");
+  // AgNO₃ γ± 0,429 (1 M) in 0,90 (0,01 M): 0,0592 · lg(0,429/0,009) / 2 = 0,0497 V na dekado
+  near((a(1).emf() - a(0.01).emf()) / 2, 0.0497, 0.002, "srebro z aktivnostmi");
+  near(clen("Zn", 0.01, "Cu", 0.01).emf(), 1.1, 0.01, "Daniell pri enakih koncentracijah: aktivnosti se odštejejo");
 });
 
-test("concentration cell Cu 0,01 | Cu 1: 0,059 V ± 2 mV; same metal and concentration: 0 V", () => {
+test("concentration cell Cu 0,01 | Cu 1: real ≈ 0,030 V (ideal 0,059 V); same metal and concentration: 0 V", () => {
   const G = clen("Cu", 0.01, "Cu", 1);
-  near(G.emf(), 0.059, 0.002, "koncentracijski člen");
-  near(G.last.U, 0.059, 0.002, "na voltmetru");
+  // γ± CuSO₄ 0,41 (0,01 M) in 0,0423 (1 M): 0,0296 · lg(0,0423/0,0041) = 0,030 V; ±3 mV za negotovost γ± (~10 %)
+  near(G.emf(), 0.03, 0.003, "koncentracijski člen z aktivnostmi");
+  near(G.last.U, 0.03, 0.003, "na voltmetru");
+  near(G.napovedNernst(), 0.0592, 0.001, "idealna Nernstova napoved s koncentracijami");
+  near(G.napovedAktivnost(), G.emf(), 1e-9, "napoved z aktivnostmi = model (obrušeni elektrodi, brez nihanja)");
   for (let s = 1; s <= 20; s++) {
     const Z = clen("Zn", 0.1, "Zn", 0.1, { seed: s });
     Z.step(30);
@@ -355,11 +368,22 @@ test("Zn powder in CuSO₄: blue fades, solution warms; Cu in AgNO₃ turns the 
   near(barvaRaztopine({}, 4)[2], 250, 0, "brezbarvna");
 });
 
+test("Mg in a salt of a nobler metal: H₂ bubbles at the deposited metal (micro-cells), warms; Mg in MgSO₄ almost none", () => {
+  const Cu = kovina("Mg", "trak", 0.5, "CuSO4", 0.5, { t: 60 });
+  assert.ok(Cu.mehurcki() >= 2 && Cu.nH2 > 0, `Mg v CuSO₄: ${Cu.hitrostPlina()} mL/s`);
+  assert.ok(Cu.T - 22 > 0.5, "segreje se");
+  const Mg = kovina("Mg", "trak", 0.5, "MgSO4", 0.5, { t: 60 });
+  assert.ok(Mg.mehurcki() <= 1 && Mg.hitrostPlina() < Cu.hitrostPlina() / 20, "v MgSO₄ le posamezni mehurčki");
+  const Zn = kovina("Mg", "trak", 0.5, "ZnSO4", 0.5, { t: 60 });
+  assert.ok(Zn.hitrostPlina() < Cu.hitrostPlina() / 3, "na cinkovi prevleki manj vodika (prenapetost)");
+  near((-466.85 + 2 * -229.99 - 2 * -285.83), -355.2, 0.1, "ΔH(Mg + 2H₂O → Mg²⁺ + 2OH⁻ + H₂)");
+});
+
 test("mistakes: no goggles, too concentrated acid and powder overflow, syringe overfilled", () => {
   const K = new KovineBench({ seed: 1 });
   assert.equal(K.nalij("HCl", 1).ok, false);
   K.ocala = true;
-  assert.equal(K.nalij("HCl", 6).dim, true, "koncentrirana HCl se kadi");
+  assert.equal(K.nalij("HCl", 6).dim, true, "6 M HCl: dražeči hlapi HCl");
   const P = kovina("Mg", "prah", 0.5, "HCl", 2, { t: 30 });
   assert.ok(P.prelito, "pena gre čez rob");
   assert.ok(P.batIzpadel, "bat izpade");

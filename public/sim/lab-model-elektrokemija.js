@@ -98,11 +98,14 @@ export const ELEKTRODE = {
 };
 // Ravnotežni potenciali (proti SHE, 25 °C, Bard & Faulkner, dodatek C): O₂/H₂O 1,229 V (dE/dT = −0,85 mV/K), Cl₂/Cl⁻ 1,358 V
 // (dE/dT = −1,25 mV/K), H⁺/H₂ 0 V. Termonevtralna napetost elektrolize vode 1,481 V (ΔH = −285,83 kJ/mol, NIST/CODATA):
-// nad njo se razlika (U − 1,481 V) · I sprosti kot toplota.
-export const E_O2 = 1.229, E_CL2 = 1.358, U_TERMONEVTRALNA = 1.481;
+// nad njo se razlika (U − 1,481 V) · I sprosti kot toplota. Za klor (2NaCl + 2H₂O → Cl₂ + H₂ + 2NaOH, ΔH = +446 kJ/mol iz
+// ΔfH NaCl(aq) −407,27, NaOH(aq) −470,11 kJ/mol, NBS) je termonevtralna napetost 2,311 V, za CO₂ na grafitu
+// (C + 2H₂O → CO₂ + 2H₂, ΔH = +178,2 kJ/mol, ΔfH CO₂ −393,51 kJ/mol) 0,462 V; utežimo jih z deleži toka.
+export const E_O2 = 1.229, E_CL2 = 1.358, U_TERMONEVTRALNA = 1.481, U_TN_CL2 = 2.311, U_TN_CO2 = 0.462;
 // Difuzijski koeficient Cl⁻ 2,03 · 10⁻⁵ cm²/s (CRC, »Ionic conductivity and diffusion at infinite dilution«), mejna plast ob
-// elektrodi, ki jo mešajo mehurčki, ~0,05 cm (ocena): mejni tok oksidacije kloridov i_lim = 2F D c / δ.
-const D_CL = 2.03e-5, DELTA_EL = 0.05;
+// elektrodi, ki jo mešajo mehurčki, ~0,025 cm (ocena; mehurčki jo stanjšajo pod ~0,05 cm pri naravni konvekciji):
+// mejni tok oksidacije kloridov i_lim = F D c / δ (en elektron na ion Cl⁻: 2Cl⁻ → Cl₂ + 2e⁻).
+const D_CL = 2.03e-5, DELTA_EL = 0.025;
 // Topnost plinov (Henryjeva konstanta, mol/(L·atm), 25 °C, Sander 2015, Atmos. Chem. Phys. 15, 4399): O₂ 1,3 · 10⁻³,
 // H₂ 7,8 · 10⁻⁴, CO₂ 0,034. Klor skupaj s hidrolizo (Cl₂ + H₂O ⇌ HClO + H⁺ + Cl⁻) ~0,10 mol/L pri 20 °C in 1 atm (CRC: 7,3 g/L).
 // Plin se raztaplja v ~15 mL tekočine ob elektrodi; od nastalega plina se raztopi delež φ · (1 − c/c_nas) (φ ocena).
@@ -207,7 +210,7 @@ export class ElektrolizaBench {
   _anoda(i, st) {
     const iO2 = (E) => iTafel(E - st.EO2, st.E.O2);
     if (st.cl < 1e-6) return { Ea: st.EO2 + eta(i, st.E.O2), fCl: 0 };
-    const ilim = (2 * F * D_CL * (st.cl / 1000)) / DELTA_EL;
+    const ilim = (F * D_CL * (st.cl / 1000)) / DELTA_EL;
     const iCl = (E) => {
       const k = iTafel(E - st.ECl2, st.E.Cl2);
       return k / (1 + k / ilim);
@@ -286,11 +289,12 @@ export class ElektrolizaBench {
       K.x -= (I * h) / F / HOFMANN.Vblizu;
       A.x += ((I * h) / F) * (s.fO2 + s.fCO2) / HOFMANN.Vblizu;
     }
-    // Joulova toplota: (U − 1,481 V) · I nad termonevtralno napetostjo; ves tok, če je napetost pod njo, ne greje.
+    // Joulova toplota: (U − U_tn) · I nad termonevtralno napetostjo (utežena z deleži O₂, Cl₂, CO₂); pod njo tok ne greje.
     const tk = this.tek ? TEKOCINE_EL[this.tek.id] : null;
     if (tk) {
       const C = HOFMANN.Vtek * tk.rho(this.tek.c) * VODA.c / 1000 + HOFMANN.Cst;
-      const P = I * Math.max(0, s.Ucell - U_TERMONEVTRALNA) + s.Ires * s.Ucell;
+      const Utn = U_TERMONEVTRALNA * (s.fO2 ?? 1) + U_TN_CL2 * (s.fCl2 ?? 0) + U_TN_CO2 * (s.fCO2 ?? 0);
+      const P = I * Math.max(0, s.Ucell - Utn) + s.Ires * s.Ucell;
       this.T += (h * (P - HOFMANN.G * (this.T - this.lab.T))) / C;
     }
     this.t += h;
@@ -420,6 +424,27 @@ export const SOLI = {
   AgNO3: { name: "srebrov nitrat", formula: "AgNO₃", ion: "Ag", k1: 6.8, D: 1.648e-5, pH: 6.0 },
 };
 export const kappaSoli = (sol, c) => SOLI[sol].k1 * c ** 0.8;
+// Srednji aktivnostni koeficienti γ± pri 25 °C (Robinson & Stokes, Electrolyte Solutions, 2. izd. 1959, dodatek 8.10; CRC Handbook,
+// »Mean activity coefficients of electrolytes as a function of concentration«; molalnost ≈ množinska koncentracija, razlika pri 1 mol/L
+// ~5 %): CuSO₄ 0,74 / 0,41 / 0,150 / 0,0423, ZnSO₄ 0,70 / 0,387 / 0,150 / 0,0435, MgSO₄ 0,74 / 0,40 / 0,150 / 0,0485 pri
+// 0,001 / 0,01 / 0,1 / 1 mol/L; AgNO₃ 0,964 / 0,90 / 0,734 / 0,429; Pb(NO₃)₂ pri 0,1 mol/L 0,395, drugje ocena po razširjenem
+// Debye-Hücklovem zakonu; FeSO₄ kot ZnSO₄ (ocena: dvo-dvovalentni sulfati se obnašajo enako). Pri 10⁻⁵ mol/L je γ± ≈ 1.
+// Aktivnost iona a = γ± · c (Guggenheimov dogovor); vmes logaritemsko interpolirano.
+export const GAMA = {
+  CuSO4: [0.74, 0.41, 0.15, 0.0423],
+  ZnSO4: [0.7, 0.387, 0.15, 0.0435],
+  MgSO4: [0.74, 0.4, 0.15, 0.0485],
+  FeSO4: [0.7, 0.387, 0.15, 0.0435],
+  PbNO3: [0.88, 0.69, 0.395, 0.17],
+  AgNO3: [0.964, 0.9, 0.734, 0.429],
+};
+export function gama(sol, c) {
+  if (!(c > 1e-5)) return 1;
+  const xs = [-5, -3, -2, -1, 0], ys = [0, ...GAMA[sol].map(Math.log10)], x = clamp(Math.log10(c), -5, 0);
+  let i = 1;
+  while (i < 4 && x > xs[i]) i++;
+  return 10 ** (ys[i - 1] + ((ys[i] - ys[i - 1]) * (x - xs[i - 1])) / (xs[i] - xs[i - 1]));
+}
 export const KONC_G = [0.001, 0.01, 0.1, 1];
 
 // Barva raztopine po Beer-Lambertovem zakonu: T = 10^(−ε c l) za rdeči, zeleni in modri del svetlobe. Efektivne absorptivnosti
@@ -432,8 +457,9 @@ export function barvaRaztopine(ioni, l = 3) {
 }
 
 // Polčlen: elektroda v raztopini. Potencial po Nernstu E = E° + (RT/zF) ln c (aktivnost ≈ koncentracija, poenostavitev).
-// Magnezij: v vodnih raztopinah ga pokriva plast MgO/Mg(OH)₂ in hkrati korodira (razvija H₂), zato izmerimo mešani potencial
-// ~−1,5…−1,7 V proti SHE (Song & Atrens 1999, Adv. Eng. Mater. 1, 11), ne −2,37 V; vzamemo −1,55 V, od c odvisen le malo (ocena).
+// Magnezij: v vodnih raztopinah ga pokriva plast MgO/Mg(OH)₂ in hkrati korodira (razvija H₂), zato izmerimo mešani (korozijski)
+// potencial, ne −2,37 V: v razredčenih kloridih ~−1,7 V proti nasičeni kalomelovi elektrodi, tj. ~−1,46 V proti SHE (Song & Atrens 1999,
+// Adv. Eng. Mater. 1, 11); šolske meritve Mg | Cu dajo 1,7–2,0 V. Vzamemo −1,55 V proti SHE, od c odvisen le malo (ocena).
 // Neobrušena kovina (oksidna plast) ima potencial bolj pozitiven: Mg +0,25, Zn +0,03, Fe +0,05, Pb +0,02, Cu +0,01 V (ocena).
 // Kovina v raztopini tuje soli: če je bolj reaktivna od kovine v soli, se nanjo izloča ta kovina (prevleka) in potencial v ~90 s
 // zdrsne k potencialu izločene kovine (ocena); če je manj reaktivna, določajo potencial sledovi lastnih ionov (~10⁻⁶ mol/L, ocena) in niha.
@@ -502,7 +528,8 @@ export class GalvanBench {
   // Potencial polčlena brez nihanja (V proti SHE).
   E0pol(i) {
     const b = this.casi[i], K = KOVINE[b.kovina], T = this.lab.T, ox = b.obrusen ? 0 : OKSID[b.kovina];
-    const own = (k, c) => (k === "Mg" ? MG_MESANI + 0.3 * nernst(T, 2) * Math.log(c) : KOVINE[k].E0 + nernst(T, KOVINE[k].z) * Math.log(c));
+    // a = γ± · c (sledovi tujih ionov: γ ≈ 1); magnezij ima mešani potencial, Nernst zanj ne velja
+    const own = (k, c) => (k === "Mg" ? MG_MESANI + 0.3 * nernst(T, 2) * Math.log(c) : KOVINE[k].E0 + nernst(T, KOVINE[k].z) * Math.log(gama(b.sol, c) * c));
     const tj = this.tuja(i);
     if (!tj) return own(b.kovina, b.c) + ox;
     if (tj === "ne") return own(b.kovina, GALV.sledovi) + ox;
@@ -519,12 +546,16 @@ export class GalvanBench {
   emf() {
     return this.potencial(this.rdeca) - this.potencial(this.com);
   }
-  // Napoved samo iz standardnih potencialov (razlika E°) in po Nernstu.
+  // Napoved samo iz standardnih potencialov (razlika E°), po idealni Nernstovi enačbi (koncentracije) in z aktivnostmi (a = γ± c).
   napovedE0() {
     return KOVINE[this.casi[this.rdeca].kovina].E0 - KOVINE[this.casi[this.com].kovina].E0;
   }
   napovedNernst() {
     const T = this.lab.T, e = (b) => KOVINE[b.kovina].E0 + nernst(T, KOVINE[b.kovina].z) * Math.log(b.c);
+    return e(this.casi[this.rdeca]) - e(this.casi[this.com]);
+  }
+  napovedAktivnost() {
+    const T = this.lab.T, e = (b) => KOVINE[b.kovina].E0 + nernst(T, KOVINE[b.kovina].z) * Math.log(gama(b.sol, b.c) * b.c);
     return e(this.casi[this.rdeca]) - e(this.casi[this.com]);
   }
   Ri() {
@@ -589,7 +620,13 @@ export const MASE = [0.05, 0.1, 0.2, 0.5]; // g
 // literaturi 20–60 kJ/mol za Mg in Zn v HCl). Konstante k (mol/(s cm² · mol/L)) so ocena po šolskih meritvah: Mg 1,0 · 10⁻⁵
 // (RSC »Disappearing magnesium«: 3 cm traku v 1 M HCl izgine v ~1 min), Zn 6 · 10⁻⁷ (granule: zmeren tok mehurčkov), Fe 6 · 10⁻⁸
 // (počasni mehurčki), Cu 0 (baker z ioni H⁺ ne reagira: E°(Cu²⁺/Cu) > 0). Magnezij počasi reagira tudi z vodo (2 · 10⁻⁹ mol/(s cm²), ocena).
-export const KINETIKA = { k: { Mg: 1.0e-5, Zn: 6e-7, Fe: 6e-8, Cu: 0, Ag: 0 }, Ea: 40000, kVoda: 2e-9 };
+// Magnezij v raztopini soli bolj žlahtne kovine: izločena kovina (Cu, Ag, Fe) je katoda galvanskih mikročlenov, na kateri se voda
+// reducira do vodika (Mg + 2H₂O → Mg²⁺ + 2OH⁻ + H₂); znano je, da Mg v CuSO₄ opazno »šumi« in se segreva. Hitrost pri popolni
+// prevleki ~1,5 · 10⁻⁷ mol H₂/(s cm²) (~30 mA/cm² galvanske korozije Mg; ocena po Song & Atrens 1999: stik z bakrom ali železom
+// korozijo Mg pospeši za več velikostnih redov), na cinku le desetina (velika prenapetost vodika na Zn; ocena).
+// ΔfH(OH⁻, aq) = −229,99 kJ/mol, ΔfH(H₂O, l) = −285,83 kJ/mol (NBS): Mg + 2H₂O → Mg²⁺ + 2OH⁻ + H₂, ΔH = −355,2 kJ/mol.
+export const KINETIKA = { k: { Mg: 1.0e-5, Zn: 6e-7, Fe: 6e-8, Cu: 0, Ag: 0 }, Ea: 40000, kVoda: 2e-9, kMikro: 1.5e-7, katoda: { Cu: 1, Ag: 1, Fe: 1, Zn: 0.1 } };
+const DHF_OH = -229.99, DHF_H2O = -285.83;
 // Izpodrivanje v raztopini soli: ione dovaja difuzija skozi mejno plast δ (mirno ~0,02 cm, ob stresanju ~0,004 cm; ocena):
 // tok j = D c / δ; ko je razlika potencialov majhna, se kovina izloča počasneje: f = min(1, (ΔE°/0,8 V)³) (ocena; Zn v FeSO₄ zato
 // počrni šele v nekaj minutah, Zn v CuSO₄ v nekaj sekundah). Prevleka je izrazita, ko je izločeno ~5 · 10⁻⁷ mol/cm² (~3 µm bakra; ocena):
@@ -698,10 +735,12 @@ export class KovineBench {
       const arr = Math.exp((-KINETIKA.Ea / R_PLIN) * (1 / (this.T + K0) - 1 / (293.15)));
       const h = this.h();
       let rH = (KINETIKA.k[k.kovina] ?? 0) * A * h * arr;
-      if (k.kovina === "Mg") rH += KINETIKA.kVoda * A * arr;
+      const R = RAZTOPINE_K[t.id];
+      // magnezij in voda; v raztopini soli še ob izločeni kovini (galvanski mikročleni)
+      let rW = 0;
+      if (k.kovina === "Mg") rW = (KINETIKA.kVoda + (R.kislina ? 0 : KINETIKA.kMikro * this._katoda())) * A * arr;
       // izpodrivanje: ioni manj reaktivne kovine v raztopini
       let rD = 0, dH = 0, ionD = null;
-      const R = RAZTOPINE_K[t.id];
       if (!R.kislina) {
         ionD = R.ion;
         if (reagiraS(k.kovina, ionD)) {
@@ -711,17 +750,18 @@ export class KovineBench {
         }
       }
       // časovni korak omeji, da kovine ali ionov ne zmanjka v enem koraku
-      const metalRate = rH + (ionD ? (rD * KOVINE[ionD].z) / K.z : 0); // mol kovine/s
+      const metalRate = rH + rW + (ionD ? (rD * KOVINE[ionD].z) / K.z : 0); // mol kovine/s
       const nMetal = k.m / K.M;
       let s = 1;
       if (metalRate * dt > nMetal) s = nMetal / (metalRate * dt);
       if (ionD && rD * dt * s > (t.ioni[ionD] ?? 0)) s = Math.min(s, (t.ioni[ionD] ?? 0) / (rD * dt));
       if (t.id === "HCl" && 2 * rH * dt * s > t.nH) s = Math.min(s, t.nH / (2 * rH * dt));
       rH *= s;
+      rW *= s;
       rD *= s;
-      const dn = rH * dt, dd = rD * dt, dm = (dn + (ionD ? (dd * KOVINE[ionD].z) / K.z : 0)) * K.M;
+      const dn = rH * dt, dw = rW * dt, dd = rD * dt, dm = (dn + dw + (ionD ? (dd * KOVINE[ionD].z) / K.z : 0)) * K.M;
       k.m = Math.max(0, k.m - dm);
-      this.nH2 += dn;
+      this.nH2 += dn + dw;
       if (t.id === "HCl") t.nH -= 2 * dn;
       t.ioni[k.kovina] = (t.ioni[k.kovina] ?? 0) + dm / K.M;
       if (ionD && dd) {
@@ -730,7 +770,8 @@ export class KovineBench {
         dH += (dd * KOVINE[ionD].z) / K.z * -(K.dHf - (K.z / KOVINE[ionD].z) * KOVINE[ionD].dHf) * 1000;
       }
       dH += dn * -K.dHf * 1000; // M + 2H⁺ → M²⁺ + H₂, ΔH = ΔfH(M²⁺)
-      this.rateH2 = rH;
+      dH += dw * -(K.dHf + 2 * DHF_OH - 2 * DHF_H2O) * 1000; // Mg + 2H₂O → Mg²⁺ + 2OH⁻ + H₂
+      this.rateH2 = rH + rW;
       this.rateDep = rD;
       this.T += (dH - POSODA_K.G * (this.T - this.lab.T) * dt) / (t.V * VODA.c / 1000 + POSODA_K.Cst); // V mL ≈ g
     } else if (t) {
@@ -771,6 +812,12 @@ export class KovineBench {
     const v = this.hitrostPlina();
     return v < 0.002 ? 0 : v < 0.03 ? 1 : v < 0.3 ? 2 : v < 3 ? 3 : 4;
   }
+  // Kako dobra katoda za vodik je prevleka (0–1): pokritost, utežena s kovino prevleke.
+  _katoda() {
+    const n = Object.values(this.dep).reduce((s, x) => s + x, 0);
+    if (!n) return 0;
+    return this.prevleka() * Object.entries(this.dep).reduce((s, [ion, x]) => s + (x / n) * (KINETIKA.katoda[ion] ?? 0), 0);
+  }
   // Pokritost kovine s prevleko izločene kovine (0–1).
   prevleka() {
     const A = this.kos ? OBLIKE[this.kos.oblika].a(KOVINE[this.kos.kovina]) * this.kos.m0 : 1;
@@ -806,20 +853,22 @@ export { meterSpec };
 export const POENOSTAVITVE_ELEKTROKEMIJA = {
   elektroliza: [
     "Tok skozi tekočino je izračunan iz prevodnosti raztopine in oblike aparata; prenapetosti na elektrodah so ocenjene po podatkih za platino in grafit.",
-    "Vsak elektron, ki steče skozi krog, sodeluje pri nastanku plina (Faradayev zakon); del plina se raztopi v tekočini ob elektrodi.",
+    "Vsak elektron, ki steče skozi krog, sodeluje pri nastanku plina (Faradayev zakon); del plina se raztopi v tekočini ob elektrodi. Malo ozona in peroksida, ki v resnici nastane na anodi, ne upoštevamo.",
     "Tekočina v vsakem kraku je dobro premešana, med krakoma se ne meša; v resnici ioni in plini počasi potujejo tudi v sosednji krak.",
     "Plin upoštevamo kot idealni plin, nasičen z vodno paro; tlak v cevi je zračni tlak plus tlak stolpca tekočine do gladine v bučki.",
     "Prevodnost raztopin in topnost plinov sta vzeti pri 20–25 °C; s temperaturo se prevodnost spreminja za 2 % na stopinjo.",
+    "Pri elektrolizi NaCl se koncentracija kloridov ob anodi ne zmanjšuje; v resnici se med daljšo elektrolizo počasi manjša in kisika je več.",
   ],
   galvanski: [
-    "V Nernstovi enačbi računamo s koncentracijami namesto z aktivnostmi; v resnici se pri 1 mol/L razlikujejo za več deset odstotkov, a se v razliki potencialov večinoma odštejejo.",
+    "Potencial elektrode računamo z aktivnostmi a = γ·c (tabelirani γ pri 25 °C). Pri 1 mol/L je aktivnost CuSO₄ ali ZnSO₄ le ~4 % koncentracije, pri 0,01 mol/L ~40 %: v Daniellovem členu z enakima koncentracijama se to odšteje, koncentracijski člen Cu 0,01 | Cu 1 mol/L pa da ~0,03 V namesto idealnih 0,059 V. Za aktivnost iona vzamemo srednji koeficient γ± soli.",
     "Standardni potenciali veljajo pri 25 °C; pri drugi temperaturi popravimo le Nernstov faktor RT/zF.",
     "Magnezij ima v vodi oksidno plast in hkrati korodira, zato izmerimo mešani potencial (ocena −1,55 V), ne standardnega.",
-    "Notranji upor člena (solni most in raztopini) je ocenjen; elektrode se pod obremenitvijo ne polarizirajo dodatno.",
+    "Notranji upor člena (solni most in raztopini) je ocenjen; elektrode se pod obremenitvijo ne polarizirajo dodatno, difuzijski potencial na stikih s solnim mostom (nekaj mV) zanemarimo.",
   ],
   kovine: [
     "Hitrosti reakcij kovin s kislino so ocenjene po šolskih meritvah; hitrost je sorazmerna s površino kovine in koncentracijo ionov H⁺.",
-    "Pri izpodrivanju ione dovaja difuzija; debelina mejne plasti in vidnost prevleke sta ocenjeni.",
+    "Pri izpodrivanju ione dovaja difuzija; debelina mejne plasti in vidnost prevleke sta ocenjeni. Magnezij v raztopini soli bolj žlahtne kovine razvija vodik na izločeni kovini (drobni galvanski členi); hitrost je ocenjena, plast Mg(OH)₂, ki bi reakcijo sčasoma upočasnila, ni upoštevana.",
+    "Za žveplovo(VI) kislino računamo z Ka2 iz razredčenih raztopin; pri 1 mol/L ion HSO₄⁻ v resnici disociira nekoliko bolj, zato je ionov H⁺ malo več.",
     "Raztopina je ves čas enako topla; toplota reakcije se porazdeli po raztopini in delu stekla.",
     "Železov(II) sulfat na zraku počasi porumeni (Fe²⁺ → Fe³⁺); tega tu ne upoštevamo.",
   ],

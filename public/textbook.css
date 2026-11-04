@@ -906,7 +906,7 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo-svg .lab-ind-dotn { fill: #fff; font-size: 9px; font-weight: 700; }
 /* elektrokemija (lab-elektroliza, lab-galvanski, lab-kovine; public/sim/lab-elektrokemija.js): isti okvir kot indikatorji */
 .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) { min-width: 0; max-width: 100%; container: labtit / inline-size; }
-.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) :is(button, select, .seg-btn, .demo-check, .layer-chip) { min-height: 44px !important; }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) :is(button, select, .seg-btn, .demo-check, .layer-chip, input[type=range]) { min-height: 44px !important; }
 .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .seg-btn { min-width: 44px; }
 .lab-bench:has(> :is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine)) { overflow-x: clip; }
 .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; }
@@ -914,7 +914,18 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
 .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table-wrap { max-width: 100%; contain: inline-size; }
 .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table :is(th, td) { white-space: normal; }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table { overflow: visible; } /* drsi okvir tabele, zato glava ostane vidna (sticky) */
 .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); }
+/* zaslon merilnika je tudi v RTL kot na napravi: število levo od enote; opomba se ravna po svojem besedilu */
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-lcd-screen { direction: ltr; }
+.demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) :is(.lab-lcd-note, .lab-lcd-name) { unicode-bidi: plaintext; }
+/* merilniki na telefonu: manjši robovi, da gre vrednost v zaslon in je risba nad kontrolami bližje */
+@container labtit (max-width: 440px) {
+  .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-meters { gap: 6px; }
+  .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-lcd { padding: 5px 6px; }
+  .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-lcd-screen { padding: 3px 5px; gap: 3px; }
+  .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-lcd-val { font-size: 1.1rem; letter-spacing: 0.02em; }
+}
 @media (max-width: 480px) {
   .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table { font-size: 0.8rem; }
   .demo:is(.demo-lab-elektroliza, .demo-lab-galvanski, .demo-lab-kovine) .lab-table :is(th, td) { padding: 5px 4px; }
@@ -936,6 +947,7 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo-svg .lab-ek-miza { fill: #1f2933; font-size: 11px; font-weight: 600; }
 .demo-svg .lab-ek-miza.small { font-size: 9px; }
 .demo-svg .lab-ek-halo { stroke: rgb(255 255 255 / 0.85); stroke-width: 2.5px; paint-order: stroke; stroke-linejoin: round; }
+.demo-svg .lab-ek-halo-bg { stroke: var(--bg); stroke-width: 3px; paint-order: stroke; stroke-linejoin: round; }
 .demo-svg .lab-scale.lab-ek-mizacrta { stroke: #1f2933; }
 /* steklo: tanek temnejši rob (debelina stekla), bel odsev; tekočine brez obrobe */
 .demo-svg .lab-ek-glass { stroke: #7d93a5; stroke-width: 1; }
@@ -950,13 +962,19 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .dark .demo-svg .lab-ek-tick { stroke: #e3e9ef; }
 .dark .demo-svg .lab-ek-glass, .dark .demo-svg .lab-ek-glass-in { stroke: #a7bccc; }
 /* mehurčki se dvigajo od elektrode ali kovine (hitrost ~15 cm/s); pri »manj gibanja« mirujejo, razporejeni po poti */
-.demo-svg .lab-ek-bub { fill: rgb(255 255 255 / 0.55); stroke: rgb(105 135 160 / 0.9); stroke-width: 0.45; animation: lab-ek-up linear infinite; }
+.demo-svg .lab-ek-bub { stroke: rgb(90 120 145 / 0.55); stroke-width: 0.3; animation: lab-ek-up linear infinite; } /* polnilo: radialni preliv »mehur« v risbi */
+/* risba z ločeno plastjo za mehurčke (enaka velikost in viewBox); plast ne lovi dotikov */
+.lab-ek-risba { position: relative; width: 100%; max-width: 460px; }
+.lab-ek-risba > .demo-svg { display: block; width: 100%; max-width: none; }
+.lab-ek-risba > .lab-ek-ov { position: absolute; inset: 0; height: 100%; pointer-events: none; will-change: transform; }
+.demo-svg .lab-ek-bubst { stroke: rgb(90 120 145 / 0.55); stroke-width: 0.3; }
 @keyframes lab-ek-up { from { transform: translate(0, 0); opacity: 0.95; } 85% { opacity: 0.95; } to { transform: translate(var(--dx, 0px), var(--d)); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .demo-svg .lab-ek-bub { animation: none; transform: translate(0, calc(var(--d) * var(--f))); } }
 .demo-svg .lab-ek-wire { fill: none; stroke-width: 2.4; stroke-linecap: round; }
 .demo-svg .lab-ek-wire.r { stroke: #c62828; }
 .demo-svg .lab-ek-wire.k { stroke: #1d1f22; }
-.dark .demo-svg .lab-ek-wire.k { stroke: #0b0c0d; }
+.dark .demo-svg .lab-ek-wire.k { stroke: #30353b; } /* črna izolacija z odsevom, da se vidi na temnem ozadju */
+.dark .demo-svg .lab-ek-wire-hl { stroke: rgb(255 255 255 / 0.4); }
 .demo-svg .lab-ek-wire-hl { fill: none; stroke: rgb(255 255 255 / 0.28); stroke-width: 0.7; stroke-linecap: round; transform: translate(-0.6px, -0.6px); }
 .demo-svg .lab-ek-clip.r { fill: #d32f2f; stroke: #7a1414; stroke-width: 0.6; }
 .demo-svg .lab-ek-clip.k { fill: #262626; stroke: #000; stroke-width: 0.6; }
