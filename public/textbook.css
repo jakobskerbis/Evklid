@@ -1175,6 +1175,143 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .dark .demo-svg .lab-gib-vrvica { stroke: #d8b48a; }
 .demo-svg .lab-gib-drog-st { stroke: #59616a; stroke-width: 0.4; }
 
+/* elektromagnetizem (lab-elektromagnet, lab-sila-vodnik, lab-indukcija; public/sim/lab-magnetizem.js): isti okvir kot gibanje */
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) { min-width: 0; max-width: 100%; container: labtit / inline-size; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) :is(button, select, .seg-btn, .demo-check, .layer-chip, input[type=range]) { min-height: 44px !important; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .seg-btn { min-width: 44px; }
+.lab-bench:has(> :is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija)) { overflow-x: clip; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) select { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); border-radius: 10px; padding: 0 8px; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table-wrap { max-width: 100%; contain: inline-size; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table :is(th, td) { white-space: normal; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table { overflow: visible; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-lcd-screen { direction: ltr; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) :is(.lab-lcd-note, .lab-lcd-name) { unicode-bidi: plaintext; }
+.demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .demo-svg :is(.lab-mag-lcdtxt, .lab-mag-lcdbig, .lab-mag-lcdbal, .lab-mag-seg, .lab-mag-ravnilo-st, .lab-mag-zaslon-txt) { direction: ltr; unicode-bidi: plaintext; }
+@container labtit (max-width: 440px) {
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-meters { gap: 6px; }
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-lcd { padding: 5px 6px; }
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-lcd-screen { padding: 3px 5px; gap: 3px; }
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-lcd-val { font-size: 1.1rem; letter-spacing: 0.02em; }
+}
+@media (max-width: 480px) {
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table { font-size: 0.8rem; }
+  .demo:is(.demo-lab-elektromagnet, .demo-lab-sila-vodnik, .demo-lab-indukcija) .lab-table :is(th, td) { padding: 5px 4px; }
+}
+.lab-mag-calc { margin: 8px 0; display: flex; flex-direction: column; gap: 6px; font-size: 0.92rem; overflow-wrap: anywhere; }
+.lab-mag-calc p { margin: 0; }
+.lab-mag-cap { margin: 6px 0 8px; font-size: 0.92rem; overflow-wrap: anywhere; }
+.lab-mag-trace-wrap { margin: 0; max-width: 460px; }
+.lab-mag-trace-wrap > .demo-svg { width: 100%; height: auto; display: block; }
+.demo-svg .lab-mag-sled { fill: none; stroke: var(--demo-a, #2563eb); stroke-width: 1.4; stroke-linejoin: round; }
+.demo-svg .lab-mag-vzorec { fill: var(--demo-a, #2563eb); }
+.demo-svg .lab-mag-ploscina { stroke: none; opacity: 0.22; }
+.demo-svg .lab-mag-ploscina.a { fill: var(--demo-b, #e11d48); }
+.demo-svg .lab-mag-ploscina.b { fill: var(--demo-c, #16a34a); }
+.demo-svg.lab-mag .lab-scale { fill: none; stroke: #1f2933; }
+.dark .demo-svg.lab-mag .lab-scale { stroke: #e3e9ef; }
+.demo-svg .lab-mag-miza { font-size: 8px; font-weight: 600; fill: #1f2933; }
+.demo-svg .lab-mag-mizarob { stroke: #8d959d; stroke-width: 0.6; }
+.demo-svg .lab-mag-oznaka { font-size: 7.5px; font-weight: 600; fill: var(--text); }
+.demo-svg .lab-mag-oznaka.halo { paint-order: stroke; stroke: var(--surface, #fff); stroke-width: 2.5px; stroke-linejoin: round; }
+.demo-svg .lab-mag-warn { font-size: 9px; font-weight: 800; fill: var(--danger); }
+.demo-svg .lab-mag-slow { font-size: 10px; font-weight: 800; fill: var(--danger); letter-spacing: 0.06em; }
+.demo-svg .lab-mag-wire { fill: none; stroke-width: 2.4; stroke-linecap: round; }
+.demo-svg .lab-mag-wire.r { stroke: #c62828; }
+.demo-svg .lab-mag-wire.k { stroke: #1d1f22; }
+.dark .demo-svg .lab-mag-wire.k { stroke: #3a4048; }
+.demo-svg .lab-mag-wire-hl { fill: none; stroke: rgb(255 255 255 / 0.28); stroke-width: 0.7; stroke-linecap: round; transform: translate(-0.6px, -0.6px); }
+.dark .demo-svg .lab-mag-wire-hl { stroke: rgb(255 255 255 / 0.4); }
+.demo-svg .lab-mag-clip.r { fill: #d32f2f; stroke: #7a1414; stroke-width: 0.6; }
+.demo-svg .lab-mag-clip.k { fill: #262626; stroke: #000; stroke-width: 0.6; }
+.dark .demo-svg .lab-mag-clip.k { fill: #3a3f46; stroke: #9aa3ad; }
+.demo-svg .lab-mag-lcdbg { fill: #b9c4a2; stroke: #6f7a5c; stroke-width: 0.6; }
+.demo-svg :is(.lab-mag-lcdtxt, .lab-mag-lcdbig, .lab-mag-lcdbal) { fill: #1d2414; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-weight: 700; }
+.demo-svg .lab-mag-lcdbig { font-size: 15px; }
+.demo-svg .lab-mag-lcdbal { font-size: 11px; }
+.demo-svg .lab-mag-lcdunit { fill: #1d2414; font-weight: 700; font-size: 6.5px; }
+.demo-svg .lab-mag-jack { fill: #e9edf1; }
+.demo-svg .lab-mag-seg { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 13px; font-weight: 700; }
+.demo-svg .lab-mag-seg.red { fill: #ff5a43; }
+.demo-svg .lab-mag-seg.grn { fill: #49e27c; }
+.demo-svg .lab-mag-panel { font-size: 7px; fill: #2c3238; font-weight: 600; }
+.demo-svg .lab-mag-panel-sv { font-size: 7px; fill: #e3e8ee; font-weight: 700; letter-spacing: 0.04em; }
+.demo-svg .lab-mag-panel-sv.small { font-size: 5.6px; letter-spacing: 0; }
+/* tuljava: baker, ovoji, lesk laka, tuljavnica */
+.demo-svg .lab-mag-navitje { stroke: #4d220e; stroke-width: 0.5; }
+.demo-svg .lab-mag-ovoj { stroke: rgb(70 28 8 / 0.55); stroke-width: 0.35; }
+.demo-svg .lab-mag-lesk { fill: rgb(255 240 225 / 0.28); }
+.demo-svg .lab-mag-vroce { fill: #ff3b1f; mix-blend-mode: multiply; }
+.demo-svg .lab-mag-prirobnica { stroke: #111; stroke-width: 0.4; }
+.demo-svg .lab-mag-nalepka { font-size: 4.2px; font-weight: 700; fill: #1d1f22; }
+.demo-svg .lab-mag-nalepka-bg { fill: #f4f1e6; stroke: #a59d86; stroke-width: 0.3; }
+.demo-svg .lab-mag-val { fill: none; stroke: #ff7a45; stroke-width: 0.9; stroke-linecap: round; }
+.demo-svg .lab-mag-jedro { stroke: #2c3036; stroke-width: 0.5; }
+.demo-svg .lab-mag-lamele { stroke: #2f343a; stroke-width: 0.5; }
+.demo-svg .lab-mag-lamela { stroke: rgb(30 34 40 / 0.35); stroke-width: 0.3; }
+.demo-svg .lab-mag-ploscica { fill: #f1efe6; stroke: #a59d86; stroke-width: 0.4; }
+.demo-svg .lab-mag-sonda { stroke: #555c64; stroke-width: 0.4; }
+.demo-svg .lab-mag-rocaj { stroke: #000; stroke-width: 0.4; }
+.demo-svg .lab-mag-kabel { fill: none; stroke: #2b2f34; stroke-width: 1.3; opacity: 0.85; }
+.dark .demo-svg .lab-mag-kabel { stroke: #9aa3ad; }
+.demo-svg .lab-mag-hall { fill: none; stroke: #ffb300; stroke-width: 0.8; stroke-dasharray: 1.2 1; }
+.demo-svg .lab-mag-hall-el { fill: #ffb300; stroke: #7a5400; stroke-width: 0.3; }
+.demo-svg .lab-mag-ravnilo { fill: #f4d03f; stroke: #a8842a; stroke-width: 0.4; }
+.demo-svg .lab-mag-ravnilo-crt { stroke: #2a2410; stroke-width: 0.4; }
+.demo-svg .lab-mag-ravnilo-st { font-size: 4.2px; font-weight: 700; fill: #2a2410; }
+.demo-svg .lab-mag-posoda { fill: rgb(200 220 235 / 0.35); stroke: #8aa0b2; stroke-width: 0.6; }
+.demo-svg .lab-mag-posoda-rob { fill: rgb(200 220 235 / 0.4); stroke: #8aa0b2; stroke-width: 0.6; }
+.demo-svg .lab-mag-sponka { fill: none; stroke: #9aa3ad; stroke-width: 0.55; stroke-linecap: round; }
+.dark .demo-svg .lab-mag-sponka { stroke: #d5dbe1; }
+.demo-svg .lab-mag-klada { stroke: #8a6234; stroke-width: 0.4; }
+.demo-svg .lab-mag-kompas-ohisje { fill: #c9a24b; stroke: #6d5420; stroke-width: 0.6; }
+.demo-svg .lab-mag-kompas-dial { fill: #fbfaf5; stroke: #6d5420; stroke-width: 0.5; }
+.demo-svg .lab-mag-kompas-crt { stroke: #333; stroke-width: 0.4; }
+.demo-svg .lab-mag-kompas-txt { font-size: 6px; font-weight: 700; fill: #222; }
+.demo-svg .lab-mag-igla-n { fill: #d32f2f; stroke: #7a1414; stroke-width: 0.3; }
+.demo-svg .lab-mag-igla-s { fill: #eef1f4; stroke: #555; stroke-width: 0.3; }
+.demo-svg .lab-mag-igla-bok { stroke: #d32f2f; stroke-width: 1; stroke-linecap: round; }
+.demo-svg .lab-mag-vodilo { fill: none; stroke: var(--muted); stroke-width: 0.6; stroke-dasharray: 2 2; }
+/* tokovna tehtnica */
+.demo-svg .lab-mag-nosilec { stroke: #3d434a; stroke-width: 0.5; }
+.demo-svg .lab-mag-reza { fill: #15181b; }
+.demo-svg .lab-mag-pol { stroke: rgb(0 0 0 / 0.4); stroke-width: 0.3; }
+.demo-svg .lab-mag-pcb { stroke: #0f3d20; stroke-width: 0.5; }
+.demo-svg .lab-mag-vez { fill: none; stroke: #d39a5c; stroke-width: 1.8; stroke-linejoin: round; }
+.demo-svg .lab-mag-vez.lupa { stroke-width: 2.6; }
+.demo-svg .lab-mag-vez-hl { fill: none; stroke: rgb(255 240 210 / 0.6); stroke-width: 0.5; }
+.demo-svg .lab-mag-pcbtxt { font-size: 5.5px; font-weight: 700; fill: #e8f5e9; }
+.demo-svg .lab-mag-lupa-bg { fill: var(--surface); stroke: var(--muted); stroke-width: 1.2; }
+.demo-svg .lab-mag-polst { font-size: 6px; font-weight: 800; fill: #fff; }
+.demo-svg .lab-mag-meja { stroke: rgb(0 0 0 / 0.35); stroke-width: 0.5; }
+.demo-svg .lab-mag-bpuscica { stroke: #5b6b7a; stroke-width: 0.9; }
+.demo-svg .lab-mag-bfill { fill: #5b6b7a; }
+.dark .demo-svg .lab-mag-bpuscica { stroke: #b8c4cf; }
+.dark .demo-svg .lab-mag-bfill { fill: #b8c4cf; }
+.demo-svg .lab-mag-ipuscica { stroke: #c62828; stroke-width: 1.4; }
+.demo-svg .lab-mag-ifill { fill: #c62828; }
+.demo-svg .lab-mag-fkrog { fill: var(--surface); stroke: var(--accent, #2563eb); stroke-width: 1.2; }
+.demo-svg .lab-mag-fpika { fill: var(--accent, #2563eb); }
+.demo-svg .lab-mag-fkriz { fill: none; stroke: var(--accent, #2563eb); stroke-width: 1.2; }
+/* indukcija */
+.demo-svg .lab-mag-cev { stroke: #7d93a5; stroke-width: 0.8; }
+.dark .demo-svg .lab-mag-cev { stroke: #a7bccc; }
+.demo-svg .lab-mag-cev-hl { fill: rgb(255 255 255 / 0.55); }
+.demo-svg .lab-mag-pena { fill: #e4c84a; stroke: #a08a2a; stroke-width: 0.5; }
+.demo-svg .lab-mag-magnet { stroke: #5e646b; stroke-width: 0.4; }
+.demo-svg .lab-mag-npol { stroke: none; }
+.demo-svg .lab-mag-palcka { stroke: #8a6234; stroke-width: 0.3; }
+.demo-svg .lab-mag-dlan { stroke: #a86c4a; stroke-width: 0.6; }
+.demo-svg .lab-mag-prst { fill: none; stroke: #d9a07c; stroke-width: 3.6; stroke-linecap: round; }
+.demo-svg .lab-mag-zapestje { fill: none; stroke: #d9a07c; stroke-width: 11; stroke-linecap: round; }
+.demo-svg .lab-mag-mreza { stroke: rgb(120 170 200 / 0.18); stroke-width: 0.5; }
+.demo-svg .lab-mag-mreza.nic { stroke: rgb(160 200 230 / 0.45); }
+.demo-svg .lab-mag-zaslon-sled { fill: none; stroke: #ffd54f; stroke-width: 1.1; stroke-linejoin: round; }
+.demo-svg .lab-mag-zaslon-txt { font-size: 6px; fill: #b8d4e8; }
+.demo-svg .lab-mag-galv-st { font-size: 7px; font-weight: 700; fill: #222; }
+
 /* kratek video iz simulacije (public/gradiva.js) */
 .gr-video { width: min(760px, calc(100vw - 16px)); max-height: calc(100dvh - 16px); padding: 12px 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text); overflow-y: auto; }
 .gr-video::backdrop { background: rgba(12, 14, 30, 0.6); }
@@ -1186,7 +1323,8 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .gr-video-sim:has(> .demo-stage), .gr-video-sim :has(> .demo-stage) { display: flex; flex-direction: column; }
 .gr-video-sim .demo-stage { order: 0; }
 .gr-video-sim .demo-readout { order: 1; }
-.gr-video-sim .demo-controls { order: 2; }
+.gr-video-sim .demo-layers { order: 2; }
+.gr-video-sim .demo-controls { order: 3; }
 .gr-video-sim .demo-try { display: none; }
 /* podnapis in gumbi ostanejo vidni tudi na telefonu, ko je simulacija višja od zaslona */
 .gr-video-foot { position: sticky; bottom: -12px; margin: 0 -16px -12px; padding: 4px 16px 12px; background: var(--surface); border-top: 1px solid var(--border); }
@@ -1257,3 +1395,23 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo-slider.as-choice .demo-choice { grid-column: 2 / -1; justify-self: start; max-width: 100%; }
 .demo .demo-choice .seg-btn { min-width: 44px; min-height: 40px; font-variant-numeric: tabular-nums; }
 @media (max-width: 520px) { .demo-slider.as-choice .demo-choice { grid-column: 1 / -1; } }
+
+/* Laboratorij: kemijske reakcije (lab-hitrost, lab-energija, lab-plamenska; public/sim/lab-reakcije.js) */
+.demo-svg .lab-rk-lcd { fill: #1d2414; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-weight: 700; }
+.demo-svg .lab-rk-lcdu { fill: #1d2414; font-size: 8px; font-weight: 700; }
+.demo-svg .lab-rk-panel { fill: #e9edf1; font-size: 7px; font-weight: 700; }
+.demo-svg .lab-rk-panel.w { fill: #ffffff; font-size: 8px; }
+.demo-svg .lab-rk-vata { fill: #fbfbf9; stroke: #c9cbc6; stroke-width: 0.5; }
+.demo-svg .lab-rk-pena { fill: rgb(120 128 135 / 0.55); }
+.demo-svg .lab-rk-skala { fill: #c9ced4; font-size: 9px; }
+.demo-svg .lab-rk-salt { stroke: none; }
+.lab-rk-eq { overflow-wrap: anywhere; }
+/* Plamen plapola (plast nad risbo se zamenja le, ko se plamen spremeni, zato animacija teče gladko); pri »manj gibanja« miruje. */
+.demo-svg .lab-rk-flame { animation: lab-rk-flick 0.22s ease-in-out infinite alternate; }
+.demo-svg .lab-rk-flame-s { animation-duration: 0.35s; }
+@keyframes lab-rk-flick { from { transform: scale(1, 1) skewX(0deg); } 50% { transform: scale(0.97, 1.03) skewX(1deg); } to { transform: scale(1.02, 0.96) skewX(-1.2deg); } }
+@media (prefers-reduced-motion: reduce) { .demo-svg .lab-rk-flame { animation: none; } }
+.lab-rk-tab .lab-table :is(td, th) { white-space: normal; overflow-wrap: normal; word-break: normal; hyphens: manual; } /* lomi le med besedami (ne »vzo|rec«); preširoka preglednica se pomika v .lab-table-wrap */
+.lab-rk-tab .lab-table td:first-child + td, .lab-rk-tab .lab-table th:first-child + th { min-width: 4.5em; }
+/* risba 4 : 3 na računalniku: zapolni levi stolpec (do 500 px) namesto splošnih 460 px */
+@container labtit (min-width: 800px) { .demo.lab .lab-tit-top > .demo-stage :is(.demo-svg.lab-rk, :has(> .demo-svg.lab-rk)) { max-width: none; } }

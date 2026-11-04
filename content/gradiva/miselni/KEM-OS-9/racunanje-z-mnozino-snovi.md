@@ -1,0 +1,21 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enaka masa, različno delcev
+  - $10\,\mathrm{g}$ aluminija ima $7{,}3$-krat več atomov kot zlato
+  - primerjaj množine, ne mase
+- Most čez množino
+  - $m \to n \to N$ in nazaj
+  - napaka: $m \cdot N_A$ preskoči množino
+- Iz mase v delce
+  - $n = \dfrac{m}{M}$, nato $N = n \cdot N_A$
+  - struna $0{,}56\,\mathrm{g}$ železa: $6{,}02 \cdot 10^{21}$ atomov
+  - kilograme najprej pretvori v grame
+- Iz delcev v maso
+  - $n = \dfrac{N}{N_A}$, nato $m = n \cdot M$
+- Molekule in atomi
+  - $1\,\mathrm{mol}$ $\mathrm{H_2O}$ ima $2\,\mathrm{mol}$ atomov H
+  - pomnoži z indeksom
+- Potence
+  - $12{,}04 \cdot 10^{23} = 1{,}204 \cdot 10^{24}$

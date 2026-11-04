@@ -5,6 +5,8 @@ task, game, text and lesson is reviewed three times before it reaches students. 
 agents read this file (see `docs/token-rules.md`). The bar each pass checks against is `docs/kakovost.md`
 (content) and `docs/oblikovanje.md` (look).
 
+Small fixes get one reviewer instead of two (§1, last paragraph; j, 2026-11-04).
+
 The author's own checking does not count as one of the three passes. Pass 1 is automatic; passes 2
 and 3 are separate reviewer agents (Opus, or Fable for the hardest content; never Sonnet or Haiku for
 content) that did not write the change and start from a fresh context with only the diff, the
@@ -39,11 +41,14 @@ Each reviewer fixes what it is sure about with small edits (or returns a list), 
 reruns pass 1. Merge only when all three passes are clean or every open item is written in the PR
 body with a reason.
 
-Small PRs (≤ ~30 changed lines, no new screen) and look-only changes (CSS, layout, UI wording, screenshots)
-that touch nothing about money, AI usage or cost, accounts, personal data or lesson content: passes 2 and 3
-may be one reviewer agent covering both checklists, but it is still a different agent from the author, and
-pass 1 still runs. Anything touching those areas always gets two separate reviewers (j, 2026-10-30: the
-second and third reviews keep catching money and cost bugs there).
+**Small fixes: one reviewer (j, 2026-10-30, widened 2026-11-04).** A small fix is a bug fix or small
+tweak to existing code or look (at most about 50 changed lines; no new screen, tab, feature or game;
+CSS, layout, UI wording and screenshots count as small). Passes 2 and 3 are then one reviewer agent
+covering both checklists; it is still a different agent from the author, and pass 1 still runs.
+Always two separate reviewers, whatever the size: anything touching money, prices, AI usage or cost,
+accounts, personal data, the tutor prompt, or student-facing content (lessons, exercises, papers,
+simulations, videos, experiments, maths/physics/chemistry text) (j, 2026-10-30: the second and third
+reviews keep catching money and cost bugs there). When unsure, treat it as big.
 
 ## 2. Lessons (`content/lessons/**`)
 

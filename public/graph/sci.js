@@ -4,6 +4,8 @@
 import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
 import { analyze, previewTex, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName, parseCommand } from "./cas.js";
+import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
+import { chemSub, chemNumbers } from "./molska.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -41,7 +43,7 @@ const store = {
 };
 
 // Tipke: [napis, vstavi, 2nd napis, 2nd vstavi]. »@« je mesto kazalca po vstavljanju.
-const FN_KEYS = [
+export const FN_KEYS = [
   ["2nd", "#2nd"], ["x²", "²", "x³", "³"], ["xʸ", "^(", "ⁿ√x", "root(@;)"], ["√", "√(", "∛", "∛("], ["x⁻¹", "⁻¹", "|x|", "abs("], ["◀", "#left"],
   ["sin", "sin(", "sin⁻¹", "arcsin("], ["cos", "cos(", "cos⁻¹", "arccos("], ["tan", "tan(", "tan⁻¹", "arctan("], ["ln", "ln(", "eˣ", "e^("], ["log", "log(", "10ˣ", "10^("], ["▶", "#right"],
   ["(", "(", "M+", "#m+"], [")", ")", "M−", "#m-"], ["π", "π", "e", "e"], ["n!", "!", "nCr", "nCr(@;)"], ["°′″", "#dms", "nPr", "nPr(@;)"], ["%", "%", "logₐ", "logb(@;)"],
@@ -64,7 +66,7 @@ const MORE = [
   ["ana", null], // odvod, integral, vsota, produkt; integriraj, limita, taylor (imena v jeziku vmesnika, glej anaKeys)
   ["trig", [["\\sin", "sin("], ["\\cos", "cos("], ["\\tan", "tan("], ["\\cot", "cot("], ["\\arcsin", "arcsin("], ["\\arccos", "arccos("], ["\\arctan", "arctan("], ["\\sinh", "sinh("], ["\\cosh", "cosh("], ["\\tanh", "tanh("], ["\\text{°}", "°"], ["\\text{′}", "′"], ["\\text{″}", "″"]]],
   ["num", [["\\gcd", "gcd(@;)"], ["\\operatorname{lcm}", "lcm(@;)"], ["\\bmod", "mod(@;)"], ["\\operatorname{round}", "round(@;)"], ["\\lfloor x\\rfloor", "floor("], ["\\lceil x\\rceil", "ceil("], ["\\binom{n}{k}", "nCr(@;)"], ["n!", "!"], ["\\%", "%"], ["\\operatorname{sgn}", "sgn("], ["\\operatorname{Int}", "Int("], ["\\operatorname{frac}", "frac("], ["\\mathrm{Ran\\#}", "rand"], ["\\operatorname{RanInt}", "randint(@;)"], ["\\operatorname{Pol}", "Pol(@;)"], ["\\operatorname{Rec}", "Rec(@;)"]]],
-  ["stat", [["\\operatorname{mean}", "mean(@)"], ["\\operatorname{median}", "median(@)"], ["\\sigma", "stdev(@)"], ["\\min", "min(@)"], ["\\max", "max(@)"], ["\\Sigma", "total(@)"]]],
+  ["stat", [["\\bar{x}", "mean(@)"], ["\\mathrm{Me}", "median(@)"], ["\\sigma", "stdevp(@)"], ["s", "stdev(@)"], ["\\min", "min(@)"], ["\\max", "max(@)"], ["\\Sigma", "total(@)"]]],
   ["cplx", [["i", "i"], ["|z|", "abs("]]],
   ["mem", [["\\mathrm{M+}", "#m+"], ["\\mathrm{M-}", "#m-"], ["\\mathrm{MR}", "M"], ["\\mathrm{MC}", "#mc"]]],
 ];
@@ -179,7 +181,15 @@ export function createScientific(root, opts) {
     const c = [cls, k[1] === "#eq" ? "eq" : "", k[1] === "#ac" || k[1] === "#del" ? "warn" : "", k[1] === "#2nd" ? "second" : "", k[1] === "#more" ? "more" : "", /^[0-9]$/.test(k[1]) || k[1] === "#dec" ? "digit" : ""].filter(Boolean).join(" ");
     return `<button type="button" class="sc-key ${c}" data-ins="${esc(k[1])}"${k[3] ? ` data-ins2="${esc(k[3])}" data-l1="${esc(k[0])}" data-l2="${esc(k[2])}"` : ""}${label}${k[1] === "#more" ? ' aria-expanded="false"' : ""}>${k[1] === "#dec" ? (comma() ? "," : ".") : esc(k[0])}</button>`;
   };
-  $(".sc-fn").innerHTML = FN_KEYS.map((k) => keyHtml(k, "fn")).join("");
+  // funkcijske tipke po poglavju, iz katerega je kalkulator odprt (tipke-poglavja.js)
+  let profile = null;
+  function renderFn() {
+    profile = chapterProfile(opts.chapter?.());
+    const box = $(".sc-fn");
+    box.dataset.profile = profile || "";
+    box.innerHTML = adaptKeys(FN_KEYS, profile).map((k) => keyHtml(k, "fn")).join("");
+  }
+  renderFn();
   $(".sc-num").innerHTML = NUM_KEYS.map((k) => keyHtml(k, "n")).join("");
 
   function setSecond(on) {
@@ -191,7 +201,15 @@ export function createScientific(root, opts) {
 
   // --- vnos ---
   const OPS = /^[+×÷^²³⁻!%−]/;
-  function insert(text) {
+  // o.replace: vnos zamenja vrstico (formula iz zbirke); o.hint: namig pod vrstico, kaj storiti z njo
+  // o.angle: formula s koti v radianih (sin ω t) preklopi kalkulator v RAD
+  function insert(text, o = {}) {
+    if (o.replace) input.value = "";
+    if (o.angle && ANGLES.includes(o.angle) && st.angle !== o.angle) {
+      st.angle = o.angle;
+      save();
+      syncBar();
+    }
     let ins = text;
     // po izračunu: operator nadaljuje z rezultatom (Ans)
     if (!input.value && OPS.test(ins) && st.history.length) ins = `Ans${ins}`;
@@ -203,7 +221,13 @@ export function createScientific(root, opts) {
     const pos = s + (at >= 0 ? at : clean.length);
     input.setSelectionRange(pos, pos);
     recall = -1;
+    if (o.replace) fromFormula = namesIn(input.value);
     update();
+    if (o.hint) {
+      const live = $(".sc-live");
+      live.className = "sc-live muted";
+      live.innerHTML = `<span class="sc-live-hint">${esc(o.hint)}</span>`;
+    }
   }
   function del() {
     const s = input.selectionStart ?? input.value.length;
@@ -211,7 +235,7 @@ export function createScientific(root, opts) {
     if (s !== e) input.value = input.value.slice(0, s) + input.value.slice(e);
     else if (s > 0) {
       // celo ime funkcije z oklepajem naenkrat (sin( …)
-      const m = /(?:arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|Int|frac|randint|Pol|Rec|mean|median|stdev|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(input.value.slice(0, s));
+      const m = /(?:arcsin|arccos|arctan|arccot|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|Int|frac|randint|Pol|Rec|mean|median|stdevp|stdev|count|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(input.value.slice(0, s));
       const n = m ? m[0].length : 1;
       input.value = input.value.slice(0, s - n) + input.value.slice(s);
       input.setSelectionRange(s - n, s - n);
@@ -223,7 +247,26 @@ export function createScientific(root, opts) {
     input.setSelectionRange(p, p);
   }
 
-  const env = () => ({ vars: st.vars, funcs: st.funcs, ans: st.ans, deg: st.angle === "deg", grad: st.angle === "grad", comma: comma() });
+  // Vrstica je formula iz zbirke (insert z replace): njene črke so neznanke, zato shranjene spremenljivke z istim
+  // imenom (F = 6 iz prejšnjega računa, spomin M) ne veljajo, dokler je ne izračunaš ali pobrišeš.
+  let fromFormula = null;
+  const vars = () => (fromFormula ? Object.fromEntries(Object.entries(st.vars).filter(([n]) => !fromFormula.has(n))) : st.vars);
+  const env = () => ({ vars: vars(), funcs: st.funcs, ans: st.ans, deg: st.angle === "deg", grad: st.angle === "grad", comma: comma() });
+  // M(H2SO4) v vnosu je molska masa (public/graph/molska.js): fn dobi vnos s spremenljivkami namesto M(…)
+  const withChem = (text, fn, extra) => {
+    const k = chemSub(text);
+    if (!k) return fn(text, { ...env(), ...extra });
+    const r = k.fix(fn(k.text, { ...env(), ...extra, vars: { ...vars(), ...k.vars } }));
+    // »M(NaCl) = 58,44« je preverjanje, ne shranjevanje v spremenljivko
+    if (r?.assign?.startsWith("M_kem")) return { kind: "bool", value: Math.abs(r.value - k.vars[r.assign]) < 1e-9 * Math.max(1, Math.abs(r.value)), tex: r.tex };
+    // molska masa je merjena vrednost: rezultat samo decimalno (ne 249677/1000)
+    return r && typeof r === "object" ? { ...r, approx: true, exact: undefined } : r;
+  };
+  // črke v vrstici (neznanke formule), brez M(…)
+  const namesIn = (text) => {
+    const src = chemSub(text)?.text ?? text;
+    return new Set(src.split("=").flatMap((p) => evaluate(p, { vars: {}, funcs: st.funcs })?.error?.info?.names || []));
+  };
   const fmt = (v) => formatNumber(v, { mode: st.format, comma: comma() });
 
   function errorText(e) {
@@ -282,9 +325,9 @@ export function createScientific(root, opts) {
   }
 
   // rezultat (TeX za vrednost) po trenutni obliki zapisa
-  function valueTex(v) {
+  function valueTex(v, approx) {
     const f = fmt(v);
-    if (st.format !== "auto") return f.tex;
+    if (st.format !== "auto" || approx) return f.tex;
     const ex = exactTex(v);
     const mix = ex && ex.startsWith(v < 0 ? "-\\frac" : "\\frac") ? mixedTex(v) : null;
     return `${ex ? `${ex} ${mix ? `= ${mix} ` : ""}\\approx ` : ""}${f.tex}`;
@@ -304,6 +347,7 @@ export function createScientific(root, opts) {
       case "value":
         e.value = r.value;
         if (r.assign) e.assign = r.assign;
+        if (r.approx) e.approx = true;
         break;
       case "complex":
         e.re = r.re;
@@ -311,7 +355,7 @@ export function createScientific(root, opts) {
         break;
       case "solve":
         e.res = solutionTex(r, c, st.format);
-        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad"]);
+        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx"]);
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
         e.steps = true;
@@ -399,7 +443,7 @@ export function createScientific(root, opts) {
     switch (e.kind || "value") {
       case "value": {
         const d = e.dms ? dmsOf(e.value, { comma: comma() }) : null;
-        return texHtml(`${e.assign ? `${e.assign} ` : ""}= ${d ? `${fmt(e.value).tex} = ${d.tex}` : valueTex(e.value)}`);
+        return texHtml(`${e.assign ? `${e.assign} ` : ""}= ${d ? `${fmt(e.value).tex} = ${d.tex}` : valueTex(e.value, e.approx)}`);
       }
       case "complex":
         return texHtml(`= ${complexTex(e.re, e.im)}`);
@@ -439,6 +483,7 @@ export function createScientific(root, opts) {
     const live = $(".sc-live");
     root.classList.toggle("sc-typing", !!text.trim());
     if (!text.trim()) {
+      fromFormula = null;
       prev.innerHTML = "";
       live.textContent = "";
       live.className = "sc-live";
@@ -470,18 +515,18 @@ export function createScientific(root, opts) {
     const cmd = parseCommand(text);
     if (cmd && ["integrate", "limit", "taylor"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env(), live: true });
     if (/[=<>≤≥;]/.test(text) && !functionDef(text)) {
-      const r = evaluate(text, env());
+      const r = withChem(text, evaluate);
       if (r && !r.error) return { kind: "value", ...r };
-      const tex = previewTex(text, env());
+      const tex = withChem(text, previewTex);
       return tex ? { kind: "solve", tex } : null;
     }
-    return analyze(text, { ...env(), live: true });
+    return withChem(text, analyze, { live: true });
   }
 
   function compute() {
     const text = input.value.trim();
     if (!text) return;
-    const r = analyze(text, env());
+    const r = withChem(text, analyze);
     const live = $(".sc-live");
     if (!r) return;
     const bad = r.error || (r.kind === "value" && !Number.isFinite(r.value));
@@ -491,7 +536,7 @@ export function createScientific(root, opts) {
       return;
     }
     if (r.kind === "value") {
-      if (r.assign) st.vars[r.assign] = r.value;
+      if (r.assign && !fromFormula?.has(r.assign)) st.vars[r.assign] = r.value;
       st.ans = r.value;
     } else if (r.kind === "complex") st.ans = r.im ? st.ans : r.re;
     else if (r.kind === "func") st.funcs[r.name] = { param: r.param, body: r.body };
@@ -502,6 +547,7 @@ export function createScientific(root, opts) {
       st.ans = e.first;
       delete e.first;
     }
+    fromFormula = null;
     st.history.push(e);
     if (st.history.length > MAX_HISTORY) st.history.splice(0, st.history.length - MAX_HISTORY);
     save();
@@ -774,7 +820,7 @@ export function createScientific(root, opts) {
     if (b.classList.contains("sc-act")) {
       const act = b.dataset.act;
       if (act === "plot") opts.openGraph?.(it.plot);
-      else if (act === "steps") opts.steps?.(it.stepsText || it.text, it.op === "factor" ? "factor" : it.op === "simplify" ? "simplify" : null);
+      else if (act === "steps") opts.steps?.(chemNumbers(it.stepsText || it.text), it.op === "factor" ? "factor" : it.op === "simplify" ? "simplify" : null);
       else if (act === "cas") {
         // ukaz se zapiše v vrstico in izračuna kot vsak drug vnos (v zgodovini ga lahko prikličeš)
         const v = b.dataset.v;
@@ -869,6 +915,12 @@ export function createScientific(root, opts) {
     resize() {
       hist.scrollTop = st.history.length ? hist.scrollHeight : 0;
       if (!touch && root.isConnected) input.focus({ preventScroll: true });
+    },
+    // drugo poglavje: druge funkcijske tipke
+    adapt() {
+      if (chapterProfile(opts.chapter?.()) === profile) return;
+      setSecond(false);
+      renderFn();
     },
     reload() {
       st = load();

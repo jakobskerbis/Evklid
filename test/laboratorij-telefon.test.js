@@ -175,7 +175,7 @@ test("lab on a phone: the drawing stays visible while using the controls", { ski
   });
 
   await t.test("landscape 740 × 360 and desktop 1280 × 800: drawing beside the controls", async () => {
-    for (const [width, height, ids] of [[740, 360, ["lab-ohm", "lab-titracija", "lab-grelnik", "lab-faze"]], [1280, 800, ["lab-co2", "lab-titracija", "lab-newton2", "lab-elektroliza"]]]) {
+    for (const [width, height, ids] of [[740, 360, ["lab-ohm", "lab-titracija", "lab-grelnik", "lab-faze"]], [1280, 800, ["lab-co2", "lab-titracija", "lab-newton2", "lab-elektroliza", "lab-indukcija"]]]) {
       const ctx = await browser.newContext({ viewport: { width, height }, isMobile: width < 1000, hasTouch: width < 1000 });
       for (const id of ids) {
         const { p, errs } = await run(ctx, id);

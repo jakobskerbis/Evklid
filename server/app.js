@@ -200,6 +200,11 @@ export function createApp(store, opts = {}) {
   securityHeaders(app);
   mountOldLinkRedirect(app, opts.homeCheck);
   app.get("/healthz", (_req, res) => res.send("ok")); // za gostovanje, brez gesla
+  // Brskalniki, Google in zaznamki iščejo /favicon.ico tudi brez <link rel="icon">: pošljemo logotip (scripts/logotip.cjs).
+  app.get("/favicon.ico", (_req, res) => {
+    res.set("Cache-Control", "public, max-age=86400");
+    res.type("image/x-icon").sendFile(path.join(here, "..", "assets", "evklid.ico"));
+  });
   // Različica in zasedenost: odprte strani se po posodobitvi osvežijo, samodejna posodobitev
   // (scripts/nadzor.js) pa strežnik znova zažene, ko nihče ne čaka na odgovor.
   const version = appVersion();
@@ -412,6 +417,7 @@ export function createApp(store, opts = {}) {
       manual_weaknesses: s.manual_weaknesses,
       flags: store.flagEvents(s.id),
       activity: store.activityByDay(s.id),
+      xpDays: store.xpByDay(s.id),
     });
   });
 

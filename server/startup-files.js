@@ -5,7 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const LOCAL = /\b(?:src|href)="(?!https?:|\/\/|data:|#)([^"?#]+)"/g;
+const LOCAL = /\b(?:src|href)="(?!https?:|\/\/|data:|#)([^"?#]+)(?:[?#][^"]*)?"/g; // ?v=… odrežemo (ikone)
 const IMPORT = /(?:^|[;\n}])\s*(?:import\s+(?:[\w*{}\s,$]+?\s+from\s+)?|export\s+(?:\*(?:\s+as\s+\w+)?|\{[^}]*\})\s+from\s+)["']([^"']+)["']/g;
 
 // later: moduli, ki jih stran naloži nekoliko kasneje (npr. "games/index.js"); pridejo na konec seznama.

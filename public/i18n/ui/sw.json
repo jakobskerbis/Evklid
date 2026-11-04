@@ -896,6 +896,8 @@
   "sc.memory": "Vilivyohifadhiwa",
   "sc.insert": "Weka kwenye hesabu",
   "sc.pressSolve": "Bonyeza = kutatua",
+  "sc.fmHint": "Badilisha herufi zinazojulikana kwa namba, acha isiyojulikana kisha bonyeza =.",
+  "sc.fmRad": "Kikokotoo sasa kiko katika hali ya RAD (pembe katika radiani).",
   "sc.errUndefined": "Jibu halijafafanuliwa (k.m. kugawanya kwa 0).",
   "sc.constants": "Viasili",
   "sc.toCalc": "Kwenye kikokotoo",
@@ -3504,5 +3506,16 @@
   "block.freeMonth": "Mwezi huu umetumia maswali yako ya bure kwa mwalimu. Mazoezi na masomo yanaendelea kufanya kazi bila kikomo.",
   "block.freePool": "Mwezi huu maswali ya bure kwa mwalimu yamekwisha kwa kila mtu. Mazoezi na masomo yanaendelea kufanya kazi bila kikomo.",
   "block.hintGuest": "Ili kupata maswali zaidi, fungua akaunti kwenye kichupo cha Akaunti.",
-  "block.hintParent": "Ili kupata maswali zaidi, mwombe mzazi achague usajili kwenye kichupo cha Akaunti."
+  "block.hintParent": "Ili kupata maswali zaidi, mwombe mzazi achague usajili kwenye kichupo cha Akaunti.",
+  "akt.title": "Shughuli katika mwaka uliopita",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Siku za kujifunza: {n}",
+  "akt.best": "Mfululizo mrefu zaidi: {n}",
+  "akt.week": "Wiki hii: {n} XP",
+  "akt.weeks": "XP kwa wiki",
+  "akt.less": "Kidogo",
+  "akt.more": "Zaidi",
+  "sch.addAt": "Ongeza kipindi: {day}, {time}",
+  "lg.free": "nafasi wazi",
+  "corner.more": "Ongeza mada nyingine"
 }

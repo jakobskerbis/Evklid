@@ -318,7 +318,8 @@ export function runGame(host, opts) {
   let last = 0, raf = 0;
   function frame(ts) {
     raf = requestAnimationFrame(frame);
-    const dt = Math.min(0.05, (ts - (last || ts)) / 1000);
+    // window.__fastGames: samodejni pregled (scripts/preveri-aplikacijo.cjs) igro pospeši, da se konča tudi pri nizkem fps
+    const dt = Math.min(0.05, (ts - (last || ts)) / 1000) * (window.__fastGames ? 8 : 1);
     last = ts;
     if (G.running && !G.paused) {
       G.time += dt;

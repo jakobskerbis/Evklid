@@ -46,15 +46,19 @@ function timeLeft(iso) {
   return d > 0 ? t("lg.leftDays", { d, h }) : t("lg.leftHours", { h });
 }
 
-function boardHtml(rows, zones = false) {
+// fill: velikost skupine; prosta mesta do nje pokažemo kot prazne vrstice (vidiš, kje so meje za napredovanje).
+function boardHtml(rows, zones = false, fill = 0) {
   if (!rows.length) return `<p class="muted">${esc(t("lg.nobody"))}</p>`;
+  const free = [...Array(Math.max(0, fill - rows.length))]
+    .map((_, i) => `<li class="free"><span class="who"><span class="rank">${rows.length + i + 1}</span><span class="nick-name">${esc(t("lg.free"))}</span></span></li>`)
+    .join("");
   return `<ol class="leaderboard league-board">${rows
     .map(
       (r) => `<li class="${r.me ? "me" : ""} ${zones ? `zone-${r.zone}` : ""}">
         <span class="who"><span class="rank">${r.rank}</span>${avatarSvg(r.avatar, { size: 44 })}<span class="nick-name">${esc(r.nickname)}</span>${r.me ? ` <span class="you">${esc(t("lg.you"))}</span>` : ""}</span>
         <b>${r.xp} <span class="xp-unit">XP</span></b>${zones && r.zone !== "stay" ? `<span class="zone-mark" title="${esc(t(r.zone === "up" ? "lg.zoneUp" : "lg.zoneDown"))}">${icon(r.zone === "up" ? "arrow-right" : "arrow-left")}</span>` : ""}</li>`,
     )
-    .join("")}</ol>`;
+    .join("")}${free}</ol>`;
 }
 
 // Razredi in prijatelji: razvrstitev po tednu ali mesecu.
@@ -149,7 +153,7 @@ export async function loadLeague(studentId) {
   const L = data.league;
   const league = L.joined
     ? `<p class="muted league-rule"><span class="dot up"></span>${esc(t("lg.promote", { count: L.promoteCount }))}${L.demoteCount ? ` · <span class="dot down"></span>${esc(t("lg.demote", { count: L.demoteCount }))}` : ""} · ${icon("calendar")} ${esc(t("lg.ends", { time: timeLeft(L.endsAt) }))}</p>
-       ${boardHtml(L.board, true)}`
+       ${boardHtml(L.board, true, L.groupSize || 30)}`
     : `<div class="league-empty">${icon("target")}<p>${esc(t("lg.empty"))}</p></div>`;
   const award = L.lastWeek?.award;
   const wins = (L.awards || []).length
@@ -169,7 +173,7 @@ export async function loadLeague(studentId) {
       </div>
     </div>
     <div id="nick-picker" class="card" hidden></div>
-    <div class="card">
+    <div class="card lg-weekly">
       <h2 class="h-icon">${icon("trophy")} ${esc(t("lg.weekly"))}</h2>
       ${league}
       <p class="muted small lg-win-rule">${icon("medal")} ${esc(t("lg.weekWin"))}</p>

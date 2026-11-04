@@ -890,6 +890,8 @@
   "sc.memory": "已儲存",
   "sc.insert": "插入算式",
   "sc.pressSolve": "按 = 求解",
+  "sc.fmHint": "把已知的字母換成數字，保留未知量，然後按 =。",
+  "sc.fmRad": "計算機現在處於 RAD 模式（角度以弧度為單位）。",
   "sc.errUndefined": "結果無定義（例如除以 0）。",
   "sc.constants": "常數",
   "sc.toCalc": "放入計算機",
@@ -3479,5 +3481,16 @@
   "block.freeMonth": "本月你向輔導老師免費提問的次數已用完。練習和課程仍可無限制使用。",
   "block.freePool": "本月所有使用者向輔導老師免費提問的次數都已用完。練習和課程仍可無限制使用。",
   "block.hintGuest": "如需更多提問次數，請在「帳戶」分頁建立帳戶。",
-  "block.hintParent": "如需更多提問次數，請家長在「帳戶」分頁選擇訂閱。"
+  "block.hintParent": "如需更多提問次數，請家長在「帳戶」分頁選擇訂閱。",
+  "akt.title": "過去一年的活動",
+  "akt.day": "{day}：{xp} XP",
+  "akt.activeDays": "學習天數：{n}",
+  "akt.best": "最長連續：{n}",
+  "akt.week": "本週：{n} XP",
+  "akt.weeks": "每週 XP",
+  "akt.less": "少",
+  "akt.more": "多",
+  "sch.addAt": "新增課程：{day}，{time}",
+  "lg.free": "空位",
+  "corner.more": "再新增一個領域"
 }

@@ -896,6 +896,8 @@
   "sc.memory": "Guardado",
   "sc.insert": "Inserir no cálculo",
   "sc.pressSolve": "Carrega em = para resolver",
+  "sc.fmHint": "Substitui as letras conhecidas por números, deixa a incógnita e carrega em =.",
+  "sc.fmRad": "A calculadora está agora no modo RAD (ângulos em radianos).",
   "sc.errUndefined": "O resultado não está definido (p. ex. divisão por 0).",
   "sc.constants": "Constantes",
   "sc.toCalc": "Para a calculadora",
@@ -3511,5 +3513,16 @@
   "block.freeMonth": "Este mês já usaste as tuas perguntas gratuitas ao tutor. A Prática e as lições continuam a funcionar sem limites.",
   "block.freePool": "Este mês as perguntas gratuitas ao tutor esgotaram-se para todos. A Prática e as lições continuam a funcionar sem limites.",
   "block.hintGuest": "Para teres mais perguntas, cria uma conta no separador Conta.",
-  "block.hintParent": "Para teres mais perguntas, pede a um dos teus pais que escolha uma subscrição no separador Conta."
+  "block.hintParent": "Para teres mais perguntas, pede a um dos teus pais que escolha uma subscrição no separador Conta.",
+  "akt.title": "Atividade no último ano",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Dias com estudo: {n}",
+  "akt.best": "Sequência mais longa: {n}",
+  "akt.week": "Esta semana: {n} XP",
+  "akt.weeks": "XP por semana",
+  "akt.less": "Menos",
+  "akt.more": "Mais",
+  "sch.addAt": "Adicionar aula: {day}, {time}",
+  "lg.free": "lugar livre",
+  "corner.more": "Adicionar outro tema"
 }

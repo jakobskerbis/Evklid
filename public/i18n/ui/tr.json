@@ -896,6 +896,8 @@
   "sc.memory": "Kayıtlı",
   "sc.insert": "Hesaplamaya ekle",
   "sc.pressSolve": "Çözmek için = tuşuna bas",
+  "sc.fmHint": "Bilinen harflerin yerine sayıları yaz, bilinmeyeni bırak ve = tuşuna bas.",
+  "sc.fmRad": "Hesap makinesi artık RAD modunda (açılar radyan cinsinden).",
   "sc.errUndefined": "Sonuç tanımsız (ör. 0'a bölme).",
   "sc.constants": "Sabitler",
   "sc.toCalc": "Hesap makinesine",
@@ -3504,5 +3506,16 @@
   "block.freeMonth": "Bu ay ücretsiz özel öğretmen sorularını kullandın. Alıştırma ve dersler sınırsız çalışmaya devam ediyor.",
   "block.freePool": "Bu ay ücretsiz özel öğretmen soruları herkes için tükendi. Alıştırma ve dersler sınırsız çalışmaya devam ediyor.",
   "block.hintGuest": "Daha fazla soru için Hesap sekmesinden bir hesap oluştur.",
-  "block.hintParent": "Daha fazla soru için bir ebeveyninden Hesap sekmesinde abonelik seçmesini iste."
+  "block.hintParent": "Daha fazla soru için bir ebeveyninden Hesap sekmesinde abonelik seçmesini iste.",
+  "akt.title": "Son bir yıldaki etkinlik",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Öğrenilen gün sayısı: {n}",
+  "akt.best": "En uzun seri: {n}",
+  "akt.week": "Bu hafta: {n} XP",
+  "akt.weeks": "Haftalara göre XP",
+  "akt.less": "Az",
+  "akt.more": "Çok",
+  "sch.addAt": "Ders ekle: {day}, {time}",
+  "lg.free": "boş yer",
+  "corner.more": "Başka bir konu ekle"
 }
