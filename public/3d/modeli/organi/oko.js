@@ -1,4 +1,4 @@
-// Oko v 3D (»Organi v 3D«): model iz Z-Anatomy (CC BY-SA 4.0), deli in besedila v ../organi-3d/oko.json.
+// Oko v 3D (»Organi v 3D«): zrklo iz HuBMAP HRA (CC BY 4.0), mišice in vidni živec iz Z-Anatomy (CC BY-SA 4.0); deli in besedila v ../organi-3d/oko.json.
 // Gradi ga skupni graditelj organov iz GLB (public/3d/organ.js, docs/3d.md »Organi iz GLB«).
 export const info = {
   id: "organ-oko",

@@ -1,6 +1,6 @@
 {
  "organ": "mozgani",
- "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
+ "vir": "Skorja iz MRI (OpenNeuro ds000001, CC0), ostalo Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "skorja": {
    "barva": "#d0706b",
@@ -213,10 +213,10 @@
   },
   {
    "id": "limbicni",
-   "ime": "Pasasta vijuga",
-   "la": "Gyrus cinguli",
+   "ime": "Limbični reženj",
+   "la": "Lobus limbicus",
    "barva": "#f472b6",
-   "opis": "Leži na notranji strani poloble in sodeluje pri čustvih, pozornosti in spominu.",
+   "opis": "Pas skorje na notranji strani poloble okoli žuljevega telesa (s pasasto vijugo); sodeluje pri čustvih, pozornosti in spominu.",
    "vozlisca": [
     "Limbic lobe (MRI).l",
     "Limbic lobe (MRI).r"
@@ -297,7 +297,7 @@
    "ime": "Možgansko deblo",
    "la": "Truncus encephali",
    "barva": "#2dd4bf",
-   "opis": "Povezuje možgane s hrbtenjačo in samo uravnava dihanje, srčni utrip in požiranje.",
+   "opis": "Povezuje možgane s hrbtenjačo in samodejno uravnava dihanje, srčni utrip in požiranje.",
    "vozlisca": [
     "Base of peduncle.l",
     "Base of peduncle.r",
@@ -334,7 +334,7 @@
    "ime": "Žuljevo telo",
    "la": "Corpus callosum",
    "barva": "#e8ecf3",
-   "opis": "Debel snop živčnih vlaken, po katerem si leva in desna polobla izmenjujeta sporočila.",
+   "opis": "Debel snop živčnih vlaken, po katerem si leva in desna polobla izmenjujeta sporočila. Pod njim sta obok (fornix) in sprednja komisura.",
    "vozlisca": [
     "Anterior commissure",
     "Corpus callosum",
@@ -397,7 +397,7 @@
    "ime": "Križišče vidnih živcev",
    "la": "Chiasma opticum",
    "barva": "#fde68a",
-   "opis": "Tu se del vlaken iz obeh očes prekriža, zato vsaka polobla dobi sliko iz obeh očes.",
+   "opis": "Tu se del vlaken iz obeh očes prekriža, zato vsaka polobla z obema očesoma vidi nasprotno polovico vidnega polja.",
    "vozlisca": [
     "Optic chiasm.l",
     "Optic chiasm.r"
@@ -486,8 +486,8 @@
     "besedilo": "Pretres možganov nastane ob udarcu v glavo: pojavijo se glavobol, slabost, zmedenost ali kratka nezavest, zato mora poškodovanca pregledati zdravnik. Možganska kap nastane, ko se žila v možganih zamaši ali poči in del možganov ostane brez kisika. Povešen kotiček ust, šibka roka ali nerazumljiv govor pomenijo, da je treba takoj poklicati 112. Pogoste so tudi migrena, epilepsija in pri starejših ljudeh demenca, na primer Alzheimerjeva bolezen."
    },
    {
-    "naslov": "Kako skrbimo zanje",
-    "besedilo": "Pri kolesarjenju, rolanju, smučanju in jahanju nosimo čelado. Dovolj spanja (najstniki potrebujejo 8 do 10 ur), gibanje, raznolika hrana in pitje vode pomagajo pri učenju in pomnjenju. Alkohol, droge in kajenje možganom škodujejo, posebno dokler se še razvijajo, kar traja do približno 25. leta."
+    "naslov": "Kako skrbiš zanje",
+    "besedilo": "Pri kolesarjenju, rolanju, smučanju in jahanju nosi čelado. Dovolj spanja (najstniki potrebujejo 8 do 10 ur), gibanje, raznolika hrana in pitje vode ti pomagajo pri učenju in pomnjenju. Alkohol, droge in kajenje možganom škodujejo, posebno dokler se še razvijajo, kar traja do približno 25. leta."
    }
   ]
  },

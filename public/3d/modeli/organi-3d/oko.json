@@ -1,6 +1,6 @@
 {
  "organ": "oko",
- "vir": "Z-Anatomy (CC BY-SA 4.0), levo oko z očesnimi mišicami; izvoz scripts/atlas/izvozi-organe.py",
+ "vir": "Zrklo HuBMAP HRA (CC BY 4.0), očesne mišice in vidni živec Z-Anatomy (CC BY-SA 4.0), levo oko; izvoz scripts/atlas/izvozi-organe.py",
  "tkiva": {
   "beločnica": {
    "barva": "#f2ede6",
@@ -508,7 +508,7 @@
    },
    {
     "naslov": "Delovanje",
-    "besedilo": "Svetloba gre skozi roženico, zenico in lečo, ki jo zbereta tako, da na mrežnici nastane ostra, a obrnjena in pomanjšana slika. Ko gledamo blizu, se leča odebeli, ko gledamo daleč, se splošči. Na mrežnici paličnice zaznavajo svetlobo tudi v mraku, čepnice pa barve in podrobnosti. Signale po vidnem živcu dobijo možgani, ki sliko obrnejo in jo sestavijo iz obeh očes."
+    "besedilo": "Svetloba gre skozi roženico, zenico in lečo. Roženica in leča jo zbereta tako, da na mrežnici nastane ostra, a obrnjena in pomanjšana slika. Ko gledamo blizu, se leča odebeli, ko gledamo daleč, se splošči. Na mrežnici paličnice zaznavajo svetlobo tudi v mraku, čepnice pa barve in podrobnosti. Signale po vidnem živcu dobijo možgani, ki sliko obrnejo in jo sestavijo iz obeh očes."
    },
    {
     "naslov": "Zanimivost",
@@ -519,8 +519,8 @@
     "besedilo": "Pri kratkovidnosti je zrklo predolgo in slika nastane pred mrežnico, zato slabo vidimo na daleč; popravijo jo razpršilna leča v očalih ali kontaktne leče. Pri daljnovidnosti je zrklo prekratko in pomagajo zbiralne leče. Pri starejših se leča lahko skali (siva mrena) in jo zamenjajo z umetno. Pogosto je tudi vnetje očesne veznice, ki pordi in srbi."
    },
    {
-    "naslov": "Kako skrbimo zanje",
-    "besedilo": "Na močnem soncu in na snegu nosimo sončna očala z UV-zaščito, pri delu z orodjem pa zaščitna očala. Pri branju in delu z zaslonom imamo dovolj svetlobe in vsakih 20 minut za kakšnih 20 sekund pogledamo v daljavo. Oči si ne drgnemo z umazanimi rokami. Če slabše vidimo, gremo k okulistu na pregled."
+    "naslov": "Kako skrbiš zanje",
+    "besedilo": "Na močnem soncu in na snegu nosi sončna očala z UV-zaščito, pri delu z orodjem pa zaščitna očala. Pri branju in delu z zaslonom imej dovolj svetlobe in vsakih 20 minut za kakšnih 20 sekund poglej v daljavo. Ne drgni si oči z umazanimi rokami. Če slabše vidiš, pojdi k okulistu na pregled."
    }
   ]
  },

@@ -141,6 +141,10 @@ function pripravi(url, napredek) {
         k.geo.computeBoundingSphere();
         k.groba = groba(k.geo, 0.022);
       }
+      // Surova kvantizirana scena ni več potrebna (kosi so ploske kopije): sprostimo jo, da v pomnilniku ne držimo
+      // vsakega organa dvakrat (teksture ostanejo v `teksture`).
+      koren.traverse((o) => o.geometry?.dispose());
+      scene.delete(url);
       return { kosi, polmer, sredisce, teksture };
     });
     p.catch(() => zdruzeno.delete(url));

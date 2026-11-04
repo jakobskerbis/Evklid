@@ -27,6 +27,27 @@ for (const e of modeli) {
   if (typeof mod.organ === "string") organi.push({ e, mod });
 }
 
+test("organi iz GLB: IZLOCI je enak kot v izvozu (scripts/atlas/izvozi-*.py)", () => {
+  for (const f of ["izvozi-organe.py", "izvozi-z-anatomy.py"]) {
+    const m = fs.readFileSync(path.join(ROOT, "scripts", "atlas", f), "utf8").match(/^IZLOCI = re\.compile\(r"(.*)", re\.I\)$/m);
+    assert.ok(m, `${f}: manjka IZLOCI`);
+    assert.equal(m[1], IZLOCI.source, `${f}: IZLOCI se razlikuje od testa`);
+  }
+});
+
+test("organi iz GLB: vsak GLB ima vir v public/3d/viri.json, brez NC in ND", () => {
+  const viri = JSON.parse(fs.readFileSync(path.join(ROOT, "public", "3d", "viri.json"), "utf8")).viri;
+  const ujema = (vzorec, p) => new RegExp(`^${vzorec.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^/]*")}$`).test(p);
+  for (const f of fs.readdirSync(MAPA).filter((x) => x.endsWith(".glb"))) {
+    const zanj = viri.filter((v) => (v.datoteke || []).some((d) => ujema(d, `organi-3d/${f}`)));
+    assert.ok(zanj.length >= 2, `${f}: premalo virov (${zanj.map((v) => v.id)})`);
+    for (const v of zanj) assert.ok(!/\b(NC|ND)\b|non-?commercial|no-?deriv/i.test(v.licenca), `${f}: vir ${v.id} ima licenco ${v.licenca}`);
+  }
+  for (const [vzorec, id] of [["organi-3d/mozgani.glb", "openneuro-ds000001"], ["organi-3d/oko.glb", "hubmap-hra-oko"], ["organi-3d/srce.glb", "z-anatomy"]]) {
+    assert.ok(viri.some((v) => v.id === id && v.datoteke.some((d) => ujema(d, vzorec))), `${vzorec}: manjka vir ${id}`);
+  }
+});
+
 test("organi iz GLB: vsaj možgani, srce in oko", () => {
   const imena = organi.map((o) => o.mod.organ);
   for (const x of ["mozgani", "srce", "oko"]) assert.ok(imena.includes(x), `manjka organ ${x}`);
@@ -40,9 +61,9 @@ for (const { e, mod } of organi) {
     const pc = path.join(MAPA, `${ime}.glb`);
     const tel = path.join(MAPA, `${ime}-telefon.glb`);
     for (const f of [pc, tel]) assert.ok(fs.existsSync(f), `manjka ${path.relative(ROOT, f)}`);
-    // Meja: 6 MB računalnik, 2 MB telefon (z zapečenimi teksturami WebP; brez tekstur ostane okoli 4 in 1,5 MB).
-    assert.ok(fs.statSync(pc).size <= 6.2 * MB, `${ime}.glb: ${(fs.statSync(pc).size / MB).toFixed(2)} MB > 6,2 MB`);
-    assert.ok(fs.statSync(tel).size <= 2.1 * MB, `${ime}-telefon.glb: ${(fs.statSync(tel).size / MB).toFixed(2)} MB > 2,1 MB`);
+    // Meja (docs/3d.md): 6 MB računalnik, 2 MB telefon (z zapečenimi teksturami WebP; brez tekstur ostane okoli 4 in 1,5 MB).
+    assert.ok(fs.statSync(pc).size <= 6 * MB, `${ime}.glb: ${(fs.statSync(pc).size / MB).toFixed(2)} MB > 6 MB`);
+    assert.ok(fs.statSync(tel).size <= 2 * MB, `${ime}-telefon.glb: ${(fs.statSync(tel).size / MB).toFixed(2)} MB > 2 MB`);
     const jp = glb(pc);
     const jt = glb(tel);
     // Brez meshopt/draco: organ se odpre tudi v lekciji (CSP glavne aplikacije ne dovoli WebAssembly).
