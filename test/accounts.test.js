@@ -1277,3 +1277,23 @@ test("pošta: /healthz/stanje pove, ali Resend sprejema sporočila, brez e-naslo
     server.close();
   }
 });
+
+test("premlad za račun: Evklid pošlje staršu povezavo, naslova ne shrani, omejitve proti zlorabi", () =>
+  withServer(async ({ client, calls, store }) => {
+    const c = client();
+    const r = await c("/api/auth/ask-parent", { method: "POST", body: { email: "Mama@Primer.si", name: "Miha<script>" } });
+    assert.equal(r.status, 200);
+    const mail = calls.filter((x) => x.host === "api.resend.com").at(-1);
+    assert.deepEqual(mail.body.to, ["mama@primer.si"]);
+    assert.equal(mail.body.subject, "Prošnja za dovoljenje za Evklid");
+    assert.match(mail.body.text, /^Mihascript bi rad/);
+    assert.match(mail.body.text, /\/starsi\.html\?ime=Mihascript/);
+    assert.doesNotMatch(mail.body.html, /<script/);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM parents").get().n, 0);
+    assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "ni-naslov" } })).status, 400);
+    // Na isti naslov največ 2 na dan, z istega omrežja 3 na uro.
+    assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "mama@primer.si" } })).status, 200);
+    assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "mama@primer.si" } })).status, 429);
+    assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "oce@primer.si" } })).status, 200);
+    assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "teta@primer.si" } })).status, 429);
+  }));

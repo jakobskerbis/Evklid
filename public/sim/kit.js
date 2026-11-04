@@ -13,6 +13,10 @@ export function fmt(x, d = 2) {
 // Število za KaTeX (decimalna vejica brez presledka).
 export const tfmt = (x, d = 2) => fmt(x, d).replace("−", "-").replace(",", "{,}");
 
+// Kombinirajoča črta (x̄ = x + U+0304) se v pisavi aplikacije izriše zamaknjeno kot »x‾« (j, 2. 11.
+// 2026), zato črko s črto izrišemo kot črko s črto nad njo (razred ovl, text-decoration: overline).
+const BAR = /(.)\u0304/;
+const barParts = (t) => String(t).split(/(.\u0304)/).filter(Boolean).map((p) => (BAR.test(p) && p.length === 2 ? { bar: p[0] } : p));
 export function h(tag, attrs = {}, ...kids) {
   const el = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs || {})) {
@@ -22,7 +26,11 @@ export function h(tag, attrs = {}, ...kids) {
     else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
     else el.setAttribute(k, v === true ? "" : v);
   }
-  for (const k of kids.flat()) if (k != null && k !== false) el.append(k);
+  for (const k of kids.flat()) {
+    if (k == null || k === false) continue;
+    if (typeof k === "string" && BAR.test(k)) for (const p of barParts(k)) el.append(typeof p === "string" ? p : Object.assign(document.createElement("span"), { className: "ovl", textContent: p.bar }));
+    else el.append(k);
+  }
   return el;
 }
 
@@ -30,7 +38,17 @@ export function h(tag, attrs = {}, ...kids) {
 export function s(tag, attrs = {}, parent, text) {
   const el = document.createElementNS(NS, tag);
   for (const [k, v] of Object.entries(attrs || {})) if (v != null) el.setAttribute(k, v);
-  if (text != null) el.textContent = text;
+  if (text != null && BAR.test(String(text))) {
+    for (const p of barParts(text)) {
+      if (typeof p === "string") el.append(p);
+      else {
+        const t = document.createElementNS(NS, "tspan");
+        t.setAttribute("class", "ovl");
+        t.textContent = p.bar;
+        el.append(t);
+      }
+    }
+  } else if (text != null) el.textContent = text;
   if (parent) parent.append(el);
   return el;
 }
@@ -140,7 +158,8 @@ export function segmented({ options, value, onChange }) {
   const wrap = h("div", { class: "demo-seg", role: "radiogroup" });
   const btns = options.map((o) => {
     const [v, t] = Array.isArray(o) ? o : [o, o];
-    const b = h("button", { type: "button", role: "radio", class: "seg-btn", onclick: () => wrap.set(v) }, t);
+    // z̄ se izriše s črto nad črko (ovl), bralnik zaslona pa naj prebere celo oznako.
+    const b = h("button", { type: "button", role: "radio", class: "seg-btn", "aria-label": typeof t === "string" && t.includes("\u0304") ? t : null, onclick: () => wrap.set(v) }, t);
     b.dataset.v = v;
     return b;
   });

@@ -4,6 +4,7 @@ import katex from "katex";
 import { parseLesson, expandFormulaBlocks } from "./textbook.js";
 import { getTopic } from "./curriculum.js";
 import { checkArithmetic } from "./lesson-math.js";
+import { checkIdentities } from "./lesson-identity.js";
 import { SYMBOLS_BLOCK_RE, parseSymbolsBlock, symbolsIn, SYMBOLS, SUBJECT_TABLES } from "../public/formula-data.js";
 
 const REQUIRED = [
@@ -104,6 +105,9 @@ export function checkLessonSource(src, topicId) {
   for (const m of calc.mismatches) {
     (m.rel > 0.02 ? err : warn)(`vrstica ${m.line + fmOffset}: račun se ne ujema: $${m.tex}$ (${m.left} ≠ ${m.right})`);
   }
+  // Enačbe z neznankami (identitete, :::simboli, odgovori kviza): naključna števila v vse strani (j, 1. 11. 2026).
+  const ids = checkIdentities(body);
+  for (const m of ids.mismatches) err(`vrstica ${m.line + fmOffset}: enakost ne velja za vse vrednosti: $${m.tex}$ (${m.left} ≠ ${m.right}); če je to enačba ali pogoj, to napiši v isti vrstici (»enačba«, »če je …«)`);
   checkSymbols(body, err, warn);
   if (/\bPhET\b/.test(body)) err("v besedilu ne omenjaj PhET; napiši »interaktivna simulacija spodaj«");
   if (/\.{3}\s*$/m.test(body.replace(/\$[^$]*\$/g, ""))) warn("vrstica se konča s »...« (nedokončano besedilo?)");
@@ -114,7 +118,7 @@ export function checkLessonSource(src, topicId) {
   if (stock.length) warn(`šablonski stavek ${stock.join(", ")}: začni s situacijo, vprašanjem ali poskusom`);
   if (words < 800) warn(`lekcija je kratka (${words} besed, cilj 1300–2300)`);
   if (words > 2800) warn(`lekcija je dolga (${words} besed, cilj 1300–2300)`);
-  return { errors, warnings, words, examples: ex ? ex.md.split(/^### +/m).length - 1 : 0, questions: qs.length, calcChecked: calc.checked };
+  return { errors, warnings, words, examples: ex ? ex.md.split(/^### +/m).length - 1 : 0, questions: qs.length, calcChecked: calc.checked, identitiesChecked: ids.checked };
 }
 
 // Oznake lekcije (:::simboli, content/lessons/README.md): vsaka vrstica se razbere in izriše,

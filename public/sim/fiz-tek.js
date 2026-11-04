@@ -47,7 +47,7 @@ export function vzvod(el, { mode = "vzvod" } = {}) {
     stage: svg,
     controls: [
       slider({ label: "masa 1 (oranžna)", min: 1, max: 8, value: m1, unit: "kg", onInput: (v) => ((m1 = v), upd()) }),
-      slider({ label: "masa 2 (zelena)", min: 1, max: 8, value: m2, unit: "kg", onInput: (v) => ((m2 = v), upd()) }),
+      slider({ label: "masa 2 (turkizna)", min: 1, max: 8, value: m2, unit: "kg", onInput: (v) => ((m2 = v), upd()) }),
     ],
     out,
     tryText: "Uravnovesi 4 kg na razdalji 2 z 2 kg. Kam moraš postaviti lažjo utež? Kaj pa, če sta obe na isti strani osi?",
@@ -197,7 +197,7 @@ export function stojece(el) {
   const info = () => {
     const f = (n * v) / (2 * Lm);
     out.innerHTML = texBlock(`f_n = \\frac{n\\,c}{2L} = \\frac{${n}\\cdot ${v}}{2\\cdot ${fmt(Lm, 2)}} = ${fmt(f, 0)}\\ \\text{Hz}`) +
-      `<p>Na struni, vpeti na obeh koncih, nastane stoječe valovanje le, če gre na dolžino strune celo število polovic valovne dolžine: L = n·λ/2. Rdeče točke so <b>vozli</b> (ne nihajo), zelene <b>hrbti</b>. ${n === 1 ? "To je osnovni ton." : `To je ${n}. lastno nihanje (${n - 1}. višji harmonik).`}</p>
+      `<p>Na struni, vpeti na obeh koncih, nastane stoječe valovanje le, če gre na dolžino strune celo število polovic valovne dolžine: L = n·λ/2. Rdeče točke so <b>vozli</b> (ne nihajo), turkizne <b>hrbti</b>. ${n === 1 ? "To je osnovni ton." : `To je ${n}. lastno nihanje (${n - 1}. višji harmonik).`}</p>
        <p class="muted">Hitrost valovanja na struni je c = √(F/μ): bolj napeta struna da višji ton. Dolžina strune je v merilu, nihanje pa je upočasnjeno 400-krat (višja frekvenca → hitrejše nihanje).</p>`;
   };
   animate(el, (dt) => {
