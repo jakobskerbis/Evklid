@@ -75,7 +75,7 @@ export function zgradi(THREE, ctx) {
   });
   const mOsnF = ploskevMat("#5C8BF2", THREE.FrontSide, 1), mOsnB = ploskevMat("#3E5DA6", THREE.BackSide, 1);
   const mPlF = ploskevMat("#E8973A", THREE.FrontSide, 1), mPlB = ploskevMat("#9A6428", THREE.BackSide, 1);
-  const mDuh = new THREE.MeshBasicMaterial({ color: "#CFDAF7", transparent: true, opacity: 0.09, depthWrite: false, side: THREE.FrontSide, clippingPlanes: duhKlipi });
+  const mDuh = new THREE.MeshBasicMaterial({ color: "#AFC4FF", transparent: true, opacity: 0.1, depthWrite: false, side: THREE.FrontSide, clippingPlanes: duhKlipi });
   const mRob = new THREE.MeshStandardMaterial({ color: "#F1F4FF", roughness: 0.35, metalness: 0.05, transparent: true, opacity: 1 });
   // skrite robove rišemo črtkano (črtice sestavimo sami, neodvisno od gonilnika)
   const mSkrit = new THREE.LineBasicMaterial({ color: "#DCE4F7", transparent: true, opacity: 0.8, depthWrite: false, depthFunc: THREE.GreaterDepth });
@@ -158,7 +158,7 @@ export function zgradi(THREE, ctx) {
     const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
     const mat = new THREE.SpriteMaterial({ map: tex, depthTest: false, depthWrite: false, transparent: true });
     const sp = new THREE.Sprite(mat); sp.renderOrder = 10; sp.visible = false;
-    const vis = 0.105; sp.scale.set(vis * w / h, vis, 1);
+    const vis = 0.12; sp.scale.set(vis * w / h, vis, 1);
     sp.userData.tex = tex; oznakeG.add(sp); napisi.set(kljuc, sp);
     return sp;
   }
@@ -603,7 +603,7 @@ export function zgradi(THREE, ctx) {
       const sp = napis(o.glavno, o.pod, o.barva || "#FFFFFF", o.barva || "#6E9BFF", n);
       sp.visible = o.alfa > 0.02; sp.material.opacity = Math.max(0, Math.min(1, o.alfa));
       vSvet(o.p, sp.position);
-      if (o.smer) sp.position.addScaledVector(o.smer, 0.085);
+      if (o.smer) sp.position.addScaledVector(o.smer, 0.095);
     }
     // ročaji
     const rp = 0.035 / s;
@@ -717,7 +717,10 @@ export function zgradi(THREE, ctx) {
       const gama = pl.tip === "valj" ? 90 : (Math.atan2(pl.Hv, pl.r1) * 180) / Math.PI;
       if (al === 0) { ime = "krog"; const rr = pl.r1 + (pl.r2 - pl.r1) * (pP.y / pl.v); plos = Math.PI * rr * rr; }
       else if (al === 90) ime = pl.tip === "valj" ? "pravokotnik (osni presek)" : pl.tip === "stozec" ? "enakokraki trikotnik (osni presek)" : "enakokraki trapez (osni presek)";
-      else if (pl.tip !== "valj" && Math.abs(al - gama) < 0.5) ime = pl.tip === "stozec" ? "odsek parabole" : "lik, omejen z lokom parabole";
+      else if (pl.tip !== "valj" && Math.abs(al - gama) < 0.5) { // drsnik ima korak 1°, zato tudi skoraj vzporedno ravnino imenujemo parabola, a povemo
+        const prib = Math.abs(al - gama) > 1e-6 ? " (približno: ravnina je skoraj vzporedna s stranico)" : "";
+        ime = (pl.tip === "stozec" ? "odsek parabole" : "lik, omejen z lokom parabole") + prib;
+      }
       else if (al > gama) ime = pl.tip === "stozec" ? "odsek hiperbole" : "lik, omejen z lokom hiperbole";
       else if (naDnu || naVrhu) ime = "del elipse";
       else {
@@ -796,7 +799,7 @@ export function zgradi(THREE, ctx) {
       case "piramida4": return "kvadrat in 4 skladni enakokraki trikotniki";
       case "valj": return `2 kroga in pravokotnik 2πr × v = ${cm(2 * Math.PI * a)} × ${cm(v)}`;
       case "stozec": { const s = Math.hypot(a, v); return `krog in krožni izsek s polmerom s = ${cm(s)} in središčnim kotom ${st((360 * a) / s)}°`; }
-      case "krogla": return "krogla nima mreže: krogelne ploskve ne moremo razgrniti v ravnino, ne da bi jo raztegnili ali strgali";
+      case "krogla": return "krogla nima mreže: krogelne ploskve ne moremo razgrniti v ravnino, ne da bi jo raztegnili ali raztrgali";
       case "prisekana": return "2 kvadrata in 4 skladni enakokraki trapezi";
       case "prisekan": { const s = Math.hypot(v, a - top), Sc = (s * a) / (a - top); return `2 kroga in izsek krožnega kolobarja (polmera ${cm(Sc)} in ${cm(Sc - s)}, kot ${st((360 * a) / Sc)}°)`; }
     }
@@ -826,7 +829,7 @@ export function zgradi(THREE, ctx) {
         : vr === "prisekana" ? "Večji spodnji in manjši zgornji kvadrat v vzporednih ravninah; njuni ploščini sta O₁ in O₂."
         : "Večji spodnji in manjši zgornji krog v vzporednih ravninah; njuni ploščini sta O₁ in O₂.";
       d.push({ id: "osnovna", ime: osnIme, opis: osnOpis, barva: "#7FA6FF", meshes: [osnF, osnB], tocka: tk(sredF(T.F[0])) });
-      const plOpis = prizma ? "Vse stranske ploskve skupaj; pri pokončni prizmi so to pravokotniki, ki skupaj merijo pl = o · v."
+      const plOpis = prizma ? "Vse stranske ploskve skupaj; pri pokončni prizmi so to pravokotniki s skupno ploščino pl = o · v (o je obseg osnovne ploskve)."
         : vr.startsWith("piramida") ? "Vse stranske ploskve skupaj; pri pravilni piramidi so to skladni enakokraki trikotniki z višino vₛ."
         : vr === "valj" ? "Ukrivljena ploskev valja; ko jo razgrneš, dobiš pravokotnik z dolžino 2πr in višino v."
         : vr === "stozec" ? "Ukrivljena ploskev stožca; ko jo razgrneš, dobiš krožni izsek s polmerom s."
@@ -840,7 +843,7 @@ export function zgradi(THREE, ctx) {
         const oglN = { kocka: 8, kvader: 8, prizma3: 6, prizma6: 12, piramida3: 4, piramida4: 5, prisekana: 8 }[vr];
         const pB = T.B[(T.k0 + 1) % T.B.length], pR = T.B[(T.k0 + 2) % T.B.length];
         d.push({ id: "robovi", ime: "Robovi", opis: `Daljice, v katerih se stikata po dve ploskvi; to telo ima ${robovN} robov. Skrite robove rišemo črtkano.`, barva: "#F1F4FF", meshes: [robovi], tocka: tk(pB.clone().lerp(pR, 0.5)) });
-        d.push({ id: "oglisca", ime: "Oglišča", opis: `Točke, v katerih se stikajo robovi; to telo ima ${oglN} oglišč.`, barva: "#F1F4FF", meshes: [oglisca], tocka: tk(pB.clone()) });
+        d.push({ id: "oglisca", ime: "Oglišča", opis: `Točke, v katerih se stikajo robovi; to telo ima ${oglN} ${oglN < 5 ? "oglišča" : "oglišč"}.`, barva: "#F1F4FF", meshes: [oglisca], tocka: tk(pB.clone()) });
       } else {
         const dva = T.F.length > 1;
         d.push({ id: "kroznice", ime: dva ? "Osnovni krožnici" : "Osnovna krožnica", opis: dva ? "Krožnici, ki omejujeta osnovni ploskvi; v njiju se plašč stika z osnovnima ploskvama." : "Krožnica, ki omejuje osnovno ploskev; v njej se plašč stika z osnovno ploskvijo.", barva: "#F1F4FF", meshes: [robovi], tocka: tk(V(-T.r1, 0, 0)) });
@@ -870,6 +873,8 @@ export function zgradi(THREE, ctx) {
 
   // ---------- nadzor ----------
   const ob = (k) => (v) => { S[k] = v; obnovi(); };
+  // drsniki ravnine delujejo le, ko je mreža zložena (krogla nima mreže)
+  const ravninaDela = () => S.prerez && (S.razpri <= 1e-4 || S.telo === "krogla");
   const api = {
     group,
     deli: [],
@@ -889,17 +894,17 @@ export function zgradi(THREE, ctx) {
       { tip: "izpis", id: "P", oznaka: "Površina", vrednost: () => { const k = kolicine(); return `P = ${k.P[0]} = ${cm2(k.P[1])}`; } },
       { tip: "izpis", id: "Opl", oznaka: "Osnovna ploskev in plašč", vrednost: () => {
         const k = kolicine();
-        if (!k.O) return "krogla nima osnovne ploskve in plašča";
-        if (k.O2) return `O₁ = ${k.O[0]} = ${cm2(k.O[1])} · O₂ = ${k.O2[0]} = ${cm2(k.O2[1])} · pl = ${k.pl[0]} = ${cm2(k.pl[1])}`;
-        return `O = ${k.O[0]} = ${cm2(k.O[1])} · pl = ${k.pl[0]} = ${cm2(k.pl[1])}`;
+        if (!k.O) return "krogla nima ne osnovne ploskve ne plašča";
+        if (k.O2) return `O₁ = ${k.O[0]} = ${cm2(k.O[1])}; O₂ = ${k.O2[0]} = ${cm2(k.O2[1])}; pl = ${k.pl[0]} = ${cm2(k.pl[1])}`;
+        return `O = ${k.O[0]} = ${cm2(k.O[1])}; pl = ${k.pl[0]} = ${cm2(k.pl[1])}`;
       } },
-      { tip: "drsnik", id: "razpri", oznaka: "Razpri mrežo", min: 0, max: 1, korak: 0.01, vrednost: S.razpri, ob: ob("razpri") },
+      { tip: "drsnik", id: "razpri", oznaka: "Razpri mrežo", min: 0, max: 1, korak: 0.01, vrednost: S.razpri, ob: ob("razpri"), vidno: () => S.telo !== "krogla" },
       { tip: "izpis", id: "mreza", oznaka: "Mreža", vrednost: () => mrezaBesedilo() },
       { tip: "stikalo", id: "prosojno", oznaka: "Prosojne ploskve", vrednost: S.prosojno, ob: ob("prosojno") },
       { tip: "stikalo", id: "prerez", oznaka: "Prerez z ravnino", vrednost: S.prerez, ob: ob("prerez") },
-      { tip: "drsnik", id: "lega", oznaka: "Lega ravnine", min: 0, max: 1, korak: 0.01, vrednost: S.lega, ob: ob("lega"), vidno: () => S.prerez },
-      { tip: "drsnik", id: "nagib", oznaka: "Nagib ravnine (°)", min: 0, max: 90, korak: 1, vrednost: S.nagib, ob: ob("nagib"), vidno: () => S.prerez },
-      { tip: "drsnik", id: "zasuk", oznaka: "Zasuk ravnine (°)", min: 0, max: 90, korak: 1, vrednost: S.zasuk, ob: ob("zasuk"), vidno: () => S.prerez },
+      { tip: "drsnik", id: "lega", oznaka: "Lega ravnine", min: 0, max: 1, korak: 0.01, vrednost: S.lega, ob: ob("lega"), vidno: () => ravninaDela() },
+      { tip: "drsnik", id: "nagib", oznaka: "Nagib ravnine (°)", min: 0, max: 90, korak: 1, vrednost: S.nagib, ob: ob("nagib"), vidno: () => ravninaDela() },
+      { tip: "drsnik", id: "zasuk", oznaka: "Zasuk ravnine (°)", min: 0, max: 90, korak: 1, vrednost: S.zasuk, ob: ob("zasuk"), vidno: () => ravninaDela() && S.nagib > 0 },
       { tip: "izpis", id: "prerezIzpis", oznaka: "Prerez", vidno: () => S.prerez, vrednost: () => {
         if (!S.prerez) return "vklopi »Prerez z ravnino«";
         if (S.razpri > 1e-4 && !T.krogla) return "prerez je prikazan, ko je mreža zložena (Razpri mrežo = 0)";

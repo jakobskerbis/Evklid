@@ -26,7 +26,7 @@ function st(x, d = 2) {
 function clen(k, s, prvi) {
   if (Math.abs(k) < 1e-12) return "";
   const a = Math.abs(k), z = k < 0 ? "−" : "+";
-  const t = Math.abs(a - 1) < 1e-12 && s ? s : st(a) + (s ? "·" + s : "");
+  const t = Math.abs(a - 1) < 1e-12 && s ? s : st(a, 3) + (s ? "·" + s : "");
   return prvi ? (k < 0 ? "−" : "") + t : ` ${z} ${t}`;
 }
 function vsota(cleni) { // [[k, s], ...]
@@ -34,8 +34,8 @@ function vsota(cleni) { // [[k, s], ...]
   for (const [k, s] of cleni) { const c = clen(k, s, prvi); if (c) { out += c; prvi = false; } }
   return out || "0";
 }
-const fakt = (k, s) => (Math.abs(k) < 1e-12 ? "0" : Math.abs(k - 1) < 1e-12 ? s : Math.abs(k + 1) < 1e-12 ? "−" + s : st(k) + "·" + s);
-const arg = (b, s) => (Math.abs(b - 1) < 1e-12 ? s : Math.abs(b + 1) < 1e-12 ? "(−" + s + ")" : "(" + st(b) + s + ")");
+const fakt = (k, s) => (Math.abs(k) < 1e-12 ? "0" : Math.abs(k - 1) < 1e-12 ? s : Math.abs(k + 1) < 1e-12 ? "−" + s : st(k, 3) + "·" + s);
+const arg = (b, s) => (Math.abs(b - 1) < 1e-12 ? " " + s : Math.abs(b + 1) < 1e-12 ? "(−" + s + ")" : "(" + st(b) + s + ")");
 
 // Funkcije: vrednost, gradient (analitično), zapis in prerez y = c.
 const FUNKCIJE = {
@@ -64,8 +64,8 @@ const FUNKCIJE = {
     oznaka: "sin x · cos y", rabi: "ab",
     f: (x, y, a, b) => a * Math.sin(b * x) * Math.cos(b * y),
     g: (x, y, a, b, o) => { o[0] = a * b * Math.cos(b * x) * Math.cos(b * y); o[1] = -a * b * Math.sin(b * x) * Math.sin(b * y); return true; },
-    zapis: (a, b) => fakt(a, `sin ${arg(b, "x")} · cos ${arg(b, "y")}`),
-    rez: (a, b, c) => fakt(a * Math.cos(b * c), `sin ${arg(b, "x")}`),
+    zapis: (a, b) => fakt(a, `sin${arg(b, "x")} · cos${arg(b, "y")}`),
+    rez: (a, b, c) => fakt(a * Math.cos(b * c), `sin${arg(b, "x")}`),
   },
   gauss: {
     oznaka: "e^(−x² − y²)", rabi: "ab", bPoz: true,
@@ -77,14 +77,14 @@ const FUNKCIJE = {
   stozec: {
     oznaka: "√(x² + y²) (stožec)", rabi: "a",
     f: (x, y, a) => a * Math.hypot(x, y),
-    g: (x, y, a, b, o) => { const r = Math.hypot(x, y); if (r < 1e-9) return false; o[0] = (a * x) / r; o[1] = (a * y) / r; return true; },
+    g: (x, y, a, b, o) => { const r = Math.hypot(x, y); if (r < 1e-9) { o[0] = o[1] = 0; return Math.abs(a) < 1e-12; } o[0] = (a * x) / r; o[1] = (a * y) / r; return true; },
     zapis: (a) => fakt(a, "√(x² + y²)"),
     rez: (a, b, c) => fakt(a, Math.abs(c) < 1e-12 ? "|x|" : `√(x² + ${st(c * c)})`),
   },
   valovi: {
     oznaka: "sin √(x² + y²)", rabi: "ab",
     f: (x, y, a, b) => a * Math.sin(b * Math.hypot(x, y)),
-    g: (x, y, a, b, o) => { const r = Math.hypot(x, y); if (r < 1e-9) return false; const k = (a * b * Math.cos(b * r)) / r; o[0] = k * x; o[1] = k * y; return true; },
+    g: (x, y, a, b, o) => { const r = Math.hypot(x, y); if (r < 1e-9) { o[0] = o[1] = 0; return Math.abs(a * b) < 1e-12; } const k = (a * b * Math.cos(b * r)) / r; o[0] = k * x; o[1] = k * y; return true; },
     zapis: (a, b) => fakt(a, `sin(${Math.abs(b - 1) < 1e-12 ? "" : st(b) + "·"}√(x² + y²))`),
     rez: (a, b, c) => fakt(a, `sin(${Math.abs(b - 1) < 1e-12 ? "" : st(b) + "·"}${Math.abs(c) < 1e-12 ? "|x|" : `√(x² + ${st(c * c)})`})`),
   },
@@ -122,7 +122,7 @@ export function zgradi(THREE, ctx) {
   const group = new THREE.Group(); group.name = "graf-ploskev";
 
   // ---------- materiali ----------
-  const mPloskev = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, metalness: 0, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+  const mPloskev = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.55, metalness: 0, clearcoat: 0.25, clearcoatRoughness: 0.45, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
   const mMreza = new THREE.LineBasicMaterial({ color: "#0B0F16", transparent: true, opacity: 0.32, depthWrite: false });
   const mStena = new THREE.MeshStandardMaterial({ color: "#161D2B", roughness: 0.9, transparent: true, opacity: 0.75, side: THREE.DoubleSide, depthWrite: false, polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 2 });
   const mCrte = new THREE.LineBasicMaterial({ color: "#8FA2C7", transparent: true, opacity: 0.22, depthWrite: false });
@@ -213,7 +213,7 @@ export function zgradi(THREE, ctx) {
   const legPlatno = document.createElement("canvas"); legPlatno.width = 200; legPlatno.height = 420;
   const legTex = new THREE.CanvasTexture(legPlatno); legTex.colorSpace = THREE.SRGBColorSpace;
   const legenda = new THREE.Sprite(new THREE.SpriteMaterial({ map: legTex, transparent: true, depthWrite: false }));
-  legenda.scale.set(0.23, 0.483, 1); legenda.position.set(WH + 0.21, 0.06, -0.3); legenda.renderOrder = 11; group.add(legenda);
+  legenda.scale.set(0.23, 0.483, 1); legenda.position.set(WH + 0.2, 0.13, -0.3); legenda.renderOrder = 11; group.add(legenda);
 
   // ---------- pomožne ----------
   const _a = new Vector3(), _b = new Vector3(), _c = new Vector3(), _d = new Vector3(), _s = new Vector3(), _q = new Quaternion(), _m = new Matrix4(), _col = new Color();
@@ -289,19 +289,19 @@ export function zgradi(THREE, ctx) {
   }
   function narisiLegendo() {
     const g = legPlatno.getContext("2d"); if (!g) { legTex.needsUpdate = true; return; }
-    const W = legPlatno.width, H = legPlatno.height, x0 = 22, y0 = 40, bw = 34, bh = H - 80;
+    const W = legPlatno.width, H = legPlatno.height, x0 = 20, y0 = 44, bw = 28, bh = H - 80;
     g.clearRect(0, 0, W, H);
     g.fillStyle = "rgba(11,15,22,0.78)"; g.strokeStyle = "rgba(110,155,255,0.6)"; g.lineWidth = 3;
     g.beginPath(); g.roundRect ? g.roundRect(2, 2, W - 4, H - 4, 18) : g.rect(2, 2, W - 4, H - 4); g.fill(); g.stroke();
     const grad = g.createLinearGradient(0, y0 + bh, 0, y0);
     for (let i = 0; i <= 20; i++) { const t = i / 20, f = (0.06 + 0.94 * t) * (VIRIDIS.length - 1), k = Math.min(VIRIDIS.length - 2, Math.floor(f)); const c0 = new Color(viridisSRGB[k]), c1 = new Color(viridisSRGB[k + 1]); grad.addColorStop(t, "#" + c0.lerp(c1, f - k).getHexString()); }
     g.fillStyle = grad; g.fillRect(x0, y0, bw, bh);
-    g.font = `italic 600 30px ${PISAVA}`; g.fillStyle = "#E8EDF7"; g.textBaseline = "middle"; g.fillText("z", x0 + 6, 20);
-    g.font = `600 26px ${PISAVA}`;
+    g.font = `italic 600 34px ${PISAVA}`; g.fillStyle = "#E8EDF7"; g.textBaseline = "middle"; g.fillText("z", x0 + 4, 21);
+    g.font = `600 33px ${PISAVA}`;
     const n = Math.round((zhi - zlo) / zKorak), korak = Math.max(1, Math.ceil(n / 6));
     for (let i = 0; i <= n; i += korak) {
       const z = zlo + i * zKorak, yy = y0 + bh - (i / n) * bh;
-      g.fillStyle = "#E8EDF7"; g.fillRect(x0 + bw, yy - 1.5, 10, 3); g.fillText(st(z), x0 + bw + 16, yy);
+      g.fillStyle = "#E8EDF7"; g.fillRect(x0 + bw, yy - 1.5, 10, 3); g.fillText(st(z), x0 + bw + 14, yy);
     }
     legTex.needsUpdate = true;
   }
@@ -378,7 +378,7 @@ export function zgradi(THREE, ctx) {
     cev(osi, ni++, _a.set(-WH, YF, -WH), _b.set(WH, YF, -WH), rt * 0.6, RB); cev(osi, ni++, _a.set(-WH, YF, -WH), _b.set(-WH, YF, WH), rt * 0.6, RB);
     cev(osi, ni++, _a.set(-WH, YF, -WH), _b.set(-WH, YT, -WH), rt * 0.6, RB); cev(osi, ni++, _a.set(-WH, YF, WH), _b.set(-WH, YB, WH), rt * 0.6, RB);
     // oznake in številke
-    const hN = 0.064;
+    const hN = 0.07;
     for (let v = Math.ceil(-L / kx - 1e-9) * kx; v <= L + 1e-9; v += kx) {
       const X = fX(v), Z = fZ(v);
       cev(osi, ni++, _a.set(X, YF, WH), _b.set(X, YF, WH + 0.025), rt, BEL);
@@ -516,6 +516,7 @@ export function zgradi(THREE, ctx) {
     const fn = F(), [x0, y0] = tockaXY();
     let s = `T(${fmtTocka(x0, y0)}): z = f(${fmtTocka(x0, y0)}) = ${st(fn.f(x0, y0, S.a, bEf()), 3)}`;
     if (S.prerez) s += " (T leži v prerezu, y₀ = c)";
+    if (Math.abs(S.x0) > S.L + 1e-9 || (!S.prerez && Math.abs(S.y0) > S.L + 1e-9)) s += " (T je omejena na območje)";
     return s;
   }
   function izpisGradienta() {
