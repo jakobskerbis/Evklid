@@ -4,9 +4,15 @@ import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, 
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
 const ANS_VAR = "A_ans"; // ime spremenljivke po razčlenitvi
-const DEG = "G_{deg}"; // »°«: 1 v stopinjah, π/180 v radianih; v zapisu ostane ° (ne izgine)
+const DEG = "G_{deg}"; // »°«: 1 v stopinjah, π/180 v radianih, 10/9 v gradih; v zapisu ostane ° (ne izgine)
 const DEG_VAR = "G_deg";
-export const HIDDEN_VARS = new Set([ANS_VAR, DEG_VAR]);
+const MIN = "G_{min}"; // »′« (kotna minuta) = °/60
+const MIN_VAR = "G_min";
+const SEC = "G_{sec}"; // »″« (kotna sekunda) = °/3600
+const SEC_VAR = "G_sec";
+export const HIDDEN_VARS = new Set([ANS_VAR, DEG_VAR, MIN_VAR, SEC_VAR]);
+// 30°15′20″ → (30° + 15′ + 20″), da ostane skupaj (−30°15′ = −30,25°, 2·30°15′ = 60,5°)
+const DMS_RUN = /\d+(?:\.\d+)?\s*[°′](?:\s*\d+(?:\.\d+)?\s*[′″])+/g;
 
 /** Razdeli besedilo na vrhnji ravni (zunaj oklepajev) pri znakih iz »seps«. */
 export function splitTop(s, seps = ";") {
@@ -46,7 +52,8 @@ function rewriteIntegrals(s) {
 /**
  * Besedilo s tipkovnice → izraz za razčlenjevalnik.
  * - decimalna vejica je vedno vejica med števkami (tudi v oklepaju), argumente loči »;«,
- * - »°« pomeni ·π/180 v radianih in ·1 v stopinjah (v zapisu ostane °),
+ * - »°« pomeni ·π/180 v radianih, ·1 v stopinjah in ·10/9 v gradih (v zapisu ostane °); »′« in »″« sta
+ *   kotna minuta in sekunda (30°15′20″),
  * - 1,2E5 → 1,2·10^(5), manjkajoče zaklepaje dodamo na konec, ∫(f; a; b) je določeni integral.
  */
 export function prepare(text, { comma = true } = {}) {
@@ -55,7 +62,8 @@ export function prepare(text, { comma = true } = {}) {
   if (comma) s = s.replace(/(\d),(?=\d)/g, "$1.");
   s = s.replace(/;/g, ",");
   s = s.replace(/(\d|\.)[eE]([+\-−]?\d+)/g, "$1*10^($2)");
-  s = s.replace(/°/g, `*${DEG}`);
+  s = s.replace(DMS_RUN, (m) => `(${m.replace(/([°′])\s*(?=\d)/g, "$1+")})`);
+  s = s.replace(/°/g, `*${DEG}`).replace(/′/g, `*${MIN}`).replace(/″/g, `*${SEC}`);
   let open = 0;
   for (const c of s) {
     if (c === "(") open++;
@@ -109,6 +117,9 @@ export function lineTex(ast, comma = true) {
   return toTex(ast, { comma, sep: comma ? ";" : "," })
     .replaceAll(ANS, "\\mathrm{Ans}")
     .replace(/\s*(?:\\cdot\s*)?G_\{deg\}/g, "^{\\circ}")
+    .replace(/\s*(?:\\cdot\s*)?G_\{min\}/g, "^{\\prime}")
+    .replace(/\s*(?:\\cdot\s*)?G_\{sec\}/g, "^{\\prime\\prime}")
+    .replace(/(\^\{\\circ\}|\^\{\\prime\})\s*\+\s*(?=[\d{},.]+\^\{\\prime)/g, "$1") // 30° + 15′ → 30°15′
     .replace(/\\cdot\s*10\^/g, "\\cdot 10^");
 }
 
@@ -125,13 +136,14 @@ export function functionDef(text) {
  * (uporabniške funkcije f(x) = …). Vrže MathError.
  * funcs: { f: { param, body } } (besedilo telesa, kot ga je vpisal učenec)
  */
-export function compileLine(text, { vars = {}, ans = 0, deg = false, comma = true, funcs = {} } = {}) {
+export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = false, comma = true, funcs = {} } = {}) {
   const src = prepare(text, { comma });
   if (!src) return null;
   const names = new Set(Object.keys(funcs));
-  const scope = Object.assign(Object.create(null), vars, { [ANS_VAR]: ans, [DEG_VAR]: deg ? 1 : Math.PI / 180 });
+  const one = grad ? 200 / 180 : deg ? 1 : Math.PI / 180; // 1° v trenutni enoti kota
+  const scope = Object.assign(Object.create(null), vars, { [ANS_VAR]: ans, [DEG_VAR]: one, [MIN_VAR]: one / 60, [SEC_VAR]: one / 3600 });
   const defs = {};
-  const ctx = { deg, funcs: defs, global: scope };
+  const ctx = { deg: deg && !grad, grad, funcs: defs, global: scope };
   for (const [name, f] of Object.entries(funcs)) {
     try {
       defs[name] = { params: [f.param], ast: rewrite(parse(prepare(f.body, { comma }), { funcs: names }), ctx), body: null };
@@ -295,6 +307,24 @@ export function formatNumber(v, { mode = "auto", comma = true } = {}) {
   let s = String(Number(v.toPrecision(12)));
   if (/e/.test(s)) return sci(9);
   return plain(s);
+}
+
+/**
+ * Kot v stopinjah → stopinje, minute in sekunde (30,25556 → 30°15′20″), sekunde na dve decimalki.
+ * Vrne { text, tex } ali null (ni število ali je preveliko).
+ */
+export function dmsOf(v, { comma = true } = {}) {
+  if (!Number.isFinite(v) || Math.abs(v) >= 1e7) return null;
+  let c = Math.round(Math.abs(v) * 360000); // v stotinkah sekunde
+  const d = Math.floor(c / 360000);
+  c -= d * 360000;
+  const m = Math.floor(c / 6000);
+  const sec = String((c - m * 6000) / 100);
+  const neg = v < 0 && (d || m || sec !== "0");
+  return {
+    text: `${neg ? "−" : ""}${d}°${m}′${comma ? sec.replace(".", ",") : sec}″`,
+    tex: `${neg ? "-" : ""}${d}^{\\circ}${m}^{\\prime}${comma ? sec.replace(".", "{,}") : sec}^{\\prime\\prime}`,
+  };
 }
 
 /** Mešano število za nepravi ulomek (npr. 7/3 → 2\\tfrac{1}{3}) ali null. */

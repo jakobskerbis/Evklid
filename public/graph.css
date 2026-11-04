@@ -491,6 +491,12 @@ body.graph-open { overflow: hidden; }
 .tl-sub { flex-wrap: wrap; }
 .tl-grid2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
 .tl-sbody .tl-grid2 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); } /* statistika: x in y (napovedi) čez vso širino, brez praznih stolpcev */
+/* razmerje a : b = c : d (štiri polja v vrsti, tudi na 360 px) */
+.tl-ratio { direction: ltr; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); align-items: end; gap: 6px; }
+.tl-ratio .tl-field { min-width: 0; }
+.tl-ratio input { min-width: 0; width: 100%; text-align: center; }
+.tl-ratio-sep { font-weight: 800; font-size: 1.15rem; padding-bottom: 10px; }
+.tl-mx-n input { width: 80px; flex: none; }
 .tl-inline2 { display: flex; gap: 6px; }
 .tl-inline2 input { flex: 1; min-width: 0; }
 .tl-inline2 select { flex: 0 0 72px; width: 72px !important; }
