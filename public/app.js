@@ -76,6 +76,7 @@ import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
 import { initTestNotice } from "./testna-verzija.js";
 import { initFormulaInfo, annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-info.js";
+import { plainTex } from "./formula-data.js";
 import { xpStatsHtml, xpItemsHtml, levelRowHtml, paintBadge, celebrateXp } from "./xp-fx.js";
 import { heatmapHtml, weeksHtml } from "./aktivnost.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
@@ -199,7 +200,7 @@ function renderUserText(text) {
   return parts
     .map((p, i) =>
       i % 2
-        ? renderMath(p.slice(1, -1), false, false)
+        ? renderMath(plainTex(p.slice(1, -1)), false, false) // starejša sporočila iz »Razloži« imajo še \htmlData
         : splitFormulas(p).map((x) => ("tex" in x ? renderMath(`\\displaystyle ${x.tex}`, false, false) : escapeHtml(x.text))).join(""), // ulomek v polni velikosti
     )
     .join("");
@@ -986,6 +987,8 @@ async function send(text, { deep = false } = {}) {
   // Izklopljen klepet (EVKLID_CHAT_OFF): nič ne pošljemo, vprašanje in fotografija ostaneta.
   if (!$("#chat-off").hidden) return;
   let userEl = null;
+  let bubble = null;
+  let pacer = null;
   state.sending = true;
   $("#send").disabled = true;
   state.pacer?.skip();
@@ -1004,7 +1007,7 @@ async function send(text, { deep = false } = {}) {
     autoGrow();
     clearImage();
 
-    const bubble = addMessage("assistant", "");
+    bubble = addMessage("assistant", "");
     bubble.classList.add("typing");
     const box = $("#messages");
     const paint = (shown) => {
@@ -1015,7 +1018,7 @@ async function send(text, { deep = false } = {}) {
     };
     paint("");
     // Odgovor se izpisuje z berljivim tempom; dotik sporočila pokaže vse naenkrat.
-    const pacer = createPacer(currentPace(), paint);
+    pacer = createPacer(currentPace(), paint);
     state.pacer = pacer;
     const skip = () => pacer.skip();
     bubble.addEventListener("click", skip);
@@ -1114,6 +1117,17 @@ async function send(text, { deep = false } = {}) {
     });
     await loadConversations();
   } catch (err) {
+    // Odgovor, prekinjen sredi izpisa: pokažemo, kar je prišlo, brez pike »piše« (prazen mehurček odstranimo).
+    if (pacer) {
+      pacer.finish();
+      pacer.skip();
+      if (state.pacer === pacer) state.pacer = null;
+    }
+    if (bubble) {
+      bubble.classList.remove("typing");
+      bubble.removeAttribute("title");
+      if (!bubble.textContent.trim()) bubble.remove();
+    }
     // Izklopljen klepet: samo obvestilo nad poljem, vprašanje ostane v polju.
     if (err.chatOff) {
       userEl?.remove();
@@ -1123,7 +1137,11 @@ async function send(text, { deep = false } = {}) {
       autoGrow();
       return;
     }
-    addMessage("assistant", err.message, false, { error: true });
+    // Prekinjena povezava (npr. med objavo nove različice) je TypeError z »network error« v angleščini: učenec
+    // dobi razumljivo obvestilo, vprašanje ostane v polju za ponovno pošiljanje.
+    const dropped = err instanceof TypeError && /^(network ?error|failed to fetch|load failed|networkerror)/i.test(err.message);
+    if (!dropped) console.error(err);
+    addMessage("assistant", dropped ? t("off.serverBusy") : err.message, false, { error: true });
     $("#input").value = text;
     autoGrow();
   } finally {

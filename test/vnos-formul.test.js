@@ -48,3 +48,34 @@ test("tutor input: keys for fractions, powers, sequences, integrals and sums; pr
   assert.match(app, /splitFormulas\(p\)\.map/, "sporočilo učenca izriše zapis s tipk");
   assert.match(app, /pv\.hidden = !show/);
 });
+
+test("»Razloži« in a lesson sends the original TeX, not the clickable-symbol wrappers", async () => {
+  globalThis.document ??= { documentElement: { dataset: {} }, querySelectorAll: () => [] };
+  const { annotateTex, plainTex } = await import("../public/formula-data.js");
+  // j, 4. 11.: Eulerjeva formula je prišla k inštruktorju kot »\htmlData^{\htmlData\htmlData} = cos \htmlData …«.
+  const euler = "e^{i\\varphi} = \\cos\\varphi + i\\sin\\varphi";
+  const shown = annotateTex(euler, "MAT");
+  assert.match(shown, /\\htmlData/);
+  assert.equal(plainTex(shown), euler);
+  assert.equal(plainTex("\\htmlData{fx=a}{\\frac{1}{2}}x"), "\\frac{1}{2}x");
+  assert.equal(plainTex("x^2"), "x^2");
+  assert.equal(plainTex("\\htmlData{fx=a} x \\htmlData{fx=b}{y}"), "\\htmlData{fx=a} x y", "pokvarjena oznaka ne ustavi ostalih");
+  assert.equal(plainTex("\\htmlData{fx=a}{\\varphi}x"), "\\varphi x");
+  const tb = readFileSync(new URL("../public/textbook.js", import.meta.url), "utf8");
+  assert.match(tb, /\$\$\{plainTex\(tex\)\.trim\(\)\}\$/);
+  const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  assert.match(app, /renderMath\(plainTex\(p\.slice\(1, -1\)\), false, false\)/, "tudi starejša sporočila");
+});
+
+test("tutor: a dropped connection shows a clear message, not the browser's »network error«", () => {
+  const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  assert.match(app, /err instanceof TypeError && \/\^\(network \?error\|failed to fetch\|load failed\|networkerror\)\/i/);
+  assert.match(app, /dropped \? t\("off\.serverBusy"\) : err\.message/);
+});
+
+test("tutor: a reply cut off mid-stream keeps what arrived and loses the typing dot", () => {
+  const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  const c = app.slice(app.indexOf("  } catch (err) {\n    // Odgovor, prekinjen sredi izpisa"));
+  assert.ok(c.length > 0 && c.indexOf('bubble.classList.remove("typing")') < c.indexOf("err.chatOff"));
+  assert.match(c, /pacer\.finish\(\);\s*pacer\.skip\(\);/);
+});

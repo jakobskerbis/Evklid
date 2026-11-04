@@ -1,0 +1,298 @@
+{
+ "organ": "jetra",
+ "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
+ "tkiva": {
+  "jetra": {
+   "hrap": 0.3,
+   "lak": 0.9,
+   "lakHrap": 0.08,
+   "sijaj": 0.6,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 220,
+   "barva": "#7c2f24",
+   "sijajBarva": "#ffb0a0",
+   "rob": 0.18,
+   "robBarva": "#ff8070",
+   "lise": 0.15,
+   "liseBarva": "#a0483a",
+   "relief": 0.25,
+   "senca": 0.3,
+   "sencaBarva": "#3a120c",
+   "rez": "#b45240",
+   "rezPore": 520,
+   "rezPoreMoc": 0.32
+  },
+  "zolcnik": {
+   "hrap": 0.3,
+   "lak": 0.85,
+   "lakHrap": 0.14,
+   "sijaj": 0.5,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 120,
+   "barva": "#5f8a3e",
+   "sijajBarva": "#d8ffb0",
+   "rob": 0.2,
+   "robBarva": "#b8e080",
+   "rez": "#4a7030",
+   "lise": 0.15,
+   "liseBarva": "#88b060"
+  },
+  "zolcevod": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#8fa83a",
+   "rez": "#6f8a2a",
+   "sijajBarva": "#eaffb0",
+   "rob": 0.15,
+   "robBarva": "#d0f080"
+  },
+  "portalna": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#6b4aa8",
+   "rez": "#553a8a",
+   "sijajBarva": "#c8b0ff",
+   "rob": 0.18,
+   "robBarva": "#a080ff",
+   "relief": 0.3
+  },
+  "arterija": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#c4312e",
+   "rez": "#a92a28",
+   "sijajBarva": "#ff9a90",
+   "rob": 0.2,
+   "robBarva": "#ff6458",
+   "relief": 0.3
+  },
+  "vena": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#3b5ba8",
+   "rez": "#2f4b8c",
+   "sijajBarva": "#9db8ff",
+   "rob": 0.18,
+   "robBarva": "#6f93ff",
+   "relief": 0.3
+  }
+ },
+ "deli": [
+  {
+   "id": "desni-rezenj",
+   "ime": "Desni jetrni reženj",
+   "la": "Lobus hepatis dexter",
+   "barva": "#ff8a6a",
+   "opis": "Največji del jeter; v kirurgiji ga delijo na štiri segmente (V–VIII).",
+   "vozlisca": [
+    "Anterior lateral segment of liver (VI)",
+    "Anterior medial segment of liver (V)",
+    "Posterior lateral segment of liver (VII)",
+    "Posterior medial segment of liver (VIII)"
+   ]
+  },
+  {
+   "id": "levi-rezenj",
+   "ime": "Levi jetrni reženj",
+   "la": "Lobus hepatis sinister",
+   "barva": "#a78bfa",
+   "opis": "Tanjši reženj levo od srpaste vezi, ki sega nad želodec (segmenta II in III).",
+   "vozlisca": [
+    "Left anterior lateral segment of liver (III)",
+    "Left posterior lateral segment of liver (II)"
+   ]
+  },
+  {
+   "id": "kvadratni-rezenj",
+   "ime": "Kvadratni reženj",
+   "la": "Lobus quadratus",
+   "barva": "#ffc06a",
+   "opis": "Majhen reženj ob žolčniku na spodnji strani jeter; z delom nad njim tvori segment IV.",
+   "vozlisca": [
+    "Left medial segment of liver (IV)"
+   ]
+  },
+  {
+   "id": "repasti-rezenj",
+   "ime": "Repasti reženj",
+   "la": "Lobus caudatus",
+   "barva": "#f472b6",
+   "opis": "Majhen reženj na zadnji strani jeter ob spodnji votli veni (segment I).",
+   "vozlisca": [
+    "Posterior segment of liver (I)"
+   ]
+  },
+  {
+   "id": "zolcnik",
+   "ime": "Žolčnik",
+   "la": "Vesica biliaris",
+   "barva": "#7ccf5a",
+   "opis": "Hruškasta vrečka pod jetri, ki shranjuje in zgošča žolč do obroka.",
+   "vozlisca": [
+    "Gallbladder"
+   ]
+  },
+  {
+   "id": "zolcevod",
+   "ime": "Žolčevod",
+   "la": "Ductus choledochus",
+   "barva": "#c8e060",
+   "opis": "Vod, ki odvaja žolč iz jeter in žolčnika v dvanajstnik.",
+   "vozlisca": [
+    "Bile duct"
+   ]
+  },
+  {
+   "id": "portalna-vena",
+   "ime": "Portalna vena",
+   "la": "Vena portae hepatis",
+   "barva": "#a080ff",
+   "opis": "Prinese v jetra kri iz želodca, črevesja in vranice, bogato s hranili.",
+   "vozlisca": [
+    "Hepatic portal vein",
+    "Hepatic portal vein branches (lastno)"
+   ]
+  },
+  {
+   "id": "jetrna-arterija",
+   "ime": "Jetrna arterija",
+   "la": "Arteria hepatica propria",
+   "barva": "#ff5a5a",
+   "opis": "Prinese v jetra s kisikom bogato kri iz trebušne aorte.",
+   "vozlisca": [
+    "Common hepatic artery",
+    "Proper hepatic artery"
+   ]
+  },
+  {
+   "id": "jetrne-vene",
+   "ime": "Jetrne vene",
+   "la": "Venae hepaticae",
+   "barva": "#6e9bff",
+   "opis": "Odvedejo kri iz jeter v spodnjo votlo veno in naprej v srce.",
+   "vozlisca": [
+    "Hepatic vein branches (lastno)",
+    "Hepatic veins"
+   ]
+  }
+ ],
+ "prerez": {
+  "ravnine": [
+   {
+    "n": [
+     0,
+     0,
+     -1
+    ],
+    "d": 0.012
+   }
+  ]
+ },
+ "pogledi": {
+  "celota": {
+   "pogled": [
+    0,
+    -0.35,
+    1
+   ],
+   "tocke": [
+    "desni-rezenj",
+    "levi-rezenj",
+    "zolcnik",
+    "kvadratni-rezenj",
+    "portalna-vena",
+    "zolcevod"
+   ]
+  },
+  "prerez": {
+   "pogled": [
+    0,
+    -0.15,
+    1
+   ],
+   "tocke": [
+    "desni-rezenj",
+    "levi-rezenj",
+    "kvadratni-rezenj",
+    "repasti-rezenj",
+    "portalna-vena",
+    "jetrne-vene"
+   ],
+   "skrijDele": [
+    "zolcevod"
+   ]
+  }
+ },
+ "podrobnosti": {
+  "naslov": "Jetra z žolčnikom",
+  "odseki": [
+   {
+    "naslov": "Zgradba",
+    "besedilo": "Jetra so največja žleza v telesu in pri odraslem tehtajo okoli poldrugi kilogram. Ležijo v desnem zgornjem delu trebušne votline, tik pod trebušno prepono. Srpasta vez jih na sprednji strani deli na večji desni in manjši levi reženj, na spodnji strani pa sta še kvadratni in repasti reženj. Na spodnji strani so jetrna vrata, kjer vstopata portalna vena in jetrna arterija ter izstopa žolčevod. Pod jetri leži žolčnik."
+   },
+   {
+    "naslov": "Delovanje",
+    "besedilo": "Jetrne celice vsak dan izdelajo pol litra do litra žolča. Žolč se shrani in zgosti v žolčniku; ko poješ mastno hrano, ga žolčnik iztisne po žolčevodu v dvanajstnik, kjer razbije maščobe v drobne kapljice. Portalna vena prinese v jetra kri s hranili iz črevesja. Jetra iz glukoze naredijo glikogen in ga shranijo, razgrajujejo alkohol, zdravila in strupe, izdelujejo beljakovine krvne plazme ter shranjujejo železo in vitamine A, D in B12."
+   },
+   {
+    "naslov": "Zanimivost",
+    "besedilo": "Jetra se obnovijo bolje kot kateri koli drug notranji organ: tudi ko kirurg odstrani velik del jeter, preostanek v nekaj tednih zraste skoraj do prvotne velikosti. Približno tri četrtine krvi dobijo jetra po portalni veni in le četrtino po jetrni arteriji. Ker v njih poteka veliko kemijskih reakcij, nastaja v jetrih tudi veliko toplote."
+   },
+   {
+    "naslov": "Pogoste bolezni",
+    "besedilo": "Hepatitis je vnetje jeter, ki ga najpogosteje povzročijo virusi hepatitisa A, B ali C. Pri bolezni jeter se v krvi kopiči rumeno barvilo bilirubin, zato koža in beločnici porumenijo (zlatenica). Dolgotrajno pitje alkohola in prekomerna telesna teža povzročita zamaščena jetra, ki se lahko spremenijo v cirozo. V žolčniku lahko nastanejo žolčni kamni, ki po mastnem obroku povzročijo bolečine pod desnim rebrnim lokom."
+   },
+   {
+    "naslov": "Kako skrbiš zanje",
+    "besedilo": "Ne pij alkohola: jetra najbolj obremeni prav alkohol, mladostnikom pa škoduje še posebej. Jej raznoliko, z manj maščob in sladkorja, in se veliko gibaj, da se v jetrih ne kopiči maščoba. Zdravila jemlji samo po navodilih. Pred hepatitisom A in B te zaščiti cepljenje, pred hepatitisom A tudi umivanje rok ter čista hrana in voda."
+   }
+  ]
+ },
+ "velikost": 0.3047,
+ "trikotniki": {
+  "racunalnik": 164076,
+  "telefon": 74862
+ },
+ "luci": [
+  {
+   "smer": [
+    -0.5,
+    1,
+    0.9
+   ],
+   "moc": 1.15,
+   "barva": "#fff0e4"
+  },
+  {
+   "smer": [
+    0.8,
+    0.3,
+    -1
+   ],
+   "moc": 0.6,
+   "barva": "#ffd6cc"
+  }
+ ]
+}

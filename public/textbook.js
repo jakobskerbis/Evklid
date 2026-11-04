@@ -1,7 +1,7 @@
 // Učbenik: kazalo, iskanje in lekcije z interaktivnimi demonstracijami.
 import { mountSim } from "./sim/index.js";
 import { t, locale } from "./i18n.js";
-import { withFormulaSubject } from "./formula-data.js";
+import { withFormulaSubject, plainTex } from "./formula-data.js";
 import { lessonSteps, demoSteps } from "./lesson-steps.js";
 import { gradivaHtml, wireGradiva, stopReading } from "./gradiva.js";
 import { prilagodiSirino } from "./sirina.js";
@@ -81,7 +81,8 @@ function selectionText(sel) {
     const frag = range.cloneContents();
     frag.querySelectorAll(".katex").forEach((k) => {
       const tex = k.querySelector('annotation[encoding="application/x-tex"]')?.textContent;
-      if (tex) k.replaceWith(document.createTextNode(` $${tex.trim()}$ `));
+      // Brez oznak klikljivih simbolov (\htmlData{fx=…}), sicer inštruktor in mehurček dobita »\htmlData«.
+      if (tex) k.replaceWith(document.createTextNode(` $${plainTex(tex).trim()}$ `));
     });
     frag.querySelectorAll(".katex-mathml, button, .i").forEach((n) => n.remove());
     const div = document.createElement("div");
