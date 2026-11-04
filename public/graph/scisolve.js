@@ -5,6 +5,7 @@ import { simplify, diff, toTex, MathError } from "./math.js";
 import { vectorLine } from "./vektor.js";
 import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prepare, exactTex, toFraction, formatNumber } from "./scicore.js";
 import { evalComplex, polyRoots } from "./toolscore.js";
+import { parseCommand, runCas, casInfo } from "./cas.js";
 
 const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE]
 const SAMPLES = 20000;
@@ -508,6 +509,10 @@ export function analyze(text, env = {}) {
   if (parts.length === 1) raw = parts[0]; // »x² = 4;« (odvečno ločilo na koncu)
   else if (!parts.length) return null;
 
+  // simbolno računanje: poenostavi(…), razvij(…), razstavi(…), reši(…; x) (public/graph/cas.js)
+  const cmd = parseCommand(raw);
+  if (cmd) return runCas(cmd, env);
+
   // definicija funkcije
   const def = functionDef(raw);
   if (def) {
@@ -593,7 +598,10 @@ export function analyze(text, env = {}) {
         const full = res.intervals.length === 1 && res.intervals[0].lo === -Infinity && res.intervals[0].hi === Infinity;
         return { ...res, ...(periodic && res.intervals.length && !full ? { interval: periodTex(!!env.deg, comma), periodic: true } : {}), tex, plot };
       }
-      if (U.length === 2 && U.includes("x") && U.includes("y")) return { kind: "plot", tex, plot: [plotText(raw, env)] };
+      // enačba s črkami: ponudimo »Reši za …« (in graf, če sta neznanki x in y)
+      const solveFor = ast.ops.length === 1 && ast.ops[0] === "=" && casInfo(ast, scope) ? U : null;
+      if (U.length === 2 && U.includes("x") && U.includes("y")) return { kind: "plot", tex, plot: [plotText(raw, env)], ...(solveFor ? { solveFor } : {}) };
+      if (solveFor) return { kind: "symeq", tex, solveFor };
       return { error: { code: "missing", info: { names: U.slice(1) } } };
     }
     if (U.length === 1) {
@@ -604,8 +612,10 @@ export function analyze(text, env = {}) {
         const resTex = toTex(res, { comma, sep: comma ? ";" : "," });
         return { kind: "deriv", tex, resTex, plot: v === "x" ? [`y = ${plotText(raw, env)}`] : [] };
       }
-      return { kind: "expr", v, tex, plot: v === "x" ? [`y = ${plotText(raw, env)}`] : [] };
+      return { kind: "expr", v, tex, plot: v === "x" ? [`y = ${plotText(raw, env)}`] : [], ...(casInfo(ast, scope) ? { cas: true } : {}) };
     }
+    // izraz z več črkami: poenostavi, razvij, razstavi
+    if (U.length > 1 && casInfo(ast, scope)) return { kind: "sym", tex, cas: true };
   } catch (e) {
     return { error: { code: e.code || "other", info: e.info || {} } };
   }
