@@ -148,6 +148,25 @@ for (const [name, opts] of [
     await tapBs(1);
     assert.equal(await page.inputValue("#t"), "abc de", "⌫ x ⌫ ni dvoklik");
     await page.waitForTimeout(500);
+    // črka se vpiše že ob pritisku; dolg pritisk na »s« in dvig izbere »š« (ne »sš«)
+    {
+      const center = async (l) => {
+        const i = await page.evaluate((l) => [...document.querySelectorAll("#tipkovnica .tk-rows .tk-k")].findIndex((b) => b.firstChild?.textContent?.toLowerCase() === l), l);
+        const b = await page.locator("#tipkovnica .tk-rows .tk-k").nth(i).boundingBox();
+        return [b.x + b.width / 2, b.y + b.height / 2];
+      };
+      await page.evaluate(() => { const t = document.getElementById("t"); t.value = "a "; t.setSelectionRange(2, 2); });
+      const [x, y] = await center("s");
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      assert.match(await page.inputValue("#t"), /^a [sS]$/, "črka ob pritisku");
+      await page.waitForTimeout(600);
+      assert.equal(await page.locator("#tipkovnica .tk-pop").count(), 1, "različice");
+      await page.mouse.up();
+      await page.waitForTimeout(40);
+      assert.match(await page.inputValue("#t"), /^a [šŠ]$/, "dolg pritisk zamenja črko");
+    }
+    await page.waitForTimeout(500);
     // ⌫ briše že ob pritisku (pred dvigom prsta), ob dvigu ne še enkrat
     await setText("abc");
     {

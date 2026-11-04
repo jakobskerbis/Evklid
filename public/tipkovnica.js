@@ -887,11 +887,11 @@ function closePreview(ms = 0) {
 function closePop() {
   board?.querySelector(".tk-pop")?.remove();
 }
-function showPop(btn, base) {
+function showPop(btn, base, shift = S.shift) {
   closePop();
   const vars = varsFor(base);
   if (!vars.length) return false;
-  const up = S.shift && base.toLocaleUpperCase(currentLang()).length === 1;
+  const up = shift && base.toLocaleUpperCase(currentLang()).length === 1;
   const list = [base, ...vars].map((v) => (up && v.toLocaleUpperCase().length === 1 ? v.toLocaleUpperCase() : v));
   const pop = document.createElement("div");
   pop.className = "tk-pop";
@@ -917,6 +917,26 @@ function popInsert(v) {
     S.shift = 0;
     paintShift();
   } else renderCtx();
+}
+
+const vlen = (f) => (!f ? undefined : f.isContentEditable ? f.textContent.length : String(f.value ?? "").length);
+/** Prekliče znak, vpisan ob pritisku (prst je začel drseti ali izbral različico), in vrne ⇧. */
+function undoPress(d) {
+  if (!d?.done) return;
+  d.done = false;
+  const f = S.field;
+  const k = (d.len1 ?? 0) - (d.len0 ?? 0);
+  if (!f || f !== d.f || k <= 0 || vlen(f) !== d.len1) return;
+  const r = sel(f);
+  if (f.isContentEditable || !r) backspace(f);
+  else if (r[0] === r[1] && r[0] >= k) {
+    f.setRangeText("", r[0] - k, r[0], "end");
+    fire(f, "deleteContentBackward");
+  }
+  if (S.shift !== d.shift) {
+    S.shift = d.shift;
+    paintShift();
+  }
 }
 
 function clearTimers() {
@@ -1014,6 +1034,16 @@ function wireBoard() {
     b.classList.add("down");
     if (b.classList.contains("tk-k")) buzz();
     if (a?.a === "char" && e.pointerType !== "mouse") preview(b);
+    // črke in znaki se vpišejo že ob pritisku (j, 4. 11.: »takoj, brez zamika«); drsenje in dolg pritisk
+    // za različice vpisani znak spodaj zamenjata (undoPress)
+    down.shift = S.shift;
+    if (a?.a === "char" || a?.a === "ins" || a?.a === "lit") {
+      down.done = true;
+      down.f = S.field;
+      down.len0 = vlen(S.field);
+      act(a);
+      down.len1 = vlen(S.field);
+    }
     if (a?.a === "sp") {
       try {
         b.setPointerCapture(e.pointerId);
@@ -1021,7 +1051,7 @@ function wireBoard() {
     } else if (a?.a === "char" && varsFor(a.v).length) {
       down.lp = setTimeout(() => {
         if (down?.b === b) {
-          down.pop = showPop(b, a.v);
+          down.pop = showPop(b, a.v, down.shift);
           if (down.pop) closePreview();
         }
       }, 380);
@@ -1061,6 +1091,7 @@ function wireBoard() {
         if (!(down.len >= 2 * down.kw || away)) return;
         down.glide = true;
         down.moved = true;
+        undoPress(down);
         clearTimers();
         closePreview();
         closePop();
@@ -1142,7 +1173,11 @@ function wireBoard() {
     const run = (fn) => (e.pointerType === "touch" ? setTimeout(fn, 0) : fn());
     if (d.pop) {
       const v = at?.closest(".tk-pop button") || board.querySelector(".tk-pop button.on");
-      if (v) run(() => popInsert(v.dataset.v));
+      if (v)
+        run(() => {
+          undoPress(d);
+          popInsert(v.dataset.v);
+        });
       return;
     }
     if (d.done || d.moved || at?.closest("button") !== d.b) return;
