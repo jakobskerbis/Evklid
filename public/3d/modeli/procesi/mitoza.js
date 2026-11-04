@@ -9,6 +9,7 @@ export const info = {
   predmet: "BIO",
   opis: "Živalska celica z 2n = 4 kromosomi se korak za korakom razdeli na dve enaki hčerinski celici: interfaza, profaza, prometafaza, metafaza, anafaza, telofaza in citokineza. Poenostavljeno: človeška celica ima 2n = 46 kromosomov.",
   merilo: { m: 30e-6, oznaka: "30 µm" },
+  poskusi: "s »Naprej« pojdi do anafaze in preštej kromosome na vsakem polu celice.",
 };
 
 const MN_KROMOSOM = ["kromosom", "kromosoma", "kromosomi", "kromosomov"];
