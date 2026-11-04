@@ -7,7 +7,6 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import zlib from "node:zlib";
-import express from "express";
 import { fileURLToPath } from "node:url";
 import { pickEncoding } from "./compress.js";
 
@@ -120,7 +119,7 @@ export function mount3d(app, { csp, modules }) {
   app.get("/3d/modeli/seznam.json", (_req, res) => {
     res.set("Cache-Control", "no-cache").json(modelList());
   });
-  // three: samo izdelana knjižnica in dodatki (examples/jsm), ne cel paket.
+  // three: samo izdelana knjižnica in dodatki (examples/jsm), ne cel paket. Izdelano knjižnico (/vendor/three/build)
+  // streže server/app.js za stisnjenimi datotekami (brotli, en teden v predpomnilniku), kot ostale knjižnice.
   app.use("/vendor/three/examples/jsm", addonsHandler(path.join(modules, "three", "examples", "jsm")));
-  app.use("/vendor/three/build", express.static(path.join(modules, "three", "build")));
 }

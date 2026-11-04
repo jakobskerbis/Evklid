@@ -56,6 +56,12 @@ export function odpriModel(el, mod, opts = {}) {
   deliEl.setAttribute("aria-label", t("a3.parts"));
   spodaj.append(nadzorEl, deliEl);
   el.append(oder, spodaj);
+  // Esc prekliče izbiro dela (šele naslednji Esc gre na strani /3d nazaj na zbirko).
+  el.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || !izbran || e.defaultPrevented) return;
+    e.preventDefault();
+    izberi(null);
+  });
 
   const btnPonastavi = mk("button", "k3-krog");
   btnPonastavi.type = "button";
@@ -161,6 +167,15 @@ export function odpriModel(el, mod, opts = {}) {
   const merilo = () => {
     const m = model && "merilo" in model && model.merilo !== undefined ? (typeof model.merilo === "function" ? model.merilo() : model.merilo) : info.merilo;
     kit.nastaviMerilo(m || null, 2);
+  };
+  // Smer kamere ob odprtju in »Ponastavi«: model.pogled ([x, y, z] ali funkcija, ki ga vrne), sicer privzeto.
+  const zacetnaSmer = () => {
+    let p = null;
+    try {
+      p = typeof model?.pogled === "function" ? model.pogled() : model?.pogled;
+    } catch {}
+    const v = Array.isArray(p) && p.length === 3 && p.every(Number.isFinite) ? new THREE.Vector3(...p) : null;
+    return v && v.lengthSq() > 1e-9 ? v : new THREE.Vector3(0.35, 0.3, 1);
   };
   const osveziIzpise = () => {
     for (const [c, out] of izpisi) {
@@ -364,7 +379,7 @@ export function odpriModel(el, mod, opts = {}) {
     if (ponastavi || !opts.ohraniPogled) {
       kit.controls.minDistance = 0.4;
       kit.controls.maxDistance = 12;
-      kit.poleti(new THREE.Vector3(0, 0, 0), 1, { smer: new THREE.Vector3(0.35, 0.3, 1), trajanje: ponastavi ? 0.6 : 0 });
+      kit.poleti(new THREE.Vector3(0, 0, 0), 1, { smer: zacetnaSmer(), trajanje: ponastavi ? 0.6 : 0 });
     }
     kit.narisi();
   }

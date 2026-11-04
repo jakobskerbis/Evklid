@@ -37,3 +37,19 @@ export async function naloziModel(id) {
   return mod;
 }
 
+
+// Mapa modelov telesa: podrobni modeli (telo-hd, ~3,5 M trikotnikov, 30 MB) samo na računalniku, sicer telo (telefonski
+// nabor, ~1,8 M, 19 MB). Pravilo: kakovost »visoka« (scena.js: samodejno ali ročna izbira) in natančen kazalec (miška,
+// ne prst), vsaj 4 GB pomnilnika (ali neznano) in zaslon vsaj 1024 px po daljši strani. Telefon in tablica vedno telo.
+export function mapaTelesa({ kakovost, grobKazalec = false, pomnilnik = null, zaslon = 0, varcno = false } = {}) {
+  if (kakovost !== "visoka" || grobKazalec || varcno) return "telo";
+  if (pomnilnik != null && pomnilnik < 4) return "telo";
+  if (!(zaslon >= 1024)) return "telo";
+  return "telo-hd";
+}
+export function mapaTelesaNaprave(kakovost) {
+  const nav = typeof navigator !== "undefined" ? navigator : {};
+  const grob = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
+  const scr = typeof screen !== "undefined" ? screen : {};
+  return mapaTelesa({ kakovost, grobKazalec: grob, pomnilnik: nav.deviceMemory ?? null, zaslon: Math.max(scr.width || 0, scr.height || 0), varcno: nav.connection?.saveData === true });
+}

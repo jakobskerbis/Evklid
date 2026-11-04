@@ -13,8 +13,11 @@ SUF = re.compile(r"\.(l|r|i|el|er|ol|or|e\d+[lr]|o\d+[lr])$")
 rows, names = [], collections.OrderedDict()
 for x in s:
     base = SUF.sub("", x["id"]); side = re.search(r"\.(l|r)$", x["id"])
+    mat = x["material"]
+    # Kosti zapestja imajo veliko ploskev sklepnega hrustanca, zato prevladujoč material izide »Cartilage«.
+    if x["sistem"] == "okostje" and mat.startswith("Cartilage") and re.search(r"\bbone\b", base, re.I): mat = "Bone"
     rows.append({"id": x["id"], "ime": base, "stran": side.group(1) if side else "", "sistem": x["sistem"],
-                 "pot": x["pot"], "material": x["material"], "c": x["sredisce"], "r": x["velikost"]})
+                 "pot": x["pot"], "material": mat, "c": x["sredisce"], "r": x["velikost"]})
     names.setdefault(base, {"en": base, "sistem": x["sistem"], "la": ta.get(base.lower(), "")})
 for x in s:
     for g in x["pot"]:

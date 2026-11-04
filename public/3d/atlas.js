@@ -7,7 +7,7 @@ import { THREE, ustvariSceno, kakovostNaprave } from "./scena.js";
 import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "/vendor/three/examples/jsm/libs/meshopt_decoder.module.js";
 import { tkivo, ustvariMaterial } from "./tkiva.js";
-import { seznamDatotek } from "./modeli.js";
+import { seznamDatotek, mapaTelesaNaprave } from "./modeli.js";
 import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
@@ -95,9 +95,11 @@ export function imeStrukture(row, im, jezik = "sl") {
 export async function odpriAtlas(el, { zapri = null } = {}) {
   const jezik = currentLang();
   const kakovost = kakovostNaprave();
+  const mapa = mapaTelesaNaprave(kakovost); // telo-hd na računalniku, telo na telefonu (modeli.js)
   el.replaceChildren();
   el.classList.add("k3", "a3");
   el.setAttribute("data-kakovost", kakovost);
+  el.setAttribute("data-modeli", mapa);
 
   // ---------- postavitev ----------
   const oder = mk("div", "a3-oder");
@@ -223,6 +225,8 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     r.prikaz = imeStrukture(r, im, jezik);
     r.la = jezik === "sl" || im?.la ? im?.la || "" : "";
     r.raven = im?.raven || (r.r >= 0.07 ? 1 : r.r >= 0.028 ? 2 : 3);
+    // Ovojnice (fascije) so v viru le na delu telesa in zakrijejo mišice: privzeto skrite, pokažejo se ob izbiri.
+    r.ovojnica = r.material === "Fascia" || /\bfascia\b/i.test(r.ime);
     r.kljuci = r.pot.map((_, i) => `${r.sistem}/${r.pot.slice(0, i + 1).join("/")}`);
     r.isci = norm([r.prikaz, im?.sl, im?.la, r.ime].filter(Boolean).join(" | "));
     // »mosko« = skrito v načinu Žensko
@@ -276,12 +280,85 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   kit.controls.maxDistance = 6;
   const telo = new THREE.Group();
   kit.scene.add(telo);
-  if (kakovost === "visoka") kit.pripraviAO(0.035);
+  // Modeli imajo zapečeno okluzijo v pregibih (barva oglišč), zato je zaslonska (GTAO) šibkejša, le za stike med deli.
+  if (kakovost === "visoka") kit.pripraviAO(0.035, { moc: 0.6 });
+
+  // Studijska svetloba, vezana na kamero (telo je lepo osvetljeno s katere koli strani): topla ključna luč zgoraj levo
+  // spredaj, hladna polnilna z desne in obrobna od zadaj (svetel rob loči obris od temnega odra). Okolje (RoomEnvironment
+  // iz scena.js) da mehke odboje.
+  kit.scene.add(kit.camera);
+  const vezi = (luc, poz, cilj, barva, moc) => {
+    kit.camera.add(luc, luc.target);
+    luc.position.set(...poz);
+    luc.target.position.set(...cilj);
+    luc.color.set(barva);
+    luc.intensity = moc;
+  };
+  const [kljucna, polnilna] = kit.luci;
+  vezi(kljucna, [-1.3, 1.5, 0.7], [0, 0, -1.6], 0xfff0e0, 1.1);
+  vezi(polnilna, [1.7, 0.15, 0.5], [0, 0, -1.6], 0xc4d6ff, 0.34);
+  vezi(new THREE.DirectionalLight(), [0.5, 1.3, -4.2], [0, 0, -1], 0xdde8ff, 0.9);
+  kit.scene.environmentIntensity = 0.62;
+
+  // Mehka senca pod stopali (prelivni krog na tleh, brez senčnih map): telo stoji na odru, ne lebdi.
+  const senca = (() => {
+    const c = document.createElement("canvas");
+    c.width = c.height = 128;
+    const g = c.getContext("2d");
+    const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gr.addColorStop(0, "rgba(0,0,0,0.62)");
+    gr.addColorStop(0.35, "rgba(0,0,0,0.38)");
+    gr.addColorStop(0.7, "rgba(0,0,0,0.1)");
+    gr.addColorStop(1, "rgba(0,0,0,0)");
+    g.fillStyle = gr;
+    g.fillRect(0, 0, 128, 128);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false }));
+    m.rotation.x = -Math.PI / 2;
+    m.position.set(0, -0.012, 0.01);
+    m.scale.set(0.82, 0.46, 1);
+    m.renderOrder = -1;
+    m.raycast = () => {};
+    return m;
+  })();
+  kit.scene.add(senca);
+
   const sij = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial());
   sij.matrixAutoUpdate = false;
   sij.visible = false;
   sij.renderOrder = 2;
   telo.add(sij);
+  // Obris izbranega dela v barvi poudarka: ista geometrija, napihnjena vzdolž normal za stalno število slikovnih točk,
+  // narisana s hrbtnimi ploskvami (vidi se le ob robu), plus širši mehak aditivni sij. Dve risanji samo za izbrani del.
+  const POUDAREK = new THREE.Color("#6E9BFF");
+  const uPx = { value: 0.002 };
+  function materialObrisa(px, opacity, aditivno) {
+    const m = new THREE.MeshBasicMaterial({ color: POUDAREK, transparent: true, opacity, side: THREE.BackSide, depthWrite: false, toneMapped: false, blending: aditivno ? THREE.AdditiveBlending : THREE.NormalBlending });
+    m.onBeforeCompile = (sh) => {
+      sh.uniforms.uPx = uPx;
+      sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nuniform float uPx;").replace(
+        "#include <project_vertex>",
+        `#include <project_vertex>
+        mvPosition.xyz += normalize( normalMatrix * normal ) * ( -mvPosition.z ) * uPx * ${px.toFixed(1)};
+        gl_Position = projectionMatrix * mvPosition;`,
+      );
+    };
+    m.customProgramCacheKey = () => `a3-obris-${px}`;
+    return m;
+  }
+  const obrisi = [materialObrisa(2.2, 0.95, false), materialObrisa(7, 0.2, true)].map((m, i) => {
+    const o = new THREE.Mesh(new THREE.BufferGeometry(), m);
+    o.matrixAutoUpdate = false;
+    o.renderOrder = 3 + i;
+    o.raycast = () => {};
+    sij.add(o);
+    return o;
+  });
+  kit.naKorak(() => {
+    uPx.value = (2 * Math.tan(THREE.MathUtils.degToRad(kit.camera.fov / 2))) / Math.max(1, kit.velikost.h);
+    return false;
+  });
   const vidiAO = () => kit.nastaviAO(kakovost === "visoka" && !rentgen && !prerez.on && !izbran && !sloji.get("koza").viden);
 
   function ponastaviPogled(trajanje = 0.7) {
@@ -349,6 +426,50 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     nalaganje.hidden = prenosi.size === 0;
   }
 
+  // Zrcaljeni deli v izvozu (večina ».l« mišic in kosti, ».r« žil, del živcev z vsake strani) imajo obrnjen vrstni red
+  // oglišč in normale navznoter:
+  // s privzetim izločanjem hrbtnih ploskev se vidi notranjost zadnje stene (napačna senca, tanke ovojnice izginejo,
+  // obris izbranega dela prekrije cel del). Predznačena prostornina (glede na središče, kar v surovih celih številih
+  // kvantizacije) je pri pravilno obrnjeni zaprti mreži pozitivna; zrcaljeno stran obrnemo ob nalaganju (~1 ms na 100k trikotnikov).
+  const surovo = (a) => (a.isInterleavedBufferAttribute ? [a.data.array, a.data.stride, a.offset] : [a.array, a.itemSize, 0]);
+  function predznacenaProstornina(g) {
+    const [p, k, o] = surovo(g.attributes.position);
+    const ix = g.index.array;
+    const n = g.attributes.position.count;
+    let cx = 0, cy = 0, cz = 0;
+    for (let i = 0; i < n; i++) {
+      cx += p[i * k + o];
+      cy += p[i * k + o + 1];
+      cz += p[i * k + o + 2];
+    }
+    cx /= n;
+    cy /= n;
+    cz /= n;
+    let v = 0;
+    for (let t = 0; t < ix.length; t += 3) {
+      const a = ix[t] * k + o, b = ix[t + 1] * k + o, c = ix[t + 2] * k + o;
+      const ax = p[a] - cx, ay = p[a + 1] - cy, az = p[a + 2] - cz;
+      const bx = p[b] - cx, by = p[b + 1] - cy, bz = p[b + 2] - cz;
+      const qx = p[c] - cx, qy = p[c + 1] - cy, qz = p[c + 2] - cz;
+      v += ax * (by * qz - bz * qy) + ay * (bz * qx - bx * qz) + az * (bx * qy - by * qx);
+    }
+    return v;
+  }
+  function obrniNotranjost(g) {
+    const ix = g.index.array;
+    for (let t = 0; t < ix.length; t += 3) {
+      const x = ix[t + 1];
+      ix[t + 1] = ix[t + 2];
+      ix[t + 2] = x;
+    }
+    g.index.needsUpdate = true;
+    const nrm = g.attributes.normal;
+    const [a, k, o] = surovo(nrm);
+    const maks = a instanceof Int16Array ? 32767 : a instanceof Int8Array ? 127 : Infinity;
+    for (let i = 0; i < nrm.count; i++) for (let j = 0; j < 3; j++) a[i * k + o + j] = Math.min(maks, -a[i * k + o + j]);
+    nrm.needsUpdate = true;
+  }
+
   function sestavi(sloj, gltf) {
     gltf.scene.updateMatrixWorld(true);
     const json = gltf.parser.json;
@@ -364,8 +485,11 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       const row = vrstice.get(id);
       if (!row) return;
       const g = o.geometry;
-      for (const a of Object.keys(g.attributes)) if (a !== "position" && a !== "normal") g.deleteAttribute(a);
+      for (const a of Object.keys(g.attributes)) if (a !== "position" && a !== "normal" && a !== "color") g.deleteAttribute(a);
       if (!g.attributes.normal) g.computeVertexNormals();
+      // Zapečena okluzija (COLOR_0, siva RGBA8): vse geometrije v istem BatchedMesh morajo imeti iste lastnosti, zato
+      // dobi del brez nje (npr. zenski.glb) belo (brez zatemnitve) v enaki obliki.
+      if (!g.attributes.color) g.setAttribute("color", new THREE.BufferAttribute(new Uint8Array(g.attributes.position.count * 4).fill(255), 4, true));
       if (!g.index) {
         const n2 = g.attributes.position.count;
         g.setIndex([...Array(n2).keys()]);
@@ -373,9 +497,12 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       g.computeBoundingBox();
       g.computeBoundingSphere();
       const t0 = tkivo(row);
-      const sig = ["position", "normal"].map((a) => `${g.attributes[a].array.constructor.name}${g.attributes[a].itemSize}${g.attributes[a].normalized}`).join("|");
-      kandidati.push({ row, g, m0: o.matrixWorld.clone(), razred: t0.razred, barva: t0.barva, kljuc: `${t0.razred}|${sig}` });
+      const sig = ["position", "normal", "color"].map((a) => `${g.attributes[a].array.constructor.name}${g.attributes[a].itemSize}${g.attributes[a].normalized}`).join("|");
+      kandidati.push({ row, g, m0: o.matrixWorld.clone(), razred: t0.razred, barva: t0.barva, kljuc: `${t0.razred}|${sig}`, v: predznacenaProstornina(g) });
     });
+    // Zaprte mreže z negativno prostornino so zrcaljene navznoter: obrnemo jih. Odprte ploskve (ovojnice) nimajo
+    // zanesljivega predznaka; njihov material je dvostranski (tkiva.js), zato smer zanje ni pomembna.
+    for (const k of kandidati) if (k.v < 0 && k.razred !== "ovojnica") obrniNotranjost(k.g);
     const skupine = new Map();
     for (const k of kandidati) {
       if (!skupine.has(k.kljuc)) skupine.set(k.kljuc, []);
@@ -408,17 +535,32 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     const sloj = sloji.get(id);
     if (!sloj || sloj.nalozen) return;
     if (sloj.nalaganje) return sloj.nalaganje;
-    const pot = id === "zenski" ? "telo/zenski.glb" : `telo/${id}.glb`;
+    // Podrobni modeli (telo-hd) na računalniku; ženski organi in plast, ki je v telo-hd ni, vedno iz telo/.
+    const potTelo = id === "zenski" ? "telo/zenski.glb" : `telo/${id}.glb`;
+    const pot = mapa === "telo-hd" && id !== "zenski" && seznam.datoteke?.[`telo-hd/${id}.glb`] ? `telo-hd/${id}.glb` : potTelo;
+    const preberi = async (p) => {
+      prenosi.set(id, { n: 0, s: seznam.datoteke?.[p]?.b || 0 });
+      prikaziNapredek();
+      const buf = await prenesi(p, (n, s) => {
+        prenosi.set(id, { n, s });
+        prikaziNapredek();
+        osveziPlasti(); // MB v vrstici plasti (Brskaj)
+      });
+      return loader.parseAsync(buf, "");
+    };
     sloj.nalaganje = (async () => {
       prenosi.set(id, { n: 0, s: seznam.datoteke?.[pot]?.b || 0 });
       prikaziNapredek();
       osveziPlasti();
       try {
-        const buf = await prenesi(pot, (n, s) => {
-          prenosi.set(id, { n, s });
-          prikaziNapredek();
-        });
-        const gltf = await loader.parseAsync(buf, "");
+        let gltf;
+        try {
+          gltf = await preberi(pot);
+        } catch (err) {
+          if (pot === potTelo) throw err;
+          console.warn(`3D atlas: podrobna plast ${id} ni na voljo, nalagam telo/`, err);
+          gltf = await preberi(potTelo);
+        }
         sestavi(sloj, gltf);
         sloj.nalozen = true;
         uporabiRazmik();
@@ -436,6 +578,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
         kit.narisi();
       }
     })();
+    osveziPlasti(); // zdaj je sloj.nalaganje nastavljen: vrstica pokaže »Nalaganje …«
     return sloj.nalaganje;
   }
 
@@ -450,10 +593,12 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (spol === "z" && r.mosko) return false;
     if (r.raven > raven) return false;
     if (skrit.has(r.id)) return false;
+    if (r.ovojnica && !ovojnice && !(samo && samo.has(r.id))) return false;
     if (samo && !samo.has(r.id)) return false;
     for (const k of r.kljuci) if (skriteSkupine.has(k)) return false;
     return true;
   }
+  let ovojnice = false; // fascije pokažemo, ko jih uporabnik izbere v iskanju ali Brskaj
   let stVidnih = 0;
   function uporabiVidnost() {
     if (sloji.has("zenski")) sloji.get("zenski").viden = spol === "z";
@@ -498,16 +643,23 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   const sredisceDela = (d) => odmik(d.row, razmik, new THREE.Vector3()).add(new THREE.Vector3(...d.row.c));
 
   // Material za vse sloje: prosojnost (rentgen), zatemnitev, prerez (obe strani ploskev, da se vidi notranjost).
+  const svetlostOstalih = () => (izbran && !rentgen ? 0.3 : 1);
   function uporabiMateriale() {
     const ravnine = prerez.on ? [ravnina] : null;
+    for (const o of obrisi) {
+      if ((o.material.clippingPlanes?.length || 0) !== (ravnine?.length || 0)) {
+        o.material.clippingPlanes = ravnine;
+        o.material.needsUpdate = true;
+      }
+    }
     skupno.uRob.value = rentgen ? 1 : 0;
     skupno.uAlfa.value = rentgen ? 0.06 : 1;
-    skupno.uSvetlost.value = izbran && !rentgen ? 0.22 : 1;
+    skupno.uSvetlost.value = svetlostOstalih();
     for (const m of [...materiali.values(), ...materialiSij.values()]) {
       const osnova = m.userData.osnovaProsojnost;
       const jeSij = m.userData.sij;
       const prosojen = (rentgen && !jeSij) || osnova < 1;
-      const strani = prerez.on ? THREE.DoubleSide : THREE.FrontSide;
+      const strani = prerez.on || m.userData.dvostransko ? THREE.DoubleSide : THREE.FrontSide;
       if (m.transparent !== prosojen || m.side !== strani || (m.clippingPlanes?.length || 0) !== (ravnine?.length || 0)) {
         m.transparent = prosojen;
         m.depthWrite = !prosojen;
@@ -536,8 +688,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (!materialiSij.has(razred)) {
       const m = ustvariMaterial(razred, kakovost, svetSkupno);
       m.userData.sij = true;
-      m.emissive = new THREE.Color(1, 1, 1);
-      m.emissiveIntensity = 0.04;
+      m.emissiveIntensity = 1; // emissive = barva dela × 0,14 (izberi): izbrani del rahlo zažari v svoji barvi
       if (m.transparent) {
         m.transparent = false;
         m.opacity = 1;
@@ -565,8 +716,11 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     const d = deli.get(izbran);
     d.batch.setVisibleAt(d.inst, false);
     sij.geometry = d.geo;
+    for (const o of obrisi) o.geometry = d.geo;
+    if (lebdiId === izbran) oznaciLebdenje(null);
     sij.material = materialSij(d.razred);
     sij.material.color.copy(d.barva);
+    sij.material.emissive.copy(d.barva).multiplyScalar(0.14);
     sij.matrix.copy(d.m);
     sij.matrixWorldNeedsUpdate = true;
     sij.visible = true;
@@ -658,6 +812,62 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     izberi(id && id !== izbran ? id : null);
   });
 
+  // Namig ob kazalcu (računalnik z miško): ime strukture pod kazalcem in rahlo osvetljen del. Med kvizom ga ni (izdal bi
+  // odgovor). Žarek gre največ ~10-krat na sekundo in le, ko se miška premakne brez pritisnjenega gumba.
+  const lebdi = mk("div", "a3-lebdi");
+  lebdi.hidden = true;
+  lebdi.setAttribute("aria-hidden", "true");
+  kit.plast.append(lebdi);
+  let lebdiId = null;
+  let lebdiXY = null;
+  let lebdiPremik = false;
+  let lebdiCas = 0;
+  const _barva = new THREE.Color();
+  function oznaciLebdenje(id) {
+    if (id === lebdiId) return;
+    if (lebdiId && deli.has(lebdiId)) {
+      const d = deli.get(lebdiId);
+      d.batch.setColorAt(d.inst, d.barva);
+    }
+    lebdiId = id;
+    if (id && deli.has(id) && id !== izbran) {
+      const d = deli.get(id);
+      d.batch.setColorAt(d.inst, _barva.copy(d.barva).multiplyScalar(1.3).lerp(POUDAREK, 0.14));
+    }
+    if (!id) lebdi.hidden = true;
+    kit.narisi();
+  }
+  if (typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    kit.canvas.addEventListener("pointermove", (e) => {
+      if (e.pointerType !== "mouse") return;
+      lebdiXY = { x: e.clientX, y: e.clientY, gumbi: e.buttons };
+      lebdiPremik = true;
+    });
+    const ugasni = () => {
+      lebdiXY = null;
+      oznaciLebdenje(null);
+    };
+    kit.canvas.addEventListener("pointerleave", ugasni);
+    kit.canvas.addEventListener("pointerdown", ugasni);
+    kit.naKorak((_dt, cas) => {
+      if (!lebdiPremik || !lebdiXY || cas - lebdiCas < 0.09) return false;
+      lebdiPremik = false;
+      lebdiCas = cas;
+      if (lebdiXY.gumbi || kvizStanje) return oznaciLebdenje(null), false;
+      const r = kit.canvas.getBoundingClientRect();
+      const ndc = new THREE.Vector2(((lebdiXY.x - r.left) / r.width) * 2 - 1, -((lebdiXY.y - r.top) / r.height) * 2 + 1);
+      const id = zadetek(ndc);
+      oznaciLebdenje(id);
+      const row = id && vrstice.get(id);
+      if (row) {
+        lebdi.textContent = row.prikaz;
+        lebdi.style.transform = `translate(${Math.round(lebdiXY.x - r.left + 14)}px, ${Math.round(lebdiXY.y - r.top + 18)}px)`;
+        lebdi.hidden = false;
+      }
+      return false;
+    });
+  }
+
   // ---------- kompas ----------
   const _q = new THREE.Quaternion();
   const _v = new THREE.Vector3();
@@ -748,11 +958,13 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     zapriList();
     const s = sloji.get(r.zenski ? "zenski" : r.sistem);
     if (r.zenski) spol = "z";
+    else if (r.mosko && spol === "z") spol = "m"; // moška struktura iz iskanja: preklop na moško telo
     if (!s.viden) {
       s.viden = true;
     }
     if (r.zenski) sloji.get("organi").viden = true;
     skrit.delete(id);
+    if (r.ovojnica) ovojnice = true;
     for (const k of r.kljuci) skriteSkupine.delete(k);
     if (samo && !samo.has(id)) samo = null;
     if (r.raven > raven) raven = 3;
@@ -1327,9 +1539,37 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   document.addEventListener("click", naKlik);
 
   // ---------- zagon: okostje in organi ----------
+  // Uvod (brez »manj gibanja«): telo se pokaže šele, ko sta naložena oba začetna sloja; kamera prileti s strani in
+  // svetloba se prižge v slabi sekundi.
+  const uvod = kit.gibanje;
+  if (uvod) {
+    telo.visible = false;
+    senca.visible = false;
+    pogled(new THREE.Vector3(0.95, 0.3, 1), { trajanje: 0, cilj: new THREE.Vector3(0, 0.95, 0), polmer: 1.45 });
+  }
   uporabiVidnost();
-  await Promise.all(ZACETNI.map((id) => naloziSloj(id)));
+  try {
+    await Promise.all(ZACETNI.map((id) => naloziSloj(id)));
+  } finally {
+    telo.visible = true;
+    senca.visible = true;
+  }
   uporabiVidnost();
+  if (uvod) {
+    let cas = 0;
+    const T = 0.9;
+    skupno.uSvetlost.value = 0;
+    senca.material.opacity = 0;
+    const stop = kit.naKorak((dt) => {
+      cas += dt;
+      const e = Math.min(1, cas / T);
+      skupno.uSvetlost.value = svetlostOstalih() * e * e * (3 - 2 * e);
+      senca.material.opacity = e;
+      if (e >= 1) stop();
+      return true;
+    });
+    ponastaviPogled(1.7);
+  }
 
   return {
     kit,
@@ -1356,7 +1596,10 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       document.removeEventListener("click", naKlik);
       kit.unici();
       for (const s of sloji.values()) for (const bm of s.skupine) bm.dispose();
-      for (const m of [...materiali.values(), ...materialiSij.values()]) m.dispose();
+      for (const m of [...materiali.values(), ...materialiSij.values(), ...obrisi.map((o) => o.material)]) m.dispose();
+      senca.material.map.dispose();
+      senca.material.dispose();
+      senca.geometry.dispose();
       for (const d of deli.values()) d.geo.dispose();
       el.replaceChildren();
     },

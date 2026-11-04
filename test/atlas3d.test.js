@@ -130,6 +130,32 @@ test("velikost prenosov: vsak GLB telesa ≤ 5 MB, skupaj ≤ 20 MB", () => {
   assert.ok(skupaj <= 20 * MB, `telo skupaj ${(skupaj / MB).toFixed(1)} MB > 20 MB`);
 });
 
+test("podrobni modeli za računalnik (telo-hd): vsak GLB ≤ 8 MB, skupaj ≤ 32 MB, iste plasti kot telo", () => {
+  const hd = datoteke(path.join(MODELI, "telo-hd"), ".glb");
+  let skupaj = 0;
+  for (const f of hd) {
+    const b = fs.statSync(f).size;
+    assert.ok(b <= 8 * MB, `${rel(f)}: ${(b / MB).toFixed(1)} MB > 8 MB`);
+    skupaj += b;
+  }
+  assert.ok(skupaj <= 32 * MB, `telo-hd skupaj ${(skupaj / MB).toFixed(1)} MB > 32 MB`);
+  const plasti = (d) => datoteke(path.join(MODELI, d), ".glb").map((f) => path.basename(f)).filter((n) => n !== "zenski.glb").sort();
+  assert.deepEqual(plasti("telo-hd"), plasti("telo"));
+});
+
+test("mapa modelov telesa: telo-hd samo na računalniku z visoko kakovostjo, telefon vedno telo", async () => {
+  const { mapaTelesa } = await import("../public/3d/modeli.js");
+  const pc = { kakovost: "visoka", grobKazalec: false, pomnilnik: 8, zaslon: 1920 };
+  assert.equal(mapaTelesa(pc), "telo-hd");
+  assert.equal(mapaTelesa({ ...pc, pomnilnik: null }), "telo-hd", "neznan pomnilnik (Firefox, Safari) šteje kot dovolj");
+  assert.equal(mapaTelesa({ ...pc, kakovost: "nizka" }), "telo");
+  assert.equal(mapaTelesa({ ...pc, grobKazalec: true }), "telo", "prst (telefon, tablica)");
+  assert.equal(mapaTelesa({ ...pc, pomnilnik: 2 }), "telo");
+  assert.equal(mapaTelesa({ ...pc, zaslon: 900 }), "telo");
+  assert.equal(mapaTelesa({ ...pc, varcno: true }), "telo", "varčevanje s prenosom");
+  assert.equal(mapaTelesa(), "telo");
+});
+
 // Pogodba za modele iz kode: info, zgradi(THREE, ctx) in kar vrne. Graditelji brez DOM (canvas za napise) se v Node
 // ne zgradijo do konca; zanje preverimo le info.
 async function preveriGraditelja(file) {
@@ -228,6 +254,11 @@ test("CSP: /3d doda samo 'wasm-unsafe-eval', drugje ostane stroga", async () => 
     const jedro = await get("/vendor/three/build/three.module.js");
     assert.equal(jedro.status, 200);
     assert.match(jedro.headers.get("content-type"), /javascript/);
+    // Izdelana knjižnica (~0,7 MB + jedro) gre stisnjena in za en teden v predpomnilnik, kot ostale knjižnice.
+    const stisnjeno = await get("/vendor/three/build/three.core.js", { headers: { "accept-encoding": "br, gzip" } });
+    assert.equal(stisnjeno.status, 200);
+    assert.match(stisnjeno.headers.get("content-encoding") || "", /^(br|gzip)$/);
+    assert.match(stisnjeno.headers.get("cache-control") || "", /max-age=[1-9]/);
     const gltf = await get("/vendor/three/examples/jsm/loaders/GLTFLoader.js");
     assert.equal(gltf.status, 200);
     assert.match(gltf.headers.get("content-type"), /javascript/);

@@ -25,8 +25,12 @@ export function sim3d(el, opts = {}) {
     const box = document.createElement("div");
     el.append(box);
     odpriModel(box, mod, { zacetek: opts.zacetek || {} });
-  })().catch((err) => {
+  })().catch(async (err) => {
     console.error("3D simulacija:", err);
-    p.textContent = "3D";
+    // Napaka (npr. brez WebGL): sporočilo namesto praznega okvirja (p je ob gradnji že odstranjen).
+    const { t } = await import("/i18n.js").catch(() => ({ t: () => "3D" }));
+    p.textContent = t("a3.loadError");
+    el.querySelector(".k3-pregled")?.remove();
+    if (el.isConnected) el.append(p);
   });
 }

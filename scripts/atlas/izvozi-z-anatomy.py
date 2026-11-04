@@ -5,7 +5,10 @@
 # Stiskanje naredi scripts/atlas/stisni.mjs.
 import bpy, bmesh, json, os, re, sys, math
 
-out = sys.argv[sys.argv.index("--") + 1] if "--" in sys.argv else "/tmp/atlas-raw"
+args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
+out = args[0] if args else "/tmp/atlas-raw"
+# Drugi argument: faktor podrobnosti (1 = telefon, 2 = podrobnejši modeli za računalnik).
+FAKTOR = float(args[1]) if len(args) > 1 else 1.0
 os.makedirs(out, exist_ok=True)
 
 # sistem: (začetek imena zbirke, ciljno število trikotnikov po poenostavitvi)
@@ -64,6 +67,31 @@ def prevladujoc_material(o, me):
     best = max(range(len(mats)), key=lambda i: count[i])
     return mats[best] or o.active_material
 
+def zapeci_senco(me, moc=2.2, gladi=3):
+    """Senca v pregibih (»dirt«): oglišča v vdolbinah so temnejša. Shrani se kot barva oglišč COLOR_0,
+    pregledovalnik z njo pomnoži barvo materiala (deluje tudi na telefonih brez dragega SSAO)."""
+    import numpy as np
+    n = len(me.vertices)
+    if n < 4 or len(me.edges) == 0:
+        return
+    co = np.empty(n * 3); me.vertices.foreach_get("co", co); co = co.reshape(n, 3)
+    nor = np.empty(n * 3); me.vertex_normals.foreach_get("vector", nor); nor = nor.reshape(n, 3)
+    ed = np.empty(len(me.edges) * 2, dtype=np.int64); me.edges.foreach_get("vertices", ed); ed = ed.reshape(-1, 2)
+    a, b = ed[:, 0], ed[:, 1]
+    d = co[b] - co[a]; ln = np.linalg.norm(d, axis=1); ln[ln == 0] = 1; d /= ln[:, None]
+    vsota = np.zeros(n); stevec = np.zeros(n)
+    np.add.at(vsota, a, (nor[a] * d).sum(1)); np.add.at(vsota, b, -(nor[b] * d).sum(1))
+    np.add.at(stevec, a, 1); np.add.at(stevec, b, 1)
+    kon = vsota / np.maximum(stevec, 1)
+    for _ in range(gladi):
+        s2 = np.zeros(n); np.add.at(s2, a, kon[b]); np.add.at(s2, b, kon[a])
+        kon = 0.5 * kon + 0.5 * s2 / np.maximum(stevec, 1)
+    ao = 1.0 - np.clip(kon * moc, 0.0, 0.6)
+    attr = me.color_attributes.new("AO", "BYTE_COLOR", "POINT")
+    col = np.ones((n, 4)); col[:, 0] = col[:, 1] = col[:, 2] = ao
+    attr.data.foreach_set("color", col.ravel())
+    me.color_attributes.active_color = attr
+
 def tris_of(me):
     return sum(len(p.vertices) - 2 for p in me.polygons)
 
@@ -73,7 +101,7 @@ for key, (prefix, target) in SISTEMI.items():
     src = [o for o in root.all_objects if o.type in ("MESH", "CURVE") and not NEVIDNO.search(o.name) and not IZLOCI.search(o.name)]
     for o in src:
         if o.type == "CURVE":
-            o.data.resolution_u = min(o.data.resolution_u, CURVE_RES)
+            o.data.resolution_u = min(o.data.resolution_u, CURVE_RES if FAKTOR <= 1 else CURVE_RES + 1)
             o.data.bevel_resolution = min(o.data.bevel_resolution, 1)
     dg.update()
     # delež, ki ostane: velike mreže skrčimo toliko, da sistem pride do cilja
@@ -83,7 +111,7 @@ for key, (prefix, target) in SISTEMI.items():
             m = o.evaluated_get(dg).to_mesh(); total += tris_of(m); o.evaluated_get(dg).to_mesh_clear()
         except RuntimeError:
             pass
-    ratio = min(1.0, target / max(total, 1))
+    ratio = min(1.0, target * FAKTOR / max(total, 1))
     tmp = bpy.data.collections.new("izvoz-" + key)
     scene.collection.children.link(tmp)
     raw_tris = 0; kept = 0
@@ -98,6 +126,7 @@ for key, (prefix, target) in SISTEMI.items():
         me.transform(o.matrix_world)
         srcmat = prevladujoc_material(o, me)
         me.materials.clear(); me.materials.append(preprost_material(srcmat))
+        zapeci_senco(me)
         n = tris_of(me); raw_tris += n
         if n > MIN_TRI and ratio < 1:
             bm = bmesh.new(); bm.from_mesh(me)
@@ -131,7 +160,7 @@ for key, (prefix, target) in SISTEMI.items():
     bpy.ops.export_scene.gltf(
         filepath=os.path.join(out, key + ".glb"), export_format="GLB",
         use_active_collection=False, use_visible=True, export_apply=True,
-        export_materials="EXPORT", export_normals=True, export_texcoords=False,
+        export_materials="EXPORT", export_normals=True, export_vertex_color="ACTIVE", export_texcoords=False,
         export_yup=True, export_extras=True, export_animations=False, export_skins=False,
         export_morph=False, export_lights=False, export_cameras=False)
     after = sum(tris_of(ob.evaluated_get(bpy.context.evaluated_depsgraph_get()).to_mesh()) for ob in tmp.objects)

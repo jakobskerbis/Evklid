@@ -10,7 +10,8 @@
       "licenca": "CC BY-SA 4.0",
       "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "datoteke": [
-        "telo/*.glb"
+        "telo/*.glb",
+        "telo-hd/*.glb"
       ]
     },
     {
@@ -22,7 +23,8 @@
       "licenca": "CC BY-SA 2.1 JP",
       "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
       "datoteke": [
-        "telo/*.glb"
+        "telo/*.glb",
+        "telo-hd/*.glb"
       ]
     },
     {
@@ -34,7 +36,8 @@
       "licenca": "CC BY-SA 4.0",
       "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "datoteke": [
-        "telo/*.glb"
+        "telo/*.glb",
+        "telo-hd/*.glb"
       ]
     },
     {

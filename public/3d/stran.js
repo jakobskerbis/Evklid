@@ -23,7 +23,10 @@ const predmet = (p) => {
 };
 
 function razberi() {
-  const h = decodeURIComponent(location.hash.slice(1));
+  let h = location.hash.slice(1);
+  try {
+    h = decodeURIComponent(h);
+  } catch {} // pokvarjen naslov (%E0%A4): id ne obstaja, stran pokaže »ne obstaja«
   const [id, q = ""] = h.split("?");
   return { id, param: Object.fromEntries(new URLSearchParams(q)) };
 }
@@ -32,6 +35,14 @@ function razberi() {
 function nazaj() {
   if (history.state?.k3Iz === "hub") history.back();
   else location.hash = "";
+}
+// Povezava z zbirke: oznako »prišel z zbirke« dobi nov vnos v zgodovini (pushState), da nazaj() ve, da sme nazaj.
+// Hashchange se ob pushState ne sproži, zato usmerimo sami. Srednji klik ali Ctrl ostane navaden (nov zavihek).
+function izZbirke(e) {
+  if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  history.pushState({ k3Iz: "hub" }, "", e.currentTarget.getAttribute("href"));
+  usmeri();
 }
 
 async function zbirka() {
@@ -52,7 +63,7 @@ async function zbirka() {
   box.append(vrh);
   const z = mk("a", "k3-zvezda");
   z.href = "#atlas";
-  z.addEventListener("click", () => history.replaceState({ k3Iz: "hub" }, ""));
+  z.addEventListener("click", izZbirke);
   const ic = mk("span", "k3-zvezda-ic");
   ic.innerHTML = icon("bone");
   const besedilo = mk("div", "");
@@ -77,7 +88,7 @@ async function zbirka() {
     for (const m of seznam) {
       const a = mk("a", "k3-kartica");
       a.href = `#${encodeURIComponent(m.id)}`;
-      a.addEventListener("click", () => history.replaceState({ k3Iz: "hub" }, ""));
+      a.addEventListener("click", izZbirke);
       a.append(mk("small", "k3-nadnaslov", predmet(m.predmet)), mk("b", "", m.naslov));
       if (m.opis) a.append(mk("small", "", m.opis));
       mreza.append(a);
@@ -155,6 +166,10 @@ async function usmeri() {
     if (moj !== zaporedje) return;
     const p = mk("div", "k3-napaka");
     p.append(mk("p", "", t("a3.loadError")));
+    const b = mk("a", "a3-pill");
+    b.href = "#";
+    b.textContent = t("a3.hubTitle");
+    p.append(b);
     glavni.replaceChildren(p);
   }
 }
@@ -162,6 +177,14 @@ async function usmeri() {
 applyI18n?.();
 document.documentElement.lang = document.documentElement.lang || "sl";
 addEventListener("hashchange", usmeri);
+// Esc v modelu ali atlasu: nazaj na zbirko. Na window, da pridejo najprej na vrsto atlas in pregledovalnik (zaprejo
+// list, kviz ali izbiro in pokličejo preventDefault); v polju za vnos (iskanje) Esc ostane polju.
+addEventListener("keydown", (e) => {
+  if (e.key !== "Escape" || e.defaultPrevented || !razberi().id) return;
+  if (e.target instanceof Element && e.target.closest("input, textarea, select, [contenteditable]")) return;
+  e.preventDefault();
+  nazaj();
+});
 usmeri();
 
 // Service worker: stran in modeli delujejo tudi brez povezave (public/sw.js shrani modele v svoj predpomnilnik).

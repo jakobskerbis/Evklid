@@ -77,11 +77,15 @@ export function ustvariSceno(el, opts = {}) {
   plast.append(tockeEl);
   el.append(canvas, plast);
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance", alpha: false, stencil: false });
+  // Ozadje nariše CSS (barva odra pod prosojnim platnom), ne WebGL: tako je barva točno ista z učinki (GTAO) ali
+  // brez njih (prej je kompozitor barvo brisanja dvakrat pretvoril v sRGB: 0x0e131c → rgb(53,66,87)), oder ima lahko
+  // mehak prelivni sij, platno pa riše samo predmete (premultiplicirana prosojnost, robovi gladki prek ozadja).
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance", alpha: true, premultipliedAlpha: true, stencil: false });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = opts.osvetlitev ?? 0.95;
-  renderer.setClearColor(opts.ozadje ?? 0x0e131c, 1);
+  renderer.setClearColor(0x000000, 0);
+  el.style.backgroundColor = `#${new THREE.Color(opts.ozadje ?? 0x0e131c).getHexString()}`;
   renderer.localClippingEnabled = true;
   const najvecjaLocljivost = Math.min(window.devicePixelRatio || 1, visoka ? 2 : 1.5);
   let locljivost = najvecjaLocljivost;
@@ -121,29 +125,106 @@ export function ustvariSceno(el, opts = {}) {
   const narisi = () => (dirty = true);
   controls.addEventListener("change", narisi);
 
-  // Učinki samo pri visoki kakovosti (zaostrovanje okluzije v pregibih), naložijo se po potrebi.
+  // Učinki samo pri visoki kakovosti (zaostrovanje okluzije v pregibih), naložijo se po potrebi. Vrstni red:
+  // 1) neprosojni predmeti v ciljno sliko, 2) GTAO iz njihove globine in normal, 3) okluzija se zmnoži v isto sliko,
+  // 4) prosojni, aditivni, črte, točke in napisi (sprite) se narišejo šele po okluziji (globina iz koraka 1 ostane),
+  // zato jih GTAO ne potemni in ne mečejo lažnih senc, 5) preslikava tonov in sRGB (OutputPass) na nepremultiplicirani
+  // barvi. Prozorno ozadje (alfa 0) ostane prozorno: oder pod platnom pokaže pravo barvo.
   let composer = null;
   let gtao = null;
   let aoVkljucen = false;
-  async function pripraviAO(polmer = 0.25) {
+  const prosojen = (o) => {
+    if (o.isSprite || o.isPoints || o.isLine) return true;
+    const m = o.material;
+    if (!m) return false;
+    // Dvostranske ploskve (trakovi beljakovine, opne) nimajo prostornine za okluzijo: rišejo se po GTAO, nepotemnjene.
+    const p = (x) => x.transparent || x.blending !== THREE.NormalBlending || x.side === THREE.DoubleSide;
+    return Array.isArray(m) ? m.some(p) : p(m);
+  };
+  const prosojni = [];
+  const neprosojni = [];
+  function razvrsti() {
+    prosojni.length = 0;
+    neprosojni.length = 0;
+    scene.traverseVisible((o) => {
+      if (o.isMesh || o.isSprite || o.isPoints || o.isLine) (prosojen(o) ? prosojni : neprosojni).push(o);
+    });
+  }
+  const vidni = (seznam, v) => {
+    for (const o of seznam) o.visible = v;
+  };
+  async function pripraviAO(polmer = 0.25, { moc = 0.85 } = {}) {
     if (!visoka || composer) return;
     try {
-      const [{ EffectComposer }, { RenderPass }, { GTAOPass }, { OutputPass }] = await Promise.all([
+      const [{ EffectComposer }, { RenderPass }, { GTAOPass }, { OutputPass }, { Pass, FullScreenQuad }, { OutputShader }] = await Promise.all([
         import("/vendor/three/examples/jsm/postprocessing/EffectComposer.js"),
         import("/vendor/three/examples/jsm/postprocessing/RenderPass.js"),
         import("/vendor/three/examples/jsm/postprocessing/GTAOPass.js"),
         import("/vendor/three/examples/jsm/postprocessing/OutputPass.js"),
+        import("/vendor/three/examples/jsm/postprocessing/Pass.js"),
+        import("/vendor/three/examples/jsm/shaders/OutputShader.js"),
       ]);
       if (unicen) return;
+      class NeprosojniPass extends RenderPass {
+        render(r, writeBuffer, readBuffer, dt, mask) {
+          razvrsti();
+          vidni(prosojni, false);
+          r.setClearColor(0x000000, 0);
+          super.render(r, writeBuffer, readBuffer, dt, mask);
+          vidni(prosojni, true);
+        }
+      }
+      class OkluzijaPass extends GTAOPass {
+        render(r, writeBuffer, readBuffer) {
+          vidni(prosojni, false);
+          super.render(r, writeBuffer, readBuffer);
+          vidni(prosojni, true);
+        }
+      }
+      class ProsojniPass extends Pass {
+        constructor() {
+          super();
+          this.needsSwap = false;
+          this.kvad = new FullScreenQuad(gtao.blendMaterial);
+        }
+        render(r, _writeBuffer, readBuffer) {
+          const ac = r.autoClear;
+          r.autoClear = false;
+          r.setRenderTarget(readBuffer);
+          gtao.blendMaterial.uniforms.intensity.value = gtao.blendIntensity;
+          gtao.blendMaterial.uniforms.tDiffuse.value = gtao.pdRenderTarget.texture;
+          this.kvad.render(r);
+          if (prosojni.length) {
+            vidni(neprosojni, false);
+            r.render(scene, camera);
+            vidni(neprosojni, true);
+          }
+          r.autoClear = ac;
+        }
+        dispose() {
+          this.kvad.dispose();
+        }
+      }
       const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
       composer = new EffectComposer(renderer, rt);
-      composer.addPass(new RenderPass(scene, camera));
-      gtao = new GTAOPass(scene, camera, 1, 1);
+      composer.addPass(new NeprosojniPass(scene, camera));
+      gtao = new OkluzijaPass(scene, camera, 1, 1);
+      gtao.output = GTAOPass.OUTPUT.Off;
+      gtao.needsSwap = false;
       gtao.updateGtaoMaterial({ radius: polmer, distanceExponent: 1.4, thickness: 1.2, scale: 1, samples: 12 });
       gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 12 });
-      gtao.blendIntensity = 0.85;
+      gtao.blendIntensity = moc;
       composer.addPass(gtao);
-      composer.addPass(new OutputPass());
+      composer.addPass(new ProsojniPass());
+      const izhod = new OutputPass();
+      // Preslikava tonov na nepremultiplicirani barvi (robovi in prosojni predmeti nad prozornim ozadjem), nato spet premultiplicirano.
+      const vir = "gl_FragColor = texture2D( tDiffuse, vUv );";
+      if (OutputShader.fragmentShader.includes(vir)) {
+        izhod.material.fragmentShader = OutputShader.fragmentShader
+          .replace(vir, `${vir}\n float evkA = clamp( gl_FragColor.a, 0.0, 1.0 );\n gl_FragColor.rgb /= max( evkA, 1e-3 );`)
+          .replace(/\}\s*$/, " gl_FragColor = vec4( gl_FragColor.rgb * evkA, evkA );\n}");
+      }
+      composer.addPass(izhod);
       velikost();
       aoVkljucen = true;
       narisi();
@@ -265,6 +346,9 @@ export function ustvariSceno(el, opts = {}) {
   const naTap = (f) => (tapi.add(f), () => tapi.delete(f));
 
   const raycaster = new THREE.Raycaster();
+  raycaster.camera = camera; // zakritje točk (raycaster.set brez kamere): Sprite.raycast potrebuje kamero
+  // Točke (oblak elektronov, pike orbital) zadene samo tap blizu točke: privzeti prag 1 je pri modelu s polmerom 1 cel model.
+  raycaster.params.Points.threshold = 0.02;
   function zadetki(ndc, objekti, filter = null) {
     raycaster.setFromCamera(ndc, camera);
     // Najbližji zadetek prvi (mreže lahko imajo svoj raycast, ki doda zadetke v poljubnem vrstnem redu).
@@ -494,6 +578,7 @@ export function ustvariSceno(el, opts = {}) {
   return {
     THREE,
     nastaviLuci,
+    luci: [luc, luc2], // ključna in zadnja luč kompleta (atlas jima prilagodi smer in moč)
     kakovost,
     gibanje: gib,
     renderer,

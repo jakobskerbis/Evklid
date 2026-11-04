@@ -1,19 +1,27 @@
 // Materiali tkiv za atlas telesa: ime materiala Z-Anatomy (atlas-strukture.json → material) → razred senčenja in barva.
-// Razredov je malo (kost, hrustanec, zob, vlakna, mišica, vlažno tkivo, živec, steklo, koža), barvo nosi vsak del
-// posebej (barva primerka v BatchedMesh), zato je klicev risanja malo: plast × razred.
+// Razredov je malo (kost, hrustanec, zob, vlakna, ovojnica, mišica, vlažno tkivo, žila, živec, steklo, koža), barvo nosi
+// vsak del posebej (barva primerka v BatchedMesh), zato je klicev risanja malo: plast × razred. Modeli imajo zapečeno
+// okluzijo v pregibih (barva oglišč COLOR_0, siva 0,4–1): zatemni barvo in odboje okolja. Podrobnost površine (pore
+// kosti, vlakna mišic in kit, mehka lisavost organov, pore kože) je proceduralni šum v senčilniku, brez tekstur; relief
+// (motena normala iz odvodov višine) samo pri visoki kakovosti, na telefonu le rahla barvna zrnatost.
 import { THREE } from "./scena.js";
 
 // Razredi senčenja (MeshPhysicalMaterial). Pri nizki kakovosti brez sijaja (sheen) in laka (clearcoat): hitreje.
+// d = podrobnost: f = frekvenca šuma v ciklih na meter (x, y, z; vlakna so podolgovata po višini telesa), f2 = druga
+// oktava, b = barvna zrnatost, r = moč reliefa, t = topel/hladen odtenek v velikih lisah, s = mehka presevnost na robu.
 const RAZREDI = {
-  kost: { roughness: 0.68, clearcoat: 0.04, clearcoatRoughness: 0.6, zrno: 1 },
-  hrustanec: { roughness: 0.3, clearcoat: 0.4, clearcoatRoughness: 0.35, sheen: 0.45, sheenColor: "#d6e8ff", sheenRoughness: 0.45 },
+  kost: { roughness: 0.74, clearcoat: 0.05, clearcoatRoughness: 0.6, sheen: 0.15, sheenColor: "#fff1d6", sheenRoughness: 0.7, d: { f: [95, 95, 95], f2: 380, b: 0.13, r: 0.75, t: 0.06 } },
+  hrustanec: { roughness: 0.26, clearcoat: 0.5, clearcoatRoughness: 0.25, sheen: 0.6, sheenColor: "#d6e8ff", sheenRoughness: 0.4, d: { f: [60, 60, 60], b: 0.05, r: 0.12, s: 0.22 } },
   zob: { roughness: 0.16, clearcoat: 0.9, clearcoatRoughness: 0.12 },
-  vlakno: { roughness: 0.38, sheen: 1, sheenColor: "#ffffff", sheenRoughness: 0.32, clearcoat: 0.22, clearcoatRoughness: 0.35 },
-  misica: { roughness: 0.5, sheen: 0.75, sheenColor: "#ff9a8c", sheenRoughness: 0.42, clearcoat: 0.14, clearcoatRoughness: 0.45, zrno: 2 },
-  vlazno: { roughness: 0.36, clearcoat: 0.6, clearcoatRoughness: 0.22, sheen: 0.25, sheenColor: "#ffd0c8", sheenRoughness: 0.5 },
-  zivec: { roughness: 0.4, sheen: 0.7, sheenColor: "#fff2b8", sheenRoughness: 0.4, clearcoat: 0.3, clearcoatRoughness: 0.3 },
+  vlakno: { roughness: 0.36, sheen: 1, sheenColor: "#ffffff", sheenRoughness: 0.3, clearcoat: 0.25, clearcoatRoughness: 0.3, d: { f: [900, 70, 900], b: 0.07, r: 0.55 } },
+  ovojnica: { roughness: 0.3, sheen: 0.9, sheenColor: "#fff6ee", sheenRoughness: 0.35, clearcoat: 0.35, clearcoatRoughness: 0.25, prosojno: 0.34, robna: true, d: { f: [700, 90, 700], b: 0.05, r: 0.3 } },
+  misica: { roughness: 0.48, sheen: 0.8, sheenColor: "#ff9a8c", sheenRoughness: 0.4, clearcoat: 0.18, clearcoatRoughness: 0.4, d: { f: [380, 30, 380], b: 0.15, r: 0.9, s: 0.1 } },
+  vlazno: { roughness: 0.34, clearcoat: 0.75, clearcoatRoughness: 0.16, sheen: 0.3, sheenColor: "#ffd0c8", sheenRoughness: 0.5, d: { f: [45, 45, 45], f2: 170, b: 0.09, r: 0.28, t: 0.04, s: 0.14 } },
+  // Žile: vlažen sijaj, a zmeren lak (tanke cevke bi sicer odbijale samo okolje in bile sive namesto modre/rdeče).
+  zila: { roughness: 0.3, clearcoat: 0.45, clearcoatRoughness: 0.2, sheen: 0.15, sheenColor: "#ffd6d6", sheenRoughness: 0.4, d: { f: [120, 120, 120], b: 0.05, r: 0.12, s: 0.16 } },
+  zivec: { roughness: 0.34, sheen: 0.9, sheenColor: "#fff2b8", sheenRoughness: 0.3, clearcoat: 0.35, clearcoatRoughness: 0.25, d: { f: [800, 80, 800], b: 0.06, r: 0.35 } },
   steklo: { roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.05, prosojno: 0.32 },
-  koza: { roughness: 0.55, sheen: 0.55, sheenColor: "#ffd9c7", sheenRoughness: 0.5, clearcoat: 0.08, clearcoatRoughness: 0.5, prosojno: 0.5 },
+  koza: { roughness: 0.52, sheen: 0.6, sheenColor: "#ffd9c7", sheenRoughness: 0.45, clearcoat: 0.1, clearcoatRoughness: 0.45, prosojno: 0.5, d: { f: [300, 300, 300], f2: 1100, b: 0.05, r: 0.22, t: 0.03, s: 0.2 } },
 };
 export const IMENA_RAZREDOV = Object.keys(RAZREDI);
 
@@ -38,12 +46,12 @@ const TOCNO = {
   "Articular capsule": ["vlakno", "#cbc3b3"],
   Bursa: ["hrustanec", "#c9d6dc"],
   Fat: ["vlazno", "#e6c463"],
-  Fascia: ["vlakno", "#d8c3ae"],
-  Artery: ["vlazno", "#c3262c"],
-  Vein: ["vlazno", "#2f5ba8"],
+  Fascia: ["ovojnica", "#e6d6c6"],
+  Artery: ["zila", "#c3262c"],
+  Vein: ["zila", "#2f5ba8"],
   // Pljučna arterija nosi kri brez kisika (modro), pljučne vene kri s kisikom (rdeče).
-  "Pulmonary artery": ["vlazno", "#3a64b8"],
-  "Pulmonary vein": ["vlazno", "#c9343a"],
+  "Pulmonary artery": ["zila", "#3a64b8"],
+  "Pulmonary vein": ["zila", "#c9343a"],
   Nerve: ["zivec", "#e8c547"],
   Nucleus: ["vlazno", "#c98e9a"],
   "Nucleus (afferent fibers)": ["vlazno", "#7fa7d9"],
@@ -126,8 +134,8 @@ export function tkivo(row) {
   return { razred, barva: c };
 }
 
-// Skupni dodatek senčilnikom: zrno kosti in mišice (prostorski šum), prosojnost za zatemnitev in rentgen
-// (rob se ob rentgenu poudari kot steklo). uAlfa: 1 = običajno; uRob: 0 … 1 (rentgen); uSvetlost: 1 = običajno,
+// Skupni dodatek senčilnikom: podrobnost površine (prostorski šum), zapečena okluzija, prosojnost za zatemnitev in
+// rentgen (rob se ob rentgenu poudari kot steklo). uAlfa: 1 = običajno; uRob: 0 … 1 (rentgen); uSvetlost: 1 = običajno,
 // manj = zatemnjeno (ostali deli, ko je en izbran); uObroba: modra obroba izbranega dela.
 const GLSL_SUM = `
 float evkHash(vec3 p){ p = fract(p * 0.3183099 + vec3(0.1,0.2,0.3)); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
@@ -135,6 +143,8 @@ float evkSum(vec3 x){ vec3 i = floor(x); vec3 f = fract(x); f = f*f*(3.0-2.0*f);
   return mix(mix(mix(evkHash(i+vec3(0,0,0)),evkHash(i+vec3(1,0,0)),f.x), mix(evkHash(i+vec3(0,1,0)),evkHash(i+vec3(1,1,0)),f.x),f.y),
              mix(mix(evkHash(i+vec3(0,0,1)),evkHash(i+vec3(1,0,1)),f.x), mix(evkHash(i+vec3(0,1,1)),evkHash(i+vec3(1,1,1)),f.x),f.y), f.z); }
 `;
+const fl = (x) => (Number.isInteger(x) ? `${x}.0` : String(x));
+const v3 = (a) => `vec3(${a.map(fl).join(", ")})`;
 
 export function ustvariMaterial(razred, kakovost, skupno) {
   const r = RAZREDI[razred] || RAZREDI.vlazno;
@@ -143,26 +153,52 @@ export function ustvariMaterial(razred, kakovost, skupno) {
     color: 0xffffff,
     roughness: r.roughness,
     metalness: 0,
-    clearcoat: visoka || razred === "zob" || razred === "steklo" ? r.clearcoat || 0 : 0,
+    clearcoat: visoka || razred === "zob" || razred === "steklo" || razred === "zila" ? r.clearcoat || 0 : 0,
     clearcoatRoughness: r.clearcoatRoughness ?? 0.3,
     sheen: visoka ? r.sheen || 0 : 0,
     sheenColor: new THREE.Color(r.sheenColor || "#ffffff"),
     sheenRoughness: r.sheenRoughness ?? 0.5,
     envMapIntensity: 1,
+    vertexColors: true, // zapečena okluzija (COLOR_0); atlas doda belo, kjer je model nima
   });
   m.userData.razred = razred;
   m.userData.osnovaProsojnost = r.prosojno ?? 1;
+  if (r.robna) {
+    m.side = THREE.DoubleSide; // tanka opna: vidni obe steni, smer normal (zrcaljeni izvoz) ni pomembna
+    m.userData.dvostransko = true;
+  }
   if (r.prosojno) {
     m.transparent = true;
     m.opacity = r.prosojno;
     m.depthWrite = false;
   }
   const uniforms = { uAlfa: skupno.uAlfa, uRob: skupno.uRob, uSvetlost: skupno.uSvetlost, uObroba: skupno.uObroba || { value: 0 } };
-  const zrno = r.zrno || 0;
+  const d = r.d || null;
+  // Telefon: samo ena oktava barvne zrnatosti pri kosti in mišici (kot prej); računalnik: vse z reliefom.
+  const zrno = d && (visoka || razred === "kost" || razred === "misica");
+  const relief = zrno && visoka && d.r > 0;
+  const f2 = visoka && d?.f2 ? d.f2 : 0;
+  const f1 = d ? Math.max(...d.f) : 1;
+  // Ko en slikovni element pokrije več kot ~pol cikla, šum zbledi proti povprečju (brez migotanja na daljavo).
+  const visina = !zrno
+    ? ""
+    : `float evkFw = length(fwidth(vEvkPos));
+       float evkLod = clamp(1.6 - evkFw * ${fl(f1)} * 1.8, 0.0, 1.0);
+       float evkZ = mix(0.5, evkSum(vEvkPos * ${v3(d.f)}), evkLod);
+       ${f2 ? `evkZ = evkZ * 0.62 + mix(0.5, evkSum(vEvkPos * ${fl(f2)}), clamp(1.6 - evkFw * ${fl(f2)} * 2.4, 0.0, 1.0)) * 0.38;` : ""}`;
   m.onBeforeCompile = (sh) => {
     Object.assign(sh.uniforms, uniforms);
     sh.vertexShader = sh.vertexShader
-      .replace("#include <common>", "#include <common>\nvarying vec3 vEvkPos;")
+      .replace("#include <common>", "#include <common>\nvarying vec3 vEvkPos;\nvarying float vEvkAO;")
+      .replace(
+        "#include <color_vertex>",
+        `#include <color_vertex>
+        #if defined( USE_COLOR ) || defined( USE_COLOR_ALPHA )
+          vEvkAO = color.r;
+        #else
+          vEvkAO = 1.0;
+        #endif`,
+      )
       .replace(
         "#include <project_vertex>",
         `#include <project_vertex>
@@ -173,12 +209,14 @@ export function ustvariMaterial(razred, kakovost, skupno) {
         vEvkPos = ( modelMatrix * evkP ).xyz;`,
       );
     sh.fragmentShader = sh.fragmentShader
-      .replace("#include <common>", `#include <common>\nvarying vec3 vEvkPos;\nuniform float uAlfa;\nuniform float uRob;\nuniform float uSvetlost;\nuniform float uObroba;\n${GLSL_SUM}`)
+      .replace("#include <common>", `#include <common>\nvarying vec3 vEvkPos;\nvarying float vEvkAO;\nuniform float uAlfa;\nuniform float uRob;\nuniform float uSvetlost;\nuniform float uObroba;\n${GLSL_SUM}`)
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-        ${zrno === 1 ? "float evkZ = evkSum(vEvkPos * 90.0) * 0.6 + evkSum(vEvkPos * 340.0) * 0.4; diffuseColor.rgb *= 0.9 + 0.13 * evkZ;" : ""}
-        ${zrno === 2 ? "float evkZ = evkSum(vEvkPos * vec3(160.0, 40.0, 160.0)); diffuseColor.rgb *= 0.92 + 0.12 * evkZ;" : ""}`,
+        diffuseColor.rgb *= mix( 1.0, vEvkAO, 0.75 ) / max( vEvkAO, 0.05 ); // zapečena okluzija v barvi le 75 %
+        ${visina}
+        ${zrno ? `diffuseColor.rgb *= 1.0 - ${fl(d.b)} * 0.5 + ${fl(d.b)} * evkZ;` : ""}
+        ${zrno && d.t && visoka ? `float evkT = evkSum(vEvkPos * 9.0); diffuseColor.rgb *= mix(vec3(1.0), vec3(1.0 + ${fl(d.t)}, 1.0, 1.0 - ${fl(d.t * 1.6)}), evkT);` : ""}`,
       )
       .replace(
         "#include <roughnessmap_fragment>",
@@ -186,8 +224,39 @@ export function ustvariMaterial(razred, kakovost, skupno) {
         ${zrno ? "roughnessFactor = clamp(roughnessFactor + (evkZ - 0.5) * 0.14, 0.04, 1.0);" : ""}`,
       )
       .replace(
+        "#include <normal_fragment_maps>",
+        `#include <normal_fragment_maps>
+        ${
+          relief
+            ? `{
+          // Relief iz odvodov višine po zaslonu (kot bumpMap, a brez teksture): višina v metrih ~ moč / najvišja frekvenca,
+          // tako je naklon (moč) neodvisen od velikosti zrn.
+          float evkH = evkZ * ${(0.1 * d.r / Math.max(f1, f2 || 0)).toExponential(3)};
+          vec3 evkDx = dFdx( -vViewPosition ); vec3 evkDy = dFdy( -vViewPosition );
+          vec3 evkR1 = cross( evkDy, normal ); vec3 evkR2 = cross( normal, evkDx );
+          float evkDet = dot( evkDx, evkR1 ) * faceDirection;
+          vec3 evkG = sign( evkDet ) * ( dFdx( evkH ) * evkR1 + dFdy( evkH ) * evkR2 );
+          normal = normalize( abs( evkDet ) * normal - evkG );
+        }`
+            : ""
+        }`,
+      )
+      .replace(
+        "#include <aomap_fragment>",
+        `#include <aomap_fragment>
+        {
+          // Zapečena okluzija: barva je že zatemnjena (barva oglišč), tu še odboji okolja v pregibih.
+          float evkNV = saturate( dot( geometryNormal, geometryViewDir ) );
+          float evkSO = saturate( pow( evkNV + vEvkAO, exp2( -16.0 * material.roughness - 1.0 ) ) - 1.0 + vEvkAO );
+          reflectedLight.indirectSpecular *= evkSO;
+          reflectedLight.indirectDiffuse *= mix( 1.0, vEvkAO, 0.35 );
+        }`,
+      )
+      .replace(
         "#include <opaque_fragment>",
         `float evkFr = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition)));
+        ${d?.s && visoka ? `outgoingLight += diffuseColor.rgb * ${fl(d.s)} * pow(evkFr, 1.6) * vEvkAO; // mehka presevnost na robu` : ""}
+        ${r.robna ? "diffuseColor.a *= 0.14 + 0.86 * pow(evkFr, 2.0); // tanka ovojnica: prozorna od spredaj, mlečna ob robu" : ""}
         outgoingLight *= uSvetlost;
         outgoingLight += vec3(0.43, 0.61, 1.0) * pow(evkFr, 2.4) * uObroba;
         outgoingLight = mix(outgoingLight, outgoingLight * 0.35 + vec3(0.42, 0.6, 0.95) * pow(evkFr, 1.6) * 0.9, uRob);
@@ -195,6 +264,6 @@ export function ustvariMaterial(razred, kakovost, skupno) {
         #include <opaque_fragment>`,
       );
   };
-  m.customProgramCacheKey = () => `evk-${zrno}`;
+  m.customProgramCacheKey = () => `evk-${razred}-${visoka ? "v" : "n"}`;
   return m;
 }

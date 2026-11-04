@@ -28,7 +28,13 @@
 .k3 [hidden] { display: none !important; }
 
 /* ---------- oder (scena.js) ---------- */
-.k3-oder { position: relative; overflow: hidden; background: var(--k3-oder); touch-action: none; }
+/* Platno je prosojno (scena.js): barvo odra (scena.js jo nastavi tudi neposredno) in mehak sij za modelom nariše CSS,
+   zato je enaka z učinki ali brez njih in ne stane nič risanja. */
+.k3-oder {
+  position: relative; overflow: hidden; touch-action: none;
+  background-color: var(--k3-oder);
+  background-image: radial-gradient(ellipse 58% 52% at 50% 46%, rgba(52, 70, 104, 0.42) 0%, rgba(30, 41, 62, 0.22) 45%, transparent 75%);
+}
 .k3-platno { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; outline: none; }
 .k3-platno:active { cursor: grabbing; }
 .k3-platno:focus-visible { box-shadow: inset 0 0 0 2px var(--k3-accent); }
@@ -152,6 +158,13 @@ html.k3-stran body { overflow: hidden; }
 /* ---------- atlas ---------- */
 .a3 { position: fixed; inset: 0; overflow: hidden; background: var(--k3-bg); }
 .a3-oder { position: absolute; inset: 0; }
+/* Ime strukture ob kazalcu (samo miška, atlas.js). */
+.a3-lebdi {
+  position: absolute; left: 0; top: 0; max-width: 260px; padding: 6px 11px; border-radius: 999px; pointer-events: none;
+  background: var(--k3-steklo); border: 1px solid var(--k3-rob); color: var(--k3-besedilo); font-size: 0.85rem; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
 .a3-vrh { position: absolute; left: 0; right: 0; top: 0; z-index: 3; display: flex; flex-direction: column; gap: 12px; padding: max(14px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left)); pointer-events: none; }
 .a3-vrh > * { pointer-events: auto; }
 .a3-glava { display: flex; align-items: center; gap: 12px; }
