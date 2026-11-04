@@ -1,5 +1,4 @@
 /* Laboratorij (#view-lab v »Uči se«, public/laboratorij.js): seznam poskusov po predmetih, poskus čez celo širino. */
-.lab-view { max-width: 1180px; }
 .lab-intro { margin: 0 0 18px; }
 /* Predmeti z enim poskusom stojijo drug ob drugem (auto-fit: brez prazne tretje kolone), predmet z več poskusi čez vso širino (kartice v mreži). */
 .lab-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 26px 14px; align-items: start; }

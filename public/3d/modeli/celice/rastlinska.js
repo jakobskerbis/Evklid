@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Celica iz lista, oblikovana kot kvader z zaobljenimi robovi (okoli 45 µm). Ima celično steno, kloroplaste in veliko osrednjo vakuolo; organelov je zaradi preglednosti manj kot v resnici, odprti kloroplast je povečan.",
+  poskusi: "Poišči tri dele, ki jih živalska celica nima: celično steno, kloroplaste in veliko vakuolo.",
   merilo: { m: 50e-6, oznaka: "50 µm" },
 };
 

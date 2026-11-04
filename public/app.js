@@ -74,7 +74,7 @@ import { initTestNotice } from "./testna-verzija.js";
 import { initFormulaInfo, annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-info.js";
 import { xpStatsHtml, xpItemsHtml, levelRowHtml, paintBadge, celebrateXp } from "./xp-fx.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
-import { validDate } from "./goal-data.js";
+import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
 import { openOurPaper, closeOurPaper } from "./our-paper.js";
@@ -733,10 +733,10 @@ function renderState(convState) {
   if (topicId) {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "chip chip-btn";
-    b.textContent = t("chat.readLesson");
+    b.className = "chip chip-btn chat-lesson";
+    b.innerHTML = `${icon("book-open")}<span>${escapeHtml(t("chat.readLesson"))}</span>`;
     b.addEventListener("click", () => openLesson(topicId));
-    $("#chat-state").append(b);
+    $("#chat-state").prepend(b); // prvi tudi za tipko Tab, ne le na zaslonu
   }
 }
 
@@ -1504,6 +1504,7 @@ function studentUpdated(updated) {
   leaveHiddenGames();
   refreshProfileButton();
   renderState(null);
+  if (before.goal !== updated.settings.goal || before.games !== updated.settings.games) renderGoal(); // bližnjici po cilju na Učni poti
   if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
     state.pathKey = null;
     refreshModes(); // številki na gumbih Ponavljanje in Kartice za novi predmet
@@ -1627,7 +1628,63 @@ function renderGoal() {
   const due = reminderDue(st);
   rem.hidden = !due;
   if (due) rem.innerHTML = reminderCardHtml(st);
+  renderGoalModes();
 }
+
+// Domači zaslon po cilju: dve bližnjici na Učni poti, pri NPZ, maturi, tekmovanju in izpitu nad načini učenja
+// (public/goal-data.js → goalShortcuts). Videz je isti kot pri načinih; vse ostane dosegljivo tudi v meniju.
+const GOAL_MODES = {
+  scan: ["scan-line", "scan.title", "scan.meSub"],
+  games: ["gamepad-2", "nav.games", "games.meSub"],
+  chat: ["message-circle", "nav.chat", "goal.mChatSub"],
+  textbook: ["book-open", "nav.textbook", "goal.mTextbookSub"],
+  exams: ["clipboard-check", "nav.examsSi", "exam.meSub"],
+  izpiti: ["clipboard-check", "nav.exams", "exam.title"],
+  tek: ["medal", "session.tek", "goal.mTekSub"],
+  contest: ["timer", "session.contest", "goal.mContestSub"],
+};
+// Cilj »test« premakne Pripravo na test na prvo mesto; ob drugem cilju gre nazaj pred svojega prejšnjega soseda.
+// Le ta gumb, da ostane red, ki ga je učenec nastavil s potegom (public/vrstice.js).
+let testModeNext; // undefined: ni premaknjen; sicer gumb (ali null = konec), pred katerim je bil
+function renderGoalModes() {
+  const st = state.student;
+  const box = $("#goal-modes");
+  const bar = $("#modebar");
+  if (!st || !box || !bar) return;
+  const s = st.settings;
+  const { first, items } = goalShortcuts(s);
+  const list = items
+    .map((k) => (k === "games" && !gamesOn(s) ? "chat" : k))
+    .filter((k) => !(k === "exams" && !siExams()) && !(k === "izpiti" && !regionalExams()))
+    .filter((k, i, a) => a.indexOf(k) === i);
+  box.innerHTML = list
+    .map((k) => {
+      const [ic, name, sub] = GOAL_MODES[k];
+      return `<button type="button" data-gm="${k}"><span class="ic">${icon(ic)}</span><span class="m-name">${t(name)}</span><span class="m-sub">${t(sub)}</span></button>`;
+    })
+    .join("");
+  box.hidden = !list.length;
+  if (first) bar.before(box);
+  else bar.after(box);
+  const test = bar.querySelector('[data-mode="test"]');
+  if (!test) return;
+  if (s.goal === "test" && testModeNext === undefined && bar.firstElementChild !== test) {
+    testModeNext = test.nextElementSibling;
+    bar.prepend(test);
+  } else if (s.goal !== "test" && testModeNext !== undefined) {
+    if (testModeNext?.parentElement === bar && testModeNext !== test) testModeNext.before(test);
+    else bar.append(test);
+    testModeNext = undefined;
+  }
+}
+$("#goal-modes")?.addEventListener("click", (e) => {
+  const k = e.target.closest("[data-gm]")?.dataset.gm;
+  if (!k || !state.student) return;
+  if (k === "tek" || k === "contest") {
+    state.compAction = k;
+    showView("competition");
+  } else showView({ izpiti: "competition" }[k] || k);
+});
 document.addEventListener("click", (e) => {
   if (e.target.closest("[data-goal-edit], #goal-chip")) {
     showView("settings");
@@ -2218,13 +2275,14 @@ const siExams = () => !!state.student && !regionalExams() && Object.hasOwn(SI_EX
 const examMode = () => regionalExams() || state.backTo === "exams";
 const prepLabel = () => (regionalExams() ? t("nav.exams") : t("nav.competition"));
 const prepBack = () => (examMode() ? t("exam.back") : t("result.toCompetitions"));
-// Telefon: Laboratorij je v »Uči se« (j, 4. 11.), zato je četrto mesto spet »NPZ« ali »Matura«, ko je cilj NPZ ali
-// matura, sicer Tekmovanja (regijski sistemi: Izpiti); drugi od obeh je vrstica pod Jaz. Fakulteta tekmovanj nima:
-// spodnja vrstica ima takrat štiri zavihke.
-const examsInTabbar = () => siExams() && ["npz", "matura"].includes(state.student.settings.goal);
+// Telefon: četrto mesto po cilju (public/goal-data.js → goalTabbarView): »NPZ« ali »Matura«, ko je cilj NPZ ali
+// matura, sicer Tekmovanja (regijski sistemi: Izpiti). Laboratorij je od 4. 11. v »Uči se«, zato ga tu ni več; drugi od
+// obeh je vrstica pod Jaz. Fakulteta tekmovanj nima: spodnja vrstica ima takrat štiri zavihke.
+const tabbarFourth = () => (state.student ? goalTabbarView(state.student.settings, { siExams: siExams() }) : null);
 function offTabbarViews() {
   if (!state.student) return [];
-  return examsInTabbar() ? ["competition"] : siExams() ? ["exams"] : [];
+  const v = tabbarFourth();
+  return v === "exams" ? ["competition"] : siExams() ? ["exams"] : [];
 }
 const meBackHtml = () => `<button type="button" class="ghost back me-back">${icon("arrow-left")}<span>${t("nav.me")}</span></button>`;
 // »Skrij igre« (nastavitev profila games: off): brez zavihka, vrstice pod Jaz in koraka v uvodnem ogledu.
@@ -2248,8 +2306,9 @@ function syncCompetitionTab() {
   span.textContent = prepLabel();
   $("#competition-tab").querySelector("i, svg").outerHTML = icon(regionalExams() ? "clipboard-check" : "medal");
   const m = $("#competition-tab-m");
-  const exams = examsInTabbar();
-  m.hidden = !exams && noComp;
+  const fourth = tabbarFourth();
+  const exams = fourth === "exams";
+  m.hidden = !fourth || (!exams && noComp);
   m.dataset.view = exams ? "exams" : "competition";
   const ms = m.querySelector("span");
   // Na ozki spodnji vrstici kratko: »NPZ« v OŠ, »Matura« v SŠ (zgoraj »NPZ in matura«).
@@ -2962,6 +3021,8 @@ const SCHOOL_NAMES = { OS: t("comp.os"), SS: t("comp.ss") };
 
 async function loadCompetition(key = state.compKey) {
   const box = $("#competition-content");
+  const act = state.compAction; // bližnjica s Učne poti (renderGoalModes)
+  state.compAction = null;
   const q = key ? `?key=${encodeURIComponent(key)}` : "";
   let c;
   try {
@@ -3024,6 +3085,12 @@ async function loadCompetition(key = state.compKey) {
           .join("")}</ol></section>`,
       )
       .join("")}`;
+  // Bližnjica s Učne poti (cilj tekmovanje): trening se začne takoj, pri poskusnem tekmovanju (na čas) le pokažemo kartico.
+  if (act === "tek") box.querySelector("[data-comp-train]")?.click();
+  if (act === "contest") {
+    box.querySelector(".contest-card")?.scrollIntoView({ block: "center" });
+    box.querySelector("[data-comp-contest]")?.focus({ preventScroll: true });
+  }
 }
 
 document.addEventListener("click", (e) => {

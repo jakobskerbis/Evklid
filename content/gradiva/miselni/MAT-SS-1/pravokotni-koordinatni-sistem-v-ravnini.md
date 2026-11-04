@@ -1,0 +1,21 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Koordinate točke
+  - $T(x, y)$: najprej abscisa, nato ordinata
+  - štirje kvadranti, II.: $x < 0$, $y > 0$
+- Razdalja med točkama
+  - $d(A, B) = \sqrt{(x_B - x_A)^2 + (y_B - y_A)^2}$
+  - Pitagorov izrek za kateti $|x_B - x_A|$, $|y_B - y_A|$
+  - napaka: $4 - (-2)$ ni $2$
+- Razpolovišče daljice
+  - povprečje koordinat krajišč
+  - $x_S = \frac{x_A + x_B}{2}$
+  - nazaj: $x_B = 2x_S - x_A$
+- Ploščina trikotnika
+  - premika od $A$: $(u_1, u_2)$, $(v_1, v_2)$
+  - $S = \frac{1}{2}\,|u_1 v_2 - u_2 v_1|$
+  - preizkus: očrtan pravokotnik minus robni trikotniki
+- Kolinearne točke
+  - ploščina trikotnika je $0$

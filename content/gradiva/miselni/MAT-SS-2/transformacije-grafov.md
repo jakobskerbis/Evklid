@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Navpični premik
+  - $f(x) + q$: za $q$ navzgor
+  - tehtnica brez tarire: $+250$ g
+- Vodoravni premik
+  - $f(x - p)$: za $p$ v desno
+  - napaka: minus v oklepaju ni levo
+- Zrcaljenje
+  - $-f(x)$: čez os $x$
+  - $f(-x)$: čez os $y$
+  - soda funkcija se ne spremeni
+- Raztezanje
+  - $a \cdot f(x)$: v smeri osi $y$
+  - $a > 1$ strmejši, $0 < a < 1$ položnejši
+  - $f(kx)$: skrčitev v smeri osi $x$
+- Več korakov
+  - $a \cdot f(x - p) + q$
+  - točka $(x, y)$ preide v $(x + p,\ ay + q)$
+- Predpis iz grafa
+  - teme parabole je $(p, q)$
+  - $a$ iz ene dodatne točke

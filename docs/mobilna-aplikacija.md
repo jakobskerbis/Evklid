@@ -13,7 +13,7 @@ Vrstici telefona (ura, gumbi) dobita barvo roba strani. Gumb nazaj na Androidu g
 druge strani odpre brskalnik.
 
 Naravno ostane: prijava in registracija (tipkovnica telefona), posodobitve (OTA in nov APK), obvestila, vaje
-brez povezave. Ko strežnik ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez
+brez povezave. Med objavo nove različice (gostitelj vrne 502/503/504) aplikacija ob vrtavki pokaže »Evklid se posodablja …« in poskuša znova do ~70 s (`BUSY_WAIT`, kot splet), ob prekinjeni povezavi dvakrat tiho poskusi znova. Ko strežnik še vedno ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez
 povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (posodobitev OTA pride pred objavo na Renderju, `/api/mobile/web` vrne 404), aplikacija do posodobitve strežnika pokaže naravne zaslone in spletno stran poskusi znova, ko se vrne v ospredje (`mobile/src/lib/web-state.ts`). Seznam razlik spodaj velja zdaj samo še za te naravne zaslone.
 
 ## Kaj zna
@@ -94,6 +94,29 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Skeniraj: po korakih | reševalnik po korakih (`public/scan/`); aplikacija pošlje fotografijo inštruktorju | M | WebView strani skeniranja ali naravni zaslon korakov | delno |
 | Govor | mikrofon v klepetu (`speech.js`) | M | naravna odvisnost (prepoznava govora) → nova gradnja APK | ✗ |
 | Učbenik za tisk | PDF učbenika (`/ucbenik`) | S | odpri v brskalniku (`WebBrowser`) | ✗ |
+
+- **Deljiva kartica zbirke** (»Deli zbirko«, public/deli-kartico.js): WebView ne podpira Web Share z datotekami
+  ne prenosa slike, zato aplikacija deli prek mostu (`public/deli-most.js`, `mobile/src/app/web.tsx`):
+  - Stran pošlje `{type: "evklid:share-image", id, name, dataBase64}` (`window.ReactNativeWebView.postMessage`).
+    Aplikacija sprejme samo sporočilo s strani Evklida, ime `*.png`, PNG v base64 (preveri glavo PNG) do 5 MB
+    (`checkShareImage`), sliko zapiše v predpomnilnik (`expo-file-system`, `Paths.cache`) in odpre sistemski meni
+    za deljenje (`expo-sharing`, `image/png`). Od tam jo učenec shrani v Galerijo/Datoteke ali deli.
+  - Odgovor (`injectJavaScript` → dogodek `evklid:share-image-result` na `window`) pove le, ali se je meni odprl:
+    stran napiše »Odprl se je meni za deljenje …« ali »Menija za deljenje ni bilo mogoče odpreti …«. Ali je
+    učenec sliko res shranil, aplikacija ne ve, zato tega nikoli ne trdimo.
+  - **Zmožnost**: gradnja z mostom pred nalaganjem strani nastavi `window.EvklidNative = { shareImage: 1 }`
+    (`injectedJavaScriptBeforeContentLoaded`). Stran gumb v aplikaciji (`EvklidApp/` v user agentu) pokaže samo
+    z zastavico (`shareMode`), sicer ostane skrit; v brskalniku ostaneta Web Share in prenos.
+  - Most deluje na **Androidu in iOS** (`expo-sharing` podpira oba; na iOS se odpre list za deljenje, od koder
+    »Shrani sliko« v Fotografije), oboje z naslednjo gradnjo.
+  - Če aplikacija v ~2 minutah ne odgovori (`SHARE_IMAGE_TIMEOUT`), stran neha čakati brez sporočila (meni je
+    morda še odprt), gumb pa spet deluje.
+  - **Potrebuje novo gradnjo** (2026-11-04): `expo-sharing` je nov domorodni paket, zato se spremeni prstni odtis
+    (`runtimeVersion: fingerprint`) in posodobitev OTA nanj ne pride na stare gradnje. Do nove gradnje je gumb v
+    aplikaciji skrit kot doslej. Android: v mapi `mobile` `npm install`, nato
+    `npx eas-cli build --profile direct --platform android` in povezavo do APK naloži kot v koraku 4 spodaj
+    (»Kaj mora narediti človek« → 1. APK za Android). iOS in trgovini: enako s `--profile production`
+    (`--platform ios` ali `android`), ko bosta računa v trgovinah odprta.
 
 ## Dve različici
 

@@ -122,6 +122,7 @@
       <button type="button" data-mode="test"><span class="ic"><i data-icon="clipboard-check"></i></span><span class="m-name" data-i18n="mode.test">Priprava na test</span><span class="m-sub" data-i18n="mode.testSub">Izberi snov in datum</span></button>
       <button type="button" data-mode="cards"><span class="ic"><i data-icon="layers"></i><b class="badge" hidden></b></span><span class="m-name" data-i18n="mode.cards">Kartice</span><span class="m-sub" data-i18n="mode.cardsSub">Pomembna dejstva</span></button>
     </nav>
+    <nav id="goal-modes" class="modes goal-modes" aria-label="Za tvoj cilj" data-i18n-aria="goal.modes" hidden></nav>
     </div>
     <div id="path-content"></div>
   </main>
@@ -239,6 +240,7 @@
   <main id="view-settings" class="view narrow" hidden>
     <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
     <h1 data-i18n="set.title">Nastavitve</h1>
+    <div class="set-cols">
     <form id="settings-form" class="card form">
       <!-- Fakulteta: predmeti iz predmetnika izbrane smeri namesto MAT/FIZ/KEM -->
       <label id="course-row" hidden><span data-i18n="set.subject">Predmet</span>
@@ -373,6 +375,7 @@
       <!-- Besedilo z imenom profila nastavi fillSettingsForm (app.js). -->
       <p class="muted" id="delete-student-text"></p>
       <button id="delete-student" class="danger" type="button"></button>
+    </div>
     </div>
   </main>
 

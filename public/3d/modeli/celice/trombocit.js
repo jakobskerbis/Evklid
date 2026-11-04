@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Krvna ploščica (2–3 µm) ni prava celica, temveč odcepljen delček velike celice kostnega mozga, megakariocita, zato nima jedra. Ob poškodbi žile se aktivira: postane okrogla, izrastki se oprimejo rane in zrnca izločijo snovi za strjevanje krvi. Zrnc je manj kot v resnici.",
+  poskusi: "Preklopi na »Aktivirana« in opazuj, kako ploščica spremeni obliko.",
   merilo: { m: 2.9e-6, oznaka: "2,9 µm" },
 };
 

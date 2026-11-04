@@ -1,6 +1,20 @@
 /* Prijava staršev in zavihek Račun (account.js) */
 body.auth-mode .tabs, body.auth-mode .xp-badge, body.auth-mode .student-picker, body.auth-mode .tabbar { display: none !important; }
 .auth-box { max-width: 440px; margin: 24px auto 0; }
+.auth-brand { display: none; }
+@media (min-width: 1000px) {
+  /* Obrazec ima ozek stolpec, znak aplikacije vzame preostanek (desno od obrazca ni praznega pasu). */
+  .auth-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 560px); gap: 48px; align-items: center; min-height: 100%; }
+  .auth-wrap > .auth-box { max-width: none; width: 100%; margin: 0; }
+  .auth-brand {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 16px; align-self: stretch; padding: 48px;
+    border-radius: var(--radius); color: #fff; background: linear-gradient(135deg, var(--hero-a), var(--hero-b));
+  }
+  .auth-brand .logo { width: 72px; height: 72px; border-radius: 22px; background: rgb(255 255 255 / 0.18); box-shadow: none; }
+  .auth-brand .logo svg.i { width: 40px; height: 40px; }
+  .auth-brand .brand-name, .auth-brand .brand-name span { font-size: clamp(2.2rem, 4vw, 3.4rem); font-weight: 900; line-height: 1.05; color: #fff; }
+  .auth-brand p { margin: 0; max-width: 28ch; font-size: clamp(1.1rem, 1.6vw, 1.45rem); line-height: 1.4; font-weight: 700; }
+}
 .auth-box h1 { margin-bottom: 4px; }
 .auth-links { text-align: center; font-size: 0.92rem; }
 a { color: var(--accent); }
@@ -108,3 +122,19 @@ details .card { margin-top: 8px; }
 .plan-upgrade .form-actions {
   flex-wrap: wrap;
 }
+/* Garancija »Boljša ocena ali vrnemo denar« in »Podari Evklid« (garancija-ui.js) */
+.guarantee-line { display: flex; gap: 8px; align-items: flex-start; margin: 4px 0; }
+.guarantee-line svg { flex: none; color: var(--ok); margin-top: 3px; }
+.podari-addon { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; margin: 0; min-width: 0; }
+.podari-addon legend { padding: 0 4px; font-weight: 600; }
+.podari-opts { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.podari-opts .check { min-height: 40px; align-items: center; }
+.podari-count { font-weight: 600; }
+.gar-weeks { list-style: none; padding: 0; margin: 8px 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; max-width: 420px; }
+.gar-week { display: flex; align-items: center; justify-content: center; min-height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85em; color: var(--muted); }
+.gar-week.ok { color: var(--ok); border-color: currentColor; }
+.gar-week.miss { color: var(--danger); border-color: currentColor; }
+.gar-week.now { color: var(--text); border-color: var(--accent); border-width: 2px; }
+.gar-week svg { width: 18px; height: 18px; }
+.gar-card summary, .podari-card summary { padding: 10px 0; cursor: pointer; font-weight: 600; }
+.gar-card .form label.check input, .podari-card .form label.check input { min-height: 0; padding: 0; }

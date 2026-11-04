@@ -1,6 +1,7 @@
 // Grafični kalkulator – iz seznama vrstic (izrazi, tabele, opombe) zgradi model:
 // kaj vsaka vrstica je (funkcija, krivulja, drsnik, točka …), prevedene funkcije za risanje
 // in vrednosti spremenljivk. Brez DOM (testi v test/graph.test.js).
+import { hasPolRec, vectorTuple } from "./vektor.js";
 import { parse, compile, freeVars, toTex, normalize, simplify, diff, inlineUfn, MathError, BUILTINS, walk } from "./math.js";
 
 export const RESERVED = new Set(["x", "y", "r", "θ"]);
@@ -249,7 +250,9 @@ export function buildModel(state, { comma = true } = {}) {
   }
 
   function classify(o) {
-    const a = o.ast;
+    let a = o.ast;
+    // Rec(r; θ), tudi Rec(…) + Rec(…): točka (x; y); |Rec(…) − Rec(…)|, Rec·Rec: število (public/graph/vektor.js)
+    if (hasPolRec(a)) a = vectorTuple(a) || a;
     const fv = freeVars(a);
     const has = (v) => fv.has(v);
     const check = (node, allowed) => {

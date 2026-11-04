@@ -21,6 +21,7 @@ export const info = {
   predmet: "KEM",
   opis: "44 molekul in ionov z izmerjenimi dolžinami vezi in koti (pri večjih organskih molekulah izračunanimi): vse oblike po teoriji VSEPR, prosti elektronski pari, vezni koti in polarnost. Atomi so prikazani kot mirujoče kroglice.",
   merilo: { m: 0.25e-9, oznaka: "0,25 nm" },
+  poskusi: "Primerjaj vezne kote metana, amonijaka in vode: kako prosti elektronski pari stisnejo kot?",
 };
 
 // Podatki: a = [element, x, y, z] v pm; b = [i, j, red vezi po Lewisu, 1 = delokalizirana]; c = osrednji atom;

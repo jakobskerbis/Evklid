@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Pivska kvasovka (Saccharomyces cerevisiae), enocelična gliva velikosti okoli 5 µm. Razmnožuje se z brstenjem: iz matične celice zraste brst, v katerega preide eno od obeh novih jeder. Organelov je manj kot v resnici.",
+  poskusi: "Premikaj drsnik »Brstenje« in opazuj, kdaj se jedro razdeli med materinsko celico in brst.",
   merilo: { m: 10e-6, oznaka: "10 µm" },
 };
 

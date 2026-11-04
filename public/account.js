@@ -7,6 +7,7 @@ import { openProfileMenu } from "./profile-menu.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
+import { guaranteeBox, guaranteeLine, podariAddon, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 // Starševski račun: prijava, potrditev e-naslova, otroci s soglasjem, naročnina, priporočila.
 // Deluje samo, ko je na strežniku EVKLID_ACCOUNTS=1.
 
@@ -335,6 +336,10 @@ export async function initAccount({ onReady }) {
       // Darilna koda: potrditev ob vrnitvi; koda je potem v zavihku Račun.
       const r = await api("/api/billing/gift/confirm", { method: "POST", body: { session_id: sessionId } }).catch(() => null);
       toast(r?.paid ? t("gift.paid") : t("pass.pending"));
+    } else if (billing === "podari" && sessionId) {
+      // »Podari Evklid«: potrditev ob vrnitvi s plačilne strani.
+      const r = await api("/api/billing/podari/confirm", { method: "POST", body: { session_id: sessionId } }).catch(() => null);
+      toast(r?.paid ? t("pod.paid") : t("pass.pending"));
     } else if (billing !== "cancel") await api("/api/billing/sync", { method: "POST" }).catch(() => {});
     if (billing === "success") toast("Hvala! Naročnina je aktivna.");
     status = await api("/api/account/status");
@@ -389,9 +394,12 @@ export function openAddChild() {
 
 // ---------- prijava in registracija ----------
 
+// Na širokem zaslonu je levo od obrazca znak aplikacije s kratkim opisom (j 2026-11-04: brez praznih robov);
+// ime vzamemo iz zgornje vrstice (brand.json → scripts/preimenuj.js), da ga ni treba popravljati na dveh mestih.
 function shell(inner) {
   authMode(true);
-  $("#view-auth").innerHTML = `<div class="auth-box">${inner}</div>`;
+  const name = document.querySelector(".topbar .brand-name")?.innerHTML || "";
+  $("#view-auth").innerHTML = `<div class="auth-wrap"><div class="auth-brand"><span class="logo" aria-hidden="true">${icon("kristal")}</span><b class="brand-name">${name}</b><p>${esc(t("mob.tagline"))}</p></div><div class="auth-box">${inner}</div></div>`;
 }
 
 // Po zavrnjeni registraciji zaradi starosti naprava 24 ur kaže stran s povezavo za starše.
@@ -783,8 +791,12 @@ function plansPicker(acc) {
     if (!p) return "";
     const cur = p.currency || "EUR";
     const perMonth = interval === "year" ? `<span class="muted">≈ ${money(Math.round(p.amount / 10), cur)} / mesec (10 mesecev)</span>` : "";
+    // Letni paket je prvi in privzet (j 2026-11-04): prihranek glede na 12 mesečnih plačil.
+    const m = interval === "year" ? find(seats, "month") : null;
+    const pct = m && m.amount > 0 && p.amount > 0 && (m.currency || "EUR") === cur ? Math.floor((1 - p.amount / (12 * m.amount)) * 100) : 0;
+    const save = pct > 0 ? ` <span class="pill ok">${esc(t("pay.save", { pct }))}</span>` : "";
     return `<label class="plan"><input type="radio" name="plan" value="${seats}-${interval}">
-      <span><b>${money(p.amount, cur)}</b> / ${interval === "year" ? (p.level === "FAKS" && !p.family ? "študijsko leto" : "šolsko leto") : "mesec"}<br>${perMonth}</span></label>`;
+      <span><b>${money(p.amount, cur)}</b> / ${interval === "year" ? (p.level === "FAKS" && !p.family ? "študijsko leto" : "šolsko leto") : "mesec"}${save}<br>${perMonth}</span></label>`;
   };
   // Najprej izbira, za koliko otrok; šele nato cene samo za to izbiro (j 2026-10-30: prej je bilo prenatrpano).
   const familyLabel = acc.children.some((c) => c.level === "FAKS") ? t("pay.familyStudent") : t("pay.family");
@@ -796,16 +808,18 @@ function plansPicker(acc) {
       <fieldset class="plan-who"><legend>${esc(t("pay.howMany"))}</legend>
         <div class="plan-who-opts">${who.map(([v, label]) => `<label class="plan"><input type="radio" name="who" value="${v}"> <span><b>${esc(keepRange(label))}</b></span></label>`).join("")}</div>
       </fieldset>
-      <div class="plan-row" data-who="1" hidden>${cell(1, "month")}${cell(1, "year")}</div>
-      ${!levels || acc.family_ok ? `<div class="plan-row" data-who="2" hidden>${cell(2, "month")}${cell(2, "year")}</div>` : ""}
+      <div class="plan-row" data-who="1" hidden>${cell(1, "year")}${cell(1, "month")}</div>
+      ${!levels || acc.family_ok ? `<div class="plan-row" data-who="2" hidden>${cell(2, "year")}${cell(2, "month")}</div>` : ""}
       ${schoolRow(acc)}
       <div id="plan-rest" class="plans" hidden>
       <p class="form-error" role="alert" hidden></p>
+      ${acc.guarantee ? guaranteeLine() : ""}
       ${acc.prices_draft ? `<p class="muted">Cene v lokalni valuti so predlog (razvojna različica).</p>` : ""}
       ${acc.parent.minor
         ? `<p class="muted">${esc(t("pay.minorNote"))}</p>
            <button class="secondary" type="button" id="plan-link">${esc(t("pay.askParent"))}</button><div id="plan-link-out"></div>`
-        : `${consentFields()}
+        : `${podariAddon(acc)}
+           ${consentFields()}
            <button class="primary" type="submit">${esc(t("pay.continue"))}</button>`}
       ${acc.parent.minor ? "" : `<p class="muted">Plačilo poteka varno prek Stripe. Naročnino lahko kadar koli prekličeš.${
         acc.access.tier === "trial" ? " Preostanek preizkusa se ohrani: prvo plačilo bo šele po njegovem koncu." : ""
@@ -817,9 +831,16 @@ function plansPicker(acc) {
 // Osebno ob šolski licenci (5,99 € / 49 €): samo, ko ima vsaj en otrok šolsko licenco.
 function schoolRow(acc) {
   if (!acc.school_plans?.length) return "";
+  const month = acc.school_plans.find((p) => p.interval === "month");
+  const save = (p) => {
+    const pct = p.interval === "year" && p.amount > 0 && month?.amount > 0 ? Math.floor((1 - p.amount / (12 * month.amount)) * 100) : 0;
+    return pct > 0 ? ` <span class="pill ok">${esc(t("pay.save", { pct }))}</span>` : "";
+  };
   const cell = (p) => `<label class="plan"><input type="radio" name="plan" value="s-${p.interval}">
-      <span><b>${money(p.amount, "EUR")}</b> / ${esc(t(p.interval === "year" ? "school.perYear" : "school.perMonth"))}</span></label>`;
-  return `<div class="plan-row" data-who="s" hidden>${acc.school_plans.map(cell).join("")}<p class="muted plan-note">${esc(t("school.planNote"))}</p></div>`;
+      <span><b>${money(p.amount, "EUR")}</b> / ${esc(t(p.interval === "year" ? "school.perYear" : "school.perMonth"))}${save(p)}</span></label>`;
+  // Letni paket prvi (j 2026-11-04).
+  const sorted = [...acc.school_plans].sort((a, b) => (b.interval === "year") - (a.interval === "year"));
+  return `<div class="plan-row" data-who="s" hidden>${sorted.map(cell).join("")}<p class="muted plan-note">${esc(t("school.planNote"))}</p></div>`;
 }
 // Vrednost izbire paketa: »1-month« (otroci-obdobje) ali »s-year« (Osebno ob šolski licenci).
 const planBody = (v) => {
@@ -1221,6 +1242,7 @@ export async function renderAccount() {
   view.innerHTML = `
     <button type="button" class="ghost back me-back">${icon("arrow-left")}Jaz</button>
     <h1>Račun</h1>
+    <div class="kolone">
     <div class="card">
       <h2>Naročnina</h2>
       ${planText(acc)}
@@ -1229,7 +1251,10 @@ export async function renderAccount() {
       ${promoBox(acc, paid)}
     </div>
     ${acc.promo?.codes ? adminCodes(acc) : ""}
+    ${guaranteeBox(acc)}
     ${giftBox(acc)}
+    ${podariBox(acc)}
+    ${adminCards(acc)}
     ${acc.promo?.codes ? `<div class="card" id="pilot-card"><h2>${esc(t("pilot.title"))}</h2><div id="pilot-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="reports-card"><h2>${esc(t("adm.rep.title"))}</h2><div id="reports-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
     ${acc.promo?.codes ? `<div class="card" id="orders-card"><h2>${esc(t("orders.title"))}</h2><div id="orders-out"><p class="muted">${esc(t("common.loading"))}</p></div></div>` : ""}
@@ -1288,9 +1313,10 @@ export async function renderAccount() {
         <button id="logout-others" type="button">Odjavi vse druge naprave</button>
       </div>
       <button id="delete-account" class="danger" type="button">Izbriši račun in vse podatke</button>
+    </div>
     </div>`;
 
-  // Izbira števila otrok pokaže samo cene za to izbiro (mesečno je izbrano) in nato soglasja ter gumb.
+  // Izbira števila otrok pokaže samo cene za to izbiro (letno je prvo in izbrano, j 2026-11-04) in nato soglasja ter gumb.
   $("#plan-form")?.addEventListener("change", (e) => {
     if (e.target.name !== "who") return;
     const f = e.currentTarget;
@@ -1298,6 +1324,12 @@ export async function renderAccount() {
     const first = f.querySelector(`.plan-row[data-who="${e.target.value}"] input[name=plan]`);
     if (first) first.checked = true;
     $("#plan-rest", f).hidden = false;
+    // Dodatek »Podari Evklid« ni na voljo pri šolski ceni (strežnik ga tam ne doda).
+    const addon = f.querySelector(".podari-addon");
+    if (addon) {
+      addon.hidden = e.target.value === "s";
+      if (addon.hidden) f.querySelector('input[name=podari][value="0"]').checked = true;
+    }
   });
   $("#plan-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -1305,7 +1337,8 @@ export async function renderAccount() {
     btn.disabled = true;
     try {
       if (!consentsOk(e.target)) throw new Error(t("payp.consentMissing"));
-      const r = await api("/api/billing/checkout", { method: "POST", body: { ...planBody(e.target.plan.value), ...consentBody() } });
+      const podari = Number(e.target.podari?.value || 0);
+      const r = await api("/api/billing/checkout", { method: "POST", body: { ...planBody(e.target.plan.value), ...consentBody(), ...(podari ? { podari } : {}) } });
       location.href = r.url;
     } catch (err) {
       btn.disabled = false;
@@ -1328,6 +1361,7 @@ export async function renderAccount() {
     }
   });
   bindAdminCodes(acc);
+  bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
   renderCreditCard($("#credit-card"), { api });
   $("#gift-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();

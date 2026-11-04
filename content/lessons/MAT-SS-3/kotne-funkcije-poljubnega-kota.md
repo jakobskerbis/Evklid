@@ -5,9 +5,11 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Predstavljaj si panoramsko kolo. Sedež začne na višini osi kolesa, na desni strani, in se dviga. Če se kolo zavrti za manj kot $90^\circ$, višino sedeža izračunaš s sinusom iz pravokotnega trikotnika, ki ga že poznaš. Kaj pa, ko se kolo zavrti za $150^\circ$, $210^\circ$ ali za dva cela obrata? Takega kota ni v nobenem pravokotnem trikotniku.
+Ko telefon nalaga stran, se na zaslonu vrti pikica okoli središča ikone. Recimo, da kroži po krožnici s polmerom $1\,\text{cm}$. Začne desno od središča, na isti višini, in se vrti v nasprotni smeri urinega kazalca. Pri zasuku $30^\circ$ je $0{,}5\,\text{cm}$ nad središčem, ker je $\sin 30^\circ = \frac12$.
 
-Zato kotne funkcije razširimo na **poljuben kot**: na tope kote, kote nad $360^\circ$ in tudi na negativne kote. Pri tem si pomagamo z **enotsko krožnico**. Hkrati spoznaš novo enoto za kote, **radian**, ki jo uporabljajo fizika, tehnika in vsa nadaljnja matematika.
+**Uganka.** Kako visoko je pikica pri zasuku $150^\circ$? In pri $210^\circ$? Nariši krog in poskusi, preden bereš naprej.
+
+Pravokotni trikotnik tu ne pomaga: kota $150^\circ$ ni v nobenem pravokotnem trikotniku. Zato kotne funkcije razširimo na **poljuben kot**: na tope kote, kote nad $360^\circ$ in tudi na negativne kote. Pomaga nam **enotska krožnica**. Spoznaš tudi novo enoto za kote, **radian**. V njej računajo programi, ki rišejo animacije na telefonu, pa tudi fizika in vsa nadaljnja matematika.
 
 ## Razlaga
 
@@ -21,6 +23,17 @@ $$\tan\alpha = \frac{y}{x} = \frac{\sin\alpha}{\cos\alpha}, \quad x \neq 0$$
 
 Kosinus je torej vodoravna koordinata točke $T$, sinus pa navpična. Za ostre kote se to ujema s staro definicijo: iz točke $T$ spustimo pravokotnico na os $x$ in dobimo pravokotni trikotnik s hipotenuzo $1$. Priležna kateta je $x$, nasprotna kateta je $y$.
 
+Primerjaj staro in novo definicijo:
+
+| | trikotnik | krožnica |
+|---|---|---|
+| kot | ostri | poljuben |
+| $\sin\alpha$ | $\frac{\text{nasprotna}}{\text{hipotenuza}}$ | $y$ točke $T$ |
+| $\cos\alpha$ | $\frac{\text{priležna}}{\text{hipotenuza}}$ | $x$ točke $T$ |
+| predznak | vedno $+$ | od lege $T$ |
+
+Razlika je v zadnji vrstici. Dolžina stranice ne more biti negativna, koordinata pa lahko je.
+
 **3. Posebni koti.** Na oseh točko $T$ preberemo kar iz slike:
 
 | kot $\alpha$ | točka $T$ | $\cos\alpha$ | $\sin\alpha$ |
@@ -33,12 +46,12 @@ Kosinus je torej vodoravna koordinata točke $T$, sinus pa navpična. Za ostre k
 Pri $90^\circ$ in $270^\circ$ je $x = 0$, zato $\tan\alpha$ tam **ni definiran**.
 
 :::premisli
-Kot $\alpha = 120^\circ$ leži v II. kvadrantu. Brez računanja napovej predznaka $\cos 120^\circ$ in $\sin 120^\circ$.
+Kot $\alpha = 120^\circ$ je med $90^\circ$ in $180^\circ$. Brez računanja napovej predznaka $\cos 120^\circ$ in $\sin 120^\circ$.
 ---
 Točka $T$ leži levo od osi $y$ in nad osjo $x$. Zato je $\cos 120^\circ < 0$ in $\sin 120^\circ > 0$.
 :::
 
-**4. Predznaki po kvadrantih.** **Kvadrant** je četrtina ravnine med osema. Predznak funkcije je predznak ustrezne koordinate:
+**4. Predznaki po kvadrantih.** **Kvadrant** je četrtina ravnine med osema; točke na oseh ne spadajo v noben kvadrant. Predznak sinusa je predznak koordinate $y$, kosinusa predznak koordinate $x$. Tangens je pozitiven, kadar imata koordinati enak predznak:
 
 | kvadrant | $\sin$ | $\cos$ | $\tan$ |
 |---|---|---|---|
@@ -47,7 +60,9 @@ Točka $T$ leži levo od osi $y$ in nad osjo $x$. Zato je $\cos 120^\circ < 0$ i
 | III. ($180^\circ$ do $270^\circ$) | $-$ | $-$ | $+$ |
 | IV. ($270^\circ$ do $360^\circ$) | $-$ | $+$ | $-$ |
 
-**5. Pripadajoči ostri kot.** Kot $150^\circ$ je za $30^\circ$ oddaljen od negativnega poltraka osi $x$. Točka za $150^\circ$ je zrcalna slika točke za $30^\circ$ čez os $y$. Zato je $\sin 150^\circ = \sin 30^\circ = \frac12$ in $\cos 150^\circ = -\cos 30^\circ = -\frac{\sqrt3}{2}$. Velja splošno: **absolutno vrednost** dobiš iz pripadajočega ostrega kota, **predznak** pa iz kvadranta.
+**5. Pripadajoči ostri kot.** Kot $150^\circ$ je za $30^\circ$ oddaljen od negativnega poltraka osi $x$. Ta ostri kot med gibljivim krakom in osjo $x$ imenujemo **pripadajoči ostri kot**. Točka za $150^\circ$ je zrcalna slika točke za $30^\circ$ čez os $y$. Zato je $\sin 150^\circ = \sin 30^\circ = \frac12$ in $\cos 150^\circ = -\cos 30^\circ = -\frac{\sqrt3}{2}$. Velja splošno: **absolutno vrednost** dobiš iz pripadajočega ostrega kota, **predznak** pa iz kvadranta.
+
+Tako rešiš tudi uganko s pikico: pri $150^\circ$ je $0{,}5\,\text{cm}$ nad središčem, pri $210^\circ$ pa $0{,}5\,\text{cm}$ pod njim, ker je $\sin 210^\circ = -\sin 30^\circ = -\frac12$.
 
 V simulaciji spodaj (»Enotska krožnica«) nastavi kot najprej na $30^\circ$, nato na $150^\circ$. Opazi, da ostane navpična koordinata točke enaka, vodoravna pa spremeni predznak. Potem poskusi še $210^\circ$ in $330^\circ$.
 
@@ -57,9 +72,9 @@ $$\sin^2\alpha + \cos^2\alpha = 1$$
 
 Od tod sledi tudi, da sta sinus in kosinus vedno med $-1$ in $1$.
 
-**7. Koti nad $360^\circ$ in negativni koti.** Kota $\alpha$ in $\alpha + 360^\circ$ imata isti gibljivi krak, zato imata enake vrednosti kotnih funkcij. Tako je $\sin 390^\circ = \sin 30^\circ$ in $\cos(-60^\circ) = \cos 300^\circ$.
+**7. Koti nad $360^\circ$ in negativni koti.** Kota $\alpha$ in $\alpha + 360^\circ$ imata isti gibljivi krak, zato imata enake vrednosti kotnih funkcij. Tako je $\sin 390^\circ = \sin 30^\circ$ in $\cos(-60^\circ) = \cos 300^\circ$, ker je $-60^\circ + 360^\circ = 300^\circ$.
 
-**8. Radian.** Kot lahko merimo tudi z **dolžino loka** na enotski krožnici. **Radian** (rad) je kot, pri katerem je lok enak polmeru. Obseg enotske krožnice je $2\pi$, zato je polni kot $2\pi$ radianov:
+**8. Radian.** Stopinja je dogovor: polni kot razdelimo na $360$ enakih delov. Kot pa lahko merimo tudi z **dolžino loka** na enotski krožnici. **Radian** (rad) je središčni kot, ki mu pripada lok, dolg kot polmer. Obseg enotske krožnice je $2\pi$, zato je polni kot $2\pi$ radianov:
 
 $$360^\circ = 2\pi\,\text{rad}, \qquad 180^\circ = \pi\,\text{rad}$$
 
@@ -72,7 +87,7 @@ En radian je $\frac{180^\circ}{\pi} \approx 57{,}3^\circ$. Pogoste kote si zapom
 | $60^\circ$ | $\frac{\pi}{3}$ |
 | $90^\circ$ | $\frac{\pi}{2}$ |
 
-Ko je kot podan v radianih, enoto rad navadno izpustimo: $\sin\frac{\pi}{2} = 1$.
+Ko je kot podan v radianih, enoto rad navadno izpustimo: $\sin\frac{\pi}{2} = 1$. Kalkulator v telefonu ima zato dva načina: DEG za stopinje in RAD za radiane.
 
 :::premisli
 V katerem kvadrantu leži kot $3$ (radiani)? Najprej oceni, nato pomisli, koliko je $\pi$.
@@ -121,10 +136,10 @@ Absolutna vrednost iz pripadajočega ostrega kota, predznak iz kvadranta; $\tan\
 
 ### Primer 3 (težji)
 
-Panoramsko kolo ima polmer $20\,\text{m}$, njegova os je $22\,\text{m}$ nad tlemi. Sedež je na začetku desno, na višini osi. Kolo se zavrti v pozitivni smeri za kot $\frac{7\pi}{6}$. Na kateri višini je sedež in kako daleč je vodoravno od osi?
+Pikica na ikoni za nalaganje kroži okoli središča ikone po krožnici s polmerom $12\,\text{mm}$. Središče ikone je $40\,\text{mm}$ nad spodnjim robom zaslona. Pikica začne desno od središča, na višini središča, in se zavrti v pozitivni smeri za kot $\frac{7\pi}{6}$. Kako visoko nad spodnjim robom zaslona je zdaj in kako daleč vodoravno od središča?
 
-**Podatki:** $r = 20\,\text{m}$, višina osi $h_0 = 22\,\text{m}$, kot $\varphi = \frac{7\pi}{6}$, začetna lega: desno na višini osi
-**Iščemo:** višino sedeža $h$ in vodoravno razdaljo $d$ od osi
+**Podatki:** $r = 12\,\text{mm}$, višina središča $h_0 = 40\,\text{mm}$, kot $\varphi = \frac{7\pi}{6}$, začetna lega: desno od središča na njegovi višini
+**Iščemo:** višino pikice $h$ in njen vodoravni odmik $x$ od središča
 
 :::formula
 Točka na krožnici s polmerom $r$: $x = r\cos\varphi$, $y = r\sin\varphi$; višina $h = h_0 + y$
@@ -132,13 +147,13 @@ Točka na krožnici s polmerom $r$: $x = r\cos\varphi$, $y = r\sin\varphi$; viš
 
 **Rešitev:**
 
-1. Postavimo izhodišče v os kolesa. Krožnica s polmerom $20$ je enotska krožnica, povečana $20$-krat, zato se obe koordinati pomnožita z $r$.
+1. Izhodišče postavimo v središče ikone. Krožnica s polmerom $12$ je enotska krožnica, povečana $12$-krat, zato se obe koordinati pomnožita z $r$.
 2. Kot pretvorimo: $\frac{7\pi}{6} = 210^\circ$, kar je III. kvadrant s pripadajočim ostrim kotom $30^\circ$.
 3. $\sin 210^\circ = -\frac12$ in $\cos 210^\circ = -\frac{\sqrt3}{2}$, ker sta v III. kvadrantu obe negativni.
-4. $y = 20\,\text{m} \cdot \left(-\frac12\right) = -10\,\text{m}$: sedež je $10\,\text{m}$ pod osjo.
-5. $h = 22\,\text{m} - 10\,\text{m} = 12\,\text{m}$, ker višino merimo od tal.
-6. $x = 20\,\text{m} \cdot \left(-\frac{\sqrt3}{2}\right) = -10\sqrt3\,\text{m} \approx -17{,}3\,\text{m}$, kar pomeni levo od osi.
-7. Odgovor: sedež je na višini $12\,\text{m}$ in približno $17{,}3\,\text{m}$ levo od osi kolesa.
+4. $y = 12\,\text{mm} \cdot \left(-\frac12\right) = -6\,\text{mm}$: pikica je $6\,\text{mm}$ pod središčem.
+5. $h = 40\,\text{mm} - 6\,\text{mm} = 34\,\text{mm}$, ker višino merimo od spodnjega roba.
+6. $x = 12\,\text{mm} \cdot \left(-\frac{\sqrt3}{2}\right) = -6\sqrt3\,\text{mm} \approx -10{,}4\,\text{mm}$, kar pomeni levo od središča.
+7. Odgovor: pikica je $34\,\text{mm}$ nad spodnjim robom zaslona in približno $10{,}4\,\text{mm}$ levo od središča ikone.
 
 ### Primer 4: zdaj ti
 
@@ -191,7 +206,7 @@ Zdaj počasi obkroži krožnico. Na vrhu ($90^\circ$) je senca na osi $x$ dolga 
 
 ## Drugače: Iz vsakdanjega življenja
 
-Pomisli na ventil na kolesu, ko kolo stoji na stojalu in ga vrtiš. Gledaš ga od strani, os kolesa je izhodišče.
+Pomisli na ventil na kolesu, ko kolo stoji na stojalu in ga vrtiš. Gledaš ga od strani, os kolesa je izhodišče. Kot $\alpha$ merimo od lege, ko je ventil spredaj na višini osi.
 
 - Višina ventila nad osjo je $r \cdot \sin\alpha$. Ko je ventil spodaj, je ta višina negativna: ventil je pod osjo.
 - Odmik ventila naprej ali nazaj od osi je $r \cdot \cos\alpha$. Negativen pomeni nazaj.
@@ -228,31 +243,15 @@ Radian je naravna enota: na krožnici s polmerom $r$ je dolžina loka pri sredi�
 
 ## Preveri se
 
-? Koliko radianov je $180^\circ$?
-- $180\,\text{rad}$
-~ Število stopinj ni število radianov. En radian je približno $57{,}3^\circ$, zato je radianov veliko manj.
-+ $\pi$
-- $2\pi$
-~ $2\pi$ je polni kot, $360^\circ$. Iztegnjeni kot je polovica tega.
-- $\frac{\pi}{2}$
-~ $\frac{\pi}{2}$ je pravi kot, $90^\circ$.
-> Obseg enotske krožnice je $2\pi$, polovica obsega je $\pi$, zato $180^\circ = \pi\,\text{rad}$.
-
-? Za kot $\alpha$ velja $\sin\alpha > 0$ in $\cos\alpha < 0$. V katerem kvadrantu je?
-- V I. kvadrantu.
-~ V I. kvadrantu sta obe koordinati pozitivni, tudi kosinus.
-+ V II. kvadrantu.
-- V IV. kvadrantu.
-~ Tu si zamenjal koordinati: v IV. kvadrantu je $x > 0$ in $y < 0$, torej kosinus pozitiven in sinus negativen. Kosinus je $x$, sinus je $y$.
-> Sinus je $y$, kosinus je $x$. Točka z $y > 0$ in $x < 0$ leži v II. kvadrantu.
-
-? Koliko je $\tan 90^\circ$?
-- $0$
-~ Pri $90^\circ$ je nič kosinus, ki je v imenovalcu, ne sinus v števcu.
-- $1$
-~ Vrednost $1$ ima tangens pri $45^\circ$, kjer sta sinus in kosinus enaka.
-+ Ni definiran.
-> $\tan 90^\circ = \dfrac{\sin 90^\circ}{\cos 90^\circ} = \dfrac{1}{0}$, z ničlo pa ne delimo.
+? Katera trditev je pravilna?
+- Sinus kota je vedno pozitiven, ker je razmerje dveh dolžin.
+~ To velja le za ostre kote v pravokotnem trikotniku. Na enotski krožnici je sinus koordinata $y$, ki je lahko negativna.
++ Sinus kota je navpična koordinata točke, v kateri gibljivi krak seka enotsko krožnico.
+- $\tan 90^\circ = 0$.
+~ Pri $90^\circ$ je nič kosinus, ki je v imenovalcu, ne sinus v števcu. Zato $\tan 90^\circ$ ni definiran.
+- En radian je ena stopinja.
+~ Radian je kot, pri katerem je lok dolg kot polmer. To je približno $57{,}3^\circ$.
+> Gibljivi krak seka enotsko krožnico v $T(\cos\alpha, \sin\alpha)$: sinus je koordinata $y$, kosinus koordinata $x$.
 
 ? Koliko je $\cos 120^\circ$?
 - $\frac12$
@@ -262,23 +261,42 @@ Radian je naravna enota: na krožnici s polmerom $r$ je dolžina loka pri sredi�
 ~ Predznak je pravilen, vrednost pa je $\sin 60^\circ$, ne $\cos 60^\circ$. Zamenjal si sinus in kosinus.
 > Pripadajoči ostri kot je $60^\circ$, $\cos 60^\circ = \frac12$, v II. kvadrantu je kosinus negativen: $\cos 120^\circ = -\frac12$.
 
-? Kje leži gibljivi krak kota $2$ (v radianih)?
-- V I. kvadrantu.
-~ To bi veljalo za $2^\circ$. En radian ni ena stopinja, ampak približno $57{,}3^\circ$.
-+ V II. kvadrantu.
-- Na negativnem poltraku osi $x$.
-~ To bi veljalo, če bi bil $1\,\text{rad}$ pravi kot. Pravi kot je $\frac{\pi}{2} \approx 1{,}57\,\text{rad}$.
-> $2\,\text{rad} = 2 \cdot \frac{180^\circ}{\pi} \approx 114{,}6^\circ$, kar je med $90^\circ$ in $180^\circ$.
+? Luka je računal $\sin 300^\circ$: »(1) Kot je v IV. kvadrantu. (2) Pripadajoči ostri kot je $360^\circ - 300^\circ = 60^\circ$. (3) Torej je $\sin 300^\circ = \frac{\sqrt3}{2}$.« Kje je napaka?
+- V koraku (1): kot $300^\circ$ je v III. kvadrantu.
+~ III. kvadrant sega le do $270^\circ$. Kot $300^\circ$ je med $270^\circ$ in $360^\circ$, torej v IV. kvadrantu.
+- V koraku (2): pripadajoči ostri kot je $300^\circ - 270^\circ = 30^\circ$.
+~ Pripadajoči ostri kot merimo od osi $x$, ne od osi $y$. V IV. kvadrantu je to $360^\circ - \alpha$.
++ V koraku (3): v IV. kvadrantu je sinus negativen, zato $\sin 300^\circ = -\frac{\sqrt3}{2}$.
+- Napake ni.
+~ Ostri kot da le absolutno vrednost. Točka za $300^\circ$ leži pod osjo $x$, zato je njena koordinata $y$ negativna.
+> Koraka (1) in (2) sta prava. V IV. kvadrantu je $y < 0$, zato $\sin 300^\circ = -\sin 60^\circ = -\frac{\sqrt3}{2}$.
+
+? Kateri kot je večji: $2\,\text{rad}$ ali $100^\circ$?
++ $2\,\text{rad}$
+- $100^\circ$
+~ Radian ni majhna enota kot stopinja. En radian je približno $57{,}3^\circ$, dva sta že več kot $100^\circ$.
+- Ne moremo ju primerjati, ker sta v različnih enotah.
+~ Enoti lahko pretvoriš: $\pi\,\text{rad} = 180^\circ$. Šele potem primerjaš.
+> $2\,\text{rad} = 2 \cdot \frac{180^\circ}{\pi} \approx 114{,}6^\circ$, kar je več kot $100^\circ$.
+
+? Na kalkulatorju v telefonu vtipkaš $\sin 30$ in dobiš $-0{,}988$. Kaj se je zgodilo?
+- Kalkulator je pravilno izračunal $\sin 30^\circ$; ta je res negativen.
+~ Kot $30^\circ$ je v I. kvadrantu, kjer je sinus pozitiven: $\sin 30^\circ = \frac12$.
++ Kalkulator je v načinu RAD in je izračunal sinus kota $30$ radianov.
+- Kalkulator je v načinu DEG, zato je rezultat napačen.
+~ V načinu DEG bi dobil prav $\sin 30^\circ = 0{,}5$. Napačen rezultat da ravno drugi način.
+> V načinu RAD kalkulator število $30$ razume kot $30\,\text{rad}$, in $\sin 30 \approx -0{,}988$. Preklopi na DEG ali kot pretvori v radiane: $30^\circ = \frac{\pi}{6}$.
 
 :::simboli
 \alpha | kot | | | v stopinjah ali radianih
-x | abscisa točke T na enotski krožnici | x = \cos\alpha | | na krožnici s polmerom r: x = r cos φ
-y | ordinata točke T na enotski krožnici | y = \sin\alpha | | na krožnici s polmerom r: y = r sin φ
+x | abscisa točke T | x = \cos\alpha | | na krožnici s polmerom $r$: $x = r\cos\varphi$
+y | ordinata točke T | y = \sin\alpha | | na krožnici s polmerom $r$: $y = r\sin\varphi$
 k | poljubno celo število | | |
-\alpha_{\text{rad}} | kot α v radianih | \alpha_{\text{rad}} = \alpha^\circ \cdot \frac{\pi}{180^\circ} | rad |
-\beta | kot, podan v radianih | \beta^\circ = \beta_{\text{rad}} \cdot \frac{180^\circ}{\pi} | | β° je isti kot v stopinjah
-r | polmer panoramskega kolesa | | m |
-\varphi | kot zasuka sedeža | | rad |
-h | višina sedeža | h = h_0 + y | m |
-h_0 | višina osi kolesa | | m |
+\alpha_{\text{rad}} | kot $\alpha$ v radianih | \alpha_{\text{rad}} = \alpha^\circ \cdot \frac{\pi}{180^\circ} | rad |
+\beta | kot, podan v radianih | \beta^\circ = \beta_{\text{rad}} \cdot \frac{180^\circ}{\pi} | | $\beta^\circ$ je isti kot v stopinjah
+r | polmer krožnice | | | v Primeru 3 polmer kroženja pikice v mm
+\varphi | kot zasuka pikice | | rad |
+h | višina pikice nad spodnjim robom zaslona | h = h_0 + y | mm |
+h_0 | višina središča ikone | | mm |
+l | dolžina loka | l = r\alpha | | $\alpha$ v radianih
 :::

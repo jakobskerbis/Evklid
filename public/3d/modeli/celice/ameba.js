@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Ameba je enocelični organizem iz sladkih voda, ki se premika in hrani s panožicami. Gumb »Pogoltni hrano« pokaže, kako obda in pogoltne drobno algo. Zrnc in mehurčkov je manj kot v resnici.",
+  poskusi: "Pritisni »Pogoltni hrano« in opazuj, kako panožice obdajo delček hrane.",
   merilo: { m: 444e-6, oznaka: "444 µm" }, // premer enotske krogle = 2 · 275 µm / 1,24
 };
 

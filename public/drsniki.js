@@ -17,7 +17,7 @@ export const DRSNE = [
   ".scan-hist .lr-text b", ".scan-hist .lr-text small", ".scan-pick", ".scan-preview", ".scan-problem-tex",
   ".scan-answer-tex", ".scan-approx", ".scan-step-math", ".scan-why",
   // vrstice gumbov in čipov
-  ".gm-fresh-row", ".seg", ".chip-row", ".zb-track", ".tk-ctx", ".tk-tablist", ".tk-sub", ".tabs",
+  ".gm-fresh-row", ".seg", ".chip-row", ".zb-track", ".tk-ctx", ".tk-tablist", ".tk-sub", ".tabs", "#chat-state",
 ];
 // Zgornja vrstica zavihkov ima svoje bledenje (app.js, style.css), zato je tu ne označujemo.
 export const IZVZETO = [".topbar .tabs"];
