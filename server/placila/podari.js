@@ -53,7 +53,8 @@ export function mountPodari(app, ctx) {
   const paidSum = () => db.prepare("SELECT COALESCE(SUM(amount), 0) AS c FROM podari_fund WHERE status = 'paid'").get().c;
   // Sklad porabijo kode iz sklada (amount = cena 3 mesecev stopnje); preklicana nevpisana koda denar vrne v sklad.
   const spent = () => db.prepare("SELECT COALESCE(SUM(amount), 0) AS c FROM gifts WHERE source = 'sklad' AND status = 'paid'").get().c;
-  const balance = () => paidSum() - spent();
+  // Vračilo plačila v sklad po izdaji kod iz sklada bi dalo negativno stanje: sklad nikoli ni pod 0.
+  const balance = () => Math.max(0, paidSum() - spent());
 
   function stats() {
     const codes = db.prepare("SELECT source, COUNT(*) AS n, SUM(redeemed_at IS NOT NULL) AS used FROM gifts WHERE source IN ('pilot', 'sklad') AND status = 'paid' GROUP BY source").all();
@@ -61,7 +62,7 @@ export function mountPodari(app, ctx) {
     const used = (by.pilot?.used || 0) + (by.sklad?.used || 0);
     return {
       // Meseci, ki so jih plačali kupci (mesec OŠ), meseci, ki jih je podaril Evklid, in meseci v uporabi.
-      donated_months: Math.floor(paidSum() / monthCents("OS")),
+      donated_months: Math.max(0, Math.floor(paidSum() / monthCents("OS"))),
       evklid_months: (by.pilot?.n || 0) * PODARI_MONTHS,
       in_use_months: used * PODARI_MONTHS,
       addons: PODARI_ADDONS,

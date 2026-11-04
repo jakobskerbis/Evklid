@@ -21,6 +21,7 @@ import { mountGradiva } from "./gradiva.js";
 import { mountKviz } from "./kviz.js";
 import { mountSchools } from "./schools.js";
 import { visitCounter, mountPilot } from "./pilot.js";
+import { sourceVisitCounter, mountRast, setSource } from "./rast.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
 import { uiLanguage } from "../public/i18n/languages.js";
@@ -64,6 +65,7 @@ import { mount3d } from "./tri-d.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
 import { jeFaks, jeSs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
+import { startCloudBackups } from "./kopije-oblak.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -203,9 +205,10 @@ export function createApp(store, opts = {}) {
   const version = appVersion();
   const activity = { active: 0, lastSend: 0 };
   let backups = null; // dnevne varnostne kopije baze (server/kopije.js), nastavljene spodaj
+  let cloudBackups = null; // ista kopija še zunaj strežnika (server/kopije-oblak.js)
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null });
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
@@ -245,6 +248,7 @@ export function createApp(store, opts = {}) {
   });
   // Merjenje v pilotu: števec ogledov strani za starše (pred statičnimi datotekami, glej pilot.js).
   app.use(visitCounter(store.db));
+  app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
@@ -366,7 +370,9 @@ export function createApp(store, opts = {}) {
     if (!name) return res.status(400).json({ error: "Vpiši ime." });
     const dup = store.recentDuplicate(name, req.body?.settings);
     if (dup) return res.status(200).json(dup);
-    res.status(201).json(store.createStudent(name, req.body?.settings));
+    const s = store.createStudent(name, req.body?.settings);
+    setSource(store.db, s.id, req.body?.vir);
+    res.status(201).json(store.getStudent(s.id));
   });
   app.get("/api/students/:id", (req, res) => {
     const s = loadStudent(req, res);
@@ -500,8 +506,8 @@ export function createApp(store, opts = {}) {
     // Stikalo za nujne primere (docs/krizni-nacrt.md): klepet izklopljen, Vadnica in lekcije delujejo.
     if (chatOff()) return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true });
     if (busy.has(conv.id)) return res.status(409).json({ error: "Počakaj, da Evklid odgovori." });
-    const blocked = usage.blockReason(student.id);
-    if (blocked) return res.status(429).json({ error: blocked, limit: true });
+    const blocked = usage.blockInfo(student.id);
+    if (blocked) return res.status(429).json({ ...blocked, limit: true });
     busy.add(conv.id);
     // Zajamčena poraba naročnika (j 2026-11-01): stanje pred odgovorom, da ob prehodu 80 % ali 100 % pošljemo obvestilo.
     const allowBefore = accounts ? usage.allowance(student.id) : null;
@@ -529,6 +535,7 @@ export function createApp(store, opts = {}) {
       wantThink: againStreak === 1,
       competition: student.settings.track === "COMPETITION",
       secondary: jeSs(student.settings),
+      university: jeFaks(student.settings),
       lite,
       free: !!accounts && !accounts.aiPremiumFor(student.id),
       deepModel: capped ? MODEL_MID : MODEL_DEEP,
@@ -1237,8 +1244,8 @@ export function createApp(store, opts = {}) {
     if (!t || t.student_id !== s.id) return res.status(404).json({ error: "Naloga ne obstaja." });
     const m = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(String(req.body?.image || ""));
     if (!m || m[2].length > 2 * 1024 * 1024) return res.status(400).json({ error: "Slika zapisa manjka ali je prevelika." });
-    const blocked = usage.blockReason(s.id);
-    if (blocked) return res.status(429).json({ error: blocked });
+    const blocked = usage.blockInfo(s.id);
+    if (blocked) return res.status(429).json(blocked);
     try {
       const a = t.payload.answer || {};
       const out = await readFn({ imageBase64: m[2], mediaType: m[1], answerType: a.type, unit: a.unit || null });
@@ -1284,6 +1291,9 @@ export function createApp(store, opts = {}) {
   const leagues = mountLeagues(app, store, { loadStudent });
   mountSchools(app, store, { loadStudent, leagues, accounts: !!accounts }); // šole, učitelji, licence, razredne naloge
   mountPilot(app, store, { accounts: !!accounts, isLocalRequest }); // merjenje v pilotu (skrbnik)
+  // Rast in vračanje (skrbnik): viri, prva naloga, vrnitev po 1 in 7 dneh; profili skrbnika se ne štejejo.
+  const adminEmails = (process.env.EVKLID_ADMIN_EMAILS || "").split(",").map((e) => e.trim()).filter(Boolean);
+  mountRast(app, store, { accounts: !!accounts, isLocalRequest, adminEmails });
   mountSchoolOrders(app, store, { accounts: !!accounts, isLocalRequest }); // naročila šol in predračun (skrbnik)
   mountGradiva(app, store, { loadStudent, accounts, leagues }); // povzetek na eni strani, zvočni povzetek, delovni listi
   mountKviz(app, store, { loadStudent, leagues }); // kviz v živo za razred
@@ -1334,5 +1344,6 @@ export function createApp(store, opts = {}) {
   // Šifriranje obstoječih vrstic in dnevno čiščenje po rokih hrambe (server/zasebnost.js).
   startPrivacyJobs(store.db, { scheduler: opts.scheduler !== false && opts.privacyJobs !== false });
   backups = startBackups(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false });
+  cloudBackups = startCloudBackups(store.file, { scheduler: opts.scheduler !== false && opts.backups !== false });
   return app;
 }

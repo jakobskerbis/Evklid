@@ -8,6 +8,7 @@ import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
 import { guaranteeBox, guaranteeLine, podariAddon, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
+import { currentSource } from "./vir.js";
 // Starševski račun: prijava, potrditev e-naslova, otroci s soglasjem, naročnina, priporočila.
 // Deluje samo, ko je na strežniku EVKLID_ACCOUNTS=1.
 
@@ -695,7 +696,7 @@ function bindChildForm(after) {
     try {
       const s = await api("/api/students", {
         method: "POST",
-        body: { name: f.name.value, birth_year: Number(f.birth_year.value), self: isSelf(), consent: f.consent.checked, settings: childSettings(f), ...(profilePw ? { profile_password: profilePw } : {}), ...(Object.keys(otherPasswords).length ? { other_passwords: otherPasswords } : {}) },
+        body: { name: f.name.value, birth_year: Number(f.birth_year.value), self: isSelf(), consent: f.consent.checked, settings: childSettings(f), vir: currentSource(), ...(profilePw ? { profile_password: profilePw } : {}), ...(Object.keys(otherPasswords).length ? { other_passwords: otherPasswords } : {}) },
       });
       store.set("studentId", String(s.id));
       store.set("evklid_invite_name", null);
@@ -790,13 +791,13 @@ function plansPicker(acc) {
     const p = find(seats, interval);
     if (!p) return "";
     const cur = p.currency || "EUR";
-    const perMonth = interval === "year" ? `<span class="muted">≈ ${money(Math.round(p.amount / 10), cur)} / mesec (10 mesecev)</span>` : "";
+    const perMonth = interval === "year" ? `<span class="muted">${esc(t("pay.yearPerMonth", { price: money(Math.round(p.amount / 10), cur) }))}</span>` : "";
     // Letni paket je prvi in privzet (j 2026-11-04): prihranek glede na 12 mesečnih plačil.
     const m = interval === "year" ? find(seats, "month") : null;
     const pct = m && m.amount > 0 && p.amount > 0 && (m.currency || "EUR") === cur ? Math.floor((1 - p.amount / (12 * m.amount)) * 100) : 0;
     const save = pct > 0 ? ` <span class="pill ok">${esc(t("pay.save", { pct }))}</span>` : "";
     return `<label class="plan"><input type="radio" name="plan" value="${seats}-${interval}">
-      <span><b>${money(p.amount, cur)}</b> / ${interval === "year" ? (p.level === "FAKS" && !p.family ? "študijsko leto" : "šolsko leto") : "mesec"}${save}<br>${perMonth}</span></label>`;
+      <span><b>${money(p.amount, cur)}</b> / ${esc(t(interval === "year" ? (p.level === "FAKS" && !p.family ? "pay.perStudyYear" : "school.perYear") : "school.perMonth"))}${save}<br>${perMonth}</span></label>`;
   };
   // Najprej izbira, za koliko otrok; šele nato cene samo za to izbiro (j 2026-10-30: prej je bilo prenatrpano).
   const familyLabel = acc.children.some((c) => c.level === "FAKS") ? t("pay.familyStudent") : t("pay.family");
@@ -814,16 +815,14 @@ function plansPicker(acc) {
       <div id="plan-rest" class="plans" hidden>
       <p class="form-error" role="alert" hidden></p>
       ${acc.guarantee ? guaranteeLine() : ""}
-      ${acc.prices_draft ? `<p class="muted">Cene v lokalni valuti so predlog (razvojna različica).</p>` : ""}
+      ${acc.prices_draft ? `<p class="muted">${esc(t("pay.pricesDraft"))}</p>` : ""}
       ${acc.parent.minor
         ? `<p class="muted">${esc(t("pay.minorNote"))}</p>
            <button class="secondary" type="button" id="plan-link">${esc(t("pay.askParent"))}</button><div id="plan-link-out"></div>`
         : `${podariAddon(acc)}
            ${consentFields()}
            <button class="primary" type="submit">${esc(t("pay.continue"))}</button>`}
-      ${acc.parent.minor ? "" : `<p class="muted">Plačilo poteka varno prek Stripe. Naročnino lahko kadar koli prekličeš.${
-        acc.access.tier === "trial" ? " Preostanek preizkusa se ohrani: prvo plačilo bo šele po njegovem koncu." : ""
-      }</p>`}
+      ${acc.parent.minor ? "" : `<p class="muted">${esc(t("pay.secureCancel"))}${acc.access.tier === "trial" ? ` ${esc(t("pay.trialKept"))}` : ""}</p>`}
       </div>
     </form>`;
 }
@@ -980,9 +979,11 @@ async function loadPilot(days = 30, school = "", focusId = "") {
   const seq = ++pilotSeq;
   const out = $("#pilot-out");
   if (!out) return;
-  let r;
+  let r, g;
   try {
-    r = await api(`/api/admin/pilot?days=${days}${school ? `&school=${school}` : ""}`);
+    const qs = `days=${days}${school ? `&school=${school}` : ""}`;
+    // Rast in vračanje (server/rast.js) je dodatek: če ne uspe, kartica pokaže vsaj merjenje v pilotu.
+    [r, g] = await Promise.all([api(`/api/admin/pilot?${qs}`), api(`/api/admin/rast?${qs}`).catch(() => null)]);
     if (seq !== pilotSeq) return;
   } catch (err) {
     out.innerHTML = `<p class="muted">${esc(err.message)}</p>`;
@@ -1009,12 +1010,39 @@ async function loadPilot(days = 30, school = "", focusId = "") {
     ${r.students != null ? `<p class="muted">${esc(t("pilot.schoolStudents", { n: r.students }))}</p>` : ""}
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr><th scope="col">${esc(t("pilot.day"))}</th><th scope="col">${esc(t("pilot.questions"))}</th><th scope="col">${esc(t("pilot.askers"))}</th><th scope="col">${esc(t("pilot.ai"))}</th><th scope="col">${esc(t("pilot.parents"))}</th></tr></thead>
       <tbody>${[...r.rows].reverse().map((d) => `<tr><td>${esc(day(d.day))}</td><td>${nf(d.questions)}</td><td>${nf(d.askers)}</td><td>${eur(d.aiUsd * rate, 3)}</td><td>${nf(d.visits.starsi + d.visits.placaj)}</td></tr>`).join("")}</tbody></table></div>
-    <p class="muted small">${esc(t("pilot.note"))}</p>`;
+    <p class="muted small">${esc(t("pilot.note"))}</p>
+    ${g ? growthHtml(g, loc) : ""}`;
   // Kartica se izriše znova: fokus ostane na izbiri, ki jo je uporabnik spremenil (tipkovnica).
   if (focusId) setTimeout(() => $(`#${focusId}`)?.focus());
   const reload = (e) => loadPilot($("#pilot-days").value, $("#pilot-school")?.value || "", e.target.id);
   $("#pilot-days").addEventListener("change", reload);
   $("#pilot-school")?.addEventListener("change", reload);
+}
+
+// Skrbnik: rast in vračanje (server/rast.js): prva naloga v 24 urah, vrnitev naslednji dan in po 7 dneh, viri, tedni.
+function growthHtml(g, loc) {
+  const nf = (x) => Number(x).toLocaleString(loc);
+  const pc = (x) => Number(x).toLocaleString(loc, { style: "percent", maximumFractionDigits: 0 });
+  const pct = (s) => (s.pct == null ? "–" : pc(s.pct));
+  const of = (s) => ({ a: nf(s.returned), b: nf(s.eligible) });
+  const dm = (s) => new Date(`${s}T12:00:00`).toLocaleDateString(loc, { day: "numeric", month: "numeric" });
+  const SRC = { "": "rast.src.none", priporocilo: "rast.src.ref", razred: "rast.src.class", drugo: "rast.src.other" };
+  const src = (v) => (SRC[v] ? t(SRC[v]) : v);
+  const th = (k) => `<th scope="col">${esc(t(k))}</th>`;
+  // Povezava v opombi je v \u2066 … \u2069 (LRI … PDI), da je v arabščini in perzijščini ne premeša smer besedila.
+  return `<h3 class="rast-title">${esc(t("rast.title"))}</h3>
+    <ul class="pilot-sum">
+      <li><b>${nf(g.newProfiles)}</b> ${esc(t("rast.newProfiles"))}</li>
+      <li><b>${pct(g.activation)}</b> ${esc(t("rast.activated", of(g.activation)))}</li>
+      <li><b>${pct(g.d1)}</b> ${esc(t("rast.d1", of(g.d1)))}</li>
+      <li><b>${pct(g.d7)}</b> ${esc(t("rast.d7", of(g.d7)))} · ${esc(t("rast.goal", { pct: pc(g.goal.target) }))} <b>${esc(t(`rast.goal.${g.goal.status}`))}</b></li>
+      <li><b>${nf(g.weeklyActive)}</b> ${esc(t("rast.wau"))}</li>
+    </ul>
+    <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.week")}${th("rast.new")}${th("rast.active")}</tr></thead>
+      <tbody>${[...g.weeks].reverse().map((w) => `<tr><td>${esc(`${dm(w.start)} – ${dm(w.end)}`)}</td><td>${nf(w.newProfiles)}</td><td>${nf(w.active)}</td></tr>`).join("")}</tbody></table></div>
+    ${g.sources.length ? `<div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.source")}${th("rast.visits")}${th("rast.profiles")}${th("rast.firstTask")}${th("rast.returned")}</tr></thead>
+      <tbody>${g.sources.map((s) => `<tr><td>${esc(src(s.vir))}</td><td>${nf(s.visits)}</td><td>${nf(s.profiles)}</td><td>${nf(s.firstTask)}</td><td>${s.d7Eligible ? `${nf(s.d7Returned)} / ${nf(s.d7Eligible)}` : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
+    <p class="muted small">${esc(t("rast.note", { link: `\u2066${location.origin}/?vir=facebook\u2069` }))}</p>`;
 }
 
 // Skrbnik: naročila šol s strani /sole (server/sole.js): stanje, opomba, predračun za tisk.

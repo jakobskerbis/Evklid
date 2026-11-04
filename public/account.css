@@ -100,6 +100,8 @@ details .card { margin-top: 8px; }
 .pilot-table th, .pilot-table td { padding: 4px 8px; text-align: end; white-space: nowrap; }
 .pilot-table th:first-child, .pilot-table td:first-child { text-align: start; }
 .pilot-scroll { overflow-x: auto; max-width: 100%; position: relative; }
+.pilot-scroll + .pilot-scroll { margin-top: 10px; }
+.rast-title { margin: 18px 0 8px; font-size: 1.05rem; }
 .pilot-table td { font-variant-numeric: tabular-nums; }
 /* »vsi učenci« je izbira, ne prazno polje: brez sivega videza */
 .pilot-filters .dd-btn.placeholder .dd-label { color: inherit; font-weight: inherit; }

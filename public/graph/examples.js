@@ -40,5 +40,6 @@ export const EXAMPLES = [
       return s;
     },
   },
+  { label: "a_n = a_{n-1} + d,\\ a_1 = 2", icon: "chart-column", state: ex(["a(n) = a(n - 1) + d", "a(1) = 2", { text: "d = 1.5", slider: { min: -3, max: 3, step: 0.5 } }, { text: "b(n) = (-1)^n · 10/n", color: 3 }], { view: { xmin: -1, xmax: 16, ymin: -12, ymax: 26 }, settings: { square: false } }) },
   { label: "\\sum_{n=1}^{k} \\frac{\\sin(nx)}{n}", icon: "sigma", state: ex(["y = ∑_(n=1)^(k) sin(nx)/n", { text: "k = 5", slider: { min: 1, max: 30, step: 1 } }], { settings: { piX: true }, view: { xmin: -7, xmax: 7, ymin: -3, ymax: 3 } }) },
 ];

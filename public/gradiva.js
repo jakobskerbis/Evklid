@@ -151,7 +151,7 @@ export function wireGradiva(root, studentId) {
 // v simulaciji (nastavi drsnik, klikni gumb). Ko je branje vklopljeno, čas čaka, da glas konča stavek.
 const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, "0")}`;
 
-function applyAction(simEl, a) {
+function applyAction(simEl, a, tries = 0) {
   const field = [...simEl.querySelectorAll("input[aria-label], select[aria-label]")].find((x) => x.getAttribute("aria-label") === a.target);
   if (a.do === "set" && field?.tagName === "SELECT") {
     // Vrednost možnosti ali njen napis (avtor vidi napis).
@@ -169,6 +169,11 @@ function applyAction(simEl, a) {
   if (a.do === "click") {
     const b = [...simEl.querySelectorAll("button, [role=button]")].find((x) => x.getAttribute("aria-label")?.trim() === a.target || x.textContent.trim() === a.target);
     if (b) return b.click(), true;
+    // Potrditveno polje (kit.toggle): klik na njegov napis ga preklopi.
+    const c = [...simEl.querySelectorAll("label.demo-check")].find((x) => x.textContent.trim() === a.target)?.querySelector("input");
+    if (c) return c.click(), true;
+    // Gumbi »Prikaz na grafu« (sim/prikaz.js) se pojavijo z zamikom: v prvem prizoru jih počakamo.
+    if (tries < 10 && simEl.isConnected) return setTimeout(() => applyAction(simEl, a, tries + 1), 150), true;
   }
   console.warn(`Video: v simulaciji ni »${a.target}«.`);
   return false;
