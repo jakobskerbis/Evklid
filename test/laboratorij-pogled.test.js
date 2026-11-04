@@ -43,7 +43,7 @@ test("lab list: the student's subject and grade first", () => {
   assert.match(labList("MAT-OS-8")[0].topics[0].path, /-OS-8$/);
   const m8 = labList("MAT-OS-8"), iFiz8 = m8.findIndex((x) => x.subject === "FIZ" && x.topics[0].path === "FIZ-OS-8");
   assert.ok(iFiz8 >= 0 && iFiz8 < m8.findIndex((x) => x.key === "lab-ohm"), "fizika 8. razreda pred lab-ohm (9. razred)");
-  assert.ok(mat8.findIndex((x) => x.id === "lab-co2") < mat8.findIndex((x) => x.id === "lab-titracija"));
+  assert.ok(m8.findIndex((x) => x.key === "lab-co2") < m8.findIndex((x) => x.key === "lab-titracija"));
   for (const x of labList("")) assert.ok(x.topics.every((tp) => tp.name && tp.level && tp.path), x.key);
 });
 
