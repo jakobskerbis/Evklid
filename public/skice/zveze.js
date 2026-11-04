@@ -12,7 +12,7 @@ export function zveze(stopinj) {
 }
 
 // Zaokrožena vrednost z »≈«, točna (npr. 0,5) z »=« izpuščenim.
-const pribl = (v) => (Math.abs(v - Number(v.toFixed(3))) < 1e-9 ? st(v, 3) : `≈ ${st(v, 3)}`);
+const pribl = (v) => (Math.abs(v - Number(v.toFixed(3))) < 1e-9 ? st(v, 3) : `≈\u00a0${st(v, 3)}`);
 
 export default function narisi(host) {
   const W = 320, H = 250, O = [120, 125], R = 88;
@@ -55,7 +55,7 @@ export default function narisi(host) {
       if (S.svg.lastChild !== tocka) S.svg.append(tocka);
     }
     S.cipi([
-      { barva: "glavna", oznaka: "\\alpha", vrednost: q.radPi === "0" ? "0° = 0 rad" : q.radPi ? `${q.stopinj}° = ${q.radPi} ≈ ${st(q.rad, 3)} rad` : `${q.stopinj}° ≈ ${st(q.rad, 3)} rad` },
+      { barva: "glavna", oznaka: "\\alpha", vrednost: q.radPi === "0" ? "0° = 0 rad" : q.radPi ? `${q.stopinj}° = ${q.radPi} ≈\u00a0${st(q.rad, 3)} rad` : `${q.stopinj}° ≈\u00a0${st(q.rad, 3)} rad` },
       { barva: "ploskev", oznaka: "\\sin\\alpha", vrednost: pribl(q.sin) },
       { barva: "druga", oznaka: "\\cos\\alpha", vrednost: pribl(q.cos) },
       { barva: "izbor", oznaka: "\\tan\\alpha = \\frac{\\sin\\alpha}{\\cos\\alpha}", vrednost: q.tan === null ? "ni definiran" : pribl(q.tan) },

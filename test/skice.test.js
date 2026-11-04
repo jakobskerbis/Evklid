@@ -393,3 +393,59 @@ test("ime kartice s TeX: vidno besedilo najde skico (»Diagonale n-kotnika«)", 
   assert.equal(skicaZa("MAT-OS", "Kvadrat"), SKICE["MAT-OS|Kvadrat"]);
   assert.equal(skicaZa("MAT-OS", "Kvadratni koren"), null);
 });
+
+test("zaporedja: a_n in s_n se ujemata s seštevanjem členov, tudi z negativnimi členi", async () => {
+  const { zaporedje } = await import("../public/skice/analiza.js");
+  for (const [vrsta, ks] of [["aritmeticno", [-2, -0.5, 0, 1.5, 2]], ["geometrijsko", [-2, -0.5, 0.25, 1, 2]]])
+    for (const a1 of [-4, -1.5, 2, 4])
+      for (const k of ks)
+        for (let n = 1; n <= 8; n++) {
+          const q = zaporedje(vrsta, a1, k, n);
+          let vsota = 0;
+          for (let i = 1; i <= n; i++) vsota += q.clen(i);
+          assert.ok(Math.abs(q.sn - vsota) < 1e-9, `${vrsta} a1=${a1} k=${k} n=${n}`);
+          assert.ok(Math.abs(q.an - q.clen(n)) < 1e-12);
+          assert.equal(q.clen(1), a1);
+          if (n > 1) assert.ok(Math.abs(vrsta === "aritmeticno" ? q.clen(n) - q.clen(n - 1) - k : q.clen(n) - q.clen(n - 1) * k) < 1e-9);
+        }
+});
+
+test("limita: za vsak x z 0 < |x − a| < δ je |f(x) − b| < ε, δ je največji", async () => {
+  const { f, limita } = await import("../public/skice/analiza.js");
+  for (let a = -2.4; a <= 2.4; a += 0.3)
+    for (let eps = 0.1; eps <= 1.5; eps += 0.2) {
+      const { b, delta } = limita(a, eps);
+      for (let t = -0.999; t <= 0.999; t += 0.037) if (t) assert.ok(Math.abs(f(a + t * delta) - b) < eps + 1e-12, `a=${a} ε=${eps}`);
+      // Malo širši pas že ne ustreza več.
+      const izven = [a - delta * 1.02, a + delta * 1.02].some((x) => Math.abs(f(x) - b) >= eps);
+      assert.ok(izven, `δ ni največji pri a=${a} ε=${eps}`);
+    }
+});
+
+test("odvod in diferencial: Δf/Δx → f′(x₀), ko gre h proti 0; Δf − df = dx²/2", async () => {
+  const { odvod, diferencial, brezNic } = await import("../public/skice/analiza.js");
+  for (let x0 = -2.5; x0 <= 2.5; x0 += 0.5) {
+    let prej = Infinity;
+    for (const h of [1, 0.5, 0.1, 0.01, 0.001, -0.001]) {
+      const q = odvod(x0, h);
+      const nap = Math.abs(q.kvocient - q.k);
+      assert.ok(nap <= prej + 1e-12);
+      prej = nap;
+    }
+    assert.ok(prej < 1e-3);
+    for (const dx of [-2, -0.3, 0.1, 1.4]) {
+      const d = diferencial(x0, dx);
+      assert.ok(Math.abs(d.razlika - (dx * dx) / 2) < 1e-12 && Math.abs(d.df - x0 * dx) < 1e-12);
+    }
+  }
+  assert.equal(brezNic(0, 0.1, 0.1), -0.1);
+  assert.equal(brezNic(0, -0.1, 0.1), 0.1);
+});
+
+test("skice: »≈« je vedno pred nedeljivim presledkom (v ozkem čipu se ne loči od števila)", () => {
+  const dir = new URL("../public/skice/", import.meta.url);
+  for (const ime of fs.readdirSync(dir).filter((x) => x.endsWith(".js"))) {
+    const koda = fs.readFileSync(new URL(ime, dir), "utf8").split("\n").filter((l) => !l.trim().startsWith("//"));
+    koda.forEach((l, i) => assert.ok(!/≈ /.test(l.replace(/\/\/.*$/, "")), `${ime}:${i + 1}`));
+  }
+});
