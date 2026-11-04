@@ -811,17 +811,20 @@ export function potence(el, { mode = "naravni" } = {}) {
       const hh = Math.max(1.5, (Math.abs(v) / maxV) * 160);
       const x = 22 + i * bw;
       s("rect", { x: x + 3, y: 180 - (v >= 0 ? hh : 0), width: bw - 6, height: hh, rx: 3, class: `bar ${e === n ? "fill-a" : e < 0 ? "fill-c" : "fill-b"}` }, svg);
-      label(svg, x + bw / 2, 196, `${a}^${e}`.replace("^", "^"), "tick");
+      label(svg, x + bw / 2, 196, `${a < 0 ? `(${fmt(a)})` : a}^${e}`, "tick");
       s("text", { x: x + bw / 2, y: 196, class: "tick", "text-anchor": "middle" }, svg);
-      if (i) label(svg, x, 210, Math.abs(a) > 1 ? `·${a}` : "", "tick small");
+      if (i) label(svg, x, 210, Math.abs(a) > 1 ? `·${a < 0 ? `(${fmt(a)})` : a}` : "", "tick small");
     });
     svg.querySelectorAll("text").forEach((t) => (t.textContent = t.textContent.replace(/\^(-?\d+)/, (m, e) => superscript(e))));
     s("line", { x1: 20, y1: 180, x2: 320, y2: 180, class: "axis" }, svg);
     const val = a ** n;
     const expand = n > 0 ? Array(n).fill(a < 0 ? `(${a})` : a).join("\\cdot ") : n === 0 ? "1" : `\\frac{1}{${Array(-n).fill(a < 0 ? `(${a})` : a).join("\\cdot ")}}`;
-    out.innerHTML = texBlock(`${a < 0 ? `(${a})` : a}^{${n}} = ${expand} = ${Number.isInteger(val) ? val : `\\frac{1}{${Math.round(1 / val)}}`}`) +
-      `<p>Osnova <b>${a}</b>, eksponent <b>${n}</b>: ${n > 0 ? `osnovo ${n}-krat pomnožimo samo s seboj` : n === 0 ? "vsaka potenca z eksponentom 0 (osnova ni 0) je 1" : `negativni eksponent pomeni obratno vrednost`}.</p>
-       <p class="muted">Ko gremo po stolpcih v desno, vsakič množimo z ${a}; v levo delimo z ${a}. Zato je ${a}⁰ = 1 in ${a}⁻¹ = 1/${a}.${a < 0 ? " Pri negativni osnovi je potenca s sodim eksponentom pozitivna, z lihim pa negativna." : ""}</p>`;
+    // Enakih členov ne ponavljamo (2¹ = 2, 2⁰ = 1, 2⁻¹ = 1/2).
+    const eq = [`${a < 0 ? `(${a})` : a}^{${n}}`, expand, `${Number.isInteger(val) ? val : `\\frac{1}{${Math.round(1 / val)}}`}`].filter((t, i, L) => t !== L[i - 1]);
+    const A = a < 0 ? `(${fmt(a)})` : `${a}`;
+    out.innerHTML = texBlock(eq.join(" = ")) +
+      `<p>Osnova <b>${fmt(a)}</b>, eksponent <b>${fmt(n)}</b>: ${n > 1 ? `${A}${superscript(n)} je zmnožek ${n} enakih faktorjev ${fmt(a)}` : n === 1 ? `${A}¹ = ${fmt(a)}, ker je pri eksponentu 1 en sam faktor (potenca je kar osnova)` : n === 0 ? "vsaka potenca z eksponentom 0 (osnova ni 0) je 1" : `negativni eksponent pomeni obratno vrednost`}.</p>
+       <p class="muted">Ko gremo po stolpcih v desno, vsakič množimo z ${A}; v levo delimo z ${A}. Zato je ${A}⁰ = 1 in ${A}⁻¹ = 1/${A}.${a < 0 ? " Pri negativni osnovi je potenca s sodim eksponentom pozitivna, z lihim pa negativna." : ""}</p>`;
   };
   const superscript = (e) => String(e).replace(/-/g, "⁻").replace(/\d/g, (d) => "⁰¹²³⁴⁵⁶⁷⁸⁹"[d]);
   layout(el, {
@@ -831,7 +834,7 @@ export function potence(el, { mode = "naravni" } = {}) {
       slider({ label: "eksponent", min: mode === "cela" ? -3 : 0, max: mode === "cela" ? 4 : 6, value: n, onInput: (v) => ((n = v), draw()) }),
     ],
     out,
-    tryText: mode === "cela" ? "Zakaj je 2⁻³ = 1/8? Pojdi od 2³ v levo in vsakič deli z 2." : "Primerjaj 2⁵ in 5². Kaj je večje? Kaj se zgodi s potencami negativne osnove (−2)?",
+    tryText: mode === "cela" ? "Nastavi osnovo 2: zakaj je 2⁻³ = 1/8? Pojdi od 2³ v levo in vsakič deli z 2. Ali enako velja tudi za osnovo 3?" : "Primerjaj 2⁵ in 5². Kaj je večje? Kaj se zgodi s potencami negativne osnove (−2)?",
   });
   draw();
 }

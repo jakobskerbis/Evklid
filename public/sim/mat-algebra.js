@@ -138,20 +138,37 @@ export function neenacba(el, { mode = "neenacba" } = {}) {
     base();
     if (mode === "neenacba") {
       // a x + b  rel  c
+      const T = (r) => r.replace("≤", "\\le ").replace("≥", "\\ge ");
+      const holds = (L) => ({ "<": L < c, ">": L > c, "≤": L <= c, "≥": L >= c })[rel];
+      const lhs = a * test + b;
+      const ok = holds(lhs);
+      s("path", { d: `M${X(test)},40 l-6,-10 h12 z`, class: ok ? "fill-ok" : "fill-danger" }, svg);
+      // Brez koeficienta 1 (x, −x), prosti člen 0 izpustimo; negativni x v preizkusu v oklepaju.
+      const ax = a === 1 ? "x" : a === -1 ? "-x" : `${a}x`;
+      const bt = b ? ` ${b > 0 ? "+" : "-"} ${Math.abs(b)}` : "";
+      const bTxt = b ? ` ${b > 0 ? "+" : "−"} ${Math.abs(b)}` : "";
+      const xt = test < 0 ? `(${fmt(test, 1)})` : fmt(test, 1);
+      const check = `<p>Preizkus x = ${fmt(test, 1)}: ${fmt(a)} · ${xt}${bTxt} = ${fmt(lhs, 2)} ${ok ? "" : "ni "}${rel} ${fmt(c)} → ${ok ? '<b class="ok-text">je rešitev</b>' : "ni rešitev"}.</p>`;
+      if (a === 0) {
+        // 0 · x + b rel c: x izgine, neenačba velja za vsak x ali za nobenega.
+        const all = holds(b);
+        if (all) s("line", { x1: 10, y1: 70, x2: 330, y2: 70, class: "ray a" }, svg);
+        out.innerHTML = texBlock(`0 \\cdot x${bt} ${T(rel)} ${c}\\\\ ${b} ${T(rel)} ${c}`) +
+          `<p>Pri a = 0 se x izgubi: ostane neenakost ${fmt(b)} ${rel} ${fmt(c)}, ki je ${all ? "<b>pravilna</b>" : "<b>nepravilna</b>"} ne glede na x.</p>
+         <p>Rešitev: ${all ? `${tex("x \\in \\mathbb{R}")} (vsako realno število).` : `neenačba nima rešitve, ${tex("\\emptyset")}.`}</p>${check}`;
+        return;
+      }
       const k = (c - b) / a;
       const flip = a < 0;
       const finalRel = flip ? { "<": ">", ">": "<", "≤": "≥", "≥": "≤" }[rel] : rel;
       const dir = finalRel === "<" || finalRel === "≤" ? -1 : 1;
       if (Math.abs(k) <= 8) ray(k, dir, finalRel === "≤" || finalRel === "≥", "a");
-      const lhs = a * test + b;
-      const ok = { "<": lhs < c, ">": lhs > c, "≤": lhs <= c, "≥": lhs >= c }[rel];
-      s("path", { d: `M${X(test)},40 l-6,-10 h12 z`, class: ok ? "fill-ok" : "fill-danger" }, svg);
-      const T = (r) => r.replace("≤", "\\le ").replace("≥", "\\ge ");
       const interval = dir < 0 ? `(-\\infty, ${tfmt(k)}${finalRel === "≤" ? "]" : ")"}` : `${finalRel === "≥" ? "[" : "("}${tfmt(k)}, \\infty)`;
-      out.innerHTML = texBlock(`${a}x ${b >= 0 ? "+" : "-"} ${Math.abs(b)} ${T(rel)} ${c}\\\\ ${a}x ${T(rel)} ${c - b}\\\\ x ${T(finalRel)} ${tfmt(k)}`) +
-        `<p>${flip ? `<b>Pozor:</b> delili smo z negativnim številom (${a}), zato se je znak neenakosti obrnil.` : `Delili smo s pozitivnim številom (${a}), znak ostane enak.`}</p>
+      const lines = [`${ax}${bt} ${T(rel)} ${c}`, `${ax} ${T(rel)} ${c - b}`, `x ${T(finalRel)} ${tfmt(k)}`].filter((l, i, L) => l !== L[i - 1]);
+      out.innerHTML = texBlock(lines.join("\\\\ ")) +
+        `<p>${flip ? `<b>Pozor:</b> delili smo z negativnim številom (${fmt(a)}), zato se je znak neenakosti obrnil.` : a === 1 ? "Koeficient pri x je 1, zato deliti ni treba." : `Delili smo s pozitivnim številom (${a}), znak ostane enak.`}</p>
          <p>Rešitev: ${tex(`x \\in ${interval}`)}. ${finalRel === "<" || finalRel === ">" ? "Prazen krožec: meja ne spada zraven." : "Poln krožec: meja spada zraven."}</p>
-         <p>Preizkus x = ${fmt(test, 1)}: ${a} · ${fmt(test, 1)} ${b >= 0 ? "+" : "−"} ${Math.abs(b)} = ${fmt(lhs, 2)} ${ok ? "" : "ni "}${rel} ${c} → ${ok ? '<b class="ok-text">je rešitev</b>' : "ni rešitev"}.</p>`;
+         ${check}`;
     } else {
       seg(lo, hi, loC, hiC, "a", 46);
       seg(lo2, hi2, true, true, "b", 58);
@@ -183,7 +200,7 @@ export function neenacba(el, { mode = "neenacba" } = {}) {
   };
   const ctl = mode === "neenacba"
     ? [
-        slider({ label: "a", min: -4, max: 4, value: a, onInput: (v) => ((a = v || 1), draw()) }),
+        slider({ label: "a", min: -4, max: 4, value: a, onInput: (v) => ((a = v), draw()) }),
         slider({ label: "b", min: -6, max: 6, value: b, onInput: (v) => ((b = v), draw()) }),
         segmented({ options: ["<", "≤", ">", "≥"], value: rel, onChange: (v) => ((rel = v), draw()) }),
         slider({ label: "c", min: -8, max: 8, value: c, onInput: (v) => ((c = v), draw()) }),
@@ -365,13 +382,15 @@ export function sistem(el) {
     line(k1, n1, "a");
     line(k2, n2, "b");
     let msg;
-    const E = (k, n) => `y = ${k === 1 ? "" : k === -1 ? "-" : tfmt(k, 1)}x ${n < 0 ? "-" : "+"} ${tfmt(Math.abs(n), 1)}`;
+    // kx + n brez koeficienta 1 (x, −x), brez 0x in brez + 0.
+    const L = (k, n) => (k ? `${k === 1 ? "" : k === -1 ? "-" : tfmt(k, 1)}x${n ? ` ${n < 0 ? "-" : "+"} ${tfmt(Math.abs(n), 1)}` : ""}` : tfmt(n, 1));
+    const E = (k, n) => `y = ${L(k, n)}`;
     if (k1 === k2) msg = n1 === n2 ? "<p>Premici se prekrivata: sistem ima <b>neskončno rešitev</b>.</p>" : "<p>Premici sta vzporedni (enak k, različen n): sistem <b>nima rešitve</b>.</p>";
     else {
       const x = (n2 - n1) / (k1 - k2), y = k1 * x + n1;
       if (Math.abs(x) <= 8 && Math.abs(y) <= 8) s("circle", { cx: A.X(x), cy: A.Y(y), r: 7, class: "pt fill-c" }, svg);
       msg = `<p>Premici se sekata v točki <b>(${fmt(x, 2)}, ${fmt(y, 2)})</b>: to je edina rešitev sistema, ker leži na obeh premicah.</p>
-        ${texBlock(`${tfmt(k1, 1)}x ${n1 < 0 ? "-" : "+"} ${tfmt(Math.abs(n1), 1)} = ${tfmt(k2, 1)}x ${n2 < 0 ? "-" : "+"} ${tfmt(Math.abs(n2), 1)} \\Rightarrow x = ${tfmt(x)}`)}`;
+        ${texBlock(`${L(k1, n1)} = ${L(k2, n2)} \\Rightarrow x = ${tfmt(x)}`)}`;
     }
     out.innerHTML = `<p><span class="dot dot-a"></span> ${tex(E(k1, n1))} &nbsp; <span class="dot dot-b"></span> ${tex(E(k2, n2))}</p>${msg}
       <p class="muted">Grafično reševanje: narišemo obe premici in odčitamo presečišče. Računsko: metoda zamenjave ali nasprotnih koeficientov.</p>`;
