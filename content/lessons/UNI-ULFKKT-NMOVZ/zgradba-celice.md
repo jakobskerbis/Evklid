@@ -26,7 +26,7 @@ Poskusi odgovoriti sam. Rešitev se pokaže sredi razlage, ko boš primerjal nek
 | celica jeter | $\approx 20\,\mu\mathrm{m}$ | da | da (veliko) |
 | celica lista | $\approx 30\text{–}50\,\mu\mathrm{m}$ | da | da |
 
-Vse štiri pa imajo nekaj skupnega: **celično membrano** okrog sebe, **citoplazmo** (tekočo notranjost), **DNA** z navodili in **ribosome**, ki po navodilih sestavljajo beljakovine.
+Vse štiri pa imajo nekaj skupnega: **celično membrano** okrog sebe, **citoplazmo** (tekočo notranjost), **DNA** z navodili in **ribosome**, ki po navodilih sestavljajo beljakovine. To povzema **celična teorija**: vsi organizmi so zgrajeni iz ene ali več celic; celica je najmanjša gradbena in funkcionalna enota živega; vsaka celica nastane z delitvijo že obstoječe celice.
 
 :::premisli
 Preden bereš naprej: kateri lastnosti v tabeli vedno nastopata skupaj? In kako je s tem povezana velikost?
@@ -44,7 +44,11 @@ Prokariontska DNA je navadno ena krožna molekula, ki leži kar v citoplazmi, v 
 
 $$\frac{S}{V} = \frac{3}{r}$$
 
-Ko se polmer podvoji, se površina poveča štirikrat, prostornina pa osemkrat. Vsak kubični mikrometer notranjosti ima tako na voljo pol manj površine. Velika celica rešuje težavo z notranjimi membranami: v sebi naguba ogromno površine, na kateri potekajo reakcije, in razdeli delo med predelke. Podobno naredijo pri tiskanih vezjih v telefonu: plošča ima deset in več tankih plasti, da se v isto debelino spravi več povezav.
+Izpeljava: $\dfrac{S}{V} = \dfrac{4\pi r^2}{\frac{4}{3}\pi r^3} = \dfrac{3}{r}$. Za kocko z robom $a$ je enako $\dfrac{6a^2}{a^3} = \dfrac{6}{a}$.
+
+**Trditev (podobna telesa).** Če vse dolžine telesa povečamo $k$-krat ($k > 0$) in oblika ostane enaka, se površina poveča $k^2$-krat, prostornina $k^3$-krat, razmerje $S/V$ pa se zmanjša $k$-krat. Dokaz: vsak košček površine je produkt dveh dolžin, zato se pomnoži s $k^2$; vsak košček prostornine je produkt treh dolžin, zato s $k^3$. Tako je $\dfrac{k^2 S}{k^3 V} = \dfrac{1}{k}\cdot\dfrac{S}{V}$.
+
+Ko se polmer podvoji ($k = 2$), se površina poveča štirikrat, prostornina pa osemkrat. Vsak kubični mikrometer notranjosti ima tako na voljo pol manj površine. Velika celica rešuje težavo z notranjimi membranami: v sebi naguba ogromno površine, na kateri potekajo reakcije, in razdeli delo med predelke. Podobno naredijo pri tiskanih vezjih v telefonu: plošča ima deset in več tankih plasti, da se v isto debelino spravi več povezav.
 
 :::premisli
 Zakaj ni bakterije, velike kot zrno riža, z enakim načinom življenja kot *E. coli*?
@@ -65,13 +69,13 @@ Ker bi bilo razmerje $S/V$ nekaj tisočkrat manjše. Skozi membrano ne bi prišl
 | lizosomi, vakuole, vezikli | enojna | razgradnja, shranjevanje, prenos |
 | ribosomi, citoskelet | brez membrane | sinteza beljakovin, oblika in gibanje |
 
-Jedrna ovojnica, ER, Golgijev aparat, lizosomi in vezikli so povezani v **endomembranski sistem**: beljakovina nastane na zrnatem ER, v mešičku potuje v Golgijev aparat in od tam v membrano, lizosom ali iz celice.
+Jedrna ovojnica, ER, Golgijev aparat, lizosomi in vezikli so povezani v **endomembranski sistem**: beljakovina nastane na zrnatem ER, v mešičku (veziklu) potuje v Golgijev aparat in od tam v membrano, lizosom ali iz celice.
 
-Mitohondriji in kloroplasti so izjema. Imajo dvojno membrano, lastno krožno DNA in ribosome 70S, kot bakterije. Razlaga je **endosimbiontska teorija**: nastali so iz bakterij, ki jih je nekoč pogoltnila večja celica in jih ni prebavila.
+Mitohondriji in kloroplasti so izjema. Imajo dvojno membrano, lastno krožno DNA in ribosome 70S, kot bakterije. Razlaga je **endosimbiontska teorija**: nastali so iz bakterij, ki jih je nekoč pogoltnila večja celica in jih ni prebavila. Dokazi: dvojna membrana, lastna krožna DNA brez histonov (beljakovin, okoli katerih je navita jedrna DNA evkariontov), ribosomi 70S, nastajanje z delitvijo že obstoječih organelov (kot bakterije) in zaporedja njihove DNA, ki so najbolj sorodna bakterijskim (mitohondriji alfa-proteobakterijam, kloroplasti cianobakterijam).
 
 **Membrana od blizu.** Vse membrane, tako zunanja kot membrane organelov, so zgrajene po istem načrtu. Osnovna molekula je **fosfolipid**: ima polarno »glavico«, ki rada leži v vodi (je **hidrofilna**), in dva dolga nepolarna »repa«, ki se vode izogibata (sta **hidrofobna**). V vodi se fosfolipidi sami uredijo v **dvosloj**: glavice navzven proti vodi na obeh straneh, repi navznoter, skriti pred vodo. Dvosloj je debel okrog $5\,\mathrm{nm}$, z beljakovinami vred $7$ do $10\,\mathrm{nm}$.
 
-V dvosloju plavajo **membranske beljakovine**: kanali, prenašalci, receptorji. Molekule se v ravnini membrane premikajo, zato govorimo o **modelu tekočega mozaika**. Membrana je **selektivno prepustna**: majhne nepolarne molekule ($\mathrm{O_2}$, $\mathrm{CO_2}$) jo prečkajo same, voda počasi, ioni in glukoza pa le skozi beljakovinske kanale in prenašalce.
+V dvosloju plavajo **membranske beljakovine**: kanali, prenašalci, receptorji. Molekule se v ravnini membrane premikajo, zato govorimo o **modelu tekočega mozaika** (Singer in Nicolson, 1972): membrana je tekoč lipidni dvosloj, v katerem so beljakovine razporejene kot koščki mozaika in se lahko gibljejo bočno. Membrana je **selektivno prepustna**: majhne nepolarne molekule ($\mathrm{O_2}$, $\mathrm{CO_2}$) jo prečkajo same, voda počasi, ioni in glukoza pa le skozi beljakovinske kanale in prenašalce.
 
 ## Rešeni primeri
 
@@ -113,13 +117,13 @@ za kroglo $\dfrac{S}{V} = \dfrac{3}{r}$
 
 ### Primer 3 (težji): koliko membran skriva celica jeter
 
-Celico jeter si predstavljaj kot kocko z robom $20\,\mu\mathrm{m}$. Meritve kažejo, da je celična membrana le približno $2\,\%$ vseh membran v tej celici. Kolikšna je skupna površina vseh membran? Kolikokrat več je notranjih membran kot zunanje?
+Celico jeter si predstavljaj kot kocko z robom $20\,\mu\mathrm{m}$. Meritve kažejo, da je celična membrana le približno $2\,\%$ vseh membran v tej celici. Kolikšna je skupna površina vseh membran? Kolikokrat več je notranjih membran kot zunanje? Kolikšen polmer bi morala imeti kroglasta celica brez notranjih membran, da bi imela enako razmerje med površino vseh membran in prostornino?
 
 **Podatki:** rob kocke $a = 20\,\mu\mathrm{m}$, delež celične membrane $2\,\% = 0{,}02$
-**Iščemo:** skupno površino membran $S_\mathrm{skupaj}$ in razmerje $S_\mathrm{notr} : S_\mathrm{zun}$
+**Iščemo:** skupno površino membran $S_\mathrm{skupaj}$, razmerje $S_\mathrm{notr} : S_\mathrm{zun}$ in polmer $r$ krogle z enakim $S_\mathrm{skupaj}/V$
 
 :::formula
-$S_\mathrm{zun} = 6 a^2$, $\quad S_\mathrm{skupaj} = \dfrac{S_\mathrm{zun}}{0{,}02}$
+$S_\mathrm{zun} = 6 a^2$, $\quad S_\mathrm{skupaj} = \dfrac{S_\mathrm{zun}}{0{,}02}$, $\quad V = a^3$, $\quad r = \dfrac{3}{S/V}$
 :::
 
 **Rešitev:**
@@ -128,7 +132,10 @@ $S_\mathrm{zun} = 6 a^2$, $\quad S_\mathrm{skupaj} = \dfrac{S_\mathrm{zun}}{0{,}
 2. Celična membrana je $2\,\%$ vseh, torej je skupna površina $50$-krat večja: $S_\mathrm{skupaj} = \dfrac{2400\,\mu\mathrm{m}^2}{0{,}02} = 120\,000\,\mu\mathrm{m}^2$.
 3. Notranje membrane: $S_\mathrm{notr} = 120\,000 - 2400 = 117\,600\,\mu\mathrm{m}^2$.
 4. Razmerje: $\dfrac{117\,600}{2400} = 49$.
-5. Odgovor: celica ima okrog $120\,000\,\mu\mathrm{m}^2$ membran, notranjih je $49$-krat več kot zunanje. Večino tvorita ER in notranja membrana mitohondrijev.
+5. Prostornina: $V = (20\,\mu\mathrm{m})^3 = 8000\,\mu\mathrm{m}^3$. Samo zunanja membrana da $\dfrac{2400}{8000} = 0{,}3\,\mu\mathrm{m}^{-1}$ (kar je $\dfrac{6}{a}$).
+6. Vse membrane: $\dfrac{S_\mathrm{skupaj}}{V} = \dfrac{120\,000}{8000} = 15\,\mu\mathrm{m}^{-1}$, $50$-krat več.
+7. Obratna naloga: iz $\dfrac{3}{r} = 15\,\mu\mathrm{m}^{-1}$ sledi $r = \dfrac{3}{15}\,\mu\mathrm{m} = 0{,}2\,\mu\mathrm{m}$.
+8. Odgovor: celica ima okrog $120\,000\,\mu\mathrm{m}^2$ membran, notranjih je $49$-krat več kot zunanje. Večino tvorita ER in notranja membrana mitohondrijev. Z njimi ima jetrna celica toliko membrane na enoto prostornine kot krogla s polmerom $0{,}2\,\mu\mathrm{m}$, manjša od bakterije.
 
 ### Primer 4: zdaj ti – zaščitno steklo
 
@@ -169,6 +176,42 @@ $N = \dfrac{300\,000\,\mathrm{nm}}{7{,}5\,\mathrm{nm}} = 40\,000$. Šele štirid
 - Endomembranski sistem: jedrna ovojnica, ER, Golgijev aparat, lizosomi, vezikli. Mitohondriji in kloroplasti imajo dvojno membrano, lastno DNA in ribosome 70S (endosimbioza).
 - Membrana: fosfolipidni dvosloj (hidrofilne glavice navzven, hidrofobni repi navznoter) z beljakovinami, model tekočega mozaika, selektivna prepustnost.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- celično teorijo ter definiciji prokariontske in evkariontske celice z razlikami (jedro, organeli, DNA, ribosomi 70S/80S, velikost);
+- izpeljavo $S/V = 3/r$ za kroglo in $6/a$ za kocko ter trditev o podobnih telesih z dokazom; zakaj velika celica potrebuje notranje membrane;
+- organele z eno, dvema ali nobeno membrano in njihove naloge; pot beljakovine skozi endomembranski sistem;
+- endosimbiontsko teorijo in njene dokaze;
+- model tekočega mozaika in selektivno prepustnost membrane.
+
+### Naloga 1
+
+V poenostavljenem modelu celica porabi $q = 1{,}2 \cdot 10^5$ molekul kisika na $\mu\mathrm{m}^3$ citoplazme v sekundi, skozi membrano pa ga sprejme največ $j = 2 \cdot 10^5$ molekul na $\mu\mathrm{m}^2$ v sekundi. (a) Izpelji pogoj, da se celica oskrbuje samo skozi površino, in izračunaj največji polmer kroglaste celice. (b) Kolikšen je največji rob kockaste celice in kolikšni sta prostornini obeh mejnih celic? (c) Celica, ki ima membrano nagubano v mikrovile (prstaste izrastke), ima $20$-krat večjo površino od gladke krogle z enakim polmerom in praktično enako prostornino. Kolikšen je zanjo največji polmer?
+
+**Rešitev:**
+
+1. Sprejem je $j \cdot S$, poraba $q \cdot V$. Celica zadošča, če $j S \ge q V$, torej $\dfrac{S}{V} \ge \dfrac{q}{j} = \dfrac{1{,}2 \cdot 10^5}{2 \cdot 10^5} = 0{,}6\,\mu\mathrm{m}^{-1}$.
+2. Krogla: $\dfrac{3}{r} \ge 0{,}6\,\mu\mathrm{m}^{-1}$, zato $r \le \dfrac{3}{0{,}6}\,\mu\mathrm{m} = 5\,\mu\mathrm{m}$.
+3. Kocka: $\dfrac{6}{a} \ge 0{,}6\,\mu\mathrm{m}^{-1}$, zato $a \le 10\,\mu\mathrm{m}$.
+4. Prostornini: krogla $\frac{4}{3}\pi \cdot 5^3 \approx 524\,\mu\mathrm{m}^3$, kocka $10^3 = 1000\,\mu\mathrm{m}^3$.
+5. Mikrovili: $S = 20 \cdot 4\pi r^2$, prostornina skoraj enaka, zato $\dfrac{S}{V} = \dfrac{60}{r} \ge 0{,}6\,\mu\mathrm{m}^{-1}$ in $r \le 100\,\mu\mathrm{m}$.
+6. Odgovor: (a) $S/V \ge q/j$, $r_\mathrm{max} = 5\,\mu\mathrm{m}$; (b) $a_\mathrm{max} = 10\,\mu\mathrm{m}$, prostornini $\approx 524\,\mu\mathrm{m}^3$ in $1000\,\mu\mathrm{m}^3$; (c) $r_\mathrm{max} = 100\,\mu\mathrm{m}$, $20$-krat več: povečanje površine odmakne mejo velikosti.
+
+### Naloga 2
+
+Izpelji razmerje $S/V$ za kroglo s polmerom $r$. Natančno navedi in dokaži, kako se $S/V$ spremeni, ko vse dolžine telesa povečamo $k$-krat. Utemelji, ali bi lahko bakterija brez notranjih membran s polmerom $1\,\mu\mathrm{m}$ zrasla do polmera $25\,\mu\mathrm{m}$ in živela enako kot prej.
+
+**Rešitev:**
+
+1. $\dfrac{S}{V} = \dfrac{4\pi r^2}{\frac{4}{3}\pi r^3} = \dfrac{3}{r}$.
+2. Trditev: pri isti obliki in $k$-krat večjih dolžinah je $S' = k^2 S$, $V' = k^3 V$ in zato $\dfrac{S'}{V'} = \dfrac{1}{k} \cdot \dfrac{S}{V}$.
+3. Dokaz: ploščina vsakega koščka površine je produkt dveh dolžin, prostornina vsakega koščka produkt treh; pri krogli neposredno $4\pi (kr)^2 = k^2 \cdot 4\pi r^2$ in $\frac{4}{3}\pi (kr)^3 = k^3 \cdot \frac{4}{3}\pi r^3$.
+4. Bakterija: $k = 25$, $S/V$ pade s $3\,\mu\mathrm{m}^{-1}$ na $0{,}12\,\mu\mathrm{m}^{-1}$, prostornina pa naraste $25^3 = 15\,625$-krat.
+5. Bakterija nima mitohondrijev; dihalna veriga in prenašalci za hranila so v celični membrani. Sprejem in pridobivanje ATP rasteta s površino ($625$-krat), potrebe s prostornino ($15\,625$-krat).
+6. Odgovor: ne; na enoto prostornine bi imela $25$-krat manj membrane in bi stradala, snovi pa bi z difuzijo predolgo potovale do sredine. Velike celice težavo rešujejo z notranjimi membranami in predelki.
+
 ## Drugače: Korak za korakom s številkami
 
 Kaj se zgodi z razmerjem $S/V$, ko celica raste? Vzemi kroglo in računaj $3/r$:
@@ -189,13 +232,15 @@ Kaj se zgodi z razmerjem $S/V$, ko celica raste? Vzemi kroglo in računaj $3/r$:
 
 ## Drugače: Kot zgodba
 
-Pred približno dvema milijardama let so morja naseljevali samo prokarionti. Ena od večjih celic, arheja, je imela navado požirati manjše bakterije in jih prebaviti.
+Pred približno dvema milijardama let je večja celica, arheja, pogoltnila bakterijo, ki je znala s kisikom učinkovito pridobivati energijo, in je ni prebavila. Gostiteljica je dajala zavetje in hrano, gostja obilo ATP. Gostja se je delila skupaj z gostiteljico, del genov predala v njeno DNA in sama ni več mogla živeti zunaj. Postala je **mitohondrij**.
 
-Nekega dne je pogoltnila bakterijo, ki je znala s kisikom zelo učinkovito pridobivati energijo, in je ni prebavila. Gostiteljica je dajala zavetje in hrano, gostja pa je vračala obilo ATP. Gostja se je delila skupaj z gostiteljico in se iz roda v rod prenašala v potomce. Del svojih genov je predala v gostiteljičino DNA, zato sama ni več mogla živeti zunaj. Postala je **mitohondrij**.
+Celica z lastno elektrarno si je lahko privoščila večjo velikost in več notranjih membran. Pozneje je ena od teh celic pogoltnila še cianobakterijo; iz nje je nastal **kloroplast**, s tem pa prednica alg in rastlin.
 
-Celica z lastno elektrarno si je lahko privoščila več: večjo velikost, več DNA, več notranjih membran, ki so se gubale iz zunanje in nazadnje obdale tudi DNA v jedro. Pozneje je ena od teh celic pogoltnila še cianobakterijo, ki je znala fotosintezo. Iz nje je nastal **kloroplast** in s tem prednica alg in rastlin.
+## Drugače: Uporaba v stroki
 
-Sledi te zgodbe nosiš še danes: mitohondriji v tvojih celicah imajo dvojno membrano, krožno DNA in bakterijske ribosome 70S. Zato nekateri antibiotiki, ki zavirajo bakterijske ribosome, v velikih odmerkih motijo tudi mitohondrije.
+- **Frakcioniranje celic.** Homogenat jeter centrifugirajo pri vse večjem pospešku: najprej se usedejo jedra (okoli $1000\,g$), nato mitohondriji (okoli $10\,000$–$20\,000\,g$), pri okoli $100\,000\,g$ pa koščki ER (mikrosomi). Tako ločijo organele za biokemijske meritve.
+- **Antibiotiki.** Tetraciklini, aminoglikozidi in makrolidi zavirajo ribosome 70S, penicilini sintezo peptidoglikanske stene. Človeške celice nimajo celične stene, njihovi citoplazemski ribosomi pa so 80S; ker imajo mitohondriji ribosome 70S, so pri velikih odmerkih prizadeti tudi ti.
+- **Liposomi.** Fosfolipidi v vodi sami tvorijo zaprte dvoslojne mešičke. V farmaciji vanje zapirajo zdravila, npr. citostatik doksorubicin, da manj škodi zdravim tkivom.
 
 ## Preveri se
 

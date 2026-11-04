@@ -16,9 +16,9 @@ Paradoks razreši ena beseda: **polarnost**. Ne gre za to, kako močna je vez, a
 **Najprej en primer do konca.** Etanal (acetaldehid, CH$_3$CHO) zmešamo z vodno raztopino NaCN in malo kisline. Nastane 2-hidroksipropannitril, CH$_3$CH(OH)CN. Kako?
 
 1. Kisik je bolj elektronegativen od ogljika, zato elektrone vezi C=O vleče k sebi. Ogljik ima delni pozitivni naboj ($\delta+$), kisik delni negativni ($\delta-$).
-2. Cianidni ion ima na ogljiku prost elektronski par in negativen naboj. Ta par napade $\delta+$ karbonilni ogljik. Delec, ki prinese elektronski par, je **nukleofil**; atom, ki ga sprejme, je **elektrofil**.
+2. Cianidni ion ima na ogljiku prost elektronski par in negativen naboj. Ta par napade $\delta+$ karbonilni ogljik. **Nukleofil** je delec s prostim elektronskim parom (Lewisova baza), ki ta par odda elektronsko revnemu atomu in z njim tvori novo kovalentno vez. **Elektrofil** je elektronsko reven atom ali delec (Lewisova kislina), ki par sprejme.
 3. Hkrati se šibkejša vez $\pi$ med C in O razcepi, njen elektronski par preide na kisik. Nastane **alkoksidni ion**, CH$_3$CH(O$^-$)CN.
-4. Alkoksid vzame proton iz vode ali HCN. Nastane **cianohidrin**.
+4. Alkoksid vzame proton iz vode ali HCN. Nastane **cianohidrin**: spojina s skupinama OH in CN na istem ogljiku.
 
 Pomembno: močna vez $\sigma$ med C in O ostane. Razcepi se le vez $\pi$, ki je šibkejša od vezi $\sigma$. V tem je odgovor na paradoks iz uvoda.
 
@@ -47,11 +47,25 @@ Nukleofil se veže na ogljik, kisik postane OH. Spreminja se samo nukleofil:
 | R–MgX (Grignard) | alkohol z novo vezjo C–C | nato vodna obdelava |
 | R–OH (s kislino kot katalizatorjem) | hemiacetal, nato acetal | acetal ščiti karbonil |
 
-Z amini ($\text{R–NH}_2$) se adiciji pridruži še izstop vode: nastane **imin** z vezjo C=N. Reakcija sečnine v lepilu se začne podobno: z adicijo na metanal da hidroksimetilsečnino, ki se nato z izstopom vode poveže v mrežo.
+**Nukleofilna adicija** je reakcija, pri kateri se nukleofil veže na elektrofilni ogljik dvojne vezi, vez $\pi$ se razcepi, iz dveh delcev pa nastane en produkt. Nukleofili, ki so tudi dobre izstopajoče skupine (H$_2$O, ROH, CN$^-$), adirajo **povratno**, zato je izid ravnotežje. Hidrid in karbanion iz Grignardovega reagenta adirata **nepovratno**, ker sta H$^-$ in R$^-$ zelo slabi izstopajoči skupini. Pri hidrataciji iz $K_\text{hidr} = [\text{hidrat}]/[\text{aldehid}]$ sledi delež hidrata $x = K_\text{hidr}/(1 + K_\text{hidr})$.
+
+Grignardov reagent da z metanalom primarni alkohol, z drugimi aldehidi sekundarni, s ketoni terciarni: karbonilni ogljik obdrži svoja substituenta in dobi še R, kisik pa postane OH.
+
+**Hemiacetal** ima na istem ogljiku skupini OH in OR, **acetal** dve skupini OR. Mehanizem nastanka acetala s kislino kot katalizatorjem:
+
+1. protonacija karbonilnega kisika poveča $\delta+$ na ogljiku, zato ga napade tudi šibak nukleofil ROH;
+2. odcep protona da hemiacetal;
+3. protonacija skupine OH hemiacetala jo spremeni v dobro izstopajočo skupino H$_2$O;
+4. izstop vode da resonančno stabiliziran oksonijev ion R$_2$C=O$^+$R;
+5. druga molekula ROH napade ogljik, odcep protona da acetal.
+
+Vse stopnje so povratne. K acetalu ravnotežje premaknemo s prebitkom alkohola in z odstranjevanjem vode, v vodni kislini pa acetal hidrolizira nazaj. V bazičnem in proti nukleofilom je acetal obstojen, zato **ščiti** karbonilno skupino.
+
+Z amini ($\text{R–NH}_2$) se adiciji pridruži še izstop vode: nastane **imin** z vezjo C=N. Amin se adira v karbinolamin (na istem ogljiku skupini OH in NHR), njegova protonirana skupina OH izstopi kot voda, iminijev ion odda proton. Reakcija je najhitrejša pri pH okoli $4$–$5$: v bolj kislem je amin protoniran (RNH$_3^+$) in ni več nukleofil, v manj kislem pa se OH ne protonira in ne izstopi. Reakcija sečnine v lepilu se začne podobno: z adicijo na metanal da hidroksimetilsečnino, ki se nato z izstopom vode poveže v mrežo.
 
 **Aldehidi so reaktivnejši od ketonov.** Razloga sta dva. Alkilne skupine ketona so elektronodonorske in zmanjšajo delni pozitivni naboj na ogljiku. Poleg tega so večje od vodika, zato nukleofilu zastirajo pot. Formaldehid ima dva vodika in je najreaktivnejši. Dobro se vidi pri hidratih: v vodi je metanal skoraj ves hidratiziran, etanal približno do polovice, propanon (aceton) pa le v desetinkah odstotka.
 
-**Drugo obličje: atom $\alpha$.** Ogljik takoj ob karbonilni skupini se imenuje **ogljik $\alpha$**, njegovi vodiki pa vodiki $\alpha$. Ti so nenavadno kisli: $\text{p}K_\text{a}$ propanona je okoli $19$, alkana pa okoli $50$. Ko baza odtrga proton $\alpha$, se negativni naboj razporedi med ogljik $\alpha$ in kisik. Ta resonančno stabiliziran anion je **enolat**. Enolat je nukleofil na ogljiku $\alpha$.
+**Drugo obličje: atom $\alpha$.** Ogljik takoj ob karbonilni skupini se imenuje **ogljik $\alpha$**, njegovi vodiki pa vodiki $\alpha$. Ti so nenavadno kisli: $\text{p}K_\text{a}$ propanona je okoli $19$, alkana pa okoli $50$. Ko baza odtrga proton $\alpha$, se negativni naboj razporedi med ogljik $\alpha$ in kisik. Ta resonančno stabiliziran anion je **enolat**. Enolat je nukleofil na ogljiku $\alpha$. Če enolat protoniramo na kisiku, dobimo **enol** (C=C–OH), tavtomer karbonilne spojine; pri preprostih aldehidih in ketonih je keto-enolno ravnotežje močno na strani karbonilne oblike.
 
 :::premisli
 Kaj se zgodi, ko enolat sreča drugo, še nespremenjeno molekulo istega aldehida? Kateri atom bo napadel katerega?
@@ -59,9 +73,13 @@ Kaj se zgodi, ko enolat sreča drugo, še nespremenjeno molekulo istega aldehida
 Ogljik $\alpha$ enolata (nukleofil) napade karbonilni ogljik druge molekule (elektrofil). To je nukleofilna adicija, le da je nukleofil enolat. Nastane nova vez C–C.
 :::
 
-**Aldolna reakcija.** Dve molekuli etanala z razredčeno NaOH dasta 3-hidroksibutanal, CH$_3$CH(OH)CH$_2$CHO. Ime »aldol« pove, da ima produkt hkrati **ald**ehidno skupino in **alkohol**no skupino OH. Skupina OH je na ogljiku $\beta$, dva atoma od karbonila. Ker se pri adiciji nič ne izgubi, ima produkt natanko maso obeh molekul skupaj.
+**Aldolna reakcija.** Dve molekuli etanala z razredčeno NaOH dasta 3-hidroksibutanal, CH$_3$CH(OH)CH$_2$CHO. Ime »aldol« pove, da ima produkt hkrati **ald**ehidno skupino in **alkohol**no skupino OH. Skupina OH je na ogljiku $\beta$, dva atoma od karbonila. Ker se pri adiciji nič ne izgubi, ima produkt natanko maso obeh molekul skupaj. Mehanizem z bazo kot katalizatorjem:
 
-Pri segrevanju produkt izgubi vodo: OH z ogljika $\beta$ in H z ogljika $\alpha$. Nastane **$\alpha,\beta$-nenasičen** karbonil, iz etanala but-2-enal. Temu rečemo **aldolna kondenzacija**. Reakcija gre rada, ker je nova vez C=C konjugirana s C=O.
+1. OH$^-$ odtrga proton $\alpha$, nastane enolat (ravnotežje, enolata je malo);
+2. ogljik $\alpha$ enolata napade karbonilni ogljik druge molekule, nastane alkoksid z novo vezjo C–C;
+3. alkoksid vzame proton vodi, nastane aldol, OH$^-$ se obnovi.
+
+Pri segrevanju produkt izgubi vodo: OH z ogljika $\beta$ in H z ogljika $\alpha$. Nastane **$\alpha,\beta$-nenasičen** karbonil, iz etanala but-2-enal. Temu rečemo **aldolna kondenzacija**. V bazičnem poteče po mehanizmu E1cB: baza odtrga še en proton $\alpha$, nastali enolat izrine OH$^-$ z ogljika $\beta$. Pogoj je torej, da ima ogljik $\alpha$ aldola še vodik. Reakcija gre rada, ker je nova vez C=C konjugirana s C=O.
 
 Pri **križni aldolni reakciji** sodelujeta dve različni spojini. Čisto gre le, če ena nima vodikov $\alpha$ (npr. benzaldehid ali metanal). Ta je lahko samo elektrofil, druga pa daje enolat.
 
@@ -106,13 +124,13 @@ $n = \dfrac{m}{M}$; $n(\text{NaBH}_4) = \dfrac{n(\text{keton})}{4}$; $m = n \cdo
 
 ### Primer 3: aldolna reakcija propanala
 
-Propanal ($5{,}81\,\text{g}$, $M = 58{,}08\,\text{g/mol}$) obdelamo z razredčeno NaOH. Kateri aldol nastane in koliko ga največ dobimo ($M = 116{,}16\,\text{g/mol}$)? Koliko produkta največ dobimo, če zmes segrevamo in pride do kondenzacije ($M = 98{,}15\,\text{g/mol}$)?
+Propanal ($5{,}81\,\text{g}$, $M = 58{,}08\,\text{g/mol}$) obdelamo z razredčeno NaOH. Kateri aldol nastane in koliko ga največ dobimo ($M = 116{,}16\,\text{g/mol}$)? Koliko produkta največ dobimo, če zmes segrevamo in pride do kondenzacije ($M = 98{,}15\,\text{g/mol}$)? Po čiščenju izoliramo $3{,}93\,\text{g}$ enala; kolikšen je izkoristek? Ali bi enak postopek z zmesjo propanala in etanala dal en sam produkt?
 
-**Podatki:** $m(\text{propanal}) = 5{,}81\,\text{g}$, $M(\text{propanal}) = 58{,}08\,\text{g/mol}$, $M(\text{aldol}) = 116{,}16\,\text{g/mol}$, $M(\text{enal}) = 98{,}15\,\text{g/mol}$
-**Iščemo:** strukturi produktov in njuni največji masi
+**Podatki:** $m(\text{propanal}) = 5{,}81\,\text{g}$, $M(\text{propanal}) = 58{,}08\,\text{g/mol}$, $M(\text{aldol}) = 116{,}16\,\text{g/mol}$, $M(\text{enal}) = 98{,}15\,\text{g/mol}$, izolirano $3{,}93\,\text{g}$ enala
+**Iščemo:** strukturi produktov, njuni največji masi, izkoristek in produkte križne reakcije z etanalom
 
 :::formula
-$2\,\text{propanal} \to \text{aldol}$; $\text{aldol} \to \text{enal} + \text{H}_2\text{O}$; $n(\text{aldol}) = \tfrac{1}{2}\,n(\text{propanal})$
+$2\,\text{propanal} \to \text{aldol}$; $\text{aldol} \to \text{enal} + \text{H}_2\text{O}$; $n(\text{aldol}) = \tfrac{1}{2}\,n(\text{propanal})$; izkoristek $= \dfrac{m(\text{izolirano})}{m(\text{največ})}$
 :::
 
 **Rešitev:**
@@ -121,8 +139,10 @@ $2\,\text{propanal} \to \text{aldol}$; $\text{aldol} \to \text{enal} + \text{H}_
 2. Nova vez C–C poveže C2 prve molekule s C1 druge. Produkt je CH$_3$CH$_2$CH(OH)–CH(CH$_3$)–CHO, 3-hidroksi-2-metilpentanal.
 3. $n(\text{propanal}) = \dfrac{5{,}81\,\text{g}}{58{,}08\,\text{g/mol}} \approx 0{,}1000\,\text{mol}$, zato $n(\text{aldol}) = 0{,}0500\,\text{mol}$.
 4. $m(\text{aldol}) = 0{,}0500\,\text{mol} \cdot 116{,}16\,\text{g/mol} \approx 5{,}81\,\text{g}$; masa se ohrani, ker je adicija.
-5. Pri segrevanju izstopi voda (OH s C3, H s C2): nastane 2-metilpent-2-enal. $m = 0{,}0500\,\text{mol} \cdot 98{,}15\,\text{g/mol} \approx 4{,}91\,\text{g}$.
-6. Odgovor: aldol je 3-hidroksi-2-metilpentanal (največ $5{,}81\,\text{g}$), po kondenzaciji pa 2-metilpent-2-enal (največ $4{,}91\,\text{g}$).
+5. Pri segrevanju izstopi voda (OH s C3, H s C2): nastane 2-metilpent-2-enal. Kondenzacija je mogoča, ker ima C2 aldola še en vodik. $m = 0{,}0500\,\text{mol} \cdot 98{,}15\,\text{g/mol} \approx 4{,}91\,\text{g}$.
+6. Izkoristek: $\dfrac{3{,}93\,\text{g}}{4{,}91\,\text{g}} \approx 0{,}800$, torej $80{,}0\,\%$.
+7. Zmes z etanalom: obe spojini imata vodike $\alpha$ in obe sta elektrofila, zato nastanejo štirje aldoli: 3-hidroksibutanal (etanal + etanal), 3-hidroksi-2-metilpentanal (propanal + propanal), 3-hidroksipentanal (enolat etanala + propanal) in 3-hidroksi-2-metilbutanal (enolat propanala + etanal).
+8. Odgovor: aldol je 3-hidroksi-2-metilpentanal (največ $5{,}81\,\text{g}$), po kondenzaciji pa 2-metilpent-2-enal (največ $4{,}91\,\text{g}$, izkoristek $80{,}0\,\%$). Zmes z etanalom bi dala štiri produkte, zato čista križna aldolna reakcija potrebuje partnerja brez vodikov $\alpha$.
 
 ### Primer 4: zdaj ti
 
@@ -137,7 +157,7 @@ $n = \dfrac{m}{M}$; $n(\text{produkt}) = n(\text{benzaldehid})$; $m = n \cdot M$
 
 **Rešitev:**
 
-1. Benzaldehid nima vodikov $\alpha$, zato je samo elektrofil. Enolat tvori propanon, ki je v prebitku, zato benzaldehid omejuje reakcijo.
+1. Benzaldehid nima vodikov $\alpha$, zato je samo elektrofil. Enolat tvori propanon, ki je v prebitku, zato benzaldehid omejuje reakcijo. Aldol tu izgubi vodo že brez močnega segrevanja, ker je nova vez C=C konjugirana z obročem in s C=O.
 2. $n(\text{benzaldehid}) = \dfrac{2{,}12\,\text{g}}{106{,}12\,\text{g/mol}} \approx 0{,}0200\,\text{mol}$.
 3. Izračunaj maso produkta sam, nato preveri:
 
@@ -164,11 +184,54 @@ $m \approx 2{,}92\,\text{g}$. Ena molekula benzaldehida se poveže z eno molekul
 - Vodiki $\alpha$ so kisli ($\text{p}K_\text{a} \approx 19$–$20$); baza da enolat, nukleofil na ogljiku $\alpha$.
 - Aldolna adicija: enolat + karbonil → $\beta$-hidroksi karbonil. Pri segrevanju izstopi voda: $\alpha,\beta$-nenasičen karbonil (kondenzacija).
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije nukleofila, elektrofila, nukleofilne adicije, hidrata, hemiacetala, acetala, imina, enola, enolata in vodikov $\alpha$;
+- mehanizem nukleofilne adicije in razliko med povratno (H$_2$O, ROH, CN$^-$) in nepovratno adicijo (H$^-$, R$^-$);
+- utemeljitev, zakaj so aldehidi reaktivnejši od ketonov (elektronski in sterični razlog), in delež hidrata iz $K_\text{hidr}$;
+- mehanizem kislinsko katalizirane tvorbe acetala in tvorbe imina z vlogo pH;
+- mehanizem aldolne adicije in kondenzacije (E1cB) ter pogoj za čisto križno aldolno reakcijo;
+- kateri alkohol da Grignardov reagent z metanalom, z drugimi aldehidi in s ketoni.
+
+### Naloga 1
+
+2-etilheksan-1-ol, surovino za mehčala v PVC, industrijsko pripravijo iz butanala: z aldolno kondenzacijo nastane 2-etilheks-2-enal, ki ga s katalitsko hidrogenacijo (H$_2$, Ni) pretvorijo v alkohol. (a) Napiši strukture vmesnih produktov in utemelji, zakaj je etilna skupina na C2. (b) Iz $14{,}42\,\text{g}$ butanala ($M = 72{,}11\,\text{g/mol}$) z izkoristkom kondenzacije $85{,}0\,\%$ in hidrogenacije $90{,}0\,\%$: koliko gramov 2-etilheksan-1-ola ($M = 130{,}23\,\text{g/mol}$) dobimo? (c) Koliko litrov vodika pri $0\,°\text{C}$ in $101{,}3\,\text{kPa}$ ($V_\text{m} = 22{,}41\,\text{L/mol}$) najmanj potrebujemo za popolno hidrogenacijo vsega nastalega enala?
+
+**Rešitev:**
+
+1. (a) Ogljik $\alpha$ butanala (CH$_3$CH$_2$CH$_2$CHO) je C2. OH$^-$ odtrga proton z njega, enolat CH$_3$CH$_2$CH$^-$–CHO napade C1 druge molekule.
+2. Aldol: CH$_3$CH$_2$CH$_2$CH(OH)–CH(CH$_2$CH$_3$)–CHO, 2-etil-3-hidroksiheksanal. Skupina CHO enolata postane C1 aldola, njegov ogljik $\alpha$ pa C2. Na tem ogljiku ostane preostanek verige enolata (C3 in C4 butanala), to je etilna skupina, zato je na C2.
+3. C2 ima še vodik, zato pri segrevanju po E1cB izstopi voda: CH$_3$CH$_2$CH$_2$CH=C(CH$_2$CH$_3$)–CHO, 2-etilheks-2-enal.
+4. Hidrogenacija nasiti vez C=C in reducira C=O: CH$_3$(CH$_2$)$_3$CH(CH$_2$CH$_3$)CH$_2$OH, 2-etilheksan-1-ol.
+5. (b) $n(\text{butanal}) = \dfrac{14{,}42\,\text{g}}{72{,}11\,\text{g/mol}} \approx 0{,}2000\,\text{mol}$; iz dveh molekul nastane ena, zato največ $0{,}1000\,\text{mol}$ enala.
+6. Pri izkoristku $85{,}0\,\%$: $n(\text{enal}) = 0{,}1000 \cdot 0{,}850 = 0{,}0850\,\text{mol}$; po hidrogenaciji $n(\text{alkohol}) = 0{,}0850 \cdot 0{,}900 = 0{,}0765\,\text{mol}$.
+7. $m(\text{alkohol}) = 0{,}0765\,\text{mol} \cdot 130{,}23\,\text{g/mol} \approx 9{,}96\,\text{g}$.
+8. (c) Na molekulo enala gresta dve molekuli H$_2$ (C=C in C=O): $n(\text{H}_2) = 2 \cdot 0{,}0850 = 0{,}170\,\text{mol}$, $V = 0{,}170\,\text{mol} \cdot 22{,}41\,\text{L/mol} \approx 3{,}81\,\text{L}$.
+9. Odgovor: butanal → 2-etil-3-hidroksiheksanal → 2-etilheks-2-enal → 2-etilheksan-1-ol; dobimo okoli $9{,}96\,\text{g}$ alkohola, za hidrogenacijo pa potrebujemo najmanj $3{,}81\,\text{L}$ vodika.
+
+### Naloga 2
+
+Natančno definiraj hemiacetal in acetal. Napiši mehanizem kislinsko katalizirane reakcije etanala s prebitkom metanola do acetala in utemelji: (a) zakaj je kislina potrebna, (b) kako ravnotežje premaknemo k produktu, (c) zakaj z acetalom zaščitimo aldehidno skupino, ko želimo v isti molekuli z LiAlH$_4$ reducirati estrsko skupino.
+
+**Rešitev:**
+
+1. Definiciji: hemiacetal ima na istem ogljiku skupini OH in OR, acetal dve skupini OR. Produkt je 1,1-dimetoksietan, CH$_3$CH(OCH$_3$)$_2$.
+2. Protonacija kisika C=O etanala da CH$_3$CH=O$^+$H; ogljik postane bolj elektrofilen.
+3. Metanol napade ogljik, odcep protona da hemiacetal CH$_3$CH(OH)OCH$_3$.
+4. Protonacija skupine OH, izstop vode da oksonijev ion CH$_3$CH=O$^+$CH$_3$, stabiliziran s prostim parom kisika.
+5. Druga molekula metanola napade ogljik, odcep protona da acetal; H$^+$ se obnovi.
+6. (a) Metanol je šibek nukleofil; brez protonacije karbonil ni dovolj elektrofilen, skupina OH hemiacetala pa ne izstopi kot OH$^-$, temveč šele kot H$_2$O.
+7. (b) Vse stopnje so povratne. Po Le Chatelierjevem načelu ravnotežje premaknemo s prebitkom metanola in z odstranjevanjem vode (sušilo ali azeotropna destilacija).
+8. (c) Acetal nima elektrofilne vezi C=O in je obstojen v bazičnem in proti hidridu, zato LiAlH$_4$ reducira le ester. Po redukciji acetal z vodno kislino hidroliziramo nazaj v aldehid.
+9. Odgovor: acetal nastane v petih stopnjah s kislino kot katalizatorjem, ravnotežje premaknemo s prebitkom alkohola in odstranjevanjem vode, kot zaščitna skupina pa deluje, ker je obstojen v bazičnem in razpade le v kislem.
+
 ## Drugače: Z analogijo
 
 Misli na kitaro. Napete strune ne strgaš zlahka, a zazveni že ob rahlem udarcu prsta. Karbonilna skupina je podobna: vez C=O je močna, a ima »občutljivo točko« – ogljik, s katerega je kisik odvlekel elektrone. Nukleofil je prst, ki udari natanko tja.
 
-Aldolna reakcija pa je kot duet, v katerem isto skladbo pojeta dva pevca z različnima vlogama. Ena molekula se z bazo spremeni v enolat in »začne« (napade), druga ostane karbonil in »odgovori« (sprejme napad). Če pevec ne more začeti, ker nima vodika $\alpha$, kot benzaldehid, lahko le odgovarja. Zato križna aldolna reakcija z benzaldehidom da en sam glavni produkt.
+Aldolna reakcija je duet z različnima vlogama: enolat »začne« (napade), karbonil »odgovori« (sprejme napad). Benzaldehid brez vodika $\alpha$ lahko le odgovarja, zato križna reakcija z njim da en sam glavni produkt.
 
 ## Drugače: Bolj natančno
 

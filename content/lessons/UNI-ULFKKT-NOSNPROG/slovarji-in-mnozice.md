@@ -5,11 +5,11 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Na transfuzijski postaji v enem dopoldnevu daruje kri $9$ ljudi. Medicinska sestra zapiše njihove krvne skupine v seznam z devetimi elementi. Nato ukaz `len(set(skupine))` vrne $4$. Kam je izginilo pet darovalcev?
+Na transfuzijski postaji v enem dopoldnevu daruje kri $9$ ljudi. Sestra zapiše njihove krvne skupine v seznam, ukaz `len(set(skupine))` vrne $4$. Kam je izginilo pet darovalcev?
 
 Nikamor. Python je odgovoril na drugo vprašanje: **koliko različnih** krvnih skupin je bilo. In še ena nenavadnost: če iz zbirke `{"A": 4, "0": 3}` hočeš »prvi element« z `[0]`, Python ne vrne $4$, ampak javi napako, čeprav podatki tam so.
 
-Oboje postane logično, ko spoznaš dve novi zbirki. **Slovar** hrani pare »ime: podatek« in iščeš po imenu, ne po mestu. **Množica** hrani vsak element samo enkrat. Z njima hitro prešteješ, kolikokrat se kaj pojavi (diagnoze, nukleotidi v DNK, krvne skupine), in primerjaš skupine, na primer simptome dveh bolezni.
+Oboje postane logično, ko spoznaš dve novi zbirki. **Slovar** hrani pare »ime: podatek« in iščeš po imenu, ne po mestu. **Množica** hrani vsak element samo enkrat. Z njima hitro prešteješ pojavitve (diagnoze, nukleotide v DNK) in primerjaš skupine, na primer simptome dveh bolezni.
 
 ## Razlaga
 
@@ -27,12 +27,14 @@ stevec = {"A": 4, "0": 3, "B": 1, "AB": 1}
 
 Vsak par ima **ključ** (levo od dvopičja) in **vrednost** (desno). Ključ je kot naslov predalčka, vrednost je tisto, kar je v njem.
 
+**Definicija.** *Slovar* (tip `dict`) je zbirka parov `ključ: vrednost`, v kateri so ključi paroma različni in **zgoščljivi** (angl. *hashable*): nespremenljivi objekti, npr. `int`, `float`, `str`, `bool` ali terka takih vrednosti; seznam, množica ali slovar ne more biti ključ. Matematično je slovar preslikava iz končne množice ključev v vrednosti. Ključa sta ista, če sta enaka po `==`. Zato `{1: "a", 1.0: "b", True: "c"}` ni slovar s tremi ključi, ampak `{1: "c"}`: velja `1 == 1.0 == True`, ostane prvi zapisani ključ, vrednost pa se dvakrat prepiše.
+
 **Branje in pisanje.** Do vrednosti prideš s ključem v oglatih oklepajih: `stevec["0"]` je `3`. Z enakim zapisom vrednost spremeniš ali dodaš nov par: `stevec["A"] = 5` prepiše staro vrednost, `stevec["A2"] = 1` doda nov ključ. Ključi so **edinstveni**: isti ključ ne more biti v slovarju dvakrat. `len(stevec)` pove število ključev, ne vsote vrednosti.
 
-Ker slovar išče po ključu, `stevec[0]` ne pomeni »prvi par«. Python išče ključ `0` (število), ga ne najde in javi napako `KeyError`. Enako se zgodi pri ključu, ki ga ni: `stevec["C"]`. Zato pred branjem preveri `if "C" in stevec:` (operator `in` pri slovarju gleda ključe) ali uporabi `stevec.get("C", 0)`, ki vrne `0`, če ključa ni.
+Ker slovar išče po ključu, `stevec[0]` ne pomeni »prvi par«. Python išče ključ `0` (število), ga ne najde in javi napako `KeyError`. Enako se zgodi pri ključu, ki ga ni: `stevec["C"]`. Zato pred branjem preveri `if "C" in stevec:` (operator `in` pri slovarju gleda ključe) ali uporabi `stevec.get("C", 0)`, ki vrne `0`, če ključa ni. Natančno: `d.get(k, p)` vrne `d[k]`, če je `k in d`, sicer `p` (brez `p` vrne `None`), slovarja pa ne spremeni.
 
 :::premisli
-Slovar je na začetku prazen: `stevec = {}`. Kaj se zgodi, če takoj izvedeš `stevec["A"] = stevec["A"] + 1`? Zakaj?
+Pisanje v nov ključ par doda, branje manjkajočega ključa pa javi napako. Slovar je prazen: `stevec = {}`. Ali vrstica `stevec["A"] = stevec["A"] + 1` naredi `{"A": 1}`? Zakaj?
 ---
 Python javi `KeyError`. Desna stran se izračuna najprej, ključa `"A"` pa še ni, zato ga ni mogoče prebrati. Prvo pojavitev moraš zapisati z `stevec["A"] = 1`.
 :::
@@ -50,7 +52,21 @@ for s in skupine:
 
 Zapis `stevec[s] += 1` je okrajšava za `stevec[s] = stevec[s] + 1`. Krajše celoten `if` naredi `stevec[s] = stevec.get(s, 0) + 1`. Postopek deluje za vsak seznam ali niz: za diagnoze v kartoteki, za črke v zaporedju DNK, za besede v izvidu. Po slovarju se sprehodiš z `for k in stevec:`; zanka da ključe, vrednost dobiš s `stevec[k]`.
 
+**Trditev (pravilnost štetja).** Naj bo `seznam` dolžine $n$ z zgoščljivimi elementi. Po zanki je za vsak element `x` seznama `stevec[x]` enak številu pojavitev `x`, ključi slovarja pa so natanko različni elementi. Zato je vsota vrednosti enaka $n$ in `len(stevec) == len(set(seznam))` (`set` spodaj odstrani ponovitve).
+
+*Dokaz* (indukcija po številu obdelanih elementov). Dokažemo močnejšo trditev: po obdelanih prvih $i$ elementih so ključi natanko različni med njimi, vrednost vsakega pa je število njegovih pojavitev med njimi. Pred zanko je slovar prazen, zato to za $i = 0$ drži. Naj drži po $i$ elementih in naj bo naslednji `s`. Če `s` že je ključ, se njegova vrednost poveča za $1$, sicer `s` postane ključ z vrednostjo $1$; drugi ključi se ne spremenijo. Torej trditev drži tudi po $i + 1$ elementih, pri $i = n$ pa je to ravno trditev o štetju. Vsak korak poveča vsoto vrednosti za $1$, zato je na koncu $n$. $\square$
+
 **Množica: samo različni.** Včasih število ni pomembno, zanima te le, *kaj vse* se pojavi. Takrat uporabiš množico. `set(skupine)` naredi množico `{"A", "0", "B", "AB"}`: ponovitve izginejo, zato je `len` enak $4$. Množica nima vrstnega reda in nima indeksov; Python jo lahko izpiše v kateremkoli zaporedju. Prazno množico ustvariš s `set()`, ker je `{}` prazen slovar. Element dodaš z `.add(x)`, z `x in m` pa preveriš, ali je v množici.
+
+**Definicija.** *Množica* (tip `set`) je neurejena zbirka paroma različnih zgoščljivih elementov. Za množici $a$ in $b$ so operacije enake kot v matematiki:
+
+- unija `a | b` $= a \cup b = \{x : x \in a \text{ ali } x \in b\}$,
+- presek `a & b` $= a \cap b = \{x : x \in a \text{ in } x \in b\}$,
+- razlika `a - b` $= a \setminus b = \{x : x \in a \text{ in } x \notin b\}$,
+- simetrična razlika `a ^ b` $= (a \setminus b) \cup (b \setminus a)$, elementi natanko ene od množic,
+- `a <= b` je `True` natanko tedaj, ko je $a \subseteq b$.
+
+Slovar in množica sta **zgoščevalni tabeli**: iz elementa (ključa) Python izračuna število `hash(x)` in iz njega neposredno mesto v pomnilniku (več v razdelku Bolj natančno). Zato `x in mnozica` in `k in slovar` v povprečju trajata enako dolgo ne glede na velikost, `x in seznam` pa sorazmerno z dolžino seznama.
 
 **Dve množici skupaj.** Vzemimo simptome dveh bolezni:
 
@@ -74,6 +90,10 @@ Gripa ima $4$ simptome, prehlad tudi $4$. Zakaj ima unija le $6$ elementov in ne
 ---
 Kašelj in utrujenost sta v obeh, množica pa vsak element hrani le enkrat. Velja $4 + 4 - 2 = 6$: velikost unije je vsota velikosti, zmanjšana za velikost preseka.
 :::
+
+**Izrek (načelo vključitev in izključitev).** Naj bosta $a$ in $b$ končni množici, $|a|$ pa število elementov množice $a$ (v Pythonu `len(a)`). Potem je $|a \cup b| = |a| + |b| - |a \cap b|$.
+
+*Dokaz.* Unija razpade na tri disjunktne dele: $a \setminus b$, $a \cap b$ in $b \setminus a$. Ker je $a$ disjunktna unija $a \setminus b$ in $a \cap b$, je $|a| = |a \setminus b| + |a \cap b|$, enako $|b| = |b \setminus a| + |a \cap b|$. Seštejemo: $|a| + |b| = |a \setminus b| + |b \setminus a| + 2|a \cap b| = |a \cup b| + |a \cap b|$. $\square$
 
 ## Rešeni primeri
 
@@ -114,12 +134,12 @@ Za vsak element `s`: `stevec[s] = stevec.get(s, 0) + 1`
 4. Preizkus: vsota vrednosti mora biti enaka dolžini seznama, $4 + 3 + 1 + 1 = 9$.
 5. Odgovor: `stevec["A"]` je $4$, slovar ima $4$ ključe (toliko je različnih skupin).
 
-### Primer 3: kateri bolezni ustreza bolnik
+### Primer 3 (težji): kateri bolezni ustreza bolnik
 
-Bolnik navaja simptome `bolnik = {"kašelj", "kihanje", "izcedek iz nosu"}`. Množici `gripa` in `prehlad` sta iz razlage. Kateri bolezni se bolnik bolj ujema (več skupnih simptomov)? Koliko različnih simptomov skupaj pokrivata obe bolezni?
+Bolnik navaja simptome `bolnik = {"kašelj", "kihanje", "izcedek iz nosu"}`. Množici `gripa` in `prehlad` sta iz razlage. Podobnost meri **Jaccardov indeks** $J(a, b) = |a \cap b| / |a \cup b|$ (za neprazno unijo). (a) Izračunaj $J$ bolnika z vsako boleznijo. (b) Koliko različnih simptomov skupaj pokrivata obe bolezni? (c) Bolniku se nato pojavi $k$ simptomov gripe, ki jih še nima. Pri katerem najmanjšem $k$ je njegov indeks z gripo vsaj $0{,}5$?
 
-**Podatki:** `gripa` = {vročina, kašelj, bolečine v mišicah, utrujenost}; `prehlad` = {kašelj, izcedek iz nosu, kihanje, utrujenost}; `bolnik` = {kašelj, kihanje, izcedek iz nosu}
-**Iščemo:** `len(gripa & bolnik)`, `len(prehlad & bolnik)` in `len(gripa | prehlad)`
+**Podatki:** `gripa` = {vročina, kašelj, bolečine v mišicah, utrujenost}; `prehlad` = {kašelj, izcedek iz nosu, kihanje, utrujenost}; `bolnik` = {kašelj, kihanje, izcedek iz nosu}; meja $J \ge 0{,}5$
+**Iščemo:** $J$(gripa, bolnik), $J$(prehlad, bolnik), `len(gripa | prehlad)`, najmanjši $k$
 
 :::formula
 Skupni elementi: `a & b`; vsi elementi: `a | b`; $|a \cup b| = |a| + |b| - |a \cap b|$, kjer $|a|$ pomeni `len(a)`
@@ -127,11 +147,13 @@ Skupni elementi: `a & b`; vsi elementi: `a | b`; $|a \cup b| = |a| + |b| - |a \c
 
 **Rešitev:**
 
-1. Ujemanje merimo s skupnimi simptomi, torej s presekom. `gripa & bolnik` je {kašelj}, dolžina $1$.
-2. `prehlad & bolnik` je {kašelj, kihanje, izcedek iz nosu}, dolžina $3$.
-3. $3 > 1$, zato se bolnik bolj ujema s prehladom.
-4. Unija bolezni: $4 + 4 - 2 = 6$, ker sta kašelj in utrujenost v obeh.
-5. Odgovor: bolnik se bolj ujema s prehladom ($3$ skupni simptomi proti $1$); bolezni skupaj pokrivata $6$ različnih simptomov.
+1. Presek z gripo: `gripa & bolnik` je {kašelj}, velikost $1$. Unija po izreku: $4 + 3 - 1 = 6$. Torej $J = 1/6 \approx 0{,}17$.
+2. Presek s prehladom: `prehlad & bolnik` je {kašelj, kihanje, izcedek iz nosu}, velikost $3$. Unija: $4 + 3 - 3 = 4$, torej $J = 3/4 = 0{,}75$. Bolnik se bolj ujema s prehladom.
+3. Unija bolezni: $4 + 4 - 2 = 6$, ker sta kašelj in utrujenost v obeh.
+4. (c) Simptomi gripe, ki jih bolnik nima, so `gripa - bolnik` = {vročina, bolečine v mišicah, utrujenost}, torej $0 \le k \le 3$. Vsak nov tak simptom poveča presek in bolnikovo množico za $1$: presek je $1 + k$, bolnik ima $3 + k$ simptomov.
+5. Unija: $4 + (3 + k) - (1 + k) = 6$, neodvisno od $k$, ker novi simptomi že so v gripi.
+6. Pogoj $(1 + k)/6 \ge 0{,}5$ da $1 + k \ge 3$, torej $k \ge 2$. Preverba: $k = 1$ da $2/6 \approx 0{,}33$, $k = 2$ da $3/6 = 0{,}5$.
+7. Odgovor: $J$ z gripo je $1/6$, s prehladom $3/4$, zato se bolnik bolj ujema s prehladom; bolezni pokrivata $6$ simptomov; indeks z gripo doseže $0{,}5$ šele pri $k = 2$ novih simptomih gripe.
 
 Pozor: tak izračun je le vaja s podatki, ne diagnoza.
 
@@ -160,10 +182,10 @@ Kakšen je končni slovar in koliko je `len(set(dnk))`?
 
 ## Pogoste napake
 
-- **Slovar po mestu.** `stevec[0]` za »prvi par« je navada iz seznamov. Slovar nima indeksov, išče ključ `0` in javi `KeyError`. Vrednost dobiš s ključem, ključe pa našteješ z `for k in stevec:`.
-- **Povečevanje ključa, ki ga še ni.** `stevec[s] += 1` je videti kot »prištej ena«, a najprej mora prebrati staro vrednost. Pri prvi pojavitvi je ni, zato `KeyError`. Uporabi `if s in stevec: … else: stevec[s] = 1` ali `.get(s, 0) + 1`.
-- **Vedno `= 1`.** Kdor v zanki piše le `stevec[s] = 1`, misli, da tako »označi« pojavitev. Vsakič prepiše vrednost, zato so na koncu vse vrednosti $1$. Število mora rasti: `+ 1` k stari vrednosti.
-- **Unija in presek zamenjana.** Znak `&` beremo »in«, zato se zdi, da `gripa & prehlad` pomeni »gripa in prehlad skupaj«. V resnici `&` pomeni »v obeh hkrati«, vse skupaj pa da `|`. Pomagaj si s krogoma: presek je prekrivanje, unija vse, kar je pokrito.
+- **Slovar po mestu.** Slovar nima indeksov: `stevec[0]` išče ključ `0` in javi `KeyError`. Vrednost dobiš s ključem, ključe pa našteješ z `for k in stevec:`.
+- **Povečevanje ključa, ki ga še ni.** `stevec[s] += 1` mora najprej prebrati staro vrednost, ki je pri prvi pojavitvi ni: `KeyError`. Uporabi `if s in stevec: … else: stevec[s] = 1` ali `.get(s, 0) + 1`.
+- **Vedno `= 1`.** `stevec[s] = 1` v zanki vsakič prepiše vrednost, zato so na koncu vse vrednosti $1$.
+- **Unija in presek zamenjana.** Znak `&` beremo »in«, zato se zdi, da `gripa & prehlad` pomeni »gripa in prehlad skupaj«. V resnici `&` pomeni »v obeh hkrati«, vse skupaj pa da `|`. Presek je prekrivanje krogov, unija vse, kar je pokrito.
 - **`{}` kot prazna množica.** `{}` ustvari prazen slovar, zato `.add` javi napako. Prazna množica je `set()`.
 
 ## Povzetek
@@ -175,23 +197,79 @@ Kakšen je končni slovar in koliko je `len(set(dnk))`?
 - Množica hrani vsak element enkrat, brez vrstnega reda; `set(seznam)` odstrani ponovitve, prazna množica je `set()`.
 - Unija `a | b` (v vsaj eni), presek `a & b` (v obeh), razlika `a - b` (le v prvi); $|a \cup b| = |a| + |b| - |a \cap b|$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo slovarja (ključi paroma različni in zgoščljivi) ter natančen pomen `d[k]`, `d[k] = v`, `k in d` in `d.get(k, p)`;
+- definicijo množice in operacij `|`, `&`, `-`, `^`, `<=` z množičnim zapisom;
+- načelo vključitev in izključitev za dve končni množici in njegov dokaz;
+- trditev o pravilnosti štetja pojavitev z dokazom z indukcijo in posledico, da je vsota vrednosti dolžina seznama;
+- zakaj seznam ne more biti ključ in zakaj je `x in mnozica` hitrejše od `x in seznam`.
+
+### Naloga 1
+
+Laboratorij beleži, kateri ioni so bili zaznani v katerem vzorcu:
+
+```python
+meritve = [("V1", "Na"), ("V2", "Cl"), ("V1", "K"), ("V3", "Na"),
+           ("V2", "Na"), ("V1", "Na"), ("V3", "Ca")]
+ioni = {}
+for v, ion in meritve:
+    if v not in ioni:
+        ioni[v] = set()
+    ioni[v].add(ion)
+stevilo = {}
+for v in ioni:
+    for ion in ioni[v]:
+        stevilo[ion] = stevilo.get(ion, 0) + 1
+```
+
+(a) Zapiši `ioni` in `stevilo` po izvedbi. (b) Izračunaj `ioni["V1"] & ioni["V2"]`, `ioni["V1"] ^ ioni["V3"]` in `len(ioni["V1"] | ioni["V2"])`, zadnjo tudi z načelom vključitev in izključitev. (c) Koliko je vsota vrednosti v `stevilo` in zakaj ni enaka `len(meritve)`?
+
+**Rešitev:**
+
+1. Prva zanka: vsak vzorec ob prvi pojavitvi dobi prazno množico, nato se doda ion. Par `("V1", "Na")` se pojavi dvakrat, a množica ga hrani enkrat. Dobimo `ioni = {"V1": {"Na", "K"}, "V2": {"Cl", "Na"}, "V3": {"Na", "Ca"}}`.
+2. Druga zanka šteje, v koliko vzorcih je ion: Na je v vseh treh, K, Cl in Ca vsak v enem. `stevilo = {"Na": 3, "K": 1, "Cl": 1, "Ca": 1}` (vrstni red ključev je lahko drugačen).
+3. Presek `ioni["V1"] & ioni["V2"]` je `{"Na"}`.
+4. Simetrična razlika: v V1 in ne v V3 je K, v V3 in ne v V1 je Ca, torej `{"K", "Ca"}`.
+5. Unija V1 in V2 je {Na, K, Cl}, velikost $3$. Po izreku: $2 + 2 - 1 = 3$, ujema se.
+6. (c) Vsota vrednosti je $3 + 1 + 1 + 1 = 6$, kar je vsota velikosti množic $2 + 2 + 2 = 6$. Meritev je $7$, vsota pa le $6$, ker se `("V1", "Na")` ponovi, množica pa ponovitev ne hrani.
+7. Odgovor: `ioni` in `stevilo` kot zgoraj; presek {Na}, simetrična razlika {K, Ca}, unija ima $3$ elemente; vsota vrednosti je $6$, ne $7$, zaradi podvojene meritve.
+
+### Naloga 2
+
+Natančno navedi načelo vključitev in izključitev za dve končni množici in ga dokaži. Nato izpelji formulo za $|a \cup b \cup c|$ in jo preveri na množicah `ioni["V1"]`, `ioni["V2"]`, `ioni["V3"]` iz naloge 1.
+
+**Rešitev:**
+
+1. Izrek: za končni množici $a$, $b$ je $|a \cup b| = |a| + |b| - |a \cap b|$.
+2. Dokaz: $a \cup b$ je disjunktna unija $a \setminus b$, $a \cap b$ in $b \setminus a$. Iz $|a| = |a \setminus b| + |a \cap b|$ in $|b| = |b \setminus a| + |a \cap b|$ sledi $|a| + |b| = |a \cup b| + |a \cap b|$. $\square$
+3. Za tri množice uporabimo izrek na $a \cup b$ in $c$: $|a \cup b \cup c| = |a \cup b| + |c| - |(a \cup b) \cap c|$.
+4. Po distributivnosti je $(a \cup b) \cap c = (a \cap c) \cup (b \cap c)$, presek teh dveh pa je $a \cap b \cap c$. Izrek da $|(a \cup b) \cap c| = |a \cap c| + |b \cap c| - |a \cap b \cap c|$.
+5. Vstavimo še $|a \cup b| = |a| + |b| - |a \cap b|$: $|a \cup b \cup c| = |a| + |b| + |c| - |a \cap b| - |a \cap c| - |b \cap c| + |a \cap b \cap c|$.
+6. Preverba: vse tri množice imajo po $2$ elementa, vsi paroma preseki in trojni presek so {Na}. Formula da $2 + 2 + 2 - 1 - 1 - 1 + 1 = 4$, neposredno pa je unija {Na, K, Cl, Ca}, prav tako $4$ elementi.
+7. Odgovor: $|a \cup b \cup c|$ je vsota velikosti, zmanjšana za paroma preseke in povečana za trojni presek; za vzorce dobimo $4$ različne ione.
+
 ## Drugače: Z analogijo
 
-**Slovar je kartoteka v ambulanti.** Vsaka mapa ima na hrbtu nalepko z imenom bolnika (ključ), v njej je izvid (vrednost). Sestra ne vpraša »daj mi tretjo mapo«, ampak »daj mi mapo Ane Novak«. Dveh map z enako nalepko ni; nov izvid gre v isto mapo in zamenja starega. Če mape ni, je ne more izročiti: to je `KeyError`.
+**Slovar je kartoteka v ambulanti.** Mapa ima nalepko z imenom (ključ), v njej je izvid (vrednost). Sestra ne vpraša za »tretjo mapo«, ampak za »mapo Ane Novak«. Če mape ni, je ne more izročiti: to je `KeyError`.
 
-**Množica je seznam alergij na kartonu.** Vseeno je, kolikokrat je bolnik povedal, da je alergičen na penicilin; na kartonu piše enkrat. Vrstni red ni pomemben, pomembno je le, ali je snov na seznamu.
+**Množica je seznam alergij na kartonu.** Penicilin piše enkrat, ne glede na to, kolikokrat ga je bolnik omenil. Kdor predpisuje zdravilo dvema bolnikoma, se izogne uniji njunih alergenov.
 
-**Unija in presek sta dva kartona na isti mizi.** Zdravnik, ki predpisuje zdravilo dvema bolnikoma hkrati, se mora izogniti vsem alergenom obeh: to je unija. Če želi vedeti, na kaj sta alergična oba, pogleda presek.
+## Drugače: Uporaba v stroki
+
+V kemijskem ali kliničnem laboratoriju je slovar naravna oblika podatkov: `{oznaka_vzorca: koncentracija}` ali `{ion: molska_masa}`, kjer vrednost poiščeš po oznaki, ne po vrstici. Množice primerjajo nabore: `zaznani - dovoljeni` takoj pokaže nepričakovane snovi v vzorcu, presek spojin dveh šarž pa skupne nečistoče. Štetje z `.get(k, 0) + 1` je osnova histogramov, na primer kolikokrat se pojavi vsak kodon v zaporedju DNK.
 
 ## Drugače: Bolj natančno
 
 Slovar in množica sta zgrajena kot **zgoščevalna tabela** (angl. hash table). Iz ključa Python izračuna število, zgoščeno vrednost (`hash(k)`), in iz nje neposredno mesto v pomnilniku. Zato `x in mnozica` in `slovar[k]` v povprečju trajata enako dolgo ne glede na velikost zbirke. Pri seznamu mora `x in seznam` pregledati elemente enega za drugim, zato pri $n$ elementih traja sorazmerno z $n$.
 
-Iz tega sledi pogoj za ključe: zgoščena vrednost se ne sme spremeniti. Ključ ali element množice je lahko nespremenljiv objekt (`int`, `float`, `str`, `bool`, terka), ne pa seznam ali slovar: `{[1, 2]: "x"}` javi `TypeError: unhashable type: 'list'`.
+Iz tega sledi pogoj za ključe: zgoščena vrednost se ne sme spremeniti, zato `{[1, 2]: "x"}` javi `TypeError: unhashable type: 'list'`.
 
 Od Pythona 3.7 slovar ohranja vrstni red vstavljanja ključev, zato jih zanka vrne v tem redu. Množica takega jamstva nima.
 
-Operacije nad množicami imajo tudi metode: `a.union(b)`, `a.intersection(b)`, `a.difference(b)`; simetrična razlika `a ^ b` vsebuje elemente, ki so v natanko eni od obeh. Za velikost unije velja načelo vključitve in izključitve: elemente preseka smo v $|a| + |b|$ šteli dvakrat, zato jih enkrat odštejemo, $|a \cup b| = |a| + |b| - |a \cap b|$.
+Operacije nad množicami imajo tudi metode: `a.union(b)`, `a.intersection(b)`, `a.difference(b)`, `a.symmetric_difference(b)`.
 
 ## Preveri se
 
