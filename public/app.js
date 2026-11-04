@@ -32,7 +32,34 @@ import { initFeedback, showFeedback } from "./feedback.js";
 import { openAdminBug, deviceInfo, shownHtml } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
-import { initGames, showGames, gamesBack, leaveGames } from "./games/index.js";
+// Igre (games/, ~2 MB kode s predmeti) se naložijo šele, ko jih učenec odpre, ali v mirnem trenutku po
+// zagonu: prvo odprtje Evklida mora prenesti in zagnati pol manj kode (j, 2026-11-04: »stran deluje počasi«).
+let gamesMod = null;
+let gamesCtx = null;
+let gamesP = null;
+let gamesTries = 0;
+// Brskalnik si neuspel modul zapomni do ponovnega nalaganja strani: nov poskus zato z drugim naslovom (?r=).
+const loadGames = () =>
+  (gamesP ||= (gamesTries++ ? import(`./games/index.js?r=${gamesTries}`) : import("./games/index.js")).then((m) => {
+    gamesMod = m;
+    if (gamesCtx) m.initGames(gamesCtx);
+    return m;
+  }).catch((err) => {
+    gamesP = null; // brez povezave ali napaka: naslednji poskus znova
+    throw err;
+  }));
+const initGames = (c) => {
+  gamesCtx = c;
+  gamesMod?.initGames(c);
+};
+const gamesNote = (key) =>
+  document.querySelector("#games-content")?.replaceChildren(Object.assign(document.createElement("p"), { className: "muted", textContent: t(key) }));
+const showGames = () => {
+  if (!gamesMod) gamesNote("common.loading");
+  return loadGames().then((m) => m.showGames()).catch(() => gamesMod || gamesNote("off.noConnection"));
+};
+const gamesBack = () => gamesMod?.gamesBack() ?? false;
+const leaveGames = () => gamesMod?.leaveGames();
 import { gamesOn } from "./games/stage.js";
 import { initCorner, showCorner, cornerBack, closeBoard, askInterests, maybeAskInterests, interestsSummary } from "./corner.js";
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
@@ -3945,6 +3972,16 @@ initFormulaInfo();
   $("#chat-bug").hidden = !cfg.admin;
   initFeedback({ api, getStudent: () => state.student, showView, toast, currentLang }, cfg);
   initGames({ api, getStudent: () => state.student, setStudent: studentUpdated, toast: (m, ic = "check") => toast(m, ic), refreshXp, currentLang });
+  // Igre v ozadju, ko se je stran že odprla (zavihek Igre se nato odpre takoj); ne ob »Skrij igre« in ne ob varčevanju s podatki.
+  const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1500));
+  setTimeout(() => idle(() => {
+    if ((state.student && !gamesOn(state.student.settings)) || navigator.connection?.saveData) return;
+    loadGames().catch(() => {});
+  }), 3000);
+  // Dotik zavihka Igre (ali vrstice v »Jaz«) začne nalaganje že pred klikom.
+  document.addEventListener("pointerdown", (e) => {
+    if (!gamesMod && e.target.closest?.('[data-view="games"], [data-go="games"]')) loadGames().catch(() => {});
+  }, { passive: true, capture: true });
   initZbirke({ api, getStudent: () => state.student, currentLang, showView });
   initCorner({
     api,
