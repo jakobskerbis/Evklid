@@ -126,4 +126,5 @@ test("izbire brez lastnih črk (pregledovalnik jih označi sam)", () => {
   assert.match(c(["**A)** $2$", "**B)** $3$"]), /izbire se začnejo s črkami/);
   assert.equal(c(["$1$", "Ana ima prav."]), "");
   assert.equal(c(["I. kvadrant", "II. kvadrant", "C. je središče"]), "");
+  assert.equal(c(Array.from({ length: 30 }, (_, i) => `$${i}$`)), ""); // več kot 26 izbir ne sme vreči
 });
