@@ -71,9 +71,20 @@ export function poveziGumbVrtenja(b, kit, icon, t) {
     b.setAttribute("aria-label", l);
     b.title = l;
   };
+  let sporocilo = null;
   b.addEventListener("click", () => {
     kit.nacinVrtenja(kit.nacinVrtenja() === "prosto" ? "pokoncno" : "prosto");
     osvezi();
+    // Telefon nima lebdečega napisa: kratko obvestilo z imenom novega načina (brez »preklopi na …«).
+    const host = b.closest(".k3-oder, .a3") || document.body;
+    sporocilo?.remove();
+    sporocilo = document.createElement("div");
+    sporocilo.className = "k3-vrtenje-sporocilo";
+    sporocilo.setAttribute("role", "status");
+    sporocilo.textContent = b.title.replace(/\s*[（(].*$/, "");
+    host.append(sporocilo);
+    const el = sporocilo;
+    setTimeout(() => el.remove(), 1600);
   });
   osvezi();
 }
