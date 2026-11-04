@@ -438,10 +438,15 @@ function materialPokrova(t, ravnine) {
         "#include <color_fragment>",
         `#include <color_fragment>\n diffuseColor.rgb *= 0.9 + 0.2 * orgSum( vOrgPos * 60.0 ) * orgSum( vOrgPos * 13.0 );${
           t.rezVlakna ? `\n diffuseColor.rgb *= 1.0 - 0.07 * smoothstep( 0.2, 0.9, 0.5 + 0.5 * sin( dot( vOrgPos, normalize( vec3( 0.4, 1.0, 0.25 ) ) ) * ${fl(t.rezVlakna)} + 5.0 * orgSum( vOrgPos * 18.0 ) ) ); // snopi mišičnih vlaken na rezu` : ""
+        }${
+          t.rezPore
+            ? `\n { float orgP = orgSum( vOrgPos * ${fl(t.rezPore)} ) * 0.65 + orgSum( vOrgPos * ${fl(t.rezPore * 2.3)} ) * 0.35; // pore (pljučna goba): temne luknjice in svetli pretini
+ diffuseColor.rgb *= 1.0 - ${fl(t.rezPoreMoc ?? 0.4)} * smoothstep( 0.52, 0.66, orgP ) + 0.12 * smoothstep( 0.4, 0.2, orgP ); }`
+            : ""
         }`,
       );
   };
-  m.customProgramCacheKey = () => `org-pokrov-${t.rez || t.barva}-${t.rezVlakna || 0}`;
+  m.customProgramCacheKey = () => `org-pokrov-${t.rez || t.barva}-${t.rezVlakna || 0}-${t.rezPore || 0}-${t.rezPoreMoc ?? ""}`;
   return m;
 }
 

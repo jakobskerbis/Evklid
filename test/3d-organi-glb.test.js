@@ -48,9 +48,9 @@ test("organi iz GLB: vsak GLB ima vir v public/3d/viri.json, brez NC in ND", () 
   }
 });
 
-test("organi iz GLB: vsaj možgani, srce in oko", () => {
+test("organi iz GLB: možgani, srce, oko, pljuča, ledvica in jetra", () => {
   const imena = organi.map((o) => o.mod.organ);
-  for (const x of ["mozgani", "srce", "oko"]) assert.ok(imena.includes(x), `manjka organ ${x}`);
+  for (const x of ["mozgani", "srce", "oko", "pljuca", "ledvica", "jetra"]) assert.ok(imena.includes(x), `manjka organ ${x}`);
 });
 
 for (const { e, mod } of organi) {
@@ -114,5 +114,8 @@ for (const { e, mod } of organi) {
     const o = p.podrobnosti?.odseki || [];
     assert.ok(o.length >= 4 && o.length <= 6, `${ime}: podrobnosti 4–6 odsekov`);
     for (const x of o) assert.ok(x.naslov && x.besedilo?.length > 120, `${ime}: odsek ${x.naslov}`);
+    // Besedila za učence: brez besede »model« (organ je organ, ne model).
+    const besedila = [mod.info.opis, e.opis, ...p.deli.flatMap((d) => [d.ime, d.opis]), ...o.flatMap((x) => [x.naslov, x.besedilo])];
+    for (const b of besedila) assert.ok(!/\bmodel/i.test(b || ""), `${ime}: »model« v besedilu: ${b}`);
   });
 }

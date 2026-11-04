@@ -1,0 +1,378 @@
+{
+ "organ": "pljuca",
+ "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
+ "tkiva": {
+  "pljuca": {
+   "hrap": 0.4,
+   "lak": 0.55,
+   "lakHrap": 0.25,
+   "sijaj": 0.5,
+   "ao": 0.5,
+   "zrno": 0.06,
+   "f": 160,
+   "barva": "#d98c88",
+   "sijajBarva": "#ffd0c8",
+   "rob": 0.25,
+   "robBarva": "#ffb0a8",
+   "lise": 0.35,
+   "liseBarva": "#a8585c",
+   "relief": 0.4,
+   "senca": 0.25,
+   "sencaBarva": "#6a2a30",
+   "rez": "#d07a78",
+   "rezPore": 1400,
+   "rezPoreMoc": 0.45
+  },
+  "dihalna": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#eadcc6",
+   "rez": "#dccbb0",
+   "sijajBarva": "#ffffff",
+   "rob": 0.15,
+   "robBarva": "#fff4e0",
+   "relief": 0.2
+  },
+  "pljucna-arterija": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#4566b8",
+   "rez": "#36549c",
+   "sijajBarva": "#a6bdff",
+   "rob": 0.18,
+   "robBarva": "#7898ff",
+   "relief": 0.3
+  },
+  "pljucna-vena": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#c4312e",
+   "rez": "#a92a28",
+   "sijajBarva": "#ff9a90",
+   "rob": 0.2,
+   "robBarva": "#ff6458",
+   "relief": 0.3
+  },
+  "dihalna-v": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#eadcc6",
+   "rez": "#dccbb0",
+   "sijajBarva": "#ffffff",
+   "rob": 0.15,
+   "robBarva": "#fff4e0",
+   "relief": 0.2
+  },
+  "pljucna-arterija-v": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#4566b8",
+   "rez": "#36549c",
+   "sijajBarva": "#a6bdff",
+   "rob": 0.18,
+   "robBarva": "#7898ff",
+   "relief": 0.3
+  },
+  "pljucna-vena-v": {
+   "hrap": 0.34,
+   "lak": 0.7,
+   "lakHrap": 0.14,
+   "sijaj": 0.45,
+   "ao": 0.85,
+   "zrno": 0.06,
+   "f": 70,
+   "barva": "#c4312e",
+   "rez": "#a92a28",
+   "sijajBarva": "#ff9a90",
+   "rob": 0.2,
+   "robBarva": "#ff6458",
+   "relief": 0.3
+  }
+ },
+ "deli": [
+  {
+   "id": "desni-zgornji",
+   "ime": "Zgornji reženj desnih pljuč",
+   "la": "Lobus superior pulmonis dextri",
+   "barva": "#ff9a8a",
+   "opis": "Najvišji od treh režnjev desnih pljuč; sega nad ključnico.",
+   "vozlisca": [
+    "Superior lobe of right lung"
+   ]
+  },
+  {
+   "id": "desni-srednji",
+   "ime": "Srednji reženj desnih pljuč",
+   "la": "Lobus medius pulmonis dextri",
+   "barva": "#ffc06a",
+   "opis": "Najmanjši reženj, ki ga imajo samo desna pljuča; leži spredaj ob srcu.",
+   "vozlisca": [
+    "Middle lobe of right lung"
+   ]
+  },
+  {
+   "id": "desni-spodnji",
+   "ime": "Spodnji reženj desnih pljuč",
+   "la": "Lobus inferior pulmonis dextri",
+   "barva": "#f472b6",
+   "opis": "Velik reženj zadaj in spodaj, ki leži na trebušni preponi.",
+   "vozlisca": [
+    "Inferior lobe of right lung"
+   ]
+  },
+  {
+   "id": "levi-zgornji",
+   "ime": "Zgornji reženj levih pljuč",
+   "la": "Lobus superior pulmonis sinistri",
+   "barva": "#a78bfa",
+   "opis": "Ima vdolbino za srce in jeziček (lingulo), ki ustreza srednjemu režnju desno.",
+   "vozlisca": [
+    "Superior lobe of left lung"
+   ]
+  },
+  {
+   "id": "levi-spodnji",
+   "ime": "Spodnji reženj levih pljuč",
+   "la": "Lobus inferior pulmonis sinistri",
+   "barva": "#60a5fa",
+   "opis": "Spodnji in zadnji reženj levih pljuč, ločen s poševno pljučno špranjo.",
+   "vozlisca": [
+    "Inferior lobe of left lung"
+   ]
+  },
+  {
+   "id": "sapnik",
+   "ime": "Sapnik",
+   "la": "Trachea",
+   "barva": "#f2e6c8",
+   "opis": "Cev s hrustančnimi obroči v obliki črke C, ki vodi zrak iz grla do pljuč.",
+   "vozlisca": [
+    "Trachea"
+   ]
+  },
+  {
+   "id": "bronhiji",
+   "ime": "Bronhiji",
+   "la": "Bronchi",
+   "barva": "#fff3d6",
+   "opis": "Sapnik se razcepi v dva glavna bronhija, ki se v pljučih razvejita kot drevo.",
+   "vozlisca": [
+    "(Anteromedial basal segmental bronchus of left lung)",
+    "Anterior basal segmental bronchus of left lung (BVIII)",
+    "Anterior basal segmental bronchus of right lung (BVIII)",
+    "Anterior segmental bronchus of left lung (BIII)",
+    "Anterior segmental bronchus of right lung (BIII)",
+    "Apical segmental bronchus of right lung (BI)",
+    "Apicoposterior segmental bronchus of left lung (BI+BII)",
+    "Inferior lingular segmental bronchus of left lung (BV)",
+    "Intermediate bronchus.r",
+    "Lateral basal segmental bronchus of left lung (BIX)",
+    "Lateral basal segmental bronchus of right lung (BIX)",
+    "Lateral segmental bronchus of right lung (BIV)",
+    "Left inferior lobar bronchus",
+    "Left main bronchus",
+    "Left superior lobar bronchus",
+    "Medial basal segmental bronchus of left lung (BVII)",
+    "Medial basal segmental bronchus of right lung (BVII)",
+    "Medial segmental bronchus of right lung (BV)",
+    "Middle lobar bronchus.r",
+    "Posterior basal segmental bronchus of left lung (BX)",
+    "Posterior basal segmental bronchus of right lung (BX)",
+    "Posterior segmental bronchus of right lung (BII)",
+    "Right inferior lobar bronchus",
+    "Right main bronchus",
+    "Right superior lobar bronchus",
+    "Superior lingular segmental bronchus of left lung (BIV)",
+    "Superior segmental bronchus of left lung (BVI)",
+    "Superior segmental bronchus of right lung (BVI)"
+   ]
+  },
+  {
+   "id": "pljucne-arterije",
+   "ime": "Pljučne arterije",
+   "la": "Arteriae pulmonales",
+   "barva": "#6e9bff",
+   "opis": "Pripeljejo kri z malo kisika iz desnega prekata srca v pljuča.",
+   "vozlisca": [
+    "Anterior basal segmental artery of left lung",
+    "Anterior basal segmental artery of right lung",
+    "Anterior segmental artery of left lung",
+    "Anterior segmental artery of right lung",
+    "Apical segmental artery of left lung",
+    "Apical segmental artery of right lung",
+    "Inferior lingular artery of left lung",
+    "Inferior lobar artery of right lung",
+    "Lateral basal segmental artery of left lung",
+    "Lateral basal segmental artery of right lung",
+    "Lateral segmental artery of right lung",
+    "Left pulmonary artery",
+    "Medial basal segmental artery of left lung",
+    "Medial basal segmental artery of right lung",
+    "Medial segmental artery of right lung",
+    "Middle lobar artery of right lung",
+    "Posterior basal segmental artery of left lung",
+    "Posterior basal segmental artery of right lung",
+    "Posterior segmental artery of left lung",
+    "Posterior segmental artery of right lung",
+    "Right pulmonary artery",
+    "Superior lingular artery of left lung",
+    "Superior lobar artery of right lung",
+    "Superior segmental artery of left lung",
+    "Superior segmental artery of right lung"
+   ]
+  },
+  {
+   "id": "pljucne-vene",
+   "ime": "Pljučne vene",
+   "la": "Venae pulmonales",
+   "barva": "#ff5a5a",
+   "opis": "Odvedejo s kisikom bogato kri iz pljuč v levi preddvor srca.",
+   "vozlisca": [
+    "Anterior vein of left lung",
+    "Anterior vein of right lung",
+    "Apical vein of right lung",
+    "Apicoposterior vein of left lung",
+    "Inferior basal vein of left lung",
+    "Inferior basal vein of right lung",
+    "Inferior lingular vein of left lung",
+    "Lateral vein of right lung",
+    "Left inferior pulmonary vein",
+    "Left superior pulmonary vein",
+    "Lingular vein of left lung",
+    "Medial vein of right lung",
+    "Posterior vein of right lung",
+    "Right inferior pulmonary vein",
+    "Right superior pulmonary vein",
+    "Superior basal vein of left lung",
+    "Superior basal vein of right lung",
+    "Superior lingular vein of left lung",
+    "Superior vein of left lung",
+    "Superior vein of right lung"
+   ]
+  }
+ ],
+ "prerez": {
+  "ravnine": [
+   {
+    "n": [
+     0,
+     0,
+     -1
+    ],
+    "d": 0
+   }
+  ]
+ },
+ "pogledi": {
+  "celota": {
+   "pogled": [
+    0,
+    0.05,
+    1
+   ],
+   "tocke": [
+    "desni-zgornji",
+    "desni-srednji",
+    "levi-zgornji",
+    "levi-spodnji",
+    "sapnik",
+    "desni-spodnji"
+   ],
+   "skrijTkiva": [
+    "dihalna-v",
+    "pljucna-arterija-v",
+    "pljucna-vena-v"
+   ]
+  },
+  "prerez": {
+   "pogled": [
+    0,
+    0.05,
+    1
+   ],
+   "tocke": [
+    "bronhiji",
+    "sapnik",
+    "pljucne-arterije",
+    "pljucne-vene",
+    "desni-spodnji",
+    "levi-zgornji"
+   ]
+  }
+ },
+ "podrobnosti": {
+  "naslov": "Pljuča",
+  "odseki": [
+   {
+    "naslov": "Zgradba",
+    "besedilo": "Pljuča sta dve gobasti krili v prsnem košu, levo in desno od srca. Desna pljuča imajo tri režnje, leva le dva, ker je na levi strani prostor za srce. Zrak pride skozi grlo v sapnik, ki se razcepi v levi in desni glavni bronhij. Bronhiji se v pljučih delijo v vse tanjše vejice (bronhiole), ki se končajo s pljučnimi mešički. Obe pljuči obdaja tanka in gladka mrena, poprsnica."
+   },
+   {
+    "naslov": "Delovanje",
+    "besedilo": "Ko se trebušna prepona in medrebrne mišice skrčijo, se prsni koš razširi in zrak steče v pljuča (vdih); ko se sprostijo, ga pljuča izdihnejo. V pljučnih mešičkih je med zrakom in krvjo v lasnicah le zelo tanka stena. Kisik prehaja iz zraka v kri, ogljikov dioksid pa iz krvi v zrak, ki ga izdihneš. Pljučne arterije prinašajo kri z malo kisika iz srca, pljučne vene pa vodijo s kisikom bogato kri nazaj v srce."
+   },
+   {
+    "naslov": "Zanimivost",
+    "besedilo": "V pljučih je okoli 300 do 500 milijonov pljučnih mešičkov. Če bi njihovo steno razprostrl, bi pokrila okoli 70 kvadratnih metrov, kar je približno četrtina teniškega igrišča. V mirovanju vdihneš 12- do 20-krat na minuto in vsakič okoli pol litra zraka."
+   },
+   {
+    "naslov": "Pogoste bolezni",
+    "besedilo": "Pri astmi se bronhiji ob dražljajih, kot so cvetni prah, prah ali hladen zrak, zožijo, zato težko dihaš in piskajoče izdihuješ. Pljučnico povzročijo bakterije ali virusi; pljučni mešički se napolnijo s tekočino, zato imaš vročino in kašelj. Kajenje povzroča kronično obstruktivno pljučno bolezen in pljučnega raka, za katerim pri nas umre največ ljudi med vsemi vrstami raka."
+   },
+   {
+    "naslov": "Kako skrbiš zanje",
+    "besedilo": "Ne kadi in se izogibaj tobačnemu dimu ter elektronskim cigaretam, saj dražijo dihalne poti in okvarjajo pljučne mešičke. Redno se gibaj na svežem zraku, da se pljuča in dihalne mišice krepijo. Prostor večkrat na dan prezrači. Ko kašljaš ali kiheš, si pokrij usta s komolcem, da ne širiš okužb."
+   }
+  ]
+ },
+ "velikost": 0.4305,
+ "trikotniki": {
+  "racunalnik": 239922,
+  "telefon": 80315
+ },
+ "luci": [
+  {
+   "smer": [
+    -0.5,
+    1,
+    0.9
+   ],
+   "moc": 1.15,
+   "barva": "#fff0e4"
+  },
+  {
+   "smer": [
+    0.8,
+    0.3,
+    -1
+   ],
+   "moc": 0.6,
+   "barva": "#ffd6cc"
+  }
+ ]
+}
