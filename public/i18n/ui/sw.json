@@ -2897,6 +2897,7 @@
   "sc.cf.dpbp": "Kipindi cha kurudisha kilichopunguzwa (vipindi)",
   "sc.cf.never": "Uwekezaji haurudi kamwe.",
   "sc.cf.noIrr": "Haipo (mitiririko yote ina alama moja).",
+  "sc.cf.noRoot": "Haipo (NPV haiwi 0 kwa kiwango chochote).",
   "sc.cf.count": "Idadi ya vipindi baada ya kiasi cha mwanzo: {n}.",
   "sc.tt.k.f2": "F, sampuli 2",
   "sc.tt.k.anova": "ANOVA",

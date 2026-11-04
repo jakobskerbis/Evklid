@@ -2899,6 +2899,7 @@
   "sc.cf.dpbp": "Délai de récupération actualisé (périodes)",
   "sc.cf.never": "L'investissement n'est jamais récupéré.",
   "sc.cf.noIrr": "N'existe pas (tous les flux ont le même signe).",
+  "sc.cf.noRoot": "N'existe pas (la NPV ne vaut 0 pour aucun taux).",
   "sc.cf.count": "Nombre de périodes après le montant initial : {n}.",
   "sc.tt.k.f2": "F, 2 échantillons",
   "sc.tt.k.anova": "ANOVA",

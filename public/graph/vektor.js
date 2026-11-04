@@ -95,8 +95,11 @@ export function vectorLine(ast) {
   return r.v ? { kind: "rec", x: r.v[0], y: r.v[1] } : { kind: "num", s: r.s };
 }
 
-/** Rec(…) v načinu graf: točka (x; y) kot par, ki ga model nariše (null, če ni vektor). */
+/**
+ * Rec(…) v načinu graf: točka (x; y) kot par, ki ga model nariše; |Rec(…) − Rec(…)| in Rec·Rec kot število
+ * (sicer bi math.js računal po komponentah). null: Pol ali ni Pol/Rec.
+ */
 export function vectorTuple(ast) {
   const vl = vectorLine(ast);
-  return vl?.kind === "rec" ? { k: "tuple", items: [vl.x, vl.y] } : null;
+  return vl?.kind === "rec" ? { k: "tuple", items: [vl.x, vl.y] } : vl?.kind === "num" ? vl.s : null;
 }

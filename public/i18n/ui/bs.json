@@ -2924,6 +2924,7 @@
   "sc.cf.dpbp": "Diskontovani period povrata (periodi)",
   "sc.cf.never": "Ulaganje se ne vraća.",
   "sc.cf.noIrr": "Ne postoji (svi tokovi imaju isti predznak).",
+  "sc.cf.noRoot": "Ne postoji (NPV ni za jednu stopu nije 0).",
   "sc.cf.count": "Broj perioda nakon početnog iznosa: {n}.",
   "sc.tt.k.f2": "F, 2 uzorka",
   "sc.tt.k.anova": "ANOVA",

@@ -2897,6 +2897,7 @@
   "sc.cf.dpbp": "Diszkontált megtérülési idő (periódus)",
   "sc.cf.never": "A befektetés nem térül meg.",
   "sc.cf.noIrr": "Nem létezik (minden pénzáram előjele azonos).",
+  "sc.cf.noRoot": "Nem létezik (az NPV egyetlen kamatlábnál sem 0).",
   "sc.cf.count": "Periódusok száma a kezdeti összeg után: {n}.",
   "sc.tt.k.f2": "F, 2 minta",
   "sc.tt.k.anova": "ANOVA",

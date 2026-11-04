@@ -2953,6 +2953,7 @@
   "sc.cf.dpbp": "Zdyskontowany okres zwrotu (okresy)",
   "sc.cf.never": "Inwestycja się nie zwraca.",
   "sc.cf.noIrr": "Nie istnieje (wszystkie przepływy mają ten sam znak).",
+  "sc.cf.noRoot": "Nie istnieje (NPV nie wynosi 0 przy żadnej stopie).",
   "sc.cf.count": "Liczba okresów po kwocie początkowej: {n}.",
   "sc.tt.k.f2": "F, 2 próby",
   "sc.tt.k.anova": "ANOVA",

@@ -482,6 +482,7 @@ body.graph-open { overflow: hidden; }
   .calc-modes > button { font-size: 0.78rem; padding: 6px 5px !important; letter-spacing: -0.01em; }
 }
 .tl-seg > button { min-width: 0; white-space: normal; line-height: 1.2; border-radius: 16px !important; }
+.tl-fseg > button { flex-basis: auto; } /* finance: ob dovolj prostora vsak zavihek v eni vrstici */
 
 /* ---------- kemija in verjetnost (tools-chem.js, tools-prob.js) ---------- */
 .tl-sub { flex-wrap: wrap; }
@@ -701,3 +702,6 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
   .tl-amort .tl-vt { font-size: 13px; } /* načrt odplačevanja: štirje stolpci brez drsenja vstran */
 }
 .tl-vt tbody th[scope="row"] { position: static; text-align: start; font-weight: 600; white-space: normal; }
+/* RTL: števila, seznami in izrazi v orodjih ostanejo od leve proti desni (sicer »3 4 5« → »5 4 3«, »−1000« → »1000−») */
+[dir="rtl"] .tl-field textarea, [dir="rtl"] .tl-field input:not([type="checkbox"]) { direction: ltr; text-align: right; }
+[dir="rtl"] .tl-vt td { direction: ltr; }

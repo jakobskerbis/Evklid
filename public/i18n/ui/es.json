@@ -2899,6 +2899,7 @@
   "sc.cf.dpbp": "Plazo de recuperación descontado (periodos)",
   "sc.cf.never": "La inversión no se recupera nunca.",
   "sc.cf.noIrr": "No existe (todos los flujos tienen el mismo signo).",
+  "sc.cf.noRoot": "No existe (el NPV no es 0 para ninguna tasa).",
   "sc.cf.count": "Número de periodos después del importe inicial: {n}.",
   "sc.tt.k.f2": "F, 2 muestras",
   "sc.tt.k.anova": "ANOVA",

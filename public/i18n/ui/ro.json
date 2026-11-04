@@ -2926,6 +2926,7 @@
   "sc.cf.dpbp": "Termen de recuperare actualizat (perioade)",
   "sc.cf.never": "Investiția nu se recuperează niciodată.",
   "sc.cf.noIrr": "Nu există (toate fluxurile au același semn).",
+  "sc.cf.noRoot": "Nu există (NPV nu este 0 la nicio rată).",
   "sc.cf.count": "Numărul de perioade după suma inițială: {n}.",
   "sc.tt.k.f2": "F, 2 eșantioane",
   "sc.tt.k.anova": "ANOVA",

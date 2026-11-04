@@ -2908,6 +2908,7 @@ export default {
   "sc.tt.k.f2": "F, 2 vzorca",
   "sc.cf.count": "Število obdobij po začetnem znesku: {n}.",
   "sc.cf.noIrr": "Ne obstaja (vsi tokovi imajo isti predznak).",
+  "sc.cf.noRoot": "Ne obstaja (NPV ni pri nobeni meri enaka 0).",
   "sc.cf.never": "Naložba se ne povrne.",
   "sc.cf.dpbp": "Diskontirana vračilna doba (obdobja)",
   "sc.cf.pbp": "Vračilna doba (obdobja)",

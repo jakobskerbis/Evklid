@@ -691,3 +691,10 @@ test("Pol/Rec sredi izraza: vektorji, skalarni produkt, dolžina; Pol le zunaj",
   assert.ok(near2(g.items[1].evalPoints()[0], [1, 1]));
   assert.ok(Math.abs(g.items[2].fy(Math.PI / 2) - 2) < 1e-12);
 });
+
+test("Denarni tokovi: robni primeri (velik IRR, prvi tok 0, brez ničle)", () => {
+  assert.ok(Math.abs(TC.irr([-1, 100]) - 9900) < 0.01, "IRR 9900 %");
+  assert.ok(Math.abs(TC.cashFlow(0, [0, -100, 200]).pbp - 1.5) < 1e-12, "prvi tok 0");
+  assert.equal(TC.irr([-100, 200, -500]), null, "mešani predznaki, NPV nikoli 0");
+  assert.equal(TC.cashFlow(0, [-100, 50]).pbp, null);
+});

@@ -2947,6 +2947,7 @@
   "sc.cf.dpbp": "Diskontovaná doba návratnosti (období)",
   "sc.cf.never": "Investice se nevrátí.",
   "sc.cf.noIrr": "Neexistuje (všechny toky mají stejné znaménko).",
+  "sc.cf.noRoot": "Neexistuje (NPV není 0 při žádné sazbě).",
   "sc.cf.count": "Počet období po počáteční částce: {n}.",
   "sc.tt.k.f2": "F, 2 výběry",
   "sc.tt.k.anova": "ANOVA",

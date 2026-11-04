@@ -251,7 +251,7 @@ export function buildModel(state, { comma = true } = {}) {
 
   function classify(o) {
     let a = o.ast;
-    // Rec(r; θ), tudi Rec(…) + Rec(…): točka (x; y) (public/graph/vektor.js)
+    // Rec(r; θ), tudi Rec(…) + Rec(…): točka (x; y); |Rec(…) − Rec(…)|, Rec·Rec: število (public/graph/vektor.js)
     if (hasPolRec(a)) a = vectorTuple(a) || a;
     const fv = freeVars(a);
     const has = (v) => fv.has(v);

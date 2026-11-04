@@ -365,7 +365,7 @@ export function irr(flows) {
     let fp = f(0);
     if (fp === 0) return 0;
     for (let j = 1; j <= 800; j++) {
-      const x = dir * (j < 400 ? j * 0.0025 : 1 + (j - 400) * 0.05);
+      const x = dir * (j < 400 ? j * 0.0025 : 1.02 ** (j - 400)); // do 100 % po 0,25 %, nato po 2 % (do ~2,7·10⁵ %)
       if (x <= -0.999) break;
       const fx = f(x);
       if (Number.isFinite(fp) && Number.isFinite(fx) && fp * fx <= 0) {
@@ -399,15 +399,17 @@ export function cashFlow(rate, flows) {
   const v = npv(rate, flows);
   if (!Number.isFinite(v)) return null;
   const r = rate / 100;
+  // zadnji prehod vsote iz − v ≥ 0 (tudi če je prvi tok 0 in naložba pride pozneje); null, če je vsota na koncu < 0
   const back = (cs) => {
-    let cum = cs[0];
-    if (cum >= 0) return 0;
-    for (let j = 1; j < cs.length; j++) {
+    let cum = 0;
+    let at = 0;
+    for (let j = 0; j < cs.length; j++) {
       const next = cum + cs[j];
-      if (next >= 0) return j - 1 + (cs[j] > 0 ? -cum / cs[j] : 1);
+      if (next < 0) at = null;
+      else if (at === null) at = j - 1 + -cum / cs[j];
       cum = next;
     }
-    return null;
+    return at;
   };
   return { npv: v, nfv: v * (1 + r) ** (flows.length - 1), irr: irr(flows), pbp: back(flows), dpbp: back(flows.map((c, j) => c / (1 + r) ** j)) };
 }

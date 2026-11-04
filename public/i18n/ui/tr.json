@@ -2897,6 +2897,7 @@
   "sc.cf.dpbp": "İndirgenmiş geri ödeme süresi (dönem)",
   "sc.cf.never": "Yatırım kendini geri ödemiyor.",
   "sc.cf.noIrr": "Yok (tüm akışların işareti aynı).",
+  "sc.cf.noRoot": "Yok (NPV hiçbir oranda 0 olmaz).",
   "sc.cf.count": "Başlangıç tutarından sonraki dönem sayısı: {n}.",
   "sc.tt.k.f2": "F, 2 örneklem",
   "sc.tt.k.anova": "ANOVA",

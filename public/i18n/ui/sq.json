@@ -2899,6 +2899,7 @@
   "sc.cf.dpbp": "Periudha e kthimit e skontuar (periudha)",
   "sc.cf.never": "Investimi nuk kthehet kurrë.",
   "sc.cf.noIrr": "Nuk ekziston (të gjitha flukset kanë të njëjtën shenjë).",
+  "sc.cf.noRoot": "Nuk ekziston (NPV nuk është 0 për asnjë normë).",
   "sc.cf.count": "Numri i periudhave pas shumës fillestare: {n}.",
   "sc.tt.k.f2": "F, 2 mostra",
   "sc.tt.k.anova": "ANOVA",

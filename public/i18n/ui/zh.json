@@ -2875,6 +2875,7 @@
   "sc.cf.dpbp": "折现回收期（期）",
   "sc.cf.never": "投资无法收回。",
   "sc.cf.noIrr": "不存在（所有现金流符号相同）。",
+  "sc.cf.noRoot": "不存在（任何利率下 NPV 都不为 0）。",
   "sc.cf.count": "期初金额之后的期数：{n}。",
   "sc.tt.k.f2": "F，双样本",
   "sc.tt.k.anova": "ANOVA",

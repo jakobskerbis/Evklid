@@ -2899,6 +2899,7 @@
   "sc.cf.dpbp": "Diskontierte Amortisationsdauer (Perioden)",
   "sc.cf.never": "Die Investition amortisiert sich nie.",
   "sc.cf.noIrr": "Existiert nicht (alle Zahlungen haben dasselbe Vorzeichen).",
+  "sc.cf.noRoot": "Existiert nicht (der NPV ist bei keinem Zinssatz 0).",
   "sc.cf.count": "Anzahl der Perioden nach dem Anfangsbetrag: {n}.",
   "sc.tt.k.f2": "F, 2 Stichproben",
   "sc.tt.k.anova": "ANOVA",

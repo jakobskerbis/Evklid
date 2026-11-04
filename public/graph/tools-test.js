@@ -226,7 +226,7 @@ export function testsTool(el, ctx) {
       if (r) {
         const tr = (name, o) => `<tr><th scope="row">${esc(name)}</th><td>${esc(num(o.df).text)}</td><td>${esc(num(o.ss).text)}</td><td>${esc(num(o.ms).text)}</td></tr>`;
         anovaTab = card(
-          `<div class="tl-vt-wrap"><table class="tl-vt tl-anova"><thead><tr><th>${esc(t("sc.tt.source"))}</th><th>${texHtml("\\mathrm{df}")}</th><th>${texHtml("SS")}</th><th>${texHtml("MS")}</th></tr></thead><tbody>${tr(t("sc.tt.between"), r.factor)}${tr(t("sc.tt.within"), r.error)}</tbody></table></div>` +
+          `<div class="tl-vt-wrap"><table class="tl-vt tl-anova"><thead><tr><th>${esc(t("sc.tt.source"))}</th><th>${texHtml("\\mathrm{df}")}</th><th>${texHtml("\\mathrm{SS}")}</th><th>${texHtml("\\mathrm{MS}")}</th></tr></thead><tbody>${tr(t("sc.tt.between"), r.factor)}${tr(t("sc.tt.within"), r.error)}</tbody></table></div>` +
             row(t("sc.tt.sxp"), `S_{xp} = ${num(r.sxp).tex}`, r.sxp) +
             `<p class="muted tl-note">${esc(t("sc.tt.means"))}: ${esc(r.means.map((m, i) => `${i + 1}: ${num(m).text}`).join("; "))}</p>`,
         );
@@ -418,7 +418,7 @@ function cfPanel(el, ctx) {
     const opt = (v, tex, none) => (v === null ? esc(t(none)) : tx(tex));
     out.innerHTML = card(
       row(t("sc.cf.npv"), tx(`\\mathrm{NPV} = ${num(r.npv).tex}`), r.npv) +
-        row(t("sc.cf.irr"), opt(r.irr, `\\mathrm{IRR} = ${r.irr === null ? "" : num(r.irr).tex}\\,\\%`, "sc.cf.noIrr"), r.irr ?? undefined) +
+        row(t("sc.cf.irr"), opt(r.irr, `\\mathrm{IRR} = ${r.irr === null ? "" : num(r.irr).tex}\\,\\%`, flows.some((c) => c > 0) && flows.some((c) => c < 0) ? "sc.cf.noRoot" : "sc.cf.noIrr"), r.irr ?? undefined) +
         row(t("sc.cf.nfv"), tx(`\\mathrm{NFV} = ${num(r.nfv).tex}`), r.nfv) +
         row(t("sc.cf.pbp"), opt(r.pbp, `\\mathrm{PBP} = ${r.pbp === null ? "" : num(r.pbp).tex}`, "sc.cf.never"), r.pbp ?? undefined) +
         row(t("sc.cf.dpbp"), opt(r.dpbp, `\\mathrm{DPBP} = ${r.dpbp === null ? "" : num(r.dpbp).tex}`, "sc.cf.never"), r.dpbp ?? undefined) +

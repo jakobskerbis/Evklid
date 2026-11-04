@@ -2903,6 +2903,7 @@
   "sc.cf.dpbp": "Período de recuperação atualizado (períodos)",
   "sc.cf.never": "O investimento nunca é recuperado.",
   "sc.cf.noIrr": "Não existe (todos os fluxos têm o mesmo sinal).",
+  "sc.cf.noRoot": "Não existe (o NPV não é 0 para nenhuma taxa).",
   "sc.cf.count": "Número de períodos após o montante inicial: {n}.",
   "sc.tt.k.f2": "F, 2 amostras",
   "sc.tt.k.anova": "ANOVA",

@@ -2951,6 +2951,7 @@
   "sc.cf.dpbp": "Diskontovaná doba návratnosti (obdobia)",
   "sc.cf.never": "Investícia sa nevráti.",
   "sc.cf.noIrr": "Neexistuje (všetky toky majú rovnaké znamienko).",
+  "sc.cf.noRoot": "Neexistuje (NPV nie je 0 pri žiadnej sadzbe).",
   "sc.cf.count": "Počet období po počiatočnej sume: {n}.",
   "sc.tt.k.f2": "F, 2 výbery",
   "sc.tt.k.anova": "ANOVA",

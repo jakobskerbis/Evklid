@@ -2875,6 +2875,7 @@
   "sc.cf.dpbp": "Thời gian hoàn vốn có chiết khấu (kỳ)",
   "sc.cf.never": "Khoản đầu tư không bao giờ hoàn vốn.",
   "sc.cf.noIrr": "Không tồn tại (mọi dòng tiền cùng dấu).",
+  "sc.cf.noRoot": "Không tồn tại (NPV không bằng 0 ở bất kỳ mức lãi nào).",
   "sc.cf.count": "Số kỳ sau số tiền ban đầu: {n}.",
   "sc.tt.k.f2": "F, 2 mẫu",
   "sc.tt.k.anova": "ANOVA",

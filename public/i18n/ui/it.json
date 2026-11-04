@@ -2899,6 +2899,7 @@
   "sc.cf.dpbp": "Tempo di recupero attualizzato (periodi)",
   "sc.cf.never": "L'investimento non viene mai recuperato.",
   "sc.cf.noIrr": "Non esiste (tutti i flussi hanno lo stesso segno).",
+  "sc.cf.noRoot": "Non esiste (il NPV non è 0 per nessun tasso).",
   "sc.cf.count": "Numero di periodi dopo l'importo iniziale: {n}.",
   "sc.tt.k.f2": "F, 2 campioni",
   "sc.tt.k.anova": "ANOVA",

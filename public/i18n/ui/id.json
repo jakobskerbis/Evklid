@@ -2875,6 +2875,7 @@
   "sc.cf.dpbp": "Periode pengembalian terdiskonto (periode)",
   "sc.cf.never": "Investasi tidak pernah kembali.",
   "sc.cf.noIrr": "Tidak ada (semua arus bertanda sama).",
+  "sc.cf.noRoot": "Tidak ada (NPV tidak bernilai 0 pada tingkat berapa pun).",
   "sc.cf.count": "Banyak periode setelah jumlah awal: {n}.",
   "sc.tt.k.f2": "F, 2 sampel",
   "sc.tt.k.anova": "ANOVA",

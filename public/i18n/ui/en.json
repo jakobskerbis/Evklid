@@ -2899,6 +2899,7 @@
   "sc.cf.dpbp": "Discounted payback period (periods)",
   "sc.cf.never": "The investment is never paid back.",
   "sc.cf.noIrr": "Does not exist (all flows have the same sign).",
+  "sc.cf.noRoot": "Does not exist (NPV is not 0 at any rate).",
   "sc.cf.count": "Number of periods after the initial amount: {n}.",
   "sc.tt.k.f2": "F, 2 samples",
   "sc.tt.k.anova": "ANOVA",
