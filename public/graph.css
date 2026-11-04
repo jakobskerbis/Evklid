@@ -616,7 +616,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
   display: grid; gap: 10px; margin: 6px 0 4px; }
 .sk-frame { background: var(--sk-bg); border: 1px solid var(--sk-line); border-radius: 14px; padding: 6px; }
 .sk-svg { display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto; touch-action: pan-y; user-select: none; }
-.sk-svg line, .sk-svg path, .sk-svg polygon { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+.sk-svg line, .sk-svg path, .sk-svg polygon, .sk-svg circle, .sk-svg ellipse { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 .sk-svg .sk-thin { stroke-width: 1.4; }
 .sk-svg .sk-dash { stroke-dasharray: 4 5; }
 .sk-svg .sk-faint { opacity: 0.35; }
@@ -640,6 +640,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .sk-chip { direction: ltr; display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: 0.92rem; }
 .sk-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--sk-c); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.18); flex: none; }
+.sk-tex .katex { white-space: nowrap; }
 .sk-val { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; }
 .sk-glavna { --sk-c: #8a8fa8; }
 .sk-ploskev { --sk-c: var(--sk-ploskev); }
@@ -653,4 +654,21 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-ctl input[type="range"] { accent-color: var(--sk-c); min-height: 40px;
   background: linear-gradient(to right, var(--sk-c) var(--sk-p, 0%), transparent var(--sk-p, 0%)) center / 100% 4px no-repeat; }
 .sk-ctl output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; min-width: 4.5ch; text-align: end; }
+.sk-svg .sk-n { font: 500 11px/1 var(--font, system-ui), sans-serif; fill: var(--sk-glavna); opacity: 0.7; }
+.sk-svg .sk-grid { stroke: var(--sk-line); stroke-width: 1; }
+.sk-svg .sk-fill { stroke: none; }
+.sk-svg .sk-fill-ploskev { fill: var(--sk-ploskev); }
+.sk-svg .sk-fill-izbor { fill: var(--sk-izbor); }
+.sk-svg .sk-fill-druga { fill: var(--sk-druga); }
+.sk-svg .sk-fill-glavna { fill: var(--sk-glavna); }
+.sk-svg .sk-fill-bg { fill: var(--sk-bg); }
+.sk-ctl .demo-seg { justify-self: start; display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 4px; border-radius: 22px; background: var(--surface-2); }
+.sk-ctl .demo-seg .seg-btn { min-height: 40px; min-width: 44px; padding: 5px 12px; border: 0; border-radius: 999px; background: none; font-weight: 800; color: var(--muted); cursor: pointer; }
+.sk-ctl .demo-seg .seg-btn.on { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
+.sk-stepper { display: flex; align-items: center; gap: 10px; }
+.sk-step-label { font-weight: 700; flex: 1; }
+.sk-step-label::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--sk-c); margin-inline-end: 6px; }
+.sk-step-btn { min-width: 40px; min-height: 40px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: inherit; font-size: 1.2rem; line-height: 1; cursor: pointer; }
+.sk-step-btn:disabled { opacity: 0.4; cursor: default; }
+.sk-stepper output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; min-width: 2.5ch; text-align: center; }
 .sk-hint { margin: 0; color: var(--muted); font-size: 0.9rem; unicode-bidi: plaintext; }
