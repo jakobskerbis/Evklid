@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zamuda da razdaljo
+  - $s = v \cdot t$
+  - boben slišiš $0{,}5\,\mathrm{s}$ pozneje: $170\,\mathrm{m}$
+- GPS
+  - telefon le sprejema signale satelitov
+  - $s = c \cdot t$, $c = 300\,000\,\mathrm{km/s}$
+  - napaka: hitrost zvoka namesto svetlobe
+- Laser
+  - ena barva, ozek snop
+  - CD: odboj od vdolbinic da ničle in enice
+- Sončna celica
+  - fotoni sprostijo elektrone v siliciju
+  - ena celica okoli $0{,}5\,\mathrm{V}$; zaporedno $U = N \cdot U_1$
+  - barva odloči, ali foton sprosti elektron; večja jakost da večji tok
+- Jedrska elektrarna
+  - cepitev urana, verižna reakcija
+  - nadzorne palice vpijajo nevtrone
+  - toplota, para, turbina, generator
+- Moč in delo
+  - $P = U \cdot I$, $A = P \cdot t$
+  - $\mathrm{kW}$ in $\mathrm{h}$ dasta $\mathrm{kWh}$
