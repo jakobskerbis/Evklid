@@ -358,7 +358,7 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 #conversation-list li span { flex: 1; overflow: hidden; text-overflow: ellipsis; }
 #conversation-list li.active, #conversation-list li:hover { background: var(--accent-soft); color: var(--text); }
 #conversation-list li button { border: 0 !important; background: none !important; padding: 4px !important; min-height: 0 !important; opacity: 0; color: var(--muted); }
-#conversation-list li:hover button, #conversation-list li.active button { opacity: 0.8; }
+#conversation-list li:hover button, #conversation-list li.active button, #conversation-list li button:focus-visible { opacity: 0.8; }
 .chat { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
 .chat-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--surface); }
 .chat-head h1 { font-size: 1.05rem; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

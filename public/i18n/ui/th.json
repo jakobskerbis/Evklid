@@ -284,7 +284,6 @@
   "chat.symbolsTitle": "สัญลักษณ์: √, π, ∫, H₂O …",
   "chat.mic": "พูดคำถาม",
   "chat.delete": "ลบบทสนทนา",
-  "chat.confirmDelete": "ลบบทสนทนานี้ไหม?",
   "chat.hello": "สวัสดี {name}!",
   "chat.intro": "พิมพ์โจทย์หรือถ่ายรูปมา แล้วเราจะแก้ด้วยกันทีละขั้น",
   "chat.idea1": "แก้สมการ 2x + 3 = 11 ยังไง?",
@@ -2878,5 +2877,6 @@
   "ai.pool": "ใช้ร่วมกันทุกโปรไฟล์ในครอบครัว",
   "gift.level": "ระดับ",
   "meter.levelsTitle": "ราคาตามระดับ",
-  "chat.choices": "ตอบกลับด่วน"
+  "chat.choices": "ตอบกลับด่วน",
+  "chat.deleted": "ลบบทสนทนาแล้ว"
 }
