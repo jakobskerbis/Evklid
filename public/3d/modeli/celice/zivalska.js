@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Evkariontska celica brez celične stene in kloroplastov. Odrezan del pokaže jedro in organele; organelov je zaradi preglednosti manj kot v resnici.",
+  poskusi: "Tapni jedro in mitohondrij ter preberi, kaj delata, nato izberi »Cela celica«.",
   merilo: { m: 20e-6, oznaka: "20 µm" },
 };
 

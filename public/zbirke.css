@@ -55,10 +55,10 @@
 /* Z odprtim »preglej« se da pomakniti tudi do zadnje vrste predmetov pod njim. */
 #zbirke-content:has(> .zb-inspect) { padding-bottom: 240px; }
 .zb-inspect { position: fixed; z-index: 60; left: 50%; bottom: 20px; transform: translateX(-50%); width: min(560px, calc(100vw - 24px)); display: flex; gap: 18px; align-items: center; box-shadow: 0 18px 50px rgba(15, 23, 42, 0.35); }
-.zb-x { position: absolute; right: 6px; top: 6px; }
+button.ghost.zb-x { position: absolute; inset-inline-end: 4px; top: 4px; min-width: 44px; min-height: 44px; display: grid; place-items: center; padding: 0; }
 .zb-big .avatar-svg, .zb-big .zb-tile { display: block; border-radius: 20px; border: 3px solid var(--text); }
 .zb-info { min-width: 0; }
-.zb-info h2 { margin: 0 28px 6px 0; font-size: 1.15rem; }
+.zb-info h2 { margin: 0; margin-inline-end: 44px; margin-bottom: 6px; font-size: 1.15rem; }
 .zb-info p { margin: 6px 0; display: flex; gap: 6px; align-items: flex-start; }
 .zb-info p > span:not(.gm-rtag) { min-width: 0; }
 .zb-info p svg.i { flex: none; width: 17px; height: 17px; margin-top: 2px; color: var(--muted); }
@@ -109,3 +109,18 @@
 /* Pot znanja (okvirji redkosti so v games.css) */
 .zb-pot { margin-bottom: 12px; }
 .zb-pot p { margin: 0 0 6px; }
+
+/* Deljiva kartica (public/deli-kartico.js): predogled slike, nato Deli ali Prenesi. */
+.zb-share-btn { margin-top: 10px; min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+.zb-share { display: flex; gap: 18px; align-items: center; margin-top: 14px; }
+.zb-share img { flex: none; width: 216px; height: auto; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 10px 30px color-mix(in srgb, var(--text) 18%, transparent); }
+.zb-share-info { min-width: 0; }
+.zb-share-info p { margin: 0 0 10px; }
+.zb-share-info .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.zb-share-info .actions button { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+.dark .zb-share img { border-color: var(--border); box-shadow: none; }
+@media (max-width: 640px) {
+  .zb-share { flex-direction: column; text-align: center; }
+  .zb-share img { width: min(240px, 70vw); }
+  .zb-share-info .actions { justify-content: center; }
+}

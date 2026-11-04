@@ -8,6 +8,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Virus, ki napada bakterijo E. coli (visok okoli 200 nm). Z repnimi vlakni se pritrdi na bakterijo, skrči plašč repa in vbrizga svojo DNK. Okno v glavi pokaže navito DNK; navojev je manj kot v resnici.",
+  poskusi: "Premakni drsnik »Vbrizgavanje« do konca in opazuj, kam gre DNK.",
   merilo: { m: 360e-9, oznaka: "360 nm" },
 };
 

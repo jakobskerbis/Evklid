@@ -16,6 +16,7 @@ import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
 import { Progress } from "./progress.js";
 import { mountLeagues } from "./leagues.js";
+import { mountClassShowcase } from "./vitrina.js";
 import { mountGradiva } from "./gradiva.js";
 import { mountKviz } from "./kviz.js";
 import { mountSchools } from "./schools.js";
@@ -58,6 +59,7 @@ import { mountScan } from "./scan.js";
 import { appVersion, vendorVersion } from "./razlicica.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
+import { mount3d } from "./tri-d.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
 import { jeFaks, jeSs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
@@ -243,6 +245,7 @@ export function createApp(store, opts = {}) {
   // Merjenje v pilotu: števec ogledov strani za starše (pred statičnimi datotekami, glej pilot.js).
   app.use(visitCounter(store.db));
   mountSolePage(app); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
+  mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
     const statics = compressedStatic([
@@ -250,6 +253,7 @@ export function createApp(store, opts = {}) {
       ["/vendor/pdfjs/", path.join(modules, "pdfjs-dist")],
       ["/vendor/marked/", path.join(modules, "marked")],
       ["/vendor/dompurify/", path.join(modules, "dompurify", "dist")],
+      ["/vendor/three/build/", path.join(modules, "three", "build")],
       ...FONTS.map(([dir, pkg]) => [`/vendor/${dir}/`, path.join(modules, "@fontsource-variable", pkg)]),
       ["/practice/", path.join(here, "practice")],
       ["/", publicDir],
@@ -268,6 +272,7 @@ export function createApp(store, opts = {}) {
   app.use("/vendor/marked", express.static(path.join(modules, "marked")));
   app.use("/vendor/dompurify", express.static(path.join(modules, "dompurify", "dist")));
   for (const [dir, pkg] of FONTS) app.use(`/vendor/${dir}`, express.static(path.join(modules, "@fontsource-variable", pkg)));
+  app.use("/vendor/three/build", express.static(path.join(modules, "three", "build"))); // 3D (server/tri-d.js)
 
   // Učbenik za tiskanje / PDF: brezplačno in brez prijave.
   app.get("/ucbenik/:path{/:topic}", (req, res) => {
@@ -1282,6 +1287,7 @@ export function createApp(store, opts = {}) {
   mountLab(app, { loadStudent, accounts }); // virtualni laboratorij: vsi poskusi, zaklep kot v učbeniku
   mountAvatar(app, avatars, { loadStudent, trendsFile: opts.trendsFile ?? null });
   mountKnowledge(app, knowledge, { loadStudent, avatars });
+  mountClassShowcase(app, store.db, { loadStudent, leagues, knowledge }); // vitrina v razredu (opt-in, server/vitrina.js)
   mountCorner(app, store, { loadStudent, fetchFn: opts.newsFetch, offline: opts.newsOffline });
   mountSchedule(app, store, { loadStudent, progress, usage, schedules, photoFn: opts.schedulePhotoFn, fetchFn: opts.fetchFn, lookup: opts.lookup, modelCapFor: (id) => accounts?.modelCapFor?.(id) ?? null });
   mountScan(app, { loadStudent, usage, readFn: opts.scanReadFn, solveFn: opts.scanSolveFn });

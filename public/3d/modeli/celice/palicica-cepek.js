@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Čutnici v mrežnici očesa: paličice zaznavajo šibko svetlobo, čepki barve. Svetloba pride od spodaj, skozi celo mrežnico, do zunanjih členkov zgoraj. Celici sta narisani približno dvakrat širši, vlakni krajši, diskov pa je manj kot v resnici (paličica jih ima okoli 1000). Debelina membrane je povečana.",
+  poskusi: "Primerjaj zunanja členka paličice in čepka: kje so diski?",
   merilo: { m: 64e-6, oznaka: "64 µm" },
 };
 
