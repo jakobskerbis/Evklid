@@ -593,7 +593,8 @@ async function renderLesson(topicId) {
     toast: ctx.toast,
   });
   box.querySelectorAll("[data-tb-lab]").forEach((b) => b.addEventListener("click", () => ctx.openLab?.(b.dataset.tbLab)));
-  box.querySelectorAll("[data-tb-3d]").forEach((b) => b.addEventListener("click", () => ctx.open3d?.(b.dataset.tb3d, b.dataset.title)));
+  // getAttribute: »data-tb-3d« v dataset ni »tb3d« (vezaj pred števko ostane, ključ je »tb-3d«).
+  box.querySelectorAll("[data-tb-3d]").forEach((b) => b.addEventListener("click", () => ctx.open3d?.(b.getAttribute("data-tb-3d"), b.dataset.title)));
   box.querySelectorAll(".tb-demo-mount").forEach((m) => {
     const d = demos[Number(m.dataset.sim)];
     mountSim(d.id, m, d.opts);
