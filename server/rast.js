@@ -111,14 +111,16 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
     .filter((s) => counted(s.id) && s.d0 <= today);
 
   const active = new Map(); // učenec → množica aktivnih dni
+  // CROSS JOIN določi vrstni red: najprej pogovori, posodobljeni v obdobju (addMessage jih osveži), nato njihova
+  // sporočila po idx_msg_conv, in najprej novi profili, nato njihove naloge po idx_tasks_topic (brez branja vseh vrstic).
   const acts = db
     .prepare(
       `SELECT student_id AS s, substr(created_at, 1, 10) AS d FROM events WHERE created_at >= ?
-       UNION SELECT c.student_id, substr(m.created_at, 1, 10) FROM messages m JOIN conversations c ON c.id = m.conversation_id
-         WHERE m.role = 'user' AND m.created_at >= ?
+       UNION SELECT c.student_id, substr(m.created_at, 1, 10) FROM conversations c CROSS JOIN messages m ON m.conversation_id = c.id
+         WHERE c.updated_at >= ? AND m.role = 'user' AND m.created_at >= ?
        UNION SELECT student_id, substr(created_at, 1, 10) FROM xp_events WHERE created_at >= ?`,
     )
-    .all(floor, floor, floor);
+    .all(floor, floor, floor, floor);
   for (const { s, d } of acts) {
     if (!counted(s) || d > today) continue;
     if (!active.has(s)) active.set(s, new Set());
@@ -130,7 +132,7 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
   const firstTask = new Set(
     db
       .prepare(
-        `SELECT DISTINCT t.student_id AS id FROM tasks t JOIN students s ON s.id = t.student_id
+        `SELECT DISTINCT t.student_id AS id FROM students s CROSS JOIN tasks t ON t.student_id = s.id
          WHERE t.solved = 1 AND s.created_at >= ? AND t.created_at < datetime(s.created_at, '+1 day')`,
       )
       .all(from)

@@ -968,6 +968,7 @@ export function mountAccounts(app, store, opts = {}) {
       consents: q("SELECT * FROM consents WHERE parent_id = ?", p.id),
       children: children(p.id).map((c) => ({
         ...c,
+        vir: db.prepare("SELECT vir FROM students WHERE id = ?").get(c.id)?.vir ?? null, // od kod je profil prišel (server/rast.js)
         conversations: store.listConversations(c.id).map((conv) => ({
           ...conv,
           // Šifrirana besedila (server/crypto-polje.js) gredo v izvoz odšifrirana.

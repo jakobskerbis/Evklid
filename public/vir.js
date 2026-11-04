@@ -31,3 +31,6 @@ export function currentSource() {
     return null;
   }
 }
+
+// Tudi na straneh za starše in šole (starsi.html, placaj.html, sole.html), od koder starš šele pride v aplikacijo.
+if (typeof location !== "undefined") captureSource();
