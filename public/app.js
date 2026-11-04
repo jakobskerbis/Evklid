@@ -1789,7 +1789,8 @@ async function goNew({ skipHint = false } = {}) {
     return;
   }
   const pretest = await openTopic(m.newTopic.id);
-  if (m.newTopic.practice && !pretest) await nextPractice();
+  // Stran ostane na vrhu (razlaga teme); naloga čaka spodaj brez samodejnega fokusa.
+  if (m.newTopic.practice && !pretest) await nextPractice({ stay: true });
 }
 
 async function showTestPrep(edit = false) {
@@ -2092,7 +2093,8 @@ async function openTopic(topicId) {
 async function startPretest(tp) {
   const out = await api(`/api/students/${state.student.id}/pretest`, { method: "POST", body: { topic_id: tp.id } }).catch(() => null);
   if (!out || out.skip || out.finished || !out.task) return false;
-  renderTask(out.task, { mode: "pretest", index: out.index, total: out.total });
+  // Test se odpre skupaj s temo: stran ostane na vrhu, polje brez samodejnega fokusa.
+  renderTask(out.task, { mode: "pretest", index: out.index, total: out.total, noFocus: true });
   return true;
 }
 
@@ -2120,7 +2122,9 @@ async function learnWithTutor(topic, firstMessage = t("topic.startMsg", { name: 
 
 // ---------- vadnica ----------
 
-async function nextPractice() {
+// stay: naloga se odpre skupaj s temo (»Nova snov«), zato ne skočimo do nje in ne fokusiramo polja.
+async function nextPractice(opts) {
+  const stay = opts?.stay === true;
   const box = $("#practice");
   let out;
   try {
@@ -2140,9 +2144,9 @@ async function nextPractice() {
     </div>`;
     $("#ex-next").addEventListener("click", nextPractice);
   } else {
-    renderTask(out.task, { mode: "practice" });
+    renderTask(out.task, { mode: "practice", noFocus: stay });
   }
-  box.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (!stay) box.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 const SESSIONS = {
@@ -2405,8 +2409,9 @@ function renderTask(task, ctx) {
       opener: form.querySelector(".pad-open-btn"),
       subject: calcSubject(),
       readFn: (image) => api(`/api/students/${state.student.id}/tasks/${task.id}/read`, { method: "POST", body: { image } }),
+      stay: !!ctx.noFocus,
     });
-    if (!document.body.classList.contains("pad-open")) $("#answer").focus();
+    if (!ctx.noFocus && !document.body.classList.contains("pad-open")) $("#answer").focus();
   } else closePad();
 }
 
