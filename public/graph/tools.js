@@ -4,7 +4,7 @@
 import { skicaZa } from "../skice/index.js";
 import { createUnits } from "./sci.js";
 import { formatNumber } from "./scicore.js";
-import { readList, stats, evalComplex, polyRoots, readMatrix, M, convertBase, molarMass, readNumber } from "./toolscore.js";
+import { readList, evalComplex, polyRoots, readMatrix, M, convertBase, logic32, LOGIC_OPS, molarMass, readNumber } from "./toolscore.js";
 import { ELEMENTS, CATEGORIES, MASSES, shells, EXTRA } from "./pse-data.js";
 
 import { esc, texHtml, usesComma, remember } from "./tools-kit.js";
@@ -12,6 +12,7 @@ import { chemTools } from "./tools-chem.js";
 import { probTool } from "./tools-prob.js";
 import { anaTools } from "./tools-ana.js";
 import { testsTool, tvmTool, tableTool } from "./tools-test.js";
+import { statsTool } from "./tools-stats.js";
 
 const TOOLS = ["units", "eq", "calc", "stats", "tests", "prob", "vec", "matrix", "plot3", "ode", "err", "complex", "base", "tvm", "table", "rxn", "conc", "solub"];
 // vrstni red čipov po predmetu: najprej orodja, ki jih predmet največ rabi
@@ -59,44 +60,6 @@ export function createTools(root, opts) {
     return `${a} ${im < 0 ? "-" : "+"} ${ib}`;
   };
   const mTex = (A) => `\\begin{pmatrix}${A.map((r) => r.map((v) => num(v).tex).join(" & ")).join(" \\\\ ")}\\end{pmatrix}`;
-
-  // ---- statistika ----
-  function stats_(el) {
-    const saved = remember.get("evklid.tool.stats", "2 4 4 4 5 5 7 9");
-    el.innerHTML = card(`<label class="tl-field"><span>${esc(t("sc.data"))}</span><textarea class="tl-data" rows="3" inputmode="decimal" spellcheck="false">${esc(saved)}</textarea></label><p class="muted tl-note">${esc(t("sc.dataHint"))}</p>`) + `<div class="tl-out" aria-live="polite"></div>`;
-    const ta = el.querySelector(".tl-data");
-    const run = () => {
-      remember.set("evklid.tool.stats", ta.value);
-      const s = stats(readList(ta.value));
-      const out = el.querySelector(".tl-out");
-      if (!s) return (out.innerHTML = "");
-      const row = (key, sym, v, extra = "") => `<div class="tl-row"><span class="tl-k">${esc(t(`sc.st.${key}`))}</span><span class="tl-v">${texHtml(`${sym} = ${extra || num(v).tex}`)}</span>${extra ? "" : insertBtn(v)}</div>`;
-      out.innerHTML =
-        (s.bad ? err(t("sc.dataBad", { n: s.bad })) : "") +
-        card(
-          [
-            row("n", "n", s.n),
-            row("sum", "\\Sigma x", s.sum),
-            row("mean", "\\bar{x}", s.mean),
-            row("median", "Me", s.median),
-            row("mode", "Mo", 0, s.mode.length ? s.mode.map((v) => num(v).tex).join(";\\ ") : "\\text{—}"),
-            row("min", "x_{\\min}", s.min),
-            row("max", "x_{\\max}", s.max),
-            row("range", "R", s.range),
-            row("q1", "Q_1", s.q1),
-            row("q3", "Q_3", s.q3),
-            row("iqr", "IQR", s.iqr),
-            row("sdP", "\\sigma", s.sdP),
-            row("sdS", "s", s.sdS),
-            row("varP", "\\sigma^2", s.varP),
-            row("varS", "s^2", s.varS),
-          ].join(""),
-        ) +
-        `<p class="muted tl-note">${esc(t("sc.sorted"))}: ${esc(s.sorted.slice(0, 200).map((v) => num(v).text).join("; "))}</p>`;
-    };
-    ta.addEventListener("input", run);
-    run();
-  }
 
   // ---- enačbe ----
   function eq_(el) {
@@ -214,7 +177,7 @@ export function createTools(root, opts) {
     el.innerHTML =
       card(`<div class="tl-mx"><label class="tl-field"><span>${texHtml("A")}</span><textarea class="tl-A" rows="3" spellcheck="false">${esc(st.A)}</textarea></label><label class="tl-field"><span>${texHtml("B")}</span><textarea class="tl-B" rows="3" spellcheck="false">${esc(st.B)}</textarea></label></div>
       <p class="muted tl-note">${esc(t("sc.mx.hint"))}</p>
-      <div class="chip-row tl-ops">${["det A", "A^{-1}", "A^T", "\\operatorname{rref} A", "A + B", "A - B", "A \\cdot B", "A x = B"].map((o, i) => `<button type="button" data-op="${i}">${texHtml(o)}</button>`).join("")}</div>`) + `<div class="tl-out" aria-live="polite"></div>`;
+      <div class="chip-row tl-ops">${["\\det A", "A^{-1}", "A^T", "\\operatorname{rref} A", "A + B", "A - B", "A \\cdot B", "A x = B", "\\operatorname{sl} A", "A^2", "\\lambda"].map((o, i) => `<button type="button" data-op="${i}">${texHtml(o)}</button>`).join("")}</div>`) + `<div class="tl-out" aria-live="polite"></div>`;
     const out = el.querySelector(".tl-out");
     let op = 0;
     const run = () => {
@@ -225,7 +188,7 @@ export function createTools(root, opts) {
       const A = readMatrix(st.A);
       const B = readMatrix(st.B);
       if (!A) return (out.innerHTML = err(t("sc.mx.hint")));
-      const needB = op >= 4;
+      const needB = op >= 4 && op <= 7;
       if (needB && !B) return (out.innerHTML = err(t("sc.mx.hint")));
       const sq = A.length === A[0].length;
       let res;
@@ -258,6 +221,25 @@ export function createTools(root, opts) {
           res = r ? `A \\cdot B = ${mTex(r)}` : null;
           break;
         }
+        case 8:
+          res = sq ? `\\operatorname{sl} A = ${num(M.trace(A)).tex}` : null;
+          break;
+        case 9:
+          res = sq ? `A^2 = ${mTex(M.mul(A, A))}` : null;
+          break;
+        case 10: {
+          // lastne vrednosti: ničle det(λI − A); kompleksne v obliki a ± bi
+          const ev = sq ? M.eigen(A) : null;
+          if (!ev) break;
+          const z = ([re, im]) => (im === 0 ? num(re).tex : `${re === 0 ? "" : num(re).tex}${im < 0 ? "-" : re === 0 ? "" : "+"}${Math.abs(im) === 1 ? "" : num(Math.abs(im)).tex}i`);
+          const cp = M.charPoly(A);
+          const n = cp.length - 1;
+          const term = (c, k) => (c === 0 ? "" : `${c < 0 ? "-" : "+"}${Math.abs(c) === 1 && k ? "" : num(Math.abs(c)).tex}${k ? (k === 1 ? "\\lambda" : `\\lambda^{${k}}`) : ""}`);
+          const poly = cp.map((c, i) => term(c, n - i)).join("").replace(/^\+/, "");
+          // vsaka vrstica posebej, da se na telefonu nič ne pomika vstran
+          res = [`\\det(\\lambda I - A) = ${poly}`, ...ev.map((e, i) => `\\lambda_{${i + 1}} = ${z(e)}`)];
+          break;
+        }
         case 7: {
           if (!sq || B.length !== A.length) break;
           const r = M.solve(A, B.map((x) => x[0]));
@@ -266,6 +248,7 @@ export function createTools(root, opts) {
         }
       }
       if (res == null) out.innerHTML = err(t("sc.mx.size"));
+      else if (Array.isArray(res)) out.innerHTML = card(res.map((r) => `<div class="tl-mx-line">${texHtml(r)}</div>`).join("")); // vrstični KaTeX: dolg polinom se prelomi pri + in −
       else if (res.startsWith("!")) out.innerHTML = err(res.slice(1));
       else out.innerHTML = card(`<div class="tl-mx-res">${texHtml(res, true)}</div>`);
     };
@@ -279,21 +262,44 @@ export function createTools(root, opts) {
     run();
   }
 
-  // ---- številski sistemi ----
+  // ---- številski sistemi (in logične operacije kot Casio: AND, OR, XOR, XNOR, Not, Neg) ----
   function base_(el) {
     const st = remember.get("evklid.tool.base", { v: "2024", b: 10 });
+    st.op ||= "";
+    st.w ??= "";
+    const ops = ["", ...LOGIC_OPS];
+    const opName = (o) => (o ? (o === "not" ? "Not" : o === "neg" ? "Neg" : o.toUpperCase()) : t("sc.base.none"));
     el.innerHTML = card(`<div class="tl-pair"><label class="tl-field"><span>${esc(t("sc.input"))}</span><input class="tl-bv" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(st.v)}"></label>
-      <label class="tl-field tl-narrow"><span>${esc(t("sc.base.from"))}</span><select class="tl-bb">${[2, 8, 10, 16].map((b) => `<option value="${b}"${b === st.b ? " selected" : ""}>${b}</option>`).join("")}</select></label></div>`) + `<div class="tl-out" aria-live="polite"></div>`;
+      <label class="tl-field tl-narrow"><span>${esc(t("sc.base.from"))}</span><select class="tl-bb">${[2, 8, 10, 16].map((b) => `<option value="${b}"${b === st.b ? " selected" : ""}>${b}</option>`).join("")}</select></label></div>
+      <div class="tl-pair"><label class="tl-field tl-narrow"><span>${esc(t("sc.base.op"))}</span><select class="tl-bo">${ops.map((o) => `<option value="${o}"${o === st.op ? " selected" : ""}>${esc(opName(o))}</option>`).join("")}</select></label>
+      <label class="tl-field tl-bw-f"><span>${esc(t("sc.base.second"))}</span><input class="tl-bw" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(st.w)}"></label></div>`) + `<div class="tl-out" aria-live="polite"></div>`;
     const run = () => {
       st.v = el.querySelector(".tl-bv").value;
       st.b = Number(el.querySelector(".tl-bb").value);
+      st.op = el.querySelector(".tl-bo").value;
+      st.w = el.querySelector(".tl-bw").value;
       remember.set("evklid.tool.base", st);
+      const binary = st.op && st.op !== "not" && st.op !== "neg";
+      el.querySelector(".tl-bw-f").hidden = !binary;
       const out = el.querySelector(".tl-out");
       if (!st.v.trim()) return (out.innerHTML = "");
       const r = convertBase(st.v, st.b);
       if (!r) return (out.innerHTML = err(t("sc.base.invalid")));
       const names = { 2: "BIN", 8: "OCT", 10: "DEC", 16: "HEX" };
-      out.innerHTML = card([2, 8, 10, 16].map((b) => `<div class="tl-row"><span class="tl-k">${names[b]}</span><span class="tl-v tl-mono">${esc(r[b])}<sub>${b}</sub></span></div>`).join(""));
+      const rows = (x) => [2, 8, 10, 16].map((b) => `<div class="tl-row"><span class="tl-k">${names[b]}</span><span class="tl-v tl-mono">${esc(x[b])}<sub>${b}</sub></span></div>`).join("");
+      let logic = "";
+      if (st.op) {
+        const w = binary ? convertBase(st.w, st.b) : null;
+        if (binary && !st.w.trim()) logic = "";
+        else if (binary && !w) logic = err(t("sc.base.invalid"));
+        else {
+          // BIN/OCT/HEX od 2³¹ do 2³² − 1 je 32-bitni vzorec (kot Casio: FFFFFFFF = −1), DEC ostane s predznakom
+          const bits = (v) => (st.b !== 10 && typeof v === "bigint" && v >= 2n ** 31n && v < 2n ** 32n ? BigInt.asIntN(32, v) : v);
+          const lr = logic32(bits(r.value), bits(w?.value ?? null), st.op);
+          logic = lr ? card(`<div class="tl-h">${esc(t("sc.base.result"))}: ${esc(opName(st.op))}</div>${rows(lr)}`) + `<p class="muted tl-note">${esc(t("sc.base.bits"))}</p>` : err(t("sc.base.range"));
+        }
+      }
+      out.innerHTML = card(rows(r)) + logic;
     };
     el.addEventListener("input", run);
     el.addEventListener("change", run);
@@ -317,7 +323,7 @@ export function createTools(root, opts) {
     err: ana.err,
     plot3: ana.plot3,
     units: (el) => createUnits(el, { t, icon, locale: opts.locale, onInsert: opts.onInsert }),
-    stats: stats_,
+    stats: (el) => statsTool(el, ctx),
     eq: eq_,
     complex: complex_,
     matrix: matrix_,
