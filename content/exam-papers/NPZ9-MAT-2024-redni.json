@@ -1,0 +1,680 @@
+{
+ "id": "NPZ9-MAT-2024-redni",
+ "exam": "NPZ9",
+ "subject": "MAT",
+ "minutes": 60,
+ "points": 50,
+ "author": "AI",
+ "tools": "Modro ali črno nalivno pero oziroma kemični svinčnik, svinčnik (le za risanje in načrtovanje), radirka, šilček, ravnilo, geotrikotnik in šestilo; žepno računalo ni dovoljeno. Priložen je list z geometrijskimi obrazci, kvadrati naravnih števil od 11 do 25, približki konstant in matematičnimi znaki. Pri načrtovanju je dovoljeno odstopanje ±2 mm in ±2°.",
+ "tasks": [
+  {
+   "n": 1,
+   "intro": "Izračunaj brez računala. Zapiši tudi vmesne račune.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "$-7 - (-15) =$",
+     "answer": "$8$",
+     "ways": [
+      {
+       "title": "Po pravilu",
+       "text": "Odšteti negativno število pomeni prišteti njegovo nasprotno vrednost: $-(-15) = +15$.\n\n$-7 - (-15) = -7 + 15 = 8$."
+      },
+      {
+       "title": "S številsko premico",
+       "text": "Odšteti $-15$ pomeni prišteti $15$. Na številski premici zato začnemo pri $-7$ in se pomaknemo za $15$ enot v desno: po $7$ korakih smo pri $0$, po preostalih $8$ pa pri $8$."
+      }
+     ],
+     "mistake": "Napačno je $-7 - (-15) = -7 - 15 = -22$: dva minusa zapored dasta plus. Napačen je tudi rezultat $-8$, ki nastane, če se zmotimo pri predznaku: večjo absolutno vrednost ima $15$, zato je rezultat pozitiven."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "$6 \\cdot (-37) =$",
+     "answer": "$-222$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Najprej zmnožimo absolutni vrednosti: $6 \\cdot 37 = 6 \\cdot 30 + 6 \\cdot 7 = 180 + 42 = 222$.\n\nFaktorja imata različna predznaka, zato je zmnožek negativen: $6 \\cdot (-37) = -222$."
+      },
+      {
+       "title": "Drugače: z razčlenitvijo",
+       "text": "$-37 = -40 + 3$, zato je $6 \\cdot (-37) = 6 \\cdot (-40) + 6 \\cdot 3 = -240 + 18 = -222$."
+      }
+     ],
+     "mistake": "Pogosta napaka je pozitiven rezultat $222$: pozitivno število, pomnoženo z negativnim, da negativen zmnožek."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "$4{,}3 : 0{,}01 =$",
+     "answer": "$430$",
+     "ways": [
+      {
+       "title": "Po pravilu",
+       "text": "Deliti z $0{,}01$ je isto kot množiti s $100$, saj je $0{,}01 = \\frac{1}{100}$. Decimalno vejico premaknemo za dve mesti v desno:\n\n$4{,}3 : 0{,}01 = 4{,}3 \\cdot 100 = 430$."
+      },
+      {
+       "title": "Drugače: z razširjanjem",
+       "text": "Deljenec in delitelj pomnožimo s $100$, da delitelj postane naravno število; količnik se ne spremeni:\n\n$4{,}3 : 0{,}01 = 430 : 1 = 430$."
+      }
+     ],
+     "mistake": "Kdor premakne vejico v levo, dobi $0{,}043$ – to bi bil rezultat množenja z $0{,}01$. Pri deljenju s številom, manjšim od $1$, je rezultat večji od deljenca."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "open",
+     "text": "$0{,}0256 \\cdot 1000 =$",
+     "answer": "$25{,}6$",
+     "ways": [
+      {
+       "title": "Po pravilu",
+       "text": "Pri množenju s $1000$ premaknemo decimalno vejico za tri mesta v desno (toliko, kolikor ima $1000$ ničel):\n\n$0{,}0256 \\cdot 1000 = 25{,}6$."
+      },
+      {
+       "title": "Z oceno",
+       "text": "$0{,}0256$ je nekaj več kot $0{,}025$, to je $25$ tisočink. Tisočkrat $25$ tisočink je $25$, zato mora biti rezultat nekaj več kot $25$: $25{,}6$ ✓."
+      }
+     ],
+     "mistake": "Kdor vejico premakne le za dve mesti, dobi $2{,}56$ (to je množenje s $100$)."
+    },
+    {
+     "id": "e",
+     "points": 2,
+     "format": "open",
+     "text": "$3{,}6 : (1{,}25 - 1{,}7) =$",
+     "answer": "$-8$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Najprej izračunamo vrednost v oklepaju. Ker je $1{,}7$ večje od $1{,}25$, bo razlika negativna:\n\n$1{,}25 - 1{,}7 = -(1{,}70 - 1{,}25) = -0{,}45$.\n\nNato delimo. Deljenec in delitelj pomnožimo s $100$: $3{,}6 : 0{,}45 = 360 : 45 = 8$.\n\nPozitivno število delimo z negativnim, zato je količnik negativen: $3{,}6 : (-0{,}45) = -8$."
+      },
+      {
+       "title": "Drugače: z ulomki",
+       "text": "$3{,}6 = \\frac{18}{5}$, $1{,}25 = \\frac{5}{4} = \\frac{25}{20}$ in $1{,}7 = \\frac{17}{10} = \\frac{34}{20}$.\n\nOklepaj: $\\frac{25}{20} - \\frac{34}{20} = -\\frac{9}{20}$.\n\nDeljenje: $\\frac{18}{5} : \\left(-\\frac{9}{20}\\right) = -\\frac{18}{5} \\cdot \\frac{20}{9} = -\\frac{2 \\cdot 4}{1} = -8$."
+      },
+      {
+       "title": "Preizkus",
+       "text": "Količnik pomnožimo z deliteljem in moramo dobiti deljenec: $(-8) \\cdot (-0{,}45) = 3{,}6$ ✓."
+      }
+     ],
+     "scoring": "1 t. za vrednost oklepaja $-0{,}45$, 1 t. za končni rezultat $-8$.",
+     "mistake": "Oklepaj je treba izračunati najprej; račun $3{,}6 : 1{,}25 - 1{,}7$ ne upošteva oklepaja. Kdor odšteje v napačnem vrstnem redu ($1{,}7 - 1{,}25 = 0{,}45$), dobi napačen predznak, $+8$."
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "intro": "Dopolni zapise. $D_n$ označuje množico vseh deliteljev števila $n$, $V_n$ množico večkratnikov števila $n$, $D(a, b)$ največji skupni delitelj in $v(a, b)$ najmanjši skupni večkratnik števil $a$ in $b$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "fill",
+     "text": "$D_{28} = \\{\\underline{\\qquad\\qquad\\qquad\\qquad}\\}$",
+     "answer": "$D_{28} = \\{1, 2, 4, 7, 14, 28\\}$",
+     "ways": [
+      {
+       "title": "S pari deliteljev",
+       "text": "Število $28$ zapišemo kot zmnožek dveh naravnih števil na vse možne načine:\n\n$28 = 1 \\cdot 28 = 2 \\cdot 14 = 4 \\cdot 7$.\n\n$3$, $5$ in $6$ števila $28$ ne delijo. Naslednji kandidat, $7$, je že v paru $4 \\cdot 7$; od tu naprej bi se pari le ponavljali, zato smo našli vse delitelje: $D_{28} = \\{1, 2, 4, 7, 14, 28\\}$."
+      }
+     ],
+     "mistake": "Pogosto se pozabi na delitelja $1$ in $28$: vsako število je deljivo z $1$ in s samim seboj."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "fill",
+     "text": "$D_{28} \\cap D_{42} = \\{\\underline{\\qquad\\qquad\\qquad}\\}$",
+     "answer": "$\\{1, 2, 7, 14\\}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Delitelji števila $42$: $42 = 1 \\cdot 42 = 2 \\cdot 21 = 3 \\cdot 14 = 6 \\cdot 7$, torej $D_{42} = \\{1, 2, 3, 6, 7, 14, 21, 42\\}$.\n\nPresek vsebuje števila, ki so v obeh množicah. Iz $D_{28} = \\{1, 2, 4, 7, 14, 28\\}$ ostanejo $1$, $2$, $7$ in $14$:\n\n$D_{28} \\cap D_{42} = \\{1, 2, 7, 14\\}$."
+      },
+      {
+       "title": "Drugače: prek največjega skupnega delitelja",
+       "text": "Skupni delitelji dveh števil so ravno delitelji njunega največjega skupnega delitelja. $28 = 2^2 \\cdot 7$, $42 = 2 \\cdot 3 \\cdot 7$, zato je $D(28, 42) = 2 \\cdot 7 = 14$ in presek je $D_{14} = \\{1, 2, 7, 14\\}$."
+      }
+     ],
+     "mistake": "Presek ni unija: v presek ne spadajo števila, ki delijo le eno od števil (npr. $4$ ali $3$)."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "fill",
+     "text": "$D(18, 45) = \\underline{\\qquad}$ in $v(18, 45) = \\underline{\\qquad}$",
+     "answer": "$D(18, 45) = 9$, $v(18, 45) = 90$",
+     "ways": [
+      {
+       "title": "Z razcepom na prafaktorje",
+       "text": "$18 = 2 \\cdot 3^2$ in $45 = 3^2 \\cdot 5$.\n\nNajvečji skupni delitelj je zmnožek skupnih prafaktorjev z manjšim eksponentom: $D(18, 45) = 3^2 = 9$.\n\nNajmanjši skupni večkratnik je zmnožek vseh prafaktorjev z večjim eksponentom: $v(18, 45) = 2 \\cdot 3^2 \\cdot 5 = 90$."
+      },
+      {
+       "title": "Drugače: z naštevanjem",
+       "text": "$D_{18} = \\{1, 2, 3, 6, 9, 18\\}$ in $D_{45} = \\{1, 3, 5, 9, 15, 45\\}$. Največji skupni je $9$.\n\nVečkratniki večjega števila $45$ so $45, 90, 135, \\dots$ Prvi, ki je deljiv tudi z $18$, je $90$ ($90 : 18 = 5$), zato je $v(18, 45) = 90$."
+      },
+      {
+       "title": "Preizkus",
+       "text": "Za dve naravni števili velja $D(a, b) \\cdot v(a, b) = a \\cdot b$: $9 \\cdot 90 = 810$ in $18 \\cdot 45 = 810$ ✓."
+      }
+     ],
+     "scoring": "1 t. za $D(18, 45) = 9$, 1 t. za $v(18, 45) = 90$.",
+     "mistake": "Zmnožek $18 \\cdot 45 = 810$ je skupni večkratnik, ni pa najmanjši, ker imata števili skupni delitelj $9$."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "fill",
+     "text": "$V_{12} = \\{12, 24, \\underline{\\qquad}, 48, \\underline{\\qquad}, 72, \\dots\\}$",
+     "answer": "$36$ in $60$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Večkratniki števila $12$ si sledijo v razmiku $12$: $12 \\cdot 1$, $12 \\cdot 2$, $12 \\cdot 3$, … Na tretjem mestu je $12 \\cdot 3 = 36$, na petem $12 \\cdot 5 = 60$.\n\n$V_{12} = \\{12, 24, 36, 48, 60, 72, \\dots\\}$"
+      }
+     ],
+     "mistake": "Večkratniki niso delitelji: $6$ ali $4$ v to množico ne spadata."
+    },
+    {
+     "id": "e",
+     "points": 1,
+     "format": "fill",
+     "text": "$432 = 2^{\\square} \\cdot 3^{\\square}$",
+     "answer": "$432 = 2^4 \\cdot 3^3$",
+     "ways": [
+      {
+       "title": "Z zaporednim deljenjem",
+       "text": "Delimo z $2$, dokler gre, nato s $3$:\n\n$432 : 2 = 216$, $216 : 2 = 108$, $108 : 2 = 54$, $54 : 2 = 27$ – štirikrat z $2$.\n\n$27 : 3 = 9$, $9 : 3 = 3$, $3 : 3 = 1$ – trikrat s $3$.\n\nTorej $432 = 2^4 \\cdot 3^3$. Preizkus: $16 \\cdot 27 = 432$ ✓."
+      }
+     ],
+     "mistake": "Kdor zapiše $2^3 \\cdot 3^4$, zamenja eksponenta: $8 \\cdot 81 = 648$, ne $432$."
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Poenostavi izraz $5a - 2b - (3a - 6b + 4) - b$.",
+     "answer": "$2a + 3b - 4$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Minus pred oklepajem spremeni predznak **vsem** členom v oklepaju:\n\n$5a - 2b - (3a - 6b + 4) - b = 5a - 2b - 3a + 6b - 4 - b$.\n\nZdružimo podobne člene: $5a - 3a = 2a$ in $-2b + 6b - b = 3b$; člen $-4$ ostane.\n\nRezultat: $2a + 3b - 4$."
+      },
+      {
+       "title": "Drugače: najprej zunaj oklepaja",
+       "text": "Najprej združimo podobna člena zunaj oklepaja: $-2b - b = -3b$, torej je izraz $(5a - 3b) - (3a - 6b + 4)$.\n\nNato odštevamo člen za členom (vsako vrsto členov posebej):\n\n- členi z $a$: $5a - 3a = 2a$,\n- členi z $b$: $-3b - (-6b) = -3b + 6b = 3b$,\n- števila: $0 - 4 = -4$.\n\nRezultat: $2a + 3b - 4$."
+      },
+      {
+       "title": "Preizkus z vstavljanjem",
+       "text": "Za $a = 2$ in $b = 1$ ima izhodiščni izraz vrednost $10 - 2 - (6 - 6 + 4) - 1 = 8 - 4 - 1 = 3$, poenostavljeni pa $4 + 3 - 4 = 3$. Vrednosti se ujemata, zato je poenostavitev zelo verjetno pravilna."
+      }
+     ],
+     "scoring": "1 t. za pravilno odpravljen oklepaj, 1 t. za končni izraz $2a + 3b - 4$.",
+     "mistake": "Pogosta napaka je $-(3a - 6b + 4) = -3a - 6b + 4$: predznak se spremeni le prvemu členu, ostalima pa ne. Pravilno je $-3a + 6b - 4$."
+    },
+    {
+     "id": "b",
+     "points": 3,
+     "format": "open",
+     "text": "Reši enačbo $4(2x - 3) - (x + 5) = 3(x + 1) - 4$ in naredi preizkus.",
+     "answer": "$x = 4$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Odpravimo oklepaje na obeh straneh:\n\n$8x - 12 - x - 5 = 3x + 3 - 4$\n\nUredimo vsako stran: $7x - 17 = 3x - 1$.\n\nČlene z $x$ prenesemo na levo, števila na desno (pri prenosu spremenimo predznak):\n\n$7x - 3x = -1 + 17$, torej $4x = 16$ in $x = 4$.\n\n**Preizkus:** leva stran $4(8 - 3) - (4 + 5) = 20 - 9 = 11$, desna stran $3 \\cdot 5 - 4 = 11$. Strani sta enaki ✓."
+      },
+      {
+       "title": "Drugače: vse na eno stran",
+       "text": "Na obeh straneh odštejemo desno stran, da je na desni $0$:\n\n$8x - 12 - x - 5 - 3x - 3 + 4 = 0$\n\n$4x - 16 = 0$, torej $4x = 16$ in $x = 4$.\n\n**Preizkus** z ločenim računanjem strani: $L = 4 \\cdot (2 \\cdot 4 - 3) - (4 + 5) = 4 \\cdot 5 - 9 = 11$, $D = 3 \\cdot (4 + 1) - 4 = 15 - 4 = 11$, torej $L = D$ ✓."
+      }
+     ],
+     "scoring": "1 t. za pravilno odpravljene oklepaje in urejeno enačbo ($7x - 17 = 3x - 1$), 1 t. za rešitev $x = 4$, 1 t. za preizkus (obe strani imata vrednost $11$).",
+     "mistake": "Pri $-(x + 5)$ se pogosto zapiše $-x + 5$; pravilno je $-x - 5$. Preizkus mora biti narejen v izhodiščni enačbi, ne v že preoblikovani."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Ploščino romba izračunamo po obrazcu $p = \\frac{e \\cdot f}{2}$, kjer sta $e$ in $f$ diagonali. Iz obrazca izrazi diagonalo $f$.",
+     "answer": "$f = \\frac{2p}{e}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Obe strani pomnožimo z $2$: $2p = e \\cdot f$.\n\nObe strani delimo z $e$: $f = \\frac{2p}{e}$.\n\nPreizkus s števili: romb z $e = 6\\,\\mathrm{cm}$ in $f = 4\\,\\mathrm{cm}$ ima $p = \\frac{6 \\cdot 4}{2} = 12\\,\\mathrm{cm}^2$; iz obrazca dobimo $f = \\frac{2 \\cdot 12}{6} = 4\\,\\mathrm{cm}$ ✓."
+      }
+     ],
+     "mistake": "Napačni sta $f = \\frac{p}{2e}$ in $f = 2p - e$: najprej odpravimo deljenje z $2$ (množimo z $2$), nato množenje z $e$ (delimo z $e$)."
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "intro": "Paralelogram $ABCD$ ima stranici $a = |AB| = 8\\,\\mathrm{cm}$ in $b = |BC| = 10\\,\\mathrm{cm}$ ter diagonalo $f = |BD| = 6\\,\\mathrm{cm}$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 3,
+     "format": "construct",
+     "text": "Nariši skico paralelograma in nanjo zapiši dane podatke. Nato paralelogram $ABCD$ načrtaj v naravni velikosti. Začni z dano stranico $AB$.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 70\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><line x1=\"40\" y1=\"40\" x2=\"260\" y2=\"40\"/><circle cx=\"40\" cy=\"40\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"260\" cy=\"40\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"28\" y=\"60\" fill=\"currentColor\" stroke=\"none\">A</text><text x=\"262\" y=\"60\" fill=\"currentColor\" stroke=\"none\">B</text><text x=\"150\" y=\"30\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-style=\"italic\">a = 8 cm</text></svg>",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 350 200\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><path d=\"M30,170 L174,170 L318,62 L174,62 Z\" fill=\"currentColor\" fill-opacity=\"0.08\"/><line x1=\"174\" y1=\"170\" x2=\"174\" y2=\"62\" stroke-dasharray=\"5 3\"/><path d=\"M162,170 L162,158 L174,158\" stroke-width=\"1.1\"/><circle cx=\"168\" cy=\"164\" r=\"1.5\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M159.8,45.3 A180,180 0 0 1 186.1,80.4\" stroke-width=\"1\" stroke-opacity=\"0.7\"/><path d=\"M155.2,63.6 A108,108 0 0 1 192.8,63.6\" stroke-width=\"1\" stroke-opacity=\"0.7\"/><path d=\"M303.8,45.3 A180,180 0 0 1 330.1,80.4\" stroke-width=\"1\" stroke-opacity=\"0.7\"/><path d=\"M316.6,42 A144,144 0 0 1 316.6,82\" stroke-width=\"1\" stroke-opacity=\"0.7\"/><text x=\"16\" y=\"186\" fill=\"currentColor\" stroke=\"none\">A</text><text x=\"178\" y=\"186\" fill=\"currentColor\" stroke=\"none\">B</text><text x=\"322\" y=\"56\" fill=\"currentColor\" stroke=\"none\">C</text><text x=\"148\" y=\"66\" fill=\"currentColor\" stroke=\"none\">D</text><text x=\"102\" y=\"188\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">8 cm</text><text x=\"92\" y=\"110\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"end\" font-size=\"11\">10 cm</text><text x=\"180\" y=\"120\" fill=\"currentColor\" stroke=\"none\" font-size=\"11\">6 cm</text></svg>",
+     "answer": "Paralelogram z $|AB| = |CD| = 8\\,\\mathrm{cm}$, $|BC| = |AD| = 10\\,\\mathrm{cm}$ in $|BD| = 6\\,\\mathrm{cm}$.",
+     "ways": [
+      {
+       "title": "Načrtovanje s šestilom",
+       "text": "**Skica:** paralelogram $ABCD$ (oglišča v nasprotni smeri urinega kazalca), označimo $|AB| = 8\\,\\mathrm{cm}$, $|BC| = |AD| = 10\\,\\mathrm{cm}$ in diagonalo $|BD| = 6\\,\\mathrm{cm}$. V paralelogramu sta nasprotni stranici enako dolgi, zato tudi $|AD| = 10\\,\\mathrm{cm}$.\n\n**Načrt:** najprej trikotnik $ABD$ iz treh stranic, nato oglišče $C$.\n1. Dano stranico $AB$ preveri z ravnilom: $8\\,\\mathrm{cm}$.\n2. S šestilom s središčem v $A$ in polmerom $10\\,\\mathrm{cm}$ nariši lok nad $AB$.\n3. S središčem v $B$ in polmerom $6\\,\\mathrm{cm}$ nariši lok, ki seka prvega. Presečišče je $D$.\n4. Oglišče $C$: lok s središčem v $B$ in polmerom $10\\,\\mathrm{cm}$ ter lok s središčem v $D$ in polmerom $8\\,\\mathrm{cm}$ (na desni strani); presečišče je $C$.\n5. Poveži $B$ s $C$, $C$ z $D$ in $D$ z $A$."
+      },
+      {
+       "title": "Drugače: s pravim kotom pri B",
+       "text": "Ker je $8^2 + 6^2 = 10^2$ (del b), je trikotnik $ABD$ pravokoten s pravim kotom pri $B$. Zato lahko načrtamo:\n1. V točki $B$ z geotrikotnikom nariši pravokotnico na $AB$ in nanjo nanesi $6\\,\\mathrm{cm}$ – dobiš $D$.\n2. Skozi $D$ nariši vzporednico k $AB$ in na njej v smeri od $A$ proti $B$ odmeri $|DC| = 8\\,\\mathrm{cm}$ – dobiš $C$.\n3. Kontrola: $|AD|$ in $|BC|$ morata meriti $10\\,\\mathrm{cm}$ (dovoljeno odstopanje $\\pm 2\\,\\mathrm{mm}$)."
+      }
+     ],
+     "scoring": "1 t. za skico z označenimi oglišči in danimi podatki, 1 t. za pravilno načrtan trikotnik $ABD$ (točka $D$), 1 t. za dokončan in označen paralelogram (točka $C$).",
+     "mistake": "Pogosto se zamenja stranico in diagonalo: točka $D$ je od $A$ oddaljena $10\\,\\mathrm{cm}$ (stranica $AD$), od $B$ pa $6\\,\\mathrm{cm}$ (diagonala $BD$), ne obratno. Paralelogram ni pravokotnik, zato kot med stranicama $AB$ in $AD$ ni pravi."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Trikotnik $ABD$ je pravokoten. Zapiši Pitagorov izrek, s katerim to utemeljiš, in povej, pri katerem oglišču je pravi kot.",
+     "answer": "$|AB|^2 + |BD|^2 = |AD|^2$, saj je $8^2 + 6^2 = 64 + 36 = 100 = 10^2$; pravi kot je pri oglišču $B$.",
+     "ways": [
+      {
+       "title": "Z obratom Pitagorovega izreka",
+       "text": "Najdaljša stranica trikotnika $ABD$ je $|AD| = 10\\,\\mathrm{cm}$. Če je vsota kvadratov krajših stranic enaka kvadratu najdaljše, je trikotnik pravokoten in pravi kot leži nasproti najdaljše stranice:\n\n$|AB|^2 + |BD|^2 = 8^2 + 6^2 = 64 + 36 = 100$ in $|AD|^2 = 10^2 = 100$.\n\nEnakost velja, zato je kot $\\angle ABD$ pravi; leži pri oglišču $B$, nasproti stranice $AD$."
+      }
+     ],
+     "mistake": "Napačno je $8^2 + 10^2 = 6^2$: na desni strani je vedno kvadrat najdaljše stranice (hipotenuze)."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj ploščino paralelograma $ABCD$.",
+     "answer": "$p = 48\\,\\mathrm{cm}^2$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $a = 8\\,\\mathrm{cm}$, $b = 10\\,\\mathrm{cm}$, $f = |BD| = 6\\,\\mathrm{cm}$, $BD \\perp AB$.\n\n**Iščemo:** ploščino $p$.\n\nPloščina paralelograma je $p = a \\cdot v_a$. Diagonala $BD$ je pravokotna na $AB$ in sega do nasprotne stranice $CD$, zato je ravno višina na stranico $a$: $v_a = 6\\,\\mathrm{cm}$.\n\n$p = a \\cdot v_a = 8\\,\\mathrm{cm} \\cdot 6\\,\\mathrm{cm} = 48\\,\\mathrm{cm}^2$."
+      },
+      {
+       "title": "Drugače: z dvema trikotnikoma",
+       "text": "Diagonala $BD$ razdeli paralelogram na skladna trikotnika $ABD$ in $CDB$. Trikotnik $ABD$ je pravokoten s katetama $8\\,\\mathrm{cm}$ in $6\\,\\mathrm{cm}$:\n\n$p_{ABD} = \\frac{8 \\cdot 6}{2}\\,\\mathrm{cm}^2 = 24\\,\\mathrm{cm}^2$, zato je $p = 2 \\cdot 24\\,\\mathrm{cm}^2 = 48\\,\\mathrm{cm}^2$."
+      }
+     ],
+     "scoring": "1 t. za ugotovitev, da je $v_a = |BD| = 6\\,\\mathrm{cm}$ (ali za ploščino trikotnika $ABD$, $24\\,\\mathrm{cm}^2$), 1 t. za $p = 48\\,\\mathrm{cm}^2$ z enoto.",
+     "mistake": "Napačno je $p = a \\cdot b = 80\\,\\mathrm{cm}^2$: tako računamo le ploščino pravokotnika. Pri paralelogramu množimo stranico z višino nanjo."
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "intro": "Pravilnemu petkotniku $ABCDE$ je očrtana krožnica s središčem $S$ in polmerom $r = 5\\,\\mathrm{cm}$. Lok $l$ je krajši lok krožnice med sosednjima ogliščema $A$ in $B$. Za $\\pi$ vzemi približek $3{,}14$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 220 225\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><circle cx=\"110\" cy=\"108\" r=\"80\" stroke-width=\"1.2\"/><path d=\"M63,172.7 L157,172.7 L186.1,83.3 L110,28 L33.9,83.3 Z\" fill=\"currentColor\" fill-opacity=\"0.08\"/><path d=\"M63,172.7 L110,108 L157,172.7\" stroke-width=\"1.2\"/><path d=\"M157,172.7 A80,80 0 0 1 63,172.7\" stroke-width=\"3.2\"/><path d=\"M119.4,120.9 A16,16 0 0 1 100.6,120.9\" stroke-width=\"1\"/><circle cx=\"110\" cy=\"108\" r=\"2.4\" fill=\"currentColor\" stroke=\"none\"/><text x=\"105\" y=\"100\" fill=\"currentColor\" stroke=\"none\">S</text><text x=\"50.7\" y=\"189\" fill=\"currentColor\" stroke=\"none\">A</text><text x=\"161.3\" y=\"189\" fill=\"currentColor\" stroke=\"none\">B</text><text x=\"195.4\" y=\"84\" fill=\"currentColor\" stroke=\"none\">C</text><text x=\"106\" y=\"19\" fill=\"currentColor\" stroke=\"none\">D</text><text x=\"16.6\" y=\"84\" fill=\"currentColor\" stroke=\"none\">E</text><text x=\"106\" y=\"205\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">l</text><text x=\"139.5\" y=\"138.4\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">r</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj velikost središčnega kota $\\angle ASB$.",
+     "answer": "$\\angle ASB = 72^\\circ$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** pravilni petkotnik $ABCDE$ ($n = 5$), $S$ je središče očrtane krožnice.\n\n**Iščemo:** središčni kot $\\angle ASB$.\n\nDaljice iz središča $S$ do vseh petih oglišč razdelijo petkotnik na pet skladnih enakokrakih trikotnikov (kraka sta polmera). Njihovi koti pri $S$ so enaki in skupaj tvorijo polni kot:\n\n$\\angle ASB = 360^\\circ : 5 = 72^\\circ$."
+      },
+      {
+       "title": "Drugače: z vrtenjem okoli središča",
+       "text": "Petkotnik zavrtimo okoli središča $S$ tako, da gre oglišče $A$ v $B$, $B$ v $C$ in tako naprej: petkotnik se pokrije sam s seboj, kot vrtenja pa je ravno $\\angle ASB$. Po petih takih vrtenjih je vsako oglišče spet na svojem mestu, kar je en cel obrat:\n\n$5 \\cdot \\angle ASB = 360^\\circ$, torej $\\angle ASB = 72^\\circ$."
+      }
+     ],
+     "scoring": "1 t. za postopek (polni kot razdeljen na $5$ enakih delov), 1 t. za $72^\\circ$.",
+     "mistake": "Središčnega kota ne zamenjaj z notranjim kotom petkotnika: središčni kot ima vrh v središču $S$, notranji pa v oglišču petkotnika in meri več (del b)."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj velikost notranjega kota petkotnika.",
+     "answer": "$108^\\circ$",
+     "ways": [
+      {
+       "title": "Z enakokrakim trikotnikom",
+       "text": "**Podatki:** pravilni petkotnik $ABCDE$, $|SA| = |SB| = r$, središčni kot $\\angle ASB = 72^\\circ$ (del a).\n\n**Iščemo:** notranji kot petkotnika, npr. $\\angle EAB$.\n\nTrikotnik $ASB$ je enakokrak ($|SA| = |SB| = r$) s kotom pri vrhu $72^\\circ$. Kota ob osnovnici sta enaka:\n\n$\\angle SAB = (180^\\circ - 72^\\circ) : 2 = 54^\\circ$.\n\nNotranji kot pri $A$ sestavljata kota $\\angle EAS$ in $\\angle SAB$ iz dveh sosednjih trikotnikov: $54^\\circ + 54^\\circ = 108^\\circ$."
+      },
+      {
+       "title": "Drugače: z vsoto notranjih kotov",
+       "text": "Vsota notranjih kotov $n$-kotnika je $(n - 2) \\cdot 180^\\circ$, za petkotnik $3 \\cdot 180^\\circ = 540^\\circ$. Vseh pet kotov je enakih: $540^\\circ : 5 = 108^\\circ$."
+      },
+      {
+       "title": "Drugače: z zunanjim kotom",
+       "text": "Zunanji koti pravilnega petkotnika so skupaj $360^\\circ$, eden meri $360^\\circ : 5 = 72^\\circ$. Notranji in zunanji kot sta sokota: $180^\\circ - 72^\\circ = 108^\\circ$."
+      }
+     ],
+     "scoring": "1 t. za postopek (npr. vsota $540^\\circ$ ali kota $54^\\circ$ ob osnovnici), 1 t. za $108^\\circ$.",
+     "mistake": "Vsota notranjih kotov petkotnika ni $360^\\circ$ (to je vsota pri štirikotniku); z njo bi dobili napačnih $72^\\circ$."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj dolžino loka $l$.",
+     "answer": "$l \\approx 6{,}28\\,\\mathrm{cm}$",
+     "ways": [
+      {
+       "title": "Z obrazcem za dolžino loka",
+       "text": "**Podatki:** $r = 5\\,\\mathrm{cm}$, središčni kot $\\alpha = 72^\\circ$, $\\pi \\approx 3{,}14$.\n\n**Iščemo:** dolžino loka $l$.\n\n$l = \\frac{\\pi \\cdot r \\cdot \\alpha}{180^\\circ} = \\frac{3{,}14 \\cdot 5 \\cdot 72^\\circ}{180^\\circ}\\,\\mathrm{cm}$.\n\nKrajšamo: $\\frac{5 \\cdot 72}{180} = \\frac{360}{180} = 2$, torej $l = 3{,}14 \\cdot 2\\,\\mathrm{cm} = 6{,}28\\,\\mathrm{cm}$."
+      },
+      {
+       "title": "Drugače: peti del obsega",
+       "text": "Oglišča razdelijo krožnico na pet enakih lokov. Obseg krožnice je $o = 2\\pi r = 2 \\cdot 3{,}14 \\cdot 5\\,\\mathrm{cm} = 31{,}4\\,\\mathrm{cm}$.\n\n$l = o : 5 = 31{,}4\\,\\mathrm{cm} : 5 = 6{,}28\\,\\mathrm{cm}$."
+      }
+     ],
+     "scoring": "1 t. za pravilno vstavljene podatke v obrazec (ali za obseg $31{,}4\\,\\mathrm{cm}$), 1 t. za $l \\approx 6{,}28\\,\\mathrm{cm}$ z enoto.",
+     "mistake": "Lok ni enak stranici petkotnika: daljica $AB$ je krajša od loka (približno $5{,}9\\,\\mathrm{cm}$). Kdor v obrazec vstavi premer $10\\,\\mathrm{cm}$ namesto polmera, dobi dvakrat preveč, $12{,}56\\,\\mathrm{cm}$."
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "intro": "Dana so števila:\n\n$$-9, \\quad -6, \\quad -\\frac{2}{3}, \\quad 1, \\quad 11, \\quad 121$$\n\nV vsakem delu odgovori s števili iz tega seznama.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Katero je najmanjše praštevilo med danimi števili?",
+     "answer": "$11$",
+     "ways": [
+      {
+       "title": "Po definiciji",
+       "text": "Praštevilo je naravno število, ki ima natanko dva delitelja: $1$ in samega sebe. Negativna števila in ulomki niso praštevila. Število $1$ ima en sam delitelj, zato ni praštevilo. $121 = 11 \\cdot 11$ je sestavljeno. Ostane le $11$, ki je zato tudi najmanjše praštevilo v seznamu."
+      }
+     ],
+     "mistake": "Število $1$ ni praštevilo, ker nima dveh različnih deliteljev."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Katero število ima natanko tri delitelje?",
+     "answer": "$121$",
+     "ways": [
+      {
+       "title": "S kvadrati praštevil",
+       "text": "Natanko tri delitelje imajo kvadrati praštevil: delitelji števila $p^2$ so $1$, $p$ in $p^2$. Iz preglednice kvadratov: $121 = 11^2$, zato je $D_{121} = \\{1, 11, 121\\}$.\n\nZa primerjavo: $11$ ima dva delitelja, $1$ pa enega."
+      }
+     ],
+     "mistake": "Število $9$ bi imelo tri delitelje, a v seznamu je $-9$, ki ni naravno število."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Kateri dve števili imata najmanjšo vsoto?",
+     "answer": "$-9$ in $-6$ (vsota $-15$)",
+     "ways": [
+      {
+       "title": "Po razmisleku",
+       "text": "Vsota je najmanjša, če seštejemo dve najmanjši števili. Najmanjši sta $-9$ in $-6$: $-9 + (-6) = -15$.\n\nVsaka druga vsota je večja, npr. $-9 + \\left(-\\frac{2}{3}\\right) = -9\\frac{2}{3}$."
+      }
+     ],
+     "mistake": "Kdor gleda le absolutne vrednosti, izbere $121$ in $11$ – to je največja vsota, ne najmanjša."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "open",
+     "text": "Kateri dve števili imata najmanjši zmnožek?",
+     "answer": "$-9$ in $121$ (zmnožek $-1089$)",
+     "ways": [
+      {
+       "title": "Po razmisleku",
+       "text": "Najmanjši zmnožek je negativen, zato pomnožimo negativno in pozitivno število. Absolutna vrednost zmnožka naj bo čim večja: vzamemo negativno število z največjo absolutno vrednostjo ($-9$) in največje pozitivno število ($121$):\n\n$-9 \\cdot 121 = -1089$.\n\nPrimerjava: $-6 \\cdot 121 = -726$ in $-9 \\cdot 11 = -99$ sta večja."
+      }
+     ],
+     "mistake": "Zmnožek dveh negativnih števil ($-9 \\cdot (-6) = 54$) je pozitiven, zato ni najmanjši."
+    },
+    {
+     "id": "e",
+     "points": 1,
+     "format": "fill",
+     "text": "Na črti vpiši dve števili iz seznama, da bo enakost pravilna: $\\underline{\\qquad} : \\underline{\\qquad} = 9$",
+     "answer": "$(-6) : \\left(-\\frac{2}{3}\\right) = 9$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Količnik je pozitiven, zato delimo dve števili z enakim predznakom. Pri pozitivnih ne gre ($121 : 11 = 11$), zato poskusimo z negativnimi.\n\nZ ulomkom delimo tako, da množimo z obratno vrednostjo:\n\n$(-6) : \\left(-\\frac{2}{3}\\right) = (-6) \\cdot \\left(-\\frac{3}{2}\\right) = 9$ ✓."
+      }
+     ],
+     "mistake": "$(-9) : 1 = -9$, ne $9$: deljenje z $1$ ne spremeni predznaka."
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "intro": "Telo na skici je sestavljeno iz kocke z robom $a = 8\\,\\mathrm{cm}$ in enakorobe pravilne štiristrane piramide. Piramida stoji na zgornji ploskvi kocke: njena osnovna ploskev se natanko pokriva z zgornjo ploskvijo kocke, tudi njeni stranski robovi merijo $8\\,\\mathrm{cm}$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 230 250\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><path d=\"M40,120 L140,120 L185,90 L112.5,34.3 Z\" fill=\"currentColor\" fill-opacity=\"0.06\" stroke=\"none\"/><path d=\"M40,220 L140,220 L140,120 L40,120 Z M140,220 L185,190 L185,90 L140,120\"/><line x1=\"112.5\" y1=\"34.3\" x2=\"40\" y2=\"120\"/><line x1=\"112.5\" y1=\"34.3\" x2=\"140\" y2=\"120\"/><line x1=\"112.5\" y1=\"34.3\" x2=\"185\" y2=\"90\"/><line x1=\"40\" y1=\"220\" x2=\"85\" y2=\"190\" stroke-dasharray=\"5 4\" stroke-width=\"1.1\"/><line x1=\"85\" y1=\"190\" x2=\"185\" y2=\"190\" stroke-dasharray=\"5 4\" stroke-width=\"1.1\"/><line x1=\"85\" y1=\"190\" x2=\"85\" y2=\"90\" stroke-dasharray=\"5 4\" stroke-width=\"1.1\"/><line x1=\"40\" y1=\"120\" x2=\"85\" y2=\"90\" stroke-dasharray=\"5 4\" stroke-width=\"1.1\"/><line x1=\"85\" y1=\"90\" x2=\"185\" y2=\"90\" stroke-dasharray=\"5 4\" stroke-width=\"1.1\"/><line x1=\"112.5\" y1=\"34.3\" x2=\"85\" y2=\"90\" stroke-dasharray=\"5 4\" stroke-width=\"1.1\"/><text x=\"90\" y=\"240\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-style=\"italic\">a = 8 cm</text><text x=\"120.5\" y=\"32.3\" fill=\"currentColor\" stroke=\"none\">V</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Kateri lik je stranska ploskev piramide? Obkroži pravilni odgovor.",
+     "choices": [
+      "Enakostranični trikotnik.",
+      "Pravokotni enakokraki trikotnik.",
+      "Kvadrat.",
+      "Enakokraki trikotnik, ki ni enakostraničen."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "Enakostranični trikotnik.",
+     "ways": [
+      {
+       "title": "Po razmisleku",
+       "text": "Stransko ploskev omejujeta dva stranska robova in en osnovni rob. Piramida je enakoroba, zato vsi trije merijo $8\\,\\mathrm{cm}$ – ploskev je **enakostranični trikotnik**.\n\n- Pravokotni enakokraki trikotnik bi imel hipotenuzo daljšo od katet, tu pa so vse stranice enake.\n- Kvadrat je osnovna ploskev piramide, ne stranska.\n- Enakokraki trikotnik, ki ni enakostraničen, bi imel stranska robova drugačne dolžine od osnovnega roba; pri enakorobi piramidi to ni tako."
+      }
+     ],
+     "mistake": "Na skici je stranska ploskev zaradi poševne projekcije videti »raztegnjena«, a skica ne kaže pravih dolžin; odločajo podatki."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "fill",
+     "text": "Vsota dolžin vseh robov telesa je $\\underline{\\qquad\\qquad}\\,\\mathrm{cm}$.",
+     "answer": "$128\\,\\mathrm{cm}$",
+     "ways": [
+      {
+       "title": "S štetjem robov",
+       "text": "Kocka ima $12$ robov. Piramida ima še $4$ stranske robove; njeni štirje osnovni robovi so hkrati robovi zgornje ploskve kocke, zato jih ne štejemo dvakrat. Telo ima $12 + 4 = 16$ robov, vsak meri $8\\,\\mathrm{cm}$:\n\n$16 \\cdot 8\\,\\mathrm{cm} = 128\\,\\mathrm{cm}$."
+      }
+     ],
+     "mistake": "Kdor sešteje robove kocke ($12$) in vse robove piramide ($8$), dobi $20 \\cdot 8 = 160\\,\\mathrm{cm}$ in štiri robove šteje dvakrat."
+    },
+    {
+     "id": "c",
+     "points": 4,
+     "format": "open",
+     "text": "Izračunaj višino telesa (razdaljo od spodnje ploskve kocke do vrha piramide $V$). Rezultat zaokroži na celo število centimetrov. Za $\\sqrt{2}$ vzemi približek $1{,}41$.",
+     "answer": "višina telesa $\\approx 14\\,\\mathrm{cm}$ (višina piramide $v = \\sqrt{32}\\,\\mathrm{cm} \\approx 5{,}64\\,\\mathrm{cm}$)",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** rob kocke in osnovni rob piramide $a = 8\\,\\mathrm{cm}$, stranski rob $s = 8\\,\\mathrm{cm}$, $\\sqrt{2} \\approx 1{,}41$.\n\n**Iščemo:** višino telesa $a + v$, kjer je $v$ višina piramide.\n\nVišina piramide $v$, polovica diagonale osnovne ploskve $\\frac{d}{2}$ in stranski rob $s$ tvorijo pravokotni trikotnik s hipotenuzo $s$.\n\nDiagonala kvadrata: $d = a\\sqrt{2} = 8\\sqrt{2}\\,\\mathrm{cm}$, polovica $\\frac{d}{2} = 4\\sqrt{2}\\,\\mathrm{cm}$ in $\\left(\\frac{d}{2}\\right)^2 = 16 \\cdot 2 = 32$.\n\nPitagorov izrek: $v^2 = s^2 - \\left(\\frac{d}{2}\\right)^2 = 64 - 32 = 32$, torej $v = \\sqrt{32} = 4\\sqrt{2}\\,\\mathrm{cm}$.\n\nPribližek: $v \\approx 4 \\cdot 1{,}41\\,\\mathrm{cm} = 5{,}64\\,\\mathrm{cm}$.\n\nVišina telesa: $8\\,\\mathrm{cm} + 5{,}64\\,\\mathrm{cm} = 13{,}64\\,\\mathrm{cm}$, zaokroženo $14\\,\\mathrm{cm}$."
+      },
+      {
+       "title": "Drugače: prek višine stranske ploskve",
+       "text": "Stranska ploskev je enakostranični trikotnik s stranico $8\\,\\mathrm{cm}$. Njena višina $v_s$ razpolovi osnovni rob:\n\n$v_s^2 = 8^2 - 4^2 = 64 - 16 = 48$.\n\nVišina piramide $v$, višina stranske ploskve $v_s$ in polovica osnovnega roba ($4\\,\\mathrm{cm}$, razdalja od središča kvadrata do roba) tvorijo pravokotni trikotnik s hipotenuzo $v_s$:\n\n$v^2 = v_s^2 - 4^2 = 48 - 16 = 32$.\n\nOcena brez korenjenja: $5{,}6^2 = 31{,}36$ in $5{,}7^2 = 32{,}49$, zato je $v$ med $5{,}6\\,\\mathrm{cm}$ in $5{,}7\\,\\mathrm{cm}$. Višina telesa je med $13{,}6\\,\\mathrm{cm}$ in $13{,}7\\,\\mathrm{cm}$, kar zaokrožimo na $14\\,\\mathrm{cm}$."
+      },
+      {
+       "title": "Preizkus z oceno",
+       "text": "Ker je $5{,}5^2 = 30{,}25 < 32$, je $v > 5{,}5\\,\\mathrm{cm}$ in višina telesa večja od $13{,}5\\,\\mathrm{cm}$. Ker je $6^2 = 36 > 32$, je $v < 6\\,\\mathrm{cm}$ in višina telesa manjša od $14\\,\\mathrm{cm}$. Zaokrožitev na $14\\,\\mathrm{cm}$ je torej pravilna."
+      }
+     ],
+     "scoring": "1 t. za pravilen pravokotni trikotnik s polovico diagonale ($\\left(\\frac{d}{2}\\right)^2 = 32$ ali $\\frac{d}{2} = 4\\sqrt{2}\\,\\mathrm{cm}$) ali z višino stranske ploskve ($v_s^2 = 48$), 1 t. za $v^2 = 32$, 1 t. za $v \\approx 5{,}6\\,\\mathrm{cm}$, 1 t. za višino telesa $14\\,\\mathrm{cm}$.",
+     "mistake": "Pogosta napaka je, da namesto polovice diagonale vzamemo polovico roba: $8^2 - 4^2 = 48$ je kvadrat višine stranske ploskve, ne višine piramide (dobili bi napačnih $15\\,\\mathrm{cm}$). Ne pozabi prišteti roba kocke."
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "intro": "Iz črnih in belih žetonov sestavljamo kvadrate po pravilu, ki ga kažejo prve štiri slike. Črni žetoni so narisani polni, beli pa prazni.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 268 112\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><path d=\"M12 58h0m11 0h0m11 0h0m-22 11h0m22 0h0m-22 11h0m11 0h0m11 0h0m30 -33h0m11 0h0m11 0h0m11 0h0m-33 11h0m33 0h0m-33 11h0m33 0h0m-33 11h0m11 0h0m11 0h0m11 0h0m30 -44h0m11 0h0m11 0h0m11 0h0m11 0h0m-44 11h0m44 0h0m-44 11h0m44 0h0m-44 11h0m44 0h0m-44 11h0m11 0h0m11 0h0m11 0h0m11 0h0m30 -55h0m11 0h0m11 0h0m11 0h0m11 0h0m11 0h0m-55 11h0m55 0h0m-55 11h0m55 0h0m-55 11h0m55 0h0m-55 11h0m55 0h0m-55 11h0m11 0h0m11 0h0m11 0h0m11 0h0m11 0h0\" stroke-width=\"8.6\" stroke-linecap=\"round\"/><path d=\"M19.3 69a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m52 -11a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m-11 11a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m52 -22a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m-22 11a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m-22 11a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m52 -33a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m-33 11a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m-33 11a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m-33 11a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0m11 0a3.7 3.7 0 1 0 7.4 0a3.7 3.7 0 1 0-7.4 0\" stroke-width=\"1.2\"/><text x=\"23\" y=\"104\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">1. slika</text><text x=\"80.5\" y=\"104\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">2. slika</text><text x=\"149\" y=\"104\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">3. slika</text><text x=\"228.5\" y=\"104\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">4. slika</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko žetonov je na 5. sliki?",
+     "answer": "$49$",
+     "ways": [
+      {
+       "title": "Po pravilu",
+       "text": "Stranica kvadrata ima na 1. sliki $3$ žetone, na 2. sliki $4$, na 3. sliki $5$ – vsakič enega več, torej na $n$-ti sliki $n + 2$. Na 5. sliki ima stranica $7$ žetonov, vseh je $7 \\cdot 7 = 49$."
+      },
+      {
+       "title": "Drugače: belo in črno posebej",
+       "text": "Beli žetoni na $n$-ti sliki tvorijo kvadrat $n \\times n$: na 5. sliki $25$ belih. Črni rob ima $4n + 4$ žetonov (po $n + 1$ ob vsaki stranici): na 5. sliki $24$ črnih. Skupaj $25 + 24 = 49$."
+      }
+     ],
+     "mistake": "Kdor prišteva vedno enako število žetonov (npr. $+11$ kot od 3. do 4. slike), dobi $47$; razlike med zaporednimi slikami rastejo ($7, 9, 11, 13, \\dots$)."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko žetonov je na 20. sliki?",
+     "answer": "$484$",
+     "ways": [
+      {
+       "title": "S splošnim pravilom",
+       "text": "Na $n$-ti sliki je $(n + 2)^2$ žetonov. Za $n = 20$: $22^2 = 484$ (preglednica kvadratov)."
+      },
+      {
+       "title": "Drugače: belo in črno posebej",
+       "text": "Belih je $20^2 = 400$, črnih $4 \\cdot 20 + 4 = 84$, skupaj $400 + 84 = 484$."
+      }
+     ],
+     "mistake": "$20^2 = 400$ so le beli žetoni; manjka še črni rob."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko belih žetonov je na 13. sliki?",
+     "answer": "$169$",
+     "ways": [
+      {
+       "title": "Po pravilu",
+       "text": "Beli žetoni na $n$-ti sliki tvorijo kvadrat s stranico $n$ (na 1. sliki $1$, na 2. sliki $4$, na 3. sliki $9$). Na 13. sliki: $13^2 = 169$."
+      }
+     ],
+     "mistake": "$15^2 = 225$ je število vseh žetonov na 13. sliki, ne le belih."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "choice",
+     "text": "Na kateri sliki je razmerje med številom črnih in številom belih žetonov $7 : 9$? Obkroži pravilni odgovor.",
+     "choices": [
+      "Na 5. sliki.",
+      "Na 6. sliki.",
+      "Na 7. sliki.",
+      "Na 9. sliki."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "Na 6. sliki ($28 : 36 = 7 : 9$).",
+     "ways": [
+      {
+       "title": "S preverjanjem možnosti",
+       "text": "Na $n$-ti sliki je $4n + 4$ črnih in $n^2$ belih žetonov.\n\n- 6. slika: $28 : 36$; okrajšamo s $4$ in dobimo $7 : 9$ ✓.\n- 5. slika: $24 : 25$, to ni $7 : 9$.\n- 7. slika: $32 : 49$, to ni $7 : 9$ (število $7$ v razmerju ni številka slike).\n- 9. slika: $40 : 81$, to ni $7 : 9$ (tudi $9$ v razmerju ni številka slike)."
+      }
+     ],
+     "mistake": "Razmerje $7 : 9$ ne pove števila žetonov, temveč le njuno razmerje: dejanski števili žetonov sta lahko večkratnika števil $7$ in $9$ (npr. $28$ in $36$)."
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "intro": "Deset učencev je pri športni vzgoji $30$ sekund preskakovalo kolebnico. Preglednica kaže, koliko preskokov je naredil vsak.\n\n| Učenec | A | B | C | D | E | F | G | H | I | J |\n|---|---|---|---|---|---|---|---|---|---|---|\n| Število preskokov | 55 | 60 | 64 | 47 | 60 | 55 | 60 | 64 | 55 | 60 |",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj aritmetično sredino števila preskokov.",
+     "answer": "$58$ preskokov",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $10$ rezultatov iz preglednice.\n\n**Iščemo:** aritmetično sredino $\\bar{x}$.\n\nEnake rezultate seštejemo skupaj: $55$ trikrat, $60$ štirikrat, $64$ dvakrat, $47$ enkrat.\n\nVsota: $3 \\cdot 55 + 4 \\cdot 60 + 2 \\cdot 64 + 47 = 165 + 240 + 128 + 47 = 580$.\n\n$\\bar{x} = 580 : 10 = 58$."
+      },
+      {
+       "title": "Drugače: z odmiki od 60",
+       "text": "Odmiki od $60$ so: $-5, 0, +4, -13, 0, -5, 0, +4, -5, 0$. Njihova vsota je $-15 + 8 - 13 = -20$, povprečni odmik $-20 : 10 = -2$. Aritmetična sredina je $60 - 2 = 58$."
+      }
+     ],
+     "scoring": "1 t. za vsoto $580$ (ali pravilen postopek), 1 t. za aritmetično sredino $58$.",
+     "mistake": "Kdor povpreči le različne vrednosti ($(47 + 55 + 60 + 64) : 4 = 56{,}5$), ne upošteva, kolikokrat se posamezna vrednost pojavi."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "fill",
+     "text": "Modus podatkov je $\\underline{\\qquad}$ preskokov.",
+     "answer": "$60$",
+     "ways": [
+      {
+       "title": "S štetjem",
+       "text": "Modus je vrednost, ki se pojavi največkrat. $60$ se pojavi štirikrat (B, E, G, J), $55$ trikrat, $64$ dvakrat, $47$ enkrat. Modus je $60$."
+      }
+     ],
+     "mistake": "Modus ni število ponovitev ($4$), temveč vrednost sama ($60$). Ne zamenjaj ga z aritmetično sredino ($58$)."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Iz skupine naključno izberemo enega učenca. Kolikšna je verjetnost, da je naredil $64$ preskokov? Zapiši jo z okrajšanim ulomkom.",
+     "answer": "$P = \\frac{1}{5}$",
+     "ways": [
+      {
+       "title": "Po definiciji",
+       "text": "Verjetnost je število ugodnih izidov, deljeno s številom vseh izidov. Ugodna sta učenca C in H ($2$), vseh učencev je $10$:\n\n$P = \\frac{2}{10} = \\frac{1}{5}$."
+      }
+     ],
+     "mistake": "Ulomek $\\frac{2}{10}$ ima sicer enako vrednost, a naloga zahteva okrajšan ulomek: števec in imenovalec deli z $2$."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "fill",
+     "text": "Verjetnost, da je naključno izbrani učenec naredil $\\underline{\\qquad}$ preskokov, je $30\\,\\%$.",
+     "answer": "$55$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "$30\\,\\%$ od $10$ učencev so $3$ učenci. Natanko trikrat se v preglednici pojavi rezultat $55$ (A, F, I), zato je verjetnost $\\frac{3}{10} = 30\\,\\%$."
+      }
+     ],
+     "mistake": "$60$ se pojavi štirikrat, kar da verjetnost $40\\,\\%$, ne $30\\,\\%$."
+    }
+   ]
+  }
+ ]
+}

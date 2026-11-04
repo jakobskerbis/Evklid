@@ -1,0 +1,28 @@
+{
+ "id": "NPZ9-FIZ-2024-redni",
+ "points": 36,
+ "minutes": 60,
+ "tools": "pisalo, svinčnik, geotrikotnik, šestilo, radirka in žepno računalo; list s fizikalnimi konstantami in osnovnimi obrazci je priložen (perforirana priloga)",
+ "tasks": [
+  {"n": 1, "points": [1], "format": ["choice"], "topic": "optika: odboj svetlobe na ravnem zrcalu – med več narisanimi odbitimi žarki izbrati pravilnega (odbojni zakon)", "figure": "skica zrcala z vpadnim in več oštevilčenimi odbitimi žarki"},
+  {"n": 2, "points": [1], "format": ["construct"], "topic": "sile: narisati silo teže danega predmeta kot vektor v predpisanem merilu (prijemališče, smer, dolžina)", "figure": "skica predmeta, na katerega se riše vektor"},
+  {"n": 3, "points": [1], "format": ["choice"], "topic": "škripec: kako se spremeni sila na silomeru, ko vrv preko pritrjenega škripca vlečemo pod drugačnim kotom, breme pa miruje (konceptualno, sila v vrvi ostane enaka)", "figure": "skica škripca z bremenom in dvema legama silomera"},
+  {"n": 4, "points": [1], "format": ["open"], "topic": "ravnovesje sil: s kolikšno silo spodnje telo deluje na zgornje, ko sta zložena drug na drugem (teža zgornjega, g = 10 N/kg); kratek številski odgovor z enoto", "figure": "skica dveh zloženih teles na tleh"},
+  {"n": 5, "points": [1], "format": ["choice"], "topic": "sile na telo med letom: iz narisanih sil upora in teže sklepati o smeri gibanja (upor nasproti hitrosti)", "figure": "skica telesa z dvema vektorjema sil"},
+  {"n": 6, "points": [1], "format": ["open"], "topic": "ocenjevanje: oceniti število enakih predmetov v posodi iz pogleda od zgoraj in od strani (plast × število plasti); sprejemljiv interval", "figure": "dve sliki posode (tloris in naris)"},
+  {"n": 7, "points": [1], "format": ["choice"], "topic": "hidrostatični tlak: na kateri od označenih točk v tekočini je tlak največji (odvisnost od globine, ne od vodoravne lege)", "figure": "skica posode s tekočino in štirimi označenimi mesti"},
+  {"n": 8, "points": [1], "format": ["choice"], "topic": "potencialna energija: kateremu od več teles se po premiku ni spremenila višina težišča (primerjava začetne in končne lege)", "figure": "dve sliki: začetna in končna lega več geometrijskih teles"},
+  {"n": 9, "points": [1], "format": ["choice"], "topic": "elektroliza: od česa je odvisna masa izločene snovi pri stalnem toku (naboj = tok × čas)", "figure": "skica elektrolizne celice"},
+  {"n": 10, "points": [1], "format": ["choice"], "topic": "električni prevodniki in izolatorji: iz seznama snovi izbrati tri, pri katerih tok v vezju zanesljivo ne teče (izbira več odgovorov)", "figure": "shema preprostega vezja z vrzeljo"},
+  {"n": 11, "points": [1, 1], "format": ["open", "open"], "topic": "valovanje: a) pri opisanem dogodku poimenovati tri vrste valovanj, ki prenašajo informacijo (svetloba, zvok, valovi na vodi); b) razvrstiti, katero je najhitrejše in katero najpočasnejše"},
+  {"n": 12, "points": [1, 1], "format": ["choice", "choice"], "topic": "leče: kratek opis poskusa z lečo, svečo in zaslonom; a) prepoznati goriščno razdaljo med podatki (past z odvečnimi podatki); b) vrsta leče in ali je zaslon bliže ali dlje od predmetne razdalje (ostra slika, predmet med f in 2f)"},
+  {"n": 13, "points": [1, 1, 1], "format": ["open", "open", "open"], "topic": "klanec, delo, moč: telo z dano težo dvignemo po klancu na neko višino; a) najmanjše delo (sprememba potencialne energije); b) sila vzporedno s klancem brez trenja (delo / dolžina klanca); c) najkrajši čas pri dani moči"},
+  {"n": 14, "points": [1, 1], "format": ["choice", "fill"], "topic": "vzgon in gostota: telo v vodi potone, z dodajanjem soli začne lebdeti; a) zakaj (sprememba vzgona); b) dopolniti dve trditvi z »večja/manjša/enaka« o gostoti tekočine v primerjavi s telesom"},
+  {"n": 15, "points": [2], "format": ["open"], "topic": "fizikalne veličine: iz kratkega poljudnega besedila (npr. napovedi ali poročila) izpisati štiri veličine, vsako s simbolom, merskim številom in enoto (pretvorba ubesednih enot v simbole)"},
+  {"n": 16, "points": [3], "format": ["open"], "topic": "energijski zakon: s kolikšne višine spustiti telo, da se ob padcu segreje za dano temperaturo, če se le del kinetične energije pretvori v notranjo (mgh·delež = mcΔT); večkoračni račun s specifično toploto"},
+  {"n": 17, "points": [1, 1, 1, 1], "format": ["open", "open", "open", "open"], "topic": "graf v(t) dveh vozil z reakcijskim časom in zaviranjem; a) pot v reakcijskem času (enakomerno gibanje); b) zavorna pot (ploščina pod grafom); c) pojemek (sprememba hitrosti na sekundo); d) rezultanta sil pri zaviranju (F = ma)", "figure": "graf hitrosti v odvisnosti od časa za dve vozili"},
+  {"n": 18, "points": [1, 1], "format": ["open", "open"], "topic": "branje grafov gibanja: dva grafa (eden s(t), drugi v(t) ali podobno); a) in b) določiti hitrost vsakega telesa ob danem času – razlikovati vrsto grafa", "figure": "dva grafa gibanja (lega/čas in hitrost/čas)"},
+  {"n": 19, "points": [1, 1], "format": ["open", "construct"], "topic": "astronomija: zvezdna karta z dvema povezanima deloma ozvezdij; a) poimenovati eno od ozvezdij; b) na sliki poiskati in označiti Severnico", "figure": "slika dela nočnega neba z ozvezdji"},
+  {"n": 20, "points": [1, 1, 1, 1], "format": ["open", "open", "open", "open"], "topic": "električni krog: dva enaka upornika vzporedno na viru z dano napetostjo; a) napetost na enem uporniku; b) tok skozi drugega (U/R); c) skupni tok vira; d) nadomestni upor vezave", "figure": "shema vezja z dvema vzporednima upornikoma"}
+ ]
+}

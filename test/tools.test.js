@@ -698,3 +698,92 @@ test("Denarni tokovi: robni primeri (velik IRR, prvi tok 0, brez ničle)", () =>
   assert.equal(TC.irr([-100, 200, -500]), null, "mešani predznaki, NPV nikoli 0");
   assert.equal(TC.cashFlow(0, [-100, 50]).pbp, null);
 });
+
+import { regressionX, regressionTex, MODELS } from "../public/graph/model.js";
+import { stats2, expandFreq, logic32 } from "../public/graph/toolscore.js";
+import { fisherF } from "../public/graph/probcore.js";
+
+test("regresija: logistična z leti kot x (brez a = ∞), e^x in 1/x, obratna napoved x̂", () => {
+  assert.ok(MODELS.includes("expe") && MODELS.includes("inv"));
+  const L = (x) => 300 / (1 + Math.exp(-0.6 * (x - 2007)));
+  const yr = [...Array(15).keys()].map((i) => 2000 + i);
+  const lg = regression(yr, yr.map(L), "logistic");
+  assert.ok(lg.r2 > 0.999999 && Number.isFinite(lg.p[1] + lg.p[2] + lg.xm), JSON.stringify(lg));
+  near(lg.fn(2010), L(2010), 1e-4);
+  near(lg.xm, 2007, 1e-4);
+  assert.match(regressionTex(lg), /2007/); // pri velikem a zapis c/(1 + e^{−b(x − xm)})
+  near(regressionX(lg, 150)[0], 2007, 1e-4);
+  const xs = [1, 2, 3, 4, 5, 6];
+  const ee = regression(xs, xs.map((x) => 2 * Math.exp(0.3 * x)), "expe");
+  near(ee.p[0], 2, 1e-6);
+  near(ee.p[1], 0.3, 1e-6);
+  near(regressionX(ee, 2 * Math.exp(0.9))[0], 3, 1e-6);
+  const iv = regression(xs, xs.map((x) => 4 + 6 / x), "inv");
+  near(iv.p[0], 4, 1e-9);
+  near(iv.p[1], 6, 1e-9);
+  near(regressionX(iv, 7)[0], 2, 1e-9);
+  const lin = regression([1, 2, 3, 4, 5], [2, 4, 5, 4, 5], "lin");
+  near(lin.p[0], 0.6);
+  near(lin.p[1], 2.2);
+  near(regressionX(lin, 5)[0], 14 / 3);
+  const q = regression([-2, -1, 0, 1, 2], [4, 1, 0, 1, 4], "quad");
+  assert.deepEqual(regressionX(q, 9).map((v) => +v.toFixed(6)), [-3, 3]);
+  assert.deepEqual(regressionX(q, -1), []);
+  assert.equal(regressionX(regression(xs, xs.map((x) => x ** 3), "cubic"), 8), null);
+});
+
+test("statistika 2 spremenljivk in pogostosti (kot Casio fx-991CW)", () => {
+  const s = stats2([1, 2, 3, 4, 5], [2, 4, 5, 4, 5]);
+  assert.equal(s.n, 5);
+  assert.deepEqual([s.sx, s.sy, s.sxx, s.syy, s.sxy], [15, 20, 55, 86, 66]);
+  near(s.mx, 3);
+  near(s.my, 4);
+  near(s.sdPx, Math.SQRT2);
+  near(s.sdSx, Math.sqrt(2.5));
+  near(s.r, 0.7745966692);
+  assert.equal(stats2([1, 2], [3]), null);
+  assert.ok(Number.isNaN(stats2([1, 1, 1], [1, 2, 3]).r));
+  near(stats2([1e200, 2e200, 3e200], [1, 2, 3]).r, 1); // Σx² = ∞, r pa ostane 1
+  assert.deepEqual(expandFreq([1, 2, 3], [2, 0, 1]), [1, 1, 3]);
+  assert.equal(expandFreq([1, 2], [1]), null);
+  assert.equal(expandFreq([1, 2], [1, 1.5]), null);
+  const st = stats(expandFreq([2, 4, 5], [1, 3, 2]));
+  near(st.mean, 24 / 6);
+  near(st.sumSq, 4 + 48 + 50);
+});
+
+test("številski sistemi: logične operacije na 32 bitih", () => {
+  assert.equal(logic32(12n, 10n, "and")[10], "8");
+  assert.equal(logic32(12n, 10n, "or")[2], "1110");
+  assert.equal(logic32(2024n, 1000n, "xor")[16], "400");
+  assert.equal(logic32(5n, 0n, "not")[10], "-6");
+  assert.equal(logic32(5n, 0n, "not")[16], "FFFFFFFA");
+  assert.equal(logic32(1n, 0n, "neg")[2], "1".repeat(32));
+  assert.equal(logic32(0n, 0n, "xnor")[10], "-1");
+  assert.equal(logic32(2n ** 31n, 1n, "and"), null);
+  assert.equal(logic32(-(2n ** 31n), 0n, "neg")[10], "-2147483648");
+  assert.equal(convertBase("FF", 16).value, 255n);
+});
+
+test("matrike: sled, karakteristični polinom, lastne vrednosti", () => {
+  assert.equal(M.trace([[2, 1], [1, 3]]), 5);
+  assert.deepEqual(M.charPoly([[2, 1], [1, 3]]).map((v) => Math.round(v * 1e9) / 1e9), [1, -5, 5]);
+  const ev = M.eigen([[2, 0, 0], [0, 3, 4], [0, 4, 9]]);
+  assert.deepEqual(ev.map(([re, im]) => [+re.toFixed(9), +im.toFixed(9)]), [[1, 0], [2, 0], [11, 0]]);
+  const rot = M.eigen([[0, -1], [1, 0]]); // ±i
+  assert.deepEqual(rot.map(([re, im]) => [+re.toFixed(9) + 0, Math.abs(+im.toFixed(9))]), [[0, 1], [0, 1]]);
+  assert.equal(M.trace([[1, 2, 3]]), null);
+  // večkratne lastne vrednosti (QR, ne ničle polinoma): I in Jordanov blok brez »kompleksnega« šuma
+  const I10 = Array.from({ length: 10 }, (_, i) => Array.from({ length: 10 }, (_, j) => (i === j ? 1 : 0)));
+  assert.deepEqual(M.eigen(I10), Array(10).fill([1, 0]));
+  assert.deepEqual(M.eigen([[2, 1, 0], [0, 2, 1], [0, 0, 2]]), [[2, 0], [2, 0], [2, 0]]);
+  assert.deepEqual(M.eigen([[5]]), [[5, 0]]);
+});
+
+test("Fisherjeva F: kvantil, pričakovana vrednost, isto kot F-test", () => {
+  const F = fisherF(5, 10);
+  near(F.inv(0.95), 3.325834530, 1e-6);
+  near(F.cdf(F.inv(0.3)), 0.3, 1e-9);
+  near(F.mean, 10 / 8);
+  near(TC.fDist(5, 10).cdf(2), F.cdf(2), 1e-12);
+});

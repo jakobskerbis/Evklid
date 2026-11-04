@@ -9,6 +9,7 @@ export const info = {
   predmet: "BIO",
   opis: "Iz ene diploidne celice (2n = 4) nastanejo štiri genetsko različne haploidne celice (n = 2): parjenje homolognih kromosomov, prekrižanje, neodvisna razporeditev v metafazi I, mejoza I in mejoza II. Poenostavljeno: človeška celica ima 2n = 46 kromosomov.",
   merilo: { m: 30e-6, oznaka: "30 µm" },
+  poskusi: "ustavi se pri profazi I in poišči mesto prekrižanja, nato na koncu primerjaj barve kromosomov v štirih celicah.",
 };
 
 const MN_KROMOSOM = ["kromosom", "kromosoma", "kromosomi", "kromosomov"];

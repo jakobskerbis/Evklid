@@ -356,7 +356,7 @@ body.graph-open { overflow: hidden; }
 .tl-card { display: flex; flex-direction: column; gap: 10px; }
 .tl-field { display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 0.85rem; color: var(--muted); min-width: 0; flex: 1; }
 .tl-field input, .tl-field select, .tl-field textarea { min-height: 44px; font-size: 1.05rem; color: var(--text); background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 6px 10px; width: 100%; }
-.tl-field textarea { font-family: inherit; resize: vertical; }
+.tl-field textarea { font-family: inherit; resize: vertical; word-spacing: 0.25em; } /* Instrument Sans ima ozek presledek: »2 4 4 5« se sicer bere kot »2445« */
 .tl-inline { flex-direction: row; align-items: center; gap: 10px; }
 .tl-inline select { width: auto; }
 .tl-inline:has(> input[type=checkbox]) { min-height: 44px; }
@@ -370,6 +370,7 @@ body.graph-open { overflow: hidden; }
 .tl-k { flex: 1; color: var(--muted); font-size: 0.9rem; font-weight: 700; }
 .tl-v { overflow-x: auto; }
 .tl-row .tl-v:only-child, .tl-row .tl-v:first-child { flex: 1; }
+.tl-k + .tl-v { text-align: end; } /* prelomljen rezultat (R² =  / 0,998…) ostane poravnan ob gumbu */
 .tl-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700; word-break: break-all; }
 .tl-h { font-weight: 800; }
 .tl-formula { font-size: 1.15rem; overflow-x: auto; }
@@ -381,6 +382,8 @@ body.graph-open { overflow: hidden; }
 .tl-mx textarea { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .tl-ops { flex-wrap: wrap; }
 .tl-mx-res { overflow-x: auto; }
+/* lastne vrednosti: vsaka vrstica vrstični KaTeX, ki se na telefonu prelomi (ne drsi vstran) */
+.tl-mx-line { text-align: center; font-size: 1.21em; line-height: 1.6; padding: 4px 0; direction: ltr; }
 /* dolga enačba reakcije se na telefonu prelomi pri + in → (inline KaTeX) */
 .tl-rx-eq { text-align: center; font-size: 1.2em; line-height: 2; padding: 4px 0; }
 .tl-seg { align-self: flex-start; }
@@ -482,11 +485,12 @@ body.graph-open { overflow: hidden; }
   .calc-modes > button { font-size: 0.78rem; padding: 6px 5px !important; letter-spacing: -0.01em; }
 }
 .tl-seg > button { min-width: 0; white-space: normal; line-height: 1.2; border-radius: 16px !important; }
-.tl-fseg > button { flex-basis: auto; } /* finance: ob dovolj prostora vsak zavihek v eni vrstici */
+.tl-fseg > button, .tl-sseg > button { flex-basis: auto; } /* finance: ob dovolj prostora vsak zavihek v eni vrstici */
 
 /* ---------- kemija in verjetnost (tools-chem.js, tools-prob.js) ---------- */
 .tl-sub { flex-wrap: wrap; }
 .tl-grid2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.tl-sbody .tl-grid2 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); } /* statistika: x in y (napovedi) čez vso širino, brez praznih stolpcev */
 .tl-inline2 { display: flex; gap: 6px; }
 .tl-inline2 input { flex: 1; min-width: 0; }
 .tl-inline2 select { flex: 0 0 72px; width: 72px !important; }
@@ -716,3 +720,6 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 /* RTL: števila, seznami in izrazi v orodjih ostanejo od leve proti desni (sicer »3 4 5« → »5 4 3«, »−1000« → »1000−») */
 [dir="rtl"] .tl-field textarea, [dir="rtl"] .tl-field input:not([type="checkbox"]) { direction: ltr; text-align: right; }
 [dir="rtl"] .tl-vt td { direction: ltr; }
+/* drsni izrazi: v RTL bi bil desni del zunaj dosega drsnika (odrezan), »-2025« bi se izpisal »2025-« */
+[dir="rtl"] :is(.tl-v, .tl-mx-res) { direction: ltr; }
+[dir="rtl"] .tl-formula { direction: ltr; text-align: right; }
