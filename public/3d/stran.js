@@ -92,6 +92,7 @@ async function zbirka(param) {
   vnos.enterKeyHint = "search";
   vnos.autocomplete = "off";
   vnos.spellcheck = false;
+  vnos.autocapitalize = "off";
   vnos.placeholder = t("a3.searchModels");
   vnos.setAttribute("aria-label", t("a3.searchModels"));
   vnos.value = param.q || "";
@@ -101,12 +102,12 @@ async function zbirka(param) {
   cipi.setAttribute("aria-label", t("a3.areas"));
   orodja.append(isk, cipi);
   const vsebina = mk("div", "k3-hub-vsebina");
-  vsebina.setAttribute("aria-live", "polite");
   box.append(vrh, orodja, vsebina);
   glavni.replaceChildren(box);
 
   const modeli = (await seznamModelov()).map((m) => ({ ...m, podrocjeIme: t(`a3.area.${m.podrocje}`) }));
   const slicice = new Set((await seznamDatotek()).slicice || []);
+  if (!box.isConnected) return null; // medtem odprt model ali atlas: ne prepišemo njegovega aktivno (pomik, unici)
   const podrocja = new Map();
   for (const m of modeli) {
     if (!podrocja.has(m.podrocje)) podrocja.set(m.podrocje, []);
@@ -203,8 +204,8 @@ async function zbirka(param) {
       b.innerHTML = icon(smer < 0 ? "arrow-left" : "arrow-right");
       b.setAttribute("aria-label", t(smer < 0 ? "a3.scrollLeft" : "a3.scrollRight"));
       b.title = t(smer < 0 ? "a3.scrollLeft" : "a3.scrollRight");
-      const rtl = document.documentElement.dir === "rtl" ? -1 : 1;
-      b.addEventListener("click", () => vrsta.scrollBy({ left: smer * rtl * vrsta.clientWidth * 0.85, behavior: "smooth" }));
+      // Levo/desno sta fizični strani (tudi v RTL, kjer se vrsta začne desno): gumb levo pomakne vrsto v levo.
+      b.addEventListener("click", () => vrsta.scrollBy({ left: smer * vrsta.clientWidth * 0.85, behavior: "smooth" }));
       return b;
     };
     const [lb, db] = [puscica(-1), puscica(1)];
@@ -287,7 +288,8 @@ async function zbirka(param) {
   });
   narisi();
   // Vrnitev z modela: isto mesto na zbirki (sicer vrh).
-  if (pomik) requestAnimationFrame(() => glavni.scrollTo({ top: pomik }));
+  const nazajNa = pomik; // rAF teče po spodnji ponastavitvi, zato vrednost vzamemo zdaj
+  if (nazajNa) requestAnimationFrame(() => glavni.scrollTo({ top: nazajNa }));
   pomik = 0;
   return {
     unici() {
@@ -408,9 +410,8 @@ async function usmeri() {
   aktivno = null;
   const { id, param } = razberi();
   try {
-    if (!id) aktivno = await zbirka(param);
-    else if (id === "atlas") aktivno = await atlas(param, moj);
-    else aktivno = await model(id, param, moj);
+    const r = !id ? await zbirka(param) : id === "atlas" ? await atlas(param, moj) : await model(id, param, moj);
+    if (moj === zaporedje) aktivno = r; // zastarela pot (medtem nov naslov) ne prepiše prizora, ki je zdaj odprt
   } catch (err) {
     console.error("3D:", err);
     if (moj !== zaporedje) return;

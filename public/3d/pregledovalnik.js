@@ -68,7 +68,7 @@ export function odpriModel(el, mod, opts = {}) {
     if (info.opis) oModelu.append(mk("p", "k3-o-opis", info.opis));
     if (info.poskusi) {
       const p = mk("p", "k3-o-poskusi");
-      p.append(mk("b", "", `${t("sc.try")} `), info.poskusi);
+      p.append(mk("b", "", `${t("sc.try")} `), mk("bdi", "", info.poskusi)); // bdi: slovensko besedilo v RTL ostane LTR
       oModelu.append(p);
     }
     oModelu.hidden = !oModelu.children.length;
@@ -392,6 +392,19 @@ export function odpriModel(el, mod, opts = {}) {
     if (!kit) {
       kit = ustvariSceno(oder, { kakovost: opts.kakovost, oznaka: info.naslov, ponastavi: () => zgradiVse(true) });
       oder.append(orodja);
+      // Barvne točke po 4 s mirovanja zbledijo (j, 4. 11.) in se vrnejo ob dotiku, premiku kamere, koleščku ali tipki;
+      // izbrana točka ostane vidna. Velja na strani /3d in v lekcijah.
+      let mir = 0;
+      const zbudi = () => {
+        oder.classList.remove("k3-tocke-mirne");
+        clearTimeout(mir);
+        mir = setTimeout(() => oder.classList.add("k3-tocke-mirne"), 4000);
+      };
+      for (const ev of ["pointerdown", "pointermove", "wheel", "keydown", "focusin"]) oder.addEventListener(ev, zbudi, { passive: true });
+      kit.controls.addEventListener("start", zbudi);
+      kit.controls.addEventListener("end", zbudi);
+      pocisti.push(() => clearTimeout(mir));
+      zbudi();
       kit.naTap((ndc) => {
         if (!model?.group) return;
         const hit = kit.zadetki(ndc, [model.group])[0];
