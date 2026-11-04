@@ -39,8 +39,10 @@ test("lab list: the student's subject and grade first", () => {
   const fiz = labList("FIZ-SS-2");
   assert.equal(fiz[0].subject, "FIZ");
   assert.equal(fiz[0].topics[0].path, "FIZ-SS-2");
-  // Matematika 8. razred: kemija (8. razred) pred fiziko (samo 9. razred in SŠ).
-  assert.equal(labList("MAT-OS-8")[0].subject, "KEM");
+  // Matematika 8. razred: najprej poskusi 8. razreda (kemija in optika pri fiziki), poskusi 9. razreda in SŠ za njimi.
+  const mat8 = labList("MAT-OS-8");
+  assert.match(mat8[0].topics[0].path, /-OS-8$/);
+  assert.ok(mat8.findIndex((x) => x.id === "lab-co2") < mat8.findIndex((x) => x.id === "lab-titracija"));
   for (const x of labList("")) assert.ok(x.topics.every((tp) => tp.name && tp.level && tp.path), x.key);
 });
 

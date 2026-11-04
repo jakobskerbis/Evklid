@@ -295,8 +295,8 @@ export const SIM_TOPICS = {
   "FIZ-OS-8/fizikalne-kolicine-in-enote": ["enote", "Predpone in pretvarjanje enot", { set: "predpone", sets: ["predpone", "dolzina", "masa", "cas", "prostornina"] }],
   "FIZ-OS-8/merske-napake": ["meritve", "Merjenje in merska napaka"],
   "FIZ-OS-8/sirjenje-svetlobe": ["senca", "Premočrtno širjenje svetlobe: senca in polsenca"],
-  "FIZ-OS-8/odboj-svetlobe": ["zarki", "Odbojni zakon", { mode: "odboj" }],
-  "FIZ-OS-8/lom-svetlobe": ["zarki", "Lom svetlobe", { mode: "lom" }],
+  "FIZ-OS-8/odboj-svetlobe": [["zarki", "Odbojni zakon", { mode: "odboj" }], ["lab-lom", "Laboratorij: odboj na optičnem disku"]],
+  "FIZ-OS-8/lom-svetlobe": [["zarki", "Lom svetlobe", { mode: "lom" }], ["lab-lom", "Laboratorij: lom svetlobe na optičnem disku"], ["lab-leca", "Laboratorij: zbiralna leča na optični klopi"]],
   "FIZ-OS-8/nebo-in-osoncje": ["osoncje", "Lunine mene in letni časi"],
   "FIZ-OS-8/sila-in-merjenje-sile": ["vzmet", "Vzmet in silomer", { mode: "hooke" }],
   "FIZ-OS-8/teza-in-masa": ["teza", "Teža in masa na različnih planetih"],
@@ -390,7 +390,7 @@ export const SIM_TOPICS = {
   "FIZ-SS-3/nihanje": [["nihalo", "Matematično nihalo"], ["vzmet", "Nihanje uteži na vzmeti", { mode: "nihanje" }]],
   "FIZ-SS-3/valovanje": ["val", "Prečno in vzdolžno valovanje", { mode: "precno" }],
   "FIZ-SS-3/zvok": ["val", "Zvok: frekvenca in glasnost", { mode: "zvok" }],
-  "FIZ-SS-3/geometrijska-optika": [["lece", "Leče in slike"], ["zarki", "Lom in popolni odboj", { mode: "lom" }]],
+  "FIZ-SS-3/geometrijska-optika": [["lece", "Leče in slike"], ["zarki", "Lom in popolni odboj", { mode: "lom" }], ["lab-lom", "Laboratorij: lomni količnik in popolni odboj"], ["lab-leca", "Laboratorij: enačba leče na optični klopi"]],
   "FIZ-SS-3/valovna-optika": ["interferenca", "Interferenca na dveh režah"],
   "FIZ-SS-3/izmenicni-tok-in-nihajni-krog": [["izmenicni", "Izmenična napetost in efektivna vrednost", { mode: "sinus" }], ["izmenicni", "Električni nihajni krog", { mode: "lc" }]],
   "FIZ-SS-3/elektromagnetno-valovanje": [["em-spekter", "Elektromagnetni spekter"], ["val", "Valovna dolžina in frekvenca", { mode: "precno" }]],
@@ -582,6 +582,16 @@ export const LAB_INFO = {
     subject: "FIZ",
     title: "Ohlajanje čaja",
     desc: "Nalij čaj v tri različne posode, meri, kako se ohlaja, in ugotovi, kaj naredijo pokrovček, stiropor in termovka.",
+  },
+  "lab-lom": {
+    subject: "FIZ",
+    title: "Odboj in lom svetlobe na optičnem disku",
+    desc: "Z laserjem posveti na zrcalo, akrilni ali stekleni polvalj ali vodo, odčitaj odbojni in lomni kot, iz grafa sin β od sin α določi lomni količnik in poišči mejni kot popolnega odboja.",
+  },
+  "lab-leca": {
+    subject: "FIZ",
+    title: "Zbiralna leča na optični klopi",
+    desc: "Na optični klopi premikaj lečo in zaslon do ostre slike, izmeri razdaljo predmeta in slike ter velikost slike in iz grafa 1/b od 1/a določi goriščno razdaljo.",
   },
 };
 export const labKey = (id, opts = {}) => (opts && Object.keys(opts).length ? `${id}:${JSON.stringify(opts)}` : id);

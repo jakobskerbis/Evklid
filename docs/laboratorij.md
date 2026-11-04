@@ -15,8 +15,8 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 3. **Mistakes have consequences** that a real lab would show: overrange (OL), blown fuse, burnt resistor,
    short circuit (supply current limit), foam overflow, popped stopper, missing goggles.
 4. **Table + graph + conclusion question** (one correct option, an explanation for every option).
-5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, »Kaj je poenostavljeno?«) and here.
-6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`) with the allowed deviation stated.
+5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, `POENOSTAVITVE_OPTIKA`, »Kaj je poenostavljeno?«) and here.
+6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`, optics: `test/laboratorij-optika.test.js`) with the allowed deviation stated.
 7. **Review:** pass 1 automatic, pass 2 an Opus expert check of the science and function, pass 3 look/phone/pedagogy
    (`docs/pregled.md`). Dangerous experiments are only simulated; a short video only when no realistic
    simulation is possible; home experiments get a safety note and an equipment list.
@@ -35,6 +35,8 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 | `public/sim/lab-elektrika.js` | `labVezava` (engine `lab-vezava`), `labPrevodnost` (engine `lab-prevodnost`); circuit parts `drawMeter`, `drawResistor`, `drawLamp` shared with `labOhm` (`lab-fiz.js`) |
 | `public/sim/lab-model-toplota.js` | heat models, no DOM: `Voda` (water + vessel, two nodes, losses through wall, bottom and surface incl. evaporation), `POSODE`, thermometer and balance, `GrelnikBench`, `MesanjeBench`, `FazeBench` (enthalpy model ice/brine/water/steam), `OhlajanjeBench`, `vrelisce` (Antoine), `talisceSoli` (CRC table) |
 | `public/sim/lab-toplota.js` | `labGrelnik` (engine `lab-grelnik`), `labMesanje` (`lab-mesanje`), `labFaze` (`lab-faze`), `labOhlajanje` (`lab-ohlajanje`); time-speed control (×1 … ×300), auto-record at round times |
+| `public/sim/lab-model-optika.js` | optics models, no DOM: `sledi` (2D ray tracer on the optical disc: flat face, curved face, mirror, Fresnel split of every ray), `snell`, `mejniKot`, `fresnel`, `LomBench`, `LecaBench` (thin lens, blur circle, depth of focus), `slika`, `nejasnost`, `fIzMeritev` |
+| `public/sim/lab-optika.js` | `labLom` (engine `lab-lom`), `labLeca` (`lab-leca`); no clock, the drawing is redrawn on every change |
 
 Engines are registered in `public/sim/index.js` and shown at topics through `public/sim/katalog.js`.
 The »Laboratorij« tab (`public/laboratorij.js`, `server/laboratorij.js`, `GET /api/students/:id/lab`) lists every `lab-` engine
@@ -148,9 +150,29 @@ Tests: ideal plateau length m L_f / P (±1,5 s); real heat during melting = m L_
 Same `Voda` model (Newton cooling through the wall plus evaporation from an open surface), three thermometers, speed ×10/×60/×300, auto-record every minute, graph T(t)
 with three series, conclusion question (thermos, lid, evaporation). Tests: porcelain 90 → 55–68 °C in 10 min (ocena), lid and thermos slower, closed thermos k constant ±15 %, full closed thermos (350 g) loses 8–12 K in 6 h (calibration). Meters: thermometer at −20…120 °C within ±0,5 (500 seeds and the worst-case sum), balance ±0,2 g.
 
+### `lab-lom` – reflection and refraction on the optical disc (FIZ-OS-8 odboj svetlobe, lom svetlobe; FIZ-SS-3 geometrijska optika)
+Optical disc with a 1° scale (radius 120 mm, ocena), red 650 nm class 2 laser (safety note on switch-on: never into the eye), plane mirror (R 90 %, ocena) or a
+semicircular block (radius 50 mm, ocena) of acrylic PMMA n = 1,4892 (Sultanova 2009), glass N-BK7 1,5145 (Schott) or water 1,3314 (Daimon & Masumura 2007), air 1,00028
+(Ciddor 1996; all at 650 nm, refractiveindex.info). Light from air into the block through the flat face, or from the block into air (enters radially through the curved face).
+Every ray is traced in 2D and split by the Fresnel equations (unpolarised), so the weak reflected ray (3,9 % at normal incidence for PMMA) is drawn faint and its share is shown.
+Reading: the disc is set to a mark within ±0,25° (ocena), angles are read to 0,5° with an eye error ≤ 0,24° (total ±0,5°). Table α, odbojni, β, sin α, sin β; graph sin β vs sin α
+with a fit through the origin, slope 1/n (air → block) or n (block → air); total internal reflection above the critical angle (PMMA 42,2°). Mistakes: angles measured from the surface,
+laser 0,5–5 mm off the centre (the ray then also bends at the curved face, readings are off). Tests: Snell 30° → 19,6° ± 0,3°, reflection = incidence (mirror and block, both directions),
+critical angles PMMA 42,2 / water 48,7 / BK7 41,3 (±0,3°) and TIR above, Fresnel 3,9 %, slope 1/n ± 2 % (3 materials × 20 seeds) and n from block → air, readings within ±0,5° (500 seeds),
+3 mm offset changes both readings by > 0,5°, a 4 mm offset spoils the slope by > 2 %, measuring from the surface makes sin β/sin α non-constant, deterministic seeds.
+
+### `lab-leca` – converging lens on an optical bench (FIZ-OS-8 lom svetlobe (leče); FIZ-SS-3 geometrijska optika)
+1 m rail with a mm scale, a 20 mm LED arrow, converging lenses f = 50/100/150 mm (true f within ±2 % of the label, ocena), aperture 30 mm (ocena), screen. Riders 15 mm apart at least,
+lens and arrow centre up to ±1 mm from the rider's mark (ocena). Sharpness from the blur circle c = D·|1 − s(1/f − 1/a)|; the image looks sharp while c ≤ 0,5 mm (per student 0,35–0,65 mm, ocena),
+so the »sharp« screen position is an interval of a few mm and readings scatter. Screen view shows the image (chief-ray size −h·s/a, blurred by c); image size read with a ruler to 0,5 mm (±0,45 mm).
+a < f: no image on the screen, »Poglej skozi lečo« shows the upright virtual image (M = f/(f − a), magnifier). Table a, b, image size and orientation, 1/a, 1/b; graph 1/b vs 1/a with the line of slope −1
+through 1/f = mean of 1/a + 1/b; conclusion question. Mistakes: object inside f, a and b read from the rail end instead of the lens centre, screen closer than 4f to the object (never sharp; refused with the reason), unsharp image (refused).
+Tests: a = 2f → b = 2f and M = −1, a < f virtual and upright (M = 2,5 at a = 60, f = 100), f from students' readings within ±3 % (20 seeds × 3 lenses, screen placed randomly inside the sharp interval),
+a < f never sharp on the whole rail, object–screen 3,8f never sharp but 4,2f is, reading from the rail end shifts a by the object position, image size within ±0,5 mm (300 seeds), deterministic seeds.
+
 The colours of graph series (`--demo-a/b/c`) are now also defined for the Laboratorij tab (`.lab-view` in `textbook.css`); before, points there were black.
 
 ## Next (from j's list)
-FIZ: pendulum and stopwatch, density and buoyancy in a measuring cylinder, refraction through a lens. KEM: flame test, electrolysis of water.
+FIZ: pendulum and stopwatch, density and buoyancy in a measuring cylinder; optics: concave mirror on the optical bench (`lab-zrcalo`, reuses `LecaBench` with 1/a + 1/b = 2/R), diverging lens with a converging one, dispersion with a prism (white light), lens defects. KEM: flame test, electrolysis of water.
 NAR: the same engines on more NAR-OS-6/7 topics. Heat: specific heat of metals (hot metal block into a calorimeter, reuses `MesanjeBench`),
 solidification curve (cooling of stearic acid / salol), a separate stopwatch for `lab-grelnik` (now started by the switch), stirring as a choice in `lab-faze`. Each one: model + test first, then UI, then the three reviews.
