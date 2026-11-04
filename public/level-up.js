@@ -3,16 +3,16 @@
 // 2) Ob prehodu OŠ → SŠ ali SŠ → fakulteta: kaj je na novi ravni novega,
 //    in (brez naročnine) povezava do paketov v zavihku Račun.
 import { icon } from "./icons.js";
+import { stopnja, rang } from "./stopnja.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const STAGE = { OSNOVNA_SOLA: 0, SREDNJA_SOLA: 1, UNIVERZA: 2 };
 
 /** Nova stopnja, če je sprememba nastavitev prehod navzgor ("SS" ali "UNI"), sicer null. */
 export function stageUp(before, after) {
   // Regijski šolski sistemi nimajo slovenskih kartic »kaj je novega v srednji šoli«.
   if (after?.school_system && after.school_system !== "SI") return null;
-  const a = STAGE[before?.educational_track] ?? 0;
-  const b = STAGE[after?.educational_track] ?? 0;
+  const a = rang(stopnja(before));
+  const b = rang(stopnja(after));
   return b > a ? ["OS", "SS", "UNI"][b] : null;
 }
 

@@ -5,6 +5,7 @@ import { withFormulaSubject } from "./formula-data.js";
 import { lessonSteps, demoSteps } from "./lesson-steps.js";
 import { gradivaHtml, wireGradiva, stopReading } from "./gradiva.js";
 import { prilagodiSirino } from "./sirina.js";
+import { jeFaks } from "./stopnja.js";
 import { wireLessonReport } from "./prijave.js";
 
 let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView }
@@ -222,7 +223,7 @@ async function renderHome() {
   const student = ctx.getStudent();
   syncProfile();
   // Študent fakultete: najprej učbenik njegovega študijskega programa, nato OŠ/SŠ.
-  const program = student?.settings?.educational_track === "UNIVERZA" ? student.settings.study_program || "" : "";
+  const program = jeFaks(student?.settings) ? student.settings.study_program || "" : "";
   const system = student?.settings?.school_system || "SI";
   if (!tb.books.length || tb.program !== program || tb.system !== system) {
     tb.program = program;

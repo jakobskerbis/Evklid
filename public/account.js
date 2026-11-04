@@ -723,21 +723,34 @@ const STATUS_TEXT = {
 };
 
 
-// Poraba inštruktorja ta mesec kot delež mesečne omejitve (brez zneskov).
+// Poraba inštruktorja ta mesec kot delež mesečne omejitve (brez zneskov). Naročnik (zajamčeni delež,
+// j 2026-11-01): preostale podrobne razlage; ko so porabljene, inštruktor odgovarja v hitrem načinu.
 function aiPill(a) {
   if (!a || a.percent == null) return "";
+  // Družina: skupen delež za vse profile (enak preostanek pri vsakem otroku, ai.pool v opisu).
+  if (a.guaranteed) return `<span class="pill${a.stage === "out" ? " warn" : ""}" title="${esc((a.stage === "out" ? t("ai.out") : t("ai.left", { n: a.explanations_left })) + (a.pool ? " " + t("ai.pool") : ""))}">${esc(t("ai.left", { n: a.explanations_left }))}</span>`;
   if (a.hard_reached) return `<span class="pill warn" title="Inštruktor bo spet na voljo 1. v mesecu. Vadnica deluje naprej.">inštruktor ta mesec porabljen</span>`;
   const extra = a.soft_reached ? " · razlage so do konca meseca manj podrobne" : "";
   return `<span class="pill" title="Delež mesečne omejitve za inštruktorja AI">inštruktor ta mesec ${a.percent} %${extra}</span>`;
 }
+
+// Ime stopnje (OŠ, SŠ, faks) iz public/stopnja.js za izbiro paketa.
+const levelName = (l) => t(l === "FAKS" ? "lp.uni" : l === "SS" ? "lp.ss" : "lp.os");
+const planName = (p) => (p.family ? t(p.level === "FAKS" ? "pay.familyStudent" : "pay.family") : levelName(p.level));
+// Brez »(2–4 profili)«, kadar je ime že v oklepaju (»18,99 € (Družina)«); »2–4« se ne prelomi.
+const shortName = (s) => s.replace(/\s*[（(][^()（）]*[)）]$/, "");
+const keepRange = (s) => s.replace(/(\d)([–〜-])(\d)/g, "$1$2\u2060$3");
 
 function planText(acc) {
   const { access, parent } = acc;
   const sub = parent.subscription;
   const plan = sub && acc.plans.find((p) => p.key === sub.plan);
   if (access.tier === "paid") {
+    const pend = acc.pending_change;
     return `<p><b>Naročnina:</b> ${esc(plan?.label || sub.plan)} (${STATUS_TEXT[sub.status] || sub.status})</p>
-      <p class="muted">${sub.cancel_at_period_end ? `Naročnina se konča ${date(sub.period_end)}.` : `Naslednje obdobje se začne ${date(sub.period_end)}.`}</p>`;
+      <p class="muted">${sub.cancel_at_period_end ? `Naročnina se konča ${date(sub.period_end)}.` : `Naslednje obdobje se začne ${date(sub.period_end)}.`}</p>
+      ${pend ? `<p class="muted">${esc(t("up.pending", { date: date(pend.effective_at), price: money(pend.amount, pend.currency), name: shortName(planName(acc.plans.find((p) => p.key === pend.plan) || { level: "OS" })) }))}</p>` : ""}
+      ${upgradeBox(acc)}`;
   }
   if (access.tier === "trial") return `<p><b>Brezplačni preizkus</b> do ${date(access.until)}: vse funkcije za do 2 otroka.</p>`;
   if (access.tier === "promo") {
@@ -750,23 +763,41 @@ function planText(acc) {
   return `<p><b>Brezplačni paket:</b> vadnica brez omejitev in ${acc.free_daily_questions} vprašanj inštruktorju na dan.</p>`;
 }
 
+// Nadgradnja na višjo stopnjo med obdobjem (doplačilo razlike, Stripe izračuna sam).
+function upgradeBox(acc) {
+  const up = acc.upgrade;
+  if (!up?.options?.length || acc.parent.minor) return "";
+  return `<div class="plan-upgrade"><p><b>${esc(t("up.title"))}</b><br><span class="muted">${esc(t("up.text"))}</span></p>
+    <div class="form-actions">${up.options.map((o) => `<button type="button" class="secondary" data-upgrade="${esc(o.key)}">${esc(t("up.btn", { name: planName(o) }))} · ${money(o.amount, o.currency)} ${esc(t(o.interval === "year" ? "mob.perYear" : "mob.perMonth"))}</button>`).join("")}</div></div>`;
+}
+
 function plansPicker(acc) {
+  // Paket v evrih ima stopnjo (j 2026-11-01): 1 profil po stopnji profila, Družina pri vsaj 2 profilih.
+  const levels = acc.plans.some((p) => p.level);
+  const find = (seats, interval) =>
+    levels
+      ? acc.plans.find((x) => (seats >= 2 ? x.family && x.level === (acc.children.some((c) => c.level === "FAKS") ? "FAKS" : "SS") : !x.family && x.level === acc.plan_level) && x.interval === interval)
+      : acc.plans.find((x) => x.seats === seats && x.interval === interval);
   const cell = (seats, interval) => {
-    const p = acc.plans.find((x) => x.seats === seats && x.interval === interval);
+    const p = find(seats, interval);
+    if (!p) return "";
     const cur = p.currency || "EUR";
     const perMonth = interval === "year" ? `<span class="muted">≈ ${money(Math.round(p.amount / 10), cur)} / mesec (10 mesecev)</span>` : "";
     return `<label class="plan"><input type="radio" name="plan" value="${seats}-${interval}">
-      <span><b>${money(p.amount, cur)}</b> / ${interval === "year" ? "šolsko leto" : "mesec"}<br>${perMonth}</span></label>`;
+      <span><b>${money(p.amount, cur)}</b> / ${interval === "year" ? (p.level === "FAKS" && !p.family ? "študijsko leto" : "šolsko leto") : "mesec"}<br>${perMonth}</span></label>`;
   };
   // Najprej izbira, za koliko otrok; šele nato cene samo za to izbiro (j 2026-10-30: prej je bilo prenatrpano).
-  const who = [["1", t("pay.seats1")], ["2", t("pay.seats2")], ...(acc.school_plans?.length ? [["s", t("school.planHead")]] : [])];
+  const familyLabel = acc.children.some((c) => c.level === "FAKS") ? t("pay.familyStudent") : t("pay.family");
+  const who = levels
+    ? [["1", t("pay.seats1Level", { level: levelName(acc.plan_level) })], ...(acc.family_ok ? [["2", familyLabel]] : []), ...(acc.school_plans?.length ? [["s", t("school.planHead")]] : [])]
+    : [["1", t("pay.seats1")], ["2", t("pay.seats2")], ...(acc.school_plans?.length ? [["s", t("school.planHead")]] : [])];
   return `
     <form id="plan-form" class="plans" novalidate>
       <fieldset class="plan-who"><legend>${esc(t("pay.howMany"))}</legend>
-        <div class="plan-who-opts">${who.map(([v, label]) => `<label class="plan"><input type="radio" name="who" value="${v}"> <span><b>${esc(label)}</b></span></label>`).join("")}</div>
+        <div class="plan-who-opts">${who.map(([v, label]) => `<label class="plan"><input type="radio" name="who" value="${v}"> <span><b>${esc(keepRange(label))}</b></span></label>`).join("")}</div>
       </fieldset>
       <div class="plan-row" data-who="1" hidden>${cell(1, "month")}${cell(1, "year")}</div>
-      <div class="plan-row" data-who="2" hidden>${cell(2, "month")}${cell(2, "year")}</div>
+      ${!levels || acc.family_ok ? `<div class="plan-row" data-who="2" hidden>${cell(2, "month")}${cell(2, "year")}</div>` : ""}
       ${schoolRow(acc)}
       <div id="plan-rest" class="plans" hidden>
       <p class="form-error" role="alert" hidden></p>
@@ -796,20 +827,27 @@ const planBody = (v) => {
   return a === "s" ? { school: true, interval } : { seats: Number(a), interval };
 };
 
-// Darilna koda: polnoletna oseba kupi eno leto Osebno za en profil (49 €) in kodo podari.
+// Darilna koda: polnoletna oseba kupi eno leto za en profil izbrane stopnje (letna cena stopnje: 99 / 139 / 199 €).
 function giftBox(acc) {
   if (!acc.billing || acc.parent.minor || acc.parent.guest) return "";
   const list = (acc.gifts || [])
     .map((g) => `<li>${g.code ? `<b dir="ltr">${esc(g.code)}</b> <button type="button" data-gift-copy="${esc(g.code)}" aria-label="${esc(t("gift.copy"))} ${esc(g.code)}">${esc(t("gift.copy"))}</button>` : ""} <span class="pill${g.redeemed ? " ok" : ""}">${esc(t(g.status !== "paid" ? "gift.refunded" : g.redeemed ? "gift.used" : "gift.unused"))}</span></li>`)
     .join("");
   // Cena v obliki jezika vmesnika (sl: 49,00 €, en: €49.00), ker je kartica v celoti prevedena.
-  const price = ((acc.gift_price || 4900) / 100).toLocaleString(locale(), { style: "currency", currency: "EUR" });
+  const fmt = (c) => (c / 100).toLocaleString(locale(), { style: "currency", currency: "EUR" });
+  const prices = acc.gift_prices || { OS: acc.gift_price || 9900 };
+  const vals = Object.values(prices);
+  const price = vals.length > 1 ? `${fmt(Math.min(...vals))} – ${fmt(Math.max(...vals))}` : fmt(vals[0]);
+  const levelSel = Object.keys(prices).length > 1
+    ? `<label>${esc(t("gift.level"))} <select name="level">${Object.entries(prices).map(([l, c]) => `<option value="${esc(l)}">${esc(levelName(l))} · ${esc(fmt(c))}</option>`).join("")}</select></label>`
+    : "";
   return `<div class="card gift-card">
       <h2>${icon("gift")} ${esc(t("gift.title"))}</h2>
       <p>${esc(t("gift.text", { price }))}</p>
       ${list ? `<ul class="gift-list">${list}</ul>` : ""}
       <details><summary>${esc(t("gift.buy"))}</summary>
         <form id="gift-form" class="form" novalidate>
+          ${levelSel}
           ${consentFields("gift")}
           <p class="form-error" role="alert" hidden></p>
           <button class="primary" type="submit">${esc(t("pay.continue"))}</button>
@@ -1201,7 +1239,7 @@ export async function renderAccount() {
       <ul class="child-list">${acc.children
         .map((c) => `<li><b>${esc(c.name)}</b> <span class="muted">(${c.birth_year || "–"})</span> ${
           c.premium ? `<span class="pill ok">poln dostop</span>` : `<span class="pill">brezplačni paket · danes ${c.questions_today}/${acc.free_daily_questions}</span>`
-        }${c.pass ? ` <span class="pill">${esc(t("acct.passPill", { date: date(c.pass.ends_at) }))}</span>` : ""} ${aiPill(c.ai_month)}${c.has_password || acc.children.length < 2 ? "" : ` <span class="pill">${esc(t("lock.none"))}</span>`}</li>`)
+        }${c.pass ? ` <span class="pill">${esc(t("acct.passPill", { date: date(c.pass.ends_at) }))}</span>` : ""}${c.level_locked ? ` <span class="pill warn">${esc(levelName(c.level))}: ${esc(t("up.locked"))}</span>` : ""} ${aiPill(c.ai_month)}${c.has_password || acc.children.length < 2 ? "" : ` <span class="pill">${esc(t("lock.none"))}</span>`}</li>`)
         .join("")}</ul>
       ${acc.children.length ? `<details class="profile-pw"><summary>${esc(t("lock.change"))}</summary>
         <form id="profile-pw-form" class="form" novalidate>
@@ -1297,7 +1335,7 @@ export async function renderAccount() {
     btn.disabled = true;
     try {
       if (!consentsOk(e.target)) throw new Error(t("payp.consentMissing"));
-      const r = await api("/api/billing/gift", { method: "POST", body: consentBody() });
+      const r = await api("/api/billing/gift", { method: "POST", body: { ...consentBody(), ...(e.target.level ? { level: e.target.level.value } : {}) } });
       location.href = r.url;
     } catch (err) {
       btn.disabled = false;
@@ -1333,6 +1371,21 @@ export async function renderAccount() {
       $("#promo-url").select();
     }
   });
+  // Nadgradnja: Stripe zaračuna razliko za preostanek obdobja, višja stopnja je odprta takoj.
+  document.querySelectorAll("[data-upgrade]").forEach((b) =>
+    b.addEventListener("click", async () => {
+      b.disabled = true;
+      try {
+        await api("/api/billing/upgrade", { method: "POST", body: { plan: b.dataset.upgrade } });
+        toast(t("up.done"));
+        await onReadyCb?.({ keepView: true });
+        renderAccount();
+      } catch (err) {
+        b.disabled = false;
+        toast(err.message);
+      }
+    }),
+  );
   $("#portal-btn")?.addEventListener("click", async () => {
     try {
       location.href = (await api("/api/billing/portal", { method: "POST" })).url;
