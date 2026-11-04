@@ -2,6 +2,17 @@
 
 Trenutni prompt je v `prompts/system_prompt.md`.
 
+## 2026-11-04: gumbi z izbirami (čaka na j-jev pregled)
+
+Nov razdelek »Gumbi z izbirami (strojni blok)« v stalnem delu (nad `EVKLID:NASTAVITVE`, predpomnilnik ostane skupen) in dve dopolnjeni vrstici (»Vedno«, »Analitika«: gumbi so pred META vrstico).
+
+- Kadar učenec na zadnje vprašanje odgovori z eno od nekaj kratkih možnosti, inštruktor tik pred META vrstico doda `<<IZBIRE ["…", "…"]>>`: seznam JSON z 2–4 odgovori, vsak do 60 znakov, kot bi jih napisal učenec, brez formul; oznaka `IZBIRE` je v vseh jezikih enaka. Pod odgovorom so gumbi; tap pošlje odgovor kot učenčevo sporočilo, učenec lahko napiše svojega.
+- Za: izbiro poti ali naslednjega koraka, da/ne, napoved (večje, manjše, enako), izbiro pristopa, kadar je vsak pravilna pot, ponudbo podobne naloge, potrditev spremembe nastavitev (razen šole, razreda, programa in šolskega sistema, kjer aplikacija že pokaže gumb).
+- Odprto vprašanje ostane odprto: brez gumbov, kadar mora učenec sam izračunati, zapisati izraz, poimenovati pravilo ali razložiti, v odgovoru ščita in kadar `flag` ni `none`. Po izbiri pri da/ne ali napovedi je inštruktor še ne potrdi: najprej »zakaj« (kot pri Ugibanju). »Ne vem« je po potrebi zadnja možnost in pomeni eno stopničko Lestvice pomoči, ne pri vsakem vprašanju.
+- Pri karticah piše »pred META vrstico (in pred morebitnimi gumbi)«.
+- Strežnik (`server/meta.js`, `parseChoices`) blok odstrani iz besedila (tudi z enim oklepajem, prevedeno oznako ali »>>« v nizu), sprejme le veljaven JSON z 2–4 različnimi kratkimi odgovori in gumbe pošlje le pri zadnjem odgovoru, ne pri opozorilih, zavrnitvi, popravku preverjanja ali predlogu nastavitev. Splet (`public/app.js`, `addChoices`) in aplikacija (`mobile/src/app/chat/[id].tsx`) jih pokažeta enako; napisano besedilo ostane.
+- Stalni del zraste za približno 2 000 znakov (~550 žetonov, predpomnjeno), odgovor z gumbi za ~20–40 žetonov.
+
 ## 2026-11-04: dodatne vaje in stranske trditve (j potrdil 4. 11. po testu)
 
 - Nova vrstica v razdelku Pravilnost (stalni del, nad `EVKLID:NASTAVITVE`): preden inštruktor ponudi vajo za samostojno delo z novimi podatki, jo zase reši, rešitve ne zapiše (rešitev obstaja, enolično rešljiva, na učenčevi ravni), sicer jo popravi ali sestavi drugo; stranske trditve s števili (primerjave, »približno desetkrat«, deleži, ocene, zaokrožitve) pred zapisom izračuna, nepreverjeno izpusti.

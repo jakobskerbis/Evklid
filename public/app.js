@@ -787,6 +787,7 @@ function addMessage(role, text, hasImage = false, info = null) {
     el.innerHTML = chatRich(text);
     if (text) addDeepButton(el, false);
     if (text && info?.full_offer) addFullButton(el);
+    if (text && info?.choices) addChoices(el, info.choices);
     if (text) addGraphButton(el, text);
     if (text && info?.id) addMsgFoot(el, info);
   }
@@ -814,7 +815,7 @@ async function send(text, { deep = false } = {}) {
     const sentTo = state.conversationId;
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
     const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
-    document.querySelectorAll(".full-btn").forEach((x) => x.remove());
+    document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
     userEl = addMessage("user", text, !!image);
     $("#input").value = "";
     autoGrow();
@@ -905,7 +906,15 @@ async function send(text, { deep = false } = {}) {
       // Odgovor, ki samo spremeni nastavitve, ne potrebuje »Razloži podrobneje«.
       if (doneData && !doneData.settings) addDeepButton(bubble, doneData.deep);
       // Ne, če je učenec med počasnim izpisom že poslal novo sporočilo (gumb samo pri zadnjem odgovoru).
-      if (doneData?.full_offer && !bubble.nextElementSibling) addFullButton(bubble);
+      // bubble.isConnected: učenec je med izpisom morda odprl drug pogovor.
+      if (doneData?.full_offer && bubble.isConnected && !bubble.nextElementSibling) addFullButton(bubble);
+      if (doneData?.choices && bubble.isConnected && !bubble.nextElementSibling) {
+        // Gumbi pridejo po izpisu: če je bil učenec na dnu, jih pokažemo (na telefonu bi bili pod robom).
+        const box = $("#messages");
+        const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+        addChoices(bubble, doneData.choices);
+        if (atBottom) requestAnimationFrame(() => (box.scrollTop = box.scrollHeight));
+      }
       if (doneData?.text) addGraphButton(bubble, doneData.text);
       if (cardsData) addCardsNote(bubble, cardsData);
       if (allowanceData) addAllowanceNote(bubble, allowanceData);
@@ -1755,6 +1764,7 @@ function addDeepButton(el, wasDeep) {
   b.type = "button";
   b.innerHTML = `${icon("search")} ${t("chat.deeper")}`;
   b.addEventListener("click", () => {
+    if (state.sending || !$("#chat-off").hidden) return;
     b.remove();
     send(t("chat.deeperMsg"), { deep: true });
   });
@@ -1771,11 +1781,48 @@ function addFullButton(el) {
   b.type = "button";
   b.innerHTML = `${icon("list-checks")} ${t("chat.full")}`;
   b.addEventListener("click", () => {
+    if (state.sending || !$("#chat-off").hidden) return;
     b.remove();
     send(t("chat.fullMsg"));
   });
   (el.querySelector(".deep-btn:not(.full-btn)") || el.lastElementChild)?.after(b);
   if (!b.isConnected) el.appendChild(b);
+}
+
+// Gumbi z izbirami (<<IZBIRE [...]>>, server/meta.js): kratki odgovori pod zadnjim sporočilom. Tap pošlje
+// odgovor kot učenčevo sporočilo (kot predlogi v praznem klepetu); če je učenec že kaj napisal, gre pred to besedilo.
+function addChoices(el, choices) {
+  if (el.classList.contains("error") || el.querySelector(".choice-row") || !Array.isArray(choices) || choices.length < 2) return;
+  document.querySelectorAll(".choice-row").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
+  const row = document.createElement("div");
+  row.className = "choice-row";
+  row.setAttribute("role", "group");
+  row.setAttribute("aria-label", t("chat.choices"));
+  for (const c of choices.slice(0, 4)) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "secondary small choice-btn";
+    b.dir = "auto";
+    b.textContent = c;
+    b.addEventListener("click", () => {
+      // Med pošiljanjem ali ob izklopljenem klepetu tap ne sme izgubiti gumbov.
+      if (state.sending || !$("#chat-off").hidden) return;
+      const typed = $("#input").value.trim();
+      row.remove();
+      if (typed || state.image) {
+        // Napisano besedilo in fotografija ostaneta: izbira gre pred besedilo, učenec pošlje sam.
+        $("#input").value = typed ? `${c}, ${typed}` : c;
+        autoGrow();
+        $("#input").focus();
+        return;
+      }
+      send(c);
+    });
+    row.append(b);
+  }
+  // Takoj za besedilom odgovora, pred »Razloži podrobneje« in nogo sporočila.
+  const before = el.querySelector(":scope > .deep-btn, :scope > .graph-btn, :scope > .msg-foot");
+  before ? before.before(row) : el.appendChild(row);
 }
 
 // Tiha napaka (npr. prekinjena povezava) se pokaže kot obvestilo, ne pa kot »nič se ne zgodi«.

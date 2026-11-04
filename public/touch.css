@@ -117,3 +117,8 @@
 
 /* Pogled je lahko v spodnji vrstici (npr. Laboratorij): takrat brez »← Jaz«. */
 .me-back[hidden] { display: none !important; }
+
+/* Gumbi z izbirami pod odgovorom inštruktorja: glavni cilj dotika, 44 px (docs/oblikovanje.md). */
+@media (hover: none) and (pointer: coarse) {
+  .choice-row .choice-btn { min-height: 44px !important; }
+}
