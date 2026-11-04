@@ -8,6 +8,7 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "./prompt.js";
 import { createStreamFilter, parseMeta, parseCards, stripMeta, stripLeadPhrase } from "./meta.js";
+import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
 import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams } from "./claude.js";
 import { Usage, LIMITS, NOTES, windowHistory, recentHistory } from "./usage.js";
@@ -585,7 +586,20 @@ export function createApp(store, opts = {}) {
       // Naloga, ki jo reši naš preverjeni reševalnik: model dobi pravilen rezultat v skriti opombi.
       const pre = liveCheckOn() && !cached && !image && !win && !hinted ? presolve(text, { first: isFirst }) : null;
       const fullHistory = store.apiHistory(conv.id);
-      const history = deep && !routed.boosted ? recentHistory(fullHistory) : windowHistory(fullHistory);
+      const shortDeep = deep && !routed.boosted;
+      let history = shortDeep ? recentHistory(fullHistory) : windowHistory(fullHistory);
+      // Odrezani starejši del dolgega pogovora: kratek povzetek pred oknom (server/povzetek.js).
+      if (!shortDeep && !cached && !win && !hinted) {
+        history = await summarizedHistory({
+          store,
+          conversationId: conv.id,
+          fullHistory,
+          history,
+          streamFn,
+          signal: controller.signal,
+          log: (r) => r?.usage && usage.log(student.id, r.model || modeParams("lite").model, r.usage, "povzetek"),
+        });
+      }
       // Učenčev rezultat ali trditev: sodbo inštruktorja preveri koda (naloga iz prvega sporočila) ali model,
       // preden učenec odgovor vidi (server/live-check.js, 4). Zato se tak odgovor ne pretaka sproti.
       const textOf = (m) => (Array.isArray(m.content) ? m.content : [{ text: m.content }]).map((b) => b.text || "").join("\n");
