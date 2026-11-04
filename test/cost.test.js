@@ -270,3 +270,15 @@ test("path topic start is reused across students; deep goes to Opus with a short
     assert.equal(typeof mine.percent, "number");
   });
 });
+
+test("faks: dnevna meja prve podrobne razlage šteje odgovore Sonneta, tudi ko deepModel kaže na Opus", () => {
+  const store = openDb(":memory:");
+  const s = store.createStudent("Eva", { educational_track: "UNIVERZA" });
+  const u = new Usage(store.db);
+  for (let i = 0; i < 5; i++) u.log(s.id, MODEL_MID, { input_tokens: 10, output_tokens: 10 });
+  const r = u.chooseMode(s.id, { university: true, wantThink: true, deepModel: MODEL_DEEP });
+  assert.equal(r.mode, "think");
+  assert.ok(r.note);
+  // Opus (druga zaporedna prošnja) ima svojo dnevno mejo.
+  assert.equal(u.chooseMode(s.id, { university: true, wantDeep: true, deepModel: MODEL_DEEP }).mode, "deep");
+});

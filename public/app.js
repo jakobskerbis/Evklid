@@ -3933,7 +3933,7 @@ async function renderStageHome() {
   await renderScheduleCard($("#schedule-card"));
   if (state.student?.id !== sid) return; // med nalaganjem zamenjan profil
   const level = stopnja(state.student.settings);
-  const schedule = lastSchedule();
+  const schedule = lastSchedule(sid);
   const box = $("#stage-card");
   box.innerHTML = stageCardHtml(level, { games: gamesOn(state.student.settings), exams: siExams(), schedule, t, esc: escapeHtml });
   box.hidden = !box.innerHTML;

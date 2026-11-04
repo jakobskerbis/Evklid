@@ -1,6 +1,6 @@
 // Poraba AI: beleženje žetonov in stroška, dnevne omejitve, mesečni proračun.
 import "./env.js";
-import { costUsd } from "./claude.js";
+import { costUsd, MODEL_MID } from "./claude.js";
 import { BUDGET, MAX_BUDGET_USD, paceLevel, periodOf, budgetMode, fastMode } from "./proracun.js";
 import { explanationsFor, allowanceStage, detailedShare, freeStudentMonthlyUsd } from "./accounts/plans.js";
 
@@ -37,7 +37,7 @@ export const LIMITS = {
   // napake Haikuja pri SŠ 27 % → 7 %, Sonnet 0 %, a ~15× dražji). 0 = navadni hitri model.
   secondaryThink: () => process.env.EVKLID_SS_THINK !== "0",
   // Fakulteta (j 2026-11-01, načrt stopenj: »daljše razlage, več dokazov, pogosteje Sonnet«): privzeto hitri model z
-  // več razmisleka kot SŠ, prva »Razloži podrobneje« pri naročnini Sonnet. 0 = kot drugi učenci.
+  // več razmisleka (kot SŠ), prva »Razloži podrobneje« pri naročnini Sonnet. 0 = kot drugi učenci.
   universityMid: () => process.env.EVKLID_UNI_MID !== "0",
 };
 
@@ -353,7 +353,9 @@ export class Usage {
     const uniMid = uni && wantThink && !wantDeep;
     if (wantDeep || competition || uniMid) {
       const daily = LIMITS.dailyDeep();
-      if (daily && this.deepToday(studentId, deepModel) >= daily) return { mode: "think", note: NOTES.dailyDeep(daily) };
+      // Prva podrobna razlaga na faksu je Sonnet: dnevna meja šteje odgovore Sonneta, tudi brez računov (deepModel Opus).
+      const counted = uniMid ? MODEL_MID : deepModel;
+      if (daily && this.deepToday(studentId, counted) >= daily) return { mode: "think", note: NOTES.dailyDeep(daily) };
       // S proračunom: blizu svojega dela proračuna (brez dokupljenega kredita); brez njega mehka meja v $.
       const state = this.budgetState();
       // Naročnik (zajamčeni delež): podrobne razlage do 100 % deleža, potem hitri način (obvestilo pošlje app.js).
