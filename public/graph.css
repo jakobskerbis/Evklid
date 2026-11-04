@@ -676,6 +676,16 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-druga { --sk-c: var(--sk-druga); }
 .sk-napaka { --sk-c: var(--sk-napaka); }
 .sk-ctl { display: grid; gap: 8px; }
+/* 3D skica (presek stožca): platno v okvirju skice, oznaka vrste levo zgoraj, gumbi desno zgoraj. */
+.sk-3d { position: relative; max-width: 520px; margin-inline: auto; }
+.sk-3d-platno { display: block; width: 100%; border-radius: 10px; cursor: grab; outline-offset: 2px; }
+.sk-3d-brez { min-height: 120px; display: grid; place-items: center; }
+.sk-3d-vrsta { position: absolute; left: 8px; top: 6px; font-weight: 800; letter-spacing: 0.08em; font-size: 0.85rem; color: var(--sk-glavna); text-shadow: 0 0 8px var(--sk-izbor); pointer-events: none; }
+.sk-3d-kot { position: absolute; right: 6px; top: 6px; display: flex; gap: 4px; }
+.sk-3d-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--sk-line); background: color-mix(in srgb, var(--sk-bg) 80%, transparent); color: var(--sk-glavna); font-size: 15px; line-height: 1; cursor: pointer; }
+.sk-3d-btn.on { border-color: var(--sk-izbor); color: var(--sk-izbor); }
+.sk-panel-t { margin: 2px 0 0; font-size: 0.82rem; color: var(--muted); letter-spacing: 0.02em; }
+.sk-ctl .sk-num { width: 4.6em; min-height: 40px; padding: 2px 6px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: inherit; font: 600 0.9rem ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-align: end; }
 .sk-ctl .demo-slider { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; }
 .sk-ctl .demo-slider .demo-slider-label { font-weight: 700; grid-column: auto; font-size: inherit; } /* ne ozka postavitev iz textbook.css (max-width: 520px) */
 .sk-ctl .demo-slider-label::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--sk-c); margin-inline-end: 6px; }
