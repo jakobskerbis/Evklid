@@ -421,8 +421,11 @@ test("garancija: zapis se izbriše 10 let po odločitvi, odprt zahtevek ostane",
   add("c", "improved", "2016-01-10 10:00:00", "2016-05-01 10:00:00", null); // boljša ocena: šteje od sporočila
   add("d", "active", "2016-01-10 10:00:00", null, null); // brez odločitve: od prijave
   add("e", "claimed", "2016-01-10 10:00:00", "2016-05-01 10:00:00", null); // odprt zahtevek ostane
+  // started_at se vpiše kot ISO (toISOString): na dan roka mora šteti ura, ne niz »T« proti presledku.
+  add("f", "active", "2016-11-04T06:00:00.000Z", null, null); // 10 let in 6 ur: izbriše se
+  add("g", "active", "2016-11-04T18:00:00.000Z", null, null); // 6 ur manj kot 10 let: ostane
   const now = Date.parse("2026-11-04T12:00:00Z");
-  assert.equal(purgeOldGuarantees(db, now), 3);
-  assert.deepEqual(db.prepare("SELECT email_hash FROM guarantees ORDER BY email_hash").all().map((r) => r.email_hash), ["b", "e"]);
+  assert.equal(purgeOldGuarantees(db, now), 4);
+  assert.deepEqual(db.prepare("SELECT email_hash FROM guarantees ORDER BY email_hash").all().map((r) => r.email_hash), ["b", "e", "g"]);
   assert.equal(purgeOldGuarantees(db, now), 0);
 });

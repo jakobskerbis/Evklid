@@ -46,8 +46,10 @@ export function purgeOldGuarantees(db, now = Date.now()) {
   const d = new Date(now);
   d.setUTCFullYear(d.getUTCFullYear() - RETENTION_YEARS);
   const cutoff = sqlTime(d.getTime());
+  // started_at je ISO (»…T…Z«), claimed_at/decided_at iz datetime('now'): datetime() oboje poenoti, sicer bi se zapis
+  // na dan roka primerjal kot niz (»T« > presledek) in izbrisal dan pozneje.
   return db
-    .prepare("DELETE FROM guarantees WHERE status != 'claimed' AND COALESCE(decided_at, claimed_at, started_at) < ?")
+    .prepare("DELETE FROM guarantees WHERE status != 'claimed' AND datetime(COALESCE(decided_at, claimed_at, started_at)) < ?")
     .run(cutoff).changes;
 }
 
