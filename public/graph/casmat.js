@@ -5,7 +5,7 @@
 import { P, AlgebraError } from "../scan/algebra.js";
 import { KIT } from "./cas.js";
 import { lineTex } from "./scicore.js";
-import { newCtx, attempt, ops, verifyAt, lineFn } from "./casalg.js";
+import { newCtx, attempt, ops, verifyAt, lineFn, condList, domainOk } from "./casalg.js";
 
 export const MAT_OPS = new Set(["det", "inverse"]);
 const MAX_N = 5;
@@ -100,9 +100,14 @@ export function runMatrix(cmd, line, env) {
     const fs = cells.map((r) => r.map((x) => lineFn(line, x)));
     const numA = (pt) => fs.map((r) => r.map((f) => f(pt)));
     if (cmd.op === "det") {
-      const ok = verifyAt(ctx, vs, (pt) => detNum(numA(pt)), (e) => KIT.evalR(det, e));
+      // pogoji elementov (√x → x ≥ 0, 1/x → x ≠ 0), kot pri poenostavi
+      const resTex = scalarTex(det, dec);
+      const cond = condList(ctx, det, dec, resTex);
+      const ok = verifyAt(ctx, vs, (pt) => detNum(numA(pt)), (e) => KIT.evalR(det, e), undefined, undefined, domainOk(cond.dom));
       if (!ok) return { error: { code: "casUnverified", info: {} } };
-      return { kind: "cas", op: "det", tex: `\\det${inTex}`, resTex: scalarTex(det, dec), inner: cmd.inner };
+      const out = { kind: "cas", op: "det", tex: `\\det${inTex}`, resTex, inner: cmd.inner };
+      if (cond.list.length) out.cond = cond.list.join(",\\; ");
+      return out;
     }
     const entries = inv.map((r) => r.map((m) => ops.div(ctx, m, det, false)));
     // A·A⁻¹ = I: vsota |(A·X − I)ᵢⱼ| mora biti blizu 0
@@ -142,7 +147,10 @@ export function runMatrix(cmd, line, env) {
       if (t.length <= resTex.length) resTex = t;
     }
     const out = { kind: "cas", op: "inverse", tex: `${inTex}^{-1}`, resTex, inner: cmd.inner };
-    const cond = KIT.conditions([...ctx.dens, det.n].filter((d) => !d.isConst()), new P().add(P.num(1)), dec);
+    // pogoj z istim zapisom determinante kot v imenovalcu (ne z nasprotnim predznakom)
+    const detTex = scalarTex(det, dec);
+    const flip = [KIT.polyTex(det.n.scale(-1), dec), KIT.polyTex(det.n.scale(-1), dec, true), KIT.polyTex(det.n, dec)].map((x) => `${x} \\ne 0`);
+    const cond = condList(ctx, null, dec, resTex, det.n.isConst() ? [] : [det.n]).list.map((c) => (det.d.isConst() && flip.includes(c) ? `${detTex} \\ne 0` : c));
     if (cond.length) out.cond = cond.join(",\\; ");
     return out;
   } catch (e) {

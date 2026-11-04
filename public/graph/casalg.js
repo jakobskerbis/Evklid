@@ -82,6 +82,11 @@ export function atomEnv(ctx, env) {
 // Relacije: zmanjšanje, racionalizacija imenovalca
 
 function reduce(p, ctx) {
+  // ⁴√|x| ⁴ = |x|, |x|² = x²: generator nad drugim atomom zahteva še en prehod
+  for (let pass = 0; pass < 3 && ctx.atoms.some((a) => a.rel && p.degree(a.name) >= a.rel.L); pass++) p = reduce1(p, ctx);
+  return p;
+}
+function reduce1(p, ctx) {
   for (const a of ctx.atoms) {
     if (!a.rel || p.degree(a.name) < a.rel.L) continue;
     const L = a.rel.L;
@@ -251,8 +256,7 @@ function needNonneg(ctx, p, op) {
 const realRoot = (x, L) => (L % 2 ? Math.sign(x) * Math.abs(x) ** (1 / L) : x < 0 ? NaN : x ** (1 / L));
 const free = (p) => p.vars().some((v) => !isAtom(v) && v !== "π" && v !== "e");
 // ⁿ√(b^e) = g^(e·L/n) za generator g = ᴸ√b
-function rootPow(ctx, b, n, e) {
-  const k0 = pkey(b);
+function rootPow(ctx, b, n, e, k0 = pkey(b)) {
   const L = ctx.Lmap.get(k0) || 1;
   if (L % n) {
     const L2 = lcmN(L, n);
@@ -265,7 +269,7 @@ function rootPow(ctx, b, n, e) {
   const rem = k - q * L;
   let out = KIT.powP(b, q);
   if (rem) {
-    const g = atom(ctx, "rad:" + k0, { kind: "rad", base: b, L, rel: { L, r: b }, free: free(b), val: (env) => realRoot(b.eval(env), L) });
+    const g = atom(ctx, "rad:" + k0, { kind: "rad", base: b, L, rel: { L, r: b }, free: free(b) || b.vars().some((v) => ctx.byName.get(v)?.free), val: (env) => realRoot(b.eval(env), L) });
     out = out.mul(mono({ [g.name]: rem }));
   }
   return out;
@@ -292,14 +296,18 @@ function rootR(ctx, r, n, forced = false, strict = false) {
   for (const f of fs) {
     f.q = Math.floor(f.e / n);
     f.rem = f.e - f.q * n;
+    // ⁴√(x²) = √|x|, ⁴√(x⁶) = |x|·√|x|: soda potenca pod sodim korenom, osnova je lahko negativna
+    f.abs = !forced && n % 2 === 0 && f.e % 2 === 0 && f.rem > 0 && !isNonneg(ctx, f.p);
+    if (f.abs) continue;
     if (f.rem && (n % 2 === 0 || forced)) needNonneg(ctx, f.p, f.e < 0 || strict ? ">" : "≥");
     if (forced && f.q && !f.p.isConst()) needNonneg(ctx, f.p, f.e < 0 || strict ? ">" : "≥");
   }
   let out = R(P.num(s));
   for (const f of fs) {
-    if (f.rem) out = ops.mul(ctx, out, R(rootPow(ctx, f.p, n, f.rem)));
+    const ab = f.abs ? absP(ctx, f.p) : null;
+    if (f.rem) out = ops.mul(ctx, out, R(ab ? rootPow(ctx, ab, n, f.rem, "abs:" + pkey(f.p)) : rootPow(ctx, f.p, n, f.rem)));
     if (f.q) {
-      const b = n % 2 === 0 && f.q % 2 && !forced ? absP(ctx, f.p) : f.p;
+      const b = ab || (n % 2 === 0 && f.q % 2 && !forced ? absP(ctx, f.p) : f.p);
       out = ops.mul(ctx, out, powInt(ctx, R(b), f.q));
     }
   }
@@ -826,25 +834,57 @@ function geTex(p, op, dec) {
   }
   return `${KIT.polyTex(p, dec)} ${sym[0]} 0`;
 }
-function condList(ctx, shown, dec) {
+// Je v zapisu rezultata koren sode stopnje iz same osnove p (√x, ⁴√x, ⁴√(x³), √(2x))? Potem pogoja p ≥ 0 ne pišemo.
+// √(xy) (združena √x·√y) ali ∛x (iz ⁶√(x²)) tega ne povesta: tam pogoj ostane.
+function evenRootShown(text, p) {
+  const pt = KIT.polyTex(p);
+  const body = (/^[A-Za-zπ]/.test(pt) ? "\\d*" : "") + pt.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
+  const re = new RegExp(`\\\\sqrt(?:\\[(\\d+)\\])?\\{${body}(?:\\^\\{(\\d+)\\})?\\}`, "g");
+  return [...text.matchAll(re)].some((m) => (!m[1] || Number(m[1]) % 2 === 0) && (!m[2] || Number(m[2]) % 2 === 1));
+}
+/**
+ * Pogoji »Velja za …« za prikazani rezultat shown (R ali null pri matriki), text = njegov TeX.
+ * Vrne { list: [TeX], dom: [{ p, op }] } (dom: prikazani pogoji p > 0 / p ≥ 0 za preverjanje s števili).
+ */
+export function condList(ctx, shown, dec, text = "", extraDens = []) {
   // imenovalci s koreni: pogoj za normo (√x − 1 ≠ 0 → x ≠ 1)
-  const dens = ctx.dens
+  // π − e ali e^x + 1 ni nikoli 0
+  const isFree = (d) => d.vars().some((v) => (!isAtom(v) && v !== "π" && v !== "e") || ctx.byName.get(v)?.free);
+  const dens = [...ctx.dens, ...extraDens]
     .map((d) => {
       for (const a of ctx.atoms) if ((a.kind === "rad" || a.kind === "abs") && d.degree(a.name) > 0) d = reduce(d.mul(cofactor(d, a, ctx)), ctx);
       return d;
     })
-    .filter((d) => d.vars().some((v) => !isAtom(v) || ctx.byName.get(v)?.free))
+    .filter(isFree)
     // e^x ≠ 0 vedno
     .filter((d) => !(d.terms().length === 1 && d.vars().every((v) => ctx.byName.get(v)?.kind === "exp" || v === "π" || v === "e")));
-  const strict = [...ctx.domain.values()].filter((x) => x.op === ">").map((x) => x.p);
+  const domain = new Map([...ctx.domain].map(([k, x]) => [k, { ...x }]));
+  // imenovalec rezultata, ki ga v vnosu ni bilo (racionalizacija: 1/(√x + 1) = (√x − 1)/(x − 1) velja le za x ≠ 1)
+  const newDen = [];
+  if (shown && !shown.d.isConst()) {
+    // primerjamo v obliki po relacijah (sin² → 1 − cos²), do konstante natančno
+    const norm = (q) => KIT.prim(reduce(q, ctx))[1];
+    const raw = [...ctx.dens, ...extraDens].flatMap((d) => [d, ...KIT.factorP(d).fs.map((f) => f.p)]).map(norm);
+    for (const { p: f } of KIT.factorP(shown.d).fs) {
+      const nf = norm(f);
+      if (!isFree(f) || raw.some((g) => g.eq(nf) || g.eq(nf.scale(-1)))) continue;
+      // √(x + 1) v imenovalcu: x + 1 ≥ 0 postane x + 1 > 0
+      const dm = domain.get(pkey(f));
+      if (dm) dm.op = ">";
+      else newDen.push(f);
+    }
+  }
+  const strict = [...domain.values()].filter((x) => x.op === ">").map((x) => x.p);
   const implied = new Set(strict.length ? KIT.conditions(strict, ONE(), dec) : []);
-  const ne = (dens.length ? KIT.conditions(dens, shown.d, dec) : []).filter((c) => !implied.has(c));
-  const has = new Set([...shown.n.vars(), ...shown.d.vars()]);
+  const ne = (dens.length ? KIT.conditions(dens, shown ? shown.d : ONE(), dec) : []).filter((c) => !implied.has(c));
+  for (const c of newDen.length ? KIT.conditions(newDen, ONE(), dec) : []) if (!implied.has(c) && !ne.includes(c)) ne.push(c);
   const ge = [];
-  for (const { p, op, log } of ctx.domain.values()) {
+  const dom = [];
+  for (const { p, op, log } of domain.values()) {
     // √x v rezultatu že pove x ≥ 0
-    if (!log && op === "≥" && ctx.atoms.some((a) => a.kind === "rad" && a.L % 2 === 0 && has.has(a.name) && pkey(a.base) === pkey(p))) continue;
+    if (!log && op === "≥" && evenRootShown(text, p)) continue;
     ge.push(geTex(p, op, dec));
+    dom.push({ p, op });
   }
   // a > 0, b > 0 → a, b > 0
   const simple = new Map();
@@ -857,8 +897,14 @@ function condList(ctx, shown, dec) {
     } else rest.push(g);
   }
   const grouped = [...simple].map(([op, vs]) => `${vs.sort(KIT.varCmp).join(", ")} ${op} 0`);
-  return [...grouped, ...rest, ...ne];
+  return { list: [...grouped, ...rest, ...ne], dom };
 }
+/** Točka izpolni prikazane pogoje p > 0 / p ≥ 0 (za preverjanje: rezultat mora tam obstajati, če obstaja vnos). */
+export const domainOk = (dom) => (env) =>
+  dom.every(({ p, op }) => {
+    const v = p.eval(env);
+    return op === ">" ? v > 0 : v >= 0;
+  });
 
 // ---------------------------------------------------------------------------
 // Preverjanje s števili
@@ -874,7 +920,11 @@ function absEval(p, env) {
   return s;
 }
 export const scaleOf = (r) => (env) => absEval(r.n, env) / Math.abs(r.d.eval(env));
-export function verifyAt(ctx, vs, f, check, need, scale) {
+/**
+ * Rezultat check (v atomih) se v točkah ujema z vnosom f. allowed (env → bool): prikazani pogoji; kjer veljajo,
+ * morata vnos in rezultat obstajati hkrati (sicer manjka pogoj ali rezultat ne velja povsod, npr. ⁴√(x²) ≠ √x).
+ */
+export function verifyAt(ctx, vs, f, check, need, scale, allowed) {
   const pts = KIT.points(vs, 24);
   // za pogoje x > 0 dodamo še točke z |x|
   const all = [...pts, ...pts.map((p) => Object.fromEntries(Object.entries(p).map(([k, v]) => [k, Math.abs(v)])))];
@@ -884,6 +934,7 @@ export function verifyAt(ctx, vs, f, check, need, scale) {
     const env2 = atomEnv(ctx, { ...pt, ...KIT.SYMBOLS });
     const b = check(env2);
     if (a === null) continue;
+    if (allowed && typeof a === "number" && Number.isFinite(a) !== Number.isFinite(b) && Math.abs(a) <= 1e12 && allowed(env2)) return false;
     if (typeof a !== "number" || !Number.isFinite(a) || !Number.isFinite(b) || Math.abs(a) > 1e12) continue;
     if (!KIT.close(a, b) && !(Math.abs(a - b) <= 1e-9 * (1 + Math.abs(a))) && !(scale && Math.abs(a - b) <= 1e-11 * scale(env2))) return false;
     ok++;
@@ -928,10 +979,10 @@ export function runAtoms(cmd, line, env, name, innerTex) {
     }
     if (!best) throw fail("unsupported");
     if (best.t.length > 12000) throw fail("big");
-    if (!verifyAt(ctx, allVs, f, (e) => KIT.evalR(best.c, e), undefined, scaleOf(r))) return { error: { code: "casUnverified", info: {} } };
-    const cond = condList(ctx, best.c, dec);
+    const cond = condList(ctx, best.c, dec, best.t);
+    if (!verifyAt(ctx, allVs, f, (e) => KIT.evalR(best.c, e), undefined, scaleOf(r), domainOk(cond.dom))) return { error: { code: "casUnverified", info: {} } };
     const out = { kind: "cas", op: cmd.op, tex: `${name}\\left(${innerTex}\\right)`, resTex: best.t, inner: cmd.inner };
-    if (cond.length) out.cond = cond.join(",\\; ");
+    if (cond.list.length) out.cond = cond.list.join(",\\; ");
     if (vs.length === 1 && vs[0] === "x") out.plot = [`y = ${cmd.inner}`];
     return out;
   } catch (e) {

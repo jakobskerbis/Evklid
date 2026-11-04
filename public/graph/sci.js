@@ -75,15 +75,18 @@ const MORE = [
 ];
 
 // gnezdeni \frac, \sqrt, ^{…} od znotraj navzven: √(E/m) ostane √((E)/(m)), ne √(E)/(m)
+// brez oklepaja samo eno število ali ena črka: √2x bi kalkulator prebral kot √2·x, e^3x kot e³·x
+const bareTok = (a) => /^(?:\d+(?:[.,]\d+)?|[A-Za-zα-ωπ])$/.test(a);
 function unnest(x) {
   for (let prev = ""; prev !== x; ) {
     prev = x;
     x = x
       .replace(/_\{([^{}]*)\}/g, "$1")
-      .replace(/\^\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `^${a}` : `^(${a})`))
+      .replace(/\^\{([^{}]*)\}/g, (_, a) => (bareTok(a) ? `^${a}` : `^(${a})`))
       .replace(/\\t?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)")
-      .replace(/\\sqrt\[(\d+)\]\{([^{}]*)\}/g, (_, n, a) => (n === "3" ? (/^[\w.,]+$/.test(a) ? `∛${a}` : `∛(${a})`) : `root(${a}; ${n})`))
-      .replace(/\\sqrt\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `√${a}` : `√(${a})`));
+      // x²·⁶√(x⁵): pred root( in za njim pišemo ·, sicer bi bilo x^2root(…)
+      .replace(/(\S?)\\sqrt\[(\d+)\]\{([^{}]*)\}(?=(.?))/g, (_, pre, n, a, post) => (n === "3" ? `${pre}${bareTok(a) ? `∛${a}` : `∛(${a})`}` : `${pre}${pre && !/[\s({[+\-·=,;]/.test(pre) ? "·" : ""}root(${a}; ${n})${post && /[\w\\√∛(|]/.test(post) ? "·" : ""}`))
+      .replace(/\\sqrt\{([^{}]*)\}/g, (_, a) => (bareTok(a) ? `√${a}` : `√(${a})`));
   }
   return x;
 }
@@ -93,7 +96,9 @@ export function texPlain(tex) {
     // matrika → [[a; b]; [c; d]] (zapis, ki ga kalkulator prebere v obeh načinih)
     .replace(/\}\\begin\{pmatrix\}/g, "}\\cdot\\begin{pmatrix}")
     .replace(/\\begin\{pmatrix\}([\s\S]*?)\\end\{pmatrix\}/g, (_, body) => `[${body.split("\\\\").map((r) => `[${r.split("&").map((x) => x.trim()).join("; ")}]`).join("; ")}]`)
-    .replace(/\\log_\{([^{}]*)\}/g, "log_$1");
+    .replace(/\\log_\{([^{}]*)\}/g, "log_$1")
+    // sin²(x/2): \sin^{2}\frac{x}{2} → sin^2((x)/(2)), ne sin^2(x)/(2)
+    .replace(/(\\(?:sin|cos|tan|cot|ln|log)(?:\^\{\d+\})?)\\frac(\{[^{}]*\}\{[^{}]*\})/g, "$1\\left(\\frac$2\\right)");
   return unnest(pre.replace(/\{,\}/g, ","))
     .replace(/\\Leftrightarrow/g, "⇔")
     .replace(/\\(left|right)(?![a-z])/g, "")

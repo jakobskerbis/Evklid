@@ -204,3 +204,43 @@ test("gumbi Poenostavi/Razvij za izraze s koreni, kotnimi funkcijami in logaritm
   assert.equal(res("razstavi(x²−1)"), "\\left(x + 1\\right)\\left(x - 1\\right)");
   assert.equal(res("poenostavi((x²−1)/(x−1))"), "x + 1");
 });
+
+test("pregled 2: sodi koreni sodih potenc, združeni koreni, racionalizacija in pogoji matrik", () => {
+  // ⁴√(x²) = √|x| (prej √x brez pogoja, napačno za x < 0), ⁶√(x²) = ∛|x| (prej ∛x), ⁴√(x⁶) = |x|√|x|
+  assert.deepEqual(both("poenostavi(root(x^2;4))"), ["\\sqrt{\\left|x\\right|}", undefined]);
+  assert.deepEqual(both("poenostavi(root(x^2;6))"), ["\\sqrt[3]{\\left|x\\right|}", undefined]);
+  assert.deepEqual(both("poenostavi(root(x^6;4))"), ["\\left|x\\right|\\sqrt{\\left|x\\right|}", undefined]);
+  assert.equal(res("poenostavi(root(x^2;4)^4)"), "x^{2}");
+  // √x·√y = √(xy) le za x, y ≥ 0; √(x⁵y³) = x²y√(xy) je za x, y < 0 napačno brez pogoja
+  assert.deepEqual(both("poenostavi(√x·√y)"), ["\\sqrt{xy}", "x, y \\ge 0"]);
+  assert.deepEqual(both("poenostavi(√(x^5·y^3))"), ["x^{2}y\\sqrt{xy}", "x, y \\ge 0"]);
+  // racionalizacija doda imenovalec: 1/(√x + 1) = (√x − 1)/(x − 1) velja le za x ≠ 1
+  assert.deepEqual(both("poenostavi(1/(√x+1))"), ["\\frac{\\sqrt{x} - 1}{x - 1}", "x \\ne 1"]);
+  assert.equal(cas("poenostavi(1/(sin x + cos x))").cond, "\\sin x + \\cos x \\ne 0,\\; 2\\cos^{2} x - 1 \\ne 0");
+  assert.equal(cas("poenostavi(1/√(x+1))").cond, "x > -1");
+  // determinanta: pogoji elementov; π − e ni nikoli 0
+  assert.deepEqual(both("det([[1/x, 0],[0, x]])"), ["1", "x \\ne 0"]);
+  assert.deepEqual(both("det([[√x, 1], [1, √x]])"), ["x - 1", "x \\ge 0"]);
+  assert.deepEqual(both("det([[tan x, 0],[0, cos x]])"), ["\\sin x", "\\cos x \\ne 0"]);
+  assert.equal(cas("inverz([[e, π],[1, 1]])").cond, undefined);
+  // preverjanje: kjer prikazani pogoji veljajo, mora rezultat obstajati, če obstaja vnos
+  const line = compileLine("root(x^2;4)", DOT);
+  const ctx = newCtx(line, DOT);
+  const f = lineFn(line, line.ast);
+  assert.equal(verifyAt(ctx, ["x"], f, (e) => Math.sqrt(e.x), undefined, undefined, () => true), false);
+  assert.equal(verifyAt(ctx, ["x"], f, (e) => Math.sqrt(e.x), undefined, undefined, (e) => e.x >= 0), true);
+  // besedilo za odložišče: √2x in e^3x bi kalkulator prebral kot √2·x in e³·x
+  assert.equal(texPlain(res("poenostavi(e^x·e^(2x))")), "e^(3x)");
+  assert.equal(texPlain(res("poenostavi(√(x/2))")), "(√(2x))/(2)");
+  assert.equal(texPlain(res("poenostavi(sin(x/2)^2)")), "sin^2((x)/(2))");
+});
+
+test("pregled 2b: e·e^{2x}, pogoj z istim zapisom determinante, množenje pred n-tim korenom v besedilu", () => {
+  assert.equal(res("razvij(e^(2x+1))"), "e\\cdot e^{2x}");
+  assert.equal(res("poenostavi(e^(x+2))"), "e^{2}\\cdot e^{x}");
+  const r = cas("inverz([[a,b,c],[d,e,f],[g,h,k]])");
+  assert.equal(r.cond, `${/\\frac\{1\}\{([^{}]*)\}/.exec(r.resTex)[1]} \\ne 0`);
+  assert.equal(texPlain("x^{2}\\sqrt[6]{x^{5}}"), "x^2·root(x^5; 6)");
+  assert.equal(texPlain("\\sqrt[5]{x}y"), "root(x; 5)·y");
+  assert.equal(texPlain("\\frac{\\sqrt[4]{x}}{2}"), "(root(x; 4))/(2)");
+});

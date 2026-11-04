@@ -540,7 +540,10 @@ function monoTex(m) {
   if (at.length) {
     const rest = { ...m };
     for (const v of at) delete rest[v];
-    return monoTex(rest) + ATOM_TEX(Object.fromEntries(at.map((v) => [v, m[v]])));
+    const head = monoTex(rest);
+    const tail = ATOM_TEX(Object.fromEntries(at.map((v) => [v, m[v]])));
+    // e·e^{2x}, ne »ee^{2x}«
+    return head + (/e(\^\{\d+\})?$/.test(head) && tail.startsWith("e^") ? "\\cdot " : "") + tail;
   }
   return Object.keys(m)
     .filter((v) => m[v])
