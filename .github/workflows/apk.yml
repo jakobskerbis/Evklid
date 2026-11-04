@@ -10,9 +10,6 @@
 name: APK za Android
 on:
   workflow_dispatch:
-  push: # PREIZKUS, odstrani pred združitvijo
-    branches: [claude/project-thread-8pn3iz]
-    paths: [.github/workflows/apk.yml]
 permissions:
   contents: write
 concurrency:

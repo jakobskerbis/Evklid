@@ -164,6 +164,24 @@ polnoletnost in pravo identiteto; ime razvijalca je javno vidno v trgovini.
 Takoj zatem gumb **»Namesti aplikacijo«** na Androidu ponudi pravo aplikacijo (APK s koraki za namestitev)
 namesto spletne različice, prav tako stran https://evklid.app/prenesi. Ob novi različici ponovi koraka 3 in 4.
 
+**Brez gradenj na expo.dev: APK zgradi GitHub** (brezplačno, `.github/workflows/apk.yml`, od 4. 11. 2026).
+Naredi isto kot gradnja s profilom `direct`: kanal `direct`, številka različice = trenutna na evklid.app + 1.
+APK mora biti podpisan z **istim ključem** kot prejšnji, sicer ga telefon ne namesti čez staro aplikacijo.
+
+Enkrat (ključ v skrivnosti GitHub, nikoli v repozitorij):
+1. expo.dev → projekt evklid → **Credentials** → Android → `app.evklid` → Keystore → **Download**. Na isti
+   strani si zapiši *Keystore password*, *Key alias* in *Key password*.
+2. V PowerShellu v mapi, kjer je preneseni `.jks` (ime prilagodi):
+   `[Convert]::ToBase64String([IO.File]::ReadAllBytes("evklid.jks")) | Set-Clipboard`
+3. github.com/jakobskerbis/Evklid → Settings → Secrets and variables → Actions → **New repository secret**,
+   štiri skrivnosti: `ANDROID_KEYSTORE_BASE64` (prilepi iz koraka 2), `ANDROID_KEYSTORE_PASSWORD`,
+   `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`. Nato datoteko `.jks` shrani na varno (ne briši).
+
+Vsakič:
+4. github.com/jakobskerbis/Evklid → **Actions** → »APK za Android« → **Run workflow** (veja `main`), ~25 minut.
+5. Povezavo `https://github.com/jakobskerbis/Evklid/releases/download/apk-<številka>/evklid.apk` iz povzetka
+   gradnje prilepi v **Račun → Aplikacija za Android (APK)** in tapni »Naloži APK«.
+
 **Posodobitve nameščene aplikacije** (`mobile/src/lib/updates.ts`):
 - **Manjše spremembe (JavaScript, besedila, prevodi)** pridejo same. Ob vsaki združitvi v `main`, ki spremeni
   `mobile/` ali skupne datoteke s spletom, Expo (EAS Workflows, `mobile/.eas/workflows/posodobitev.yml`)
