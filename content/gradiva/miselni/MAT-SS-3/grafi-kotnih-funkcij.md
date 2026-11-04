@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sinusoida
+  - višina točke na enotski krožnici
+  - ničle pri $k\pi$, vrh pri $\frac{\pi}{2}$
+- Perioda
+  - $\sin$, $\cos$: $2\pi$; $\tan$: $\pi$
+  - $T = \dfrac{2\pi}{|b|}$
+  - napaka: pri $\sin 2x$ perioda $4\pi$
+- Amplituda
+  - število pred sinusom, $|A|$
+  - $2\sin x$: višji val
+- Premik levo ali desno
+  - $\sin(x - c)$: za $c$ v desno
+  - najprej izpostavi $b$
+- Srednja črta
+  - $y = d$, val se premakne z njo
+  - $Z_f = [d - |A|,\ d + |A|]$
+- Splošna oblika
+  - $f(x) = A\sin\big(b(x - c)\big) + d$
+  - dihalni krog: $r = 10\sin\left(\frac{\pi}{4}t\right) + 20$
+- Tangens
+  - asimptote pri $\frac{\pi}{2} + k\pi$

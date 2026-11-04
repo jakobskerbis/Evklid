@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Funkcija
+  - vsakemu $x$ natanko ena vrednost $f(x)$
+  - palačinke: $f(x) = 50x + 100$ ml mleka
+- Definicijsko območje
+  - dovoljeni vhodi $D_f$
+  - sodi koren: izraz $\ge 0$; imenovalec $\ne 0$
+- Zaloga vrednosti
+  - dosežene vrednosti $Z_f$
+  - $x^2$: $Z_f = [0, \infty)$
+- Ničle
+  - rešitve enačbe $f(x) = 0$
+  - graf seka os $x$
+- Naraščanje in padanje
+  - narašča: $x_1 < x_2 \Rightarrow f(x_1) < f(x_2)$
+  - ohlajanje juhe: temperatura pada
+- Sodost in lihost
+  - soda: simetrija glede na os $y$
+  - liha: simetrija glede na izhodišče
+  - napaka: »ni soda, torej liha«
+- Injektivnost
+  - različni $x$, različne vrednosti
+  - vodoravna premica seka graf največ enkrat
+- Sestavljena in inverzna
+  - $(g \circ f)(x) = g(f(x))$, najprej $f$
+  - $f^{-1}$ le za injektivno $f$
+  - napaka: $f^{-1}(x) \ne \frac{1}{f(x)}$
