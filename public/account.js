@@ -8,6 +8,7 @@ import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
 import { guaranteeBox, guaranteeLine, podariAddon, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
+import { landingHtml } from "./pristajalna.js";
 // Starševski račun: prijava, potrditev e-naslova, otroci s soglasjem, naročnina, priporočila.
 // Deluje samo, ko je na strežniku EVKLID_ACCOUNTS=1.
 
@@ -301,6 +302,13 @@ export async function initAccount({ onReady }) {
   lockAccountOnLeave();
   guardLogoOnAuth();
   $("#account-tab").addEventListener("click", renderAccount);
+  // Nazaj in Naprej med pristajalno stranjo, prijavo in registracijo (#prijava, #registracija).
+  addEventListener("popstate", () => {
+    if (status?.logged_in || !document.body.classList.contains("auth-mode")) return;
+    const m = hashMode();
+    if (m) renderLogin(m);
+    else renderLanding();
+  });
 
   const q = new URLSearchParams(location.search);
   if (q.get("ref")) store.set("evklid_ref", q.get("ref"));
@@ -353,6 +361,7 @@ export async function initAccount({ onReady }) {
 
 // Na zaslonih prijave logotip ne odpira menija »Nadaljuj z učenjem« (brez profila ne deluje).
 // Skriti vhod za goste (dotik logotipa) je odstranjen skupaj z uporabo brez računa (j, 2026-10-29).
+// Neprijavljen obiskovalec se z logotipom vrne na pristajalno stran.
 function guardLogoOnAuth() {
   document.addEventListener(
     "click",
@@ -360,13 +369,63 @@ function guardLogoOnAuth() {
       if (!e.target.closest(".brand") || !document.body.classList.contains("auth-mode")) return;
       e.preventDefault();
       e.stopImmediatePropagation();
+      if (!status?.logged_in) goAuth(null);
     },
     true,
   );
 }
 
+// Naprava, na kateri je bil kdo že prijavljen: neprijavljen obiskovalec dobi takoj prijavo, ne pristajalne strani.
+const SEEN = "evklid.racun";
+const AUTH_HASH = { "#prijava": "login", "#registracija": "register" };
+const hashMode = () => AUTH_HASH[location.hash] || null;
+
+// Pristajalna stran ↔ prijava ↔ registracija, z zapisom v zgodovini (#prijava, #registracija), da Nazaj deluje.
+function goAuth(mode) {
+  const hash = Object.keys(AUTH_HASH).find((h) => AUTH_HASH[h] === mode) || "";
+  if (location.hash !== hash) history.pushState(null, "", hash || location.pathname + location.search);
+  if (mode) renderLogin(mode);
+  else renderLanding();
+  scrollTo(0, 0);
+}
+
+// Cene in preizkus za pristajalno stran (isti podatki kot na strani za starše); največ 1,5 s čakanja.
+let landingPrices;
+function loadLandingPrices() {
+  if (landingPrices) return landingPrices;
+  const region = deviceRegion();
+  const req = api(`/api/account/prices${region ? `?country=${region}` : ""}`).catch(() => null);
+  landingPrices = Promise.race([req, new Promise((r) => setTimeout(() => r(null), 1500))]);
+  req.then((p) => p && (landingPrices = Promise.resolve(p)));
+  return landingPrices;
+}
+
+async function renderLanding() {
+  const prices = await loadLandingPrices();
+  if (status?.logged_in) return;
+  authMode(true);
+  document.body.classList.add("land-mode");
+  const name = document.querySelector(".topbar .brand-name")?.textContent || "";
+  // Cele zneske brez decimalk (99 € namesto 99,00 €), sicer kot drugod v računu.
+  const whole = (minor, currency) => money(minor, currency).replace(/[,.]00(?=\D*$)/, "");
+  $("#view-auth").innerHTML = landingHtml({ name, prices, money: whole });
+  $("#view-auth").querySelectorAll("[data-land]").forEach((a) =>
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      goAuth(a.dataset.land);
+    }),
+  );
+  // Cene so prišle po izrisu (počasna povezava): kartice stopenj dopolnimo, ko pridejo.
+  if (!prices) loadLandingPrices().then((p) => p && document.body.classList.contains("land-mode") && renderLanding());
+}
+
 async function route() {
-  if (!status.logged_in) return renderLogin(route.firstMode || "login"), false;
+  if (!status.logged_in) {
+    const mode = route.firstMode || hashMode() || (store.get(SEEN) ? "login" : null);
+    return (mode ? renderLogin(mode) : await renderLanding()), false;
+  }
+  store.set(SEEN, "1");
+  if (hashMode()) history.replaceState(null, "", location.pathname + location.search);
   // Uporaba brez računa je izklopljena: gost lahko samo ustvari račun in obdrži napredek.
   if (status.parent.guest && !status.guest_mode) return renderGuestOff(), false;
   if (!status.parent.verified && !status.parent.guest) return renderVerify(), false;
@@ -398,6 +457,7 @@ export function openAddChild() {
 // ime vzamemo iz zgornje vrstice (brand.json → scripts/preimenuj.js), da ga ni treba popravljati na dveh mestih.
 function shell(inner) {
   authMode(true);
+  document.body.classList.remove("land-mode");
   const name = document.querySelector(".topbar .brand-name")?.innerHTML || "";
   $("#view-auth").innerHTML = `<div class="auth-wrap"><div class="auth-brand"><span class="logo" aria-hidden="true">${icon("kristal")}</span><b class="brand-name">${name}</b><p>${esc(t("mob.tagline"))}</p></div><div class="auth-box">${inner}</div></div>`;
 }
@@ -413,7 +473,7 @@ function renderLogin(mode = "login") {
   const koda = store.get("evklid_koda") || "";
   shell(`
     <h1>${mode === "login" ? "Prijava" : "Nov račun"}</h1>
-    <p class="muted">${mode === "login" ? "Za starše (otrokov profil) in za dijake ter študente (lasten profil)." : `Evklid je 7 dni brezplačen, brez kartice. Nato ${eur(999)} na mesec ali brezplačni paket z omejenim številom vprašanj.`}</p>
+    <p class="muted">${mode === "login" ? "Za starše (otrokov profil) in za dijake ter študente (lasten profil)." : `Evklid je 7 dni brezplačen, brez kartice. Nato naročnina od ${eur(999)} na mesec ali brezplačni paket z omejenim številom vprašanj.`}</p>
     ${invited ? `<p class="card">Ustvari svoj račun starša. Nato dodaš otrokov profil (<b>${esc(invited)}</b>) in s tem daš soglasje.</p>` : ""}
     <form id="auth-form" class="card form">
       ${mode === "register" ? `<label>Tvoje ime (neobvezno) <input name="name" maxlength="60" autocomplete="name"></label>` : ""}
@@ -432,7 +492,8 @@ function renderLogin(mode = "login") {
       ${mode === "login"
         ? `Še nimaš računa? <a href="#" data-go="register">Registracija</a> · <a href="#" data-go="forgot">Pozabljeno geslo</a>`
         : `Že imaš račun? <a href="#" data-go="login">Prijava</a>`}
-    </p>`);
+    </p>
+    <p class="auth-links"><a href="#" data-go="landing">${esc(t("land.what"))}</a></p>`);
   bindLinks();
   $("#auth-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -533,7 +594,7 @@ function bindLinks() {
       e.preventDefault();
       const go = a.dataset.go;
       if (go === "forgot") renderForgot();
-      else renderLogin(go);
+      else goAuth(go === "landing" ? null : go);
     }),
   );
 }
