@@ -252,11 +252,50 @@ export function subjectWithGlossary(subject, glossary) {
   return glossary?.length ? registerGlossary(subject, glossary) : subject;
 }
 
+// Pomen dvoumne črke: najprej formula (ctx, npr. G v F = G m₁m₂/r²), nato poved okoli nje (rich.js), če
+// imenuje natanko enega od pomenov (»Planckova konstanta h = 6,63·10⁻³⁴ J s«), sicer privzeti pomen.
+// Besede imena primerjamo po korenu (skloni: »gibalno količino«).
+let sentence = "";
+const escRe = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const stem = (w) => escRe(w.slice(0, Math.max(4, w.length - 1)));
+const nameWords = (n) => String(n || "").replace(/\s*\(.*?\)/g, "").replace(/\$[^$]*\$/g, " ").toLowerCase().split(/[\s,]+/).filter((w) => w.length > 2);
+function namedIn(e, s) {
+  return [e.n, e.en].some((n) => {
+    const words = nameWords(n);
+    return words.length > 0 && words.every((w) => new RegExp(`(^|[^\\p{L}])${stem(w)}`, "u").test(s));
+  });
+}
+function pickIndex(list, tex) {
+  const k = list.findIndex((e) => !e.ctx || new RegExp(e.ctx).test(tex));
+  if (k >= 0 && list[k].ctx) return k;
+  if (sentence && list.length > 1) {
+    const s = sentence.toLowerCase();
+    const named = list.map((e, i) => (namedIn(e, s) ? i : -1)).filter((i) => i >= 0);
+    if (named.length === 1) return named[0];
+  }
+  return k;
+}
 function pick(entry, tex) {
   if (!entry) return null;
   const list = Array.isArray(entry) ? entry : [entry];
-  for (const e of list) if (!e.ctx || new RegExp(e.ctx).test(tex)) return e;
-  return null;
+  return list[pickIndex(list, tex)] || null;
+}
+// Kateri pomen dvoumne črke velja v tej formuli (in povedi): »FIZ.1« (tabela.indeks) ali "" za edini pomen.
+function variantOf(key, subject, tex) {
+  if (!subject || subject[0] === "@") return "";
+  for (const tb of SUBJECT_TABLES[subject] || ["MAT"]) {
+    const v = SYMBOLS[tb][key];
+    if (!v) continue;
+    const k = pickIndex(Array.isArray(v) ? v : [v], tex);
+    if (k >= 0) return Array.isArray(v) && v.length > 1 ? `${tb}.${k}` : "";
+  }
+  return "";
+}
+// Pomen iz kode kartice (variantOf); null, če ga ni.
+export function symbolVariant(key, vi) {
+  const m = /^([A-Z]+)\.(\d+)$/.exec(vi || "");
+  const v = m && SYMBOLS[m[1]]?.[key];
+  return (Array.isArray(v) && v[Number(m[2])]) || null;
 }
 
 export function lookupSymbol(key, subject, tex = "") {
@@ -291,9 +330,9 @@ function symbolKey(base, sub, subject, tex) {
   const dict = local ? LOCAL[local.slice(1)]?.subject : subject;
   const full = sub ? `${base}_${sub}` : null;
   if (full && local && lookupSymbol(full, local)) return [full, local];
-  if (full && lookupSymbol(full, dict, tex)) return [full, dict];
+  if (full && lookupSymbol(full, dict, tex)) return [full, dict, variantOf(full, dict, tex)];
   if (local && lookupSymbol(base, local)) return [base, local];
-  return lookupSymbol(base, dict, tex) ? [base, dict] : null;
+  return lookupSymbol(base, dict, tex) ? [base, dict, variantOf(base, dict, tex)] : null;
 }
 
 // ---------- oznake lekcije (:::simboli) ----------
@@ -423,8 +462,18 @@ export function plainTex(tex) {
 }
 
 // Pred izrisom: ovije znane simbole in enote v \htmlData{fx=…}{…}.
-export function annotateTex(tex, subject = override || subjectFn()) {
+// o.sentence: besedilo povedi okoli formule (rich.js) za izbiro pomena dvoumne črke.
+export function annotateTex(tex, subject = override || subjectFn(), o = null) {
   if (!tex || tex.length > 4000 || /\\htmlData/.test(tex)) return tex;
+  const prev = sentence;
+  sentence = o?.sentence || "";
+  try {
+    return annotateInner(tex, subject);
+  } finally {
+    sentence = prev;
+  }
+}
+function annotateInner(tex, subject) {
   let out = "";
   let i = 0;
   const n = tex.length;
@@ -476,7 +525,7 @@ export function annotateTex(tex, subject = override || subjectFn()) {
     const hit = symbolKey(base, sub ? normSub(sub.raw) : "", subject, tex);
     let end = sub ? sub.end : j;
     if (!hit) { out += tex.slice(from, end); return end; }
-    const [key, subj] = hit;
+    const [key, subj, vi] = hit;
     const withSub = key.includes("_") || (sub && /^\d$/.test(normSub(sub.raw)));
     let bodyEnd = withSub ? end : j;
     // v_0^2: potenca gre v isto oznako, sicer jo KaTeX postavi za indeks namesto nadenj.
@@ -493,7 +542,7 @@ export function annotateTex(tex, subject = override || subjectFn()) {
     // Za golim _ ali ^ (\log_a, \int_a^b, e^x) ali ukazom brez oklepajev (\vec F, \bar v) mora biti
     // oznaka v zavitih oklepajih, sicer jo KaTeX vzame za argument brez njenih argumentov (rdeč surov LaTeX).
     const bare = /(?:[_^]|\\[a-zA-Z]+|\\[dt]?frac\s*\w)\s*$/.test(out);
-    const marked = wrap(`${delta ? "d" : "s"}:${subj}:${key}`, tex.slice(from, bodyEnd).trimEnd());
+    const marked = wrap(`${delta ? "d" : "s"}:${subj}:${key}${vi ? `:${vi}` : ""}`, tex.slice(from, bodyEnd).trimEnd());
     out += (bare ? `{${marked}}` : marked) + tex.slice(from, bodyEnd).match(/\s*$/)[0];
     out += tex.slice(bodyEnd, end);
     return end;

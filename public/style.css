@@ -10,6 +10,7 @@
   --muted: #566070;
   --border: #e1e5eb;
   --accent: #2353d1;
+  --fx-tone-1: #a1520d; --fx-tone-2: #aa0e76; --fx-tone-3: #0a7b39;
   --accent-2: #4a74e0;
   --accent-grad: #3d6fe8;
   --accent-soft: #e8eefc;
@@ -41,6 +42,7 @@
   --muted: #9da7b6;
   --border: #2a3340;
   --accent: #6e9bff;
+  --fx-tone-1: #f2a35f; --fx-tone-2: #f25fc1; --fx-tone-3: #5ff29c;
   --accent-2: #8fb2ff;
   --accent-grad: #5b8cf5;
   --accent-soft: #1a2a4a;

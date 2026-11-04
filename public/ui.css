@@ -791,6 +791,13 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 [data-fx][role="button"] { cursor: pointer; border-radius: 3px; padding: 0 0.08em; margin: 0 -0.08em; color: var(--accent); background-image: none; }
 [data-fx][role="button"]:hover, [data-fx].fx-open { background: var(--accent-soft); }
 [data-fx][role="button"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+/* Ista črka z drugim pomenom na isti strani (a kot realni del z in a kot pospešek) ima svojo barvo,
+   da se pred dotikom vidi, katera je katera (formula-card.js claimMarks). Barve --fx-tone-N so v style.css
+   (Čist) in theme.js tonesOf (drugi slogi, lasten poudarek): kontrast ≥ 4,5, prvi ton nasproti poudarka. */
+[data-fx][role="button"][data-fx-tone="1"], .fx-pop[data-tone="1"] .fx-title .katex { color: var(--fx-tone-1); }
+[data-fx][role="button"][data-fx-tone="2"], .fx-pop[data-tone="2"] .fx-title .katex { color: var(--fx-tone-2); }
+[data-fx][role="button"][data-fx-tone="3"], .fx-pop[data-tone="3"] .fx-title .katex { color: var(--fx-tone-3); }
+[data-fx][role="button"][data-fx-tone]:hover, [data-fx][data-fx-tone].fx-open { background: color-mix(in srgb, currentColor 14%, transparent); }
 .fx-pop {
   position: absolute; z-index: 1200; background: var(--surface); color: var(--text);
   border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
