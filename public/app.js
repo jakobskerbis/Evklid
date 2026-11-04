@@ -66,7 +66,8 @@ import { initCorner, showCorner, cornerBack, closeBoard, askInterests, maybeAskI
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
 import { initFullscreen } from "./fullscreen.js";
 import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-settings.js";
-import { initSchedule, showSchedule, renderScheduleCard } from "./schedule.js";
+import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./schedule.js";
+import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
 import { initScan, showScan, leaveScan, scanBack } from "./scan/scan.js";
 import { initLab, showLab, labBack } from "./laboratorij.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
@@ -120,6 +121,16 @@ async function fetchThroughRestart(url, init) {
   }
 }
 
+// Napaka strežnika v jeziku vmesnika: code je ključ i18n (npr. »block.daily« iz server/usage.js blockInfo),
+// error je slovensko besedilo strežnika (rezerva, če ključa ni). Samo imenski prostori, ki jih strežnik
+// pošilja kot kode napak (usage.js block.*, gradiva.js gr.*, kviz.js kv.*/comp.*, progress.js chk.*), da
+// drugačna koda (npr. iz drugega vira) ne pokaže nepovezanega besedila.
+const ERROR_CODE = /^(block|gr|kv|comp|chk)\.[A-Za-z]+$/;
+const serverError = (err, status) => {
+  const own = typeof err?.code === "string" && ERROR_CODE.test(err.code) ? t(err.code, err.params || {}) : null;
+  return own && own !== err.code ? own : err?.error || t("common.error", { status });
+};
+
 const api = async (url, opts = {}) => {
   if (/\/tasks\/off-/.test(url)) {
     const local = fromPack(url, opts);
@@ -140,7 +151,7 @@ const api = async (url, opts = {}) => {
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     // status: strežnik je odgovoril (napaka ni v povezavi); body: dodatni podatki (npr. unavailable).
-    throw Object.assign(new Error(err.error || t("common.error", { status: res.status })), { status: res.status, body: err });
+    throw Object.assign(new Error(serverError(err, res.status)), { status: res.status, body: err });
   }
   return res.json();
 };
@@ -892,7 +903,7 @@ async function send(text, { deep = false } = {}) {
       bubble.remove();
       if (serverDown(res)) throw new Error(t("off.serverBusy"));
       if (err.chat_off) throw Object.assign(new Error(t("chat.off")), { chatOff: true });
-      throw new Error(err.error || t("common.error", { status: res.status }));
+      throw new Error(serverError(err, res.status));
     }
 
     if (paperCtx && state.paperCtx === paperCtx) state.paperCtx = null; // strežnik ga je shranil s sporočilom
@@ -1648,10 +1659,14 @@ function renderGoalModes() {
   if (!st || !box || !bar) return;
   const s = st.settings;
   const { first, items } = goalShortcuts(s);
+  // Kar že odpre kartica stopnje (public/zacetna.js: OŠ igre, SŠ matura, faks Moj študij), tu nadomesti druga bližnjica.
+  const shown = stageRows(stopnja(s), { games: gamesOn(s), exams: siExams() });
   const list = items
     .map((k) => (k === "games" && !gamesOn(s) ? "chat" : k))
     .filter((k) => !(k === "exams" && !siExams()) && !(k === "izpiti" && !regionalExams()))
+    .filter((k) => !shown.includes(k))
     .filter((k, i, a) => a.indexOf(k) === i);
+  for (const alt of ["scan", "chat"]) if (list.length < 2 && !list.includes(alt)) list.push(alt);
   box.innerHTML = list
     .map((k) => {
       const [ic, name, sub] = GOAL_MODES[k];
@@ -2167,7 +2182,7 @@ async function loadPath(key = state.pathKey) {
   state.pathSubject = paths.find((x) => x.key === p.key)?.subject || state.student.settings.subject;
   if (changed) refreshModes(); // fakulteta: drug predmet iz seznama poti
   showLevelCard();
-  renderScheduleCard($("#schedule-card"));
+  renderStageHome();
   syncOfflineBanner();
   // Naloge za vadbo brez povezave (enkrat na dan, v ozadju).
   if (!p.offline) refreshPack(api, state.student.id, p.key).then(syncOfflineBanner);
@@ -4020,10 +4035,29 @@ initFlashcards({ api, renderRich, escapeHtml, toast, showView, getStudent: () =>
 // Urnik (public/schedule.js): po spremembi se osvežita kartica »Danes imaš …« in Priprava na test.
 function scheduleChanged() {
   if (currentView === "schedule") showSchedule();
-  renderScheduleCard($("#schedule-card"));
+  renderStageHome();
   refreshModes();
 }
-initSchedule({ api, escapeHtml, toast, showView, startSession, getStudent: () => state.student, onChange: () => (renderScheduleCard($("#schedule-card")), refreshModes()) });
+initSchedule({ api, escapeHtml, toast, showView, startSession, getStudent: () => state.student, onChange: () => (renderStageHome(), refreshModes()) });
+
+// Začetna stran po stopnji (public/zacetna.js, j 2026-11-01): kartica »Danes imaš …«, kartica stopnje
+// (OŠ igre, SŠ matura, faks Moj študij z izpitnimi roki) in vrstni red kartic na Učni poti.
+async function renderStageHome() {
+  if (!state.student) return;
+  const sid = state.student.id;
+  await renderScheduleCard($("#schedule-card"));
+  if (state.student?.id !== sid) return; // med nalaganjem zamenjan profil
+  const level = stopnja(state.student.settings);
+  const schedule = lastSchedule(sid);
+  const box = $("#stage-card");
+  box.innerHTML = stageCardHtml(level, { games: gamesOn(state.student.settings), exams: siExams(), schedule, t, esc: escapeHtml });
+  box.hidden = !box.innerHTML;
+  uvrstiKartice($("#view-path .path-side"), vrstniRed(level, schedule));
+}
+$("#stage-card").addEventListener("click", (e) => {
+  const go = e.target.closest("[data-home-go]")?.dataset.homeGo;
+  if (go) showView(go);
+});
 // Skeniranje nalog (public/scan/): fotografija ali vpis → rešitev po korakih.
 initScan({
   api,
