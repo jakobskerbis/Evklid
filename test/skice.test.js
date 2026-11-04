@@ -526,3 +526,37 @@ test("Bernoulli: zelo majhna verjetnost ni »= 0« (n = 12, p = 0,05, k = 12)", 
   assert.equal(zapisP(bernoulli(12, 0.05, 12)), "< 0,0001");
   assert.equal(zapisP(0.25), "0,25");
 });
+
+test("telesa: ploščina razgrnjene mreže je površina P, prostornine se ujemajo z računom", async () => {
+  const { telo, mreza, ploscinaLika } = await import("../public/skice/telesa.js");
+  for (const ime of ["kocka", "kvader", "prizma", "valj", "stozec", "piramida", "prisekana"]) {
+    const T = telo(ime), M = mreza(T);
+    const vsota = M.liki.reduce((a, l) => a + ploscinaLika(l.tocke), 0);
+    assert.ok(Math.abs(vsota - T.P) / T.P < 1e-3, `${ime}: mreža ${vsota} ≠ P ${T.P}`);
+    assert.equal(M.liki.filter((l) => l.vrsta === "osnova").length, ime === "stozec" || ime === "piramida" ? 1 : 2, ime);
+  }
+  const K = telo("kocka");
+  assert.equal(K.P, 24);
+  assert.equal(K.Vol, 8);
+  assert.ok(Math.abs(K.D - 2 * Math.sqrt(3)) < 1e-12);
+  // Prisekana piramida = velika piramida brez male (višina vrha H iz podobnosti).
+  const Q = telo("prisekana"), Hv = (Q.v * Q.a1) / (Q.a1 - Q.a2);
+  assert.ok(Math.abs(Q.Vol - (Q.a1 ** 2 * Hv - Q.a2 ** 2 * (Hv - Q.v)) / 3) < 1e-12);
+  const S = telo("stozec");
+  assert.ok(Math.abs(S.s ** 2 - (S.r ** 2 + S.v ** 2)) < 1e-12);
+});
+
+test("telesa: pri vsakem zasuku so pri kocki zakriti 3 robovi, valj in stožec imata 2 tvorilki na obrisu", async () => {
+  const { telo, robovi } = await import("../public/skice/telesa.js");
+  const K = telo("kocka"), V = telo("valj"), S = telo("stozec"), P = telo("prizma");
+  for (let phi = 0.05; phi < 2 * Math.PI; phi += 0.21) {
+    const k = robovi(K, phi).robovi;
+    assert.equal(k.length, 12);
+    assert.equal(k.filter((e) => !e.vidno).length, 3, `kocka φ=${phi}`);
+    for (const T of [V, S]) assert.equal(robovi(T, phi).robovi.filter((e) => e.obris).length, 2, `${T.ime} φ=${phi}`);
+    // Zgornja osnova prizme je pri pogledu od zgoraj vsa vidna, spodnja na zadnji strani zakrita.
+    const p = robovi(P, phi).robovi;
+    assert.ok(p.filter((e) => P.V[e.a][1] > 0 && P.V[e.b][1] > 0).every((e) => e.vidno));
+    assert.ok(p.some((e) => !e.vidno));
+  }
+});
