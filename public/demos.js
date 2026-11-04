@@ -2,6 +2,8 @@
 // Vsaka demonstracija je funkcija (el) => void, ki nariše vse v el.
 // Barve jemljemo iz CSS spremenljivk, da delujejo v svetli in temni temi.
 
+import { decVejica } from "./sim/kit.js";
+
 const NS = "http://www.w3.org/2000/svg";
 
 // Število s slovensko decimalno vejico.
@@ -78,7 +80,7 @@ function animate(el, step) {
   requestAnimationFrame(tick);
 }
 
-const tex = (t) => (window.katex ? katex.renderToString(t, { throwOnError: false }) : t);
+const tex = (t) => (window.katex ? katex.renderToString(decVejica(t), { throwOnError: false }) : t);
 
 // ------------------------------------------------------------ y = kx + n
 function linearna(el) {
