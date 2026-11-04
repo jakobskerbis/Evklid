@@ -880,6 +880,7 @@
   "sc.insert": "插入算式",
   "sc.pressSolve": "按 = 求解",
   "sc.fmHint": "把已知的字母換成數字，保留未知量，然後按 =。",
+  "sc.fmRad": "計算機現在處於 RAD 模式（角度以弧度為單位）。",
   "sc.errUndefined": "結果無定義（例如除以 0）。",
   "sc.constants": "常數",
   "sc.toCalc": "放入計算機",

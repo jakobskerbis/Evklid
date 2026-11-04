@@ -898,6 +898,7 @@
   "sc.insert": "Wstaw do obliczenia",
   "sc.pressSolve": "Naciśnij =, aby rozwiązać",
   "sc.fmHint": "Zastąp znane litery liczbami, niewiadomą zostaw i naciśnij =.",
+  "sc.fmRad": "Kalkulator jest teraz w trybie RAD (kąty w radianach).",
   "sc.errUndefined": "Wynik jest nieokreślony (np. dzielenie przez 0).",
   "sc.constants": "Stałe",
   "sc.toCalc": "Do kalkulatora",

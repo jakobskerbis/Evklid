@@ -886,6 +886,7 @@
   "sc.insert": "Beszúrás a számításba",
   "sc.pressSolve": "Nyomd meg az = gombot a megoldáshoz",
   "sc.fmHint": "Az ismert betűk helyére írj számokat, az ismeretlent hagyd meg, és nyomd meg az = gombot.",
+  "sc.fmRad": "A számológép most RAD módban van (szögek radiánban).",
   "sc.errUndefined": "Az eredmény nem értelmezett (pl. osztás 0-val).",
   "sc.constants": "Állandók",
   "sc.toCalc": "A számológépbe",

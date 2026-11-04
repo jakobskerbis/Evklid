@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import { formulaToCalc } from "../public/graph/formula-calc.js";
+import { formulaToCalc, vRadianih } from "../public/graph/formula-calc.js";
 import { chemSub, chemText, chemTex, chemNumbers } from "../public/graph/molska.js";
 import { analyze, previewTex } from "../public/graph/scisolve.js";
 import { evaluate } from "../public/graph/scicore.js";
@@ -79,8 +79,13 @@ test("formula iz zbirke: primeri pretvorbe", () => {
     ["\\dfrac{p_1 V_1}{T_1} = \\dfrac{p_2 V_2}{T_2}", "KEM", "(p₁ V₁)/T₁ = (p₂ V₂)/T₂"],
     ["c^2 = a^2 + b^2", "MAT", "c² = a² + b²"],
     ["\\dfrac{1}{f} = \\dfrac{1}{a} + \\dfrac{1}{b}", "FIZ", "1/f = 1/a + 1/b"],
-    ["\\dfrac{a}{b} : \\dfrac{c}{d} = \\dfrac{a}{b} \\cdot \\dfrac{d}{c}", "MAT", "(a/b) : (c/d) = (a/b) · (d/c)"],
+    ["y = k x + n", "MAT", "y = k x + n"],
+    ["o = \\dfrac{a}{b} : \\dfrac{c}{d}", "MAT", "o = (a/b) : (c/d)"],
     ["d = a\\sqrt{2}", "MAT", "d = a √(2)"],
+    // argument funkcije z več faktorji v oklepaju: vpisana števila (sin 2·30) ostanejo v argumentu
+    ["D = \\dfrac{v_0^2 \\sin 2\\alpha}{g}", "FIZ", "D = (v₀² sin(2α))/g"],
+    ["x = x_0 \\sin \\omega t", "FIZ", "x = x₀ sin(ω t)"],
+    ["A = F s \\cos \\varphi", "FIZ", "A = F s cos φ"],
   ];
   for (const [tex, subj, want] of cases) assert.equal(formulaToCalc(tex, subj), want, tex);
   // kar kalkulator ne zna ali bi pomenilo kaj drugega: brez gumba
@@ -99,15 +104,41 @@ test("formula iz zbirke: primeri pretvorbe", () => {
     ["g = 9{,}81\\,\\mathrm{m/s^2}", "FIZ"],
     ["\\mathrm{pH} = -\\log [\\mathrm{H_3O^+}]", "KEM"],
     ["a < b", "MAT"],
+    ["S = \\dfrac{e f}{2}", "MAT"], // e je v matematiki Eulerjevo število
+    ["e^2 = a^2 - b^2", "MAT"],
+    ["a^0 = 1", "MAT"], // ena sama črka: istovetnost, ne račun
+    ["i^2 = -1", "MAT"],
+    ["E = D = \\lambda", "FIZ"], // veriga samih imen
+    ["d x = \\Delta x", "MAT"],
+    ["(A B)^{-1} = B^{-1} A^{-1}", "MAT"],
+    // istovetnosti: ni neznanke, ki bi jo kalkulator izračunal
+    ["a + b = b + a", "MAT"],
+    ["(a + b)^2 = a^2 + 2 a b + b^2", "MAT"],
+    ["\\dfrac{a}{b} : \\dfrac{c}{d} = \\dfrac{a}{b} \\cdot \\dfrac{d}{c}", "MAT"],
+    ["\\sin^2 x + \\cos^2 x = 1", "MAT"],
   ])
     assert.equal(formulaToCalc(tex, subj), null, tex);
+});
+
+test("formula s koti v radianih preklopi kalkulator v RAD", () => {
+  assert.equal(vRadianih("x = x₀ sin(ω t)"), true);
+  assert.equal(vRadianih("sin(x + 2 k π) = sin x"), true);
+  assert.equal(vRadianih("A = F s cos φ"), false);
+  assert.equal(vRadianih("D = (v₀² sin(2α))/g"), false);
+  assert.equal(vRadianih("sin θ_(min) = 1.22 (λ/D)"), false);
+  assert.equal(vRadianih("F = m a"), false);
+  const tools = readFileSync("public/graph/tools.js", "utf8");
+  assert.ok(/angle: rad \? "rad"/.test(tools), "gumb pošlje angle: rad");
+  const sci = readFileSync("public/graph/sci.js", "utf8");
+  assert.ok(sci.includes("o.angle") && sci.includes("fromFormula"), "insert preklopi kot; črke formule niso shranjene spremenljivke");
 });
 
 test("formula v kalkulatorju: neznanko izračuna, ko vpišeš ostale vrednosti", () => {
   const solve = (text) => analyze(text, { vars: {}, funcs: {} });
   // s = v t, s = 100, v = 4 → t = 25
   assert.equal(solve("100 = 4 t").roots[0], 25);
-  // Δt je ena neznanka, ne Δ · t
+  // Δt je ena neznanka, ne Δ · t; Δπ in Δe ostaneta Δ · π in Δ · e
+  assert.deepEqual(analyze("Δπ = 2", { vars: {}, funcs: {} }).solveFor?.includes("Δπ") ?? false, false);
   const r = solve("6 = 3 Δt");
   assert.equal(r.kind, "solve");
   assert.equal(r.v, "Δt");
@@ -143,9 +174,20 @@ test("M(H2SO4) v kalkulatorju je molska masa, tudi sredi računa in v enačbi", 
   assert.equal(chemSub("M(2 + 3)"), null);
   assert.equal(chemSub("M(Xx)"), null);
   assert.equal(chemSub("2M"), null);
+  assert.equal(chemSub("xM(H2O)"), null);
   assert.equal(chemSub("sin(M(x))"), null);
   assert.equal(chemNumbers("2 = n·M(NaCl)"), `2 = n·${molarMass("NaCl", MASSES).M}`);
   assert.equal(chemNumbers("2 + 3"), "2 + 3");
+  // telo funkcije, graf in ukaz za korake dobijo število, ne začasnega imena M_(kem0)
+  const M2 = molarMass("H2O", MASSES).M;
+  const f = run("f(x) = M(H2O)·x");
+  assert.equal(f.kind, "func");
+  assert.ok(!JSON.stringify(f).includes("kem"), JSON.stringify(f));
+  assert.ok(f.body.includes(String(M2)), f.body);
+  assert.ok(!JSON.stringify(run("y = M(H2O)·x")).includes("kem"));
+  // 2M(H2O) je 2 · M(H2O)
+  assert.equal(run("2M(H2O)").value, 2 * M2);
+  assert.equal(chemText("CuSO4.5H2O"), "M(CuSO₄·5H₂O)");
   assert.equal(chemTex("CuSO4·5H2O"), "\\mathrm{CuSO_{4}\\cdot 5H_{2}O}");
 });
 

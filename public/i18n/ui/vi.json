@@ -880,6 +880,7 @@
   "sc.insert": "Chèn vào phép tính",
   "sc.pressSolve": "Bấm = để giải",
   "sc.fmHint": "Thay các chữ đã biết bằng số, giữ lại ẩn số rồi bấm =.",
+  "sc.fmRad": "Máy tính hiện ở chế độ RAD (góc tính bằng radian).",
   "sc.errUndefined": "Kết quả không xác định (ví dụ chia cho 0).",
   "sc.constants": "Hằng số",
   "sc.toCalc": "Vào máy tính",

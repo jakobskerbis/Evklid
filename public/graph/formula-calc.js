@@ -3,6 +3,7 @@
 // neznanko (public/graph/scisolve.js). Formul, ki jih kalkulator ne zna (integrali, vsote, limite, ±, vektorski
 // produkti, enote …), ne pretvorimo: vrne null in gumba »V kalkulator« ni. Preverjeno v test/formula-calc.test.js.
 import { fromTex } from "./math.js";
+import { evaluate } from "./scicore.js";
 
 const GREEK = {
   alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", varepsilon: "ε", zeta: "ζ", eta: "η", theta: "θ", vartheta: "θ",
@@ -87,6 +88,39 @@ function brezOznak(tex) {
   return s;
 }
 
+const FN = "arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|cot|ln|log";
+// funkcija brez oklepaja in njen argument do naslednjega operatorja ali funkcije (kot ga bere kalkulator)
+const TRIG_ARG = new RegExp(`\\b(${FN})([²³]?) (?!\\()((?:(?!(?:${FN})\\b)[^\\s+\\-=)(·/:])+(?: (?!(?:${FN})\\b)[^\\s+\\-=)(·/:]+)*)`, "g");
+
+/**
+ * Ali formula računa s koti v radianih (sin ω t, cos(x + 2kπ)): gumb tedaj kalkulator preklopi v RAD.
+ * Koti α, β, γ, φ … (trikotnik, met, lom) ostanejo v stopinjah.
+ */
+export function vRadianih(text) {
+  const s = String(text ?? "").replace(/_\([^)]*\)|_[A-Za-z0-9]|[₀-₉]/g, "");
+  const re = /\b(sin|cos|tan|cot)[²³]?(?:\(((?:[^()]|\([^()]*\))*)\)|\s+(\S+))/g;
+  for (const m of s.matchAll(re)) if (/[πωνktxi]/.test(m[2] ?? m[3] ?? "")) return true;
+  return false;
+}
+
+// »a + b = b + a«, »(a − b)² = a² − 2ab + b²«: obe strani sta enaki pri vseh vrednostih črk, zato ni neznanke,
+// ki bi jo kalkulator izračunal. Preverimo pri treh naključnih pozitivnih vrednostih (radiani).
+function istovetnost(text) {
+  const [l, d] = text.split("=");
+  const imena = new Set([l, d].flatMap((x) => evaluate(x, { vars: {}, funcs: {} })?.error?.info?.names || []));
+  if (!imena.size) return false;
+  for (const seme of [0.37, 0.61, 0.83]) {
+    const vars = {};
+    let k = 0;
+    for (const n of imena) vars[n] = 1.1 + ((seme * 97 * ++k) % 1.7);
+    const a = evaluate(l, { vars, funcs: {}, deg: false });
+    const b = evaluate(d, { vars, funcs: {}, deg: false });
+    if (a?.error || b?.error || !Number.isFinite(a?.value) || !Number.isFinite(b?.value)) return false;
+    if (Math.abs(a.value - b.value) > 1e-9 * Math.max(1, Math.abs(a.value))) return false;
+  }
+  return true;
+}
+
 /**
  * LaTeX ene formule → besedilo za vnosno polje kalkulatorja ali null, če je kalkulator ne zna.
  * Verigo »v = 2πr/t₀ = ωr« skrajša na prvo zvezo (v = 2πr/t₀). Pri fiziki in kemiji formul s črko e
@@ -104,6 +138,8 @@ export function formulaToCalc(tex, subject = "MAT", { surovo = false } = {}) {
   // C_n^r, V_n^r: oznaka kombinacij, ne potenca; dV, dr, dφ: diferencial; A·x⃗ = b⃗ v matematiki: matrike
   if (/_[A-Za-z0-9]\^[A-Za-z{]/.test(s) || /(^|[^A-Za-z\\])d(?:[A-Za-z]|\\(?:varphi|phi|theta|vartheta|rho|alpha|omega|lambda|mu|nu)\b)/.test(s)) return null;
   if (subject === "MAT" && /\\vec|\^\{?T\b/.test(s)) return null; // vektorji in transponirane matrike
+  // »d x = Δx« (diferencial) in »(A B)⁻¹ = B⁻¹ A⁻¹« (inverz matrik) v matematiki
+  if (subject === "MAT" && (/(^|[^A-Za-z\\])d\s+[A-Za-z]\b/.test(s) || /\)\s*\^\{?-1/.test(s))) return null;
   s = s
     .replace(/\\vec\s*\{([^{}]*)\}/g, "$1")
     .replace(/\\vec\s*([A-Za-z])/g, "$1")
@@ -119,7 +155,11 @@ export function formulaToCalc(tex, subject = "MAT", { surovo = false } = {}) {
   if (/(^|[^A-Za-z])[A-Za-zα-ωΑ-Ω](_\w|_\(\w+\))?\s*\(/.test(out)) return null;
   // samo ena zveza: »a = b = c« → »a = b«
   const parts = out.split("=");
-  if (parts.length > 2) out = `${parts[0]}=${parts[1]}`;
+  if (parts.length > 2) {
+    // »E = D = λ«, »I = I₁ = I₂«: prva zveza samih imen ni formula za račun
+    if (ATOM.test(parts[0].trim()) && ATOM.test(parts[1].trim())) return null;
+    out = `${parts[0]}=${parts[1]}`;
+  }
   if (surovo) return out; // za test: zapis pred lepšanjem mora pomeniti isto kot končni
   out = out
     .replace(/\^(?:\((\d)\)|(\d))(?![\d.(])/g, (m, a, b) => SUP[a ?? b])
@@ -141,7 +181,16 @@ export function formulaToCalc(tex, subject = "MAT", { surovo = false } = {}) {
     .replace(/\s*=\s*/, " = ")
     .replace(/\s+/g, " ")
     .trim();
+  // argument funkcije z več faktorji v oklepaj: »sin 2α« → »sin(2α)«, »sin ω t« → »sin(ω t)«; ko učenec vpiše
+  // števila (sin 2·30), bi kalkulator sicer bral sin(2)·30
+  out = out.replace(TRIG_ARG, (m, f, sup, arg) => (/\s/.test(arg) || /^\d+(\.\d+)?[^\d.]/.test(arg) ? `${f}${sup}(${arg})` : m));
   const crke = out.replace(/_\([^)]*\)|_[A-Za-z0-9]/g, "").replace(/\b(root|arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|exp)\b/g, "");
   if (subject !== "MAT" && /[eτ]/.test(crke)) return null;
+  // v matematiki je e Eulerjevo število; formule z e kot črko (diagonali e, f; gorišče e) ne gredo v kalkulator
+  if (subject === "MAT" && /(^|[^A-Za-z])e(?![\^A-Za-z])/.test(crke)) return null;
+  // vsaj dve različni črki, sicer je to istovetnost ali pogoj (a⁰ = 1, i² = −1, D = 0), ne formula za račun
+  const imena = new Set(crke.match(/Δ?[A-Za-zα-ωΑ-Ω]/g)?.filter((c) => c !== "π" && !(subject === "MAT" && (c === "e" || c === "i"))) || []);
+  if (imena.size < 2) return null;
+  if (istovetnost(out)) return null;
   return out;
 }

@@ -32,7 +32,7 @@ export function chemSub(text) {
     if (at < 0) break;
     let o = at + 1;
     while (src[o] === " ") o++;
-    if (src[o] !== "(" || /[A-Za-z0-9_α-ωΑ-Ω]/.test(src[at - 1] || "")) {
+    if (src[o] !== "(" || /[A-Za-z_α-ωΑ-Ω]/.test(src[at - 1] || "")) {
       out += src.slice(i, at + 1);
       i = at + 1;
       continue;
@@ -59,7 +59,8 @@ export function chemSub(text) {
   if (!found.length) return null;
   out += src.slice(i);
   const vars = Object.fromEntries(found.map((x, k) => [`M_kem${k}`, x.M]));
-  const fixStr = (s) => s.replace(/M_\{kem(\d+)\}/g, (m, k) => `M(${chemTex(found[k].f)})`);
+  // TeX pokaže M(H₂SO₄); v besedilu (telo funkcije, graf, ukaz za »Po korakih«) ostane število
+  const fixStr = (s) => s.replace(/M_\{kem(\d+)\}/g, (m, k) => `M(${chemTex(found[k].f)})`).replace(/M_\(kem(\d+)\)/g, (m, k) => `(${Number(found[k].M.toPrecision(12))})`);
   const fix = (r) => {
     if (typeof r === "string") return fixStr(r);
     if (Array.isArray(r)) return r.map(fix);
@@ -72,7 +73,8 @@ export function chemSub(text) {
 const SUB = "₀₁₂₃₄₅₆₇₈₉";
 /**
  * Besedilo za vnos v kalkulator iz periodnega sistema: »H2SO4« → »M(H₂SO₄)«, »CuSO4·5H2O« → »M(CuSO₄·5H₂O)«.
- * Naboj iona (SO4^2-, NH4+) odpade, ker ne spremeni molske mase. Vrne null, če kalkulator formule ne bi prebral.
+ * Naboj iona za ^ (SO4^2-) ali sam + / − na koncu (NH4+) odpade, ker ne spremeni molske mase (Fe3+ se kot v
+ * periodnem sistemu bere kot Fe₃). Vrne null, če kalkulator formule ne bi prebral.
  */
 export function chemText(formula) {
   const f = String(formula ?? "")
@@ -80,6 +82,7 @@ export function chemText(formula) {
     .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+$/, "")
     .replace(/\^\d*[+-]$|[+-]$/, "")
     .replace(/[*•×]/g, "·")
+    .replace(/\.(?=\d*[A-Z])/g, "·")
     .replace(/[₀-₉]/g, (c) => String(c.charCodeAt(0) - 0x2080))
     .replace(/(\d+)/g, (m, d, i, s) => (i === 0 || s[i - 1] === "·" ? m : [...m].map((x) => SUB[x]).join("")));
   const text = `M(${f})`;

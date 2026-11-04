@@ -880,6 +880,7 @@
   "sc.insert": "計算に挿入",
   "sc.pressSolve": "= を押すと解きます",
   "sc.fmHint": "分かっている文字を数に置き換え、未知数はそのままにして = を押してください。",
+  "sc.fmRad": "電卓は RAD モード（角度はラジアン）になりました。",
   "sc.errUndefined": "結果は定義されません (例: 0 で割る)。",
   "sc.constants": "定数",
   "sc.toCalc": "電卓へ",

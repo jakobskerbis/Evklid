@@ -817,7 +817,10 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 
 /* ---------- formula iz zbirke v kalkulator (public/graph/formula-calc.js) ---------- */
 .fm-fx { display: flex; align-items: center; gap: 6px; min-width: 0; }
-.fm-fx > .fm-f { flex: 1 1 auto; }
+.fm-fx > .fm-f { flex: 0 1 auto; }
+/* na telefonu so gumbi v stolpcu ob desnem robu, na širšem zaslonu tik za formulo */
+@media (max-width: 640px) { .fm-fx > .fm-f { flex: 1 1 auto; } }
 .fm-calc { flex: none; width: 36px; height: 36px; color: var(--muted); }
 .fm-calc:hover, .fm-calc:focus-visible { color: var(--accent); }
-@media (pointer: coarse) { .fm-calc { width: 40px; height: 40px; } }
+@media (pointer: coarse) { .fm-calc { width: 44px; height: 44px; } .pse-act button { min-height: 44px; } }
+.pse-mm-res { margin: 8px 0 4px; }

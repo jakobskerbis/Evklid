@@ -886,6 +886,7 @@
   "sc.insert": "Hesaplamaya ekle",
   "sc.pressSolve": "Çözmek için = tuşuna bas",
   "sc.fmHint": "Bilinen harflerin yerine sayıları yaz, bilinmeyeni bırak ve = tuşuna bas.",
+  "sc.fmRad": "Hesap makinesi artık RAD modunda (açılar radyan cinsinden).",
   "sc.errUndefined": "Sonuç tanımsız (ör. 0'a bölme).",
   "sc.constants": "Sabitler",
   "sc.toCalc": "Hesap makinesine",

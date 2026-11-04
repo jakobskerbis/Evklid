@@ -9,7 +9,7 @@ import { ELEMENTS, CATEGORIES, MASSES, shells, EXTRA } from "./pse-data.js";
 
 import { esc, texHtml, usesComma, remember } from "./tools-kit.js";
 import { chemTools } from "./tools-chem.js";
-import { formulaToCalc } from "./formula-calc.js";
+import { formulaToCalc, vRadianih } from "./formula-calc.js";
 import { chemText } from "./molska.js";
 import { probTool } from "./tools-prob.js";
 import { anaTools } from "./tools-ana.js";
@@ -720,6 +720,13 @@ export function createFormulas(root, opts) {
     box.append(f, btn);
   }
 
+  // decimalna vejica, kjer jo jezik uporablja (1,22 λ/D); v oklepaju je vejica ločilo, tam ostane pika
+  function vejica(text) {
+    if (!usesComma(opts.locale?.())) return text;
+    let d = 0;
+    return text.replace(/[()]|(\d)\.(?=\d)/g, (m, dig) => (m === "(" ? (d++, m) : m === ")" ? (d--, m) : d ? m : `${dig},`));
+  }
+
   // Vidno ime kartice brez skritega MathML (»Diagonale n-kotnika«); skicaZa ga primerja z imenom brez $.
   function imeKartice(cell) {
     const c = cell.cloneNode(true);
@@ -810,7 +817,9 @@ export function createFormulas(root, opts) {
   });
   body.addEventListener("click", (e) => {
     const b = e.target.closest(".fm-calc");
-    if (b) opts.onInsert(b.dataset.calc, { replace: true, hint: t("sc.fmHint") });
+    if (!b) return;
+    const rad = vRadianih(b.dataset.calc);
+    opts.onInsert(vejica(b.dataset.calc), { replace: true, hint: rad ? `${t("sc.fmHint")} ${t("sc.fmRad")}` : t("sc.fmHint"), angle: rad ? "rad" : undefined });
   });
   toc.addEventListener("click", (e) => {
     const c = e.target.closest("[data-sec]");
