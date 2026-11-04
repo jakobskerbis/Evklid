@@ -2772,7 +2772,7 @@
   "rast.src.ref": "ajánlás",
   "rast.src.class": "osztálykód",
   "rast.src.other": "egyéb",
-  "rast.note": "A forrás egy címke a linkben, pl. {link}. Az ajánlások és az osztálykódos linkek automatikusan címkét kapnak. Aktív az a tanuló, aki aznap megold egy feladatot, kérdez a tanártól vagy pontot szerez. Sütik, IP-címek és külső követők nélkül; az adminisztrátor profiljai nem számítanak.",
+  "rast.note": "A forrás egy címke a linkben, pl. {link}. Az ajánlások és az osztálykódos linkek automatikusan címkét kapnak. Aktív az a tanuló, aki aznap megold egy feladatot, kérdez az oktatótól vagy pontot szerez. Sütik, IP-címek és külső követők nélkül; az adminisztrátor profiljai nem számítanak.",
   "orders.title": "Iskolai rendelések",
   "orders.empty": "Még nincs rendelés.",
   "orders.status": "Állapot",

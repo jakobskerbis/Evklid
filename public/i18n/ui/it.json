@@ -2758,7 +2758,7 @@
   "rast.activated": "hanno risolto il primo esercizio entro 24 ore ({a} su {b})",
   "rast.d1": "sono tornati il giorno dopo ({a} su {b})",
   "rast.d7": "sono tornati dopo 7 giorni, giorni 7–13 ({a} su {b})",
-  "rast.goal": "obiettivo del pilota {pct}:",
+  "rast.goal": "obiettivo del progetto pilota {pct}:",
   "rast.goal.met": "raggiunto",
   "rast.goal.notYet": "non ancora",
   "rast.goal.wait": "troppo pochi profili più vecchi di 7 giorni",

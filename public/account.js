@@ -1031,6 +1031,7 @@ function growthHtml(g, loc) {
   const SRC = { "": "rast.src.none", priporocilo: "rast.src.ref", razred: "rast.src.class", drugo: "rast.src.other" };
   const src = (v) => (SRC[v] ? t(SRC[v]) : v);
   const th = (k) => `<th scope="col">${esc(t(k))}</th>`;
+  // Povezava v opombi je v \u2066 … \u2069 (LRI … PDI), da je v arabščini in perzijščini ne premeša smer besedila.
   return `<h3 class="rast-title">${esc(t("rast.title"))}</h3>
     <ul class="pilot-sum">
       <li><b>${nf(g.newProfiles)}</b> ${esc(t("rast.newProfiles"))}</li>
@@ -1043,7 +1044,7 @@ function growthHtml(g, loc) {
       <tbody>${[...g.weeks].reverse().map((w) => `<tr><td>${esc(`${dm(w.start)} – ${dm(w.end)}`)}</td><td>${nf(w.newProfiles)}</td><td>${nf(w.active)}</td></tr>`).join("")}</tbody></table></div>
     ${g.sources.length ? `<div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("rast.source")}${th("rast.visits")}${th("rast.profiles")}${th("rast.firstTask")}${th("rast.returned")}</tr></thead>
       <tbody>${g.sources.map((s) => `<tr><td>${esc(src(s.vir))}</td><td>${nf(s.visits)}</td><td>${nf(s.profiles)}</td><td>${nf(s.firstTask)}</td><td>${s.d7Eligible ? `${nf(s.d7Returned)} / ${nf(s.d7Eligible)}` : "–"}</td></tr>`).join("")}</tbody></table></div>` : ""}
-    <p class="muted small">${esc(t("rast.note", { link: `${location.origin}/?vir=facebook` }))}</p>`;
+    <p class="muted small">${esc(t("rast.note", { link: `\u2066${location.origin}/?vir=facebook\u2069` }))}</p>`;
 }
 
 // Skrbnik: naročila šol s strani /sole (server/sole.js): stanje, opomba, predračun za tisk.
