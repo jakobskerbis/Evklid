@@ -172,6 +172,9 @@ export const ENGINES = {
   "lab-klanec": ["lab-gibanje.js", "labKlanec"],
   "lab-prosti-pad": ["lab-gibanje.js", "labProstiPad"],
   "lab-newton2": ["lab-gibanje.js", "labNewton2"],
+  "lab-elektromagnet": ["lab-magnetizem.js", "labElektromagnet"],
+  "lab-sila-vodnik": ["lab-magnetizem.js", "labSilaVodnik"],
+  "lab-indukcija": ["lab-magnetizem.js", "labIndukcija"],
   // teme, dodane po primerjavi z učnimi načrti (2026-10-30)
   logika: ["vrzeli.js", "logika"], prostor: ["vrzeli.js", "prostor"], "koord-trikotnik": ["vrzeli.js", "koordTrikotnik"],
   "vezava-vzmeti": ["vrzeli.js", "vezavaVzmeti"], izmenicni: ["vrzeli.js", "izmenicni"], "em-spekter": ["vrzeli.js", "emSpekter"], zvezde: ["vrzeli.js", "zvezde"], domine: ["vrzeli.js", "domine"],
