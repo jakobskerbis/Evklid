@@ -191,6 +191,13 @@ export function zgradi(THREE, ctx) {
   const tla = mesh(tlaGeo, mTla, -2); telo.add(tla);
   let korakTal = 1;
 
+  // Obris začetne velikosti: robovi telesa, kot je bilo izbrano. Ko spreminjaš mere, ostane na mestu (v cm, na isti
+  // podlagi), zato vidiš, koliko je telo zraslo ali se skrčilo, tudi ko se merilo prilagodi.
+  const mObris = new THREE.LineBasicMaterial({ color: 0xdfe8ff, transparent: true, opacity: 0.5, depthTest: false, depthWrite: false });
+  const obrisZac = new THREE.LineSegments(new THREE.BufferGeometry(), mObris); obrisZac.name = "obris-zacetka"; obrisZac.renderOrder = 7; obrisZac.visible = false; obrisZac.frustumCulled = false;
+  telo.add(obrisZac);
+  let zacetek = null; // { telo, mere, tocke }
+
   // nevidni »ročaji« za tanke dele (višina, polmer ...), da jih lahko tapneš
   const proxyCev = {}, proxyKr = {};
   for (const k of ["visina", "polmer", "stranska", "polmer2"]) { proxyCev[k] = mesh(cevGeo, mNevidno, 0); telo.add(proxyCev[k]); }
@@ -431,6 +438,12 @@ export function zgradi(THREE, ctx) {
 
   // ---------- stanje ----------
   let T = null, s = 1, D = 10, sred = new Vector3(), prerezInfo = null, deliSeznam = [];
+  // Merilo pri spreminjanju mer ostane, dokler telo ne preraste prizora ali se ne skrči pod 45 %: tako telo vidno
+  // zraste ali se skrči (prej se je vsakič samo prilagodilo zaslonu in se je spremenilo le merilo).
+  const MERE = ["a", "b", "c", "r", "a1", "a2", "r1", "r2", "v"];
+  let Dfiks = 0, zadnja = "";
+  const kljucMer = () => MERE.filter((k) => rabi(k)()).map((k) => S[k]).join(); // le mere izbranega telesa
+  const naslednjaLepa = (x) => LEPA.find((l) => l >= x - 1e-9) ?? x;
   const robSeg = []; // [x1,y1,z1,x2,y2,z2] ...
   const tocke = []; // oglišča (v cm, trenutno)
   const lokTocke = []; // za meje
@@ -506,7 +519,10 @@ export function zgradi(THREE, ctx) {
       napolniMnogokotnike(plB.geometry, stranske);
     }
 
-    // ----- merilo in središčenje -----
+    // ----- merilo in središčenje ----- (z obrisom začetne velikosti, da tudi ta ostane v prizoru)
+    if (zacetek?.telo !== S.telo) zacetek = null;
+    const obrisViden = !!zacetek && e <= 1e-4 && zacetek.mere !== kljucMer();
+    if (obrisViden) for (const p of zacetek.tocke) lokTocke.push(p);
     const R = meje(lokTocke, sred);
     let D0;
     { // zloženo telo: lepa (okrogla) dolžina merila
@@ -522,6 +538,13 @@ export function zgradi(THREE, ctx) {
         D = Math.max(D0 + (D1 - D0) * k, (2 * R) / 0.95);
       } else D = D0;
     }
+    if (e <= 1e-4) {
+      if (MERE.includes(zadnja) && Dfiks > 0) {
+        if (D > Dfiks) Dfiks = naslednjaLepa(D * 1.25); // preraslo: večji korak, da naslednji premiki spet vidno rastejo
+        else if (D < Dfiks * 0.45) Dfiks = D;
+      } else Dfiks = D;
+      D = Dfiks;
+    } else Dfiks = D;
     s = 2 / D;
     telo.scale.setScalar(s); telo.position.copy(sred).multiplyScalar(-s);
     telo.updateMatrix();
@@ -555,6 +578,17 @@ export function zgradi(THREE, ctx) {
     }
     robovi.count = nSeg; robovi.instanceMatrix.needsUpdate = true; robovi.computeBoundingSphere?.();
     crtkaj(robSeg, nSeg, skritGeo, 0.036 / s, 0.6);
+    // obris začetne velikosti (posnetek zloženega telesa ob izbiri; krogli dodamo še poldnevnik)
+    if (!zacetek && e <= 1e-4) {
+      const seg = robSeg.slice(0, nSeg * 6);
+      if (T.krogla) { const r = T.krogla; for (let i = 0; i < NK; i++) { const f1 = (2 * Math.PI * i) / NK, f2 = (2 * Math.PI * (i + 1)) / NK; seg.push(r * Math.sin(f1), r - r * Math.cos(f1), 0, r * Math.sin(f2), r - r * Math.cos(f2), 0); } }
+      obrisZac.geometry.setAttribute("position", new THREE.Float32BufferAttribute(seg, 3));
+      obrisZac.geometry.computeBoundingSphere();
+      const tocke = [];
+      for (let i = 0; i < seg.length; i += 3) tocke.push(new Vector3(seg[i], seg[i + 1], seg[i + 2]));
+      zacetek = { telo: S.telo, mere: kljucMer(), tocke };
+    }
+    obrisZac.visible = obrisViden;
     // oglišča
     const rOgl = (visoka ? 0.0135 : 0.015) / s;
     let no = 0;
@@ -1016,7 +1050,7 @@ export function zgradi(THREE, ctx) {
   }
 
   // ---------- nadzor ----------
-  const ob = (k) => (v) => { S[k] = v; obnovi(); };
+  const ob = (k) => (v) => { S[k] = v; zadnja = k; obnovi(); zadnja = ""; };
   // drsniki ravnine delujejo le, ko je mreža zložena (krogla nima mreže)
   const ravninaDela = () => S.prerez && (S.razpri <= 1e-4 || S.telo === "krogla");
   const api = {

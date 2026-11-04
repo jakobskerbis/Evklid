@@ -215,15 +215,22 @@ export function open3d(id, title = "") {
   el.append(frame);
   document.body.append(el);
   document.body.classList.add("uci-3d-open");
-  full = { el, frame, from: document.activeElement };
+  // Okvir je širok kot vidni del zaslona: če je stran aplikacije kje širša od zaslona, Android razširi postavitev in
+  // okvir s `inset: 0` bi segal čez desni rob (odrezane vrednosti in gumbi v 3D svetu).
+  const vv = window.visualViewport;
+  const prilagodi = () => { if (vv) Object.assign(el.style, { width: `${Math.round(vv.width * vv.scale)}px`, left: "0", right: "auto" }); };
+  prilagodi();
+  vv?.addEventListener("resize", prilagodi);
+  full = { el, frame, from: document.activeElement, odjavi: () => vv?.removeEventListener("resize", prilagodi) };
   D?.onOverlay?.(true);
   frame.focus();
 }
 
 function close3d() {
   if (!full) return false;
-  const { el, from } = full;
+  const { el, from, odjavi } = full;
   full = null;
+  odjavi();
   el.remove(); // okvir se uniči skupaj s prizorom (pomnilnik grafične kartice)
   document.body.classList.remove("uci-3d-open");
   D?.onOverlay?.(false);
