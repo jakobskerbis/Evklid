@@ -35,8 +35,11 @@ test("validatePaper: pravilna pola, točke po zgradbi, napačen račun, varen SV
 test("zgradbe izvirnih pol: vsota točk, vnos v katalogu RIC", () => {
   for (const [id, s] of Object.entries(PAPER_STRUCTURES)) {
     assert.ok(PAPERS_SI.some((e) => e.id === id), id);
-    assert.equal(s.tasks.flat().reduce((a, b) => a + b, 0), s.points, id);
-    assert.equal(s.topics.length, s.tasks.length, id);
+    const pts = s.tasks.map((t) => (Array.isArray(t) ? t : t.points));
+    const listed = pts.flat().reduce((a, b) => a + b, 0);
+    assert.equal(listed, s.maxListed ?? s.points, id);
+    // opis vsake naloge (stari zapis: topics[i], novi: tasks[i].topic)
+    s.tasks.forEach((t, i) => assert.ok(Array.isArray(t) ? s.topics?.[i] : t.topic, `${id} naloga ${i + 1}: opis`));
   }
 });
 

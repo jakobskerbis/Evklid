@@ -107,7 +107,9 @@ export function validatePaper(p, expected = null) {
   });
   if (expected?.tasks && (p.tasks || []).length !== expected.tasks.length) err(`število nalog ${(p.tasks || []).length}, izvirna pola ${expected.tasks.length}`);
   if (Number.isInteger(p.points) && p.points !== total) err(`points ${p.points}, vsota delov ${total}`);
-  if (expected?.points && total !== expected.points) err(`vsota točk ${total}, izvirna pola ${expected.points}`);
+  // Pri izbirnih nalogah (pola 2 mature: učenec izbere nekaj nalog) pola vsebuje vse naštete (maxListed).
+  const want = expected?.maxListed ?? expected?.points;
+  if (want && total !== want) err(`vsota točk ${total}, izvirna pola ${want}`);
   for (const [text, where] of md) {
     texErrors(text, where, err);
     const calc = checkArithmetic(String(text || ""));
