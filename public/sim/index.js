@@ -212,8 +212,9 @@ export async function mountSim(id, el, opts = {}) {
       el.append(b);
     }
     // Prikaz na grafu: gumbi za vklop in izklop krivulj, točk, oznak in mreže (public/sim/prikaz.js).
+    // Počakamo nanje, da predvajalnik videa (gradiva.js) v prvem prizoru že najde npr. »Vijolična«.
     if (id !== "zbirka" && !m3 && id !== "3d")
-      Promise.all([import("./prikaz.js"), import("../i18n.js")])
+      await Promise.all([import("./prikaz.js"), import("../i18n.js")])
         .then(([m, i18n]) => m.layerToggles(el, i18n.t))
         .catch((err) => console.error("Prikaz na grafu:", err));
   } catch (err) {
