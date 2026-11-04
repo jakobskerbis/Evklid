@@ -10,9 +10,8 @@ import { loadLesson, expandFormulaBlocks } from "./textbook.js";
 
 export const LESSON_TAG = "lekcija_ucbenika";
 export const LESSON_NOTE_HEAD = `<${LESSON_TAG}>`;
-// Privzeto izklopljeno, dokler j ne pregleda (opomba inštruktorju je sprememba tega, kar mu rečemo:
-// docs/spremembe-prompta.md). Vklop: EVKLID_LESSON_SEARCH=1.
-export const lessonSearchOn = () => process.env.EVKLID_LESSON_SEARCH === "1";
+// j vklopil 4. 11. (kartica); EVKLID_LESSON_SEARCH=0 izklopi.
+export const lessonSearchOn = () => process.env.EVKLID_LESSON_SEARCH !== "0";
 
 const fold = (s) =>
   String(s || "")
