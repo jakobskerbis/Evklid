@@ -27,7 +27,7 @@
        "text": "Odštevanje zamenjamo s prištevanjem nasprotnega števila: $-18 - 26 = -18 + (-26)$.\n\nSeštevamo dve negativni števili: $-(18 + 26) = -44$."
       }
      ],
-     "mistake": "Napačno je $-18 - 26 = 8$ ali $-8$: števili se ne odštevata med seboj, ker imata oba člena enak (negativen) predznak."
+     "mistake": "Napačno je $-18 - 26 = 8$ ali $-8$: od negativnega števila odštevamo, zato gremo še bolj v levo, ne proti $0$."
     },
     {
      "id": "b",
@@ -73,10 +73,10 @@
      "ways": [
       {
        "title": "Po korakih",
-       "text": "Število delimo z ulomkom tako, da ga pomnožimo z obratno vrednostjo ulomka. Obratna vrednost $\\frac{3}{5}$ je $\\frac{5}{3}$.\n\n$9 \\cdot \\frac{5}{3} = \\frac{45}{3} = 15$."
+       "text": "Z ulomkom delimo tako, da število pomnožimo z obratno vrednostjo ulomka. Obratna vrednost $\\frac{3}{5}$ je $\\frac{5}{3}$.\n\n$9 \\cdot \\frac{5}{3} = \\frac{45}{3} = 15$."
       },
       {
-       "title": "Drugače: koliko tretjih petin je v 9",
+       "title": "Drugače: kolikokrat gredo tri petine v 9",
        "text": "$9 = \\frac{45}{5}$. Sprašujemo, kolikokrat gre $\\frac{3}{5}$ v $\\frac{45}{5}$, to je kolikokrat gre $3$ v $45$: $45 : 3 = 15$.\n\nPreizkus: $15 \\cdot \\frac{3}{5} = \\frac{45}{5} = 9$."
       }
      ],
@@ -507,7 +507,7 @@
       },
       {
        "title": "Preveri z oceno",
-       "text": "Ker je $\\sqrt{3}$ približno $1{,}73$, je $24\\sqrt{3}$ približno $41{,}5$ cm². Šestkotnik leži v krogu s polmerom $4\\,\\mathrm{cm}$, katerega ploščina je približno $50$ cm², in je večji od kvadrata s stranico $4\\,\\mathrm{cm}$ ($16$ cm²), zato je rezultat smiseln."
+       "text": "Ker je $\\sqrt{3}$ približno $1{,}73$, je $24\\sqrt{3}$ približno $41{,}5$ cm². Šestkotnik leži v krogu s polmerom $4\\,\\mathrm{cm}$, katerega ploščina je približno $50$ cm², šestkotnik pa zapolni večino tega kroga, zato je rezultat smiseln."
       }
      ],
      "scoring": "1 t. za ploščino enega trikotnika ($4\\sqrt{3}\\,\\mathrm{cm}^2$) ali pravilno uporabljen obrazec, 1 t. za točen rezultat z enoto $24\\sqrt{3}\\,\\mathrm{cm}^2$.",
@@ -517,13 +517,13 @@
      "id": "d",
      "points": 2,
      "format": "construct",
-     "text": "Načrtaj pravilni šestkotnik $ABCDEF$ s stranico $\\overline{AB} = 4\\,\\mathrm{cm}$. Načrtaj ga na dani daljici $AB$ in pusti vidne konstrukcijske črte.",
+     "text": "Na dani daljici $AB$ načrtaj pravilni šestkotnik $ABCDEF$ s stranico $\\overline{AB} = 4\\,\\mathrm{cm}$. Konstrukcijske črte naj ostanejo vidne.",
      "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 120 34\" font-family=\"sans-serif\" fill=\"none\" stroke=\"currentColor\"><path d=\"M40 14H80\" stroke-width=\"1.6\"/><circle cx=\"40\" cy=\"14\" r=\"1.5\" fill=\"currentColor\"/><circle cx=\"80\" cy=\"14\" r=\"1.5\" fill=\"currentColor\"/><text x=\"34\" y=\"28\" fill=\"currentColor\" stroke=\"none\" font-size=\"9\">A</text><text x=\"82\" y=\"28\" fill=\"currentColor\" stroke=\"none\" font-size=\"9\">B</text></svg>",
      "answer": "Pravilni šestkotnik $ABCDEF$ s stranicami $4\\,\\mathrm{cm}$, včrtan v krožnico s središčem $S$ in polmerom $4\\,\\mathrm{cm}$.",
      "ways": [
       {
        "title": "Konstrukcija s središčem",
-       "text": "1. Načrtaj daljico $AB$ dolžine $4\\,\\mathrm{cm}$.\n2. Šestilo razpri na $4\\,\\mathrm{cm}$. Okoli $A$ in okoli $B$ zariši loka; njuno presečišče nad daljico je središče $S$ (trikotnik $ABS$ je enakostraničen).\n3. Okoli $S$ načrtaj krožnico s polmerom $4\\,\\mathrm{cm}$; gre skozi $A$ in $B$.\n4. Z enako razprtim šestilom od $B$ naprej po krožnici odmeri točke $C$, $D$, $E$ in $F$ (vsaka je od prejšnje oddaljena $4\\,\\mathrm{cm}$).\n5. Zaporedoma poveži $A$, $B$, $C$, $D$, $E$, $F$ in označi oglišča."
+       "text": "1. Začni z dano daljico $AB$ ($4\\,\\mathrm{cm}$).\n2. Šestilo razpri na $4\\,\\mathrm{cm}$. Okoli $A$ in okoli $B$ zariši loka; njuno presečišče nad daljico je središče $S$ (trikotnik $ABS$ je enakostraničen).\n3. Okoli $S$ načrtaj krožnico s polmerom $4\\,\\mathrm{cm}$; gre skozi $A$ in $B$.\n4. Z enako razprtim šestilom od $B$ naprej po krožnici (stran od $A$) odmeri točke $C$, $D$, $E$ in $F$ (vsaka je od prejšnje oddaljena $4\\,\\mathrm{cm}$).\n5. Zaporedoma poveži $A$, $B$, $C$, $D$, $E$, $F$ in označi oglišča.\n\nZakaj deluje: stranica pravilnega šestkotnika je enako dolga kot polmer očrtane krožnice, zato šestilo ves čas ostane razprto na $4\\,\\mathrm{cm}$."
       },
       {
        "title": "Drugače: s koti po 120°",
@@ -692,7 +692,7 @@
      "points": 1,
      "format": "open",
      "text": "Koliko dni v tem tednu je Ana preplavala **več kot** $40$ dolžin?",
-     "answer": "4 dni (torek, sreda, petek, sobota)",
+     "answer": "4 dnevi (torek, sreda, petek, sobota)",
      "ways": [
       {
        "title": "Branje s prikaza",
@@ -745,7 +745,7 @@
       }
      ],
      "scoring": "1 t. za pravilno vsoto in postopek ($336 : 7$), 1 t. za rezultat $48\\,\\mathrm{min}$ z enoto.",
-     "mistake": "Napačno je deliti s $6$ (število razlik med dnevi) ali vzeti srednji podatek po velikosti (mediano $50$) namesto aritmetične sredine."
+     "mistake": "Napačno je deliti z drugim številom kot $7$ (podatkov je toliko, kolikor je dni) ali vzeti srednji podatek po velikosti (mediano $50$) namesto aritmetične sredine."
     }
    ]
   }

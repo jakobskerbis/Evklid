@@ -22,6 +22,8 @@ test("validatePaper: pravilna pola, točke po zgradbi, napačen račun, varen SV
   assert.match(errs(paper([{ n: 1, parts: [part({ ways: [{ title: "x", text: "$3 \\cdot 4 = 13$" }] })] }])), /račun se ne izide/);
   assert.match(errs(paper([{ n: 1, parts: [part({ points: 2 })] }])), /vsaj dva načina/);
   assert.match(errs(paper([{ n: 1, figure: '<svg onload="x()"></svg>', parts: [part()] }])), /varen <svg>/);
+  assert.match(errs(paper([{ n: 1, figure: "<svg/onload=x()></svg>", parts: [part()] }])), /varen <svg>/);
+  assert.match(errs(paper([{ n: 1, figure: "<svg><img src=x></svg>", parts: [part()] }])), /varen <svg>/);
   assert.match(errs(paper([{ n: 1, parts: [part({ figure: '<svg><a href="https://x">a</a></svg>' })] }])), /varen <svg>/);
   assert.match(errs(paper([{ n: 1, parts: [part({ solutionFigure: "<svg><script>x</script></svg>" })] }])), /solutionFigure mora biti varen/);
   assert.match(errs(paper([{ n: 1, parts: [part({ format: "choice", choices: ["A", "B"], correct: [2] })] }])), /correct/);

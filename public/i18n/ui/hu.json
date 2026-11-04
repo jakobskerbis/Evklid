@@ -599,7 +599,7 @@
   "pp.file.scoringNpz": "Értékelési útmutató",
   "pp.opens": "A ric.si új lapon nyílik meg",
   "pp.oursSoon": "A saját, ilyen stílusú feladatsorunk készül",
-  "pp.oursOpen": "Oldd meg ilyen stílusú feladatsorunkat",
+  "pp.oursOpen": "Oldd meg a saját, ilyen stílusú feladatsorunkat",
   "pp.oursTitle": "Evklid feladatsora ebben a stílusban: {paper}",
   "pp.oursInfo": "{minutes} perc · {points} pont",
   "pp.oursAbout": "A feladatokat Evklid (MI) írta. A felépítés és a pontozás olyan, mint az eredeti feladatsoron, de a feladatok újak. Oldd meg őket papíron, aztán nézd meg a megoldást, és jelöld be a pontjaidat.",

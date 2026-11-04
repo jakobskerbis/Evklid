@@ -67,7 +67,7 @@ function rowHtml(e, i, tutor, local, ours) {
   // pride pozneje (Opus s trojnim pregledom); do takrat »Naša pola v tem slogu je v pripravi«, povezava na ric.si ostane.
   // Naša pola obstaja: gumb »Reši našo polo v tem slogu« pred povezavami na ric.si (public/our-paper.js).
   const expl = e.ours ? "" : `<span class="pp-expl">${icon("notebook-pen")}${esc(t("pp.oursSoon"))}</span>`;
-  const oursBtn = e.ours && ours ? `<button type="button" class="pp-ours small" data-pp-ours="${i}">${icon("notebook-pen")}<span>${esc(t("pp.oursOpen"))}</span></button>` : "";
+  const oursBtn = e.ours && ours ? `<button type="button" class="secondary small pp-ours" data-pp-ours="${i}">${icon("notebook-pen")}<span>${esc(t("pp.oursOpen"))}</span></button>` : "";
   // »Rešuj z inštruktorjem«: pogovor z inštruktorjem, ki ve, katero polo učenec rešuje (nalogo pošlje s fotografijo ali prepisom).
   const help = tutor ? `<button type="button" class="secondary small pp-tutor" data-pp-tutor="${i}">${icon("message-circle")}<span>${esc(t("pp.tutor"))}</span></button>` : "";
   // »Odpri preneseno polo«: PDF, ki ga je učenec prenesel z ric.si, ostane v napravi (public/paper-viewer.js).

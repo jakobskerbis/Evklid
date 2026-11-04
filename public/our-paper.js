@@ -31,7 +31,9 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
   el.setAttribute("aria-label", title);
   el.tabIndex = -1;
   const sum = () => paper.tasks.reduce((s, tk) => s + tk.parts.reduce((a, p) => a + (got[label(tk, p)] ? p.points : 0), 0), 0);
-  const fig = (svg) => (svg ? `<figure class="op-fig">${svg}</figure>` : "");
+  // Figure preveri že strežnik (server/our-papers.js, validatePaper); DOMPurify (globalen, public/rich.js) še enkrat.
+  const clean = (svg) => (globalThis.DOMPurify ? globalThis.DOMPurify.sanitize(svg, { USE_PROFILES: { svg: true } }) : "");
+  const fig = (svg) => (svg ? `<figure class="op-fig">${clean(svg)}</figure>` : "");
   const partHtml = (tk, p) => {
     const id = label(tk, p);
     const choices = p.format === "choice" && p.choices ? `<ol class="op-choices" type="A">${p.choices.map((c) => `<li>${rich(c)}</li>`).join("")}</ol>` : "";
@@ -44,11 +46,11 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
         <label class="op-got"><input type="checkbox" data-op-got ${got[id] ? "checked" : ""}><span>${esc(t("pp.oursGot"))}</span></label>
       </div>
       <div class="op-sol" hidden>
-        <p class="op-answer"><b>${esc(t("pp.oursAnswer"))}</b> ${rich(p.answer)}</p>
+        <div class="op-answer"><b>${esc(t("pp.oursAnswer"))}</b> ${rich(p.answer)}</div>
         ${fig(p.solutionFigure)}
         ${ways}
-        ${p.scoring ? `<p class="op-note"><b>${esc(t("pp.oursScoring"))}</b> ${rich(p.scoring)}</p>` : ""}
-        ${p.mistake ? `<p class="op-note op-mistake"><b>${esc(t("pp.oursMistake"))}</b> ${rich(p.mistake)}</p>` : ""}
+        ${p.scoring ? `<div class="op-note"><b>${esc(t("pp.oursScoring"))}</b> ${rich(p.scoring)}</div>` : ""}
+        ${p.mistake ? `<div class="op-note op-mistake"><b>${esc(t("pp.oursMistake"))}</b> ${rich(p.mistake)}</div>` : ""}
       </div>
     </li>`;
   };

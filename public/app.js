@@ -3076,7 +3076,7 @@ async function openOurs(entry, subjectName) {
   try {
     const paper = await api(`/api/exam-papers/ours/${encodeURIComponent(entry.id)}`);
     const title = t("pp.oursTitle", { paper: paperLabel(entry, subjectName) });
-    const key = `ours.${state.student.id}.${entry.id}`;
+    const key = `evklid.ours.${state.student.id}.${entry.id}`;
     openOurPaper(paper, {
       title,
       rich: (md) => withFormulaSubject(entry.subject, () => renderRich(String(md ?? ""))),
@@ -3108,7 +3108,7 @@ async function oursTutor(entry, title, task, part) {
     const choices = part.format === "choice" && part.choices ? part.choices.map((c, i) => `${String.fromCharCode(65 + i)}) ${strip(c)}`).join("\n") : "";
     const body = [strip(task.intro), strip(part.text), choices].filter(Boolean).join("\n\n").slice(0, 1500);
     state.paperCtx = { conv: state.conversationId, paper: title, task: n, ours: entry.id };
-    await send(`${t("pp.taskMsg", { paper: title, n })}\n\n${body}`);
+    await send(`${title} · ${t("pp.oursTask", { n })}\n\n${body}`);
   } catch (err) {
     toast(err.message);
   } finally {
