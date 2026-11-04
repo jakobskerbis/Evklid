@@ -514,7 +514,7 @@ export function zgradi(THREE, ctx = {}) {
   }
 
   // ---------- oznake kromosomov
-  // velikost oznake sledi velikosti modela na zaslonu, a ostane berljiva (15–26 px visoka)
+  // velikost oznake sledi velikosti modela na zaslonu, a ostane berljiva (17–26 px visoka)
   const _cp = new V3(), _sp = new V3(), _vel = new THREE.Vector2();
   function velikostOznake(renderer, scene, camera) {
     if (!camera.isPerspectiveCamera) return;
@@ -522,7 +522,7 @@ export function zgradi(THREE, ctx = {}) {
     const H = _vel.y || 800, tf = 2 * Math.tan((camera.fov * Math.PI) / 360);
     _cp.setFromMatrixPosition(camera.matrixWorld); _sp.setFromMatrixPosition(this.matrixWorld);
     const enota = H / (tf * (_cp.distanceTo(_sp) || 1));
-    const sy = (cl(0.05 * enota, 15, 26) * tf) / H;
+    const sy = (cl(0.05 * enota, 17, 26) * tf) / H;
     this.scale.set(sy * 2, sy, 1);
     this.updateMatrixWorld();
   }
@@ -596,7 +596,7 @@ export function zgradi(THREE, ctx = {}) {
     citoplazma: { id: "citoplazma", ime: "Citoplazma", opis: "Poltekoča notranjost celice, v kateri so organeli; v modelu so organeli nakazani le kot drobna zrnca.", barva: "#E9B48C", meshes: [citoplazma, zrna], tocka: tc() },
     jedro: { id: "jedro", ime: "Jedro in jedrna ovojnica", opis: "Dvojna membrana s porami obdaja DNK; v profazi I razpade, po mejozi I se pri mnogih živalih za kratek čas obnovi, ob koncu mejoze II pa nastanejo štiri nova jedra.", barva: "#B7A6FF", meshes: [ovojnica], tocka: tc() },
     jedrce: { id: "jedrce", ime: "Jedrce", opis: "Gosto območje v jedru, kjer nastajajo deli ribosomov; med delitvijo izgine in se v novih jedrih spet pojavi.", barva: "#6E4FD0", meshes: [jedrca], tocka: tc() },
-    kromosomi: { id: "kromosomi", ime: "Kromosomi (sestrski kromatidi)", opis: "Nosijo dedni zapis (DNK); podvojen kromosom ima dve sestrski kromatidi. Rdeči z oznako M so od matere, modri z oznako O od očeta; po prekrižanju imata nekatere kromatide dele obeh barv.", barva: "#FF6B7C", meshes: [kromosomi], tocka: tc() },
+    kromosomi: { id: "kromosomi", ime: "Kromosomi", opis: "Nosijo dedni zapis (DNK); podvojen kromosom ima dve sestrski kromatidi. Rdeči z oznako M so od matere, modri z oznako O od očeta; po prekrižanju imata nekatere kromatide dele obeh barv.", barva: "#FF6B7C", meshes: [kromosomi], tocka: tc() },
     bivalent: { id: "bivalent", ime: "Bivalent (tetrada)", opis: "Par homolognih kromosomov, ki se v profazi I tesno zložita drug ob drugega; skupaj imata štiri kromatide.", barva: "#E6DEFF", meshes: [halo], tocka: tc() },
     hiazma: { id: "hiazma", ime: "Hiazma (mesto prekrižanja)", opis: "Mesto, kjer sta si nesestrski kromatidi homolognih kromosomov izmenjali dela DNK; do anafaze I drži homologna kromosoma skupaj.", barva: "#FFF1C9", meshes: [hiazme], tocka: tc() },
     centromera: { id: "centromera", ime: "Centromera", opis: "Zoženi del kromosoma, kjer sta sestrski kromatidi povezani vse do anafaze II.", barva: "#F3ECFF", meshes: [centromere], tocka: tc() },
@@ -999,7 +999,7 @@ export function zgradi(THREE, ctx = {}) {
     { tip: "izpis", id: "faza", oznaka: "Faza", vrednost: () => { const i = indeks(); return i < 0 ? KONEC[0] : `${FAZE[i][0]} (${i + 1}/${N})`; } },
     { tip: "izpis", id: "dogajanje", oznaka: "Kaj se dogaja", vrednost: () => faza()[1] },
     { tip: "izpis", id: "stevilo", oznaka: "Kromosomi in kromatide", vrednost: () => faza()[2] },
-    { tip: "izpis", id: "oznake", oznaka: "Oznake", vrednost: () => "rdeče M: od matere · modro O: od očeta · 1, 2: homologna para" },
+    { tip: "izpis", id: "oznake", oznaka: "Oznake", vrednost: () => "M (rdeči): od matere · O (modri): od očeta · 1 in 2: homologna para" },
   ];
 
   nastavi(Number(zac.potek ?? 0));

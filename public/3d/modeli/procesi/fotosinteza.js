@@ -160,13 +160,13 @@ export function zgradi(THREE, ctx = {}) {
     };
     return m;
   }
-  // na ozkih zaslonih so značke in napisi nekoliko manjši (spremembo uveljavi naslednji okvir)
+  // na ozkih zaslonih so značke in napisi le malo manjši (spremembo uveljavi naslednji okvir)
   const napisi = [];
   let fNapis = 1;
   const merilniZaslon = (r) => {
     const w = (r && r.domElement && (r.domElement.clientWidth || r.domElement.width)) || 1000;
-    uVel.value = Math.min(1, Math.max(0.74, w / 900));
-    const f = Math.min(1, Math.max(0.84, w / 700));
+    uVel.value = Math.min(1, Math.max(0.8, w / 900));
+    const f = Math.min(1, Math.max(0.96, w / 700)); // napisi ostanejo berljivi (vsaj ~11 px)
     if (f !== fNapis) {
       fNapis = f;
       for (const s of napisi) s.scale.set(s.userData.osnova[0] * f, s.userData.osnova[1] * f, 1);
@@ -797,7 +797,7 @@ export function zgradi(THREE, ctx = {}) {
     const tPSII = [P2[0] - 0.02, yT + 0.12, P2[2]], tB6 = [B6[0], yT + 0.1, B6[2]], tPSI = [P1[0], yT + 0.14, P1[2]], tFNR = [FN[0] + 0.02, FN[1] + 0.05, FN[2]];
     const tPQ = [-0.36, yM, ZF + 0.012], tPC = [-0.02, yB - 0.13, ZF + 0.04], tFD = [0.28, yT + 0.12, ZF + 0.04], tATP = [AT[0], yG + 0.12, AT[2]], tMemb = [-0.1, yM, ZF], tLum = [-0.3, yB - 0.16, ZF];
     const ozn = oznake(G, [
-      ["stroma", zaslon(-0.72, 0.62), null, { barva: "#C9DE95", ozadje: "rgba(13,18,28,0.55)" }],
+      ["stroma", zaslon(-0.74, 0.72), null, { barva: "#C9DE95", ozadje: "rgba(13,18,28,0.55)" }],
       ["lumen", zaslon(-0.72, -0.4), null, { barva: "#A9C2FF", ozadje: "rgba(13,18,28,0.55)" }],
       ["fotosistem II", zaslon(-0.46, 0.52), tPSII],
       ["citokrom b6f", zaslon(-0.16, 0.42), tB6],

@@ -141,13 +141,13 @@ export function zgradi(THREE, ctx = {}) {
     };
     return m;
   }
-  // na ozkih zaslonih so značke in napisi nekoliko manjši (spremembo uveljavi naslednji okvir)
+  // na ozkih zaslonih so značke in napisi le malo manjši (spremembo uveljavi naslednji okvir)
   const napisi = [];
   let fNapis = 1;
   const merilniZaslon = (r) => {
     const w = (r && r.domElement && (r.domElement.clientWidth || r.domElement.width)) || 1000;
-    uVel.value = Math.min(1, Math.max(0.74, w / 900));
-    const f = Math.min(1, Math.max(0.84, w / 700));
+    uVel.value = Math.min(1, Math.max(0.8, w / 900));
+    const f = Math.min(1, Math.max(0.96, w / 700)); // napisi ostanejo berljivi (vsaj ~11 px)
     if (f !== fNapis) {
       fNapis = f;
       for (const s of napisi) s.scale.set(s.userData.osnova[0] * f, s.userData.osnova[1] * f, 1);
@@ -827,15 +827,15 @@ export function zgradi(THREE, ctx = {}) {
       if (vv < 4) { const j = 14; iz(MR, j, t); zx(0.15, 0.32, 0.3, p); return true; }
       const j = NNT - 2; iz(MR, j, t); odm(t, 0.1, 0.24, p); return true;
     } },
-    { b: "jedrna ovojnica", f: (p, t) => { t[0] = -0.3; t[1] = yOv(-0.3, OV_Z1); t[2] = OV_Z1; zx(-0.42, 0.18, 0.3, p); return true; } },
+    { b: "jedrna ovojnica", f: (p, t) => { t[0] = -0.3; t[1] = yOv(-0.3, OV_Z1); t[2] = OV_Z1; zx(-0.4, 0.13, 0.3, p); return fazaV() < 5; } }, // pri translaciji bi prekrila polipeptid
     { b: "jedrna pora", f: (p, t) => { t[0] = PORA[0]; t[1] = yP + 0.04; t[2] = PORA[2] + PR; zx(0.82, 0.32, 0.2, p); return true; } },
     { b: "mala podenota", o: { barva: "#FFE08A" }, f: (p, t) => { kopiraj(S.malaPos, t, -0.12, -0.06, 0.08); odm(t, -0.4, -0.3, p); return S.ribVid > 0 && fazaV() < 11.9; } },
-    { b: "velika podenota", o: { barva: "#FFB59E" }, f: (p, t) => { kopiraj(S.velikaPos, t, -0.2, 0.08, 0.05); odm(t, -0.42, 0.2, p); return S.velVid > 0.5 && fazaV() < 11.9; } },
+    { b: "velika podenota", o: { barva: "#FFB59E" }, f: (p, t) => { kopiraj(S.velikaPos, t, -0.2, 0.08, 0.05); odm(t, -0.38, 0.17, p); return S.velVid > 0.5 && fazaV() < 11.9; } },
     { b: "tRNA", o: { barva: "#A8C8FF" }, f: (p, t) => { const k = fazaV() < 5 ? 0 : Math.min(NK - 1, Math.floor(fazaV()) - 4); const tr = S.trna[k]; if (!tr.vid || tr.f < 0.5 || fazaV() >= 11) return false; kopiraj(tr.p, t, -0.02, 0.14, 0); odm(t, 0.44, 0.08, p); return true; } },
     { b: "antikodon", f: (p, t) => { const k = fazaV() < 5 ? 0 : Math.min(NK - 1, Math.floor(fazaV()) - 4); const tr = S.trna[k]; if (!tr.vid || tr.f < 0.5 || fazaV() >= 11) return false; kopiraj(tr.p, t, D, 0.0, 0.04); odm(t, 0.42, -0.06, p); return true; } },
     { b: "kodon", o: { barva: "#B8CCFF" }, f: (p, t) => { if (!S.kodonVid || fazaV() >= 11.75) return false; t[0] = kodonX(S.kodonC); t[1] = YR - 0.02; t[2] = ZR + 0.05; odm(t, 0.3, -0.34, p); return true; } },
     { b: "aminokislina", f: (p, t) => { const vv = fazaV(); if (vv < 4.2 || vv >= 11) return false; const k = vv < 5 ? 0 : Math.floor(vv) - 4; if (BK[k * 3] > 1e8) return false; iz(BK, k, t); odm(t, 0.3, 0.14, p); return true; } },
-    { b: "polipeptid", f: (p, t) => { if (S.nVer < 2) return false; iz(BK, 0, t); odm(t, -0.22, 0.2, p); return fazaV() < 11.6; } },
+    { b: "polipeptid", f: (p, t) => { if (S.nVer < 2) return false; iz(BK, 0, t); odm(t, -0.18, 0.28, p); return fazaV() < 11.6; } },
     { b: "sprostitveni dejavnik", o: { barva: "#C3CDE3" }, f: (p, t) => { if (S.sprostVid < 0.5) return false; kopiraj(S.sprost, t, 0, 0.17, 0); odm(t, 0.36, 0.2, p); return true; } },
     { b: "beljakovina", o: { barva: "#FFE3A0", krepko: true }, f: (p, t) => { if (fazaV() < 11.7) return false; kopiraj(FOLD, t); kopiraj(FOLD, p, 0.02, 0.2, 0.0); return true; } },
     { b: "E", o: { px: 11 }, crta: false, f: (p) => { if (!S.ribVid || S.velVid < 0.5 || fazaV() >= 11.7) return false; p[0] = S.xR - 4.5 * D; p[1] = YR - 0.2; p[2] = ZR + 0.16; return true; } },
