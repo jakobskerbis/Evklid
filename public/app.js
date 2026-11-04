@@ -726,8 +726,8 @@ function renderState(convState) {
   if (topicId) {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "chip chip-btn";
-    b.textContent = t("chat.readLesson");
+    b.className = "chip chip-btn chat-lesson";
+    b.innerHTML = `${icon("book-open")}<span>${escapeHtml(t("chat.readLesson"))}</span>`;
     b.addEventListener("click", () => openLesson(topicId));
     $("#chat-state").append(b);
   }

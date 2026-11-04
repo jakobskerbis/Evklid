@@ -196,7 +196,7 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
    Enako na tablici ležeče (na dotik, od 1000 px); ožji stolpci zanjo so v touch.css. */
 @media (min-width: 1200px), (min-width: 1000px) and (hover: none) and (pointer: coarse) {
   /* Učna pot: levo izbira, trening in načini (ostanejo vidni), desno sklopi in teme. */
-  #view-path { max-width: 1320px; display: grid; grid-template-columns: var(--split-path, minmax(360px, 440px)) minmax(0, 1fr); gap: 0 28px; align-items: start; align-content: start; }
+  #view-path { display: grid; grid-template-columns: var(--split-path, minmax(360px, 440px)) minmax(0, 1fr); gap: 0 28px; align-items: start; align-content: start; }
   /* Na nizkem zaslonu stolpec ne sme biti višji od okna, sicer zadnja kartica ni dosegljiva: dobi svoj drsnik. */
   #view-path > .path-side { position: sticky; top: 0; max-height: calc(100dvh - 120px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; margin: -6px; padding: 6px; }
   #view-path .hero { grid-template-columns: auto 1fr; }
@@ -209,7 +209,6 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
   #path-content .unit { margin-bottom: 16px; }
 
   /* Tema: levo naloga, desno razlaga, ki ostane vidna med reševanjem. */
-  #view-topic:has(.topic-grid) { max-width: 1400px; }
   body:not(.pad-open) .topic-grid {
     display: grid; grid-template-columns: minmax(0, 1.05fr) var(--split-topic, minmax(0, 1fr)); grid-template-areas: "head expl" "practice expl"; grid-template-rows: auto 1fr;
     gap: 0 24px; align-items: start;
@@ -220,27 +219,23 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
   body:not(.pad-open) .topic-grid > #practice > .task:first-child { margin-top: 0; }
 
   /* Serija nalog (trening, ponavljanje …): desno razlaga teme trenutne naloge. */
-  #view-topic:has(.session-grid > aside:not([hidden])) { max-width: 1400px; }
   body:not(.pad-open) .session-grid:has(> aside:not([hidden])) { display: grid; grid-template-columns: minmax(0, 1.05fr) var(--split-topic, minmax(0, 1fr)); gap: 0 24px; align-items: start; }
   .session-grid > aside { position: sticky; top: 0; max-height: calc(100dvh - 150px); overflow-y: auto; }
 
   /* Lekcija: besedilo levo, poskusi desno (pritrjeni, da so vidni med branjem). */
-  #view-textbook:has(.tb-lesson-grid.has-side) { max-width: 1440px; }
-  .tb-lesson-grid.has-side { display: grid; grid-template-columns: minmax(0, 1fr) var(--split-lesson, minmax(420px, 560px)); gap: 0 28px; align-items: start; }
+  .tb-lesson-grid.has-side { display: grid; grid-template-columns: minmax(0, 1fr) var(--split-lesson, minmax(420px, 42%)); gap: 0 28px; align-items: start; }
   .tb-lesson-grid.has-side .tb-side { position: sticky; top: 0; max-height: calc(100dvh - 120px); overflow-y: auto; overscroll-behavior: contain; padding-bottom: 8px; }
   /* Krogi lekcije po korakih segajo čez oba stolpca; poskusi desno se končajo nad njimi. */
   .tb-lesson-grid.has-side:has(+ .tb-stepper) .tb-side { max-height: calc(100dvh - 206px); }
   .tb-side .demo-values { grid-template-columns: 1fr 1fr; }
   .tb-lesson-grid.has-side .tb-side .demo-svg { max-width: 100%; max-height: 46dvh; width: auto; display: block; margin: 0 auto; }
 
-  /* Kazalo učbenika: sklopi v dveh stolpcih. */
-  #view-textbook:not(:has(.tb-lesson-grid)) { max-width: 1240px; }
-  .tb-part { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; align-items: start; }
+  /* Kazalo učbenika: sklopi v stolpcih, kolikor jih gre v širino. */
+  .tb-part { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 0 16px; align-items: start; }
   .tb-part > .tb-part-head { grid-column: 1 / -1; }
 
-  /* Ostale strani s karticami: dva stolpca. */
-  #view-progress, #view-league, #view-competition { max-width: 1240px; }
-  #view-progress { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; align-items: start; align-content: start; }
+  /* Ostale strani s karticami: stolpci, kolikor jih gre v širino. */
+  #view-progress { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 0 16px; align-items: start; align-content: start; }
   #view-progress > h1 { grid-column: 1 / -1; }
 }
 @media (min-width: 1700px) {
@@ -252,14 +247,12 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
   body.pad-open .topic-grid > .explanation { grid-area: expl; position: sticky; top: 0; max-height: calc(100dvh - 150px); overflow-y: auto; }
   body.pad-open .topic-grid > #practice { grid-area: practice; }
 }
-@media (min-width: 1700px) { body.pad-open #view-topic > #topic-content:has(.topic-grid) { max-width: 1300px; } }
 /* Razlaga ob seriji nalog je samo za široke zaslone (na telefonu bi bila predolga). */
 @media (max-width: 999px), (max-width: 1199px) and (hover: hover), (max-width: 1199px) and (pointer: fine) { #session-side { display: none !important; } }
 body.pad-open #session-side { display: none !important; }
 @media (min-width: 1700px) {
   body.pad-open #session-side:not([hidden]) { display: block !important; }
   body.pad-open .session-grid:has(> aside:not([hidden])) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 24px; align-items: start; }
-  body.pad-open #view-topic > #topic-content:has(.session-grid > aside:not([hidden])) { max-width: 1300px; }
 }
 
 /* ---------- izbira jezika (language.js) ---------- */
@@ -879,14 +872,44 @@ body:has(> #boot-down) > :not(#boot-down) { visibility: hidden; }
   background: var(--surface); color: var(--text); font: inherit; line-height: 1.5;
 }
 
-/* Naslov pogovora na telefonu: ena vrstica s tropičjem (j, 2026-10-31), oznaka predmeta se skrči. */
+/* Naslov pogovora na telefonu: ena vrstica s tropičjem (j, 2026-10-31); oznake pogovora so v svoji vrstici pod njim
+   (touch.css, j 2026-11-04). */
 @media (max-width: 760px) {
   .chat-head { gap: 8px; }
   .chat-head h1 { min-width: 0; font-size: 1rem; line-height: 1.25; }
-  .chat-head #chat-state { flex: 0 1 auto; min-width: 0; max-width: 34%; }
-  .chat-head #chat-state .chip { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .chat-head .icon-only { flex: none; }
   .composer-row.multi { flex-wrap: wrap; row-gap: 2px; }
   .composer-row.multi #input { order: -1; flex: 1 1 100%; padding-inline: 10px; }
   .composer-row.multi .mic-btn { margin-inline-start: auto; }
 }
+
+/* ---------- Brez praznih robov (j 2026-11-04) ----------
+   »Če je ob straneh zaslona na katerem koli delu Evklida prazen prostor, naj se prikaz spremeni, da ga izkoristi.«
+   Pogledi segajo čez vso širino okna (rob --rob-strani). Kartice strani se razvrstijo v stolpce širine vsaj 400 px,
+   kolikor jih gre: telefon in tablica pokončno 1, računalnik 2–4. Stolpci se računajo iz širine vsebnika (column-width,
+   auto-fill), zato veljajo tudi v premičnem oknu. Vsaka kartica ostane cela v enem stolpcu. */
+.kolone, .set-cols, #view-me .list-card, .sch-body, #exams-content, #competition-content, #league-content, #path-content {
+  column-width: 400px; column-gap: 20px;
+}
+:is(.kolone, .set-cols, .sch-body, #exams-content, #competition-content, #league-content, #path-content) > * { break-inside: avoid; }
+:is(.kolone, .set-cols, .sch-body, #exams-content, #competition-content, #league-content, #path-content) > :is(h1, h2, h3) { break-after: avoid; }
+#exams-content > :is(h1, .comp-pickers), #competition-content > :is(h1, .comp-pickers), #path-content > .legend { column-span: all; }
+/* Jaz: profil, raven, števci in zbirke v vrsti; seznam povezav pod njimi v stolpcih. */
+#view-me { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 0 16px; align-content: start; }
+#view-me > :is(.list-card, .me-back, h1) { grid-column: 1 / -1; }
+#view-me .list-card .list-row { break-inside: avoid; }
+/* Mnenje: ocene levo, besedila desno (obrazec v stolpcih namesto vrstice čez ves zaslon). */
+.fb-form.form { display: block; column-width: 400px; column-gap: 32px; }
+.fb-form.form > * { break-inside: avoid; }
+.fb-form.form > * + * { margin-top: 14px; }
+.fb-form.form > h2 { break-after: avoid; }
+.fb-form.form { columns: 400px 2; } /* največ dva stolpca: ocene | besedila */
+.fb-form.form > .fb-hint { break-after: avoid; }
+/* Prazen klepet (brez stavbe obdobja): pozdrav in predlogi čez več prostora, predlogi v vrsti. */
+:root:not([data-chat-frame]) #messages > .empty { max-width: min(100%, 960px); width: 100%; }
+:root:not([data-chat-frame]) #messages > .empty .ideas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+/* Nov profil: pozdrav, jezik in ime levo, šolanje desno. */
+#onboard-form.form { display: block; columns: 400px 2; column-gap: 32px; }
+#onboard-form.form > * { break-inside: avoid; }
+#onboard-form.form > * + * { margin-top: 14px; }
+#onboard-form.form > :is(h1, p) { break-after: avoid; }

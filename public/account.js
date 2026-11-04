@@ -389,9 +389,12 @@ export function openAddChild() {
 
 // ---------- prijava in registracija ----------
 
+// Na širokem zaslonu je levo od obrazca znak aplikacije s kratkim opisom (j 2026-11-04: brez praznih robov);
+// ime vzamemo iz zgornje vrstice (brand.json → scripts/preimenuj.js), da ga ni treba popravljati na dveh mestih.
 function shell(inner) {
   authMode(true);
-  $("#view-auth").innerHTML = `<div class="auth-box">${inner}</div>`;
+  const name = document.querySelector(".topbar .brand-name")?.innerHTML || "";
+  $("#view-auth").innerHTML = `<div class="auth-wrap"><div class="auth-brand"><span class="logo" aria-hidden="true">${icon("kristal")}</span><b class="brand-name">${name}</b><p>${esc(t("mob.tagline"))}</p></div><div class="auth-box">${inner}</div></div>`;
 }
 
 // Po zavrnjeni registraciji zaradi starosti naprava 24 ur kaže stran s povezavo za starše.
@@ -1221,6 +1224,7 @@ export async function renderAccount() {
   view.innerHTML = `
     <button type="button" class="ghost back me-back">${icon("arrow-left")}Jaz</button>
     <h1>Račun</h1>
+    <div class="kolone">
     <div class="card">
       <h2>Naročnina</h2>
       ${planText(acc)}
@@ -1288,6 +1292,7 @@ export async function renderAccount() {
         <button id="logout-others" type="button">Odjavi vse druge naprave</button>
       </div>
       <button id="delete-account" class="danger" type="button">Izbriši račun in vse podatke</button>
+    </div>
     </div>`;
 
   // Izbira števila otrok pokaže samo cene za to izbiro (mesečno je izbrano) in nato soglasja ter gumb.

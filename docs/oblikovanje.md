@@ -180,7 +180,7 @@ j (2026-10-31): okna, preurejanje vrstic in ločnice morajo delovati tudi pri vs
 
 Učenčevo besedilo, odgovor inštruktorja in besedilo naloge morajo biti vedno berljivi (`public/razpri.js`).
 
-- Polje za vnos v Inštruktorju raste z besedilom do 40 % vidne višine (tudi z odprto tipkovnico; `interactive-widget=resizes-content`), nato drsi. Na telefonu daljše besedilo dobi celo širino vrstice, gumbi gredo podenj. Zadnja sporočila ostanejo vidna nad poljem. Naslov pogovora ima na telefonu eno vrstico s tropičjem; predolg namig v polju se skrajša za zadnjo celo besedo (»Napiši nalogo …«). Druga vrstica pod poljem (namig) je na sredini kot »Evklid se lahko zmoti«.
+- Polje za vnos v Inštruktorju raste z besedilom do 40 % vidne višine (tudi z odprto tipkovnico; `interactive-widget=resizes-content`), nato drsi. Na telefonu daljše besedilo dobi celo širino vrstice, gumbi gredo podenj. Zadnja sporočila ostanejo vidna nad poljem. Naslov pogovora ima na telefonu eno vrstico s tropičjem, oznake pogovora (predmet, način, raven) in »Preberi lekcijo« (z ikono knjige, prvi) so cele v svoji vrstici pod njim, ki se po potrebi pomika vstran (j 2026-11-04); predolg namig v polju se skrajša za zadnjo celo besedo (»Napiši nalogo …«). Druga vrstica pod poljem (namig) je na sredini kot »Evklid se lahko zmoti«.
 - Če besedilo ne gre v prostor (vnos višji od polja, naloga višja od prostora nad ploščo za vnos, odgovor višji od vidnega dela klepeta ob odprti tipkovnici ali plošči), se samodejno odpre okno s celim besedilom: kartica na vrhu vidnega dela z ×, mirna animacija (220 ms, rahel dvig; brez nje pri zmanjšanem gibanju). Pri vnosu je v oknu večje polje, usklajeno z `#input` (Enter pošlje). Okno se odpre enkrat; ko ga učenec zapre, ostane zaprto, dokler se besedilo bistveno ne spremeni (vsaj 40 znakov) ali ne pride nova naloga ali odgovor.
 
 ## Široki zasloni (od 1200 px, tablica ležeče od 1000 px)
@@ -190,8 +190,20 @@ Prostor ob strani izkoristimo za informacije, ki jih učenec potrebuje hkrati:
 - Učna pot: levo izbira poti, Današnji trening in načini (pritrjeni), desno sklopi.
 - Tema: levo naloga, desno razlaga (pritrjena, z lastnim drsnikom). Pri seriji nalog (trening, ponavljanje, priprava na test, vaja sklopa, tekmovalni trening) je desno razlaga teme trenutne naloge; pri Preizkusu znanja in tekmovanju je ni.
 - Lekcija: besedilo levo, poskusi in simulacije desno (`placeDemos` v `textbook.js`; na ožjem zaslonu so med besedilom).
-- Kazalo učbenika in Napredek: kartice v dveh stolpcih.
+- Kazalo učbenika in Napredek: kartice v stolpcih (vsaj 440 px), kolikor jih gre.
 - Ko je odprta plošča za vnos (400 px desno), sta stolpca šele od 1700 px.
+
+### Brez praznih robov (j, 2026-11-04, vse platforme)
+
+»Če je ob straneh zaslona na katerem koli delu Evklida prazen prostor, naj se prikaz spremeni tako, da ga izkoristi.«
+
+- Noben pogled ni omejen na sredinski stolpec: `.narrow` in vsi `#view-…` segajo čez vso širino okna z robom `--rob-strani` (16 px na telefonu, do 40 px na širokem zaslonu). Pogledu ali glavnemu ovoju ne dajaj `max-width` v px (`test/brez-robov.test.js`).
+- Kartice strani so v stolpcih, ki se računajo iz širine vsebnika (`column-width: 400px` na ovoju: `.kolone`, `.set-cols`, `#exams-content`, `#competition-content`, `#league-content`, `#path-content`, `.sch-body`, seznam na Jaz; ali mreža `repeat(auto-fill, minmax(…))`), zato delujejo tudi v premičnem oknu: telefon in tablica pokončno 1 stolpec, računalnik 2–4. Kartica ostane cela v enem stolpcu. Nov pogled s karticami ovij v `<div class="kolone">`.
+- Obrazci (Mnenje, nov profil) imajo na širokem zaslonu dva stolpca; prijava ima levo znak aplikacije z opisom (`mob.tagline`), desno obrazec.
+- Klepet: odgovor inštruktorja sega do roba (na telefonu brez pasu za ikono inštruktorja), učenčevo sporočilo do 85 % širine, vrstica za pisanje čez vso širino. Prazen klepet brez stavbe obdobja: predlogi v vrsti.
+- Strani pole so čez vso širino, na zelo širokem zaslonu dve drug ob drugi; naloge naše pole v stolpcih; lestvica kviza v stolpcih.
+- Izjemi: Evklidova tipkovnica in plošča za vnos ostaneta široki največ 640 px (tipke ne smejo postati preširoke za prste in oči).
+- Aplikacija (`mobile/src/app/web.tsx`) sama pusti prostor za uro in gumbe telefona; `theme.js` ji (User-Agent `EvklidApp/`) nastavi `--varno-zg`/`--varno-sp` na 0, CSS pa odmik za zarezo vedno piše kot `var(--varno-zg, env(safe-area-inset-top, 0px))` (prej je bil nad glavo dvojni prazen pas).
 
 ## Telefon in tablica
 
