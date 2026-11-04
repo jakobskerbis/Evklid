@@ -30,10 +30,34 @@
       ]
     },
     {
+      "id": "openneuro-ds000001",
+      "ime": "OpenNeuro ds000001 (fMRIPrep, FreeSurfer)",
+      "avtor": "OpenNeuro Preprocessing Team; izvorni podatki: ds000001 (Balloon Analog Risk-taking Task)",
+      "opis": "Površina možganske skorje (pialna površina obeh polobel) in globina brazd iz MRI ene anonimne prostovoljke ali prostovoljca (sub-01). Iz nje so vijuge in brazde v Organih v 3D: možgani; režnji po parcelaciji Desikan-Killiany.",
+      "url": "https://openneuro-derivatives.s3.amazonaws.com/fmriprep/ds000001-fmriprep/dataset_description.json",
+      "licenca": "CC0 1.0",
+      "licencaUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "datoteke": [
+        "organi-3d/mozgani*.glb"
+      ]
+    },
+    {
+      "id": "hubmap-hra-oko",
+      "ime": "HuBMAP Human Reference Atlas: 3D referenčni organ Oko (VH moški, levo)",
+      "avtor": "HuBMAP / Human Reference Atlas (Cyberinfrastructure for Network Science Center, Indiana University); model po podatkih Visible Human",
+      "opis": "Zrklo v Organih v 3D: oko (beločnica, roženica, šarenica, leča, mrežnica z vidnim diskom, žilnica, ciliarnik, zonularna vlakna, steklovina). Mišice, kite in vidni živec so iz Z-Anatomy; zrklo smo poravnali nanje.",
+      "url": "https://lod.humanatlas.io/ref-organ/eye-male-left",
+      "licenca": "CC BY 4.0",
+      "licencaUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "datoteke": [
+        "organi-3d/oko*.glb"
+      ]
+    },
+    {
       "id": "evklid-telo",
       "ime": "Evklid: prirejeni modeli telesa",
       "avtor": "Evklid",
-      "opis": "Modele smo razdelili po plasteh, stisnili za hiter prenos in jim dodali slovenska imena. Prirejene modele delimo pod isto licenco.",
+      "opis": "Modele smo razdelili po plasteh in po organih (Organi v 3D), stisnili za hiter prenos in jim dodali slovenska imena. Prirejene modele delimo pod isto licenco.",
       "url": "https://evklid.app/3d",
       "licenca": "CC BY-SA 4.0",
       "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",

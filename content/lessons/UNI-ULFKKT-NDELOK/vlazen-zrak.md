@@ -64,19 +64,37 @@ Pozimi izdihneš topel, skoraj nasičen zrak v mrzel zunanji zrak. Na diagramu p
 Obala $\varphi = 100\,\%$ je ukrivljena: proti desni postaja vse bolj položna. Zato ravna črta med toplo nasičeno točko in mrzlo točko vmes zaide pod obalo, v območje megle. Mešanica ima pri svoji temperaturi več vode, kot je zrak lahko sprejme, in del pare se kondenzira v drobne kapljice.
 :::
 
-Šele zdaj zapiši oznake. Relativna vlažnost je razmerje delnega tlaka pare $p_v$ in nasičenega tlaka pri isti temperaturi:
+Šele zdaj zapiši oznake in natančne definicije. Vlažen zrak obravnavamo kot zmes dveh idealnih plinov, suhega zraka in vodne pare, pri skupnem tlaku $p$. Po Daltonovem zakonu je $p = p_z + p_v$, kjer sta $p_z$ in $p_v$ delna tlaka suhega zraka in pare.
 
-$$\varphi = \frac{p_v}{p_s}$$
+**Definicija (relativna vlažnost).** Naj ima vlažen zrak temperaturo $t$ in delni tlak pare $p_v$. Relativna vlažnost je
 
-Približno enako je razmerje $\rho_v / \rho_s$. Vsebnost vlage pri skupnem tlaku $p$ izračunaš kot
+$$\varphi = \frac{p_v}{p_s(t)},$$
 
-$$x = 0{,}622 \, \frac{p_v}{p - p_v}$$
+kjer je $p_s(t)$ nasičeni parni tlak vode pri *isti* temperaturi. Za nenasičen zrak je $0 \le \varphi < 1$, za nasičen $\varphi = 1$. Ker je za idealni plin $\rho_v = p_v M_v/(RT)$ in $\rho_s = p_s M_v/(RT)$, je pri isti $T$ tudi $\varphi = \rho_v/\rho_s$ (do natančnosti modela idealnega plina).
 
-Število $0{,}622$ je razmerje molskih mas vode in suhega zraka ($18/29$). Entalpija vlažnega zraka v $\mathrm{kJ/kg}$ suhega zraka, s $t$ v $^\circ\mathrm{C}$ in $x$ v $\mathrm{kg/kg}$, je
+**Definicija (vsebnost vlage).** $x = m_v/m_z$ je masa pare na maso suhega zraka v isti prostornini.
+
+**Trditev.** Če sta suh zrak in para idealna plina pri skupnem tlaku $p$, potem je
+
+$$x = 0{,}622 \, \frac{p_v}{p - p_v}.$$
+
+*Izpeljava.* Oba plina zavzemata isto prostornino $V$ pri isti $T$, zato je $m_v = p_v V M_v/(RT)$ in $m_z = p_z V M_z/(RT)$. Deliš in $V$, $R$, $T$ se pokrajšajo: $x = \dfrac{M_v}{M_z}\,\dfrac{p_v}{p_z}$. Vstaviš $p_z = p - p_v$ in $M_v/M_z = 18{,}02/28{,}96 \approx 0{,}622$. Za nasičen zrak je $x_s = 0{,}622\,p_s/(p - p_s)$; tako je izračunan četrti stolpec tabele.
+
+**Definicija (rosišče).** Rosišče $t_r$ je temperatura, na katero moramo ohladiti zrak pri stalnih $p$ in $x$, da postane nasičen: $p_s(t_r) = p_v$. Iz trditve sledi, da sta pri stalnih $p$ in $x$ tudi $p_v$ in s tem $t_r$ stalna: rosišče je odvisno od količine vode, ne od temperature zraka.
+
+**Entalpija** vlažnega zraka $h$ je entalpija zmesi $(1 + x)\,\mathrm{kg}$, ki vsebuje $1\,\mathrm{kg}$ suhega zraka; za ničlo vzamemo suh zrak in kapljevito vodo pri $0\,^\circ\mathrm{C}$. Za nenasičen zrak, s $t$ v $^\circ\mathrm{C}$ in $x$ v $\mathrm{kg/kg}$, je v $\mathrm{kJ/kg}$ suhega zraka
 
 $$h = 1{,}005\, t + x\,(2501 + 1{,}86\, t)$$
 
-Prvi člen je segrevanje suhega zraka, drugi pa izparilna toplota vode in segrevanje pare. Zrak v Anini kabini ima pri $22\,^\circ\mathrm{C}$ in $x = 0{,}00302$ entalpijo približno $29{,}8\,\mathrm{kJ/kg}$.
+Prvi člen je segrevanje suhega zraka ($c_{p,z} = 1{,}005\,\mathrm{kJ/(kg\,K)}$), drugi pa izparilna toplota vode pri $0\,^\circ\mathrm{C}$ ($2501\,\mathrm{kJ/kg}$) in segrevanje pare ($c_{p,v} = 1{,}86\,\mathrm{kJ/(kg\,K)}$). Zrak v Anini kabini ima pri $22\,^\circ\mathrm{C}$ in $x = 0{,}00302$ entalpijo približno $29{,}8\,\mathrm{kJ/kg}$.
+
+**Bilance naprave.** Skozi grelnik, vlažilnik ali hladilnik teče v ustaljenem stanju stalen masni tok suhega zraka $\dot m_z$. Bilanca vode da $\dot m_w = \dot m_z\,(x_2 - x_1)$, energijska bilanca grelnika brez dodane vode pa $\dot Q = \dot m_z\,(h_2 - h_1)$.
+
+**Trditev (adiabatno mešanje).** Če zmešamo tokova $1$ in $2$ z masnima tokovoma suhega zraka $\dot m_1$ in $\dot m_2$ brez izmenjave toplote z okolico, potem je
+
+$$x_M = \frac{\dot m_1 x_1 + \dot m_2 x_2}{\dot m_1 + \dot m_2}, \qquad h_M = \frac{\dot m_1 h_1 + \dot m_2 h_2}{\dot m_1 + \dot m_2}.$$
+
+*Dokaz.* Bilance suhega zraka, vode in energije so $\dot m_M = \dot m_1 + \dot m_2$, $\dot m_M x_M = \dot m_1 x_1 + \dot m_2 x_2$ in $\dot m_M h_M = \dot m_1 h_1 + \dot m_2 h_2$; deliš z $\dot m_M$. Iz obeh enačb sledi $\dot m_1 (x_M - x_1) = \dot m_2 (x_2 - x_M)$ in enako za $h$, zato ima daljica od $1$ do $M$ enak naklon kot od $M$ do $2$ (pri $x_1 = x_2$ je tudi $x_M = x_1$ in vse tri točke ležijo na isti navpičnici). Točka $M$ leži na daljici $12$ v $h$–$x$ diagramu in jo deli v razmerju $\overline{1M} : \overline{M2} = \dot m_2 : \dot m_1$ (pravilo vzvoda).
 
 ## Rešeni primeri
 
@@ -116,15 +134,16 @@ $p_v = \varphi_1 \, p_s(t_1)$, $\quad x = 0{,}622\,\dfrac{p_v}{p - p_v}$, $\quad
 4. $\varphi_2 = \dfrac{488{,}8}{2645} \approx 0{,}185$.
 5. Odgovor: vsebnost vlage ostane $3{,}0\,\mathrm{g/kg}$, relativna vlažnost pa pade na približno $18\,\%$. Na diagramu točka iz bližine obale navpično prečka pahljačo krivulj do skoraj $\varphi = 20\,\%$.
 
-### Primer 3: koliko vode za vlažilnik
+### Primer 3: vlažilnik in grelnik za kabino
 
-Ana želi v kabini $22\,^\circ\mathrm{C}$ in $\varphi = 40\,\%$. Ventilator dovaja $300\,\mathrm{m^3/h}$ zunanjega zraka iz primera 2 (gostota suhega zraka približno $1{,}2\,\mathrm{kg/m^3}$). Koliko vode na uro mora dodati parni vlažilnik?
+Ana želi v kabini $22\,^\circ\mathrm{C}$ in $\varphi = 40\,\%$. Ventilator dovaja $300\,\mathrm{m^3/h}$ zunanjega zraka iz primera 2 ($0\,^\circ\mathrm{C}$, $80\,\%$; gostota suhega zraka približno $1{,}2\,\mathrm{kg/m^3}$). Grelnik zrak najprej segreje na $22\,^\circ\mathrm{C}$, nato parni vlažilnik doda vodo; temperatura se pri vlaženju praktično ne spremeni. Koliko vode na uro mora dodati vlažilnik in kolikšna mora biti moč grelnika?
 
-**Podatki:** $t_2 = 22\,^\circ\mathrm{C}$, $\varphi_3 = 0{,}40$, $p_s(22\,^\circ\mathrm{C}) = 2645\,\mathrm{Pa}$, $x_1 = 3{,}02\,\mathrm{g/kg}$, $V = 300\,\mathrm{m^3/h}$, $\rho = 1{,}2\,\mathrm{kg/m^3}$, $p = 101\,325\,\mathrm{Pa}$
-**Iščemo:** masni tok vode $m_w$ v $\mathrm{kg/h}$
+**Podatki:** $t_1 = 0\,^\circ\mathrm{C}$, $t_2 = 22\,^\circ\mathrm{C}$, $\varphi_3 = 0{,}40$, $p_s(22\,^\circ\mathrm{C}) = 2645\,\mathrm{Pa}$, $x_1 = 3{,}02\,\mathrm{g/kg}$, $V = 300\,\mathrm{m^3/h}$, $\rho = 1{,}2\,\mathrm{kg/m^3}$, $p = 101\,325\,\mathrm{Pa}$
+**Iščemo:** masni tok vode $m_w$ v $\mathrm{kg/h}$ in moč grelnika $\dot Q$ v $\mathrm{kW}$
 
 :::formula
 $x_3 = 0{,}622\,\dfrac{\varphi_3 p_s}{p - \varphi_3 p_s}$, $\quad m_w = \rho V \,(x_3 - x_1)$
+$h = 1{,}005\,t + x\,(2501 + 1{,}86\,t)$, $\quad \dot Q = \rho V\,(h_2 - h_1)$
 :::
 
 **Rešitev:**
@@ -134,7 +153,10 @@ $x_3 = 0{,}622\,\dfrac{\varphi_3 p_s}{p - \varphi_3 p_s}$, $\quad m_w = \rho V \
 3. Vsak kilogram suhega zraka potrebuje $6{,}56 - 3{,}02 = 3{,}54$ grama vode. Na diagramu je to pot skoraj vodoravno desno od točke iz primera 2.
 4. Masni tok suhega zraka: $1{,}2 \cdot 300 = 360$ kilogramov na uro.
 5. $m_w = 360 \cdot 3{,}54 = 1274{,}4$ grama na uro.
-6. Odgovor: vlažilnik mora dodati približno $1{,}3\,\mathrm{kg}$ vode na uro, kar je več kot liter na uro vožnje.
+6. Grelnik vode ne doda, zato zanj velja $\dot Q = \rho V\,(h_2 - h_1)$ pri $x = x_1 = 0{,}00302$. Pred grelnikom: $h_1 = 1{,}005 \cdot 0 + 0{,}00302 \cdot 2501 \approx 7{,}55\,\mathrm{kJ/kg}$.
+7. Za grelnikom: $h_2 = 1{,}005 \cdot 22 + 0{,}00302 \cdot (2501 + 1{,}86 \cdot 22) \approx 22{,}11 + 7{,}68 = 29{,}79\,\mathrm{kJ/kg}$.
+8. $\dot Q = 360 \cdot (29{,}79 - 7{,}55) = 360 \cdot 22{,}24 \approx 8006\,\mathrm{kJ/h}$; deliš s $3600\,\mathrm{s/h}$ in dobiš $2{,}22\,\mathrm{kW}$.
+9. Odgovor: vlažilnik mora dodati približno $1{,}3\,\mathrm{kg}$ vode na uro, kar je več kot liter na uro vožnje, grelnik pa mora imeti moč približno $2{,}2\,\mathrm{kW}$.
 
 ### Primer 4: zdaj ti
 
@@ -175,6 +197,48 @@ $1058\,\mathrm{Pa} > 872\,\mathrm{Pa}$, zato se steklo orosi. Rosišče je med $
 - Mollierov ($h$–$x$) diagram: $x$ vodoravno, $t$ navpično, krivulje $\varphi$ in poševne črte $h$; segrevanje je navpična pot, vlaženje s paro skoraj vodoravna, mešanje ravna črta.
 - Za ugodje na delovnem mestu je primerna relativna vlažnost približno $40$ do $60\,\%$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- natančne definicije relativne vlažnosti ($\varphi = p_v/p_s(t)$ pri *isti* temperaturi), vsebnosti vlage ($x = m_v/m_z$), absolutne vlažnosti in rosišča ($p_s(t_r) = p_v$ pri stalnih $p$ in $x$);
+- izpeljavo $x = 0{,}622\,p_v/(p - p_v)$ iz Daltonovega zakona in plinske enačbe ter pogoje, pod katerimi velja (idealna plina, skupni tlak $p$);
+- entalpijo $h = 1{,}005\,t + x(2501 + 1{,}86\,t)$: pomen vsakega člena in referenčno stanje;
+- bilanci vode in energije za grelnik in vlažilnik ter dokaz, da mešanica leži na daljici med točkama tokov (pravilo vzvoda);
+- kako na Mollierovem diagramu potekajo segrevanje, ohlajanje pod rosišče, vlaženje in mešanje.
+
+### Naloga 1
+
+Klimatska naprava laboratorija zmeša zunanji zrak ($0\,^\circ\mathrm{C}$, $80\,\%$, $x_1 = 3{,}02\,\mathrm{g/kg}$, $h_1 = 7{,}55\,\mathrm{kJ/kg}$; masni tok suhega zraka $2000\,\mathrm{kg/h}$) z obtočnim zrakom iz laboratorija ($22\,^\circ\mathrm{C}$, $50\,\%$; masni tok suhega zraka $6000\,\mathrm{kg/h}$). Mešanico nato grelnik segreje na $22\,^\circ\mathrm{C}$. Tlak je $101\,325\,\mathrm{Pa}$, nasičene tlake vzemi iz tabele v razlagi. (a) Izračunaj $x$, $h$ in temperaturo mešanice. (b) Ali se v mešalni komori pojavi megla? (c) Kolikšna je moč grelnika in kolikšna relativna vlažnost zraka, ki gre v laboratorij?
+
+**Rešitev:**
+
+1. Obtočni zrak: $p_{v2} = 0{,}50 \cdot 2645 = 1322{,}5\,\mathrm{Pa}$ in $x_2 = 0{,}622 \cdot \dfrac{1322{,}5}{101\,325 - 1322{,}5} \approx 0{,}00823$, to je $8{,}23\,\mathrm{g/kg}$.
+2. $h_2 = 1{,}005 \cdot 22 + 0{,}00823 \cdot (2501 + 1{,}86 \cdot 22) \approx 22{,}11 + 20{,}92 = 43{,}03\,\mathrm{kJ/kg}$.
+3. Mešanje (bilanca vode): $x_M = \dfrac{2000 \cdot 3{,}02 + 6000 \cdot 8{,}23}{8000} = \dfrac{55\,420}{8000} \approx 6{,}93\,\mathrm{g/kg}$.
+4. Mešanje (bilanca energije): $h_M = \dfrac{2000 \cdot 7{,}55 + 6000 \cdot 43{,}03}{8000} = \dfrac{273\,280}{8000} = 34{,}16\,\mathrm{kJ/kg}$.
+5. Temperaturo dobiš, ko enačbo za $h$ razrešiš na $t$ in vstaviš $x_M = 0{,}00693\,\mathrm{kg/kg}$: $t_M = \dfrac{h_M - 2501\,x_M}{1{,}005 + 1{,}86\,x_M} = \dfrac{34{,}16 - 17{,}33}{1{,}0179} \approx 16{,}5\,^\circ\mathrm{C}$.
+6. Delni tlak pare v mešanici: iz $x = 0{,}622\,p_v/(p - p_v)$ sledi $p_v = \dfrac{x\,p}{0{,}622 + x} = \dfrac{0{,}00693 \cdot 101\,325}{0{,}62893} \approx 1116\,\mathrm{Pa}$.
+7. Ker je $p_s(10\,^\circ\mathrm{C}) = 1228\,\mathrm{Pa} > 1116\,\mathrm{Pa}$ in $p_s$ s temperaturo narašča, je rosišče pod $10\,^\circ\mathrm{C}$ (med $5$ in $10\,^\circ\mathrm{C}$), mešanica pa ima $16{,}5\,^\circ\mathrm{C}$. Megle ni.
+8. Za grelnikom: $h_4 = 1{,}005 \cdot 22 + 0{,}00693 \cdot (2501 + 1{,}86 \cdot 22) \approx 22{,}11 + 17{,}62 = 39{,}73\,\mathrm{kJ/kg}$.
+9. $\dot Q = 8000 \cdot (39{,}73 - 34{,}16) = 44\,560\,\mathrm{kJ/h}$, kar je $44\,560/3600 \approx 12{,}4\,\mathrm{kW}$.
+10. $\varphi_4 = \dfrac{1116}{2645} \approx 0{,}42$.
+11. Odgovor: mešanica ima $x \approx 6{,}93\,\mathrm{g/kg}$, $h \approx 34{,}2\,\mathrm{kJ/kg}$ in $t \approx 16{,}5\,^\circ\mathrm{C}$; megle ni, ker je rosišče pod $10\,^\circ\mathrm{C}$. Grelnik potrebuje približno $12{,}4\,\mathrm{kW}$, v laboratorij pa pride zrak z $22\,^\circ\mathrm{C}$ in $\varphi \approx 42\,\%$.
+
+### Naloga 2
+
+Natančno definiraj relativno vlažnost in vsebnost vlage ter navedi pogoje, pod katerimi velja $x = 0{,}622\,p_v/(p - p_v)$. Izpelji to zvezo. Nato utemelji, ali se pri segrevanju vlažnega zraka pri stalnem tlaku brez dodajanja vode spremenijo $x$, rosišče in $\varphi$.
+
+**Rešitev:**
+
+1. Naj ima vlažen zrak temperaturo $t$ in delni tlak pare $p_v$. Relativna vlažnost je $\varphi = p_v/p_s(t)$, kjer je $p_s(t)$ nasičeni parni tlak pri isti temperaturi. Vsebnost vlage je $x = m_v/m_z$, masa pare na maso suhega zraka.
+2. Pogoji: suh zrak in para sta idealna plina, ki zavzemata isto prostornino pri isti temperaturi, skupni tlak je $p = p_z + p_v$ (Daltonov zakon).
+3. Za vsak plin velja $m_i = p_i V M_i/(RT)$, zato $x = \dfrac{M_v}{M_z} \cdot \dfrac{p_v}{p_z} = \dfrac{18{,}02}{28{,}96} \cdot \dfrac{p_v}{p - p_v} \approx 0{,}622\,\dfrac{p_v}{p - p_v}$.
+4. Pri segrevanju brez dodajanja vode se $m_v$ in $m_z$ ne spremenita, zato je $x$ stalen.
+5. Iz zveze v koraku 3, razrešene na $p_v = x\,p/(0{,}622 + x)$, sledi: pri stalnih $x$ in $p$ je stalen tudi $p_v$. Rosišče je določeno s $p_s(t_r) = p_v$, zato se ne spremeni.
+6. $p_s(t)$ s temperaturo strogo narašča, $p_v$ pa je stalen, zato $\varphi = p_v/p_s(t)$ pada.
+7. Odgovor: $x$ in rosišče ostaneta enaka, $\varphi$ pade; na Mollierovem diagramu je to navpična pot navzgor.
+
 ## Drugače: Z analogijo
 
 Zrak je avtobus, molekule vodne pare so potniki.
@@ -187,13 +251,13 @@ Ko zunanji zrak segreješ, potnike iz kombija prestaviš v zgibni avtobus. Potni
 
 Analogija ima mejo: v zraku »sedeži« niso prava mesta. Para in zrak sta mešanica plinov, $p_s$ pa je lastnost vode pri tej temperaturi.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-- **Očala po vstopu v toplo.** Pozimi prideš z mraza v toplo kavarno in očala se orosijo. Mrzla stekla ohladijo topel vlažen zrak ob sebi pod rosišče.
-- **Ogledalo v kopalnici.** Prha da veliko pare, $x$ naraste, rosišče se dvigne nad temperaturo ogledala.
-- **Pločevinka iz hladilnika.** Poleti se orosi, ker ima okoli $5\,^\circ\mathrm{C}$, rosišče poletnega zraka pa je pogosto $15\,^\circ\mathrm{C}$ ali več.
-- **Suho grlo na letalu ali v ogrevani pisarni.** Zunanji mrzel zrak ima malo vode; segret ima zelo nizko $\varphi$.
-- **Perilo na balkonu.** Hitreje se suši v toplem, suhem in vetrovnem dnevu kot v hladni megli, kjer je $\varphi$ blizu $100\,\%$.
+- **Klimatizacija laboratorijev in čistih prostorov.** Klimatska naprava pozimi zrak segreje in navlaži, poleti ga ohladi pod rosišče, da izloči vodo, in nato dogreje. Moč grelnika, hladilnika in porabo vode projektant odčita kot razlike $h$ in $x$ na Mollierovem diagramu.
+- **Sušilniki v kemijski in živilski industriji.** Zrak se v grelniku segreje, $\varphi$ pade in zrak lahko prevzame vlago iz produkta. Ker vodo prevzame skoraj adiabatno, $h$ ostane približno stalna in iz razlike $x$ izračunaš, koliko zraka potrebuješ na kilogram izparjene vode.
+- **Izolacija hladnih cevi in opreme.** Cev s hladilno vodo, ki je hladnejša od rosišča zraka v hali, se orosi in korodira; izolacija mora imeti zunanjo površino nad rosiščem.
+- **Kondicioniranje vzorcev.** Higroskopne snovi, papir in polimere pred tehtanjem ali mehanskim preskusom hranijo v standardni atmosferi, na primer $23\,^\circ\mathrm{C}$ in $50\,\%$ (ISO 554), ker se njihova masa in lastnosti spreminjajo z vlago.
+- **Psihrometer.** Vlažnost merimo s suhim in mokrim termometrom; razlika temperatur je večja, kadar je $\varphi$ nižja.
 
 ## Preveri se
 
@@ -262,4 +326,12 @@ m_w | masni tok vode iz vlažilnika | m_w = \rho V (x_3 - x_1) | kg/h
 \rho | gostota suhega zraka | | kg/m^3
 V | prostorninski tok zraka | | m^3/h
 t_{\text{steklo}} | temperatura stekla | | °C
+p_z | delni tlak suhega zraka | p_z = p - p_v | Pa
+t_r | rosišče | p_s(t_r) = p_v | °C
+\dot Q | toplotni tok (moč grelnika) | \dot Q = \dot m_z (h_2 - h_1) | kW
+\dot m_z | masni tok suhega zraka | | kg/h
+x_M | vsebnost vlage mešanice | x_M = \dfrac{\dot m_1 x_1 + \dot m_2 x_2}{\dot m_1 + \dot m_2} | g/kg
+\dot m_1 | masni tok suhega zraka v toku 1 | | kg/h
+\dot m_2 | masni tok suhega zraka v toku 2 | | kg/h
+h_M | entalpija mešanice | h_M = \dfrac{\dot m_1 h_1 + \dot m_2 h_2}{\dot m_1 + \dot m_2} | kJ/kg
 :::

@@ -27,13 +27,25 @@ $$p = p_0 + \rho g h$$
 
 Ploščina se je pokrajšala. Tlak ni odvisen od tega, kako velik je bazen, ampak le od globine pod gladino in od gostote tekočine. Člen $\rho g h$ imenujemo **hidrostatični tlak**.
 
+**Osnovna enačba hidrostatike.** Naj tekočina miruje v homogenem težnostnem polju (os $z$ navpično navzgor). Potem velja
+
+$$\frac{\mathrm{d}p}{\mathrm{d}z} = -\rho g, \qquad \frac{\partial p}{\partial x} = \frac{\partial p}{\partial y} = 0.$$
+
+*Izpeljava.* Na kvader tekočine z dnom $\mathrm{d}A$ in višino $\mathrm{d}z$ delujejo tlačna sila od spodaj $p\,\mathrm{d}A$, od zgoraj $(p + \mathrm{d}p)\,\mathrm{d}A$ in teža $\rho g\,\mathrm{d}A\,\mathrm{d}z$. V mirovanju je vsota nič, po krajšanju z $\mathrm{d}A$ ostane $\mathrm{d}p = -\rho g\,\mathrm{d}z$; vodoravno teže ni, zato se tlak vodoravno ne spreminja. Če je $\rho$ stalna (nestisljiva tekočina), integracija od gladine s tlakom $p_0$ navzdol do globine $h$ da $p = p_0 + \rho g h$.
+
+*Posledica.* V povezani mirujoči tekočini iste gostote je tlak na isti višini povsod enak (vezne posode). Pri U-cevnem manometru z merilno tekočino gostote $\rho_\mathrm{m}$, priključenem na dve točki na isti višini v tekočini gostote $\rho$, od tod sledi $p_1 - p_2 = (\rho_\mathrm{m} - \rho)\,g\,\Delta h$, kjer je $\Delta h$ razlika gladin merilne tekočine.
+
 :::premisli
 Steklenica ima dno s ploščino $1\,\mathrm{m^2}$ in ozko grlo. Voda v njej sega do višine $5\,\mathrm{m}$, a je zaradi zožitve v njej le $1\,\mathrm{m^3}$ vode. Je sila vode na dno večja, manjša ali enaka teži te vode? Napovej, preden pogledaš.
 ---
 Večja, kar petkrat. Tlak na dnu je $\rho g h$ kot v jezeru, globokem $5\,\mathrm{m}$, zato je sila na dno $\rho g h A$, enaka teži stolpca $5\,\mathrm{m^3}$ vode. Razliko prevzamejo poševne stene: voda nanje pritiska pravokotno, torej deloma navzgor, stene pa vodo enako močno potiskajo navzdol. Šteje globina, ne količina vode.
 :::
 
-**3. Tlak deluje v vse smeri.** Tekočina v mirovanju ne prenaša strižnih sil (sil vzdolž ploskve), saj bi jo te takoj premaknile. Zato tlak v neki točki deluje enako na ploskev v vsaki legi in vedno pravokotno nanjo. Bobnič potapljača čuti enak tlak, ne glede na to, kako obrne glavo. Sprememba tlaka na gladini se prenese v vse točke tekočine (**Pascalov zakon**); na tem delujejo hidravlične stiskalnice.
+**3. Tlak deluje v vse smeri.** Tekočina v mirovanju ne prenaša strižnih sil (sil vzdolž ploskve), saj bi jo te takoj premaknile. Zato tlak v neki točki deluje enako na ploskev v vsaki legi in vedno pravokotno nanjo. Bobnič potapljača čuti enak tlak, ne glede na to, kako obrne glavo.
+
+*Dokaz.* Vzemimo majhno trikotno prizmo tekočine z vodoravno stranico $\mathrm{d}x$, navpično $\mathrm{d}z$ in poševno ploskvijo dolžine $\mathrm{d}s$ pod poljubnim kotom $\alpha$ proti vodoravnici; globina prizme je $\mathrm{d}y$, tlaki na ploskve so $p_x$, $p_z$, $p_s$. Ker je $\mathrm{d}s\sin\alpha = \mathrm{d}z$ in $\mathrm{d}s\cos\alpha = \mathrm{d}x$, da ravnovesje v smeri $x$: $p_x\,\mathrm{d}z\,\mathrm{d}y = p_s\,\mathrm{d}s\sin\alpha\,\mathrm{d}y$, torej $p_x = p_s$. V smeri $z$: $p_z\,\mathrm{d}x\,\mathrm{d}y = p_s\,\mathrm{d}s\cos\alpha\,\mathrm{d}y + \tfrac12\rho g\,\mathrm{d}x\,\mathrm{d}z\,\mathrm{d}y$, torej $p_z = p_s + \tfrac12\rho g\,\mathrm{d}z \to p_s$, ko prizmo skrčimo v točko. Ker je $\alpha$ poljuben, je tlak v točki neodvisen od smeri. $\square$
+
+Sprememba tlaka na gladini se prenese v vse točke tekočine (**Pascalov zakon**); na tem delujejo hidravlične stiskalnice.
 
 **4. Absolutni tlak in nadtlak.** Večina merilnikov meri razliko do okoliškega zraka: to je **nadtlak** $p_\mathrm{n} = p - p_0 = \rho g h$. **Absolutni tlak** $p$ šteje od vakuuma. Merilnik v pnevmatiki kolesa, ki kaže $4\,\mathrm{bar}$, pomeni okoli $5\,\mathrm{bar}$ absolutno. Enote: $1\,\mathrm{bar} = 10^5\,\mathrm{Pa}$. Pri vodi vsakih $10\,\mathrm{m}$ globine doda približno $1\,\mathrm{bar}$.
 
@@ -51,17 +63,25 @@ $$F = \rho g h_\mathrm{T} A,$$
 
 kjer je $h_\mathrm{T}$ globina težišča ploskve. Zračni tlak navadno ne šteje, ker deluje tudi z druge strani stene. Rezultanta prijemlje nekoliko globlje od težišča (v **središču tlaka**), ker spodnji del ploskve nosi večji tlak.
 
-**6. Vzgon.** Potopimo kocko z robom $a$. Sili tlaka na nasprotni stranski ploskvi se izničita. Spodnja ploskev je za $a$ globlje od zgornje, zato je tlak nanjo za $\rho g a$ večji. Razlika sil je
+*Izpeljava.* Naj bo ravna ploskev $A$ nagnjena pod kotom $\theta$ proti gladini; razdaljo $y$ merimo vzdolž ploskve od presečišča z gladino, globina je $h = y\sin\theta$. Vse sile $\rho g h\,\mathrm{d}A$ so pravokotne na ploskev, zato jih seštejemo kot števila: $F = \rho g \sin\theta \int_A y\,\mathrm{d}A = \rho g \sin\theta\, y_\mathrm{T} A = \rho g h_\mathrm{T} A$, ker je po definiciji težišča $\int_A y\,\mathrm{d}A = y_\mathrm{T} A$. Moment okoli presečišča z gladino: $F y_\mathrm{P} = \rho g \sin\theta \int_A y^2\,\mathrm{d}A = \rho g \sin\theta\,(I_\mathrm{T} + y_\mathrm{T}^2 A)$ po Steinerjevem izreku, kjer je $I_\mathrm{T}$ ploskovni vztrajnostni moment okoli vodoravne osi skozi težišče. Deljenje s $F$ da
 
-$$F_\mathrm{vz} = \rho g a \cdot a^2 = \rho g V.$$
-
-To je **vzgon**: enak je teži izpodrinjene tekočine (**Arhimedov zakon**). Velja za telo poljubne oblike, ker ga lahko razrežemo na tanke navpične stolpce. Vzgon je odvisen od gostote tekočine in prostornine potopljenega dela, ne od gostote telesa. Telo plava, če je njegova povprečna gostota manjša od gostote tekočine.
+$$y_\mathrm{P} = y_\mathrm{T} + \frac{I_\mathrm{T}}{y_\mathrm{T} A}.$$
 
 :::premisli
 Opazovalno okno, visoko $0{,}8\,\mathrm{m}$, v steni bazena prestavimo za $2\,\mathrm{m}$ globlje, tako da je njegov zgornji rob namesto na $2\,\mathrm{m}$ na $4\,\mathrm{m}$. Ali se sila vode na okno podvoji?
 ---
-Ne. Sila je sorazmerna z globino težišča, ne z globino zgornjega roba. Težišče premakne z $2{,}4\,\mathrm{m}$ na $4{,}4\,\mathrm{m}$, sila naraste za faktor $4{,}4/2{,}4 \approx 1{,}83$.
+Ne. Sila je sorazmerna z globino težišča, ne z globino zgornjega roba. Težišče se premakne z $2{,}4\,\mathrm{m}$ na $4{,}4\,\mathrm{m}$, sila naraste za faktor $4{,}4/2{,}4 \approx 1{,}83$.
 :::
+
+**6. Vzgon.** Potopimo kocko z robom $a$. Sili tlaka na nasprotni stranski ploskvi se izničita. Spodnja ploskev je za $a$ globlje od zgornje, zato je tlak nanjo za $\rho g a$ večji. Razlika sil je
+
+$$F_\mathrm{vz} = \rho g a \cdot a^2 = \rho g V.$$
+
+To je **vzgon**: enak je teži izpodrinjene tekočine (**Arhimedov zakon**). Natančno: naj bo telo s prostornino $V$ v mirujoči tekočini s stalno gostoto $\rho$ in naj tekočina obdaja vso njegovo površino. Potem je rezultanta tlačnih sil nanj navpično navzgor, $F_\mathrm{vz} = \rho g V$, in prijemlje v težišču izpodrinjene tekočine (**središče vzgona**).
+
+*Dokaz za poljubno obliko.* Telo v mislih zamenjamo s tekočino enake oblike. Ta miruje, zato rezultanta tlačnih sil nanjo uravnoteži njeno težo $\rho g V$ in poteka skozi njeno težišče. Tlak v točkah površine je odvisen le od njihove globine, ne od tega, kaj je znotraj, zato na telo deluje natanko ista rezultanta. (Enako sledi, če telo razrežemo na tanke navpične stolpce in za vsakega ponovimo račun s kocko.)
+
+Vzgon je odvisen od gostote tekočine in prostornine potopljenega dela, ne od gostote telesa. Telo plava, če je njegova povprečna gostota $\bar\rho$ manjša od gostote tekočine. Tedaj se potopi le toliko, da vzgon potopljenega dela uravnoteži težo: $\rho g V_\mathrm{pot} = \bar\rho g V$, torej $V_\mathrm{pot}/V = \bar\rho/\rho$.
 
 ## Rešeni primeri
 
@@ -103,13 +123,15 @@ $F = \rho g h_\mathrm{T} A$, $\quad h_\mathrm{T} = h_1 + \dfrac{a}{2}$, $\quad A
 
 ### Primer 3 (težji): vaterpolska žoga pod vodo
 
-Vaterpolska žoga ima premer $22\,\mathrm{cm}$ in maso $0{,}43\,\mathrm{kg}$. S kolikšno silo jo mora igralec držati, da ostane v celoti pod vodo in miruje?
+Vaterpolska žoga ima premer $22\,\mathrm{cm}$ in maso $0{,}43\,\mathrm{kg}$. (a) S kolikšno silo jo mora igralec držati, da ostane v celoti pod vodo in miruje? (b) Kolikšen del prostornine žoge je pod vodo, ko prosto plava? (c) Kolikšna je najmanjša masa svinčene uteži ($\rho_\mathrm{Pb} = 11\,340\,\mathrm{kg/m^3}$), ki jo moramo privezati na žogo, da ta brez roke ostane v celoti pod vodo?
 
-**Podatki:** $d = 22\,\mathrm{cm}$, $m = 0{,}43\,\mathrm{kg}$, $\rho = 1000\,\mathrm{kg/m^3}$, $g = 9{,}81\,\mathrm{m/s^2}$
-**Iščemo:** silo roke $F$
+**Podatki:** $d = 22\,\mathrm{cm}$, $m = 0{,}43\,\mathrm{kg}$, $\rho = 1000\,\mathrm{kg/m^3}$, $\rho_\mathrm{Pb} = 11\,340\,\mathrm{kg/m^3}$, $g = 9{,}81\,\mathrm{m/s^2}$
+**Iščemo:** silo roke $F$, delež potopljene prostornine $V_\mathrm{pot}/V$, maso uteži $m_\mathrm{Pb}$
 
 :::formula
 $V = \dfrac{4}{3}\pi r^3$, $\quad F_\mathrm{vz} = \rho g V$, $\quad F = F_\mathrm{vz} - m g$
+
+$\dfrac{V_\mathrm{pot}}{V} = \dfrac{m}{\rho V}$, $\quad (m + m_\mathrm{Pb})\,g = \rho g \left(V + \dfrac{m_\mathrm{Pb}}{\rho_\mathrm{Pb}}\right)$
 :::
 
 **Rešitev:**
@@ -119,7 +141,10 @@ $V = \dfrac{4}{3}\pi r^3$, $\quad F_\mathrm{vz} = \rho g V$, $\quad F = F_\mathr
 3. Vzgon: $F_\mathrm{vz} = 1000 \cdot 9{,}81 \cdot 5{,}575 \cdot 10^{-3}\,\mathrm{N} \approx 54{,}7\,\mathrm{N}$.
 4. Teža žoge: $0{,}43 \cdot 9{,}81 = 4{,}2183$, torej $4{,}22\,\mathrm{N}$.
 5. Žoga miruje, zato je vsota sil nič: roka potiska navzdol s $F = 54{,}7\,\mathrm{N} - 4{,}2\,\mathrm{N} \approx 50{,}5\,\mathrm{N}$.
-6. Odgovor: igralec mora žogo potiskati navzdol s silo okoli $50\,\mathrm{N}$, kot bi držal $5\,\mathrm{kg}$ uteži. Zato žoga po izpustu tako sunkovito skoči iz vode.
+6. Prosto plavajoča žoga: vzgon potopljenega dela je enak teži, $\rho V_\mathrm{pot} = m$, zato $\dfrac{V_\mathrm{pot}}{V} = \dfrac{0{,}43}{1000 \cdot 5{,}575 \cdot 10^{-3}} \approx 0{,}077$.
+7. Utež: na sistem žoga + utež deluje vzgon obeh teles, utež pa izpodrine $m_\mathrm{Pb}/\rho_\mathrm{Pb}$. Iz ravnovesja $m_\mathrm{Pb}\left(1 - \dfrac{\rho}{\rho_\mathrm{Pb}}\right) = \rho V - m = 5{,}575 - 0{,}43 = 5{,}145\,\mathrm{kg}$ (masa izpodrinjene vode je $\rho V = 5{,}575\,\mathrm{kg}$).
+8. $1 - \dfrac{1000}{11\,340} \approx 0{,}9118$, zato $m_\mathrm{Pb} = \dfrac{5{,}145\,\mathrm{kg}}{0{,}9118} \approx 5{,}64\,\mathrm{kg}$; pri manjši masi sistem splava.
+9. Odgovor: igralec mora žogo potiskati navzdol s silo okoli $50\,\mathrm{N}$, kot bi držal $5\,\mathrm{kg}$ uteži, zato žoga po izpustu tako sunkovito skoči iz vode. Prosto plavajoča žoga je le $7{,}7\,\%$ pod vodo. Svinčena utež mora imeti vsaj $5{,}64\,\mathrm{kg}$, več kot $50\,\mathrm{N}/g$, ker utež sama dobi nekaj vzgona.
 
 ### Primer 4: zdaj ti
 
@@ -160,35 +185,63 @@ $h = \dfrac{148\,700\,\mathrm{Pa}}{10\,055{,}25\,\mathrm{Pa/m}} \approx 14{,}8\,
 - Sila na ravno ploskev: $F = \rho g h_\mathrm{T} A$ z globino težišča $h_\mathrm{T}$; prijemališče je globlje od težišča.
 - Vzgon: $F_\mathrm{vz} = \rho g V$, teža izpodrinjene tekočine; telo plava, če je njegova povprečna gostota manjša od gostote tekočine.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo tlaka in dokaz, da je tlak v točki mirujoče tekočine neodvisen od smeri; Pascalov zakon;
+- osnovno enačbo hidrostatike $\mathrm{d}p/\mathrm{d}z = -\rho g$ s pogoji, njeno izpeljavo in integracijo v $p = p_0 + \rho g h$; enačbo U-cevnega manometra;
+- izpeljavo sile na ravno ploskev $F = \rho g h_\mathrm{T} A$ in lege središča tlaka $y_\mathrm{P} = y_\mathrm{T} + I_\mathrm{T}/(y_\mathrm{T} A)$;
+- Arhimedov zakon s pogoji, dokaz za poljubno obliko in pogoj za plavanje z deležem potopljene prostornine.
+
+### Naloga 1
+
+Pravokotna loputa v navpični steni rezervoarja z vodo je široka $1{,}5\,\mathrm{m}$ in visoka $2{,}0\,\mathrm{m}$. Vrtljiva je okoli vodoravnega tečaja ob zgornjem robu, ki je $1{,}0\,\mathrm{m}$ pod gladino; zaprto jo drži zapah ob spodnjem robu. Na zunanji strani je zrak. Izračunaj (a) silo vode na loputo, (b) globino središča tlaka, (c) silo v zapahu in (d) silo v tečaju. Gostota vode je $1000\,\mathrm{kg/m^3}$, $g = 9{,}81\,\mathrm{m/s^2}$.
+
+**Rešitev:**
+
+1. $A = 1{,}5 \cdot 2{,}0 = 3{,}0\,\mathrm{m^2}$; težišče je na polovici višine, $h_\mathrm{T} = 1{,}0 + 1{,}0 = 2{,}0\,\mathrm{m}$.
+2. $F = \rho g h_\mathrm{T} A = 1000 \cdot 9{,}81 \cdot 2{,}0 \cdot 3{,}0\,\mathrm{N} = 58\,860\,\mathrm{N}$; zračni tlak deluje z obeh strani in ne šteje.
+3. Pri navpični ploskvi je $y = h$. $I_\mathrm{T} = \dfrac{b a^3}{12} = \dfrac{1{,}5 \cdot 2{,}0^3}{12} = 1{,}0\,\mathrm{m^4}$.
+4. $h_\mathrm{P} = 2{,}0 + \dfrac{1{,}0}{2{,}0 \cdot 3{,}0}\,\mathrm{m} \approx 2{,}1667\,\mathrm{m}$, torej $16{,}7\,\mathrm{cm}$ pod težiščem.
+5. Ročica sile glede na tečaj: $2{,}1667 - 1{,}0 = 1{,}1667\,\mathrm{m}$; moment $M = 58\,860 \cdot 1{,}1667\,\mathrm{N\,m} \approx 68\,670\,\mathrm{N\,m}$.
+6. Zapah je $2{,}0\,\mathrm{m}$ od tečaja; ravnovesje momentov: $F_\mathrm{z} = \dfrac{68\,670}{2{,}0}\,\mathrm{N} \approx 34\,335\,\mathrm{N}$.
+7. Ravnovesje sil: $F_\mathrm{t} = 58\,860 - 34\,335 = 24\,525\,\mathrm{N}$.
+8. Odgovor: voda pritiska na loputo s $58{,}9\,\mathrm{kN}$, središče tlaka je na globini $2{,}17\,\mathrm{m}$, zapah nosi $34{,}3\,\mathrm{kN}$, tečaj $24{,}5\,\mathrm{kN}$. Če bi silo napačno postavili v težišče, bi zapahu pripisali le polovico, $29{,}4\,\mathrm{kN}$.
+
+### Naloga 2
+
+Natančno navedi Arhimedov zakon in ga dokaži za telo poljubne oblike. Utemelji, ali se vzgon na potopljeno trdno telo spreminja z globino in ali zakon velja za kvader, ki tesno nalega na dno posode, tako da pod njim ni vode.
+
+**Rešitev:**
+
+1. Trditev: telo s prostornino $V$, ki ga z vseh strani obdaja mirujoča tekočina s stalno gostoto $\rho$, čuti rezultanto tlačnih sil $F_\mathrm{vz} = \rho g V$ navpično navzgor, s prijemališčem v težišču izpodrinjene tekočine.
+2. Dokaz: telo zamenjamo s tekočino enake oblike. Ta je v ravnovesju, zato tlačne sile nanjo dajo silo $\rho g V$ navzgor skozi njeno težišče.
+3. Tlak na površini je odvisen le od globine, $p = p_0 + \rho g h$, ne od snovi znotraj, zato na telo deluje enaka rezultanta.
+4. Globina: če telo spustimo za $\Delta h$, se tlak na vseh točkah površine poveča za $\rho g\,\Delta h$. Enakomerno povečan tlak na zaprto ploskev da rezultanto nič, zato se vzgon nestisljivega telesa ne spremeni.
+5. Kvader na dnu: pogoj »tekočina obdaja vso površino« ni izpolnjen. Na spodnjo ploskev ne deluje tlak vode, na zgornjo pa $p_0 + \rho g h_\mathrm{zg}$, stranske sile se izničijo.
+6. Odgovor: vzgon je $\rho g V$ in je neodvisen od globine; za kvader, ki tesno nalega na dno, zakon ne velja: tekočina ga s silo $(p_0 + \rho g h_\mathrm{zg})A$ tišči navzdol, zato ga je težko odlepiti od dna.
+
 ## Drugače: Z analogijo
 
 Pomisli na človeško piramido navijačev na tribuni. Kdor stoji na vrhu, ne nosi nikogar. Vsaka vrsta niže nosi težo vseh nad seboj. Spodnja vrsta je najbolj obremenjena, in to ne glede na to, ali je piramida široka pet ali petdeset ljudi: vsak v spodnji vrsti nosi le ljudi nad seboj.
 
 Tekočina je kot taka piramida z dvema razlikama. Prvič, »obremenitev« v tekočini pritiska tudi vstran in navzgor, ne le navzdol, zato voda tišči na stene in od spodaj na žogo. Drugič, če nekdo potisne na vrh piramide (zračni tlak), se pritisk enako prenese do vseh vrst. Vzgon je potem le to, da spodnji del žoge stoji v »nižji vrsti« kot zgornji.
 
+## Drugače: Uporaba v stroki
+
+- **Merjenje nivoja.** Diferenčni tlačni pretvornik na dnu rezervoarja meri $\Delta p = \rho g h$, krmilnik izračuna $h = \Delta p/(\rho g)$. Če se gostota spremeni (temperatura, sestava), je odčitek napačen, zato ga kompenziramo ali gostoto merimo z drugim pretvornikom na znani višinski razliki.
+- **U-cevni manometer** na zaslonki v cevovodu meri padec tlaka, iz katerega izračunamo pretok; z vodo nad živim srebrom šteje razlika gostot $\rho_\mathrm{m} - \rho$.
+- **Rezervoarji in zapornice.** Tlak na steno raste z globino, zato so spodnji pasovi plašča velikih rezervoarjev debelejši, lopute pa dimenzioniramo na silo v središču tlaka.
+- **Areometer** plava v raztopini in potone toliko, da je $V_\mathrm{pot}/V = \bar\rho/\rho$; na skali beremo gostoto kislin, elektrolita ali sladkornih raztopin.
+
 ## Drugače: Bolj natančno
 
-**Diferencialna oblika.** Vzemimo kvader tekočine z dnom $\mathrm{d}A$ in višino $\mathrm{d}z$, os $z$ navzgor. Bilanca sil v mirovanju v smeri $z$:
+**Stisljiva tekočina.** Enačba $\mathrm{d}p/\mathrm{d}z = -\rho g$ velja tudi za plin, le da $\rho$ ni stalna. Za idealni plin je $\rho = pM/(RT)$; pri stalni temperaturi integracija da eksponentno upadanje tlaka z višino.
 
-$$p\,\mathrm{d}A - (p + \mathrm{d}p)\,\mathrm{d}A - \rho g\,\mathrm{d}A\,\mathrm{d}z = 0$$
+**Središče tlaka v številkah.** Za okno iz primera 2 ($\theta = 90^\circ$): $I_\mathrm{T} = \dfrac{b a^3}{12} = \dfrac{1{,}2 \cdot 0{,}8^3}{12} = 0{,}0512\,\mathrm{m^4}$, zato $y_\mathrm{P} = 2{,}4 + \dfrac{0{,}0512}{2{,}4 \cdot 0{,}96} \approx 2{,}422\,\mathrm{m}$. Prijemališče je $2{,}2\,\mathrm{cm}$ pod težiščem; z globino se razlika manjša, ker $y_\mathrm{T}$ v imenovalcu raste.
 
-Po krajšanju z $\mathrm{d}A$:
-
-$$\frac{\mathrm{d}p}{\mathrm{d}z} = -\rho g.$$
-
-V vodoravnih smereh dobimo $\partial p/\partial x = \partial p/\partial y = 0$: na enaki višini je tlak enak. Za nestisljivo tekočino integracija od gladine da $p = p_0 + \rho g h$. Za plin, kjer je $\rho = pM/(RT)$, pa pri stalni temperaturi dobimo eksponentno upadanje tlaka z višino.
-
-**Sila in središče tlaka.** Za ravno ploskev, nagnjeno pod kotom $\theta$ proti gladini, merimo razdaljo $y$ vzdolž ploskve od presečišča z gladino; globina je $h = y \sin\theta$. Potem
-
-$$F = \int_A \rho g y \sin\theta\,\mathrm{d}A = \rho g \sin\theta \, y_\mathrm{T} A = \rho g h_\mathrm{T} A.$$
-
-Iz ravnovesja momentov je prijemališče
-
-$$y_\mathrm{P} = y_\mathrm{T} + \frac{I_\mathrm{T}}{y_\mathrm{T} A},$$
-
-kjer je $I_\mathrm{T}$ ploskovni vztrajnostni moment okoli vodoravne osi skozi težišče. Za okno iz primera 2 ($\theta = 90^\circ$): $I_\mathrm{T} = \dfrac{b a^3}{12} = \dfrac{1{,}2 \cdot 0{,}8^3}{12} = 0{,}0512\,\mathrm{m^4}$, zato $y_\mathrm{P} = 2{,}4 + \dfrac{0{,}0512}{2{,}4 \cdot 0{,}96} \approx 2{,}422\,\mathrm{m}$. Prijemališče je $2{,}2\,\mathrm{cm}$ pod težiščem.
-
-**Vzgon za poljubno telo.** Rezultanta tlaka na zaprto ploskev $S$ je $\vec F = -\oint_S p\,\vec n\,\mathrm{d}S$. Po Gaussovem izreku je to $-\int_V \nabla p\,\mathrm{d}V = \rho g V\,\vec e_z$, saj je $\nabla p = -\rho g\,\vec e_z$. Vzgon prijemlje v težišču izpodrinjene tekočine (središču vzgona), kar določa stabilnost plavajočih teles.
+**Vzgon za poljubno telo.** Rezultanta tlaka na zaprto ploskev $S$ je $\vec F = -\oint_S p\,\vec n\,\mathrm{d}S$. Po Gaussovem izreku je to $-\int_V \nabla p\,\mathrm{d}V = \rho g V\,\vec e_z$, saj je $\nabla p = -\rho g\,\vec e_z$. Lega središča vzgona glede na težišče telesa določa stabilnost plavajočih teles.
 
 ## Preveri se
 
@@ -250,6 +303,14 @@ V | prostornina potopljenega telesa | | m^3 | za kroglo V = 4/3 π r³
 r | polmer žoge | | m
 m | masa telesa | | kg
 z | navpična koordinata (os navzgor) | | m
+x | vodoravna koordinata | | m
+\alpha | kot poševne ploskve prizme proti vodoravnici | | °
+\rho_\mathrm{m} | gostota merilne tekočine v manometru | | kg/m^3
+\Delta h | razlika gladin v U-cevi | | m | p_1 − p_2 = (ρ_m − ρ) g Δh
+\bar\rho | povprečna gostota telesa | | kg/m^3 | plava, če je manjša od ρ
+V_\mathrm{pot} | prostornina potopljenega dela | V_\mathrm{pot} = \dfrac{\bar\rho}{\rho} V | m^3
+m_\mathrm{Pb} | masa svinčene uteži | | kg
+\rho_\mathrm{Pb} | gostota svinca | | kg/m^3 | 11 340 kg/m³
 y | razdalja vzdolž ploskve od presečišča z gladino | | m
 \theta | naklonski kot ploskve proti gladini | | °
 y_\mathrm{T} | lega težišča ploskve, merjena vzdolž ploskve | | m

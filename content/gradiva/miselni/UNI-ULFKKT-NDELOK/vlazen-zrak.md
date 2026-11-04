@@ -16,7 +16,7 @@ stanje: osnutek
   - $0\,^\circ\mathrm{C}$, $80\,\%$ segret na $22\,^\circ\mathrm{C}$: $18\,\%$
 - Rosišče
   - $\varphi = 100\,\%$, para se kondenzira
-  - orošena šipa, očala, pločevinka
+  - orošena šipa, očala, megla
 - Mollierov diagram
   - $x$ vodoravno, $t$ navpično
   - krivulja $\varphi = 100\,\%$ je obala
