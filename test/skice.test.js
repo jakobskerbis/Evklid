@@ -651,3 +651,16 @@ test("presek stožca: pri τ = 90° ravnina vsebuje os (par premic), krivulja se
       }
   }
 });
+
+test("presek stožca: gumb Elipsa da zaprto elipso za vsak α", async () => {
+  const { nastavitev, krivulja, vrsta } = await import("../public/skice/presek-stozca.js");
+  for (let alfa = 15; alfa <= 60; alfa++) {
+    const e = nastavitev("Elipsa", alfa, { tau: 0, h: 1 });
+    assert.equal(vrsta(e.tau, alfa, e.h), "elipsa");
+    const o = krivulja(e.tau, alfa, e.h, { pol: 2.5 }).odseki;
+    assert.equal(o.length, 1, `α=${alfa}`);
+    assert.ok(Math.hypot(...o[0][0].map((x, k) => x - o[0][o[0].length - 1][k])) < 1e-9, `α=${alfa}: zaprta`);
+  }
+  // Začetno stanje skice (τ = 25°, h = 0,8, α = 30°) je zaprta elipsa.
+  assert.equal(krivulja(25, 30, 0.8, { pol: 2.5 }).odseki.length, 1);
+});

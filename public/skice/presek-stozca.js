@@ -28,7 +28,11 @@ export const izsrednost = (tau, alfa) => Math.sin(tau * RAD) / Math.cos(alfa * R
 export function nastavitev(ime, alfa, prej = { tau: 0, h: 1 }) {
   const meja = 90 - alfa, hh = Math.abs(prej.h) > 1e-9 ? prej.h : 1;
   if (ime === "Krožnica") return { tau: 0, h: hh };
-  if (ime === "Elipsa") return { tau: Math.round(meja / 2), h: hh };
+  if (ime === "Elipsa") {
+    // Ravnina naj seka cel plašč: daljno teme y = h·cos τ·cos α / cos(τ + α) ostane pod robom stožca.
+    const tau = Math.round(meja / 2), r = Math.PI / 180, najvec = (0.85 * VISINA * Math.cos((tau + alfa) * r)) / (Math.cos(tau * r) * Math.cos(alfa * r));
+    return { tau, h: Math.sign(hh) * Math.min(Math.abs(hh), Math.floor(najvec * 10) / 10) };
+  }
   if (ime === "Parabola") return { tau: meja, h: hh };
   if (ime === "Hiperbola") return { tau: Math.min(89, meja + Math.max(10, Math.round(alfa / 2))), h: hh };
   // Skozi vrh: h = 0, naklon ostane (točka, premica ali par premic).
@@ -100,7 +104,7 @@ export function krivulja(tau, alfa, hh, { n = 720, pol = 2.8 } = {}) {
 
 export default async function narisi(host, { potem } = {}) {
   const S = skica({ w: 300, h: 230, navodilo: "Povleci, da zavrtiš stožec.", oznaka: "Stožnice kot presek stožca z ravnino" });
-  let tau = 35, hh = 1, alfa = 30;
+  let tau = 25, hh = 0.8, alfa = 30; // zaprta elipsa
   // 3D platno namesto SVG.
   const oder = h("div", { class: "sk-3d" });
   S.svg.replaceWith(oder);
@@ -157,7 +161,6 @@ export default async function narisi(host, { potem } = {}) {
     S.cipi([
       { barva: "izbor", oznaka: `\\tau ${znak} 90^\\circ - \\alpha`, vrednost: `${st(tau, 0)}° ${znak} ${st(90 - alfa, 0)}°` },
       { barva: "glavna", oznaka: "e = \\frac{\\sin \\tau}{\\cos \\alpha}", vrednost: skoziVrh(tau, hh) ? "–" : vr(e, 3) },
-      { barva: "ploskev", oznaka: "\\text{presek}", vrednost: v },
     ]);
   }
 
@@ -197,7 +200,8 @@ export default async function narisi(host, { potem } = {}) {
   oder.prepend(platno);
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
-  const ZACETEK = new THREE.Vector3(4.6, 2.5, 5.6);
+  const ZACETEK = new THREE.Vector3(5.1, 2.8, 6.2);
+  const SREDINA = new THREE.Vector3(0, 0.3, 0); // pogled malo višje: vrh stožca ne pride pod gumbe v kotu
   camera.position.copy(ZACETEK);
   const controls = new OrbitControls(camera, platno);
   controls.enableZoom = false;
@@ -206,6 +210,21 @@ export default async function narisi(host, { potem } = {}) {
   controls.dampingFactor = 0.12;
   // Na telefonu navpični poteg še vedno pomika stran, vodoravni vrti stožec.
   platno.style.touchAction = "pan-y";
+  controls.target.copy(SREDINA);
+  // Prst: samo vodoravno vrtenje (navpični poteg pomika stran in ne sme nagniti pogleda).
+  let sprosti = null;
+  platno.addEventListener("pointerdown", (e) => {
+    if (e.pointerType !== "touch") return;
+    clearTimeout(sprosti);
+    controls.minPolarAngle = controls.maxPolarAngle = controls.getPolarAngle();
+  });
+  const odpusti = (e) => {
+    if (e.pointerType !== "touch") return;
+    clearTimeout(sprosti);
+    sprosti = setTimeout(() => ((controls.minPolarAngle = 0), (controls.maxPolarAngle = Math.PI)), 800); // po dušenju
+  };
+  platno.addEventListener("pointerup", odpusti);
+  platno.addEventListener("pointercancel", odpusti);
   platno.addEventListener("keydown", (e) => {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
     e.preventDefault();
@@ -220,7 +239,10 @@ export default async function narisi(host, { potem } = {}) {
   const rezStozca = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0);
   const stozec = new THREE.Group();
   scene.add(stozec);
+  // Dva materiala tvorilk (brez in z rezalno ravnino): ob prerezu se zamenja material, ne število ravnin v istem.
   const matTv = new THREE.LineBasicMaterial({ color: barva("pt"), transparent: true, opacity: 0.75 });
+  const matTvRez = new THREE.LineBasicMaterial({ color: barva("pt"), transparent: true, opacity: 0.75, clippingPlanes: [rezStozca] });
+  let tvorilke = null;
   function zgradiStozec() {
     for (const c of [...stozec.children]) (c.geometry.dispose(), stozec.remove(c));
     const ca = Math.cos(alfa * RAD), sa = Math.sin(alfa * RAD), T = VISINA / ca, N = 40, tocke = [];
@@ -235,7 +257,8 @@ export default async function narisi(host, { potem } = {}) {
         tocke.push(new THREE.Vector3(R * Math.cos(a), y, R * Math.sin(a)), new THREE.Vector3(R * Math.cos(b), y, R * Math.sin(b)));
       }
     }
-    stozec.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(tocke), matTv));
+    tvorilke = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(tocke), prerez ? matTvRez : matTv);
+    stozec.add(tvorilke);
     // Os stožca, tanko.
     stozec.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, -VISINA - 0.3, 0), new THREE.Vector3(0, VISINA + 0.3, 0)]), new THREE.LineBasicMaterial({ color: 0x8a8fa8, transparent: true, opacity: 0.5 })));
   }
@@ -261,7 +284,7 @@ export default async function narisi(host, { potem } = {}) {
     // Prerez: obdrži samo del stožca pod ravnino (−n·p + h·cos τ ≥ 0).
     rezStozca.normal.copy(n).negate();
     rezStozca.constant = hh * Math.cos(tau * RAD);
-    if ((matTv.clippingPlanes?.length || 0) !== (prerez ? 1 : 0)) (matTv.clippingPlanes = prerez ? [rezStozca] : []), (matTv.needsUpdate = true);
+    if (tvorilke) tvorilke.material = prerez ? matTvRez : matTv;
     for (const c of [...presek.children]) (c.geometry.dispose(), presek.remove(c));
     const { odseki, tocka } = krivulja(tau, alfa, hh, { pol: POL });
     for (const o of odseki) {
@@ -281,18 +304,22 @@ export default async function narisi(host, { potem } = {}) {
   // Predvajaj: ravnina se nagiba od 0° do 90° (krožnica → elipsa → parabola → hiperbola), 9 sekund.
   function predvajaj() {
     if (hh === 0) nastavi({ tau, h: 1 });
-    const t0 = performance.now(), od = 0;
+    const t0 = performance.now(), od = 0, meja = 90 - alfa;
+    // Manj gibanja (sistemska nastavitev): štirje koraki namesto zveznega nagibanja.
+    const koraki = matchMedia?.("(prefers-reduced-motion: reduce)").matches ? [0, Math.round(meja / 2), meja, Math.min(89, meja + 15)] : null;
     bPredvajaj.textContent = "❚❚";
     bPredvajaj.setAttribute("aria-label", "Ustavi predvajanje");
     tece = (t) => {
       // Do 89°: pri 90° bi ravnina vsebovala os (par premic skozi vrh), predvajanje pa naj konča pri hiperboli.
-      const v = Math.min(89, od + ((t - t0) / 9000) * 89);
+      const i = Math.floor((t - t0) / 1800);
+      if (koraki && i >= koraki.length) return ustavi();
+      const v = koraki ? koraki[i] : Math.min(89, od + ((t - t0) / 9000) * 89);
       if (Math.round(v) !== tau) {
         tau = Math.round(v);
         sTau.set(tau, true), sTau.pokazi();
         posodobi();
       }
-      if (v >= 89) ustavi();
+      if (!koraki && v >= 89) ustavi();
     };
   }
   function ustavi() {
@@ -303,7 +330,7 @@ export default async function narisi(host, { potem } = {}) {
   }
   function ponastavi() {
     camera.position.copy(ZACETEK);
-    controls.target.set(0, 0, 0);
+    controls.target.copy(SREDINA);
     controls.update();
     velikost(true);
   }
