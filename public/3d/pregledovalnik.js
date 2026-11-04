@@ -268,7 +268,7 @@ export function odpriModel(el, mod, opts = {}) {
           console.error("3D nadzor", c.id, err);
         }
         poSpremembi();
-        if (c.ponastaviPogled) kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7 });
+        if (c.ponastaviPogled) kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7, pokonci: true });
       };
       if (c.tip === "drsnik") {
         const lab = mk("label", "k3-drsnik");
@@ -390,7 +390,7 @@ export function odpriModel(el, mod, opts = {}) {
     } catch {}
     if (model?.group) kit?.scene.remove(model.group);
     if (!kit) {
-      kit = ustvariSceno(oder, { kakovost: opts.kakovost, oznaka: info.naslov, ponastavi: () => zgradiVse(true) });
+      kit = ustvariSceno(oder, { kakovost: opts.kakovost, oznaka: info.naslov, ponastavi: () => zgradiVse(true), prostoVrtenje: true });
       oder.append(orodja);
       // Barvne točke po 4 s mirovanja zbledijo (j, 4. 11.) in se vrnejo ob dotiku, premiku kamere, koleščku ali tipki;
       // izbrana točka ostane vidna. Velja na strani /3d in v lekcijah.
@@ -615,7 +615,7 @@ export function odpriModel(el, mod, opts = {}) {
     if (ponastavi || !opts.ohraniPogled) {
       kit.controls.minDistance = 0.4;
       kit.controls.maxDistance = 12;
-      const leti = () => kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: ponastavi ? 0.6 : 0 });
+      const leti = () => kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: ponastavi ? 0.6 : 0, pokonci: true });
       leti();
       // Postavitev »organ« spremeni višino odra šele ob naslednji postavitvi strani (ResizeObserver): kader ponovimo,
       // da organ pade v ožji zorni kot (pokončen telefon).

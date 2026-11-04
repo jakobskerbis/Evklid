@@ -24,13 +24,17 @@ Preizkusimo to na jekleni palici s premerom $10\,\mathrm{mm}$ in dolžino $1\,\m
 
 Mejo med obema primeroma imenujemo **kritična (uklonska) sila** $F_{kr}$. Pojav, ko se stisnjena palica izboči vstran, je **uklon**. O njem odloča togost, ne trdnost.
 
-**Eulerjeva formula.** Za palico, ki je na obeh koncih členkasto podprta (konca se lahko vrtita, ne moreta pa se premakniti vstran), velja
+**Definicija.** Ravna lega stisnjene palice je ravnovesna pri vsaki sili. **Kritična sila** $F_{kr}$ je najmanjša osna tlačna sila, pri kateri ima palica poleg ravne lege še sosednjo ukrivljeno ravnovesno lego (indiferentno ravnovesje, razcepišče ravnovesnih leg). Pri $F < F_{kr}$ je ravna lega stabilna, pri $F > F_{kr}$ labilna.
+
+**Eulerjev izrek.** Naj bo palica idealno ravna, iz homogenega linearno elastičnega materiala z modulom $E$, s stalnim presekom z najmanjšim vztrajnostnim momentom $I$ in dolžino $L$. Naj bo na obeh koncih členkasto podprta (konca se lahko vrtita, ne moreta pa se premakniti vstran), sila $F$ naj deluje točno v osi, odmiki naj bodo majhni. Potem ima palica ukrivljeno ravnovesno lego natanko pri silah $F_n = n^2 \pi^2 E I/L^2$, $n = 1, 2, \dots$, in kritična sila je
 
 $$F_{kr} = \frac{\pi^2 E I}{L^2}.$$
 
+*Izpeljava.* V ukrivljeni legi z majhnim odmikom $w(x)$ ima sila $F$ v prerezu $x$ ročico $w$, zato je upogibni moment $M = -F w$. Enačba upogibnice $EI\,w'' = M$ da $w'' + k^2 w = 0$ s $k^2 = F/(EI)$ in splošno rešitvijo $w = A \sin kx + B \cos kx$. Iz $w(0) = 0$ sledi $B = 0$, iz $w(L) = 0$ pa $A \sin kL = 0$. Ukrivljena lega pomeni $A \neq 0$, torej $\sin kL = 0$ in $kL = n\pi$. Iz $k^2 = F/(EI)$ dobimo $F_n = n^2\pi^2 EI/L^2$; najmanjša je pri $n = 1$. Amplituda $A$ ostane nedoločena: linearna teorija pove, pri kateri sili se palica izboči, ne pa, za koliko.
+
 Tu je $E$ modul elastičnosti, $I$ najmanjši vztrajnostni moment preseka (iz upogiba nosilcev: za poln krog $I = \pi d^4/64$) in $L$ dolžina palice.
 
-Za našo palico: $I = 490{,}87\,\mathrm{mm^4}$ in $F_{kr} \approx 969\,\mathrm{N}$. To je tisti »slabi kilonewton«.
+Za našo jekleno palico ($E = 200\,\mathrm{GPa}$): $I = 490{,}87\,\mathrm{mm^4}$ in $F_{kr} \approx 969\,\mathrm{N}$. To je tisti »slabi kilonewton«.
 
 :::premisli
 Palico podaljšaš na dvojno dolžino, vse drugo ostane enako. Kolikšna je nova kritična sila? Napovej, preden računaš.
@@ -51,7 +55,9 @@ Splošna oblika je
 
 $$F_{kr} = \frac{\pi^2 E I}{L_u^2}, \qquad L_u = \beta L.$$
 
-**Katera os.** Palica se vedno izboči tja, kjer je najšibkejša. Pri pravokotnem preseku $b \times h$ z $h < b$ je odločilen $I = b h^3/12$, z manjšo stranico na tretjo potenco.
+*Izpeljava za konzolo.* Os $x$ naj gre od vpetja navzgor, vrh se odmakne za $\delta$. V prerezu $x$ ima sila ročico $\delta - w$, zato $EI\,w'' = F(\delta - w)$ oziroma $w'' + k^2 w = k^2 \delta$. Rešitev, ki izpolni pogoja vpetja $w(0) = 0$ in $w'(0) = 0$, je $w = \delta(1 - \cos kx)$. Pogoj $w(L) = \delta$ da $\cos kL = 0$, najmanjša rešitev je $kL = \pi/2$. Zato $F_{kr} = \pi^2 EI/(4L^2) = \pi^2 EI/(2L)^2$ in $\beta = 2$.
+
+**Katera os.** Palica se vedno izboči tja, kjer je najšibkejša. Pri pravokotnem preseku $b \times h$ z $h < b$ je odločilen $I = b h^3/12$, z manjšo stranico na tretjo potenco. Če so podpore v obeh ravninah različne (npr. prečka prepreči izbočenje le v eni smeri), izračunamo $F_{kr}$ za vsako smer posebej, s pripadajočima $I$ in $L_u$; odloča manjša.
 
 :::premisli
 Ravnilo iz pleksi stekla, $30 \times 3\,\mathrm{mm}$, stisneš med dlanema. Zakaj se vedno izboči čez ploščato stran in kolikokrat manjša je kritična sila v tej smeri kot čez rob? Oceni, preden bereš naprej.
@@ -61,7 +67,9 @@ Ker je vztrajnostni moment okoli osi, vzporedne s široko stranjo, mnogo manjši
 
 **Kdaj Euler velja.** Formula predpostavlja, da je material ves čas elastičen. Kritična napetost je $\sigma_{kr} = F_{kr}/A = \pi^2 E/\lambda^2$, kjer je $\lambda = L_u/i$ **vitkost** in $i = \sqrt{I/A}$ vztrajnostni polmer (za poln krog $i = d/4$).
 
-Pri jeklu ($E = 200\,\mathrm{GPa}$, meja proporcionalnosti okoli $200\,\mathrm{MPa}$) je Euler zanesljiv za približno $\lambda \gtrsim 100$. Naša palica ima $\lambda = 1000/2{,}5 = 400$, je torej zelo vitka. Pri kratkih, debelih palicah odloča tlačna trdnost, Euler pa bi napovedal previsoko silo.
+*Izpeljava.* $\sigma_{kr} = \dfrac{\pi^2 E I}{A L_u^2} = \dfrac{\pi^2 E\, i^2}{L_u^2} = \dfrac{\pi^2 E}{\lambda^2}$. Euler velja, če je $\sigma_{kr} \le \sigma_P$ (meja proporcionalnosti), torej za $\lambda \ge \lambda_P = \pi\sqrt{E/\sigma_P}$ (**mejna vitkost**).
+
+Pri jeklu ($E = 200\,\mathrm{GPa}$, meja proporcionalnosti okoli $200\,\mathrm{MPa}$) je $\lambda_P = \pi\sqrt{1000} \approx 99{,}3$, Euler je torej zanesljiv za približno $\lambda \gtrsim 100$. Naša palica ima $\lambda = 1000/2{,}5 = 400$, je torej zelo vitka. Pri kratkih, debelih palicah odloča tlačna trdnost, Euler pa bi napovedal previsoko silo; tam uporabimo Tetmajerjevo enačbo ali uklonske krivulje po Evrokodu 3.
 
 ## Rešeni primeri
 
@@ -107,25 +115,27 @@ $I = \dfrac{\pi (D^4 - d^4)}{64}$, $\quad L_u = 2L$, $\quad F_{kr} = \dfrac{\pi^
 
 ### Primer 3 (težji): noga orkestrskega podesta
 
-Jeklena noga podesta za orkester je na obeh koncih členkasto pritrjena, dolga $800\,\mathrm{mm}$ in nosi $12\,\mathrm{kN}$. Zahtevamo varnost $3$ proti uklonu. Kolikšen premer polne okrogle palice potrebujemo? Ali Euler pri tem premeru velja?
+Jeklena noga podesta za orkester je na obeh koncih členkasto pritrjena, dolga $800\,\mathrm{mm}$ in nosi $12\,\mathrm{kN}$. Zahtevamo varnost $3$ proti uklonu. (a) Kolikšen premer polne okrogle palice potrebujemo? (b) Nogo želimo narediti iz cevi z razmerjem premerov $d/D = 0{,}75$. Kolikšen je najmanjši zunanji premer in koliko materiala prihranimo? (c) Ali Euler v obeh primerih velja, če je meja proporcionalnosti $200\,\mathrm{MPa}$?
 
-**Podatki:** $L = 800\,\mathrm{mm}$, $\beta = 1$, $F = 12\,000\,\mathrm{N}$, $n = 3$, $E = 200\,000\,\mathrm{MPa}$
-**Iščemo:** najmanjši premer $d$ in vitkost $\lambda$
+**Podatki:** $L = 800\,\mathrm{mm}$, $\beta = 1$, $F = 12\,000\,\mathrm{N}$, $n = 3$, $E = 200\,000\,\mathrm{MPa}$, $d/D = 0{,}75$, $\sigma_P = 200\,\mathrm{MPa}$
+**Iščemo:** najmanjši premer polne palice $d_p$, najmanjši $D$ cevi, razmerje ploščin, vitkosti $\lambda$
 
 :::formula
-$F_{kr} = n F$, $\quad I_{\text{potr}} = \dfrac{F_{kr} L^2}{\pi^2 E}$
+$F_{kr} = n F$, $\quad I_{\text{potr}} = \dfrac{F_{kr} L^2}{\pi^2 E}$, $\quad d_p = \sqrt[4]{\dfrac{64\, I_{\text{potr}}}{\pi}}$
 
-$d = \sqrt[4]{\dfrac{64\, I_{\text{potr}}}{\pi}}$, $\quad \lambda = \dfrac{L_u}{d/4}$
+cev: $I = \dfrac{\pi D^4 (1 - 0{,}75^4)}{64}$, $\quad i = \dfrac{\sqrt{D^2 + d^2}}{4}$, $\quad \lambda = \dfrac{L_u}{i}$, $\quad \lambda_P = \pi\sqrt{\dfrac{E}{\sigma_P}}$
 :::
 
 **Rešitev:**
 
 1. Potrebna kritična sila: $F_{kr} = 3 \cdot 12\,000 = 36\,000\,\mathrm{N}$.
-2. Eulerjevo formulo obrnemo na $I$: $I_{\text{potr}} = \dfrac{36\,000 \cdot 800^2}{\pi^2 \cdot 200\,000}\,\mathrm{mm^4} \approx 11\,672\,\mathrm{mm^4}$.
-3. Iz $I = \pi d^4/64$: $d = \sqrt[4]{64 \cdot 11\,672/\pi}\,\mathrm{mm} \approx 22{,}1\,\mathrm{mm}$.
-4. Izberemo standardno palico $d = 24\,\mathrm{mm}$ (z $22\,\mathrm{mm}$ bi bila varnost pod $3$). Zanjo je $I \approx 16\,286\,\mathrm{mm^4}$ in $F_{kr} \approx 50{,}2\,\mathrm{kN}$, varnost $\approx 4{,}2$.
-5. Vitkost: $i = 24/4 = 6\,\mathrm{mm}$, $\lambda = 800/6 \approx 133$. To je nad $100$, zato je Euler upravičen.
-6. Odgovor: potrebujemo palico s premerom vsaj $22{,}1\,\mathrm{mm}$; vzamemo $24\,\mathrm{mm}$.
+2. Eulerjevo formulo obrnemo na $I$: $I_{\text{potr}} = \dfrac{36\,000 \cdot 800^2}{\pi^2 \cdot 200\,000}\,\mathrm{mm^4} \approx 11\,672\,\mathrm{mm^4}$. Ta zahteva velja za oba preseka, ker sta $L_u$ in $E$ enaka.
+3. Polna palica, iz $I = \pi d^4/64$: $d_p = \sqrt[4]{64 \cdot 11\,672/\pi}\,\mathrm{mm} \approx 22{,}1\,\mathrm{mm}$. (Standardna palica $24\,\mathrm{mm}$ bi imela $I \approx 16\,286\,\mathrm{mm^4}$ in $F_{kr} \approx 50{,}2\,\mathrm{kN}$.)
+4. Cev potrebuje isti $I$: $D^4 (1 - 0{,}75^4) = d_p^4$. Ker je $1 - 0{,}75^4 \approx 0{,}6836$, je $D = d_p/\sqrt[4]{0{,}6836} \approx 22{,}08/0{,}9093\,\mathrm{mm} \approx 24{,}3\,\mathrm{mm}$ in $d \approx 18{,}2\,\mathrm{mm}$. Isti $I$ dobimo z malo večjim zunanjim premerom, ker je material daleč od osi.
+5. Ploščini: polna $A = \pi \cdot 22{,}08^2/4\,\mathrm{mm^2} \approx 383\,\mathrm{mm^2}$, cev $A = \pi \cdot 24{,}29^2 \cdot (1 - 0{,}75^2)/4\,\mathrm{mm^2} \approx 203\,\mathrm{mm^2}$. Razmerje $\approx 0{,}53$: cev porabi okoli $47\,\%$ manj jekla.
+6. Mejna vitkost: $\lambda_P = \pi\sqrt{200\,000/200} \approx 99{,}3$.
+7. Polna palica: $i = 22{,}08/4 \approx 5{,}52\,\mathrm{mm}$, $\lambda \approx 800/5{,}52 \approx 145 > 99{,}3$. Cev: $i = 24{,}29 \cdot \sqrt{1 + 0{,}75^2}/4 \approx 7{,}59\,\mathrm{mm}$, $\lambda \approx 105 > 99{,}3$. Euler velja v obeh primerih, pri cevi že blizu meje.
+8. Odgovor: polna palica potrebuje premer vsaj $22{,}1\,\mathrm{mm}$, cev zunanji premer vsaj $24{,}3\,\mathrm{mm}$ (notranji $18{,}2\,\mathrm{mm}$) in prihrani skoraj polovico materiala; Eulerjeva formula je v obeh primerih upravičena.
 
 ### Primer 4: zdaj ti (ost violončela)
 
@@ -168,11 +178,52 @@ $F_{kr} = \dfrac{\pi^2 \cdot 200\,000 \cdot 201{,}06}{245^2}\,\mathrm{N} \approx
 - Euler velja v elastičnem območju; pri jeklu za vitkost $\lambda = L_u/i \gtrsim 100$, $i = \sqrt{I/A}$.
 - Računaj v $\mathrm{N}$, $\mathrm{mm}$, $\mathrm{MPa}$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo kritične sile kot najmanjše sile, pri kateri obstaja sosednja ukrivljena ravnovesna lega, in razliko med uklonom in porušitvijo zaradi tlačne trdnosti;
+- Eulerjev izrek z vsemi predpostavkami (ravna palica, linearno elastičen homogen material, stalen presek, sila v osi, majhni odmiki, podpore) in izpeljavo za členkasto palico iz $EI\,w'' = -Fw$;
+- uklonsko dolžino za štiri Eulerjeve primere in izpeljavo $\beta = 2$ za konzolo;
+- zakaj šteje najmanjši vztrajnostni moment preseka in kako pri različnih podporah v dveh ravninah preveriš obe smeri;
+- vitkost, vztrajnostni polmer, izpeljavo $\sigma_{kr} = \pi^2 E/\lambda^2$ in mejne vitkosti $\lambda_P = \pi\sqrt{E/\sigma_P}$ ter kdaj Euler ne velja.
+
+### Naloga 1
+
+Navpična lesena opornica odrske konstrukcije je dolga $3\,\mathrm{m}$, ima pravokoten presek $b \times h$ in je na obeh koncih členkasto podprta. Upogib okoli šibke osi (izbočenje v smeri stranice $b$) dodatno preprečuje vodoravna prečka na polovici višine, upogiba okoli močne osi pa ne. Opornica nosi $10\,\mathrm{kN}$, zahtevana varnost proti uklonu je $3$, modul lesa je $E = 11\,000\,\mathrm{MPa}$. (a) Pri katerem razmerju $h/b$ je presek enako varen v obeh smereh? (b) Kolikšna sta najmanjša $b$ in $h$ pri tem razmerju? (c) Ali Euler velja, če je za les mejna vitkost okoli $100$? (d) Kolikšna je varnost, če vzamemo letev $45 \times 90\,\mathrm{mm}$?
+
+**Rešitev:**
+
+1. Močna os: $I = b h^3/12$, $L_u = L = 3000\,\mathrm{mm}$. Šibka os: $I = h b^3/12$, prečka razpolovi uklonsko dolžino, $L_u = L/2 = 1500\,\mathrm{mm}$.
+2. Enaka varnost pomeni enaki kritični sili, kar da enačbo $\dfrac{b h^3}{12 L^2} = \dfrac{h b^3}{12 (L/2)^2}$, torej $h^2 = 4 b^2$ in $h = 2b$.
+3. Potrebna kritična sila: $F_{kr} = 3 \cdot 10\,000 = 30\,000\,\mathrm{N}$.
+4. Pri $h = 2b$ je $I = b (2b)^3/12 = 2b^4/3$. Iz $F_{kr} = \pi^2 E I/L^2$: $b^4 = \dfrac{3 F_{kr} L^2}{2 \pi^2 E} = \dfrac{3 \cdot 30\,000 \cdot 3000^2}{2 \pi^2 \cdot 11\,000}\,\mathrm{mm^4} \approx 3{,}73 \cdot 10^6\,\mathrm{mm^4}$.
+5. $b \approx 43{,}9\,\mathrm{mm}$ in $h \approx 87{,}9\,\mathrm{mm}$.
+6. Vitkost okoli močne osi: $i = h/\sqrt{12} \approx 25{,}4\,\mathrm{mm}$, $\lambda = 3000/25{,}4 \approx 118$. Okoli šibke osi: $i = b/\sqrt{12}$, $L_u = 1500\,\mathrm{mm}$, kar da isto vitkost $\approx 118$. Ker je $118 > 100$, Euler velja.
+7. Letev $45 \times 90\,\mathrm{mm}$: v obeh smereh je $F_{kr} = \dfrac{\pi^2 \cdot 11\,000 \cdot 45 \cdot 90^3}{12 \cdot 3000^2}\,\mathrm{N} \approx 32{,}98\,\mathrm{kN}$, varnost $\approx 32{,}98/10 \approx 3{,}3$.
+8. Odgovor: optimalno razmerje je $h/b = 2$; potrebujemo vsaj $b \approx 44\,\mathrm{mm}$ in $h \approx 88\,\mathrm{mm}$; vitkost $118$ dovoljuje Eulerja; letev $45 \times 90\,\mathrm{mm}$ ima varnost okoli $3{,}3$.
+
+### Naloga 2
+
+Natančno navedi predpostavke Eulerjevega izreka. Izpelji kritično silo konzole (spodaj vpeta, zgoraj prosta palica) in utemelji, zakaj je $\beta = 2$. Izpelji mejno vitkost $\lambda_P$. Utemelji, ali Euler velja za jekleno konzolo s premerom $30\,\mathrm{mm}$ in dolžino $600\,\mathrm{mm}$ ($E = 200\,\mathrm{GPa}$, $\sigma_P = 200\,\mathrm{MPa}$), in izračunaj njeno kritično silo.
+
+**Rešitev:**
+
+1. Predpostavke: idealno ravna palica s stalnim presekom, homogen linearno elastičen material, tlačna sila točno v osi, majhni odmiki (velja $EI\,w'' = M$), napetost do izbočenja pod mejo proporcionalnosti.
+2. Konzola: os $x$ od vpetja, vrh se odmakne za $\delta$. Moment v prerezu $x$ je $F(\delta - w)$, zato $w'' + k^2 w = k^2\delta$, $k^2 = F/(EI)$.
+3. Splošna rešitev je $w = A \sin kx + B \cos kx + \delta$. Iz $w'(0) = 0$ sledi $A = 0$, iz $w(0) = 0$ pa $B = -\delta$, torej $w = \delta(1 - \cos kx)$.
+4. Na vrhu $w(L) = \delta$ da $\delta \cos kL = 0$. Za $\delta \neq 0$ je $\cos kL = 0$, najmanjša rešitev $kL = \pi/2$.
+5. $F_{kr} = k^2 EI = \dfrac{\pi^2 EI}{4L^2} = \dfrac{\pi^2 EI}{(2L)^2}$, zato $L_u = 2L$ in $\beta = 2$. Oblika je četrt sinusnega vala, polovica loka členkaste palice dolžine $2L$.
+6. Mejna vitkost: $\sigma_{kr} = F_{kr}/A = \pi^2 E i^2/L_u^2 = \pi^2 E/\lambda^2$. Pogoj $\sigma_{kr} \le \sigma_P$ da $\lambda \ge \lambda_P = \pi\sqrt{E/\sigma_P} = \pi\sqrt{1000} \approx 99{,}3$.
+7. Konzola: $L_u = 1200\,\mathrm{mm}$, $i = 30/4 = 7{,}5\,\mathrm{mm}$, $\lambda = 1200/7{,}5 = 160 > 99{,}3$, zato Euler velja.
+8. $I = \pi \cdot 30^4/64\,\mathrm{mm^4} \approx 39\,761\,\mathrm{mm^4}$, $F_{kr} = \dfrac{\pi^2 \cdot 200\,000 \cdot 39\,761}{1200^2}\,\mathrm{N} \approx 54{,}5\,\mathrm{kN}$.
+9. Odgovor: konzola ima $\beta = 2$; Euler zanjo velja ($\lambda = 160$), kritična sila je približno $54{,}5\,\mathrm{kN}$.
+
 ## Drugače: Kot zgodba
 
 Bobnar čaka na začetek koncerta in se z eno palico opre ob tla. Palica je kratka in debela, ne zgane se. Potem vzame dolgo tanko paličico za triangel in se nanjo opre enako. Paličica se ukloni v lok, čeprav je iz jekla.
 
-Kaj se je spremenilo? Ne material. Paličica je daljša in tanjša. Pri vsakem majhnem odmiku vstran ima njegova roka ročico, ki jo upogiba naprej. Kratka palica se temu upre, tanka ne.
+Kaj se je spremenilo? Ne material. Paličica je daljša in tanjša. Pri vsakem majhnem odmiku vstran dobi sila njegove roke ročico in paličico upogiba naprej. Kratka palica se temu upre, tanka ne.
 
 Bobnar paličico prime še na sredini z drugo roko, da se ne more odmakniti. Zdaj se mora izbočiti v dva krajša loka. Vsak lok je pol tako dolg, zato zdrži štirikrat več. Tako delujejo prečne opore v visokih odrskih stolpih.
 
@@ -189,13 +240,18 @@ Postopek pri vsaki stisnjeni palici:
 
 Primer s številkami: jeklena palica $d = 20\,\mathrm{mm}$, $L = 2\,\mathrm{m}$, oba členka. $I \approx 7854\,\mathrm{mm^4}$, $L_u = 2000\,\mathrm{mm}$, $F_{kr} \approx 3876\,\mathrm{N}$, $\lambda = 2000/5 = 400$.
 
+## Drugače: Uporaba v stroki
+
+- **Hidravlični in pnevmatski valji.** Batnica je pri polnem izvleku vitka stisnjena palica; glede na pritrditev valja (vpeto, členkasto) izberemo $\beta$ in preverimo uklon. Proizvajalci zato za vsak premer batnice podajo največji hod pri dani sili.
+- **Jeklene konstrukcije.** Stebre ploščadi in cevnih mostov ter tlačne palice paličij dimenzioniramo po SIST EN 1993-1-1 (Evrokod 3) z uklonskimi krivuljami, ki upoštevajo začetne nepopolnosti in zaostale napetosti.
+- **Noge posod in rezervoarjev.** Pokončna posoda na nogah obremeni vsako nogo z delom teže polne posode; nogo preverimo na uklon kot palico z ustreznimi podporami, pogosto s prečnimi povezji, ki skrajšajo uklonsko dolžino.
+- **Vretena.** Navojna vretena stiskalnic in dvigal preverimo na uklon pri največjem izvleku, ko je prosti del najdaljši.
+
 ## Drugače: Bolj natančno
 
-Za členkasto palico z majhnim odmikom $w(x)$ je upogibni moment $M = -F w$. Diferencialna enačba upogibnice $EI\,w'' = M$ da
+**Višje oblike.** Rešitve $kL = n\pi$ iz Razlage z $n \ge 2$ dajo sile $F_n = n^2 F_{kr}$ in oblike z $n$ loki. Palica jih doseže le, če nižje oblike preprečimo: prečka na sredini prepove obliko $n = 1$, zato je nosilnost $F_2 = 4F_{kr}$.
 
-$$w'' + k^2 w = 0, \qquad k^2 = \frac{F}{EI}.$$
-
-Rešitev je $w = C \sin kx$ (iz $w(0) = 0$). Pogoj $w(L) = 0$ zahteva $\sin kL = 0$, torej $kL = m\pi$. Najmanjša netrivialna rešitev $m = 1$ da $F_{kr} = \pi^2 EI/L^2$. Pri tej sili je ravna lega le še ena od možnih ravnovesnih leg.
+**Nepopolna palica.** Resnična palica ima začetno ukrivljenost. Če ima začetno obliko $w_0 \sin(\pi x/L)$, ima rešitev enačbe $EI\,\bigl(w - w_0 \sin(\pi x/L)\bigr)'' = -Fw$ obliko $w = \dfrac{w_0}{1 - F/F_{kr}} \sin(\pi x/L)$. Odmik raste že pod kritično silo in pri $F \to F_{kr}$ narašča čez vse meje. Zato standardi zahtevajo varnost in upoštevajo nepopolnosti z uklonskimi krivuljami.
 
 Povezava z zvokom: za členkasto palico pod tlačno silo $F$ velja za osnovno lastno frekvenco upogibnega nihanja $f^2 = f_0^2 (1 - F/F_{kr})$. Ko se sila približuje kritični, ton palice pada proti nič. Na tem temelji preizkus, ki kritično silo oceni iz meritve frekvence brez porušitve.
 
@@ -229,7 +285,7 @@ Povezava z zvokom: za členkasto palico pod tlačno silo $F$ velja za osnovno la
 + Poveča se šestnajstkrat.
 > $I = \pi d^4/64$, zato $2^4 = 16$. Zato je pri uklonu debelina tako učinkovita.
 
-? Študent računa konzolno stojalo ($L = 1\,\mathrm{m}$, spodaj vpeto, zgoraj prosto). Kateri korak je napačen? (1) $I = \pi d^4/64$; (2) $L_u = 0{,}5 \cdot 1000\,\mathrm{mm}$, ker je en konec vpet; (3) $F_{kr} = \pi^2 E I/L_u^2$; (4) $n = F_{kr}/F$.
+? Sošolka preverja konzolno stojalo ($L = 1\,\mathrm{m}$, spodaj vpeto, zgoraj prosto) v štirih korakih. Kje se je zmotila? (1) $I = \pi d^4/64$; (2) $L_u = 0{,}5 \cdot 1000\,\mathrm{mm}$, ker je en konec vpet; (3) $F_{kr} = \pi^2 E I/L_u^2$; (4) $n = F_{kr}/F$.
 - Korak (1)
 ~ Za poln krog je $I = \pi d^4/64$ pravilen.
 + Korak (2)
@@ -264,4 +320,9 @@ I_{\text{potr}} | potrebni vztrajnostni moment | I_{\text{potr}} = \dfrac{F_{kr}
 \lambda | vitkost palice | \lambda = \dfrac{L_u}{i} | – | Euler velja pri jeklu za λ ≳ 100
 i | vztrajnostni polmer preseka | i = \sqrt{\frac{I}{A}} | m | za poln krog i = d/4
 A | ploščina prečnega prereza | | m^2 |
+\sigma_{kr} | kritična napetost | \sigma_{kr} = \frac{\pi^2 E}{\lambda^2} | Pa |
+\sigma_P | meja proporcionalnosti | | Pa | jeklo ≈ 200 MPa
+\lambda_P | mejna vitkost | \lambda_P = \pi\sqrt{\frac{E}{\sigma_P}} | – | jeklo ≈ 99
+\delta | odmik prostega konca konzole | | m |
+w_0 | začetna ukrivljenost palice | | m |
 :::

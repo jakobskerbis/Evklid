@@ -168,7 +168,7 @@ async function newPage(browser, phone, label, base) {
 }
 
 // V strani: id zadnje prikazane naloge (za pravilen/napačen odgovor iz baze) in pospešena ura iger
-// (window.__fastGames: vsak okvir izriše 10 korakov po 50 ms, da se igra konča v nekaj sekundah).
+// (window.__fastGames: vsak okvir izriše 10 korakov po 50 ms, core.js pa čas igre še pospeši 8×, da se igra konča tudi na počasnem stroju).
 function PAGE_HOOKS() {
   // Neobravnavane zavrnitve aplikacija pokaže le kot obvestilo; tukaj jih zabeležimo kot napako.
   addEventListener("unhandledrejection", (e) => console.error(`neobravnavana zavrnitev: ${e.reason?.message || e.reason}`));
@@ -575,6 +575,23 @@ async function chat(p, label) {
   await p.waitForFunction(() => !document.querySelector("#send")?.disabled, null, { timeout: 8000 }).catch(() => {});
   await settle(p, 300);
   await screen(p, `klepet-${label}`);
+  // Ulomki, vsote in integrali s tipk (j, 4. 11.): predogled nad poljem jih izriše kot formulo.
+  await p.fill("#input", "Koliko je (3)/(4) + ∑_(n=1)^(5) n in ∫_(0)^(1) (x^(2)) dx?");
+  await expectVisible(p, "#formula-preview .katex .mfrac", "predogled ulomka nad poljem");
+  if (!(await p.locator("#formula-preview .katex .mop").count())) throw new Error("vsota ali integral nista izrisana v predogledu");
+  await screen(p, `klepet-formule-${label}`);
+  await p.fill("#input", "");
+  await p.waitForFunction(() => document.querySelector("#formula-preview")?.hidden, null, { timeout: 3000 }).catch(() => {
+    throw new Error("predogled ostane po praznjenju polja");
+  });
+  // Način v glavi se zamenja kar tam (j, 4. 11.): »Celotna rešitev«, nato nazaj na »Vodenje«.
+  for (const want of ["Celotna rešitev", "Vodenje"]) {
+    await click(p, '#chat-state .chip-pick:has(select[data-pick="mode"]) .dd-btn', { wait: 200 });
+    if (want !== "Vodenje") await screen(p, `klepet-glava-izbira-${label}`);
+    await click(p, `.dd-list .dd-opt:has-text("${want}")`, { wait: 400 });
+    const shown = await p.locator('#chat-state .chip-pick:has(select[data-pick="mode"]) .dd-label').textContent();
+    if (shown.trim() !== want) throw new Error(`način v glavi ni »${want}«, ampak »${shown}«`);
+  }
   const n = await p.locator("#conversation-list li").count();
   if (!n) throw new Error("pogovor ni na seznamu");
   // Gumbi z izbirami (<<IZBIRE [...]>>): pod zadnjim odgovorom, tap pošlje odgovor, gumbi izginejo.
@@ -943,7 +960,7 @@ async function games(p, label) {
   await click(p, ".gm-play [data-act=play]", { wait: 200 });
   // Do konca igre: brez odgovorov se čas za nalogo izteče in igra porabi vsa življenja.
   const over = () => p.locator(".gm-end").isVisible();
-  for (let i = 0; i < 60 && !(await over()); i++) await p.waitForTimeout(250);
+  for (let i = 0; i < 240 && !(await over()); i++) await p.waitForTimeout(250); // do 60 s (počasen stroj, igra brez časovne meje)
   await p.evaluate(() => (window.__fastGames = false));
   if (!(await over())) throw new Error("igra se ni končala (brez odgovorov bi morala izgubiti vsa življenja)");
   await settle(p, 400);

@@ -23,10 +23,11 @@ import { loadLeague } from "./leagues.js";
 import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
 import { createRenderer, streamSafe } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
-import { mountLevelPicker, levelLabel, schoolSystemOptions } from "./level-picker.js";
+import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from "./level-picker.js";
 import { attachMic } from "./speech.js";
 import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
 import { TUTOR_CHIPS } from "./tipkovnica-data.js";
+import { splitFormulas, hasFormula } from "./vnos-formul.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
 import { offlineApi, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback } from "./feedback.js";
@@ -190,10 +191,17 @@ setFormulaSubject(() => subjectWithGlossary(topicSubject(state.topic) || state.s
 // Razlaga teme in »Bistvo«: črke imajo pomen iz lekcije te teme (:::simboli), sicer iz slovarja predmeta.
 const topicRich = (tp, text) => withFormulaSubject(topicSubject(tp) || state.student?.settings?.subject || "MAT", () => renderRich(text), tp?.symbols);
 
-// Sporočilo učenca: besedilo ostane besedilo, le $...$ se izriše kot formula.
+// Sporočilo učenca: besedilo ostane besedilo, $...$ in zapis s tipkovnice ((3)/(4), √(2), x^(2), ∑_(n=1)^∞ …,
+// public/vnos-formul.js) se izrišeta kot formula.
 function renderUserText(text) {
   const parts = String(text).split(/(\$[^$\n]+?\$)/g);
-  return parts.map((p, i) => (i % 2 ? renderMath(p.slice(1, -1), false, false) : escapeHtml(p))).join("");
+  return parts
+    .map((p, i) =>
+      i % 2
+        ? renderMath(p.slice(1, -1), false, false)
+        : splitFormulas(p).map((x) => ("tex" in x ? renderMath(`\\displaystyle ${x.tex}`, false, false) : escapeHtml(x.text))).join(""), // ulomek v polni velikosti
+    )
+    .join("");
 }
 
 // ---------- pogledi ----------
@@ -749,10 +757,24 @@ function renderState(convState) {
   const subject = convState?.subject || s.subject;
   const mode = convState?.mode || s.solving_mode;
   const program = isUni(s) ? programsCache().find((p) => p.id === s.study_program)?.label : null;
-  $("#chat-state").innerHTML = [SUBJECT_NAMES[subject], MODE_NAMES[mode], program, levelLabel(s.curriculum_level)]
+  // Predmet, način in letnik se zamenjajo kar v glavi (izbirni seznam), program je le napis.
+  const pick = (key, label, options) =>
+    `<span class="chip chip-pick"><select data-pick="${key}" aria-label="${escapeHtml(label)}">${options}</select></span>`;
+  const opt = (value, label, current) => `<option value="${escapeHtml(value)}"${current ? " selected" : ""}>${escapeHtml(label)}</option>`;
+  const levels = levelChoices(s);
+  const head = $("#chat-state");
+  head.innerHTML = [
+    SUBJECT_NAMES[subject] && pick("subject", t("set.subject"), opt(subject, SUBJECT_NAMES[subject], true)),
+    MODE_NAMES[mode] && pick("mode", t("set.mode"), Object.entries(MODE_NAMES).map(([k, v]) => opt(k, v, k === mode)).join("")),
+    program && `<span class="chip">${escapeHtml(program)}</span>`,
+    levelLabel(s.curriculum_level) &&
+      (levels.length > 1
+        ? pick("level", t("set.school"), levels.map((x, i) => opt(i, x.label, x.current)).join(""))
+        : `<span class="chip">${escapeHtml(levelLabel(s.curriculum_level))}</span>`),
+  ]
     .filter(Boolean)
-    .map((t) => `<span class="chip">${escapeHtml(t)}</span>`)
     .join("");
+  wireStatePicks(head, subject, levels);
   // Pogovor o temi učne poti: povezava na lekcijo v učbeniku.
   const topicId = state.conversationId && state.convTopic;
   if (topicId) {
@@ -765,6 +787,45 @@ function renderState(convState) {
   }
 }
 
+async function wireStatePicks(head, subject, levels) {
+  const save = async (settings, what, label) => {
+    const updated = await api(`/api/students/${state.student.id}`, { method: "PUT", body: { settings } });
+    studentUpdated(updated);
+    toast(`${what}: ${label}`, "check");
+  };
+  head.querySelector('[data-pick="mode"]')?.addEventListener("change", (e) =>
+    save({ solving_mode: e.target.value }, t("set.mode"), MODE_NAMES[e.target.value]).catch(() => renderState(null)),
+  );
+  head.querySelector('[data-pick="level"]')?.addEventListener("change", (e) => {
+    const next = { ...levels[Number(e.target.value)].settings };
+    // Predmet, ki ga novi razred nima (npr. fizika v 7. razredu), zamenja prvi predmet razreda.
+    if (!jeFaks(next)) {
+      const list = schoolSubjectsFor(next.educational_track, next.curriculum_level, isRegional(next.school_system));
+      if (list.length && !list.includes(state.student.settings.subject)) next.subject = list.includes("NAR") && ["FIZ", "KEM", "BIO"].includes(state.student.settings.subject) ? "NAR" : list[0];
+    } else next.study_course = "";
+    save(next, t("set.school"), levels[Number(e.target.value)].label).catch(() => renderState(null));
+  });
+  const sel = head.querySelector('[data-pick="subject"]');
+  if (!sel) return;
+  const groups = await subjectChoices().catch(() => []);
+  if (!sel.isConnected || !groups.length) return;
+  const items = groups.flatMap((g) => g.items);
+  const isCur = (it) => (isUni(state.student.settings) ? it.current : it.id === subject);
+  let i = 0;
+  sel.innerHTML = groups
+    .map((g) => {
+      const o = g.items.map((it) => `<option value="${i++}"${isCur(it) ? " selected" : ""}>${escapeHtml(it.label)}</option>`).join("");
+      return g.label && groups.length > 1 ? `<optgroup label="${escapeHtml(g.label)}">${o}</optgroup>` : o;
+    })
+    .join("");
+  // Predmet pogovora ni na seznamu: ostane prikazan, izbira drugega ga zamenja.
+  if (!items.some(isCur)) sel.insertAdjacentHTML("afterbegin", `<option value="" selected>${escapeHtml(SUBJECT_NAMES[subject] || subject)}</option>`);
+  sel.addEventListener("change", () => {
+    const it = sel.value === "" ? null : items[Number(sel.value)];
+    if (it) pickSubject(it).catch(() => renderState(null));
+  });
+}
+
 // Formule v odgovorih inštruktorja: črke s pomenom iz predmeta pogovora in, pri pogovoru o temi
 // učne poti, iz lekcije te teme (:::simboli). Nov pogovor: predmet iz nastavitev.
 async function setChatFx(conv) {
@@ -775,7 +836,7 @@ async function setChatFx(conv) {
     if (!topicCache.has(id)) topicCache.set(id, await api(`/api/topic?id=${encodeURIComponent(id)}`));
     if (state.conversationId !== conv.id) return; // medtem odprt drug pogovor
     const tp = topicCache.get(id);
-    state.chatFx = { subject: topicSubject(tp) || state.chatFx.subject, symbols: tp?.symbols || null };
+    state.chatFx = { subject: topicSubject(tp) || state.chatFx.subject, symbols: tp?.symbols || null, topic: tp?.id ? { id: tp.id, unit: tp.unit, name: tp.name, subject: tp.subject } : null };
   } catch { /* brez oznak lekcije */ }
 }
 const chatRich = (text) => withFormulaSubject(state.chatFx?.subject || state.student?.settings?.subject || "MAT", () => renderRich(text), state.chatFx?.symbols);
@@ -1072,6 +1133,11 @@ const input = $("#input");
 // Če besedilo ne gre več v polje, se samodejno pokaže v večjem oknu (public/razpri.js). Zadnja sporočila
 // ostanejo vidna nad poljem.
 function autoGrow(stick, again) {
+  // Predogled formul nad poljem: (3)/(4) se pokaže kot ulomek, preden ga pošlješ.
+  const pv = $("#formula-preview");
+  const show = hasFormula(input.value);
+  if (show) pv.innerHTML = renderUserText(input.value);
+  pv.hidden = !show;
   const box = $("#messages");
   const atBottom = typeof stick === "boolean" ? stick : box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   const max = Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
@@ -1157,7 +1223,7 @@ attachMic($("#mic-btn"), input, { onMessage: (m) => toast(m, "mic"), onChange: a
 initKeyboard();
 initSirina();
 initDrsniki();
-setKeyboardContext({ settings: () => state.student?.settings });
+setKeyboardContext({ settings: () => state.student?.settings, chapter: calcChapter });
 mountKeyboardSettings($("#tipkovnica-card"));
 configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx: TUTOR_CHIPS });
 $("#sym-btn").addEventListener("click", () => toggleKeyboard(input, { layer: "sym" }));
@@ -3813,14 +3879,20 @@ function calcSubject() {
   const id = !$("#view-topic").hidden ? state.topic?.id : null;
   return (id && /^[A-Z]+/.exec(id)?.[0]) || state.student?.settings?.subject || "MAT";
 }
+// Poglavje, iz katerega je odprt kalkulator (tema učne poti ali pogovor o temi): tipke se mu prilagodijo.
+function calcChapter() {
+  if (!$("#view-topic").hidden && state.topic?.id) return { id: state.topic.id, unit: state.topic.unit, name: state.topic.name, subject: state.topic.subject };
+  if (!$("#view-chat").hidden && state.chatFx?.topic) return state.chatFx.topic;
+  return null;
+}
 function formulaBook() {
   const s = calcSubject();
   const subj = ["MAT", "FIZ", "KEM"].includes(s) ? s : "MAT";
   return `${subj}-${stageCode(state.student?.settings)}`;
 }
-async function insertIntoCalc(text) {
+async function insertIntoCalc(text, o) {
   const tool = await setCalcMode("sci");
-  tool.insert(text);
+  tool.insert(text, o);
 }
 function calcTool(mode) {
   if (mode === "graph") return graphCalc();
@@ -3832,6 +3904,7 @@ function calcTool(mode) {
       return m.createScientific(host, {
         ...base,
         toast: (msg) => toast(msg, "check"),
+        chapter: calcChapter,
         storageKey: () => `evklid.sci.${state.student?.id ?? 0}`,
         // »Nariši graf«: isti zaslon, način Grafični z vpisanimi izrazi
         openGraph: async (exprs) => (await setCalcMode("graph"))?.show(exprs),
@@ -3871,6 +3944,7 @@ async function setCalcMode(mode) {
     tool._student = state.student?.id;
   }
   if (mode === "formulas" || mode === "tools") tool.reload();
+  if (mode === "sci") tool.adapt?.();
   const slot = calcSlot();
   if (tool.root.parentElement !== slot) slot.replaceChildren(tool.root);
   tool.resize?.();
@@ -3918,6 +3992,7 @@ document.querySelectorAll(".calc-open").forEach((b) =>
     if (isFloating("graph")) {
       focusWindow("graph");
       if (calcSubject() === "KEM") setCalcMode("pse");
+      else calcTools.sci?.then((tool) => tool.adapt?.()); // tipke poglavja, iz katerega je odprt
       return;
     }
     const view = document.querySelector("main.view:not([hidden]):not(.in-okno)")?.id;
@@ -4233,6 +4308,7 @@ async function bootFailed(err) {
   box.querySelector("button").onclick = () => location.reload();
   for (const el of document.body.children) el.inert = true; // prazna lupina pod sporočilom ni dosegljiva s tipkovnico
   document.body.append(box);
+  document.body.classList.add("boot-down-on");
   box.querySelector("button").focus();
   const timer = setInterval(async () => {
     if ((await serverReach()) !== "down") {

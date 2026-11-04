@@ -7,9 +7,9 @@ avtor: AI
 
 Tina je tekačica na smučeh. Trener jo za tri tedne pošlje na priprave na $2000\,\mathrm{m}$ nadmorske višine in ji razloži: »Tam je zrak redkejši, ledvice bodo izločale več hormona eritropoetina (EPO), kostni mozeg bo naredil več rdečih krvničk in na tekmi v dolini boš imela več kisika v mišicah.«
 
-Tina, ki študira biologijo, se ustavi pri prvem koraku. Ledvične celice imajo isto DNA kot kožne in gen za EPO so imele že v dolini. Kako lahko celica »zve«, da je kisika malo, in zaradi tega naredi več ene same beljakovine, ne da bi se karkoli zgodilo z genom?
+Tina, ki študira biologijo, se ustavi pri prvem koraku. Ledvične celice imajo isto DNA kot kožne in gen za EPO so imele že v dolini. Kako celica »zve«, da je kisika malo, in naredi več ene same beljakovine, ne da bi se gen spremenil?
 
-Odgovor je **uravnavanje izražanja genov**: celica ne odloča, katere gene ima, ampak katere in koliko jih **prepiše**. Ista logika razloži, zakaj bakterija v črevesju po kozarcu mleka začne razgrajevati laktozo.
+Odgovor je **uravnavanje izražanja genov**: celica ne odloča, katere gene ima, ampak katere in koliko jih **prepiše**. Ista logika razloži, zakaj bakterija po kozarcu mleka začne razgrajevati laktozo.
 
 ## Razlaga
 
@@ -21,7 +21,7 @@ Celica lahko uravnava tudi pozneje (razgradnjo mRNA, prevajanje, aktivnost belja
 
 **Druga mamljiva ideja: snov sama prižge gen.** *E. coli* razgrajuje laktozo le, kadar laktozo ima. Zdi se, kot da bi se laktoza vezala na DNA in jo »odklenila«. V resnici med snovjo in genom vedno stoji **uravnalna beljakovina**, ki se veže na točno določeno zaporedje DNA. Laktoza (natančneje njen izomer alolaktoza) samo spremeni obliko te beljakovine.
 
-**Operon.** Pri bakterijah so geni za encime iste presnovne poti pogosto zloženi skupaj in se prepišejo skupaj. Taki enoti rečemo **operon**. Za *lac* operon si nariši vrsto na DNA:
+**Operon.** Pri bakterijah so geni za encime iste presnovne poti pogosto zloženi skupaj in se prepišejo skupaj. **Operon** je enota prokariontske DNA iz promotorja, operatorja in enega ali več **strukturnih genov** (genov za beljakovine, tu encime). Strukturni geni se z istega promotorja prepišejo v eno mRNA, zato se vklapljajo in izklapljajo skupaj. Za *lac* operon si nariši vrsto na DNA:
 
 ```
 [lacI]   ...   [P][O][ lacZ ][ lacY ][ lacA ]
@@ -32,9 +32,11 @@ represor        ←──── lac operon ────────→
 - **operator (O)**: kratko zaporedje, ki se prekriva s promotorjem; nanj se lahko veže represor,
 - **strukturni geni**: *lacZ* (β-galaktozidaza, cepi laktozo na glukozo in galaktozo), *lacY* (permeaza, prenaša laktozo v celico) in *lacA* (transacetilaza).
 
-Vsi trije geni se prepišejo v eno samo, **policistronsko** mRNA. Gen *lacI* leži zunaj operona, ima svoj promotor in se prepisuje stalno. Kodira **represor**, beljakovino, ki se veže na operator.
+Vsi trije geni se prepišejo v eno samo, **policistronsko** mRNA. Gen *lacI* (**regulatorni gen**) leži zunaj operona, ima svoj promotor in se prepisuje stalno. Kodira **represor**, beljakovino, ki se veže na operator.
 
-**Negativni nadzor.** Brez laktoze represor sedi na operatorju in RNA-polimeraza ne more prepisovati. Ko pride laktoza, se alolaktoza kot **induktor** veže na represor. Represor spremeni obliko (alosterična sprememba), odpade z operatorja in prepis steče. Operonu, ki ga signal prižge, rečemo **inducibilni**.
+**Negativni nadzor.** Brez laktoze represor sedi na operatorju in RNA-polimeraza ne more prepisovati. Ko pride laktoza, se alolaktoza kot **induktor** veže na represor. Represor spremeni obliko (alosterična sprememba), odpade z operatorja in prepis steče. Več permeaze spusti v celico več laktoze, kar operon še bolj odpre. Ko laktoze zmanjka, se represor vrne na operator; bakterijska mRNA razpade v nekaj minutah, zato se izdelava encimov hitro ustavi.
+
+Natančno: pri **negativnem nadzoru** prepis teče, če uravnalna beljakovina (represor) *ni* vezana na DNA; pri **pozitivnem nadzoru** teče (močno) šele, če je uravnalna beljakovina (aktivator) vezana. Operon je **inducibilen**, če je brez signalne molekule izklopljen in ga njena vezava na represor (**induktor**) vklopi; **represibilen**, če je brez nje vklopljen in ga njena vezava na represor (**korepresor**) izklopi. Inducibilni so tipično operoni za razgradnjo hranila (*lac*), represibilni za sintezo (*trp*).
 
 :::premisli
 Mutacija v genu *lacI* povzroči, da represor ne more več vezati operatorja. Napovej, kdaj bo ta bakterija delala β-galaktozidazo.
@@ -42,7 +44,13 @@ Mutacija v genu *lacI* povzroči, da represor ne more več vezati operatorja. Na
 Vedno, z laktozo ali brez nje. Ker nič ne zapre operatorja, je operon stalno prižgan. Takemu mutantu rečemo konstitutivni.
 :::
 
-**Pozitivni nadzor in glukoza.** Bakterija raje porablja glukozo. Ko glukoze zmanjka, v celici naraste koncentracija **cAMP**. cAMP se veže na aktivatorsko beljakovino **CAP**; kompleks CAP–cAMP se veže tik pred promotor in pomaga RNA-polimerazi, da se trdneje veže. Obe stikali skupaj dasta tabelo:
+**Cis in trans: dokaz z delnim diploidom.** Jacob in Monod sta v bakterijo vnesla plazmid F' z drugo kopijo *lac* regije (**delni diploid**). Beljakovina, ki difundira (represor), deluje na vse kopije DNA (**trans**); zaporedje DNA (operator, promotor) le na gene na isti molekuli (**cis**). V zapisu genotipa pomeni $^+$ delujoč alel divjega tipa, $^-$ okvarjen alel, poševnica pa loči kromosom od plazmida. Zato:
+
+- $lacI^-\,O^+\,lacZ^+ / \mathrm{F'}\,lacI^+$: represor s plazmida se veže tudi na kromosomski operator, zato je operon spet inducibilen. Mutacija $lacI^-$ je **recesivna**.
+- $lacI^+\,O^c\,lacZ^+ / \mathrm{F'}\,lacI^+\,O^+\,lacZ^+$: operator $O^c$ ne veže represorja, zato se *lacZ* na isti molekuli prepisuje stalno, *lacZ* na plazmidu pa ostane uravnavan. Mutacija $O^c$ je **cis-dominantna**.
+- $lacI^s$ (represor, ki ne veže induktorja) je **dominantna**: tak represor zasede oba operatorja in ga laktoza ne sname.
+
+**Pozitivni nadzor in glukoza.** Bakterija raje porablja glukozo. Ko glukoze zmanjka, v celici naraste koncentracija **cAMP** (ciklični AMP, majhna signalna molekula, ki sporoča »glukoze ni«). cAMP se veže na aktivatorsko beljakovino **CAP**; kompleks CAP–cAMP se veže tik pred promotor in pomaga RNA-polimerazi, da se trdneje veže. Pojavu, da glukoza zavre prepis operonov za druge sladkorje, rečemo **katabolna represija**; poleg nizkega cAMP k njej prispeva tudi to, da glukoza zavre vstop laktoze. Obe stikali skupaj dasta tabelo:
 
 | Glukoza | Laktoza | Represor / CAP–cAMP | Prepis *lac* |
 |---|---|---|---|
@@ -53,7 +61,7 @@ Vedno, z laktozo ali brez nje. Ker nič ne zapre operatorja, je operon stalno pr
 
 Laktoza odpre vrata, pomanjkanje glukoze prižge luč.
 
-**Represibilni operon.** Operon *trp* nosi gene za sintezo aminokisline triptofana. Tu je logika obrnjena: represor je sam neaktiven. Ko je triptofana veliko, se triptofan kot **korepresor** veže na represor, ta postane aktiven, sede na operator in prepis ustavi. Celica ne sintetizira tistega, česar ima dovolj.
+**Represibilni operon.** Operon *trp* nosi gene za sintezo aminokisline triptofana. Tu je logika obrnjena: represor je sam neaktiven. Ko je triptofana veliko, se triptofan kot **korepresor** veže na represor, ta postane aktiven, sede na operator in prepis ustavi. Operon *trp* je zato represibilen. Celica ne sintetizira tistega, česar ima dovolj.
 
 **Evkarionti: transkripcijski dejavniki.** Tinine ledvične celice operonov nimajo: vsak gen ima svoj promotor in svojo mRNA. RNA-polimeraza II, ki prepisuje gene za beljakovine, se na promotor sama ne veže; potrebuje **splošne transkripcijske dejavnike**; eden od njih prepozna zaporedje TATA v promotorju. Brez njih ni prepisa pri nobenem genu.
 
@@ -73,7 +81,7 @@ Ker posnemajo višinske priprave brez višine. HIF se kopiči tudi ob normalni k
 
 ### Primer 1: kakav po tekmi
 
-Po tekmi Luka spije kakav z mlekom. V debelem črevesu je zdaj za *E. coli* veliko laktoze, glukozo pa so že prej porabile druge bakterije. V kakšnem stanju sta represor in CAP in kako močno se prepisuje *lac* operon?
+Po tekmi Luka spije kakav z mlekom. V debelem črevesu je za *E. coli* veliko laktoze, glukozo pa so že porabile druge bakterije. V kakšnem stanju sta represor in CAP in kako močno se prepisuje *lac*?
 
 **Podatki:** laktoza je prisotna, glukoze ni
 **Iščemo:** stanje represorja, stanje CAP in jakost prepisa
@@ -109,26 +117,29 @@ $n = \dfrac{\text{dolžina} - 3}{3}$, poraba $= n \cdot 4 \cdot 3000$
 
 ### Primer 3: kaj je pokvarjeno?
 
-Raziskovalka ima dva mutanta *E. coli*, oba gojena brez glukoze. Mutant A dela β-galaktozidazo z laktozo in brez nje. Mutant B je ne dela niti z laktozo. Kateri del sistema je lahko poškodovan v vsakem?
+Raziskovalka ima dva mutanta *E. coli*, oba gojena brez glukoze. Mutant A dela β-galaktozidazo z laktozo in brez nje. Mutant B je ne dela niti z laktozo. (a) Kateri del sistema je lahko poškodovan v vsakem? (b) V mutanta A vnese plazmid F' z $lacI^+\,O^+\,lacZ^-$ (plazmidni *lacZ* ne daje delujočega encima). Brez laktoze nastane le še zelo malo β-galaktozidaze, z laktozo veliko. Kje je mutacija v A in kaj bi videla, če bi bila drugje?
 
-**Podatki:** brez glukoze (CAP–cAMP je vezan); A: encim vedno; B: encima nikoli
-**Iščemo:** možne poškodovane dele pri A in B
+**Podatki:** brez glukoze (CAP–cAMP je vezan); A: encim vedno; B: encima nikoli; A + F' $lacI^+\,O^+\,lacZ^-$: encim le z laktozo
+**Iščemo:** možne poškodovane dele pri A in B; mesto mutacije v A
 
 :::formula
-Prepis teče, kadar operator ni zaprt in se RNA-polimeraza lahko veže na promotor.
+Prepis teče, kadar operator ni zaprt in se RNA-polimeraza lahko veže na promotor. Represor deluje trans (na vse kopije), operator le cis (na gene na isti molekuli).
 :::
 
 **Rešitev:**
 
 1. Pri A operon ostane odprt tudi brez induktorja. Torej represor ne sedi na operatorju.
-2. Represor ne nastaja ali ne veže DNA (mutacija v *lacI*), ali pa je spremenjen operator, ki ga represor ne prepozna.
-3. Pri B se operon ne odpre niti z induktorjem. Ena možnost je represor, ki ne veže več alolaktoze, zato nikoli ne odpade.
+2. Represor ne nastaja ali ne veže DNA (mutacija $lacI^-$), ali pa je spremenjen operator, ki ga represor ne prepozna ($O^c$).
+3. Pri B se operon ne odpre niti z induktorjem. Ena možnost je represor, ki ne veže več alolaktoze ($lacI^s$), zato nikoli ne odpade.
 4. Druga možnost pri B je poškodovan promotor ali okvara v samem *lacZ*.
-5. Odgovor: pri A je poškodovan *lacI* ali operator, pri B represor, ki ne veže induktorja, promotor ali sam *lacZ*.
+5. (b) Plazmidni *lacZ* je okvarjen, zato vsa β-galaktozidaza prihaja s kromosoma.
+6. Če je A $lacI^-$: plazmidni represor difundira (trans) in se veže na kromosomski $O^+$; encim nastaja le z laktozo, kot opaženo.
+7. Če bi bil A $O^c$: kromosomskega operatorja noben represor ne prepozna (cis), encim bi nastajal tudi brez laktoze.
+8. Odgovor: (a) pri A je poškodovan *lacI* ali operator, pri B represor, ki ne veže induktorja, promotor ali sam *lacZ*. (b) A je recesivni mutant $lacI^-$; pri $O^c$ bi celica s plazmidom ostala konstitutivna.
 
 ### Primer 4: zdaj ti
 
-Specifični transkripcijski dejavnik prepozna zaporedje $6$ baznih parov. Človeški genom ima okoli $3{,}1 \cdot 10^9$ baznih parov. Koliko mest bi dejavnik našel povsem po naključju (gledamo eno verigo)? Koliko bi jih bilo, če se gen prepiše le, kadar ob njem sedita dva takšna dejavnika, ki skupaj prepoznata $12$ baznih parov?
+Specifični transkripcijski dejavnik prepozna zaporedje $6$ baznih parov. Človeški genom ima okoli $3{,}1 \cdot 10^9$ baznih parov. Koliko mest bi dejavnik našel po naključju (gledamo eno verigo)? Koliko bi jih bilo, če se gen prepiše le, kadar ob njem sedita dva takšna dejavnika, ki skupaj prepoznata $12$ baznih parov?
 
 **Podatki:** dolžina mesta $6\,\mathrm{bp}$ ali $12\,\mathrm{bp}$, $4$ možne baze, genom $3{,}1 \cdot 10^9\,\mathrm{bp}$
 **Iščemo:** število naključnih mest za $6\,\mathrm{bp}$ in za $12\,\mathrm{bp}$
@@ -146,16 +157,16 @@ verjetnost zaporedja dolžine $k$ je $\dfrac{1}{4^k}$, število mest $\approx \d
 :::premisli
 Koliko je $\dfrac{3{,}1 \cdot 10^9}{4^{12}}$ in kaj to pove o kombinacijskem nadzoru?
 ---
-$4^{12} = 16\,777\,216$, zato je mest okoli $185$. En dejavnik sam bi »prižgal« stotisoče mest, par dejavnikov skupaj pa le peščico. Kombinacija daje natančnost.
+$4^{12} = 16\,777\,216$, zato je mest okoli $185$. En dejavnik sam bi našel stotisoče mest, par le peščico: kombinacija daje natančnost.
 :::
 
 ## Pogoste napake
 
-- **»Različne celice imajo različne gene.«** Genom je enak, razlikuje se nabor izraženih genov. Tudi kožna celica ima gen za EPO.
+- **»Različne celice imajo različne gene.«** Genom je enak, razlikuje se nabor izraženih genov.
 - **»Laktoza se veže na DNA.«** Induktor se veže na represor, ne na operator. DNA prepoznajo le beljakovine.
 - **»Laktoza zadošča za polni prepis *lac*.«** Ob glukozi je cAMP nizek, CAP se ne veže in prepis ostane šibek.
 - **»Triptofan je induktor *trp* operona.«** Triptofan je korepresor: z njim se represor aktivira in operon zapre. *trp* je represibilen, *lac* inducibilen.
-- **»Evkarionti imajo operone in dejavnik se veže tik ob genu.«** Vsak evkariontski gen ima svoj promotor, ojačevalci pa so lahko daleč od gena.
+- **»Evkarionti imajo operone.«** Vsak evkariontski gen ima svoj promotor, ojačevalci so lahko daleč od gena.
 
 ## Povzetek
 
@@ -166,32 +177,68 @@ $4^{12} = 16\,777\,216$, zato je mest okoli $185$. En dejavnik sam bi »prižgal
 - Evkarionti: splošni transkripcijski dejavniki (npr. vezava na TATA) so potrebni za vsak prepis; specifični dejavniki (DNA-vezavna in aktivacijska domena) se vežejo na ojačevalce ali utiševalce. Kombinacija dejavnikov določa, kje in kdaj se gen prepiše.
 - Primer: pri pomanjkanju kisika se HIF kopiči in poveča prepis gena za EPO.
 
-## Drugače: Kot zgodba
+## Za izpit
 
-Sledimo eni bakteriji *E. coli* skozi Lukov tekmovalni dan. Zjutraj Luka spije športni napitek z glukozo. cAMP je nizek, laktoze ni, represor sedi na operatorju in *lac* geni molčijo.
+Znati moraš povedati:
 
-Do popoldneva je glukoza porabljena. CAP–cAMP se namesti pred promotor, a represor še vedno zapira operator.
+- definicije: izražanje gena, konstitutivni in uravnavani gen, operon (promotor, operator, strukturni geni, policistronska mRNA), regulatorni gen;
+- negativni in pozitivni nadzor, inducibilni (*lac*) in represibilni operon (*trp*);
+- vse štiri kombinacije glukoze in laktoze pri *lac* z utemeljitvijo prek represorja in CAP–cAMP;
+- sklepanje z delnim diploidom: zakaj je $lacI^-$ recesivna in deluje trans, $O^c$ cis-dominantna, $lacI^s$ dominantna;
+- evkariontski nadzor: splošni in specifični transkripcijski dejavniki, ojačevalci in utiševalci, kombinacijski nadzor.
 
-Po tekmi pride kakav z mlekom. Nekaj laktoze zdrsne v celico skozi redke molekule permeaze, peščica β-galaktozidaze iz nje naredi alolaktozo in represor odpade. Zdaj RNA-polimeraza prepisuje vse tri gene v eni mRNA. Več permeaze pomeni več laktoze v celici, to pa operon še bolj odpre.
+### Naloga 1
 
-Zvečer je laktoza porabljena, represor se vrne na operator. Bakterijska mRNA razpade v nekaj minutah, zato se proizvodnja encimov hitro ustavi.
+V modelu je polni prepis ene kopije *lac* $1$, vezan represor ga zmanjša $1000$-krat, odsotnost CAP–cAMP $50$-krat, učinka se množita. Delni diploid ima na kromosomu $lacI^-\,O^+\,lacZ^+$, na plazmidu F' pa $lacI^+\,O^c\,lacZ^+$ (vsaka kopija je v celici enkrat). (a) Izračunaj skupni prepis *lacZ* v vseh štirih kombinacijah glukoze in laktoze. (b) Kolikšno je razmerje indukcije (z laktozo proti brez nje, oboje brez glukoze) za ta diploid in za divji tip? (c) Divji tip ima ob polni indukciji $3000$ molekul β-galaktozidaze. Koliko jih ima diploid brez glukoze in brez laktoze, če je število molekul sorazmerno prepisu?
+
+**Rešitev:**
+
+1. Represor nastaja le s plazmida ($lacI^+$) in deluje trans: veže se na kromosomski $O^+$, na plazmidni $O^c$ pa ne.
+2. Kromosomska kopija je zato uravnavana kot pri divjem tipu, plazmidna čuti le CAP–cAMP.
+3. Laktoza da, glukoza ne: $1 + 1 = 2$.
+4. Laktoza da, glukoza da: $\dfrac{1}{50} + \dfrac{1}{50} = 0{,}04$.
+5. Laktoza ne, glukoza ne: $\dfrac{1}{1000} + 1 = 1{,}001$.
+6. Laktoza ne, glukoza da: $\dfrac{1}{50\,000} + \dfrac{1}{50} = 0{,}02002$.
+7. Razmerje indukcije: diploid $\dfrac{2}{1{,}001} \approx 2{,}0$; divji tip $\dfrac{1}{0{,}001} = 1000$.
+8. Molekule brez laktoze: $3000 \cdot 1{,}001 = 3003$.
+9. Odgovor: (a) $2$; $0{,}04$; $1{,}001$; $0{,}02002$. (b) Diploid se inducira le okoli $2$-krat, divji tip $1000$-krat: zaradi cis-dominantnega $O^c$ je diploid praktično konstitutiven. (c) $3003$ molekul, praktično toliko kot divji tip ob polni indukciji.
+
+### Naloga 2
+
+Natančno definiraj negativni nadzor ter inducibilni in represibilni operon. Utemelji, zakaj je mutacija $O^c$ cis-dominantna, mutacija $lacI^-$ pa recesivna. Nato izpelji, kakšen fenotip ima brez glukoze, z laktozo in brez nje, delni diploid $lacI^s\,O^+\,lacZ^+ / \mathrm{F'}\,lacI^+\,O^+\,lacZ^+$, kjer represor $lacI^s$ ne veže induktorja.
+
+**Rešitev:**
+
+1. Negativni nadzor: prepis teče, če represor ni vezan na operator.
+2. Inducibilen operon je brez signalne molekule izklopljen, induktor ga prek represorja vklopi (*lac*); represibilen je brez nje vklopljen, korepresor ga prek represorja izklopi (*trp*).
+3. $lacI^-$: represor difundira po celici; če ga izdela druga kopija ($lacI^+$), se veže na vse operatorje $O^+$ in fenotip je divji. Mutacija je recesivna, delujoč alel jo popravi v trans.
+4. $O^c$: operator je zaporedje DNA in nadzira le gene na isti molekuli. *lacZ* ob $O^c$ se prepisuje ne glede na represor, druga kopija ostane uravnavana: cis-dominantnost.
+5. Delni diploid z $lacI^s$: brez laktoze oba represorja zasedeta oba operatorja, prepisa ni.
+6. Z laktozo alolaktoza sname normalni represor, represor $lacI^s$ pa je ne veže, ostane aktiven in difundira, zato zasede tudi operator, s katerega je normalni odpadel.
+7. Odgovor: delni diploid β-galaktozidaze ne izdeluje ne brez laktoze ne z njo; $lacI^s$ je dominantna nad $lacI^+$ (neinducibilen fenotip).
 
 ## Drugače: Korak za korakom s številkami
 
-Vzemimo poenostavljen model z okroglimi števili: polni prepis *lac* označimo z $1$; vezan represor prepis zmanjša $1000$-krat; odsotnost CAP–cAMP ga zmanjša $50$-krat. Pojdimo skozi vse štiri vrstice tabele.
+Poenostavljen model: polni prepis *lac* je $1$, vezan represor ga zmanjša $1000$-krat, odsotnost CAP–cAMP $50$-krat.
 
-1. Laktoza da, glukoza ne: nobene ovire, prepis $= 1$.
-2. Laktoza da, glukoza da: le CAP manjka, prepis $= \dfrac{1}{50} = 0{,}02$.
-3. Laktoza ne, glukoza ne: le represor zapira, prepis $= \dfrac{1}{1000} = 0{,}001$.
-4. Laktoza ne, glukoza da: obe oviri, prepis $= \dfrac{1}{1000 \cdot 50} = 0{,}00002$.
+1. Laktoza da, glukoza ne: $1$.
+2. Laktoza da, glukoza da (manjka CAP): $\dfrac{1}{50} = 0{,}02$.
+3. Laktoza ne, glukoza ne (represor): $\dfrac{1}{1000} = 0{,}001$.
+4. Laktoza ne, glukoza da (obe oviri): $\dfrac{1}{1000 \cdot 50} = 0{,}00002$.
 
-Razlika med skrajnima stanjema je $50\,000$-kratna. Represor je stikalo »vklop/izklop«, CAP regulator jakosti. Prave vrednosti se med sevi razlikujejo, vrstni red stanj pa ne.
+Skrajni stanji se razlikujeta $50\,000$-krat: represor je stikalo, CAP regulator jakosti. Prave vrednosti se med sevi razlikujejo, vrstni red ne.
+
+## Drugače: Uporaba v stroki
+
+*lac* sistem je najpogostejše stikalo za proizvodnjo rekombinantnih beljakovin v *E. coli*. Gen vstavijo v plazmid za promotor z *lac* operatorjem, bakterije gojijo do želene gostote, nato dodajo **IPTG**: induktor, ki se veže na represor kot alolaktoza, a ga celica ne razgradi.
+
+Pri **modro-belem testu** kloniranja vstavljena DNA prekine plazmidni del *lacZ*: na gojišču z IPTG in X-gal (brezbarvnim substratom, ki ga β-galaktozidaza cepi v modro barvilo) so kolonije brez vstavka modre, z vstavkom bele.
 
 ## Preveri se
 
 ? Kaj od naštetega ni del *lac* operona?
 - promotor
-~ Promotor je del operona: z njega se začne skupni prepis vseh treh strukturnih genov.
+~ Promotor je del operona: z njega se začne skupni prepis.
 - operator
 ~ Operator je del operona; nanj se veže represor.
 - gen *lacY*
@@ -212,15 +259,15 @@ Razlika med skrajnima stanjema je $50\,000$-kratna. Represor je stikalo »vklop/
 ~ Glukoza ne vpliva na represor; ta je ob laktozi z operatorja odstranjen.
 + Ker je cAMP nizek, CAP se ne veže in RNA-polimeraza se slabo veže na promotor.
 - Ker laktoza ob glukozi ne more vstopiti v celico.
-~ Glukoza vstop laktoze res nekoliko zavre, a ga ne prepreči: del laktoze vstopi in sname represor. Šibkost prepisa izvira predvsem iz manjkajoče aktivacije.
+~ Glukoza vstop laktoze zavre, ne prepreči pa ga: del laktoze vstopi in sname represor. Šibkost izvira iz manjkajoče aktivacije.
 > Represor je odstranjen, a manjka pozitivni nadzor: brez CAP–cAMP je vezava RNA-polimeraze šibka.
 
-? Študent opiše indukcijo *lac* operona v štirih korakih. Kateri korak je napačen? (1) Laktoza vstopi v celico in nastane alolaktoza. (2) Alolaktoza se veže na operator in izrine represor. (3) Operator je prost, RNA-polimeraza prepisuje. (4) Nastane ena mRNA za tri encime.
+? Kateri korak opisa indukcije *lac* je napačen? (1) Laktoza vstopi v celico in nastane alolaktoza. (2) Alolaktoza se veže na operator in izrine represor. (3) Operator je prost, RNA-polimeraza prepisuje. (4) Nastane ena mRNA za tri encime.
 - korak 1
-~ Laktoza res vstopi s permeazo in del se pretvori v alolaktozo.
+~ Korak je pravilen: laktoza vstopi s permeazo, del postane alolaktoza.
 + korak 2
 - korak 3
-~ Ko represor ni vezan, RNA-polimeraza lahko prepisuje; korak je pravilen.
+~ Brez represorja RNA-polimeraza lahko prepisuje.
 - korak 4
 ~ *lac* mRNA je policistronska in nosi zapis za vse tri beljakovine.
 > Alolaktoza se ne veže na DNA, ampak na represor; ta spremeni obliko in odpade z operatorja.
@@ -229,13 +276,13 @@ Razlika med skrajnima stanjema je $50\,000$-kratna. Represor je stikalo »vklop/
 - Ledvične celice so na višini pridobile gen za EPO.
 ~ Gen za EPO je v ledvicah že od začetka; spremeni se le, kako močno se prepisuje.
 - Pomanjkanje kisika je povzročilo mutacijo, ki je okrepila gen za EPO.
-~ Prilagoditev je povratna in prizadene vse ledvične celice hkrati; mutacija bi bila naključna in redka.
+~ Prilagoditev je povratna in zajame vse ledvične celice; mutacija bi bila naključna in redka.
 + Pri pomanjkanju kisika se HIF ne razgradi, veže se na ojačevalec gena za EPO in poveča njegov prepis.
 - Gen za EPO je del operona, ki ga kisik izklopi.
 ~ Človeški geni niso organizirani v operone; uravnavajo jih transkripcijski dejavniki.
-> HIF je transkripcijski dejavnik, ki se ob pomanjkanju kisika ne razgradi in poveča prepis gena za EPO.
+> HIF se ob pomanjkanju kisika ne razgradi in poveča prepis gena za EPO.
 
 :::simboli
-n | število aminokislin v beljakovini | n = \dfrac{\text{dolžina} - 3}{3} | – | dolžina mRNA v nukleotidih, brez stop kodona
+n | število aminokislin v beljakovini | n = \dfrac{\text{dolžina} - 3}{3} | – | dolžina kodirnega zaporedja v nukleotidih, s stop kodonom
 k | dolžina zaporedja (število nukleotidov) | | – | naključno zaporedje ima verjetnost 1/4ᵏ
 :::

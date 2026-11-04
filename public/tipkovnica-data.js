@@ -110,7 +110,11 @@ export const KEM_ROWS = [
 export const NUM_TOP_MATH = [["x²", "²"], ["√", "√(@)"], ["xⁿ", "^(@)"], ["π", "π"], ["( )", "(@)"], ["a/b", "(@)/()"]];
 export const NUM_TOP_TEXT = [["( )", "(@)"], ["%", "%"], ["€", "€"], ["/", "/"], ["#", "#"], ["&", "&"]];
 // Pogosti znaki v klepetu z inštruktorjem (vrstica nad tipkami).
-export const TUTOR_CHIPS = [["x²", "²"], ["√", "√(@)"], ["a/b", "(@)/()"], ["π", "π"], ["→", "→"], ["≤", "≤"], ["≠", "≠"], ["·", "·"], ["°", "°"]];
+// Ulomek, potenca, indeks (zaporedja), integral in vsota se v poslanem sporočilu izrišejo kot formula (public/vnos-formul.js).
+export const TUTOR_CHIPS = [
+  ["a/b", "(@)/()"], ["x²", "²"], ["xⁿ", "^(@)"], ["√", "√(@)"], ["aₙ", "_(@)"], ["∫", "∫ (@) dx"], ["∫ₐᵇ", "∫_(@)^() () dx"], ["∑", "∑_(n=1)^(@) "],
+  ["π", "π"], ["∞", "∞"], ["→", "→"], ["≤", "≤"], ["≠", "≠"], ["·", "·"], ["°", "°"],
+];
 export const URL_CHIPS = [["https://", "https://"], [".com", ".com"], [".si", ".si"], ["/", "/"]];
 /** Ali je polje za povezavo (type=url ali inputmode=url): dobi tipko Prilepi in pripone. */
 export const isUrlField = (el) => String(el?.type || el?.getAttribute?.("type") || "").toLowerCase() === "url" || String(el?.getAttribute?.("inputmode") || "").toLowerCase() === "url";

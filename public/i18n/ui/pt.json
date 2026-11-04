@@ -896,6 +896,8 @@
   "sc.memory": "Guardado",
   "sc.insert": "Inserir no cálculo",
   "sc.pressSolve": "Carrega em = para resolver",
+  "sc.fmHint": "Substitui as letras conhecidas por números, deixa a incógnita e carrega em =.",
+  "sc.fmRad": "A calculadora está agora no modo RAD (ângulos em radianos).",
   "sc.errUndefined": "O resultado não está definido (p. ex. divisão por 0).",
   "sc.constants": "Constantes",
   "sc.toCalc": "Para a calculadora",

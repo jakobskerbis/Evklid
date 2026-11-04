@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Trije delci
+  - proton $+1$ in nevtron $0$ v jedru
+  - elektron $-1$ v ovojnici, razporejen v lupinah
+  - elektron ima le približno $\frac{1}{1836}$ mase protona
+- Nevtralen atom
+  - število protonov = število elektronov
+  - ion: elektronov je več ali manj kot protonov
+  - drgnjenje balona prenese elektrone, ne protonov
+- Vrstno število
+  - $Z$ = število protonov
+  - določa element: $Z = 6$ je vedno ogljik
+- Masno število
+  - $A = Z + N$, elektronov ne štejemo
+  - $N = A - Z$, npr. $19 - 9 = 10$
+- Zapis atoma
+  - $^{A}_{Z}\mathrm{X}$: masno zgoraj, vrstno spodaj
+  - napaka: zgornje število vzeti za protone
+- Izotopi
+  - enak $Z$, različno število nevtronov
+  - $^{12}_{6}\mathrm{C}$ in $^{14}_{6}\mathrm{C}$ sta oba ogljik

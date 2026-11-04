@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Nova snov
+  - kemijska reakcija: nastane snov z drugačnimi lastnostmi
+  - fizikalna sprememba: taljenje spajke, raztapljanje sladkorja
+- Reaktanti in produkti
+  - reaktanti levo, produkti desno
+  - voda $\longrightarrow$ vodik + kisik
+  - napaka: zamenjava strani puščice
+- Znaki reakcije
+  - plin, oborina, barva, toplota, svetloba, vonj
+  - znak je namig, dokaz je nova snov
+  - napaka: mehurčki pri vrenju vode
+- Preurejanje atomov
+  - vezi se pretrgajo in nastanejo nove
+  - atomi ne nastajajo in ne izginjajo
+- Ohranitev mase
+  - $m(\text{reaktantov}) = m(\text{produktov})$
+  - $6{,}4\,\text{g}$ bakra + $1{,}6\,\text{g}$ kisika $= 8{,}0\,\text{g}$ oksida
+- Plin ima maso
+  - odprt kozarec: plin uide, masa pade
+  - zaprta posoda: masa ostane enaka
+- Kemijska enačba
+  - $2\,\mathrm{H_2} + \mathrm{O_2} \longrightarrow 2\,\mathrm{H_2O}$
+  - koeficienti uredijo, indeksi ostanejo

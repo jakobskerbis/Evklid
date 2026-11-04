@@ -63,3 +63,18 @@ test("glava Inštruktorja na telefonu: oznake cele v svoji vrstici, »Preberi le
   assert.match(style, /\.chat-head #chat-state \.chip:not\(\.chip-btn\) \{[^}]*background: none/);
   assert.match(style, /\.chat-head #chat-state \{[^}]*flex: 1 1 auto/);
 });
+
+test("krogi lekcije ob pokazani spodnji vrstici: dvig samo s premikom, brez spremembe postavitve (hitro drsenje)", () => {
+  const touch = css("touch.css");
+  const peek = [...touch.matchAll(/body\.tb-peek[^{]*\.tb-stepper\s*\{([^}]*)\}/g)].map((m) => m[1]);
+  assert.ok(peek.length, "pravilo za kroge ob pokazani vrstici obstaja");
+  for (const body of peek) {
+    assert.match(body, /transform:\s*translateY\([^;]*var\(--tabbar-h/);
+    // bottom, padding ali margin bi spremenili postavitev: po zamahu na Androidu krogi ostanejo previsoko (j 4. 11.).
+    assert.doesNotMatch(body, /(^|;)\s*(bottom|padding[\w-]*|margin[\w-]*|height)\s*:/);
+  }
+  assert.doesNotMatch(touch, /body\.tb-peek[^{]*#view-textbook[^{]*\{[^}]*padding/, "pogled ob pokazani vrstici ne dobi odmika");
+  // Kratek korak: krogi stojijo na dnu pogleda, sicer bi jih dvig potisnil v besedilo (na tablici korak 1 brez drsenja).
+  assert.match(touch, /#view-textbook:has\(> \.tb-stepper\)\s*\{[^}]*flex-direction:\s*column/);
+  assert.match(touch, /#view-textbook \.tb-stepper\s*\{[^}]*margin-top:\s*auto/);
+});
