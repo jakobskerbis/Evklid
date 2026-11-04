@@ -1701,8 +1701,8 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
         razmik = v;
         uporabiRazmik();
       } else if (k === "rentgen") {
-        rentgen = !!v;
-        uporabiMateriale();
+        pozabiKvizRentgen(); // izrecna nastavitev ima prednost pred kvizovim časovnikom
+        nastaviRentgen(!!v);
       } else if (k === "prerez") {
         prerez = { ...prerez, ...v };
         uporabiPrerez();
