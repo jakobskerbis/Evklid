@@ -449,3 +449,68 @@ test("skice: »≈« je vedno pred nedeljivim presledkom (v ozkem čipu se ne lo
     koda.forEach((l, i) => assert.ok(!/≈ /.test(l.replace(/\/\/.*$/, "")), `${ime}:${i + 1}`));
   }
 });
+
+test("integral: pri velikem n se Riemannova vsota in trapezna metoda ujemata z integralom na dve decimalki", async () => {
+  const { riemann, trapez, TOCNO, f, F, simpson } = await import("../public/skice/integral.js");
+  assert.ok(Math.abs(TOCNO - 82 / 15) < 1e-12);
+  for (const x of [0, 0.7, 2, 3.3]) assert.ok(Math.abs((F(x + 1e-6) - F(x - 1e-6)) / 2e-6 - f(x)) < 1e-6, "F′ = f");
+  assert.ok(Math.abs(simpson(f, 0, 4) - 82 / 15) < 1e-10);
+  // Največji n na drsniku: razlika pod pol stotinke.
+  assert.ok(Math.abs(riemann(40).vsota - TOCNO) < 0.005);
+  assert.ok(Math.abs(trapez(12).T - TOCNO) < 0.005);
+  // Pri majhnem n je napaka vidna (skica ima kaj pokazati).
+  assert.ok(Math.abs(trapez(1).T - TOCNO) > 0.3 && Math.abs(riemann(1).vsota - TOCNO) > 0.1);
+  // Približka se z večjim n približujeta točni vrednosti; trapez pri n = 1 je (f(0) + f(4))·2.
+  assert.ok(Math.abs(riemann(40).vsota - TOCNO) < Math.abs(riemann(4).vsota - TOCNO));
+  assert.ok(Math.abs(trapez(12).T - TOCNO) < Math.abs(trapez(2).T - TOCNO));
+  assert.ok(Math.abs(trapez(1).T - (f(0) + f(4)) * 2) < 1e-12);
+  assert.equal(riemann(5).pr.length, 5);
+});
+
+test("ploščina in vrtenina: S = ∫|f − g| dx in V = π∫f² dx se ujemata z znanima vrednostma", async () => {
+  const { ploscina, vrtenina, f1, g1 } = await import("../public/skice/integral.js");
+  // f₁ − g = 1 + 1,5x − x²/2, nedoločeni integral x + 0,75x² − x³/6.
+  const P = (x) => x + 0.75 * x * x - x ** 3 / 6;
+  assert.ok(Math.abs(ploscina(0, 3) - 5.25) < 1e-9);
+  assert.ok(Math.abs(ploscina(3, 0) - 5.25) < 1e-9, "meji v obratnem vrstnem redu");
+  assert.equal(ploscina(2, 2), 0);
+  // Čez presečišče x = (3 + √17)/2 se ploščina sešteva po absolutni vrednosti.
+  const r = (3 + Math.sqrt(17)) / 2;
+  assert.ok(Math.abs(f1(r) - g1(r)) < 1e-12);
+  assert.ok(Math.abs(ploscina(0, 4) - (P(r) - P(0) + P(r) - P(4))) < 1e-6);
+  assert.ok(Math.abs(vrtenina() - 6.272 * Math.PI) < 1e-9);
+});
+
+test("kombinatorika: C(n, r) = C(n, n − r) in Pascalovo pravilo za vse n in r; vsota vseh P_n(k) je 1", async () => {
+  const { C, bernoulli } = await import("../public/skice/integral.js");
+  const { clen, N_MAX } = await import("../public/skice/pascal.js");
+  const fak = (n) => (n < 2 ? 1 : n * fak(n - 1));
+  for (let n = 0; n <= N_MAX; n++)
+    for (let r = 0; r <= n; r++) {
+      assert.equal(C(n, r), fak(n) / (fak(r) * fak(n - r)));
+      assert.equal(C(n, r), C(n, n - r));
+      if (r > 0 && r < n) assert.equal(C(n - 1, r - 1) + C(n - 1, r), C(n, r));
+    }
+  assert.equal(C(3, 5), 0);
+  assert.equal(C(30, 15), 155117520);
+  assert.deepEqual([0, 1, 2, 4, 5].map((k) => clen(5, k)), ["a⁵", "5a⁴b", "10a³b²", "5ab⁴", "b⁵"]);
+  assert.equal(clen(0, 0), "1");
+  for (let n = 1; n <= 12; n++)
+    for (const p of [0.05, 0.3, 0.5, 0.95]) {
+      const P = Array.from({ length: n + 1 }, (_, k) => bernoulli(n, p, k));
+      assert.ok(Math.abs(P.reduce((a, v) => a + v, 0) - 1) < 1e-12);
+      assert.ok(Math.abs(P.reduce((a, v, k) => a + k * v, 0) - n * p) < 1e-12, "E = np");
+    }
+});
+
+test("povprečje in odklon: σ se računa z delitvijo z N", async () => {
+  const { statistika } = await import("../public/skice/integral.js");
+  const q = statistika([2, 4, 4, 4, 5, 5, 7, 9]);
+  assert.equal(q.x, 5);
+  assert.equal(q.sigma, 2); // z delitvijo z N − 1 bi bil ≈ 2,14
+  assert.equal(q.var, 4);
+  const e = statistika([3, 3, 3]);
+  assert.equal(e.sigma, 0);
+  const d = statistika([2, 3.5, 5, 6, 8.5]);
+  assert.ok(Math.abs(d.x - 5) < 1e-12 && Math.abs(d.var - (9 + 2.25 + 0 + 1 + 12.25) / 5) < 1e-12);
+});
