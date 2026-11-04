@@ -16,7 +16,7 @@ export const info = {
   predmet: "BIO",
   opis: "Dvojna vijačnica DNA v pravih merah (premer 2 nm, 0,34 nm na bazni par, 10,5 baznega para na zavoj) in lasnica RNA. Vijačnico lahko odpreš kot zadrgo; baze so poenostavljene v ploščice, vodikovi atomi niso prikazani.",
   merilo: { m: 9.5e-9, oznaka: "9,5 nm" },
-  poskusi: "Povleci drsnik »Odpiranje« in poglej, kako se vijačnica DNA odpre; nato preklopi na RNA.",
+  poskusi: "Povleci drsnik »Odpiranje vijačnice« in poglej, kako se vijačnica DNA odpre; nato preklopi na RNA.",
 };
 
 // ---------------------------------------------------------------- podatki (Å)

@@ -10,7 +10,7 @@ export const info = {
   predmet: "KEM",
   opis: "Orbitale s, p, d in f vodikovega atoma, izračunane iz valovne funkcije. Ploskev obdaja 90 % verjetnosti, barva kaže predznak (fazo) valovne funkcije, prerez pa gostoto verjetnosti in vozle.",
   merilo: { m: 1.19e-9, oznaka: "1,2 nm" },
-  poskusi: "Izberi 2s, 2p in 3d ter preštej vozle; vklopi vozelne ploskve, da jih vidiš.",
+  poskusi: "Izberi 2s, 2p in 3d ter preštej vozelne ploskve: kako je njihovo število povezano z n in l?",
 };
 
 const A0 = 5.29177e-11; // Bohrov polmer v metrih

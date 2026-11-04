@@ -32,6 +32,7 @@ export function sim3d(el, opts = {}) {
     if (!el.isConnected) return;
     if (!mod) {
       p.textContent = t("a3.notFound");
+      poskusi?.remove(); // brez modela ni kaj poskusiti
       return;
     }
     p.remove();
@@ -45,6 +46,7 @@ export function sim3d(el, opts = {}) {
     const { t } = await import("/i18n.js").catch(() => ({ t: () => "3D" }));
     p.textContent = t(err?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError");
     el.querySelector(".k3-pregled")?.remove();
+    poskusi?.remove();
     if (el.isConnected) el.append(p);
   });
 }
