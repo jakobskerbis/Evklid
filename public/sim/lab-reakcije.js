@@ -185,7 +185,8 @@ export function labHitrost(el, opts = {}) {
   const gD = s("g", {}, svg);
   const P = plastMehurckov(svg, W, H);
   const log = eventLog();
-  const swL = lcd("štoparica"), maL = lcd("tehtnica"), brL = lcd("plinska brizga"), thL = lcd("termometer"), koL = lcd("vodna kopel");
+  const swL = lcd("štoparica"), maL = lcd("tehtnica"), brL = lcd("plinska brizga"), thL = lcd("termometer");
+  const meters = h("div", { class: "lab-meters" }); // največ trije merilniki: pripeta risba na telefonu ostane velika
   const said = {};
   const once = (k, text, kind = "warn") => said[k] || ((said[k] = true), log.push(text, kind));
   // stanje po načinih: oznaka poskusa, serije za graf
@@ -253,19 +254,20 @@ export function labHitrost(el, opts = {}) {
   const gm = grp("2. Marmor in klorovodikova kislina", hint(`Bučka stoji na tehtnici (0,01${nb}g). CO₂ uhaja iz bučke, zato se masa manjša. Vata zadrži kapljice kisline.`), mcSel, moSel, mmSel, vataT, buttons(mNalij, mDodaj));
   const gg = grp("2. Magnezij in klorovodikova kislina", hint(`Vodik potiska bat brizge. Brizga meri do 100${nb}mL; pri ~110${nb}mL bat izpade.`), gcSel, glSel, buttons(gNalij, gDodaj));
   const gt = grp("2. Natrijev tiosulfat in kislina", hint(`Bučko postavi na list s črnim križem in glej od zgoraj skozi raztopino. Žveplo, ki nastaja, raztopino skali. Štoparico ustavi sam, ko križa ne vidiš več.`), tvSel, buttons(tPrip, tZlij, tStop));
-  const gp = grp("2. Vodikov peroksid in katalizator", hint(`Kisik potiska bat brizge. Katalizator pospeši razkroj, a se pri tem ne porabi.`), pvSel, pkSel, buttons(pNalij, pDodaj, pTrska, pFilt));
+  const gp = grp("2. Vodikov peroksid in katalizator", hint(`Kisik potiska bat brizge. Katalizator pospeši razkroj, a se pri tem ne porabi. Z MnO₂ da 5${nb}mL 3-odstotnega H₂O₂ okoli 50${nb}mL kisika; pri 10 ali 20${nb}mL ga nastane več, kot ga sprejme brizga (100${nb}mL), in bat izpade.`), pvSel, pkSel, buttons(pNalij, pDodaj, pTrska, pFilt));
   const gBriz = grp("Plinska brizga", batSeg, zamSeg);
   const gZap = grp("3. Merjenje", hitrostSeg([1, 5, 20], 1, (v) => (speed = v)), hkratiT, autoSeg, buttons(startBtn, recBtn, clrBtn));
 
   layout(el, {
     extra: [
-      h("div", { class: "lab-tit-top" }, stageBox(P.wrap, h("div", { class: "lab-meters" }, swL, maL, brL, thL, koL)), controlsBox(
+      h("div", { class: "lab-tit-top" }, stageBox(P.wrap, meters), controlsBox(
         grp("1. Priprava", hint("Najprej si nadeni zaščitna očala: klorovodikova kislina draži kožo in oči, pri tiosulfatu nastaja dražljiv SO₂ (zračen prostor)."), goggles, row("poskus", nacinSeg), kopelSl, hint("Raztopine segreješ v vodni kopeli (kopel nima termostata in se počasi ohlaja). Pri brizgi bučka stoji v kopeli.")),
         gm, gg, gt, gp, gBriz, gZap, log,
       )),
       h("h4", { class: "lab-h" }, "Meritve"), ...Object.values(tabs),
       h("h4", { class: "lab-h" }, "Graf"), row("prikaži", grSeg), row("prikaži", grTSeg), ...Object.values(gPots), ...Object.values(gR0s), gTc, gTT, calc, qBox,
-      notes(POENOSTAVITVE_REAKCIJE.hitrost, "Marmor: Plummer, Wigley in Parkhurst (Am. J. Sci. 1978) – hitrost ∝ [H⁺] pri pH < 3,5; kalcit 2,71 g/cm³ (CRC); topnost CO₂ 0,038 mol/L (Sander 2015). Magnezij: kinetika iz lab-kovine (RSC »Disappearing magnesium«). Tiosulfat: hitrost ∝ [S₂O₃²⁻], Ea ≈ 52 kJ/mol (ocena; Q10 ≈ 2). KI: k = 0,0115 L/(mol s) pri 25 °C, Ea 56 kJ/mol (Liebhafsky in Mohammad 1933). Reakcijski čas človeka ~0,25 s. Ocene: konstante MnO₂ in katalaze, vidnost križa, trenje bata, ohlajanje kopeli."),
+      notes(OS ? POENOSTAVITVE_REAKCIJE.hitrost.filter((t) => !/∝|Ea\b|Michaelis|reda/.test(t)) : POENOSTAVITVE_REAKCIJE.hitrost, OS ? "Marmor: Plummer, Wigley in Parkhurst (1978); gostota kalcita (CRC). Ocene: delovanje katalizatorjev, vidnost križa, trenje bata, ohlajanje kopeli." : "Marmor: Plummer, Wigley in Parkhurst (Am. J. Sci. 1978) – hitrost ∝ [H⁺] pri pH < 3,5; kalcit 2,71 g/cm³ (CRC); topnost CO₂ 0,038 mol/L (Sander 2015). Magnezij: kinetika iz lab-kovine (RSC »Disappearing magnesium«). Tiosulfat: hitrost ∝ [S₂O₃²⁻], Ea ≈ 52 kJ/mol (ocena; Q10 ≈ 2). KI: k = 0,0115 L/(mol s) pri 25 °C, Ea 56 kJ/mol (Liebhafsky in Mohammad 1933). Reakcijski čas človeka ~0,25 s. Ocene: konstante MnO₂ in katalaze, vidnost križa, trenje bata, ohlajanje kopeli."),
+
     ],
     tryText: OS
       ? "Primerjaj marmor v koščkih in v prahu: kdaj bučka hitreje izgublja maso? Nato razkroji vodikov peroksid brez katalizatorja, z MnO₂, s surovim in s kuhanim krompirjem. Pri katerem nastaja kisik najhitreje? Kaj se zgodi s tlečo trsko?"
@@ -288,8 +290,7 @@ export function labHitrost(el, opts = {}) {
     grTSeg.parentElement.hidden = mode !== "tio";
     if (mode === "h2o2" || OS) grSeg.set("pot", true);
     kopelSl.set(B().TkopSet > B().lab.T + 0.5 ? B().TkopSet : 20, true);
-    maL.hidden = mode !== "marmor" && mode !== "h2o2";
-    brL.hidden = !(mode === "mg" || mode === "h2o2");
+    meters.replaceChildren(swL, ...(mode === "marmor" ? [maL] : []), ...(mode === "mg" || mode === "h2o2" ? [brL] : []), thL);
     redraw();
     draw();
   }
@@ -516,10 +517,8 @@ export function labHitrost(el, opts = {}) {
     const b = B();
     const tece = !!b.ura && b.uraStop == null;
     swL.set(b.ura ? ura(b.cas()) : "", "", b.ura ? (tece ? "teče" : "ustavljena") : "ne teče");
-    koL.set(num(b.Tkop, 1), "°C", b.Tkop > b.lab.T + 0.5 ? "brez termostata" : "sobna temperatura");
-    thL.set(num(b.T, 1), "°C", "v raztopini");
+    thL.set(num(b.T, 1), "°C", b.Tkop > b.lab.T + 0.5 ? `v raztopini; kopel ${num(b.Tkop, 0)}${nb}°C` : "v raztopini");
     if (mode === "marmor") maL.set(b.c != null ? b.beriMaso().text : "", "g");
-    if (mode === "h2o2") maL.set("", "g", "za MnO₂ po filtriranju");
     if (mode === "mg" || mode === "h2o2") {
       const o = b.brizga.beri();
       const on = mode === "mg" ? !!b.K.kos : !!b.kat;
@@ -743,7 +742,7 @@ export function labEnergija(el, opts = {}) {
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table,
       h("h4", { class: "lab-h" }, "Graf"), gTt, gTV, calc, qBox,
-      notes(OS ? POENOSTAVITVE_REAKCIJE.energija.filter((t) => !/entalpij/i.test(t)) : POENOSTAVITVE_REAKCIJE.energija, "Nevtralizacija −57,1 kJ/mol (močna kislina in baza, ~1 mol/L; Atkins), ocetna kislina −56,1 kJ/mol (ocena), raztapljanje NH₄NO₃ +25,69, NaOH −44,51, CaCl₂ −81,33 kJ/mol (CRC), ΔfH(Mg²⁺) = −466,85 kJ/mol (NBS). c(vode) = 4,18 J/(g K). Izgube toplote: model »Voda« (stiropor k = 0,035 W/(m K), steklo 1,14 W/(m K)). Ocene: mešanje, plasti, toplotna kapaciteta termometra."),
+      notes(OS ? POENOSTAVITVE_REAKCIJE.energija.filter((t) => !/kJ|entalpij|ΔfH/i.test(t)) : POENOSTAVITVE_REAKCIJE.energija, OS ? "Toplota pri nevtralizaciji in raztapljanju: Atkins, CRC Handbook. Izgube toplote: model »Mešanje vode« (stiropor, steklo). Ocene: mešanje, plasti, termometer." : "Nevtralizacija −57,1 kJ/mol (močna kislina in baza, ~1 mol/L; Atkins), ocetna kislina −56,1 kJ/mol (ocena), raztapljanje NH₄NO₃ +25,69, NaOH −44,51, CaCl₂ −81,33 kJ/mol (CRC), ΔfH(Mg²⁺) = −466,85 kJ/mol (NBS). c(vode) = 4,18 J/(g K). Izgube toplote: model »Voda« (stiropor k = 0,035 W/(m K), steklo 1,14 W/(m K)). Ocene: mešanje, plasti, toplotna kapaciteta termometra."),
     ],
     tryText: OS
       ? "Raztopi amonijev nitrat v vodi in nato kalcijev klorid: pri katerem se raztopina segreje in pri katerem ohladi? Nato zlij kislino in bazo: je nevtralizacija eksotermna ali endotermna reakcija?"
@@ -1003,7 +1002,7 @@ export function labEnergija(el, opts = {}) {
       label(gD, gx, yB + 12, proc === "mg" ? "magnezij" : TRDNE[proc].formula, "lab-ek-miza small");
     }
     if (!B.ocala) label(gD, 150, 14, "brez zaščitnih očal", "lab-warn");
-    if (speed > 1) label(gD, 392, 20, `čas teče ×${speed}`, "lab-warn small", "end");
+    if (speed > 1) label(gD, 8, 20, `čas teče ×${speed}`, "lab-warn small", "start");
     merilo(gD, 222, H - 4, S);
     P.commit();
   }
@@ -1129,7 +1128,7 @@ export function labPlamenska(el, opts = {}) {
     const sol = Object.entries(B.zanka).filter(([, n]) => n > 0.002);
     stL.set(sol.length ? "vzorec" : "čista", "", B.vPlamenu ? "v plamenu" : "zunaj plamena");
     const vid = B.vidnostSoli();
-    plL.set(!B.prizgan ? "ugasnjen" : B.zrak < 0.3 ? "svetel" : "nesvetel", "", B.prizgan && B.vPlamenu && vid > 0.3 ? "obarvan" : B.prizgan && B.zrak < 0.3 && B.vPlamenu ? "barve ni videti" : "");
+    plL.set(!B.prizgan ? "ugasnjen" : B.zrak < 0.3 ? "svetel" : "nesvetel", "", B.prizgan && B.vPlamenu && vid > 0.3 ? `obarvan: ${rgbIme()}` : B.prizgan && B.zrak < 0.3 && B.vPlamenu ? "barve ni videti" : "");
     if (B.vPlamenu && B.prizgan) zadnjeCrte = B.odcitajCrte().length && vid > 0.2 ? B.odcitajCrte() : zadnjeCrte;
     if (B.vPlamenu && B.prizgan && B.zrak < 0.3) once("svetel", "V svetlem rumenem plamenu barve soli skoraj ne vidiš. Odpri zračno odprtino.", "warn");
     if (B.vPlamenu && B.prizgan && (B.zanka.Na ?? 0) > 0.01 && Object.keys(B.vzorci[B.zadnji ?? "Na"]?.sestava ?? {}).every((e) => e !== "Na")) once(`na-${B.zadnji}-${B.cistil}`, "Plamen je rumen od natrija na umazani zanki in prekrije barvo vzorca. Očisti zanko!", "warn");
@@ -1187,7 +1186,10 @@ export function labPlamenska(el, opts = {}) {
     if (!B.prizgan) return "ni";
     const vid = B.vidnostSoli();
     if (!B.vPlamenu || vid < 0.3) return B.zrak < 0.3 ? "rumena (saje)" : "bledo modra";
-    return "obarvana";
+    const [r, g, b] = B.barva().rgb, mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn || 1;
+    const hue = (mx === r ? ((g - b) / d + 6) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4) * 60;
+    const ime = hue < 15 || hue >= 340 ? "rdeča" : hue < 38 ? "oranžno rdeča" : hue < 52 ? "oranžna" : hue < 70 ? "rumena" : hue < 150 ? "zelena" : hue < 190 ? "modro zelena" : hue < 255 ? "modra" : hue < 300 ? "vijolična" : "rožnato vijolična";
+    return (mx - mn) / (mx || 1) < 0.3 ? `bledo ${ime}` : ime;
   }
   // Plamen: svetel (saje: rumeno oranžen, plapola) ali nesvetel (bledo vijoličasto moder z modrim notranjim stožcem); sol ga obarva.
   function plamen(bx, ct) {

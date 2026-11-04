@@ -491,6 +491,31 @@ test("fuzz: random settings never give NaN", () => {
     fin(f.vidnostSoli(), "vidnost");
   }
   assert.equal(new Brizga(() => 0.5, { Vglava: 80, T: 20, p: 98000 }).beri().value, 0);
+  // premor: korak dt = 0 ne sme dati NaN (prej 0/0 pri hitrosti razkroja in moči v kalorimetru)
+  const p0 = peroksid("mno2_05", { idealno: false });
+  p0.step(0);
+  fin(p0.hitrostPlina(), "H₂O₂ dt = 0");
+  const k0 = new KalorimeterBench({ seed: 2 });
+  k0.ocala = true;
+  k0.nalij("HCl", 1, 50), k0.pripravi2(1, 50), k0.zlij();
+  k0.step(0);
+  k0.step(30);
+  fin(k0.readT().value, "kalorimeter dt = 0");
+});
+
+test("mistake: stopping the stopwatch while the cross is still visible gives a much shorter time; judging by eye scatters ≤ ±4 %", () => {
+  // Napaka ±4 % je meja presoje v modelu (σ 1,5 %, ocena); prezgodnja ustavitev pri vidnosti 50 % da ~1/5 pravega časa
+  // (S = 0,18 · Sk, ker vidnost = e^(−3,9 S/Sk)).
+  for (let s = 1; s <= 20; s++) rel(tio(50, 20, { seed: s, idealno: false }), casKriza(((TIO.c0 * 50) / 50) * (50 / 55), 20), 0.045, `presoja ${s}`);
+  const B = new TiosulfatBench({ seed: 4, idealno: true, T: 20 });
+  B.ocala = true;
+  B.pripravi(50);
+  B.zlij();
+  B.zazeni();
+  while (B.vidnost() > 0.5) B.step(0.1);
+  const t = B.ustavi();
+  while (B.kriz == null) B.step(0.5);
+  assert.ok(t < 0.3 * B.kriz, `prezgodaj ustavljena: ${t} vs ${B.kriz}`);
 });
 
 test("POENOSTAVITVE_REAKCIJE lists simplifications for every bench", () => {

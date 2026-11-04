@@ -14,7 +14,9 @@ const K0 = 273.15;
 export const arrhenius = (Ea, T, T0 = 20) => Math.exp((-Ea / R_PLIN) * (1 / (T + K0) - 1 / (T0 + K0)));
 // Korak integracije 0,1 s (najkrajša časovna konstanta je ~1 s).
 const KORAK = 0.1;
+// dt ≤ 0 (premor) ne naredi ničesar: sicer bi bila hitrost 0/0.
 const korakaj = (dt, fn) => {
+  if (!(dt > 0)) return;
   for (let n = Math.max(1, Math.ceil(dt / KORAK - 1e-9)), i = 0; i < n; i++) fn(dt / n);
 };
 
@@ -412,7 +414,8 @@ export class TiosulfatBench extends Osnova {
 
 // ---------------------------------------------------------------- (d) razkroj vodikovega peroksida s katalizatorji
 // 2H₂O₂ → 2H₂O + O₂. 3 % H₂O₂ = 30 g/L = 0,882 mol/L (M = 34,01 g/mol); 5 / 10 / 20 mL in voda do 25 mL v erlenmajerici 100 mL.
-// 1. red glede na H₂O₂: −d[H₂O₂]/dt = k · [H₂O₂]. Brez katalizatorja k ≈ 1 · 10⁻⁷ /s (v nekaj minutah ni plina; ocena).
+// 1. red glede na H₂O₂: −d[H₂O₂]/dt = k · [H₂O₂]. Brez katalizatorja k ≈ 1 · 10⁻⁷ /s (v nekaj minutah ni plina; ocena),
+// Ea = 75 kJ/mol (učbeniška vrednost za nekatalizirani razkroj; ocena).
 // MnO₂ (prah): k = 0,12 /s na gram (ocena: 0,5 g sprosti ~40 mL O₂ v ~30 s), Ea 30 kJ/mol (ocena).
 // KI (~0,5 g trdnega, [I⁻] = 0,12 mol/L): H₂O₂ + I⁻ → H₂O + IO⁻ (počasna stopnja), IO⁻ + H₂O₂ → H₂O + O₂ + I⁻;
 // k = 0,0115 L/(mol s) pri 25 °C, Ea = 56 kJ/mol (Liebhafsky in Mohammad, JACS 1933; ocena ±20 %); −d[H₂O₂]/dt = 2k[I⁻][H₂O₂].
@@ -493,8 +496,8 @@ export class PeroksidBench extends Osnova {
           this.nO2 += dn / 2;
           this.st.nProst += dn / 2;
           this.rate = dn / 2 / d;
-          // ΔH = −98,0 kJ/mol H₂O₂ (NBS: ΔfH H₂O₂(aq) −191,17, H₂O −285,83)
-          this.T += (98000 * dn) / (PEROKSID.Vskupaj * VODA.c / 1000 + 0.5 * BUCKA_R.masa * 0.84);
+          // ΔH = −285,83 + 191,17 = −94,7 kJ/mol H₂O₂ (NBS: ΔfH H₂O₂(aq) −191,17, H₂O(l) −285,83)
+          this.T += (94660 * dn) / (PEROKSID.Vskupaj * VODA.c / 1000 + 0.5 * BUCKA_R.masa * 0.84);
         }
         this.T += (this.Tkop - this.T) * (1 - Math.exp(-d / (this.Tkop > this.lab.T + 0.5 ? KOPEL.tauBucka : 900)));
         const raz = raztapljaj(this.st, "O2", d, { nastaja: this.rate > 1e-8, Vtek: PEROKSID.Vskupaj, T: this.T });
