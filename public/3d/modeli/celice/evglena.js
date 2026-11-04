@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Enocelični bičkar iz mlakuž, dolg okoli 50 µm. Na svetlobi dela fotosintezo kot rastlina, v temi pa vsrkava hrano iz vode. Plava z bičem in se pri tem vrti okoli dolge osi.",
+  poskusi: "Poišči očesno pego ob biču: čemu služi?",
   merilo: { m: 76e-6, oznaka: "76 µm" },
 };
 

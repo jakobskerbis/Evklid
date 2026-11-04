@@ -32,6 +32,8 @@ import { Credits } from "../placila/krediti.js";
 import { SHARE } from "../proracun.js";
 import { stopnja, rang, STOPNJE } from "../../public/stopnja.js";
 import { mountGifts } from "../placila/darila.js";
+import { mountGuarantee } from "../placila/garancija.js";
+import { mountPodari } from "../placila/podari.js";
 import { Schedules, nowParts } from "../schedule.js";
 
 export const CONSENT_TEXT =
@@ -125,6 +127,8 @@ export function mountAccounts(app, store, opts = {}) {
   const accessOf = (p) => accessFor(p, Date.now(), p.promo_until ? promo.termsOf(p.id).seats : promoCfg.seats);
   let billing = null; // paketi pred testom, povezave za starše (mountBilling spodaj)
   let gifts = null; // darilne kode (mountGifts spodaj)
+  let guarantee = null; // garancija »Boljša ocena ali vrnemo denar« (mountGuarantee spodaj)
+  let podari = null; // »Podari Evklid« (mountPodari spodaj)
 
   const baseUrl = (req) => (env.EVKLID_BASE_URL || (req ? `${req.protocol}://${req.get("host")}` : `http://localhost:${env.PORT || 3000}`)).replace(/\/$/, "");
 
@@ -384,7 +388,7 @@ export function mountAccounts(app, store, opts = {}) {
     next();
   });
 
-  const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/];
+  const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/podari$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/];
   app.use("/api", (req, res, next) => {
     if (PUBLIC.some((re) => re.test(req.path))) return next();
     const p = req.parent;
@@ -843,6 +847,8 @@ export function mountAccounts(app, store, opts = {}) {
       // Osebno ob šolski licenci: ponudi se, ko ima vsaj en otrok šolsko licenco (samo v evrih).
       school_plans: childIds(p.id).some((id) => schools.hasLicence(id)) && currencyOf(req, p) === "EUR" ? SCHOOL_PLANS : [],
       gifts: gifts ? gifts.listFor(p.id) : [],
+      guarantee: guarantee ? guarantee.viewFor(p) : null,
+      podari: podari ? podari.stats() : null,
       // Darilna koda po letni ceni stopnje (99 / 139 / 199 €).
       gift_prices: GIFT_PRICES,
       gift_price: GIFT_PRICES.OS,
@@ -1246,12 +1252,15 @@ export function mountAccounts(app, store, opts = {}) {
         Math.max(Date.parse(p.trial_ends_at || 0) || 0, Date.parse(p.promo_until || 0) || 0, giftCarries ? Date.parse(p.gift_until || 0) || 0 : 0),
       );
       const subscription_data = { metadata: { parent_id: p.id } };
+      // »Podari Evklid«: neobvezen dodatek 2/5/10 € k prvemu plačilu (enkratna vrstica), potrdi ga invoice.paid.
+      const addon = !school && currency === "EUR" && req.body?.podari ? podari.addonFor(p.id, req.body.podari) : null;
+      if (addon) subscription_data.metadata.podari_id = addon.id;
       if (trialEnd - Date.now() > 49 * 3600000) subscription_data.trial_end = Math.floor(trialEnd / 1000);
       const session = await stripe.request("POST", "/checkout/sessions", {
         mode: "subscription",
         customer,
         client_reference_id: String(p.id),
-        line_items: [{ price: prices[plan.key], quantity: 1 }],
+        line_items: [{ price: prices[plan.key], quantity: 1 }, ...(addon ? [addon.line_item] : [])],
         success_url: `${base}/?billing=success&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: currency === "EUR" ? "sl" : "auto",
@@ -1431,6 +1440,13 @@ export function mountAccounts(app, store, opts = {}) {
     ageOf: ageOfStudent,
   });
   gifts = mountGifts(app, { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, recordConsent: billing.recordConsent, paidActive });
+  podari = mountPodari(app, { db, stripe, json, log, ensureCustomer, baseUrl, isMinor });
+  // Garancija: ob vračilu se naročnina takoj prekliče (profili preidejo na brezplačni paket).
+  async function cancelSubscription(p) {
+    const sub = await stripe.request("DELETE", `/subscriptions/${p.sub_id}`);
+    await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } });
+  }
+  guarantee = mountGuarantee(app, { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, cancelSubscription, addonOf: podari.addonOf });
 
   // Naročnina iz dogodka: sveže stanje iz Stripa (dogodki lahko pridejo v napačnem vrstnem redu).
   async function freshSubscription(obj) {
@@ -1463,6 +1479,10 @@ export function mountAccounts(app, store, opts = {}) {
           gifts.complete(obj);
           break;
         }
+        if (obj.metadata?.kind === "podari") {
+          podari.complete(obj);
+          break;
+        }
         if (obj.metadata?.pay_link && obj.subscription && stripe.enabled) {
           await billing.completeSubSession(obj);
           break;
@@ -1482,7 +1502,9 @@ export function mountAccounts(app, store, opts = {}) {
       }
       case "invoice.paid": {
         const p = parentFor();
-        if (p && obj.amount_paid > 0) await maybeRewardReferral(p.id);
+        podari.invoicePaid(obj); // dodatek »Podari Evklid« pri prvem plačilu naročnine
+        // Nagrada za priporočilo šele ob plačilu naročnine (sam dodatek ob začetku preizkusa ne šteje).
+        if (p && obj.amount_paid - podari.addonOf(obj).amount > 0) await maybeRewardReferral(p.id);
         break;
       }
       case "invoice.payment_failed": {
@@ -1496,6 +1518,8 @@ export function mountAccounts(app, store, opts = {}) {
       case "charge.refunded": {
         // Vračilo dokupa: kredit se odvzame (porabljeni del ostane porabljen).
         if (obj.amount_refunded > 0 && credits.refund(obj.payment_intent)) break;
+        // »Podari«: samostojen nakup se konča tu; dodatek je na plačilu naročnine, zato obdelava teče naprej.
+        if (obj.amount_refunded > 0 && podari.end(obj.payment_intent, "refunded", obj) === "month") break;
         const pass = billing.passes.byPayment(obj.payment_intent);
         if (pass && obj.amount_refunded > 0) billing.passes.end(pass.id, "refunded"); // tudi delno vračilo ob odstopu
         if (obj.amount_refunded > 0) gifts.end(obj.payment_intent, "refunded"); // darilna koda: tudi delno vračilo
@@ -1504,6 +1528,7 @@ export function mountAccounts(app, store, opts = {}) {
       case "charge.dispute.created": {
         if (credits.refund(obj.payment_intent)) break;
         if (gifts.end(obj.payment_intent, "disputed")) break;
+        if (podari.end(obj.payment_intent, "disputed") === "month") break;
         const pass = billing.passes.byPayment(obj.payment_intent);
         if (pass) {
           billing.passes.end(pass.id, "disputed");

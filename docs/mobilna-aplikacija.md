@@ -13,7 +13,7 @@ Vrstici telefona (ura, gumbi) dobita barvo roba strani. Gumb nazaj na Androidu g
 druge strani odpre brskalnik.
 
 Naravno ostane: prijava in registracija (tipkovnica telefona), posodobitve (OTA in nov APK), obvestila, vaje
-brez povezave. Ko strežnik ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez
+brez povezave. Med objavo nove različice (gostitelj vrne 502/503/504) aplikacija ob vrtavki pokaže »Evklid se posodablja …« in poskuša znova do ~70 s (`BUSY_WAIT`, kot splet), ob prekinjeni povezavi dvakrat tiho poskusi znova. Ko strežnik še vedno ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez
 povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (posodobitev OTA pride pred objavo na Renderju, `/api/mobile/web` vrne 404), aplikacija do posodobitve strežnika pokaže naravne zaslone in spletno stran poskusi znova, ko se vrne v ospredje (`mobile/src/lib/web-state.ts`). Seznam razlik spodaj velja zdaj samo še za te naravne zaslone.
 
 ## Kaj zna
@@ -30,6 +30,10 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
   istim sporočilom kot na spletu (`public/textbook.js`). Na Androidu je v meniju še »Kopiraj«.
 - **Kalkulator** med vajo (gumb ob Namigu): spletni kalkulator s strani `/kalkulator` (znanstveni, grafični,
   orodja, PSE; pri kemiji se odpre PSE) v WebView, brez prijave in brez »Moji grafi«.
+- **3D svet** (vrstica v zavihku Jaz): stran `/3d` (atlas človeškega telesa, pozneje modeli iz kode, `docs/3d.md`) v
+  WebView `mobile/src/app/atlas.tsx`; »Vprašaj inštruktorja« pošlje `{tip: "vprasaj", besedilo}` in aplikacija odpre
+  nov pogovor s tem sporočilom. Modeli ostanejo v predpomnilniku WebView (service worker), ob prvem odprtju je
+  potrebna povezava.
 - **Učbenik** s kazalom in iskanjem.
 - **Inštruktor**: klepet, odgovor prihaja sproti, fotografija naloge (kamera ali galerija),
   »Razloži podrobneje«, predlog spremembe šole in letnika.
@@ -59,6 +63,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Videz sloga Čist | barve, robovi, pisava Instrument Sans, zavihki v istem redu | S | naravno (`theme.ts`, `font()`) | ✓ narejeno; besedilo v WebView (lekcije, klepet) ima Instrument Sans, formule pa KaTeX in `public/sirina.js` s strežnika kot splet (brez povezave MathML) |
 | Razloži ob izboru | označeno besedilo lekcije → inštruktor | S | naravno (meni izbora WebView) | ✓ narejeno |
 | Kalkulator | znanstveni, grafični, orodja, PSE (`public/graph/`) | M | WebView `/kalkulator` | ✓ narejeno med vajo; manjka še gumb v lekciji in klepetu |
+| 3D atlas in modeli | telo v 3D, kviz, modeli iz kode (`public/3d/`) | L | WebView `/3d` (`atlas.tsx`), vstop v zavihku Jaz | ✓ narejeno; manjka še vstop iz lekcije (simulacija `3d-<id>` v katalogu) |
 | Formule | zbirka formul (način Formule kalkulatorja) | S | dodati način `formulas` na `/kalkulator` (potrebuje `rich.js`, marked) | ✗ |
 | Klikljive črke v formulah | kartica s pomenom črke iz predmeta, razdelka in lekcije (`public/formula-info.js`; lekcije, razlaga teme z »Bistvom«, naloge, odgovori inštruktorja, list s formulami z oznakami razdelkov) | M | naravno: `RichText` označi črke (`annotateTex`), dotik pošlje kodo iz WebView, kartica (`public/formula-card.js`) se odpre kot spodnji list; predmet in oznake iz `FormulaCtx` (`useTopicFx`, `/api/topic`) | ✓ narejeno v lekciji, nalogah in klepetu; list s formulami čaka na način Formule (vrstica »Formule«) |
 | Moji grafi | shranjeni grafi na strežniku | S | `/kalkulator` s sejo aplikacije (žeton v glavi ali enkratna povezava kot `app-link.js`) | ✗ |
