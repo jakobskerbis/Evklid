@@ -231,8 +231,8 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 /* Okvir po redkosti (trgovina, zbirke): višja redkost ima bogatejši okvir. Od legendarnih naprej je rob
    preliv (border-box), od kozmičnih se vrti, večni še utripa in ima znak ∞. Sij je filter, da ostane
    box-shadow za »oblečeno« in »izbrano«. */
-@property --gm-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-@keyframes gm-spin { to { --gm-a: 360deg; } }
+@property --gm-spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes gm-spin { to { --gm-spin: 360deg; } }
 @keyframes gm-pulse { 50% { filter: drop-shadow(0 0 12px rgba(250, 204, 21, 0.75)); } }
 .gm-r-rare, .zb-card.gm-r-rare { border-color: #3b82f6; background-image: linear-gradient(160deg, rgba(59, 130, 246, 0.13), transparent 55%); }
 .gm-r-epic, .zb-card.gm-r-epic { border-color: #a855f7; background-image: linear-gradient(160deg, rgba(168, 85, 247, 0.18), transparent 60%); }
@@ -253,12 +253,12 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
   --gm-glow: rgba(225, 29, 72, 0.45);
 }
 .gm-r-cosmic {
-  --gm-edge: conic-gradient(from var(--gm-a, 0deg), #22d3ee, #6366f1, #a855f7, #0ea5e9, #e0f2fe, #22d3ee);
+  --gm-edge: conic-gradient(from var(--gm-spin, 0deg), #22d3ee, #6366f1, #a855f7, #0ea5e9, #e0f2fe, #22d3ee);
   --gm-tint: radial-gradient(1.5px 1.5px at 18% 22%, #a5b4fc 99%, transparent), radial-gradient(1.5px 1.5px at 82% 14%, #67e8f9 99%, transparent), radial-gradient(1.5px 1.5px at 88% 70%, #c4b5fd 99%, transparent), linear-gradient(160deg, rgba(99, 102, 241, 0.3), rgba(34, 211, 238, 0.14) 55%, transparent 85%);
   --gm-glow: rgba(56, 189, 248, 0.55);
 }
 .gm-r-eternal {
-  --gm-edge: conic-gradient(from var(--gm-a, 0deg), #f87171, #fbbf24, #4ade80, #22d3ee, #818cf8, #f472b6, #f87171);
+  --gm-edge: conic-gradient(from var(--gm-spin, 0deg), #f87171, #fbbf24, #4ade80, #22d3ee, #818cf8, #f472b6, #f87171);
   --gm-tint: radial-gradient(circle at 50% 0, rgba(253, 224, 71, 0.4), transparent 60%), linear-gradient(160deg, rgba(244, 114, 182, 0.16), rgba(34, 211, 238, 0.16));
   --gm-glow: rgba(250, 204, 21, 0.55);
 }

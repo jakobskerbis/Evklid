@@ -1050,6 +1050,9 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .check-row { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
 .check-row input { flex: none; width: 22px; height: 22px; margin: 2px 0 0; accent-color: var(--accent); }
 .check-row span { display: flex; flex-direction: column; gap: 2px; }
+/* V obrazcu (.form, npr. »Skrij igre« v Nastavitvah) ostane kljukica ob besedilu in brez okvirja polja. */
+.form label.check-row { flex-direction: row; gap: 12px; font-weight: 400; min-height: 44px; }
+.form .check-row input { min-height: 0; padding: 0; }
 /* Dokup pogovorov (credit-card.js): ploščice paketov kot drugje v Računu, izbrana z obrobo in kljukico. */
 .credit-packs { border: 0; padding: 0; margin: 4px 0 0; min-width: 0; display: grid; gap: 8px; }
 .credit-pack { position: relative; display: grid; grid-template-columns: 8em minmax(0, 1fr); align-items: center; gap: 6px 12px; min-width: 0; min-height: 52px; padding: 10px 16px; padding-inline-end: 48px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); cursor: pointer; transition: border-color 0.15s, background 0.15s; }

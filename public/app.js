@@ -538,6 +538,12 @@ async function selectStudent(id) {
   applyLite();
   refreshBubble(); // premična okna zavihkov, ki jih ta profil nima (NPZ in matura, Tekmovanja), se zaprejo
   localStorageSet("studentId", state.student.id);
+  leaveHiddenGames(); // »Skrij igre« novega profila
+  // Igre (glavni pogled ali okno): igra, kovanci in videz po stopnji prejšnjega profila ne ostanejo.
+  if (!$("#view-games").hidden) {
+    leaveGames();
+    showGames();
+  }
   sendOffline();
   state.conversationId = null;
   await loadConversations();
@@ -558,7 +564,7 @@ async function selectStudent(id) {
   if (!$("#view-exams").hidden) showView(siExams() ? "exams" : "path");
   if (!$("#view-competition").hidden) showView(isUni(state.student.settings) ? "path" : "competition");
   // Drugi pogledi v premičnih oknih pokažejo podatke novega profila (zgornji so se že osvežili).
-  for (const v of floatingViews()) if (!["settings", "progress", "league", "scan", "path", "exams", "competition"].includes(v)) v === "account" ? renderAccount() : initView(v);
+  for (const v of floatingViews()) if (!["settings", "progress", "league", "scan", "path", "exams", "competition", "games"].includes(v)) v === "account" ? renderAccount() : initView(v);
   refreshProfileButton();
   refreshXp();
   // Vprašalnik kotička zanimanj: profil, ki ga še ni izpolnil, ga dobi ob zagonu (enkrat).
@@ -1318,6 +1324,7 @@ $("#settings-form").addEventListener("submit", async (e) => {
   if (before.xp_goal !== updated.settings.xp_goal) refreshXp().catch(() => null);
   syncCompetitionTab();
   applyLite();
+  leaveHiddenGames();
   $("#student-select").options[$("#student-select").selectedIndex].textContent = updated.name;
   fillDeleteCard();
   refreshProfileButton();
@@ -1345,6 +1352,7 @@ function studentUpdated(updated) {
   state.student = updated;
   syncCompetitionTab();
   applyLite();
+  leaveHiddenGames();
   refreshProfileButton();
   renderState(null);
   if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) state.pathKey = null;
@@ -2008,6 +2016,12 @@ const meBackHtml = () => `<button type="button" class="ghost back me-back">${ico
 function syncGamesTab() {
   const off = !!state.student && !gamesOn(state.student.settings);
   document.querySelectorAll('.tab[data-view="games"], [data-go="games"]').forEach((el) => (el.hidden = off));
+}
+// Igre so se pravkar skrile (Nastavitve, inštruktor, menjava profila): odprto okno se zapre, glavni pogled gre na Jaz.
+function leaveHiddenGames() {
+  if (!state.student || gamesOn(state.student.settings)) return;
+  if (isFloating("games")) closeWindow("games");
+  if (currentView === "games") showView("me");
 }
 function syncCompetitionTab() {
   syncGamesTab();
