@@ -896,6 +896,8 @@
   "sc.memory": "Vilivyohifadhiwa",
   "sc.insert": "Weka kwenye hesabu",
   "sc.pressSolve": "Bonyeza = kutatua",
+  "sc.fmHint": "Badilisha herufi zinazojulikana kwa namba, acha isiyojulikana kisha bonyeza =.",
+  "sc.fmRad": "Kikokotoo sasa kiko katika hali ya RAD (pembe katika radiani).",
   "sc.errUndefined": "Jibu halijafafanuliwa (k.m. kugawanya kwa 0).",
   "sc.constants": "Viasili",
   "sc.toCalc": "Kwenye kikokotoo",

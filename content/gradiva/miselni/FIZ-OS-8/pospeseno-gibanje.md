@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enakomerno pospešeno gibanje
+  - hitrost vsako sekundo enako naraste
+  - raketa: $0$, $4$, $8$, $12\,\mathrm{m/s}$
+- Pospešek
+  - $a = \dfrac{\Delta v}{\Delta t}$, enota $\mathrm{m/s^2}$
+  - napaka: pospešek zamenjan s hitrostjo
+- Hitrost iz mirovanja
+  - $v = a \cdot t$
+  - raketa po $10\,\mathrm{s}$: $40\,\mathrm{m/s}$
+- Pot iz mirovanja
+  - $s = \dfrac{a \cdot t^2}{2}$
+  - ploščina trikotnika pod $v(t)$
+  - napaka: pozabljeno deljenje z $2$
+- Kvadrat časa
+  - dvakrat več časa, štirikrat daljša pot
+- Padanje brez zraka
+  - pospešek $g$, enak za vsa telesa
+  - Zemlja $9{,}81\,\mathrm{m/s^2}$, Luna $1{,}6\,\mathrm{m/s^2}$
+  - kladivo in pero na Luni

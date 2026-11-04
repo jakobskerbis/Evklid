@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Električna moč
+  - energija v eni sekundi
+  - $P = U \cdot I$, enota $\mathrm{W}$
+  - $1\,\mathrm{kW} = 1000\,\mathrm{W}$
+- Električno delo
+  - $A = P \cdot t = U \cdot I \cdot t$
+  - enota $\mathrm{J}$ (moč v $\mathrm{W}$, čas v $\mathrm{s}$)
+- Kilovatna ura
+  - $1\,\mathrm{kWh} = 3\,600\,000\,\mathrm{J}$
+  - enota za delo, ne za moč
+- Usklajene enote
+  - $\mathrm{kW}$ in $\mathrm{h}$ dasta $\mathrm{kWh}$
+  - minute deli s $60$, ne s $100$
+- Strošek
+  - delo v $\mathrm{kWh}$ krat cena
+  - halogenka $3\,\mathrm{h}$: okoli $0{,}025\,\text{€}$
+- Moč in čas skupaj
+  - šibek aparat ves dan lahko porabi več
+  - LED se izplača v približno $139$ dneh

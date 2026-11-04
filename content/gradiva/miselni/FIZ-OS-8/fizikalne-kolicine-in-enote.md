@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Merjenje
+  - fizikalna količina: merljiva lastnost
+  - primerjanje z dogovorjeno enoto
+  - skok: $6{,}45\,\mathrm{m}$
+- Zapis meritve
+  - številska vrednost in enota
+  - napaka: število brez enote
+- Merilni instrument
+  - najmanjši razdelek omejuje natančnost
+  - merilno območje
+  - glej pravokotno na skalo
+- Enote SI
+  - meter, kilogram, sekunda, kelvin
+  - liter in ura nista enoti SI
+- Predpone
+  - kilo $1000$, centi $0{,}01$, mili $0{,}001$
+  - napaka: $1\,\mathrm{mm}$ ni $1000\,\mathrm{m}$, ampak $0{,}001\,\mathrm{m}$
+- Pretvarjanje
+  - v manjšo enoto množimo
+  - čas s $60$: $1{,}5\,\mathrm{h} = 90\,\mathrm{min}$
+- Prostornina
+  - $1\,\mathrm{l} = 1\,\mathrm{dm^3}$
+  - $1\,\mathrm{m^3} = 1000\,\mathrm{dm^3}$
+  - napaka: korak $10$ namesto $1000$

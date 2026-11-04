@@ -6,143 +6,167 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Pri kemiji si že spoznal, da so snovi okoli nas kisle, bazične ali nevtralne. Limona in kis imata kisel okus, milo je spolzko in bazično, čista voda pa je nevtralna. Spoznal si tudi, da se barva nekaterih barvil (indikatorjev) spremeni, ko jih dodamo kislini ali bazi.
+Leta 1909 je danski kemik Søren Sørensen delal v laboratoriju pivovarne Carlsberg v Københavnu. Preučeval je encime, snovi, ki v živih bitjih in pri varjenju piva pospešujejo reakcije. Opazil je, da encim dobro deluje le pri določeni kislosti raztopine.
 
-Samo »kislo« ali »bazično« pa ni dovolj natančno. Limonin sok in želodčna kislina sta oba kisla, vendar je želodčna kislina bolj kisla. Zato kemiki uporabljajo **pH lestvico**, ki kislost ali bazičnost izrazi s številom. Merjenje pH je pomembno v vsakdanjem življenju:
+Kislost je moral zapisovati natančno. Tedaj so jo izražali z drobnimi števili, kot je $0{,}0000001$, ki so nerodna za branje in primerjanje. Sørensen je zato uvedel kratko število: **pH**. Namesto dolgega decimalnega števila je zapisal kar $7$, ker enica v $0{,}0000001$ stoji na sedmem mestu za vejico.
 
-- vrtnar preveri, ali je prst primerna za rastline,
-- v bazenu vzdržujejo pH vode, da ne draži oči in kože,
-- v laboratoriju in industriji nadzirajo potek reakcij,
-- pri negi las in kože izbiramo izdelke s primernim pH.
+Danes pH srečaš povsod. Na etiketi ustekleničene vode, ki jo kupiš na potovanju, je pogosto napisan pH. Kmetijski strokovnjaki rišejo zemljevide kislosti tal, da vedo, kje bo kakšna rastlina uspevala.
 
 ## Razlaga
 
-**1. Kaj je pH.** pH je število, ki pove, kako kisla ali bazična je vodna raztopina. Navadno ima vrednosti od $0$ do $14$.
+**1. Mamljiva, a napačna predstava.** Ker pH zapišemo s številom, se zdi, da deluje kot ocena ali temperatura: »Večje število pomeni več kisline, pH $4$ je dvakrat bolj kisel od pH $2$.« Obe misli sta napačni. Popravimo ju po vrsti.
 
-**2. Tri območja.**
+**2. Prvi popravek: smer lestvice.** pH je število, ki pove, kako kisla ali bazična je vodna raztopina. Navadno ima vrednosti od $0$ do $14$:
 
 - $\mathrm{pH} < 7$: raztopina je **kisla**,
 - $\mathrm{pH} = 7$: raztopina je **nevtralna** (npr. čista voda),
 - $\mathrm{pH} > 7$: raztopina je **bazična** (alkalna).
 
-**3. Smer lestvice.** Manjši ko je pH, bolj je raztopina kisla. Večji ko je pH, bolj je bazična. Najbolj kisle snovi so blizu $0$, najbolj bazične blizu $14$.
+Manjši ko je pH, bolj je raztopina kisla. Večji ko je pH, bolj je bazična.
 
-**4. Kaj se skriva za številom.** Kislost je odvisna od količine oksonijevih ionov $\mathrm{H_3O^+}$ v raztopini (poenostavljeno jih zapišemo tudi kot vodikove ione $\mathrm{H^+}$). Več jih je, nižji je pH. Lestvica je **logaritemska**: ko se pH zmanjša za $1$, je oksonijevih ionov desetkrat več. Raztopina s $\mathrm{pH} = 3$ je torej desetkrat bolj kisla kot raztopina s $\mathrm{pH} = 4$ in stokrat bolj kisla kot raztopina s $\mathrm{pH} = 5$.
+:::premisli
+Sošolec pravi: »$0$ točk pomeni nič točk, torej raztopina s $\mathrm{pH} = 0$ ne vsebuje nič kisline.« Ima prav? Zakaj?
+---
+Ravno nasprotno: $\mathrm{pH} = 0$ je zelo kisla raztopina. Število $0$ ne pomeni »nič«, ampak skrajni levi konec lestvice, kjer je kislost največja.
+:::
 
-**5. Kako merimo pH.**
+**3. Drugi popravek: vsak korak je desetkrat.** Kislost je odvisna od tega, koliko **oksonijevih ionov** $\mathrm{H_3O^+}$ je v enaki prostornini raztopine. To so ioni, ki v vodi nastanejo iz kislin (poenostavljeno jih zapišemo tudi kot vodikove ione $\mathrm{H^+}$). Več jih je, nižji je pH.
 
-- **Univerzalni indikatorski papirček**: pomočimo ga v raztopino, se obarva, barvo primerjamo z barvno skalo na embalaži. Rdeča in oranžna pomenita kislo, zelena nevtralno, modra in vijolična bazično.
-- **pH-meter**: elektronska naprava z elektrodo, ki pH izmeri in prikaže številčno, bolj natančno kot papirček.
+Lestvica je **logaritemska**: ko se pH zmanjša za $1$, je oksonijevih ionov desetkrat več. Podobno je z bankovci za $1$ €, $10$ € in $100$ €: vsak naslednji je vreden desetkrat več, ne le za eno enoto več.
+
+| pH | Vrsta | Oksonijevih ionov v primerjavi s pH 7 |
+|---|---|---|
+| $7$ | nevtralno | $1$-krat |
+| $6$ | rahlo kislo | $10$-krat več |
+| $5$ | kislo | $100$-krat več |
+| $4$ | kislo | $1000$-krat več |
+| $3$ | močno kislo | $10\,000$-krat več |
+
+Raztopina s $\mathrm{pH} = 3$ je torej desetkrat bolj kisla kot raztopina s $\mathrm{pH} = 4$ in stokrat bolj kisla kot raztopina s $\mathrm{pH} = 5$. Na bazični strani velja enako v nasprotno smer: vsak korak navzgor pomeni desetkrat manj oksonijevih ionov.
+
+V simulaciji spodaj (»pH lestvica«) nastavi drsnik na $3$, nato na $5$. Opazuj zapis $[\mathrm{H_3O^+}]$ v izpisu pod gumbi: eksponent se spremeni z $-3$ na $-5$. Ker je $10^{-3} = 0{,}001$ in $10^{-5} = 0{,}00001$, to pomeni stokrat manj ionov.
+
+**4. Kako merimo pH.**
+
+- **Univerzalni indikatorski papirček**: pomočimo ga v raztopino, se obarva, barvo primerjamo z barvno skalo na embalaži. Rdeča in oranžna pomenita kislo, zelena nevtralno, modra in vijolična bazično. Dobimo približno vrednost, na celo enoto natančno ali slabše.
+- **Sok rdečega zelja**: domač indikator. V kislem je rdeč do roza, v nevtralnem vijoličen, v bazičnem moder, zelen in pri zelo bazičnem rumen.
+- **pH-meter**: elektronska naprava z elektrodo, ki pH izmeri in prikaže številčno, na desetinko ali bolj natančno. Pred meritvijo ga umerimo z raztopinami z znanim pH.
 - **Posamezni indikatorji** (npr. lakmus, fenolftalein) ne pokažejo vrednosti pH, ampak le območje. Lakmus je v kisli raztopini rdeč, v bazični moder. Fenolftalein je v kisli in nevtralni raztopini brezbarven, v bazični pa rožnato vijoličen.
 
-**6. Primeri iz vsakdana (približne vrednosti).**
+**5. Primeri iz vsakdana (približne vrednosti).**
 
 | Snov | Približni pH |
 |---|---|
-| želodčna kislina | okoli $1$–$2$ |
+| želodčni sok | okoli $1{,}5$–$3$ |
 | limonin sok | okoli $2$ |
 | kis | okoli $3$ |
 | kava | okoli $5$ |
 | čista voda | $7$ |
+| kri | okoli $7{,}4$ |
 | milo | okoli $9$–$10$ |
 | belilo (varikina) | okoli $12$–$13$ |
 
 Vrednosti so orientacijske, saj se razlikujejo glede na izdelek in koncentracijo.
 
-**7. Pomen pH.** Veliko procesov deluje le v ozkem območju pH. Naša koža je rahlo kisla, zato so izdelki za nego pogosto prilagojeni temu. Ribe v preveč kisli vodi ne preživijo. Tudi prst vpliva na to, katere rastline uspevajo.
+**6. Pomen pH.** Veliko procesov deluje le v ozkem območju pH, tako kot Sørensenovi encimi. Kri ima pH med približno $7{,}35$ in $7{,}45$; že majhen odmik je nevaren. Koža je rahlo kisla, zato so izdelki za nego pogosto prilagojeni temu. V bazenu vzdržujejo pH malo nad $7$, da voda ne draži oči. Ribe v preveč kisli vodi ne preživijo.
 
-**8. Previdnost.** Zelo kisle (pH blizu $0$) in zelo bazične (pH blizu $14$) raztopine so jedke. Z njimi delamo le z zaščitnimi očali in rokavicami.
+Tudi tla imajo svoj pH. Na zemljevidu kislosti tal so tla na apnencu, ki ga je v Sloveniji veliko, pogosto nevtralna do rahlo bazična. Na drugih kamninah in na šotnih tleh so pogosto kisla. Borovnice uspevajo v kislih tleh, okoli $\mathrm{pH} = 5$.
+
+:::premisli
+Limonin sok s $\mathrm{pH} = 2$ močno razredčiš z vodo. Napovej: ali se pH zviša ali zniža? Ali lahko z dodajanjem vode preseže $7$?
+---
+pH se zviša, ker je oksonijevih ionov v enaki prostornini manj. Približuje se $7$, a $7$ ne preseže: z dodajanjem vode iz kisle raztopine ne nastane bazična.
+:::
+
+**7. Previdnost.** Zelo kisle (pH blizu $0$) in zelo bazične (pH blizu $14$) raztopine so jedke. Z njimi delamo le z zaščitnimi očali in rokavicami.
 
 ## Rešeni primeri
 
-### Primer 1 (lažji): razvrščanje po pH
+### Primer 1 (lažji): vzorci z izleta
 
-Raztopina A ima $\mathrm{pH} = 2$, raztopina B $\mathrm{pH} = 7$, raztopina C $\mathrm{pH} = 11$. Določi, katera je kisla, katera nevtralna in katera bazična.
+Na šolskem izletu izmeriš pH treh vzorcev: voda iz izvira ima $\mathrm{pH} = 7{,}8$, mineralna voda z mehurčki $\mathrm{pH} = 5{,}5$, pomarančni sok pa $\mathrm{pH} = 3{,}5$. Razvrsti jih od najbolj kislega do najbolj bazičnega in za vsakega povej, ali je kisel, nevtralen ali bazičen.
 
-**Podatki:** $\mathrm{pH_A} = 2$, $\mathrm{pH_B} = 7$, $\mathrm{pH_C} = 11$
-**Iščemo:** vrsto vsake raztopine (kisla, nevtralna ali bazična)
+**Podatki:** izvir $\mathrm{pH} = 7{,}8$, mineralna voda $\mathrm{pH} = 5{,}5$, pomarančni sok $\mathrm{pH} = 3{,}5$
+**Iščemo:** vrstni red po kislosti in vrsto vsakega vzorca
 
 :::formula
-$\mathrm{pH} < 7$: kislo; $\mathrm{pH} = 7$: nevtralno; $\mathrm{pH} > 7$: bazično
+$\mathrm{pH} < 7$: kislo; $\mathrm{pH} = 7$: nevtralno; $\mathrm{pH} > 7$: bazično. Manjši pH pomeni bolj kislo.
 :::
 
 **Rešitev:**
 
-1. Primerjamo pH z $7$, ker je to meja med kislim in bazičnim.
-2. A: $2 < 7$, zato je **kisla**.
-3. B: $7 = 7$, zato je **nevtralna**.
-4. C: $11 > 7$, zato je **bazična**.
-5. Smiselnost: raztopina A je daleč od $7$ proti $0$, zato je močno kisla.
-6. Odgovor: raztopina A je kisla, B nevtralna, C pa bazična.
+1. Vrednosti uredimo od najmanjše do največje, ker manjši pH pomeni bolj kislo: $3{,}5 < 5{,}5 < 7{,}8$.
+2. Pomarančni sok: $3{,}5 < 7$, zato je **kisel**.
+3. Mineralna voda: $5{,}5 < 7$, zato je **rahlo kisla**. Kisla je zaradi raztopljenega ogljikovega dioksida, ki daje mehurčke.
+4. Voda iz izvira: $7{,}8 > 7$, zato je **rahlo bazična**.
+5. Odgovor: od najbolj kislega do najbolj bazičnega so pomarančni sok, mineralna voda in voda iz izvira.
 
-### Primer 2: barva papirčka
+### Primer 2: dve njivi na zemljevidu tal
 
-Univerzalni indikatorski papirček v raztopini postane oranžen. Kaj lahko poveš o raztopini?
+Na zemljevidu kislosti tal sta označeni dve njivi. Prva ima $\mathrm{pH} = 5$, druga $\mathrm{pH} = 7$. Na kateri so tla bolj kisla in kolikokrat več oksonijevih ionov je v njeni talni raztopini?
 
-**Podatki:** barva univerzalnega indikatorskega papirčka v raztopini je oranžna
-**Iščemo:** ali je raztopina kisla, nevtralna ali bazična in kaj to pove o njenem pH
+**Podatki:** $\mathrm{pH_1} = 5$, $\mathrm{pH_2} = 7$
+**Iščemo:** katera tla so bolj kisla in kolikokrat več oksonijevih ionov imajo
 
 :::formula
-rdeča, oranžna: kislo ($\mathrm{pH} < 7$); zelena: nevtralno ($\mathrm{pH} = 7$); modra, vijolična: bazično ($\mathrm{pH} > 7$)
+Nižji pH pomeni bolj kislo. Vsaka enota pH pomeni $10$-krat več oksonijevih ionov.
 :::
 
 **Rešitev:**
 
-1. Oranžna in rdeča barva na skali pomenita kislo območje.
-2. Raztopina je torej **kisla**, njen pH je manjši od $7$.
-3. Natančne vrednosti iz barve ne moremo zanesljivo določiti, ker papirček pokaže le približno območje. Če potrebujemo natančno vrednost, uporabimo pH-meter.
-4. Odgovor: raztopina je kisla, njen pH je manjši od $7$.
+1. Nižji pH ima prva njiva, zato so tam tla bolj kisla.
+2. Razlika pH je $7 - 5 = 2$ enoti.
+3. Vsaka enota pomeni faktor $10$, zato je razlika $10 \cdot 10 = 100$.
+4. Opozorilo: ne »dvakrat«, čeprav je razlika le $2$. Lestvica je logaritemska.
+5. Odgovor: tla na prvi njivi so bolj kisla; oksonijevih ionov je v njih stokrat več kot na drugi.
 
-### Primer 3 (težji): primerjava kislosti
+### Primer 3 (težji): jezero po kislem dežju
 
-Sok A ima $\mathrm{pH} = 3$, sok B pa $\mathrm{pH} = 5$. Kateri je bolj kisel in kolikokrat?
+Jezero ima $\mathrm{pH} = 6$. Po obdobju kislega dežja je v njegovi vodi desetkrat več oksonijevih ionov. Kolikšen je nov pH? Kolikšen bi bil, če bi bilo ionov stokrat več kot na začetku?
 
-**Podatki:** $\mathrm{pH_A} = 3$, $\mathrm{pH_B} = 5$
-**Iščemo:** kateri sok je bolj kisel in kolikokrat
+**Podatki:** začetni $\mathrm{pH} = 6$; oksonijevih ionov $10$-krat več; druga možnost $100$-krat več
+**Iščemo:** nov pH v obeh primerih
 
 :::formula
-Nižji pH pomeni bolj kislo. Razlika za $1$ enoto pH pomeni $10$-krat več oksonijevih ionov, razlika za $2$ enoti $10 \cdot 10 = 100$-krat več.
+$10$-krat več oksonijevih ionov $\rightarrow$ pH se zniža za $1$. $100$-krat več $\rightarrow$ pH se zniža za $2$.
 :::
 
 **Rešitev:**
 
-1. Nižji pH pomeni bolj kislo, zato je bolj kisel sok A.
-2. Razlika pH je $5 - 3 = 2$.
-3. Vsaka enota pH pomeni desetkratno spremembo količine oksonijevih ionov. Za dve enoti je razlika $10 \cdot 10 = 100$.
-4. Sok A ima stokrat več oksonijevih ionov, zato je **stokrat bolj kisel** kot sok B.
-5. Opozorilo: ni dvakrat bolj kisel, čeprav je razlika v pH le $2$. To je posledica logaritemske lestvice.
-6. Odgovor: bolj kisel je sok A, in sicer stokrat bolj kot sok B.
+1. Več oksonijevih ionov pomeni bolj kislo, zato se pH zniža.
+2. Desetkrat več ionov je en korak lestvice: $6 - 1 = 5$. Jezero ima zdaj $\mathrm{pH} = 5$, kar mnogim vrstam rib že škodi.
+3. Stokrat več ionov: koliko korakov je to in kolikšen je pH? Izračunaj sam, nato preveri.
+
+:::premisli
+Kolikšen je pH jezera, če je oksonijevih ionov stokrat več kot pri $\mathrm{pH} = 6$?
+---
+$100 = 10 \cdot 10$, to sta dva koraka. Nov pH je $6 - 2 = 4$.
+:::
 
 ## Pogoste napake
 
-- **Mešanje smeri lestvice.** Večji pH ne pomeni bolj kislo. Pomeni bolj bazično. Kisle snovi imajo majhen pH.
-- **Mislimo, da je $\mathrm{pH} = 0$ nevtralen.** Nevtralna je vrednost $7$, vrednost $0$ je zelo kisla.
-- **Linearno razmišljanje.** Razlika dveh enot pH ni »dvakrat«, ampak stokrat.
-- **Zaupanje samo barvi indikatorja.** Papirček da približno vrednost, natančno število da pH-meter.
-- **Mislimo, da je bazično isto kot varno.** Močne baze (npr. belilo) so jedke tako kot močne kisline.
+- **Večje število, več kisline.** Napačno sklepanje: »pH $10$ je večji od pH $3$, torej bolj kisel.« Lestvica teče obratno. Popravek: manjši pH pomeni bolj kislo, večji pH bolj bazično.
+- **Linearno razmišljanje.** Napačno: »pH $2$ in pH $4$ se razlikujeta za $2$, torej je razlika dvakratna.« Vsaka enota pomeni faktor $10$. Popravek: dve enoti sta $10 \cdot 10 = 100$-krat.
+- **pH 0 pomeni »nič kisline«.** Ničla na lestvici ni prazna posoda, ampak skrajno kislo. Nevtralna je vrednost $7$.
+- **Z dovolj vode kislina postane bazična.** Razredčenje pH le približa $7$. Popravek: iz kisle raztopine bazično dobiš šele z dodatkom baze.
+- **Papirček je natančen kot pH-meter.** Barvo primerjaš s skalo, zato dobiš le približno vrednost. Za desetinke potrebuješ pH-meter.
 
 ## Povzetek
 
-- pH pove, kako kisla ali bazična je vodna raztopina; navadno ima vrednosti od $0$ do $14$.
-- $\mathrm{pH} < 7$ kislo, $\mathrm{pH} = 7$ nevtralno, $\mathrm{pH} > 7$ bazično.
-- Nižji pH pomeni bolj kislo, višji pH bolj bazično.
-- Sprememba pH za $1$ pomeni desetkratno spremembo količine oksonijevih ionov $\mathrm{H_3O^+}$.
-- pH merimo z univerzalnim indikatorskim papirčkom (približno) ali s pH-metrom (natančneje).
-- Zelo kisle in zelo bazične raztopine so jedke.
+- pH pove, kako kisla ali bazična je vodna raztopina; navadno ima vrednosti od $0$ do $14$. Uvedel ga je Søren Sørensen leta 1909.
+- $\mathrm{pH} < 7$ kislo, $\mathrm{pH} = 7$ nevtralno, $\mathrm{pH} > 7$ bazično. Nižji pH pomeni bolj kislo.
+- Sprememba pH za $1$ pomeni desetkratno spremembo števila oksonijevih ionov $\mathrm{H_3O^+}$ v enaki prostornini; za $2$ stokratno.
+- pH merimo z univerzalnim indikatorskim papirčkom ali sokom rdečega zelja (približno) ali s pH-metrom (natančneje).
+- Razredčenje z vodo pH le približa $7$.
+- Pomen: kri okoli $7{,}4$, rahlo kisla koža, bazeni, ribe v jezerih, rastline v tleh. Zelo kisle in zelo bazične raztopine so jedke.
 
-## Drugače: Na sliki
+## Drugače: Kot zgodba
 
-Predstavljaj si pH lestvico kot vodoravni trak. Na levem koncu ($0$) je rdeča barva za zelo kislo, na sredini ($7$) zelena za nevtralno, na desnem koncu ($14$) vijolična za zelo bazično.
+V tridesetih letih 20. stoletja so pridelovalci limon v Kaliforniji morali hitro preverjati kislost limoninega soka. Barvni indikatorji jim niso zadoščali, ker je bilo v soku težko zanesljivo prebrati barvo. Kemik Arnold Beckman jim je zato izdelal elektronsko napravo, ki je kislost pokazala s kazalcem na skali.
 
-V simulaciji spodaj (»pH lestvica«) izberi različne snovi in opazuj, kam na traku se uvrstijo in kako se spreminja barva raztopine. Ugotovi, katere snovi so levo od zelene sredine (kisle) in katere desno (bazične). Primerjaj dve snovi, ki sta na lestvici narazen za dve enoti, in se spomni, da to pomeni stokratno razliko v kislosti.
+Iz te naprave se je razvil današnji pH-meter. Zgodba pokaže dve poti merjenja, ki ju uporabljaš tudi ti. Barva indikatorja je hitra in poceni, a približna. Elektronska meritev da natančno število, a jo moraš prej umeriti.
 
-## Drugače: Iz vsakdanjega življenja
-
-Pomisli na kuhinjo. Limonin sok ($\mathrm{pH}\approx 2$) te zapeče na jeziku, ker je zelo kisel. Kis je manj kisel ($\mathrm{pH}\approx 3$). Če limonin sok razredčiš z veliko vode, se pH približa $7$, torej postane manj kisel.
-
-Podobno je pri umivanju. Milo je bazično ($\mathrm{pH}\approx 9$–$10$) in zato čisti maščobe, a lahko izsuši kožo, ki je rahlo kisla. Zato so nekateri izdelki za nego kože narejeni tako, da imajo pH bližje koži.
-
-Še en primer: v bazenu merijo pH vode. Če je pH preveč nizek ali previsok, voda draži oči in kožo. Zato ga redno preverjajo in uravnavajo.
+Sørensen je torej dal kislosti število, Beckman pa napravo, ki to število izmeri.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -177,26 +201,51 @@ Opomba: v 8. razredu logaritma formalno ne računamo; pomembna je ideja, da en k
 
 ## Preveri se
 
-? Katera raztopina je kisla?
-- $\mathrm{pH} = 7$
-- $\mathrm{pH} = 9$
-+ $\mathrm{pH} = 4$
-- $\mathrm{pH} = 13$
-> Kisle raztopine imajo pH manjši od $7$. Vrednost $7$ je nevtralna, vrednosti $9$ in $13$ pa sta bazični.
+? Katera vrednost ne sodi k ostalim trem?
+- $\mathrm{pH} = 2$
+~ $2$ je res najbolj kisla vrednost, a je še vedno kisla, tako kot $4{,}5$ in $6$.
+- $\mathrm{pH} = 6$
+~ $6$ je blizu $7$, a je še pod $7$, torej kisla kot ostali dve.
++ $\mathrm{pH} = 8$
+- $\mathrm{pH} = 4{,}5$
+~ Necela vrednost je čisto običajna. $4{,}5 < 7$, torej je kisla.
+> Vrednosti $2$, $4{,}5$ in $6$ so pod $7$, torej kisle. Le $8$ je nad $7$, zato je bazična.
 
-? Raztopina A ima $\mathrm{pH} = 2$, raztopina B pa $\mathrm{pH} = 4$. Kaj velja?
-- A je dvakrat bolj kisla kot B.
-- B je stokrat bolj kisla kot A.
-+ A je stokrat bolj kisla kot B.
-> Razlika dveh enot pH pomeni $10 \cdot 10 = 100$-kratno razliko v količini oksonijevih ionov. Nižji pH ima bolj kisla raztopina, torej A.
+? Raztopina A ima $\mathrm{pH} = 2$, raztopina B pa $\mathrm{pH} = 5$. Kolikokrat več oksonijevih ionov je v A kot v enaki prostornini B?
+- $3$-krat
+~ To je razlika števil. Vsaka enota pH je faktor $10$, ne $1$.
+- $30$-krat
+~ Tu je faktor $10$ pomnožen s $3$. Trije koraki so $10 \cdot 10 \cdot 10$.
++ $1000$-krat
+> Razlika je $5 - 2 = 3$ enote, zato $10 \cdot 10 \cdot 10 = 1000$-krat več oksonijevih ionov v A.
 
-? Univerzalni indikatorski papirček v neki raztopini postane modro-vijoličen. Kaj to pomeni?
-- Raztopina je kisla.
-- Raztopina je nevtralna.
-+ Raztopina je bazična.
-> Modra in vijolična barva na skali univerzalnega indikatorja pomenita bazično območje, torej $\mathrm{pH} > 7$.
+? Kis s $\mathrm{pH} = 3$ močno razredčimo z vodo. Kaj se zgodi s pH?
+- Zniža se, ker smo dodali tekočino.
+~ Z vodo je oksonijevih ionov v enaki prostornini manj, zato je raztopina manj kisla in pH višji.
++ Zviša se proti $7$, a ostane pod $7$.
+- Zviša se nad $7$, raztopina postane bazična.
+~ Voda je nevtralna. Brez dodane baze pH ne preseže $7$.
+> Razredčena kislina je manj kisla, zato pH raste. Približuje se pH vode, $7$, a ga ne preseže.
+
+? Učenec primerja raztopini s $\mathrm{pH} = 4$ in $\mathrm{pH} = 6$. (1) Razlika je $6 - 4 = 2$. (2) Večji pH pomeni bolj kislo, zato je bolj kisla raztopina s pH $6$. (3) Dve enoti pomenita $10 \cdot 10 = 100$-krat. Kateri korak je napačen?
+- korak (1)
+~ Razlika je pravilno izračunana: $6 - 4 = 2$.
++ korak (2)
+- korak (3)
+~ Dve enoti sta res faktor $100$. Napaka je v smeri lestvice.
+- noben
+~ Eden od korakov obrne smer lestvice.
+> Manjši pH pomeni bolj kislo, zato je stokrat bolj kisla raztopina s $\mathrm{pH} = 4$.
+
+? Na potovanju kupiš ustekleničeno vodo. Na etiketi piše $\mathrm{pH} = 7{,}8$. Kaj to pomeni?
+- Voda je močno bazična in jedka.
+~ Jedke so raztopine blizu $14$. $7{,}8$ je le malo nad nevtralno vrednostjo.
+- Voda je kisla, ker je pH pod $14$.
+~ Meja med kislim in bazičnim je $7$, ne $14$.
++ Voda je rahlo bazična in primerna za pitje.
+> $7{,}8 > 7$, zato je voda rahlo bazična. Tako vrednost ima veliko izvirske vode; pitna voda ima običajno pH med približno $6{,}5$ in $9{,}5$.
 
 :::simboli
 \mathrm{pH} | pH vrednost (merilo kislosti raztopine) | \mathrm{pH} = -\log\, c(\mathrm{H_3O^+}) | – | pod 7 kislo, 7 nevtralno, nad 7 bazično
-c | množinska koncentracija oksonijevih ionov | | mol/L | c(H₃O⁺); v čisti vodi 10⁻⁷ mol/L
+c | množinska koncentracija oksonijevih ionov | | mol/L | $c(\mathrm{H_3O^+})$; v čisti vodi $10^{-7}$ mol/L
 :::

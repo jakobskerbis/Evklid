@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Skupne lastnosti
+  - sijaj, prevodnost, kovnost in raztegljivost
+  - živo srebro je tekoče
+  - napaka: ni vsaka kovina trda in težka
+- Pozitivni ioni
+  - kovina odda zunanje elektrone
+  - z nekovinami tvori ionske spojine, npr. $\mathrm{NaCl}$
+- Alkalijske kovine
+  - 1. skupina, en zunanji elektron, ion $1+$
+  - mehke, lažje od vode, hranimo pod oljem
+- Reakcija z vodo
+  - $2\,\mathrm{Na} + 2\,\mathrm{H_2O} \rightarrow 2\,\mathrm{NaOH} + \mathrm{H_2}$
+  - nastane bazična raztopina hidroksida
+  - napaka: pozabljen koeficient $2$ pred vodo
+- Zemeljskoalkalijske kovine
+  - 2. skupina, dva zunanja elektrona, ion $2+$
+  - trše, gostejše, manj reaktivne
+  - gašeno apno $\mathrm{Ca(OH)_2}$ v malti
+- Reaktivnost navzdol narašča
+  - večji atom lažje odda elektron
+  - cezij je reaktivnejši od kalija

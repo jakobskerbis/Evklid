@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Štetje s tehtanjem
+  - atomov ne preštejemo, snov stehtamo
+  - $12\,\mathrm{g}$ ogljika ima $6{,}02 \cdot 10^{23}$ atomov
+- Mol
+  - $1\,\mathrm{mol}$ je $6{,}02 \cdot 10^{23}$ delcev
+  - $N_A = 6{,}02 \cdot 10^{23}\,\mathrm{mol^{-1}}$
+  - povej, katere delce šteješ
+- Molska masa
+  - masa $1\,\mathrm{mol}$, enota $\mathrm{g/mol}$
+  - enaka relativni atomski masi iz periodnega sistema
+- Molska masa spojine
+  - $M(\mathrm{H_2O}) = 2 \cdot 1 + 16 = 18\,\mathrm{g/mol}$
+  - napaka: pozabljen indeks, $17$ namesto $18$
+- Masa in množina
+  - $n = \dfrac{m}{M}$, $m = n \cdot M$
+  - enote: $\mathrm{g} : \mathrm{g/mol} = \mathrm{mol}$
+  - napaka: obrnjen ulomek $\dfrac{M}{m}$
+- Enak mol, različna masa
+  - mol vode $18\,\mathrm{g}$, mol soli $58{,}5\,\mathrm{g}$
+  - težji delci, težji mol

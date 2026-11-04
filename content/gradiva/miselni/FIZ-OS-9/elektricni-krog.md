@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sklenjen krog
+  - vir, porabniki, stikalo, vodniki
+  - prekinjen krog: tok ne teče
+- Zaporedna vezava
+  - ena pot za tok
+  - $I = I_1 = I_2$, $U = U_1 + U_2$
+  - ena pregori: ugasnejo vse
+- Vozlišče in veja
+  - vozlišče: tu se žica razcepi ali združi
+  - veja: del med dvema vozliščema
+- Vzporedna vezava
+  - $U = U_1 = U_2$, $I = I_1 + I_2$
+  - ena izpade: druge delujejo naprej
+- Paradoks toka
+  - nova vzporedna veja poveča tok iz vira
+  - napaka: »več porabnikov, manj toka«
+- Merilnika
+  - ampermeter zaporedno, voltmeter vzporedno
+- Uporaba
+  - bolnišnica in stanovanje: vzporedno
+  - preveč tokov skupaj: varovalka pregori

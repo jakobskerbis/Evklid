@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Masa enega kubičnega centimetra
+  - kocka $1\,\mathrm{cm^3}$: pluta $0{,}24\,\mathrm{g}$, železo $7{,}9\,\mathrm{g}$
+  - večji kos, enaka gostota
+- Gostota
+  - $\rho = \dfrac{m}{V}$
+  - napaka: $\dfrac{V}{m}$ namesto $\dfrac{m}{V}$
+- Masa in prostornina
+  - $m = \rho \cdot V$
+  - $V = \dfrac{m}{\rho}$
+- Enote
+  - $\mathrm{g/cm^3}$ ali $\mathrm{kg/m^3}$
+  - $1\,\mathrm{g/cm^3} = 1000\,\mathrm{kg/m^3}$
+  - voda: $1\,\mathrm{g/cm^3}$
+- Merjenje gostote
+  - masa s tehtnico
+  - merilni valj: $V = V_2 - V_1$
+- Plava ali potone
+  - manjša gostota od tekočine: plava
+  - večja gostota: potone
+  - teniška žogica plava, golfska potone
+- Povprečna gostota
+  - votlo telo: šteje tudi zrak
+  - jeklena ladja plava

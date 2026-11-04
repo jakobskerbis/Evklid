@@ -5,83 +5,87 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že veš, da je **sila** merilo za medsebojno delovanje teles, da jo merimo v newtonih ($\text{N}$) in da jo narišemo kot puščico, ki ima velikost, smer in prijemališče. Veš tudi, da je teža sila, s katero Zemlja privlači telesa, in da trenje deluje proti gibanju.
+**Uganka.** Telefon leži na armaturni plošči avtomobila. Avto naglo spelje in telefon zdrsne nazaj, proti tebi. Kaj je potisnilo telefon nazaj?
 
-Zdaj se vprašamo: **kaj sila sploh naredi s telesom?** Zakaj se žoga na tleh ustavi, vesoljska sonda pa se brez motorja giblje milijone kilometrov? Zakaj je težje pospešiti poln nakupovalni voziček kot prazen? Zakaj te ob odrivu od zidu odnese nazaj?
+Preden bereš naprej, zapiši svoj odgovor. Rešitev je v prvem delu razlage.
 
-Na ta vprašanja odgovarjajo **trije Newtonovi zakoni**. Z njimi razložimo vožnjo avtomobila, skok v vodo, izstrelitev rakete in tudi, zakaj moraš v avtu pripeti pas.
+Uganko, varnostni pas, let drona in odrin rakete razložijo **trije Newtonovi zakoni**. Povedo, kaj sila naredi s telesom: kdaj se hitrost ne spremeni, za koliko se spremeni in zakaj sile vedno nastopajo v parih. Uporabljajo jih inženirji, ki načrtujejo varnostne pasove, drone in tudi pospeškomer v tvojem telefonu.
 
 ## Razlaga
 
-**1. Prvi zakon: zakon o ravnovesju (vztrajnostni zakon).**
-Telo miruje ali se enakomerno giblje po premici, dokler je vsota vseh sil nanj enaka nič.
+Vsak zakon postavimo ob nekaj, kar že poznaš, in pogledamo, v čem se razlikujeta.
 
-To pomeni:
+**1. Od ravnovesja do prvega zakona.** Iz 8. razreda veš: če na telo delujeta dve enako veliki, nasprotni sili na isti premici, je **rezultanta** (ena sila z enakim učinkom kot vse sile skupaj) enaka nič. Telo, ki miruje, ostane v miru.
 
-- Če je **rezultanta** (vsota vseh sil) enaka nič, se hitrost telesa ne spreminja. Telo, ki je mirovalo, še naprej miruje. Telo, ki se je gibalo, se še naprej giblje z enako hitrostjo v enako smer.
-- Pravimo, da so sile v **ravnovesju**.
-- Lastnosti telesa, da se upira spremembi gibanja, pravimo **vztrajnost** (tromost). Večja ko je masa, večja je vztrajnost.
+Novo je to, da enako velja za telo, ki se že giblje. **Prvi Newtonov zakon (zakon o ravnovesju ali vztrajnostni zakon):** če je rezultanta sil na telo nič, telo miruje ali se giblje enakomerno po premici.
 
-Pogosta zmota je, da za gibanje vedno potrebujemo silo. Ni res: za *enakomerno gibanje* sila ni potrebna, potrebna je za *spremembo* gibanja. Predmet na ledu zdrsi daleč, ker je trenje majhno. Na grobih tleh se hitro ustavi, ker ga zavira trenje.
+Za sile sta torej mirovanje in enakomerno premo gibanje *enaka* stanja. Za gibanje s stalno hitrostjo rezultanta ni potrebna. Potrebna je šele za **spremembo** velikosti ali smeri hitrosti.
+
+Lastnost telesa, da ohranja svoje gibanje, imenujemo **vztrajnost**. Večja ko je masa, večja je vztrajnost.
+
+*Rešitev uganke:* nazaj telefona ni potisnilo nič. Telefon je zaradi vztrajnosti ostal skoraj na mestu, avto pa je pospešil naprej pod njim. Trenje med telefonom in ploščo je bilo premajhno, da bi telefon pospešilo skupaj z avtom.
 
 :::premisli
-Hokejski plošček drsi po gladkem ledu. Kaj bi se zgodilo s ploščkom, če ne bi bilo ne trenja ne upora zraka?
+Vesoljska sonda daleč od planetov in zvezd ugasne motor. Napovej: kaj se zgodi z njeno hitrostjo?
 ---
-Drsel bi naprej v isti smeri z enako hitrostjo, dokler ga kaj ne ustavi. Rezultanta bi bila nič, za enakomerno gibanje pa sila ni potrebna.
+Ostane enaka po velikosti in smeri. Tam ni zraka ne trenja, rezultanta je skoraj nič, zato sonda leti naprej enakomerno premo, tudi več let.
 :::
 
-**2. Drugi zakon: $F = m \cdot a$.**
-Če je rezultanta sil na telo različna od nič, telo pospešuje. Pospešek je premo sorazmeren rezultanti in obratno sorazmeren masi:
+**2. Od rezultante nič do rezultante, ki ni nič.** Kaj pa, če sile niso v ravnovesju? Takrat se hitrost telesa spreminja, telo **pospešuje**. **Pospešek** $a$ pove, za koliko se hitrost spremeni v vsaki sekundi; enota je $\mathrm{m/s^2}$. Pospešek $2\,\mathrm{m/s^2}$ pomeni, da hitrost vsako sekundo naraste za $2\,\mathrm{m/s}$.
 
-$$a = \frac{F}{m} \qquad\text{oziroma}\qquad F = m \cdot a$$
+**Drugi Newtonov zakon:** pospešek je premo sorazmeren z rezultanto in obratno sorazmeren z maso:
 
-- $F$ je rezultanta sil v newtonih ($\text{N}$),
-- $m$ je masa v kilogramih ($\text{kg}$),
-- $a$ je pospešek v $\dfrac{\text{m}}{\text{s}^2}$.
+$$a = \frac{F}{m}$$
 
-Pospešek ima **isto smer kot rezultanta**. Velja $1\,\text{N} = 1\,\dfrac{\text{kg}\cdot\text{m}}{\text{s}^2}$: sila $1\,\text{N}$ telesu z maso $1\,\text{kg}$ da pospešek $1\,\dfrac{\text{m}}{\text{s}^2}$.
+$$F = m \cdot a$$
 
-Iz tega sledi:
+Tu je $F$ rezultanta v newtonih, $m$ masa v kilogramih in $a$ pospešek. Pospešek ima **smer rezultante**. Od tod izhaja enota sile: $1\,\mathrm{N} = 1\,\mathrm{kg \cdot m/s^2}$. Sila $1\,\mathrm{N}$ da telesu z maso $1\,\mathrm{kg}$ pospešek $1\,\mathrm{m/s^2}$.
 
-- dvakrat večja sila na isto telo da dvakrat večji pospešek,
-- dvakrat večja masa pri isti sili da dvakrat manjši pospešek.
+| Masa $m$ | Rezultanta $F$ | Pospešek $a$ |
+|---|---|---|
+| $2\,\mathrm{kg}$ | $10\,\mathrm{N}$ | $5\,\mathrm{m/s^2}$ |
+| $2\,\mathrm{kg}$ | $20\,\mathrm{N}$ | $10\,\mathrm{m/s^2}$ |
+| $4\,\mathrm{kg}$ | $20\,\mathrm{N}$ | $5\,\mathrm{m/s^2}$ |
+| $4\,\mathrm{kg}$ | $0\,\mathrm{N}$ | $0\,\mathrm{m/s^2}$ |
 
-V simulaciji spodaj »Sila, masa in pospešek« (podlaga brez trenja) nastavi vlečno silo $10\,\text{N}$ in maso $5\,\text{kg}$ ter klikni Spusti. Nato podvoji oboje ($20\,\text{N}$, $10\,\text{kg}$). Opazi, da je premica na grafu hitrosti enako strma: pospešek je v obeh primerih $2\,\dfrac{\text{m}}{\text{s}^2}$. Če med gibanjem vlečno silo nastaviš na $0$, se klada giblje naprej s stalno hitrostjo (1. zakon).
+Iz prve v drugo vrstico se sila podvoji in pospešek tudi. Iz druge v tretjo se podvoji masa, pospešek se prepolovi. Zadnja vrstica je spet prvi zakon.
 
-**3. Teža.** Teža $F_g$ je sila, s katero Zemlja privlači telo. Izračunamo jo z maso in težnim pospeškom $g \approx 10\,\dfrac{\text{m}}{\text{s}^2}$ (to je isto kot $10\,\dfrac{\text{N}}{\text{kg}}$):
+V simulaciji spodaj (»Sila, masa in pospešek«, podlaga brez trenja) nastavi vlečno silo $10\,\mathrm{N}$ in maso $5\,\mathrm{kg}$ ter klikni Spusti. Nato podvoji oboje. Opazi: premica na grafu hitrosti je obakrat enako strma, pospešek je $2\,\mathrm{m/s^2}$. Če med gibanjem vlečno silo postaviš na nič, se klada giblje naprej s stalno hitrostjo.
 
-$$F_g = m \cdot g.$$
+**Teža.** Teža je sila, s katero Zemlja privlači telo:
 
-Telo z maso $1\,\text{kg}$ ima težo približno $10\,\text{N}$.
+$$F_g = m \cdot g$$
 
-**4. Rezultanta.** Sile v isti smeri seštejemo, sile v nasprotnih smereh odštejemo. Če vlečeš škatlo z $30\,\text{N}$ v desno, trenje pa jo zavira s $10\,\text{N}$ v levo, je rezultanta $20\,\text{N}$ v desno.
+Tu je $g \approx 10\,\mathrm{N/kg} = 10\,\mathrm{m/s^2}$ težni pospešek. Masa ($\mathrm{kg}$) pove, koliko snovi je v telesu, teža ($\mathrm{N}$) je sila. Telefon z maso $0{,}2\,\mathrm{kg}$ ima težo $2\,\mathrm{N}$.
 
-**5. Tretji zakon: zakon o vzajemnem učinku.**
-Če prvo telo deluje na drugo telo s silo, drugo telo deluje na prvo z **enako veliko, a nasprotno usmerjeno silo**:
+**3. Od ravnovesja dveh sil do vzajemnega učinka.** **Tretji Newtonov zakon (zakon o vzajemnem učinku):** če prvo telo deluje na drugo s silo, deluje drugo telo na prvo z enako veliko, nasprotno usmerjeno silo:
 
 $$\vec F_{1\to 2} = -\vec F_{2\to 1}$$
 
-Pomembno:
+Ta par je na prvi pogled podoben ravnovesju dveh sil. Razlika je v tem, na katero telo sili delujeta:
 
-- Sili sta vedno **par**: nastaneta in izgineta hkrati.
-- Sili sta enako veliki, nasprotno usmerjeni in ležita na isti premici.
-- Prijemališči sil sta na **različnih telesih**. Zato se med seboj ne izničita, saj ju ne seštevamo za isto telo.
+| | Ravnovesje dveh sil | Par po 3. zakonu |
+|---|---|---|
+| Na katero telo | obe na isto telo | vsaka na drugo telo |
+| Velikost, smer | enaki, nasprotni | enaki, nasprotni |
+| Se izničita? | da, rezultanta je nič | ne |
+| Telefon na mizi | teža in sila mize na telefon | telefon na mizo, miza na telefon |
 
-Primer: ko stojiš na tleh, na tla pritiskaš s silo (enako veliko, kot je tvoja teža), tla pa nate delujejo z enako veliko silo navzgor.
+Sili para nastaneta in izgineta hkrati. Velja vedno: ko telesi mirujeta, pospešujeta ali trčita.
 
 :::premisli
-Na drsališču stojita oče ($80\,\text{kg}$) in sin ($40\,\text{kg}$). Sin odrine očeta. Kdo od njiju dobi večji pospešek in zakaj?
+Zakaj dron s propelerji ne bi mogel leteti v prostoru brez zraka, na primer na Luni?
 ---
-Sin. Po 3. zakonu delujeta drug na drugega z enako veliko silo, sin pa ima pol manjšo maso, zato po $a = F/m$ dobi dvakrat večji pospešek. Odpelje ga nazaj, čeprav je potiskal očeta.
+Propelerji potiskajo zrak navzdol, zrak pa po 3. zakonu potiska dron navzgor. Brez zraka propelerji nimajo česa odriniti, zato ni sile navzgor.
 :::
 
 ## Rešeni primeri
 
-### Primer 1 (lažji): pospešek vozička
+### Primer 1: avtek na daljinsko upravljanje
 
-Na voziček z maso $4\,\text{kg}$ deluje vodoravna rezultanta $12\,\text{N}$. Kolikšen je pospešek?
+Na avtek z maso $0{,}5\,\mathrm{kg}$ deluje vodoravna rezultanta $2\,\mathrm{N}$. Kolikšen je njegov pospešek?
 
-**Podatki:** $m = 4\,\text{kg}$, $F = 12\,\text{N}$ (vodoravna rezultanta)
+**Podatki:** $m = 0{,}5\,\mathrm{kg}$, $F = 2\,\mathrm{N}$
 **Iščemo:** pospešek $a$
 
 :::formula
@@ -90,206 +94,167 @@ Drugi Newtonov zakon: $a = \dfrac{F}{m}$
 
 **Rešitev:**
 
-1. Uporabimo drugi zakon, ker nas zanima pospešek zaradi sile: $a = \dfrac{F}{m}$.
-2. Vstavimo: $a = \dfrac{12\,\text{N}}{4\,\text{kg}} = 3\,\dfrac{\text{m}}{\text{s}^2}$.
-3. Smiselnost: pospešek ima smer sile in je v številčni vrednosti manjši od sile, ker je masa večja od $1\,\text{kg}$. ✓
-4. Odgovor: voziček pospešuje s $3\,\dfrac{\text{m}}{\text{s}^2}$ v smeri rezultante.
+1. Rezultanta je že dana, zato takoj uporabimo drugi zakon.
+2. $a = \dfrac{2\,\mathrm{N}}{0{,}5\,\mathrm{kg}} = 4\,\mathrm{m/s^2}$.
+3. Odgovor: avtek pospešuje s $4\,\mathrm{m/s^2}$ v smeri rezultante; vsako sekundo je za $4\,\mathrm{m/s}$ hitrejši.
 
-### Primer 2: rezultanta s trenjem
+### Primer 2: dron se dviga
 
-Škatlo z maso $5\,\text{kg}$ vlečeš po tleh z vodoravno silo $35\,\text{N}$. Trenje je $10\,\text{N}$. Kolikšen je pospešek škatle?
+Dron z maso $1{,}5\,\mathrm{kg}$ se dviga navpično. Propelerji ga potiskajo navzgor s silo $24\,\mathrm{N}$, upor zraka zanemarimo. Kolikšen je pospešek drona?
 
-**Podatki:** $m = 5\,\text{kg}$, vlečna sila $F_1 = 35\,\text{N}$ (vodoravna), trenje $F_{\text{tr}} = 10\,\text{N}$
-**Iščemo:** pospešek škatle $a$
-
-:::formula
-Rezultanta nasprotno usmerjenih sil: $F = F_1 - F_{\text{tr}}$, nato drugi Newtonov zakon: $a = \dfrac{F}{m}$
-:::
-
-**Rešitev:**
-
-1. **Sile v vodoravni smeri:** vlečna sila $35\,\text{N}$ naprej, trenje $10\,\text{N}$ nazaj.
-2. **Rezultanta:** sili sta nasprotni, zato odštejemo: $F = 35\,\text{N} - 10\,\text{N} = 25\,\text{N}$.
-3. **Navpična smer:** teža in sila podlage se izničita, zato škatla ne pospešuje navpično in ju ne potrebujemo.
-4. **Drugi zakon:** $a = \dfrac{F}{m} = \dfrac{25\,\text{N}}{5\,\text{kg}} = 5\,\dfrac{\text{m}}{\text{s}^2}$.
-5. **Preverimo:** če bi uporabili samo $35\,\text{N}$, bi dobili $7\,\dfrac{\text{m}}{\text{s}^2}$, kar je preveč, saj trenje zavira.
-6. **Odgovor:** škatla pospešuje s $5\,\dfrac{\text{m}}{\text{s}^2}$ v smeri vlečne sile.
-
-### Primer 3 (težji): sila in gibanje iz mirovanja
-
-Avto z maso $1000\,\text{kg}$ miruje. Motor ga potiska naprej s silo $2500\,\text{N}$, upor in trenje skupaj zavirata s silo $500\,\text{N}$. Kolikšno hitrost ima avto po $6\,\text{s}$?
-
-**Podatki:** $m = 1000\,\text{kg}$, začetna hitrost $v_0 = 0$ (avto miruje), sila motorja $F_1 = 2500\,\text{N}$, zaviralna sila (upor in trenje) $F_2 = 500\,\text{N}$, $t = 6\,\text{s}$
-**Iščemo:** hitrost $v$ po $6\,\text{s}$
-
-:::formula
-Rezultanta: $F = F_1 - F_2$, pospešek: $a = \dfrac{F}{m}$, hitrost pri gibanju iz mirovanja: $v = a \cdot t$
-:::
-
-**Rešitev:**
-
-1. **Rezultanta:** $F = 2500\,\text{N} - 500\,\text{N} = 2000\,\text{N}$.
-2. **Pospešek:** $a = \dfrac{F}{m} = \dfrac{2000\,\text{N}}{1000\,\text{kg}} = 2\,\dfrac{\text{m}}{\text{s}^2}$.
-3. **Pomen pospeška:** hitrost se vsako sekundo poveča za $2\,\dfrac{\text{m}}{\text{s}}$.
-4. **Hitrost:** $v = a \cdot t = 2\,\dfrac{\text{m}}{\text{s}^2}\cdot 6\,\text{s} = 12\,\dfrac{\text{m}}{\text{s}}$ (začetna hitrost je nič).
-5. **Odgovor:** po $6\,\text{s}$ je hitrost $12\,\dfrac{\text{m}}{\text{s}}$, kar je $43{,}2\,\dfrac{\text{km}}{\text{h}}$.
-
-### Primer 4: zdaj ti
-
-Kolesar s kolesom ima skupaj maso $80\,\text{kg}$. Pedala ga poganjajo naprej s silo $200\,\text{N}$, upor zraka in trenje ga zavirata s silo $40\,\text{N}$. Kolikšen je pospešek kolesarja?
-
-**Podatki:** $m = 80\,\text{kg}$, sila naprej $F_1 = 200\,\text{N}$, zaviralna sila $F_2 = 40\,\text{N}$
+**Podatki:** $m = 1{,}5\,\mathrm{kg}$, sila propelerjev $F_p = 24\,\mathrm{N}$ navzgor, $g = 10\,\mathrm{N/kg}$
 **Iščemo:** pospešek $a$
 
 :::formula
-$F = F_1 - F_2$, nato $a = \dfrac{F}{m}$
+$F_g = m \cdot g$, rezultanta $F = F_p - F_g$, nato $a = \dfrac{F}{m}$
 :::
 
 **Rešitev:**
 
-1. **Sile:** $200\,\text{N}$ naprej in $40\,\text{N}$ nazaj; sili sta nasprotni, zato ju odštejemo.
-2. **Rezultanta:** $F = 200\,\text{N} - 40\,\text{N} = 160\,\text{N}$ naprej.
-3. **Drugi zakon:** izračunaj sam, nato preveri:
+1. Teža kaže navzdol, zato jo moramo upoštevati: $F_g = 1{,}5 \cdot 10 = 15\,\mathrm{N}$.
+2. Sili sta nasprotni, zato ju odštejemo: $F = 24\,\mathrm{N} - 15\,\mathrm{N} = 9\,\mathrm{N}$ navzgor.
+3. $a = \dfrac{9\,\mathrm{N}}{1{,}5\,\mathrm{kg}} = 6\,\mathrm{m/s^2}$.
+4. Odgovor: dron pospešuje navzgor s $6\,\mathrm{m/s^2}$. Če bi propelerji dajali natanko $15\,\mathrm{N}$, bi dron lebdel ali se dvigal s stalno hitrostjo.
+
+### Primer 3: kaj pokaže telefon v avtu
+
+Telefon, pritrjen v nosilcu, z aplikacijo za pospeškomer izmeri, da avto pospešuje s $2\,\mathrm{m/s^2}$. Avto ima maso $1200\,\mathrm{kg}$, upor zraka in kotalno trenje ga skupaj zavirata s $400\,\mathrm{N}$. S kolikšno silo ga poganja motor?
+
+**Podatki:** $a = 2\,\mathrm{m/s^2}$, $m = 1200\,\mathrm{kg}$, zaviralna sila $F_u = 400\,\mathrm{N}$
+**Iščemo:** silo motorja $F_m$
+
+:::formula
+Rezultanta iz drugega zakona: $F = m \cdot a$; ker je $F = F_m - F_u$, je $F_m = F + F_u$
+:::
+
+**Rešitev:**
+
+1. Najprej rezultanta, ker jo določa pospešek: $F = 1200 \cdot 2 = 2400\,\mathrm{N}$.
+2. Motor mora dati rezultanto in še premagati zaviranje: $F_m = 2400\,\mathrm{N} + 400\,\mathrm{N} = 2800\,\mathrm{N}$.
+3. Odgovor: motor poganja avto s silo $2800\,\mathrm{N}$.
+4. Za povrh: telefonu z maso $0{,}2\,\mathrm{kg}$ mora nosilec dati silo $0{,}2 \cdot 2 = 0{,}4\,\mathrm{N}$ naprej. Na armaturni plošči mora to silo dati trenje. Ko avto spelje naglo, je potrebna sila večja, kot jo trenje zmore, zato je telefon v uganki zdrsnil.
+
+### Primer 4 – zdaj ti: odrin robotkov
+
+Dva robotka na kolescih stojita drug ob drugem. Prvi ima maso $0{,}4\,\mathrm{kg}$, drugi $0{,}8\,\mathrm{kg}$. Vzmet med njima ju odrine: na prvega deluje s silo $2{,}4\,\mathrm{N}$. Trenje zanemarimo. Kolikšna sta pospeška robotkov?
+
+**Podatki:** $m_1 = 0{,}4\,\mathrm{kg}$, $m_2 = 0{,}8\,\mathrm{kg}$, $F = 2{,}4\,\mathrm{N}$
+**Iščemo:** pospeška $a_1$ in $a_2$
+
+:::formula
+3. zakon: na drugega deluje enako velika sila; nato $a_1 = \dfrac{F}{m_1}$ in $a_2 = \dfrac{F}{m_2}$
+:::
+
+**Rešitev:**
+
+1. Po 3. zakonu je tudi sila na drugega robotka $2{,}4\,\mathrm{N}$, le v nasprotno smer.
+2. Na vsakega uporabi drugi zakon z njegovo maso.
+3. Izračunaj sam, nato preveri:
 
 :::premisli
-Koliko je $a = \dfrac{160\,\text{N}}{80\,\text{kg}}$?
+Koliko sta $a_1 = \dfrac{2{,}4\,\mathrm{N}}{0{,}4\,\mathrm{kg}}$ in $a_2 = \dfrac{2{,}4\,\mathrm{N}}{0{,}8\,\mathrm{kg}}$?
 ---
-$a = 2\,\dfrac{\text{m}}{\text{s}^2}$ v smeri vožnje. Če bi pozabil na upor in vzel $200\,\text{N}$, bi dobil napačnih $2{,}5\,\dfrac{\text{m}}{\text{s}^2}$.
+$a_1 = 6\,\mathrm{m/s^2}$ in $a_2 = 3\,\mathrm{m/s^2}$, v nasprotnih smereh. Sili sta enaki, lažji robotek pa dobi dvakrat večji pospešek.
 :::
 
 ## Pogoste napake
 
-- **»Brez sile ni gibanja.«** Narobe. Brez rezultante se telo giblje enakomerno naprej. Sila je potrebna za spremembo hitrosti.
-- **Ravnovesje pomeni mirovanje.** Ne nujno. Ravnovesje pomeni, da je rezultanta nič; telo lahko miruje ali se enakomerno giblje.
-- **Pozabljeno trenje.** V $F = m \cdot a$ vstavljamo **rezultanto**, ne le ene sile.
-- **Sili akcije in reakcije se izničita.** Ne, ker delujeta na različni telesi. Izničita se lahko le sili na isto telo (npr. teža in sila podlage pri knjigi na mizi, a to ni par po tretjem zakonu).
-- **Mešanje mase in teže.** »Tehtam $50\,\text{kg}$, torej je moja teža $50\,\text{kg}$.« Masa je v $\text{kg}$, teža pa je sila v $\text{N}$: $F_g = m \cdot g \approx 500\,\text{N}$.
+- **»Brez sile ni gibanja.«** Za stalno hitrost rezultanta ni potrebna. Če se škatla giblje enakomerno, sta vlečna sila in trenje enako veliki.
+- **Ena sila namesto rezultante.** V $F = m \cdot a$ gre rezultanta: od vlečne sile odštej trenje, od sile propelerjev težo.
+- **»Večje telo deluje z večjo silo.«** Po 3. zakonu sta sili para vedno enako veliki. Različna sta le pospeška, ker imata telesi različni masi.
+- **»Sili para se izničita.«** Ne, ker delujeta na različni telesi. Izničita se le sili na isto telo.
+- **Masa in teža.** »Tehtam $50\,\mathrm{kg}$« govori o masi. Teža je sila: $F_g = m \cdot g = 500\,\mathrm{N}$. V formulo za težo vstaviš maso v kilogramih, ne newtonov.
 
 ## Povzetek
 
-- **1. zakon:** če je rezultanta sil nič, telo miruje ali se enakomerno giblje po premici. Vztrajnost je lastnost telesa, da se upira spremembi gibanja.
-- **2. zakon:** $F = m \cdot a$, pospešek ima smer rezultante. $1\,\text{N} = 1\,\dfrac{\text{kg}\cdot\text{m}}{\text{s}^2}$.
-- **Teža:** $F_g = m \cdot g$, $g \approx 10\,\dfrac{\text{m}}{\text{s}^2}$.
-- **3. zakon:** sili vzajemnega učinka sta enako veliki, nasprotno usmerjeni in delujeta na različni telesi.
-- Pri nalogah najprej določi vse sile, nato rezultanto, nato uporabi $a = F/m$.
+- **1. zakon (zakon o ravnovesju):** če je rezultanta nič, telo miruje ali se giblje enakomerno premo. Vztrajnost: telo ohranja svoje gibanje.
+- **2. zakon:** $F = m \cdot a$, pospešek ima smer rezultante; $1\,\mathrm{N} = 1\,\mathrm{kg \cdot m/s^2}$.
+- **Teža:** $F_g = m \cdot g$, $g \approx 10\,\mathrm{N/kg}$; masa je v $\mathrm{kg}$, teža v $\mathrm{N}$.
+- **3. zakon (zakon o vzajemnem učinku):** sili para sta enako veliki, nasprotni in delujeta na različni telesi, zato se ne izničita.
+- Pri nalogi: vse sile na telo, nato rezultanta, nato $a = F/m$.
 
 ## Drugače: Na sliki
 
-Nariši škatlo kot kvadrat in vse sile kot puščice, ki izhajajo iz njega:
+Telo nariši kot kvadrat, vsako silo nanj kot puščico iz njega. Dolžina puščice pove velikost.
 
-- teža $F_g$ navzdol,
-- sila podlage navzgor,
-- vlečna sila v desno,
-- trenje v levo.
+- Škatla, ki jo vlečeš: teža navzdol, sila tal navzgor, vlečna sila desno, trenje levo.
+- Navpični puščici sta enako dolgi, zato se škatla navpično ne premika.
+- Če je desna puščica daljša od leve, kaže rezultanta desno in škatla pospešuje desno. Če sta enako dolgi, se škatla giblje s stalno hitrostjo ali miruje.
 
-Dolžina puščice pove velikost sile. Če sta navpični puščici enako dolgi, se škatla v navpični smeri ne giblje. Če je puščica v desno daljša od puščice v levo, je rezultanta v desno in škatla pospešuje v desno.
+Za 3. zakon nariši **dve** telesi, na primer telefon in mizo. Puščica »telefon na mizo« izhaja iz mize in kaže navzdol, puščica »miza na telefon« izhaja iz telefona in kaže navzgor. Ker sta na različnih kvadratih, ju ne moreš sešteti.
 
-V simulaciji spodaj so vse puščice sil narisane v istem merilu. Izberi podlago »les na lesu« in počasi večaj vlečno silo: dokler je puščica vlečne sile enako dolga kot puščica trenja, je rezultanta nič in klada se ne začne gibati.
+V simulaciji spodaj so vse puščice v istem merilu. Izberi podlago »les na lesu« in počasi večaj vlečno silo. Dokler lepenje (trenje, ki drži klado pri miru) zdrži, sta puščici vlečne sile in lepenja enako dolgi, rezultanta je nič in klada miruje.
 
 ## Drugače: Iz vsakdanjega življenja
 
-- **Avto in pas:** ko avto močno zavre, tvoje telo zaradi vztrajnosti nadaljuje gibanje naprej. Pas ti da silo, ki te ustavi. Brez pasu bi te ustavilo šele vetrobransko steklo.
-- **Voziček v trgovini:** prazen voziček pospešiš z majhno silo, poln pa potrebuje veliko večjo, če hočeš enak pospešek. To je $F = m \cdot a$.
-- **Plavanje:** z rokami potiskaš vodo nazaj, voda pa potiska tebe naprej. To je tretji zakon.
-- **Balon:** izpuščen napihnjen balon odleti, ker zrak izhaja nazaj, balon pa dobi silo naprej.
-- **Poskok:** ko poskočiš, odrineš tla navzdol, tla pa odrinejo tebe navzgor.
-
-## Drugače: Korak za korakom s številkami
-
-Primerjajmo pospešek pri različnih silah in masah z enačbo $a = F/m$:
-
-| Masa $m$ | Rezultanta $F$ | Pospešek $a$ |
-|---|---|---|
-| $2\,\text{kg}$ | $10\,\text{N}$ | $5\,\dfrac{\text{m}}{\text{s}^2}$ |
-| $2\,\text{kg}$ | $20\,\text{N}$ | $10\,\dfrac{\text{m}}{\text{s}^2}$ |
-| $4\,\text{kg}$ | $20\,\text{N}$ | $5\,\dfrac{\text{m}}{\text{s}^2}$ |
-| $4\,\text{kg}$ | $0\,\text{N}$ | $0\,\dfrac{\text{m}}{\text{s}^2}$ |
-
-Preberi tabelo:
-
-- Vrstica 1 in 2: sila se podvoji, pospešek se podvoji.
-- Vrstica 2 in 3: masa se podvoji, pospešek se prepolovi.
-- Zadnja vrstica: rezultanta nič pomeni pospešek nič (1. zakon).
-
-Recept za naloge:
-
-1. Nariši telo in vse sile.
-2. Določi rezultanto v smeri gibanja (seštej, odštej).
-3. Pretvori enote.
-4. Izračunaj $a = F/m$.
-5. Preveri smer in velikost.
-
-## Drugače: Bolj natančno
-
-Prvi zakon je poseben primer drugega: če je $F = 0$, je $a = 0$, torej se hitrost ne spreminja. Vendar ima samostojno vlogo, ker pove, da sploh obstajajo sistemi (inercialni), v katerih zakoni veljajo v tej obliki.
-
-Drugi zakon je v splošni obliki zapisan z gibalno količino $p = m \cdot v$: rezultanta je enaka časovni spremembi gibalne količine. Če je masa stalna, se to poenostavi v $F = m \cdot a$. Tega zapisa v 9. razredu ne potrebuješ.
-
-Pri tretjem zakonu je ključno vprašanje, na katero telo delujeta sili. Knjiga miruje na mizi. Sili na **knjigo** sta teža (Zemlja deluje na knjigo) in sila mize navzgor. Ti sili se izničita, ker delujeta na isto telo, vendar nista par po tretjem zakonu, saj ju povzročata različni telesi. Pravi par teže je sila, s katero knjiga privlači Zemljo. Pravi par sile mize na knjigo je sila, s katero knjiga pritiska na mizo.
-
-Ker je masa Zemlje ogromna, enaka sila Zemlji da zanemarljiv pospešek, žogi pa velik pospešek. Zato opazimo padanje žoge, ne pa premikanja Zemlje.
+- **Varnostni pas:** ko avto naglo zavre, telo zaradi vztrajnosti nadaljuje naprej. Pas mu da silo nazaj in ga ustavi skupaj z avtom.
+- **Telefon v torbi:** ko avtobus zavre, torba zdrsne naprej po sedežu. Ni je potisnilo nič, gibala se je naprej, sedež pa jo je premalo zaviral.
+- **Nakupovalni voziček:** prazen pospešiš z majhno silo, poln potrebuje večjo za enak pospešek. To je $F = m \cdot a$.
+- **Plavanje in čoln:** z rokami ali veslom potiskaš vodo nazaj, voda potiska tebe naprej.
+- **Raketa:** iz šob izriva pline nazaj, plini potiskajo raketo naprej. Zato raketa leti tudi v vesolju, kjer zraka ni.
+- **Poskok:** odrineš tla navzdol, tla odrinejo tebe navzgor.
 
 ## Preveri se
 
-? Škatlo vlečeš po ravnih tleh in se giblje s stalno hitrostjo $2\,\dfrac{\text{m}}{\text{s}}$. Kaj lahko rečemo o silah na škatlo v vodoravni smeri?
-- Vlečna sila je večja od trenja.
-~ To je zmota »brez sile ni gibanja«. Če bi bila vlečna sila večja, bi škatla pospeševala, hitrost pa je stalna.
-- Na škatlo v vodoravni smeri ne deluje nobena sila.
-~ Ti jo vlečeš, tla pa jo zavirajo s trenjem. Stalna hitrost ne pomeni, da sil ni, ampak da je njihova vsota nič.
-+ Rezultanta sil je enaka nič.
-- Trenje je večje od vlečne sile.
-~ Potem bi rezultanta kazala nazaj in škatla bi se ustavljala, ne bi se gibala s stalno hitrostjo.
-> Pri stalni hitrosti je pospešek nič, zato je po prvem zakonu rezultanta nič. Sili (vlečna in trenje) sta lahko obe prisotni, le enako veliki in nasprotni.
+? Telefon leži na sedežu avta. Avto naglo zavre in telefon zdrsne naprej s sedeža. Zakaj?
+- Zavore so ga potisnile naprej.
+~ Zavore delujejo na kolesa avta, ne na telefon.
+- Med zaviranjem nanj deluje sila naprej, sicer se ne bi gibal.
+~ To je zmota »brez sile ni gibanja«. Telefon se je že gibal in je gibanje ohranil.
++ Zaradi vztrajnosti se je gibal naprej, trenje sedeža pa ga ni moglo ustaviti tako hitro kot avto.
+> Po 1. zakonu telo ohranja hitrost, dokler je rezultanta ne spremeni. Avto je zavirala velika sila cestišča, telefon pa le šibko trenje, zato se je ustavljal počasneje.
 
-? Na telo z maso $3\,\text{kg}$ deluje rezultanta $12\,\text{N}$. Kolikšen je pospešek?
-- $36\,\dfrac{\text{m}}{\text{s}^2}$
-~ Silo in maso si pomnožil. Iz $F = m \cdot a$ sledi $a = F/m$, zato delimo.
-- $0{,}25\,\dfrac{\text{m}}{\text{s}^2}$
-~ Delil si maso s silo ($3 : 12$). Pospešek je sila, deljena z maso.
-+ $4\,\dfrac{\text{m}}{\text{s}^2}$
-- $9\,\dfrac{\text{m}}{\text{s}^2}$
-~ Maso si odštel od sile. Masa in sila sta različni količini, zato ju ne moremo odštevati.
-> $a = \dfrac{F}{m} = \dfrac{12\,\text{N}}{3\,\text{kg}} = 4\,\dfrac{\text{m}}{\text{s}^2}$. Odgovor $36$ dobiš, če pomnožiš namesto deliš, odgovor $0{,}25$ pa, če deliš narobe obrnjeno.
+? Samo ena od teh trditev drži. Katera?
+- Za gibanje s stalno hitrostjo potrebuješ rezultanto v smeri gibanja.
+~ To je zmota »brez sile ni gibanja«. Pri stalni hitrosti je rezultanta nič.
++ Pospešek telesa ima smer rezultante sil nanj.
+- Sili vzajemnega učinka se izničita, ker sta nasprotni.
+~ Delujeta na različni telesi, zato ju ne seštevamo.
+- Maso merimo v newtonih.
+~ V newtonih merimo silo, tudi težo. Masa je v kilogramih.
+> Iz $F = m \cdot a$: pospešek je rezultanta, deljena z maso, in kaže v smer rezultante.
 
-? Odrineš se od zidu in zdrsneš nazaj. Katera trditev pravilno razloži pojav?
-- Zid deluje na tebe z manjšo silo, kot ti nanj.
-~ Ker se zid ne premakne, se zdi, da je njegova sila šibkejša. Po 3. zakonu sta sili vedno enako veliki; zid se ne premakne, ker je trdno vpet v stavbo.
-+ Zid deluje na tebe z enako veliko, nasprotno usmerjeno silo, kot ti nanj.
-- Zid ne deluje na tebe s silo, ker miruje.
-~ Tudi mirujoča telesa delujejo s silo (miza drži knjigo). Brez sile zidu se ne bi začel gibati nazaj.
-> Po tretjem zakonu sta sili vzajemnega učinka vedno enako veliki in nasprotno usmerjeni. Zid miruje, a vseeno deluje s silo na tvoje roke.
+? Dostavni robot z maso $20\,\mathrm{kg}$ poganja motor s silo $100\,\mathrm{N}$, trenje in upor ga zavirata s $40\,\mathrm{N}$. Kolikšen je pospešek robota?
+- $5\,\mathrm{m/s^2}$
+~ Pozabil si na zaviranje. V $a = F/m$ vstavimo rezultanto, ne le sile motorja.
+- $7\,\mathrm{m/s^2}$
+~ Sili si seštel. Zaviralna sila kaže nazaj, zato jo odštejemo.
++ $3\,\mathrm{m/s^2}$
+- $1200\,\mathrm{m/s^2}$
+~ Rezultanto si pomnožil z maso. Pospešek dobiš z deljenjem.
+> $F = 100\,\mathrm{N} - 40\,\mathrm{N} = 60\,\mathrm{N}$, $a = \dfrac{60\,\mathrm{N}}{20\,\mathrm{kg}} = 3\,\mathrm{m/s^2}$.
 
-? V kateri enoti merimo maso in v kateri težo?
-+ Maso v $\text{kg}$, težo v $\text{N}$.
-- Obe v $\text{kg}$.
-~ V vsakdanjem govoru rečemo »tehtam $50\,\text{kg}$«, a to je masa. Teža je sila, zato jo merimo v newtonih.
-- Maso v $\text{N}$, težo v $\text{kg}$.
-~ Enoti sta zamenjani. Masa pove, koliko snovi je v telesu ($\text{kg}$), teža je sila ($\text{N}$).
-- Obe v $\text{N}$.
-~ Masa ni sila. Iz mase šele izračunamo težo: $F_g = m \cdot g$.
-> Masa je v kilogramih, teža je sila, s katero Zemlja privlači telo, in jo merimo v newtonih: $F_g = m \cdot g$.
+? Nik je rešil nalogo: »Dron z maso $2\,\mathrm{kg}$ propelerji potiskajo navzgor s $30\,\mathrm{N}$. Pospešek je $a = \dfrac{30}{2} = 15\,\mathrm{m/s^2}$.« Ali ima prav?
+- Ima prav.
+~ Na dron deluje tudi teža navzdol. V drugi zakon gre rezultanta.
++ Nima prav, pozabil je na težo: rezultanta je $30\,\mathrm{N} - 20\,\mathrm{N} = 10\,\mathrm{N}$, zato je $a = 5\,\mathrm{m/s^2}$.
+- Nima prav, moral bi množiti: $a = 30 \cdot 2 = 60\,\mathrm{m/s^2}$.
+~ Iz $F = m \cdot a$ sledi $a = F/m$, torej delimo.
+- Nima prav, maso bi moral zapisati v newtonih, $20\,\mathrm{N}$, in deliti s tem.
+~ V $a = F/m$ je masa v kilogramih. V newtonih je teža, ki jo potrebuješ za rezultanto.
+> $F_g = 2 \cdot 10 = 20\,\mathrm{N}$, $F = 30\,\mathrm{N} - 20\,\mathrm{N} = 10\,\mathrm{N}$, $a = \dfrac{10\,\mathrm{N}}{2\,\mathrm{kg}} = 5\,\mathrm{m/s^2}$ navzgor.
 
-? Sani z maso $20\,\text{kg}$ vlečeš z vodoravno silo $100\,\text{N}$, trenje jih zavira s $40\,\text{N}$. Kolikšen je pospešek sani?
-- $5\,\dfrac{\text{m}}{\text{s}^2}$
-~ Pozabil si trenje. V $a = F/m$ vstavimo rezultanto, ne le vlečne sile.
-- $7\,\dfrac{\text{m}}{\text{s}^2}$
-~ Sili si seštel. Trenje kaže v nasprotno smer, zato ga odštejemo.
-+ $3\,\dfrac{\text{m}}{\text{s}^2}$
-- $1200\,\dfrac{\text{m}}{\text{s}^2}$
-~ Rezultanto si pomnožil z maso. Pospešek dobimo z deljenjem: $a = F/m$.
-> Rezultanta je $F = 100\,\text{N} - 40\,\text{N} = 60\,\text{N}$, pospešek pa $a = \dfrac{60\,\text{N}}{20\,\text{kg}} = 3\,\dfrac{\text{m}}{\text{s}^2}$ v smeri vlečne sile.
+? Tovornjak in majhen avto trčita. Primerjaj sili, s katerima med trkom delujeta drug na drugega.
+- Tovornjak deluje z večjo silo, ker ima večjo maso.
+~ Masa vpliva na pospešek, ne na velikost sile para. Sili sta enaki.
++ Sili sta enako veliki in nasprotni; avto dobi večji pospešek, ker ima manjšo maso.
+- Sili sta enaki, zato se izničita in se nobenemu nič ne zgodi.
+~ Sili delujeta na različni vozili, zato se ne izničita: vsako vozilo dobi svoj pospešek.
+> Po 3. zakonu sta sili enako veliki. Po $a = F/m$ ima lažji avto večji pospešek, zato je v njem trk hujši.
 
 :::simboli
 a | pospešek | a = \dfrac{F}{m} | m/s^2
-F | rezultanta sil | F = m \cdot a | N
+F | rezultanta sil | F = m \cdot a | N | v Primeru 4 sila vzmeti
 m | masa | | kg
 F_g | teža | F_g = m \cdot g | N
-g | težni pospešek | | m/s^2 | približno 10 m/s² = 10 N/kg
+g | težni pospešek | | N/kg | približno $10\,\mathrm{N/kg} = 10\,\mathrm{m/s^2}$
 \vec F_{1\to 2} | sila prvega telesa na drugo | \vec F_{1\to 2} = -\vec F_{2\to 1} | N | tretji Newtonov zakon
 \vec F_{2\to 1} | sila drugega telesa na prvo | | N
-F_1 | vlečna sila (sila motorja) | | N
-F_2 | zaviralna sila (upor in trenje) | | N
-F_{\text{tr}} | sila trenja | | N
-v | hitrost | v = a \cdot t | m/s | velja, če telo začne iz mirovanja
-t | čas | | s
+F_p | sila propelerjev | | N
+F_m | sila motorja | F_m = F + F_u | N
+F_u | zaviralna sila (upor in trenje) | | N
+m_1 | masa prvega robotka | | kg
+m_2 | masa drugega robotka | | kg
+a_1 | pospešek prvega robotka | a_1 = \dfrac{F}{m_1} | m/s^2
+a_2 | pospešek drugega robotka | a_2 = \dfrac{F}{m_2} | m/s^2
 :::

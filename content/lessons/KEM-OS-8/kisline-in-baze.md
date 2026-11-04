@@ -6,102 +6,115 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že veš, da so snovi okoli nas čiste snovi ali zmesi in da se raztopine pripravijo z raztapljanjem snovi v vodi. Veliko snovi iz vsakdanjega življenja so vodne raztopine: limonin sok, kis, gazirana pijača, milnica, čistila, celo želodčni sok.
+V trgovini v isto košarico položiš steklenico kisa za $0{,}99$ €, mrežico limon za $1{,}49$ € in čistilo za odtoke za $3{,}99$ €. Kis in limone daš na solato. Na čistilu pa je znak v rdečem rombu: kapljice tekočine razjedajo roko in kos kovine. Zakaj je ena tekočina začimba, druga pa nevarna za kožo?
 
-Nekatere od njih imajo skupne lastnosti. Eni so **kisli** (limona, kis), drugi **bazični** (milo, čistilo za odtoke). Pomembno je, da jih znaš prepoznati in razlikovati, saj lahko nekatere močno poškodujejo kožo, kovine ali tkanine. Pri tem ti ne smeš pomagati z okusom ali otipom. Kemiki uporabljamo **indikatorje**, snovi, ki z barvo pokažejo, ali je raztopina kisla, bazična ali nevtralna.
+Odgovor je v tem, da sta kis in limonin sok **kisla**, čistilo za odtoke pa je **bazično**. Kisline in baze imajo vsaka svoje lastnosti. Nekatere so tako močne, da razjedajo kožo, kovine ali kamen.
+
+Isto vprašanje si postavljajo inženirji vesoljskih sond. Oblaki planeta Venera so iz drobnih kapljic žveplove kisline. Sonda, ki leti skozi njih, mora biti iz snovi, ki je kislina ne razje.
+
+Kislino od baze ločimo brez okušanja in tipanja. Pomagajo nam **indikatorji**, snovi, ki z barvo pokažejo, ali je raztopina kisla, bazična ali nevtralna.
 
 **Varnostno pravilo:** neznanih snovi v laboratoriju nikoli ne okušamo, ne vonjamo od blizu in se jih ne dotikamo. Uporabljamo zaščitna očala in rokavice.
 
 ## Razlaga
 
-**1. Kisline.** Kisline so snovi, ki z vodo tvorijo kislo raztopino. Primeri:
+**1. Kisline.** Kis, limonin sok in želodčni sok imajo skupno to, da so v njih raztopljene kisline. **Kisline** so snovi, ki z vodo tvorijo **kislo** raztopino. Primeri:
 
-| Kislina | Formula | Kje jo srečamo |
+| Kislina | Formula | Kje |
 |---|---|---|
-| klorovodikova | $\mathrm{HCl}$ | želodčni sok (zelo razredčena), čistila |
-| žveplova | $\mathrm{H_2SO_4}$ | akumulatorji, industrija |
-| dušikova | $\mathrm{HNO_3}$ | gnojila, industrija |
+| klorovodikova | $\mathrm{HCl}$ | želodec, čistila |
+| žveplova | $\mathrm{H_2SO_4}$ | akumulatorji |
+| dušikova | $\mathrm{HNO_3}$ | gnojila |
 | ocetna | $\mathrm{CH_3COOH}$ | kis |
-| citronska | $\mathrm{C_6H_8O_7}$ | limone, pomaranče |
+| citronska | $\mathrm{C_6H_8O_7}$ | limone |
 
-Formule večine kislin se začnejo z vodikom (H), to ti pomaga pri prepoznavanju. Pri ocetni kislini je vodik, ki ga kislina odda, v formuli $\mathrm{CH_3COOH}$ zapisan na koncu.
+Formule večine kislin se začnejo z vodikom (H), to ti pomaga pri prepoznavanju. Izjema je ocetna kislina: vodik, zaradi katerega je kisla, je v formuli $\mathrm{CH_3COOH}$ zapisan na koncu.
 
-**2. Lastnosti kislin.**
+:::premisli
+Voda $\mathrm{H_2O}$ in metan $\mathrm{CH_4}$ imata v formuli vodik. Napovej: ali sta kislini?
+---
+Ne. Voda je nevtralna, metan pa z vodo ne da kisle raztopine. O kislini ne odloča sam vodik v formuli, ampak to, kakšno raztopino snov da z vodo.
+:::
 
-- Raztopine imajo kisel okus (to velja le za živilske kisline, kot sta ocetna in citronska, ki jih lahko srečaš v hrani).
-- Spremenijo barvo indikatorjev (glej spodaj).
-- Nekatere kisline reagirajo z nekaterimi kovinami (npr. s cinkom, magnezijem) in pri tem nastaja plin vodik.
-- Reagirajo z apnencem (kalcijev karbonat) in pri tem nastaja ogljikov dioksid. Zato kis ali limonin sok na apnencu zapenita.
-- Raztopine kislin prevajajo električni tok.
-- Močne in koncentrirane kisline so jedke.
+**2. Baze kot nasprotje kislin.** Čistilo za odtoke in milnica sta **bazična**. V njiju so raztopljene baze. **Baze** so snovi, ki z vodo tvorijo **bazično** raztopino. Bazični raztopini rečemo tudi **alkalna**. Primeri:
 
-**3. Baze.** Baze so snovi, ki z vodo tvorijo bazično raztopino. Raztopinam pogosto rečemo tudi **alkalne** raztopine. Primeri:
-
-| Baza | Formula | Kje jo srečamo |
+| Baza | Formula | Kje |
 |---|---|---|
-| natrijev hidroksid | $\mathrm{NaOH}$ | čistilo za odtoke, izdelava mila |
-| kalijev hidroksid | $\mathrm{KOH}$ | izdelava mila, industrija |
-| kalcijev hidroksid | $\mathrm{Ca(OH)_2}$ | gašeno apno, malta |
-| amonijak (raztopina) | $\mathrm{NH_3}$ | nekatera čistila |
+| natrijev hidroksid | $\mathrm{NaOH}$ | čistila |
+| kalijev hidroksid | $\mathrm{KOH}$ | tekoče milo |
+| kalcijev hidroksid | $\mathrm{Ca(OH)_2}$ | gašeno apno |
+| amonijak | $\mathrm{NH_3}$ | čistila |
 
-Pri hidroksidih ($\mathrm{NaOH}$, $\mathrm{KOH}$, $\mathrm{Ca(OH)_2}$) opaziš skupino $\mathrm{OH}$ na koncu formule.
+Pri hidroksidih ($\mathrm{NaOH}$, $\mathrm{KOH}$, $\mathrm{Ca(OH)_2}$) opaziš skupino $\mathrm{OH}$ na koncu formule. Kislino torej prepoznaš po H na začetku, hidroksid po OH na koncu.
 
-**4. Lastnosti baz.**
+Hidroksid že poznaš. Pri kovinah si spoznal, da natrij z vodo da bazično raztopino in vodik. Ta raztopina je raztopina natrijevega hidroksida:
 
-- Raztopine so na otip spolzke (podobno kot milnica) in grenkega okusa, vendar jih nikoli ne preizkušamo.
-- Spremenijo barvo indikatorjev, drugače kot kisline.
-- Raztopine prevajajo električni tok.
-- Močne baze so jedke: razjedajo kožo in tkanine.
-- Bazične raztopine lahko nevtralizirajo kisline (to bomo podrobneje spoznali pri nevtralizaciji).
+$$\mathrm{2\,Na + 2\,H_2O \rightarrow 2\,NaOH + H_2}$$
 
-**5. Indikatorji.** Indikator je snov, ki spremeni barvo glede na to, ali je raztopina kisla ali bazična. Najbolj pogosti:
+**3. Kisline in baze drug ob drugem.** Najlaže si jih zapomniš, če jih primerjaš:
 
-| Indikator | V kislem | V nevtralnem | V bazičnem |
-|---|---|---|---|
-| lakmus | rdeč | vijoličen | moder |
-| fenolftalein | brezbarven | brezbarven | škrlatno roza |
-| metiloranž | rdeč | rumen | rumen |
-| sok rdečega zelja | rdeč do roza | vijoličen | zelen do rumen |
-| univerzalni indikator | rdeč, oranžen | zelen | moder, vijoličen |
+| Lastnost | Kisline | Baze |
+|---|---|---|
+| okus | kisel | grenak |
+| na otip | – | spolzke |
+| z Mg | vodik | ne reagirajo |
+| z apnencem | $\mathrm{CO_2}$ | ne reagirajo |
+| tok | prevajajo | prevajajo |
+| lakmus | rdeč | moder |
+| močne | jedke | jedke |
 
-Vsak indikator spremeni barvo le v svojem območju pH. Metiloranž jo spremeni že pri pH približno med $3$ in $4{,}4$ (v prehodu je oranžen), zato nevtralne raztopine ne loči od bazične. Fenolftalein jo spremeni šele pri bazičnih vrednostih (nad približno $\mathrm{pH} = 8$). Zato uporabljamo več indikatorjev ali univerzalni indikator.
+Okus in otip sta v tabeli le za opis: v laboratoriju ničesar ne okušamo in ne tipamo.
 
-**6. pH vrednost.** Kislost ali bazičnost izrazimo s števili na **pH lestvici**, ki običajno poteka od $0$ do $14$:
+Pri apnencu (kalcijev karbonat) je razlika najbolj vidna. Kapljica kisa na apnencu zapeni, ker nastaja plin ogljikov dioksid. Kapljica milnice ostane mirna.
+
+Dve vrstici tabele sta enaki. Raztopine kislin in baz prevajajo električni tok, ker so v njih **ioni**, nabiti delci. Destilirana voda ima zelo malo ionov, zato tok prevaja zelo slabo. Tudi jedkost je skupna: močna baza razjeda kožo prav tako kot močna kislina.
+
+:::premisli
+Natrij v vodi in magnezij v klorovodikovi kislini: v obeh posodah nastaja vodik. Kakšne barve bo lakmus v vsaki posodi, dokler kisline ne zmanjka? Zakaj?
+---
+V posodi z natrijem moder, ker nastaja natrijev hidroksid, baza. V posodi z magnezijem rdeč, ker je v njej še vedno kislina. Isti plin torej še ne pove, ali je raztopina kisla ali bazična.
+:::
+
+**4. Indikatorji.** Indikator je snov, ki spremeni barvo glede na to, ali je raztopina kisla ali bazična. Najbolj pogosti:
+
+| Indikator | kislo / nevtralno / bazično |
+|---|---|
+| lakmus | rdeč / vijoličen / moder |
+| fenolftalein | brez barve / brez barve / roza |
+| rdeče zelje | rdeč / vijoličen / moder, zelen do rumen |
+| univerzalni | rdeč, oranžen / zelen / moder, vijoličen |
+
+Fenolftalein se obarva šele v bazičnem, zato sam ne loči kisle raztopine od nevtralne. Zato uporabimo več indikatorjev ali univerzalni indikator, ki ga opišemo v naslednjem razdelku.
+
+**5. pH vrednost.** Kislost ali bazičnost izrazimo s številom na **pH lestvici**, ki običajno poteka od $0$ do $14$:
 
 - $\mathrm{pH} < 7$: kisla raztopina (manjši pH pomeni močneje kislo),
 - $\mathrm{pH} = 7$: nevtralna raztopina (npr. čista voda),
 - $\mathrm{pH} > 7$: bazična raztopina (večji pH pomeni močneje bazično).
 
-Univerzalni indikator je zmes indikatorjev, ki ima v različnih območjih pH različne barve. Primerjava z barvno lestvico nam pove približni pH.
+Univerzalni indikator je zmes indikatorjev, ki ima v različnih območjih pH različne barve. Primerjava z barvno lestvico na embalaži pove približni pH.
 
-**7. Simulacija.** V interaktivni simulaciji spodaj (»Kisline, baze in pH«) lahko primerjaš različne snovi in spremljaš njihov pH. Poskusi primerjati kisline, baze in vodo.
+V simulaciji spodaj (»Kisline, baze in pH«) klikni najprej gumb kis, nato raztopina NaOH. Preden klikneš, napovej, na katero stran števila $7$ bo pokazala puščica. Nato preveri na traku in v čaši: kis je levo od $7$ in oranžen, raztopina NaOH je čisto desno in vijolična.
 
 ## Rešeni primeri
 
-### Primer 1: kislo, nevtralno ali bazično? (lažji)
+### Primer 1: kisline in baze v vesolju (lažji)
 
-Dane so raztopine z naslednjimi pH vrednostmi:
+Tri snovi so povezane s poleti v vesolje. Oblaki Venere so iz kapljic $\mathrm{H_2SO_4}$. V kapsulah Apollo so ogljikov dioksid iz zraka vezali z litijevim hidroksidom $\mathrm{LiOH}$. Gorivne celice istih plovil so vsebovale raztopino $\mathrm{KOH}$. Katera snov je kislina in kateri sta bazi?
 
-- limonin sok: $\mathrm{pH} = 2$
-- čista voda: $\mathrm{pH} = 7$
-- milnica: $\mathrm{pH} = 10$
-
-Določi, katera je kisla, nevtralna in bazična.
-
-**Podatki:** limonin sok $\mathrm{pH} = 2$, čista voda $\mathrm{pH} = 7$, milnica $\mathrm{pH} = 10$
-**Iščemo:** za vsako raztopino, ali je kisla, nevtralna ali bazična
+**Podatki:** $\mathrm{H_2SO_4}$ (oblaki Venere), $\mathrm{LiOH}$ (kapsula Apollo), $\mathrm{KOH}$ (gorivne celice)
+**Iščemo:** ali je posamezna snov kislina ali baza
 
 :::formula
-$\mathrm{pH} < 7$: kislo, $\mathrm{pH} = 7$: nevtralno, $\mathrm{pH} > 7$: bazično
+Formula kisline se navadno začne z H. Formula hidroksida (baze) ima na koncu skupino OH.
 :::
 
 **Rešitev:**
 
-1. Primerjamo pH z $7$, ker je to meja med kislim in bazičnim.
-2. Limonin sok: $2 < 7$, torej je **kisel**.
-3. Čista voda: $\mathrm{pH} = 7$, torej je **nevtralna**.
-4. Milnica: $10 > 7$, torej je **bazična**.
-5. Preverimo smiselnost: limona je kisla in milo je spolzko, torej se rezultat ujema z lastnostmi iz razlage. ✓
+1. $\mathrm{H_2SO_4}$ se začne z vodikom, zato je **kislina**. To je žveplova kislina iz tabele kislin.
+2. $\mathrm{LiOH}$ ima na koncu skupino OH, zato je hidroksid, torej **baza**. Litij je alkalijska kovina, tako kot natrij, zato je njegov hidroksid podoben $\mathrm{NaOH}$.
+3. $\mathrm{KOH}$ ima na koncu OH, zato je **baza** (kalijev hidroksid).
+4. Odgovor: žveplova kislina je kislina, litijev in kalijev hidroksid sta bazi.
 
 ### Primer 2: iz barve indikatorja ugotovi, kaj je v kozarcu
 
@@ -124,140 +137,119 @@ Lakmus: rdeč pomeni kislo, vijoličen nevtralno, moder bazično. Fenolftalein: 
 
 **Rešitev:**
 
-1. **Raztopina A.** Lakmus je rdeč, kar pomeni kislo raztopino. Fenolftalein je brezbarven, kar se ujema (kisla raztopina ga ne obarva). Torej je A **kisla**.
+1. **Raztopina A.** Rdeč lakmus pomeni kislo, brezbarven fenolftalein se s tem ujema. A je **kisla**.
 2. **Raztopina B.** Lakmus je moder in fenolftalein je roza, oboje kaže na bazično raztopino. Torej je B **bazična**.
-3. **Raztopina C.** Lakmus je vijoličen, kar pomeni nevtralno raztopino. Fenolftalein je brezbarven, kar se ujema (v nevtralni raztopini ostane brezbarven). Torej je C **nevtralna**.
+3. **Raztopina C.** Vijoličen lakmus pomeni nevtralno, brezbarven fenolftalein se s tem ujema. C je **nevtralna**.
 4. Zakaj uporabimo dva indikatorja? Fenolftalein sam pove le, ali je raztopina bazična ali ne. Brezbarven je tako v kislem kot v nevtralnem. Šele lakmus loči kislo od nevtralnega.
 
-### Primer 3: kako razlikovati tri tekočine? (težji)
+### Primer 3: ohišje za sondo na Veneri (težji, dokončaj sam)
 
-V treh enakih posodah so brezbarvne tekočine: kis, čista voda in raztopina natrijevega hidroksida. Napisi so odpadli. Kako ugotoviš, katera je katera, in zakaj je pomembno, da to narediš varno?
+Inženirji izbirajo snov za zunanji del sonde, ki bo letela skozi oblake Venere iz kapljic žveplove kisline. Na Zemlji preizkusijo tri ploščice: iz magnezija, iz marmorja in iz zlata. Vsako potopijo v razredčeno žveplovo kislino. Marmor je vrsta apnenca, zlato pa je zelo nereaktivna kovina. Kaj opazijo pri vsaki ploščici in katero snov izberejo?
 
-**Podatki:** tri enake posode z brezbarvnimi tekočinami (kis, čista voda, raztopina natrijevega hidroksida), napisi so odpadli
-**Iščemo:** katera tekočina je katera in kako delamo varno
+**Podatki:** ploščice iz magnezija (Mg), marmorja (apnenec, kalcijev karbonat) in zlata (Au); razredčena žveplova kislina $\mathrm{H_2SO_4}$; zlato je zelo nereaktivno
+**Iščemo:** kaj se zgodi s posamezno ploščico in katera je primerna za sondo
 
 :::formula
-Univerzalni indikator: rdeč ali oranžen pomeni kislo ($\mathrm{pH} < 7$), zelen nevtralno ($\mathrm{pH} = 7$), moder ali vijoličen bazično ($\mathrm{pH} > 7$).
+Kislina + nekatere kovine (Mg, Zn) $\rightarrow$ nastane vodik. Kislina + apnenec $\rightarrow$ nastane ogljikov dioksid. Zelo nereaktivne kovine s kislino ne reagirajo.
 :::
 
 **Rešitev:**
 
-1. **Varnost.** Raztopina natrijevega hidroksida je jedka. Zato si nadeneš očala in rokavice, tekočin pa ne okušaš in ne vonjaš od blizu.
-2. **Izbira indikatorja.** Univerzalni indikator pokaže tri različne barve (kislo, nevtralno, bazično), zato ga izberemo. Z enim samim poskusom loči vse tri tekočine.
-3. **Poskus.** V vsako posodo pomočimo svež košček indikatorskega papirja (ali dodamo nekaj kapljic indikatorja).
-4. **Rezultat.** Pričakujemo:
-   - kis: rdeča ali oranžna barva ($\mathrm{pH} < 7$),
-   - čista voda: zelena barva ($\mathrm{pH} = 7$),
-   - raztopina $\mathrm{NaOH}$: modra ali vijolična barva ($\mathrm{pH} > 7$).
-5. **Zakaj sveži košček?** Če bi isti košček pomakal v več tekočin, bi se tekočine mešale in bi bil rezultat napačen.
-6. **Odgovor.** Tekočino z rdečo (ali oranžno) barvo označimo kot kis, zeleno kot vodo in modro (ali vijolično) kot raztopino natrijevega hidroksida.
+1. **Magnezij.** Je reaktivna kovina, zato s kislino reagira. Na ploščici nastajajo mehurčki vodika, ploščica se manjša.
+2. **Marmor.** Je apnenec, zato s kislino reagira. Kislina zapeni, ker nastaja ogljikov dioksid.
+3. **Zlato.** Dokončaj sam: kaj opazijo pri zlati ploščici in katero snov izberejo?
+
+:::premisli
+Kaj se zgodi z zlato ploščico in katera snov je primerna za sondo?
+---
+Pri zlatu ni mehurčkov in ploščica ostane enaka, ker zlato s kislino ne reagira. Od treh preizkušenih snovi je za ohišje primerno samo zlato. Magnezij in marmor bi kisle kapljice počasi razjedle.
+:::
 
 ## Pogoste napake
 
-- **Mešanje barv pri indikatorjih.** Lakmus je v kislem rdeč, v bazičnem moder. Pomagaj si z miselnim pravilom: *kislina, rdeča*.
-- **Misliš, da fenolftalein zazna kislino.** Brezbarven je tako v kislem kot v nevtralnem. Obarva se samo v bazičnem.
-- **Večji pH pomeni bolj kislo.** Ravno nasprotno: manjši pH pomeni bolj kislo, večji pa bolj bazično.
-- **»Nevtralno« in »brezbarvno« sta isto.** Raztopina je lahko brezbarvna, a kisla. Barva raztopine nič ne pove o pH, pove le barva indikatorja.
-- **Okušanje ali vonjanje v laboratoriju.** Tega nikoli ne počni. Nekatere raztopine so jedke ali strupene.
-- **Misliš, da so vse baze topne v vodi.** Baze, ki se v vodi raztapljajo (npr. $\mathrm{NaOH}$, $\mathrm{KOH}$), imenujemo alkalije, njihove raztopine pa alkalne. Nekatere baze, npr. $\mathrm{Cu(OH)_2}$, se v vodi skoraj ne raztapljajo.
+- **Vsaka snov z vodikom v formuli je kislina.** Napačno sklepanje: »$\mathrm{H_2O}$ in $\mathrm{CH_4}$ imata H, torej sta kislini.« Voda je nevtralna, metan z vodo ne da kisle raztopine. Popravek: o kislini odloča, kakšno raztopino da snov z vodo; preveri z indikatorjem.
+- **Zamenjane barve lakmusa.** Napačno: »moder pomeni kislo«. Lakmus je v kislem rdeč, v bazičnem moder. Pomagaj si s pravilom *kislina, rdeča*.
+- **Brezbarven fenolftalein pomeni kislino.** Fenolftalein je brezbarven v kislem in v nevtralnem. Obarva se samo v bazičnem. Popravek: iz brezbarvnega fenolftaleina sklepaš le, da raztopina ni bazična.
+- **Brezbarvna tekočina je voda.** Kis, raztopina $\mathrm{NaOH}$ in voda so vsi brezbarvni. Barva raztopine nič ne pove o tem, ali je kisla; pove le barva indikatorja.
+- **Baze so manj nevarne od kislin.** Ker jih poznamo iz mila, se zdijo nežne. Raztopina $\mathrm{NaOH}$ iz čistila za odtoke je jedka kot močna kislina. Popravek: z obema delaš z očali in rokavicami.
 
 ## Povzetek
 
-- Kisline imajo v formuli vodik (npr. $\mathrm{HCl}$, $\mathrm{H_2SO_4}$, $\mathrm{CH_3COOH}$), baze pogosto skupino $\mathrm{OH}$ (npr. $\mathrm{NaOH}$, $\mathrm{Ca(OH)_2}$).
-- Kisline so kislega okusa, reagirajo z nekaterimi kovinami (nastane vodik) in z apnencem (nastane ogljikov dioksid). Raztopine baz so spolzke, močne baze so jedke.
-- Raztopine kislin in baz prevajajo električni tok.
-- Indikator z barvo pokaže vrsto raztopine: lakmus je rdeč v kislem in moder v bazičnem. Fenolftalein je roza samo v bazičnem.
+- Kisline z vodo dajo kislo raztopino; formula se navadno začne z H ($\mathrm{HCl}$, $\mathrm{H_2SO_4}$, pri $\mathrm{CH_3COOH}$ je kisli H na koncu).
+- Baze z vodo dajo bazično (alkalno) raztopino; hidroksidi imajo skupino OH ($\mathrm{NaOH}$, $\mathrm{Ca(OH)_2}$).
+- Kisline reagirajo z nekaterimi kovinami (nastane vodik) in z apnencem (nastane ogljikov dioksid). Raztopine baz so spolzke.
+- Skupno: raztopine kislin in baz vsebujejo ione in prevajajo električni tok; močne kisline in baze so jedke.
+- Indikatorji: lakmus je rdeč v kislem, vijoličen v nevtralnem, moder v bazičnem. Fenolftalein je roza samo v bazičnem.
 - pH lestvica: $\mathrm{pH} < 7$ kislo, $\mathrm{pH} = 7$ nevtralno, $\mathrm{pH} > 7$ bazično.
 - Neznanih snovi ne okušamo, ne vonjamo in se jih ne dotikamo.
 
 ## Drugače: Na sliki
 
-Predstavljaj si pH lestvico kot **termometer za kislost**. Na levi strani je $0$, kjer so zelo kisle raztopine, na sredini $7$ (čista voda), na desni $14$, kjer so zelo bazične raztopine.
+Predstavljaj si tri kozarce v vrsti, v vsakega pomočiš trak lakmusovega papirja:
 
-V simulaciji spodaj (»Kisline, baze in pH«) premikaj drsnik po lestvici in opazuj:
+```
+  kis          voda          milnica
+ [rdeč]     [vijoličen]      [moder]
+ kislo      nevtralno       bazično
+```
 
-- barvo, ki jo ima univerzalni indikator pri izbranem pH (od rdeče prek oranžne, rumene in zelene do modre in vijolične),
-- kam na lestvici sodijo znane snovi iz vsakdanjega življenja (limona, kis, voda, milo, čistila).
+Kisline potegnejo lakmus na rdečo stran, baze na modro. Vmes je vijolična, nevtralna sredina.
 
-Opaziš, da se barva spreminja postopoma. Že ob premiku za eno enoto pH se količina vodikovih ionov spremeni desetkrat, barva indikatorja pa se spreminja le postopoma (sosednji odtenki so si podobni), zato barvna lestvica pomaga ugotoviti le približen pH.
-
-Z gumbi snovi lahko dodatno primerjaš pH različnih raztopin in poiščeš, kje na lestvici se ustavijo kisline in baze.
+V simulaciji spodaj (»Kisline, baze in pH«) to sliko razširiš v trak od $0$ do $14$. Klikaj gumbe snovi od limoninega soka do belila. Opazuj, kako se puščica premika od leve (kislo) proti desni (bazično) in kako se postopoma spreminja barva v čaši.
 
 ## Drugače: Iz vsakdanjega življenja
 
-**Kuhinja.** Limona, kis in jabolčni sok so kisli. Zato jih uporabljamo kot začimbo, ki da jedem kisel okus. Kis se zato dobro odreže pri čiščenju vodnega kamna (apnenca) v kotličku ali kopalnici: kislina reagira z apnencem in pri tem nastaja ogljikov dioksid, zato kis zapeni.
+**Kuhinja.** Limona, kis in jabolčni sok so kisli. Kis odstrani vodni kamen (apnenec) v kotličku: kislina z apnencem tvori ogljikov dioksid, zato zapeni.
 
-**Higiena.** Milo in čistilni praški so bazični. Zato jih na otip občutimo kot spolzke. Čistila za odtoke vsebujejo močne baze (npr. natrijev hidroksid), zato so jedka in jih uporabljamo samo z rokavicami.
+**Higiena.** Milnica in čistilni praški so bazični in na otip spolzki. Čistila za odtoke vsebujejo močne baze (npr. natrijev hidroksid), zato so jedka in jih uporabljamo samo z rokavicami.
 
-**Rdeče zelje kot domač indikator.** Če skuhaš rdeče zelje, dobiš vijoličen sok. V kis ga kapni in postane rdeč do roza. V raztopino pecilnega praška v vodi ga kapni in postane modro-zelen. Sok je tako preprost domač indikator.
+**Rdeče zelje kot domač indikator.** Če skuhaš rdeče zelje, dobiš vijoličen sok. Če ga kapneš v kis, postane rdeč do roza. Če ga kapneš v raztopino sode bikarbone, postane moder do modro-zelen. Sok je tako preprost domač indikator.
 
-**Telo.** Želodčni sok je zelo kisel, ker vsebuje klorovodikovo kislino. Kisla raztopina pomaga pri prebavi. Če je kisline preveč ali se vrača v požiralnik, nastane zgaga, zato nam pomagajo zdravila z bazami (antacidi), ki kislino nevtralizirajo.
-
-## Drugače: Korak za korakom s številkami
-
-Recept, kako iz rezultatov poskusov ugotoviš lastnosti raztopine:
-
-1. Zapiši, katere indikatorje si uporabil.
-2. Za vsakega zapiši dobljeno barvo.
-3. S pomočjo tabele indikatorjev preberi, kaj ta barva pomeni (kislo, nevtralno ali bazično).
-4. Če se rezultati ujemajo, si prepričan v odgovor. Če se ne, poskus ponovi.
-5. Za pH vrednost preveri, ali je manjši od $7$, enak $7$ ali večji od $7$.
-
-**Primer s številkami (univerzalni indikator):**
-
-| Barva | Približen pH | Vrsta raztopine |
-|---|---|---|
-| rdeča | $1$ do $3$ | močno kisla |
-| oranžna | $4$ | kisla |
-| rumena | $5$ do $6$ | šibko kisla |
-| zelena | $7$ | nevtralna |
-| modra | $8$ do $10$ | bazična |
-| vijolična | $11$ do $14$ | močno bazična |
-
-Tabela je približna. Natančne barve se razlikujejo glede na proizvajalca indikatorja, zato se vedno zanesi na barvno lestvico, priloženo indikatorju.
-
-**Primerjava vsakdanjih snovi (približne vrednosti):**
-
-| Snov | Približen pH |
-|---|---|
-| limonin sok | $2$ |
-| kis | $2{,}5$ do $3$ |
-| mleko | okoli $6{,}5$ |
-| čista voda | $7$ |
-| milnica | $9$ do $10$ |
-| čistilo za odtoke | $13$ do $14$ |
-
-## Drugače: Bolj natančno
-
-Zakaj se kisline in baze obnašajo tako, kot se? Odgovor je v tem, kaj se zgodi, ko jih raztopimo v vodi.
-
-Kisline v vodi sproščajo delce z nabojem, imenovane vodikovi ioni ($\mathrm{H^+}$; v vodi so vezani na molekule vode kot oksonijevi ioni $\mathrm{H_3O^+}$). Več vodikovih ionov je v raztopini, bolj je ta kisla. Baze v vodi tvorijo hidroksidne ione ($\mathrm{OH^-}$). Več jih je, bolj je raztopina bazična.
-
-Zaradi teh nabitih delcev raztopine kislin in baz prevajajo električni tok. Čista voda ima zelo malo ionov, zato tok prevaja zelo slabo.
-
-pH vrednost je mera za količino vodikovih ionov v raztopini. Zapis je logaritemski: ko se pH zmanjša za $1$, je vodikovih ionov desetkrat več. Zato je raztopina s $\mathrm{pH} = 2$ veliko bolj kisla kot raztopina s $\mathrm{pH} = 4$ (stokrat več vodikovih ionov). To je zato, da lahko zelo velike razlike zapišemo z majhnimi števili.
-
-Indikatorji so organske snovi, katerih molekule imajo v kislem in bazičnem okolju različno zgradbo. Zaradi tega absorbirajo različne barve svetlobe in jih zato vidimo različno obarvane.
+**Telo.** Želodčni sok je zelo kisel, ker vsebuje klorovodikovo kislino. Kisla raztopina pomaga pri prebavi. Če je kisline preveč ali se vrača v požiralnik, nastane zgaga, zato pomagajo zdravila z bazičnimi snovmi (antacidi), ki odvečno kislino nevtralizirajo.
 
 ## Preveri se
 
-? Katera barva lakmusa pomeni, da je raztopina kisla?
-- moder
-- vijoličen
-+ rdeč
-> Lakmus je v kislem rdeč, v bazičnem moder in v nevtralnem vijoličen.
+? Katera vrstica pravilno opiše barve lakmusa (kislo / nevtralno / bazično)?
+- moder / vijoličen / rdeč
+~ Barvi sta zamenjani. Lakmus je v kislem rdeč: *kislina, rdeča*.
++ rdeč / vijoličen / moder
+- brezbarven / brezbarven / roza
+~ To so barve fenolftaleina, ne lakmusa.
+> Lakmus je v kislem rdeč, v nevtralnem vijoličen in v bazičnem moder.
 
-? Raztopina ima $\mathrm{pH} = 12$. Kaj lahko poveš o njej?
-- Je kisla, ker je število veliko.
-- Je nevtralna.
-+ Je bazična.
-> Vse raztopine s $\mathrm{pH} > 7$ so bazične. Večje število pomeni bolj bazično, ne bolj kislo.
+? Zakaj raztopini $\mathrm{HCl}$ in $\mathrm{NaOH}$ prevajata električni tok, destilirana voda pa skoraj ne?
+- Ker sta jedki.
+~ Jedkost ne prenaša toka. Trden NaOH je jedek, a toka ne prevaja.
+- Ker imata v formuli vodik.
+~ Tudi voda $\mathrm{H_2O}$ ima vodik, pa tok prevaja zelo slabo.
++ Ker je v njiju veliko ionov, nabitih delcev.
+> Tok v raztopini prenašajo ioni. V raztopinah kislin in baz jih je veliko, v destilirani vodi zelo malo.
 
-? Raztopini smo dodali fenolftalein in ta je ostal brezbarven. Kaj lahko zagotovo trdimo?
-- Raztopina je bazična.
-- Raztopina je kisla.
-+ Raztopina ni bazična.
-> Fenolftalein se obarva roza samo v bazičnem. Brezbarven je v kislem in v nevtralnem, zato iz rezultata ne moremo reči, ali je raztopina kisla ali nevtralna.
+? V raztopini je lakmus moder, fenolftalein pa roza. Oceni, kateri pH je najbolj verjeten.
+- $\mathrm{pH} \approx 3$
+~ Moder lakmus ne pomeni kislo, to je zamenjava barv. Rdeč bi pomenil kislo.
+- $\mathrm{pH} \approx 7$
+~ V nevtralni raztopini je fenolftalein brezbarven, lakmus pa vijoličen.
++ $\mathrm{pH} \approx 11$
+> Oba indikatorja kažeta bazično raztopino, torej $\mathrm{pH} > 7$. Od ponujenih vrednosti je bazična le $11$.
+
+? Iščeš raztopino, ki lakmus obarva modro in na apnencu ne peni. Katera je to?
+- raztopina $\mathrm{H_2SO_4}$
+~ Formula se začne s H: to je kislina. Lakmus bi bil rdeč, na apnencu bi penila.
+- destilirana voda
+~ Voda na apnencu res ne peni, a je nevtralna: lakmus ostane vijoličen.
++ raztopina $\mathrm{KOH}$
+- kis
+~ Kis je kisel: lakmus obarva rdeče in na apnencu zapeni.
+> $\mathrm{KOH}$ je hidroksid, torej baza. Lakmus obarva modro, z apnencem pa baze ne reagirajo.
+
+? Na marmorno polico v kopalnici kapne limonin sok. Kaj opaziš?
+- Mehurčke vodika.
+~ Vodik nastane, ko kislina reagira s kovino, na primer z magnezijem. Marmor ni kovina.
+- Nič, ker je limonin sok živilo.
+~ Tudi kislina v živilu je kislina. Citronska kislina z apnencem reagira.
++ Sok zapeni, ker nastaja ogljikov dioksid.
+> Marmor je apnenec. Kislina z apnencem tvori ogljikov dioksid, zato sok zapeni, polica pa na tem mestu izgubi sijaj.
 
 :::simboli
 \mathrm{pH} | pH vrednost (merilo kislosti raztopine) | | – | pod 7 kislo, 7 nevtralno, nad 7 bazično

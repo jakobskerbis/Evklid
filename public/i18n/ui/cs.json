@@ -908,6 +908,8 @@
   "sc.memory": "Uloženo",
   "sc.insert": "Vložit do výpočtu",
   "sc.pressSolve": "Pro vyřešení stiskni =",
+  "sc.fmHint": "Známá písmena nahraď čísly, neznámou nech a stiskni =.",
+  "sc.fmRad": "Kalkulačka je teď v režimu RAD (úhly v radiánech).",
   "sc.errUndefined": "Výsledek není definován (např. dělení 0).",
   "sc.constants": "Konstanty",
   "sc.toCalc": "Do kalkulačky",

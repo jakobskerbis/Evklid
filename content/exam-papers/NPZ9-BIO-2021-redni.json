@@ -1,0 +1,786 @@
+{
+ "id": "NPZ9-BIO-2021-redni",
+ "exam": "NPZ9",
+ "subject": "BIO",
+ "minutes": 60,
+ "points": 35,
+ "author": "AI",
+ "tools": "Dovoljeno je samo pisalo (nalivno pero ali kemični svinčnik); računalo in druga gradiva niso dovoljeni.",
+ "tasks": [
+  {
+   "n": 1,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Maja je zamesila testo za kruh iz moke, vode, soli in svežega kvasa ter ga pokrito pustila v topli kuhinji. Čez eno uro je bilo testo skoraj dvakrat večje, v notranjosti pa je bilo polno drobnih mehurčkov. Kaj je povzročilo, da je testo naraslo?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Kisik, ki ga kvasovke sproščajo, ko razgrajujejo sladkorje.",
+      "Ogljikov dioksid, ki nastaja, ko kvasovke z vrenjem razgrajujejo sladkorje iz moke.",
+      "Vodna para, ki nastane, ker se testo na toplem segreje do vrelišča vode.",
+      "Zrak, ki se pri gnetenju ujame v testo, kvasovke pa ga segrejejo, da se razširi."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "Ogljikov dioksid, ki ga pri vrenju sproščajo kvasovke.",
+     "ways": [
+      {
+       "title": "Kaj delajo kvasovke v testu",
+       "text": "Kvas so žive **kvasovke** – enocelične glive. V testu se hranijo s sladkorji, ki nastanejo iz škroba v moki. V notranjosti testa je malo kisika, zato kvasovke sladkor razgrajujejo z **alkoholnim vrenjem**:\n\nsladkor (glukoza) → alkohol (etanol) + **ogljikov dioksid** + energija\n\nPlin ogljikov dioksid se ujame v lepljivo testo in tvori mehurčke, zato se prostornina testa poveča. Pri peki se mehurčki zaradi vročine še razširijo, kvasovke odmrejo, alkohol pa izhlapi. Mehurčki ostanejo kot luknjice v sredici kruha.\n\nZakaj so drugi odgovori napačni:\n\n- *Kisik* – kvasovke kisik porabljajo (kadar ga imajo), ne sproščajo ga. Kisik sproščajo zelene rastline pri fotosintezi.\n- *Vodna para* – topla kuhinja ima okrog $25\\,^\\circ\\mathrm{C}$, voda pa vre pri $100\\,^\\circ\\mathrm{C}$; testo med vzhajanjem ne zavre.\n- *Ujet zrak* – nekaj zraka se res ujame pri gnetenju, a ga je malo in ga kvasovke ne »segrevajo«; testo naraste šele, ko kvasovke dalj časa proizvajajo plin."
+      }
+     ],
+     "mistake": "Misliti, da mikroorganizmi pri vrenju proizvajajo kisik, ker so »živi in dihajo«. Pri dihanju in vrenju nastaja ogljikov dioksid, kisik pa se pri dihanju porabi."
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "V knjigi o živalih si o neki živali prebral: »Odrasle živali dihajo s pljuči, del kisika pa sprejmejo tudi skozi tanko, vlažno kožo. Njihova telesna temperatura se spreminja s temperaturo okolja.« V kateri razred vretenčarjev spada ta žival?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "med ribe",
+      "med dvoživke",
+      "med plazilce",
+      "med sesalce"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "Med dvoživke.",
+     "ways": [
+      {
+       "title": "Primerjava razredov",
+       "text": "| razred | dihanje odraslih živali | telesna temperatura |\n|---|---|---|\n| ribe | škrge | nestalna (spreminja se z okoljem) |\n| dvoživke | pljuča **in vlažna koža** | nestalna |\n| plazilci | pljuča (koža je suha, luskasta) | nestalna |\n| ptiči | pljuča | stalna |\n| sesalci | pljuča | stalna |\n\nObe lastnosti skupaj – dihanje s pljuči **in skozi vlažno kožo** ter **nestalna telesna temperatura** – ustrezata le **dvoživkam** (npr. navadni krastači, sekulji ali planinskemu pupku).\n\nZakaj drugi odgovori niso pravilni:\n\n- *Ribe* – dihajo s škrgami, ne s pljuči.\n- *Plazilci* – imajo nestalno telesno temperaturo in pljuča, a imajo suho kožo z luskami, skozi katero ne dihajo.\n- *Sesalci* – imajo stalno telesno temperaturo, ki je ne spreminja temperatura okolja."
+      }
+     ],
+     "mistake": "Izbrati plazilce, ker se ujemata pljuča in nestalna telesna temperatura. Spregledaš pa dihanje skozi vlažno kožo, ki je značilno za dvoživke."
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Tilen je jeseni v kompostnik na vrtu nametal odpadlo listje, olupke zelenjave in pokošeno travo. Naslednjo pomlad je bil kup precej nižji, na dnu pa je bila temna, rahla prst (kompost), ki jo je raztrosil po gredicah. Kaj se je zgodilo s snovmi iz rastlinskih ostankov?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Razkrojevalci so jih razgradili do mineralnih snovi, ogljikovega dioksida in vode; mineralne snovi rastline spet sprejmejo s koreninami.",
+      "Čez zimo so večinoma izhlapeli v zrak, kompost pa rastlinam koristi le zato, ker zrahlja prst na gredicah.",
+      "Razkrojevalci so jih spremenili v sladkor, ki ga rastline s koreninami sprejmejo iz komposta, zato jim ni treba opravljati fotosinteze.",
+      "Pojedli so jih deževniki; snovi iz ostankov so za vedno ostale v njihovih telesih in se v prst ne vrnejo več."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "Razkrojevalci so ostanke razgradili do mineralnih snovi, ogljikovega dioksida in vode; mineralne snovi rastline ponovno uporabijo.",
+     "ways": [
+      {
+       "title": "Kroženje snovi",
+       "text": "Odmrle dele organizmov razgradijo **razkrojevalci** (bakterije in glive), pri tem pa pomagajo drobne živali (deževniki, mokrice, ličinke žuželk), ki ostanke drobijo. Organske snovi se razgradijo do preprostih anorganskih snovi: **mineralnih snovi** (npr. spojin dušika, fosforja, kalija), **ogljikovega dioksida** in **vode**. Ogljikov dioksid in vodna para uideta v zrak – zato je kup nižji.\n\nRastline mineralne snovi iz prsti sprejmejo s koreninami, ogljikov dioksid pa iz zraka in ju znova uporabijo za gradnjo svojega telesa. Snovi tako **krožijo**: rastlina → odmrli ostanki → razkrojevalci → mineralne snovi → rastlina.\n\nZakaj drugi odgovori niso pravilni:\n\n- *Izhlapeli* – trdne snovi listja ne izhlapijo; v zrak preideta le ogljikov dioksid in voda, ki nastaneta pri razgradnji.\n- *Sladkor namesto fotosinteze* – rastline s koreninami sprejemajo vodo in mineralne snovi, ne sladkorja; sladkor si izdelajo same s fotosintezo.\n- *Za vedno v deževnikih* – tudi deževniki izločajo iztrebke in nekoč odmrejo, njihove snovi pa razkrojevalci prav tako razgradijo."
+      }
+     ],
+     "mistake": "Misliti, da se rastline »hranijo« s kompostom kot živali s hrano. Iz komposta dobijo le mineralne snovi in vodo; organske snovi (sladkorje) si naredijo same s fotosintezo."
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "intro": "Šoja je pisana ptica, ki živi v slovenskih gozdovih in parkih. V preglednici je navedeno, s čim se šoja najpogosteje hrani v posameznih letnih časih (prirejeni podatki).\n\n| letni čas | najpogostejša hrana |\n|---|---|\n| pomlad | žuželke in njihove ličinke, jajca in mladiči drugih ptic, popki |\n| poletje | hrošči, gosenice, češnje in drugo sadje |\n| jesen | želod, bukov žir, lešniki, robidnice |\n| zima | želod in lešniki, ki jih je jeseni skrila v tla, semena |",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Kako šojo uvrstimo glede na način prehranjevanja?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Je rastlinojedec, ker se jeseni in pozimi hrani skoraj samo s semeni in plodovi.",
+      "Je mesojedec, ker spomladi lovi žuželke in pleni gnezda drugih ptic.",
+      "Je vsejedec, ker se hrani z rastlinsko in živalsko hrano.",
+      "Je razkrojevalec, ker razgrajuje odpadle plodove in semena na gozdnih tleh."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "Šoja je vsejedec.",
+     "ways": [
+      {
+       "title": "Pregled hrane v vseh letnih časih",
+       "text": "Razvrsti hrano iz preglednice:\n\n- **živalska hrana**: žuželke in ličinke, jajca in mladiči drugih ptic, hrošči, gosenice;\n- **rastlinska hrana**: popki, češnje in drugo sadje, želod, žir, lešniki, robidnice, semena.\n\nŠoja se torej hrani **z obema vrstama hrane**, zato je **vsejedec**. Ker je vsejedec, lahko jé tisto, česar je v posameznem letnem času največ – poleti veliko živalske hrane, jeseni in pozimi plodove in semena.\n\nZakaj drugi odgovori niso pravilni:\n\n- *Rastlinojedec* – ta odgovor upošteva le jesen in zimo; spomladi in poleti šoja jé veliko živalske hrane.\n- *Mesojedec* – upošteva le pomlad; šoja pa jé tudi veliko rastlinske hrane.\n- *Razkrojevalec* – razkrojevalci so bakterije in glive, ki razgrajujejo odmrle ostanke organizmov; šoja hrano poje in prebavi kot vsaka žival, torej je potrošnik."
+      }
+     ],
+     "mistake": "Odločiti se le po enem letnem času. Način prehranjevanja določimo po vsej hrani, ki jo žival uživa skozi leto."
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Doma si pripravil jogurt: mleko si segrel skoraj do vrenja, ga ohladil na približno $42\\,^\\circ\\mathrm{C}$, vanj vmešal žlico kupljenega navadnega jogurta in ga za $6$ ur postavil na toplo. Mleko se je zgostilo in postalo kiselkasto. Kaj se je med tem dogajalo z bakterijami, ki si jih dodal z žlico jogurta?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "V toplem mleku so se hitro razmnoževale, mlečni sladkor pa so razgrajevale v mlečno kislino, ki mleko skisa in zgosti.",
+      "V toplem mleku so poginile, mleko pa se je zgostilo zaradi segrevanja.",
+      "Njihovo število se ni spremenilo; mleko se je skisalo, ker je bilo dolgo na zraku.",
+      "Razmnoževale so se in iz mlečnega sladkorja izdelovale alkohol in ogljikov dioksid, tako kot kvasovke v testu."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "Bakterije so se razmnoževale in mlečni sladkor razgrajevale v mlečno kislino.",
+     "ways": [
+      {
+       "title": "Mlečnokislinsko vrenje",
+       "text": "Z žlico jogurta si v mleko dodal **mlečnokislinske bakterije**. Pri približno $42\\,^\\circ\\mathrm{C}$ imajo v mleku dovolj hrane in toplote, zato **rastejo in se hitro razmnožujejo z delitvijo** – v nekaj urah jih je mnogo več kot na začetku.\n\nPri tem razgrajujejo **mlečni sladkor (laktozo)** v **mlečno kislino**. Kislina naredi jogurt kiselkast, mlečne beljakovine pa se v kislem okolju zgostijo (strdijo).\n\nMleko si prej segrel zato, da si uničil druge mikroorganizme, ki bi ga lahko pokvarili, nato pa ga ohladil, ker bi pri previsoki temperaturi poginile tudi jogurtove bakterije.\n\nZakaj drugi odgovori niso pravilni:\n\n- *So poginile* – $42\\,^\\circ\\mathrm{C}$ je zanje ugodna temperatura; zgostitev povzroči mlečna kislina, ne segrevanje.\n- *Število se ni spremenilo* – brez razmnoževanja bakterij mleko v $6$ urah ne bi postalo jogurt.\n- *Alkohol in ogljikov dioksid* – to je alkoholno vrenje kvasovk; jogurtove bakterije izdelujejo mlečno kislino."
+      }
+     ],
+     "mistake": "Misliti, da toplota bakterije vedno uniči. Visoka temperatura (vrenje) jih res uniči, zmerna toplota pa njihovo razmnoževanje pospeši."
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Lara goji solato brez zemlje: korenine rastlin so v vodi, v katero mora redno dodajati raztopino mineralnih snovi z dušikom, fosforjem, kalijem in magnezijem. Zakaj solata potrebuje mineralne snovi?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Mineralne snovi so rastlini glavni vir energije, ki jo porabi za rast.",
+      "Iz mineralnih snovi rastlina ob svetlobi s fotosintezo izdela sladkor.",
+      "Iz njih gradi snovi za rast, na primer beljakovine in klorofil.",
+      "Potrebuje jih le za to, da lahko sprejme vodo, v rastlini pa se ne porabijo."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "Za gradnjo snovi za rast (npr. beljakovin in klorofila).",
+     "ways": [
+      {
+       "title": "Kaj rastlina naredi iz katere snovi",
+       "text": "Pri **fotosintezi** rastlina iz **ogljikovega dioksida in vode** ob svetlobi izdela **sladkor** (glukozo), pri tem pa sprosti kisik. Iz sladkorja dobi energijo (pri celičnem dihanju) in ogrodje za druge snovi.\n\nZa gradnjo mnogih snovi pa potrebuje še **mineralne snovi** iz tal oziroma iz raztopine:\n\n- **dušik** za beljakovine in klorofil,\n- **magnezij** za klorofil,\n- **fosfor** za dedno snov (DNA) in prenašalce energije,\n- **kalij** za uravnavanje vode v celicah.\n\nBrez njih rastlina ne more rasti, čeprav ima dovolj svetlobe in vode; listi takih rastlin pogosto porumenijo.\n\nZakaj drugi odgovori niso pravilni:\n\n- *Vir energije* – mineralne snovi ne vsebujejo energije, ki bi jo rastlina lahko uporabila; energijo dobi iz sladkorja, ki ga izdela s fotosintezo.\n- *Iz njih izdela sladkor* – sladkor nastane iz ogljikovega dioksida in vode.\n- *Se ne porabijo* – mineralne snovi se vgradijo v rastlino, zato jih mora Lara stalno dodajati."
+      }
+     ],
+     "mistake": "Misliti, da se rastline »hranijo« z gnojilom ali prstjo tako kot živali s hrano. Gnojilo je vir gradbenih snovi, hrano (sladkor) pa si rastlina izdela sama."
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "V katerem organu moškega nastajajo spolne celice (semenčice)?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "v prostati (obsečnici)",
+      "v modih",
+      "v semenovodu",
+      "v nadmodku"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "V modih.",
+     "ways": [
+      {
+       "title": "Pot semenčic",
+       "text": "Semenčice nastajajo od pubertete naprej v **modih** (v semenskih cevkah). Od tam potujejo po moških spolnih organih:\n\n**moda** (nastanek) → **nadmodek** (dozorevanje in shranjevanje) → **semenovod** (prevajanje) → ob tem se jim primeša tekočina iz **semenskih mešičkov in prostate** → **sečnica** v spolnem udu.\n\nZakaj drugi odgovori niso pravilni:\n\n- *Prostata* – izloča tekočino, ki je del semenske tekočine in semenčicam omogoča gibanje; semenčic ne tvori.\n- *Semenovod* – je cev, po kateri semenčice potujejo.\n- *Nadmodek* – v njem semenčice dozorijo in se shranjujejo, nastanejo pa v modih."
+      }
+     ],
+     "mistake": "Zamenjati nadmodek in modo, ker sta tesno skupaj v modniku. V nadmodku semenčice le dozorevajo."
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Rok je nekaj dni jemal zdravilo proti bolečinam. Zdravnica mu je razložila, da en organ v trebušni votlini razgrajuje zdravila, alkohol in druge škodljive snovi v krvi, zato ga preveliki odmerki zdravil lahko poškodujejo. Kateri organ je to?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "želodec",
+      "trebušna slinavka",
+      "vranica",
+      "jetra"
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "Jetra.",
+     "ways": [
+      {
+       "title": "Naloge organov v trebušni votlini",
+       "text": "**Jetra** so največja žleza v telesu. Kri iz prebavil najprej priteče skozi jetra, ki:\n\n- **razstrupljajo** škodljive snovi (alkohol, zdravila, strupe),\n- izdelujejo **žolč**, ki pomaga pri prebavi maščob,\n- shranjujejo glukozo v obliki glikogena.\n\nZakaj drugi odgovori niso pravilni:\n\n- *Želodec* – v njem se hrana premeša z želodčnim sokom, začne se prebava beljakovin; kri ne razstruplja.\n- *Trebušna slinavka* – izloča prebavni sok v dvanajstnik in hormon inzulin v kri.\n- *Vranica* – razgrajuje stare rdeče krvničke in sodeluje pri obrambi pred okužbami; zdravil in alkohola ne razgrajuje."
+      }
+     ],
+     "mistake": "Izbrati vranico, ker »čisti kri«. Vranica odstranjuje stare krvne celice, razstrupljanje snovi pa je naloga jeter."
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Učenka je pod svetlobnim mikroskopom opazovala celice lista vodne kuge (vodne rastline) in celice ustne sluznice človeka. Kateri dve zgradbi imajo celice vodne kuge, celice ustne sluznice pa ju **nimajo**?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "jedro in celično membrano",
+      "celično steno in kloroplaste",
+      "mitohondrije in citoplazmo",
+      "celično membrano in kloroplaste"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "Celično steno in kloroplaste.",
+     "ways": [
+      {
+       "title": "Rastlinska in živalska celica",
+       "text": "| zgradba | celica vodne kuge (rastlinska) | celica ustne sluznice (živalska) |\n|---|---|---|\n| celična membrana | da | da |\n| citoplazma | da | da |\n| jedro | da | da |\n| mitohondriji | da | da |\n| **celična stena** | da | **ne** |\n| **kloroplasti** | da | **ne** |\n| velika vakuola | da | ne |\n\nŽivalske celice nimajo celične stene (zato so bolj okrogle in nepravilnih oblik) in nimajo kloroplastov, zato ne morejo opravljati fotosinteze.\n\nZakaj drugi odgovori niso pravilni:\n\n- *Jedro in celična membrana* – imata ju obe celici.\n- *Mitohondriji in citoplazma* – imata ju obe celici; mitohondriji so v celicah rastlin in živali, ker v obeh poteka celično dihanje.\n- *Celična membrana in kloroplasti* – kloroplastov živalska celica res nima, celično membrano pa ima."
+      }
+     ],
+     "mistake": "Misliti, da rastlinska celica nima mitohondrijev, ker ima kloroplaste. Rastlinske celice dihajo, zato imajo tudi mitohondrije."
+    }
+   ]
+  },
+  {
+   "n": 10,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Neža je pozimi z mokrimi lasmi čakala na avtobus. Čez dva dni je imela zamašen nos, kihala je in bolelo jo je grlo – zbolela je za prehladom. Babica je rekla: »Prehladila si se, ker te je zeblo.« Kaj je vzrok prehlada?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "mraz, zaradi katerega ohlajeno telo samo od sebe zboli",
+      "bakterije, ki v mrazu same nastanejo v sluznici nosu in grla",
+      "pomanjkanje vitamina C, zaradi katerega se v telesu razvije bolezen",
+      "virusi, ki so s kapljicami ali z rok prišli na sluznico nosu in grla"
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "Virusi (povzročitelji prehlada), ki pridejo na sluznico dihal.",
+     "ways": [
+      {
+       "title": "Povzročitelj in dejavniki tveganja",
+       "text": "Nalezljivo bolezen vedno povzroči **povzročitelj** – pri prehladu so to **virusi**. Bolna oseba jih izkašlja ali izkiha v drobnih kapljicah; v telo zdrave osebe pridejo z vdihanim zrakom ali z rok, s katerimi se dotaknemo nosu, ust ali oči. Virusi se razmnožujejo v celicah sluznice nosu in grla, ki se vname.\n\nMraz, utrujenost ali slaba prehrana so le **dejavniki tveganja**: lahko oslabijo obrambo telesa, zato se okužba lažje razvije. Brez virusa pa prehlada ni. Pozimi se prehladimo pogosteje tudi zato, ker smo več v zaprtih prostorih skupaj z drugimi ljudmi.\n\nZakaj drugi odgovori niso pravilni:\n\n- *Mraz sam* – mraz je kvečjemu dejavnik tveganja, ne povzročitelj.\n- *Bakterije nastanejo v mrazu* – mikroorganizmi ne nastanejo iz nič; vsak izvira iz drugih mikroorganizmov. Prehlad povzročajo virusi.\n- *Pomanjkanje vitamina C* – pomanjkanje vitaminov lahko oslabi telo, ni pa povzročitelj nalezljive bolezni."
+      }
+     ],
+     "mistake": "Zamenjati dejavnik tveganja (mraz) z vzrokom bolezni (virus). Zaradi takšne zamenjave ljudje mislijo, da je dovolj, da se toplo oblečejo, in pozabijo na umivanje rok."
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Okostje sprednjih okončin človeka, mačke, kita in netopirja je zgrajeno iz enakih vrst kosti: ena kost v nadlakti, dve kosti v podlakti, drobne kosti zapestja ter kosti dlančnice in prstnice – čeprav človek z roko prijema, mačka hodi, kit plava, netopir pa leti. Kako razložimo to podobnost?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Vse živijo v enakem okolju, zato so se jim razvile enake kosti v okončinah.",
+      "Njihove okončine opravljajo enako nalogo, zato morajo imeti tudi enako zgradbo kosti.",
+      "Vsaka žival je okončino med življenjem uporabljala na svoj način in to pridobljeno zgradbo prenesla na potomce.",
+      "Imajo skupnega prednika, od katerega so podedovale osnovno zgradbo okončine, ki se je nato različno spremenila."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "S skupnim izvorom (skupnim prednikom) – z evolucijo.",
+     "ways": [
+      {
+       "title": "Skupni izvor",
+       "text": "Okončine, ki imajo **enako osnovno zgradbo**, a opravljajo različne naloge, kažejo na **skupni izvor**. Vsi sesalci izvirajo od skupnega prednika, ki je že imel okončino s tako razporeditvijo kosti. Pri potomcih, ki so se v milijonih let prilagodili na različna okolja, so se kosti spreminjale (podaljšale, skrajšale, zrasle skupaj), osnovni načrt pa je ostal. To razlaga **evolucija z naravnim izborom**.\n\nZakaj drugi odgovori niso pravilni:\n\n- *Enako okolje* – živali živijo v različnih okoljih (kopno, morje, zrak), pa imajo vseeno enake kosti.\n- *Enaka naloga* – naloge so različne (prijemanje, hoja, plavanje, letenje).\n- *Pridobljena zgradba se prenese na potomce* – lastnosti, ki jih organizem pridobi z uporabo med življenjem, se ne dedujejo; dedujejo se le lastnosti, zapisane v dedni snovi."
+      }
+     ],
+     "mistake": "Misliti, da se je okončina spremenila, ker jo je žival »hotela« ali »morala« uporabljati drugače. Spremembe nastajajo naključno v dedni snovi, naravni izbor pa ohrani tiste, ki so v okolju koristne."
+    }
+   ]
+  },
+  {
+   "n": 12,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Pri tem procesu kisik iz vdihanega zraka skozi tanko steno drobnih mehurčkov, ki jih obdaja gosta mreža kapilar, prehaja v kri, ogljikov dioksid pa iz krvi v zrak, ki ga nato izdihnemo. Kateri proces je opisan?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "celično dihanje",
+      "fotosinteza",
+      "pljučno dihanje",
+      "transpiracija"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "Pljučno dihanje (izmenjava plinov v pljučnih mehurčkih).",
+     "ways": [
+      {
+       "title": "Kje poteka in kaj se izmenja",
+       "text": "Opis govori o **pljučnih mehurčkih** (alveolah) in **kapilarah** okoli njih: kisik prehaja iz zraka v kri, ogljikov dioksid iz krvi v zrak. To je **pljučno (zunanje) dihanje** – izmenjava plinov med zrakom in krvjo.\n\nZakaj drugi odgovori niso pravilni:\n\n- *Celično dihanje* – poteka v vseh celicah (v mitohondrijih): celica s kisikom razgradi glukozo, pri tem nastaneta ogljikov dioksid in voda ter se sprosti energija. Kri kisik pripelje do celic, a samo celično dihanje ne poteka v mehurčkih pljuč.\n- *Fotosinteza* – poteka v kloroplastih zelenih rastlin, ki sprejemajo ogljikov dioksid in sproščajo kisik.\n- *Transpiracija* – oddajanje vodne pare skozi listne reže rastlin."
+      }
+     ],
+     "mistake": "Zamenjati pljučno in celično dihanje. Pljučno dihanje je le izmenjava plinov v pljučih; energija se sprošča šele pri celičnem dihanju v celicah."
+    }
+   ]
+  },
+  {
+   "n": 13,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Krompir navadno razmnožujemo tako, da v zemljo posadimo gomolje. Poleti pa krompir tudi cveti in nekatere rastline razvijejo majhne zelene plodove (jagode), v katerih so semena. Kako nastanejo ta semena?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Iz delčkov gomolja, ki jih rastlina po steblu prenese v cvet, kjer zrastejo v seme.",
+      "Iz trosov, ki dozorijo v prašnikih cveta in nato padejo v plodnico.",
+      "Z delitvijo celic v listih, brez oprašitve, zato so semena povsem enaka materinski rastlini.",
+      "Po oprašitvi se moška spolna celica iz peloda združi z jajčno celico v semenski zasnovi."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "S spolnim razmnoževanjem – po oprašitvi in oploditvi jajčne celice v semenski zasnovi.",
+     "ways": [
+      {
+       "title": "Od cveta do semena",
+       "text": "1. **Oprašitev** – pelod pride s prašnikov na brazdo pestiča.\n2. Iz pelodnega zrna zraste **pelodna cev** do semenske zasnove v plodnici.\n3. **Oploditev** – moška spolna celica se združi z **jajčno celico**.\n4. Iz oplojene semenske zasnove nastane **seme** (v njem je zarodek), iz plodnice pa **plod** – pri krompirju zelena jagoda.\n\nSeme torej nastane s **spolnim razmnoževanjem**, zato so rastline iz semen med seboj različne. Rastline iz gomoljev pa nastanejo **nespolno** in so enake materinski rastlini. (Plodovi krompirja so strupeni, zato jih ne jemo.)\n\nZakaj drugi odgovori niso pravilni:\n\n- *Iz delčkov gomolja* – gomolj je odebeljeno podzemno steblo za nespolno razmnoževanje; v cvet se ne prenaša.\n- *Iz trosov* – s trosi se razmnožujejo praproti, mahovi in glive; semenke tvorijo semena.\n- *Brez oprašitve, enaka materinski rastlini* – to opisuje nespolno razmnoževanje; seme pa nastane z oploditvijo."
+      }
+     ],
+     "mistake": "Misliti, da seme nastane že ob oprašitvi. Oprašitev je le prenos peloda; seme nastane šele po oploditvi jajčne celice."
+    }
+   ]
+  },
+  {
+   "n": 14,
+   "intro": "Preglednica prikazuje, katerim prejemnikom smemo pri transfuziji dati rdeče krvničke darovalca z določeno krvno skupino. Upoštevan je samo sistem AB0. Znak ✓ pomeni, da je transfuzija mogoča, znak ✗ pa, da ni.\n\n| prejemnik ↓ / darovalec → | 0 | A | B | AB |\n|---|:-:|:-:|:-:|:-:|\n| **0** | ✓ | ✗ | ✗ | ✗ |\n| **A** | ✓ | ✓ | ✗ | ✗ |\n| **B** | ✓ | ✗ | ✓ | ✗ |\n| **AB** | ✓ | ✓ | ✓ | ✓ |",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Krvno skupino, katere nosilec lahko prejme kri vseh krvnih skupin, imenujemo splošni prejemnik. Katera krvna skupina je splošni prejemnik?",
+     "answer": "Krvna skupina AB.",
+     "ways": [
+      {
+       "title": "Branje preglednice",
+       "text": "Poišči vrstico (prejemnika), v kateri so **same kljukice**. To je vrstica **AB**: prejemnik s skupino AB lahko prejme kri skupin 0, A, B in AB.\n\nZakaj? Oseba s skupino AB ima na rdečih krvničkah antigena A in B, zato v njeni krvni plazmi **ni protiteles** ne proti A ne proti B. Tuje rdeče krvničke s katerim koli od teh antigenov se v njeni krvi ne zlepijo.\n\nZa primerjavo: skupina 0 je **splošni darovalec** (stolpec 0 ima same kljukice), ker njene rdeče krvničke nimajo antigenov A in B."
+      }
+     ],
+     "scoring": "1 t. za AB.",
+     "mistake": "Zamenjati splošnega prejemnika s splošnim darovalcem (0). Pri prejemniku bereš vrstico, pri darovalcu stolpec."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Ana ima krvno skupino A. Ali ji smejo dati rdeče krvničke darovalca s krvno skupino AB? Obkroži DA ali NE in odgovor utemelji s tem, kaj je v Anini krvi.\n\nDA      NE",
+     "answer": "NE – v Anini krvni plazmi so protitelesa proti antigenu B, ki bi se vezala na rdeče krvničke darovalca (te imajo antigen B) in jih zlepila.",
+     "ways": [
+      {
+       "title": "Antigeni in protitelesa",
+       "text": "| krvna skupina | antigen na rdečih krvničkah | protitelesa v plazmi |\n|---|---|---|\n| 0 | ni ga | proti A in proti B |\n| A | A | **proti B** |\n| B | B | proti A |\n| AB | A in B | ni jih |\n\nAna (skupina A) ima v plazmi **protitelesa proti B**. Rdeče krvničke darovalca AB imajo na površini antigena A **in B**. Protitelesa bi se vezala na antigen B, rdeče krvničke bi se **zlepile** (aglutinirale) in razpadale, zlepljene krvničke pa bi lahko zamašile drobne žile. Odgovor je **NE** – to kaže tudi preglednica (vrstica A, stolpec AB: ✗)."
+      }
+     ],
+     "scoring": "1 t. za NE z utemeljitvijo (Ana ima protitelesa proti B / darovalčeve krvničke imajo antigen B, zato bi se zlepile). Samo NE brez utemeljitve ne prinese točke.",
+     "mistake": "Misliti, da je kri AB primerna, ker »vsebuje tudi A«. Odloča, ali ima darovana kri antigen, proti kateremu ima prejemnik protitelesa – AB ima antigen B."
+    }
+   ]
+  },
+  {
+   "n": 15,
+   "intro": "Ko Luka brcne žogo, se mu noga v kolenu iztegne. Slika poenostavljeno prikazuje njegovo nogo od strani med iztegovanjem; puščica kaže smer giba spodnjega dela noge.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 262\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M20,40C80,34 140,46 178,62C196,70 206,84 208,96L246,196C250,206 258,210 280,214C290,216 290,232 280,234L232,236C224,236 220,228 220,220L190,130C186,122 178,118 168,116C120,110 60,106 20,104\" stroke-opacity=\"0.45\" stroke-dasharray=\"4 3\"/><ellipse cx=\"102\" cy=\"58\" rx=\"66\" ry=\"14\" transform=\"rotate(9 102 58)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><path d=\"M168,70C180,74 186,78 189,82M194,96C195,102 196,106 196,112\" stroke-width=\"3\"/><rect x=\"34\" y=\"73\" width=\"140\" height=\"12\" rx=\"6\" transform=\"rotate(9 34 79)\" fill=\"currentColor\" fill-opacity=\"0.12\"/><circle cx=\"32\" cy=\"78\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.12\"/><rect x=\"184\" y=\"96\" width=\"128\" height=\"12\" rx=\"6\" transform=\"rotate(66 184 102)\" fill=\"currentColor\" fill-opacity=\"0.12\"/><rect x=\"190\" y=\"110\" width=\"104\" height=\"6\" rx=\"3\" transform=\"rotate(66 184 102)\" fill=\"currentColor\" fill-opacity=\"0.12\"/><ellipse cx=\"191\" cy=\"89\" rx=\"5\" ry=\"8\" transform=\"rotate(-20 191 89)\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M222,252Q276,252 302,198\" stroke-width=\"1.3\" marker-end=\"url(#b21a)\"/><defs><marker id=\"b21a\" viewBox=\"0 0 8 8\" refX=\"7\" refY=\"4\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0,0L8,4L0,8Z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Naštej tri različne dele telesa, ki sodelujejo pri iztegovanju noge v kolenu.",
+     "answer": "Npr. mišica (štiriglava stegenska mišica), kita, kosti (stegnenica, golenica), sklep (koleno); sprejme se tudi živec.",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 380 262\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M20,40C80,34 140,46 178,62C196,70 206,84 208,96L246,196C250,206 258,210 280,214C290,216 290,232 280,234L232,236C224,236 220,228 220,220L190,130C186,122 178,118 168,116C120,110 60,106 20,104\" stroke-opacity=\"0.45\" stroke-dasharray=\"4 3\"/><ellipse cx=\"102\" cy=\"58\" rx=\"66\" ry=\"14\" transform=\"rotate(9 102 58)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><path d=\"M168,70C180,74 186,78 189,82M194,96C195,102 196,106 196,112\" stroke-width=\"3\"/><rect x=\"34\" y=\"73\" width=\"140\" height=\"12\" rx=\"6\" transform=\"rotate(9 34 79)\" fill=\"currentColor\" fill-opacity=\"0.12\"/><circle cx=\"32\" cy=\"78\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.12\"/><rect x=\"184\" y=\"96\" width=\"128\" height=\"12\" rx=\"6\" transform=\"rotate(66 184 102)\" fill=\"currentColor\" fill-opacity=\"0.12\"/><rect x=\"190\" y=\"110\" width=\"104\" height=\"6\" rx=\"3\" transform=\"rotate(66 184 102)\" fill=\"currentColor\" fill-opacity=\"0.12\"/><ellipse cx=\"191\" cy=\"89\" rx=\"5\" ry=\"8\" transform=\"rotate(-20 191 89)\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M222,252Q276,252 302,198\" stroke-width=\"1.3\" marker-end=\"url(#b21a)\"/><defs><marker id=\"b21a\" viewBox=\"0 0 8 8\" refX=\"7\" refY=\"4\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0,0L8,4L0,8Z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><path d=\"M100,52L100,18M184,76L232,40M195,90L250,72M120,85L120,128M224,168L282,150M181,101L150,150\" stroke-width=\"0.9\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"100\" y=\"13\" text-anchor=\"middle\">mišica (štiriglava stegenska)</text><text x=\"236\" y=\"38\">kita</text><text x=\"254\" y=\"72\">pogačica</text><text x=\"120\" y=\"142\" text-anchor=\"middle\">stegnenica</text><text x=\"284\" y=\"150\">golenica</text><text x=\"150\" y=\"164\" text-anchor=\"middle\">kolenski sklep</text></g></svg>",
+     "ways": [
+      {
+       "title": "Kako nastane gib",
+       "text": "Pri gibu sodelujejo:\n\n1. **živec** – prinese ukaz iz hrbtenjače in možganov;\n2. **mišica** – štiriglava stegenska mišica na sprednji strani stegna se skrči (skrajša);\n3. **kita** – mišico pripenja na kost; poteka čez **pogačico** in se pripne na golenico;\n4. **kosti** – mišica prek kite povleče **golenico** in jo premakne;\n5. **sklep** – v **kolenskem sklepu** se golenica zavrti glede na stegnenico.\n\nZa točko zadostujejo trije različni deli (npr. mišica, kost, sklep). Vse dele vidiš označene na sliki ob rešitvi."
+      }
+     ],
+     "scoring": "1 t. za tri pravilne različne dele (mišica, kita, kost/ime kosti, sklep/koleno, živec). Stegnenica in golenica se štejeta kot en del (kost).",
+     "mistake": "Našteti le različne kosti (stegnenica, golenica, pogačica). Kosti same se ne premikajo – potrebni sta vsaj še mišica in sklep."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Luka si je pri padcu zlomil golenico. Mišica in živec sta ostala nepoškodovana, vendar noge v kolenu ne more iztegniti. Pojasni, zakaj.",
+     "answer": "Mišica se s kito pripenja na golenico in jo pri krčenju vleče; zlomljena kost ni več trdna opora (vzvod), zato se sila mišice ne prenese na spodnji del noge.",
+     "ways": [
+      {
+       "title": "Mišica potrebuje trdno prijemališče",
+       "text": "Mišica se lahko le **krči** in s tem vleče. Gib nastane, ker kita mišico pripenja na kost, kost pa je **trdna in toga**: ko mišica potegne zgornji del golenice, se zavrti cela golenica okrog kolenskega sklepa in s tem stopalo.\n\nČe je golenica zlomljena, sta dela kosti ločena. Mišica vleče le kos kosti pod kolenom, sila se ne prenese na ostali del noge – kost ne deluje več kot vzvod, zato iztegovanje ni mogoče (pa tudi zelo boli). Zato zlomljeno kost imobiliziramo (mavec, opornica), da kosa zarasteta."
+      }
+     ],
+     "scoring": "1 t. za razlago, da mišica (prek kite) vleče kost in potrebuje trdno oporo/prijemališče, ki ga zlomljena kost ne zagotavlja.",
+     "mistake": "Odgovoriti le »ker boli«. Bolečina je res prisotna, a vprašanje sprašuje, zakaj gib mehansko ni mogoč."
+    }
+   ]
+  },
+  {
+   "n": 16,
+   "intro": "Na sliki je list sobnega fikusa. Puščica X kaže na označeni del lista.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 270 200\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M14,100H52\"/><path d=\"M52,100C82,28 192,36 240,100C192,164 82,172 52,100Z\" fill=\"currentColor\" fill-opacity=\"0.12\"/><path d=\"M52,100H236\" stroke-width=\"2.2\"/><path d=\"M82,100C90,84 98,72 104,62M82,100C90,116 98,128 104,138M112,100C122,82 132,70 140,56M112,100C122,118 132,130 140,144M142,100C152,84 162,72 172,62M142,100C152,116 162,128 172,138M172,100C182,88 192,80 202,74M172,100C182,112 192,120 202,126M200,100C206,94 212,90 220,88M200,100C206,106 212,110 220,112\" stroke-width=\"1\"/><path d=\"M122,192L127,104\" stroke-width=\"1.3\" marker-end=\"url(#b21b)\"/><defs><marker id=\"b21b\" viewBox=\"0 0 8 8\" refX=\"7\" refY=\"4\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0,0L8,4L0,8Z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><g fill=\"currentColor\" stroke=\"none\"><text x=\"108\" y=\"192\" font-weight=\"bold\" font-size=\"14\">X</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Kakšna je naloga dela lista, ki ga kaže puščica X?",
+     "answer": "To je (glavna) listna žila: po njej se v list pretakata voda in mineralne snovi, iz lista pa sladkorji v druge dele rastline; žile list tudi utrjujejo.",
+     "ways": [
+      {
+       "title": "Listne žile",
+       "text": "Puščica kaže na **glavno listno žilo**, iz katere se razraščajo stranske žile. V žilah so **prevajalna tkiva**:\n\n- po enih cevkah prihaja iz stebla v list **voda z mineralnimi snovmi** (potrebna za fotosintezo in rast),\n- po drugih se **sladkorji**, ki nastanejo pri fotosintezi, odvajajo iz lista v steblo, korenine in plodove.\n\nŽile so tudi **opora** – list držijo razprt, da prestreže čim več svetlobe."
+      }
+     ],
+     "scoring": "1 t. za pravilno nalogo žile (prevajanje vode/mineralnih snovi ali sladkorjev; sprejme se tudi opora lista).",
+     "mistake": "Zapisati, da je to listna reža. Listne reže so mikroskopsko majhne odprtine v povrhnjici, vidiš jih le z mikroskopom."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Učenci so nekaj listov fikusa na obeh straneh premazali z vazelinom, ki zapre listne reže. Navedi en proces, ki v teh listih ne more potekati, in odgovor utemelji.",
+     "answer": "Fotosinteza – skozi zaprte reže v list ne more priti ogljikov dioksid (sprejme se tudi transpiracija – vodna para ne more iz lista).",
+     "ways": [
+      {
+       "title": "Kaj gre skozi listne reže",
+       "text": "Skozi **listne reže** poteka izmenjava plinov med listom in zrakom:\n\n- v list vstopa **ogljikov dioksid**, ki ga rastlina potrebuje za **fotosintezo**;\n- iz lista izstopa **kisik**, ki nastane pri fotosintezi;\n- iz lista izhaja **vodna para** – **transpiracija**.\n\nKo so reže zaprte z vazelinom, v list ne pride ogljikov dioksid, zato **fotosinteza ne more potekati** (list ne izdela sladkorja). Prav tako se ustavi **transpiracija**, ker vodna para ne more iz lista. Oba odgovora sta pravilna, če sta utemeljena. Ker v list ne more niti kisik, je oteženo tudi celično dihanje, zato premazani listi čez čas porumenijo in odmrejo."
+      }
+     ],
+     "scoring": "1 t. za fotosintezo (ni ogljikovega dioksida) ali transpiracijo (vodna para ne more iz lista) z utemeljitvijo. Navedba procesa brez utemeljitve ne prinese točke.",
+     "mistake": "Utemeljiti, da fotosinteza ne poteka, »ker list ne dobi svetlobe«. Vazelin je prozoren; težava je v tem, da ne more priti ogljikov dioksid."
+    }
+   ]
+  },
+  {
+   "n": 17,
+   "intro": "Čebelarji morajo vsako leto zatirati **varojo** (*Varroa destructor*), ki je zajedavec medonosne čebele. Samica varoje je dolga približno $1{,}1\\,\\mathrm{mm}$ in široka približno $1{,}6\\,\\mathrm{mm}$. Prisesa se na odraslo čebelo ali njeno ličinko in se hrani s snovmi iz njenega telesa. Na slikah je varoja povečana.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 190\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><g transform=\"translate(88,92)\"><g id=\"b21v\"><path d=\"M-14,-30L-24,-50L-30,-64\" stroke-width=\"2.2\"/><path d=\"M-26,-27L-46,-44L-58,-54\" stroke-width=\"2.2\"/><path d=\"M-38,-22L-62,-30L-78,-32\" stroke-width=\"2.2\"/><path d=\"M-46,-14L-70,-12L-84,-4\" stroke-width=\"2.2\"/></g><use href=\"#b21v\" transform=\"scale(-1,1)\"/><ellipse rx=\"55\" ry=\"38\" fill=\"currentColor\" fill-opacity=\"0.3\"/><path d=\"M-6,-37L-5,-46H5L6,-37\" fill=\"currentColor\" fill-opacity=\"0.3\"/><path d=\"M-40,-10C-20,-18 20,-18 40,-10M-46,6C-20,-2 20,-2 46,6\" stroke-width=\"0.8\" stroke-opacity=\"0.6\"/></g><g transform=\"translate(252,92)\"><use href=\"#b21v\"/><use href=\"#b21v\" transform=\"scale(-1,1)\"/><ellipse rx=\"55\" ry=\"38\" fill=\"currentColor\" fill-opacity=\"0.12\"/><path d=\"M-6,-37L-5,-46H5L6,-37\" fill=\"currentColor\" fill-opacity=\"0.3\"/><path d=\"M-18,-12C-18,-24 18,-24 18,-12L14,14C8,20 -8,20 -14,14Z\" fill=\"currentColor\" fill-opacity=\"0.2\"/><ellipse cy=\"27\" rx=\"12\" ry=\"6\"/><path d=\"M-30,-26L-22,-14M30,-26L22,-14M-38,-18L-26,-8M38,-18L26,-8\" stroke-width=\"1\"/></g><path d=\"M54,158H123M54,154V162M123,154V162\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"88\" y=\"176\" text-anchor=\"middle\">1 mm</text><text x=\"88\" y=\"16\" text-anchor=\"middle\">Slika 1: od zgoraj</text><text x=\"252\" y=\"16\" text-anchor=\"middle\">Slika 2: od spodaj</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "S katerim pripomočkom bi varojo opazoval, da bi lahko preštel njene noge in videl podrobnosti telesa?",
+     "answer": "Z lupo ali s stereomikroskopom (binokularno lupo).",
+     "ways": [
+      {
+       "title": "Velikost in izbira pripomočka",
+       "text": "Varoja je velika približno $1$–$2\\,\\mathrm{mm}$. S prostim očesom jo vidiš kot rjavo piko, noge in podrobnosti pa vidiš šele, ko jo povečaš nekajkrat do nekaj desetkrat. Za to je primerna **lupa** ali **stereomikroskop** (binokularna lupa), pod katerim opazuješ cele, neprozorne predmete.\n\n**Svetlobni mikroskop** za to ni primeren: povečuje veliko bolj (npr. $100$- do $400$-krat), zato bi videl le majhen del živali, poleg tega svetloba prehaja le skozi tanke in prozorne preparate."
+      }
+     ],
+     "scoring": "1 t. za lupo ali stereomikroskop/binokularno lupo. Svetlobni (ali elektronski) mikroskop ne prinese točke."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Ali varoja spada med žuželke? Obkroži DA ali NE in odgovor utemelji z lastnostmi, ki jih vidiš na slikah.\n\nDA      NE",
+     "answer": "NE – ima štiri pare (8) nog, žuželke pa tri pare (6); njeno telo ni razdeljeno na glavo, oprsje in zadek (nima tipalk in kril). Je pajkovec (pršica).",
+     "ways": [
+      {
+       "title": "Primerjava z znaki žuželk",
+       "text": "| lastnost | žuželke | varoja na slikah |\n|---|---|---|\n| število nog | $6$ (tri pari) | $8$ (štirje pari) |\n| deli telesa | glava, oprsje, zadek | eno nerazčlenjeno telo |\n| tipalke | en par | jih ni |\n\nŠtiri pare nog imajo **pajkovci** – med njimi so pajki, klopi in **pršice**, kamor spada varoja. Odgovor je **NE**.\n\nTo, da živi na čebeli (žuželki), ne pomeni, da je tudi sama žuželka."
+      }
+     ],
+     "scoring": "1 t. za NE z utemeljitvijo (osem nog / štirje pari nog ali telo ni razdeljeno na glavo, oprsje in zadek). Samo NE brez utemeljitve ne prinese točke.",
+     "mistake": "Prešteti le noge na eni strani (štiri) ali sklepati, da je žuželka, ker je majhna in živi na čebeli."
+    }
+   ]
+  },
+  {
+   "n": 18,
+   "intro": "Shema prikazuje notranje spolne organe ženske, gledane od spredaj.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 370 240\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><g id=\"b21f\"><path d=\"M124,70C104,56 84,50 66,58C52,64 48,78 50,90\" stroke-width=\"3\"/><path d=\"M50,90L42,98M50,90L46,102M50,90L54,103M50,90L58,100\" stroke-width=\"1.2\"/><ellipse cx=\"82\" cy=\"104\" rx=\"17\" ry=\"10\" transform=\"rotate(-15 82 104)\" fill=\"currentColor\" fill-opacity=\"0.25\"/><path d=\"M98,100L124,92\" stroke-width=\"1\" stroke-dasharray=\"3 2\"/></g><use href=\"#b21f\" transform=\"translate(320,0) scale(-1,1)\"/><path d=\"M122,74C120,46 200,46 198,74C198,106 180,128 172,140V160H148V140C140,128 122,106 122,74Z\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M134,66L160,124L186,66Z\" stroke-width=\"1\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M148,160L142,222M172,160L178,222M150,222Q160,228 170,222\" stroke-width=\"1.5\"/><path d=\"M232,60L288,40M252,104L288,96M196,90L288,140M172,150L288,172M176,200L288,206\" stroke-width=\"0.9\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"292\" y=\"44\">jajcevod</text><text x=\"292\" y=\"100\">jajčnik</text><text x=\"292\" y=\"144\">maternica</text><text x=\"292\" y=\"176\">maternični</text><text x=\"292\" y=\"190\">vrat</text><text x=\"292\" y=\"210\">nožnica</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Mateji so zaradi bolezni odstranili en jajčnik. Drugi jajčnik, oba jajcevoda in maternica so zdravi. Ali je pri njej oploditev še mogoča? Obkroži DA ali NE in odgovor utemelji.\n\nDA      NE",
+     "answer": "DA – drugi jajčnik še vedno tvori jajčne celice, ki potujejo v jajcevod, kjer se lahko srečajo s semenčico.",
+     "ways": [
+      {
+       "title": "Kaj se zgodi z jajčno celico",
+       "text": "Jajčnika sta **parna** organa. V vsakem dozorevajo jajčne celice; pri ovulaciji se zrela jajčna celica sprosti iz jajčnika in jo ujame lijak bližnjega **jajcevoda**. **Oploditev** – združitev jajčne celice in semenčice – navadno poteka v jajcevodu, nato pa oplojena celica potuje v maternico, kjer se ugnezdi.\n\nKer Matejin drugi jajčnik deluje in sta jajcevoda prehodna, se jajčne celice še sproščajo in oploditev je mogoča. Odgovor je **DA**."
+      }
+     ],
+     "scoring": "1 t. za DA z utemeljitvijo (drugi jajčnik še tvori jajčne celice; jajcevod je prehoden, oploditev poteka v njem). Samo DA brez utemeljitve ne prinese točke.",
+     "mistake": "Misliti, da za oploditev potrebujemo oba jajčnika. En delujoč jajčnik zadostuje."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Pri pouku si spoznal več načinov zaščite pri spolnih odnosih: kontracepcijske tablete, kondom, prekinjen spolni odnos in upoštevanje »varnih dni«. Utemelji, zakaj je kondom najustreznejša zaščita za mlade.",
+     "answer": "Kondom je edini od naštetih načinov, ki hkrati ščiti pred nosečnostjo in pred spolno prenosljivimi boleznimi.",
+     "ways": [
+      {
+       "title": "Pred čim ščiti posamezen način",
+       "text": "| način | pred nosečnostjo | pred spolno prenosljivimi boleznimi |\n|---|---|---|\n| **kondom** | **da** (zanesljiv, če ga pravilno uporabljamo) | **da** |\n| kontracepcijske tablete | da | ne |\n| prekinjen spolni odnos | nezanesljivo | ne |\n| »varni dnevi« | nezanesljivo | ne |\n\nKondom je **pregrada**: semenčice ne pridejo v nožnico, hkrati pa preprečuje stik s telesnimi tekočinami in sluznico, po katerih se prenašajo povzročitelji spolno prenosljivih bolezni (npr. okužba s HIV, klamidija, gonoreja). Zato je kondom najustreznejši, kadar se želimo zaščititi pred obojim."
+      }
+     ],
+     "scoring": "1 t. za utemeljitev, da kondom ščiti pred nosečnostjo **in** pred spolno prenosljivimi boleznimi. Le ena od obeh zaščit ne prinese točke.",
+     "mistake": "Utemeljiti le z nosečnostjo. Pred nosečnostjo ščitijo tudi tablete; prednost kondoma je, da ščiti tudi pred spolno prenosljivimi boleznimi."
+    }
+   ]
+  },
+  {
+   "n": 19,
+   "intro": "Učenci so v tri enake merilne valje A, B in C nalili po $100\\,\\mathrm{mL}$ vode. V valj A so postavili poganjek vrbe z listi, v valj B enako velik poganjek vrbe, ki so mu odstranili vse liste, v valju C pa ni bilo poganjka. Na vodo v vseh treh valjih so nalili tanko plast olja. Valje so tri dni pustili na svetlem in toplem mestu.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"-26 0 356 250\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><defs><path id=\"b21w\" d=\"M0,0C6,-5 18,-5 26,0C18,5 6,5 0,0Z\" fill=\"currentColor\" fill-opacity=\"0.3\"/></defs><rect x=\"30\" y=\"80\" width=\"60\" height=\"140\" rx=\"3\"/><rect x=\"31\" y=\"128\" width=\"58\" height=\"91\" fill=\"currentColor\" fill-opacity=\"0.12\" stroke=\"none\"/><rect x=\"31\" y=\"120\" width=\"58\" height=\"8\" fill=\"currentColor\" fill-opacity=\"0.4\" stroke=\"none\"/><path d=\"M30,120H90\" stroke-width=\"1\"/><path d=\"M34,100H42M34,140H42M34,160H42M34,180H42M34,200H42\" stroke-width=\"0.8\"/><path d=\"M62,212C60,150 64,80 60,18\" stroke-width=\"2.2\"/><use href=\"#b21w\" transform=\"translate(60,26) rotate(-45)\"/><use href=\"#b21w\" transform=\"translate(61,38) rotate(-135)\"/><use href=\"#b21w\" transform=\"translate(61,50) rotate(-40)\"/><use href=\"#b21w\" transform=\"translate(62,62) rotate(-140)\"/><use href=\"#b21w\" transform=\"translate(62,72) rotate(-35)\"/><rect x=\"135\" y=\"80\" width=\"60\" height=\"140\" rx=\"3\"/><rect x=\"136\" y=\"128\" width=\"58\" height=\"91\" fill=\"currentColor\" fill-opacity=\"0.12\" stroke=\"none\"/><rect x=\"136\" y=\"120\" width=\"58\" height=\"8\" fill=\"currentColor\" fill-opacity=\"0.4\" stroke=\"none\"/><path d=\"M135,120H195\" stroke-width=\"1\"/><path d=\"M139,100H147M139,140H147M139,160H147M139,180H147M139,200H147\" stroke-width=\"0.8\"/><path d=\"M167,212C165,150 169,80 165,18\" stroke-width=\"2.2\"/><path d=\"M162,26h6M163,38h6M163,50h6M164,62h6M164,72h6\" stroke-width=\"1.2\"/><rect x=\"240\" y=\"80\" width=\"60\" height=\"140\" rx=\"3\"/><rect x=\"241\" y=\"128\" width=\"58\" height=\"91\" fill=\"currentColor\" fill-opacity=\"0.12\" stroke=\"none\"/><rect x=\"241\" y=\"120\" width=\"58\" height=\"8\" fill=\"currentColor\" fill-opacity=\"0.4\" stroke=\"none\"/><path d=\"M240,120H300\" stroke-width=\"1\"/><path d=\"M244,100H252M244,140H252M244,160H252M244,180H252M244,200H252\" stroke-width=\"0.8\"/><path d=\"M300,124L316,110\" stroke-width=\"0.9\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"60\" y=\"240\" text-anchor=\"middle\" font-weight=\"bold\" font-size=\"14\">A</text><text x=\"165\" y=\"240\" text-anchor=\"middle\" font-weight=\"bold\" font-size=\"14\">B</text><text x=\"270\" y=\"240\" text-anchor=\"middle\" font-weight=\"bold\" font-size=\"14\">C</text><text x=\"304\" y=\"104\">olje</text><text x=\"18\" y=\"131\" text-anchor=\"end\" font-size=\"10\">100 mL</text></g><path d=\"M20,128H30\" stroke-width=\"0.8\"/></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "V katerem valju bo gladina vode po treh dneh najnižja? Odgovor utemelji.",
+     "answer": "V valju A – listi oddajajo vodo v obliki vodne pare skozi listne reže (transpiracija), zato poganjek iz valja črpa največ vode.",
+     "ways": [
+      {
+       "title": "Kam izgine voda",
+       "text": "Plast **olja** preprečuje, da bi voda izhlapevala neposredno z gladine. Voda lahko iz valja odide le skozi poganjek.\n\n- **A**: poganjek z listi vodo vsrkava in jo po žilah vodi v liste, kjer skozi **listne reže** izhaja kot vodna para – **transpiracija**. Ta poteka ves čas, na svetlem in toplem še hitreje, zato iz valja A odteče največ vode.\n- **B**: poganjek brez listov nima listnih rež, zato skoraj ne transpirira; gladina se zniža le malo.\n- **C**: brez poganjka; gladina ostane (skoraj) enaka.\n\nNajnižja bo gladina v valju **A**."
+      }
+     ],
+     "scoring": "1 t. za A z utemeljitvijo (listi oddajajo vodo/transpiracija skozi listne reže). Samo A brez utemeljitve ne prinese točke.",
+     "mistake": "Izbrati C, ker »ni nič, kar bi vodo zadrževalo«. Olje prepreči izhlapevanje, zato v C voda ne more izginiti."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Zakaj so učenci pripravili tudi valj C?",
+     "answer": "Za kontrolo: pokaže, ali se voda izgublja tudi brez poganjka (npr. izhlapevanje skozi olje). Če gladina v C ostane enaka, je znižanje v A in B posledica poganjka.",
+     "ways": [
+      {
+       "title": "Pomen kontrolne posode",
+       "text": "Valj C je **kontrolni valj**: v njem je vse enako kot v drugih dveh (voda, olje, mesto, čas), le poganjka ni. Če bi se gladina znižala tudi v C, bi vedeli, da voda izhlapeva skozi olje ali da uide kako drugače, in tega znižanja ne bi smeli pripisati rastlini. Če gladina v C ostane enaka, lahko zanesljivo sklepamo, da je voda iz A in B odšla skozi poganjek.\n\nPodobno je valj **B** primerjava za valj **A**: razlika med njima pokaže, koliko vode oddajo **listi**."
+      }
+     ],
+     "scoring": "1 t. za razlago, da je C kontrola, ki pokaže, da se voda brez poganjka ne izgublja (ali koliko je izhlapi), zato je razlika posledica poganjka. Samo »za kontrolo« brez razlage ne prinese točke."
+    }
+   ]
+  },
+  {
+   "n": 20,
+   "intro": "Ošpice so zelo nalezljiva bolezen, ki se širi s kapljicami, ko bolnik kašlja, kiha ali govori. Na sliki je poenostavljen model virusa ošpic.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 330 200\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><defs><path id=\"b21s\" d=\"M95,38V26M91,24H99\" stroke-width=\"2\"/></defs><use href=\"#b21s\" transform=\"rotate(0 95 100)\"/><use href=\"#b21s\" transform=\"rotate(22.5 95 100)\"/><use href=\"#b21s\" transform=\"rotate(45 95 100)\"/><use href=\"#b21s\" transform=\"rotate(67.5 95 100)\"/><use href=\"#b21s\" transform=\"rotate(90 95 100)\"/><use href=\"#b21s\" transform=\"rotate(112.5 95 100)\"/><use href=\"#b21s\" transform=\"rotate(135 95 100)\"/><use href=\"#b21s\" transform=\"rotate(157.5 95 100)\"/><use href=\"#b21s\" transform=\"rotate(180 95 100)\"/><use href=\"#b21s\" transform=\"rotate(202.5 95 100)\"/><use href=\"#b21s\" transform=\"rotate(225 95 100)\"/><use href=\"#b21s\" transform=\"rotate(247.5 95 100)\"/><use href=\"#b21s\" transform=\"rotate(270 95 100)\"/><use href=\"#b21s\" transform=\"rotate(292.5 95 100)\"/><use href=\"#b21s\" transform=\"rotate(315 95 100)\"/><use href=\"#b21s\" transform=\"rotate(337.5 95 100)\"/><circle cx=\"95\" cy=\"100\" r=\"62\" fill=\"currentColor\" fill-opacity=\"0.08\"/><circle cx=\"95\" cy=\"100\" r=\"58\" stroke-width=\"1\"/><path d=\"M60,80C70,60 80,100 90,80S110,60 120,80S135,110 125,120S100,140 90,120S70,105 62,118\" stroke-width=\"5\" stroke-opacity=\"0.35\"/><path d=\"M60,80C70,60 80,100 90,80S110,60 120,80S135,110 125,120S100,140 90,120S70,105 62,118\" stroke-width=\"1.2\"/><path d=\"M110,30L190,30M155,96L190,84M126,118L190,150\" stroke-width=\"0.9\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"194\" y=\"34\">beljakovinski</text><text x=\"194\" y=\"48\">izrastki</text><text x=\"194\" y=\"88\">ovojnica</text><text x=\"194\" y=\"148\">dedna snov (RNA),</text><text x=\"194\" y=\"162\">obdana z beljakovinami</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Ali je virus celica in ali ga uvrščamo med živa bitja? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Virus je celica in je živo bitje, saj se v telesu gostitelja razmnožuje.",
+      "Virus je celica brez jedra in ga kot bakterije uvrščamo med živa bitja.",
+      "Virus ni celica, je pa živo bitje, saj ima dedno snov in sam pridobiva energijo iz hrane.",
+      "Virus ni celica in ni živo bitje, ker se lahko razmnožuje le v celicah gostitelja."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "Virus ni celica in ga ne uvrščamo med živa bitja.",
+     "ways": [
+      {
+       "title": "Zgradba virusa",
+       "text": "Na sliki vidiš, da virus sestavljajo le **dedna snov** (pri virusu ošpic RNA), **beljakovine** okoli nje in **ovojnica** z beljakovinskimi izrastki. Nima citoplazme, ribosomov in celične membrane, pa tudi lastne presnove ne – torej **ni celica**.\n\nVirus sam ne pridobiva energije in ne izdeluje snovi. Razmnoži se lahko le tako, da vdre v **celico gostitelja**, ki nato po navodilih virusne dedne snovi izdela nove viruse. Zato virusov **ne uvrščamo med živa bitja** (so na meji med živim in neživim).\n\nZakaj drugi odgovori niso pravilni:\n\n- *Je celica in živo bitje* – virus ni celica; sam se ne razmnožuje, razmnoži ga celica gostitelja.\n- *Celica brez jedra kot bakterije* – bakterije so celice (brez jedra, a s citoplazmo, ribosomi, membrano in steno); virus ni celica.\n- *Sam pridobiva energijo* – virus nima presnove; dedno snov sicer ima, a to ni dovolj za živo bitje."
+      }
+     ],
+     "mistake": "Misliti, da je vse, kar se »razmnožuje« in povzroča bolezen, živo bitje. Virus se ne razmnožuje sam, temveč ga razmnožijo celice gostitelja."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Zdravstveno osebje pri pregledu bolnika z ošpicami nosi zaščitno masko, zaščitna očala in haljo. Pojasni, kako taka zaščitna oprema zavira širjenje okužbe.",
+     "answer": "Oprema je pregrada: maska in očala prestrežejo kapljice z virusi, da ne pridejo na sluznico nosu, ust in oči; halja prepreči, da bi se virusi prenesli z obleko k drugim bolnikom.",
+     "ways": [
+      {
+       "title": "Pot virusa in pregrada",
+       "text": "Bolnik pri kašljanju, kihanju in govorjenju izloča **kapljice z virusi**. Okužba nastane, ko virusi pridejo na **sluznico** nosu, ust ali oči druge osebe.\n\n- **Maska** prestreže kapljice, preden jih zdravstveni delavec vdihne.\n- **Zaščitna očala** preprečijo, da bi kapljice padle na sluznico oči.\n- **Halja** (in rokavice) prepreči, da bi se kapljice ujele na obleko in bi jih osebje preneslo k drugim bolnikom.\n\nTako virusi ne pridejo do novega gostitelja in veriga prenosa se prekine. Najboljša zaščita pred ošpicami je sicer **cepljenje**."
+      }
+     ],
+     "scoring": "1 t. za razlago, da oprema deluje kot pregrada, ki prestreže kapljice z virusi (da ne pridejo v nos, usta, oči ali naprej na druge).",
+     "mistake": "Zapisati, da maska »ubija viruse«. Maska viruse le zadrži (prestreže kapljice), ne uniči jih."
+    }
+   ]
+  },
+  {
+   "n": 21,
+   "intro": "Vinska mušica (*Drosophila melanogaster*) je drobna muha, ki jo jeseni pogosto vidiš okrog zrelega sadja. Na sliki je kariotip – urejeni pari kromosomov iz telesne celice samca. Zigota (oplojena jajčna celica) vinske mušice ima $8$ kromosomov.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 330 130\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"30\" y=\"48\" width=\"6\" height=\"42\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"37\" y=\"48\" width=\"6\" height=\"42\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M33,53.04h7\" stroke-width=\"3\"/><rect x=\"56\" y=\"56\" width=\"6\" height=\"34\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"63\" y=\"56\" width=\"6\" height=\"34\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M59,67.9h7\" stroke-width=\"3\"/><rect x=\"110\" y=\"28\" width=\"6\" height=\"62\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"117\" y=\"28\" width=\"6\" height=\"62\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M113,59h7\" stroke-width=\"3\"/><rect x=\"136\" y=\"28\" width=\"6\" height=\"62\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"143\" y=\"28\" width=\"6\" height=\"62\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M139,59h7\" stroke-width=\"3\"/><rect x=\"190\" y=\"32\" width=\"6\" height=\"58\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"197\" y=\"32\" width=\"6\" height=\"58\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M193,59.84h7\" stroke-width=\"3\"/><rect x=\"216\" y=\"32\" width=\"6\" height=\"58\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"223\" y=\"32\" width=\"6\" height=\"58\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M219,59.84h7\" stroke-width=\"3\"/><rect x=\"272\" y=\"82\" width=\"6\" height=\"8\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"279\" y=\"82\" width=\"6\" height=\"8\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"292\" y=\"82\" width=\"6\" height=\"8\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"299\" y=\"82\" width=\"6\" height=\"8\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M24,98H74M104,98H154M184,98H234M266,98H310\" stroke-width=\"1\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"37\" y=\"114\" text-anchor=\"middle\">X</text><text x=\"63\" y=\"114\" text-anchor=\"middle\">Y</text><text x=\"129\" y=\"114\" text-anchor=\"middle\">2</text><text x=\"209\" y=\"114\" text-anchor=\"middle\">3</text><text x=\"288\" y=\"114\" text-anchor=\"middle\">4</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko kromosomov je v spolni celici (semenčici) vinske mušice? Odgovor utemelji.",
+     "answer": "4 kromosome – pri nastanku spolnih celic (mejozi) se število kromosomov razpolovi, v spolno celico pride po en kromosom iz vsakega para.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** zigota ima $8$ kromosomov; v kariotipu so $4$ pari kromosomov.\n\n**Iščemo:** število kromosomov v spolni celici.\n\nZigota nastane z združitvijo **dveh spolnih celic** – semenčice in jajčne celice. Vsaka prispeva enako število kromosomov, torej:\n\n$8 : 2 = 4$\n\nPri nastanku spolnih celic (**mejozi**) se število kromosomov razpolovi: v vsako spolno celico pride **po en kromosom iz vsakega para**. Iz kariotipa: $4$ pari → $4$ kromosomi (en spolni kromosom X ali Y in po en kromosom 2, 3 in 4)."
+      }
+     ],
+     "scoring": "1 t. za 4 kromosome z utemeljitvijo (polovica kromosomov zigote / en kromosom iz vsakega para).",
+     "mistake": "Odgovoriti $8$, ker »so vse celice iste živali enake«. Spolne celice imajo polovično število kromosomov, sicer bi se število ob vsaki oploditvi podvojilo."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko kromosomov je v jedru telesne celice odrasle vinske mušice, na primer celice iz povrhnjice? Odgovor utemelji.",
+     "answer": "8 kromosomov – vse telesne celice nastanejo iz zigote z delitvami (mitozo), pri katerih se število kromosomov ohrani.",
+     "ways": [
+      {
+       "title": "Od zigote do odrasle mušice",
+       "text": "**Podatki:** zigota ima $8$ kromosomov.\n\n**Iščemo:** število kromosomov v telesni celici.\n\nOdrasla mušica se razvije iz ene celice – zigote – z zaporednimi **delitvami celic (mitozo)**. Pri mitozi se kromosomi najprej podvojijo, nato vsaka hčerinska celica dobi enak nabor kromosomov kot materinska. Zato ima vsaka telesna celica toliko kromosomov kot zigota: **$8$** ($4$ pare). To potrjuje tudi kariotip na sliki, ki je iz telesne celice: v njem je $4 \\cdot 2 = 8$ kromosomov."
+      }
+     ],
+     "scoring": "1 t. za 8 kromosomov z utemeljitvijo (enako kot zigota – mitoza ohrani število / kariotip telesne celice ima 4 pare)."
+    }
+   ]
+  },
+  {
+   "n": 22,
+   "intro": "Rdeče-zelena barvna slepota je recesivna lastnost; alel zanjo je na kromosomu X. Alel $\\mathrm{D}$ omogoča normalno zaznavanje barv, alel $\\mathrm{d}$ povzroča barvno slepoto. Rodovnik prikazuje družino; osebe so v vsaki generaciji oštevilčene.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 210\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M132,34H178M155,34V72M80,72H230M80,72V88M155,72V88M230,72V88\"/><rect x=\"108\" y=\"22\" width=\"24\" height=\"24\"/><circle cx=\"190\" cy=\"34\" r=\"12\"/><rect x=\"68\" y=\"88\" width=\"24\" height=\"24\" fill=\"currentColor\" fill-opacity=\"0.85\"/><circle cx=\"155\" cy=\"100\" r=\"12\"/><rect x=\"218\" y=\"88\" width=\"24\" height=\"24\"/><path d=\"M10,138H310\" stroke-width=\"0.6\" stroke-opacity=\"0.5\"/><rect x=\"12\" y=\"146\" width=\"24\" height=\"24\"/><circle cx=\"24\" cy=\"190\" r=\"12\"/><rect x=\"158\" y=\"146\" width=\"24\" height=\"24\" fill=\"currentColor\" fill-opacity=\"0.85\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"10\" y=\"38\">I</text><text x=\"10\" y=\"104\">II</text><text x=\"120\" y=\"62\" text-anchor=\"middle\" font-size=\"10\">1</text><text x=\"190\" y=\"62\" text-anchor=\"middle\" font-size=\"10\">2</text><text x=\"80\" y=\"128\" text-anchor=\"middle\" font-size=\"10\">1</text><text x=\"155\" y=\"128\" text-anchor=\"middle\" font-size=\"10\">2</text><text x=\"230\" y=\"128\" text-anchor=\"middle\" font-size=\"10\">3</text><text x=\"44\" y=\"162\">moški</text><text x=\"44\" y=\"194\">ženska</text><text x=\"190\" y=\"162\">barvno slep</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Zapiši genotip matere I-2. Uporabi oznake spolnih kromosomov in alelov (npr. $\\mathrm{X^D}$).",
+     "answer": "$\\mathrm{X^DX^d}$ (prenašalka).",
+     "ways": [
+      {
+       "title": "Sklepanje iz sina",
+       "text": "Sin **II-1** je barvno slep. Moški ima en kromosom X, zato je njegov genotip $\\mathrm{X^dY}$. Kromosom **Y** dobi od očeta, kromosom **X** pa od **matere**. Mati I-2 mu je torej dala alel $\\mathrm{d}$.\n\nMati sama barve zaznava normalno, zato ima tudi alel $\\mathrm{D}$. Njen genotip je $\\mathrm{X^DX^d}$ – je **prenašalka**."
+      }
+     ],
+     "scoring": "1 t. za $\\mathrm{X^DX^d}$ (zapisano z oznakami spolnih kromosomov).",
+     "mistake": "Zapisati $\\mathrm{X^DX^D}$, ker mati ni barvno slepa. Iz česa bi potem sin dobil alel d? Oče mu je dal kromosom Y."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Denimo, da bi bila hči II-2 barvno slepa, mati I-2 pa bi barve še vedno zaznavala normalno. Kakšna bi morala biti genotipa staršev I-1 in I-2?",
+     "answer": "Oče I-1: $\\mathrm{X^dY}$ (barvno slep), mati I-2: $\\mathrm{X^DX^d}$.",
+     "ways": [
+      {
+       "title": "Od koga hči dobi kromosoma X",
+       "text": "Barvno slepa hči bi imela genotip $\\mathrm{X^dX^d}$ – recesivna lastnost se pri ženski izrazi le, če ima alel $\\mathrm{d}$ na **obeh** kromosomih X. En kromosom X dobi od očeta, drugega od matere:\n\n- **oče** ima en sam kromosom X; če bi hčeri dal $\\mathrm{X^d}$, bi bil $\\mathrm{X^dY}$ – sam **barvno slep**;\n- **mati** bi ji dala $\\mathrm{X^d}$; ker sama barve zaznava normalno, je $\\mathrm{X^DX^d}$.\n\nV tem primeru bi moral biti oče I-1 na rodovniku označen kot barvno slep."
+      }
+     ],
+     "scoring": "1 t. za oba pravilna genotipa: oče $\\mathrm{X^dY}$ in mati $\\mathrm{X^DX^d}$.",
+     "mistake": "Pustiti očeta $\\mathrm{X^DY}$. Hči vedno dobi očetov kromosom X, zato barvno slepa hči pomeni barvno slepega očeta."
+    }
+   ]
+  },
+  {
+   "n": 23,
+   "intro": "Koruzna vešča je metulj, katerega gosenice vrtajo rove v steblih koruze in povzročajo veliko škodo. Znanstveniki so v laboratoriju v dedno snov koruze vnesli gen bakterije, ki živi v tleh. Zaradi tega gena celice koruze izdelujejo beljakovino, ki je strupena za gosenice koruzne vešče, za ljudi in vretenčarje pa ne. Taki koruzi pravimo Bt-koruza.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Ali je Bt-koruza gensko spremenjen organizem (GSO)? Obkroži DA ali NE in odgovor utemelji.\n\nDA      NE",
+     "answer": "DA – njeno dedno snov so z gensko tehnologijo spremenili tako, da so vanjo vnesli gen druge vrste (bakterije).",
+     "ways": [
+      {
+       "title": "Kaj je gensko spremenjen organizem",
+       "text": "**Gensko spremenjen organizem** je organizem, ki so mu dedno snov spremenili v laboratoriju z gensko tehnologijo – na način, ki pri razmnoževanju v naravi ne bi nastal. Bt-koruza ima v dedni snovi **gen bakterije**: z navadnim križanjem tega ne bi dosegli, saj se koruza in bakterija ne moreta križati. Odgovor je **DA**.\n\nZa primerjavo: sorta, ki jo vzgojijo s križanjem in izbiro najboljših rastlin, ni GSO."
+      }
+     ],
+     "scoring": "1 t. za DA z utemeljitvijo (v dedno snov so vnesli gen druge vrste/bakterije z gensko tehnologijo). Samo DA brez utemeljitve ne prinese točke."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Navedi eno možno posledico, ki bi jo lahko imelo gojenje Bt-koruze na velikih površinah za okolje.",
+     "answer": "Npr.: gosenice koruzne vešče lahko sčasoma postanejo odporne proti strupu; strup lahko škoduje tudi drugim žuželkam (npr. gosenicam drugih metuljev); pelod GSO lahko opraši navadno koruzo na sosednjih poljih; uporabljajo manj škropiv, kar je manj škodljivo za druge organizme.",
+     "ways": [
+      {
+       "title": "Možne posledice",
+       "text": "Sprejme se vsaka smiselna posledica, na primer:\n\n- **odpornost škodljivcev** – gosenice, ki so po naključju manj občutljive za strup, preživijo in se razmnožijo; čez leta je odpornih vedno več (naravni izbor);\n- **vpliv na druge žuželke** – strup lahko škoduje tudi gosenicam drugih metuljev, ki niso škodljivci, na primer če se pelod koruze nabere na rastlinah, s katerimi se hranijo;\n- **prenos gena** – veter raznaša pelod Bt-koruze na sosednja polja z navadno koruzo, ki tako dobi vneseni gen;\n- **manj škropiv** (lahko tudi pozitivna posledica) – kmetje manj škropijo, zato je manj škode za koristne žuželke in vode."
+      }
+     ],
+     "scoring": "1 t. za eno smiselno posledico za okolje (pozitivno ali negativno).",
+     "mistake": "Zapisati, da bo koruza strupena za ljudi. Po opisu beljakovina deluje na gosenice, za ljudi in vretenčarje pa ni strupena; poleg tega vprašanje sprašuje po posledici za okolje."
+    }
+   ]
+  },
+  {
+   "n": 24,
+   "intro": "Na travniku blizu šole so junija pokosili travo. Že čez tri tedne so bile rastline spet visoke in nekatere so zacvetele.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Fotosinteza je pokošenim rastlinam dala snovi, celično dihanje pa energijo. Kateri proces v celicah je še nujno potreben, da rastline po košnji spet zrastejo? Pojasni.",
+     "answer": "Delitev celic (mitoza): nastajajo nove celice, ki nato zrastejo, zato rastlina raste.",
+     "ways": [
+      {
+       "title": "Kako rastlina raste",
+       "text": "Rastlina zraste, ker se v **rastnih tkivih** (na vrhovih poganjkov, v kolencih in pri dnu listov trav) celice **delijo (mitoza)** – iz ene celice nastaneta dve enaki. Nove celice nato **zrastejo** in se specializirajo. Pri travah so rastna tkiva pri dnu listov in stebel, zato jih košnja ne odstrani in trava hitro odraste.\n\nFotosinteza da sladkor (snov in energijo), celično dihanje sprosti energijo, toda brez delitve celic ne bi nastalo novo tkivo."
+      }
+     ],
+     "scoring": "1 t. za delitev celic (mitozo) z razlago, da nastajajo nove celice (ki zrastejo). Sprejme se tudi »rast in delitev celic«.",
+     "mistake": "Odgovoriti »rast«. Rast je posledica; vprašanje sprašuje po procesu v celicah, ki rast omogoča – delitvi celic."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Na slikah so štiri rastline s tega travnika (slike niso v istem merilu). S pomočjo določevalnega ključa določi ime vsake rastline A–D in ga zapiši v zvezek.\n\n**Določevalni ključ**\n\n1a Listi so trojnati (vsak list ima tri lističe). → **travniška detelja**\n\n1b Listi niso trojnati. → 2\n\n2a Listi rastejo vzdolž stebla in so pernato razdeljeni na številne drobne krpice; na vrhu stebla so številni drobni koški, zbrani v ploščato socvetje. → **navadni rman**\n\n2b Vsi listi rastejo pri tleh v pritlični rozeti; steblo je brez listov in ima en sam koš. → 3\n\n3a Listi so globoko in ostro nazobčani; koš je velik, iz samih jezičastih cvetov. → **navadni regrat**\n\n3b Listi so lopatičasti, z gladkim ali le rahlo narezanim robom; koš je majhen, z belimi jezičastimi cvetovi okoli rumene sredine. → **navadna marjetica**",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 340\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><defs><path id=\"b21r\" d=\"M0,0L30,-10M6,-2l-1,-6M6,-2l3,4M12,-4l-1,-6M12,-4l3,4M18,-6l-1,-6M18,-6l3,4M24,-8l-1,-5M24,-8l3,4\" stroke-width=\"1\"/><ellipse id=\"b21p\" cx=\"240\" cy=\"83\" rx=\"2.6\" ry=\"6.5\"/><path id=\"b21m\" d=\"M0,0C8,-3 14,-6 20,-10C28,-15 34,-9 28,-4C22,1 9,1 0,0Z\" fill=\"currentColor\" fill-opacity=\"0.25\"/><g id=\"b21t\" fill=\"currentColor\" fill-opacity=\"0.25\"><path d=\"M0,0V-10\" stroke-width=\"1\"/><ellipse cy=\"-19\" rx=\"5\" ry=\"9\"/><ellipse cx=\"-9\" cy=\"-14\" rx=\"5\" ry=\"9\" transform=\"rotate(-60 -9 -14)\"/><ellipse cx=\"9\" cy=\"-14\" rx=\"5\" ry=\"9\" transform=\"rotate(60 9 -14)\"/></g><path id=\"b21d\" d=\"M0,0L10,-4L12,-10L18,-6L24,-14L28,-8L36,-18L38,-10L48,-16L46,-6L38,0Z\" fill=\"currentColor\" fill-opacity=\"0.25\"/></defs><path d=\"M80,160V46M80,62L66,42M80,62L96,44M80,52L74,34M80,52L88,32\" stroke-width=\"1.2\"/><circle id=\"b21h\" cx=\"58\" cy=\"36\" r=\"3.2\" fill=\"currentColor\" fill-opacity=\"0.3\"/><use href=\"#b21h\" x=\"8\" y=\"-6\"/><use href=\"#b21h\" x=\"16\" y=\"-8\"/><use href=\"#b21h\" x=\"24\" y=\"-9\"/><use href=\"#b21h\" x=\"32\" y=\"-8\"/><use href=\"#b21h\" x=\"40\" y=\"-6\"/><use href=\"#b21h\" x=\"48\" y=\"0\"/><use href=\"#b21h\" x=\"12\" y=\"2\"/><use href=\"#b21h\" x=\"28\" y=\"0\"/><use href=\"#b21h\" x=\"42\" y=\"4\"/><use href=\"#b21h\" x=\"4\" y=\"8\"/><use href=\"#b21r\" transform=\"translate(80,140)\"/><use href=\"#b21r\" transform=\"translate(80,124) scale(-1,1)\"/><use href=\"#b21r\" transform=\"translate(80,106)\"/><use href=\"#b21r\" transform=\"translate(80,90) scale(-1,1)\"/><use href=\"#b21r\" transform=\"translate(80,76) scale(0.8)\"/><path d=\"M240,160C238,140 242,120 240,102\" stroke-width=\"1.2\"/><g id=\"b21k\"><use href=\"#b21m\" transform=\"translate(240,160) rotate(-8)\"/><use href=\"#b21m\" transform=\"translate(240,160) rotate(-32)\"/><use href=\"#b21m\" transform=\"translate(240,160) rotate(-58)\"/></g><use href=\"#b21k\" transform=\"translate(478,0) scale(-1,1)\"/><g id=\"b21q\"><use href=\"#b21p\" transform=\"rotate(0 240 94)\"/><use href=\"#b21p\" transform=\"rotate(30 240 94)\"/><use href=\"#b21p\" transform=\"rotate(60 240 94)\"/><use href=\"#b21p\" transform=\"rotate(90 240 94)\"/></g><use href=\"#b21q\" transform=\"rotate(120 240 94)\"/><use href=\"#b21q\" transform=\"rotate(240 240 94)\"/><circle cx=\"240\" cy=\"94\" r=\"5\" fill=\"currentColor\" fill-opacity=\"0.6\"/><path d=\"M80,330C78,300 82,260 80,232M80,290C70,284 62,278 56,270M80,268C92,262 100,256 104,248\" stroke-width=\"1.2\"/><use href=\"#b21t\" transform=\"translate(56,270)\"/><use href=\"#b21t\" transform=\"translate(104,248)\"/><ellipse cx=\"80\" cy=\"218\" rx=\"12\" ry=\"15\" fill=\"currentColor\" fill-opacity=\"0.3\" stroke-width=\"3\" stroke-dasharray=\"1 3\"/><path d=\"M74,210l3,3M84,208l-2,4M80,222l0,4M73,224l3,-2M86,220l-3,3\" stroke-width=\"1\"/><path d=\"M240,330C238,300 244,260 240,226\" stroke-width=\"2.5\"/><use href=\"#b21d\" transform=\"translate(240,330) rotate(-170) scale(1,-1)\"/><use href=\"#b21d\" transform=\"translate(240,330) rotate(-150) scale(1,-1)\"/><use href=\"#b21d\" transform=\"translate(240,330) rotate(-25)\"/><use href=\"#b21d\" transform=\"translate(240,330) rotate(-5)\"/><use href=\"#b21d\" transform=\"translate(240,330) rotate(-125) scale(1,-1)\"/><path d=\"M245,212L259,212M252,215L258,217M244,215L256,222M248,221L252,226M242,217L248,229M242,224L243,231M239,217L237,231M235,223L232,229M237,216L228,226M230,218L224,222M235,213L222,217M228,212L221,212M235,211L222,207M230,206L224,202M237,208L228,198M235,201L232,195M239,207L237,193M242,200L243,193M242,207L248,195M248,203L252,198M244,209L256,202M252,209L258,207\" stroke-width=\"1.6\"/><circle cx=\"240\" cy=\"212\" r=\"4\" fill=\"currentColor\"/><g fill=\"currentColor\" stroke=\"none\" font-weight=\"bold\" font-size=\"14\"><text x=\"10\" y=\"18\">A</text><text x=\"170\" y=\"18\">B</text><text x=\"10\" y=\"188\">C</text><text x=\"170\" y=\"188\">D</text></g><path d=\"M160,8V332M8,170H312\" stroke-width=\"0.6\" stroke-opacity=\"0.4\"/><path d=\"M15,160H145M175,160H305M15,330H145M175,330H305\" stroke-width=\"1\" stroke-opacity=\"0.6\"/></svg>",
+     "answer": "A – navadni rman, B – navadna marjetica, C – travniška detelja, D – navadni regrat.",
+     "ways": [
+      {
+       "title": "Pot skozi ključ za vsako rastlino",
+       "text": "- **A**: listi niso trojnati (1b → 2); listi so na steblu in pernato razdeljeni, na vrhu ploščato socvetje drobnih koškov (2a) → **navadni rman**.\n- **B**: listi niso trojnati (1b → 2); listi le v pritlični rozeti, steblo brez listov z enim košem (2b → 3); listi lopatičasti, rob ni globoko nazobčan, majhen koš z venčkom jezičastih cvetov (3b) → **navadna marjetica**.\n- **C**: listi so trojnati (1a) → **travniška detelja**.\n- **D**: listi niso trojnati (1b → 2); pritlična rozeta, steblo brez listov z enim košem (2b → 3); listi globoko nazobčani, velik koš (3a) → **navadni regrat**.\n\nPri dihotomnem ključu na vsakem koraku izbereš eno od dveh nasprotnih trditev in slediš številki, dokler ne prideš do imena."
+      }
+     ],
+     "scoring": "1 t., če so pravilno določene vse štiri rastline.",
+     "mistake": "Pri D in B se ustaviti že pri koraku 2 in ju zamenjati. Obe imata pritlično rozeto in steblo brez listov – loči ju šele korak 3 (rob lista in velikost koša)."
+    }
+   ]
+  }
+ ]
+}
