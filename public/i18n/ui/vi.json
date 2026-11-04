@@ -607,6 +607,7 @@
   "pp.oursScoring": "Thang điểm:",
   "pp.oursMistake": "Lỗi thường gặp:",
   "pp.oursScore": "{got} / {max} đ",
+  "pp.oursPola": "Đề {n}",
   "pp.more": "Hiện đề cũ hơn ({n})",
   "pp.empty": "Chưa có đề nào được công bố trên ric.si cho lựa chọn này.",
   "exam.train": "Luyện thi",

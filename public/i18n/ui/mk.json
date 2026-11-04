@@ -613,6 +613,7 @@
   "pp.oursScoring": "Бодување:",
   "pp.oursMistake": "Честа грешка:",
   "pp.oursScore": "{got} / {max} п.",
+  "pp.oursPola": "Испитна книшка {n}",
   "pp.more": "Прикажи постари ({n})",
   "pp.empty": "За овој избор на ric.si нема објавени испити.",
   "exam.train": "Вежба за испит",

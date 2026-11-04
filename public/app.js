@@ -77,6 +77,7 @@ import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
 import { openOurPaper, closeOurPaper } from "./our-paper.js";
+import { partKey, partLabel } from "./our-paper-key.js";
 import { initDrsniki } from "./drsniki.js";
 import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
@@ -3319,12 +3320,13 @@ async function oursTutor(entry, title, task, part) {
   paperBusy = true;
   try {
     await newTutorChat();
-    const n = `${task.n}${part.id || ""}`;
+    const n = partLabel(task, part);
+    const pola = task.pola ? `${t("pp.oursPola", { n: task.pola })} · ` : "";
     const strip = (md) => String(md || "").replace(/<svg[\s\S]*?<\/svg>/g, "").trim();
     const choices = part.format === "choice" && part.choices ? part.choices.map((c, i) => `${String.fromCharCode(65 + i)}) ${strip(c)}`).join("\n") : "";
     const body = [strip(task.intro), strip(part.text), choices].filter(Boolean).join("\n\n").slice(0, 1500);
-    state.paperCtx = { conv: state.conversationId, paper: title, task: n, ours: entry.id };
-    await send(`${title} · ${t("pp.oursTask", { n })}\n\n${body}`);
+    state.paperCtx = { conv: state.conversationId, paper: title, task: partKey(task, part), ours: entry.id };
+    await send(`${title} · ${pola}${t("pp.oursTask", { n })}\n\n${body}`);
   } catch (err) {
     toast(err.message);
   } finally {

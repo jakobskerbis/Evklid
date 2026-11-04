@@ -1,7 +1,10 @@
 // Zgradba izvirnih pol RIC, ki jim sledijo naše pole (content/exam-papers): samo število nalog, točke po delih in
 // opis vrste naloge s svojimi besedami, nikoli besedilo RIC (j 30. 10. 2026). Preverja jo scripts/check-paper.js.
 // topics: kratek opis vsebine dela; format: open | choice | fill | construct | table.
-export const PAPER_STRUCTURES = {
+import fs from "node:fs";
+import path from "node:path";
+
+const INLINE = {
   "NPZ9-MAT-2026-redni": {
     points: 50,
     minutes: 60,
@@ -55,3 +58,20 @@ export const PAPER_STRUCTURES = {
     ],
   },
 };
+
+// Zgradbe v content/exam-papers/structures/<id>.json (enaka vsebina, tasks: [{ pola?, section?, n, points: [..],
+// format, topic, figure? }]) dopolnijo zgornje.
+const DIR = path.join(path.dirname(new URL(import.meta.url).pathname), "..", "content", "exam-papers", "structures");
+function fromFiles() {
+  const out = {};
+  try {
+    for (const f of fs.readdirSync(DIR)) if (f.endsWith(".json")) {
+      const s = JSON.parse(fs.readFileSync(path.join(DIR, f), "utf8"));
+      out[s.id || f.slice(0, -5)] = s;
+    }
+  } catch {
+    /* brez datotek */
+  }
+  return out;
+}
+export const PAPER_STRUCTURES = { ...INLINE, ...fromFiles() };

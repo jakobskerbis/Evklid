@@ -607,6 +607,7 @@
   "pp.oursScoring": "採点基準：",
   "pp.oursMistake": "よくある間違い：",
   "pp.oursScore": "{got} / {max} 点",
+  "pp.oursPola": "試験問題 {n}",
   "pp.more": "古いものを表示（{n}）",
   "pp.empty": "この選択では ric.si に公開された問題はありません。",
   "exam.train": "試験対策",

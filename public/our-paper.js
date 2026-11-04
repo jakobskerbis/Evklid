@@ -5,9 +5,10 @@
 // »Vprašaj inštruktorja« (nov pogovor z nalogo; rešitev dobi inštruktor kot skrit kontekst).
 import { t } from "./i18n.js";
 import { icon } from "./icons.js";
+import { partKey, partLabel } from "./our-paper-key.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const label = (task, part) => `${task.n}${part.id || ""}`;
+const label = partKey;
 
 let current = null;
 export const ourPaperOpen = () => !!current;
@@ -34,12 +35,22 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
   // Figure preveri že strežnik (server/our-papers.js, validatePaper); DOMPurify (globalen, public/rich.js) še enkrat.
   const clean = (svg) => (globalThis.DOMPurify ? globalThis.DOMPurify.sanitize(svg, { USE_PROFILES: { svg: true } }) : "");
   const fig = (svg) => (svg ? `<figure class="op-fig">${clean(svg)}</figure>` : "");
+  // Naslov izpitne pole (čas, pripomočki) in dela (»A) Kratke naloge«), kadar se začne nova.
+  const headings = (tk, prev) => {
+    let h = "";
+    if (tk.pola && tk.pola !== prev?.pola) {
+      const info = (paper.polas || []).find((x) => x.pola === tk.pola);
+      h += `<h2 class="op-pola">${esc(t("pp.oursPola", { n: tk.pola }))}${info?.minutes ? ` <small>${esc(`${info.minutes} min`)}</small>` : ""}</h2>${info?.tools ? `<p class="op-tools">${esc(info.tools)}</p>` : ""}`;
+    }
+    if (tk.section && (tk.section !== prev?.section || tk.pola !== prev?.pola)) h += `<h3 class="op-section">${esc(`${tk.section}) ${paper.sections?.[tk.section] || ""}`.trim())}</h3>`;
+    return h;
+  };
   const partHtml = (tk, p) => {
     const id = label(tk, p);
     const choices = p.format === "choice" && p.choices ? `<ol class="op-choices" type="A">${p.choices.map((c) => `<li>${rich(c)}</li>`).join("")}</ol>` : "";
     const ways = (p.ways || []).map((w, i) => `<section class="op-way"><h4>${esc(w.title || t("pp.oursWay", { n: i + 1 }))}</h4>${rich(w.text)}</section>`).join("");
     return `<li class="op-part" data-op="${esc(id)}">
-      <div class="op-q"><span class="op-no">${esc(p.id ? `${p.id})` : `${tk.n}.`)}</span><div class="op-text">${rich(p.text || "")}${fig(p.figure)}${choices}</div><span class="op-pts">${esc(t("pp.oursPoints", { n: p.points }))}</span></div>
+      <div class="op-q"><span class="op-no">${esc(p.id ? `${p.id})` : `${tk.section || ""}${tk.n}.`)}</span><div class="op-text">${rich(p.text || "")}${fig(p.figure)}${choices}</div><span class="op-pts">${esc(t("pp.oursPoints", { n: p.points }))}</span></div>
       <div class="op-actions">
         <button type="button" class="secondary small" data-op-show aria-expanded="false">${icon("eye")}<span>${esc(t("pp.oursShow"))}</span></button>
         ${onTutor ? `<button type="button" class="secondary small" data-op-tutor>${icon("message-circle")}<span>${esc(t("pp.oursTutor"))}</span></button>` : ""}
@@ -63,7 +74,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
       <p class="op-about">${icon("info")}<span>${esc(t("pp.oursAbout"))}</span></p>
       ${paper.tools ? `<p class="op-tools">${esc(paper.tools)}</p>` : ""}
       ${paper.tasks
-        .map((tk) => `<article class="op-task"><h3>${esc(t("pp.oursTask", { n: tk.n }))}</h3>${tk.intro ? rich(tk.intro) : ""}${fig(tk.figure)}<ol class="op-parts">${tk.parts.map((p) => partHtml(tk, p)).join("")}</ol></article>`)
+        .map((tk, i) => `${headings(tk, paper.tasks[i - 1])}<article class="op-task"><h3>${esc(t("pp.oursTask", { n: `${tk.section || ""}${tk.n}` }))}</h3>${tk.intro ? rich(tk.intro) : ""}${fig(tk.figure)}<ol class="op-parts">${tk.parts.map((p) => partHtml(tk, p)).join("")}</ol></article>`)
         .join("")}
     </div></div>`;
   const showScore = () => (el.querySelector(".op-score").textContent = t("pp.oursScore", { got: sum(), max }));

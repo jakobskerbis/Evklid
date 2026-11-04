@@ -625,6 +625,7 @@
   "pp.oursScoring": "Punktacja:",
   "pp.oursMistake": "Częsty błąd:",
   "pp.oursScore": "{got} / {max} pkt",
+  "pp.oursPola": "Arkusz {n}",
   "pp.more": "Pokaż starsze ({n})",
   "pp.empty": "Dla tego wyboru na ric.si nie opublikowano arkuszy.",
   "exam.train": "Trening do egzaminu",

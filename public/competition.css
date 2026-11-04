@@ -195,6 +195,9 @@ html.pv-open, html.pv-open body { overflow: hidden; }
 .op-about { display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--accent-soft); font-size: 0.92rem; }
 .op-about svg.i { flex: none; width: 18px; height: 18px; margin-top: 2px; }
 .op-tools { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.op-pola { margin: 8px 0 0; font-size: 1.2rem; display: flex; align-items: baseline; gap: 8px; }
+.op-pola small { color: var(--muted); font-size: 0.85rem; font-weight: 400; }
+.op-section { margin: 4px 0 0; font-size: 1rem; color: var(--muted); }
 .op-task { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: 14px 16px; }
 .op-task > h3 { margin: 0 0 8px; font-size: 1.05rem; }
 .op-parts { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }

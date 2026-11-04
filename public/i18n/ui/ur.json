@@ -613,6 +613,7 @@
   "pp.oursScoring": "نمبروں کی تقسیم:",
   "pp.oursMistake": "عام غلطی:",
   "pp.oursScore": "{got} / {max} پوائنٹس",
+  "pp.oursPola": "پرچہ {n}",
   "pp.more": "پرانے دکھائیں ({n})",
   "pp.empty": "اس انتخاب کے لیے ric.si پر کوئی پرچہ شائع نہیں ہوا۔",
   "exam.train": "امتحان کی مشق",

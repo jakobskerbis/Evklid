@@ -7,6 +7,9 @@
 //   id: "a", points, format: open|choice|fill|construct|table, text, figure?, choices?, correct?, answer,
 //   ways: [{ title, text }], solutionFigure?, scoring?, mistake? }] }] }
 // figure se vidi ob nalogi, solutionFigure (npr. končana konstrukcija) šele v »Pokaži rešitev«.
+// Več izpitnih pol (matura): polas: [{ pola: 1, minutes: 90, tools: "Računalo ni dovoljeno." }], vsaka naloga
+// ima pola; deli: sections: { A: "Kratke naloge" }, naloga ima section. n se šteje v skupini (pola, del) kot v
+// izvirniku. Zgradba izvirnika: content/exam-papers/structures/<id>.json ali server/our-paper-structures.js.
 // Besedila so Markdown z LaTeX v $…$ (public/markdown.js), figure so vrstični SVG brez skript.
 import fs from "node:fs";
 import path from "node:path";
@@ -15,7 +18,7 @@ import { checkArithmetic } from "./lesson-math.js";
 
 export const OUR_PAPERS_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), "..", "content", "exam-papers");
 const FORMATS = ["open", "choice", "fill", "construct", "table"];
-const ID = /^(NPZ6|NPZ9|MATURA|POKLICNA)-(MAT|FIZ|KEM|BIO)-\d{4}-[a-z0-9-]+$/;
+const ID = /^(NPZ6|NPZ9|MATURA|POKLICNA)-(MAT|FIZ|KEM|BIO)-(?:(?:OR|VR)-)?\d{4}-[a-z0-9-]+$/;
 const SVG_BAD_RE = /<script|[\s/"']on\w+\s*=|javascript:|<foreignObject|xlink:href\s*=\s*["']?(?!#)|href\s*=\s*["']?(?!#)/i;
 // Samo risarske oznake: <img>, <iframe>, <embed>, <style>, <set>/<animate> (href → javascript:) ipd. niso dovoljene.
 const SVG_TAGS = new Set(["svg", "g", "path", "circle", "ellipse", "line", "polyline", "polygon", "rect", "text", "tspan", "title", "desc", "defs", "marker", "use", "lineargradient", "stop", "clippath", "pattern"]);
@@ -49,9 +52,22 @@ export function validatePaper(p, expected = null) {
   let total = 0;
   let checked = 0;
   const md = [];
+  // Pola z več izpitnimi polami (pola: 1, 2) ali deli (section: "A") šteje naloge v vsaki skupini posebej.
+  const seen = new Map();
+  const keys = new Set();
+  if (p.polas !== undefined && (!Array.isArray(p.polas) || p.polas.some((x) => !Number.isInteger(x?.pola) || x.pola < 1))) err("polas mora biti seznam { pola, minutes, tools }");
   (p.tasks || []).forEach((task, ti) => {
-    const tw = `naloga ${task?.n ?? ti + 1}`;
-    if (task?.n !== ti + 1) err(`${tw}: n mora biti ${ti + 1}`);
+    const group = `${task?.pola ?? ""}|${task?.section ?? ""}`;
+    const tw = `naloga ${task?.pola ? `${task.pola}-` : ""}${task?.section ?? ""}${task?.n ?? ti + 1}`;
+    if (task?.pola !== undefined && (!Number.isInteger(task.pola) || !(p.polas || []).some((x) => x.pola === task.pola))) err(`${tw}: pola ${task.pola} ni v polas`);
+    if (task?.section !== undefined && !/^[A-Z]$/.test(task.section)) err(`${tw}: section je ena velika črka`);
+    // V skupini zaporedno; prva naloga skupine z delom ali polo lahko nadaljuje številčenje izvirnika (B9 za A8).
+    const want = seen.has(group) ? seen.get(group) + 1 : group === "|" ? 1 : null;
+    if (!Number.isInteger(task?.n) || task.n < 1) err(`${tw}: n mora biti pozitivno celo število`);
+    else if (want !== null && task.n !== want) err(`${tw}: n mora biti ${want}`);
+    else if (keys.has(`${group}|${task.n}`)) err(`${tw}: podvojena številka naloge`);
+    seen.set(group, task?.n);
+    keys.add(`${group}|${task?.n}`);
     if (task.intro) md.push([task.intro, `${tw} uvod`]);
     if (task.figure && (typeof task.figure !== "string" || !/^<svg[\s>]/.test(task.figure.trim()) || SVG_BAD.test(task.figure))) err(`${tw}: figure mora biti varen <svg>`);
     if (!Array.isArray(task.parts) || !task.parts.length) return err(`${tw}: ni delov`);
@@ -82,9 +98,11 @@ export function validatePaper(p, expected = null) {
       for (const c of part.choices || []) md.push([c, `${w} izbira`]);
     });
     if (expected?.tasks?.[ti]) {
-      const want = expected.tasks[ti];
+      const e = expected.tasks[ti];
+      const want = Array.isArray(e) ? e : e.points;
       const got = task.parts.map((x) => x.points);
       if (want.join(",") !== got.join(",")) err(`${tw}: točke po delih ${got.join("+")}, zgradba izvirne pole ${want.join("+")}`);
+      if (!Array.isArray(e) && ((e.pola ?? null) !== (task.pola ?? null) || (e.section ?? null) !== (task.section ?? null) || (e.n ?? task.n) !== task.n)) err(`${tw}: pola/del/številka se ne ujema z zgradbo (${e.pola ?? ""}-${e.section ?? ""}${e.n})`);
     }
   });
   if (expected?.tasks && (p.tasks || []).length !== expected.tasks.length) err(`število nalog ${(p.tasks || []).length}, izvirna pola ${expected.tasks.length}`);

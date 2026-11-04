@@ -619,6 +619,7 @@
   "pp.oursScoring": "Punctaj:",
   "pp.oursMistake": "Greșeală frecventă:",
   "pp.oursScore": "{got} / {max} p.",
+  "pp.oursPola": "Lucrarea {n}",
   "pp.more": "Arată mai vechi ({n})",
   "pp.empty": "Pentru această alegere nu există subiecte publicate pe ric.si.",
   "exam.train": "Antrenament pentru examen",

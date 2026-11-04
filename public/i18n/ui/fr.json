@@ -613,6 +613,7 @@
   "pp.oursScoring": "Barème :",
   "pp.oursMistake": "Erreur fréquente :",
   "pp.oursScore": "{got} / {max} pts",
+  "pp.oursPola": "Épreuve {n}",
   "pp.more": "Afficher les plus anciennes ({n})",
   "pp.empty": "Aucun sujet n’est publié sur ric.si pour ce choix.",
   "exam.train": "Entraînement à l'examen",

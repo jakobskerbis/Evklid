@@ -613,6 +613,7 @@
   "pp.oursScoring": "Puntuación:",
   "pp.oursMistake": "Error frecuente:",
   "pp.oursScore": "{got} / {max} pts",
+  "pp.oursPola": "Prueba {n}",
   "pp.more": "Mostrar anteriores ({n})",
   "pp.empty": "No hay exámenes publicados en ric.si para esta selección.",
   "exam.train": "Práctica de examen",

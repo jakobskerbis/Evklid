@@ -619,6 +619,7 @@
   "pp.oursScoring": "Бодовање:",
   "pp.oursMistake": "Честа грешка:",
   "pp.oursScore": "{got} / {max} п.",
+  "pp.oursPola": "{n}. испитна свеска",
   "pp.more": "Прикажи старије ({n})",
   "pp.empty": "За овај избор на ric.si нема објављених испита.",
   "exam.train": "Вежба за испит",

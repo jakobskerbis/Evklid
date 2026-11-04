@@ -613,6 +613,7 @@
   "pp.oursScoring": "Punteggio:",
   "pp.oursMistake": "Errore comune:",
   "pp.oursScore": "{got} / {max} pt",
+  "pp.oursPola": "Prova {n}",
   "pp.more": "Mostra le precedenti ({n})",
   "pp.empty": "Per questa scelta non ci sono prove pubblicate su ric.si.",
   "exam.train": "Allenamento all'esame",

@@ -66,3 +66,29 @@ test("API: katalog označi naše pole, polo vrne, neznano 404", async () => {
     server.close();
   }
 });
+
+test("pola z dvema izpitnima polama in deli: številčenje po skupinah, ključ dela, zgradba", async () => {
+  const { partKey, partLabel } = await import("../public/our-paper-key.js");
+  const two = {
+    ...paper([
+      { pola: 1, section: "A", n: 1, parts: [part()] },
+      { pola: 1, section: "A", n: 2, parts: [part()] },
+      { pola: 1, section: "B", n: 1, parts: [part()] },
+      { pola: 2, n: 1, parts: [part()] },
+    ]),
+    id: "MATURA-MAT-OR-2026-spomladanski",
+    polas: [{ pola: 1, minutes: 90 }, { pola: 2, minutes: 90 }],
+  };
+  const exp = { points: 4, tasks: [{ pola: 1, section: "A", n: 1, points: [1] }, { pola: 1, section: "A", n: 2, points: [1] }, { pola: 1, section: "B", n: 1, points: [1] }, { pola: 2, n: 1, points: [1] }] };
+  assert.deepEqual(validatePaper(two, exp).errors, []);
+  assert.equal(partKey(two.tasks[2], two.tasks[2].parts[0]), "1-B1a");
+  assert.equal(partLabel(two.tasks[2], two.tasks[2].parts[0]), "B1a");
+  assert.equal(partKey({ n: 3 }, { id: "" }), "3");
+  const bad = structuredClone(two);
+  bad.tasks[1].n = 3;
+  bad.tasks[3].pola = 3;
+  const e = validatePaper(bad, exp).errors.join("\n");
+  assert.match(e, /n mora biti 2/);
+  assert.match(e, /pola 3 ni v polas/);
+  assert.match(e, /se ne ujema z zgradbo/);
+});

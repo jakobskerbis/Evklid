@@ -607,6 +607,7 @@
   "pp.oursScoring": "Penskoran:",
   "pp.oursMistake": "Kesalahan umum:",
   "pp.oursScore": "{got} / {max} poin",
+  "pp.oursPola": "Lembar soal {n}",
   "pp.more": "Tampilkan yang lebih lama ({n})",
   "pp.empty": "Belum ada soal yang diterbitkan di ric.si untuk pilihan ini.",
   "exam.train": "Latihan ujian",
