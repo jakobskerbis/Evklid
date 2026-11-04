@@ -756,6 +756,8 @@
   "tk.set.wordsNote": "你開始輸入的單字會顯示在字母上方。",
   "tk.set.buzz": "按鍵震動",
   "tk.set.buzzNote": "觸碰按鍵時手機會短暫震動。",
+  "tk.set.glide": "滑行輸入",
+  "tk.set.glideNote": "用手指滑過單字的字母，就能輸入這個單字。",
   "gc.settings": "圖形設定",
   "gc.clear": "全部清除",
   "gc.grid": "格線",

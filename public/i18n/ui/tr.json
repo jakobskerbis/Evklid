@@ -762,6 +762,8 @@
   "tk.set.wordsNote": "Yazmaya başladığın kelimeler harflerin üstünde görünür.",
   "tk.set.buzz": "Tuş titreşimi",
   "tk.set.buzzNote": "Bir tuşa dokunduğunda telefon kısa bir süre titrer.",
+  "tk.set.glide": "Kaydırarak yazma",
+  "tk.set.glideNote": "Parmağını harflerin üzerinde kaydırarak bir kelime yaz.",
   "gc.settings": "Grafik ayarları",
   "gc.clear": "Tümünü temizle",
   "gc.grid": "Izgara",

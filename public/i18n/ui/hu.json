@@ -762,6 +762,8 @@
   "tk.set.wordsNote": "A betűk fölött megjelennek a szavak, amelyeket elkezdesz írni.",
   "tk.set.buzz": "Billentyűrezgés",
   "tk.set.buzzNote": "A telefon röviden rezeg, amikor megérintesz egy billentyűt.",
+  "tk.set.glide": "Csúsztatásos gépelés",
+  "tk.set.glideNote": "Egy szót úgy írsz le, hogy az ujjadat végighúzod a betűin.",
   "gc.settings": "Grafikon beállításai",
   "gc.clear": "Minden törlése",
   "gc.grid": "Rács",

@@ -14,7 +14,7 @@ import { icon } from "./icons.js";
 import { GROUPS, groupOrder, chemFormat } from "./symbols.js";
 import {
   layoutFor, FX_GROUPS, KEM_ROWS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
-  fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest,
+  fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
 } from "./tipkovnica-data.js";
 
 const touch = () => typeof matchMedia !== "undefined" && matchMedia("(pointer: coarse)").matches;
@@ -137,6 +137,8 @@ export function hideKeyboard({ blur = false } = {}) {
   if (!S.open) return;
   S.open = false;
   closePop();
+  trailEnd(true);
+  S.lastGlide = null;
   if (board) board.hidden = true;
   document.body.classList.remove("tk-open");
   document.documentElement.style.setProperty("--tk-h", "0px");
@@ -232,6 +234,12 @@ function ctxChips() {
   if (url || mail) {
     const paste = chip(t("tk.paste"), { a: "paste" }, "paste");
     return { words: false, html: paste + (url ? URL_CHIPS : EMAIL_CHIPS).map(([l, v]) => chip(l, { a: "lit", v })).join("") };
+  }
+  // po drsenju: drugi kandidati (tudi ko so predlogi besed izklopljeni); tap zamenja drsano besedo
+  const g = S.layer === "abc" && S.lastGlide && glideValid(S.field, S.lastGlide) ? S.lastGlide : null;
+  if (g) {
+    const alts = g.cands.filter((x) => x !== g.cur);
+    return { words: true, glide: true, html: alts.map((x) => chip(glideCase(x, g.shift), { a: "gword", v: x }, "word")).join("") };
   }
   if (prefs.words && S.layer === "abc" && words) {
     const w = currentWord();
@@ -394,13 +402,28 @@ function render() {
   S.layer = layerId(L);
   const body = typeof L === "object" ? customHtml(L) : { abc: abcHtml, num: numHtml, fx: fxHtml, sym: symHtml, kem: kemHtml }[S.layer]?.() || abcHtml();
   const c = ctxChips();
-  const ctx = c.html || (prefs.words && S.layer === "abc" && words) ? `<div class="tk-ctx${c.words ? " words" : ""}">${c.html}</div>` : "";
+  const ctx = c.html || (prefs.words && S.layer === "abc" && words) ? `<div class="tk-ctx${c.words ? " words" : ""}"${c.glide ? ' data-g="1"' : ""}>${c.html}</div>` : "";
   board.innerHTML = `<div class="tk-in">${ctx}${tabsHtml()}<div class="tk-rows" data-layer="${esc(S.layer)}">${body}</div></div>`;
+  for (const cv of [trail?.cv, fading]) {
+    // sled drsenja ostane, dokler ne zbledi (prehod steče znova od polne barve)
+    if (!cv || cv.isConnected) continue;
+    cv.classList.remove("out");
+    board.firstElementChild.appendChild(cv);
+    cv.getBoundingClientRect();
+    if (cv === fading) cv.classList.add("out");
+  }
+  if (S.layer === "abc" && prefs.glide) loadGlide();
 }
 function renderCtx() {
   const box = board?.querySelector(".tk-ctx");
-  if (!box || !(prefs.words && S.layer === "abc")) return;
   const c = ctxChips();
+  const was = box?.dataset.g === "1";
+  if (c.glide || was) {
+    if (box && c.glide && was) box.innerHTML = c.html;
+    else render(); // vrstica se pojavi ali izgine
+    return;
+  }
+  if (!box || !(prefs.words && S.layer === "abc")) return;
   box.innerHTML = c.html;
 }
 
@@ -493,6 +516,69 @@ async function loadWords() {
   if (S.open && S.layer === "abc") render();
 }
 
+// ---------- drsenje po črkah (glide) ----------
+
+let glideList = null; // seznam besed za drsenje v jeziku vmesnika (lenobno naložen)
+let glideP = null;
+let glideLang = "";
+/** Naloži seznam za drsenje: slovenščina velik seznam iz vsebin (tipkovnica-glide-sl.js), angleščina WORDS.en. */
+function loadGlide() {
+  const base = currentLang().split("-")[0];
+  if (glideP && glideLang === base) return glideP;
+  glideLang = base;
+  glideList = null;
+  glideP = (async () => {
+    try {
+      if (base === "sl") glideList = (await import("./tipkovnica-glide-sl.js")).GLIDE_SL;
+      else glideList = (await import("./tipkovnica-besede.js")).WORDS[base] || null;
+    } catch {
+      glideList = null;
+    }
+    return glideList;
+  })();
+  return glideP;
+}
+/** Ali se tu sme drsati: ABC, vklopljeno, ne v e-pošti in povezavah, ne v poljih brez kazalca. */
+function glideOn() {
+  const f = S.field;
+  if (!prefs.glide || S.layer !== "abc" || !f || f.isContentEditable || sel(f) === null || S.kind !== "text") return false;
+  const lay = layoutFor(currentLang());
+  if (lay.globe || lay.id === "ime") return false;
+  const auto = String(f.getAttribute("autocomplete") || "") + " " + String(orig(f) || "") + " " + String(f.type || "");
+  return !isUrlField(f) && !/\b(email|url)\b/.test(auto);
+}
+const glideCase = (w, shift) => (shift === 2 ? w.toLocaleUpperCase(currentLang()) : shift === 1 ? w.charAt(0).toLocaleUpperCase(currentLang()) + w.slice(1) : w);
+/** Drsana beseda je še tik pred kazalcem (nič drugega se ni spremenilo). */
+function glideValid(f, g) {
+  const r = f && f === S.field && sel(f);
+  return !!r && r[0] === r[1] && r[0] === g.end && String(f.value).slice(g.start, g.end) === g.text;
+}
+function finishGlide(pts, centers) {
+  const f = target();
+  if (!f || pts.length < 2) return;
+  loadGlide().then((list) => {
+    if (!list || !f.isConnected || S.field !== f || !glideOn()) return;
+    const cands = glideDecode(pts, centers, list, { n: 3 });
+    if (!cands.length) return;
+    const shift = S.shift;
+    const w = glideCase(cands[0], shift);
+    const r = sel(f);
+    if (!r) return;
+    const b = f.value.slice(0, r[0]);
+    const sp = /[\p{L}\p{N}]$/u.test(b) ? " " : ""; // kot Gboard: druga drsana beseda dobi presledek pred seboj
+    if (f.maxLength >= 0 && f.value.length - (r[1] - r[0]) + sp.length + w.length > f.maxLength) return;
+    S.corr = null;
+    S.lastSpace = 0;
+    insertText(f, sp + w, true);
+    const e = sel(f);
+    if (!e) return;
+    S.lastGlide = { start: e[0] - w.length, end: e[0], text: w, cands, cur: cands[0], shift };
+    if (S.shift === 1) S.shift = 0;
+    autoShift();
+    render();
+  });
+}
+
 function nextField(f) {
   const scope = f.form || f.closest(".view, .overlay, [role='dialog'], .card") || document.body;
   const list = [...scope.querySelectorAll("input, textarea, [contenteditable='true']")].filter((x) => fieldKind(x, orig(x)) && visible(x));
@@ -580,7 +666,21 @@ function act(a) {
   const shiftWas = S.shift;
   const corr = S.corr;
   S.corr = null;
-  if (a.a === "ins") insertText(f, prettyIns(a.v, !!S.cfg.parsed));
+  const lg = S.lastGlide && glideValid(f, S.lastGlide) ? S.lastGlide : null;
+  if (a.a !== "gword") S.lastGlide = null;
+  if (a.a === "gword") {
+    if (lg) {
+      const w = glideCase(a.v, lg.shift);
+      f.setRangeText(w, lg.start, lg.end, "end");
+      fire(f, "insertReplacementText", w);
+      S.lastGlide = { ...lg, end: lg.start + w.length, text: w, cur: a.v };
+    }
+  } else if (a.a === "bs" && lg) {
+    // ⌫ takoj po drsenju zbriše vso drsano besedo (kot Gboard)
+    f.setRangeText("", lg.start, lg.end, "end");
+    f.setSelectionRange(lg.start, lg.start);
+    fire(f, "deleteContentBackward");
+  } else if (a.a === "ins") insertText(f, prettyIns(a.v, !!S.cfg.parsed));
   else if (a.a === "lit") insertText(f, a.v, true);
   else if (a.a === "char") {
     const u = a.v.toLocaleUpperCase(currentLang());
@@ -704,6 +804,7 @@ function showPop(btn, base) {
 }
 function popInsert(v) {
   const f = target();
+  S.lastGlide = null;
   if (f) insertText(f, v);
   closePop();
   if (S.shift === 1) {
@@ -719,6 +820,80 @@ function clearTimers() {
   clearInterval(down.iv);
 }
 
+// Sled prsta med drsenjem (kot Gboard: barvna črta, ki bledi); platno znotraj plošče, brez dogodkov dotika.
+let trail = null;
+const reduceMotion = () => typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+function trailColor() {
+  const root = document.documentElement;
+  const cs = getComputedStyle(root);
+  const era = root.hasAttribute("data-era") ? cs.getPropertyValue("--menu-accent").trim() : "";
+  return era || cs.getPropertyValue("--accent").trim() || "#2563eb";
+}
+function trailStart() {
+  trailEnd(true);
+  const host = board.firstElementChild;
+  const br = host.getBoundingClientRect();
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const cv = document.createElement("canvas");
+  cv.className = "tk-trail";
+  cv.setAttribute("aria-hidden", "true");
+  cv.width = Math.max(1, Math.round(br.width * dpr));
+  cv.height = Math.max(1, Math.round(br.height * dpr));
+  host.appendChild(cv);
+  trail = { cv, g: cv.getContext("2d"), pts: [], dpr, br, color: trailColor(), raf: 0, live: true, reduced: reduceMotion() };
+  const loop = () => {
+    if (!trail || trail.cv !== cv || !trail.live) return;
+    trailDraw();
+    trail.raf = requestAnimationFrame(loop);
+  };
+  trail.raf = requestAnimationFrame(loop);
+}
+function trailAdd(x, y) {
+  if (!trail) return;
+  trail.pts.push({ x: x - trail.br.left, y: y - trail.br.top, t: performance.now() });
+}
+function trailDraw(tr = trail) {
+  const { g, cv, pts, dpr, color, reduced } = tr;
+  const now = performance.now();
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, cv.width, cv.height);
+  g.lineCap = "round";
+  g.lineJoin = "round";
+  g.strokeStyle = color;
+  for (let i = 1; i < pts.length; i++) {
+    const a = reduced ? 1 : Math.max(0, 1 - (now - pts[i].t) / 600); // starejši del sledi bledi
+    if (a <= 0) continue;
+    g.globalAlpha = 0.75 * a;
+    g.lineWidth = reduced ? 8 : 3 + 7 * a;
+    g.beginPath();
+    g.moveTo(pts[i - 1].x, pts[i - 1].y);
+    g.lineTo(pts[i].x, pts[i].y);
+    g.stroke();
+  }
+  g.globalAlpha = 1;
+}
+/** Konec drsenja: sled ~200 ms zbledi (pri zmanjšanem gibanju takoj izgine). */
+let fading = null; // platno, ki še bledi (render() ga ohrani)
+function trailEnd(now = false) {
+  fading?.remove();
+  fading = null;
+  const tr = trail;
+  if (!tr) return;
+  trail = null;
+  tr.live = false;
+  cancelAnimationFrame(tr.raf);
+  if (now || tr.reduced) return tr.cv.remove();
+  const cv = tr.cv;
+  trailDraw(tr);
+  fading = cv;
+  cv.getBoundingClientRect(); // začetno stanje, da prehod steče
+  cv.classList.add("out");
+  setTimeout(() => {
+    cv.remove();
+    if (fading === cv) fading = null;
+  }, 220);
+}
+
 function wireBoard() {
   board.addEventListener("pointerdown", (e) => {
     e.preventDefault(); // polje obdrži fokus
@@ -729,7 +904,7 @@ function wireBoard() {
     closePop();
     clearTimers();
     const a = keys[Number(b.dataset.k)];
-    down = { b, a, x: e.clientX, x0: e.clientX, moved: false, pop: false };
+    down = { b, a, x: e.clientX, x0: e.clientX, moved: false, pop: false, pts: [{ x: e.clientX, y: e.clientY }], len: 0, glide: false, kw: b.getBoundingClientRect().width };
     b.classList.add("down");
     if (b.classList.contains("tk-k")) buzz();
     if (a?.a === "char" && e.pointerType !== "mouse") preview(b);
@@ -758,6 +933,33 @@ function wireBoard() {
   board.addEventListener("mousedown", (e) => e.preventDefault());
   board.addEventListener("pointermove", (e) => {
     if (!down) return;
+    if (down.a?.a === "char" && !down.pop && /^\p{L}$/u.test(down.a.v) && glideOn()) {
+      // poteg čez črke = drsenje: pot ≥ 2 širini tipke ali ≥ 0,6 širine stran od začetne tipke in nad drugo črko
+      const last = down.pts[down.pts.length - 1];
+      if (e.clientX === last.x && e.clientY === last.y) return;
+      down.len += Math.hypot(e.clientX - last.x, e.clientY - last.y);
+      down.pts.push({ x: e.clientX, y: e.clientY });
+      if (!down.glide) {
+        const p0 = down.pts[0];
+        const over = document.elementFromPoint(e.clientX, e.clientY)?.closest("button[data-k]");
+        const oa = over && over !== down.b ? keys[Number(over.dataset.k)] : null;
+        const away = Math.hypot(e.clientX - p0.x, e.clientY - p0.y) > 0.6 * down.kw && oa?.a === "char" && /^\p{L}$/u.test(oa.v);
+        if (!(down.len >= 2 * down.kw || away)) return;
+        down.glide = true;
+        down.moved = true;
+        clearTimers();
+        closePreview();
+        closePop();
+        down.b.classList.remove("down");
+        try {
+          down.b.setPointerCapture(e.pointerId);
+        } catch {}
+        loadGlide();
+        trailStart();
+        for (const p of down.pts) trailAdd(p.x, p.y);
+      } else trailAdd(e.clientX, e.clientY);
+      return;
+    }
     if (down.a?.a === "sp") {
       const dx = e.clientX - down.x;
       if (Math.abs(dx) >= 12) {
@@ -799,6 +1001,22 @@ function wireBoard() {
     down = null;
     d.b.classList.remove("down");
     closePreview(70);
+    if (d.glide) {
+      if (e.type === "pointerup") {
+        trailAdd(e.clientX, e.clientY);
+        d.pts.push({ x: e.clientX, y: e.clientY });
+        const centers = {};
+        for (const k of board.querySelectorAll(".tk-rows button[data-k]")) {
+          const a = keys[Number(k.dataset.k)];
+          if (a?.a !== "char" || !/^\p{L}$/u.test(a.v)) continue;
+          const r = k.getBoundingClientRect();
+          centers[a.v] = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        }
+        finishGlide(d.pts, centers);
+      }
+      trailEnd();
+      return;
+    }
     if (d.swipe) {
       const f = S.field;
       const r = f && sel(f);
@@ -934,6 +1152,7 @@ export function initKeyboard() {
     if (k === "keyboard" && MODES.includes(value)) prefs.mode = value;
     else if (k === "keyboard_words") prefs.words = value === "on";
     else if (k === "keyboard_vibration") prefs.buzz = value === "on";
+    else if (k === "keyboard_glide") prefs.glide = value === "on";
     else return;
     syncSettings();
     if (S.open && !S.explicit && !autoEligible(S.field)) hideKeyboard();
@@ -960,6 +1179,8 @@ function syncSettings() {
   if (w) w.checked = prefs.words;
   const b = settingsBox.querySelector("#tk-buzz");
   if (b) b.checked = prefs.buzz;
+  const gl = settingsBox.querySelector("#tk-glide");
+  if (gl) gl.checked = prefs.glide;
 }
 export function mountKeyboardSettings(box) {
   if (!box) return;
@@ -974,6 +1195,7 @@ export function mountKeyboardSettings(box) {
     </div>
     <div class="tk-set-checks">
       <label class="check-row"><input type="checkbox" id="tk-words"${prefs.words ? " checked" : ""}><span><b>${esc(t("tk.set.words"))}</b><small class="muted">${esc(t("tk.set.wordsNote"))}</small></span></label>
+      <label class="check-row"><input type="checkbox" id="tk-glide"${prefs.glide ? " checked" : ""}><span><b>${esc(t("tk.set.glide"))}</b><small class="muted">${esc(t("tk.set.glideNote"))}</small></span></label>
       <label class="check-row"><input type="checkbox" id="tk-buzz"${prefs.buzz ? " checked" : ""}><span><b>${esc(t("tk.set.buzz"))}</b><small class="muted">${esc(t("tk.set.buzzNote"))}</small></span></label>
     </div>`;
   box.querySelector("#tk-mode").addEventListener("change", (e) => {
@@ -984,6 +1206,12 @@ export function mountKeyboardSettings(box) {
     prefs.words = e.target.checked;
     savePrefs();
     if (prefs.words) loadWords();
+  });
+  box.querySelector("#tk-glide").addEventListener("change", (e) => {
+    prefs.glide = e.target.checked;
+    savePrefs();
+    if (prefs.glide) loadGlide();
+    else S.lastGlide = null;
   });
   box.querySelector("#tk-buzz").addEventListener("change", (e) => {
     prefs.buzz = e.target.checked;
