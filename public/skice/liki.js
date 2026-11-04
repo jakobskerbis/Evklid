@@ -8,7 +8,7 @@ import { stirikotnik } from "./geometrija.js";
 // Pri trapezu je c ≤ a, da nožišče višine iz D leži na osnovnici a.
 export const LIKI = {
   kvadrat: { mere: { a: [2, 6, 4] }, cipi: (q, p) => [["o = 4a", q.o, "glavna"], ["S = a^2", q.S, "ploskev"], ["d = a\\sqrt{2}", q.d, "izbor"]] },
-  pravokotnik: { mere: { a: [2, 10, 6], b: [1, 6, 3.5] }, cipi: (q) => [["o = 2a + 2b", q.o, "glavna"], ["S = a b", q.S, "ploskev"], ["d", q.d, "izbor"]] },
+  pravokotnik: { mere: { a: [2, 10, 6], b: [1, 6, 3.5] }, cipi: (q) => [["o = 2a + 2b", q.o, "glavna"], ["S = a b", q.S, "ploskev"], ["d = \\sqrt{a^2 + b^2}", q.d, "izbor"]] },
   paralelogram: { mere: { a: [3, 6, 5], b: [2, 4, 3.5], alfa: [30, 90, 60] }, cipi: (q) => [["o = 2a + 2b", q.o, "glavna"], ["v_a", q.va, "izbor"], ["S = a \\cdot v_a", q.S, "ploskev"]] },
   romb: { mere: { a: [2, 5, 4], alfa: [30, 90, 60] }, cipi: (q) => [["o = 4a", q.o, "glavna"], ["v", q.v, "izbor"], ["e,\\ f", [q.e, q.f], "glavna"], ["S = a \\cdot v = \\frac{e f}{2}", q.S, "ploskev"]] },
   trapez: { mere: { a: [4, 10, 8], c: [1, 4, 3], v: [1, 6, 3.5] }, cipi: (q) => [["b = d", q.b, "glavna"], ["o = a + b + c + d", q.o, "glavna"], ["s = \\frac{a + c}{2}", q.s, "druga"], ["S = \\frac{(a + c) \\cdot v}{2}", q.S, "ploskev"]] },
@@ -56,6 +56,8 @@ export default function narisi(host, lik = "kvadrat") {
     if (lik === "paralelogram" || lik === "romb") {
       diag(A, C, "e", 0.62);
       diag(B, D, "f", 0.3);
+      // Nožišče višine iz D je lahko za B (b cos α > a): premica AB se podaljša s črtkano črto.
+      if (D[0] > B[0]) crta(g, ...B, D[0], A[1], "glavna", { class: "sk-s-glavna sk-thin sk-dash" });
       visina(D, [D[0], A[1]], "v");
       if (lik === "paralelogram") s("tspan", { dy: 4, style: "font-size: 10px" }, g.lastChild, "a");
       const lok = lokKota(g, A, B, D, 16, "ploskev");

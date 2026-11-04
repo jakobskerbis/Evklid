@@ -182,5 +182,5 @@ export function praviKot(g, V, P, Q, k = 9, barva = "glavna") {
   s("path", { d: `M${p1} L${p2} L${p3}`, class: `sk-s-${barva} sk-thin` }, g);
 }
 
-// Seznam vrednosti za čip, npr. »≈ 40,6°; 72,3°; 67,1°«: »≈« enkrat spredaj, kadar je katera zaokrožena.
-export const seznam = (vs, d = 2, enota = "") => `${vs.some((v) => Math.abs(v - Number(v.toFixed(d))) > 1e-9) ? "≈ " : ""}${vs.map((v) => st(v, d) + enota).join("; ")}`;
+// Seznam vrednosti za čip, npr. »7,5; ≈ 6,4; 5«: »≈« pred vsako zaokroženo vrednostjo.
+export const seznam = (vs, d = 2, enota = "") => vs.map((v) => vr(v, d) + enota).join("; ");

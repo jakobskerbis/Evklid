@@ -6,7 +6,7 @@ import { s } from "../sim/kit.js";
 import { trikotnik } from "./geometrija.js";
 
 const W = 300, H = 240, M = 28, X0 = 10, Y0 = 228; // 28 px na enoto, izhodišče spodaj levo
-export const MEJE = { x: [0.5, 9.5], y: [0.5, 7.5] };
+export const MEJE = { x: [0.5, 9.5], y: [0.5, 7] };
 const P = (v) => [X0 + v[0] * M, Y0 - v[1] * M];
 const omeji = (v, [lo, hi]) => Math.min(hi, Math.max(lo, Math.round(v * 2) / 2));
 
@@ -28,13 +28,15 @@ export default function narisi(host, { krozici = false } = {}) {
       const O = P(q.O), I = P(q.I);
       s("circle", { cx: O[0], cy: O[1], r: q.R * M, class: "sk-s-druga" }, zg);
       crta(zg, ...O, ...A, "druga", { class: "sk-s-druga sk-thin sk-dash" });
+      napis(g, (O[0] + A[0]) / 2 - 4, (O[1] + A[1]) / 2 - 5, "R", "druga", { "text-anchor": "end", style: "font-size: 12px" });
       s("circle", { cx: O[0], cy: O[1], r: 4, class: "sk-fill sk-fill-druga" }, zg);
-      napis(g, O[0] + 7, O[1] - 7, "O", "druga");
+      if (O[0] > 8 && O[0] < W - 16 && O[1] > 16 && O[1] < H - 4) napis(g, O[0] + 7, O[1] - 7, "O", "druga"); // O je lahko zunaj okvirja
       s("circle", { cx: I[0], cy: I[1], r: q.r * M, class: "sk-s-izbor" }, zg);
       // r do dotikališča na AB (nožišče pravokotnice iz I).
       const ab = [T.B[0] - T.A[0], T.B[1] - T.A[1]], t = ((q.I[0] - T.A[0]) * ab[0] + (q.I[1] - T.A[1]) * ab[1]) / (q.c * q.c);
       const D = P([T.A[0] + t * ab[0], T.A[1] + t * ab[1]]);
       crta(zg, ...I, ...D, "izbor", { class: "sk-s-izbor sk-thin" });
+      napis(g, (I[0] + D[0]) / 2 + 5, (I[1] + D[1]) / 2 + 4, "r", "izbor", { style: "font-size: 12px" });
       s("circle", { cx: I[0], cy: I[1], r: 4, class: "sk-fill sk-fill-izbor" }, zg);
       napis(g, I[0] + 6, I[1] - 6, "I", "izbor", { style: "font-size: 12px" });
     }

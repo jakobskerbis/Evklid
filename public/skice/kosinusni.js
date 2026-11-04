@@ -61,7 +61,7 @@ export default function narisi(host) {
       y: P(T[ime])[1],
       label: ime === "B" ? "Oglišče B: premikaj ga po osnovnici" : "Oglišče C: premikaj ga po mreži",
       onMove: (x, y) => {
-        const v = ime === "B" ? [omeji((x - X0) / M, 2, 10), 1] : [omeji((x - X0) / M, 0.5, 10), omeji((Y0 - y) / M, 1.5, 7.5)];
+        const v = ime === "B" ? [omeji((x - X0) / M, 2, 9.5), 1] : [omeji((x - X0) / M, 0.5, 9.5), omeji((Y0 - y) / M, 1.5, 7)];
         const drugo = ime === "B" ? T.C : T.B;
         if ((v[0] === A[0] && v[1] === A[1]) || (v[0] === drugo[0] && v[1] === drugo[1])) return;
         T[ime] = v;

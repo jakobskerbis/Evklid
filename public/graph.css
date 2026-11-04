@@ -614,10 +614,11 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 /* Temen okvir v obeh temah; barve količin so enake v skici, čipu in drsniku. */
 .fm-item.has-skica { grid-template-columns: minmax(0, 1fr); }
 .fm-skica { min-height: 120px; }
-.fm-skica-row > td { padding: 4px 0 12px; white-space: normal; }
+.md-table .fm-skica-row > td { padding: 4px 0 12px; white-space: normal; background: none; }
 /* Široka tabela se na telefonu pomika vstran: skica je široka kot vidni del tabele in ostane na mestu. */
 .md-table-wrap:has(.fm-skica-row) { container-type: inline-size; }
-.fm-skica-row .fm-skica { width: 100cqw; position: sticky; left: 0; }
+/* Rob tabele (2 × 1 px) ne sme povzročiti pomika; na računalniku skica tabele ne razširi. */
+.fm-skica-row .fm-skica { width: min(calc(100cqw - 2px), 460px); position: sticky; left: 0; }
 .sk { --sk-bg: #10131f; --sk-line: rgb(255 255 255 / 0.16); --sk-glavna: #f4f5fb; --sk-ploskev: #8f8cff; --sk-izbor: #f5c542; --sk-druga: #4fd18b; --sk-napaka: #ff6b6b; --sk-pt: #4f8cff;
   display: grid; gap: 10px; margin: 6px 0 4px; }
 .sk-frame { background: var(--sk-bg); border: 1px solid var(--sk-line); border-radius: 14px; padding: 6px; }

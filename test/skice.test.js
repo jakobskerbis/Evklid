@@ -299,6 +299,10 @@ test("pravokotni trikotnik: Pitagorov, višinski in Evklidov izrek za vsak polo�
     const q = pravokotni(a1);
     assert.equal(q.a1, omejiA1(a1));
     assert.ok(Math.abs(q.a1 + q.b1 - C_HIP) < 1e-12);
+    // Narisana odseka: a₁ = NB, b₁ = AN.
+    assert.ok(Math.abs(q.B[0] - q.N[0] - q.a1) < 1e-9 && Math.abs(q.N[0] - q.A[0] - q.b1) < 1e-9);
+    // Čipi z »=«: a², b², v_c² so natančni na dve decimalki.
+    for (const v of [q.a ** 2, q.b ** 2, q.vc ** 2]) assert.ok(Math.abs(v - Number(v.toFixed(2))) < 1e-9);
     assert.ok(Math.abs(q.a ** 2 + q.b ** 2 - C_HIP ** 2) < 1e-9);
     assert.ok(Math.abs(q.vc ** 2 - q.a1 * q.b1) < 1e-9);
     assert.ok(Math.abs(q.a ** 2 - C_HIP * q.a1) < 1e-9 && Math.abs(q.b ** 2 - C_HIP * q.b1) < 1e-9);
@@ -344,6 +348,8 @@ test("pravilni n-kotnik, enakostranični trikotnik in krožni izsek", async () =
     assert.equal(q.vsota, (n - 2) * 180);
     assert.ok(Math.abs(q.S - (n * q.a * q.r) / 2) < 1e-12);
     assert.ok(Math.abs((q.a / 2) ** 2 + q.r ** 2 - 1) < 1e-12);
+    // Stranica je razdalja sosednjih oglišč na enotski krožnici.
+    assert.ok(Math.abs(q.a - Math.hypot(Math.cos((2 * Math.PI) / n) - 1, Math.sin((2 * Math.PI) / n))) < 1e-12);
   }
   assert.ok(Math.abs(nKotnik(6).a - 1) < 1e-12 && Math.abs(nKotnik(4).S - 2) < 1e-12);
   for (let a = 3; a <= 7; a += 0.5) {
