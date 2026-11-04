@@ -49,7 +49,7 @@ export const PROFILE_SETTINGS = {
 // ls: ključ v localStorage in preslikava vrednosti; brez ls ima nastavitev svojo kodo v public/chat-settings.js.
 export const DEVICE_SETTINGS = {
   // Zgodovinski slogi (public/theme.js → ERAS) so našteti tu, ker strežnik ne bere theme.js; test/teme.test.js preveri oboje.
-  style: { values: ["cist", "igriv", "temen", "antik", "renesansa", "bagdad", "indija"], desc: "visual style: cist = clean (default), igriv = playful/rounded, temen = always dark; history styles (light or dark, subtle period drawings in the background, serif headings, facts card about that era's mathematicians): antik = ancient Greece (marble, terracotta), renesansa = Renaissance (parchment, crimson), bagdad = House of Wisdom / Islamic golden age (teal and gold), indija = Indian mathematics (saffron and indigo)" },
+  style: { values: ["cist", "igriv", "temen", "antik", "renesansa", "bagdad", "indija", "egipt"], desc: "visual style: cist = clean (default), igriv = playful/rounded, temen = always dark; history styles (light or dark, subtle period drawings in the background, serif headings, facts card about that era's mathematicians): antik = ancient Greece (marble, terracotta), renesansa = Renaissance (parchment, crimson), bagdad = House of Wisdom / Islamic golden age (teal and gold), indija = Indian mathematics (saffron and indigo), egipt = ancient Egyptian mathematics (sand and lapis lazuli)" },
   theme: { values: ["light", "dark", "system"], desc: "light / dark mode, system = follow the device (ignored in style temen)" },
   accent: { desc: "accent colour: '#rrggbb', 'random' or 'default' (contrast is fixed automatically)" },
   colors: { values: ["random", "default"], desc: "whole colour palette of the current light/dark mode: random or back to default" },
@@ -65,6 +65,7 @@ export const DEVICE_SETTINGS = {
   keyboard: { values: ["always", "math", "never"], desc: "Evklid's own on-screen keyboard on touch devices instead of the phone's: always (default), math = only maths fields (calculator, task answers), never = phone keyboard everywhere; login e-mail and password always use the phone keyboard" },
   keyboard_words: { values: ["on", "off"], desc: "word suggestions above the letters of Evklid's keyboard (off by default)" },
   keyboard_vibration: { values: ["on", "off"], desc: "short vibration on key press of Evklid's keyboard (on by default)" },
+  keyboard_glide: { values: ["on", "off"], desc: "glide typing on Evklid's keyboard: swipe a finger across the letters to type a word (on by default)" },
   game_sound: { values: ["on", "off"], ls: ["evklid.gameSound"], desc: "sound in games" },
   game_speed: { values: ["slow", "mid", "fast"], ls: ["evklid.gamePace"], desc: "game speed" },
   windows: { values: ["on", "off"], ls: ["evklid.windows", { on: "1", off: "0" }], desc: "movable windows: drag top tabs onto the page to open them as windows, tutor chat bubble outside the chat (on by default)" },

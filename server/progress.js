@@ -2,6 +2,7 @@
 // preizkus znanja, razmaknjeno ponavljanje, XP in lestvica.
 import crypto from "node:crypto";
 import { getPath, getTopic, localTopic, localUnitTitle } from "./curriculum.js";
+import { sameSubject } from "./subjects.js";
 import { uiLanguage } from "../public/i18n/languages.js";
 import { generateTask, hasGenerator, publicTask, hintSteps } from "./practice/index.js";
 import { checkAnswer } from "./practice/check.js";
@@ -179,17 +180,18 @@ export class Progress {
     }
     const next =
       units.flatMap((u) => (u.ahead ? [] : u.topics)).find((t) => t.status !== "mastered") || null;
-    return { key: path.key, label: path.label, units, next, dueCount: this.dueTopics(studentId).length };
+    return { key: path.key, label: path.label, units, next, dueCount: this.dueTopics(studentId, path.subject).length };
   }
 
-  dueTopics(studentId) {
+  // subject: le teme izbranega predmeta (brez njega vse).
+  dueTopics(studentId, subject = null) {
     return this.db
       .prepare(
         "SELECT topic_id FROM topic_state WHERE student_id = ? AND status = 'mastered' AND review_due IS NOT NULL AND review_due <= ? ORDER BY review_due",
       )
       .all(studentId, nowSql())
       .map((r) => r.topic_id)
-      .filter((id) => hasGenerator(id));
+      .filter((id) => hasGenerator(id) && sameSubject(getTopic(id)?.subject, subject));
   }
 
   // ---------- naloge ----------
@@ -307,21 +309,21 @@ export class Progress {
     return next;
   }
 
-  reviewBacklog(studentId) {
-    return this.dueTopics(studentId).length * RULES.reviewPerTopic;
+  reviewBacklog(studentId, subject = null) {
+    return this.dueTopics(studentId, subject).length * RULES.reviewPerTopic;
   }
 
-  // Ponavljanje: naloge iz več tem, ki so na vrsti, prepletene med sabo.
-  startReview(studentId, { quick = false } = {}) {
-    const open = this.openSession(studentId, "review");
+  // Ponavljanje: naloge iz več tem izbranega predmeta, ki so na vrsti, prepletene med sabo.
+  startReview(studentId, { quick = false, subject = null } = {}) {
+    const open = this.openSession(studentId, "review", (x) => (x.params.subject || null) === subject);
     if (open) return this.sessionNext(open.id);
-    const due = this.dueTopics(studentId);
+    const due = this.dueTopics(studentId, subject);
     if (!due.length) return null;
     const max = quick ? RULES.quickReviewTasks : RULES.reviewSessionMax;
     const topics = due.slice(0, Math.ceil(max / RULES.reviewPerTopic));
     const plan = [];
     for (let r = 0; r < RULES.reviewPerTopic; r++) for (const t of topics) plan.push({ topic: t, mode: "review", level: 2 });
-    return this.sessionNext(this.createSession(studentId, "review", plan.slice(0, max), { quick }));
+    return this.sessionNext(this.createSession(studentId, "review", plan.slice(0, max), { quick, subject }));
   }
 
   // Preizkus znanja za sklop: ob uspehu so vse teme sklopa obvladane.
@@ -411,7 +413,7 @@ export class Progress {
     const fresh = [cur?.practice ? cur.id : null, ...here.filter((t) => t.status === "learning").map((t) => t.id)]
       .filter((v, i, a) => v && a.indexOf(v) === i)
       .slice(0, 2);
-    const due = this.dueTopics(studentId);
+    const due = this.dueTopics(studentId, getPath(pathKey)?.subject);
     // Če ni ničesar na vrsti, priklic že osvojenih tem (brez vpliva na urnik ponavljanja).
     const old = due.length ? due : here.filter((t) => t.status === "mastered").map((t) => t.id);
     const oldMode = due.length ? "review" : "test";
@@ -660,6 +662,7 @@ export class Progress {
     const daysLeft = Math.round((Date.parse(r.test_date) - Date.parse(nowParts().date)) / 86400000); // slovenski dan, kot v urniku
     return {
       path: r.path_key,
+      subject: path?.subject || null,
       units,
       unitTitles: units.map((i) => path?.units[i]?.title).filter(Boolean),
       date: r.test_date,
@@ -703,7 +706,7 @@ export class Progress {
 
   // Pregled za spodnjo vrstico.
   modes(studentId, pathKey) {
-    const dueCount = this.dueTopics(studentId).length;
+    const dueCount = this.dueTopics(studentId, getPath(pathKey)?.subject).length;
     const backlog = dueCount * RULES.reviewPerTopic;
     const daily = this.db
       .prepare("SELECT finished FROM sessions WHERE student_id = ? AND kind = 'daily' AND date(created_at) = date('now') ORDER BY created_at DESC LIMIT 1")

@@ -27,9 +27,9 @@ const padPrefs = () => {
     return {};
   }
 };
-// Evklidova tipkovnica (public/tipkovnica-data.js): { mode, words, buzz }.
+// Evklidova tipkovnica (public/tipkovnica-data.js): { mode, words, buzz, glide }.
 const kbPrefs = () => parsePrefs(get(PREF_KEY));
-const KB_KEYS = { keyboard: "mode", keyboard_words: "words", keyboard_vibration: "buzz" };
+const KB_KEYS = { keyboard: "mode", keyboard_words: "words", keyboard_vibration: "buzz", keyboard_glide: "glide" };
 // Imena barv iz nastavitev → deli palete v theme.js.
 const PART = { color_background: "bg", color_windows: "surface", color_menus: "menu", color_text: "text" };
 
@@ -60,6 +60,7 @@ export function deviceSnapshot() {
   if (kb.mode !== "always") out.keyboard = kb.mode;
   if (kb.words) out.keyboard_words = "on";
   if (!kb.buzz) out.keyboard_vibration = "off";
+  if (!kb.glide) out.keyboard_glide = "off";
   return out;
 }
 

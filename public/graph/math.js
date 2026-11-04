@@ -98,7 +98,8 @@ const UNARY = {
   round: Math.round,
   sign: Math.sign,
   sgn: Math.sign,
-  frac: (x) => x - Math.floor(x),
+  Int: Math.trunc, // celi del proti 0 (Casio Int)
+  frac: (x) => x - Math.trunc(x), // Casio Frac: frac(-2,7) = -0,7
 };
 // funkcije več števil
 const MULTI = {
@@ -111,6 +112,12 @@ const MULTI = {
   nPr: (n, k) => (k < 0 || k > n ? 0 : Math.round(fact(n) / fact(n - k))),
   root: (x, n) => nthroot(x, n),
   logb: (x, b) => Math.log(x) / Math.log(b),
+  // celo število na [a, b] (Casio RanInt#)
+  randint: (a, b) => {
+    const lo = Math.ceil(Math.min(a, b));
+    const hi = Math.floor(Math.max(a, b));
+    return hi < lo ? NaN : lo + Math.floor(Math.random() * (hi - lo + 1));
+  },
 };
 // funkcije seznamov (vrnejo eno število)
 const LISTF = {
@@ -126,7 +133,7 @@ const LISTF = {
 const ALIASES = { asin: "arcsin", acos: "arccos", atan: "arctan", acot: "arccot", arctg: "arctan", tg: "tan", ctg: "cot", sh: "sinh", ch: "cosh", th: "tanh", lg: "log", sqr: "sqrt", asinh: "arsinh", acosh: "arcosh", atanh: "artanh", avg: "mean", ncr: "nCr", npr: "nPr", binom: "nCr" };
 const INVERSE = { sin: "arcsin", cos: "arccos", tan: "arctan", cot: "arccot", sinh: "arsinh", cosh: "arcosh", tanh: "artanh" };
 
-export const BUILTINS = new Set([...Object.keys(TRIG), ...Object.keys(UNARY), ...Object.keys(MULTI), ...Object.keys(LISTF), "sort", "sum", "prod", ...Object.keys(ALIASES)]);
+export const BUILTINS = new Set([...Object.keys(TRIG), ...Object.keys(UNARY), ...Object.keys(MULTI), ...Object.keys(LISTF), "sort", "sum", "prod", "rand", "Pol", "Rec", ...Object.keys(ALIASES)]);
 const CONSTS = { pi: Math.PI, "π": Math.PI, tau: 2 * Math.PI, "τ": 2 * Math.PI, e: Math.E, inf: Infinity };
 const GREEK = { theta: "θ", alpha: "α", beta: "β", gamma: "γ", delta: "δ", lambda: "λ", mu: "μ", phi: "φ", omega: "ω", sigma: "σ", rho: "ρ" };
 // imena, ki jih razbijemo iz niza črk (najdaljša najprej): sinx → sin x, pix → pi x
@@ -503,6 +510,16 @@ export function parse(src, { funcs = new Set() } = {}) {
     if (tok.t === "id") {
       next();
       const name = tok.v;
+      if ((name === "sum" || name === "prod") && is("(")) {
+        // sum(izraz; n; a; b) – zapis kot na kalkulatorju
+        const args = parenArgs();
+        if (args.length !== 4 || args[1].k !== "var") throw new MathError("sum");
+        return { k: "sum", f: name, v: args[1].name, lo: args[2], hi: args[3], a: args[0] };
+      }
+      if (name === "rand") {
+        if (is("(")) parenArgs();
+        return { k: "call", f: "rand", args: [] };
+      }
       if (name === "sum" || name === "prod") {
         // ∑_(n=1)^(10) izraz
         if (!is("op", "_")) throw new MathError("sum");
@@ -727,6 +744,16 @@ export function compile(node, ctx = {}) {
     case "call": {
       const args = node.args.map(c);
       const f = node.f;
+      if (f === "rand") return () => Math.random();
+      if (f === "Pol" || f === "Rec") {
+        // Pol(x; y) → [r, θ], Rec(r; θ) → [x, y]; kot v enoti kota (Casio Pol/Rec)
+        if (args.length !== 2) throw new MathError("arity", { f, n: 2 });
+        const k = deg ? Math.PI / 180 : 1;
+        return (s) => {
+          const [p, q] = args.map((a) => a(s));
+          return f === "Pol" ? [Math.hypot(p, q), Math.atan2(q, p) / k] : [p * Math.cos(q * k), p * Math.sin(q * k)];
+        };
+      }
       if (TRIG[f]) {
         const g = TRIG[f];
         const a = args[0];
@@ -881,8 +908,9 @@ export function compile(node, ctx = {}) {
         const from = Math.ceil(lo(s));
         let to = Math.floor(hi(s));
         if (!Number.isFinite(from)) return NaN;
-        if (to === Infinity) to = from + 100000; // približek za neskončno vrsto
-        if (!Number.isFinite(to) || to - from > 1e6) return NaN;
+        if (to === Infinity) to = from + 99999; // približek za neskončno vrsto
+        if (!Number.isFinite(to)) return NaN;
+        if (to - from >= 100000) throw new MathError("sumLimit"); // največ 100 000 členov
         const sc = Object.create(s);
         let acc = isProd ? 1 : 0;
         for (let k = from; k <= to; k++) {
@@ -1309,6 +1337,10 @@ export function toTex(node, opt = {}) {
           return `\\log_{${a[1]}}\\left(${a[0]}\\right)`;
         case "exp":
           return `e^{${a[0]}}`;
+        case "rand":
+          return "\\mathrm{Ran\\#}";
+        case "randint":
+          return `\\mathrm{RanInt}\\left(${a.join(sep)}\\right)`;
         case "nCr":
           return `\\binom{${a[0]}}{${a[1]}}`;
         default: {

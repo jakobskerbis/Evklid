@@ -28,6 +28,8 @@ import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
 import { detectWeakTopics, weaknessesForPrompt } from "./weaknesses.js";
 import { cleanText, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
+import { paperContext, PAPER_NOTE_HEAD } from "./paper-context.js";
+import { ourPaperIds, loadOurPaper } from "./our-papers.js";
 import { mountAccounts } from "./accounts/index.js";
 import { passwordGate, gateNeeded } from "./gate.js";
 import { levelUpSuggestion, nextLevel } from "./level-up.js";
@@ -502,6 +504,9 @@ export function createApp(store, opts = {}) {
 
     const userContent = [];
     if (image) userContent.push({ type: "image", source: { type: "base64", media_type: image.media_type, data: image.data } });
+    // Naloga iz pretekle pole: navodilo za inštruktorja kot skrit blok (server/paper-context.js), učenec vidi le text.
+    const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper });
+    if (paperNote) userContent.push({ type: "text", text: paperNote });
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     const isFirst = store.listMessages(conv.id).length === 0;
     const userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
@@ -510,7 +515,7 @@ export function createApp(store, opts = {}) {
     const weak = weaknessesForPrompt(store, student);
     const results = studentResults(store, student.id, conv.path_topic);
     // Prošnja za spremembo nastavitev mora poklicati orodje, zato ne iz predpomnilnika odgovorov.
-    const key = ANSWER_CACHE && isFirst && !image && !help && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
+    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
     if (conv.title === "Nov pogovor") {
       store.renameConversation(conv.id, cleanText(text, 50) || "Naloga s fotografije");
     }
@@ -592,7 +597,9 @@ export function createApp(store, opts = {}) {
       // Če je učenec po tej nalogi poslal še eno, ki je reševalnik ne zna (»Kaj pa 3x = 15?«), koda ne sodi.
       let firstPre = null;
       if (claim) {
-        const earlier = fullHistory.filter((m) => m.role === "user").slice(0, -1).map(textOf);
+        // Brez skrite opombe pole (server/paper-context.js), sicer reševalnik prve naloge ne prepozna.
+        const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !x.text?.startsWith(PAPER_NOTE_HEAD)) } : m);
+        const earlier = fullHistory.filter((m) => m.role === "user").slice(0, -1).map(ownText);
         let at = -1;
         for (let i = earlier.length - 1; i >= 0 && !firstPre; i--) {
           firstPre = presolve(earlier[i], { first: i === 0 });
@@ -768,7 +775,7 @@ export function createApp(store, opts = {}) {
         });
       }
       // Nepreverjenih kartic učenec še ne vidi (tudi ne v obvestilu »dodane kartice«).
-      if (cards.length && !liveCards) send("cards", { cards: cards.map((c) => ({ id: c.id, front: c.front })), due: store.cards.dueCount(student.id) });
+      if (cards.length && !liveCards) send("cards", { cards: cards.map((c) => ({ id: c.id, front: c.front })), due: store.cards.dueCount(student.id, student.settings.subject || null) });
       if (meta) {
         store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: assistantId, ...meta });
         if (meta.done && conv.path_topic && progress.markMastered(student.id, conv.path_topic, "chat")) {
@@ -922,10 +929,12 @@ export function createApp(store, opts = {}) {
     const results = Array.isArray(req.body?.results) ? req.body.results : [];
     res.json({ ...progress.offlineSync(s.id, results), xp: progress.xpSummary(s.id) });
   });
+  // Predmet snovi pod gumbi učne poti: predmet izbrane poti (fakulteta: predmet), sicer predmet iz profila.
+  const subjectFor = (s, key) => getPath(String(key || ""))?.subject || s.settings.subject || null;
   app.post("/api/students/:id/review", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = progress.startReview(s.id, { quick: !!req.body?.quick });
+    const out = progress.startReview(s.id, { quick: !!req.body?.quick, subject: subjectFor(s, req.body?.path) });
     if (!out) return res.json({ finished: true, empty: true });
     res.json(out);
   });
@@ -935,14 +944,15 @@ export function createApp(store, opts = {}) {
     if (!s) return;
     // Priprava na test sledi najbližjemu testu iz urnika (če je učenec ni nastavil sam).
     syncTestPlan(progress, s.id, scheduleView(schedules.get(s.id), s.settings));
-    res.json({ ...progress.modes(s.id, getPath(String(req.query.path || "")) ? String(req.query.path) : pathKeyFor(s.settings)), cardsDue: store.cards.dueCount(s.id) });
+    const key = getPath(String(req.query.path || "")) ? String(req.query.path) : pathKeyFor(s.settings);
+    res.json({ ...progress.modes(s.id, key), cardsDue: store.cards.dueCount(s.id, subjectFor(s, key)) });
   });
 
   // --- kartice za ponavljanje ---
   const cardId = (req) => intParam(req.params.cardId);
   app.get("/api/students/:id/flashcards", (req, res) => {
     const s = loadStudent(req, res);
-    if (s) res.json(store.cards.list(s.id));
+    if (s) res.json(store.cards.list(s.id, subjectFor(s, req.query.path)));
   });
   app.post("/api/students/:id/flashcards", (req, res) => {
     const s = loadStudent(req, res);
@@ -950,7 +960,7 @@ export function createApp(store, opts = {}) {
     const front = typeof req.body?.front === "string" ? req.body.front : "";
     const back = typeof req.body?.back === "string" ? req.body.back : "";
     if (!front.trim() || !back.trim()) return res.status(400).json({ error: "Kartica potrebuje vprašanje in odgovor." });
-    const [card] = store.cards.add(s.id, [{ front, back }], { source: "own", subject: s.settings.subject });
+    const [card] = store.cards.add(s.id, [{ front, back }], { source: "own", subject: subjectFor(s, req.body?.path) });
     if (!card) return res.status(409).json({ error: "Kartico s tem vprašanjem že imaš." });
     res.status(201).json(card);
   });
@@ -974,7 +984,7 @@ export function createApp(store, opts = {}) {
     if (!s) return;
     const c = store.cards.review(s.id, cardId(req), req.body?.ok === true);
     if (!c) return res.status(404).json({ error: "Kartica ne obstaja." });
-    res.json({ card: c, due: store.cards.dueCount(s.id) });
+    res.json({ card: c, due: store.cards.dueCount(s.id, subjectFor(s, req.body?.path)) });
   });
   app.post("/api/students/:id/daily", (req, res) => {
     const s = loadStudent(req, res);
@@ -1028,7 +1038,16 @@ export function createApp(store, opts = {}) {
   // Pretekle pole NPZ in mature: samo povezave na ric.si (server/exam-papers-si.js), brez besedila pol.
   app.get("/api/exam-papers", (_req, res) => {
     res.set("Cache-Control", "public, max-age=3600");
-    res.json({ source: PAPERS_SOURCE, papers: PAPERS_SI });
+    // ours: naša pola v istem slogu (content/exam-papers, server/our-papers.js) obstaja.
+    const ours = ourPaperIds();
+    res.json({ source: PAPERS_SOURCE, papers: ours.size ? PAPERS_SI.map((e) => (ours.has(e.id) ? { ...e, ours: true } : e)) : PAPERS_SI });
+  });
+  // Naša pola (naloge Evklida z zgradbo izvirne pole, z rešitvami in razlagami).
+  app.get("/api/exam-papers/ours/:id", (req, res) => {
+    const paper = loadOurPaper(req.params.id);
+    if (!paper) return res.status(404).json({ error: "Te pole še ni." });
+    res.set("Cache-Control", "public, max-age=3600");
+    res.json(paper);
   });
   app.post("/api/students/:id/competition-training", (req, res) => {
     const s = loadStudent(req, res);

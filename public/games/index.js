@@ -14,7 +14,7 @@ function onPath(e, c) {
   if (PACE[e.id] !== clearedPace(c.id, LS) + 1) return false;
   return c.year >= Math.min(data.year, 13) - 1 || lessonsOf(c.id).some((x) => LS.known.has(x));
 }
-import { ENGINES } from "./engines.js";
+import { ENGINES, fits } from "./engines.js";
 import { runGame } from "./core.js";
 import { GENRES, childhoodEngines, matchTitle, cleanTitles, MAX_TITLES } from "./childhood.js";
 import { WISHES } from "./wishes.js";
@@ -95,7 +95,7 @@ export function initGames(c) {
     if (!SUBJECTS.includes(filter.subject)) filter.subject = "MAT";
   } catch {}
 }
-export const allGamesCount = () => CONCEPTS.length * ENGINES.length;
+export const allGamesCount = () => ENGINES.reduce((n, e) => n + (e.fits ? CONCEPTS.filter((c) => e.fits(c)).length : CONCEPTS.length), 0);
 
 export async function showGames() {
   root = document.querySelector("#games-content");
@@ -218,7 +218,7 @@ function renderPortal() {
     const shut = [];
     for (let r = 0; r < kinds.length; r++) cs.forEach((c, i) => {
       const e = kinds[(i + r) % kinds.length];
-      if (match(c, e)) (gameLock(e.id, c, LS) ? shut : onPath(e, c) ? path : open).push([e, c]);
+      if (fits(e, c) && match(c, e)) (gameLock(e.id, c, LS) ? shut : onPath(e, c) ? path : open).push([e, c]);
     });
     paths += path.length;
     const games = [...path, ...open, ...shut]; // igre na poti najprej
@@ -233,7 +233,7 @@ function renderPortal() {
   let kidSec = "";
   if (kidEngines.length && filter.kind === "all" && !q && !page) {
     const pool = CONCEPTS.filter((c) => pick(c));
-    const tiles = pool.length ? kidEngines.flatMap((id, i) => [0, 1].map((j) => [ENGINES.find((e) => e.id === id), pool[(i * 7 + j * 3) % pool.length]])).filter(([e, c], k, all) => e && all.findIndex(([e2, c2]) => e2 === e && c2 === c) === k).slice(0, 12) : [];
+    const tiles = pool.length ? kidEngines.flatMap((id, i) => [0, 1].map((j) => [ENGINES.find((e) => e.id === id), pool[(i * 7 + j * 3) % pool.length]])).filter(([e, c], k, all) => e && fits(e, c) && all.findIndex(([e2, c2]) => e2 === e && c2 === c) === k).slice(0, 12) : [];
     if (tiles.length) kidSec = `<section class="gm-sec gm-kidsec"><h2><span class="gm-kid-ic" aria-hidden="true">🕹️</span>${esc(t("games.kidTitle"))}<span class="gm-count">${tiles.length}</span><button type="button" class="ghost gm-kidedit" data-act="kid">${icon("pencil")}${esc(t("games.kidEdit"))}</button></h2><div class="gm-grid">${tiles.map(([e, c]) => tile(e, c)).join("")}</div></section>`;
   }
   const kidAsk = kid === null && ctx.getStudent() && !q
@@ -540,7 +540,7 @@ function openGame(id) {
   const [eid, cid] = id.split(":");
   const engine = ENGINES.find((e) => e.id === eid);
   const concept = CONCEPTS.find((c) => c.id === cid);
-  if (!engine || !concept) return;
+  if (!engine || !concept || !fits(engine, concept)) return;
   const lock = gameLock(eid, concept, LS);
   if (lock) return showLock(engine, concept, lock);
   root.innerHTML = `<div class="gm-host"></div>`;
@@ -590,7 +590,7 @@ function openGame(id) {
 // Zaklenjena igra: kaj manjka in pot do odklepa (snov na učni poti, preizkus ali najprej mirnejša igra).
 function showLock(engine, c, lock) {
   const name = conceptName(c);
-  const others = lock.need === "pace" ? ENGINES.filter((e) => PACE[e.id] === lock.pace && !gameLock(e.id, c, LS)).slice(0, 3) : [];
+  const others = lock.need === "pace" ? ENGINES.filter((e) => PACE[e.id] === lock.pace && fits(e, c) && !gameLock(e.id, c, LS)).slice(0, 3) : [];
   const text = lock.need === "learn" ? t("games.lockLearn", { name }) : t("games.lockPace", { n: CLEAR_CORRECT });
   root.innerHTML = `<div class="gm-portal"><div class="card gm-lockcard">
     <h2>${icon("lock")} ${esc(`${kindName(engine)}: ${name}`)}</h2>
@@ -648,7 +648,7 @@ function runCheck(engine, c) {
       const s = ctx.getStudent();
       if (s) ctx.api(`/api/students/${s.id}/games/unlock`, { method: "POST", body: JSON.stringify({ concept: c.id, correct: ok }) }).catch(() => {});
     }
-    const first = pass ? ENGINES.find((e) => !gameLock(e.id, c, LS)) : null;
+    const first = pass ? ENGINES.find((e) => fits(e, c) && !gameLock(e.id, c, LS)) : null;
     const topic = gameLock(engine.id, c, { ...LS, passed: new Set() })?.topic;
     shell(`<p class="gm-check-res">${esc(t(pass ? "games.checkPass" : "games.checkFail", { ok, n: qs.length, need: CHECK_PASS }))}</p>
       <div class="actions">
