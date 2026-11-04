@@ -906,8 +906,9 @@ export function dveTocki(el) {
 export function podobnost(el) {
   const svg = svgBox(340, 300);
   const out = readout();
-  const pts = { A: [120, 200], B: [180, 210], C: [150, 150] };
-  const O = [60, 250];
+  // trikotnik je isti kot prej, le premaknjen bliže O: pri k = 2,5 je slika še v celoti na sliki (na telefonu)
+  const pts = { A: [95, 215], B: [155, 225], C: [125, 165] };
+  const O = [55, 255];
   let k = 2;
   const lay = s("g", {}, svg), top = s("g", {}, svg);
   const draw = () => {
@@ -922,10 +923,12 @@ export function podobnost(el) {
     label(lay, O[0] - 10, O[1] + 12, "O", "pt-lbl");
     const a = dist(P[1], P[2]), a2 = dist(Q[1], Q[2]);
     const ar = (T) => Math.abs((T[1][0] - T[0][0]) * (T[2][1] - T[0][1]) - (T[2][0] - T[0][0]) * (T[1][1] - T[0][1])) / 2;
-    out.innerHTML = `<p>Raztezni faktor <b>k = ${fmt(k, 2)}</b>: vsaka stranica slike je ${fmt(Math.abs(k), 2)}-krat ${Math.abs(k) >= 1 ? "daljša" : "krajša"}. Koti ostanejo enaki, zato sta trikotnika <b>podobna</b>.</p>
+    const ak = Math.abs(k), inv = 1 / ak, invInt = Math.abs(inv - Math.round(inv)) < 1e-9;
+    const dolz = Math.abs(ak - 1) < 1e-9 ? "enako dolga kot ustrezna stranica lika" : ak > 1 ? `${fmt(ak, 2)}-krat daljša od ustrezne stranice lika` : `dolga ${fmt(ak, 2)} dolžine ustrezne stranice lika${invInt ? ` (${fmt(inv, 0)}-krat krajša)` : ""}`;
+    out.innerHTML = (Math.abs(k) < 1e-9 ? `<p>Pri <b>k = 0</b> se vsa oglišča preslikajo v točko O: slika je ena sama točka, ne trikotnik. Zato k = 0 ni podobnost.</p>` : `<p>Raztezni faktor <b>k = ${fmt(k, 2)}</b>: vsaka stranica slike je ${dolz}. Koti ostanejo enaki, zato sta trikotnika <b>podobna</b>.</p>`) + `
       <p>|B'C'| : |BC| = ${fmt(a2 / CM, 2)} : ${fmt(a / CM, 2)} = ${fmt(a2 / a, 2)}.</p>
       <p>Ploščini: ${fmt(ar(Q) / CM / CM, 2)} : ${fmt(ar(P) / CM / CM, 2)} = <b>${fmt(ar(Q) / ar(P), 2)} = k²</b>.</p>
-      <p class="muted">${k < 0 ? "Negativni k: slika je na drugi strani O, zasukana za 180°." : ""} Pri k = 1 je slika skladna z likom.</p>`;
+      <p class="muted">${k < 0 ? "Negativni k: slika je na drugi strani O, zasukana za 180°." : ""} Pri k = 1 in k = −1 je slika skladna z likom.</p>`;
     place();
   };
   const place = dragPoints(svg, top, pts, draw);

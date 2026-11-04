@@ -67,6 +67,11 @@ function mesh(kind, p, units) {
 
 function formulas(kind, p) {
   const T = (x) => tfmt(x, 2);
+  // ali je vrednost na 2 decimalki natančna (potem »=«, sicer »≈«)
+  const ex = (...xs) => xs.every((x) => Math.abs(x - Math.round(x * 100) / 100) < 1e-9);
+  const eq = (...xs) => (ex(...xs) ? "=" : "\\approx"), eqT = (...xs) => (ex(...xs) ? "=" : "≈");
+  // osnovna ploskev: n = 3 enakostranični trikotnik, n = 4 kvadrat
+  const lik = (n) => (n === 3 ? "enakostranični trikotnik" : n === 4 ? "kvadrat" : `pravilni ${n}-kotnik`);
   if (kind === "kocka") {
     const [a] = p;
     return { P: `P = 6a^2 = 6\\cdot ${a}^2 = ${6 * a * a}`, V: `V = a^3 = ${a}^3 = ${a ** 3}`, note: `Kocka iz ${a ** 3} ${(a ** 3) % 100 === 1 ? "enotske kocke" : "enotskih kock"}. Diagonala ploskve a√2 ≈ ${fmt(a * Math.SQRT2)}, telesna diagonala a√3 ≈ ${fmt(a * Math.sqrt(3))}.` };
@@ -78,7 +83,7 @@ function formulas(kind, p) {
   if (kind === "prizma") {
     const [n, a, v] = p;
     const O = (n * a * a) / (4 * Math.tan(Math.PI / n));
-    return { P: `P = 2O + pl = 2\\cdot ${T(O)} + ${n}\\cdot ${a}\\cdot ${v} = ${T(2 * O + n * a * v)}`, V: `V = O\\cdot v = ${T(O)}\\cdot ${v} = ${T(O * v)}`, note: `Osnovna ploskev je pravilni ${n}-kotnik s ploščino O ≈ ${fmt(O)}. Plašč ${plural(n, ["sestavlja", "sestavljata", "sestavljajo", "sestavlja"])} ${n} ${plural(n, ["pravokotnik", "pravokotnika", "pravokotniki", "pravokotnikov"])} ${a} × ${v}.` };
+    return { P: `P = 2O + pl ${eq(O)} 2\\cdot ${T(O)} + ${n}\\cdot ${a}\\cdot ${v} ${eq(O, 2 * O + n * a * v)} ${T(2 * O + n * a * v)}`, V: `V = O\\cdot v ${eq(O)} ${T(O)}\\cdot ${v} ${eq(O, O * v)} ${T(O * v)}`, note: `Osnovna ploskev je ${lik(n)} s ploščino O ${eqT(O)} ${fmt(O)}. Plašč ${plural(n, ["sestavlja", "sestavljata", "sestavljajo", "sestavlja"])} ${n} ${plural(n, ["pravokotnik", "pravokotnika", "pravokotniki", "pravokotnikov"])} ${a} × ${v}.` };
   }
   if (kind === "valj") {
     const [r, v] = p;
@@ -87,15 +92,15 @@ function formulas(kind, p) {
   if (kind === "piramida") {
     const [n, a, v] = p;
     const O = (n * a * a) / (4 * Math.tan(Math.PI / n)), ri = a / (2 * Math.tan(Math.PI / n)), va = Math.hypot(v, ri);
-    return { P: `P = O + pl = ${T(O)} + ${n}\\cdot\\frac{${a}\\cdot ${T(va)}}{2} = ${T(O + (n * a * va) / 2)}`, V: `V = \\frac{O\\cdot v}{3} = \\frac{${T(O)}\\cdot ${v}}{3} = ${T((O * v) / 3)}`, note: `Višina stranske ploskve v_a = √(v² + ρ²) ≈ ${fmt(va)} (ρ je polmer včrtane krožnice osnove). Piramida ima tretjino prostornine prizme z enako osnovo in višino.` };
+    return { P: `P = O + pl ${eq(O, va)} ${T(O)} + ${n}\\cdot\\frac{${a}\\cdot ${T(va)}}{2} ${eq(O, va, O + (n * a * va) / 2)} ${T(O + (n * a * va) / 2)}`, V: `V = \\frac{O\\cdot v}{3} ${eq(O)} \\frac{${T(O)}\\cdot ${v}}{3} ${eq(O, (O * v) / 3)} ${T((O * v) / 3)}`, note: `Osnovna ploskev je ${lik(n)}. Višina stranske ploskve v_a = √(v² + ρ²) ${eqT(va)} ${fmt(va)} (ρ je polmer včrtane krožnice osnove). Piramida ima tretjino prostornine prizme z enako osnovo in višino.` };
   }
   if (kind === "stozec") {
     const [r, v] = p;
     const sl = Math.hypot(r, v);
-    return { P: `P = \\pi r^2 + \\pi r s = \\pi r(r + s) \\approx ${T(Math.PI * r * (r + sl))}`, V: `V = \\frac{\\pi r^2 v}{3} \\approx ${T((Math.PI * r * r * v) / 3)}`, note: `Stranica s = √(r² + v²) ≈ ${fmt(sl)}. Plašč je krožni izsek s polmerom s in lokom 2πr; njegov kot je ${fmt((360 * r) / sl, 1)}°.` };
+    return { P: `P = \\pi r^2 + \\pi r s = \\pi r(r + s) \\approx ${T(Math.PI * r * (r + sl))}`, V: `V = \\frac{\\pi r^2 v}{3} \\approx ${T((Math.PI * r * r * v) / 3)}`, note: `Stranica s = √(r² + v²) ${eqT(sl)} ${fmt(sl)}. Plašč je krožni izsek s polmerom s in lokom 2πr; njegov kot je ${fmt((360 * r) / sl, 1)}°.` };
   }
   const [r] = p;
-  return { P: `P = 4\\pi r^2 \\approx ${T(4 * Math.PI * r * r)}`, V: `V = \\frac{4\\pi r^3}{3} \\approx ${T((4 * Math.PI * r ** 3) / 3)}`, note: `Površina krogle je enaka ploščini štirih največjih krogov. Prostornina je 2/3 prostornine valja, ki krogli očrtamo (r, v = 2r): ${fmt((4 / 3) * Math.PI * r ** 3)} : ${fmt(2 * Math.PI * r ** 3)}.` };
+  return { P: `P = 4\\pi r^2 \\approx ${T(4 * Math.PI * r * r)}`, V: `V = \\frac{4\\pi r^3}{3} \\approx ${T((4 * Math.PI * r ** 3) / 3)}`, note: `Krogle ne moremo razgrniti v ravnino, zato nima mreže. Njena površina je enaka ploščini štirih največjih krogov. Prostornina je 2/3 prostornine valja, ki krogli očrtamo (r, v = 2r): ${fmt((4 / 3) * Math.PI * r ** 3)} : ${fmt(2 * Math.PI * r ** 3)}.` };
 }
 
 // Merilo mreže za dane mere (uporabimo največje mere, da je merilo stalno in se sprememba vidi).
@@ -243,10 +248,12 @@ export function telesa(el, { bodies = ["kocka", "kvader"] } = {}) {
   };
   const build = () => {
     p = BODIES[kind].params.map((q) => q[3]);
+    if (kind === "krogla") net = false;
     ctl.replaceChildren(
       ...(bodies.length > 1 ? [select({ label: "telo", options: bodies.map((b) => [b, BODIES[b].name]), value: kind, onChange: (v) => ((kind = v), build()) })] : []),
       ...BODIES[kind].params.map((q, i) => slider({ label: q[0], min: q[1], max: q[2], value: q[3], onInput: (v) => ((p[i] = v), draw()) })),
-      toggle("pokaži mrežo", net, (v) => ((net = v), draw())),
+      // krogle ne moremo razgrniti: brez gumba za mrežo (besedilo pod sliko to pove)
+      ...(kind === "krogla" ? [] : [toggle("pokaži mrežo", net, (v) => ((net = v), draw()))]),
       ...(kind === "kocka" || kind === "kvader" ? [toggle("enotske kocke", units, (v) => ((units = v), draw()))] : []),
       buttons(playButton(anim, { play: "Vrti", pause: "Ustavi vrtenje" })),
     );
