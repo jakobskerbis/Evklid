@@ -213,7 +213,7 @@ export function withUnit(value, unit) {
 // ---------- nastavitve naprave ----------
 export const PREF_KEY = "evklid.tipkovnica";
 export const MODES = ["always", "math", "never"];
-export const DEFAULT_PREFS = { mode: "always", words: false, buzz: true };
+export const DEFAULT_PREFS = { mode: "always", words: false, buzz: true, glide: true };
 export function parsePrefs(raw) {
   let p = {};
   try {
@@ -223,6 +223,7 @@ export function parsePrefs(raw) {
     mode: MODES.includes(p.mode) ? p.mode : DEFAULT_PREFS.mode,
     words: typeof p.words === "boolean" ? p.words : DEFAULT_PREFS.words,
     buzz: typeof p.buzz === "boolean" ? p.buzz : DEFAULT_PREFS.buzz,
+    glide: typeof p.glide === "boolean" ? p.glide : DEFAULT_PREFS.glide,
   };
 }
 
@@ -294,4 +295,97 @@ export function autocorrect(word, words) {
   });
   if (!hit) return null;
   return w[0] !== low[0] ? hit[0].toLocaleUpperCase() + hit.slice(1) : hit;
+}
+
+// ---------- drsenje po črkah (glide, kot Gboard) ----------
+// Tipka za črko: črka sama, sicer osnovna črka (č → c, če je v razporeditvi ni ali jo ima le kot različico).
+const baseKey = (c, centers) => {
+  if (centers[c]) return c;
+  const b = FOLD[c] || c.normalize("NFD").replace(/\p{M}/gu, "");
+  return centers[b] ? b : null;
+};
+function resample(pts, n) {
+  if (pts.length === 1) return Array.from({ length: n }, () => pts[0]);
+  let total = 0;
+  const seg = [0];
+  for (let i = 1; i < pts.length; i++) seg.push((total += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y)));
+  if (total < 1e-6) return Array.from({ length: n }, () => pts[0]);
+  const out = [];
+  let j = 1;
+  for (let k = 0; k < n; k++) {
+    const d = (total * k) / (n - 1);
+    while (j < pts.length - 1 && seg[j] < d) j++;
+    const span = seg[j] - seg[j - 1] || 1;
+    const u = Math.min(1, Math.max(0, (d - seg[j - 1]) / span));
+    out.push({ x: pts[j - 1].x + (pts[j].x - pts[j - 1].x) * u, y: pts[j - 1].y + (pts[j].y - pts[j - 1].y) * u });
+  }
+  return out;
+}
+function normalised(p) {
+  const cx = p.reduce((s, q) => s + q.x, 0) / p.length;
+  const cy = p.reduce((s, q) => s + q.y, 0) / p.length;
+  const r = Math.sqrt(p.reduce((s, q) => s + (q.x - cx) ** 2 + (q.y - cy) ** 2, 0) / p.length) || 1;
+  return p.map((q) => ({ x: (q.x - cx) / r, y: (q.y - cy) / r }));
+}
+const meanDist = (a, b) => a.reduce((s, q, i) => s + Math.hypot(q.x - b[i].x, q.y - b[i].y), 0) / a.length;
+
+/**
+ * Drsenje po črkah: do n najboljših besed za pot prsta.
+ * points: [{x, y}] (ali [x, y]); keyCenters: { črka: {x, y} }; words: seznam po pogostosti.
+ * opts: n (3), keyW (širina tipke; sicer ocena), radius (v širinah tipke: kako blizu mora biti prvi/zadnji znak).
+ * Beseda se začne pri tipki blizu prve točke in konča blizu zadnje; idealna pot skozi središča tipk
+ * (podvojene črke se strnejo) se primerja z narisano: povprečna razdalja točk + oblika + pokritost črk + majhna prednost pogostih besed.
+ */
+export function glideDecode(points, keyCenters, words, { n = 3, keyW, radius } = {}) {
+  const pts = (points || []).map((p) => (Array.isArray(p) ? { x: p[0], y: p[1] } : p));
+  if (pts.length < 2 || !words?.length) return [];
+  const centers = {};
+  for (const [c, p] of Object.entries(keyCenters || {})) centers[c] = Array.isArray(p) ? { x: p[0], y: p[1] } : p;
+  const chars = Object.keys(centers);
+  if (chars.length < 2) return [];
+  if (!keyW) {
+    const nn = chars.map((a) => Math.min(...chars.filter((b) => b !== a).map((b) => Math.hypot(centers[a].x - centers[b].x, centers[a].y - centers[b].y))));
+    keyW = nn.sort((a, b) => a - b)[nn.length >> 1] || 40;
+  }
+  const rad = (radius || 1.4) * keyW;
+  const first = pts[0];
+  const last = pts[pts.length - 1];
+  const near = (c, p) => Math.hypot(centers[c].x - p.x, centers[c].y - p.y) <= rad;
+  const fk = new Set(chars.filter((c) => near(c, first)));
+  const lk = new Set(chars.filter((c) => near(c, last)));
+  if (!fk.size || !lk.size) return [];
+  const N = 32;
+  const user = resample(pts, N);
+  const userShape = normalised(user);
+  const scored = [];
+  const seen = new Set();
+  for (let rank = 0; rank < words.length; rank++) {
+    const w = words[rank];
+    if (w.length < 2) continue;
+    const low = w.toLocaleLowerCase();
+    const a = baseKey(low[0], centers);
+    const z = baseKey(low[low.length - 1], centers);
+    if (!a || !z || !fk.has(a) || !lk.has(z) || seen.has(low)) continue;
+    const ks = [];
+    let ok = true;
+    for (const ch of low) {
+      const k = baseKey(ch, centers);
+      if (!k) {
+        ok = false;
+        break;
+      }
+      if (ks[ks.length - 1] !== k) ks.push(k);
+    }
+    if (!ok) continue;
+    seen.add(low);
+    const ideal = resample(ks.map((k) => centers[k]), N);
+    const loc = meanDist(user, ideal) / keyW;
+    const shape = meanDist(userShape, normalised(ideal));
+    const uniq = [...new Set(ks)];
+    let cover = 0;
+    for (const k of uniq) cover += Math.min(...user.map((q) => Math.hypot(q.x - centers[k].x, q.y - centers[k].y))) / keyW;
+    cover /= uniq.length;
+    scored.push({ w, s: loc + 0.5 * shape + 0.3 * cover + 0.05 * Math.log10(rank + 1) });
+  }
+  return scored.sort((x, y) => x.s - y.s).slice(0, n).map((x) => x.w);
 }

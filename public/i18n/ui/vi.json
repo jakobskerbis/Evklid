@@ -756,6 +756,8 @@
   "tk.set.wordsNote": "Những từ đang gõ dở hiện phía trên các chữ cái.",
   "tk.set.buzz": "Rung phím",
   "tk.set.buzzNote": "Điện thoại rung nhẹ khi chạm vào phím.",
+  "tk.set.glide": "Gõ bằng cách vuốt",
+  "tk.set.glideNote": "Viết một từ bằng cách vuốt ngón tay qua các chữ cái của từ đó.",
   "gc.settings": "Cài đặt đồ thị",
   "gc.clear": "Xóa tất cả",
   "gc.grid": "Lưới",

@@ -147,3 +147,10 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
 @media (prefers-reduced-motion: reduce) {
   .tk-prev, .tk-pop, .tk:not([hidden]) { animation: none; }
 }
+/* drsenje po črkah: sled prsta (barva poudarka, v zgodovinskih slogih poudarek menija) bledi ~200 ms po dvigu */
+.tk-trail { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+.tk-trail.out { opacity: 0; transition: opacity 200ms linear; }
+.tk-rows[data-layer="abc"] { touch-action: none; }
+@media (prefers-reduced-motion: reduce) {
+  .tk-trail.out { transition: none; }
+}

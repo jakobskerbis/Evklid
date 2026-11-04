@@ -768,6 +768,8 @@
   "tk.set.wordsNote": "Iznad slova se pojavljuju riječi koje počneš pisati.",
   "tk.set.buzz": "Vibracija tipki",
   "tk.set.buzzNote": "Telefon blago zavibrira kad dodirneš tipku.",
+  "tk.set.glide": "Pisanje prevlačenjem",
+  "tk.set.glideNote": "Riječ napišeš jednim potezom prsta preko njenih slova.",
   "gc.settings": "Postavke grafa",
   "gc.clear": "Očisti sve",
   "gc.grid": "Mreža",

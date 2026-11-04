@@ -762,6 +762,8 @@
   "tk.set.wordsNote": "Über den Buchstaben erscheinen Wörter, die du zu schreiben beginnst.",
   "tk.set.buzz": "Tastenvibration",
   "tk.set.buzzNote": "Dein Handy vibriert kurz, wenn du eine Taste tippst.",
+  "tk.set.glide": "Wischen über Buchstaben",
+  "tk.set.glideNote": "Du schreibst ein Wort, indem du mit dem Finger über seine Buchstaben wischst.",
   "gc.settings": "Graph-Einstellungen",
   "gc.clear": "Alles löschen",
   "gc.grid": "Gitter",

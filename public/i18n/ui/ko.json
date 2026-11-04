@@ -756,6 +756,8 @@
   "tk.set.wordsNote": "쓰기 시작한 단어가 글자 위에 나타나요.",
   "tk.set.buzz": "키 진동",
   "tk.set.buzzNote": "키를 누르면 휴대폰이 짧게 진동해요.",
+  "tk.set.glide": "밀어서 입력",
+  "tk.set.glideNote": "손가락으로 글자 위를 쭉 밀면 단어가 입력돼요.",
   "gc.settings": "그래프 설정",
   "gc.clear": "모두 지우기",
   "gc.grid": "격자",

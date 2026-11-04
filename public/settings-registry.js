@@ -65,6 +65,7 @@ export const DEVICE_SETTINGS = {
   keyboard: { values: ["always", "math", "never"], desc: "Evklid's own on-screen keyboard on touch devices instead of the phone's: always (default), math = only maths fields (calculator, task answers), never = phone keyboard everywhere; login e-mail and password always use the phone keyboard" },
   keyboard_words: { values: ["on", "off"], desc: "word suggestions above the letters of Evklid's keyboard (off by default)" },
   keyboard_vibration: { values: ["on", "off"], desc: "short vibration on key press of Evklid's keyboard (on by default)" },
+  keyboard_glide: { values: ["on", "off"], desc: "glide typing on Evklid's keyboard: swipe a finger across the letters to type a word (on by default)" },
   game_sound: { values: ["on", "off"], ls: ["evklid.gameSound"], desc: "sound in games" },
   game_speed: { values: ["slow", "mid", "fast"], ls: ["evklid.gamePace"], desc: "game speed" },
   windows: { values: ["on", "off"], ls: ["evklid.windows", { on: "1", off: "0" }], desc: "movable windows: drag top tabs onto the page to open them as windows, tutor chat bubble outside the chat (on by default)" },

@@ -774,6 +774,8 @@
   "tk.set.wordsNote": "Nad písmenami sa zobrazia slová, ktoré začneš písať.",
   "tk.set.buzz": "Vibrácia klávesov",
   "tk.set.buzzNote": "Telefón krátko zavibruje, keď ťukneš na kláves.",
+  "tk.set.glide": "Písanie ťahaním",
+  "tk.set.glideNote": "Slovo napíšeš jedným ťahom prsta cez jeho písmená.",
   "gc.settings": "Nastavenia grafu",
   "gc.clear": "Vymazať všetko",
   "gc.grid": "Mriežka",

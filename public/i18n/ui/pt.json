@@ -762,6 +762,8 @@
   "tk.set.wordsNote": "Por cima das letras aparecem as palavras que começas a escrever.",
   "tk.set.buzz": "Vibração das teclas",
   "tk.set.buzzNote": "O telemóvel vibra um pouco quando tocas numa tecla.",
+  "tk.set.glide": "Escrita por deslize",
+  "tk.set.glideNote": "Escreve uma palavra deslizando o dedo pelas suas letras.",
   "gc.settings": "Configurações do gráfico",
   "gc.clear": "Limpar tudo",
   "gc.grid": "Grade",

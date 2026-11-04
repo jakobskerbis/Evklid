@@ -756,6 +756,8 @@
   "tk.set.wordsNote": "書き始めた単語が文字の上に表示されます。",
   "tk.set.buzz": "キーの振動",
   "tk.set.buzzNote": "キーに触れるとスマホが短く振動します。",
+  "tk.set.glide": "なぞり入力",
+  "tk.set.glideNote": "指で文字の上をなぞると、単語を入力できます。",
   "gc.settings": "グラフの設定",
   "gc.clear": "すべて消去",
   "gc.grid": "グリッド",

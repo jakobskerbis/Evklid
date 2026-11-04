@@ -762,6 +762,8 @@
   "tk.set.wordsNote": "Maneno unayoanza kuandika yanaonekana juu ya herufi.",
   "tk.set.buzz": "Mtetemo wa vitufe",
   "tk.set.buzzNote": "Simu inatetemeka kidogo unapogusa kitufe.",
+  "tk.set.glide": "Kuandika kwa kutelezesha",
+  "tk.set.glideNote": "Andika neno kwa kutelezesha kidole juu ya herufi zake.",
   "gc.settings": "Mipangilio ya grafu",
   "gc.clear": "Futa yote",
   "gc.grid": "Gridi",
