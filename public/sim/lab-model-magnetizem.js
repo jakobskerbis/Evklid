@@ -135,7 +135,7 @@ export const REMANENCA = { delez: 0.6, NdEf: { palica: JEDRA.palica.Nd, zebelj: 
 // ------------------------------------------------------------------ sponke in kompas
 // Pisarniška sponka 32 mm iz jeklene žice Ø 0,9 mm: 0,5 g (ocena). Sila na sponke ob polu: F = V_ef · M_s(B) · |dB/dz|,
 // M_s = najmanj (χ_s B/μ0, Js/μ0): χ_s = 12 (upognjena žica, ocena), Js = 1,6 T. V_ef = ploščina pola × 12,5 µm (ocena:
-// koliko sponk je v območju strmega polja ob polu; uglašeno, da palica pri največjem toku dvigne ~20–30 sponk, kot v šoli).
+// koliko sponk je v območju strmega polja ob polu; uglašeno, da palica s 500 ovoji pri 3 A dvigne ~16 sponk, kot v šoli).
 // Sponke se zapletejo: vsakič jih dvigneš 85–100 % toliko, kot jih sila zdrži (ocena). V škatlici je 60 sponk.
 export const SPONKA = { m: 0.5e-3, chi: 12, Js: 1.6, debelina: 12.5e-6, zaplet: [0.85, 1], max: 60 };
 // Kompas leži na kladi 11 cm desno od osi in 2 cm pod spodnjim koncem tuljave ali jedra; os tuljave je navpična (ocena).
@@ -156,7 +156,7 @@ export function teslaRead(m, B, range) {
   const R = TESLA_RANGES[range], step = 10 ** -R.dec;
   if (Math.abs(B) > R.max * 0.99995) return { text: "OL", value: NaN, over: true };
   const gain = clamp(m.gain, -0.8, 0.8) * HALL.rel;
-  const jit = gauss(m.r, 0.25, 2.4);
+  const jit = gauss(m.r, 0.2, 2.5); // do 0,5 digita: z zaokroževanjem skupaj največ 1 digit (specifikacija)
   const counts = Math.round((B * R.k * (1 + gain)) / step + jit);
   const value = counts * step;
   return { text: value.toFixed(R.dec), value, over: false };
@@ -195,6 +195,7 @@ export class ElektromagnetBench {
     this.Mmax = 0; // največja magnetizacija odprtega jedra od zadnjega vklopa
     this.Mrem = 0;
     this.remT = 0; // čas od izklopa (remanenca žeblja pojema)
+    this.remJedro = this.jedro; // jedro, ki mu pripada remanenca (zamenjano jedro je nemagnetno)
     this.sponke = 0;
     this.t = 0;
     this.events = [];
@@ -247,7 +248,7 @@ export class ElektromagnetBench {
     const J = JEDRA[this.jedro];
     if (!J.L) return 0;
     const Ha = this._Ha();
-    if (Math.abs(Ha) < 1) return this.Mrem;
+    if (Math.abs(Ha) < 1) return this.remJedro === this.jedro ? this.Mrem : 0;
     return magnetizacijaPalice(Ha, J.Nd, J.mat);
   }
   // Gostota v U-jedru (T, smer kot tok): N I = H_Fe(B) l + B g/μ0, g = 2 (g0 + razmik).
@@ -355,7 +356,8 @@ export class ElektromagnetBench {
     for (let left = dt; left > 1e-9; left -= 0.05) {
       const h = Math.min(0.05, left);
       const st = this.solve(), J = JEDRA[this.jedro];
-      // remanenca odprtega jedra
+      // remanenca odprtega jedra (novo vstavljeno jedro je nemagnetno)
+      if (this.remJedro !== this.jedro) (this.remJedro = this.jedro), (this.Mrem = this.Mrem0 = this.Mmax = 0), (this.bilVklop = false);
       if (J.L) {
         const on = Math.abs(st.Icoil) > 1e-4;
         if (on) {
@@ -517,7 +519,7 @@ export class TehtnicaBench {
   }
   read() {
     const m = (this.masaNaTehtnici + this.dmPravi) * (1 + this.cal) + this.lez - this.tara;
-    if (m > TEHTNICA.max) return { text: "Err", value: NaN, over: true };
+    if (this.masaNaTehtnici + this.dmPravi > TEHTNICA.max) return { text: "Err", value: NaN, over: true }; // preobremenitev velja za celotno breme
     const jit = this.idealno ? 0 : clamp(gauss(this.r, 0.22, 2.3), -0.5, 0.5);
     const counts = Math.round(m / TEHTNICA.d + jit);
     const value = counts * TEHTNICA.d;
@@ -595,7 +597,7 @@ export class IndukcijaBench {
     const r = (this.r = rng(seed));
     this.idealno = idealno;
     this.tuljava = "t500";
-    this.pol = 1; // +1: severni pol spodaj (gre prvi v tuljavo)
+    this.pol = 1; // +1: severni pol spodaj (gre prvi v tuljavo); pretokOvoj ima s = +1 za severni pol zgoraj, zato s = −pol
     this.nacin = "spust"; // spust | roka
     this.h = 0.3;
     this.vRoka = 0.3;
@@ -621,8 +623,9 @@ export class IndukcijaBench {
       const tDno = Math.sqrt((2 * (h - zDno)) / G_LJ);
       return { pot: (t) => (t < tDno ? { z: h - 0.5 * G_LJ * t * t, v: G_LJ * t } : { z: zDno, v: 0 }), tEnd: tDno + 0.15, tDno };
     }
-    // z roko: z 20 cm nad sredino tuljave do sredine, 0,5 s mirovanja in nazaj; pospeševanje in zaviranje 3 m/s² (ocena)
-    const v = this.vRoka, a = 3, z0 = 0.2, tA = v / a, sA = 0.5 * a * tA * tA, tC = (z0 - 2 * sA) / v, T1 = 2 * tA + tC, tP = 0.5;
+    // z roko: z 20 cm nad sredino tuljave do sredine, 0,5 s mirovanja in nazaj; pospeševanje in zaviranje 3 m/s² (ocena),
+    // pri večji hitrosti (nad √(a·20 cm) ≈ 0,77 m/s) toliko več, da roka hitrost še doseže (trikoten potek hitrosti)
+    const v = this.vRoka, z0 = 0.2, a = Math.max(3, (v * v) / z0), tA = v / a, sA = 0.5 * a * tA * tA, tC = (z0 - 2 * sA) / v, T1 = 2 * tA + tC, tP = 0.5;
     const enPot = (t) => {
       if (t < tA) return { s: 0.5 * a * t * t, v: a * t };
       if (t < tA + tC) return { s: sA + v * (t - tA), v };
@@ -648,10 +651,11 @@ export class IndukcijaBench {
     };
     return { pot, tEnd: 0.1 + 2 * T1 + tP + 0.15, T1 };
   }
-  // Inducirana napetost na sponkah tuljave (V) ob času t: U = −dΛ/dt = −dΛ/dz · dz/dt (dz/dt = −v).
+  // Inducirana napetost na sponkah tuljave (V) ob času t: U = −dΛ/dt = −dΛ/dz · dz/dt (dz/dt = −v); Λ štejemo navzgor
+  // (ovoji so naviti tako, da pretok navzgor da pozitiven Λ). Severni pol spodaj: pretok navzdol raste, zato je prvi vrh pozitiven.
   napetost(t, G = this._g) {
     const { z, v } = G.pot(t);
-    return dPretok(z, this.coil.N, this.pol) * v; // −dΛ/dz · (−v)
+    return dPretok(z, this.coil.N, -this.pol) * v; // −dΛ/dz · (−v)
   }
   // Izvede poskus: izračuna vzorce senzorja (ali odklon galvanometra) od spusta do konca.
   spusti() {

@@ -321,8 +321,8 @@ export const SIM_TOPICS = {
   "FIZ-OS-9/elektricni-krog": [["krog-el", "Zaporedna in vzporedna vezava žarnic", { mode: "zarnice" }], ["lab-vezava", "Laboratorij: zaporedna in vzporedna vezava"]],
   "FIZ-OS-9/upor-in-ohmov-zakon": [["ohm", "Ohmov zakon v električnem krogu"], ["lab-ohm", "Laboratorij: izmeri Ohmov zakon"]],
   "FIZ-OS-9/elektricno-delo-in-moc": [["poraba", "Poraba električne energije doma"], ["lab-grelnik", "Laboratorij: električno delo grelca"]],
-  "FIZ-OS-9/magneti-in-magnetno-polje": [["magnet", "Magnetno polje in kompas", { mode: "magnet" }], ["3d-magnetno-polje", "3D: Magnetno polje magneta", { zacetek: { vir: "magnet" }, poskusi: "Vklopi kompase. Kam kaže rdeči konec igle blizu severnega pola in kam blizu južnega?" }], ["lab-elektromagnet", "Laboratorij: tuljava, kompas in sponke"]],
-  "FIZ-OS-9/elektromagnet": [["magnet", "Elektromagnet", { mode: "tuljava" }], ["3d-magnetno-polje", "3D: Magnetno polje tuljave", { zacetek: { vir: "tuljava" }, poskusi: "Povečaj tok in število ovojev: kako se spremeni polje v tuljavi? Nato zamenjaj smer toka in poglej, kje je zdaj severni pol." }], ["lab-elektromagnet", "Laboratorij: elektromagnet s Hallovo sondo, sponkami in kompasom"]],
+  "FIZ-OS-9/magneti-in-magnetno-polje": [["magnet", "Magnetno polje in kompas", { mode: "magnet" }], ["3d-magnetno-polje", "3D: Magnetno polje magneta", { zacetek: { vir: "magnet" }, poskusi: "Vklopi kompase. Kam kaže rdeči konec igle blizu severnega pola in kam blizu južnega?" }], ["lab-elektromagnet", "Laboratorij: tuljava, kompas in sponke", { raven: "os" }]],
+  "FIZ-OS-9/elektromagnet": [["magnet", "Elektromagnet", { mode: "tuljava" }], ["3d-magnetno-polje", "3D: Magnetno polje tuljave", { zacetek: { vir: "tuljava" }, poskusi: "Povečaj tok in število ovojev: kako se spremeni polje v tuljavi? Nato zamenjaj smer toka in poglej, kje je zdaj severni pol." }], ["lab-elektromagnet", "Laboratorij: elektromagnet – tok, ovoji, jedro in sponke", { raven: "os" }]],
   "FIZ-OS-9/fizika-v-sodobnih-napravah": [["uvrsti", "GPS, laser, sončna celica, jedrska elektrarna", { set: "naprave" }], ["fotoefekt", "Svetloba izbija elektrone (sončna celica)"], ["razpad", "Razpad jeder (jedrsko gorivo in odpadki)"]],
   // ---------------------------------------------------------------- KEM OŠ 8
   "KEM-OS-8/varno-delo-v-laboratoriju": ["razvrsti", "Varnostni znaki v laboratoriju", { set: "ghs" }],
@@ -663,6 +663,11 @@ export const LAB_INFO = {
     title: "Elektromagnet",
     desc: "Sestavi krog z napajalnikom, ampermetrom in tuljavo (250, 500 ali 1000 ovojev), s Hallovo sondo izmeri gostoto polja, dodaj železno jedro in preštej dvignjene sponke.",
   },
+  'lab-elektromagnet:{"raven":"os"}': {
+    subject: "FIZ",
+    title: "Elektromagnet (OŠ)",
+    desc: "Sestavi krog z napajalnikom, ampermetrom in tuljavo, spreminjaj tok, število ovojev in jedro, preštej dvignjene sponke in s kompasom poišči pola tuljave.",
+  },
   "lab-sila-vodnik": {
     subject: "FIZ",
     title: "Sila na vodnik v magnetnem polju",
@@ -671,7 +676,7 @@ export const LAB_INFO = {
   "lab-indukcija": {
     subject: "FIZ",
     title: "Elektromagnetna indukcija",
-    desc: "Spusti magnet skozi tuljavo in s senzorjem napetosti zapiši oba vrhova inducirane napetosti. Pokaži, da je vrh sorazmeren s hitrostjo, ploščina pa ne.",
+    desc: "Spusti magnet skozi tuljavo in s senzorjem napetosti zapiši oba vrhova inducirane napetosti. Pokaži, da je vrh sorazmeren s hitrostjo, ploščina pod njim pa je od hitrosti neodvisna.",
   },
 };
 export const labKey = (id, opts = {}) => (opts && Object.keys(opts).length ? `${id}:${JSON.stringify(opts)}` : id);

@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import {
   ElektromagnetBench, TehtnicaBench, IndukcijaBench, MU0, TULJAVE, GRETJE, BAKER, JEDRA, ZELEZO, HALL, TESLA_RANGES, MAGNETI, VODNIKI,
   TEHTNICA, SENZOR, NAPAJALNIK_EM, bTuljavaOs, bSolenoid, bBiotSavart, bZelezo, teslaSpec, pretokTuljava, integralPolja, silaNaVodnik,
-  POENOSTAVITVE_MAGNETIZEM,
+  POENOSTAVITVE_MAGNETIZEM, MAGNET_IND, pretokOvoj,
 } from "../public/sim/lab-model-magnetizem.js";
 
 const near = (a, b, tol, msg) => assert.ok(Math.abs(a - b) <= tol, `${msg}: ${a} ni ${b} ± ${tol}`);
@@ -80,6 +80,15 @@ test("clips: rod lifts ~10–30, air coil none, hardened nail keeps one for a mo
   z.step(10);
   assert.equal(z.sponke, 0, "remanenca pojema, sponka odpade");
   assert.ok(types(z).includes("sponke"));
+  // zamenjano jedro ne podeduje remanence: namesto magnetnega žeblja vstaviš palico, brez toka ne drži ničesar
+  const zz = em({ U: 12, jedro: "zebelj" });
+  zz.step(1);
+  zz.vklop = false;
+  zz.step(0.1);
+  zz.jedro = "palica";
+  assert.equal(zz.dvigniSponke(), 0, "nova palica brez remanence");
+  zz.step(0.1);
+  assert.equal(zz.M(), 0);
   // mehko železo po izklopu ne drži ničesar
   p.step(1);
   p.vklop = false;
@@ -295,7 +304,8 @@ test("induction: ∫U dt over each peak = N ΔΦ within 2 % for three drop heigh
   for (const h of [0.1, 0.2, 0.35]) {
     const B = pad({ h });
     const a = B.analiza(), N = B.coil.N;
-    const L0 = pretokTuljava(0, N), Lh = pretokTuljava(h, N), Ld = pretokTuljava(B.run.G.pot(B.run.G.tEnd).z, N);
+    // severni pol spodaj: magnetizacija kaže navzdol (s = −1); U = −dΛ/dt, zato ∫U dt = Λ(začetek) − Λ(konec)
+    const L0 = pretokTuljava(0, N, -1), Lh = pretokTuljava(h, N, -1), Ld = pretokTuljava(B.run.G.pot(B.run.G.tEnd).z, N, -1);
     rel(a.P1, Lh - L0, 0.02, `h ${h}: prvi vrh`);
     rel(a.P2, L0 - Ld, 0.02, `h ${h}: drugi vrh`);
   }
@@ -318,8 +328,42 @@ test("induction: peak voltage ∝ speed within 5 %; second peak larger and of op
   rel(pad({ tuljava: "t1000" }).vrhoviPravi()[0].U / pad({ tuljava: "t250" }).vrhoviPravi()[0].U, 4, 0.02, "U ∝ N");
 });
 
-test("induction: flipping the magnet inverts the signal", () => {
+test("induction: flux of the magnet through one turn = exact coaxial-loop mutual inductance (Maxwell, elliptic integrals) within 0,1 %; dipole far away within 0,5 %", () => {
+  // Valj z magnetizacijo M = površinski tok M na polmeru R; pretok skozi ovoj a = ∫ M · M12(R, a, z′) dz′ (Maxwell, Jackson 5.37).
+  const KE = (k) => {
+    let a = 1, b = Math.sqrt(1 - k * k), c = k, sum = (k * k) / 2, p = 1;
+    for (let i = 0; i < 30 && Math.abs(c) > 1e-16; i++) {
+      const an = (a + b) / 2;
+      c = (a - b) / 2;
+      b = Math.sqrt(a * b);
+      a = an;
+      p *= 2;
+      sum += (p * c * c) / 2;
+    }
+    const K = Math.PI / (2 * a);
+    return { K, E: K * (1 - sum) };
+  };
+  const M12 = (a, b, d) => {
+    const k = Math.sqrt((4 * a * b) / ((a + b) ** 2 + d * d)), { K, E } = KE(k);
+    return MU0 * Math.sqrt(a * b) * ((2 / k - k) * K - (2 / k) * E);
+  };
+  const { Br, D, L, m } = MAGNET_IND, n = 1000;
+  near(m, 2.25, 0.02, "m = Br V/μ0 za Ø 12 × 20 mm, Br 1,25 T");
+  for (const a of [0.024, 0.034]) {
+    for (const z of [0, 0.01, 0.02, 0.04, 0.1]) {
+      let s = 0;
+      for (let i = 0; i < n; i++) s += M12(D / 2, a, z - L / 2 + ((i + 0.5) * L) / n);
+      rel(pretokOvoj(z, a), ((Br / MU0) * L * s) / n, 0.001, `a ${a}, z ${z}`);
+    }
+    const z = 0.3;
+    rel(pretokOvoj(z, a), (MU0 * m * a * a) / (2 * (a * a + z * z) ** 1.5), 0.005, "dipol");
+  }
+});
+
+test("induction: flipping the magnet inverts the signal; Lenz sign with N pole down (flux counted upward)", () => {
   const a = pad().analiza(), b = pad({ pol: -1 }).analiza();
+  // N spodaj: pretok skozi tuljavo kaže navzdol in raste, Λ (navzgor) pada, U = −dΛ/dt > 0; ko magnet odhaja, U < 0
+  assert.ok(a.U1 > 0 && a.U2 < 0, `${a.U1}, ${a.U2}`);
   near(b.U1, -a.U1, 2 * new IndukcijaBench().lsb, "prvi vrh");
   near(b.U2, -a.U2, 2 * new IndukcijaBench().lsb, "drugi vrh");
 });
@@ -367,6 +411,22 @@ test("galvanometer: a falling magnet barely kicks it (two opposite pulses), a sl
   // z roko: oba sunka imata enako ploščino (pretok tja in nazaj)
   const r = pad({ nacin: "roka", vRoka: 0.3, fs: 1000 }).analiza();
   rel(-r.P1, r.P2, 0.02, "tja in nazaj");
+  // roka do 1 m/s: lega se ne zlomi (zvezno gibanje, največja hitrost dosežena)
+  for (const vRoka of [0.6, 1]) {
+    const G = new IndukcijaBench({ idealno: true });
+    G.nacin = "roka";
+    G.vRoka = vRoka;
+    const g = G.gibanje();
+    let prev = g.pot(0).z, skok = 0, vmax = 0;
+    for (let t = 0; t < g.tEnd; t += 1e-4) {
+      const p = g.pot(t);
+      skok = Math.max(skok, Math.abs(p.z - prev));
+      vmax = Math.max(vmax, Math.abs(p.v));
+      prev = p.z;
+    }
+    assert.ok(skok <= vRoka * 1e-4 * 1.01, `v ${vRoka}: skok ${skok}`);
+    near(vmax, vRoka, 1e-9, "največja hitrost");
+  }
 });
 
 test("simplifications are listed for all three benches and in Slovene", () => {
