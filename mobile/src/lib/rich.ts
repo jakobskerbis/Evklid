@@ -5,7 +5,7 @@ import { Marked } from "marked";
 import katex from "katex";
 import { createRenderer, streamSafe } from "../../../public/rich.js";
 import { annotateTex, withFormulaSubject } from "../../../public/formula-data.js";
-import { cardFor, configureCard } from "../../../public/formula-card.js";
+import { cardFor, configureCard, claimMarks, createMarkPage, releaseMarks } from "../../../public/formula-card.js";
 import type { Theme } from "./theme";
 import type { Fx } from "./formula-ctx";
 import { API_URL } from "./api";
@@ -22,15 +22,51 @@ const make = createRenderer as (o: object) => { renderRich: (s: string) => strin
 const trusted = make({ marked: trustedMarked, katex, sanitize: (h: string) => h });
 const untrusted = make({ marked: safeMarked, katex, sanitize: (h: string) => h });
 // Klikljive črke (kot na spletu): oznake v formuli dobijo data-fx s pomenom iz predmeta in lekcije.
-const annotate = (tex: string) => annotateTex(tex) as string;
+const annotate = (tex: string, o?: { sentence?: string } | null) => (annotateTex as (t: string, s?: string, o?: unknown) => string)(tex, undefined, o);
 const trustedFx = make({ marked: trustedMarked, katex, sanitize: (h: string) => h, annotate });
 const untrustedFx = make({ marked: safeMarked, katex, sanitize: (h: string) => h, annotate });
 
-export function toHtml(md: string, { ai = false, streaming = false, fx = null as Fx } = {}) {
+// owner: besedilo (RichText) na zaslonu. Kot na spletu je na zaslonu klikljiva le prva pojavitev vsakega pomena
+// črke (ostale dobijo data-fxd in so navadno besedilo), ista črka z drugim pomenom pa ima svoj ton barve.
+// ownPage: besedilo je samo svoja stran (sporočilo v klepetu, kot .msg na spletu).
+export function toHtml(md: string, { ai = false, streaming = false, fx = null as Fx, owner = null as object | null, ownPage = false } = {}) {
   const src = streaming ? streamSafe(md) : md;
   if (!fx) return (ai ? untrusted : trusted).renderRich(src) as string;
   const r = ai ? untrustedFx : trustedFx;
-  return withFormulaSubject(fx.subject || "MAT", () => r.renderRich(src), fx.symbols as never) as string;
+  const html = withFormulaSubject(fx.subject || "MAT", () => r.renderRich(src), fx.symbols as never) as string;
+  if (!owner) return html;
+  return markHtml(html, ownPage ? createMarkPage() : pageOf(fx), owner);
+}
+
+type MarkPage = ReturnType<typeof createMarkPage>;
+const pages = new WeakMap<object, MarkPage>();
+const pageOf = (fx: object) => {
+  let p = pages.get(fx);
+  if (!p) pages.set(fx, (p = createMarkPage()));
+  return p;
+};
+const decode = (c: string) => decodeURIComponent(c.replace(/\./g, "%"));
+export function markHtml(html: string, page: MarkPage, owner: object) {
+  const codes = [...html.matchAll(/data-fx="([^"]*)"/g)].map((m) => decode(m[1]));
+  if (!codes.length) return html;
+  const plan = claimMarks(page, owner, codes) as { dup: boolean; tone: number }[];
+  let i = 0;
+  return html.replace(/data-fx="([^"]*)"/g, (m, c) => {
+    const p = plan[i++];
+    if (p?.dup) return `data-fxd="${c}"`;
+    return p?.tone ? `${m} data-fx-tone="${p.tone}"` : m;
+  });
+}
+export const releaseHtmlMarks = (fx: Fx, owner: object) => {
+  if (fx && pages.has(fx)) releaseMarks(pages.get(fx)!, owner);
+};
+// Ko drugo besedilo na zaslonu sprosti oznake (zapre se, odide s seznama), se besedila znova označijo.
+export const marksVersion = (fx: Fx) => (fx ? pageOf(fx).version : 0);
+export function subscribeMarks(fx: Fx, cb: () => void) {
+  if (!fx) return () => {};
+  const subs = pageOf(fx).subs as Set<() => void>;
+  subs.add(cb);
+  return () => void subs.delete(cb);
 }
 
 // Kartica dotaknjene oznake (koda iz data-fx): { label, html } ali null; isto besedilo kot na spletu.
@@ -45,6 +81,11 @@ export function formulaCard(code: string): { label: string; html: string } | nul
 
 // Kratko besedilo brez formul in Markdowna se izriše kar z naravnim besedilom (brez WebView).
 export const isPlain = (s: string) => !/[$*_`|#<>\\[\]]|^\s*[-+]\s|^\s*\d+\.\s/m.test(s);
+
+// Barve drugega, tretjega in četrtega pomena iste črke (kot na spletu style.css --fx-tone-N za slog Čist).
+const TONES = { light: ["#a1520d", "#aa0e76", "#0a7b39"], dark: ["#f2a35f", "#f25fc1", "#5ff29c"] };
+const toneCss = (th: Theme) =>
+  (th.dark ? TONES.dark : TONES.light).map((c, i) => `[data-fx-tone="${i + 1}"],.fx-card[data-tone="${i + 1}"] .fx-title .katex{color:${c}}`).join("");
 
 // Celoten dokument za WebView: barve teme, pisava Instrument Sans, formule kot na spletu (KaTeX + sirina.js
 // s strežnika; RichText naloži dokument z baseUrl API_URL), tabele, »Pokaži formulo«.
@@ -100,6 +141,8 @@ img,svg{max-width:100%;height:auto}
 .katex .vlist{pointer-events:none}.katex [data-fx],.katex [data-fx] *{pointer-events:auto}.katex .pstrut{pointer-events:none!important}
 [data-fx]{cursor:pointer;color:${th.accent};border-radius:3px;padding:0 .08em;margin:0 -.08em}
 [data-fx].fx-open{background:${th.accentSoft}}
+${toneCss(th)}
+[data-fx-tone].fx-open{background:color-mix(in srgb,currentColor 14%,transparent)}
 .fx-title{display:flex;align-items:baseline;gap:8px;color:${th.accent}}.fx-title b{color:${th.text};min-width:0}
 .fx-title .katex{font-size:1.25em;color:${th.accent};flex:none}
 .fx-card{display:grid;gap:6px}.fx-line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -112,7 +155,7 @@ img,svg{max-width:100%;height:auto}
 /* Formule vedno od leve proti desni, tudi v arabščini (kartica ima dir=rtl). */
 .katex{direction:ltr;unicode-bidi:isolate}
 </style>
-<script>document.addEventListener('click',function(e){var el=e.target.closest&&e.target.closest('[data-fx]');if(!el||!window.ReactNativeWebView)return;e.preventDefault();var o=document.querySelector('.fx-open');if(o)o.classList.remove('fx-open');el.classList.add('fx-open');window.ReactNativeWebView.postMessage('fx:'+el.getAttribute('data-fx'));},true);window.__fxClose=function(){var o=document.querySelector('.fx-open');if(o)o.classList.remove('fx-open');};</script></head><body><div id="c">${body}</div></body></html>`;
+<script>document.addEventListener('click',function(e){var el=e.target.closest&&e.target.closest('[data-fx]');if(!el||!window.ReactNativeWebView)return;e.preventDefault();var o=document.querySelector('.fx-open');if(o)o.classList.remove('fx-open');el.classList.add('fx-open');window.ReactNativeWebView.postMessage('fx:'+el.getAttribute('data-fx')+'|'+(el.getAttribute('data-fx-tone')||''));},true);window.__fxClose=function(){var o=document.querySelector('.fx-open');if(o)o.classList.remove('fx-open');};</script></head><body><div id="c">${body}</div></body></html>`;
 }
 
 // Merjenje višine vsebine (WebView brez drsenja, višino dobi od vsebine).

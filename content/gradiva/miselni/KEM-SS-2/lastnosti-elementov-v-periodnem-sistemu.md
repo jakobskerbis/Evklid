@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kovine in nekovine
+  - kovine oddajajo elektrone, prevajajo tok
+  - nekovine elektrone sprejemajo ali delijo
+- Polkovine
+  - B, Si, Ge, As, Sb, Te ob stopničasti meji
+  - čist element z vmesnimi lastnostmi, ne zmes
+- Trendi v periodi
+  - proti desni polmer pada
+  - ionizacijska energija in elektronegativnost rasteta
+  - napaka: »več elektronov, večji atom«
+- Trendi v skupini
+  - navzdol nova lupina, večji polmer
+  - zunanji elektron šibkeje vezan
+- Kovinski značaj
+  - raste proti levi in navzdol
+  - najizrazitejša kovina cezij, nekovina fluor
+- Značaj oksidov
+  - oksid kovine bazičen: $\mathrm{CaO + H_2O \rightarrow Ca(OH)_2}$
+  - oksid nekovine kisel: $\mathrm{SO_3 + H_2O \rightarrow H_2SO_4}$
+  - amfoterna $\mathrm{Al_2O_3}$ in $\mathrm{ZnO}$
+- pH raztopine oksida
+  - $n = \dfrac{m}{M}$, nato $[\mathrm{OH^-}]$
+  - iz $\mathrm{Na_2O}$ nastaneta dva $\mathrm{NaOH}$
+  - $\mathrm{pH} = 14 - \mathrm{pOH}$

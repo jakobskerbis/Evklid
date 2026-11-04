@@ -64,38 +64,64 @@ export function lepaDolzina(maks) {
 
 // Gumb za preklop načina vrtenja (orodja odra v pregledovalniku in atlasu): ikona in napis kažeta trenutni način.
 export function poveziGumbVrtenja(b, kit, icon, t) {
+  const IKONA = { prosto: "rotate-3d", pokoncno: "globe", hoja: "gamepad-2" };
+  const NAPIS = { prosto: "a3.rotFree", pokoncno: "a3.rotUpright", hoja: "a3.rotWalk" };
+  const NASLEDNJI = { prosto: "pokoncno", pokoncno: "hoja", hoja: "prosto" };
+  const oder = kit.canvas.parentElement;
+  // Gumba Naprej/Nazaj na odru (držiš, da hodiš): za dotik, kjer ni tipkovnice; vidna le pri hoji.
+  const pad = document.createElement("div");
+  pad.className = "k3-hoja";
+  for (const [smer, kljuc] of [[1, "a3.walkForward"], [-1, "a3.walkBack"]]) {
+    const g = document.createElement("button");
+    g.type = "button";
+    g.className = "k3-hoja-gumb" + (smer > 0 ? " naprej" : "");
+    g.innerHTML = icon("chevron-down");
+    g.setAttribute("aria-label", t(kljuc));
+    g.title = t(kljuc);
+    g.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      g.setPointerCapture?.(e.pointerId);
+      kit.hodi(smer);
+    });
+    for (const ev of ["pointerup", "pointercancel", "lostpointercapture"]) g.addEventListener(ev, () => kit.hodi(0));
+    g.addEventListener("contextmenu", (e) => e.preventDefault());
+    pad.append(g);
+  }
+  oder?.append(pad);
   const osvezi = () => {
-    const prosto = kit.nacinVrtenja() === "prosto";
-    b.innerHTML = icon(prosto ? "rotate-3d" : "globe");
-    const l = t(prosto ? "a3.rotFree" : "a3.rotUpright");
+    const n = kit.nacinVrtenja();
+    b.innerHTML = icon(IKONA[n]);
+    const l = t(NAPIS[n]);
     b.setAttribute("aria-label", l);
     b.title = l;
+    pad.hidden = n !== "hoja";
   };
   let sporocilo = null;
   b.addEventListener("click", () => {
-    kit.nacinVrtenja(kit.nacinVrtenja() === "prosto" ? "pokoncno" : "prosto");
+    kit.nacinVrtenja(NASLEDNJI[kit.nacinVrtenja()]);
     osvezi();
-    // Telefon nima lebdečega napisa: kratko obvestilo z imenom novega načina (brez »preklopi na …«).
-    const host = b.closest(".k3-oder, .a3") || document.body;
+    // Telefon nima lebdečega napisa: kratko obvestilo z imenom novega načina (brez »preklopi na …«), pri hoji še navodilo.
+    const n = kit.nacinVrtenja();
     sporocilo?.remove();
     sporocilo = document.createElement("div");
     sporocilo.className = "k3-vrtenje-sporocilo";
     sporocilo.setAttribute("role", "status");
-    sporocilo.textContent = b.title.replace(/\s*[（(].*$/, "");
-    host.append(sporocilo);
+    sporocilo.textContent = n === "hoja" ? t("a3.walkHint") : b.title.replace(/\s*[（(].*$/, "");
+    (oder || document.body).append(sporocilo);
     const el = sporocilo;
-    setTimeout(() => el.remove(), 1600);
+    setTimeout(() => el.remove(), n === "hoja" ? 3500 : 1600);
   });
   osvezi();
 }
 
-// Način vrtenja, ki ga uporabnik izbere v kateremkoli 3D modelu: »prosto« (v vse smeri, čez vrh) ali »pokoncno« (okoli
-// navpične osi). Brez izbire ima vsak oder svoj privzeti način (modeli prosto, atlas pokončno).
+// Način vrtenja, ki ga uporabnik izbere v kateremkoli 3D modelu: »prosto« (v vse smeri, čez vrh), »pokoncno« (okoli
+// navpične osi) ali »hoja« (prvoosebno premikanje). Brez izbire ima vsak oder svoj privzeti način (modeli prosto, atlas pokončno).
 const KLJUC_NACINA = "evklid.3d.vrtenje";
+const NACINI = ["prosto", "pokoncno", "hoja"];
 export function shranjenNacin() {
   try {
     const v = localStorage.getItem(KLJUC_NACINA);
-    return v === "prosto" || v === "pokoncno" ? v : null;
+    return NACINI.includes(v) ? v : null;
   } catch {
     return null;
   }
@@ -175,7 +201,10 @@ export function ustvariSceno(el, opts = {}) {
   // kot krogla v roki (brez zaklenjene navpične osi in brez ustavljanja na polu). Kamera kroži okoli controls.target,
   // njen »gor« se vrti z njo; OrbitControls ostane za povečavo in premik (dva prsta, desna tipka).
   // Način izbere uporabnik z gumbom (nacinVrtenja, shranjen na napravi za vse modele); brez izbire velja opts.
-  let prosto = shranjenNacin() ? shranjenNacin() === "prosto" : opts.prostoVrtenje === true;
+  // »hoja«: prvoosebni pogled (vlečenje gleda okoli, premik s tipkami W A S D / puščicami, gumbi Naprej/Nazaj, kolešček
+  // in dva prsta), kamera gre lahko tudi v notranjost. OrbitControls je takrat izklopljen; cilj ostane pred kamero.
+  let nacin = shranjenNacin() || (opts.prostoVrtenje === true ? "prosto" : "pokoncno");
+  let prosto = nacin === "prosto";
   const vztr = { x: 0, y: 0 }; // hitrost po spustu (rad/s), pojema
   function zavrti(kotX, kotY) {
     zavrtiOkoli(THREE, camera.position, camera.up, controls.target, kotX, kotY);
@@ -187,16 +216,21 @@ export function ustvariSceno(el, opts = {}) {
   // dveh prstov ostal v stanju povečave in ob vsakem premiku preostalega prsta vrgel napako (_handleTouchMoveDolly).
   const enPrst = controls.touches.ONE;
   const uporabiNacin = () => {
-    controls.enableRotate = !prosto;
-    controls.touches.ONE = prosto ? null : enPrst;
+    controls.enabled = nacin !== "hoja";
+    controls.enableRotate = nacin === "pokoncno";
+    controls.touches.ONE = nacin === "pokoncno" ? enPrst : null;
   };
   uporabiNacin();
   {
     let zadnjiCas = 0;
     let pot = 0; // pot od pritiska (px): tap (< 7 px, kot naTap) ne zavrti naprej
     canvas.addEventListener("pointerdown", (e) => {
-      if (!prosto || (e.pointerType === "mouse" && e.button !== 0)) return;
+      if (nacin === "pokoncno" || (e.pointerType === "mouse" && e.button !== 0)) return;
       prsti.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      // OrbitControls je v hoji izklopljen in ne zajame kazalca: brez zajema bi spust zunaj platna ostal neopažen
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch {}
       vztr.x = vztr.y = 0;
       pot = 0;
       zadnjiCas = performance.now();
@@ -204,12 +238,25 @@ export function ustvariSceno(el, opts = {}) {
     canvas.addEventListener("pointermove", (e) => {
       const p = prsti.get(e.pointerId);
       if (!p) return;
+      if (e.pointerType === "mouse" && e.buttons === 0) return void prsti.delete(e.pointerId); // spust smo zgrešili
       const dx = e.clientX - p.x;
       const dy = e.clientY - p.y;
+      const razmik = () => { const [a, b] = [...prsti.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
+      const prej = nacin === "hoja" && prsti.size === 2 ? razmik() : 0;
       // Položaj se osveži tudi med povečavo z dvema prstoma in med preletom: ko ostane en prst, ni skoka.
       p.x = e.clientX;
       p.y = e.clientY;
-      if (prsti.size !== 1 || let_) return; // dva prsta: povečava (OrbitControls)
+      if (let_) return;
+      if (nacin === "hoja") {
+        // en prst gleda okoli (prijem: pogled sledi prstu), razpiranje dveh prstov premika naprej
+        if (prsti.size === 2) premakni(((razmik() - prej) * 4 * hitrostHoje()) / Math.max(1, canvas.clientHeight), 0, 0);
+        else if (prsti.size === 1) {
+          const k = (camera.fov * Math.PI) / 180 / Math.max(1, canvas.clientHeight);
+          zavrtiPogled(dx * k, dy * k);
+        }
+        return;
+      }
+      if (prsti.size !== 1) return; // dva prsta: povečava (OrbitControls)
       pot += Math.hypot(dx, dy);
       const k = (2 * Math.PI * controls.rotateSpeed) / Math.max(1, canvas.clientHeight);
       const kx = dx * k;
@@ -229,6 +276,72 @@ export function ustvariSceno(el, opts = {}) {
     canvas.addEventListener("pointerup", spusti);
     canvas.addEventListener("pointercancel", spusti);
   }
+  // ---- hoja ----
+  let vhodHoje = null; // pogled ob vstopu v hojo (cilj, razdalja), da se ob izhodu vrnemo ven
+  const OS_Y = new THREE.Vector3(0, 1, 0);
+  const _hSmer = new THREE.Vector3();
+  const _hDesno = new THREE.Vector3();
+  const _hNova = new THREE.Vector3();
+  const tipke = new Set(); // držane tipke za hojo
+  let gumbHoje = 0; // gumb Naprej (1) / Nazaj (−1) na odru
+  const hitrostHoje = () => fitRazdalja(1) * 0.35; // enot na sekundo (prizor ima polmer ~1)
+  // Desni vektor kamere (v _hDesno); pri pogledu natanko navpično (križni produkt 0) vzame desno os kamere, ne NaN.
+  function desnoOd(smer) {
+    _hDesno.crossVectors(smer, OS_Y);
+    if (_hDesno.lengthSq() < 1e-8) _hDesno.set(1, 0, 0).applyQuaternion(camera.quaternion);
+    _hDesno.normalize();
+  }
+  function zavrtiPogled(yaw, pitch) {
+    const L = Math.max(1e-3, camera.position.distanceTo(controls.target));
+    camera.getWorldDirection(_hSmer).applyAxisAngle(OS_Y, yaw);
+    desnoOd(_hSmer);
+    _hNova.copy(_hSmer).applyAxisAngle(_hDesno, pitch);
+    if (Math.abs(_hNova.y) < 0.995 || Math.abs(_hNova.y) < Math.abs(_hSmer.y)) _hSmer.copy(_hNova); // ne čez navpičnico
+    camera.up.copy(OS_Y);
+    controls.target.copy(camera.position).addScaledVector(_hSmer, L);
+    camera.lookAt(controls.target);
+    narisi();
+  }
+  function premakni(naprej, vstran, gor) {
+    camera.getWorldDirection(_hSmer);
+    desnoOd(_hSmer);
+    _hNova.set(0, 0, 0).addScaledVector(_hSmer, naprej).addScaledVector(_hDesno, vstran).addScaledVector(OS_Y, gor);
+    camera.position.add(_hNova);
+    controls.target.add(_hNova);
+    narisi();
+  }
+  const ima = (...k) => k.some((x) => tipke.has(x));
+  function korakHoje(dt) {
+    if (nacin !== "hoja" || let_) return false;
+    const n = gumbHoje + (ima("w", "arrowup") ? 1 : 0) - (ima("s", "arrowdown") ? 1 : 0);
+    const st = (ima("d") ? 1 : 0) - (ima("a") ? 1 : 0);
+    const g = (ima("e") ? 1 : 0) - (ima("q") ? 1 : 0);
+    const zavoj = (ima("arrowleft") ? 1 : 0) - (ima("arrowright") ? 1 : 0);
+    if (!n && !st && !g && !zavoj) return false;
+    let_ = null; // premik prekine prelet
+    if (zavoj) zavrtiPogled(zavoj * 1.4 * dt, 0);
+    const v = hitrostHoje() * dt;
+    if (n || st || g) premakni(n * v, st * v, g * v);
+    return true;
+  }
+  // W A S D Q E po legi tipke (e.code), da delujejo tudi v cirilici, arabščini, tajščini …
+  const KODE = { KeyW: "w", KeyA: "a", KeyS: "s", KeyD: "d", KeyQ: "q", KeyE: "e" };
+  const tipkaHoje = (e) => KODE[e.code] || String(e.key).toLowerCase();
+  const HOJA_TIPKE = new Set(["w", "a", "s", "d", "q", "e", "arrowup", "arrowdown", "arrowleft", "arrowright"]);
+  canvas.addEventListener("keyup", (e) => tipke.delete(tipkaHoje(e)));
+  canvas.addEventListener("blur", () => tipke.clear());
+  canvas.addEventListener(
+    "wheel",
+    (e) => {
+      if (nacin !== "hoja") return;
+      e.preventDefault();
+      // sledilna ploščica pošlje veliko majhnih dogodkov: korak sorazmeren z deltaY (100 px ≈ en zarez koleščka)
+      const d = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
+      premakni((-Math.max(-100, Math.min(100, d)) / 100) * hitrostHoje() * 0.25, 0, 0);
+    },
+    { passive: false },
+  );
+
   function korakVztrajnosti(dt) {
     // Vztrajnost teče šele po spustu (med vlečenjem kamero vodi prst).
     if (!prosto || prsti.size || (!vztr.x && !vztr.y)) return false;
@@ -391,6 +504,7 @@ export function ustvariSceno(el, opts = {}) {
     // vzporedno s pogledom (kader bi se prevrnil, vodoravni poteg bi kader le kotalil).
     if (prosto && !pokonci) doUp.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(camera.position.clone().sub(controls.target).normalize(), s)).normalize();
     const d = razdalja ?? fitRazdalja(polmer);
+    if (nacin === "hoja") vhodHoje = { cilj: cilj.clone(), d }; // prelet ali Ponastavi med hojo: izhod se vrne sem
     const poz = cilj.clone().addScaledVector(s, d);
     if (!gib || trajanje <= 0) {
       controls.target.copy(cilj);
@@ -436,17 +550,38 @@ export function ustvariSceno(el, opts = {}) {
   }
   // Preklop načina: v pokončnem se kamera gladko postavi pokonci (OrbitControls kroži okoli navpične osi).
   function nacinVrtenja(nov) {
-    if (nov === undefined) return prosto ? "prosto" : "pokoncno";
-    const p = nov === "prosto";
+    if (nov === undefined) return nacin;
+    if (!NACINI.includes(nov)) return nacin;
     try {
-      localStorage.setItem(KLJUC_NACINA, p ? "prosto" : "pokoncno");
+      localStorage.setItem(KLJUC_NACINA, nov);
     } catch {}
-    if (p === prosto) return nov;
-    prosto = p;
+    if (nov === nacin) return nov;
+    const izHoje = nacin === "hoja";
+    nacin = nov;
+    prosto = nov === "prosto";
     vztr.x = vztr.y = 0;
     prsti.clear();
+    tipke.clear();
+    gumbHoje = 0;
     uporabiNacin();
-    if (!prosto) poleti(controls.target, 1, { razdalja: camera.position.distanceTo(controls.target), pokonci: true, trajanje: 0.5 });
+    if (nacin === "hoja") {
+      vhodHoje = { cilj: controls.target.clone(), d: camera.position.distanceTo(controls.target) };
+      // Vstop v hojo: »gor« vodoravno, pogled ne natanko navpično (sicer bi bil desni vektor nedoločen).
+      camera.getWorldDirection(_hSmer);
+      _hSmer.y = Math.max(-0.99, Math.min(0.99, _hSmer.y));
+      _hSmer.normalize();
+      const L = Math.max(1e-3, camera.position.distanceTo(controls.target));
+      camera.up.copy(OS_Y);
+      controls.target.copy(camera.position).addScaledVector(_hSmer, L);
+      camera.lookAt(controls.target);
+    }
+    if (izHoje && vhodHoje) {
+      // Iz hoje nazaj k pogledu od zunaj: isti cilj in razdalja kot ob vstopu, smer od tam, kjer si zdaj.
+      const smer = camera.position.clone().sub(vhodHoje.cilj);
+      if (smer.lengthSq() < 1e-6) camera.getWorldDirection(smer).negate();
+      poleti(vhodHoje.cilj, 1, { smer, razdalja: vhodHoje.d, pokonci: !prosto, trajanje: 0.6 });
+      vhodHoje = null;
+    } else if (!prosto) poleti(controls.target, 1, { razdalja: camera.position.distanceTo(controls.target), pokonci: true, trajanje: 0.5 });
     narisi();
     return nov;
   }
@@ -461,6 +596,7 @@ export function ustvariSceno(el, opts = {}) {
     narisi();
   };
   const priblizaj = (k) => {
+    if (nacin === "hoja") return premakni((k > 1 ? 1 : -1) * hitrostHoje() * 0.6, 0, 0); // gumba +/− stopita naprej/nazaj
     if (k > 1) controls.dollyIn(k);
     else controls.dollyOut(1 / k);
     controls.update();
@@ -469,6 +605,11 @@ export function ustvariSceno(el, opts = {}) {
   // Tipkovnica na platnu: puščice vrtijo, + in − približata, Home ponastavi pogled (opts.ponastavi).
   canvas.addEventListener("keydown", (e) => {
     const k = e.key;
+    if (nacin === "hoja" && HOJA_TIPKE.has(tipkaHoje(e)) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      tipke.add(tipkaHoje(e));
+      e.preventDefault();
+      return;
+    }
     const s = Math.PI / 18;
     if (k === "ArrowLeft") obrni(s, 0);
     else if (k === "ArrowRight") obrni(-s, 0);
@@ -682,9 +823,13 @@ export function ustvariSceno(el, opts = {}) {
     zadnji = now;
     if (++stevec % 60 === 0 && !el.isConnected) return unici();
     let risi = dirty;
-    if (korakLeta(dt)) risi = true;
+    if (korakLeta(dt)) {
+      risi = true;
+      if (nacin === "hoja") camera.lookAt(controls.target); // OrbitControls je izklopljen: kamero obrne sam
+    }
     if (korakVztrajnosti(dt)) risi = true;
-    if (controls.update(dt)) risi = true;
+    if (korakHoje(dt)) risi = true;
+    if (nacin !== "hoja" && controls.update(dt)) risi = true;
     for (const f of koraki) if (f(dt, now / 1000) !== false) risi = true;
     if (stalno > 0) risi = true;
     if (!risi) {
@@ -755,6 +900,7 @@ export function ustvariSceno(el, opts = {}) {
     narisi,
     poleti,
     nacinVrtenja,
+    hodi: (n) => (gumbHoje = Math.sign(n) || 0),
     fitRazdalja,
     obrni,
     priblizaj,

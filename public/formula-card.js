@@ -1,6 +1,6 @@
 // Kartica oznake (simbol ali enota) iz kode data-fx: { label, html }. Brez DOM, zato jo uporablja
 // tudi aplikacija na telefonu (mobile/src/lib/rich.ts). Prevode, jezik in KaTeX dobi s configureCard.
-import { lookupSymbol, lookupUnit, symbolsIn, SYMBOLS, GREEK, SUBJECT_TABLES } from "./formula-data.js";
+import { lookupSymbol, lookupUnit, symbolsIn, symbolVariant, SYMBOLS, GREEK, SUBJECT_TABLES } from "./formula-data.js";
 
 let T = (k) => k;
 let LANG = () => "sl";
@@ -55,8 +55,9 @@ export function cardFor(code) {
         ${descOf(u) ? `<div class="fx-note" dir="auto">${subSup(esc(descOf(u)))}</div>` : ""}`,
     };
   }
-  const [subject, key] = rest;
-  const e = lookupSymbol(key, subject, "") || lookupSymbolAny(key, subject);
+  const [subject, key, vi] = rest;
+  // vi: pomen dvoumne črke, ki ga je izbrala formula ali poved (G v F = G m₁m₂/r² je gravitacijska konstanta).
+  const e = symbolVariant(key, vi) || lookupSymbol(key, subject, "") || lookupSymbolAny(key, subject);
   if (!e) return null;
   const delta = kind === "d";
   const name = delta ? T("fx.change", { what: nameOf(e) }) : nameOf(e);
@@ -117,3 +118,61 @@ function lookupSymbolAny(key, subject) {
   return null;
 }
 
+
+// ---------- ena oznaka za vsak pomen na strani ----------
+// Na strani je klikljiva le prva pojavitev vsakega pomena črke; ista črka z drugim pomenom (a kot realni
+// del z in a kot pospešek) dobi svojo oznako v drugi barvi (ton 1–3), da se pred dotikom vidi, katera je katera.
+// Spletna stran (formula-info.js) in aplikacija (mobile/src/lib/rich.ts) uporabljata isti claimMarks.
+const meanings = new Map();
+const normName = (n) => String(n || "").replace(/\$/g, "").replace(/\s+/g, " ").trim().toLowerCase();
+export function meaningOf(code) {
+  if (meanings.has(code)) return meanings.get(code);
+  const [kind, subject, key, vi] = String(code).split(":");
+  const unit = String(code).split(":").slice(1).join(":");
+  let m = null;
+  if (kind === "s" || kind === "d") {
+    const e = symbolVariant(key, vi) || lookupSymbol(key, subject, "") || lookupSymbolAny(key, subject);
+    // Isto ime = isti pomen (oznaka lekcije »hitrost« in slovar »hitrost« sta ena oznaka).
+    if (e) m = { letter: `${kind === "d" ? "Δ" : ""}${key}`, id: `${kind}|${key}|${normName(e.n)}` };
+  } else if (kind === "u" && lookupUnit(unit)) m = { letter: `u|${unit}`, id: `u|${unit}` };
+  if (meanings.size > 5000) meanings.clear();
+  meanings.set(code, m);
+  return m;
+}
+// Stran: kdo ima oznako pomena (owners) in ton vsakega pomena; ton ostane, dokler stran živi, da barva
+// pomena ne skače. version se poveča, ko lastnik sprosti oznake (aplikacija: druga besedila jih prevzamejo).
+export const createMarkPage = () => ({ owners: new Map(), tones: new Map(), version: 0, subs: new Set() });
+const TONES = 4;
+// codes: kode data-fx enega lastnika (spletna stran, besedilo v aplikaciji) po vrsti; vrne { dup, tone } za vsako.
+export function claimMarks(page, owner, codes) {
+  const mine = new Set();
+  return codes.map((code) => {
+    const m = meaningOf(code);
+    if (!m) return { dup: false, tone: 0 };
+    const own = page.owners.get(m.id);
+    if ((own !== undefined && own !== owner) || mine.has(m.id)) return { dup: true, tone: 0 };
+    mine.add(m.id);
+    page.owners.set(m.id, owner);
+    if (!page.tones.has(m.id)) {
+      // najnižji ton, ki ga nima noben drug pomen te črke na strani
+      const used = new Set([...page.tones.values()].filter((x) => x.letter === m.letter).map((x) => x.tone));
+      let n = 0;
+      while (used.has(n) && n < TONES - 1) n++;
+      page.tones.set(m.id, { letter: m.letter, tone: n });
+    }
+    return { dup: false, tone: page.tones.get(m.id).tone };
+  });
+}
+// Pozabi tone pomenov, ki jih nihče več nima (splet: po vsakem preračunu strani).
+export function pruneTones(page) {
+  for (const id of page.tones.keys()) if (!page.owners.has(id)) page.tones.delete(id);
+}
+export function releaseMarks(page, owner) {
+  let freed = false;
+  for (const [id, o] of page.owners) if (o === owner) { page.owners.delete(id); freed = true; }
+  pruneTones(page);
+  if (freed) {
+    page.version++;
+    for (const f of page.subs) f();
+  }
+}

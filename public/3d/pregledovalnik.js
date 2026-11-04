@@ -296,6 +296,22 @@ export function odpriModel(el, mod, opts = {}) {
         inp.setAttribute("aria-label", c.oznaka);
         const sd = { c, zadnja: c.vrednost, nastavi: (v) => ((inp.value = v), (out.textContent = stevilo(v, c.korak))) };
         sinh.push(sd);
+        // Med vlečenjem drsnika ostaneta vidna le njegov gumb in tirnica (j, 4. 11.: »da vidiš, kje ustaviti«): plošča,
+        // orodja, točke in napisi postanejo prosojni, ob spustu se vrnejo.
+        inp.addEventListener("pointerdown", (e) => {
+          if (e.button !== 0) return; // desni klik: kontekstni meni pogoltne spust
+          const id = e.pointerId;
+          const koren = lab.closest(".k3-pregled") || lab;
+          lab.classList.add("k3-aktiven");
+          koren.classList.add("k3-drsam");
+          const konec = (ev) => {
+            if (ev.pointerId !== undefined && ev.pointerId !== id) return; // drug prst na odru ne konča vlečenja
+            lab.classList.remove("k3-aktiven");
+            koren.classList.remove("k3-drsam");
+            for (const t of ["pointerup", "pointercancel", "blur", "contextmenu"]) window.removeEventListener(t, konec);
+          };
+          for (const t of ["pointerup", "pointercancel", "blur", "contextmenu"]) window.addEventListener(t, konec);
+        });
         inp.addEventListener("input", () => {
           const v = Number(inp.value);
           c.vrednost = sd.zadnja = v;

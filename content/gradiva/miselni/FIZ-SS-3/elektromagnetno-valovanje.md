@@ -1,0 +1,22 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Nihanje polj
+  - nihata $\vec E$ in $\vec B$, ne snov
+  - širi se tudi skozi vakuum, zvok ne
+- Nastanek
+  - nihajoči naboji v anteni ali atomu
+  - antena seva frekvenco nihajnega kroga
+- Prečno valovanje
+  - $\vec E \perp \vec B$, oba pravokotna na smer širjenja
+- Hitrost svetlobe
+  - $c = 3{,}00\cdot10^{8}\,\mathrm{m/s}$ za vsa EM valovanja
+  - Sonce–Zemlja: $500\,\mathrm{s}$; Luna: $1{,}28\,\mathrm{s}$
+- Zveza $c = \lambda \nu$
+  - $\lambda = \dfrac{c}{\nu}$, enota meter
+  - napaka: obrnjena formula $\dfrac{\nu}{c}$
+- Spekter
+  - radio, mikrovalovi, IR, vidna, UV, rentgen, gama
+  - vidna svetloba: $380$–$750\,\mathrm{nm}$
+  - višja frekvenca, več energije

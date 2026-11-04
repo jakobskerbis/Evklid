@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sila ne zadošča
+  - vsota sil nič, telo se lahko vrti
+  - pomembno je prijemališče
+- Navor
+  - $M = F\,r$
+  - enota $\mathrm{N\,m}$
+  - predznak glede na smer vrtenja
+- Ročica
+  - pravokotna razdalja od osi do nosilke
+  - nosilka skozi os: navor nič
+- Ravnovesje togega telesa
+  - vsota sil je nič
+  - vsota navorov je nič
+  - os tam, kjer je neznana sila
+- Vzvod
+  - $F_1 r_1 = F_2 r_2$
+  - daljša ročica, manjša sila
+- Težišče
+  - teža $F_\mathrm{g} = m\,g$ prijemlje tu
+  - enakomerno telo: na sredini
+  - nad podporno ploskvijo ni prevrnitve

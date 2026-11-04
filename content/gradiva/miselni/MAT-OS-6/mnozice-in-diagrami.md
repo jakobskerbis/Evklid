@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Množica in element
+  - Kraji na seznamu so elementi množice
+  - $x \in A$: element; $x \notin A$: ni element
+- Euler-Vennov diagram
+  - Krogi v pravokotniku, štiri področja
+  - Vsak element napišeš natanko enkrat
+- Presek
+  - $A \cap B$: v $A$ **in** v $B$
+  - Prekrivanje krogov, vedno najmanjši del
+- Unija
+  - $A \cup B$: v $A$ **ali** v $B$
+  - Napaka: presek šteješ dvakrat, $12 + 9 \ne 16$
+- Zunaj krogov
+  - Elementi brez obeh lastnosti
+  - Vsi minus unija, na primer $30 - 23 = 7$
+- Carrollov diagram
+  - Tabela $2 \times 2$: vrstici in stolpca
+  - Vsak element v natanko enem polju
+  - Manjkajoče polje: vrstica minus znano polje

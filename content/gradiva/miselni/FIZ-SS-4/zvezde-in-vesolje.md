@@ -1,0 +1,30 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Wienov zakon
+  - $\lambda_{\max} T = k_\mathrm{W}$
+  - $k_\mathrm{W} = 2{,}90\cdot10^{-3}\,\mathrm{m\,K}$
+  - napaka: rdeče zvezde niso vroče
+- Stefanov zakon
+  - $j = \sigma T^4$, enota $\mathrm{W/m^2}$
+  - dvakrat višja $T$: $16$-krat več
+  - $T$ vedno v kelvinih
+- Izsev zvezde
+  - $L = 4\pi R^2 \sigma T^4$
+  - Sonce: $3{,}85\cdot10^{26}\,\mathrm{W}$
+  - velika hladna zvezda lahko seva več
+- Gostota toka na Zemlji
+  - $j = \dfrac{L}{4\pi d^2}$
+  - svetlost na nebu ni izsev
+- HR-diagram
+  - izsev proti temperaturi
+  - glavna veja, orjakinje, bele pritlikavke
+- Fuzija v jedru
+  - štirje protoni v helijevo jedro
+  - $0{,}71\,\%$ mase, $26{,}7\,\mathrm{MeV}$
+  - Sonce izgubi $4{,}3\cdot10^{9}\,\mathrm{kg}$ na sekundo
+- Razdalje v vesolju
+  - svetlobno leto $= 9{,}46\cdot10^{15}\,\mathrm{m}$, razdalja
+  - $1\,\mathrm{pc} = 3{,}26$ svetlobnega leta
+  - paralaksa: $d = 1/p$

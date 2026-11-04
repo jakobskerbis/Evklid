@@ -94,8 +94,18 @@ test("every 3D stage (viewer and atlas) has the rotation mode button, with strin
   assert.match(scena, /nacinVrtenja,/, "kit exposes nacinVrtenja");
   for (const f of ["pregledovalnik.js", "atlas.js"]) assert.match(fs.readFileSync(path.join(D3, f), "utf8"), /poveziGumbVrtenja\(btnVrtenje, kit, icon, t\)/, f);
   const ui = path.join(ROOT, "public", "i18n", "ui");
-  for (const k of ["a3.rotFree", "a3.rotUpright"]) {
+  assert.match(scena, /"hoja"/, "walk mode exists");
+  for (const k of ["a3.rotFree", "a3.rotUpright", "a3.rotWalk", "a3.walkHint", "a3.walkForward", "a3.walkBack"]) {
     assert.ok(sl[k], `sl ${k}`);
     for (const f of fs.readdirSync(ui)) assert.ok(JSON.parse(fs.readFileSync(path.join(ui, f), "utf8"))[k], `${f} ${k}`);
   }
+});
+
+test("dragging a slider hides everything but its knob and track until release", () => {
+  const src = fs.readFileSync(path.join(D3, "pregledovalnik.js"), "utf8");
+  assert.match(src, /koren\.classList\.add\("k3-drsam"\)/);
+  assert.match(src, /for \(const t of \["pointerup", "pointercancel", "blur", "contextmenu"\]\) window\.addEventListener\(t, konec\)/, "released on pointerup/cancel/blur/contextmenu");
+  const css = fs.readFileSync(path.join(D3, "3d.css"), "utf8");
+  assert.match(css, /\.k3-drsam \.k3-spodaj[^{]*\{ visibility: hidden; \}/);
+  assert.match(css, /\.k3-drsam \.k3-aktiven input\[type="range"\] \{ visibility: visible; \}/);
 });

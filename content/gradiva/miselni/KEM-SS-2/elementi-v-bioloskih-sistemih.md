@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Biogeni elementi
+  - nujni za zgradbo in delovanje živih bitij
+  - O, C, H, N skupaj okoli $96\,\%$ mase
+  - makro nad $0{,}01\,\%$, mikro pod tem (Fe)
+- Kisik in vodik
+  - večinoma v vodi, okoli $60\,\%$ telesa
+  - po masi največ kisika, $65\,\%$
+- Ogljik kot ogrodje
+  - štiri vezi, verige in obroči
+  - sladkor in maščoba iz C, H, O
+- Dušik
+  - amino skupina $\mathrm{-NH_2}$ v beljakovinah
+  - dušikove baze v DNA
+  - napaka: $\mathrm{N_2}$ iz zraka ne porabimo
+- Fosfor in žveplo
+  - fosfat v DNA, ATP, fosfolipidih, kosteh
+  - žveplo v cisteinu in metioninu
+  - $\mathrm{H_2S}$ pri kuhanju jajc
+- Kalcij in železo
+  - iona $\mathrm{Ca^{2+}}$ in $\mathrm{Fe^{2+}}$, ne kovini
+  - kosti: $\mathrm{Ca_5(PO_4)_3OH}$
+  - hemoglobin z $\mathrm{Fe^{2+}}$ veže kisik
+- Račun z deležem
+  - $m(\text{element}) = w \cdot m(\text{snov})$
+  - odstotek najprej deli s $100$
