@@ -614,6 +614,10 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 /* Temen okvir v obeh temah; barve količin so enake v skici, čipu in drsniku. */
 .fm-item.has-skica { grid-template-columns: minmax(0, 1fr); }
 .fm-skica { min-height: 120px; }
+.fm-skica-row > td { padding: 4px 0 12px; white-space: normal; }
+/* Široka tabela se na telefonu pomika vstran: skica je široka kot vidni del tabele in ostane na mestu. */
+.md-table-wrap:has(.fm-skica-row) { container-type: inline-size; }
+.fm-skica-row .fm-skica { width: 100cqw; position: sticky; left: 0; }
 .sk { --sk-bg: #10131f; --sk-line: rgb(255 255 255 / 0.16); --sk-glavna: #f4f5fb; --sk-ploskev: #8f8cff; --sk-izbor: #f5c542; --sk-druga: #4fd18b; --sk-napaka: #ff6b6b; --sk-pt: #4f8cff;
   display: grid; gap: 10px; margin: 6px 0 4px; }
 .sk-frame { background: var(--sk-bg); border: 1px solid var(--sk-line); border-radius: 14px; padding: 6px; }
@@ -629,6 +633,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-s-druga { stroke: var(--sk-druga); }
 .sk-s-napaka { stroke: var(--sk-napaka); }
 .sk-svg .sk-f-ploskev { fill: color-mix(in srgb, var(--sk-ploskev) 22%, transparent); stroke: none; }
+.sk-svg .sk-f-izbor { fill: color-mix(in srgb, var(--sk-izbor) 22%, transparent); stroke: none; }
 .sk-t { font: 600 14px/1 var(--font, system-ui), sans-serif; fill: var(--sk-glavna); font-style: italic; }
 .sk-t-ploskev { fill: var(--sk-ploskev); }
 .sk-t-izbor { fill: var(--sk-izbor); }
@@ -644,7 +649,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-chip { direction: ltr; display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: 0.92rem; }
 .sk-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--sk-c); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.18); flex: none; }
 .sk-tex .katex { white-space: nowrap; }
-.sk-val { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; }
+.sk-val { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; white-space: nowrap; }
 .sk-glavna { --sk-c: #8a8fa8; }
 .sk-ploskev { --sk-c: var(--sk-ploskev); }
 .sk-izbor { --sk-c: var(--sk-izbor); }

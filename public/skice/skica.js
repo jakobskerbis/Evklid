@@ -158,3 +158,29 @@ export const par = (x, y, d = 2) => {
 };
 // Število z »≈«, kadar je zaokroženo na d decimalk, sicer brez.
 export const vr = (v, d = 2) => (Math.abs(v - Number(v.toFixed(d))) < 1e-9 ? st(v, d) : `≈ ${st(v, d)}`);
+
+// Lok kota v oglišču V med krakoma proti P in Q (enote SVG, krajši lok). Vrne (razdalja) → točka na simetrali kota za oznako.
+export function lokKota(g, V, P, Q, r, barva = "glavna", extra = {}) {
+  const a1 = Math.atan2(P[1] - V[1], P[0] - V[0]);
+  let d = Math.atan2(Q[1] - V[1], Q[0] - V[0]) - a1;
+  while (d <= -Math.PI) d += 2 * Math.PI;
+  while (d > Math.PI) d -= 2 * Math.PI;
+  const z = [V[0] + r * Math.cos(a1), V[1] + r * Math.sin(a1)], k = [V[0] + r * Math.cos(a1 + d), V[1] + r * Math.sin(a1 + d)];
+  s("path", { d: `M${z} A${r},${r} 0 0 ${d > 0 ? 1 : 0} ${k}`, class: `sk-s-${barva} sk-thin`, ...extra }, g);
+  const m = a1 + d / 2;
+  return (rr) => [V[0] + rr * Math.cos(m), V[1] + rr * Math.sin(m)];
+}
+
+// Oznaka pravega kota v oglišču V (kraka proti P in Q), kvadratek s stranico k.
+export function praviKot(g, V, P, Q, k = 9, barva = "glavna") {
+  const e = (T) => {
+    const l = Math.hypot(T[0] - V[0], T[1] - V[1]) || 1;
+    return [(T[0] - V[0]) / l, (T[1] - V[1]) / l];
+  };
+  const u = e(P), w = e(Q);
+  const p1 = [V[0] + k * u[0], V[1] + k * u[1]], p2 = [p1[0] + k * w[0], p1[1] + k * w[1]], p3 = [V[0] + k * w[0], V[1] + k * w[1]];
+  s("path", { d: `M${p1} L${p2} L${p3}`, class: `sk-s-${barva} sk-thin` }, g);
+}
+
+// Seznam vrednosti za čip, npr. »≈ 40,6°; 72,3°; 67,1°«: »≈« enkrat spredaj, kadar je katera zaokrožena.
+export const seznam = (vs, d = 2, enota = "") => `${vs.some((v) => Math.abs(v - Number(v.toFixed(d))) > 1e-9) ? "≈ " : ""}${vs.map((v) => st(v, d) + enota).join("; ")}`;
