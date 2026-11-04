@@ -137,6 +137,7 @@ export function openKeyboard(field, { layer } = {}) {
 export function hideKeyboard({ blur = false } = {}) {
   if (!S.open) return;
   S.open = false;
+  clearTimers(); // držanje ⌫ / ← / → se ustavi
   closePop();
   trailEnd(true);
   S.lastGlide = null;
@@ -934,7 +935,8 @@ function wireBoard() {
           if (down.pop) closePreview();
         }
       }, 380);
-    } else if (a?.a === "bs") {
+    } else if (a?.a === "bs" || a?.a === "l" || a?.a === "r") {
+      // držanje ⌫, ← ali → ponavlja (briše ali premika kazalec, dokler je prst na tipki)
       try {
         b.setPointerCapture(e.pointerId);
       } catch {}
@@ -946,6 +948,7 @@ function wireBoard() {
     }
   });
   board.addEventListener("mousedown", (e) => e.preventDefault());
+  window.addEventListener("blur", clearTimers);
   board.addEventListener("pointermove", (e) => {
     if (!down) return;
     if (down.a?.a === "char" && !down.pop && /^\p{L}$/u.test(down.a.v) && glideOn()) {
