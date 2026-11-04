@@ -1,7 +1,20 @@
 # Mobilna aplikacija (iPhone, iPad, Android)
 
-Prava aplikacija v mapi `mobile/` (Expo, React Native), ne ovita spletna stran. Uporablja isti strežnik
-in isti račun kot splet, napredek je skupen.
+Aplikacija v mapi `mobile/` (Expo, React Native). Uporablja isti strežnik in isti račun kot splet, napredek je
+skupen.
+
+**Splet znotraj aplikacije** (j, 4. 11. 2026): po prijavi aplikacija pokaže pravo spletno stran Evklida čez cel
+zaslon (`mobile/src/app/web.tsx`), zato sta videz in delovanje vedno enaka spletu: vsi slogi, igre, nastavitve,
+Evklidova tipkovnica, laboratorij, NPZ, vse nove stvari s spleta. Seja je ena: WebView najprej odpre
+`/api/mobile/web` z glavami aplikacije, strežnik isto sejo zapiše v piškotek WebView-a
+(`server/mobile/web-session.js`). Odjava na spletu odjavi tudi aplikacijo. Splet aplikacijo prepozna po
+`EvklidApp/<različica>` v User-Agent (`public/install.js` → `isStandalone()`: brez ponudbe »Namesti aplikacijo«).
+Vrstici telefona (ura, gumbi) dobita barvo roba strani. Gumb nazaj na Androidu gre nazaj po strani, povezave na
+druge strani odpre brskalnik.
+
+Naravno ostane: prijava in registracija (tipkovnica telefona), posodobitve (OTA in nov APK), obvestila, vaje
+brez povezave. Ko strežnik ni dosegljiv, aplikacija pokaže »Ni povezave« z gumboma »Poskusi znova« in »Vaje brez
+povezave« (naravni zavihki spodaj). Seznam razlik spodaj velja zdaj samo še za te naravne zaslone.
 
 ## Kaj zna
 

@@ -117,6 +117,32 @@ test("app session travels in headers, never as cookies", async () => {
   });
 });
 
+test("web inside the app: app session becomes the WebView's cookie, only with app headers and a live session", async () => {
+  await withServer(async ({ base, appClient, adult }) => {
+    const device = crypto.randomBytes(24).toString("base64url");
+    const c = appClient(device);
+    await adult(c);
+    const session = c.session();
+    const open = (to, headers) => fetch(`${base}/api/mobile/web?to=${encodeURIComponent(to)}`, { redirect: "manual", headers });
+    const app = { "x-app-client": "android/1.0.0", "x-app-device": device, authorization: `Bearer ${session}` };
+    const r = await open("/#path", app);
+    assert.equal(r.status, 302);
+    assert.equal(r.headers.get("location"), "/#path");
+    const cookies = r.headers.getSetCookie();
+    assert.ok(cookies.some((x) => x.startsWith(`sm_session=${session};`) && /HttpOnly/.test(x)), JSON.stringify(cookies));
+    assert.ok(cookies.some((x) => x.includes(`=${device};`)), "naprava ostane ista");
+    assert.equal(r.headers.get("x-app-session"), null);
+    // Cilj je vedno na tem strežniku.
+    for (const bad of ["//drug.si/x", "/\\drug.si", "https://drug.si", "javascript:alert(1)"]) assert.equal((await open(bad, app)).headers.get("location"), "/", bad);
+    // Brez glave aplikacije (navaden brskalnik) ali brez veljavne seje ne gre.
+    const plain = await open("/", { authorization: `Bearer ${session}` });
+    assert.ok(plain.status >= 400 && !plain.headers.getSetCookie().some((x) => x.includes(session)), String(plain.status));
+    assert.equal((await open("/", { ...app, authorization: "Bearer " + "x".repeat(40) })).status, 401);
+    await c("/api/auth/logout", { body: {} });
+    assert.equal((await open("/", app)).status, 401, "po odjavi seja ne velja več");
+  });
+});
+
 test("profile open on another device: app gets 409 taken, claim with app headers takes it over", async () => {
   await withServer(async ({ appClient, adult }) => {
     const a = appClient();

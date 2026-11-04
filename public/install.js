@@ -30,7 +30,9 @@ function set(v) {
   } catch {}
 }
 
+// Nameščena: kot program (PWA) ali spletna stran v mobilni aplikaciji Evklid (WebView, mobile/src/app/web.tsx).
 export function isStandalone() {
+  if (/ EvklidApp\//.test(navigator.userAgent)) return true;
   return ["standalone", "fullscreen", "minimal-ui", "window-controls-overlay"].some((m) => matchMedia(`(display-mode: ${m})`).matches) || navigator.standalone === true;
 }
 
