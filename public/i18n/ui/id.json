@@ -756,6 +756,8 @@
   "tk.set.wordsNote": "Kata yang mulai kamu ketik muncul di atas huruf.",
   "tk.set.buzz": "Getar tombol",
   "tk.set.buzzNote": "Ponsel bergetar sebentar saat kamu menyentuh tombol.",
+  "tk.set.glide": "Mengetik dengan geser",
+  "tk.set.glideNote": "Tulis kata dengan menggeser jarimu melewati huruf-hurufnya.",
   "gc.settings": "Pengaturan grafik",
   "gc.clear": "Hapus semua",
   "gc.grid": "Kisi",

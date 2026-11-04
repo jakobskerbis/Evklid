@@ -756,6 +756,8 @@
   "tk.set.wordsNote": "你开始输入的单词会显示在字母上方。",
   "tk.set.buzz": "按键振动",
   "tk.set.buzzNote": "触碰按键时手机会短暂振动。",
+  "tk.set.glide": "滑行输入",
+  "tk.set.glideNote": "用手指滑过单词的字母，就能输入这个单词。",
   "gc.settings": "图像设置",
   "gc.clear": "全部清除",
   "gc.grid": "网格",

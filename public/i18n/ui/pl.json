@@ -774,6 +774,8 @@
   "tk.set.wordsNote": "Nad literami pojawiają się słowa, które zaczynasz pisać.",
   "tk.set.buzz": "Wibracja klawiszy",
   "tk.set.buzzNote": "Telefon krótko wibruje, gdy dotkniesz klawisza.",
+  "tk.set.glide": "Pisanie przesuwaniem",
+  "tk.set.glideNote": "Napisz słowo, przesuwając palec po jego literach.",
   "gc.settings": "Ustawienia wykresu",
   "gc.clear": "Wyczyść wszystko",
   "gc.grid": "Siatka",

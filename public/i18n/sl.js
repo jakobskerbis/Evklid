@@ -884,6 +884,8 @@ export default {
   "tk.set.wordsNote": "Nad črkami se pokažejo besede, ki jih začneš pisati.",
   "tk.set.buzz": "Tresljaj tipk",
   "tk.set.buzzNote": "Telefon ob dotiku tipke rahlo zavibrira.",
+  "tk.set.glide": "Drsenje po črkah",
+  "tk.set.glideNote": "Besedo napišeš z enim potegom prsta čez njene črke.",
   "gc.settings": "Nastavitve grafa",
   "gc.clear": "Počisti vse",
   "gc.grid": "Mreža",

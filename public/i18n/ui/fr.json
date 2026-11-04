@@ -762,6 +762,8 @@
   "tk.set.wordsNote": "Les mots que tu commences à écrire apparaissent au-dessus des lettres.",
   "tk.set.buzz": "Vibration des touches",
   "tk.set.buzzNote": "Le téléphone vibre brièvement quand tu touches une touche.",
+  "tk.set.glide": "Saisie par glissement",
+  "tk.set.glideNote": "Écris un mot en faisant glisser ton doigt sur ses lettres.",
   "gc.settings": "Réglages du graphique",
   "gc.clear": "Tout effacer",
   "gc.grid": "Quadrillage",

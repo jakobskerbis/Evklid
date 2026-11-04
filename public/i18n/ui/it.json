@@ -762,6 +762,8 @@
   "tk.set.wordsNote": "Sopra le lettere compaiono le parole che inizi a scrivere.",
   "tk.set.buzz": "Vibrazione dei tasti",
   "tk.set.buzzNote": "Il telefono vibra brevemente quando tocchi un tasto.",
+  "tk.set.glide": "Scrittura a scorrimento",
+  "tk.set.glideNote": "Scrivi una parola facendo scorrere il dito sulle sue lettere.",
   "gc.settings": "Impostazioni del grafico",
   "gc.clear": "Cancella tutto",
   "gc.grid": "Griglia",

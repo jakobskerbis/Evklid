@@ -762,6 +762,8 @@
   "tk.set.wordsNote": "Words you start typing appear above the letters.",
   "tk.set.buzz": "Key vibration",
   "tk.set.buzzNote": "Your phone vibrates briefly when you tap a key.",
+  "tk.set.glide": "Glide typing",
+  "tk.set.glideNote": "Write a word by swiping your finger across its letters.",
   "gc.settings": "Graph settings",
   "gc.clear": "Clear all",
   "gc.grid": "Grid",
