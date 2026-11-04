@@ -138,6 +138,7 @@ export default function Me() {
           onPress={() => router.push("/subscription")}
         />
         {students.length > 1 ? <Row title={t("mob.switchProfile")} icon={{ ios: "person.2", android: "group" }} onPress={() => select(null)} /> : null}
+        <Row title={t("lab.3dTitle")} subtitle={t("lab.3dText")} icon={{ ios: "cube", android: "view_in_ar" }} onPress={() => router.push("/atlas")} />
         <Row title={t("guide.title")} icon={{ ios: "questionmark.circle", android: "help" }} onPress={() => router.push("/vodic")} />
         <Row title={t("mob.privacy")} icon={{ ios: "hand.raised", android: "privacy_tip" }} onPress={() => WebBrowser.openBrowserAsync(webUrl("/zasebnost.html"))} />
         <Row

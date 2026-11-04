@@ -88,7 +88,8 @@
 
 /* ---------- Spodnja vrstica se umakne pri branju in gledanju (j, 2026-10-31) ----------
    Telefon in tablica na dotik, vsi slogi: v klepetu z inštruktorjem (prazen ali s sporočili), v temi (lekcija, naloge,
-   vaja, simulacije), pri karticah za ponavljanje, v odprti lekciji Učbenika in v kalkulatorju (cel pogled). Igra med
+   vaja, simulacije), pri karticah za ponavljanje, v odprti lekciji Učbenika, v odprtem poskusu Laboratorija (več prostora
+   za pripeto risbo, docs/laboratorij.md) in v kalkulatorju (cel pogled). Igra med
    igranjem, tipkovnica kalkulatorja, plošča za vnos, Oglasna deska in video gradiv jo že prekrijejo ali skrijejo.
    Vrstica je takrat pritrjena pod spodnjim robom (ne vzame prostora); poteg navzdol ali kolešček gor jo pokaže
    (body.tb-peek, app.js), poteg navzgor skrije. Na teh zaslonih je v glavi gumb Nazaj. app.js iz position: fixed
@@ -97,7 +98,7 @@
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
   body:is(:has(> #view-chat:not([hidden]):not(.in-okno)), :has(> #view-topic:not([hidden]):not(.in-okno)),
     :has(> #view-cards:not([hidden]):not(.in-okno)), :has(> #view-graph:not([hidden]):not(.in-okno)),
-    :has(> #view-textbook:not([hidden]):not(.in-okno) .tb-lesson-grid)) > .tabbar {
+    :has(> #view-textbook:not([hidden]):not(.in-okno) .tb-lesson-grid), :has(> #view-lab.lab-open:not([hidden]):not(.in-okno))) > .tabbar {
     position: fixed; inset-inline: 0; bottom: 0; z-index: 30;
     transform: translateY(var(--tb-y, 100%)); visibility: var(--tb-vis, hidden);
     transition: transform 0.22s ease, visibility 0s linear var(--tb-vd, 0.22s);
@@ -117,3 +118,15 @@
 
 /* Pogled je lahko v spodnji vrstici (npr. Laboratorij): takrat brez »← Jaz«. */
 .me-back[hidden] { display: none !important; }
+
+/* Gumbi z izbirami pod odgovorom inštruktorja: glavni cilj dotika, 44 px (docs/oblikovanje.md). */
+@media (hover: none) and (pointer: coarse) {
+  .choice-row .choice-btn { min-height: 44px !important; }
+}
+
+/* Koš v seznamu pogovorov: brisanje je z enim dotikom (brez potrditve), zato je na dotik vedno viden,
+   dovolj velik in odmaknjen od naslova (prej je bil neviden, a se ga je dalo zadeti). */
+@media (hover: none) {
+  #conversation-list li { gap: 12px; }
+  #conversation-list li button { opacity: 0.8; min-width: 40px; min-height: 40px !important; margin-block: -8px; display: inline-flex; align-items: center; justify-content: center; }
+}

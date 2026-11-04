@@ -2,7 +2,7 @@
 // aplikacija vedno enaka). Naravni zavihki (učna pot, vaje, pogovor …) ostanejo za vaje brez povezave in se
 // odprejo iz zaslona »Ni povezave«; zasloni nad njimi so naravni sklad (iOS: potisk z robu, Android: nazaj).
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Modal, Text, View } from "react-native";
+import { ActivityIndicator, Alert, AppState, Modal, Text, View } from "react-native";
 import { Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import * as Notifications from "expo-notifications";
@@ -14,6 +14,7 @@ import { font, fonts, setFontsReady, useTheme } from "@/lib/theme";
 import { watchPurchases } from "@/lib/billing";
 import { useAppUpdates } from "@/lib/updates";
 import { api, setBusyListener, setTakenHandler } from "@/lib/api";
+import { webPending } from "@/lib/web-state";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -82,6 +83,21 @@ function Root() {
     if (ready && fontsDone && signedIn) router.replace("/web");
   }, [ready, fontsDone, signedIn, epoch]);
 
+  // Strežnik je bil starejši od aplikacije (src/lib/web-state.ts): ob vrnitvi v ospredje znova spletna stran.
+  // Samo po ozadju: iOS da »inactive« → »active« tudi ob sistemskem oknu (nakup, dovoljenje, center obvestil),
+  // ki naj uporabnika ne vrže z naravnega zaslona.
+  useEffect(() => {
+    let wasBg = false;
+    const sub = AppState.addEventListener("change", (st) => {
+      if (st === "background") wasBg = true;
+      else if (st === "active" && wasBg) {
+        wasBg = false;
+        if (signedIn && webPending()) router.replace("/web");
+      }
+    });
+    return () => sub.remove();
+  }, [signedIn]);
+
   if (!ready || !fontsDone) return null;
   // Kam gre zaščiten zaslon, ki ga ni mogoče odpreti. Brez tega Expo Router izbere prvi prosti zaslon
   // po abecedi: ob prvem zagonu se je odprlo »Pozabljeno geslo« namesto prijave.
@@ -111,6 +127,7 @@ function Root() {
           <Stack.Screen name="chat/[id]" options={{ title: t("nav.chat") }} />
           <Stack.Screen name="subscription" options={{ title: t("mob.subscription"), presentation: "modal" }} />
           <Stack.Screen name="calculator" options={{ title: t("nav.graph"), presentation: "modal" }} />
+          <Stack.Screen name="atlas" options={{ title: t("a3.title") }} />
           <Stack.Screen name="delete-account" options={{ title: t("mob.deleteAccount"), presentation: "modal" }} />
           <Stack.Screen name="vodic" options={{ title: t("guide.title") }} />
         </Stack.Protected>

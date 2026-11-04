@@ -46,10 +46,10 @@ export default function narisi(host) {
     crta(zg, Ax.X(z0), yT - 5, Ax.X(z0), yT + 5, "druga");
     crta(zg, Ax.X(z0 + q.T), yT - 5, Ax.X(z0 + q.T), yT + 5, "druga");
     napis(g, (Ax.X(z0) + Ax.X(Math.min(DO, z0 + q.T))) / 2, yT - 6, "T", "druga", { "text-anchor": "middle" });
-    const blizu = q.nicle.filter((x) => x >= -1e-9).slice(0, 3).map((x) => piZapis(x, 60) ?? `≈ ${st(x, 2)}`);
+    const blizu = q.nicle.filter((x) => x >= -1e-9).slice(0, 3).map((x) => piZapis(x, 60) ?? `≈\u00a0${st(x, 2)}`);
     S.cipi([
       { barva: "izbor", oznaka: "A", vrednost: st(A, 1) },
-      { barva: "druga", oznaka: "T = \\frac{2\\pi}{\\omega}", vrednost: `${piZapis(q.T, 60) ?? ""} ≈ ${st(q.T, 2)}`.trim() },
+      { barva: "druga", oznaka: "T = \\frac{2\\pi}{\\omega}", vrednost: `${piZapis(q.T, 60) ?? ""} ≈\u00a0${st(q.T, 2)}`.trim() },
       { barva: "ploskev", oznaka: "\\varphi", vrednost: piFmt(fi) },
       { barva: "ploskev", oznaka: "x = \\varphi + \\frac{k\\pi}{\\omega},\\ x \\ge 0", vrednost: `${blizu.join("; ")}; …` },
     ]);

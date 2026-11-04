@@ -245,3 +245,207 @@ test("eksponentna in logaritemska pri a blizu 1: graf nima navpičnih skokov če
       for (let i = 1; i < tocke.length; i++) if (tocke[i][0] === "L") assert.ok(Math.abs(tocke[i][1] - tocke[i - 1][1]) < 274, `a = ${a}`);
     }
 });
+
+test("stožnice: r₁ + r₂ = 2a, |r₁ − r₂| = 2a, d(T, G) = d(T, v) za vsak položaj T", async () => {
+  const { elipsa, hiperbola, parabola, kroznica } = await import("../public/skice/stoznice.js");
+  for (let a = 1; a <= 5.5; a += 0.5)
+    for (let b = 0.5; b <= a; b += 0.5)
+      for (let t = -Math.PI; t <= Math.PI; t += 0.3) {
+        const q = elipsa(a, b, t);
+        assert.ok(Math.abs(q.r1 + q.r2 - 2 * a) < 1e-9);
+        assert.ok(Math.abs(q.T[0] ** 2 / a ** 2 + q.T[1] ** 2 / b ** 2 - 1) < 1e-9);
+      }
+  for (let a = 0.5; a <= 3.5; a += 0.5)
+    for (let b = 0.5; b <= 3.5; b += 0.5)
+      for (let t = -2.2; t <= 2.2; t += 0.4) // (skica omeji t še na okvir)
+        for (const v of [1, -1]) {
+          const q = hiperbola(a, b, t, v);
+          assert.ok(Math.abs(Math.abs(q.r1 - q.r2) - 2 * a) < 1e-9);
+          assert.ok(Math.abs(q.T[0] ** 2 / a ** 2 - q.T[1] ** 2 / b ** 2 - 1) < 1e-9);
+        }
+  for (let p = 0.5; p <= 4; p += 0.5)
+    for (let y = -4.3; y <= 4.3; y += 0.7) {
+      const q = parabola(p, y);
+      assert.ok(Math.abs(q.dG - q.dV) < 1e-9);
+      assert.ok(Math.abs(q.T[1] ** 2 - 2 * p * q.T[0]) < 1e-9);
+    }
+  assert.equal(kroznica(1, -2, 3).enacba, "(x − 1)² + (y + 2)² = 9");
+  assert.equal(kroznica(0, 0.5, 2.5).enacba, "x² + (y − 0,5)² = 6,25");
+});
+
+test("hiperbola: točka T ostane v okvirju za vse a in b", async () => {
+  const { tMeja } = await import("../public/skice/hiperbola.js");
+  for (let a = 0.5; a <= 3.5; a += 0.5)
+    for (let b = 0.5; b <= 3.5; b += 0.5) {
+      const m = tMeja(a, b);
+      assert.ok(a * Math.cosh(m) <= 5.8 + 1e-9 && b * Math.sinh(m) <= 4.3 + 1e-9);
+    }
+});
+
+test("sinusni izrek: a/sin α = b/sin β = c/sin γ = 2R za vsak položaj C", async () => {
+  const { sinusni, kotC, KOT_A, KOT_B, ODMIK } = await import("../public/skice/sinusni.js");
+  for (let t = 0; t < 360; t += 0.5) {
+    const q = sinusni(t);
+    for (const r of [q.ra, q.rb, q.rc]) assert.ok(Math.abs(r - q.dveR) < 1e-9, `t = ${t}`);
+    assert.ok(Math.abs(q.alfa + q.beta + q.gama - 180) < 1e-9);
+    const v = kotC(t);
+    assert.ok(Math.abs(v - KOT_A) >= ODMIK - 1e-9 && Math.abs(v - KOT_B) >= ODMIK - 1e-9);
+  }
+});
+
+test("pravokotni trikotnik: Pitagorov, višinski in Evklidov izrek za vsak položaj C", async () => {
+  const { pravokotni, C_HIP, omejiA1 } = await import("../public/skice/pitagora.js");
+  for (let a1 = 0; a1 <= C_HIP; a1 += 0.25) {
+    const q = pravokotni(a1);
+    assert.equal(q.a1, omejiA1(a1));
+    assert.ok(Math.abs(q.a1 + q.b1 - C_HIP) < 1e-12);
+    // Narisana odseka: a₁ = NB, b₁ = AN.
+    assert.ok(Math.abs(q.B[0] - q.N[0] - q.a1) < 1e-9 && Math.abs(q.N[0] - q.A[0] - q.b1) < 1e-9);
+    // Čipi z »=«: a², b², v_c² so natančni na dve decimalki.
+    for (const v of [q.a ** 2, q.b ** 2, q.vc ** 2]) assert.ok(Math.abs(v - Number(v.toFixed(2))) < 1e-9);
+    assert.ok(Math.abs(q.a ** 2 + q.b ** 2 - C_HIP ** 2) < 1e-9);
+    assert.ok(Math.abs(q.vc ** 2 - q.a1 * q.b1) < 1e-9);
+    assert.ok(Math.abs(q.a ** 2 - C_HIP * q.a1) < 1e-9 && Math.abs(q.b ** 2 - C_HIP * q.b1) < 1e-9);
+    // Pravi kot pri C: (A − C)·(B − C) = 0.
+    assert.ok(Math.abs((q.A[0] - q.C[0]) * (q.B[0] - q.C[0]) + (q.A[1] - q.C[1]) * (q.B[1] - q.C[1])) < 1e-9);
+  }
+});
+
+test("trikotnik: R, r, Heronova formula, višina in koti za oglišča na mreži", async () => {
+  const { trikotnik } = await import("../public/skice/geometrija.js");
+  const { kosinusni } = await import("../public/skice/kosinusni.js");
+  const razd = (P, Q) => Math.hypot(P[0] - Q[0], P[1] - Q[1]);
+  const doPremice = (X, P, Q) => Math.abs((Q[0] - P[0]) * (X[1] - P[1]) - (Q[1] - P[1]) * (X[0] - P[0])) / razd(P, Q);
+  let n = 0;
+  for (let bx = 2; bx <= 9.5; bx += 1.5)
+    for (let cx = 0.5; cx <= 9.5; cx += 1.5)
+      for (let cy = 1.5; cy <= 7.5; cy += 1.5) {
+        const A = [1, 1], B = [bx, 1], C = [cx, cy];
+        const q = trikotnik(A, B, C);
+        if (q.izrojen) continue;
+        n++;
+        for (const V of [A, B, C]) assert.ok(Math.abs(razd(q.O, V) - q.R) < 1e-9);
+        for (const [P, Q] of [[A, B], [B, C], [C, A]]) assert.ok(Math.abs(doPremice(q.I, P, Q) - q.r) < 1e-9);
+        assert.ok(Math.abs(Math.sqrt(q.s * (q.s - q.a) * (q.s - q.b) * (q.s - q.c)) - q.S) < 1e-9);
+        assert.ok(Math.abs((q.c * q.vc) / 2 - q.S) < 1e-9);
+        assert.ok(Math.abs(q.alfa + q.beta + q.gama - 180) < 1e-9);
+        assert.ok(Math.abs(q.R - (q.a * q.b * q.c) / (4 * q.S)) < 1e-9 && Math.abs(q.r - q.S / q.s) < 1e-12);
+        const k = kosinusni(A, B, C);
+        assert.ok(Math.abs(k.c2 - k.desno) < 1e-9);
+      }
+  assert.ok(n > 100);
+  assert.ok(trikotnik([0, 0], [2, 2], [4, 4]).izrojen);
+});
+
+test("pravilni n-kotnik, enakostranični trikotnik in krožni izsek", async () => {
+  const { nKotnik, enakostranicni, izsek } = await import("../public/skice/geometrija.js");
+  const { N_MIN, N_MAX } = await import("../public/skice/nkotnik.js");
+  for (let n = N_MIN; n <= N_MAX; n++) {
+    const q = nKotnik(n);
+    let d = 0;
+    for (let i = 0; i < n; i++) for (let j = i + 2; j < n; j++) if (!(i === 0 && j === n - 1)) d++;
+    assert.equal(q.d, d);
+    assert.equal(q.vsota, (n - 2) * 180);
+    assert.ok(Math.abs(q.S - (n * q.a * q.r) / 2) < 1e-12);
+    assert.ok(Math.abs((q.a / 2) ** 2 + q.r ** 2 - 1) < 1e-12);
+    // Stranica je razdalja sosednjih oglišč na enotski krožnici.
+    assert.ok(Math.abs(q.a - Math.hypot(Math.cos((2 * Math.PI) / n) - 1, Math.sin((2 * Math.PI) / n))) < 1e-12);
+  }
+  assert.ok(Math.abs(nKotnik(6).a - 1) < 1e-12 && Math.abs(nKotnik(4).S - 2) < 1e-12);
+  for (let a = 3; a <= 7; a += 0.5) {
+    const q = enakostranicni(a);
+    assert.ok(Math.abs(q.R + q.r - q.v) < 1e-12 && Math.abs(q.R - 2 * q.r) < 1e-12);
+    assert.ok(Math.abs(q.S - (a * q.v) / 2) < 1e-12);
+  }
+  const k = izsek(2, 360);
+  assert.ok(Math.abs(k.l - 4 * Math.PI) < 1e-12 && Math.abs(k.S - 4 * Math.PI) < 1e-12);
+  assert.ok(Math.abs(izsek(3, 90).S - (izsek(3, 90).l * 3) / 2) < 1e-12);
+});
+
+test("štirikotniki: obseg in ploščina se ujemata z oglišči, lik je v okvirju pri vseh mejah drsnikov", async () => {
+  const { stirikotnik } = await import("../public/skice/geometrija.js");
+  const { LIKI } = await import("../public/skice/liki.js");
+  const razd = (P, Q) => Math.hypot(P[0] - Q[0], P[1] - Q[1]);
+  for (const [lik, L] of Object.entries(LIKI)) {
+    const kljuci = Object.keys(L.mere);
+    // Vse kombinacije mej in srednjih vrednosti drsnikov.
+    const izbire = kljuci.map((k) => { const [lo, hi] = L.mere[k]; return [lo, (lo + hi) / 2, hi]; });
+    const kombinacije = izbire.reduce((acc, xs) => acc.flatMap((c) => xs.map((x) => [...c, x])), [[]]);
+    for (const c of kombinacije) {
+      const p = Object.fromEntries(kljuci.map((k, i) => [k, c[i]]));
+      const q = stirikotnik(lik, p);
+      const T = q.T;
+      const o = T.reduce((s, P, i) => s + razd(P, T[(i + 1) % 4]), 0);
+      const S = Math.abs(T.reduce((s, P, i) => s + P[0] * T[(i + 1) % 4][1] - T[(i + 1) % 4][0] * P[1], 0)) / 2;
+      assert.ok(Math.abs(o - q.o) < 1e-9, `${lik} o`);
+      assert.ok(Math.abs(S - q.S) < 1e-9, `${lik} S`);
+      if (q.Sef !== undefined) assert.ok(Math.abs(q.Sef - q.S) < 1e-9);
+      if (lik === "trapez") assert.ok(Math.abs(q.s * p.v - q.S) < 1e-9 && T[3][0] >= 0);
+      if (lik === "deltoid") assert.ok(Math.abs((p.e * p.f) / 2 - S) < 1e-9);
+      const xs = T.map((t) => t[0]), ys = T.map((t) => t[1]);
+      assert.ok(Math.max(...xs) - Math.min(...xs) <= 10 + 1e-9 && Math.max(...ys) - Math.min(...ys) <= 6.5 + 1e-9, `${lik} je prevelik`);
+    }
+  }
+});
+
+test("ime kartice s TeX: vidno besedilo najde skico (»Diagonale n-kotnika«)", () => {
+  assert.equal(skicaZa("MAT-OS", "Diagonale n-kotnika"), SKICE["MAT-OS|Diagonale $n$-kotnika"]);
+  assert.equal(skicaZa("MAT-OS", "Kvadrat"), SKICE["MAT-OS|Kvadrat"]);
+  assert.equal(skicaZa("MAT-OS", "Kvadratni koren"), null);
+});
+
+test("zaporedja: a_n in s_n se ujemata s seštevanjem členov, tudi z negativnimi členi", async () => {
+  const { zaporedje } = await import("../public/skice/analiza.js");
+  for (const [vrsta, ks] of [["aritmeticno", [-2, -0.5, 0, 1.5, 2]], ["geometrijsko", [-2, -0.5, 0.25, 1, 2]]])
+    for (const a1 of [-4, -1.5, 2, 4])
+      for (const k of ks)
+        for (let n = 1; n <= 8; n++) {
+          const q = zaporedje(vrsta, a1, k, n);
+          let vsota = 0;
+          for (let i = 1; i <= n; i++) vsota += q.clen(i);
+          assert.ok(Math.abs(q.sn - vsota) < 1e-9, `${vrsta} a1=${a1} k=${k} n=${n}`);
+          assert.ok(Math.abs(q.an - q.clen(n)) < 1e-12);
+          assert.equal(q.clen(1), a1);
+          if (n > 1) assert.ok(Math.abs(vrsta === "aritmeticno" ? q.clen(n) - q.clen(n - 1) - k : q.clen(n) - q.clen(n - 1) * k) < 1e-9);
+        }
+});
+
+test("limita: za vsak x z 0 < |x − a| < δ je |f(x) − b| < ε, δ je največji", async () => {
+  const { f, limita } = await import("../public/skice/analiza.js");
+  for (let a = -2.4; a <= 2.4; a += 0.3)
+    for (let eps = 0.1; eps <= 1.5; eps += 0.2) {
+      const { b, delta } = limita(a, eps);
+      for (let t = -0.999; t <= 0.999; t += 0.037) if (t) assert.ok(Math.abs(f(a + t * delta) - b) < eps + 1e-12, `a=${a} ε=${eps}`);
+      // Malo širši pas že ne ustreza več.
+      const izven = [a - delta * 1.02, a + delta * 1.02].some((x) => Math.abs(f(x) - b) >= eps);
+      assert.ok(izven, `δ ni največji pri a=${a} ε=${eps}`);
+    }
+});
+
+test("odvod in diferencial: Δf/Δx → f′(x₀), ko gre h proti 0; Δf − df = dx²/2", async () => {
+  const { odvod, diferencial, brezNic } = await import("../public/skice/analiza.js");
+  for (let x0 = -2.5; x0 <= 2.5; x0 += 0.5) {
+    let prej = Infinity;
+    for (const h of [1, 0.5, 0.1, 0.01, 0.001, -0.001]) {
+      const q = odvod(x0, h);
+      const nap = Math.abs(q.kvocient - q.k);
+      assert.ok(nap <= prej + 1e-12);
+      prej = nap;
+    }
+    assert.ok(prej < 1e-3);
+    for (const dx of [-2, -0.3, 0.1, 1.4]) {
+      const d = diferencial(x0, dx);
+      assert.ok(Math.abs(d.razlika - (dx * dx) / 2) < 1e-12 && Math.abs(d.df - x0 * dx) < 1e-12);
+    }
+  }
+  assert.equal(brezNic(0, 0.1, 0.1), -0.1);
+  assert.equal(brezNic(0, -0.1, 0.1), 0.1);
+});
+
+test("skice: »≈« je vedno pred nedeljivim presledkom (v ozkem čipu se ne loči od števila)", () => {
+  const dir = new URL("../public/skice/", import.meta.url);
+  for (const ime of fs.readdirSync(dir).filter((x) => x.endsWith(".js"))) {
+    const koda = fs.readFileSync(new URL(ime, dir), "utf8").split("\n").filter((l) => !l.trim().startsWith("//"));
+    koda.forEach((l, i) => assert.ok(!/≈ /.test(l.replace(/\/\/.*$/, "")), `${ime}:${i + 1}`));
+  }
+});

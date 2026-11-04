@@ -41,6 +41,17 @@ The sections stay (the app and `check-lesson.js` need them); what varies is how 
 - **Review.** The second pass checks that the plan was followed and removes the worst repetition with a small edit.
 - **Old lessons.** Raises of old lessons apply the plan to Zakaj, Razlaga and the quiz without rewriting correct text wholesale.
 
+## 1c. University lessons (`UNI-*`, j 2026-11-04, after comparing lessons with real past exams)
+
+A comparison with 20 public 1st-year Matematika exams (UL FKKT, UM FKKT) showed that our hardest examples were easier than the exam tasks, and that about 40 % of an exam is theory (definitions, theorems, proofs), which the school structure did not practise. So university lessons differ from school lessons in five ways, and the same structure applies to all existing university lessons (they are reworked course by course, UL FKKT first):
+1. Razlaga has precise definitions and theorems with all their conditions, plus the short proofs or derivations an exam may ask. »Drugače: Bolj natančno« only goes deeper.
+2. Primer 3 is at real exam level.
+3. A new section `## Za izpit` follows `## Povzetek`. It starts with »Znati moraš povedati:« and then gives 2–3 `### Naloga` at exam level, in our own words (never a copied exam): at least one computation harder than Primer 3 and one theory task, each with a complete `**Rešitev:**` (hidden behind a button in the app).
+4. »Drugače: Uporaba v stroki« replaces »Iz vsakdanjega življenja«.
+5. 1800–3000 words.
+
+`node scripts/check-lesson.js` warns when a university lesson lacks this structure, and `node scripts/lesson-brief.js` gives the rules to writers and reviewers.
+
 ## 2. Tasks (code generators, `server/practice/generators/*.js`)
 
 Generators are code (no API cost); they are written and reviewed by Opus too. Audit:

@@ -358,7 +358,7 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 #conversation-list li span { flex: 1; overflow: hidden; text-overflow: ellipsis; }
 #conversation-list li.active, #conversation-list li:hover { background: var(--accent-soft); color: var(--text); }
 #conversation-list li button { border: 0 !important; background: none !important; padding: 4px !important; min-height: 0 !important; opacity: 0; color: var(--muted); }
-#conversation-list li:hover button, #conversation-list li.active button { opacity: 0.8; }
+#conversation-list li:hover button, #conversation-list li.active button, #conversation-list li button:focus-visible { opacity: 0.8; }
 .chat { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
 .chat-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--surface); }
 .chat-head h1 { font-size: 1.05rem; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -408,6 +408,8 @@ html[data-tutor-ic] .msg.assistant::after {
 .deep-btn { display: inline-flex !important; margin-top: 10px; font-size: 0.85rem; min-height: 40px !important; padding: 4px 12px !important; color: var(--muted) !important; }
 /* Ob prelomu v novo vrstico »Pokaži celoten postopek« ostane poravnan z levim robom (razmik je za prvim gumbom). */
 .deep-btn:has(+ .full-btn) { margin-inline-end: 8px; }
+.choice-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.choice-row .choice-btn { min-height: 40px !important; max-width: 100%; white-space: normal; text-align: start; overflow-wrap: anywhere; background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); color: var(--text); } /* odgovori se ločijo od »Razloži podrobneje« */
 /* Pod odgovorom: koda sporočila (za preverjanje posnetkov zaslona) in »Prijavi napako« (server/reports.js) */
 .msg-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-top: 8px; font-size: 0.78rem; color: var(--muted); }
 .msg-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.03em; user-select: all; }

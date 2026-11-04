@@ -13,7 +13,7 @@ import { giftFor, isoIn } from "../accounts/plans.js";
 import { STOPNJE, visja } from "../../public/stopnja.js";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // brez I, O, 0, 1
-const newCode = () =>
+export const newCode = () =>
   "DAR-" +
   [...randomBytes(8)]
     .map((b, i) => (i === 4 ? "-" : "") + ALPHABET[b % ALPHABET.length])

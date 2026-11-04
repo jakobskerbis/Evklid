@@ -16,6 +16,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "../server/prompt.js";
+import { stripMeta as stripMetaBlocks } from "../server/meta.js";
 import { DEFAULT_SETTINGS } from "../server/settings.js";
 import { streamReply, modeParams, costUsd, getClient, isMockMode, MODEL_DEEP } from "../server/claude.js";
 import { getTopic, getPath, learningPathPrompt } from "../server/curriculum.js";
@@ -119,7 +120,7 @@ function settingsFor(p) {
 }
 
 const question = (task) => `Kako rešim to nalogo? Pokaži mi rešitev po korakih in končni rezultat.\n\n${task}`;
-const stripMeta = (t) => t.replace(/<<META[\s\S]*?>>/g, "").replace(/<<KARTICA[\s\S]*?>>/g, "").trim();
+const stripMeta = (t) => stripMetaBlocks(t).trim();
 
 // --- 2. Ocena stroška pred zagonom ------------------------------------------
 // Na nalogo: inštruktor (~11.000 žetonov stalnih navodil iz predpomnilnika, ~1.500 novih, izhod po načinu)
