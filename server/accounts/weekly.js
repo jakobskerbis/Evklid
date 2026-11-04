@@ -121,9 +121,11 @@ export function childWeek(db, student) {
     .filter((w) => !hardPractice.some((h) => (w.topic_id && h.topic_id === w.topic_id) || h.name.toLowerCase() === String(w.topic).toLowerCase()))
     .filter((w, i, all) => all.findIndex((x) => String(x.topic).toLowerCase() === String(w.topic).toLowerCase()) === i) // ista tema pri dveh predmetih
     .map((w) => ({
-      name: w.topic_id ? topicName(w.topic_id) : w.topic,
+      // Ime iz klepeta brez teme učne poti je z malo začetnico (»ulomki«); v seznamu kot ime teme.
+      name: w.topic_id ? topicName(w.topic_id) : String(w.topic).charAt(0).toUpperCase() + String(w.topic).slice(1),
       ...(w.topic_id ? { topic_id: w.topic_id } : {}),
-      detail: `pogosto napake: ${sourceWords(w.sources)}${w.subject ? ` (${subjectName(w.subject).toLowerCase()})` : ""}`,
+      // V e-pošti v oklepaju za imenom: »Gostota (fizika: veliko napak v klepetu in pri karticah)«.
+      detail: `${w.subject ? `${subjectName(w.subject).toLowerCase()}: ` : ""}veliko napak ${sourceWords(w.sources)}`,
     }));
   const weak = [...hardPractice, ...hardChat].slice(0, 3);
 
