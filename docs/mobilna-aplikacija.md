@@ -103,11 +103,16 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
   - **Zmožnost**: gradnja z mostom pred nalaganjem strani nastavi `window.EvklidNative = { shareImage: 1 }`
     (`injectedJavaScriptBeforeContentLoaded`). Stran gumb v aplikaciji (`EvklidApp/` v user agentu) pokaže samo
     z zastavico (`shareMode`), sicer ostane skrit; v brskalniku ostaneta Web Share in prenos.
-  - **Potrebuje nov APK** (2026-11-04): `expo-sharing` je nov domorodni paket, zato se spremeni prstni odtis
-    (`runtimeVersion: fingerprint`) in posodobitev OTA nanj ne pride na stare gradnje. Do novega APK je gumb v
-    aplikaciji skrit kot doslej. Gradnja: v mapi `mobile` `npm install`, nato
+  - Most deluje na **Androidu in iOS** (`expo-sharing` podpira oba; na iOS se odpre list za deljenje, od koder
+    »Shrani sliko« v Fotografije), oboje z naslednjo gradnjo.
+  - Če aplikacija v ~2 minutah ne odgovori (`SHARE_IMAGE_TIMEOUT`), stran neha čakati brez sporočila (meni je
+    morda še odprt), gumb pa spet deluje.
+  - **Potrebuje novo gradnjo** (2026-11-04): `expo-sharing` je nov domorodni paket, zato se spremeni prstni odtis
+    (`runtimeVersion: fingerprint`) in posodobitev OTA nanj ne pride na stare gradnje. Do nove gradnje je gumb v
+    aplikaciji skrit kot doslej. Android: v mapi `mobile` `npm install`, nato
     `npx eas-cli build --profile direct --platform android` in povezavo do APK naloži kot v koraku 4 spodaj
-    (»Kaj mora narediti človek« → 1. APK za Android). Za trgovini enako s `--profile production`.
+    (»Kaj mora narediti človek« → 1. APK za Android). iOS in trgovini: enako s `--profile production`
+    (`--platform ios` ali `android`), ko bosta računa v trgovinah odprta.
 
 ## Dve različici
 

@@ -182,7 +182,7 @@ export default function Web() {
                 const m = JSON.parse(e.nativeEvent.data);
                 if (m?.t === "bar") setBar({ top: String(m.top || ""), bottom: String(m.bottom || "") });
                 // Deljenje slike samo s strani Evklida (druge strani WebView odpre v brskalniku, a za vsak primer).
-                else if (m?.type === "evklid:share-image" && (!e.nativeEvent.url || e.nativeEvent.url.startsWith(ORIGIN)))
+                else if (m?.type === "evklid:share-image" && (e.nativeEvent.url === ORIGIN || e.nativeEvent.url?.startsWith(ORIGIN + "/")))
                   shareImage(m).then((r) => ref.current?.injectJavaScript(shareResultJs(r)));
               } catch {}
             }}

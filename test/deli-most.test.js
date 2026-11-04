@@ -83,3 +83,30 @@ test("injectJavaScript odgovora sproži dogodek z id-jem na strani", () => {
     [SHARE_IMAGE_RESULT, { id: "2", ok: false, error: "Activity not found </script>" }],
   ]);
 });
+
+test("brez odgovora aplikacije stran po času neha čakati, brez sporočila in brez poslušalca", async () => {
+  const { shareCardNative } = await import("../public/deli-kartico.js");
+  const listeners = new Set();
+  const posted = [];
+  globalThis.window = {
+    addEventListener: (_, f) => listeners.add(f),
+    removeEventListener: (_, f) => listeners.delete(f),
+    ReactNativeWebView: { postMessage: (s) => posted.push(JSON.parse(s)) },
+  };
+  globalThis.FileReader = class {
+    readAsDataURL() {
+      this.result = `data:image/png;base64,${PNG}`;
+      queueMicrotask(() => this.onload());
+    }
+  };
+  try {
+    const r = await shareCardNative(new Blob([]), { name: "evklid-zbirka.png", timeout: 20 });
+    assert.deepEqual(r, { ok: false, error: "timeout" });
+    assert.equal(listeners.size, 0);
+    assert.equal(checkShareImage(posted[0]).ok, true, "poslano sporočilo prestane preverjanje aplikacije");
+    assert.equal(shareResultKey(r), "", "ob izteku časa ne trdimo ne uspeha ne napake");
+  } finally {
+    delete globalThis.window;
+    delete globalThis.FileReader;
+  }
+});

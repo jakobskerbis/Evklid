@@ -7,7 +7,7 @@
 import { avatarSvg, itemOf, itemName, itemRarity, cleanAvatar, DEFAULT_AVATAR } from "./avatar.js";
 import { COLLECTIONS, KNOWLEDGE, elementTile } from "./zbirke.js";
 import { icon } from "./icons.js";
-import { SHARE_IMAGE, SHARE_IMAGE_RESULT } from "./deli-most.js";
+import { SHARE_IMAGE, SHARE_IMAGE_RESULT, SHARE_IMAGE_TIMEOUT } from "./deli-most.js";
 
 export const CARD_W = 1080;
 export const CARD_H = 1350; // 4 : 5, kot objava na družbenih omrežjih
@@ -165,7 +165,7 @@ export async function shareCardFile(blob, { name = "zbirka.png", title = "" } = 
 
 // V aplikaciji z mostom (public/deli-most.js): PNG kot base64 aplikaciji, ki odpre sistemski meni za deljenje.
 // Vrne odgovor aplikacije { ok, error }; ok pomeni samo, da se je meni odprl.
-export async function shareCardNative(blob, { name = "zbirka.png" } = {}) {
+export async function shareCardNative(blob, { name = "zbirka.png", timeout = SHARE_IMAGE_TIMEOUT } = {}) {
   const url = await new Promise((ok, fail) => {
     const r = new FileReader();
     r.onload = () => ok(String(r.result || ""));
@@ -175,17 +175,21 @@ export async function shareCardNative(blob, { name = "zbirka.png" } = {}) {
   const dataBase64 = url.slice(url.indexOf(",") + 1);
   const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   return new Promise((ok) => {
-    const on = (e) => {
-      if (e.detail?.id !== id) return;
+    let timer = null;
+    const done = (r) => {
+      clearTimeout(timer);
       window.removeEventListener(SHARE_IMAGE_RESULT, on);
-      ok({ ok: e.detail.ok === true, error: String(e.detail.error || "") });
+      ok(r);
+    };
+    const on = (e) => {
+      if (e.detail?.id === id) done({ ok: e.detail.ok === true, error: String(e.detail.error || "") });
     };
     window.addEventListener(SHARE_IMAGE_RESULT, on);
+    timer = setTimeout(() => done({ ok: false, error: "timeout" }), timeout);
     try {
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: SHARE_IMAGE, id, name, dataBase64 }));
     } catch (e) {
-      window.removeEventListener(SHARE_IMAGE_RESULT, on);
-      ok({ ok: false, error: String(e?.message || "post") });
+      done({ ok: false, error: String(e?.message || "post") });
     }
   });
 }

@@ -42,8 +42,11 @@ export function checkShareImage(m) {
 }
 
 // Odgovor aplikacije → ključ prevoda za sporočilo pod gumbom. Uspeh pomeni le, da se je meni odprl: ali je
-// učenec sliko shranil ali delil, aplikacija ne ve, zato tega ne trdimo.
-export const shareResultKey = (r) => (r?.ok === true ? "share.appOpened" : "share.appFailed");
+// učenec sliko shranil ali delil, aplikacija ne ve, zato tega ne trdimo. Brez odgovora v SHARE_IMAGE_TIMEOUT
+// (error "timeout") sporočila ni: meni je morda še odprt (Android odgovori šele, ko se zapre), zato ne trdimo
+// ne uspeha ne napake, gumb pa spet deluje.
+export const SHARE_IMAGE_TIMEOUT = 120000;
+export const shareResultKey = (r) => (r?.ok === true ? "share.appOpened" : r?.error === "timeout" ? "" : "share.appFailed");
 
 // JavaScript, ki ga aplikacija vbrizga v stran z odgovorom (injectJavaScript).
 export function shareResultJs(r) {

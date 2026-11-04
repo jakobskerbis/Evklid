@@ -269,9 +269,16 @@ function render(focus = null) {
       s.busy = true;
       s.msg = "";
       render('[data-act="share-go"]');
-      const r = await shareCardNative(s.blob, { name: "evklid-zbirka.png" });
-      s.busy = false;
-      s.msg = t(shareResultKey(r));
+      let r;
+      try {
+        r = await shareCardNative(s.blob, { name: "evklid-zbirka.png" });
+      } catch {
+        r = { ok: false };
+      } finally {
+        s.busy = false;
+      }
+      const key = shareResultKey(r);
+      s.msg = key ? t(key) : "";
     } else {
       const how = await shareCardFile(s.blob, { name: "evklid-zbirka.png", title: t("share.cardTitle") });
       s.msg = how === "downloaded" ? t("share.downloaded") : how === "shared" ? t("share.shared") : "";
