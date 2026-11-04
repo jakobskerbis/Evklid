@@ -222,11 +222,12 @@ export function open3d(id, title = "", param = null) {
   const prilagodi = () => {
     if (!vv) return;
     const k = Math.max(1, vv.scale);
-    Object.assign(el.style, { width: `${Math.round(vv.width * k)}px`, height: `${Math.round(vv.height * k)}px`, left: "0", right: "auto", top: "0", bottom: "auto" });
+    Object.assign(el.style, { width: `${Math.round(vv.width * k)}px`, height: `${Math.round(vv.height * k)}px`, left: "0", right: "auto", top: `${k > 1 ? 0 : Math.round(vv.offsetTop)}px`, bottom: "auto" });
   };
   prilagodi();
   vv?.addEventListener("resize", prilagodi);
-  full = { el, frame, from: document.activeElement, odjavi: () => vv?.removeEventListener("resize", prilagodi) };
+  vv?.addEventListener("scroll", prilagodi); // iOS premakne vidni del (tipkovnica): okvir mu sledi
+  full = { el, frame, from: document.activeElement, odjavi: () => (vv?.removeEventListener("resize", prilagodi), vv?.removeEventListener("scroll", prilagodi)) };
   D?.onOverlay?.(true);
   frame.focus();
 }

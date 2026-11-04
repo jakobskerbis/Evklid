@@ -309,6 +309,7 @@ export function odpriModel(el, mod, opts = {}) {
           const KONEC = ["pointerup", "touchend", "touchcancel", "blur", "contextmenu"];
           const konec = (ev) => {
             if (ev.pointerId !== undefined && ev.pointerId !== id) return; // drug prst na odru ne konča vlečenja
+            if (ev.touches?.length) return; // dvig drugega prsta (touchend nima pointerId)
             lab.classList.remove("k3-aktiven");
             koren.classList.remove("k3-drsam");
             for (const t of KONEC) window.removeEventListener(t, konec);

@@ -53,6 +53,7 @@ function prosojnoObVlecenju(inp, koren) {
     koren.classList.add("a3-drsam");
     const konec = (ev) => {
       if (ev.pointerId !== undefined && ev.pointerId !== id) return; // drug prst na odru ne konča vlečenja
+      if (ev.touches?.length) return; // dvig drugega prsta (touchend nima pointerId)
       inp.classList.remove("a3-aktiven");
       koren.classList.remove("a3-drsam");
       for (const t of KONEC) window.removeEventListener(t, konec);
@@ -1586,6 +1587,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       // Pogled od zgoraj ali spodaj: majhen odmik naprej, da se kamera ne obrne okoli navpične osi.
       b.addEventListener("click", () => {
         zapriPlavajoce();
+        btnMeni.focus({ preventScroll: true });
         pogled(new THREE.Vector3(d[0], d[1], d[2] + (d[1] ? 0.002 : 0)));
       });
       smeri.append(b);
