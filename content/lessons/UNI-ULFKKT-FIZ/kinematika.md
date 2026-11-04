@@ -19,11 +19,15 @@ Nejčev avto stoji, nato $8{,}0\,\mathrm{s}$ enakomerno pospešuje. Graf hitrost
 
 **1. Lega, premik in pot.** Lego točkastega telesa opišemo s krajevnim vektorjem $\vec{r}(t) = x(t)\,\vec{i} + y(t)\,\vec{j} + z(t)\,\vec{k}$ glede na izbrano izhodišče. **Premik** v časovnem intervalu je $\Delta\vec{r} = \vec{r}(t_2) - \vec{r}(t_1)$, **pot** $s$ pa dolžina krivulje, ki jo telo opiše. Premik je vektor, pot je skalar in je vedno vsaj tolikšna kot $|\Delta\vec{r}|$.
 
-**2. Hitrost.** Povprečna hitrost je $\bar{\vec{v}} = \Delta\vec{r}/\Delta t$, **trenutna hitrost** pa limita, ko gre $\Delta t \to 0$:
+**2. Hitrost.** Povprečna hitrost je $\bar{\vec{v}} = \Delta\vec{r}/\Delta t$. **Definicija.** Naj bo $\vec{r}(t)$ odvedljiva funkcija časa. **Trenutna hitrost** ob času $t$ je limita povprečne hitrosti, ko gre $\Delta t \to 0$:
 
-$$\vec{v} = \frac{\mathrm{d}\vec{r}}{\mathrm{d}t} = \dot{x}\,\vec{i} + \dot{y}\,\vec{j} + \dot{z}\,\vec{k}.$$
+$$\vec{v}(t) = \lim_{\Delta t \to 0}\frac{\vec{r}(t + \Delta t) - \vec{r}(t)}{\Delta t} = \frac{\mathrm{d}\vec{r}}{\mathrm{d}t},$$
 
-Hitrost je vedno **tangentna** na tir. Njena velikost $v = |\vec{v}| = \mathrm{d}s/\mathrm{d}t$ je hitrost, ki jo kaže merilnik v avtomobilu.
+po komponentah
+
+$$\vec{v} = \dot{x}\,\vec{i} + \dot{y}\,\vec{j} + \dot{z}\,\vec{k}.$$
+
+Odvod vektorja je vektor odvodov komponent, ker so $\vec{i}, \vec{j}, \vec{k}$ stalni. Hitrost je vedno **tangentna** na tir: sekanta $\Delta\vec{r}$ med točkama tira pri $\Delta t \to 0$ preide v tangento. Njena velikost $v = |\vec{v}| = \mathrm{d}s/\mathrm{d}t$ je hitrost, ki jo kaže merilnik v avtomobilu.
 
 **3. Pospešek.** Pospešek je odvod hitrosti po času:
 
@@ -32,7 +36,7 @@ $$\vec{a} = \frac{\mathrm{d}\vec{v}}{\mathrm{d}t} = \frac{\mathrm{d}^2\vec{r}}{\
 Pospešek ni nič, kadar se spreminja velikost **ali** smer hitrosti. Zato ima pospešek tudi telo, ki enakomerno kroži.
 
 :::premisli
-Avto vozi po krožnem priključku avtoceste, merilnik ves čas kaže $60\,\mathrm{km/h}$. Ali avto pospešuje?
+Avto vozi po krožnem priključku avtoceste, merilnik ves čas kaže $60\,\mathrm{km/h}$. Ali avto pospešuje? Če da, v katero smer kaže pospešek?
 ---
 Da. Velikost hitrosti je stalna, smer pa se ves čas spreminja, zato je $\mathrm{d}\vec{v}/\mathrm{d}t \neq 0$. Pospešek kaže proti središču priključka; potnik ga čuti kot potisk proti zunanji strani.
 :::
@@ -48,11 +52,11 @@ Začetna lega $\vec{r}_0$ in začetna hitrost $\vec{v}_0$ sta integracijski kons
 **5. Premo gibanje.** Pri premem gibanju zadošča ena koordinata $x(t)$.
 
 - **Enakomerno gibanje** ($a = 0$): $x = x_0 + vt$.
-- **Enakomerno pospešeno gibanje** ($a$ stalen):
+- **Enakomerno pospešeno gibanje.** Naj bo pospešek $a$ stalen in naj bosta ob $t = 0$ lega $x_0$ in hitrost $v_0$. Potem je
 
 $$v = v_0 + at, \qquad x = x_0 + v_0 t + \tfrac{1}{2}at^2, \qquad v^2 = v_0^2 + 2a(x - x_0).$$
 
-Tretjo enačbo dobimo, če iz prvih dveh izločimo čas. Prosti pad je poseben primer z $a = g \approx 9{,}81\,\mathrm{m/s^2}$ navzdol. V grafu $v(t)$ je pospešek naklon, ploščina pod krivuljo pa premik.
+*Izpeljava.* Integriramo $\dot{v} = a$: $v(t) = v_0 + \int_0^t a\,\mathrm{d}t' = v_0 + at$. Integriramo $\dot{x} = v$: $x(t) = x_0 + \int_0^t (v_0 + at')\,\mathrm{d}t' = x_0 + v_0t + \tfrac{1}{2}at^2$. Tretjo enačbo dobimo, če iz prvih dveh izločimo čas: $t = (v - v_0)/a$ vstavimo v drugo in uredimo. Prosti pad je poseben primer z $a = g \approx 9{,}81\,\mathrm{m/s^2}$ navzdol. V grafu $v(t)$ je pospešek naklon, ploščina pod krivuljo pa premik.
 
 :::premisli
 Avto z istimi zavorami enkrat zavira s $50\,\mathrm{km/h}$, drugič s $100\,\mathrm{km/h}$. Kolikokrat daljša je zavorna pot v drugem primeru in zakaj?
@@ -65,18 +69,22 @@ Avto z istimi zavorami enkrat zavira s $50\,\mathrm{km/h}$, drugič s $100\,\mat
 - **tangentni pospešek** $a_t = \mathrm{d}v/\mathrm{d}t$ (vzdolž hitrosti, spreminja velikost hitrosti),
 - **radialni (normalni) pospešek** $a_r = v^2/R$ (pravokotno na hitrost, proti središču ukrivljenosti s polmerom $R$, spreminja smer).
 
-Velikost celotnega pospeška je $a = \sqrt{a_t^2 + a_r^2}$.
+**Izrek.** Naj bo $\vec{e}_t = \vec{v}/v$ enotski tangentni vektor ($v \neq 0$) in $\vec{e}_n$ enotski vektor proti središču ukrivljenosti. Potem je $\vec{a} = \dfrac{\mathrm{d}v}{\mathrm{d}t}\vec{e}_t + \dfrac{v^2}{R}\vec{e}_n$ in velikost celotnega pospeška $a = \sqrt{a_t^2 + a_r^2}$. *Skica dokaza:* odvajamo $\vec{v} = v\vec{e}_t$ kot produkt; ker je $|\vec{e}_t| = 1$, je $\mathrm{d}\vec{e}_t/\mathrm{d}t$ pravokoten na $\vec{e}_t$ (podrobno v razdelku »Bolj natančno«).
 
 **7. Poševni met.** Telo vržemo z začetno hitrostjo $v_0$ pod kotom $\alpha$ glede na vodoravnico. Zračni upor zanemarimo, os $y$ kaže navzgor, pospešek je $\vec{a} = (0, -g)$. Komponenti gibanja sta neodvisni:
 
 $$x = v_0\cos\alpha\,t, \qquad y = v_0\sin\alpha\,t - \tfrac{1}{2}gt^2,$$
 $$v_x = v_0\cos\alpha, \qquad v_y = v_0\sin\alpha - gt.$$
 
-Vodoravno je gibanje enakomerno, navpično enakomerno pospešeno. Če iz $x(t)$ izrazimo $t$ in ga vstavimo v $y(t)$, dobimo parabolo. Za met z vodoravnih tal in pristanek na isti višini veljajo:
+Vodoravno je gibanje enakomerno, navpično enakomerno pospešeno. Če iz $x(t)$ izrazimo $t = x/(v_0\cos\alpha)$ in ga vstavimo v $y(t)$, dobimo enačbo tira, parabolo:
+
+$$y = x\tan\alpha - \frac{g x^2}{2v_0^2\cos^2\alpha}.$$
+
+Za met z vodoravnih tal in pristanek na isti višini veljajo:
 
 $$t_{\text{let}} = \frac{2v_0\sin\alpha}{g}, \qquad h_{\max} = \frac{v_0^2\sin^2\alpha}{2g}, \qquad D = \frac{v_0^2\sin 2\alpha}{g}.$$
 
-Domet je največji pri $\alpha = 45^\circ$, koti $\alpha$ in $90^\circ - \alpha$ pa dasta enak domet. V najvišji točki je $v_y = 0$, hitrost pa ni nič: ostane $v_x$.
+*Izpeljava.* Pristanek: $y = 0$ da $t(v_0\sin\alpha - \tfrac{1}{2}gt) = 0$, rešitev $t \ne 0$ je $t_{\text{let}}$. Vrh: $v_y = 0$ pri $t = t_{\text{let}}/2$, vstavimo v $y(t)$ in dobimo $h_{\max}$. Domet: $D = v_0\cos\alpha \cdot t_{\text{let}} = 2v_0^2\sin\alpha\cos\alpha/g$. Ker je $\sin 2\alpha \le 1$ z enakostjo pri $2\alpha = 90^\circ$, je domet največji pri $\alpha = 45^\circ$, koti $\alpha$ in $90^\circ - \alpha$ pa dasta enak domet. V najvišji točki je $v_y = 0$, hitrost pa ni nič: ostane $v_x$.
 
 ### Kroženje in relativno gibanje
 
@@ -85,11 +93,15 @@ Domet je največji pri $\alpha = 45^\circ$, koti $\alpha$ in $90^\circ - \alpha$
 - **kotno hitrost** $\omega = \mathrm{d}\varphi/\mathrm{d}t$ (enota $\mathrm{s^{-1}}$ oziroma $\mathrm{rad/s}$),
 - **kotni pospešek** $\alpha = \mathrm{d}\omega/\mathrm{d}t$ (enota $\mathrm{s^{-2}}$).
 
-Zveze med obodnimi in kotnimi količinami so $s = r\varphi$, $v = \omega r$, $a_t = \alpha r$, $a_r = v^2/r = \omega^2 r$. Pri **enakomernem kroženju** je $\omega$ stalna, obhodni čas je $t_0 = 2\pi/\omega$, frekvenca $\nu = 1/t_0$. Pri **enakomerno pospešenem kroženju** veljajo enačbe, analogne prememu gibanju: $\omega = \omega_0 + \alpha t$, $\varphi = \omega_0 t + \tfrac{1}{2}\alpha t^2$.
+Zveze med obodnimi in kotnimi količinami so $s = r\varphi$, $v = \omega r$, $a_t = \alpha r$, $a_r = v^2/r = \omega^2 r$ (kot v radianih).
+
+*Dokaz za $a_r$:* pri $\vec{r} = r(\cos\varphi, \sin\varphi)$ s stalnim $r$ je $\vec{v} = \omega r(-\sin\varphi, \cos\varphi)$, pri stalni $\omega$ pa $\vec{a} = -\omega^2 r(\cos\varphi, \sin\varphi) = -\omega^2\vec{r}$: pospešek kaže proti središču in ima velikost $\omega^2 r$.
+
+Pri **enakomernem kroženju** je $\omega$ stalna, obhodni čas je $t_0 = 2\pi/\omega$, frekvenca $\nu = 1/t_0$. Pri **enakomerno pospešenem kroženju** veljajo enačbe, analogne prememu gibanju: $\omega = \omega_0 + \alpha t$, $\varphi = \omega_0 t + \tfrac{1}{2}\alpha t^2$.
 
 Pazi na dve različni oznaki: $\alpha$ za kot meta in $\alpha$ za kotni pospešek. Iz okoliščin je vedno jasno, katera je mišljena, v lastnih zapiskih pa ju lahko ločiš z indeksom.
 
-**9. Relativno gibanje.** Lega, hitrost in pospešek so odvisni od opazovalca. Če se opazovalni sistem $S'$ glede na sistem $S$ giblje premo s hitrostjo $\vec{u}$, velja
+**9. Relativno gibanje.** Lega, hitrost in pospešek so odvisni od opazovalca. **Galilejeva transformacija.** Naj se opazovalni sistem $S'$ glede na sistem $S$ giblje premo (brez vrtenja) s hitrostjo $\vec{u}$, naj izhodišči ob $t = 0$ sovpadata in naj bo $u$ mnogo manjša od svetlobne hitrosti (čas je v obeh sistemih enak). Potem velja
 
 $$\vec{r} = \vec{r}\,' + \vec{u}t, \qquad \vec{v} = \vec{v}\,' + \vec{u}, \qquad \vec{a} = \vec{a}\,' \quad (\text{pri stalnem } \vec{u}).$$
 
@@ -140,13 +152,13 @@ $v_x = v_0\cos\alpha$, $v_{0y} = v_0\sin\alpha$; $t_{\text{let}} = \dfrac{2v_{0y
 
 ### Primer 3 (težji)
 
-Rotor centrifuge s polmerom $0{,}30\,\mathrm{m}$ začne iz mirovanja enakomerno pospeševati in v $4{,}0\,\mathrm{s}$ doseže kotno hitrost $20\,\mathrm{s^{-1}}$. Za točko na obodu izračunaj tangentni, radialni in celotni pospešek ob koncu pospeševanja ter število obratov, ki jih rotor pri tem naredi.
+Rotor centrifuge s polmerom $0{,}30\,\mathrm{m}$ začne iz mirovanja enakomerno pospeševati in v $4{,}0\,\mathrm{s}$ doseže kotno hitrost $20\,\mathrm{s^{-1}}$. Za točko na obodu izračunaj tangentni, radialni in celotni pospešek ob koncu pospeševanja, število obratov, ki jih rotor pri tem naredi, in pot, ki jo prepotuje točka na obodu. Ob katerem času med pospeševanjem oklepa celotni pospešek s hitrostjo kot $45^\circ$?
 
 **Podatki:** $r = 0{,}30\,\mathrm{m}$, $\omega_0 = 0$, $\omega = 20\,\mathrm{s^{-1}}$, $t = 4{,}0\,\mathrm{s}$, kotni pospešek je stalen
-**Iščemo:** $a_t$, $a_r$, $a$ ob $t = 4{,}0\,\mathrm{s}$ in število obratov $N$
+**Iščemo:** $a_t$, $a_r$, $a$ ob $t = 4{,}0\,\mathrm{s}$, število obratov $N$, pot $s$ in čas $t_1$, ko je kot med $\vec{a}$ in $\vec{v}$ enak $45^\circ$
 
 :::formula
-$\alpha = \dfrac{\omega - \omega_0}{t}$, $a_t = \alpha r$, $a_r = \omega^2 r$, $a = \sqrt{a_t^2 + a_r^2}$, $\varphi = \tfrac{1}{2}\alpha t^2$, $N = \dfrac{\varphi}{2\pi}$
+$\alpha = \dfrac{\omega - \omega_0}{t}$, $a_t = \alpha r$, $a_r = \omega^2 r$, $a = \sqrt{a_t^2 + a_r^2}$, $\varphi = \tfrac{1}{2}\alpha t^2$, $N = \dfrac{\varphi}{2\pi}$, $s = r\varphi$; kot $45^\circ$ pri $a_r = a_t$
 :::
 
 **Rešitev:**
@@ -156,8 +168,10 @@ $\alpha = \dfrac{\omega - \omega_0}{t}$, $a_t = \alpha r$, $a_r = \omega^2 r$, $
 3. Radialni pospešek na koncu: $a_r = \omega^2 r = (20\,\mathrm{s^{-1}})^2 \cdot 0{,}30\,\mathrm{m} = 120\,\mathrm{m/s^2}$.
 4. Celotni pospešek: $a = \sqrt{1{,}5^2 + 120^2}\,\mathrm{m/s^2} \approx 120\,\mathrm{m/s^2}$; radialni del močno prevlada.
 5. Zasučni kot (enačba kot pri premem gibanju, le s kotnimi količinami): $\varphi = \tfrac{1}{2} \cdot 5{,}0\,\mathrm{s^{-2}} \cdot (4{,}0\,\mathrm{s})^2 = 40\,\mathrm{rad}$.
-6. Število obratov: $N = 40 / (2\pi) \approx 6{,}4$.
-7. Odgovor: ob koncu je $a_t = 1{,}5\,\mathrm{m/s^2}$, $a_r = 120\,\mathrm{m/s^2}$ in $a \approx 120\,\mathrm{m/s^2}$ (približno $12\,g$); rotor pri pospeševanju naredi približno $6{,}4$ obrata.
+6. Število obratov: $N = 40 / (2\pi) \approx 6{,}4$, pot točke na obodu pa $s = r\varphi = 0{,}30\,\mathrm{m} \cdot 40 = 12\,\mathrm{m}$.
+7. Hitrost kaže v smeri $\vec{e}_t$: $a_t$ leži vzdolž nje, $a_r$ pa pravokotno nanjo, zato je tangens kota med $\vec{a}$ in $\vec{v}$ enak $a_r/a_t$. Kot je $45^\circ$, ko je $a_r = a_t$: $\omega^2 r = \alpha r$, torej $\omega = \sqrt{\alpha} = \sqrt{5{,}0}\,\mathrm{s^{-1}} \approx 2{,}24\,\mathrm{s^{-1}}$.
+8. Kotna hitrost raste kot $\omega = \alpha t$, zato $t_1 = \omega/\alpha = 2{,}236/5{,}0\,\mathrm{s} \approx 0{,}45\,\mathrm{s}$. Pred tem prevladuje tangentni, pozneje radialni pospešek.
+9. Odgovor: ob koncu je $a_t = 1{,}5\,\mathrm{m/s^2}$, $a_r = 120\,\mathrm{m/s^2}$ in $a \approx 120\,\mathrm{m/s^2}$ (približno $12\,g$); rotor pri pospeševanju naredi približno $6{,}4$ obrata, točka na obodu prepotuje $12\,\mathrm{m}$. Kot $45^\circ$ med pospeškom in hitrostjo je ob $t_1 \approx 0{,}45\,\mathrm{s}$.
 
 ### Primer 4 – zdaj ti
 
@@ -174,7 +188,7 @@ $h = \tfrac{1}{2}gt^2$, $D = v_x t$, $v_y = gt$, $v = \sqrt{v_x^2 + v_y^2}$
 
 1. Paket ima ob spustu hitrost drona, zato je $v_x = 10\,\mathrm{m/s}$ in $v_{0y} = 0$; vodoravno se giblje enakomerno, navpično prosto pada.
 2. Čas padca določa le navpično gibanje: $t = \sqrt{2h/g} = \sqrt{2 \cdot 20/9{,}81}\,\mathrm{s} \approx 2{,}02\,\mathrm{s}$.
-3. Izračunaj $D$ in $v$ sam, nato preveri:
+3. Zdaj ti: s tem časom dobiš vodoravno razdaljo in navpično hitrost; sestavi ju v $D$ in $v$, nato odpri rešitev:
 
 :::premisli
 Kolikšna sta $D$ in hitrost paketa ob pristanku?
@@ -200,6 +214,45 @@ $D = 10\,\mathrm{m/s} \cdot 2{,}02\,\mathrm{s} \approx 20{,}2\,\mathrm{m}$. Navp
 - Poševni met: vodoravno enakomerno, navpično pospešeno z $-g$; $D = v_0^2\sin 2\alpha/g$, največji pri $45^\circ$.
 - Kroženje: $\omega = \mathrm{d}\varphi/\mathrm{d}t$, $v = \omega r$, $a_t = \alpha r$, $a_r = \omega^2 r$, $t_0 = 2\pi/\omega$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije premika, poti, trenutne hitrosti (kot limite) in pospeška ter utemeljitev, zakaj je hitrost tangentna na tir;
+- izpeljavo enačb za stalni pospešek z integriranjem, vključno z $v^2 = v_0^2 + 2a(x - x_0)$, in kdaj jih ne smeš uporabiti;
+- izrek o razcepu pospeška na tangentni in radialni del ter dokaz $\vec{a} = -\omega^2\vec{r}$ za enakomerno kroženje;
+- izpeljavo enačbe tira, časa leta, največje višine in dometa poševnega meta ter dokaz, da je domet največji pri $45^\circ$;
+- Galilejevo transformacijo s pogoji in zakaj je pospešek v obeh sistemih enak.
+
+### Naloga 1
+
+Z roba ravne strehe na višini $12\,\mathrm{m}$ vržemo žogo s hitrostjo $15\,\mathrm{m/s}$ pod kotom $30^\circ$ nad vodoravnico. Kdaj in kako daleč od stavbe pade na tla? S kolikšno hitrostjo in pod kolikšnim kotom glede na vodoravnico zadene tla? Kolikšna sta tangentni in radialni pospešek ter krivinski polmer tira v najvišji točki? Zračni upor zanemari, $g = 9{,}81\,\mathrm{m/s^2}$.
+
+**Rešitev:**
+
+1. Izhodišče postavimo ob vznožje stavbe pod točko meta, os $y$ navzgor: $y_0 = 12\,\mathrm{m}$, $v_x = 15\cos 30^\circ\,\mathrm{m/s} \approx 12{,}99\,\mathrm{m/s}$, $v_{0y} = 15\sin 30^\circ\,\mathrm{m/s} = 7{,}5\,\mathrm{m/s}$.
+2. Pristanek je pri $y = 0$: $12 + 7{,}5t - 4{,}905t^2 = 0$. Pozitivna rešitev kvadratne enačbe: $t = \dfrac{7{,}5 + \sqrt{7{,}5^2 + 4 \cdot 4{,}905 \cdot 12}}{2 \cdot 4{,}905}\,\mathrm{s} = \dfrac{7{,}5 + 17{,}08}{9{,}81}\,\mathrm{s} \approx 2{,}51\,\mathrm{s}$.
+3. Vodoravno je gibanje enakomerno: $D = v_xt = 12{,}99 \cdot 2{,}505\,\mathrm{m} \approx 32{,}5\,\mathrm{m}$.
+4. Navpična hitrost ob pristanku: $v_y = 7{,}5 - 9{,}81 \cdot 2{,}505\,\mathrm{m/s} \approx -17{,}08\,\mathrm{m/s}$, zato $v = \sqrt{12{,}99^2 + 17{,}08^2}\,\mathrm{m/s} \approx 21{,}5\,\mathrm{m/s}$. Preizkus z $v^2 = v_0^2 + 2gh$: $\sqrt{225 + 2 \cdot 9{,}81 \cdot 12}\,\mathrm{m/s} \approx 21{,}5\,\mathrm{m/s}$. ✓
+5. Kot pod vodoravnico: $\tan\beta = 17{,}08/12{,}99 \approx 1{,}315$, $\beta \approx 52{,}7^\circ$.
+6. V najvišji točki je $\vec{v}$ vodoraven, $\vec{g}$ pa pravokoten nanj: $a_t = 0$, $a_r = g = 9{,}81\,\mathrm{m/s^2}$.
+7. Iz $a_r = v^2/R$ sledi $R = v_x^2/g = 12{,}99^2/9{,}81\,\mathrm{m} \approx 17{,}2\,\mathrm{m}$.
+8. Odgovor: žoga pade po približno $2{,}51\,\mathrm{s}$, $32{,}5\,\mathrm{m}$ od stavbe, s hitrostjo $21{,}5\,\mathrm{m/s}$ pod kotom približno $53^\circ$ pod vodoravnico; v najvišji točki je ves pospešek radialen, krivinski polmer tira pa okoli $17\,\mathrm{m}$.
+
+### Naloga 2
+
+Natančno definiraj trenutno hitrost in pospešek točkastega telesa. Dokaži, da je pri enakomernem kroženju s polmerom $r$ in kotno hitrostjo $\omega$ pospešek usmerjen proti središču in ima velikost $\omega^2 r$. Utemelji, ali ima lahko telo (a) stalno velikost hitrosti in neničeln pospešek, (b) v nekem trenutku hitrost nič in neničeln pospešek.
+
+**Rešitev:**
+
+1. Naj bo $\vec{r}(t)$ odvedljiva. Trenutna hitrost je $\vec{v}(t) = \lim_{\Delta t \to 0}[\vec{r}(t + \Delta t) - \vec{r}(t)]/\Delta t = \mathrm{d}\vec{r}/\mathrm{d}t$, pospešek pa $\vec{a} = \mathrm{d}\vec{v}/\mathrm{d}t = \mathrm{d}^2\vec{r}/\mathrm{d}t^2$; oba odvajamo po komponentah.
+2. Kroženje: $\vec{r} = r(\cos\varphi, \sin\varphi)$ z $\varphi = \omega t$ in stalnima $r$, $\omega$.
+3. Odvajamo: $\vec{v} = \omega r(-\sin\varphi, \cos\varphi)$; $\vec{v}\cdot\vec{r} = 0$, zato je hitrost tangentna, njena velikost pa $\omega r$.
+4. Še enkrat odvajamo: $\vec{a} = -\omega^2 r(\cos\varphi, \sin\varphi) = -\omega^2\vec{r}$. Pospešek je nasprotno usmerjen kot krajevni vektor, torej proti središču, z velikostjo $\omega^2 r = v^2/r$.
+5. (a) Da: pri enakomernem kroženju je $|\vec{v}| = \omega r$ stalna, $\vec{a} \ne 0$, ker se spreminja smer hitrosti. Splošno je $\mathrm{d}(v^2)/\mathrm{d}t = 2\vec{v}\cdot\vec{a}$, zato je $v$ stalna natanko takrat, ko je $\vec{a}$ ves čas pravokoten na $\vec{v}$.
+6. (b) Da: pri navpičnem metu je v najvišji točki $v = 0$, pospešek pa $g$ navzdol; hitrost je trenutno nič, njen odvod pa ne.
+7. Odgovor: pri enakomernem kroženju je $\vec{a} = -\omega^2\vec{r}$; obe situaciji (a) in (b) sta mogoči.
+
 ## Drugače: Na sliki
 
 Tir poševnega meta je parabola. Na vsaki točki nariši vektor hitrosti kot puščico, tangentno na tir:
@@ -222,15 +275,13 @@ Pri kroženju nariši krožnico, vektor hitrosti kot tangento in radialni pospe�
 
 V grafu $v(t)$ za enakomerno pospešeno gibanje je premica. Naklon je pospešek, ploščina trikotnika (ali trapeza) pod premico pa prevožena pot.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Centrifuga v laboratoriju.** Proizvajalci navajajo »relativno centrifugalno silo« (RCF), ki je razmerje $\omega^2 r / g$. Pri $3000$ obratih na minuto in $r = 10\,\mathrm{cm}$ je $\omega = 2\pi \cdot 50\,\mathrm{s^{-1}} \approx 314\,\mathrm{s^{-1}}$ in $\omega^2 r \approx 9{,}9 \cdot 10^3\,\mathrm{m/s^2}$, kar je približno $1000\,g$. Zato za isti učinek pri manjšem rotorju potrebuješ več obratov.
+**Centrifuga v laboratoriju.** V protokolih je pogoj podan z »relativno centrifugalno silo« (RCF), razmerjem $\omega^2 r / g$, ne z obrati. Pri $3000$ obratih na minuto in $r = 10\,\mathrm{cm}$ je $\omega = 2\pi \cdot 50\,\mathrm{s^{-1}} \approx 314\,\mathrm{s^{-1}}$ in $\omega^2 r \approx 9{,}9 \cdot 10^3\,\mathrm{m/s^2}$, približno $1000\,g$. Ker je RCF sorazmerna z $r$ in s kvadratom obratov, moraš pri prenosu protokola z rotorja s polmerom $r_1$ na rotor z manjšim polmerom $r_2$ obrate povečati za faktor $\sqrt{r_1/r_2}$.
 
-**Zavorna pot.** Iz $v^2 = v_0^2 + 2a\Delta x$ pri $v = 0$ sledi $\Delta x = v_0^2/(2|a|)$. Zavorna pot je sorazmerna s **kvadratom** hitrosti: pri $100\,\mathrm{km/h}$ je približno dvakrat daljša kot pri $70\,\mathrm{km/h}$ ($(100/70)^2 \approx 2{,}04$).
+**Sledenje delcem.** Pri mikroskopiji živih celic in pri merjenju tokov (PIV) hitrost izračunajo iz zaporednih posnetkov kot $\Delta\vec{r}/\Delta t$, pospešek pa iz druge razlike. Numerično odvajanje ojača šum: napaka lege $\delta$ da napako hitrosti reda $\delta/\Delta t$, zato podatke pred odvajanjem zgladijo.
 
-**Skok bolhe in kobilice.** Žuželke pri skoku dosežejo veliko začetno hitrost na kratki razdalji. Kobilica, ki skoči $1\,\mathrm{m}$ daleč pod kotom okoli $45^\circ$, mora odskočiti s hitrostjo $v_0 = \sqrt{gD} \approx 3{,}1\,\mathrm{m/s}$.
-
-**Namakanje in vodni curki.** Curek iz šobe razpršilca je približno parabola. Kmetijski razpršilci so pogosto nagnjeni nekoliko manj kot $45^\circ$, ker zračni upor in veter domet pri večjih kotih bolj zmanjšata.
+**Varnostne razdalje v industriji.** Iz $\Delta x = v_0^2/(2|a|)$ načrtujejo zaustavitev transportnih trakov, dvigal in robotskih rok ter varnostne razdalje vozil. Pot je sorazmerna s **kvadratom** hitrosti: zavorna pot vozila je pri $100\,\mathrm{km/h}$ približno dvakrat daljša kot pri $70\,\mathrm{km/h}$ ($(100/70)^2 \approx 2{,}04$).
 
 ## Drugače: Korak za korakom s številkami
 
@@ -244,8 +295,6 @@ Gibanje delca je podano s $\vec{r}(t) = (3{,}0\,\mathrm{m/s} \cdot t)\,\vec{i} +
 6. **Tangentni pospešek ob $t = 1{,}0\,\mathrm{s}$:** projekcija $\vec{a}$ na smer $\vec{v}$: $a_t = \vec{a}\cdot\vec{v}/v = (-2{,}0 \cdot 2{,}0)/3{,}61\,\mathrm{m/s^2} \approx -1{,}11\,\mathrm{m/s^2}$; delec se upočasnjuje.
 
 ## Drugače: Bolj natančno
-
-**Definicija hitrosti kot limite.** Hitrost ob času $t$ je $\vec{v}(t) = \lim_{\Delta t \to 0} \frac{\vec{r}(t + \Delta t) - \vec{r}(t)}{\Delta t}$, če limita obstaja. Odvod vektorske funkcije je vektor odvodov komponent, zato vsa pravila odvajanja veljajo po komponentah.
 
 **Izpeljava enačb za stalni pospešek.** Iz $\dot{v} = a$ z integriranjem dobimo $v(t) = v_0 + at$, iz $\dot{x} = v$ pa $x(t) = x_0 + v_0 t + \tfrac{1}{2}at^2$. Če zapišemo $a = \frac{\mathrm{d}v}{\mathrm{d}t} = \frac{\mathrm{d}v}{\mathrm{d}x}\frac{\mathrm{d}x}{\mathrm{d}t} = v\frac{\mathrm{d}v}{\mathrm{d}x}$ in integriramo po $x$, dobimo $\tfrac{1}{2}(v^2 - v_0^2) = a(x - x_0)$.
 

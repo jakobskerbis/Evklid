@@ -25,6 +25,8 @@ V haloalkanu $\mathrm{R{-}X}$ je vez $\mathrm{C{-}X}$ polarna: ogljik je delno p
 
 Pri **substituciji** nukleofil zamenja izstopajočo skupino. Pri **eliminaciji** odideta $\mathrm{H}$ z ogljika $\beta$ in $\mathrm{X}$ z ogljika $\alpha$, nastane dvojna vez $\mathrm{C{=}C}$. Eliminacija je obratna reakcija adicije, ki jo že poznaš.
 
+Natančno: **nukleofilna substitucija** na nasičenem ogljiku je reakcija $\mathrm{R{-}X + Nu^- \to R{-}Nu + X^-}$ (z nevtralnim $\mathrm{Nu{:}}$ nastane $\mathrm{R{-}Nu^+}$), pri kateri nukleofil tvori novo vez z ogljikom $\alpha$ z lastnim elektronskim parom, $\mathrm{X}$ pa odide z elektronskim parom stare vezi. **$\beta$-eliminacija** (1,2-eliminacija) je reakcija $\mathrm{H{-}C_\beta{-}C_\alpha{-}X + B^- \to C_\beta{=}C_\alpha + HB + X^-}$. Številka v imenu mehanizma ($\mathrm{S_N1}$, $\mathrm{E2}$) je **molekularnost** koraka, ki določa hitrost: število delcev, ki v tem koraku tvorijo prehodno stanje. Korak, ki določa hitrost, je najpočasnejši korak mehanizma; hitreje od njega reakcija ne more poteči.
+
 ### Dobra izstopajoča skupina je šibka baza
 
 Ko odide, mora stabilno nositi negativni naboj. Vrstni red: $\mathrm{I^-} > \mathrm{Br^-} > \mathrm{Cl^-} \gg \mathrm{F^-}$. Skupina $\mathrm{OH^-}$ je močna baza in slaba izstopajoča skupina. Zato alkohol reagira šele v kislem: protonirani $\mathrm{R{-}OH_2^+}$ odda nevtralno vodo, ki je odlična izstopajoča skupina.
@@ -36,6 +38,8 @@ Ime pomeni substitucijo, nukleofilno, bimolekularno. Reakcija poteče v **enem k
 V koraku sodelujeta dve molekuli, zato je hitrost odvisna od obeh koncentracij:
 
 $$v = k\,[\mathrm{RX}]\,[\mathrm{Nu}]$$
+
+Če je nukleofil v velikem prebitku ($[\mathrm{Nu}]_0 \gg [\mathrm{RX}]_0$), se njegova koncentracija med reakcijo skoraj ne spremeni. Tedaj je $v = k'[\mathrm{RX}]$ s $k' = k[\mathrm{Nu}]_0$: reakcija je **psevdo prvega reda**.
 
 Hrbtni napad ovirajo velike skupine na ogljiku $\alpha$. Hitrost $\mathrm{S_N2}$ pada: metil $>$ 1° $>$ 2° $\gg$ 3° (terciarni praktično ne reagira). Pospešijo jo močan nukleofil in **polarna aprotična topila** (aceton, DMSO, DMF), ki nukleofila ne obdajo z vodikovimi vezmi.
 
@@ -50,19 +54,31 @@ Najpočasnejši korak vsebuje samo substrat, zato:
 
 $$v = k\,[\mathrm{RX}]$$
 
-Hitrost ni odvisna od koncentracije nukleofila. Ker poteka prek karbokationa, velja vrstni red stabilnosti iz adicij: 3° $>$ 2° $\gg$ 1°. Nukleofil napade ravninski kation z obeh strani, zato iz kiralnega substrata nastane (skoraj) **racemat**. Možne so premestitve karbokationa. $\mathrm{S_N1}$ pospešijo **polarna protična topila** (voda, alkoholi), ki ione stabilizirajo. Pogosto je topilo kar nukleofil; taki reakciji rečemo **solvoliza**.
+Hitrost ni odvisna od koncentracije nukleofila.
+
+**Izpeljava.** Naj bo mehanizem $\mathrm{RX} \rightleftharpoons \mathrm{R^+} + \mathrm{X^-}$ (konstanti $k_1$, $k_{-1}$) in $\mathrm{R^+} + \mathrm{Nu^-} \to \mathrm{RNu}$ ($k_2$). Karbokation je zelo reaktiven, zato zanj velja približek stacionarnega stanja: $\mathrm{d}[\mathrm{R^+}]/\mathrm{d}t = k_1[\mathrm{RX}] - k_{-1}[\mathrm{R^+}][\mathrm{X^-}] - k_2[\mathrm{R^+}][\mathrm{Nu}] = 0$. Od tod $[\mathrm{R^+}] = k_1[\mathrm{RX}]/(k_{-1}[\mathrm{X^-}] + k_2[\mathrm{Nu}])$ in
+
+$$v = k_2[\mathrm{R^+}][\mathrm{Nu}] = \frac{k_1 k_2[\mathrm{RX}][\mathrm{Nu}]}{k_{-1}[\mathrm{X^-}] + k_2[\mathrm{Nu}]}.$$
+
+Če je $k_2[\mathrm{Nu}] \gg k_{-1}[\mathrm{X^-}]$ (kation ujame nukleofil prej, kot se vrne v $\mathrm{RX}$), se ulomek skrajša v $v = k_1[\mathrm{RX}]$. Hitrostni zakon je z mehanizmom skladen, sam pa ga ne dokazuje.
+
+**Kinetika prvega reda.** Iz $-\mathrm{d}[\mathrm{RX}]/\mathrm{d}t = k[\mathrm{RX}]$ z integracijo dobiš $\ln([\mathrm{RX}]_0/[\mathrm{RX}]) = kt$. Pri $[\mathrm{RX}] = [\mathrm{RX}]_0/2$ je razpolovni čas $t_{1/2} = \ln 2/k$, neodvisen od začetne koncentracije.
+
+Ker poteka prek karbokationa, velja vrstni red stabilnosti iz adicij: 3° $>$ 2° $\gg$ 1°. Zakaj stabilnost vmesnega delca vpliva na hitrost, pove **Hammondov postulat**: prehodno stanje endotermnega koraka je po zgradbi in energiji podobno produktu tega koraka, tu karbokationu; kar stabilizira kation, zniža aktivacijsko energijo ionizacije.
+
+Nukleofil napade ravninski kation z obeh strani, zato iz kiralnega substrata nastane (skoraj) **racemat**. Možne so premestitve karbokationa. $\mathrm{S_N1}$ pospešijo **polarna protična topila** (voda, alkoholi), ki ione stabilizirajo. Pogosto je topilo kar nukleofil; taki reakciji rečemo **solvoliza**.
 
 :::premisli
-Pri $\mathrm{S_N2}$ in pri $\mathrm{S_N1}$ podvojimo koncentracijo nukleofila. Kaj se zgodi s hitrostjo v vsakem primeru?
+Ne veš, ali substrat reagira po $\mathrm{S_N2}$ ali po $\mathrm{S_N1}$. Načrtuj en sam poskus s koncentracijo nukleofila, ki ju loči: kaj spremeniš in kaj pričakuješ pri vsakem mehanizmu?
 ---
-Pri $\mathrm{S_N2}$ se hitrost podvoji, ker je $[\mathrm{Nu}]$ v hitrostnem zakonu. Pri $\mathrm{S_N1}$ ostane enaka: nukleofil sodeluje šele v hitrem drugem koraku, hitrost pa določa počasna ionizacija.
+Podvojiš $[\mathrm{Nu}]$, vse drugo pustiš enako, in izmeriš začetno hitrost. Pri $\mathrm{S_N2}$ se hitrost podvoji, ker je $[\mathrm{Nu}]$ v hitrostnem zakonu. Pri $\mathrm{S_N1}$ ostane enaka: nukleofil sodeluje šele v hitrem drugem koraku, hitrost pa določa počasna ionizacija.
 :::
 
 ### Mehanizem $\mathrm{E2}$
 
 En korak: baza odtrga $\mathrm{H}$ z ogljika $\beta$, elektroni vezi $\mathrm{C{-}H}$ tvorijo vez $\pi$, $\mathrm{X}$ hkrati odide. Hitrost je $v = k\,[\mathrm{RX}]\,[\mathrm{B}]$. Vodik in izstopajoča skupina morata biti **antiperiplanarna**: v isti ravnini, na nasprotnih straneh vezi $\mathrm{C{-}C}$. E2 pospešijo močne baze ($\mathrm{CH_3CH_2O^-}$, $\mathrm{OH^-}$, $\mathrm{(CH_3)_3CO^-}$) in višja temperatura.
 
-Če je na voljo več ogljikov $\beta$, nastane več alkenov. **Zajcevo pravilo:** prevlada bolj substituiran alken, ker je stabilnejši. Izjema je velika baza, npr. kalijev *terc*-butoksid $\mathrm{(CH_3)_3COK}$: težko doseže notranji vodik in odtrga končnega, zato nastane manj substituiran alken (**Hofmannov produkt**).
+Če je na voljo več ogljikov $\beta$, nastane več alkenov. **Zajcevo pravilo:** če lahko pri eliminaciji nastane več konstitucijsko izomernih alkenov, prevlada bolj substituiran alken, ker je termodinamsko stabilnejši; to velja za majhne baze in kadar je antiperiplanarna lega mogoča za več vodikov $\beta$. Izjema je velika baza, npr. kalijev *terc*-butoksid $\mathrm{(CH_3)_3COK}$: težko doseže notranji vodik in odtrga končnega, zato nastane manj substituiran alken (**Hofmannov produkt**).
 
 ### Mehanizem $\mathrm{E1}$
 
@@ -136,15 +152,15 @@ $v = k\,[\mathrm{RX}]\,[\mathrm{Nu}]$
 4. Prioritete v produktu: $\mathrm{CN}$ (ogljik z $(\mathrm{N,N,N})$) $>$ $\mathrm{CH_2CH_3}$ $(\mathrm{C,H,H})$ $>$ $\mathrm{CH_3}$ $>$ $\mathrm{H}$. $\mathrm{CN}$ ima prvo prioriteto kot prej $\mathrm{Br}$, zato se z inverzijo geometrije obrne tudi oznaka.
 5. Odgovor: nastane (*S*)-2-metilbutannitril. Oznaka se obrne le zato, ker ima $\mathrm{CN}$ enako prioriteto kot prej $\mathrm{Br}$.
 
-### Primer 3 (težji): en substrat, trije pogoji
+### Primer 3 (težji): en substrat, trije pogoji in kinetika
 
-2-bromo-2-metilbutan $\mathrm{(CH_3)_2CBrCH_2CH_3}$ reagira (a) z $\mathrm{NaOCH_2CH_3}$ v etanolu ob segrevanju, (b) s $\mathrm{(CH_3)_3COK}$ v *terc*-butanolu, (c) v samem etanolu pri sobni temperaturi. Napovej glavni produkt.
+2-bromo-2-metilbutan $\mathrm{(CH_3)_2CBrCH_2CH_3}$ reagira (a) z $\mathrm{NaOCH_2CH_3}$ v etanolu ob segrevanju, (b) s $\mathrm{(CH_3)_3COK}$ v *terc*-butanolu, (c) v samem etanolu pri $25\,°\mathrm{C}$. Napovej glavni produkt. (d) Pri pogoju (c) je konstanta hitrosti porabe substrata $k = 1{,}4 \cdot 10^{-5}\,\mathrm{s^{-1}}$, v raztopini je $0{,}050\,\mathrm{mol}$ substrata, eter pa nastane iz $64\,\%$ zreagiranega substrata (ostalo so alkeni). Koliko časa traja, da zreagira $90\,\%$ substrata, koliko razpolovnih časov je to in koliko gramov etra ($M = 116{,}2\,\mathrm{g/mol}$) takrat nastane?
 
-**Podatki:** terciarni substrat; ogljiki $\beta$: dva $\mathrm{CH_3}$ in en $\mathrm{CH_2}$; reagenti: (a) močna majhna baza, (b) močna velika baza, (c) šibek nukleofil in šibka baza (topilo)
-**Iščemo:** mehanizem in glavni produkt v (a), (b), (c)
+**Podatki:** terciarni substrat; ogljiki $\beta$: dva $\mathrm{CH_3}$ in en $\mathrm{CH_2}$; reagenti: (a) močna majhna baza, (b) močna velika baza, (c) šibek nukleofil in šibka baza (topilo); $k = 1{,}4 \cdot 10^{-5}\,\mathrm{s^{-1}}$, $n_0 = 0{,}050\,\mathrm{mol}$, pretvorba $90\,\%$, delež etra $64\,\%$, $M = 116{,}2\,\mathrm{g/mol}$
+**Iščemo:** mehanizem in glavni produkt v (a), (b), (c); čas $t$, $t/t_{1/2}$ in masa etra $m$
 
 :::formula
-3° + močna baza $\Rightarrow$ E2 (Zajcev; velika baza: Hofmann). 3° + šibek Nu $\Rightarrow$ $\mathrm{S_N1}$ (+ E1).
+3° + močna baza $\Rightarrow$ E2 (Zajcev; velika baza: Hofmann). 3° + šibek Nu $\Rightarrow$ $\mathrm{S_N1}$ (+ E1). Prvi red: $\ln([\mathrm{RX}]_0/[\mathrm{RX}]) = kt$, $t_{1/2} = \ln 2/k$
 :::
 
 **Rešitev:**
@@ -153,7 +169,11 @@ $v = k\,[\mathrm{RX}]\,[\mathrm{Nu}]$
 2. (a) Močna baza in toplota: E2. Odtrganje $\mathrm{H}$ s $\mathrm{CH_2}$ da $\mathrm{(CH_3)_2C{=}CHCH_3}$ (trisubstituiran), z $\mathrm{CH_3}$ pa $\mathrm{CH_2{=}C(CH_3)CH_2CH_3}$ (disubstituiran). Po Zajcevu prevlada **2-metilbut-2-en**.
 3. (b) Velika baza: E2, a odtrga lažje dosegljiv vodik s $\mathrm{CH_3}$. Prevlada **2-metilbut-1-en** (Hofmannov produkt).
 4. (c) Brez močne baze terciarni substrat počasi ionizira v terciarni karbokation: $\mathrm{S_N1}$. Etanol napade kation, po odcepu $\mathrm{H^+}$ nastane eter **2-etoksi-2-metilbutan**; ob njem nekaj alkenov po E1.
-5. Odgovor: (a) 2-metilbut-2-en, (b) 2-metilbut-1-en, (c) 2-etoksi-2-metilbutan.
+5. (d) Ionizacija določa hitrost, zato velja kinetika prvega reda. Pri $90\,\%$ pretvorbe je $[\mathrm{RX}]_0/[\mathrm{RX}] = 10$, torej $t = \ln 10/k = 2{,}303/(1{,}4 \cdot 10^{-5}\,\mathrm{s^{-1}}) = 1{,}64 \cdot 10^{5}\,\mathrm{s}$, kar je približno $45{,}7\,\mathrm{h}$.
+6. Razpolovni čas: $t_{1/2} = 0{,}693/(1{,}4 \cdot 10^{-5}\,\mathrm{s^{-1}}) = 4{,}95 \cdot 10^{4}\,\mathrm{s}$ (približno $13{,}8\,\mathrm{h}$). Razmerje $t/t_{1/2} = \ln 10/\ln 2 = 3{,}32$, neodvisno od $k$.
+7. Zreagira $0{,}90 \cdot 0{,}050 = 0{,}045\,\mathrm{mol}$ substrata, eter pa nastane iz $0{,}64 \cdot 0{,}045 = 0{,}0288\,\mathrm{mol}$.
+8. Masa etra: $m = nM = 0{,}0288 \cdot 116{,}2 = 3{,}35\,\mathrm{g}$.
+9. Odgovor: (a) 2-metilbut-2-en, (b) 2-metilbut-1-en, (c) 2-etoksi-2-metilbutan; (d) $90\,\%$ substrata zreagira v približno $45{,}7\,\mathrm{h}$, kar je $3{,}32$ razpolovnega časa, in nastane $3{,}35\,\mathrm{g}$ etra.
 
 ### Primer 4 – zdaj ti
 
@@ -195,12 +215,47 @@ $\mathrm{S_N2}$; nastane 1-jodopropan $\mathrm{CH_3CH_2CH_2I}$. $\mathrm{I^-}$ i
 - $\mathrm{E1}$: prek karbokationa, tekmuje s $\mathrm{S_N1}$; toplota daje prednost eliminaciji.
 - Odločanje: najprej substrat (metil/1°/2°/3°), nato reagent (nukleofil ali baza, močan ali šibek), nato topilo in temperatura.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- natančne definicije nukleofila, baze, izstopajoče skupine, nukleofilne substitucije in $\beta$-eliminacije ter pomen številk 1 in 2 (molekularnost koraka, ki določa hitrost);
+- hitrostne zakone vseh štirih mehanizmov in izpeljavo $v = k_1[\mathrm{RX}]$ za $\mathrm{S_N1}$ iz približka stacionarnega stanja s pogojem $k_2[\mathrm{Nu}] \gg k_{-1}[\mathrm{X^-}]$;
+- integrirani zakon prvega reda, $t_{1/2} = \ln 2/k$ in psevdo prvi red $k' = k[\mathrm{Nu}]_0$ pri prebitku nukleofila;
+- stereokemijski izid: inverzija pri $\mathrm{S_N2}$ (z dokazom), racemizacija pri $\mathrm{S_N1}$, antiperiplanarna lega pri E2;
+- Zajcevo pravilo z vsemi pogoji in obe izjemi (velika baza, obroči).
+
+### Naloga 1
+
+1-bromobutan ($[\mathrm{RX}]_0 = 0{,}020\,\mathrm{mol/L}$) reagira z $\mathrm{NaCN}$ ($[\mathrm{CN^-}]_0 = 0{,}50\,\mathrm{mol/L}$) v DMSO, $k = 4{,}0 \cdot 10^{-3}\,\mathrm{L\,mol^{-1}\,s^{-1}}$. (a) Določi mehanizem in produkt. (b) Utemelji, da je reakcija psevdo prvega reda, in izračunaj $k'$. (c) V kolikšnem času zreagira $99\,\%$ 1-bromobutana? (d) Koliko časa bi za enako pretvorbo potrebovali, če bi bila $[\mathrm{CN^-}]_0 = 0{,}020\,\mathrm{mol/L}$?
+
+**Rešitev:**
+
+1. (a) Primaren substrat, močan nukleofil in šibka baza, aprotično topilo: $\mathrm{S_N2}$. Nastane pentannitril $\mathrm{CH_3CH_2CH_2CH_2CN}$.
+2. (b) Tudi ob popolni pretvorbi se $[\mathrm{CN^-}]$ zmanjša le za $0{,}020/0{,}50 = 0{,}04$, torej za $4\,\%$; zato je $[\mathrm{CN^-}] \approx [\mathrm{CN^-}]_0$ in $v = k'[\mathrm{RX}]$.
+3. $k' = k[\mathrm{CN^-}]_0 = 4{,}0 \cdot 10^{-3} \cdot 0{,}50 = 2{,}0 \cdot 10^{-3}\,\mathrm{s^{-1}}$.
+4. (c) Pri $99\,\%$ pretvorbe je $[\mathrm{RX}]_0/[\mathrm{RX}] = 100$, zato $t = \ln 100/k' = 4{,}605/(2{,}0 \cdot 10^{-3}\,\mathrm{s^{-1}}) = 2303\,\mathrm{s}$, približno $38\,\mathrm{min}$.
+5. (d) Pri enakih začetnih koncentracijah in stehiometriji 1 : 1 velja $[\mathrm{CN^-}] = [\mathrm{RX}]$ ves čas, zato $-\mathrm{d}[\mathrm{RX}]/\mathrm{d}t = k[\mathrm{RX}]^2$. Integracija da $1/[\mathrm{RX}] - 1/[\mathrm{RX}]_0 = kt$.
+6. Pri $[\mathrm{RX}] = 0{,}01[\mathrm{RX}]_0$ je leva stran $99/[\mathrm{RX}]_0$, torej $t = 99/(k[\mathrm{RX}]_0) = 99/(4{,}0 \cdot 10^{-3} \cdot 0{,}020) = 1{,}24 \cdot 10^{6}\,\mathrm{s}$, približno $14\,$dni.
+7. Odgovor: $\mathrm{S_N2}$ do pentannitrila; $k' = 2{,}0 \cdot 10^{-3}\,\mathrm{s^{-1}}$; $99\,\%$ zreagira v približno $38\,\mathrm{min}$, brez prebitka cianida pa šele v približno $14$ dneh.
+
+### Naloga 2
+
+Optično čisti (*R*)-2-jodooktan raztopimo v acetonu z $\mathrm{Na{}^{128}I}$ (radioaktivni jodid). Izpelji, kolikšno je razmerje med začetno hitrostjo izgubljanja optične aktivnosti in začetno hitrostjo vgrajevanja radioaktivnega joda, če vsaka zamenjava poteče (i) z inverzijo, (ii) z racemizacijo. Izmerjeno razmerje je $2{,}0$. Kaj to dokazuje?
+
+**Rešitev:**
+
+1. Optična aktivnost je sorazmerna s presežkom enantiomera, $n_R - n_S$. Naj v času $\mathrm{d}t$ zamenja jod $\mathrm{d}n$ molekul; hitrost vgrajevanja je $\mathrm{d}n/\mathrm{d}t$. Na začetku so vse molekule (*R*).
+2. (i) Inverzija: vsaka zamenjava naredi iz (*R*) molekulo (*S*). Torej $\mathrm{d}n_R = -\mathrm{d}n$, $\mathrm{d}n_S = +\mathrm{d}n$ in $\mathrm{d}(n_R - n_S) = -2\,\mathrm{d}n$. Razmerje hitrosti je $2$.
+3. (ii) Racemizacija: zamenjana molekula je s 50 % verjetnostjo (*R*) ali (*S*). Torej $\mathrm{d}n_R = -\mathrm{d}n + \mathrm{d}n/2$, $\mathrm{d}n_S = +\mathrm{d}n/2$ in $\mathrm{d}(n_R - n_S) = -\mathrm{d}n$. Razmerje je $1$.
+4. Izmerjeno razmerje $2{,}0$ ustreza (i): vsaka posamezna zamenjava poteče z inverzijo. To je skladno le s hrbtnim napadom v enem koraku ($\mathrm{S_N2}$); prosti ravninski karbokation bi dal razmerje $1$.
+
 ## Drugače: Na sliki
 
-Predstavljaj si ogljik $\alpha$ kot sredino dežnika, tri substituente kot žice in izstopajočo skupino kot ročaj.
+Ogljik $\alpha$ je sredina dežnika, substituenti so žice, izstopajoča skupina ročaj.
 
 - **$\mathrm{S_N2}$:** nukleofil pride z vrha dežnika, nasproti ročaja. Ko ročaj odpade, veter dežnik obrne navzven. Žice zdaj kažejo na drugo stran: inverzija. Če je dežnik obdan s tremi velikimi skupinami (3°), nukleofil do vrha sploh ne pride.
-- **$\mathrm{S_N1}$:** ročaj odpade sam, dežnik se zravna v ploščo (ravninski kation). Nukleofil pride od spodaj ali od zgoraj z enako verjetnostjo: polovica produktov ima eno, polovica drugo konfiguracijo.
+- **$\mathrm{S_N1}$:** ročaj odpade sam, dežnik se zravna v ploščo (ravninski kation). Nukleofil pride od spodaj ali od zgoraj z enako verjetnostjo.
 - **$\mathrm{E2}$:** gledaš vzdolž vezi $\mathrm{C_\alpha{-}C_\beta}$ (Newmanova projekcija). $\mathrm{X}$ kaže navzgor, $\mathrm{H}$ na zadnjem ogljiku navzdol. Le v tej legi elektroni vezi $\mathrm{C{-}H}$ zdrsnejo v vez $\pi$, ko $\mathrm{X}$ odide.
 
 ## Drugače: Korak za korakom s številkami
@@ -213,7 +268,7 @@ Kako s hitrostjo ločiš $\mathrm{S_N1}$ od $\mathrm{S_N2}$? Merimo začetno hit
 | 2 | $0{,}10$ | $0{,}20$ | $1{,}2 \cdot 10^{-6}$ |
 | 3 | $0{,}20$ | $0{,}10$ | $2{,}4 \cdot 10^{-6}$ |
 
-Postopek je podoben uglaševanju kitare: naenkrat zavrtiš le en vijak in poslušaš, kaj se spremeni. Tudi tu se poskusa, ki ju primerjamo, razlikujeta le v eni koncentraciji.
+Poskusa, ki ju primerjamo, se razlikujeta le v eni koncentraciji.
 
 1. Poskus 1 → 2: $[\mathrm{OH^-}]$ podvojimo, hitrost ostane enaka. Hidroksid ni v hitrostnem zakonu.
 2. Poskus 1 → 3: $[\mathrm{RX}]$ podvojimo, hitrost se podvoji. Reakcija je prvega reda glede na $\mathrm{RX}$.
@@ -221,7 +276,7 @@ Postopek je podoben uglaševanju kitare: naenkrat zavrtiš le en vijak in poslu�
 
 ## Drugače: Bolj natančno
 
-**Energijski diagram.** $\mathrm{S_N2}$ ima en vrh (prehodno stanje) in nobene doline. $\mathrm{S_N1}$ ima dva vrha in vmes dolino (karbokation). Višji je prvi vrh, zato je ionizacija korak, ki določa hitrost. Po Hammondovem postulatu je prvo prehodno stanje podobno karbokationu, zato stabilnost kationa (3° $>$ 2°) neposredno zniža aktivacijsko energijo.
+**Energijski diagram.** $\mathrm{S_N2}$ ima en vrh (prehodno stanje) in nobene doline. $\mathrm{S_N1}$ ima dva vrha in vmes dolino (karbokation). Višji je prvi vrh, zato je ionizacija korak, ki določa hitrost; po Hammondovem postulatu je to prehodno stanje podobno karbokationu.
 
 **Ionski pari.** $\mathrm{S_N1}$ redko da popoln racemat. Izstopajoči $\mathrm{X^-}$ nekaj časa ostane ob kationu (tesni ionski par) in zakriva eno stran, zato nastane rahel presežek produkta z inverzijo.
 
@@ -274,4 +329,6 @@ Postopek je podoben uglaševanju kitare: naenkrat zavrtiš le en vijak in poslu�
 :::simboli
 v | hitrost reakcije | v = k\,[\mathrm{RX}]\,[\mathrm{Nu}] | mol/(L s) | velja za SN2; pri SN1 in E1 v = k[RX]
 k | konstanta hitrosti | | | pri SN2 v L/(mol s), pri SN1 v 1/s
+t | čas reakcije | \ln([\mathrm{RX}]_0/[\mathrm{RX}]) = kt | s | za reakcijo prvega reda
+t_{1/2} | razpolovni čas | t_{1/2} = \ln 2/k | s | pri prvem redu neodvisen od začetne koncentracije
 :::

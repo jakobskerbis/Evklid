@@ -13,7 +13,7 @@ Odgovor so naboji aminokislin, ki so odvisni od pH. Kdor zna iz pH napovedati na
 
 ### Ena aminokislina, dvajset različic
 
-Na osrednji ogljik $\mathrm{C_\alpha}$ so vezani štirje deli: amino skupina $-\mathrm{NH_2}$, karboksilna skupina $-\mathrm{COOH}$, vodik in **stranska veriga** $R$. V proteinih je 20 standardnih aminokislin, ki se razlikujejo le po $R$. Razen glicina ($R = \mathrm{H}$) imajo vse kiralen $\mathrm{C_\alpha}$; v proteinih so vse v obliki L.
+**α-aminokislina** je karboksilna kislina, ki ima amino skupino na ogljiku $\alpha$, tj. na ogljiku, sosednjem karboksilni skupini. Na osrednji ogljik $\mathrm{C_\alpha}$ so torej vezani štirje deli: amino skupina $-\mathrm{NH_2}$, karboksilna skupina $-\mathrm{COOH}$, vodik in **stranska veriga** $R$. V proteinih je 20 standardnih aminokislin, ki se razlikujejo le po $R$. Razen glicina ($R = \mathrm{H}$) imajo vse kiralen $\mathrm{C_\alpha}$; v proteinih so vse v obliki L (v Fischerjevi projekciji s karboksilno skupino zgoraj in stransko verigo spodaj je amino skupina levo).
 
 Po stranski verigi jih razvrstimo v štiri skupine:
 
@@ -44,13 +44,19 @@ Kislina $\mathrm{HA}$ odda proton in nastane konjugirana baza $\mathrm{A^-}$. Pr
 
 $$\mathrm{pH} = \mathrm{p}K_\mathrm{a} + \log\frac{[\mathrm{A^-}]}{[\mathrm{HA}]}$$
 
+*Izpeljava.* Konstanta kisline je $K_\mathrm{a} = \dfrac{[\mathrm{H^+}][\mathrm{A^-}]}{[\mathrm{HA}]}$. Logaritmiramo in pomnožimo z $-1$: $-\log[\mathrm{H^+}] = -\log K_\mathrm{a} - \log\dfrac{[\mathrm{A^-}]}{[\mathrm{HA}]}$, kar je enačba zgoraj z $\mathrm{pH} = -\log[\mathrm{H^+}]$ in $\mathrm{p}K_\mathrm{a} = -\log K_\mathrm{a}$. Iz nje sledi delež deprotonirane oblike $\alpha = \dfrac{[\mathrm{A^-}]}{[\mathrm{HA}] + [\mathrm{A^-}]} = \dfrac{1}{1 + 10^{\,\mathrm{p}K_\mathrm{a} - \mathrm{pH}}}$. **Povprečni naboj** molekule je vsota prispevkov vseh skupin: kisla skupina prispeva $-\alpha$, bazična (npr. $-\mathrm{NH_3^+}$) pa $+(1 - \alpha)$.
+
 ### Izoelektrična točka
 
 **Izoelektrična točka** $\mathrm{pI}$ je pH, pri katerem je povprečni skupni naboj molekule nič. Na premici je to sredina polja z nabojem $0$, torej med obema $\mathrm{p}K$, ki obdajata nevtralno obliko:
 
 $$\mathrm{pI} = \frac{\mathrm{p}K_\text{pred} + \mathrm{p}K_\text{za}}{2}$$
 
+*Dokaz za glicin.* Naj bodo oblike $\mathrm{H_2A^+}$, $\mathrm{HA}$ (ion dvojček) in $\mathrm{A^-}$, s $K_1 = \dfrac{[\mathrm{HA}][\mathrm{H^+}]}{[\mathrm{H_2A^+}]}$ in $K_2 = \dfrac{[\mathrm{A^-}][\mathrm{H^+}]}{[\mathrm{HA}]}$. Skupni naboj je nič natanko tedaj, ko je $[\mathrm{H_2A^+}] = [\mathrm{A^-}]$, torej $\dfrac{[\mathrm{HA}][\mathrm{H^+}]}{K_1} = \dfrac{K_2[\mathrm{HA}]}{[\mathrm{H^+}]}$ in $[\mathrm{H^+}]^2 = K_1K_2$. Logaritmiramo: $\mathrm{pI} = \tfrac12(\mathrm{p}K_1 + \mathrm{p}K_2)$.
+
 Pri glicinu sta to $\mathrm{p}K_1$ in $\mathrm{p}K_2$. Pri aminokislinah z ionizirajočo stransko verigo pa moraš najprej poiskati, med katerima $\mathrm{p}K$ leži nevtralna oblika.
+
+Na tem temelji elektroforeza: pri $\mathrm{pH} < \mathrm{pI}$ je molekula pozitivna in v električnem polju potuje h katodi ($-$), pri $\mathrm{pH} > \mathrm{pI}$ je negativna in potuje k anodi ($+$), pri $\mathrm{pI}$ obstane.
 
 :::premisli
 Aspartat ima v stranski verigi še eno karboksilno skupino ($\mathrm{p}K_R = 3{,}65$). Ali bo njegov $\mathrm{pI}$ višji ali nižji od glicinovega? Zakaj?
@@ -60,7 +66,7 @@ Nižji. Dodatna kisla skupina pri $\mathrm{pH}$ nad $3{,}65$ prinese še en nega
 
 ### Peptidna vez
 
-Karboksilna skupina ene aminokisline in amino skupina druge se povežeta z odcepom vode. Nastane **peptidna vez** $-\mathrm{CO-NH}-$. Veriga ima smer: začne se s prosto amino skupino (**N-konec**) in konča s prosto karboksilno skupino (**C-konec**). Peptidna vez ima delni značaj dvojne vezi, zato je skupina $\mathrm{C_\alpha{-}CO{-}NH{-}C_\alpha}$ ravninska in skoraj vedno v obliki trans. Vrtenje je mogoče le okoli vezi na $\mathrm{C_\alpha}$; kota vrtenja imenujemo $\varphi$ in $\psi$.
+Karboksilna skupina ene aminokisline in amino skupina druge se povežeta z odcepom vode. Nastane **peptidna vez** $-\mathrm{CO-NH}-$. Veriga ima smer: začne se s prosto amino skupino (**N-konec**) in konča s prosto karboksilno skupino (**C-konec**). Peptidna vez je amidna vez. Zaradi resonance med $\mathrm{C{=}O}$ in prostim elektronskim parom dušika ima vez C–N delni značaj dvojne vezi (je krajša od enojne), zato je skupina $\mathrm{C_\alpha{-}CO{-}NH{-}C_\alpha}$ ravninska in skoraj vedno v obliki trans. Vrtenje je mogoče le okoli vezi na $\mathrm{C_\alpha}$; kota vrtenja imenujemo $\varphi$ in $\psi$.
 
 ### Štiri ravni zgradbe
 
@@ -78,14 +84,14 @@ V **α-vijačnici** tvori $\mathrm{C{=}O}$ aminokisline $n$ vodikovo vez z $\mat
 V vodi se nepolarne stranske verige zberejo v notranjosti proteina, polarne in nabite pa ostanejo na površini. To je glavna gonilna sila zvijanja v terciarno zgradbo. Ionske vezi (npr. Lys$^+$ z Asp$^-$) in disulfidni mostički med dvema Cys obliko dodatno utrdijo.
 
 :::premisli
-Zakaj ekstremen pH (npr. kis v beljaku) proteine denaturira, čeprav peptidnih vezi ne pretrga?
+Zakaj ekstremen pH (npr. kis v beljaku) proteinske verige razvije, čeprav peptidnih vezi ne pretrga?
 ---
 Ker spremeni naboje stranskih verig. Pri nizkem pH Asp in Glu sprejmeta proton in izgubita negativni naboj. Ionske vezi z Lys in Arg razpadejo, enako nabite skupine se odbijajo in veriga se razvije. Primarna zgradba ostane, terciarna se podre.
 :::
 
 ### Denaturacija in zvijanje
 
-**Denaturacija** je izguba sekundarne, terciarne in kvartarne zgradbe brez pretrganja peptidnih vezi. Povzročijo jo toplota, ekstremen pH, sečnina ali detergenti. Ker zaporedje ostane, se nekateri proteini po odstranitvi denaturanta sami spet pravilno zvijejo. Iz tega sklepamo, da primarna zgradba določa prostorsko obliko.
+**Denaturacija** je izguba sekundarne, terciarne in kvartarne zgradbe brez pretrganja peptidnih vezi. Povzročijo jo toplota, ekstremen pH, sečnina ali detergenti. Ker zaporedje ostane, se nekateri proteini po odstranitvi denaturanta sami spet pravilno zvijejo. Iz tega sklepamo, da primarna zgradba določa prostorsko obliko. Klasičen dokaz je **Anfinsenov poskus**: ribonukleazo A razvijemo s sečnino in 2-merkaptoetanolom, ki reducira štiri disulfidne mostičke. Ko oba odstranimo z dializo in pustimo cisteine počasi oksidirati na zraku, encim spet dobi skoraj vso aktivnost; od $105$ možnih parjenj osmih cisteinov nastane spet pravo.
 
 ## Rešeni primeri
 
@@ -125,13 +131,13 @@ $\dfrac{[\mathrm{A}]}{[\mathrm{HA}]} = 10^{\,\mathrm{pH} - \mathrm{p}K_\mathrm{a
 
 ### Primer 3 (težji): izoelektrična točka kisle aminokisline
 
-Aspartat ima $\mathrm{p}K_1 = 1{,}88$ ($\alpha$-COOH), $\mathrm{p}K_R = 3{,}65$ (COOH v stranski verigi) in $\mathrm{p}K_2 = 9{,}60$ ($\alpha$-$\mathrm{NH_3^+}$). Izračunaj $\mathrm{pI}$ in napovej skupni naboj pri $\mathrm{pH}\ 7$.
+Aspartat ima $\mathrm{p}K_1 = 1{,}88$ ($\alpha$-COOH), $\mathrm{p}K_R = 3{,}65$ (COOH v stranski verigi) in $\mathrm{p}K_2 = 9{,}60$ ($\alpha$-$\mathrm{NH_3^+}$). Izračunaj $\mathrm{pI}$ in napovej skupni naboj pri $\mathrm{pH}\ 7$. Nato s Henderson-Hasselbalchovo enačbo izračunaj povprečni naboj pri $\mathrm{pH} = 3{,}00$ in preveri, ali se ujema z $\mathrm{pI}$.
 
-**Podatki:** $\mathrm{p}K_1 = 1{,}88$, $\mathrm{p}K_R = 3{,}65$, $\mathrm{p}K_2 = 9{,}60$, $\mathrm{pH} = 7$
-**Iščemo:** $\mathrm{pI}$ in naboj pri $\mathrm{pH}\ 7$
+**Podatki:** $\mathrm{p}K_1 = 1{,}88$, $\mathrm{p}K_R = 3{,}65$, $\mathrm{p}K_2 = 9{,}60$, $\mathrm{pH} = 7$ in $\mathrm{pH} = 3{,}00$
+**Iščemo:** $\mathrm{pI}$, naboj pri $\mathrm{pH}\ 7$ in povprečni naboj $z$ pri $\mathrm{pH} = 3{,}00$
 
 :::formula
-$\mathrm{pI} = \dfrac{\mathrm{p}K_\text{pred} + \mathrm{p}K_\text{za}}{2}$, kjer sta $\mathrm{p}K$ tik pod in tik nad nevtralno obliko
+$\mathrm{pI} = \dfrac{\mathrm{p}K_\text{pred} + \mathrm{p}K_\text{za}}{2}$, kjer sta $\mathrm{p}K$ tik pod in tik nad nevtralno obliko; $\alpha = \dfrac{1}{1 + 10^{\,\mathrm{p}K_\mathrm{a} - \mathrm{pH}}}$
 :::
 
 **Rešitev:**
@@ -141,7 +147,9 @@ $\mathrm{pI} = \dfrac{\mathrm{p}K_\text{pred} + \mathrm{p}K_\text{za}}{2}$, kjer
 3. Nevtralna oblika leži med $1{,}88$ in $3{,}65$. Tretjega $\mathrm{p}K$ ($9{,}60$) zato ne uporabimo.
 4. $\mathrm{pI} = \dfrac{1{,}88 + 3{,}65}{2} = 2{,}765 \approx 2{,}77$.
 5. $\mathrm{pH}\ 7$ leži med $3{,}65$ in $9{,}60$, kjer je naboj $-1$.
-6. Odgovor: $\mathrm{pI}$ aspartata je približno $2{,}77$; pri $\mathrm{pH}\ 7$ ima naboj približno $-1$.
+6. Pri $\mathrm{pH} = 3{,}00$ je $\alpha$-COOH deprotonirana v deležu $\alpha_1 = \dfrac{1}{1 + 10^{1{,}88 - 3{,}00}} \approx 0{,}930$, stranska veriga v deležu $\alpha_R = \dfrac{1}{1 + 10^{3{,}65 - 3{,}00}} \approx 0{,}183$; amino skupina je protonirana praktično v celoti ($10^{3{,}00 - 9{,}60}$ je zanemarljivo).
+7. Povprečni naboj: $z = +1 - 0{,}930 - 0{,}183 \approx -0{,}11$. Je majhen in negativen, kar se ujema s tem, da je $\mathrm{pH} = 3{,}00$ malo nad $\mathrm{pI} = 2{,}77$.
+8. Odgovor: $\mathrm{pI}$ aspartata je približno $2{,}77$; pri $\mathrm{pH}\ 7$ ima naboj približno $-1$, pri $\mathrm{pH} = 3{,}00$ pa $z \approx -0{,}11$.
 
 ### Primer 4: zdaj ti
 
@@ -184,6 +192,45 @@ $\mathrm{pI} = 9{,}74$. Lizin je bazična aminokislina, zato je njegov $\mathrm{
 - Primarna (zaporedje), sekundarna (α-vijačnica, β-ploskev; H-vezi ogrodja), terciarna (hidrofobni učinek, ionske vezi, disulfidi), kvartarna (več podenot).
 - Denaturacija podre prostorsko zgradbo, zaporedje ostane; zaporedje določa obliko.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definiciji α-aminokisline in izoelektrične točke ter razvrstitev 20 aminokislin po stranski verigi;
+- izpeljavo Henderson-Hasselbalchove enačbe iz $K_\mathrm{a}$ in računanje deleža oblik ter povprečnega naboja pri danem pH;
+- dokaz $\mathrm{pI} = \tfrac12(\mathrm{p}K_1 + \mathrm{p}K_2)$ in pravilo, katera dva $\mathrm{p}K$ vzameš pri ionizirajoči stranski verigi;
+- zgradbo peptidne vezi (resonanca, ravninska, trans) in štiri ravni zgradbe z vezmi, ki jih držijo;
+- definicijo denaturacije in Anfinsenov poskus kot dokaz, da zaporedje določa obliko.
+
+### Naloga 1
+
+Tetrapeptid Ala–His–Asp–Lys ima ionizirajoče skupine s temi $\mathrm{p}K$: C-konec $3{,}1$, stranska veriga Asp $3{,}9$, stranska veriga His $6{,}0$, N-konec $8{,}0$, stranska veriga Lys $10{,}5$. (a) Določi $\mathrm{pI}$. (b) Izračunaj povprečni naboj pri $\mathrm{pH} = 7{,}40$ na dve decimalki. (c) V katero smer potuje peptid pri elektroforezi s pufrom $\mathrm{pH} = 7{,}40$?
+
+**Rešitev:**
+
+1. Kisle skupine (C-konec, Asp) so nevtralne ali negativne, bazične (His, N-konec, Lys) pozitivne ali nevtralne. Pri zelo nizkem pH je naboj $+3$.
+2. Po naraščajočih $\mathrm{p}K$: nad $3{,}1$ naboj $+2$, nad $3{,}9$ $+1$, nad $6{,}0$ $0$, nad $8{,}0$ $-1$, nad $10{,}5$ $-2$.
+3. Nevtralna oblika je med $6{,}0$ in $8{,}0$, zato $\mathrm{pI} = \dfrac{6{,}0 + 8{,}0}{2} = 7{,}0$.
+4. Bazične skupine pri $\mathrm{pH} = 7{,}40$, protonirani delež $1/(1 + 10^{\,\mathrm{pH} - \mathrm{p}K})$: His $\dfrac{1}{1 + 10^{1{,}4}} \approx 0{,}038$, N-konec $\dfrac{1}{1 + 10^{-0{,}6}} \approx 0{,}799$, Lys $\dfrac{1}{1 + 10^{-3{,}1}} \approx 0{,}999$.
+5. Kisli skupini: deprotonirana deleža $\dfrac{1}{1 + 10^{-4{,}3}} \approx 1{,}000$ in $\dfrac{1}{1 + 10^{-3{,}5}} \approx 1{,}000$; skupaj prispevata $-2{,}00$.
+6. Povprečni naboj: $z = 0{,}038 + 0{,}799 + 0{,}999 - 2{,}000 \approx -0{,}16$.
+7. Ker je $\mathrm{pH} > \mathrm{pI}$, je naboj negativen in peptid počasi potuje proti anodi ($+$).
+8. Odgovor: $\mathrm{pI} = 7{,}0$; pri $\mathrm{pH} = 7{,}40$ je $z \approx -0{,}16$ in peptid potuje k anodi.
+
+### Naloga 2
+
+Izpelji Henderson-Hasselbalchovo enačbo iz definicije konstante kisline. Nato natančno navedi pogoj za izoelektrično točko in dokaži, da za aminokislino z neionizirajočo stransko verigo velja $\mathrm{pI} = \tfrac12(\mathrm{p}K_1 + \mathrm{p}K_2)$. Utemelji, ali sme študent pri aspartatu vzeti povprečje vseh treh $\mathrm{p}K$.
+
+**Rešitev:**
+
+1. Za $\mathrm{HA \rightleftharpoons H^+ + A^-}$ je $K_\mathrm{a} = \dfrac{[\mathrm{H^+}][\mathrm{A^-}]}{[\mathrm{HA}]}$; logaritmiramo in pomnožimo z $-1$, pa dobimo $\mathrm{pH} = \mathrm{p}K_\mathrm{a} + \log\dfrac{[\mathrm{A^-}]}{[\mathrm{HA}]}$.
+2. Pogoj: $\mathrm{pI}$ je pH, pri katerem je povprečni skupni naboj molekule nič.
+3. Z oblikami $\mathrm{H_2A^+}$, $\mathrm{HA}$, $\mathrm{A^-}$ je naboj $([\mathrm{H_2A^+}] - [\mathrm{A^-}])/c$, kjer je $c$ skupna koncentracija aminokisline; torej je nič natanko pri $[\mathrm{H_2A^+}] = [\mathrm{A^-}]$.
+4. Iz $K_1$ in $K_2$: $[\mathrm{H_2A^+}] = [\mathrm{HA}][\mathrm{H^+}]/K_1$ in $[\mathrm{A^-}] = K_2[\mathrm{HA}]/[\mathrm{H^+}]$. Izenačimo: $[\mathrm{H^+}]^2 = K_1K_2$.
+5. Z $-\log$: $2\,\mathrm{pI} = \mathrm{p}K_1 + \mathrm{p}K_2$, kar je bilo treba dokazati.
+6. Aspartat: nevtralna oblika obstaja le med $\mathrm{p}K_1 = 1{,}88$ in $\mathrm{p}K_R = 3{,}65$. Pri pH okoli $3$ je oblika z nabojem $-2$ zaradi $\mathrm{p}K_2 = 9{,}60$ zanemarljiva, zato se pogoj prevede na $[\mathrm{H^+}]^2 = K_1K_R$.
+7. Odgovor: ne sme; povprečje vseh treh ($5{,}04$) leži v območju z nabojem $-1$, pravilno je $\mathrm{pI} = \tfrac12(1{,}88 + 3{,}65) \approx 2{,}77$.
+
 ## Drugače: Na sliki
 
 Nariši graf naboja v odvisnosti od pH za aspartat: na osi $x$ pH od $0$ do $14$, na osi $y$ naboj od $+1$ do $-2$.
@@ -194,24 +241,20 @@ Nariši graf naboja v odvisnosti od pH za aspartat: na osi $x$ pH od $0$ do $14$
 
 Pri elektroforezi to pomeni: pod $\mathrm{pI}$ molekula potuje h katodi ($-$), nad $\mathrm{pI}$ k anodi ($+$), pri $\mathrm{pI}$ pa obstane.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Protein si predstavljaj kot ogrlico iz perl na vrvici.
-
-- **Primarna zgradba** je vrstni red perl. Dvajset barv perl je dvajset aminokislin.
-- **Sekundarna zgradba**: deli vrvice se navijejo v vzmet (α-vijačnica) ali zložijo kot harmonika (β-ploskev). Drži jih vrvica sama, ne perle.
-- **Terciarna zgradba**: celo ogrlico stisneš v kepo. »Mastne« perle se skrijejo v sredino, ker ne marajo vode, »vodoljubne« ostanejo zunaj.
-- **Kvartarna zgradba**: več takih kep se zlepi skupaj, npr. štiri podenote hemoglobina.
-
-Denaturacija je, kot da kepo razvozlaš. Perle ostanejo na vrvici v istem vrstnem redu.
+- **Ionsko-izmenjevalna kromatografija:** pufer izberemo glede na $\mathrm{pI}$. Pri $\mathrm{pH} > \mathrm{pI}$ je protein negativen in se veže na anionski izmenjevalec (npr. DEAE), z naraščajočo koncentracijo soli ga speremo.
+- **Izoelektrično fokusiranje:** v gelu z gradientom pH protein potuje, dokler ne pride do svojega $\mathrm{pI}$; v kombinaciji s SDS-PAGE (dvodimenzionalna elektroforeza) ločimo tisoče proteinov celice.
+- **Izoelektrično obarjanje:** proteini so pri $\mathrm{pI}$ najmanj topni. Kazein se obori pri pH okoli $4{,}6$; na tem temelji kislinsko sirjenje mleka pri izdelavi skute in svežih sirov.
+- **Biofarmacija:** rekombinantni proteini iz bakterije *E. coli* so pogosto v netopnih inkluzijskih telesih. Raztopimo jih v sečnini in jih s postopnim odstranjevanjem denaturanta ponovno zvijemo, kot v Anfinsenovem poskusu. Formulacijo zdravila pufriramo stran od $\mathrm{pI}$, da protein ne agregira.
 
 ## Drugače: Bolj natančno
 
-**Izpeljava $\mathrm{pI}$.** Za glicin naj bodo oblike $\mathrm{H_2A^+}$, $\mathrm{HA}$ (ion dvojček) in $\mathrm{A^-}$. Velja $K_1 = \dfrac{[\mathrm{HA}][\mathrm{H^+}]}{[\mathrm{H_2A^+}]}$ in $K_2 = \dfrac{[\mathrm{A^-}][\mathrm{H^+}]}{[\mathrm{HA}]}$. Pri $\mathrm{pI}$ je $[\mathrm{H_2A^+}] = [\mathrm{A^-}]$, zato
+**Izpeljava $\mathrm{pI}$ za tri skupine.** Pri aspartatu so oblike $\mathrm{H_3A^+}$, $\mathrm{H_2A}$, $\mathrm{HA^-}$ in $\mathrm{A^{2-}}$. Naboj je nič, ko je $[\mathrm{H_3A^+}] = [\mathrm{HA^-}] + 2[\mathrm{A^{2-}}]$. Ker je $[\mathrm{A^{2-}}]/[\mathrm{HA^-}] = 10^{\,\mathrm{pH} - 9{,}60}$, pri pH okoli $3$ reda velikosti $10^{-7}$, člen zanemarimo in dobimo
 
-$$\frac{[\mathrm{HA}][\mathrm{H^+}]}{K_1} = \frac{K_2[\mathrm{HA}]}{[\mathrm{H^+}]} \;\Rightarrow\; [\mathrm{H^+}]^2 = K_1K_2$$
+$$\frac{[\mathrm{H_2A}][\mathrm{H^+}]}{K_1} = \frac{K_R[\mathrm{H_2A}]}{[\mathrm{H^+}]} \;\Rightarrow\; [\mathrm{H^+}]^2 = K_1K_R$$
 
-in z logaritmiranjem $\mathrm{pI} = \tfrac{1}{2}(\mathrm{p}K_1 + \mathrm{p}K_2)$.
+Zato je pravilo »dva sosednja $\mathrm{p}K$« približek, ki je dober, kadar so ostale vrednosti $\mathrm{p}K$ daleč.
 
 **Puferska kapaciteta.** Aminokislina najbolje pufrira v območju $\mathrm{p}K \pm 1$, ne pri $\mathrm{pI}$. Med proteini v krvi pufrira predvsem hemoglobin s svojimi histidini, ker je njegov $\mathrm{p}K_R$ blizu $7$.
 
@@ -272,4 +315,8 @@ K_\text{pred} | konstanta skupine tik pod nevtralno obliko | | mol/L
 K_\text{za} | konstanta skupine tik nad nevtralno obliko | | mol/L
 K_1 | konstanta karboksilne skupine | | mol/L | glicin: pK₁ = 2,34
 K_2 | konstanta amino skupine | | mol/L | glicin: pK₂ = 9,60
+K_R | konstanta skupine v stranski verigi | | mol/L | aspartat: pK_R = 3,65
+\alpha | delež deprotonirane oblike | \alpha = \frac{1}{1 + 10^{\mathrm{p}K_\mathrm{a} - \mathrm{pH}}} | – |
+z | povprečni naboj molekule | | – | vsota prispevkov skupin
+c | skupna koncentracija aminokisline | | mol/L |
 :::

@@ -13,7 +13,9 @@ Atomi v kovini imajo isto težavo. Železni meteorit je večinoma iz zlitine že
 
 **Molekula proti kristalu.** Molekula $\mathrm{CH_4}$ ima točno določeno število atomov: pet. Kristal diamanta ali železa pa nima »končne« formule. Isti vzorec atomov se ponavlja v treh smereh, dokler se kristal ne konča. Zato kristala ne opišemo atom za atomom, ampak opišemo najmanjši del, ki se ponavlja.
 
-**Osnovna celica.** To je paralelepiped, iz katerega z zlaganjem (brez vrtenja) zgradimo cel kristal. Izberemo najmanjšega, ki še kaže vso simetrijo kristala; pri kubičnih celicah spodaj je to kocka, čeprav bi obstajala še manjša, poševna celica. Pri kubičnih celicah jo opiše ena dolžina, **mrežni parameter** $a$ (rob kocke). Tipične vrednosti so nekaj sto pikometrov ($1\,\mathrm{pm} = 10^{-12}\,\mathrm{m}$).
+**Mreža in osnovna celica.** Naj bodo $\vec a$, $\vec b$, $\vec c$ trije nekomplanarni vektorji. **Kristalna mreža** je množica točk $\vec r = n_1\vec a + n_2\vec b + n_3\vec c$, kjer so $n_1, n_2, n_3$ cela števila. **Kristalna struktura** nastane, ko vsaki mrežni točki pripišemo enako skupino atomov (*bazo*).
+
+**Osnovna celica** je paralelepiped, napet na $\vec a$, $\vec b$, $\vec c$: s premiki za mrežne vektorje (brez vrtenja) zapolni prostor brez vrzeli in prekrivanj. Izberemo najmanjšega, ki še kaže vso simetrijo kristala; pri kubičnih celicah spodaj je to kocka, čeprav bi obstajala še manjša, poševna celica. Pri kubičnih celicah jo opiše ena dolžina, **mrežni parameter** $a$ (rob kocke). Tipične vrednosti so nekaj sto pikometrov ($1\,\mathrm{pm} = 10^{-12}\,\mathrm{m}$).
 
 **Kdo si deli atome.** Atom v oglišču si deli osem celic, zato pripada eni celici le $\tfrac18$ atoma. Na ploskvi si atom delita dve celici, na robu štiri.
 
@@ -33,7 +35,7 @@ Zdaj dodajmo en atom v središče kocke. To je **telesno centrirana kubična** c
 Namesto središča lahko zapolnimo središča ploskev. To je **ploskovno centrirana kubična** celica (fcc): $Z = 8 \cdot \tfrac18 + 6 \cdot \tfrac12 = 4$. Stik je zdaj vzdolž **ploskovne diagonale**: $a\sqrt2 = 4r$. KŠ je 12. Enako gost je heksagonalni gost zlog (hcp); razlikujeta se le v zaporedju gosto zloženih plasti, kot so plasti pomaranč na stojnici (ABCABC proti ABAB).
 
 :::premisli
-Pri sc velja $a = 2r$. Napovej, zakaj ta zveza pri bcc ne velja več, čeprav so v ogliščih isti atomi.
+Pri sc velja $a = 2r$. Brez računa napovej: ali je pri bcc iz istih atomov rob $a$ daljši ali krajši od $2r$, in zakaj?
 ---
 Ker sredinski atom stoji med oglišči in jih razmakne. Atoma v sosednjih ogliščih se ne dotikata, razdalja med njima je večja od $2r$. Dotikajo se le atomi na telesni diagonali, zato velja $a\sqrt3 = 4r$.
 :::
@@ -42,13 +44,13 @@ Ker sredinski atom stoji med oglišči in jih razmakne. Atoma v sosednjih ogliš
 
 $$f = \frac{Z \cdot \tfrac43 \pi r^3}{a^3}$$
 
-Ko vstavimo zvezo med $a$ in $r$, se $r$ pokrajša. Gostota zloga je odvisna le od vrste celice, ne od velikosti atomov:
+Ko vstavimo zvezo med $a$ in $r$, se $r$ pokrajša. Za fcc je $r = a\sqrt2/4$, torej $r^3 = 2\sqrt2\,a^3/64$ in $f = 4 \cdot \tfrac43\pi \cdot \dfrac{2\sqrt2\,a^3}{64} \Big/ a^3 = \dfrac{\pi}{3\sqrt2}$. Enako iz $r = a/2$ dobimo za sc $\pi/6$, iz $r = a\sqrt3/4$ za bcc $\pi\sqrt3/8$. Gostota zloga je odvisna le od vrste celice, ne od velikosti atomov:
 
 | celica | $Z$ | KŠ | $f$ |
 |---|---|---|---|
-| sc | 1 | 6 | $0{,}524$ |
-| bcc | 2 | 8 | $0{,}680$ |
-| fcc, hcp | 4 | 12 | $0{,}740$ |
+| sc | 1 | 6 | $\pi/6 \approx 0{,}524$ |
+| bcc | 2 | 8 | $\pi\sqrt3/8 \approx 0{,}680$ |
+| fcc, hcp | 4 | 12 | $\pi/(3\sqrt2) \approx 0{,}740$ |
 
 Vrednost $0{,}74$ je natanko meja s frnikolami iz uvoda.
 
@@ -58,6 +60,10 @@ $$\rho = \frac{Z \cdot M}{N_\mathrm{A} \cdot a^3}$$
 
 Ker je $a$ v pikometrih, ga pred kubiranjem pretvori v centimetre: $1\,\mathrm{pm} = 10^{-10}\,\mathrm{cm}$.
 
+**Braggov zakon.** Mrežni parameter izmerimo z rentgensko difrakcijo. Rentgenski žarki z valovno dolžino $\lambda$ se na družini vzporednih mrežnih ravnin z razmikom $d$ ojačano odbijejo natanko tedaj, ko je $n\lambda = 2d\sin\theta$ ($n$ naravno število, $\theta$ kot med žarkom in ravnino). Izpeljava: žarek, odbit na sosednji globlji ravnini, prepotuje dodatno pot $2d\sin\theta$; valovi se ojačajo, ko je ta razlika celi mnogokratnik $\lambda$.
+
+Ravnino opišemo z **Millerjevimi indeksi** $(hkl)$: to so cela števila brez skupnega delitelja, sorazmerna obratnim vrednostim odsekov ravnine na oseh, merjenih v enotah $a$, $b$, $c$ (indeks $0$: ravnina je vzporedna osi). V kubični celici je razmik ravnin $(hkl)$ enak $d_{hkl} = a/\sqrt{h^2+k^2+l^2}$.
+
 **Ionski kristal proti kovini.** V kovini so vsi delci enaki. V ionskem kristalu sta dve vrsti delcev z nasprotnim nabojem in pogosto različno velikostjo. Večji anioni tvorijo ogrodje, manjši kationi sedijo v praznih prostorih (**luknjah** oziroma prazninah) med njimi. Kateri sosedje so okoli iona, določa razmerje polmerov $r_+/r_-$:
 
 | $r_+/r_-$ | KŠ | primer |
@@ -65,6 +71,10 @@ Ker je $a$ v pikometrih, ga pred kubiranjem pretvori v centimetre: $1\,\mathrm{p
 | $0{,}225$ do $0{,}414$ | 4 | $\mathrm{ZnS}$ (sfalerit) |
 | $0{,}414$ do $0{,}732$ | 6 | $\mathrm{NaCl}$, $\mathrm{MgO}$ |
 | nad $0{,}732$ | 8 | $\mathrm{CsCl}$ |
+
+**Pravilo razmerja polmerov.** Predpostavke: ioni so toge krogle, vez je ionska, kation se dotika vseh sosednjih anionov. Koordinacija s KŠ $k$ je stabilna, dokler je $r_+/r_-$ vsaj mejna vrednost, pri kateri se dotikajo še anioni med seboj; pod njo bi kation »ropotal« v luknji, anioni pa bi se dotikali in odbijali med seboj, zato se izbere manjše KŠ. Izpeljava za KŠ 6: štirje od šestih anionov ležijo v kvadratu okoli kationa s stranico $2r_-$ (na meji se dotikajo); po diagonali kvadrata je $2(r_+ + r_-) = 2\sqrt2\,r_-$, torej $r_+/r_- = \sqrt2 - 1 \approx 0{,}414$. Za KŠ 8 (kocka anionov z robom $2r_-$) je po telesni diagonali $2(r_+ + r_-) = 2\sqrt3\,r_-$, meja $\sqrt3 - 1 \approx 0{,}732$; za KŠ 4 (tetraeder) je meja $\sqrt{3/2} - 1 \approx 0{,}225$. Pravilo je le smernica: pri bolj kovalentnih vezeh pogosto odpove.
+
+**Luknje v fcc.** Luknja je **oktaedrska**, če jo obdaja šest atomov v ogliščih oktaedra, in **tetraedrska**, če jo obdajajo štirje v ogliščih tetraedra. V fcc z $N$ atomi je $N$ oktaedrskih in $2N$ tetraedrskih lukenj. V celici ($Z = 4$) so oktaedrske v središču kocke in na sredinah robov, $1 + 12 \cdot \tfrac14 = 4$, tetraedrske pa v središčih osmih manjših kock z robom $a/2$, torej $8$.
 
 V **strukturi NaCl** ioni $\mathrm{Cl^-}$ tvorijo fcc, ioni $\mathrm{Na^+}$ pa zapolnijo vse **oktaedrske luknje** (vsako obdaja šest anionov v ogliščih oktaedra): središča robov in središče kocke. Ionov $\mathrm{Na^+}$ je $12 \cdot \tfrac14 + 1 = 4$, ionov $\mathrm{Cl^-}$ prav tako 4. Torej $Z = 4$ formulske enote. Kation in anion se dotikata vzdolž roba: $a = 2(r_+ + r_-)$.
 
@@ -118,13 +128,13 @@ $\rho = \dfrac{Z \cdot M}{N_\mathrm{A} \cdot a^3}$
 
 ### Primer 3 (težji): velikost iona iz gostote
 
-Halit iz meteorita ima gostoto $2{,}165\,\mathrm{g/cm^3}$ in strukturo NaCl. Polmer iona $\mathrm{Cl^-}$ je $181\,\mathrm{pm}$. Kolikšen je mrežni parameter in kolikšen polmer iona $\mathrm{Na^+}$? Ali razmerje polmerov ustreza KŠ 6?
+Halit iz meteorita ima gostoto $2{,}165\,\mathrm{g/cm^3}$ in strukturo NaCl. Polmer iona $\mathrm{Cl^-}$ je $181\,\mathrm{pm}$. Kolikšen je mrežni parameter in kolikšen polmer iona $\mathrm{Na^+}$? Ali razmerje polmerov ustreza KŠ 6? Kolikšen del prostornine zasedajo ioni in zakaj je to manj kot $0{,}74$, čeprav anioni tvorijo fcc?
 
 **Podatki:** $\rho = 2{,}165\,\mathrm{g/cm^3}$, $M(\mathrm{NaCl}) = 58{,}44\,\mathrm{g/mol}$, $Z = 4$, $r_- = 181\,\mathrm{pm}$, $N_\mathrm{A} = 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$
-**Iščemo:** $a$, $r_+$ in $r_+/r_-$
+**Iščemo:** $a$, $r_+$, $r_+/r_-$ in gostoto zloga $f$
 
 :::formula
-$a^3 = \dfrac{Z \cdot M}{N_\mathrm{A} \cdot \rho}$, $\quad a = 2(r_+ + r_-)$
+$a^3 = \dfrac{Z \cdot M}{N_\mathrm{A} \cdot \rho}$, $\quad a = 2(r_+ + r_-)$, $\quad f = \dfrac{Z \cdot \tfrac43\pi (r_+^3 + r_-^3)}{a^3}$
 :::
 
 **Rešitev:**
@@ -134,7 +144,9 @@ $a^3 = \dfrac{Z \cdot M}{N_\mathrm{A} \cdot \rho}$, $\quad a = 2(r_+ + r_-)$
 3. Ioni se dotikajo vzdolž roba, zato $r_+ + r_- = \dfrac{a}{2} \approx 281{,}9\,\mathrm{pm}$.
 4. $r_+ = 281{,}9\,\mathrm{pm} - 181\,\mathrm{pm} = 100{,}9\,\mathrm{pm}$.
 5. Razmerje: $\dfrac{r_+}{r_-} \approx \dfrac{101}{181} \approx 0{,}56$; leži med $0{,}414$ in $0{,}732$.
-6. Odgovor: $a \approx 564\,\mathrm{pm}$, $r(\mathrm{Na^+}) \approx 101\,\mathrm{pm}$; razmerje $0{,}56$ res ustreza KŠ 6.
+6. Gostota zloga: v celici so 4 kationi in 4 anioni, $f = \dfrac{4 \cdot \tfrac43\pi\,(100{,}9^3 + 181^3)}{563{,}9^3} \approx 0{,}650$.
+7. Zakaj manj kot $0{,}74$: kation je večji od oktaedrske luknje ($0{,}414 \cdot 181\,\mathrm{pm} \approx 75\,\mathrm{pm}$), zato anione razmakne. Razdalja med sosednjima $\mathrm{Cl^-}$ je pol ploskovne diagonale, $\dfrac{a}{\sqrt2} \approx 398{,}7\,\mathrm{pm}$, več kot $2r_- = 362\,\mathrm{pm}$: anioni se ne dotikajo.
+8. Odgovor: $a \approx 564\,\mathrm{pm}$, $r(\mathrm{Na^+}) \approx 101\,\mathrm{pm}$; razmerje $0{,}56$ res ustreza KŠ 6. Ioni zasedajo $65\,\%$ prostornine, ker $\mathrm{Na^+}$ razmakne fcc anionov.
 
 ### Primer 4 – zdaj ti
 
@@ -151,7 +163,7 @@ $a\sqrt3 = 2(r_+ + r_-)$
 
 1. Stik je vzdolž telesne diagonale, ker je $\mathrm{Cs^+}$ v središču kocke.
 2. $r_+ + r_- = \dfrac{a\sqrt3}{2} \approx 357{,}1\,\mathrm{pm}$.
-3. Izračunaj $r_+$ in razmerje sam, nato preveri:
+3. Odštej $r_-$ in razmerje primerjaj z mejami iz tabele:
 
 :::premisli
 Koliko je $r_+$ in kakšno je razmerje $r_+/r_-$?
@@ -175,6 +187,44 @@ $r_+ \approx 357{,}1 - 181 = 176\,\mathrm{pm}$, razmerje $\approx 0{,}97$. To je
 - Gostota: $\rho = Z M/(N_\mathrm{A} a^3)$, $a$ v cm.
 - Ionski kristali: razmerje $r_+/r_-$ določa KŠ (4, 6, 8). NaCl: fcc anionov, kationi v oktaedrskih luknjah, $Z=4$, $a = 2(r_+ + r_-)$. CsCl: preprosta kubična, $Z=1$, $a\sqrt3 = 2(r_+ + r_-)$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije kristalne mreže, baze, osnovne celice, mrežnega parametra, $Z$ in koordinacijskega števila;
+- zveze med $a$ in $r$ za sc, bcc, fcc z izpeljavo (po kateri premici se krogle dotikajo) ter izpeljavo $f$ in $\rho = ZM/(N_\mathrm{A}a^3)$;
+- pravilo razmerja polmerov s predpostavkami in izpeljavo mej $0{,}225$, $0{,}414$, $0{,}732$;
+- število oktaedrskih in tetraedrskih lukenj v fcc ter strukturi NaCl in CsCl (zakaj CsCl ni bcc);
+- Braggov zakon z izpeljavo in $d_{hkl} = a/\sqrt{h^2+k^2+l^2}$.
+
+### Naloga 1
+
+Krom ima gostoto $7{,}19\,\mathrm{g/cm^3}$, molsko maso $52{,}00\,\mathrm{g/mol}$ in kovinski polmer $124{,}9\,\mathrm{pm}$; $N_\mathrm{A} = 6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}}$. (a) Ugotovi z računom, ali kristalizira v bcc ali v fcc. (b) Pri katerem kotu $2\theta$ se pojavi uklon prvega reda na ravninah $(110)$, če merimo z rentgensko svetlobo Cu K$\alpha$ ($\lambda = 154{,}06\,\mathrm{pm}$)?
+
+**Rešitev:**
+
+1. Če je bcc: $a = \dfrac{4r}{\sqrt3} = \dfrac{4 \cdot 124{,}9\,\mathrm{pm}}{\sqrt3} \approx 288{,}4\,\mathrm{pm}$, $a^3 \approx 2{,}400 \cdot 10^{-23}\,\mathrm{cm^3}$.
+2. $\rho_\text{bcc} = \dfrac{2 \cdot 52{,}00\,\mathrm{g/mol}}{6{,}022 \cdot 10^{23}\,\mathrm{mol^{-1}} \cdot 2{,}400 \cdot 10^{-23}\,\mathrm{cm^3}} \approx 7{,}20\,\mathrm{g/cm^3}$.
+3. Če je fcc: $a = 2\sqrt2\,r \approx 353{,}3\,\mathrm{pm}$, $a^3 \approx 4{,}409 \cdot 10^{-23}\,\mathrm{cm^3}$, $\rho_\text{fcc} = \dfrac{4 \cdot 52{,}00}{6{,}022 \cdot 4{,}409}\,\mathrm{g/cm^3} \approx 7{,}83\,\mathrm{g/cm^3}$.
+4. Izmerjeni $7{,}19\,\mathrm{g/cm^3}$ se ujema z bcc; kontrola: $Z = \dfrac{\rho N_\mathrm{A} a^3}{M} \approx 2{,}00$.
+5. Razmik ravnin: $d_{110} = \dfrac{a}{\sqrt{1^2 + 1^2 + 0^2}} = \dfrac{288{,}4\,\mathrm{pm}}{\sqrt2} \approx 203{,}9\,\mathrm{pm}$.
+6. Bragg za $n = 1$: $\sin\theta = \dfrac{\lambda}{2d} = \dfrac{154{,}06\,\mathrm{pm}}{2 \cdot 203{,}9\,\mathrm{pm}} \approx 0{,}3778$, $\theta \approx 22{,}20^\circ$.
+7. Odgovor: krom je bcc; uklon $(110)$ je pri $2\theta \approx 44{,}4^\circ$.
+
+### Naloga 2
+
+Natančno navedi pravilo razmerja polmerov z vsemi predpostavkami in izpelji mejno vrednost za koordinacijsko število 6. Nato utemelji, ali pričakuješ strukturo NaCl za binarno sol z $r_+ = 63\,\mathrm{pm}$ in $r_- = 180\,\mathrm{pm}$, in pokaži, da ima fcc z $N$ atomi $N$ oktaedrskih lukenj.
+
+**Rešitev:**
+
+1. Predpostavke: ioni so toge krogle, vez je ionska, kation se dotika vseh svojih anionov. KŠ $k$ je stabilno, dokler je $r_+/r_-$ vsaj meja, pri kateri se dotikajo še anioni med seboj.
+2. Pri KŠ 6 leži kation v središču oktaedra; štirje anioni tvorijo kvadrat s stranico $2r_-$ (na meji se dotikajo).
+3. Diagonala kvadrata gre skozi kation: $2r_- \cdot \sqrt2 = 2(r_+ + r_-)$, zato $r_+ = (\sqrt2 - 1)\,r_-$ in meja je $r_+/r_- = \sqrt2 - 1 \approx 0{,}414$.
+4. Za dano sol: $\dfrac{63\,\mathrm{pm}}{180\,\mathrm{pm}} = 0{,}35 < 0{,}414$. Kation bi v oktaedrski luknji ne dosegel vseh šestih anionov.
+5. Ker je $0{,}35$ med $0{,}225$ in $0{,}414$, model napove KŠ 4 (kation v tetraedrskih luknjah, npr. tip sfalerita), ne NaCl.
+6. Luknje: v celici fcc ($Z = 4$) so oktaedrske v središču ($1$) in na sredinah $12$ robov, vsaka deljena s štirimi celicami: $1 + 12 \cdot \tfrac14 = 4$, torej ena luknja na atom.
+7. Odgovor: meja za KŠ 6 je $\sqrt2 - 1 \approx 0{,}414$; sol z razmerjem $0{,}35$ verjetno ne bo imela strukture NaCl, temveč KŠ 4; v fcc je oktaedrskih lukenj toliko kot atomov.
+
 ## Drugače: Na sliki
 
 Nariši kvadrat, to je ena ploskev kocke fcc. V vsak vogal nariši četrtino kroga, v sredino cel krog. Vse se dotikajo vzdolž diagonale:
@@ -191,13 +241,12 @@ Na diagonali naštej: polmer (vogal), premer (sredina), polmer (vogal). Skupaj $
 
 Za NaCl si predstavljaj šahovnico v treh razsežnostih: polja se izmenjujejo, $\mathrm{Na^+}$ in $\mathrm{Cl^-}$, v vseh smereh. Vsak ion ima tako 6 sosedov druge vrste: levo, desno, spredaj, zadaj, zgoraj, spodaj.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Na tržnici so pomaranče v spodnji plasti zložene v šestkotniški vzorec. Vsaka pomaranča druge plasti leži v jamici med tremi spodnjimi. Ko tretja plast ne leži točno nad prvo, dobiš fcc; ko leži točno nad njo, hcp. V obeh primerih ima vsaka pomaranča 12 sosedov: 6 v svoji plasti, 3 zgoraj in 3 spodaj.
-
-Če bi pomaranče postavil v ravne vrste, eno natanko nad drugo (sc), bi vsaka imela le 6 sosedov in med njimi bi ostalo skoraj pol zaboja praznega. Atomi kovine »zlagajo« podobno, ker več sosedov pomeni več vezi in nižjo energijo.
-
-Ionski kristal je kot zaboj z dvema vrstama sadja, velikimi grenivkami in majhnimi mandarinami. Mandarine se skrijejo v vrzeli med grenivkami. Kako velika vrzel je potrebna, je odvisno od razmerja velikosti, natanko kot pri $r_+/r_-$.
+- **Jeklo.** Železo je pod $912\,^\circ\mathrm{C}$ bcc (ferit), med $912$ in $1394\,^\circ\mathrm{C}$ pa fcc (avstenit). Čeprav je fcc gostejši zlog, so njegove oktaedrske luknje večje (polmer $0{,}414\,r$ proti $0{,}155\,r$ v bcc), zato avstenit raztopi do $2{,}1\,\%$ ogljika (masno), ferit le okoli $0{,}02\,\%$. Pri kaljenju hitro ohlajen avstenit ogljika ne utegne izločiti in nastane trdi martenzit, popačena (tetragonalna) različica bcc.
+- **Fazna analiza.** S praškovno rentgensko difrakcijo v industriji pigmentov, farmaciji in geologiji ugotovijo, katera kristalna faza je v vzorcu. Rutil in anatas sta oba $\mathrm{TiO_2}$, a imata različne uklonske kote; posnetek primerjajo z bazo uklonskih vzorcev. V farmaciji tako ločijo polimorfe učinkovine, ki se razlikujejo v topnosti.
+- **Rentgenska gostota.** $\rho = ZM/(N_\mathrm{A}a^3)$ je gostota idealnega kristala. Če je izmerjena gostota manjša, ima vzorec prazna mesta ali pore; tako v keramiki ocenijo poroznost.
+- **Baterije.** V katodi $\mathrm{LiCoO_2}$ so oksidni ioni v gostem zlogu, $\mathrm{Li^+}$ in $\mathrm{Co^{3+}}$ pa v izmeničnih plasteh oktaedrskih lukenj. Pri polnjenju litij zapusti svoje plasti, ogrodje pa ostane.
 
 ## Drugače: Bolj natančno
 
@@ -207,7 +256,11 @@ Izpeljava gostote zloga: v $f = Z \cdot \tfrac43\pi r^3 / a^3$ vstavimo $r$, izr
 - bcc: $r = a\sqrt3/4$, $f = 2 \cdot \tfrac43\pi \tfrac{3\sqrt3\,a^3}{64} / a^3 = \tfrac{\pi\sqrt3}{8} \approx 0{,}680$.
 - fcc: $r = a\sqrt2/4$, $f = 4 \cdot \tfrac43\pi \tfrac{2\sqrt2\,a^3}{64} / a^3 = \tfrac{\pi}{3\sqrt2} \approx 0{,}740$.
 
-V vsaki vrstici se $a^3$ pokrajša, zato $f$ ni odvisna od velikosti atomov.
+**Idealni hcp.** V hcp leži atom plasti B nad središčem trikotnika treh atomov plasti A; vsi štirje tvorijo pravilni tetraeder z robom $2r = a$. Višina tetraedra je $a\sqrt{2/3}$, razmik med plastema A je dvakratna višina, zato $c/a = 2\sqrt{2/3} = \sqrt{8/3} \approx 1{,}633$. Kovine z razmerjem blizu tega (Mg $1{,}62$) so skoraj idealne krogle; Zn ($1{,}86$) in Cd odstopata.
+
+**Izbirna pravila za uklon.** Pri bcc se odboji s lihim $h + k + l$ izničijo, ker sredinski atom leži na pol poti med ravninami in sipa v protifazi. Zato je prvi uklon bcc $(110)$, ne $(100)$. Pri fcc se pojavijo le odboji z $h, k, l$ vsi lihi ali vsi sodi: $(111)$, $(200)$, $(220)$. Iz zaporedja uklonov tako določimo vrsto celice.
+
+**Keplerjeva domneva.** Da $\pi/(3\sqrt2)$ ni le najgostejši zlog med mrežami, ampak med vsemi razporeditvami enakih krogel, je dokazal T. Hales (1998) z računalnikom; formalno preverjen dokaz je bil objavljen leta 2017.
 
 ## Preveri se
 
