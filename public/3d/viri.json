@@ -54,10 +54,22 @@
       ]
     },
     {
+      "id": "hubmap-hra-ledvica",
+      "ime": "HuBMAP Human Reference Atlas: 3D referenčni organ Ledvica (VH moški, leva)",
+      "avtor": "HuBMAP / Human Reference Atlas (Cyberinfrastructure for Network Science Center, Indiana University); model po podatkih Visible Human",
+      "opis": "Ledvica v Organih v 3D: ovojnica, skorja, ledvični stebrički, piramide in papile. Sečevod, ledvični žili in nadledvična žleza so iz Z-Anatomy; ledvico smo poravnali nanje. Ledvični meh s čašicami smo oblikovali sami, ker ga HRA nima, različice iz Z-Anatomy pa ne uporabljamo (morda licenca NC).",
+      "url": "https://lod.humanatlas.io/ref-organ/kidney-male-left",
+      "licenca": "CC BY 4.0",
+      "licencaUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "datoteke": [
+        "organi-3d/ledvica*.glb"
+      ]
+    },
+    {
       "id": "evklid-telo",
       "ime": "Evklid: prirejeni modeli telesa",
       "avtor": "Evklid",
-      "opis": "Modele smo razdelili po plasteh in po organih (Organi v 3D), stisnili za hiter prenos in jim dodali slovenska imena. Prirejene modele delimo pod isto licenco.",
+      "opis": "Modele smo razdelili po plasteh in po organih (Organi v 3D), stisnili za hiter prenos in jim dodali slovenska imena. Sami smo oblikovali ledvični meh s čašicami (Organi v 3D: ledvica) ter veje portalne vene in jetrnih ven v jetrih (Organi v 3D: jetra). Prirejene modele delimo pod isto licenco.",
       "url": "https://evklid.app/3d",
       "licenca": "CC BY-SA 4.0",
       "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",

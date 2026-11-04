@@ -3565,5 +3565,16 @@
   "block.freeMonth": "Tento mesiac sú vyčerpané tvoje bezplatné otázky pre tútora. Precvičovanie a lekcie fungujú ďalej bez obmedzenia.",
   "block.freePool": "Tento mesiac sú bezplatné otázky pre tútora vyčerpané pre všetkých. Precvičovanie a lekcie fungujú ďalej bez obmedzenia.",
   "block.hintGuest": "Pre viac otázok si vytvor účet na karte Účet.",
-  "block.hintParent": "Pre viac otázok nech rodič vyberie predplatné na karte Účet."
+  "block.hintParent": "Pre viac otázok nech rodič vyberie predplatné na karte Účet.",
+  "akt.title": "Aktivita za posledný rok",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Dni s učením: {n}",
+  "akt.best": "Najdlhšia séria: {n}",
+  "akt.week": "Tento týždeň: {n} XP",
+  "akt.weeks": "XP po týždňoch",
+  "akt.less": "Menej",
+  "akt.more": "Viac",
+  "sch.addAt": "Pridať hodinu: {day}, {time}",
+  "lg.free": "voľné miesto",
+  "corner.more": "Pridať ďalšiu oblasť"
 }

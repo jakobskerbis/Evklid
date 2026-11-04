@@ -3480,5 +3480,16 @@
   "block.freeMonth": "Bulan ini kamu sudah memakai pertanyaan gratis untuk tutor. Latihan dan pelajaran tetap berjalan tanpa batas.",
   "block.freePool": "Bulan ini pertanyaan gratis untuk tutor sudah habis untuk semua orang. Latihan dan pelajaran tetap berjalan tanpa batas.",
   "block.hintGuest": "Untuk mendapatkan lebih banyak pertanyaan, buat akun di tab Akun.",
-  "block.hintParent": "Untuk mendapatkan lebih banyak pertanyaan, minta orang tuamu memilih langganan di tab Akun."
+  "block.hintParent": "Untuk mendapatkan lebih banyak pertanyaan, minta orang tuamu memilih langganan di tab Akun.",
+  "akt.title": "Aktivitas dalam setahun terakhir",
+  "akt.day": "{day}: {xp} XP",
+  "akt.activeDays": "Hari belajar: {n}",
+  "akt.best": "Rentetan terpanjang: {n}",
+  "akt.week": "Minggu ini: {n} XP",
+  "akt.weeks": "XP per minggu",
+  "akt.less": "Sedikit",
+  "akt.more": "Banyak",
+  "sch.addAt": "Tambah pelajaran: {day}, {time}",
+  "lg.free": "tempat kosong",
+  "corner.more": "Tambah topik lain"
 }

@@ -404,6 +404,15 @@ export class Store {
       .all(studentId, limit)
       .map(openConv);
   }
+  // XP po dnevih (vse dejavnosti: lekcije, vaje, igre, inštruktor) za koledar aktivnosti na Napredku in strani Jaz.
+  xpByDay(studentId, days = 371) {
+    return this.db
+      .prepare(
+        `SELECT date(created_at) AS day, SUM(amount) AS xp FROM xp_events
+         WHERE student_id = ? AND created_at >= datetime('now', ?) GROUP BY day ORDER BY day`,
+      )
+      .all(studentId, `-${days} days`);
+  }
   activityByDay(studentId, days = 30) {
     return this.db
       .prepare(
