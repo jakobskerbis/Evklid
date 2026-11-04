@@ -29,7 +29,7 @@ import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
 import { offlineApi, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback } from "./feedback.js";
-import { openAdminBug } from "./prijave.js";
+import { openAdminBug, deviceInfo, shownHtml } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
 import { initGames, showGames, gamesBack, leaveGames } from "./games/index.js";
@@ -786,6 +786,7 @@ function addMessage(role, text, hasImage = false, info = null) {
   } else {
     el.innerHTML = chatRich(text);
     if (text) addDeepButton(el, false);
+    if (text && info?.full_offer) addFullButton(el);
     if (text) addGraphButton(el, text);
     if (text && info?.id) addMsgFoot(el, info);
   }
@@ -813,6 +814,7 @@ async function send(text, { deep = false } = {}) {
     const sentTo = state.conversationId;
     // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
     const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
+    document.querySelectorAll(".full-btn").forEach((x) => x.remove());
     userEl = addMessage("user", text, !!image);
     $("#input").value = "";
     autoGrow();
@@ -902,6 +904,8 @@ async function send(text, { deep = false } = {}) {
       bubble.removeAttribute("title");
       // Odgovor, ki samo spremeni nastavitve, ne potrebuje »Razloži podrobneje«.
       if (doneData && !doneData.settings) addDeepButton(bubble, doneData.deep);
+      // Ne, če je učenec med počasnim izpisom že poslal novo sporočilo (gumb samo pri zadnjem odgovoru).
+      if (doneData?.full_offer && !bubble.nextElementSibling) addFullButton(bubble);
       if (doneData?.text) addGraphButton(bubble, doneData.text);
       if (cardsData) addCardsNote(bubble, cardsData);
       if (allowanceData) addAllowanceNote(bubble, allowanceData);
@@ -1725,7 +1729,8 @@ function openReport(el, foot, btn, id, done) {
     }
     sendBtn.disabled = true;
     try {
-      await api(`/api/conversations/${convId}/messages/${id}/report`, { method: "POST", body: { reason, note: area.value } });
+      // Zraven gre, kar je učenec videl: izrisan HTML sporočila in naprava (napaka v izpisu formule).
+      await api(`/api/conversations/${convId}/messages/${id}/report`, { method: "POST", body: { reason, note: area.value, shown: shownHtml(el), ...deviceInfo() } });
       box.remove();
       done();
       toast(t("rep.thanks"), "check");
@@ -1742,8 +1747,8 @@ function openReport(el, foot, btn, id, done) {
 // Gumb »Razloži podrobneje« uporabi zmogljivejši (dražji) model samo na zahtevo.
 function addDeepButton(el, wasDeep) {
   // Ponovna razlaga je vedno na voljo (tudi po ponovni razlagi); strežnik izbere najcenejši model.
-  if (el.classList.contains("error") || el.querySelector(".deep-btn")) return;
-  document.querySelectorAll(".deep-btn").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
+  if (el.classList.contains("error") || el.querySelector(".deep-btn:not(.full-btn)")) return;
+  document.querySelectorAll(".deep-btn:not(.full-btn)").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
   if (state.aiOut) return; // 100 % deleža: inštruktor odgovarja v hitrem načinu, podrobne razlage ni
   const b = document.createElement("button");
   b.className = "deep-btn";
@@ -1754,6 +1759,23 @@ function addDeepButton(el, wasDeep) {
     send(t("chat.deeperMsg"), { deep: true });
   });
   el.appendChild(b);
+}
+
+// »Pokaži celoten postopek«: strežnik ga ponudi po treh zaporednih korakih vodenja (način A) v istem pogovoru.
+// Je enkratna prošnja: inštruktor pokaže celotno rešitev te naloge, nato se vrne v vodenje.
+function addFullButton(el) {
+  if (el.classList.contains("error") || el.querySelector(".full-btn")) return;
+  document.querySelectorAll(".full-btn").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
+  const b = document.createElement("button");
+  b.className = "deep-btn full-btn";
+  b.type = "button";
+  b.innerHTML = `${icon("list-checks")} ${t("chat.full")}`;
+  b.addEventListener("click", () => {
+    b.remove();
+    send(t("chat.fullMsg"));
+  });
+  (el.querySelector(".deep-btn:not(.full-btn)") || el.lastElementChild)?.after(b);
+  if (!b.isConnected) el.appendChild(b);
 }
 
 // Tiha napaka (npr. prekinjena povezava) se pokaže kot obvestilo, ne pa kot »nič se ne zgodi«.

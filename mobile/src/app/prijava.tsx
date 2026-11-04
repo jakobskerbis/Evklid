@@ -1,7 +1,8 @@
 // Prijava iz brskalnika: stran /prenesi v brskalniku, kjer je račun prijavljen, odpre
 // evklid://prijava?t=… (server/mobile/app-link.js). Aplikacija najprej pokaže, v kateri račun se bo
 // prijavila (tuja povezava te ne sme potiho prijaviti v drug račun), ob »Nadaljuj« porabi žeton (velja
-// enkrat) in dobi svojo sejo; profil iz brskalnika je odprt brez gesla.
+// enkrat) in dobi svojo sejo; profil iz brskalnika je odprt brez gesla. Nato splet v aplikaciji (/web; brez
+// prijave ga zaščita preusmeri na prijavo).
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
@@ -27,7 +28,7 @@ export default function Prijava() {
 
   // Za kateri račun je povezava (žeton ostane neporabljen).
   const check = useCallback(async () => {
-    if (!token) return router.replace("/");
+    if (!token) return router.replace("/web");
     try {
       const r = await api<{ email: string }>("/api/auth/app-link/check", {
         body: { token },
@@ -51,7 +52,7 @@ export default function Prijava() {
       const r = await api<{ student_id?: number | null }>("/api/auth/app-link", { body: { token } });
       if (r.student_id) await select(r.student_id);
       await refresh();
-      router.replace("/");
+      router.replace("/web");
     } catch (err) {
       fail(err);
     } finally {
@@ -83,13 +84,13 @@ export default function Prijava() {
               loading={busy}
             />
           ) : null}
-          <Button title={t("mob.signIn")} kind={error.offline ? "ghost" : "primary"} onPress={() => router.replace("/")} />
+          <Button title={t("mob.signIn")} kind={error.offline ? "ghost" : "primary"} onPress={() => router.replace("/web")} />
         </>
       ) : email ? (
         <>
           <Body center>{t("mob.linkConfirm", { email })}</Body>
           <Button title={t("mob.continue")} onPress={accept} loading={busy} />
-          <Button title={t("mob.cancel")} kind="ghost" onPress={() => router.replace("/")} disabled={busy} />
+          <Button title={t("mob.cancel")} kind="ghost" onPress={() => router.replace("/web")} disabled={busy} />
         </>
       ) : (
         <View style={{ alignItems: "center", gap: 12 }}>

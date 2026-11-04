@@ -11,13 +11,14 @@ import { esc, texHtml, usesComma, remember } from "./tools-kit.js";
 import { chemTools } from "./tools-chem.js";
 import { probTool } from "./tools-prob.js";
 import { anaTools } from "./tools-ana.js";
+import { testsTool, tvmTool, tableTool } from "./tools-test.js";
 
-const TOOLS = ["units", "eq", "calc", "stats", "prob", "vec", "matrix", "plot3", "ode", "err", "complex", "base", "rxn", "conc", "solub"];
+const TOOLS = ["units", "eq", "calc", "stats", "tests", "prob", "vec", "matrix", "plot3", "ode", "err", "complex", "base", "tvm", "table", "rxn", "conc", "solub"];
 // vrstni red čipov po predmetu: najprej orodja, ki jih predmet največ rabi
 const ORDER = {
   KEM: ["rxn", "conc", "solub", "units", "err", "stats", "eq"],
   FIZ: ["units", "err", "eq", "vec", "calc", "ode", "stats"],
-  MAT: ["eq", "calc", "stats", "prob", "vec", "matrix", "plot3", "ode", "complex", "base"],
+  MAT: ["eq", "calc", "table", "stats", "tests", "prob", "vec", "matrix", "plot3", "ode", "complex", "base", "tvm"],
 };
 const toolOrder = (subj) => {
   const first = ORDER[subj] || ORDER.MAT;
@@ -307,6 +308,9 @@ export function createTools(root, opts) {
     conc: chem.conc,
     solub: chem.solub,
     prob: (el) => probTool(el, ctx),
+    tests: (el) => testsTool(el, ctx),
+    tvm: (el) => tvmTool(el, ctx),
+    table: (el) => tableTool(el, ctx),
     calc: ana.calc,
     vec: ana.vec,
     ode: ana.ode,

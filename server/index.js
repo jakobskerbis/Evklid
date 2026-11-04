@@ -1,9 +1,13 @@
 import "./env.js";
 import path from "node:path";
 import { openDb } from "./db.js";
+import { BRAND } from "./brand.js";
+import { applyPendingRestore } from "./kopije.js";
 import { createApp } from "./app.js";
 import { isMockMode, MODEL } from "./claude.js";
 
+// Obnova iz varnostne kopije (scripts/obnovi-kopijo.js) samo ob zagonu strežnika, preden se baza odpre.
+applyPendingRestore(process.env.EVKLID_DB || `data/${BRAND.slug}.db`);
 const store = openDb();
 // Povratne informacije testerjev se zapišejo tudi v datoteko ob bazi (data/povratne-informacije.json).
 const feedbackFile = path.resolve(path.dirname(process.env.EVKLID_DB || "data/evklid.db"), "povratne-informacije.json");

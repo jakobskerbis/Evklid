@@ -178,6 +178,14 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
     CREATE INDEX IF NOT EXISTS idx_cards_due ON flashcards(student_id, due);
     CREATE INDEX IF NOT EXISTS idx_msg_conv ON messages(conversation_id, id);
     CREATE INDEX IF NOT EXISTS idx_events_student ON events(student_id, created_at);
+    -- Sprotni povzetek starejšega dela dolgega pogovora (server/povzetek.js), šifriran; upto = število
+    -- sporočil, ki jih povzetek pokrije. Izbriše se s pogovorom.
+    CREATE TABLE IF NOT EXISTS conversation_summaries (
+      conversation_id INTEGER PRIMARY KEY REFERENCES conversations(id) ON DELETE CASCADE,
+      text TEXT NOT NULL,
+      upto INTEGER NOT NULL,
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
   `);
   // Migracije za starejše baze
   const studentCols = db.prepare("PRAGMA table_info(students)").all().map((c) => c.name);
@@ -223,7 +231,9 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       COMMIT;
     `);
   }
-  return new Store(db);
+  const store = new Store(db);
+  store.file = file; // za dnevne varnostne kopije (server/kopije.js)
+  return store;
 }
 
 const parseStudent = (row) =>
@@ -336,6 +346,20 @@ export class Store {
   // Zamenja vsebino uporabnikovega sporočila (npr. odstranjena fotografija, server/zasebnost.js).
   setMessageContent(id, apiContent, hasImage) {
     this.db.prepare("UPDATE messages SET api_content = ?, has_image = ? WHERE id = ?").run(sealJson(apiContent), hasImage, id);
+  }
+  // Sprotni povzetek pogovora (server/povzetek.js): { text, upto } ali null (tudi neberljiv po menjavi ključa).
+  getSummary(conversationId) {
+    const r = this.db.prepare("SELECT text, upto FROM conversation_summaries WHERE conversation_id = ?").get(conversationId);
+    const text = r ? unseal(r.text, null) : null;
+    return text ? { text, upto: r.upto } : null;
+  }
+  setSummary(conversationId, text, upto) {
+    this.db
+      .prepare(
+        `INSERT INTO conversation_summaries (conversation_id, text, upto) VALUES (?, ?, ?)
+         ON CONFLICT(conversation_id) DO UPDATE SET text = excluded.text, upto = excluded.upto, updated_at = datetime('now')`,
+      )
+      .run(conversationId, seal(text), upto);
   }
   // Zgodovina za API: dosledno zaporedje, brez sprememb že poslanih blokov.
   apiHistory(conversationId) {

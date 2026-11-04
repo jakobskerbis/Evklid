@@ -459,14 +459,19 @@ function renderAskParent(minAge) {
   const linkFor = (name) => `${location.origin}/starsi.html${name ? `?ime=${encodeURIComponent(name)}` : ""}`;
   shell(`
     <h1>Vprašaj starše</h1>
-    <p class="muted">${minAge ? `Za mlajše od ${minAge} let` : "Za mlajše učence"} račun ustvari starš ali skrbnik. Pošlji jim to povezavo: tam piše, kaj je Evklid, katere podatke hranimo in koliko stane. Ko starš ustvari račun in doda tvoj profil, se lahko začneš učiti.</p>
+    <p class="muted">${minAge ? `Za mlajše od ${minAge} let` : "Za mlajše učence"} račun ustvari starš ali skrbnik. Vpiši e-naslov starša in Evklid mu pošlje povezavo, ali pa mu jo pošlji sam(a). Tam piše, kaj je Evklid, katere podatke hranimo in koliko stane. Ko starš ustvari račun in doda tvoj profil, se lahko začneš učiti.</p>
     <form id="ask-parent" class="card form">
       <label>Tvoje ime ali vzdevek (neobvezno) <input name="name" maxlength="40" placeholder="npr. Miha"></label>
-      <label>Povezava za starše <input name="link" readonly value="${esc(linkFor(""))}"></label>
+      <label>E-naslov starša <input name="parent_email" type="email" autocomplete="off" inputmode="email" placeholder="npr. mama@primer.si"></label>
       <div class="form-actions">
-        <button class="primary" type="button" data-act="share">Pošlji staršem</button>
+        <button class="primary" type="button" data-act="send">Pošlji staršu</button>
+      </div>
+      <p class="form-error" role="alert" hidden></p>
+      <p class="muted" data-sent role="status" hidden style="overflow-wrap:anywhere"></p>
+      <label>Ali pošlji povezavo sam(a) <input name="link" readonly value="${esc(linkFor(""))}"></label>
+      <div class="form-actions">
+        <button type="button" data-act="share">Deli (Viber, WhatsApp, SMS …)</button>
         <button type="button" data-act="copy">Kopiraj povezavo</button>
-        <button type="button" data-act="mail">Pošlji po e-pošti</button>
       </div>
     </form>
     <p class="auth-links">Si starš? <a href="/starsi.html">Preberi več in ustvari račun</a> · <a href="#" data-go="login">Prijava</a></p>`);
@@ -479,7 +484,24 @@ function renderAskParent(minAge) {
   };
   const mail = () => (location.href = `mailto:?subject=${encodeURIComponent("Evklid – prosim za dovoljenje")}&body=${encodeURIComponent(`${text()}\n${link()}`)}`);
   f.name.addEventListener("input", () => (f.link.value = link()));
-  f.querySelector('[data-act="mail"]').addEventListener("click", mail);
+  // Evklid pošlje staršu e-pošto s povezavo (naslova ne shrani); otrok ne potrebuje svoje e-pošte.
+  f.querySelector('[data-act="send"]').addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    const sent = f.querySelector("[data-sent]");
+    btn.disabled = true;
+    try {
+      await api("/api/auth/ask-parent", { method: "POST", body: { email: f.parent_email.value, name: f.name.value } });
+      sent.textContent = `Poslano na ${f.parent_email.value.trim()}. Naj starš pogleda tudi med vsiljeno pošto. Ko ustvari račun in doda tvoj profil, se lahko začneš učiti.`;
+      sent.hidden = false;
+      const box = errorBox(f);
+      if (box) box.hidden = true;
+      f.parent_email.value = "";
+    } catch (err) {
+      showError(f, err);
+    } finally {
+      btn.disabled = false;
+    }
+  });
   f.querySelector('[data-act="copy"]').addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(link());

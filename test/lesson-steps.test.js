@@ -62,3 +62,23 @@ test("a numbered point stays whole on one step (j, 1. 11. 2026)", () => {
   const raz = L.sections.find((s) => /razlag/i.test(s.title));
   for (const c of splitSection(raz.md, "explain")) assert.match(c.trimStart(), /^\*\*\d+\. /);
 });
+
+test("a simulation sits on the step whose text mentions it (j, 2. 11. 2026)", async () => {
+  const { demoSteps } = await import("../public/lesson-steps.js");
+  const T = (section, md, title = "Razlaga", last = false) => ({ type: "text", section, title, md, last });
+  const steps = [T(0, "Uvod brez omembe.", "Zakaj se tega učimo", true), T(1, "Razlaga."), T(1, "V simulaciji spodaj »Merjenje« izmeri svinčnik.", "Razlaga", true), { type: "check", checks: [0] }, T(2, "Primer.", "Rešeni primeri", true)];
+  assert.deepEqual(demoSteps(steps, [{ title: "Merjenje" }], 2), [[2]]);
+  // brez omembe ostane za rešenimi primeri
+  assert.deepEqual(demoSteps(steps.map((s) => (s.type === "text" ? { ...s, md: "Nič." } : s)), [{ title: "Merjenje" }], 2), [[4]]);
+  // dve simulaciji: naslov odloči, splošna omemba velja za neomenjeno
+  const two = [T(0, "Uvod.", "Zakaj", true), T(1, "Poskusi simulacijo spodaj."), T(1, "V simulaciji spodaj (»Graf«) nariši.", "Razlaga", true), T(2, "Primer.", "Rešeni primeri", true)];
+  assert.deepEqual(demoSteps(two, [{ title: "Koren" }, { title: "Graf" }], 2), [[1], [2]]);
+  // omemba samo v uvodu: tam in še za rešenimi primeri
+  const intro = [T(0, "Pomaga ti simulacija spodaj.", "Zakaj se tega učimo", true), T(1, "Razlaga.", "Razlaga", true), T(2, "Primer.", "Rešeni primeri", true)];
+  assert.deepEqual(demoSteps(intro, [{ title: "X" }], 2), [[0, 2]]);
+  // prava lekcija iz j-jevega posnetka: simulacija je na koraku, ki jo omenja
+  const L = loadLesson("FIZ-OS-8/merske-napake");
+  const st = lessonSteps(L.sections, L.checks.length);
+  const [ks] = demoSteps(st, [{ title: "Merjenje in merska napaka" }], L.sections.findIndex((s) => /rešen/i.test(s.title)));
+  for (const k of ks) assert.match(st[k].md, /simulacij/i);
+});
