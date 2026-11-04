@@ -8,6 +8,7 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "./prompt.js";
 import { createStreamFilter, parseMeta, parseCards, stripMeta, stripLeadPhrase } from "./meta.js";
+import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
 import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams } from "./claude.js";
 import { Usage, LIMITS, NOTES, windowHistory, recentHistory } from "./usage.js";
@@ -55,6 +56,7 @@ import { appVersion, vendorVersion } from "./razlicica.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
+import { startBackups } from "./kopije.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -193,9 +195,10 @@ export function createApp(store, opts = {}) {
   // (scripts/nadzor.js) pa strežnik znova zažene, ko nihče ne čaka na odgovor.
   const version = appVersion();
   const activity = { active: 0, lastSend: 0 };
+  let backups = null; // dnevne varnostne kopije baze (server/kopije.js), nastavljene spodaj
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
-    res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null });
+    res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null });
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
@@ -585,7 +588,21 @@ export function createApp(store, opts = {}) {
       // Naloga, ki jo reši naš preverjeni reševalnik: model dobi pravilen rezultat v skriti opombi.
       const pre = liveCheckOn() && !cached && !image && !win && !hinted ? presolve(text, { first: isFirst }) : null;
       const fullHistory = store.apiHistory(conv.id);
-      const history = deep && !routed.boosted ? recentHistory(fullHistory) : windowHistory(fullHistory);
+      const shortDeep = deep && !routed.boosted;
+      let history = shortDeep ? recentHistory(fullHistory) : windowHistory(fullHistory);
+      // Odrezani starejši del dolgega pogovora: kratek povzetek pred oknom (server/povzetek.js).
+      // V načinu brez API-ja (mock) ne, razen v testih z lastnim streamFn.
+      if (!shortDeep && !cached && !win && !hinted && (!isMockMode() || opts.streamFn)) {
+        history = await summarizedHistory({
+          store,
+          conversationId: conv.id,
+          fullHistory,
+          history,
+          streamFn,
+          signal: controller.signal,
+          log: (r) => r?.usage && usage.log(student.id, r.model || modeParams("lite").model, r.usage, "povzetek"),
+        });
+      }
       // Učenčev rezultat ali trditev: sodbo inštruktorja preveri koda (naloga iz prvega sporočila) ali model,
       // preden učenec odgovor vidi (server/live-check.js, 4). Zato se tak odgovor ne pretaka sproti.
       const textOf = (m) => (Array.isArray(m.content) ? m.content : [{ text: m.content }]).map((b) => b.text || "").join("\n");
@@ -1238,5 +1255,6 @@ export function createApp(store, opts = {}) {
 
   // Šifriranje obstoječih vrstic in dnevno čiščenje po rokih hrambe (server/zasebnost.js).
   startPrivacyJobs(store.db, { scheduler: opts.scheduler !== false && opts.privacyJobs !== false });
+  backups = startBackups(store.db, store.file, { scheduler: opts.scheduler !== false && opts.backups !== false });
   return app;
 }
