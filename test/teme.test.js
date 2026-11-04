@@ -223,3 +223,27 @@ test("every history chat look and column set is styled in ui.css, readable and s
   }
   assert.ok(T.PAPER > 0 && T.PAPER <= 0.15, "PAPER (vlakna papirusa)");
 });
+
+// Okvir obdobja (ERAS[…].frame, j 2026-11-04: stebri samo za Antični, drugi slogi okvir iz svojega obdobja): vsak slog
+// ima natanko en okvir pozdrava, risba je preprost SVG z barvami S/F/A, rez in širine roba so v mejah.
+test("every history style frames the empty chat with its own period, columns only in Antični", () => {
+  const css = fs.readFileSync(path.join(PUB, "ui.css"), "utf8");
+  for (const [id, e] of Object.entries(T.ERAS)) {
+    const own = e.chat && e.chat.frame;
+    assert.ok(!!own !== !!e.frame, `${id}: natanko en okvir pozdrava (chat.frame ali frame)`);
+    if (own === "stebri") assert.equal(id, "antik", "stebri samo v Antičnem");
+    if (!e.frame) continue;
+    const fr = T.FRAMES[e.frame];
+    assert.ok(fr, `${id}: neznan okvir ${e.frame}`);
+    assert.ok(css.includes(`[data-chat-frame="${e.frame}"]`), `${id}: ui.css nima okvirja ${e.frame}`);
+    const body = fr.body();
+    assert.ok(body.length < 6000 && !/<(?!\/?(path|rect|circle|ellipse)\b)/.test(body) && !/\son\w+=|href|url\(|style=|fill="#|stroke="#/i.test(body), `${id}: okvir samo osnovne oblike`);
+    assert.ok(/^\d+( \d+)?$/.test(fr.slice) && fr.w.length === 4 && fr.w.every((x) => x >= 12 && x <= 36), `${id}: rez in širine okvirja`);
+    for (const mode of ["light", "dark"]) {
+      const c = T.compute({ style: id, mode, accent: null, light: null, dark: null });
+      assert.match(c.vars["--frame-img"], /^url\("data:image\/svg\+xml,/, `${id} ${mode}: --frame-img`);
+      assert.ok(!/%22[SFA]%22/.test(c.vars["--frame-img"]), `${id} ${mode}: vse barve okvirja zamenjane`);
+    }
+  }
+  assert.equal(T.compute({ style: "antik", mode: "light", accent: null, light: null, dark: null }).vars["--frame-img"], undefined, "Antični brez okvirja (stebri)");
+});

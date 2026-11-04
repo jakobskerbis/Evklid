@@ -55,6 +55,8 @@
   //     F = polnilo): cap (kapitel), shaft (ploščica debla, ponavlja se navpično), base (baza); theme.js jih obarva za
   //     ozadje (--arch-*) in za meni (--arch-*-m). temple: pročelje ob pozdravu praznega klepeta (pediment, entablature,
   //     column = [kapitel, deblo, baza], stylobate), glej temple() spodaj.
+  //   frame (neobvezno, za slog brez chat.frame): okvir pozdrava praznega klepeta iz obdobja (ime iz FRAMES spodaj,
+  //     data-chat-frame); stebri so samo za Antični (j, 4. 11.: »drugim temam izberi nekaj primernega iz njihovega obdobja«).
   const ERAS = {
     antik: {
       light: { bg: "#f5f0e8", surface: "#fffcf7", menu: "#efe2d2", text: "#241c15", accent: "#973f1c", bar: "#f6ece0", banner: "#f6e2d1", paper: "#f4e6cb", wood: "#8a5b36" },
@@ -84,6 +86,7 @@
       font: ["EB Garamond Variable", "eb-garamond"], hero: 14, band: ["prepletanje", 16, 8], edge: 1.25, glyph: "ikona",
       motifs: ["sestilo", "armila", "vitruvij", "spirala", "kodeks", "perspektiva", "daljnogled", "poliedr"],
       facts: ["era.renesansa", 6], icons: "ikone",
+      frame: "okvir-slike",
     },
     bagdad: {
       light: { bg: "#edf2f0", surface: "#fbfdfc", menu: "#123a43", menuAccent: "#e2b24f", text: "#10272b", accent: "#0f5f68", band: "#b88a2e", bar: "#e4efeb", banner: "#f6edcf" },
@@ -91,6 +94,7 @@
       font: ["El Messiri Variable", "el-messiri"], hero: 22, band: ["zvezde", 12, 10], edge: 1.2, glyph: "ikona",
       motifs: ["astrolab", "zvezda", "ozvezdje", "lok", "rozeta", "kvadrant", "rokopis", "abak"],
       facts: ["era.bagdad", 6], icons: "ikone",
+      frame: "rokopis",
     },
     indija: {
       light: { bg: "#fbf1e1", surface: "#fffbf4", menu: "#262d6b", menuAccent: "#f2a64a", text: "#231a2c", accent: "#33408f", band: "#d9822b", bar: "#f9ecd6", banner: "#fbe3c0" },
@@ -98,9 +102,37 @@
       font: ["Eczar Variable", "eczar"], hero: 14, band: ["lotosi", 12, 10], edge: 1.5, glyph: "ikona",
       motifs: ["lotos", "sunja", "kolo", "steber", "stopnice", "palmov-list", "pav", "rangoli"],
       facts: ["era.indija", 6], icons: "ikone",
+      frame: "palmov-list",
     },
   };
   const STYLES = ["cist", "igriv", "temen", ...Object.keys(ERAS)];
+  // Okvirji pozdrava (ERAS[…].frame, ui.css → »Okvir obdobja«): 9-rezni SVG 96 × 96 za border-image, rez 24 (koti
+  // 0–24 in 72–96), na sredini okraski s periodo 8, da se ponavljajo brez šiva. S = črta, F = svetlo polnilo,
+  // A = odtenek (tint: pas obdobja ali poudarek). w = širina roba v px [zgoraj, desno, spodaj, levo] (na telefonu × 0,75).
+  const STEP = [20, 28, 36, 44, 52, 60, 68, 76];
+  const FRAMES = {
+    // Renesansa: pozlačen okvir slike (cassetta): zunanja letev, pas z jajčnim nizom, rozete v kotih, notranji biser.
+    "okvir-slike": { tint: "band", slice: "24", w: [30, 30, 30, 30], rep: "round", body() {
+      const egg = (x, y, v) => `<ellipse fill="A" cx="${x}" cy="${y}" rx="${v ? 2.6 : 3.3}" ry="${v ? 3.3 : 2.6}"/>`;
+      const ros = (x, y) => `<rect fill="F" x="${x - 8}" y="${y - 8}" width="16" height="16"/>` + [[0, -3.2], [3.2, 0], [0, 3.2], [-3.2, 0]].map(([a, b]) => `<circle fill="A" cx="${x + a}" cy="${y + b}" r="2.9"/>`).join("") + `<circle fill="S" stroke="none" cx="${x}" cy="${y}" r="1.5"/>`;
+      return '<path fill="F" fill-rule="evenodd" d="M3 3h90v90H3zM17 17v62h62V17z"/><path d="M1 1h94v94H1zM3 3h90v90H3zM17 17h62v62H17z"/><path stroke-opacity=".6" d="M20.5 20.5h55v55h-55z"/>' +
+        STEP.map((p) => egg(p, 10, 1) + egg(p, 86, 1) + egg(10, p, 0) + egg(86, p, 0)).join("") + ros(10, 10) + ros(86, 10) + ros(10, 86) + ros(86, 86);
+    } },
+    // Hiša modrosti: rob rokopisa: dvojne zlate črte, pas v poudarku z verigo osemkrakih zvezd, večja zvezda v kotih.
+    rokopis: { tint: "accent", slice: "24", w: [30, 30, 30, 30], rep: "round", body() {
+      const star = (x, y, s) => { const d = +(s * Math.SQRT2).toFixed(2);
+        return `<path fill="F" d="M${x - s} ${y - s}h${2 * s}v${2 * s}h${-2 * s}z"/><path fill="F" d="M${x} ${+(y - d).toFixed(2)}L${+(x + d).toFixed(2)} ${y} ${x} ${+(y + d).toFixed(2)} ${+(x - d).toFixed(2)} ${y}z"/>`; };
+      const big = (x, y) => star(x, y, 5.6) + `<circle fill="S" stroke="none" cx="${x}" cy="${y}" r="2"/>`;
+      return '<path fill="A" fill-rule="evenodd" d="M4 4h88v88H4zM18 18v60h60V18z"/><path d="M1 1h94v94H1zM4 4h88v88H4zM18 18h60v60H18z"/><path stroke-opacity=".55" d="M21 21h54v54H21z"/>' +
+        STEP.map((p) => star(p, 11, 2.8) + star(p, 85, 2.8) + star(11, p, 2.8) + star(85, p, 2.8)).join("") + big(11, 11) + big(85, 11) + big(11, 85) + big(85, 85);
+    } },
+    // Indija: list palmovega rokopisa (zaobljen rob) med lesenima deskama z vrsto lotosovih listov; ob strani le rob lista.
+    "palmov-list": { tint: "band", slice: "24 16", w: [30, 20, 30, 20], rep: "round stretch", body() {
+      const petal = (x, y) => `<path fill="F" d="M${x} ${y + 4.2}c-2.8-1.7-2.8-6.6 0-8.4 2.8 1.8 2.8 6.7 0 8.4z"/>`;
+      return '<rect fill="A" x="1" y="1" width="94" height="18" rx="6"/><rect fill="A" x="1" y="77" width="94" height="18" rx="6"/><path stroke-opacity=".55" d="M6 4.5h84M6 15.5h84M6 80.5h84M6 91.5h84"/>' +
+        [12, ...STEP, 84].map((p) => petal(p, 10) + petal(p, 86)).join("") + '<path d="M4 72V26q0-4 4-4h80q4 0 4 4v46q0 4-4 4H8q-4 0-4-4z"/>';
+    } },
+  };
   // Osnovne barve slogov. Čist je enak privzetim barvam v style.css (brez izračuna).
   const BASES = {
     cist: {
@@ -325,12 +357,25 @@
       paint(bg, "");
       paint(vars["--menu"] || menu, "-m");
     }
+    // Okvir pozdrava obdobja (ERAS[…].frame): v barvi pasu na ozadju klepeta, malo potopljen (okras, ne vsebina).
+    const fr = era && FRAMES[era.frame];
+    if (fr) {
+      const S = mix(bg, vars["--edge-c"], dark ? 0.72 : 0.66);
+      const F = mix(bg, dark ? text : "#ffffff", dark ? 0.06 : 0.6);
+      const A = mix(bg, fr.tint === "band" && base.band && !s.accent ? base.band : accent, dark ? 0.3 : 0.24);
+      vars["--frame-img"] = frameUrl(fr.body(), S, F, A);
+    }
     return { vars, dark, menu, text, bg, surface, accent, motifBg, chrome, menuMotif, paperBg, era: !!era };
   }
 
   // Del stebra kot slika: preserveAspectRatio="none" in črta, ki se ne razteguje.
   function archUrl([w, h, body], S, F) {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" fill="none" stroke="${S}" stroke-width="1" stroke-linejoin="round"><style>*{vector-effect:non-scaling-stroke}</style>${body.replace(/"S"/g, `"${S}"`).replace(/"F"/g, `"${F}"`)}</svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  }
+  // Okvir obdobja kot slika za border-image (širina in višina, da rez 24 pomeni koordinate risbe).
+  function frameUrl(body, S, F, A) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none" stroke="${S}" stroke-width="1.2" stroke-linejoin="round">${body.replace(/"S"/g, `"${S}"`).replace(/"F"/g, `"${F}"`).replace(/"A"/g, `"${A}"`)}</svg>`;
     return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
   }
   // Pročelje (ERAS[…].arch.temple) okrog pozdrava praznega klepeta (app.js, ui.css → »Klepet obdobja«): deli kot
@@ -350,8 +395,8 @@
     };
   }
   const ARCH_VARS = ["cap", "shaft", "base"].flatMap((k) => [`--arch-${k}`, `--arch-${k}-m`]);
-  const ALL_VARS = [...ARCH_VARS, "--paper", "--paper-2", "--paper-fibre", "--wood", "--bg", "--surface", "--text", "--muted", "--surface-2", "--border", "--accent", "--accent-2", "--accent-grad", "--accent-soft", "--accent-text", "--hero-a", "--hero-b", "--user-bubble", "--user-text", "--menu", "--menu-text", "--menu-muted", "--menu-2", "--menu-border", "--menu-accent", "--menu-accent-soft", "--menu-accent-text", "--band-c", "--edge-c", "--bar", "--banner"];
-  const ERA_VARS = ["--era-font", "--band", "--band-w", "--band-h", "--edge-w", "--edge-h", "--glyph", "--tapeta"];
+  const ALL_VARS = [...ARCH_VARS, "--frame-img", "--paper", "--paper-2", "--paper-fibre", "--wood", "--bg", "--surface", "--text", "--muted", "--surface-2", "--border", "--accent", "--accent-2", "--accent-grad", "--accent-soft", "--accent-text", "--hero-a", "--hero-b", "--user-bubble", "--user-text", "--menu", "--menu-text", "--menu-muted", "--menu-2", "--menu-border", "--menu-accent", "--menu-accent-soft", "--menu-accent-text", "--band-c", "--edge-c", "--bar", "--banner"];
+  const ERA_VARS = ["--frame-slice", "--frame-w", "--frame-ws", "--frame-rep", "--era-font", "--band", "--band-w", "--band-h", "--edge-w", "--edge-h", "--glyph", "--tapeta"];
   const CHAT_ATTRS = { tutor: "data-tutor-surface", user: "data-user-shape", frame: "data-chat-frame", composer: "data-composer", arch: "data-arch" };
   const eraUrl = (id, f) => `url("/eras/${id}/${f}.svg")`;
   // Pisava sloga (/vendor/<paket>/index.css) se doda le enkrat; brskalnik prenese datoteke šele, ko jih rabi.
@@ -379,7 +424,7 @@
     for (const v of ERA_VARS) root.style.removeProperty(v);
     // Klepet obdobja in stebri: atributi, po katerih ui.css izbere videz (brez njih ostane klepet kot v Čistem).
     for (const [k, attr] of Object.entries(CHAT_ATTRS)) {
-      const v = k === "arch" ? era && era.arch && id : era && era.chat && era.chat[k];
+      const v = k === "arch" ? era && era.arch && id : (era && era.chat && era.chat[k]) || (k === "frame" && era && FRAMES[era.frame] && era.frame);
       if (v) root.setAttribute(attr, v); else root.removeAttribute(attr);
     }
     if (era) {
@@ -395,6 +440,13 @@
       root.style.setProperty("--edge-h", era.band[2] * (era.edge || 1) + "px");
       root.style.setProperty("--glyph", eraUrl(id, era.glyph));
       root.style.setProperty("--tapeta", eraUrl(id, "tapeta"));
+      const fr = FRAMES[era.frame];
+      if (fr) {
+        root.style.setProperty("--frame-slice", fr.slice);
+        root.style.setProperty("--frame-w", fr.w.map((x) => x + "px").join(" "));
+        root.style.setProperty("--frame-ws", fr.w.map((x) => Math.round(x * 0.75) + "px").join(" "));
+        root.style.setProperty("--frame-rep", fr.rep);
+      }
     } else root.removeAttribute("data-era");
     // Menjava sloga brez ponovnega nalaganja: icons.js zamenja ikone.
     if (prev !== (era ? id : "")) window.dispatchEvent(new CustomEvent("evklid:era", { detail: era ? id : "" }));
@@ -480,7 +532,7 @@
     return pairs.every(([a, b, m]) => contrast(a, b) >= m - 0.01);
   }
 
-  window.STEMTheme = { load, save, apply, compute, check, contrast, randomAccent, randomPalette, isDarkMode, BASE, BASES, STYLES, ERAS, baseOf, MIN, MOTIF, PAPER, readable, loadFont, iconSet, temple };
+  window.STEMTheme = { load, save, apply, compute, check, contrast, randomAccent, randomPalette, isDarkMode, BASE, BASES, STYLES, ERAS, baseOf, MIN, MOTIF, PAPER, readable, loadFont, iconSet, temple, FRAMES };
   apply();
   mq.addEventListener?.("change", () => apply());
 })();

@@ -560,6 +560,29 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   :root[data-chat-frame="stebri"] .idea:is(:hover, :focus-visible)::after { opacity: 1; }
   :root[data-chat-frame="stebri"] .idea:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
 
+  /* Okvir obdobja (ERAS[…].frame, risba iz theme.js FRAMES kot --frame-img): pozdrav praznega klepeta v okvirju iz
+     obdobja, ne v templju (stebri so samo za Antični, j 2026-11-04): Renesansa pozlačen okvir slike, Hiša modrosti rob
+     rokopisa z osemkrakimi zvezdami, Indija list palmovega rokopisa med lesenima deskama. Na ozkem tanjši rob. */
+  :root:is([data-chat-frame="okvir-slike"], [data-chat-frame="rokopis"], [data-chat-frame="palmov-list"]):not(.lite) .empty-hall {
+    display: flex; flex-direction: column; align-items: center; box-sizing: border-box; width: 100%; padding: 14px 16px 18px;
+    border-style: solid; border-color: transparent; border-width: var(--frame-w);
+    border-image: var(--frame-img) var(--frame-slice) / var(--frame-w) var(--frame-rep);
+  }
+  :root:is([data-chat-frame="okvir-slike"], [data-chat-frame="rokopis"], [data-chat-frame="palmov-list"]):not(.lite) .empty-hall > .ideas { margin-top: 14px; }
+  :root:is([data-chat-frame="okvir-slike"], [data-chat-frame="rokopis"], [data-chat-frame="palmov-list"]):not(.lite) .empty:has(.empty-hall) { width: min(100%, 560px); max-width: none; }
+  /* Široko (vsebnik ≥ 640 px): predlogi v vrsti kot ploščice, da je ves okvir viden brez drsenja (1280 × 800). */
+  :root:is([data-chat-frame="okvir-slike"], [data-chat-frame="rokopis"], [data-chat-frame="palmov-list"]):not(.lite) .messages:has(.empty-hall) { container: okvir / inline-size; }
+  @container okvir (min-width: 640px) {
+    :root:is([data-chat-frame="okvir-slike"], [data-chat-frame="rokopis"], [data-chat-frame="palmov-list"]):not(.lite) .empty:has(.empty-hall) { width: min(100%, 720px); }
+    :root:is([data-chat-frame="okvir-slike"], [data-chat-frame="rokopis"], [data-chat-frame="palmov-list"]):not(.lite) .empty-hall .ideas { flex-flow: row wrap; justify-content: center; gap: 8px; }
+    :root:is([data-chat-frame="okvir-slike"], [data-chat-frame="rokopis"], [data-chat-frame="palmov-list"]):not(.lite) .empty-hall .idea { flex: 1 1 auto; text-align: center; }
+  }
+  @container okvir (max-width: 539.98px) {
+    :root:is([data-chat-frame="okvir-slike"], [data-chat-frame="rokopis"], [data-chat-frame="palmov-list"]):not(.lite) .empty-hall {
+      padding: 10px 8px 12px; border-width: var(--frame-ws); border-image-width: var(--frame-ws);
+    }
+  }
+
   /* Voščena tablica: polje ostane čisto (--surface), okvir iz lesa (--wood, 3:1) z notranjo svetlejšo letvico. */
   :root[data-composer="vosek"] .composer-row {
     border: 3px solid var(--wood); border-radius: 9px;
