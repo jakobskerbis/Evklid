@@ -105,3 +105,29 @@ test("šolska licenca: učenec z mestom v dveh šolah šteje samo v šolo, ki mu
   assert.equal(src.forStudent(ana)[0].ai_spent_usd, 3, "šola 7: Ana + Bor");
   assert.equal(src.forStudent(cene)[0].ai_spent_usd, 4, "šola 8: samo Cene, Bor ne šteje dvakrat");
 });
+
+test("šolska licenca (pravi vir, server/schools.js): učenec v razredih dveh šol šteje samo v prvo, ki mu da mesto", () => {
+  const store = openDb(":memory:");
+  createApp(store, { accounts: false, scheduler: false, log: { error() {} } }); // ustvari šolske tabele
+  const { db } = store;
+  const [ana, bor, cene] = ["Ana", "Bor", "Cene"].map((n) => store.createStudent(n, {}).id);
+  const spend = db.prepare("INSERT INTO usage (student_id, model, cost_usd) VALUES (?, 'm', ?)");
+  spend.run(ana, 1);
+  spend.run(bor, 2);
+  spend.run(cene, 4);
+  const school = (n, members) => {
+    const sid = Number(db.prepare("INSERT INTO schools (name, invite_code) VALUES (?, ?)").run(`Šola ${n}`, `INV${n}`).lastInsertRowid);
+    db.prepare("INSERT INTO school_licences (school_id, plan, seats, valid_from, valid_until) VALUES (?, 'class', 30, '2026-01-01', '2099-01-01')").run(sid);
+    const cid = Number(db.prepare("INSERT INTO classes (code, name, kind, school_id) VALUES (?, ?, 'class', ?)").run(`C${n}`, `${n}.a`, sid).lastInsertRowid);
+    for (const id of members) db.prepare("INSERT INTO class_members (class_id, student_id) VALUES (?, ?)").run(cid, id);
+    return sid;
+  };
+  const a = school(1, [ana, bor]);
+  const b = school(2, [bor, cene]);
+  const src = createSchoolSource(db);
+  src.clearCache();
+  assert.equal(src.forStudent(ana)[0].school_id, a);
+  assert.equal(src.forStudent(ana)[0].ai_spent_usd, 3, "šola 1: Ana + Bor");
+  assert.equal(src.forStudent(cene)[0].school_id, b);
+  assert.equal(src.forStudent(cene)[0].ai_spent_usd, 4, "šola 2: samo Cene");
+});

@@ -170,6 +170,8 @@ test("free tier limits tutor questions; subscription via webhook lifts it", asyn
       // Otrok, mlajši od 15 let: brez ponudbe nakupa (server/placila/ponudbe.js).
       assert.equal(blocked.body.upgrade, false);
       assert.doesNotMatch(blocked.body.error, /naročnin/);
+      assert.equal(blocked.body.code, "block.freeDaily");
+      assert.equal(blocked.body.hint, undefined);
 
       // Plačilo: checkout s pravilno ceno.
       const co = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "year", adult: true, withdrawal: true } });
@@ -272,11 +274,13 @@ test("free tier stops at the monthly AI budget (all free students and per studen
       const pool = await ask("drugo");
       assert.equal(pool.status, 429);
       assert.match(pool.body.error, /za vse porabljena/);
+      assert.equal(pool.body.code, "block.freePool");
       process.env.EVKLID_FREE_POOL_USD = "0";
       process.env.EVKLID_FREE_STUDENT_USD = "0.5";
       const per = await ask("tretje");
       assert.equal(per.status, 429);
       assert.match(per.body.error, /Ta mesec si porabil/);
+      assert.equal(per.body.code, "block.freeMonth");
       process.env.EVKLID_FREE_STUDENT_USD = "0";
       assert.equal((await ask("četrto")).status, 200);
     });
@@ -1016,6 +1020,8 @@ test("guest: clearing cookies or deleting the profile does not give a new free a
       const blocked = await ask(a, conv, "3");
       assert.equal(blocked.status, 429);
       assert.match(blocked.body.error, /ustvari račun/);
+      assert.equal(blocked.body.code, "block.freeDaily");
+      assert.equal(blocked.body.hint, "block.hintGuest");
 
       // Nov gost z istega omrežja (izbrisani piškotki) deli isto kvoto.
       const b = client();
@@ -1063,6 +1069,8 @@ test("guest: monthly AI spend counts for the whole network, also after deletion"
       const r = await b(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: "x" } });
       assert.equal(r.status, 429);
       assert.match(r.body.error, /Ta mesec si porabil/);
+      assert.equal(r.body.code, "block.freeMonth");
+      assert.equal(r.body.hint, "block.hintGuest");
     });
   } finally {
     delete process.env.EVKLID_FREE_STUDENT_USD;

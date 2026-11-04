@@ -3362,6 +3362,6 @@
   "block.freeDaily": "Pertanyaan gratis untuk tutor hari ini sudah habis ({n} per hari). Besok kamu mendapatkannya lagi. Sampai saat itu, kamu bisa berlatih tanpa batas di Latihan.",
   "block.freeMonth": "Bulan ini kamu sudah memakai pertanyaan gratis untuk tutor. Latihan dan pelajaran tetap berjalan tanpa batas.",
   "block.freePool": "Bulan ini pertanyaan gratis untuk tutor sudah habis untuk semua orang. Latihan dan pelajaran tetap berjalan tanpa batas.",
-  "block.hintGuest": "Untuk pertanyaan lebih banyak, buat akun di tab Akun.",
-  "block.hintParent": "Untuk pertanyaan lebih banyak, minta orang tuamu memilih langganan di tab Akun."
+  "block.hintGuest": "Untuk mendapatkan lebih banyak pertanyaan, buat akun di tab Akun.",
+  "block.hintParent": "Untuk mendapatkan lebih banyak pertanyaan, minta orang tuamu memilih langganan di tab Akun."
 }
