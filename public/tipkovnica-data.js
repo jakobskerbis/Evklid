@@ -5,13 +5,16 @@ import { LANGUAGES } from "./i18n/languages.js";
 
 // ---------- razporeditve črk ----------
 // rows: tri vrstice črk; caseless: pisava brez velikih črk (brez ⇧); rtl: od desne proti levi;
-// globe: tipka 🌐 da temu polju telefonovo tipkovnico (jeziki, ki pišejo z načinom za znake).
+// globe: tipka 🌐 da temu polju telefonovo tipkovnico (jeziki, ki pišejo z načinom za znake);
+// hints: samo te črke imajo namig različice v kotu (sicer vse z različicami; zgornja vrsta ima vedno številko).
 const QWERTY = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
 const QWERTZ = ["qwertzuiop", "asdfghjkl", "yxcvbnm"];
 const split = (rows) => rows.map((r) => [...r]);
 
 export const LAYOUTS = {
-  sl: { rows: split(["qwertzuiopš", "asdfghjklčž", "yxcvbnm"]) },
+  // slovenščina kot Gboard na telefonu (j, 4. 11.): QWERTY, č š ž z dolgim pritiskom na c s z
+  sl: { rows: split(QWERTY), hints: "csz" },
+  hr: { rows: split(["qwertzuiopš", "asdfghjklčž", "yxcvbnm"]) },
   de: { rows: split(["qwertzuiopü", "asdfghjklöä", "yxcvbnmß"]) },
   qwertz: { rows: split(QWERTZ) },
   qwerty: { rows: split(QWERTY) },
@@ -35,6 +38,7 @@ const LATIN_VARIANTS = {
 const PUNCT = { ".": ["?", "!", "…", ":"], ",": [";", "'", '"', "-"] };
 export const VARIANTS = {
   sl: { c: ["č", "ć"], s: ["š"], z: ["ž"], d: ["đ"], e: ["é", "è", "ê", "ë"], a: ["á", "à", "â", "ä"], o: ["ó", "ô", "ö"], u: ["ú", "ü"], i: ["í", "î"], n: ["ñ"], ...PUNCT },
+  hr: { c: ["č", "ć"], s: ["š"], z: ["ž"], d: ["đ"], e: ["é", "è", "ê", "ë"], a: ["á", "à", "â", "ä"], o: ["ó", "ô", "ö"], u: ["ú", "ü"], i: ["í", "î"], n: ["ñ"], ...PUNCT },
   de: { a: ["á", "à", "â"], o: ["ó", "ò", "ô"], u: ["ú", "ù", "û"], e: ["é", "è", "ê", "ë"], s: ["ś", "š"], c: ["ç", "č"], n: ["ñ"], ...PUNCT },
   latin: { ...LATIN_VARIANTS, ...PUNCT },
   ru: { "е": ["ё"], "ь": ["ъ"], ...PUNCT },
@@ -48,7 +52,7 @@ export const VARIANTS = {
 };
 
 const LANG_LAYOUT = {
-  sl: "sl", hr: "sl", bs: "sl", "sr-Latn": "sl",
+  sl: "sl", hr: "hr", bs: "hr", "sr-Latn": "hr",
   de: "de", gsw: "de", bar: "de", nds: "de", lb: "de",
   cs: "qwertz", sk: "qwertz", hu: "qwertz",
   ru: "ru", bg: "ru", uk: "uk", be: "be", sr: "sr", mk: "mk", el: "el",
@@ -58,7 +62,7 @@ const LANG_LAYOUT = {
 const IME_LATIN = new Set(["vi"]);
 const NATIVE = new Map(LANGUAGES.map(([code, native]) => [code, native]));
 
-/** Razporeditev ABC za jezik aplikacije: { id, rows, variants, caseless, rtl, globe, comma }. */
+/** Razporeditev ABC za jezik aplikacije: { id, rows, variants, hints, caseless, rtl, globe, comma }. */
 export function layoutFor(lang = "sl") {
   let id = LANG_LAYOUT[lang];
   if (!id) {
@@ -75,7 +79,7 @@ export function layoutFor(lang = "sl") {
   }
   const L = LAYOUTS[id];
   const variants = VARIANTS[id] || (id === "ime" || id === "qwerty" || id === "qwertz" ? VARIANTS.latin : PUNCT);
-  return { id, rows: L.rows, variants, caseless: !!L.caseless, rtl: !!L.rtl, globe: !!L.globe, comma: L.rtl ? "،" : "," };
+  return { id, rows: L.rows, variants, hints: L.hints || null, caseless: !!L.caseless, rtl: !!L.rtl, globe: !!L.globe, comma: L.rtl ? "،" : "," };
 }
 
 // ---------- matematika: f(x) po skupinah ----------
