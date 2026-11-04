@@ -1145,7 +1145,7 @@ export function initKeyboard() {
       if (!autoEligible(f)) return;
       prepare(f);
       // Fokus iz dotika (oznaka, vrstica kalkulatorja, ki odpre urejanje), ne iz kode ali gumba.
-      if (Date.now() - lastTap.t < 600 && !lastTap.el?.closest?.("button, a, [role='button'], select")) openKeyboard(f);
+      if (Date.now() - lastTap.t < 600 && !lastTap.el?.closest?.("button, a, [role='button'], [role='option'], select")) openKeyboard(f);
       return;
     }
     if (f === S.field) return;

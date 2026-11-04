@@ -23,7 +23,7 @@ import { loadLeague } from "./leagues.js";
 import { PACES, DEFAULT_PACE, createPacer } from "./pace.js";
 import { createRenderer, streamSafe } from "./rich.js";
 import { loadPrograms, programsCache, subjectOptions, schoolSubjectsFor, SUBJECT_NAMES } from "./programs.js";
-import { mountLevelPicker, levelLabel, schoolSystemOptions } from "./level-picker.js";
+import { mountLevelPicker, levelLabel, levelChoices, schoolSystemOptions } from "./level-picker.js";
 import { attachMic } from "./speech.js";
 import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
 import { TUTOR_CHIPS } from "./tipkovnica-data.js";
@@ -749,10 +749,24 @@ function renderState(convState) {
   const subject = convState?.subject || s.subject;
   const mode = convState?.mode || s.solving_mode;
   const program = isUni(s) ? programsCache().find((p) => p.id === s.study_program)?.label : null;
-  $("#chat-state").innerHTML = [SUBJECT_NAMES[subject], MODE_NAMES[mode], program, levelLabel(s.curriculum_level)]
+  // Predmet, način in letnik se zamenjajo kar v glavi (izbirni seznam), program je le napis.
+  const pick = (key, label, options) =>
+    `<span class="chip chip-pick"><select data-pick="${key}" aria-label="${escapeHtml(label)}">${options}</select></span>`;
+  const opt = (value, label, current) => `<option value="${escapeHtml(value)}"${current ? " selected" : ""}>${escapeHtml(label)}</option>`;
+  const levels = levelChoices(s);
+  const head = $("#chat-state");
+  head.innerHTML = [
+    SUBJECT_NAMES[subject] && pick("subject", t("set.subject"), opt(subject, SUBJECT_NAMES[subject], true)),
+    MODE_NAMES[mode] && pick("mode", t("set.mode"), Object.entries(MODE_NAMES).map(([k, v]) => opt(k, v, k === mode)).join("")),
+    program && `<span class="chip">${escapeHtml(program)}</span>`,
+    levelLabel(s.curriculum_level) &&
+      (levels.length > 1
+        ? pick("level", t("set.school"), levels.map((x, i) => opt(i, x.label, x.current)).join(""))
+        : `<span class="chip">${escapeHtml(levelLabel(s.curriculum_level))}</span>`),
+  ]
     .filter(Boolean)
-    .map((t) => `<span class="chip">${escapeHtml(t)}</span>`)
     .join("");
+  wireStatePicks(head, subject, levels);
   // Pogovor o temi učne poti: povezava na lekcijo v učbeniku.
   const topicId = state.conversationId && state.convTopic;
   if (topicId) {
@@ -763,6 +777,45 @@ function renderState(convState) {
     b.addEventListener("click", () => openLesson(topicId));
     $("#chat-state").prepend(b); // prvi tudi za tipko Tab, ne le na zaslonu
   }
+}
+
+async function wireStatePicks(head, subject, levels) {
+  const save = async (settings, what, label) => {
+    const updated = await api(`/api/students/${state.student.id}`, { method: "PUT", body: { settings } });
+    studentUpdated(updated);
+    toast(`${what}: ${label}`, "check");
+  };
+  head.querySelector('[data-pick="mode"]')?.addEventListener("change", (e) =>
+    save({ solving_mode: e.target.value }, t("set.mode"), MODE_NAMES[e.target.value]).catch(() => renderState(null)),
+  );
+  head.querySelector('[data-pick="level"]')?.addEventListener("change", (e) => {
+    const next = { ...levels[Number(e.target.value)].settings };
+    // Predmet, ki ga novi razred nima (npr. fizika v 7. razredu), zamenja prvi predmet razreda.
+    if (!jeFaks(next)) {
+      const list = schoolSubjectsFor(next.educational_track, next.curriculum_level, isRegional(next.school_system));
+      if (list.length && !list.includes(state.student.settings.subject)) next.subject = list.includes("NAR") && ["FIZ", "KEM", "BIO"].includes(state.student.settings.subject) ? "NAR" : list[0];
+    } else next.study_course = "";
+    save(next, t("set.school"), levels[Number(e.target.value)].label).catch(() => renderState(null));
+  });
+  const sel = head.querySelector('[data-pick="subject"]');
+  if (!sel) return;
+  const groups = await subjectChoices().catch(() => []);
+  if (!sel.isConnected || !groups.length) return;
+  const items = groups.flatMap((g) => g.items);
+  const isCur = (it) => (isUni(state.student.settings) ? it.current : it.id === subject);
+  let i = 0;
+  sel.innerHTML = groups
+    .map((g) => {
+      const o = g.items.map((it) => `<option value="${i++}"${isCur(it) ? " selected" : ""}>${escapeHtml(it.label)}</option>`).join("");
+      return g.label && groups.length > 1 ? `<optgroup label="${escapeHtml(g.label)}">${o}</optgroup>` : o;
+    })
+    .join("");
+  // Predmet pogovora ni na seznamu: ostane prikazan, izbira drugega ga zamenja.
+  if (!items.some(isCur)) sel.insertAdjacentHTML("afterbegin", `<option value="" selected>${escapeHtml(SUBJECT_NAMES[subject] || subject)}</option>`);
+  sel.addEventListener("change", () => {
+    const it = sel.value === "" ? null : items[Number(sel.value)];
+    if (it) pickSubject(it).catch(() => renderState(null));
+  });
 }
 
 // Formule v odgovorih inštruktorja: črke s pomenom iz predmeta pogovora in, pri pogovoru o temi

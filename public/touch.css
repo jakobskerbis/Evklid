@@ -89,6 +89,7 @@
   }
   .chat-head #chat-state::-webkit-scrollbar { display: none; }
   .chat-head #chat-state .chip { display: inline-flex; max-width: none; overflow: visible; }
+  .chat-head #chat-state .chip-pick .dd-btn { min-height: 40px; } /* dovolj velik za prst */
   .chat-head #chat-state .chip-btn { min-height: 40px; padding-inline: 12px !important; order: -1; } /* »Preberi lekcijo« prvi, vedno viden */
   .chat-head #chat-state:empty, .chat-view:has(.sidebar.open) #chat-state { display: none; }
   .messages { padding-inline: 16px; }

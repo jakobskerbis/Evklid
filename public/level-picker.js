@@ -4,6 +4,7 @@
 // curriculum_level), zato jo obrazci berejo kot prej.
 
 import { t } from "./i18n.js";
+import { imaStopnjo, jeOs, jeSs, jeFaks } from "./stopnja.js";
 import { SCHOOL_SYSTEMS, isRegional, gradesOf, gradeInfo, trackForLevel } from "./regions.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -193,4 +194,26 @@ export function levelLabel(level) {
   const m = /^(\d+)\. (razred|letnik)(.*)$/.exec(String(level || ""));
   if (!m) return String(level || "");
   return t(m[2] === "razred" ? "lp.grade" : "path.year", { n: m[1] }) + m[3];
+}
+
+/**
+ * Razredi ali letniki iste šole za hitro menjavo (glava Inštruktorja): [{ settings, label, current }].
+ * Ostane ista vrsta šole, program in raven matematike (SŠ); regijski sistem: razredi iste stopnje.
+ */
+export function levelChoices(s = {}) {
+  const level = String(s.curriculum_level || "");
+  if (isRegional(s.school_system)) {
+    const g = gradeInfo(s.school_system, level);
+    const stage = SCHOOL_SYSTEMS[s.school_system].stages.find(([name]) => name === g?.stage);
+    return (stage?.[1] || []).map(([label]) => ({ settings: regionToSettings({ sys: s.school_system, grade: label }), label, current: label === g?.label })).filter((x) => x.settings);
+  }
+  const make = (curriculum_level) => ({ settings: { educational_track: s.educational_track, study_program: s.study_program || "", curriculum_level }, label: levelLabel(curriculum_level), current: curriculum_level === level });
+  if (!imaStopnjo(s)) return [];
+  if (jeOs(s)) return OS_GRADES.map(make);
+  if (jeSs(s)) {
+    const rest = level.replace(/^\d+\. letnik/, ""); // » OR« / » VR«
+    return SS_YEARS.map((y) => make(y + rest));
+  }
+  if (jeFaks(s)) return UNI_YEARS.map(make);
+  return [];
 }
