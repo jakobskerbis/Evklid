@@ -384,7 +384,15 @@ document.addEventListener("click", (e) => {
 });
 
 // Formula in rešitev v rešenem primeru sta skriti za gumbom, da učenec najprej poskusi sam.
+// Kadar je vsaka črka formule klikljiva s pomenom iz lekcije (:::simboli), okna »Pokaži formulo«
+// ni (j, 1. 11. 2026): formula je razložena že v rešitvi. V PDF-ju ostane.
 function wireFormulas(root) {
+  root.querySelectorAll("details.tb-formula").forEach((d) => {
+    const fx = [...d.querySelectorAll("[data-fx]")].map((el) => decodeURIComponent(el.dataset.fx.replace(/\./g, "%")).split(":"));
+    const syms = fx.filter(([kind]) => kind !== "u");
+    if (!syms.length || syms.some(([, subj]) => subj?.[0] !== "@")) return;
+    if (![...d.querySelectorAll(".katex-html .mathnormal")].some((x) => !x.closest("[data-fx]"))) d.remove();
+  });
   root.querySelectorAll("details.tb-formula").forEach((d) =>
     d.addEventListener("toggle", () => {
       d.querySelector("summary").textContent = d.open ? "Skrij formulo" : "Pokaži formulo";

@@ -22,7 +22,7 @@ import { visitCounter, mountPilot } from "./pilot.js";
 import { mountSolePage, mountSchoolOrders } from "./sole.js";
 import { getTopic, getPath, listPaths, pathKeyFor, pathLabelFor, learningPathPrompt, listPrograms, listProgramPaths, localTopic } from "./curriculum.js";
 import { uiLanguage } from "../public/i18n/languages.js";
-import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheet } from "./textbook.js";
+import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummaryForPrompt, lessonExplanation, explanationFor, formulaSheetSections, lessonSymbols } from "./textbook.js";
 import { printPage } from "./textbook-print.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
@@ -823,7 +823,8 @@ export function createApp(store, opts = {}) {
     // lang: jezik vmesnika (indijski izpiti imajo imena tem tudi v hindijščini).
     const lang = String(req.query.lang || "");
     const topic = localizeExamTopic({ ...localTopic(t, uiLanguage(lang)), pathLabel: getPath(t.path).label }, taskLanguage(lang));
-    res.json({ ...topic, explanation: explanationFor(t.id) || lessonExplanation(t.id) });
+    // symbols: oznake lekcije, da so črke v razlagi in »Bistvu« klikljive s pomenom iz lekcije.
+    res.json({ ...topic, subject: t.subject, explanation: explanationFor(t.id) || lessonExplanation(t.id), symbols: lessonSymbols(t.id) });
   });
   // --- učbenik ---
   const systemOf = (req) => String(req.query.system || "SI");
@@ -874,9 +875,9 @@ export function createApp(store, opts = {}) {
   // Formule in konstante predmeta (za orodja ob kalkulatorju), npr. ?book=KEM-OS
   app.get("/api/formulas", (req, res) => {
     const key = String(req.query.book || "");
-    const md = /^[A-Z]{3}-(OS|SS|UNI)$/.test(key) ? formulaSheet(key) : null;
-    if (!md) return res.status(404).json({ error: "Zbirke formul ni." });
-    res.set("Cache-Control", "public, max-age=3600").json({ key, md });
+    const sheet = /^[A-Z]{3}-(OS|SS|UNI)$/.test(key) ? formulaSheetSections(key) : null;
+    if (!sheet) return res.status(404).json({ error: "Zbirke formul ni." });
+    res.set("Cache-Control", "public, max-age=3600").json({ key, md: sheet.md, sections: sheet.sections });
   });
   app.get("/api/textbook/search", (req, res) => {
     const subject = /^[A-Z]{2,6}$/.test(req.query.subject || "") ? req.query.subject : undefined;

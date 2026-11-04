@@ -47,6 +47,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Razloži ob izboru | označeno besedilo lekcije → inštruktor | S | naravno (meni izbora WebView) | ✓ narejeno |
 | Kalkulator | znanstveni, grafični, orodja, PSE (`public/graph/`) | M | WebView `/kalkulator` | ✓ narejeno med vajo; manjka še gumb v lekciji in klepetu |
 | Formule | zbirka formul (način Formule kalkulatorja) | S | dodati način `formulas` na `/kalkulator` (potrebuje `rich.js`, marked) | ✗ |
+| Klikljive črke v formulah | kartica s pomenom črke iz predmeta, razdelka in lekcije (`public/formula-info.js`; lekcije, razlaga teme z »Bistvom«, naloge, odgovori inštruktorja, list s formulami z oznakami razdelkov) | M | v WebView `rich.ts` dodati `formula-data.js` in kartico, oznake teme so v `/api/topic` (`symbols`), oznake lista v `/api/formulas` (`sections`) | ✗ (izbire z logičnimi znaki se izrišejo že zdaj, strežnik nastavi `optionsTex`) |
 | Moji grafi | shranjeni grafi na strežniku | S | `/kalkulator` s sejo aplikacije (žeton v glavi ali enkratna povezava kot `app-link.js`) | ✗ |
 | Zaslonska tipkovnica | matematične plasti, simboli, enote (`public/tipkovnica*.js`) | L | naravno, iz istih podatkov (`tipkovnica-data.js`); v WebView strani že deluje | ✗ |
 | Laboratorij | poskusi in meritve (`public/laboratorij.js`) | L | WebView samostojne strani | ✗ |

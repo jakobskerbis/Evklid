@@ -319,6 +319,22 @@ export function formulaSheet(bookKey) {
   }
 }
 
+// Vsak razdelek lista (## …) ima lahko svoj skrit blok :::simboli: pomen črk v tem razdelku
+// (pri »Številih« je a poljubno število, pri kvadratni enačbi vodilni koeficient). Bloki se ne izpišejo.
+export function formulaSheetSections(bookKey) {
+  const raw = formulaSheet(bookKey);
+  if (!raw) return null;
+  const sections = raw
+    .split(/^(?=## )/m)
+    .map((part) => {
+      const symbols = [];
+      const md = part.replace(SYMBOLS_BLOCK_RE, (_, block) => (symbols.push(...parseSymbolsBlock(block).list), "")).trim();
+      return { md, symbols };
+    })
+    .filter((x) => x.md);
+  return { md: sections.map((x) => x.md).join("\n\n"), sections };
+}
+
 export function getBook(bookKey, system = "SI") {
   if (String(bookKey).startsWith("P-")) return programBook(String(bookKey).slice(2));
   // Regijski učbenik brez podanega sistema (npr. povezava za PDF): vzamemo tipičen sistem učnega načrta.
@@ -420,6 +436,12 @@ export function lessonExplanation(topicId) {
   return [why, sum ? `### Bistvo\n${sum}` : "", "*Celotna lekcija z rešenimi primeri in vprašanji je pod gumbom »Lekcija«.*"]
     .filter(Boolean)
     .join("\n\n");
+}
+
+// Oznake lekcije (:::simboli) za razlago teme in »Bistvo« zunaj učbenika (kartica ob temi, naloge).
+export function lessonSymbols(topicId) {
+  const list = loadLesson(topicId)?.symbols;
+  return list?.length ? list : null;
 }
 
 // Kratek povzetek lekcije za sistemski prompt tutorja (če lekcija obstaja),

@@ -94,6 +94,7 @@ h1 { font-size: 1.55rem; line-height: 1.25; margin: 0 0 8px; font-weight: 800; l
 h2 { font-size: 1.12rem; margin: 0 0 8px; font-weight: 800; }
 .with-icon { display: flex; align-items: center; gap: 8px; }
 .with-icon svg.i { color: var(--accent); }
+.pretest-note { margin: 8px 0 0; font-weight: 600; }
 .eyebrow { font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 a { color: var(--accent); }
 :focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 2px; }
@@ -569,6 +570,8 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .answer-row input:focus { border-color: var(--accent); outline: none; }
 .answer-row button { min-height: 52px !important; }
 .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 16px; }
+.choices.one-col { grid-template-columns: 1fr; }
+.choice .katex { white-space: nowrap; }
 .choice { min-height: 56px; font-size: 1.08rem; font-weight: 700; border: 2px solid var(--border); background: var(--surface); border-radius: var(--radius-sm); box-shadow: 0 var(--press) 0 var(--border); transition: transform 0.08s; }
 .choice:hover { border-color: var(--accent); }
 .choice:active { transform: translateY(calc(var(--press) * 0.66)); box-shadow: 0 calc(var(--press) / 3) 0 var(--border); }

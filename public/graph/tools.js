@@ -525,7 +525,9 @@ export function createPse(root, opts) {
 
 /**
  * Formule in konstante predmeta (content/formulas/*.md prek /api/formulas).
- * opts: { t, icon, api, renderRich, bookKey() }
+ * opts: { t, icon, api, renderRich, withSymbols(subject, fn, glossary), bookKey() }
+ * Vsak razdelek se izriše s predmetom lista in svojimi oznakami (:::simboli v .md), da ima črka
+ * pomen iz tega razdelka (a pri »Številih« poljubno število, ne pospešek iz fizike).
  */
 export function createFormulas(root, opts) {
   const { t } = opts;
@@ -597,21 +599,27 @@ export function createFormulas(root, opts) {
   async function show(b) {
     book = BOOKS.includes(b) ? b : "MAT-OS";
     markActive();
-    if (!(book in cache)) {
+    const key = book;
+    if (!(key in cache)) {
       body.innerHTML = `<p class="muted">${esc(t("common.loading"))}</p>`;
       toc.hidden = true;
       try {
-        cache[book] = (await opts.api(`/api/formulas?book=${book}`)).md;
+        const r = await opts.api(`/api/formulas?book=${key}`);
+        cache[key] = r?.md ? r : null;
       } catch {
-        cache[book] = null;
+        cache[key] = null;
       }
+      if (book !== key) return; // med nalaganjem je učenec izbral drug list
     }
     if (!cache[book]) {
       body.innerHTML = `<div class="card"><p class="muted">${esc(t("sc.formNone"))}</p></div>`;
       toc.hidden = true;
       return;
     }
-    body.replaceChildren(...layout(opts.renderRich(cache[book])).children);
+    const subject = book.split("-")[0];
+    const parts = cache[book].sections || [{ md: cache[book].md, symbols: null }];
+    const html = parts.map((x) => (opts.withSymbols ? opts.withSymbols(subject, () => opts.renderRich(x.md), x.symbols) : opts.renderRich(x.md))).join("");
+    body.replaceChildren(...layout(html).children);
     const secs = [...body.querySelectorAll(".fm-sec[id]")];
     toc.innerHTML = secs.map((x) => `<button type="button" data-sec="${x.id}">${esc(x.querySelector("h2").textContent)}</button>`).join("");
     toc.hidden = secs.length < 2;
