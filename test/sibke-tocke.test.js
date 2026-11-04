@@ -140,6 +140,8 @@ test("weak points API: lesson checks, our papers, games, cards and the progress 
     assert.ok(g.topic_id, "igra ima temo");
     assert.equal(g.n, GAME_MAX);
     assert.equal(g.wrong, 3);
+    // Id igre z imenom lastnosti objekta (LESSONS["constructor"]) ne sme sesuti zapisa.
+    assert.equal((await call(`/api/students/${s.id}/games/result`, { game: "meteor:constructor", score: 1, correct: 1, wrong: 1, tier: 1 })).status, 200);
     r = await call(`/api/students/${s.id}/progress`);
     assert.ok(r.body.topics.some((x) => x.topic_id === g.topic_id && x.sources.game));
     // Izvoz podatkov in izbris profila zajameta nove zapise (ON DELETE CASCADE).

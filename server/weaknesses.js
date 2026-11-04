@@ -145,6 +145,7 @@ export function weaknessesForPrompt(store, student) {
 // Igra (pojem) → tema učne poti za učenca: med temami pojma (najzgodnejša prva) zadnja, ki ni nad
 // učenčevim letom šolanja (year: 1–13, faks 14), sicer prva.
 export function topicForGame(lessonTopics = [], year = 8) {
+  if (!Array.isArray(lessonTopics)) return null; // npr. LESSONS["constructor"] iz id igre »meteor:constructor«
   const yearOf = (id) => {
     const p = getPath(getTopic(id)?.path);
     if (!p) return 99;

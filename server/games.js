@@ -124,7 +124,7 @@ export function mountGames(app, store, { loadStudent, progress, avatars, knowled
     const concept = game.split(":")[1];
     noteGame(db, s.id, concept, correct, wrong, s);
     // Šibke točke iz vseh virov: igra šteje pri temi učne poti, ki uči njen pojem (server/weaknesses.js).
-    const topicId = topicForGame(LESSONS[concept], schoolYear(s.settings));
+    const topicId = topicForGame(Object.hasOwn(LESSONS, concept) ? LESSONS[concept] : [], schoolYear(s.settings));
     if (topicId) recordSkill(db, s.id, { source: "game", topicId, n: correct + wrong, wrong });
     const room = Math.max(0, XP_PER_DAY - xpToday(s.id));
     const xp = Math.min(XP_PER_GAME, Math.floor(correct / 2), room);
