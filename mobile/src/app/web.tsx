@@ -146,9 +146,10 @@ export default function Web() {
               else if (/^(mailto|tel|sms):/i.test(req.url)) Linking.openURL(req.url).catch(() => {});
               return false;
             }}
-            onLoadEnd={(e: { nativeEvent: { url: string } }) => {
-              setLoading(false);
-              if (!e.nativeEvent.url.includes("/api/mobile/web")) setWebPending(false);
+            onLoadEnd={() => setLoading(false)}
+            // onLoad (ne onLoadEnd): na iOS onLoadEnd pride tudi ob napaki povezave, z URL-jem "".
+            onLoad={(e: { nativeEvent: { url: string } }) => {
+              if (e.nativeEvent.url.startsWith(ORIGIN) && !e.nativeEvent.url.includes("/api/mobile/web")) setWebPending(false);
             }}
             onError={() => setFailed(true)}
             onHttpError={(e: { nativeEvent: { url: string; statusCode: number } }) => {

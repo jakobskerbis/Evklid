@@ -78,18 +78,25 @@ function Root() {
 
   // Po prijavi (in ob zagonu prijavljene aplikacije) se odpre spletna stran; tudi po »Nadaljuj tukaj« (epoch
   // znova izriše Stack, ki se sicer odpre na prvem zaslonu, naravni učni poti).
-  // Strežnik je bil starejši od aplikacije (src/lib/web-state.ts): ob vrnitvi v ospredje znova spletna stran.
-  useEffect(() => {
-    const sub = AppState.addEventListener("change", (st) => {
-      if (st === "active" && signedIn && webPending()) router.replace("/web");
-    });
-    return () => sub.remove();
-  }, [signedIn]);
-
   // fontsDone: Stack je že izrisan (prej navigacija ne gre).
   useEffect(() => {
     if (ready && fontsDone && signedIn) router.replace("/web");
   }, [ready, fontsDone, signedIn, epoch]);
+
+  // Strežnik je bil starejši od aplikacije (src/lib/web-state.ts): ob vrnitvi v ospredje znova spletna stran.
+  // Samo po ozadju: iOS da »inactive« → »active« tudi ob sistemskem oknu (nakup, dovoljenje, center obvestil),
+  // ki naj uporabnika ne vrže z naravnega zaslona.
+  useEffect(() => {
+    let wasBg = false;
+    const sub = AppState.addEventListener("change", (st) => {
+      if (st === "background") wasBg = true;
+      else if (st === "active" && wasBg) {
+        wasBg = false;
+        if (signedIn && webPending()) router.replace("/web");
+      }
+    });
+    return () => sub.remove();
+  }, [signedIn]);
 
   if (!ready || !fontsDone) return null;
   // Kam gre zaščiten zaslon, ki ga ni mogoče odpreti. Brez tega Expo Router izbere prvi prosti zaslon
