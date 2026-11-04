@@ -88,5 +88,68 @@ test("an inline formula never overlaps the lines around it and keeps line spacin
   assert.equal(besedilniTex("\\frac12"), null);
   const { VISOKA } = await import("../public/sirina.js");
   assert.ok(VISOKA > 1 && VISOKA <= 1.3);
-  assert.match(pub("sirina.js"), /if \(k\.getBoundingClientRect\(\)\.height > visoka\) k = zlozi\(k, "t"\) \|\| k;/);
+  assert.match(pub("sirina.js"), /if \(visoka < Infinity && k\.getBoundingClientRect\(\)\.height > visoka\) k = zlozi\(k, "t"\) \|\| k;/);
+});
+
+// j 2026-11-04: »Predolge zapise ustrezno prelomi v drugo vrstico. Če je mogoče, ne uporabljaj scrollanja. To naj velja
+// za vse enačbe.« Celoten videz v simulacijah, klepetu in nalogah preverja scripts/preveri-formule.cjs.
+test("every equation in the app is fitted: sims, chat, exercises, formula cards (not only lessons)", async () => {
+  for (const f of ["app.js", "kalkulator.js"]) assert.match(pub(f), /import \{ initSirina \} from "\.\/sirina\.js";[\s\S]*\ninitSirina\(\);\ninitDrsniki\(\);/, f);
+  const js = pub("sirina.js");
+  assert.match(js, /mo\.observe\(document\.body, \{ childList: true, subtree: true \}\)/);
+  // simulacija ob vsakem premiku drsnika: rešitev za isto obliko formule brez merjenja (drsnik ostane gladek)
+  assert.match(js, /tex\.replace\(\/\\d\/g, "0"\)/);
+  const { OKVIRI } = await import("../public/sirina.js");
+  for (const sel of [".demo-eq", ".graf-eq", ".formula-body", ".fm-f"]) assert.ok(OKVIRI.includes(sel), sel);
+  // v okviru se formula ne prelomi sama sredi izraza; zloži jo sirina.js
+  assert.match(pub("ui.css"), /^:is\(\.demo-eq, \.graf-eq, \.formula-body, \.fm-f\) \.katex \{ white-space: nowrap; \}$/m);
+  // zbirka formul nima več svojega pomanjševanja (prej 78 %, brez zlaganja)
+  assert.doesNotMatch(pub("graph/tools.js"), /function fit\(\)/);
+});
+
+test("sim formulas fold like lesson ones: statements, then »= …«, »⇒« and »ali« start a new line", async () => {
+  const { zlozTex } = await import("../public/sirina.js");
+  // stehiometrija (j-jev posnetek s telefona): ⇒ in \quad začneta novo vrstico
+  const t = "\\frac{n(\\mathrm{MgO})}{n(\\mathrm{Mg})} = \\frac{2}{2} \\Rightarrow n(\\mathrm{MgO}) = 0{,}041\\ \\text{mol},\\quad m = n M = 1{,}66\\ \\text{g}";
+  assert.equal(zlozTex(t, 1), "\\begin{aligned}&\\frac{n(\\mathrm{MgO})}{n(\\mathrm{Mg})} = \\frac{2}{2} \\\\ &\\Rightarrow  n(\\mathrm{MgO}) = 0{,}041\\ \\text{mol}, \\\\ &m = n M = 1{,}66\\ \\text{g}\\end{aligned}");
+  // »ali« med dvema rešitvama začne novo izjavo (razmik pred njim odpade)
+  assert.equal(zlozTex("x = a + 2k\\pi \\ \\text{ ali } \\ x = \\pi - a", 1), "\\begin{aligned}&x = a + 2k\\pi \\\\ &\\text{ali}\\ x = \\pi - a\\end{aligned}");
+  assert.equal(zlozTex("x = 1 \\quad\\text{in}\\quad y = 2", 1), "\\begin{aligned}&x = 1 \\\\ &\\text{in}\\ y = 2\\end{aligned}");
+});
+
+test("a long sum is continued before + or − in balanced pieces, never inside brackets or after a sign", async () => {
+  const { zlozTex } = await import("../public/sirina.js");
+  const vsota = "3\\cdot 1\\,000 + 4\\cdot 100 + 5\\cdot 10 + 6\\cdot 1";
+  assert.equal(zlozTex(vsota, 2), null); // brez relacije: stopnja 2 ne pomaga
+  assert.equal(zlozTex(vsota, 3), "\\begin{aligned}&3\\cdot 1\\,000 + 4\\cdot 100 \\\\ &\\quad {}+ 5\\cdot 10 + 6\\cdot 1\\end{aligned}");
+  // del za enačajem: nadaljevanje je zamaknjeno še za en \quad
+  assert.equal(zlozTex("S = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 = 36", 3), "\\begin{aligned}&S \\\\ &\\quad {}= 1 + 2 + 3 + 4 \\\\ &\\quad \\quad {}+ 5 + 6 + 7 + 8 \\\\ &\\quad {}= 36\\end{aligned}");
+  // predznak (»= -3«, »(-2)«, »\\cdot -1«) in oklepaji ostanejo celi
+  const z = zlozTex("y = -30 + 2\\cdot(-20 - 10) - 40\\cdot -10 + 50", 3);
+  assert.ok(!/\{\}-30|\{\}- 10|\{\}-10/.test(z), z);
+  assert.match(z, /2\\cdot\(-20 - 10\)/);
+  // dolg zmnožek števil in enot: pred ·, nikoli sredi števila v desetiškem zapisu (»2\\cdot10^6«)
+  const f = zlozTex("F = 1{,}6\\cdot10^{-19}\\,\\mathrm{A\\,s} \\cdot 2\\cdot10^6\\,\\mathrm{m/s} \\cdot 0{,}3\\,\\mathrm{T} \\cdot 0{,}5", 3, 20);
+  assert.equal(f, "\\begin{aligned}&F \\\\ &\\quad {}= 1{,}6\\cdot10^{-19}\\,\\mathrm{A\\,s} \\\\ &\\quad \\quad {}\\cdot 2\\cdot10^6\\,\\mathrm{m/s} \\cdot 0{,}3\\,\\mathrm{T} \\cdot 0{,}5\\end{aligned}");
+});
+
+test("with a line length (meja) only the statements that do not fit are folded; matrices stay whole", async () => {
+  const { zlozTex } = await import("../public/sirina.js");
+  const t = "c^2 = a^2 + b^2 - 2ab\\cos\\gamma:\\quad 64 = 61 + 45 - 2\\cdot 7{,}81\\cdot 6{,}71\\cdot\\cos 67^\\circ";
+  assert.equal(zlozTex(t, 2, 24), "\\begin{aligned}&c^2 = a^2 + b^2 - 2ab\\cos\\gamma: \\\\ &64 \\\\ &\\quad {}= 61 + 45 - 2\\cdot 7{,}81\\cdot 6{,}71\\cdot\\cos 67^\\circ\\end{aligned}");
+  // determinanta je celota; zložimo pri enačajih okoli nje
+  assert.equal(zlozTex("p(\\lambda) = \\begin{vmatrix} a & b \\\\ c & d \\end{vmatrix} = ad - bc"), "\\begin{aligned}&p(\\lambda) \\\\ &\\quad {}= \\begin{vmatrix} a & b \\\\ c & d \\end{vmatrix} \\\\ &\\quad {}= ad - bc\\end{aligned}");
+  for (const x of ["\\begin{cases} x = 1 \\\\ y = 2 \\end{cases}", "a &= b \\\\ c &= d"]) assert.equal(zlozTex(x), null);
+  // puščice niso oklepaji (\\leftarrow, \\rightarrow)
+  assert.equal(zlozTex("x \\leftarrow y = a \\rightarrow b"), "\\begin{aligned}&x \\leftarrow y \\\\ &\\quad {}= a \\\\ &\\quad {}\\rightarrow b\\end{aligned}");
+});
+
+test("decimal comma in sim formulas has no gap (»0,041«, not »0, 041«); lists stay lists", async () => {
+  const { decVejica } = await import("../public/sim/kit.js");
+  assert.equal(decVejica("n = 0,041\\ \\text{mol}"), "n = 0{,}041\\ \\text{mol}");
+  assert.equal(decVejica("2,5 + 3,75 = 6,25"), "2{,}5 + 3{,}75 = 6{,}25");
+  assert.equal(decVejica("10^{2,5}"), "10^{2{,}5}");
+  for (const t of ["1{,}5", "x_{1,2} = 3", "\\{1,2,3\\}", "\\{1,5\\}", "(1,2,3)", "T(1, 2)", "5\\,000"]) assert.equal(decVejica(t), t);
+  assert.match(pub("sim/kit.js"), /katex\.renderToString\(decVejica\(t\)/);
+  assert.match(pub("demos.js"), /katex\.renderToString\(decVejica\(t\)/);
 });

@@ -51,6 +51,7 @@ import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS }
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
 import { openOurPaper, closeOurPaper } from "./our-paper.js";
 import { initDrsniki } from "./drsniki.js";
+import { initSirina } from "./sirina.js";
 import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
 import { GUIDE } from "./vodic.js";
@@ -1070,6 +1071,7 @@ $("#composer").addEventListener("submit", (e) => {
 attachMic($("#mic-btn"), input, { onMessage: (m) => toast(m, "mic"), onChange: autoGrow });
 // Evklidova tipkovnica (public/tipkovnica.js): na dotik za vsa polja, Σ jo odpre na plasti simbolov (tudi na računalniku).
 initKeyboard();
+initSirina();
 initDrsniki();
 setKeyboardContext({ settings: () => state.student?.settings });
 mountKeyboardSettings($("#tipkovnica-card"));

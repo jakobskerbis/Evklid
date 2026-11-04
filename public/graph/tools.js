@@ -661,26 +661,10 @@ export function createFormulas(root, opts) {
     toc.innerHTML = secs.map((x) => `<button type="button" data-sec="${x.id}">${esc(x.querySelector("h2").textContent)}</button>`).join("");
     toc.hidden = secs.length < 2;
     root.scrollTop = 0;
-    fit();
     spy();
   }
 
-  // formula, širša od zaslona, se pomanjša (največ na 78 %); šele potem se pomika vodoravno
-  function fit() {
-    for (const k of body.querySelectorAll(".fm-f .katex")) {
-      k.style.fontSize = "";
-      const cw = k.closest(".fm-f").clientWidth;
-      const w = k.getBoundingClientRect().width;
-      if (!cw || w <= cw) continue;
-      const fs = parseFloat(getComputedStyle(k).fontSize);
-      k.style.fontSize = `${Math.max(fs * 0.78, (fs * cw * 0.98) / w).toFixed(2)}px`;
-    }
-  }
-  let fitTimer = 0;
-  window.addEventListener("resize", () => {
-    clearTimeout(fitTimer);
-    fitTimer = setTimeout(fit, 150);
-  });
+  // Formulo, širšo od zaslona, sirina.js (initSirina) zloži pri enačajih in malo pomanjša; šele potem se pomika.
 
   // čip poglavja, ki je trenutno na vrhu, je označen
   function spy() {
@@ -716,7 +700,7 @@ export function createFormulas(root, opts) {
   });
   return {
     root,
-    resize: fit,
+    resize() {}, // širino formul ob spremembi okna ureja sirina.js
     reload() {
       show(opts.bookKey?.() || book);
     },
