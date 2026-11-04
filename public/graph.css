@@ -359,6 +359,8 @@ body.graph-open { overflow: hidden; }
 .tl-field textarea { font-family: inherit; resize: vertical; }
 .tl-inline { flex-direction: row; align-items: center; gap: 10px; }
 .tl-inline select { width: auto; }
+.tl-inline:has(> input[type=checkbox]) { min-height: 44px; }
+.tl-inline input[type=checkbox] { width: 22px; min-height: 22px; height: 22px; flex: none; }
 .tl-narrow { flex: 0 0 110px; }
 .tl-pair { display: flex; gap: 8px; align-items: flex-end; }
 .tl-note { font-size: 0.85rem; margin: 0; }

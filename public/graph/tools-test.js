@@ -68,7 +68,7 @@ export function testsTool(el, ctx) {
     else if (k === "z2" || k === "t2") {
       const sd = k === "z2" ? "\\sigma" : "s";
       h = sampleBlock("a", `${t("sc.tt.sample")} 1`, sd) + sampleBlock("b", `${t("sc.tt.sample")} 2`, sd);
-      if (k === "t2") h += `<label class="tl-inline"><input type="checkbox" class="tl-tp"${st.pooled ? " checked" : ""}> <span>${esc(t("sc.tt.pooled"))}</span></label>`;
+      if (k === "t2") h += `<label class="tl-field tl-inline"><input type="checkbox" class="tl-tp"${st.pooled ? " checked" : ""}> <span>${esc(t("sc.tt.pooled"))}</span></label>`;
     } else if (k === "p1") h = `<div class="tl-grid2">${fld("x", "x")}${fld("n", "n")}${test ? fld("p0", "p_0") : ""}</div>`;
     else if (k === "p2") h = `<div class="tl-grid2">${fld("x1", "x_1")}${fld("n1", "n_1")}${fld("x2", "x_2")}${fld("n2", "n_2")}</div>`;
     else if (k === "gof")

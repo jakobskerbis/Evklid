@@ -213,6 +213,7 @@ export function tvm(v, solve) {
       if (!(q > 0) || i <= -1) return null;
       out.N = -Math.log(q) / Math.log(1 + i);
     }
+    if (!(out.N >= 0)) return null; // PV in PMT istega predznaka: ni rešitve
   } else {
     if (!(v.N > 0)) return null;
     const f = (r) => v.PV + v.PMT * ann(v.N, r) + v.FV * (1 + r) ** -v.N;
