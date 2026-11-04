@@ -515,6 +515,8 @@
   "set.dataLite": "Immer an",
   "set.dataNormal": "Aus",
   "set.dataNote": "Kürzere Antworten des Tutors, kleinere Fotos, keine Animationen und keine Zusatzschrift. Aufgaben deines Lernpfads werden zum Üben ohne Verbindung gespeichert.",
+  "set.hideGames": "Spiele ausblenden",
+  "set.hideGamesNote": "Der Bereich Spiele wird ausgeblendet. Fortschritt, Münzen und Avatar bleiben erhalten.",
   "set.xpGoal": "Tägliches XP-Ziel",
   "set.xpGoal30": "30 XP – entspannt",
   "set.xpGoal50": "50 XP – normal",

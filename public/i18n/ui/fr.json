@@ -515,6 +515,8 @@
   "set.dataLite": "Toujours activé",
   "set.dataNormal": "Désactivé",
   "set.dataNote": "Réponses du tuteur plus courtes, photos plus petites, pas d'animations ni de police supplémentaire. Les exercices de ton parcours sont enregistrés pour t'entraîner hors connexion.",
+  "set.hideGames": "Masquer les jeux",
+  "set.hideGamesNote": "La section Jeux est masquée. Ta progression, tes pièces et ton avatar sont conservés.",
   "set.xpGoal": "Objectif XP du jour",
   "set.xpGoal30": "30 XP – tranquille",
   "set.xpGoal50": "50 XP – normal",

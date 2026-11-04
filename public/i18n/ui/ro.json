@@ -521,6 +521,8 @@
   "set.dataLite": "Mereu activ",
   "set.dataNormal": "Dezactivat",
   "set.dataNote": "Răspunsuri mai scurte ale tutorelui, fotografii mai mici, fără animații și fără font suplimentar. Exercițiile traseului se salvează pentru exersare offline.",
+  "set.hideGames": "Ascunde jocurile",
+  "set.hideGamesNote": "Secțiunea Jocuri se ascunde. Progresul, monedele și avatarul rămân.",
   "set.xpGoal": "Obiectiv zilnic XP",
   "set.xpGoal30": "30 XP – relaxat",
   "set.xpGoal50": "50 XP – obișnuit",

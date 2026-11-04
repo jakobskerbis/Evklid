@@ -509,6 +509,8 @@
   "set.dataLite": "常にオン",
   "set.dataNormal": "オフ",
   "set.dataNote": "チューターの返答が短く、写真が小さく、アニメーションや追加フォントなし。学習パスの問題はオフライン練習用に保存されます。",
+  "set.hideGames": "ゲームを隠す",
+  "set.hideGamesNote": "ゲームのセクションが非表示になります。進み具合、コイン、アバターはそのまま残ります。",
   "set.xpGoal": "1日のXP目標",
   "set.xpGoal30": "30 XP – ゆったり",
   "set.xpGoal50": "50 XP – ふつう",

@@ -309,3 +309,27 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-pager button:disabled { opacity: 0.4; cursor: default; }
 .gm-pager .gm-gap { color: var(--muted); padding: 0 2px; }
 [dir="rtl"] .gm-pager svg.i { transform: scaleX(-1); }
+
+/* Srednja šola in fakulteta (stage.js, j 2. 11. 2026): iste igre v resnejšem videzu: običajna pisava,
+   tanke obrobe, brez izbočenih senc, nagnjenih črk in sijaja, umirjene barve ploščic. OŠ ostane igriva. */
+.gm-calm { --gm-font: var(--font); }
+.gm-calm .gm-tile { border: 1px solid color-mix(in srgb, var(--gm-ink) 35%, transparent); border-radius: 12px; box-shadow: var(--shadow-sm, 0 1px 3px rgba(20, 33, 61, 0.14)); filter: saturate(0.6) brightness(0.92); }
+.gm-calm .gm-tile::before { opacity: 0.15; }
+.gm-calm .gm-tile::after { display: none; }
+.gm-calm .gm-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(20, 33, 61, 0.2); }
+.gm-calm .gm-tile:active { transform: none; box-shadow: none; }
+.gm-calm .gm-tile.gm-path { border-color: #facc15; box-shadow: 0 0 0 2px #facc15; }
+.gm-calm .gm-glyph { font-weight: 700; -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35); transform: none; }
+.gm-calm .gm-name b { font-weight: 700; }
+.gm-calm .gm-hud { background: linear-gradient(90deg, var(--gm-a), var(--gm-b)); border-bottom: 0; }
+.gm-calm .gm-q { font-weight: 700; -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); }
+.gm-calm .gm-btn { border: 1px solid rgba(255, 255, 255, 0.45); border-radius: 10px; background: rgba(255, 255, 255, 0.16); box-shadow: none; }
+.gm-calm .gm-btn:active { transform: none; box-shadow: none; }
+.gm-calm .gm-timer { border-bottom: 0; }
+.gm-calm .gm-stage::after { display: none; }
+.gm-calm :is(.gm-card, .gm-me) { border: 1px solid var(--border); border-radius: var(--radius, 16px); box-shadow: var(--shadow-lg); }
+.gm-calm .gm-card .primary.big { border: 0; border-radius: var(--radius-sm, 12px); box-shadow: none; background-image: none; text-shadow: none; }
+.gm-calm .gm-card .primary.big:active { transform: none; }
+.gm-calm .gm-title::before { display: none; }
+.gm-calm .gm-big { font-weight: 700; }
+.gm-calm .gm-kidnew .gm-tile { animation: none; }

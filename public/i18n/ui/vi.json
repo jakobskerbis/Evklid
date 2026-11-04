@@ -509,6 +509,8 @@
   "set.dataLite": "Luôn bật",
   "set.dataNormal": "Tắt",
   "set.dataNote": "Gia sư trả lời ngắn hơn, ảnh nhỏ hơn, không có hiệu ứng và phông chữ bổ sung. Bài tập của lộ trình được lưu để luyện tập khi không có mạng.",
+  "set.hideGames": "Ẩn trò chơi",
+  "set.hideGamesNote": "Mục Trò chơi sẽ được ẩn. Tiến độ, xu và hình đại diện của bạn vẫn được giữ.",
   "set.xpGoal": "Mục tiêu XP mỗi ngày",
   "set.xpGoal30": "30 XP – thoải mái",
   "set.xpGoal50": "50 XP – bình thường",

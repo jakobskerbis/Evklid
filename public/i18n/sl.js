@@ -743,6 +743,8 @@ export default {
   "set.dataLite": "Vedno vklopljen",
   "set.dataNormal": "Izklopljen",
   "set.dataNote": "Krajši odgovori inštruktorja, manjše fotografije, brez animacij in brez dodatne pisave. Naloge za učno pot se shranijo za vadbo brez povezave.",
+  "set.hideGames": "Skrij igre",
+  "set.hideGamesNote": "Razdelek Igre se skrije. Napredek, kovanci in avatar ostanejo.",
   "set.xpGoal": "Dnevni cilj XP",
   "set.xpGoal30": "30 XP – sproščeno",
   "set.xpGoal50": "50 XP – običajno",

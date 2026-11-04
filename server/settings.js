@@ -25,6 +25,8 @@ export const ENUMS = {
   // Kotiček zanimanj: kako zahtevne novice (auto = po šoli) in ali tudi v angleščini.
   news_level: NEWS_LEVELS,
   news_lang: NEWS_LANGS,
+  // Stikalo »Skrij igre« (j, 2. 11. 2026): off skrije razdelek Igre na vseh napravah profila.
+  games: ["on", "off"],
 };
 
 export const DEFAULT_SETTINGS = {
@@ -53,6 +55,7 @@ export const DEFAULT_SETTINGS = {
   news_lang: "all",
   // Igre iz otroštva (public/games/childhood.js): null = vprašalnik še ni bil izpolnjen, [] = preskočen.
   game_childhood: null,
+  games: "on", // razdelek Igre: on = viden, off = skrit (»Skrij igre«)
   game_titles: [], // lastni naslovi iger iz vprašalnika (childhood.js matchTitle)
 };
 

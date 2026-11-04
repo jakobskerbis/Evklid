@@ -32,6 +32,7 @@ import { initFeedback, showFeedback } from "./feedback.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
 import { initGames, showGames, gamesBack, leaveGames } from "./games/index.js";
+import { gamesOn } from "./games/stage.js";
 import { initCorner, showCorner, cornerBack, closeBoard, askInterests, maybeAskInterests, interestsSummary } from "./corner.js";
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
 import { initFullscreen } from "./fullscreen.js";
@@ -140,6 +141,7 @@ function renderUserText(text) {
 // ---------- pogledi ----------
 
 function showView(name) {
+  if (name === "games" && state.student && !gamesOn(state.student.settings)) name = "me"; // »Skrij igre«
   // Uvod profila: izbira v meniju pod logotipom ali tipka Nazaj ga zapreta (prej so ostali skriti vsi zavihki).
   // Prvi profil na napravi mora nastati, zato takrat ostanemo na uvodu.
   if (name !== "onboard" && document.body.classList.contains("onboarding")) {
@@ -1239,6 +1241,7 @@ async function fillSettingsForm() {
   const programs = await loadPrograms(api);
   for (const key of ["track", "personality_setting"]) f[key].value = s[key];
   f.data_mode.value = s.data_mode || "auto";
+  f.games.checked = !gamesOn(s);
   f.xp_goal.value = String(s.xp_goal || 50);
   fillDialectOptions(f, s);
   f.subject.innerHTML = subjectOptions(null, s.subject, schoolSubjectsFor(s.educational_track, s.curriculum_level, isRegional(s.school_system)));
@@ -1303,6 +1306,7 @@ $("#settings-form").addEventListener("submit", async (e) => {
         personality_setting: f.personality_setting.value,
         dialect: f.dialect.value,
         data_mode: f.data_mode.value,
+        games: f.games.checked ? "off" : "on",
         xp_goal: Number(f.xp_goal.value),
         ...readGoalFields($("#settings-goal")),
       },
@@ -2000,7 +2004,13 @@ function offTabbarViews() {
   return examsInTabbar() ? ["competition", "lab"] : siExams() ? ["competition", "exams"] : ["competition"];
 }
 const meBackHtml = () => `<button type="button" class="ghost back me-back">${icon("arrow-left")}<span>${t("nav.me")}</span></button>`;
+// »Skrij igre« (nastavitev profila games: off): brez zavihka, vrstice pod Jaz in koraka v uvodnem ogledu.
+function syncGamesTab() {
+  const off = !!state.student && !gamesOn(state.student.settings);
+  document.querySelectorAll('.tab[data-view="games"], [data-go="games"]').forEach((el) => (el.hidden = off));
+}
 function syncCompetitionTab() {
+  syncGamesTab();
   const noComp = !state.student || isUni(state.student.settings);
   $("#competition-tab").hidden = noComp;
   $("#exams-tab").hidden = !siExams();

@@ -521,6 +521,8 @@
   "set.dataLite": "Uvijek uključen",
   "set.dataNormal": "Isključen",
   "set.dataNote": "Kraći odgovori instruktora, manje fotografije, bez animacija i bez dodatnog fonta. Zadaci za put učenja se spremaju za vježbu bez veze.",
+  "set.hideGames": "Sakrij igre",
+  "set.hideGamesNote": "Odjeljak Igre se sakriva. Napredak, novčići i avatar ostaju.",
   "set.xpGoal": "Dnevni cilj XP",
   "set.xpGoal30": "30 XP – opušteno",
   "set.xpGoal50": "50 XP – uobičajeno",
