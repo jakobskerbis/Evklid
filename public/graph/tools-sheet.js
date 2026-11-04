@@ -10,8 +10,10 @@ const KEY = "evklid.tool.sheet";
 
 export function sheetTool(el, ctx) {
   const { t, icon, insertBtn, comma } = ctx;
-  const st = remember.get(KEY, null) || { cells: { A1: "2", A2: "=A1+3", B1: "=A1^2" }, sel: "A1" };
-  if (!st.cells || typeof st.cells !== "object") st.cells = {};
+  const obj = (x) => x && typeof x === "object" && !Array.isArray(x);
+  const saved = remember.get(KEY, null);
+  const st = obj(saved) ? saved : { cells: { A1: "2", A2: "=A1+3", B1: "=A1^2" }, sel: "A1" };
+  if (!obj(st.cells)) st.cells = {};
   if (!parseCell(st.sel)) st.sel = "A1";
   const save = () => remember.set(KEY, st);
   let res = {};
@@ -107,7 +109,8 @@ export function sheetTool(el, ctx) {
   }
   function select(name, { focusCell = false } = {}) {
     if (!parseCell(name)) return;
-    if (document.activeElement === input) commit();
+    // vrstica drži vsebino izbrane celice; na dotik je fokus že na celici, preden se sproži blur (commit)
+    commit();
     st.sel = name;
     save();
     input.value = st.cells[name] ?? "";
@@ -228,7 +231,7 @@ export function sheetTool(el, ctx) {
       b.textContent = t("sc.sh.clearAll");
       b.classList.remove("danger");
     } else if (act === "fill") {
-      if (document.activeElement === input) commit();
+      commit();
       const p = parseCell(st.sel);
       el.querySelector(".tl-sh-fl").textContent = t("sc.sh.fillTo", { cell: st.sel });
       const to = el.querySelector(".tl-sh-to");

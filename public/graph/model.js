@@ -179,6 +179,18 @@ export function buildModel(state, { comma = true } = {}) {
 
   // zaporedja: vrednost samo pri celih n od prvega člena naprej; rekurzivna računamo po vrsti od začetka
   const SEQ_MAX = 10000;
+  // en račun (člen ali obseg) lahko kliče druga zaporedja (c(n) = a(n) + 1): spomin vseh velja do konca računa,
+  // sicer bi vsak člen c znova računal a od začetka (pri n do 10000 sekunde na sliko)
+  const memos = [];
+  let session = 0;
+  const inSession = (fn) => {
+    session++;
+    try {
+      return fn();
+    } finally {
+      if (--session === 0) for (const m of memos) m.length = 0;
+    }
+  };
   for (const name of seqNames) {
     const F = funcs[name];
     if (!F?.body) continue;
@@ -208,21 +220,27 @@ export function buildModel(state, { comma = true } = {}) {
       S[p] = k;
       return toNum(raw(S));
     };
-    let memo = null; // med enim računom: memo[k − n0] = člen
+    const memo = []; // med enim računom: memo[k − n0] = člen
+    memos.push(memo);
+    let busy = false; // računamo člen memo.length: sklic nanj ali naprej (a(n + 1)) nima vrednosti
     const value = (k) => {
       if (typeof k !== "number" || Math.abs(k - Math.round(k)) > 1e-9) return NaN;
       k = Math.round(k);
       if (k < n0 || k > n0 + SEQ_MAX) return NaN;
       if (!recursive) return at(k);
-      if (memo && k - n0 < memo.length) return memo[k - n0];
-      const outer = !memo;
-      if (outer) memo = [];
-      try {
-        while (memo.length <= k - n0) memo.push(at(n0 + memo.length));
+      if (k - n0 < memo.length) return memo[k - n0];
+      if (busy) return NaN;
+      return inSession(() => {
+        while (memo.length <= k - n0) {
+          busy = true;
+          try {
+            memo.push(at(n0 + memo.length));
+          } finally {
+            busy = false;
+          }
+        }
         return memo[k - n0];
-      } finally {
-        if (outer) memo = null;
-      }
+      });
     };
     F.body = (S) => value(S[p]);
     F.seq = {
@@ -232,13 +250,9 @@ export function buildModel(state, { comma = true } = {}) {
       // členi od a do b (vsak step-ti), v enem računu
       range(a, b, step = 1) {
         const res = [];
-        const outer = !memo;
-        if (outer) memo = [];
-        try {
+        inSession(() => {
           for (let k = Math.max(a, n0); k <= Math.min(b, n0 + SEQ_MAX); k += step) res.push([k, value(k)]);
-        } finally {
-          if (outer) memo = null;
-        }
+        });
         return res;
       },
     };
@@ -429,7 +443,7 @@ export function buildModel(state, { comma = true } = {}) {
           if (isV(l, yv) && !rf.has(yv)) rhs = r;
           else if (isV(r, yv) && !lf.has(yv)) {
             rhs = l;
-            opn = { "<": ">", ">": "<", "<=": ">=", ">=": "<=", "=": "=" }[op];
+            opn = { "<": ">", ">": "<", "<=": ">=", ">=": "<=", "=": "=", "!=": "!=" }[op];
           }
           if (rhs) {
             if (!check(rhs, [xv])) return;

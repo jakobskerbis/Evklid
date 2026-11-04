@@ -11,13 +11,23 @@ const MAX_N = 100000;
 
 export function trialsTool(el, ctx) {
   const { t, icon, num, card, err, comma } = ctx;
-  const st = remember.get(KEY, null) || {};
+  const obj = (x) => x && typeof x === "object" && !Array.isArray(x);
+  const saved = remember.get(KEY, null);
+  const st = obj(saved) ? saved : {};
   st.mode = ["dice", "coin", "line", "verify"].includes(st.mode) ? st.mode : "dice";
-  st.dice ||= { k: 1, n: "100", counts: {}, last: [] };
-  st.coin ||= { k: 1, n: "100", counts: {}, last: [] };
-  st.line = Array.isArray(st.line) ? st.line.slice(0, 3) : ["x > -2", "x ≤ 3", ""];
+  // pokvarjen ali star zapis v localStorage: vsak del posebej nazaj na privzeto
+  for (const [m, max] of [["dice", 3], ["coin", 5]]) {
+    const s = obj(st[m]) ? st[m] : {};
+    st[m] = {
+      k: Number.isInteger(s.k) && s.k >= 1 && s.k <= max ? s.k : 1,
+      n: typeof s.n === "string" || typeof s.n === "number" ? String(s.n) : "100",
+      counts: obj(s.counts) ? s.counts : {},
+      last: Array.isArray(s.last) ? s.last : [],
+    };
+  }
+  st.line = Array.isArray(st.line) ? st.line.slice(0, 3).map((v) => (typeof v === "string" ? v : "")) : ["x > -2", "x ≤ 3", ""];
   while (st.line.length < 3) st.line.push("");
-  st.check ??= "√8 = 2√2";
+  st.check = typeof st.check === "string" ? st.check : "√8 = 2√2";
   const save = () => remember.set(KEY, st);
   const MODES = [
     ["dice", "sc.tr.dice"],
@@ -82,7 +92,7 @@ export function trialsTool(el, ctx) {
     const rows = dist
       .map(({ x, p }) => {
         const f = s.counts[x] || 0;
-        return `<tr><th scope="row">${esc(label(x))}</th><td>${f}</td><td>${total ? esc(num(f / total).text) : "—"}</td><td>${esc(num(p).text)}</td></tr>`;
+        return `<tr><th scope="row">${esc(label(x))}</th><td>${f}</td><td>${total ? esc(num(Math.round((f / total) * 1e4) / 1e4).text) : "—"}</td><td>${esc(num(Math.round(p * 1e4) / 1e4).text)}</td></tr>`;
       })
       .join("");
     out.innerHTML =
@@ -142,9 +152,10 @@ export function trialsTool(el, ctx) {
     b += span * 0.2;
     const W = svgWidth();
     const pad = 14;
+    const padL = 30; // levo številka pogoja, da sled ni označena le z barvo
     const rowH = 22;
     const H = tracks.length * rowH + 34;
-    const sx = (x) => pad + ((Math.max(a, Math.min(b, x)) - a) / (b - a)) * (W - 2 * pad);
+    const sx = (x) => padL + ((Math.max(a, Math.min(b, x)) - a) / (b - a)) * (W - padL - pad);
     const axisY = H - 22;
     // oznake: »lepi« koraki in vsa krajišča
     const raw = span / 5;
@@ -156,7 +167,8 @@ export function trialsTool(el, ctx) {
     const trackSvg = tracks
       .map((tr, k) => {
         const y = 12 + k * rowH;
-        return tr.I.map((i) => {
+        const lab = `<text x="10" y="${y + 4}" class="tl-nl-lab ${tr.cls}">${esc(tr.label)}</text>`;
+        return lab + tr.I.map((i) => {
           const x1 = sx(i.lo);
           const x2 = sx(i.hi);
           const seg = i.lo === i.hi ? "" : `<line x1="${x1.toFixed(1)}" x2="${x2.toFixed(1)}" y1="${y}" y2="${y}" class="tl-nl-seg ${tr.cls}"/>`;
@@ -166,7 +178,7 @@ export function trialsTool(el, ctx) {
         }).join("");
       })
       .join("");
-    return `<svg class="pr-svg tl-nl" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("sc.tr.line"))}"><line x1="${pad - 6}" x2="${W - pad + 6}" y1="${axisY}" y2="${axisY}" class="pr-ax"/>${tickSvg}${trackSvg}</svg>`;
+    return `<svg class="pr-svg tl-nl" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("sc.tr.line"))}"><line x1="${padL - 6}" x2="${W - pad + 6}" y1="${axisY}" y2="${axisY}" class="pr-ax"/>${tickSvg}${trackSvg}</svg>`;
   }
 
   // ---- dogodki ----
@@ -180,7 +192,7 @@ export function trialsTool(el, ctx) {
   const doRoll = () => {
     const s = st[st.mode];
     const n = Math.round(Number(String(s.n).replace(/\s/g, "")));
-    if (!Number.isFinite(n) || n < 1) return (out.innerHTML = err(t("sc.tr.nBad", { max: MAX_N.toLocaleString() })));
+    if (!Number.isFinite(n) || n < 1 || n > MAX_N) return (out.innerHTML = err(t("sc.tr.nBad", { max: "100\u00a0000" })));
     const r = roll(st.mode, s.k, Math.min(n, MAX_N));
     for (const [x, f] of Object.entries(r.counts)) s.counts[x] = (s.counts[x] || 0) + f;
     s.last = r.last;

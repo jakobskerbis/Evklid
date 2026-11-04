@@ -134,3 +134,29 @@ test("grafični kalkulator: zaporedja (rekurzivna, eksplicitna, Fibonacci, tabel
   const long = by.a.seq.range(1, 10001, 100);
   assert.equal(long.at(-1)[1], 2 + 3 * 10000);
 });
+
+test("pregled: periodična neenačba brez oklepaja, zaporedja, ki kličejo zaporedja, ≠ v grafu", () => {
+  // »sin x > 0« (brez oklepaja) je periodična kot »sin(x) > 0«: ena perioda, ne 32 intervalov do ±100
+  for (const src of ["sin x > 0", "sin(x) > 0"]) {
+    const s = solutionSet(src);
+    assert.ok(s.period, src);
+    assert.equal(s.intervals.length, 1, src);
+    near(s.intervals[0].hi, Math.PI);
+  }
+  const mk = (texts) => buildModel({ items: texts.map((text, i) => ({ id: `r${i}`, type: "expr", text })) }).items;
+  // a kliče rekurzivni b: spomin velja čez ves račun (prej O(n²): pri n do 10000 sekunde na sliko)
+  const [a] = mk(["a(n) = b(n - 1) + 1", "a(1) = 0", "b(n) = b(n - 1) + 1", "b(1) = 1"]);
+  const t0 = performance.now();
+  assert.equal(a.seq.range(1, 10000).at(-1)[1], 10000);
+  assert.ok(performance.now() - t0 < 1000);
+  assert.equal(a.fn(5), 5); // po računu se spomin počisti, posamezen člen je še pravilen
+  // sklic naprej (a(n + 1)) nima vrednosti, ne zanke
+  const [f] = mk(["a(n) = a(n + 1) - 1", "a(1) = 1"]);
+  assert.deepEqual(f.seq.range(1, 3).map((p) => p[1]), [1, NaN, NaN]);
+  // 1 ≠ x in y ≠ x: neenačba z obema stranema (risba senči obe strani)
+  const [p, q] = mk(["1 ≠ x", "y ≠ x"]);
+  assert.equal(p.kind, "ineq-x");
+  assert.equal(p.op, "!=");
+  assert.equal(q.kind, "ineq-y");
+  assert.equal(q.op, "!=");
+});

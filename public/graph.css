@@ -116,6 +116,7 @@
 .gc-val { display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--text); overflow-x: auto; font-size: 1rem; }
 .gc-val svg.i { color: var(--muted); }
 .gc-seq { flex-wrap: wrap; gap: 2px 14px; overflow: visible; font-weight: 600; } /* členi zaporedja: prelom med členi, ne drsenje */
+[dir="rtl"] .gc-seq { direction: ltr; justify-content: flex-end; } /* u(1), u(2), … od leve proti desni kot drugi seznami števil */
 .gc-deriv { color: var(--muted); font-weight: 700; }
 .gc-err { display: flex; gap: 6px; align-items: flex-start; color: var(--danger); font-weight: 700; font-size: 0.88rem; line-height: 1.35; }
 .gc-err svg.i { margin-top: 2px; }
@@ -738,7 +739,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .tl-sh tfoot tr:nth-child(1) > * { bottom: 96px; } .tl-sh tfoot tr:nth-child(2) > * { bottom: 64px; }
 .tl-sh tfoot tr:nth-child(3) > * { bottom: 32px; } .tl-sh tfoot tr:nth-child(4) > * { bottom: 0; }
 .tl-sh tfoot tr:first-child > * { border-top: 2px solid var(--border); }
-.tl-sh td { height: 36px; padding: 0 4px; text-align: right; border: 1px solid var(--border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: cell; }
+.tl-sh td { height: 40px; padding: 0 4px; text-align: right; border: 1px solid var(--border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); cursor: cell; }
 .tl-sh tfoot td { height: 32px; cursor: default; }
 .tl-sh td.tl-sh-txt { text-align: left; color: var(--muted); font-weight: 700; }
 .tl-sh td.tl-sh-err { color: var(--danger); font-weight: 800; text-align: center; font-size: 0.75rem; }
@@ -746,6 +747,14 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .tl-sh td:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
 @media (max-width: 420px) { .tl-sh { font-size: 0.8rem; } .tl-sh col:first-child, .tl-sh th:first-child { width: 28px; } .tl-sh td { padding: 0 3px; } }
 .tl-sh-wrap:has(.tl-sh td:focus) { scroll-padding: 40px 0 136px; }
+/* gumbi pod vrstico za pisanje: dotik vsaj 44 px (žetoni so sicer 36 px) */
+.chip-row.tl-sh-acts > button, .chip-row.tl-tacts > button { min-height: 44px; }
+/* telefon z odprto Evklidovo tipkovnico: vrstica za pisanje ostane vidna nad mrežo (sicer jo tipkovnica
+   ali drsenje do celic skrije), gumbi pod njo se med pisanjem umaknejo, da je vidnih več vrstic */
+@media (pointer: coarse) {
+  body.tk-open .tl-sh-bar:has(.tl-sh-in:focus) { position: sticky; top: 0; z-index: 3; }
+  body.tk-open .tl-sh-bar:has(.tl-sh-in:focus) .tl-sh-acts { display: none; }
+}
 
 /* Poskusi (tools-trials.js) */
 .tl-tacts { flex-wrap: wrap; }
@@ -777,3 +786,10 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .tl-lastv { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; }
 .tl-nl, .tl-tchart svg { direction: ltr; }
 .tl-tchart .pr-svg { max-height: none; }
+/* Vrzi je glavni gumb (ne žeton); tabela frekvenc: glave se prelomijo, da so vsi 4 stolpci vidni na 360 px */
+.chip-row.tl-tacts > button.primary { background: var(--accent) !important; border-color: var(--accent) !important; color: var(--accent-text); }
+.tl-tchart + .tl-vt-wrap .tl-vt thead th { white-space: normal; vertical-align: bottom; hyphens: auto; }
+@media (max-width: 480px) { .tl-tchart + .tl-vt-wrap .tl-vt { font-size: 13px; } }
+/* zadnji met: kocke in vsota »5 + 2 + 1 = 8« ostanejo od leve proti desni (v RTL bi se obrnile) */
+[dir="rtl"] .tl-lastv { direction: ltr; }
+.tl-nl-lab { font-size: 12px; font-weight: 800; text-anchor: middle; fill: currentColor; stroke: none !important; }
