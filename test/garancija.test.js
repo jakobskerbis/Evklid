@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { signWebhook } from "../server/accounts/stripe.js";
-import { weeksFor, GUARANTEE } from "../server/placila/garancija.js";
+import { weeksFor, GUARANTEE, ljDate, ljMidnight } from "../server/placila/garancija.js";
 
 const SECRET = "whsec_test";
 const YEAR = new Date().getFullYear();
@@ -317,7 +317,7 @@ test("garancija: dodatek »Podari« ni plačilo naročnine (prijava, vračilo, p
   }
 });
 
-test("garancija: dan vaje (datum UTC) šteje samo v en teden", async () => {
+test("garancija: dan vaje (datum v Ljubljani) šteje samo v en teden", async () => {
   await withServer(async ({ client, stripe, store }) => {
     const a = client();
     const parent = await registerVerified(a, stripe, "oce@gar3.si");
@@ -333,6 +333,57 @@ test("garancija: dan vaje (datum UTC) šteje samo v en teden", async () => {
     const g = (await a("/api/guarantee")).body.guarantee;
     assert.deepEqual(g.weeks.slice(0, 2).map((w) => w.days), [0, 1]);
   });
+});
+
+test("garancija: dnevi in tedni vaje po času v Ljubljani (vaja ob 0.30 v ponedeljek je ponedeljek)", async () => {
+  // Pozimi UTC+1, poleti UTC+2; polnoč v Ljubljani je prejšnji dan ob 23.00 ali 22.00 UTC.
+  assert.equal(ljDate(Date.UTC(2026, 0, 4, 23, 30)), "2026-01-05");
+  assert.equal(ljMidnight(Date.UTC(2026, 0, 5, 12)), Date.UTC(2026, 0, 4, 23));
+  assert.equal(ljMidnight(Date.UTC(2026, 6, 1, 12)), Date.UTC(2026, 5, 30, 22));
+  // Prehod na poletni čas (29. 3. 2026): teden od 23. 3. ima 7 dni, a 167 ur.
+  assert.equal(ljMidnight(Date.UTC(2026, 2, 23, 12), 7) - ljMidnight(Date.UTC(2026, 2, 23, 12)), 167 * 3600000);
+  await withServer(async ({ client, stripe, store }) => {
+    const a = client();
+    const parent = await registerVerified(a, stripe, "oce@gar4.si");
+    const kid = (await a("/api/students", { method: "POST", body: { name: "Ana", birth_year: YEAR - 12, consent: true } })).body;
+    paid(store, parent.id);
+    stripe.state.invoices = [{ id: "in_1", amount_paid: 999, created: Math.floor(Date.now() / 1000), payment_intent: "pi_1", subscription: "sub_1" }];
+    assert.equal((await a("/api/guarantee/enroll", { method: "POST", body: { student_id: kid.id, subject: "MAT", grade: 3, terms: true } })).status, 201);
+    // Prijava pred 20 dnevi; 2. teden se začne 7. dan ob polnoči v Ljubljani. Vaja ob 0.30 7. dne (v UTC še 6. dan,
+    // prej 1. teden) je 2. teden.
+    const day0 = ljMidnight(Date.now() - 20 * DAY);
+    store.db.prepare("UPDATE guarantees SET started_at = ?").run(new Date(day0 + 9 * 3600000).toISOString());
+    const ins = store.db.prepare("INSERT INTO xp_events (student_id, amount, reason, created_at) VALUES (?, 10, 'vaja', ?)");
+    ins.run(kid.id, sql(ljMidnight(day0, 7) + 30 * 60000));
+    // Dve vaji istega dne v Ljubljani (0.30 in 23.30, v UTC dva datuma) sta en dan vaje.
+    ins.run(kid.id, sql(ljMidnight(day0, 8) + 30 * 60000));
+    ins.run(kid.id, sql(ljMidnight(day0, 9) - 30 * 60000));
+    const g = (await a("/api/guarantee")).body.guarantee;
+    assert.deepEqual(g.weeks.slice(0, 2).map((w) => w.days), [0, 2]);
+  });
+});
+
+test("Podari Evklid: vračilo po izdaji kod iz sklada sklada ne spusti pod 0", async () => {
+  process.env.EVKLID_ADMIN_EMAILS = "skrbnik@pod3.si";
+  try {
+    await withServer(async ({ client, stripe, store, hook }) => {
+      const adm = client();
+      await registerVerified(adm, stripe, "skrbnik@pod3.si");
+      store.db.prepare("INSERT INTO podari_fund (kind, amount, status, payment_id) VALUES ('month', 3000, 'paid', 'pi_neg')").run();
+      const r = await adm("/api/admin/podari/codes", { method: "POST", body: { school: "OŠ Vič", count: 1, source: "sklad" } });
+      assert.equal(r.status, 201, JSON.stringify(r.body));
+      assert.equal(r.body.balance, 3);
+      // Plačilo, iz katerega je koda, je vrnjeno: koda ostane, sklad je 0 (ne −2997), nova koda iz sklada ni mogoča.
+      await hook({ id: "evt_neg", type: "charge.refunded", data: { object: { payment_intent: "pi_neg", amount: 3000, amount_refunded: 3000 } } });
+      const view = (await adm("/api/admin/podari")).body;
+      assert.equal(view.balance, 0);
+      assert.ok(view.donated_months >= 0);
+      assert.equal((await client()("/api/podari")).body.donated_months, 0);
+      assert.equal((await adm("/api/admin/podari/codes", { method: "POST", body: { school: "OŠ Vič", count: 1, source: "sklad" } })).status, 409);
+    });
+  } finally {
+    delete process.env.EVKLID_ADMIN_EMAILS;
+  }
 });
 
 test("Podari Evklid: meja na šolo velja tudi za razstavljene črke in nevidne znake; soglasje brez besedila o odstopu", async () => {

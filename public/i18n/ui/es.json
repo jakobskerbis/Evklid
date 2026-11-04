@@ -3168,5 +3168,19 @@
   "gift.level": "Nivel",
   "meter.levelsTitle": "Precios por nivel",
   "chat.choices": "Respuestas rápidas",
-  "chat.deleted": "Conversación eliminada."
+  "chat.deleted": "Conversación eliminada.",
+  "pay.perStudyYear": "curso académico",
+  "pay.yearPerMonth": "≈ {price} / mes (10 meses)",
+  "pay.secureCancel": "El pago se realiza de forma segura a través de Stripe. Puedes cancelar la suscripción en cualquier momento.",
+  "pay.trialKept": "Se mantiene lo que queda de tu prueba: el primer pago se hará cuando termine.",
+  "pay.pricesDraft": "Los precios en moneda local son provisionales (versión de desarrollo).",
+  "block.daily": "Hoy has usado tus {n} preguntas al tutor. Mañana tendrás nuevas. Hasta entonces puedes practicar sin límite en Práctica.",
+  "block.creditOut": "El tutor no está disponible durante unos minutos (se ha agotado el crédito de IA). Práctica y las explicaciones de los temas siguen funcionando.",
+  "block.freeTailTopup": "Este mes has usado todas las preguntas al tutor de tu plan. Con uso adicional en la pestaña Cuenta puedes seguir ahora mismo; si no, el día 1 del mes. Práctica y las explicaciones de los temas siguen funcionando.",
+  "block.freeTail": "Este mes has usado todas las preguntas al tutor de tu plan. Volverás a tenerlas el día 1 del mes. Práctica y las explicaciones de los temas siguen funcionando.",
+  "block.capOut": "El tutor ya no está disponible este mes (se ha alcanzado el presupuesto mensual). Práctica y las explicaciones de los temas siguen funcionando.",
+  "block.shareOut": "Este mes has usado tu parte del tutor. Volverás a tenerla el día 1 del mes. Práctica y las explicaciones de los temas siguen funcionando.",
+  "block.capOutTopup": "El tutor ya no está disponible este mes (se ha alcanzado el presupuesto mensual). Con uso adicional en la pestaña Cuenta puedes seguir ahora mismo. Práctica y las explicaciones de los temas siguen funcionando.",
+  "block.shareOutTopup": "Este mes has usado tu parte del tutor. Con uso adicional en la pestaña Cuenta puedes seguir ahora mismo; si no, el día 1 del mes. Práctica y las explicaciones de los temas siguen funcionando.",
+  "block.monthLimit": "Este mes has alcanzado el límite de preguntas al tutor. Práctica y las explicaciones de los temas siguen funcionando."
 }

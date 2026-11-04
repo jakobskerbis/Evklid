@@ -790,13 +790,13 @@ function plansPicker(acc) {
     const p = find(seats, interval);
     if (!p) return "";
     const cur = p.currency || "EUR";
-    const perMonth = interval === "year" ? `<span class="muted">≈ ${money(Math.round(p.amount / 10), cur)} / mesec (10 mesecev)</span>` : "";
+    const perMonth = interval === "year" ? `<span class="muted">${esc(t("pay.yearPerMonth", { price: money(Math.round(p.amount / 10), cur) }))}</span>` : "";
     // Letni paket je prvi in privzet (j 2026-11-04): prihranek glede na 12 mesečnih plačil.
     const m = interval === "year" ? find(seats, "month") : null;
     const pct = m && m.amount > 0 && p.amount > 0 && (m.currency || "EUR") === cur ? Math.floor((1 - p.amount / (12 * m.amount)) * 100) : 0;
     const save = pct > 0 ? ` <span class="pill ok">${esc(t("pay.save", { pct }))}</span>` : "";
     return `<label class="plan"><input type="radio" name="plan" value="${seats}-${interval}">
-      <span><b>${money(p.amount, cur)}</b> / ${interval === "year" ? (p.level === "FAKS" && !p.family ? "študijsko leto" : "šolsko leto") : "mesec"}${save}<br>${perMonth}</span></label>`;
+      <span><b>${money(p.amount, cur)}</b> / ${esc(t(interval === "year" ? (p.level === "FAKS" && !p.family ? "pay.perStudyYear" : "school.perYear") : "school.perMonth"))}${save}<br>${perMonth}</span></label>`;
   };
   // Najprej izbira, za koliko otrok; šele nato cene samo za to izbiro (j 2026-10-30: prej je bilo prenatrpano).
   const familyLabel = acc.children.some((c) => c.level === "FAKS") ? t("pay.familyStudent") : t("pay.family");
@@ -814,16 +814,14 @@ function plansPicker(acc) {
       <div id="plan-rest" class="plans" hidden>
       <p class="form-error" role="alert" hidden></p>
       ${acc.guarantee ? guaranteeLine() : ""}
-      ${acc.prices_draft ? `<p class="muted">Cene v lokalni valuti so predlog (razvojna različica).</p>` : ""}
+      ${acc.prices_draft ? `<p class="muted">${esc(t("pay.pricesDraft"))}</p>` : ""}
       ${acc.parent.minor
         ? `<p class="muted">${esc(t("pay.minorNote"))}</p>
            <button class="secondary" type="button" id="plan-link">${esc(t("pay.askParent"))}</button><div id="plan-link-out"></div>`
         : `${podariAddon(acc)}
            ${consentFields()}
            <button class="primary" type="submit">${esc(t("pay.continue"))}</button>`}
-      ${acc.parent.minor ? "" : `<p class="muted">Plačilo poteka varno prek Stripe. Naročnino lahko kadar koli prekličeš.${
-        acc.access.tier === "trial" ? " Preostanek preizkusa se ohrani: prvo plačilo bo šele po njegovem koncu." : ""
-      }</p>`}
+      ${acc.parent.minor ? "" : `<p class="muted">${esc(t("pay.secureCancel"))}${acc.access.tier === "trial" ? ` ${esc(t("pay.trialKept"))}` : ""}</p>`}
       </div>
     </form>`;
 }

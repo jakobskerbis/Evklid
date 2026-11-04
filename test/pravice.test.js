@@ -250,6 +250,7 @@ test("šolska licenca v aplikaciji: interaktivne lekcije za šolske predmete, 15
       grades: ["OS-8"],
       validUntil: iso(60),
       aiCapUsdMonth: 5,
+      seats: 2, // tudi sošolec spodaj ima mesto: v mejo AI šole šteje samo poraba učencev z mestom
     });
     schools.join(1, kid.id);
     assert.equal((await lesson(MAT)).body.interactive, true);

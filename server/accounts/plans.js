@@ -314,6 +314,18 @@ export const giftGuarantee = (giftLevel, useLevel) =>
 // Najmanjša meja naročnika: tudi paket z mejo 0 (majhna regijska cena) ostane »zajamčen« (hitri način, nato
 // brezplačni rep), ne pa brez meje po utežeh skupnega proračuna.
 export const MIN_CEILING_USD = 0.001;
+// Nadgradnja med mesecem: ta mesec zajamčeni AI starega paketa za pretekle dni in novega za preostale (dan
+// nadgradnje šteje k novemu); od naslednjega meseca novi v celoti. Mesec AI je koledarski mesec v UTC (enako
+// kot server/proracun.js periodOf). Nižji paket (ali nadgradnja v prejšnjem mesecu) velja takoj v celoti.
+export function upgradeMonthUsd(oldUsd, newUsd, upgradedAt, now = Date.now()) {
+  const d = new Date(now);
+  const start = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
+  const end = Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1);
+  if (!(upgradedAt >= start && upgradedAt < end) || !(newUsd > oldUsd)) return newUsd;
+  const days = Math.round((end - start) / 86400000);
+  const left = days - Math.floor((upgradedAt - start) / 86400000);
+  return Math.round((oldUsd * (days - left) + newUsd * left) / days * 1000) / 1000;
+}
 // Učencu in staršu pokažemo porabo kot število preostalih podrobnih razlag (nikoli € ali $).
 // Ocena za eno podrobno razlago (zmogljivejši model, kratka zgodovina); zaokroženo navzdol.
 export const usdPerExplanation = () => {

@@ -3165,5 +3165,19 @@
   "gift.level": "Szint",
   "meter.levelsTitle": "Árak szintenként",
   "chat.choices": "Gyors válaszok",
-  "chat.deleted": "A beszélgetés törölve."
+  "chat.deleted": "A beszélgetés törölve.",
+  "pay.perStudyYear": "egyetemi tanév",
+  "pay.yearPerMonth": "≈ {price} / hónap (10 hónap)",
+  "pay.secureCancel": "A fizetés biztonságosan, a Stripe szolgáltatáson keresztül történik. Az előfizetést bármikor lemondhatod.",
+  "pay.trialKept": "A próbaidőszak hátralévő része megmarad: az első fizetés csak annak végén történik.",
+  "pay.pricesDraft": "A helyi pénznemben megadott árak tervezetek (fejlesztői változat).",
+  "block.daily": "Mára elfogyott mind a(z) {n} kérdésed az oktatóhoz. Holnap újakat kapsz. Addig korlátlanul gyakorolhatsz a Gyakorlásban.",
+  "block.creditOut": "Az oktató néhány percig nem érhető el (elfogyott az AI-kredit). A Gyakorlás és a témák magyarázatai továbbra is működnek.",
+  "block.freeTailTopup": "Ebben a hónapban elfogyott a csomagodban lévő összes kérdés az oktatóhoz. Ha a Fiók fülön további használatot vásárolsz, azonnal folytathatod, különben a hónap 1-jén. A Gyakorlás és a témák magyarázatai továbbra is működnek.",
+  "block.freeTail": "Ebben a hónapban elfogyott a csomagodban lévő összes kérdés az oktatóhoz. A hónap 1-jén újra megkapod őket. A Gyakorlás és a témák magyarázatai továbbra is működnek.",
+  "block.capOut": "Az oktató ebben a hónapban már nem érhető el (a havi keret elfogyott). A Gyakorlás és a témák magyarázatai továbbra is működnek.",
+  "block.shareOut": "Ebben a hónapban elfogyott az oktatóból rád eső rész. A hónap 1-jén újra megkapod. A Gyakorlás és a témák magyarázatai továbbra is működnek.",
+  "block.capOutTopup": "Az oktató ebben a hónapban már nem érhető el (a havi keret elfogyott). Ha a Fiók fülön további használatot vásárolsz, azonnal folytathatod. A Gyakorlás és a témák magyarázatai továbbra is működnek.",
+  "block.shareOutTopup": "Ebben a hónapban elfogyott az oktatóból rád eső rész. Ha a Fiók fülön további használatot vásárolsz, azonnal folytathatod, különben a hónap 1-jén. A Gyakorlás és a témák magyarázatai továbbra is működnek.",
+  "block.monthLimit": "Ebben a hónapban elérted az oktatóhoz intézhető kérdések korlátját. A Gyakorlás és a témák magyarázatai továbbra is működnek."
 }

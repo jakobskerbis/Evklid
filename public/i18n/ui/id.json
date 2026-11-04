@@ -3141,5 +3141,19 @@
   "gift.level": "Jenjang",
   "meter.levelsTitle": "Harga per jenjang",
   "chat.choices": "Balasan cepat",
-  "chat.deleted": "Percakapan dihapus."
+  "chat.deleted": "Percakapan dihapus.",
+  "pay.perStudyYear": "tahun akademik",
+  "pay.yearPerMonth": "≈ {price} / bulan (10 bulan)",
+  "pay.secureCancel": "Pembayaran diproses dengan aman melalui Stripe. Kamu bisa membatalkan langganan kapan saja.",
+  "pay.trialKept": "Sisa masa uji coba tetap berlaku: pembayaran pertama baru dilakukan setelah masa itu berakhir.",
+  "pay.pricesDraft": "Harga dalam mata uang lokal masih berupa usulan (versi pengembangan).",
+  "block.daily": "Hari ini kamu sudah memakai semua {n} pertanyaan untuk tutor. Besok kamu mendapatkannya lagi. Sampai saat itu, kamu bisa berlatih tanpa batas di Latihan.",
+  "block.creditOut": "Tutor tidak tersedia selama beberapa menit (kredit AI sudah habis). Latihan dan penjelasan topik tetap berjalan.",
+  "block.freeTailTopup": "Bulan ini kamu sudah memakai semua pertanyaan untuk tutor dalam paketmu. Dengan membeli pemakaian tambahan di tab Akun, kamu bisa langsung lanjut; jika tidak, mulai tanggal 1. Latihan dan penjelasan topik tetap berjalan.",
+  "block.freeTail": "Bulan ini kamu sudah memakai semua pertanyaan untuk tutor dalam paketmu. Kamu mendapatkannya lagi pada tanggal 1. Latihan dan penjelasan topik tetap berjalan.",
+  "block.capOut": "Tutor tidak lagi tersedia bulan ini (anggaran bulanan sudah tercapai). Latihan dan penjelasan topik tetap berjalan.",
+  "block.shareOut": "Bulan ini kamu sudah memakai jatah tutormu. Kamu mendapatkannya lagi pada tanggal 1. Latihan dan penjelasan topik tetap berjalan.",
+  "block.capOutTopup": "Tutor tidak lagi tersedia bulan ini (anggaran bulanan sudah tercapai). Dengan membeli pemakaian tambahan di tab Akun, kamu bisa langsung lanjut. Latihan dan penjelasan topik tetap berjalan.",
+  "block.shareOutTopup": "Bulan ini kamu sudah memakai jatah tutormu. Dengan membeli pemakaian tambahan di tab Akun, kamu bisa langsung lanjut; jika tidak, mulai tanggal 1. Latihan dan penjelasan topik tetap berjalan.",
+  "block.monthLimit": "Bulan ini kamu sudah mencapai batas pertanyaan untuk tutor. Latihan dan penjelasan topik tetap berjalan."
 }

@@ -3165,5 +3165,19 @@
   "gift.level": "Ngazi",
   "meter.levelsTitle": "Bei kwa ngazi",
   "chat.choices": "Majibu ya haraka",
-  "chat.deleted": "Mazungumzo yamefutwa."
+  "chat.deleted": "Mazungumzo yamefutwa.",
+  "pay.perStudyYear": "mwaka wa masomo wa chuo",
+  "pay.yearPerMonth": "≈ {price} / mwezi (miezi 10)",
+  "pay.secureCancel": "Malipo yanafanyika kwa usalama kupitia Stripe. Unaweza kughairi usajili wakati wowote.",
+  "pay.trialKept": "Muda uliobaki wa majaribio unabaki: malipo ya kwanza yatafanyika tu baada ya kuisha kwake.",
+  "pay.pricesDraft": "Bei kwa sarafu ya ndani ni pendekezo (toleo la uundaji).",
+  "block.daily": "Leo umetumia maswali yako yote {n} kwa mwalimu. Kesho utapata mapya. Hadi wakati huo unaweza kufanya mazoezi bila kikomo kwenye Mazoezi.",
+  "block.creditOut": "Mwalimu hapatikani kwa dakika chache (salio la AI limeisha). Mazoezi na maelezo ya mada yanaendelea kufanya kazi.",
+  "block.freeTailTopup": "Mwezi huu umetumia maswali yote kwa mwalimu yaliyo kwenye kifurushi chako. Ukinunua matumizi ya ziada kwenye kichupo cha Akaunti unaweza kuendelea mara moja, la sivyo tarehe 1 ya mwezi. Mazoezi na maelezo ya mada yanaendelea kufanya kazi.",
+  "block.freeTail": "Mwezi huu umetumia maswali yote kwa mwalimu yaliyo kwenye kifurushi chako. Utayapata tena tarehe 1 ya mwezi. Mazoezi na maelezo ya mada yanaendelea kufanya kazi.",
+  "block.capOut": "Mwalimu hapatikani tena mwezi huu (bajeti ya mwezi imefikiwa). Mazoezi na maelezo ya mada yanaendelea kufanya kazi.",
+  "block.shareOut": "Mwezi huu umetumia sehemu yako ya mwalimu. Utaipata tena tarehe 1 ya mwezi. Mazoezi na maelezo ya mada yanaendelea kufanya kazi.",
+  "block.capOutTopup": "Mwalimu hapatikani tena mwezi huu (bajeti ya mwezi imefikiwa). Ukinunua matumizi ya ziada kwenye kichupo cha Akaunti unaweza kuendelea mara moja. Mazoezi na maelezo ya mada yanaendelea kufanya kazi.",
+  "block.shareOutTopup": "Mwezi huu umetumia sehemu yako ya mwalimu. Ukinunua matumizi ya ziada kwenye kichupo cha Akaunti unaweza kuendelea mara moja, la sivyo tarehe 1 ya mwezi. Mazoezi na maelezo ya mada yanaendelea kufanya kazi.",
+  "block.monthLimit": "Mwezi huu umefikia kikomo cha maswali kwa mwalimu. Mazoezi na maelezo ya mada yanaendelea kufanya kazi."
 }

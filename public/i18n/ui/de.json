@@ -3167,5 +3167,19 @@
   "gift.level": "Stufe",
   "meter.levelsTitle": "Preise nach Stufe",
   "chat.choices": "Schnelle Antworten",
-  "chat.deleted": "Unterhaltung gelöscht."
+  "chat.deleted": "Unterhaltung gelöscht.",
+  "pay.perStudyYear": "Studienjahr",
+  "pay.yearPerMonth": "≈ {price} / Monat (10 Monate)",
+  "pay.secureCancel": "Die Zahlung läuft sicher über Stripe. Du kannst das Abo jederzeit kündigen.",
+  "pay.trialKept": "Der Rest deiner Testphase bleibt erhalten: Die erste Zahlung erfolgt erst nach ihrem Ende.",
+  "pay.pricesDraft": "Die Preise in Landeswährung sind ein Entwurf (Entwicklungsversion).",
+  "block.daily": "Du hast heute alle {n} Fragen an den Tutor verbraucht. Morgen bekommst du neue. Bis dahin kannst du im Übungsbereich unbegrenzt üben.",
+  "block.creditOut": "Der Tutor ist für ein paar Minuten nicht erreichbar (das KI-Guthaben ist aufgebraucht). Übungsbereich und Themenerklärungen funktionieren weiter.",
+  "block.freeTailTopup": "Du hast diesen Monat alle Fragen an den Tutor in deinem Paket verbraucht. Mit zusätzlicher Nutzung im Tab Konto kannst du sofort weitermachen, sonst am 1. des Monats. Übungsbereich und Themenerklärungen funktionieren weiter.",
+  "block.freeTail": "Du hast diesen Monat alle Fragen an den Tutor in deinem Paket verbraucht. Am 1. des Monats bekommst du neue. Übungsbereich und Themenerklärungen funktionieren weiter.",
+  "block.capOut": "Der Tutor ist diesen Monat nicht mehr verfügbar (das Monatsbudget ist erreicht). Übungsbereich und Themenerklärungen funktionieren weiter.",
+  "block.shareOut": "Du hast deinen Anteil am Tutor für diesen Monat verbraucht. Am 1. des Monats bekommst du ihn wieder. Übungsbereich und Themenerklärungen funktionieren weiter.",
+  "block.capOutTopup": "Der Tutor ist diesen Monat nicht mehr verfügbar (das Monatsbudget ist erreicht). Mit zusätzlicher Nutzung im Tab Konto kannst du sofort weitermachen. Übungsbereich und Themenerklärungen funktionieren weiter.",
+  "block.shareOutTopup": "Du hast deinen Anteil am Tutor für diesen Monat verbraucht. Mit zusätzlicher Nutzung im Tab Konto kannst du sofort weitermachen, sonst am 1. des Monats. Übungsbereich und Themenerklärungen funktionieren weiter.",
+  "block.monthLimit": "Du hast diesen Monat das Limit an Fragen an den Tutor erreicht. Übungsbereich und Themenerklärungen funktionieren weiter."
 }

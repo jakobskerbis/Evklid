@@ -121,6 +121,13 @@ async function fetchThroughRestart(url, init) {
   }
 }
 
+// Napaka strežnika v jeziku vmesnika: code je ključ i18n (npr. »block.daily« iz server/usage.js blockInfo),
+// error je slovensko besedilo strežnika (rezerva, če ključa ni).
+const serverError = (err, status) => {
+  const own = err?.code ? t(err.code, err.params || {}) : null;
+  return own && own !== err.code ? own : err?.error || t("common.error", { status });
+};
+
 const api = async (url, opts = {}) => {
   if (/\/tasks\/off-/.test(url)) {
     const local = fromPack(url, opts);
@@ -141,7 +148,7 @@ const api = async (url, opts = {}) => {
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     // status: strežnik je odgovoril (napaka ni v povezavi); body: dodatni podatki (npr. unavailable).
-    throw Object.assign(new Error(err.error || t("common.error", { status: res.status })), { status: res.status, body: err });
+    throw Object.assign(new Error(serverError(err, res.status)), { status: res.status, body: err });
   }
   return res.json();
 };
@@ -893,7 +900,7 @@ async function send(text, { deep = false } = {}) {
       bubble.remove();
       if (serverDown(res)) throw new Error(t("off.serverBusy"));
       if (err.chat_off) throw Object.assign(new Error(t("chat.off")), { chatOff: true });
-      throw new Error(err.error || t("common.error", { status: res.status }));
+      throw new Error(serverError(err, res.status));
     }
 
     if (paperCtx && state.paperCtx === paperCtx) state.paperCtx = null; // strežnik ga je shranil s sporočilom
