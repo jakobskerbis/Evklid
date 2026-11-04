@@ -2752,6 +2752,7 @@
   "sim.layers": "Afișează pe grafic",
   "sim.layers.show": "Afișează:",
   "sim.layer.grid": "Grilă",
+  "sim.lab.pin": "Fixează imaginea",
   "sim.layer.marks": "Marcaje",
   "sim.layer.fit": "{name}: dreaptă",
   "sim.color.accent": "Albastru",

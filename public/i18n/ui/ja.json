@@ -2701,6 +2701,7 @@
   "sim.layers": "グラフに表示",
   "sim.layers.show": "表示:",
   "sim.layer.grid": "方眼",
+  "sim.lab.pin": "図を固定",
   "sim.layer.marks": "目印",
   "sim.layer.fit": "{name}: 直線",
   "sim.color.accent": "青",

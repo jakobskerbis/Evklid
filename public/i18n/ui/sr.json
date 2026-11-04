@@ -2750,6 +2750,7 @@
   "sim.layers": "Прикажи на графику",
   "sim.layers.show": "Прикажи:",
   "sim.layer.grid": "Мрежа",
+  "sim.lab.pin": "Закачи слику",
   "sim.layer.marks": "Ознаке",
   "sim.layer.fit": "{name}: права",
   "sim.color.accent": "Плава",

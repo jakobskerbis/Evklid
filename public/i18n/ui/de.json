@@ -2725,6 +2725,7 @@
   "sim.layers": "Im Diagramm anzeigen",
   "sim.layers.show": "Anzeigen:",
   "sim.layer.grid": "Gitter",
+  "sim.lab.pin": "Bild anheften",
   "sim.layer.marks": "Markierungen",
   "sim.layer.fit": "{name}: Gerade",
   "sim.color.accent": "Blau",

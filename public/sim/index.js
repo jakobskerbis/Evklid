@@ -195,6 +195,8 @@ export async function mountSim(id, el, opts = {}) {
   el.classList.add("demo", `demo-${id}`);
   try {
     fn(el, opts || {});
+    // Laboratorij: na telefonu ostane risba vidna med uporabo kontrol (lab.js → pripni, docs/laboratorij.md).
+    if (el.classList.contains("lab")) (await import("./lab.js")).pripni(el);
     focusableTargets(el);
     // Ponastavi: simulacijo postavi znova v začetno stanje (ne pri zbirki, ki ima svoje podsimulacije).
     if (id !== "zbirka" && !opts?.noReset) {
