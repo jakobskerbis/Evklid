@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Pot do polne lupine
+  - Na odda $1$, Cl sprejme $1$
+  - ion dobi razporeditev žlahtnega plina
+- Ion
+  - delec z nabojem
+  - protoni ostanejo, spremenijo se elektroni
+- Naboj iona
+  - protoni minus elektroni
+  - $\mathrm{Na^+}$: $11 - 10 = 1$
+  - napaka: oddan elektron da minus
+- Kation in anion
+  - kovina odda: $\mathrm{Mg^{2+}}$
+  - nekovina sprejme: $\mathrm{O^{2-}}$
+- Ionska vez
+  - privlak nasprotnih nabojev
+  - med kovino in nekovino
+- Razmerje ionov
+  - vsota nabojev je $0$
+  - $\mathrm{CaCl_2}$: $2 + 2 \cdot (-1) = 0$
+- Ionski kristal
+  - ni molekul, formula je razmerje
+  - visoko tališče, krhek
+  - tok prevaja raztopina ali talina
