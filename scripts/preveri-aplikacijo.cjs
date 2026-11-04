@@ -1301,26 +1301,38 @@ async function uciPhone(p) {
   await barTab(p, "path", { wait: 300 });
   await barTab(p, "uci", { wait: 300 });
   if ((await currentView(p)) !== "view-lab") throw new Error(`»Uči se« ne odpre zadnjega zavihka (${await currentView(p)})`);
-  // Lekcija s poskusom in 3D modelom (katalog): »Poglej v 3D« odpre model čez cel zaslon, Nazaj ga zapre in lekcija
-  // ostane; »Poskus v laboratoriju« odpre poskus, Nazaj vrne v lekcijo (ne na seznam poskusov).
-  await p.evaluate(() => window.evklid.openLesson("BIO-OS-8/prebavila-in-prehrana"));
-  await expectVisible(p, "#view-textbook .tb-link[data-tb-3d]", "povezava »Poglej v 3D« v lekciji", 8000);
-  await click(p, "#view-textbook .tb-link[data-tb-3d]", { wait: 300 });
-  await p.locator(".uci-3d-full iframe").waitFor({ state: "attached", timeout: 20000 }).catch(() => {
-    throw new Error("»Poglej v 3D« v lekciji ne odpre modela");
+  // Povezave iz lekcije (katalog): »Poglej v 3D« odpre pravi model čez cel zaslon (Nazaj in Esc sta preverjena zgoraj);
+  // »Poskus v laboratoriju« odpre poskus, Nazaj vrne v lekcijo (ne na seznam poskusov). Klik prek DOM in dolgi roki:
+  // lekcija s 3D modelom ga gradi na glavni niti in telefon brez grafične kartice med tem skoraj ne riše.
+  const uciTb = async (id) => {
+    await p.evaluate((id) => window.evklid.openLesson(id), id);
+    await expectVisible(p, "#view-textbook .tb-links", `povezave v lekciji ${id}`, 15000);
+  };
+  const closeLesson = async () => {
+    await p.goBack();
+    await p.locator("#view-textbook .tb-title").waitFor({ state: "detached", timeout: 15000 }).catch(() => {
+      throw new Error("Nazaj ne zapre lekcije");
+    });
+  };
+  await uciTb("BIO-OS-8/dna-in-dedna-informacija");
+  // Klik in Esc v enem koraku: okvir se zapre, preden začne graditi prizor.
+  const src = await p.evaluate(() => {
+    document.querySelector("#view-textbook .tb-link[data-tb-3d]").click();
+    const f = document.querySelector(".uci-3d-full iframe")?.getAttribute("src") || "";
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+    return f;
   });
-  await p.goBack();
-  await settle(p, 300);
-  if (await p.locator(".uci-3d-full").count()) throw new Error("Nazaj ne zapre 3D modela iz lekcije");
-  await expectVisible(p, "#view-textbook .tb-link[data-tb-lab]", "lekcija po zaprtju 3D modela");
-  await click(p, "#view-textbook .tb-link[data-tb-lab]", { wait: 400 });
-  await expectVisible(p, "#view-lab .lab-stage", "poskus iz lekcije");
+  if (!/^\/3d\?vgrajeno=1#[a-z0-9]+(-[a-z0-9]+)*$/.test(src)) throw new Error(`»Poglej v 3D« v lekciji ne odpre modela (${src || "brez okvirja"})`);
+  if (await p.locator(".uci-3d-full").count()) throw new Error("Esc ne zapre 3D modela iz lekcije");
+  await closeLesson();
+  await uciTb("FIZ-OS-8/gostota");
+  await p.evaluate(() => document.querySelector("#view-textbook .tb-link[data-tb-lab]").click());
+  await expectVisible(p, "#view-lab .lab-stage", "poskus iz lekcije", 15000);
   await p.goBack();
   await settle(p, 300);
   if ((await currentView(p)) !== "view-textbook") throw new Error(`Nazaj iz poskusa, odprtega v lekciji, odpre ${await currentView(p)} namesto lekcije`);
   await expectVisible(p, "#view-textbook .tb-title", "lekcija po Nazaj iz poskusa");
-  await p.goBack();
-  await settle(p, 300);
+  await closeLesson();
 }
 
 async function phone(browser, app) {
