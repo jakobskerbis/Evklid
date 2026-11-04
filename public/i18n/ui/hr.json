@@ -3115,5 +3115,19 @@
   "gift.level": "Razina",
   "meter.levelsTitle": "Cijene po razinama",
   "chat.choices": "Brzi odgovori",
-  "chat.deleted": "Razgovor je izbrisan."
+  "chat.deleted": "Razgovor je izbrisan.",
+  "pay.perStudyYear": "akademska godina",
+  "pay.yearPerMonth": "≈ {price} / mjesec (10 mjeseci)",
+  "pay.secureCancel": "Plaćanje se odvija sigurno putem servisa Stripe. Pretplatu možeš otkazati u bilo kojem trenutku.",
+  "pay.trialKept": "Ostatak probnog razdoblja ostaje: prvo plaćanje bit će tek nakon njegova završetka.",
+  "pay.pricesDraft": "Cijene u lokalnoj valuti su prijedlog (razvojna verzija).",
+  "block.daily": "Za danas su potrošena sva tvoja pitanja za instruktora ({n}). Sutra ih opet dobivaš. Do tada možeš neograničeno vježbati u Vježbanju.",
+  "block.creditOut": "Instruktor je nekoliko minuta nedostupan (kredit za AI je potrošen). Vježbanje i objašnjenja tema i dalje rade.",
+  "block.freeTailTopup": "Ovaj su mjesec potrošena sva pitanja za instruktora iz tvog paketa. Dodatnom potrošnjom u kartici Račun možeš odmah nastaviti, inače 1. u mjesecu. Vježbanje i objašnjenja tema i dalje rade.",
+  "block.freeTail": "Ovaj su mjesec potrošena sva pitanja za instruktora iz tvog paketa. Ponovno ih dobivaš 1. u mjesecu. Vježbanje i objašnjenja tema i dalje rade.",
+  "block.capOut": "Instruktor ovaj mjesec više nije dostupan (dosegnut je mjesečni proračun). Vježbanje i objašnjenja tema i dalje rade.",
+  "block.shareOut": "Ovaj je mjesec potrošen tvoj dio instruktora. Ponovno ga dobivaš 1. u mjesecu. Vježbanje i objašnjenja tema i dalje rade.",
+  "block.capOutTopup": "Instruktor ovaj mjesec više nije dostupan (dosegnut je mjesečni proračun). Dodatnom potrošnjom u kartici Račun možeš odmah nastaviti. Vježbanje i objašnjenja tema i dalje rade.",
+  "block.shareOutTopup": "Ovaj je mjesec potrošen tvoj dio instruktora. Dodatnom potrošnjom u kartici Račun možeš odmah nastaviti, inače 1. u mjesecu. Vježbanje i objašnjenja tema i dalje rade.",
+  "block.monthLimit": "Ovaj je mjesec dosegnuto ograničenje pitanja za instruktora. Vježbanje i objašnjenja tema i dalje rade."
 }

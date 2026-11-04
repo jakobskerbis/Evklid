@@ -3143,5 +3143,19 @@
   "gift.level": "Stupeň",
   "meter.levelsTitle": "Ceny podľa stupňa",
   "chat.choices": "Rýchle odpovede",
-  "chat.deleted": "Konverzácia vymazaná."
+  "chat.deleted": "Konverzácia vymazaná.",
+  "pay.perStudyYear": "akademický rok",
+  "pay.yearPerMonth": "≈ {price} / mesiac (10 mesiacov)",
+  "pay.secureCancel": "Platba prebieha bezpečne cez Stripe. Predplatné môžeš kedykoľvek zrušiť.",
+  "pay.trialKept": "Zvyšok skúšobného obdobia zostáva: prvá platba bude až po jeho skončení.",
+  "pay.pricesDraft": "Ceny v miestnej mene sú návrh (vývojová verzia).",
+  "block.daily": "Dnes sú vyčerpané všetky tvoje otázky pre tútora ({n}). Zajtra dostaneš nové. Dovtedy môžeš neobmedzene precvičovať v Precvičovaní.",
+  "block.creditOut": "Tútor je na pár minút nedostupný (kredit pre AI je vyčerpaný). Precvičovanie a výklady tém fungujú ďalej.",
+  "block.freeTailTopup": "Tento mesiac sú vyčerpané všetky otázky pre tútora z tvojho balíka. S dokúpeným využitím na karte Účet môžeš pokračovať hneď, inak 1. dňa v mesiaci. Precvičovanie a výklady tém fungujú ďalej.",
+  "block.freeTail": "Tento mesiac sú vyčerpané všetky otázky pre tútora z tvojho balíka. Nové dostaneš 1. dňa v mesiaci. Precvičovanie a výklady tém fungujú ďalej.",
+  "block.capOut": "Tútor už tento mesiac nie je k dispozícii (mesačný rozpočet je vyčerpaný). Precvičovanie a výklady tém fungujú ďalej.",
+  "block.shareOut": "Tento mesiac je vyčerpaný tvoj podiel tútora. Znova ho dostaneš 1. dňa v mesiaci. Precvičovanie a výklady tém fungujú ďalej.",
+  "block.capOutTopup": "Tútor už tento mesiac nie je k dispozícii (mesačný rozpočet je vyčerpaný). S dokúpeným využitím na karte Účet môžeš pokračovať hneď. Precvičovanie a výklady tém fungujú ďalej.",
+  "block.shareOutTopup": "Tento mesiac je vyčerpaný tvoj podiel tútora. S dokúpeným využitím na karte Účet môžeš pokračovať hneď, inak 1. dňa v mesiaci. Precvičovanie a výklady tém fungujú ďalej.",
+  "block.monthLimit": "Tento mesiac je vyčerpaný limit otázok pre tútora. Precvičovanie a výklady tém fungujú ďalej."
 }

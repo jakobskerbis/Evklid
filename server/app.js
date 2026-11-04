@@ -499,8 +499,8 @@ export function createApp(store, opts = {}) {
     // Stikalo za nujne primere (docs/krizni-nacrt.md): klepet izklopljen, Vadnica in lekcije delujejo.
     if (chatOff()) return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true });
     if (busy.has(conv.id)) return res.status(409).json({ error: "Počakaj, da Evklid odgovori." });
-    const blocked = usage.blockReason(student.id);
-    if (blocked) return res.status(429).json({ error: blocked, limit: true });
+    const blocked = usage.blockInfo(student.id);
+    if (blocked) return res.status(429).json({ ...blocked, limit: true });
     busy.add(conv.id);
     // Zajamčena poraba naročnika (j 2026-11-01): stanje pred odgovorom, da ob prehodu 80 % ali 100 % pošljemo obvestilo.
     const allowBefore = accounts ? usage.allowance(student.id) : null;
@@ -1233,8 +1233,8 @@ export function createApp(store, opts = {}) {
     if (!t || t.student_id !== s.id) return res.status(404).json({ error: "Naloga ne obstaja." });
     const m = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(String(req.body?.image || ""));
     if (!m || m[2].length > 2 * 1024 * 1024) return res.status(400).json({ error: "Slika zapisa manjka ali je prevelika." });
-    const blocked = usage.blockReason(s.id);
-    if (blocked) return res.status(429).json({ error: blocked });
+    const blocked = usage.blockInfo(s.id);
+    if (blocked) return res.status(429).json(blocked);
     try {
       const a = t.payload.answer || {};
       const out = await readFn({ imageBase64: m[2], mediaType: m[1], answerType: a.type, unit: a.unit || null });

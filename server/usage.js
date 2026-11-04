@@ -51,6 +51,19 @@ export const NOTES = {
   appBudget: "*(Ta mesec je v Evklidu veliko vprašanj, zato so podrobne razlage malo manj poglobljene, a še vedno skrbno premišljene.)*\n\n",
 };
 
+// Razlogi, zakaj inštruktor ne odgovori (blockInfo). Enako besedilo je v public/i18n/sl.js pod istim ključem.
+export const BLOCK_TEXT = {
+  "block.daily": "Danes si porabil vseh {n} vprašanj za inštruktorja. Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
+  "block.creditOut": "Inštruktor je za nekaj minut nedosegljiv (dobroimetje za AI je porabljeno). Vadnica in razlage tem delujejo naprej.",
+  "block.freeTailTopup": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
+  "block.freeTail": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
+  "block.capOut": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej.",
+  "block.shareOut": "Ta mesec si porabil svoj del inštruktorja. Spet ga dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
+  "block.capOutTopup": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj. Vadnica in razlage tem delujejo naprej.",
+  "block.shareOutTopup": "Ta mesec si porabil svoj del inštruktorja. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
+  "block.monthLimit": "Ta mesec si dosegel omejitev vprašanj za inštruktorja. Vadnica in razlage tem delujejo naprej.",
+};
+
 // Kako dolgo po napaki »ni dobroimetja« inštruktor ne kliče API-ja (en neuspel klic na 10 minut).
 const CREDIT_PAUSE_MS = 10 * 60_000;
 // Vsota uteži aktivnih učencev (delitev proračuna) se izračuna največ enkrat na minuto.
@@ -406,37 +419,30 @@ export class Usage {
   }
   // Vrne besedilo razloga, če je klepet trenutno onemogočen, sicer null.
   blockReason(studentId) {
+    return this.blockInfo(studentId)?.error ?? null;
+  }
+  // Razlog za odgovor 429: { error, code, params? }. code je ključ i18n (public/i18n/sl.js »block.*«), da ga
+  // odjemalec pokaže v jeziku vmesnika; error ostane slovensko besedilo (rezerva, če ključa ni).
+  blockInfo(studentId) {
     const daily = LIMITS.dailyQuestions();
     if (daily && this.questionsToday(studentId) >= daily) {
-      return `Danes si porabil vseh ${daily} vprašanj za inštruktorja. Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.`;
+      return { error: BLOCK_TEXT["block.daily"].replace("{n}", daily), code: "block.daily", params: { n: daily } };
     }
-    if (this.creditOut()) {
-      return "Inštruktor je za nekaj minut nedosegljiv (dobroimetje za AI je porabljeno). Vadnica in razlage tem delujejo naprej.";
-    }
+    const out = (code) => ({ error: BLOCK_TEXT[code], code });
+    if (this.creditOut()) return out("block.creditOut");
     // Skupni proračun se deli po profilih (server/proracun.js); nad svojim delom učenec nadaljuje z dokupljenim kreditom.
     const state = this.budgetState();
-    if (this.overFreeTail(studentId, state)) {
-      return this.topupPrompt(studentId)
-        ? "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej."
-        : "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.";
-    }
+    if (this.overFreeTail(studentId, state)) return out(this.topupPrompt(studentId) ? "block.freeTailTopup" : "block.freeTail");
     if (state.cap) {
       if (!this.overShare(studentId, state)) return null;
       // Pod 15 let ali ob ponudbi paketa pred testom brez poziva k dokupu (ponudbe.js, ena ponudba naenkrat).
-      if (!this.topupPrompt(studentId)) {
-        return state.spent >= state.cap
-          ? "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej."
-          : "Ta mesec si porabil svoj del inštruktorja. Spet ga dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.";
-      }
-      return state.spent >= state.cap
-        ? "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj. Vadnica in razlage tem delujejo naprej."
-        : "Ta mesec si porabil svoj del inštruktorja. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.";
+      const capped = state.spent >= state.cap;
+      if (!this.topupPrompt(studentId)) return out(capped ? "block.capOut" : "block.shareOut");
+      return out(capped ? "block.capOutTopup" : "block.shareOutTopup");
     }
     const per = LIMITS.studentMonthlyUsd();
     // Naročnika mesečna meja ne ustavi: nad zajamčenim deležem odgovarja hitri model (dnevna meja vprašanj velja).
-    if (per && !(this.guaranteeOf(studentId) > 0) && this.monthTotal(studentId) >= per) {
-      return "Ta mesec si dosegel omejitev vprašanj za inštruktorja. Vadnica in razlage tem delujejo naprej.";
-    }
+    if (per && !(this.guaranteeOf(studentId) > 0) && this.monthTotal(studentId) >= per) return out("block.monthLimit");
     return null;
   }
   summary() {

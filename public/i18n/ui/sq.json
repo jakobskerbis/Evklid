@@ -3089,5 +3089,19 @@
   "gift.level": "Niveli",
   "meter.levelsTitle": "Çmimet sipas nivelit",
   "chat.choices": "Përgjigje të shpejta",
-  "chat.deleted": "Biseda u fshi."
+  "chat.deleted": "Biseda u fshi.",
+  "pay.perStudyYear": "vit akademik",
+  "pay.yearPerMonth": "≈ {price} / muaj (10 muaj)",
+  "pay.secureCancel": "Pagesa kryhet në mënyrë të sigurt përmes Stripe. Abonimin mund ta anulosh në çdo kohë.",
+  "pay.trialKept": "Pjesa e mbetur e provës ruhet: pagesa e parë bëhet vetëm pasi të mbarojë.",
+  "pay.pricesDraft": "Çmimet në monedhën vendase janë propozim (version zhvillimi).",
+  "block.daily": "Sot i ke përdorur të gjitha {n} pyetjet për tutorin. Nesër merr të reja. Deri atëherë mund të ushtrohesh pa kufi te Ushtrimet.",
+  "block.creditOut": "Tutori nuk është i disponueshëm për disa minuta (krediti për AI ka mbaruar). Ushtrimet dhe shpjegimet e temave vazhdojnë të funksionojnë.",
+  "block.freeTailTopup": "Këtë muaj i ke përdorur të gjitha pyetjet për tutorin në paketën tënde. Me përdorim shtesë te skeda Llogaria mund të vazhdosh menjëherë, përndryshe më 1 të muajit. Ushtrimet dhe shpjegimet e temave vazhdojnë të funksionojnë.",
+  "block.freeTail": "Këtë muaj i ke përdorur të gjitha pyetjet për tutorin në paketën tënde. I merr sërish më 1 të muajit. Ushtrimet dhe shpjegimet e temave vazhdojnë të funksionojnë.",
+  "block.capOut": "Tutori nuk është më i disponueshëm këtë muaj (është arritur buxheti mujor). Ushtrimet dhe shpjegimet e temave vazhdojnë të funksionojnë.",
+  "block.shareOut": "Këtë muaj e ke përdorur pjesën tënde të tutorit. E merr sërish më 1 të muajit. Ushtrimet dhe shpjegimet e temave vazhdojnë të funksionojnë.",
+  "block.capOutTopup": "Tutori nuk është më i disponueshëm këtë muaj (është arritur buxheti mujor). Me përdorim shtesë te skeda Llogaria mund të vazhdosh menjëherë. Ushtrimet dhe shpjegimet e temave vazhdojnë të funksionojnë.",
+  "block.shareOutTopup": "Këtë muaj e ke përdorur pjesën tënde të tutorit. Me përdorim shtesë te skeda Llogaria mund të vazhdosh menjëherë, përndryshe më 1 të muajit. Ushtrimet dhe shpjegimet e temave vazhdojnë të funksionojnë.",
+  "block.monthLimit": "Këtë muaj ke arritur kufirin e pyetjeve për tutorin. Ushtrimet dhe shpjegimet e temave vazhdojnë të funksionojnë."
 }

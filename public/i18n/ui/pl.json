@@ -3145,5 +3145,19 @@
   "gift.level": "Poziom",
   "meter.levelsTitle": "Ceny według poziomu",
   "chat.choices": "Szybkie odpowiedzi",
-  "chat.deleted": "Rozmowa usunięta."
+  "chat.deleted": "Rozmowa usunięta.",
+  "pay.perStudyYear": "rok akademicki",
+  "pay.yearPerMonth": "≈ {price} / miesiąc (10 miesięcy)",
+  "pay.secureCancel": "Płatność odbywa się bezpiecznie przez Stripe. Subskrypcję możesz anulować w każdej chwili.",
+  "pay.trialKept": "Pozostała część okresu próbnego zostaje zachowana: pierwsza płatność nastąpi dopiero po jego końcu.",
+  "pay.pricesDraft": "Ceny w walucie lokalnej są propozycją (wersja rozwojowa).",
+  "block.daily": "Na dziś wykorzystano wszystkie twoje pytania do korepetytora ({n}). Jutro dostaniesz nowe. Do tego czasu możesz bez ograniczeń ćwiczyć w Ćwiczeniach.",
+  "block.creditOut": "Korepetytor jest przez kilka minut niedostępny (skończył się kredyt na AI). Ćwiczenia i objaśnienia tematów działają dalej.",
+  "block.freeTailTopup": "W tym miesiącu wykorzystano wszystkie pytania do korepetytora z twojego pakietu. Dokupując dodatkowe użycie w karcie Konto, możesz kontynuować od razu, w przeciwnym razie 1. dnia miesiąca. Ćwiczenia i objaśnienia tematów działają dalej.",
+  "block.freeTail": "W tym miesiącu wykorzystano wszystkie pytania do korepetytora z twojego pakietu. Nowe dostaniesz 1. dnia miesiąca. Ćwiczenia i objaśnienia tematów działają dalej.",
+  "block.capOut": "Korepetytor nie jest już dostępny w tym miesiącu (osiągnięto miesięczny budżet). Ćwiczenia i objaśnienia tematów działają dalej.",
+  "block.shareOut": "W tym miesiącu wykorzystano twoją część korepetytora. Znów ją dostaniesz 1. dnia miesiąca. Ćwiczenia i objaśnienia tematów działają dalej.",
+  "block.capOutTopup": "Korepetytor nie jest już dostępny w tym miesiącu (osiągnięto miesięczny budżet). Dokupując dodatkowe użycie w karcie Konto, możesz kontynuować od razu. Ćwiczenia i objaśnienia tematów działają dalej.",
+  "block.shareOutTopup": "W tym miesiącu wykorzystano twoją część korepetytora. Dokupując dodatkowe użycie w karcie Konto, możesz kontynuować od razu, w przeciwnym razie 1. dnia miesiąca. Ćwiczenia i objaśnienia tematów działają dalej.",
+  "block.monthLimit": "W tym miesiącu osiągnięto limit pytań do korepetytora. Ćwiczenia i objaśnienia tematów działają dalej."
 }
