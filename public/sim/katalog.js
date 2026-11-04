@@ -298,13 +298,13 @@ export const SIM_TOPICS = {
   "FIZ-OS-8/odboj-svetlobe": ["zarki", "Odbojni zakon", { mode: "odboj" }],
   "FIZ-OS-8/lom-svetlobe": ["zarki", "Lom svetlobe", { mode: "lom" }],
   "FIZ-OS-8/nebo-in-osoncje": ["osoncje", "Lunine mene in letni časi"],
-  "FIZ-OS-8/sila-in-merjenje-sile": ["vzmet", "Vzmet in silomer", { mode: "hooke" }],
+  "FIZ-OS-8/sila-in-merjenje-sile": [["vzmet", "Vzmet in silomer", { mode: "hooke" }], ["lab-hooke", "Laboratorij: vzmet, uteži in Hookov zakon"]],
   "FIZ-OS-8/teza-in-masa": ["teza", "Teža in masa na različnih planetih"],
   "FIZ-OS-8/sestavljanje-sil-in-ravnovesje": ["sile", "Sestavljanje sil in ravnovesje"],
   "FIZ-OS-8/trenje-in-upor": ["klada", "Trenje pri vlečenju klade", { mode: "trenje" }],
-  "FIZ-OS-8/gostota": ["gostota", "Gostota: plava ali potone?", { mode: "gostota" }],
-  "FIZ-OS-8/tlak": ["tlak", "Tlak na ploskev in tlak v tekočini", { mode: "ploskev" }],
-  "FIZ-OS-8/vzgon": ["gostota", "Vzgon in Arhimedov zakon", { mode: "vzgon" }],
+  "FIZ-OS-8/gostota": [["gostota", "Gostota: plava ali potone?", { mode: "gostota" }], ["lab-gostota", "Laboratorij: gostota z merilnim valjem in tehtnico"]],
+  "FIZ-OS-8/tlak": [["tlak", "Tlak na ploskev in tlak v tekočini", { mode: "ploskev" }], ["lab-tlak", "Laboratorij: hidrostatični tlak in manometer"]],
+  "FIZ-OS-8/vzgon": [["gostota", "Vzgon in Arhimedov zakon", { mode: "vzgon" }], ["lab-vzgon", "Laboratorij: vzgon s silomerom"]],
   "FIZ-OS-8/enakomerno-gibanje": ["gibanje", "Enakomerno gibanje in grafi", { mode: "enakomerno" }],
   "FIZ-OS-8/pospeseno-gibanje": ["gibanje", "Pospešeno gibanje in grafi", { mode: "pospeseno" }],
   // ---------------------------------------------------------------- FIZ OŠ 9
@@ -368,8 +368,8 @@ export const SIM_TOPICS = {
   "FIZ-SS-1/gibalna-kolicina": ["trki", "Trki in gibalna količina"],
   "FIZ-SS-1/delo-in-moc": ["delo", "Delo in moč", { mode: "moc" }],
   "FIZ-SS-1/energija": ["skejt", "Ohranitev mehanske energije"],
-  "FIZ-SS-1/tlak-in-vzgon": [["tlak", "Hidrostatični tlak", { mode: "hidro" }], ["gostota", "Vzgon in Arhimedov zakon", { mode: "vzgon" }]],
-  "FIZ-SS-1/proznost": [["vzmet", "Hookov zakon", { mode: "hooke" }], ["vezava-vzmeti", "Zaporedna in vzporedna vezava vzmeti"]],
+  "FIZ-SS-1/tlak-in-vzgon": [["tlak", "Hidrostatični tlak", { mode: "hidro" }], ["gostota", "Vzgon in Arhimedov zakon", { mode: "vzgon" }], ["lab-tlak", "Laboratorij: hidrostatični tlak in manometer"], ["lab-vzgon", "Laboratorij: Arhimedov zakon s silomerom"]],
+  "FIZ-SS-1/proznost": [["vzmet", "Hookov zakon", { mode: "hooke" }], ["vezava-vzmeti", "Zaporedna in vzporedna vezava vzmeti"], ["lab-hooke", "Laboratorij: Hookov zakon in meja prožnosti"]],
   "FIZ-SS-1/navor-in-ravnovesje": ["vzvod", "Navor in ravnovesje vzvoda"],
   // ---------------------------------------------------------------- FIZ SŠ 2
   "FIZ-SS-2/enakomerno-krozenje": ["krozenje", "Enakomerno kroženje"],
@@ -582,6 +582,26 @@ export const LAB_INFO = {
     subject: "FIZ",
     title: "Ohlajanje čaja",
     desc: "Nalij čaj v tri različne posode, meri, kako se ohlaja, in ugotovi, kaj naredijo pokrovček, stiropor in termovka.",
+  },
+  "lab-hooke": {
+    subject: "FIZ",
+    title: "Vzmet in uteži: Hookov zakon",
+    desc: "Na vzmet obešaj uteži, odčitaj podaljšek na ravnilu, nariši graf F(x), izračunaj prožnostni koeficient in poišči mejo prožnosti.",
+  },
+  "lab-gostota": {
+    subject: "FIZ",
+    title: "Gostota trdnin in tekočin",
+    desc: "Stehtaj vzorce, izmeri njihovo prostornino z izpodrivanjem vode v merilnem valju, določi gostoto tekočin in primerjaj s tabelo.",
+  },
+  "lab-vzgon": {
+    subject: "FIZ",
+    title: "Vzgon in Arhimedov zakon",
+    desc: "Valj na silomeru potapljaj v vodo, slano vodo, olje in etanol, izmeri vzgon in ga primerjaj s težo izpodrinjene tekočine.",
+  },
+  "lab-tlak": {
+    subject: "FIZ",
+    title: "Hidrostatični tlak z manometrom",
+    desc: "Sondo z opno spuščaj v tekočino, odčitaj razliko višin v manometru in ugotovi, kako je tlak odvisen od globine, gostote in smeri.",
   },
 };
 export const labKey = (id, opts = {}) => (opts && Object.keys(opts).length ? `${id}:${JSON.stringify(opts)}` : id);
