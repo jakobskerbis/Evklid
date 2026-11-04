@@ -4,7 +4,7 @@ Trenutni prompt je v `prompts/system_prompt.md`.
 
 ## 2026-11-04: dodatne vaje in stranske trditve (j potrdil 4. 11. po testu)
 
-- Nova vrstica v razdelku Pravilnost (stalni del, nad `EVKLID:NASTAVITVE`): preden inštruktor ponudi vajo za samostojno delo z novimi podatki, jo sam reši (rešitev obstaja, je enolična, na učenčevi ravni), sicer je ne ponudi; stranske trditve s števili (primerjave, »približno desetkrat«, deleži, ocene, zaokrožitve) pred zapisom izračuna, nepreverjeno izpusti.
+- Nova vrstica v razdelku Pravilnost (stalni del, nad `EVKLID:NASTAVITVE`): preden inštruktor ponudi vajo za samostojno delo z novimi podatki, jo zase reši, rešitve ne zapiše (rešitev obstaja, enolično rešljiva, na učenčevi ravni), sicer jo popravi ali sestavi drugo; stranske trditve s števili (primerjave, »približno desetkrat«, deleži, ocene, zaokrožitve) pred zapisom izračuna, nepreverjeno izpusti.
 - Zakaj: v primerjavi modelov (4. 11., ocenjevalec Opus) je bila večina napak Haikuja prav tu (nerešljiva dodatna vaja AB + BA = CCC, protislovna vaja s koti, »desetkrat manj« namesto ~94-krat, »šibko v primerjavi z zemeljskim poljem«), ne v končnem rezultatu. Preizkus (`scripts/primerjava-modelov.js --prompt`, navadni Haiku, istih 35 nalog SŠ, tekmovanj in faksa): napake 6 → 2 (SŠ 27 % → 13 %, tekmovanja 13 % → 0 %, faks 8 % → 0 %), cena odgovora enaka.
 
 ## 2026-11-04: skriti opombi »povzetek pogovora« in »lekcija iz učbenika«

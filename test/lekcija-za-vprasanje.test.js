@@ -8,7 +8,6 @@ import { listPaths, topicOrder, getTopic } from "../server/curriculum.js";
 import { loadLesson } from "../server/textbook.js";
 import { transcript } from "../server/povzetek.js";
 
-
 const os = (subject, g) => ({ subject, educational_track: "OSNOVNA_SOLA", curriculum_level: `${g}. razred` });
 const ss = (subject, g) => ({ subject, educational_track: "SREDNJA_SOLA", curriculum_level: `${g}. letnik` });
 
