@@ -854,7 +854,7 @@
   "sc.cas.eqHint": "Equazione con lettere: scegli quale lettera ricavare.",
   "sc.cas.cond": "Vale per",
   "sc.cas.unsupported": "Con le lettere per ora calcolo solo espressioni con +, −, ·, : e potenze intere (polinomi e frazioni di polinomi).",
-  "sc.cas.equation": "Questa è un'equazione. Usa »Risolvi per«.",
+  "sc.cas.equation": "Questa è un'equazione. Usa «Risolvi per».",
   "sc.cas.needeq": "Per risolvere scrivi un'equazione con =, ad es. solve(2x + a = 5; x).",
   "sc.cas.big": "L'espressione è troppo complessa da calcolare sul dispositivo.",
   "sc.cas.unverified": "Non è stato possibile verificare il risultato con i numeri, quindi non lo mostro.",

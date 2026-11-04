@@ -854,7 +854,7 @@
   "sc.cas.eqHint": "Mlinganyo wenye herufi: chagua herufi ipi nitafute.",
   "sc.cas.cond": "Inafaa kwa",
   "sc.cas.unsupported": "Kwa herufi kwa sasa nakokotoa tu semi zenye +, −, ·, : na vipeo kamili (polinomia na sehemu za polinomia).",
-  "sc.cas.equation": "Huu ni mlinganyo. Tumia »Tatua kwa«.",
+  "sc.cas.equation": "Huu ni mlinganyo. Tumia “Tatua kwa”.",
   "sc.cas.needeq": "Ili kutatua, andika mlinganyo wenye =, mfano solve(2x + a = 5; x).",
   "sc.cas.big": "Usemi ni mgumu mno kukokotolewa kwenye kifaa.",
   "sc.cas.unverified": "Jibu halikuweza kuthibitishwa kwa namba, kwa hivyo silionyeshi.",

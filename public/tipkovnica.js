@@ -377,7 +377,8 @@ function fxHtml() {
 // skupina Algebra: v slovenščini poenostavi/razvij/razstavi/reši, drugje angleška imena (kot na kalkulatorjih CAS)
 function fxKey(group, l, ins) {
   const sl = group === "alg" && CAS_SL[l] && /^sl/.test(currentLang() || "sl");
-  return sl ? key(CAS_SL[l], { a: "ins", v: ins.replace(l, CAS_SL[l]) }, { cls: "sm" }) : key(l, { a: "ins", v: ins }, { cls: "sm" });
+  const cls = group === "alg" && CAS_SL[l] ? "sm word" : "sm";
+  return sl ? key(CAS_SL[l], { a: "ins", v: ins.replace(l, CAS_SL[l]) }, { cls }) : key(l, { a: "ins", v: ins }, { cls });
 }
 
 function symName(g) {

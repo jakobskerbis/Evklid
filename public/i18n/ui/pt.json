@@ -854,7 +854,7 @@
   "sc.cas.eqHint": "Equação com letras: escolhe que letra resolvo.",
   "sc.cas.cond": "Válido para",
   "sc.cas.unsupported": "Com letras, por agora só calculo expressões com +, −, ·, : e potências inteiras (polinómios e frações de polinómios).",
-  "sc.cas.equation": "Isto é uma equação. Usa »Resolver em ordem a«.",
+  "sc.cas.equation": "Isto é uma equação. Usa «Resolver em ordem a».",
   "sc.cas.needeq": "Para resolver, escreve uma equação com =, por ex. solve(2x + a = 5; x).",
   "sc.cas.big": "A expressão é demasiado complicada para calcular no dispositivo.",
   "sc.cas.unverified": "Não foi possível verificar o resultado com números, por isso não o mostro.",

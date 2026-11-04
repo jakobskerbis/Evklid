@@ -67,7 +67,7 @@ const MORE = [
 
 /**
  * Znanstveni kalkulator v elementu root.
- * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text), canSteps?() }
+ * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), steps?(text, goal), canSteps?() }
  */
 export function createScientific(root, opts) {
   const { t, icon } = opts;
@@ -467,7 +467,7 @@ export function createScientific(root, opts) {
           <button type="button" class="sc-h-expr" data-i="${i}" title="${esc(t("sc.recall"))}">${texHtml(e.tex)}</button>
           ${resultHtml(e) ? `<button type="button" class="sc-h-res" data-i="${i}" title="${esc(t("sc.useResult"))}">${resultHtml(e)}</button>` : ""}
           ${fact ? `<div class="sc-h-note muted">${texHtml(`${fmt(e.value).tex} = ${factorsTex(e.value, fact)}`)}</div>` : ""}
-          ${noteHtml(e)}
+          ${last || !/^sc\.cas\.(symHint|eqHint)$/.test(e.note?.key || "") ? noteHtml(e) : ""}
           ${last ? actionsHtml(e, i) : ""}
         </div>`;
       })
@@ -504,7 +504,7 @@ export function createScientific(root, opts) {
   }
   function renderMore() {
     more.innerHTML = `<div class="sc-consts-h"><b>${esc(t("sc.functions"))}</b><button type="button" class="ghost icon-only sc-more-x" aria-label="${esc(t("pad.close"))}">${icon("x")}</button></div>
-      ${MORE.map(([g, keys]) => [g, keys || algKeys()]).map(([g, keys]) => `<div class="sc-more-g"><div class="sc-more-h">${esc(t(`sc.grp.${g}`))}</div><div class="sc-more-keys">${keys.map(([l, ins]) => `<button type="button" class="sc-mk" data-ins="${esc(ins)}">${texHtml(l)}</button>`).join("")}</div></div>`).join("")}`;
+      ${MORE.map(([g, keys]) => [g, keys || algKeys()]).map(([g, keys]) => `<div class="sc-more-g" data-g="${g}"><div class="sc-more-h">${esc(t(`sc.grp.${g}`))}</div><div class="sc-more-keys">${keys.map(([l, ins]) => `<button type="button" class="sc-mk" data-ins="${esc(ins)}">${texHtml(l)}</button>`).join("")}</div></div>`).join("")}`;
   }
   function algKeys() {
     const n = (op) => commandName(op, opts.locale?.());
@@ -617,7 +617,7 @@ export function createScientific(root, opts) {
     if (b.classList.contains("sc-act")) {
       const act = b.dataset.act;
       if (act === "plot") opts.openGraph?.(it.plot);
-      else if (act === "steps") opts.steps?.(it.stepsText || it.text);
+      else if (act === "steps") opts.steps?.(it.stepsText || it.text, it.op === "factor" ? "factor" : it.op === "simplify" ? "simplify" : null);
       else if (act === "cas") {
         // ukaz se zapiše v vrstico in izračuna kot vsak drug vnos (v zgodovini ga lahko prikličeš)
         const v = b.dataset.v;
@@ -653,12 +653,24 @@ export function createScientific(root, opts) {
     if (!it.im) return n(it.re);
     return `${it.re ? `${n(it.re)}${it.im < 0 ? "-" : "+"}` : it.im < 0 ? "-" : ""}${Math.abs(it.im) === 1 ? "" : n(Math.abs(it.im))}i`;
   };
+  // gnezdeni \frac, \sqrt, ^{…} od znotraj navzven: √(E/m) ostane √((E)/(m)), ne √(E)/(m)
+  function unnest(x) {
+    for (let prev = ""; prev !== x; ) {
+      prev = x;
+      x = x
+        .replace(/_\{([^{}]*)\}/g, "$1")
+        .replace(/\^\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `^${a}` : `^(${a})`))
+        .replace(/\\t?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)")
+        .replace(/\\sqrt\{([^{}]*)\}/g, (_, a) => (/^[\w.,]+$/.test(a) ? `√${a}` : `√(${a})`));
+    }
+    return x;
+  }
   // besedilo za odložišče: število ali rešitev v zapisu, ki ga razume vsak program (brez TeX)
   function copyText(it) {
     const c = comma();
     if ((it.kind || "value") === "value") return formatNumber(it.value, { mode: st.format, comma: c }).text;
     if (it.kind === "complex") return complexText(it);
-    return String(resTex(it))
+    return unnest(String(resTex(it)).replace(/\{,\}/g, ","))
       .replace(/\\Leftrightarrow/g, "⇔")
       .replace(/\\(quad|,|;|left|right)/g, " ")
       .replace(/\\approx/g, "≈")
@@ -672,11 +684,7 @@ export function createScientific(root, opts) {
       .replace(/\\pm/g, "±")
       .replace(/\\pi/g, "π")
       .replace(/\\cdot/g, "·")
-      .replace(/\\sqrt\{([^}]*)\}/g, "√$1")
-      .replace(/\\t?frac\{([^}]*)\}\{([^}]*)\}/g, "($1)/($2)")
       .replace(/\{,\}/g, ",")
-      .replace(/_\{([^}]*)\}/g, "$1")
-      .replace(/\^\{([^}]*)\}/g, "^$1")
       .replace(/\\[a-z]+/g, "")
       .replace(/[{}]/g, "")
       .replace(/\s+/g, " ")

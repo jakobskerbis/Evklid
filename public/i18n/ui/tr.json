@@ -854,7 +854,7 @@
   "sc.cas.eqHint": "Harfli denklem: hangi harfi yalnız bırakacağımı seç.",
   "sc.cas.cond": "Geçerli olduğu durum:",
   "sc.cas.unsupported": "Harflerle şimdilik yalnızca +, −, ·, : ve tam sayı kuvvetler içeren ifadeleri hesaplayabiliyorum (polinomlar ve polinom kesirleri).",
-  "sc.cas.equation": "Bu bir denklem. »… için çöz« düğmesini kullan.",
+  "sc.cas.equation": "Bu bir denklem. “… için çöz” düğmesini kullan.",
   "sc.cas.needeq": "Çözmek için = içeren bir denklem yaz, ör. solve(2x + a = 5; x).",
   "sc.cas.big": "İfade cihazda hesaplamak için fazla karmaşık.",
   "sc.cas.unverified": "Sonuç sayılarla doğrulanamadı, bu yüzden göstermiyorum.",

@@ -5,7 +5,7 @@ import { simplify, diff, toTex, MathError } from "./math.js";
 import { vectorLine } from "./vektor.js";
 import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prepare, exactTex, toFraction, formatNumber } from "./scicore.js";
 import { evalComplex, polyRoots } from "./toolscore.js";
-import { parseCommand, runCas, casInfo } from "./cas.js";
+import { parseCommand, runCas, casInfo, commandStart } from "./cas.js";
 
 const RANGE = 100; // numerično iščemo rešitve na [−RANGE, RANGE]
 const SAMPLES = 20000;
@@ -511,7 +511,17 @@ export function analyze(text, env = {}) {
 
   // simbolno računanje: poenostavi(…), razvij(…), razstavi(…), reši(…; x) (public/graph/cas.js)
   const cmd = parseCommand(raw);
-  if (cmd) return runCas(cmd, env);
+  if (cmd) {
+    const r = runCas(cmd, env);
+    // reši(x³ = 2; x) brez drugih črk: rešitve poišče številski reševalnik
+    if (r.error?.code === "casDegree" && cmd.op === "solve" && /[=]/.test(cmd.inner)) {
+      const num = analyze(cmd.inner, env);
+      if (num?.kind === "solve" && num.v === r.error.info.v) return { ...num, tex: r.tex || num.tex };
+    }
+    return r;
+  }
+  // razstavi(x² − 1)/(x + 1): ukaz, ki mu sledi še kaj, ni zmnožek črk r·a·z·s·t·a·v·i
+  if (commandStart(raw)) return { error: { code: "casTrailing", info: {} } };
 
   // definicija funkcije
   const def = functionDef(raw);

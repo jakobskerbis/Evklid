@@ -866,7 +866,7 @@
   "sc.cas.eqHint": "Równanie z literami: wybierz, którą literę mam wyznaczyć.",
   "sc.cas.cond": "Dla",
   "sc.cas.unsupported": "Z literami na razie liczę tylko wyrażenia z +, −, ·, : i potęgami całkowitymi (wielomiany i ułamki wielomianów).",
-  "sc.cas.equation": "To jest równanie. Użyj »Wyznacz«.",
+  "sc.cas.equation": "To jest równanie. Użyj „Wyznacz”.",
   "sc.cas.needeq": "Aby rozwiązać, wpisz równanie z =, np. solve(2x + a = 5; x).",
   "sc.cas.big": "Wyrażenie jest zbyt skomplikowane do obliczenia na urządzeniu.",
   "sc.cas.unverified": "Wyniku nie udało się sprawdzić liczbami, więc go nie pokazuję.",

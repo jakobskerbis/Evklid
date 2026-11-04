@@ -854,7 +854,7 @@
   "sc.cas.eqHint": "Gleichung mit Buchstaben: wähle, nach welchem Buchstaben ich auflöse.",
   "sc.cas.cond": "Gilt für",
   "sc.cas.unsupported": "Mit Buchstaben rechne ich bisher nur Terme mit +, −, ·, : und ganzzahligen Potenzen (Polynome und Brüche von Polynomen).",
-  "sc.cas.equation": "Das ist eine Gleichung. Nutze »Nach … auflösen«.",
+  "sc.cas.equation": "Das ist eine Gleichung. Nutze „Nach … auflösen“.",
   "sc.cas.needeq": "Zum Lösen gib eine Gleichung mit = ein, z. B. solve(2x + a = 5; x).",
   "sc.cas.big": "Der Term ist zu kompliziert für die Berechnung auf dem Gerät.",
   "sc.cas.unverified": "Das Ergebnis ließ sich nicht mit Zahlen prüfen, deshalb zeige ich es nicht.",

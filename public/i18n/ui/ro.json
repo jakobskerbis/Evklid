@@ -860,7 +860,7 @@
   "sc.cas.eqHint": "Ecuație cu litere: alege ce literă să exprim.",
   "sc.cas.cond": "Valabil pentru",
   "sc.cas.unsupported": "Cu litere deocamdată calculez doar expresii cu +, −, ·, : și puteri întregi (polinoame și fracții de polinoame).",
-  "sc.cas.equation": "Aceasta este o ecuație. Folosește »Exprimă«.",
+  "sc.cas.equation": "Aceasta este o ecuație. Folosește „Exprimă”.",
   "sc.cas.needeq": "Pentru rezolvare scrie o ecuație cu =, de ex. solve(2x + a = 5; x).",
   "sc.cas.big": "Expresia este prea complicată pentru calcul pe dispozitiv.",
   "sc.cas.unverified": "Rezultatul nu a putut fi verificat cu numere, așa că nu îl afișez.",

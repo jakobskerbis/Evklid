@@ -854,7 +854,7 @@
   "sc.cas.eqHint": "Ecuación con letras: elige qué letra despejo.",
   "sc.cas.cond": "Válido para",
   "sc.cas.unsupported": "Con letras por ahora solo calculo expresiones con +, −, ·, : y potencias enteras (polinomios y fracciones de polinomios).",
-  "sc.cas.equation": "Esto es una ecuación. Usa »Despejar«.",
+  "sc.cas.equation": "Esto es una ecuación. Usa «Despejar».",
   "sc.cas.needeq": "Para resolver, escribe una ecuación con =, p. ej. solve(2x + a = 5; x).",
   "sc.cas.big": "La expresión es demasiado complicada para calcularla en el dispositivo.",
   "sc.cas.unverified": "No se pudo comprobar el resultado con números, así que no lo muestro.",

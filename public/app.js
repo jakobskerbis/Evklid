@@ -3785,11 +3785,12 @@ function calcTool(mode) {
         openGraph: async (exprs) => (await setCalcMode("graph"))?.show(exprs),
         // »Po korakih«: zaslon Skeniraj (public/scan/) ima reševalnik po korakih
         canSteps: () => !!document.getElementById("view-scan"),
-        steps: async (text) => {
+        // goal: po »Razstavi« pokaže korake razstavljanja, ne poenostavljanja
+        steps: async (text, goal) => {
           if (!document.getElementById("view-scan")) return;
           closeCalcOverlay();
           showView("scan");
-          (await import("./scan/scan.js")).showScan?.({ text });
+          (await import("./scan/scan.js")).showScan?.({ text, goal });
         },
       });
     if (mode === "tools") return m.createTools(host, { ...base, subject: calcSubject });

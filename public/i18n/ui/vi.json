@@ -848,7 +848,7 @@
   "sc.cas.eqHint": "Phương trình có chữ: chọn chữ cần tìm.",
   "sc.cas.cond": "Với điều kiện",
   "sc.cas.unsupported": "Với chữ, hiện mình chỉ tính được biểu thức có +, −, ·, : và lũy thừa nguyên (đa thức và phân thức).",
-  "sc.cas.equation": "Đây là phương trình. Hãy dùng »Giải theo«.",
+  "sc.cas.equation": "Đây là phương trình. Hãy dùng “Giải theo”.",
   "sc.cas.needeq": "Để giải, hãy nhập phương trình có dấu =, ví dụ solve(2x + a = 5; x).",
   "sc.cas.big": "Biểu thức quá phức tạp để tính trên thiết bị.",
   "sc.cas.unverified": "Không thể kiểm tra kết quả bằng số, nên mình không hiển thị.",

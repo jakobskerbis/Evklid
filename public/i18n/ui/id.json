@@ -848,7 +848,7 @@
   "sc.cas.eqHint": "Persamaan dengan huruf: pilih huruf mana yang dicari.",
   "sc.cas.cond": "Berlaku untuk",
   "sc.cas.unsupported": "Dengan huruf saat ini aku hanya menghitung ekspresi dengan +, −, ·, : dan pangkat bulat (polinomial dan pecahan polinomial).",
-  "sc.cas.equation": "Ini persamaan. Gunakan »Selesaikan untuk«.",
+  "sc.cas.equation": "Ini persamaan. Gunakan “Selesaikan untuk”.",
   "sc.cas.needeq": "Untuk menyelesaikan, tulis persamaan dengan =, mis. solve(2x + a = 5; x).",
   "sc.cas.big": "Ekspresi terlalu rumit untuk dihitung di perangkat.",
   "sc.cas.unverified": "Hasilnya tidak dapat diperiksa dengan angka, jadi tidak kutampilkan.",

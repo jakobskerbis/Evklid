@@ -854,7 +854,7 @@
   "sc.cas.eqHint": "Ekuacion me shkronja: zgjidh cilën shkronjë të shpreh.",
   "sc.cas.cond": "Vlen për",
   "sc.cas.unsupported": "Me shkronja për momentin llogaris vetëm shprehje me +, −, ·, : dhe fuqi të plota (polinome dhe thyesa polinomesh).",
-  "sc.cas.equation": "Ky është ekuacion. Përdor »Shpreh«.",
+  "sc.cas.equation": "Ky është ekuacion. Përdor «Shpreh».",
   "sc.cas.needeq": "Për ta zgjidhur, shkruaj një ekuacion me =, p.sh. solve(2x + a = 5; x).",
   "sc.cas.big": "Shprehja është shumë e ndërlikuar për llogaritje në pajisje.",
   "sc.cas.unverified": "Rezultati nuk u kontrollua dot me numra, prandaj nuk e shfaq.",

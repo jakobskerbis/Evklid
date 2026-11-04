@@ -866,7 +866,7 @@
   "sc.cas.eqHint": "Rovnice s písmeny: vyber, které písmeno mám vyjádřit.",
   "sc.cas.cond": "Platí pro",
   "sc.cas.unsupported": "S písmeny zatím počítám jen výrazy s +, −, ·, : a celočíselnými mocninami (mnohočleny a zlomky mnohočlenů).",
-  "sc.cas.equation": "Toto je rovnice. Použij »Vyjádřit«.",
+  "sc.cas.equation": "Toto je rovnice. Použij „Vyjádřit“.",
   "sc.cas.needeq": "Pro řešení zadej rovnici s =, např. solve(2x + a = 5; x).",
   "sc.cas.big": "Výraz je příliš složitý pro výpočet v zařízení.",
   "sc.cas.unverified": "Výsledek se nepodařilo ověřit čísly, proto ho nezobrazím.",

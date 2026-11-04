@@ -579,6 +579,8 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sc-more-g { padding: 6px 4px; }
 .sc-more-h { font-size: 0.75rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
 .sc-more-keys { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; }
+/* Algebra: ukazi z besedo (poenostavi, reši (…; x)) potrebujejo širše tipke, sicer se napis odreže */
+.sc-more-g[data-g="alg"] .sc-more-keys { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
 .sc-mk { min-height: 42px; padding: 4px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer; overflow: hidden; }
 .sc-mk:hover, .sc-mk:focus-visible { border-color: var(--accent); background: var(--accent-soft); }
 .sc-h-row.last .sc-h-res { font-size: 1.3rem; }

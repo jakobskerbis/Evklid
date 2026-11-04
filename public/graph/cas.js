@@ -217,6 +217,10 @@ const divisors = (n) => {
 
 // p (ena spremenljivka, celi koeficienti, brez kvadratnih faktorjev) → nerazcepni faktorji
 function splitUni(q, v) {
+  if (q.degree(v) >= 4) {
+    const sub = substSplit(q, v);
+    if (sub) return sub;
+  }
   const out = [];
   let rest = q;
   // racionalne ničle n/d: d deli vodilni, n prosti koeficient
@@ -244,9 +248,40 @@ function splitUni(q, v) {
   if (rest.degree(v) >= 4) {
     const quad = kroneckerQuadratic(rest, v);
     if (quad) return [...out, ...splitUni(quad, v), ...splitUni(norm(divExact(rest, quad)), v)];
+    const sub = substSplit(rest, v);
+    if (sub) return [...out, ...sub];
   }
   if (rest.degree(v) >= 1) out.push(rest);
   return out;
+}
+// Samo potence x^k (x⁶ + 5x³ + 6, x¹⁰ − 1, x¹² + 1): uvedemo t = x^k, razstavimo v t in vrnemo x^k nazaj.
+// Največji k najprej (x¹⁰ − 1 = (x⁵ − 1)(x⁵ + 1), sicer z k = 2 ostane nerazstavljen x⁸ + x⁶ + x⁴ + x² + 1).
+function substSplit(q, v) {
+  const G = q.terms().reduce((g, t) => Number(gcdInt(BigInt(g), BigInt(t.m[v] || 0))), 0);
+  for (let k = G; k >= 2; k--) {
+    if (G % k) continue;
+    const parts = splitUni(norm(powMap(q, v, (e) => e / k)), v);
+    if (parts.length > 1) return parts.flatMap((f) => splitUni(norm(powMap(f, v, (e) => e * k)), v));
+  }
+  return null;
+}
+// polinom z eksponenti črke v, preslikanimi s fn (x³ → t pri fn = e/3)
+const powMap = (p, v, fn) => new P(p.terms().map(({ m, c }) => ({ m: m[v] ? { ...m, [v]: fn(m[v]) } : m, c })));
+
+// Vsi členi so potence enega monoma μ (x⁶y⁶ − 1, μ = xy)? Vrne μ (eksponenti brez skupnega delitelja) ali null.
+function monoBase(q) {
+  const ts = q.terms().filter((t) => Object.keys(t.m).length);
+  if (!ts.length) return null;
+  const m0 = ts[0].m;
+  const g0 = Object.values(m0).reduce((g, e) => Number(gcdInt(BigInt(g), BigInt(e))), 0);
+  const mu = Object.fromEntries(Object.entries(m0).map(([k, e]) => [k, e / g0]));
+  const ks = Object.keys(mu);
+  for (const t of ts) {
+    if (Object.keys(t.m).length !== ks.length) return null;
+    const j = (t.m[ks[0]] || 0) / mu[ks[0]];
+    if (!Number.isInteger(j) || ks.some((k) => t.m[k] !== j * mu[k])) return null;
+  }
+  return mu;
 }
 
 // Kvadratni faktor αv² + βv + γ polinoma brez racionalnih ničel (Kronecker: vrednosti v 0, 1, −1 delijo vrednosti q).
@@ -291,6 +326,15 @@ function split(q) {
   }
   if (vs.some((v) => q.degree(v) === 1)) return [q]; // linearen v neki črki in primitiven → nerazcepen
   if (vs.length === 1) return splitUni(q, vs[0]);
+  const mu = monoBase(q);
+  if (mu) {
+    // q = u(μ): razstavimo u(t) (t zapišemo kot prvo črko) in vstavimo μ nazaj
+    const [w] = Object.keys(mu);
+    const u = new P(q.terms().map(({ m, c }) => ({ m: Object.keys(m).length ? { [w]: m[w] / mu[w] } : {}, c })));
+    const parts = splitUni(norm(u), w);
+    if (parts.length > 1)
+      return parts.map((f) => norm(new P(f.terms().map(({ m, c }) => ({ m: Object.fromEntries(Object.entries(mu).map(([k, e]) => [k, e * (m[w] || 0)]).filter(([, e]) => e)), c })))));
+  }
   if (homogeneous(q)) {
     // x² − 5xy + 6y²: postavimo y = 1, razstavimo in vrnemo y nazaj
     const z = vs[vs.length - 1];
@@ -406,8 +450,12 @@ function rat(node, ctx) {
     case "var": {
       // shranjene spremenljivke (a = 5), Ans in ° so števila
       const name = node.name;
-      if (ctx.scope && name in ctx.scope) return new R(P.num(qOfNumber(ctx.scope[name])));
+      if (ctx.scope && name in ctx.scope) {
+        if (!Number.isInteger(ctx.scope[name])) ctx.dec = true; // a = 0,1 → 0,2x + 0,01, ne x/5 + 1/100
+        return new R(P.num(qOfNumber(ctx.scope[name])));
+      }
       if (HIDDEN_VARS.has(name)) throw fail("unsupported");
+      ctx.vars?.add(name); // tudi črke, ki se pokrajšajo (x/x), potrebujemo za preverjanje
       return new R(P.v(name));
     }
     case "const":
@@ -444,7 +492,8 @@ function rat(node, ctx) {
       const e = r(node.b);
       if (!e.n.isConst() || !e.d.isConst()) throw fail("unsupported");
       const k = e.n.constValue().div(e.d.constValue());
-      if (!k.int || k.abs().cmp(MAX_POW) > 0) throw fail("unsupported");
+      if (!k.int) throw fail("unsupported");
+      if (k.abs().cmp(MAX_POW) > 0) throw fail("big");
       const a = r(node.a);
       const n = Number(k.n);
       if (n >= 0) return new R(powP(a.n, n), powP(a.d, n));
@@ -498,7 +547,11 @@ function termTex({ m, c }, first, dec) {
 }
 /** Polinom v TeX (urejen po glavni črki, nato po stopnji). */
 export function polyTex(p, dec = false, pos = false) {
-  const list = p.sorted(MAIN(p.vars()));
+  // glavna črka padajoče, nato stopnja, nato po abecedi (y³ + 3y²z + 3yz² + z³)
+  const main = MAIN(p.vars());
+  const ord = order(p);
+  const deg = (m) => Object.values(m).reduce((s, e) => s + e, 0);
+  const list = p.terms().sort((a, b) => (b.m[main] || 0) - (a.m[main] || 0) || deg(b.m) - deg(a.m) || lexCmp(b.m, a.m, ord));
   if (!list.length) return "0";
   // več črk ali števec ulomka: začnemo s pozitivnim členom (b² − 4ac, (5 − a)/2)
   if ((pos || p.vars().length > 1) && list[0].c.sign < 0) {
@@ -584,8 +637,18 @@ function conditions(dens, finalDen, dec) {
   const fs = [];
   for (const d of dens)
     for (const f of factorP(d).fs) if (!fs.some((x) => x.eq(f.p))) fs.push(f.p);
-  const out = fs.filter((f) => finalDen.isConst() || !divExact(finalDen, f));
+  const out = fs.filter((f) => !neverZero(f) && (finalDen.isConst() || !divExact(finalDen, f)));
   return out.map((f) => neTex(f, dec));
+}
+// Faktor, ki za realne vrednosti ni nikoli 0 (x² + 1, x² + x + 1): pogoja »≠ 0« ne pišemo.
+function neverZero(f) {
+  const ts = f.terms();
+  const sgn = ts[0].c.sign;
+  if (ts.some((t) => !Object.keys(t.m).length) && ts.every((t) => t.c.sign === sgn && Object.values(t.m).every((e) => e % 2 === 0))) return true;
+  const vs = f.vars();
+  if (vs.length !== 1 || f.degree(vs[0]) !== 2) return false;
+  const [c, b, a] = coeffsIn(f, vs[0]).map((x) => x.constValue());
+  return b.mul(b).sub(a.mul(c).mul(4)).sign < 0;
 }
 function neTex(f, dec) {
   const vs = f.vars();
@@ -633,6 +696,12 @@ export function commandName(op, locale = "sl") {
   return sl ? { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši" }[op] : op;
 }
 
+/** Se besedilo začne z imenom ukaza CAS in oklepajem (tudi če za zaklepajem sledi še kaj)? */
+export function commandStart(text) {
+  const m = /^\s*([A-Za-zčšž]+)\s*\(/.exec(String(text ?? ""));
+  return !!m && m[1].toLowerCase() in CMDS;
+}
+
 /** Je besedilo ukaz CAS? Vrne { op, name, inner, v } ali null. */
 export function parseCommand(text) {
   const m = /^\s*([A-Za-zčšž]+)\s*\(/.exec(String(text ?? ""));
@@ -675,9 +744,9 @@ export function runCas(cmd, env = {}) {
   try {
     if (cmd.op === "solve") return solveCmd(cmd, line, name, innerTex);
     if (line.ast.k === "cmp") return { error: { code: "casEquation", info: {} } };
-    const ctx = { scope: line.scope, dens: [], dec: false };
+    const ctx = { scope: line.scope, dens: [], dec: false, vars: new Set() };
     const r = rat(line.ast, ctx);
-    const vs = order(r.n, r.d);
+    const vs = [...new Set([...order(r.n, r.d), ...ctx.vars])].sort(varCmp);
     let resTex;
     let check;
     if (cmd.op === "factor") {
@@ -689,7 +758,9 @@ export function runCas(cmd, env = {}) {
       resTex = cmd.op === "expand" ? expandedTex(r, ctx.dec) : simplifiedTex(r, ctx.dec);
       check = (env2) => evalR(r, env2);
     }
-    if (!verifyExpr(line, vs, check)) return { error: { code: "casUnverified", info: {} } };
+    // predolg rezultat KaTeX ne izriše (»Too many expansions«: vsak \, so 3 razširitve od 1000): raje »preveč zapleteno«
+    if (resTex.length > 12000 || (resTex.match(/\\,/g) || []).length > 250) throw fail("big");
+    if (!verifyExpr(line, vs, check, (env2) => absEval(r.n, env2) / Math.abs(r.d.eval(env2)))) return { error: { code: "casUnverified", info: {} } };
     const cond = conditions(ctx.dens, r.d, ctx.dec);
     const out = { kind: "cas", op: cmd.op, tex: `${name}\\left(${innerTex}\\right)`, resTex, inner: cmd.inner };
     if (cond.length) out.cond = cond.join(",\\; ");
@@ -704,7 +775,18 @@ export function runCas(cmd, env = {}) {
 }
 const casCode = (e) => (e instanceof AlgebraError ? (e.code === "timeout" || e.code === "big" ? "casBig" : e.code === "div0" ? "undef" : e.code === "irrational" ? "casIrrational" : e.code === "unverified" ? "casUnverified" : "casUnsupported") : e?.code || "other");
 
-function verifyExpr(line, vs, check) {
+// Σ|c|·Π|x|^e: velikost členov, ki jih seštejemo (razvit (x + 1)²⁴ izgubi pri x ≈ −1,5 zaradi odštevanja do 1e−8)
+function absEval(p, env) {
+  let s = 0;
+  for (const { m, c } of p.terms()) {
+    let t = Math.abs(c.num());
+    for (const [v, e] of Object.entries(m)) t *= Math.abs(env[v]) ** e;
+    s += t;
+  }
+  return s;
+}
+
+function verifyExpr(line, vs, check, scale) {
   const f = line.run(line.ast);
   let ok = 0;
   for (const pt of points(vs)) {
@@ -714,7 +796,7 @@ function verifyExpr(line, vs, check) {
     const a = f(s);
     const b = check(env2);
     if (typeof a !== "number" || !Number.isFinite(a) || !Number.isFinite(b) || Math.abs(a) > 1e12) continue;
-    if (!close(a, b)) return false;
+    if (!close(a, b) && !(Math.abs(a - b) <= 1e-11 * scale(env2))) return false;
     ok++;
   }
   return ok >= Math.min(5, vs.length ? 5 : 1);
@@ -738,8 +820,14 @@ function solveCmd(cmd, line, name, innerTex) {
   const vT = varTex(v);
   const tex = `${name}\\left(${innerTex};\\ ${vT}\\right)`;
   const base = { kind: "cas", op: "solve", tex, v };
+  // pogoj ≠ 0 le za faktorje s pravimi črkami (ne »π ≠ 0«)
+  const param = (p) => p.vars().some((w) => !(w in SYMBOLS)) && !neverZero(p);
   if (!N.vars().includes(v)) {
-    if (N.zero) return { ...base, resTex: `${vT} \\in \\mathbb{R}`, all: true };
+    if (N.zero) {
+      // x/x = 1: vsa realna števila razen ničel imenovalcev
+      const cond = conditions(ctx.dens, ONE(), ctx.dec);
+      return { ...base, resTex: `${vT} \\in \\mathbb{R}`, all: true, ...(cond.length ? { cond: cond.join(",\\; ") } : {}) };
+    }
     if (!all.includes(v)) return { error: { code: "casVar", info: { v } } };
     return { ...base, resTex: `${vT} \\in \\varnothing`, none: true };
   }
@@ -748,14 +836,18 @@ function solveCmd(cmd, line, name, innerTex) {
   const notes = [];
   for (const f of fs) {
     const d = f.p.degree(v);
-    if (!d) continue;
+    if (!d) {
+      // faktor brez iskane črke: (a − 1)x = a² − 1 → (a − 1)(x − a − 1) = 0 velja za a ≠ 1 (pri a = 1 vsak x)
+      if (param(f.p)) notes.push(neTex(f.p, ctx.dec));
+      continue;
+    }
     if (d > 2) return { error: { code: "casDegree", info: { v } } };
     const [c, b, a] = d === 1 ? [coefIn(f.p, v, 0), coefIn(f.p, v, 1), null] : coeffsIn(f.p, v);
     const lc = d === 1 ? b : a;
-    if (!lc.isConst()) for (const g of factorP(lc).fs) notes.push(neTex(g.p, ctx.dec));
+    if (!lc.isConst()) for (const g of factorP(lc).fs) if (param(g.p)) notes.push(neTex(g.p, ctx.dec));
     if (d === 1) {
       const r = cancel(new R(c.scale(-1), b));
-      sols.push({ tex: simplifiedTex(r, ctx.dec), n: 1, fn: (e) => [evalR(r, e)] });
+      sols.push({ tex: simplifiedTex(r, ctx.dec), n: 1, fn: (e) => [evalR(r, e)], r });
       continue;
     }
     const q = quadSolution(a, b, c, ctx.dec);
@@ -791,6 +883,14 @@ function solveCmd(cmd, line, name, innerTex) {
   if (!kept.length) return { ...base, resTex: `${vT} \\in \\varnothing`, none: true };
   if (good.reduce((x, y) => x + y, 0) < 3) return { error: { code: "casUnverified", info: {} } };
   uniq.splice(0, uniq.length, ...kept);
+  // imenovalci z iskano črko: rešitev vstavimo vanje (a/x = 1 → x = a velja za a ≠ 0)
+  const vDens = ctx.dens.flatMap((d) => factorP(d).fs.map((f) => f.p)).filter((f) => f.vars().includes(v));
+  for (const s of uniq)
+    if (s.r)
+      for (const f of vDens) {
+        const n = substR(f, v, s.r).n;
+        if (!n.isConst()) for (const g of factorP(n).fs) if (param(g.p)) notes.push(neTex(g.p, ctx.dec));
+      }
   const total = uniq.reduce((s, x) => s + x.n, 0);
   let k = 1;
   const resTex = uniq
@@ -807,13 +907,22 @@ function solveCmd(cmd, line, name, innerTex) {
   return out;
 }
 
+// p(v) pri v = r (r ulomek polinomov), Hornerjev postopek
+function substR(p, v, r) {
+  const cs = coeffsIn(p, v);
+  let acc = new R(cs[cs.length - 1]);
+  for (let k = cs.length - 2; k >= 0; k--) acc = cancel(new R(acc.n.mul(r.n).add(cs[k].mul(acc.d).mul(r.d)), acc.d.mul(r.d)));
+  return acc;
+}
+
 // a·v² + b·v + c = 0 (a, b, c polinomi v ostalih črkah) → { tex, n: 2, fn } ali null (ni realnih rešitev)
 function quadSolution(a, b, c, dec) {
   if (prim(a)[0].sign < 0) [a, b, c] = [a.scale(-1), b.scale(-1), c.scale(-1)];
   if (b.zero) {
     // a·v² + c = 0 → v = ±√(−c/a)
     const r = cancel(new R(c.scale(-1), a));
-    if (r.n.isConst() && r.n.constValue().sign < 0) return null;
+    // ni realnih rešitev le, če je −c/a vedno negativen (x² + 1 = 0); ax² + 1 = 0 ima rešitve za a < 0
+    if (r.n.isConst() && r.n.constValue().sign < 0 && (r.d.isConst() || neverZero(r.d))) return null;
     if (r.d.isConst() && r.n.isConst()) {
       const sq = sqrtConst(r.n.constValue());
       return { tex: `\\pm ${sq.tex}`, n: 2, fn: () => [sq.value, -sq.value] };

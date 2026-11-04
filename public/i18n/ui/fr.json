@@ -854,7 +854,7 @@
   "sc.cas.eqHint": "Équation avec des lettres : choisis quelle lettre isoler.",
   "sc.cas.cond": "Valable pour",
   "sc.cas.unsupported": "Avec des lettres, je ne calcule pour l'instant que des expressions avec +, −, ·, : et des puissances entières (polynômes et fractions de polynômes).",
-  "sc.cas.equation": "C'est une équation. Utilise »Isoler«.",
+  "sc.cas.equation": "C'est une équation. Utilise « Isoler ».",
   "sc.cas.needeq": "Pour résoudre, saisis une équation avec =, p. ex. solve(2x + a = 5; x).",
   "sc.cas.big": "L'expression est trop compliquée pour être calculée sur l'appareil.",
   "sc.cas.unverified": "Le résultat n'a pas pu être vérifié avec des nombres, je ne l'affiche donc pas.",
