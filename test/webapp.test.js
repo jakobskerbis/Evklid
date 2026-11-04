@@ -69,3 +69,21 @@ test("manifest in povezava za Google Play sta dostopna brez gesla", () =>
     },
     { gate: true },
   ));
+
+test("manifest: barva sistemske vrstice sledi slogu (?barva=, ?ozadje=), neveljavne vrednosti zavrne", async () => {
+  const m = manifest("sl");
+  assert.equal(m.theme_color, "#ffffff"); // privzeti slog »čist«, ne več modra
+  assert.equal(m.background_color, "#f6f7f9");
+  assert.equal(manifest("sl", { barva: "#EAD8BD", ozadje: "#f3ead8" }).theme_color, "#ead8bd");
+  assert.equal(manifest("sl", { barva: "red;}", ozadje: ["#000000"] }).theme_color, "#ffffff");
+  await withServer(async (base) => {
+    const r = await (await fetch(base + "/manifest.webmanifest?lang=sl&barva=%23301b16&ozadje=%2319130c")).json();
+    assert.equal(r.theme_color, "#301b16");
+    assert.equal(r.background_color, "#19130c");
+  });
+  // theme.js in install.js ohranita drug drugemu parameter v povezavi do manifesta
+  const theme = fs.readFileSync(path.join(PUB, "theme.js"), "utf8");
+  const inst = fs.readFileSync(path.join(PUB, "install.js"), "utf8");
+  assert.match(theme, /searchParams\.set\("barva"/);
+  assert.match(inst, /searchParams\.set\("lang"/);
+});
