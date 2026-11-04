@@ -194,8 +194,11 @@ export function mountGifts(app, ctx) {
       return res
         .status(429)
         .json({ error: "Preveč odprtih nakupov. Poskusi jutri." });
-    // Stopnja darila: OŠ (privzeto), SŠ ali faks; cena je letna cena stopnje (89 / 119 / 149 €).
-    const GIFT = giftFor(STOPNJE.includes(req.body?.level) ? req.body.level : "OS");
+    // Stopnja darila: OŠ (privzeto), SŠ ali faks; cena je letna cena stopnje (89 / 119 / 149 €). Neznana stopnja
+    // je napaka (400), ne tiho OŠ, da kupec ne plača in dobi druge stopnje, kot jo je izbral.
+    const want = req.body?.level ?? "OS";
+    if (!STOPNJE.includes(want)) return res.status(400).json({ error: "Neznana stopnja darila." });
+    const GIFT = giftFor(want);
     try {
       const customer = await ensureCustomer(p);
       const id = Number(

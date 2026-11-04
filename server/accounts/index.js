@@ -10,7 +10,7 @@ import { audit, detachAudit } from "../dnevnik-dostopov.js";
 import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
-import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, guaranteeUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
+import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
@@ -282,8 +282,9 @@ export function mountAccounts(app, store, opts = {}) {
     const o = offersFor(studentId);
     return o.show && o.prices && offerKindFor(studentId) !== "pass";
   }
-  // Gumb »Dokupi« ob obvestilu o porabi (80 %, 100 %): samo naročniku po pravilu ene ponudbe.
-  const topupButton = (studentId) => topupPrompt(studentId) && offerKindFor(studentId) === "topup";
+  // Gumb »Dokupi« ob obvestilu o porabi (80 %, 100 %): samo naročniku po pravilu ene ponudbe in samo polnoletnemu
+  // profilu (j 2026-11-01: gumb za dokup le polnoletni in starši); dijak 15–17 na računu staršev ga ne vidi.
+  const topupButton = (studentId) => (ageOfStudent(studentId) ?? 0) >= 18 && topupPrompt(studentId) && offerKindFor(studentId) === "topup";
   aiUsage.configure({ topupPrompt });
 
   // Ali sme sporočilo o porabljenih vprašanjih predlagati nakup: le ponudba s ceno in ne učencu iz šole
@@ -1158,9 +1159,11 @@ export function mountAccounts(app, store, opts = {}) {
       const { prices } = school ? await stripe.ensureSchoolPrices() : await stripe.ensurePrices(currency);
       const base = baseUrl(req);
       // Preostanek preizkusa, aktivacijske ali darilne kode se prenese v Stripe (če sta še vsaj 2 dni; Stripe dovoli največ 730 dni).
+      // Darilo stopnje (gift_level) samo, če odpre stopnjo paketa: darilo OŠ ne sme dati brezplačnega faksa do konca darila.
+      const giftCarries = opensLevel(STOPNJE.includes(p.gift_level) ? p.gift_level : null, planLevel(plan) || "FAKS");
       const trialEnd = Math.min(
         Date.now() + 729 * 86400000,
-        Math.max(Date.parse(p.trial_ends_at || 0) || 0, Date.parse(p.promo_until || 0) || 0, Date.parse(p.gift_until || 0) || 0),
+        Math.max(Date.parse(p.trial_ends_at || 0) || 0, Date.parse(p.promo_until || 0) || 0, giftCarries ? Date.parse(p.gift_until || 0) || 0 : 0),
       );
       const subscription_data = { metadata: { parent_id: p.id } };
       if (trialEnd - Date.now() > 49 * 3600000) subscription_data.trial_end = Math.floor(trialEnd / 1000);
@@ -1201,11 +1204,17 @@ export function mountAccounts(app, store, opts = {}) {
       const item = sub.items?.data?.[0];
       const { prices } = await stripe.ensurePrices("EUR");
       if (!item?.id || !prices[to.key]) throw new Error("ni postavke naročnine");
+      // pending_if_incomplete: paket se zamenja šele, ko je razlika plačana; ob zavrnjeni kartici (ali 3-D Secure)
+      // ostane stari paket (sicer bi bila višja stopnja odprta brez plačila in naročnina past_due). Čakajoče
+      // posodobitve Stripe ne dovolijo spremembe metadata (parent_id je na naročnini že od nakupa).
       const updated = await stripe.request("POST", `/subscriptions/${p.sub_id}`, {
         items: [{ id: item.id, price: prices[to.key] }],
         proration_behavior: "always_invoice",
-        metadata: { parent_id: p.id },
+        payment_behavior: "pending_if_incomplete",
       });
+      if (updated.pending_update) {
+        return res.status(402).json({ error: "Plačilo razlike ni uspelo, paket ostaja isti. Preveri kartico z gumbom »Upravljaj naročnino in račune« in poskusi znova." });
+      }
       await applySubscription(p.id, updated);
       db.prepare("DELETE FROM plan_changes WHERE parent_id = ?").run(p.id);
       audit(db, { req, parentId: p.id, actor: "parent", action: "plan_upgrade" });

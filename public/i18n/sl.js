@@ -2481,7 +2481,7 @@ export default {
   "pay.parentOptions": "Kako lahko plača starš?",
   "gift.tier": "Poln dostop z darilno kodo do {date}.",
   "gift.title": "Darilna koda",
-  "gift.text": "Kupi enoletni paket Osebno za en profil ({price}, enkratno plačilo) in kodo podari. Prejemnik jo vpiše v zavihku Račun pod »Imaš aktivacijsko ali darilno kodo?«.",
+  "gift.text": "Kupi enoletni paket za en profil izbrane stopnje ({price}, enkratno plačilo) in kodo podari. Prejemnik jo vpiše v zavihku Račun pod »Imaš aktivacijsko ali darilno kodo?«.",
   "gift.buy": "Kupi darilno kodo",
   "gift.level": "Stopnja",
   "gift.copy": "Kopiraj",

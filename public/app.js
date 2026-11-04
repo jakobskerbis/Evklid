@@ -877,8 +877,9 @@ function checkReplyFits(bubble, id) {
 function addAllowanceNote(bubble, d) {
   const el = document.createElement("div");
   el.className = "cards-note allowance-note";
-  const text = d.stage === "out" ? t("ai.out") : `${t("ai.low")} ${t("ai.left", { n: d.left })}`;
-  el.innerHTML = `<div class="cn-head">${icon("info")} <span>${escapeHtml(text)}</span></div>${d.buy ? `<button type="button" class="text-btn">${escapeHtml(t("ai.buy"))} ${icon("chevron-right")}</button>` : ""}`;
+  // Pri 80 % dve vrstici: obvestilo, pod njim preostanek (»Podrobne razlage ta mesec: še 6«).
+  const text = d.stage === "out" ? escapeHtml(t("ai.out")) : `${escapeHtml(t("ai.low"))}<br><small>${escapeHtml(t("ai.left", { n: d.left }))}</small>`;
+  el.innerHTML = `<div class="cn-head">${icon("info")} <span>${text}</span></div>${d.buy ? `<button type="button" class="text-btn">${escapeHtml(t("ai.buy"))} ${icon("chevron-right")}</button>` : ""}`;
   el.querySelector("button")?.addEventListener("click", () => $("#account-tab").click());
   bubble.appendChild(el);
 }

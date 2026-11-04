@@ -155,6 +155,7 @@ export const isSchoolPlan = (key) => !!planByKey(key)?.school;
 // Paket za nakup: v evrih 1 profil po stopnji profila, 2 ali več profilov Družina (s študentom, če je stopnja
 // faks); v regijskih valutah kot doslej po številu otrok (1 ali 2).
 export function planFor(seats, interval, currency = "EUR", level = "OS") {
+  if (!(seats >= 1)) return null; // manjkajoče ali neveljavno število profilov: 400 pri nakupu
   if (currency === "EUR" || !REGIONAL_PRICES[currency]) {
     if (currency !== "EUR") return null;
     return seats >= 2 ? familyPlanFor(level === "FAKS", interval) : levelPlanFor(STOPNJE.includes(level) ? level : "OS", interval);
@@ -207,8 +208,9 @@ export const FAKS_PASSES = [
 export const passesFor = (level) => (level === "FAKS" ? FAKS_PASSES : PASSES);
 export const passByDays = (days, level = "OS") => passesFor(level).find((p) => p.days === Number(days)) || null;
 export const passByKey = (key) => [...PASSES, ...FAKS_PASSES].find((p) => p.key === key) || null;
-// Stopnja, ki jo paket pred testom odpre: faks vse, paket OŠ/SŠ (ista cena) OŠ in SŠ.
-export const passLevel = (pass) => (pass?.level === "FAKS" ? "FAKS" : "SS");
+// Stopnja, ki jo paket pred testom odpre: faks vse, paket OŠ/SŠ (ista cena) OŠ in SŠ. Paketi, kupljeni pred
+// cenami po stopnjah (level prazen), odprejo vse stopnje kot ob nakupu (null), da študent ne izgubi dostopa.
+export const passLevel = (pass) => (pass?.level === "FAKS" ? "FAKS" : pass?.level ? "SS" : null);
 // Najmanjši paket, ki pokrije čas do dneva po testu (test čez daysLeft dni; 0 = danes).
 export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find((p) => p.days >= daysLeft + 1) || null;
 

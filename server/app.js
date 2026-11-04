@@ -722,6 +722,10 @@ export function createApp(store, opts = {}) {
         const after = usage.allowance(student.id);
         if (after.stage !== allowBefore.stage && (after.stage === "low" || after.stage === "out")) {
           send("allowance", { stage: after.stage, percent: after.percent, left: after.explanations_left, buy: !!accounts.topupButton?.(student.id) });
+        }
+        // E-pošta staršu ob vsakem odgovoru nad mejo (enkrat na mesec za mejo, email_log): mejo lahko prestopi tudi
+        // strošek zunaj tega odgovora (preverjanje, skeniranje), zato ne samo ob prehodu v tem odgovoru.
+        if (after.stage === "low" || after.stage === "out") {
           accounts.billing?.allowanceMail(student.id, after.stage).catch?.((e) => console.error("[evklid] e-pošta o porabi:", e?.message));
         }
       }

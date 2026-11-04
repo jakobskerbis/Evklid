@@ -25,6 +25,7 @@ import {
   freeMonthlyPoolUsd,
   accessFor,
   monthlyOf,
+  passLevel,
 } from "../server/accounts/plans.js";
 import { STORE_PRICES_EUR, STORE_PRODUCTS } from "../server/mobile/store-billing.js";
 import { rights, lessonInteractive } from "../server/placila/pravice.js";
@@ -250,13 +251,15 @@ test("tedensko poročilo pokaže odstotek porabe; predlog za skrbnika po stopnja
 function fakeStripe() {
   const calls = [];
   const subs = {};
+  // failMail: Resend vrne napako; sub.declined: kartica zavrne doplačilo (Stripe vrne pending_update).
+  const state = { failMail: false };
   let n = 0;
   const fetchFn = async (url, init = {}) => {
     const body = init.body ? (init.headers["Content-Type"]?.includes("json") ? JSON.parse(init.body) : Object.fromEntries(new URLSearchParams(init.body))) : null;
     const u = new URL(url);
     calls.push({ method: init.method, path: u.pathname, body, host: u.host });
     const ok = (data) => ({ ok: true, status: 200, json: async () => data });
-    if (u.host === "api.resend.com") return ok({ id: "email_" + ++n });
+    if (u.host === "api.resend.com") return state.failMail ? { ok: false, status: 500, json: async () => ({ message: "napaka" }) } : ok({ id: "email_" + ++n });
     const p = u.pathname.replace("/v1", "");
     if (p === "/customers") return ok({ id: "cus_" + ++n });
     if (p === "/prices" && init.method === "GET") return ok({ data: [] });
@@ -266,13 +269,14 @@ function fakeStripe() {
     const sub = /^\/subscriptions\/(\w+)$/.exec(p);
     if (sub && init.method === "POST" && body["items[0][price]"]) {
       const s = subs[sub[1]];
+      if (s.declined && body.payment_behavior === "pending_if_incomplete") return ok({ ...s, pending_update: { subscription_items: [{ price: body["items[0][price]"] }] } });
       s.items.data[0].price = { lookup_key: body["items[0][price]"].replace(/^price_/, "") };
       return ok(s);
     }
     if (sub) return ok(subs[sub[1]] || {});
     return { ok: false, status: 404, json: async () => ({ error: { message: "ni" } }) };
   };
-  return { calls, subs, fetchFn };
+  return { calls, subs, fetchFn, state };
 }
 
 async function withAccounts(fn, opts = {}) {
@@ -503,4 +507,173 @@ test("ena ponudba: s ponudbo paketa pred testom račun ne ponudi dokupa; naročn
     assert.ok((await call("/api/billing/credit")).body.packs.length > 0);
     assert.equal(api.offerKindFor(ana), null, "pod 80 % ni ponudbe");
   });
+});
+
+// ---------- pregled 2 (funkcija): popravki denarnih poti ----------
+
+test("paket pred testom, kupljen pred cenami po stopnjah, odpre vse stopnje (študent ne izgubi dostopa)", () => {
+  assert.equal(passLevel({ level: null }), null, "stari paket: vse stopnje");
+  assert.equal(passLevel({ level: "SS" }), "SS");
+  assert.equal(passLevel({ level: "FAKS" }), "FAKS");
+  const r = rights({ personal: { tier: "pass", until: iso(5), level: passLevel({ level: null }) }, ownLevel: "FAKS" });
+  assert.equal(r.levelLocked, false);
+  assert.ok(lessonInteractive(r, TOPIC.FAKS));
+  // Nov paket OŠ/SŠ odpre SŠ, ne faksa.
+  assert.ok(!lessonInteractive(rights({ personal: { tier: "pass", until: iso(5), level: passLevel({ level: "SS" }) }, ownLevel: "OS" }), TOPIC.FAKS));
+  // Manjkajoče število profilov ni tiho en profil.
+  assert.equal(planFor(NaN, "month", "EUR", "SS"), null);
+  assert.equal(planFor(0, "year"), null);
+});
+
+test("nakup: brez števila profilov 400; neznana stopnja darila 400; darilo nižje stopnje ne da brezplačnega preizkusa višjega paketa", async () => {
+  await withAccounts(async ({ call, stripe, kid, db, pid }) => {
+    kid("Maks", "FAKS", YEAR - 20);
+    assert.equal((await call("/api/billing/checkout", { method: "POST", body: { interval: "month", adult: true, withdrawal: true } })).status, 400);
+    assert.equal((await call("/api/billing/gift", { method: "POST", body: { level: "faks", adult: true, withdrawal: true } })).status, 400);
+    const sessions = () => stripe.calls.filter((c) => c.path === "/v1/checkout/sessions");
+    // Darilo OŠ še 200 dni: naročnina faks se plača takoj (brez preizkusa do konca darila).
+    db.prepare("UPDATE parents SET gift_until = ?, gift_level = 'OS', trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(iso(200), pid);
+    assert.equal((await call("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } })).status, 200);
+    assert.equal(sessions().at(-1).body["line_items[0][price]"], "price_evklid_faks_month");
+    assert.equal(sessions().at(-1).body["subscription_data[trial_end]"], undefined);
+    // Darilo faks (ali staro darilo brez stopnje): preostanek se prenese kot doslej.
+    db.prepare("UPDATE parents SET gift_level = 'FAKS' WHERE id = ?").run(pid);
+    await call("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } });
+    assert.ok(sessions().at(-1).body["subscription_data[trial_end]"]);
+  });
+});
+
+test("nadgradnja: zavrnjena kartica pusti stari paket (pending_if_incomplete), višja stopnja ostane zaprta", async () => {
+  await withAccounts(async ({ call, stripe, kid, subscribe, api, db, pid }) => {
+    const ana = kid("Ana", "OS");
+    subscribe("evklid_1_month");
+    stripe.subs.sub_a.declined = true;
+    const up = await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month" } });
+    assert.equal(up.status, 402, JSON.stringify(up.body));
+    const post = stripe.calls.find((c) => c.path === "/v1/subscriptions/sub_a" && c.method === "POST");
+    assert.equal(post.body.payment_behavior, "pending_if_incomplete");
+    assert.equal(post.body.proration_behavior, "always_invoice");
+    assert.equal(db.prepare("SELECT sub_plan FROM parents WHERE id = ?").get(pid).sub_plan, "evklid_1_month");
+    assert.ok(!api.lessonInteractive(ana, TOPIC.SS));
+  });
+});
+
+test("prehod navzdol: nižja cena že ob naslednjem podaljšanju; zamujena izvedba se izračuna znova", async () => {
+  await withAccounts(async ({ db, api, stripe, kid, subscribe, pid }) => {
+    kid("Ana", "SS"); // paket faks, profil zdaj SŠ
+    const end = iso(10);
+    subscribe("evklid_faks_month", end);
+    const run = (now = new Date()) => api.billing.billingDaily(now, { force: true });
+    assert.equal((await run()).plan_notified, 1);
+    let row = db.prepare("SELECT * FROM plan_changes WHERE parent_id = ?").get(pid);
+    assert.equal(row.to_key, "evklid_ss_month");
+    assert.equal(row.effective_at, end, "ne šele čez 30 dni: naročnik SŠ ne plača še enega meseca po ceni faksa");
+    assert.match(stripe.calls.filter((c) => c.host === "api.resend.com").at(-1).body.text, /cenejša/);
+    await run(new Date(Date.parse(end) - 2 * day));
+    const post = stripe.calls.find((c) => c.path === "/v1/subscriptions/sub_a" && c.method === "POST");
+    assert.equal(post.body["items[0][price]"], "price_evklid_ss_month");
+    assert.equal(post.body.proration_behavior, "none");
+    // Zamujena izvedba navzgor (strežnik ni tekel pred podaljšanjem): nov rok vsaj 30 dni, ne obtiči.
+    db.prepare("DELETE FROM plan_changes").run();
+    db.prepare("UPDATE students SET settings = ? WHERE parent_id = ?").run(JSON.stringify(SETTINGS.FAKS), pid);
+    subscribe("evklid_ss_month", iso(5));
+    db.prepare("INSERT INTO plan_changes (parent_id, sub_id, from_key, to_key, effective_at, notified_at) VALUES (?, 'sub_a', 'evklid_ss_month', 'evklid_faks_month', ?, ?)").run(pid, iso(-25), iso(-60));
+    await run();
+    row = db.prepare("SELECT * FROM plan_changes WHERE parent_id = ?").get(pid);
+    assert.ok(Date.parse(row.effective_at) - Date.now() >= 30 * day - 1000, row.effective_at);
+  });
+});
+
+test("prehod navzgor: brez poslane e-pošte nova cena ne začne veljati; letni opomnik navede novo ceno", async () => {
+  await withAccounts(async ({ db, api, stripe, kid, subscribe, pid }) => {
+    kid("Ana", "SS");
+    subscribe("evklid_1_year", iso(20));
+    const run = (now = new Date()) => api.billing.billingDaily(now, { force: true });
+    stripe.state.failMail = true;
+    assert.equal((await run()).plan_notified, 0);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM plan_changes").get().n, 0, "brez e-pošte ni spremembe cene");
+    stripe.state.failMail = false;
+    assert.equal((await run()).plan_notified, 1, "naslednji dan znova");
+    const row = db.prepare("SELECT * FROM plan_changes WHERE parent_id = ?").get(pid);
+    assert.equal(row.to_key, "evklid_ss_year");
+    // Leto pozneje: obdobje se konča ob effective_at, opomnik o obnovitvi 20 dni prej navede 119 €, ne 89 €.
+    db.prepare("UPDATE parents SET sub_period_end = ? WHERE id = ?").run(row.effective_at, pid);
+    await run(new Date(Date.parse(row.effective_at) - 20 * day));
+    const renewal = stripe.calls.filter((c) => c.host === "api.resend.com" && /obnovila/.test(c.body.text)).at(-1);
+    assert.match(renewal.body.text, /119,00/);
+  });
+});
+
+test("povezava za plačilo s starim paketom »2 otroka«: stran in plačilo po današnjem paketu (Družina)", async () => {
+  await withAccounts(async ({ db, call, stripe, kid, pid }) => {
+    kid("Ana", "OS");
+    kid("Bor", "SS");
+    const { sha256 } = await import("../server/accounts/auth.js");
+    db.prepare("INSERT INTO pay_links (token_hash, parent_id, kind, plan_key, expires_at) VALUES (?, ?, 'sub', 'evklid_2_month', ?)").run(sha256("t".repeat(30)), pid, iso(5));
+    const view = (await call(`/api/pay/${"t".repeat(30)}`)).body;
+    assert.equal(view.plan.amount, 1799);
+    const co = await call(`/api/pay/${"t".repeat(30)}/checkout`, { method: "POST", body: { email: "oce@p.si", adult: true, withdrawal: true } });
+    assert.equal(co.status, 200, JSON.stringify(co.body));
+    assert.equal(stripe.calls.filter((c) => c.path === "/v1/checkout/sessions").at(-1).body["line_items[0][price]"], "price_evklid_druzina_month");
+  });
+});
+
+test("gumb za dokup ob porabi samo polnoletnemu profilu, ne dijaku 15–17 na računu staršev", async () => {
+  process.env.EVKLID_AI_GUARANTEE_SS_USD = "0.1";
+  try {
+    await withAccounts(async ({ db, api, kid, subscribe }) => {
+      const bor = kid("Bor", "SS", YEAR - 16);
+      const mama = kid("Mama", "SS", YEAR - 40);
+      subscribe("evklid_druzina_month");
+      for (const id of [bor, mama]) db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku', 'chat', 0.09)").run(id);
+      assert.equal(api.offerKindFor(bor), "topup");
+      assert.equal(api.topupButton(bor), false, "16 let: brez gumba");
+      assert.equal(api.topupButton(mama), true, "polnoletna: gumb");
+    });
+  } finally {
+    delete process.env.EVKLID_AI_GUARANTEE_SS_USD;
+  }
+});
+
+test("e-pošta staršu pri 80 %, tudi ko mejo prestopi strošek zunaj odgovora (npr. preverjanje)", async () => {
+  const model = modeParams("chat").model;
+  const tokens = Math.round(0.02 / costUsd(model, { input_tokens: 1 }));
+  process.env.EVKLID_AI_GUARANTEE_OS_USD = "0.5";
+  const store = openDb(":memory:");
+  const calls = [];
+  const fetchFn = async (url, init = {}) => {
+    const body = init.body ? (init.headers["Content-Type"]?.includes("json") ? JSON.parse(init.body) : Object.fromEntries(new URLSearchParams(init.body))) : null;
+    calls.push({ host: new URL(url).host, body });
+    return { ok: true, status: 200, json: async () => ({ id: "x", data: [] }) };
+  };
+  const streamFn = async ({ onText }) => {
+    const text = 'Odgovor.\n<<META subject=MAT topic="-" error=0 mode=A flag=none>>';
+    onText(text);
+    return { text, stopReason: "end_turn", model, usage: { input_tokens: tokens, output_tokens: 0 } };
+  };
+  const server = createApp(store, { accounts: true, scheduler: false, stripeKey: "sk_test_x", resendKey: "re_x", fetchFn, log: { error() {} }, streamFn }).listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const jar = {};
+  const call = async (path, o = {}) => {
+    const res = await fetch(base + path, { method: o.method || "GET", headers: { "Content-Type": "application/json", cookie: Object.entries(jar).map(([k, v]) => `${k}=${v}`).join("; ") }, body: o.body ? JSON.stringify(o.body) : undefined });
+    for (const c of res.headers.getSetCookie()) jar[c.split(";")[0].split("=")[0]] = c.split(";")[0].slice(c.indexOf("=") + 1);
+    return { status: res.status, body: (res.headers.get("content-type") || "").includes("json") ? await res.json() : await res.text() };
+  };
+  try {
+    const reg = await call("/api/auth/register", { method: "POST", body: { email: "oce@p.si", password: "geslo1234", accept_privacy: true, birth_date: ADULT } });
+    await call(/\/api\/auth\/verify\?token=[\w-]+/.exec(calls.filter((c) => c.host === "api.resend.com").at(-1).body.text)[0]);
+    const kid = (await call("/api/students", { method: "POST", body: { name: "Tim", birth_year: YEAR - 10, consent: true } })).body;
+    store.db.prepare("UPDATE parents SET sub_status = 'active', sub_plan = 'evklid_1_month', sub_seats = 1, sub_period_end = ?, sub_id = 'sub_k', trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(iso(20), reg.body.parent.id);
+    // 80 % porabljenih s preverjanjem odgovorov (ne z odgovorom v klepetu).
+    store.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku', 'verify', 0.4)").run(kid.id);
+    const conv = (await call(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
+    await call(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: "Koliko je 3 + 4?" } });
+    await new Promise((r) => setTimeout(r, 50));
+    const mails = calls.filter((c) => c.host === "api.resend.com" && /razlag/.test(c.body.subject));
+    assert.equal(mails.length, 1);
+    assert.match(mails[0].body.subject, /80 %/);
+  } finally {
+    delete process.env.EVKLID_AI_GUARANTEE_OS_USD;
+    server.close();
+  }
 });

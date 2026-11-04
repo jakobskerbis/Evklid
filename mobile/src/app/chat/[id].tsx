@@ -40,7 +40,7 @@ export default function Chat() {
   const [photo, setPhoto] = useState<Photo | null>(null);
   const [busy, setBusy] = useState(false);
   const [deepOk, setDeepOk] = useState(false);
-  const [notes, setNotes] = useState<{ key: string; text: string; tone?: "gold" | "ok" }[]>([]);
+  const [notes, setNotes] = useState<{ key: string; text: string; tone?: "gold" | "ok" | "info" }[]>([]);
   const [proposal, setProposal] = useState<Proposal | null>(null);
   const list = useRef<FlatList<Msg>>(null);
   const abort = useRef<AbortController | null>(null);
@@ -85,8 +85,8 @@ export default function Chat() {
               setNotes((n) => [...n, { key: `c${Date.now()}`, text: t("mob.cardsAdded", { n: e.data.cards?.length || 0 }) }]);
             } else if (e.event === "allowance") {
               // Zajamčena poraba naročnika (kot na spletu): 80 % obvestilo, 100 % hitri način; brez zneskov.
-              const text = e.data.stage === "out" ? t("ai.out") : `${t("ai.low")} ${t("ai.left", { n: e.data.left ?? 0 })}`;
-              setNotes((n) => [...n, { key: `a${Date.now()}`, text }]);
+              const text = e.data.stage === "out" ? t("ai.out") : `${t("ai.low")}\n${t("ai.left", { n: e.data.left ?? 0 })}`;
+              setNotes((n) => [...n, { key: `a${Date.now()}`, text, tone: "info" }]);
             } else if (e.event === "proposal") setProposal(e.data);
           },
           abort.current.signal,
@@ -208,7 +208,7 @@ export default function Chat() {
           ListFooterComponent={
             <View style={{ gap: 10 }}>
               {notes.map((n) => (
-                <Banner key={n.key} text={n.text} tone={n.tone} icon={n.tone === "gold" ? { ios: "trophy.fill", android: "emoji_events" } : { ios: "rectangle.stack", android: "style" }} />
+                <Banner key={n.key} text={n.text} tone={n.tone === "info" ? undefined : n.tone} icon={n.tone === "gold" ? { ios: "trophy.fill", android: "emoji_events" } : n.tone === "info" ? { ios: "info.circle", android: "info" } : { ios: "rectangle.stack", android: "style" }} />
               ))}
               {proposal ? (
                 <Card tone="accent">

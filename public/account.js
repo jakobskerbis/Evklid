@@ -713,6 +713,9 @@ function aiPill(a) {
 // Ime stopnje (OŠ, SŠ, faks) iz public/stopnja.js za izbiro paketa.
 const levelName = (l) => t(l === "FAKS" ? "lp.uni" : l === "SS" ? "lp.ss" : "lp.os");
 const planName = (p) => (p.family ? t(p.level === "FAKS" ? "pay.familyStudent" : "pay.family") : levelName(p.level));
+// Brez »(2–4 profili)«, kadar je ime že v oklepaju (»17,99 € (Družina)«); »2–4« se ne prelomi.
+const shortName = (s) => s.replace(/\s*[（(][^()（）]*[)）]$/, "");
+const keepRange = (s) => s.replace(/(\d)([–〜-])(\d)/g, "$1$2\u2060$3");
 
 function planText(acc) {
   const { access, parent } = acc;
@@ -722,7 +725,7 @@ function planText(acc) {
     const pend = acc.pending_change;
     return `<p><b>Naročnina:</b> ${esc(plan?.label || sub.plan)} (${STATUS_TEXT[sub.status] || sub.status})</p>
       <p class="muted">${sub.cancel_at_period_end ? `Naročnina se konča ${date(sub.period_end)}.` : `Naslednje obdobje se začne ${date(sub.period_end)}.`}</p>
-      ${pend ? `<p class="muted">${esc(t("up.pending", { date: date(pend.effective_at), price: money(pend.amount, pend.currency), name: planName(acc.plans.find((p) => p.key === pend.plan) || { level: "OS" }) }))}</p>` : ""}
+      ${pend ? `<p class="muted">${esc(t("up.pending", { date: date(pend.effective_at), price: money(pend.amount, pend.currency), name: shortName(planName(acc.plans.find((p) => p.key === pend.plan) || { level: "OS" })) }))}</p>` : ""}
       ${upgradeBox(acc)}`;
   }
   if (access.tier === "trial") return `<p><b>Brezplačni preizkus</b> do ${date(access.until)}: vse funkcije za do 2 otroka.</p>`;
@@ -741,7 +744,7 @@ function upgradeBox(acc) {
   const up = acc.upgrade;
   if (!up?.options?.length || acc.parent.minor) return "";
   return `<div class="plan-upgrade"><p><b>${esc(t("up.title"))}</b><br><span class="muted">${esc(t("up.text"))}</span></p>
-    <div class="form-actions">${up.options.map((o) => `<button type="button" class="secondary" data-upgrade="${esc(o.key)}">${esc(t("up.btn", { name: planName(o) }))} · ${money(o.amount, o.currency)}</button>`).join("")}</div></div>`;
+    <div class="form-actions">${up.options.map((o) => `<button type="button" class="secondary" data-upgrade="${esc(o.key)}">${esc(t("up.btn", { name: planName(o) }))} · ${money(o.amount, o.currency)} ${esc(t(o.interval === "year" ? "mob.perYear" : "mob.perMonth"))}</button>`).join("")}</div></div>`;
 }
 
 function plansPicker(acc) {
@@ -767,7 +770,7 @@ function plansPicker(acc) {
   return `
     <form id="plan-form" class="plans" novalidate>
       <fieldset class="plan-who"><legend>${esc(t("pay.howMany"))}</legend>
-        <div class="plan-who-opts">${who.map(([v, label]) => `<label class="plan"><input type="radio" name="who" value="${v}"> <span><b>${esc(label)}</b></span></label>`).join("")}</div>
+        <div class="plan-who-opts">${who.map(([v, label]) => `<label class="plan"><input type="radio" name="who" value="${v}"> <span><b>${esc(keepRange(label))}</b></span></label>`).join("")}</div>
       </fieldset>
       <div class="plan-row" data-who="1" hidden>${cell(1, "month")}${cell(1, "year")}</div>
       ${!levels || acc.family_ok ? `<div class="plan-row" data-who="2" hidden>${cell(2, "month")}${cell(2, "year")}</div>` : ""}
@@ -810,7 +813,7 @@ function giftBox(acc) {
   const fmt = (c) => (c / 100).toLocaleString(locale(), { style: "currency", currency: "EUR" });
   const prices = acc.gift_prices || { OS: acc.gift_price || 8900 };
   const vals = Object.values(prices);
-  const price = vals.length > 1 ? `${fmt(Math.min(...vals))}–${fmt(Math.max(...vals))}` : fmt(vals[0]);
+  const price = vals.length > 1 ? `${fmt(Math.min(...vals))} – ${fmt(Math.max(...vals))}` : fmt(vals[0]);
   const levelSel = Object.keys(prices).length > 1
     ? `<label>${esc(t("gift.level"))} <select name="level">${Object.entries(prices).map(([l, c]) => `<option value="${esc(l)}">${esc(levelName(l))} · ${esc(fmt(c))}</option>`).join("")}</select></label>`
     : "";
