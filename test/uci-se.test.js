@@ -175,3 +175,43 @@ test("stored tab orders and window layouts from before Uči se move to it (Učbe
   assert.deepEqual(uciLayout({ geo: { textbook: geo, lab: { x: 1 }, graph: { x: 2 } }, open: ["graph", "lab", "textbook"] }), { geo: { uci: geo, graph: { x: 2 } }, open: ["graph", "uci"] });
   assert.deepEqual(uciLayout({ geo: { uci: { x: 3 }, textbook: geo }, open: ["uci"] }), { geo: { uci: { x: 3 } }, open: ["uci"] });
 });
+
+test("lesson → 3D link reads its id (data-tb-3d is not dataset.tb3d), Back closes 3D before anything else, Back from a lesson's experiment returns to the lesson", () => {
+  const tb = read("public/textbook.js");
+  assert.doesNotMatch(tb, /dataset\.tb3d/);
+  assert.match(tb, /getAttribute\("data-tb-3d"\)/);
+  const app = read("public/app.js");
+  const pop = app.slice(app.indexOf('window.addEventListener("popstate"'));
+  assert.ok(pop.indexOf("if (isOpen3d())") > 0 && pop.indexOf("if (isOpen3d())") < pop.indexOf('if (wasOverlay && currentView === "path") return;'), "3D se mora zapreti, preden se Nazaj na Učni poti ustavi");
+  assert.match(app, /openLabExperiment\(key\);\s*showView\("lab"\);\s*labFromLesson\(\);/);
+});
+
+test("Back: experiment opened from a lesson returns to the lesson, otherwise to the experiment list", async () => {
+  mem.clear();
+  const u = await load(5);
+  const calls = [];
+  u.initUci({ showTextbook: () => calls.push("textbook"), showLab: () => calls.push("lab"), stopReading() {} });
+  let labOpen = true;
+  const backs = { textbookBack: () => false, labBack: () => ((labOpen = false), true) };
+  u.setUciTab("lab");
+  u.labFromLesson();
+  assert.equal(u.uciBack(backs), true);
+  assert.equal(u.uciTab(), "textbook");
+  assert.deepEqual(calls, ["textbook"]);
+  // Poskus, odprt na seznamu: Nazaj na seznam, zavihek ostane Laboratorij; nato ni več česa zapreti.
+  u.setUciTab("lab");
+  labOpen = true;
+  const once = { textbookBack: () => false, labBack: () => (labOpen ? ((labOpen = false), true) : false) };
+  assert.equal(u.uciBack(once), true);
+  assert.equal(u.uciTab(), "lab");
+  assert.equal(u.uciBack(once), false);
+  // Odhod iz »Uči se« ali drug zavihek pozabi, da je poskus prišel iz lekcije.
+  u.labFromLesson();
+  u.leaveUci();
+  assert.equal(u.uciBack(once), false);
+  u.labFromLesson();
+  u.setUciTab("3d");
+  u.setUciTab("lab");
+  assert.equal(u.uciBack(once), false);
+  assert.equal(u.uciTab(), "lab");
+});
