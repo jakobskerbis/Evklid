@@ -498,7 +498,7 @@ export function trikotnik(el, { mode = "vrste" } = {}) {
     const cm = (x) => fmt(x / CM, 1);
     let html = "";
     if (mode === "vrste" || mode === "koti") {
-      const eq = (x, y) => Math.abs(x - y) < 6;
+      const eq = (x, y) => cm(x) === cm(y); // vrsta se mora ujemati z izpisanimi (zaokroženimi) dolžinami
       const bySides = eq(a, b) && eq(b, c) ? "enakostranični" : eq(a, b) || eq(b, c) || eq(a, c) ? "enakokraki" : "raznostranični";
       const byAngles = Math.max(r1, r2, r3) > 90 ? "topokotni" : Math.max(r1, r2, r3) === 90 ? "pravokotni" : "ostrokotni";
       html = `<p>Po stranicah: <b>${bySides}</b> (a = ${cm(a)}, b = ${cm(b)}, c = ${cm(c)} cm). Po kotih: <b>${byAngles}</b>.</p>

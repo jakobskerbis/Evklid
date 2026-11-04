@@ -987,7 +987,7 @@ export function venn(el) {
     const U = Array.from({ length: 20 }, (_, i) => i + 1);
     const inA = PROPS[pa][1], inB = PROPS[pb][1];
     const res = U.filter((n) => (op === "∪" ? inA(n) || inB(n) : op === "∩" ? inA(n) && inB(n) : op === "A∖B" ? inA(n) && !inB(n) : op === "B∖A" ? inB(n) && !inA(n) : !inA(n)));
-    s("rect", { x: 4, y: 4, width: 332, height: 222, rx: 12, class: `set ${op === "A'" ? "" : ""}` }, svg);
+    s("rect", { x: 4, y: 4, width: 332, height: 222, rx: 12, class: `set ${op === "Aᶜ" ? "" : ""}` }, svg);
     s("text", { x: 14, y: 22, class: "tick b" }, svg, "U = {1, 2, …, 20}");
     s("circle", { cx: 130, cy: 120, r: 82, class: "venn fill-a" }, svg);
     s("circle", { cx: 212, cy: 120, r: 82, class: "venn fill-b" }, svg);
@@ -1008,9 +1008,9 @@ export function venn(el) {
       const t = label(svg, x, y, String(n), res.includes(n) ? "venn-num on" : "venn-num");
       if (res.includes(n)) s("circle", { cx: x, cy: y, r: 10, class: "venn-hit" }, svg).after(t);
     });
-    const opName = { "∪": "unija (v A ali v B)", "∩": "presek (v A in v B hkrati)", "A∖B": "razlika (v A, ne pa v B)", "B∖A": "razlika (v B, ne pa v A)", "A'": "komplement (v U, ne pa v A)" }[op];
+    const opName = { "∪": "unija (v A ali v B)", "∩": "presek (v A in v B hkrati)", "A∖B": "razlika (v A, ne pa v B)", "B∖A": "razlika (v B, ne pa v A)", "Aᶜ": "komplement (v U, ne pa v A)" }[op];
     out.innerHTML = `<p>A = ${PROPS[pa][0]}, B = ${PROPS[pb][0]}.</p>
-      <p><b>${op === "A'" ? "A'" : op.length > 1 ? op : `A ${op} B`}</b>, ${opName}: {${res.join(", ") || " "}}, moč množice je ${res.length}.</p>
+      <p><b>${op === "Aᶜ" ? "Aᶜ" : op.length > 1 ? op : `A ${op} B`}</b>, ${opName}: ${res.length ? `{${res.join(", ")}}` : tex("\\emptyset")}, moč množice je ${res.length}.</p>
       <p class="muted">Preveri: |A ∪ B| = |A| + |B| − |A ∩ B| = ${zones.a.length + zones.ab.length} + ${zones.b.length + zones.ab.length} − ${zones.ab.length} = ${zones.a.length + zones.b.length + zones.ab.length}.</p>`;
   };
   const opts = Object.entries(PROPS).map(([k, v]) => [k, v[0]]);
@@ -1019,7 +1019,7 @@ export function venn(el) {
     controls: [
       select({ label: "A", options: opts, value: pa, onChange: (v) => ((pa = v), draw()) }),
       select({ label: "B", options: opts, value: pb, onChange: (v) => ((pb = v), draw()) }),
-      segmented({ options: ["∪", "∩", "A∖B", "B∖A", "A'"], value: op, onChange: (v) => ((op = v), draw()) }),
+      segmented({ options: ["∪", "∩", "A∖B", "B∖A", "Aᶜ"], value: op, onChange: (v) => ((op = v), draw()) }),
     ],
     out,
     tryText: "Izberi A = soda, B = liha. Kaj je A ∩ B? Kaj je A ∪ B? Kdaj je A ∖ B = A?",
