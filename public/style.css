@@ -405,8 +405,9 @@ html[data-tutor-ic] .msg.assistant::after {
 /* Pri seznamu za besedilom zadnje točke, ne v novi vrstici; prazen mehurček dobi <p></p> (app.js, paint). */
 .msg.assistant.typing > :last-child:not(ul, ol)::after, .msg.assistant.typing > :is(ul, ol):last-child > li:last-child::after { content: ""; display: inline-block; width: 8px; height: 8px; margin-inline-start: 4px; border-radius: 50%; background: var(--accent); animation: blink 1s ease-in-out infinite; }
 @keyframes blink { 50% { opacity: 0.2; } }
-.deep-btn { display: inline-flex !important; margin-top: 10px; font-size: 0.85rem; min-height: 34px !important; padding: 4px 12px !important; color: var(--muted) !important; }
-.deep-btn + .full-btn { margin-inline-start: 8px; }
+.deep-btn { display: inline-flex !important; margin-top: 10px; font-size: 0.85rem; min-height: 40px !important; padding: 4px 12px !important; color: var(--muted) !important; }
+/* Ob prelomu v novo vrstico »Pokaži celoten postopek« ostane poravnan z levim robom (razmik je za prvim gumbom). */
+.deep-btn:has(+ .full-btn) { margin-inline-end: 8px; }
 /* Pod odgovorom: koda sporočila (za preverjanje posnetkov zaslona) in »Prijavi napako« (server/reports.js) */
 .msg-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-top: 8px; font-size: 0.78rem; color: var(--muted); }
 .msg-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.03em; user-select: all; }

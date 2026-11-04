@@ -894,7 +894,8 @@ async function send(text, { deep = false } = {}) {
       bubble.removeAttribute("title");
       // Odgovor, ki samo spremeni nastavitve, ne potrebuje »Razloži podrobneje«.
       if (doneData && !doneData.settings) addDeepButton(bubble, doneData.deep);
-      if (doneData?.full_offer) addFullButton(bubble);
+      // Ne, če je učenec med počasnim izpisom že poslal novo sporočilo (gumb samo pri zadnjem odgovoru).
+      if (doneData?.full_offer && !bubble.nextElementSibling) addFullButton(bubble);
       if (doneData?.text) addGraphButton(bubble, doneData.text);
       if (cardsData) addCardsNote(bubble, cardsData);
       if (doneData?.id) addMsgFoot(bubble, doneData);
@@ -1720,8 +1721,8 @@ function openReport(el, foot, btn, id, done) {
 // Gumb »Razloži podrobneje« uporabi zmogljivejši (dražji) model samo na zahtevo.
 function addDeepButton(el, wasDeep) {
   // Ponovna razlaga je vedno na voljo (tudi po ponovni razlagi); strežnik izbere najcenejši model.
-  if (el.classList.contains("error") || el.querySelector(".deep-btn")) return;
-  document.querySelectorAll(".deep-btn").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
+  if (el.classList.contains("error") || el.querySelector(".deep-btn:not(.full-btn)")) return;
+  document.querySelectorAll(".deep-btn:not(.full-btn)").forEach((x) => x.remove()); // samo pri zadnjem odgovoru
   const b = document.createElement("button");
   b.className = "deep-btn";
   b.type = "button";
@@ -1733,7 +1734,7 @@ function addDeepButton(el, wasDeep) {
   el.appendChild(b);
 }
 
-// »Pokaži celoten postopek«: strežnik ga ponudi po treh zaporednih korakih vodenja (način A) pri isti nalogi.
+// »Pokaži celoten postopek«: strežnik ga ponudi po treh zaporednih korakih vodenja (način A) v istem pogovoru.
 // Je enkratna prošnja: inštruktor pokaže celotno rešitev te naloge, nato se vrne v vodenje.
 function addFullButton(el) {
   if (el.classList.contains("error") || el.querySelector(".full-btn")) return;
@@ -1746,7 +1747,7 @@ function addFullButton(el) {
     b.remove();
     send(t("chat.fullMsg"));
   });
-  (el.querySelector(".deep-btn") || el.lastElementChild)?.after(b);
+  (el.querySelector(".deep-btn:not(.full-btn)") || el.lastElementChild)?.after(b);
   if (!b.isConnected) el.appendChild(b);
 }
 

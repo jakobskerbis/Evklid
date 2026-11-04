@@ -49,13 +49,13 @@ test("full solution offer: after three guided replies in a row, reset by a mode 
     setReply(reply("A", 1));
     assert.equal((await say("korak")).full_offer, undefined, "ne ob koncu teme");
     conv = await call(`/api/conversations/${c.id}`);
-    assert.equal(conv.messages.at(-1).full_offer, true, "ob ponovnem odprtju šteje le način");
+    assert.equal(conv.messages.at(-1).full_offer, undefined, "ne ob koncu teme tudi po ponovnem odprtju");
   });
 });
 
 test("full solution button: web and app show it and send a one-time request", () => {
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
-  assert.match(app, /if \(doneData\?\.full_offer\) addFullButton\(bubble\)/);
+  assert.match(app, /if \(doneData\?\.full_offer && !bubble\.nextElementSibling\) addFullButton\(bubble\)/);
   assert.match(app, /send\(t\("chat\.fullMsg"\)\)/);
   const mob = readFileSync(new URL("../mobile/src/app/chat/[id].tsx", import.meta.url), "utf8");
   assert.match(mob, /setFullOk\(!!e\.data\.full_offer\)/);

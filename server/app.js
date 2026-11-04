@@ -435,7 +435,9 @@ export function createApp(store, opts = {}) {
     const reported = new Set(store.db.prepare("SELECT message_id FROM message_reports WHERE conversation_id = ?").all(c.id).map((r) => r.message_id));
     const msgs = store.listMessages(c.id);
     const lastMsg = msgs.at(-1);
-    const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && last.flag === "none" && fullOffer(c.id);
+    // done ni v tabeli events: prebere se iz META zadnjega odgovora (kot v done ob pošiljanju).
+    const lastText = (m) => (Array.isArray(m.api_content) ? m.api_content.filter((b) => b.type === "text").map((b) => b.text).join("\n") : "");
+    const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && last.flag === "none" && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
     res.json({
       ...c,
       state: last ? { subject: last.subject, mode: last.mode } : null,
@@ -824,7 +826,7 @@ export function createApp(store, opts = {}) {
         // Brez ponovnega gumba »Razloži podrobneje«, tudi če je odgovor pripravil hitri model.
         deep: deep || req.body?.deep === true,
         settings: settingsTools.state.used || undefined,
-        full_offer: (meta?.mode === "A" && meta.flag === "none" && !meta.done && fullOffer(conv.id)) || undefined,
+        full_offer: (meta?.mode === "A" && meta.flag === "none" && !meta.done && !settingsTools.state.used && fullOffer(conv.id)) || undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();
