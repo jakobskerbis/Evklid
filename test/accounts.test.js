@@ -1298,3 +1298,22 @@ test("premlad za račun: Evklid pošlje staršu povezavo, naslova ne shrani, ome
     assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "oce@primer.si" } })).status, 200);
     assert.equal((await c("/api/auth/ask-parent", { method: "POST", body: { email: "teta@primer.si" } })).status, 429);
   }));
+
+test("skrbnik ima profil lahko odprt na več napravah hkrati", async () => {
+  process.env.EVKLID_ADMIN_EMAILS = "skrbnik@kod.si";
+  try {
+    await withServer(async ({ client, calls }) => {
+      const phone = client();
+      await registerVerified(phone, calls, "skrbnik@kod.si");
+      const kid = (await phone("/api/students", { method: "POST", body: { name: "Jaka", birth_year: YEAR - 17, consent: true } })).body;
+      assert.equal((await phone(`/api/students/${kid.id}/xp`)).status, 200);
+      const pc = client();
+      assert.equal((await pc("/api/auth/login", { method: "POST", body: { email: "skrbnik@kod.si", password: "geslo1234" } })).status, 200);
+      assert.equal((await pc(`/api/students/${kid.id}/xp`)).status, 200);
+      assert.equal((await phone(`/api/students/${kid.id}/xp`)).status, 200);
+      assert.equal((await pc(`/api/students/${kid.id}/xp`)).status, 200);
+    });
+  } finally {
+    delete process.env.EVKLID_ADMIN_EMAILS;
+  }
+});

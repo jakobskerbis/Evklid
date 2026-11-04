@@ -425,6 +425,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
 
     // Profil je hkrati odprt samo na eni napravi. Izbris profila je dovoljen z vsake naprave staršu.
+    // Skrbnik (EVKLID_ADMIN_EMAILS) ima profile lahko odprte na več napravah hkrati (j, 4. 11.).
     if (studentId !== null) {
       const own = s && /^\/students\/\d+\/?$/.test(req.path);
       if (own && req.method === "DELETE") {
@@ -433,7 +434,7 @@ export function mountAccounts(app, store, opts = {}) {
       } else if (c && req.method === "DELETE" && /^\/conversations\/\d+\/?$/.test(req.path)) {
         guests.snapshotConversation(Number(c[1]), studentId);
       } else {
-        const takeover = req.method === "POST" && req.path === `/students/${studentId}/claim`;
+        const takeover = !!p.is_admin || (req.method === "POST" && req.path === `/students/${studentId}/claim`);
         const r = devices.use(studentId, req.deviceId, deviceLabel(req.get("user-agent")), { takeover });
         if (!r.ok) {
           return res.status(409).json({
