@@ -272,6 +272,8 @@ body.pad-open #session-side { display: none !important; }
 /* Od desne proti levi (arabščina, perzijščina, urdujščina): puščice nazaj/naprej kažejo v smer branja.
    Izjemi: tipka kazalca v kalkulatorju (izraz je vedno od leve proti desni) in zasukana puščica napredovanja v ligi. */
 [dir="rtl"] svg.i-dir { transform: scaleX(-1); }
+/* Puščica »naprej« v vrsticah seznama in glavah kartic (npr. Urnik, kartica stopnje na Učni poti). */
+[dir="rtl"] .list-row > svg.i[data-i="chevron-right"], [dir="rtl"] button.sch-card-head > svg.i[data-i="chevron-right"] { transform: scaleX(-1); }
 [dir="rtl"] .gc-key svg.i-dir, [dir="rtl"] .zone-mark svg.i-dir { transform: none; }
 
 /* ---------- Šolski sistem (regijski profili) ---------- */

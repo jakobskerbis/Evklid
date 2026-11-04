@@ -1951,7 +1951,7 @@ export default {
   "sch.addPrompt": "Dodaj svoj urnik",
   "sch.addPromptSub": "Opomnik pred testi in ponovitev pred uro",
   // Začetna stran po stopnji (public/zacetna.js)
-  "home.gamesSub": "Vadi snov svojega razreda skozi igro",
+  "home.gamesSub": "Vadi snov svojega razreda z igrami",
   "home.matura": "Priprava na maturo",
   "home.maturaSub": "Pripravljenost po temah, poskusna matura in pretekle pole",
   "home.studySub": "Učbenik predmetov tvojega programa",

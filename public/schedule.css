@@ -103,4 +103,5 @@ button.sch-lesson { justify-content: flex-start; }
 .stage-exams .se-name { font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
 .stage-exams .se-when { flex: none; color: var(--muted); font-weight: 600; font-size: 0.9rem; }
 .stage-note { margin: 0; font-size: 0.92rem; }
-.stage-exams-box > button.secondary { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; }
+.stage-exams-box > button.secondary { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 40px !important; }
+.stage-exams-box > button.sch-card-head { min-height: 40px; }
