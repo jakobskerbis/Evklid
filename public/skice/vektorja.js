@@ -1,6 +1,6 @@
 // Pravila za računanje z vektorji: konca vektorjev a⃗ in b⃗ iz O se vlečeta po mreži (korak 0,5);
 // paralelogram, vsota a⃗ + b⃗ (rumena), razlika a⃗ − b⃗ (zelena, od konca b⃗ do konca a⃗) in kot φ.
-import { skica, st, crta, napis, osi, novId } from "./skica.js";
+import { skica, st, crta, napis, osi, novId, par, vr } from "./skica.js";
 import { s } from "../sim/kit.js";
 
 export const MEJA = 4;
@@ -55,20 +55,17 @@ export default function narisi(host) {
       napis(g, Math.min(W - 10, Math.max(10, x + (v[0] / d) * 16)), Math.min(H - 6, Math.max(14, y - (v[1] / d) * 16 + 4)), t, barva, { "text-anchor": "middle" });
     };
     // Brez znaka U+20D7: pisava ga v SVG ne izriše; barva pove, kateri vektor je.
-    oz(a, "a", "ploskev");
-    oz(b, "b", "glavna");
+    if (q.la > 0.3) oz(a, "a", "ploskev");
+    if (q.lb > 0.3) oz(b, "b", "glavna");
     for (const [t, v] of [[ta, a], [tb, b]])
-      if (t) {
-        t.move(...P(v));
-        if (S.svg.lastChild !== t) S.svg.append(t);
-      }
+      if (t) t.move(...P(v)); // plast je nastala pred točkami, zato so točke nad njo
     S.cipi([
-      { barva: "ploskev", oznaka: "|\\vec{a}|", vrednost: koren(q.la ** 2, q.la) },
-      { barva: "glavna", oznaka: "|\\vec{b}|", vrednost: koren(q.lb ** 2, q.lb) },
+      { barva: "ploskev", oznaka: "|\\vec{a}|", vrednost: koren(a[0] * a[0] + a[1] * a[1], q.la) },
+      { barva: "glavna", oznaka: "|\\vec{b}|", vrednost: koren(b[0] * b[0] + b[1] * b[1], q.lb) },
       { barva: "glavna", oznaka: "\\vec{a} \\cdot \\vec{b}", vrednost: `${okl(a[0])}·${okl(b[0])} + ${okl(a[1])}·${okl(b[1])} = ${st(q.skalarni, 2)}` },
-      { barva: "glavna", oznaka: "\\varphi", vrednost: q.fi === null ? "ni določen" : `${tocno(q.fi) ? "" : "≈ "}${st(q.fi, 1)}°` },
-      { barva: "izbor", oznaka: "\\vec{a} + \\vec{b}", vrednost: `(${st(q.vsota[0], 1)}, ${st(q.vsota[1], 1)})` },
-      { barva: "druga", oznaka: "\\vec{a} - \\vec{b}", vrednost: `(${st(q.razlika[0], 1)}, ${st(q.razlika[1], 1)})` },
+      { barva: "glavna", oznaka: "\\varphi", vrednost: q.fi === null ? "ni določen" : `${vr(q.fi, 1)}°` },
+      { barva: "izbor", oznaka: "\\vec{a} + \\vec{b}", vrednost: par(...q.vsota, 1) },
+      { barva: "druga", oznaka: "\\vec{a} - \\vec{b}", vrednost: par(...q.razlika, 1) },
     ]);
   }
   izris();

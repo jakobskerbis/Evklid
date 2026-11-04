@@ -1,6 +1,6 @@
 // Kvadratna funkcija v temenski obliki f(x) = a(x − p)² + q: drsniki a, p, q; teme T in simetrala x = p.
 // Čipi: T, b = −2ap, c = ap² + q, D = b² − 4ac in ničli (ali »ni realnih«).
-import { skica, st, crta, napis, osi } from "./skica.js";
+import { skica, st, crta, napis, osi, par } from "./skica.js";
 import { s, fnPath } from "../sim/kit.js";
 
 export function kvadratna(a, p, q) {
@@ -35,11 +35,11 @@ export default function narisi(host) {
     napis(g, Math.min(A.R - 4, A.X(p) + 5), A.T + 12, "x = p", "izbor", { style: "font-size: 11px" });
     const z = (v) => `${Math.abs(v - Number(v.toFixed(2))) < 1e-9 ? "" : "≈ "}${st(v, 2)}`;
     S.cipi([
-      { barva: "druga", oznaka: "T(p, q)", vrednost: `T(${st(p, 1)}, ${st(q, 1)})` },
+      { barva: "druga", oznaka: "T(p, q)", vrednost: `T${par(p, q, 1)}` },
       { barva: "glavna", oznaka: "b = -2ap", vrednost: st(k.b, 2) },
-      { barva: "glavna", oznaka: "c = ap^2 + q", vrednost: st(k.c, 2) },
+      { barva: "glavna", oznaka: "c = ap^2 + q", vrednost: st(k.c, 3) },
       { barva: "glavna", oznaka: "D = b^2 - 4ac", vrednost: st(k.D, 2) },
-      { barva: "ploskev", oznaka: "x_{1,2}", vrednost: k.nicle.length ? k.nicle.map(z).join("; ") : "ni realnih" },
+      { barva: "ploskev", oznaka: k.nicle.length === 1 ? "x_1 = x_2" : "x_{1,2}", vrednost: k.nicle.length ? k.nicle.map(z).join("; ") : "ni realnih" },
     ]);
   }
   izris();

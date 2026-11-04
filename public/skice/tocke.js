@@ -1,6 +1,6 @@
 // Analitična geometrija v ravnini: točke A, B, C se vlečejo po mreži (korak 0,5); daljica AB z
 // razpoloviščem S, trikotnik ABC s ploščino in orientacijo (puščica v smeri A → B → C).
-import { skica, st, crta, napis, osi } from "./skica.js";
+import { skica, st, crta, napis, osi, par, vr } from "./skica.js";
 import { s } from "../sim/kit.js";
 
 export const MEJA = 4;
@@ -45,17 +45,13 @@ export default function narisi(host) {
       const [x, y] = P(v);
       napis(g, Math.min(W - 10, x + 14), Math.max(14, y - 10), ime, "glavna");
       const t = vlecne[ime];
-      if (t) {
-        t.move(x, y);
-        if (S.svg.lastChild !== t) S.svg.append(t);
-      }
+      if (t) t.move(x, y); // plast je nastala pred točkami, zato so točke nad njo
     }
-    const zv = (v) => `(${st(v[0], 2)}, ${st(v[1], 2)})`;
     S.cipi([
       { barva: "izbor", oznaka: "d(A, B)", vrednost: `√${st(q.d2, 2)} ${tocno(q.d) ? "=" : "≈"} ${st(q.d, 2)}` },
-      { barva: "druga", oznaka: "S", vrednost: zv(q.S) },
-      { barva: "ploskev", oznaka: "S_{\\triangle ABC}", vrednost: st(q.ploscina, 2) },
-      { barva: "glavna", oznaka: "\\text{orientacija}", vrednost: q.orientacija > 0 ? "pozitivna ↺" : q.orientacija < 0 ? "negativna ↻" : "točke so kolinearne" },
+      { barva: "druga", oznaka: "S", vrednost: par(...q.S) },
+      { barva: "ploskev", oznaka: "\\text{ploščina } \\triangle ABC", vrednost: vr(q.ploscina, 3) },
+      { barva: "glavna", oznaka: "\\text{orientacija}", vrednost: q.orientacija > 0 ? "pozitivna ↺ (nasprotno urinemu kazalcu)" : q.orientacija < 0 ? "negativna ↻ (v smeri urinega kazalca)" : "točke ležijo na isti premici" },
     ]);
   }
   izris();

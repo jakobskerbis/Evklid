@@ -33,10 +33,10 @@ export default function narisi(host) {
     if (V.koren) leg.push([n1 === 2 ? "y = √x" : "y = ∛x", "druga"]);
     leg.forEach(([t, b], i) => napis(g, A.L + 6, A.T + 14 + i * 16, t, b, { style: "font-size: 12px" }));
     const cipi = [
-      { barva: "glavna", oznaka: "n", vrednost: `${st(n1, 0)}, ${st(n2, 0)}` },
+      n1 > 0 ? { barva: "glavna", oznaka: "f(x) = x^n,\\ n", vrednost: `${n1} in ${n2}` } : { barva: "glavna", oznaka: "f(x) = x^{-n},\\ n", vrednost: `${-n1} in ${-n2}` },
       { barva: "glavna", oznaka: `D_f = ${V.D}` },
       { barva: "glavna", oznaka: `Z_f = ${V.Z}` },
-      { barva: "glavna", oznaka: "f", vrednost: V.parnost },
+      { barva: "glavna", oznaka: "f", vrednost: `${V.parnost} funkcija` },
     ];
     if (V.koren) cipi.push({ barva: "druga", oznaka: `${V.koren.tex}:\\ D_f = ${V.koren.D}` });
     S.cipi(cipi);

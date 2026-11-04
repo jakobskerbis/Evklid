@@ -1,6 +1,6 @@
 // Eksponentna in logaritemska funkcija: drsnik a (preskoči a = 1), y = aˣ in y = logₐ x sta zrcalni čez
 // y = x; točki (0, 1) in (1, 0); vlečna točka na eksponentni funkciji in njena zrcalna slika na logaritmu.
-import { skica, st, crta, napis, osi } from "./skica.js";
+import { skica, st, crta, napis, osi, vr } from "./skica.js";
 import { s, fnPath } from "../sim/kit.js";
 
 export const brezEna = (v, prej) => (Math.abs(v - 1) < 1e-9 ? (prej > 1 ? 0.9 : 1.1) : v);
@@ -8,10 +8,10 @@ export const exp = (a) => (x) => a ** x;
 export const log = (a) => (x) => (x > 0 ? Math.log(x) / Math.log(a) : NaN);
 
 export default function narisi(host) {
-  const W = 290, H = 270;
-  const S = skica({ w: W, h: H, navodilo: "Spreminjaj osnovo a in povleci točko po eksponentni krivulji.", oznaka: "Eksponentna in logaritemska funkcija" });
+  const W = 290, H = 290; // enako merilo na obeh oseh: y = x je pod 45°, zrcaljenje je pravokotno
+  const S = skica({ w: W, h: H, navodilo: "Spreminjaj osnovo a in povleci točko po grafu eksponentne funkcije.", oznaka: "Eksponentna in logaritemska funkcija" });
   const oz = [-2, 2, 4].map((v) => [v, st(v, 0)]);
-  const A = osi(S.svg, { W, H, x: [-3, 5], y: [-3, 5], rob: 8, xOznake: [...oz, [1, "1"]], yOznake: [...oz, [1, "1"]] });
+  const A = osi(S.svg, { W, H, x: [-3, 5], y: [-3, 5], rob: 8, xOznake: [...oz, [1, ""]], yOznake: [...oz, [1, ""]] });
   crta(S.svg, A.X(-3), A.Y(-3), A.X(5), A.Y(5), "glavna", { class: "sk-s-glavna sk-thin sk-dash sk-faint" });
   let a = 2, x = 1.5, tocka;
   const slA = S.drsnik({ label: "a", min: 0.2, max: 4, step: 0.1, value: a, digits: 1, barva: "ploskev", onInput: (v) => ((a = brezEna(v, a)), a !== v && slA.set(a, true), izris()) });
@@ -33,6 +33,8 @@ export default function narisi(host) {
     crta(zg, ...P, ...Q, "izbor", { class: "sk-s-izbor sk-thin sk-dash" });
     s("circle", { cx: Q[0], cy: Q[1], r: 6, class: "sk-fill sk-fill-izbor" }, zg);
     for (const [px, py] of [[0, 1], [1, 0]]) s("circle", { cx: A.X(px), cy: A.Y(py), r: 4.5, class: "sk-fill sk-fill-glavna" }, zg);
+    napis(g, A.X(0) - 6, A.Y(1) - 6, "(0, 1)", "glavna", { "text-anchor": "end", style: "font-size: 11px; font-style: normal" });
+    napis(g, A.X(1) + 4, A.Y(0) + 15, "(1, 0)", "glavna", { style: "font-size: 11px; font-style: normal" });
     napis(g, A.R - 4, A.T + 14, "y = aˣ", "ploskev", { "text-anchor": "end", style: "font-style: normal" });
     napis(g, A.R - 4, A.T + 30, "y = logₐ x", "druga", { "text-anchor": "end", style: "font-style: normal" });
     if (tocka) {
@@ -41,14 +43,14 @@ export default function narisi(host) {
     }
     S.cipi([
       { barva: "ploskev", oznaka: "a", vrednost: st(a, 1) },
-      { barva: "ploskev", oznaka: "f(x) = a^x", vrednost: a > 1 ? "naraščajoča" : "padajoča" },
-      { barva: "izbor", oznaka: "x", vrednost: `≈ ${st(x, 2)}` },
-      { barva: "izbor", oznaka: "y = a^x", vrednost: `≈ ${st(y, 2)}` },
-      { barva: "izbor", oznaka: "\\log_a y = x", vrednost: `≈ ${st(x, 2)}` },
+      { barva: "ploskev", oznaka: a > 1 ? "a > 1" : "0 < a < 1", vrednost: a > 1 ? "obe funkciji naraščata" : "obe funkciji padata" },
+      { barva: "izbor", oznaka: "x", vrednost: vr(x) },
+      { barva: "izbor", oznaka: "y = a^x", vrednost: vr(y) },
+      { barva: "izbor", oznaka: "\\log_a y = x", vrednost: vr(x) },
     ]);
   }
   izris();
-  tocka = S.tocka({ x: A.X(x), y: A.Y(a ** x), label: "Točka na eksponentni funkciji: premikaj jo levo in desno", onMove: (px) => ((x = A.inv(px, 0)[0]), izris()) });
+  tocka = S.tocka({ x: A.X(x), y: A.Y(a ** x), label: "Točka na grafu eksponentne funkcije: premikaj jo levo in desno", onMove: (px) => ((x = A.inv(px, 0)[0]), izris()) });
   izris();
   host.append(S.el);
 }

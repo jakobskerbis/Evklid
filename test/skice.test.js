@@ -232,3 +232,16 @@ test("eksponentna in logaritemska: zrcalni čez y = x, a = 1 se preskoči", asyn
   assert.equal(brezEna(1, 0.9), 1.1);
   assert.equal(brezEna(1, 1.1), 0.9);
 });
+
+test("eksponentna in logaritemska pri a blizu 1: graf nima navpičnih skokov čez okvir", async () => {
+  const { exp, log } = await import("../public/skice/eksponentna.js");
+  const { fnPath } = await import("../public/sim/kit.js");
+  // Ista preslikava kot v skici (okvir 274 × 274 px za [−3, 5] × [−3, 5]).
+  const A = { x0: -3, x1: 5, y0: -3, y1: 5, X: (x) => 8 + ((x + 3) / 8) * 274, Y: (y) => 282 - ((y + 3) / 8) * 274 };
+  for (const a of [0.2, 0.9, 1.1, 4])
+    for (const [f, od] of [[exp(a), -3], [log(a), 0.0005]]) {
+      const d = fnPath(f, A, { from: od, to: 5, n: 600 });
+      const tocke = [...d.matchAll(/([ML])(-?[\d.]+),(-?[\d.]+)/g)].map((m) => [m[1], Number(m[3])]);
+      for (let i = 1; i < tocke.length; i++) if (tocke[i][0] === "L") assert.ok(Math.abs(tocke[i][1] - tocke[i - 1][1]) < 274, `a = ${a}`);
+    }
+});
