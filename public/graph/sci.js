@@ -5,6 +5,7 @@ import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, 
 import { analyze, previewTex, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName, parseCommand } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
+import { chemSub, chemNumbers } from "./molska.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -200,7 +201,15 @@ export function createScientific(root, opts) {
 
   // --- vnos ---
   const OPS = /^[+×÷^²³⁻!%−]/;
-  function insert(text) {
+  // o.replace: vnos zamenja vrstico (formula iz zbirke); o.hint: namig pod vrstico, kaj storiti z njo
+  // o.angle: formula s koti v radianih (sin ω t) preklopi kalkulator v RAD
+  function insert(text, o = {}) {
+    if (o.replace) input.value = "";
+    if (o.angle && ANGLES.includes(o.angle) && st.angle !== o.angle) {
+      st.angle = o.angle;
+      save();
+      syncBar();
+    }
     let ins = text;
     // po izračunu: operator nadaljuje z rezultatom (Ans)
     if (!input.value && OPS.test(ins) && st.history.length) ins = `Ans${ins}`;
@@ -212,7 +221,13 @@ export function createScientific(root, opts) {
     const pos = s + (at >= 0 ? at : clean.length);
     input.setSelectionRange(pos, pos);
     recall = -1;
+    if (o.replace) fromFormula = namesIn(input.value);
     update();
+    if (o.hint) {
+      const live = $(".sc-live");
+      live.className = "sc-live muted";
+      live.innerHTML = `<span class="sc-live-hint">${esc(o.hint)}</span>`;
+    }
   }
   function del() {
     const s = input.selectionStart ?? input.value.length;
@@ -232,7 +247,26 @@ export function createScientific(root, opts) {
     input.setSelectionRange(p, p);
   }
 
-  const env = () => ({ vars: st.vars, funcs: st.funcs, ans: st.ans, deg: st.angle === "deg", grad: st.angle === "grad", comma: comma() });
+  // Vrstica je formula iz zbirke (insert z replace): njene črke so neznanke, zato shranjene spremenljivke z istim
+  // imenom (F = 6 iz prejšnjega računa, spomin M) ne veljajo, dokler je ne izračunaš ali pobrišeš.
+  let fromFormula = null;
+  const vars = () => (fromFormula ? Object.fromEntries(Object.entries(st.vars).filter(([n]) => !fromFormula.has(n))) : st.vars);
+  const env = () => ({ vars: vars(), funcs: st.funcs, ans: st.ans, deg: st.angle === "deg", grad: st.angle === "grad", comma: comma() });
+  // M(H2SO4) v vnosu je molska masa (public/graph/molska.js): fn dobi vnos s spremenljivkami namesto M(…)
+  const withChem = (text, fn, extra) => {
+    const k = chemSub(text);
+    if (!k) return fn(text, { ...env(), ...extra });
+    const r = k.fix(fn(k.text, { ...env(), ...extra, vars: { ...vars(), ...k.vars } }));
+    // »M(NaCl) = 58,44« je preverjanje, ne shranjevanje v spremenljivko
+    if (r?.assign?.startsWith("M_kem")) return { kind: "bool", value: Math.abs(r.value - k.vars[r.assign]) < 1e-9 * Math.max(1, Math.abs(r.value)), tex: r.tex };
+    // molska masa je merjena vrednost: rezultat samo decimalno (ne 249677/1000)
+    return r && typeof r === "object" ? { ...r, approx: true, exact: undefined } : r;
+  };
+  // črke v vrstici (neznanke formule), brez M(…)
+  const namesIn = (text) => {
+    const src = chemSub(text)?.text ?? text;
+    return new Set(src.split("=").flatMap((p) => evaluate(p, { vars: {}, funcs: st.funcs })?.error?.info?.names || []));
+  };
   const fmt = (v) => formatNumber(v, { mode: st.format, comma: comma() });
 
   function errorText(e) {
@@ -291,9 +325,9 @@ export function createScientific(root, opts) {
   }
 
   // rezultat (TeX za vrednost) po trenutni obliki zapisa
-  function valueTex(v) {
+  function valueTex(v, approx) {
     const f = fmt(v);
-    if (st.format !== "auto") return f.tex;
+    if (st.format !== "auto" || approx) return f.tex;
     const ex = exactTex(v);
     const mix = ex && ex.startsWith(v < 0 ? "-\\frac" : "\\frac") ? mixedTex(v) : null;
     return `${ex ? `${ex} ${mix ? `= ${mix} ` : ""}\\approx ` : ""}${f.tex}`;
@@ -313,6 +347,7 @@ export function createScientific(root, opts) {
       case "value":
         e.value = r.value;
         if (r.assign) e.assign = r.assign;
+        if (r.approx) e.approx = true;
         break;
       case "complex":
         e.re = r.re;
@@ -320,7 +355,7 @@ export function createScientific(root, opts) {
         break;
       case "solve":
         e.res = solutionTex(r, c, st.format);
-        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad"]);
+        e.r = pick(r, ["v", "roots", "complex", "exact", "all", "none", "deg", "grad", "approx"]);
         if (r.interval) e.note = { key: "sc.onePeriod", tex: r.interval };
         if (!r.roots.length && r.complex?.length) e.note = { key: "sc.noReal" };
         e.steps = true;
@@ -408,7 +443,7 @@ export function createScientific(root, opts) {
     switch (e.kind || "value") {
       case "value": {
         const d = e.dms ? dmsOf(e.value, { comma: comma() }) : null;
-        return texHtml(`${e.assign ? `${e.assign} ` : ""}= ${d ? `${fmt(e.value).tex} = ${d.tex}` : valueTex(e.value)}`);
+        return texHtml(`${e.assign ? `${e.assign} ` : ""}= ${d ? `${fmt(e.value).tex} = ${d.tex}` : valueTex(e.value, e.approx)}`);
       }
       case "complex":
         return texHtml(`= ${complexTex(e.re, e.im)}`);
@@ -448,6 +483,7 @@ export function createScientific(root, opts) {
     const live = $(".sc-live");
     root.classList.toggle("sc-typing", !!text.trim());
     if (!text.trim()) {
+      fromFormula = null;
       prev.innerHTML = "";
       live.textContent = "";
       live.className = "sc-live";
@@ -479,18 +515,18 @@ export function createScientific(root, opts) {
     const cmd = parseCommand(text);
     if (cmd && ["integrate", "limit", "taylor"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env(), live: true });
     if (/[=<>≤≥;]/.test(text) && !functionDef(text)) {
-      const r = evaluate(text, env());
+      const r = withChem(text, evaluate);
       if (r && !r.error) return { kind: "value", ...r };
-      const tex = previewTex(text, env());
+      const tex = withChem(text, previewTex);
       return tex ? { kind: "solve", tex } : null;
     }
-    return analyze(text, { ...env(), live: true });
+    return withChem(text, analyze, { live: true });
   }
 
   function compute() {
     const text = input.value.trim();
     if (!text) return;
-    const r = analyze(text, env());
+    const r = withChem(text, analyze);
     const live = $(".sc-live");
     if (!r) return;
     const bad = r.error || (r.kind === "value" && !Number.isFinite(r.value));
@@ -500,7 +536,7 @@ export function createScientific(root, opts) {
       return;
     }
     if (r.kind === "value") {
-      if (r.assign) st.vars[r.assign] = r.value;
+      if (r.assign && !fromFormula?.has(r.assign)) st.vars[r.assign] = r.value;
       st.ans = r.value;
     } else if (r.kind === "complex") st.ans = r.im ? st.ans : r.re;
     else if (r.kind === "func") st.funcs[r.name] = { param: r.param, body: r.body };
@@ -511,6 +547,7 @@ export function createScientific(root, opts) {
       st.ans = e.first;
       delete e.first;
     }
+    fromFormula = null;
     st.history.push(e);
     if (st.history.length > MAX_HISTORY) st.history.splice(0, st.history.length - MAX_HISTORY);
     save();
@@ -783,7 +820,7 @@ export function createScientific(root, opts) {
     if (b.classList.contains("sc-act")) {
       const act = b.dataset.act;
       if (act === "plot") opts.openGraph?.(it.plot);
-      else if (act === "steps") opts.steps?.(it.stepsText || it.text, it.op === "factor" ? "factor" : it.op === "simplify" ? "simplify" : null);
+      else if (act === "steps") opts.steps?.(chemNumbers(it.stepsText || it.text), it.op === "factor" ? "factor" : it.op === "simplify" ? "simplify" : null);
       else if (act === "cas") {
         // ukaz se zapiše v vrstico in izračuna kot vsak drug vnos (v zgodovini ga lahko prikličeš)
         const v = b.dataset.v;

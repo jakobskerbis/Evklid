@@ -1,0 +1,785 @@
+{
+ "id": "NPZ9-FIZ-2023-redni",
+ "exam": "NPZ9",
+ "subject": "FIZ",
+ "minutes": 60,
+ "points": 36,
+ "author": "AI",
+ "tools": "Dovoljeni so pisalo, svinčnik, geotrikotnik, šestilo, radirka, šilček in žepno računalo. Priložen je list s fizikalnimi konstantami in osnovnimi obrazci. Kjer naloga zahteva risanje, riši v zvezek.",
+ "tasks": [
+  {
+   "n": 1,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "open",
+     "text": "Sončna svetloba pade na gladino mirnega jezera. Zapiši **dva** različna pojava, ki se lahko zgodita s svetlobo, ko pade na mejo med zrakom in vodo.",
+     "answer": "Na primer: **odboj** (del svetlobe se od gladine odbije) in **lom** (del svetlobe preide v vodo in pri tem spremeni smer). Pravilna sta tudi **absorpcija** (voda del svetlobe vpije) in **sipanje** (svetloba se razprši na delcih v vodi).",
+     "scoring": "1 točka, če sta zapisana dva različna pravilna pojava (odboj, lom oz. prepuščanje, absorpcija, sipanje). Z enim samim pravilnim pojavom ni točke.",
+     "ways": [
+      {
+       "title": "Kaj se zgodi s svetlobo na meji",
+       "text": "Ko svetloba pade na mejo dveh snovi, se razdeli na več delov:\n\n- **Odboj:** del svetlobe se od gladine vrne nazaj v zrak. Zato na mirnem jezeru vidiš zrcalno sliko dreves in neba.\n- **Lom:** del svetlobe preide v vodo. Pri poševnem vpadu se smer žarka na meji spremeni, saj je hitrost svetlobe v vodi manjša kot v zraku. Zato je veslo, potopljeno v vodo, videti prelomljeno.\n- **Absorpcija:** voda del svetlobe vpije in se zaradi tega malo segreje. V globini je zato vedno temneje.\n- **Sipanje:** delci v vodi (mulj, alge) svetlobo razpršijo na vse strani, zato je kalna voda videti motna.\n\nZa točko zadostujeta dva od teh pojavov, najpogosteje odboj in lom."
+      },
+      {
+       "title": "Drugače: iz vsakdanjih opažanj",
+       "text": "Spomni se, kaj vidiš ob jezeru. Na gladini vidiš odsev Sonca in obale: svetloba se je **odbila**. Kamne na dnu plitve vode prav tako vidiš, torej je del svetlobe **prešel** v vodo; ker so kamni videti bliže gladini, kot so v resnici, veš, da se je svetloba na meji **lomila**. Dva pojava: odboj in lom."
+      }
+     ],
+     "mistake": "Odgovor »odboj in zrcaljenje« šteje kot en sam pojav, saj je zrcaljenje odboj. Tudi »svetloba se ustavi« ni dovolj natančno: pravilno je absorpcija (vpijanje)."
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Na drugem koncu velikega travnika, približno $255\\,\\mathrm{m}$ od tebe, kmet s težkim kladivom zabija kole za ograjo. Opaziš, da udarec kladiva po kolu vedno najprej vidiš, pok pa slišiš šele malo pozneje, ko je kladivo že spet v zraku. Katera razlaga je pravilna?",
+     "choices": [
+      "Zvok potuje hitreje kot svetloba, a se mora najprej odbiti od kola, zato prispe pozneje.",
+      "Svetloba potuje veliko hitreje kot zvok, zato sliko udarca dobiš skoraj takoj, zvok pa potrebuje do tebe opazno več časa.",
+      "Zvok nastane šele, ko kladivo odskoči od kola, zato ga slišiš pozneje, kot vidiš udarec.",
+      "Zvok se na dolgi poti skozi zrak oslabi, šibkejši zvok pa uho zazna pozneje."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "Svetloba potuje veliko hitreje kot zvok, zato sliko udarca dobiš skoraj takoj, zvok pa opazno pozneje.",
+     "ways": [
+      {
+       "title": "Primerjava hitrosti",
+       "text": "Svetloba potuje s hitrostjo približno $300\\,000\\,\\mathrm{km/s}$, zvok v zraku pa s hitrostjo približno $340\\,\\mathrm{m/s}$.\n\n- Zvok za pot $255\\,\\mathrm{m}$ potrebuje $t = \\frac{s}{c} = \\frac{255\\,\\mathrm{m}}{340\\,\\mathrm{m/s}} = 0{,}75\\,\\mathrm{s}$.\n- Svetloba za isto pot potrebuje manj kot milijoninko sekunde, kar je praktično takoj.\n\nZvok torej zaostaja za sliko za približno tri četrtine sekunde. V tem času kmet že dvigne kladivo za naslednji udarec, zato je pravilna trditev **B**.\n\nZakaj druge niso pravilne:\n- **A:** zvok ni hitrejši od svetlobe, ampak skoraj milijonkrat počasnejši; odboj ni potreben, zvok se širi od kola naravnost do tebe.\n- **C:** zvok nastane ob udarcu, ko kladivo zadene kol, ne pozneje.\n- **D:** zvok na poti res postane tišji, a tišji zvok ne potuje počasneje; hitrost zvoka ni odvisna od glasnosti."
+      },
+      {
+       "title": "Drugače: preizkus z razdaljo",
+       "text": "Če bi stal tik ob kmetu, bi udarec videl in slišal hkrati. Čim dlje greš, tem večji je zaostanek zvoka: pri $340\\,\\mathrm{m}$ bi bil približno $1\\,\\mathrm{s}$, pri $255\\,\\mathrm{m}$ pa $0{,}75\\,\\mathrm{s}$. Zaostanek se veča z razdaljo, ker zvok potuje z omejeno, razmeroma majhno hitrostjo. Svetloba je tako hitra, da njenega časa potovanja na takih razdaljah ne opazimo. To je ista razlaga kot pri blisku in grmenju."
+      }
+     ],
+     "mistake": "Pogosto zmotno mnenje je, da sta zvok in svetloba »enaka valovanja« in zato enako hitra. Svetloba je elektromagnetno valovanje in potuje tudi skozi prazen prostor, zvok pa je mehansko valovanje snovi in je veliko počasnejši."
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 410 252\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M270,50V127M270,133V210M270,50H370V210H270\"/><path d=\"M45,130H395\" stroke-dasharray=\"5 4\" stroke-width=\"1\"/><line x1=\"70\" y1=\"110\" x2=\"70\" y2=\"41\" stroke-width=\"2.6\"/><polygon points=\"70,30 74.8,41 65.2,41\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M50,130H60M50,110H60M50,30H60M55,130V30M70,222V232M270,222V232M370,222V232M70,227H370\" stroke-width=\"1\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"6\" y=\"124\" font-size=\"11\">1 cm</text><text x=\"6\" y=\"74\" font-size=\"11\">4 cm</text><text x=\"170\" y=\"245\" text-anchor=\"middle\" font-size=\"12\">10 cm</text><text x=\"320\" y=\"245\" text-anchor=\"middle\" font-size=\"12\">5 cm</text><text x=\"80\" y=\"66\" font-size=\"12\">predmet</text><text x=\"262\" y=\"150\" text-anchor=\"end\" font-size=\"12\">luknjica</text><text x=\"370\" y=\"43\" text-anchor=\"middle\" font-size=\"12\">zaslon</text><text x=\"100\" y=\"147\" font-size=\"11\">pomožna premica</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "construct",
+     "text": "Na sliki je stranski ris temne škatle z majhno luknjico na sprednji steni (camera obscura). Zadnja stena škatle je zaslon iz prosojnega papirja. Pred škatlo stoji svetleča puščica, ki je visoka $4\\,\\mathrm{cm}$; njen spodnji konec je $1\\,\\mathrm{cm}$ nad pomožno premico, ki gre skozi luknjico pravokotno na zaslon. Puščica je $10\\,\\mathrm{cm}$ pred luknjico, zaslon pa $5\\,\\mathrm{cm}$ za njo.\n\nSkico preriši v zvezek z danimi merami in nariši sliko puščice na zaslonu v pravilni velikosti in legi. Pomagaj si z dvema žarkoma.",
+     "answer": "Slika je na zaslonu pod pomožno premico, obrnjena (puščica kaže navzdol) in dolga $2\\,\\mathrm{cm}$: od $0{,}5\\,\\mathrm{cm}$ do $2{,}5\\,\\mathrm{cm}$ pod premico.",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 410 252\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M270,50V127M270,133V210M270,50H370V210H270\"/><path d=\"M45,130H395\" stroke-dasharray=\"5 4\" stroke-width=\"1\"/><line x1=\"70\" y1=\"110\" x2=\"70\" y2=\"41\" stroke-width=\"2.6\"/><polygon points=\"70,30 74.8,41 65.2,41\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M50,130H60M50,110H60M50,30H60M55,130V30M70,222V232M270,222V232M370,222V232M70,227H370\" stroke-width=\"1\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"6\" y=\"124\" font-size=\"11\">1 cm</text><text x=\"6\" y=\"74\" font-size=\"11\">4 cm</text><text x=\"170\" y=\"245\" text-anchor=\"middle\" font-size=\"12\">10 cm</text><text x=\"320\" y=\"245\" text-anchor=\"middle\" font-size=\"12\">5 cm</text><text x=\"80\" y=\"66\" font-size=\"12\">predmet</text><text x=\"262\" y=\"150\" text-anchor=\"end\" font-size=\"12\">luknjica</text><text x=\"370\" y=\"43\" text-anchor=\"middle\" font-size=\"12\">zaslon</text><text x=\"100\" y=\"147\" font-size=\"11\">pomožna premica</text></g><path d=\"M70,30L370,180M70,110L370,140\" stroke-width=\"1.1\" stroke-dasharray=\"4 3\"/><line x1=\"370\" y1=\"140\" x2=\"370\" y2=\"169\" stroke-width=\"3.2\"/><polygon points=\"370,180 365.2,169 374.8,169\" fill=\"currentColor\" stroke=\"none\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"376\" y=\"172\" font-size=\"12\">slika</text></g></svg>",
+     "scoring": "1 točka, če je slika na zaslonu obrnjena, dolga $2\\,\\mathrm{cm}$ in leži od $0{,}5\\,\\mathrm{cm}$ do $2{,}5\\,\\mathrm{cm}$ pod pomožno premico (dopustno odstopanje približno $2\\,\\mathrm{mm}$). Žarka skozi luknjico pokažeta, kako je slika nastala.",
+     "ways": [
+      {
+       "title": "Z žarkoma skozi luknjico",
+       "text": "Svetloba se širi premočrtno. Od vsake točke puščice pride na zaslon le tisti žarek, ki gre skozi luknjico.\n\n1. Iz vrha puščice ($5\\,\\mathrm{cm}$ nad premico) nariši ravno črto skozi luknjico do zaslona. Ker gre žarek čez premico, pade na zaslon **pod** njo.\n2. Enako nariši žarek iz spodnjega konca puščice ($1\\,\\mathrm{cm}$ nad premico).\n3. Točki, kjer žarka zadeneta zaslon, sta vrh in spodnji konec slike. Slika vrha je spodaj, slika spodnjega konca zgoraj, zato je slika **obrnjena**.\n\nKer je zaslon $5\\,\\mathrm{cm}$ za luknjico, puščica pa $10\\,\\mathrm{cm}$ pred njo, je pot žarka za luknjico pol krajša kot pred njo. Zato se žarek do zaslona od premice oddalji le za polovico toliko, kolikor je bila točka puščice nad premico: vrh slike je $2{,}5\\,\\mathrm{cm}$ pod premico, spodnji konec $0{,}5\\,\\mathrm{cm}$ pod njo. Slika je dolga $2{,}5\\,\\mathrm{cm} - 0{,}5\\,\\mathrm{cm} = 2\\,\\mathrm{cm}$."
+      },
+      {
+       "title": "Drugače: s podobnimi trikotniki",
+       "text": "Žarek iz vrha puščice, pomožna premica in puščica oz. zaslon tvorijo dva podobna trikotnika z vrhom v luknjici. Razmerje razdalj je $\\frac{5\\,\\mathrm{cm}}{10\\,\\mathrm{cm}} = \\frac{1}{2}$, zato je vsaka razdalja od premice na zaslonu polovica ustrezne razdalje pred luknjico:\n\n- vrh: $5\\,\\mathrm{cm} \\cdot \\frac{1}{2} = 2{,}5\\,\\mathrm{cm}$ pod premico,\n- spodnji konec: $1\\,\\mathrm{cm} \\cdot \\frac{1}{2} = 0{,}5\\,\\mathrm{cm}$ pod premico,\n- velikost slike: $4\\,\\mathrm{cm} \\cdot \\frac{1}{2} = 2\\,\\mathrm{cm}$.\n\nSlika je pod premico, ker se žarki v luknjici križajo."
+      }
+     ],
+     "mistake": "Pokončna slika nad premico je napačna: žarki se v luknjici križajo, zato je slika vedno obrnjena. Napačna je tudi slika, enako velika kot predmet; velikost določa razmerje razdalj $5\\,\\mathrm{cm} : 10\\,\\mathrm{cm}$."
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 470 250\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M5,205H465M5,195H465M5,185H465M5,175H465M5,165H465M5,155H465M5,145H465M5,135H465M5,125H465\" stroke-width=\"0.9\" stroke-opacity=\"0.5\"/><rect x=\"10\" y=\"175\" width=\"60\" height=\"40\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"none\"/><rect x=\"90\" y=\"125\" width=\"40\" height=\"90\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"none\"/><rect x=\"170\" y=\"155\" width=\"40\" height=\"60\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"none\"/><polygon points=\"255,215 295,215 295,195 315,195 315,185 235,185 235,195 255,195\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"none\"/><rect x=\"335\" y=\"155\" width=\"40\" height=\"60\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"none\"/><polygon points=\"395,215 455,215 455,192.5 435,192.5 435,155 415,155 415,192.5 395,192.5\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"none\"/><path d=\"M10,115V215H70V115M90,115V215H130V115M170,115V215H210V115M235,155V195H255V215H295V195H315V155M335,135V215H375V135M415,135V192.5H395V215H455V192.5H435V135\"/><circle cx=\"40\" cy=\"45\" r=\"30\"/><circle cx=\"110\" cy=\"45\" r=\"20\"/><circle cx=\"190\" cy=\"45\" r=\"20\"/><circle cx=\"275\" cy=\"45\" r=\"40\"/><circle cx=\"275\" cy=\"45\" r=\"20\" stroke-dasharray=\"3 3\"/><circle cx=\"355\" cy=\"45\" r=\"20\"/><circle cx=\"425\" cy=\"45\" r=\"30\"/><circle cx=\"425\" cy=\"45\" r=\"10\"/><path d=\"M150,5V240M322,5V240\" stroke-width=\"1\" stroke-dasharray=\"2 4\"/><g fill=\"currentColor\" stroke=\"none\" font-size=\"18\"><text x=\"40\" y=\"236\" text-anchor=\"middle\" font-weight=\"bold\">A</text><text x=\"110\" y=\"236\" text-anchor=\"middle\" font-weight=\"bold\">B</text><text x=\"190\" y=\"236\" text-anchor=\"middle\" font-weight=\"bold\">C</text><text x=\"275\" y=\"236\" text-anchor=\"middle\" font-weight=\"bold\">D</text><text x=\"355\" y=\"236\" text-anchor=\"middle\" font-weight=\"bold\">E</text><text x=\"425\" y=\"236\" text-anchor=\"middle\" font-weight=\"bold\">F</text><text x=\"75\" y=\"104\" text-anchor=\"middle\" font-size=\"15\">1. par</text><text x=\"236\" y=\"104\" text-anchor=\"middle\" font-size=\"15\">2. par</text><text x=\"394\" y=\"104\" text-anchor=\"middle\" font-size=\"15\">3. par</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "fill",
+     "text": "Na sliki so tlorisi (zgoraj) in stranski risi (spodaj) šestih osno simetričnih posod, razdeljenih v tri pare. V obeh posodah istega para je **enaka količina vode**. Vodoravne pomožne črte so v razmikih po $1\\,\\mathrm{cm}$.\n\nDopolni trditve z besedo *večji*, *manjši* ali *enak*.\n\n1. Tlak vode na dno posode A je … kot tlak vode na dno posode B.\n2. Tlak vode na dno posode C je … kot tlak vode na dno posode D.\n3. Tlak vode na dno posode E je … kot tlak vode na dno posode F.",
+     "answer": "1. manjši, 2. večji, 3. enak.",
+     "scoring": "1 točka, če so pravilno dopolnjene vse tri trditve.",
+     "ways": [
+      {
+       "title": "Tlak je odvisen od globine",
+       "text": "Hidrostatični tlak na dnu je $p = \\rho \\cdot g \\cdot h$: odvisen je le od gostote kapljevine in od globine, to je od višine gladine nad dnom. Oblika posode in količina vode nista pomembni. Voda je povsod ista, zato primerjaš samo višine gladin (pomagaj si s pomožnimi črtami):\n\n1. V A sega voda $4\\,\\mathrm{cm}$ visoko, v B $9\\,\\mathrm{cm}$. Gladina v A je nižja, tlak na dno je **manjši**.\n2. V C sega voda $6\\,\\mathrm{cm}$ visoko, v D le $3\\,\\mathrm{cm}$, ker se v širokem zgornjem delu razleze. Tlak na dno C je **večji**.\n3. V E in F sega voda do višine $6\\,\\mathrm{cm}$. Gladini sta enako visoko, tlaka sta **enaka**, čeprav ima F veliko širše dno."
+      },
+      {
+       "title": "Drugače: preizkus s silo na dno",
+       "text": "Pri posodah z navpičnimi stenami (A, B, C, E) vsa teža vode pritiska na dno. A in B imata enako težo vode, a ima A večje dno, zato se ista sila razporedi na večjo ploskev: tlak v A je manjši. To se ujema z nižjo gladino v A.\n\nPri F je drugače: voda pritiska na vodoravno »ramo« posode navzgor, rama pa z enako veliko silo nazaj navzdol na vodo. Zato je sila vode na dno F večja od teže vode v posodi. Ker pa je tudi dno F večje, je tlak na dno enak kot pri E, ki ima enako visoko gladino. Hidrostatični tlak zato vedno računaj iz višine gladine, ne iz količine vode."
+      }
+     ],
+     "mistake": "»Enaka količina vode, zato enak tlak« ni pravilno: tlak na dno ni odvisen od količine vode, ampak od višine gladine. Prav tako ni pravilno »F ima širše dno, zato je tlak večji« – pri enaki višini gladine je tlak enak."
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Na kakšen način lahko povečaš notranjo energijo kosa bakrene žice?",
+     "choices": [
+      "Samo tako, da ji dovajaš toploto, na primer da jo potopiš v vročo vodo.",
+      "Samo tako, da na njej opravljaš delo, na primer da jo hitro upogibaš sem in tja.",
+      "Tako, da ji dovajaš toploto, ali tako, da na njej opravljaš delo.",
+      "Tako, da jo dvigneš na višjo polico."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "Z dovajanjem toplote ali z opravljanjem dela.",
+     "ways": [
+      {
+       "title": "Dva načina spreminjanja notranje energije",
+       "text": "Notranja energija telesa je energija gibanja in medsebojne lege njegovih delcev. Poveča se, ko se delci gibljejo hitreje; to opazimo kot višjo temperaturo. To lahko dosežeš na dva načina:\n\n- **s toploto:** žico potopiš v vročo vodo; hitrejši delci vode prek stika predajo energijo delcem bakra;\n- **z delom:** žico hitro upogibaš ali jo drgneš s smirkovim papirjem; delo, ki ga opraviš, se pretvori v notranjo energijo žice in žica se segreje.\n\nPravilen je odgovor **C**.\n\n- **A** in **B** sta napačna zaradi besede »samo«: vsak opisuje le enega od dveh načinov.\n- **D** je napačen: z dvigom se poveča potencialna energija žice kot celote, gibanje njenih delcev pa se ne spremeni, zato se notranja energija ne poveča."
+      },
+      {
+       "title": "Drugače: iz poskusa",
+       "text": "Preizkusi oboje: žico, ki jo deset sekund hitro upogibaš na istem mestu, na pregibu otipaš toplo, čeprav je nisi segrevala s plamenom. Žica, ki jo potopiš v vročo vodo, se segreje, čeprav nanjo nisi delovala s silo. Oba načina torej delujeta, vsak zase ali skupaj, zato je pravilno **C**. Če pa žico samo dvigneš na polico, ostane enako topla."
+      }
+     ],
+     "mistake": "Zamenjava notranje energije s potencialno: dvignjeno telo ima več potencialne energije, ne pa tudi več notranje."
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 330 175\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"220\" y=\"50\" width=\"95\" height=\"100\" fill=\"currentColor\" fill-opacity=\"0.1\"/><path d=\"M5,150H325\" stroke-width=\"2\"/><path d=\"M205,150V50H220\"/><path d=\"M80,150L220,50\"/><path d=\"M15,150C70,150 60,70 115,85S175,50 220,50\" stroke-dasharray=\"6 3\"/><rect x=\"197\" y=\"136\" width=\"16\" height=\"12\" fill=\"currentColor\" fill-opacity=\"0.4\"/><rect x=\"66\" y=\"136\" width=\"16\" height=\"12\" fill=\"currentColor\" fill-opacity=\"0.4\"/><rect x=\"8\" y=\"136\" width=\"16\" height=\"12\" fill=\"currentColor\" fill-opacity=\"0.4\"/><path d=\"M300,50V150M294,50H306M294,150H306\" stroke-width=\"1\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"190\" y=\"110\" font-weight=\"bold\">1</text><text x=\"140\" y=\"116\" font-weight=\"bold\">2</text><text x=\"58\" y=\"96\" font-weight=\"bold\">3</text><text x=\"285\" y=\"104\">h</text><text x=\"267\" y=\"42\" text-anchor=\"middle\" font-size=\"12\">polica</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Nik spravi tri enake igrače s stalno hitrostjo na isto polico. Prvo igračo dvigne navpično (pot 1), drugo povleče po ravni deski (pot 2), tretjo pa po ukrivljeni progi (pot 3). Trenje in zračni upor zanemari. Kaj velja za delo, ki ga Nik opravi pri posamezni igrači?",
+     "choices": [
+      "Največ dela opravi pri poti 1, ker mora takrat delovati z največjo silo.",
+      "Največ dela opravi pri poti 3, ker je ta pot najdaljša.",
+      "Pri vseh treh poteh opravi enako delo.",
+      "Najmanj dela opravi pri poti 1, ker je ta pot najkrajša."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "Pri vseh treh poteh opravi enako delo.",
+     "ways": [
+      {
+       "title": "Sprememba potencialne energije",
+       "text": "Ker se igrače gibljejo s stalno hitrostjo, se njihova kinetična energija ne spremeni. Brez trenja se tudi nič energije ne pretvori v notranjo. Vse Nikovo delo se torej pretvori v potencialno energijo igrače:\n\n$A = \\Delta W_p = m \\cdot g \\cdot h$.\n\nIgrače so enake ($m$ enak) in so na koncu na isti višini $h$, zato je delo pri vseh treh poteh **enako** (odgovor **C**).\n\n- **A:** pri navpičnem dvigu je sila res največja, a je pot najkrajša; zmnožek sile in poti je enak kot pri drugih poteh.\n- **B** in **D:** dolžina poti sama ne odloča. Na daljši, položnejši poti je potrebna sila manjša, tako da delo ostane enako."
+      },
+      {
+       "title": "Drugače: zlato pravilo mehanike",
+       "text": "Zlato pravilo mehanike pravi: kar pridobiš pri sili, izgubiš pri poti. Po deski (pot 2) vlečeš z manjšo silo kot pri navpičnem dvigu, a na daljši poti. Na ukrivljeni progi se sila spreminja (kjer je strmo, je večja, kjer je položno, manjša), a če delo sešteješ po vseh odsekih, spet dobiš $m \\cdot g \\cdot h$. Delo je odvisno le od začetne in končne višine."
+      }
+     ],
+     "mistake": "Zmotno je misliti, da daljša pot pomeni več dela (odgovor B). Pri dvigovanju šteje le, za koliko se igrača dvigne, torej višinska razlika $h$; na daljši, položnejši poti je zato potrebna ustrezno manjša sila."
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "open",
+     "text": "Kamenček spustiš z mostu, da prosto pada proti vodi. Zračni upor zanemari. Kolikšen je pospešek kamenčka med padanjem? Zapiši vrednost z enoto.",
+     "answer": "$a = g \\approx 9{,}8\\,\\mathrm{m/s^2}$ (zaokroženo $10\\,\\mathrm{m/s^2}$).",
+     "scoring": "1 točka za vrednost $9{,}8\\,\\mathrm{m/s^2}$ ali $10\\,\\mathrm{m/s^2}$ s pravilno enoto (tudi $\\mathrm{N/kg}$).",
+     "ways": [
+      {
+       "title": "Težni pospešek",
+       "text": "Pri prostem padu na kamenček deluje le sila teže $F_g = m \\cdot g$. Po drugem Newtonovem zakonu je pospešek $a = \\frac{F_g}{m} = \\frac{m \\cdot g}{m} = g$.\n\nPospešek prostega pada je torej **težni pospešek** $g \\approx 9{,}8\\,\\mathrm{m/s^2}$; pri računanju ga pogosto zaokrožimo na $10\\,\\mathrm{m/s^2}$. Ves čas padanja je enak, zato se hitrost kamenčka vsako sekundo poveča za približno $10\\,\\mathrm{m/s}$. Pospešek ni odvisen od mase kamenčka."
+      },
+      {
+       "title": "Drugače: iz enote N/kg",
+       "text": "Na listu s konstantami je $g = 9{,}8\\,\\mathrm{N/kg}$ (zaokroženo $10\\,\\mathrm{N/kg}$). Ker je $1\\,\\mathrm{N} = 1\\,\\mathrm{kg \\cdot m/s^2}$, je $1\\,\\mathrm{N/kg} = 1\\,\\mathrm{m/s^2}$. Ista številka torej pove, da na vsak kilogram deluje sila teže približno $10\\,\\mathrm{N}$, in hkrati, da prosto padajoče telo pospešuje s približno $10\\,\\mathrm{m/s^2}$."
+      }
+     ],
+     "mistake": "Enota $\\mathrm{m/s}$ je enota za hitrost, ne za pospešek. Napačna je tudi trditev, da je pospešek ob začetku padanja enak nič: nič je začetna hitrost, pospešek pa je od začetka enak $g$."
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Daljinsko vodeni avtomobilček ima maso $800\\,\\mathrm{g}$. Ko spelje, je rezultanta sil nanj $2\\,\\mathrm{N}$ in kaže v smeri gibanja. Kolikšen je pospešek avtomobilčka?",
+     "choices": [
+      "$0{,}0025\\,\\mathrm{m/s^2}$",
+      "$0{,}25\\,\\mathrm{m/s^2}$",
+      "$2{,}5\\,\\mathrm{m/s^2}$",
+      "$25\\,\\mathrm{m/s^2}$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "$a = 2{,}5\\,\\mathrm{m/s^2}$",
+     "ways": [
+      {
+       "title": "Drugi Newtonov zakon",
+       "text": "**Podatki:** $m = 800\\,\\mathrm{g} = 0{,}8\\,\\mathrm{kg}$, $F_r = 2\\,\\mathrm{N}$.\n\n**Iščemo:** pospešek $a$.\n\nPo drugem Newtonovem zakonu je $F_r = m \\cdot a$, zato\n\n$a = \\frac{F_r}{m} = \\frac{2\\,\\mathrm{N}}{0{,}8\\,\\mathrm{kg}} = 2{,}5\\,\\mathrm{m/s^2}$.\n\nPravilen je odgovor **C**.\n\n- **A** dobiš, če maso pustiš v gramih: $\\frac{2}{800} = 0{,}0025$. Newton je določen s kilogramom, zato moraš maso najprej pretvoriti v $\\mathrm{kg}$.\n- **B** je desetkrat premajhen, **D** desetkrat prevelik. **B** dobiš, če maso zapišeš kot $8\\,\\mathrm{kg}$, **D** pa, če jo zapišeš kot $0{,}08\\,\\mathrm{kg}$: pri pretvorbi $800\\,\\mathrm{g} = 0{,}8\\,\\mathrm{kg}$ si decimalno vejico zamaknil za eno mesto narobe."
+      },
+      {
+       "title": "Drugače: preizkus z oceno",
+       "text": "Sila $2\\,\\mathrm{N}$ bi telesu z maso $1\\,\\mathrm{kg}$ dala pospešek $2\\,\\mathrm{m/s^2}$. Avtomobilček je nekoliko lažji od $1\\,\\mathrm{kg}$, zato mora biti pospešek nekoliko večji od $2\\,\\mathrm{m/s^2}$, a ne veliko večji. Temu ustreza le $2{,}5\\,\\mathrm{m/s^2}$. Preizkus: $0{,}8\\,\\mathrm{kg} \\cdot 2{,}5\\,\\mathrm{m/s^2} = 2\\,\\mathrm{N}$."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 215\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M65,180V30M40,165H290M90,180V30M40,150H290M115,180V30M40,135H290M140,180V30M40,120H290M165,180V30M40,105H290M190,180V30M40,90H290M215,180V30M40,75H290M240,180V30M40,60H290M265,180V30M40,45H290M290,180V30M40,30H290\" stroke-width=\"0.6\" stroke-opacity=\"0.35\"/><path d=\"M40,185V22M35,180H298\" stroke-width=\"1.4\"/><path d=\"M40,60H165L265,180H290\" stroke-width=\"2.4\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"40\" y=\"197\" text-anchor=\"middle\" font-size=\"11\">0</text><text x=\"32\" y=\"184\" text-anchor=\"end\" font-size=\"11\">0</text><text x=\"90\" y=\"197\" text-anchor=\"middle\" font-size=\"11\">2</text><text x=\"32\" y=\"154\" text-anchor=\"end\" font-size=\"11\">2</text><text x=\"140\" y=\"197\" text-anchor=\"middle\" font-size=\"11\">4</text><text x=\"32\" y=\"124\" text-anchor=\"end\" font-size=\"11\">4</text><text x=\"190\" y=\"197\" text-anchor=\"middle\" font-size=\"11\">6</text><text x=\"32\" y=\"94\" text-anchor=\"end\" font-size=\"11\">6</text><text x=\"240\" y=\"197\" text-anchor=\"middle\" font-size=\"11\">8</text><text x=\"32\" y=\"64\" text-anchor=\"end\" font-size=\"11\">8</text><text x=\"290\" y=\"197\" text-anchor=\"middle\" font-size=\"11\">10</text><text x=\"32\" y=\"34\" text-anchor=\"end\" font-size=\"11\">10</text><text x=\"300\" y=\"197\" font-size=\"12\">t [s]</text><text x=\"46\" y=\"16\" font-size=\"12\">v [m/s]</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "open",
+     "text": "Graf kaže, kako se je s časom spreminjala hitrost kolesarke, preden se je ustavila pred semaforjem. Kolikšno pot je prevozila med enakomernim zaviranjem?",
+     "answer": "$s = 16\\,\\mathrm{m}$",
+     "ways": [
+      {
+       "title": "Ploščina pod grafom",
+       "text": "**Podatki (z grafa):** pred zaviranjem $v = 8\\,\\mathrm{m/s}$; zavirati začne ob $5\\,\\mathrm{s}$ in se ustavi ob $9\\,\\mathrm{s}$, zato zavira $t = 9\\,\\mathrm{s} - 5\\,\\mathrm{s} = 4\\,\\mathrm{s}$.\n\n**Iščemo:** pot med zaviranjem $s$.\n\nPot je enaka ploščini pod grafom $v(t)$. Med zaviranjem je lik pod grafom pravokoten trikotnik s katetama $4\\,\\mathrm{s}$ in $8\\,\\mathrm{m/s}$:\n\n$s = \\frac{1}{2} \\cdot 4\\,\\mathrm{s} \\cdot 8\\,\\mathrm{m/s} = 16\\,\\mathrm{m}$."
+      },
+      {
+       "title": "Drugače: s povprečno hitrostjo",
+       "text": "Pri enakomernem zaviranju hitrost enakomerno pada od $8\\,\\mathrm{m/s}$ do $0$, zato je povprečna hitrost med zaviranjem $\\bar{v} = \\frac{8\\,\\mathrm{m/s} + 0}{2} = 4\\,\\mathrm{m/s}$. Pot: $s = \\bar{v} \\cdot t = 4\\,\\mathrm{m/s} \\cdot 4\\,\\mathrm{s} = 16\\,\\mathrm{m}$."
+      }
+     ],
+     "mistake": "Račun $8\\,\\mathrm{m/s} \\cdot 4\\,\\mathrm{s} = 32\\,\\mathrm{m}$ predpostavlja, da je kolesarka ves čas zaviranja vozila s hitrostjo $8\\,\\mathrm{m/s}$. Ker se hitrost zmanjšuje, je pot pol manjša."
+    }
+   ]
+  },
+  {
+   "n": 10,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Na ploščati bateriji piše $4{,}5\\,\\mathrm{V}$. Katera trditev o električni napetosti je pravilna?",
+     "choices": [
+      "Napetost merimo v amperih. Pove, koliko naboja vsako sekundo steče skozi baterijo.",
+      "Napetost merimo v voltih. Pove, koliko dela opravi vir, ko skozi vezje prenese naboj $1\\,\\mathrm{As}$.",
+      "Napetost merimo v ohmih. Pove, kako močno žice in porabniki ovirajo tok.",
+      "Napetost merimo v voltih. Pove, koliko naboja baterija pošlje v vezje, da se porabi v žarnici."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "Napetost merimo v voltih; pove, koliko dela opravi vir pri prenosu naboja $1\\,\\mathrm{As}$ skozi vezje.",
+     "ways": [
+      {
+       "title": "Pomen napetosti",
+       "text": "Električna napetost je razmerje med električnim delom in prenesenim nabojem: $U = \\frac{A_e}{e}$. Enota je volt: $1\\,\\mathrm{V} = 1\\,\\frac{\\mathrm{J}}{\\mathrm{As}}$. Baterija z napetostjo $4{,}5\\,\\mathrm{V}$ torej opravi delo $4{,}5\\,\\mathrm{J}$ za vsak $1\\,\\mathrm{As}$ naboja, ki ga požene skozi vezje. Pravilen je odgovor **B**.\n\n- **A** opisuje električni tok, katerega enota je amper.\n- **C** opisuje električni upor, katerega enota je ohm.\n- **D** ima pravo enoto, a napačen pomen: naboj se v žarnici ne porabi. Kolikor naboja izstopi iz baterije, toliko se ga vrne vanjo; v žarnici se porabi (pretvori) energija, ne naboj."
+      },
+      {
+       "title": "Drugače: po enotah",
+       "text": "Najprej izloči odgovora z napačno enoto: v **A** je amper, ki je enota za tok, v **C** pa ohm, ki je enota za upor. Ostaneta B in D z enoto volt. Električni naboj se ohranja: v sklenjenem krogu se naboj samo pretaka in se ne porablja, zato D ne drži. Vir naboju daje energijo, ki jo porabniki pretvorijo v svetlobo in toploto. Ostane **B**."
+      }
+     ],
+     "mistake": "Pogosta zmota je, da baterija »vsebuje elektriko«, ki se v žarnici porabi. Baterija naboj le poganja po krogu in mu pri tem daje energijo."
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "intro": "Slika shematsko kaže planet in štiri njegove lune A, B, C in D na krožnih tirih. Vsi tiri ležijo v isti ravnini. Sončni žarki prihajajo z leve in so vzporedni. Velikosti in razdalje na sliki niso v pravem razmerju.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 330 225\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"170\" cy=\"110\" r=\"45\" stroke-width=\"0.8\" stroke-dasharray=\"3 3\"/><circle cx=\"170\" cy=\"110\" r=\"75\" stroke-width=\"0.8\" stroke-dasharray=\"3 3\"/><circle cx=\"170\" cy=\"110\" r=\"100\" stroke-width=\"0.8\" stroke-dasharray=\"3 3\"/><circle cx=\"170\" cy=\"110\" r=\"20\" fill=\"#ffffff\"/><path d=\"M170,90A20,20 0 0 1 170,130Z\" fill=\"#555555\" stroke=\"none\"/><circle cx=\"170\" cy=\"110\" r=\"20\"/><line x1=\"4\" y1=\"30\" x2=\"35\" y2=\"30\" stroke-width=\"1.4\"/><polygon points=\"46,30 35,34.8 35,25.2\" fill=\"currentColor\" stroke=\"none\"/><line x1=\"4\" y1=\"75\" x2=\"35\" y2=\"75\" stroke-width=\"1.4\"/><polygon points=\"46,75 35,79.8 35,70.2\" fill=\"currentColor\" stroke=\"none\"/><line x1=\"4\" y1=\"145\" x2=\"35\" y2=\"145\" stroke-width=\"1.4\"/><polygon points=\"46,145 35,149.8 35,140.2\" fill=\"currentColor\" stroke=\"none\"/><line x1=\"4\" y1=\"190\" x2=\"35\" y2=\"190\" stroke-width=\"1.4\"/><polygon points=\"46,190 35,194.8 35,185.2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"215\" cy=\"110\" r=\"6\" fill=\"currentColor\" fill-opacity=\"0.35\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"223\" y=\"102\" font-weight=\"bold\" font-size=\"14\">A</text></g><circle cx=\"170\" cy=\"35\" r=\"6\" fill=\"currentColor\" fill-opacity=\"0.35\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"178\" y=\"27\" font-weight=\"bold\" font-size=\"14\">B</text></g><circle cx=\"97\" cy=\"128\" r=\"6\" fill=\"currentColor\" fill-opacity=\"0.35\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"105\" y=\"120\" font-weight=\"bold\" font-size=\"14\">C</text></g><circle cx=\"269.3\" cy=\"122\" r=\"6\" fill=\"currentColor\" fill-opacity=\"0.35\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"277.3\" y=\"114\" font-weight=\"bold\" font-size=\"14\">D</text></g><g fill=\"currentColor\" stroke=\"none\"><text x=\"4\" y=\"222\" font-size=\"11\">sončni žarki</text><text x=\"170\" y=\"145\" text-anchor=\"middle\" font-size=\"11\">planet</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Katere lune so v trenutku na sliki v senci planeta, torej v mrku?",
+     "choices": [
+      "samo A",
+      "samo C",
+      "A in D",
+      "A, C in D"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "Lune A in D.",
+     "ways": [
+      {
+       "title": "Kje je senca planeta",
+       "text": "Svetloba se širi premočrtno. Planet zastre vzporedne žarke, zato za njim, na strani, **obrnjeni stran od Sonca** (na sliki desno), nastane senca: pas, širok približno toliko kot planet.\n\n- **A** leži desno od planeta, točno za njim: v senci.\n- **D** je na zunanjem tiru desno od planeta in le malo pod vodoravno črto skozi središče planeta; od te črte je oddaljena manj kot polmer planeta, zato je še v pasu sence.\n- **B** je nad planetom; žarki jo osvetljujejo neovirano.\n- **C** je na strani Sonca, med Soncem in planetom. Ta luna je osvetljena, saj ji ničesar ne zastira svetlobe (ravno obratno: ona lahko meče senco na planet).\n\nPravilno je **A in D**."
+      },
+      {
+       "title": "Drugače: z žarkoma ob robu planeta",
+       "text": "Nariši (v mislih ali v zvezku) dva sončna žarka, ki se dotakneta zgornjega in spodnjega roba planeta, in ju podaljšaj na desno. Med njima, desno od planeta, je senca. Lune, ki ležijo med tema črtama na desni strani, ne dobijo sončne svetlobe: to sta A in D. Luna C je med istima črtama, a **pred** planetom, kjer svetloba še ni zastrta."
+      }
+     ],
+     "mistake": "Pogosta zmota je, da je v mrku luna C, ker je »med Soncem in planetom«. V senci je tisto, kar je za planetom, gledano od Sonca, ne pred njim."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "choice",
+     "text": "Od kod bi moral gledati, da bi videl planet in lune tako, kot jih kaže slika (tiri so vidni kot krogi)?",
+     "choices": [
+      "Iz smeri Sonca.",
+      "Pravokotno na ravnino, v kateri ležijo tiri lun (od zgoraj ali od spodaj).",
+      "Iz ravnine, v kateri ležijo tiri lun, s strani.",
+      "Iz smeri, v katero kaže senca planeta."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "Pravokotno na ravnino tirov.",
+     "ways": [
+      {
+       "title": "Kako je videti krog z različnih strani",
+       "text": "Krog vidiš kot krog le, če nanj gledaš pravokotno na njegovo ravnino, tako kot gledaš na uro na steni od spredaj. Ker so na sliki vsi tiri krogi, sončni žarki pa prihajajo v ravnini tirov s strani, opazuješ **pravokotno na ravnino tirov** (odgovor **B**).\n\n- **A** in **D:** smeri Sonca in sence ležita v ravnini tirov. Od tam bi tire videl od strani, kot daljice; lune bi se prekrivale s planetom.\n- **C:** pogled iz ravnine tirov je prav tako pogled s strani; tiri bi bili videti kot ravne črte, ne kot krogi."
+      },
+      {
+       "title": "Drugače: preizkus s krožnikom",
+       "text": "Vzemi krožnik in ga položi na mizo. Če ga gledaš od zgoraj, vidiš krog. Ko se z očmi spuščaš proti robu mize, postaja vse bolj sploščena elipsa; v višini mize vidiš le še črto. Tiri lun so kot rob krožnika: na sliki so krogi, zato gledaš pravokotno na njihovo ravnino."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "n": 12,
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 292\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"60\" y=\"100\" width=\"240\" height=\"80\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M8,262H332\" stroke-width=\"3\"/><rect x=\"26\" y=\"30\" width=\"16\" height=\"10\" fill=\"currentColor\" fill-opacity=\"0.5\"/><line x1=\"40\" y1=\"40\" x2=\"92.2\" y2=\"92.2\" stroke-width=\"1.8\"/><polygon points=\"100,100 88.8,95.6 95.6,88.8\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M195,255L205,265M205,255L195,265\" stroke-width=\"1.8\"/><path d=\"M225,255L235,265M235,255L225,265\" stroke-width=\"1.8\"/><path d=\"M255,255L265,265M265,255L255,265\" stroke-width=\"1.8\"/><path d=\"M285,255L295,265M295,255L285,265\" stroke-width=\"1.8\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"200\" y=\"284\" text-anchor=\"middle\" font-weight=\"bold\">A</text><text x=\"230\" y=\"284\" text-anchor=\"middle\" font-weight=\"bold\">B</text><text x=\"260\" y=\"284\" text-anchor=\"middle\" font-weight=\"bold\">C</text><text x=\"290\" y=\"284\" text-anchor=\"middle\" font-weight=\"bold\">D</text><text x=\"18\" y=\"24\" font-size=\"12\">laser</text><text x=\"240\" y=\"150\" text-anchor=\"middle\" font-size=\"12\">posoda z vodo</text><text x=\"14\" y=\"254\" font-size=\"12\">stena</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 2,
+     "format": "construct",
+     "text": "Slika kaže tloris sobe. Na tleh stoji pravokotna steklena posoda, polna vode. Laserski žarek, ki ga kaže puščica, poševno pade na steno posode, preide skozi vodo in nato zadene eno od tarč A, B, C ali D na steni sobe. Stene posode so tanke, zato vpliv stekla zanemari.\n\nKatero tarčo zadene žarek? Skico preriši v zvezek (ni treba natančno) in nariši potek žarka skozi posodo in do stene. Na mestih, kjer se žarek lomi, nariši vpadno pravokotnico.",
+     "answer": "Tarčo **B**. Ob vstopu v vodo se žarek lomi proti vpadni pravokotnici, ob izstopu stran od nje; izstopni žarek je vzporeden vpadnemu, le nekoliko premaknjen.",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 292\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"60\" y=\"100\" width=\"240\" height=\"80\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M8,262H332\" stroke-width=\"3\"/><rect x=\"26\" y=\"30\" width=\"16\" height=\"10\" fill=\"currentColor\" fill-opacity=\"0.5\"/><line x1=\"40\" y1=\"40\" x2=\"92.2\" y2=\"92.2\" stroke-width=\"1.8\"/><polygon points=\"100,100 88.8,95.6 95.6,88.8\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M195,255L205,265M205,255L195,265\" stroke-width=\"1.8\"/><path d=\"M225,255L235,265M235,255L225,265\" stroke-width=\"1.8\"/><path d=\"M255,255L265,265M265,255L255,265\" stroke-width=\"1.8\"/><path d=\"M285,255L295,265M295,255L285,265\" stroke-width=\"1.8\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"200\" y=\"284\" text-anchor=\"middle\" font-weight=\"bold\">A</text><text x=\"230\" y=\"284\" text-anchor=\"middle\" font-weight=\"bold\">B</text><text x=\"260\" y=\"284\" text-anchor=\"middle\" font-weight=\"bold\">C</text><text x=\"290\" y=\"284\" text-anchor=\"middle\" font-weight=\"bold\">D</text><text x=\"18\" y=\"24\" font-size=\"12\">laser</text><text x=\"240\" y=\"150\" text-anchor=\"middle\" font-size=\"12\">posoda z vodo</text><text x=\"14\" y=\"254\" font-size=\"12\">stena</text></g><path d=\"M100,82V198M150.2,162V198\" stroke-width=\"1\" stroke-dasharray=\"4 3\"/><path d=\"M100,100L150.2,180\" stroke-width=\"2.2\"/><line x1=\"150.2\" y1=\"180\" x2=\"222.4\" y2=\"252.2\" stroke-width=\"2.2\"/><polygon points=\"230.2,260 219,255.6 225.8,248.8\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M100,100L260,260\" stroke-width=\"1\" stroke-dasharray=\"2 4\" stroke-opacity=\"0.6\"/></svg>",
+     "scoring": "1 točka za izbiro tarče B. 1 točka za risbo: v vodi je žarek bližje vpadni pravokotnici kot v zraku (lom proti pravokotnici), po izstopu je vzporeden vpadnemu žarku (lom stran od pravokotnice) in zadene B.",
+     "ways": [
+      {
+       "title": "Lom ob vstopu in izstopu",
+       "text": "1. **Vstop (zrak → voda):** svetloba je v vodi počasnejša kot v zraku, zato se lomi **proti vpadni pravokotnici**. Lomni kot je manjši od vpadnega: pri vpadnem kotu $45^\\circ$ je v vodi približno $32^\\circ$. Žarek v vodi zato poteka bolj strmo proti nasprotni steni posode, kot bi potekal brez vode.\n2. **Izstop (voda → zrak):** pot je obrnjena, zato se žarek lomi **stran od pravokotnice** in v zraku spet oklepa s pravokotnico $45^\\circ$.\n3. Ker sta steni posode vzporedni, je izstopni žarek **vzporeden vpadnemu**, le premaknjen v stran. Ker je v vodi potoval bolj strmo, izstopi nekoliko levo od mesta, kjer bi izstopil brez vode. Naprej gre v isti smeri kot vpadni žarek, le premaknjen v levo, zato namesto tarče C zadene sosednjo tarčo **B**.\n\nZakaj ne druge: **C** bi zadel žarek brez loma (kot da vode ni). **A** bi zadel, če bi žarek po izstopu nadaljeval v smeri, ki jo je imel v vodi (lom le ob vstopu). **D** bi zadel, če bi se ob vstopu lomil stran od pravokotnice."
+      },
+      {
+       "title": "Drugače: s kotomerom",
+       "text": "Skico nariši natančneje z geotrikotnikom.\n\n1. V točki, kjer žarek zadene posodo, nariši vpadno pravokotnico na steno posode. Vpadni kot meri $45^\\circ$.\n2. Pri prehodu iz zraka v vodo je lomni kot manjši od vpadnega; pri vpadnem kotu $45^\\circ$ meri približno $32^\\circ$ (te vrednosti ni treba poznati, za risbo zadošča kot, opazno manjši od $45^\\circ$). Žarek v vodi nariši pod tem kotom do nasprotne stene posode.\n3. Tam spet nariši pravokotnico. Izstopni žarek oklepa z njo $45^\\circ$, tako kot vpadni žarek, zato sta vzporedna; preveri to z vzporednim premikom geotrikotnika.\n4. Podaljšaj izstopni žarek do stene sobe.\n\nKer je kot v vodi manjši od $45^\\circ$, izstopi žarek levo od mesta, kjer bi izstopil brez vode. Na skici je ta premik približno tolikšen kot razmik med sosednjima tarčama, zato žarek namesto C zadene **B**."
+      }
+     ],
+     "mistake": "Žarek, ki po izstopu ostane v smeri, ki jo je imel v vodi (tarča A): lom se zgodi na vsaki meji dveh snovi, torej tudi ob izstopu iz vode."
+    }
+   ]
+  },
+  {
+   "n": 13,
+   "intro": "Kocka ima maso $2{,}7\\,\\mathrm{kg}$ in prostornino $1\\,\\mathrm{dm^3}$. Leži na tehtnici, hkrati pa visi na silomeru, kot kaže slika. Kocka miruje. Upoštevaj $g = 10\\,\\mathrm{N/kg}$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"280\" viewBox=\"0 0 260 290\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M70,8H190M130,8V20\" stroke-width=\"2\"/><rect x=\"112\" y=\"20\" width=\"36\" height=\"120\" rx=\"4\" fill=\"currentColor\" fill-opacity=\"0.06\"/><path d=\"M132,30H146M136,35H146M136,40H146M136,45H146M136,50H146M132,55H146M136,60H146M136,65H146M136,70H146M136,75H146M132,80H146M136,85H146M136,90H146M136,95H146M136,100H146M132,105H146M136,110H146M136,115H146M136,120H146M136,125H146M132,130H146\" stroke-width=\"1\"/><path d=\"M116,90H146\" stroke-width=\"3\"/><path d=\"M130,140V170\"/><rect x=\"90\" y=\"170\" width=\"80\" height=\"80\" fill=\"currentColor\" fill-opacity=\"0.2\"/><rect x=\"55\" y=\"250\" width=\"150\" height=\"24\" rx=\"3\" fill=\"currentColor\" fill-opacity=\"0.08\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"129\" y=\"34\" text-anchor=\"end\" font-size=\"10\">0</text><text x=\"129\" y=\"84\" text-anchor=\"end\" font-size=\"10\">10</text><text x=\"129\" y=\"134\" text-anchor=\"end\" font-size=\"10\">20</text><text x=\"152\" y=\"56\" font-size=\"12\">N</text><text x=\"152\" y=\"92\" font-size=\"11\">kazalec</text><text x=\"130\" y=\"266\" text-anchor=\"middle\" font-size=\"12\">tehtnica</text><text x=\"130\" y=\"215\" text-anchor=\"middle\" font-size=\"12\">kocka</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 3,
+     "format": "open",
+     "text": "Kolikšen tlak povzroča kocka na tehtnico? Zapiši tudi, kolikšno silo kaže silomer in s kolikšno silo kocka pritiska na tehtnico.",
+     "answer": "Silomer kaže $12\\,\\mathrm{N}$, kocka pritiska na tehtnico s silo $15\\,\\mathrm{N}$, tlak je $p = 1500\\,\\mathrm{Pa}$.",
+     "scoring": "1 točka: pravilno odčitana sila silomera $12\\,\\mathrm{N}$. 1 točka: sila na tehtnico $F = F_g - F_s = 27\\,\\mathrm{N} - 12\\,\\mathrm{N} = 15\\,\\mathrm{N}$. 1 točka: ploščina ploskve $0{,}01\\,\\mathrm{m^2}$ in tlak $1500\\,\\mathrm{Pa}$ (z enoto).",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $m = 2{,}7\\,\\mathrm{kg}$, $V = 1\\,\\mathrm{dm^3}$, $g = 10\\,\\mathrm{N/kg}$, sila silomera s slike.\n\n**Iščemo:** silo silomera $F_s$, silo na tehtnico $F$ in tlak $p$.\n\n1. **Odčitek:** med $0$ in $10\\,\\mathrm{N}$ je $10$ razdelkov, en razdelek je $1\\,\\mathrm{N}$. Kazalec je dva razdelka pod oznako $10$: $F_s = 12\\,\\mathrm{N}$.\n2. **Teža kocke:** $F_g = m \\cdot g = 2{,}7\\,\\mathrm{kg} \\cdot 10\\,\\mathrm{N/kg} = 27\\,\\mathrm{N}$.\n3. **Sila na tehtnico:** silomer drži del teže, preostanek nosi tehtnica: $F = F_g - F_s = 27\\,\\mathrm{N} - 12\\,\\mathrm{N} = 15\\,\\mathrm{N}$.\n4. **Ploščina ploskve:** kocka s prostornino $1\\,\\mathrm{dm^3}$ ima rob $1\\,\\mathrm{dm} = 10\\,\\mathrm{cm} = 0{,}1\\,\\mathrm{m}$, zato je ploščina spodnje ploskve $S = 0{,}1\\,\\mathrm{m} \\cdot 0{,}1\\,\\mathrm{m} = 0{,}01\\,\\mathrm{m^2}$.\n5. **Tlak:** $p = \\frac{F}{S} = \\frac{15\\,\\mathrm{N}}{0{,}01\\,\\mathrm{m^2}} = 1500\\,\\mathrm{Pa}$."
+      },
+      {
+       "title": "Drugače: ravnovesje sil in cm²",
+       "text": "Kocka miruje, zato je rezultanta sil nanjo nič. Navzdol deluje teža $27\\,\\mathrm{N}$, navzgor pa silomer z $12\\,\\mathrm{N}$ in tehtnica s silo podlage $F_p$:\n\n$F_s + F_p = F_g$, torej $F_p = 27\\,\\mathrm{N} - 12\\,\\mathrm{N} = 15\\,\\mathrm{N}$.\n\nPo tretjem Newtonovem zakonu kocka pritiska na tehtnico z enako veliko silo $15\\,\\mathrm{N}$. Ploskev meri $10\\,\\mathrm{cm} \\cdot 10\\,\\mathrm{cm} = 100\\,\\mathrm{cm^2}$, zato je tlak $\\frac{15\\,\\mathrm{N}}{100\\,\\mathrm{cm^2}} = 0{,}15\\,\\mathrm{N/cm^2}$. Ker je $1\\,\\mathrm{m^2} = 10\\,000\\,\\mathrm{cm^2}$, je to $0{,}15 \\cdot 10\\,000\\,\\mathrm{Pa} = 1500\\,\\mathrm{Pa}$."
+      }
+     ],
+     "mistake": "Tlak, izračunan iz cele teže, $\\frac{27\\,\\mathrm{N}}{0{,}01\\,\\mathrm{m^2}} = 2700\\,\\mathrm{Pa}$, je napačen: del teže drži silomer, zato kocka pritiska na tehtnico le s $15\\,\\mathrm{N}$."
+    }
+   ]
+  },
+  {
+   "n": 14,
+   "intro": "Zaboj s knjigami vlečeš za vrv po vodoravnih tleh hodnika. Vrv je vodoravna in vleče zaboj v točki P s silo $90\\,\\mathrm{N}$. Zaboj se giblje premo in enakomerno. Zračni upor zanemari. Sliko preriši v zvezek; za sile uporabi merilo: $1\\,\\mathrm{cm}$ na risbi pomeni $30\\,\\mathrm{N}$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M5,110H335\" stroke-width=\"2\"/><rect x=\"120\" y=\"50\" width=\"100\" height=\"60\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M220,80H330\" stroke-width=\"1.2\"/><circle cx=\"220\" cy=\"80\" r=\"3\" fill=\"currentColor\" stroke=\"none\"/><line x1=\"130\" y1=\"22\" x2=\"189\" y2=\"22\" stroke-width=\"1.4\"/><polygon points=\"200,22 189,26.8 189,17.2\" fill=\"currentColor\" stroke=\"none\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"212\" y=\"70\" text-anchor=\"end\" font-weight=\"bold\" font-size=\"12\">P</text><text x=\"300\" y=\"72\" font-size=\"12\">vrv</text><text x=\"206\" y=\"26\" font-size=\"11\">smer gibanja</text><text x=\"170\" y=\"85\" text-anchor=\"middle\" font-size=\"12\">zaboj</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "construct",
+     "text": "Nariši silo vrvi na zaboj.",
+     "answer": "Puščica z začetkom v točki P, vodoravno v desno (v smeri vrvi), dolga $3\\,\\mathrm{cm}$, označena z $F_v$.",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M5,110H335\" stroke-width=\"2\"/><rect x=\"120\" y=\"50\" width=\"100\" height=\"60\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M220,80H330\" stroke-width=\"1.2\"/><circle cx=\"220\" cy=\"80\" r=\"3\" fill=\"currentColor\" stroke=\"none\"/><line x1=\"130\" y1=\"22\" x2=\"189\" y2=\"22\" stroke-width=\"1.4\"/><polygon points=\"200,22 189,26.8 189,17.2\" fill=\"currentColor\" stroke=\"none\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"212\" y=\"70\" text-anchor=\"end\" font-weight=\"bold\" font-size=\"12\">P</text><text x=\"300\" y=\"72\" font-size=\"12\">vrv</text><text x=\"206\" y=\"26\" font-size=\"11\">smer gibanja</text><text x=\"170\" y=\"85\" text-anchor=\"middle\" font-size=\"12\">zaboj</text></g><line x1=\"220\" y1=\"80\" x2=\"299\" y2=\"80\" stroke-width=\"3\"/><polygon points=\"310,80 299,84.8 299,75.2\" fill=\"currentColor\" stroke=\"none\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"272\" y=\"100\" font-style=\"italic\">F</text><text x=\"281\" y=\"104\" font-size=\"10\">v</text><text x=\"256\" y=\"132\" text-anchor=\"middle\" font-size=\"11\">3 cm = 90 N</text></g></svg>",
+     "scoring": "1 točka, če je puščica narisana v zvezku s prijemališčem v točki P, kaže vodoravno v desno (v smeri vrvi) in je dolga $3\\,\\mathrm{cm}$ (dopustno odstopanje približno $2\\,\\mathrm{mm}$).",
+     "ways": [
+      {
+       "title": "Prijemališče, smer, velikost",
+       "text": "**Podatki:** $F_v = 90\\,\\mathrm{N}$, merilo $1\\,\\mathrm{cm} \\to 30\\,\\mathrm{N}$.\n\n**Iščemo:** dolžino in lego puščice.\n\n- **Prijemališče:** vrv deluje na zaboj tam, kjer je pritrjena, v točki P.\n- **Smer:** vrv lahko samo vleče, vzdolž sebe: vodoravno v desno.\n- **Dolžina:** $90\\,\\mathrm{N} : 30\\,\\mathrm{N} = 3$, torej $3\\,\\mathrm{cm}$."
+      }
+     ]
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Kolikšna je sila trenja na zaboj?",
+     "answer": "$F_{tr} = 90\\,\\mathrm{N}$",
+     "ways": [
+      {
+       "title": "Prvi Newtonov zakon",
+       "text": "**Podatki:** $F_v = 90\\,\\mathrm{N}$, gibanje je premo in enakomerno.\n\n**Iščemo:** silo trenja $F_{tr}$.\n\nPri premem enakomernem gibanju je rezultanta sil na telo enaka nič (prvi Newtonov zakon). V vodoravni smeri delujeta le sila vrvi in sila trenja, zato sta nasprotno enaki: $F_{tr} = F_v = 90\\,\\mathrm{N}$. (V navpični smeri se izničita teža in sila podlage.)"
+      },
+      {
+       "title": "Drugače: kaj bi bilo sicer",
+       "text": "Če bi bila sila vrvi večja od trenja, bi bila rezultanta usmerjena naprej in zaboj bi pospeševal. Če bi bila manjša, bi se zaboj ustavljal. Ker se hitrost ne spreminja, sta sili enaki: $90\\,\\mathrm{N}$."
+      }
+     ],
+     "mistake": "Pogosta zmota je, da mora biti sila vrvi večja od trenja, »da se zaboj sploh giblje«. Večja sila je potrebna le za pospeševanje; za gibanje s stalno hitrostjo zadošča sila, enaka trenju."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "construct",
+     "text": "Na isto risbo nariši silo trenja na zaboj.",
+     "answer": "Puščica na stični ploskvi med zabojem in tlemi, vodoravno v levo (nasproti smeri gibanja), dolga $3\\,\\mathrm{cm}$, označena z $F_{tr}$.",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 140\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M5,110H335\" stroke-width=\"2\"/><rect x=\"120\" y=\"50\" width=\"100\" height=\"60\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M220,80H330\" stroke-width=\"1.2\"/><circle cx=\"220\" cy=\"80\" r=\"3\" fill=\"currentColor\" stroke=\"none\"/><line x1=\"130\" y1=\"22\" x2=\"189\" y2=\"22\" stroke-width=\"1.4\"/><polygon points=\"200,22 189,26.8 189,17.2\" fill=\"currentColor\" stroke=\"none\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"212\" y=\"70\" text-anchor=\"end\" font-weight=\"bold\" font-size=\"12\">P</text><text x=\"300\" y=\"72\" font-size=\"12\">vrv</text><text x=\"206\" y=\"26\" font-size=\"11\">smer gibanja</text><text x=\"170\" y=\"85\" text-anchor=\"middle\" font-size=\"12\">zaboj</text></g><line x1=\"220\" y1=\"80\" x2=\"299\" y2=\"80\" stroke-width=\"3\"/><polygon points=\"310,80 299,84.8 299,75.2\" fill=\"currentColor\" stroke=\"none\"/><line x1=\"170\" y1=\"110\" x2=\"91\" y2=\"110\" stroke-width=\"3\"/><polygon points=\"80,110 91,105.2 91,114.8\" fill=\"currentColor\" stroke=\"none\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"272\" y=\"100\" font-style=\"italic\">F</text><text x=\"281\" y=\"104\" font-size=\"10\">v</text><text x=\"92\" y=\"128\" font-style=\"italic\">F</text><text x=\"101\" y=\"132\" font-size=\"10\">tr</text></g></svg>",
+     "scoring": "1 točka, če puščica leži na stični ploskvi med zabojem in tlemi, kaže vodoravno v levo in je enako dolga kot puščica sile vrvi ($3\\,\\mathrm{cm}$, dopustno odstopanje približno $2\\,\\mathrm{mm}$).",
+     "ways": [
+      {
+       "title": "Prijemališče, smer, velikost",
+       "text": "- **Prijemališče:** trenje deluje tam, kjer se zaboj dotika tal, na spodnji ploskvi zaboja (puščico običajno narišemo na sredini spodnje ploskve).\n- **Smer:** trenje nasprotuje gibanju, zato kaže vodoravno v levo.\n- **Dolžina:** sila je $90\\,\\mathrm{N}$ (del b), $90\\,\\mathrm{N} : 30\\,\\mathrm{N} = 3$, torej $3\\,\\mathrm{cm}$, enako dolga kot puščica sile vrvi."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "n": 15,
+   "intro": "Družina se je z avtomobilom peljala na izlet. Graf kaže, kako se je oddaljenost avtomobila od doma spreminjala s časom. Odseki potovanja so označeni s črkami A, B, C in D.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 345 232\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M80,200V20M115,200V20M150,200V20M185,200V20M220,200V20M255,200V20M290,200V20M325,200V20M45,185H325M45,170H325M45,155H325M45,140H325M45,125H325M45,110H325M45,95H325M45,80H325M45,65H325M45,50H325M45,35H325M45,20H325\" stroke-width=\"0.6\" stroke-opacity=\"0.35\"/><path d=\"M45,205V12M40,200H333\" stroke-width=\"1.4\"/><path d=\"M45,200L115,140H150L220,65L325,20\" stroke-width=\"2.4\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"45\" y=\"216\" text-anchor=\"middle\" font-size=\"11\">0</text><text x=\"115\" y=\"216\" text-anchor=\"middle\" font-size=\"11\">1</text><text x=\"185\" y=\"216\" text-anchor=\"middle\" font-size=\"11\">2</text><text x=\"255\" y=\"216\" text-anchor=\"middle\" font-size=\"11\">3</text><text x=\"325\" y=\"216\" text-anchor=\"middle\" font-size=\"11\">4</text><text x=\"38\" y=\"204\" text-anchor=\"end\" font-size=\"11\">0</text><text x=\"38\" y=\"174\" text-anchor=\"end\" font-size=\"11\">40</text><text x=\"38\" y=\"144\" text-anchor=\"end\" font-size=\"11\">80</text><text x=\"38\" y=\"114\" text-anchor=\"end\" font-size=\"11\">120</text><text x=\"38\" y=\"84\" text-anchor=\"end\" font-size=\"11\">160</text><text x=\"38\" y=\"54\" text-anchor=\"end\" font-size=\"11\">200</text><text x=\"38\" y=\"24\" text-anchor=\"end\" font-size=\"11\">240</text><text x=\"70\" y=\"158\" font-weight=\"bold\">A</text><text x=\"128\" y=\"133\" font-weight=\"bold\">B</text><text x=\"172\" y=\"96\" font-weight=\"bold\">C</text><text x=\"268\" y=\"36\" font-weight=\"bold\">D</text><text x=\"318\" y=\"229\" font-size=\"12\">t [h]</text><text x=\"50\" y=\"10\" font-size=\"12\">s [km]</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko časa je trajal postanek?",
+     "answer": "$0{,}5\\,\\mathrm{h} = 30\\,\\mathrm{min}$",
+     "ways": [
+      {
+       "title": "Vodoravni odsek",
+       "text": "Med postankom se oddaljenost od doma ne spreminja, zato je graf vodoraven: to je odsek **B**. Traja od $1\\,\\mathrm{h}$ do $1{,}5\\,\\mathrm{h}$ (en razdelek na časovni osi je $0{,}5\\,\\mathrm{h}$). Postanek je trajal $1{,}5\\,\\mathrm{h} - 1\\,\\mathrm{h} = 0{,}5\\,\\mathrm{h} = 30\\,\\mathrm{min}$."
+      }
+     ]
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Na katerem odseku je avtomobil vozil z največjo hitrostjo?",
+     "answer": "Na odseku C ($100\\,\\mathrm{km/h}$).",
+     "ways": [
+      {
+       "title": "Najbolj strm odsek",
+       "text": "Na grafu $s(t)$ je hitrost tem večja, čim bolj strm je odsek, saj se v enakem času oddaljenost poveča bolj. Najbolj strm je odsek **C**.\n\nPreizkus z računom:\n- A: $\\frac{80\\,\\mathrm{km}}{1\\,\\mathrm{h}} = 80\\,\\mathrm{km/h}$,\n- B: postanek, $0\\,\\mathrm{km/h}$,\n- C: $\\frac{180\\,\\mathrm{km} - 80\\,\\mathrm{km}}{1\\,\\mathrm{h}} = 100\\,\\mathrm{km/h}$,\n- D: $\\frac{240\\,\\mathrm{km} - 180\\,\\mathrm{km}}{1{,}5\\,\\mathrm{h}} = 40\\,\\mathrm{km/h}$."
+      }
+     ],
+     "mistake": "Odsek D ni najhitrejši, čeprav je na grafu najvišje: višina pove, kako daleč od doma je avtomobil, hitrost pa pove strmina."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Kolikšna je bila povprečna hitrost avtomobila na celotnem potovanju?",
+     "answer": "$\\bar{v} = 60\\,\\mathrm{km/h}$",
+     "ways": [
+      {
+       "title": "Celotna pot deljeno s celotnim časom",
+       "text": "**Podatki (z grafa):** celotna pot $s = 240\\,\\mathrm{km}$, celoten čas $t = 4\\,\\mathrm{h}$ (s postankom vred).\n\n**Iščemo:** povprečno hitrost $\\bar{v}$.\n\n$\\bar{v} = \\frac{s}{t} = \\frac{240\\,\\mathrm{km}}{4\\,\\mathrm{h}} = 60\\,\\mathrm{km/h}$."
+      },
+      {
+       "title": "Drugače: preizkus po odsekih",
+       "text": "Seštej poti posameznih odsekov: $80\\,\\mathrm{km} + 0\\,\\mathrm{km} + 100\\,\\mathrm{km} + 60\\,\\mathrm{km} = 240\\,\\mathrm{km}$ in čase: $1\\,\\mathrm{h} + 0{,}5\\,\\mathrm{h} + 1\\,\\mathrm{h} + 1{,}5\\,\\mathrm{h} = 4\\,\\mathrm{h}$. Povprečna hitrost je $\\frac{240\\,\\mathrm{km}}{4\\,\\mathrm{h}} = 60\\,\\mathrm{km/h}$. Pomeni: če bi avto ves čas vozil s $60\\,\\mathrm{km/h}$ brez postanka, bi v istem času prevozil isto pot."
+      }
+     ],
+     "mistake": "Napačno je povprečiti hitrosti odsekov, $\\frac{80 + 100 + 40}{3} \\approx 73\\,\\mathrm{km/h}$, ker odseki trajajo različno dolgo. Napačno je tudi izpustiti postanek ($\\frac{240\\,\\mathrm{km}}{3{,}5\\,\\mathrm{h}} \\approx 69\\,\\mathrm{km/h}$): povprečna hitrost celotnega potovanja upošteva ves čas."
+    }
+   ]
+  },
+  {
+   "n": 16,
+   "intro": "Prozorna posoda z ravnim dnom ima na plašču oznake. Vsaka oznaka pove, koliko vode izpodrine posoda, če je potopljena do te oznake. Prazna posoda ima maso $40\\,\\mathrm{g}$. Vanjo nasuješ $360\\,\\mathrm{g}$ mokre mivke, ki sega do oznake $200\\,\\mathrm{cm^3}$. Posodo položiš v vodo, kjer pokončno plava. Gostota vode je $1\\,\\mathrm{g/cm^3}$. Upoštevaj $g = 10\\,\\mathrm{N/kg}$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"260\" viewBox=\"0 0 220 250\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><rect x=\"72\" y=\"180\" width=\"76\" height=\"48\" fill=\"currentColor\" fill-opacity=\"0.3\" stroke=\"none\"/><path d=\"M70,22V230H150V22\"/><path d=\"M70,205H84M70,180H84M70,155H84M70,130H84M70,105H84M70,80H84M70,55H84M70,30H84\" stroke-width=\"1.2\"/><circle cx=\"150\" cy=\"205\" r=\"3.2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"150\" cy=\"155\" r=\"3.2\" fill=\"currentColor\" stroke=\"none\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"64\" y=\"209\" text-anchor=\"end\" font-size=\"11\">100</text><text x=\"64\" y=\"184\" text-anchor=\"end\" font-size=\"11\">200</text><text x=\"64\" y=\"159\" text-anchor=\"end\" font-size=\"11\">300</text><text x=\"64\" y=\"134\" text-anchor=\"end\" font-size=\"11\">400</text><text x=\"64\" y=\"109\" text-anchor=\"end\" font-size=\"11\">500</text><text x=\"64\" y=\"84\" text-anchor=\"end\" font-size=\"11\">600</text><text x=\"64\" y=\"59\" text-anchor=\"end\" font-size=\"11\">700</text><text x=\"64\" y=\"34\" text-anchor=\"end\" font-size=\"11\">800</text><text x=\"157\" y=\"209\" font-weight=\"bold\">P</text><text x=\"157\" y=\"159\" font-weight=\"bold\">Q</text><text x=\"110\" y=\"210\" text-anchor=\"middle\" font-size=\"12\">mivka</text><text x=\"64\" y=\"14\" text-anchor=\"end\" font-size=\"11\">cm³</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Do katere oznake se posoda potopi v vodo?",
+     "choices": [
+      "do oznake $200\\,\\mathrm{cm^3}$",
+      "do oznake $360\\,\\mathrm{cm^3}$",
+      "do oznake $400\\,\\mathrm{cm^3}$",
+      "do oznake $800\\,\\mathrm{cm^3}$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "Do oznake $400\\,\\mathrm{cm^3}$.",
+     "ways": [
+      {
+       "title": "Vzgon je enak teži",
+       "text": "**Podatki:** $m = 40\\,\\mathrm{g} + 360\\,\\mathrm{g} = 400\\,\\mathrm{g} = 0{,}4\\,\\mathrm{kg}$, $\\rho_v = 1\\,\\mathrm{g/cm^3}$.\n\n**Iščemo:** prostornino izpodrinjene vode.\n\nPosoda plava, zato je vzgon enak njeni teži: $F_{vz} = F_g = 0{,}4\\,\\mathrm{kg} \\cdot 10\\,\\mathrm{N/kg} = 4\\,\\mathrm{N}$. Vzgon je enak teži izpodrinjene vode, torej ima izpodrinjena voda maso $0{,}4\\,\\mathrm{kg} = 400\\,\\mathrm{g}$ in prostornino $\\frac{400\\,\\mathrm{g}}{1\\,\\mathrm{g/cm^3}} = 400\\,\\mathrm{cm^3}$. Posoda se potopi do oznake $400\\,\\mathrm{cm^3}$ (**C**).\n\n- **A:** $200\\,\\mathrm{cm^3}$ je prostornina mivke, ne izpodrinjene vode.\n- **B:** $360\\,\\mathrm{cm^3}$ dobiš, če pozabiš na maso posode.\n- **D:** do vrha bi se potopila le posoda s skupno maso $800\\,\\mathrm{g}$."
+      },
+      {
+       "title": "Drugače: masa izpodrinjene vode",
+       "text": "Telo, ki plava, izpodrine toliko vode, kolikor samo tehta. Posoda z mivko ima $400\\,\\mathrm{g}$, zato izpodrine $400\\,\\mathrm{g}$ vode. Ker ima $1\\,\\mathrm{cm^3}$ vode maso $1\\,\\mathrm{g}$, je to $400\\,\\mathrm{cm^3}$ vode."
+      }
+     ]
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "choice",
+     "text": "Točki P in Q na plašču posode sta pod gladino vode. Kako se razlikujeta tlaka vode na plašč v točkah P in Q?",
+     "choices": [
+      "Tlak v točki P je večji kot v točki Q.",
+      "Tlak v točki Q je večji kot v točki P.",
+      "Tlaka sta enaka, ker je posoda v ravnovesju.",
+      "Tlaka sta enaka, ker sta obe točki na istem telesu."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "Tlak v točki P je večji.",
+     "ways": [
+      {
+       "title": "Hidrostatični tlak narašča z globino",
+       "text": "Hidrostatični tlak je $p = \\rho \\cdot g \\cdot h$, kjer je $h$ globina pod gladino. Točka P je nižje, torej globlje pod gladino kot Q, zato je tlak v P **večji** (**A**).\n\n- **B** obrne odvisnost od globine.\n- **C:** ravnovesje pomeni, da je **vzgon** enak teži, ne da je tlak povsod enak. Prav razlika tlakov med spodnjim in zgornjim delom posode povzroča vzgon.\n- **D:** tlak vode ni odvisen od tega, na katero telo deluje, ampak le od globine."
+      },
+      {
+       "title": "Drugače: s številkami",
+       "text": "Posoda je potopljena do oznake $400$. Oznake so enako razmaknjene, P je pri oznaki $100$, Q pri oznaki $300$; P je torej za dva razdelka globlje kot Q. Če bi bil en razdelek npr. $2{,}5\\,\\mathrm{cm}$, bi bila P v globini $7{,}5\\,\\mathrm{cm}$, Q pa $2{,}5\\,\\mathrm{cm}$ pod gladino. V trikratni globini je tlak vode trikrat večji."
+      }
+     ]
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "choice",
+     "text": "Kolikšna je približno povprečna gostota mokre mivke v posodi? Debelino sten zanemari.",
+     "choices": [
+      "$0{,}56\\,\\mathrm{g/cm^3}$",
+      "$0{,}9\\,\\mathrm{g/cm^3}$",
+      "$1{,}8\\,\\mathrm{g/cm^3}$",
+      "$2{,}0\\,\\mathrm{g/cm^3}$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "$\\rho \\approx 1{,}8\\,\\mathrm{g/cm^3}$",
+     "ways": [
+      {
+       "title": "Masa deljeno s prostornino",
+       "text": "**Podatki:** masa mivke $m = 360\\,\\mathrm{g}$, prostornina mivke $V = 200\\,\\mathrm{cm^3}$ (sega do oznake $200$).\n\n**Iščemo:** gostoto $\\rho$.\n\n$\\rho = \\frac{m}{V} = \\frac{360\\,\\mathrm{g}}{200\\,\\mathrm{cm^3}} = 1{,}8\\,\\mathrm{g/cm^3}$ (**C**).\n\n- **A** je obrnjeno razmerje, $\\frac{200}{360} \\approx 0{,}56$.\n- **B** dobiš, če maso mivke deliš s prostornino izpodrinjene vode ($\\frac{360}{400}$).\n- **D** dobiš, če v maso vštevaš tudi posodo ($\\frac{400}{200}$)."
+      },
+      {
+       "title": "Drugače: primerjava z vodo",
+       "text": "Enako prostornino vode ($200\\,\\mathrm{cm^3}$) bi imela maso $200\\,\\mathrm{g}$. Mivka ima maso $360\\,\\mathrm{g}$, kar je $360 : 200 = 1{,}8$-krat več. Mivka je torej $1{,}8$-krat gostejša od vode: $1{,}8\\,\\mathrm{g/cm^3}$. Smiselno: mivka v vodi potone, zato mora biti njena gostota večja od $1\\,\\mathrm{g/cm^3}$, kar izloči A in B."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "n": 17,
+   "intro": "Slika kaže kapljevinski termometer, ki visi zunaj na oknu v zimskem jutru. V termometru je obarvan alkohol (etanol); njegovo tališče je $-114\\,^\\circ\\mathrm{C}$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"170\" viewBox=\"0 0 150 305\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M60,280V16A8,8 0 0 1 76,16V280\"/><circle cx=\"68\" cy=\"288\" r=\"12\" fill=\"currentColor\" fill-opacity=\"0.45\"/><rect x=\"64\" y=\"190\" width=\"8\" height=\"96\" fill=\"currentColor\" fill-opacity=\"0.45\" stroke=\"none\"/><path d=\"M72,270H86M76,260H86M76,250H86M76,240H86M76,230H86M72,220H86M76,210H86M76,200H86M76,190H86M76,180H86M72,170H86M76,160H86M76,150H86M76,140H86M76,130H86M72,120H86M76,110H86M76,100H86M76,90H86M76,80H86M72,70H86M76,60H86M76,50H86M76,40H86M76,30H86M72,20H86\" stroke-width=\"1\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"92\" y=\"274\" font-size=\"11\">−30</text><text x=\"92\" y=\"224\" font-size=\"11\">−20</text><text x=\"92\" y=\"174\" font-size=\"11\">−10</text><text x=\"92\" y=\"124\" font-size=\"11\">0</text><text x=\"92\" y=\"74\" font-size=\"11\">10</text><text x=\"92\" y=\"24\" font-size=\"11\">20</text><text x=\"118\" y=\"30\" font-size=\"12\">°C</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Kolikšno temperaturo kaže termometer? Zapiši jo z enoto.",
+     "answer": "$T = -14\\,^\\circ\\mathrm{C}$",
+     "ways": [
+      {
+       "title": "Odčitek pod ničlo",
+       "text": "Med oznakama $-10$ in $-20$ je pet razdelkov, zato en razdelek pomeni $2\\,^\\circ\\mathrm{C}$. Pod ničlo temperatura z vsakim razdelkom navzdol **pada**. Stolpec sega dva razdelka pod oznako $-10$: $-10\\,^\\circ\\mathrm{C} - 2 \\cdot 2\\,^\\circ\\mathrm{C} = -14\\,^\\circ\\mathrm{C}$."
+      },
+      {
+       "title": "Drugače: od spodnje oznake navzgor",
+       "text": "Od oznake $-20$ je vrh stolpca tri razdelke više: $-20\\,^\\circ\\mathrm{C} + 3 \\cdot 2\\,^\\circ\\mathrm{C} = -14\\,^\\circ\\mathrm{C}$. Oba načina dasta isti rezultat, kar je dober preizkus."
+      }
+     ],
+     "mistake": "Odčitek $-6\\,^\\circ\\mathrm{C}$ dobiš, če od oznake $-10$ šteješ razdelke navzgor namesto navzdol, odčitek $-12\\,^\\circ\\mathrm{C}$ pa, če razdelek vzameš za $1\\,^\\circ\\mathrm{C}$. Pod ničlo je temperatura tem nižja, čim nižje je vrh stolpca."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "choice",
+     "text": "V katerem agregatnem stanju sta pri tej temperaturi voda in alkohol v termometru?",
+     "choices": [
+      "Voda je trdna (led), alkohol je tekoč.",
+      "Oba sta tekoča.",
+      "Oba sta trdna.",
+      "Voda je tekoča, alkohol je trden."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "Voda je trdna (led), alkohol je tekoč.",
+     "ways": [
+      {
+       "title": "Primerjava s tališčem",
+       "text": "Snov je trdna, če je njena temperatura pod tališčem, in tekoča, če je med tališčem in vreliščem.\n\n- Voda ima tališče $0\\,^\\circ\\mathrm{C}$. Temperatura $-14\\,^\\circ\\mathrm{C}$ je nižja, zato je voda **led**.\n- Alkohol ima tališče $-114\\,^\\circ\\mathrm{C}$. Temperatura $-14\\,^\\circ\\mathrm{C}$ je precej višja, zato je alkohol še **tekoč**.\n\nPravilno je **A**. B in C ne upoštevata, da imata snovi različni tališči, D pa ju zamenja. Da je alkohol tekoč, vidiš že na termometru: stolpec se lahko krči in razteza."
+      },
+      {
+       "title": "Drugače: zakaj termometer sploh deluje",
+       "text": "Kapljevinski termometer meri le, dokler je kapljevina v njem tekoča; če bi zmrznila, se stolpec ne bi več premikal. Zato so zunanji termometri napolnjeni z alkoholom in ne z vodo: alkohol ostane tekoč tudi v najhujšem mrazu pri nas, voda pa zmrzne že pri $0\\,^\\circ\\mathrm{C}$ in bi termometer celo razgnala."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "n": 18,
+   "intro": "Baterija električnega kolesa shrani energijo $0{,}5\\,\\mathrm{kWh}$. Kolesarka in kolo imata skupaj maso $90\\,\\mathrm{kg}$. Upoštevaj $g = 10\\,\\mathrm{N/kg}$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko joulov energije shrani baterija?",
+     "answer": "$W = 1{,}8 \\cdot 10^6\\,\\mathrm{J} = 1\\,800\\,000\\,\\mathrm{J}$",
+     "ways": [
+      {
+       "title": "Pretvorba kWh v J",
+       "text": "**Podatki:** $W = 0{,}5\\,\\mathrm{kWh}$.\n\n**Iščemo:** energijo v joulih.\n\n$1\\,\\mathrm{kWh}$ je energija, ki jo porabi naprava z močjo $1000\\,\\mathrm{W}$ v eni uri ($3600\\,\\mathrm{s}$):\n\n$1000\\,\\mathrm{W} \\cdot 3600\\,\\mathrm{s} = 3\\,600\\,000\\,\\mathrm{J}$, torej $1\\,\\mathrm{kWh} = 3{,}6 \\cdot 10^6\\,\\mathrm{J}$.\n\nBaterija: $0{,}5 \\cdot 3\\,600\\,000\\,\\mathrm{J} = 1\\,800\\,000\\,\\mathrm{J}$."
+      },
+      {
+       "title": "Drugače: z vatnimi urami",
+       "text": "$0{,}5\\,\\mathrm{kWh} = 500\\,\\mathrm{Wh}$. Ena vatna ura je $1\\,\\mathrm{W} \\cdot 3600\\,\\mathrm{s} = 3600\\,\\mathrm{J}$, zato $500 \\cdot 3600\\,\\mathrm{J} = 1\\,800\\,000\\,\\mathrm{J}$."
+      }
+     ],
+     "mistake": "Pretvorba $0{,}5\\,\\mathrm{kWh} = 500\\,\\mathrm{J}$ je napačna: kilovatna ura je enota za energijo (moč krat čas), zato moraš upoštevati tudi $3600$ sekund v uri."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Do kolikšne višine bi lahko ta energija dvignila kolesarko s kolesom, če bi se vsa pretvorila v potencialno energijo (izgube zanemari)?",
+     "answer": "$h = 2000\\,\\mathrm{m}$",
+     "scoring": "1 točka: zapis $W = m \\cdot g \\cdot h$ ali sila teže $F_g = 900\\,\\mathrm{N}$. 1 točka: $h = 2000\\,\\mathrm{m}$ (z enoto).",
+     "ways": [
+      {
+       "title": "Potencialna energija",
+       "text": "**Podatki:** $W = 1\\,800\\,000\\,\\mathrm{J}$, $m = 90\\,\\mathrm{kg}$, $g = 10\\,\\mathrm{N/kg}$.\n\n**Iščemo:** višino $h$.\n\nVsa energija baterije naj se pretvori v potencialno energijo: $W = m \\cdot g \\cdot h$.\n\n1. Sila teže: $F_g = m \\cdot g = 90\\,\\mathrm{kg} \\cdot 10\\,\\mathrm{N/kg} = 900\\,\\mathrm{N}$.\n2. Višina: $h = \\frac{W}{F_g} = \\frac{1\\,800\\,000\\,\\mathrm{J}}{900\\,\\mathrm{N}} = 2000\\,\\mathrm{m}$."
+      },
+      {
+       "title": "Drugače: energija za en meter",
+       "text": "Za dvig za $1\\,\\mathrm{m}$ je treba opraviti delo $900\\,\\mathrm{N} \\cdot 1\\,\\mathrm{m} = 900\\,\\mathrm{J}$. Baterija ima $1\\,800\\,000\\,\\mathrm{J}$, kar zadošča za $1\\,800\\,000 : 900 = 2000$ takih metrov. Kolesarka bi se lahko povzpela $2000\\,\\mathrm{m}$ visoko. V resnici manj, ker se del energije pretvori v notranjo (trenje, zračni upor, segrevanje motorja), del dela pa opravi kolesarka sama s poganjanjem."
+      }
+     ],
+     "mistake": "Deljenje z maso namesto s težo, $\\frac{1\\,800\\,000}{90} = 20\\,000$, da višino, ki je desetkrat prevelika: v enačbi $W = m \\cdot g \\cdot h$ je tudi $g$."
+    }
+   ]
+  },
+  {
+   "n": 19,
+   "intro": "Preberi besedilo.\n\n»Luka si je za taborjenje izdelal svetilko. Žarnico z močjo šest vatov je priključil na akumulator z napetostjo dvanajst voltov. Skozi žarnico je tekel tok pol ampera. Svetilka je svetila štiri ure, nato jo je Luka ugasnil.«",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Iz besedila izpiši vse štiri podatke o fizikalnih količinah. Vsakega zapiši s simbolom, merskim številom in enoto, na primer $m = 3\\,\\mathrm{kg}$.",
+     "answer": "$P = 6\\,\\mathrm{W}$, $U = 12\\,\\mathrm{V}$, $I = 0{,}5\\,\\mathrm{A}$, $t = 4\\,\\mathrm{h}$",
+     "scoring": "1 točka, če so pravilno zapisani vsi štirje podatki, vsak s simbolom, merskim številom in enoto.",
+     "ways": [
+      {
+       "title": "Besede v simbole",
+       "text": "Poišči besede, ki opisujejo količine, in jih zapiši s simboli:\n\n- »moč šest vatov« → moč $P = 6\\,\\mathrm{W}$,\n- »napetost dvanajst voltov« → napetost $U = 12\\,\\mathrm{V}$,\n- »tok pol ampera« → tok $I = 0{,}5\\,\\mathrm{A}$,\n- »svetila štiri ure« → čas $t = 4\\,\\mathrm{h}$."
+      }
+     ],
+     "mistake": "Mešanje simbolov in enot, npr. »$V = 12\\,\\mathrm{U}$« ali »$A = 0{,}5\\,\\mathrm{I}$«: simbol napetosti je $U$, enota volt ($\\mathrm{V}$); simbol toka je $I$, enota amper ($\\mathrm{A}$)."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Z ustreznimi oznakami zapiši enačbo, ki povezuje moč, napetost in tok.",
+     "answer": "$P = U \\cdot I$",
+     "ways": [
+      {
+       "title": "Električna moč",
+       "text": "Električna moč porabnika je zmnožek napetosti in toka: $P = U \\cdot I$."
+      },
+      {
+       "title": "Preizkus s podatki iz besedila",
+       "text": "$U \\cdot I = 12\\,\\mathrm{V} \\cdot 0{,}5\\,\\mathrm{A} = 6\\,\\mathrm{W}$, kar je ravno moč žarnice iz besedila. Enota se ujema: $1\\,\\mathrm{V} \\cdot 1\\,\\mathrm{A} = 1\\,\\mathrm{W}$."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "n": 20,
+   "intro": "Trije enaki uporniki z uporom po $15\\,\\Omega$ so vezani na vir z napetostjo $9\\,\\mathrm{V}$, kot kaže shema. Upornika $R_2$ in $R_3$ sta vezana zaporedno, upornik $R_1$ pa je vezan vzporedno z njima. Upor žic in vira zanemari.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 190\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M60,40H140M180,40H260M60,100H90M130,100H190M230,100H260M60,40V160H153M167,160H260V40\"/><rect x=\"140\" y=\"31\" width=\"40\" height=\"18\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"90\" y=\"91\" width=\"40\" height=\"18\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"190\" y=\"91\" width=\"40\" height=\"18\" fill=\"currentColor\" fill-opacity=\"0.08\"/><path d=\"M153,146V174\" stroke-width=\"2\"/><path d=\"M167,152V168\" stroke-width=\"4\"/><circle cx=\"60\" cy=\"100\" r=\"3\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"260\" cy=\"100\" r=\"3\" fill=\"currentColor\" stroke=\"none\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"160\" y=\"24\" text-anchor=\"middle\" font-style=\"italic\">R</text><text x=\"166\" y=\"28\" font-size=\"10\">1</text><text x=\"110\" y=\"84\" text-anchor=\"middle\" font-style=\"italic\">R</text><text x=\"116\" y=\"88\" font-size=\"10\">2</text><text x=\"210\" y=\"84\" text-anchor=\"middle\" font-style=\"italic\">R</text><text x=\"216\" y=\"88\" font-size=\"10\">3</text><text x=\"160\" y=\"188\" text-anchor=\"middle\" font-size=\"12\">U = 9 V</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Kolikšen tok teče skozi upornik $R_1$?",
+     "answer": "$I_1 = 0{,}6\\,\\mathrm{A}$",
+     "ways": [
+      {
+       "title": "Ohmov zakon za vejo z R1",
+       "text": "**Podatki:** $U = 9\\,\\mathrm{V}$, $R_1 = 15\\,\\Omega$.\n\n**Iščemo:** tok $I_1$.\n\nUpornik $R_1$ je s svojima koncema neposredno priključen na vir, zato je napetost na njem enaka napetosti vira, $9\\,\\mathrm{V}$. Po Ohmovem zakonu:\n\n$I_1 = \\frac{U}{R_1} = \\frac{9\\,\\mathrm{V}}{15\\,\\Omega} = 0{,}6\\,\\mathrm{A}$."
+      }
+     ]
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Kolikšen tok teče skozi upornik $R_2$?",
+     "answer": "$I_2 = 0{,}3\\,\\mathrm{A}$",
+     "ways": [
+      {
+       "title": "Nadomestni upor veje",
+       "text": "**Podatki:** $U = 9\\,\\mathrm{V}$, $R_2 = R_3 = 15\\,\\Omega$.\n\n**Iščemo:** tok $I_2$.\n\nTudi veja z $R_2$ in $R_3$ je priključena na celotno napetost $9\\,\\mathrm{V}$. Zaporedno vezana upornika imata nadomestni upor $R_{23} = R_2 + R_3 = 15\\,\\Omega + 15\\,\\Omega = 30\\,\\Omega$. Tok v tej veji je\n\n$I_2 = \\frac{U}{R_{23}} = \\frac{9\\,\\mathrm{V}}{30\\,\\Omega} = 0{,}3\\,\\mathrm{A}$.\n\nPri zaporedni vezavi teče skozi oba upornika isti tok, zato je tudi tok skozi $R_3$ enak $0{,}3\\,\\mathrm{A}$."
+      },
+      {
+       "title": "Drugače: primerjava vej",
+       "text": "Veja z $R_2$ in $R_3$ ima dvakrat večji upor ($30\\,\\Omega$) kot veja z $R_1$ ($15\\,\\Omega$), napetost na obeh pa je enaka. Zato teče skozi to vejo pol manjši tok kot skozi $R_1$: $0{,}6\\,\\mathrm{A} : 2 = 0{,}3\\,\\mathrm{A}$."
+      }
+     ],
+     "mistake": "Račun $\\frac{9\\,\\mathrm{V}}{15\\,\\Omega} = 0{,}6\\,\\mathrm{A}$ tudi za $R_2$ ne upošteva, da $R_2$ v svoji veji ni sam: napetost $9\\,\\mathrm{V}$ je na obeh zaporednih upornikih skupaj."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Kolikšna je napetost na uporniku $R_3$?",
+     "answer": "$U_3 = 4{,}5\\,\\mathrm{V}$",
+     "ways": [
+      {
+       "title": "Ohmov zakon za R3",
+       "text": "**Podatki:** $I_3 = I_2 = 0{,}3\\,\\mathrm{A}$, $R_3 = 15\\,\\Omega$.\n\n**Iščemo:** napetost $U_3$.\n\n$U_3 = I_3 \\cdot R_3 = 0{,}3\\,\\mathrm{A} \\cdot 15\\,\\Omega = 4{,}5\\,\\mathrm{V}$."
+      },
+      {
+       "title": "Drugače: delitev napetosti",
+       "text": "Pri zaporedni vezavi se napetost veje razdeli na upornika v razmerju njunih uporov. Upornika sta enaka, zato dobi vsak polovico: $9\\,\\mathrm{V} : 2 = 4{,}5\\,\\mathrm{V}$. Preizkus: $U_2 + U_3 = 4{,}5\\,\\mathrm{V} + 4{,}5\\,\\mathrm{V} = 9\\,\\mathrm{V}$."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

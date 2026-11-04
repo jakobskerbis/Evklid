@@ -5,221 +5,248 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Fizika je veda, ki opisuje naravo s **števili**. Ne rečemo le »palica je dolga«, ampak »palica je dolga $1{,}2\,\text{m}$«. Že v prejšnjih razredih si meril dolžino z ravnilom, maso s tehtnico in čas z uro. Zdaj te izkušnje uredimo: povemo, kaj je fizikalna količina, kako zapišemo meritev in kako enote pretvarjamo.
+Pred dobrimi dvesto leti je imel skoraj vsak kraj v Evropi svoje mere. Mere so imele povsod enaka imena, na primer čevelj, laket in vatel, a so bile od mesta do mesta različno dolge. Trgovec, ki je kupil blago v enem mestu in ga prodal v drugem, je moral znati preračunavati, in marsikdo je bil pri tem ogoljufan.
 
-Če bi vsak uporabljal svoje enote (svoj »korak«, svojo »pest«), se ne bi mogli sporazumeti. Zato so se znanstveniki dogovorili za enoten sistem. Brez njega ne bi mogli zgraditi mostu po načrtu iz tujine, pripraviti zdravila po receptu ali primerjati rezultatov tekmovalcev.
+Konec 18. stoletja so se v Franciji odločili za mero, ki ne bo odvisna od nobenega kralja ali mesta. Znanstveniki so predlagali **meter**: razdaljo od severnega tečaja do ekvatorja so razdelili na deset milijonov enakih delov in en tak del poimenovali meter. Da bi ga določili, so leta merili poldnevnik med severom Francije in Barcelono. Iz te zamisli je zrasel današnji mednarodni sistem enot.
+
+Brez skupnih enot tudi šport ne bi deloval. Rezultat skoka v daljino iz Tokia lahko primerjaš z rezultatom iz Ljubljane samo zato, ker sta oba merjena v istih metrih.
 
 ## Razlaga
 
-**1. Fizikalna količina.** Fizikalna količina je lastnost telesa ali pojava, ki jo lahko **izmerimo** in izrazimo s številom in enoto. Primeri: dolžina, masa, čas, temperatura, prostornina.
+**1. Najprej en primer: skok v daljino.** Skakalka pristane v pesku. Sodnik napne merilni trak od deske do sledi in vidi, da je razdalja šest celih metrov in še $45$ centimetrov. Zapiše: dolžina skoka je $6{,}45\,\mathrm{m}$.
 
-**2. Merjenje.** Meriti pomeni primerjati količino z dogovorjeno enoto. Če je dolžina mize $2\,\text{m}$, to pomeni, da v njej »gre« dvakrat po en meter.
+Sodnik je naredil tri stvari:
+- izbral je, kaj meri (dolžino),
+- to dolžino je primerjal z dogovorjeno enoto (metrom),
+- rezultat je zapisal kot **število in enoto**.
 
-**3. Zapis meritve.** Rezultat je vedno sestavljen iz **številske vrednosti** in **enote**:
+**2. Posplošimo: fizikalna količina in merjenje.** Dolžina je **fizikalna količina**: lastnost telesa ali pojava, ki jo lahko izmerimo. Druge so masa, čas, temperatura, prostornina. **Meriti** pomeni ugotoviti, kolikokrat dogovorjena enota gre v izmerjeno količino.
 
-$$\text{količina} = \text{številska vrednost} \cdot \text{enota}$$
+**3. Zapis meritve.** Izmerjena vrednost ima vedno dva dela: **številsko vrednost** in **enoto**. V zapisu $m = 0{,}6\,\mathrm{kg}$ je $m$ oznaka količine (masa), $0{,}6$ številska vrednost in $\mathrm{kg}$ enota. Samo število ne pove nič: »skok je dolg $6{,}45$« bi lahko pomenilo metre ali kilometre.
 
-Primer: $m = 3\,\text{kg}$. Število brez enote nima pomena. »Dolžina je 5« ne pove nič.
+**4. Merilni instrument.** Črtice na traku so narazen po $1\,\mathrm{cm}$. Ta razmik je **najmanjši razdelek** instrumenta in pove, kako natančno lahko odčitamo. Vsak instrument ima tudi **merilno območje**, od najmanjše do največje vrednosti, ki jo izmeri. Pri odčitavanju glej pravokotno na skalo, sicer odčitaš preveč ali premalo.
 
-**4. Mednarodni sistem enot (SI).** Po vsem svetu se dogovorno uporabljajo osnovne enote SI. Vseh je sedem; v tem razredu potrebuješ te štiri:
+:::premisli
+Ali lahko sodnik s tem trakom zapiše rezultat $6{,}453\,\mathrm{m}$? Zakaj?
+---
+Ne. Tretja decimalka metra so milimetri, trak pa kaže le cele centimetre ($0{,}01\,\mathrm{m}$). Zapis ne sme biti natančnejši, kot omogoča najmanjši razdelek.
+:::
 
-| Količina | Oznaka količine | Enota | Znak enote |
+**5. Mednarodni sistem enot (SI).** Danes po vsem svetu uporabljamo dogovorjene **osnovne enote SI**. Vseh je sedem; zdaj potrebuješ te štiri:
+
+| količina | oznaka | enota | znak |
 |---|---|---|---|
-| dolžina | $l$ | meter | $\text{m}$ |
-| masa | $m$ | kilogram | $\text{kg}$ |
-| čas | $t$ | sekunda | $\text{s}$ |
-| temperatura | $T$ | kelvin | $\text{K}$ |
+| dolžina | $l$ | meter | $\mathrm{m}$ |
+| masa | $m$ | kilogram | $\mathrm{kg}$ |
+| čas | $t$ | sekunda | $\mathrm{s}$ |
+| temperatura | $T$ | kelvin | $\mathrm{K}$ |
 
-Druge enote (npr. liter, minuta, ura, stopinja Celzija) niso osnovne enote SI, so pa dovoljene in jih v vsakdanjem življenju pogosto uporabljamo.
+Liter, minuta in ura niso enote SI, a jih smemo uporabljati skupaj z njimi. Temperaturo v vsakdanjem življenju merimo v stopinjah Celzija ($^\circ\mathrm{C}$).
 
-**5. Predpone.** Za zelo velike ali majhne vrednosti uporabljamo predpone, ki pomenijo množenje z določeno potenco števila 10:
+**6. Drugi primer: maraton.** Maratonska proga je dolga $42{,}195\,\mathrm{km}$. Predpona *kilo* pomeni »tisočkrat«, $1\,\mathrm{km} = 1000\,\mathrm{m}$. Zato je proga dolga $42{,}195 \cdot 1000 = 42\,195$ metrov.
 
-| Predpona | Znak | Pomen |
+**7. Posplošimo: predpone.** Predpona pred enoto pove, s katerim številom enoto pomnožimo:
+
+| predpona | znak | pomen |
 |---|---|---|
-| kilo | k | $1000 = 10^3$ |
-| hekto | h | $100 = 10^2$ |
-| deci | d | $0{,}1 = 10^{-1}$ |
-| centi | c | $0{,}01 = 10^{-2}$ |
-| mili | m | $0{,}001 = 10^{-3}$ |
+| kilo | k | $1000$ (tisočkrat) |
+| hekto | h | $100$ (stokrat) |
+| deci | d | $0{,}1$ (desetinka) |
+| centi | c | $0{,}01$ (stotinka) |
+| mili | m | $0{,}001$ (tisočinka) |
 
-Torej $1\,\text{km} = 1000\,\text{m}$, $1\,\text{cm} = 0{,}01\,\text{m}$, $1\,\text{mm} = 0{,}001\,\text{m}$ in $1\,\text{kg} = 1000\,\text{g}$.
+Tako je $1\,\mathrm{cm} = 0{,}01\,\mathrm{m}$, $1\,\mathrm{mm} = 0{,}001\,\mathrm{m}$ in $1\,\mathrm{kg} = 1000\,\mathrm{g}$. Pozor: znak $\mathrm{m}$ *pred* enoto je predpona mili, sam pa je meter.
 
-**6. Pretvarjanje enot.** Pretvarjamo tako, da uporabimo zvezo med enotama:
+**8. Pravilo pretvarjanja.** Pri maratonu smo šli iz večje enote (km) v manjšo (m) in število je zraslo. To velja vedno:
+- **v manjšo enoto** število postane večje, zato **množimo**,
+- **v večjo enoto** število postane manjše, zato **delimo**.
 
-- **v manjšo enoto** (npr. iz m v cm): število postane **večje**, zato množimo,
-- **v večjo enoto** (npr. iz mm v m): število postane **manjše**, zato delimo.
+Pri času je drugače: $1\,\mathrm{min} = 60\,\mathrm{s}$ in $1\,\mathrm{h} = 60\,\mathrm{min} = 3600\,\mathrm{s}$. Tu pretvarjamo s $60$, ne z $10$, $100$ ali $1000$.
 
-Za čas velja: $1\,\text{min} = 60\,\text{s}$, $1\,\text{h} = 60\,\text{min} = 3600\,\text{s}$. Tu ne pretvarjamo z 10, 100 ali 1000.
+V simulaciji spodaj, »Predpone in pretvarjanje enot«, izberi isto dolžino najprej v metrih, nato v centimetrih. Opazuj, kolikokrat se poveča število, ko se enota zmanjša.
 
-**7. Prostornina.** Enota SI je $\text{m}^3$. Pogosto uporabljamo tudi liter: $1\,\text{l} = 1\,\text{dm}^3$ in $1\,\text{ml} = 1\,\text{cm}^3$.
+**9. Prostornina.** Enota SI za prostornino je $\mathrm{m^3}$; tako veliko je kocka z robom $1\,\mathrm{m}$. Manjši sta $\mathrm{dm^3}$ in $\mathrm{cm^3}$. Velja $1\,\mathrm{l} = 1\,\mathrm{dm^3}$ in $1\,\mathrm{ml} = 1\,\mathrm{cm^3}$.
 
-**8. Merilni instrument.** Vsak instrument ima **merilno območje** (od najmanjše do največje vrednosti, ki jo lahko izmeri) in **vrednost najmanjšega razdelka** (npr. $1\,\text{mm}$ na ravnilu). Meritve ne moremo odčitati natančneje od najmanjšega razdelka. Pri odčitku gledamo pravokotno na skalo, da se izognemo napaki.
+:::premisli
+Kocka ima rob $1\,\mathrm{dm} = 10\,\mathrm{cm}$. Koliko kockic z robom $1\,\mathrm{cm}$ gre vanjo? Napovej, preden pogledaš.
+---
+$1000$. V eno vrsto jih gre $10$, v eno plast $10 \cdot 10 = 100$, plasti je $10$. Zato je $1\,\mathrm{dm^3} = 1000\,\mathrm{cm^3}$ in $1\,\mathrm{l} = 1000\,\mathrm{ml}$. Pri kubičnih enotah je korak $1000$, ne $10$. Enako je $1\,\mathrm{m^3} = 1000\,\mathrm{dm^3} = 1000\,\mathrm{l}$.
+:::
 
 ## Rešeni primeri
 
-### Primer 1: preprosta pretvorba (lažji)
+### Primer 1: skok v centimetrih
 
-Pretvori $3{,}5\,\text{m}$ v centimetre.
+Skok v daljino meri $6{,}45\,\mathrm{m}$. Koliko centimetrov je to?
 
-**Podatki:** dolžina $3{,}5\,\text{m}$
+**Podatki:** dolžina skoka $l = 6{,}45\,\mathrm{m}$
 **Iščemo:** isto dolžino v centimetrih
 
 :::formula
-$1\,\text{m} = 100\,\text{cm}$; v manjšo enoto množimo.
+$1\,\mathrm{m} = 100\,\mathrm{cm}$; v manjšo enoto množimo.
 :::
 
 **Rešitev:**
 
-1. Ker je $1\,\text{m} = 100\,\text{cm}$, gremo v manjšo enoto, zato bo število večje.
-2. Množimo s $100$: $3{,}5 \cdot 100 = 350$.
-3. Rezultat: $3{,}5\,\text{m} = 350\,\text{cm}$.
-4. Smiselnost: centimeter je veliko krajši od metra, zato jih potrebujemo več. ✓
+1. Centimeter je manjša enota od metra, zato bo število večje.
+2. Množimo s $100$: $6{,}45 \cdot 100 = 645$.
+3. Odgovor: skok je dolg $645\,\mathrm{cm}$.
 
-### Primer 2: več pretvorb
+### Primer 2: žoga in četrtina tekme
 
-a) Pretvori $2400\,\text{g}$ v kilograme.
-b) Pretvori $45\,\text{min}$ v sekunde.
+a) Košarkarska žoga ima maso $600\,\mathrm{g}$. Koliko kilogramov je to?
+b) Četrtina košarkarske tekme traja $10\,\mathrm{min}$. Koliko sekund je to?
 
-**Podatki:** a) masa $2400\,\text{g}$; b) čas $45\,\text{min}$
+**Podatki:** a) $m = 600\,\mathrm{g}$; b) $t = 10\,\mathrm{min}$
 **Iščemo:** a) maso v kilogramih, b) čas v sekundah
 
 :::formula
-a) $1\,\text{kg} = 1000\,\text{g}$ (v večjo enoto delimo); b) $1\,\text{min} = 60\,\text{s}$ (v manjšo enoto množimo)
+a) $1\,\mathrm{kg} = 1000\,\mathrm{g}$; b) $1\,\mathrm{min} = 60\,\mathrm{s}$
 :::
 
 **Rešitev:**
 
 a)
-1. $1\,\text{kg} = 1000\,\text{g}$. Gremo v večjo enoto, zato delimo.
-2. $2400 : 1000 = 2{,}4$, torej $2400\,\text{g} = 2{,}4\,\text{kg}$.
+1. Kilogram je večja enota od grama, zato delimo s $1000$.
+2. $600 : 1000 = 0{,}6$, torej $m = 0{,}6\,\mathrm{kg}$.
 
 b)
-1. $1\,\text{min} = 60\,\text{s}$. Gremo v manjšo enoto, zato množimo.
-2. $45 \cdot 60 = 2700$, torej $45\,\text{min} = 2700\,\text{s}$.
-3. Preverimo: $2700 : 60 = 45$. ✓
+1. Sekunda je manjša enota, zato množimo, in to s $60$, ker ima minuta $60$ sekund.
+2. $10 \cdot 60 = 600$, torej $t = 600\,\mathrm{s}$.
+3. Odgovor: žoga ima maso $0{,}6\,\mathrm{kg}$, četrtina traja $600\,\mathrm{s}$.
 
-### Primer 3: besedilna naloga (težji)
+### Primer 3: voda v bazenu
 
-Kolesar se vozi $1{,}5\,\text{h}$. Koliko je to v sekundah? Nato pretvori še prevoženo pot $12\,\text{km}$ v metre.
+Olimpijski bazen je dolg $50\,\mathrm{m}$ in širok $25\,\mathrm{m}$. Recimo, da je povsod globok $2\,\mathrm{m}$. Koliko litrov vode je v polnem bazenu?
 
-**Podatki:** čas vožnje $t = 1{,}5\,\text{h}$, prevožena pot $s = 12\,\text{km}$
-**Iščemo:** čas v sekundah in pot v metrih
+**Podatki:** $a = 50\,\mathrm{m}$, $b = 25\,\mathrm{m}$, $c = 2\,\mathrm{m}$
+**Iščemo:** prostornino vode $V$ v litrih
 
 :::formula
-$1\,\text{h} = 60\,\text{min}$, $1\,\text{min} = 60\,\text{s}$ (torej $1\,\text{h} = 3600\,\text{s}$); $1\,\text{km} = 1000\,\text{m}$
+$V = a \cdot b \cdot c$; $1\,\mathrm{m^3} = 1000\,\mathrm{dm^3} = 1000\,\mathrm{l}$
 :::
 
 **Rešitev:**
 
-1. **Čas v minute:** $1\,\text{h} = 60\,\text{min}$, zato $1{,}5 \cdot 60 = 90\,\text{min}$.
-2. **Minute v sekunde:** $90 \cdot 60 = 5400\,\text{s}$.
-3. Lahko tudi naravnost: $1\,\text{h} = 3600\,\text{s}$, torej $1{,}5 \cdot 3600 = 5400\,\text{s}$. Enak rezultat. ✓
-4. **Pot:** $1\,\text{km} = 1000\,\text{m}$, gremo v manjšo enoto, zato množimo: $12 \cdot 1000 = 12\,000\,\text{m}$.
-5. **Odgovor:** $1{,}5\,\text{h} = 5400\,\text{s}$ in $12\,\text{km} = 12\,000\,\text{m}$.
+1. Bazen je kvader, zato zmnožimo dolžino, širino in globino: $V = 50\,\mathrm{m} \cdot 25\,\mathrm{m} \cdot 2\,\mathrm{m} = 2500\,\mathrm{m^3}$.
+2. Liter je $1\,\mathrm{dm^3}$, v kubičnem metru pa je $1000$ kubičnih decimetrov, zato množimo s $1000$: $2500 \cdot 1000 = 2\,500\,000$.
+3. Odgovor: v bazenu je $2\,500\,000\,\mathrm{l}$ vode, kar je dva milijona in pol litrov.
+
+### Primer 4 – zdaj ti: kolesarska etapa
+
+Kolesar prevozi etapo, dolgo $185\,\mathrm{km}$, v $4\,\mathrm{h}$ in $20\,\mathrm{min}$. Zapiši pot v metrih in čas v sekundah.
+
+**Podatki:** $s = 185\,\mathrm{km}$, $t = 4\,\mathrm{h}\ 20\,\mathrm{min}$
+**Iščemo:** pot v $\mathrm{m}$, čas v $\mathrm{s}$
+
+:::formula
+$1\,\mathrm{km} = 1000\,\mathrm{m}$; $1\,\mathrm{h} = 3600\,\mathrm{s}$; $1\,\mathrm{min} = 60\,\mathrm{s}$
+:::
+
+**Rešitev:**
+
+1. Pot: $185 \cdot 1000 = 185\,000$, torej $s = 185\,000\,\mathrm{m}$.
+2. Ure: $4 \cdot 3600 = 14\,400$, torej $4\,\mathrm{h} = 14\,400\,\mathrm{s}$.
+3. Minute: $20 \cdot 60 = 1200$, torej $20\,\mathrm{min} = 1200\,\mathrm{s}$.
+4. Zdaj oba dela časa združi sam, nato preveri:
+
+:::premisli
+Koliko sekund je skupaj $4\,\mathrm{h}$ in $20\,\mathrm{min}$?
+---
+$14\,400\,\mathrm{s} + 1200\,\mathrm{s} = 15\,600\,\mathrm{s}$. Kdor zapiše $4{,}20\,\mathrm{h}$ in množi s $3600$, dobi napačnih $15\,120\,\mathrm{s}$: $20$ minut ni $0{,}20$ ure, ampak tretjina ure.
+:::
 
 ## Pogoste napake
 
-- **Enota manjka.** Zapis »$m = 5$« je nepopoln. Vedno napiši tudi enoto.
-- **Napačna smer pretvorbe.** Pri pretvorbi v manjšo enoto množimo, v večjo delimo. Preveri s smiselnostjo: v manjši enoti mora biti število večje.
-- **Čas pretvarjaš s 100.** Ura ima $60$ minut, minuta $60$ sekund. Pretvarjanje s $100$ je napaka.
-- **Mešanje enot v računu.** Pred računanjem vse količine izrazi v isti enoti (npr. ne seštevaj $\text{m}$ in $\text{cm}$ brez pretvorbe).
-- **Zamenjava predpon.** Znak $\text{m}$ pred enoto pomeni predpono *mili* (tisočinka), sam pa enoto *meter*: $1\,\text{mm} = 0{,}001\,\text{m}$, ne $1000\,\text{m}$. Pozorno beri znake.
+- **Enota manjka.** »Masa žoge je $600$.« Iz tega ne veš, ali gre za grame ali kilograme, razlika pa je tisočkratna. Vedno zapiši število in enoto.
+- **Napačna smer pretvorbe.** »$6{,}45\,\mathrm{m}$ je $0{,}0645\,\mathrm{cm}$.« Centimeter je krajši od metra, zato jih gre v isto dolžino več, ne manj. Pred računom se vprašaj, ali mora število zrasti ali se zmanjšati.
+- **Čas s $100$.** »$1{,}5\,\mathrm{h}$ je $150\,\mathrm{min}$.« Ura ima $60$ minut, zato je $1{,}5\,\mathrm{h} = 90\,\mathrm{min}$. Tudi $4\,\mathrm{h}\ 20\,\mathrm{min}$ ni $4{,}20\,\mathrm{h}$.
+- **Mili in meter.** »$1\,\mathrm{mm}$ je $1000\,\mathrm{m}$, ker je mili tisoč.« Mili pomeni tisočinko: $1\,\mathrm{mm} = 0{,}001\,\mathrm{m}$. Tisočkrat pomeni kilo.
+- **Kubične enote z $10$.** »$1\,\mathrm{m^3} = 10\,\mathrm{dm^3}$.« Vsak rob kocke je desetkrat daljši, zato je kockic $10 \cdot 10 \cdot 10 = 1000$.
 
 ## Povzetek
 
-- Fizikalna količina je merljiva lastnost; zapišemo jo kot število in enoto.
-- Merjenje je primerjanje z dogovorjeno enoto.
-- Osnovne enote SI: meter (dolžina), kilogram (masa), sekunda (čas), kelvin (temperatura).
-- Predpone: kilo $10^3$, hekto $10^2$, deci $10^{-1}$, centi $10^{-2}$, mili $10^{-3}$.
-- Pretvarjanje: v manjšo enoto množimo, v večjo delimo. Čas pretvarjamo s $60$.
-- $1\,\text{l} = 1\,\text{dm}^3$, $1\,\text{ml} = 1\,\text{cm}^3$.
-- Instrumenta ne moremo odčitati natančneje od njegovega najmanjšega razdelka.
+- Fizikalna količina je merljiva lastnost; meritev zapišemo kot številsko vrednost in enoto.
+- Meriti pomeni primerjati z dogovorjeno enoto; natančnost odčitka omejuje najmanjši razdelek instrumenta.
+- Osnovne enote SI, ki jih zdaj rabiš: meter, kilogram, sekunda, kelvin.
+- Predpone: kilo $1000$, hekto $100$, deci $0{,}1$, centi $0{,}01$, mili $0{,}001$.
+- V manjšo enoto množimo, v večjo delimo; čas pretvarjamo s $60$.
+- $1\,\mathrm{l} = 1\,\mathrm{dm^3}$, $1\,\mathrm{ml} = 1\,\mathrm{cm^3}$, $1\,\mathrm{m^3} = 1000\,\mathrm{l}$.
 
-## Drugače: Na sliki
+## Drugače: Z analogijo
 
-Predstavljaj si ravnilo dolžine $1\,\text{m}$. Razdeljeno je na $100$ enakih delov, vsak je $1\,\text{cm}$. Vsak centimeter ima še $10$ manjših delov, vsak je $1\,\text{mm}$.
+Pretvarjanje enot je kot menjava denarja v kovance. $2\,€$ je isti denar kot $200$ centov: številka je drugačna, vrednost ista. Ker je cent majhen, jih potrebuješ veliko. Ker je evro velik, jih potrebuješ malo.
 
-Zato: ena palica ($1\,\text{m}$) je sestavljena iz $100$ »koščkov« po $1\,\text{cm}$. Če meriš s krajšim koščkom, jih potrebuješ več. To je razlog, da pri pretvorbi v manjšo enoto število naraste.
+Z dolžino je enako. $6{,}45\,\mathrm{m}$ in $645\,\mathrm{cm}$ sta ista dolžina, le »kovanec« je drugačen. Manjša enota, več kosov; večja enota, manj kosov. Zato pri prehodu v manjšo enoto množiš.
 
-Podobno si lahko predstavljaš lestvico: najmanjši razdelki so $\text{mm}$, večji $\text{cm}$, še večji $\text{m}$ in največji $\text{km}$. Pomik za eno stopnjo navzgor ali navzdol pomeni množenje ali deljenje z ustrezno potenco števila 10.
-
-## Drugače: Iz vsakdanjega življenja
-
-Poglej embalažo v kuhinji:
-
-- Mleko: $1\,\text{l}$. To je prostornina; en liter je enak $1\,\text{dm}^3$.
-- Moka: $500\,\text{g}$. To je masa. Dva taka paketa dasta $1000\,\text{g} = 1\,\text{kg}$.
-- Čas kuhanja jajca: $10\,\text{min} = 600\,\text{s}$.
-
-Še en primer: če si $1{,}60\,\text{m}$ visok/-a, je to $160\,\text{cm}$. Obe števili opisujeta isto višino, le enota je drugačna, tako kot ista cena v evrih ali centih ($2\,\text{€}$ je $200$ centov).
-
-Zato je pomembno, da vedno zapišeš tudi enoto: »$1{,}60$« in »$160$« sta različni števili, a ob pravilni enoti pomenita isto.
-
-## Drugače: Korak za korakom s številkami
-
-Recept za pretvarjanje:
-
-1. Zapiši dano vrednost z enoto, npr. $0{,}75\,\text{km}$.
-2. Poišči zvezo med enotama: $1\,\text{km} = 1000\,\text{m}$.
-3. Vprašaj se: *ali gremo v manjšo ali večjo enoto?* Iz $\text{km}$ v $\text{m}$ gremo v manjšo.
-4. Manjša enota: število poraste, zato **množimo**: $0{,}75 \cdot 1000 = 750$.
-5. Zapiši rezultat z novo enoto: $750\,\text{m}$.
-6. Preveri: $750 : 1000 = 0{,}75$. ✓
-
-Tabela hitrih pretvorb:
-
-| Iz | V | Kaj naredimo |
-|---|---|---|
-| $\text{km}$ | $\text{m}$ | $\cdot\,1000$ |
-| $\text{m}$ | $\text{cm}$ | $\cdot\,100$ |
-| $\text{cm}$ | $\text{mm}$ | $\cdot\,10$ |
-| $\text{g}$ | $\text{kg}$ | $:\,1000$ |
-| $\text{min}$ | $\text{s}$ | $\cdot\,60$ |
-| $\text{h}$ | $\text{min}$ | $\cdot\,60$ |
+Analogija ima mejo pri času: tam »menjalni tečaj« ni $100$, ampak $60$, kot da bi imel evro le $60$ centov.
 
 ## Drugače: Bolj natančno
 
-Zakaj sploh potrebujemo mednarodni sistem? Če merimo isto količino z različnimi enotami, števil ne moremo neposredno primerjati. Zato se znanstveniki dogovorijo za **standard**. Danes so enote SI določene tako, da jih lahko vsak laboratorij na svetu ponovi.
+Fizikalne količine delimo na **osnovne** in **izpeljane**. Osnovnih je sedem (dolžina, masa, čas, temperatura, električni tok, množina snovi in svetilnost), vsaka ima svojo osnovno enoto. Izpeljane dobimo z računanjem iz osnovnih. Prostornina kvadra je $V = a \cdot b \cdot c$, zato je njena enota $\mathrm{m} \cdot \mathrm{m} \cdot \mathrm{m} = \mathrm{m^3}$.
 
-Pomembno je razlikovati med **osnovnimi** in **izpeljanimi** količinami. Osnovne (dolžina, masa, čas, temperatura in še tri, ki jih spoznaš pozneje) imajo vsaka svojo osnovno enoto. Izpeljane dobimo z računanjem iz osnovnih. Na primer prostornina kvadra je $V = a \cdot b \cdot c$, zato je njena enota $\text{m} \cdot \text{m} \cdot \text{m} = \text{m}^3$.
+Meter danes ni več določen z dolžino poldnevnika. Določa ga svetloba: meter je pot, ki jo svetloba v praznem prostoru prepotuje v $\dfrac{1}{299\,792\,458}$ sekunde. Tudi kilogram in sekunda sta določena z naravnimi stalnicami, zato ju lahko ponovi vsak dobro opremljen laboratorij na svetu, ne da bi primerjal svoje uteži s kakšnim pramerilom.
 
-Pri pretvarjanju prostornine moramo paziti: ker je $1\,\text{m} = 10\,\text{dm}$, velja
-
-$$1\,\text{m}^3 = 10 \cdot 10 \cdot 10\,\text{dm}^3 = 1000\,\text{dm}^3.$$
-
-Torej pri kubičnih enotah ne množimo z $10$, ampak z $1000$. Prav tako je $1\,\text{dm}^3 = 1000\,\text{cm}^3$, kar potrdi zvezo $1\,\text{l} = 1000\,\text{ml}$.
+Pri ploščini je korak $100$: $1\,\mathrm{m^2} = 10 \cdot 10\,\mathrm{dm^2} = 100\,\mathrm{dm^2}$. Pri prostornini je $1000$. Pri navadnih dolžinskih enotah je med sosednjimi enotami m–dm–cm–mm korak $10$.
 
 ## Preveri se
 
-? Kolikšna je dolžina $2{,}5\,\text{km}$ v metrih?
-- $25\,\text{m}$
-- $250\,\text{m}$
-+ $2500\,\text{m}$
-- $0{,}0025\,\text{m}$
-> $1\,\text{km} = 1000\,\text{m}$. Gremo v manjšo enoto, zato množimo: $2{,}5 \cdot 1000 = 2500\,\text{m}$.
+? Katera od naštetih enot **ni** osnovna enota SI?
+- kilogram
+~ Kilogram ima sicer predpono kilo, a je prav on osnovna enota za maso, ne gram.
+- sekunda
+~ Sekunda je osnovna enota SI za čas.
++ liter
+- meter
+~ Meter je osnovna enota SI za dolžino.
+> Liter ni enota SI, čeprav ga smemo uporabljati; enota SI za prostornino je $\mathrm{m^3}$, $1\,\mathrm{l} = 1\,\mathrm{dm^3}$.
 
-? Koliko sekund ima $3\,\text{min}$?
-- $30\,\text{s}$
-- $300\,\text{s}$
-+ $180\,\text{s}$
-- $0{,}05\,\text{s}$
-> Ena minuta ima $60\,\text{s}$, zato $3 \cdot 60 = 180\,\text{s}$. Pri času ne množimo s $100$, ampak s $60$.
+? Tekaški krog v parku je dolg $2{,}5\,\mathrm{km}$. Koliko metrov je to?
+- $25\,\mathrm{m}$
+~ To je množenje z $10$. Kilo pomeni $1000$.
+- $250\,\mathrm{m}$
+~ To je množenje s $100$. Med km in m je faktor $1000$.
++ $2500\,\mathrm{m}$
+- $0{,}0025\,\mathrm{m}$
+~ Tu je bilo deljeno. Meter je manjša enota, zato mora število zrasti.
+> $1\,\mathrm{km} = 1000\,\mathrm{m}$; v manjšo enoto množimo: $2{,}5 \cdot 1000 = 2500\,\mathrm{m}$.
 
-? Kateri zapis je pravilen zapis meritve mase?
-- $m = 4$
-- $m = 4\,\text{m}$
-+ $m = 4\,\text{kg}$
-> Meritev je sestavljena iz števila in prave enote. Za maso je enota SI kilogram ($\text{kg}$). Samo število nima pomena, $\text{m}$ pa je enota za dolžino.
+? Ko dolžino skoka pretvorimo iz metrov v centimetre, je število stokrat večje. Zakaj?
++ Ker je centimeter stokrat krajši od metra, zato jih gre v isto dolžino stokrat več.
+- Ker se dolžina skoka pri pretvorbi poveča.
+~ Skok je enako dolg ne glede na enoto. Spremeni se le število, ki pove, kolikokrat gre enota vanj.
+- Ker pri pretvarjanju vedno množimo s $100$.
+~ Faktor je odvisen od enot: med km in m je $1000$, med min in s $60$, v večjo enoto pa delimo.
+> Manjša enota pomeni več kosov v isti dolžini: $1\,\mathrm{m} = 100\,\mathrm{cm}$.
+
+? Luka pretvarja čas tekme $1{,}5\,\mathrm{h}$ v sekunde. 1. korak: $1\,\mathrm{h} = 60\,\mathrm{min}$. 2. korak: $1{,}5\,\mathrm{h} = 150\,\mathrm{min}$. 3. korak: $150 \cdot 60 = 9000\,\mathrm{s}$. Kateri korak je napačen?
+- 1. korak
+~ Ura res ima $60$ minut, ta korak je pravilen.
++ 2. korak
+- 3. korak
+~ Množenje minut s $60$ je pravi postopek. Napačno je število minut iz prejšnjega koraka.
+- Noben, rezultat je pravilen.
+~ $9000\,\mathrm{s}$ je $2{,}5\,\mathrm{h}$, kar je več od $1{,}5\,\mathrm{h}$.
+> $1{,}5\,\mathrm{h} = 1{,}5 \cdot 60 = 90\,\mathrm{min}$, nato $90 \cdot 60 = 5400\,\mathrm{s}$. Luka je uro razdelil na $100$ minut.
+
+? Na športni steklenici piše $750\,\mathrm{ml}$. Koliko litrov je to?
+- $7{,}5\,\mathrm{l}$
+~ To je deljenje s $100$. Mili pomeni tisočinko, zato deliš s $1000$.
++ $0{,}75\,\mathrm{l}$
+- $75\,\mathrm{l}$
+~ To je deljenje z $10$. Med ml in l je faktor $1000$.
+- $750\,000\,\mathrm{l}$
+~ Tu je bilo množeno. Liter je večja enota, zato mora biti število manjše.
+> $1\,\mathrm{l} = 1000\,\mathrm{ml}$; v večjo enoto delimo: $750 : 1000 = 0{,}75\,\mathrm{l}$.
 
 :::simboli
-\text{količina} | fizikalna količina | \text{količina} = \text{številska vrednost} \cdot \text{enota} | | npr. $m = 3\,\text{kg}$
-\text{številska vrednost} | številska vrednost | | – | samo število nima pomena
-\text{enota} | enota | | | npr. m, kg, s
-l | dolžina | | m
+l | dolžina | | m | v Primeru 1 dolžina skoka
 m | masa | | kg
 t | čas | | s
 T | temperatura | | K
-s | prevožena pot | | m | v primeru v km
-V | prostornina kvadra | V = a \cdot b \cdot c | m^3 | izpeljana količina
-a, b, c | dolžine robov kvadra | | m
+s | pot (dolžina etape) | | m
+V | prostornina | V = a \cdot b \cdot c | m^3 | izpeljana količina
+a | dolžina bazena | | m
+b | širina bazena | | m
+c | globina bazena | | m
 :::

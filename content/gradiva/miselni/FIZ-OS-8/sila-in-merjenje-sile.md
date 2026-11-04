@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sila
+  - medsebojno delovanje teles, oznaka $F$
+  - spremeni gibanje ali obliko telesa
+- Velikost in smer
+  - ponazorimo s puščico
+  - začetek puščice je prijemališče
+- Enota newton
+  - $\mathrm{N}$, $1\,\mathrm{kN} = 1000\,\mathrm{N}$
+  - jabolko s $100\,\mathrm{g}$ vleče s približno $1\,\mathrm{N}$
+- Raztezek vzmeti
+  - podaljšek, ne cela dolžina vzmeti
+  - sorazmeren s silo, le do neke meje
+  - napaka: prištevanje namesto sorazmerja
+- Silomer
+  - vzmetna tehtnica z enakomerno lestvico
+  - vrednost črtice: razlika oznak deljena z razmiki
+- Pravilno merjenje
+  - najprej preveri ničlo
+  - drži ga v smeri sile
+  - ne preseži največje sile

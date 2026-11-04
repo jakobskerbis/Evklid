@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Moč
+  - delo v eni sekundi
+  - $P = \frac{A}{t}$
+  - Luka: $1500\,\mathrm{J}$ v $4\,\mathrm{s}$ je $375\,\mathrm{W}$
+- Enota vat
+  - $1\,\mathrm{W} = 1\,\mathrm{J/s}$
+  - čas vedno v sekundah
+  - napaka: $\mathrm{kWh}$ je energija
+- Obrnjene oblike
+  - $A = P \cdot t$
+  - $t = \frac{A}{P}$
+- Hitreje, ne več
+  - enako delo v krajšem času
+  - večja moč, isto delo
+- Izkoristek
+  - $\eta = \frac{A_\text{koristno}}{A_\text{dovedeno}}$
+  - brez enote, pod $100\,\%$
+  - napaka: obrnjen ulomek
+- Telo
+  - mišice približno $20\,\%$ do $25\,\%$
+  - ostanek postane toplota
