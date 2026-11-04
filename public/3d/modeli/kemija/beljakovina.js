@@ -19,6 +19,7 @@ export const info = {
   predmet: "BIO",
   opis: "Hemoglobin, inzulin in zeleni fluorescentni protein iz pravih kristalnih struktur (PDB). Poenostavljeno: prikazana je le glavna veriga skozi atome Cα (osrednji ogljikov atom vsake aminokisline), stranske verige aminokislin niso prikazane.",
   merilo: { m: 7e-9, oznaka: "7 nm" },
+  poskusi: "Preklopi barve po zgradbi in poišči α-vijačnice in β-ploskve; primerjaj hemoglobin z GFP.",
 };
 
 // ---------------------------------------------------------------- podatki PDB

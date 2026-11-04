@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Košček žilnega snopa v vzdolžnem prerezu: po mrtvih celicah ksilema se pretakata voda in mineralne snovi navzgor, po živih sitastih ceveh floema pa sladkorji iz listov v druge dele rastline. Pri dvokaličnicah je med njima kambij, plast celic, ki se delijo. Celice so prikazane skrajšane; v resnici so dolge od desetink milimetra do več milimetrov.",
+  poskusi: "Preklopi tok med vodo in sladkorji: v katero smer teče vsak?",
   merilo: { m: 300e-6, oznaka: "300 µm" },
 };
 

@@ -1,0 +1,393 @@
+{
+ "id": "MATURA-MAT-OR-2026-spomladanski",
+ "points": 120,
+ "minutes": 180,
+ "polas": [
+  {
+   "pola": 1,
+   "minutes": 90,
+   "calculator": false,
+   "points": 60
+  },
+  {
+   "pola": 2,
+   "minutes": 90,
+   "calculator": true,
+   "points": 60
+  }
+ ],
+ "tools": "Nalivno pero ali kemični svinčnik, svinčnik, radirka, šilček in geometrijsko orodje (ravnilo, šestilo, trikotnik); kandidat dobi zbirko formul in konceptna lista. Pri izpitni poli 1 računalo ni dovoljeno, pri izpitni poli 2 je dovoljeno. Pot do rezultata mora biti zapisana z vmesnimi računi.",
+ "sections": {
+  "A": "kratke naloge: 8 nalog po 2–3 točke (skupaj 20 točk na polo), priporočeno 30 minut; enostopenjske, brez delov",
+  "B": "krajše strukturirane naloge: 6 nalog po 6–8 točk (skupaj 40 točk na polo), priporočeno 60 minut; pogosto razdeljene na dele 1.1, 1.2 …; del B je enak kot pri višji ravni"
+ },
+ "tasks": [
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 1,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "razcep dveh trimestnih naravnih števil na prafaktorje in izračun njunega največjega skupnega delitelja"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 2,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "brez računala: deljenje ulomka z decimalnim številom; rezultat zapisan kot okrajšan ulomek"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 3,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "eksponentna enačba z osnovo 2 in linearnim izrazom v eksponentu; prevedba na enaki osnovi"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 4,
+   "points": [
+    2
+   ],
+   "format": [
+    "fill"
+   ],
+   "topic": "iz grafa funkcije oblike A·cos x + B odčitati raztezni faktor A in premik B (vpis dveh vrednosti)",
+   "figure": "graf kosinusne funkcije z abscisno osjo, označeno v večkratnikih π/2"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 5,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "enačba krožnice z danim središčem (celoštevilske koordinate), ki poteka skozi koordinatno izhodišče; polmer kot razdalja dveh točk"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 6,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "dve limiti racionalne funkcije (linearni števec, kvadratni imenovalec): ena v točki z nedoločeno obliko 0/0 (razcep in krajšanje), druga v neskončnosti"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 7,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "določeni integral vsote linearne funkcije in funkcije e^x med preprostima mejama; nedoločeni integral in vstavljanje mej, natančen rezultat z e"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 8,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "kombinatorika: število vrstnih redov nastopov skupin iz več držav, ko morata prvo in zadnje mesto zasesti skupini iz iste države (pravilo produkta in permutacije)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 1,
+   "points": [
+    7
+   ],
+   "format": [
+    "choice"
+   ],
+   "topic": "množice: iz Vennovega diagrama univerzalne množice in dveh podmnožic s številskimi elementi presoditi pravilnost trditev (DA/NE) o preseku, uniji, razliki, komplementu, moči in pripadnosti; en primer je rešen",
+   "figure": "Vennov diagram z vpisanimi elementi in preglednica trditev DA/NE"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 2,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "kvadratna funkcija v splošni obliki z negativnim vodilnim koeficientom: ničli, teme, začetna vrednost, graf in zapis v temenski obliki",
+   "figure": "prazen koordinatni sistem za risanje parabole"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 3,
+   "points": [
+    1,
+    1,
+    2,
+    2
+   ],
+   "format": [
+    "open",
+    "open",
+    "open",
+    "open"
+   ],
+   "topic": "linearna funkcija s parametrom m v smernem koeficientu in začetni vrednosti; za vsak pogoj posebej določiti m: 1) dano presečišče z ordinatno osjo; 2) funkcija strogo narašča (neenačba); 3) dana ničla; 4) graf vzporeden s simetralo sodih kvadrantov"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 4,
+   "points": [
+    2,
+    6
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "logaritemski enačbi: 1) logaritem z osnovo 2 linearnega izraza je enak celemu številu; 2) vsota in razlika desetiških logaritmov linearnih izrazov z ustreznima koeficientoma (uporaba pravil za logaritme, prevedba na kvadratno enačbo, preverjanje definicijskega območja)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 5,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "enačba v kompleksnih številih, v kateri nastopajo z, imaginarna enota in absolutna vrednost |z|; zapis z = x + iy, enačenje realnih in imaginarnih delov, kvadratna enačba z dvema rešitvama (dve kompleksni rešitvi)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 6,
+   "points": [
+    2,
+    4
+   ],
+   "format": [
+    "construct",
+    "open"
+   ],
+   "topic": "odsekoma definirana funkcija iz sinusa (različen predpis za negativne in nenegativne x): 1) narisati graf; 2) zapisati predpis funkcije g z dano vrednostjo v 0, katere odvod je enak f (iskanje nedoločenega integrala po odsekih)",
+   "figure": "koordinatni sistem z abscisno osjo, označeno v večkratnikih π"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 1,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "produkt potence in korena iste spremenljivke zapisati kot eno potenco z racionalnim eksponentom"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 2,
+   "points": [
+    2
+   ],
+   "format": [
+    "construct"
+   ],
+   "topic": "danemu trikotniku konstruirati očrtano krožnico (simetrali stranic)",
+   "figure": "narisan trikotnik"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 3,
+   "points": [
+    3
+   ],
+   "format": [
+    "fill"
+   ],
+   "topic": "iz grafa in predpisa racionalne funkcije (linearni števec, linearni imenovalec) zapisati interval, kjer je funkcija negativna, definicijsko območje in enačbo vodoravne asimptote",
+   "figure": "graf racionalne funkcije s polom in vodoravno asimptoto"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 4,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "deljenje polinoma tretje stopnje z linearnim polinomom; količnik in ostanek"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 5,
+   "points": [
+    2
+   ],
+   "format": [
+    "fill"
+   ],
+   "topic": "primerjava ploščin treh likov z enako dolžino stranice oziroma polmera (kvadrat, enakostranični trikotnik, krog): kateri ima največjo in kateri najmanjšo ploščino"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 6,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "z računalom izračunati ulomek s produkti števil v znanstvenem zapisu (velike in majhne potence 10); rezultat v obliki A·10^B, A zaokrožen na tri mesta"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 7,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "poenostavljanje racionalnega izraza: vsota ena in ulomka, pomnožena z drugim ulomkom; skupni imenovalec, razcep razlike kvadratov, krajšanje"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 8,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "pretaljevanje krogle z danim polmerom v kocko (enaki prostornini); rob kocke na milimeter natančno"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 1,
+   "points": [
+    1,
+    1,
+    2,
+    2,
+    2
+   ],
+   "format": [
+    "fill",
+    "open",
+    "open",
+    "open",
+    "open"
+   ],
+   "topic": "paralelogram v koordinatnem sistemu s tremi danimi oglišči: 1) koordinate četrtega oglišča; 2) ploščina; 3) obseg (razdalja točk); 4) notranji kot pri oglišču na minuto natančno; 5) presečišče diagonal (razpolovišče)",
+   "figure": "paralelogram v mreži koordinatnega sistema"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 2,
+   "points": [
+    2,
+    4
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "dve aritmetični zaporedji, eno podano s splošnim členom, drugo s prvim členom in diferenco (ulomki): 1) razlika dveh členov prvega zaporedja; 2) indeks n, pri katerem sta n-ta člena obeh zaporedij enaka"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 3,
+   "points": [
+    4,
+    2
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "vektorji v prostoru s celoštevilskimi komponentami, eden s parametrom: 1) kot med dvema vektorjema na stotinko stopinje (skalarni produkt, dolžini); 2) parameter, pri katerem sta vektorja pravokotna"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 4,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "tangenti na graf kubične funkcije v dveh danih abscisah (odvod, enačbi tangent) in presečišče teh tangent"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 5,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "besedilna naloga s cenami treh vrst izdelkov in pribitkom, ki je odvisen od števila kosov; postaviti in rešiti sistem dveh linearnih enačb za število kosov dveh vrst, ko je skupna cena enaka ceni nakupa tretje vrste"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 6,
+   "points": [
+    3,
+    4
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "verjetnost pri izbiri brez vračanja iz skupine dveh vrst: 1) verjetnost, da je med tremi izbranimi vsaj en element prve vrste (nasprotni dogodek, kombinacije); 2) po zamenjavi n elementov ene vrste z drugo je dana verjetnost, da sta oba izbrana prve vrste; izračunati n (kvadratna enačba)"
+  }
+ ]
+}

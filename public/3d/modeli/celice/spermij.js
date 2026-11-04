@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Moška spolna celica, dolga okoli 60 µm: glava z akrosomom in jedrom, vrat s centriolama, srednji del z vijačnico mitohondrijev in dolg bič. Povečan pogled pokaže notranjost glave in zgradbo biča 9 + 2; mikrotubuli so narisani debelejši kot v resnici.",
+  poskusi: "Izberi »Cela semenčica« in primerjaj dolžino glave z dolžino biča.",
   merilo: { m: 12e-6, oznaka: "12 µm" },
 };
 

@@ -2,6 +2,9 @@
 // - knjižnice in pisave (/vendor/): najprej iz predpomnilnika (se ne spreminjajo),
 // - ostale datoteke in branje API: najprej omrežje (vedno najnovejša različica), ob
 //   izpadu ali zelo počasni povezavi zadnja shranjena kopija,
+// - 3D modeli (/3d/modeli/*.glb?v=…): najprej iz svojega predpomnilnika (MODELS), ki ostane tudi ob novi
+//   različici knjižnic; ?v= je zgoščena vrednost vsebine (server/tri-d.js), zato nov izvoz pride sam,
+//   stara kopija iste datoteke pa se ob tem pobriše,
 // - pošiljanje (POST …) gre vedno na strežnik; vaje brez povezave ureja public/offline.js.
 // Strežnik ime spodaj dopolni z različico knjižnic (server/razlicica.js): ob novi knjižnici se
 // stari predpomnilnik pobriše. Nove datoteke aplikacije pridejo same (najprej omrežje).
@@ -9,6 +12,7 @@ const VERSION = "evklid-v1";
 const STATIC = `${VERSION}-static`;
 const VENDOR = `${VERSION}-vendor`;
 const API = `${VERSION}-api`;
+const MODELS = "evklid-3d-v1"; // nova številka samo ob spremembi oblike shranjenih modelov
 const SHELL = ["/", "/index.html"];
 // API, ki ga ne shranjujemo (prijava, plačila, osebni podatki računa). /api/mobile/web (vstop v splet iz
 // aplikacije, server/mobile/web-session.js) gre mimo, da ostanejo glave aplikacije in brez povezave aplikacija
@@ -25,7 +29,7 @@ self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((k) => !k.startsWith(VERSION)).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => !k.startsWith(VERSION) && k !== MODELS).map((k) => caches.delete(k))))
       .then(() => self.clients.claim()),
   );
 });
@@ -113,6 +117,23 @@ async function cacheFirst(req) {
   return res;
 }
 
+// 3D model: shranjena kopija s pravo različico (?v=), sicer prenos; ob uspehu pobrišemo starejše različice.
+async function modelFirst(req) {
+  const cache = await caches.open(MODELS);
+  const hit = await cache.match(req);
+  if (hit) return hit;
+  const res = await fetch(req);
+  if (res.ok && res.type === "basic" && new URL(req.url).searchParams.has("v")) {
+    const path = new URL(req.url).pathname;
+    const keep = res.clone();
+    (async () => {
+      for (const old of await cache.keys()) if (new URL(old.url).pathname === path) await cache.delete(old);
+      await cache.put(req, keep);
+    })().catch(() => null);
+  }
+  return res;
+}
+
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
@@ -122,6 +143,10 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.startsWith("/api/")) {
     if (NO_CACHE.test(url.pathname)) return;
     e.respondWith(networkFirst(req, API, TIMEOUT.api));
+    return;
+  }
+  if (url.pathname.startsWith("/3d/modeli/") && url.pathname.endsWith(".glb")) {
+    e.respondWith(modelFirst(req));
     return;
   }
   if (url.pathname.startsWith("/vendor/")) {

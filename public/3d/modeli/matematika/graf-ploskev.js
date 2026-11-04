@@ -7,6 +7,7 @@ export const info = {
   predmet: "MAT",
   opis: "Ploskev z = f(x, y) za osem značilnih funkcij: plastnice na ploskvi in na tleh, prerez y = c, vrednost in gradient v izbrani točki.",
   merilo: { m: 1, oznaka: "enote na oseh" },
+  poskusi: "izberi sedlo, vklopi »Plastnice« in poišči točko, iz katere gre ploskev vzdolž osi x na obe strani navzgor, vzdolž osi y pa na obe strani navzdol.",
 };
 
 // viridis (barvno slepim prijazna zaporedna lestvica), sRGB

@@ -37,7 +37,16 @@ export const SKICE = {
   "MAT-SS|Limita funkcije": () => import("./limita.js"),
   "MAT-SS|Odvodi": () => import("./odvod.js"),
   "MAT-SS|Diferencial": () => import("./diferencial.js"),
+  "MAT-SS|Integrali": () => import("./riemann.js"),
+  "MAT-SS|Trapezna metoda": () => import("./trapezna.js"),
+  "MAT-SS|Ploščina, vrtenina": () => import("./vrtenina.js"),
+  "MAT-SS|Kombinacije": () => import("./pascal.js"),
+  "MAT-SS|Binomski izrek": z(() => import("./pascal.js"), { binom: true }),
+  "MAT-SS|Bernoullijevo zaporedje": () => import("./bernoulli.js"),
+  "MAT-SS|Povprečje, odklon": () => import("./odklon.js"),
   "MAT-UNI|Definicija": z(() => import("./odvod.js"), "h"), // edina kartica »Definicija« na listu za faks (Odvodi)
+  ...Object.fromEntries(Object.entries({ Kocka: "kocka", Kvader: "kvader", Prizma: "prizma", Valj: "valj", Piramida: "piramida", Stožec: "stozec" }).map(([ime, telo]) => [`MAT-OS|${ime}`, z(() => import("./telesa.js"), { telo })])),
+  ...Object.fromEntries(Object.entries({ Prizma: "prizma", Piramida: "piramida", "Prisekana piramida": "prisekana", Valj: "valj", Stožec: "stozec" }).map(([ime, telo]) => [`MAT-SS|${ime}`, z(() => import("./telesa.js"), { telo, ss: true })])),
   ...Object.fromEntries(["Kvadrat", "Pravokotnik", "Paralelogram", "Romb", "Trapez", "Deltoid"].map((ime) => [`MAT-OS|${ime}`, z(() => import("./liki.js"), ime.toLowerCase())])),
 };
 

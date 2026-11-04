@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { BRAND } from "./brand.js";
-import { PLANS, SCHOOL_LICENCE_PRICES } from "./schools.js";
+import { PLANS, SCHOOL_LICENCE_PRICES, PILOT_SCHOOLS_MAX, pilotOpen } from "./schools.js";
 import { schoolDailyQuestions } from "./placila/pravice.js";
 
 export const ORDER_STATUSES = ["new", "contacted", "offer_sent", "won", "lost"];
@@ -116,7 +116,8 @@ export function validateOrder(b, now = new Date()) {
 }
 
 // Stran /sole: statična datoteka, v katero strežnik vstavi cene in ime aplikacije (eno mesto za cene).
-export function solePage() {
+// pilot: ali je pilotna cena še na voljo (prvih 10 šol); ko ni, stran pilotnega paketa ne pokaže.
+export function solePage({ pilot = true } = {}) {
   const P = SCHOOL_LICENCE_PRICES;
   const vars = {
     name: BRAND.name,
@@ -124,6 +125,8 @@ export function solePage() {
     "price.school": eurShort(P.school.eur),
     "price.pilot": eurShort(P.pilot.eur),
     "pilot.years": String(P.pilot.years),
+    "pilot.max": String(PILOT_SCHOOLS_MAX),
+    "pilot.full": pilot ? "0" : "1",
     dailyQuestions: schoolDailyQuestions() > 0 ? `do ${schoolDailyQuestions()} vprašanj inštruktorju na dan` : "neomejeno število vprašanj inštruktorju",
     consent: CONSENT_TEXT,
     maxStudents: String(ORDER_LIMITS.maxStudents),
@@ -134,12 +137,13 @@ export function solePage() {
 }
 
 // Stran /sole in /sole.html (pred statičnimi datotekami in za števcem obiskov v pilot.js).
-export function mountSolePage(app) {
-  let cached = null;
+export function mountSolePage(app, store = null) {
+  const cached = {};
   app.get(["/sole", "/sole.html"], (_req, res) => {
-    // Brez predpomnjenja v razvoju (datoteko lahko urejamo), sicer enkrat na zagon.
-    const html = cached || solePage();
-    if (process.env.NODE_ENV === "production") cached = html;
+    // Brez predpomnjenja v razvoju (datoteko lahko urejamo), sicer enkrat na zagon za vsako stanje pilota.
+    const pilot = store?.db ? pilotOpen(store.db) : true;
+    const html = cached[pilot] || solePage({ pilot });
+    if (process.env.NODE_ENV === "production") cached[pilot] = html;
     res.set("Cache-Control", "no-cache");
     res.type("html").send(html);
   });
@@ -225,6 +229,7 @@ export function mountSchoolOrders(app, store, { accounts, isLocalRequest }) {
     }
     const v = validateOrder(b, new Date(now));
     if (v.error) return res.status(400).json({ error: v.error });
+    if (v.order.plan === "pilot" && !pilotOpen(db)) return res.status(409).json({ error: `Pilotna cena je veljala za prvih ${PILOT_SCHOOLS_MAX} šol. Izberite drug paket.` });
     if (db.prepare("SELECT COUNT(*) AS n FROM school_orders WHERE created_at >= datetime('now', '-1 day')").get().n >= ORDER_LIMITS.perDay)
       return res.status(429).json({ error: "Danes je prišlo veliko naročil. Poskusite znova jutri." });
     const o = v.order;

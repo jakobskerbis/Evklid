@@ -181,6 +181,7 @@ function overviewHtml(c, v) {
       : `<p class="muted">${esc(t("tc.empty", { code: c.code }))}</p>`}
     <div class="tc-actions">
       <label class="tc-offers"><input type="checkbox" data-offers ${v.offersOff ? "checked" : ""}> ${esc(t("tc.offersOff"))}</label>
+      <label class="tc-offers"><input type="checkbox" data-showcase ${v.showcaseOff ? "checked" : ""}> ${esc(t("tc.showcaseOff"))}</label>
       <button type="button" class="secondary" data-export>${icon("download")}<span>${esc(t("tc.export"))}</span></button>
       ${home.schools.length ? `<label class="tc-move">${esc(t("tc.moveTo"))} <select data-move>${schoolOptions(c.schoolId ?? null)}</select></label>` : ""}
       <button type="button" class="danger" data-del-class>${esc(t("tc.deleteClass"))}</button>
@@ -275,15 +276,17 @@ async function loadOverview(card, c) {
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   });
-  $("[data-offers]", body).addEventListener("change", async (e) => {
-    try {
-      await api(`/api/teacher/classes/${encodeURIComponent(c.code)}/offers`, { method: "PUT", code: c.code, body: { off: e.target.checked } });
-      toast(t("common.saved"));
-    } catch (err) {
-      e.target.checked = !e.target.checked;
-      toast(err.message);
-    }
-  });
+  // Ponudbe paketov in vitrine učencev: isti stikali, ista oblika zahteve.
+  for (const [sel, url] of [["[data-offers]", "offers"], ["[data-showcase]", "showcase"]])
+    $(sel, body).addEventListener("change", async (e) => {
+      try {
+        await api(`/api/teacher/classes/${encodeURIComponent(c.code)}/${url}`, { method: "PUT", code: c.code, body: { off: e.target.checked } });
+        toast(t("common.saved"));
+      } catch (err) {
+        e.target.checked = !e.target.checked;
+        toast(err.message);
+      }
+    });
   $("[data-move]", body)?.addEventListener("change", async (e) => {
     try {
       await api(`/api/teacher/classes/${encodeURIComponent(c.code)}/school`, { method: "PUT", code: c.code, body: { schoolId: e.target.value || null } });

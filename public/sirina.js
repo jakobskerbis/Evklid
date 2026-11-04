@@ -229,7 +229,9 @@ function prilagodi(el) {
   else vrstica(el);
 }
 
-export function prilagodiSirino(root) {
+// vrstice: false = le formule v svoji vrstici in tabele (naša pola, public/our-paper.js), formule sredi besedila
+// ostanejo, kot so (prelomijo se same).
+export function prilagodiSirino(root, { vrstice = true } = {}) {
   if (!root || typeof ResizeObserver === "undefined") return;
   if (!ro) {
     // V naslednji sliki, da sprememba pisave ne sproži opozorila »ResizeObserver loop«.
@@ -248,6 +250,7 @@ export function prilagodiSirino(root) {
     ro.observe(el);
     opazovani.add(el);
   });
+  if (!vrstice) return;
   const vrste = new Set();
   root.querySelectorAll(".katex").forEach((k) => {
     if (k.closest(".katex-display, table")) return;

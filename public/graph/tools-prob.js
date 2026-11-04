@@ -2,7 +2,7 @@
 // z grafom in osenčeno verjetnostjo. Računanje je v probcore.js.
 import { esc, texHtml, remember } from "./tools-kit.js";
 import { readNumber } from "./toolscore.js";
-import { normal, binomial, poisson, geometric, hypergeometric, studentT, chi2, probability } from "./probcore.js";
+import { normal, binomial, poisson, geometric, hypergeometric, studentT, chi2, fisherF, probability } from "./probcore.js";
 
 const DISTS = {
   normal: { params: [["mu", "\\mu", "0"], ["sigma", "\\sigma", "1"]], make: (p) => (p.sigma > 0 ? normal(p.mu, p.sigma) : null), tex: (p) => `N(${p.mu}, ${p.sigma}^2)` },
@@ -16,6 +16,7 @@ const DISTS = {
   },
   t: { params: [["nu", "\\nu", "10"]], make: (p) => (p.nu > 0 ? studentT(p.nu) : null), tex: (p) => `t_{${p.nu}}` },
   chi2: { params: [["k", "k", "5"]], make: (p) => (p.k > 0 ? chi2(p.k) : null), tex: (p) => `\\chi^2_{${p.k}}` },
+  F: { params: [["d1", "d_1", "5"], ["d2", "d_2", "10"]], make: (p) => (p.d1 > 0 && p.d2 > 0 ? fisherF(p.d1, p.d2) : null), tex: (p) => `F_{${p.d1},\\,${p.d2}}` },
 };
 const KINDS = ["le", "ge", "between", "eq", "inv"];
 

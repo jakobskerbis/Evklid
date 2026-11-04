@@ -5,9 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Ana vsak teden v hranilnik da $3\,\text{€}$ več kot prejšnji teden. Bojan pa vsak teden prihrani dvakrat toliko kot prejšnji teden. Kdo bo po desetih tednih prihranil več? In koliko bo v hranilniku vsega skupaj?
+Tilen iz lesenih kock zlaga stopnice za maketo hiše. Prva stopnica je ena kocka, druga stolpec iz dveh kock, tretja iz treh … Za $10$ stopnic je porabil $55$ kock. »Za $20$ stopnic bom potreboval dvakrat toliko, torej $110$ kock,« reče sošolki. Ima prav?
 
-Pri Ani se člen za členom **prišteva** isto število, pri Bojanu se **množi** z istim številom. To sta dve najpomembnejši vrsti zaporedij: **aritmetično** in **geometrijsko**. Že veš, kaj je zaporedje, splošni člen in monotonost. V tej lekciji se naučiš za ti dve zaporedji hitro izračunati poljuben člen in vsoto prvih $n$ členov, ne da bi jih seštel enega za drugim. Prvo opisuje enakomerno rast (sedeži v vrstah dvorane, stopnice), drugo rast ali upadanje za isti delež (razmnoževanje bakterij, razpolovna doba).
+Ugibati ni treba. Odgovor dobiš z enim računom, ko spoznaš dve vrsti zaporedij, ki ju srečaš v vsaki delavnici. Pri **aritmetičnem** zaporedju naslednji člen dobiš tako, da prišteješ vedno isto število: vsaka stopnica ima eno kocko več, vsaka vrsta strešnikov dva več. Pri **geometrijskem** vedno množiš z istim številom: deska, ki jo vsakič prežagaš na pol, se vsakič skrajša za polovico. Za obe vrsti boš znal izračunati poljuben člen in vsoto prvih $n$ členov, ne da bi člene seštel enega za drugim.
 
 ## Razlaga
 
@@ -23,49 +23,59 @@ Pri Ani se člen za členom **prišteva** isto število, pri Bojanu se **množi*
 
 Prvo raste enakomerno, drugo vedno hitreje.
 
+*Preveri:* kolikšen je šesti člen v vsakem stolpcu? *(Odgovor: $17$ in $486$.)*
+
 **2. Aritmetično zaporedje.** Zaporedje je **aritmetično**, če je razlika dveh zaporednih členov vedno enaka. To stalno razliko imenujemo **diferenca** in jo označimo z $d$:
 
 $$a_{n+1} - a_n = d.$$
 
-Od $a_1$ do $a_n$ naredimo $n - 1$ korakov, vsak prinese $d$. Zato je splošni člen
+*Preveri:* kolikšna je diferenca zaporedja $10, 7, 4, 1, \ldots$? *(Odgovor: $d = -3$; diferenca je lahko negativna.)*
+
+**3. Splošni člen aritmetičnega zaporedja.** Od $a_1$ do $a_n$ naredimo $n - 1$ korakov, vsak prinese $d$. Zato je splošni člen
 
 $$a_n = a_1 + (n-1)\,d.$$
 
 Če je $d > 0$, je zaporedje strogo naraščajoče, če je $d < 0$, strogo padajoče, pri $d = 0$ pa konstantno.
 
 :::premisli
-Zaporedje je $3, 7, 11, \ldots$ Koliko je $a_{10}$? Zakaj v formuli piše $n - 1$ in ne $n$?
+Zaporedje je $3, 7, 11, \ldots$ Sošolec izračuna $a_{10} = 3 + 10 \cdot 4 = 43$. Kje se zmoti in koliko je $a_{10}$ v resnici?
 ---
 $d = 4$, $a_{10} = 3 + 9 \cdot 4 = 39$. Od prvega do desetega člena je le $9$ korakov: prvi člen že imamo, diferenco prištejemo za vsak naslednji člen.
 :::
 
-**3. Vsota aritmetičnega zaporedja.** Z $S_n$ označimo **vsoto prvih $n$ členov**: $S_n = a_1 + a_2 + \ldots + a_n$. Mladi Gauss je baje v nekaj minutah seštel $1 + 2 + \ldots + 100$. Vsoto je zapisal še v obratnem vrstnem redu in seštel člene v parih: $1 + 100$, $2 + 99$, $3 + 98$ … Vsak par da $101$, parov je $100$, kar je dvojna vsota. Torej je vsota $\dfrac{100 \cdot 101}{2} = 5050$.
+**4. Vsota aritmetičnega zaporedja.** Z $S_n$ označimo **vsoto prvih $n$ členov**: $S_n = a_1 + a_2 + \ldots + a_n$. Mladi Gauss je baje v nekaj minutah seštel $1 + 2 + \ldots + 100$. Pod vsoto je isto vsoto zapisal še v obratnem vrstnem redu in seštel števili, ki stojita drugo pod drugim: $1 + 100$, $2 + 99$, $3 + 98$ … Vsak par da $101$, parov je $100$. Ker je vsako število v računu dvakrat, je to dvojna vsota. Torej je vsota $\dfrac{100 \cdot 101}{2} = 5050$.
 
 Isti premislek velja za vsako aritmetično zaporedje, ker se od para do para prvi člen poveča za $d$, drugi pa zmanjša za $d$, zato ima vsak od $n$ parov vsoto $a_1 + a_n$:
 
 $$S_n = \frac{n}{2}\,(a_1 + a_n) = \frac{n}{2}\,\bigl(2a_1 + (n-1)\,d\bigr).$$
 
-**4. Geometrijsko zaporedje.** Zaporedje z neničelnimi členi je **geometrijsko**, če je količnik dveh zaporednih členov vedno enak. To stalno število imenujemo **količnik** in ga označimo s $q$:
+*Preveri:* koliko kock potrebuje Tilen za $20$ stopnic? *(Odgovor: $\frac{20}{2}(1 + 20) = 210$, skoraj štirikrat toliko kot za $10$ stopnic. Tilen se moti: vsaka od novih stopnic ima več kock kot katera koli od prvih desetih.)*
+
+**5. Geometrijsko zaporedje.** Zaporedje z neničelnimi členi je **geometrijsko**, če je količnik dveh zaporednih členov vedno enak. To stalno število imenujemo **količnik** in ga označimo s $q$:
 
 $$\frac{a_{n+1}}{a_n} = q.$$
+
+*Preveri:* ostanki deske, ki jo vsakič prežagaš na pol, merijo $96$, $48$, $24$ … centimetrov. Kolikšen je $q$? *(Odgovor: $q = \frac{1}{2}$.)*
 
 Od $a_1$ do $a_n$ spet naredimo $n - 1$ korakov, le da vsak korak pomeni množenje s $q$:
 
 $$a_n = a_1 \cdot q^{\,n-1}.$$
 
-Pri $a_1 > 0$ je zaporedje za $q > 1$ strogo naraščajoče, za $0 < q < 1$ strogo padajoče. Za $q < 0$ členi izmenično menjajo predznak, zato zaporedje ni monotono. Takemu zaporedju rečemo **alternirajoče**.
+Pri $a_1 > 0$ je zaporedje za $q > 1$ strogo naraščajoče, za $0 < q < 1$ strogo padajoče, za $q = 1$ pa konstantno. Za $q < 0$ členi izmenično menjajo predznak, zato zaporedje ni monotono. Takemu zaporedju rečemo **alternirajoče**.
 
 :::premisli
 Zaporedji $2, 4, 6, \ldots$ in $2, 4, 8, \ldots$ se začneta enako. Napovej, kolikšen je deseti člen vsakega.
 ---
-Prvo je aritmetično z $d = 2$: $a_{10} = 2 + 9 \cdot 2 = 20$. Drugo je geometrijsko s $q = 2$: $a_{10} = 2 \cdot 2^9 = 1024$. Geometrijska rast z $q > 1$ prej ali slej prehiti vsako aritmetično.
+Prvo je aritmetično z $d = 2$: $a_{10} = 2 + 9 \cdot 2 = 20$. Drugo je geometrijsko s $q = 2$: $a_{10} = 2 \cdot 2^9 = 1024$. Pri $a_1 > 0$ in $q > 1$ geometrijsko zaporedje prej ali slej prehiti vsako aritmetično.
 :::
 
-**5. Vsota geometrijskega zaporedja.** Vsoto $S_n = a_1 + a_1 q + \ldots + a_1 q^{n-1}$ pomnožimo s $q$ in odštejemo. Skoraj vsi členi se odštejejo, ostane $S_n - q S_n = a_1 - a_1 q^n$. Za $q \ne 1$ zato velja
+**6. Vsota geometrijskega zaporedja.** Vsoto $S_n = a_1 + a_1 q + \ldots + a_1 q^{n-1}$ pomnožimo s $q$: $q S_n = a_1 q + a_1 q^2 + \ldots + a_1 q^n$. Obe vsoti imata skupne vse člene razen $a_1$ in $a_1 q^n$, zato pri odštevanju ostane $S_n - q S_n = a_1 - a_1 q^n$. Za $q \ne 1$ izpostavimo $S_n$, delimo z $1 - q$ ter števec in imenovalec pomnožimo z $-1$:
 
 $$S_n = a_1 \cdot \frac{q^n - 1}{q - 1}.$$
 
 Pri $q = 1$ so vsi členi enaki $a_1$, zato je $S_n = n \cdot a_1$.
+
+*Preveri:* koliko je $1 + 2 + 4 + 8 + 16$ po formuli? *(Odgovor: $\frac{2^5 - 1}{2 - 1} = 31$.)*
 
 V simulaciji spodaj (»Aritmetično in geometrijsko zaporedje«) primerjaj grafa obeh vrst zaporedij. Naloga: pri aritmetičnem zaporedju preveri, da točke $(n, a_n)$ ležijo na isti premici; pri geometrijskem zaporedju s količnikom večjim od $1$ opazi, da so razmiki med sosednjimi točkami vedno večji.
 
@@ -108,10 +118,10 @@ $a_n = a_1 \cdot q^{\,n-1}$, $\quad S_n = a_1 \cdot \dfrac{q^n - 1}{q - 1}$
 
 ### Primer 3 (težji)
 
-V dvorani je v prvi vrsti $18$ sedežev, v vsaki naslednji vrsti pa $2$ sedeža več kot v prejšnji. Dvorana ima skupaj $740$ sedežev. Koliko vrst ima dvorana in koliko sedežev je v zadnji vrsti?
+Krovec polaga strešnike na streho v obliki trapeza. V najvišji vrsti je $18$ strešnikov, v vsaki naslednji vrsti navzdol pa $2$ več kot v prejšnji. Za streho je porabil natanko $740$ strešnikov. Koliko vrst ima streha in koliko strešnikov je v najnižji vrsti?
 
 **Podatki:** $a_1 = 18$, $d = 2$, $S_n = 740$
-**Iščemo:** število vrst $n$ in število sedežev v zadnji vrsti $a_n$
+**Iščemo:** število vrst $n$ in število strešnikov v najnižji vrsti $a_n$
 
 :::formula
 $S_n = \dfrac{n}{2}\,\bigl(2a_1 + (n-1)\,d\bigr)$, $\quad a_n = a_1 + (n-1)\,d$
@@ -119,13 +129,13 @@ $S_n = \dfrac{n}{2}\,\bigl(2a_1 + (n-1)\,d\bigr)$, $\quad a_n = a_1 + (n-1)\,d$
 
 **Rešitev:**
 
-1. Števila sedežev po vrstah tvorijo aritmetično zaporedje, ker se vsakič povečajo za isto število.
+1. Števila strešnikov po vrstah tvorijo aritmetično zaporedje, ker se vsakič povečajo za isto število.
 2. Neznan je $n$, zato uporabimo obliko vsote brez $a_n$: $740 = \dfrac{n}{2}\,\bigl(36 + 2(n-1)\bigr) = n\,(n + 17)$.
 3. Dobimo kvadratno enačbo $n^2 + 17n - 740 = 0$.
 4. Diskriminanta: $D = 17^2 + 4 \cdot 740 = 289 + 2960 = 3249 = 57^2$.
 5. Rešitvi sta $n = \dfrac{-17 + 57}{2} = 20$ in $n = \dfrac{-17 - 57}{2} = -37$. Število vrst je naravno število, zato velja $n = 20$.
-6. Zadnja vrsta: $a_{20} = 18 + 19 \cdot 2 = 56$. Preizkus: $\dfrac{20}{2} \cdot (18 + 56) = 740$.
-7. Odgovor: dvorana ima $20$ vrst, v zadnji vrsti je $56$ sedežev.
+6. Najnižja vrsta: $a_{20} = 18 + 19 \cdot 2 = 56$. Preizkus: $\dfrac{20}{2} \cdot (18 + 56) = 740$.
+7. Odgovor: streha ima $20$ vrst, v najnižji vrsti je $56$ strešnikov.
 
 ### Primer 4: zdaj ti
 
@@ -152,8 +162,8 @@ $S_6 = 3 \cdot \dfrac{2^6 - 1}{2 - 1} = 3 \cdot 63 = 189$. Preizkus: $3 + 6 + 12
 
 ## Pogoste napake
 
-- **$a_n = a_1 + n \cdot d$.** Učenec misli, da do $n$-tega člena prišteje $d$ $n$-krat. Prvi člen pa že ima, korakov je le $n - 1$. Preveri pri $n = 1$: formula mora dati $a_1$, kar velja le za $a_1 + (n-1)\,d$.
-- **$a_n = a_1 \cdot q^n$.** Ista napaka pri geometrijskem zaporedju: eksponent je $n - 1$, ker je množenj eno manj kot členov. Tudi tu preveri pri $n = 1$: $q^0 = 1$.
+- **Korakov je $n$ namesto $n - 1$.** Učenec napačno piše $a_n = a_1 + n\,d$ ali $a_n = a_1 \cdot q^n$, ker misli, da do $n$-tega člena naredi $n$ korakov. Prvi člen pa že ima, prištevanj oziroma množenj je le $n - 1$. Preveri pri $n = 1$: prava formula mora dati $a_1$, saj je $a_1 + 0 \cdot d = a_1$ in $a_1 \cdot q^0 = a_1$.
+- **Odstotek namesto količnika.** Če vrednost vsako leto pade za $20\,\%$, ostane $80\,\%$, zato je $q = 0{,}8$, ne $0{,}2$. Pri rasti za $5\,\%$ je $q = 1{,}05$. Količnik pove, kolikšen del prejšnjega člena je naslednji člen.
 - **Vrsta zaporedja iz prvih dveh členov.** Iz $2, 4$ ne moreš vedeti, ali je naslednji člen $6$ (aritmetično) ali $8$ (geometrijsko). Prav tako zaporedje $1, 2, 4, 8$ ni aritmetično, čeprav je $2 - 1 = 1$. Razliko oziroma količnik preveri pri vseh danih parih.
 - **Gaussova formula za geometrijsko vsoto.** Formula $S_n = \dfrac{n}{2}(a_1 + a_n)$ velja le za aritmetično zaporedje, ker so le tam vsote parov enake. Pri geometrijskem uporabi $S_n = a_1 \cdot \dfrac{q^n - 1}{q - 1}$.
 - **»Geometrijsko zaporedje z velikim $|q|$ vedno narašča.«** Pri $q = -2$ členi $5, -10, 20, -40$ menjajo predznak, zato zaporedje ni monotono. Pri $a_1 > 0$ monotonost določata predznak $q$ in to, ali je $|q|$ večji ali manjši od $1$.
@@ -173,25 +183,7 @@ Nariši točke $(n, a_n)$. Pri aritmetičnem zaporedju ležijo vse na eni premic
 
 Pri geometrijskem zaporedju s $q > 1$ točke ležijo na krivulji, ki se vedno strmeje dviga. Vsak korak v desno ne doda stalne višine, ampak stalni *delež*: višina se pomnoži s $q$.
 
-Gaussovo vsoto si predstavljaj kot stopnice iz kock: v prvem stolpcu je $a_1$ kock, v zadnjem $a_n$. Vzemi še ene enake stopnice, jih obrni na glavo in prisloni ob prve. Skupaj tvorijo pravokotnik z $n$ stolpci višine $a_1 + a_n$. Ena stopnica je polovica pravokotnika, zato je $S_n = \dfrac{n}{2}(a_1 + a_n)$.
-
-## Drugače: Iz vsakdanjega življenja
-
-Aritmetično zaporedje srečaš povsod, kjer se nekaj enakomerno povečuje. Taksi zaračuna začetnih $3\,\text{€}$ in vsak kilometer $1{,}5\,\text{€}$: cene po prvem, drugem, tretjem kilometru so $4{,}5$, $6$, $7{,}5$ evra, vsakič za isti znesek več. Tudi višine stopnic v stopnišču so aritmetično zaporedje.
-
-Geometrijsko zaporedje srečaš, kjer se nekaj spreminja za isti delež. List papirja, debel $0{,}1\,\text{mm}$, prepogneš na pol in debelina se podvoji. Po desetih prepogibih bi bil kup debel $0{,}1 \cdot 2^{10} = 102{,}4\,\text{mm}$, kar je več kot $10\,\text{cm}$. Zato listov v resnici ne moreš prepogniti več kot nekajkrat. Podobno se razpolavlja količina radioaktivne snovi: po vsaki razpolovni dobi ostane polovica, zato je količnik $q = \dfrac{1}{2}$.
-
-## Drugače: Korak za korakom s številkami
-
-Seštej $1 + 2 + 4 + 8 + \ldots + 512$ brez računala.
-
-1. Ugotovi vrsto: količniki $\frac{2}{1}, \frac{4}{2}, \frac{8}{4}$ so vsi $2$, zato je zaporedje geometrijsko s $q = 2$ in $a_1 = 1$.
-2. Število členov: $512 = 2^9 = a_1 \cdot q^{\,n-1}$, torej $n - 1 = 9$ in $n = 10$.
-3. Trik: vsoto $S$ podvoji, $2S = 2 + 4 + \ldots + 512 + 1024$.
-4. Odštej: v $2S - S$ se vsi srednji členi odštejejo, ostane $1024 - 1 = 1023$.
-5. Torej $S = 1023$. Formula da isto: $1 \cdot \dfrac{2^{10} - 1}{2 - 1} = 1023$.
-
-Za primerjavo aritmetično: $3 + 6 + 9 + \ldots + 30$. Diferenca je $3$, členov je $10$, vsota parov $3 + 30 = 33$, zato $S = 5 \cdot 33 = 165$.
+Gaussovo vsoto si predstavljaj kot Tilnove stopnice iz kock: v prvem stolpcu je $a_1$ kock, v zadnjem $a_n$. Vzemi še ene enake stopnice, jih obrni na glavo in prisloni ob prve. Skupaj tvorijo pravokotnik z $n$ stolpci višine $a_1 + a_n$. Ene stopnice so polovica pravokotnika, zato je $S_n = \dfrac{n}{2}(a_1 + a_n)$.
 
 ## Drugače: Bolj natančno
 
@@ -199,33 +191,17 @@ Pri aritmetičnem zaporedju je vsak člen (razen prvega) **aritmetična sredina*
 
 Splošni člen $a_n = a_1 + (n-1)d = d\,n + (a_1 - d)$ je linearna funkcija spremenljivke $n$, zato točke ležijo na premici. Splošni člen $a_n = a_1 q^{\,n-1} = \dfrac{a_1}{q} \cdot q^n$ je pri $q > 0$ eksponentna funkcija, zožena na naravna števila.
 
-Formulo za vsoto dokažemo tudi s popolno indukcijo. Za $q \ne 1$ velja pri $n = 1$: $a_1 \frac{q - 1}{q - 1} = a_1$. Iz $S_n$ dobimo $S_{n+1} = S_n + a_1 q^n = a_1 \frac{q^n - 1 + q^{n+1} - q^n}{q - 1} = a_1 \frac{q^{n+1} - 1}{q - 1}$.
+Formulo za vsoto dokažemo tudi z matematično indukcijo. Za $q \ne 1$ velja pri $n = 1$: $a_1 \frac{q - 1}{q - 1} = a_1$. Iz $S_n$ dobimo $S_{n+1} = S_n + a_1 q^n = a_1 \frac{q^n - 1 + q^{n+1} - q^n}{q - 1} = a_1 \frac{q^{n+1} - 1}{q - 1}$.
 
 ## Preveri se
 
-? Kateri je splošni člen geometrijskega zaporedja?
-- $a_n = a_1 \cdot q^n$
-~ Pri $n = 1$ bi dobil $a_1 q$ namesto $a_1$. Množenj je eno manj kot členov.
-+ $a_n = a_1 \cdot q^{\,n-1}$
-- $a_n = a_1 + (n-1)\,q$
-~ To je oblika aritmetičnega zaporedja. Pri geometrijskem se s $q$ množi, ne prišteva.
-> Od $a_1$ do $a_n$ je $n - 1$ množenj s $q$, zato $a_n = a_1 q^{\,n-1}$.
-
-? Prva dva člena zaporedja sta $2$ in $4$. Kaj lahko zagotovo rečemo?
-- Zaporedje je aritmetično z $d = 2$.
-~ Iz dveh členov ne veš, ali je naslednji $6$ ali $8$. Morda je zaporedje geometrijsko.
-- Zaporedje je geometrijsko s $q = 2$.
-~ Enako velja v drugo smer: naslednji člen je lahko tudi $6$.
-+ Brez dodatnih podatkov vrste zaporedja ne vemo.
-> Dva člena določata le en korak. Vrsto zaporedja določiš šele, ko preveriš več zaporednih parov ali je vrsta podana.
-
-? Geometrijsko zaporedje ima $a_1 = 5$ in $q = -2$. Kakšno je?
-- Strogo naraščajoče, ker je $|q| > 1$.
-~ Absolutne vrednosti res rastejo, sami členi pa ne: $5, -10, 20, -40$.
-- Strogo padajoče, ker je $q < 0$.
-~ Že $a_3 = 20$ je večji od $a_2 = -10$, zato zaporedje ne pada.
-+ Alternirajoče, zato ni monotono.
-> Pri negativnem $q$ zaporedni členi menjajo predznak, zato zaporedje ne narašča in ne pada.
+? Katera trditev je pravilna?
+- Zaporedje $1, 2, 4, 8$ je aritmetično, ker je $2 - 1 = 1$.
+~ Razliko moraš preveriti pri vseh parih: $4 - 2 = 2$ in $8 - 4 = 4$. Zaporedje je geometrijsko s $q = 2$.
++ Splošni člen geometrijskega zaporedja je $a_n = a_1 \cdot q^{\,n-1}$.
+- Geometrijsko zaporedje z $a_1 = 5$ in $q = -2$ strogo narašča, ker je $|q| > 1$.
+~ Absolutne vrednosti res rastejo, sami členi pa ne: $5, -10, 20, -40$. Zaporedje je alternirajoče.
+> Od $a_1$ do $a_n$ je $n - 1$ množenj s $q$; pri $n = 1$ formula da $a_1 \cdot q^0 = a_1$.
 
 ? Aritmetično zaporedje ima $a_1 = 4$ in $d = 3$. Koliko je $a_{15}$?
 - $49$
@@ -235,20 +211,38 @@ Formulo za vsoto dokažemo tudi s popolno indukcijo. Za $q \ne 1$ velja pri $n =
 ~ Tako računaš pri geometrijskem zaporedju. Pri aritmetičnem diferenco prišteješ.
 > $a_{15} = 4 + 14 \cdot 3 = 46$.
 
-? Kolikšna je vsota prvih petih členov geometrijskega zaporedja z $a_1 = 1$ in $q = 3$?
-- $205$
-~ To je Gaussova formula $\frac{5}{2}(1 + 81)$, ki velja le za aritmetična zaporedja.
-- $81$
-~ To je peti člen $a_5 = 3^4$, ne vsota prvih petih členov.
-+ $121$
-> $S_5 = 1 \cdot \dfrac{3^5 - 1}{3 - 1} = \dfrac{242}{2} = 121$; preizkus: $1 + 3 + 9 + 27 + 81 = 121$.
+? Maja je vsoto $1 + 3 + 9 + 27 + 81$ izračunala takole: $\dfrac{5}{2} \cdot (1 + 81) = 205$. Kje je napaka?
+- Členi so štirje, ne pet, zato bi morala pisati $\dfrac{4}{2}$.
+~ Členov je pet: $1, 3, 9, 27, 81$. Število členov je pravo.
+- Zadnji člen bi moral biti $3^5 = 243$.
+~ Peti člen je $a_1 q^4 = 81$, ker je množenj eno manj kot členov.
++ Gaussova formula velja le za aritmetična zaporedja; to je geometrijsko, prava vsota je $121$.
+> Pari $1 + 81$ in $3 + 27$ nimajo enake vsote, zato Gaussov premislek tu ne deluje. Pravilno: $S_5 = \dfrac{3^5 - 1}{3 - 1} = 121$.
+
+? Zaporedji imata isti prvi člen $a_1 = 1$: aritmetično z $d = 10$ in geometrijsko s $q = 2$. Katero ima večjo vsoto prvih $8$ členov?
+- Geometrijsko, ker geometrijska rast vedno prehiti aritmetično.
+~ Prehiti šele prej ali slej. Pri $8$ členih še ne, pri $9$ pa že: $511 > 369$.
+- Geometrijsko, ker je njegov osmi člen $128$ večji od $71$.
+~ Večji zadnji člen še ne pomeni večje vsote. Prvi členi geometrijskega so majhni: $1, 2, 4, 8, \ldots$
++ Aritmetično: $288$ proti $255$.
+> Aritmetično: $S_8 = \dfrac{8}{2} \cdot (1 + 71) = 288$. Geometrijsko: $S_8 = \dfrac{2^8 - 1}{2 - 1} = 255$.
+
+? Vrtalnik stane $500\,\text{€}$ in vsako leto izgubi $20\,\%$ vrednosti, ki jo ima na začetku tega leta. Koliko je vreden po $3$ letih?
+- $200\,\text{€}$
+~ Tako računaš, če vsako leto odšteješ $100\,\text{€}$ (aritmetično). Odstotek se računa od vedno manjše vrednosti.
+- $320\,\text{€}$
+~ To je vrednost po $2$ letih. Ker je $a_1 = 500$ cena ob nakupu, je vrednost po $3$ letih šele $a_4 = 500 \cdot 0{,}8^3$.
++ $256\,\text{€}$
+- $4\,\text{€}$
+~ To je $500 \cdot 0{,}2^3$. Ostane $80\,\%$ vrednosti, zato je $q = 0{,}8$, ne $0{,}2$.
+> Vrednosti tvorijo geometrijsko zaporedje s $q = 0{,}8$: po $3$ letih je vrtalnik vreden $500 \cdot 0{,}8^3 = 256\,\text{€}$.
 
 :::simboli
-a_n | splošni (n-ti) člen zaporedja | a_n = a_1 + (n-1)\,d | | geometrijsko: aₙ = a₁ · qⁿ⁻¹
-a_{n+1} | člen, ki sledi členu a_n | | |
+a_n | splošni ($n$-ti) člen zaporedja | a_n = a_1 + (n-1)\,d | | geometrijsko: $a_n = a_1 q^{n-1}$
+a_{n+1} | člen, ki sledi členu $a_n$ | | |
 a_1 | prvi člen zaporedja | | |
 d | diferenca aritmetičnega zaporedja | d = a_{n+1} - a_n | |
-q | količnik geometrijskega zaporedja | q = \frac{a_{n+1}}{a_n} | | v formuli za vsoto q ≠ 1
+q | količnik geometrijskega zaporedja | q = \frac{a_{n+1}}{a_n} | | v formuli za vsoto $q \ne 1$
 n | zaporedna številka člena (število členov) | | |
-S_n | vsota prvih n členov | S_n = \frac{n}{2}\,(a_1 + a_n) | | geometrijsko: Sₙ = a₁ · (qⁿ − 1)/(q − 1)
+S_n | vsota prvih $n$ členov | S_n = \frac{n}{2}\,(a_1 + a_n) | | geometrijsko: $S_n = a_1 \frac{q^n - 1}{q - 1}$
 :::

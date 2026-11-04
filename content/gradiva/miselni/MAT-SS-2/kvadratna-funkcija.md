@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Splošna oblika
+  - $f(x) = ax^2 + bx + c$, $a \ne 0$
+  - presečišče z osjo $y$ je $(0, c)$
+- Vodilni koeficient
+  - $a > 0$ navzgor, $a < 0$ navzdol
+  - $|a| > 1$: ožja parabola
+- Temenska oblika
+  - $f(x) = a(x - p)^2 + q$, teme $T(p, q)$
+  - napaka: pri $(x + 3)^2$ je $p = -3$
+- Teme iz splošne
+  - $p = -\dfrac{b}{2a}$, $q = f(p)$
+  - simetrijska os $x = p$
+- Ničle
+  - $(x - p)^2 = -\dfrac{q}{a}$, nato $\pm$
+  - $a$ in $q$ različnih predznakov: dve
+- Ničelna oblika
+  - $f(x) = a(x - x_1)(x - x_2)$
+  - samo pri realnih ničlah
+- Lastnosti grafa
+  - zaloga vrednosti $[q, \infty)$ za $a > 0$
+  - temperatura dneva: vrh ob 14.00
