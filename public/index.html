@@ -179,6 +179,7 @@
         <button id="toggle-sidebar" class="mobile-only icon-only" type="button" aria-label="Pogovori" data-i18n-aria="chat.list" aria-expanded="false" aria-controls="conversation-list"><i data-icon="menu"></i></button>
         <h1 id="chat-title" data-i18n="chat.new">Nov pogovor</h1>
         <div id="chat-state" class="chips"></div>
+        <button type="button" id="chat-bug" class="ghost icon-only chat-bug" aria-expanded="false" title="Prijavi napako" aria-label="Prijavi napako" data-i18n-title="bug.btn" data-i18n-aria="bug.btn" hidden><i data-icon="flag"></i></button>
         <button type="button" class="ghost icon-only chat-scan" data-open-scan title="Skeniraj nalogo" aria-label="Skeniraj nalogo" data-i18n-title="scan.title" data-i18n-aria="scan.title"><i data-icon="scan-line"></i></button>
         <button type="button" class="ghost icon-only chat-calc calc-open" data-calc="sci" title="Kalkulator" aria-label="Kalkulator" data-i18n-title="nav.graph" data-i18n-aria="nav.graph"><i data-icon="calculator"></i></button>
       </div>
@@ -216,34 +217,7 @@
   <main id="view-settings" class="view narrow" hidden>
     <button type="button" class="ghost back me-back"><i data-icon="arrow-left"></i><span data-i18n="nav.me">Jaz</span></button>
     <h1 data-i18n="set.title">Nastavitve</h1>
-    <div id="language-card" class="card"></div>
     <form id="settings-form" class="card form">
-      <label><span data-i18n="set.name">Ime</span> <input name="name" maxlength="40" required></label>
-      <fieldset class="level-field">
-        <legend data-i18n="set.school">Šola in letnik</legend>
-        <label class="system-field"><span data-i18n="set.system">Država in šolski sistem</span>
-          <select name="school_system" id="settings-system"></select>
-        </label>
-        <div id="settings-level" class="level-picker"></div>
-        <small class="muted" data-i18n="set.schoolNote">Učna pot, naloge in učbenik se prilagodijo izbiri. Pri fakulteti sledijo javnemu predmetniku programa.</small>
-        <input type="hidden" name="educational_track">
-        <input type="hidden" name="study_program">
-        <input type="hidden" name="curriculum_level">
-      </fieldset>
-      <fieldset class="goal-field">
-        <legend data-i18n="goal.title">Cilj</legend>
-        <small class="muted" data-i18n="goal.setNote">Inštruktor prilagodi priporočila in tempo ponavljanja do datuma.</small>
-        <div id="settings-goal"></div>
-      </fieldset>
-      <label><span data-i18n="set.xpGoal">Dnevni cilj XP</span>
-        <select name="xp_goal">
-          <option value="30" data-i18n="set.xpGoal30">30 XP – sproščeno</option>
-          <option value="50" data-i18n="set.xpGoal50">50 XP – običajno</option>
-          <option value="100" data-i18n="set.xpGoal100">100 XP – resno</option>
-          <option value="200" data-i18n="set.xpGoal200">200 XP – zagnano</option>
-        </select>
-        <small class="muted" data-i18n="set.xpGoalNote">Približno 15 XP za vsako rešeno nalogo. Ko cilj dosežeš, ti aplikacija čestita.</small>
-      </label>
       <!-- Fakulteta: predmeti iz predmetnika izbrane smeri namesto MAT/FIZ/KEM -->
       <label id="course-row" hidden><span data-i18n="set.subject">Predmet</span>
         <select name="study_course"></select>
@@ -262,6 +236,20 @@
           <option value="REGULAR" data-i18n="set.regular">Redni pouk (NPZ / matura)</option>
           <option value="COMPETITION" data-i18n="set.competition">Tekmovanja</option>
         </select>
+      </label>
+      <fieldset class="goal-field">
+        <legend data-i18n="goal.title">Cilj</legend>
+        <small class="muted" data-i18n="goal.setNote">Inštruktor prilagodi priporočila in tempo ponavljanja do datuma.</small>
+        <div id="settings-goal"></div>
+      </fieldset>
+      <label><span data-i18n="set.xpGoal">Dnevni cilj XP</span>
+        <select name="xp_goal">
+          <option value="30" data-i18n="set.xpGoal30">30 XP – sproščeno</option>
+          <option value="50" data-i18n="set.xpGoal50">50 XP – običajno</option>
+          <option value="100" data-i18n="set.xpGoal100">100 XP – resno</option>
+          <option value="200" data-i18n="set.xpGoal200">200 XP – zagnano</option>
+        </select>
+        <small class="muted" data-i18n="set.xpGoalNote">Približno 15 XP za vsako rešeno nalogo. Ko cilj dosežeš, ti aplikacija čestita.</small>
       </label>
       <fieldset>
         <legend data-i18n="set.mode">Način</legend>
@@ -287,9 +275,25 @@
         </select>
         <small class="muted" data-i18n="set.dataNote">Krajši odgovori inštruktorja, manjše fotografije, brez animacij in brez dodatne pisave. Naloge za učno pot se shranijo za vadbo brez povezave.</small>
       </label>
+      <label class="check-row"><input type="checkbox" name="games">
+        <span><b data-i18n="set.hideGames">Skrij igre</b><small class="muted" data-i18n="set.hideGamesNote">Razdelek Igre se skrije. Napredek, kovanci in avatar ostanejo.</small></span>
+      </label>
       <label><span data-i18n="set.weak">Znane šibke točke (ločene z vejico)</span>
         <input name="manual_weaknesses" placeholder="npr. ulomki, pretvarjanje enot" data-i18n-ph="set.weakPh">
       </label>
+      <!-- Redko spremenjeno: šola in ime (najpogostejše nastavitve so zgoraj). -->
+      <fieldset class="level-field">
+        <legend data-i18n="set.school">Šola in letnik</legend>
+        <label class="system-field"><span data-i18n="set.system">Država in šolski sistem</span>
+          <select name="school_system" id="settings-system"></select>
+        </label>
+        <div id="settings-level" class="level-picker"></div>
+        <small class="muted" data-i18n="set.schoolNote">Učna pot, naloge in učbenik se prilagodijo izbiri. Pri fakulteti sledijo javnemu predmetniku programa.</small>
+        <input type="hidden" name="educational_track">
+        <input type="hidden" name="study_program">
+        <input type="hidden" name="curriculum_level">
+      </fieldset>
+      <label><span data-i18n="set.name">Ime</span> <input name="name" maxlength="40" required></label>
       <div class="form-actions">
         <button class="primary" type="submit" data-i18n="common.save">Shrani</button>
         <span id="settings-saved" class="muted" hidden data-i18n="common.saved">Shranjeno ✓</span>
@@ -312,6 +316,9 @@
       <button type="button" class="secondary" id="corner-edit"><i data-icon="pencil"></i><span data-i18n="corner.edit">Uredi zanimanja</span></button>
     </div>
 
+    <!-- Jezik se nastavi enkrat, zato je med redkejšimi nastavitvami (j, 2. 11. 2026). -->
+    <div id="language-card" class="card"></div>
+
     <div id="install-settings" hidden></div>
 
     <div class="card" hidden>
@@ -322,7 +329,12 @@
     <div class="card">
       <h2 data-i18n="set.help">Pomoč</h2>
       <p class="muted" data-i18n="set.helpText">Kratek ogled pokaže, kje je kaj v aplikaciji.</p>
-      <button id="tour-again" type="button" class="secondary"><i data-icon="circle-help"></i><span data-i18n="set.tourAgain">Ponovi uvodni ogled</span></button>
+      <div class="actions help-actions">
+        <button id="tour-again" type="button" class="secondary"><i data-icon="circle-help"></i><span data-i18n="set.tourAgain">Ponovi uvodni ogled</span></button>
+        <button id="guide-open" type="button" class="secondary" aria-expanded="false" aria-controls="guide-list"><i data-icon="book-open"></i><span data-i18n="guide.title">Vodič po aplikaciji</span></button>
+      </div>
+      <!-- Vodič po aplikaciji (public/vodic.js): isti seznam kot v aplikaciji (Jaz → Vodič). -->
+      <div id="guide-list" class="list-card guide-list" hidden></div>
     </div>
 
     <div class="card" id="new-student-card">

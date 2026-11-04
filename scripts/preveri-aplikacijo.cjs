@@ -480,6 +480,16 @@ async function textbook(p, label) {
   await settle(p, 400);
   await expectVisible(p, "#view-textbook .tb-title", "lekcija");
   await screen(p, `lekcija-${label}`);
+  // »Prijavi napako« v lekciji (public/prijave.js): brez razloga opozori, z razlogom pošlje.
+  await click(p, "#tb-report", { wait: 150 });
+  await expectVisible(p, "#view-textbook .tb-tools + .report-box", "okvir za prijavo napake v lekciji");
+  await screen(p, `lekcija-prijava-${label}`);
+  await click(p, "#view-textbook .report-box .rep-send", { wait: 100 });
+  await expectVisible(p, "#view-textbook .report-box .rep-err", "opozorilo, da je treba izbrati razlog");
+  await click(p, "#view-textbook .report-box .rep-reasons button >> nth=1", { wait: 50 });
+  await click(p, "#view-textbook .report-box .rep-send", { wait: 400 });
+  if (await p.locator("#view-textbook .report-box").count()) throw new Error("prijava napake v lekciji se ni poslala");
+  if (!(await p.locator("#tb-report").isDisabled())) throw new Error("gumb »Prijavi napako« po prijavi ni označen kot prijavljeno");
   // Lekcija po korakih (privzeto): Naprej do konca, enkrat Nazaj; »Preveri se« in »Razloži drugače«
   // preveri v koraku, kjer sta (skriti koraki so hidden).
   const shown = (sel) => p.locator(sel).filter({ visible: true }).first();
@@ -631,6 +641,15 @@ async function oknaVsi(p) {
 async function okna(p, label) {
   const sheet = label === "tel";
   await tab(p, "chat");
+  // Skrbnik (računalnik s strežnikom): »Prijavi napako« v glavi klepeta; brez opisa opozori, z opisom pošlje.
+  await click(p, "#chat-bug", { wait: 150 });
+  await expectVisible(p, "#view-chat .bug-box textarea", "okvir za skrbnikovo prijavo napake");
+  await click(p, "#view-chat .bug-box .rep-send", { wait: 100 });
+  await expectVisible(p, "#view-chat .bug-box .rep-err", "opozorilo, da je treba opisati napako");
+  await p.fill("#view-chat .bug-box textarea", "Preizkus: prijava iz klepeta");
+  await screen(p, `klepet-prijava-${label}`);
+  await click(p, "#view-chat .bug-box .rep-send", { wait: 400 });
+  if (await p.locator("#view-chat .bug-box").count()) throw new Error("skrbnikova prijava napake se ni poslala");
   await p.fill("#input", "Pokaži periodni sistem");
   await click(p, "#send", { wait: 300 });
   await expectVisible(p, '.okno[data-view="graph"] #graph-slot .pse, .okno[data-view="graph"] #graph-slot > *', "kalkulator v oknu po ukazu inštruktorju", 8000);
@@ -662,6 +681,22 @@ async function okna(p, label) {
     await click(p, '.okno[data-view="textbook"] .okno-max');
     if ((await currentView(p)) !== "view-textbook" || (await p.locator(".okno").count())) throw new Error("»Odpri čez cel zaslon« ne vrne Učbenika v glavni pogled");
     await tab(p, "path");
+  }
+  // Mehurček, povlečen na X, izgine (prej se je X skril, preden je bil spust preverjen); X ga privlači.
+  await tab(p, "path");
+  if (await p.locator("#chat-bubble").isVisible()) {
+    const b = await p.locator("#chat-bubble .cb-main").boundingBox();
+    const vw = p.viewportSize().width;
+    const vh = p.viewportSize().height;
+    await p.mouse.move(b.x + 28, b.y + 28);
+    await p.mouse.down();
+    for (let i = 1; i <= 12; i++) await p.mouse.move(b.x + 28 + (vw / 2 - 40 - b.x - 28) * (i / 12), b.y + 28 + (vh - 100 - b.y - 28) * (i / 12));
+    await settle(p, 150);
+    if (!(await p.locator("#chat-bubble.magnet").count())) throw new Error("X ne privlači mehurčka");
+    await screen(p, `mehurcek-x-${label}`);
+    await p.mouse.up();
+    await settle(p, 400);
+    if (await p.locator("#chat-bubble").isVisible()) throw new Error("mehurček, spuščen na X, se ni zaprl");
   }
 }
 

@@ -190,6 +190,11 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
 .cb-drop svg { width: 28px; height: 28px; }
 .cb-drop.hot { transform: translateX(-50%) scale(1.2); background: var(--danger); color: var(--surface); }
 .cb-drop[hidden] { display: none; }
+/* Magnet: blizu X-a se mehurček prilepi nanj; ob spustu ali fliku proti X-u odleti vanj in izgine. */
+.chat-bubble.dragging.magnet { transition: left 0.12s ease-out, top 0.12s ease-out; }
+.chat-bubble.magnet .cb-main { transform: scale(0.9); }
+.chat-bubble.closing { transition: left 0.2s ease-in, top 0.2s ease-in, transform 0.2s ease-in, opacity 0.2s ease-in; transform: scale(0.3); opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .chat-bubble.dragging.magnet, .chat-bubble.closing { transition: none; } }
 
 /* ---------- preurejanje vrstic (vrstice.js) ---------- */
 .vr-row > * { -webkit-touch-callout: none; }

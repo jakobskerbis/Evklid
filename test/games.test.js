@@ -354,3 +354,301 @@ test("games: grid pages of 60 across area sections (j: »največ 50 iger naenkra
   assert.deepEqual(pageNums(0, 111, 1), [0, 1, 110]);
   assert.deepEqual(pageNums(0, 1), [0]);
 });
+
+test("games: adapt to the student's stage, and »Skrij igre« is a saved profile setting", async () => {
+  const { STAGES, stageOf, startTierFor, gamesOn } = await import("../public/games/stage.js");
+  const { normalizeSettings } = await import("../server/settings.js");
+  // OŠ igrivo in od lahkega naprej; SŠ in fakulteta resnejši videz, težji začetek, hitreje težje.
+  assert.equal(stageOf({ educational_track: "OSNOVNA_SOLA" }), "os");
+  assert.equal(stageOf({ educational_track: "SREDNJA_SOLA" }), "ss");
+  assert.equal(stageOf({ educational_track: "UNIVERZA" }), "faks");
+  assert.equal(stageOf(null), "os");
+  assert.equal(STAGES.os.calm, false);
+  assert.ok(STAGES.ss.calm && STAGES.faks.calm);
+  assert.ok(STAGES.os.tierUp > STAGES.ss.tierUp && STAGES.ss.tierUp >= STAGES.faks.tierUp);
+  assert.equal(startTierFor("os", undefined), 1);
+  assert.equal(startTierFor("ss", 1), 2);
+  assert.equal(startTierFor("ss", 3), 3);
+  assert.equal(startTierFor("faks", 1), 3);
+  // Stikalo: privzeto vidno, »off« se ohrani, neveljavna vrednost ne.
+  assert.equal(normalizeSettings({}).games, "on");
+  assert.equal(normalizeSettings({ games: "off" }).games, "off");
+  assert.equal(normalizeSettings({ games: "maybe" }).games, "on");
+  assert.equal(gamesOn(normalizeSettings({})), true);
+  assert.equal(gamesOn(normalizeSettings({ games: "off" })), false);
+  // Splet in aplikacija imata isti obrazec: polje, besedilo v vseh jezikih in resnejši videz v CSS.
+  const fs = await import("node:fs");
+  const html = fs.readFileSync(new URL("../public/index.html", import.meta.url), "utf8");
+  assert.match(html, /name="games"/);
+  for (const f of fs.readdirSync(new URL("../public/i18n/ui/", import.meta.url))) {
+    const ui = JSON.parse(fs.readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8"));
+    assert.ok(ui["set.hideGames"] && ui["set.hideGamesNote"], f);
+  }
+  assert.match(fs.readFileSync(new URL("../public/games.css", import.meta.url), "utf8"), /\.gm-calm \.gm-tile/);
+});
+
+// Igre, v katerih učenec odgovor naredi sam (public/games/produce.js, j 2026-11-01: »naj bodo igre bolj
+// raznovrstne kot samo izbiranje pravilnih možnosti«).
+const produce = await import("../public/games/produce.js");
+const { FITS } = await import("../public/games/produce-fits.js");
+const { numline, typed, readNumber, isPick, lineFor, lineValueText, lineHit, typedTask, checkTyped, readTyped, fitNow, padKeys } = produce;
+// kot core.js: naloga, ki jo igra sprejme (engine.accept), in delež sprejetih
+function drawFor(engine, cid, tier) {
+  for (let i = 0; i < 60; i++) {
+    const q = makeQuestion(cid, tier);
+    if (engine.accept(q)) return [q, i];
+  }
+  return [null, 60];
+}
+
+test("games: produce-the-answer games apply only to concepts with one-number answers; the list is fresh", () => {
+  setNumberStyle("sl");
+  for (const e of [numline, typed]) {
+    assert.ok(ENGINES.includes(e), e.id);
+    assert.equal(e.added, "2026-11-04");
+    const mine = CONCEPTS.filter((c) => e.fits(c)).map((c) => c.id);
+    const now = CONCEPTS.filter((c) => fitNow[e.id](c)).map((c) => c.id);
+    assert.deepEqual(mine, now, `${e.id}: seznam pojmov je star – zaženi node scripts/igre-pojmi.js`);
+    assert.ok(mine.length >= 100, `${e.id}: samo ${mine.length} pojmov`);
+    assert.ok(mine.length < CONCEPTS.length / 2, `${e.id}: preveč pojmov (${mine.length})`);
+    for (const id of FITS[e.id]) assert.ok(CONCEPTS.some((c) => c.id === id), `${e.id}: neznan pojem ${id}`);
+  }
+  // naloge z izbiro in odgovori, ki niso eno število, niso za ti igri
+  for (const id of ["prime", "frac_compare", "m_even", "factor", "quad", "system", "rem", "m_shapes"]) {
+    assert.ok(!numline.fits(CONCEPTS.find((c) => c.id === id)) && !typed.fits(CONCEPTS.find((c) => c.id === id)), id);
+  }
+  for (const id of ["add", "mul", "frac_add", "dec_add", "lin2", "neg_add", "pct_of", "f_ohm"]) assert.ok(typed.fits(CONCEPTS.find((c) => c.id === id)), id);
+  for (const id of ["add", "frac_add", "dec_add", "lin2", "neg_add", "round", "angles_tri"]) assert.ok(numline.fits(CONCEPTS.find((c) => c.id === id)), id);
+  assert.ok(isPick({ q: "Največje?", a: "2/3", w: [] }) && isPick({ q: "Katero število je sodo?", a: "18", w: [] }) && isPick({ q: "Višina vrat je približno?", a: "2 m", w: [] }));
+  assert.ok(!isPick({ q: "Imam 5 piškotov. Dobim še 4. Koliko jih imam?", a: "9", w: [] }) && !isPick({ q: "7 · 8", a: "56", w: [] }) && !isPick({ q: "? + 7 = 8", a: "1", w: [] }));
+  // izbira med ponujenimi količinami (pregled 2): brez možnosti naloge ni mogoče rešiti
+  for (const qq of ["Kaj je najdaljše?", "Kaj je najlažje?", "Kaj je največ denarja?", "Kaj je najmanj denarja?"]) assert.ok(isPick({ q: qq, a: "4,05 €", w: [] }), qq);
+  // premica: razdelek je natančnost odgovora, zato brez odmika (3² ≠ 8); bližnja napaka ima svoj razdelek
+  setNumberStyle("sl");
+  for (let tier = 1; tier <= 3; tier++) assert.equal(lineFor({ q: "3²", a: "9", w: ["6", "−9", "12"] }, tier).tol, 0);
+  assert.equal(lineFor({ q: "397 ≈ ? (10)", a: "400", w: ["390", "420", "410"] }, 1).u, 10);
+  assert.equal(lineFor({ q: "34 − 14", a: "20", w: ["48", "30", "10"] }, 2).u, 1);
+  assert.equal(lineFor({ q: "8,01 ≈ ? (0,1)", a: "8", w: ["8,2", "7,9", "8,1"] }, 3).u, 0.1);
+  // portal: ploščice teh dveh iger le za ustrezne pojme
+  const n = CONCEPTS.length * (ENGINES.length - 2) + FITS.numline.length + FITS.typed.length;
+  assert.ok(n > CONCEPTS.length * (ENGINES.length - 2));
+});
+
+test("games: reading one-number answers (number style, units, prefixes) and typed input", () => {
+  setNumberStyle("sl");
+  const r = (a) => {
+    const p = readNumber(a);
+    return p && [p.v, p.kind, p.pre, p.unit.trim()];
+  };
+  assert.deepEqual(r("−3/4"), [-0.75, "frac", "", ""]);
+  assert.deepEqual(r("0,75"), [0.75, "dec", "", ""]);
+  assert.deepEqual(r("x = −12"), [-12, "int", "x = ", ""]);
+  assert.deepEqual(r("12,5 m/s²"), [12.5, "dec", "", "m/s²"]);
+  assert.deepEqual(r("45 %"), [45, "int", "", "%"]);
+  assert.deepEqual(r("30°"), [30, "int", "", "°"]);
+  assert.deepEqual(r("−100 °C"), [-100, "int", "", "°C"]);
+  for (const a of ["7 ost. 1", "3 · 10⁴", "5 N v desno", "√2", "x² − 1", "{−2; 2}", "(3, 4)", "1 : 3", "0,666…", "2 2/3", "60 in 70", "0.75"]) assert.equal(readNumber(a), null, a);
+  setNumberStyle("en");
+  assert.deepEqual(r("0.75"), [0.75, "dec", "", ""]);
+  assert.deepEqual(r("€20"), [20, "int", "€", ""]);
+  assert.equal(readNumber("0,75"), null);
+  setNumberStyle("sl");
+  assert.deepEqual(readTyped(",5"), { n: 5, d: 10, kind: "dec" });
+  assert.deepEqual(readTyped("−3/4"), { n: -3, d: 4, kind: "frac" });
+  for (const s of ["", "−", ",", "3/0", "1,5/2", "/4", "1,2,3", "1/2/3"]) assert.equal(readTyped(s), null, s);
+  // enakovredni zapisi, razen kadar naloga preverja prav zapis
+  const q = (qq, a, w = []) => ({ q: qq, a, w });
+  assert.equal(checkTyped("0,5", q("1/4 + 1/4", "1/2")), "ok");
+  assert.equal(checkTyped(",5", q("1/4 + 1/4", "1/2")), "ok");
+  assert.equal(checkTyped("2/4", q("1/4 + 1/4", "1/2")), "reduce");
+  assert.equal(checkTyped("0,7", q("0,7 = ?", "7/10")), "asFrac");
+  assert.equal(checkTyped("7/10", q("0,7 = ?", "7/10")), "ok");
+  assert.equal(checkTyped("5/4", q("5/4 = ?", "1,25")), "asDec");
+  assert.equal(checkTyped("1.25", q("5/4 = ?", "1,25")), "ok");
+  assert.equal(checkTyped("0,8", q("20/25 = ?", "4/5")), "asFrac");
+  assert.equal(checkTyped("4,0", q("2 + 2", "4")), "ok");
+  assert.equal(checkTyped("8/2", q("2 + 2", "4")), "reduce");
+  assert.equal(checkTyped("5", q("2 + 2", "4")), "no");
+  assert.equal(checkTyped("−4", q("x + 6 = 2", "x = −4")), "ok");
+  assert.equal(checkTyped("-4", q("x + 6 = 2", "x = −4")), "ok");
+  assert.equal(checkTyped("4", q("x + 6 = 2", "x = −4")), "no");
+  assert.equal(checkTyped("8,6", q("860 c = ?", "8,60 €")), "ok");
+  assert.equal(checkTyped("1001", q("9₁₀ = ?₂", "1001")), "ok");
+  assert.equal(checkTyped("1001,0", q("9₁₀ = ?₂", "1001")), "no");
+  assert.deepEqual(padKeys([readNumber("3"), readNumber("−1/2")]), { neg: true, dec: true, frac: true });
+  assert.deepEqual(padKeys([readNumber("3"), readNumber("12")]), { neg: false, dec: false, frac: false });
+});
+
+test("games: number line – every accepted concept and tier gives a finite answer on the drawn line", () => {
+  for (const lang of ["sl", "en"]) {
+    setNumberStyle(lang);
+    for (const c of CONCEPTS.filter((x) => numline.fits(x))) {
+      for (let tier = 1; tier <= 3; tier++) {
+        let tries = 0;
+        for (let i = 0; i < 40; i++) {
+          const [q, k] = drawFor(numline, c.id, tier);
+          tries += k + 1;
+          const where = `${lang} ${c.id} ${tier}: ${q && `${q.q} → ${q.a}`}`;
+          assert.ok(q, `${where}: ni sprejete naloge`);
+          const L = lineFor(q, tier);
+          assert.ok(L, where);
+          const p = readNumber(q.a);
+          assert.ok(Number.isFinite(p.v), where);
+          assert.ok(Number.isInteger(L.at) && L.at >= 0 && L.at <= L.cells, `${where}: odgovor ni na premici (${L.at}/${L.cells})`);
+          assert.ok(L.cells >= 4 && L.cells <= 40 && L.labels.length >= 2, `${where}: ${L.cells} razdelkov`);
+          assert.ok(Math.abs(L.lo + L.at * L.u - p.v) < 1e-9 * Math.max(1, Math.abs(p.v)), `${where}: ${L.lo} + ${L.at}·${L.u}`);
+          assert.ok(p.v >= L.lo - 1e-9 && p.v <= L.lo + L.cells * L.u + 1e-9, where);
+          if (p.v >= 0) assert.ok(L.lo >= 0, `${where}: negativna premica za pozitiven odgovor`);
+          // izpis na mestu odgovora je odgovor (isti zapis brez enote ali enakovreden), premica brez NaN
+          const shown = readNumber(lineValueText(L, L.at));
+          assert.ok(shown && Math.abs(shown.v - p.v) < 1e-9, `${where}: ${lineValueText(L, L.at)}`);
+          for (const [, txt] of L.labels) assert.ok(!/NaN|undefined|Infinity|e[+-]/.test(txt), `${where}: ${txt}`);
+          assert.ok(lineHit(L, L.at), where);
+          assert.ok([0, 1].includes(L.tol) && (tier < 3 || L.tol === 0), where);
+          // tipična napaka (napačni odgovor) na premici nikoli ne šteje kot zadetek
+          for (const w of q.w.map(readNumber)) {
+            if (!w || w.unit.trim() !== p.unit.trim()) continue;
+            const kw = (w.v - L.lo) / L.u;
+            if (Math.abs(kw - Math.round(kw)) < 1e-9 && kw >= 0 && kw <= L.cells) assert.ok(!lineHit(L, Math.round(kw)), `${where}: napačni ${w.v} je zadetek`);
+          }
+        }
+        // igra med igro preskoči neustrezne naloge; teh ne sme biti toliko, da bi bila igra počasna
+        assert.ok(tries <= 40 * 5, `${lang} ${c.id} ${tier}: ${tries} poskusov za 40 nalog`);
+      }
+    }
+  }
+  setNumberStyle("sl");
+});
+
+test("games: mental maths – the canonical answer and its equivalent forms count, wrong ones do not", () => {
+  const gcd = (a, b) => (b ? gcd(b, a % b) : Math.abs(a));
+  for (const lang of ["sl", "en"]) {
+    setNumberStyle(lang);
+    const D = lang === "sl" ? "," : ".";
+    for (const c of CONCEPTS.filter((x) => typed.fits(x))) {
+      for (let tier = 1; tier <= 3; tier++) {
+        for (let i = 0; i < 30; i++) {
+          const [q] = drawFor(typed, c.id, tier);
+          const where = `${lang} ${c.id} ${tier}: ${q && `${q.q} → ${q.a}`}`;
+          assert.ok(q, where);
+          const p = typedTask(q);
+          assert.ok(p, where);
+          // kar učenec vtipka: odgovor brez predpone (x =) in enote, ki ju igra pokaže ob polju
+          const core = q.a.slice(p.pre.length, q.a.length - p.unit.length).trim();
+          assert.equal(checkTyped(core, q), "ok", `${where}: »${core}«`);
+          assert.equal(checkTyped(core.replace(/−/g, "-"), q), "ok", where);
+          if (p.kind === "code") {
+            assert.equal(checkTyped(`${core}1`, q), "no", where);
+            continue;
+          }
+          if (p.kind === "dec") {
+            assert.equal(checkTyped(`${core}0`, q), "ok", `${where}: ničla na koncu`);
+            assert.equal(checkTyped(core.replace(D, D === "," ? "." : ","), q), "ok", `${where}: druga decimalna ločila`);
+            if (Math.abs(p.v) < 1) assert.equal(checkTyped(core.replace(/^(−?)0/, "$1"), q), "ok", `${where}: brez ničle pred vejico`);
+          }
+          if (p.kind === "int") assert.equal(checkTyped(`${core}${D}0`, q), "ok", where);
+          if (p.kind === "frac") {
+            const [n, d] = [p.n, p.d];
+            assert.equal(checkTyped(`${2 * n}/${2 * d}`.replace("-", "−"), q), "reduce", `${where}: neokrajšan`);
+            if (10000 % d === 0) assert.ok(["ok", "asFrac"].includes(checkTyped(String(n / d).replace(".", D).replace("-", "−"), q)), `${where}: decimalni zapis`);
+            assert.equal(gcd(n, d), 1, where);
+          }
+          // napačno: za ena več in vsak napačni odgovor z drugo vrednostjo
+          const plus = p.kind === "frac" ? `${p.n + p.d}/${p.d}` : String(Math.round((p.v + 1) * 1e6) / 1e6).replace(".", D);
+          assert.equal(checkTyped(plus.replace("-", "−"), q), "no", `${where}: ${plus}`);
+          for (const w of q.w) {
+            const x = readNumber(w);
+            if (!x || Math.abs(x.v - p.v) < 1e-9) continue;
+            const s = w.slice(x.pre.length, w.length - x.unit.length).trim();
+            assert.equal(checkTyped(s, q), "no", `${where}: napačni »${s}«`);
+          }
+        }
+      }
+    }
+  }
+  setNumberStyle("sl");
+});
+
+// Motorja brez brskalnika: G.ui je preprost nadomestek, odgovor gre skozi G.answer kot v core.js.
+function fakeG(cid, tier = 1) {
+  const got = [];
+  const el = { textContent: "" };
+  const G = {
+    W: 360, H: 480, tier, streak: 0, chapter: 1, waiting: false, running: true, paused: false, over: false, reduced: true, time: 0,
+    t: (k, v) => `${k}${v ? JSON.stringify(v) : ""}`,
+    ui: { innerHTML: "", querySelector: () => el, addEventListener() {} },
+    answer: (ok, x, y, o) => got.push([ok, o]),
+    stopTimer() {}, sound() {}, hint() {},
+    got, el,
+  };
+  return G;
+}
+
+test("games: number line and mental maths engines – keys move, confirm and judge like the rules", () => {
+  setNumberStyle("sl");
+  for (const cid of ["add", "frac_add", "dec_add", "neg_add", "lin2"]) {
+    for (let round = 0; round < 15; round++) {
+      const G = fakeG(cid, 1 + (round % 3));
+      const e = numline.create(G);
+      e.resize();
+      e.reset();
+      const [q] = drawFor(numline, cid, G.tier);
+      G.q = q;
+      e.question(q);
+      const { L } = e.peek();
+      assert.ok(L, `${cid}: ${q.q} → ${q.a}`);
+      // Home → skrajno levo, nato desno do izbranega razdelka; izpis za bralnik zaslona pove vrednost
+      const right = round % 2 === 1;
+      const want = right ? L.at : L.at + L.tol + 1 <= L.cells ? L.at + L.tol + 1 : L.at - L.tol - 1;
+      e.key("Home", true);
+      for (let k = 0; k < want; k++) e.key("ArrowRight", true);
+      assert.equal(e.peek().cur, want);
+      assert.ok(G.el.textContent.endsWith(lineValueText(L, want)), G.el.textContent);
+      e.key("Enter", true);
+      e.update(1);
+      e.update(1);
+      assert.equal(G.got.length, 1, cid);
+      const [ok, o] = G.got[0];
+      assert.equal(ok, right, `${cid}: ${q.q} → ${q.a} @ ${lineValueText(L, want)}`);
+      // napaka ima smer in velikost: »za … premalo/preveč«
+      if (!right) assert.match(o.note, want > L.at ? /games\.e\.numline\.high/ : /games\.e\.numline\.low/);
+      // po odgovoru tipke ne štejejo več
+      e.key("Enter", true);
+      e.update(1);
+      assert.equal(G.got.length, 1);
+    }
+  }
+  for (const cid of ["add", "frac_add", "dec_add", "neg_add", "lin2", "r_dec2bin"]) {
+    for (let round = 0; round < 10; round++) {
+      const G = fakeG(cid, 1 + (round % 3));
+      G.ask = (tier = G.tier) => drawFor(typed, cid, tier)[0];
+      const e = typed.create(G);
+      e.reset();
+      const [q] = drawFor(typed, cid, G.tier);
+      G.q = q;
+      e.question(q);
+      const p = typedTask(q);
+      const core = q.a.slice(p.pre.length, q.a.length - p.unit.length).trim();
+      const right = round % 2 === 0;
+      const keys = [...(right ? core : `${core}9`)].map((ch) => (ch === "−" ? "-" : ch));
+      for (const k of keys) assert.ok(e.key(k, true), `${cid}: tipka ${k}`);
+      e.key("Enter", true);
+      assert.equal(G.got.length, 1, `${cid}: ${q.q} → ${q.a} (${keys.join("")})`);
+      assert.equal(G.got[0][0], right, `${cid}: ${q.q} → ${q.a} (${keys.join("")})`);
+    }
+  }
+});
+
+test("games: new game kinds have names, how-to text, pace, tile pattern and icon", async () => {
+  const fs = await import("node:fs");
+  const sl = (await import("../public/i18n/sl.js")).default;
+  const css = fs.readFileSync(new URL("../public/games.css", import.meta.url), "utf8");
+  const icons = fs.readFileSync(new URL("../public/icons.js", import.meta.url), "utf8");
+  for (const e of ENGINES) {
+    assert.ok(sl[`games.e.${e.id}`] && sl[`games.e.${e.id}.how`], e.id);
+    assert.ok(css.includes(`.gm-k-${e.id}::before`), `.gm-k-${e.id}`);
+    assert.ok(icons.includes(`"${e.icon}":`), `${e.id}: ikona ${e.icon}`);
+  }
+  for (const k of ["games.confirm", "games.yourAnswer", "games.e.numline.less", "games.e.numline.more", "games.e.numline.low", "games.e.numline.high", "games.e.typed.erase", "games.e.typed.neg", "games.e.typed.comma", "games.e.typed.slash", "games.e.typed.reduce", "games.e.typed.asFrac", "games.e.typed.asDec"]) assert.ok(sl[k], k);
+  assert.match(css, /\.gm-calm \.gm-key/);
+});

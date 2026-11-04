@@ -62,8 +62,10 @@
   //     ozadje (--arch-*) in za meni (--arch-*-m). temple: pročelje ob pozdravu praznega klepeta (pediment, entablature,
   //     column = [kapitel, deblo, baza], stylobate; samo s frame »stebri«), glej temple() spodaj. Brez »stebri« ni
   //     stebrov ob klepetu (seznam pogovorov, rob klepeta), ostanejo okenca in Učna pot.
-  //   building (za okvir pozdrava, ki ni »stebri«): stavba iz obdobja, front = [širina, višina, oznake] ena risba z
-  //     nespremenljivim razmerjem (razredi kot pri temple, o = odprtina), npr. Egipt: pilon; temple() jo vrne kot top.
+  //   frame: "stavba" + building (za slog brez chat.frame): pozdrav praznega klepeta v stavbi iz obdobja (isti deli kot
+  //     arch.temple: pediment = streha, entablature ali null, column = [vrh, deblo, baza] stolpa, stylobate = podstavek);
+  //     stebri so samo za Antični (j, 4. 11.: »v stilu Tadž Mahala za Indijo itd.«). Izjema: chat.frame »pilon« (Egipt)
+  //     ima building.front = [širina, višina, oznake], eno risbo z nespremenljivim razmerjem (o = odprtina vrat).
   const ERAS = {
     antik: {
       light: { bg: "#f5f0e8", surface: "#fffcf7", menu: "#efe2d2", text: "#241c15", accent: "#973f1c", bar: "#f6ece0", banner: "#f6e2d1", paper: "#f4e6cb", wood: "#8a5b36" },
@@ -93,6 +95,15 @@
       font: ["EB Garamond Variable", "eb-garamond"], hero: 14, band: ["prepletanje", 16, 8], edge: 1.25, glyph: "ikona",
       motifs: ["sestilo", "armila", "vitruvij", "spirala", "kodeks", "perspektiva", "daljnogled", "poliedr"],
       facts: ["era.renesansa", 6], icons: "ikone",
+      frame: "stavba",
+      // Stavba ob pozdravu: šilasta rebrasta kupola z laterno na bobnu z okroglimi okni (Firence), polkupoli, venec,
+      // nizek polkrožni lok s klinastimi kamni; ob strani kamniti robniki (rustika), spodaj podstavek.
+      building: {
+        pediment: [600, 170, "<path class=\"f\" d=\"M0 136h600v34H0z\"/><path class=\"t\" d=\"M46 170A254 40 0 0 1 554 170z\"/><path d=\"M46 170A254 40 0 0 1 554 170\"/><path class=\"l\" d=\"M34 170A266 52 0 0 1 566 170M54.7 159.6L43.1 156.5M80 150L69.6 144M120.4 141.7L111.9 133.2M173 135.4L167 125M234.3 131.4L231.2 119.8M300 130L300 118M365.7 131.4L368.8 119.8M427 135.4L433 125M479.6 141.7L488.1 133.2M520 150L530.4 144M545.3 159.6L556.9 156.5\"/><path class=\"f\" d=\"M0 122h600v14H0z\"/><path class=\"l\" d=\"M0 126h600\"/><path class=\"f\" d=\"M-4 116h608v6H-4z\"/><path class=\"f\" d=\"M118 116A46 26 0 0 1 210 116z\"/><path class=\"f\" d=\"M390 116A46 26 0 0 1 482 116z\"/><path class=\"f\" d=\"M222 92h156v24H222z\"/><circle class=\"l\" cx=\"252\" cy=\"104\" r=\"6\"/><circle class=\"l\" cx=\"300\" cy=\"104\" r=\"6\"/><circle class=\"l\" cx=\"348\" cy=\"104\" r=\"6\"/><path class=\"f\" d=\"M226 92C230 50 268 30 300 22 332 30 370 50 374 92z\"/><path class=\"l\" d=\"M264 92C267 60 284 36 300 22 316 36 333 60 336 92M300 22v70\"/><path class=\"f\" d=\"M292 10h16v12h-16z\"/><path class=\"f\" d=\"M290 10 300 2l10 8z\"/>"],
+        entablature: null,
+        column: [[26, 6, "<path class=\"f\" d=\"M.75 .75h24.5v4.5H.75z\"/>"], [24, 100, "<path class=\"f\" d=\"M1.5 0h21v12.5H1.5z\"/><path class=\"f\" d=\"M5 12.5h14v12.5H5z\"/><path class=\"f\" d=\"M1.5 25h21v12.5H1.5z\"/><path class=\"f\" d=\"M5 37.5h14v12.5H5z\"/><path class=\"f\" d=\"M1.5 50h21v12.5H1.5z\"/><path class=\"f\" d=\"M5 62.5h14v12.5H5z\"/><path class=\"f\" d=\"M1.5 75h21v12.5H1.5z\"/><path class=\"f\" d=\"M5 87.5h14v12.5H5z\"/>"], [30, 8, "<path class=\"f\" d=\"M.75 .75h28.5v6.5H.75z\"/>"]],
+        stylobate: [600, 18, "<path class=\"f\" d=\"M6 .75h588v7H6zM.75 7.75h598.5v9.5H.75z\"/>"],
+      },
     },
     bagdad: {
       light: { bg: "#edf2f0", surface: "#fbfdfc", menu: "#123a43", menuAccent: "#e2b24f", text: "#10272b", accent: "#0f5f68", band: "#b88a2e", bar: "#e4efeb", banner: "#f6edcf" },
@@ -100,6 +111,15 @@
       font: ["El Messiri Variable", "el-messiri"], hero: 22, band: ["zvezde", 12, 10], edge: 1.2, glyph: "ikona",
       motifs: ["astrolab", "zvezda", "ozvezdje", "lok", "rozeta", "kvadrant", "rokopis", "abak"],
       facts: ["era.bagdad", 6], icons: "ikone",
+      frame: "stavba",
+      // Stavba ob pozdravu: ivan (velik šilasti lok v pravokotnem pročelju) s pasom zvezd, stopničast zobčast rob,
+      // rebrasta kupola; ob strani okrogli opečni stolpi z zobčastim vrhom (palače Abasidov).
+      building: {
+        pediment: [600, 170, "<path class=\"f\" d=\"M24 72v-6h4v-6h8v6h4v6zM52 72v-6h4v-6h8v6h4v6zM80 72v-6h4v-6h8v6h4v6zM108 72v-6h4v-6h8v6h4v6zM136 72v-6h4v-6h8v6h4v6zM164 72v-6h4v-6h8v6h4v6zM192 72v-6h4v-6h8v6h4v6zM220 72v-6h4v-6h8v6h4v6zM248 72v-6h4v-6h8v6h4v6zM276 72v-6h4v-6h8v6h4v6zM304 72v-6h4v-6h8v6h4v6zM332 72v-6h4v-6h8v6h4v6zM360 72v-6h4v-6h8v6h4v6zM388 72v-6h4v-6h8v6h4v6zM416 72v-6h4v-6h8v6h4v6zM444 72v-6h4v-6h8v6h4v6zM472 72v-6h4v-6h8v6h4v6zM500 72v-6h4v-6h8v6h4v6zM528 72v-6h4v-6h8v6h4v6zM556 72v-6h4v-6h8v6h4v6z\"/><path class=\"f\" d=\"M16 72h568v98H16z\"/><path class=\"l\" d=\"M24 80h552v90M24 170V80\"/><path class=\"s\" d=\"M44 86l1.6 2.4 2.4 1.6-2.4 1.6-1.6 2.4-1.6-2.4-2.4-1.6 2.4-1.6zM108 86l1.6 2.4 2.4 1.6-2.4 1.6-1.6 2.4-1.6-2.4-2.4-1.6 2.4-1.6zM172 86l1.6 2.4 2.4 1.6-2.4 1.6-1.6 2.4-1.6-2.4-2.4-1.6 2.4-1.6zM236 86l1.6 2.4 2.4 1.6-2.4 1.6-1.6 2.4-1.6-2.4-2.4-1.6 2.4-1.6zM300 86l1.6 2.4 2.4 1.6-2.4 1.6-1.6 2.4-1.6-2.4-2.4-1.6 2.4-1.6zM364 86l1.6 2.4 2.4 1.6-2.4 1.6-1.6 2.4-1.6-2.4-2.4-1.6 2.4-1.6zM428 86l1.6 2.4 2.4 1.6-2.4 1.6-1.6 2.4-1.6-2.4-2.4-1.6 2.4-1.6zM492 86l1.6 2.4 2.4 1.6-2.4 1.6-1.6 2.4-1.6-2.4-2.4-1.6 2.4-1.6zM556 86l1.6 2.4 2.4 1.6-2.4 1.6-1.6 2.4-1.6-2.4-2.4-1.6 2.4-1.6z\"/><path class=\"t\" d=\"M66 170V146C66 128 176 124 236 118 278 114 294 108 300 98 306 108 322 114 364 118 424 124 534 128 534 146v24z\"/><path class=\"l\" d=\"M76 170V148C76 134 180 130 238 126 280 122 294 116 300 108 306 116 320 122 362 126 420 130 524 134 524 148v22\"/><circle class=\"l\" cx=\"46\" cy=\"118\" r=\"7\"/><circle class=\"s\" cx=\"46\" cy=\"118\" r=\"2.2\"/><circle class=\"l\" cx=\"554\" cy=\"118\" r=\"7\"/><circle class=\"s\" cx=\"554\" cy=\"118\" r=\"2.2\"/><path class=\"f\" d=\"M254 46h92v14h-92z\"/><path class=\"f\" d=\"M256 46C256 18 282 8 300 6 318 8 344 18 344 46z\"/><path class=\"l\" d=\"M278 46C278 24 290 12 300 6 310 12 322 24 322 46M300 6v40\"/><circle class=\"s\" cx=\"300\" cy=\"3\" r=\"2.4\"/>"],
+        entablature: null,
+        column: [[40, 22, "<path class=\"f\" d=\"M4 10h6V4h6v6h8V4h6v6h6v6H4z\"/><path class=\"f\" d=\"M2 16h36v5.25H2z\"/>"], [26, 100, "<path class=\"f\" d=\"M3 0h20v100H3z\"/><path class=\"l\" d=\"M3 12.5h20M3 25h20M3 37.5h20M3 50h20M3 62.5h20M3 75h20M3 87.5h20\"/>"], [34, 12, "<path class=\"f\" d=\"M2 .75h30v10.5H2z\"/>"]],
+        stylobate: [600, 18, "<path class=\"f\" d=\"M10 .75h580v7H10zM.75 7.75h598.5v9.5H.75z\"/>"],
+      },
     },
     indija: {
       light: { bg: "#fbf1e1", surface: "#fffbf4", menu: "#262d6b", menuAccent: "#f2a64a", text: "#231a2c", accent: "#33408f", band: "#d9822b", bar: "#f9ecd6", banner: "#fbe3c0" },
@@ -107,6 +127,15 @@
       font: ["Eczar Variable", "eczar"], hero: 14, band: ["lotosi", 12, 10], edge: 1.5, glyph: "ikona",
       motifs: ["lotos", "sunja", "kolo", "steber", "stopnice", "palmov-list", "pav", "rangoli"],
       facts: ["era.indija", 6], icons: "ikone",
+      frame: "stavba",
+      // Stavba ob pozdravu v slogu Tadž Mahala: čebulasta kupola na bobnu, dva paviljona (čatri), pištak z mogulskim
+      // lokom, vogalna stolpiča; ob strani minareti s paviljonom na vrhu (na širokem štirje), spodaj ploščad.
+      building: {
+        pediment: [600, 180, "<path class=\"f\" d=\"M10 104h580v76H10z\"/><path class=\"l\" d=\"M18 180V112h564v68\"/><path class=\"t\" d=\"M44 180V152C44 138 150 136 220 132 268 129 292 126 300 114 308 126 332 129 380 132 450 136 556 138 556 152v28z\"/><path class=\"l\" d=\"M54 180V154C54 144 154 142 222 138 270 135 292 132 300 122 308 132 330 135 378 138 446 142 546 144 546 154v26\"/><circle class=\"s\" cx=\"34\" cy=\"126\" r=\"3\"/><circle class=\"s\" cx=\"566\" cy=\"126\" r=\"3\"/><path class=\"f\" d=\"M6 98h588v6H6z\"/><path d=\"M14 98V82\"/><path class=\"f\" d=\"M8 82c0-6 4-9 6-11 2 2 6 5 6 11z\"/><path d=\"M586 98V82\"/><path class=\"f\" d=\"M580 82c0-6 4-9 6-11 2 2 6 5 6 11z\"/><path d=\"M139 98V84M161 98V84M150 98V86\"/><path class=\"f\" d=\"M133 80h34v4h-34z\"/><path class=\"f\" d=\"M137 80c-2-10 7-17 13-21 6 4 15 11 13 21z\"/><path d=\"M150 59v-7\"/><path d=\"M439 98V84M461 98V84M450 98V86\"/><path class=\"f\" d=\"M433 80h34v4h-34z\"/><path class=\"f\" d=\"M437 80c-2-10 7-17 13-21 6 4 15 11 13 21z\"/><path d=\"M450 59v-7\"/><path class=\"f\" d=\"M266 82h68v16h-68z\"/><path class=\"l\" d=\"M280 82v16M294 82v16M306 82v16M320 82v16\"/><path class=\"f\" d=\"M268 82C226 74 222 36 300 8 378 36 374 74 332 82z\"/><path d=\"M300 8V0\"/><circle class=\"s\" cx=\"300\" cy=\"3\" r=\"2.2\"/>"],
+        entablature: null,
+        column: [[40, 44, "<path class=\"f\" d=\"M10 30c-1-12 6-19 10-22 4 3 11 10 10 22z\"/><path d=\"M20 8V2\"/><path class=\"f\" d=\"M6 30h28v4H6z\"/><path d=\"M10 34v6M30 34v6M20 34v6\"/><path class=\"f\" d=\"M4 40h32v4H4z\"/>"], [22, 100, "<path class=\"f\" d=\"M3 0h16v100H3z\"/><path class=\"l\" d=\"M11 0v100\"/>"], [34, 16, "<path class=\"f\" d=\"M6 .75h22v6H6z\"/><path class=\"f\" d=\"M2 6.75h30v8.5H2z\"/>"]],
+        stylobate: [600, 18, "<path class=\"f\" d=\"M8 .75h584v7H8zM.75 7.75h598.5v9.5H.75z\"/><path class=\"l\" d=\"M8 4h584\"/>"],
+      },
     },
     // Stari Egipt: barve grobnih poslikav. Svetlo papirus in pesek, meni v zlatem peščenjaku, poudarek lapis lazuli;
     // temno nočno nebo nad Nilom (globok lapis), zlat poudarek (zlato na lapisu). Pisani pas: friz kheker (zvezani
@@ -425,7 +454,7 @@
     const [cap, shaft, base] = t.column;
     const col = (n) => `<div class="t-part t-col t${n}" aria-hidden="true">${svg("t-cap", cap, "xMidYMin")}${svg("t-shaft", shaft)}${svg("t-base", base, "xMidYMax")}</div>`;
     return {
-      top: svg("t-part t-roof", t.pediment, "xMidYMax") + `<div class="t-part t-ent" aria-hidden="true">${svg("", t.entablature)}</div>`,
+      top: svg("t-part t-roof", t.pediment, "xMidYMax") + (t.entablature ? `<div class="t-part t-ent" aria-hidden="true">${svg("", t.entablature)}</div>` : ""),
       bottom: [1, 2, 3, 4].map(col).join("") + svg("t-part t-steps", t.stylobate),
     };
   }
@@ -459,7 +488,7 @@
     for (const v of ERA_VARS) root.style.removeProperty(v);
     // Klepet obdobja in stebri: atributi, po katerih ui.css izbere videz (brez njih ostane klepet kot v Čistem).
     for (const [k, attr] of Object.entries(CHAT_ATTRS)) {
-      const v = k === "arch" ? era && era.arch && id : era && era.chat && era.chat[k];
+      const v = k === "arch" ? era && era.arch && id : (era && era.chat && era.chat[k]) || (k === "frame" && era && era.building && era.frame);
       if (v) root.setAttribute(attr, v); else root.removeAttribute(attr);
     }
     if (era) {

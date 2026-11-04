@@ -2,12 +2,18 @@
 // z grafom in osenčeno verjetnostjo. Računanje je v probcore.js.
 import { esc, texHtml, remember } from "./tools-kit.js";
 import { readNumber } from "./toolscore.js";
-import { normal, binomial, poisson, studentT, chi2, probability } from "./probcore.js";
+import { normal, binomial, poisson, geometric, hypergeometric, studentT, chi2, probability } from "./probcore.js";
 
 const DISTS = {
   normal: { params: [["mu", "\\mu", "0"], ["sigma", "\\sigma", "1"]], make: (p) => (p.sigma > 0 ? normal(p.mu, p.sigma) : null), tex: (p) => `N(${p.mu}, ${p.sigma}^2)` },
   binom: { params: [["n", "n", "10"], ["p", "p", "0,5"]], make: (p) => (Number.isInteger(p.n) && p.n >= 0 && p.n <= 100000 && p.p >= 0 && p.p <= 1 ? binomial(p.n, p.p) : null), tex: (p) => `B(${p.n}, ${p.p})` },
   poisson: { params: [["lambda", "\\lambda", "3"]], make: (p) => (p.lambda > 0 ? poisson(p.lambda) : null), tex: (p) => `\\mathrm{Po}(${p.lambda})` },
+  geom: { params: [["p", "p", "0,2"]], make: (p) => (p.p > 0 && p.p <= 1 ? geometric(p.p) : null), tex: (p) => `\\mathrm{Geo}(${p.p})` },
+  hyper: {
+    params: [["N", "N", "20"], ["K", "K", "7"], ["n", "n", "5"]],
+    make: (p) => (Number.isInteger(p.N) && Number.isInteger(p.K) && Number.isInteger(p.n) && p.N >= 1 && p.N <= 100000 && p.K >= 0 && p.K <= p.N && p.n >= 0 && p.n <= p.N ? hypergeometric(p.N, p.K, p.n) : null),
+    tex: (p) => `H(${p.N}, ${p.K}, ${p.n})`,
+  },
   t: { params: [["nu", "\\nu", "10"]], make: (p) => (p.nu > 0 ? studentT(p.nu) : null), tex: (p) => `t_{${p.nu}}` },
   chi2: { params: [["k", "k", "5"]], make: (p) => (p.k > 0 ? chi2(p.k) : null), tex: (p) => `\\chi^2_{${p.k}}` },
 };
@@ -35,7 +41,7 @@ export function probTool(el, ctx) {
     });
     st.p[st.d] ||= {};
     pp.innerHTML = D.params.map(([k, tex, def]) => fld(`tl-pv" data-k="${k}`, tex, st.p[st.d][k] ?? def)).join("");
-    const disc = st.d === "binom" || st.d === "poisson";
+    const disc = ["binom", "poisson", "geom", "hyper"].includes(st.d);
     const kinds = KINDS.filter((k) => (disc ? k !== "inv" : k !== "eq"));
     if (!kinds.includes(st.kind)) st.kind = "between";
     sel.innerHTML = kinds.map((k) => `<option value="${k}"${k === st.kind ? " selected" : ""}>${esc(t(`sc.prob.k.${k}`))}</option>`).join("");

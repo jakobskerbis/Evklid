@@ -1,6 +1,7 @@
 // Orodja za računanje ob kalkulatorju: pretvornik enot, statistika, enačbe, kompleksna števila,
 // matrike, številski sistemi; periodni sistem z molsko maso; zbirka formul predmeta.
 // Vse računa brskalnik (toolscore.js, pse-data.js), brez API.
+import { skicaZa } from "../skice/index.js";
 import { createUnits } from "./sci.js";
 import { formatNumber } from "./scicore.js";
 import { readList, stats, evalComplex, polyRoots, readMatrix, M, convertBase, molarMass, readNumber } from "./toolscore.js";
@@ -525,8 +526,30 @@ export function createPse(root, opts) {
 
 /**
  * Formule in konstante predmeta (content/formulas/*.md prek /api/formulas).
- * opts: { t, icon, api, renderRich, bookKey() }
+ * opts: { t, icon, api, renderRich, withSymbols(subject, fn, glossary), bookKey() }
+ * Vsak razdelek se izriše s predmetom lista in svojimi oznakami (:::simboli v .md), da ima črka
+ * pomen iz tega razdelka (a pri »Številih« poljubno število, ne pospešek iz fizike).
  */
+let skIo = null;
+const skiceIo = () =>
+  (skIo ||= new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting || !e.target._load) continue;
+      const host = e.target;
+      const load = host._load;
+      host._load = null;
+      skIo.unobserve(host);
+      load()
+        .then((m) => m.default(host))
+        .catch((err) => {
+          // Skica se ni naložila: kartica ostane taka kot brez skice.
+          console.warn("skica", err);
+          host.closest(".fm-item")?.classList.remove("has-skica");
+          host.remove();
+        });
+    }
+  }, { rootMargin: "200px" }));
+
 export function createFormulas(root, opts) {
   const { t } = opts;
   const SUBJ = ["MAT", "FIZ", "KEM"];
@@ -576,6 +599,16 @@ export function createFormulas(root, opts) {
           // Prazno ime: še ena formula pod istim imenom (rich.js da vsaki formuli svojo vrstico).
           item.className = r.parentElement.tagName === "THEAD" ? "fm-item fm-head" : a.textContent.trim() ? "fm-item" : "fm-item fm-cont";
           item.innerHTML = `<div class="fm-name">${a.innerHTML}</div><div class="fm-f">${b.innerHTML}</div>`;
+          // Interaktivna skica nad formulami kartice (public/skice/), naloži se, ko je kartica vidna.
+          const sk = skicaZa(book, a.textContent);
+          if (sk) {
+            const host = document.createElement("div");
+            host.className = "fm-skica";
+            item.classList.add("has-skica");
+            item.insertBefore(host, item.querySelector(".fm-f"));
+            skiceIo().observe(host);
+            host._load = sk;
+          }
           list.append(item);
         }
         sec.append(list);
@@ -597,21 +630,29 @@ export function createFormulas(root, opts) {
   async function show(b) {
     book = BOOKS.includes(b) ? b : "MAT-OS";
     markActive();
-    if (!(book in cache)) {
+    // Vsaka pot spodaj zamenja vsebino lista: skic, ki se še niso naložile, ne opazujemo več.
+    if (skIo) for (const x of body.querySelectorAll(".fm-skica")) skIo.unobserve(x);
+    const key = book;
+    if (!(key in cache)) {
       body.innerHTML = `<p class="muted">${esc(t("common.loading"))}</p>`;
       toc.hidden = true;
       try {
-        cache[book] = (await opts.api(`/api/formulas?book=${book}`)).md;
+        const r = await opts.api(`/api/formulas?book=${key}`);
+        cache[key] = r?.md ? r : null;
       } catch {
-        cache[book] = null;
+        cache[key] = null;
       }
+      if (book !== key) return; // med nalaganjem je učenec izbral drug list
     }
     if (!cache[book]) {
       body.innerHTML = `<div class="card"><p class="muted">${esc(t("sc.formNone"))}</p></div>`;
       toc.hidden = true;
       return;
     }
-    body.replaceChildren(...layout(opts.renderRich(cache[book])).children);
+    const subject = book.split("-")[0];
+    const parts = cache[book].sections || [{ md: cache[book].md, symbols: null }];
+    const html = parts.map((x) => (opts.withSymbols ? opts.withSymbols(subject, () => opts.renderRich(x.md), x.symbols) : opts.renderRich(x.md))).join("");
+    body.replaceChildren(...layout(html).children);
     const secs = [...body.querySelectorAll(".fm-sec[id]")];
     toc.innerHTML = secs.map((x) => `<button type="button" data-sec="${x.id}">${esc(x.querySelector("h2").textContent)}</button>`).join("");
     toc.hidden = secs.length < 2;

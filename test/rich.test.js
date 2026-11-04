@@ -182,3 +182,13 @@ test("formula sheet: a clause after a comma (ko, če, npr.) stays with its formu
   const md = "| | |\n|---|---|\n| Rang | $A x = b$ je rešljiv natanko tedaj, ko $r(A) = r(A|b)$ |\n| Nevtralizacija | kislina $+$ baza → sol, npr. $\\mathrm{HCl + NaOH \\rightarrow NaCl + H_2O}$ |";
   assert.equal(count(renderRich(md), /<tr>/g), 3);
 });
+
+test("oštevilčen podnaslov postane naslov, stavek z odebeljenim začetkom ostane cel", () => {
+  assert.equal(
+    subHeadings("<p><strong>1. Imaginarna enota.</strong> Vpeljemo število.</p>"),
+    '<h3 class="sub-head">1. Imaginarna enota</h3><p>Vpeljemo število.</p>',
+  );
+  assert.equal(subHeadings("<p><strong>2. Postopek:</strong></p>"), '<h3 class="sub-head">2. Postopek</h3>');
+  const sentence = "<p><strong>3. Seštevanje</strong> dveh števil je preprosto.</p>";
+  assert.equal(subHeadings(sentence), sentence);
+});

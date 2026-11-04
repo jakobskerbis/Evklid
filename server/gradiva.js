@@ -8,7 +8,7 @@ import path from "node:path";
 import { getTopic, getPath } from "./curriculum.js";
 import { loadLesson } from "./textbook.js";
 import { renderMd, shell } from "./textbook-print.js";
-import { generateTask, hasGenerator } from "./practice/index.js";
+import { generateTask, hasGenerator, optionsAreTex } from "./practice/index.js";
 import { speakMarkdown } from "./govor.js";
 import { GRADIVA_DIR, hasGradivo, gradivoPage, videoFor } from "./gradiva-vsebina.js";
 
@@ -186,7 +186,7 @@ function formatNumber(a) {
 }
 const LETTERS = "abcdefghij";
 // Ena izbira pri nalogi z izbiro (LaTeX ali navadno besedilo); tudi za kviz v živo.
-export const optionHtml = (task, o) => (task.options_tex ? inline(`$${o}$`) : inline(String(o)));
+export const optionHtml = (task, o) => (optionsAreTex(task) ? inline(`$${o}$`) : inline(String(o)));
 export function answerHtml(task) {
   const a = task.answer;
   switch (a.type) {
