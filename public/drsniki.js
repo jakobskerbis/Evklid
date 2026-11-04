@@ -21,6 +21,16 @@ export const DRSNE = [
 ];
 // Zgornja vrstica zavihkov ima svoje bledenje (app.js, style.css), zato je tu ne označujemo.
 export const IZVZETO = [".topbar .tabs"];
+// Brez malih navpičnih drsnikov s puščicama ▲▼ (j 2026-11-04: »never use scrollbars like that again«).
+// »overflow-x: auto« sam naredi drsno tudi navpično smer, zato ob formuli, ki za nekaj pik štrli čez vrstico
+// (meje integrala, potence), Windows pokaže drsnik s puščicama. Vse drsne vrstice zato navpično obrežemo
+// (clip: v vrstici, ki se pomika vstran, velja kot hidden; kjer se ne, ne postane drsna), razen teh:
+// NAVPICNE se namenoma pomikajo tudi navzdol, SKRITE so vrstice gumbov s skritim drsnikom, ki na
+// računalniku niso drsne (obrezali bi jim obrobo fokusa). ».katex-display« je drsna le v klepetu, učbeniku,
+// tekmovanju in karticah, kjer ima že »overflow-y: hidden«; drugje bi ji obrezali meje integrala.
+export const NAVPICNE = [".lab-table-wrap", ".tl-vt-wrap", ".lab-bench"];
+export const SKRITE = [".seg", ".chip-row", ".tk-ctx", ".tk-tablist", ".tk-sub", ".tabs", "#chat-state", ".katex-display"];
+export const BREZ_NAVPICNEGA = DRSNE.filter((s) => !NAVPICNE.includes(s) && !SKRITE.includes(s));
 
 const SEL = DRSNE.join(",");
 const NI = IZVZETO.join(",");
@@ -104,6 +114,11 @@ const polje = (m) => m.type === "attributes" && m.attributeName === "style" && /
 
 export function initDrsniki() {
   if (ro || typeof ResizeObserver === "undefined") return;
+  // :where() ima ničelno prednost: pravilo z »overflow: auto« ali »overflow-y« v CSS ostane, kot je.
+  const slog = document.createElement("style");
+  slog.id = "drs-navpicno";
+  slog.textContent = `:where(${BREZ_NAVPICNEGA.join(",")}) { overflow-y: clip; }`;
+  document.head.append(slog);
   ro = new ResizeObserver((vnosi) => vnosi.forEach((v) => oznaci(v.target)));
   const dotik = matchMedia("(pointer: coarse)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (dotik && typeof IntersectionObserver !== "undefined") {
