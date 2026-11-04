@@ -157,6 +157,10 @@ export const ENGINES = {
   "lab-mesanje": ["lab-toplota.js", "labMesanje"],
   "lab-faze": ["lab-toplota.js", "labFaze"],
   "lab-ohlajanje": ["lab-toplota.js", "labOhlajanje"],
+  "lab-hooke": ["lab-sile.js", "labHooke"],
+  "lab-gostota": ["lab-sile.js", "labGostota"],
+  "lab-vzgon": ["lab-sile.js", "labVzgon"],
+  "lab-tlak": ["lab-sile.js", "labTlak"],
   // teme, dodane po primerjavi z učnimi načrti (2026-10-30)
   logika: ["vrzeli.js", "logika"], prostor: ["vrzeli.js", "prostor"], "koord-trikotnik": ["vrzeli.js", "koordTrikotnik"],
   "vezava-vzmeti": ["vrzeli.js", "vezavaVzmeti"], izmenicni: ["vrzeli.js", "izmenicni"], "em-spekter": ["vrzeli.js", "emSpekter"], zvezde: ["vrzeli.js", "zvezde"], domine: ["vrzeli.js", "domine"],
