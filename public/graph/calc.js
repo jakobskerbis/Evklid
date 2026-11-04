@@ -1191,6 +1191,7 @@ export function createCalculator(root, opts) {
     layers: [{ id: "num", label: "123", cols: 8, keys: KEYS["123"] }, { id: "fx", label: "f(x)", cols: 8, keys: KEYS.fx }, "sym", "abc"],
     start: "num",
     enter: "go",
+    parsed: true, // math.js: abs, floor … ostanejo imena funkcij
   });
   // Odprta tipkovnica: graf in seznam se stisneta, pomoč pod seznamom se skrije.
   const onKeyboard = (e) => {
