@@ -7,7 +7,7 @@ import { readFileSync, readdirSync } from "node:fs";
 const pub = new URL("../public/", import.meta.url);
 const read = (f) => readFileSync(new URL(f, pub), "utf8");
 const css = (f) => read(f).replace(/\/\*[\s\S]*?\*\//g, "");
-const CSS = readdirSync(pub).filter((f) => f.endsWith(".css"));
+const CSS = readdirSync(pub, { recursive: true }).filter((f) => f.endsWith(".css") && !f.startsWith("vendor"));
 
 test("pogledi nimajo omejene širine (.narrow in glavni pogledi čez vso širino)", () => {
   const style = css("style.css");
@@ -20,7 +20,7 @@ test("pogledi nimajo omejene širine (.narrow in glavni pogledi čez vso širino
     for (const [, sel, body] of css(f).matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
       const m = /max-width:\s*(\d+)px/.exec(body);
       if (!m) continue;
-      if (/#view-[a-z]+(?::has\([^)]*\))?\s*$|\.gm-portal|\.lab-view|\.composer-row|\.ai-note|\.pse-wrap|\.fm-wrap|\.un-wrap|\.tl-view|\.op-body|\.pv-pages|\.cb-grid/.test(sel.trim())) bad.push(`${f}: ${sel.trim()} (${m[1]}px)`);
+      if (/#view-[a-z]+(?::has\([^)]*\))?\s*$|\.gm-portal|\.lab-view|\.composer-row|\.ai-note|\.pse-wrap|\.fm-wrap|\.un-wrap|\.tl-view|\.op-body|\.pv-pages|\.cb-grid|\.k3-hub/.test(sel.trim())) bad.push(`${f}: ${sel.trim()} (${m[1]}px)`);
     }
   }
   assert.deepEqual(bad, []);
