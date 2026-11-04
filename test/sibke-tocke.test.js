@@ -66,13 +66,19 @@ test("weak points: chat, practice and other sources merge under one path topic",
   assert.deepEqual(Object.keys(lin.sources).sort(), ["cards", "chat", "lesson", "practice"]);
   assert.ok(stats.some((x) => !x.topic_id && x.topic === "Čudna tema"));
   const weak = weakTopicsFor(store, s);
-  assert.deepEqual(weak.map((w) => w.topic_id), [LIN]);
+  assert.deepEqual(weak.map((w) => w.topic_id), [LIN]); // 3 napake v enem dnevu
+  // Ena lekcija z dvema napakama v enem dnevu še ni šibka tema; iz dveh dni pa je.
+  recordSkill(store.db, s.id, { source: "lesson", topicId: "MAT-OS-8/pitagorov-izrek", n: 3, wrong: 2 });
+  assert.ok(!weakTopicsFor(store, s).some((w) => w.topic_id === "MAT-OS-8/pitagorov-izrek"));
+  store.db.prepare("UPDATE skill_results SET day = date('now', '-1 day') WHERE topic_id = 'MAT-OS-8/pitagorov-izrek'").run();
+  recordSkill(store.db, s.id, { source: "lesson", topicId: "MAT-OS-8/pitagorov-izrek", n: 1, wrong: 1 });
+  assert.ok(weakTopicsFor(store, s).some((w) => w.topic_id === "MAT-OS-8/pitagorov-izrek"));
   assert.ok(weaknessesForPrompt(store, { ...s, manual_weaknesses: [] }).includes("Linearne enačbe (MAT)"));
   // Ista šibka tema v igrah (»Ponovi šibke teme«) in na delovnem listu.
   migrateGameDays(store.db);
   assert.ok(weakFor(store.db, s.id, s).length > 0);
   assert.equal(weakFor(store.db, s.id).length, 0); // brez učenca le zadnji teden nalog in iger, kot doslej
-  assert.deepEqual(weakTopicIds(store.db, s.id, 3, s), [LIN]);
+  assert.deepEqual(weakTopicIds(store.db, s.id, 3, s).sort(), [LIN, "MAT-OS-8/pitagorov-izrek"]);
   assert.equal(sourceWords(lin.sources), "v klepetu in pri karticah");
   assert.equal(sourceWords({}), "pri nalogah");
 });
@@ -114,7 +120,15 @@ test("weak points API: lesson checks, our papers, games, cards and the progress 
     assert.equal(row.errors, 2);
     // Kviz v razredu bi šel enako; tu tretja napaka pride iz kartice »še ne znam«.
     const card = store.cards.add(s.id, [{ front: "Ohmov zakon?", back: "U = R I" }], { subject: "FIZ", topic: "Ohmov zakon" })[0];
+    // Nova kartica, ki se je učenec šele uči: »še ne znam« ni napaka.
     await call(`/api/students/${s.id}/flashcards/${card.id}/review`, { ok: false });
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM skill_results WHERE source = 'cards'").get().n, 0);
+    // Kartica, ki jo je že znal (škatla ≥ 1): napaka; ista kartica isti dan le enkrat.
+    store.db.prepare("UPDATE flashcards SET box = 2 WHERE id = ?").run(card.id);
+    await call(`/api/students/${s.id}/flashcards/${card.id}/review`, { ok: false });
+    store.db.prepare("UPDATE flashcards SET box = 2 WHERE id = ?").run(card.id);
+    await call(`/api/students/${s.id}/flashcards/${card.id}/review`, { ok: false });
+    assert.equal(store.db.prepare("SELECT SUM(n) AS n FROM skill_results WHERE source = 'cards'").get().n, 1);
     r = await call(`/api/students/${s.id}/progress`);
     assert.deepEqual(r.body.weak.map((w) => w.topic_id), [OHM]);
     assert.equal(r.body.weak[0].sources.cards.wrong, 1);
@@ -126,6 +140,9 @@ test("weak points API: lesson checks, our papers, games, cards and the progress 
     const keys = [...map.keys()].slice(0, 2);
     assert.equal(keys.length, 2);
     assert.equal((await call(`/api/students/${s.id}/paper-check`, { paper: "ni-pole", parts: [] })).status, 404);
+    // Le branje rešitev (nič označeno): ne šteje in del ostane neštet.
+    r = await call(`/api/students/${s.id}/paper-check`, { paper: pid, parts: [{ key: keys[0], ok: false }] });
+    assert.equal(r.body.counted, 0);
     r = await call(`/api/students/${s.id}/paper-check`, { paper: pid, parts: [{ key: keys[0], ok: false }, { key: keys[1], ok: true }, { key: "nič", ok: false }] });
     assert.equal(r.body.counted, 2);
     r = await call(`/api/students/${s.id}/paper-check`, { paper: pid, parts: [{ key: keys[0], ok: false }] });

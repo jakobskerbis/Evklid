@@ -15,13 +15,13 @@ same word index as the textbook lesson search, clear matches only); unmapped nam
 | Vadnica, daily, unit, contest, test prep, offline sync | `server/progress.js answer()` | `events` (+ `topic_id`) |
 | Games | `server/games.js` result; concept → topic via `public/games/lessons.js` (`topicForGame`), max `GAME_MAX` answers per game | `skill_results` |
 | Textbook »Preveri se« | `POST /api/students/:id/lesson-check` (web `public/textbook.js`, app `mobile/src/app/topic/[id].tsx`); server checks the answer; once per question per day | `skill_results` |
-| Our NPZ/matura papers | `POST /api/students/:id/paper-check` on close (`public/our-paper.js`): parts with the solution opened or »Imam prav« toggled; ok = ticked; once per part; part → topic by local search over task text and solution titles (`paperTopics`) | `skill_results` |
-| Flashcards »še ne znam« | `server/app.js` review route | `skill_results` |
+| Our NPZ/matura papers | `POST /api/students/:id/paper-check` on close (`public/our-paper.js`): parts with the solution opened or »Imam prav« toggled; ok = ticked; an unticked part is wrong only if the student ticked at least one part in that sitting (only reading solutions counts nothing); once per part; max `PAPER_MAX` (3) parts per topic per sitting; part → topic by local search over task text and solution titles (`paperTopics`) | `skill_results` |
+| Flashcards | `server/app.js` review route: first grade of a card per day; »še ne znam« is wrong only for a card already known (box ≥ 1), not a new card still being learnt | `skill_results` |
 | Class live quiz | `server/kviz.js` answer route | `skill_results` |
 
 Not sources (no right/wrong answer by the student): lab, calculator, scanner (solves for the student), daily
 puzzle (logic puzzles, no curriculum topic), 3D atlas quiz (no path topic for its concepts yet).
 
-Rule: weak = at least `MIN_TURNS` (3) answers in `DAYS` (60) days across all sources and error rate ≥ `MIN_RATE` (40 %).
-Privacy: `skill_results` keeps only daily counts per topic (no answers, no per-task times), 365 days, in the
-data export (`weak_points`), deleted with the profile. No AI calls (free-tier cost cap).
+Rule (`isWeak`): at least `MIN_TURNS` (3) answers in `DAYS` (60) days across all sources, error rate ≥ `MIN_RATE` (40 %), and errors on at least 2 days or at least `MIN_ERRORS_ONE_DAY` (3) errors (one lesson read with 2 wrong checks is not yet weak).
+Privacy: `skill_results` keeps only daily counts per topic, `skill_seen` only what was counted and the day (no answers,
+no times of day), 365 days, both in the data export (`weak_points`, `weak_points_seen`), deleted with the profile. No AI calls (free-tier cost cap).

@@ -272,7 +272,7 @@ export function weakFor(db, studentId, student = null) {
   const games = db
     .prepare("SELECT concept, SUM(wrong) AS n FROM game_concept_days WHERE student_id = ? AND day >= date('now', '-6 days') GROUP BY concept")
     .all(studentId);
-  if (student) for (const w of weakTopicsFor({ db }, student)) if (w.topic_id) path.push({ topic_id: w.topic_id, n: w.errors });
+  if (student) for (const w of weakTopicsFor({ db }, student)) if (w.topic_id) path.push({ topic_id: w.topic_id, n: w.errors - (w.sources.game?.wrong || 0) }); // igre so že zgoraj
   return weakConcepts(path, games, baseTopicIds);
 }
 

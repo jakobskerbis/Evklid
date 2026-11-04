@@ -595,7 +595,7 @@ export default {
   // napredek
   "prog.title": "Napredek",
   "prog.weak": "Šibke točke",
-  "prog.weakNote": "Samodejno zaznane iz pogovorov (vsaj 3 poteze, vsaj 40 % napak v zadnjih 60 dneh) in ročno vnesene. Evklid jih upošteva pri razlagi.",
+  "prog.weakNote": "Samodejno zaznane iz vseh nalog (pogovori, vaje, igre, učbenik, pole, kartice, kviz; vsaj 3 odgovori, vsaj 40 % napak v zadnjih 60 dneh) in ročno vnesene. Evklid jih upošteva pri razlagi.",
   "prog.activity": "Aktivnost (30 dni)",
   "prog.noActivity": "Še ni aktivnosti.",
   "prog.dayTitle": "{day}: {turns} potez, {errors} napak",
@@ -603,7 +603,7 @@ export default {
   "prog.topics": "Teme",
   "prog.subject": "Predmet",
   "prog.topic": "Tema",
-  "prog.turns": "Poteze",
+  "prog.turns": "Odgovori",
   "prog.errors": "Napake",
   "prog.flags": "Opozorila",
   "prog.flagsNote": "Pogovori, kjer je Evklid zaznal stisko, nevarno prošnjo ali poskus obiti pravila.",

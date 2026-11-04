@@ -19,9 +19,13 @@ import { partKey } from "../public/our-paper-key.js";
 const SUBJECT_LABEL = { MAT: "MAT", FIZ: "FIZ", KEM: "KEM", BIO: "BIO", GEO: "GEO", RAC: "RAČ", EKO: "EKO" };
 
 // Tema je šibka, če je imel učenec v zadnjih DAYS dneh vsaj MIN_TURNS odgovorov pri njej (iz vseh virov
-// skupaj) in je bil delež napak vsaj MIN_RATE.
+// skupaj), je bil delež napak vsaj MIN_RATE in so napake vsaj iz dveh dni ali vsaj MIN_ERRORS_ONE_DAY
+// (ena lekcija ali en kviz z dvema napakama še ni šibka tema).
 export const MIN_TURNS = 3;
 export const MIN_RATE = 0.4;
+export const MIN_ERRORS_ONE_DAY = 3;
+// Pola: največ toliko delov iste teme na eno zaprtje pole (pola ima pogosto več delov iste teme).
+export const PAPER_MAX = 3;
 export const DAYS = 60;
 // Ena igra prinese veliko hitrih odgovorov; da igre ne preglasijo nalog in klepeta, šteje ena igra
 // največ GAME_MAX odgovorov (napake sorazmerno).
@@ -73,7 +77,7 @@ export function recordSkill(db, studentId, { source, topicId = null, subject = n
   if (topicId && !t) return false;
   const name = t ? t.name : String(topic || "").trim().slice(0, 80);
   if (!name) return false;
-  const key = t ? t.id : `~${fold(name)}`;
+  const key = t ? t.id : `~${fold(name)}|${subject || ""}`;
   db.prepare(
     `INSERT INTO skill_results (student_id, day, source, key, topic_id, subject, topic, n, wrong) VALUES (?, date('now'), ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(student_id, day, source, key) DO UPDATE SET n = n + excluded.n, wrong = wrong + excluded.wrong, last_at = datetime('now')`,
@@ -90,15 +94,15 @@ export function skillStats(store, student, days = DAYS) {
     ...db
       .prepare(
         `SELECT CASE WHEN conversation_id IS NULL THEN 'practice' ELSE 'chat' END AS source, topic_id, subject, topic,
-           COUNT(*) AS n, SUM(error) AS wrong, MAX(created_at) AS last
+           date(created_at) AS day, COUNT(*) AS n, SUM(error) AS wrong, MAX(created_at) AS last
          FROM events WHERE student_id = ? AND topic IS NOT NULL AND created_at >= datetime('now', ?)
-         GROUP BY source, topic_id, subject, topic`,
+         GROUP BY source, topic_id, subject, topic, day`,
       )
       .all(student.id, `-${days} days`),
     ...db
       .prepare(
-        `SELECT source, topic_id, subject, topic, SUM(n) AS n, SUM(wrong) AS wrong, MAX(last_at) AS last
-         FROM skill_results WHERE student_id = ? AND day >= date('now', ?) GROUP BY source, key`,
+        `SELECT source, topic_id, subject, topic, day, n, wrong, last_at AS last
+         FROM skill_results WHERE student_id = ? AND day >= date('now', ?)`,
       )
       .all(student.id, `-${days} days`),
   ];
@@ -109,22 +113,27 @@ export function skillStats(store, student, days = DAYS) {
     const key = t ? t.id : `~${fold(r.topic)}|${r.subject || ""}`;
     let x = by.get(key);
     if (!x) {
-      x = { key, topic_id: t?.id ?? null, subject: t?.subject ?? r.subject ?? null, topic: t ? t.name : r.topic, turns: 0, errors: 0, last_seen: "", sources: {} };
+      x = { key, topic_id: t?.id ?? null, subject: t?.subject ?? r.subject ?? null, topic: t ? t.name : r.topic, turns: 0, errors: 0, last_seen: "", sources: {}, errorDays: new Set() };
       by.set(key, x);
     }
     x.turns += r.n;
     x.errors += r.wrong || 0;
+    if (r.wrong > 0) x.errorDays.add(r.day);
     if (r.last > x.last_seen) x.last_seen = r.last;
     const s = (x.sources[r.source] ||= { n: 0, wrong: 0 });
     s.n += r.n;
     s.wrong += r.wrong || 0;
   }
-  return [...by.values()].sort((a, b) => (a.last_seen < b.last_seen ? 1 : a.last_seen > b.last_seen ? -1 : 0));
+  return [...by.values()]
+    .map(({ errorDays, ...x }) => ({ ...x, errorDays: errorDays.size, weak: isWeak({ ...x, errorDays: errorDays.size }) }))
+    .sort((a, b) => (a.last_seen < b.last_seen ? 1 : a.last_seen > b.last_seen ? -1 : 0));
 }
+
+export const isWeak = (s) => s.turns >= MIN_TURNS && s.errors / s.turns >= MIN_RATE && (s.errorDays >= 2 || s.errors >= MIN_ERRORS_ONE_DAY);
 
 export function detectWeakTopics(stats) {
   return stats
-    .filter((s) => s.turns >= MIN_TURNS && s.errors / s.turns >= MIN_RATE)
+    .filter(isWeak)
     .sort((a, b) => b.errors / b.turns - a.errors / a.turns || b.turns - a.turns)
     .slice(0, 8)
     .map((s) => ({ ...s, rate: s.errors / s.turns }));
@@ -210,13 +219,19 @@ export function mountSkillChecks(app, store, { loadStudent }) {
     const parts = Array.isArray(req.body?.parts) ? req.body.parts.slice(0, 120) : [];
     const keys = new Set(paper.tasks.flatMap((tk) => tk.parts.map((p) => partKey(tk, p))));
     const topics = paperTopics(id, paper);
+    // Odprta rešitev brez »Imam prav« je napaka le, če je učenec v tem odpiranju označil vsaj en del
+    // (torej pole res rešuje in si šteje točke); kdor le bere rešitve, nima napak.
+    const grading = parts.some((p) => p?.ok === true);
+    const perTopic = new Map();
     let counted = 0;
     for (const part of parts) {
       const key = String(part?.key || "");
-      if (!keys.has(key)) continue;
+      const ok = part?.ok === true;
+      if (!keys.has(key) || (!ok && !grading)) continue;
       const topicId = topics.get(key);
-      if (!topicId || !firstTime(db, s.id, `P|${id}|${key}`)) continue;
-      if (recordSkill(db, s.id, { source: "paper", topicId, n: 1, wrong: part.ok === true ? 0 : 1 })) counted++;
+      if (!topicId || (perTopic.get(topicId) || 0) >= PAPER_MAX || !firstTime(db, s.id, `P|${id}|${key}`)) continue;
+      perTopic.set(topicId, (perTopic.get(topicId) || 0) + 1);
+      if (recordSkill(db, s.id, { source: "paper", topicId, n: 1, wrong: ok ? 0 : 1 })) counted++;
     }
     res.json({ counted });
   });

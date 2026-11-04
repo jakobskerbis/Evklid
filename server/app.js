@@ -29,7 +29,7 @@ import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummary
 import { printPage } from "./textbook-print.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
-import { skillStats, detectWeakTopics, weaknessesForPrompt, topicIdFor, recordSkill, mountSkillChecks } from "./weaknesses.js";
+import { skillStats, detectWeakTopics, weaknessesForPrompt, topicIdFor, recordSkill, firstTime, mountSkillChecks } from "./weaknesses.js";
 import { cleanText, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
 import { isHiddenNote } from "./skrite-opombe.js";
@@ -413,7 +413,7 @@ export function createApp(store, opts = {}) {
     if (!s) return;
     // Vsi viri (klepet, Vadnica, igre, učbenik, pole, kartice, kviz) skupaj, po temi učne poti.
     const stats = skillStats(store, s);
-    const topics = stats.map(({ subject, topic, topic_id, turns, errors, last_seen, sources }) => ({ subject, topic, topic_id, turns, errors, last_seen, sources, rate: turns ? errors / turns : 0 }));
+    const topics = stats.map(({ subject, topic, topic_id, turns, errors, last_seen, sources, weak }) => ({ subject, topic, topic_id, turns, errors, last_seen, sources, weak, rate: turns ? errors / turns : 0 }));
     res.json({
       topics,
       weak: detectWeakTopics(stats),
@@ -1105,11 +1105,17 @@ export function createApp(store, opts = {}) {
   app.post("/api/students/:id/flashcards/:cardId/review", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
+    const before = store.cards.get(s.id, cardId(req));
     const c = store.cards.review(s.id, cardId(req), req.body?.ok === true);
     if (!c) return res.status(404).json({ error: "Kartica ne obstaja." });
     // Šibke točke: »še ne znam« je napaka pri temi kartice (tema poti ali ime iz klepeta, preslikano lokalno).
-    const topicId = c.topic_id && getTopic(c.topic_id) ? c.topic_id : topicIdFor(s.settings, c.subject, c.topic);
-    recordSkill(store.db, s.id, { source: "cards", topicId, subject: c.subject, topic: c.topic, n: 1, wrong: req.body?.ok === true ? 0 : 1 });
+    // Šteje le prva ocena kartice na dan, napaka pa le pri kartici, ki jo je učenec že znal (nova kartica,
+    // ki se je šele uči in se mu v isti seji ponovi, ni šibka točka).
+    const ok = req.body?.ok === true;
+    if ((ok || before?.box >= 1) && firstTime(store.db, s.id, `C|${c.id}|${new Date().toISOString().slice(0, 10)}`)) {
+      const topicId = c.topic_id && getTopic(c.topic_id) ? c.topic_id : topicIdFor(s.settings, c.subject, c.topic);
+      recordSkill(store.db, s.id, { source: "cards", topicId, subject: c.subject, topic: c.topic, n: 1, wrong: ok ? 0 : 1 });
+    }
     res.json({ card: c, due: store.cards.dueCount(s.id, subjectFor(s, req.body?.path)) });
   });
   app.post("/api/students/:id/daily", (req, res) => {

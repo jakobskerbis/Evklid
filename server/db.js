@@ -200,7 +200,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
     CREATE TABLE IF NOT EXISTS skill_seen (
       student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
       item TEXT NOT NULL,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      created_at TEXT NOT NULL DEFAULT (date('now')), -- samo dan (brez ure)
       PRIMARY KEY (student_id, item)
     );
     CREATE INDEX IF NOT EXISTS idx_msg_conv ON messages(conversation_id, id);
@@ -265,7 +265,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   if (!eventCols.includes("topic_id")) db.exec("ALTER TABLE events ADD COLUMN topic_id TEXT");
   // Rok hrambe dnevnih vsot za šibke točke.
   db.prepare("DELETE FROM skill_results WHERE day < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
-  db.prepare("DELETE FROM skill_seen WHERE created_at < datetime('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
+  db.prepare("DELETE FROM skill_seen WHERE created_at < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
