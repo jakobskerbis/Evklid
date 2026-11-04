@@ -13,6 +13,7 @@ import { t, currentLang } from "./i18n.js";
 import { icon } from "./icons.js";
 import { GROUPS, groupOrder, chemFormat } from "./symbols.js";
 import { stopnja } from "./stopnja.js";
+import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
 import {
   layoutFor, FX_GROUPS, CAS_SL, KEM_ROWS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
   fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
@@ -38,6 +39,8 @@ const configs = new WeakMap(); // polje ali okvir → nastavitve
 const origMode = new WeakMap(); // polje → izvirni inputmode (null: ga ni bilo)
 const numShadow = new WeakMap(); // type=number: vpisano besedilo (brskalnik »3.« ne sprejme kot vrednost)
 let studentSettings = () => null;
+let chapterOf = () => null; // poglavje, iz katerega je odprt kalkulator (tipke-poglavja.js)
+let lastProfile; // f(x) odpre skupino poglavja samo ob novem poglavju; učenčeva izbira potem ostane
 let words = null; // seznam za predloge (naloži se, ko so predlogi vklopljeni)
 let starts = null; // predlogi, ko se beseda še ne piše
 
@@ -52,8 +55,9 @@ export function configureKeyboard(el, cfg) {
   if (el) configs.set(el, cfg || {});
 }
 /** Nastavitve učenca za vrstni red skupin Σ (raven, predmet). */
-export function setKeyboardContext({ settings } = {}) {
+export function setKeyboardContext({ settings, chapter } = {}) {
   if (settings) studentSettings = settings;
+  if (chapter) chapterOf = chapter;
 }
 export const keyboardPrefs = () => ({ ...prefs });
 
@@ -120,6 +124,16 @@ export function openKeyboard(field, { layer } = {}) {
   if (layer || !same || !S.layers.some((l) => layerId(l) === S.layer)) S.layer = startLayer(layer);
   S.shift = 0;
   S.corr = null;
+  // novo poglavje: plast f(x) začne s skupino tega poglavja (kotne funkcije, potence, statistika …)
+  let prof = null;
+  try {
+    prof = chapterProfile(chapterOf());
+  } catch {}
+  if (prof !== lastProfile) {
+    lastProfile = prof;
+    const g = fxGroupFor(prof);
+    if (g) S.fxg = g;
+  }
   if (S.layer === "abc") autoShift();
   prepare(field);
   if (document.activeElement !== field) field.focus({ preventScroll: true });

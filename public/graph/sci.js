@@ -4,6 +4,7 @@
 import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
 import { analyze, previewTex, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName, parseCommand } from "./cas.js";
+import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -41,7 +42,7 @@ const store = {
 };
 
 // Tipke: [napis, vstavi, 2nd napis, 2nd vstavi]. »@« je mesto kazalca po vstavljanju.
-const FN_KEYS = [
+export const FN_KEYS = [
   ["2nd", "#2nd"], ["x²", "²", "x³", "³"], ["xʸ", "^(", "ⁿ√x", "root(@;)"], ["√", "√(", "∛", "∛("], ["x⁻¹", "⁻¹", "|x|", "abs("], ["◀", "#left"],
   ["sin", "sin(", "sin⁻¹", "arcsin("], ["cos", "cos(", "cos⁻¹", "arccos("], ["tan", "tan(", "tan⁻¹", "arctan("], ["ln", "ln(", "eˣ", "e^("], ["log", "log(", "10ˣ", "10^("], ["▶", "#right"],
   ["(", "(", "M+", "#m+"], [")", ")", "M−", "#m-"], ["π", "π", "e", "e"], ["n!", "!", "nCr", "nCr(@;)"], ["°′″", "#dms", "nPr", "nPr(@;)"], ["%", "%", "logₐ", "logb(@;)"],
@@ -179,7 +180,15 @@ export function createScientific(root, opts) {
     const c = [cls, k[1] === "#eq" ? "eq" : "", k[1] === "#ac" || k[1] === "#del" ? "warn" : "", k[1] === "#2nd" ? "second" : "", k[1] === "#more" ? "more" : "", /^[0-9]$/.test(k[1]) || k[1] === "#dec" ? "digit" : ""].filter(Boolean).join(" ");
     return `<button type="button" class="sc-key ${c}" data-ins="${esc(k[1])}"${k[3] ? ` data-ins2="${esc(k[3])}" data-l1="${esc(k[0])}" data-l2="${esc(k[2])}"` : ""}${label}${k[1] === "#more" ? ' aria-expanded="false"' : ""}>${k[1] === "#dec" ? (comma() ? "," : ".") : esc(k[0])}</button>`;
   };
-  $(".sc-fn").innerHTML = FN_KEYS.map((k) => keyHtml(k, "fn")).join("");
+  // funkcijske tipke po poglavju, iz katerega je kalkulator odprt (tipke-poglavja.js)
+  let profile = null;
+  function renderFn() {
+    profile = chapterProfile(opts.chapter?.());
+    const box = $(".sc-fn");
+    box.dataset.profile = profile || "";
+    box.innerHTML = adaptKeys(FN_KEYS, profile).map((k) => keyHtml(k, "fn")).join("");
+  }
+  renderFn();
   $(".sc-num").innerHTML = NUM_KEYS.map((k) => keyHtml(k, "n")).join("");
 
   function setSecond(on) {
@@ -869,6 +878,12 @@ export function createScientific(root, opts) {
     resize() {
       hist.scrollTop = st.history.length ? hist.scrollHeight : 0;
       if (!touch && root.isConnected) input.focus({ preventScroll: true });
+    },
+    // drugo poglavje: druge funkcijske tipke
+    adapt() {
+      if (chapterProfile(opts.chapter?.()) === profile) return;
+      setSecond(false);
+      renderFn();
     },
     reload() {
       st = load();
