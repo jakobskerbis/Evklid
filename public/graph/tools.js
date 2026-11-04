@@ -599,15 +599,17 @@ export function createFormulas(root, opts) {
   async function show(b) {
     book = BOOKS.includes(b) ? b : "MAT-OS";
     markActive();
-    if (!(book in cache)) {
+    const key = book;
+    if (!(key in cache)) {
       body.innerHTML = `<p class="muted">${esc(t("common.loading"))}</p>`;
       toc.hidden = true;
       try {
-        const r = await opts.api(`/api/formulas?book=${book}`);
-        cache[book] = r?.md ? r : null;
+        const r = await opts.api(`/api/formulas?book=${key}`);
+        cache[key] = r?.md ? r : null;
       } catch {
-        cache[book] = null;
+        cache[key] = null;
       }
+      if (book !== key) return; // med nalaganjem je učenec izbral drug list
     }
     if (!cache[book]) {
       body.innerHTML = `<div class="card"><p class="muted">${esc(t("sc.formNone"))}</p></div>`;

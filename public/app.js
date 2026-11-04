@@ -131,8 +131,10 @@ const { renderMath, renderRich } = createRenderer({ annotate: (tex) => annotateT
 const subjectOfId = (id) => (/^([A-Z]{3})-/.exec(id || "") || [])[1];
 // Predmet teme: fakultetne teme (UNI-…) imajo predmet v podatkih, šolske ga imajo v oznaki.
 const topicSubject = (tp) => tp?.subject || (/^UNI-/.test(tp?.id || "") ? null : subjectOfId(tp?.id));
-// Odprta tema: naloge, namigi, rešitve in klepet o njej uporabijo oznake njene lekcije.
-setFormulaSubject(() => subjectWithGlossary(topicSubject(state.topic) || state.student?.settings?.subject || "MAT", state.topic?.symbols));
+// Odprta tema: naloge, namigi, rešitve in klepet o njej uporabijo oznake njene lekcije. Serija nalog iz več tem
+// (ponavljanje, dnevni izziv, sklop, tekmovanje) in drugi pogledi jih ne, sicer bi črka imela pomen iz zadnje odprte teme.
+const topicGlossary = () => (currentView === "topic" && state.topicFx ? state.topic?.symbols : null);
+setFormulaSubject(() => subjectWithGlossary(topicSubject(state.topic) || state.student?.settings?.subject || "MAT", topicGlossary()));
 // Razlaga teme in »Bistvo«: črke imajo pomen iz lekcije te teme (:::simboli), sicer iz slovarja predmeta.
 const topicRich = (tp, text) => withFormulaSubject(topicSubject(tp) || state.student?.settings?.subject || "MAT", () => renderRich(text), tp?.symbols);
 
@@ -619,6 +621,7 @@ function renderConversationList() {
 }
 
 function renderEmptyChat() {
+  state.chatFx = null; // nov pogovor (tudi po brisanju odprtega ali menjavi profila): predmet iz nastavitev
   $("#chat-title").textContent = t("chat.new");
   const ideas = [t("chat.idea1"), t("chat.idea2"), t("chat.idea3")];
   // .empty-hall: okvir pozdrava (v slogu s chat.frame »stebri« pročelje templa iz ERAS[…].arch.temple, ui.css →
@@ -680,6 +683,7 @@ async function setChatFx(conv) {
   if (!id) return;
   try {
     if (!topicCache.has(id)) topicCache.set(id, await api(`/api/topic?id=${encodeURIComponent(id)}`));
+    if (state.conversationId !== conv.id) return; // medtem odprt drug pogovor
     const tp = topicCache.get(id);
     state.chatFx = { subject: topicSubject(tp) || state.chatFx.subject, symbols: tp?.symbols || null };
   } catch { /* brez oznak lekcije */ }
@@ -691,6 +695,7 @@ async function openConversation(id) {
   state.conversationId = conv.id;
   state.convTopic = conv.topic?.id || null;
   await setChatFx(conv);
+  if (state.conversationId !== conv.id) return; // medtem odprt drug pogovor
   $("#chat-title").textContent = conv.title;
   const box = $("#messages");
   box.innerHTML = "";
@@ -768,6 +773,7 @@ async function send(text, { deep = false } = {}) {
       const conv = await api(`/api/students/${state.student.id}/conversations`, { method: "POST" });
       state.conversationId = conv.id;
     }
+    const sentTo = state.conversationId;
     userEl = addMessage("user", text, !!image);
     $("#input").value = "";
     autoGrow();
@@ -827,6 +833,8 @@ async function send(text, { deep = false } = {}) {
       mastered: (d) => toast(d.unlocked?.length ? `${t("chat.mastered", { topic: d.topic })} ${unlockedText(d.unlocked)}` : t("chat.mastered", { topic: d.topic }), "trophy"),
       done: (d) => {
         doneData = d;
+        // Predmet pogovora, ki ga je inštruktor pravkar določil (nov pogovor brez teme): formule v tem in naslednjih odgovorih.
+        if (d.state?.subject && state.conversationId === sentTo && !state.chatFx?.symbols) state.chatFx = { subject: d.state.subject, symbols: null };
         pacer.finish(d.text);
         chatReply(d.text); // mehurček, če klepet ni na zaslonu (public/okna.js)
         if (d.state) renderState(d.state);
@@ -2062,6 +2070,7 @@ function setBack(view) {
 async function openTopic(topicId) {
   const tp = await api(`/api/topic?id=${encodeURIComponent(topicId)}&lang=${encodeURIComponent(state.student?.settings?.language || "")}`);
   state.topic = tp;
+  state.topicFx = true;
   showView("topic");
   const units = (await api(`/api/students/${state.student.id}/path?key=${encodeURIComponent(tp.path)}`)).units;
   const unit = units.find((u) => u.topics.some((x) => x.id === tp.id));
@@ -2191,6 +2200,7 @@ async function startSession(kind, body = {}) {
     toast(err.message);
     return;
   }
+  state.topicFx = false; // naloge serije niso iz odprte teme
   if (kind !== "tek" && kind !== "contest") setBack("path");
   showView("topic");
   $("#topic-content").innerHTML = `<div class="session-grid"><div class="session-main"><div class="session-head"><span class="session-icon">${icon(cfg.icon)}</span><div><h1>${cfg.title}</h1><p class="muted">${cfg.intro}</p></div></div><div id="practice"></div></div><aside id="session-side" class="card explanation" hidden></aside></div>`;
