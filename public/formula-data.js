@@ -394,6 +394,29 @@ export function symbolsIn(tex, subject) {
   return out;
 }
 
+// Obratno: izvirni LaTeX brez oznak \htmlData{fx=…}{…} (npr. označena formula iz lekcije za inštruktorja;
+// KaTeX v <annotation> hrani označen zapis).
+export function plainTex(tex) {
+  let s = String(tex ?? "");
+  for (let i = s.indexOf("\\htmlData{"); i >= 0; i = s.indexOf("\\htmlData{", i)) {
+    const close = (from) => {
+      let depth = 0;
+      for (let j = from; j < s.length; j++) {
+        if (s[j] === "\\") j++;
+        else if (s[j] === "{") depth++;
+        else if (s[j] === "}" && --depth === 0) return j;
+      }
+      return -1;
+    };
+    const a = close(i + 9); // konec {fx=…}
+    if (a < 0 || s[a + 1] !== "{") break;
+    const b = close(a + 1); // konec {telo}
+    if (b < 0) break;
+    s = s.slice(0, i) + s.slice(a + 2, b) + s.slice(b + 1);
+  }
+  return s;
+}
+
 // Pred izrisom: ovije znane simbole in enote v \htmlData{fx=…}{…}.
 export function annotateTex(tex, subject = override || subjectFn()) {
   if (!tex || tex.length > 4000 || /\\htmlData/.test(tex)) return tex;

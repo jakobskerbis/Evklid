@@ -76,6 +76,7 @@ import { initUci, showUci, setUciTab, uciTab, uciBack, leaveUci, open3d, isOpen3
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
 import { initTestNotice } from "./testna-verzija.js";
 import { initFormulaInfo, annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-info.js";
+import { plainTex } from "./formula-data.js";
 import { xpStatsHtml, xpItemsHtml, levelRowHtml, paintBadge, celebrateXp } from "./xp-fx.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
 import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
@@ -198,7 +199,7 @@ function renderUserText(text) {
   return parts
     .map((p, i) =>
       i % 2
-        ? renderMath(p.slice(1, -1), false, false)
+        ? renderMath(plainTex(p.slice(1, -1)), false, false) // starejša sporočila iz »Razloži« imajo še \htmlData
         : splitFormulas(p).map((x) => ("tex" in x ? renderMath(`\\displaystyle ${x.tex}`, false, false) : escapeHtml(x.text))).join(""), // ulomek v polni velikosti
     )
     .join("");
@@ -1074,7 +1075,10 @@ async function send(text, { deep = false } = {}) {
       autoGrow();
       return;
     }
-    addMessage("assistant", err.message, false, { error: true });
+    // Prekinjena povezava (npr. med objavo nove različice) je TypeError z »network error« v angleščini: učenec
+    // dobi razumljivo obvestilo, vprašanje ostane v polju za ponovno pošiljanje.
+    const dropped = err instanceof TypeError && /network|fetch|load failed/i.test(err.message);
+    addMessage("assistant", dropped ? t("off.serverBusy") : err.message, false, { error: true });
     $("#input").value = text;
     autoGrow();
   } finally {
