@@ -3,9 +3,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
+import { migrateAccounts } from "../server/accounts/schema.js";
 import { createApp } from "../server/app.js";
 import { signWebhook } from "../server/accounts/stripe.js";
-import { weeksFor, GUARANTEE, ljDate, ljMidnight } from "../server/placila/garancija.js";
+import { weeksFor, GUARANTEE, ljDate, ljMidnight, migrateGuarantee, purgeOldGuarantees } from "../server/placila/garancija.js";
 
 const SECRET = "whsec_test";
 const YEAR = new Date().getFullYear();
@@ -406,4 +407,22 @@ test("Podari Evklid: meja na šolo velja tudi za razstavljene črke in nevidne z
   } finally {
     delete process.env.EVKLID_ADMIN_EMAILS;
   }
+});
+
+test("garancija: zapis se izbriše 10 let po odločitvi, odprt zahtevek ostane", () => {
+  const store = openDb(":memory:");
+  const db = store.db;
+  migrateAccounts(db);
+  migrateGuarantee(db);
+  const add = (hash, status, started, claimed, decided) =>
+    db.prepare("INSERT INTO guarantees (email_hash, subject, grade_before, started_at, status, claimed_at, decided_at) VALUES (?, 'MAT', 3, ?, ?, ?, ?)").run(hash, started, status, claimed, decided);
+  add("a", "refunded", "2016-01-10 10:00:00", "2016-05-01 10:00:00", "2016-05-20 10:00:00"); // odločeno pred 10 leti
+  add("b", "rejected", "2016-09-01 10:00:00", "2017-01-01 10:00:00", "2017-02-01 10:00:00"); // še ne 10 let
+  add("c", "improved", "2016-01-10 10:00:00", "2016-05-01 10:00:00", null); // boljša ocena: šteje od sporočila
+  add("d", "active", "2016-01-10 10:00:00", null, null); // brez odločitve: od prijave
+  add("e", "claimed", "2016-01-10 10:00:00", "2016-05-01 10:00:00", null); // odprt zahtevek ostane
+  const now = Date.parse("2026-11-04T12:00:00Z");
+  assert.equal(purgeOldGuarantees(db, now), 3);
+  assert.deepEqual(db.prepare("SELECT email_hash FROM guarantees ORDER BY email_hash").all().map((r) => r.email_hash), ["b", "e"]);
+  assert.equal(purgeOldGuarantees(db, now), 0);
 });
