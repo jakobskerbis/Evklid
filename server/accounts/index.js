@@ -210,6 +210,16 @@ export function mountAccounts(app, store, opts = {}) {
   const freeOver = (studentId) => !premiumFor(studentId) && !!freeBudgetReason(studentId);
   aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver });
 
+  // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
+  // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
+  // null = brez meje (stari profili, meja 0 v nastavitvah). Mesečni delež še vedno omeji usage.blockReason.
+  const dailyLimitFor = (studentId, r = rightsFor(studentId)) => {
+    if (r.dailyQuestions === null) return null;
+    const owner = ownerOf(studentId);
+    const credit = owner ? credits.balance(owner) / Math.max(1, childIds(owner).length) : 0;
+    return Math.max(r.dailyQuestions, aiUsage.dailyLimit(studentId, { credit }) ?? 0);
+  };
+
   // Interaktivni del lekcije: Osebno za vse teme, šolska licenca za svoje predmete in razrede.
   const lessonInteractive = (studentId, topicId) => lessonOpen(rightsFor(studentId), topicId);
 
@@ -359,7 +369,8 @@ export function mountAccounts(app, store, opts = {}) {
       }
     }
 
-    // Vprašanja inštruktorju na dan: brezplačni paket (10) ali vsota šolske licence (15) in Osebno (60).
+    // Vprašanja inštruktorju na dan: brezplačni paket (10); plačljivi paketi in šolska licenca vsaj vsota
+    // šolske licence (15) in Osebno (60), s proračunom AI več (dailyLimitFor).
     if (c && req.method === "POST" && /\/messages$/i.test(req.path)) {
       const r = rightsFor(studentId);
       if (!r.personal && !r.school) {
@@ -371,11 +382,14 @@ export function mountAccounts(app, store, opts = {}) {
             upgrade: !!guests.netOf(studentId) || upsell(studentId),
           });
         }
-      } else if (r.dailyQuestions && questionsToday(studentId) >= r.dailyQuestions) {
-        return res.status(429).json({
-          error: `Danes si porabil vseh ${r.dailyQuestions} vprašanj za inštruktorja. Jutri jih spet dobiš. Vadnica in lekcije delujejo naprej neomejeno.`,
-          limit: true,
-        });
+      } else {
+        const limit = dailyLimitFor(studentId, r);
+        if (limit && questionsToday(studentId) >= limit) {
+          return res.status(429).json({
+            error: `Danes si porabil vseh ${limit} vprašanj za inštruktorja. Jutri dobiš nova. Vadnica in lekcije delujejo naprej neomejeno.`,
+            limit: true,
+          });
+        }
       }
     }
     // Mesečna meja porabe brezplačnega paketa velja za vse klice AI (inštruktor, branje zapisa, fotografija urnika).
@@ -827,6 +841,13 @@ export function mountAccounts(app, store, opts = {}) {
         xp: q("SELECT amount, reason, created_at FROM xp_events WHERE student_id = ?", c.id),
         // Prijave napak (server/reports.js): tudi opomba učenca so njegovi podatki.
         reports: q("SELECT message_id, reason, note, question, answer, created_at FROM message_reports WHERE student_id = ?", c.id).map(openReport),
+        lesson_reports: (() => {
+          try {
+            return q("SELECT kind, topic_id, step, reason, note, created_at FROM bug_reports WHERE student_id = ? AND kind = 'lesson'", c.id).map((r) => ({ ...r, note: unseal(r.note) }));
+          } catch {
+            return [];
+          }
+        })(),
         flashcards: (() => {
           try {
             return q("SELECT front, back, subject, topic, source, box, due, reviews, created_at FROM flashcards WHERE student_id = ? AND verified = 1", c.id).map((f) => ({ ...f, front: unseal(f.front), back: unseal(f.back) }));

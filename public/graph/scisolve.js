@@ -438,6 +438,28 @@ export function previewTex(text, env = {}) {
 // ---------- glavna funkcija ----------
 
 /**
+ * Pol(x; y) → r, θ in Rec(r; θ) → x, y (Casio Pol/Rec); kot je v trenutni enoti (stopinje ali radiani).
+ * @returns {{ kind:"pair", tex, deg, items:[{name, v, angle?}] } | { error } | null} null, če vrstica ni Pol/Rec.
+ */
+export function polRec(text, env = {}) {
+  const m = /^\s*(pol|rec)\s*\(([\s\S]*)\)\s*$/i.exec(String(text ?? ""));
+  if (!m) return null;
+  const args = splitTop(m[2], ";").map((x) => x.trim());
+  if (args.length !== 2 || args.some((a) => !a)) return { error: { code: "other", info: {} } };
+  const rs = args.map((a) => evaluate(a, env));
+  const bad = rs.find((r) => !r || r.error || !Number.isFinite(r.value));
+  if (bad) return bad.error ? bad : { error: { code: "other", info: {} } };
+  const [a, b] = rs.map((r) => r.value);
+  const k = env.deg ? Math.PI / 180 : 1; // enota kota → radiani
+  const pol = m[1].toLowerCase() === "pol";
+  const tex = `\\mathrm{${pol ? "Pol" : "Rec"}}\\left(${rs.map((r) => r.tex).join(env.comma === false ? ",\\ " : ";\\ ")}\\right)`;
+  const items = pol
+    ? [{ name: "r", v: clean(Math.hypot(a, b)) }, { name: "\\theta", v: clean(Math.atan2(b, a) / k), angle: true }]
+    : [{ name: "x", v: clean(a * Math.cos(b * k)) }, { name: "y", v: clean(a * Math.sin(b * k)) }];
+  return { kind: "pair", tex, deg: !!env.deg, items };
+}
+
+/**
  * Analizira vrstico znanstvenega kalkulatorja.
  * env: { vars, funcs, ans, deg, comma }
  * Vrne { kind, tex, … } ali { error }:
@@ -447,6 +469,7 @@ export function previewTex(text, env = {}) {
  * - solve: { v, roots, complex, exact?, interval?, all?, none? }
  * - ineq: { v, intervals }
  * - system: { unknowns, values | none | many }
+ * - pair: { items: [{ name, v, angle? }], deg } (Pol/Rec: dva rezultata)
  * - bool: { value } (enačba brez neznank: drži / ne drži)
  * - deriv: { resTex } (simbolni odvod)
  * - expr: izraz z eno spremenljivko (narišemo ga)
@@ -483,6 +506,8 @@ export function analyze(text, env = {}) {
 
   // odvodi in integrali so vedno v radianih (d/dx sin x = cos x, ∫ sin x od 0 do π = 2), tudi v načinu DEG
   if (env.deg && /d\/d|∫|'/.test(raw)) env = { ...env, deg: false };
+  const pr = polRec(raw, env);
+  if (pr) return pr;
   const r = evaluate(raw, env);
   if (r && !r.error) return { kind: "value", ...r };
   if (!r) return null;

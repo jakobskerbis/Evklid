@@ -14,7 +14,7 @@ function onPath(e, c) {
   if (PACE[e.id] !== clearedPace(c.id, LS) + 1) return false;
   return c.year >= Math.min(data.year, 13) - 1 || lessonsOf(c.id).some((x) => LS.known.has(x));
 }
-import { ENGINES } from "./engines.js";
+import { ENGINES, fits } from "./engines.js";
 import { runGame } from "./core.js";
 import { GENRES, childhoodEngines, matchTitle, cleanTitles, MAX_TITLES } from "./childhood.js";
 import { WISHES } from "./wishes.js";
@@ -22,6 +22,7 @@ import { ITEMS, SLOTS, DEFAULT_AVATAR, MULTI_MAX, avatarSvg, itemName, itemOf, i
 import { seasonOf } from "../zbirke.js";
 import { unlockedText } from "../zbirke-view.js";
 import { pageSlice, pageNums } from "./pages.js";
+import { STAGES, stageOf, startTierFor } from "./stage.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const FILTER_KEY = "evklid.gamesFilter";
@@ -80,8 +81,12 @@ const tileColor = (c) => `hsl(${(CONCEPTS.indexOf(c) * 137.5) % 360} 78% 52%)`;
 const areaColor = (id) => AREAS.find((a) => a[0] === id)?.[2] || "#2563eb";
 // Pojem je »zate«, če je blizu tvojemu letu šolanja (malo za nazaj, eno leto naprej).
 const forYou = (c) => (data.year >= 13 ? c.year >= 10 : c.year <= data.year + 1 && c.year >= data.year - 4);
-// Vsaka igra se začne lahko; težje gre šele, ko učencu gre (shranjena raven pojma).
-const startTier = (c) => data.concepts[c.id] || 1;
+// Stopnja učenca (stage.js): OŠ igrivo, SŠ in fakulteta resnejši videz in težji začetek.
+const stage = () => stageOf(ctx?.getStudent()?.settings);
+// V OŠ se vsaka igra začne lahko; težje gre šele, ko učencu gre (shranjena raven pojma).
+const startTier = (c) => startTierFor(stage(), data.concepts[c.id]);
+// Videz po stopnji velja za ves pogled iger (mreža, igra, kartice).
+const applyStageLook = () => document.querySelector("#view-games")?.classList.toggle("gm-calm", STAGES[stage()].calm);
 
 export function initGames(c) {
   ctx = c;
@@ -90,12 +95,13 @@ export function initGames(c) {
     if (!SUBJECTS.includes(filter.subject)) filter.subject = "MAT";
   } catch {}
 }
-export const allGamesCount = () => CONCEPTS.length * ENGINES.length;
+export const allGamesCount = () => ENGINES.reduce((n, e) => n + (e.fits ? CONCEPTS.filter((c) => e.fits(c)).length : CONCEPTS.length), 0);
 
 export async function showGames() {
   root = document.querySelector("#games-content");
   if (!root || !ctx) return;
   setNumberStyle(ctx.currentLang());
+  applyStageLook();
   if (game) return; // igra ostane odprta
   renderPortal();
   try {
@@ -212,7 +218,7 @@ function renderPortal() {
     const shut = [];
     for (let r = 0; r < kinds.length; r++) cs.forEach((c, i) => {
       const e = kinds[(i + r) % kinds.length];
-      if (match(c, e)) (gameLock(e.id, c, LS) ? shut : onPath(e, c) ? path : open).push([e, c]);
+      if (fits(e, c) && match(c, e)) (gameLock(e.id, c, LS) ? shut : onPath(e, c) ? path : open).push([e, c]);
     });
     paths += path.length;
     const games = [...path, ...open, ...shut]; // igre na poti najprej
@@ -227,7 +233,7 @@ function renderPortal() {
   let kidSec = "";
   if (kidEngines.length && filter.kind === "all" && !q && !page) {
     const pool = CONCEPTS.filter((c) => pick(c));
-    const tiles = pool.length ? kidEngines.flatMap((id, i) => [0, 1].map((j) => [ENGINES.find((e) => e.id === id), pool[(i * 7 + j * 3) % pool.length]])).filter(([e, c], k, all) => e && all.findIndex(([e2, c2]) => e2 === e && c2 === c) === k).slice(0, 12) : [];
+    const tiles = pool.length ? kidEngines.flatMap((id, i) => [0, 1].map((j) => [ENGINES.find((e) => e.id === id), pool[(i * 7 + j * 3) % pool.length]])).filter(([e, c], k, all) => e && fits(e, c) && all.findIndex(([e2, c2]) => e2 === e && c2 === c) === k).slice(0, 12) : [];
     if (tiles.length) kidSec = `<section class="gm-sec gm-kidsec"><h2><span class="gm-kid-ic" aria-hidden="true">🕹️</span>${esc(t("games.kidTitle"))}<span class="gm-count">${tiles.length}</span><button type="button" class="ghost gm-kidedit" data-act="kid">${icon("pencil")}${esc(t("games.kidEdit"))}</button></h2><div class="gm-grid">${tiles.map(([e, c]) => tile(e, c)).join("")}</div></section>`;
   }
   const kidAsk = kid === null && ctx.getStudent() && !q
@@ -534,7 +540,7 @@ function openGame(id) {
   const [eid, cid] = id.split(":");
   const engine = ENGINES.find((e) => e.id === eid);
   const concept = CONCEPTS.find((c) => c.id === cid);
-  if (!engine || !concept) return;
+  if (!engine || !concept || !fits(engine, concept)) return;
   const lock = gameLock(eid, concept, LS);
   if (lock) return showLock(engine, concept, lock);
   root.innerHTML = `<div class="gm-host"></div>`;
@@ -544,6 +550,7 @@ function openGame(id) {
     engine,
     concept,
     tier: startTier(concept),
+    tierUp: STAGES[stage()].tierUp,
     best: data.games[id]?.best || 0,
     title,
     t,
@@ -583,7 +590,7 @@ function openGame(id) {
 // Zaklenjena igra: kaj manjka in pot do odklepa (snov na učni poti, preizkus ali najprej mirnejša igra).
 function showLock(engine, c, lock) {
   const name = conceptName(c);
-  const others = lock.need === "pace" ? ENGINES.filter((e) => PACE[e.id] === lock.pace && !gameLock(e.id, c, LS)).slice(0, 3) : [];
+  const others = lock.need === "pace" ? ENGINES.filter((e) => PACE[e.id] === lock.pace && fits(e, c) && !gameLock(e.id, c, LS)).slice(0, 3) : [];
   const text = lock.need === "learn" ? t("games.lockLearn", { name }) : t("games.lockPace", { n: CLEAR_CORRECT });
   root.innerHTML = `<div class="gm-portal"><div class="card gm-lockcard">
     <h2>${icon("lock")} ${esc(`${kindName(engine)}: ${name}`)}</h2>
@@ -641,7 +648,7 @@ function runCheck(engine, c) {
       const s = ctx.getStudent();
       if (s) ctx.api(`/api/students/${s.id}/games/unlock`, { method: "POST", body: JSON.stringify({ concept: c.id, correct: ok }) }).catch(() => {});
     }
-    const first = pass ? ENGINES.find((e) => !gameLock(e.id, c, LS)) : null;
+    const first = pass ? ENGINES.find((e) => fits(e, c) && !gameLock(e.id, c, LS)) : null;
     const topic = gameLock(engine.id, c, { ...LS, passed: new Set() })?.topic;
     shell(`<p class="gm-check-res">${esc(t(pass ? "games.checkPass" : "games.checkFail", { ok, n: qs.length, need: CHECK_PASS }))}</p>
       <div class="actions">

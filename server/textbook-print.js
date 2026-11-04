@@ -3,7 +3,7 @@
 import katex from "katex";
 import { marked } from "marked";
 import { getPath, getTopic, topicOrder } from "./curriculum.js";
-import { loadLesson, simsFor, expandFormulaBlocks, getBook, formulaSheet } from "./textbook.js";
+import { loadLesson, simsFor, expandFormulaBlocks, getBook, formulaSheetSections } from "./textbook.js";
 import { splitFormulaCells } from "../public/rich.js";
 
 const esc = (s) =>
@@ -107,7 +107,7 @@ export function printFormulas(key) {
   const p = getPath(key);
   const bookKey = p ? `${p.subject}-${p.school}` : key;
   const book = getBook(bookKey);
-  const md = formulaSheet(bookKey);
+  const md = formulaSheetSections(bookKey)?.md;
   if (!book || !md) return null;
   const content = `<section class="sheet">
       <p class="brand small">Evkli<span>d</span></p>

@@ -3,6 +3,7 @@
 import { t } from "./i18n.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { createRenderer } from "./rich.js";
+import { renderAdminReports } from "./prijave.js";
 
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -290,6 +291,9 @@ async function renderAdmin(box) {
         <a class="btn-secondary" href="/api/feedback/export?format=json" download>${icon("download")}<span>${esc(t("fb.download"))}</span></a>
       </div>
       ${data.count || data.wishes ? `<div class="fb-summary">${window.DOMPurify && window.marked ? createRenderer().renderRich(data.summary) : `<pre>${esc(data.summary)}</pre>`}</div>` : ""}
-    </div>`;
+    </div>
+    <div class="card"><h2>${icon("flag")} ${esc(t("adm.rep.title"))}</h2><div class="fb-reports"></div></div>`;
   hydrateIcons(box);
+  // Prijave napak (lekcije, odgovori inštruktorja, skrbnik) tudi na računalniku s strežnikom brez računov.
+  renderAdminReports(box.querySelector(".fb-reports"), { api: ctx.api, toast: ctx.toast });
 }

@@ -71,6 +71,8 @@ export function textWidth(g, text, size, weight = 800) {
   g.font = `${weight} ${size}px Nunito, system-ui, sans-serif`;
   return g.measureText(text).width;
 }
+// Račun ali odgovor sredi prevedenega besedila: smer po vsebini (»−11« ostane »−11« tudi v RTL).
+export const iso = (s) => `\u2068${s}\u2069`;
 export function roundRect(g, x, y, w, h, r) {
   g.beginPath();
   g.moveTo(x + r, y);
@@ -81,11 +83,12 @@ export function roundRect(g, x, y, w, h, r) {
   g.closePath();
 }
 
-// Zažene igro v elementu host. opts: { engine, concept, tier, best, t, title, onEnd(result) → Promise<info>, onExit() }
+// Zažene igro v elementu host. opts: { engine, concept, tier, tierUp, best, t, title, onEnd(result) → Promise<info>, onExit() }
+// tierUp: po koliko pravilnih zaporedoma igra preide na težje naloge (stage.js, privzeto 5).
 export function runGame(host, opts) {
   const { engine, concept, t } = opts;
   host.innerHTML = `
-    <div class="gm-play" style="--gm-a:${engine.colors[0]};--gm-b:${engine.colors[1]}">
+    <div class="gm-play${engine.ui ? " gm-has-ui" : ""}" style="--gm-a:${engine.colors[0]};--gm-b:${engine.colors[1]}">
       <div class="gm-hud">
         <button type="button" class="gm-btn gm-exit" aria-label="${esc(t("games.back"))}">${icon("arrow-left")}</button>
         <div class="gm-qbox"><div class="gm-q" aria-live="polite"></div><div class="gm-fb" aria-live="assertive"></div></div>
@@ -98,6 +101,7 @@ export function runGame(host, opts) {
       </div>
       <div class="gm-timer" hidden><i></i></div>
       <div class="gm-stage"><canvas dir="ltr" tabindex="0" aria-label="${esc(opts.title)}"></canvas><div class="gm-overlay"></div></div>
+      ${engine.ui ? `<div class="gm-ui" dir="ltr"></div>` : ""}
     </div>`;
   const $ = (s) => host.querySelector(s);
   const canvas = $("canvas"), g = canvas.getContext("2d");
@@ -110,6 +114,22 @@ export function runGame(host, opts) {
     mistakes: [],
     fx: [], shakeT: 0,
   };
+  // Igra z lastnimi gumbi (engine.ui, npr. številčnica) jih postavi v G.ui pod prizorom; gumbi so
+  // neaktivni, dokler igra ne teče (začetna kartica, premor, konec).
+  G.ui = $(".gm-ui");
+  const uiLive = () => G.ui && (G.ui.inert = !(G.running && !G.paused && !G.over));
+  // Igra lahko sprejme le nekatere naloge pojma (engine.accept, npr. samo odgovor z enim številom).
+  const okQ = (q) => !engine.accept || engine.accept(q);
+  function drawQuestion(tier, avoid) {
+    for (let i = 0; i < 60; i++) {
+      const q = makeQuestion(concept.id, tier);
+      if (!okQ(q)) continue;
+      if (!avoid || q.q !== avoid || i >= 8) return q;
+    }
+    return makeQuestion("add", tier); // varna rezervna naloga (eno število), če pojem nič ne ustreza
+  }
+  // dodatna naloga iste snovi (za igre, ki pokažejo več nalog hkrati, ali vzorec za tipke igre)
+  G.ask = (tier = G.tier) => drawQuestion(tier);
   const eng = engine.create(G);
   // Zgodba: poglavje se odklene na vsakih CHAPTER_EVERY pravilnih odgovorov.
   const story = () => engine.story?.[gameLang()] || engine.story?.en || [];
@@ -126,11 +146,7 @@ export function runGame(host, opts) {
 
   // ---------- naloge ----------
   function newQuestion() {
-    let q;
-    for (let i = 0; i < 5; i++) {
-      q = makeQuestion(concept.id, G.tier);
-      if (!G.q || q.q !== G.q.q) break;
-    }
+    const q = drawQuestion(G.tier, G.q?.q);
     G.q = q;
     showFb("", "");
     const n = engine.options || 4;
@@ -150,8 +166,6 @@ export function runGame(host, opts) {
     }
   }
   G.isRight = (s) => s === G.q?.a;
-  // dodatna naloga iste snovi (za igre, ki pokažejo več nalog hkrati)
-  G.ask = () => makeQuestion(concept.id, G.tier);
   function startTimer(sec) {
     timer = { left: sec, total: sec };
     $(".gm-timer").hidden = false;
@@ -166,6 +180,8 @@ export function runGame(host, opts) {
     el.className = `gm-fb ${cls}`;
     el.innerHTML = html;
   }
+  // namig brez kazni (npr. »Ulomek še okrajšaj.«): naloga ostane, življenje tudi
+  G.hint = (text) => showFb(`${icon("lightbulb")} ${esc(text)}`, "hint");
 
   // Odgovor igralca. keep: naloga ostane (npr. baloni), sicer nova po kratkem premoru.
   G.answer = (ok, x = G.W / 2, y = G.H / 2, { keep = false, delay = 0.45, silent = false, note = "" } = {}) => {
@@ -184,7 +200,7 @@ export function runGame(host, opts) {
         G.lives++;
         G.float(G.W / 2, G.H / 3, "+❤", "#ef4444");
       }
-      if (G.streak % 5 === 0 && G.tier < 3) {
+      if (G.streak % (opts.tierUp || 5) === 0 && G.tier < 3) {
         G.tier++;
         beep("up");
         G.float(G.W / 2, G.H / 2, t("games.harder"), "#f59e0b", 28);
@@ -205,7 +221,8 @@ export function runGame(host, opts) {
       beep("bad");
       // Če naloga ostane (izbira med več predmeti), pravilnega odgovora še ne izdamo.
       // note: igra lahko pove svojo razlago (npr. kateri robotek je bil slepar)
-      showFb(`${icon("x")} ${esc(note || (keep ? t("games.tryAgain") : t("games.correctWas", { a: G.q.a })))}`, "bad");
+      // odgovor osamljen (FSI … PDI), da »−11« v arabščini ne postane »11−«
+      showFb(`${icon("x")} ${esc(note || (keep ? t("games.tryAgain") : t("games.correctWas", { a: iso(G.q.a) })))}`, "bad");
       if (G.badStreak >= 2 && G.tier > 1) {
         G.tier--;
         G.badStreak = 0;
@@ -347,7 +364,8 @@ export function runGame(host, opts) {
     if (!host.isConnected) return;
     if (e.target.closest?.("input, textarea, select")) return;
     if (e.key === "Escape" || e.key === "p" || e.key === "P") {
-      if (G.running && !G.over) {
+      // samo ob pritisku: onKey posluša tudi spust tipke, ki bi premor takoj spet končal
+      if (e.type === "keydown" && G.running && !G.over) {
         togglePause();
         e.preventDefault();
       }
@@ -359,6 +377,8 @@ export function runGame(host, opts) {
       e.preventDefault();
       return;
     }
+    // Enter/presledek na gumbu igre (G.ui) sproži ta gumb, ne še enkrat tipke igre
+    if ((e.key === "Enter" || e.key === " ") && e.target.closest?.(".gm-ui")) return;
     if (!live()) return;
     if (eng.key?.(e.key, e.type === "keydown")) e.preventDefault();
   };
@@ -378,6 +398,7 @@ export function runGame(host, opts) {
       beta0 = null; // po premoru znova umeri nagib
       canvas.focus({ preventScroll: true });
     }
+    uiLive();
   }
   $(".gm-pause").addEventListener("click", () => G.running && !G.over && togglePause());
   $(".gm-sound").addEventListener("click", () => {
@@ -475,6 +496,7 @@ export function runGame(host, opts) {
     overlay.hidden = true;
     eng.reset?.();
     G.running = true;
+    uiLive();
     hud();
     G.waiting = true; // kratek premor pred prvo nalogo
     nextAt = 0.8;
@@ -484,6 +506,7 @@ export function runGame(host, opts) {
   async function end() {
     G.over = true;
     G.running = false;
+    uiLive();
     G.stopTimer();
     beep("over");
     const res = { score: G.score, correct: G.correct, wrong: G.wrong, tier: G.tier };
@@ -511,6 +534,7 @@ export function runGame(host, opts) {
   }
 
   hud();
+  uiLive();
   resize();
   intro();
   raf = requestAnimationFrame(frame);

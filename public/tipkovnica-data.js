@@ -85,7 +85,7 @@ export const FX_GROUPS = [
   ["trig", "sc.grp.trig", [["sin", "sin(@)"], ["cos", "cos(@)"], ["tan", "tan(@)"], ["cot", "cot(@)"], ["°", "°"], ["sin⁻¹", "arcsin(@)"], ["cos⁻¹", "arccos(@)"], ["tan⁻¹", "arctan(@)"], ["cot⁻¹", "arccot(@)"], ["π", "π"], ["sinh", "sinh(@)"], ["cosh", "cosh(@)"], ["tanh", "tanh(@)"]]],
   ["pow", "tk.fx.pow", [["x²", "²"], ["x³", "³"], ["xⁿ", "^(@)"], ["x⁻¹", "⁻¹"], ["√", "√(@)"], ["∛", "∛(@)"], ["ⁿ√", "root(@;)"], ["eˣ", "e^(@)"], ["10ˣ", "10^(@)"], ["log", "log(@)"], ["ln", "ln(@)"], ["logₐ", "logb(@;)"], ["|x|", "abs(@)"], ["a/b", "(@)/()"], ["×10ⁿ", "×10^(@)"]]],
   ["ana", "sc.grp.ana", [["d/dx", "d/dx(@)"], ["f′(a)", "d/dx(@;)"], ["∫ₐᵇ", "∫(@;;)"], ["∑", "∑_(n=1)^(@) "], ["∏", "∏_(n=1)^(@) "], ["f(x)=", "f(x)="], ["g(x)=", "g(x)="], ["x", "x"], ["y", "y"], ["=", "="], [";", ";"], ["<", "<"], [">", ">"], ["≤", "≤"], ["≥", "≥"]]],
-  ["num", "sc.grp.num", [["n!", "!"], ["nCr", "nCr(@;)"], ["nPr", "nPr(@;)"], ["gcd", "gcd(@;)"], ["lcm", "lcm(@;)"], ["mod", "mod(@;)"], ["round", "round(@;)"], ["⌊x⌋", "floor(@)"], ["⌈x⌉", "ceil(@)"], ["sgn", "sgn(@)"], ["%", "%"], ["Ans", "Ans"]]],
+  ["num", "sc.grp.num", [["n!", "!"], ["nCr", "nCr(@;)"], ["nPr", "nPr(@;)"], ["gcd", "gcd(@;)"], ["lcm", "lcm(@;)"], ["mod", "mod(@;)"], ["round", "round(@;)"], ["⌊x⌋", "floor(@)"], ["⌈x⌉", "ceil(@)"], ["sgn", "sgn(@)"], ["Int", "Int(@)"], ["frac", "frac(@)"], ["Ran#", "rand"], ["RanInt", "randint(@;)"], ["Pol", "Pol(@;)"], ["Rec", "Rec(@;)"], ["%", "%"], ["Ans", "Ans"]]],
   ["stat", "sc.grp.stat", [["mean", "mean(@)"], ["median", "median(@)"], ["σ", "stdev(@)"], ["min", "min(@)"], ["max", "max(@)"], ["Σ", "total(@)"], [";", ";"]]],
   ["cplx", "sc.grp.cplx", [["i", "i"], ["|z|", "abs(@)"]]],
 ];
@@ -153,6 +153,24 @@ export function usesOwnKeyboard(el, mode = "always", { math = false, inputmode }
  * Vstavi predlogo v besedilo: »@« je mesto kazalca, tja gre označeno besedilo (označiš 16, pritisneš √ → √(16)).
  * Vrne { value, caret, text } (text = vstavljeni del).
  */
+// Zapisi za ljudi (j, 2. 11.: »Vmesni koraki« so izpisali abs(abs(…)) namesto |x|). Kalkulator in skener
+// (configureKeyboard … parsed: true) dobita zapis, ki ga razčleni math.js; |x| razume tudi ta.
+const PRETTY_ALWAYS = { "abs(@)": "|@|" };
+const PRETTY_TEXT = {
+  "floor(@)": "⌊@⌋",
+  "ceil(@)": "⌈@⌉",
+  "stdev(@)": "σ(@)",
+  "total(@)": "Σ(@)",
+  "root(@;)": "@√()",
+  "logb(@;)": "log_@()",
+  "gcd(@;)": "D(@; )",
+  "lcm(@;)": "v(@; )",
+};
+/** Kaj vstavi tipka: v poljih, ki jih bere človek ali inštruktor, matematični zapis namesto imena funkcije. */
+export function prettyIns(ins, parsed = false) {
+  return PRETTY_ALWAYS[ins] ?? (parsed ? ins : PRETTY_TEXT[ins] ?? ins);
+}
+
 export function applyTemplate(value, start, end, ins, maxLength = -1, literal = false) {
   const v = String(value ?? "");
   const s = Math.max(0, Math.min(start ?? v.length, v.length));
@@ -195,7 +213,7 @@ export function withUnit(value, unit) {
 // ---------- nastavitve naprave ----------
 export const PREF_KEY = "evklid.tipkovnica";
 export const MODES = ["always", "math", "never"];
-export const DEFAULT_PREFS = { mode: "always", words: false, buzz: true };
+export const DEFAULT_PREFS = { mode: "always", words: false, buzz: true, glide: true };
 export function parsePrefs(raw) {
   let p = {};
   try {
@@ -205,6 +223,7 @@ export function parsePrefs(raw) {
     mode: MODES.includes(p.mode) ? p.mode : DEFAULT_PREFS.mode,
     words: typeof p.words === "boolean" ? p.words : DEFAULT_PREFS.words,
     buzz: typeof p.buzz === "boolean" ? p.buzz : DEFAULT_PREFS.buzz,
+    glide: typeof p.glide === "boolean" ? p.glide : DEFAULT_PREFS.glide,
   };
 }
 
@@ -218,4 +237,155 @@ export function suggest(words, prefix, n = 3) {
     if (out.length >= n) break;
   }
   return out;
+}
+
+// ---------- črke kot Gboard (j, 3. 11.: »po funkcionalnosti enak g-boardu«) ----------
+// Zgornja vrsta: dolg pritisk da številko (namig v kotu tipke), nato različice črke.
+const DIGITS = "1234567890";
+/** Številka za tipko v zgornji vrsti (prvih deset tipk) ali "". */
+export const digitFor = (rows, c) => {
+  const i = rows?.[0]?.indexOf(c) ?? -1;
+  return i >= 0 && i < DIGITS.length ? DIGITS[i] : "";
+};
+
+/** Velika začetnica: na začetku polja, po . ! ? … in presledku ali v novi vrstici. */
+export function autoCapNeeded(before) {
+  const b = String(before ?? "");
+  return !b.trim() || /[.!?…]\s+$/u.test(b) || /\n\s*$/.test(b);
+}
+
+/** Dva presledka za besedo ali številko = pika in presledek (kot Gboard). Vrne položaj prvega presledka ali -1. */
+export function doubleSpaceAt(before) {
+  return /[\p{L}\p{N})] $/u.test(String(before ?? "")) ? String(before).length - 1 : -1;
+}
+
+/** Začetek n-te besede nazaj od pos (poteg levo po ⌫ označi besede). */
+export function wordsBack(value, pos, n = 1) {
+  const v = String(value ?? "");
+  let p = Math.max(0, Math.min(pos, v.length));
+  for (let k = 0; k < n && p > 0; k++) {
+    while (p > 0 && /\s/u.test(v[p - 1])) p--;
+    while (p > 0 && !/\s/u.test(v[p - 1])) p--;
+  }
+  return p;
+}
+
+// Samopopravek (le s predlogi besed): seznam je majhen, zato popravimo samo varne tipkarske napake —
+// manjkajoče strešice (resitev → rešitev) in zamenjani sosednji črki (enacba ← enčaba ni, a »koilko« → »koliko«).
+const FOLD = { č: "c", ć: "c", š: "s", ž: "z", đ: "d" };
+const fold = (w) => [...w].map((ch) => FOLD[ch] || ch).join("");
+function swapped(a, b) {
+  if (a.length !== b.length) return false;
+  const d = [];
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) d.push(i);
+  return d.length === 2 && d[1] === d[0] + 1 && a[d[0]] === b[d[1]] && a[d[1]] === b[d[0]];
+}
+/** Popravek besede ali null. words: seznam po pogostosti. Velika začetnica ostane. */
+export function autocorrect(word, words) {
+  const w = String(word ?? "");
+  if (!words?.length || w.length < 3 || !/^[\p{L}]+$/u.test(w)) return null;
+  const low = w.toLocaleLowerCase();
+  if (low !== w && low.slice(1) !== w.slice(1)) return null; // KRATICE ostanejo
+  const set = new Set(words.map((x) => x.toLocaleLowerCase()));
+  if (set.has(low)) return null;
+  const f = fold(low);
+  const hit = words.find((x) => {
+    const xl = x.toLocaleLowerCase();
+    return xl.length === low.length && ((fold(xl) === f && f === low) || swapped(xl, low));
+  });
+  if (!hit) return null;
+  return w[0] !== low[0] ? hit[0].toLocaleUpperCase() + hit.slice(1) : hit;
+}
+
+// ---------- drsenje po črkah (glide, kot Gboard) ----------
+// Tipka za črko: črka sama, sicer osnovna črka (č → c, če je v razporeditvi ni ali jo ima le kot različico).
+const baseKey = (c, centers) => {
+  if (centers[c]) return c;
+  const b = FOLD[c] || c.normalize("NFD").replace(/\p{M}/gu, "");
+  return centers[b] ? b : null;
+};
+function resample(pts, n) {
+  if (pts.length === 1) return Array.from({ length: n }, () => pts[0]);
+  let total = 0;
+  const seg = [0];
+  for (let i = 1; i < pts.length; i++) seg.push((total += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y)));
+  if (total < 1e-6) return Array.from({ length: n }, () => pts[0]);
+  const out = [];
+  let j = 1;
+  for (let k = 0; k < n; k++) {
+    const d = (total * k) / (n - 1);
+    while (j < pts.length - 1 && seg[j] < d) j++;
+    const span = seg[j] - seg[j - 1] || 1;
+    const u = Math.min(1, Math.max(0, (d - seg[j - 1]) / span));
+    out.push({ x: pts[j - 1].x + (pts[j].x - pts[j - 1].x) * u, y: pts[j - 1].y + (pts[j].y - pts[j - 1].y) * u });
+  }
+  return out;
+}
+function normalised(p) {
+  const cx = p.reduce((s, q) => s + q.x, 0) / p.length;
+  const cy = p.reduce((s, q) => s + q.y, 0) / p.length;
+  const r = Math.sqrt(p.reduce((s, q) => s + (q.x - cx) ** 2 + (q.y - cy) ** 2, 0) / p.length) || 1;
+  return p.map((q) => ({ x: (q.x - cx) / r, y: (q.y - cy) / r }));
+}
+const meanDist = (a, b) => a.reduce((s, q, i) => s + Math.hypot(q.x - b[i].x, q.y - b[i].y), 0) / a.length;
+
+/**
+ * Drsenje po črkah: do n najboljših besed za pot prsta.
+ * points: [{x, y}] (ali [x, y]); keyCenters: { črka: {x, y} }; words: seznam po pogostosti.
+ * opts: n (3), keyW (širina tipke; sicer ocena), radius (v širinah tipke: kako blizu mora biti prvi/zadnji znak).
+ * Beseda se začne pri tipki blizu prve točke in konča blizu zadnje; idealna pot skozi središča tipk
+ * (podvojene črke se strnejo) se primerja z narisano: povprečna razdalja točk + oblika + pokritost črk + majhna prednost pogostih besed.
+ */
+export function glideDecode(points, keyCenters, words, { n = 3, keyW, radius } = {}) {
+  const pts = (points || []).map((p) => (Array.isArray(p) ? { x: p[0], y: p[1] } : p));
+  if (pts.length < 2 || !words?.length) return [];
+  const centers = {};
+  for (const [c, p] of Object.entries(keyCenters || {})) centers[c] = Array.isArray(p) ? { x: p[0], y: p[1] } : p;
+  const chars = Object.keys(centers);
+  if (chars.length < 2) return [];
+  if (!keyW) {
+    const nn = chars.map((a) => Math.min(...chars.filter((b) => b !== a).map((b) => Math.hypot(centers[a].x - centers[b].x, centers[a].y - centers[b].y))));
+    keyW = nn.sort((a, b) => a - b)[nn.length >> 1] || 40;
+  }
+  const rad = (radius || 1.4) * keyW;
+  const first = pts[0];
+  const last = pts[pts.length - 1];
+  const near = (c, p) => Math.hypot(centers[c].x - p.x, centers[c].y - p.y) <= rad;
+  const fk = new Set(chars.filter((c) => near(c, first)));
+  const lk = new Set(chars.filter((c) => near(c, last)));
+  if (!fk.size || !lk.size) return [];
+  const N = 32;
+  const user = resample(pts, N);
+  const userShape = normalised(user);
+  const scored = [];
+  const seen = new Set();
+  for (let rank = 0; rank < words.length; rank++) {
+    const w = words[rank];
+    if (w.length < 2) continue;
+    const low = w.toLocaleLowerCase();
+    const a = baseKey(low[0], centers);
+    const z = baseKey(low[low.length - 1], centers);
+    if (!a || !z || !fk.has(a) || !lk.has(z) || seen.has(low)) continue;
+    const ks = [];
+    let ok = true;
+    for (const ch of low) {
+      const k = baseKey(ch, centers);
+      if (!k) {
+        ok = false;
+        break;
+      }
+      if (ks[ks.length - 1] !== k) ks.push(k);
+    }
+    if (!ok) continue;
+    seen.add(low);
+    const ideal = resample(ks.map((k) => centers[k]), N);
+    const loc = meanDist(user, ideal) / keyW;
+    const shape = meanDist(userShape, normalised(ideal));
+    const uniq = [...new Set(ks)];
+    let cover = 0;
+    for (const k of uniq) cover += Math.min(...user.map((q) => Math.hypot(q.x - centers[k].x, q.y - centers[k].y))) / keyW;
+    cover /= uniq.length;
+    scored.push({ w, s: loc + 0.5 * shape + 0.3 * cover + 0.05 * Math.log10(rank + 1) });
+  }
+  return scored.sort((x, y) => x.s - y.s).slice(0, n).map((x) => x.w);
 }

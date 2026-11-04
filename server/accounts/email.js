@@ -10,6 +10,8 @@ export class Mailer {
     this.from = from || "Evklid <onboarding@resend.dev>";
     this.fetch = fetchFn;
     this.log = log;
+    // Stanje pošiljanja od zagona (za /healthz/stanje): ali Resend sprejema sporočila, brez naslovov.
+    this.stats = { poslanih: 0, napak: 0, zadnjiUspeh: null, zadnjaNapaka: null, razlog: null };
   }
   get enabled() {
     return !!this.key;
@@ -21,14 +23,35 @@ export class Mailer {
       this.log(prod ? `[evklid] E-pošta ni poslana (Resend ni nastavljen): ${subject}` : `[evklid] E-pošta (Resend ni nastavljen) za ${to}: ${subject}\n${text || ""}`);
       return { id: null, dev: true };
     }
-    const res = await this.fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${this.key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: this.from, to: [to], subject, html, text }),
-    });
+    let res;
+    try {
+      res = await this.fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${this.key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ from: this.from, to: [to], subject, html, text }),
+      });
+    } catch (err) {
+      this.failed(`omrežje: ${err.message}`);
+      throw err;
+    }
     const body = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(body?.message || `Resend ${res.status}`);
+    if (!res.ok) {
+      const msg = body?.message || `Resend ${res.status}`;
+      this.failed(`${res.status} ${msg}`);
+      throw new Error(msg);
+    }
+    this.stats.poslanih++;
+    this.stats.zadnjiUspeh = new Date().toISOString();
     return body;
+  }
+  failed(reason) {
+    this.stats.napak++;
+    this.stats.zadnjaNapaka = new Date().toISOString();
+    // Brez e-naslovov: stanje je javno.
+    this.stats.razlog = String(reason).replace(/[^\s<>"']+@[^\s<>"']+/g, "…").slice(0, 200);
+  }
+  status() {
+    return { nastavljena: this.enabled, ...this.stats };
   }
 }
 

@@ -51,7 +51,10 @@ export const PRICES = {
 };
 
 export function costUsd(model, u) {
-  const p = PRICES[model] || PRICES["claude-opus-5-5"];
+  // API lahko vrne ime z datumom (»claude-haiku-5-5-20261015«): cena po začetku imena, sicer bi Haiku štel po ceni Opusa.
+  const id = String(model || "");
+  const key = Object.keys(PRICES).filter((k) => id === k || id.startsWith(`${k}-`)).sort((a, b) => b.length - a.length)[0];
+  const p = PRICES[key] || PRICES["claude-opus-5-5"];
   return (
     ((u.input_tokens || 0) * p.in +
       (u.output_tokens || 0) * p.out +
@@ -203,9 +206,9 @@ function lastUserText(messages) {
   const last = messages[messages.length - 1];
   if (!last) return "";
   if (typeof last.content === "string") return last.content;
-  // Skrita opomba s preverjenim rezultatom (server/live-check.js) ni del učenčevega besedila.
+  // Skriti opombi s preverjenim rezultatom (server/live-check.js) in pole (server/paper-context.js) nista del učenčevega besedila.
   return last.content
-    .filter((b) => b.type === "text" && !b.text.startsWith("<preverjen_racun>"))
+    .filter((b) => b.type === "text" && !b.text.startsWith("<preverjen_racun>") && !b.text.startsWith("<kontekst_pole>"))
     .map((b) => b.text)
     .join(" ");
 }

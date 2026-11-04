@@ -101,6 +101,7 @@ function Root() {
           <Stack.Screen name="subscription" options={{ title: t("mob.subscription"), presentation: "modal" }} />
           <Stack.Screen name="calculator" options={{ title: t("nav.graph"), presentation: "modal" }} />
           <Stack.Screen name="delete-account" options={{ title: t("mob.deleteAccount"), presentation: "modal" }} />
+          <Stack.Screen name="vodic" options={{ title: t("guide.title") }} />
         </Stack.Protected>
       </Stack>
       {serverBusy ? (

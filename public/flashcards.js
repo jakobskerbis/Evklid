@@ -4,7 +4,7 @@
 import { icon } from "./icons.js";
 import { t, locale } from "./i18n.js";
 
-let D = null; // { api, renderRich, escapeHtml, toast, showView, getStudent, onDue }
+let D = null; // { api, renderRich, escapeHtml, toast, showView, getStudent, getPath, subjectName, onDue }
 const $ = (sel) => document.querySelector(sel);
 const box = () => $("#view-cards");
 let session = null; // { queue, done, shown, total }
@@ -17,6 +17,8 @@ export function initFlashcards(deps) {
 // SQLite datetime (UTC, »YYYY-MM-DD HH:MM:SS«) → Date.
 const sqlDate = (s) => new Date(String(s).replace(" ", "T") + "Z");
 const sid = () => D.getStudent()?.id;
+// Kartice izbranega predmeta (predmet učne poti); brez poti strežnik vzame predmet iz profila.
+const pathQ = () => (D.getPath?.() ? `?path=${encodeURIComponent(D.getPath())}` : "");
 const rich = (s) => D.renderRich(s);
 
 export async function showFlashcards() {
@@ -25,7 +27,7 @@ export async function showFlashcards() {
   v.innerHTML = `<p class="muted">${t("common.loading")}</p>`;
   let data;
   try {
-    data = await D.api(`/api/students/${sid()}/flashcards`);
+    data = await D.api(`/api/students/${sid()}/flashcards${pathQ()}`);
   } catch (err) {
     v.innerHTML = `<p class="muted">${D.escapeHtml(err.message)}</p>`;
     return;
@@ -35,6 +37,7 @@ export async function showFlashcards() {
   session = { queue: due.map((c) => c.id), cards: new Map(data.cards.map((c) => [c.id, c])), done: 0, again: new Set(), shown: false, total: due.length };
   v.innerHTML = `
     <button type="button" class="ghost back fc-back"><i data-icon="arrow-left"></i><span>${t("topic.backPath")}</span></button>
+    ${D.subjectName?.() ? `<div class="eyebrow fc-subject">${D.escapeHtml(D.subjectName())}</div>` : ""}
     <h1 class="with-icon">${icon("layers")} ${t("cards.title")}</h1>
     <p class="muted">${t("cards.intro")}</p>
     <section id="fc-review" class="fc-review" aria-live="polite"></section>
@@ -59,7 +62,7 @@ export async function showFlashcards() {
 function rowHtml(c) {
   const meta = [c.topic, c.source === "own" ? t("cards.own") : ""].filter(Boolean).map(D.escapeHtml).join(" · ");
   return `<li data-id="${c.id}">
-    <div class="fc-row-text"><div class="fc-q">${rich(c.front)}</div><div class="fc-a muted">${rich(c.back)}</div>${meta ? `<small class="muted">${meta}</small>` : ""}</div>
+    <div class="fc-row-text"><div class="fc-q" dir="auto">${rich(c.front)}</div><div class="fc-a muted" dir="auto">${rich(c.back)}</div>${meta ? `<small class="muted">${meta}</small>` : ""}</div>
     <div class="fc-row-btns">
       <button type="button" class="ghost icon-only" data-act="edit" title="${t("cards.edit")}" aria-label="${t("cards.edit")}">${icon("pencil")}</button>
       <button type="button" class="ghost icon-only" data-act="del" title="${t("cards.delete")}" aria-label="${t("cards.delete")}">${icon("trash-2")}</button>
@@ -86,8 +89,8 @@ function renderReview(data) {
   const total = Math.max(session.total, pos);
   el.innerHTML = `<div class="card fc-card">
       <div class="fc-head muted"><span>${t("cards.progress", { i: pos, n: total })}</span>${c.topic ? `<span>${D.escapeHtml(c.topic)}</span>` : ""}</div>
-      <div class="fc-front">${rich(c.front)}</div>
-      <div class="fc-backside" hidden>${rich(c.back)}</div>
+      <div class="fc-front" dir="auto">${rich(c.front)}</div>
+      <div class="fc-backside" dir="auto" hidden>${rich(c.back)}</div>
       <div class="actions fc-show"><button type="button" class="primary" data-act="show">${icon("eye")} ${t("cards.show")}</button></div>
       <div class="actions fc-grade" hidden>
         <button type="button" class="secondary" data-act="again">${icon("rotate-ccw")} ${t("cards.again")}</button>
@@ -118,7 +121,7 @@ async function grade(ok) {
   const id = session.queue.shift();
   session.shown = false;
   try {
-    const r = await D.api(`/api/students/${sid()}/flashcards/${id}/review`, { method: "POST", body: { ok } });
+    const r = await D.api(`/api/students/${sid()}/flashcards/${id}/review`, { method: "POST", body: { ok, path: D.getPath?.() || undefined } });
     session.cards.set(id, r.card);
     D.onDue?.(r.due);
   } catch (err) {
@@ -152,7 +155,7 @@ async function addOwn(e) {
   const f = new FormData(e.target);
   const err = e.target.querySelector(".fc-err");
   try {
-    await D.api(`/api/students/${sid()}/flashcards`, { method: "POST", body: { front: f.get("front"), back: f.get("back") } });
+    await D.api(`/api/students/${sid()}/flashcards`, { method: "POST", body: { front: f.get("front"), back: f.get("back"), path: D.getPath?.() || undefined } });
     D.toast(t("common.saved"), "check");
     showFlashcards();
   } catch (x) {

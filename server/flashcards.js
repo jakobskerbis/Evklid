@@ -4,6 +4,7 @@
 // napačen jo vrne na začetek (na vrsti takoj, v isti seji še enkrat).
 
 import { seal, unseal, blindIndex } from "./crypto-polje.js";
+import { sameSubject } from "./subjects.js";
 
 export const INTERVALS = [1, 3, 7, 16, 35, 90];
 export const MAX_PER_REPLY = 3;
@@ -81,23 +82,26 @@ export class Flashcards {
     return this.db.prepare("SELECT COUNT(*) AS n FROM flashcards WHERE student_id = ?").get(studentId).n;
   }
 
-  dueCount(studentId) {
-    return this.db.prepare("SELECT COUNT(*) AS n FROM flashcards WHERE student_id = ? AND verified = 1 AND due <= datetime('now')").get(studentId).n;
+  // subject: le kartice izbranega predmeta (in kartice brez predmeta); brez njega vse.
+  dueCount(studentId, subject = null) {
+    return this.db
+      .prepare("SELECT subject FROM flashcards WHERE student_id = ? AND verified = 1 AND due <= datetime('now')")
+      .all(studentId)
+      .filter((r) => sameSubject(r.subject, subject)).length;
   }
 
   // Vse kartice: najprej tiste na vrsti (najstarejše najprej), nato po času nastanka.
-  list(studentId) {
-    const rows = this.db
+  list(studentId, subject = null) {
+    const all = this.db
       .prepare(
         `SELECT *, due <= datetime('now') AS is_due FROM flashcards WHERE student_id = ? AND verified = 1
-         ORDER BY is_due DESC, CASE WHEN due <= datetime('now') THEN due END, id DESC LIMIT ?`,
+         ORDER BY is_due DESC, CASE WHEN due <= datetime('now') THEN due END, id DESC`,
       )
-      .all(studentId, MAX_CARDS)
-      .map(view);
+      .all(studentId)
+      .filter((r) => sameSubject(r.subject, subject));
+    const rows = all.slice(0, MAX_CARDS).map(view);
     // Kdaj je na vrsti naslednja kartica (za besedilo »naslednja jutri«).
-    const next = this.db
-      .prepare("SELECT MIN(due) AS d FROM flashcards WHERE student_id = ? AND verified = 1 AND due > datetime('now')")
-      .get(studentId).d;
+    const next = all.filter((r) => !r.is_due).reduce((d, r) => (!d || r.due < d ? r.due : d), null);
     return { cards: rows, total: rows.length, due: rows.filter((c) => c.is_due).length, next_due: next || null };
   }
 

@@ -15,8 +15,8 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 3. **Mistakes have consequences** that a real lab would show: overrange (OL), blown fuse, burnt resistor,
    short circuit (supply current limit), foam overflow, popped stopper, missing goggles.
 4. **Table + graph + conclusion question** (one correct option, an explanation for every option).
-5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, »Kaj je poenostavljeno?«) and here.
-6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`) with the allowed deviation stated.
+5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, »Kaj je poenostavljeno?«) and here.
+6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`) with the allowed deviation stated.
 7. **Review:** pass 1 automatic, pass 2 an Opus expert check of the science and function, pass 3 look/phone/pedagogy
    (`docs/pregled.md`). Dangerous experiments are only simulated; a short video only when no realistic
    simulation is possible; home experiments get a safety note and an equipment list.
@@ -33,6 +33,8 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 | `public/sim/lab-titracija.js` | `labTitracija` (engine `lab-titracija`) |
 | `public/sim/lab-model-elektrika.js` | models, no DOM: `VezBench` (series/parallel/mixed netlist, reuses the `lab-model.js` meters, fuse, resistors, lamp, supply), `tester`, `MATERIALI` |
 | `public/sim/lab-elektrika.js` | `labVezava` (engine `lab-vezava`), `labPrevodnost` (engine `lab-prevodnost`); circuit parts `drawMeter`, `drawResistor`, `drawLamp` shared with `labOhm` (`lab-fiz.js`) |
+| `public/sim/lab-model-toplota.js` | heat models, no DOM: `Voda` (water + vessel, two nodes, losses through wall, bottom and surface incl. evaporation), `POSODE`, thermometer and balance, `GrelnikBench`, `MesanjeBench`, `FazeBench` (enthalpy model ice/brine/water/steam), `OhlajanjeBench`, `vrelisce` (Antoine), `talisceSoli` (CRC table) |
+| `public/sim/lab-toplota.js` | `labGrelnik` (engine `lab-grelnik`), `labMesanje` (`lab-mesanje`), `labFaze` (`lab-faze`), `labOhlajanje` (`lab-ohlajanje`); time-speed control (×1 … ×300), auto-record at round times |
 
 Engines are registered in `public/sim/index.js` and shown at topics through `public/sim/katalog.js`.
 The »Laboratorij« tab (`public/laboratorij.js`, `server/laboratorij.js`, `GET /api/students/:id/lab`) lists every `lab-` engine
@@ -103,7 +105,52 @@ Graph: current vs salt % (lamp and LED). Tests: R of copper from ρ; metals ligh
 but with the LED (and bubbles), insulators and distilled/sugar water dark with both (< 0,1 mA); current rises with concentration; copper 0,3 A ± 10 %, and with the 200 mA range (1 Ω) below 1,5 In so the F 200 mA fuse holds (IEC 60127-2);
 brightness Cu > graphite > 5 % salt; only iron is magnetic; metals and non-metals classified as in the textbook.
 
+### Heat: shared model (`lab-model-toplota.js`)
+Water and its vessel are two nodes (water T, vessel Tv). Water → vessel: 250 W/(m²·K) in series with half the wall (ocena); vessel → room:
+half the wall in series with natural convection 4,5 W/(m²·K) (ocena) + radiation 4εσT³; bottom on the table 3 W/(m²·K) (ocena). Open surface: convection
+6 W/(m²·K) (ocena), radiation (ε 0,96) and evaporation by the Chilton–Colburn analogy (Le 0,85) with vapour density from the Antoine equation and 50 % room
+humidity (ocena); a lid replaces this with conduction through the lid. Vessels (masses, diameters, wall thickness are ocena): 400/600 mL borosilicate beaker
+(c 830 at 20 °C, ~900 at 100 °C, model 840; k 1,14, Schott), styrofoam cup (k 0,035, EN 13163), porcelain cup (c 1085, k 1,5), enamelled mug, thermos (G = 0,01 W/K with stopper, ocena from ~10 K in 6 h).
+Data: c water 4182 J/(kg·K) at 20 °C (IAPWS/CRC), ice 2100, L_f 334 kJ/kg, L_v 2257 kJ/kg at 100 °C (linear to 2454 at 20 °C), NaCl c 864 (CRC).
+Digital thermometer ±0,5 °C, 0,1 °C, response time 4 s (offset ≤ 0,25, gain ≤ 0,1 %, jitter ≤ 0,06: worst case 0,48 °C at 120 °C); balance 0,1 g, ±0,2 g. Euler steps of 0,2 s.
+Room 20 °C, tap water 18 °C (ocena).
+
+### `lab-grelnik` – heater, Q = mcΔT vs W = UIt, efficiency (FIZ-OS-9 toplota, električno delo in moč, moč in izkoristek)
+12 V / 50 W immersion heater (R = 2,88 Ω ±5 %) in a 400 mL beaker with 100–350 g of tap water (pour ±2 %, weighed on the balance), supply 0–30 V with a current limit
+0,5–10 A (CC), ammeter 10 A (0,01 Ω) in series and voltmeter (autorange) across the heater, thermometer at the side, lid, stirring rod, stopwatch from the first switch-on,
+time speed ×1/×10/×60, auto-record every 30 s. Table t, U, I, T; graph T(t); W = ŪĪt, Q = mcΔT (start T at t = 0, highest T after switch-off), η, warnings for ΔT < 3 K
+and for an unstirred final reading. Heater: sheath 10 J/K, 2,0 W/K to water, 0,1 W/K to air, wire 2,5 K/W above the sheath (all ocena); thermal fuse 250 °C, wire burns at 650 °C (ocena).
+Coil 0,5–3 cm above the bottom (less water → part of it in air). Unstirred water: the side probe reads up to 0,06 K/W · P lower (τ 120 s, stirring 4 s; ocena).
+Mistakes: heater on dry (thermal fuse in ~1 min, voltmeter then shows the supply voltage and I = 0), shallow water, above 12 V (warning; the wire burns at ≥ 26 V within seconds and at 24 V after ~6 min as the water warms, only if the current limit lets more than ~8 A through; with the default 5 A limit it survives),
+low current limit (CC), too much water (small ΔT, large relative error), reading without stirring, boiling.
+Tests: R and 50 W ±10 % at 12 V; ideal 200 g, 50 W, 120 s → ΔT 7,17 K ±0,01 and Q = W; student's η 60–95 % over 20 seeds, lid + stirring > open + unstirred by ≥ 5 points
+(means > 84 % and < 80 %), η below the water's share of the heat capacity; ΔT and relative error for 350 g vs 150 g; dry heater trips in 30–120 s, 30 V burns, 13 V survives 10 min, CC at 2 A.
+
+### `lab-mesanje` – mixing warm and cold water (FIZ-OS-9 toplota; FIZ-SS-2 notranja energija in toplota; NAR-OS-6 toplota in temperatura)
+Styrofoam cup (with or without lid) or glass beaker; cold water 50–150 g at 10–25 °C, warm water 50–150 g at 40–80 °C; weighed (balance) or poured to the mark (±5 %, ocena).
+Cold water goes into the vessel at room temperature; the warm water is measured just before pouring, loses ~0,3 K while pouring (ocena) and floats on top: the probe at the bottom
+reads low by 60 % of the mixing step (ocena), decaying with τ 150 s unstirred, 3 s stirred. Table (vessel, m₁ T₁, m₂ T₂, measured, computed), formula with the student's numbers,
+graph T(t) after pouring with the computed T as a line. Mistakes: reading before stirring, not weighing, waiting long (cooling).
+Tests: ideal 100 g 80 °C + 100 g 20 °C = 50,00 °C; styrofoam + lid within −1,5/+0,5 K of the student's formula, glass ≥ 1,5 K lower, unstirred ≥ 1 K lower (20 seeds).
+
+### `lab-faze` – melting ice and boiling water (NAR-OS-6 agregatna stanja; FIZ-SS-2 notranja energija in toplota)
+100/150/200 g crushed ice at −15 °C (ocena) in a 600 mL beaker on a hot plate (stage 1/2/3 → 80/150/250 W into the beaker, warm-up τ 90 s, cool-down 240 s; ocena),
+optional 10 or 30 g NaCl (dissolves with τ 40 s, ocena), place: sea level, Ljubljana 295 m, Rogla 1517 m, Kredarica 2515 m (ISA pressure). Enthalpy model: ice and brine
+in equilibrium on the liquidus (CRC freezing points of NaCl solutions, eutectic 23,3 % / −21,1 °C), above it water, at the boiling point (Antoine, plus boiling-point
+elevation K_b·2·φ·b up to saturation 39,1 g/100 g) water evaporates. Probe in the middle or touching the bottom (+0,06 K/W · P, ocena). Auto-record every 30 s, graph T(t) in minutes,
+two conclusion questions (constant T while melting; boiling point and pressure). Mistakes: probe on the bottom, boiling dry (plate switched off, warning).
+Tests: ideal plateau length m L_f / P (±1,5 s); real heat during melting = m L_f ±10 % and readings 0,0 ± 0,5 °C; Antoine 100,0 at 101,325 kPa, 98,49 at 96 kPa (IF97), 99,0 in Ljubljana,
+91,6 on Kredarica; boiling plateau in the model ±0,2 K and the reading ±0,7; boiling evaporates P/L_v (ideal ±1 %, real 80–100 %); CRC table vs ΔT = K_f·2·φ·b (±0,12 K); 10 g salt in 150 g ice: last ice melts at −3,93 ± 0,15 °C;
+30 g salt cools to −21,1 °C; probe on the bottom reads > 4 K more.
+
+### `lab-ohlajanje` – cooling of tea (FIZ-OS-9 prenos toplote; FIZ-SS-2 prevajanje toplote in sevanje; NAR-OS-6 toplota in temperatura)
+200 g of tea at 90 °C (ocena) into up to three vessels at room temperature: porcelain cup with/without a saucer lid, enamelled mug, styrofoam cup with lid, thermos with/without stopper.
+Same `Voda` model (Newton cooling through the wall plus evaporation from an open surface), three thermometers, speed ×10/×60/×300, auto-record every minute, graph T(t)
+with three series, conclusion question (thermos, lid, evaporation). Tests: porcelain 90 → 55–68 °C in 10 min (ocena), lid and thermos slower, closed thermos k constant ±15 %, full closed thermos (350 g) loses 8–12 K in 6 h (calibration). Meters: thermometer at −20…120 °C within ±0,5 (500 seeds and the worst-case sum), balance ±0,2 g.
+
+The colours of graph series (`--demo-a/b/c`) are now also defined for the Laboratorij tab (`.lab-view` in `textbook.css`); before, points there were black.
+
 ## Next (from j's list)
-FIZ: heater power and efficiency (`lab-grelnik`, planned: 12 V / 50 W immersion heater, water on a balance, lid and stirring, Q = mcΔT vs W = UIt),
-pendulum and stopwatch, density and buoyancy in a measuring cylinder, refraction through a lens. KEM: flame test, electrolysis of water.
-NAR: the same engines on more NAR-OS-6/7 topics. Each one: model + test first, then UI, then the three reviews.
+FIZ: pendulum and stopwatch, density and buoyancy in a measuring cylinder, refraction through a lens. KEM: flame test, electrolysis of water.
+NAR: the same engines on more NAR-OS-6/7 topics. Heat: specific heat of metals (hot metal block into a calorimeter, reuses `MesanjeBench`),
+solidification curve (cooling of stearic acid / salol), a separate stopwatch for `lab-grelnik` (now started by the switch), stirring as a choice in `lab-faze`. Each one: model + test first, then UI, then the three reviews.

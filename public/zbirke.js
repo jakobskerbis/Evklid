@@ -66,6 +66,7 @@ const m = (id, rarity, sl, en, t, kw) => ({ id, collection: "krivulje", slot: "b
 const ABOUT = {
   pot_vega: { sl: "Jurij Vega (1754–1802), slovenski matematik in topniški častnik, avtor slavnih logaritemskih tablic.", en: "Jurij Vega (1754–1802), Slovenian mathematician and artillery officer, author of famous logarithm tables." },
   pot_stefan: { sl: "Jožef Stefan (1835–1893), slovenski fizik: zakon sevanja j = σT⁴.", en: "Jožef Stefan (1835–1893), Slovenian physicist: radiation law j = σT⁴." },
+  pot_rhind: { sl: "Rhindov papirus (okoli 1550 pr. n. št.) je egipčanska zbirka računskih nalog, ki jo je prepisal pisar Ahmes. Ploščino kroga računa, kot da je π ≈ 3,16.", en: "The Rhind papyrus (around 1550 BC) is an Egyptian collection of maths problems copied by the scribe Ahmes. It finds the area of a circle as if π ≈ 3.16." },
   pot_radium: { sl: "Marie Curie je odkrila radij in polonij ter dobila dve Nobelovi nagradi.", en: "Marie Curie discovered radium and polonium and won two Nobel Prizes." },
   pot_pregl: { sl: "Friderik Pregl (1869–1930), slovenski kemik, Nobelova nagrada 1923 za mikroanalizo.", en: "Fritz Pregl (1869–1930), Slovenian chemist, Nobel Prize 1923 for microanalysis." },
   pot_noether: { sl: "Emmy Noether (1882–1935) je pokazala, da iz vsake simetrije v naravi sledi en ohranitveni zakon.", en: "Emmy Noether (1882–1935) showed that every symmetry in nature gives a conservation law." },
@@ -131,6 +132,7 @@ export const KNOWLEDGE = [
     ["pot_dividers", "badge", "epic", 10000, "Šestilo", "Compasses"],
     ["pot_stefan", "outfit", "legendary", 15000, "Stefanov frak", "Stefan's tailcoat"],
     ["pot_radium", "fx", "legendary", 20000, "Sij radija", "Radium glow"],
+    ["pot_rhind", "badge", "legendary", 25000, "Rhindov papirus", "Rhind papyrus"],
     ["pot_laurel", "hat", "legendary", 30000, "Lovorov venec", "Laurel wreath"],
     ["pot_observatory", "bg", "legendary", 40000, "Observatorij", "Observatory"],
     ["pot_pregl", "acc", "legendary", 50000, "Preglova lupa", "Pregl's magnifier"],
@@ -238,6 +240,8 @@ const medal = (ribbon, face, inner) =>
   `<g transform="translate(64 82)"><path d="M-7-14l4 9h6l4-9z" fill="${ribbon}" stroke="${INK}" stroke-width="1.4" stroke-linejoin="round"/><path d="M-2-14l2 5 2-5" stroke="#fff" stroke-width="1.2" fill="none" opacity=".7"/><circle r="9.5" fill="${face}" stroke="${INK}" stroke-width="1.8"/><circle r="7" fill="none" stroke="#fff" stroke-width=".9" opacity=".7"/>${inner}</g>`;
 const ONE = `<text y="3.6" font-size="10" font-weight="800" text-anchor="middle" font-family="system-ui,sans-serif" fill="${INK}">1</text>`;
 const BADGE = {
+  pot_rhind: () =>
+    `<g transform="translate(64 82)"><rect x="-10" y="-7.5" width="20" height="15" fill="#fef3c7" stroke="${INK}" stroke-width="1.4"/><path d="M-10-3.5h20M-10 0.5h20M-10 4.5h20" stroke="#e7c08a" stroke-width=".6"/><path d="M-7 5h7l-7-8z" fill="none" stroke="#b45309" stroke-width="1.1" stroke-linejoin="round"/><circle cx="5" cy="0" r="3.6" fill="none" stroke="#b45309" stroke-width="1.1"/><path d="M5 0h3.6" stroke="#b45309" stroke-width=".8"/>${[-12, 12].map((x) => `<rect x="${x - 2}" y="-9" width="4" height="18" rx="2" fill="#d6a86b" stroke="${INK}" stroke-width="1.2"/>`).join("")}</g>`,
   meme_pica: () =>
     `<g transform="translate(64 83)"><path d="M-11-8L11-8 0 13z" fill="#fde68a" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/><path d="M-12-8q12-6 24 0" stroke="#b45309" stroke-width="4.5" fill="none" stroke-linecap="round"/><circle cx="-5" cy="-3" r="2" fill="#ef4444"/><circle cx="1" cy="6" r="1.6" fill="#ef4444"/><text x="3" y="0" font-size="9" font-weight="800" text-anchor="middle" font-family="Georgia,serif" fill="${INK}">π</text></g>`,
   ...Object.fromEntries(LEAGUE_COLORS.map((c, i) => [`win_week_${i}`, () => medal(c, c, ONE)])),
