@@ -5,7 +5,7 @@ import { analyze, solutionTex, intervalsTex, systemTex, polyCoeffs, previewTex }
 import { stats, evalComplex, polyRoots, M, readMatrix, convertBase, molarMass } from "../public/graph/toolscore.js";
 import { ELEMENTS, MASSES, CATEGORIES, shells, fullConfig, EXTRA } from "../public/graph/pse-data.js";
 import { balance, parseSpecies, stoich, phOf, phAll, solveConc, dilution, massFraction, saltFormula, solubility, SOL_CATIONS, SOL_ANIONS } from "../public/graph/chemcore.js";
-import { normal, studentT, chi2, binomial, poisson, probability, phiInv } from "../public/graph/probcore.js";
+import { normal, studentT, chi2, binomial, poisson, geometric, hypergeometric, probability, phiInv } from "../public/graph/probcore.js";
 import { fn, derivative, roots, limit, taylor, V, odeSolve, measurement, propagate, roundMeasurement, toTex } from "../public/graph/anacore.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
@@ -362,4 +362,70 @@ test("zbirka formul prek API", async () => {
   } finally {
     server.close();
   }
+});
+
+test("kalkulator: ∑/∏ (sum(...; n; a; b) in ∑_(n=a)^(b)), Int, frac, rand, randint", () => {
+  const v = (s, env = {}) => evaluate(s, env).value;
+  // vsota prvih 10 kvadratov = n(n+1)(2n+1)/6 = 385, 5! = 120
+  assert.equal(v("sum(n^2;n;1;10)"), 385);
+  assert.equal(v("prod(n;n;1;5)"), 120);
+  assert.equal(v("∑_(n=1)^(10) n^2"), 385);
+  assert.equal(v("∏_(n=1)^(5) n"), 120);
+  assert.ok(Math.abs(v("sum(1/n;n;1;3)") - 11 / 6) < 1e-12);
+  assert.equal(v("sum(1;n;1;100000)"), 100000); // meja: 100 000 členov
+  assert.equal(evaluate("sum(1;n;1;100001)").error.code, "sumLimit");
+  // Casio Int/Frac: celi del proti 0
+  assert.equal(v("Int(-2,7)"), -2);
+  assert.equal(v("Int(2,7)"), 2);
+  assert.ok(Math.abs(v("frac(-2,7)") + 0.7) < 1e-12);
+  assert.ok(Math.abs(v("frac(2,75)") - 0.75) < 1e-12);
+  let lo = Infinity, hi = -Infinity, r0 = 1, r1 = 0;
+  for (let i = 0; i < 3000; i++) {
+    const k = v("randint(3;6)");
+    lo = Math.min(lo, k); hi = Math.max(hi, k);
+    const u = v("rand");
+    r0 = Math.min(r0, u); r1 = Math.max(r1, u);
+  }
+  assert.equal(lo, 3);
+  assert.equal(hi, 6);
+  assert.ok(r0 >= 0 && r1 < 1 && r1 > 0.9 && r0 < 0.1);
+  assert.equal(v("randint(-2;-2)"), -2);
+});
+
+test("kalkulator: Pol in Rec upoštevata enoto kota", () => {
+  const close = (a, b) => assert.ok(Math.abs(a - b) < 1e-9, `${a} ≠ ${b}`);
+  // Casio Pol(1;1) = (√2, 45°); π/4 v radianih
+  let r = analyze("Pol(1;1)", { deg: true });
+  assert.equal(r.kind, "pair");
+  close(r.items[0].v, Math.SQRT2);
+  close(r.items[1].v, 45);
+  close(analyze("Pol(1;1)", { deg: false }).items[1].v, Math.PI / 4);
+  // Pol(−1; 0): θ = 180°
+  close(analyze("Pol(-1;0)", { deg: true }).items[1].v, 180);
+  // Rec(2; 60°) = (1, √3)
+  r = analyze("Rec(2;60°)", { deg: true });
+  close(r.items[0].v, 1);
+  close(r.items[1].v, Math.sqrt(3));
+  r = analyze("Rec(2;60°)", { deg: false });
+  close(r.items[0].v, 1);
+  close(r.items[1].v, Math.sqrt(3));
+  r = analyze("Rec(2;π/3)", { deg: false });
+  close(r.items[1].v, Math.sqrt(3));
+  assert.ok(analyze("Pol(1)", {}).error);
+});
+
+test("verjetnost: geometrijska in hipergeometrijska porazdelitev", () => {
+  const close = (a, b) => assert.ok(Math.abs(a - b) < 1e-9, `${a} ≠ ${b}`);
+  // geometpdf(0,2; 3) = 0,8² · 0,2 = 0,128; geometcdf(0,2; 3) = 1 − 0,8³ = 0,488 (TI-84)
+  const g = geometric(0.2);
+  close(probability(g, "eq", 3), 0.128);
+  close(probability(g, "le", 3), 0.488);
+  close(g.pdf(0), 0);
+  close(g.mean, 5);
+  // hipergeometrijska N=20, K=7, n=5: C(7,2)·C(13,3)/C(20,5) = 21·286/15504
+  const h = hypergeometric(20, 7, 5);
+  close(probability(h, "eq", 2), (21 * 286) / 15504);
+  close(probability(h, "le", 2), (1287 + 7 * 715 + 21 * 286) / 15504); // C(13,5)=1287, C(13,4)=715
+  close(probability(h, "le", 5), 1);
+  close(h.mean, (5 * 7) / 20);
 });
