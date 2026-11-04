@@ -235,8 +235,11 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
   .tb-part > .tb-part-head { grid-column: 1 / -1; }
 
   /* Ostale strani s karticami: stolpci, kolikor jih gre v širino. */
-  #view-progress { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 0 16px; align-items: start; align-content: start; }
-  #view-progress > h1 { grid-column: 1 / -1; }
+  /* Napredek ima le 3–4 kartice: vrstica s flex-wrap, da na širokem zaslonu ne ostane prazen četrti stolpec. */
+  #view-progress { display: flex; flex-wrap: wrap; gap: 0 16px; align-items: flex-start; align-content: flex-start; }
+  #view-progress > * { flex: 1 1 440px; min-width: 0; }
+  #view-progress > h1 { flex-basis: 100%; }
+  #view-progress > .me-back { flex: 0 0 auto; } /* sam v prvi vrstici, naslov se prelomi pod njim */
 }
 @media (min-width: 1700px) {
   /* Zelo širok zaslon: razlaga ostane ob nalogi tudi, ko je odprta plošča za vnos. */

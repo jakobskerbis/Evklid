@@ -729,7 +729,7 @@ function renderState(convState) {
     b.className = "chip chip-btn chat-lesson";
     b.innerHTML = `${icon("book-open")}<span>${escapeHtml(t("chat.readLesson"))}</span>`;
     b.addEventListener("click", () => openLesson(topicId));
-    $("#chat-state").append(b);
+    $("#chat-state").prepend(b); // prvi tudi za tipko Tab, ne le na zaslonu
   }
 }
 

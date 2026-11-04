@@ -3,8 +3,9 @@ body.auth-mode .tabs, body.auth-mode .xp-badge, body.auth-mode .student-picker, 
 .auth-box { max-width: 440px; margin: 24px auto 0; }
 .auth-brand { display: none; }
 @media (min-width: 1000px) {
-  .auth-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; min-height: 100%; }
-  .auth-wrap > .auth-box { max-width: 520px; width: 100%; margin: 0; justify-self: start; }
+  /* Obrazec ima ozek stolpec, znak aplikacije vzame preostanek (desno od obrazca ni praznega pasu). */
+  .auth-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 560px); gap: 48px; align-items: center; min-height: 100%; }
+  .auth-wrap > .auth-box { max-width: none; width: 100%; margin: 0; }
   .auth-brand {
     display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 16px; align-self: stretch; padding: 48px;
     border-radius: var(--radius); color: #fff; background: linear-gradient(135deg, var(--hero-a), var(--hero-b));
