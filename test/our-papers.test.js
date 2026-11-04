@@ -119,3 +119,11 @@ test("izbirne naloge: maxPoints je največ točk izpita; slike brez zunanjih url
   assert.match(fig('<svg><rect fill="url(https://e/x.svg#g)"/></svg>'), /varen <svg>/);
   assert.match(fig("<svg><rect style=\"fill:url( 'https://e/x' )\"/></svg>"), /varen <svg>/);
 });
+
+test("izbire brez lastnih črk (pregledovalnik jih označi sam)", () => {
+  const c = (choices) => validatePaper(paper([{ n: 1, parts: [part({ format: "choice", choices, correct: [0] })] }])).errors.join("\n");
+  assert.match(c(["A: $1$", "B: $2$"]), /izbire se začnejo s črkami/);
+  assert.match(c(["**A)** $2$", "**B)** $3$"]), /izbire se začnejo s črkami/);
+  assert.equal(c(["$1$", "Ana ima prav."]), "");
+  assert.equal(c(["I. kvadrant", "II. kvadrant", "C. je središče"]), "");
+});

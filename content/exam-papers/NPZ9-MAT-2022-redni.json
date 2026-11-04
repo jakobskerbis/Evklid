@@ -1,0 +1,509 @@
+{
+ "id": "NPZ9-MAT-2022-redni",
+ "exam": "NPZ9",
+ "subject": "MAT",
+ "minutes": 60,
+ "points": 50,
+ "author": "AI",
+ "tools": "Modro ali črno nalivno pero oziroma kemični svinčnik, svinčnik (le za risanje in načrtovanje), radirka, šilček, ravnilo, geotrikotnik in šestilo; žepno računalo ni dovoljeno. Priložen je list z geometrijskimi obrazci, kvadrati naravnih števil od 11 do 25, približki konstant in matematičnimi znaki. Pri načrtovanju je dovoljeno odstopanje ±2 mm in ±2°; pot do rezultata mora biti zapisana z vmesnimi računi.",
+ "tasks": [
+  {
+   "n": 1,
+   "intro": "Dopolni zapise.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 3,
+     "format": "fill",
+     "text": "Števila zapiši s številkami.\n\n- dvesto sedem milijonov štiristo tri tisoč petdeset: $\\underline{\\qquad\\qquad\\qquad}$\n- $3$ stotisočice, $9$ tisočic in $4$ enice: $\\underline{\\qquad\\qquad\\qquad}$\n- $6 \\cdot 10^5 + 2 \\cdot 10^3 + 7 \\cdot 10^1$: $\\underline{\\qquad\\qquad\\qquad}$",
+     "answer": "$207\\,403\\,050$; $309\\,004$; $602\\,070$",
+     "ways": [
+      {
+       "title": "Po razredih in mestih",
+       "text": "**Prvo število.** Besedni zapis razdelimo na razrede (po tri mesta): milijoni, tisoči, enice.\n\n- »dvesto sedem milijonov« → razred milijonov: $207$,\n- »štiristo tri tisoč« → razred tisočev: $403$,\n- »petdeset« → razred enic: $050$ (stotic ni, zato na tem mestu zapišemo $0$).\n\nŠtevilo je $207\\,403\\,050$.\n\n**Drugo število.** Stotisočice so na 6. mestu z desne. Zapišemo števke od stotisočic do enic:\n\n| stotisočice | desettisočice | tisočice | stotice | desetice | enice |\n|---|---|---|---|---|---|\n| 3 | 0 | 9 | 0 | 0 | 4 |\n\nDesettisočic, stotic in desetic ni, zato so tam ničle: $309\\,004$.\n\n**Tretje število.** $10^5 = 100\\,000$, $10^3 = 1\\,000$ in $10^1 = 10$, torej je\n\n$6 \\cdot 100\\,000 + 2 \\cdot 1\\,000 + 7 \\cdot 10 = 600\\,000 + 2\\,000 + 70 = 602\\,070$."
+      },
+      {
+       "title": "Drugače: potenca pove mesto števke",
+       "text": "Pri tretjem zapisu eksponent pove, koliko ničel ima desetiška enota: $6 \\cdot 10^5$ pomeni števko $6$ na mestu stotisočic (5 mest za njo), $2 \\cdot 10^3$ števko $2$ na mestu tisočic, $7 \\cdot 10^1$ števko $7$ na mestu desetic. Vsa druga mesta so $0$:\n\n| $10^5$ | $10^4$ | $10^3$ | $10^2$ | $10^1$ | $10^0$ |\n|---|---|---|---|---|---|\n| 6 | 0 | 2 | 0 | 7 | 0 |\n\nDobimo $602\\,070$.\n\nPrvi dve števili preverimo tako, da ju **preberemo nazaj**: $207\\,403\\,050$ preberemo »dvesto sedem milijonov štiristo tri tisoč petdeset« ✓, $309\\,004$ pa »tristo devet tisoč štiri«, kar je res $3$ stotisočice, $9$ tisočic in $4$ enice ✓."
+      }
+     ],
+     "scoring": "Po 1 t. za vsako pravilno zapisano število ($207\\,403\\,050$, $309\\,004$, $602\\,070$).",
+     "mistake": "Najpogostejša napaka so izpuščene ničle: $2\\,074\\,350$ namesto $207\\,403\\,050$ ali $394$ namesto $309\\,004$. Vsako mesto, ki v besedilu ni omenjeno, mora dobiti ničlo, sicer se druge števke premaknejo na napačna mesta."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "fill",
+     "text": "Število $739\\,512$ zaokroži na tisočice: $739\\,512 \\approx \\underline{\\qquad\\qquad}$",
+     "answer": "$740\\,000$",
+     "ways": [
+      {
+       "title": "Po pravilu zaokroževanja",
+       "text": "Mesto tisočic ima števko $9$ ($739\\,512$). Odločamo po prvi števki desno od nje, to je števka stotic $5$. Ker je $5$ ali več, zaokrožimo **navzgor**: tisočice povečamo za $1$.\n\n$739$ tisočic $+ 1$ tisočica $= 740$ tisočic, vsa mesta desno od tisočic postanejo $0$:\n\n$739\\,512 \\approx 740\\,000$.\n\nPreizkus: število $739\\,512$ leži med $739\\,000$ in $740\\,000$; od $740\\,000$ je oddaljeno $488$, od $739\\,000$ pa $512$, zato je bližje $740\\,000$ ✓."
+      }
+     ],
+     "mistake": "Kdor števke le »odreže«, dobi $739\\,000$. Kdor števko tisočic $9$ le zamenja z $0$ in pozabi, da $9 + 1 = 10$ prenese $1$ na mesto desettisočic, dobi $730\\,000$. Pravilno je $739 + 1 = 740$ tisočic, torej $740\\,000$."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "fill",
+     "text": "Na črto vpiši števko enic, da bo število deljivo z $9$: $7\\,305\\,81\\underline{\\quad}$",
+     "answer": "$3$ (število $7\\,305\\,813$)",
+     "ways": [
+      {
+       "title": "S pravilom deljivosti z 9",
+       "text": "Število je deljivo z $9$, če je z $9$ deljiva **vsota njegovih števk**.\n\nVsota znanih števk: $7 + 3 + 0 + 5 + 8 + 1 = 24$.\n\nNajbližji večkratnik števila $9$, ki ni manjši od $24$, je $27$. Manjka $27 - 24 = 3$. Naslednji večkratnik je $36$, za to pa bi potrebovali $12$, kar ni števka. Edina možnost je zato števka $3$.\n\nŠtevilo je $7\\,305\\,813$, vsota števk je $27 = 3 \\cdot 9$ ✓."
+      }
+     ],
+     "mistake": "Pravilo »vsota števk« velja za $3$ in $9$, ne za vsa števila. Kdor dopolni števko $0$ (»deljivo z $9$, ker se konča z $0$«), zamenja pravilo deljivosti z $10$ s pravilom deljivosti z $9$; vsota števk bi bila $24$, ki ni deljiva z $9$."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "fill",
+     "text": "$D_{52} = \\{\\underline{\\qquad\\qquad\\qquad\\qquad}\\}$ ($D_n$ je množica vseh deliteljev števila $n$.)",
+     "answer": "$D_{52} = \\{1, 2, 4, 13, 26, 52\\}$",
+     "ways": [
+      {
+       "title": "Po parih deliteljev",
+       "text": "Delitelje iščemo v parih, katerih zmnožek je $52$:\n\n- $1 \\cdot 52 = 52$,\n- $2 \\cdot 26 = 52$,\n- $4 \\cdot 13 = 52$.\n\nŠtevila $3, 5, 6, 7, 8, 9, 10, 11, 12$ ne delijo števila $52$ (deljenje se pri nobenem ne izide brez ostanka). Ko pridemo do $13$, ki je že v paru s $4$, smo našli vse.\n\n$D_{52} = \\{1, 2, 4, 13, 26, 52\\}$.\n\nPreizkus s prafaktorji: $52 = 2^2 \\cdot 13$, zato ima $(2 + 1) \\cdot (1 + 1) = 6$ deliteljev – našli smo jih $6$ ✓."
+      }
+     ],
+     "mistake": "Pogosto se pozabi na delitelja $1$ in $52$ (vsako število deli samo sebe in ga deli $1$) ali pa se namesto deliteljev zapiše večkratnike ($52, 104, 156, \\dots$)."
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "intro": "Izračunaj pisno. Zapiši postopek.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj vsoto $4\\,786 + 12\\,359 + 908$ in rezultat zaokroži na stotice.",
+     "answer": "$18\\,053 \\approx 18\\,100$",
+     "ways": [
+      {
+       "title": "Pisno seštevanje",
+       "text": "Števila podpišemo tako, da so enice pod enicami, desetice pod deseticami …\n\n$$\\begin{array}{r} 4\\,786 \\\\ 12\\,359 \\\\ +\\quad 908 \\\\ \\hline 18\\,053 \\end{array}$$\n\nPo mestih od desne:\n\n- enice: $6 + 9 + 8 = 23$ → zapišemo $3$, $2$ prenesemo,\n- desetice: $8 + 5 + 0 + 2 = 15$ → zapišemo $5$, $1$ prenesemo,\n- stotice: $7 + 3 + 9 + 1 = 20$ → zapišemo $0$, $2$ prenesemo,\n- tisočice: $4 + 2 + 2 = 8$,\n- desettisočice: $1$.\n\nVsota je $18\\,053$.\n\n**Zaokroževanje na stotice:** števka stotic je $0$, desno od nje je števka desetic $5$, zato zaokrožimo navzgor: $18\\,053 \\approx 18\\,100$."
+      },
+      {
+       "title": "Drugače: preizkus z oceno",
+       "text": "Seštevance zaokrožimo na stotice in seštejemo: $4\\,800 + 12\\,400 + 900 = 18\\,100$. Ocena je zelo blizu natančnemu rezultatu $18\\,053$, zato pisni račun verjetno ni zgrešen.\n\nNatančen rezultat preverimo še z odštevanjem: $18\\,053 - 908 = 17\\,145$ in $17\\,145 - 12\\,359 = 4\\,786$ ✓.\n\nPozor: pri zaokroževanju se vedno zaokroži **natančen** rezultat $18\\,053$; ocena je le preizkus."
+      }
+     ],
+     "scoring": "1 t. za pravilno vsoto $18\\,053$, 1 t. za zaokrožitev $18\\,100$.",
+     "mistake": "Kdor števil ne podpiše po mestih (npr. $908$ poravna z levim robom), sešteva stotice s tisočicami. Pri zaokroževanju $18\\,053$ je napačno $18\\,000$: odloča števka desetic $5$, ne števka enic $3$."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj količnik $587 : 40$ na tri decimalna mesta natančno in rezultat zaokroži na desetine.",
+     "answer": "$587 : 40 = 14{,}675 \\approx 14{,}7$",
+     "ways": [
+      {
+       "title": "Pisno deljenje",
+       "text": "Delimo po korakih (ostanek vsakič pomnožimo z $10$ oziroma pripišemo naslednjo števko):\n\n- $58 : 40 = 1$, ostanek $58 - 40 = 18$,\n- $187 : 40 = 4$, ostanek $187 - 160 = 27$; s tem smo porabili vse števke celega dela, zato v količnik zapišemo **decimalno vejico**,\n- $270 : 40 = 6$, ostanek $270 - 240 = 30$,\n- $300 : 40 = 7$, ostanek $300 - 280 = 20$,\n- $200 : 40 = 5$, ostanek $0$.\n\nKoličnik je $14{,}675$.\n\n**Zaokroževanje na desetine:** števka desetin je $6$, desno od nje je števka stotin $7$, zato zaokrožimo navzgor: $14{,}675 \\approx 14{,}7$."
+      },
+      {
+       "title": "Drugače: delimo najprej z 10, nato s 4",
+       "text": "Ker je $40 = 10 \\cdot 4$, lahko delimo v dveh korakih:\n\n$587 : 10 = 58{,}7$ in nato $58{,}7 : 4$.\n\n$58{,}7 : 4$: $58 : 4 = 14$ z ostankom $2$; $27 : 4 = 6$ z ostankom $3$ (pripisali smo prvo decimalko, zato v količnik zapišemo vejico); $30 : 4 = 7$ z ostankom $2$; $20 : 4 = 5$. Dobimo $14{,}675$.\n\n**Preizkus:** $14{,}675 \\cdot 40 = 587$ ✓. Zaokroženo na desetine: $14{,}7$."
+      }
+     ],
+     "scoring": "1 t. za pravilen količnik $14{,}675$ (s postopkom), 1 t. za zaokrožitev $14{,}7$.",
+     "mistake": "Kdor pozabi postaviti decimalno vejico, dobi $14\\,675$ ali $1\\,467{,}5$. Hitra ocena pomaga: $40 \\cdot 15 = 600$, zato mora biti količnik malo manjši od $15$."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj vrednost izraza $63 - 7{,}5 \\cdot 4{,}6$.",
+     "answer": "$28{,}5$",
+     "ways": [
+      {
+       "title": "Po vrstnem redu računskih operacij",
+       "text": "Množenje ima prednost pred odštevanjem, zato najprej zmnožimo.\n\n$7{,}5 \\cdot 4{,}6$: zmnožimo, kot da ni vejic, $75 \\cdot 46 = 3\\,450$. Faktorja imata skupaj dve decimalni mesti, zato ima tudi zmnožek dve: $34{,}50 = 34{,}5$.\n\nNato odštejemo: $63 - 34{,}5 = 28{,}5$."
+      },
+      {
+       "title": "Drugače: razstavimo faktor",
+       "text": "$4{,}6 = 4 + 0{,}6$, zato je\n\n$7{,}5 \\cdot 4{,}6 = 7{,}5 \\cdot 4 + 7{,}5 \\cdot 0{,}6 = 30 + 4{,}5 = 34{,}5$.\n\n$63 - 34{,}5 = 28{,}5$.\n\n**Preizkus z oceno:** $7{,}5 \\cdot 4{,}6$ je malo manj kot $8 \\cdot 5 = 40$ in več kot $7 \\cdot 4 = 28$, zato je rezultat med $23$ in $35$; $28{,}5$ ustreza."
+      }
+     ],
+     "scoring": "1 t. za zmnožek $34{,}5$, 1 t. za končni rezultat $28{,}5$.",
+     "mistake": "Kdor računa od leve proti desni, dobi $(63 - 7{,}5) \\cdot 4{,}6 = 55{,}5 \\cdot 4{,}6 = 255{,}3$. To je napačno, ker množenje opravimo pred odštevanjem."
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "intro": "Izračunaj brez računala.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "$1^{58} =$",
+     "answer": "$1$",
+     "ways": [
+      {
+       "title": "Po definiciji potence",
+       "text": "Potenca $1^{58}$ pomeni zmnožek $58$ enic: $1 \\cdot 1 \\cdot \\ldots \\cdot 1$. Ne glede na to, kolikokrat množimo $1$ samo s seboj, je rezultat $1$.\n\n$1^{58} = 1$."
+      }
+     ],
+     "mistake": "Napačna sta odgovora $58$ (osnovo in eksponent zmnožimo: $1 \\cdot 58$) in $59$ (seštejemo). Eksponent pove, kolikokrat množimo osnovo samo s seboj."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "$-30^2 =$",
+     "answer": "$-900$",
+     "ways": [
+      {
+       "title": "Najprej potenca, nato predznak",
+       "text": "Eksponent $2$ se nanaša samo na število $30$, ne na minus pred njim (oklepaja ni). Zato najprej potenciramo in nato upoštevamo minus:\n\n$-30^2 = -(30 \\cdot 30) = -900$.\n\nZa primerjavo: $(-30)^2 = (-30) \\cdot (-30) = 900$, ker je tu v oklepaju tudi minus."
+      }
+     ],
+     "mistake": "Odgovor $900$ bi bil pravilen le za $(-30)^2$. Odgovora $-60$ in $60$ nastaneta, če potenco zamenjamo z množenjem z $2$."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "$\\sqrt{0{,}0169} =$",
+     "answer": "$0{,}13$",
+     "ways": [
+      {
+       "title": "Z ulomkom",
+       "text": "Decimalno število zapišemo z ulomkom: $0{,}0169 = \\frac{169}{10\\,000}$.\n\nKoren ulomka je koren števca, deljen s korenom imenovalca: $\\sqrt{169} = 13$ (iz preglednice kvadratov: $13^2 = 169$) in $\\sqrt{10\\,000} = 100$.\n\n$\\sqrt{0{,}0169} = \\frac{13}{100} = 0{,}13$.\n\nPreizkus: $0{,}13 \\cdot 0{,}13 = 0{,}0169$ ✓ (dve decimalni mesti krat dve decimalni mesti da štiri)."
+      }
+     ],
+     "mistake": "Pogosta napaka je $0{,}013$: kvadrat števila $0{,}013$ ima šest decimalnih mest ($0{,}000169$). Koren ima pol toliko decimalnih mest kot število pod korenom, tu $4 : 2 = 2$."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "open",
+     "text": "$\\sqrt{3\\frac{1}{16}} =$",
+     "answer": "$\\frac{7}{4} = 1\\frac{3}{4}$",
+     "ways": [
+      {
+       "title": "Mešano število spremenimo v ulomek",
+       "text": "Mešano število zapišemo z ulomkom: $3\\frac{1}{16} = \\frac{3 \\cdot 16 + 1}{16} = \\frac{49}{16}$.\n\n$\\sqrt{\\frac{49}{16}} = \\frac{\\sqrt{49}}{\\sqrt{16}} = \\frac{7}{4} = 1\\frac{3}{4}$.\n\nPreizkus: $\\frac{7}{4} \\cdot \\frac{7}{4} = \\frac{49}{16} = 3\\frac{1}{16}$ ✓."
+      }
+     ],
+     "mistake": "Ne smemo koreniti celega dela in ulomka posebej: $\\sqrt{3} + \\sqrt{\\frac{1}{16}}$ ali »$3\\frac{1}{4}$« je napačno, ker $\\left(3\\frac{1}{4}\\right)^2 = \\frac{169}{16} = 10\\frac{9}{16}$, ne $3\\frac{1}{16}$."
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "intro": "Reši enačbi.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "$5x + 14 = 2x - 7$",
+     "answer": "$x = -7$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Člene z neznanko zberemo na levi, števila na desni. Pri prenosu na drugo stran člen spremeni predznak:\n\n$5x - 2x = -7 - 14$\n\n$3x = -21$\n\nObe strani delimo s $3$: $x = -7$.\n\n**Preizkus:** leva stran $5 \\cdot (-7) + 14 = -35 + 14 = -21$, desna stran $2 \\cdot (-7) - 7 = -14 - 7 = -21$ ✓."
+      },
+      {
+       "title": "Drugače: neznanke na desno",
+       "text": "Člene z $x$ lahko zberemo tudi na desni strani. Obema stranema odštejemo $5x$ in prištejemo $7$:\n\n$14 + 7 = 2x - 5x$\n\n$21 = -3x$\n\n$x = 21 : (-3) = -7$.\n\nRezultat je enak, kot mora biti: na katero stran zberemo neznanke, ni pomembno."
+      }
+     ],
+     "scoring": "1 t. za pravilno urejeno enačbo ($3x = -21$ ali $21 = -3x$), 1 t. za rešitev $x = -7$.",
+     "mistake": "Pogosta napaka je, da se pri prenosu ne spremeni predznak: $5x + 2x = -7 + 14$ da $7x = 7$ in napačno $x = 1$. Preizkus takoj pokaže napako: $5 + 14 = 19$, $2 - 7 = -5$."
+    },
+    {
+     "id": "b",
+     "points": 4,
+     "format": "open",
+     "text": "Reši enačbo $7 - 2(3x - 4) = 5 - (2x + 6)$ in naredi preizkus.",
+     "answer": "$x = 4$ (preizkus: obe strani imata vrednost $-9$)",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Odpravimo oklepaje.** Na levi množimo oklepaj z $-2$: $-2 \\cdot 3x = -6x$ in $-2 \\cdot (-4) = +8$. Na desni minus pred oklepajem spremeni predznak obema členoma:\n\n$7 - 6x + 8 = 5 - 2x - 6$\n\n**Uredimo vsako stran:** $15 - 6x = -1 - 2x$\n\n**Člene z $x$ na levo, števila na desno:**\n\n$-6x + 2x = -1 - 15$\n\n$-4x = -16$\n\n$x = 4$\n\n**Preizkus v izhodiščni enačbi:**\n\nleva stran: $7 - 2 \\cdot (3 \\cdot 4 - 4) = 7 - 2 \\cdot 8 = 7 - 16 = -9$,\n\ndesna stran: $5 - (2 \\cdot 4 + 6) = 5 - 14 = -9$.\n\nStrani sta enaki, zato je $x = 4$ rešitev ✓."
+      },
+      {
+       "title": "Drugače: neznanke na desno",
+       "text": "Po odpravi oklepajev imamo $15 - 6x = -1 - 2x$.\n\nDa bo koeficient neznanke pozitiven, prištejemo obema stranema $6x$ in $1$:\n\n$15 + 1 = -2x + 6x$\n\n$16 = 4x$\n\n$x = 16 : 4 = 4$.\n\n**Preizkus** vedno naredi v izhodiščni enačbi, ne v urejeni: napake pri odpravljanju oklepajev bi preizkus urejene enačbe ne odkril. $L = 7 - 2(12 - 4) = -9$ in $D = 5 - (8 + 6) = -9$, torej $L = D$ ✓."
+      }
+     ],
+     "scoring": "1 t. za pravilno odpravljena oklepaja ($7 - 6x + 8 = 5 - 2x - 6$), 1 t. za urejeno enačbo ($-4x = -16$ ali enakovredno), 1 t. za rešitev $x = 4$, 1 t. za preizkus (obe strani $-9$).",
+     "mistake": "Dve tipični napaki: $-2(3x - 4) = -6x - 8$ (minus krat minus je plus, pravilno je $-6x + 8$) in $-(2x + 6) = -2x + 6$ (minus pred oklepajem spremeni predznak **obema** členoma, pravilno je $-2x - 6$)."
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "intro": "Premici $p$ in $q$ se sekata v točki $S$. Točki $A$ in $B$ ležita na premici $p$, točka $C$ leži na premici $q$, točka $T$ pa ne leži na nobeni od premic. Pri merjenju je dovoljeno odstopanje $\\pm 2^\\circ$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 235\" font-family=\"sans-serif\" font-size=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><line x1=\"11.5\" y1=\"140.9\" x2=\"303.6\" y2=\"99.8\"/><line x1=\"116.1\" y1=\"218.7\" x2=\"203.9\" y2=\"21.3\"/><circle cx=\"61\" cy=\"133.9\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"254.1\" cy=\"106.8\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"192.5\" cy=\"46.9\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"160\" cy=\"120\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"70\" cy=\"60\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><text x=\"54\" y=\"153\" fill=\"currentColor\" stroke=\"none\">A</text><text x=\"250\" y=\"125\" fill=\"currentColor\" stroke=\"none\">B</text><text x=\"200\" y=\"50\" fill=\"currentColor\" stroke=\"none\">C</text><text x=\"141\" y=\"113\" fill=\"currentColor\" stroke=\"none\">S</text><text x=\"77\" y=\"66\" fill=\"currentColor\" stroke=\"none\">T</text><text x=\"298\" y=\"92\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">p</text><text x=\"210\" y=\"26\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">q</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "construct",
+     "text": "Na premici $q$ označi točko $D$ tako, da bo kot $\\angle BSD$ **top**.",
+     "answer": "Točka $D$ leži na premici $q$ na drugi strani točke $S$ kot točka $C$ (pod premico $p$). Kot $\\angle BSD$ je sokot ostrega kota $\\angle BSC$, zato je top.",
+     "ways": [
+      {
+       "title": "S premislekom",
+       "text": "Kot $\\angle BSD$ ima vrh v $S$, en krak je poltrak $SB$, drugi poltrak $SD$. Na premici $q$ sta iz točke $S$ dva poltraka:\n\n- poltrak proti $C$: kot $\\angle BSC$ je oster (na sliki je manjši od pravega kota),\n- nasprotni poltrak: kot je **sokot** kota $\\angle BSC$, skupaj z ostrim kotom $\\angle BSC$ meri $180^\\circ$, zato je večji od $90^\\circ$ – je top.\n\nTočko $D$ zato označimo na premici $q$ na nasprotni strani točke $S$ kot $C$, torej pod premico $p$ (v rešitvi levo spodaj). Kje točno na tem poltraku, ni pomembno, le da $D \\neq S$."
+      }
+     ],
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 235\" font-family=\"sans-serif\" font-size=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><line x1=\"11.5\" y1=\"140.9\" x2=\"303.6\" y2=\"99.8\"/><line x1=\"116.1\" y1=\"218.7\" x2=\"203.9\" y2=\"21.3\"/><circle cx=\"61\" cy=\"133.9\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"254.1\" cy=\"106.8\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"192.5\" cy=\"46.9\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"160\" cy=\"120\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"70\" cy=\"60\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><text x=\"54\" y=\"153\" fill=\"currentColor\" stroke=\"none\">A</text><text x=\"250\" y=\"125\" fill=\"currentColor\" stroke=\"none\">B</text><text x=\"200\" y=\"50\" fill=\"currentColor\" stroke=\"none\">C</text><text x=\"141\" y=\"113\" fill=\"currentColor\" stroke=\"none\">S</text><text x=\"77\" y=\"66\" fill=\"currentColor\" stroke=\"none\">T</text><text x=\"298\" y=\"92\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">p</text><text x=\"210\" y=\"26\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">q</text><circle cx=\"131.5\" cy=\"183.9\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><text x=\"115\" y=\"192\" fill=\"currentColor\" stroke=\"none\">D</text><path d=\"M181.8,116.9 A22,22 0 0 1 151.1,140.1\" stroke-width=\"1.2\"/><text x=\"184\" y=\"146\" fill=\"currentColor\" stroke=\"none\">122°</text></svg>",
+     "mistake": "Kdor označi $D$ na isti strani kot $C$, dobi oster kot: $\\angle BSD$ je tedaj kar kot $\\angle BSC$. Tudi točka $D = S$ ni dobra: takrat kota sploh ni."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "fill",
+     "text": "Izmeri velikosti kotov.\n\n$\\angle BSC = \\underline{\\qquad\\quad}$\n\n$\\angle ASC = \\underline{\\qquad\\quad}$",
+     "answer": "$\\angle BSC = 58^\\circ$, $\\angle ASC = 122^\\circ$ (dovoljeno $\\pm 2^\\circ$)",
+     "ways": [
+      {
+       "title": "Z geotrikotnikom",
+       "text": "Geotrikotnik položimo tako, da je njegovo središče (ničla merila na sredini roba) v točki $S$, rob pa leži na poltraku $SB$. Na tisti skali, ki se na poltraku $SB$ začne z $0^\\circ$, odčitamo, kje jo preseka poltrak $SC$: $\\angle BSC = 58^\\circ$.\n\nNato rob položimo na poltrak $SA$ in na skali, ki se začne z $0^\\circ$ pri $SA$, odčitamo smer poltraka $SC$: $\\angle ASC = 122^\\circ$."
+      },
+      {
+       "title": "Preizkus: sokota",
+       "text": "Poltraka $SA$ in $SB$ ležita na isti premici $p$ in kažeta v nasprotni smeri, zato sta kota $\\angle BSC$ in $\\angle ASC$ **sokota**: skupaj merita $180^\\circ$.\n\n$58^\\circ + 122^\\circ = 180^\\circ$ ✓.\n\nČe izmerjena kota skupaj ne dasta (približno) $180^\\circ$, smo na eni skali odčitali napačno. Tudi videz pomaga: $\\angle BSC$ je oster (manj kot $90^\\circ$), $\\angle ASC$ top."
+      }
+     ],
+     "scoring": "Po 1 t. za vsak pravilno izmerjen kot ($58^\\circ \\pm 2^\\circ$ in $122^\\circ \\pm 2^\\circ$).",
+     "mistake": "Najpogostejša napaka je odčitavanje na napačni skali geotrikotnika: namesto $58^\\circ$ se zapiše $122^\\circ$ in obratno. Pred zapisom pomisli, ali je kot oster ali top."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "construct",
+     "text": "Skozi točko $T$ nariši premico $r$, ki je vzporedna premici $q$.",
+     "answer": "Premica $r$ gre skozi $T$ in ima isto smer kot $q$ (oznaka $r \\parallel q$).",
+     "ways": [
+      {
+       "title": "Z geotrikotnikom in ravnilom",
+       "text": "1. Geotrikotnik položimo z dolgim robom (hipotenuzo) na premico $q$.\n2. Ob eno od krajših stranic geotrikotnika tesno prislonimo ravnilo.\n3. Ravnilo držimo pri miru in geotrikotnik drsimo ob njem, dokler dolgi rob ne pride do točke $T$.\n4. Ob dolgem robu skozi $T$ narišemo premico in jo označimo z $r$.\n\nKer geotrikotnik pri drsenju ne spremeni smeri, ima $r$ enako smer kot $q$: $r \\parallel q$.\n\nDrugače: na geotrikotniku so vzporedne črte; eno položimo na $q$, nato geotrikotnik premaknemo vzporedno, da ista črta pride do $T$."
+      }
+     ],
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 235\" font-family=\"sans-serif\" font-size=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><line x1=\"11.5\" y1=\"140.9\" x2=\"303.6\" y2=\"99.8\"/><line x1=\"116.1\" y1=\"218.7\" x2=\"203.9\" y2=\"21.3\"/><circle cx=\"61\" cy=\"133.9\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"254.1\" cy=\"106.8\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"192.5\" cy=\"46.9\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"160\" cy=\"120\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"70\" cy=\"60\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><text x=\"54\" y=\"153\" fill=\"currentColor\" stroke=\"none\">A</text><text x=\"250\" y=\"125\" fill=\"currentColor\" stroke=\"none\">B</text><text x=\"200\" y=\"50\" fill=\"currentColor\" stroke=\"none\">C</text><text x=\"141\" y=\"113\" fill=\"currentColor\" stroke=\"none\">S</text><text x=\"77\" y=\"66\" fill=\"currentColor\" stroke=\"none\">T</text><text x=\"298\" y=\"92\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">p</text><text x=\"210\" y=\"26\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">q</text><line x1=\"47.6\" y1=\"110.2\" x2=\"86.3\" y2=\"23.5\" stroke-width=\"1.8\"/><text x=\"91\" y=\"30\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">r</text></svg>",
+     "mistake": "Premica, narisana »na oko«, navadno ni vzporedna; tudi premica skozi $T$, vzporedna premici $p$ namesto $q$, ni pravilna."
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "intro": "Dan je izraz $I = 3x - 4y + 2xy$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj vrednost izraza za $x = -2$ in $y = 5$.",
+     "answer": "$-46$",
+     "ways": [
+      {
+       "title": "Vstavimo vrednosti",
+       "text": "Namesto $x$ vstavimo $-2$ (v oklepaju), namesto $y$ pa $5$:\n\n$I = 3 \\cdot (-2) - 4 \\cdot 5 + 2 \\cdot (-2) \\cdot 5$\n\nIzračunamo vsak člen posebej: $3 \\cdot (-2) = -6$, $4 \\cdot 5 = 20$, $2 \\cdot (-2) \\cdot 5 = -20$.\n\n$I = -6 - 20 - 20 = -46$."
+      },
+      {
+       "title": "Drugače: najprej izpostavimo",
+       "text": "Člena z $x$ lahko združimo: $3x + 2xy = x(3 + 2y)$. Za $y = 5$ je $3 + 2 \\cdot 5 = 13$, zato je\n\n$I = x \\cdot 13 - 4y = (-2) \\cdot 13 - 4 \\cdot 5 = -26 - 20 = -46$.\n\nOba načina dasta isti rezultat ✓."
+      }
+     ],
+     "scoring": "1 t. za pravilno vstavljene vrednosti (ali pravilno izračunane člene $-6$, $-20$, $-20$), 1 t. za rezultat $-46$.",
+     "mistake": "Pri $2xy$ se pogosto izgubi minus: $2 \\cdot (-2) \\cdot 5 = -20$, ne $20$. Kdor dobi $-6 - 20 + 20 = -6$, je naredil to napako."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj vrednost izraza za $x = 0$ in $y = -1{,}25$.",
+     "answer": "$5$",
+     "ways": [
+      {
+       "title": "Vstavimo vrednosti",
+       "text": "$I = 3 \\cdot 0 - 4 \\cdot (-1{,}25) + 2 \\cdot 0 \\cdot (-1{,}25)$\n\nČleni: $3 \\cdot 0 = 0$, $-4 \\cdot (-1{,}25) = 5$ (minus krat minus je plus), $2 \\cdot 0 \\cdot (-1{,}25) = 0$ (zmnožek z ničlo je nič).\n\n$I = 0 + 5 + 0 = 5$."
+      },
+      {
+       "title": "Drugače: s premislekom o ničli",
+       "text": "Ker je $x = 0$, sta člena $3x$ in $2xy$ enaka $0$ (v obeh je faktor $x$). Ostane samo člen $-4y$:\n\n$I = -4y = -4 \\cdot (-1{,}25) = 5$.\n\nZa $4 \\cdot 1{,}25$ si pomagamo z $1{,}25 = \\frac{5}{4}$: $4 \\cdot \\frac{5}{4} = 5$."
+      }
+     ],
+     "scoring": "1 t. za ugotovitev, da sta člena z $x$ enaka $0$ (ali pravilno vstavljene vrednosti), 1 t. za rezultat $5$.",
+     "mistake": "Napačen je rezultat $-5$ (pozabljen predznak: $-4 \\cdot (-1{,}25)$ je pozitivno) in rezultat $0$ (kdor misli, da je zaradi $x = 0$ ves izraz $0$; ničla izniči le člene, v katerih je $x$ faktor)."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Naj bo $x = -\\frac{2}{3}$. Koliko mora biti $y$, da bo vrednost izraza $I$ enaka $0$?",
+     "answer": "$y = -\\frac{3}{8}$",
+     "ways": [
+      {
+       "title": "Vstavimo in rešimo enačbo",
+       "text": "Vstavimo $x = -\\frac{2}{3}$ in zahtevamo, da je izraz enak $0$:\n\n$3 \\cdot \\left(-\\frac{2}{3}\\right) - 4y + 2 \\cdot \\left(-\\frac{2}{3}\\right) \\cdot y = 0$\n\n$-2 - 4y - \\frac{4}{3}y = 0$\n\nČlena z $y$ seštejemo: $-4y - \\frac{4}{3}y = -\\frac{12}{3}y - \\frac{4}{3}y = -\\frac{16}{3}y$.\n\n$-2 - \\frac{16}{3}y = 0$, torej $-\\frac{16}{3}y = 2$ in\n\n$y = 2 : \\left(-\\frac{16}{3}\\right) = 2 \\cdot \\left(-\\frac{3}{16}\\right) = -\\frac{6}{16} = -\\frac{3}{8}$."
+      },
+      {
+       "title": "Drugače: odpravimo ulomke in preizkus",
+       "text": "Enačbo $-2 - 4y - \\frac{4}{3}y = 0$ pomnožimo s $3$: $-6 - 12y - 4y = 0$, torej $-16y = 6$ in $y = -\\frac{6}{16} = -\\frac{3}{8}$.\n\n**Preizkus:** za $x = -\\frac{2}{3}$ in $y = -\\frac{3}{8}$ so členi\n\n- $3x = -2$,\n- $-4y = -4 \\cdot \\left(-\\frac{3}{8}\\right) = \\frac{3}{2}$,\n- $2xy = 2 \\cdot \\left(-\\frac{2}{3}\\right) \\cdot \\left(-\\frac{3}{8}\\right) = \\frac{12}{24} = \\frac{1}{2}$.\n\nVsota: $-2 + \\frac{3}{2} + \\frac{1}{2} = 0$ ✓."
+      }
+     ],
+     "scoring": "1 t. za pravilno zapisano enačbo po vstavljanju ($-2 - 4y - \\frac{4}{3}y = 0$ ali enakovredno), 1 t. za $y = -\\frac{3}{8}$.",
+     "mistake": "Pogosto se pozabi, da je tudi v členu $2xy$ neznanka $y$: kdor reši le $-2 - 4y = 0$, dobi napačno $y = -\\frac{1}{2}$. Preizkus pokaže, da tedaj $I = -2 + 2 + \\frac{2}{3} \\neq 0$."
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "intro": "Na skici je kvader $ABCDEFGH$. Njegova osnovna ploskev $ABCD$ je pravokotnik z robovoma $|AB| = 12\\,\\mathrm{cm}$ in $|BC| = 5\\,\\mathrm{cm}$. Razdalja med ogliščema $C$ in $G$ je $8\\,\\mathrm{cm}$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 280 215\" font-family=\"sans-serif\" font-size=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><path d=\"M30,190 L210,190 L210,70 L30,70 Z M210,190 L250,160 L250,40 L210,70 M30,70 L70,40 L250,40\"/><path d=\"M30,190 L70,160 L250,160 M70,160 L70,40\" stroke-dasharray=\"5 4\" stroke-width=\"1.1\"/><text x=\"18\" y=\"206\" fill=\"currentColor\" stroke=\"none\">A</text><text x=\"212\" y=\"206\" fill=\"currentColor\" stroke=\"none\">B</text><text x=\"256\" y=\"168\" fill=\"currentColor\" stroke=\"none\">C</text><text x=\"76\" y=\"156\" fill=\"currentColor\" stroke=\"none\">D</text><text x=\"15\" y=\"72\" fill=\"currentColor\" stroke=\"none\">E</text><text x=\"214\" y=\"86\" fill=\"currentColor\" stroke=\"none\">F</text><text x=\"255\" y=\"38\" fill=\"currentColor\" stroke=\"none\">G</text><text x=\"58\" y=\"36\" fill=\"currentColor\" stroke=\"none\">H</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 3,
+     "format": "choice",
+     "text": "Pri vsaki izjavi (A, B in C) presodi, ali je pravilna ali nepravilna. Obkroži črke **pravilnih** izjav.",
+     "choices": [
+      "Premica $AB$ je vzporedna premici $HG$.",
+      "Ravnini $ADH$ in $BCG$ sta pravokotni.",
+      "Premici $AE$ in $BC$ sta mimobežni."
+     ],
+     "correct": [
+      0,
+      2
+     ],
+     "answer": "A – pravilna, B – nepravilna, C – pravilna.",
+     "ways": [
+      {
+       "title": "Po izjavah",
+       "text": "**A – pravilna.** Rob $AB$ je vzporeden robu $DC$ (nasprotni stranici pravokotnika $ABCD$), rob $DC$ pa robu $HG$ (nasprotni stranici pravokotnika $DCGH$). Zato je $AB \\parallel HG$. Premici ležita v ravnini $ABGH$ (diagonalni prerez kvadra) in se ne sekata.\n\n**B – nepravilna.** Ravnina $ADH$ je leva stranska ploskev $ADHE$, ravnina $BCG$ desna stranska ploskev $BCGF$. Nasprotni ploskvi kvadra sta **vzporedni**, ne pravokotni. (Pravokotni bi bili npr. ravnini $ADH$ in $ABC$.)\n\n**C – pravilna.** Premica $AE$ je navpični rob v oglišču $A$, premica $BC$ pa vodoraven rob osnovne ploskve. Premica $AE$ prebode osnovno ploskev samo v točki $A$, ta pa ne leži na $BC$, zato se premici ne sekata. Vzporedni tudi nista (ena je navpična, druga vodoravna). Premici, ki se ne sekata in nista vzporedni, sta **mimobežni**."
+      },
+      {
+       "title": "Drugače: s predmetom v sobi",
+       "text": "Predstavljaj si sobo v obliki kvadra: tla so $ABCD$, strop $EFGH$.\n\n- A: spodnji rob sprednje stene ($AB$) in zgornji rob zadnje stene ($HG$) kažeta v isto smer – vzporedna.\n- B: leva in desna stena ($ADHE$ in $BCGF$) sta si nasproti kot platnici zaprte knjige – vzporedni, zato izjava ni pravilna.\n- C: navpični vogal sobe pri $A$ in talni rob $BC$ na drugi strani sobe se nikoli ne srečata in nimata iste smeri – mimobežna."
+      }
+     ],
+     "scoring": "Po 1 t. za vsako pravilno presojeno izjavo (A: pravilna, B: nepravilna, C: pravilna).",
+     "mistake": "Na skici sta $AE$ in $BC$ videti, kot da bi se ob podaljšanju sekala, zato marsikdo izjavo C zavrne. Skica je ravninska slika prostorskega telesa; premici ležita v različnih ravninah in se v prostoru ne sekata."
+    },
+    {
+     "id": "b",
+     "points": 3,
+     "format": "open",
+     "text": "Izračunaj površino kvadra. Rezultat zapiši v $\\mathrm{dm}^2$.",
+     "answer": "$P = 392\\,\\mathrm{cm}^2 = 3{,}92\\,\\mathrm{dm}^2$",
+     "ways": [
+      {
+       "title": "Po obrazcu",
+       "text": "**Podatki:** $a = |AB| = 12\\,\\mathrm{cm}$, $b = |BC| = 5\\,\\mathrm{cm}$, $c = |CG| = 8\\,\\mathrm{cm}$ (rob $CG$ je navpičen, zato je njegova dolžina višina kvadra).\n\n**Iščemo:** površino $P$ v $\\mathrm{dm}^2$.\n\nPovršina kvadra je vsota ploščin šestih pravokotnikov, po dva in dva sta skladna: $P = 2(ab + ac + bc)$.\n\n$ab = 12 \\cdot 5 = 60$, $ac = 12 \\cdot 8 = 96$, $bc = 5 \\cdot 8 = 40$ (v $\\mathrm{cm}^2$).\n\n$P = 2 \\cdot (60 + 96 + 40) = 2 \\cdot 196 = 392$, torej $P = 392\\,\\mathrm{cm}^2$.\n\n**Pretvorba:** $1\\,\\mathrm{dm}^2 = 100\\,\\mathrm{cm}^2$, zato $392\\,\\mathrm{cm}^2 = 392 : 100\\,\\mathrm{dm}^2 = 3{,}92\\,\\mathrm{dm}^2$."
+      },
+      {
+       "title": "Drugače: najprej pretvorimo v dm",
+       "text": "Robove najprej zapišemo v decimetrih: $a = 1{,}2\\,\\mathrm{dm}$, $b = 0{,}5\\,\\mathrm{dm}$, $c = 0{,}8\\,\\mathrm{dm}$.\n\nPloskve (po dve enaki):\n\n- osnovni ploskvi: $1{,}2 \\cdot 0{,}5 = 0{,}6$,\n- sprednja in zadnja ploskev: $1{,}2 \\cdot 0{,}8 = 0{,}96$,\n- stranski ploskvi: $0{,}5 \\cdot 0{,}8 = 0{,}4$ (vse v $\\mathrm{dm}^2$).\n\n$P = 2 \\cdot (0{,}6 + 0{,}96 + 0{,}4) = 2 \\cdot 1{,}96 = 3{,}92$, torej $P = 3{,}92\\,\\mathrm{dm}^2$ ✓."
+      }
+     ],
+     "scoring": "1 t. za pravilen nastavek (obrazec $P = 2(ab + ac + bc)$ z vstavljenimi podatki), 1 t. za $P = 392\\,\\mathrm{cm}^2$, 1 t. za pretvorbo $3{,}92\\,\\mathrm{dm}^2$.",
+     "mistake": "Kvadratne enote se pretvarjajo s faktorjem $100$, ne $10$: $392\\,\\mathrm{cm}^2$ ni $39{,}2\\,\\mathrm{dm}^2$. Pogosta je tudi zamenjava površine s prostornino ($12 \\cdot 5 \\cdot 8 = 480$, to so $\\mathrm{cm}^3$) ali pozabljen faktor $2$ ($196\\,\\mathrm{cm}^2$)."
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "parts": [
+    {
+     "id": "a",
+     "points": 3,
+     "format": "open",
+     "text": "Luka pripravlja ptičjo pogačo za zimsko krmljenje ptic. Na kuhinjsko tehtnico postavi posodo s sončničnimi semeni; tehtnica kaže maso, ki jo vidiš na sliki. Prazna posoda ima maso $35\\,\\mathrm{dag}$. V posodo nato doda še $25\\,\\mathrm{dag}$ loja in $0{,}4\\,\\mathrm{kg}$ prosa.\n\nKolikšna je masa zmesi semen, loja in prosa (brez posode)? Rezultat zapiši v gramih.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 240 170\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><rect x=\"8\" y=\"12\" width=\"224\" height=\"150\" rx=\"14\"/><path d=\"M25,125 A95,95 0 0 1 215,125\"/><path d=\"M25,125L39,125M26.2,110.1L34.1,111.4M29.6,95.6L37.3,98.1M35.4,81.9L42.5,85.5M43.1,69.2L49.6,73.9M52.8,57.8L62.7,67.7M64.2,48.1L68.9,54.6M76.9,40.4L80.5,47.5M90.6,34.6L93.1,42.3M105.1,31.2L106.4,39.1M120,30L120,44M134.9,31.2L133.6,39.1M149.4,34.6L146.9,42.3M163.1,40.4L159.5,47.5M175.8,48.1L171.1,54.6M187.2,57.8L177.3,67.7M196.9,69.2L190.4,73.9M204.6,81.9L197.5,85.5M210.4,95.6L202.7,98.1M213.8,110.1L205.9,111.4M215,125L201,125\" stroke-width=\"1.3\"/><text x=\"53\" y=\"129\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">0</text><text x=\"73\" y=\"82\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">0,5</text><text x=\"120\" y=\"63\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">1</text><text x=\"167\" y=\"82\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">1,5</text><text x=\"187\" y=\"129\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">2</text><text x=\"120\" y=\"150\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">kg</text><line x1=\"120\" y1=\"125\" x2=\"157.2\" y2=\"51.9\" stroke-width=\"2.2\"/><circle cx=\"120\" cy=\"125\" r=\"4\" fill=\"currentColor\"/></svg>",
+     "answer": "$1\\,600\\,\\mathrm{g}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** tehtnica (posoda s semeni) – odčitamo s slike; posoda $35\\,\\mathrm{dag}$; loj $25\\,\\mathrm{dag}$; proso $0{,}4\\,\\mathrm{kg}$.\n\n**Iščemo:** maso zmesi brez posode v gramih.\n\n**Odčitamo tehtnico.** Med $0$ in $1\\,\\mathrm{kg}$ je $10$ razdelkov, en razdelek je torej $100\\,\\mathrm{g}$. Kazalec stoji na tretjem razdelku za oznako $1$ (to je $1\\,\\mathrm{kg} = 1\\,000\\,\\mathrm{g}$): $1\\,000 + 3 \\cdot 100 = 1\\,300$, torej tehtnica kaže $1\\,300\\,\\mathrm{g}$.\n\n**Pretvorimo v grame:** $35\\,\\mathrm{dag} = 350\\,\\mathrm{g}$, $25\\,\\mathrm{dag} = 250\\,\\mathrm{g}$, $0{,}4\\,\\mathrm{kg} = 400\\,\\mathrm{g}$ ($1\\,\\mathrm{dag} = 10\\,\\mathrm{g}$, $1\\,\\mathrm{kg} = 1\\,000\\,\\mathrm{g}$).\n\n**Semena:** $1\\,300 - 350 = 950$, torej $950\\,\\mathrm{g}$.\n\n**Zmes:** $950 + 250 + 400 = 1\\,600$, torej $1\\,600\\,\\mathrm{g}$."
+      },
+      {
+       "title": "Drugače: najprej vse na tehtnici",
+       "text": "Ko Luka doda loj in proso, tehtnica pokaže $1\\,300\\,\\mathrm{g} + 250\\,\\mathrm{g} + 400\\,\\mathrm{g} = 1\\,950\\,\\mathrm{g}$ (to je še vedno manj od $2\\,\\mathrm{kg}$, ki jih tehtnica zmore).\n\nOd tega odštejemo posodo: $1\\,950\\,\\mathrm{g} - 350\\,\\mathrm{g} = 1\\,600\\,\\mathrm{g}$.\n\nZmes ima maso $1\\,600\\,\\mathrm{g} = 1{,}6\\,\\mathrm{kg}$ ✓."
+      }
+     ],
+     "scoring": "1 t. za pravilno odčitano maso $1\\,300\\,\\mathrm{g}$, 1 t. za pravilne pretvorbe v grame ($350\\,\\mathrm{g}$, $250\\,\\mathrm{g}$, $400\\,\\mathrm{g}$), 1 t. za rezultat $1\\,600\\,\\mathrm{g}$.",
+     "mistake": "Pri odčitavanju se pogosto misli, da je en razdelek $10\\,\\mathrm{g}$ ali $50\\,\\mathrm{g}$ – vedno najprej preštej razdelke med dvema oznakama. Druga napaka je $35\\,\\mathrm{dag} = 35\\,\\mathrm{g}$ ali $3\\,500\\,\\mathrm{g}$: dekagram je $10\\,\\mathrm{g}$."
+    },
+    {
+     "id": "b",
+     "points": 3,
+     "format": "open",
+     "text": "Dostavljavec Gregor se je s kombijem odpeljal iz skladišča ob 9.45. Vožnja do stranke je trajala $2$ uri in $35$ minut. Števec prevoženih kilometrov je ob odhodu kazal stanje na sliki; zadnja, osenčena števka pomeni desetinke kilometra. Do stranke je Gregor prevozil $126\\,\\mathrm{km}$ in $400\\,\\mathrm{m}$.\n\nObkroži pravilni zapis ure, ko je Gregor prispel do stranke:\n\n**A** 11.80 **B** 12.20 **C** 12.80 **D** 11.20\n\nNato izračunaj, koliko kilometrov je kazal števec ob prihodu.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 250 62\" font-family=\"monospace\" font-size=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><rect x=\"6\" y=\"6\" width=\"238\" height=\"50\" rx=\"6\" stroke-width=\"1\"/><rect x=\"16\" y=\"13\" width=\"24\" height=\"36\" rx=\"2\"/><text x=\"28\" y=\"39\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">0</text><rect x=\"44\" y=\"13\" width=\"24\" height=\"36\" rx=\"2\"/><text x=\"56\" y=\"39\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">4</text><rect x=\"72\" y=\"13\" width=\"24\" height=\"36\" rx=\"2\"/><text x=\"84\" y=\"39\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">8</text><rect x=\"100\" y=\"13\" width=\"24\" height=\"36\" rx=\"2\"/><text x=\"112\" y=\"39\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">7</text><rect x=\"128\" y=\"13\" width=\"24\" height=\"36\" rx=\"2\"/><text x=\"140\" y=\"39\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">3</text><rect x=\"156\" y=\"13\" width=\"24\" height=\"36\" rx=\"2\"/><text x=\"168\" y=\"39\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">6</text><rect x=\"190\" y=\"13\" width=\"24\" height=\"36\" rx=\"2\" fill=\"currentColor\" fill-opacity=\"0.18\"/><text x=\"202\" y=\"39\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\">2</text><text x=\"226\" y=\"38\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"13\">km</text></svg>",
+     "answer": "B (12.20); števec je kazal $48\\,862{,}6\\,\\mathrm{km}$.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** odhod ob 9.45, vožnja $2\\,\\mathrm{h}\\ 35\\,\\mathrm{min}$, stanje števca ob odhodu $48\\,736{,}2\\,\\mathrm{km}$ (s slike: $048736$ in desetinka $2$), pot $126\\,\\mathrm{km}\\ 400\\,\\mathrm{m}$.\n\n**Iščemo:** uro prihoda in stanje števca ob prihodu.\n\n**Ura prihoda.** Najprej prištejemo cele ure: 9.45 + 2 h = 11.45. Nato še $35\\,\\mathrm{min}$: do polne ure 12.00 manjka $15\\,\\mathrm{min}$, ostane $35 - 15 = 20$ minut. Gregor je prispel ob **12.20** – odgovor **B**.\n\n**Pot v kilometrih.** $1\\,\\mathrm{km} = 1\\,000\\,\\mathrm{m}$, zato je $400\\,\\mathrm{m} = 0{,}4\\,\\mathrm{km}$ in pot meri $126{,}4\\,\\mathrm{km}$.\n\n**Novo stanje števca:** $48\\,736{,}2 + 126{,}4 = 48\\,862{,}6$, torej $48\\,862{,}6\\,\\mathrm{km}$ (na števcu $048862$ in desetinka $6$)."
+      },
+      {
+       "title": "Drugače: računamo v minutah in metrih",
+       "text": "**Ura:** 9.45 je $9 \\cdot 60 + 45 = 585$ minut po polnoči, vožnja traja $2 \\cdot 60 + 35 = 155$ minut. Skupaj $585 + 155 = 740$ minut, $740 = 12 \\cdot 60 + 20$, torej ob 12.20 ✓.\n\nZakaj so drugi zapisi napačni: 11.80 nastane, če seštejemo $45 + 35 = 80$ in pozabimo, da ima ura le $60$ minut (pravilno je $80\\,\\mathrm{min} = 1\\,\\mathrm{h}\\ 20\\,\\mathrm{min}$); 12.80 je ista napaka, le da je ura že povečana; 11.20 nastane, če preneseno uro izpustimo.\n\n**Števec v metrih:** $48\\,736{,}2\\,\\mathrm{km} = 48\\,736\\,200\\,\\mathrm{m}$ in $126\\,\\mathrm{km}\\ 400\\,\\mathrm{m} = 126\\,400\\,\\mathrm{m}$. Vsota: $48\\,862\\,600\\,\\mathrm{m} = 48\\,862{,}6\\,\\mathrm{km}$ ✓."
+      }
+     ],
+     "scoring": "1 t. za obkroženi pravilni zapis B (12.20), 1 t. za pretvorbo $126\\,\\mathrm{km}\\ 400\\,\\mathrm{m} = 126{,}4\\,\\mathrm{km}$, 1 t. za stanje števca $48\\,862{,}6\\,\\mathrm{km}$.",
+     "mistake": "Pri števcu se pogosto pozabi, da je zadnja števka desetinka: kdor prebere $487\\,362\\,\\mathrm{km}$ in prišteje $126{,}4$, dobi nesmiseln rezultat. Tudi $400\\,\\mathrm{m} = 0{,}04\\,\\mathrm{km}$ je napačno: $400$ od $1\\,000$ je $0{,}4$."
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "intro": "Proizvajalec obutve je v preglednico zapisal, kolikšni dolžini stopala ustreza posamezna številka čevljev. Razlike med zaporednimi dolžinami se ponavljajo po stalnem pravilu.\n\n| Številka čevlja | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 |\n|---|---|---|---|---|---|---|---|---|---|\n| Dolžina stopala (cm) | 22,6 | 23,2 | 23,9 | 24,6 | 25,2 | | | 27,2 | |",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "fill",
+     "text": "Dopolni manjkajoče dolžine stopala v preglednici.\n\nŠtevilka $41$: $\\underline{\\qquad}\\,\\mathrm{cm}$, številka $42$: $\\underline{\\qquad}\\,\\mathrm{cm}$, številka $44$: $\\underline{\\qquad}\\,\\mathrm{cm}$",
+     "answer": "$41$: $25{,}9\\,\\mathrm{cm}$; $42$: $26{,}6\\,\\mathrm{cm}$; $44$: $27{,}9\\,\\mathrm{cm}$",
+     "ways": [
+      {
+       "title": "Z razlikami",
+       "text": "Izračunamo razlike med znanimi zaporednimi dolžinami:\n\n- $23{,}2 - 22{,}6 = 0{,}6$,\n- $23{,}9 - 23{,}2 = 0{,}7$,\n- $24{,}6 - 23{,}9 = 0{,}7$,\n- $25{,}2 - 24{,}6 = 0{,}6$.\n\nRazlike se ponavljajo v vzorcu $0{,}6;\\ 0{,}7;\\ 0{,}7$, nato spet $0{,}6;\\ 0{,}7;\\ 0{,}7$ … Za številko $40$ ($+0{,}6$) sledita $+0{,}7$ in $+0{,}7$:\n\n- $41$: $25{,}2 + 0{,}7 = 25{,}9$,\n- $42$: $25{,}9 + 0{,}7 = 26{,}6$,\n- $43$: $26{,}6 + 0{,}6 = 27{,}2$ – se ujema s preglednico ✓,\n- $44$: $27{,}2 + 0{,}7 = 27{,}9$."
+      },
+      {
+       "title": "Drugače: vsake tri številke 2 cm",
+       "text": "Vsota razlik v enem ponovitvenem vzorcu je $0{,}6 + 0{,}7 + 0{,}7 = 2$. Torej je stopalo pri številki, ki je za $3$ večja, daljše za natanko $2\\,\\mathrm{cm}$:\n\n- $41 = 38 + 3$: $23{,}9 + 2 = 25{,}9$,\n- $42 = 39 + 3$: $24{,}6 + 2 = 26{,}6$,\n- $44 = 41 + 3$: $25{,}9 + 2 = 27{,}9$.\n\nPreizkus z dano vrednostjo: $43 = 40 + 3$ in $25{,}2 + 2 = 27{,}2$ ✓."
+      }
+     ],
+     "scoring": "2 t. za vse tri pravilne dolžine; 1 t., če sta pravilni dve.",
+     "mistake": "Kdor opazi samo prvo razliko in vsakič prišteje $0{,}6$, dobi $25{,}8$, $26{,}4$ in $27{,}6$. Takšni podatki se ne ujemajo z dano dolžino $27{,}2$ za številko $43$ – dana vrednost je namig za preizkus."
+    },
+    {
+     "id": "b",
+     "points": 4,
+     "format": "fill",
+     "text": "V razredu je $25$ učencev. Preglednica kaže, katero številko čevljev nosijo.\n\n| Številka čevlja | 37 | 38 | 39 | 40 | 41 | 42 |\n|---|---|---|---|---|---|---|\n| Število učencev | 2 | 7 | 3 | 6 | 4 | 3 |\n\nPredpostavi, da ima vsak učenec stopalo take dolžine, kot jo za njegovo številko kaže prva preglednica. Dopolni.\n\n1. Številko $41$ nosi $\\underline{\\qquad}\\,\\%$ učencev.\n2. Modus številk čevljev v razredu je $\\underline{\\qquad}$.\n3. Mediana dolžin stopal učencev je $\\underline{\\qquad}\\,\\mathrm{cm}$.\n4. Verjetnost, da ima naključno izbrani učenec manjšo številko od $40$, je $\\underline{\\qquad}$.",
+     "answer": "1. $16\\,\\%$; 2. $38$; 3. $25{,}2\\,\\mathrm{cm}$; 4. $\\frac{12}{25} = 0{,}48 = 48\\,\\%$",
+     "ways": [
+      {
+       "title": "Po vrsti",
+       "text": "**Podatki:** $25$ učencev; številke $37$ ($2$ učenca), $38$ ($7$), $39$ ($3$), $40$ ($6$), $41$ ($4$), $42$ ($3$); dolžine stopal iz prve preglednice.\n\n**1. Odstotek.** Številko $41$ nosijo $4$ učenci od $25$: $\\frac{4}{25} = \\frac{16}{100} = 16\\,\\%$.\n\n**2. Modus** je podatek, ki se pojavi najpogosteje. Največ učencev ($7$) nosi številko $38$, zato je modus $38$.\n\n**3. Mediana.** Podatke uredimo po velikosti; pri $25$ podatkih je mediana srednji, $13.$ podatek (pred njim jih je $12$ in za njim $12$). Štejemo od najmanjše številke:\n\n- številki $37$: $1.$ in $2.$ učenec,\n- številka $38$: $3.$ do $9.$ učenec ($2 + 7 = 9$),\n- številka $39$: $10.$ do $12.$ učenec ($9 + 3 = 12$),\n- številka $40$: $13.$ do $18.$ učenec.\n\n$13.$ učenec nosi številko $40$, njegovo stopalo meri $25{,}2\\,\\mathrm{cm}$. Mediana dolžin stopal je $25{,}2\\,\\mathrm{cm}$.\n\n**4. Verjetnost.** Manjšo številko od $40$ (torej $37$, $38$ ali $39$) nosi $2 + 7 + 3 = 12$ učencev. Ugodnih izidov je $12$, vseh $25$:\n\n$P = \\frac{12}{25} = 0{,}48 = 48\\,\\%$."
+      },
+      {
+       "title": "Drugače: preizkusi in hitre poti",
+       "text": "**1.** En učenec od $25$ je $100\\,\\% : 25 = 4\\,\\%$ razreda, štirje učenci so $4 \\cdot 4\\,\\% = 16\\,\\%$.\n\n**3.** Mediano lahko poiščemo tudi s štetjem od zgoraj: številko $42$ nosi $3$ učencev, $41$ še $4$ (skupaj $7$), $40$ še $6$ (skupaj $13$). Tudi od zgoraj je $13.$ učenec med tistimi s številko $40$ ✓ – mediana je $25{,}2\\,\\mathrm{cm}$. Ker vsaki številki ustreza ena dolžina, je mediana dolžin kar dolžina, ki ustreza mediani številk.\n\n**4.** Prek nasprotnega dogodka: številko $40$ ali večjo nosi $6 + 4 + 3 = 13$ učencev, zato je verjetnost za manjšo številko $1 - \\frac{13}{25} = \\frac{12}{25}$ ✓."
+      }
+     ],
+     "scoring": "Po 1 t. za vsak pravilen odgovor: $16\\,\\%$; $38$; $25{,}2\\,\\mathrm{cm}$; $\\frac{12}{25}$ (tudi $0{,}48$ ali $48\\,\\%$).",
+     "mistake": "Modus ni največje število v preglednici ($7$), temveč podatek, ki se tolikokrat pojavi (številka $38$). Pri mediani je napačno vzeti srednjo številko iz preglednice ($39$ ali $40$ »na sredini vrstice«), ne da bi upoštevali, koliko učencev nosi posamezno številko. Pri verjetnosti »manjšo od $40$« ne štejemo učencev s številko $40$."
+    }
+   ]
+  }
+ ]
+}

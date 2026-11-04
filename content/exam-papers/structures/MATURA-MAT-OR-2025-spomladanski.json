@@ -1,0 +1,373 @@
+{
+ "id": "MATURA-MAT-OR-2025-spomladanski",
+ "points": 120,
+ "minutes": 180,
+ "polas": [
+  {
+   "pola": 1,
+   "minutes": 90,
+   "calculator": false,
+   "points": 60
+  },
+  {
+   "pola": 2,
+   "minutes": 90,
+   "calculator": true,
+   "points": 60
+  }
+ ],
+ "tools": "Nalivno pero ali kemični svinčnik, svinčnik, radirka in geometrijsko orodje (šestilo, ravnilo, po želji trikotnik); zbirka zahtevnejših formul in konceptna lista sta na perforiranih listih v izpitni poli (osnutki se ne ocenjujejo). Pri izpitni poli 1 računalo ni dovoljeno, pri izpitni poli 2 je dovoljeno. Pot do rezultata mora biti zapisana z vmesnimi računi in sklepi.",
+ "sections": {
+  "A": "kratke naloge: 8 nalog po 2–3 točke (skupaj 20 točk na polo), priporočeno 30 minut; enostopenjske, brez delov",
+  "B": "krajše strukturirane naloge: 6 nalog po 5–8 točk (skupaj 40 točk na polo), priporočeno 60 minut; brez oštevilčenih delov, a pogosto z več vprašanji v isti nalogi; del B je enak kot pri višji ravni"
+ },
+ "tasks": [
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 1,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "izraz s potenco potence in deljenjem s potenco iste spremenljivke zapisati kot eno potenco a^m s celim eksponentom (pravila za potence, brez računala)"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 2,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "eksponentna enačba oblike k·b^(x+c) = N, kjer je N/k celoštevilska potenca osnove b; prevedba na enako osnovo in enačenje eksponentov (rešitev z logaritmom se ne prizna)"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 3,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "dano kompleksno število z; z računom pokazati, da je izraz iz z in njegove konjugirane vrednosti enak danemu številu w, nato w predstaviti v kompleksni ravnini",
+   "figure": "prazna kompleksna ravnina z označeno enoto"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 4,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "abscisi presečišč premice skozi izhodišče in krožnice s središčem v izhodišču (vstavljanje, kvadratna enačba)"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 5,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "štirikotnik s skico: dva notranja kota sta dana, preostala dva sta v razmerju 1 : 2; izračunati ju iz vsote notranjih kotov",
+   "figure": "skica štirikotnika z označenima znanima kotoma in neznankama"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 6,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "nedoločeni integral vsote potenčnega člena in sinusa (integriranje po členih)"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 7,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "površina enakostraničnega valja z danim polmerom osnovne ploskve; natančen rezultat s π"
+  },
+  {
+   "pola": 1,
+   "section": "A",
+   "n": 8,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "ploščina osenčenega lika v mreži koordinatnega sistema (razdelitev na preproste like ali odštevanje)",
+   "figure": "osenčen lik v kvadratni mreži s celoštevilskimi oglišči"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 1,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "tri množice, podane z opisom (praštevila pod mejo, delitelji naravnega števila, večkratniki pod mejo); zapisati jih z naštevanjem elementov ter zapisati še dve množici, dobljeni z množičnima operacijama (npr. presek, razlika)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 2,
+   "points": [
+    7
+   ],
+   "format": [
+    "table"
+   ],
+   "topic": "tri kvadratne enačbe z ničelno, pozitivno in negativno diskriminanto: izračunati diskriminanto in vse rešitve (dvojna, realni, kompleksni), vpis v preglednico",
+   "figure": "preglednica enačba / diskriminanta / rešitve"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 3,
+   "points": [
+    5
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "enotska krožnica s središčem v izhodišču: dana je točka na krožnici s koordinatami iz posebnih vrednosti, druga točka je od nje zasukana za dani posebni kot; natančni koordinati druge točke ter natančni obseg in ploščina pravokotnega trikotnika iz izhodišča, dane točke in njene pravokotne projekcije na abscisno os",
+   "figure": "enotska krožnica z dvema točkama, projekcijo in označenim kotom"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 4,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "dana sta a in b kot logaritma dveh praštevil pri isti osnovi; tri logaritme (produkta, produkta s korenom, decimalnega števila) izraziti z a in b (pravila za logaritme, log osnove je 1)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 5,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "racionalna funkcija s kvadratnim števcem in linearnim imenovalcem: stacionarni točki (odvod kvocienta) in enačba tangente v točki z dano absciso"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 6,
+   "points": [
+    8
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "hiperbola s središčem v izhodišču in goriščema na abscisni osi: dana sta asimptota in točka na hiperboli (s korenom v koordinati); zapisati enačbo; nato hiperbolo prezrcaliti čez simetralo lihih kvadrantov in zapisati enačbo zrcalne slike"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 1,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "linearna funkcija z danim ulomljenim smernim koeficientom: določiti začetno vrednost, da graf seka abscisno os v dani točki"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 2,
+   "points": [
+    3
+   ],
+   "format": [
+    "table"
+   ],
+   "topic": "pravokotna parcela z danima dimenzijama: eno stranico povečamo, drugo zmanjšamo za dana odstotka; novi dimenziji in sprememba ploščine v kvadratnih metrih, vpis v preglednico",
+   "figure": "preglednica za tri rezultate"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 3,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "skupno mesečno povprečje za celo leto, ko je za prve mesece dano povprečje, za preostanek pa skupno število (tehtano povprečje)"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 4,
+   "points": [
+    3
+   ],
+   "format": [
+    "choice"
+   ],
+   "topic": "iz grafa polinoma tretje stopnje z obkroževanjem odgovoriti na tri vprašanja: število ničel, predznak vodilnega koeficienta, število stacionarnih točk",
+   "figure": "graf kubičnega polinoma v koordinatnem sistemu"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 5,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "kombinacije: na koliko načinov iz razreda izberemo tričlansko skupino (vrstni red ni pomemben)"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 6,
+   "points": [
+    3
+   ],
+   "format": [
+    "fill"
+   ],
+   "topic": "zapisati odvode treh preprostih funkcij: potenca s koeficientom, kosinus s koeficientom, eksponentna funkcija s koeficientom"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 7,
+   "points": [
+    3
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "največji notranji kot enakokrakega trikotnika iz dolžin osnovnice in kraka (kosinusni izrek ali višina), na stotinko stopinje"
+  },
+  {
+   "pola": 2,
+   "section": "A",
+   "n": 8,
+   "points": [
+    2
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "geometrijsko zaporedje: iz prvega in četrtega člena (ulomek) izračunati količnik"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 1,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "narisati vodoravno premico in poševno premico z dano enačbo ter izračunati ploščino trikotnika, ki ga premici oklepata z ordinatno osjo (presečišča)",
+   "figure": "prazen koordinatni sistem za risanje premic"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 2,
+   "points": [
+    8
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "dva vektorja enake dolžine s topim kotom med njima: skicirati njuno linearno kombinacijo in izračunati dva skalarna produkta (definicija, distributivnost)",
+   "figure": "skica dveh vektorjev z označenim kotom"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 3,
+   "points": [
+    8
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "dva zaporedna meta poštene kocke: verjetnosti treh dogodkov (dvakrat isti izid, vsaj enkrat dani izid, vsota pik največ dana meja)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 4,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "stranice trikotnika tvorijo aritmetično zaporedje z dano diferenco, dan je obseg: izračunati stranice in največji kot na minuto natančno (kosinusni izrek)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 5,
+   "points": [
+    5
+   ],
+   "format": [
+    "choice"
+   ],
+   "topic": "preglednica šestih funkcij (produkt potence in sinusa, eksponentna, kosinus, logaritemska, kvadratna, vsota linearne in kosinusa): pri vsaki obkrožiti edino lastnost med sodo, liho, naraščajočo, padajočo; prvi primer je rešen",
+   "figure": "preglednica funkcij in lastnosti"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 6,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "graf potenčne funkcije s parametrom a deli pravokotnik ob koordinatnih oseh na dve območji z enako ploščino; z določenim integralom izračunati a",
+   "figure": "koordinatni sistem s krivuljo in pravokotnikom, razdeljenim na označeni območji"
+  }
+ ]
+}

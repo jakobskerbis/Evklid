@@ -99,6 +99,9 @@ export function validatePaper(p, expected = null) {
       });
       for (const k of ["text", "answer", "scoring", "mistake"]) if (part[k]) md.push([part[k], `${w} ${k}`]);
       for (const c of part.choices || []) md.push([c, `${w} izbira`]);
+      // Pregledovalnik možnosti sam označi z A, B, C …; »A: …« v besedilu bi se pokazalo kot »A. A: …« (ne »I. kvadrant«).
+      const own = (part.choices || []).filter((c, i) => new RegExp(`^\\s*(\\*\\*)?\\(?${String.fromCharCode(65 + i)}[):.]`).test(String(c)));
+      if (own.length >= 2) err(`${w}: izbire se začnejo s črkami (»${String(own[0]).slice(0, 12)}«), črke doda pregledovalnik`);
     });
     if (expected?.tasks?.[ti]) {
       const e = expected.tasks[ti];
