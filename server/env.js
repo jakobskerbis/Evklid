@@ -11,3 +11,14 @@ for (const old of LEGACY) {
     if (process.env[name] === undefined) process.env[name] = value;
   }
 }
+
+// node:sqlite izpiše »ExperimentalWarning« ob vsakem zagonu skripte; v Render Shell je videti kot napaka.
+// Privzeti izpis opozoril zamenjamo z enakim, ki to eno opozorilo izpusti.
+const defaults = process.listeners("warning");
+if (defaults.length) {
+  process.removeAllListeners("warning");
+  process.on("warning", (w) => {
+    if (w?.name === "ExperimentalWarning" && /SQLite/i.test(String(w.message))) return;
+    for (const fn of defaults) fn(w);
+  });
+}

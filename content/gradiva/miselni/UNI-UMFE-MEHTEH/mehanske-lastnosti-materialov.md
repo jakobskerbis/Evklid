@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Napetost
+  - $\sigma = \dfrac{F}{S_0}$, enota $\mathrm{MPa} = \mathrm{N/mm^2}$
+  - debelejša palica nosi več, jeklo je enako
+  - napaka: $S_0 = \pi d_0^2$ namesto $\pi d_0^2/4$
+- Natezni preizkus
+  - raztezek $\varepsilon = \dfrac{\Delta L}{L_0}$
+  - meja tečenja $R_e$, natezna trdnost $R_m$
+  - po $R_m$ vrat, krivulja pade
+- Togost
+  - Hookov zakon $\sigma = E \cdot \varepsilon$
+  - vsa jekla $E \approx 210\,\mathrm{GPa}$
+  - močnejše jeklo se ne povesi manj
+- Duktilnost
+  - $A = \dfrac{L_u - L_0}{L_0} \cdot 100\,\%$
+  - jeklo se pred lomom vidno deformira
+- Trdota
+  - Brinell HB, Vickers HV, Rockwell HRC
+  - manjši odtis, večja trdota
+  - jekla: $R_m \approx 3{,}5 \cdot \mathrm{HB}$
+- Žilavost
+  - Charpy z zarezo: $\mathrm{KV} = m g (h_1 - h_2)$
+  - kaljeno dleto trdo, a krhko
+- Prehodna temperatura
+  - feritna jekla na mrazu krhka
+  - žilavost navedi s temperaturo preizkusa

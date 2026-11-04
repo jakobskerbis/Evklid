@@ -5,6 +5,7 @@
 import "./env.js";
 import crypto from "node:crypto";
 import { INTERESTS, interestById, feedInfo, SL_POOL, CUSTOM_POOL, NEWS_LEVELS } from "../public/interests.js";
+import { jeOs, jeFaks } from "../public/stopnja.js";
 
 const TTL = 2 * 60 * 60 * 1000; // vir preberemo znova po 2 urah
 const RETRY = 10 * 60 * 1000; // po neuspehu poskusimo znova po 10 minutah
@@ -116,7 +117,7 @@ export function plan(settings) {
 export function resolveLevel(settings) {
   const v = NEWS_LEVELS.includes(settings.news_level) ? settings.news_level : "auto";
   if (v !== "auto") return v;
-  return settings.educational_track === "OSNOVNA_SOLA" ? "simple" : "all";
+  return jeOs(settings) ? "simple" : "all";
 }
 
 // Pestra mešanica: po vrsti iz vsakega področja najnovejša novica (en vir ne zasede vsega),
@@ -215,7 +216,7 @@ export function createNews(store, { fetchFn = globalThis.fetch, now = () => Date
   async function forStudent(student) {
     const s = student.settings;
     const steps = plan(s);
-    const safe = s.educational_track !== "UNIVERZA";
+    const safe = !jeFaks(s);
     const results = await Promise.all(steps.map((st) => feed(st.feed)));
     const seen = new Map();
     let failed = 0;

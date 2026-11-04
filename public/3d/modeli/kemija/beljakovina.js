@@ -119,6 +119,7 @@ const BELJAKOVINE = {
 };
 
 const SS_BARVE = { H: "#e8628c", E: "#f2c14e", L: "#a9b4c6" };
+const BELA = { r: 1, g: 1, b: 1 };
 const SS_IME = { H: "α-vijačnica", E: "β-ploskev", L: "Zanka" };
 // Vezi hema po vrstnem redu atomov v zapisu PDB (CHA CHB CHC CHD C1A … O2D NA NB NC ND FE); stare koordinate
 // propionatov so ponekod popačene, zato vezi ne iščemo le po razdalji.
@@ -293,6 +294,9 @@ function trakVerige(v, vz, obr) {
 }
 
 // ---------------------------------------------------------------- model
+// Velikost točke (PointsMaterial, sizeAttenuation) je v enotah višine zaslona/razdalje; za premer w v sceni pri vidnem kotu ~40° je size ≈ w / tan(20°).
+const TOCKA_V_SVET = 2.75;
+
 export function zgradi(THREE, ctx = {}) {
   const visoka = ctx.kakovost !== "nizka";
   const zac = ctx.zacetek || {};
@@ -309,6 +313,25 @@ export function zgradi(THREE, ctx = {}) {
   let model = null;
 
   const fiz = (barva, o = {}) => new THREE.MeshPhysicalMaterial({ color: barva, roughness: 0.36, metalness: 0, clearcoat: 0.45, clearcoatRoughness: 0.35, ...o });
+  // trak: lakiran, z rahlim sheenom (mehak rob na zavojih vijačnic) in šibkim lastnim sijem v barvi verige
+  const trakMat = (o = {}) => fiz("#ffffff", { roughness: 0.36, clearcoat: 0.55, clearcoatRoughness: 0.18, sheen: 0.5, sheenRoughness: 0.35, sheenColor: new THREE.Color("#ffffff"), emissiveIntensity: 0.14, ...o });
+  /** Mehak sij (sprite s krožnim prelivom); brez platna (Node) vrne null. */
+  function sijMat(barva, moc, velikost) {
+    if (typeof document === "undefined") return null;
+    const c = document.createElement("canvas"); c.width = c.height = 128;
+    const x = c.getContext && c.getContext("2d");
+    if (!x) return null;
+    const col = new THREE.Color(barva), rgb = [col.r, col.g, col.b].map((v) => Math.round(v * 255)).join(",");
+    const g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+    g.addColorStop(0, `rgba(${rgb},${moc})`); g.addColorStop(0.4, `rgba(${rgb},${moc * 0.4})`); g.addColorStop(1, `rgba(${rgb},0)`);
+    x.fillStyle = g; x.fillRect(0, 0, 128, 128);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+    // točka (Points) namesto sprite: GTAO točk ne upošteva (sprite bi dal temen kvadrat); velikost (Å) se pretvori ob merilu
+    const m = new THREE.PointsMaterial({ map: t, size: 1, sizeAttenuation: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+    m.userData.velikostA = velikost;
+    return m;
+  }
+  const tocka = (p) => new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(p, 3));
 
   function pocisti() {
     if (!model) return;
@@ -316,7 +339,7 @@ export function zgradi(THREE, ctx = {}) {
     const g = new Set(), m = new Set();
     model.koren.traverse((o) => { if (o.geometry) g.add(o.geometry); if (o.material) m.add(o.material); });
     for (const x of g) x.dispose();
-    for (const x of m) x.dispose();
+    for (const x of m) { if (x.map) x.map.dispose(); x.dispose(); }
     model = null;
   }
 
@@ -324,7 +347,7 @@ export function zgradi(THREE, ctx = {}) {
     pocisti();
     const B = beljakovina(stanje.beljakovina);
     const koren = new THREE.Group();
-    const M = { B, koren, trak: {}, veriga: {}, tipi: new Set() };
+    const M = { B, koren, trak: {}, veriga: {}, tipi: new Set(), siji: [] };
 
     // --- trak (risanka)
     const trakSk = new THREE.Group(); koren.add(trakSk);
@@ -338,7 +361,7 @@ export function zgradi(THREE, ctx = {}) {
         g.setAttribute("position", new THREE.Float32BufferAttribute(t[tip].P, 3));
         g.setAttribute("normal", new THREE.Float32BufferAttribute(t[tip].N, 3));
         g.setIndex(t[tip].I);
-        const m = new THREE.Mesh(g, fiz("#ffffff", { side: THREE.DoubleSide }));
+        const m = new THREE.Mesh(g, trakMat({ side: THREE.DoubleSide }));
         m.name = `trak-${v.id}-${tip}`;
         m.userData = { veriga: v.id, tip };
         trakSk.add(m);
@@ -362,7 +385,7 @@ export function zgradi(THREE, ctx = {}) {
       for (const tip of ["H", "E", "L"]) {
         const idx = v.ss.map((s, i) => (s === tip ? i : -1)).filter((i) => i >= 0);
         if (!idx.length) continue;
-        const mat = fiz("#ffffff");
+        const mat = trakMat();
         const k = new THREE.InstancedMesh(kroglaGeo, mat, idx.length);
         idx.forEach((i, j) => k.setMatrixAt(j, mx.compose(v3.set(...v.ca[i]), q.identity(), sc.set(1, 1, 1))));
         const pal = idx.filter((i) => i + 1 < v.ca.length && Math.hypot(...sub(v.ca[i + 1], v.ca[i])) < 4.3);
@@ -386,8 +409,9 @@ export function zgradi(THREE, ctx = {}) {
       for (const a of atomi) (poEl[a.el] ||= []).push(a);
       const meshes = [];
       for (const [e, sez] of Object.entries(poEl)) {
-        const im = new THREE.InstancedMesh(atomGeo, fiz(ELEMENTI[e][0], { roughness: 0.3, clearcoat: 0.55, ...(e === "F" ? { metalness: 0.25 } : {}) }), sez.length);
-        sez.forEach((a, i) => im.setMatrixAt(i, mx.compose(v3.set(...a.p), q.identity(), sc.setScalar(ELEMENTI[e][1]))));
+        // hetero skupina je poudarjena: nekoliko večje, sijoče kroglice; železo rahlo žari
+        const im = new THREE.InstancedMesh(atomGeo, fiz(ELEMENTI[e][0], { roughness: 0.25, clearcoat: 0.9, clearcoatRoughness: 0.1, emissive: ELEMENTI[e][0], emissiveIntensity: e === "F" ? 0.55 : 0.12, ...(e === "F" ? { metalness: 0.35 } : {}) }), sez.length);
+        sez.forEach((a, i) => im.setMatrixAt(i, mx.compose(v3.set(...a.p), q.identity(), sc.setScalar(ELEMENTI[e][1] * (e === "F" ? 1.35 : 1.15)))));
         im.name = `${ime}-${e}`;
         sk.add(im); meshes.push(im);
       }
@@ -398,8 +422,8 @@ export function zgradi(THREE, ctx = {}) {
         if (d < meja && d > 0.5) vezi.push([a.p, b.p]);
       }
       if (vezi.length) {
-        const im = new THREE.InstancedMesh(vezGeo, fiz("#c9d1de", { roughness: 0.4 }), vezi.length);
-        vezi.forEach(([a, b], i) => im.setMatrixAt(i, palcka(a, b)));
+        const im = new THREE.InstancedMesh(vezGeo, fiz("#d3dae6", { roughness: 0.28, clearcoat: 0.7 }), vezi.length);
+        vezi.forEach(([a, b], i) => im.setMatrixAt(i, palcka(a, b).multiply(new THREE.Matrix4().makeScale(1.25, 1, 1.25))));
         im.name = `${ime}-vezi`;
         sk.add(im); meshes.push(im);
       }
@@ -412,13 +436,16 @@ export function zgradi(THREE, ctx = {}) {
       const znane = hem.every((h) => h.at.map((a) => a.el).join("") === HEM_ATOMI) ? hem.flatMap((h, k) => HEM_VEZI.map(([a, b]) => [a + 43 * k, b + 43 * k])) : null;
       M.hem = kroglicePalcke(vsi, "hem", znane);
       M.hemFe = hem.map((h) => h.at.find((a) => a.el === "F").p);
+      // topel sij okoli vsakega hema (le v brskalniku), da se štirje hemi vidijo med trakovi
+      const sm = sijMat("#ff8a45", 0.7, 13);
+      if (sm) { const s = new THREE.Points(tocka(M.hemFe.flat()), sm); s.name = "hem-sij"; s.renderOrder = 2; s.raycast = () => {}; koren.add(s); M.siji.push(sm); }
     }
     if (B.kljuc === "gfp" && B.het.length) {
       const at = B.het[0].at;
       M.kromofor = kroglicePalcke(at, "kromofor");
       const c = at.reduce((s, a) => add(s, a.p), [0, 0, 0]).map((x) => x / at.length);
       // zelen sij: tri prosojne krogle drugo v drugi (mehak prehod)
-      for (const [r, op] of [[3.2, 0.14], [4.6, 0.1], [6.2, 0.07]]) {
+      for (const [r, op] of [[3.2, 0.2], [4.6, 0.13], [6.2, 0.08]]) {
         const sij = new THREE.Mesh(new THREE.SphereGeometry(r, visoka ? 24 : 14, visoka ? 16 : 10),
           new THREE.MeshBasicMaterial({ color: "#58f08a", transparent: true, opacity: op, depthWrite: false, blending: THREE.AdditiveBlending }));
         sij.position.set(...c); sij.name = "kromofor-sij"; sij.renderOrder = 2;
@@ -426,6 +453,8 @@ export function zgradi(THREE, ctx = {}) {
         M.kromofor.push(sij);
       }
       M.kromoforSredina = c;
+      const sm = sijMat("#62ff9a", 0.85, 16); // jedro sija (le v brskalniku)
+      if (sm) { const sp = new THREE.Points(tocka(c), sm); sp.name = "kromofor-jedro"; sp.renderOrder = 3; sp.raycast = () => {}; koren.add(sp); M.siji.push(sm); }
     }
     // disulfidni mostovi: Cα–Cβ–Sγ–Sγ–Cβ–Cα
     if (B.ssb.length) {
@@ -463,6 +492,7 @@ export function zgradi(THREE, ctx = {}) {
     rmax += 1.5;
     const D = [2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 9, 10].find((d) => d * 5 >= rmax) || 10;
     drzalo.scale.setScalar(1 / (D * 5));
+    for (const m of M.siji) m.size = (m.userData.velikostA / (D * 5)) * TOCKA_V_SVET;
     obj.merilo = { m: D * 1e-9, oznaka: `${nm(D)} nm` };
     group.userData.beljakovina = { kljuc: B.kljuc, aNaEnoto: D * 5, podatki: B };
     posodobi();
@@ -475,7 +505,7 @@ export function zgradi(THREE, ctx = {}) {
     for (const v of B.verige) for (const tip of ["H", "E", "L"]) {
       const barva = stanje.barve === "verige" ? B.barve[v.id] : SS_BARVE[tip];
       const t = M.trak[v.id]?.[tip];
-      if (t) t.material.color.set(barva);
+      if (t) { t.material.color.set(barva); t.material.emissive.set(barva); t.material.sheenColor.set(barva).lerp(BELA, 0.35); }
       const c = M.veriga[v.id]?.[tip];
       if (c) c[0].material.color.set(barva);
     }

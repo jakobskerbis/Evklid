@@ -500,7 +500,7 @@ export function sredine(el) {
   };
   const info = () => {
     out.innerHTML = texBlock(`\\sqrt{\\tfrac{a^2+b^2}{2}} \\ge \\frac{a+b}{2} \\ge \\sqrt{ab} \\ge \\frac{2ab}{a+b}`) +
-      `<p>Na polkrogu nad daljico a + b je <b>polmer</b> aritmetična sredina (oranžno), <b>višina v točki delitve</b> geometrijska sredina (zeleno), njena projekcija na polmer pa harmonična sredina (vijolično). Ker je polmer najdaljša taka daljica, je AM ≥ GM.</p>
+      `<p>Na polkrogu nad daljico a + b je <b>polmer</b> aritmetična sredina (oranžno), <b>višina v točki delitve</b> geometrijska sredina (turkizno), njena projekcija na polmer pa harmonična sredina (vijolično). Ker je polmer najdaljša taka daljica, je AM ≥ GM.</p>
        <p class="muted">${Math.abs(a - b) < 1e-9 ? '<b class="ok-text">a = b: vse sredine so enake (enakost).</b>' : "Enakost velja natanko, ko je a = b."} Uporaba: med pravokotniki z danim obsegom ima kvadrat največjo ploščino.</p>`;
   };
   const upd = () => (draw(), info());
@@ -775,8 +775,8 @@ export function grafi(el, { mode = "stopnje" } = {}) {
         `<p>Vsota stopenj je vedno <b>dvakratnik števila povezav</b> (lema o rokovanju), zato je točk z liho stopnjo vedno sodo mnogo (zdaj ${odd}).</p><p class="muted">Klikni dve točki, da dodaš ali odstraniš povezavo. V točkah je zapisana stopnja.</p>`;
     } else {
       const tri = triangle(), full = E.size === (nV * (nV - 1)) / 2 && [...E.values()].every(Boolean);
-      out.innerHTML = `<p>Pobarvaj vse povezave med ${nV} točkami rdeče ali modro (klik na povezavo). ${tri ? `<b class="bad-text">Enobarven trikotnik ${String.fromCharCode(65 + tri[0])}${String.fromCharCode(65 + tri[1])}${String.fromCharCode(65 + tri[2])}!</b>` : full ? '<b class="ok-text">Brez enobarvnega trikotnika!</b>' : "Ali se lahko izogneš enobarvnemu trikotniku?"}</p>
-        <p class="muted">${nV === 6 ? "Pri 6 točkah enobarvni trikotnik vedno nastane (R(3, 3) = 6): točka A ima 5 povezav, po Dirichletu so vsaj 3 iste barve." : "Pri 5 točkah se mu lahko izogneš: pobarvaj obod petkotnika rdeče, diagonale modro."}</p>`;
+      out.innerHTML = `<p>Pobarvaj vse povezave med ${nV} točkami rdeče ali turkizno (klik na povezavo). ${tri ? `<b class="bad-text">Enobarven trikotnik ${String.fromCharCode(65 + tri[0])}${String.fromCharCode(65 + tri[1])}${String.fromCharCode(65 + tri[2])}!</b>` : full ? '<b class="ok-text">Brez enobarvnega trikotnika!</b>' : "Ali se lahko izogneš enobarvnemu trikotniku?"}</p>
+        <p class="muted">${nV === 6 ? "Pri 6 točkah enobarvni trikotnik vedno nastane (R(3, 3) = 6): točka A ima 5 povezav, po Dirichletu so vsaj 3 iste barve." : "Pri 5 točkah se mu lahko izogneš: pobarvaj obod petkotnika rdeče, diagonale turkizno."}</p>`;
     }
   };
   const restart = () => (md === "stopnje" ? randomGraph() : (E = new Map()), (sel = null), draw(), info());

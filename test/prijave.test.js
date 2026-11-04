@@ -99,6 +99,47 @@ test("admin bug report from the chat: admin only, keeps the last messages; repor
   });
 });
 
+test("message report keeps what the student saw: raw model text, rendered HTML and device", async () => {
+  await withServer(async ({ call }) => {
+    const s = (await call("/api/students", { method: "POST", body: { name: "Ana" } })).body;
+    const c = (await call(`/api/students/${s.id}/conversations`, { method: "POST" })).body;
+    await call(`/api/conversations/${c.id}/messages`, { method: "POST", body: { text: "kaj je pitagorov izrek" } });
+    const conv = (await call(`/api/conversations/${c.id}`)).body;
+    const mid = conv.messages.find((m) => m.role === "assistant").id;
+    const url = `/api/conversations/${c.id}/messages/${mid}/report`;
+    const shown = '<p>Pitagorov izrek: <span class="katex-error">a^2 + b^2</span></p>';
+    // HTML s skripto se ne shrani, prijava pa vseeno uspe.
+    const bad = await call(url, { method: "POST", body: { reason: "wrong", shown: "<script>x</script>" } });
+    assert.equal(bad.status, 201);
+    assert.equal((await call("/api/admin/reports")).body.reports.find((x) => x.kind === "message").shown, null);
+    await call(`/api/admin/reports/message/${(await call("/api/admin/reports")).body.reports[0].id}`, { method: "POST", body: { status: "fixed" } });
+
+    const c2 = (await call(`/api/students/${s.id}/conversations`, { method: "POST" })).body;
+    await call(`/api/conversations/${c2.id}/messages`, { method: "POST", body: { text: "kaj je pitagorov izrek" } });
+    const mid2 = (await call(`/api/conversations/${c2.id}`)).body.messages.find((m) => m.role === "assistant").id;
+    const r = await call(`/api/conversations/${c2.id}/messages/${mid2}/report`, { method: "POST", body: { reason: "wrong", note: "formula", shown, device: "web-phone", screen: "390x844" } });
+    assert.equal(r.status, 201);
+    const it = (await call("/api/admin/reports")).body.reports.find((x) => x.kind === "message" && x.status === "open");
+    assert.equal(it.device, "web-phone 390x844");
+    assert.equal(it.shown, shown);
+    assert.match(it.raw, /<<META/, "surovo besedilo modela z vrstico META");
+    assert.ok(!it.answer.includes("<<META"));
+    const md = (await call("/api/admin/reports/export")).body;
+    assert.match(md, /web-phone 390x844/);
+    assert.match(md, /katex-error/);
+    assert.match(md, /Surovo besedilo modela/);
+
+    // Ime učenca se zamenja samo v besedilu, oznake in razredi ostanejo (ime »ma« ne pokvari <math>).
+    const s3 = (await call("/api/students", { method: "POST", body: { name: "ma" } })).body;
+    const c3 = (await call(`/api/students/${s3.id}/conversations`, { method: "POST" })).body;
+    await call(`/api/conversations/${c3.id}/messages`, { method: "POST", body: { text: "kaj je pitagorov izrek" } });
+    const mid3 = (await call(`/api/conversations/${c3.id}`)).body.messages.find((m) => m.role === "assistant").id;
+    await call(`/api/conversations/${c3.id}/messages/${mid3}/report`, { method: "POST", body: { reason: "wrong", shown: '<math class="mathnormal">Pozdravljen, ma!</math>' } });
+    const it3 = (await call("/api/admin/reports")).body.reports.find((x) => x.kind === "message" && x.student_id === s3.id);
+    assert.equal(it3.shown, '<math class="mathnormal">Pozdravljen, [ime]!</math>');
+  });
+});
+
 test("tutor bubble: X attracts it, a flick toward X closes it, other drags do not", () => {
   const X = { x: 200, y: 700 };
   const drag = (pts) => pts.reduce((s, [x, y, t]) => addSample(s, x, y, t), []);

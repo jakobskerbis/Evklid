@@ -157,8 +157,9 @@ function odpri(THREE, s, u) {
 }
 
 // ---------------------------------------------------------------- geometrija
-/** Prizma iz (skoraj) ravninskega konveksnega mnogokotnika točk p (Å), debelina h; vrne trikotnike in normale. */
-function prizma(tocke, h, skrci = 1) {
+/** Prizma iz (skoraj) ravninskega konveksnega mnogokotnika točk p (Å), debelina h, robovi zaobljeni s posnetjem
+ * širine rob (mehke normale, da je ploščica videti kot zglajena tableta); vrne trikotnike in normale. */
+function prizma(tocke, h, skrci = 1, rob = 0) {
   const n = tocke.length;
   const c = [0, 0, 0];
   for (const p of tocke) { c[0] += p[0] / n; c[1] += p[1] / n; c[2] += p[2] / n; }
@@ -169,38 +170,73 @@ function prizma(tocke, h, skrci = 1) {
     nx += (a[1] - b[1]) * (a[2] + b[2]); ny += (a[2] - b[2]) * (a[0] + b[0]); nz += (a[0] - b[0]) * (a[1] + b[1]);
   }
   const l = Math.hypot(nx, ny, nz); nx /= l; ny /= l; nz /= l;
+  const N0 = [nx, ny, nz];
   const q = tocke.map((p) => {
     const d = (p[0] - c[0]) * nx + (p[1] - c[1]) * ny + (p[2] - c[2]) * nz;
     return [c[0] + (p[0] - nx * d - c[0]) * skrci, c[1] + (p[1] - ny * d - c[1]) * skrci, c[2] + (p[2] - nz * d - c[2]) * skrci];
   });
-  const P = [], N = [];
-  const top = q.map((p) => [p[0] + nx * h / 2, p[1] + ny * h / 2, p[2] + nz * h / 2]);
-  const bot = q.map((p) => [p[0] - nx * h / 2, p[1] - ny * h / 2, p[2] - nz * h / 2]);
-  const tri = (a, b, cc, nn) => { P.push(...a, ...b, ...cc); N.push(...nn, ...nn, ...nn); };
-  for (let i = 1; i < n - 1; i++) {
-    tri(top[0], top[i], top[i + 1], [nx, ny, nz]);
-    tri(bot[0], bot[i + 1], bot[i], [-nx, -ny, -nz]);
-  }
+  // normale stranskih ploskev (robov) in zglajene normale oglišč
+  const sN = [];
   for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n, a = q[i], b = q[j];
+    const a = q[i], b = q[(i + 1) % n];
     const mx = (a[0] + b[0]) / 2 - c[0], my = (a[1] + b[1]) / 2 - c[1], mz = (a[2] + b[2]) / 2 - c[2];
     const d = mx * nx + my * ny + mz * nz;
     let sx = mx - nx * d, sy = my - ny * d, sz = mz - nz * d;
-    const sl = Math.hypot(sx, sy, sz) || 1; sx /= sl; sy /= sl; sz /= sl;
-    tri(top[i], bot[i], bot[j], [sx, sy, sz]);
-    tri(top[i], bot[j], top[j], [sx, sy, sz]);
+    // pravokotno na rob v ravnini (za podolgovate palčke je to bolje od smeri iz središča)
+    const ex = b[0] - a[0], ey = b[1] - a[1], ez = b[2] - a[2];
+    let px = ey * nz - ez * ny, py = ez * nx - ex * nz, pz = ex * ny - ey * nx;
+    if (px * sx + py * sy + pz * sz < 0) { px = -px; py = -py; pz = -pz; }
+    const pl = Math.hypot(px, py, pz) || 1;
+    sN.push([px / pl, py / pl, pz / pl]);
+  }
+  const vN = q.map((_, i) => {
+    const a = sN[(i + n - 1) % n], b = sN[i], v = [a[0] + b[0], a[1] + b[1], a[2] + b[2]], vl = Math.hypot(...v) || 1;
+    return v.map((x) => x / vl);
+  });
+  const nrm = (v) => { const vl = Math.hypot(...v) || 1; return v.map((x) => x / vl); };
+  const zamik = (p, i, dz, noter) => {
+    const v = vN[i];
+    return [p[0] + nx * dz - v[0] * noter, p[1] + ny * dz - v[1] * noter, p[2] + nz * dz - v[2] * noter];
+  };
+  const b = Math.min(rob, h * 0.45);
+  const top = q.map((p, i) => zamik(p, i, h / 2, b)), bot = q.map((p, i) => zamik(p, i, -h / 2, b));
+  const topR = q.map((p, i) => zamik(p, i, h / 2 - b, 0)), botR = q.map((p, i) => zamik(p, i, -h / 2 + b, 0));
+  const P = [], N = [];
+  const tri = (a, bb, cc, na, nb, nc) => { P.push(...a, ...bb, ...cc); N.push(...na, ...(nb || na), ...(nc || na)); };
+  for (let i = 1; i < n - 1; i++) {
+    tri(top[0], top[i], top[i + 1], N0);
+    tri(bot[0], bot[i + 1], bot[i], [-nx, -ny, -nz]);
+  }
+  const kvad = (A, B, nA, nB, i, j) => { // pas med obročema A (zgoraj) in B (spodaj)
+    tri(A[i], B[i], B[j], nA[i], nB[i], nB[j]);
+    tri(A[i], B[j], A[j], nA[i], nB[j], nA[j]);
+  };
+  if (b > 0) {
+    const nTop = vN.map((v) => nrm([v[0] * 0.55 + nx, v[1] * 0.55 + ny, v[2] * 0.55 + nz]));
+    const nBot = vN.map((v) => nrm([v[0] * 0.55 - nx, v[1] * 0.55 - ny, v[2] * 0.55 - nz]));
+    for (let i = 0; i < n; i++) {
+      const j = (i + 1) % n;
+      kvad(top, topR, nTop, vN, i, j);
+      kvad(topR, botR, vN, vN, i, j);
+      kvad(botR, bot, vN, nBot, i, j);
+    }
+  } else {
+    for (let i = 0; i < n; i++) { const j = (i + 1) % n; kvad(top, bot, sN.map(() => sN[i]), sN.map(() => sN[i]), i, j); }
   }
   // Ploskve morajo gledati navzven: če je zgornja ploskev narobe zavita, obrni vrstni red.
   const ax = P[3] - P[0], ay = P[4] - P[1], az = P[5] - P[2], bx = P[6] - P[0], by = P[7] - P[1], bz = P[8] - P[2];
   const cx = ay * bz - az * by, cy = az * bx - ax * bz, cz = ax * by - ay * bx;
   if (cx * nx + cy * ny + cz * nz < 0) {
-    for (let i = 0; i < P.length; i += 9) for (let k = 0; k < 3; k++) { const t = P[i + 3 + k]; P[i + 3 + k] = P[i + 6 + k]; P[i + 6 + k] = t; }
+    for (let i = 0; i < P.length; i += 9) for (let k = 0; k < 3; k++) {
+      const t = P[i + 3 + k]; P[i + 3 + k] = P[i + 6 + k]; P[i + 6 + k] = t;
+      const u = N[i + 3 + k]; N[i + 3 + k] = N[i + 6 + k]; N[i + 6 + k] = u;
+    }
   }
   return { P, N };
 }
 
 /** Palčka (kvader) med točkama a in b v ravnini z normalo n. */
-function palcka(a, b, sirina, h, n) {
+function palcka(a, b, sirina, h, n, rob = 0) {
   const d = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], l = Math.hypot(...d);
   const t = d.map((x) => x / l);
   const s = [t[1] * n[2] - t[2] * n[1], t[2] * n[0] - t[0] * n[2], t[0] * n[1] - t[1] * n[0]];
@@ -210,7 +246,7 @@ function palcka(a, b, sirina, h, n) {
     A.map((x, i) => x + s[i] * w), B.map((x, i) => x + s[i] * w),
     B.map((x, i) => x - s[i] * w), A.map((x, i) => x - s[i] * w),
   ];
-  return prizma(pt, h);
+  return prizma(pt, h, 1, rob);
 }
 
 /** Združena geometrija kosov, ki so pripeti na okvirje nukleotidov; posodobi() jih premakne. */
@@ -255,6 +291,9 @@ function sredina(THREE, n, imena) {
 }
 
 // ---------------------------------------------------------------- model
+// Velikost točke (PointsMaterial, sizeAttenuation) je v enotah višine zaslona/razdalje; za premer w v sceni pri vidnem kotu ~40° je size ≈ w / tan(20°).
+const TOCKA_V_SVET = 2.75;
+
 export function zgradi(THREE, ctx = {}) {
   const visoka = ctx.kakovost !== "nizka";
   const zac = ctx.zacetek || {};
@@ -274,6 +313,8 @@ export function zgradi(THREE, ctx = {}) {
   drzalo.add(vsebina);
 
   const fiz = (barva, o = {}) => new THREE.MeshPhysicalMaterial({ color: barva, roughness: 0.34, metalness: 0, clearcoat: 0.5, clearcoatRoughness: 0.3, ...o });
+  // sijaj »molekularnega modela«: lak + rahel sheen, da se oblike pod šibko lučjo ločijo od ozadja
+  const sijaj = (o = {}) => ({ roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.14, sheen: 0.35, sheenRoughness: 0.45, sheenColor: new THREE.Color("#ffffff"), ...o });
   const krogla = (r, w, h) => new THREE.SphereGeometry(r, w, h);
   function napis(tekst) {
     if (typeof document === "undefined") return null;
@@ -284,8 +325,10 @@ export function zgradi(THREE, ctx = {}) {
     x.lineWidth = 10; x.strokeStyle = "rgba(11,15,22,0.9)"; x.strokeText(tekst, 64, 68);
     x.fillStyle = "#f4f6fa"; x.fillText(tekst, 64, 68);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-    const m = new THREE.SpriteMaterial({ map: t, depthWrite: false, transparent: true });
-    const s = new THREE.Sprite(m); s.scale.set(4.2, 4.2, 1); s.renderOrder = 3;
+    // točka (Points) namesto sprite: GTAO točk ne upošteva (sprite bi dal temen kvadrat); velikost se nastavi ob merilu
+    const m = new THREE.PointsMaterial({ map: t, size: 4.2, sizeAttenuation: true, depthWrite: false, transparent: true });
+    const s = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute([0, 0, 0], 3)), m);
+    s.renderOrder = 3; s.raycast = () => {}; // napis ni tarča tapa
     return s;
   }
 
@@ -316,8 +359,8 @@ export function zgradi(THREE, ctx = {}) {
 
     // --- shematski prikaz
     const shema = new THREE.Group(); koren.add(shema);
-    const fosfatGeo = krogla(1.15, visoka ? 20 : 12, visoka ? 14 : 8);
-    const fosfati = new THREE.InstancedMesh(fosfatGeo, m2(BARVE.fosfat, { roughness: 0.3, clearcoat: 0.6 }), s.nt.length);
+    const fosfatGeo = krogla(1.55, visoka ? 26 : 12, visoka ? 18 : 8);
+    const fosfati = new THREE.InstancedMesh(fosfatGeo, m2(BARVE.fosfat, sijaj({ roughness: 0.26, clearcoat: 0.95, clearcoatRoughness: 0.08, emissive: new THREE.Color("#ff6a10"), emissiveIntensity: 0.12, sheenColor: new THREE.Color("#ffd9b0") })), s.nt.length);
     fosfati.name = "fosfati";
     fosfati.userData.nukleotidi = s.nt.map((_, i) => i);
     shema.add(fosfati);
@@ -325,23 +368,23 @@ export function zgradi(THREE, ctx = {}) {
     const sladkorKosi = [], bazaKosi = {};
     s.nt.forEach((n, i) => {
       const obroc = ["C1'", "C2'", "C3'", "C4'", "O4'"].map((a) => lokalno(n, a));
-      const p = prizma(obroc, 0.9, 0.97);
+      const p = prizma(obroc, 1.5, 0.98, 0.5);
       sladkorKosi.push({ n: i, ...p });
       const b = BAZE[n.baza], kosi = (bazaKosi[n.baza] ||= []);
-      for (const r of OBROCI[n.baza]) kosi.push({ n: i, ...prizma(r.map((a) => b[a]), 1.1, 0.9) });
+      for (const r of OBROCI[n.baza]) kosi.push({ n: i, ...prizma(r.map((a) => b[a]), 1.8, 0.97, 0.6) });
       for (const [a, c] of VEJE[n.baza]) {
         const sr = (OBROCI[n.baza].find((r) => r.includes(a)) || OBROCI[n.baza][0]).map((x) => b[x]);
         const cen = [0, 1, 2].map((k) => sr.reduce((t, q) => t + q[k], 0) / sr.length);
         const A = b[a].map((x, k) => x + (cen[k] - x) * 0.2);
-        kosi.push({ n: i, ...palcka(A, b[c], 0.5, 0.7, [0, 0, 1]) });
+        kosi.push({ n: i, ...palcka(A, b[c], 0.95, 1.3, [0, 0, 1], 0.4) });
       }
     });
-    const sladkorji = spoj(THREE, sladkorKosi, m2(BARVE.sladkor, { roughness: 0.45 }));
+    const sladkorji = spoj(THREE, sladkorKosi, m2(BARVE.sladkor, sijaj({ roughness: 0.36, sheen: 0.25 })));
     sladkorji.mesh.name = "sladkorji";
     shema.add(sladkorji.mesh);
     const baze = {};
     for (const b of Object.keys(bazaKosi)) {
-      baze[b] = spoj(THREE, bazaKosi[b], m2(BARVE[b], { roughness: 0.38, clearcoat: 0.35 }));
+      baze[b] = spoj(THREE, bazaKosi[b], m2(BARVE[b], sijaj({ roughness: 0.32, emissive: new THREE.Color(BARVE[b]), emissiveIntensity: 0.06 })));
       baze[b].mesh.name = "baza-" + b;
       shema.add(baze[b].mesh);
     }
@@ -353,13 +396,13 @@ export function zgradi(THREE, ctx = {}) {
       const kljuc = s.nt[pur[0]].baza + s.nt[pur[1]].baza;
       for (const [x, y] of VODIKOVE[kljuc]) for (const t of [0.22, 0.5, 0.78]) vezi.push({ i: pur[0], j: pur[1], x, y, t, k });
     }
-    const pike = new THREE.InstancedMesh(krogla(0.3, visoka ? 8 : 6, visoka ? 6 : 4), m2(BARVE.vez, { emissive: new THREE.Color("#9fb6e6"), emissiveIntensity: 0.35 }), vezi.length);
+    const pike = new THREE.InstancedMesh(krogla(0.32, visoka ? 12 : 6, visoka ? 8 : 4), m2(BARVE.vez, { roughness: 0.25, clearcoat: 0.6, emissive: new THREE.Color("#b8ccff"), emissiveIntensity: 0.75 }), vezi.length);
     pike.name = "vodikove-vezi";
     pike.userData.vezi = vezi.map((v) => [v.i, v.j, v.x, v.y]);
     shema.add(pike);
 
     // hrbtenica: cev skozi P in sladkor
-    const cevMat = s.verige.map((_, v) => m2(dnk ? (v === 0 ? BARVE.veriga1 : BARVE.veriga2) : BARVE.rnk, { roughness: 0.4 }));
+    const cevMat = s.verige.map((_, v) => m2(dnk ? (v === 0 ? BARVE.veriga1 : BARVE.veriga2) : BARVE.rnk, sijaj({ roughness: 0.28, clearcoat: 0.9, clearcoatRoughness: 0.1, sheen: 0.45 })));
     const cevi = s.verige.map((V, v) => {
       return { V, kosi: (dnk ? [0] : [0, 1, 2]).map(() => { const m = new THREE.Mesh(new THREE.BufferGeometry(), cevMat[v]); m.name = "hrbtenica"; shema.add(m); return m; }) };
     });
@@ -384,7 +427,7 @@ export function zgradi(THREE, ctx = {}) {
     const elMat = {};
     for (const [kl, sez] of skupine) {
       const [sk, e] = kl.split("|");
-      elMat[e] ||= m2(ELEMENTI[e][0], { roughness: 0.32, clearcoat: 0.45 });
+      elMat[e] ||= m2(ELEMENTI[e][0], { roughness: 0.3, clearcoat: 0.6, clearcoatRoughness: 0.18 });
       const im = new THREE.InstancedMesh(atomGeo, elMat[e], sez.length);
       im.name = "atomi-" + kl; im.userData.atomi = sez;
       atomi.add(im);
@@ -436,9 +479,9 @@ export function zgradi(THREE, ctx = {}) {
 
     // --- konca verig
     const konci5 = [], konci3 = [];
-    const obrocGeo = new THREE.TorusGeometry(1.9, 0.3, visoka ? 10 : 6, visoka ? 28 : 16);
-    const stozecGeo = new THREE.ConeGeometry(1.5, 3.2, visoka ? 18 : 10);
-    const konecMat = m2(BARVE.konec, { roughness: 0.3, emissive: new THREE.Color("#cdd9f2"), emissiveIntensity: 0.15 });
+    const obrocGeo = new THREE.TorusGeometry(1.9, 0.38, visoka ? 14 : 6, visoka ? 40 : 16);
+    const stozecGeo = new THREE.ConeGeometry(1.6, 3.2, visoka ? 28 : 10);
+    const konecMat = m2(BARVE.konec, sijaj({ roughness: 0.25, emissive: new THREE.Color("#cdd9f2"), emissiveIntensity: 0.22 }));
     for (let v = 0; v < s.verige.length; v++) {
       const a = new THREE.Mesh(obrocGeo, konecMat); a.name = "5-konec"; koren.add(a); konci5.push(a);
       const b = new THREE.Mesh(stozecGeo, konecMat); b.name = "3-konec"; koren.add(b); konci3.push(b);
@@ -467,8 +510,9 @@ export function zgradi(THREE, ctx = {}) {
     const D = [3, 3.5, 4, 4.5, 5, 5.5, 6, 7, 8, 9, 9.5, 10].find((d) => d * 5 * 1.02 >= rmax) || 10; // premer enotske krogle v nm
     vsebina.position.copy(c).multiplyScalar(-1);
     drzalo.scale.setScalar(1 / (D * 5));
+    for (const [a, b] of napisi) for (const x of [a, b]) if (x) x.material.size = (4.2 / (D * 5)) * TOCKA_V_SVET;
     obj.merilo = { m: D * 1e-9, oznaka: `${String(D).replace(".", ",")} nm` };
-    group.userData.dnk = { molekula: s.molekula, nmNaEnoto: D / 2, oblika: { dvig: o.dvig / 10, zasuk: o.zasuk, bpNaZavoj: 360 / o.zasuk }, polmerFosfata: 0.115, struktura: s };
+    group.userData.dnk = { molekula: s.molekula, nmNaEnoto: D / 2, oblika: { dvig: o.dvig / 10, zasuk: o.zasuk, bpNaZavoj: 360 / o.zasuk }, polmerFosfata: 0.155, struktura: s };
     posodobi();
   }
 
@@ -522,9 +566,9 @@ export function zgradi(THREE, ctx = {}) {
           const [a, b] = meje[j];
           const del = new THREE.Curve();
           del.getPoint = (t, o = new THREE.Vector3()) => krivulja.getPoint(a + (b - a) * t, o);
-          const segs = Math.max(8, Math.round((b - a) * (pts.length - 1) * (visoka ? 5 : 3)));
+          const segs = Math.max(8, Math.round((b - a) * (pts.length - 1) * (visoka ? 8 : 3)));
           m.geometry.dispose();
-          m.geometry = new THREE.TubeGeometry(del, segs, 0.5, visoka ? 10 : 6, false);
+          m.geometry = new THREE.TubeGeometry(del, segs, 1.0, visoka ? 16 : 8, false);
         });
       });
     }

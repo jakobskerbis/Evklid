@@ -32,7 +32,7 @@ export function mdBlocks(md) {
 const kindOf = (title) =>
   /zakaj/i.test(title) ? "why"
   : /razlag/i.test(title) ? "explain"
-  : /rešen/i.test(title) ? "examples"
+  : /rešen|za izpit/i.test(title) ? "examples" // ena naloga »Za izpit« = en korak, rešitev ob besedilu
   : /napak/i.test(title) ? "mistakes"
   : /povzetek/i.test(title) ? "summary"
   : "other";
@@ -89,4 +89,33 @@ export function lessonSteps(sections, nChecks = 0) {
   });
   if (next < nChecks) steps.push({ type: "check", checks: Array.from({ length: nChecks - next }, (_, k) => next + k), final: true });
   return steps;
+}
+
+// Na katerih korakih je posamezna simulacija (j, 2. 11. 2026: »Kje je simulacija?«). Simulacija je
+// na ISTEM koraku kot besedilo, ki jo omenja (»V simulaciji spodaj …«); omeni jo lahko več korakov,
+// stran jo med njimi premakne (textbook.js placeDemos). Korak z naslovom simulacije velja zanjo,
+// korak brez naslova za simulacije, ki jih ne omeni noben naslov (sicer za vse). Simulacija, ki je
+// ne omeni nihče ali jo omeni le uvod (»Zakaj«), je (tudi) na zadnjem koraku razdelka `fallback`
+// (rešeni primeri), kjer je bila prej.
+// Vrne seznam indeksov korakov za vsako simulacijo.
+const low = (s) => String(s ?? "").toLowerCase().replace(/\s+/g, " ");
+const MENTION = /simulacij|poskus\w* spodaj|spodnj\w* poskus/;
+export function demoSteps(steps, demos = [], fallback = -1) {
+  const titles = demos.map((d) => low(d?.title).trim());
+  const text = steps.map((st, k) => ({ k, md: st.type === "text" ? low(st.md) : "" }));
+  const names = (md) => titles.map((t, i) => (t.length >= 3 && (md.includes(`»${t}«`) || (MENTION.test(md) && md.includes(t))) ? i : -1)).filter((i) => i >= 0);
+  const named = new Set(text.flatMap((x) => names(x.md)));
+  const unnamed = demos.map((_, i) => i).filter((i) => !named.has(i));
+  const out = demos.map(() => []);
+  for (const { k, md } of text) {
+    const hit = names(md);
+    const who = hit.length ? hit : MENTION.test(md) ? (unnamed.length ? unnamed : demos.map((_, i) => i)) : [];
+    for (const i of who) out[i].push(k);
+  }
+  let fb = -1;
+  steps.forEach((st, k) => { if (st.type === "text" && st.section === fallback && st.last) fb = k; });
+  if (fb < 0) fb = steps.findLastIndex((st) => st.type === "text");
+  if (fb < 0) return demos.map(() => []);
+  const intro = (k) => /zakaj/i.test(steps[k].title || "");
+  return out.map((ks) => (ks.every(intro) && !ks.includes(fb) ? [...ks, fb] : ks));
 }

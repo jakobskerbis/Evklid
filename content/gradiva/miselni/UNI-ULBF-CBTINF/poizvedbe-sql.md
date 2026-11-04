@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tabele in ključi
+  - vrstica je zapis, stolpec atribut
+  - tuji ključ kaže na primarni ključ
+- SELECT in FROM
+  - `SELECT naziv, cena FROM material;`
+  - `*` vrne vse stolpce
+- WHERE
+  - filtrira posamezne vrstice
+  - besedilo v enojnih narekovajih: `'kos'`
+- Računani stolpci
+  - `kolicina * cena AS strosek`
+  - `ORDER BY cena DESC` uredi padajoče
+- JOIN
+  - `ON p.material_id = m.id`
+  - brez pogoja vsi pari: $7 \cdot 5 = 35$
+- Združevanje
+  - `SUM`, `COUNT`, `AVG`, `MIN`, `MAX`
+  - `GROUP BY`: ena vrstica na skupino
+- HAVING
+  - filtrira skupine po združevanju
+  - napaka: agregat v `WHERE`
+- Vrstni red delov
+  - SELECT, FROM, JOIN, WHERE
+  - GROUP BY, HAVING, ORDER BY

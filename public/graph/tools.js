@@ -11,13 +11,14 @@ import { esc, texHtml, usesComma, remember } from "./tools-kit.js";
 import { chemTools } from "./tools-chem.js";
 import { probTool } from "./tools-prob.js";
 import { anaTools } from "./tools-ana.js";
+import { testsTool, tvmTool, tableTool } from "./tools-test.js";
 
-const TOOLS = ["units", "eq", "calc", "stats", "prob", "vec", "matrix", "plot3", "ode", "err", "complex", "base", "rxn", "conc", "solub"];
+const TOOLS = ["units", "eq", "calc", "stats", "tests", "prob", "vec", "matrix", "plot3", "ode", "err", "complex", "base", "tvm", "table", "rxn", "conc", "solub"];
 // vrstni red čipov po predmetu: najprej orodja, ki jih predmet največ rabi
 const ORDER = {
   KEM: ["rxn", "conc", "solub", "units", "err", "stats", "eq"],
   FIZ: ["units", "err", "eq", "vec", "calc", "ode", "stats"],
-  MAT: ["eq", "calc", "stats", "prob", "vec", "matrix", "plot3", "ode", "complex", "base"],
+  MAT: ["eq", "calc", "table", "stats", "tests", "prob", "vec", "matrix", "plot3", "ode", "complex", "base", "tvm"],
 };
 const toolOrder = (subj) => {
   const first = ORDER[subj] || ORDER.MAT;
@@ -307,6 +308,9 @@ export function createTools(root, opts) {
     conc: chem.conc,
     solub: chem.solub,
     prob: (el) => probTool(el, ctx),
+    tests: (el) => testsTool(el, ctx),
+    tvm: (el) => tvmTool(el, ctx),
+    table: (el) => tableTool(el, ctx),
     calc: ana.calc,
     vec: ana.vec,
     ode: ana.ode,
@@ -545,7 +549,7 @@ const skiceIo = () =>
           // Skica se ni naložila: kartica ostane taka kot brez skice.
           console.warn("skica", err);
           host.closest(".fm-item")?.classList.remove("has-skica");
-          host.remove();
+          (host.closest(".fm-skica-row") || host).remove();
         });
     }
   }, { rootMargin: "200px" }));
@@ -600,21 +604,50 @@ export function createFormulas(root, opts) {
           item.className = r.parentElement.tagName === "THEAD" ? "fm-item fm-head" : a.textContent.trim() ? "fm-item" : "fm-item fm-cont";
           item.innerHTML = `<div class="fm-name">${a.innerHTML}</div><div class="fm-f">${b.innerHTML}</div>`;
           // Interaktivna skica nad formulami kartice (public/skice/), naloži se, ko je kartica vidna.
-          const sk = skicaZa(book, a.textContent);
-          if (sk) {
-            const host = document.createElement("div");
-            host.className = "fm-skica";
+          const host = skicaHost(imeKartice(a));
+          if (host) {
             item.classList.add("has-skica");
             item.insertBefore(host, item.querySelector(".fm-f"));
-            skiceIo().observe(host);
-            host._load = sk;
           }
           list.append(item);
         }
         sec.append(list);
-      } else sec.append(el);
+      } else {
+        // Tabela z več stolpci (npr. Lik | Obseg | Ploščina): skica v svoji vrstici pod vrstico lika.
+        for (const r of rows) {
+          if (r.parentElement.tagName === "THEAD" || !r.children.length) continue;
+          const host = skicaHost(imeKartice(r.children[0]));
+          if (!host) continue;
+          const tr = document.createElement("tr");
+          tr.className = "fm-skica-row";
+          const td = document.createElement("td");
+          td.colSpan = r.children.length;
+          td.append(host);
+          tr.append(td);
+          r.after(tr);
+        }
+        sec.append(el);
+      }
     }
     return out;
+  }
+
+  // Vidno ime kartice brez skritega MathML (»Diagonale n-kotnika«); skicaZa ga primerja z imenom brez $.
+  function imeKartice(cell) {
+    const c = cell.cloneNode(true);
+    c.querySelectorAll(".katex-mathml").forEach((x) => x.remove());
+    return c.textContent;
+  }
+
+  // Interaktivna skica nad formulami kartice (public/skice/), naloži se, ko je kartica vidna.
+  function skicaHost(ime) {
+    const sk = skicaZa(book, ime);
+    if (!sk) return null;
+    const host = document.createElement("div");
+    host.className = "fm-skica";
+    skiceIo().observe(host);
+    host._load = sk;
+    return host;
   }
 
   function markActive() {

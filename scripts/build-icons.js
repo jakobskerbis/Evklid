@@ -35,8 +35,8 @@ const NAMES = [
   "unlock", "castle",
   // igre v slogu mobilnih iger (public/games/fun.js)
   "chef-hat", "car", "paw-print", "shopping-basket", "grid-2x2", "cherry", "droplet", "bomb", "blocks", "gem", "spade", "joystick", "venetian-mask",
-  // igre, v katerih odgovor narediš sam (public/games/produce.js)
-  "ruler-dimension-line", "train-front",
+  // igre, v katerih odgovor narediš sam (public/games/produce.js, produce2.js)
+  "ruler-dimension-line", "train-front", "key-round", "arrow-up-narrow-wide",
   // skeniranje nalog (public/scan/)
   "scan-line", "scan-text", "badge-check", "image",
   // kovanci (igre, zbirke)
@@ -51,12 +51,11 @@ for (const n of NAMES) {
   out[n] = svg.slice(svg.indexOf(">", svg.indexOf("<svg")) + 1, svg.lastIndexOf("</svg>")).replace(/\s*\n\s*/g, "").trim();
 }
 // Lastne ikone (ista mreža 24 × 24, currentColor).
-// »elementi«: Evklidovi Elementi, I. knjiga, 1. trditev – enakostranični trikotnik nad daljico AB iz dveh krogov
-// s središčema A in B (logotip v aplikaciji; ikona za namestitev in favicon ostaneta v public/icons/).
+// »kristal«: logotip v aplikaciji, kristal kuhinjske soli (kocka v poševni projekciji, izmenično veliki in mali ioni,
+// skriti robovi črtkano; j 2026-11-04). Polna različica istega znaka je ikona za namestitev in favicon (scripts/logotip.cjs).
 const CUSTOM = {
-  elementi:
-    '<circle cx="8.5" cy="12" r="7" stroke-width="1.5" /><circle cx="15.5" cy="12" r="7" stroke-width="1.5" />' +
-    '<path d="M8.5 12h7L12 5.94z" fill="currentColor" fill-opacity="0.3" stroke-width="1.75" />',
+  kristal:
+    '<path d="M8.5 15.5V3.5M8.5 15.5h12M8.5 15.5l-5 5" stroke-width="1" stroke-dasharray="1.2 1.2" opacity=".55" /><path d="M3.5 8.5h12v12h-12zM8.5 3.5h12v12M3.5 8.5l5-5M15.5 8.5l5-5M15.5 20.5l5-5" stroke-width="1.5" /><circle cx="8.5" cy="15.5" r="2.2" fill="currentColor" stroke="none" opacity=".35" /><circle cx="3.5" cy="8.5" r="2.5" fill="currentColor" stroke="none" /><circle cx="15.5" cy="20.5" r="2.5" fill="currentColor" stroke="none" /><circle cx="20.5" cy="3.5" r="2.5" fill="currentColor" stroke="none" /><circle cx="15.5" cy="8.5" r="1.65" fill="currentColor" stroke="none" /><circle cx="3.5" cy="20.5" r="1.65" fill="currentColor" stroke="none" /><circle cx="8.5" cy="3.5" r="1.65" fill="currentColor" stroke="none" /><circle cx="20.5" cy="15.5" r="1.65" fill="currentColor" stroke="none" />',
 };
 Object.assign(out, CUSTOM);
 const js = `// Ikone Lucide (ISC licenca, https://lucide.dev) in lastne (CUSTOM). Ustvarjeno s scripts/build-icons.js.

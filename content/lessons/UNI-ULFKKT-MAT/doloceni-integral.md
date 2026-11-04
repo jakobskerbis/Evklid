@@ -5,16 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Odvod odgovarja na vprašanje »kako hitro se količina spreminja«. **Določeni integral** odgovarja na obratno vprašanje: »koliko se je nabralo«, če poznamo hitrost spreminjanja. Iz hitrosti izračunamo prevoženo pot, iz pretoka prostornino pretečene tekočine, iz hitrosti reakcije spremembo koncentracije, iz sile opravljeno delo.
-
-Geometrijsko integral pomeni **ploščino** pod grafom funkcije. Iz tega izpeljemo ploščine likov med krivuljami, prostornine teles (vrtenin), **povprečno vrednost** funkcije na intervalu, težišča in še veliko drugega. Določeni integral je tako eno najbolj uporabnih orodij v naravoslovju in tehniki.
-
-V tej lekciji se naučiš:
-
-- kaj je **Riemannov integral** kot limita vsot,
-- kako ga z **Newton-Leibnizovo formulo** izračunamo s pomočjo nedoločenega integrala,
-- zakaj to velja (**osnovni izrek analize**),
-- kako računamo **ploščine**, **prostornine vrtenin** in **povprečne vrednosti**.
+Med poletno nevihto postavi na vrt valjast kozarec in vsakih deset minut z ravnilom izmeri višino vode v njem. Vremenska postaja ob tem poroča **jakost padavin** v milimetrih na uro, ki se med nevihto ves čas spreminja. Iz višine vode dobiš jakost z odvodom. Obratno pa jakost v vsakem kratkem koraku pomnožiš s trajanjem koraka in prispevke sešteješ: limita takih vsot je **določeni integral**, ki vrne višino vode v kozarcu. Na grafu jakosti je to **ploščina** pod krivuljo; iz iste zamisli dobimo prevoženo pot iz hitrosti, delo iz sile, ploščine likov, prostornine vrtenin in **povprečne vrednosti**.
 
 Zamisel je stara več kot dva tisoč let: Arhimed je ploščino odseka parabole izračunal tako, da ga je napolnil z vse manjšimi trikotniki. Natančno definicijo z vsotami pravokotnikov je v 19. stoletju podal Bernhard Riemann, zato govorimo o Riemannovem integralu. Bistveno odkritje Newtona in Leibniza pa je bilo, da integral ni treba računati kot limito vsot, ker ga dobimo iz primitivne funkcije.
 
@@ -22,11 +13,27 @@ Predpostavljamo, da že znaš poiskati nedoločeni integral (primitivno funkcijo
 
 ## Razlaga
 
+Določeni integral najlaže razumeš, če ga postaviš ob dve stvari, ki ju že poznaš:
+
+| | odvod | nedoločeni integral | določeni integral |
+|---|---|---|---|
+| vprašanje | kako hitro se količina spreminja? | katera funkcija ima dani odvod? | koliko se je nabralo od $a$ do $b$? |
+| rezultat | funkcija $f'$ | družina funkcij $F + C$ | eno število |
+| na grafu | naklon tangente | — | ploščina s predznakom |
+
+Zadnji stolpec gradimo iz vsot, povezavo z drugim pa da Newton-Leibnizova formula (točka 6).
+
 **1. Riemannova vsota.** Naj bo $f$ omejena funkcija na $[a, b]$. Interval razdelimo s točkami $a = x_0 < x_1 < \dots < x_n = b$ na $n$ podintervalov dolžin $\Delta x_i = x_i - x_{i-1}$. V vsakem podintervalu izberemo točko $\xi_i \in [x_{i-1}, x_i]$ in sestavimo **Riemannovo vsoto**
 
 $$R = \sum_{i=1}^{n} f(\xi_i)\, \Delta x_i.$$
 
 Vsak člen je ploščina pravokotnika z višino $f(\xi_i)$ in širino $\Delta x_i$. Vsota je približek ploščine pod grafom.
+
+:::premisli
+Funkcija $f$ na $[a, b]$ narašča in za $\xi_i$ vedno vzameš levo krajišče podintervala. Je Riemannova vsota večja ali manjša od prave ploščine?
+---
+Manjša. Naraščajoča funkcija ima na vsakem podintervalu najmanjšo vrednost v levem krajišču, zato vsak pravokotnik leži pod grafom.
+:::
 
 **2. Določeni integral.** Če se Riemannove vsote, ko gre največja dolžina podintervalov proti $0$, približujejo istemu številu ne glede na izbiro delitev in točk $\xi_i$, to število imenujemo **določeni integral** funkcije $f$ na $[a, b]$ in pišemo
 
@@ -59,6 +66,12 @@ $$\int_a^b f(x)\, dx = f(\xi)(b - a).$$
 $$F(x) = \int_a^x f(t)\, dt$$
 
 je odvedljiva in velja $F'(x) = f(x)$. Integral s spremenljivo zgornjo mejo je torej primitivna funkcija integranda. Odvajanje in integriranje sta nasprotni operaciji.
+
+:::premisli
+Koliko je $F(a)$ in zakaj $F$ narašča, kadar je $f > 0$?
+---
+$F(a) = \int_a^a f(t)\, dt = 0$. Ko zgornjo mejo premakneš v desno, dodaš pozitivno ploščino, zato $F$ narašča; enako pove $F' = f > 0$.
+:::
 
 **6. Newton-Leibnizova formula.** Če je $F$ katerakoli primitivna funkcija zvezne funkcije $f$ na $[a, b]$ (torej $F' = f$), je
 
@@ -97,7 +110,7 @@ Newton-Leibnizova formula: $\int_a^b f(x)\, dx = F(b) - F(a)$, kjer je $F' = f$.
 
 1. Primitivna funkcija: $F(x) = 3 \cdot \frac{x^3}{3} - 2 \cdot \frac{x^2}{2} = x^3 - x^2$.
 2. Preizkus z odvodom: $F'(x) = 3x^2 - 2x = f(x)$.
-3. $F(3) = 27 - 9 = 18$ in $F(1) = 1 - 1 = 0$.
+3. Vstavimo zgornjo in spodnjo mejo: $F(3) = 27 - 9 = 18$ in $F(1) = 1 - 1 = 0$.
 4. $\int_1^3 (3x^2 - 2x)\, dx = 18 - 0 = 18$.
 5. Odgovor: integral je enak $18$. Ker je $f > 0$ na $[1, 3]$, je to tudi ploščina lika pod grafom.
 
@@ -116,7 +129,7 @@ $S = \int_a^b \big(f(x) - g(x)\big)\, dx$, kjer je $f \ge g$ na $[a, b]$, meji $
 
 1. Presečišči: $4 - x^2 = x + 2 \iff x^2 + x - 2 = 0 \iff (x + 2)(x - 1) = 0$, torej $a = -2$, $b = 1$.
 2. Kateri graf je zgoraj: pri $x = 0$ je $f(0) = 4 > g(0) = 2$, zato je parabola nad premico.
-3. Razlika: $f(x) - g(x) = 2 - x - x^2$.
+3. Razlika (zgornji graf minus spodnji, da je integrand nenegativen): $f(x) - g(x) = 2 - x - x^2$.
 4. Primitivna funkcija: $F(x) = 2x - \frac{x^2}{2} - \frac{x^3}{3}$.
 5. $F(1) = 2 - \frac{1}{2} - \frac{1}{3} = \frac{7}{6}$ in $F(-2) = -4 - 2 + \frac{8}{3} = -\frac{10}{3}$.
 6. $S = \frac{7}{6} + \frac{10}{3} = \frac{7}{6} + \frac{20}{6} = \frac{27}{6} = \frac{9}{2}$.
@@ -135,12 +148,34 @@ $V = \pi \int_a^b f(x)^2\, dx$; povprečna vrednost $\bar A = \dfrac{1}{b - a} \
 
 **Rešitev:**
 
-1. Kvadrat funkcije: $f(x)^2 = (\sqrt{x})^2 = x$.
+1. Kvadrat funkcije potrebujemo, ker je prerez krog s polmerom $f(x)$: $f(x)^2 = (\sqrt{x})^2 = x$.
 2. $V = \pi \int_0^4 x\, dx = \pi \Big[\frac{x^2}{2}\Big]_0^4 = \pi \cdot \frac{16}{2} = 8\pi$.
 3. Številsko: $8\pi \approx 25{,}13$, torej $V \approx 25{,}1\,\mathrm{dm^3} = 25{,}1\,\mathrm{L}$.
 4. Prerez pri $x$ je krog s ploščino $A(x) = \pi x$ (v $\mathrm{dm^2}$).
 5. Povprečna ploščina: $\bar A = \frac{1}{4 - 0} \cdot 8\pi = 2\pi \approx 6{,}28\,\mathrm{dm^2}$. Valj z višino $4\,\mathrm{dm}$ in tako osnovno ploskvijo ima isto prostornino.
 6. Odgovor: posoda ima prostornino $8\pi\,\mathrm{dm^3} \approx 25{,}1\,\mathrm{L}$; povprečna ploščina prereza je $2\pi\,\mathrm{dm^2} \approx 6{,}28\,\mathrm{dm^2}$.
+
+### Primer 4 – zdaj ti
+
+Poletna nevihta traja $2$ uri. Jakost padavin na vremenski postaji opisuje model $i(t) = 6t - 3t^2$ (v $\mathrm{mm/h}$, čas $t$ v urah). Koliko milimetrov dežja pade in kolikšna je povprečna jakost padavin med nevihto?
+
+**Podatki:** $i(t) = 6t - 3t^2$ v $\mathrm{mm/h}$, $t$ v urah, interval $[0, 2]\,\mathrm{h}$
+**Iščemo:** višino padavin $h$ in povprečno jakost $\bar i$
+
+:::formula
+$h = \int_0^2 i(t)\, dt$ (Newton-Leibniz: $F(b) - F(a)$); $\bar i = \dfrac{1}{b - a} \displaystyle\int_a^b i(t)\, dt$.
+:::
+
+**Rešitev:**
+
+1. Primitivna funkcija: $F(t) = 6 \cdot \frac{t^2}{2} - 3 \cdot \frac{t^3}{3} = 3t^2 - t^3$; preizkus z odvodom da $6t - 3t^2$.
+2. Vstavi meji $0$ in $2$, nato rezultat deli z dolžino intervala.
+
+:::premisli
+Koliko dežja pade in kolikšna je povprečna jakost?
+---
+$h = F(2) - F(0) = 12 - 8 - 0 = 4\,\mathrm{mm}$, kar je $4$ litre vode na kvadratni meter. Povprečna jakost je $\bar i = \frac{4\,\mathrm{mm}}{2\,\mathrm{h}} = 2\,\mathrm{mm/h}$, manj od največje $i(1) = 3\,\mathrm{mm/h}$.
+:::
 
 ## Pogoste napake
 
@@ -217,27 +252,43 @@ za neki $\xi_h$ med $x$ in $x + h$ (izrek o povprečni vrednosti). Ko gre $h \to
 
 ? Koliko je $\displaystyle \int_0^{\pi} \sin x\, dx$?
 - $0$
+~ To velja na $[0, 2\pi]$; na $[0, \pi]$ je sinus ves nad osjo, zato se nič ne izniči.
 - $1$
+~ Vstavil si le zgornjo mejo, $-\cos\pi = 1$, in pozabil odšteti $F(0) = -\cos 0 = -1$.
 + $2$
 > $\Big[-\cos x\Big]_0^{\pi} = -\cos\pi + \cos 0 = 1 + 1 = 2$.
 
 ? Koliko je $\displaystyle \frac{d}{dx} \int_0^x e^{t^2}\, dt$?
 + $e^{x^2}$
 - $2x e^{x^2}$
+~ To je odvod funkcije $e^{x^2}$ po verižnem pravilu; odvajaš pa integral, ki vrne kar integrand pri zgornji meji.
 - $e^{x^2} - 1$
+~ Tako bi bilo, če bi bila $e^{t^2}$ primitivna funkcija integranda; ni, njen odvod je $2t e^{t^2}$.
 > Po osnovnem izreku analize je odvod integrala s spremenljivo zgornjo mejo enak integrandu pri tej meji.
 
 ? Kolikšna je povprečna vrednost funkcije $f(x) = x^2$ na intervalu $[0, 3]$?
 + $3$
 - $9$
+~ To je integral; za povprečno vrednost ga moraš deliti še z dolžino intervala $3$.
 - $4{,}5$
+~ To je povprečje vrednosti v krajiščih $\frac{0 + 9}{2}$; za ukrivljen graf to ni povprečna vrednost funkcije.
 > $\int_0^3 x^2\, dx = \frac{27}{3} = 9$, deljeno z dolžino intervala $3$ da $3$.
 
 ? Kolikšna je ploščina lika med grafom $y = x^3$ in osjo $x$ na intervalu $[-1, 1]$?
 - $0$
+~ To je integral s predznakom; pri ploščini del pod osjo šteje pozitivno.
 + $\frac{1}{2}$
 - $\frac{1}{4}$
+~ To je ploščina le na $[0, 1]$; enako velik del na $[-1, 0]$ si izpustil.
 > $\int_{-1}^{1} x^3\, dx = 0$, ker se dela s predznakoma izničita. Ploščina je $2 \int_0^1 x^3\, dx = 2 \cdot \frac{1}{4} = \frac{1}{2}$.
+
+? Katera vrstica »integriramo po času → dobimo« je pravilna?
+- pospešek → prevožena pot
+~ Integral pospeška da spremembo hitrosti; za pot moraš integrirati hitrost.
++ jakost padavin v $\mathrm{mm/h}$ → višina padavin v $\mathrm{mm}$
+- prevožena pot → hitrost
+~ Hitrost je odvod poti, integral gre v obratno smer; enota bi bila $\mathrm{m \cdot s}$, ne $\mathrm{m/s}$.
+> Določeni integral hitrosti spreminjanja da nabrano količino; enote se ujemajo: $\mathrm{mm/h} \cdot \mathrm{h} = \mathrm{mm}$.
 
 :::simboli
 f | integrirana funkcija (integrand) | |
@@ -255,7 +306,9 @@ i | zaporedna številka podintervala | | | i = 1, …, n
 F | primitivna funkcija funkcije f | F' = f |
 F' | odvod primitivne funkcije | F' = f |
 t | spremenljivka pod integralom | | | v primeru z zdravilom čas v urah
-h | prirastek spremenljivke x | | | h ≠ 0, nato h → 0
+h | prirastek spremenljivke x; v primeru 4 višina padavin | | | h ≠ 0, nato h → 0
+i | jakost padavin | | mm/h | v primeru 4
+\bar i | povprečna jakost padavin | \bar i = \frac{1}{b - a} \int_a^b i(t)\, dt | mm/h |
 \xi_h | točka med x in x + h | |
 S | ploščina lika med grafoma | S = \int_a^b \big(f(x) - g(x)\big)\, dx | | velja, če je f ≥ g na [a, b]
 g | spodnja funkcija (spodnji graf) | |

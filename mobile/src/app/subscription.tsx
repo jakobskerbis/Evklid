@@ -15,7 +15,10 @@ import { buyInStore, buyOnWeb, loadProducts, manageInStore, manageOnWeb, restore
 import { Banner, Body, Button, Card, Chip, ErrorView, Icon, Loading, Screen, Title } from "@/components/ui";
 
 type Access = { tier: "paid" | "promo" | "trial" | "bonus" | "free"; seats: number; until: string | null };
-type Plan = { seats: number; interval: "month" | "year"; amount: number; currency: string };
+type Plan = { seats: number; interval: "month" | "year"; amount: number; currency: string; level?: string | null; family?: boolean };
+type Account = { access: Access; plans: Plan[]; plan_level?: string; family_ok?: boolean; children?: { level?: string }[] };
+// Ime stopnje (kot na spletu, public/account.js levelName).
+const levelName = (l?: string | null) => t(l === "FAKS" ? "lp.uni" : l === "SS" ? "lp.ss" : "lp.os");
 
 const day = (iso: string) => new Date(iso).toLocaleDateString();
 const EULA = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/";
@@ -27,19 +30,25 @@ export default function Subscription() {
   const [buying, setBuying] = useState<string | null>(null);
   const [restoring, setRestoring] = useState(false);
   const { data, error, loading, reload } = useLoad(async () => {
-    const [account, store] = await Promise.all([api<{ access: Access; plans: Plan[] }>("/api/account"), loadProducts()]);
-    return { access: account.access, plans: account.plans, ...store };
+    const [account, store] = await Promise.all([api<Account>("/api/account"), loadProducts()]);
+    return { access: account.access, plans: account.plans, account, ...store };
   }, []);
 
   if (loading) return <Loading />;
   if (error || !data) return <ErrorView message={error?.message || ""} onRetry={reload} retryLabel={t("mob.retry")} />;
-  const { access, info, products, plans } = data;
+  const { access, info, products, plans, account } = data;
+  // Cena stopnje profila (j 2026-11-01); Družina samo pri vsaj 2 profilih, s študentom, če je med njimi faks.
+  const withStudent = !!account.children?.some((c) => c.level === "FAKS");
+  const fits = (p: StoreProduct) =>
+    !p.level ? true : p.family ? !!account.family_ok && p.level === (withStudent ? "FAKS" : "SS") : p.level === (account.plan_level || "OS");
+  const nameOf = (p: StoreProduct) =>
+    p.family ? t(p.level === "FAKS" ? "pay.familyStudent" : "pay.family") : p.level ? t("pay.seats1Level", { level: levelName(p.level) }) : t(p.seats === 1 ? "mob.oneChild" : "mob.twoChildren");
   const paid = access.tier === "paid";
   const otherProvider = paid && info.provider && info.provider !== (Platform.OS === "ios" ? "apple" : "google");
 
   const priceOf = (p: StoreProduct) => {
     if (p.price) return p.price;
-    const plan = plans.find((x) => x.seats === p.seats && x.interval === p.interval);
+    const plan = plans.find((x) => x.interval === p.interval && (p.level ? x.level === p.level && !!x.family === !!p.family : x.seats === p.seats));
     return plan ? new Intl.NumberFormat(undefined, { style: "currency", currency: plan.currency }).format(plan.amount / 100) : "";
   };
   const buy = async (p: StoreProduct) => {
@@ -78,7 +87,7 @@ export default function Subscription() {
     }
   };
 
-  const shown = products.filter((p) => p.interval === interval).sort((a, b) => a.seats - b.seats);
+  const shown = products.filter((p) => p.interval === interval && fits(p)).sort((a, b) => a.seats - b.seats);
   return (
     <Screen>
       <Stack.Screen options={{ title: t("mob.subscription") }} />
@@ -119,7 +128,7 @@ export default function Subscription() {
               <Pressable key={p.id} onPress={() => buy(p)} disabled={!!buying} accessibilityRole="button" style={({ pressed }) => ({ borderRadius: radius.card, borderWidth: 2, borderColor: p.seats === 1 ? th.accent : th.border, backgroundColor: th.surface, padding: 16, gap: 4, opacity: pressed || (buying && buying !== p.id) ? 0.6 : 1 })}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                   <Icon name={{ ios: p.seats === 1 ? "person.fill" : "person.2.fill", android: p.seats === 1 ? "person" : "group" }} color={th.accent} />
-                  <Text style={{ flex: 1, color: th.text, fontSize: 18, fontWeight: "700" }}>{t(p.seats === 1 ? "mob.oneChild" : "mob.twoChildren")}</Text>
+                  <Text style={{ flex: 1, color: th.text, fontSize: 18, fontWeight: "700" }}>{nameOf(p)}</Text>
                   <Text style={{ color: th.text, fontSize: 18, fontWeight: "800" }}>{priceOf(p)}</Text>
                 </View>
                 <Body muted small>{t(p.interval === "year" ? "mob.perYear" : "mob.perMonth")} · {t("mob.cancelAnytime")}</Body>

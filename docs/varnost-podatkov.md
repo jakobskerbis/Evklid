@@ -8,7 +8,7 @@ odgovor, ki je zakrožil): [krizni-nacrt.md](krizni-nacrt.md).
 
 | Kaj | Zaščita | Koda |
 |---|---|---|
-| Pogovori (besedilo, fotografije nalog), naslovi pogovorov, prijave napak, mnenja testerjev, urniki, kartice | šifrirano v bazi (AES-256-GCM) | `server/crypto-polje.js`, `server/zasebnost.js` |
+| Pogovori (besedilo, fotografije nalog), naslovi in sprotni povzetki pogovorov, prijave napak, mnenja testerjev, urniki, kartice | šifrirano v bazi (AES-256-GCM) | `server/crypto-polje.js`, `server/zasebnost.js` |
 | Gesla računov in profilov | scrypt (N = 2^17, r = 8, p = 1); stari zapisi se ob prijavi tiho zamenjajo | `server/accounts/auth.js` |
 | Seje | v bazi le zgoščena vrednost žetona; piškotek HttpOnly, SameSite=Lax, Secure prek https | `server/accounts/auth.js` |
 | Ugibanje gesel | omejitve: e-naslov + IP (10 / 15 min), e-naslov (30 / uro), IP (100 / 15 min), profil in račun (30 / uro), izbris računa | `server/accounts/index.js` |

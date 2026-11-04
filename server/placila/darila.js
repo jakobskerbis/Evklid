@@ -9,7 +9,8 @@ import { randomBytes } from "node:crypto";
 export const GIFT_ADULT_TEXT = "Sem polnoletna oseba in kupujem darilno kodo za Evklid.";
 export const GIFT_WITHDRAWAL_TEXT =
   "Vem, da lahko v 14 dneh od nakupa odstopim in dobim vrnjeno celotno plačilo, če koda še ni vpisana. Ko je koda vpisana, se uporaba začne in pravica do odstopa preneha.";
-import { GIFT, isoIn } from "../accounts/plans.js";
+import { giftFor, isoIn } from "../accounts/plans.js";
+import { STOPNJE, visja } from "../../public/stopnja.js";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // brez I, O, 0, 1
 const newCode = () =>
@@ -38,6 +39,9 @@ export function migrateGifts(db) {
     CREATE INDEX IF NOT EXISTS idx_gifts_buyer ON gifts(buyer_id);
     CREATE INDEX IF NOT EXISTS idx_gifts_payment ON gifts(payment_id);
   `);
+  // Stopnja darila (j 2026-11-01): cena = letna cena stopnje; stara darila (brez stopnje) odprejo vse stopnje.
+  if (!db.prepare("PRAGMA table_info(gifts)").all().some((c) => c.name === "level")) db.exec("ALTER TABLE gifts ADD COLUMN level TEXT");
+  if (!db.prepare("PRAGMA table_info(parents)").all().some((c) => c.name === "gift_level")) db.exec("ALTER TABLE parents ADD COLUMN gift_level TEXT");
 }
 
 const later = (iso, now = Date.now()) => !!iso && Date.parse(iso) > now;
@@ -137,8 +141,12 @@ export function mountGifts(app, ctx) {
       )
       .run(parent.id, g.id);
     if (!r.changes) return { error: "Ta darilna koda je že uporabljena." };
-    db.prepare("UPDATE parents SET gift_until = ? WHERE id = ?").run(
+    // Stopnja: višja od veljavnega darila in novega (staro darilo brez stopnje = vse stopnje).
+    const prev = later(parent.gift_until) ? (STOPNJE.includes(parent.gift_level) ? parent.gift_level : "FAKS") : null;
+    const level = STOPNJE.includes(g.level) ? (prev ? visja(prev, g.level) : g.level) : "FAKS";
+    db.prepare("UPDATE parents SET gift_until = ?, gift_level = ? WHERE id = ?").run(
       until,
+      level,
       parent.id,
     );
     return { ok: true, until, gift: true };
@@ -186,14 +194,19 @@ export function mountGifts(app, ctx) {
       return res
         .status(429)
         .json({ error: "Preveč odprtih nakupov. Poskusi jutri." });
+    // Stopnja darila: OŠ (privzeto), SŠ ali faks; cena je letna cena stopnje (99 / 139 / 199 €). Neznana stopnja
+    // je napaka (400), ne tiho OŠ, da kupec ne plača in dobi druge stopnje, kot jo je izbral.
+    const want = req.body?.level ?? "OS";
+    if (!STOPNJE.includes(want)) return res.status(400).json({ error: "Neznana stopnja darila." });
+    const GIFT = giftFor(want);
     try {
       const customer = await ensureCustomer(p);
       const id = Number(
         db
           .prepare(
-            "INSERT INTO gifts (buyer_id, amount, currency, days) VALUES (?, ?, ?, ?)",
+            "INSERT INTO gifts (buyer_id, amount, currency, days, level) VALUES (?, ?, ?, ?, ?)",
           )
-          .run(p.id, GIFT.amount, GIFT.currency, GIFT.days).lastInsertRowid,
+          .run(p.id, GIFT.amount, GIFT.currency, GIFT.days, GIFT.level).lastInsertRowid,
       );
       const lang = /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(String(req.body?.lang || "")) ? req.body.lang : "sl";
       db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, 'gift', ?)").run(p.id, p.email, `${GIFT_ADULT_TEXT}\n${GIFT_WITHDRAWAL_TEXT}\n[jezik: ${lang}]`);

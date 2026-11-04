@@ -95,13 +95,16 @@ S | ploščina lika | | |
 a | stranica | | | pri pravokotnem trikotniku kateta, pri trapezu osnovnica
 b | stranica | | | pri pravokotnem trikotniku kateta, pri trapezu krak
 c | stranica | | | pri pravokotnem trikotniku hipotenuza (najdaljša stranica), pri trapezu druga osnovnica
-d | diagonala kvadrata (pri krogu: premer; pri trapezu: krak) | | |
+d | diagonala kvadrata ali pravokotnika (pri krogu: premer; pri trapezu: krak) | | |
 d_n | število diagonal $n$-kotnika | d_n = \dfrac{n (n - 3)}{2} | |
 v | višina | | | pri trapezu razdalja med osnovnicama, pri rombu razdalja med nasprotnima stranicama
 v_a | višina na stranico $a$ | | |
 v_c | višina na stranico $c$ | | | daljica iz nasprotnega oglišča, pravokotna na stranico $c$
 e, f | diagonali | | | pri rombu in deltoidu sta pravokotni druga na drugo
-r | polmer kroga | | | razdalja od središča do krožnice
+r | polmer kroga | | | razdalja od središča do krožnice; pri trikotniku in pravilnem večkotniku polmer včrtane krožnice
+R | polmer očrtane krožnice | | | pri pravilnem $n$-kotniku razdalja od središča do oglišča, pri enakostraničnem trikotniku $R = \dfrac{2}{3} v$
+s | srednjica trapeza | s = \dfrac{a + c}{2} | | daljica med razpoloviščema krakov
+a_1, b_1 | odseka hipotenuze ob katetah $a$ in $b$ | | | pravokotni projekciji katet na hipotenuzo; višina $v_c$ deli hipotenuzo na $a_1$ in $b_1$
 l | dolžina krožnega loka | | |
 \alpha | kot (pri krožnem loku in izseku: središčni kot) | | | merimo ga v stopinjah; v trikotniku kot pri oglišču $A$
 \beta, \gamma | notranja kota trikotnika | | | pri ogliščih $B$ in $C$

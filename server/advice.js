@@ -4,7 +4,8 @@
 
 import "./env.js";
 import { LIMITS, EUR_PER_USD } from "./usage.js";
-import { PLANS } from "./accounts/plans.js";
+import { PLANS, LEVEL_PRICES, LEVEL_LABEL, guaranteeUsd } from "./accounts/plans.js";
+import { STOPNJE, stageCodeSql, STAGE_CODE } from "../public/stopnja.js";
 
 const VAT = 0.22; // DDV v Sloveniji
 const STRIPE = (eur) => eur * 0.015 + 0.25; // provizija za evropske kartice
@@ -150,5 +151,35 @@ export function pricingAdvice(db, sum, { now = new Date() } = {}) {
       text: `Cena ${fmt(price)} € je dobra: ${interest.conversion_pct} % preizkusov postane naročnina, na učenca ostane ${fmt(profit)} € (${economy.margin_pct} %).`,
     };
 
-  return { economy, limit, price: priceAdv, interest };
+  return { economy, limit, price: priceAdv, interest, levels: levelAdvice(db, active, { eur, scale }) };
+}
+
+// Stopnja učencev (OS/SS/FAKS) iz baze; brez tabele students (testi) vsi OŠ.
+function levelsById(db) {
+  const has = db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'students'").get();
+  if (!has) return new Map();
+  const back = Object.fromEntries(Object.entries(STAGE_CODE).map(([l, c]) => [c, l]));
+  return new Map(db.prepare(`SELECT id, ${stageCodeSql("settings")} AS stage FROM students`).all().map((r) => [r.id, back[r.stage] || "OS"]));
+}
+
+// Predlog po stopnjah (j 2026-11-01): cena stopnje, kaj ostane, zajamčena poraba AI in najslabši primer
+// (naročnik porabi ves zajamčeni delež). Besedila za skrbnika (števec porabe).
+export function levelAdvice(db, active, { eur = EUR_PER_USD(), scale = 1 } = {}) {
+  const lv = levelsById(db);
+  return STOPNJE.map((level) => {
+    const price = LEVEL_PRICES[level].month / 100;
+    const net = netOf(price);
+    const g = guaranteeUsd(level);
+    const worst = net - g * eur;
+    const mine = active.filter((s) => (lv.get(s.id) || "OS") === level);
+    const avg = mine.length ? (mine.reduce((a, s) => a + s.cost_usd * scale, 0) / mine.length) * eur : 0;
+    const status = worst >= MIN_PROFIT_EUR ? "keep" : "lower";
+    const text =
+      `${LEVEL_LABEL[level]}: ${fmt(price)} € na mesec, ostane ${fmt(net)} €. Zajamčeno ${fmt(g)} $ AI na mesec; ` +
+      (status === "keep"
+        ? `tudi naročnik, ki ga porabi vsega, prinese ${fmt(worst)} €.`
+        : `naročnik, ki ga porabi vsega, prinese le ${fmt(worst)} € (cilj vsaj ${fmt(MIN_PROFIT_EUR)} €): spremljaj porabo te stopnje.`) +
+      (mine.length ? ` Aktivnih ${mine.length}, povprečen strošek AI ${fmt(avg)} €.` : "");
+    return { level, price_eur: price, net_eur: r2(net), guarantee_usd: g, worst_profit_eur: r2(worst), active: mine.length, ai_avg_eur: r2(avg), status, text };
+  });
 }

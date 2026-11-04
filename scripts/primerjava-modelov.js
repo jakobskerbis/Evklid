@@ -6,13 +6,17 @@
 //   node scripts/primerjava-modelov.js --dry          izpiše izbrane naloge in oceno stroška, brez klicev
 //   node scripts/primerjava-modelov.js                zažene (potrebuje ANTHROPIC_API_KEY)
 // Možnosti: --n 50 (število nalog), --modes chat,mid (tudi think, deep), --max-usd 5 (ustavi se pred mejo),
-//           --out data/primerjava-modelov.md, --seed 1
+//           --out data/primerjava-modelov.md, --seed 1,
+//           --groups ss,tek (le te stopnje: os, ss, tek, uni),
+//           --prompt /tmp/novi-prompt.md (drug sistemski prompt za preizkus spremembe, aplikacija ga ne uporablja),
+//           --from data/primerjava-modelov.json (iste naloge kot prejšnji zagon, npr. za primerjavo z drugim načinom)
 // Brez ključa (ali z EVKLID_MOCK=1) teče v preizkusnem načinu: odgovori in ocene so izmišljeni, strošek 0.
 import "../server/env.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildSystemPrompt } from "../server/prompt.js";
+import { stripMeta as stripMetaBlocks } from "../server/meta.js";
 import { DEFAULT_SETTINGS } from "../server/settings.js";
 import { streamReply, modeParams, costUsd, getClient, isMockMode, MODEL_DEEP } from "../server/claude.js";
 import { getTopic, getPath, learningPathPrompt } from "../server/curriculum.js";
@@ -30,7 +34,14 @@ const N = Number(arg("n", 50));
 const MODES = arg("modes", "chat,mid").split(",").filter((m) => ["chat", "think", "mid", "deep"].includes(m));
 const MAX_USD = Number(arg("max-usd", 5));
 const OUT = path.resolve(root, arg("out", "data/primerjava-modelov.md"));
+const PROMPT = arg("prompt", "");
+const TEMPLATE = PROMPT ? fs.readFileSync(path.resolve(root, PROMPT), "utf8") : undefined;
 const MOCK = isMockMode();
+const GROUP_KEYS = { os: "osnovna šola", ss: "srednja šola", tek: "tekmovanja", uni: "fakulteta" };
+const GROUPS = arg("groups", "")
+  .split(",")
+  .map((g) => GROUP_KEYS[g.trim()])
+  .filter(Boolean);
 const LABEL = { chat: "Haiku", think: "Haiku (več razmisleka)", mid: "Sonnet", deep: "Opus" };
 
 // --- 1. Naloge iz lekcij --------------------------------------------------
@@ -109,7 +120,7 @@ function settingsFor(p) {
 }
 
 const question = (task) => `Kako rešim to nalogo? Pokaži mi rešitev po korakih in končni rezultat.\n\n${task}`;
-const stripMeta = (t) => t.replace(/<<META[\s\S]*?>>/g, "").replace(/<<KARTICA[\s\S]*?>>/g, "").trim();
+const stripMeta = (t) => stripMetaBlocks(t).trim();
 
 // --- 2. Ocena stroška pred zagonom ------------------------------------------
 // Na nalogo: inštruktor (~11.000 žetonov stalnih navodil iz predpomnilnika, ~1.500 novih, izhod po načinu)
@@ -170,7 +181,15 @@ async function grade(ex, answer) {
 }
 
 // --- 4. Zagon ----------------------------------------------------------------
-const tasks = pick();
+// --from: naloge iz prejšnjega poročila (lekcije se medtem spreminjajo, zato izbor s semenom ni nujno enak).
+const FROM = arg("from", "");
+const fromRows = () => {
+  const seen = new Set();
+  return JSON.parse(fs.readFileSync(path.resolve(root, FROM), "utf8"))
+    .filter((r) => !seen.has(r.id) && seen.add(r.id))
+    .map(({ id, path: p, title, task, solution, hard }) => ({ id, path: p, title, task, solution, hard }));
+};
+const tasks = (FROM ? fromRows() : pick()).filter((t) => !GROUPS.length || GROUPS.includes(group(t.path)));
 const est = estimate(tasks.length);
 const eur = EUR_PER_USD();
 console.log(`Naloge: ${tasks.length} (${Object.entries(tasks.reduce((a, t) => ((a[group(t.path)] = (a[group(t.path)] || 0) + 1), a), {})).map(([k, v]) => `${k} ${v}`).join(", ")})`);
@@ -193,7 +212,7 @@ for (const [i, t] of tasks.entries()) {
     settings: settingsFor(t.path),
     studentName: "Ana",
     learningPath: [learningPathPrompt(t.id), lessonSummaryForPrompt(t.id)].filter(Boolean).join("\n"),
-  });
+  }, TEMPLATE);
   for (const m of MODES) {
     if (!MOCK && spent + worstStep(m) > MAX_USD) {
       stopped = true;
@@ -211,8 +230,10 @@ for (const [i, t] of tasks.entries()) {
       // Napaka klica ne sme zavreči že plačanih rezultatov.
       g = { ocena: "neocenjeno", rezultat_podan: false, razlog: `napaka klica: ${String(err?.message || err).slice(0, 200)}`, usd: 0 };
     }
-    spent += usd + g.usd;
-    rows.push({ ...t, mode: m, answer, usd, ...g });
+    // Cena ocene (Opus) je ločena od cene odgovora, sicer bi stolpec »Cena na odgovor« kazal ceno ocenjevanja.
+    const { usd: gradeUsd = 0, ...verdict } = g;
+    spent += usd + gradeUsd;
+    rows.push({ ...t, mode: m, answer, usd, grade_usd: gradeUsd, ...verdict });
     console.log(`[${i + 1}/${tasks.length}] ${LABEL[m].padEnd(8)} ${String(g.ocena).padEnd(13)} ${t.id}  (skupaj ${spent.toFixed(2)} $)`);
   }
   if (stopped) {
@@ -227,7 +248,7 @@ const pct = (a, b) => (b ? `${Math.round((100 * a) / b)} %` : "–");
 const lines = [
   `# Primerjava modelov za inštruktorja`,
   ``,
-  `${new Date().toISOString().slice(0, 10)} · ${new Set(rows.map((r) => r.id)).size} rešenih primerov iz lekcij · ocenjevalec ${MODEL_DEEP}${MOCK ? " · PREIZKUSNI NAČIN (izmišljeni rezultati)" : ""}`,
+  `${new Date().toISOString().slice(0, 10)} · ${new Set(rows.map((r) => r.id)).size} rešenih primerov iz lekcij · ocenjevalec ${MODEL_DEEP}${PROMPT ? ` · prompt ${path.basename(PROMPT)}` : ""}${MOCK ? " · PREIZKUSNI NAČIN (izmišljeni rezultati)" : ""}`,
   ``,
   `| Model | Pravilno | Manjša napaka | Napaka | Rezultat podan | Cena na odgovor |`,
   `|---|---|---|---|---|---|`,

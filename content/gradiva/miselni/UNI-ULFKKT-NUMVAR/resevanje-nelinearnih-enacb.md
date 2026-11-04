@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Enačba kot ničla
+  - zapis $f(x) = 0$, iščemo $r$
+  - škatla: $x(30-2x)^2 - 1000 = 0$
+- Bisekcija
+  - začetek: $f(a)$ in $f(b)$ različnih predznakov
+  - sredina $c = \frac{a+b}{2}$, obdrži polovico z menjavo
+  - napaka: obdržiš polovico z istim predznakom
+- Dolžina intervala
+  - $L_n = \frac{b-a}{2^n}$
+  - $10$ korakov da približno $3$ decimalke
+- Newtonova metoda
+  - $x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}$
+  - tangenta seka os $x$
+  - napaka: plus namesto minus
+- Red konvergence
+  - linearna: $e_{n+1} \approx \frac{1}{2} e_n$
+  - kvadratična: $e_{n+1} \approx C\,e_n^2$
+  - decimalke se podvojijo
+- Kdaj Newton odpove
+  - $f'(x_n) = 0$: vodoravna tangenta
+  - slab $x_0$: približki odbežijo
+  - rešitev: najprej bisekcija, nato Newton
+- Ustavitev
+  - $|x_{n+1} - x_n| < \varepsilon$
+  - omejitev števila korakov

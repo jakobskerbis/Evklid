@@ -14,8 +14,10 @@ const VENDOR = `${VERSION}-vendor`;
 const API = `${VERSION}-api`;
 const MODELS = "evklid-3d-v1"; // nova številka samo ob spremembi oblike shranjenih modelov
 const SHELL = ["/", "/index.html"];
-// API, ki ga ne shranjujemo (prijava, plačila, osebni podatki računa).
-const NO_CACHE = /^\/api\/(auth|billing|account|stripe|usage)/;
+// API, ki ga ne shranjujemo (prijava, plačila, osebni podatki računa). /api/mobile/web (vstop v splet iz
+// aplikacije, server/mobile/web-session.js) gre mimo, da ostanejo glave aplikacije in brez povezave aplikacija
+// pokaže svoj zaslon »Ni povezave« (sicer: 400 brez glav ali kopija »/« na tem naslovu).
+const NO_CACHE = /^\/api\/(auth|billing|account|stripe|usage|mobile)/;
 const TIMEOUT = { static: 4000, api: 7000 };
 
 self.addEventListener("install", (e) => {

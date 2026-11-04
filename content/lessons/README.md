@@ -115,7 +115,7 @@ Pravila za rešene primere (vsak `### Primer`):
   sam; v PDF-ju je izpisan. Vsebina bloka je navaden Markdown z LaTeX.
 - **Rešitev:** koraki z vmesnimi rezultati in odgovor v stavku.
 
-Obliko preveriš z `node scripts/check-lesson.js -q content/lessons/<pot>/<slug>.md` (`-q` izpiše samo težave). Preverjevalnik tudi sam preračuna čisto številske korake v formulah (`$37 \cdot 7 = 259$`) in javi napako, če se ne ujemajo; pretvorb enot in razdelkov »Pogoste napake« / »Preveri se« ne preverja. Navodila za pisca ali pregledovalca izpiše `node scripts/lesson-brief.js [--review] <id-teme> [...]`. Za varčno pisanje glej `docs/token-rules.md`.
+Obliko preveriš z `node scripts/check-lesson.js -q content/lessons/<pot>/<slug>.md` (`-q` izpiše samo težave). Preverjevalnik tudi sam preračuna čisto številske korake v formulah (`$37 \cdot 7 = 259$`) in javi napako, če se ne ujemajo; pretvorb enot in razdelkov »Pogoste napake« / »Preveri se« ne preverja. Enakosti z neznankami (pravila, identitete, `:::simboli`, pravilni odgovor `+` v kvizu, miselni vzorci) preveri z naključnimi števili (`server/lesson-identity.js`): $(a+b)^2 = a^2 + b^2$ ali $z \cdot \bar z = a^2 - b^2$ je napaka. Enačbo ali pogoj označi v isti vrstici (»enačba«, »če je …«, »za $x < 0$«), namerno napačen zapis z »napačno« ali »napaka«. Navodila za pisca ali pregledovalca izpiše `node scripts/lesson-brief.js [--review] <id-teme> [...]`. Za varčno pisanje glej `docs/token-rules.md`.
 (brez argumentov preveri vse lekcije). Simulacijo v besedilu omeni kot
 »simulacija spodaj« z njenim naslovom iz public/sim/katalog.js.
 
@@ -129,7 +129,13 @@ Fakultetna tema z enakim naslovom in predmetom se pojavi v več predmetih (npr.
 predmeta (`sameTopics(id)[0]` v `server/curriculum.js`), in velja za vse
 predmete s to temo. Lastna datoteka v mapi drugega predmeta ima prednost.
 Zato naj bo fakultetna lekcija splošna (brez imena enega predmeta ali
-fakultete), strožje dokaze pa daj v »Drugače: Bolj natančno«.
+fakultete).
+
+Fakultetna lekcija ima zgradbo, prilagojeno izpitom (j, 4. 11. 2026, `docs/kakovost.md` §1c):
+natančne definicije, izreki s pogoji in dokazi, ki jih izpit zahteva, so v »Razlaga«;
+Primer 3 je na ravni izpita; za »## Povzetek« pride razdelek »## Za izpit«
+(»Znati moraš povedati:« in 2–3 »### Naloga« z »**Rešitev:**«, ki je v aplikaciji
+skrita za gumbom); namesto »Drugače: Iz vsakdanjega življenja« je »Drugače: Uporaba v stroki«.
 
 Katere teme še nimajo lekcije, urejeno po številu programov:
 `node scripts/fakultetne-lekcije.js --letnik 1 --n 40`.

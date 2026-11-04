@@ -14,6 +14,7 @@ import {
   readTimetablePhoto,
   mergeImport,
 } from "./schedule.js";
+import { jeFaks } from "../public/stopnja.js";
 
 export function mountSchedule(app, store, { loadStudent, progress, usage, schedules = new Schedules(store.db), photoFn = readTimetablePhoto, fetchFn = fetch, lookup, modelCapFor = () => null } = {}) {
   // Pogled urnika + Priprava na test, usklajena z najbližjim testom.
@@ -24,7 +25,7 @@ export function mountSchedule(app, store, { loadStudent, progress, usage, schedu
   };
   // Predmeti za obrazec: pri fakulteti predmeti letnika in izbirni predmeti programa.
   const courses = (s) =>
-    s.settings.educational_track === "UNIVERZA"
+    jeFaks(s.settings)
       ? courseKeysFor(s.settings.study_program, s.settings.curriculum_level)
           .filter((k) => UNI_PATHS[k])
           .map((k) => ({ course: k, subject: UNI_PATHS[k].subject, name: UNI_PATHS[k].label.replace(/ \([^)]*\)$/, "") }))
