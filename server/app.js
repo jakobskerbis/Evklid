@@ -53,6 +53,7 @@ import { appVersion, vendorVersion } from "./razlicica.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnost.js";
+import { jeFaks } from "../public/stopnja.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -671,7 +672,7 @@ export function createApp(store, opts = {}) {
         const plain = stripMeta(result.text);
         const found = codeFindings(plain, pre);
         let issue = found.issue;
-        const risky = !!tekTopic || student.settings.track === "COMPETITION" || student.settings.educational_track === "UNIVERZA" || again;
+        const risky = !!tekTopic || student.settings.track === "COMPETITION" || jeFaks(student.settings) || again;
         if (
           !issue &&
           !image && // pregledovalec slike naloge ne vidi

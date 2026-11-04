@@ -2,11 +2,11 @@
 // Na začetku šolskega leta učencu predlagamo naslednjo raven (en klik),
 // ob prehodu OŠ → SŠ → fakulteta pa pokažemo, kaj je na novi ravni novega.
 import { PROGRAMS } from "./university-data.js";
+import { stageCode } from "../public/stopnja.js";
 import { SCHOOL_SYSTEMS, isRegional, gradesOf, trackForLevel } from "../public/regions.js";
 
-export const STAGES = { OSNOVNA_SOLA: "OS", SREDNJA_SOLA: "SS", UNIVERZA: "UNI" };
 const ORDER = ["OS", "SS", "UNI"];
-export const stageOf = (settings) => STAGES[settings?.educational_track] || "OS";
+export const stageOf = (settings) => stageCode(settings);
 
 /** Ali je sprememba nastavitev prehod na višjo stopnjo (OŠ → SŠ, SŠ → fakulteta)? Vrne novo stopnjo ali null. */
 export function stageUp(before, after) {

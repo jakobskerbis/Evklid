@@ -9,6 +9,7 @@ import { EXAMS, EXAM_IDS, SUBJECT_NAMES_EN } from "./exam-data.js";
 import { gradeInfo } from "../public/regions.js";
 import { uiChain } from "../public/i18n/languages.js";
 import { EXAM_HI, NAMES_HI, COUNTRY_HI, SUBJECT_HI } from "./exam-hi.js";
+import { jeSs, stopnja } from "../public/stopnja.js";
 
 // Jezik besedila pri dvojezičnih (angleško-hindijskih) nalogah in opisih izpitov: "hi", če je
 // hindijščina v verigi jezikov vmesnika pred angleščino (hi, bho, mai, mr …), sicer "en".
@@ -40,7 +41,7 @@ export const hasExams = (system) => examsFor(system).own.length > 0;
 function slovenianLevel(settings) {
   const n = parseInt(String(settings.curriculum_level || ""), 10);
   if (!n) return null;
-  return settings.educational_track === "SREDNJA_SOLA" ? 9 + n : n;
+  return jeSs(settings) ? 9 + n : n;
 }
 
 // Brez izbire: domači izpit za učenčev razred (najprej šolski izpit, npr. CBSE 10 za Class 8,
@@ -49,7 +50,7 @@ export function examKeyFor(settings, examId = null) {
   const { own } = examsFor(settings.school_system);
   const level = gradeInfo(settings.school_system, settings.curriculum_level)?.level || slovenianLevel(settings);
   const fits = (x) =>
-    level && EXAMS[x].forLevel && level >= EXAMS[x].forLevel[0] && level <= EXAMS[x].forLevel[1] && (!EXAMS[x].track || EXAMS[x].track === settings.educational_track);
+    level && EXAMS[x].forLevel && level >= EXAMS[x].forLevel[0] && level <= EXAMS[x].forLevel[1] && (!EXAMS[x].track || stopnja({ educational_track: EXAMS[x].track }) === stopnja(settings));
   const forGrade = own.filter(fits).sort((a, b) => !!EXAMS[b].board - !!EXAMS[a].board);
   const id = examId && Object.hasOwn(EXAMS, examId) ? examId : forGrade[0] || own[0] || "SAT"; // brez domačih izpitov: SAT (mednarodno najbolj razširjen)
   if (!id) return null;

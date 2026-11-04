@@ -15,6 +15,7 @@
 // zato vzdevek ne more vsebovati pravega imena.
 import "./env.js";
 import crypto from "node:crypto";
+import { stageCode, stageCodeSql } from "../public/stopnja.js";
 import { ensureAvatarTables, publicAvatar } from "./avatar.js";
 import { AWARD_MIN } from "../public/zbirke.js";
 
@@ -73,9 +74,9 @@ const prevMonth = (month) => {
 // Zmaga šteje, ko je na lestvici vsaj AWARD_MIN učencev z XP.
 export { AWARD_MIN };
 export const MONTH_BOARD = 30; // prikazanih na mesečni lestvici
-const stageOf = (student) => ({ SREDNJA_SOLA: "SS", UNIVERZA: "UNI" })[student.settings.educational_track] || "OS";
+const stageOf = (student) => stageCode(student);
 // Isto v SQL (nastavitve so shranjene normalizirane, server/db.js), da mesečna lestvica ne bere učenca po učenca.
-const STAGE_SQL = `CASE json_extract(s.settings, '$.educational_track') WHEN 'SREDNJA_SOLA' THEN 'SS' WHEN 'UNIVERZA' THEN 'UNI' ELSE 'OS' END`;
+const STAGE_SQL = stageCodeSql("s.settings");
 
 export class Leagues {
   constructor(store, { now = () => new Date() } = {}) {

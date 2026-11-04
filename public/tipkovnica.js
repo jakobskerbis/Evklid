@@ -11,6 +11,7 @@
 import { t, currentLang } from "./i18n.js";
 import { icon } from "./icons.js";
 import { GROUPS, groupOrder, chemFormat } from "./symbols.js";
+import { stopnja } from "./stopnja.js";
 import {
   layoutFor, FX_GROUPS, KEM_ROWS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
   fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest,
@@ -335,7 +336,7 @@ function symName(g) {
 }
 function symHtml() {
   const s = studentSettings() || {};
-  const order = groupOrder(s.educational_track, s.subject);
+  const order = groupOrder(stopnja(s), s.subject);
   const all = [...order, ...Object.keys(GROUPS).filter((g) => !order.includes(g))];
   if (!all.includes(S.symg)) S.symg = all[0];
   const sl = currentLang() === "sl";

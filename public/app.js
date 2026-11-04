@@ -48,6 +48,7 @@ import { validDate } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
 import { initDrsniki } from "./drsniki.js";
+import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
 
 const $ = (sel) => document.querySelector(sel);
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
@@ -112,7 +113,7 @@ const api = async (url, opts = {}) => {
 
 const MODE_NAMES = { A: t("chatMode.A"), B: t("chatMode.B") };
 
-const isUni = (s) => s?.educational_track === "UNIVERZA";
+const isUni = (s) => jeFaks(s);
 
 const state = {
   students: [],
@@ -1443,7 +1444,7 @@ $("#delete-student").addEventListener("click", async () => {
 
 // Cilj: vrstica na Učni poti, značka v zgornji vrstici in opomnik ob 12.00 (public/goal.js).
 function goalLevelText(st) {
-  return [st.educational_track === "UNIVERZA" ? t("lp.uni") : st.educational_track === "SREDNJA_SOLA" ? t("lp.ss") : t("lp.os"), levelLabel(st.curriculum_level)].filter(Boolean).join(" ");
+  return [jeFaks(st) ? t("lp.uni") : jeSs(st) ? t("lp.ss") : t("lp.os"), levelLabel(st.curriculum_level)].filter(Boolean).join(" ");
 }
 function renderGoal() {
   const st = state.student;
@@ -1898,7 +1899,7 @@ async function loadPath(key = state.pathKey) {
   const prog = uni ? programsCache().find((x) => x.id === state.student.settings.study_program) : null;
   // OŠ 1.–5. razred: učne poti še ni, prikažemo snov 6. razreda (igre in inštruktor so prilagojeni razredu).
   const st = state.student.settings;
-  const early = !prog && !isRegional(sys) && st.educational_track === "OSNOVNA_SOLA" && /^[1-5]\./.test(String(st.curriculum_level || "").trim());
+  const early = !prog && !isRegional(sys) && jeOs(st) && /^[1-5]\./.test(String(st.curriculum_level || "").trim());
   $("#path-note").hidden = !prog && !isRegional(sys) && !early;
   if (early) $("#path-note").textContent = t("path.earlyNote", { grade: levelLabel(st.curriculum_level) });
   // Regijski šolski sistem: učna pot je preslikana na snov te države (osnutek).
@@ -2014,7 +2015,7 @@ function syncCompetitionTab() {
   m.dataset.view = exams ? "exams" : "lab";
   const ms = m.querySelector("span");
   // Na ozki spodnji vrstici kratko: »NPZ« v OŠ, »Matura« v SŠ (zgoraj »NPZ in matura«).
-  const short = state.student?.settings.educational_track === "OSNOVNA_SOLA" ? "goal.npz" : "goal.matura";
+  const short = jeOs(state.student?.settings) ? "goal.npz" : "goal.matura";
   ms.dataset.i18n = exams ? short : "nav.lab";
   ms.textContent = exams ? t(short) : t("nav.lab");
   m.querySelector("i, svg").outerHTML = icon(exams ? "clipboard-check" : "flask-conical");
@@ -2758,7 +2759,7 @@ document.addEventListener("click", (e) => {
 // ---------- priprave na izpite: regijski »Izpiti« (v zavihku Tekmovanja) in slovenski »NPZ in matura« ----------
 
 // Cilj, ki ustreza izpitom šole: NPZ v OŠ, matura v SŠ (splošna ali poklicna).
-const siGoal = () => (state.student?.settings.educational_track === "OSNOVNA_SOLA" ? "npz" : "matura");
+const siGoal = () => (jeOs(state.student?.settings) ? "npz" : "matura");
 
 // Kartica Pripravljenost: dni do izpita (datum cilja), delež znane snovi izpita in tri najšibkejše teme.
 function readinessHtml(c) {
@@ -2807,7 +2808,7 @@ async function loadExams(key = state.examKey, exam = null) {
     return;
   }
   // Slovenski izpit zunaj šole učenca (npr. ostanek izbire po menjavi OŠ → SŠ): privzeti izpit šole.
-  const own = si ? SI_EXAMS[state.student.settings.educational_track] : null;
+  const own = si ? SI_EXAMS[TRACK[stopnja(state.student.settings)]] : null;
   if (si && !own.includes(c.exam) && (key || exam)) return loadExams(null, null);
   if (!c.key) {
     box.innerHTML = `<h1>${t("exam.title")}</h1>`;
@@ -3311,8 +3312,7 @@ function calcSubject() {
 function formulaBook() {
   const s = calcSubject();
   const subj = ["MAT", "FIZ", "KEM"].includes(s) ? s : "MAT";
-  const track = state.student?.settings?.educational_track;
-  return `${subj}-${track === "OSNOVNA_SOLA" ? "OS" : track === "UNIVERZA" ? "UNI" : "SS"}`;
+  return `${subj}-${stageCode(state.student?.settings)}`;
 }
 async function insertIntoCalc(text) {
   const tool = await setCalcMode("sci");

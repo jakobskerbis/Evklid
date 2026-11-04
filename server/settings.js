@@ -8,6 +8,7 @@ import { cleanChildhood, cleanTitles } from "../public/games/childhood.js";
 import { SYSTEM_IDS, DEFAULT_SYSTEM, isRegional, gradeInfo, defaultGrade, trackForLevel } from "../public/regions.js";
 import { GOALS, DEFAULT_GOAL, goalsFor, validDate } from "../public/goal-data.js";
 import { DEFAULT_XP_GOAL, cleanXpGoal } from "../public/xp-levels.js";
+import { jeFaks } from "../public/stopnja.js";
 
 export const ENUMS = {
   subject: ALL_SUBJECTS,
@@ -81,7 +82,7 @@ export function normalizeSettings(input = {}) {
     out.curriculum_level = DEFAULT_SETTINGS.curriculum_level;
   }
   // Fakulteta: program je obvezen, tekmovanj ni; brez fakultete programa ne hranimo.
-  if (out.educational_track === "UNIVERZA") {
+  if (jeFaks(out)) {
     if (!out.study_program) out.study_program = Object.keys(PROGRAMS)[0];
     out.track = "REGULAR";
     // Predmet iz predmetnika: veljati mora za program in letnik (ali biti izbirni),

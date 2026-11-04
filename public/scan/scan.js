@@ -4,6 +4,7 @@
 //   ki rešitev preveri (verify.js). Vsak korak ima »Zakaj?« in »Vprašaj Evklida«, več metod, graf, številsko premico.
 import { icon, hydrateIcons } from "../icons.js";
 import { t } from "../i18n.js";
+import { jeOs } from "../stopnja.js";
 import { solve, analyze, prep, tex as exprTex, parseTask } from "./solvecore.js";
 import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
 
@@ -505,7 +506,7 @@ function renderConfirm(box) {
 // ---------- 4. rešitev ----------
 
 function solveNow() {
-  const complex = ["SREDNJA_SOLA", "UNIVERZA"].includes(D.getStudent()?.settings?.educational_track) || /SŠ|faks/i.test(D.getStudent()?.settings?.curriculum_level || "");
+  const complex = !jeOs(D.getStudent()?.settings) || /SŠ|faks/i.test(D.getStudent()?.settings?.curriculum_level || "");
   const r = solve(S.text, { goal: S.goal, complex });
   S.result = r.ok ? r : null;
   S.goals = r.goals || [];
