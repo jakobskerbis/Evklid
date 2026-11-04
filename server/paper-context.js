@@ -4,6 +4,7 @@
 // stalne predloge; od odjemalca vzame samo ime pole, oznako naloge in stran, zato učenec prek tega ne more
 // vriniti svojega navodila.
 import { cleanText } from "./settings.js";
+import { partKey } from "../public/our-paper-key.js";
 
 // Ista oblika kot opomba preverjenega računa (server/live-check.js, NOTE_TAG): oznaka, angleško, »ne omenjaj«.
 export const PAPER_TAG = "kontekst_pole";
@@ -11,7 +12,7 @@ export const PAPER_NOTE_HEAD = `<${PAPER_TAG}>`;
 
 // Del naše pole (server/our-papers.js) po oznaki »3b«: inštruktor dobi našo rešitev kot skrit kontekst.
 function ourPart(paper, label) {
-  for (const tk of paper?.tasks || []) for (const part of tk.parts || []) if (`${tk.n}${part.id || ""}` === label) return { tk, part };
+  for (const tk of paper?.tasks || []) for (const part of tk.parts || []) if (partKey(tk, part) === label) return { tk, part };
   return null;
 }
 
@@ -23,7 +24,7 @@ export function paperContext(p, { loadOurs = null } = {}) {
   if (!p || typeof p !== "object") return "";
   const paper = cleanText(String(p.paper ?? ""), 120).replace(/[<>[\]]/g, "");
   if (!paper) return "";
-  const task = String(p.task ?? "").replace(/[^A-Za-z0-9]/g, "").slice(0, 4);
+  const task = String(p.task ?? "").replace(/[^A-Za-z0-9-]/g, "").slice(0, 8);
   const page = Number.isInteger(p.page) && p.page > 0 && p.page < 200 ? p.page : 0;
   const where = task ? `, task ${task}` : page ? `, page ${page}` : "";
   const ours = typeof p.ours === "string" && task && loadOurs ? ourPart(loadOurs(p.ours), task) : null;

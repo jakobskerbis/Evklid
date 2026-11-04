@@ -97,6 +97,7 @@ export async function preveriGradnik(mod, pricakovanId) {
   if (!PREDMETI.includes(info.predmet)) n(`predmet ${info.predmet}`);
   if (!besedilo(info.opis)) n("ni opisa");
   if (!(info.merilo?.m > 0) || !besedilo(info.merilo?.oznaka)) n("ni merila");
+  if (info.poskusi !== undefined && (!besedilo(info.poskusi) || /^Poskusi/.test(info.poskusi))) n("poskusi: besedilo brez »Poskusi:« na začetku");
   if (napake.length) return napake;
   for (const kakovost of ["visoka", "nizka"]) {
     for (const gibanje of [true, false]) {
@@ -134,6 +135,8 @@ export async function preveriGradnik(mod, pricakovanId) {
         if (!TIPI.includes(c.tip)) { n(`${oznaka}: tip nadzora ${c.tip}`); continue; }
         if (!besedilo(c.oznaka)) n(`${oznaka}: nadzor ${c.id} brez oznake`);
         if (c.vidno !== undefined && typeof c.vidno !== "function") n(`${oznaka}: nadzor ${c.id} vidno ni funkcija`);
+        const opis = Object.getOwnPropertyDescriptor(c, "vrednost");
+        if (opis?.get && !opis.set) n(`${oznaka}: nadzor ${c.id} ima vrednost le z get (kit jo zapiše: dodaj set)`);
         try {
           if (c.tip === "drsnik") {
             if (!(c.min <= c.vrednost && c.vrednost <= c.max) || !(c.korak > 0)) n(`${oznaka}: drsnik ${c.id} meje`);

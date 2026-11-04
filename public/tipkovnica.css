@@ -63,6 +63,8 @@
 }
 .tk-k.fn { background: var(--tk-fn); color: var(--tk-ink); font-size: 0.95rem; font-weight: 700; }
 .tk-k.sm { font-size: 0.92rem; }
+/* f(x) → Algebra: ukaz z besedo (poenostavi, simplify) mora biti ves viden na telefonu (5 stolpcev) */
+.tk-k.word { font-size: 0.8rem; letter-spacing: -0.01em; }
 .tk-k.dig { font-size: 1.25rem; font-weight: 600; }
 .tk-k.sym { font-size: 1.05rem; font-weight: 700; }
 /* Kem: indeksi ₂ ₃ ⁺ ²⁻ so v pisavi drobni, zato večji napis */

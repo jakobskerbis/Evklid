@@ -559,6 +559,24 @@ export class GraphView {
         ctx.globalAlpha = 1;
         this.polylines.set(`${o.id}'`, dp);
       }
+    } else if (o.kind === "func" && o.plot === "seq") {
+      // zaporedje: pika za vsak člen na vidnem delu osi x (največ ~1500 pik)
+      const a = Math.ceil(v.xmin);
+      const b = Math.floor(v.xmax);
+      const step = Math.max(1, Math.ceil((b - a + 1) / 1500));
+      const pts = b >= a ? o.seq.range(a, b, step).filter(([, y]) => Number.isFinite(y)) : [];
+      ctx.setLineDash([]);
+      ctx.fillStyle = color;
+      const r = step > 1 ? 2.5 : sel ? 5.5 : 4.5;
+      ctx.beginPath();
+      for (const [n, y] of pts) {
+        const px = this.X(n);
+        const py = this.Y(y);
+        ctx.moveTo(px + r, py);
+        ctx.arc(px, py, r, 0, 2 * Math.PI);
+      }
+      ctx.fill();
+      this.polylines.set(o.id, [pts.map(([n, y]) => [this.X(n), this.Y(y)])]);
     } else if (o.kind === "polar") {
       const [t0, t1] = o.domain;
       const paths = this.sampleParam(
@@ -669,28 +687,31 @@ export class GraphView {
     const v = this.view;
     if (o.kind === "ineq-y" || o.kind === "ineq-x") {
       const swap = o.kind === "ineq-x";
-      const up = o.op === ">" || o.op === ">=";
+      // y ≠ f(x): vsa ravnina razen krivulje (obe strani)
+      const sides = o.op === "!=" ? [true, false] : [o.op === ">" || o.op === ">="];
       for (const f of this.branches(o.fn, swap ? (v.ymin + v.ymax) / 2 : (v.xmin + v.xmax) / 2)) {
         const paths = this.sampleExplicit(f, swap);
-        for (const p of paths) {
-          if (p.length < 4) continue;
-          ctx.beginPath();
-          if (!swap) {
-            const edgeY = up ? -5 : H + 5;
-            ctx.moveTo(p[0], edgeY);
-            for (let i = 0; i < p.length; i += 2) ctx.lineTo(p[i], p[i + 1]);
-            ctx.lineTo(p[p.length - 2], edgeY);
-          } else {
-            const edgeX = up ? W + 5 : -5;
-            ctx.moveTo(edgeX, p[1]);
-            for (let i = 0; i < p.length; i += 2) ctx.lineTo(p[i], p[i + 1]);
-            ctx.lineTo(edgeX, p[p.length - 1]);
+        for (const up of sides) {
+          for (const p of paths) {
+            if (p.length < 4) continue;
+            ctx.beginPath();
+            if (!swap) {
+              const edgeY = up ? -5 : H + 5;
+              ctx.moveTo(p[0], edgeY);
+              for (let i = 0; i < p.length; i += 2) ctx.lineTo(p[i], p[i + 1]);
+              ctx.lineTo(p[p.length - 2], edgeY);
+            } else {
+              const edgeX = up ? W + 5 : -5;
+              ctx.moveTo(edgeX, p[1]);
+              for (let i = 0; i < p.length; i += 2) ctx.lineTo(p[i], p[i + 1]);
+              ctx.lineTo(edgeX, p[p.length - 1]);
+            }
+            ctx.closePath();
+            ctx.fill();
           }
-          ctx.closePath();
-          ctx.fill();
         }
         ctx.globalAlpha = 1;
-        this.stroke(ctx, o, color, { dash: o.op === "<" || o.op === ">" ? [9, 6] : [] });
+        this.stroke(ctx, o, color, { dash: o.op === "<" || o.op === ">" || o.op === "!=" ? [9, 6] : [] });
         this.strokePaths(ctx, paths);
         this.polylines.set(o.id, paths);
         ctx.globalAlpha = 0.2;

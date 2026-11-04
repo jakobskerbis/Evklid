@@ -98,6 +98,12 @@
   </div>
   <p class="small">Cena velja za vsakega učenca, ki ga licenca zajema. Končni znesek bo naveden na predračunu.</p>
 
+  <section id="podari" hidden>
+    <h2>Podari {{name}}</h2>
+    <p>Učenci, ki si naročnine ne morejo privoščiti, dobijo kodo za {{podari.months}} mesece brezplačne uporabe. Kode pošljemo šoli, učence pa izbere šola sama: o dohodkih ne sprašujemo nikogar, na profilu učenca ni nobene oznake. Mesece podarijo starši in drugi odrasli, ki uporabljajo {{name}}, del pa jih podarimo mi.</p>
+    <p class="small" id="podari-count" hidden>Podarjenih mesecev: <b data-podari="months"></b> · že v uporabi: <b data-podari="used"></b></p>
+  </section>
+
   <h2>Kako poteka plačilo</h2>
   <ol class="steps">
     <li><b>Naročilo.</b> Šola izpolni obrazec spodaj; številko naročilnice, če jo ima, vpiše v opombo.</li>
@@ -170,5 +176,6 @@
 </main>
 <script src="/sole.js"></script>
 <script type="module" src="/tipkovnica-strani.js"></script>
+<script type="module" src="/vir.js"></script>
 </body>
 </html>

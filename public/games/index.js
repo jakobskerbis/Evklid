@@ -1,8 +1,8 @@
 // Razdelek IGRE: mreža pisanih ploščic (kot na portalih z igrami), filtri po področjih in vrstah,
 // igra se odpre v istem pogledu. Igra = vrsta igre (engines.js) × matematični pojem (topics.js).
-import { t } from "../i18n.js";
+import { t, locale } from "../i18n.js";
 import { icon } from "../icons.js";
-import { CONCEPTS, AREAS, SUBJECTS, conceptName, areaName, setNumberStyle, makeQuestion, shuffle } from "./topics.js";
+import { CONCEPTS, AREAS, SUBJECTS, conceptName, areaName, setNumberStyle, loadConceptNames, makeQuestion, shuffle } from "./topics.js";
 import { gameLock as ruleLock, clearedPace, lessonsOf, PACE, CLEAR_CORRECT, CHECK_TASKS, CHECK_PASS, LOCKS_ON } from "./unlock.js";
 // Zapora iger je izklopljena (LOCKS_ON v unlock.js): vse igre so odprte.
 const gameLock = (...a) => (LOCKS_ON ? ruleLock(...a) : null);
@@ -23,6 +23,9 @@ import { seasonOf } from "../zbirke.js";
 import { unlockedText } from "../zbirke-view.js";
 import { pageSlice, pageNums } from "./pages.js";
 import { STAGES, stageOf, startTierFor } from "./stage.js";
+import { dailyCard, openDaily, pickLevel, saveLevel } from "./daily-view.js";
+import { suggestedLevel } from "./daily.js";
+import { gameFor, rewardGame, WEAK_MAX } from "./learn-link.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const FILTER_KEY = "evklid.gamesFilter";
@@ -73,7 +76,11 @@ let game = null; // odprta igra
 let trOpen = false;
 let page = 0; // stran mreže iger (pages.js); ob vsaki spremembi izbire ali iskanja spet prva
 let trends = null; // glasovi tedna (samo skrbnik ali računalnik s strežnikom, server/games.js)
+let pilot = null; // merjenje v pilotu (enako zaščiteno kot glasovi)
+let loaded = null; // nalaganje podatkov iger (openReward počaka nanj)
 let root = null;
+let daily = null; // dnevna uganka: stanje stopenj in niz (server/daily-puzzle.js)
+let dailyLevel = null; // izbrana stopnja na kartici (shranjena na napravi, sicer predlog po stopnji šolanja)
 
 const kindName = (e) => t(`games.e.${e.id}`);
 const gameId = (e, c) => `${e.id}:${c.id}`;
@@ -101,15 +108,27 @@ export async function showGames() {
   root = document.querySelector("#games-content");
   if (!root || !ctx) return;
   setNumberStyle(ctx.currentLang());
+  await loadConceptNames(ctx.currentLang());
   applyStageLook();
   if (game) return; // igra ostane odprta
   renderPortal();
-  try {
-    const s = ctx.getStudent();
-    if (s) [data, av, trends] = await Promise.all([ctx.api(`/api/students/${s.id}/games`), ctx.api(`/api/students/${s.id}/avatar`).catch(() => av), ctx.api("/api/games/trends").catch(() => null)]);
-    LS = lockState();
-    if (!game) renderPortal();
-  } catch {}
+  loaded = (async () => {
+    try {
+      const s = ctx.getStudent();
+      if (s) [data, av, trends, daily] = await Promise.all([ctx.api(`/api/students/${s.id}/games`), ctx.api(`/api/students/${s.id}/avatar`).catch(() => av), ctx.api("/api/games/trends").catch(() => null), ctx.api(`/api/students/${s.id}/daily`).catch(() => null)]);
+      if (trends) pilot = await ctx.api("/api/games/pilot").catch(() => null);
+      LS = lockState();
+      if (!game) renderPortal();
+    } catch {}
+  })();
+  await loaded;
+}
+
+// Nagradna igra po dnevnem treningu (app.js, reward.js): igra iz pravkar vadene snovi.
+export async function openReward(conceptIds) {
+  await (loaded || showGames());
+  const id = rewardGame(conceptIds, CONCEPTS, ENGINES, fits);
+  if (id && !game) openGame(id);
 }
 
 // Tipka nazaj: najprej zapre igro.
@@ -125,12 +144,12 @@ function saveFilter() {
   } catch {}
 }
 
-function tile(e, c) {
+function tile(e, c, whyId = "") {
   const st = data.games[gameId(e, c)];
   const locked = !!gameLock(e.id, c, LS);
   const path = !locked && onPath(e, c);
-  return `<button type="button" class="gm-tile gm-k-${e.id}${locked ? " gm-locked" : ""}${path ? " gm-path" : ""}" data-game="${gameId(e, c)}" style="--a:${tileColor(c)};--b:${e.colors[0]}"${locked ? ` aria-label="${esc(`${t("games.locked")}: ${conceptName(c)}, ${kindName(e)}`)}"` : path ? ` aria-label="${esc(`${t("games.pathMark")}: ${conceptName(c)}, ${kindName(e)}`)}"` : ""}>
-    ${isNewDate(e.added) ? `<span class="gm-new">${esc(t("games.new"))}</span>` : ""}<span class="gm-kind">${icon(e.icon)}</span>
+  return `<button type="button" class="gm-tile gm-k-${e.id}${locked ? " gm-locked" : ""}${path ? " gm-path" : ""}" data-game="${gameId(e, c)}" style="--a:${tileColor(c)};--b:${e.colors[0]}"${whyId ? ` aria-describedby="${whyId}"` : ""}${locked ? ` aria-label="${esc(`${t("games.locked")}: ${conceptName(c)}, ${kindName(e)}`)}"` : path ? ` aria-label="${esc(`${t("games.pathMark")}: ${conceptName(c)}, ${kindName(e)}`)}"` : ""}>
+    ${isNewDate(e.added) && !whyId ? `<span class="gm-new">${esc(t("games.new"))}</span>` : ""}<span class="gm-kind">${icon(e.icon)}</span>
     ${path ? `<span class="gm-pathmark" title="${esc(t("games.pathMark"))}">${icon("compass")}</span>` : ""}
     ${st?.best ? `<span class="gm-best">${icon("star")}${st.best}</span>` : ""}
     <span class="gm-glyph">${locked ? `<span class="gm-lock">${icon("lock")}</span>` : esc(GLYPH[c.id] || c.glyph || SUBJ_GLYPH[c.subject] || "∑")}</span>
@@ -180,6 +199,54 @@ function trendsCard() {
       <button type="button" class="secondary" data-act="trcopy">${icon("clipboard-check")}${esc(t("games.trCopy"))}</button>`;
   return `<details class="card gm-trends"${trOpen ? " open" : ""}><summary>📋 ${esc(t("games.trTitle"))}</summary><p class="muted small">${esc(t("games.trOnly"))}</p>${body}</details>`;
 }
+
+// »Ponovi šibke teme« (server/games.js weakFor): pojmi z največ napakami ta teden, vsak v igri, ki mu ustreza
+// (najprej igre, kjer odgovor narediš sam), sosednji ploščici različnih vrst. Brez podatkov ni vrste.
+function weakSec() {
+  const used = [];
+  const tiles = [];
+  for (const w of data.weak || []) {
+    const c = CONCEPTS.find((x) => x.id === w.concept);
+    const e = c && gameFor(c, ENGINES, fits, used.slice(-2));
+    if (!e) continue;
+    used.push(e.id);
+    // Razlog pod ploščico (ne na njej): ne prekrije znaka, kompasa ali značke »Novo«, daljši prevodi se prelomijo.
+    const id = `gm-why-${tiles.length}`;
+    tiles.push(`<div class="gm-weakitem">${tile(e, c, id)}<p class="gm-why" id="${id}">${esc(t("games.weakWhy", { n: w.n }))}</p></div>`);
+    if (tiles.length >= WEAK_MAX) break;
+  }
+  if (!tiles.length) return "";
+  return `<section class="gm-sec gm-weaksec"><h2><span class="gm-weak-ic" aria-hidden="true">${icon("repeat")}</span>${esc(t("games.weakTitle"))}<span class="gm-count">${tiles.length}</span></h2><p class="muted gm-weaknote">${esc(t("games.weakNote"))}</p><div class="gm-grid">${tiles.join("")}</div></section>`;
+}
+
+// Merjenje v pilotu za skrbnika: igre na učenca, vrnitev na pot po igri, točnost pri šibkih temah.
+const pct = (x) => (x == null ? "—" : `${x} %`);
+// Decimalna vejica po jeziku (1,5 v slovenščini), števke ostanejo latinične kot drugje na kartici.
+const num = (x) => {
+  try {
+    return Number(x).toLocaleString(`${locale()}-u-nu-latn`);
+  } catch {
+    return String(x);
+  }
+};
+function pilotCard() {
+  if (!pilot) return "";
+  const p = pilot;
+  const T = p.totals;
+  const body = !p.enough
+    ? `<p class="muted">${esc(t("games.trFew", { n: p.players, min: p.minStudents }))}</p>`
+    : `<ul class="gm-plsum">
+        <li><b>${esc(p.players)}</b><span>${esc(t("games.plPlayers"))}</span></li>
+        <li><b>${esc(num(T.playsPerPlayerDay))}</b><span>${esc(t("games.plPerDay"))}</span></li>
+        <li><b>${esc(pct(T.returnRate))}</b><span>${esc(t("games.plReturn", { min: p.minutes }))}</span></li>
+        <li><b>${esc(pct(T.weakAccuracy))}</b><span>${esc(t("games.plWeak", { n: T.weakAnswers }))}</span></li>
+        <li><b>${esc(pct(T.otherAccuracy))}</b><span>${esc(t("games.plOther", { n: T.otherAnswers }))}</span></li>
+      </ul>
+      <div class="pilot-scroll"><table class="table pilot-table gm-pltable"><thead><tr><th scope="col">${esc(t("games.plDay"))}</th><th scope="col">${esc(t("games.plPlayersCol"))}</th><th scope="col">${esc(t("games.plPlays"))}</th><th scope="col">${esc(t("games.plReturns"))}</th></tr></thead>
+      <tbody>${p.rows.map((r) => `<tr><td>${esc(r.day ?? t("games.plOtherDays"))}</td><td>${esc(r.players)}</td><td>${esc(r.plays)}</td><td>${esc(r.returns)} (${esc(pct(r.returnRate))})</td></tr>`).join("")}</tbody></table></div>`;
+  return `<details class="card gm-trends gm-pilot"${plOpen ? " open" : ""}><summary>📈 ${esc(t("games.plTitle", { n: p.days }))}</summary><p class="muted small">${esc(t("games.trOnly"))}</p>${body}</details>`;
+}
+let plOpen = false;
 
 // Številke strani: 1 … 4 5 [6] 7 8 … 275, puščici za prejšnjo in naslednjo.
 function pager(pages) {
@@ -255,6 +322,7 @@ function renderPortal() {
         <button type="button" class="gm-me gm-zb" data-act="zbirke" title="${esc(t("zb.title"))}"><span class="gm-zb-ic">${icon("award")}</span><span><b>${esc(t("games.zbirke"))}</b><small>${esc(t("zb.pass"))}</small></span></button></span>
         <label class="gm-search">${icon("search")}<input type="search" value="${esc(filter.q)}" placeholder="${esc(t("games.search"))}" aria-label="${esc(t("games.search"))}"></label>
       </div>
+      ${ctx.getStudent() && !q ? dailyCard(daily, { t, lang: ctx.currentLang(), level: curDailyLevel(), suggested: suggestedDaily() }) : ""}
       ${SUBJECTS.length > 1 ? `<div class="chip-row gm-subjects" role="group" aria-label="${esc(t("games.subjects"))}">${SUBJECTS.map((x) => chip(x, t(`subj.${x}`), filter.subject === x)).join("")}</div>` : ""}
       <div class="chip-row gm-areas" role="group" aria-label="${esc(t("games.areas"))}">
         ${chip("you", t("games.forYou"), filter.area === "you")}${chip("all", t("games.all"), filter.area === "all")}
@@ -263,9 +331,9 @@ function renderPortal() {
       <div class="chip-row gm-kinds" role="group" aria-label="${esc(t("games.kinds"))}">
         ${chip("all", t("games.allKinds"), filter.kind === "all")}${kidEngines.length ? chip("kid", `🕹️ ${t("games.kidChip")}`, filter.kind === "kid") : ""}${ENGINES.map((e) => chip(e.id, kindName(e), filter.kind === e.id, isNewDate(e.added))).join("")}
       </div>
-      ${q ? "" : trendsCard()}${kidAsk}${ctx.getStudent() && !q ? `<button type="button" class="ghost gm-kidlink gm-wishlink" data-act="wish">🗳️ ${esc(data.wish ? t("games.wishMine", { g: t(`games.w.${data.wish}`) }) : t("games.wishAsk"))}</button>` : ""}${kid && !kidEngines.length ? `<button type="button" class="ghost gm-kidlink" data-act="kid">🕹️ ${esc(t("games.kidLink"))}</button>` : ""}
+      ${q ? "" : trendsCard() + pilotCard()}${kidAsk}${ctx.getStudent() && !q ? `<button type="button" class="ghost gm-kidlink gm-wishlink" data-act="wish">🗳️ ${esc(data.wish ? t("games.wishMine", { g: t(`games.w.${data.wish}`) }) : t("games.wishAsk"))}</button>` : ""}${kid && !kidEngines.length ? `<button type="button" class="ghost gm-kidlink" data-act="kid">🕹️ ${esc(t("games.kidLink"))}</button>` : ""}
       ${paths ? `<p class="gm-pathhint">${icon("compass")} ${esc(t("games.pathHint"))}</p>` : ""}
-      ${kidSec}${total ? sections : `<p class="muted gm-none">${esc(t("games.none"))}</p>`}
+      ${q || page ? "" : weakSec()}${kidSec}${total ? sections : `<p class="muted gm-none">${esc(t("games.none"))}</p>`}
       ${pager(pages)}
     </div>`;
   root.querySelector(".gm-subjects")?.addEventListener("click", (ev) => {
@@ -315,8 +383,18 @@ function renderPortal() {
     root.querySelector(".gm-sec .gm-tile")?.focus({ preventScroll: true });
   });
   root.querySelector('[data-act="shop"]').addEventListener("click", () => renderShop("", true));
+  root.querySelector(".gm-daily")?.addEventListener("click", (ev) => {
+    const lv = ev.target.closest("button[data-lv]");
+    if (lv) {
+      dailyLevel = lv.dataset.lv;
+      saveLevel(dailyLevel);
+      return renderPortal();
+    }
+    if (ev.target.closest('[data-act="daily"]')) openDailyPuzzle();
+  });
   root.querySelector('[data-act="wish"]')?.addEventListener("click", askWish);
-  root.querySelector(".gm-trends")?.addEventListener("toggle", (e) => (trOpen = e.target.open));
+  root.querySelector(".gm-trends:not(.gm-pilot)")?.addEventListener("toggle", (e) => (trOpen = e.target.open));
+  root.querySelector(".gm-pilot")?.addEventListener("toggle", (e) => (plOpen = e.target.open));
   root.querySelector('[data-act="trcopy"]')?.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(trendsText());
@@ -813,6 +891,32 @@ function renderShop(msg = "", top = false) {
   });
   if (top) window.scrollTo(0, 0);
   else window.scrollTo(0, y);
+}
+
+// Dnevna uganka: predlagana stopnja po stopnji šolanja, izbrana na napravi.
+const suggestedDaily = () => suggestedLevel(stage(), data.year);
+const curDailyLevel = () => dailyLevel || pickLevel(stage(), data.year);
+// Odpre dnevno uganko (s kartice v Igrah ali z vrstice na Učni poti). Brez profila ni lestvice: nič.
+export function openDailyPuzzle() {
+  const s = ctx?.getStudent();
+  root = document.querySelector("#games-content");
+  if (!s || !root) return;
+  game?.destroy();
+  document.body.classList.remove("gm-on");
+  applyStageLook();
+  game = openDaily(root, {
+    api: ctx.api,
+    student: s,
+    t,
+    lang: ctx.currentLang(),
+    level: curDailyLevel(),
+    suggested: suggestedDaily(),
+    toast: ctx.toast,
+    onLevel: (lv) => (dailyLevel = lv),
+    onChange: (info) => (daily = { ...info, board: null }),
+    onClose: closeGame,
+  });
+  root.closest(".view")?.scrollTo?.(0, 0);
 }
 
 function closeGame() {

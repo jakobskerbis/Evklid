@@ -250,6 +250,7 @@ test("šolska licenca v aplikaciji: interaktivne lekcije za šolske predmete, 15
       grades: ["OS-8"],
       validUntil: iso(60),
       aiCapUsdMonth: 5,
+      seats: 2, // tudi sošolec spodaj ima mesto: v mejo AI šole šteje samo poraba učencev z mestom
     });
     schools.join(1, kid.id);
     assert.equal((await lesson(MAT)).body.interactive, true);
@@ -284,7 +285,9 @@ test("šolska licenca v aplikaciji: interaktivne lekcije za šolske predmete, 15
       body: { text: "Še eno?" },
     });
     assert.equal(over.status, 429);
-    assert.match(over.body.error, /vseh 15 vprašanj/);
+    assert.match(over.body.error, /\(15 na dan\)/);
+    assert.equal(over.body.code, "block.daily");
+    assert.deepEqual(over.body.params, { n: 15 });
     assert.equal(over.body.upgrade, undefined);
 
     // Osebni paket se prišteje: 75 na dan in Opus ob 3. prošnji.
@@ -336,7 +339,9 @@ test("šolska licenca v aplikaciji: interaktivne lekcije za šolske predmete, 15
       for (let i = 0; i < 7; i++) store.addMessage(c3.id, "user", [{ type: "text", text: "x" }], "x", false);
       const out = await call(`/api/conversations/${c3.id}/messages`, { method: "POST", body: { text: "Še eno?" } });
       assert.equal(out.status, 429);
-      assert.match(out.body.error, /vseh 10 brezplačnih vprašanj/);
+      assert.match(out.body.error, /brezplačna vprašanja .*\(10 na dan\)/);
+      assert.equal(out.body.code, "block.freeDaily");
+      assert.deepEqual(out.body.params, { n: 10 });
     } finally {
       if (prevPool === undefined) delete process.env.EVKLID_FREE_POOL_USD;
       else process.env.EVKLID_FREE_POOL_USD = prevPool;

@@ -7,7 +7,7 @@ import { parse, compile, freeVars, toTex, normalize, simplify, diff, inlineUfn, 
 export const RESERVED = new Set(["x", "y", "r", "θ"]);
 const DEF_RE = /^\s*([A-Za-zα-ωΑ-Ω](?:_\w+)?)\s*\(\s*([A-Za-zθ](?:\s*,\s*[A-Za-zθ])*)\s*\)\s*=(?!=)/;
 
-export const MODELS = ["lin", "quad", "cubic", "quart", "exp", "pow", "log", "logistic", "sin"];
+export const MODELS = ["lin", "quad", "cubic", "quart", "exp", "expe", "pow", "log", "inv", "logistic", "sin"];
 
 let idSeq = 0;
 export const newId = () => `i${Date.now().toString(36)}${(idSeq++).toString(36)}`;
@@ -87,6 +87,18 @@ export function buildModel(state, { comma = true } = {}) {
     }
   }
 
+  // zaporedja (kot način SEQ na TI-84): u(n) = … s parametrom n ali rekurzivna u(n) = u(n − 1) + …;
+  // začetni členi so vrstice u(1) = 2
+  const seqNames = new Set();
+  for (const o of out) {
+    if (o.kind || !o.ast) continue;
+    const d = definitionOf(o.src.text);
+    if (!d || d.params.length !== 1 || o.ast.k !== "cmp" || o.ast.ops.length !== 1 || o.ast.ops[0] !== "=") continue;
+    let self = false;
+    walk(o.ast.terms[1], (n) => n.k === "ufn" && n.f === d.name && (self = true));
+    if (self || d.params[0] === "n") seqNames.add(d.name);
+  }
+
   // 2. definicije: drsniki, spremenljivke, funkcije, tabele
   const defined = new Map(); // ime → vrstica
   const defineName = (name, o) => {
@@ -102,11 +114,24 @@ export function buildModel(state, { comma = true } = {}) {
     if (o.kind === "table") {
       const cols = o.src.cols || [];
       o.cols = cols.map((c) => ({ name: c.name, values: (c.values || []).map((v) => (v === "" || v == null ? NaN : Number(String(v).replace(",", ".").replace("−", "-")))) }));
-      for (const c of o.cols) if (c.name && /^[A-Za-zα-ω](_\w+)?$/.test(c.name) && !RESERVED.has(c.name)) defineName(c.name, o) && (scope[c.name] = c.values);
+      // tabela vrednosti funkcije (ref) stolpcev ne poimenuje: »n« zaporedja ni spremenljivka
+      if (!o.src.ref) for (const c of o.cols) if (c.name && /^[A-Za-zα-ω](_\w+)?$/.test(c.name) && !RESERVED.has(c.name)) defineName(c.name, o) && (scope[c.name] = c.values);
       continue;
     }
     if (!o.ast) continue;
     const a = o.ast;
+    // začetni člen zaporedja: u(1) = 2
+    if (a.k === "cmp" && a.ops.length === 1 && a.ops[0] === "=" && a.terms[0].k === "ufn" && !a.terms[0].d && seqNames.has(a.terms[0].f) && a.terms[0].args.length === 1) {
+      const arg = a.terms[0].args[0];
+      const k = arg.k === "num" ? arg.v : arg.k === "neg" && arg.a.k === "num" ? -arg.a.v : NaN;
+      if (Number.isInteger(k)) {
+        o.kind = "seqinit";
+        o.fname = a.terms[0].f;
+        o.n = k;
+        o.rhs = a.terms[1];
+        continue;
+      }
+    }
     // f(x) = …
     const def = definitionOf(o.src.text);
     if (def && a.k === "cmp" && a.ops.length === 1 && a.ops[0] === "=") {
@@ -150,6 +175,87 @@ export function buildModel(state, { comma = true } = {}) {
       o.error = err(e.code || "parse", e.info);
       delete funcs[name];
     }
+  }
+
+  // zaporedja: vrednost samo pri celih n od prvega člena naprej; rekurzivna računamo po vrsti od začetka
+  const SEQ_MAX = 10000;
+  // en račun (člen ali obseg) lahko kliče druga zaporedja (c(n) = a(n) + 1): spomin vseh velja do konca računa,
+  // sicer bi vsak člen c znova računal a od začetka (pri n do 10000 sekunde na sliko)
+  const memos = [];
+  let session = 0;
+  const inSession = (fn) => {
+    session++;
+    try {
+      return fn();
+    } finally {
+      if (--session === 0) for (const m of memos) m.length = 0;
+    }
+  };
+  for (const name of seqNames) {
+    const F = funcs[name];
+    if (!F?.body) continue;
+    const raw = F.body;
+    const p = F.params[0];
+    const inits = new Map();
+    for (const o of out) {
+      if (o.kind !== "seqinit" || o.fname !== name) continue;
+      if (inits.has(o.n)) {
+        o.kind = "error";
+        o.error = err("twice", { name: `${name}(${o.n})` });
+        continue;
+      }
+      try {
+        inits.set(o.n, compile(o.rhs, ctx));
+      } catch (e) {
+        o.kind = "error";
+        o.error = err(e.code || "parse", e.info);
+      }
+    }
+    let recursive = false;
+    walk(F.ast, (n) => n.k === "ufn" && n.f === name && (recursive = true));
+    const n0 = inits.size ? Math.min(...inits.keys()) : 1;
+    const at = (k) => {
+      if (inits.has(k)) return toNum(inits.get(k)(scope));
+      const S = Object.create(scope);
+      S[p] = k;
+      return toNum(raw(S));
+    };
+    const memo = []; // med enim računom: memo[k − n0] = člen
+    memos.push(memo);
+    let busy = false; // računamo člen memo.length: sklic nanj ali naprej (a(n + 1)) nima vrednosti
+    const value = (k) => {
+      if (typeof k !== "number" || Math.abs(k - Math.round(k)) > 1e-9) return NaN;
+      k = Math.round(k);
+      if (k < n0 || k > n0 + SEQ_MAX) return NaN;
+      if (!recursive) return at(k);
+      if (k - n0 < memo.length) return memo[k - n0];
+      if (busy) return NaN;
+      return inSession(() => {
+        while (memo.length <= k - n0) {
+          busy = true;
+          try {
+            memo.push(at(n0 + memo.length));
+          } finally {
+            busy = false;
+          }
+        }
+        return memo[k - n0];
+      });
+    };
+    F.body = (S) => value(S[p]);
+    F.seq = {
+      n0,
+      recursive,
+      noStart: recursive && !inits.size,
+      // členi od a do b (vsak step-ti), v enem računu
+      range(a, b, step = 1) {
+        const res = [];
+        inSession(() => {
+          for (let k = Math.max(a, n0); k <= Math.min(b, n0 + SEQ_MAX); k += step) res.push([k, value(k)]);
+        });
+        return res;
+      },
+    };
   }
 
   // 3. izračunane spremenljivke (v vrstnem redu odvisnosti)
@@ -203,6 +309,10 @@ export function buildModel(state, { comma = true } = {}) {
   for (const o of out) {
     if (!o.ast || o.kind) {
       if (o.kind === "func") classifyFunc(o);
+      if (o.kind === "seqinit") {
+        const miss = bodyMissing(o.rhs, []);
+        if (miss.length) fail(o, miss);
+      }
       continue;
     }
     try {
@@ -227,6 +337,21 @@ export function buildModel(state, { comma = true } = {}) {
   function classifyFunc(o) {
     const miss = bodyMissing(o.body, o.params);
     if (miss.length) return fail(o, miss);
+    const seq = funcs[o.fname]?.seq;
+    if (seq) {
+      if (seq.noStart) {
+        o.kind = "error";
+        o.error = err("seqStart", { name: o.fname });
+        return;
+      }
+      const f = funcs[o.fname].body;
+      const p = o.params[0];
+      o.plot = "seq";
+      o.seq = seq;
+      o.varName = p;
+      o.fn = (x) => f({ [p]: x });
+      return;
+    }
     if (o.params.length === 1) {
       const p = o.params[0];
       const f = funcs[o.fname].body;
@@ -318,7 +443,7 @@ export function buildModel(state, { comma = true } = {}) {
           if (isV(l, yv) && !rf.has(yv)) rhs = r;
           else if (isV(r, yv) && !lf.has(yv)) {
             rhs = l;
-            opn = { "<": ">", ">": "<", "<=": ">=", ">=": "<=", "=": "=" }[op];
+            opn = { "<": ">", ">": "<", "<=": ">=", ">=": "<=", "=": "=", "!=": "!=" }[op];
           }
           if (rhs) {
             if (!check(rhs, [xv])) return;
@@ -421,7 +546,7 @@ export function buildModel(state, { comma = true } = {}) {
     if (it.ref) {
       // tabela vrednosti funkcije iz druge vrstice
       const src = out.find((x) => x.id === it.ref);
-      if (src?.fn && (src.kind === "y" || src.plot === "y")) {
+      if (src?.fn && (src.kind === "y" || src.plot === "y" || src.plot === "seq")) {
         o.refFn = src.fn;
         const ys = cx.values.map((x) => (Number.isFinite(x) ? toNum(src.fn(x)) : NaN));
         if (cys[0]) cys[0].values = ys;
@@ -674,13 +799,15 @@ function levMar(f, p0, xs, ys) {
 
 /**
  * Regresija po metodi najmanjših kvadratov.
- * model: lin (y = ax + b), quad, cubic, quart, exp (y = a·bˣ), pow (y = a·xᵇ), log (y = a + b ln x),
+ * model: lin (y = ax + b), quad, cubic, quart, exp (y = a·bˣ), expe (y = a·e^(bx)), pow (y = a·xᵇ), log (y = a + b ln x),
+ * inv (y = a + b/x),
  * logistic (y = c/(1 + a·e^(−bx)), p = [a, b, c]), sin (y = a·sin(bx + c) + d, p = [a, b, c, d]) – kot TI-84
  * @returns {{ model, p: number[], fn: (x)=>number, r2: number } | null}
  */
 export function regression(xs, ys, model) {
   let fn;
   let p;
+  let xm; // logistična: x prevoja
   if (model === "lin" || model === "quad" || model === "cubic" || model === "quart") {
     const deg = { lin: 1, quad: 2, cubic: 3, quart: 4 }[model];
     const c = polyfit(xs, ys, deg);
@@ -697,6 +824,28 @@ export function regression(xs, ys, model) {
     if (!c) return null;
     p = [Math.exp(c[0]), Math.exp(c[1])];
     fn = (x) => p[0] * p[1] ** x;
+  } else if (model === "expe") {
+    // y = a·e^(bx) (Casio »e-exponentna«), prek ln y
+    const ok = xs.map((x, i) => [x, ys[i]]).filter(([, y]) => y > 0);
+    const c = polyfit(
+      ok.map((q) => q[0]),
+      ok.map((q) => Math.log(q[1])),
+      1,
+    );
+    if (!c) return null;
+    p = [Math.exp(c[0]), c[1]];
+    fn = (x) => p[0] * Math.exp(p[1] * x);
+  } else if (model === "inv") {
+    // y = a + b/x (Casio »obratna«)
+    const ok = xs.map((x, i) => [x, ys[i]]).filter(([x]) => x !== 0);
+    const c = polyfit(
+      ok.map((q) => 1 / q[0]),
+      ok.map((q) => q[1]),
+      1,
+    );
+    if (!c) return null;
+    p = [c[0], c[1]];
+    fn = (x) => p[0] + p[1] / x;
   } else if (model === "pow") {
     const ok = xs.map((x, i) => [x, ys[i]]).filter(([x, y]) => x > 0 && y > 0);
     const c = polyfit(
@@ -720,22 +869,27 @@ export function regression(xs, ys, model) {
   } else if (model === "logistic") {
     const ok = xs.every(Number.isFinite) && ys.every(Number.isFinite) && xs.length >= 4;
     if (!ok) return null;
+    // x premaknemo v sredino podatkov (npr. leta 2000–2014): sicer e^(−b·x) prekorači obseg števil
+    const x0 = xs.reduce((s, x) => s + x, 0) / xs.length;
+    const ts = xs.map((x) => x - x0);
     const top = Math.max(...ys);
     const span = Math.max(1e-9, top - Math.min(...ys));
     let best = null;
     for (const k of [0.02, 0.1, 0.3, 0.6, 1, 2, 4, 8]) {
       const c = top + k * span;
-      const pts = xs.map((x, i) => [x, ys[i]]).filter(([, y]) => y > 0 && y < c);
+      const pts = ts.map((x, i) => [x, ys[i]]).filter(([, y]) => y > 0 && y < c);
       const l = pts.length >= 2 ? polyfit(pts.map((q) => q[0]), pts.map((q) => Math.log(c / q[1] - 1)), 1) : null;
       if (!l) continue;
       const q = [Math.exp(l[0]), -l[1], c];
-      const sse = xs.reduce((a, x, i) => a + (ys[i] - q[2] / (1 + q[0] * Math.exp(-q[1] * x))) ** 2, 0);
-      if (!best || sse < best.sse) best = { q, sse };
+      const sse = ts.reduce((a, x, i) => a + (ys[i] - q[2] / (1 + q[0] * Math.exp(-q[1] * x))) ** 2, 0);
+      if (Number.isFinite(sse) && (!best || sse < best.sse)) best = { q, sse };
     }
     if (!best) return null;
     const f = (q, x) => q[2] / (1 + q[0] * Math.exp(-q[1] * x));
-    p = levMar(f, best.q, xs, ys);
-    fn = (x) => f(p, x);
+    const q = levMar(f, best.q, ts, ys);
+    p = [q[0] * Math.exp(q[1] * x0), q[1], q[2]]; // a v izvirnem x (lahko zelo velik ali majhen)
+    fn = (x) => f(q, x - x0);
+    xm = x0 + Math.log(q[0]) / q[1]; // prevoj: y = c/2
   } else if (model === "sin") {
     if (xs.length < 4 || !xs.every(Number.isFinite) || !ys.every(Number.isFinite)) return null;
     const lo = Math.min(...xs);
@@ -769,13 +923,53 @@ export function regression(xs, ys, model) {
   const ssTot = ys.reduce((s, y) => s + (y - m) ** 2, 0);
   const ssRes = xs.reduce((s, x, i) => s + (ys[i] - fn(x)) ** 2, 0);
   const r2 = ssTot > 0 ? 1 - ssRes / ssTot : 1;
-  return { model, p, fn, r2 };
+  return xm === undefined ? { model, p, fn, r2 } : { model, p, fn, r2, xm };
 }
+
+/**
+ * Obratna napoved (Casio x̂): vrednosti x, pri katerih je model enak y. Seznam (prazen, če rešitve ni);
+ * null za modele brez ene same zaprte rešitve (kubična, kvartična, sinusna).
+ */
+export function regressionX(fit, y) {
+  const p = fit.p;
+  const ok = (v) => (Number.isFinite(v) ? [v] : []);
+  switch (fit.model) {
+    case "lin":
+      return p[0] === 0 ? [] : [(y - p[1]) / p[0]];
+    case "quad": {
+      const [a, b, c] = p;
+      if (a === 0) return b === 0 ? [] : [(y - c) / b];
+      const D = b * b - 4 * a * (c - y);
+      if (D < 0) return [];
+      const r = [(-b - Math.sqrt(D)) / (2 * a), (-b + Math.sqrt(D)) / (2 * a)].sort((u, v) => u - v);
+      return D === 0 ? [r[0]] : r;
+    }
+    case "exp":
+      return ok(Math.log(y / p[0]) / Math.log(p[1]));
+    case "expe":
+      return ok(Math.log(y / p[0]) / p[1]);
+    case "pow":
+      return ok((y / p[0]) ** (1 / p[1]));
+    case "log":
+      return ok(Math.exp((y - p[0]) / p[1]));
+    case "inv":
+      return ok(p[1] / (y - p[0]));
+    case "logistic":
+      return Number.isFinite(fit.xm) ? ok(fit.xm - Math.log(p[2] / y - 1) / p[1]) : ok(-Math.log((p[2] / y - 1) / p[0]) / p[1]);
+    default: // tudi sinusna: rešitev je neskončno (ena na periodo), zato je ne ponujamo
+      return null;
+  }
+}
+
+/** Zapis modela v TeX (enako kot v načinu graf). */
+export const regressionTex = (fit, comma = true) => fitTex(fit, comma);
 
 const r4 = (v) => Number(v.toPrecision(4));
 function fitTex(fit, comma) {
   const n = (v) => {
-    const s = String(r4(v));
+    // 7.282e-287 → 7,282·10^{−287} (ne »e-287«, kar bi se bralo kot e na potenco)
+    const [m, e] = String(r4(v)).split("e");
+    const s = e === undefined ? m : `${m}\\cdot 10^{${Number(e)}}`;
     return comma ? s.replace(".", "{,}") : s;
   };
   const term = (c, pow, first) => {
@@ -798,11 +992,18 @@ function fitTex(fit, comma) {
     }
     case "exp":
       return `y = ${n(p[0])}\\cdot ${n(p[1])}^{x}`;
+    case "expe":
+      return `y = ${n(p[0])}e^{${n(p[1])}x}`;
+    case "inv":
+      return `y = ${n(p[0])}${p[1] < 0 ? "-" : "+"}\\dfrac{${n(Math.abs(p[1]))}}{x}`;
     case "pow":
       return `y = ${n(p[0])}x^{${n(p[1])}}`;
     case "log":
       return `y = ${n(p[0])}${p[1] < 0 ? "-" : "+"}${n(Math.abs(p[1]))}\\ln x`;
     case "logistic":
+      // pri velikih x (leta) je a zunaj obsega: zapis s prevojem y = c/(1 + e^(−b(x − x₀)))
+      if (!(Math.abs(Math.log10(p[0])) < 12) && Number.isFinite(fit.xm))
+        return `y = \\dfrac{${n(p[2])}}{1+e^{${n(-p[1])}(x${fit.xm < 0 ? "+" : "-"}${n(Math.abs(fit.xm))})}}`;
       return `y = \\dfrac{${n(p[2])}}{1+${n(p[0])}e^{${n(-p[1])}x}}`;
     case "sin":
       return `y = ${n(p[0])}\\sin(${n(p[1])}x${p[2] < 0 ? "-" : "+"}${n(Math.abs(p[2]))})${p[3] < 0 ? "-" : "+"}${n(Math.abs(p[3]))}`;

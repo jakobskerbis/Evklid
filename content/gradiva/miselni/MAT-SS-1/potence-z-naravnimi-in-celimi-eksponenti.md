@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Potenca
+  - $a^n$: $n$ enakih faktorjev $a$
+  - osnova $a$, eksponent $n$
+- Predznak
+  - negativna osnova, lih eksponent: negativno
+  - $-2^4 = -16$, $(-2)^4 = 16$
+- Pravila z isto osnovo
+  - $a^m \cdot a^n = a^{m+n}$
+  - $a^m : a^n = a^{m-n}$
+  - $(a^m)^n = a^{m \cdot n}$
+- Zmnožek in količnik
+  - $(a \cdot b)^n = a^n \cdot b^n$
+  - napaka: $(a + b)^n = a^n + b^n$
+- Ničta potenca
+  - $a^0 = 1$ za $a \neq 0$
+  - $0^0$ ni definiran
+- Negativni eksponent
+  - $a^{-n} = \dfrac{1}{a^n}$
+  - obratna vrednost, ne negativno število
+- Znanstveni zapis
+  - $a \cdot 10^n$, $1 \le a < 10$
+  - $0{,}00042 = 4{,}2 \cdot 10^{-4}$

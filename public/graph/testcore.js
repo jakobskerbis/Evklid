@@ -1,7 +1,7 @@
 // Preizkusi domnev, intervali zaupanja, finance (TVM) in tabela vrednosti. Brez DOM (preizkusi v test/tools.test.js).
 // Imena in izidi kot na TI-84 (Z-Test, T-Test, 2-SampTTest, 2-SampFTest, 1-PropZTest, χ²-Test, LinRegTTest, ANOVA,
 // TVM Solver, npv/irr, amortizacija bal/ΣInt/ΣPrn).
-import { normal, studentT, chi2, betaI, lnGamma } from "./probcore.js";
+import { normal, studentT, chi2, fisherF } from "./probcore.js";
 import { stats } from "./toolscore.js";
 import { fn as parseFn } from "./anacore.js";
 
@@ -182,11 +182,7 @@ export function propInt2({ x1, n1, x2, n2 }, level = 0.95) {
 
 /** Porazdelitev F(d1, d2): cdf(x) = I_{d1·x/(d1·x + d2)}(d1/2, d2/2). */
 export function fDist(d1, d2) {
-  const lc = (d1 / 2) * Math.log(d1) + (d2 / 2) * Math.log(d2) - (lnGamma(d1 / 2) + lnGamma(d2 / 2) - lnGamma((d1 + d2) / 2));
-  return {
-    cdf: (x) => (x <= 0 ? 0 : betaI((d1 * x) / (d1 * x + d2), d1 / 2, d2 / 2)),
-    pdf: (x) => (x <= 0 ? 0 : Math.exp(lc + (d1 / 2 - 1) * Math.log(x) - ((d1 + d2) / 2) * Math.log(d1 * x + d2))),
-  };
+  return fisherF(d1, d2);
 }
 
 /** Porazdelitev testne statistike za graf p-ploščine: { pdf, cdf } za kind z, t, chi, F. */

@@ -1,4 +1,21 @@
 // Stran za šole (/sole): obrazec za naročilo ali povpraševanje.
+  // »Podari Evklid«: razdelek in števec podarjenih mesecev (/api/podari, samo z računi; brez njega ostane skrit).
+  (function () {
+    var box = document.getElementById("podari");
+    if (!box || !window.fetch) return;
+    fetch("/api/podari")
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (s) {
+        if (!s || typeof s.donated_months !== "number") return;
+        var months = (s.donated_months || 0) + (s.evklid_months || 0);
+        box.querySelector('[data-podari="months"]').textContent = String(months);
+        box.querySelector('[data-podari="used"]').textContent = String(s.in_use_months || 0);
+        // Števec pokažemo, ko je podarjen vsaj en mesec.
+        document.getElementById("podari-count").hidden = months < 1;
+        box.hidden = false;
+      })
+      .catch(function () {});
+  })();
   (function () {
     var f = document.getElementById("order-form");
     var prices = {};

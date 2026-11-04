@@ -43,9 +43,13 @@ Z $M(\mathrm{CH_4}) = 16{,}04\,\mathrm{g/mol}$ je to okoli $678\,\mathrm{g}$ met
 
 $$pV = nRT, \qquad R = 8{,}314\,\mathrm{J/(mol\,K)}.$$
 
+*Izpeljava:* po Boylu je $V \propto 1/p$ (pri stalnih $T$, $n$), po Charlesu $V \propto T$ (pri stalnih $p$, $n$), po Avogadru $V \propto n$ (pri stalnih $p$, $T$). Ker vsaka sorazmernost velja, ko sta drugi dve količini stalni, je $V \propto nT/p$; sorazmernostni koeficient $R$ je za vse pline enak. Enačba natančno velja za **idealni plin**: model, v katerem so molekule točkaste, med seboj se ne privlačijo in trkajo prožno. Realni plini ji ustrezajo v limiti $p \to 0$.
+
 Ker je $1\,\mathrm{J} = 1\,\mathrm{Pa\,m^3}$, moramo vstaviti tlak v $\mathrm{Pa}$ in prostornino v $\mathrm{m^3}$. Priročno je tudi $R = 8{,}314\,\mathrm{kPa\,L/(mol\,K)}$ (tlak v $\mathrm{kPa}$, prostornina v $\mathrm{L}$). Za stalno množino plina, ki preide iz stanja 1 v stanje 2, velja
 
 $$\frac{p_1V_1}{T_1} = \frac{p_2V_2}{T_2}.$$
+
+To sledi neposredno iz $pV/T = nR$, kar je pri stalnem $n$ konstanta.
 
 :::premisli
 Pozimi se plin v števcu ohladi na $5\,^\circ\mathrm{C}$, tlak ostane $101{,}325\,\mathrm{kPa}$. Vsebuje $1{,}00\,\mathrm{m^3}$ zdaj več ali manj metana kot pri $15\,^\circ\mathrm{C}$ in za koliko?
@@ -65,11 +69,11 @@ Gostota plina je sorazmerna z molsko maso: pri enakih pogojih je $\mathrm{CO_2}$
 
 $$p_i = \frac{n_iRT}{V}.$$
 
-**Daltonov zakon:** skupni tlak zmesi idealnih plinov je vsota parcialnih tlakov,
+**Daltonov zakon:** naj bo v prostornini $V$ pri temperaturi $T$ zmes idealnih plinov, ki med seboj ne reagirajo. Potem je skupni tlak vsota parcialnih tlakov,
 
 $$p = p_1 + p_2 + \dots = \sum_i p_i.$$
 
-Iz tega sledi zveza z **množinskim deležem** $x_i = n_i/n_{\text{skupna}}$:
+*Dokaz:* $\sum_i p_i = \sum_i n_iRT/V = (\sum_i n_i)RT/V = nRT/V$, kar je tlak celotne množine $n$. Iz tega sledi zveza z **množinskim deležem** $x_i = n_i/n_{\text{skupna}}$: deljenje $p_i = n_iRT/V$ z $p = nRT/V$ da
 
 $$p_i = x_i\,p, \qquad \sum_i x_i = 1.$$
 
@@ -83,7 +87,7 @@ Pri idealnih plinih je množinski delež enak prostorninskemu deležu: zrak ima 
 
 **6. Plin, zbran nad vodo.** Ko plin (npr. $\mathrm{H_2}$ ali $\mathrm{O_2}$) zbiramo z izpodrivanjem vode, je v posodi poleg plina še nasičena vodna para. Izmerjeni tlak je vsota: $p = p(\text{plin}) + p(\mathrm{H_2O})$. Nasičeni parni tlak vode je odvisen le od temperature (pri $25\,^\circ\mathrm{C}$ približno $3{,}17\,\mathrm{kPa}$) in ga odčitamo iz tabel.
 
-**7. Meje idealnega plina.** Model predpostavlja, da molekule nimajo lastne prostornine in se med seboj ne privlačijo. Dober je pri nizkih tlakih in visokih temperaturah. Pri visokih tlakih in nizkih temperaturah (blizu utekočinjenja) uporabimo realne modele, npr. van der Waalsovo enačbo (glej »Bolj natančno«).
+**7. Meje idealnega plina.** Model predpostavlja, da molekule nimajo lastne prostornine in se med seboj ne privlačijo. Dober je pri nizkih tlakih in visokih temperaturah. Iz istih predpostavk **kinetična teorija** (izpeljava v Nalogi 2) izračuna tlak iz trkov molekul s steno. Za $N$ molekul z maso $m$ in povprečjem kvadrata hitrosti $\langle v^2 \rangle$ dobi $pV = \tfrac13 Nm\langle v^2 \rangle$. Primerjava s $pV = nRT$ da povprečno kinetično energijo molekule $\tfrac12 m\langle v^2 \rangle = \tfrac32 k_BT$ (Boltzmannova konstanta $k_B = R/N_A$, $N_A$ je Avogadrova konstanta) in korensko srednjo hitrost $v_\mathrm{rms} = \sqrt{3RT/M}$. Temperatura je torej merilo za kinetično energijo molekul. Pri visokih tlakih in nizkih temperaturah (blizu utekočinjenja) uporabimo realne modele, npr. van der Waalsovo enačbo (glej »Bolj natančno«).
 
 ## Rešeni primeri
 
@@ -126,10 +130,10 @@ $M = \dfrac{\rho RT}{p}$
 
 ### Primer 3 (težji)
 
-V posodo s prostornino $10{,}0\,\mathrm{L}$ pri $27\,^\circ\mathrm{C}$ uvedemo $4{,}00\,\mathrm{g}$ helija in $16{,}0\,\mathrm{g}$ kisika. Izračunaj množinska deleža, parcialna tlaka in skupni tlak. Molski masi: $M(\mathrm{He}) = 4{,}003\,\mathrm{g/mol}$, $M(\mathrm{O_2}) = 32{,}00\,\mathrm{g/mol}$.
+V posodo s prostornino $10{,}0\,\mathrm{L}$ pri $27\,^\circ\mathrm{C}$ uvedemo $4{,}00\,\mathrm{g}$ helija in $16{,}0\,\mathrm{g}$ kisika. Izračunaj množinska deleža, parcialna tlaka in skupni tlak. Koliko gramov dušika moramo nato še dodati, da skupni tlak pri isti temperaturi naraste na $500\,\mathrm{kPa}$, in kolikšen je tedaj parcialni tlak kisika? Molske mase: $M(\mathrm{He}) = 4{,}003\,\mathrm{g/mol}$, $M(\mathrm{O_2}) = 32{,}00\,\mathrm{g/mol}$, $M(\mathrm{N_2}) = 28{,}02\,\mathrm{g/mol}$.
 
-**Podatki:** $V = 10{,}0\,\mathrm{L}$, $t = 27\,^\circ\mathrm{C}$, $m(\mathrm{He}) = 4{,}00\,\mathrm{g}$, $m(\mathrm{O_2}) = 16{,}0\,\mathrm{g}$, $M(\mathrm{He}) = 4{,}003\,\mathrm{g/mol}$, $M(\mathrm{O_2}) = 32{,}00\,\mathrm{g/mol}$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$
-**Iščemo:** $x(\mathrm{He})$, $x(\mathrm{O_2})$, $p(\mathrm{He})$, $p(\mathrm{O_2})$, skupni tlak $p$
+**Podatki:** $V = 10{,}0\,\mathrm{L}$, $t = 27\,^\circ\mathrm{C}$, $m(\mathrm{He}) = 4{,}00\,\mathrm{g}$, $m(\mathrm{O_2}) = 16{,}0\,\mathrm{g}$, $M(\mathrm{He}) = 4{,}003\,\mathrm{g/mol}$, $M(\mathrm{O_2}) = 32{,}00\,\mathrm{g/mol}$, $M(\mathrm{N_2}) = 28{,}02\,\mathrm{g/mol}$, končni tlak $500\,\mathrm{kPa}$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$
+**Iščemo:** $x(\mathrm{He})$, $x(\mathrm{O_2})$, $p(\mathrm{He})$, $p(\mathrm{O_2})$, skupni tlak $p$, maso dodanega dušika in nov $p(\mathrm{O_2})$
 
 :::formula
 $n_i = m_i/M_i$, $x_i = n_i/n$, $p = \dfrac{nRT}{V}$, $p_i = x_i\,p = \dfrac{n_iRT}{V}$ (Daltonov zakon $p = \sum p_i$)
@@ -142,7 +146,10 @@ $n_i = m_i/M_i$, $x_i = n_i/n$, $p = \dfrac{nRT}{V}$, $p_i = x_i\,p = \dfrac{n_i
 3. Skupni tlak: $T = 300{,}15\,\mathrm{K}$, $V = 1{,}00 \cdot 10^{-2}\,\mathrm{m^3}$, $p = \dfrac{1{,}499 \cdot 8{,}314 \cdot 300{,}15}{1{,}00 \cdot 10^{-2}}\,\mathrm{Pa} \approx 3{,}74 \cdot 10^5\,\mathrm{Pa} = 374\,\mathrm{kPa}$.
 4. Parcialna tlaka (po Daltonu je vsak sorazmeren z množinskim deležem): $p(\mathrm{He}) = 0{,}667 \cdot 374\,\mathrm{kPa} \approx 249\,\mathrm{kPa}$, $p(\mathrm{O_2}) = 0{,}333 \cdot 374\,\mathrm{kPa} \approx 125\,\mathrm{kPa}$.
 5. Preizkus: $p(\mathrm{O_2}) = \dfrac{0{,}500 \cdot 8{,}314 \cdot 300{,}15}{1{,}00 \cdot 10^{-2}}\,\mathrm{Pa} \approx 125\,\mathrm{kPa}$ in $249 + 125 = 374\,\mathrm{kPa}$.
-6. Odgovor: $x(\mathrm{He}) \approx 0{,}667$ in $x(\mathrm{O_2}) \approx 0{,}333$, parcialna tlaka sta približno $249\,\mathrm{kPa}$ in $125\,\mathrm{kPa}$, skupni tlak pa $374\,\mathrm{kPa}$.
+6. Obratni račun: za $500\,\mathrm{kPa}$ potrebujemo skupno množino $n' = \dfrac{5{,}00 \cdot 10^5 \cdot 1{,}00 \cdot 10^{-2}}{8{,}314 \cdot 300{,}15}\,\mathrm{mol} \approx 2{,}0037\,\mathrm{mol}$.
+7. Dodati moramo $n(\mathrm{N_2}) = 2{,}0037 - 1{,}4993 = 0{,}5044\,\mathrm{mol}$ (množini helija in kisika se ne spremenita), to je $m = 0{,}5044 \cdot 28{,}02\,\mathrm{g} \approx 14{,}1\,\mathrm{g}$.
+8. Parcialni tlak kisika ostane $125\,\mathrm{kPa}$, ker so $n(\mathrm{O_2})$, $V$ in $T$ enaki; delež kisika pa pade na $0{,}500/2{,}0037 \approx 0{,}250$, in res $0{,}250 \cdot 500\,\mathrm{kPa} = 125\,\mathrm{kPa}$.
+9. Odgovor: $x(\mathrm{He}) \approx 0{,}667$ in $x(\mathrm{O_2}) \approx 0{,}333$, parcialna tlaka sta približno $249\,\mathrm{kPa}$ in $125\,\mathrm{kPa}$, skupni tlak pa $374\,\mathrm{kPa}$. Dodati moramo okoli $14{,}1\,\mathrm{g}$ dušika; parcialni tlak kisika ostane $125\,\mathrm{kPa}$.
 
 ### Primer 4 – zdaj ti
 
@@ -185,6 +192,46 @@ Uporabnega helija je $2014\,\mathrm{L} - 10\,\mathrm{L} = 2004\,\mathrm{L}$, kar
 - Plin nad vodo: $p(\text{plin}) = p - p(\mathrm{H_2O})$.
 - Model idealnega plina velja pri nizkih tlakih in visokih temperaturah.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- plinske zakone (Boyle, Charles, Amontons, Avogadro) s pogoji, kaj je stalno, in izpeljavo $pV = nRT$ iz njih;
+- definicijo idealnega plina in kdaj se mu realni plin približa;
+- definicijo parcialnega tlaka, Daltonov zakon s pogoji in dokaz zveze $p_i = x_i\,p$;
+- izpeljavo $M = \rho RT/p$;
+- izpeljavo kinetične teorije $pV = \tfrac13 Nm\langle v^2 \rangle$, $\tfrac12 m\langle v^2 \rangle = \tfrac32 k_BT$ in $v_\mathrm{rms} = \sqrt{3RT/M}$.
+
+### Naloga 1
+
+V jekleni posodi s prostornino $2{,}00\,\mathrm{L}$ je pri $25\,^\circ\mathrm{C}$ zmes $0{,}0500\,\mathrm{mol}$ $\mathrm{H_2}$ in $0{,}0200\,\mathrm{mol}$ $\mathrm{O_2}$. Zmes vžgemo, nastane voda, posodo pa ohladimo nazaj na $25\,^\circ\mathrm{C}$. Izračunaj tlak pred reakcijo, sestavo plinske faze po reakciji in končni tlak. Nasičeni parni tlak vode pri $25\,^\circ\mathrm{C}$ je $3{,}17\,\mathrm{kPa}$, $R = 8{,}314\,\mathrm{J/(mol\,K)}$; prostornino tekoče vode zanemari.
+
+**Rešitev:**
+
+1. Pred reakcijo: $n = 0{,}0700\,\mathrm{mol}$, $T = 298{,}15\,\mathrm{K}$, $V = 2{,}00 \cdot 10^{-3}\,\mathrm{m^3}$, zato $p = \dfrac{0{,}0700 \cdot 8{,}314 \cdot 298{,}15}{2{,}00 \cdot 10^{-3}}\,\mathrm{Pa} \approx 8{,}68 \cdot 10^4\,\mathrm{Pa} = 86{,}8\,\mathrm{kPa}$.
+2. Reakcija $\mathrm{2\,H_2 + O_2 \to 2\,H_2O}$: za $0{,}0500\,\mathrm{mol}$ $\mathrm{H_2}$ bi potrebovali $0{,}0250\,\mathrm{mol}$ $\mathrm{O_2}$, imamo le $0{,}0200\,\mathrm{mol}$, zato je kisik omejujoči reaktant.
+3. Porabi se $2 \cdot 0{,}0200 = 0{,}0400\,\mathrm{mol}$ $\mathrm{H_2}$; ostane $0{,}0100\,\mathrm{mol}$ $\mathrm{H_2}$, nastane $0{,}0400\,\mathrm{mol}$ vode.
+4. Ali voda ostane plinasta? Pri $25\,^\circ\mathrm{C}$ je v $2{,}00\,\mathrm{L}$ lahko največ $n = \dfrac{3170 \cdot 2{,}00 \cdot 10^{-3}}{8{,}314 \cdot 298{,}15}\,\mathrm{mol} \approx 2{,}56 \cdot 10^{-3}\,\mathrm{mol}$ pare. To je manj od $0{,}0400\,\mathrm{mol}$, zato večina vode kondenzira in para je nasičena: $p(\mathrm{H_2O}) = 3{,}17\,\mathrm{kPa}$.
+5. Parcialni tlak preostalega vodika: $p(\mathrm{H_2}) = \dfrac{0{,}0100 \cdot 8{,}314 \cdot 298{,}15}{2{,}00 \cdot 10^{-3}}\,\mathrm{Pa} \approx 1{,}24 \cdot 10^4\,\mathrm{Pa} = 12{,}4\,\mathrm{kPa}$.
+6. Po Daltonu: $p = 12{,}4\,\mathrm{kPa} + 3{,}17\,\mathrm{kPa} \approx 15{,}6\,\mathrm{kPa}$.
+7. Odgovor: pred reakcijo je tlak $86{,}8\,\mathrm{kPa}$; po reakciji je v plinski fazi $0{,}0100\,\mathrm{mol}$ $\mathrm{H_2}$ in nasičena vodna para, končni tlak je okoli $15{,}6\,\mathrm{kPa}$.
+
+### Naloga 2
+
+Navedi predpostavke kinetične teorije idealnega plina in iz njih izpelji $pV = \tfrac13 Nm\langle v^2 \rangle$. S primerjavo s splošno plinsko enačbo izpelji povprečno kinetično energijo molekule in $v_\mathrm{rms} = \sqrt{3RT/M}$. Utemelji, ali imajo molekule helija in kisika v Primeru 3 ($27\,^\circ\mathrm{C}$) enako povprečno kinetično energijo in enako $v_\mathrm{rms}$; izračunaj obe hitrosti ($M(\mathrm{He}) = 4{,}003\,\mathrm{g/mol}$, $M(\mathrm{O_2}) = 32{,}00\,\mathrm{g/mol}$).
+
+**Rešitev:**
+
+1. Predpostavke: $N$ enakih molekul z maso $m$ v kocki s stranico $L$ ($V = L^3$); molekule so točkaste, med seboj se ne privlačijo, trki s stenami so prožni, trki med molekulami ne spremenijo porazdelitve hitrosti, smeri gibanja so naključne.
+2. Molekula s komponento hitrosti $v_x$ se od stene odbije s $-v_x$, zato se ji gibalna količina spremeni za $2mv_x$.
+3. Do iste stene se vrne po času $2L/v_x$, zato je povprečna sila ene molekule na steno $\dfrac{2mv_x}{2L/v_x} = \dfrac{mv_x^2}{L}$.
+4. Za vse molekule je sila $Nm\langle v_x^2 \rangle/L$, tlak pa sila na ploščino $L^2$: $p = Nm\langle v_x^2 \rangle/V$.
+5. Nobena smer ni izbrana, zato $\langle v_x^2 \rangle = \langle v_y^2 \rangle = \langle v_z^2 \rangle = \tfrac13\langle v^2 \rangle$ in $pV = \tfrac13 Nm\langle v^2 \rangle$.
+6. Splošna plinska enačba z $n = N/N_A$ in $k_B = R/N_A$ se glasi $pV = Nk_BT$. Primerjava da $\tfrac13 m\langle v^2 \rangle = k_BT$, torej $\tfrac12 m\langle v^2 \rangle = \tfrac32 k_BT$.
+7. Ker je $mN_A = M$ in $k_BN_A = R$, je $\langle v^2 \rangle = 3RT/M$ in $v_\mathrm{rms} = \sqrt{3RT/M}$.
+8. Povprečna kinetična energija je odvisna le od $T$, zato je pri $300{,}15\,\mathrm{K}$ za He in $\mathrm{O_2}$ enaka. Hitrosti pa ne: $v_\mathrm{rms}(\mathrm{He}) = \sqrt{3 \cdot 8{,}314 \cdot 300{,}15/0{,}004003}\,\mathrm{m/s} \approx 1368\,\mathrm{m/s}$, $v_\mathrm{rms}(\mathrm{O_2}) = \sqrt{3 \cdot 8{,}314 \cdot 300{,}15/0{,}03200}\,\mathrm{m/s} \approx 484\,\mathrm{m/s}$; razmerje je $\sqrt{32{,}00/4{,}003} \approx 2{,}83$.
+9. Odgovor: $pV = \tfrac13 Nm\langle v^2 \rangle$, $\tfrac12 m\langle v^2 \rangle = \tfrac32 k_BT$, $v_\mathrm{rms} = \sqrt{3RT/M}$; helij in kisik imata enako povprečno kinetično energijo, helijeve molekule pa so okoli $2{,}83$-krat hitrejše.
+
 ## Drugače: Na sliki
 
 Predstavljaj si posodo iz Primera 3 kot škatlo z dvema vrstama kroglic:
@@ -199,17 +246,17 @@ Predstavljaj si posodo iz Primera 3 kot škatlo z dvema vrstama kroglic:
                                      p     = 374 kPa
 ```
 
-Tlak nastane zaradi trkov molekul s stenami. Ker se pri idealnem plinu molekule ne zmenijo druga za drugo, vsaka vrsta »tolče« po stenah, kot da bi bila sama. Helijevih molekul je dvakrat več, zato prispevajo dve tretjini tlaka, ne glede na to, da je vsaka od njih osemkrat lažja od molekule kisika: lažje molekule so hitrejše, in pri isti temperaturi imajo vse molekule enako povprečno kinetično energijo.
+Tlak nastane zaradi trkov molekul s stenami. Ker se pri idealnem plinu molekule ne zmenijo druga za drugo, vsaka vrsta »tolče« po stenah, kot da bi bila sama. Helijevih molekul je dvakrat več, zato prispevajo dve tretjini tlaka, čeprav je vsaka osemkrat lažja od molekule kisika. Pri isti temperaturi imajo namreč vse molekule enako povprečno kinetično energijo: lažje so ustrezno hitrejše, zato vsaka v povprečju enako močno tolče po steni.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Dihanje na višini.** Zrak ima na vseh višinah okoli $21\,\%$ kisika, a skupni tlak z višino pada. Ob morju je $p(\mathrm{O_2}) \approx 0{,}21 \cdot 101\,\mathrm{kPa} \approx 21\,\mathrm{kPa}$, na vrhu Everesta pri približno $34\,\mathrm{kPa}$ pa le okoli $7\,\mathrm{kPa}$. Ker prehod kisika v kri določa parcialni tlak, ne delež, alpinisti brez dodatnega kisika težko dihajo.
+**Normni kubični metri.** V industriji pretoke plinov podajamo v $\mathrm{Nm^3}$ (pri $0\,^\circ\mathrm{C}$ in $101{,}325\,\mathrm{kPa}$); $1\,\mathrm{Nm^3}$ idealnega plina je približno $44{,}6\,\mathrm{mol}$ ne glede na vrsto plina, zato iz izmerjenega prostorninskega pretoka takoj dobimo množinski pretok.
 
-**Potapljanje.** Na vsakih $10\,\mathrm{m}$ globine se tlak poveča za približno $100\,\mathrm{kPa}$. Na $40\,\mathrm{m}$ je tlak okoli $500\,\mathrm{kPa}$, parcialni tlak dušika pa že tako velik, da povzroča dušikovo omamo; zato potapljači za globoke potope uporabljajo zmesi s helijem. Ob prehitrem dviganju se raztopljeni plini iz krvi sproščajo v mehurčkih (dekompresijska bolezen).
+**Varnost jeklenk.** Pri stalni prostornini je $p \propto T$: jeklenka, napolnjena na $200\,\mathrm{bar}$ pri $20\,^\circ\mathrm{C}$, ima pri $50\,^\circ\mathrm{C}$ tlak okoli $200 \cdot 323/293 \approx 220\,\mathrm{bar}$. Zato jeklenke hranimo v senci in daleč od grelcev.
 
-**Fermentacija in bioreaktorji.** Pri vrenju mošta kvasovke proizvajajo $\mathrm{CO_2}$. Iz izmerjene prostornine sproščenega plina in splošne plinske enačbe izračunamo množino $\mathrm{CO_2}$ in s tem, koliko sladkorja je že pretvorjenega. V bioreaktorjih z merjenjem parcialnih tlakov $\mathrm{O_2}$ in $\mathrm{CO_2}$ v izstopnem plinu spremljamo dihanje celic.
+**Bioprocesna tehnika.** V bioreaktorju iz parcialnih tlakov $\mathrm{O_2}$ in $\mathrm{CO_2}$ v vstopnem in izstopnem plinu izračunamo porabo kisika in nastanek $\mathrm{CO_2}$; njuno razmerje (respiracijski kvocient) pove, kaj celice presnavljajo. Pri vrenju mošta iz prostornine sproščenega $\mathrm{CO_2}$ ocenimo, koliko sladkorja je že pretvorjenega.
 
-**Pnevmatike.** Tlak v pnevmatikah izmerimo zjutraj, ker se med vožnjo segrejejo. Pri stalni prostornini je $p \propto T$: segretje z $20\,^\circ\mathrm{C}$ na $50\,^\circ\mathrm{C}$ poveča absolutni tlak za faktor $323/293 \approx 1{,}10$.
+**Visokotlačni procesi in potapljaška tehnika.** Sinteza amonijaka poteka pri $150$ do $300\,\mathrm{bar}$, kjer $pV = nRT$ ne zadošča in reaktorje računamo z realnimi enačbami stanja. Zmesi za globoke potope sestavimo tako, da $p(\mathrm{O_2})$ ostane pod okoli $140\,\mathrm{kPa}$; na $40\,\mathrm{m}$ (okoli $500\,\mathrm{kPa}$) je to pri zraku $0{,}21 \cdot 500 = 105\,\mathrm{kPa}$, parcialni tlak dušika pa že povzroča omamo, zato del dušika nadomesti helij.
 
 ## Drugače: Korak za korakom s številkami
 

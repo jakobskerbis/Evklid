@@ -27,6 +27,7 @@ export const info = {
   predmet: "FIZ",
   opis: "Sonce, osem planetov, Luna in pritlikavi planet Pluton krožijo po pravih eliptičnih tirnicah, začenši z današnjim datumom. Primerjaj velikosti in razdalje v treh merilih.",
   merilo: { m: 1.495978707e13, oznaka: "100 a. e. ≈ 15 milijard km" },
+  poskusi: "preklopi na »Resnične razdalje« in poglej, kako daleč so zunanji planeti v primerjavi z notranjimi.",
 };
 
 const D = Math.PI / 180;

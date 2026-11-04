@@ -526,3 +526,141 @@ test("Bernoulli: zelo majhna verjetnost ni »= 0« (n = 12, p = 0,05, k = 12)", 
   assert.equal(zapisP(bernoulli(12, 0.05, 12)), "< 0,0001");
   assert.equal(zapisP(0.25), "0,25");
 });
+
+test("telesa: ploščina razgrnjene mreže je površina P, prostornine se ujemajo z računom", async () => {
+  const { telo, mreza, ploscinaLika } = await import("../public/skice/telesa.js");
+  for (const ime of ["kocka", "kvader", "prizma", "valj", "stozec", "piramida", "prisekana"]) {
+    const T = telo(ime), M = mreza(T);
+    const vsota = M.liki.reduce((a, l) => a + ploscinaLika(l.tocke), 0);
+    assert.ok(Math.abs(vsota - T.P) / T.P < 1e-3, `${ime}: mreža ${vsota} ≠ P ${T.P}`);
+    assert.equal(M.liki.filter((l) => l.vrsta === "osnova").length, ime === "stozec" || ime === "piramida" ? 1 : 2, ime);
+  }
+  const K = telo("kocka");
+  assert.equal(K.P, 24);
+  assert.equal(K.Vol, 8);
+  assert.ok(Math.abs(K.D - 2 * Math.sqrt(3)) < 1e-12);
+  // Prisekana piramida = velika piramida brez male (višina vrha H iz podobnosti).
+  const Q = telo("prisekana"), Hv = (Q.v * Q.a1) / (Q.a1 - Q.a2);
+  assert.ok(Math.abs(Q.Vol - (Q.a1 ** 2 * Hv - Q.a2 ** 2 * (Hv - Q.v)) / 3) < 1e-12);
+  const S = telo("stozec");
+  assert.ok(Math.abs(S.s ** 2 - (S.r ** 2 + S.v ** 2)) < 1e-12);
+});
+
+test("telesa: pri vsakem zasuku so pri kocki zakriti 3 robovi, valj in stožec imata 2 tvorilki na obrisu", async () => {
+  const { telo, robovi } = await import("../public/skice/telesa.js");
+  const K = telo("kocka"), V = telo("valj"), S = telo("stozec"), P = telo("prizma");
+  for (let phi = 0.05; phi < 2 * Math.PI; phi += 0.21) {
+    const k = robovi(K, phi).robovi;
+    assert.equal(k.length, 12);
+    assert.equal(k.filter((e) => !e.vidno).length, 3, `kocka φ=${phi}`);
+    for (const T of [V, S]) assert.equal(robovi(T, phi).robovi.filter((e) => e.obris).length, 2, `${T.ime} φ=${phi}`);
+    // Zgornja osnova prizme je pri pogledu od zgoraj vsa vidna, spodnja na zadnji strani zakrita.
+    const p = robovi(P, phi).robovi;
+    assert.ok(p.filter((e) => P.V[e.a][1] > 0 && P.V[e.b][1] > 0).every((e) => e.vidno));
+    assert.ok(p.some((e) => !e.vidno));
+  }
+});
+
+test("telesa: prizma ima 5 zakritih robov, deli mreže se ne prekrivajo, P in V v čipih sta kot na kartici", async () => {
+  const { telo, robovi, mreza, cipi, verige } = await import("../public/skice/telesa.js");
+  const P = telo("prizma");
+  for (let phi = 0.05; phi < 2 * Math.PI; phi += 0.21) assert.equal(robovi(P, phi).robovi.filter((e) => !e.vidno).length, 5, `φ=${phi}`);
+  // Zakriti lok osnove valja je ena veriga (enakomerno črtkanje).
+  const V = telo("valj");
+  assert.equal(verige(robovi(V, 0.5).robovi.filter((e) => !e.vidno)).length, 1);
+  // Težišče vsakega dela mreže ne leži v nobenem drugem delu.
+  const notri = ([x, y], t) => t.reduce((c, p, i) => {
+    const q = t[(i + 1) % t.length];
+    return (p[1] > y) !== (q[1] > y) && x < ((q[0] - p[0]) * (y - p[1])) / (q[1] - p[1]) + p[0] ? !c : c;
+  }, false);
+  for (const ime of ["kocka", "kvader", "prizma", "valj", "stozec", "piramida", "prisekana"]) {
+    const L = mreza(telo(ime)).liki;
+    L.forEach((a, i) => {
+      const c = a.tocke.reduce((s, p) => [s[0] + p[0] / a.tocke.length, s[1] + p[1] / a.tocke.length], [0, 0]);
+      L.forEach((b, j) => i !== j && assert.ok(!notri(c, b.tocke), `${ime}: del ${i} v delu ${j}`));
+    });
+  }
+  const norm = (t) => t.replace(/\\dfrac/g, "\\frac").replace(/\s+/g, "");
+  for (const [list, ss, vrste] of [["MAT-OS", false, { Kocka: "kocka", Kvader: "kvader", Prizma: "prizma", Valj: "valj", Piramida: "piramida", Stožec: "stozec" }], ["MAT-SS", true, { Prizma: "prizma", Piramida: "piramida", "Prisekana piramida": "prisekana", Valj: "valj", Stožec: "stozec" }]]) {
+    const md = fs.readFileSync(new URL(`../content/formulas/${list}.md`, import.meta.url), "utf8").split("\n");
+    for (const [ime, t] of Object.entries(vrste)) {
+      const vrstica = norm(md.find((l) => l.startsWith(`| ${ime} |`)));
+      for (const c of cipi(telo(t), ss).filter((c) => /^[PV] =/.test(c.oznaka))) assert.ok(vrstica.includes(norm(c.oznaka)), `${list} ${ime}: ${c.oznaka}`);
+    }
+  }
+});
+
+test("presek stožca: parabola nastane natanko pri τ = 90° − α, pri manjšem nagibu zaprta krivulja, pri večjem dve veji", async () => {
+  const { vrsta, nastavitev, krivulja, izsrednost, VISINA } = await import("../public/skice/presek-stozca.js");
+  for (let alfa = 15; alfa <= 60; alfa++) {
+    const par = nastavitev("Parabola", alfa);
+    assert.equal(par.tau, 90 - alfa, "gumb Parabola");
+    assert.equal(vrsta(par.tau, alfa, par.h), "parabola");
+    assert.ok(Math.abs(izsrednost(par.tau, alfa) - 1) < 1e-12, "e = 1");
+    assert.equal(vrsta(par.tau - 1, alfa, 0.6), par.tau - 1 === 0 ? "krožnica" : "elipsa");
+    assert.equal(vrsta(par.tau + 1, alfa, 0.6), "hiperbola");
+    for (const ime of ["Krožnica", "Elipsa", "Parabola", "Hiperbola"]) assert.equal(vrsta(nastavitev(ime, alfa).tau, alfa, 1), ime.toLowerCase(), `${ime} α=${alfa}`);
+    assert.equal(nastavitev("Skozi vrh", alfa).h, 0);
+  }
+  // Izrojeni primeri (h = 0): točka, premica, par premic.
+  assert.equal(vrsta(20, 30, 0), "točka");
+  assert.equal(vrsta(60, 30, 0), "premica");
+  assert.equal(vrsta(80, 30, 0), "par premic");
+  assert.equal(krivulja(20, 30, 0).odseki.length, 0);
+  assert.deepEqual(krivulja(20, 30, 0).tocka, [0, 0, 0]);
+  assert.equal(krivulja(60, 30, 0).odseki.length, 1);
+  assert.equal(krivulja(80, 30, 0).odseki.length, 2);
+  // Točke krivulje ležijo na stožcu (x² + z² = y² tan² α) in na ravnini (n·p = h cos τ); elipsa je ena zaprta krivulja.
+  const na = (tau, alfa, hh) => (p) => {
+    const t = Math.tan((alfa * Math.PI) / 180), r = (tau * Math.PI) / 180;
+    assert.ok(Math.abs(p[0] ** 2 + p[2] ** 2 - p[1] ** 2 * t * t) < 1e-9);
+    assert.ok(Math.abs(p[1] * Math.cos(r) + p[2] * Math.sin(r) - hh * Math.cos(r)) < 1e-9);
+    assert.ok(Math.abs(p[1]) <= VISINA + 1e-9);
+  };
+  const el = krivulja(30, 30, 0.6);
+  assert.equal(el.odseki.length, 1);
+  const o = el.odseki[0];
+  assert.ok(Math.hypot(...o[0].map((x, k) => x - o[o.length - 1][k])) < 1e-9, "zaprta");
+  o.forEach(na(30, 30, 0.6));
+  const hip = krivulja(75, 30, 0.6);
+  assert.equal(hip.odseki.length, 2, "dve veji");
+  assert.ok(hip.odseki.some((s) => s.every((p) => p[1] > 0)) && hip.odseki.some((s) => s.every((p) => p[1] < 0)), "veji na obeh plaščih");
+  hip.odseki.flat().forEach(na(75, 30, 0.6));
+  const pa = krivulja(60, 30, 0.6);
+  assert.equal(pa.odseki.length, 1);
+  pa.odseki[0].forEach(na(60, 30, 0.6));
+  assert.ok(pa.odseki[0].every((p) => p[1] > 0), "parabola na enem plašču");
+  const kr = krivulja(0, 30, 0.6);
+  assert.equal(kr.odseki.length, 1);
+  kr.odseki[0].forEach((p) => assert.ok(Math.abs(p[1] - 0.6) < 1e-12));
+});
+
+test("presek stožca: pri τ = 90° ravnina vsebuje os (par premic), krivulja sega do roba stožca", async () => {
+  const { vrsta, nastavitev, krivulja, skoziVrh, VISINA } = await import("../public/skice/presek-stozca.js");
+  assert.ok(skoziVrh(90, 1) && skoziVrh(40, 0) && !skoziVrh(89, 1));
+  assert.equal(vrsta(90, 30, 1), "par premic");
+  assert.equal(krivulja(90, 30, 1).odseki.length, 2);
+  for (let alfa = 15; alfa <= 60; alfa++) assert.ok(nastavitev("Hiperbola", alfa).tau < 90);
+  // Konci vej hiperbole in parabole so na robu stožca (|y| = VISINA) ali na robu ravnine, ne korak prej.
+  for (const [tau, alfa, hh] of [[75, 30, 0.6], [89, 30, 1], [60, 30, 0.6]]) {
+    const { odseki } = krivulja(tau, alfa, hh, { pol: 2.5 });
+    for (const o of odseki)
+      for (const p of [o[0], o[o.length - 1]]) {
+        const w = (p[1] - hh) * -Math.sin((tau * Math.PI) / 180) + p[2] * Math.cos((tau * Math.PI) / 180);
+        assert.ok(Math.abs(Math.abs(p[1]) - VISINA) < 1e-6 || Math.abs(Math.abs(p[0]) - 2.5) < 1e-6 || Math.abs(Math.abs(w) - 2.5) < 1e-6, `${tau}/${alfa}/${hh}: konec ${p}`);
+      }
+  }
+});
+
+test("presek stožca: gumb Elipsa da zaprto elipso za vsak α", async () => {
+  const { nastavitev, krivulja, vrsta } = await import("../public/skice/presek-stozca.js");
+  for (let alfa = 15; alfa <= 60; alfa++) {
+    const e = nastavitev("Elipsa", alfa, { tau: 0, h: 1 });
+    assert.equal(vrsta(e.tau, alfa, e.h), "elipsa");
+    const o = krivulja(e.tau, alfa, e.h, { pol: 2.5 }).odseki;
+    assert.equal(o.length, 1, `α=${alfa}`);
+    assert.ok(Math.hypot(...o[0][0].map((x, k) => x - o[0][o[0].length - 1][k])) < 1e-9, `α=${alfa}: zaprta`);
+  }
+  // Začetno stanje skice (τ = 25°, h = 0,8, α = 30°) je zaprta elipsa.
+  assert.equal(krivulja(25, 30, 0.8, { pol: 2.5 }).odseki.length, 1);
+});

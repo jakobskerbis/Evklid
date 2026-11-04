@@ -1,0 +1,32 @@
+{
+ "id": "NPZ9-BIO-2020-redni",
+ "points": 35,
+ "minutes": 60,
+ "tools": "samo pisalo (nalivno pero ali kemični svinčnik); računalo in druga gradiva niso dovoljeni",
+ "tasks": [
+  {"n": 1, "points": [1], "format": ["choice"], "topic": "zdravje: med naštetimi boleznimi prepoznati tisto, ki jo povzročajo bakterije (pasti: virusne bolezni)"},
+  {"n": 2, "points": [1], "format": ["choice"], "topic": "prilagoditve ptičev: iz oblike kljuna na sliki sklepati o načinu prehranjevanja", "figure": "slika ptiča z vidnim kljunom"},
+  {"n": 3, "points": [1], "format": ["choice"], "topic": "varstvo vrst in genetika populacij: zakaj je zelo majhna populacija ogrožena ob spremembah okolja (majhna genetska raznolikost)"},
+  {"n": 4, "points": [1], "format": ["choice"], "topic": "odnos plenilec–plen: iz grafa nihanja velikosti dveh populacij skozi leta razbrati povezavo v označenem obdobju", "figure": "črtni graf števila osebkov dveh populacij v odvisnosti od časa z označenim območjem"},
+  {"n": 5, "points": [1], "format": ["choice"], "topic": "razkrojevalci: vloga gliv na odmrlem lesu v ekosistemu (izbrati najbolj pravilno trditev o prehranjevanju)", "figure": "fotografija gliv na drevesnem deblu"},
+  {"n": 6, "points": [1], "format": ["choice"], "topic": "fotosinteza in celično dihanje: kateri procesi potekajo v zelenih delih rastline (past: rastline tudi dihajo)"},
+  {"n": 7, "points": [1], "format": ["choice"], "topic": "razvoj žuželk: prepoznati razvojno stopnjo pri popolni preobrazbi s slike", "figure": "slika ene razvojne stopnje žuželke"},
+  {"n": 8, "points": [1], "format": ["choice"], "topic": "prebava: katera skupina hranilnih snovi se začne kemično razgrajevati v izbranem delu prebavne cevi"},
+  {"n": 9, "points": [1], "format": ["choice"], "topic": "zgradba celice: katere strukture živalska celica nima v primerjavi z rastlinsko"},
+  {"n": 10, "points": [1], "format": ["choice"], "topic": "izločala: naloga naprave, ki nadomešča delovanje okvarjenega izločalnega organa (čiščenje krvi odpadnih snovi)"},
+  {"n": 11, "points": [1], "format": ["choice"], "topic": "evolucija: med štirimi slikami spreminjanja izbrati tisto, ki prikazuje evolucijo (pasti: osebni razvoj, kalitev, razvoj zarodka)", "figure": "štiri slike različnih procesov spreminjanja organizmov"},
+  {"n": 12, "points": [1], "format": ["choice"], "topic": "presnova: iz opisne trditve prepoznati proces (celično dihanje, fotosinteza, pljučno dihanje, transpiracija)"},
+  {"n": 13, "points": [1], "format": ["choice"], "topic": "kalitev semen: iz preglednice pogojev (kisik, temperatura, voda) v več posodah izbrati, kje bodo semena najverjetneje vzkalila", "figure": "preglednica dejavnikov za več posod s semeni"},
+  {"n": 14, "points": [1, 1], "format": ["open", "open"], "topic": "hormonske žleze in prehrana: a) iz slik zdrave in prizadete osebe poimenovati žlezo, katere motnja povzroča prikazano bolezen; b) iz preglednic priporočenega dnevnega vnosa elementa po starostnih skupinah in vsebnosti v živilih izbrati živila, ki pokrijejo potrebo izbrane osebe (računanje s preglednicama)", "figure": "dve sliki oseb ter dve preglednici (dnevne potrebe, vsebnost v živilih)"},
+  {"n": 15, "points": [1, 1], "format": ["open", "open"], "topic": "čutila – oko: a) pojasniti, zakaj na označenem mestu mrežnice slika ne nastane (slepa pega); b) z grafa razbrati najmanjšo razdaljo izostritve za dano starost", "figure": "shema zgradbe očesa s puščico in graf razdalje izostritve v odvisnosti od starosti"},
+  {"n": 16, "points": [1, 1], "format": ["open", "open"], "topic": "fotosinteza: a) navesti dve rabi organskih snovi, ki jih rastlina izdela; b) poskus z vodno rastlino in zbiranjem plina v dveh posodah, v eni je dodana žival – izbrati, kje se nabere več kisika, z utemeljitvijo (žival porablja kisik)", "figure": "skica dveh posod z vodno rastlino, lijem in epruveto"},
+  {"n": 17, "points": [1, 1], "format": ["choice", "open"], "topic": "razvoj zarodka: a) kateri procesi omogočajo rast in razvoj zarodka (rast, delitev, diferenciacija celic); b) od kod dobi hranilne snovi zarodek, ki se razvija v jajcu, in od kod tisti v maternici", "figure": "slika dveh zarodkov (v jajcu in v maternici)"},
+  {"n": 18, "points": [1, 1], "format": ["open", "open"], "topic": "nespolno razmnoževanje rastlin: dve mladi rastlini, vzgojeni iz potaknjencev iste matične rastline; a) razložiti, zakaj sta klona; b) DA/NE z utemeljitvijo, ali sta gensko spremenjena organizma", "figure": "slika dveh mladih rastlin"},
+  {"n": 19, "points": [1, 1], "format": ["table", "open"], "topic": "raziskovalno delo – vpliv kislosti vode na preživetje drobnih vodnih živali: opis poskusa z več ponovitvami; a) podatke o preživelih osebkih urediti v preglednico; b) zapisati ugotovitev iz rezultatov"},
+  {"n": 20, "points": [1, 1], "format": ["open", "open"], "topic": "kromosomi: iz kariotipa in danega števila kromosomov v zigoti a) število kromosomov v spolni celici (haploidno); b) število kromosomov v telesni celici", "figure": "slika kariotipa živali"},
+  {"n": 21, "points": [1, 1], "format": ["open", "open"], "topic": "celični organeli: a) vloga organela, ki je skupen rastlinskim, živalskim in glivnim celicam (sproščanje energije pri celičnem dihanju); b) pojasniti, zakaj imajo nekatere vrste celic več teh organelov (večja poraba energije)"},
+  {"n": 22, "points": [1, 1], "format": ["fill", "open"], "topic": "dedovanje spola: a) v shemo celic staršev, spolnih celic in otrok vpisati oznake spolnih kromosomov; b) med opisanimi spolnimi celicami izbrati tisto z napako pri delitvi in utemeljiti (mejoza)", "figure": "shema krogov – celic za dve generaciji"},
+  {"n": 23, "points": [1, 1], "format": ["open", "open"], "topic": "matične celice v medicini: kratek opis zdravljenja s celicami, ki se razvijejo v določeno tkivo; a) poimenovati vrsto celic; b) DA/NE z utemeljitvijo, ali bi bil drugačen način vnosa v telo (na kožo) učinkovit"},
+  {"n": 24, "points": [1, 1], "format": ["open", "open"], "topic": "določevalni ključ in umetni izbor: a) z dihotomnim ključem določiti imena več sort kulturnih rastlin na slikah; b) pojasniti, kako je človek iz ene divje vrste vzgojil različne sorte (umetni izbor, križanje)", "figure": "dihotomni ključ, štiri slike rastlin in slika divje prednice"}
+ ]
+}

@@ -1,0 +1,239 @@
+{
+ "id": "MATURA-MAT-VR-2025-spomladanski",
+ "points": 120,
+ "minutes": 180,
+ "polas": [
+  {
+   "pola": 1,
+   "minutes": 90,
+   "calculator": false,
+   "points": 60
+  },
+  {
+   "pola": 2,
+   "minutes": 90,
+   "calculator": true,
+   "points": 60
+  }
+ ],
+ "tools": "Nalivno pero ali kemični svinčnik, svinčnik, radirka in geometrijsko orodje (šestilo, ravnilo, po želji trikotnik); zbirka zahtevnejših formul in konceptna lista sta na perforiranih listih v izpitni poli (osnutki se ne ocenjujejo). Pri izpitni poli 1 računalo ni dovoljeno, pri izpitni poli 2 je dovoljeno. Pot do rezultata mora biti zapisana z vmesnimi računi in sklepi.",
+ "sections": {
+  "B": "krajše strukturirane naloge: 6 nalog po 5–8 točk (skupaj 40 točk na polo), priporočeno 45 minut; enake kot del B osnovne ravni",
+  "C": "strukturirane naloge: 2 nalogi po 10 točk (skupaj 20 točk na polo), priporočeno 45 minut; večstopenjske, z deli 1.1, 1.2 …, zahtevnejša vsebina višje ravni"
+ },
+ "tasks": [
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 1,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "tri množice, podane z opisom (praštevila pod mejo, delitelji naravnega števila, večkratniki pod mejo); zapisati jih z naštevanjem elementov ter zapisati še dve množici, dobljeni z množičnima operacijama (npr. presek, razlika)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 2,
+   "points": [
+    7
+   ],
+   "format": [
+    "table"
+   ],
+   "topic": "tri kvadratne enačbe z ničelno, pozitivno in negativno diskriminanto: izračunati diskriminanto in vse rešitve (dvojna, realni, kompleksni), vpis v preglednico",
+   "figure": "preglednica enačba / diskriminanta / rešitve"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 3,
+   "points": [
+    5
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "enotska krožnica s središčem v izhodišču: dana je točka na krožnici s koordinatami iz posebnih vrednosti, druga točka je od nje zasukana za dani posebni kot; natančni koordinati druge točke ter natančni obseg in ploščina pravokotnega trikotnika iz izhodišča, dane točke in njene pravokotne projekcije na abscisno os",
+   "figure": "enotska krožnica z dvema točkama, projekcijo in označenim kotom"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 4,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "dana sta a in b kot logaritma dveh praštevil pri isti osnovi; tri logaritme (produkta, produkta s korenom, decimalnega števila) izraziti z a in b (pravila za logaritme, log osnove je 1)"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 5,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "racionalna funkcija s kvadratnim števcem in linearnim imenovalcem: stacionarni točki (odvod kvocienta) in enačba tangente v točki z dano absciso"
+  },
+  {
+   "pola": 1,
+   "section": "B",
+   "n": 6,
+   "points": [
+    8
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "hiperbola s središčem v izhodišču in goriščema na abscisni osi: dana sta asimptota in točka na hiperboli (s korenom v koordinati); zapisati enačbo; nato hiperbolo prezrcaliti čez simetralo lihih kvadrantov in zapisati enačbo zrcalne slike"
+  },
+  {
+   "pola": 1,
+   "section": "C",
+   "n": 1,
+   "points": [
+    2,
+    4,
+    4
+   ],
+   "format": [
+    "open",
+    "open",
+    "open"
+   ],
+   "topic": "pravilni šestkotnik s stranico 1, dva vektorja ob enem oglišču in razpolovišče ene stranice: 1) dva vektorja (diagonala, daljica do razpolovišča) izraziti kot linearni kombinaciji in izračunati dolžino daljice; 2) razmerje, v katerem presečišče teh daljic deli diagonalo (linearna neodvisnost, sistem enačb); 3) dani vektor izraziti kot linearno kombinacijo dveh novih vektorjev, ki sta kombinaciji osnovnih",
+   "figure": "pravilni šestkotnik z označenima vektorjema in razpoloviščem"
+  },
+  {
+   "pola": 1,
+   "section": "C",
+   "n": 2,
+   "points": [
+    7,
+    3
+   ],
+   "format": [
+    "table",
+    "open"
+   ],
+   "topic": "odsekoma definirana funkcija na končnem intervalu (kvadratni del in dva linearna dela) z narisanim grafom: 1) v razpredelnico vpisati funkcijske vrednosti, vrednost inverzne preslikave, odvode v točkah in določene integrale po podintervalih (ploščine iz grafa); prva vrstica je rešena; 2) periodična razširitev funkcije: integral čez dolg simetričen interval, ali je funkcija soda (utemeljitev), intervali padanja",
+   "figure": "graf odsekoma definirane funkcije in razpredelnica"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 1,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "narisati vodoravno premico in poševno premico z dano enačbo ter izračunati ploščino trikotnika, ki ga premici oklepata z ordinatno osjo (presečišča)",
+   "figure": "prazen koordinatni sistem za risanje premic"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 2,
+   "points": [
+    8
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "dva vektorja enake dolžine s topim kotom med njima: skicirati njuno linearno kombinacijo in izračunati dva skalarna produkta (definicija, distributivnost)",
+   "figure": "skica dveh vektorjev z označenim kotom"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 3,
+   "points": [
+    8
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "dva zaporedna meta poštene kocke: verjetnosti treh dogodkov (dvakrat isti izid, vsaj enkrat dani izid, vsota pik največ dana meja)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 4,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "stranice trikotnika tvorijo aritmetično zaporedje z dano diferenco, dan je obseg: izračunati stranice in največji kot na minuto natančno (kosinusni izrek)"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 5,
+   "points": [
+    5
+   ],
+   "format": [
+    "choice"
+   ],
+   "topic": "preglednica šestih funkcij (produkt potence in sinusa, eksponentna, kosinus, logaritemska, kvadratna, vsota linearne in kosinusa): pri vsaki obkrožiti edino lastnost med sodo, liho, naraščajočo, padajočo; prvi primer je rešen",
+   "figure": "preglednica funkcij in lastnosti"
+  },
+  {
+   "pola": 2,
+   "section": "B",
+   "n": 6,
+   "points": [
+    7
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "graf potenčne funkcije s parametrom a deli pravokotnik ob koordinatnih oseh na dve območji z enako ploščino; z določenim integralom izračunati a",
+   "figure": "koordinatni sistem s krivuljo in pravokotnikom, razdeljenim na označeni območji"
+  },
+  {
+   "pola": 2,
+   "section": "C",
+   "n": 1,
+   "points": [
+    3,
+    3,
+    4
+   ],
+   "format": [
+    "open",
+    "open",
+    "open"
+   ],
+   "topic": "zaporedji s kvadratnim in linearnim splošnim členom: 1) koliko členov zaporedja recipročnih vrednosti je večjih od dane majhne meje (kvadratna neenačba); 2) limita razlike korena prvega in drugega zaporedja (racionalizacija); 3) dokazati, da je zaporedje iz količnika padajoče, ter določiti natančno spodnjo in zgornjo mejo"
+  },
+  {
+   "pola": 2,
+   "section": "C",
+   "n": 2,
+   "points": [
+    4,
+    6
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "dve neodvisni besedilni nalogi: 1) tekača tečeta iz iste točke v nasprotnih smereh po krožni progi z danim obsegom in stalnima hitrostma; kolikokrat se srečata v danem času; 2) ekstremalni problem: igrišče iz pravokotnika z dano ploščino in dveh polkrogov na krajših stranicah; dolžina ravnega dela in polmer, da je obseg najmanjši (odvod)",
+   "figure": "skica igrišča: pravokotnik s polkrogoma"
+  }
+ ]
+}

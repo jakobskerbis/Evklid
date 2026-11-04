@@ -7,8 +7,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { BRAND } from "./brand.js";
-import { PLANS, SCHOOL_LICENCE_PRICES, PILOT_SCHOOLS_MAX, pilotOpen } from "./schools.js";
+import { PLANS, SCHOOL_LICENCE_PRICES, PILOT_SCHOOLS_MAX, pilotSchoolIds } from "./schools.js";
 import { schoolDailyQuestions } from "./placila/pravice.js";
+import { PODARI_MONTHS } from "./placila/podari.js";
 
 export const ORDER_STATUSES = ["new", "contacted", "offer_sent", "won", "lost"];
 export const PLAN_LABELS = { class: "Licenca za razrede", school: "Cela šola", pilot: "Pilotna šola" };
@@ -50,6 +51,26 @@ export function migrateSchoolOrders(db) {
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
   )`);
+}
+
+// Pilotna mesta (prvih 10 šol): zasedejo jih šole s pilotno licenco in odprta pilotna naročila (ena šola = ena
+// davčna številka). Mesto naročila se sprosti, ko ga skrbnik označi kot »won« (takrat šola dobi licenco) ali »lost«.
+export const PILOT_HOLD_STATUSES = ["new", "contacted", "offer_sent"];
+export function pilotPlaces(db) {
+  const licences = pilotSchoolIds(db).length;
+  const hasOrders = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_orders'").get();
+  const orders = hasOrders
+    ? db
+        .prepare(`SELECT DISTINCT tax_id FROM school_orders WHERE plan = 'pilot' AND status IN (${PILOT_HOLD_STATUSES.map(() => "?").join(", ")})`)
+        .all(...PILOT_HOLD_STATUSES)
+        .map((r) => r.tax_id)
+    : [];
+  return { max: PILOT_SCHOOLS_MAX, licences, orders, free: Math.max(0, PILOT_SCHOOLS_MAX - licences - orders.length) };
+}
+// Ali je pilotna cena na voljo za novo naročilo; šola z že odprtim pilotnim naročilom (ista davčna) lahko naroči znova.
+export function pilotOpenForOrder(db, taxId = null) {
+  const p = pilotPlaces(db);
+  return p.free > 0 || (taxId != null && p.orders.includes(taxId));
 }
 
 export const orderNumber = (o) => `${String(o.created_at || "").slice(0, 4) || new Date().getUTCFullYear()}-${String(o.id).padStart(4, "0")}`;
@@ -127,6 +148,7 @@ export function solePage({ pilot = true } = {}) {
     "pilot.years": String(P.pilot.years),
     "pilot.max": String(PILOT_SCHOOLS_MAX),
     "pilot.full": pilot ? "0" : "1",
+    "podari.months": String(PODARI_MONTHS),
     dailyQuestions: schoolDailyQuestions() > 0 ? `do ${schoolDailyQuestions()} vprašanj inštruktorju na dan` : "neomejeno število vprašanj inštruktorju",
     consent: CONSENT_TEXT,
     maxStudents: String(ORDER_LIMITS.maxStudents),
@@ -141,7 +163,7 @@ export function mountSolePage(app, store = null) {
   const cached = {};
   app.get(["/sole", "/sole.html"], (_req, res) => {
     // Brez predpomnjenja v razvoju (datoteko lahko urejamo), sicer enkrat na zagon za vsako stanje pilota.
-    const pilot = store?.db ? pilotOpen(store.db) : true;
+    const pilot = store?.db ? pilotOpenForOrder(store.db) : true;
     const html = cached[pilot] || solePage({ pilot });
     if (process.env.NODE_ENV === "production") cached[pilot] = html;
     res.set("Cache-Control", "no-cache");
@@ -229,11 +251,13 @@ export function mountSchoolOrders(app, store, { accounts, isLocalRequest }) {
     }
     const v = validateOrder(b, new Date(now));
     if (v.error) return res.status(400).json({ error: v.error });
-    if (v.order.plan === "pilot" && !pilotOpen(db)) return res.status(409).json({ error: `Pilotna cena je veljala za prvih ${PILOT_SCHOOLS_MAX} šol. Izberite drug paket.` });
     if (db.prepare("SELECT COUNT(*) AS n FROM school_orders WHERE created_at >= datetime('now', '-1 day')").get().n >= ORDER_LIMITS.perDay)
       return res.status(429).json({ error: "Danes je prišlo veliko naročil. Poskusite znova jutri." });
     const o = v.order;
     const cols = Object.keys(o);
+    // Pilotno naročilo zasede mesto (pilotPlaces). Preverjanje in vpis sta sinhrona (brez await), zato dve hkratni
+    // naročili ne dobita zadnjega mesta obe.
+    if (o.plan === "pilot" && !pilotOpenForOrder(db, o.tax_id)) return res.status(409).json({ error: `Pilotna mesta za prvih ${PILOT_SCHOOLS_MAX} šol so zasedena. Izberite drug paket.` });
     const id = Number(db.prepare(`INSERT INTO school_orders (${cols.join(", ")}) VALUES (${cols.map(() => "?").join(", ")})`).run(...cols.map((k) => o[k])).lastInsertRowid);
     hits.set(ip, [...mine, now]);
     if (hits.size > 10000) hits.clear();
@@ -256,7 +280,7 @@ export function mountSchoolOrders(app, store, { accounts, isLocalRequest }) {
 
   app.get("/api/admin/school-orders", (req, res) => {
     if (!isAdmin(req, res)) return;
-    res.json({ statuses: ORDER_STATUSES, orders: db.prepare("SELECT * FROM school_orders ORDER BY id DESC LIMIT 500").all().map(view) });
+    res.json({ statuses: ORDER_STATUSES, pilot: pilotPlaces(db), orders: db.prepare("SELECT * FROM school_orders ORDER BY id DESC LIMIT 500").all().map(view) });
   });
   app.put("/api/admin/school-orders/:id", (req, res) => {
     if (!isAdmin(req, res)) return;

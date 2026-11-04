@@ -268,6 +268,8 @@ body.pad-open #session-side { display: none !important; }
 /* Od desne proti levi (arabščina, perzijščina, urdujščina): puščice nazaj/naprej kažejo v smer branja.
    Izjemi: tipka kazalca v kalkulatorju (izraz je vedno od leve proti desni) in zasukana puščica napredovanja v ligi. */
 [dir="rtl"] svg.i-dir { transform: scaleX(-1); }
+/* Puščica »naprej« v vrsticah seznama in glavah kartic (npr. Urnik, kartica stopnje na Učni poti). */
+[dir="rtl"] .list-row > svg.i[data-i="chevron-right"], [dir="rtl"] button.sch-card-head > svg.i[data-i="chevron-right"] { transform: scaleX(-1); }
 [dir="rtl"] .gc-key svg.i-dir, [dir="rtl"] .zone-mark svg.i-dir { transform: none; }
 
 /* ---------- Šolski sistem (regijski profili) ---------- */
@@ -775,6 +777,11 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 /* ---------- Klikljive formule (public/formula-info.js) ---------- */
 /* Formule so vedno od leve proti desni, tudi v arabščini (sicer m/V = ρ postane obrnjeno). */
 .katex { direction: ltr; unicode-bidi: isolate; }
+/* Formula v svojem okviru (simulacija, namig, zbirka) se ne prelomi sama sredi izraza: preširoko zloži
+   sirina.js pri enačajih (j 2026-11-04: »To naj velja za vse enačbe«). */
+:is(.demo-eq, .graf-eq, .formula-body, .fm-f) .katex { white-space: nowrap; }
+/* Zložena formula: KaTeX-ov stolpec »aligned« seže 2 px čez desni rob (.vlist-s), kar bi okvir naredilo drsen. */
+.katex.tb-zlozena { padding-right: 2px; }
 /* Ulomki in indeksi: nevidni KaTeX-ovi okvirji (vlist, pstrut) prekrivajo imenovalec, zato dotik
    simbola pod ulomkovo črto ni prišel do njega. Dotik dobijo samo klikljive oznake. */
 .katex .vlist { pointer-events: none; }

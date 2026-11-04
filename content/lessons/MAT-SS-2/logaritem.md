@@ -5,9 +5,13 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Pri eksponentnih enačbah si reševal naloge, kot je $2^x = 32$: desno stran si zapisal kot $2^5$ in prebral $x = 5$. Kaj pa enačba $2^x = 5$? Število $5$ ni potenca števila $2$ s celim eksponentom, rešitev pa vseeno obstaja, saj graf funkcije $y = 2^x$ seka premico $y = 5$ nekje med $x = 2$ in $x = 3$. To število potrebuje svoje ime in svoj zapis. Imenujemo ga **logaritem** in pišemo $\log_2 5$.
+Poleti alge na ribniku vsak teden podvojijo površino, ki jo prekrivajo. Danes pokrivajo $1\,\text{m}^2$, čez $x$ tednov torej $2^x\,\text{m}^2$. Kdaj bodo pokrivale $5\,\text{m}^2$? Rešiti moramo enačbo $2^x = 5$.
 
-Logaritem odgovarja na vprašanje: **»Na katero potenco moram dvigniti osnovo, da dobim dano število?«** Z njim merimo kislost raztopin (pH), glasnost zvoka (decibeli) in moč potresov, izračunamo, kdaj se vloga v banki podvoji, ali koliko let mine, da se število prebivalcev podeseteri. V tej lekciji spoznaš definicijo logaritma, **pravila za računanje** z logaritmi in **prehod na novo osnovo**, s katerim izračunaš logaritem s poljubno osnovo na žepnem računalu.
+Tu odpove vse, kar znaš iz eksponentnih enačb: števila $5$ ne moreš zapisati kot potenco števila $2$, zato enačenje osnov ne gre, tipke $\log_2$ pa na računalu ni. Ima enačba sploh rešitev?
+
+Alge se za to ne zmenijo. Po dveh tednih pokrivajo $4\,\text{m}^2$, po treh $8\,\text{m}^2$, vmes pa površina raste brez skokov. Nekje med drugim in tretjim tednom torej pokrijejo natanko $5\,\text{m}^2$; graf $y = 2^x$ res seka premico $y = 5$ med $x = 2$ in $x = 3$. To število potrebuje ime in zapis: imenujemo ga **logaritem**, pišemo $\log_2 5$.
+
+Logaritem odgovori na vprašanje: **»Na katero potenco moram dvigniti osnovo, da dobim dano število?«** V naravi ga srečaš pri kislosti dežja (pH), moči potresov in glasnosti grmenja (decibeli). Ko spoznaš **pravila za računanje** in **prehod na novo osnovo**, boš to število tudi izračunal.
 
 ## Razlaga
 
@@ -17,7 +21,7 @@ $$\log_a b = x \iff a^x = b.$$
 
 Število $a$ imenujemo **osnova**, število $b$ pa **logaritmand**. Na primer $\log_2 32 = 5$, ker je $2^5 = 32$, in $\log_3 \dfrac{1}{9} = -2$, ker je $3^{-2} = \dfrac{1}{9}$. Logaritem je torej **eksponent**; to si zapomni, ker iz tega sledi vse ostalo.
 
-**2. Pogoji.** Osnova mora biti pozitivna in različna od $1$, sicer potenca $a^x$ ne zavzame vseh pozitivnih vrednosti natanko enkrat. Logaritmand mora biti **pozitiven**, ker je $a^x > 0$ za vsak $x$. Izrazi $\log_2 0$, $\log_2 (-4)$ in $\log_1 5$ niso definirani. Logaritem sam pa je lahko negativen, nič ali pozitiven.
+**2. Pogoji.** Osnova mora biti pozitivna in različna od $1$. Pri $a \le 0$ potenca $a^x$ ni realno število za vse realne $x$ (na primer $(-4)^{\frac{1}{2}} = \sqrt{-4}$), pri $a = 1$ pa je $1^x = 1$ za vsak $x$, zato $1^x = 5$ nima rešitve. Logaritmand mora biti **pozitiven**, ker je $a^x > 0$ za vsak $x$. Izrazi $\log_2 0$, $\log_2 (-4)$ in $\log_1 5$ niso definirani. Logaritem sam pa je lahko negativen, nič ali pozitiven.
 
 **3. Posebni vrednosti in osnovni zvezi.** Iz definicije neposredno sledi:
 
@@ -27,28 +31,48 @@ Zadnji dve zvezi povesta, da potenciranje z osnovo $a$ in logaritmiranje z osnov
 
 **4. Posebni osnovi.** Logaritem z osnovo $10$ imenujemo **desetiški logaritem** in ga pišemo brez osnove: $\log b = \log_{10} b$. Velja $\log 1000 = 3$, $\log 1 = 0$, $\log 0{,}01 = -2$. Logaritem z osnovo $\mathrm{e} \approx 2{,}718$ je **naravni logaritem**, pišemo $\ln b = \log_{\mathrm{e}} b$. Za ti dve osnovi ima vsako žepno računalo tipki »log« in »ln«.
 
-**5. Pravila za računanje.** Za $a > 0$, $a \ne 1$, $x, y > 0$ in realno število $n$ velja:
+:::premisli
+Brez računala napovej: je $\log_2 5$ bliže $2$ ali $3$?
+---
+Bliže $2$. Na sredini med $2$ in $3$ bi bila potenca $2^{2{,}5} = \sqrt{32} \approx 5{,}66$, kar je že več od $5$. Zato je $\log_2 5 < 2{,}5$.
+:::
 
-| Pravilo | Z besedami | Primer |
-|---|---|---|
-| $\log_a (x \cdot y) = \log_a x + \log_a y$ | logaritem produkta je vsota logaritmov | $\log_2 (4 \cdot 8) = 2 + 3 = 5$ |
-| $\log_a \dfrac{x}{y} = \log_a x - \log_a y$ | logaritem kvocienta je razlika logaritmov | $\log 50 - \log 5 = \log 10 = 1$ |
-| $\log_a x^n = n \cdot \log_a x$ | eksponent gre pred logaritem | $\log_3 9^5 = 5 \cdot 2 = 10$ |
-| $\log_a \sqrt[n]{x} = \dfrac{1}{n} \log_a x$ | posebni primer prejšnjega | $\log_2 \sqrt{8} = \dfrac{3}{2}$ |
+**5. Pravila za računanje: postavi jih ob pravila za potence.** Logaritem je eksponent, zato vsako pravilo za potence z isto osnovo da pravilo za logaritme. Za $a > 0$, $a \ne 1$, $x, y > 0$ in realno število $n$ (pri korenu je $n$ naravno, $n \ge 2$):
 
-Pravila so »prevod« pravil za potence: pri množenju potenc se eksponenti seštejejo, pri deljenju odštejejo, pri potenciranju pomnožijo. Logaritem je eksponent, zato se logaritmi obnašajo enako. Dokaz prvega pravila: označimo $u = \log_a x$ in $v = \log_a y$, torej $x = a^u$, $y = a^v$. Potem je $x \cdot y = a^{u+v}$ in po definiciji $\log_a (xy) = u + v$.
+| potence (že znaš) | logaritmi (novo) |
+|---|---|
+| $a^u \cdot a^v = a^{u+v}$ | $\log_a (xy) = \log_a x + \log_a y$ |
+| $\dfrac{a^u}{a^v} = a^{u-v}$ | $\log_a \dfrac{x}{y} = \log_a x - \log_a y$ |
+| $\left(a^u\right)^n = a^{nu}$ | $\log_a x^n = n \cdot \log_a x$ |
+| $\sqrt[n]{a^u} = a^{\frac{u}{n}}$ | $\log_a \sqrt[n]{x} = \dfrac{1}{n} \log_a x$ |
+
+Primeri po vrsti: $\log_2 (4 \cdot 8) = 2 + 3 = 5$, $\;\log 50 - \log 5 = \log 10 = 1$, $\;\log_3 9^5 = 5 \cdot 2 = 10$, $\;\log_2 \sqrt{8} = \dfrac{3}{2}$.
+
+Primerjaj stolpca. Pri potencah eksponenta $u$ in $v$ vidiš, ker stojita desno zgoraj ob osnovi. Pri logaritmih sta skrita: $u = \log_a x$, $v = \log_a y$. Pravilo je isto, le vsaka računska operacija se pri logaritmih spusti za stopnjo nižje. Množenje števil postane seštevanje logaritmov, deljenje odštevanje, potenciranje pa množenje z eksponentom.
+
+Dokaz prvega pravila: označimo $u = \log_a x$ in $v = \log_a y$, torej $x = a^u$, $y = a^v$. Potem je $x \cdot y = a^{u+v}$ in po definiciji $\log_a (xy) = u + v$.
 
 Pravila uporabljamo v obe smeri: izraz **razčlenimo** (logaritem produkta zapišemo kot vsoto) ali **združimo** (vsoto logaritmov zapišemo kot en logaritem).
+
+:::premisli
+Zakaj za $\log_a (x + y)$ ni pravila? Namig: znaš vsoto $a^u + a^v$ zapisati kot eno potenco?
+---
+Ne znaš: $2^1 + 2^3 = 10$, eksponenta za $10$ ($\log_2 10 \approx 3{,}32$) pa iz $1$ in $3$ ne dobiš s preprostim računom. Ker za vsoto potenc ni pravila, ga ni niti za logaritem vsote. Na primer $\log 20 \approx 1{,}30$, $\log 10 + \log 10 = 2$.
+:::
 
 **6. Prehod na novo osnovo.** Logaritem z osnovo $a$ lahko izrazimo z logaritmi s katerokoli drugo osnovo $c$ ($c > 0$, $c \ne 1$):
 
 $$\log_a b = \frac{\log_c b}{\log_c a}.$$
 
-Izpeljava: naj bo $x = \log_a b$, torej $a^x = b$. Obe strani logaritmiramo z osnovo $c$ in uporabimo pravilo za potenco: $x \cdot \log_c a = \log_c b$. Delimo z $\log_c a$ (ki ni $0$, ker je $a \ne 1$) in dobimo formulo. V praksi najpogosteje vzamemo $c = 10$ ali $c = \mathrm{e}$:
+Izpeljava: naj bo $x = \log_a b$, torej $a^x = b$. Obe strani logaritmiramo z osnovo $c$ in uporabimo pravilo za potenco: $x \cdot \log_c a = \log_c b$. Delimo z $\log_c a$ (ki ni $0$, ker je $a \ne 1$) in dobimo formulo.
+
+Primerjaj z eksponentnimi enačbami: tam smo obe strani zapisali z **isto osnovo**. Tu pa logaritem z neugodno osnovo zamenjamo s kvocientom dveh logaritmov z **osnovo, ki jo izberemo sami**. Najpogosteje vzamemo $c = 10$ ali $c = \mathrm{e}$:
 
 $$\log_a b = \frac{\log b}{\log a} = \frac{\ln b}{\ln a}.$$
 
-Tako izračunamo tudi število z začetka: $\log_2 5 = \dfrac{\log 5}{\log 2} \approx \dfrac{0{,}69897}{0{,}30103} \approx 2{,}3219$. Preizkus: $2^{2{,}3219} \approx 5{,}000$. Posledica formule je še zveza $\log_a b \cdot \log_b a = 1$, na primer $\log_2 8 \cdot \log_8 2 = 3 \cdot \dfrac{1}{3} = 1$.
+Tako izračunamo tudi število z začetka: $\log_2 5 = \dfrac{\log 5}{\log 2} \approx \dfrac{0{,}69897}{0{,}30103} \approx 2{,}3219$. Preizkus: $2^{2{,}3219} \approx 5{,}000$. Alge torej pokrijejo $5\,\text{m}^2$ po približno $2{,}32$ tedna, to je po približno $16$ dneh. Rešitev torej obstaja, z računalom pa jo izračunaš na nekaj decimalk natančno.
+
+Posledica formule je še zveza $\log_a b \cdot \log_b a = 1$, na primer $\log_2 8 \cdot \log_8 2 = 3 \cdot \dfrac{1}{3} = 1$.
 
 ## Rešeni primeri
 
@@ -112,6 +136,29 @@ $\log (xy) = \log x + \log y$, $\;\log x^n = n \log x$, $\;\log_a b = \dfrac{\lo
 6. Smiselnost: $6^1 = 6$ in $6^2 = 36$, število $24$ leži vmes, zato mora biti $\log_6 24$ med $1$ in $2$. Ujema se.
 7. Odgovor: $\log 72 \approx 1{,}857$ in $\log_6 24 \approx 1{,}774$.
 
+### Primer 4 – zdaj ti: tlak v ozračju
+
+Zračni tlak z višino pada: na vsak kilometer višine se zmanjša na približno $88\,\%$ prejšnje vrednosti. Pri tleh je $1013\,\text{hPa}$, zato je na višini $h$ (v km) tlak približno $p = 1013 \cdot 0{,}88^h$ hektopaskalov. Vremenoslovci rišejo posebne karte za plast s tlakom $500\,\text{hPa}$. Na kateri višini je ta plast?
+
+**Podatki:** tlak pri tleh $p_0 = 1013\,\text{hPa}$, faktor $0{,}88$ na kilometer, iskani tlak $p = 500\,\text{hPa}$
+**Iščemo:** višino $h$ v kilometrih
+
+:::formula
+$p = p_0 \cdot 0{,}88^h$; $\;a^x = b \iff x = \log_a b$; $\;\log_a b = \dfrac{\log b}{\log a}$
+:::
+
+**Rešitev:**
+
+1. Enačba: $1013 \cdot 0{,}88^h = 500$. Delimo s $1013$: $0{,}88^h = \dfrac{500}{1013} \approx 0{,}4936$.
+2. Po definiciji je $h = \log_{0{,}88} 0{,}4936$. Take tipke ni, zato preidemo na desetiški logaritem: $h = \dfrac{\log 0{,}4936}{\log 0{,}88}$.
+3. Zdaj ti: izračunaj kvocient na dve decimalki in preveri smiselnost.
+
+:::premisli
+Na kateri višini je plast s tlakom $500\,\text{hPa}$?
+---
+$\log 0{,}4936 \approx -0{,}3066$ in $\log 0{,}88 \approx -0{,}0555$. Oba logaritma sta negativna (logaritmanda sta manjša od $1$), kvocient je pozitiven: $h \approx 5{,}52$. Smiselnost: $0{,}88^5 \approx 0{,}53$ in $0{,}88^6 \approx 0{,}46$, iskani $0{,}4936$ leži vmes, zato je $h$ med $5$ in $6$. Odgovor: plast s tlakom $500\,\text{hPa}$ je na višini približno $5{,}5\,\text{km}$.
+:::
+
 ## Pogoste napake
 
 - **Logaritem vsote.** $\log (x + y) = \log x + \log y$ ne velja. Pravilo za vsoto logaritmov govori o **produktu**: $\log x + \log y = \log (xy)$. Preizkus: $\log (10 + 10) = \log 20 \approx 1{,}30$, $\log 10 + \log 10 = 2$. Za logaritem vsote ni posebnega pravila.
@@ -134,19 +181,26 @@ $\log (xy) = \log x + \log y$, $\;\log x^n = n \log x$, $\;\log_a b = \dfrac{\lo
 
 Nariši tabelo potenc števila $2$ in jo beri v obe smeri:
 
-| eksponent $x$ | $-2$ | $-1$ | $0$ | $1$ | $2$ | $3$ | $4$ | $5$ |
-|---|---|---|---|---|---|---|---|---|
-| potenca $2^x$ | $\frac{1}{4}$ | $\frac{1}{2}$ | $1$ | $2$ | $4$ | $8$ | $16$ | $32$ |
+| eksponent $x$ | potenca $2^x$ |
+|---|---|
+| $-2$ | $\frac{1}{4}$ |
+| $-1$ | $\frac{1}{2}$ |
+| $0$ | $1$ |
+| $1$ | $2$ |
+| $2$ | $4$ |
+| $3$ | $8$ |
+| $4$ | $16$ |
+| $5$ | $32$ |
 
-Če bereš od zgoraj navzdol, potenciraš. Če bereš od spodaj navzgor, logaritmiraš: nad $16$ piše eksponent $4$, zato je $\log_2 16 = 4$. Število $5$ v spodnji vrstici manjka, leži med $4$ in $8$, zato je $\log_2 5$ med $2$ in $3$.
+Če bereš od leve proti desni, potenciraš. Če bereš od desne proti levi, logaritmiraš: levo od $16$ piše eksponent $4$, zato je $\log_2 16 = 4$. Število $5$ v desnem stolpcu manjka, leži med $4$ in $8$, zato je $\log_2 5$ med $2$ in $3$.
 
 Enako lahko narediš na grafu funkcije $y = 2^x$: namesto da od osi $x$ greš navpično do krivulje, greš z osi $y$ (pri višini $5$) vodoravno do krivulje in nato navpično navzdol na os $x$. Prebrana abscisa, približno $2{,}32$, je $\log_2 5$. Če graf prezrcališ čez simetralo lihih kvadrantov $y = x$, dobiš krivuljo, s katere logaritme bereš kar navpično. To pokaže interaktivna simulacija spodaj (»Logaritem kot obratna funkcija«).
 
 ## Drugače: Iz vsakdanjega življenja
 
-**Kislost (pH).** Kemiki kislost raztopine opišejo s številom $\mathrm{pH} = -\log c$, kjer je $c$ množinska koncentracija oksonijevih ionov $\mathrm{H_3O^+}$ v $\text{mol/L}$. Pri $c = 0{,}001\,\text{mol/L} = 10^{-3}\,\text{mol/L}$ je $\mathrm{pH} = -(-3) = 3$, kar je približno kislost kisa. Čista voda ima $c = 10^{-7}\,\text{mol/L}$ in $\mathrm{pH} = 7$. Ker je lestvica logaritemska, je raztopina s $\mathrm{pH} = 3$ **desetkrat** bolj kisla od raztopine s $\mathrm{pH} = 4$, ne le malo bolj.
+**Kislost (pH).** Kemiki kislost raztopine opišejo s številom $\mathrm{pH} = -\log c$, kjer je $c$ množinska koncentracija oksonijevih ionov $\mathrm{H_3O^+}$ v $\text{mol/L}$. Pri $c = 0{,}001\,\text{mol/L} = 10^{-3}\,\text{mol/L}$ je $\mathrm{pH} = -(-3) = 3$, podobno kot pri kisu. Čista voda ima $c = 10^{-7}\,\text{mol/L}$ in $\mathrm{pH} = 7$. Nekoliko kisel je že čist dež ($\mathrm{pH} \approx 5{,}6$), kisli dež pa ima pH še nižji. Ker je lestvica logaritemska, je raztopina s $\mathrm{pH} = 3$ **desetkrat** bolj kisla od raztopine s $\mathrm{pH} = 4$, ne le malo bolj.
 
-**Decibeli.** Glasnost zvoka v decibelih izračunamo po $L = 10 \log \dfrac{I}{I_0}$, kjer je $I$ jakost zvoka, $I_0$ pa jakost na pragu slišnosti. Če jakost podvojiš (na primer dva enaka zvočnika namesto enega), se glasnost poveča za $10 \log 2 \approx 3\,\text{dB}$, ne za dvakrat. Tu deluje pravilo za logaritem produkta: $\log (2 \cdot I) = \log 2 + \log I$.
+**Decibeli.** Glasnost zvoka v decibelih izračunamo po $L = 10 \log \dfrac{I}{I_0}$, kjer je $I$ jakost zvoka, $I_0$ pa jakost na pragu slišnosti. Če jakost podvojiš (na primer dva enaka zvočnika namesto enega), se glasnost poveča za $10 \log 2 \approx 3\,\text{dB}$, ne za dvakrat. Tu deluje pravilo za logaritem produkta: $\log \dfrac{2I}{I_0} = \log 2 + \log \dfrac{I}{I_0}$.
 
 Logaritme uporabljamo povsod, kjer se količine razlikujejo za veliko velikostnih redov, saj jih stisnejo na pregledno lestvico.
 
@@ -176,40 +230,66 @@ Logaritme uporabljamo povsod, kjer se količine razlikujejo za veliko velikostni
 
 ## Preveri se
 
-? Koliko je $\log_3 81$?
-- $27$
-+ $4$
-- $3$
-- $\dfrac{1}{4}$
-> $3^4 = 81$, zato je $\log_3 81 = 4$. Logaritem je eksponent, ne kvocient.
+? Katera trditev je pravilna za vse $x, y > 0$?
+- $\log (x + y) = \log x + \log y$
+~ Pravilo za vsoto logaritmov govori o produktu. Za logaritem vsote pravila ni: $\log 20 \approx 1{,}30$, $\log 10 + \log 10 = 2$.
++ $\log (xy) = \log x + \log y$
+- $\dfrac{\log x}{\log y} = \log \dfrac{x}{y}$
+~ Kvocient logaritmov je po prehodu na novo osnovo $\log_y x$, ne logaritem kvocienta: $\dfrac{\log 100}{\log 10} = 2$, $\log 10 = 1$.
+- $(\log x)^2 = 2\log x$
+~ Eksponent smeš prestaviti pred logaritem le, če je na logaritmandu: $\log x^2 = 2\log x$. Za $x = 1000$ je $(\log x)^2 = 9$, $2\log x = 6$.
+> Logaritem produkta je vsota logaritmov, ker se pri množenju potenc z isto osnovo eksponenta seštejeta.
 
 ? Koliko je $\log_2 12 - \log_2 3$?
 - $\log_2 9$
+~ Razlika logaritmov ni logaritem razlike $12 - 3$, ampak logaritem kvocienta.
 + $2$
 - $4$
+~ $\dfrac{12}{3} = 4$ je logaritmand. Treba je še logaritmirati: $\log_2 4 = 2$.
 - $\log_2 36$
+~ Logaritmanda si zmnožil; to velja za vsoto logaritmov, ne za razliko.
 > Razlika logaritmov je logaritem kvocienta: $\log_2 \dfrac{12}{3} = \log_2 4 = 2$.
 
-? Kateri izraz je enak $\log_5 7$?
-+ $\dfrac{\log 7}{\log 5}$
-- $\dfrac{\log 5}{\log 7}$
-- $\log 7 - \log 5$
-- $\log \dfrac{7}{5}$
-> Pri prehodu na novo osnovo gre logaritmand v števec, osnova v imenovalec: $\log_5 7 = \dfrac{\log 7}{\log 5} \approx 1{,}209$.
+? Sošolka je računala (napačno): $\log_3 (9 \cdot 27) = \log_3 9 \cdot \log_3 27 = 2 \cdot 3 = 6$. Kje je napaka?
+- $\log_3 27$ ni $3$
+~ Je: $3^3 = 27$. Napaka je že v prvem koraku.
++ logaritem produkta je vsota logaritmov, pravilno $2 + 3 = 5$
+- napake ni, rezultat je $6$
+~ Preveri: $3^6 = 729$, $9 \cdot 27 = 243 = 3^5$. Rezultat $6$ je napačen.
+- napaka je v $2 \cdot 3$, prav je $2^3 = 8$
+~ Logaritmov ne potenciramo med seboj. Težava ni v računanju, ampak v napačnem pravilu.
+> $\log_3 (9 \cdot 27) = \log_3 9 + \log_3 27 = 2 + 3 = 5$; res je $3^5 = 243 = 9 \cdot 27$.
 
-? Koliko je $\log 1000 + \log 0{,}01$?
-+ $1$
-- $5$
-- $-6$
-- $10$
-> $\log 1000 = 3$ in $\log 0{,}01 = -2$, vsota je $1$. Isto dobiš kot $\log (1000 \cdot 0{,}01) = \log 10 = 1$.
+? Primerjaj $\log_2 7$ in $\log_3 7$. Kaj velja?
++ $\log_2 7 > \log_3 7$
+- $\log_2 7 < \log_3 7$
+~ Večja osnova ne pomeni večjega logaritma. Večjo osnovo moraš dvigniti na manjšo potenco, da dobiš isto število.
+- sta enaka, ker je logaritmand isti
+~ Logaritem je odvisen tudi od osnove: $\log_2 4 = 2$, $\log_4 4 = 1$.
+- brez računala ju ni mogoče primerjati
+~ Dovolj je oceniti: $2^2 < 7 < 2^3$ in $3^1 < 7 < 3^2$.
+> $\log_2 7$ je med $2$ in $3$, $\log_3 7$ pa med $1$ in $2$. Prehod na novo osnovo: $\log_2 7 \approx 2{,}807$, $\log_3 7 \approx 1{,}771$.
+
+? Kislost dežja meri $\mathrm{pH} = -\log c$, kjer je $c$ koncentracija oksonijevih ionov. Čist dež ima $\mathrm{pH} = 5{,}6$, kisli dež nad onesnaženim mestom pa $\mathrm{pH} = 4{,}6$. Kolikokrat večja je $c$ v kislem dežju?
+- za $1$ večja, saj se pH razlikuje le za $1$
+~ Lestvica je logaritemska: razlika logaritmov $1$ pomeni kvocient števil $10$, ne razlike $1$.
+- $\dfrac{5{,}6}{4{,}6} \approx 1{,}2$-krat
+~ Deliti ne smeš pH-jev, ker sta logaritma. Kvocient koncentracij dobiš iz razlike logaritmov.
++ $10$-krat
+- $100$-krat
+~ $100$-kratna bi bila pri razliki pH za $2$, ker je $\log 100 = 2$.
+> Naj bo $c_1$ koncentracija v kislem, $c_2$ pa v čistem dežju: $\log c_1 - \log c_2 = -4{,}6 + 5{,}6 = 1$, torej $\log \dfrac{c_1}{c_2} = 1$ in $\dfrac{c_1}{c_2} = 10$.
 
 :::simboli
-a | osnova logaritma | | | a > 0, a ≠ 1
-b | logaritmand | | | b > 0
-x | logaritem števila b (eksponent) | x = \log_a b | | v pravilih poljubno pozitivno število
+a | osnova logaritma | | | $a > 0$, $a \ne 1$
+b | logaritmand | | | $b > 0$
+x | logaritem števila $b$ (eksponent) | x = \log_a b | | v pravilih poljubno pozitivno število
 y | pozitivno število | | |
-c | nova osnova | | | c > 0, c ≠ 1
-n | realno število (eksponent) | | |
+c | nova osnova | | | $c > 0$, $c \ne 1$; pri pH koncentracija $\mathrm{H_3O^+}$ v mol/L
+n | realno število (eksponent) | | | pri korenu naravno, $n \ge 2$
 m | eksponent v potenci | | |
+u, v | eksponenta potenc z osnovo $a$ | u = \log_a x | | 
+p | zračni tlak na višini $h$ | p = p_0 \cdot 0{,}88^h | hPa |
+p_0 | zračni tlak pri tleh | | hPa | $1013\,\mathrm{hPa}$
+h | nadmorska višina | | km |
 :::

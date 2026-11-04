@@ -13,6 +13,7 @@ export const info = {
   predmet: "NAR",
   opis: "Sonce vedno osvetljuje polovico Lune, z Zemlje pa vidimo različno velik del te polovice. Premikaj Luno po tirnici in poglej, kako jo vidimo z Zemlje.",
   merilo: { m: 7.5e7, oznaka: "premer prikaza ≈ 75 000 km (le velikosti teles)" },
+  poskusi: "premikaj »Dan od mlaja« in poišči dan, ko vidimo prvi krajec; kje je takrat Luna glede na Sonce?",
 };
 
 const D = Math.PI / 180;
@@ -788,7 +789,7 @@ export function zgradi(THREE, ctx) {
   ];
 
   const nadzor = [
-    { tip: "drsnik", id: "dan", oznaka: "Dan od mlaja", min: 0, max: 29.5, korak: 0.1, get vrednost() { return Math.round(dan * 10) / 10; }, ob: (v) => { dan = Math.min(29.5, Math.max(0, Number(v) || 0)); zem.rotation.y = (dan % 1) * 2 * Math.PI; postavi(); } },
+    { tip: "drsnik", id: "dan", oznaka: "Dan od mlaja", min: 0, max: 29.5, korak: 0.1, get vrednost() { return Math.round(dan * 10) / 10; }, set vrednost(_) { /* kit zapiše vrednost; stanje nastavi ob() */ }, ob: (v) => { dan = Math.min(29.5, Math.max(0, Number(v) || 0)); zem.rotation.y = (dan % 1) * 2 * Math.PI; postavi(); } },
     { tip: "stikalo", id: "predvajaj", oznaka: "Predvajaj", vrednost: tece, vidno: () => gib, ob: (v) => { tece = !!v; } },
     { tip: "izpis", id: "mena", oznaka: "Lunina mena", vrednost: () => mena(kotE()) },
     { tip: "izpis", id: "dan-cikla", oznaka: "Dan Luninega cikla", vrednost: () => `${dneva(dan)} od mlaja (cikel traja 29,5 dneva)` },

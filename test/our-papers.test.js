@@ -35,8 +35,11 @@ test("validatePaper: pravilna pola, točke po zgradbi, napačen račun, varen SV
 test("zgradbe izvirnih pol: vsota točk, vnos v katalogu RIC", () => {
   for (const [id, s] of Object.entries(PAPER_STRUCTURES)) {
     assert.ok(PAPERS_SI.some((e) => e.id === id), id);
-    assert.equal(s.tasks.flat().reduce((a, b) => a + b, 0), s.points, id);
-    assert.equal(s.topics.length, s.tasks.length, id);
+    const pts = s.tasks.map((t) => (Array.isArray(t) ? t : t.points));
+    const listed = pts.flat().reduce((a, b) => a + b, 0);
+    assert.equal(listed, s.maxListed ?? s.points, id);
+    // opis vsake naloge (stari zapis: topics[i], novi: tasks[i].topic)
+    s.tasks.forEach((t, i) => assert.ok(Array.isArray(t) ? s.topics?.[i] : t.topic, `${id} naloga ${i + 1}: opis`));
   }
 });
 
@@ -65,4 +68,63 @@ test("API: katalog označi naše pole, polo vrne, neznano 404", async () => {
   } finally {
     server.close();
   }
+});
+
+test("pola z dvema izpitnima polama in deli: številčenje po skupinah, ključ dela, zgradba", async () => {
+  const { partKey, partLabel } = await import("../public/our-paper-key.js");
+  const two = {
+    ...paper([
+      { pola: 1, section: "A", n: 1, parts: [part()] },
+      { pola: 1, section: "A", n: 2, parts: [part()] },
+      { pola: 1, section: "B", n: 1, parts: [part()] },
+      { pola: 2, n: 1, parts: [part()] },
+    ]),
+    id: "MATURA-MAT-OR-2026-spomladanski",
+    polas: [{ pola: 1, minutes: 90 }, { pola: 2, minutes: 90 }],
+  };
+  const exp = { points: 4, tasks: [{ pola: 1, section: "A", n: 1, points: [1] }, { pola: 1, section: "A", n: 2, points: [1] }, { pola: 1, section: "B", n: 1, points: [1] }, { pola: 2, n: 1, points: [1] }] };
+  assert.deepEqual(validatePaper(two, exp).errors, []);
+  assert.equal(partKey(two.tasks[2], two.tasks[2].parts[0]), "1-B1a");
+  assert.equal(partLabel(two.tasks[2], two.tasks[2].parts[0]), "B1a");
+  assert.equal(partKey({ n: 3 }, { id: "" }), "3");
+  const bad = structuredClone(two);
+  bad.tasks[1].n = 3;
+  bad.tasks[3].pola = 3;
+  const e = validatePaper(bad, exp).errors.join("\n");
+  assert.match(e, /n mora biti 2/);
+  assert.match(e, /pola 3 ni v polas/);
+  assert.match(e, /se ne ujema z zgradbo/);
+});
+
+test("pola z več polami: vsaka naloga ima polo, skupine strnjene, <use> samo z notranjo povezavo", () => {
+  const two = (tasks) => ({ ...paper(tasks), id: "MATURA-MAT-OR-2026-spomladanski", polas: [{ pola: 1 }, { pola: 2 }] });
+  const errs = (p) => validatePaper(p).errors.join("\n");
+  assert.match(errs(two([{ pola: 1, n: 1, parts: [part()] }, { n: 2, parts: [part()] }])), /pola manjka/);
+  assert.match(errs(two([{ pola: 1, section: "A", n: 1, parts: [part()] }, { pola: 1, section: "B", n: 1, parts: [part()] }, { pola: 1, section: "A", n: 2, parts: [part()] }])), /niso skupaj/);
+  assert.equal(errs(two([{ pola: 1, section: "A", n: 1, parts: [part()] }, { pola: 1, section: "B", n: 1, parts: [part()] }, { pola: 2, section: "A", n: 1, parts: [part()] }])), "");
+  const fig = (f) => errs(paper([{ n: 1, figure: f, parts: [part()] }]));
+  assert.equal(fig('<svg><defs><circle id="o" r="2"/></defs><use href="#o" x="1"/><use href = "#o"/><use xlink:href="#o"/></svg>'), "");
+  for (const bad of ['<svg><use href="x.svg#o"/></svg>', "<svg><use href=//e/x#o /></svg>", '<svg><use href="#o" xlink:href="https://e/x#o"/></svg>', '<svg><use href="&#x23;o"/></svg>', "<svg><use href=\"data:image/svg+xml,<svg id='o'/>#o\"/></svg>"])
+    assert.match(fig(bad), /varen <svg>/, bad);
+});
+
+test("izbirne naloge: maxPoints je največ točk izpita; slike brez zunanjih url()", () => {
+  const p = paper([{ n: 1, parts: [part()] }, { n: 2, parts: [part()] }, { n: 3, parts: [part()] }]);
+  const exp = { points: 2, maxListed: 3, tasks: [[1], [1], [1]] };
+  assert.match(validatePaper(p, exp).errors.join("\n"), /maxPoints mora biti 2/);
+  assert.deepEqual(validatePaper({ ...p, maxPoints: 2 }, exp).errors, []);
+  assert.match(validatePaper({ ...p, maxPoints: 4 }).errors.join("\n"), /maxPoints 4/);
+  const fig = (f) => validatePaper(paper([{ n: 1, figure: f, parts: [part()] }])).errors.join("\n");
+  assert.equal(fig('<svg><defs><marker id="m"/></defs><path marker-end="url(#m)" d="M0 0L1 1"/></svg>'), "");
+  assert.match(fig('<svg><rect fill="url(https://e/x.svg#g)"/></svg>'), /varen <svg>/);
+  assert.match(fig("<svg><rect style=\"fill:url( 'https://e/x' )\"/></svg>"), /varen <svg>/);
+});
+
+test("izbire brez lastnih črk (pregledovalnik jih označi sam)", () => {
+  const c = (choices) => validatePaper(paper([{ n: 1, parts: [part({ format: "choice", choices, correct: [0] })] }])).errors.join("\n");
+  assert.match(c(["A: $1$", "B: $2$"]), /izbire se začnejo s črkami/);
+  assert.match(c(["**A)** $2$", "**B)** $3$"]), /izbire se začnejo s črkami/);
+  assert.equal(c(["$1$", "Ana ima prav."]), "");
+  assert.equal(c(["I. kvadrant", "II. kvadrant", "C. je središče"]), "");
+  assert.equal(c(Array.from({ length: 30 }, (_, i) => `$${i}$`)), ""); // več kot 26 izbir ne sme vreči
 });

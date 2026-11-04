@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Luknje v premici
+  - $\sqrt{2}$ in $\pi$ nista ulomka
+  - $\mathbb{R} = \mathbb{Q} \cup \mathbb{I}$
+  - zapis neskončen in neperiodičen
+- Absolutna vrednost
+  - razdalja od $0$, nikoli negativna
+  - $|x| = -x$ za $x < 0$
+  - napaka: $|2 - 5| = 2 + 5$
+- Razdalja točk
+  - $|AB| = |b - a|$
+  - $|3 - (-4)| = 7$
+- Intervali
+  - $[a, b]$ vsebuje vsa realna števila vmes
+  - oglat oklepaj: krajišče vključeno
+  - ob $\infty$ vedno okrogel oklepaj
+- Brez največjega elementa
+  - $t < 38$: največjega $t$ ni
+  - $\dfrac{t + 38}{2}$ je še bližje $38$
+- Presek in unija
+  - $[1, 5] \cap (3, 8) = (3, 5]$
+  - nariši na isto premico
+- Odmik od središča
+  - $|x - c| \le r$: interval $[c - r,\, c + r]$
+  - $|x - c| > r$: dva kosa zunaj
+  - utrip: $|x - 80| \le 20$

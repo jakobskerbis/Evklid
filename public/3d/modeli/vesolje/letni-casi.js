@@ -18,6 +18,7 @@ export const info = {
   predmet: "NAR",
   opis: "Zemlja kroži okoli Sonca z nagnjeno osjo, ki ves čas kaže proti Severnici. Izberi dan v letu in poglej, kako visoko je opoldne Sonce v Ljubljani in kako dolg je dan.",
   merilo: { m: 2.992e11, oznaka: "premer Zemljine tirnice ≈ 300 milijonov km" },
+  poskusi: "premakni »Dan v letu« na 21. junij in na 21. december ter primerjaj opoldansko višino Sonca in dolžino dneva v Ljubljani.",
 };
 
 const D = Math.PI / 180;
@@ -798,7 +799,7 @@ export function zgradi(THREE, ctx) {
     { tip: "drsnik", id: "dan", oznaka: "Dan v letu", min: 1, max: 365, korak: 1, vrednost: dan, ob: (v) => { dan = Math.min(365, Math.max(1, Math.round(Number(v) || 1))); osvezi(); } },
     { tip: "izpis", id: "datum", oznaka: "Datum", vrednost: () => `${dolgo(dan)} ${LETO} (${dan}. dan v letu)` },
     { tip: "stikalo", id: "vrti", oznaka: "Zemlja se vrti", vrednost: vrti, vidno: () => gib, ob: (v) => { vrti = !!v; osvezi(); } },
-    { tip: "drsnik", id: "ura", oznaka: "Sončni čas v Ljubljani", min: 0, max: 24, korak: 0.25, get vrednost() { return Math.round(ure * 4) / 4; }, vidno: () => !vrti || !gib, ob: (v) => { ure = Math.min(24, Math.max(0, Number(v) || 0)); osvezi(); } },
+    { tip: "drsnik", id: "ura", oznaka: "Sončni čas v Ljubljani", min: 0, max: 24, korak: 0.25, get vrednost() { return Math.round(ure * 4) / 4; }, set vrednost(_) { /* kit zapiše vrednost; stanje nastavi ob() */ }, vidno: () => !vrti || !gib, ob: (v) => { ure = Math.min(24, Math.max(0, Number(v) || 0)); osvezi(); } },
     { tip: "izpis", id: "cas", oznaka: "Ura v Ljubljani (sončni čas)", vrednost: () => ura(ure) + (Math.abs(ure - 12) < 0.13 ? " – poldne" : "") },
     { tip: "izpis", id: "letni-cas", oznaka: "Letni čas na severni polobli", vrednost: () => {
       let k = 3;
