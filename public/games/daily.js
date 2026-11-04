@@ -60,7 +60,7 @@ function seq(level, rnd) {
   if (level === "easy") {
     const a = R(rnd, 2, 20), d = R(rnd, 3, 12);
     const t = [0, 1, 2, 3, 4].map((i) => a + i * d);
-    return mk(t, a + 5 * d, [H("dz.h.diffs1"), H("dz.h.rule", { rule: `aₙ₊₁ = aₙ + ${n_(d)}` })], [`${n_(t[1])} ${MINUS} ${n_(t[0])} = ${n_(d)}`, `${n_(t[2])} ${MINUS} ${n_(t[1])} = ${n_(d)}`, `${n_(t[4])} + ${n_(d)} = ${n_(a + 5 * d)}`]);
+    return mk(t, a + 5 * d, [H("dz.h.diffs1"), H("dz.h.rule", { rule: `+ ${n_(d)}` })], [`${n_(t[1])} ${MINUS} ${n_(t[0])} = ${n_(d)}`, `${n_(t[2])} ${MINUS} ${n_(t[1])} = ${n_(d)}`, `${n_(t[4])} + ${n_(d)} = ${n_(a + 5 * d)}`]);
   }
   if (level === "medium") {
     if (v < 0.5) {
@@ -73,7 +73,7 @@ function seq(level, rnd) {
     }
     const a = R(rnd, 2, 7), r = R(rnd, 2, 3);
     const t = [0, 1, 2, 3, 4].map((i) => a * r ** i);
-    return mk(t, a * r ** 5, [H("dz.h.ratio1"), H("dz.h.rule", { rule: `aₙ₊₁ = ${n_(r)} · aₙ` })], [`${n_(t[1])} : ${n_(t[0])} = ${n_(r)}`, `${n_(t[2])} : ${n_(t[1])} = ${n_(r)}`, `${n_(t[4])} · ${n_(r)} = ${n_(a * r ** 5)}`]);
+    return mk(t, a * r ** 5, [H("dz.h.ratio1"), H("dz.h.rule", { rule: `· ${n_(r)}` })], [`${n_(t[1])} : ${n_(t[0])} = ${n_(r)}`, `${n_(t[2])} : ${n_(t[1])} = ${n_(r)}`, `${n_(t[4])} · ${n_(r)} = ${n_(a * r ** 5)}`]);
   }
   if (v < 0.5) {
     // vsak člen iz dveh prejšnjih
@@ -159,7 +159,7 @@ function box(level, rnd) {
     const x = R(rnd, -9, 15) || 7, a = R(rnd, 1, 9), b = m * (x - a) - k * x;
     const right = b ? `${n_(k)} · □ ${pm(b)}` : `${n_(k)} · □`;
     const rx = b ? `${cx(k)} ${pm(b)}` : cx(k);
-    return mk(`${n_(m)} · (□ ${MINUS} ${n_(a)}) = ${right}`, x, [H("dz.h.collect"), H("dz.h.eq", { eq: `${cx(m)} ${MINUS} ${n_(m * a)} = ${rx}` })], [`${cx(m)} ${MINUS} ${n_(m * a)} = ${rx}`, `${cx(m - k)} = ${n_(b + m * a)}`, Math.abs(m - k) === 1 ? `x = ${n_(x)}` : `x = ${n_(b + m * a)} : ${m - k < 0 ? `(${n_(m - k)})` : n_(m - k)} = ${n_(x)}`]);
+    return mk(`${n_(m)} · (□ ${MINUS} ${n_(a)}) = ${right}`, x, [H("dz.h.collect"), H("dz.h.eq", { eq: `${cx(m)} ${MINUS} ${n_(m * a)} = ${rx}` })], ["□ = x", `${cx(m)} ${MINUS} ${n_(m * a)} = ${rx}`, `${cx(m - k)} = ${n_(b + m * a)}`, Math.abs(m - k) === 1 ? `x = ${n_(x)}` : `x = ${n_(b + m * a)} : ${m - k < 0 ? `(${n_(m - k)})` : n_(m - k)} = ${n_(x)}`]);
   }
   // ostanek potence: ostanki se ponavljajo v krogu
   // a ≡ 0, 1 ali −1 (mod m) da prazen ali dolgočasen krog (vedno 0, vedno 1, izmenično): taka a izpusti

@@ -1811,7 +1811,7 @@
   "dz.x.div": "Si n = pᵃ · qᵇ · …, n tiene (a + 1)(b + 1)… divisores: cada factor primo se toma de 0 a a veces.",
   "dz.q.seq": "¿Cuál es el siguiente término de la sucesión?",
   "dz.q.think": "Pienso un número. {m} veces ese número, aumentado en {a}, es {r}. ¿Qué número pienso?",
-  "dz.q.think2": "Pienso un número. Si le resto {a} y tomo la diferencia {m} veces, obtengo {k} veces mi número. ¿Qué número pienso?",
+  "dz.q.think2": "Pienso un número. Si le resto {a} y multiplico la diferencia por {m}, obtengo {k} veces mi número. ¿Qué número pienso?",
   "dz.q.sumsq": "La suma de dos números es {s} y su producto es {p}. ¿Cuánto vale la suma de sus cuadrados?",
   "dz.q.pyr": "Cada ladrillo es la suma de los dos ladrillos de abajo. ¿Qué número va en el lugar de «?»?",
   "dz.q.box": "¿Qué número va en la casilla?",

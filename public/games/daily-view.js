@@ -9,6 +9,9 @@ import { LEVELS, MAX_HINTS, HINT_MS, WRONG_MS, puzzleFor, checkAnswer, timeText,
 const LEVEL_KEY = "evklid.dailyLevel";
 const MINUS = "−";
 const sec = (ms) => Math.round(ms / 1000);
+// Račun ali seznam v stavku ostane LTR tudi v arabščini (LRI … PDI), sicer se »12 + 7 = 19« ali »−12« obrne.
+const iso = (v) => (typeof v === "string" && /\D/.test(v) ? `\u2066${v}\u2069` : v);
+const isoVars = (o) => Object.fromEntries(Object.entries(o || {}).map(([k, v]) => [k, iso(v)]));
 
 export function savedLevel() {
   try {
@@ -140,8 +143,9 @@ export function openDaily(root, ctx) {
       .join("")}</div>`;
   }
 
-  const tx = (h) => esc(t(h.key, h.vars));
-  const stepHtml = (s) => (typeof s === "string" ? `<li class="gm-dz-math" dir="ltr">${esc(s)}</li>` : `<li>${tx(s)}</li>`);
+  const tx = (h) => esc(t(h.key, isoVars(h.vars)));
+  // Številka koraka ostane na strani jezika (v arabščini desno), račun sam je LTR.
+  const stepHtml = (s) => (typeof s === "string" ? `<li class="gm-dz-math"><span dir="ltr">${esc(s)}</span></li>` : `<li>${tx(s)}</li>`);
   const ans = () => String(p.answer).replace("-", MINUS);
 
   function boardHtml(b) {
@@ -163,7 +167,7 @@ export function openDaily(root, ctx) {
       const pen = (r.hints || 0) * HINT_MS + (r.wrong || 0) * WRONG_MS;
       const streak = info.streak?.days || 0;
       body = `<div class="card gm-dz-res ${r.solved ? "ok" : "no"}">
-          <div class="gm-dz-big">${r.solved ? icon("trophy") : icon("flag")}<span>${esc(r.solved ? t("dz.solved") : t("dz.gaveUp", { a: ans() }))}</span></div>
+          <div class="gm-dz-big">${r.solved ? icon("trophy") : icon("flag")}<span>${esc(r.solved ? t("dz.solved") : t("dz.gaveUp", { a: iso(ans()) }))}</span></div>
           ${r.solved ? `<p class="gm-dz-time"><span>${esc(t("dz.time"))}</span> <b dir="ltr">${esc(timeText(r.total))}</b>${pen ? ` <small dir="ltr">(${esc(timeText(r.time))}, ${esc(t("dz.penalty", { s: sec(pen) }))})</small>` : ""}</p>` : ""}
           ${r.solved && r.board?.rank ? `<p class="gm-dz-place">${esc(t("dz.place", { rank: r.board.rank, n: r.board.solvers }))}</p>` : ""}
           ${streak ? `<p class="gm-dz-streak">${icon("flame")}${esc(t("dz.streak", { n: streak }))}</p>` : ""}
@@ -173,7 +177,7 @@ export function openDaily(root, ctx) {
           <p class="gm-dz-q">${tx(p.q)}</p>${showHtml()}
           <p>${esc(t(`dz.x.${p.x}`))}</p>
           <ol class="gm-dz-steps">${p.steps.map(stepHtml).join("")}</ol>
-          <p class="gm-dz-ans"><b>${esc(t("dz.gaveUp", { a: ans() }))}</b></p>
+          <p class="gm-dz-ans"><b>${esc(t("dz.gaveUp", { a: iso(ans()) }))}</b></p>
         </div>
         <div class="card gm-dz-lb"><h2>${icon("trophy")} ${esc(t("dz.board"))}</h2>${boardHtml(r.board)}</div>`;
     } else if (!st?.started) {
@@ -197,10 +201,18 @@ export function openDaily(root, ctx) {
             <button type="button" class="secondary" data-act="hint" ${used >= MAX_HINTS ? "disabled" : ""}>${icon("lightbulb")}${esc(t("dz.hintBtn", { s: sec(HINT_MS) }))}</button>
             <button type="button" class="ghost" data-act="giveup">${icon("flag")}${esc(sure ? t("dz.giveUpSure") : t("dz.giveUp"))}</button>
           </div>
-          <div class="gm-ui gm-dz-pad"><div class="gm-pad">${pad()}</div></div>
+          <div class="gm-ui gm-dz-pad"><div class="gm-pad" dir="ltr">${pad()}</div></div>
         </div>`;
     }
+    // Kdor uporablja tipkovnico (Tab), po izrisu ostane na istem gumbu (tipka, Namig, stopnja), ne skoči na vrh.
+    // Po kliku z miško ali dotiku ne: takrat mora Enter s tipkovnice potrditi odgovor.
+    const f = document.activeElement;
+    const keep = f && root.contains(f) && f.matches(":focus-visible") ? ["k", "act", "lv"].map((a) => (f.dataset?.[a] ? `[data-${a}="${CSS.escape(f.dataset[a])}"]` : "")).find(Boolean) : "";
     root.innerHTML = `<div class="gm-dz">${head}${body}</div>`;
+    if (keep) {
+      const el = root.querySelector(keep);
+      (el && !el.disabled ? el : root.querySelector(".gm-dz-pad .gm-key"))?.focus({ preventScroll: true }); // zadnji namig: gumb je onemogočen
+    }
   }
 
   // Številčnica kot v igri »Računanje na pamet« (produce.js): števke, minus, brisanje, potrditev.
@@ -252,7 +264,7 @@ export function openDaily(root, ctx) {
       if (!r.correct) {
         st.wrong = r.wrong;
         buf = "";
-        msg = t("dz.wrong", { a: shown, s: sec(WRONG_MS) });
+        msg = t("dz.wrong", { a: iso(shown), s: sec(WRONG_MS) });
         return render();
       }
       stopClock();
@@ -317,6 +329,8 @@ export function openDaily(root, ctx) {
     if (/^\d$/.test(e.key) || ["-", "Backspace"].includes(e.key) || (e.key === "Enter" && !e.target.closest?.("button"))) {
       if (!st?.started || st.done || result) return;
       e.preventDefault();
+      // Kdor tipka števke, ne ostane na gumbu (tipka, Namig): sicer bi Enter pritisnil gumb namesto potrditve.
+      if (e.key !== "Enter" && e.target.closest?.("button") && root.contains(e.target)) e.target.blur();
       type(e.key);
     }
   }
