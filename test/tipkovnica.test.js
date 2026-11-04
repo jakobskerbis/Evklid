@@ -97,9 +97,14 @@ test("templates: @ marks the caret and takes the selected text", () => {
 test("letter layouts per app language", () => {
   const sl = layoutFor("sl");
   assert.equal(sl.id, "sl");
-  assert.deepEqual(sl.rows[0], [..."qwertzuiopš"]);
-  assert.ok(sl.rows[1].includes("č") && sl.rows[1].includes("ž"));
+  // kot Gboard na telefonu (j, 4. 11.): QWERTY, č š ž z dolgim pritiskom, namig le na c s z
+  assert.deepEqual(sl.rows.map((r) => r.join("")), ["qwertyuiop", "asdfghjkl", "zxcvbnm"]);
+  assert.ok(!sl.rows.flat().some((c) => "čšž".includes(c)));
   assert.deepEqual(sl.variants.c, ["č", "ć"]);
+  assert.equal(sl.variants.s[0], "š");
+  assert.equal(sl.variants.z[0], "ž");
+  assert.equal(sl.hints, "csz");
+  assert.equal(layoutFor("en").hints, null);
   assert.equal(layoutFor("en").rows[0].join(""), "qwertyuiop");
   const de = layoutFor("de").rows.flat();
   for (const c of ["ä", "ö", "ü", "ß"]) assert.ok(de.includes(c), c);
@@ -108,7 +113,10 @@ test("letter layouts per app language", () => {
     assert.equal(l.rows[0].join(""), "qwertyuiop", code);
     assert.ok(l.variants.e?.length && l.variants.a?.length, `${code}: dolg pritisk za naglase`);
   }
-  for (const code of ["hr", "bs", "sr-Latn"]) assert.equal(layoutFor(code).id, "sl", code);
+  for (const code of ["hr", "bs", "sr-Latn"]) {
+    assert.equal(layoutFor(code).id, "hr", code);
+    assert.ok(layoutFor(code).rows.flat().includes("č"), code);
+  }
   for (const code of ["cs", "sk", "hu"]) assert.equal(layoutFor(code).rows[0].join(""), "qwertzuiop", code);
   const ar = layoutFor("ar");
   assert.ok(ar.rtl && ar.caseless && !ar.globe);
@@ -278,7 +286,8 @@ function keyGrid(lang = "sl") {
 function pathFor(word, centers, jitter = 6) {
   let seed = 7;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647 - 0.5) * 2 * jitter;
-  const ks = [...word].filter((c, i, a) => c !== a[i - 1]).map((c) => centers[c]);
+  const FOLD = { č: "c", š: "s", ž: "z", ć: "c", đ: "d" };
+  const ks = [...word].map((c) => (centers[c] ? c : FOLD[c])).filter((c, i, a) => c !== a[i - 1]).map((c) => centers[c]);
   const out = [];
   for (let i = 0; i < ks.length - 1; i++) for (let t = 0; t < 8; t++) out.push({ x: ks[i].x + ((ks[i + 1].x - ks[i].x) * t) / 8 + rnd(), y: ks[i].y + ((ks[i + 1].y - ks[i].y) * t) / 8 + rnd() });
   out.push({ x: ks.at(-1).x + rnd(), y: ks.at(-1).y + rnd() });
@@ -317,10 +326,13 @@ test("glide: prva in zadnja črka določata kandidate, podvojene črke se strnej
   assert.deepEqual(glideDecode([{ x: 20, y: 25 }], g, ["ta"]), []);
   assert.deepEqual(glideDecode(pathFor("ta", g), g, []), []);
 });
-test("glide: š č ž so svoje tipke v sl; drugje gre črka na osnovno tipko", () => {
+test("glide: š č ž so svoje tipke v hr; v sl in drugje gre črka na osnovno tipko", () => {
+  const hr = keyGrid("hr");
+  assert.ok(hr["š"] && hr["č"] && hr["ž"]);
+  assert.equal(glideDecode(pathFor("šola", hr), hr, ["sola", "šola", "pola"])[0], "šola");
   const sl = keyGrid("sl");
-  assert.ok(sl["š"] && sl["č"] && sl["ž"]);
-  assert.equal(glideDecode(pathFor("šola", sl), sl, ["sola", "šola", "pola"])[0], "šola");
+  assert.ok(!sl["š"] && !sl["č"] && !sl["ž"]);
+  assert.equal(glideDecode(pathFor("enačba", sl), sl, ["enačba", "enaka", "enota"])[0], "enačba", "č na tipki c");
   const en = keyGrid("qwerty");
   assert.ok(!en["š"]);
   assert.equal(glideDecode(pathFor("sola", en), en, ["šola", "pola", "kola"])[0], "šola", "š na tipki s");

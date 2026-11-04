@@ -290,7 +290,6 @@
   "chat.symbolsTitle": "Símbolos: √, π, ∫, H₂O …",
   "chat.mic": "Di tu pregunta",
   "chat.delete": "Borrar conversación",
-  "chat.confirmDelete": "¿Borrar esta conversación?",
   "chat.hello": "¡Hola, {name}!",
   "chat.intro": "Escribe un ejercicio o hazle una foto. Lo resolveremos juntos paso a paso.",
   "chat.idea1": "¿Cómo resuelvo la ecuación 2x + 3 = 11?",
@@ -2902,5 +2901,6 @@
   "ai.pool": "Compartido por todos los perfiles de la familia.",
   "gift.level": "Nivel",
   "meter.levelsTitle": "Precios por nivel",
-  "chat.choices": "Respuestas rápidas"
+  "chat.choices": "Respuestas rápidas",
+  "chat.deleted": "Conversación eliminada."
 }
