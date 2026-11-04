@@ -904,6 +904,9 @@ body.boot-down-on > :not(#boot-down) { visibility: hidden; }
   column-width: 400px; column-gap: 20px;
 }
 :is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > * { break-inside: avoid; }
+/* Nastavitve: največ trije stolpci, na širokem zaslonu na sredini skupaj z naslovom (j, 4. 11. 2026). */
+.set-cols { columns: 400px 3; }
+#view-settings > :is(h1, .set-cols) { width: min(100%, calc(3 * 460px + 2 * 20px)); margin-inline: auto; }
 :is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > :is(h1, h2, h3) { break-after: avoid; }
 #exams-content > :is(h1, .comp-pickers), #competition-content > :is(h1, .comp-pickers), #path-content > .legend { column-span: all; }
 /* Jaz: profil, raven, števci in zbirke v vrsti; seznam povezav pod njimi v stolpcih. */

@@ -205,6 +205,7 @@ Prostor ob strani izkoristimo za informacije, ki jih učenec potrebuje hkrati:
 - Klepet: odgovor inštruktorja sega do roba (na telefonu brez pasu za ikono inštruktorja), učenčevo sporočilo do 85 % širine, vrstica za pisanje čez vso širino. Prazen klepet brez stavbe obdobja: predlogi v vrsti.
 - Strani pole so čez vso širino, na zelo širokem zaslonu dve drug ob drugi; naloge naše pole v stolpcih; lestvica kviza v stolpcih.
 - Izjemi: Evklidova tipkovnica in plošča za vnos ostaneta široki največ 640 px (tipke ne smejo postati preširoke za prste in oči).
+- Nastavitve so na širokem zaslonu največ trije stolpci, postavljeni na sredino (j, 4. 11. 2026: »v širokem načinu naj se stran za nastavitve centrira na sredino«).
 - Aplikacija (`mobile/src/app/web.tsx`) sama pusti prostor za uro in gumbe telefona; `theme.js` ji (User-Agent `EvklidApp/`) nastavi `--varno-zg`/`--varno-sp` na 0 (stran `/3d` tega ne naloži, zato isto naredi `public/3d/nastavi.js`, tudi v okvirju »Uči se« → 3D svet), CSS pa odmik za zarezo vedno piše kot `var(--varno-zg, env(safe-area-inset-top, 0px))` (prej je bil nad glavo dvojni prazen pas).
 
 ## Telefon in tablica
