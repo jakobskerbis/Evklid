@@ -168,6 +168,7 @@ const pinWrite = (on) => { try { localStorage.setItem(PIN_KEY, on ? "1" : "0"); 
 const vvH = () => (typeof visualViewport !== "undefined" && visualViewport ? visualViewport.height : innerHeight);
 
 export function pripni(el) {
+  el._labOff?.(); // »Ponastavi« (mountSim znova): poslušalci prejšnje risbe gredo takoj, ne šele ob naslednjem drsenju
   let top = el.querySelector(":scope > .lab-tit-top");
   // Poskus z layout({ stage, controls }) (lab-ohm, lab-co2): risbo in kontrole zavijemo v .lab-tit-top.
   if (!top) {
@@ -207,12 +208,14 @@ export function pripni(el) {
   let sc = null, raf = 0;
   const port = () => (sc ? sc.getBoundingClientRect() : { top: 0, bottom: innerHeight });
   const sticky = () => getComputedStyle(stage).position === "sticky";
+  // Pišemo le spremembe: upd teče ob vsakem drsenju in ob vsaki spremembi merilnika, enak zapis bi znova sprožil slog.
+  const put = (x, k, v) => (v == null ? x.style.getPropertyValue(k) && x.style.removeProperty(k) : x.style.getPropertyValue(k) !== v && x.style.setProperty(k, v));
   function upd() {
     raf = 0;
     if (el._labPin !== gen || !el.isConnected) return off();
     const p = port();
     const okno = Math.round(Math.max(0, Math.min(p.bottom, vvH()) - Math.max(p.top, 0)));
-    if (okno) el.style.setProperty("--lab-okno", `${okno}px`);
+    if (okno) put(el, "--lab-okno", `${okno}px`);
     // Zelo nizek vidni del (odprta tipkovnica na majhnem telefonu, deljen zaslon): risba ne gre nad kontrole.
     el.classList.toggle("lab-nizko", okno > 0 && okno < 330);
     const pin = sticky(), sr = stage.getBoundingClientRect();
@@ -220,13 +223,17 @@ export function pripni(el) {
     // Višina risbe: pripeti del (risba + merilniki + stanje) skupaj ~45 % vidne višine nad kontrolami,
     // ob kontrolah (široko, ležeče) pa cel na zaslonu. Merilniki in stanje so neodvisni od risbe, zato se ne ziblje.
     const svg = stage.querySelector(".demo-svg"), ctl = top.querySelector(":scope > .demo-controls");
-    if (!pin || !svg || !okno) return stage.style.removeProperty("--lab-risba-h");
     const cr = ctl?.getBoundingClientRect(), beside = cr && (cr.left >= sr.right - 1 || cr.right <= sr.left + 1);
+    // scroll-margin-top kontrol (textbook.css): scrollIntoView in fokus jih ne postavita pod pripeto risbo
+    put(el, "--lab-pin-h", pin && !beside ? `${Math.round(sr.height + 8)}px` : null);
+    if (!pin || !svg || !okno) return put(stage, "--lab-risba-h", null);
     const gap = parseFloat(getComputedStyle(stage).top) + (sc ? parseFloat(getComputedStyle(sc).paddingTop) || 0 : 0);
     // telefon in tablica ~45 %, z miško (npr. stranski stolpec lekcije na računalniku) ~60 %: tam se drsi s kolescem
-    const total = beside ? okno - Math.max(0, gap) - 6 : okno * (matchMedia("(pointer: coarse)").matches ? 0.45 : 0.6);
+    // pokončna risba (titracija: bireta in povečan menisk) je pri isti višini ozka, zato dobi malo več višine (~52 %)
+    const tall = (parseFloat(stage.style.getPropertyValue("--lab-ar")) || 1.4) < 0.95;
+    const total = beside ? okno - Math.max(0, gap) - 6 : okno * (matchMedia("(pointer: coarse)").matches ? (tall ? 0.52 : 0.45) : 0.6);
     const rest = sr.height - svg.getBoundingClientRect().height;
-    stage.style.setProperty("--lab-risba-h", `${Math.round(Math.max(beside ? 100 : 110, total - rest))}px`);
+    put(stage, "--lab-risba-h", `${Math.round(Math.max(beside ? 100 : 110, total - rest))}px`);
   }
   const later = () => raf || (raf = requestAnimationFrame(upd));
   // Fokus (Tab, tipkovnica telefona) na kontroli pod pripeto risbo ali pod spodnjim robom: pomakni jo na vidno mesto.
@@ -246,11 +253,16 @@ export function pripni(el) {
   const onResize = () => (later(), setTimeout(() => reveal(focused()), 60));
   const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(later) : null;
   function off() {
+    if (el._labOff === off) el._labOff = null;
+    cancelAnimationFrame(raf);
+    raf = 0;
+    el.removeEventListener("focusin", onFocus);
     (sc || window).removeEventListener("scroll", later);
     removeEventListener("resize", onResize);
     ro?.disconnect();
   }
   el.addEventListener("focusin", onFocus);
+  el._labOff = off;
   // Drsni del poiščemo ob prvem izrisu, ko je poskus že na strani.
   requestAnimationFrame(() => {
     if (el._labPin !== gen) return;

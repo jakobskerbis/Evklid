@@ -25,12 +25,14 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
    measures the visible height of the scroll area (`--lab-okno`, `--lab-vrh`) and sizes the drawing (`--lab-risba-h`,
    aspect from the SVG viewBox). CSS in `public/textbook.css` (»Na telefonu ostane risba vidna«, container `labtit` on
    `.demo.lab`): narrow (container < 800 px) → drawing + meters sticky at the top of the scroll area below the app
-   header, together ~45 % of the visible height (60 % with a mouse), compact one-line LCDs, shadow once stuck, controls
-   scroll under it; landscape phone (height ≤ 560 px, container ≥ 520 px) and wide (container ≥ 800 px) → drawing
+   header, together ~45 % of the visible height (~52 % for an upright drawing such as the titration, 60 % with a mouse),
+   compact LCDs (note up to 3 lines, never cut to »…«), shadow once stuck, controls scroll under it and carry
+   `scroll-margin-top: var(--lab-pin-h)` so `scrollIntoView`/focus never park one under the drawing; landscape phone (height ≤ 560 px, container ≥ 520 px) and wide (container ≥ 800 px) → drawing
    pinned left beside the controls and fully visible. Pinning lives only inside `.lab-tit-top`, so the table, graph and
    conclusion below are never covered. Very low visible height (< 330 px, e.g. keyboard on a small phone) unpins in
    portrait (`.lab-nizko`); a focused control under the drawing or under the keyboard is scrolled into view. The phone
-   bottom bar hides in an open experiment like in a lesson (`touch.css`). Check: `test/laboratorij-telefon.test.js`
+   bottom bar hides in an open experiment like in a lesson (`touch.css`). Every lab table (`dataTable`) scrolls in its
+   `.lab-table-wrap`, not in the table, so the header row stays visible (sticky `thead th`). Check: `test/laboratorij-telefon.test.js`
    (every `lab-` engine at 360 × 740: drawing ≥ 80 % visible at every control, no control under it, ≤ 62 % of the
    view; toggle; landscape and desktop beside). A new experiment only needs `el.classList.add("lab")` and its drawing
    in a `.demo-stage` directly followed by `.demo-controls` (or both inside `.lab-tit-top`).

@@ -93,6 +93,8 @@ const MEASURE = async () => {
     pin: btn?.getAttribute("aria-pressed"), label: btn?.getAttribute("aria-label"), sticky: getComputedStyle(stage).position,
     beside: ctl.getBoundingClientRect().left >= s.right - 1 || ctl.getBoundingClientRect().right <= s.left + 1,
     over: document.documentElement.scrollWidth - innerWidth,
+    // tabela meritev: drsi okvir, ne tabela, zato glava ostane vidna
+    head: [...demo.querySelectorAll(".lab-table-wrap > .lab-table:not(.lab-prev-table)")].every((t) => getComputedStyle(t).overflowY === "visible" && getComputedStyle(t.tHead.rows[0].cells[0]).position === "sticky"),
   };
 };
 
@@ -110,6 +112,8 @@ test("lab on a phone: the drawing stays visible while using the controls", { ski
     await p.goto(`${base}/t-lab.html`);
     await p.waitForFunction(() => window.ready);
     await p.evaluate((id) => window.mount(id), id);
+    // prikaz.js in prevodi se naložijo za mountSim (dinamični import) in še dodajo kontrole: počakaj nanje, sicer meritev pod obremenitvijo zgreši
+    await p.waitForLoadState("networkidle");
     await p.waitForTimeout(150);
     return { p, errs };
   };
@@ -128,6 +132,7 @@ test("lab on a phone: the drawing stays visible while using the controls", { ski
       assert.equal(r.pin, "true");
       assert.equal(r.label, "Pripni sliko");
       assert.ok(r.over <= 0, `${id}: vodoravno drsenje`);
+      assert.ok(r.head, `${id}: glava tabele meritev ni pripeta`);
       assert.deepEqual(errs, [], id);
       await p.close();
     }
@@ -139,8 +144,9 @@ test("lab on a phone: the drawing stays visible while using the controls", { ski
     const { p } = await run(ctx, "lab-hooke");
     await p.locator(".lab-pin").tap();
     assert.equal(await p.evaluate(() => [localStorage.getItem("evklid.lab.pripni"), getComputedStyle(document.querySelector(".demo-stage")).position, document.querySelector(".lab-pin").getAttribute("aria-pressed")].join()), "0,relative,false");
+    await p.evaluate(() => (window.oldPin = document.querySelector(".lab-pin")));
     await p.locator(".demo-reset").tap();
-    await p.waitForTimeout(150);
+    await p.waitForFunction(() => document.querySelector(".lab-pin") && document.querySelector(".lab-pin") !== window.oldPin);
     assert.equal(await p.evaluate(() => getComputedStyle(document.querySelector(".demo-stage")).position), "relative");
     await p.locator(".lab-pin").tap();
     assert.equal(await p.evaluate(() => localStorage.getItem("evklid.lab.pripni") + getComputedStyle(document.querySelector(".demo-stage")).position), "1sticky");
