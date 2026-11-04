@@ -96,15 +96,21 @@ summary{color:${th.accent};font-weight:700;cursor:pointer}
 .tb-think{margin:.8em 0;padding:.7em .9em;border-radius:12px;background:${th.goldSoft}}
 .tb-think-label{font-weight:700;color:${th.gold};margin-bottom:.3em}
 img,svg{max-width:100%;height:auto}
-[data-fx]{color:${th.accent};border-radius:3px;padding:0 .08em;margin:0 -.08em}
+/* Dotik: iOS pošlje click le klikljivemu elementu (cursor), KaTeX-ovi okvirji ulomkov ga ne smejo prestreči (kot ui.css). */
+.katex .vlist{pointer-events:none}.katex [data-fx],.katex [data-fx] *{pointer-events:auto}.katex .pstrut{pointer-events:none!important}
+[data-fx]{cursor:pointer;color:${th.accent};border-radius:3px;padding:0 .08em;margin:0 -.08em}
 [data-fx].fx-open{background:${th.accentSoft}}
 .fx-title{display:flex;align-items:baseline;gap:8px;color:${th.accent}}.fx-title b{color:${th.text};min-width:0}
 .fx-title .katex{font-size:1.25em;color:${th.accent};flex:none}
 .fx-card{display:grid;gap:6px}.fx-line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .fx-k{color:${th.muted};font-size:.8em;font-weight:700;text-transform:uppercase;letter-spacing:.05em;min-width:62px}
-.fx-un,.fx-sub span{color:${th.muted}}.fx-sub{padding-inline-start:70px;font-size:.9em}
-.fx-parts{display:flex;gap:8px;align-items:flex-start}.fx-parts ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}
+/* Kartica kot na spletu v ozkem oknu (ui.css .fx-pop, max-width 760px): deli pod oznako »Kjer je«. */
+.fx-un,.fx-sub span{color:${th.muted}}.fx-sub{padding-inline-start:0;font-size:.9em}
+.fx-parts{display:flex;flex-direction:column;gap:3px;align-items:flex-start}.fx-parts ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}
 .fx-parts li{display:grid;grid-template-columns:minmax(1.6em,auto) 1fr;column-gap:8px;align-items:baseline}.fx-parts li>.katex{color:${th.accent}}
+.fx-parts .fx-un{white-space:nowrap}.fx-note{color:${th.muted};font-size:.88em;border-top:1px solid ${th.border};padding-top:6px}
+/* Formule vedno od leve proti desni, tudi v arabščini (kartica ima dir=rtl). */
+.katex{direction:ltr;unicode-bidi:isolate}
 </style>
 <script>document.addEventListener('click',function(e){var el=e.target.closest&&e.target.closest('[data-fx]');if(!el||!window.ReactNativeWebView)return;e.preventDefault();var o=document.querySelector('.fx-open');if(o)o.classList.remove('fx-open');el.classList.add('fx-open');window.ReactNativeWebView.postMessage('fx:'+el.getAttribute('data-fx'));},true);window.__fxClose=function(){var o=document.querySelector('.fx-open');if(o)o.classList.remove('fx-open');};</script></head><body><div id="c">${body}</div></body></html>`;
 }

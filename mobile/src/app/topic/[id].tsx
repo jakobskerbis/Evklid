@@ -52,7 +52,7 @@ export default function Topic() {
   const [reported, setReported] = useState(false);
 
   // Klikljive črke s pomenom iz predmeta in oznak te lekcije (kot na spletu).
-  const fx = useMemo<Fx>(() => (L ? { subject: L.subject || L.id.split("-")[0], symbols: L.lesson?.symbols || null } : null), [L]);
+  const fx = useMemo<Fx>(() => (L ? { subject: L.subject || (/^UNI-/.test(L.id) ? null : /^[A-Z]+/.exec(L.id)?.[0]) || student.settings?.subject || "MAT", symbols: L.lesson?.symbols || null } : null), [L, student.settings?.subject]);
   const steps = useMemo<Step[]>(() => (L?.lesson ? (lessonSteps(L.lesson.sections, L.lesson.checks?.length || 0) as Step[]) : []), [L]);
 
   if (loading) return <Loading />;

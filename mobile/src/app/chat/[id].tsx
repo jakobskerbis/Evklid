@@ -81,6 +81,8 @@ export default function Chat() {
             else if (e.event === "done") {
               patch((m) => ({ ...m, id: e.data.id ?? m.id, text: e.data.text ?? m.text, streaming: false }));
               if (e.data.title) setTitle(e.data.title);
+              // Predmet, ki ga je inštruktor pravkar določil (nov pogovor brez teme), kot na spletu.
+              if (e.data.state?.subject) setConvFx((c) => (c.subject === e.data.state.subject ? c : { ...c, subject: e.data.state.subject }));
               setDeepOk(!e.data.deep);
               if (e.data.settings) refresh().catch(() => {});
             } else if (e.event === "error") {
@@ -190,9 +192,9 @@ export default function Chat() {
   if (error) return <ErrorView message={error} retryLabel={t("mob.retry")} />;
 
   const last = messages[messages.length - 1];
+  // Odmik tipkovnice = kje se zaslon začne (pod naslovno vrstico); izmerjen, ker se višina vrstice razlikuje.
   return (
     <FormulaCtx.Provider value={fx}>
-    // Odmik tipkovnice = kje se zaslon začne (pod naslovno vrstico); izmerjen, ker se višina vrstice razlikuje.
     <View ref={root} onLayout={() => root.current?.measureInWindow((_x: number, y: number) => setTop(y))} style={{ flex: 1, backgroundColor: th.bg }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={top}>
         <Stack.Screen

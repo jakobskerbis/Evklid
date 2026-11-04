@@ -7,12 +7,13 @@
 import React, { memo, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Clipboard, Modal, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { WebView } from "react-native-webview";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
 import { docHtml, formulaCard, isPlain, MEASURE_JS, toHtml } from "@/lib/rich";
 import { FormulaCtx } from "@/lib/formula-ctx";
 import { API_URL } from "@/lib/api";
 import { font, useTheme } from "@/lib/theme";
-import { t } from "@/lib/i18n";
+import { isRtl, t } from "@/lib/i18n";
 
 // noFx: brez klikljivih črk (izbire v nalogah in kvizu: dotik izbere odgovor, kartica bi izdala rešitev).
 type Props = { text: string; html?: string; ai?: boolean; streaming?: boolean; size?: number; center?: boolean; minHeight?: number; onExplain?: (selected: string) => void; noFx?: boolean };
@@ -102,13 +103,14 @@ function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size
 // Kartica oznake kot spodnji list (na spletu okence ob znaku): ime, zveza, sestavni deli in enota.
 function FormulaCard({ card, onClose }: { card: { label: string; html: string }; onClose: () => void }) {
   const th = useTheme();
+  const insets = useSafeAreaInsets();
   return (
     <Modal transparent animationType="fade" visible onRequestClose={onClose}>
-      <Pressable style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.35)", justifyContent: "flex-end" }} onPress={onClose} accessibilityLabel={t("fx.close")}>
-        <Pressable onPress={() => {}} accessible accessibilityLabel={card.label} style={{ backgroundColor: th.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18, padding: 16, paddingBottom: 28, borderWidth: 1, borderColor: th.border }}>
+      <Pressable style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.35)", justifyContent: "flex-end" }} onPress={onClose} accessible={false}>
+        <Pressable onPress={() => {}} accessible={false} style={{ backgroundColor: th.surface, borderTopLeftRadius: 18, borderTopRightRadius: 18, padding: 16, paddingBottom: 16 + Math.max(12, insets.bottom), borderWidth: 1, borderColor: th.border }}>
           <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 8 }}>
             <View style={{ flex: 1 }}>
-              <RichText text="" html={`<div class="fx-card">${card.html}</div>`} size={16} noFx />
+              <RichText text="" html={`<div class="fx-card"${isRtl() ? ' dir="rtl"' : ""}>${card.html}</div>`} size={16} noFx />
             </View>
             <Pressable onPress={onClose} hitSlop={10} accessibilityRole="button" accessibilityLabel={t("fx.close")} style={{ minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
               <Text style={{ color: th.muted, fontSize: 24 }}>×</Text>
