@@ -1,6 +1,6 @@
 // Razdelek IGRE: mreža pisanih ploščic (kot na portalih z igrami), filtri po področjih in vrstah,
 // igra se odpre v istem pogledu. Igra = vrsta igre (engines.js) × matematični pojem (topics.js).
-import { t } from "../i18n.js";
+import { t, locale } from "../i18n.js";
 import { icon } from "../icons.js";
 import { CONCEPTS, AREAS, SUBJECTS, conceptName, areaName, setNumberStyle, makeQuestion, shuffle } from "./topics.js";
 import { gameLock as ruleLock, clearedPace, lessonsOf, PACE, CLEAR_CORRECT, CHECK_TASKS, CHECK_PASS, LOCKS_ON } from "./unlock.js";
@@ -139,16 +139,16 @@ function saveFilter() {
   } catch {}
 }
 
-function tile(e, c, why = "") {
+function tile(e, c, whyId = "") {
   const st = data.games[gameId(e, c)];
   const locked = !!gameLock(e.id, c, LS);
   const path = !locked && onPath(e, c);
-  return `<button type="button" class="gm-tile gm-k-${e.id}${locked ? " gm-locked" : ""}${path ? " gm-path" : ""}" data-game="${gameId(e, c)}" style="--a:${tileColor(c)};--b:${e.colors[0]}"${locked ? ` aria-label="${esc(`${t("games.locked")}: ${conceptName(c)}, ${kindName(e)}`)}"` : path ? ` aria-label="${esc(`${t("games.pathMark")}: ${conceptName(c)}, ${kindName(e)}${why ? `, ${why}` : ""}`)}"` : ""}>
-    ${isNewDate(e.added) && !why ? `<span class="gm-new">${esc(t("games.new"))}</span>` : ""}<span class="gm-kind">${icon(e.icon)}</span>
+  return `<button type="button" class="gm-tile gm-k-${e.id}${locked ? " gm-locked" : ""}${path ? " gm-path" : ""}" data-game="${gameId(e, c)}" style="--a:${tileColor(c)};--b:${e.colors[0]}"${whyId ? ` aria-describedby="${whyId}"` : ""}${locked ? ` aria-label="${esc(`${t("games.locked")}: ${conceptName(c)}, ${kindName(e)}`)}"` : path ? ` aria-label="${esc(`${t("games.pathMark")}: ${conceptName(c)}, ${kindName(e)}`)}"` : ""}>
+    ${isNewDate(e.added) && !whyId ? `<span class="gm-new">${esc(t("games.new"))}</span>` : ""}<span class="gm-kind">${icon(e.icon)}</span>
     ${path ? `<span class="gm-pathmark" title="${esc(t("games.pathMark"))}">${icon("compass")}</span>` : ""}
-    ${st?.best && !why ? `<span class="gm-best">${icon("star")}${st.best}</span>` : ""}
+    ${st?.best ? `<span class="gm-best">${icon("star")}${st.best}</span>` : ""}
     <span class="gm-glyph">${locked ? `<span class="gm-lock">${icon("lock")}</span>` : esc(GLYPH[c.id] || c.glyph || SUBJ_GLYPH[c.subject] || "∑")}</span>
-    <span class="gm-name"><b>${esc(conceptName(c))}</b><small>${esc(kindName(e))}</small></span>${why ? `<span class="gm-why">${esc(why)}</span>` : ""}
+    <span class="gm-name"><b>${esc(conceptName(c))}</b><small>${esc(kindName(e))}</small></span>
   </button>`;
 }
 
@@ -205,7 +205,9 @@ function weakSec() {
     const e = c && gameFor(c, ENGINES, fits, used.slice(-2));
     if (!e) continue;
     used.push(e.id);
-    tiles.push(tile(e, c, t("games.weakWhy", { n: w.n })));
+    // Razlog pod ploščico (ne na njej): ne prekrije znaka, kompasa ali značke »Novo«, daljši prevodi se prelomijo.
+    const id = `gm-why-${tiles.length}`;
+    tiles.push(`<div class="gm-weakitem">${tile(e, c, id)}<p class="gm-why" id="${id}">${esc(t("games.weakWhy", { n: w.n }))}</p></div>`);
     if (tiles.length >= WEAK_MAX) break;
   }
   if (!tiles.length) return "";
@@ -214,6 +216,14 @@ function weakSec() {
 
 // Merjenje v pilotu za skrbnika: igre na učenca, vrnitev na pot po igri, točnost pri šibkih temah.
 const pct = (x) => (x == null ? "—" : `${x} %`);
+// Decimalna vejica po jeziku (1,5 v slovenščini), števke ostanejo latinične kot drugje na kartici.
+const num = (x) => {
+  try {
+    return Number(x).toLocaleString(`${locale()}-u-nu-latn`);
+  } catch {
+    return String(x);
+  }
+};
 function pilotCard() {
   if (!pilot) return "";
   const p = pilot;
@@ -222,7 +232,7 @@ function pilotCard() {
     ? `<p class="muted">${esc(t("games.trFew", { n: p.players, min: p.minStudents }))}</p>`
     : `<ul class="gm-plsum">
         <li><b>${esc(p.players)}</b><span>${esc(t("games.plPlayers"))}</span></li>
-        <li><b>${esc(T.playsPerPlayerDay)}</b><span>${esc(t("games.plPerDay"))}</span></li>
+        <li><b>${esc(num(T.playsPerPlayerDay))}</b><span>${esc(t("games.plPerDay"))}</span></li>
         <li><b>${esc(pct(T.returnRate))}</b><span>${esc(t("games.plReturn", { min: p.minutes }))}</span></li>
         <li><b>${esc(pct(T.weakAccuracy))}</b><span>${esc(t("games.plWeak", { n: T.weakAnswers }))}</span></li>
         <li><b>${esc(pct(T.otherAccuracy))}</b><span>${esc(t("games.plOther", { n: T.otherAnswers }))}</span></li>
