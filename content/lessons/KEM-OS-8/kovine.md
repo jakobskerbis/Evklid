@@ -5,202 +5,256 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Že veš, da so snovi sestavljene iz atomov in da so atomi različnih elementov razporejeni v periodnem sistemu. Okoli sebe vidiš veliko kovin: bakrene žice v kablih, aluminijasto folijo, železne žeblje, zlat prstan. Večina elementov v periodnem sistemu so prav kovine.
+Matic med počitnicami pomaga stricu kleparju pri obnovi strehe. Med delom samozavestno razloži: »Vse kovine so trde, težke in obstojne. Zato iz njih delamo žlebove, žeblje in strešne nosilce. Kovina je pač kovina.«
 
-Če poznaš skupne lastnosti kovin in razumeš, kako se razlikujejo po skupinah, lahko predvidiš, kako se bo neki element obnašal, ne da bi ga preizkusil. Zato natrij hranimo pod oljem, aluminij pa uporabljamo za pločevinke. V tej lekciji spoznaš splošne lastnosti kovin ter dve pomembni skupini: **alkalijske kovine** (1. skupina) in **zemeljskoalkalijske kovine** (2. skupina).
+Baker, cink, železo in aluminij se na strehi res obnesejo. A tudi natrij je kovina. Režeš ga lahko z nožem kot hladno maslo, plava na vodi, z dežjem pa burno reagira. Žleb iz natrija ne bi preživel prvega naliva.
+
+Ima Matic prav? Presodiš, ko poznaš lastnosti, skupne vsem kovinam, in razlike med skupinami kovin. Potem iz mesta v periodnem sistemu napoveš, kako se bo vedla kovina, ki je še nisi videl.
 
 ## Razlaga
 
-**1. Kje so kovine v periodnem sistemu.** Kovine so na levi in v sredini periodnega sistema. Nekovine so na desni strani. Vodik je poseben primer: je nekovina, čeprav stoji zgoraj levo. Med kovinami in nekovinami poteka stopničasta črta, ob kateri so polkovine.
+**1. Kje so kovine.** Kovine zavzemajo levo stran in sredino periodnega sistema. Nekovine so desno zgoraj, mejo kaže stopničasta črta. Ob njej so polkovine, na primer silicij. Vodik stoji zgoraj levo, a ni kovina.
 
-**2. Skupne lastnosti kovin.**
+**2. Kaj imajo kovine skupnega.** Klepar te lastnosti uporablja vsak dan.
 
-- **Kovinski sijaj**: sveže prerezana ali zloščena kovina se sveti.
-- **Dobra električna prevodnost** in **dobra toplotna prevodnost**.
-- **Kovnost in raztegljivost**: kovine lahko kujemo v plošče in vlečemo v žice, ne da bi se zdrobile.
-- **Pri sobni temperaturi so trdne snovi**. Izjema je živo srebro ($\mathrm{Hg}$), ki je tekoče.
-- Večinoma imajo **visoko tališče** in **veliko gostoto**. Tudi tu so izjeme, ki jih spoznaš spodaj.
+- **Kovinski sijaj**: sveža ali zloščena površina se sveti.
+- **Dobra električna in toplotna prevodnost**: po bakreni žici teče tok, kovinski ročaj lonca se hitro segreje.
+- **Kovnost in raztegljivost**: kovina se pod kladivom oblikuje v pločevino, ne da bi se zdrobila (kovnost), in se da izvleči v žico (raztegljivost).
+- **Trdno agregatno stanje** pri sobni temperaturi. Izjema je živo srebro ($\mathrm{Hg}$), ki je tekoče, saj se tali že pri $-39\,^\circ\mathrm{C}$.
 
-**3. Kovine in kemijske reakcije.** Atomi kovin pri reakcijah radi oddajo elektrone in tvorijo pozitivno nabite ione. Zato kovine z nekovinami tvorijo ionske spojine, na primer s klorom.
+Mnoge kovine imajo še visoko tališče in veliko gostoto. Železo se tali pri $1538\,^\circ\mathrm{C}$, kocka železa s prostornino $1\,\mathrm{cm^3}$ pa ima maso $7{,}9\,\mathrm{g}$ (enaka kocka vode $1\,\mathrm{g}$). To pa ne velja za vse kovine. Tu se Matic zmoti.
 
-**4. Alkalijske kovine (1. skupina, razen vodika).**
-Litij ($\mathrm{Li}$), natrij ($\mathrm{Na}$), kalij ($\mathrm{K}$), rubidij ($\mathrm{Rb}$), cezij ($\mathrm{Cs}$), francij ($\mathrm{Fr}$).
+**3. Kovina odda elektrone.** Atom kovine ima v zunanji lupini malo elektronov. V reakcijah jih rad odda in postane **pozitivni ion**. Zato kovine z nekovinami tvorijo ionske spojine, na primer natrijev klorid $\mathrm{NaCl}$.
 
-- Tako mehke so, da jih lahko režemo z nožem. Na prerezu se svetijo, a na zraku hitro potemnijo.
-- Imajo nizko gostoto in nizko tališče. Litij, natrij in kalij so celo lažji od vode.
-- Zelo so **reaktivne**: reagirajo z vodo, kisikom in drugimi snovmi. Reaktivnost narašča od litija proti ceziju.
-- Zaradi reaktivnosti jih v naravi ne najdemo kot čiste kovine, ampak v spojinah (npr. kuhinjska sol $\mathrm{NaCl}$). Hranimo jih pod oljem.
-- Pri reakciji z vodo nastaneta vodik in raztopina hidroksida, ki je bazična (alkalna). Po tem so dobile ime:
+**4. Trije sorodniki iz 1. skupine.** Litij, natrij in kalij stojijo v 1. skupini, od zgoraj navzdol. Primerjaj jih:
+
+| Kovina | Gostota v $\mathrm{g/cm^3}$ | Tališče v $^\circ\mathrm{C}$ | Kos kovine v vodi |
+|---|---|---|---|
+| litij $\mathrm{Li}$ | 0,53 | 180,5 | plava in enakomerno brbota |
+| natrij $\mathrm{Na}$ | 0,97 | 97,8 | se stali v kroglico, ki šviga po vodi |
+| kalij $\mathrm{K}$ | 0,86 | 63,5 | takoj zagori z vijoličastim plamenom |
+
+Kaj se ponavlja? Vsi trije imajo gostoto pod $1\,\mathrm{g/cm^3}$, zato plavajo na vodi. Vsi se talijo pri nizki temperaturi: natrij bi se stalil že v vreli vodi. Reakcija z vodo pa je od zgoraj navzdol vse burnejša. (Gostota ne sledi vzorcu: kalij je lažji od natrija.)
+
+Elementom 1. skupine (brez vodika) pravimo **alkalijske kovine**: litij, natrij, kalij, rubidij ($\mathrm{Rb}$), cezij ($\mathrm{Cs}$) in francij ($\mathrm{Fr}$). Za vse velja:
+
+- So mehke, lahke in imajo nizko tališče.
+- So zelo **reaktivne**: hitro reagirajo z vodo in kisikom. Reaktivnost narašča navzdol po skupini.
+- Sveža površina se sveti, na zraku pa hitro potemni. Zato jih v naravi najdemo le v spojinah (kuhinjska sol $\mathrm{NaCl}$), v laboratoriju pa jih hranimo pod oljem.
+- Z vodo dajo vodik in hidroksid. Hidroksid se v vodi raztopi, raztopina je **bazična** (lužnata). Lugom so včasih rekli alkalije, od tod ime skupine:
 
 $$2\,\mathrm{Na} + 2\,\mathrm{H_2O} \rightarrow 2\,\mathrm{NaOH} + \mathrm{H_2}$$
 
-- V spojinah tvorijo ione z nabojem $1+$, npr. $\mathrm{Na^+}$.
+- Atom odda svoj edini zunanji elektron, zato je naboj iona $1+$, na primer $\mathrm{Na^+}$, $\mathrm{K^+}$.
 
-**5. Zemeljskoalkalijske kovine (2. skupina).**
-Berilij ($\mathrm{Be}$), magnezij ($\mathrm{Mg}$), kalcij ($\mathrm{Ca}$), stroncij ($\mathrm{Sr}$), barij ($\mathrm{Ba}$), radij ($\mathrm{Ra}$).
+:::premisli
+Cezij stoji v 1. skupini dve vrstici pod kalijem. Napovej, kako bi kos cezija reagiral z vodo in kateri hidroksid bi pri tem nastal.
+---
+Še burneje kot kalij, tako burno, da kos eksplodira. Reaktivnost v 1. skupini narašča navzdol, cezij je pod kalijem. Cezij odda en elektron kot natrij, zato je ion $\mathrm{Cs^+}$ in nastane cezijev hidroksid $\mathrm{CsOH}$.
+:::
+
+**5. Sosedje iz 2. skupine.** Desno od natrija stoji magnezij, desno od kalija kalcij. Primerjaj ju s tabelo zgoraj:
+
+| Kovina | Gostota v $\mathrm{g/cm^3}$ | Tališče v $^\circ\mathrm{C}$ | Kos kovine v hladni vodi |
+|---|---|---|---|
+| magnezij $\mathrm{Mg}$ | 1,74 | 650 | skoraj nič, šele v vroči vodi počasi |
+| kalcij $\mathrm{Ca}$ | 1,55 | 842 | potone in enakomerno brbota |
+
+Obe sta težji od vode, talita se pri več sto stopinjah in z vodo reagirata počasneje kot sosedi iz 1. skupine. Kalcij je reaktivnejši od magnezija nad njim.
+
+To so **zemeljskoalkalijske kovine** (2. skupina): berilij ($\mathrm{Be}$), magnezij, kalcij, stroncij ($\mathrm{Sr}$), barij ($\mathrm{Ba}$) in radij ($\mathrm{Ra}$).
 
 - So trše in gostejše od alkalijskih kovin ter imajo višja tališča.
-- So reaktivne, a manj kot alkalijske kovine v isti periodi. Reaktivnost narašča od berilija proti radiju.
-- Tudi njih v naravi najdemo v spojinah (npr. kalcij v apnencu $\mathrm{CaCO_3}$).
-- V spojinah tvorijo ione z nabojem $2+$, npr. $\mathrm{Mg^{2+}}$, $\mathrm{Ca^{2+}}$.
-- Magnezij zgori z zelo svetlim plamenom: $2\,\mathrm{Mg} + \mathrm{O_2} \rightarrow 2\,\mathrm{MgO}$.
+- So reaktivne, a manj kot alkalijska kovina iz iste periode. Tudi tu reaktivnost narašča navzdol, od berilija proti radiju.
+- Atom odda dva zunanja elektrona, zato je naboj iona $2+$: $\mathrm{Mg^{2+}}$, $\mathrm{Ca^{2+}}$.
+- V naravi so le v spojinah. Apnenec na Krasu je kalcijev karbonat $\mathrm{CaCO_3}$, iz njega pridobivamo apno za malto.
+- Magnezij gori s slepeče belo svetlobo: $2\,\mathrm{Mg} + \mathrm{O_2} \rightarrow 2\,\mathrm{MgO}$.
 
-**6. Zakaj ima skupina enake lastnosti.** Elementi iste skupine imajo enako število zunanjih elektronov: alkalijske kovine enega, zemeljskoalkalijske dva. Zato se v reakcijah obnašajo podobno.
+:::premisli
+Kalij in kalcij sta v isti periodi. Zakaj kalij z vodo reagira veliko burneje?
+---
+Kalij mora oddati le en zunanji elektron, kalcij pa dva. En elektron atom odda lažje, zato je kalij reaktivnejši.
+:::
+
+**6. Zakaj se skupina vede enotno.** Atomi iste skupine imajo enako število zunanjih elektronov (1. skupina enega, 2. skupina dva), zato tvorijo ione z enakim nabojem in reagirajo podobno. Navzdol so atomi večji, zunanji elektroni so dlje od jedra in jih atom lažje odda. Zato reaktivnost navzdol narašča.
+
+Matic ima torej le delno prav. Sijaj, prevodnost in kovnost so skupni vsem kovinam, trdota, gostota in obstojnost pa ne. Klepar zato izbira kovine iz sredine periodnega sistema, ki z vodo reagirajo počasi.
 
 ## Rešeni primeri
 
-### Primer 1 (lažji): ali je snov kovina?
+### Primer 1 (lažji): kovina ali ne?
 
-Snov se sveti, prevaja elektriko, jo lahko skujemo v ploščo in je pri sobni temperaturi trdna. Je kovina?
+V delavnici ležita dva siva kosa. Kos A se sveti, dobro prevaja tok in se pod kladivom splošči v ploščico. Kos B se tudi sveti, a tok prevaja slabo in se pod kladivom razleti na drobce. Kateri kos je kovina?
 
-**Podatki:** snov ima sijaj, prevaja električni tok, je kovna (skujemo jo v ploščo), pri sobni temperaturi je trdna
-**Iščemo:** ali je snov kovina
+**Podatki:** kos A: sijaj, dobro prevaja tok, kovnost; kos B: sijaj, slabo prevaja tok, krhek
+**Iščemo:** kateri kos je kovina
 
 :::formula
-Lastnosti kovin: kovinski sijaj, dobra električna in toplotna prevodnost, kovnost in raztegljivost, pri sobni temperaturi so trdne (izjema je $\mathrm{Hg}$).
+Kovina ima kovinski sijaj, dobro prevaja električni tok in toploto ter je kovna in raztegljiva. Ena sama lastnost ne zadošča.
 :::
 
 **Rešitev:**
 
-1. Pogledamo lastnosti kovin: sijaj, prevodnost, kovnost, trdno stanje.
-2. Snov izpolnjuje vse štiri. Zato je to zelo verjetno kovina.
-3. Odgovor: da, gre za kovino.
+1. Kos A ima vse tri preverjene lastnosti kovin, zato je kovina (lahko je na primer cink).
+2. Kos B ima sijaj, a slabo prevaja tok in je krhek. Krhkost kovino izključi, ker se kovina pod udarci oblikuje. Tako se vede polkovina silicij.
+3. Odgovor: kovina je kos A. Kos B ni kovina, čeprav se sveti.
 
-### Primer 2: kam spada element
+### Primer 2: kalij in voda
 
-Element ima ime kalcij ($\mathrm{Ca}$). V katero skupino spada in kakšen ion tvori?
+Napiši urejeno enačbo reakcije kalija z vodo. Razloži, zakaj kalij hranimo pod oljem.
 
-**Podatki:** element kalcij, simbol $\mathrm{Ca}$
-**Iščemo:** skupino, v katero spada kalcij, in ion, ki ga tvori
-
-:::formula
-Pri 1. in 2. skupini je število zunanjih elektronov enako številki skupine. Atom kovine odda zunanje elektrone, zato je naboj iona $1+$ (1. skupina) oziroma $2+$ (2. skupina).
-:::
-
-**Rešitev:**
-
-1. Kalcij je v 2. skupini periodnega sistema, torej je zemeljskoalkalijska kovina.
-2. Atomi te skupine imajo dva zunanja elektrona, ki ju oddajo.
-3. Zato nastane ion $\mathrm{Ca^{2+}}$.
-4. Preverimo: naboj $2+$ ustreza 2. skupini. Pravilno.
-
-### Primer 3 (težji): reakcija z vodo
-
-Napiši enačbo reakcije kalija z vodo in razloži, zakaj mora biti kalij shranjen pod oljem.
-
-**Podatki:** reaktanta sta kalij $\mathrm{K}$ (alkalijska kovina) in voda $\mathrm{H_2O}$
-**Iščemo:** urejeno enačbo reakcije in razlog, zakaj kalij hranimo pod oljem
+**Podatki:** reaktanta: kalij $\mathrm{K}$ (alkalijska kovina, ion $\mathrm{K^+}$) in voda $\mathrm{H_2O}$
+**Iščemo:** urejeno enačbo in razlog za hranjenje pod oljem
 
 :::formula
 alkalijska kovina + voda $\rightarrow$ hidroksid + vodik
 
-Pri urejeni enačbi je število atomov vsakega elementa na levi in desni strani enako.
+Urejena enačba ima na obeh straneh enako število atomov vsakega elementa. V členu jih preštejemo kot koeficient krat indeks: $N = k \cdot i$.
 :::
 
 **Rešitev:**
 
-1. Kalij je alkalijska kovina, zato z vodo reagira podobno kot natrij. Nastaneta kalijev hidroksid in vodik.
-2. Zapišemo shemo: $\mathrm{K} + \mathrm{H_2O} \rightarrow \mathrm{KOH} + \mathrm{H_2}$.
-3. Izravnamo. Vodik ima na desni $2$ atoma ($\mathrm{H_2}$), na levi v $\mathrm{H_2O}$ prav tako $2$, a ker je na desni v $\mathrm{KOH}$ še en atom $\mathrm{H}$, imamo na desni skupaj $3$ atome. Zato vzamemo dve molekuli vode in dva $\mathrm{KOH}$: $2\,\mathrm{H_2O}$ da $4$ atome $\mathrm{H}$, na desni pa $2\,\mathrm{KOH}$ ($2$ atoma $\mathrm{H}$) in $\mathrm{H_2}$ ($2$ atoma), skupaj $4$.
-4. Kalij uskladimo: na desni sta $2$ atoma $\mathrm{K}$, zato na levi $2\,\mathrm{K}$.
+1. Kalij je v isti skupini kot natrij, zato reagira enako. Nastaneta kalijev hidroksid $\mathrm{KOH}$ in vodik $\mathrm{H_2}$.
+2. Shema: $\mathrm{K} + \mathrm{H_2O} \rightarrow \mathrm{KOH} + \mathrm{H_2}$.
+3. Vodik: levo $2$ atoma, desno $1 + 2 = 3$. Levo je vodika vedno sodo število, saj ima vsaka molekula vode dva atoma. Zato liho število desno popravimo z $2\,\mathrm{KOH}$: desno je $2 + 2 = 4$ atomov $\mathrm{H}$, zato levo $2\,\mathrm{H_2O}$ ($2 \cdot 2 = 4$).
+4. Kalij: desno $2$ atoma, zato levo $2\,\mathrm{K}$. Kisik: levo $2$, desno $2$.
 5. Enačba: $2\,\mathrm{K} + 2\,\mathrm{H_2O} \rightarrow 2\,\mathrm{KOH} + \mathrm{H_2}$.
-6. Preverimo kisik: levo $2$, desno $2$ (v $2\,\mathrm{KOH}$). Uravnoteženo.
-7. Kalij je zelo reaktiven in reagira z vlago in kisikom iz zraka, zato ga hranimo pod oljem, ki ga loči od zraka.
+6. Odgovor: kalij reagira že z vlago in kisikom iz zraka, olje pa ga loči od zraka.
+
+### Primer 3 (težji): kalcij in apno za malto
+
+Zidar meša malto iz peska, vode in gašenega apna, to je kalcijevega hidroksida. Ta nastane tudi pri reakciji kalcija z vodo, poleg vodika. Ugotovi formulo kalcijevega hidroksida in zapiši urejeno enačbo reakcije kalcija z vodo.
+
+**Podatki:** kalcij $\mathrm{Ca}$ je v 2. skupini; hidroksidni ion $\mathrm{OH^-}$ ima naboj $1-$; produkta sta kalcijev hidroksid in vodik $\mathrm{H_2}$
+**Iščemo:** formulo kalcijevega hidroksida in urejeno enačbo
+
+:::formula
+Kovina 2. skupine tvori ion $2+$. V formuli ionske spojine je vsota nabojev $0$.
+
+kovina + voda $\rightarrow$ hidroksid + vodik
+:::
+
+**Rešitev:**
+
+1. Kalcij odda dva zunanja elektrona, nastane $\mathrm{Ca^{2+}}$.
+2. En ion $\mathrm{OH^-}$ izniči le en pozitivni naboj, zato potrebujemo dva: $\mathrm{Ca(OH)_2}$. Oklepaj pove, da indeks $2$ velja za celo skupino $\mathrm{OH}$.
+3. Shema: $\mathrm{Ca} + \mathrm{H_2O} \rightarrow \mathrm{Ca(OH)_2} + \mathrm{H_2}$.
+4. Vodik desno: $2$ v $\mathrm{Ca(OH)_2}$ in $2$ v $\mathrm{H_2}$, skupaj $2 + 2 = 4$.
+5. Zdaj ti: koliko molekul vode potrebuješ na levi? Preveri še kisik in kalcij ter zapiši enačbo.
+
+:::premisli
+Kako se glasi urejena enačba?
+---
+Levo potrebujemo $4$ atome vodika, zato $2\,\mathrm{H_2O}$. Kisik: levo $2$, desno $2$; kalcij: $1$ in $1$. Enačba: $\mathrm{Ca} + 2\,\mathrm{H_2O} \rightarrow \mathrm{Ca(OH)_2} + \mathrm{H_2}$. Kalcijev hidroksid je $\mathrm{Ca(OH)_2}$.
+:::
+
+Za malto gašeno apno sicer pripravijo iz žganega apna in vode, ne iz dragega čistega kalcija.
 
 ## Pogoste napake
 
-- **Mešanje skupin.** Natrij in kalij sta alkalijski kovini (1. skupina), magnezij in kalcij pa zemeljskoalkalijski (2. skupina).
-- **Napačen naboj iona.** Alkalijske kovine tvorijo ione $1+$, zemeljskoalkalijske $2+$. Napačno je npr. $\mathrm{Mg^+}$.
-- **»Vse kovine so težke in trde.«** Natrij režemo z nožem, litij plava na vodi.
-- **»Vse kovine so trdne.«** Živo srebro je pri sobni temperaturi tekoče.
-- **Neizravnana enačba.** Pri reakciji z vodo preveri število atomov vodika na obeh straneh.
+- **»Kovina je trda in težka.«** Misel: železo in baker sta taka, torej vse. A natrij režemo z nožem, kalij plava na vodi, živo srebro je tekoče. Skupni so sijaj, prevodnost in kovnost; trdota in gostota se med kovinami močno razlikujeta.
+- **»Kar se sveti, je kovina.«** Silicij se sveti, a se pod kladivom zdrobi in slabo prevaja tok. Preveri več lastnosti, zlasti kovnost in prevodnost.
+- **Napačen naboj iona.** Kdo napiše $\mathrm{Mg^+}$, ker »kovine dajo $1+$«, ali $\mathrm{Mg^{2-}}$, ker »sprejme dva elektrona«. Kovina elektrone odda, zato je ion pozitiven, naboj pa je enak številu zunanjih elektronov: 1. skupina $1+$, 2. skupina $2+$.
+- **»Navzdol po skupini reaktivnost pada, ker so atomi težji.«** Masa tu ni pomembna: večji atom zunanji elektron drži šibkeje in ga lažje odda. Reaktivnost navzdol narašča, cezij je reaktivnejši od kalija.
+- **Neurejena enačba.** Kdo uredi le kalij: $2\,\mathrm{K} + \mathrm{H_2O} \rightarrow 2\,\mathrm{KOH} + \mathrm{H_2}$. Vodika je levo $2$, desno $4$. Po vsakem koeficientu preštej vse elemente.
 
 ## Povzetek
 
-- Kovine so na levi in v sredini periodnega sistema. Svetijo se, dobro prevajajo elektriko in toploto, so kovne in raztegljive ter večinoma trdne.
+- Kovine so na levi in v sredini periodnega sistema. Svetijo se, dobro prevajajo elektriko in toploto, so kovne in raztegljive ter večinoma trdne (izjema je živo srebro).
 - Atomi kovin v reakcijah oddajo elektrone in postanejo pozitivni ioni.
-- Alkalijske kovine (1. skupina) so mehke, lahke, zelo reaktivne, z vodo dajo bazično raztopino in vodik. Ioni imajo naboj $1+$.
+- Alkalijske kovine (1. skupina) so mehke, lahke, zelo reaktivne, z vodo dajo bazično raztopino hidroksida in vodik. Ioni imajo naboj $1+$.
 - Zemeljskoalkalijske kovine (2. skupina) so trše, gostejše, manj reaktivne. Ioni imajo naboj $2+$.
 - Reaktivnost v obeh skupinah narašča navzdol po skupini.
 - Lastnosti skupine so podobne, ker imajo atomi enako število zunanjih elektronov.
 
-## Drugače: Na sliki
-
-Predstavljaj si periodni sistem kot zemljevid. Skrajni levi stolpec je 1. skupina (alkalijske kovine), takoj desno od njega 2. skupina (zemeljskoalkalijske kovine). Večina preostalega zemljevida levo od stopničaste črte so ostale kovine.
-
-Predstavljaj si še stolpec 1. skupine kot stavbo. Zgoraj je litij, spodaj cezij. Čim nižje greš, tem bolj je kovina reaktivna, zato je cezij bolj »buren« kot litij. Enako velja za 2. skupino: kalcij je reaktivnejši od magnezija.
-
-Še slika kovine: atomi so kot kroglice v skladu, elektroni pa se med njimi prosto gibljejo kot »oblak«. Ta oblak prenaša naboj (elektrika) in energijo (toplota), zato kovine dobro prevajajo.
-
-## Drugače: Iz vsakdanjega življenja
-
-- **Baker** je v žicah, ker dobro prevaja elektriko.
-- **Aluminij** je v foliji, ker ga lahko stanjšamo v tanek list (kovnost).
-- **Železo** je v mostovih in orodju, ker je trdo.
-- **Natrij** srečaš vsak dan v kuhinjski soli $\mathrm{NaCl}$. Čista kovina bi pri stiku z mokrimi rokami povzročila nevarno reakcijo, spojina pa je neškodljiva v primerni količini.
-- **Magnezij** gori z močno belo svetlobo, zato so ga uporabljali v starih fotografskih bliskavicah, danes pa ga uporabljamo v ognjemetih.
-- **Kalcij** je v obliki spojin v kosteh, zobeh in v apnencu.
-
-Primerjava: alkalijske kovine so kot zelo živahni otroci, ki takoj stopijo v stik z vsem, kar je blizu. Zato jih »zapremo« pod olje.
-
 ## Drugače: Korak za korakom s številkami
 
-Tabela za primerjavo skupin:
-
-| Lastnost | Alkalijske kovine | Zemeljskoalkalijske kovine |
+| Lastnost | 1. skupina | 2. skupina |
 |---|---|---|
-| Skupina | 1. | 2. |
+| Ime | alkalijske kovine | zemeljskoalkalijske kovine |
 | Zunanji elektroni | 1 | 2 |
 | Naboj iona | $1+$ | $2+$ |
-| Trdota | zelo mehke | trše |
 | Reaktivnost | zelo velika | velika, a manjša |
-| Primer | $\mathrm{Na}$, $\mathrm{K}$ | $\mathrm{Mg}$, $\mathrm{Ca}$ |
 
-Kako iz skupine ugotoviš naboj iona:
+Od skupine do formule:
 
-1. Poglej, v kateri skupini je element: kalij je v 1. skupini.
-2. Število zunanjih elektronov je enako številki skupine (pri teh dveh skupinah): $1$.
-3. Atom odda te elektrone in nastane ion s tolikšnim pozitivnim nabojem: $\mathrm{K^+}$.
-4. Za magnezij (2. skupina): odda $2$ elektrona, nastane $\mathrm{Mg^{2+}}$.
+1. Poišči skupino: kalij je v 1. skupini.
+2. Zunanjih elektronov je toliko, kot je številka skupine: $1$.
+3. Atom odda te elektrone, naboj iona je $1+$: $\mathrm{K^+}$.
+4. Pri magneziju (2. skupina) nastane $\mathrm{Mg^{2+}}$. Kloridni ion $\mathrm{Cl^-}$ ima naboj $1-$, zato ion $\mathrm{Mg^{2+}}$ potrebuje dva: $\mathrm{MgCl_2}$.
 
-## Drugače: Bolj natančno
+Iz številke skupine izračunaš tudi, koliko elektronov oddajo atomi. Trije atomi kalcija oddajo $3 \cdot 2 = 6$ elektronov, trije atomi kalija pa $3 \cdot 1 = 3$.
 
-Zakaj so kovine take, kot so? V kovini atomi oddajo zunanje elektrone, ki se prosto gibljejo med pozitivnimi ioni. Privlaku med pozitivnimi ioni in skupnim »oblakom« elektronov pravimo **kovinska vez**. Ker se elektroni lahko gibljejo, kovine prevajajo elektriko. Ko kovino udarimo, se plasti ionov premaknejo, a jih oblak elektronov še vedno drži skupaj, zato se kovina ne zdrobi, ampak oblikuje.
+## Drugače: Kot zgodba
 
-Reaktivnost narašča navzdol po skupini, ker je zunanji elektron pri večjih atomih dlje od jedra in je šibkeje vezan. Zato ga atom lažje odda. Alkalijske kovine imajo en zunanji elektron, ki ga oddajo zelo zlahka. Zemeljskoalkalijske kovine morajo oddati dva, kar je nekoliko težje, zato so manj reaktivne od alkalijskih kovin iz iste periode.
+Leta 1807 je angleški kemik Humphry Davy skozi staljeni kalijev hidroksid spustil električni tok. Na elektrodi so se pojavile srebrne kroglice, ki so takoj zagorele z vijoličastim plamenom ali na zraku potemnele. Odkril je kalij in menda od veselja plesal po laboratoriju. Nekaj dni pozneje je pridobil še natrij. Prej ju nihče ni videl, ker sta v naravi le v spojinah.
+
+Naslednje leto je Davy na podoben način pridobil še magnezij, kalcij, stroncij in barij iz »zemelj«, trdnih snovi, ki se v ognju niso stalile. Nove kovine so z vodo reagirale mirneje kot kalij. Tako sta se pokazali dve sosednji družini kovin z različno živahnostjo.
 
 ## Preveri se
 
-? Katera trditev drži za alkalijske kovine?
+? Katera trditev o alkalijskih kovinah drži?
 - Trde so in malo reaktivne.
+~ Tako sklepaš, če so zate vse kovine kot železo. Alkalijske kovine režemo z nožem.
 + Mehke so in zelo reaktivne.
 - Tvorijo ione z nabojem $2+$.
+~ Naboj $2+$ imajo ioni 2. skupine. Alkalijske kovine imajo en zunanji elektron, zato $1+$.
 - V naravi jih pogosto najdemo kot čiste kovine.
-> Alkalijske kovine so mehke in zelo reaktivne, zato jih v naravi najdemo v spojinah. Tvorijo ione $1+$, ne $2+$.
+~ Ker so tako reaktivne, so v naravi le v spojinah, na primer v soli.
+> Alkalijske kovine so mehke in zelo reaktivne, zato so v naravi le v spojinah.
 
-? Kateri ion tvori magnezij?
-- $\mathrm{Mg^+}$
-+ $\mathrm{Mg^{2+}}$
-- $\mathrm{Mg^{-}}$
-- $\mathrm{Mg^{3+}}$
-> Magnezij je v 2. skupini, ima dva zunanja elektrona, ki ju odda. Nastane ion $\mathrm{Mg^{2+}}$. Kovine tvorijo pozitivne ione.
+? Šest atomov natrija zreagira z vodo po enačbi $2\,\mathrm{Na} + 2\,\mathrm{H_2O} \rightarrow 2\,\mathrm{NaOH} + \mathrm{H_2}$. Koliko molekul vodika nastane?
+- $6$
+~ Tako bi bilo, če bi vsak atom natrija dal svojo molekulo. Po enačbi dva atoma dasta eno.
+- $12$
+~ Šest si pomnožil z indeksom $2$ v $\mathrm{H_2}$. Iščemo število molekul, ne atomov.
++ $3$
+- $2$
+~ Prepisal si koeficient iz enačbe. Ta velja za $2$ atoma natrija, tu jih je $6$.
+> Dva atoma natrija dasta eno molekulo $\mathrm{H_2}$. Šest atomov je trikrat po dva, zato nastanejo $3$ molekule.
 
-? Kateri par elementov vsebuje samo zemeljskoalkalijski kovini?
-- $\mathrm{Na}$ in $\mathrm{K}$
-- $\mathrm{Li}$ in $\mathrm{Ca}$
-+ $\mathrm{Mg}$ in $\mathrm{Ca}$
-- $\mathrm{Na}$ in $\mathrm{Mg}$
-> Magnezij in kalcij sta v 2. skupini. Natrij, kalij in litij so alkalijske kovine iz 1. skupine.
+? Ana ureja enačbo kalija z vodo. 1. korak: $\mathrm{K} + \mathrm{H_2O} \rightarrow \mathrm{KOH} + \mathrm{H_2}$. 2. korak: $2\,\mathrm{K} + \mathrm{H_2O} \rightarrow 2\,\mathrm{KOH} + \mathrm{H_2}$. 3. korak: »Urejeno.« Kje je napaka?
+- V 1. koraku: pravilna formula je $\mathrm{K(OH)_2}$.
+~ Kalij ima ion $1+$, zato zadošča en $\mathrm{OH^-}$. Dva potrebuje ion $2+$, na primer kalcijev.
+- V 2. koraku: koeficienta pred $\mathrm{K}$ ne sme pisati.
+~ Prav s koeficienti urejamo enačbo. Ne smemo spreminjati le indeksov.
++ V 3. koraku: vodika in kisika ni preštela. Levo sta $2$ atoma H in $1$ atom O, desno $4$ in $2$.
+- Napake ni.
+~ Preštet je le kalij. Urejeni morajo biti vsi elementi.
+> Pred vodo manjka $2$: $2\,\mathrm{K} + 2\,\mathrm{H_2O} \rightarrow 2\,\mathrm{KOH} + \mathrm{H_2}$. Po vsakem koeficientu preštej vse elemente.
+
+? Natrij (1. skupina) in magnezij (2. skupina) sta v 3. periodi. Kaj drži?
++ Natrij je mehkejši in reaktivnejši od magnezija.
+- Magnezij je reaktivnejši, ker odda dva elektrona.
+~ Več oddanih elektronov ne pomeni večje reaktivnosti. Dva elektrona atom odda teže kot enega.
+- Oba tvorita ion $1+$, ker sta v isti periodi.
+~ Naboj iona določa skupina, ne perioda. Magnezij ima dva zunanja elektrona, zato $\mathrm{Mg^{2+}}$.
+- Natrij je trši, ker ima višje tališče.
+~ Natrij se tali pri $97{,}8\,^\circ\mathrm{C}$, magnezij pri $650\,^\circ\mathrm{C}$. Natrij je mehkejši.
+> Natrij odda en elektron, magnezij dva, zato je natrij reaktivnejši. Alkalijske kovine so tudi mehkejše od zemeljskoalkalijskih.
+
+? Klepar izbira kovino za strešni žleb, ki bo leta na dežju. Katera od naštetih je primerna?
+- natrij
+~ Tako izbereš, če je »kovina pač kovina«. Natrij z vodo burno reagira.
+- kalij
+~ Kalij z vodo reagira še burneje kot natrij in vodik zagori.
+- kalcij
+~ Tudi kalcij reagira z vodo: v njej enakomerno brbota.
++ baker
+> Baker je iz sredine periodnega sistema in z vodo ne reagira. Sčasoma ga prekrije zelena patina, ki ga ščiti.
 
 :::simboli
-\mathrm{Li} | litij | |
-\mathrm{Na} | natrij | |
-\mathrm{K} | kalij | |
-\mathrm{Mg} | magnezij | |
-\mathrm{Ca} | kalcij | |
-\mathrm{Hg} | živo srebro | | | kovina, ki je pri sobni temperaturi tekoča
+\mathrm{Na} | natrij | | | alkalijska kovina, 1. skupina
 \mathrm{H_2O} | voda | |
 \mathrm{NaOH} | natrijev hidroksid | | | njegova raztopina je bazična
+\mathrm{H_2} | vodik | | | nastane pri reakciji kovine z vodo
+\mathrm{K} | kalij | | | alkalijska kovina, 1. skupina
 \mathrm{KOH} | kalijev hidroksid | | | njegova raztopina je bazična
-\mathrm{H_2} | vodik | | | nastane pri reakciji alkalijske kovine z vodo
+\mathrm{Ca} | kalcij | | | zemeljskoalkalijska kovina, 2. skupina
+\mathrm{OH^-} | hidroksidni ion | | | naboj $1-$
+\mathrm{Mg} | magnezij | | | zemeljskoalkalijska kovina, 2. skupina
+\mathrm{K^+} | kalijev ion | | | naboj $1+$
+N | število atomov elementa v členu | N = k \cdot i | –
+k | koeficient | | –
+i | indeks | | –
 :::
