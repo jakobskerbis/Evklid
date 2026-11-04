@@ -38,12 +38,18 @@ jobs:
           distribution: temurin
           java-version: 17
       - run: npm ci
-      - name: Številka različice (evklid.app + 1)
+      # Večja od APK na evklid.app in od zadnje izdaje apk-N (ponovni zagon, preden je povezava prilepljena).
+      - name: Številka različice
         id: ver
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           now=$(curl -fsS https://evklid.app/api/app-links | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).apkVersion?.versionCode||0))')
-          echo "code=$((now + 1))" >> "$GITHUB_OUTPUT"
-          echo "Nova različica: $((now + 1))"
+          test "$now" -gt 0 || { echo "::error::evklid.app ne pove številke trenutnega APK"; exit 1; }
+          last=$(gh release list --limit 100 --json tagName -q '.[].tagName' | sed -n 's/^apk-\([0-9]*\)$/\1/p' | sort -n | tail -1)
+          code=$(( (${last:-0} > now ? ${last:-0} : now) + 1 ))
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "Nova različica: $code (evklid.app $now, zadnja izdaja ${last:-ni})"
       # Prstni odtis pred prebuild (kot EAS): enak kot pri objavi posodobitev (.eas/workflows/posodobitev.yml),
       # sicer APK ne dobi posodobitev JavaScripta.
       - name: Prstni odtis
@@ -79,7 +85,8 @@ jobs:
           signer=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)apksigner
           "$signer" sign --ks "$RUNNER_TEMP/evklid.jks" --ks-pass env:KS_PASS --ks-key-alias "$KEY_ALIAS" --key-pass env:KEY_PASS \
             --out evklid.apk android/app/build/outputs/apk/release/app-release.apk
-          "$signer" verify --print-certs evklid.apk | head -3
+          # Primerjaj s SHA-256 na expo.dev (Credentials): mora biti enak, sicer se APK ne namesti čez staro.
+          "$signer" verify --print-certs evklid.apk | grep -m1 "SHA-256"
           rm -f "$RUNNER_TEMP/evklid.jks"
       - name: Brez ključa (samo preizkus)
         if: env.HAS_KEY != 'true'

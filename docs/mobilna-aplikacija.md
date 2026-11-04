@@ -171,14 +171,15 @@ APK mora biti podpisan z **istim ključem** kot prejšnji, sicer ga telefon ne n
 Enkrat (ključ v skrivnosti GitHub, nikoli v repozitorij):
 1. expo.dev → projekt evklid → **Credentials** → Android → `app.evklid` → Keystore → **Download**. Na isti
    strani si zapiši *Keystore password*, *Key alias* in *Key password*.
-2. V PowerShellu v mapi, kjer je preneseni `.jks` (ime prilagodi):
-   `[Convert]::ToBase64String([IO.File]::ReadAllBytes("evklid.jks")) | Set-Clipboard`
+2. Preneseno datoteko preimenuj v `evklid.jks`. V PowerShellu pojdi v njeno mapo (`cd Downloads`) in zaženi:
+   `[Convert]::ToBase64String([IO.File]::ReadAllBytes((Resolve-Path "evklid.jks"))) | Set-Clipboard`
 3. github.com/jakobskerbis/Evklid → Settings → Secrets and variables → Actions → **New repository secret**,
    štiri skrivnosti: `ANDROID_KEYSTORE_BASE64` (prilepi iz koraka 2), `ANDROID_KEYSTORE_PASSWORD`,
    `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`. Nato datoteko `.jks` shrani na varno (ne briši).
 
 Vsakič:
 4. github.com/jakobskerbis/Evklid → **Actions** → »APK za Android« → **Run workflow** (veja `main`), ~25 minut.
+   V koraku »Podpis z ključem Evklid« je izpisan SHA-256: biti mora enak kot na expo.dev (Credentials).
 5. Povezavo `https://github.com/jakobskerbis/Evklid/releases/download/apk-<številka>/evklid.apk` iz povzetka
    gradnje prilepi v **Račun → Aplikacija za Android (APK)** in tapni »Naloži APK«.
 
