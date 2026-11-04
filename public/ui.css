@@ -910,7 +910,9 @@ body.boot-down-on > :not(#boot-down) { visibility: hidden; }
 :is(.kolone, .set-cols, #exams-content, #competition-content, #league-content, #path-content) > :is(h1, h2, h3) { break-after: avoid; }
 #exams-content > :is(h1, .comp-pickers), #competition-content > :is(h1, .comp-pickers), #path-content > .legend { column-span: all; }
 /* Jaz: profil, raven, števci in zbirke v vrsti; seznam povezav pod njimi v stolpcih. */
-#view-me { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 0 16px; align-content: start; }
+/* Vrstice vedno po vsebini: pogled ima stalno višino (drsi), zato bi jih mreža sicer stisnila do min-height
+   (gumb s profilom na 44 px, velika ikona J bi segla čez kartico Raven; telefon, j 4. 11. 2026). */
+#view-me { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 0 16px; align-content: start; grid-auto-rows: max-content; }
 #view-me > :is(.list-card, .me-back, h1) { grid-column: 1 / -1; }
 #view-me .list-card .list-row { break-inside: avoid; }
 /* Mnenje: ocene levo, besedila desno (obrazec v stolpcih namesto vrstice čez ves zaslon). */
