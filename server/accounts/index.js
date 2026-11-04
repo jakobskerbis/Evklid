@@ -997,6 +997,24 @@ export function mountAccounts(app, store, opts = {}) {
             return [];
           }
         })(),
+        // Igre (server/games.js, server/daily-puzzle.js); tabele morda še ne obstajajo.
+        games: Object.fromEntries(
+          [
+            ["scores", "SELECT game, best, plays, tier, correct, wrong, updated_at FROM game_scores WHERE student_id = ?"],
+            ["ratings", "SELECT engine, up, updated_at FROM game_ratings WHERE student_id = ?"],
+            ["wishes", "SELECT week, genre FROM game_wishes WHERE student_id = ?"],
+            ["unlocks", "SELECT concept, created_at FROM game_unlocks WHERE student_id = ?"],
+            ["days", "SELECT day, plays, returns FROM game_days WHERE student_id = ?"],
+            ["concept_days", "SELECT day, concept, weak, correct, wrong FROM game_concept_days WHERE student_id = ?"],
+            ["daily_puzzle", "SELECT day, level, hints, wrong, solved, time_ms, total_ms FROM daily_puzzle WHERE student_id = ?"],
+          ].map(([k, sql]) => {
+            try {
+              return [k, q(sql, c.id)];
+            } catch {
+              return [k, []];
+            }
+          }),
+        ),
         schedule: (() => {
           try {
             const r = db.prepare("SELECT data FROM schedules WHERE student_id = ?").get(c.id);

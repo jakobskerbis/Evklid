@@ -1293,10 +1293,20 @@ export const AREAS = [
   ["la", { sl: "Vektorji, matrike, kompleksna števila", en: "Vectors, matrices, complex numbers" }, "#d946ef"],
 ].map((a) => [...a, "MAT"]).concat(SUBJ_AREAS);
 export const SUBJECTS = [...new Set(AREAS.map((a) => a[3]))];
-export const conceptName = (c) => c.name[LANG] || c.name.en;
+// Imena v jeziku vmesnika, ki ni slovenščina ali angleščina (names-<jezik>.js); naloge ostanejo v angleščini.
+const NAME_PACKS = { ar: () => import("./names-ar.js") };
+let NAMES = null;
+export async function loadConceptNames(lang) {
+  try {
+    NAMES = NAME_PACKS[lang] ? (await NAME_PACKS[lang]()).NAMES : null;
+  } catch {
+    NAMES = null; // brez povezave: angleška imena
+  }
+}
+export const conceptName = (c) => NAMES?.[c.id] || c.name[LANG] || c.name.en;
 export const areaName = (id) => {
   const a = AREAS.find((x) => x[0] === id);
-  return a ? a[1][LANG] || a[1].en : id;
+  return NAMES?.[`area:${id}`] || (a ? a[1][LANG] || a[1].en : id);
 };
 export const concept = (id) => C.find((c) => c.id === id);
 

@@ -445,6 +445,26 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-dz-pad { --gm-a: #8b5cf6; --gm-b: #2563eb; border: 3px solid var(--gm-ink); border-radius: 16px; padding: 8px; }
 .gm-dz-acts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-between; margin: 4px 0 12px; }
 .gm-dz-pad .gm-key { min-height: 46px; }
+/* telefon ležeče: med reševanjem brez glave aplikacije in obvestil, da gre vse na en zaslon */
+@media (orientation: landscape) and (max-height: 560px) {
+  body:has(.gm-dz-play) :is(.topbar, .tabbar, #mock-banner, #test-notice, #offline-banner) { display: none !important; }
+  .gm-dz-pad .gm-key { min-height: 40px; }
+}
+/* telefon ležeče in širok zaslon: tipkovnica desno ob uganki (brez praznega roba ob strani) */
+@media (orientation: landscape) and (max-height: 560px), (min-width: 900px) {
+  .gm-dz:has(.gm-dz-play) { max-width: 1100px; gap: 8px 16px; flex-flow: row wrap; align-items: center; }
+  .gm-dz:has(.gm-dz-play) > .seg { width: auto; margin-inline-start: auto; }
+  .gm-dz > .gm-dz-play { flex: 1 1 100%; }
+  .gm-dz:has(.gm-dz-play) .gm-dz-bar { flex-direction: row; align-items: center; gap: 12px; }
+  .gm-dz:has(.gm-dz-play) .gm-dz-bar h1 { font-size: 1.1rem; }
+  .gm-dz:has(.gm-dz-play) .gm-dz-bar h1 > svg.i { width: 24px; height: 24px; }
+  .gm-dz > .gm-dz-play { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 40%); column-gap: 14px; align-items: start; padding: 10px 12px; }
+  .gm-dz-play > * { grid-column: 1; }
+  .gm-dz-play > .gm-dz-pad { grid-column: 2; grid-row: 1 / span 7; align-self: center; padding: 6px; }
+  .gm-dz-play .gm-dz-q { margin: 2px 0 6px; }
+  .gm-dz-play .gm-dz-acts { margin: 4px 0 0; }
+  .gm-dz-play .gm-pad { gap: 5px; }
+}
 .gm-dz-acts button { display: inline-flex; align-items: center; gap: 6px; }
 .gm-dz-res { text-align: center; }
 .gm-dz-res p { margin: 6px 0; }
