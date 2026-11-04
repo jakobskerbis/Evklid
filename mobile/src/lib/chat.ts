@@ -3,7 +3,7 @@ import { request } from "./api";
 
 export type ChatEvent = { event: string; data: any };
 
-// Razčleni tok SSE na dogodke (delta, done, error, cards, mastered, proposal).
+// Razčleni tok SSE na dogodke (delta, done, error, cards, mastered, proposal, allowance).
 export function parseSse(buffer: string): { events: ChatEvent[]; rest: string } {
   const events: ChatEvent[] = [];
   const blocks = buffer.split("\n\n");

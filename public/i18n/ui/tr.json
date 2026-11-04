@@ -2738,5 +2738,20 @@
   "pp.taskN": "Soru {n}",
   "pp.taskMsg": "Geçmiş sınavı çözüyorum: {paper}, soru {n}. Sorunun resmini gönderiyorum. Bu sınavın tarzında ipuçlarıyla bana yol göster ve kendim denemeden çözümü söyleme.",
   "pp.boxMsg": "Geçmiş sınavı çözüyorum: {paper}, sayfa {page}. Sorunun resmini gönderiyorum. Bu sınavın tarzında ipuçlarıyla bana yol göster ve kendim denemeden çözümü söyleme.",
-  "pp.taskText": "Sınavdan alınan soru metni (formüller bozuk olabilir, esas olan resimdir):"
+  "pp.taskText": "Sınavdan alınan soru metni (formüller bozuk olabilir, esas olan resimdir):",
+  "pay.seats1Level": "1 profil · {level}",
+  "pay.family": "Aile (2–4 profil)",
+  "pay.familyStudent": "Öğrencili aile (2–4 profil)",
+  "up.title": "Daha yüksek seviye",
+  "up.text": "Aboneliğin kendi seviyeni ve tüm alt seviyeleri açar. Daha yüksek bir seviyeyi hemen açabilir, dönem sonuna kadar yalnızca farkı ödersin.",
+  "up.btn": "Aç: {name}",
+  "up.done": "Yükseltme tamamlandı. Daha yüksek seviye açık.",
+  "up.pending": "{date} tarihinden itibaren yeni fiyat geçerli: {price} ({name}).",
+  "up.locked": "seviye kilitli",
+  "ai.left": "Bu ayki ayrıntılı açıklamalar: {n} kaldı",
+  "ai.low": "Bu ayki ayrıntılı açıklamaların % 80'i kullanıldı.",
+  "ai.out": "Bu ayki ayrıntılı açıklamalar bitti. Öğretmen hızlı modda yanıt vermeye devam ediyor.",
+  "ai.buy": "Açıklama satın al",
+  "gift.level": "Seviye",
+  "meter.levelsTitle": "Seviyeye göre fiyatlar"
 }

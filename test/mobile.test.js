@@ -163,7 +163,7 @@ test("App Store purchase gives the plan, other account is refused, refund notifi
     const info = await c("/api/billing/store");
     assert.equal(info.status, 200);
     assert.match(info.body.account_token, /^[0-9a-f-]{36}$/);
-    assert.equal(info.body.products.length, 4);
+    assert.equal(info.body.products.length, 10, "OŠ, SŠ, faks, Družina, Družina s študentom × mesec/leto (stari »2 otroka« ni v ponudbi)");
     const token = info.body.account_token;
 
     // Nakup drugega računa (drug appAccountToken) je zavrnjen.

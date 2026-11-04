@@ -790,7 +790,10 @@ async function send(text, { deep = false } = {}) {
     let cardsData = null;
     let proposal = null;
     let newLanguage = null;
+    let allowanceData = null;
     await readSse(res, {
+      // Zajamčena poraba naročnika: obvestilo pri 80 %, opomba pri 100 % (server/app.js, j 2026-11-01).
+      allowance: (d) => (allowanceData = d),
       delta: (d) => pacer.push(d.text),
       cards: (d) => (cardsData = d),
       // Inštruktor je spremenil nastavitve (server/chat-settings.js).
@@ -828,6 +831,7 @@ async function send(text, { deep = false } = {}) {
       if (doneData && !doneData.settings) addDeepButton(bubble, doneData.deep);
       if (doneData?.text) addGraphButton(bubble, doneData.text);
       if (cardsData) addCardsNote(bubble, cardsData);
+      if (allowanceData) addAllowanceNote(bubble, allowanceData);
       if (doneData?.id) addMsgFoot(bubble, doneData);
       if (proposal) addProposal(bubble, proposal, { onConfirm: confirmChatProposal });
       checkReplyFits(bubble, doneData?.id);
@@ -866,6 +870,17 @@ function checkReplyFits(bubble, id) {
   const copy = bubble.cloneNode(true);
   copy.querySelectorAll("button, .msg-foot, .graph-btn").forEach((b) => b.remove());
   showFull({ kind: "reply", sig: String(id || bubble.textContent.length), title: t("nav.chat"), html: copy.innerHTML });
+}
+
+// Obvestilo pod odgovorom: koliko podrobnih razlag je še ostalo (nikoli € ali $). Gumb za dokup samo, ko ga
+// strežnik dovoli (polnoleten imetnik, profil 15+, ena ponudba naenkrat).
+function addAllowanceNote(bubble, d) {
+  const el = document.createElement("div");
+  el.className = "cards-note allowance-note";
+  const text = d.stage === "out" ? t("ai.out") : `${t("ai.low")} ${t("ai.left", { n: d.left })}`;
+  el.innerHTML = `<div class="cn-head">${icon("info")} <span>${escapeHtml(text)}</span></div>${d.buy ? `<button type="button" class="text-btn">${escapeHtml(t("ai.buy"))} ${icon("chevron-right")}</button>` : ""}`;
+  el.querySelector("button")?.addEventListener("click", () => $("#account-tab").click());
+  bubble.appendChild(el);
 }
 
 async function readSse(res, handlers) {

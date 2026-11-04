@@ -2792,5 +2792,20 @@
   "pp.taskN": "Úloha {n}",
   "pp.taskMsg": "Riešim staršiu písomku {paper}, úloha {n}. Posielam obrázok úlohy. Veď ma nápovedami v štýle tejto skúšky a neprezraď riešenie, kým sa oň nepokúsim.",
   "pp.boxMsg": "Riešim staršiu písomku {paper}, strana {page}. Posielam obrázok úlohy. Veď ma nápovedami v štýle tejto skúšky a neprezraď riešenie, kým sa oň nepokúsim.",
-  "pp.taskText": "Text úlohy z písomky (vzorce môžu byť poškodené, platí obrázok):"
+  "pp.taskText": "Text úlohy z písomky (vzorce môžu byť poškodené, platí obrázok):",
+  "pay.seats1Level": "1 profil · {level}",
+  "pay.family": "Rodina (2–4 profily)",
+  "pay.familyStudent": "Rodina so študentom (2–4 profily)",
+  "up.title": "Vyšší stupeň",
+  "up.text": "Predplatné otvára tvoj stupeň a všetky nižšie. Vyšší môžeš otvoriť hneď a doplatíš len rozdiel do konca obdobia.",
+  "up.btn": "Otvoriť: {name}",
+  "up.done": "Prechod sa podaril. Vyšší stupeň je otvorený.",
+  "up.pending": "Od {date} platí nová cena: {price} ({name}).",
+  "up.locked": "stupeň zamknutý",
+  "ai.left": "Podrobné vysvetlenia tento mesiac: ešte {n}",
+  "ai.low": "Tento mesiac je využitých 80 % podrobných vysvetlení.",
+  "ai.out": "Podrobné vysvetlenia na tento mesiac sú minuté. Doučovateľ odpovedá ďalej v rýchlom režime.",
+  "ai.buy": "Dokúpiť vysvetlenia",
+  "gift.level": "Stupeň",
+  "meter.levelsTitle": "Ceny podľa stupňa"
 }

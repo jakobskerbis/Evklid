@@ -65,6 +65,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Okna | več oken hkrati (`okna.js`) | L | samo iPad (Split View); na telefonu ne | ✗ (namerno na telefonu) |
 | Nastavitve | slogi (Igriv, Temen, zgodovinski), lastne barve, jezik, tempo, tipkovnica, glas; aplikacija ima raven, opomnike, vibracijo | M | naravno; slogi kot dodatne palete v `theme.ts` | delno |
 | Račun staršev | otroci, plačila, darila, šole (`account.js`) | M | odpri spletno stran prijavljeno (`app-link.js` v obratni smeri) | delno (naročnina, izbris) |
+| Nadgradnja stopnje, dokup razlag, darilo po stopnji | gumb »Odpri: …« (doplačilo razlike), gumb »Dokupi razlage« ob obvestilu o porabi, izbira stopnje darilne kode (`account.js`, `app.js` addAllowanceNote) | S | splet; aplikacija iz trgovine teh nakupov ne sme ponuditi mimo trgovine | delno (cena stopnje, Družina, obvestilo o porabi brez gumba) |
 | Skrbnik | upravljanje (APK, uporabniki) | S | samo splet | ✗ (namerno) |
 | Skeniraj: po korakih | reševalnik po korakih (`public/scan/`); aplikacija pošlje fotografijo inštruktorju | M | WebView strani skeniranja ali naravni zaslon korakov | delno |
 | Govor | mikrofon v klepetu (`speech.js`) | M | naravna odvisnost (prepoznava govora) → nova gradnja APK | ✗ |
@@ -76,7 +77,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 |---|---|---|
 | Kje | Android: APK na evklid.app/prenesi | App Store, Google Play |
 | Gradnja | `eas build --profile direct --platform android` | `eas build --profile production` |
-| Plačilo | Stripe na spletu (9,99 / 89 / 15,99 / 139 €) | nakup v aplikaciji (11,99 / 104,99 / 18,99 / 159,99 €) |
+| Plačilo | Stripe na spletu po stopnjah (OŠ 9,99 / 89 €, SŠ 12,99 / 119 €, faks 16,99 / 149 €, Družina 17,99 / 159 €, Družina s študentom 24,99 / 219 €) | nakup v aplikaciji, vsak paket 2 € dražji kot na spletu (`STORE_PRICES_EUR` v `server/mobile/store-billing.js`: 11,99 / 91, 14,99 / 121, 18,99 / 151, 19,99 / 161, 26,99 / 221 €); izdelki `<predpona>.<month\|year>.<1\|ss\|faks\|druzina\|druzina_student>`, stari `.2` ostane za obstoječe naročnine |
 | Provizija | Stripe ~1,5 % + 0,25 € | 15 % (Apple Small Business Program, Google Play) |
 
 Cene v trgovinah so višje zaradi provizije. Aplikacija iz trgovine ne sme omenjati cenejših cen na

@@ -2767,5 +2767,20 @@
   "pp.taskN": "Exercițiul {n}",
   "pp.taskMsg": "Rezolv lucrarea din anii trecuți {paper}, exercițiul {n}. Trimit o imagine a exercițiului. Ghidează-mă cu indicii în stilul acestui examen și nu-mi dezvălui soluția până nu încerc singur sau singură.",
   "pp.boxMsg": "Rezolv lucrarea din anii trecuți {paper}, pagina {page}. Trimit o imagine a exercițiului. Ghidează-mă cu indicii în stilul acestui examen și nu-mi dezvălui soluția până nu încerc singur sau singură.",
-  "pp.taskText": "Textul exercițiului din lucrare (formulele pot fi deteriorate; contează imaginea):"
+  "pp.taskText": "Textul exercițiului din lucrare (formulele pot fi deteriorate; contează imaginea):",
+  "pay.seats1Level": "1 profil · {level}",
+  "pay.family": "Familie (2–4 profiluri)",
+  "pay.familyStudent": "Familie cu student (2–4 profiluri)",
+  "up.title": "Nivel superior",
+  "up.text": "Abonamentul deschide nivelul tău și toate nivelurile inferioare. Poți deschide unul superior acum și plătești doar diferența până la sfârșitul perioadei.",
+  "up.btn": "Deschide: {name}",
+  "up.done": "Trecerea a reușit. Nivelul superior este deschis.",
+  "up.pending": "Din {date} se aplică noul preț: {price} ({name}).",
+  "up.locked": "nivel blocat",
+  "ai.left": "Explicații detaliate luna aceasta: mai sunt {n}",
+  "ai.low": "Luna aceasta s-au folosit 80 % din explicațiile detaliate.",
+  "ai.out": "Explicațiile detaliate pentru luna aceasta s-au terminat. Tutorele răspunde în continuare în modul rapid.",
+  "ai.buy": "Cumpără explicații",
+  "gift.level": "Nivel",
+  "meter.levelsTitle": "Prețuri pe niveluri"
 }

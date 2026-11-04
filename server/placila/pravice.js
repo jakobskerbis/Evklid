@@ -7,7 +7,12 @@
 // na dan, »Razloži podrobneje« največ s Sonnetom, mesečna meja AI na šolo.
 // Osebno: vsi predmeti in ravni, 60 vprašanj na dan, Opus ob 3. zaporedni prošnji »Razloži podrobneje«,
 // skeniranje naloge, načrt pred testom, tedensko poročilo staršem.
+// Stopnje (j 2026-11-01): naročnina odpre svojo stopnjo in vse nižje; višjo le z nadgradnjo (doplačilo razlike
+// s proracijo Stripa, server/accounts/index.js /api/billing/upgrade). Profil, ki je prešel na višjo stopnjo
+// (npr. 1. 9. iz OŠ v SŠ), ima pri naročnini za en profil svojo stopnjo odprto do naslednjega podaljšanja,
+// ko velja nova cena (server/accounts/billing.js); pri družinskem paketu je faks do nadgradnje zaklenjen.
 import { getTopic } from "../curriculum.js";
+import { STOPNJE, rang, stopnjaPoti } from "../../public/stopnja.js";
 
 const envNum = (k, d) => {
   const v = Number(process.env[k]);
@@ -21,8 +26,9 @@ const envNum = (k, d) => {
 // 0 = brez omejitve.
 export const schoolDailyQuestions = () =>
   envNum("EVKLID_SOLA_DAILY_QUESTIONS", 15);
-export const personalDailyQuestions = () =>
-  envNum("EVKLID_OSEBNO_DAILY_QUESTIONS", 60);
+// Osebno: 60 vprašanj na dan (OŠ, SŠ), faks 100 (j 2026-11-01).
+export const personalDailyQuestions = (level = "OS") =>
+  level === "FAKS" ? envNum("EVKLID_OSEBNO_DAILY_QUESTIONS_FAKS", 100) : envNum("EVKLID_OSEBNO_DAILY_QUESTIONS", 60);
 
 // Rok brez ure (»2027-06-30«) velja do konca tega dne (UTC).
 const later = (iso, now) => {
@@ -80,20 +86,32 @@ export function schoolCovers(s, topicId) {
   return true;
 }
 
-// personal: { tier, until } ali null; schools: vrstice licenc, ki jim učenec pripada (z ai_spent_usd).
-// freeDaily: vprašanja na dan v brezplačnem paketu. Vrne opis pravic.
+// personal: { tier, until, level?, grace? } ali null; level = najvišja stopnja, ki jo osebni paket odpre
+// (null ali brez = vse stopnje: preizkus, koda, bonus, regijske cene, stari paketi); grace = stopnja profila,
+// odprta do naslednjega podaljšanja. ownLevel: stopnja profila (public/stopnja.js).
+// schools: vrstice licenc, ki jim učenec pripada (z ai_spent_usd). freeDaily: vprašanja na dan v brezplačnem paketu.
+// Vrne opis pravic.
 export function rights({
   personal = null,
   schools = [],
   freeDaily = 10,
+  ownLevel = "OS",
   now = Date.now(),
 } = {}) {
   const valid = schools.filter((s) => schoolValid(s, now));
   const school = valid.length > 0;
   const own = !!personal;
+  const lvl = STOPNJE.includes(ownLevel) ? ownLevel : "OS";
+  // Najvišja odprta stopnja osebnega paketa: svoja (paket) in vse nižje; prehod profila navzgor do podaljšanja.
+  const top = !own ? null : STOPNJE.includes(personal.level) ? personal.level : "FAKS";
+  const openLevel = !own ? null : STOPNJE.includes(personal.grace) && rang(personal.grace) > rang(top) ? personal.grace : top;
+  // Profil je nad odprto stopnjo (npr. študent v Družini brez študenta): poln dostop do nižjih stopenj, svoja do nadgradnje zaprta.
+  const levelLocked = own && rang(lvl) > rang(openLevel);
+  // Stopnja, po kateri veljajo meje (vprašanja na dan, zajamčena poraba AI): stopnja profila, največ odprta.
+  const useLevel = !own ? lvl : levelLocked ? openLevel : lvl;
   // Vprašanja na dan: vsota virov; 0 pri katerem koli viru pomeni brez omejitve (null).
   const parts = [
-    own && (personal.tier === "legacy" ? 0 : personalDailyQuestions()), // stari profili brez starša: brez meje kot doslej
+    own && (personal.tier === "legacy" ? 0 : personalDailyQuestions(useLevel)), // stari profili brez starša: brez meje kot doslej
     school && schoolDailyQuestions(),
   ].filter((x) => x !== false);
   const dailyQuestions = !parts.length
@@ -110,6 +128,12 @@ export function rights({
     sources: [...(own ? ["osebno"] : []), ...(school ? ["sola"] : [])],
     personal: own,
     personalTier: own ? personal.tier : null,
+    // Stopnje (j 2026-11-01): openLevel = najvišja odprta stopnja osebnega paketa, levels = vse odprte.
+    level: lvl,
+    openLevel,
+    levels: own ? STOPNJE.filter((l) => rang(l) <= rang(openLevel)) : [],
+    levelLocked,
+    useLevel,
     school,
     schools: valid,
     dailyQuestions,
@@ -123,8 +147,10 @@ export function rights({
   };
 }
 
-// Interaktivni del lekcije: Osebno za vse teme, šolska licenca za teme svojih predmetov in razredov.
+// Interaktivni del lekcije: Osebno za teme odprtih stopenj, šolska licenca za teme svojih predmetov in razredov.
 export function lessonInteractive(r, topicId) {
-  if (r.personal) return true;
+  if (r.personal && levelOpen(r, stopnjaPoti(getTopic(topicId)?.path))) return true;
   return r.schools.some((s) => schoolCovers(s, topicId));
 }
+// Ali osebni paket odpre stopnjo (svoja in vse nižje).
+export const levelOpen = (r, level) => !!r.personal && rang(level) <= rang(r.openLevel || "FAKS");

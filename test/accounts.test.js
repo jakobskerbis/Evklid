@@ -178,7 +178,7 @@ test("free tier limits tutor questions; subscription via webhook lifts it", asyn
       assert.equal(session.body["line_items[0][price]"], "price_evklid_1_year");
       assert.equal(session.body.mode, "subscription");
       assert.equal(session.body["subscription_data[trial_end]"], undefined); // preizkus je že potekel
-      assert.equal(calls.filter((c) => c.path === "/v1/prices" && c.method === "POST").length, 4);
+      assert.equal(calls.filter((c) => c.path === "/v1/prices" && c.method === "POST").length, 10, "cene po stopnjah in družinska paketa");
       const customer = store.db.prepare("SELECT stripe_customer_id FROM parents WHERE id = ?").get(parent.id).stripe_customer_id;
 
       // Webhook z napačnim podpisom je zavrnjen.
@@ -252,7 +252,7 @@ test("checkout carries remaining app trial into Stripe", async () => {
     await registerVerified(a, calls, "dani@primer.si");
     await a("/api/billing/checkout", { method: "POST", body: { seats: 2, interval: "month", adult: true, withdrawal: true } });
     const session = calls.find((c) => c.path === "/v1/checkout/sessions");
-    assert.equal(session.body["line_items[0][price]"], "price_evklid_2_month");
+    assert.equal(session.body["line_items[0][price]"], "price_evklid_druzina_month", "Družina namesto »2 otroka«");
     const days = (Number(session.body["subscription_data[trial_end]"]) * 1000 - Date.now()) / 86400000;
     assert.ok(days > 6.9 && days <= 7, String(days));
   });
@@ -282,7 +282,7 @@ test("referral: both parents get a free month after the first payment", async ()
 
     const credits = calls.filter((c) => c.path.endsWith("/balance_transactions"));
     assert.equal(credits.length, 1);
-    assert.equal(credits[0].body.amount, "-1599"); // povabljeni: dobropis v višini mesečne naročnine
+    assert.equal(credits[0].body.amount, "-1599"); // povabljeni (stari paket »2 otroka«): dobropis v višini mesečne naročnine
     const referrer = (await a("/api/account")).body;
     assert.equal(referrer.referral.rewards, 1);
     assert.equal(referrer.access.tier, "trial"); // še v preizkusu, mesec se doda kot bonus
@@ -879,7 +879,7 @@ test("preverjanje starosti: premlad otrok dobi povezavo za starše, dijak ima sa
     const prices = await client()("/api/account/prices?country=SI");
     assert.equal(prices.status, 200);
     assert.equal(prices.body.currency, "EUR");
-    assert.equal(prices.body.plans.length, 4);
+    assert.equal(prices.body.plans.length, 10);
 
     // Dijak (16) ustvari račun zase: samo en profil, letnica iz datuma rojstva.
     const teen = client();

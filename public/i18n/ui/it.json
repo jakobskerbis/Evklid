@@ -2740,5 +2740,20 @@
   "pp.taskN": "Esercizio {n}",
   "pp.taskMsg": "Sto risolvendo la prova passata {paper}, esercizio {n}. Invio un'immagine dell'esercizio. Guidami con suggerimenti nello stile di questo esame e non svelarmi la soluzione finché non ci provo da me.",
   "pp.boxMsg": "Sto risolvendo la prova passata {paper}, pagina {page}. Invio un'immagine dell'esercizio. Guidami con suggerimenti nello stile di questo esame e non svelarmi la soluzione finché non ci provo da me.",
-  "pp.taskText": "Testo dell'esercizio dalla prova (le formule possono essere rovinate; vale l'immagine):"
+  "pp.taskText": "Testo dell'esercizio dalla prova (le formule possono essere rovinate; vale l'immagine):",
+  "pay.seats1Level": "1 profilo · {level}",
+  "pay.family": "Famiglia (2–4 profili)",
+  "pay.familyStudent": "Famiglia con studente (2–4 profili)",
+  "up.title": "Livello superiore",
+  "up.text": "L'abbonamento apre il tuo livello e tutti quelli inferiori. Puoi aprirne uno superiore subito e pagare solo la differenza fino alla fine del periodo.",
+  "up.btn": "Apri: {name}",
+  "up.done": "Aggiornamento riuscito. Il livello superiore è aperto.",
+  "up.pending": "Dal {date} vale il nuovo prezzo: {price} ({name}).",
+  "up.locked": "livello bloccato",
+  "ai.left": "Spiegazioni dettagliate questo mese: ancora {n}",
+  "ai.low": "Questo mese hai usato l'80 % delle spiegazioni dettagliate.",
+  "ai.out": "Le spiegazioni dettagliate di questo mese sono finite. Il tutor continua a rispondere in modalità veloce.",
+  "ai.buy": "Acquista altre spiegazioni",
+  "gift.level": "Livello",
+  "meter.levelsTitle": "Prezzi per livello"
 }

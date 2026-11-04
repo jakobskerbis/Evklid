@@ -2738,5 +2738,20 @@
   "pp.taskN": "{n}. feladat",
   "pp.taskMsg": "Egy korábbi feladatlapot oldok meg: {paper}, {n}. feladat. Küldök egy képet a feladatról. Vezess rávezető tippekkel ennek a vizsgának a stílusában, és ne áruld el a megoldást, amíg magam meg nem próbálom.",
   "pp.boxMsg": "Egy korábbi feladatlapot oldok meg: {paper}, {page}. oldal. Küldök egy képet a feladatról. Vezess rávezető tippekkel ennek a vizsgának a stílusában, és ne áruld el a megoldást, amíg magam meg nem próbálom.",
-  "pp.taskText": "A feladat szövege a feladatlapról (a képletek sérültek lehetnek, a kép a mérvadó):"
+  "pp.taskText": "A feladat szövege a feladatlapról (a képletek sérültek lehetnek, a kép a mérvadó):",
+  "pay.seats1Level": "1 profil · {level}",
+  "pay.family": "Család (2–4 profil)",
+  "pay.familyStudent": "Család egyetemistával (2–4 profil)",
+  "up.title": "Magasabb szint",
+  "up.text": "Az előfizetés megnyitja a szintedet és az összes alacsonyabbat. Magasabb szintet azonnal megnyithatsz, és csak a különbözetet fizeted az időszak végéig.",
+  "up.btn": "Megnyitás: {name}",
+  "up.done": "A váltás sikerült. A magasabb szint nyitva van.",
+  "up.pending": "{date}-tól az új ár érvényes: {price} ({name}).",
+  "up.locked": "szint zárolva",
+  "ai.left": "Részletes magyarázatok ebben a hónapban: még {n}",
+  "ai.low": "Ebben a hónapban a részletes magyarázatok 80 %-a elfogyott.",
+  "ai.out": "Az e havi részletes magyarázatok elfogytak. A tanár gyors módban válaszol tovább.",
+  "ai.buy": "Magyarázatok vásárlása",
+  "gift.level": "Szint",
+  "meter.levelsTitle": "Árak szintenként"
 }

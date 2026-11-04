@@ -1,6 +1,7 @@
 // Paketi, cene in pravica do polnega dostopa.
 import "../env.js";
 import { BRAND, LEGACY } from "../brand.js";
+import { STOPNJE, rang } from "../../public/stopnja.js";
 
 export const TRIAL_DAYS = 7;
 export const REFERRAL_DAYS = 30;
@@ -8,18 +9,65 @@ export const MAX_CHILDREN = 4;
 export const PRIVACY_VERSION = "2026-10-29";
 
 // Cene v centih (z DDV). lookup_key poveže ceno v Stripu s paketom.
-// Ena cena za vse ravni (OŠ, SŠ, fakulteta). Ob spremembi zneska Stripe sam
-// ustvari novo ceno in staro arhivira (glej ensurePrices); obstoječe naročnine
-// ostanejo pri stari ceni.
-// Izračun (2026-10-28): od 9,99 € ostane po DDV (22 %) in Stripu (1,5 % + 0,25 €)
-// 7,8 €; AI stane 1–2 € na dejavnega učenca → 6–7 € na mesec za nas (≈ 75 %).
-// Šolsko leto: 89 € = 7,42 € na mesec (26 % ceneje), plačilo vnaprej, manj odpovedi.
+// Cene po stopnjah (j 2026-11-01, »Predlog cenika«): cena velja za profil in sledi stopnji profila
+// (public/stopnja.js): OŠ 9,99 € na mesec ali 89 € na leto (nespremenjeno), SŠ 12,99 / 119 €,
+// faks 16,99 / 149 €. Družina (2–4 profili OŠ ali SŠ) 17,99 / 159 € namesto »2 otroka« (15,99 / 139 €),
+// Družina s študentom (2–4 profili, tudi faks) 24,99 / 219 €. Letna cena ≈ 9 mesečnih plačil.
+// Paket OŠ obdrži stari lookup_key (<slug>_1_month), da obstoječe naročnine ostanejo pri isti ceni v Stripu.
+// Ob spremembi zneska Stripe sam ustvari novo ceno in staro arhivira (glej ensurePrices); obstoječe
+// naročnine ostanejo pri stari ceni. Naročnina odpre svojo stopnjo in vse nižje (server/placila/pravice.js).
+export const LEVEL_PRICES = {
+  OS: { month: 999, year: 8900 },
+  SS: { month: 1299, year: 11900 },
+  FAKS: { month: 1699, year: 14900 },
+};
+export const FAMILY_PRICES = {
+  druzina: { month: 1799, year: 15900 },
+  druzina_student: { month: 2499, year: 21900 },
+};
+// Kratka oznaka stopnje v nazivu paketa (Stripe, zavihek Račun).
+export const LEVEL_LABEL = { OS: "OŠ", SS: "SŠ", FAKS: "Faks" };
+const LEVEL_KEY = { OS: "1", SS: "ss", FAKS: "faks" };
+const PERIOD = (interval, level) => (interval === "month" ? "mesečno" : level === "FAKS" ? "študijsko leto" : "šolsko leto");
 export const PLANS = [
-  { key: `${BRAND.slug}_1_month`, seats: 1, interval: "month", amount: 999, label: "1 otrok, mesečno" },
-  { key: `${BRAND.slug}_1_year`, seats: 1, interval: "year", amount: 8900, label: "1 otrok, šolsko leto" },
-  { key: `${BRAND.slug}_2_month`, seats: 2, interval: "month", amount: 1599, label: "2 otroka, mesečno" },
-  { key: `${BRAND.slug}_2_year`, seats: 2, interval: "year", amount: 13900, label: "2 otroka, šolsko leto" },
+  ...STOPNJE.flatMap((level) =>
+    ["month", "year"].map((interval) => ({
+      key: `${BRAND.slug}_${LEVEL_KEY[level]}_${interval}`,
+      seats: 1,
+      interval,
+      amount: LEVEL_PRICES[level][interval],
+      level,
+      label: `${LEVEL_LABEL[level]}, ${PERIOD(interval, level)}`,
+    })),
+  ),
+  ...[
+    ["druzina", "SS", "Družina"],
+    ["druzina_student", "FAKS", "Družina s študentom"],
+  ].flatMap(([id, level, name]) =>
+    ["month", "year"].map((interval) => ({
+      key: `${BRAND.slug}_${id}_${interval}`,
+      seats: MAX_CHILDREN,
+      interval,
+      amount: FAMILY_PRICES[id][interval],
+      level,
+      family: true,
+      label: `${name}, ${PERIOD(interval, "OS")}`,
+    })),
+  ),
 ];
+// Stari paket »2 otroka« (do 2026-11-04): ni več v ponudbi. Obstoječe naročnine ostanejo pri svoji ceni in
+// odprejo vse stopnje do naslednjega podaljšanja; nato preidejo na Družino (ali Družino s študentom, če je
+// med profili študent), z e-pošto 30 dni prej (server/accounts/billing.js, levelChanges).
+export const LEGACY_PLANS = [
+  { key: `${BRAND.slug}_2_month`, seats: 2, interval: "month", amount: 1599, label: "2 otroka, mesečno", level: "FAKS", family: true, legacy: true },
+  { key: `${BRAND.slug}_2_year`, seats: 2, interval: "year", amount: 13900, label: "2 otroka, šolsko leto", level: "FAKS", family: true, legacy: true },
+];
+export const levelPlanFor = (level, interval) => PLANS.find((p) => !p.family && p.level === level && p.interval === interval) || null;
+export const familyPlanFor = (withStudent, interval) => PLANS.find((p) => p.family && p.level === (withStudent ? "FAKS" : "SS") && p.interval === interval) || null;
+// V trgovinah z aplikacijami (App Store, Google Play) je vsak paket 2 € dražji kot na spletu (j 2026-11-01);
+// splet je privzet. Ceni v trgovini se vpišeta v App Store Connect in Google Play Console (server/mobile).
+export const STORE_MARKUP_CENTS = 200;
+export const storeAmount = (plan) => plan.amount + STORE_MARKUP_CENTS;
 
 // ---------- regijske cene (potrdil j, 2026-10-28) ----------
 // Cene v lokalni valuti: [1 otrok mesečno, 1 otrok šolsko leto, 2 otroka mesečno,
@@ -68,6 +116,7 @@ export const currencyForCountry = (country) => {
 export function plansFor(currency = "EUR") {
   const r = REGIONAL_PRICES[currency];
   if (!r) return PLANS.map((p) => ({ ...p, currency: "EUR" }));
+  // Regijske cene so ena cena za vse stopnje (nespremenjeno): level null = vse stopnje.
   return SHAPE.map(([seats, interval, label], i) => ({
     key: `${BRAND.slug}_${seats}_${interval}_${currency.toLowerCase()}`,
     seats,
@@ -75,6 +124,7 @@ export function plansFor(currency = "EUR") {
     amount: minorUnits(currency, r.prices[i]),
     label,
     currency,
+    level: null,
   }));
 }
 // ---------- Evklid Osebno za učence s šolsko licenco (j 2026-10-30, načrt »Šolska licenca in Osebno«) ----------
@@ -87,17 +137,38 @@ export const SCHOOL_PLANS = [
 ];
 export const schoolPlanFor = (interval) => SCHOOL_PLANS.find((p) => p.interval === interval) || null;
 
-// Darilna koda: eno leto Osebno za en profil, enkratno plačilo 49 € (server/placila/darila.js).
-export const GIFT = { amount: 4900, days: 365, currency: "EUR", label: "Darilna koda: 1 leto Osebno" };
+// Darilna koda: eno leto za en profil izbrane stopnje, enkratno plačilo po letni ceni stopnje
+// (j 2026-11-01: 89 / 119 / 149 € namesto 49 €; server/placila/darila.js).
+export const giftFor = (level = "OS") => {
+  const l = LEVEL_PRICES[level] ? level : "OS";
+  return { amount: LEVEL_PRICES[l].year, days: 365, currency: "EUR", level: l, label: `Darilna koda: 1 leto ${LEVEL_LABEL[l]}` };
+};
+export const GIFT = giftFor("OS");
+export const GIFT_PRICES = Object.fromEntries(STOPNJE.map((l) => [l, giftFor(l).amount]));
 
-export const ALL_PLANS = [...PLANS.map((p) => ({ ...p, currency: "EUR" })), ...SCHOOL_PLANS, ...Object.keys(REGIONAL_PRICES).flatMap(plansFor)];
+export const ALL_PLANS = [...PLANS.map((p) => ({ ...p, currency: "EUR" })), ...LEGACY_PLANS.map((p) => ({ ...p, currency: "EUR" })), ...SCHOOL_PLANS, ...Object.keys(REGIONAL_PRICES).flatMap(plansFor)];
 
 // Cene, ustvarjene pod prejšnjim imenom aplikacije (brand.json → legacy), imajo v Stripu lookup_key »<staro>_…«.
 const currentKey = (key) => LEGACY.reduce((k, l) => (k.startsWith(`${l.slug}_`) ? `${BRAND.slug}_${k.slice(l.slug.length + 1)}` : k), String(key ?? ""));
 export const planByKey = (key) => ALL_PLANS.find((p) => p.key === currentKey(key)) || null;
 export const isSchoolPlan = (key) => !!planByKey(key)?.school;
-export const planFor = (seats, interval, currency = "EUR") => plansFor(currency).find((p) => p.seats === seats && p.interval === interval) || null;
-export const monthlyAmount = (seats, currency = "EUR") => planFor(seats >= 2 ? 2 : 1, "month", currency).amount;
+// Paket za nakup: v evrih 1 profil po stopnji profila, 2 ali več profilov Družina (s študentom, če je stopnja
+// faks); v regijskih valutah kot doslej po številu otrok (1 ali 2).
+export function planFor(seats, interval, currency = "EUR", level = "OS") {
+  if (currency === "EUR" || !REGIONAL_PRICES[currency]) {
+    if (currency !== "EUR") return null;
+    return seats >= 2 ? familyPlanFor(level === "FAKS", interval) : levelPlanFor(STOPNJE.includes(level) ? level : "OS", interval);
+  }
+  return plansFor(currency).find((p) => p.seats === (seats >= 2 ? 2 : 1) && p.interval === interval) || null;
+}
+// Mesečni par paketa (isti paket, mesečno; ključ <slug>_<paket>_month[_valuta]).
+export const monthlyOf = (plan) => (!plan ? null : plan.interval === "month" ? plan : planByKey(plan.key.replace(/_year(?=$|_)/, "_month")) || plan);
+// Mesečna cena paketa za nakup.
+export const monthlyAmount = (seats, currency = "EUR", level = "OS") => planFor(seats, "month", currency, level)?.amount ?? LEVEL_PRICES.OS.month;
+// Najvišja stopnja, ki jo paket odpre (null pri regijskih cenah, šolski ceni in neznanem paketu = vse stopnje).
+export const planLevel = (plan) => (plan && STOPNJE.includes(plan.level) && !plan.school ? plan.level : null);
+// Ali paket odpre stopnjo: svojo in vse nižje (j 2026-11-01).
+export const opensLevel = (open, level) => !open || rang(level) <= rang(open);
 
 export const freeDailyQuestions = () => {
   const v = Number(process.env.EVKLID_FREE_DAILY_QUESTIONS);
@@ -123,9 +194,48 @@ export const PASSES = [
   { days: 14, amount: 779, aiUsd: 1.5, label: "Temeljita priprava" },
   { days: 30, amount: 1169, aiUsd: 3, label: "Velika priprava" },
 ].map((p) => ({ ...p, key: `${BRAND.slug}_pass_${p.days}`, currency: "EUR" }));
-export const passByDays = (days) => PASSES.find((p) => p.days === Number(days)) || null;
+// Paketi pred testom za faks (j 2026-11-01): 6,99 / 9,99 / 14,99 €, meja AI 1,5-krat višja.
+export const FAKS_PASSES = [
+  { days: 7, amount: 699 },
+  { days: 14, amount: 999 },
+  { days: 30, amount: 1499 },
+].map((p) => {
+  const base = PASSES.find((x) => x.days === p.days);
+  return { ...base, ...p, aiUsd: base.aiUsd * 1.5, key: `${BRAND.slug}_pass_faks_${p.days}`, level: "FAKS" };
+});
+// Paketi za stopnjo profila: faks svoje, OŠ in SŠ kot doslej.
+export const passesFor = (level) => (level === "FAKS" ? FAKS_PASSES : PASSES);
+export const passByDays = (days, level = "OS") => passesFor(level).find((p) => p.days === Number(days)) || null;
+export const passByKey = (key) => [...PASSES, ...FAKS_PASSES].find((p) => p.key === key) || null;
+// Stopnja, ki jo paket pred testom odpre: faks vse, paket OŠ/SŠ (ista cena) OŠ in SŠ.
+export const passLevel = (pass) => (pass?.level === "FAKS" ? "FAKS" : "SS");
 // Najmanjši paket, ki pokrije čas do dneva po testu (test čez daysLeft dni; 0 = danes).
-export const passForDaysLeft = (daysLeft) => PASSES.find((p) => p.days >= daysLeft + 1) || null;
+export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find((p) => p.days >= daysLeft + 1) || null;
+
+// ---------- poraba AI v naročnini (j 2026-11-01, »Poraba AI v naročnini«) ----------
+// Zajamčeno na profil na mesec (v $, kot zaračunava Claude API): OŠ 2 $, SŠ 3 $, faks 5 $. Ko je
+// porabljeno, inštruktor odgovarja naprej s hitrim modelom do dnevne meje vprašanj (60 / 60 / 100).
+// Deleži naročnikov imajo prednost pred brezplačnimi v skupnem mesečnem proračunu (server/usage.js).
+export const AI_GUARANTEE_USD = { OS: 2, SS: 3, FAKS: 5 };
+export const guaranteeUsd = (level) => {
+  const v = Number(process.env[`EVKLID_AI_GUARANTEE_${level}_USD`]);
+  return process.env[`EVKLID_AI_GUARANTEE_${level}_USD`] && Number.isFinite(v) && v >= 0 ? v : AI_GUARANTEE_USD[level] ?? AI_GUARANTEE_USD.OS;
+};
+// Učencu in staršu pokažemo porabo kot število preostalih podrobnih razlag (nikoli € ali $).
+// Ocena za eno podrobno razlago (zmogljivejši model, kratka zgodovina); zaokroženo navzdol.
+export const usdPerExplanation = () => {
+  const v = Number(process.env.EVKLID_USD_PER_EXPLANATION);
+  return process.env.EVKLID_USD_PER_EXPLANATION && Number.isFinite(v) && v > 0 ? v : 0.04;
+};
+export const explanationsFor = (usd) => Math.max(0, Math.floor((usd || 0) / usdPerExplanation() + 1e-9));
+// Obvestilo pri 80 %, opomba pri 100 % (inštruktor nadaljuje v hitrem načinu).
+export const ALLOWANCE_NOTICE = 0.8;
+// Razmerje z majhno toleranco: 0,04 / 0,05 je v plavajoči vejici malo pod 0,8, prikazano pa je »80 %«.
+export const allowanceStage = (spent, allowance) => {
+  if (!(allowance > 0)) return null;
+  const r = spent / allowance + 1e-9;
+  return r >= 1 ? "out" : r >= ALLOWANCE_NOTICE ? "low" : "ok";
+};
 
 // Neuspelo plačilo: poln dostop ostane še GRACE_DAYS dni, nato velja brezplačni paket.
 export const GRACE_DAYS = 7;
@@ -144,7 +254,8 @@ export function paidActive(parent, now = Date.now()) {
 // bonus (mesec iz priporočila) ali free.
 export function accessFor(parent, now = Date.now(), promoSeats = 1) {
   if (paidActive(parent, now)) {
-    return { tier: "paid", seats: parent.sub_seats || 1, until: parent.sub_period_end };
+    // level: najvišja stopnja, ki jo naročnina odpre (null = vse stopnje: regijske cene, šolska cena, neznan paket).
+    return { tier: "paid", seats: parent.sub_seats || 1, until: parent.sub_period_end, level: planLevel(planByKey(parent.sub_plan)) };
   }
   // Aktivacijska koda; med 7-dnevnim preizkusom ostaneta 2 profila.
   if (later(parent.promo_until, now)) {
@@ -153,7 +264,8 @@ export function accessFor(parent, now = Date.now(), promoSeats = 1) {
   }
   if (later(parent.trial_ends_at, now)) return { tier: "trial", seats: 2, until: parent.trial_ends_at };
   // Darilna koda (server/placila/darila.js): eno leto za en profil.
-  if (later(parent.gift_until, now)) return { tier: "gift", seats: 1, until: parent.gift_until };
+  // Stopnja darila (gift_level); stara darila (49 €, pred 2026-11-04) odprejo vse stopnje.
+  if (later(parent.gift_until, now)) return { tier: "gift", seats: 1, until: parent.gift_until, level: STOPNJE.includes(parent.gift_level) ? parent.gift_level : null };
   if (later(parent.bonus_until, now)) return { tier: "bonus", seats: 1, until: parent.bonus_until };
   return { tier: "free", seats: 0, until: null };
 }

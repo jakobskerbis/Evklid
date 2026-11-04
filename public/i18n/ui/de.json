@@ -2740,5 +2740,20 @@
   "pp.taskN": "Aufgabe {n}",
   "pp.taskMsg": "Ich bearbeite die frühere Prüfung {paper}, Aufgabe {n}. Ich schicke ein Bild der Aufgabe. Führe mich mit Hinweisen im Stil dieser Prüfung und verrate die Lösung nicht, bevor ich es selbst versucht habe.",
   "pp.boxMsg": "Ich bearbeite die frühere Prüfung {paper}, Seite {page}. Ich schicke ein Bild der Aufgabe. Führe mich mit Hinweisen im Stil dieser Prüfung und verrate die Lösung nicht, bevor ich es selbst versucht habe.",
-  "pp.taskText": "Aufgabentext aus der Prüfung (Formeln können fehlerhaft sein, maßgeblich ist das Bild):"
+  "pp.taskText": "Aufgabentext aus der Prüfung (Formeln können fehlerhaft sein, maßgeblich ist das Bild):",
+  "pay.seats1Level": "1 Profil · {level}",
+  "pay.family": "Familie (2–4 Profile)",
+  "pay.familyStudent": "Familie mit Studierenden (2–4 Profile)",
+  "up.title": "Höhere Stufe",
+  "up.text": "Dein Abo öffnet deine Stufe und alle niedrigeren. Eine höhere öffnest du sofort und zahlst nur die Differenz bis zum Ende des Zeitraums.",
+  "up.btn": "Öffnen: {name}",
+  "up.done": "Upgrade erfolgreich. Die höhere Stufe ist offen.",
+  "up.pending": "Ab {date} gilt der neue Preis: {price} ({name}).",
+  "up.locked": "Stufe gesperrt",
+  "ai.left": "Ausführliche Erklärungen diesen Monat: noch {n}",
+  "ai.low": "80 % der ausführlichen Erklärungen dieses Monats sind verbraucht.",
+  "ai.out": "Die ausführlichen Erklärungen für diesen Monat sind verbraucht. Der Tutor antwortet im schnellen Modus weiter.",
+  "ai.buy": "Erklärungen nachkaufen",
+  "gift.level": "Stufe",
+  "meter.levelsTitle": "Preise nach Stufe"
 }

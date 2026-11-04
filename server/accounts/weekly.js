@@ -271,7 +271,11 @@ function listHtml(icon, title, items) {
   return `<p style="margin:10px 0 0">${icon} <b>${title}:</b> ${items.join(", ")}</p>`;
 }
 
-function childBlock({ child, week: w, self }) {
+// Poraba podrobnih razlag ta mesec v odstotkih (j 2026-11-01), brez zneskov; null = ni meje.
+const aiLine = (ai) =>
+  ai?.percent == null ? "" : ai.guaranteed ? `Podrobne razlage ta mesec: porabljenih ${ai.percent} %${ai.stage === "out" ? ", inštruktor odgovarja v hitrem načinu" : ""}.` : `Inštruktor ta mesec: porabljenih ${ai.percent} % mesečnega dela.`;
+
+function childBlock({ child, week: w, self, ai }) {
   const quiet = !w.active_days;
   // Brez float (Outlook ga ne upošteva): ime in niz dni v isti vrstici tabele.
   const streak = w.streak >= 2 ? `<td style="text-align:right;vertical-align:middle;white-space:nowrap;font-size:13px;color:#b45309;font-weight:bold">🔥 ${plural(w.streak, DNI)} zapored</td>` : "";
@@ -305,10 +309,11 @@ ${listHtml("💪", "Gre dobro", w.strong.map(esc))}
 ${listHtml("🔎", "Še vaditi", w.weak.map((x) => `${esc(x.name)} <span style="color:${MUTED}">(${esc(x.detail)})</span>`))}
 ${stepsHtml}
 ${talk}
+${aiLine(ai) ? `<p style="margin:12px 0 0;font-size:13px;color:${MUTED}">🤖 ${esc(aiLine(ai))}</p>` : ""}
 </div>`;
 }
 
-function childText({ child, week: w, self }) {
+function childText({ child, week: w, self, ai }) {
   const lines = [`${child.name}: ${headline(w)}`];
   if (w.active_days) lines.push(`Rešene naloge: ${w.solved} (prejšnji teden ${w.prev_solved}), vprašanja inštruktorju: ${w.questions}.`);
   for (const s of w.subjects) lines.push(`${s.name}: ${[...s.practice.map((t) => t.name), ...s.chat].join(", ")}`);
@@ -317,6 +322,7 @@ function childText({ child, week: w, self }) {
   if (w.goal) lines.push(`${w.goal.name} ${w.goal.date}: ${w.goal.days === 0 ? "danes je dan cilja" : `še ${plural(w.goal.days, DNI)}`}`);
   const steps = nextSteps(w, self);
   if (steps.length) lines.push("Naslednji koraki:", ...steps.map((s, i) => `${i + 1}. ${s}`));
+  if (aiLine(ai)) lines.push(aiLine(ai));
   return lines.join("\n");
 }
 
@@ -333,8 +339,9 @@ function subjectLine(rows) {
   return `${BRAND.name}, tedenski pregled: ${rows.map((r) => r.child.name).join(", ").replace(/, ([^,]*)$/, " in $1")}`;
 }
 
-export function buildWeeklyReport(db, parent, children, { appUrl, unsubscribeUrl, selfIds = [] }) {
-  const rows = children.map((c) => ({ child: c, week: childWeek(db, c), self: selfIds.includes(c.id) }));
+// aiOf(id): poraba inštruktorja ta mesec (Usage.studentMonth) za odstotek v poročilu.
+export function buildWeeklyReport(db, parent, children, { appUrl, unsubscribeUrl, selfIds = [], aiOf = () => null }) {
+  const rows = children.map((c) => ({ child: c, week: childWeek(db, c), self: selfIds.includes(c.id), ai: aiOf(c.id) }));
   const allSelf = rows.length > 0 && rows.every((r) => r.self);
   const hello = allSelf
     ? `<p style="margin:0">Živjo${rows[0] ? `, ${esc(rows[0].child.name)}` : ""}! Tvoj teden na kratko.</p>`

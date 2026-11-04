@@ -2740,5 +2740,20 @@
   "pp.taskN": "Exercice {n}",
   "pp.taskMsg": "Je travaille sur l'ancienne épreuve {paper}, exercice {n}. J'envoie une image de l'exercice. Guide-moi avec des indices dans le style de cet examen et ne me donne pas la solution tant que je n'ai pas essayé moi-même.",
   "pp.boxMsg": "Je travaille sur l'ancienne épreuve {paper}, page {page}. J'envoie une image de l'exercice. Guide-moi avec des indices dans le style de cet examen et ne me donne pas la solution tant que je n'ai pas essayé moi-même.",
-  "pp.taskText": "Texte de l'exercice tiré de l'épreuve (les formules peuvent être abîmées ; l'image fait foi) :"
+  "pp.taskText": "Texte de l'exercice tiré de l'épreuve (les formules peuvent être abîmées ; l'image fait foi) :",
+  "pay.seats1Level": "1 profil · {level}",
+  "pay.family": "Famille (2–4 profils)",
+  "pay.familyStudent": "Famille avec étudiant (2–4 profils)",
+  "up.title": "Niveau supérieur",
+  "up.text": "Ton abonnement ouvre ton niveau et tous les niveaux inférieurs. Tu peux ouvrir un niveau supérieur tout de suite et ne payer que la différence jusqu'à la fin de la période.",
+  "up.btn": "Ouvrir : {name}",
+  "up.done": "Mise à niveau réussie. Le niveau supérieur est ouvert.",
+  "up.pending": "À partir du {date}, le nouveau prix s'applique : {price} ({name}).",
+  "up.locked": "niveau verrouillé",
+  "ai.left": "Explications détaillées ce mois-ci : encore {n}",
+  "ai.low": "80 % des explications détaillées de ce mois sont utilisées.",
+  "ai.out": "Les explications détaillées de ce mois sont épuisées. Le tuteur continue de répondre en mode rapide.",
+  "ai.buy": "Acheter des explications",
+  "gift.level": "Niveau",
+  "meter.levelsTitle": "Prix par niveau"
 }

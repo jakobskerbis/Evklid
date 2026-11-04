@@ -98,3 +98,13 @@ details .card { margin-top: 8px; }
 .order-ctl select, .order-ctl input { min-height: 40px; }
 .order-ctl input { padding: 6px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); font: inherit; max-width: 100%; }
 .order-ctl a { min-height: 40px; display: inline-flex; align-items: center; }
+
+/* Nadgradnja na višjo stopnjo (zavihek Račun, j 2026-11-01) */
+.plan-upgrade {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.plan-upgrade .form-actions {
+  flex-wrap: wrap;
+}

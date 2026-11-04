@@ -273,7 +273,8 @@ export function createApp(store, opts = {}) {
   const helpTasks = new Map();
   const usage = new Usage(store.db);
   // Delitev mesečnega proračuna po profilih in dokupljeni kredit (z računi; server/proracun.js).
-  if (accounts?.credits) usage.configure({ weightOf: accounts.shareWeightFor, ownerOf: accounts.ownerOf, credits: accounts.credits, freeOver: accounts.freeOver });
+  // Zajamčeni delež naročnikov in poziv k dokupu (j 2026-11-01) morata veljati tudi tu, ne samo v Računu.
+  if (accounts?.credits) usage.configure({ weightOf: accounts.shareWeightFor, ownerOf: accounts.ownerOf, credits: accounts.credits, freeOver: accounts.freeOver, guaranteeOf: accounts.guaranteeFor, topupPrompt: accounts.topupPrompt });
   // Kartice, ki so čakale na preverjanje ob ponovnem zagonu, ne bodo nikoli preverjene: proč z njimi
   // (sicer bi skrite blokirale isto vprašanje, UNIQUE student_id + norm).
   store.db.prepare("DELETE FROM flashcards WHERE verified = 0").run();
@@ -455,6 +456,8 @@ export function createApp(store, opts = {}) {
     const blocked = usage.blockReason(student.id);
     if (blocked) return res.status(429).json({ error: blocked, limit: true });
     busy.add(conv.id);
+    // Zajamčena poraba naročnika (j 2026-11-01): stanje pred odgovorom, da ob prehodu 80 % ali 100 % pošljemo obvestilo.
+    const allowBefore = accounts ? usage.allowance(student.id) : null;
     // Lahki način: vedno (lite), nikoli (normal) ali po povezavi naprave, ki jo sporoči odjemalec (auto).
     const lite = student.settings.data_mode === "lite" || (student.settings.data_mode !== "normal" && req.body?.lite === true);
     // »Razloži podrobneje« je vedno na voljo, čim ceneje: prva ponovna razlaga je Haiku z več
@@ -712,6 +715,16 @@ export function createApp(store, opts = {}) {
       let content = [{ type: "text", text: (fix ? insertFix(result.text, fix) : result.text) || "…" }];
       // Prvi odgovor gre v porabo kot »chat«; ponovni odgovor po napačni sodbi je že zabeležen kot »popravek« (extraCost).
       const cost = (cached ? 0 : usage.log(student.id, first.model || answerModelOf(mode, deep), first.usage, routed.boosted ? "boost" : "chat")) + extraCost;
+      // Obvestilo pri 80 % in opomba pri 100 % (inštruktor nadaljuje v hitrem načinu): kot preostale podrobne razlage,
+      // nikoli € ali $. Gumb za dokup samo, če ga sme videti (polnoleten imetnik, profil 15+, ena ponudba naenkrat);
+      // pri profilu pod 15 let dobi starš e-pošto (billing.allowanceMail).
+      if (allowBefore?.guaranteed) {
+        const after = usage.allowance(student.id);
+        if (after.stage !== allowBefore.stage && (after.stage === "low" || after.stage === "out")) {
+          send("allowance", { stage: after.stage, percent: after.percent, left: after.explanations_left, buy: !!accounts.topupButton?.(student.id) });
+          accounts.billing?.allowanceMail(student.id, after.stage).catch?.((e) => console.error("[evklid] e-pošta o porabi:", e?.message));
+        }
+      }
       if (settingsTools.state.proposal) send("proposal", settingsTools.state.proposal);
       if (key && !cached && !fix && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).

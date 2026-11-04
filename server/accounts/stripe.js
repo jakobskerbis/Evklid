@@ -24,6 +24,11 @@ export class Stripe {
   get enabled() {
     return !!this.key;
   }
+  // Testni način (ključ sk_test_ ali rk_test_): j še nima s.p., zato nadgradnja s proracijo deluje samo v
+  // testnem načinu, razen če EVKLID_STRIPE_LIVE_UPGRADE=1 (server/accounts/index.js, /api/billing/upgrade).
+  get testMode() {
+    return /^(sk|rk)_test_/.test(String(this.key || ""));
+  }
   async request(method, path, params) {
     if (!this.key) throw new Error("STRIPE_SECRET_KEY ni nastavljen.");
     let url = API + path;
@@ -44,7 +49,7 @@ export class Stripe {
     return body;
   }
 
-  // Izdelek in štiri cene v valuti (po lookup_key). Ustvari jih, če manjkajo.
+  // Izdelek in cene v valuti (po lookup_key; v evrih 10 cen: stopnje in družinska paketa). Ustvari jih, če manjkajo.
   // EUR: cene iz PLANS; regijske valute (INR, NGN …) imajo svoje cene istega izdelka.
   // Če se znesek spremeni, ustvari novo ceno (lookup_key se prenese nanjo)
   // in staro arhivira; obstoječe naročnine ostanejo pri stari ceni.
@@ -58,7 +63,7 @@ export class Stripe {
       const c = JSON.parse(cached);
       if (JSON.stringify(c.amounts) === JSON.stringify(amounts)) return c;
     }
-    const found = await this.request("GET", "/prices", { lookup_keys: plans.map((p) => p.key), active: "true", limit: 10 });
+    const found = await this.request("GET", "/prices", { lookup_keys: plans.map((p) => p.key), active: "true", limit: 100 });
     const existing = Object.fromEntries(found.data.map((p) => [p.lookup_key, p]));
     let product = found.data[0]?.product;
     if (!product && (currency !== "EUR" || extra)) product = (await this.ensurePrices("EUR")).product;
@@ -66,7 +71,7 @@ export class Stripe {
       product = (await this.request("POST", "/products", { name: "Evklid", description: "AI inštruktor za matematiko, fiziko in kemijo" })).id;
     }
     const byKey = {};
-    let replaced = false;
+    let replaced = false; // nova cena v evrih (sprememba zneska ali nov paket): portal se ustvari znova
     for (const plan of plans) {
       const old = existing[plan.key];
       if (old && old.unit_amount === plan.amount) {
@@ -85,9 +90,9 @@ export class Stripe {
         metadata: { seats: plan.seats },
       });
       byKey[plan.key] = price.id;
+      replaced = true;
       if (old) {
         await this.request("POST", `/prices/${old.id}`, { active: false });
-        replaced = true;
       }
     }
     const result = { product, prices: byKey, amounts };

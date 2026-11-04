@@ -7,7 +7,7 @@ import { Platform } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import { api, CHANNEL } from "./api";
 
-export type StoreProduct = { id: string; seats: number; interval: "month" | "year"; price?: string };
+export type StoreProduct = { id: string; seats: number; interval: "month" | "year"; price?: string; level?: string | null; family?: boolean };
 type StoreInfo = { account_token: string; products: StoreProduct[]; provider: string | null };
 
 let iap: typeof import("expo-iap") | null = null;

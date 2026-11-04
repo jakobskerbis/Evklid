@@ -83,3 +83,7 @@ export function budgetMode(mode, { level = 1, maxTier = "deep", lite = false, ov
   if (RANK[want] > RANK[maxTier]) want = maxTier;
   return RANK[want] > RANK[mode] ? { mode: want, boosted: true, saved: false } : { mode, boosted: false, saved: false };
 }
+
+// Hitri način (j 2026-11-01): naročnik nad zajamčenim deležem dobi samo hitri model. Podrobna razlaga
+// (Opus, Sonnet) postane razlaga hitrega modela z več razmisleka; ostali načini so že hitri.
+export const fastMode = (mode) => (mode === "deep" || mode === "mid" ? "think" : mode);

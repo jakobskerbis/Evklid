@@ -2788,5 +2788,20 @@
   "pp.taskN": "Úloha {n}",
   "pp.taskMsg": "Řeším starší písemku {paper}, úloha {n}. Posílám obrázek úlohy. Veď mě nápovědami ve stylu této zkoušky a neprozrazuj řešení, dokud se o něj nepokusím.",
   "pp.boxMsg": "Řeším starší písemku {paper}, strana {page}. Posílám obrázek úlohy. Veď mě nápovědami ve stylu této zkoušky a neprozrazuj řešení, dokud se o něj nepokusím.",
-  "pp.taskText": "Text úlohy z písemky (vzorce mohou být poškozené, platí obrázek):"
+  "pp.taskText": "Text úlohy z písemky (vzorce mohou být poškozené, platí obrázek):",
+  "pay.seats1Level": "1 profil · {level}",
+  "pay.family": "Rodina (2–4 profily)",
+  "pay.familyStudent": "Rodina se studentem (2–4 profily)",
+  "up.title": "Vyšší stupeň",
+  "up.text": "Předplatné otevírá tvůj stupeň a všechny nižší. Vyšší můžeš otevřít hned a doplatíš jen rozdíl do konce období.",
+  "up.btn": "Otevřít: {name}",
+  "up.done": "Přechod se povedl. Vyšší stupeň je otevřený.",
+  "up.pending": "Od {date} platí nová cena: {price} ({name}).",
+  "up.locked": "stupeň uzamčen",
+  "ai.left": "Podrobná vysvětlení tento měsíc: ještě {n}",
+  "ai.low": "Tento měsíc je využito 80 % podrobných vysvětlení.",
+  "ai.out": "Podrobná vysvětlení na tento měsíc jsou vyčerpaná. Doučovatel odpovídá dál v rychlém režimu.",
+  "ai.buy": "Dokoupit vysvětlení",
+  "gift.level": "Stupeň",
+  "meter.levelsTitle": "Ceny podle stupně"
 }

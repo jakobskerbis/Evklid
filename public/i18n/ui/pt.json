@@ -2744,5 +2744,20 @@
   "pp.taskN": "Questão {n}",
   "pp.taskMsg": "Estou resolvendo a prova anterior {paper}, questão {n}. Envio uma imagem da questão. Guie-me com dicas no estilo deste exame e não revele a solução antes que eu tente sozinho ou sozinha.",
   "pp.boxMsg": "Estou resolvendo a prova anterior {paper}, página {page}. Envio uma imagem da questão. Guie-me com dicas no estilo deste exame e não revele a solução antes que eu tente sozinho ou sozinha.",
-  "pp.taskText": "Texto da questão extraído da prova (as fórmulas podem estar corrompidas; vale a imagem):"
+  "pp.taskText": "Texto da questão extraído da prova (as fórmulas podem estar corrompidas; vale a imagem):",
+  "pay.seats1Level": "1 perfil · {level}",
+  "pay.family": "Família (2–4 perfis)",
+  "pay.familyStudent": "Família com estudante (2–4 perfis)",
+  "up.title": "Nível superior",
+  "up.text": "A tua subscrição abre o teu nível e todos os inferiores. Podes abrir um superior já e pagar só a diferença até ao fim do período.",
+  "up.btn": "Abrir: {name}",
+  "up.done": "Atualização concluída. O nível superior está aberto.",
+  "up.pending": "A partir de {date} aplica-se o novo preço: {price} ({name}).",
+  "up.locked": "nível bloqueado",
+  "ai.left": "Explicações detalhadas este mês: restam {n}",
+  "ai.low": "Já usaste 80 % das explicações detalhadas deste mês.",
+  "ai.out": "As explicações detalhadas deste mês esgotaram-se. O tutor continua a responder no modo rápido.",
+  "ai.buy": "Comprar mais explicações",
+  "gift.level": "Nível",
+  "meter.levelsTitle": "Preços por nível"
 }

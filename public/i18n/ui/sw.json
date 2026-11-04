@@ -2738,5 +2738,20 @@
   "pp.taskN": "Swali {n}",
   "pp.taskMsg": "Ninafanya mtihani wa zamani {paper}, swali {n}. Ninatuma picha ya swali. Niongoze kwa vidokezo kwa mtindo wa mtihani huu na usinifunulie jibu mpaka nijaribu mwenyewe.",
   "pp.boxMsg": "Ninafanya mtihani wa zamani {paper}, ukurasa {page}. Ninatuma picha ya swali. Niongoze kwa vidokezo kwa mtindo wa mtihani huu na usinifunulie jibu mpaka nijaribu mwenyewe.",
-  "pp.taskText": "Maandishi ya swali kutoka kwenye mtihani (fomula zinaweza kuharibika; picha ndiyo sahihi):"
+  "pp.taskText": "Maandishi ya swali kutoka kwenye mtihani (fomula zinaweza kuharibika; picha ndiyo sahihi):",
+  "pay.seats1Level": "Wasifu 1 · {level}",
+  "pay.family": "Familia (wasifu 2–4)",
+  "pay.familyStudent": "Familia yenye mwanafunzi wa chuo (wasifu 2–4)",
+  "up.title": "Ngazi ya juu zaidi",
+  "up.text": "Usajili wako unafungua ngazi yako na zote za chini. Unaweza kufungua ya juu zaidi sasa na kulipa tofauti tu hadi mwisho wa kipindi.",
+  "up.btn": "Fungua: {name}",
+  "up.done": "Uboreshaji umefanikiwa. Ngazi ya juu iko wazi.",
+  "up.pending": "Kuanzia {date} bei mpya inatumika: {price} ({name}).",
+  "up.locked": "ngazi imefungwa",
+  "ai.left": "Maelezo ya kina mwezi huu: yamebaki {n}",
+  "ai.low": "Mwezi huu umetumia 80 % ya maelezo ya kina.",
+  "ai.out": "Maelezo ya kina ya mwezi huu yameisha. Mwalimu anaendelea kujibu kwa hali ya haraka.",
+  "ai.buy": "Nunua maelezo zaidi",
+  "gift.level": "Ngazi",
+  "meter.levelsTitle": "Bei kwa ngazi"
 }

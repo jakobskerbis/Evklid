@@ -83,6 +83,10 @@ export default function Chat() {
               celebrate();
             } else if (e.event === "cards") {
               setNotes((n) => [...n, { key: `c${Date.now()}`, text: t("mob.cardsAdded", { n: e.data.cards?.length || 0 }) }]);
+            } else if (e.event === "allowance") {
+              // Zajamčena poraba naročnika (kot na spletu): 80 % obvestilo, 100 % hitri način; brez zneskov.
+              const text = e.data.stage === "out" ? t("ai.out") : `${t("ai.low")} ${t("ai.left", { n: e.data.left ?? 0 })}`;
+              setNotes((n) => [...n, { key: `a${Date.now()}`, text }]);
             } else if (e.event === "proposal") setProposal(e.data);
           },
           abort.current.signal,

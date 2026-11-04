@@ -2765,5 +2765,20 @@
   "pp.taskN": "Zadatak {n}",
   "pp.taskMsg": "Rješavam prošli ispit {paper}, zadatak {n}. Šaljem sliku zadatka. Vodi me naputcima u stilu ovog ispita i ne otkrivaj rješenje dok ga ne pokušam riješiti.",
   "pp.boxMsg": "Rješavam prošli ispit {paper}, stranica {page}. Šaljem sliku zadatka. Vodi me naputcima u stilu ovog ispita i ne otkrivaj rješenje dok ga ne pokušam riješiti.",
-  "pp.taskText": "Tekst zadatka iz ispita (formule mogu biti oštećene, vrijedi slika):"
+  "pp.taskText": "Tekst zadatka iz ispita (formule mogu biti oštećene, vrijedi slika):",
+  "pay.seats1Level": "1 profil · {level}",
+  "pay.family": "Obitelj (2–4 profila)",
+  "pay.familyStudent": "Obitelj sa studentom (2–4 profila)",
+  "up.title": "Viša razina",
+  "up.text": "Pretplata otvara tvoju razinu i sve niže. Višu možeš otvoriti odmah i platiti samo razliku do kraja razdoblja.",
+  "up.btn": "Otvori: {name}",
+  "up.done": "Nadogradnja je uspjela. Viša razina je otvorena.",
+  "up.pending": "Od {date} vrijedi nova cijena: {price} ({name}).",
+  "up.locked": "razina zaključana",
+  "ai.left": "Detaljna objašnjenja ovaj mjesec: još {n}",
+  "ai.low": "Ovaj mjesec potrošeno je 80 % detaljnih objašnjenja.",
+  "ai.out": "Detaljna objašnjenja za ovaj mjesec su potrošena. Instruktor nastavlja odgovarati u brzom načinu.",
+  "ai.buy": "Dokupi objašnjenja",
+  "gift.level": "Razina",
+  "meter.levelsTitle": "Cijene po razinama"
 }

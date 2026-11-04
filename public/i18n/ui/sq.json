@@ -2740,5 +2740,20 @@
   "pp.taskN": "Detyra {n}",
   "pp.taskMsg": "Po zgjidh provimin e kaluar {paper}, detyra {n}. Po dërgoj një foto të detyrës. Më udhëhiq me sugjerime në stilin e këtij provimi dhe mos ma zbulo zgjidhjen derisa ta provoj vetë.",
   "pp.boxMsg": "Po zgjidh provimin e kaluar {paper}, faqja {page}. Po dërgoj një foto të detyrës. Më udhëhiq me sugjerime në stilin e këtij provimi dhe mos ma zbulo zgjidhjen derisa ta provoj vetë.",
-  "pp.taskText": "Teksti i detyrës nga provimi (formulat mund të jenë të dëmtuara; vlen fotoja):"
+  "pp.taskText": "Teksti i detyrës nga provimi (formulat mund të jenë të dëmtuara; vlen fotoja):",
+  "pay.seats1Level": "1 profil · {level}",
+  "pay.family": "Familje (2–4 profile)",
+  "pay.familyStudent": "Familje me student (2–4 profile)",
+  "up.title": "Nivel më i lartë",
+  "up.text": "Abonimi hap nivelin tënd dhe të gjitha nivelet më të ulëta. Një nivel më të lartë mund ta hapësh menjëherë dhe paguan vetëm diferencën deri në fund të periudhës.",
+  "up.btn": "Hap: {name}",
+  "up.done": "Përmirësimi u krye. Niveli më i lartë është i hapur.",
+  "up.pending": "Nga {date} vlen çmimi i ri: {price} ({name}).",
+  "up.locked": "niveli i kyçur",
+  "ai.left": "Shpjegime të hollësishme këtë muaj: edhe {n}",
+  "ai.low": "Këtë muaj është përdorur 80 % e shpjegimeve të hollësishme.",
+  "ai.out": "Shpjegimet e hollësishme për këtë muaj janë mbaruar. Tutori vazhdon të përgjigjet në mënyrën e shpejtë.",
+  "ai.buy": "Bli më shumë shpjegime",
+  "gift.level": "Niveli",
+  "meter.levelsTitle": "Çmimet sipas nivelit"
 }

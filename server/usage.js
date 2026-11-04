@@ -1,7 +1,8 @@
 // Poraba AI: beleženje žetonov in stroška, dnevne omejitve, mesečni proračun.
 import "./env.js";
 import { costUsd } from "./claude.js";
-import { BUDGET, MAX_BUDGET_USD, paceLevel, periodOf, budgetMode } from "./proracun.js";
+import { BUDGET, MAX_BUDGET_USD, paceLevel, periodOf, budgetMode, fastMode } from "./proracun.js";
+import { explanationsFor, allowanceStage } from "./accounts/plans.js";
 
 const num = (k, d) => {
   const v = Number(process.env[k]);
@@ -58,15 +59,22 @@ export class Usage {
     this.lastCreditOut = Number(this.kvGet("ai_credit_out_at")) || 0;
     // Brez računov (lokalno): vsi profili imajo enako utež, dokupa ni.
     this.weightOf = () => 1;
+    // Zajamčena mesečna poraba profila v $ (naročnina: OŠ 2, SŠ 3, faks 5; 0 = brez, deli se po utežeh).
+    this.guaranteeOf = () => 0;
     this.ownerOf = () => null;
     this.freeOver = () => false;
+    // Ali sme sporočilo o porabljenem delu predlagati dokup (ne pod 15 let in ne ob ponudbi paketa pred testom).
+    this.topupPrompt = () => true;
     this.credits = null;
     this.shareCache = null;
   }
   // Računi (server/accounts/index.js): utež profila po paketu, lastnik računa in dokupljeni kredit.
   // freeOver: brezplačni profil je nad mejo brezplačnega paketa (s kreditom nadaljuje, ves strošek gre iz kredita).
-  configure({ weightOf, ownerOf, credits, freeOver } = {}) {
+  // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, topupPrompt } = {}) {
     if (weightOf) this.weightOf = weightOf;
+    if (topupPrompt) this.topupPrompt = topupPrompt;
+    if (guaranteeOf) this.guaranteeOf = guaranteeOf;
     if (ownerOf) this.ownerOf = ownerOf;
     if (freeOver) this.freeOver = freeOver;
     if (credits) this.credits = credits;
@@ -107,18 +115,40 @@ export class Usage {
   baseSpent(studentId = null) {
     return Math.max(0, this.monthTotal(studentId) - (this.credits?.usedMonth(studentId) || 0));
   }
-  // Vsota uteži učencev, ki so v zadnjih 30 dneh uporabljali AI (in tega učenca).
-  totalWeight(studentId = null) {
+  // Aktivni učenci (AI v zadnjih 30 dneh): vsota uteži brez naročnikov in rezervacija naročnikov
+  // (vsak naročnik zajamčeno ali več, če je porabil več), enkrat na minuto.
+  shares() {
     const now = Date.now();
     if (!this.shareCache || now - this.shareCache.at > SHARE_TTL_MS) {
       const ids = this.db
         .prepare("SELECT DISTINCT student_id AS id FROM usage WHERE student_id IS NOT NULL AND kind NOT IN ('reuse','hint') AND created_at >= datetime('now','-30 days')")
         .all()
         .map((r) => r.id);
-      this.shareCache = { at: now, ids: new Set(ids), sum: ids.reduce((t, id) => t + this.weightOf(id), 0) };
+      let sum = 0;
+      let reserved = 0;
+      const guaranteed = new Map();
+      for (const id of ids) {
+        const g = this.guaranteeOf(id) || 0;
+        if (g > 0) {
+          guaranteed.set(id, g);
+          reserved += Math.max(g, this.baseSpent(id));
+        } else sum += this.weightOf(id);
+      }
+      this.shareCache = { at: now, ids: new Set(ids), sum, reserved, guaranteed };
     }
-    const c = this.shareCache;
-    return c.sum + (studentId != null && !c.ids.has(studentId) ? this.weightOf(studentId) : 0);
+    return this.shareCache;
+  }
+  // Vsota uteži učencev brez zajamčenega deleža, ki so v zadnjih 30 dneh uporabljali AI (in tega učenca).
+  totalWeight(studentId = null) {
+    const c = this.shares();
+    const extra = studentId != null && !c.ids.has(studentId) && !(this.guaranteeOf(studentId) > 0) ? this.weightOf(studentId) : 0;
+    return c.sum + extra;
+  }
+  // Del proračuna, rezerviran za naročnike (zajamčeni deleži), skupaj s tem učencem, če še ni med aktivnimi.
+  reservedUsd(studentId = null) {
+    const c = this.shares();
+    const g = studentId != null && !c.ids.has(studentId) ? this.guaranteeOf(studentId) || 0 : 0;
+    return c.reserved + g;
   }
   // Stanje proračuna in raven nadgradnje modelov (server/proracun.js).
   budgetState(now = new Date()) {
@@ -127,24 +157,58 @@ export class Usage {
     const pace = paceLevel({ cap: b.cap, spent, today: this.todayTotal(), now });
     return { ...b, spent, ...pace, credit_out: this.creditOut() };
   }
-  // Delež učenca: proračun se deli po utežeh (paket: plačljivi sorazmerno s ceno več kot brezplačni).
+  // Delež učenca. Naročnik (zajamčeno, j 2026-11-01): svoj zajamčeni znesek, tudi brez proračuna in ne glede na
+  // druge. Ostali: proračun brez rezervacije naročnikov se deli po utežeh (plačljivi sorazmerno s ceno več).
   studentBudget(studentId, state = this.budgetState()) {
     const weight = this.weightOf(studentId);
-    const allowance = state.cap ? (state.cap * weight) / Math.max(weight, this.totalWeight(studentId)) : 0;
     const owner = this.ownerOf(studentId);
-    return { weight, allowance, spent: this.baseSpent(studentId), credit: this.credits?.balance(owner) || 0, owner };
+    const base = { weight, spent: this.baseSpent(studentId), credit: this.credits?.balance(owner) || 0, owner };
+    const g = this.guaranteeOf(studentId) || 0;
+    if (g > 0) return { ...base, allowance: g, guaranteed: true };
+    const pool = state.cap ? Math.max(0, state.cap - this.reservedUsd(studentId)) : 0;
+    const allowance = pool ? (pool * weight) / Math.max(weight, this.totalWeight(studentId)) : 0;
+    return { ...base, allowance, guaranteed: false };
   }
   // Ali je učenec (ali vsa aplikacija) porabil svoj del proračuna; z dokupljenim kreditom gre naprej.
+  // Naročnika proračun nikoli ne ustavi: nad zajamčenim deležem odgovarja hitri model do dnevne meje vprašanj.
   overShare(studentId, state = this.budgetState()) {
     if (!state.cap) return false;
     const sb = this.studentBudget(studentId, state);
+    if (sb.guaranteed) return false;
     return (sb.spent >= sb.allowance || state.spent >= state.cap) && sb.credit <= 0;
+  }
+  // Naročnik je porabil zajamčeni delež (brez dokupljenega kredita): inštruktor nadaljuje v hitrem načinu.
+  fastOnly(studentId, state = this.budgetState()) {
+    const sb = this.studentBudget(studentId, state);
+    return !!sb.guaranteed && sb.spent >= sb.allowance && sb.credit <= 0;
+  }
+  // Prikaz porabe za učenca in starše (j 2026-11-01): preostale podrobne razlage, nikoli € ali $.
+  // stage: ok | low (80 %) | out (100 %, hitri način); null brez zajamčenega deleža.
+  allowance(studentId, state = this.budgetState()) {
+    const sb = this.studentBudget(studentId, state);
+    if (!sb.guaranteed) return { guaranteed: false, stage: null, percent: null, explanations_left: null };
+    const spent = Math.max(0, sb.spent);
+    return {
+      guaranteed: true,
+      stage: allowanceStage(spent, sb.allowance),
+      percent: Math.min(100, Math.round((100 * spent) / sb.allowance)),
+      explanations_left: explanationsFor(Math.max(0, sb.allowance - spent)) + explanationsFor(sb.credit),
+      explanations_month: explanationsFor(sb.allowance),
+    };
   }
   // Prilagodi izbrani način proračunu: pod načrtom močnejši model, nad njim hitri.
   // Učenec blizu svojega dela proračuna nadgradnje ne dobi.
   route(studentId, mode, { lite = false, maxTier = "deep", state = this.budgetState() } = {}) {
+    const sb0 = this.studentBudget(studentId, state);
+    // Naročnik nad zajamčenim deležem: hitri model (Haiku), brez nadgradnje, tudi brez proračuna.
+    if (sb0.guaranteed && sb0.spent >= sb0.allowance && sb0.credit <= 0) {
+      const down = fastMode(mode);
+      return { mode: down, boosted: false, saved: false, fast: true, level: state.level };
+    }
     if (!state.cap) return { mode, boosted: false, saved: false, level: state.level };
-    const sb = this.studentBudget(studentId, state);
+    const sb = sb0;
+    // Naročnik pod zajamčenim deležem ima prednost: skupni proračun ga ne spusti pod običajno raven.
+    if (sb.guaranteed && state.level < 1) return { mode, boosted: false, saved: false, level: state.level };
     // Tudi pri porabi iz dokupljenega kredita brez nadgradnje: kupljeni pogovori so ocenjeni za običajne modele.
     const near = sb.spent >= sb.allowance * SHARE_SOFT;
     return { ...budgetMode(mode, { level: state.level, maxTier, lite, overShare: near }), level: state.level };
@@ -243,6 +307,12 @@ export class Usage {
       if (daily && this.deepToday(studentId, deepModel) >= daily) return { mode: "think", note: NOTES.dailyDeep(daily) };
       // S proračunom: blizu svojega dela proračuna (brez dokupljenega kredita); brez njega mehka meja v $.
       const state = this.budgetState();
+      // Naročnik (zajamčeni delež): podrobne razlage do 100 % deleža, potem hitri način (obvestilo pošlje app.js).
+      const sb = this.studentBudget(studentId, state);
+      if (sb.guaranteed) {
+        if (sb.spent >= sb.allowance && sb.credit <= 0) return { mode: "think", note: null, fast: true };
+        return { mode: capped ? "mid" : "deep", note: null };
+      }
       if (state.cap) {
         const sb = this.studentBudget(studentId, state);
         if (sb.spent >= sb.allowance * SHARE_SOFT && sb.credit <= 0) return { mode: "think", note: NOTES.softBudget };
@@ -281,12 +351,19 @@ export class Usage {
     const state = this.budgetState();
     if (state.cap) {
       if (!this.overShare(studentId, state)) return null;
+      // Pod 15 let ali ob ponudbi paketa pred testom brez poziva k dokupu (ponudbe.js, ena ponudba naenkrat).
+      if (!this.topupPrompt(studentId)) {
+        return state.spent >= state.cap
+          ? "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej."
+          : "Ta mesec si porabil svoj del inštruktorja. Spet ga dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.";
+      }
       return state.spent >= state.cap
         ? "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj. Vadnica in razlage tem delujejo naprej."
         : "Ta mesec si porabil svoj del inštruktorja. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.";
     }
     const per = LIMITS.studentMonthlyUsd();
-    if (per && this.monthTotal(studentId) >= per) {
+    // Naročnika mesečna meja ne ustavi: nad zajamčenim deležem odgovarja hitri model (dnevna meja vprašanj velja).
+    if (per && !(this.guaranteeOf(studentId) > 0) && this.monthTotal(studentId) >= per) {
       return "Ta mesec si dosegel omejitev vprašanj za inštruktorja. Vadnica in razlage tem delujejo naprej.";
     }
     return null;
@@ -368,8 +445,19 @@ export class Usage {
     };
   }
   // Za starše: poraba otroka ta mesec kot delež mesečne omejitve (brez zneskov).
+  // Naročnik (zajamčeni delež): odstotek in preostale podrobne razlage; inštruktor se ne ustavi (hitri način).
   studentMonth(studentId) {
     const state = this.budgetState();
+    const a = this.allowance(studentId, state);
+    if (a.guaranteed) {
+      return {
+        ...a,
+        soft_reached: a.stage !== "ok",
+        hard_reached: false,
+        fast: a.stage === "out",
+        can_buy: !!this.credits && !!this.ownerOf(studentId),
+      };
+    }
     if (state.cap) {
       const sb = this.studentBudget(studentId, state);
       const pct = sb.allowance ? Math.round((sb.spent / sb.allowance) * 100) : 100;

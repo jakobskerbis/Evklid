@@ -2794,5 +2794,20 @@
   "pp.taskN": "Zadanie {n}",
   "pp.taskMsg": "Rozwiązuję arkusz z poprzednich lat: {paper}, zadanie {n}. Przesyłam zdjęcie zadania. Prowadź mnie wskazówkami w stylu tego egzaminu i nie zdradzaj rozwiązania, zanim nie spróbuję.",
   "pp.boxMsg": "Rozwiązuję arkusz z poprzednich lat: {paper}, strona {page}. Przesyłam zdjęcie zadania. Prowadź mnie wskazówkami w stylu tego egzaminu i nie zdradzaj rozwiązania, zanim nie spróbuję.",
-  "pp.taskText": "Treść zadania z arkusza (wzory mogą być zniekształcone, liczy się obraz):"
+  "pp.taskText": "Treść zadania z arkusza (wzory mogą być zniekształcone, liczy się obraz):",
+  "pay.seats1Level": "1 profil · {level}",
+  "pay.family": "Rodzina (2–4 profile)",
+  "pay.familyStudent": "Rodzina ze studentem (2–4 profile)",
+  "up.title": "Wyższy poziom",
+  "up.text": "Subskrypcja otwiera twój poziom i wszystkie niższe. Wyższy możesz otworzyć od razu i dopłacić tylko różnicę do końca okresu.",
+  "up.btn": "Otwórz: {name}",
+  "up.done": "Zmiana się udała. Wyższy poziom jest otwarty.",
+  "up.pending": "Od {date} obowiązuje nowa cena: {price} ({name}).",
+  "up.locked": "poziom zablokowany",
+  "ai.left": "Szczegółowe wyjaśnienia w tym miesiącu: jeszcze {n}",
+  "ai.low": "W tym miesiącu wykorzystano 80 % szczegółowych wyjaśnień.",
+  "ai.out": "Szczegółowe wyjaśnienia na ten miesiąc się skończyły. Korepetytor odpowiada dalej w trybie szybkim.",
+  "ai.buy": "Dokup wyjaśnienia",
+  "gift.level": "Poziom",
+  "meter.levelsTitle": "Ceny według poziomu"
 }
