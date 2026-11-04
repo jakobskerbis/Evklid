@@ -1,6 +1,6 @@
 // Klepet z inštruktorjem: odgovor prihaja sproti, formule in tabele kot na spletu, fotografija naloge
 // (kamera ali galerija), »Razloži podrobneje«, predlog spremembe šole in letnika, osvojena tema.
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ActionSheetIOS, Alert, FlatList, Image, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,6 +13,7 @@ import { radius, useTheme } from "@/lib/theme";
 import { celebrate, failure, success, tap } from "@/lib/haptics";
 import { pickPhoto, takePendingPhoto, type Photo } from "@/lib/images";
 import { RichText } from "@/components/RichText";
+import { toHtml } from "@/lib/rich";
 import { FormulaCtx } from "@/lib/formula-ctx";
 import { useTopicFx } from "@/lib/useTopicFx";
 import { Banner, Button, Card, ErrorView, Icon, Loading } from "@/components/ui";
@@ -324,11 +325,21 @@ export default function Chat() {
 
 // »Prijavi napako« pod odgovorom (kot na spletu, server/reports.js). Trgovini zahtevata, da uporabnik
 // neprimerno vsebino AI prijavi v aplikaciji (Google Play: AI-generated content, Apple 1.2).
-function ReportButton({ conv, mid }: { conv: string; mid: number }) {
+function ReportButton({ conv, mid, text }: { conv: string; mid: number; text: string }) {
   const th = useTheme();
+  const fx = useContext(FormulaCtx);
   const [done, setDone] = useState(false);
+  // shown: isti HTML, kot ga je izrisal RichText (skrbnik vidi napako izrisa, kot jo je videl učenec).
+  const shown = () => {
+    try {
+      const html = toHtml(text, { ai: true, fx });
+      return html.length <= 200000 ? html : undefined;
+    } catch {
+      return undefined;
+    }
+  };
   const report = (reason: string) =>
-    api(`/api/conversations/${conv}/messages/${mid}/report`, { body: { reason, ...appDevice() } })
+    api(`/api/conversations/${conv}/messages/${mid}/report`, { body: { reason, shown: shown(), ...appDevice() } })
       .then(() => {
         setDone(true);
         Alert.alert(t("rep.thanks"));
@@ -386,7 +397,7 @@ function Bubble({ m, conv }: { m: Msg; conv: string }) {
   return (
     <View style={{ alignSelf: "stretch", backgroundColor: m.error ? th.dangerSoft : th.surface, borderRadius: radius.card, borderWidth: 1, borderColor: m.error ? th.danger : th.border, padding: 14 }}>
       {m.text ? <RichText text={m.text} ai streaming={m.streaming} size={16} /> : <Text style={{ color: th.muted, fontSize: 22 }}>…</Text>}
-      {typeof m.id === "number" && !m.streaming && !m.error ? <ReportButton conv={conv} mid={m.id} /> : null}
+      {typeof m.id === "number" && !m.streaming && !m.error ? <ReportButton conv={conv} mid={m.id} text={m.text} /> : null}
     </View>
   );
 }

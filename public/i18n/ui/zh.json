@@ -2786,7 +2786,6 @@
   "adm.rep.app": "应用错误（管理员）",
   "adm.rep.more": "详情",
   "adm.rep.question": "问题：",
-  "adm.rep.answer": "回答：",
   "adm.rep.fixed": "已修正",
   "adm.rep.reopen": "重新打开",
   "adm.rep.none": "没有报告。",
@@ -2796,6 +2795,6 @@
   "chat.full": "显示完整解题过程",
   "chat.fullMsg": "请给我看这道题的完整解题过程。",
   "adm.rep.shown": "学生看到的回答是这样的：",
-  "adm.rep.rerendered": "重新显示的回答（没有快照，例如来自应用）：",
+  "adm.rep.rerendered": "重新显示的回答（较早的报告，没有快照）：",
   "adm.rep.raw": "辅导老师的原始文本："
 }

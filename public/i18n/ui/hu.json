@@ -2808,7 +2808,6 @@
   "adm.rep.app": "Alkalmazáshiba (adminisztrátor)",
   "adm.rep.more": "Részletek",
   "adm.rep.question": "Kérdés:",
-  "adm.rep.answer": "Válasz:",
   "adm.rep.fixed": "Javítva",
   "adm.rep.reopen": "Újranyitás",
   "adm.rep.none": "Nincs jelentés.",
@@ -2818,6 +2817,6 @@
   "chat.full": "Teljes megoldás mutatása",
   "chat.fullMsg": "Mutasd meg a feladat teljes megoldását.",
   "adm.rep.shown": "Így látta a tanuló a választ:",
-  "adm.rep.rerendered": "A válasz újra megjelenítve (nincs pillanatkép, pl. az alkalmazásból):",
+  "adm.rep.rerendered": "A válasz újra megjelenítve (régebbi bejelentés pillanatkép nélkül):",
   "adm.rep.raw": "A tanár nyers szövege:"
 }

@@ -2810,7 +2810,6 @@
   "adm.rep.app": "App-Fehler (Admin)",
   "adm.rep.more": "Details",
   "adm.rep.question": "Frage:",
-  "adm.rep.answer": "Antwort:",
   "adm.rep.fixed": "Behoben",
   "adm.rep.reopen": "Wieder öffnen",
   "adm.rep.none": "Keine Meldungen.",
@@ -2820,6 +2819,6 @@
   "chat.full": "Ganzen Lösungsweg zeigen",
   "chat.fullMsg": "Zeig mir den ganzen Lösungsweg dieser Aufgabe.",
   "adm.rep.shown": "So hat der Schüler die Antwort gesehen:",
-  "adm.rep.rerendered": "Die Antwort, neu dargestellt (keine Momentaufnahme, z. B. aus der App):",
+  "adm.rep.rerendered": "Die Antwort, neu dargestellt (ältere Meldung ohne Momentaufnahme):",
   "adm.rep.raw": "Rohtext des Tutors:"
 }

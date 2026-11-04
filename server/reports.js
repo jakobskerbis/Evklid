@@ -80,8 +80,9 @@ export function listReports(db, limit = 200) {
 
 // Opomba, vprašanje in odgovor so šifrirani (server/crypto-polje.js).
 export const openReport = (r) => r && { ...r, note: unseal(r.note), question: unseal(r.question), answer: unseal(r.answer), raw: unseal(r.raw), shown: unseal(r.shown) };
-// Izrisan HTML sporočila s spleta: največ 40 000 znakov, brez skriptov (prikaz za skrbnika ga še očisti z DOMPurify).
-export const SHOWN_MAX = 40000;
+// Izrisan HTML sporočila s spleta: največ 200 000 znakov (dolg postopek s formulami), brez skriptov
+// (prikaz za skrbnika ga še strogo očisti, public/prijave.js safeShown).
+export const SHOWN_MAX = 200000;
 const cleanShown = (v) => (typeof v === "string" && v.length <= SHOWN_MAX && !/<script\b/i.test(v) ? v : null);
 
 const openBug = (r) => r && { ...r, note: unseal(r.note), context: unseal(r.context) };
@@ -99,6 +100,12 @@ export function adminReports(db, { status = "open", limit = 300 } = {}) {
   return { reports, open: open("message_reports") + open("bug_reports") };
 }
 
+// Ograja, daljša od vseh ``` v besedilu (odgovor ima lahko svoje bloke kode).
+const fenced = (text, lang = "") => {
+  const fence = "`".repeat(Math.max(3, ...(text.match(/`+/g) || []).map((m) => m.length + 1)));
+  return [fence + lang, text, fence];
+};
+
 // Povzetek v Markdownu: skrbnik ga prenese in da Claudu, ki napake popravi.
 export function reportsMarkdown({ reports }, topicName = () => null) {
   const lines = ["# Prijave napak (odprte)", ""];
@@ -114,8 +121,8 @@ export function reportsMarkdown({ reports }, topicName = () => null) {
     if (r.note) lines.push(`- opomba: ${r.note}`);
     if (r.question) lines.push("", "Vprašanje:", "", "> " + r.question.replace(/\n/g, "\n> "));
     if (r.answer) lines.push("", "Odgovor (kot ga je videl učenec):", "", "> " + r.answer.replace(/\n/g, "\n> "));
-    if (r.raw && r.raw !== r.answer) lines.push("", "Surovo besedilo modela:", "", "```", r.raw, "```");
-    if (r.shown) lines.push("", "Izrisan HTML (splet):", "", "```html", r.shown.slice(0, 6000), "```");
+    if (r.raw && r.raw !== r.answer) lines.push("", "Surovo besedilo modela:", "", ...fenced(r.raw));
+    if (r.shown) lines.push("", "Izrisan HTML (splet):", "", ...fenced(r.shown.slice(0, 6000), "html"));
     if (r.context) lines.push("", "Zadnja sporočila:", "", r.context);
     lines.push("");
   }
@@ -163,7 +170,8 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
         purged,
         deviceOf(req.body),
         raw ? seal(anonymize(raw).slice(0, 12000)) : null,
-        cleanShown(req.body?.shown) ? seal(anonymize(req.body.shown)) : null,
+        // Ime samo v besedilu, ne v oznakah in razredih (npr. ime »ma« bi pokvarilo <math>).
+        cleanShown(req.body?.shown) ? seal(req.body.shown.replace(/>([^<]*)</g, (_, t) => `>${anonymize(t)}<`)) : null,
       );
     console.warn(`[evklid] prijava napake ${code} (${reason}), pogovor ${conv.id}`);
     res.status(201).json({ ok: true, code });

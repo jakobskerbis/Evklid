@@ -2786,7 +2786,6 @@
   "adm.rep.app": "應用程式錯誤（管理員）",
   "adm.rep.more": "詳細資料",
   "adm.rep.question": "問題：",
-  "adm.rep.answer": "回答：",
   "adm.rep.fixed": "已修正",
   "adm.rep.reopen": "重新開啟",
   "adm.rep.none": "沒有回報。",
@@ -2796,6 +2795,6 @@
   "chat.full": "顯示完整解題過程",
   "chat.fullMsg": "請給我看這道題的完整解題過程。",
   "adm.rep.shown": "學生看到的回答是這樣的：",
-  "adm.rep.rerendered": "重新顯示的回答（沒有快照，例如來自應用程式）：",
+  "adm.rep.rerendered": "重新顯示的回答（較早的回報，沒有快照）：",
   "adm.rep.raw": "家教的原始文字："
 }

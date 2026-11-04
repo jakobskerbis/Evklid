@@ -2810,7 +2810,6 @@
   "adm.rep.app": "Gabim i aplikacionit (administrator)",
   "adm.rep.more": "Hollësi",
   "adm.rep.question": "Pyetja:",
-  "adm.rep.answer": "Përgjigja:",
   "adm.rep.fixed": "U ndreq",
   "adm.rep.reopen": "Rihape",
   "adm.rep.none": "Nuk ka raporte.",
@@ -2820,6 +2819,6 @@
   "chat.full": "Shfaq gjithë zgjidhjen",
   "chat.fullMsg": "Më trego gjithë zgjidhjen e kësaj detyre.",
   "adm.rep.shown": "Kështu e pa nxënësi përgjigjen:",
-  "adm.rep.rerendered": "Përgjigja, e shfaqur sërish (pa pamje, p.sh. nga aplikacioni):",
+  "adm.rep.rerendered": "Përgjigja, e shfaqur sërish (raportim më i vjetër pa pamje):",
   "adm.rep.raw": "Teksti origjinal i tutorit:"
 }

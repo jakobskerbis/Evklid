@@ -2808,7 +2808,6 @@
   "adm.rep.app": "Hitilafu ya programu (msimamizi)",
   "adm.rep.more": "Maelezo zaidi",
   "adm.rep.question": "Swali:",
-  "adm.rep.answer": "Jibu:",
   "adm.rep.fixed": "Imerekebishwa",
   "adm.rep.reopen": "Fungua tena",
   "adm.rep.none": "Hakuna ripoti.",
@@ -2818,6 +2817,6 @@
   "chat.full": "Onyesha suluhisho lote",
   "chat.fullMsg": "Nionyeshe suluhisho lote la swali hili.",
   "adm.rep.shown": "Hivi ndivyo mwanafunzi alivyoona jibu:",
-  "adm.rep.rerendered": "Jibu, limeonyeshwa tena (hakuna picha ya skrini, k.m. kutoka programu):",
+  "adm.rep.rerendered": "Jibu, limeonyeshwa tena (ripoti ya zamani bila picha ya skrini):",
   "adm.rep.raw": "Maandishi asili ya mkufunzi:"
 }

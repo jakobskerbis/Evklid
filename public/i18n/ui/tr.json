@@ -2808,7 +2808,6 @@
   "adm.rep.app": "Uygulama hatası (yönetici)",
   "adm.rep.more": "Ayrıntılar",
   "adm.rep.question": "Soru:",
-  "adm.rep.answer": "Cevap:",
   "adm.rep.fixed": "Düzeltildi",
   "adm.rep.reopen": "Yeniden aç",
   "adm.rep.none": "Bildirim yok.",
@@ -2818,6 +2817,6 @@
   "chat.full": "Çözümün tamamını göster",
   "chat.fullMsg": "Bu sorunun çözümünün tamamını göster.",
   "adm.rep.shown": "Öğrenci cevabı böyle gördü:",
-  "adm.rep.rerendered": "Cevap yeniden gösterildi (anlık görüntü yok, ör. uygulamadan):",
+  "adm.rep.rerendered": "Cevap yeniden gösterildi (anlık görüntüsü olmayan eski bildirim):",
   "adm.rep.raw": "Öğretmenin ham metni:"
 }

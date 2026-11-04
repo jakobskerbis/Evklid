@@ -16,9 +16,21 @@ export function deviceInfo() {
 /** Izrisan HTML sporočila, kot ga vidi učenec (brez gumbov, noge in okvirja prijave), za prijavo napake. */
 export function shownHtml(el) {
   const c = el.cloneNode(true);
-  c.querySelectorAll(".msg-foot, .report-box, button, .cards-note").forEach((x) => x.remove());
+  // .katex-mathml je skrit (za bralnike zaslona) in polovica velikosti; skrbnik ga ne vidi.
+  c.querySelectorAll(".msg-foot, .report-box, button, .cards-note, .katex-mathml").forEach((x) => x.remove());
   const html = c.innerHTML.trim();
-  return html.length <= 40000 ? html : undefined;
+  return html.length <= 200000 ? html : undefined;
+}
+
+// HTML posnetka pošlje učenec, zato pri skrbniku le oblikovanje besedila in formul: brez slik, povezav,
+// obrazcev, <style>, id-jev in slogov, ki bi kaj prekrili ali naložili (position, url()).
+const SHOWN_FORBID = ["style", "img", "a", "form", "input", "textarea", "select", "button", "iframe", "video", "audio", "link", "image", "use", "foreignObject"];
+export function safeShown(html) {
+  const frag = window.DOMPurify.sanitize(html, { FORBID_TAGS: SHOWN_FORBID, FORBID_ATTR: ["id", "name", "href", "xlink:href", "src", "srcset", "action"], RETURN_DOM_FRAGMENT: true });
+  for (const el of frag.querySelectorAll("[style]")) if (/position|url\s*\(|@import|expression/i.test(el.getAttribute("style"))) el.removeAttribute("style");
+  const box = document.createElement("div");
+  box.append(frag);
+  return box.innerHTML;
 }
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -170,7 +182,7 @@ function shownBlock(r) {
   let html = "";
   let label = t("adm.rep.shown");
   try {
-    if (r.shown) html = window.DOMPurify.sanitize(r.shown);
+    if (r.shown) html = safeShown(r.shown);
     else {
       rich ||= createRenderer({ annotate: (tex) => annotateTex(tex) });
       html = rich.renderRich(r.answer);
@@ -179,7 +191,10 @@ function shownBlock(r) {
   } catch {
     return "";
   }
-  return `<div class="adm-rep-shown"><small class="muted">${esc(label)}</small><div class="msg assistant">${html}</div></div>`;
+  // Širina kot pri učencu (zaslon iz naprave, manj robov), da se prelomi in odrezane formule ponovijo.
+  const w = Number(/(\d+)x\d+/.exec(r.device || "")?.[1]);
+  const width = w >= 240 && w < 760 ? ` style="max-width: min(100%, ${w - 48}px)"` : "";
+  return `<div class="adm-rep-shown"><small class="muted">${esc(label)}</small><div class="msg assistant"${width}>${html}</div></div>`;
 }
 
 /** Izriše prijave v box (Račun skrbnika ali stran z mnenji na računalniku s strežnikom). */
@@ -210,8 +225,8 @@ export async function renderAdminReports(box, { api, toast, showAll = false }) {
       <button type="button" class="ghost" data-rep-all>${esc(t(showAll ? "adm.rep.onlyOpen" : "adm.rep.showAll"))}</button>
     </div>`;
   hydrateIcons(box);
-  box.querySelector("[data-rep-all]").addEventListener("click", () => renderAdminReports(box, { api, toast, showAll: !showAll }));
-  box.querySelectorAll("[data-rep-status]").forEach((b) =>
+  box.querySelector(":scope > .actions > [data-rep-all]").addEventListener("click", () => renderAdminReports(box, { api, toast, showAll: !showAll }));
+  box.querySelectorAll(".adm-rep > button[data-rep-status]").forEach((b) =>
     b.addEventListener("click", async () => {
       const li = b.closest("li");
       b.disabled = true;

@@ -2835,7 +2835,6 @@
   "adm.rep.app": "Greška u aplikaciji (administrator)",
   "adm.rep.more": "Detalji",
   "adm.rep.question": "Pitanje:",
-  "adm.rep.answer": "Odgovor:",
   "adm.rep.fixed": "Ispravljeno",
   "adm.rep.reopen": "Ponovo otvori",
   "adm.rep.none": "Nema prijava.",
@@ -2845,6 +2844,6 @@
   "chat.full": "Prikaži cijeli postupak",
   "chat.fullMsg": "Pokaži mi cijeli postupak ovog zadatka.",
   "adm.rep.shown": "Ovako je učenik vidio odgovor:",
-  "adm.rep.rerendered": "Odgovor, ponovo prikazan (nema snimka, npr. iz aplikacije):",
+  "adm.rep.rerendered": "Odgovor, ponovo prikazan (starija prijava bez snimka):",
   "adm.rep.raw": "Izvorni tekst instruktora:"
 }

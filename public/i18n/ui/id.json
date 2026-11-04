@@ -2786,7 +2786,6 @@
   "adm.rep.app": "Bug aplikasi (admin)",
   "adm.rep.more": "Detail",
   "adm.rep.question": "Pertanyaan:",
-  "adm.rep.answer": "Jawaban:",
   "adm.rep.fixed": "Sudah diperbaiki",
   "adm.rep.reopen": "Buka lagi",
   "adm.rep.none": "Tidak ada laporan.",
@@ -2796,6 +2795,6 @@
   "chat.full": "Tampilkan seluruh penyelesaian",
   "chat.fullMsg": "Tunjukkan seluruh penyelesaian soal ini.",
   "adm.rep.shown": "Beginilah siswa melihat jawabannya:",
-  "adm.rep.rerendered": "Jawaban ditampilkan ulang (tanpa cuplikan, mis. dari aplikasi):",
+  "adm.rep.rerendered": "Jawaban ditampilkan ulang (laporan lama tanpa cuplikan):",
   "adm.rep.raw": "Teks asli tutor:"
 }

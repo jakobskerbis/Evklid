@@ -2786,7 +2786,6 @@
   "adm.rep.app": "앱 오류(관리자)",
   "adm.rep.more": "자세히",
   "adm.rep.question": "질문:",
-  "adm.rep.answer": "답변:",
   "adm.rep.fixed": "수정됨",
   "adm.rep.reopen": "다시 열기",
   "adm.rep.none": "신고가 없습니다.",
@@ -2796,6 +2795,6 @@
   "chat.full": "전체 풀이 보기",
   "chat.fullMsg": "이 문제의 전체 풀이를 보여 줘.",
   "adm.rep.shown": "학생에게 보인 답변:",
-  "adm.rep.rerendered": "다시 표시한 답변(스냅샷 없음, 예: 앱에서):",
+  "adm.rep.rerendered": "다시 표시한 답변(스냅샷이 없는 이전 신고):",
   "adm.rep.raw": "튜터의 원본 텍스트:"
 }

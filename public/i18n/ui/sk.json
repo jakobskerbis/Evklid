@@ -2862,7 +2862,6 @@
   "adm.rep.app": "Chyba aplikácie (správca)",
   "adm.rep.more": "Podrobnosti",
   "adm.rep.question": "Otázka:",
-  "adm.rep.answer": "Odpoveď:",
   "adm.rep.fixed": "Opravené",
   "adm.rep.reopen": "Znova otvoriť",
   "adm.rep.none": "Žiadne hlásenia.",
@@ -2872,6 +2871,6 @@
   "chat.full": "Ukázať celý postup",
   "chat.fullMsg": "Ukáž mi celý postup tejto úlohy.",
   "adm.rep.shown": "Takto žiak videl odpoveď:",
-  "adm.rep.rerendered": "Odpoveď znova vykreslená (bez snímky, napr. z aplikácie):",
+  "adm.rep.rerendered": "Odpoveď znova vykreslená (staršie hlásenie bez snímky):",
   "adm.rep.raw": "Pôvodný text lektora:"
 }

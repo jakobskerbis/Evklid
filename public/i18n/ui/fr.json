@@ -2810,7 +2810,6 @@
   "adm.rep.app": "Bug de l'application (admin)",
   "adm.rep.more": "Détails",
   "adm.rep.question": "Question :",
-  "adm.rep.answer": "Réponse :",
   "adm.rep.fixed": "Corrigé",
   "adm.rep.reopen": "Rouvrir",
   "adm.rep.none": "Aucun signalement.",
@@ -2820,6 +2819,6 @@
   "chat.full": "Montrer toute la démarche",
   "chat.fullMsg": "Montre-moi toute la démarche de cet exercice.",
   "adm.rep.shown": "Voici comment l'élève a vu la réponse :",
-  "adm.rep.rerendered": "La réponse, affichée à nouveau (pas d'instantané, p. ex. depuis l'application) :",
+  "adm.rep.rerendered": "La réponse, affichée à nouveau (ancien signalement sans instantané) :",
   "adm.rep.raw": "Texte brut du tuteur :"
 }

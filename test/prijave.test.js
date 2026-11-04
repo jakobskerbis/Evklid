@@ -128,6 +128,15 @@ test("message report keeps what the student saw: raw model text, rendered HTML a
     assert.match(md, /web-phone 390x844/);
     assert.match(md, /katex-error/);
     assert.match(md, /Surovo besedilo modela/);
+
+    // Ime učenca se zamenja samo v besedilu, oznake in razredi ostanejo (ime »ma« ne pokvari <math>).
+    const s3 = (await call("/api/students", { method: "POST", body: { name: "ma" } })).body;
+    const c3 = (await call(`/api/students/${s3.id}/conversations`, { method: "POST" })).body;
+    await call(`/api/conversations/${c3.id}/messages`, { method: "POST", body: { text: "kaj je pitagorov izrek" } });
+    const mid3 = (await call(`/api/conversations/${c3.id}`)).body.messages.find((m) => m.role === "assistant").id;
+    await call(`/api/conversations/${c3.id}/messages/${mid3}/report`, { method: "POST", body: { reason: "wrong", shown: '<math class="mathnormal">Pozdravljen, ma!</math>' } });
+    const it3 = (await call("/api/admin/reports")).body.reports.find((x) => x.kind === "message" && x.student_id === s3.id);
+    assert.equal(it3.shown, '<math class="mathnormal">Pozdravljen, [ime]!</math>');
   });
 });
 

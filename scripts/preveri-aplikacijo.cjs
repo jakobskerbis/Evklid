@@ -660,7 +660,8 @@ async function okna(p, label) {
   if (await p.locator(".okno").count()) throw new Error("okno se ni zaprlo");
   // Prijava odgovora: skrbnik vidi odgovor tako, kot ga je videl učenec (izrisan HTML in naprava).
   const ans = "#view-chat .msg.assistant:has(.msg-report) >> nth=-1";
-  if (await p.locator(ans).count()) {
+  {
+    if (!(await p.locator(ans).count())) throw new Error("v klepetu ni odgovora s »Prijavi napako«");
     await click(p, `${ans} >> .msg-report`, { wait: 150 });
     await click(p, `${ans} >> .report-box .rep-reasons button >> nth=0`, { wait: 50 });
     await click(p, `${ans} >> .report-box .rep-send`, { wait: 400 });
@@ -675,7 +676,9 @@ async function okna(p, label) {
       };
       await renderAdminReports(box, { api });
       const li = box.querySelector('.adm-rep[data-kind="message"]');
-      const out = { shown: li?.querySelector(".adm-rep-shown .msg")?.textContent.trim().length || 0, device: li?.querySelector("small")?.textContent || "" };
+      const { t } = await import("/i18n.js");
+      const label = li?.querySelector(".adm-rep-shown > small")?.textContent;
+      const out = { shown: label === t("adm.rep.shown") ? li.querySelector(".adm-rep-shown .msg").textContent.trim().length : 0, device: li?.querySelector("small")?.textContent || "" };
       box.remove();
       return out;
     });

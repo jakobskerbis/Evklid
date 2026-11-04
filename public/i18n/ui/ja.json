@@ -2786,7 +2786,6 @@
   "adm.rep.app": "アプリの不具合（管理者）",
   "adm.rep.more": "詳細",
   "adm.rep.question": "質問：",
-  "adm.rep.answer": "回答：",
   "adm.rep.fixed": "修正済み",
   "adm.rep.reopen": "再び開く",
   "adm.rep.none": "報告はありません。",
@@ -2796,6 +2795,6 @@
   "chat.full": "解き方をすべて見る",
   "chat.fullMsg": "この問題の解き方をすべて見せてください。",
   "adm.rep.shown": "生徒にはこのように表示されました：",
-  "adm.rep.rerendered": "回答を再表示（スナップショットなし、例：アプリから）：",
+  "adm.rep.rerendered": "回答を再表示（スナップショットのない以前の報告）：",
   "adm.rep.raw": "チューターの元のテキスト："
 }

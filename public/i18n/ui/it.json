@@ -2810,7 +2810,6 @@
   "adm.rep.app": "Errore dell'app (amministratore)",
   "adm.rep.more": "Dettagli",
   "adm.rep.question": "Domanda:",
-  "adm.rep.answer": "Risposta:",
   "adm.rep.fixed": "Corretto",
   "adm.rep.reopen": "Riapri",
   "adm.rep.none": "Nessuna segnalazione.",
@@ -2820,6 +2819,6 @@
   "chat.full": "Mostra tutto il procedimento",
   "chat.fullMsg": "Mostrami tutto il procedimento di questo esercizio.",
   "adm.rep.shown": "Così lo studente ha visto la risposta:",
-  "adm.rep.rerendered": "La risposta, mostrata di nuovo (nessuna istantanea, ad es. dall'app):",
+  "adm.rep.rerendered": "La risposta, mostrata di nuovo (segnalazione precedente senza istantanea):",
   "adm.rep.raw": "Testo grezzo del tutor:"
 }
