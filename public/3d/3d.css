@@ -135,6 +135,15 @@
 html.k3-stran, html.k3-stran body { margin: 0; height: 100%; background: #0b0f16; color-scheme: dark; }
 html.k3-stran body { overflow: hidden; }
 .k3-glavni { position: fixed; inset: 0; overflow: auto; overscroll-behavior: contain; }
+/* Evklidova tipkovnica na strani /3d (tipkovnica-strani.js): barve plošče iz barv odra (stran nima style.css), odprta
+   tipkovnica skrajša stran, da iskalnik in zadetki ostanejo nad njo. */
+html.k3-stran {
+  --font: var(--k3-font, "Instrument Sans Variable", system-ui, sans-serif); --text: #e8ecf3; --muted: #9aa6ba; --accent: #6e9bff; --accent-text: #0b0f16;
+  --accent-soft: #1a2540; --surface: #141a25; --surface-2: #1b2331; --border: #273142; --press: #273142; --radius-sm: 10px;
+  --shadow: 0 -8px 30px rgba(0, 0, 0, 0.45); --menu: #141a25; --menu-text: #e8ecf3; --menu-muted: #9aa6ba; --menu-border: #273142;
+  --menu-accent: #6e9bff; --menu-accent-text: #0b0f16;
+}
+body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(--tk-h, 0px); }
 .k3-hub { margin: 0 auto; padding: max(20px, var(--varno-zg, env(safe-area-inset-top, 0px))) max(16px, env(safe-area-inset-right)) 48px max(16px, env(safe-area-inset-left)); display: flex; flex-direction: column; gap: 24px; }
 .k3-hub-vrh { display: flex; align-items: center; gap: 12px; }
 .k3-hub-vrh h1 { margin: 0; font-size: 1.6rem; line-height: 1.15; }
@@ -151,19 +160,97 @@ html.k3-stran body { overflow: hidden; }
 .k3-zvezda-ic svg.i { width: 30px; height: 30px; }
 .k3-zvezda-oznake { display: flex; flex-wrap: wrap; gap: 6px; }
 .k3-zvezda-oznake span { font-size: 0.82rem; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); color: var(--k3-muted); }
-.k3-podrocje h2 { font-size: 1.1rem; margin: 0 0 12px; }
-.k3-mreza { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-.k3-kartica { display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 16px; border: 1px solid var(--k3-rob); background: var(--k3-povrsina); color: inherit; text-decoration: none; min-height: 110px; }
+/* Iskanje in področja: lepljiva vrstica (ostane vidna med pomikanjem po zbirki). */
+.k3-hub-orodja {
+  position: sticky; top: 0; z-index: 3; display: flex; flex-direction: column; gap: 10px;
+  margin: -8px calc(-1 * max(16px, env(safe-area-inset-right))) 0 calc(-1 * max(16px, env(safe-area-inset-left)));
+  padding: 8px max(16px, env(safe-area-inset-right)) 10px max(16px, env(safe-area-inset-left));
+  background: linear-gradient(var(--k3-bg) 82%, transparent);
+}
+.k3-iskalnik {
+  display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 16px; border-radius: 999px;
+  background: var(--k3-povrsina); border: 1px solid var(--k3-rob); color: var(--k3-muted); cursor: text;
+}
+.k3-iskalnik:focus-within { border-color: var(--k3-accent); }
+.k3-iskalnik input { flex: 1; min-width: 0; height: 46px; border: 0; outline: none; background: transparent; color: var(--k3-besedilo); font: inherit; font-size: 1rem; }
+.k3-iskalnik input::placeholder { color: var(--k3-muted); }
+.k3-iskalnik input::-webkit-search-cancel-button { filter: invert(0.7); cursor: pointer; }
+.k3-cipi { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; mask-image: linear-gradient(90deg, transparent, #000 12px, #000 calc(100% - 12px), transparent); }
+.k3-cipi::-webkit-scrollbar { display: none; }
+.k3 .k3-cip {
+  flex: none; display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 15px; border-radius: 999px;
+  border: 1px solid var(--k3-rob); background: transparent; color: var(--k3-muted); font-weight: 600; font-size: 0.92rem; cursor: pointer; white-space: nowrap;
+}
+.k3 .k3-cip:hover { color: var(--k3-besedilo); background: var(--k3-povrsina); }
+.k3 .k3-cip[aria-pressed="true"] { background: var(--k3-accent); border-color: var(--k3-accent); color: #0b0f16; }
+.k3-cip small { font-size: 0.78rem; font-weight: 600; opacity: 0.75; font-variant-numeric: tabular-nums; }
+.k3-hub-vsebina { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+.k3-zadetki { margin: 0; color: var(--k3-muted); }
+.k3-podrocje { min-width: 0; }
+.k3-podrocje h2 { display: flex; align-items: baseline; gap: 8px; font-size: 1.1rem; margin: 0 0 12px; }
+.k3-stevec { font-size: 0.82rem; font-weight: 600; color: var(--k3-muted); font-variant-numeric: tabular-nums; }
+.k3-podrocje-glava { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.k3-podrocje-glava h2 { margin: 0; }
+.k3 .k3-vec { display: inline-flex; align-items: center; gap: 4px; min-height: 40px; padding: 0 6px 0 12px; border: 0; border-radius: 999px; background: transparent; color: var(--k3-accent); font-weight: 600; font-size: 0.92rem; cursor: pointer; }
+.k3 .k3-vec:hover { background: var(--k3-accent-soft); }
+.k3-vec svg.i { width: 18px; height: 18px; }
+[dir="rtl"] .k3-vec svg.i, [dir="rtl"] .k3-polica-gumb svg.i, [dir="rtl"] .k3-sosed svg.i, .k3-zrcali svg.i { transform: scaleX(-1); }
+[dir="rtl"] .k3-zrcali svg.i { transform: none; }
+/* Polica: vodoravna vrsta kartic do robov zaslona (brez praznih robov), pripenjanje na kartico. */
+.k3-polica-ovoj { position: relative; margin: 0 calc(-1 * max(16px, env(safe-area-inset-right))) 0 calc(-1 * max(16px, env(safe-area-inset-left))); }
+.k3-polica {
+  display: grid; grid-auto-flow: column; grid-auto-columns: clamp(158px, 42vw, 236px); gap: 12px; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-inline: max(16px, env(safe-area-inset-left)); scrollbar-width: none;
+  padding: 2px max(16px, env(safe-area-inset-right)) 4px max(16px, env(safe-area-inset-left));
+}
+.k3-polica::-webkit-scrollbar { display: none; }
+.k3-polica > .k3-kartica { scroll-snap-align: start; }
+.k3 .k3-polica-gumb { position: absolute; top: calc(50% - 30px); z-index: 2; background: var(--k3-steklo); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45); }
+.k3-polica-gumb.levo { left: 8px; }
+.k3-polica-gumb.desno { right: 8px; }
+[dir="rtl"] .k3-polica-gumb.levo { left: auto; right: 8px; }
+[dir="rtl"] .k3-polica-gumb.desno { right: auto; left: 8px; }
+@media (hover: none) { .k3 .k3-polica-gumb { display: none; } }
+.k3-mreza { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(208px, calc(50% - 6px)), 1fr)); gap: 12px; }
+.k3-kartica {
+  display: flex; flex-direction: column; min-width: 0; border-radius: 18px; overflow: hidden; border: 1px solid var(--k3-rob);
+  background: var(--k3-povrsina); color: inherit; text-decoration: none; transition: border-color 0.15s, transform 0.15s;
+}
 .k3-kartica:hover { border-color: #3a4760; }
-.k3-kartica b { font-size: 1.02rem; }
+.k3-kartica:hover .k3-slicica img { transform: scale(1.04); }
+.k3-kartica:focus-visible { outline-offset: 3px; }
+/* Sličica: posnetek modela na odru (scripts/3d-slicice.cjs), sicer ikona področja. */
+.k3-slicica {
+  position: relative; display: grid; place-items: center; aspect-ratio: 8 / 5; overflow: hidden; color: var(--k3-accent);
+  background-color: var(--k3-oder);
+  background-image: radial-gradient(ellipse 62% 60% at 50% 50%, rgba(52, 70, 104, 0.5) 0%, rgba(30, 41, 62, 0.22) 50%, transparent 80%);
+}
+.k3-slicica img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: transform 0.25s; }
+.k3-slicica svg.i { width: 34px; height: 34px; opacity: 0.8; }
+.k3-kartica-besedilo { display: flex; flex-direction: column; gap: 4px; padding: 11px 14px 14px; }
+.k3-kartica b { font-size: 0.98rem; line-height: 1.25; }
 .k3-kartica small { color: var(--k3-muted); line-height: 1.4; }
+.k3-kartica .k3-nadnaslov { font-size: 0.68rem; }
+.k3-kartica-opis { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.84rem; }
 .k3-prazno { color: var(--k3-muted); }
+.k3-zvezda-slika { position: absolute; top: 18px; inset-inline-end: 22px; height: 104px; width: auto; pointer-events: none; }
 .k3-model { position: fixed; inset: 0; display: flex; flex-direction: column; background: var(--k3-bg); }
-.k3-model-vrh { display: flex; align-items: center; gap: 12px; padding: max(12px, var(--varno-zg, env(safe-area-inset-top, 0px))) 16px 10px; }
-.k3-model-vrh h1 { margin: 0; font-size: 1.25rem; }
+.k3-model-vrh { display: flex; align-items: center; gap: 12px; padding: max(12px, var(--varno-zg, env(safe-area-inset-top, 0px))) max(16px, env(safe-area-inset-right)) 10px max(16px, env(safe-area-inset-left)); }
+.k3-model-naslov { flex: 1; min-width: 0; }
+.k3-model-vrh h1 { margin: 0; font-size: 1.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.k3-model-desno { display: flex; align-items: center; gap: 6px; flex: none; }
+.k3-model-desno a.a3-krog { text-decoration: none; }
+.k3-model-stevec { min-width: 3.2em; text-align: center; font-size: 0.86rem; color: var(--k3-muted); font-variant-numeric: tabular-nums; }
 .k3-model-telo { flex: 1; min-height: 0; overflow: auto; padding: 0 16px max(16px, var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
 .k3-model-telo .k3-pregled { border-radius: 18px; }
 .k3-model-telo .k3-oder-ovoj { height: clamp(320px, 62vh, 760px); }
+@media (max-width: 480px) {
+  .k3-model-vrh { gap: 8px; }
+  .k3-model-vrh h1 { font-size: 1.1rem; }
+  .k3-model-desno .a3-krog { width: 40px; height: 40px; min-height: 40px; }
+  .k3-model-stevec { display: none; }
+}
+@media (max-width: 359px) { .k3-cel-zaslon { display: none !important; } }
 .k3-napaka { max-width: 520px; margin: 0 auto; padding: 40px 16px; text-align: center; color: var(--k3-muted); line-height: 1.5; }
 .k3-napaka .a3-pill { text-decoration: none; }
 
@@ -337,7 +424,7 @@ html.k3-stran body { overflow: hidden; }
   .a3-kompas { bottom: 24px; right: 24px; }
   .a3-list-odprt .a3-kompas { right: 432px; }
   .k3-zvezda { grid-template-columns: auto 1fr; align-items: center; padding: 28px; }
-  .k3-zvezda > :not(.k3-zvezda-ic) { grid-column: 2; }
+  .k3-zvezda > :not(.k3-zvezda-ic):not(.k3-zvezda-slika) { grid-column: 2; }
 }
 @media (prefers-reduced-motion: reduce) {
   .a3-kartica, .a3-kviz, .a3-list { animation: none; }
@@ -385,18 +472,67 @@ html.k3-stran body { overflow: hidden; }
 .k3-list-vsebina h3 { margin: 0 0 4px; font-size: 1rem; color: var(--k3-accent); font-weight: 600; }
 .k3-list-vsebina p { margin: 0; line-height: 1.55; color: var(--k3-besedilo); }
 @keyframes k3-gor { from { transform: translateY(24px); opacity: 0; } }
-/* Stran /3d: organ zapolni zaslon brez okvirja (kot atlas), list ob desnem robu na širokih zaslonih. */
-.k3-model-telo:has(> .k3-organ) { padding: 0; overflow: hidden; display: flex; }
-.k3-model-telo > .k3-organ { flex: 1; min-height: 0; border: 0; border-radius: 0; background: transparent; }
-.k3-model-telo > .k3-organ .k3-oder-ovoj { flex: 1 1 auto; height: auto; min-height: 300px; }
-.k3-model-telo > .k3-organ .k3-spodaj { padding-bottom: max(16px, var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+/* ---------- stran /3d: oder čez cel zaslon in plošča ob njem (pregledovalnik z opts.stran) ---------- */
+/* Telefon: oder zgoraj, plošča spodaj se drsi sama (oder ostane viden med premikanjem drsnikov). Široki zasloni in
+   telefon ležeče: plošča desno. Velja tudi za organe (k3-organ), ki imajo svoj odrski nadzor in »Podrobnosti organa«. */
+.k3-model-telo:has(> .k3-stran-pregled) { padding: 0; overflow: hidden; display: flex; }
+.k3-model-telo > .k3-stran-pregled { flex: 1; min-height: 0; border: 0; border-radius: 0; background: transparent; }
+.k3-stran-pregled .k3-oder-ovoj { flex: 1 1 58%; height: auto; min-height: 240px; }
+.k3-stran-pregled > .k3-plosca {
+  flex: 0 1 auto; max-height: 44%; overflow-y: auto; overscroll-behavior: contain; gap: 14px;
+  padding: 14px max(16px, env(safe-area-inset-right)) max(16px, var(--varno-sp, env(safe-area-inset-bottom, 0px))) max(16px, env(safe-area-inset-left));
+  border-top: 1px solid var(--k3-rob); background: var(--k3-bg);
+}
+.k3-o-modelu { order: 9; display: flex; flex-direction: column; gap: 8px; }
+.k3-o-modelu p { margin: 0; line-height: 1.5; color: var(--k3-muted); font-size: 0.94rem; }
+.k3-o-modelu .k3-o-poskusi { padding: 10px 12px; border-radius: 12px; background: var(--k3-accent-soft); color: var(--k3-besedilo); }
+.k3-o-poskusi b { color: var(--k3-accent); font-weight: 600; }
+.k3-deli-glava { display: flex; align-items: baseline; gap: 8px; margin: 0 0 -4px; font-size: 0.92rem; font-weight: 600; color: var(--k3-muted); }
+.k3-namig {
+  position: absolute; z-index: 2; left: 50%; bottom: 14px; translate: -50% 0; width: max-content; max-width: calc(100% - 140px); margin: 0;
+  padding: 8px 14px; border-radius: 999px; background: var(--k3-steklo); border: 1px solid var(--k3-rob); color: var(--k3-muted);
+  font-size: 0.84rem; line-height: 1.35; text-align: center; pointer-events: none; transition: opacity 0.4s; animation: k3-pojav 0.4s 0.6s both;
+}
+.k3-namig.skrit { opacity: 0; }
+@keyframes k3-pojav { from { opacity: 0; } }
+.k3-stran-pregled .k3-orodja { flex-wrap: wrap; justify-content: flex-end; max-width: calc(100% - 24px); }
+.k3-organ.k3-stran-pregled .k3-oder-ovoj { min-height: 300px; }
+@media (max-width: 480px) {
+  .k3-stran-pregled .k3-orodja { gap: 6px; top: 10px; right: 10px; }
+  .k3-stran-pregled .k3-orodja .k3-krog { width: 40px; height: 40px; min-height: 40px; }
+  .k3-namig { max-width: calc(100% - 32px); bottom: 10px; }
+  .k3-namig-viden .k3-merilo { bottom: 62px; }
+}
+@media (min-width: 900px), (orientation: landscape) and (max-height: 560px) {
+  .k3-model-telo > .k3-stran-pregled { flex-direction: row; }
+  .k3-stran-pregled .k3-oder-ovoj { flex: 1 1 auto; min-width: 0; min-height: 0; }
+  .k3-stran-pregled > .k3-plosca {
+    flex: 0 0 clamp(300px, 30vw, 440px); max-height: none; height: 100%; gap: 16px; border-top: 0; border-inline-start: 1px solid var(--k3-rob);
+    padding: 16px max(18px, env(safe-area-inset-right)) max(18px, var(--varno-sp, env(safe-area-inset-bottom, 0px))) 18px;
+  }
+  .k3-o-modelu { order: 0; }
+  .k3-stran-pregled .k3-nadzor { flex-direction: column; align-items: stretch; }
+  .k3-stran-pregled .k3-drsnik, .k3-stran-pregled .k3-izbira { flex: none; }
+  .k3-stran-pregled .k3-nadzor > .k3-pill { align-self: flex-start; }
+  /* Organ: deli v plošči v več vrstah (ne vodoraven trak), »Podrobnosti organa« čez vso širino. */
+  .k3-organ.k3-stran-pregled .k3-deli { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; mask-image: none; }
+  .k3-organ.k3-stran-pregled .k3-nadzor { flex-direction: row; align-items: center; }
+}
+@media (orientation: landscape) and (max-height: 560px) and (max-width: 899px) {
+  .k3-stran-pregled > .k3-plosca { flex-basis: 42%; }
+  .k3-model-vrh { padding-top: max(6px, var(--varno-zg, env(safe-area-inset-top, 0px))); padding-bottom: 6px; }
+}
 @media (min-width: 900px) {
   .k3-list-ozadje { align-items: stretch; justify-content: flex-end; background: rgba(5, 7, 11, 0.35); }
   .k3-list { width: 420px; max-height: none; margin: 12px; border-radius: 22px; border-bottom: 1px solid var(--k3-rob); }
-  .k3-model-telo > .k3-organ .k3-spodaj { flex-direction: row; align-items: center; }
-  .k3-model-telo > .k3-organ .k3-deli { flex: 1; min-width: 0; margin: 0; }
-  .k3-model-telo > .k3-organ .k3-podrobnosti-gumb { width: auto; flex: none; padding: 0 26px; }
+  /* Atlas: celo telo (prosojen posnetek) ob desnem robu kartice. */
+  .k3-zvezda-slika { display: block; position: absolute; top: 14px; bottom: 14px; inset-inline-end: 7%; height: calc(100% - 28px); width: auto; pointer-events: none; filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.5)); }
+  .k3-zvezda > :not(.k3-zvezda-slika) { position: relative; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .k3-list { animation: none; }
+  .k3-list, .k3-namig { animation: none; }
+  .k3-slicica img { transition: none; }
 }
+/* Iskalnik: fokus pokaže obroba celega polja (ne pravokotnik v njem); puščica Nazaj v RTL kaže desno. */
+.k3 .k3-iskalnik input:focus-visible { outline: none; }
+[dir="rtl"] .k3-hub-vrh > a.a3-krog svg.i, [dir="rtl"] .k3-model-vrh > button.a3-krog svg.i { transform: scaleX(-1); }

@@ -14,6 +14,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(here, "..", "public");
 const modelsDir = path.join(publicDir, "3d", "modeli");
 const page = path.join(publicDir, "3d.html");
+const slicDir = path.join(publicDir, "3d", "slicice");
 export const PODROCJA = ["celice", "organi", "sistemi", "kemija", "fizika", "matematika", "vesolje", "procesi"];
 export const THREE_URL = "/vendor/three/build/three.module.js";
 
@@ -41,8 +42,13 @@ export function modelList() {
   const podrocja = PODROCJA.filter((p) => fs.existsSync(path.join(modelsDir, p, "index.js")));
   // Viri področij (public/3d/modeli/<podrocje>/viri.json): »Viri in licence« jih združi z public/3d/viri.json.
   const viri = PODROCJA.filter((p) => fs.existsSync(path.join(modelsDir, p, "viri.json")));
+  // Sličice za kartice zbirke (public/3d/slicice/<id>.webp, scripts/3d-slicice.cjs): stran pokaže samo obstoječe.
+  let slicice = [];
+  try {
+    slicice = fs.readdirSync(slicDir).filter((f) => f.endsWith(".webp")).map((f) => f.slice(0, -5)).sort();
+  } catch {}
   const stats = files.map((f) => [f, fs.statSync(f)]);
-  const key = podrocja.join(",") + "|" + viri.join(",") + "|" + stats.map(([f, st]) => `${f}:${st.size}:${st.mtimeMs}`).join("|");
+  const key = podrocja.join(",") + "|" + viri.join(",") + "|" + slicice.join(",") + "|" + stats.map(([f, st]) => `${f}:${st.size}:${st.mtimeMs}`).join("|");
   if (listCache.key === key) return listCache.body;
   const datoteke = {};
   for (const [f, st] of stats) {
@@ -50,7 +56,7 @@ export function modelList() {
     const v = crypto.createHash("sha1").update(fs.readFileSync(f)).digest("hex").slice(0, 10);
     datoteke[rel] = { b: st.size, v };
   }
-  listCache = { key, body: { datoteke, podrocja, viri } };
+  listCache = { key, body: { datoteke, podrocja, viri, slicice } };
   return listCache.body;
 }
 
