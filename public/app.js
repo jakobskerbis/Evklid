@@ -127,9 +127,12 @@ async function fetchThroughRestart(url, init) {
 // pošilja kot kode napak (usage.js block.*, gradiva.js gr.*, kviz.js kv.*/comp.*, progress.js chk.*), da
 // drugačna koda (npr. iz drugega vira) ne pokaže nepovezanega besedila.
 const ERROR_CODE = /^(block|gr|kv|comp|chk)\.[A-Za-z]+$/;
+// hint: neobvezen drugi ključ (npr. »block.hintGuest«), ki ga dodamo za razlogom, kako do več vprašanj.
 const serverError = (err, status) => {
   const own = typeof err?.code === "string" && ERROR_CODE.test(err.code) ? t(err.code, err.params || {}) : null;
-  return own && own !== err.code ? own : err?.error || t("common.error", { status });
+  if (!own || own === err.code) return err?.error || t("common.error", { status });
+  const hint = typeof err.hint === "string" && ERROR_CODE.test(err.hint) ? t(err.hint) : "";
+  return hint && hint !== err.hint ? `${own} ${hint}` : own;
 };
 
 const api = async (url, opts = {}) => {

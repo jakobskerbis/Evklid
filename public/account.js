@@ -17,11 +17,12 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 const eur = (cents) => (cents / 100).toLocaleString("sl-SI", { style: "currency", currency: "EUR" });
 // Cena v valuti paketa (regijske cene: rupije, naire …); valute brez decimalk imajo cele enote.
 const ZERO_DECIMAL = new Set(["VND", "XOF", "XAF", "UGX", "RWF", "JPY", "KRW", "GNF", "MGA"]);
+// V jeziku vmesnika (locale(), kot garancija-ui.js, placaj.js), da je zapis enak povsod (npr. arabščina »9.99 €«).
+// Evro vedno s centi; druge valute s celim zneskom brez decimalk.
 const money = (minor, currency = "EUR") => {
-  if (currency === "EUR") return eur(minor);
   const major = ZERO_DECIMAL.has(currency) ? minor : minor / 100;
-  const whole = Number.isInteger(major);
-  return major.toLocaleString(currentLang() === "sl" ? "sl-SI" : undefined, { style: "currency", currency, minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: whole ? 0 : 2 });
+  const digits = currency !== "EUR" && Number.isInteger(major) ? 0 : 2;
+  return major.toLocaleString(locale(), { style: "currency", currency, minimumFractionDigits: digits, maximumFractionDigits: digits });
 };
 const date = (iso) => (iso ? new Date(iso).toLocaleDateString("sl-SI", { day: "numeric", month: "long", year: "numeric" }) : "");
 const store = {

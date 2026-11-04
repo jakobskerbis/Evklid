@@ -12,6 +12,7 @@ const CACHES = new WeakMap(); // db → Map(schoolId → { at, usd })
 
 // source: { access(db, studentId, now), students(db, schoolId), seats?(db, schoolId) }; privzeto server/schools.js.
 // seats: število mest veljavne licence (students je v vrstnem redu mest); brez njega šteje access().
+// elsewhere?(db, schoolId, ids): kdo od ids je tudi v drugi šoli; ta šteje samo v šolo, ki mu da pravice (access()).
 // personalOf(studentId): ali ima učenec osebni paket; njegova poraba AI se ne šteje v mejo šole.
 export function createSchoolSource(
   db,
@@ -25,6 +26,7 @@ export function createSchoolSource(
           students: schools.schoolStudents,
           seats: (d, schoolId) => schools.activeLicence(d, schoolId)?.seats ?? 0,
           membership: schools.schoolMembership,
+          elsewhere: schools.inOtherSchools,
         }
       : null);
   if (!CACHES.has(db)) CACHES.set(db, new Map());
@@ -38,7 +40,9 @@ export function createSchoolSource(
     const seated = src.seats
       ? all.slice(0, src.seats(db, schoolId))
       : all.filter((id) => src.access(db, id, Date.now())?.schoolId === schoolId);
-    const ids = seated.filter((id) => !personalOf(id));
+    // Učenec z mestom v dveh šolah šteje samo v šolo, ki mu da pravice (access() izbere eno).
+    const both = new Set(src.seats && src.elsewhere ? src.elsewhere(db, schoolId, seated) : []);
+    const ids = seated.filter((id) => !personalOf(id) && (!both.has(id) || src.access(db, id, Date.now())?.schoolId === schoolId));
     const usd = ids.length
       ? db
           .prepare(
