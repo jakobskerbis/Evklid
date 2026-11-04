@@ -2698,7 +2698,7 @@ export default {
   "pay.trialKept": "Preostanek preizkusa se ohrani: prvo plačilo bo šele po njegovem koncu.",
   "pay.pricesDraft": "Cene v lokalni valuti so predlog (razvojna različica).",
   // Inštruktor ne odgovori (server/usage.js BLOCK_TEXT, isto besedilo): odjemalec pokaže ključ iz odgovora 429.
-  "block.daily": "Danes si porabil vseh {n} vprašanj za inštruktorja. Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
+  "block.daily": "Današnja vprašanja za inštruktorja so porabljena (na dan jih je {n}). Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
   "block.creditOut": "Inštruktor je za nekaj minut nedosegljiv (dobroimetje za AI je porabljeno). Vadnica in razlage tem delujejo naprej.",
   "block.freeTailTopup": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
   "block.freeTail": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",

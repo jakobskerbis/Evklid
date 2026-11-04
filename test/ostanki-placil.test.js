@@ -23,7 +23,7 @@ test("blockInfo: vsak razlog ima ključ i18n z enakim slovenskim besedilom; bloc
     const b = u.blockInfo(sid);
     assert.equal(b.code, "block.daily");
     assert.deepEqual(b.params, { n: 3 });
-    assert.match(b.error, /vseh 3 vprašanj/);
+    assert.match(b.error, /na dan jih je 3/);
   } finally {
     delete process.env.EVKLID_DAILY_QUESTIONS;
   }
@@ -51,7 +51,7 @@ test("klepet: odgovor 429 ima code in params (odjemalec ga prevede), error ostan
     assert.equal(r.body.code, "block.daily");
     assert.deepEqual(r.body.params, { n: 1 });
     assert.equal(r.body.limit, true);
-    assert.match(r.body.error, /vseh 1 vprašanj/);
+    assert.match(r.body.error, /na dan jih je 1/);
   } finally {
     delete process.env.EVKLID_DAILY_QUESTIONS;
     server.close();
