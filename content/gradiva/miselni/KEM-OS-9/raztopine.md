@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Topljenec in topilo
+  - sol v vodi: sol je topljenec, voda topilo
+  - mase se seštejejo: $m(\text{raztopine}) = m(\text{topljenca}) + m(\text{topila})$
+- Razredčenje
+  - doliješ vodo: masa topljenca ostane enaka
+  - $10\,\text{g}$ soli v $100\,\text{g}$ je $10\,\%$, v $200\,\text{g}$ $5\,\%$
+  - odlivanje deleža ne spremeni
+- Masni delež
+  - $w = \dfrac{m(\text{topljenca})}{m(\text{raztopine})}$
+  - brez enote, med $0$ in $1$
+  - napaka: deljenje z maso vode
+- Masna koncentracija
+  - $\gamma = \dfrac{m(\text{topljenca})}{V(\text{raztopine})}$, enota $\text{g/L}$
+  - mililitre najprej pretvori v litre
+- Obrnjene formule
+  - $m(\text{topljenca}) = w \cdot m(\text{raztopine})$
+  - $m(\text{topljenca}) = \gamma \cdot V(\text{raztopine})$
+  - odstotek deli s $100$: $0{,}9\,\% = 0{,}009$
+- Fiziološka raztopina
+  - $\gamma = 9\,\text{g/L}$, masni delež približno $0{,}9\,\%$
+  - $500\,\text{g}$ raztopine: $4{,}5\,\text{g}$ soli

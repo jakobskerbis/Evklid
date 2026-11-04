@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Slika s kroglicami
+  - levo in desno enako kroglic vsake vrste
+  - narišemo več celih molekul
+- Indeks
+  - majhna številka v formuli, določa snov
+  - napaka: $\mathrm{H_2O}$ v $\mathrm{H_2O_2}$
+- Koeficient
+  - število molekul pred formulo
+  - koeficienta $1$ ne pišemo
+- Štetje atomov
+  - $N = k \cdot i$
+  - v $3\,\mathrm{CO_2}$ je $6$ atomov O
+- Pravilne formule
+  - dvoatomni: $\mathrm{O_2}$, $\mathrm{H_2}$, $\mathrm{N_2}$, $\mathrm{Cl_2}$
+  - napaka: $\mathrm{Mg + O \rightarrow MgO}$
+- Postopek urejanja
+  - najprej element v najmanj formulah
+  - H in O pogosto na koncu
+  - po vsaki spremembi štej znova
+- Najmanjši koeficienti
+  - $\mathrm{4\,Fe + 3\,O_2 \rightarrow 2\,Fe_2O_3}$
+  - deli s skupnim deliteljem

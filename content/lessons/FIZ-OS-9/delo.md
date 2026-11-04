@@ -5,46 +5,75 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Iz prejšnjih tem že poznaš silo (merimo jo v newtonih, $\mathrm{N}$) in veš, da sila lahko spremeni gibanje telesa ali ga deformira. Znaš tudi izmeriti dolžino poti v metrih.
+Uganka za začetek. Trije prizori iz narave:
 
-V vsakdanjem govoru rečemo, da »delamo«, ko se učimo, razmišljamo ali držimo težko torbo. V fiziki pa ima beseda **delo** natančen pomen: povezano je s silo in potjo, na kateri sila deluje. S tem pojmom lahko primerjamo, koliko napora je potrebnega, da dvignemo škatlo, porinemo omaro ali potegnemo sani. Delo je tudi prvi korak k energiji, ki jo bomo spoznali v naslednjih temah.
+- **A.** Ves dan piha močan veter v velik balvan na pobočju. Balvan se ne premakne niti za milimeter.
+- **B.** Sunek vetra potisne suh list $2\,\mathrm{m}$ daleč po pločniku.
+- **C.** Štorklja nese vejo za gnezdo vodoravno nad travnikom. Vejo drži v kljunu, da ne pade, in z njo preleti $100\,\mathrm{m}$.
+
+V katerem prizoru sila na balvan, list ali vejo opravi **delo**? V vsakdanjem govoru bi rekli, da se najbolj »trudi« veter pri balvanu. Fizika pa ima za delo natančno pravilo, in to pravilo da drugačen odgovor. Zapiši si svojega, preden bereš naprej.
+
+Delo je tudi most do energije. Z njim bomo kmalu razložili, zakaj ima kamen na vrhu pečine energijo in kam gre ta energija, ko pade.
 
 ## Razlaga
 
-**1. Kdaj telo opravi delo.** Sila opravi delo, kadar telo premika. Pri tem mora sila vsaj delno kazati v smeri gibanja telesa. Potrebujemo torej dvoje: **silo** in **pot**, na kateri sila deluje.
+**1. Nekaj primerov.** Bober vleče debla po bregu do vode. Eno deblo vleče s silo $50\,\mathrm{N}$. Primerjajmo štiri vlečenja in ocenimo, koliko »dela« je v vsakem:
 
-**2. Formula.** Če na telo deluje stalna sila $F$ v smeri gibanja in telo prepotuje pot $s$, je opravljeno delo:
+| primer | $F$ [N] | $s$ [m] | koliko dela |
+|---|---|---|---|
+| eno deblo | 50 | 10 | osnova |
+| dve debli | 100 | 10 | dvakrat toliko |
+| eno deblo, dlje | 50 | 20 | dvakrat toliko |
+| dve debli, dlje | 100 | 20 | ? |
+
+Dve debli na isti razdalji sta kot dvakrat po eno deblo. Eno deblo na dvakrat daljši poti je kot dve vlečenji drugo za drugim. Delo torej raste s silo in raste s potjo.
+
+:::premisli
+Kolikokrat več dela kot pri »osnovi« opravi bober v zadnji vrstici? Napovej, preden bereš dalje.
+---
+Štirikrat več. Sila je dvakrat večja in pot dvakrat daljša, $2 \cdot 2 = 4$. Delo raste kot zmnožek sile in poti.
+:::
+
+**2. Pravilo.** Vzorec iz tabele zapišemo z enačbo. Če na telo deluje stalna sila $F$ v smeri gibanja in telo prepotuje pot $s$, je **delo** te sile
 
 $$A = F \cdot s$$
 
-- $A$ je delo,
-- $F$ je sila (v $\mathrm{N}$),
-- $s$ je pot (v $\mathrm{m}$).
+Za bobra: $A = 50\,\mathrm{N} \cdot 10\,\mathrm{m} = 500\,\mathrm{N\,m}$, v zadnji vrstici pa $100 \cdot 20 = 2000\,\mathrm{N\,m}$, res štirikrat več.
 
-**3. Enota.** Delo merimo v **joulih** ($\mathrm{J}$):
+**3. Enota.** Enota za delo je **joule** ($\mathrm{J}$), izgovorimo »džul«:
 
 $$1\,\mathrm{J} = 1\,\mathrm{N} \cdot 1\,\mathrm{m}$$
 
-Delo je $1\,\mathrm{J}$, kadar sila $1\,\mathrm{N}$ premakne telo za $1\,\mathrm{m}$ v smeri sile. Pogosto uporabljamo tudi $1\,\mathrm{kJ} = 1000\,\mathrm{J}$.
+Delo $1\,\mathrm{J}$ opravi sila $1\,\mathrm{N}$, ko telo premakne za $1\,\mathrm{m}$ v svoji smeri. To je približno delo, ko jabolko ($1\,\mathrm{N}$) dvigneš za meter. Večja dela pišemo v kilojoulih: $1\,\mathrm{kJ} = 1000\,\mathrm{J}$.
 
-**4. Kdaj je delo enako nič.**
+**4. Kdaj je delo nič.** Zdaj lahko rešiš uganko z začetka.
 
-- Če se telo ne premakne ($s = 0$), je $A = 0$. Tudi če se zelo trudiš in potiskaš zid, ne opraviš dela.
-- Če je sila pravokotna na smer gibanja, delo ni opravljeno. Ko nosiš torbo po vodoravni poti, je sila, s katero držiš torbo, usmerjena navzgor, gibanje pa je vodoravno. Ta sila ne opravlja dela.
+:::premisli
+V katerem prizoru iz uganke je delo enako nič in zakaj? Pomagaj si s $F$ in $s$ v pravilu.
+---
+V prizoru A, ker je pot balvana $s = 0$, in v prizoru C, ker sila, s katero štorklja drži vejo, kaže navzgor, veja pa se premika vodoravno. Delo opravi le veter v prizoru B: sila in premik lista kažeta v isto smer.
+:::
 
-**5. Dviganje telesa.** Pri dviganju telesa s stalno hitrostjo mora sila dvigovanja uravnotežiti težo telesa. Teža je $F_g = m \cdot g$, pri čemer je $g \approx 10\,\dfrac{\mathrm{N}}{\mathrm{kg}}$. Teža telesa z maso $1\,\mathrm{kg}$ je torej približno $10\,\mathrm{N}$. Delo pri dvigovanju za višino $h$ je:
+- Če se telo ne premakne ($s = 0$), je $A = 0$, ne glede na to, kako velika je sila.
+- Če je sila **pravokotna** na smer gibanja, ne opravi dela. Štorklja vejo drži navzgor, premika pa jo vodoravno. Ta sila vejo le drži, da ne pade, ne pomika pa je naprej.
+
+V simulaciji spodaj »Delo sile« pusti silo in pot enaki, kot med silo in smerjo premika pa nastavi najprej na $0°$, nato na $90°$. Opazi, kako delo pade na nič. Pri vmesnih kotih je delo manjše, ker vleče naprej le del sile.
+
+**5. Dviganje.** Ko telo dvigamo enakomerno (s stalno hitrostjo), mora sila navzgor uravnotežiti njegovo težo $F_g = m \cdot g$, kjer je $g \approx 10\,\mathrm{\frac{N}{kg}}$. Pot v smeri sile je višina dviga $h$, zato
 
 $$A = F_g \cdot h$$
 
-**6. Pretvarjanje enot.** Pred računom vse pretvori v osnovne enote: sila v $\mathrm{N}$, pot v $\mathrm{m}$. Na primer $250\,\mathrm{cm} = 2{,}5\,\mathrm{m}$.
+V enačbo gre teža v newtonih, ne masa v kilogramih. Delo proti teži je odvisno le od višine: veverica, ki spleza na isto vejo po ovinkih ali naravnost, opravi proti teži enako delo.
+
+**6. Enote pred računom.** Silo zapiši v $\mathrm{N}$, pot v $\mathrm{m}$, maso v $\mathrm{kg}$. Na primer $250\,\mathrm{cm} = 2{,}5\,\mathrm{m}$ in $400\,\mathrm{g} = 0{,}4\,\mathrm{kg}$. Le tako dobiš delo v joulih.
 
 ## Rešeni primeri
 
-### Primer 1: vlečenje vozička
+### Primer 1: veter in jadrnica (lažji)
 
-Otrok vleče voziček s stalno silo $20\,\mathrm{N}$ v smeri gibanja po poti $5\,\mathrm{m}$. Koliko dela opravi?
+Veter potiska jadrnico na jezeru s stalno silo $200\,\mathrm{N}$ v smeri gibanja. Jadrnica prepluje $50\,\mathrm{m}$. Koliko dela opravi sila vetra?
 
-**Podatki:** $F = 20\,\mathrm{N}$ (stalna sila v smeri gibanja), $s = 5\,\mathrm{m}$
+**Podatki:** $F = 200\,\mathrm{N}$ (stalna, v smeri gibanja), $s = 50\,\mathrm{m}$
 **Iščemo:** delo $A$
 
 :::formula
@@ -53,35 +82,34 @@ $A = F \cdot s$
 
 **Rešitev:**
 
-1. Sila in pot sta v isti smeri, zato lahko uporabimo $A = F \cdot s$.
-2. Vstavimo: $A = 20\,\mathrm{N} \cdot 5\,\mathrm{m} = 100\,\mathrm{N\,m}$.
-3. Ker je $1\,\mathrm{N\,m} = 1\,\mathrm{J}$, je $A = 100\,\mathrm{J}$.
-4. Smiselnost: večja sila ali daljša pot bi dala več dela, kar se ujema s formulo.
-5. Odgovor: otrok opravi $100\,\mathrm{J}$ dela.
+1. Sila in premik kažeta v isto smer, zato velja $A = F \cdot s$.
+2. Vstavimo: $A = 200\,\mathrm{N} \cdot 50\,\mathrm{m} = 10\,000\,\mathrm{J}$.
+3. Velika števila zapišemo krajše: $10\,000\,\mathrm{J} = 10\,\mathrm{kJ}$, ker je $1\,\mathrm{kJ} = 1000\,\mathrm{J}$.
+4. Odgovor: sila vetra opravi $10\,\mathrm{kJ}$ dela.
 
-### Primer 2: dviganje škatle
+### Primer 2: veverica na drevesu
 
-Škatlo z maso $4\,\mathrm{kg}$ dvignemo enakomerno s tal na polico, ki je $1{,}5\,\mathrm{m}$ visoko. Koliko dela opravimo? Vzemi $g = 10\,\dfrac{\mathrm{N}}{\mathrm{kg}}$.
+Veverica z maso $400\,\mathrm{g}$ enakomerno spleza na vejo, ki je $5\,\mathrm{m}$ nad tlemi. Koliko dela opravi proti svoji teži? Vzemi $g = 10\,\mathrm{\frac{N}{kg}}$.
 
-**Podatki:** $m = 4\,\mathrm{kg}$, $h = 1{,}5\,\mathrm{m}$, $g = 10\,\dfrac{\mathrm{N}}{\mathrm{kg}}$, dviganje je enakomerno
+**Podatki:** $m = 400\,\mathrm{g}$, $h = 5\,\mathrm{m}$, $g = 10\,\mathrm{\frac{N}{kg}}$, plezanje je enakomerno
 **Iščemo:** delo $A$
 
 :::formula
-Sila dvigovanja je enaka teži: $F_g = m \cdot g$, nato $A = F_g \cdot h$
+Teža: $F_g = m \cdot g$, nato $A = F_g \cdot h$
 :::
 
 **Rešitev:**
 
-1. Pri enakomernem dviganju je sila dvigovanja enaka teži škatle. Izračunamo težo: $F_g = m \cdot g = 4\,\mathrm{kg} \cdot 10\,\dfrac{\mathrm{N}}{\mathrm{kg}} = 40\,\mathrm{N}$.
-2. Pot v smeri sile je višina: $s = h = 1{,}5\,\mathrm{m}$.
-3. Delo: $A = 40\,\mathrm{N} \cdot 1{,}5\,\mathrm{m} = 60\,\mathrm{J}$.
-4. Odgovor: opravimo $60\,\mathrm{J}$ dela.
+1. Maso pretvorimo v kilograme, ker je $g$ v $\mathrm{\frac{N}{kg}}$: $m = 0{,}4\,\mathrm{kg}$.
+2. Pri enakomernem plezanju je sila navzgor enaka teži: $F_g = 0{,}4 \cdot 10 = 4\,\mathrm{N}$.
+3. Pot v smeri te sile je višina: $A = 4\,\mathrm{N} \cdot 5\,\mathrm{m} = 20\,\mathrm{J}$.
+4. Odgovor: veverica proti teži opravi $20\,\mathrm{J}$ dela.
 
-### Primer 3 (težji): iskanje sile iz dela
+### Primer 3: nevihta na terasi (težji)
 
-Delavec porine zaboj po vodoravnih tleh po poti $300\,\mathrm{cm}$ in pri tem opravi $540\,\mathrm{J}$ dela. S kolikšno stalno silo je potiskal v smeri gibanja?
+Med nevihto veter s stalno silo potisne vrtni stol $250\,\mathrm{cm}$ daleč po terasi in pri tem opravi $90\,\mathrm{J}$ dela. S kolikšno silo je veter potiskal stol v smeri gibanja?
 
-**Podatki:** $s = 300\,\mathrm{cm}$, $A = 540\,\mathrm{J}$, sila je stalna in kaže v smeri gibanja
+**Podatki:** $s = 250\,\mathrm{cm}$, $A = 90\,\mathrm{J}$, sila je stalna in kaže v smeri gibanja
 **Iščemo:** silo $F$
 
 :::formula
@@ -90,104 +118,143 @@ Iz $A = F \cdot s$ sledi $F = \dfrac{A}{s}$
 
 **Rešitev:**
 
-1. Pot pretvorimo v metre: $300\,\mathrm{cm} = 3\,\mathrm{m}$.
-2. Iščemo silo, zato formulo preoblikujemo: iz $A = F \cdot s$ sledi $F = \dfrac{A}{s}$.
-3. Vstavimo: $F = \dfrac{540\,\mathrm{J}}{3\,\mathrm{m}} = 180\,\mathrm{N}$.
-4. Preverimo: $180\,\mathrm{N} \cdot 3\,\mathrm{m} = 540\,\mathrm{J}$. ✓
-5. Odgovor: delavec je potiskal s silo $180\,\mathrm{N}$.
+1. Pot pretvorimo v metre, da bo sila v newtonih: $s = 2{,}5\,\mathrm{m}$.
+2. Iščemo silo, zato enačbo delimo s $s$: $F = \dfrac{A}{s}$.
+3. Vstavimo: $F = \dfrac{90}{2{,}5} = 36\,\mathrm{N}$.
+4. Preverimo: $36 \cdot 2{,}5 = 90$, delo je res $90\,\mathrm{J}$. ✓
+5. Odgovor: veter je stol potiskal s silo $36\,\mathrm{N}$.
+
+### Primer 4: zdaj ti – zrno toče
+
+Zrno toče z maso $10\,\mathrm{g}$ pade iz oblaka z višine $2\,\mathrm{km}$. Koliko dela na tej poti opravi njegova teža? Vzemi $g = 10\,\mathrm{\frac{N}{kg}}$.
+
+**Podatki:** $m = 10\,\mathrm{g}$, $h = 2\,\mathrm{km}$, $g = 10\,\mathrm{\frac{N}{kg}}$
+**Iščemo:** delo teže $A$
+
+:::formula
+$F_g = m \cdot g$, nato $A = F_g \cdot h$
+:::
+
+**Rešitev:**
+
+1. Pretvorimo enote: $m = 0{,}01\,\mathrm{kg}$, $h = 2000\,\mathrm{m}$.
+2. Teža kaže navzdol, zrno se giblje navzdol, zato teža opravlja delo. Teža zrna: $F_g = 0{,}01 \cdot 10 = 0{,}1\,\mathrm{N}$.
+3. Odloči, katero pot vstaviš, in izračunaj delo sam, nato preveri:
+
+:::premisli
+Koliko dela opravi teža zrna na vsej poti od oblaka do tal?
+---
+$A = 200\,\mathrm{J}$. Majhna sila na zelo dolgi poti opravi kar veliko dela.
+:::
 
 ## Pogoste napake
 
-- **Pozabljena pretvorba enot.** Če pot vstaviš v centimetrih, rezultat ni v joulih. Najprej pretvori v $\mathrm{m}$.
-- **Mešanje mase in teže.** Pri dviganju v formulo ne vstaviš mase v $\mathrm{kg}$, ampak težo v $\mathrm{N}$: $F_g = m \cdot g$.
-- **»Držim, torej delam.«** Če se telo ne premakne, je delo v fizikalnem smislu enako nič, ne glede na napor.
-- **Napačna pot pri dviganju.** Za delo dviga šteje samo višina, ne dolžina poti po klančini ali vijugasti poti.
-- **Napačna enota.** Delo ni v newtonih ali metrih, ampak v joulih.
+- **Pot v centimetrih.** »$90\,\mathrm{J} : 250 = 0{,}36\,\mathrm{N}$.« Joule je newton krat **meter**, zato pot v centimetrih da stokrat premajhen rezultat. Najprej pretvori: $250\,\mathrm{cm} = 2{,}5\,\mathrm{m}$.
+- **Masa namesto teže.** »Dvignem $2\,\mathrm{kg}$ za $3\,\mathrm{m}$, delo je $6\,\mathrm{J}$.« V $A = F \cdot s$ je sila v newtonih, masa pa ni sila. Najprej $F_g = m \cdot g = 20\,\mathrm{N}$, nato $A = 60\,\mathrm{J}$.
+- **»Trudim se, torej delam.«** Kdor potiska zid ali drži težko vejo, se utrudi. Mišice res porabljajo energijo, a na zidu ali veji sila ne opravi dela, ker je $s = 0$.
+- **Pot, ki ni v smeri sile.** »Nesem vedro vode $100\,\mathrm{m}$ po ravnem, delo je teža krat $100\,\mathrm{m}$.« Sila drže kaže navzgor, premik je vodoraven, zato je to delo nič. Šteje le pot v smeri sile.
+- **Napačna enota.** »Delo je $120\,\mathrm{N}$.« Newton je enota sile. Delo je sila krat pot, zato $\mathrm{N} \cdot \mathrm{m} = \mathrm{J}$.
 
 ## Povzetek
 
-- Delo opravi sila, ki premika telo v smeri svojega delovanja.
-- Za stalno silo v smeri gibanja velja $A = F \cdot s$.
-- Enota za delo je joule: $1\,\mathrm{J} = 1\,\mathrm{N\,m}$.
-- Če je $s = 0$ ali je sila pravokotna na gibanje, je delo enako $0$.
-- Pri dviganju je $F = m \cdot g$ in $s = h$, torej $A = m \cdot g \cdot h$.
-- Pred računom pretvori enote v $\mathrm{N}$ in $\mathrm{m}$.
-
-## Drugače: Na sliki
-
-Predstavljaj si graf, na katerem vodoravna os kaže pot $s$, navpična pa silo $F$. Če je sila stalna, je graf vodoravna črta. Lik pod črto do poti $s$ je **pravokotnik** s stranicama $F$ in $s$. Njegova ploščina je $F \cdot s$, to pa je ravno delo.
-
-Zgled: sila $4\,\mathrm{N}$ na poti $3\,\mathrm{m}$ nariše pravokotnik z višino $4$ in širino $3$, njegova ploščina je $12$, delo pa $12\,\mathrm{J}$.
-
-Če sila ostane enaka, a je pot dvakrat daljša, je pravokotnik dvakrat širši in delo je dvakrat večje.
-
-## Drugače: Iz vsakdanjega življenja
-
-Primerjaj dva primera:
-
-- Po stopnicah v nadstropje nosiš nahrbtnik. Dvigaš ga navzgor, zato tvoje mišice opravljajo delo proti teži.
-- Po vodoravnem hodniku nosiš isti nahrbtnik. Sila, s katero ga držiš, kaže navzgor, gibanje pa je vodoravno, zato ta sila ne opravi dela v fizikalnem smislu.
-
-Ko ob steni stojiš in jo potiskaš, se utrudiš, čeprav je delo na zidu enako nič, ker se zid ne premakne. Utrujenost nastane zato, ker mišice v telesu porabljajo energijo tudi takrat, ko ni fizikalnega dela.
-
-Še en zgled: kdor dvigne težji kovček, opravi več dela kot tisti, ki dvigne lažjega na isto višino, ker je potrebna sila večja.
+- Sila opravi delo, ko telo premakne v svoji smeri.
+- Za stalno silo v smeri gibanja: $A = F \cdot s$; obrnjeno $F = A/s$, $s = A/F$.
+- Enota je joule: $1\,\mathrm{J} = 1\,\mathrm{N} \cdot 1\,\mathrm{m}$; $1\,\mathrm{kJ} = 1000\,\mathrm{J}$.
+- Delo je nič, če je $s = 0$ ali če je sila pravokotna na gibanje.
+- Pri enakomernem dviganju: $F_g = m \cdot g$ in $s = h$, torej $A = m \cdot g \cdot h$.
+- Pred računom pretvori v $\mathrm{N}$, $\mathrm{m}$ in $\mathrm{kg}$.
 
 ## Drugače: Korak za korakom s številkami
 
-Recept za nalogo z delom:
+Recept:
 
-1. Izpiši podatke in jih pretvori v $\mathrm{N}$ in $\mathrm{m}$.
-2. Preveri, ali je sila v smeri gibanja.
-3. Če se telo dviga, izračunaj težo: $F_g = m \cdot g$.
-4. Uporabi $A = F \cdot s$ (ali preoblikuj: $F = \dfrac{A}{s}$, $s = \dfrac{A}{F}$).
-5. Zapiši rezultat z enoto $\mathrm{J}$.
+1. Izpiši podatke in jih pretvori v $\mathrm{N}$, $\mathrm{m}$ in $\mathrm{kg}$.
+2. Preveri, ali sila kaže v smeri gibanja. Če je pravokotna ali se telo ne premakne, je $A = 0$.
+3. Če je dana masa, izračunaj težo: $F_g = m \cdot g$.
+4. Uporabi $A = F \cdot s$ (ali obrnjeno $F = \dfrac{A}{s}$, $s = \dfrac{A}{F}$).
+5. Zapiši rezultat v $\mathrm{J}$ (ali $\mathrm{kJ}$).
 
-Tabela primerov ($A = F \cdot s$):
+Zgledi, v katerih se spreminja po ena količina:
 
-| $F$ | $s$ | $A$ |
+| $F$ [N] | $s$ [m] | $A$ [J] |
 |---|---|---|
-| $10\,\mathrm{N}$ | $2\,\mathrm{m}$ | $20\,\mathrm{J}$ |
-| $10\,\mathrm{N}$ | $4\,\mathrm{m}$ | $40\,\mathrm{J}$ |
-| $25\,\mathrm{N}$ | $4\,\mathrm{m}$ | $100\,\mathrm{J}$ |
-| $50\,\mathrm{N}$ | $0{,}5\,\mathrm{m}$ | $25\,\mathrm{J}$ |
+| 10 | 2 | 20 |
+| 10 | 4 | 40 |
+| 20 | 4 | 80 |
+| 40 | 0,5 | 20 |
 
-Opazuj: če se ena količina podvoji, se podvoji tudi delo. Delo je sorazmerno s silo in s potjo.
+Iz prve v drugo vrstico se pot podvoji in delo se podvoji. Iz druge v tretjo se podvoji sila in delo spet. V zadnji vrstici je sila štirikrat večja kot v prvi, pot pa štirikrat krajša, zato je delo enako kot v prvi.
+
+## Drugače: Kot zgodba
+
+Zrno toče se rodi visoko v nevihtnem oblaku. Močan vzgornik, veter, ki piha navzgor, ga nosi vse više. Sila vetra kaže navzgor in zrno se dviga navzgor: veter opravlja delo.
+
+Ko zrno postane pretežko, ga vzgornik ne zmore več nositi. Zrno pada proti tlom. Zdaj delo opravlja teža, ker kaže navzdol, v smeri padanja.
+
+Zrno pristane na listu solate. List ga drži s silo navzgor, a zrno se ne premika več. Pot je nič, zato list ne opravi nobenega dela, čeprav zrno ves čas drži.
+
+Nato zapiha veter ob tleh in zrno odkotali $1\,\mathrm{m}$ po vrtu. Sila vetra in premik kažeta vodoravno: veter spet opravlja delo. V vsakem delu zgodbe je odgovor isti: delo je tam, kjer se telo premakne v smeri sile.
 
 ## Drugače: Bolj natančno
 
-Enoto joule lahko izpeljemo iz osnovnih enot. Sila ima enoto $1\,\mathrm{N} = 1\,\dfrac{\mathrm{kg\,m}}{\mathrm{s}^2}$, zato je
+Enoto joule lahko zapišemo z osnovnimi enotami. Ker je $1\,\mathrm{N} = 1\,\mathrm{kg \cdot m/s^2}$, je $1\,\mathrm{J} = 1\,\mathrm{N \cdot m} = 1\,\mathrm{kg \cdot m^2/s^2}$.
 
-$$1\,\mathrm{J} = 1\,\mathrm{N\,m} = 1\,\dfrac{\mathrm{kg\,m}^2}{\mathrm{s}^2}.$$
-
-Formula $A = F \cdot s$ velja samo, če je sila stalna in kaže v smeri gibanja. Če sila s smerjo gibanja oklepa kot, delo opravi le njena komponenta v smeri gibanja. Pri pravokotni sili je ta komponenta enaka nič, zato je delo nič. Če se sila vzdolž poti spreminja, delo ustreza ploščini pod grafom sile v odvisnosti od poti. Splošnejše primere boš spoznal kasneje.
+Formula $A = F \cdot s$ velja, ko je sila stalna in kaže v smeri gibanja. Če sila s smerjo gibanja oklepa kot, delo opravi le njen del v smeri premika (to kaže simulacija). Če sila kaže nasprotno gibanju, na primer upor zraka na padajoče zrno toče, opravi **negativno** delo: telo zavira. Če se sila vzdolž poti spreminja, je delo ploščina pod grafom sile v odvisnosti od poti. Pri stalni sili je ta lik pravokotnik s stranicama $F$ in $s$.
 
 ## Preveri se
 
-? Kolikšno delo opravi sila $30\,\mathrm{N}$, ki telo premakne za $4\,\mathrm{m}$ v smeri sile?
+? Katera trditev o enoti za delo drži?
+- Delo merimo v newtonih, ker ga opravi sila.
+~ Newton je enota sile. Delo je sila krat pot, zato je enota $\mathrm{N} \cdot \mathrm{m}$, to je joule.
++ $1\,\mathrm{J}$ je delo sile $1\,\mathrm{N}$, ki telo premakne za $1\,\mathrm{m}$ v svoji smeri.
+- $1\,\mathrm{kJ} = 100\,\mathrm{J}$
+~ Predpona kilo pomeni tisoč, kot pri $1\,\mathrm{km} = 1000\,\mathrm{m}$.
+- $1\,\mathrm{J} = 1\,\mathrm{kg} \cdot 1\,\mathrm{m}$
+~ V pravilu je sila v newtonih, ne masa v kilogramih. Masa ni sila.
+> $A = F \cdot s$, zato $1\,\mathrm{J} = 1\,\mathrm{N} \cdot 1\,\mathrm{m}$: sila $1\,\mathrm{N}$ na poti $1\,\mathrm{m}$ v smeri sile.
+
+? Sunek vetra potisne vejo po zamrznjenem ribniku s stalno silo $30\,\mathrm{N}$ za $4\,\mathrm{m}$ v smeri vetra. Koliko dela opravi veter?
 - $7{,}5\,\mathrm{J}$
+~ Silo si delil s potjo. Delo je zmnožek: $A = F \cdot s$.
 - $34\,\mathrm{J}$
+~ Silo in pot si seštel. Delo raste s silo in s potjo hkrati, zato ju pomnožimo.
 + $120\,\mathrm{J}$
 - $120\,\mathrm{N}$
-> $A = F \cdot s = 30\,\mathrm{N} \cdot 4\,\mathrm{m} = 120\,\mathrm{J}$. Odgovor $7{,}5$ dobiš z deljenjem, $34$ s seštevanjem, enota $\mathrm{N}$ pa ni enota za delo.
+~ Število je pravo, enota ne. Newton je enota sile, delo merimo v joulih.
+> $A = F \cdot s = 30\,\mathrm{N} \cdot 4\,\mathrm{m} = 120\,\mathrm{J}$.
 
-? Škatlo z maso $2\,\mathrm{kg}$ enakomerno dvignemo za $3\,\mathrm{m}$. Koliko dela opravimo? Vzemi $g = 10\,\dfrac{\mathrm{N}}{\mathrm{kg}}$.
-- $6\,\mathrm{J}$
-- $20\,\mathrm{J}$
-+ $60\,\mathrm{J}$
-> Teža škatle je $2\,\mathrm{kg} \cdot 10\,\dfrac{\mathrm{N}}{\mathrm{kg}} = 20\,\mathrm{N}$. Delo je $20\,\mathrm{N} \cdot 3\,\mathrm{m} = 60\,\mathrm{J}$. Odgovor $6$ uporabi samo maso, $20$ pa samo težo brez poti.
+? Nina je izračunala, koliko dela opravi orel, ki ribo z maso $2\,\mathrm{kg}$ enakomerno dvigne za $3\,\mathrm{m}$: »$A = 2 \cdot 3 = 6\,\mathrm{J}$.« Kje je napaka ($g = 10\,\mathrm{\frac{N}{kg}}$)?
+- Napake ni, delo je $6\,\mathrm{J}$.
+~ Kilogrami niso newtoni. V $A = F \cdot s$ mora biti sila, pri dviganju teža ribe.
++ Namesto teže je vstavila maso. Teža je $20\,\mathrm{N}$, delo pa $60\,\mathrm{J}$.
+- Višino bi morala vstaviti v centimetrih.
+~ Pot je v $\mathrm{m}$ že prav. Joule je newton krat meter, centimetri bi dali napačen rezultat.
+- Maso bi morala deliti z višino: $2 : 3$.
+~ Delo je zmnožek sile in poti, ne količnik.
+> Najprej teža: $F_g = 2 \cdot 10 = 20\,\mathrm{N}$. Nato $A = 20\,\mathrm{N} \cdot 3\,\mathrm{m} = 60\,\mathrm{J}$.
 
-? Učenec $10$ sekund z vso močjo potiska težko omaro, ki se ne premakne. Koliko dela opravi na omari?
-+ $0\,\mathrm{J}$, ker je pot enaka nič
-- $0\,\mathrm{J}$, ker se ne utrudi
-- Veliko, ker se trudi
-> Delo je $A = F \cdot s$. Ker se omara ne premakne, je $s = 0$ in zato $A = 0$, ne glede na to, kako se učenec trudi.
+? Veter potisne čoln A s silo $100\,\mathrm{N}$ za $30\,\mathrm{m}$, čoln B pa s silo $300\,\mathrm{N}$ za $10\,\mathrm{m}$. Pri katerem čolnu opravi veter več dela?
+- Pri čolnu A, ker je pot daljša.
+~ Gledaš le pot. Delo je odvisno od sile in poti hkrati.
+- Pri čolnu B, ker je sila večja.
+~ Gledaš le silo. Trikrat večja sila na trikrat krajši poti da enako delo.
++ Pri obeh enako.
+> $A_A = 100 \cdot 30 = 3000\,\mathrm{J}$ in $A_B = 300 \cdot 10 = 3000\,\mathrm{J}$. Šteje zmnožek $F \cdot s$.
+
+? Pohodnik nese težak nahrbtnik po ravni gozdni poti $2\,\mathrm{km}$ daleč. Koliko dela opravi sila, s katero nahrbtnik drži navzgor?
+- Veliko, ker je pot dolga in nahrbtnik težak.
+~ Množiš težo s potjo, ki ni v smeri sile. Sila drže kaže navzgor, pot pa je vodoravna.
++ Nič, ker je sila pravokotna na smer gibanja.
+- Nič, ker se pohodnik ne utrudi.
+~ Utrudi se, saj mišice porabljajo energijo. Delo je nič zaradi smeri sile, ne zaradi utrujenosti.
+> Delo opravi le sila, ki ima smer gibanja. Sila drže je navpična, premik vodoraven, zato je to delo $0\,\mathrm{J}$.
 
 :::simboli
-A | delo | A = F \cdot s | J | pri dvigovanju A = F_g · h
+A | delo | A = F \cdot s | J | pri dviganju $A = F_g \cdot h$
 F | sila v smeri gibanja | F = \dfrac{A}{s} | N
-s | pot | | m
+s | pot v smeri sile | s = \dfrac{A}{F} | m
 F_g | teža | F_g = m \cdot g | N
-h | višina dviga | | m
+h | višina dviga ali padca | | m
 m | masa | | kg
 g | težni pospešek | | N/kg | približno 10 N/kg
 :::

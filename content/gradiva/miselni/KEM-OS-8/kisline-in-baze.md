@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Kisline
+  - z vodo dajo kislo raztopino
+  - $\mathrm{HCl}$, $\mathrm{H_2SO_4}$, $\mathrm{CH_3COOH}$
+  - napaka: ni vsaka snov s H v formuli kislina
+- Baze
+  - z vodo dajo bazično (alkalno) raztopino
+  - hidroksidi: $\mathrm{NaOH}$, $\mathrm{KOH}$, $\mathrm{Ca(OH)_2}$
+- Razlike
+  - z magnezijem kisline dajo vodik
+  - z apnencem kisline dajo $\mathrm{CO_2}$
+  - baze so spolzke
+- Skupne lastnosti
+  - raztopine z ioni prevajajo tok
+  - močne kisline in baze so jedke
+- Indikatorji
+  - lakmus: kislo rdeč, nevtralno vijoličen, bazično moder
+  - fenolftalein roza samo v bazičnem
+  - sok rdečega zelja kot domač indikator
+- pH lestvica
+  - $\mathrm{pH} < 7$ kislo, $\mathrm{pH} > 7$ bazično
+  - univerzalni indikator pokaže približni pH
+- Varnost
+  - ne okušamo, ne vonjamo, ne tipamo
+  - očala in rokavice
