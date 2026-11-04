@@ -43,14 +43,23 @@ test("organi iz GLB: vsak GLB ima vir v public/3d/viri.json, brez NC in ND", () 
     assert.ok(zanj.length >= 2, `${f}: premalo virov (${zanj.map((v) => v.id)})`);
     for (const v of zanj) assert.ok(!/\b(NC|ND)\b|non-?commercial|no-?deriv/i.test(v.licenca), `${f}: vir ${v.id} ima licenco ${v.licenca}`);
   }
-  for (const [vzorec, id] of [["organi-3d/mozgani.glb", "openneuro-ds000001"], ["organi-3d/oko.glb", "hubmap-hra-oko"], ["organi-3d/srce.glb", "z-anatomy"]]) {
+  for (const [vzorec, id] of [["organi-3d/mozgani.glb", "openneuro-ds000001"], ["organi-3d/oko.glb", "hubmap-hra-oko"], ["organi-3d/srce.glb", "z-anatomy"], ["organi-3d/ledvica.glb", "hubmap-hra-ledvica"], ["organi-3d/jetra.glb", "evklid-telo"]]) {
     assert.ok(viri.some((v) => v.id === id && v.datoteke.some((d) => ujema(d, vzorec))), `${vzorec}: manjka vir ${id}`);
   }
 });
 
-test("organi iz GLB: vsaj možgani, srce in oko", () => {
+test("organi iz GLB: lastni deli (»(lastno)«) so navedeni v viru evklid-telo", () => {
+  const viri = JSON.parse(fs.readFileSync(path.join(ROOT, "public", "3d", "viri.json"), "utf8")).viri;
+  const ev = viri.find((v) => v.id === "evklid-telo");
+  for (const f of fs.readdirSync(MAPA).filter((x) => x.endsWith(".glb") && !x.includes("-telefon"))) {
+    const lastni = glb(path.join(MAPA, f)).nodes.filter((n) => n.mesh != null && /\(lastno\)/.test(n.name));
+    if (lastni.length) assert.ok(ev.opis.includes(f.replace(".glb", "")), `${f}: lastni deli (${lastni.map((n) => n.name)}) niso omenjeni v viru evklid-telo`);
+  }
+});
+
+test("organi iz GLB: možgani, srce, oko, pljuča, ledvica in jetra", () => {
   const imena = organi.map((o) => o.mod.organ);
-  for (const x of ["mozgani", "srce", "oko"]) assert.ok(imena.includes(x), `manjka organ ${x}`);
+  for (const x of ["mozgani", "srce", "oko", "pljuca", "ledvica", "jetra"]) assert.ok(imena.includes(x), `manjka organ ${x}`);
 });
 
 for (const { e, mod } of organi) {
@@ -79,6 +88,8 @@ for (const { e, mod } of organi) {
     const ozadje = jp.nodes.filter((n) => n.mesh != null && n.extras?.del === "").length;
     const vozliscaT = new Set(jt.nodes.filter((n) => n.mesh != null).map((n) => n.name));
     for (const n of vozlisca) assert.ok(!IZLOCI.test(n), `${ime}: izključen del ${n} (licenca NC)`);
+    // Izvor, ne samo ime: ledvični meh in čašice (pri Z-Anatomy v IZLOCI) smejo biti le naše lastno delo, »Evklid … (lastno)«.
+    for (const n of [...vozlisca, ...vozliscaT]) if (/pelvis|calyc|calic/i.test(n)) assert.match(n, /^Evklid .* \(lastno\)$/, `${ime}: ${n} ni lastno delo (licenca NC?)`);
     for (const n of jp.nodes) if (n.mesh != null) assert.ok(n.extras?.tkivo && "del" in n.extras, `${ime}: vozlišče ${n.name} brez tkiva/dela`);
 
     const p = JSON.parse(fs.readFileSync(path.join(MAPA, `${ime}.json`), "utf8"));
@@ -114,5 +125,8 @@ for (const { e, mod } of organi) {
     const o = p.podrobnosti?.odseki || [];
     assert.ok(o.length >= 4 && o.length <= 6, `${ime}: podrobnosti 4–6 odsekov`);
     for (const x of o) assert.ok(x.naslov && x.besedilo?.length > 120, `${ime}: odsek ${x.naslov}`);
+    // Besedila za učence: brez besede »model« (organ je organ, ne model).
+    const besedila = [mod.info.opis, e.opis, ...p.deli.flatMap((d) => [d.ime, d.opis]), ...o.flatMap((x) => [x.naslov, x.besedilo])];
+    for (const b of besedila) assert.ok(!/\bmodel/i.test(b || ""), `${ime}: »model« v besedilu: ${b}`);
   });
 }
