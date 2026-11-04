@@ -326,7 +326,9 @@ document.addEventListener("touchmove", (e) => {
   const t = e.touches[0];
   const dy = t.clientY - swipe.y;
   if (Math.abs(dy) < 24 || Math.abs(t.clientX - swipe.x) > Math.abs(dy)) return;
-  const on = barWanted(dy > 0, swipe.edge);
+  // Rob ob začetku ali že zdaj: poteg, ki se začne tik ob robu in vanj udari, vrstice ne skrije (j 2026-11-04).
+  const now = lessonEdge(e.target);
+  const on = barWanted(dy > 0, swipe.edge) || !!(now && (dy > 0 ? now.top : now.bottom));
   swipe = null;
   requestAnimationFrame(() => barAuto() && peekBar(on));
 }, { passive: true });
@@ -340,7 +342,7 @@ document.addEventListener("wheel", (e) => {
   });
 }, { passive: true });
 // Drsenje v lekciji, ki udari v vrh ali dno (j 2026-11-04), vrstico pokaže, tudi ko lekcija pride do roba z zagonom
-// po potegu ali isti poteg pripelje do dna. Šteje samo drsenje uporabnika (poteg ali kolešček v zadnjih 2,5 s);
+// po potegu ali isti poteg pripelje do dna. Šteje samo drsenje uporabnika (poteg ali kolešček v zadnjih 4 s, dolg zamah);
 // dotik gumba (npr. Naprej, ki korak prestavi na vrh) ni drsenje. rAF: pride za umikom ob istem potegu ali koleščku.
 let lessonTop = null, userScrollAt = 0;
 const userScroll = () => { userScrollAt = performance.now(); };
@@ -349,10 +351,10 @@ document.addEventListener("touchend", () => userScrollAt && userScroll(), { pass
 document.addEventListener("wheel", userScroll, { passive: true });
 document.addEventListener("click", () => { userScrollAt = 0; }, true);
 document.addEventListener("scroll", (e) => {
-  if (e.target?.id !== "view-textbook") return;
+  if (e.target?.id !== "view-textbook" || e.target.closest(".in-okno")) return;
   const prev = lessonTop;
   lessonTop = e.target.scrollTop;
-  if (prev == null || prev === lessonTop || performance.now() - userScrollAt > 2500) return;
+  if (prev == null || prev === lessonTop || performance.now() - userScrollAt > 4000) return;
   const edge = lessonEdge(e.target);
   if (edge && (lessonTop < prev ? edge.top : edge.bottom)) requestAnimationFrame(() => barAuto() && peekBar(true));
 }, { capture: true, passive: true });
