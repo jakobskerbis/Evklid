@@ -44,6 +44,18 @@ function circleHandle(svg, cx, cy, R, ang, cls, onAngle, snap = 0) {
   });
   return hnd;
 }
+// »=« če je vrednost na d decimalk natančna, sicer »≈«
+const eqA = (v, d = 2) => (Math.abs(v - Math.round(v * 10 ** d) / 10 ** d) < 1e-9 ? "=" : "≈");
+// točka (x, y); pri decimalnih vejicah ločimo koordinati s podpičjem: (0,87; 0,5)
+const ptTxt = (x, y) => (/,/.test(x + y) ? `${x}; ${y}` : `${x}, ${y}`);
+// oznaka ob točki, ki ne gre čez rob slike (širina iz števila znakov, lbl small ≈ 6,6 px na znak)
+const sideLabel = (svg, px, py, txt, right, dy, W = 340) => {
+  const w = txt.length * 6.6;
+  let x = px + (right ? 14 : -14);
+  if (!right && x - w < 4) x = 4 + w;
+  if (right && x + w > W - 4) x = W - 4 - w;
+  label(svg, x, py + dy, txt, "lbl small", right ? "start" : "end");
+};
 const dot = (svg, x, y, cls = "a", r = 5) => s("circle", { cx: x, cy: y, r, class: `pt fill-${cls}` }, svg);
 
 // ------------------------------------------------------------ kotne funkcije v pravokotnem trikotniku
@@ -145,7 +157,7 @@ export function enotska(el, { mode = "krog" } = {}) {
     if (Math.abs(c) > 0.15) label(svg, (cx + P[0]) / 2, cy + (sn > 0 ? 16 : -12), "cos φ", "lbl small");
     if (Math.abs(sn) > 0.15) label(svg, P[0] + (c >= 0 ? 8 : -8), (cy + P[1]) / 2, "sin φ", "lbl small", c >= 0 ? "start" : "end");
     circleHandle(svg, cx, cy, R, phi, "accent", (a) => ((phi = Math.round(a)), ctl.set(phi, true), draw()), 15);
-    label(svg, P[0] + (c >= 0 ? 14 : -14), P[1] + (sn >= 0 ? -14 : 16), `T(${fmt(c)}, ${fmt(sn)})`, "lbl small", c >= 0 ? "start" : "end");
+    sideLabel(svg, P[0], P[1], `T(${ptTxt(fmt(c), fmt(sn))})`, c >= 0, sn >= 0 ? -16 : 18);
     const q = QUAD(phi), ref = refAngle(phi);
     const sgnW = (v) => (Math.abs(v) < 1e-10 ? "0" : v > 0 ? "+" : "−");
     const tanTxt = Math.abs(c) < 1e-10 ? "ne obstaja" : fmt(clean(sn / c), 3);
@@ -256,6 +268,7 @@ function adicija(el) {
     const P = ray(g, "c", op === "+" ? "α+β" : "α−β");
     s("line", { x1: P[0], y1: cy, x2: P[0], y2: P[1], class: "guide stroke-c" }, svg);
     s("line", { x1: cx, y1: P[1], x2: P[0], y2: P[1], class: "guide stroke-c" }, svg);
+    sideLabel(svg, P[0], P[1], `(${ptTxt(fmt(cosD(g), 3), fmt(sinD(g), 3))})`, cosD(g) >= 0, sinD(g) >= 0 ? 20 : -12);
     label(svg, cx + 64 * cosD(op === "+" ? a + b / 2 : a - b / 2), cy - 64 * sinD(op === "+" ? a + b / 2 : a - b / 2), "β", "lbl small");
     const sa = sinD(a), ca = cosD(a), sb = sinD(b), cb = cosD(b);
     const sg = sinD(g), cg = cosD(g);
@@ -264,7 +277,7 @@ function adicija(el) {
     const F3 = (x) => (Number(x.toFixed(3)) < 0 ? `(${T(x, 3)})` : T(x, 3));
     out.innerHTML = texBlock(`\\sin(\\alpha ${pm} \\beta) = \\sin\\alpha\\cos\\beta ${pm} \\cos\\alpha\\sin\\beta = ${F3(sa)}\\cdot ${F3(cb)} ${pm} ${F3(ca)}\\cdot ${F3(sb)} = ${T(sg, 3)}`) +
       texBlock(`\\cos(\\alpha ${pm} \\beta) = \\cos\\alpha\\cos\\beta ${mp} \\sin\\alpha\\sin\\beta = ${F3(ca)}\\cdot ${F3(cb)} ${mp} ${F3(sa)}\\cdot ${F3(sb)} = ${T(cg, 3)}`) +
-      `<p>Preverba na krožnici: kot α ${op === "+" ? "+" : "−"} β = ${g}°, njegova točka ima koordinati (${fmt(cg, 3)}, ${fmt(sg, 3)}). <b>Pozor:</b> sin(α ${op === "+" ? "+" : "−"} β) ni sin α ${op === "+" ? "+" : "−"} sin β = ${fmt(op === "+" ? sa + sb : sa - sb, 3)}.</p>
+      `<p>Preverba na krožnici: kot α ${op === "+" ? "+" : "−"} β = ${g}°, njegova točka ima koordinati (${ptTxt(fmt(cg, 3), fmt(sg, 3))}). <b>Pozor:</b> sin(α ${op === "+" ? "+" : "−"} β) ni sin α ${op === "+" ? "+" : "−"} sin β = ${fmt(op === "+" ? sa + sb : sa - sb, 3)}.</p>
        <p class="muted">${a === b && op === "+" ? `Ker je β = α, dobimo formuli za dvojni kot: sin 2α = 2 sin α cos α = ${fmt(2 * sa * ca, 3)}, cos 2α = cos²α − sin²α = ${fmt(ca * ca - sa * sa, 3)}.` : "Nastavi β = α, pa dobiš formuli za dvojni kot."}</p>`;
   };
   layout(el, {
@@ -375,7 +388,7 @@ export function vektorji(el, { mode = "vsota" } = {}) {
     const P = (v) => [A.X(v[0]), A.Y(v[1])];
     const vec = (from, v, col, w = 3, extra = {}) => arrow(svg, A.X(from[0]), A.Y(from[1]), A.X(from[0] + v[0]), A.Y(from[1] + v[1]), col, w, extra);
     const len = (v) => Math.hypot(v[0], v[1]);
-    let html = "";
+    let html = "", proj = null;
     if (mode === "vsota") {
       let r;
       if (op === "+") {
@@ -394,9 +407,9 @@ export function vektorji(el, { mode = "vsota" } = {}) {
       } else {
         r = [kk * a[0], kk * a[1]];
         vec([0, 0], r, "c", 3.5);
-        html = texBlock(`${T(kk, 1)}\\cdot\\vec a = ${T(kk, 1)}\\cdot(${a[0]}, ${a[1]}) = (${T(r[0], 1)}, ${T(r[1], 1)})`) + `<p>${kk < 0 ? "Negativen k obrne smer." : kk === 0 ? "Pri k = 0 dobimo ničelni vektor." : "Pozitiven k ohrani smer."} Dolžina se pomnoži z |k|: |k·a| = ${fmt(Math.abs(kk))} · ${fmt(len(a))} = ${fmt(len(r))}.</p>`;
+        html = texBlock(`${T(kk, 1)}\\cdot\\vec a = ${T(kk, 1)}\\cdot(${a[0]}, ${a[1]}) = (${Number.isInteger(r[0]) && Number.isInteger(r[1]) ? `${r[0]}, ${r[1]}` : `${T(r[0], 1)};\\ ${T(r[1], 1)}`})`) + `<p>${kk < 0 ? "Negativen k obrne usmerjenost, smer (nosilka) ostane ista." : kk === 0 ? "Pri k = 0 dobimo ničelni vektor." : "Pozitiven k ohrani smer in usmerjenost."} Dolžina se pomnoži z |k|: |k·a| = ${fmt(Math.abs(kk))} · ${fmt(len(a))} ${eqA(Math.abs(kk) * len(a))} ${fmt(len(r))}.</p>`;
       }
-      html += `<p class="muted">|a| = √(${a[0]}² + ${a[1]}²) ≈ ${fmt(len(a))}, |b| ≈ ${fmt(len(b))}, |rezultat| ≈ ${fmt(len(r))}.</p>`;
+      html += `<p class="muted">|a| = √(${a[0]}² + ${a[1]}²) ${eqA(len(a))} ${fmt(len(a))}, |b| ${eqA(len(b))} ${fmt(len(b))}, |rezultat| ${eqA(len(r))} ${fmt(len(r))}.</p>`;
     } else {
       const d = a[0] * b[0] + a[1] * b[1], la = len(a), lb = len(b);
       const cosf = la && lb ? d / (la * lb) : NaN, phi = deg(Math.acos(clamp(cosf, -1, 1)));
@@ -404,7 +417,8 @@ export function vektorji(el, { mode = "vsota" } = {}) {
         const t = d / (la * la), pr = [t * a[0], t * a[1]];
         s("line", { x1: A.X(-6 * a[0] / la * 2), y1: A.Y(-6 * a[1] / la * 2), x2: A.X(6 * a[0] / la * 2), y2: A.Y(6 * a[1] / la * 2), class: "guide" }, svg);
         s("line", { x1: A.X(b[0]), y1: A.Y(b[1]), x2: A.X(pr[0]), y2: A.Y(pr[1]), class: "guide stroke-b" }, svg);
-        s("line", { x1: O[0], y1: O[1], x2: A.X(pr[0]), y2: A.Y(pr[1]), class: "graph-line stroke-c", "stroke-width": 6, opacity: 0.5 }, svg);
+        // projekcija leži na nosilki a: nariše se šele nad vektorjema (spodaj), sicer jo pri ostrem kotu prekrije a
+        proj = () => s("line", { x1: O[0], y1: O[1], x2: A.X(pr[0]), y2: A.Y(pr[1]), class: "graph-line stroke-c", "stroke-width": 6, opacity: 0.85 }, svg);
       }
       if (la && lb) {
         const a0 = deg(Math.atan2(a[1], a[0])), b0 = deg(Math.atan2(b[1], b[0]));
@@ -412,12 +426,13 @@ export function vektorji(el, { mode = "vsota" } = {}) {
         s("path", { d: arcD(O[0], O[1], 26, from, from + phi, true), class: `angle-fill ${Math.abs(d) < 1e-9 ? "fill-ok" : "fill-c"}` }, svg);
       }
       html = texBlock(`\\vec a\\cdot\\vec b = a_x b_x + a_y b_y = ${a[0]}\\cdot ${b[0] < 0 ? `(${b[0]})` : b[0]} + ${a[1]}\\cdot ${b[1] < 0 ? `(${b[1]})` : b[1]} = ${d}`) +
-        (la && lb ? texBlock(`\\cos\\varphi = \\frac{\\vec a\\cdot\\vec b}{|\\vec a|\\,|\\vec b|} = \\frac{${d}}{${T(la)}\\cdot ${T(lb)}} = ${T(cosf, 3)} \\Rightarrow \\varphi \\approx ${T(phi, 1)}^\\circ`) : "") +
+        (la && lb ? texBlock(`\\cos\\varphi = \\frac{\\vec a\\cdot\\vec b}{|\\vec a|\\,|\\vec b|} = \\frac{${d}}{${T(la)}\\cdot ${T(lb)}} ${eqA(cosf, 3) === "=" ? "=" : "\\approx"} ${T(cosf, 3)} \\Rightarrow \\varphi ${eqA(phi, 1) === "=" ? "=" : "\\approx"} ${T(phi, 1)}^\\circ`) : "") +
         `<p>${d === 0 ? "<b>Skalarni produkt je 0: vektorja sta pravokotna.</b>" : la && lb && Math.abs(Math.abs(cosf) - 1) < 1e-9 ? (d > 0 ? "Kot med vektorjema je 0°: vektorja sta vzporedna in enako usmerjena, skalarni produkt je enak produktu dolžin." : "Kot med vektorjema je 180°: vektorja sta vzporedna in nasprotno usmerjena.") : d > 0 ? "Skalarni produkt je pozitiven: kot med vektorjema je oster." : "Skalarni produkt je negativen: kot med vektorjema je top."}</p>
-         <p class="muted">Vijolična daljica je pravokotna projekcija b na a, dolga |b|·|cos φ| ≈ ${fmt(la ? Math.abs(d) / la : 0)}. ${d < 0 ? "Kaže nasproti a, zato je skalarni produkt = −|a| · (dolžina projekcije)." : "Skalarni produkt = |a| · (dolžina projekcije)."}</p>`;
+         <p class="muted">Vijolična daljica je pravokotna projekcija b na a, dolga |b|·|cos φ| ${eqA(la ? Math.abs(d) / la : 0)} ${fmt(la ? Math.abs(d) / la : 0)}. ${d < 0 ? "Kaže nasproti a, zato je skalarni produkt = −|a| · (dolžina projekcije)." : "Skalarni produkt = |a| · (dolžina projekcije)."}</p>`;
     }
     vec([0, 0], a, "a", 3.5);
     vec([0, 0], b, "b", 3.5);
+    proj?.();
     [["a", a, "a"], ["b", b, "b"]].forEach(([nm, v, col]) => {
       const hnd = handle(svg, col);
       label(hnd, 12, -12, nm, "pt-lbl");

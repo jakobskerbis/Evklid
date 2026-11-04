@@ -71,6 +71,19 @@ const periodTex = (b) => {
   return d === 1 ? `${n === 1 ? "" : n}\\pi` : `\\frac{${n === 1 ? "" : n}\\pi}{${d}}`;
 };
 
+// Ničle polinoma kot [x, stopnja]; drsnika na istem x se združita: (x + 2)(x + 2) → (x + 2)², stopnji se seštejeta.
+const polyRoots = (P) => {
+  const out = [];
+  ["x₁", "x₂", "x₃"].forEach((k) => {
+    const d = P[`stopnja ${k}`];
+    if (!d) return;
+    const r = out.find(([x]) => Math.abs(x - P[k]) < 1e-9);
+    if (r) r[1] += d;
+    else out.push([P[k], d]);
+  });
+  return out;
+};
+
 // ------------------------------------------------------------ prednastavitve za graf
 const PRESETS = {
   kvadratna: {
@@ -86,7 +99,7 @@ const PRESETS = {
       const b = -2 * P.a * P.p, c = P.a * P.p * P.p + P.q;
       const D = b * b - 4 * P.a * c;
       return `<p>Teme <b>T(${fmt(P.p)}, ${fmt(P.q)})</b>, simetrijska os x = ${fmt(P.p)}. ${P.a > 0 ? "a > 0: parabola je odprta navzgor, teme je najnižja točka." : P.a < 0 ? "a < 0: parabola je odprta navzdol, teme je najvišja točka." : "a = 0: to ni več kvadratna funkcija."} ${Math.abs(P.a) > 1 ? "|a| > 1: ožja od y = x²." : Math.abs(P.a) < 1 && P.a ? "|a| < 1: širša od y = x²." : ""}</p>
-        <p>${P.a ? `Splošna oblika: ${tex(`f(x) = ${term(P.a, "x^2", true)}${term(b, "x")}${term(c)}`)}. ` : ""}Presečišče z osjo y: (0, ${fmt(c)}). ${P.a ? (D > 0 ? `Ničli: ${fmt(P.p - Math.sqrt(-P.q / P.a))} in ${fmt(P.p + Math.sqrt(-P.q / P.a))}.` : D === 0 ? `Ena dvojna ničla: ${fmt(P.p)}.` : "Ničel ni (D < 0).") : ""}</p>
+        <p>${P.a ? `Splošna oblika: ${tex(`f(x) = ${term(P.a, "x^2", true)}${term(b, "x")}${term(c)}`)}. ` : ""}Presečišče z osjo y: (0, ${fmt(c)}). ${P.a ? (D > 0 ? `Ničli: ${fmt(P.p - Math.sqrt(-P.q / P.a))} in ${fmt(P.p + Math.sqrt(-P.q / P.a))}.` : D === 0 ? `Ena dvojna ničla: ${fmt(P.p)}.` : "Ničel ni: parabola ne seka osi x.") : ""}</p>
         <p class="muted">Zaloga vrednosti: ${P.a > 0 ? `[${fmt(P.q)}, ∞)` : P.a < 0 ? `(−∞, ${fmt(P.q)}]` : "{" + fmt(P.q) + "}"}. Parameter p premakne graf vodoravno, q navpično.</p>`;
     },
     tryText: "Kaj naredi parameter p? Zakaj se pri p = 2 graf premakne v desno, čeprav v oklepaju piše x − 2?",
@@ -155,8 +168,9 @@ const PRESETS = {
     params: [["m (števec)", -3, 4, 1, 1], ["n (imenovalec)", 1, 4, 1, 2]],
     f: (x, P) => {
       const m = P["m (števec)"], n = P["n (imenovalec)"];
+      // n ≥ 2: potenco z racionalnim eksponentom pišemo le za x > 0 (pri m > 0 še x = 0), kot v lekciji.
+      if (n > 1 && (x < 0 || (x === 0 && m <= 0))) return NaN;
       if (m === 0) return 1;
-      if (x < 0 && n % 2 === 0) return NaN;
       if (x === 0 && m < 0) return NaN;
       const v = Math.abs(x) ** (m / n);
       return x < 0 && m % 2 ? -v : v;
@@ -170,10 +184,10 @@ const PRESETS = {
     marks: (A, P, svg) => dot(svg, A, 1, 1, "c", "(1, 1)"),
     info: (P) => {
       const m = P["m (števec)"], n = P["n (imenovalec)"];
-      return `<p>${tex(`x^{m/n} = \\sqrt[n]{x^m}`)}: imenovalec je stopnja korena, števec je eksponent. ${n % 2 === 0 ? "Sod koren obstaja le za x ≥ 0, zato je definicijsko območje [0, ∞)" : "Lih koren obstaja za vsa realna števila"}${m < 0 ? ", poleg tega x ≠ 0 (negativni eksponent pomeni ulomek 1/x…)" : ""}.</p>
-        <p class="muted">Vsi grafi gredo skozi točko (1, 1). ${m / n > 1 ? "Eksponent > 1: graf je nad x = 1 strmejši od premice y = x." : m / n > 0 && m / n < 1 ? "0 < eksponent < 1: graf se počasi dviga (kot koren)." : m < 0 ? "Negativni eksponent: graf pada in se osem le približuje." : ""}</p>`;
+      return `<p>${tex(`x^{m/n} = \\sqrt[n]{x^m}`)}: imenovalec je stopnja korena, števec je eksponent. ${n === 1 ? `Pri n = 1 je eksponent celo število: potenca je definirana za vsa realna števila${m <= 0 ? ", razen x = 0 (negativni ali ničelni eksponent)" : ""}.` : `Potenco z racionalnim eksponentom pišemo le za pozitivno osnovo${m > 0 ? " (in za 0, ker je 0 na pozitivni eksponent 0)" : ""}, zato je definicijsko območje ${m > 0 ? "[0, ∞)" : "(0, ∞)"}.${n % 2 ? ` Lihi koren negativnega števila sicer obstaja, npr. ${tex(`\\sqrt[${n}]{-8} = ${T(-(8 ** (1 / n)), 3)}`)}, a ga kot potenco ne pišemo.` : ""}`}</p>
+        <p class="muted">Vsi grafi gredo skozi točko (1, 1). ${m / n > 1 ? "Eksponent > 1: graf je nad x = 1 strmejši od premice y = x." : m / n > 0 && m / n < 1 ? "0 < eksponent < 1: graf se počasi dviga (kot koren)." : m < 0 ? "Negativni eksponent: za x > 0 graf pada in se osema le približuje." : ""}</p>`;
     },
-    tryText: "Primerjaj x^(1/2) in x^(2/4). Ali sta enaki funkciji? (Namig: definicijsko območje.)",
+    tryText: "Primerjaj grafa x^(1/2) in x^(2/4). Ali se razlikujeta? Pojasni z enakostjo ulomkov 1/2 = 2/4.",
   },
   koreni: {
     params: [["n", 2, 5, 1, 2]],
@@ -197,7 +211,7 @@ const PRESETS = {
     },
     info: (P) => `<p>${P.a > 1 ? "a > 1: funkcija <b>narašča</b> (eksponentna rast)." : P.a < 1 ? "0 < a < 1: funkcija <b>pada</b> (eksponentno upadanje)." : "a = 1: konstantna funkcija, ni eksponentna."} Vodoravna asimptota je y = ${fmt(P.q)} (rdeča črta): graf se ji približuje, a je ne doseže.</p>
       <p>Graf gre skozi (${fmt(P.p)}, ${fmt(1 + P.q)}), ker je a⁰ = 1. Zaloga vrednosti: (${fmt(P.q)}, ∞).</p>
-      <p class="muted">Pri a = 2 se vrednost ob vsakem koraku x za 1 podvoji: ${[0, 1, 2, 3].map((k) => fmt(2 ** k)).join(", ")}, …</p>`,
+      ${Math.abs(P.a - 1) < 1e-9 ? "" : `<p class="muted">Ko se x poveča za 1, se vrednost a<sup>x − p</sup> pomnoži z a = ${fmt(P.a, 1)}: ${[0, 1, 2, 3].map((k) => fmt(P.a ** k, 3)).join("; ")}; …</p>`}`,
     tryText: "Primerjaj a = 2 in a = 0,5. Kako sta grafa povezana? (Namig: zrcaljenje.)",
   },
   "eksponentna-enacba": {
@@ -215,8 +229,21 @@ const PRESETS = {
         dot(svg, A, x, P.b, "c", "");
       }
     },
-    info: (P) => (Math.abs(P.a - 1) < 1e-9 ? "<p>a = 1: 1ˣ = 1 za vsak x.</p>" : texBlock(`x = \\log_{${T(P.a, 1)}} ${T(P.b, 1)} = \\frac{\\ln ${T(P.b, 1)}}{\\ln ${T(P.a, 1)}} \\approx ${T(Math.log(P.b) / Math.log(P.a), 3)}`) +
-      `<p>Rešitev je x-koordinata presečišča grafa y = aˣ in premice y = b. ${Number.isInteger(Math.round(Math.log(P.b) / Math.log(P.a) * 1000) / 1000) ? "Rešitev je celo število: b je potenca a." : "Ko b ni potenca a, rešitev zapišemo z logaritmom."}</p>`),
+    info: (P) => {
+      if (Math.abs(P.a - 1) < 1e-9) return "<p>a = 1: 1ˣ = 1 za vsak x.</p>";
+      const x = Math.log(P.b) / Math.log(P.a), q = [1, 2, 3, 4, 6].find((d) => Math.abs(x * d - Math.round(x * d)) < 1e-9);
+      if (!q) return `<p>Rešitev je abscisa presečišča grafa y = aˣ in premice y = b: <b>x ≈ ${fmt(x, 3)}</b>.</p>
+        <p class="muted">Števila ${fmt(P.b, 1)} ne znamo zapisati kot potenco osnove ${fmt(P.a, 1)} s preprostim eksponentom, zato osnov ne moremo izenačiti. Natančno takšno rešitev zapišemo z logaritmom, ki ga spoznaš v naslednji lekciji.</p>`;
+      const k = Math.round(x * q), xTex = q === 1 ? T(k) : `${k < 0 ? "-" : ""}\\frac{${Math.abs(k)}}{${q}}`;
+      const xTxt = q === 1 ? fmt(k) : `${k < 0 ? "−" : ""}${Math.abs(k)}/${q}${q === 3 || q === 6 ? "" : ` = ${fmt(x, 2)}`}`;
+      // skupna osnova c: a = cⁱ, b = cʲ (npr. 4ˣ = 8 → 2²ˣ = 2³)
+      const pw = (v, c) => { const e = Math.round(Math.log(v) / Math.log(c)); return Math.abs(c ** e - v) < 1e-9 ? e : null; };
+      const c = [2, 3, 5, 6, 7, 10].find((c) => pw(P.a, c) !== null && pw(P.b, c) !== null);
+      const ix = (i) => `${i === 1 ? "" : i === -1 ? "-" : i}x`;
+      const how = c ? `${c}^{${ix(pw(P.a, c))}} = ${c}^{${pw(P.b, c)}}${pw(P.a, c) === 1 ? "" : ` \\;\\Rightarrow\\; ${ix(pw(P.a, c))} = ${pw(P.b, c)}`} \\;\\Rightarrow\\; x = ${xTex}`
+        : `${T(P.a, 1)}^{${xTex}} = ${T(P.b, 1)} \\;\\Rightarrow\\; x = ${xTex}`;
+      return texBlock(how) + `<p>Rešitev je abscisa presečišča grafa y = aˣ in premice y = b: <b>x = ${xTxt}</b>. ${c ? `Obe strani zapišemo kot potenci osnove ${c} in izenačimo eksponenta.` : `Desna stran je potenca osnove ${fmt(P.a, 1)}, zato eksponenta izenačimo.`}</p>`;
+    },
     tryText: "Reši 2ˣ = 8 in 2ˣ = 5. Pri kateri dobiš celo število?",
   },
   logaritem: {
@@ -250,7 +277,7 @@ const PRESETS = {
       const z = P.p + P.a ** -P.q;
       if (Number.isFinite(z) && z < A.x1) dot(svg, A, z, 0, "c", "");
     },
-    info: (P) => `<p>Definicijsko območje: x > ${fmt(P.p)}. Navpična asimptota x = ${fmt(P.p)} (rdeča). Ničla: ${tex(`x = ${T(P.p)} + ${T(P.a, 1)}^{${T(-P.q)}} \\approx ${T(P.p + P.a ** -P.q)}`)}.</p>
+    info: (P) => `<p>Definicijsko območje: x > ${fmt(P.p)}. Navpična asimptota x = ${fmt(P.p)} (rdeča). Ničla: ${tex(`x = ${T(P.p)} + ${T(P.a, 1)}^{${T(-P.q)}} ${Math.abs(P.p + P.a ** -P.q - Math.round((P.p + P.a ** -P.q) * 100) / 100) < 1e-9 ? "=" : "\\approx"} ${T(P.p + P.a ** -P.q)}`)}.</p>
       <p class="muted">Pri reševanju logaritemskih enačb vedno preveri, ali rešitev leži v definicijskem območju.</p>`,
     tryText: "Kako parameter p vpliva na definicijsko območje? In parameter q?",
   },
@@ -260,9 +287,10 @@ const PRESETS = {
     f: (x, P) => P.A * Math.sin(P.b * (x - P.c)) + P.d,
     gName: "y = sin x",
     g: (x) => Math.sin(x),
-    win: [-2 * PI, 2 * PI, -4, 4],
+    // malo širše od [−2π, 2π], da oznaka 2π ni pod puščico; brez ±3π/2, da se oznake na telefonu ne prekrivajo
+    win: [-2 * PI - 0.4, 2 * PI + 0.4, -4, 4],
     xStep: PI / 2,
-    xFmt: piTicks,
+    xFmt: (v) => (Math.abs(Math.abs(v) - 1.5 * PI) < 1e-6 ? "" : piTicks(v)),
     tex: (P) => {
       const c = Math.abs(P.c) < 1e-9 ? "" : ` ${P.c > 0 ? "-" : "+"} ${piTex(Math.abs(P.c))}`;
       const inner = !c ? `${cf(P.b)}x` : Math.abs(P.b - 1) < 1e-12 ? `x${c}` : `${cf(P.b)}\\left(x${c}\\right)`;
@@ -273,15 +301,15 @@ const PRESETS = {
       s("line", { x1: A.L, y1: A.Y(P.d - P.A), x2: A.R, y2: A.Y(P.d - P.A), class: "guide" }, svg);
     },
     info: (P) => `<p>Amplituda |A| = ${fmt(P.A)}, osnovna perioda ${tex(`\\frac{2\\pi}{b} = ${periodTex(P.b)}`)}, premik ${P.c < -1e-9 ? "v levo" : "v desno"} za ${piTxt(Math.abs(P.c))}, premik navzgor za ${fmt(P.d)}. Zaloga vrednosti [${fmt(P.d - P.A)}, ${fmt(P.d + P.A)}].</p>
-      <p class="muted"><span class="dot dot-b"></span> je osnovni graf y = sin x. Kosinus je sinus, premaknjen za π/2 v levo: cos x = sin(x + π/2).</p>`,
+      <p class="muted">Tanka črta <span class="dot dot-b"></span> je osnovni graf y = sin x. Kosinus je sinus, premaknjen za π/2 v levo: cos x = sin(x + π/2).</p>`,
     tryText: "Nastavi c = −π/2. Kateri znan graf dobiš?",
   },
   polinom: {
     params: [["a", -2, 2, 0.25, 0.5], ["x₁", -4, 4, 0.5, -3], ["x₂", -4, 4, 0.5, 0], ["x₃", -4, 4, 0.5, 2.5], ["stopnja x₁", 0, 3, 1, 1], ["stopnja x₂", 0, 3, 1, 2], ["stopnja x₃", 0, 3, 1, 1]],
     f: (x, P) => P.a * (x - P["x₁"]) ** P["stopnja x₁"] * (x - P["x₂"]) ** P["stopnja x₂"] * (x - P["x₃"]) ** P["stopnja x₃"],
     win: [-5, 5, -8, 8],
-    tex: (P) => !P.a ? "p(x) = 0" : `p(x) = ${["x₁", "x₂", "x₃"].some((k) => P[`stopnja ${k}`]) ? cf(P.a) : T(P.a)}${["x₁", "x₂", "x₃"].map((k, i) => (P[`stopnja ${k}`] ? `${shift("x", P[k])}${P[`stopnja ${k}`] > 1 ? `^${P[`stopnja ${k}`]}` : ""}` : "")).join("")}`,
-    marks: (A, P, svg) => P.a && ["x₁", "x₂", "x₃"].forEach((k) => P[`stopnja ${k}`] && dot(svg, A, P[k], 0, P[`stopnja ${k}`] % 2 ? "a" : "c", "")),
+    tex: (P) => !P.a ? "p(x) = 0" : `p(x) = ${polyRoots(P).length ? cf(P.a) : T(P.a)}${polyRoots(P).map(([x, d]) => `${shift("x", x)}${d > 1 ? `^${d}` : ""}`).join("")}`,
+    marks: (A, P, svg) => P.a && polyRoots(P).forEach(([x, d]) => dot(svg, A, x, 0, d % 2 ? "a" : "c", "")),
     info: (P) => {
       if (!P.a) return `<p>Pri a = 0 je p(x) = 0 (ničelni polinom): graf je os x, vsak x je ničla. Nastavi a ≠ 0.</p>`;
       const deg = P["stopnja x₁"] + P["stopnja x₂"] + P["stopnja x₃"];
@@ -690,9 +718,13 @@ export function zaporedje(el, { mode = "ag" } = {}) {
     const n = mode === "ag" ? N : 30;
     for (let i = 1; i <= n; i++) terms.push(mode === "ag" ? (kind === "a" ? a1 + (i - 1) * d : a1 * q ** (i - 1)) : SEQS[key][1](i));
     let lo = Math.min(0, ...terms), hi = Math.max(0, ...terms);
+    // pri geometrijskem zaporedju členi hitro zrastejo (1 · 2⁷ = 128), zato tam višja meja osi
+    const cap = mode === "ag" ? 500 : 60;
+    lo = Math.max(lo, -cap);
+    hi = Math.min(hi, cap);
     if (hi - lo < 1) hi = lo + 1;
     const pad = (hi - lo) * 0.1;
-    const A = axes(svg, { W: 340, H: 280, x: [0, n + 1], y: [Math.max(lo - pad, -60), Math.min(hi + pad, 60)], xLabel: "n", yLabel: "aₙ", xStep: n > 20 ? 5 : n > 10 ? 2 : 1 });
+    const A = axes(svg, { W: 340, H: 280, x: [0, n + 1], y: [Math.max(lo - pad, -cap), Math.min(hi + pad, cap)], xLabel: "n", yLabel: "aₙ", xStep: n > 20 ? 5 : n > 10 ? 2 : 1 });
     const L = mode === "ag" ? null : SEQS[key][2];
     if (L != null) {
       s("rect", { x: A.L, y: A.Y(L + eps), width: A.R - A.L, height: A.Y(L - eps) - A.Y(L + eps), class: "band" }, svg);
@@ -708,8 +740,8 @@ export function zaporedje(el, { mode = "ag" } = {}) {
     // Narisanih je le 30 členov; pri majhnem ε je zadnji člen zunaj pasu lahko dlje.
     if (L != null) for (let i = n + 1; i <= 5000; i++) if (zunaj(SEQS[key][1](i))) Ne = i;
     if (mode === "ag") {
-      const S = terms.reduce((x, y) => x + y, 0);
-      out.innerHTML = (kind === "a"
+      const S = terms.reduce((x, y) => x + y, 0), skrito = terms.filter((t) => t < A.y0 || t > A.y1).length;
+      out.innerHTML = (skrito ? `<p class="muted">${skrito === 1 ? "En člen je" : skrito === 2 ? "Dva člena sta" : skrito < 5 ? `${skrito} členi so` : `${skrito} členov je`} zunaj slike (|aₙ| > ${cap}).</p>` : "") + (kind === "a"
         ? texBlock(`a_n = a_1 + (n - 1)d = ${T(a1)} + (n - 1)\\cdot ${d < 0 ? `(${T(d)})` : T(d)},\\quad a_{${N}} = ${T(terms[N - 1])}`) + texBlock(`s_{${N}} = \\frac{n(a_1 + a_n)}{2} = ${T(S)}`) + `<p>Vsak člen dobimo tako, da prejšnjemu <b>prištejemo</b> d. Točke ležijo na premici. ${d > 0 ? "d > 0: zaporedje narašča." : d < 0 ? "d < 0: zaporedje pada." : "d = 0: konstantno."}</p>`
         : texBlock(`a_n = a_1 q^{n-1} = ${T(a1)}\\cdot ${q < 0 ? `(${T(q, 1)})` : T(q, 1)}^{n-1},\\quad a_{${N}} = ${T(terms[N - 1])}`) + texBlock(`s_{${N}} = a_1\\frac{q^n - 1}{q - 1} = ${T(S)}`) + `<p>Vsak člen dobimo tako, da prejšnjega <b>pomnožimo</b> s q. ${Math.abs(q) > 1 ? "|q| > 1: členi po absolutni vrednosti hitro rastejo." : Math.abs(q) < 1 ? "|q| < 1: členi se bližajo 0." : ""}${q < 0 ? " q < 0: predznaki se izmenjujejo." : ""}</p>`);
     } else {
@@ -851,11 +883,16 @@ export function kompleksna(el) {
         draw();
       });
     });
-    const abs = (c) => Math.hypot(...c), arg = (c) => (deg(Math.atan2(c[1], c[0])) + 360) % 360;
+    // samo snov lekcije MAT-SS-2: |z| = √(a² + b²), |z·w| = |z|·|w|, |z : w| = |z| : |w|, množenje z i = zasuk za 90°
+    const abs = (c) => Math.hypot(...c);
+    const eqA = (v) => (Math.abs(v - Math.round(v * 100) / 100) < 1e-9 ? "=" : "≈");
+    const sq = (v) => (v < 0 ? `(${fmt(v)})²` : `${fmt(v)}²`);
+    const absTxt = (n, c) => `|${n}| = √(${sq(c[0])} + ${sq(c[1])}) ${eqA(abs(c))} ${fmt(abs(c))}`;
+    const zero = op === ":" && !w[0] && !w[1];
     const nm = op === "z̄" ? "\\bar z" : op === "^" ? `z^{${npow}}` : `z ${{ "+": "+", "−": "-", "·": "\\cdot", ":": ":" }[op]} w`;
-    out.innerHTML = texBlock(`${nm} = ${ztex(r)}`) +
-      `<p>z = ${ztex(z).replace(/\{,\}/g, ",")}: |z| = ${fmt(abs(z))}, kot ${fmt(arg(z), 1)}°.${useW ? ` w: |w| = ${fmt(abs(w))}, kot ${fmt(arg(w), 1)}°.` : ""}</p>
-       <p>${op === "+" || op === "−" ? "Seštevamo kot vektorje: realne dele posebej, imaginarne posebej (paralelogram)." : op === "·" ? `Pri množenju se absolutni vrednosti zmnožita (${fmt(abs(z))} · ${fmt(abs(w))} = ${fmt(abs(r))}), kota pa seštejeta (${fmt(arg(z), 1)}° + ${fmt(arg(w), 1)}° = ${fmt((arg(z) + arg(w)) % 360, 1)}°). Množenje z i je zasuk za 90°.` : op === ":" ? "Pri deljenju se absolutni vrednosti delita, kota odštejeta." : op === "z̄" ? `Konjugirano število je zrcalna slika čez realno os. ${tex("z \\cdot \\bar{z} = |z|^2")} je realno.` : `Potenciranje: |z|ⁿ = ${fmt(abs(z) ** npow)}, kot se pomnoži z n.`}</p>`;
+    out.innerHTML = (zero ? "<p><b>Z 0 ne delimo:</b> premakni w stran od izhodišča.</p>" : texBlock(`${nm} = ${ztex(r)}`)) +
+      `<p>z = ${ztex(z).replace(/\{,\}/g, ",")}: ${absTxt("z", z)}.${useW ? ` w = ${ztex(w).replace(/\{,\}/g, ",")}: ${absTxt("w", w)}.` : ""}</p>
+       <p>${op === "+" || op === "−" ? "Seštevamo kot vektorje: realne dele posebej, imaginarne posebej (paralelogram)." : op === "·" ? `Množimo kot dvočlenika in upoštevamo i² = −1. Absolutni vrednosti se zmnožita: |z · w| = |z| · |w| ${eqA(abs(r))} ${fmt(abs(r))}. Množenje z i zavrti točko za 90° v pozitivni smeri.` : op === ":" ? (zero ? "" : `Ulomek razširimo s številom, konjugiranim imenovalcu, da imenovalec postane realen: ${tex("w \\cdot \\bar{w} = |w|^2")} = ${fmt(w[0] ** 2 + w[1] ** 2)}. Absolutni vrednosti se delita: |z : w| = |z| : |w| ${eqA(abs(r))} ${fmt(abs(r))}.`) : op === "z̄" ? `Konjugirano število je zrcalna slika čez realno os. ${tex("z \\cdot \\bar{z} = |z|^2")} je realno.` : `Potenco izračunamo z zaporednim množenjem: z${["²", "³", "⁴", "⁵", "⁶"][npow - 2]} = ${Array(npow).fill("z").join(" · ")}. Absolutne vrednosti se zmnožijo: |z${["²", "³", "⁴", "⁵", "⁶"][npow - 2]}| = |z|${["²", "³", "⁴", "⁵", "⁶"][npow - 2]} ${eqA(abs(z) ** npow)} ${fmt(abs(z) ** npow)}.`}</p>`;
   };
   layout(el, {
     stage: [svg],

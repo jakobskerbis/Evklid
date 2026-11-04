@@ -1186,7 +1186,8 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .gr-video-sim:has(> .demo-stage), .gr-video-sim :has(> .demo-stage) { display: flex; flex-direction: column; }
 .gr-video-sim .demo-stage { order: 0; }
 .gr-video-sim .demo-readout { order: 1; }
-.gr-video-sim .demo-controls { order: 2; }
+.gr-video-sim .demo-layers { order: 2; }
+.gr-video-sim .demo-controls { order: 3; }
 .gr-video-sim .demo-try { display: none; }
 /* podnapis in gumbi ostanejo vidni tudi na telefonu, ko je simulacija višja od zaslona */
 .gr-video-foot { position: sticky; bottom: -12px; margin: 0 -16px -12px; padding: 4px 16px 12px; background: var(--surface); border-top: 1px solid var(--border); }
