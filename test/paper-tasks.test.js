@@ -1,4 +1,4 @@
-// Razdelitev prenešene pole na naloge (public/paper-tasks.js): elementi besedilne plasti pdf.js → naloge z območji.
+// Razdelitev prenesene pole na naloge (public/paper-tasks.js): elementi besedilne plasti pdf.js → naloge z območji.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { splitTasks, textInBox, pageLines } from "../public/paper-tasks.js";
@@ -82,4 +82,17 @@ test("pravi PDF: pdf.js prebere besedilno plast majhne pole in najde dve nalogi"
   assert.match(tasks[0].text, /a\) 12 \+ 30 =/);
   assert.match(tasks[1].text, /25 % od 80/);
   assert.equal(tasks[1].regions[0].page, 1);
+});
+
+test("številka strani, črtna koda in koda pole niso del besedila naloge (j 1. 11.: »5« pod nalogo)", () => {
+  const pages = [
+    page([it("A) KRATKE NALOGE", 70.9, 754.3, 10), it("1.", 70.9, 722.3, 10), it("Števili 126 in 150 razcepite na prafaktorje.", 92.2, 722.3, 10),
+      it("12", 300, 600, 10) /* število v nalogi ostane */, it("(3 točke)", 486, 405, 10), it("*M26140111*", 230, 72, 20), it("5", 295, 48, 10)]),
+    page([it("M261-401-1-1", 70, 770, 8), it("2.", 70.9, 722.3, 10), it("Izračunajte 5/6 : 0,5.", 92.2, 722.3, 10), it("Obrnite list.", 450, 60, 9), it("6/16", 290, 45, 9)]),
+  ];
+  const tasks = splitTasks(pages);
+  assert.deepEqual(tasks.map((t) => t.label), ["1", "2"]);
+  assert.equal(tasks[0].text, "1. Števili 126 in 150 razcepite na prafaktorje.\n12\n(3 točke)");
+  assert.equal(tasks[1].text, "2. Izračunajte 5/6 : 0,5.");
+  assert.equal(textInBox(pages[0], { x0: 60, y0: H - 420, x1: 560, y1: H - 30 }), "(3 točke)");
 });

@@ -28,6 +28,8 @@ import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
 import { detectWeakTopics, weaknessesForPrompt } from "./weaknesses.js";
 import { cleanText, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
+import { paperContext, PAPER_NOTE_HEAD } from "./paper-context.js";
+import { ourPaperIds, loadOurPaper } from "./our-papers.js";
 import { mountAccounts } from "./accounts/index.js";
 import { passwordGate, gateNeeded } from "./gate.js";
 import { levelUpSuggestion, nextLevel } from "./level-up.js";
@@ -502,6 +504,9 @@ export function createApp(store, opts = {}) {
 
     const userContent = [];
     if (image) userContent.push({ type: "image", source: { type: "base64", media_type: image.media_type, data: image.data } });
+    // Naloga iz pretekle pole: navodilo za inštruktorja kot skrit blok (server/paper-context.js), učenec vidi le text.
+    const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper });
+    if (paperNote) userContent.push({ type: "text", text: paperNote });
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     const isFirst = store.listMessages(conv.id).length === 0;
     const userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
@@ -510,7 +515,7 @@ export function createApp(store, opts = {}) {
     const weak = weaknessesForPrompt(store, student);
     const results = studentResults(store, student.id, conv.path_topic);
     // Prošnja za spremembo nastavitev mora poklicati orodje, zato ne iz predpomnilnika odgovorov.
-    const key = ANSWER_CACHE && isFirst && !image && !help && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
+    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
     if (conv.title === "Nov pogovor") {
       store.renameConversation(conv.id, cleanText(text, 50) || "Naloga s fotografije");
     }
@@ -592,7 +597,9 @@ export function createApp(store, opts = {}) {
       // Če je učenec po tej nalogi poslal še eno, ki je reševalnik ne zna (»Kaj pa 3x = 15?«), koda ne sodi.
       let firstPre = null;
       if (claim) {
-        const earlier = fullHistory.filter((m) => m.role === "user").slice(0, -1).map(textOf);
+        // Brez skrite opombe pole (server/paper-context.js), sicer reševalnik prve naloge ne prepozna.
+        const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !x.text?.startsWith(PAPER_NOTE_HEAD)) } : m);
+        const earlier = fullHistory.filter((m) => m.role === "user").slice(0, -1).map(ownText);
         let at = -1;
         for (let i = earlier.length - 1; i >= 0 && !firstPre; i--) {
           firstPre = presolve(earlier[i], { first: i === 0 });
@@ -1028,7 +1035,16 @@ export function createApp(store, opts = {}) {
   // Pretekle pole NPZ in mature: samo povezave na ric.si (server/exam-papers-si.js), brez besedila pol.
   app.get("/api/exam-papers", (_req, res) => {
     res.set("Cache-Control", "public, max-age=3600");
-    res.json({ source: PAPERS_SOURCE, papers: PAPERS_SI });
+    // ours: naša pola v istem slogu (content/exam-papers, server/our-papers.js) obstaja.
+    const ours = ourPaperIds();
+    res.json({ source: PAPERS_SOURCE, papers: ours.size ? PAPERS_SI.map((e) => (ours.has(e.id) ? { ...e, ours: true } : e)) : PAPERS_SI });
+  });
+  // Naša pola (naloge Evklida z zgradbo izvirne pole, z rešitvami in razlagami).
+  app.get("/api/exam-papers/ours/:id", (req, res) => {
+    const paper = loadOurPaper(req.params.id);
+    if (!paper) return res.status(404).json({ error: "Te pole še ni." });
+    res.set("Cache-Control", "public, max-age=3600");
+    res.json(paper);
   });
   app.post("/api/students/:id/competition-training", (req, res) => {
     const s = loadStudent(req, res);

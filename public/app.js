@@ -49,6 +49,7 @@ import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName,
 import { validDate } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
+import { openOurPaper, closeOurPaper } from "./our-paper.js";
 import { initDrsniki } from "./drsniki.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
 import { GUIDE } from "./vodic.js";
@@ -320,7 +321,7 @@ window.addEventListener("popstate", () => {
   overlayEntry = false;
   const keep = () => currentView !== "path" && history.pushState({ stm: 1, v: currentView }, "");
   // Odprt meni (klobuk ali profil) Nazaj le zapre, pogled ostane.
-  if (closePaperViewer() || closeQuickStart() || closeProfileMenu()) return keep();
+  if (closePaperViewer() || closeOurPaper() || closeQuickStart() || closeProfileMenu()) return keep();
   if (installSheetOpen()) {
     closeInstallSheet({ fromBack: true });
     return keep();
@@ -538,6 +539,7 @@ async function selectStudent(id) {
   }
   state.student = target;
   keptPaper = null;
+  state.paperCtx = null; // skrit kontekst pole ne gre v pogovor drugega profila
   // Jezik je del profila: ob menjavi učenca se vmesnik preklopi v njegov jezik (stran se naloži znova).
   const want = state.student.settings.language;
   if (want && want !== currentLang()) {
@@ -621,6 +623,7 @@ function renderConversationList() {
       e.stopPropagation();
       if (!confirm(t("chat.confirmDelete"))) return;
       await api(`/api/conversations/${c.id}`, { method: "DELETE" });
+      if (state.paperCtx?.conv === c.id) state.paperCtx = null; // id se lahko ponovi pri novem pogovoru
       if (state.conversationId === c.id) {
         state.conversationId = null;
         renderEmptyChat();
@@ -806,6 +809,8 @@ async function send(text, { deep = false } = {}) {
       state.conversationId = conv.id;
     }
     const sentTo = state.conversationId;
+    // Skrit kontekst pole (»Pomoč pri tej nalogi«, »Rešuj z inštruktorjem«): samo s prvim sporočilom tega pogovora.
+    const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
     userEl = addMessage("user", text, !!image);
     $("#input").value = "";
     autoGrow();
@@ -830,7 +835,7 @@ async function send(text, { deep = false } = {}) {
     const res = await fetchThroughRestart(`/api/conversations/${state.conversationId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, deep, lite: liteActive(), device: deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined }),
+      body: JSON.stringify({ text, deep, lite: liteActive(), device: deviceSnapshot(), image: image ? { media_type: image.media_type, data: image.data } : undefined, paper: paperCtx || undefined }),
     });
     if (!res) {
       bubble.remove();
@@ -844,6 +849,7 @@ async function send(text, { deep = false } = {}) {
       throw new Error(err.error || t("common.error", { status: res.status }));
     }
 
+    if (paperCtx && state.paperCtx === paperCtx) state.paperCtx = null; // strežnik ga je shranil s sporočilom
     let doneData = null;
     let cardsData = null;
     let proposal = null;
@@ -3029,6 +3035,7 @@ async function showPapers(c) {
   mountPapers(slot, papers, { track: s.educational_track, exam: c.exam, subject: c.subject, level }, {
     subjectName: (k) => SUBJECT_NAMES[k] || k,
     onTutor: paperTutor,
+    onOurs: openOurs,
     onLocal: (entry, file, subjectName) => openLocalPaper(entry, file, subjectName),
     onReopen: (entry, subjectName) => {
       const k = keptPaper;
@@ -3038,18 +3045,74 @@ async function showPapers(c) {
     },
   });
 }
-// »Rešuj z inštruktorjem« pri pretekli poli: nov pogovor z vnaprej napisanim sporočilom (katera pola, namigi
-// namesto rešitve); učenec doda nalogo s fotografijo ali prepisom in pošlje sam. Pole RIC ne pošiljamo.
+// »Rešuj z inštruktorjem« pri pretekli poli: nov pogovor z vnaprej napisanim kratkim sporočilom (katera pola);
+// učenec doda nalogo s fotografijo ali prepisom in pošlje sam. Pole RIC ne pošiljamo. Navodilo za inštruktorja
+// (namigi namesto rešitve) gre s prvim sporočilom kot skrit kontekst (state.paperCtx), učenec ga ne vidi.
+// Dvojni dotik ne odpre dveh pogovorov.
+let paperBusy = false;
 async function paperTutor(entry, subjectName) {
-  if (!entry) return;
+  if (!entry || paperBusy) return;
+  paperBusy = true;
   try {
     await newTutorChat();
+    const paper = paperLabel(entry, subjectName);
+    state.paperCtx = { conv: state.conversationId, paper };
     const box = $("#input");
-    box.value = t("pp.tutorMsg", { paper: paperLabel(entry, subjectName) });
+    box.value = `${t("pp.tutorMsg", { paper })} `;
     autoGrow();
     box.focus();
   } catch (err) {
     toast(err.message);
+  } finally {
+    paperBusy = false;
+  }
+}
+// »Reši našo polo v tem slogu« (public/our-paper.js): naloge Evklida z zgradbo izvirne pole. Točke, ki si jih
+// učenec označi, ostanejo v tej napravi. »Vprašaj inštruktorja«: nov pogovor z nalogo, naša rešitev gre
+// inštruktorju kot skrit kontekst (server/paper-context.js), učenec vidi le nalogo.
+async function openOurs(entry, subjectName) {
+  if (!entry?.ours || paperBusy) return;
+  paperBusy = true;
+  try {
+    const paper = await api(`/api/exam-papers/ours/${encodeURIComponent(entry.id)}`);
+    const title = t("pp.oursTitle", { paper: paperLabel(entry, subjectName) });
+    const key = `evklid.ours.${state.student.id}.${entry.id}`;
+    openOurPaper(paper, {
+      title,
+      rich: (md) => withFormulaSubject(entry.subject, () => renderRich(String(md ?? ""))),
+      score: {
+        get: () => {
+          try {
+            return JSON.parse(localStorageGet(key) || "{}");
+          } catch {
+            return {};
+          }
+        },
+        set: (v) => localStorageSet(key, JSON.stringify(v)),
+      },
+      onTutor: (task, part) => oursTutor(entry, title, task, part),
+    });
+  } catch (err) {
+    toast(err.message);
+  } finally {
+    paperBusy = false;
+  }
+}
+async function oursTutor(entry, title, task, part) {
+  if (paperBusy) return;
+  paperBusy = true;
+  try {
+    await newTutorChat();
+    const n = `${task.n}${part.id || ""}`;
+    const strip = (md) => String(md || "").replace(/<svg[\s\S]*?<\/svg>/g, "").trim();
+    const choices = part.format === "choice" && part.choices ? part.choices.map((c, i) => `${String.fromCharCode(65 + i)}) ${strip(c)}`).join("\n") : "";
+    const body = [strip(task.intro), strip(part.text), choices].filter(Boolean).join("\n\n").slice(0, 1500);
+    state.paperCtx = { conv: state.conversationId, paper: title, task: n, ours: entry.id };
+    await send(`${title} · ${t("pp.oursTask", { n })}\n\n${body}`);
+  } catch (err) {
+    toast(err.message);
+  } finally {
+    paperBusy = false;
   }
 }
 // Prenesena pola ostane v pomnilniku (ta seja, ta učenec): po »Pomoč pri tej nalogi« jo »Odpri preneseno polo« pri isti
@@ -3076,8 +3139,10 @@ async function newTutorChat() {
 }
 // »Pomoč pri tej nalogi« v preneseni poli (public/paper-viewer.js): nov pogovor, v enem sporočilu izrez naloge
 // (slika kot pri fotografiji) in besedilo iz pole. Pošlje se samo ta naloga, ker jo je učenec izbral.
+// Učenec vidi le kratek naslov in čisto besedilo naloge; navodilo za inštruktorja je skrit kontekst (state.paperCtx).
 async function paperTask(entry, subjectName, task) {
-  if (!entry || !task?.image) return;
+  if (!entry || !task?.image || paperBusy) return;
+  paperBusy = true;
   try {
     await newTutorChat();
     state.image = task.image;
@@ -3086,9 +3151,12 @@ async function paperTask(entry, subjectName, task) {
     const paper = paperLabel(entry, subjectName);
     const head = task.label ? t("pp.taskMsg", { paper, n: task.label }) : t("pp.boxMsg", { paper, page: task.page });
     const text = String(task.text || "").slice(0, 1500).trim();
-    await send(text ? `${head}\n\n${t("pp.taskText")}\n${text}` : head);
+    state.paperCtx = { conv: state.conversationId, paper, task: task.label || "", page: task.label ? 0 : task.page, fromPdf: !!text };
+    await send(text ? `${head}\n\n${text}` : head);
   } catch (err) {
     toast(err.message);
+  } finally {
+    paperBusy = false;
   }
 }
 
