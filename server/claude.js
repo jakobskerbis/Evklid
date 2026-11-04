@@ -15,9 +15,12 @@ const EFFORT = env("EVKLID_EFFORT", "low");
 // »Razloži podrobneje« je druga razlaga snovi, ne težko sklepanje: Opus pri effort low
 // razloži enako dobro z manj razmišljanja (manj izhodnih žetonov). Prej: medium.
 const EFFORT_DEEP = env("EVKLID_EFFORT_DEEP", "low");
-// Stalni del prompta za Opus ostane v predpomnilniku 1 uro (klici Opusa so redki,
-// 5 minut bi pogosto poteklo in vsakič bi znova plačali zapis).
-const DEEP_CACHE_TTL = env("EVKLID_DEEP_CACHE_TTL", "1h");
+// Čas v predpomnilniku za stalni del prompta (enak za vse učence): »auto« (privzeto) izbere po razmikih
+// med klici istega modela, »1h« ali »5m« ga določi. Zapis za 1 h stane 2× vhod, za 5 min 1,25×, branje
+// osveži čas pri obeh. 1 h se splača le, ko klici prihajajo v razmikih 5–60 min in se vnos prebere vsaj
+// dvakrat; redek posamezen klic (npr. nadgradnja na Opus enkrat na nekaj ur) bi z 1 h stal dvakrat več
+// kot brez predpomnilnika (merjeno na strežniku 4. 11.: 3 odgovori Opusa po ~11 centov, večinoma zapis).
+const CACHE_TTL = () => env("EVKLID_CACHE_TTL", env("EVKLID_DEEP_CACHE_TTL", "auto"));
 // Hitri model z več razmisleka: Tekmovanja in »Razloži podrobneje«, ko je dnevna
 // ali mesečna omejitev za zmogljivejši model porabljena.
 const EFFORT_THINK = env("EVKLID_EFFORT_THINK", "high");
@@ -41,7 +44,8 @@ export function modeParams(mode = "chat") {
   return { model: MODEL, effort: EFFORT, max_tokens: MAX_TOKENS.chat };
 }
 
-// Cene v USD na milijon žetonov (vhod, izhod, branje predpomnilnika, zapis v predpomnilnik).
+// Cene v USD na milijon žetonov (vhod, izhod, branje predpomnilnika, zapis v predpomnilnik za 5 min;
+// zapis za 1 h stane 2× vhod).
 // Preveri na https://claude.com/pricing in po potrebi popravi.
 export const PRICES = {
   "claude-haiku-5-5": { in: 0.1, out: 0.5, cacheRead: 0.01, cacheWrite: 0.125 },
@@ -55,11 +59,15 @@ export function costUsd(model, u) {
   const id = String(model || "");
   const key = Object.keys(PRICES).filter((k) => id === k || id.startsWith(`${k}-`)).sort((a, b) => b.length - a.length)[0];
   const p = PRICES[key] || PRICES["claude-opus-5-5"];
+  // Zapis za 1 h (usage.cache_creation.ephemeral_1h_input_tokens) stane 2× vhod, ostali zapisi 1,25×.
+  const write = u.cache_creation_input_tokens || 0;
+  const write1h = Math.min(write, u.cache_creation?.ephemeral_1h_input_tokens || 0);
   return (
     ((u.input_tokens || 0) * p.in +
       (u.output_tokens || 0) * p.out +
       (u.cache_read_input_tokens || 0) * p.cacheRead +
-      (u.cache_creation_input_tokens || 0) * p.cacheWrite) /
+      (write - write1h) * p.cacheWrite +
+      write1h * p.in * 2) /
     1e6
   );
 }
@@ -120,6 +128,25 @@ export function quickParams(model) {
 // Strežniški nadomestni model ob zavrnitvi podpirajo modeli Opus/Sonnet/Fable, Haiku ne.
 const supportsFallback = (model) => !/haiku/.test(model);
 
+// Začetki zadnjih klicev s stalnim delom prompta po modelu (predpomnilnik je ločen za vsak model).
+const recentCalls = new Map();
+const HOUR = 3_600_000;
+export function cacheTtl(model, now = Date.now(), ttl = CACHE_TTL()) {
+  if (ttl === "1h") return "1h";
+  if (ttl !== "auto") return null; // »5m«: privzeti čas
+  const times = (recentCalls.get(model) || []).filter((t) => now - t < HOUR);
+  // Vsaj dva klica v zadnji uri in povprečni razmik (do zdaj) nad 5 min: vnos za 1 h bo prebran večkrat.
+  if (times.length < 2) return null;
+  const gap = (now - times[0]) / times.length;
+  return gap > 5 * 60_000 ? "1h" : null;
+}
+export function noteCacheCall(model, now = Date.now()) {
+  const times = (recentCalls.get(model) || []).filter((t) => now - t < HOUR);
+  times.push(now);
+  recentCalls.set(model, times.slice(-50));
+}
+export const resetCacheCalls = () => recentCalls.clear();
+
 /**
  * Pretoči odgovor modela.
  * @returns {Promise<{content, text, stopReason, usage, model}>}
@@ -133,7 +160,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     max_tokens,
     // Stalni del prompta (enak za vse učence) ima svojo oznako predpomnilnika,
     // zato se deli med vsemi pogovori; nastavitve učenca so v drugem bloku.
-    system: typeof system === "string" ? systemBlocks(system, { ttl: (mode === "deep" || mode === "mid") && DEEP_CACHE_TTL === "1h" ? "1h" : null }) : system,
+    system: typeof system === "string" ? systemBlocks(system, { ttl: cacheTtl(model) }) : system,
     messages,
     thinking: { type: "adaptive" },
     output_config: { effort },
@@ -144,6 +171,8 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   // Orodja (npr. nastavitve iz klepeta) so pred sistemskim promptom in enaka za vse učence,
   // zato ostanejo v istem predpomnjenem začetku.
   if (tools?.length) params.tools = tools;
+  // Razmike štejemo samo za klice s skupnim stalnim delom (pregledi in popravki imajo svoj kratek prompt).
+  if (Array.isArray(params.system) && params.system[0]?.cache_control) noteCacheCall(model);
   if (supportsFallback(model)) {
     params.betas = ["server-side-fallback-2026-07-01"];
     params.fallbacks = "default";
@@ -196,6 +225,11 @@ export function addUsage(a, b) {
   if (!a) return { ...b };
   const out = { ...a };
   for (const k of ["input_tokens", "output_tokens", "cache_read_input_tokens", "cache_creation_input_tokens"]) out[k] = (a[k] || 0) + (b[k] || 0);
+  // Razdelitev zapisov po času (5 min / 1 h) za pravilno ceno (costUsd).
+  if (a.cache_creation || b.cache_creation) {
+    out.cache_creation = {};
+    for (const k of ["ephemeral_5m_input_tokens", "ephemeral_1h_input_tokens"]) out.cache_creation[k] = (a.cache_creation?.[k] || 0) + (b.cache_creation?.[k] || 0);
+  }
   return out;
 }
 
