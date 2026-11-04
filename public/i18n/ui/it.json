@@ -2481,6 +2481,7 @@
   "scan.mock": "La lettura delle foto al momento non funziona. Scrivi l'esercizio con la tastiera.",
   "scan.offline": "Per leggere una foto ti serve la connessione. Puoi scrivere l'esercizio: lo risolvo anche offline.",
   "scan.readAs": "Ho letto",
+  "scan.given": "Dati",
   "scan.pick": "Nell'immagine ci sono più esercizi. Scegline uno:",
   "scan.inputLabel": "Esercizio (correggilo se ho letto male qualcosa)",
   "scan.typeLabel": "Esercizio",

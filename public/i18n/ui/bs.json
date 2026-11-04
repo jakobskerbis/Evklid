@@ -2500,6 +2500,7 @@
   "scan.mock": "Čitanje fotografija trenutno ne radi. Zadatak upiši tastaturom.",
   "scan.offline": "Za čitanje fotografije trebaš internet vezu. Zadatak možeš upisati, riješit ću ga i bez veze.",
   "scan.readAs": "Pročitao sam",
+  "scan.given": "Zadano",
   "scan.pick": "Na slici je više zadataka. Izaberi jedan:",
   "scan.inputLabel": "Zadatak (ispravi ga ako sam nešto pogrešno pročitao)",
   "scan.typeLabel": "Zadatak",

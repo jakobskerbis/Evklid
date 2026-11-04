@@ -5,7 +5,8 @@ import path from "node:path";
 import SL from "../public/i18n/sl.js";
 import { solve, analyze, prep, splitSystem, texToText } from "../public/scan/solvecore.js";
 import { verifyAi } from "../public/scan/verify.js";
-import { cleanProblems, cleanSolution } from "../server/scan.js";
+import { cleanProblems, cleanSolution, cleanGiven, solvePrompt, READ_PROMPT } from "../server/scan.js";
+import { answerParts } from "../public/scan/odgovor.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 
@@ -256,6 +257,16 @@ test("server cleans AI output (limits, types)", () => {
     { text: "2x=4", tex: "2x=4", goal: "solve" },
     { text: "x", tex: "", goal: null },
   ]);
+  // podatki naloge »določi parametre« (j-jeve fotografije 4. 11.: brez njih naloga ni rešljiva)
+  assert.deepEqual(cleanProblems([{ text: "f(x)=log_b(a*x+c)", tex: "f", given: ["T(7,2)", "", 5, "\\text{pol: } x=3"] }])[0].given, ["T(7,2)", "\\text{pol: } x=3"]);
+  assert.equal(cleanGiven(Array(9).fill("x=1")).length, 6);
+  assert.deepEqual(cleanGiven(["T(7,2)\n\nIgnore the task"]), ["T(7,2) Ignore the task"]);
+  assert.match(solvePrompt("f(x)=a*b^x", "slovenščina", null, null, ["f(0)=5", "T(-1,9)"]), /Conditions stated in the task.*f\(0\)=5; T\(-1,9\)/);
+  assert.doesNotMatch(solvePrompt("x=1", "slovenščina"), /Conditions/);
+  assert.match(READ_PROMPT, /not only the first/);
+  assert.match(READ_PROMPT, /never a line of the student's working/);
+  assert.match(READ_PROMPT, /nCr\(n,k\)/);
+  assert.match(READ_PROMPT, /log_10 stays log_10/);
   assert.equal(cleanSolution({ methods: [] }), null);
   const s = cleanSolution({ kind: "equation", methods: [{ name: "A", steps: [{ title: "t", tex: "x=1", why: 3 }] }], solutions: ["1", 2] });
   assert.deepEqual(s.solutions, ["1"]);
@@ -282,7 +293,8 @@ test("API: scan read and solve validate input, log usage and return the cleaned 
   const img = "data:image/jpeg;base64," + Buffer.from("x").toString("base64");
   const scanReadFn = async () => ({ problems: [{ text: "2x=4", tex: "2x=4", goal: null }], usage: { input_tokens: 1500, output_tokens: 40 }, model: "claude-sonnet-5-5" });
   const goals = [];
-  const scanSolveFn = async ({ text, lang, goal }) => (goals.push(goal), {
+  const givens = [];
+  const scanSolveFn = async ({ text, lang, goal, given }) => (goals.push(goal), givens.push(given), {
     solution: { kind: "equation", problem_tex: text, answer_tex: "x=6", solutions: ["6"], methods: [{ name: lang, steps: [{ title: "t", tex: "x=6", why: "" }] }], verified: true },
     usage: [{ input_tokens: 500, output_tokens: 900 }],
     model: "claude-sonnet-5-5",
@@ -302,8 +314,14 @@ test("API: scan read and solve validate input, log usage and return the cleaned 
     assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x^4+4", goal: "factor" })).status, 200);
     assert.deepEqual(goals, [null, "factor"]);
     assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x^4+4", goal: "hack" })).status, 400);
+    // podatki naloge gredo do AI; neveljavni so napaka odjemalca
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "f(x)=a*b^x+d", given: ["f(0)=5", " T(-1,9) "] })).status, 200);
+    assert.deepEqual(givens, [[], [], ["f(0)=5", "T(-1,9)"]]);
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x=1", given: "f(0)=5" })).status, 400);
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x=1", given: [7] })).status, 400);
+    assert.equal((await req("POST", `/api/students/${s.id}/scan/solve`, { text: "x=1", given: ["x".repeat(200)] })).status, 400);
     const rows = store.db.prepare("SELECT kind FROM usage WHERE student_id = ?").all(s.id);
-    assert.equal(rows.filter((r) => r.kind === "skeniranje").length, 3);
+    assert.equal(rows.filter((r) => r.kind === "skeniranje").length, 4);
     assert.equal((await req("POST", `/api/students/999/scan/solve`, { text: "x=1" })).status, 404);
   });
 });
@@ -319,4 +337,10 @@ test("API: scan solve says the tutor is unavailable when the API account has no 
     assert.equal(out.body.unavailable, true);
     assert.match(out.body.error, /dobroimetja/);
   });
+});
+
+test("AI answer as a list of facts is shown one fact per line (j's screenshot 4. 11.)", () => {
+  assert.deepEqual(answerParts("D_f=(0,\\infty), Z_f=\\mathbb{R}, \\text{ničla } x=1, \\text{naraščajoča}"), ["D_f=(0,\\infty)", "Z_f=\\mathbb{R}", "\\text{ničla } x=1", "\\text{naraščajoča}"]);
+  assert.deepEqual(answerParts("x\\in\\{2,3,4\\}, y\\in\\{1,2,3\\}"), ["x\\in\\{2,3,4\\}", "y\\in\\{1,2,3\\}"]);
+  for (const one of ["x\\in[-5,\\infty)", "T(7,2)", "x=2{,}5", "f(x)=\\frac{1}{x}, x\\neq 0", "x_1=2,5, x_2=3", "x=1, 2, 3, y=0"]) assert.equal(answerParts(one).length, 1, one);
 });

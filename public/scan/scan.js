@@ -8,6 +8,7 @@ import { jeOs } from "../stopnja.js";
 import { solve, analyze, prep, tex as exprTex, parseTask } from "./solvecore.js";
 import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
+import { answerParts } from "./odgovor.js";
 
 let D = null; // { api, getStudent, toast, escapeHtml, askTutor, openGraph }
 const fresh = () => ({
@@ -22,6 +23,7 @@ const fresh = () => ({
   shown: 1, // koliko korakov je razkritih
   ai: null, // { loading, error }
   note: null, // obvestilo nad poljem (npr. brez povezave)
+  given: [], // podatki naloge s fotografije (točka, asimptota …), gredo k AI rešitvi
   quality: null, // težava fotografije (blur | dark | glare), ki jo zaznamo na napravi pred branjem
 });
 const S = fresh();
@@ -52,7 +54,17 @@ const coarse = () => window.matchMedia?.("(pointer: coarse)").matches;
 
 // leva in desna stran pri preizkusu (\\sideL, \\sideR iz solvecore.js) v jeziku vmesnika
 const sideMacros = () => ({ "\\sideL": `\\text{${t("scan.sideL")}}`, "\\sideR": `\\text{${t("scan.sideR")}}` });
-const plainSides = (tx) => String(tx ?? "").replace(/\\sideL/g, t("scan.sideL")).replace(/\\sideR/g, t("scan.sideR"));
+// formula za sporočilo inštruktorju: v $…$, da jo klepet izriše (prej je ostal surov LaTeX, npr. \iff; j 4. 11.)
+const texSides = (tx) => String(tx ?? "").replace(/\\sideL/g, `\\text{${t("scan.sideL")}}`).replace(/\\sideR/g, `\\text{${t("scan.sideR")}}`);
+const dollars = (tx) => {
+  const s = texSides(tx).replace(/\\?\$/g, "").replace(/\s+/g, " ").trim(); // klepet loči $…$ brez \n; \$ bi ubežal zaključnemu $
+  return s ? `$${s}$` : "";
+};
+// odgovor: ena formula prikazno; seznam dejstev po eno v vrstico, v besedilni velikosti, da se dolgo dejstvo prelomi
+function answerTex(tex) {
+  const parts = answerParts(tex);
+  return parts.length > 1 ? parts.map((p) => `<p class="scan-fact">${math(p)}</p>`).join("") : math(tex, true);
+}
 function math(tx, display = false) {
   try {
     return window.katex.renderToString(String(tx ?? ""), { throwOnError: false, strict: "ignore", displayMode: display, macros: sideMacros() });
@@ -87,6 +99,7 @@ export function showScan({ text = null, goal = null } = {}) {
   if (text) {
     S.text = text;
     S.problems = [];
+    S.given = [];
     S.goal = goal; // npr. »factor« iz kalkulatorja (razstavi)
     return solveNow();
   }
@@ -172,6 +185,7 @@ function renderCapture(box) {
   box.querySelector('[data-act="type"]').addEventListener("click", () => {
     S.text = "";
     S.problems = [];
+    S.given = [];
     S.note = null;
     S.mode = "confirm";
     render();
@@ -194,6 +208,7 @@ function renderCapture(box) {
       S.text = h.text;
       S.goal = h.goal || null;
       S.problems = [];
+      S.given = Array.isArray(h.given) ? h.given.filter((g) => typeof g === "string").slice(0, 6) : [];
       solveNow();
     }),
   );
@@ -481,18 +496,21 @@ async function readImage(dataUrl) {
     if (out.mock) {
       S.note = t("scan.mock");
       S.problems = [];
+      S.given = [];
       S.text = "";
       S.mode = "confirm";
       return render();
     }
     S.problems = out.problems || [];
     if (!S.problems.length) {
+      S.given = [];
       D.toast(t("scan.readFail"));
       S.mode = "crop";
       return render();
     }
     S.note = null;
     S.text = S.problems[0].text;
+    S.given = S.problems[0].given || [];
     S.goal = S.problems[0].goal || null;
     S.mode = "confirm";
     render();
@@ -514,6 +532,7 @@ function renderConfirm(box) {
     <div class="card scan-confirm">
       ${S.problems.length ? `<p class="scan-label">${esc(t("scan.readAs"))}</p>` : ""}
       <div class="scan-preview" aria-live="polite"></div>
+      ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item">${math(g)}</span>`).join("")}</p>` : ""}
       <label class="scan-label" for="scan-input">${esc(S.problems.length ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
       <div class="scan-input-row">
         <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(S.text)}">
@@ -532,7 +551,12 @@ function renderConfirm(box) {
     S.text = input.value;
     const info = analyze(input.value);
     err.hidden = true;
-    if (!input.value.trim()) return (prev.innerHTML = "");
+    if (!input.value.trim()) {
+      // izbrisana naloga: podatki prejšnje ne smejo k novi, vpisani
+      S.given = [];
+      box.querySelector(".scan-given")?.remove();
+      return (prev.innerHTML = "");
+    }
     if (info.type === "error") {
       prev.innerHTML = "";
       return;
@@ -560,6 +584,7 @@ function renderConfirm(box) {
     b.addEventListener("click", () => {
       const p = S.problems[Number(b.dataset.pick)];
       S.text = p.text;
+      S.given = p.given || [];
       S.goal = p.goal || null;
       render();
     }),
@@ -589,7 +614,8 @@ function renderConfirm(box) {
 
 function solveNow() {
   const complex = !jeOs(D.getStudent()?.settings) || /SŠ|faks/i.test(D.getStudent()?.settings?.curriculum_level || "");
-  const r = solve(S.text, { goal: S.goal, complex });
+  // naloga s podatki (»določi a, b, c, če gre graf skozi T(7,2) …«): lastni reševalnik podatkov ne pozna, reši jo AI
+  const r = S.given.length ? { ok: false, goals: [] } : solve(S.text, { goal: S.goal, complex });
   S.result = r.ok ? r : null;
   S.goals = r.goals || [];
   S.goal = r.goal || S.goal;
@@ -614,6 +640,7 @@ async function solveAi() {
   // izbrani cilj gre zraven (»Razstavi«, »Odvod« …); ničle izraza = rešitve enačbe izraz = 0
   const text = prep(S.text);
   const body = S.goal === "zeros" ? { text: `${text}=0`, goal: "solve" } : { text, goal: S.goal || null };
+  if (S.given.length) body.given = S.given;
   try {
     const out = await D.api(`/api/students/${sid()}/scan/solve`, { method: "POST", body });
     if (seq !== aiSeq || S.mode !== "solution") return;
@@ -681,7 +708,7 @@ function renderSolution(box) {
   box.innerHTML = `${head}
     <section class="card scan-answer" aria-label="${esc(t("scan.answer"))}">
       <div class="scan-answer-head"><span class="scan-label">${esc(t("scan.answer"))}</span>${badge}</div>
-      <div class="scan-answer-tex">${r.answer.key ? `<p>${esc(t(r.answer.key))}</p>` : ""}${math(r.answer.tex, true)}</div>
+      <div class="scan-answer-tex">${r.answer.key ? `<p>${esc(t(r.answer.key))}</p>` : ""}${answerTex(r.answer.tex)}</div>
       ${r.answer.approx ? `<div class="scan-approx">${math(r.answer.approx)}</div>` : ""}
     </section>
     ${r.methods.length > 1 ? `<div class="scan-methods"><span class="scan-label">${esc(t("scan.method"))}</span><div class="seg" role="tablist">${r.methods.map((mm, i) => `<button type="button" role="tab" data-method="${i}" class="${i === S.method ? "active" : ""}" aria-selected="${i === S.method}">${esc(mm.name || t(`scan.m.${mm.id}`))}</button>`).join("")}</div></div>` : ""}
@@ -755,13 +782,14 @@ function bindSolution(box) {
     const i = Number(e.currentTarget.dataset.ask);
     const s = S.result.methods[S.method].steps[i];
     const title = typeof s.title === "string" ? s.title : t(s.title.k, s.title.v);
-    D.askTutor(t("scan.askStepText", { problem: S.text, n: i + 1, title, tex: plainSides(s.tex) }));
+    D.askTutor(t("scan.askStepText", { problem: S.text, n: i + 1, title, tex: dollars(s.tex) }));
   });
-  on('[data-act="ask"]', () => D.askTutor(t("scan.askAllText", { problem: S.text, answer: S.result?.answer?.tex || "?" })));
+  on('[data-act="ask"]', () => D.askTutor(t("scan.askAllText", { problem: S.text, answer: dollars(S.result?.answer?.tex) || "?" })));
   on('[data-act="new"]', () => {
     S.mode = "capture";
     S.result = null;
     S.problems = [];
+    S.given = [];
     S.text = "";
     S.goal = null;
     frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };
@@ -856,7 +884,7 @@ function history() {
 }
 function remember(r) {
   const h = history().filter((x) => x.text !== S.text || x.goal !== (S.goal || null));
-  h.unshift({ text: S.text, goal: S.goal || null, tex: r.problemTex, answer: r.answer?.key ? null : r.answer?.tex, at: Date.now() });
+  h.unshift({ text: S.text, goal: S.goal || null, ...(S.given.length ? { given: S.given } : {}), tex: r.problemTex, answer: r.answer?.key ? null : r.answer?.tex, at: Date.now() });
   try {
     localStorage.setItem(HIST(), JSON.stringify(h.slice(0, 12)));
   } catch {}

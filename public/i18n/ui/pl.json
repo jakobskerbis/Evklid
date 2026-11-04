@@ -2520,6 +2520,7 @@
   "scan.mock": "Odczytywanie zdjęć teraz nie działa. Wpisz zadanie z klawiatury.",
   "scan.offline": "Do odczytania zdjęcia potrzebujesz połączenia. Możesz wpisać zadanie – rozwiążę je także offline.",
   "scan.readAs": "Odczytałem",
+  "scan.given": "Dane",
   "scan.pick": "Na zdjęciu jest kilka zadań. Wybierz jedno:",
   "scan.inputLabel": "Zadanie (popraw, jeśli coś źle odczytałem)",
   "scan.typeLabel": "Zadanie",

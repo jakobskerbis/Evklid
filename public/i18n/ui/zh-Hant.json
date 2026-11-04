@@ -2463,6 +2463,7 @@
   "scan.mock": "目前無法辨識照片。請用鍵盤輸入題目。",
   "scan.offline": "辨識照片需要連網。你可以直接輸入題目，離線我也能解。",
   "scan.readAs": "辨識結果",
+  "scan.given": "已知",
   "scan.pick": "圖片裡有好幾題。選一題：",
   "scan.inputLabel": "題目（如果我辨識錯了，請修正）",
   "scan.typeLabel": "題目",

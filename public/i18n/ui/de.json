@@ -2480,6 +2480,7 @@
   "scan.mock": "Fotos können gerade nicht gelesen werden. Tippe die Aufgabe ein.",
   "scan.offline": "Zum Lesen eines Fotos brauchst du eine Verbindung. Du kannst die Aufgabe eintippen, lösen kann ich sie auch offline.",
   "scan.readAs": "Ich habe gelesen",
+  "scan.given": "Gegeben",
   "scan.pick": "Auf dem Bild sind mehrere Aufgaben. Wähle eine aus:",
   "scan.inputLabel": "Aufgabe (korrigiere sie, falls ich etwas falsch gelesen habe)",
   "scan.typeLabel": "Aufgabe",

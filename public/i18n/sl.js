@@ -2505,6 +2505,7 @@ export default {
   "scan.mock": "Branje fotografij trenutno ne deluje. Nalogo vpiši s tipkami.",
   "scan.offline": "Za branje fotografije potrebuješ povezavo. Nalogo lahko vpišeš, rešim jo tudi brez povezave.",
   "scan.readAs": "Prebral sem",
+  "scan.given": "Podatki",
   "scan.pick": "Na sliki je več nalog. Izberi eno:",
   "scan.inputLabel": "Naloga (popravi, če sem kaj narobe prebral)",
   "scan.typeLabel": "Naloga",
