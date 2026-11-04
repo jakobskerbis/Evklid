@@ -17,19 +17,25 @@ Začni pri enem samem nihalu: utež na vzmeti potegneš navzdol in spustiš. Vzm
 
 **1. Osnovni pojmi.** Nihalo se giblje okoli **ravnovesne lege**, kjer je vsota sil nanj enaka nič. Odmik od ravnovesne lege označimo z $x$. Največji odmik je **amplituda** $x_0$. **Nihajni čas** $t_0$ (v mnogih učbenikih $T$) je čas enega celega nihaja, **frekvenca** $\nu = 1/t_0$ (enota $\mathrm{Hz} = \mathrm{s^{-1}}$), **krožna frekvenca** pa $\omega = 2\pi\nu = 2\pi/t_0$.
 
-**2. Harmonična sila in enačba nihanja.** Nihanje je harmonično, kadar je sila, ki vleče telo nazaj proti ravnovesni legi, sorazmerna z odmikom:
+**2. Harmonična sila in enačba nihanja.** **Definicija.** Naj se telo z maso $m$ giblje vzdolž osi $x$ in naj nanj v smeri gibanja deluje le sila, ki je sorazmerna z odmikom od ravnovesne lege in usmerjena proti njej:
 
-$$F = -kx.$$
+$$F = -kx, \qquad k > 0.$$
 
-Po drugem Newtonovem zakonu je $m\ddot{x} = -kx$ oziroma
+Takšno silo imenujemo **harmonična sila**, gibanje pod njo pa **harmonično nihanje** (telo je **harmonični oscilator**). Po drugem Newtonovem zakonu je $m\ddot{x} = -kx$ oziroma
 
 $$\ddot{x} + \omega_0^2 x = 0, \qquad \omega_0 = \sqrt{\frac{k}{m}}.$$
 
-To je linearna diferencialna enačba drugega reda. Njena splošna rešitev je
+**Izrek.** Vsaka rešitev te enačbe ima obliko
 
 $$x(t) = x_0\cos(\omega_0 t + \delta),$$
 
-kjer sta amplituda $x_0$ in **fazni zamik** $\delta$ določena z začetno lego in začetno hitrostjo. Z vstavljanjem preveriš, da rešitev ustreza enačbi: $\ddot{x} = -\omega_0^2 x$.
+kjer sta amplituda $x_0 \ge 0$ in **fazni zamik** $\delta$ določena z začetno lego $x(0)$ in začetno hitrostjo $v(0)$ (amplituda enolično, pri $x_0 > 0$ pa $\delta$ enolično do večkratnika $2\pi$):
+
+$$x_0 = \sqrt{x(0)^2 + \left(\frac{v(0)}{\omega_0}\right)^2},$$
+
+$$\cos\delta = \frac{x(0)}{x_0}, \qquad \sin\delta = -\frac{v(0)}{\omega_0 x_0}.$$
+
+*Dokaz (skica).* Z dvakratnim odvajanjem dobiš $\ddot{x} = -\omega_0^2x_0\cos(\omega_0 t + \delta) = -\omega_0^2x$, torej funkcija enačbo reši. Pri $t = 0$ je $x(0) = x_0\cos\delta$ in $v(0) = -\omega_0x_0\sin\delta$; kvadriramo in seštejemo, pa dobimo $x_0$. Da drugih rešitev ni, sledi iz izreka o enoličnosti za linearne enačbe drugega reda (razdelek »Bolj natančno«).
 
 **3. Hitrost in pospešek.** Z odvajanjem dobimo
 
@@ -53,7 +59,7 @@ Pri navpični vzmeti teža le premakne ravnovesno lego za $mg/k$ navzdol; okoli 
 
 Če utež obesimo na dve vzmeti, je pomembno, kako sta vezani. Pri **vzporedni** vezavi (vzmeti druga ob drugi) se raztezka ujemata, sili pa seštejeta, zato je $k = k_1 + k_2$ in nihalo niha hitreje. Pri **zaporedni** vezavi (vzmet pod vzmetjo) obe nosita isto silo, raztezka pa se seštejeta, zato je $1/k = 1/k_1 + 1/k_2$ in nihalo niha počasneje. Dve enaki vzmeti zaporedno imata polovični koeficient, vzporedno pa dvakratnega.
 
-**5. Matematično nihalo.** Točkasta utež na lahki neraztegljivi vrvici dolžine $l$. Če je odklon $\varphi$, je tangentna komponenta teže $-mg\sin\varphi$, lok pa $s = l\varphi$. Enačba gibanja je
+**5. Matematično nihalo.** Točkasta utež na lahki neraztegljivi vrvici dolžine $l$. Če je odklon $\varphi$, je tangentna komponenta teže $-mg\sin\varphi$, lok pa $s = l\varphi$, zato je pospešek vzdolž loka $\ddot{s} = l\ddot{\varphi}$. Drugi Newtonov zakon vzdolž loka da
 
 $$ml\ddot{\varphi} = -mg\sin\varphi.$$
 
@@ -75,21 +81,31 @@ Sila, ki vrača utež, je del teže $mg\sin\varphi$ in je sorazmerna z maso, sor
 
 $$W = \tfrac{1}{2}mv^2 + \tfrac{1}{2}kx^2 = \tfrac{1}{2}kx_0^2 = \tfrac{1}{2}mv_{\max}^2.$$
 
-Energija je sorazmerna s **kvadratom amplitude**. Iz ohranitve energije lahko izračunamo hitrost pri poljubnem odmiku: $v = \omega_0\sqrt{x_0^2 - x^2}$.
+*Dokaz.* Odvajamo vsoto po času: $\dot{W} = mv\dot{v} + kx\dot{x} = v(m\ddot{x} + kx) = 0$, ker je po enačbi gibanja $m\ddot{x} + kx = 0$. Energija je torej stalna; v skrajni legi je $v = 0$ in $W = \tfrac{1}{2}kx_0^2$.
+
+Energija je sorazmerna s **kvadratom amplitude**. Iz $\tfrac{1}{2}mv^2 + \tfrac{1}{2}kx^2 = \tfrac{1}{2}kx_0^2$ in $k/m = \omega_0^2$ dobimo hitrost pri poljubnem odmiku: $v = \pm\omega_0\sqrt{x_0^2 - x^2}$.
 
 **7. Dušeno nihanje.** V resnici nihanje zaradi trenja in upora počasi zamre. Pri majhnih hitrostih je sila upora sorazmerna s hitrostjo, $F_u = -bv$. Enačba gibanja je
 
-$$m\ddot{x} + b\dot{x} + kx = 0 \quad\Longleftrightarrow\quad \ddot{x} + 2\beta\dot{x} + \omega_0^2 x = 0, \qquad \beta = \frac{b}{2m}.$$
+$$m\ddot{x} + b\dot{x} + kx = 0,$$
 
-Glede na velikost **koeficienta dušenja** $\beta$ ločimo tri primere:
+kar po deljenju z $m$ zapišemo kot
+
+$$\ddot{x} + 2\beta\dot{x} + \omega_0^2 x = 0, \qquad \beta = \frac{b}{2m}.$$
+
+Nastavek $x = e^{\lambda t}$ da karakteristično enačbo $\lambda^2 + 2\beta\lambda + \omega_0^2 = 0$ s koreni $\lambda = -\beta \pm \sqrt{\beta^2 - \omega_0^2}$. Glede na velikost **koeficienta dušenja** $\beta$ (predznak diskriminante) ločimo tri primere:
 
 - **šibko dušenje** ($\beta < \omega_0$): $x(t) = x_0\,e^{-\beta t}\cos(\omega t + \delta)$ z $\omega = \sqrt{\omega_0^2 - \beta^2}$; amplituda eksponentno pojema, energija pa kot $e^{-2\beta t}$;
 - **kritično dušenje** ($\beta = \omega_0$): telo se najhitreje vrne v ravnovesno lego brez nihanja;
 - **nadkritično dušenje** ($\beta > \omega_0$): telo se počasi, brez nihanja, plazi v ravnovesno lego.
 
-Pri šibkem dušenju se amplituda v času $t_{1/2} = \ln 2/\beta$ razpolovi. Ker je navadno $\beta \ll \omega_0$, se krožna frekvenca zaradi dušenja skoraj ne spremeni.
+Pri šibkem dušenju se amplituda v času $t_{1/2} = \ln 2/\beta$ razpolovi. Ker je navadno $\beta \ll \omega_0$, se krožna frekvenca zaradi dušenja skoraj ne spremeni. Energija vedno pojema, ker je moč sile upora $\dot{W} = F_uv = -bv^2 \le 0$.
 
-**8. Vsiljeno nihanje in resonanca (na kratko).** Če na dušen oscilator deluje periodična sila s krožno frekvenco $\omega_v$, po prehodnem času niha s frekvenco sile. Amplituda je največja, ko je $\omega_v$ blizu $\omega_0$ (**resonanca**), in tem večja, čim šibkejše je dušenje.
+**8. Vsiljeno nihanje in resonanca (na kratko).** Če na dušen oscilator deluje sila $F_0\cos\omega_vt$, po prehodnem času niha s krožno frekvenco sile in amplitudo
+
+$$x_0(\omega_v) = \frac{F_0/m}{\sqrt{(\omega_0^2 - \omega_v^2)^2 + 4\beta^2\omega_v^2}}.$$
+
+Če je $\beta < \omega_0/\sqrt{2}$, je amplituda največja pri $\omega_v = \sqrt{\omega_0^2 - 2\beta^2}$, torej blizu $\omega_0$ (**resonanca**), in tem večja, čim šibkejše je dušenje.
 
 ## Rešeni primeri
 
@@ -134,13 +150,13 @@ $\omega_0 = \sqrt{g/l}$, $t_0 = 2\pi\sqrt{l/g}$, $v_{\max} = \omega_0 x_0$
 
 ### Primer 3 (težji)
 
-Utež z maso $0{,}50\,\mathrm{kg}$ niha na vzmeti s koeficientom $50\,\mathrm{N/m}$ v zraku. Amplituda se v $8{,}0\,\mathrm{s}$ zmanjša z $10\,\mathrm{cm}$ na $5{,}0\,\mathrm{cm}$. Kolikšna sta koeficient dušenja in koeficient upora $b$? Koliko nihajev naredi utež v tem času in po kolikšnem času je amplituda le še $1\,\%$ začetne?
+Utež z maso $0{,}50\,\mathrm{kg}$ niha na vzmeti s koeficientom $50\,\mathrm{N/m}$ v zraku. Amplituda se v $8{,}0\,\mathrm{s}$ zmanjša z $10\,\mathrm{cm}$ na $5{,}0\,\mathrm{cm}$. Kolikšna sta koeficient dušenja in koeficient upora $b$? Koliko nihajev naredi utež v tem času, koliko mehanske energije se v tem času pretvori v notranjo energijo zraka in po kolikšnem času je amplituda le še $1\,\%$ začetne? Kolikšen bi moral biti koeficient upora, da bi bilo dušenje kritično?
 
 **Podatki:** $m = 0{,}50\,\mathrm{kg}$, $k = 50\,\mathrm{N/m}$, $x_0 = 10\,\mathrm{cm}$, po $t_1 = 8{,}0\,\mathrm{s}$ je amplituda $5{,}0\,\mathrm{cm}$, upor $F_u = -bv$
-**Iščemo:** $\beta$, $b$, število nihajev v $8{,}0\,\mathrm{s}$, čas $t_2$, ko je amplituda $1\,\%$ začetne
+**Iščemo:** $\beta$, $b$, število nihajev v $8{,}0\,\mathrm{s}$, izgubo energije $\Delta W$, čas $t_2$, ko je amplituda $1\,\%$ začetne, koeficient upora $b_k$ za kritično dušenje
 
 :::formula
-Amplituda $x_0e^{-\beta t}$, $\beta = b/(2m)$, $\omega = \sqrt{\omega_0^2 - \beta^2}$, $t_0 = 2\pi/\omega$
+Amplituda $x_0e^{-\beta t}$, $\beta = b/(2m)$, $\omega = \sqrt{\omega_0^2 - \beta^2}$, $t_0 = 2\pi/\omega$, $W = \tfrac{1}{2}kx_0^2$, kritično dušenje pri $\beta = \omega_0$
 :::
 
 **Rešitev:**
@@ -149,8 +165,10 @@ Amplituda $x_0e^{-\beta t}$, $\beta = b/(2m)$, $\omega = \sqrt{\omega_0^2 - \bet
 2. Koeficient upora: $b = 2m\beta = 2 \cdot 0{,}50\,\mathrm{kg} \cdot 0{,}0866\,\mathrm{s^{-1}} \approx 0{,}0866\,\mathrm{kg/s}$.
 3. Lastna krožna frekvenca: $\omega_0 = \sqrt{50/0{,}50}\,\mathrm{s^{-1}} = 10\,\mathrm{s^{-1}}$. Ker je $\beta \ll \omega_0$, je $\omega = \sqrt{100 - 0{,}0075}\,\mathrm{s^{-1}} \approx 10{,}0\,\mathrm{s^{-1}}$ in $t_0 \approx 0{,}628\,\mathrm{s}$.
 4. Število nihajev v $8{,}0\,\mathrm{s}$ (čas, deljen z nihajnim časom): $8{,}0/0{,}628 \approx 12{,}7$.
-5. Amplituda $1\,\%$: $e^{-\beta t_2} = 0{,}01$, torej $t_2 = \ln 100/\beta = 4{,}605/0{,}0866\,\mathrm{s} \approx 53\,\mathrm{s}$.
-6. Odgovor: koeficient dušenja je približno $0{,}087\,\mathrm{s^{-1}}$, koeficient upora približno $0{,}087\,\mathrm{kg/s}$; v $8{,}0\,\mathrm{s}$ utež naredi približno $12{,}7$ nihaja, amplituda pa pade na $1\,\%$ po približno $53\,\mathrm{s}$. Energija se v vsakih $8{,}0\,\mathrm{s}$ zmanjša na četrtino.
+5. Energija je sorazmerna s kvadratom amplitude: na začetku $W_1 = \tfrac{1}{2} \cdot 50\,\mathrm{N/m} \cdot (0{,}10\,\mathrm{m})^2 = 0{,}25\,\mathrm{J}$, po $8{,}0\,\mathrm{s}$ pa $\tfrac{1}{2} \cdot 50 \cdot 0{,}050^2\,\mathrm{J} = 0{,}0625\,\mathrm{J}$. Sila upora pretvori $\Delta W = 0{,}25 - 0{,}0625 \approx 0{,}19\,\mathrm{J}$.
+6. Amplituda $1\,\%$: $e^{-\beta t_2} = 0{,}01$, torej $t_2 = \ln 100/\beta = 4{,}605/0{,}0866\,\mathrm{s} \approx 53\,\mathrm{s}$.
+7. Kritično dušenje zahteva $\beta = \omega_0$, torej $b_k = 2m\omega_0 = 2 \cdot 0{,}50\,\mathrm{kg} \cdot 10\,\mathrm{s^{-1}} = 10\,\mathrm{kg/s}$, kar je približno $115$-krat več od dejanskega $b$.
+8. Odgovor: koeficient dušenja je približno $0{,}087\,\mathrm{s^{-1}}$, koeficient upora približno $0{,}087\,\mathrm{kg/s}$; v $8{,}0\,\mathrm{s}$ utež naredi približno $12{,}7$ nihaja in izgubi približno $0{,}19\,\mathrm{J}$ (tri četrtine) energije, amplituda pade na $1\,\%$ po približno $53\,\mathrm{s}$. Za kritično dušenje bi potrebovali $b_k = 10\,\mathrm{kg/s}$, na primer utež v viskoznem olju.
 
 ### Primer 4 – zdaj ti
 
@@ -192,6 +210,44 @@ $v_{\max} = 316\,\mathrm{s^{-1}} \cdot 0{,}0020\,\mathrm{m} \approx 0{,}63\,\mat
 - Energija: $W = \tfrac{1}{2}kx_0^2 = \tfrac{1}{2}mv_{\max}^2$, sorazmerna s kvadratom amplitude.
 - Dušenje: $\ddot{x} + 2\beta\dot{x} + \omega_0^2x = 0$; šibko: amplituda $\propto e^{-\beta t}$, $\omega = \sqrt{\omega_0^2 - \beta^2}$; kritično pri $\beta = \omega_0$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo harmonične sile in harmoničnega nihanja, enačbo $\ddot{x} + \omega_0^2x = 0$ in izrek o njeni rešitvi, vključno z izračunom $x_0$ in $\delta$ iz začetne lege in hitrosti;
+- izpeljavo $t_0 = 2\pi\sqrt{m/k}$ ter $t_0 = 2\pi\sqrt{l/g}$ s pogojem majhnih odklonov ($\sin\varphi \approx \varphi$, kot v radianih);
+- izpeljavo koeficienta zaporedne in vzporedne vezave vzmeti;
+- dokaz ohranitve energije nedušenega nihala in izpeljavo $v = \pm\omega_0\sqrt{x_0^2 - x^2}$;
+- enačbo dušenega nihanja, karakteristično enačbo, tri vrste dušenja s pogoji in pojemanje amplitude ($e^{-\beta t}$) ter energije ($e^{-2\beta t}$).
+
+### Naloga 1
+
+Dve vzmeti s koeficientoma $k_1 = 60\,\mathrm{N/m}$ in $k_2 = 30\,\mathrm{N/m}$ sta vezani zaporedno, zgornja je pritrjena na strop, na spodnjo obesimo utež z maso $0{,}40\,\mathrm{kg}$. (a) Za koliko je raztegnjena vsaka vzmet, ko utež miruje? (b) Utež izmaknemo tako, da je ob $t = 0$ $3{,}0\,\mathrm{cm}$ pod ravnovesno lego in se giblje navzgor s hitrostjo $0{,}25\,\mathrm{m/s}$. Kolikšna sta nihajni čas in amplituda in ob katerem času je utež prvič v najvišji legi? (c) Kolikšni sta največja in najmanjša sila v zgornji vzmeti in ali sta vzmeti ves čas napeti? Masi vzmeti in upor zanemari, $g = 9{,}81\,\mathrm{m/s^2}$.
+
+**Rešitev:**
+
+1. Zaporedna vezava: $1/k = 1/60 + 1/30 = 3/60\,\mathrm{m/N}$, torej $k = 20\,\mathrm{N/m}$.
+2. Obe vzmeti nosita isto silo $mg = 0{,}40 \cdot 9{,}81\,\mathrm{N} \approx 3{,}92\,\mathrm{N}$, zato $\Delta l_1 = 3{,}924/60\,\mathrm{m} \approx 6{,}5\,\mathrm{cm}$ in $\Delta l_2 = 3{,}924/30\,\mathrm{m} \approx 13{,}1\,\mathrm{cm}$; skupaj $mg/k \approx 19{,}6\,\mathrm{cm}$.
+3. $\omega_0 = \sqrt{20/0{,}40}\,\mathrm{s^{-1}} = \sqrt{50}\,\mathrm{s^{-1}} \approx 7{,}07\,\mathrm{s^{-1}}$, $t_0 = 2\pi/7{,}071\,\mathrm{s} \approx 0{,}889\,\mathrm{s}$.
+4. Os $x$ usmerimo navzdol, izhodišče je v ravnovesni legi: $x(0) = 0{,}030\,\mathrm{m}$, $v(0) = -0{,}25\,\mathrm{m/s}$. Amplituda: $x_0 = \sqrt{0{,}030^2 + (0{,}25/7{,}071)^2}\,\mathrm{m} = \sqrt{0{,}00215}\,\mathrm{m} \approx 0{,}0464\,\mathrm{m}$.
+5. Fazni zamik: $\cos\delta = x(0)/x_0 = 0{,}030/0{,}04637 \approx 0{,}647$, $\sin\delta = -v(0)/(\omega_0x_0) = 0{,}25/(7{,}071 \cdot 0{,}04637) \approx 0{,}762$, torej $\delta \approx 0{,}867\,\mathrm{rad}$.
+6. Najvišja lega je $x = -x_0$, kar zahteva $\omega_0t + \delta = \pi$: $t = (\pi - 0{,}867)/7{,}071\,\mathrm{s} \approx 0{,}322\,\mathrm{s}$.
+7. Sila v vzmeteh je $F = k(mg/k + x) = mg + kx$: največja v spodnji legi, $F_{\max} = 3{,}924 + 20 \cdot 0{,}04637 \approx 4{,}85\,\mathrm{N}$, najmanjša v zgornji, $F_{\min} = 3{,}924 - 0{,}927 \approx 3{,}00\,\mathrm{N}$.
+8. Odgovor: vzmeti sta v mirovanju raztegnjeni za $6{,}5\,\mathrm{cm}$ in $13{,}1\,\mathrm{cm}$; utež niha z $t_0 \approx 0{,}89\,\mathrm{s}$ in amplitudo $4{,}6\,\mathrm{cm}$ ter je prvič v najvišji legi ob $t \approx 0{,}32\,\mathrm{s}$. Sila v vzmeteh se giblje med $3{,}0\,\mathrm{N}$ in $4{,}9\,\mathrm{N}$; ker je ves čas pozitivna, sta vzmeti ves čas napeti in model velja.
+
+### Naloga 2
+
+Natančno navedi, kdaj je nihanje harmonično, in za nedušeno nihalo na vzmeti dokaži, da je vsota kinetične in prožnostne energije stalna; iz tega izpelji hitrost v odvisnosti od odmika. Utemelji, ali je matematično nihalo harmonični oscilator pri poljubnem odklonu, in izpelji njegov nihajni čas pri majhnih odklonih.
+
+**Rešitev:**
+
+1. Nihanje je harmonično, če na telo deluje sila $F = -kx$ s $k > 0$, sorazmerna z odmikom od ravnovesne lege in usmerjena proti njej; potem velja $\ddot{x} + \omega_0^2x = 0$ z $\omega_0 = \sqrt{k/m}$.
+2. Energija $W = \tfrac{1}{2}m\dot{x}^2 + \tfrac{1}{2}kx^2$ ima odvod $\dot{W} = \dot{x}(m\ddot{x} + kx) = 0$, zato je stalna. V skrajni legi je $\dot{x} = 0$, torej $W = \tfrac{1}{2}kx_0^2$.
+3. Iz $\tfrac{1}{2}mv^2 = \tfrac{1}{2}k(x_0^2 - x^2)$ sledi $v = \pm\omega_0\sqrt{x_0^2 - x^2}$.
+4. Pri matematičnem nihalu je tangentna komponenta teže $-mg\sin\varphi$, lok $s = l\varphi$, zato $ml\ddot{\varphi} = -mg\sin\varphi$. Vračajoča sila je sorazmerna s $\sin\varphi$, ne z lokom $s$, zato nihanje pri poljubnem odklonu **ni** harmonično; posledica je, da nihajni čas z amplitudo narašča.
+5. Pri majhnih odklonih je $\sin\varphi \approx \varphi$ (kot v radianih; pri $10^\circ$ je napaka okoli $0{,}5\,\%$). Enačba preide v $\ddot{\varphi} + (g/l)\varphi = 0$, ki ima obliko iz točke 1.
+6. Odgovor: pri majhnih odklonih je $\omega_0 = \sqrt{g/l}$ in $t_0 = 2\pi\sqrt{l/g}$, neodvisno od mase in amplitude; pri velikih odklonih nihalo niha periodično, a ne harmonično.
+
 ## Drugače: Na sliki
 
 Harmonično nihanje je **senca enakomernega kroženja**. Predstavljaj si kroglico, ki enakomerno kroži s kotno hitrostjo $\omega_0$ po krožnici s polmerom $x_0$, in njeno senco na steni:
@@ -209,19 +265,19 @@ Ko kroglica obkroži krožnico enkrat, senca naredi en cel nihaj. Projekcija leg
 
 Graf dušenega nihanja je kosinusna krivulja, ki jo od zgoraj in spodaj omejujeta eksponentni ovojnici $\pm x_0e^{-\beta t}$. Pri kritičnem dušenju krivulja le enkrat pade proti ničli, ne da bi jo prečkala.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Nihanje molekul in infrardeča spektroskopija.** Vez med atomoma v molekuli se obnaša kot vzmet. Za molekulo $\mathrm{HCl}$ je koeficient vezi okoli $516\,\mathrm{N/m}$, reducirana masa $\mu = m_\mathrm{H}m_\mathrm{Cl}/(m_\mathrm{H} + m_\mathrm{Cl}) \approx 1{,}63 \cdot 10^{-27}\,\mathrm{kg}$. Frekvenca nihanja je $\nu = \frac{1}{2\pi}\sqrt{k/\mu} \approx 9{,}0 \cdot 10^{13}\,\mathrm{Hz}$, kar ustreza infrardeči svetlobi. Iz izmerjenih absorpcijskih črt kemiki ugotovijo, katere vezi so v molekuli.
+**Infrardeča spektroskopija.** Vez med atomoma se pri majhnih odmikih obnaša kot vzmet. Za $\mathrm{HCl}$ je koeficient vezi okoli $516\,\mathrm{N/m}$, reducirana masa $\mu = m_\mathrm{H}m_\mathrm{Cl}/(m_\mathrm{H} + m_\mathrm{Cl}) \approx 1{,}63 \cdot 10^{-27}\,\mathrm{kg}$, frekvenca $\nu = \frac{1}{2\pi}\sqrt{k/\mu} \approx 9{,}0 \cdot 10^{13}\,\mathrm{Hz}$ (infrardeče). Pri zamenjavi $\mathrm{H}$ z devterijem se $k$ ne spremeni, $\mu$ pa se skoraj podvoji, zato se trak premakne na okoli $1/\sqrt{2}$ prvotne frekvence; z izotopsko zamenjavo spektroskopisti ugotovijo, kateri trak pripada kateri vezi.
 
-**Blažilniki v avtomobilu.** Vzmeti avtomobila skupaj s karoserijo tvorijo nihalo z nihajnim časom okoli $1\,\mathrm{s}$. Blažilniki ga dušijo skoraj kritično, da se avtomobil po luknji hitro umiri brez poskakovanja. Obrabljen blažilnik spoznaš po tem, da avto po pritisku še nekajkrat zaniha.
+**Mikroskop na atomsko silo (AFM).** Merilna ročica je vzmet s $k$ med približno $0{,}1$ in $40\,\mathrm{N/m}$. Njen $k$ umerijo iz toplotnega šuma: po ekviparticijskem izreku je povprečna prožnostna energija $\tfrac{1}{2}k\langle x^2\rangle = \tfrac{1}{2}k_BT$ ($k_B$ je Boltzmannova konstanta, $T$ temperatura). V dinamičnem načinu ročico vzbujajo blizu resonance; sila konice premakne resonančno frekvenco, iz premika pa dobijo sliko površine.
 
-**Ure in metronomi.** Matematično nihalo z dolžino okoli $1\,\mathrm{m}$ ima nihajni čas okoli $2\,\mathrm{s}$ (vsak polnihaj traja eno sekundo), zato so ga uporabljali v nihalnih urah. Na Luni, kjer je $g$ šestkrat manjši, bi ista ura tekla $\sqrt{6} \approx 2{,}45$-krat počasneje.
+**Kvarčna mikrotehtnica in senzorji.** Kristal kvarca niha z ostro resonanco (nekaj $\mathrm{MHz}$). Ko se nanj adsorbira tanka plast, se frekvenca zniža; tako merijo nanograme snovi v tankih plasteh in biosenzorjih.
 
-**Resonanca.** Mostovi, stavbe in deli strojev imajo lastne frekvence. Če jih zunanja sila (veter, koraki, potres, vibracije motorja) vzbuja s podobno frekvenco, se amplituda nevarno poveča. Zato v stavbe vgrajujejo dušilnike, v laboratoriju pa tehtnice in mikroskope postavljajo na mize, ki dušijo tresljaje.
+**Izolacija tresljajev.** Analitske tehtnice, mikroskopi in laserske mize stojijo na podlagah z nizko lastno frekvenco (okoli $1\,\mathrm{Hz}$) z zmernim dušenjem, ki omeji nihanje pri resonanci: tresljaji stavbe s frekvencami precej nad lastno frekvenco podlage se prenesejo močno oslabljeni. Stroje in centrifuge pa vodijo hitro skozi njihovo resonančno frekvenco.
 
 ## Drugače: Korak za korakom s številkami
 
-Utež z maso $0{,}20\,\mathrm{kg}$ visi na vzmeti s $k = 20\,\mathrm{N/m}$. Ob $t = 0$ je $3{,}0\,\mathrm{cm}$ od ravnovesne lege in se giblje s hitrostjo $0{,}40\,\mathrm{m/s}$. Kolikšna je amplituda?
+Utež z maso $0{,}20\,\mathrm{kg}$ visi na vzmeti s $k = 20\,\mathrm{N/m}$. Ob $t = 0$ je $3{,}0\,\mathrm{cm}$ od ravnovesne lege in se giblje s hitrostjo $0{,}40\,\mathrm{m/s}$ stran od nje (v smeri odmika, torej $v(0) > 0$). Kolikšna je amplituda?
 
 1. **Krožna frekvenca:** $\omega_0 = \sqrt{20/0{,}20}\,\mathrm{s^{-1}} = 10\,\mathrm{s^{-1}}$.
 2. **Energija ob $t = 0$:** $W = \tfrac{1}{2} \cdot 20 \cdot 0{,}030^2 + \tfrac{1}{2} \cdot 0{,}20 \cdot 0{,}40^2 = 0{,}0090 + 0{,}016 = 0{,}025\,\mathrm{J}$.
@@ -293,7 +349,7 @@ F | sila vzmeti (vračajoča sila) | F = -kx | N
 k | koeficient vzmeti | | N/m
 x | odmik od ravnovesne lege | x(t) = x_0\cos(\omega_0 t + \delta) | m
 x_0 | amplituda | | m | največji odmik
-\omega_0 | lastna krožna frekvenca | \omega_0 = \sqrt{\frac{k}{m}} | s^{-1} | pri nitnem nihalu ω₀ = √(g/l)
+\omega_0 | lastna krožna frekvenca | \omega_0 = \sqrt{\frac{k}{m}} | s^{-1} | pri matematičnem nihalu ω₀ = √(g/l)
 \omega | krožna frekvenca dušenega nihanja | \omega = \sqrt{\omega_0^2 - \beta^2} | s^{-1}
 m | masa uteži | | kg
 t | čas | | s

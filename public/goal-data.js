@@ -53,10 +53,10 @@ export function goalShortcuts(settings = {}) {
   return { first: false, items: ["scan", "games"] };
 }
 
-// Telefon: četrti zavihek spodnje vrstice po cilju (lab, exams ali competition); kar ni tam, je pod »Jaz«.
+// Telefon: četrti zavihek spodnje vrstice po cilju (exams ali competition, fakulteta: nič); kar ni tam, je pod »Jaz«.
+// Laboratorij je od 4. 11. zavihek v »Uči se«, zato ga tu ni (prej privzeti četrti zavihek, j, 1. 11.).
 export function goalTabbarView(settings = {}, { siExams = false } = {}) {
-  if (jeFaks(settings) || (settings.school_system && settings.school_system !== "SI")) return "lab";
+  if (jeFaks(settings)) return null;
   if (siExams && (settings.goal === "npz" || settings.goal === "matura")) return "exams";
-  if (settings.goal === "tekmovanje") return "competition";
-  return "lab";
+  return "competition";
 }

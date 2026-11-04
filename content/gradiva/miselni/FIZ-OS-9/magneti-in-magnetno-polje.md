@@ -1,0 +1,23 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Magnetna pola
+  - istoimenska se odbijata, raznoimenska privlačita
+  - prerezan magnet ima spet oba pola
+- Feromagnetne snovi
+  - železo, jeklo, nikelj, kobalt
+  - napaka: aluminija in bakra ne privlači
+- Magnetno polje
+  - silnice od severnega proti južnemu polu
+  - ob polih goste, polje najmočnejše
+- Kompas
+  - igla je majhen vrtljiv magnet
+  - postavi se vzdolž silnic
+- Zemlja kot magnet
+  - na severu je južni magnetni pol
+  - magnetni pol se premika
+- Odklon in azimut
+  - $\alpha_\mathrm{k} = \alpha_\mathrm{z} - \delta$
+  - v Sloveniji $\delta \approx 5^\circ$ proti vzhodu
+  - sever $0^\circ$, vzhod $90^\circ$, jug $180^\circ$
