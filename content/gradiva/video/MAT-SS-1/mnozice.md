@@ -3,7 +3,7 @@ naslov: Operacije z množicami v Vennovem diagramu
 simulacija: venn
 trajanje: 1:44
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -16,7 +16,7 @@ Univerzalna množica je $\mathcal{U} = \{1, 2, \dots, 20\}$. Naj bo $A$ množica
 
 ## 0:14
 
-Unija $A \cup B$ zajame oba kroga: števila, ki so v $A$ ali v $B$. Ima $13$ elementov, saj presek šteješ le enkrat: $|A \cup B| = 10 + 6 - 3 = 13$.
+Unija $A \cup B$ zajame oba kroga: števila, ki so v $A$ ali v $B$. Sodih je $10$, deljivih s $3$ je $6$, a presek šteješ le enkrat: $|A \cup B| = 10 + 6 - 3 = 13$.
 
 - klikni: ∪
 
@@ -28,19 +28,19 @@ Razlika $A \setminus B = \{2, 4, 8, 10, 14, 16, 20\}$ je del kroga $A$ zunaj kro
 
 ## 0:39
 
-Zamenjaj vrstni red: $B \setminus A = \{3, 9, 15\}$. Opazuj, da je to drug del diagrama, zato razlika ni zamenljiva.
+Zamenjaj vrstni red: $B \setminus A = \{3, 9, 15\}$. Opazuj: to je drug del diagrama, zato razlika ni zamenljiva.
 
 - klikni: B∖A
 
 ## 0:51
 
-Komplement $A^c$ (gumb A') so vsa števila iz $\mathcal{U}$, ki niso v $A$. To so liha števila od $1$ do $19$, teh je $10$.
+Komplement $A^c$ so vsa števila iz $\mathcal{U}$, ki niso v $A$. To so liha števila od $1$ do $19$, teh je $10$.
 
-- klikni: A'
+- klikni: Aᶜ
 
 ## 1:03
 
-Za $B$ izberi liha števila. Krogov nič ne povezuje, presek je prazen: $A \cap B = \emptyset$. Množici sta disjunktni.
+Za $B$ izberi liha števila. V skupnem delu krogov ni nobenega števila, presek je prazen: $A \cap B = \emptyset$. Množici sta disjunktni.
 
 - nastavi: B = liho
 - klikni: ∩

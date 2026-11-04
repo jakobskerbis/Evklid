@@ -360,8 +360,8 @@ export function povrsinski(el, { mode = "stevila" } = {}) {
       const cols = [[xv, "x"], [p, mono(p, "")]], rows = [[xv, "x"], [q, mono(q, "")]];
       rect2(cols, rows, (i, j) => [["x²", mono(q)], [mono(p), mono(p * q, "")]][i][j]);
       out.innerHTML = texBlock([`${fac(p)}${p || q ? "" : "\\cdot "}${fac(q)}`, sum([[1, "x^2"], [q, "x"], [p, "x"], [p * q, ""]], "-"), sum([[1, "x^2"], [p + q, "x"], [p * q, ""]], "-")].filter((t, i, L) => t !== L[i - 1]).join(" = ")) +
-        `<p>Vsak člen prvega oklepaja pomnožimo z vsakim členom drugega: dobimo 4 pravokotnike. Rdeči deli imajo negativno ploščino.</p>
-         <p class="muted">Pri x = ${xv}: ${facN(p)} · ${facN(q)} = ${(xv + p) * (xv + q)} in ${sum([[1, `${xv}²`], [p + q, Math.abs(p + q) === 1 ? `${xv}` : ` · ${xv}`], [p * q, ""]])} = ${xv * xv + (p + q) * xv + p * q}.</p>`;
+        `<p>Vsak člen prvega oklepaja pomnožimo z vsakim členom drugega: dobimo ${p && q ? "4 pravokotnike" : p || q ? "2 pravokotnika" : "1 kvadrat"}.${p < 0 || q < 0 ? " Rdeči deli imajo negativno ploščino." : ""}</p>
+         <p class="muted">Pri x = ${xv}: ${facN(p)} · ${facN(q)} = ${String((xv + p) * (xv + q)).replace("-", "−")} in ${sum([[1, `${xv}²`], [p + q, Math.abs(p + q) === 1 ? `${xv}` : ` · ${xv}`], [p * q, ""]])} = ${String(xv * xv + (p + q) * xv + p * q).replace("-", "−")}.</p>`;
     } else {
       const t = Math.floor(n / 10) * 10, u = n % 10;
       const cols = [[t, String(t)], [u, String(u)]];

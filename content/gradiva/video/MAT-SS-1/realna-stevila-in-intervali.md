@@ -4,7 +4,7 @@ simulacija: neenacba
 moznosti: {"mode": "intervali"}
 trajanje: 1:32
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00

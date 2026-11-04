@@ -166,9 +166,10 @@ export function statistika(el) {
     s("rect", { x: X(q1), y: y - 14, width: X(q3) - X(q1), height: 28, class: "shape fill-a" }, svg);
     s("line", { x1: X(q2), y1: y - 14, x2: X(q2), y2: y + 14, class: "axis" }, svg);
     [sorted[0], sorted[n - 1]].forEach((v) => s("line", { x1: X(v), y1: y - 8, x2: X(v), y2: y + 8, class: "axis" }, svg));
-    label(svg, X(q1), y + 26, "Q₁", "tick");
+    // pri ozki škatli (majhen σ) oznake razmaknemo, da se ne prekrivajo
+    label(svg, Math.min(X(q1), X(q2) - 20), y + 26, "Q₁", "tick");
     label(svg, X(q2), y + 26, "Me", "tick");
-    label(svg, X(q3), y + 26, "Q₃", "tick");
+    label(svg, Math.max(X(q3), X(q2) + 20), y + 26, "Q₃", "tick");
     out.innerHTML = `<p>Višine ${n} dijakov (cm). <span class="dot dot-c"></span> Aritmetična sredina ${tex(`\\bar x = ${tfmt(mean, 1)}`)}, standardni odklon ${tex(`\\sigma = ${tfmt(sdv, 1)}`)} (pas zgoraj: ${tex("\\bar x \\pm \\sigma")}).</p>
       <p>Škatla z brki: min ${sorted[0]}, Q₁ = ${fmt(q1, 1)}, mediana ${fmt(q2, 1)}, Q₃ = ${fmt(q3, 1)}, max ${sorted[n - 1]}. Medkvartilni razmik ${fmt(q3 - q1, 1)}: v škatli je srednja polovica podatkov.</p>
       <p class="muted">Večji σ pomeni bolj razpršene podatke (širši histogram in daljša škatla). Število razredov spremeni videz histograma, ne pa podatkov.</p>`;

@@ -4,12 +4,12 @@ simulacija: trikotnik
 moznosti: {"mode": "tocke"}
 trajanje: 1:32
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
 
-Pred tabo je ostrokotni trikotnik $ABC$. V njem narišemo štiri vrste značilnih premic, in vsaka trojica se seka v eni točki. Vklapljaj jih po vrsti.
+Pred tabo je ostrokotni trikotnik $ABC$. V njem narišemo štiri vrste značilnih premic. Tri premice iste vrste se vedno sekajo v eni točki. Vklapljaj jih po vrsti.
 
 - klikni: težiščnice
 
@@ -21,7 +21,7 @@ Simetrale stranic gredo skozi sredine stranic pravokotno nanje in se sekajo v to
 
 ## 0:26
 
-Simetrale kotov razpolovijo kote in se sekajo v središču včrtane krožnice, ki je v simulaciji označeno s $S$, v razlagi pa z $I$. Ta točka je enako oddaljena od vseh treh stranic, zato se krožnica dotika vseh treh.
+Simetrale kotov razpolovijo kote in se sekajo v središču $I$ včrtane krožnice (simulacija ga označi s $S$). Ta točka je enako oddaljena od vseh treh stranic, zato se krožnica dotika vseh treh.
 
 - klikni: simetrale stranic
 - klikni: simetrale kotov
@@ -41,7 +41,7 @@ Vklopi še višine: sekajo se v višinski točki $V$. Primerjaj jih s težiščn
 
 ## 1:08
 
-Vklopi še obe vrsti simetral. Ker je trikotnik ostrokoten, ležijo vse štiri točke $O$, $I$, $T$ in $V$ znotraj njega.
+Vklopi še obe vrsti simetral. Ker je trikotnik ostrokoten, ležijo vse štiri točke $O$, $I$ (v simulaciji $S$), $T$ in $V$ znotraj njega.
 
 - klikni: simetrale stranic
 - klikni: simetrale kotov

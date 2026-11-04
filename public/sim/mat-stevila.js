@@ -1010,7 +1010,7 @@ export function venn(el) {
     });
     const opName = { "∪": "unija (v A ali v B)", "∩": "presek (v A in v B hkrati)", "A∖B": "razlika (v A, ne pa v B)", "B∖A": "razlika (v B, ne pa v A)", "Aᶜ": "komplement (v U, ne pa v A)" }[op];
     out.innerHTML = `<p>A = ${PROPS[pa][0]}, B = ${PROPS[pb][0]}.</p>
-      <p><b>${op === "Aᶜ" ? "Aᶜ" : op.length > 1 ? op : `A ${op} B`}</b>, ${opName}: ${res.length ? `{${res.join(", ")}}` : "∅"}, moč množice je ${res.length}.</p>
+      <p><b>${op === "Aᶜ" ? "Aᶜ" : op.length > 1 ? op : `A ${op} B`}</b>, ${opName}: ${res.length ? `{${res.join(", ")}}` : tex("\\emptyset")}, moč množice je ${res.length}.</p>
       <p class="muted">Preveri: |A ∪ B| = |A| + |B| − |A ∩ B| = ${zones.a.length + zones.ab.length} + ${zones.b.length + zones.ab.length} − ${zones.ab.length} = ${zones.a.length + zones.b.length + zones.ab.length}.</p>`;
   };
   const opts = Object.entries(PROPS).map(([k, v]) => [k, v[0]]);

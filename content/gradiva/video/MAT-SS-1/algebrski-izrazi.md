@@ -4,7 +4,7 @@ simulacija: povrsinski
 moznosti: {"mode": "izrazi"}
 trajanje: 1:32
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -29,13 +29,13 @@ Drugi oklepaj spremeni v $x - 2$. Rdeči deli imajo negativno ploščino: $(x + 
 
 ## 0:40
 
-Zdaj naj bosta oba oklepaja $x + 3$: lik je kvadrat. Dva enaka pravokotnika $3x$ dasta srednji člen $2 \cdot 3x$, zato je $(x + 3)^2 = x^2 + 6x + 9$.
+Zdaj naj bosta oba oklepaja $x + 3$: lik je kvadrat. Dva enaka pravokotnika $3x$ dasta srednji člen $2 \cdot 3x = 6x$, zato je $(x + 3)^2 = x^2 + 6x + 9$.
 
 - nastavi: b = 3
 
 ## 0:53
 
-Pogosta napaka je $(x + 3)^2 = x^2 + 9$: izpusti oba pravokotnika $3x$. Preizkus pri $x = 5$: $(5 + 3) \cdot (5 + 3) = 64$, $5^2 + 9$ pa je precej manj.
+Pogosta napaka je $(x + 3)^2 = x^2 + 9$: v njej manjkata oba pravokotnika $3x$. Preizkus pri $x = 5$: $(5 + 3) \cdot (5 + 3) = 64$, $5^2 + 9$ pa je le $34$.
 
 ## 1:05
 

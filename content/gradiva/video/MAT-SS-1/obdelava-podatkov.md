@@ -3,7 +3,7 @@ naslov: Sredina in razpršenost podatkov
 simulacija: statistika
 trajanje: 1:15
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -17,7 +17,7 @@ Histogram kaže višine $300$ dijakov. Navpična črta je aritmetična sredina $
 
 ## 0:15
 
-Premakni povprečje na $170\,\text{cm}$. Histogram in škatla z brki se premakneta v desno, njuna širina pa ostane enaka. Sredina pove, kje so podatki, ne pa, kako so razpršeni.
+Premakni povprečje na $170\,\text{cm}$. Histogram in škatla z brki se premakneta v desno, njuna širina pa ostane skoraj enaka. Sredina pove, kje so podatki, ne pa, kako so razpršeni.
 
 - nastavi: povprečje = 170
 
@@ -29,7 +29,7 @@ Zdaj povečaj razpršenost na $8\,\text{cm}$. Sredina ostane blizu $170\,\text{c
 
 ## 0:43
 
-Poglej škatlo z brki: brka segata do najmanjšega in največjega podatka, škatla pa od $Q_1$ do $Q_3$. V škatli je srednja polovica podatkov, njena dolžina je medkvartilni razmik $Q_3 - Q_1$.
+Poglej škatlo z brki: brka segata do najmanjšega in največjega podatka, škatla pa od $Q_1$ do $Q_3$, črta v njej je mediana. V škatli je srednja polovica podatkov, njena dolžina je medkvartilni razmik $Q_3 - Q_1$.
 
 ## 0:57
 
