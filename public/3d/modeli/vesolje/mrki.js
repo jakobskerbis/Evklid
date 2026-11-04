@@ -1117,10 +1117,10 @@ export function zgradi(THREE, ctx) {
   };
   const nadzor = [
     { tip: "izbira", id: "vrsta", oznaka: "Prikaz", moznosti: [["soncni", "Sončni mrk"], ["lunin", "Lunin mrk"], ["zakaj", "Zakaj ni mrka vsak mesec"]], vrednost: vrsta, ob: (v) => nastaviVrsto(v) },
-    { tip: "drsnik", id: "lega", oznaka: "Lega Lune (prečno na premico Sonce–Zemlja)", min: -1, max: 1, korak: 0.01, get vrednost() { return Math.round(lega * 100) / 100; }, vidno: () => !zakaj(), ob: (v) => { lega = num(v, -1, 1, 0); osvezi(); } },
+    { tip: "drsnik", id: "lega", oznaka: "Lega Lune (prečno na premico Sonce–Zemlja)", min: -1, max: 1, korak: 0.01, get vrednost() { return Math.round(lega * 100) / 100; }, set vrednost(_) { /* kit zapiše vrednost; stanje nastavi ob() */ }, vidno: () => !zakaj(), ob: (v) => { lega = num(v, -1, 1, 0); osvezi(); } },
     { tip: "drsnik", id: "razdalja", oznaka: "Razdalja Luna–Zemlja (od perigeja do apogeja)", min: PERIGEJ, max: APOGEJ, korak: 100, vrednost: razdalja, vidno: ali("soncni"), ob: (v) => { razdalja = num(v, PERIGEJ, APOGEJ, 365000); osvezi(); } },
-    { tip: "drsnik", id: "dan", oznaka: "Lega Lune na tirnici (dan od mlaja)", min: 0, max: 29.5, korak: 0.1, get vrednost() { return Math.round(dan * 10) / 10; }, vidno: zakaj, ob: (v) => { dan = num(v, 0, 29.5, 0); osvezi(); } },
-    { tip: "drsnik", id: "vozel", oznaka: "Smer vozelne črte glede na Sonce", min: 0, max: 359, korak: 1, get vrednost() { return Math.round(vozel) % 360; }, vidno: zakaj, ob: (v) => { vozel = num(v, 0, 359, 35); osvezi(); } },
+    { tip: "drsnik", id: "dan", oznaka: "Lega Lune na tirnici (dan od mlaja)", min: 0, max: 29.5, korak: 0.1, get vrednost() { return Math.round(dan * 10) / 10; }, set vrednost(_) { /* kit zapiše vrednost; stanje nastavi ob() */ }, vidno: zakaj, ob: (v) => { dan = num(v, 0, 29.5, 0); osvezi(); } },
+    { tip: "drsnik", id: "vozel", oznaka: "Smer vozelne črte glede na Sonce", min: 0, max: 359, korak: 1, get vrednost() { return Math.round(vozel) % 360; }, set vrednost(_) { /* kit zapiše vrednost; stanje nastavi ob() */ }, vidno: zakaj, ob: (v) => { vozel = num(v, 0, 359, 35); osvezi(); } },
     { tip: "stikalo", id: "povecaj", oznaka: "Povečaj kote in telesa 5-krat", vrednost: povecaj, vidno: zakaj, ob: (v) => { povecaj = !!v; osvezi(); } },
     { tip: "stikalo", id: "predvajaj", oznaka: "Predvajaj", vrednost: tece, vidno: () => gib, ob: (v) => { tece = !!v; } },
     { tip: "izpis", id: "vrsta-mrka", oznaka: "Mrk", vrednost: () => {
