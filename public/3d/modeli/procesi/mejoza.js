@@ -53,17 +53,20 @@ export function zgradi(THREE, ctx = {}) {
   let seme = 20261104;
   const rnd = () => (seme = (seme * 16807) % 2147483647) / 2147483647;
   const _m = new THREE.Matrix4(), _m2 = new THREE.Matrix4(), _q = new THREE.Quaternion(), _p = new V3(), _s = new V3(), _d = new V3();
+  const _q3 = new THREE.Quaternion(), _p3 = new V3(), _s3 = new V3();
   const _y = new V3(0, 1, 0), _x = new V3(1, 0, 0);
   const NIC = new THREE.Matrix4().makeScale(0, 0, 0);
 
   // prosojnost po Fresnelu: rob membrane je bolj neprosojen kot sredina (kot milni mehurček)
-  function fresnel(mat, kljuc, a0, a1, pw) {
+  function fresnel(mat, kljuc, a0, a1, pw, deb = 0) {
     const u = { a0: { value: a0 }, a1: { value: a1 }, pw: { value: pw } };
     mat.onBeforeCompile = (sh) => {
       sh.uniforms.uA0 = u.a0; sh.uniforms.uA1 = u.a1; sh.uniforms.uPw = u.pw;
       sh.fragmentShader = "uniform float uA0;\nuniform float uA1;\nuniform float uPw;\n" + sh.fragmentShader.replace(
         "#include <opaque_fragment>",
         "{ float frs = pow(1.0 - clamp(abs(dot(normalize(vViewPosition), normal)), 0.0, 1.0), uPw); diffuseColor.a = mix(uA0, uA1, frs); }\n#include <opaque_fragment>");
+      // deb: ista ploskev, zamaknjena za deb navznoter (notranja plast debele membrane)
+      if (deb) sh.vertexShader = `const float uDeb = ${deb.toFixed(4)};\n` + sh.vertexShader.replace("#include <begin_vertex>", "#include <begin_vertex>\ntransformed -= objectNormal * uDeb;");
     };
     mat.customProgramCacheKey = () => "evklid-fresnel-" + kljuc;
     return u;
@@ -116,12 +119,16 @@ export function zgradi(THREE, ctx = {}) {
   memGeo.setDrawRange(0, 2 * iKos);
   const memMat = fiz({ color: "#F4B6A2", roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.2, sheen: 1, sheenColor: new THREE.Color("#FFD5C8"), sheenRoughness: 0.35, transparent: true, depthWrite: false, side: THREE.FrontSide });
   fresnel(memMat, "membrana", 0.07, 0.7, 2.4);
+  // notranja plast: ista ploskev, zamaknjena navznoter, da ima membrana na robu vidno debelino
+  const memNMat = fiz({ color: "#F6BCA8", roughness: 0.35, clearcoat: 0.6, clearcoatRoughness: 0.3, sheen: 0.7, sheenColor: new THREE.Color("#FFD5C8"), sheenRoughness: 0.4, transparent: true, depthWrite: false, side: THREE.FrontSide });
+  fresnel(memNMat, "membrana-n", 0.035, 0.62, 3.0, 0.014);
   const citMat = fiz({ color: "#F7D2B6", roughness: 0.85, transparent: true, depthWrite: false, side: THREE.BackSide });
   fresnel(citMat, "citoplazma", 0.13, 0.2, 1.0);
   const membrana = izbirno(dinamicno(new THREE.Mesh(memGeo, memMat)), 20);
   const citoplazma = izbirno(dinamicno(new THREE.Mesh(memGeo, citMat)), 30);
-  membrana.renderOrder = 8; citoplazma.renderOrder = 4;
-  group.add(citoplazma, membrana);
+  const membranaN = izbirno(dinamicno(new THREE.Mesh(memGeo, memNMat)), 20);
+  membrana.renderOrder = 8; membranaN.renderOrder = 6; citoplazma.renderOrder = 4;
+  group.add(citoplazma, membranaN, membrana);
 
   // profil osno simetrične oblike: gladka unija dveh krogel (središči ±c, polmer r, zglajenost k)
   const prX = new Float32Array(nT + 1), prR = new Float32Array(nT + 1), prNX = new Float32Array(nT + 1), prNR = new Float32Array(nT + 1);
@@ -218,7 +225,7 @@ export function zgradi(THREE, ctx = {}) {
         const raz = Math.sqrt(d2) - Math.sqrt(d1);
         const v = raz < 0.035 ? 0.1 : vv[i1];
         const o = (py * TW + px) * 4;
-        d[o] = d[o + 1] = d[o + 2] = Math.round(v * 255); d[o + 3] = 255;
+        d[o] = raz < 0.035 ? 0 : Math.round(255 * cl(1 - (raz - 0.035) / 0.05)); d[o + 1] = d[o + 2] = Math.round(v * 255); d[o + 3] = 255;
       }
     }
     aCtx.putImageData(img, 0, 0);
@@ -238,8 +245,21 @@ export function zgradi(THREE, ctx = {}) {
   const bTex = hr(new THREE.CanvasTexture(bPl)); bTex.colorSpace = THREE.SRGBColorSpace;
   const jedroGeo = hr(new THREE.SphereGeometry(1, visoka ? 48 : 30, visoka ? 30 : 18));
   const ovojMat = fiz({ color: "#B7A6FF", map: bTex, alphaMap: aTex, alphaTest: 0.03, roughness: 0.35, clearcoat: 0.7, clearcoatRoughness: 0.3, sheen: 0.6, sheenColor: new THREE.Color("#E4DCFF"), transparent: true, depthWrite: false, side: THREE.DoubleSide });
-  fresnel(ovojMat, "ovojnica", 0.22, 0.85, 1.8);
-  const ovojnica = izbirno(instance(jedroGeo, ovojMat, 4), 10);
+  fresnel(ovojMat, "ovojnica", 0.17, 0.85, 1.8);
+  // med razpadom so robovi koščkov svetlejši (prerez obeh membran)
+  const ovojLom = { value: 0 };
+  {
+    const prej = ovojMat.onBeforeCompile;
+    ovojMat.onBeforeCompile = (sh) => {
+      prej(sh);
+      sh.uniforms.uLom = ovojLom;
+      sh.fragmentShader = "uniform float uLom;\n" + sh.fragmentShader.replace("#include <alphatest_fragment>", "#include <alphatest_fragment>\ndiffuseColor.rgb = mix(diffuseColor.rgb, vec3(1.0, 0.98, 1.0), 0.8 * uLom * texture2D(alphaMap, vAlphaMapUv).r);");
+    };
+  }
+  // vsako jedro ima zunanjo in notranjo membrano (instanci i in n + i), vmes je perinuklearni prostor
+  const ovojnica = izbirno(instance(jedroGeo, ovojMat, 8), 10);
+  const OVOJ_N = 0.92, BELA = new THREE.Color(1, 1, 1), OVOJ_NB = new THREE.Color(0.8, 0.76, 0.92);
+  for (let i = 0; i < 8; i++) ovojnica.setColorAt(i, BELA);
   ovojnica.renderOrder = 3;
   group.add(ovojnica);
   const OVOJ_Q = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.6, 0.3, 0.2));
@@ -592,9 +612,9 @@ export function zgradi(THREE, ctx = {}) {
   // ---------- deli (izbirni)
   const tc = (x = 0, y = 0, z = 0) => [x, y, z];
   const DELI = {
-    membrana: { id: "membrana", ime: "Celična membrana", opis: "Tanka ovojnica iz lipidov in beljakovin, ki obdaja celico; v mejozi se zažame dvakrat, zato nastanejo štiri celice.", barva: "#F4B6A2", meshes: [membrana], tocka: tc() },
+    membrana: { id: "membrana", ime: "Celična membrana", opis: "Tanka ovojnica iz lipidov in beljakovin (v modelu debelejša), ki obdaja celico; v mejozi se zažame dvakrat, zato nastanejo štiri celice.", barva: "#F4B6A2", meshes: [membrana, membranaN], tocka: tc() },
     citoplazma: { id: "citoplazma", ime: "Citoplazma", opis: "Poltekoča notranjost celice, v kateri so organeli; v modelu so organeli nakazani le kot drobna zrnca.", barva: "#E9B48C", meshes: [citoplazma, zrna], tocka: tc() },
-    jedro: { id: "jedro", ime: "Jedro in jedrna ovojnica", opis: "Dvojna membrana s porami obdaja DNK; v profazi I razpade, po mejozi I se pri mnogih živalih za kratek čas obnovi, ob koncu mejoze II pa nastanejo štiri nova jedra.", barva: "#B7A6FF", meshes: [ovojnica], tocka: tc() },
+    jedro: { id: "jedro", ime: "Jedro in jedrna ovojnica", opis: "Dvojna membrana s porami (razmik med membranama je v modelu povečan) obdaja DNK; v profazi I razpade, po mejozi I se pri mnogih živalih za kratek čas obnovi, ob koncu mejoze II pa nastanejo štiri nova jedra.", barva: "#B7A6FF", meshes: [ovojnica], tocka: tc() },
     jedrce: { id: "jedrce", ime: "Jedrce", opis: "Gosto območje v jedru, kjer nastajajo deli ribosomov; med delitvijo izgine in se v novih jedrih spet pojavi.", barva: "#6E4FD0", meshes: [jedrca], tocka: tc() },
     kromosomi: { id: "kromosomi", ime: "Kromosomi", opis: "Nosijo dedni zapis (DNK); podvojen kromosom ima dve sestrski kromatidi. Rdeči z oznako M so od matere, modri z oznako O od očeta; po prekrižanju imata nekatere kromatide dele obeh barv.", barva: "#FF6B7C", meshes: [kromosomi], tocka: tc() },
     bivalent: { id: "bivalent", ime: "Bivalent (tetrada)", opis: "Par homolognih kromosomov, ki se v profazi I tesno zložita drug ob drugega; skupaj imata štiri kromatide.", barva: "#E6DEFF", meshes: [halo], tocka: tc() },
@@ -685,7 +705,13 @@ export function zgradi(THREE, ctx = {}) {
       if (th < 0.985) for (let sx = -1; sx <= 1; sx += 2) for (let sy = -1; sy <= 1; sy += 2) { _p.set(sx * cellx, sy * c2, 0); _s.setScalar(RJQ * (0.85 + 0.15 * nas)); ovojnica.setMatrixAt(n++, _m.compose(_p, OVOJ_Q, _s)); }
       setT(DELI.jedro.tocka, cellx + 0.04, c2 + RJQ * 0.72, RJQ * 0.68);
     }
-    ovojnica.count = n; ovojnica.instanceMatrix.needsUpdate = true;
+    for (let i = 0; i < n; i++) {
+      ovojnica.getMatrixAt(i, _m2); _m2.decompose(_p3, _q3, _s3); _s3.multiplyScalar(OVOJ_N);
+      ovojnica.setMatrixAt(n + i, _m2.compose(_p3, _q3, _s3));
+      ovojnica.setColorAt(i, BELA); ovojnica.setColorAt(n + i, OVOJ_NB);
+    }
+    ovojnica.count = 2 * n; ovojnica.instanceMatrix.needsUpdate = true; ovojnica.instanceColor.needsUpdate = true;
+    ovojLom.value = th > 0.004 ? sm(th * 5) : 0;
     ovojMat.alphaTest = 0.03 + 0.97 * th;
     prisoten.jedro = n > 0;
     const jcM = 1 - ramp(p, 3.05, 3.6), jcH = ramp(p, 11.55, 12);

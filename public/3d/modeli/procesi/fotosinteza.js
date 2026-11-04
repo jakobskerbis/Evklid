@@ -304,11 +304,12 @@ export function zgradi(THREE, ctx = {}) {
     const A = [0.9, 0.34, 0.55];
     const rnd = nakljucje(7);
     const nA = nizka ? 40 : 72, nB = nizka ? 30 : 54;
-    const tocka = (r, a, b, out) => {
+    // točka na ovojnici v globini d pod površjem (zamik vzdolž normale, zato je debelina plasti povsod enaka)
+    const tocka = (d, a, b, out) => {
       const w = 1 + 0.012 * Math.sin(a * 6 + b * 2) * Math.sin(a);
-      out[0] = A[0] * r * w * Math.cos(a);
-      out[1] = A[1] * r * w * Math.sin(a) * Math.cos(b);
-      out[2] = A[2] * r * w * Math.sin(a) * Math.sin(b);
+      const x = A[0] * w * Math.cos(a), y = A[1] * w * Math.sin(a) * Math.cos(b), z = A[2] * w * Math.sin(a) * Math.sin(b);
+      const nx = x / (A[0] * A[0]), ny = y / (A[1] * A[1]), nz = z / (A[2] * A[2]), l = Math.hypot(nx, ny, nz) || 1;
+      out[0] = x - (d * nx) / l; out[1] = y - (d * ny) / l; out[2] = z - (d * nz) / l;
     };
     const t3 = [0, 0, 0];
     function lupina(r, b0, b1) {
@@ -360,11 +361,13 @@ export function zgradi(THREE, ctx = {}) {
     const mNot = fiz("#93C95A", { roughness: 0.4, clearcoat: 0.6, sheen: 0.15, emissive: "#d6f59a", emissiveIntensity: 0 });
     const mNotRob = fiz("#BFE07E", { side: THREE.DoubleSide, roughness: 0.5, emissive: "#d6f59a", emissiveIntensity: 0 });
     const mStroma = fiz("#B9D488", { side: THREE.BackSide, roughness: 0.75, clearcoat: 0.1, sheen: 0.0, emissive: "#e8f5b0", emissiveIntensity: 0 });
-    const zun = new THREE.Mesh(lupina(1, P2, P3), mZun);
-    const zunRob = new THREE.Mesh(pasovi(0.982, 1.0, [P2, P3]), mZunRob);
-    const not = new THREE.Mesh(lupina(0.966, P2 - E, P3 + E), mNot);
-    const notRob = new THREE.Mesh(pasovi(0.95, 0.966, [P2 - E, P3 + E]), mNotRob);
-    const stromaStena = new THREE.Mesh(lupina(0.947, P2 - E, P3 + E), mStroma);
+    // globine pod površjem: zunanja membrana 0–0,011, medmembranski prostor, notranja membrana 0,022–0,033
+    const Z0 = 0, Z1 = 0.011, N0 = 0.022, N1 = 0.033;
+    const zun = new THREE.Mesh(lupina(Z0, P2, P3), mZun);
+    const zunRob = new THREE.Mesh(pasovi(Z1, Z0, [P2, P3]), mZunRob);
+    const not = new THREE.Mesh(lupina(N0, P2 - E, P3 + E), mNot);
+    const notRob = new THREE.Mesh(pasovi(N1, N0, [P2 - E, P3 + E]), mNotRob);
+    const stromaStena = new THREE.Mesh(lupina(N1 + 0.001, P2 - E, P3 + E), mStroma);
     G.add(zun, zunRob, not, notRob, stromaStena);
     zun.onBeforeRender = merilniZaslon;
 
@@ -407,7 +410,33 @@ export function zgradi(THREE, ctx = {}) {
     let nDisk = 0, nDisk2 = 0;
     for (const [i, g] of grana.entries()) (i === gi ? (nDisk2 += g.n) : (nDisk += g.n));
     const diski = new THREE.InstancedMesh(diskGeo, mDisk, nDisk);
-    const diski2 = new THREE.InstancedMesh(diskGeo, mDisk2, nDisk2);
+    // izpostavljeno granum je prerezano: manjka klin proti privzeti kameri (azimut 35°), v prerezu se vidita membrana in lumen
+    const KLIN = (100 * Math.PI) / 180, FI0 = 0.611 + KLIN / 2;
+    const diskGeo2 = h(new THREE.LatheGeometry(prof.map((p) => new THREE.Vector2(p.x, p.y)).reverse(), nizka ? 10 : 18, FI0, 2 * Math.PI - KLIN));
+    const notr = [V(0, 0.3, 0)];
+    for (let i = 0; i <= nr; i++) { const f = Math.PI / 2 - (i / nr) * Math.PI; notr.push(V(0.9 + 0.074 * Math.cos(f), 0.3 * Math.sin(f), 0)); }
+    notr.push(V(0, -0.3, 0));
+    const pPos = [], pBar = [], pIdx = [];
+    const cMem = new THREE.Color("#72D282"), cLum = new THREE.Color("#7FA2EC");
+    for (const fi of [FI0, FI0 + 2 * Math.PI - KLIN]) {
+      const sn = Math.sin(fi), cs = Math.cos(fi), o = pPos.length / 3, M = prof.length;
+      const tk = (p, c) => { pPos.push(p.x * sn, p.y, p.x * cs); pBar.push(c.r, c.g, c.b); };
+      for (const p of prof) tk(p, cMem);
+      for (const p of notr) tk(p, cMem);
+      for (const p of notr) tk(p, cLum);
+      tk(V(0, 0, 0), cLum);
+      for (let i = 0; i < M - 1; i++) {
+        pIdx.push(o + i, o + i + 1, o + M + i + 1, o + i, o + M + i + 1, o + M + i);
+        pIdx.push(o + 3 * M, o + 2 * M + i, o + 2 * M + i + 1);
+      }
+    }
+    const prerezGeo = h(new THREE.BufferGeometry());
+    prerezGeo.setAttribute("position", new THREE.Float32BufferAttribute(pPos, 3));
+    prerezGeo.setAttribute("color", new THREE.Float32BufferAttribute(pBar, 3));
+    prerezGeo.setIndex(pIdx);
+    prerezGeo.computeVertexNormals();
+    const diski2 = new THREE.InstancedMesh(diskGeo2, mDisk2, nDisk2);
+    const prerez = new THREE.InstancedMesh(prerezGeo, fiz("#ffffff", { vertexColors: true, side: THREE.DoubleSide, roughness: 0.55, clearcoat: 0.3, sheen: 0, emissive: "#58e06a", emissiveIntensity: 0 }), nDisk2);
     const mt = new THREE.Matrix4(), q0 = new THREE.Quaternion(), sv = V(1, 1, 1), pv = V(0, 0, 0), barva = new THREE.Color();
     let a1 = 0, a2 = 0;
     const zeleni = ["#1F7A34", "#24873A", "#1A6E2E", "#2A9441"];
@@ -416,10 +445,10 @@ export function zgradi(THREE, ctx = {}) {
         const yy = g.y - g.v / 2 + (d + 0.5) * RAZ, rr = g.r * (1 - 0.05 * rnd());
         mt.compose(pv.set(g.x, yy, g.z), q0, sv.set(rr, DEB, rr));
         barva.set(zeleni[Math.floor(rnd() * zeleni.length)]);
-        if (i === gi) { diski2.setMatrixAt(a2, mt); diski2.setColorAt(a2++, barva.offsetHSL(0, 0.05, 0.04)); } else { diski.setMatrixAt(a1, mt); diski.setColorAt(a1++, barva); }
+        if (i === gi) { prerez.setMatrixAt(a2, mt); diski2.setMatrixAt(a2, mt); diski2.setColorAt(a2++, barva.offsetHSL(0, 0.05, 0.04)); } else { diski.setMatrixAt(a1, mt); diski.setColorAt(a1++, barva); }
       }
     }
-    G.add(diski, diski2);
+    G.add(diski, diski2, prerez);
 
     // lamele (stromalne tilakoide) med sosednjimi grani
     const pari = new Set(), lamM = [];
@@ -462,7 +491,7 @@ export function zgradi(THREE, ctx = {}) {
     const tP = [];
     for (let p = 0; p < 20000 && tP.length < (nizka ? 600 : 1300) * 3; p++) {
       const x = (rnd() * 2 - 1) * 0.8, y = (rnd() * 2 - 1) * 0.3, z = (rnd() * 2 - 1) * 0.5;
-      if (znotraj(x, y, z, 0.92) && !vGranumu(x, y, z, 0.005)) tP.push(x, y, z);
+      if (znotraj(x, y, z, 0.9) && !vGranumu(x, y, z, 0.005)) tP.push(x, y, z);
     }
     const tgeo = new THREE.BufferGeometry();
     tgeo.setAttribute("position", new THREE.Float32BufferAttribute(tP, 3));
@@ -556,9 +585,9 @@ export function zgradi(THREE, ctx = {}) {
     ];
     const gTop = grana[gi];
     const tZun = [0, 0, 0], tNot = [0, 0, 0], tStr = [0, 0, 0];
-    tocka(1, Math.PI * 0.3, P2 + 0.6, tZun);
-    tocka(0.966, Math.PI * 0.68, P2 - E / 2, tNot);
-    tocka(0.947, Math.PI * 0.36, Math.PI * 1.5 + 0.5, tStr);
+    tocka(Z0, Math.PI * 0.3, P2 + 0.6, tZun);
+    tocka(N0, Math.PI * 0.68, P2 - E / 2, tNot);
+    tocka(N1 + 0.001, Math.PI * 0.36, Math.PI * 1.5 + 0.5, tStr);
     const tTil = [g2.x + g2.r * 0.6, g2.y + g2.v / 2 - 0.004, g2.z];
     const tLam = lamM.length ? lamM.reduce((b, m) => (m.elements[14] + m.elements[13] > b[2] + b[1] ? m.elements.slice(12, 15) : b), [0, -1, -1]) : [0, 0, 0];
     const tRib = ribP.reduce((b, p) => (p[2] + p[1] * 0.5 > b[2] + b[1] * 0.5 && p[0] < -0.05 && p[0] > -0.5 ? p : b), ribP[0]);
@@ -581,7 +610,7 @@ export function zgradi(THREE, ctx = {}) {
       { id: "notranja-membrana", ime: "Notranja membrana", opis: "Notranja ovojnica s prenašalci, ki izbirajo, katere snovi pridejo v stromo.", barva: "#A6D46A", meshes: [not, notRob], tocka: tNot },
       { id: "stroma", ime: "Stroma", opis: "Gosta tekočina v kloroplastu, polna encimov; v njej poteka Calvinov cikel, v katerem nastane sladkor.", barva: "#C9DE95", meshes: [stromaStena, drobci], tocka: tStr },
       { id: "tilakoide", ime: "Tilakoide", opis: "Sploščeni membranski mešički s klorofilom, v katerih poteka svetlobni del fotosinteze; narisani so debelejši, kot so v resnici.", barva: "#34A84C", meshes: [diski], tocka: tTil },
-      { id: "granum", ime: "Granum", opis: "Kupček tilakoid, zloženih kot kovanci; v enem kloroplastu jih je več deset.", barva: "#3BB255", meshes: [diski2], tocka: vrh(gTop) },
+      { id: "granum", ime: "Granum", opis: "Kupček tilakoid, zloženih kot kovanci; v enem kloroplastu jih je več deset. V prerezu se vidi, da ima vsaka tilakoida membrano in v njej prostor, imenovan lumen.", barva: "#3BB255", meshes: [diski2, prerez], tocka: vrh(gTop) },
       { id: "lamele", ime: "Lamele", opis: "Stromalne tilakoide, ki povezujejo grana, tako da so vse tilakoide ena sama povezana membrana.", barva: "#49B85C", meshes: [lamele], tocka: tLam },
       { id: "ribosomi", ime: "Ribosomi", opis: "Kloroplast ima svoje majhne ribosome, na katerih izdela del svojih beljakovin.", barva: "#7A63C9", meshes: [ribosomi], tocka: tRib },
       { id: "dnk", ime: "Kloroplastna DNK", opis: "Kloroplast ima svojo krožno DNK, podobno bakterijski, z geni za nekatere svoje beljakovine.", barva: "#F08A5D", meshes: [dnk], tocka: tDnk },

@@ -409,17 +409,24 @@ export function zgradi(THREE, ctx = {}) {
 
   // jedrna ovojnica (dvojna membrana) s poro
   const OV_X = 0.86, OV_Z0 = -0.42, OV_Z1 = 0.14, ovN = nizka ? 34 : 64, ovM = nizka ? 12 : 22, PR = 0.07;
+  // ob pori se membrani zlijeta v zaobljen rob (stena pore na polmeru PR + 0,02); luknja v mreži je krog s polmerom R_IZREZ
+  const R_LUK = PR + 0.05, R_IZREZ = 0.1, R_OBOD = 0.13;
   function ovojnica(dy) {
     const pos = [], idx = [];
+    const notri = [];
     for (let i = 0; i <= ovN; i++) for (let k = 0; k <= ovM; k++) {
-      const x = -OV_X + (2 * OV_X * i) / ovN, z = OV_Z0 + ((OV_Z1 - OV_Z0) * k) / ovM;
+      let x = -OV_X + (2 * OV_X * i) / ovN, z = OV_Z0 + ((OV_Z1 - OV_Z0) * k) / ovM;
+      const d = Math.hypot(x - PORA[0], z - PORA[2]);
+      notri.push(d < R_IZREZ);
+      // oglišča v luknji potisnemo na njen rob, da je luknja okrogla
+      if (d < R_IZREZ && d > 1e-6) { x = PORA[0] + ((x - PORA[0]) * R_IZREZ) / d; z = PORA[2] + ((z - PORA[2]) * R_IZREZ) / d; }
       pos.push(x, yOv(x, z) + dy, z);
     }
     for (let i = 0; i < ovN; i++) for (let k = 0; k < ovM; k++) {
-      const x = -OV_X + (2 * OV_X * (i + 0.5)) / ovN, z = OV_Z0 + ((OV_Z1 - OV_Z0) * (k + 0.5)) / ovM;
-      if (Math.hypot(x - PORA[0], z - PORA[2]) < PR + 0.012) continue;
       const a = i * (ovM + 1) + k, b = a + ovM + 1;
-      idx.push(a, a + 1, b, b, a + 1, b + 1);
+      if (notri[a] && notri[a + 1] && notri[b] && notri[b + 1]) continue;
+      if (!(notri[a] && notri[a + 1] && notri[b])) idx.push(a, a + 1, b);
+      if (!(notri[b] && notri[a + 1] && notri[b + 1])) idx.push(b, a + 1, b + 1);
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
@@ -430,19 +437,32 @@ export function zgradi(THREE, ctx = {}) {
   const mOv = fiz("#73C2C9", { side: THREE.DoubleSide, roughness: 0.4, clearcoat: 0.6, transparent: true, opacity: 0.9, emissive: "#9ff0f5", emissiveIntensity: 0 });
   const ovZg = new THREE.Mesh(ovojnica(0.022), mOv);
   const ovSp = new THREE.Mesh(ovojnica(-0.022), mOv);
-  // sprednji rob: prerez obeh membran
+  // robovi na vseh štirih straneh: prerez obeh membran (vsaka ima debelino), vmes lumen
   const robPos = [], robIdx = [];
-  for (let i = 0; i <= ovN; i++) {
-    const x = -OV_X + (2 * OV_X * i) / ovN, y = yOv(x, OV_Z1);
-    robPos.push(x, y + 0.03, OV_Z1, x, y + 0.014, OV_Z1, x, y - 0.014, OV_Z1, x, y - 0.03, OV_Z1);
+  function rob(x0, z0, x1, z1, n) {
+    const o = robPos.length / 3;
+    for (let i = 0; i <= n; i++) {
+      const x = lerp(x0, x1, i / n), z = lerp(z0, z1, i / n), y = yOv(x, z);
+      robPos.push(x, y + 0.03, z, x, y + 0.014, z, x, y - 0.014, z, x, y - 0.03, z);
+    }
+    for (let i = 0; i < n; i++) { const a = o + i * 4, b = a + 4; robIdx.push(a, a + 1, b, b, a + 1, b + 1, a + 2, a + 3, b + 2, b + 2, a + 3, b + 3); }
   }
-  for (let i = 0; i < ovN; i++) { const a = i * 4, b = a + 4; robIdx.push(a, a + 1, b, b, a + 1, b + 1, a + 2, a + 3, b + 2, b + 2, a + 3, b + 3); }
+  rob(-OV_X, OV_Z1, OV_X, OV_Z1, ovN); rob(-OV_X, OV_Z0, OV_X, OV_Z0, ovN);
+  rob(-OV_X, OV_Z0, -OV_X, OV_Z1, ovM); rob(OV_X, OV_Z0, OV_X, OV_Z1, ovM);
   const robGeo = new THREE.BufferGeometry();
   robGeo.setAttribute("position", new THREE.Float32BufferAttribute(robPos, 3));
   robGeo.setIndex(robIdx);
   robGeo.computeVertexNormals();
   const ovRob = new THREE.Mesh(robGeo, fiz("#A6E3E8", { side: THREE.DoubleSide, roughness: 0.5 }));
-  group.add(ovZg, ovSp, ovRob);
+  // rob pore: zunanja membrana se zavije v notranjo (prerez je polkrog), nagnjen po ukrivljenosti ovojnice
+  const lukT = [new THREE.Vector2(R_OBOD, 0.03)];
+  for (let i = 0; i <= 10; i++) { const t = (i / 10) * Math.PI; lukT.push(new THREE.Vector2(R_LUK - 0.03 * Math.sin(t), 0.03 * Math.cos(t))); }
+  lukT.push(new THREE.Vector2(R_OBOD, -0.03));
+  const ovPoraGeo = new THREE.LatheGeometry(lukT.reverse(), seg(40));
+  ovPoraGeo.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(-0.16 * PORA[0], 1, -0.04 * PORA[2]).normalize()));
+  ovPoraGeo.translate(PORA[0], yOv(PORA[0], PORA[2]), PORA[2]);
+  const ovPora = new THREE.Mesh(ovPoraGeo, ovRob.material);
+  group.add(ovZg, ovSp, ovRob, ovPora);
   // jedrna pora: obroč z osmimi deli
   const poraDeli = [];
   const yP = yOv(PORA[0], PORA[2]);
@@ -860,7 +880,7 @@ export function zgradi(THREE, ctx = {}) {
     { id: "promotor", ime: "Promotor", opis: "Odsek DNK pred genom, kamor se veže RNA-polimeraza; pove, kje se prepisovanje začne.", barva: "#FFD166", meshes: [promotor], tocka: [promotor.position.x, Y0 + 0.15, 0] },
     { id: "rna-polimeraza", ime: "RNA-polimeraza", opis: "Encim, ki razpre DNK, bere matrično verigo in povezuje nukleotide v mRNA.", barva: "#9D7BEA", meshes: [polMesh], get tocka() { return [S.pol[0], S.pol[1] + 0.17, S.pol[2]]; } },
     { id: "mrna", ime: "mRNA", opis: "Sporočilna RNA, prepis gena, ki nese navodilo iz jedra do ribosoma; model izpusti introne, kapo in rep poli-A, ki jih ima mRNA pri evkariontih.", barva: "#FF6B9A", meshes: [mrnaCev.mesh, bazeR], get tocka() { return tockaMr(); } },
-    { id: "jedrna-ovojnica", ime: "Jedrna ovojnica", opis: "Dvojna membrana, ki loči jedro od citoplazme.", barva: "#73C2C9", meshes: [ovZg, ovSp, ovRob], tocka: [-0.3, yOv(-0.3, OV_Z1), OV_Z1] },
+    { id: "jedrna-ovojnica", ime: "Jedrna ovojnica", opis: "Dvojna membrana, ki loči jedro od citoplazme; ob porah se zunanja in notranja membrana zlijeta. Razmik med membranama je v modelu povečan.", barva: "#73C2C9", meshes: [ovZg, ovSp, ovRob, ovPora], tocka: [-0.3, yOv(-0.3, OV_Z1), OV_Z1] },
     { id: "jedrna-pora", ime: "Jedrna pora", opis: "Odprtina v jedrni ovojnici iz mnogih beljakovin, skozi katero mRNA zapusti jedro.", barva: "#5A8FD8", meshes: [pora], tocka: [PORA[0], yP + 0.04, PORA[2] + PR] },
     { id: "mala-podenota", ime: "Mala podenota ribosoma", opis: "Spodnji del ribosoma, ki se veže na mRNA in poišče začetni kodon AUG; model prikazuje le en ribosom, čeprav mRNA hkrati bere več ribosomov.", barva: "#F2C14E", meshes: [mala], get tocka() { return [S.malaPos[0], S.malaPos[1] - 0.05, S.malaPos[2] + 0.1]; } },
     { id: "velika-podenota", ime: "Velika podenota ribosoma", opis: "Zgornji del ribosoma z mesti A, P in E, kjer med aminokislinami nastajajo peptidne vezi.", barva: "#E07A5F", meshes: [velika], get tocka() { return [S.velikaPos[0], S.velikaPos[1] + 0.12, S.velikaPos[2]]; } },
