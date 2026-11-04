@@ -489,6 +489,7 @@ export function createApp(store, opts = {}) {
       wantDeep: againStreak >= 2,
       wantThink: againStreak === 1,
       competition: student.settings.track === "COMPETITION",
+      secondary: student.settings.educational_track === "SREDNJA_SOLA",
       lite,
       free: !!accounts && !accounts.premiumFor(student.id),
       deepModel: capped ? MODEL_MID : MODEL_DEEP,

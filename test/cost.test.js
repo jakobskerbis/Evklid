@@ -84,6 +84,16 @@ test("daily deep cap and monthly soft budget fall back to the thinking Haiku wit
   assert.ok(soft.note);
   assert.equal(u.chooseMode(t.id, {}).mode, "chat");
   assert.equal(u.chooseMode(t.id, { lite: true }).mode, "lite");
+  // Srednja šola: Haiku z več razmisleka (primerjava modelov 4. 11.), razen v varčnem načinu ali z EVKLID_SS_THINK=0.
+  assert.equal(u.chooseMode(t.id, { secondary: true }).mode, "think");
+  assert.equal(u.chooseMode(t.id, { secondary: true, lite: true }).mode, "lite");
+  assert.equal(u.chooseMode(t.id, { secondary: true, wantDeep: true, deepModel: MODEL_DEEP }).mode, "think", "nad mehko mejo");
+  process.env.EVKLID_SS_THINK = "0";
+  try {
+    assert.equal(u.chooseMode(t.id, { secondary: true }).mode, "chat");
+  } finally {
+    delete process.env.EVKLID_SS_THINK;
+  }
   assert.equal(u.studentMonth(t.id).soft_reached, true);
   assert.equal(u.blockReason(t.id), null);
   u.log(t.id, MODEL, { input_tokens: 0, output_tokens: 4_000_000 }); // nad 3 $
