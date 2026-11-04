@@ -259,8 +259,8 @@ export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find
 
 // ---------- poraba AI v naročnini (j 2026-11-01, deleži j 2026-11-04 »Predlog A«) ----------
 // Zajamčeno na profil na mesec (v $, kot zaračunava Claude API): mesečna naročnina OŠ 1,9 $, SŠ 2,9 $, faks 4,5 $;
-// letna OŠ 1,7 $, SŠ 2,6 $, faks 3,8 $. Družina ima en skupen delež za ves račun (vsi profili skupaj): Družina 3,5 $
-// (letno 2,9 $), Družina s študentom 5,5 $ (letno 4,3 $); obvestila 80 % / 100 % in »še N razlag« veljajo za skupni
+// letna OŠ 1,7 $, SŠ 2,6 $, faks 3,8 $. Družina ima en skupen delež za ves račun (vsi profili skupaj): Družina 3,2 $
+// (letno 2,6 $), Družina s študentom 5,5 $ (letno 4,3 $); obvestila 80 % / 100 % in »še N razlag« veljajo za skupni
 // delež. Osebno ob šolski licenci 0,9 $ (letno 0,6 $). Regijski paketi po pravilu 75 % (regionalGuaranteeUsd).
 // Deleži naročnikov imajo prednost pred brezplačnimi v skupnem mesečnem proračunu (server/usage.js).
 //

@@ -715,7 +715,7 @@ function aiPill(a) {
 // Ime stopnje (OŠ, SŠ, faks) iz public/stopnja.js za izbiro paketa.
 const levelName = (l) => t(l === "FAKS" ? "lp.uni" : l === "SS" ? "lp.ss" : "lp.os");
 const planName = (p) => (p.family ? t(p.level === "FAKS" ? "pay.familyStudent" : "pay.family") : levelName(p.level));
-// Brez »(2–4 profili)«, kadar je ime že v oklepaju (»19,99 € (Družina)«); »2–4« se ne prelomi.
+// Brez »(2–4 profili)«, kadar je ime že v oklepaju (»18,99 € (Družina)«); »2–4« se ne prelomi.
 const shortName = (s) => s.replace(/\s*[（(][^()（）]*[)）]$/, "");
 const keepRange = (s) => s.replace(/(\d)([–〜-])(\d)/g, "$1$2\u2060$3");
 
