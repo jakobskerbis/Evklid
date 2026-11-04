@@ -341,6 +341,13 @@ export function zgradi(THREE, ctx = {}) {
       mfKon.setMatrixAt(i * 2 + s, o.matrix);
     }
   });
+  // rahle razlike v svetlosti in zatemnitev globje ležečih miofibril (namesto senčenja), da prerez dobi globino
+  const cc = new THREE.Color();
+  mf.forEach((m, i) => {
+    const r = Math.hypot(m.y, m.z) / RMF, k = (0.58 + 0.42 * Math.min(1, r * 1.15)) * (0.9 + 0.2 * hash(m.y * 91, m.z * 37, 5));
+    cc.setRGB(k, k, k);
+    mfM.setColorAt(i, cc); mfKon.setColorAt(i * 2, cc); mfKon.setColorAt(i * 2 + 1, cc);
+  });
   GV.add(mfM, srM, tM, mfKon);
 
   // T-cevke od roba miofibril do sarkoleme na ploskvah prereza
@@ -365,6 +372,7 @@ export function zgradi(THREE, ctx = {}) {
   jedraKos.forEach((j, i) => {
     o.position.set(j.x, j.y, j.z); o.rotation.set(j.a, 0, 0); o.scale.set(0.085, 0.022, 0.036); o.updateMatrix(); jedra.setMatrixAt(i, o.matrix);
   });
+  jedraKos.forEach((j, i) => { const k = 0.88 + 0.24 * hash(j.x * 13, j.a, 2); jedra.setColorAt(i, cc.setRGB(k, k, k * 1.02)); });
   GV.add(jedra);
 
   // mitohondriji: med miofibrilami ob Z-linijah in skupine pod sarkolemo
@@ -383,7 +391,10 @@ export function zgradi(THREE, ctx = {}) {
     mitKos.push([j.x + (rnd() - 0.5) * 0.25, Math.cos(a) * 0.35, Math.sin(a) * 0.35]);
   }
   const mitV = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.0065, 0.016, 2, q(6)), mat(0xe8743b, { roughness: 0.4 }), mitKos.length);
-  mitKos.forEach((p, i) => { o.position.set(...p); o.rotation.set(0, 0, Math.PI / 2); o.scale.setScalar(1); o.updateMatrix(); mitV.setMatrixAt(i, o.matrix); });
+  mitKos.forEach((p, i) => {
+    o.position.set(...p); o.rotation.set(0, 0, Math.PI / 2); o.scale.setScalar(1); o.updateMatrix(); mitV.setMatrixAt(i, o.matrix);
+    const k = 0.85 + 0.25 * hash(p[0] * 17, p[1] * 23, p[2] * 29); mitV.setColorAt(i, cc.setRGB(k, k * 0.97, k * 0.94));
+  });
   GV.add(mitV);
 
   const naRobu = robne.filter((m) => m.z > -0.001 && m.z < 0.01 && m.y > 0.1)[0] || robne[0];
@@ -546,15 +557,21 @@ export function zgradi(THREE, ctx = {}) {
     Lsar = 2.5 - 0.6 * krc;
     const s = Lsar / 2.5, g = 1 / Math.sqrt(s);
     GV.scale.set(s, g, g);
-    for (const d of deliV) d.tocka = d.tockaOsn.map((x, i) => Math.round(x * (i ? g : s) * 1000) / 1000);
+    for (const d of deliV) d.tocka = nagni(d.tockaOsn.map((x, i) => x * (i ? g : s)));
     osveziTeksture();
     postaviSarkomero();
   }
-  deliV.forEach((d) => { d.tockaOsn = d.tocka.slice(); });
+  // vlakno rahlo nagnemo, da bolje zapolni zaslon in deluje bolj prostorsko
+  const GVn = new THREE.Group();
+  group.remove(GV); GVn.add(GV); group.add(GVn);
+  GVn.rotation.z = 0.2;
+  GVn.updateMatrix();
+  const nagni = (t) => V(...t).applyMatrix4(GVn.matrix).toArray().map((x) => Math.round(x * 1000) / 1000);
+  deliV.forEach((d) => { d.tockaOsn = d.tocka.slice(); d.tocka = nagni(d.tockaOsn); });
   const nadzor = [
     {
       tip: "izbira", id: "pogled", oznaka: "Pogled", moznosti: [["vlakno", "Vlakno"], ["sarkomera", "Sarkomera"]], vrednost: "vlakno",
-      ob: (v) => { pogled = v === "sarkomera" ? "sarkomera" : "vlakno"; GV.visible = pogled === "vlakno"; GS.visible = !GV.visible; postaviSarkomero(); },
+      ob: (v) => { pogled = v === "sarkomera" ? "sarkomera" : "vlakno"; GVn.visible = pogled === "vlakno"; GS.visible = !GVn.visible; postaviSarkomero(); },
     },
     { tip: "drsnik", id: "krcenje", oznaka: "Krčenje", min: 0, max: 1, korak: 0.01, vrednost: 0, ob: nastaviKrcenje },
     { tip: "izpis", id: "dolzina", oznaka: "Sarkomera", vrednost: () => `Dolžina sarkomere: ${f1(Lsar)} µm` },
@@ -562,6 +579,15 @@ export function zgradi(THREE, ctx = {}) {
   ];
   const z = ctx.zacetek || {};
   for (const n of nadzor) if (n.ob && z[n.id] !== undefined) { n.vrednost = z[n.id]; n.ob(z[n.id]); }
+
+  // rahle razlike v svetlosti med ponovljenimi deli (organeli in beljakovine niso vsi povsem enaki)
+  {
+    const c = new THREE.Color();
+    group.traverse((m) => {
+      if (!m.isInstancedMesh || m.instanceColor) return;
+      for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
+    });
+  }
 
   return {
     group,

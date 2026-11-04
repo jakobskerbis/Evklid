@@ -241,7 +241,7 @@ export function zgradi(THREE, ctx = {}) {
   // 1 enota = 75 nm
   const gor = V(0, 1, 0);
   const RE = 0.74; // ovojnica: premer ≈ 111 nm
-  const oblE = (d) => RE * (1 + 0.02 * fbm(d.x * 1.7 + 4, d.y * 1.7, d.z * 1.7));
+  const oblE = (d) => RE * (1 + 0.02 * fbm(d.x * 1.7 + 4, d.y * 1.7, d.z * 1.7) + 0.005 * sum(d.x * 9, d.y * 9, d.z * 9));
   const odm = (dz) => (d) => oblE(d) - dz;
   // izrezan klin: x < 0, z > 0 po vsej višini (proti gledalcu)
   const vKlinu = (d, m = 0) => d.x < m && d.z > -m;
@@ -415,6 +415,15 @@ export function zgradi(THREE, ctx = {}) {
     { tip: "izbira", id: "prikaz", oznaka: "Prikaz", moznosti: [["prerez", "Prerez"], ["cel", "Cel virus"]], vrednost: "prerez", ob: (v) => { const c = v === "cel"; ovPok.visible = c; ovRez.visible = mxRez.visible = !c; gp41.count = gp120.count = c ? bodD.length : nB0; } },
   ];
   if (zac.prikaz) { nadzor[0].vrednost = zac.prikaz; nadzor[0].ob(zac.prikaz); }
+
+  // rahle razlike v svetlosti med ponovljenimi deli (organeli in beljakovine niso vsi povsem enaki)
+  {
+    const c = new THREE.Color();
+    group.traverse((m) => {
+      if (!m.isInstancedMesh || m.instanceColor) return;
+      for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
+    });
+  }
 
   return {
     group,

@@ -542,6 +542,15 @@ export function zgradi(THREE, ctx = {}) {
   ];
   if (ctx.zacetek && ctx.zacetek.prikaz) { nadzor[0].vrednost = ctx.zacetek.prikaz; nadzor[0].ob(ctx.zacetek.prikaz); }
 
+  // rahle razlike v svetlosti med ponovljenimi deli (organeli in beljakovine niso vsi povsem enaki)
+  {
+    const c = new THREE.Color();
+    group.traverse((m) => {
+      if (!m.isInstancedMesh || m.instanceColor) return;
+      for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
+    });
+  }
+
   return {
     group,
     deli,

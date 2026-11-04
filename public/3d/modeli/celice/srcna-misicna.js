@@ -447,7 +447,13 @@ export function zgradi(THREE, ctx = {}) {
   const mfOsn = mfPos.filter(([y, z]) => Math.hypot(y, z) > 0.055);
   // ob jedrih se miofibrile umaknejo (jedri ležita v svetlem pasu sredi celice)
   const mfM = new THREE.InstancedMesh(mfGeo, mat(0xffffff, { map: mfTex, roughness: 0.45, clearcoat: 0.5, sheen: 0.3 }), mfOsn.length);
-  mfOsn.forEach(([y, z], i) => { o.position.set(0, Y0 + y, z); o.rotation.set(0, 0, 0); o.scale.setScalar(1); o.updateMatrix(); mfM.setMatrixAt(i, o.matrix); });
+  const cc = new THREE.Color();
+  mfOsn.forEach(([y, z], i) => {
+    o.position.set(0, Y0 + y, z); o.rotation.set(0, 0, 0); o.scale.setScalar(1); o.updateMatrix(); mfM.setMatrixAt(i, o.matrix);
+    // globlje ležeče miofibrile temnejše (namesto senčenja), rahle razlike med njimi
+    const k = (0.62 + 0.38 * Math.min(1, Math.hypot(y, z) / (R * 0.7))) * (0.9 + 0.2 * hash(y * 71, z * 53, 3));
+    mfM.setColorAt(i, cc.setRGB(k, k, k));
+  });
   telo.add(mfM);
   // mitohondriji v vrstah med miofibrilami (≈ tretjina prostornine) in ob polih jeder
   const mitKos = [];
@@ -467,7 +473,10 @@ export function zgradi(THREE, ctx = {}) {
     mitKos.push([x, Y0 + Math.cos(a) * rr, Math.sin(a) * rr, 0.8]);
   }
   const mitM = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.0095, 0.016, 2, q(8)), mat(0xe8743b, { roughness: 0.38 }), mitKos.length);
-  mitKos.forEach(([x, y, z, s], i) => { o.position.set(x, y, z); o.rotation.set(rnd() * 0.3, 0, Math.PI / 2); o.scale.set(s, 1, s); o.updateMatrix(); mitM.setMatrixAt(i, o.matrix); });
+  mitKos.forEach(([x, y, z, s], i) => {
+    o.position.set(x, y, z); o.rotation.set(rnd() * 0.3, 0, Math.PI / 2); o.scale.set(s, 1, s); o.updateMatrix(); mitM.setMatrixAt(i, o.matrix);
+    const k = 0.84 + 0.26 * hash(x * 41, y * 37, z * 29); mitM.setColorAt(i, cc.setRGB(k, k * 0.96, k * 0.92));
+  });
   telo.add(mitM);
   // jedri: podolgovati, v sredini celice (prerezani kot celica)
   const jGeo = [], jIn = [], jPok = [];
@@ -508,6 +517,15 @@ export function zgradi(THREE, ctx = {}) {
   ];
   const z = ctx.zacetek || {};
   for (const n of nadzor) if (n.ob && z[n.id] !== undefined) { n.vrednost = z[n.id]; n.ob(z[n.id]); }
+
+  // rahle razlike v svetlosti med ponovljenimi deli (organeli in beljakovine niso vsi povsem enaki)
+  {
+    const c = new THREE.Color();
+    group.traverse((m) => {
+      if (!m.isInstancedMesh || m.instanceColor) return;
+      for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
+    });
+  }
 
   return {
     group,

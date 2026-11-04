@@ -6,7 +6,7 @@ export const info = {
   naslov: "Ksilem in floem",
   podrocje: "celice",
   predmet: "BIO",
-  opis: "Košček žilnega snopa v vzdolžnem prerezu: po mrtvih celicah ksilema se pretakata voda in mineralne snovi navzgor, po živih sitastih ceveh floema pa sladkorji iz listov v druge dele rastline. Celice so prikazane skrajšane; v resnici so dolge od desetink milimetra do več milimetrov.",
+  opis: "Košček žilnega snopa v vzdolžnem prerezu: po mrtvih celicah ksilema se pretakata voda in mineralne snovi navzgor, po živih sitastih ceveh floema pa sladkorji iz listov v druge dele rastline. Pri dvokaličnicah je med njima kambij, plast celic, ki se delijo. Celice so prikazane skrajšane; v resnici so dolge od desetink milimetra do več milimetrov.",
   merilo: { m: 300e-6, oznaka: "300 µm" },
 };
 
@@ -346,6 +346,29 @@ export function zgradi(THREE, ctx = {}) {
   const plastidi = instance(new THREE.SphereGeometry(0.008, q(8), q(6)), mat(0xd8d0a0, { roughness: 0.5 }), plastSez);
   group.add(perfM, odebM, piknje, ploscice, jedri, mitohondriji, plastidi);
 
+  // ---------- kambij: ozke delujoče se celice med ksilemom in floemom (dvokaličnice) ----------
+  const kamZad = [], kamSpr = [], kzB = [], ksB = [], KX = [0.077, 0.091], KW = 0.0125, KD = 0.06;
+  const kamStena = new THREE.Color(0x9fb86a), kamCit = new THREE.Color(0xdbe9b4), kamJed = new THREE.Color(0x7a68d8), _kc = new THREE.Color();
+  KX.forEach((kx, st) => {
+    let y = Y0, prva = true;
+    while (y < Y1 - 0.02) {
+      const h = Math.min(Y1 - y, prva && st ? 0.035 : 0.06 + rnd() * 0.03), yc = y + h / 2;
+      prva = false;
+      _kc.copy(kamStena).multiplyScalar(0.9 + rnd() * 0.18);
+      kamZad.push(new THREE.BoxGeometry(KW, h - 0.003, KD).translate(kx, yc, -KD / 2)); kzB.push(_kc.getHex());
+      kamSpr.push(new THREE.BoxGeometry(KW, h - 0.003, KD).translate(kx, yc, KD / 2)); ksB.push(_kc.getHex());
+      kamZad.push(new THREE.PlaneGeometry(KW - 0.004, h - 0.008).translate(kx, yc, 0.0006)); kzB.push(kamCit.getHex());
+      kamZad.push(new THREE.CircleGeometry(0.0042, q(12)).scale(1, 1.5, 1).translate(kx, yc + (rnd() - 0.5) * h * 0.3, 0.0012)); kzB.push(kamJed.getHex());
+      y += h;
+    }
+  });
+  const kamMat = mat(0xffffff, { vertexColors: true, roughness: 0.55, clearcoat: 0.3, sheen: 0.3 });
+  const kambij = new THREE.Mesh(zdruzi(kamZad, kzB), kamMat);
+  const kambijPokrov = new THREE.Mesh(zdruzi(kamSpr, ksB), kamMat);
+  kambijPokrov.visible = false;
+  group.add(kambij, kambijPokrov);
+  pokrovMreze.push(kambijPokrov);
+
   // ---------- tok: voda navzgor po ksilemu, sladkorji po floemu ----------
   const vodaPoti = [], sladPoti = [];
   for (const [xc, r0, n] of [[xV1, rV1, 12], [xV2, rV2, 16]]) for (let i = 0; i < n; i++) {
@@ -399,9 +422,16 @@ export function zgradi(THREE, ctx = {}) {
   del("jedro", "Jedro celice spremljevalke", "Sitaste cevi nimajo jedra; namesto njih delo upravlja jedro sosednje celice spremljevalke.", "#7a68d8", [jedri], [xC1, 0.18, -0.005]);
   del("mitohondrij", "Mitohondriji", "V celicah spremljevalkah jih je veliko, ker nalaganje sladkorjev v sitaste cevi porablja energijo.", "#e8743b", [mitohondriji], mitSez[3].p.toArray());
   del("plastidi", "Plastidi", "Redki ostanki organelov ob steni sitaste cevi; večina organelov in jedro med razvojem propadejo.", "#d8d0a0", [plastidi], plastSez[2].p.toArray());
+  del("kambij", "Kambij", "Plast ozkih celic, ki se delijo, med ksilemom in floemom; navznoter tvori nov ksilem, navzven nov floem, zato se steblo debeli.", "#9fb86a",
+    [kambij, kambijPokrov], [KX[0], -0.62, 0.002]);
   del("tok-vode", "Tok vode", "Voda z mineralnimi snovmi potuje po ksilemu navzgor; vleče jo izhlapevanje iz listov.", "#3f9cff", [vodaM], [xV2 + 0.02, 0.1, -0.04]);
   del("tok-sladkorjev", "Tok sladkorjev", "Sladkorji iz listov potujejo po floemu tja, kjer jih rastlina porablja ali shranjuje, na primer v korenine in plodove.", "#f0a040",
     [sladM], [xS2 - 0.01, -0.2, -0.04]);
+
+  // Ves košček rahlo zasukamo proti privzetemu pogledu, da je prerez viden bolj od spredaj in je snop širši.
+  const zasuk = new THREE.Matrix4().makeRotationY(-0.3);
+  group.children.forEach((m) => m.applyMatrix4(zasuk));
+  deli.forEach((d) => { d.tocka = new THREE.Vector3(...d.tocka).applyMatrix4(zasuk).toArray().map((x) => Math.round(x * 1000) / 1000); });
 
   // ---------- nadzor ----------
   let tok = "voda", zadnjiT = 0;

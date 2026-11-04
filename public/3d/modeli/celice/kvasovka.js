@@ -6,7 +6,7 @@ export const info = {
   naslov: "Kvasovka",
   podrocje: "celice",
   predmet: "BIO",
-  opis: "Pivska kvasovka (Saccharomyces cerevisiae), enocelična gliva velikosti okoli 5 µm. Razmnožuje se z brstenjem: iz matične celice zraste brst, vanj potuje polovica jedra. Organelov je manj kot v resnici.",
+  opis: "Pivska kvasovka (Saccharomyces cerevisiae), enocelična gliva velikosti okoli 5 µm. Razmnožuje se z brstenjem: iz matične celice zraste brst, v katerega preide eno od obeh novih jeder. Organelov je manj kot v resnici.",
   merilo: { m: 10e-6, oznaka: "10 µm" },
 };
 
@@ -493,6 +493,15 @@ export function zgradi(THREE, ctx = {}) {
   ];
   if (zac.brstenje != null && isFinite(+zac.brstenje)) nadzor[0].vrednost = Math.min(1, Math.max(0, +zac.brstenje));
   nastavi(nadzor[0].vrednost);
+
+  // rahle razlike v svetlosti med ponovljenimi deli (organeli in beljakovine niso vsi povsem enaki)
+  {
+    const c = new THREE.Color();
+    group.traverse((m) => {
+      if (!m.isInstancedMesh || m.instanceColor) return;
+      for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
+    });
+  }
 
   return {
     group,

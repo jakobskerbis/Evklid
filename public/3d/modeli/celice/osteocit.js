@@ -175,9 +175,9 @@ export function zgradi(THREE, ctx = {}) {
   const oznaka = (um) => (um >= 10 ? String(Math.round(um)) : String(Math.round(um * 10) / 10).replace(".", ",")) + " µm";
   const o = new THREE.Object3D();
 
-  const BX = 24, BZ = 12, BY = 5; // kos kosti: 48 × 24 µm, 5 µm globoko pod prerezom
+  const BX = 24, BZ = 12, BY = 10; // kos kosti: 48 × 24 µm, 10 µm globoko pod prerezom
   const svet = new THREE.Group(); group.add(svet);
-  svet.rotation.set(0.5, -0.22, 0, "YXZ");
+  svet.rotation.set(0.6, -0.22, 0, "YXZ");
 
   // ---------- lakune ----------
   const lakune = [
@@ -286,7 +286,8 @@ export function zgradi(THREE, ctx = {}) {
   const del3 = idx.map((ix) => { const g = new THREE.BufferGeometry(); g.setAttribute("position", polje.attributes.position); g.setAttribute("normal", polje.attributes.normal); g.setAttribute("color", polje.attributes.color); g.setIndex(ix); return g; });
   // stene kosa (zgornji rob sledi višinskemu polju), vse z lamelami v barvi oglišč
   const stene = [];
-  const stena = (f) => { const g = ploskev(f, q(160), 10); const p = g.attributes.position, c = new Float32Array(p.count * 3); for (let i = 0; i < p.count; i++) { barvaKosti(p.getX(i), p.getY(i), p.getZ(i), cc); c.set([cc.r, cc.g, cc.b], i * 3); } g.setAttribute("color", new THREE.BufferAttribute(c, 3)); return g; };
+  // stene: lamele kot navpične proge, proti dnu temneje (globina), ob vrhu tanek svetel rob prereza
+  const stena = (f) => { const g = ploskev(f, q(160), 12); const p = g.attributes.position, c = new Float32Array(p.count * 3); for (let i = 0; i < p.count; i++) { const y = p.getY(i); barvaKosti(p.getX(i), y, p.getZ(i), cc); cc.multiplyScalar(0.62 + 0.38 * Math.pow(THREE.MathUtils.clamp((y + BY) / BY, 0, 1), 0.8)); c.set([cc.r, cc.g, cc.b], i * 3); } g.setAttribute("color", new THREE.BufferAttribute(c, 3)); return g; };
   stene.push(stena((u, v, p) => { const x = -BX + 2 * BX * u; return p.set(x, -BY + (visina(x, BZ)[0] + BY) * v, BZ); }));
   stene.push(stena((u, v, p) => { const x = BX - 2 * BX * u; return p.set(x, -BY + (visina(x, -BZ)[0] + BY) * v, -BZ); }));
   stene.push(stena((u, v, p) => { const z = BZ - 2 * BZ * u; return p.set(-BX, -BY + (visina(-BX, z)[0] + BY) * v, z); }));
@@ -304,6 +305,19 @@ export function zgradi(THREE, ctx = {}) {
     const [h] = visina(x, z);
     const t = new THREE.CircleGeometry(0.28, q(10)); t.rotateX(-Math.PI / 2); t.translate(x, h + 0.04, z);
     odpr.push(t);
+  }
+  // prerezani kanalikuli na stenah kosa (kanalčki potekajo v vse smeri, tudi navzdol): temna odprtina z izrastkom v sredini
+  const presekiIz = [];
+  const stenaN = [[V(0, 0, 1), (a) => V(a * BX, 0, BZ)], [V(0, 0, -1), (a) => V(a * BX, 0, -BZ)], [V(-1, 0, 0), (a) => V(-BX, 0, a * BZ)], [V(1, 0, 0), (a) => V(BX, 0, a * BZ)]];
+  for (const [n, tocka] of stenaN) {
+    const N = n.z ? 26 : 13;
+    for (let i = 0; i < N; i++) {
+      const p = tocka(-0.96 + 1.92 * ((i + rnd() * 0.8) / N)), y = -BY + 1 + rnd() * (BY - 2.4);
+      p.y = y;
+      const r0 = 0.2 + rnd() * 0.1, kv = new THREE.Quaternion().setFromUnitVectors(V(0, 0, 1), n);
+      const a = new THREE.CircleGeometry(r0 * (1 + 0.6 * rnd()), q(10)).scale(1, 0.7 + rnd() * 0.6, 1).applyQuaternion(kv); a.translate(p.x + n.x * 0.03, p.y, p.z + n.z * 0.03); odpr.push(a);
+      const b = new THREE.CircleGeometry(r0 * 0.55, q(8)).applyQuaternion(kv); b.translate(p.x + n.x * 0.06, p.y, p.z + n.z * 0.06); presekiIz.push(b);
+    }
   }
   const odprtine = new THREE.Mesh(zdruzi(odpr), mat(0x4a3826, { roughness: 0.9, clearcoat: 0, sheen: 0 }));
   svet.add(odprtine);
@@ -360,7 +374,7 @@ export function zgradi(THREE, ctx = {}) {
     if (p.cilj) { const z = t[t.length - 1]; t.push(V(z.x, -0.5, z.z)); }
     izG.push(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(t), q(Math.max(12, t.length * 3)), 0.24, q(6), false));
   });
-  const izrastki = new THREE.Mesh(zdruzi(izG), mat(0xe596b0, { roughness: 0.35, clearcoat: 0.8, sheen: 0.5 }));
+  const izrastki = new THREE.Mesh(zdruzi(izG.concat(presekiIz)), mat(0xe596b0, { roughness: 0.35, clearcoat: 0.8, sheen: 0.5 }));
   svet.add(izrastki);
 
   const s = umeri(svet, 0.985);
@@ -377,9 +391,11 @@ export function zgradi(THREE, ctx = {}) {
   del("izrastki", "Izrastki (dendriti)", "Do 50 tankih izrastkov iz vsake celice teče po kanalikulih; s sosednjimi se dotikajo v presledkovnih stikih, skozi katere prehajajo snovi.", "#e596b0", [izrastki], (() => { const k = krivulje[poti.findIndex((p) => p.od === 0 && p.t[0][1] > 3)] || krivulje[0]; const e = k.getPoint(0.2); return L(e.x, zg(e.x, e.z) + 0.4, e.z); })());
   del("sosednji-osteociti", "Sosednja osteocita", "Osteocita v sosednjih lakunah; vse celice so povezane v mrežo, ki prepreda celo kost.", "#c77f98", [sosedi], L(-20.5, 1.4, -6));
 
+  const premer = 2 / s; // µm na premer enotske krogle
   return {
     group,
     deli,
+    merilo: { m: premer * 1e-6, oznaka: oznaka(premer) },
     korak(t) {
       if (!gib) return;
       group.rotation.y = Math.sin(t * 0.15) * 0.04;

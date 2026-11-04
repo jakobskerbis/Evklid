@@ -239,7 +239,10 @@ export function zgradi(THREE, ctx = {}) {
   const o = new THREE.Object3D(), smer = V();
 
   const mat1 = (barva, o2 = {}) => mat(barva, Object.assign({ forceSinglePass: true }, o2));
-  const CZ = V(-0.433, 0, -0.25), CR = V(0.41, 0, 0.235); // središči živalske in rastlinske celice
+  // središči živalske in rastlinske celice: druga ob drugi, pravokotno na privzeti pogled in rahlo po diagonali
+  const SMER = V(0.866, 0, 0.5);
+  const CZ = SMER.clone().multiplyScalar(-0.33).add(V(0, 0.24, 0));
+  const CR = SMER.clone().multiplyScalar(0.36).add(V(0, -0.16, 0));
   const izrezan = (p, c, m = 0.02) => p.x < c.x + m && p.y > c.y - m && p.z > c.z - m;
   const gor = V(0, 1, 0);
   const postavi = (mesh, c) => { mesh.position.copy(c); group.add(mesh); return mesh; };
@@ -482,7 +485,7 @@ export function zgradi(THREE, ctx = {}) {
       odpad.push(sm, tex);
       const sp = new THREE.Sprite(sm);
       sp.scale.set(0.5, 0.094, 1);
-      sp.position.set(c.x, 0.45, c.z);
+      sp.position.set(c.x, c.y + 0.43, c.z);
       group.add(sp);
       napisi.push(sp);
     }
@@ -494,7 +497,7 @@ export function zgradi(THREE, ctx = {}) {
   for (const d of deli) for (const m of d.meshes) if (!izvirne.has(m.material)) izvirne.set(m.material, m.material.color.clone());
   const OPISI = {
     vse: "Vsi deli obeh celic",
-    skupni: "Skupno: membrana, citoplazma, jedro, ER, Golgi, mitohondriji, ribosomi",
+    skupni: "Skupno: membrana, citoplazma, jedro, ER, Golgijev aparat, mitohondriji, ribosomi",
     zival: "Samo v živalski: lizosomi, centriole",
     rastl: "Samo v rastlinski: celična stena, kloroplasti, osrednja vakuola",
   };
@@ -515,6 +518,13 @@ export function zgradi(THREE, ctx = {}) {
       }
     }
   }
+  // vse skupaj povečamo, da celici bolje zapolnita pogled
+  const POV = 1.15, notranja = new THREE.Group();
+  while (group.children.length) notranja.add(group.children[0]);
+  notranja.scale.setScalar(POV);
+  notranja.position.copy(SMER).multiplyScalar(-0.07);
+  group.add(notranja);
+  for (const d of deli) d.tocka = d.tocka.map((x, i) => Math.round((x * POV + notranja.position.getComponent(i)) * 1000) / 1000);
   const nadzor = [
     {
       tip: "izbira", id: "poudari", oznaka: "Poudari",
@@ -529,6 +539,15 @@ export function zgradi(THREE, ctx = {}) {
   ];
   if (zac.poudari) { nadzor[0].vrednost = zac.poudari; nastavi(zac.poudari); }
   if (zac.prikaz) { nadzor[2].vrednost = zac.prikaz; nadzor[2].ob(zac.prikaz); }
+
+  // rahle razlike v svetlosti med ponovljenimi deli (organeli in beljakovine niso vsi povsem enaki)
+  {
+    const c = new THREE.Color();
+    group.traverse((m) => {
+      if (!m.isInstancedMesh || m.instanceColor) return;
+      for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
+    });
+  }
 
   return {
     group,

@@ -7,7 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Ameba je enocelični organizem iz sladkih voda, ki se premika in hrani s panožicami. Gumb »Pogoltni hrano« pokaže, kako obda in pogoltne drobno algo. Zrnc in mehurčkov je manj kot v resnici.",
-  merilo: { m: 550e-6, oznaka: "550 µm" },
+  merilo: { m: 444e-6, oznaka: "444 µm" }, // premer enotske krogle = 2 · 275 µm / 1,24
 };
 
 export function zgradi(THREE, ctx = {}) {
@@ -217,7 +217,7 @@ export function zgradi(THREE, ctx = {}) {
   // Celica leži na podlagi; skupino »tel« nagnemo proti gledalcu, da je vidna kot pod mikroskopom.
   const tel = new THREE.Group();
   tel.rotation.x = 0.5;
-  tel.scale.setScalar(1.09);
+  tel.scale.setScalar(1.24); // 1 enota v »tel« = 275 µm, v skupini 275 / 1,24 ≈ 222 µm
   group.add(tel);
   tel.updateMatrix();
 
@@ -229,9 +229,9 @@ export function zgradi(THREE, ctx = {}) {
   const HRANA_SMER = smerH(0.95); // proti gledalcu desno (zunaj izreza)
   // panožica = kapsula od središča do razdalje L (konica), polširina W
   const panozice = [
-    { p: smerH(Math.PI * 1.06, 0.12), L0: 0.9, W: 0.125, f: 0.0, h: 0.31 },
+    { p: smerH(Math.PI * 1.06, 0.12), L0: 0.8, W: 0.13, f: 0.0, h: 0.31 },
     { p: smerH(Math.PI * 0.66, -0.08), L0: 0.74, W: 0.11, f: 2.1, h: 0.27 },
-    { p: smerH(-0.28, 0.1), L0: 0.86, W: 0.12, f: 4.0, h: 0.23 },
+    { p: smerH(-0.28, 0.1), L0: 0.78, W: 0.125, f: 4.0, h: 0.23 },
     { p: smerH(-Math.PI * 0.58, -0.05), L0: 0.72, W: 0.115, f: 1.3, h: 0.35 },
     { p: smerH(-Math.PI * 0.84, 0.2), L0: 0.6, W: 0.1, f: 3.3, h: 0.29 },
     { p: smerH(Math.PI * 0.36, -0.15), L0: 0.58, W: 0.1, f: 5.1, h: 0.33 },
@@ -330,13 +330,13 @@ export function zgradi(THREE, ctx = {}) {
 
   // ---------- celična membrana (prozorna), ektoplazma, endoplazma ----------
   const [memG, memPG] = dinLupina(q(168), q(84));
-  const memMat = mat(0xe6b3c6, { roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.1, transparent: true, opacity: 0.34, depthWrite: false, sheen: 0.9, sheenColor: new THREE.Color(0xffe0ee) });
+  const memMat = mat(0xf2cfdc, { roughness: 0.1, clearcoat: 1, clearcoatRoughness: 0.06, transparent: true, opacity: 0.44, depthWrite: false, sheen: 1, sheenColor: new THREE.Color(0xfff0f6), sheenRoughness: 0.35 });
   const membrana = new THREE.Mesh(memG, memMat);
   const memPokrov = new THREE.Mesh(memPG, memMat);
   membrana.renderOrder = memPokrov.renderOrder = 5;
   memPokrov.visible = false;
   const memTrak = new THREE.Mesh(trak(), mat(0xd88aa2, { roughness: 0.3, clearcoat: 1, side: THREE.DoubleSide }));
-  const ektoTrak = new THREE.Mesh(trak(), mat(0xe4eef0, { roughness: 0.25, clearcoat: 1, transparent: true, opacity: 0.6, depthWrite: false, side: THREE.DoubleSide }));
+  const ektoTrak = new THREE.Mesh(trak(), mat(0xeef6f8, { roughness: 0.2, clearcoat: 1, transparent: true, opacity: 0.82, depthWrite: false, side: THREE.DoubleSide }));
   ektoTrak.renderOrder = 3;
   const [endG, endPG] = dinLupina(q(144), q(72));
   for (const g of [endG, endPG]) {
@@ -426,7 +426,7 @@ export function zgradi(THREE, ctx = {}) {
   }
   const alga = new THREE.Mesh(algaGeo, mat(0xffffff, { vertexColors: true, roughness: 0.35, clearcoat: 0.8 }));
   tel.add(alga);
-  const ALGA_ZUNAJ = HRANA_SMER.clone().multiplyScalar(0.8).setY(0.0), ALGA_NOTRI = HRANA_SMER.clone().multiplyScalar(0.2).setY(-0.03);
+  const ALGA_ZUNAJ = HRANA_SMER.clone().multiplyScalar(0.56).setY(0.0), ALGA_NOTRI = HRANA_SMER.clone().multiplyScalar(0.2).setY(-0.03);
   let faza = -1, fazaZac = 0, zadnjiT = 0, prikazanaNova = 1;
   const zadnjiPreb = { p: ALGA_NOTRI.clone(), s: 0 };
   function postaviHrano() {
@@ -444,8 +444,8 @@ export function zgradi(THREE, ctx = {}) {
   // potek požiranja: f ∈ [0, 1] v 7 s
   function pozri(f) {
     const vrh = (a, b) => gladko(a, b, f);
-    pcA.L = pcB.L = 0.25 + 0.68 * vrh(0, 0.4) * (1 - vrh(0.62, 0.95));
-    pcC.L = Math.max(0, 0.25 + 0.4 * vrh(0.05, 0.35) + 0.3 * vrh(0.4, 0.58) - 0.7 * vrh(0.62, 0.95));
+    pcA.L = pcB.L = 0.25 + 0.47 * vrh(0, 0.4) * (1 - vrh(0.62, 0.95));
+    pcC.L = Math.max(0, 0.25 + 0.26 * vrh(0.05, 0.35) + 0.2 * vrh(0.4, 0.58) - 0.5 * vrh(0.62, 0.95));
     const notri = vrh(0.6, 1);
     alga.position.copy(ALGA_ZUNAJ).lerp(ALGA_NOTRI, notri);
     zadnjiPreb.p.copy(alga.position);

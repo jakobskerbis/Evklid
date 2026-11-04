@@ -362,7 +362,7 @@ export function zgradi(THREE, ctx = {}) {
     dd("citoplazma", "Citoplazma", "Tekočina z organeli, ki zapolnjuje celico med membrano in jedrom.", "#" + new THREE.Color(c.cit).getHexString(), [citIn], L(V(0.45, -0.35, -0.55).normalize().multiplyScalar(R * 0.96).toArray()));
     dd("jedro", "Jedro", c.jedroOpis, "#7a68d8", [jedro], izbJ());
     if (zrnca && tocke.zrnca.length) dd("zrnca", c.zrnca.ime, c.zrnca.opis, "#" + new THREE.Color(c.zrnca.barva).getHexString(), [zrnca], L(naj(tocke.zrnca).toArray()));
-    if (vak && tocke.vak.length) dd("vakuole", "Vakuole", "Mehurčki, v katerih monocit hrani in prebavlja pogoltnjene delce.", "#a8e6ef", [vak], L(naj(tocke.vak).toArray()));
+    if (vak && tocke.vak.length) dd("vakuole", "Vakuole", "Mehurčki, v katerih monocit prebavlja pogoltnjene delce.", "#a8e6ef", [vak], L(naj(tocke.vak).toArray()));
     if (mit && tocke.mito.length) dd("mitohondrij", "Mitohondriji", "Elektrarne celice, ki pri celičnem dihanju pridobivajo energijo; v belih krvničkah jih je malo.", "#e8743b", [mit], L(naj(tocke.mito).toArray()));
     if (rib) dd("ribosomi", "Ribosomi", "Drobna zrnca, ki izdelujejo beljakovine (pri limfocitih B tudi protitelesa); zaradi njih je citoplazma modrikasta.", "#2b3f8f", [rib], naCeli(-0.75, 0.62, 0.15).map((x) => x * 0.97));
     dd("eritrocit", "Rdeča krvnička za primerjavo", "Rdeča krvnička meri 7,8 µm; ob njej vidiš, kako velika je ta bela krvnička (" + c.velikost + ").", "#d9545f", [eri], L(eri.position.clone().add(osE.clone().multiplyScalar(0.5)).add(V(0.4, 1.2, 0)).toArray()));

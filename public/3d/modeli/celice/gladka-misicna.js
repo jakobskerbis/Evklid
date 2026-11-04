@@ -7,7 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Vretenasta celica brez prečnih prog z enim osrednjim jedrom; aktinski in miozinski filamenti so pripeti na gosta telesca in tvorijo poševno mrežo. Povečan izsek pokaže notranjost; filamenti in kaveole so narisani debelejši in redkejši kot v resnici.",
-  merilo: { m: 100e-6, oznaka: "100 µm" },
+  merilo: { m: 12e-6, oznaka: "12 µm" },
 };
 
 export function zgradi(THREE, ctx = {}) {
@@ -458,7 +458,7 @@ export function zgradi(THREE, ctx = {}) {
     const gtT = (notri[0] || vozli[0]).p;
     dl.push(["membrana", "Celična membrana", c.kaveole ? "Meja celice; drobne vdolbine v njej so kaveole, ki uravnavajo vstop kalcijevih ionov, ti pa sprožijo krčenje." : "Meja celice; na njeno notranjo stran so pripeti filamenti, zato se ob krčenju nagrbanči. Kaveole vidiš v povečanem izseku.", "#d88aa2", [memOut, memRob, pok], naM(c.tMem, -0.9)]);
     dl.push(["citoplazma", "Citoplazma", "Notranjost celice; skoraj vso zapolnjujejo aktinski in miozinski filamenti, zato je v mikroskopu enakomerno svetla, brez prog.", "#f1c9b6", citDeli, c.tCit]);
-    dl.push(["jedro", "Jedro", "Eno samo podolgovato jedro leži v sredini celice; ko se celica skrči, se zvije kot zamašek.", "#7a68d8", [jOut, jRob, jPok], c.tJedro]);
+    dl.push(["jedro", "Jedro", "Eno samo podolgovato jedro leži v sredini celice; ko se celica skrči, se nagrbanči in zvije kot vijak.", "#7a68d8", [jOut, jRob, jPok], c.tJedro]);
     dl.push(["nukleoplazma", "Nukleoplazma", "Tekočina v notranjosti jedra z dednim zapisom (DNK).", "#b9a8ff", [jIn], c.tNuk]);
     dl.push(["jedrce", "Jedrce", "Telesce v jedru, kjer nastajajo deli ribosomov.", "#34268a", [jc], jcP.toArray()]);
     dl.push(["gosta-telesca", "Gosta telesca", "Temna sidrišča v citoplazmi in na membrani; nanje so pripeti aktinski filamenti, ki jih pri krčenju vlečejo skupaj.", "#2f3550", [gt], gtT.toArray()]);
@@ -469,11 +469,15 @@ export function zgradi(THREE, ctx = {}) {
     if (c.kaveole) dl.push(["kaveole", "Kaveole", "Drobne vrečaste vdolbine celične membrane; zbirajo ionske kanalčke in signalne beljakovine za sprožitev krčenja.", "#a8506f", [kav, kavB], naM(c.tMem * 0.6, -0.5, 1.02)]);
     const lastni = [];
     dl.forEach((d) => del(...d, lastni));
+    // rahel nagib, da podolgovata celica bolje zapolni zaslon (tudi na telefonu)
+    G.rotation.z = c.nagib || 0;
+    G.updateMatrix();
     const tBase = lastni.map((d) => V(...d.tocka));
     const nastaviVse = (kc) => {
       nastavi(kc);
-      lastni.forEach((d, i) => { D(tBase[i], kc, tmp, d.id === "jedro" || d.id === "nukleoplazma" || d.id === "jedrce"); d.tocka = tmp.toArray().map((x) => Math.round(x * 1000) / 1000); });
+      lastni.forEach((d, i) => { D(tBase[i], kc, tmp, d.id === "jedro" || d.id === "nukleoplazma" || d.id === "jedrce"); d.tocka = tmp.applyMatrix4(G.matrix).toArray().map((x) => Math.round(x * 1000) / 1000); });
     };
+    lastni.forEach((d, i) => { d.tocka = tBase[i].clone().applyMatrix4(G.matrix).toArray().map((x) => Math.round(x * 1000) / 1000); });
     return { G, deli: lastni, nastavi: nastaviVse, prikaz: (cela) => { pok.visible = cela; jPok.visible = cela; memRob.visible = !cela; jRob.visible = !cela; } };
   }
 
@@ -481,31 +485,31 @@ export function zgradi(THREE, ctx = {}) {
   const L1 = 0.98;
   const celica = pogled({
     R: (x) => 0.07 * Math.pow(Math.max(0, 1 - Math.pow(x / L1, 2)), 1.15) + 0.0015,
-    xr: [-L1, L1], nProf: 120, nKot: 36, rob: 0.0028, kape: false,
+    xr: [-L1, L1], nProf: 120, nKot: 36, rob: 0.0028, kape: false, nagib: 0.28,
     jx: [-0.17, 0.17], jR: (x) => 0.021 * Math.sqrt(Math.max(0, 1 - Math.pow(Math.abs(x / 0.17), 2.4))) + 0.0005, jZapri: false,
     dx: 0.05, nKrog: hi ? 6 : 5, nAkt: hi ? 3 : 2, gtR: 0.55, razmik: 0.008, fil: 0.0011, glave: false, gt: 0.0034,
     nMit: hi ? 22 : 14, mit: [0.004, 0.012], mitX: [-0.34, 0.34], mitR: 0.65, kaveole: false,
-    sosedje: [[0.45, -0.075, -0.09, 0.5, 0.058], [-0.45, 0.045, -0.115, 0.5, 0.062], [0.02, -0.125, 0.0, 0.62, 0.062], [-0.5, -0.115, 0.05, 0.44, 0.05], [0.52, 0.085, -0.1, 0.43, 0.05], [-0.02, -0.03, -0.14, 0.66, 0.064], [0.4, -0.2, 0.05, 0.5, 0.055]],
+    sosedje: [[0.45, -0.075, -0.09, 0.5, 0.058], [-0.45, 0.045, -0.115, 0.5, 0.062], [0.02, -0.125, 0.0, 0.62, 0.062], [-0.5, -0.115, 0.05, 0.44, 0.05], [0.52, 0.085, -0.1, 0.43, 0.05], [-0.02, -0.03, -0.14, 0.66, 0.064], [0.4, -0.2, 0.05, 0.5, 0.055], [0.3, 0.13, -0.08, 0.52, 0.056], [-0.36, 0.15, -0.05, 0.5, 0.055], [0.0, 0.1, -0.24, 0.6, 0.06], [-0.55, -0.22, -0.05, 0.4, 0.05], [0.6, -0.06, -0.24, 0.36, 0.05]],
     tSos: [0.02, -0.19, 0.04],
     skrajsaj: 0.42, mehur: 0.07, mehurK: 40, zasuk: 1.4, vijak: 0.01, vijakK: 34,
     tMem: 0.32, tCit: [-0.5, 0.008, 0.012], tJedro: [0.06, 0.012, 0.016], tNuk: [-0.05, 0.004, -0.01], tAkt: [-0.42, 0.015, 0.02], tMio: [0.45, 0.01, 0.018],
   });
   // ---------- pogled 2: povečan izsek okoli pola jedra (≈ 11 µm × 4,8 µm; 1 enota = 6 µm) ----------
-  const L2 = 0.95, R2 = 0.4;
+  const L2 = 0.9, R2 = 0.4;
   const izsek = pogled({
-    R: () => R2, xr: [-L2, L2], nProf: 60, nKot: 72, rob: 0.006, kape: true,
+    R: () => R2, xr: [-L2, L2], nProf: 60, nKot: 72, rob: 0.006, kape: true, nagib: 0.3,
     jx: [-0.05, L2], jR: (x) => 0.125 * Math.sqrt(Math.max(0, 1 - Math.pow(Math.max(0, 0.6 - (x + 0.05)) / 0.6, 2.2))) + 0.002, jZapri: true,
     dx: 0.15, nKrog: hi ? 12 : 9, nAkt: hi ? 4 : 3, gtR: 0.6, razmik: 0.06, fil: 0.0042, glave: true, gt: 0.024,
     nMit: hi ? 11 : 8, mit: [0.034, 0.11], mitX: [-0.55, -0.04], mitR: 0.45, kaveole: true,
     skrajsaj: 0.42, mehur: 0.09, mehurK: 9, zasuk: 0.3, vijak: 0.045, vijakK: 7,
     tMem: 0.55, tCit: [-L2 - 0.01, -0.12, -0.2], tJedro: [0.4, 0.09, 0.1], tNuk: [0.5, 0.02, -0.06], tAkt: [-0.3, 0.12, 0.2], tMio: [0.2, 0.25, 0.2],
   });
-  izsek.G.visible = false;
+  celica.G.visible = false;
 
-  let pogledId = "celica", krc = 0, cela = false;
+  let pogledId = "izsek", krc = 0, cela = false;
   const nadzor = [
     {
-      tip: "izbira", id: "pogled", oznaka: "Pogled", moznosti: [["celica", "Cela celica"], ["izsek", "Povečan izsek"]], vrednost: "celica",
+      tip: "izbira", id: "pogled", oznaka: "Pogled", moznosti: [["izsek", "Povečan izsek"], ["celica", "Cela celica v tkivu"]], vrednost: "izsek",
       ob: (v) => { pogledId = v === "izsek" ? "izsek" : "celica"; celica.G.visible = pogledId === "celica"; izsek.G.visible = !celica.G.visible; },
     },
     {
@@ -521,11 +525,20 @@ export function zgradi(THREE, ctx = {}) {
   const z = ctx.zacetek || {};
   for (const n of nadzor) if (n.ob && z[n.id] !== undefined) { n.vrednost = z[n.id]; n.ob(z[n.id]); }
 
+  // rahle razlike v svetlosti med ponovljenimi deli (organeli in beljakovine niso vsi povsem enaki)
+  {
+    const c = new THREE.Color();
+    group.traverse((m) => {
+      if (!m.isInstancedMesh || m.instanceColor) return;
+      for (let i = 0; i < m.instanceMatrix.count; i++) { const k = 0.88 + 0.2 * hash(i * 1.37, m.instanceMatrix.count * 0.11, 7); m.setColorAt(i, c.setRGB(k, k, k)); }
+    });
+  }
+
   return {
     group,
     get deli() { return pogledId === "izsek" ? izsek.deli : celica.deli; },
     nadzor,
-    get merilo() { return pogledId === "izsek" ? { m: 12e-6, oznaka: "12 µm" } : info.merilo; },
+    get merilo() { return pogledId === "izsek" ? info.merilo : { m: 100e-6, oznaka: "100 µm" }; },
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
       odpad.forEach((m) => m.dispose());

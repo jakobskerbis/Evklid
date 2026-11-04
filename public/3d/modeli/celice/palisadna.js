@@ -430,7 +430,7 @@ export function zgradi(THREE, ctx = {}) {
       k++;
     }
   });
-  const sosMat = mat(0xb5b07a, { roughness: 0.5, clearcoat: 0.6, transparent: true, opacity: 0.5, depthWrite: false });
+  const sosMat = mat(0xd9d4a2, { roughness: 0.35, clearcoat: 0.8, clearcoatRoughness: 0.2, transparent: true, opacity: 0.48, depthWrite: false, sheen: 1, sheenColor: new THREE.Color(0xfff6d0), sheenRoughness: 0.4 });
   const sosStena = new THREE.Mesh(zdruzi(sosGeo), sosMat);
   sosStena.renderOrder = 3;
   const sosKloroplasti = instance(kloroplastGeo(1), mat(0xffffff, { vertexColors: true, roughness: 0.4, clearcoat: 0.6 }), sosKlo);

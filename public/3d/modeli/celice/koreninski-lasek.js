@@ -375,15 +375,34 @@ export function zgradi(THREE, ctx = {}) {
   const opisDelcev = [[0.3, -0.25, 0.15, 0x9a7650], [0.52, Math.PI + 0.35, 0.17, 0xb08a5a], [0.8, -0.55, 0.12, 0x8f8a7e], [0.14, Math.PI + 0.6, 0.11, 0x7d6648], [0.93, Math.PI + 0.2, 0.1, 0xa39478]];
   const delci = opisDelcev.map(([u, beta, r, b]) => [ob(u, beta, r), r, b, u]);
   const kamni = [], filmi = [];
+  // Zrno kamnine: presek naključnih polprostorov (oglato kot pesek), robovi mehko zaobljeni, površina rahlo hrapava.
+  const drobtine = [];
   delci.forEach(([c, r, b], i) => {
     const sc = new THREE.Vector3(1.2, 0.8, 1).applyAxisAngle(new THREE.Vector3(0, 0, 1), i);
-    const obl = (v) => v.multiplyScalar(1 + 0.22 * fbm(v.x * 1.7 + i * 5, v.y * 1.7, v.z * 1.7) + 0.05 * sum(v.x * 6, v.y * 6, v.z * 6)).multiply(sc).multiplyScalar(r);
-    const g = preoblikuj(new THREE.SphereGeometry(1, q(36), q(24)), (v) => obl(v).add(c));
-    const p = g.attributes.position, col = [], cc = new THREE.Color();
-    for (let k = 0; k < p.count; k++) { const t = 0.5 + 0.5 * sum(p.getX(k) * 50, p.getY(k) * 50, p.getZ(k) * 50); cc.set(b).multiplyScalar(0.75 + 0.4 * t); col.push(cc.r, cc.g, cc.b); }
+    const ravn = [];
+    for (let k = 0; k < 13; k++) { const n = new THREE.Vector3(rnd() * 2 - 1, rnd() * 2 - 1, rnd() * 2 - 1).normalize(); ravn.push([n, 0.78 + rnd() * 0.22]); }
+    const polmer = (d) => { let e = 0; for (const [n, h] of ravn) { const c2 = d.dot(n); if (c2 > 0.05) e += Math.pow(c2 / h, 14); } return e > 0 ? Math.min(1.25, Math.pow(e, -1 / 14)) : 1.25; };
+    const obl = (v) => { const d = v.clone().normalize(); return v.copy(d).multiplyScalar(polmer(d) * (1 + 0.06 * fbm(d.x * 2.5 + i * 5, d.y * 2.5, d.z * 2.5) + 0.018 * sum(d.x * 14, d.y * 14, d.z * 14))).multiply(sc).multiplyScalar(r); };
+    const g = preoblikuj(new THREE.SphereGeometry(1, q(56), q(40)), (v) => obl(v).add(c));
+    const p = g.attributes.position, nr = g.attributes.normal, col = [], cc = new THREE.Color(), sv = new THREE.Color(0xe8dcc0), tm = new THREE.Color(0x3b2a1a), lo = new THREE.Vector3();
+    for (let k = 0; k < p.count; k++) {
+      lo.set(p.getX(k), p.getY(k), p.getZ(k)).sub(c);
+      const t = 0.5 + 0.5 * sum(lo.x * 40, lo.y * 40, lo.z * 40), pik = sum(lo.x * 170 + 7, lo.y * 170, lo.z * 170);
+      cc.set(b).multiplyScalar(0.8 + 0.35 * t);
+      if (pik > 0.68) cc.lerp(sv, 0.35); else if (pik < -0.62) cc.lerp(tm, 0.4); // svetla in temna mineralna zrnca
+      const vb = 1 - lo.normalize().dot(new THREE.Vector3(nr.getX(k), nr.getY(k), nr.getZ(k))); // na robovih in v vdolbinah temneje
+      cc.multiplyScalar(1 - Math.min(0.35, Math.max(0, vb) * 0.9));
+      col.push(cc.r, cc.g, cc.b);
+    }
     g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
     kamni.push(g);
-    filmi.push(preoblikuj(new THREE.SphereGeometry(1, q(30), q(20)), (v) => { const n = v.clone(); obl(v); v.addScaledVector(n, 0.026).add(c); }));
+    filmi.push(preoblikuj(new THREE.SphereGeometry(1, q(36), q(24)), (v) => { const n = v.clone().normalize(); obl(v); v.addScaledVector(n, 0.018).add(c); }));
+    // drobni delci gline in humusa, prilepljeni na zrno
+    for (let k = 0; k < (hi ? 9 : 5); k++) {
+      const d = new THREE.Vector3(rnd() * 2 - 1, rnd() * 2 - 1, rnd() * 2 - 1).normalize(), v = d.clone();
+      obl(v);
+      drobtine.push({ p: v.add(c), s: r * (0.07 + rnd() * 0.07), b: rnd() < 0.5 ? 0x4a3524 : 0x7a5a3a, r: new THREE.Euler(rnd() * 3, rnd() * 3, rnd() * 3) });
+    }
   });
   // vodni mostički med delci in laskom
   const mostovi = delci.map((d, i) => [i, d[3]]);
@@ -405,7 +424,11 @@ export function zgradi(THREE, ctx = {}) {
     filmi.push(g.translate(sr.x, sr.y, sr.z));
   });
   const prst = new THREE.Mesh(zdruzi(kamni, kamni.map(() => null)), mat(0xffffff, { vertexColors: true, roughness: 0.9, clearcoat: 0.05, sheen: 0.1 }));
-  const vodaMat = mat(0x9fd4ff, { roughness: 0.05, clearcoat: 1, transparent: true, opacity: 0.3, depthWrite: false, sheen: 0.6, sheenColor: new THREE.Color(0xd8f0ff), emissive: 0x0c2440 });
+  const drobG = preoblikuj(new THREE.IcosahedronGeometry(1, 1), (v) => v.multiplyScalar(1 + 0.25 * sum(v.x * 3 + 1, v.y * 3, v.z * 3)));
+  const drob = new THREE.InstancedMesh(drobG, mat(0xffffff, { roughness: 0.95, clearcoat: 0, sheen: 0.2 }), drobtine.length);
+  drobtine.forEach((x, k) => { o.position.copy(x.p); o.rotation.copy(x.r); o.scale.setScalar(x.s); o.updateMatrix(); drob.setMatrixAt(k, o.matrix); drob.setColorAt(k, new THREE.Color(x.b)); });
+  drob.computeBoundingSphere(); group.add(drob);
+  const vodaMat = mat(0x9fd4ff, { roughness: 0.03, clearcoat: 1, transparent: true, opacity: 0.22, depthWrite: false, sheen: 0.6, sheenColor: new THREE.Color(0xd8f0ff), emissive: 0x0c2440 });
   const voda = new THREE.Mesh(zdruzi(filmi), vodaMat);
   voda.renderOrder = 4;
   group.add(prst, voda);
@@ -451,9 +474,9 @@ export function zgradi(THREE, ctx = {}) {
     [mitohondriji], mitSez[20].p.toArray());
   del("mesicki", "Mešički za rast laska", "Majhni mešički nosijo snovi za novo steno na konico, kjer se lasek podaljšuje.", "#f2c94c",
     [mesicki], vezSez[0].p.toArray());
-  del("sosednja-celica", "Sosednja celica povrhnjice", "Celica povrhnjice korenine brez laska; laske tvorijo le nekatere celice v območju korenine nad koreninsko čepico.", "#c9b98a",
+  del("sosednja-celica", "Sosednja celica povrhnjice", "Celica povrhnjice korenine brez laska; laske tvorijo le nekatere celice povrhnjice v pasu nekoliko nad konico korenine.", "#c9b98a",
     [sosed], [B2.x + 0.1, B2.y + 0.1, AZ]);
-  del("prst", "Delci prsti", "Drobni delci kamnin in gline; lasek se vrine mednje in se jih tesno dotika.", "#9a7650", [prst], delci[0][0].clone().add(new THREE.Vector3(0.05, 0.12, 0.08)).toArray());
+  del("prst", "Delci prsti", "Drobni delci kamnin in gline; lasek se vrine mednje in se jih tesno dotika.", "#9a7650", [prst, drob], delci[0][0].clone().add(new THREE.Vector3(0.05, 0.12, 0.08)).toArray());
   del("voda", "Voda v prsti", "Tanek vodni film ovija delce prsti; v njem so raztopljene mineralne snovi, ki jih rastlina potrebuje.", "#5aa8ff",
     [voda], delci[1][0].clone().add(new THREE.Vector3(0.04, 0.14, 0.06)).toArray());
   del("osmoza", "Vstop vode z osmozo", "Molekule vode prehajajo iz prsti skozi steno in membrano v celico, ker je v celici manj vode kot zunaj.", "#2f86ff",

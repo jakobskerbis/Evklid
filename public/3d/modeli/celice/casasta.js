@@ -361,7 +361,7 @@ export function zgradi(THREE, ctx = {}) {
   del("jedro", "Jedro", "Sploščeno temno jedro, ki ga zrnca sluzi potisnejo v ozko dno celice.", "#6a58c8", [jedro, jPlo], L(-0.4, 3.6, 0.05));
   del("zrnati-er", "Zrnati endoplazemski retikulum", "Membranski mešički z ribosomi v dnu celice; tu nastaja beljakovina mucin.", "#5b8fe0", [zer], L(-1.25, 6.5, -0.2));
   del("ribosomi", "Ribosomi", "Drobna zrnca na zrnatem ER, ki sestavljajo beljakovino mucin.", "#2b3f8f", [rib], L(1.1, 6.0, -0.25));
-  del("golgi", "Golgijev aparat", "Velik kup mešičkov v obliki skodelice pod teko; mucinu doda sladkorje in ga zapakira v zrnca sluzi.", "#f2c94c", [golgi], L(-1.7, 9.4, -0.2));
+  del("golgi", "Golgijev aparat", "Velik sklad sploščenih mešičkov v obliki skodelice pod teko; mucinu doda sladkorje in ga zapakira v zrnca sluzi.", "#f2c94c", [golgi], L(-1.7, 9.4, -0.2));
   del("mitohondrij", "Mitohondriji", "Nekaj mitohondrijev v dnu celice daje energijo za izdelovanje in izločanje sluzi.", "#e8743b", [mit], L(-1.1, 6.6, -0.2));
   del("mikrovili", "Mikrovili", "Sosednje valjaste celice imajo gost krtačasti obrobek mikrovilov, čašasta celica pa le nekaj kratkih.", "#eaa0b6", [mv], L(-5.5, H + 0.9, -0.2));
   del("bazalna-membrana", "Bazalna membrana", "Tanka plast beljakovinskih vlaken pod epitelijem, na kateri celice stojijo.", "#8fb0a8", [bazalna], L(-1, -0.3, -0.02));

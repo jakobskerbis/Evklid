@@ -193,9 +193,9 @@ export function zgradi(THREE, ctx = {}) {
   const memMat = mat(0xd88aa2, { roughness: 0.32, clearcoat: 1, sheen: 0.6 });
   const mem = new THREE.Mesh(new THREE.BufferGeometry(), memMat);
   const memRob = new THREE.Mesh(new THREE.BufferGeometry(), memMat);
-  const kapMat = mat(0xf3d36b, { roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.1, sheen: 0.5, sheenColor: new THREE.Color(0xfff2b0), side: THREE.DoubleSide });
+  const kapMat = mat(0xffffff, { vertexColors: true, roughness: 0.12, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.04, specularIntensity: 1, specularColor: new THREE.Color(0xfff6d8), ior: 1.47, sheen: 0.35, sheenColor: new THREE.Color(0xfff2b0), sheenRoughness: 0.3, side: THREE.DoubleSide });
   const kapljica = new THREE.Mesh(new THREE.BufferGeometry(), kapMat);
-  const citMat = mat(0xf1c9b6, { roughness: 0.6, clearcoat: 0.3, sheen: 0.3, side: THREE.DoubleSide });
+  const citMat = mat(0xffffff, { vertexColors: true, roughness: 0.55, clearcoat: 0.45, clearcoatRoughness: 0.35, sheen: 0.4, sheenColor: new THREE.Color(0xffe0d0), side: THREE.DoubleSide });
   const cit = new THREE.Mesh(new THREE.BufferGeometry(), citMat);
   const jMat = mat(0x7a68d8, { roughness: 0.34, side: THREE.DoubleSide });
   const jedro = new THREE.Mesh(new THREE.BufferGeometry(), jMat);
@@ -214,6 +214,35 @@ export function zgradi(THREE, ctx = {}) {
   const normalaRavnine = (rv) => (rv === 0 ? V(-1, 0, 0) : rv === 1 ? V(0, 1, 0) : V(0, 0, 1));
   const robR = (rv, kot) => oblika(naRavnini(rv, kot, 1).normalize());
 
+  // Barve oglišč: kapljica je v sredini svetlejša, proti robu temneje jantarna z rahlimi progami; tik ob citoplazmi senca.
+  const kS = new THREE.Color(0xffe7a1), kR = new THREE.Color(0xd99a2e), kT = new THREE.Color(0x8a5a1c), _c = new THREE.Color();
+  function barvajKapljico(g, rv) {
+    const p = g.attributes.position, a = new Float32Array(p.count * 3), v = V();
+    for (let i = 0; i < p.count; i++) {
+      v.fromBufferAttribute(p, i); const r = v.length() / Rd;
+      const proga = fbm(v.x * 0.05 + rv * 3, v.y * 0.05 + fbm(v.z * 0.04, v.x * 0.04, 1) * 1.5, v.z * 0.05 + 9);
+      _c.copy(kS).lerp(kR, THREE.MathUtils.clamp(r ** 2 * 0.8 + proga * 0.32, 0, 1));
+      if (r > 0.9) _c.lerp(kT, ((r - 0.9) / 0.1) ** 1.5 * 0.55);
+      const os = Math.min(...[v.x, v.y, v.z].map((x, k) => (k === rv ? 1e9 : Math.abs(x)))); // razdalja do roba, kjer se ploskvi stikata
+      _c.lerp(kT, Math.max(0, 1 - os / 7) ** 2 * 0.4 * Math.min(1, r * 4));
+      a.set([_c.r, _c.g, _c.b], i * 3);
+    }
+    g.setAttribute("color", new THREE.BufferAttribute(a, 3));
+    return g;
+  }
+  const cS = new THREE.Color(0xf4cdb9), cT = new THREE.Color(0xb7826f), cZ = new THREE.Color(0xe9b98f);
+  function barvajCit(g) {
+    const p = g.attributes.position, a = new Float32Array(p.count * 3), v = V();
+    for (let i = 0; i < p.count; i++) {
+      v.fromBufferAttribute(p, i); const r = v.length(), t = THREE.MathUtils.clamp((r - Rd) / Math.max(0.5, Rc - Rd), 0, 1);
+      const zrn = sum(v.x * 0.9, v.y * 0.9, v.z * 0.9);
+      _c.copy(cS).lerp(cZ, THREE.MathUtils.clamp(zrn * 0.6 + 0.2, 0, 1)).lerp(cT, (1 - Math.sin(Math.PI * t)) * 0.45);
+      a.set([_c.r, _c.g, _c.b], i * 3);
+    }
+    g.setAttribute("color", new THREE.BufferAttribute(a, 3));
+    return g;
+  }
+
   function postavi() {
     Rd = RDM * Math.cbrt(f);
     Rc = Math.cbrt(Rd ** 3 + VC);
@@ -224,12 +253,14 @@ export function zgradi(THREE, ctx = {}) {
     memRob.geometry.dispose(); memRob.geometry = rob(oblika, 0.35, q(60));
     // ploskve prereza: kapljica (do Rd) in pas citoplazme (od Rd do membrane)
     const kg = [], cg = [];
+    const H = Math.min(3.5, Rd * 0.065); // rahla izboklina ploskve kapljice (kot gladka gladina olja), ujame odsev luči
     for (let rv = 0; rv < 3; rv++) {
-      kg.push(ploskev((u, v, p) => naRavnini(rv, u * Math.PI / 2, v * (Rd - 0.03), p), q(48), q(20)));
-      cg.push(ploskev((u, v, p) => { const k = u * Math.PI / 2, r1 = robR(rv, k) * 0.999; return naRavnini(rv, k, Rd + (r1 - Rd) * v, p); }, q(96), 3));
+      const nr = normalaRavnine(rv);
+      kg.push(barvajKapljico(ploskev((u, v, p) => naRavnini(rv, u * Math.PI / 2, v * (Rd - 0.03), p).addScaledVector(nr, H * Math.sin(Math.PI * u) * 4 * v * (1 - v)), q(64), q(28)), rv));
+      cg.push(barvajCit(ploskev((u, v, p) => { const k = u * Math.PI / 2, r1 = robR(rv, k) * 0.999; return naRavnini(rv, k, Rd + (r1 - Rd) * v, p); }, q(120), 6)));
     }
-    kapljica.geometry.dispose(); kapljica.geometry = zdruzi(kg);
-    cit.geometry.dispose(); cit.geometry = zdruzi(cg);
+    kapljica.geometry.dispose(); kapljica.geometry = zdruzi(kg, true);
+    cit.geometry.dispose(); cit.geometry = zdruzi(cg, true);
     // jedro: sploščena leča med kapljico in membrano, prerezana na z = 0
     const Rin = Rd + 0.12;
     const debel = (a, b) => T0 * Math.max(0, 1 - a * a - b * b) ** 0.55;

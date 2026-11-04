@@ -6,8 +6,8 @@ export const info = {
   naslov: "Semenčica (spermij)",
   podrocje: "celice",
   predmet: "BIO",
-  opis: "Moška spolna celica, dolga okoli 60 µm: glava z akrosomom in jedrom, vrat s centriolo, srednji del z vijačnico mitohondrijev in dolg bič. Povečan pogled pokaže notranjost glave in zgradbo biča 9 + 2; mikrotubuli so narisani debelejši kot v resnici.",
-  merilo: { m: 60e-6, oznaka: "60 µm" },
+  opis: "Moška spolna celica, dolga okoli 60 µm: glava z akrosomom in jedrom, vrat s centriolama, srednji del z vijačnico mitohondrijev in dolg bič. Povečan pogled pokaže notranjost glave in zgradbo biča 9 + 2; mikrotubuli so narisani debelejši kot v resnici.",
+  merilo: { m: 12e-6, oznaka: "12 µm" },
 };
 
 export function zgradi(THREE, ctx = {}) {
@@ -300,7 +300,7 @@ export function zgradi(THREE, ctx = {}) {
   { const idx = []; for (let i = 0; i < nS; i++) for (let j = 0; j < nR; j++) { const a = i * nR + j, b = i * nR + ((j + 1) % nR), c = a + nR, d = b + nR; idx.push(a, b, c, b, d, c); }
     const kon = (nS + 1) * nR; for (let j = 0; j < nR; j++) { idx.push(kon + 1, nS * nR + j, nS * nR + ((j + 1) % nR)); } repGeo.setIndex(idx); }
   const repM = new THREE.Mesh(repGeo, mat(0xe6a8bd, { roughness: 0.32, clearcoat: 1 }));
-  const LAMBDA = 0.95, AMAX = 0.075;
+  const LAMBDA = 0.95, AMAX = 0.1;
   const sredina = [];
   function postaviRep(t) {
     const p = repGeo.attributes.position, c = [];
@@ -330,7 +330,7 @@ export function zgradi(THREE, ctx = {}) {
   G1.add(akrM1, jedM1, vrat1, sred1, repM);
   del("akrosom", "Akrosom", "Kapica na sprednjem delu glave z encimi, ki semenčici pomagajo prebiti ovojnico jajčne celice.", "#5fd0b8", [akrM1], [HC1.x + 0.03, 0.02, 0.02], deli1);
   del("jedro", "Jedro (v glavi)", "Zelo zgoščeno jedro s polovičnim številom kromosomov (23); to je očetov delež dednega zapisa.", "#8c7ae0", [jedM1], [HC1.x - 0.035, 0.01, 0.022], deli1);
-  del("vrat", "Vrat s centriolo", "Kratek vrat povezuje glavo in bič; centriola v njem je izhodišče biča.", "#66d3f0", [vrat1], [XV0 - 0.008, 0.012, 0.01], deli1);
+  del("vrat", "Vrat s centriolama", "Kratek vrat povezuje glavo in bič; v njem sta dve centrioli, iz ene izrašča bič.", "#66d3f0", [vrat1], [XV0 - 0.008, 0.012, 0.01], deli1);
   del("srednji-del", "Srednji del z mitohondriji", "Mitohondriji so zviti v vijačnico okoli začetka biča in dajejo energijo (ATP) za plavanje.", "#e8743b", [sred1], [(XS0 + XS1) / 2, 0.016, 0.01], deli1);
   del("rep", "Rep (bič)", "Dolg bič, ki z valovanjem poganja semenčico naprej; v njem je aksonema iz mikrotubulov (9 + 2).", "#e6a8bd", [repM], [-0.3, 0, 0.01], deli1);
 
@@ -354,6 +354,8 @@ export function zgradi(THREE, ctx = {}) {
   const akMat = mat(0x5fd0b8, { roughness: 0.3, clearcoat: 1, side: THREE.DoubleSide });
   const akM = new THREE.Mesh(odrezi(ak.odprta, sprednji).translate(HC2.x, 0, 0), akMat);
   const akP = new THREE.Mesh(odrezi(ak.pokrov, sprednji).translate(HC2.x, 0, 0), akMat);
+  // rob prereza akrosoma: debelejši trak, da se kapica vidi tudi v prerezu
+  const akR = new THREE.Mesh(odrezi(robK((d) => fM(d) * 0.9, 0.016, q(48)), sprednji).translate(HC2.x, 0, 0), akMat);
   // jedro z zgoščenim kromatinom
   const jg = lupinaK(fJ, q(80), q(56));
   const jMat = mat(0x7a68d8, { roughness: 0.34 });
@@ -363,7 +365,7 @@ export function zgradi(THREE, ctx = {}) {
   const kromTex = tekstura(64, 64, (u, v) => { const n = 0.5 + 0.5 * fbm(u * 12, v * 12, 3); return [60 + 50 * n, 40 + 30 * n, 140 + 50 * n]; });
   const jIn = new THREE.Mesh(jg.odprta.clone().translate(-HC2.x, 0, 0).scale(0.97, 0.97, 0.97).translate(HC2.x, 0, 0), mat(0xffffff, { map: kromTex, roughness: 0.6, clearcoat: 0.2, side: THREE.BackSide }));
   for (const m of [akP, memGP, jP]) m.visible = false;
-  G2.add(memG, memGP, memGR, akM, akP, jM, jP, jR, jIn);
+  G2.add(memG, memGP, memGR, akM, akP, akR, jM, jP, jR, jIn);
 
   // vrat, srednji del in začetek glavnega dela biča: membrana kot vrtenina okoli osi x
   const XG = HC2.x - a2 * 0.97; // zadnji rob glave
@@ -432,23 +434,31 @@ export function zgradi(THREE, ctx = {}) {
 
   const naB = (x, a, f = 1.02) => { const r = profB.reduce((m, p) => (Math.abs(p[0] - x) < Math.abs(m[0] - x) ? p : m))[1]; return [x, Math.cos(a) * r * f, Math.sin(a) * r * f]; };
   del("membrana", "Celična membrana", "Ovija vso semenčico; na glavi se ob oploditvi zlije z membrano jajčne celice.", "#d88aa2", [memG, memGP, memGR, memB, memBP, memBR, citM, konec], naB(-0.3, -0.9), deli2);
-  del("akrosom", "Akrosom", "Kapica z encimi na sprednjih dveh tretjinah jedra; ob stiku z jajčno celico encime sprosti in prebavi pot skozi njeno ovojnico.", "#5fd0b8", [akM, akP], [HC2.x + 0.18, 0.06, 0.05], deli2);
+  del("akrosom", "Akrosom", "Kapica z encimi na sprednjih dveh tretjinah jedra; ob stiku z jajčno celico encime sprosti in prebavi pot skozi njeno ovojnico.", "#5fd0b8", [akM, akP, akR], [HC2.x + 0.18, 0.06, 0.05], deli2);
   del("jedro", "Jedro", "Zelo zgoščeno jedro s 23 kromosomi; DNK je stisnjena, da je glava čim manjša.", "#7a68d8", [jM, jP, jR, jIn], [HC2.x - 0.12, 0.04, 0.03], deli2);
   del("centriola", "Vrat s centriolama", "V vratu sta dve centrioli; ena je bazalno telesce, iz katerega raste bič, drugo semenčica prinese v jajčno celico.", "#66d3f0", [centM], [XG - 0.035, 0.03, 0.03], deli2);
   del("mitohondriji", "Mitohondriji srednjega dela", "Okoli 13 zavojev mitohondrijev, ovitih kot vijačnica; s celičnim dihanjem dajejo ATP za gibanje biča.", "#e8743b", [vij, anulus], [-0.3, 0.06, 0.05], deli2);
   del("aksonema", "Aksonema 9 + 2", "Os biča: devet parov mikrotubulov v krogu in dva v sredini; z drsenjem drug ob drugem upogibajo bič.", "#9fe3a0", [aks], [XK - 0.002, 0.02, 0.012], deli2);
   del("oporna-vlakna", "Oporna vlakna in vlaknati plašč", "Debela vlakna in obročki okoli aksoneme bič utrdijo, da se ne zlomi pri močnem valovanju.", "#e9dcc0", [odf], [-0.8, 0.045, 0.045], deli2);
 
+  // Oba pogleda rahlo nagnemo (glava desno zgoraj), da podolgovata celica bolje zapolni zaslon.
+  const NAGIB1 = 0.3, NAGIB2 = 0.36;
+  G1.rotation.z = NAGIB1; G2.rotation.z = NAGIB2;
+  G1.updateMatrix(); G2.updateMatrix();
+  const vSkupino = (G, t) => V(...t).applyMatrix4(G.matrix).toArray().map((x) => Math.round(x * 1000) / 1000);
+  for (const d of deli1) d.tocka = vSkupino(G1, d.tocka);
+  for (const d of deli2) d.tocka = vSkupino(G2, d.tocka);
+  G1.visible = false; G2.visible = true;
   // ---------- nadzor ----------
-  let pogled = "celota";
+  let pogled = "glava";
   const nadzor = [
     {
-      tip: "izbira", id: "pogled", oznaka: "Pogled", moznosti: [["celota", "Cela semenčica"], ["glava", "Glava in vrat (povečano)"]], vrednost: "celota",
+      tip: "izbira", id: "pogled", oznaka: "Pogled", moznosti: [["glava", "Glava in vrat (povečano)"], ["celota", "Cela semenčica"]], vrednost: "glava",
       ob: (v) => { pogled = v === "glava" ? "glava" : "celota"; G1.visible = pogled === "celota"; G2.visible = !G1.visible; },
     },
     {
       tip: "izbira", id: "prikaz", oznaka: "Prikaz (povečano)", moznosti: [["prerez", "Prerez"], ["cela", "Cela"]], vrednost: "prerez",
-      ob: (v) => { const cela = v === "cela"; for (const m of [memGP, akP, jP, memBP]) m.visible = cela; memGR.visible = !cela; memBR.visible = !cela; jR.visible = !cela; },
+      ob: (v) => { const cela = v === "cela"; for (const m of [memGP, akP, jP, memBP]) m.visible = cela; akR.visible = !cela; memGR.visible = !cela; memBR.visible = !cela; jR.visible = !cela; },
     },
   ];
   const z = ctx.zacetek || {};
@@ -458,13 +468,13 @@ export function zgradi(THREE, ctx = {}) {
     group,
     get deli() { return pogled === "glava" ? deli2 : deli1; },
     nadzor,
-    get merilo() { return pogled === "glava" ? { m: 12e-6, oznaka: "12 µm" } : info.merilo; },
+    get merilo() { return pogled === "glava" ? info.merilo : { m: 60e-6, oznaka: "60 µm" }; },
     korak(t) {
       if (!gib || pogled !== "celota") return;
       postaviRep(t);
       const rep = deli1.find((d) => d.id === "rep");
       const c = sredina[Math.round(sredina.length * 0.6)];
-      if (rep && c) rep.tocka = [Math.round(c.x * 1000) / 1000, Math.round(c.y * 1000) / 1000, 0.01];
+      if (rep && c) rep.tocka = vSkupino(G1, [c.x, c.y, 0.01]);
     },
     dispose() {
       group.traverse((x) => x.geometry && x.geometry.dispose());
