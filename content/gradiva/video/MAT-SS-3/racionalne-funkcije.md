@@ -4,7 +4,7 @@ simulacija: graf
 moznosti: {"preset": "racionalna"}
 trajanje: 1:52
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -24,13 +24,13 @@ Premakni pol na $x = 3$. Navpična asimptota gre z njim. Opazuj, da se graf asim
 
 ## 0:28
 
-Števec pomnoži z $2$: $f(x) = \dfrac{2(x + 2)}{x - 3}$. Stopnji števca in imenovalca sta enaki, zato se rdeča vodoravna asimptota dvigne na $y = \frac{2}{1} = 2$.
+Števec pomnoži z $2$: $f(x) = \dfrac{2(x + 2)}{x - 3}$. Stopnji števca in imenovalca sta enaki, zato se rdeča vodoravna asimptota dvigne z $y = 1$ na $y = \frac{2}{1} = 2$.
 
 - nastavi: a = 2
 
 ## 0:42
 
-Imenovalec dobi kvadrat, pol je zdaj stopnje $2$. Obe veji ob $x = 3$ gresta navzgor. Imenovalec ima višjo stopnjo, zato je vodoravna asimptota $y = 0$, graf pa jo pri ničli $x = -2$ seka.
+Imenovalec dobi kvadrat, pol je zdaj stopnje $2$: obe veji ob $x = 3$ gresta navzgor. Imenovalec ima višjo stopnjo, zato je rdeča vodoravna asimptota kar os $x$; graf jo pri $x = -2$ seka, levo od tam je tik pod njo.
 
 - nastavi: stopnja pola = 2
 
@@ -42,7 +42,7 @@ Nazaj na pol stopnje $1$. Opazuj, da gre zdaj ena veja ob $x = 3$ navzgor, druga
 
 ## 1:12
 
-Premakni ničlo števca na $x = 3$. Faktor $(x - 3)$ se okrajša, ostane $f(x) = 2$ za $x \ne 3$. Prazen krogec pri $x = 3$ je luknja: pola tu ni več, zato graf ne gre v neskončnost.
+Premakni ničlo števca na $x = 3$. Faktor $(x - 3)$ se okrajša, ostane $f(x) = 2$ za $x \ne 3$. Prazen krogec pri $x = 3$ je luknja: pola ni več, zato izgine tudi rdeča navpična asimptota.
 
 - nastavi: ničla = 3
 

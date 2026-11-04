@@ -4,7 +4,7 @@ simulacija: vektorji
 moznosti: {"mode": "vsota"}
 trajanje: 1:52
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -15,7 +15,7 @@ Oranžna puščica je $\vec a = (3, 1)$, turkizna $\vec b = (1, 3)$. Njuna vsota
 
 ## 0:14
 
-Opazuj črtkani puščici: $\vec b$ pripneš na konec $\vec a$ in prideš v točko $(4, 4)$. To je pravilo trikotnika; vsota je hkrati diagonala obarvanega paralelograma.
+Opazuj turkizno črtkano puščico: $\vec b$ pripneš na konec $\vec a$ in prideš v točko $(4, 4)$. To je pravilo trikotnika; vsota je hkrati diagonala obarvanega paralelograma.
 
 ## 0:28
 
@@ -29,13 +29,13 @@ Zdaj odštej. Razlika $\vec a - \vec b = \vec a + (-\vec b) = (2, -2)$ je vijoli
 
 ## 0:56
 
-Pomnožimo $\vec a$ s številom $k = 2$. Vijolična puščica $2\vec a = (6, 2)$ leži na isti premici kot oranžna, kaže v isto smer in je dvakrat daljša: približno $6{,}32$.
+Pomnožimo $\vec a$ s številom $k = 2$. Vijolična puščica $2\vec a = (6, 2)$ leži na isti premici kot oranžna, je enako usmerjena in dvakrat daljša: približno $6{,}32$.
 
 - klikni: k · a
 
 ## 1:10
 
-Pri $k = 0{,}5$ dobiš $(1{,}5;\ 0{,}5)$. Vijolična puščica je pol krajša od oranžne, smer ostane enaka.
+Pri $k = 0{,}5$ dobiš $(1{,}5;\ 0{,}5)$. Vijolična puščica je dvakrat krajša od oranžne, smer in usmerjenost ostaneta enaki.
 
 - nastavi: k = 0,5
 

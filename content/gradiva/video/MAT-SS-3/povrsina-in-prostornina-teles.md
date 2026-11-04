@@ -4,7 +4,7 @@ simulacija: telesa
 moznosti: {"bodies": ["prizma", "valj", "piramida", "stozec", "krogla"]}
 trajanje: 1:40
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -18,7 +18,7 @@ Pravilna štiristrana prizma ima osnovni rob $a = 3$ in višino $v = 4$. Osnovna
 
 ## 0:14
 
-Zamenjajmo jo s pravilno piramido z enako osnovo in višino. Opazuj prostornino: $V = \dfrac{9 \cdot 4}{3} = 12$, natanko tretjina prostornine prizme.
+Zamenjajmo jo s pravilno piramido z enako osnovo in višino. Njena prostornina je $V = \dfrac{9 \cdot 4}{3} = 12$, natanko tretjina prostornine prizme.
 
 - nastavi: telo = piramida
 
@@ -40,13 +40,13 @@ Stožec z enakim $r$ in $v$ ima prostornino $V = \dfrac{\pi r^2 v}{3} \approx 16
 
 ## 0:52
 
-Prikažimo mrežo stožca: osnovna ploskev je krog, plašč krožni izsek s polmerom $s = \sqrt{r^2 + v^2} \approx 4{,}47$. Ploščina mreže je površina, $P = \pi r(r + s) \approx 40{,}67$.
+Prikažimo mrežo stožca: spodaj je krog (osnovna ploskev), zgoraj krožni izsek (plašč) s polmerom $s = \sqrt{r^2 + v^2} \approx 4{,}47$. Ploščina mreže je površina, $P = \pi r(r + s) \approx 40{,}67$.
 
 - klikni: pokaži mrežo
 
 ## 1:06
 
-Krogla s polmerom $r = 2$ nima mreže. Njena površina je $P = 4\pi r^2 \approx 50{,}27$, prostornina pa $V = \dfrac{4\pi r^3}{3} \approx 33{,}51$.
+Krogle ne moremo razgrniti v ravnino, zato nima mreže. Pri $r = 2$ je njena površina $P = 4\pi r^2 \approx 50{,}27$, prostornina pa $V = \dfrac{4\pi r^3}{3} \approx 33{,}51$.
 
 - klikni: pokaži mrežo
 - nastavi: telo = krogla

@@ -280,7 +280,7 @@ const PRESETS = {
     params: [["a", -2, 2, 0.25, 0.5], ["x₁", -4, 4, 0.5, -3], ["x₂", -4, 4, 0.5, 0], ["x₃", -4, 4, 0.5, 2.5], ["stopnja x₁", 0, 3, 1, 1], ["stopnja x₂", 0, 3, 1, 2], ["stopnja x₃", 0, 3, 1, 1]],
     f: (x, P) => P.a * (x - P["x₁"]) ** P["stopnja x₁"] * (x - P["x₂"]) ** P["stopnja x₂"] * (x - P["x₃"]) ** P["stopnja x₃"],
     win: [-5, 5, -8, 8],
-    tex: (P) => `p(x) = ${T(P.a)}${["x₁", "x₂", "x₃"].map((k, i) => (P[`stopnja ${k}`] ? `${shift("x", P[k])}${P[`stopnja ${k}`] > 1 ? `^${P[`stopnja ${k}`]}` : ""}` : "")).join("")}`,
+    tex: (P) => `p(x) = ${["x₁", "x₂", "x₃"].some((k) => P[`stopnja ${k}`]) ? cf(P.a) : T(P.a)}${["x₁", "x₂", "x₃"].map((k, i) => (P[`stopnja ${k}`] ? `${shift("x", P[k])}${P[`stopnja ${k}`] > 1 ? `^${P[`stopnja ${k}`]}` : ""}` : "")).join("")}`,
     marks: (A, P, svg) => ["x₁", "x₂", "x₃"].forEach((k) => P[`stopnja ${k}`] && dot(svg, A, P[k], 0, P[`stopnja ${k}`] % 2 ? "a" : "c", "")),
     info: (P) => {
       const deg = P["stopnja x₁"] + P["stopnja x₂"] + P["stopnja x₃"];
@@ -296,13 +296,17 @@ const PRESETS = {
     f: (x, P) => (P.a * (x - P["ničla"])) / (x - P.pol) ** P["stopnja pola"],
     tex: (P) => (P.a ? `f(x) = \\frac{${cf(P.a)}${shift("x", P["ničla"])}}{${shift("x", P.pol)}${P["stopnja pola"] > 1 ? "^2" : ""}}` : "f(x) = 0"),
     marks: (A, P, svg) => {
-      s("line", { x1: A.X(P.pol), y1: A.T, x2: A.X(P.pol), y2: A.B, class: "guide stroke-danger" }, svg);
+      // Ista ničla in pol stopnje 1: ostane luknja. Pri polu stopnje 2 se okrajša en faktor, pol ostane.
+      const hole = P["ničla"] === P.pol && P["stopnja pola"] === 1;
+      if (!hole) s("line", { x1: A.X(P.pol), y1: A.T, x2: A.X(P.pol), y2: A.B, class: "guide stroke-danger" }, svg);
       const hy = P["stopnja pola"] === 1 ? P.a : 0;
       s("line", { x1: A.L, y1: A.Y(hy), x2: A.R, y2: A.Y(hy), class: "guide stroke-danger" }, svg);
       if (P["ničla"] !== P.pol) dot(svg, A, P["ničla"], 0, "a", "");
-      else s("circle", { cx: A.X(P.pol), cy: A.Y(P["stopnja pola"] === 1 ? P.a : 0), r: 6, class: "pt open stroke-a" }, svg);
+      else if (hole) s("circle", { cx: A.X(P.pol), cy: A.Y(P.a), r: 6, class: "pt open stroke-a" }, svg);
     },
-    info: (P) => (P["ničla"] === P.pol
+    info: (P) => (P["ničla"] === P.pol && P["stopnja pola"] === 2
+      ? `<p>Števec in imenovalec imata skupni faktor ${tex(shift("x", P.pol))}: izraz se okrajša v ${tex(`f(x) = \\frac{${T(P.a)}}{${shift("x", P.pol).replace(/^\((.*)\)$/, "$1")}}`)} (za x ≠ ${fmt(P.pol)}). Pri x = ${fmt(P.pol)} ostane <b>pol</b> lihe stopnje: navpična asimptota. Ničle ni, vodoravna asimptota je y = 0.</p>`
+      : P["ničla"] === P.pol
       ? `<p>Števec in imenovalec imata isti faktor: izraz se okrajša. Pri x = ${fmt(P.pol)} je v grafu <b>luknja</b> (funkcija tam ni definirana), pola ni.</p>`
       : `<p><b>Pol</b> pri x = ${fmt(P.pol)} (ničla imenovalca): navpična asimptota. ${P["stopnja pola"] === 2 ? "Pol sode stopnje: na obeh straneh gre graf v isto neskončnost." : "Pol lihe stopnje: graf na eni strani gre v +∞, na drugi v −∞."}</p>
          <p><b>Ničla</b> pri x = ${fmt(P["ničla"])} (ničla števca). Vodoravna asimptota: y = ${fmt(P["stopnja pola"] === 1 ? P.a : 0)} (${P["stopnja pola"] === 1 ? "stopnji števca in imenovalca sta enaki, zato je to razmerje vodilnih koeficientov" : "stopnja imenovalca je večja, zato y = 0"}).</p>`),

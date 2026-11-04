@@ -4,24 +4,24 @@ simulacija: enotska
 moznosti: {"mode": "krog"}
 trajanje: 1:32
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
 
-Kot $\varphi = 30^\circ$ merimo od pozitivnega poltraka osi $x$. Krak seka enotsko krožnico v točki $T(\cos\varphi, \sin\varphi)$: abscisa je $\cos 30^\circ \approx 0{,}87$, ordinata $\sin 30^\circ = 0{,}5$.
+Kot $\varphi = 30^\circ$ merimo od pozitivnega poltraka osi $x$. Krak seka enotsko krožnico v točki $T(\cos\varphi, \sin\varphi)$: abscisa (oranžna daljica) je $\cos 30^\circ \approx 0{,}87$, ordinata (zelena) $\sin 30^\circ = 0{,}5$.
 
 - nastavi: kot φ = 30
 
 ## 0:14
 
-Povečajmo kot na $150^\circ$. Točka je v 2. kvadrantu: ordinata je spet $0{,}5$, abscisa pa je negativna, $\cos 150^\circ \approx -0{,}87$.
+Povečajmo kot na $150^\circ$. Točka je v 2. kvadrantu: zelena daljica je enako dolga, ordinata je spet $0{,}5$, oranžna pa kaže v levo, $\cos 150^\circ \approx -0{,}87$.
 
 - nastavi: kot φ = 150
 
 ## 0:26
 
-Pri $210^\circ$ je točka v 3. kvadrantu. Obe koordinati sta negativni, zato sta sinus in kosinus negativna, tangens pa pozitiven.
+Pri $210^\circ$ je točka v 3. kvadrantu. Obe koordinati sta negativni, zato sta sinus in kosinus negativna, tangens kot njun količnik pa pozitiven.
 
 - nastavi: kot φ = 210
 
@@ -33,7 +33,7 @@ Pri $330^\circ$ je točka v 4. kvadrantu: $\sin 330^\circ = -0{,}5$ in $\cos 330
 
 ## 0:52
 
-Pri $90^\circ$ je točka $T(0, 1)$, zato je $\sin 90^\circ = 1$ in $\cos 90^\circ = 0$. Tangens tu ne obstaja, ker bi delili z $0$.
+Pri $90^\circ$ je točka $T(0, 1)$, zato je $\sin 90^\circ = 1$ in $\cos 90^\circ = 0$. Tangens tu ne obstaja, ker bi delili s $\cos 90^\circ = 0$.
 
 - nastavi: kot φ = 90
 

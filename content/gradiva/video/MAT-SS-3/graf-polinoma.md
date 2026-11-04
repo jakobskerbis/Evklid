@@ -4,7 +4,7 @@ simulacija: graf
 moznosti: {"preset": "polinom"}
 trajanje: 1:52
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -27,13 +27,13 @@ Faktor $x$ dobi kvadrat: ničla $0$ je zdaj stopnje $2$. Opazuj srednjo piko, ki
 
 ## 0:28
 
-Pri stopnji $3$ je pika spet oranžna. Graf v točki $0$ os $x$ preseka, ob njej pa se splošči.
+Stopnjo ničle $0$ povečaj na $3$ (zgoraj piše $x^3$). Pika je spet oranžna: graf v točki $0$ os $x$ preseka, ob njej pa se splošči.
 
 - nastavi: stopnja x₂ = 3
 
 ## 0:40
 
-Vrnimo stopnjo ničle na $2$, da ima polinom stopnjo $2 + 1 + 1 = 4$. Opazuj kraka: za velike $|x|$ je $p(x) \approx 0{,}25x^4$, zato gresta oba kraka navzgor.
+Vrni stopnjo ničle $0$ na $2$. Seštej eksponente v zapisu zgoraj: polinom ima stopnjo $1 + 2 + 1 = 4$. Opazuj kraka: za velike $|x|$ je $p(x) \approx 0{,}25x^4$, zato gresta oba kraka navzgor.
 
 - nastavi: stopnja x₂ = 2
 

@@ -4,12 +4,12 @@ simulacija: enotska
 moznosti: {"mode": "adicija"}
 trajanje: 1:32
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
 
-Na krožnici sta kota $\alpha = 40^\circ$ in $\beta = 30^\circ$, skupaj $70^\circ$. Po adicijskem izreku je $\sin(\alpha + \beta) = \sin\alpha\cos\beta + \cos\alpha\sin\beta \approx 0{,}94$.
+Na krožnici sta kota $\alpha = 40^\circ$ (oranžni krak) in $\beta = 30^\circ$, skupaj $70^\circ$ do vijolične točke. Po adicijskem izreku je $\sin(\alpha + \beta) = \sin\alpha\cos\beta + \cos\alpha\sin\beta \approx 0{,}94$.
 
 - klikni: α + β
 - nastavi: α = 40
@@ -17,7 +17,7 @@ Na krožnici sta kota $\alpha = 40^\circ$ in $\beta = 30^\circ$, skupaj $70^\cir
 
 ## 0:14
 
-Preveri na krožnici: točka kota $70^\circ$ ima ordinato $0{,}94$. Vsota $\sin\alpha + \sin\beta \approx 1{,}143$ pa je večja od $1$, zato sploh ne more biti sinus nobenega kota.
+Preveri na krožnici: vijolična točka $\alpha + \beta$ leži na višini $0{,}94$, to je $\sin 70^\circ$. Vsota $\sin\alpha + \sin\beta \approx 1{,}143$ pa je večja od $1$, zato sploh ne more biti sinus nobenega kota.
 
 ## 0:28
 
@@ -27,20 +27,20 @@ Nastavimo $\alpha = 45^\circ$. Iz znanih vrednosti za $45^\circ$ in $30^\circ$ i
 
 ## 0:42
 
-Preklopimo na razliko $\alpha - \beta = 15^\circ$. Sinus razlike ima minus, $\sin 15^\circ \approx 0{,}259$. Pri kosinusu se predznak obrne: $\cos(\alpha - \beta) = \cos\alpha\cos\beta + \sin\alpha\sin\beta \approx 0{,}966$.
+Preklopimo na razliko $\alpha - \beta = 15^\circ$. V formuli za sinus razlike je minus, $\sin 15^\circ \approx 0{,}259$. Pri kosinusu se predznak obrne: $\cos(\alpha - \beta) = \cos\alpha\cos\beta + \sin\alpha\sin\beta \approx 0{,}966$.
 
 - klikni: α − β
 
 ## 0:56
 
-Vrnimo se k vsoti in nastavimo še $\beta = \alpha = 45^\circ$. Dobimo dvojni kot: $\sin 90^\circ = 2\sin 45^\circ\cos 45^\circ = 1$, kosinus pa je $0$.
+Vrnimo se k vsoti in nastavimo še $\beta = \alpha = 45^\circ$. Dobimo dvojni kot: $\sin 90^\circ = 2\sin 45^\circ\cos 45^\circ = 1$, $\cos 90^\circ$ pa je $0$.
 
 - klikni: α + β
 - nastavi: β = 45
 
 ## 1:08
 
-Opazuj: $2\sin 45^\circ \approx 1{,}414$, kar ni $\sin 90^\circ$. Kot podvojimo, sinus pa se ne podvoji.
+Opazuj vijolično točko: leži na višini $1$, $2\sin 45^\circ \approx 1{,}414$ pa je več kot $1$. Kot podvojimo, sinus pa se ne podvoji.
 
 ## 1:20
 

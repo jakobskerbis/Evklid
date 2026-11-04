@@ -413,7 +413,7 @@ export function vektorji(el, { mode = "vsota" } = {}) {
       }
       html = texBlock(`\\vec a\\cdot\\vec b = a_x b_x + a_y b_y = ${a[0]}\\cdot ${b[0] < 0 ? `(${b[0]})` : b[0]} + ${a[1]}\\cdot ${b[1] < 0 ? `(${b[1]})` : b[1]} = ${d}`) +
         (la && lb ? texBlock(`\\cos\\varphi = \\frac{\\vec a\\cdot\\vec b}{|\\vec a|\\,|\\vec b|} = \\frac{${d}}{${T(la)}\\cdot ${T(lb)}} = ${T(cosf, 3)} \\Rightarrow \\varphi \\approx ${T(phi, 1)}^\\circ`) : "") +
-        `<p>${d === 0 ? "<b>Skalarni produkt je 0: vektorja sta pravokotna.</b>" : d > 0 ? "Skalarni produkt je pozitiven: kot med vektorjema je oster." : "Skalarni produkt je negativen: kot med vektorjema je top."}</p>
+        `<p>${d === 0 ? "<b>Skalarni produkt je 0: vektorja sta pravokotna.</b>" : la && lb && Math.abs(Math.abs(cosf) - 1) < 1e-9 ? (d > 0 ? "Kot med vektorjema je 0°: vektorja sta vzporedna in enako usmerjena, skalarni produkt je enak produktu dolžin." : "Kot med vektorjema je 180°: vektorja sta vzporedna in nasprotno usmerjena.") : d > 0 ? "Skalarni produkt je pozitiven: kot med vektorjema je oster." : "Skalarni produkt je negativen: kot med vektorjema je top."}</p>
          <p class="muted">Vijolična daljica je pravokotna projekcija b na a, dolga |b|·cos φ ≈ ${fmt(la ? d / la : 0)}. Skalarni produkt = |a| · (dolžina projekcije).</p>`;
     }
     vec([0, 0], a, "a", 3.5);

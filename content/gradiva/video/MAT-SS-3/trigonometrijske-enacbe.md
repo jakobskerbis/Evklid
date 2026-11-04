@@ -4,12 +4,12 @@ simulacija: enotska
 moznosti: {"mode": "enacba"}
 trajanje: 1:44
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
 
-Rešujemo $\sin x = 0{,}5$. Na intervalu $[0, 2\pi)$ najdemo dve rešitvi: $x_1 = 30^\circ$ in $x_2 = 180^\circ - 30^\circ = 150^\circ$. Obe točki na krožnici imata enako ordinato.
+Rešujemo $\sin x = 0{,}5$. Na intervalu $[0, 2\pi)$ najdemo dve rešitvi: $x_1 = 30^\circ$ in $x_2 = 180^\circ - 30^\circ = 150^\circ$. Oranžna premica $y = 0{,}5$ seka krožnico v dveh točkah z enako ordinato.
 
 - klikni: sin x = a
 - nastavi: desna stran a = 0,5
@@ -26,19 +26,19 @@ Desno stran spremenimo v $-0{,}5$. Rešitvi sta zdaj $210^\circ$ in $330^\circ$:
 
 ## 0:40
 
-Pri desni strani $1$ ostane na $[0, 2\pi)$ ena sama rešitev, $x = 90^\circ$. Tam se premica $y = 1$ krivulje le še dotakne.
+Pri desni strani $1$ ostane na $[0, 2\pi)$ ena sama rešitev, $x = 90^\circ$. Oranžna premica $y = 1$ se krožnice in sinusoide le še dotakne.
 
 - nastavi: desna stran a = 1
 
 ## 0:52
 
-Pri $1{,}2$ enačba nima rešitev, ker je sinus vedno med $-1$ in $1$.
+Pri $1{,}2$ oranžna premica ne seka sinusoide, zato enačba nima rešitev: sinus je vedno med $-1$ in $1$.
 
 - nastavi: desna stran a = 1,2
 
 ## 1:02
 
-Preklopimo na $\cos x = 0{,}5$. Rešitvi sta $60^\circ$ in $300^\circ = -60^\circ + 360^\circ$, zato je splošna rešitev $x = \pm 60^\circ + k \cdot 360^\circ$.
+Preklopimo na $\cos x = 0{,}5$: zdaj iščemo točki na krožnici z enako absciso. Rešitvi sta $60^\circ$ in $300^\circ = -60^\circ + 360^\circ$, zato je splošna rešitev $x = \pm 60^\circ + k \cdot 360^\circ$.
 
 - nastavi: desna stran a = 0,5
 - klikni: cos x = a

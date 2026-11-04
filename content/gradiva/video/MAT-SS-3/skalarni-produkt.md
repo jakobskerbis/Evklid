@@ -4,7 +4,7 @@ simulacija: vektorji
 moznosti: {"mode": "skalarni"}
 trajanje: 1:20
 avtor: AI
-stanje: osnutek
+stanje: pregledano
 ---
 
 ## 0:00
@@ -16,7 +16,7 @@ Oranžni $\vec a = (3, 1)$ in turkizni $\vec b = (1, 3)$ imata skupni začetek. 
 
 ## 0:14
 
-Vijolični lok označi kot med vektorjema: $\cos\varphi = \dfrac{6}{3{,}16 \cdot 3{,}16} = 0{,}6$, zato je $\varphi \approx 53{,}1^\circ$. Vijolična daljica na sivi premici je projekcija $\vec b$ na $\vec a$, dolga približno $1{,}9$.
+Vijolični lok je kot med vektorjema: $\cos\varphi = \dfrac{6}{3{,}16 \cdot 3{,}16} = 0{,}6$, zato je $\varphi \approx 53{,}1^\circ$. Projekcija $\vec b$ na $\vec a$ je del oranžne puščice do črtkane daljice, dolg približno $1{,}9$.
 
 - klikni: Vijolična
 
