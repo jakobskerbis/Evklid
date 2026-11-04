@@ -43,8 +43,9 @@ export default function narisi(host) {
     crta(g, O[0], O[1], K[0], K[1], "izbor", { class: "sk-s-izbor sk-faint" });
     s("circle", { cx: K[0], cy: K[1], r: 6, class: "sk-fill sk-fill-izbor" }, g);
     const levo = a < 0;
-    napis(g, Z[0] + (levo ? -14 : 14), Z[1] + (b >= 0 ? -10 : 18), "z", "ploskev", { "text-anchor": "middle" });
-    napis(g, K[0] + (levo ? -14 : 14), K[1] + (b >= 0 ? 18 : -10), "z̄", "izbor", { "text-anchor": "middle" });
+    const vOkvir = (y) => Math.min(H - 6, Math.max(14, y)); // oznaka ob robu mreže ostane vidna
+    napis(g, Z[0] + (levo ? -16 : 16), vOkvir(Z[1] + (b >= 0 ? -10 : 18)), "z", "ploskev", { "text-anchor": "middle" });
+    napis(g, K[0] + (levo ? -16 : 16), vOkvir(K[1] + (b >= 0 ? 18 : -10)), "z̄", "izbor", { "text-anchor": "middle" });
     const sred = pos(a / 2, b / 2);
     if (q.abs > 0.8) napis(g, sred[0] + (b * a >= 0 ? -10 : 10), sred[1] - 6, "|z|", "druga", { "text-anchor": "middle" });
     if (tocka) {

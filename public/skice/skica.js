@@ -28,7 +28,8 @@ const tex = (t) => {
 export function skica({ w = 320, h: hgt = 220, navodilo = "", oznaka = "Interaktivna skica" } = {}) {
   const svg = svgBox(w, hgt, "sk-svg");
   svg.setAttribute("aria-label", oznaka);
-  const cipiEl = h("div", { class: "sk-chips", "aria-live": "polite" });
+  // Čipi niso aria-live: ob vlečenju bi se bralnik zaslona oglašal ob vsakem premiku.
+  const cipiEl = h("div", { class: "sk-chips" });
   const kontrole = h("div", { class: "sk-ctl" });
   const el = h("div", { class: "sk" }, h("div", { class: "sk-frame" }, svg), cipiEl, kontrole, navodilo ? h("p", { class: "sk-hint" }, navodilo) : null);
   const plasti = {};
@@ -84,8 +85,9 @@ export function skica({ w = 320, h: hgt = 220, navodilo = "", oznaka = "Interakt
       kontrole.append(el);
       return el;
     },
-    gumbi(opts) {
+    gumbi({ label, ...opts }) {
       const g = segmented(opts);
+      if (label) g.setAttribute("aria-label", label);
       g.classList.add("sk-seg");
       kontrole.append(g);
       return g;

@@ -35,7 +35,7 @@ export default function narisi(host) {
   napis(S.svg, B[0] + R - 6, B[1] - R + 12, "B");
 
   let op = "A∪B";
-  S.gumbi({ options: Object.keys(OPERACIJE), value: op, onChange: (v) => ((op = v), izris()) });
+  S.gumbi({ label: "Operacija z množicama", options: Object.keys(OPERACIJE), value: op, onChange: (v) => ((op = v), izris()) });
 
   function izris() {
     obarvaj.replaceChildren();

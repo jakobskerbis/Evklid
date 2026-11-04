@@ -121,8 +121,9 @@ test("periodičnost: vrednost se ponovi v x₀ + kT, točka ne pade na asimptoto
 
 test("sinusna krivulja: T = 2π/ω, ničle so ničle, vrh je A", async () => {
   const { sinusna } = await import("../public/skice/sinusna.js");
-  for (const A of [0.5, 2, 3])
-    for (const w of [0.5, 1, 2, 3])
+  const korak = [0.5, 1, 1.5, 2, 2.5, 3]; // vse izbire drsnikov A in ω
+  for (const A of korak)
+    for (const w of korak)
       for (let fi = -Math.PI; fi <= Math.PI + 1e-9; fi += Math.PI / 12) {
         const q = sinusna(A, w, fi);
         assert.ok(Math.abs(q.T - (2 * Math.PI) / w) < 1e-12);

@@ -46,7 +46,7 @@ export default function narisi(host) {
   }
 
   let vrsta = "[a, b)", a = -1, b = 2.5;
-  S.gumbi({ options: VRSTE, value: vrsta, onChange: (v) => ((vrsta = v), izris()) });
+  S.gumbi({ label: "Vrsta intervala", options: VRSTE, value: vrsta, onChange: (v) => ((vrsta = v), izris()) });
   const slA = S.drsnik({ label: "a", min: MIN, max: MAX, step: KORAK, value: a, digits: 1, barva: "izbor", onInput: (v) => premakni(v, b, "a") });
   const slB = S.drsnik({ label: "b", min: MIN, max: MAX, step: KORAK, value: b, digits: 1, barva: "druga", onInput: (v) => premakni(a, v, "b") });
 

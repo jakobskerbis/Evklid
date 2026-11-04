@@ -34,7 +34,7 @@ export default function narisi(host) {
 
   let par = "sin", x0 = 1;
   let tocka;
-  S.gumbi({ options: Object.entries(PARI).map(([k, p]) => [k, p.ime]), value: par, onChange: (v) => ((par = v), (x0 = omejiX(par, x0)), izris()) });
+  S.gumbi({ label: "Par funkcij", options: Object.entries(PARI).map(([k, p]) => [k, p.ime]), value: par, onChange: (v) => ((par = v), (x0 = omejiX(par, x0)), izris()) });
 
   function izris() {
     const P = PARI[par];

@@ -18,7 +18,7 @@ export default function narisi(host) {
   const W = 320, H = 210;
   const S = skica({ w: W, h: H, navodilo: "Spreminjaj A, ω in φ.", oznaka: "Graf funkcije A sin ω(x − φ)" });
   const xOz = [-2, -1, 1, 2].map((k) => [k * Math.PI, piZapis(k * Math.PI)]);
-  const Ax = osi(S.svg, { W, H, x: [OD - 0.7, DO + 0.7], y: [-3.4, 3.4], xOznake: xOz, yOznake: [[-3, "−3"], [-2, ""], [-1, "−1"], [1, "1"], [2, ""], [3, "3"]] });
+  const Ax = osi(S.svg, { W, H, x: [OD - 0.7, DO + 0.7], y: [-3.9, 3.9], xOznake: xOz, yOznake: [[-3, "−3"], [-2, ""], [-1, "−1"], [1, "1"], [2, ""], [3, "3"]] });
   s("path", { d: fnPath(Math.sin, Ax, { n: 400 }), class: "sk-s-glavna sk-thin sk-faint" }, S.svg);
 
   let A = 2, w = 2, fi = Math.PI / 4;

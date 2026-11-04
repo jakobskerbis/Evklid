@@ -22,7 +22,7 @@ export default function narisi(host) {
   napis(S.svg, A.X(3.1), A.Y(3.3), "y = x", "glavna", { "text-anchor": "end", style: "font-size: 11px; font-style: normal; opacity: 0.7" });
 
   let ime = "arcsin", t = 0.6, tocka;
-  S.gumbi({ options: Object.keys(KROZNE), value: ime, onChange: (v) => ((ime = v), (t = (KROZNE[v].od + KROZNE[v].do) / 2 + 0.4), izris()) });
+  S.gumbi({ label: "Krožna funkcija", options: Object.keys(KROZNE), value: ime, onChange: (v) => ((ime = v), (t = (KROZNE[v].od + KROZNE[v].do) / 2 + 0.4), izris()) });
 
   function izris() {
     const K = KROZNE[ime];
