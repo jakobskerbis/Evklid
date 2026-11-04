@@ -4362,6 +4362,7 @@ async function bootFailed(err) {
   box.querySelector("button").onclick = () => location.reload();
   for (const el of document.body.children) el.inert = true; // prazna lupina pod sporočilom ni dosegljiva s tipkovnico
   document.body.append(box);
+  document.body.classList.add("boot-down-on");
   box.querySelector("button").focus();
   const timer = setInterval(async () => {
     if ((await serverReach()) !== "down") {
