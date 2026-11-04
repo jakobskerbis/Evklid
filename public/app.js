@@ -353,6 +353,8 @@ function overlayClosed() {
   overlayEntry = false;
 }
 window.addEventListener("popstate", () => {
+  // Pred prijavo (pristajalna stran, prijava, registracija) Nazaj ureja account.js.
+  if (document.body.classList.contains("auth-mode")) return;
   if (skipPop) {
     skipPop--;
     // Medtem odprt drug pogled (npr. takoj po zagonu) dobi svoj zapis, da Nazaj ne zapre aplikacije.

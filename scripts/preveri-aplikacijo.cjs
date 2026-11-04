@@ -1349,6 +1349,12 @@ async function accounts(browser, app) {
   await p.goto(app.base + "/");
   await settle(p, 500);
   const email = "stars@primer.si";
+  // Nov obiskovalec najprej vidi pristajalno stran (public/pristajalna.js), od tam gre na prijavo.
+  await step(p, "pristajalna", async () => {
+    await expectVisible(p, "#view-auth .land .land-hero", "pristajalna stran");
+    await screen(p, "pristajalna");
+    await click(p, '#view-auth .land-hero [data-land="login"]', { wait: 300 });
+  });
   await step(p, "prijava-prazna", async () => {
     await expectVisible(p, "#view-auth #auth-form", "prijava");
     await screen(p, "prijava");
@@ -1415,7 +1421,7 @@ async function accounts(browser, app) {
     // Račun z enim profilom: na drugi napravi ni zaslona za geslo profila (j, 2026-10-30), samo prevzem.
     const p2 = await newPage(browser, false, "pc2", app.base);
     try {
-      await p2.goto(app.base + "/");
+      await p2.goto(app.base + "/#prijava");
       await expectVisible(p2, "#auth-form", "prijava na drugi napravi", 8000);
       await p2.fill('#auth-form input[name="email"]', email);
       await p2.fill('#auth-form input[name="password"]', "geslo1234");
