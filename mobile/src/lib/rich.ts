@@ -35,7 +35,7 @@ export function docHtml(body: string, th: Theme, { size = 17, center = false } =
 <link rel="stylesheet" href="/vendor/instrument-sans/index.css">
 <link rel="stylesheet" href="/vendor/katex/katex.min.css" onload="document.documentElement.classList.add('kx')">
 <script defer src="/vendor/katex/katex.min.js"></script>
-<script type="module">import{prilagodiSirino as f}from"/sirina.js";window.__fit=function(){f(document.getElementById('c'))};window.__fit();</script>
+<script type="module">import{prilagodiSirino as f}from"/sirina.js";document.documentElement.classList.add('sw');window.__fit=function(){f(document.getElementById('c'))};window.__fit();</script>
 <style>
 :root{color-scheme:${th.dark ? "dark" : "light"}}
 html,body{margin:0;padding:0;background:transparent;color:${th.text};font:${size}px/1.5 "Instrument Sans Variable","Instrument Sans",system-ui,-apple-system,Roboto,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%;word-wrap:break-word}
@@ -59,6 +59,8 @@ html:not(.kx) .katex{display:inline-block;max-width:100%;overflow-x:auto;overflo
 .kx .katex{white-space:nowrap}
 .kx :is(p,li,dd,blockquote,h2,h3,td,th) .katex:not(.katex-display>.katex){display:inline-block;text-indent:0;margin-block:-.15em}
 .kx :is(p,li,dd,blockquote,h2,h3) .katex.tb-zlozena:not(.katex-display>.katex){display:block;width:fit-content;max-width:100%;margin:6px 0}
+/* KaTeX CSS iz predpomnilnika, sirina.js pa ne (brez povezave): dolga vrstična formula se pomika, ne štrli. */
+.kx:not(.sw) :is(p,li,dd,blockquote,h2,h3,td,th) .katex:not(.katex-display>.katex){max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:2px 0 4px}
 .kx .katex.tb-dolga{display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:2px 0 4px}
 .md-table-wrap{overflow-x:auto;margin:.6em 0;border:1px solid ${th.border};border-radius:12px}
 table{border-collapse:collapse;width:100%;font-size:.95em}

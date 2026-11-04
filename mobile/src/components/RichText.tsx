@@ -48,7 +48,8 @@ function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size
         ref={ref}
         // baseUrl: pisave, KaTeX in sirina.js s strežnika (kot na spletu), brez povezave ostane MathML.
         source={{ html: doc, baseUrl: `${API_URL}/` }}
-        originWhitelist={["about:blank", "data:*", `${API_URL}/*`]}
+        // Seznam primerja le izvor (brez poti): `${API_URL}/*` ne bi ujel baseUrl in iOS bi ga odprl v Safariju.
+        originWhitelist={["about:blank", "data:*", API_URL]}
         style={{ backgroundColor: "transparent", flex: 1 }}
         scrollEnabled={false}
         showsVerticalScrollIndicator={false}
