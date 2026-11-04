@@ -2,7 +2,7 @@
 import "./env.js";
 import { costUsd } from "./claude.js";
 import { BUDGET, MAX_BUDGET_USD, paceLevel, periodOf, budgetMode, fastMode } from "./proracun.js";
-import { explanationsFor, allowanceStage, FAST_TAIL } from "./accounts/plans.js";
+import { explanationsFor, allowanceStage, detailedShare, freeStudentMonthlyUsd } from "./accounts/plans.js";
 
 const num = (k, d) => {
   const v = Number(process.env[k]);
@@ -185,9 +185,10 @@ export class Usage {
     const base = { weight, spent: this.baseSpent(studentId), credit: this.credits?.balance(owner) || 0, owner };
     const g = this.guaranteeOf(studentId) || 0;
     if (g > 0) {
-      // Družina: skupen delež, poraba vseh profilov skupaj. ceiling: trda meja s hitrim načinom (plans.js FAST_TAIL).
+      // Družina: skupen delež, poraba vseh profilov skupaj. g je ves mesečni strošek AI paketa (ceiling, trda meja);
+      // allowance = del za podrobne razlage (g / 1,15), od tam do meje hitri način (plans.js FAST_TAIL, detailedShare).
       const group = this.poolOf(studentId);
-      return { ...base, spent: this.groupSpent(studentId, group), group, pool: !!group, allowance: g, ceiling: g * (1 + FAST_TAIL), guaranteed: true };
+      return { ...base, spent: this.groupSpent(studentId, group), group, pool: !!group, allowance: detailedShare(g), ceiling: g, guaranteed: true };
     }
     const pool = state.cap ? Math.max(0, state.cap - this.reservedUsd(studentId)) : 0;
     const allowance = pool ? (pool * weight) / Math.max(weight, this.totalWeight(studentId)) : 0;
@@ -211,6 +212,12 @@ export class Usage {
   overCeiling(studentId, state = this.budgetState()) {
     const sb = this.studentBudget(studentId, state);
     return !!sb.guaranteed && sb.spent >= sb.ceiling - 1e-9 && sb.credit <= 0;
+  }
+  // Naročnik je nad mejo paketa porabil še brezplačni rep (kot brezplačni profil: freeStudentMonthlyUsd na profil,
+  // pri Družini za vse profile skupaj), brez kredita: inštruktor do 1. v mesecu ali do dokupa ne odgovarja.
+  overFreeTail(studentId, state = this.budgetState()) {
+    const sb = this.studentBudget(studentId, state);
+    return !!sb.guaranteed && sb.credit <= 0 && sb.spent >= sb.ceiling + freeStudentMonthlyUsd() * (sb.group?.length || 1) - 1e-9;
   }
   // Prikaz porabe za učenca in starše (j 2026-11-01): preostale podrobne razlage, nikoli € ali $.
   // stage: ok | low (80 %) | out (100 %, hitri način); null brez zajamčenega deleža.
@@ -401,6 +408,11 @@ export class Usage {
     }
     // Skupni proračun se deli po profilih (server/proracun.js); nad svojim delom učenec nadaljuje z dokupljenim kreditom.
     const state = this.budgetState();
+    if (this.overFreeTail(studentId, state)) {
+      return this.topupPrompt(studentId)
+        ? "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej."
+        : "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.";
+    }
     if (state.cap) {
       if (!this.overShare(studentId, state)) return null;
       // Pod 15 let ali ob ponudbi paketa pred testom brez poziva k dokupu (ponudbe.js, ena ponudba naenkrat).

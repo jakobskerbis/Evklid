@@ -735,7 +735,8 @@ export function createApp(store, opts = {}) {
       let aiOut = false; // ves zajamčeni delež porabljen: brez gumba »Razloži podrobneje« (hitri način)
       if (allowBefore?.guaranteed) {
         const after = usage.allowance(student.id);
-        aiOut = after.stage === "out";
+        // Z dokupljenim kreditom so podrobne razlage še na voljo (usage.fastOnly), gumb ostane.
+        aiOut = usage.fastOnly(student.id);
         if (after.stage !== allowBefore.stage && (after.stage === "low" || after.stage === "out")) {
           send("allowance", { stage: after.stage, percent: after.percent, left: after.explanations_left, pool: after.pool || undefined, buy: !!accounts.topupButton?.(student.id) });
         }

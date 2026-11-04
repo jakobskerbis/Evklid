@@ -260,19 +260,23 @@ export const passForDaysLeft = (daysLeft, level = "OS") => passesFor(level).find
 // ---------- poraba AI v naročnini (j 2026-11-01, deleži j 2026-11-04 »Predlog A«) ----------
 // Zajamčeno na profil na mesec (v $, kot zaračunava Claude API): mesečna naročnina OŠ 1,9 $, SŠ 2,9 $, faks 4,5 $;
 // letna OŠ 1,7 $, SŠ 2,6 $, faks 3,8 $. Družina ima en skupen delež za ves račun (vsi profili skupaj): Družina 3,5 $
-// (letno 2,9 $), Družina s študentom 5,5 $ (letno 4,5 $); obvestila 80 % / 100 % in »še N razlag« veljajo za skupni
-// delež. Osebno ob šolski licenci 0,9 $. Regijski paketi po pravilu 75 % (regionalGuaranteeUsd).
+// (letno 2,9 $), Družina s študentom 5,5 $ (letno 4,3 $); obvestila 80 % / 100 % in »še N razlag« veljajo za skupni
+// delež. Osebno ob šolski licenci 0,9 $ (letno 0,6 $). Regijski paketi po pravilu 75 % (regionalGuaranteeUsd).
 // Deleži naročnikov imajo prednost pred brezplačnimi v skupnem mesečnem proračunu (server/usage.js).
 //
-// Trda mesečna meja (j 2026-11-04: paket ne sme preseči svojega stroška): ko je delež porabljen, inštruktor
-// odgovarja s hitrim modelom (Haiku), a samo še do FAST_TAIL (15 %) vrednosti deleža v $ na mesec. Nad tem
-// (delež × 1,15) velja dnevna meja brezplačnega paketa (freeDailyQuestions, 10 vprašanj na dan, hitri model) do
-// 1. v mesecu ali do dokupa (server/usage.js overCeiling, server/accounts/index.js dailyLimitFor).
+// Trda mesečna meja (j 2026-11-04: paket ne sme preseči svojega stroška): vrednosti zgoraj so ves mesečni strošek AI
+// paketa (najslabši primer, worstProfit), skupaj z brezplačnim repom 0,2 $ na profil nad mejo (subscriptionCeiling
+// spodaj; meja paketa = vrednost − rep). Hitri način je vštet v mejo: podrobne razlage do meje / 1,15
+// (to se pokaže učencu kot »še N razlag«), nato hitri model (Haiku) še FAST_TAIL (15 % podrobnega dela) do meje. Nad
+// mejo velja dnevna meja brezplačnega paketa (freeDailyQuestions, 10 vprašanj na dan, hitri model) do 1. v mesecu
+// ali do dokupa (server/usage.js studentBudget/overCeiling, server/accounts/index.js dailyLimitFor).
 export const AI_GUARANTEE_USD = { OS: 1.9, SS: 2.9, FAKS: 4.5 };
 export const AI_GUARANTEE_YEAR_USD = { OS: 1.7, SS: 2.6, FAKS: 3.8 };
-export const FAMILY_POOL_USD = { druzina: { month: 3.5, year: 2.9 }, druzina_student: { month: 5.5, year: 4.5 } };
-export const SCHOOL_PLAN_AI_USD = 0.9;
+export const FAMILY_POOL_USD = { druzina: { month: 3.5, year: 2.9 }, druzina_student: { month: 5.5, year: 4.3 } };
+export const SCHOOL_PLAN_AI_USD = { month: 0.9, year: 0.6 };
 export const FAST_TAIL = 0.15;
+// Del meje za podrobne razlage (zmogljivejši model); ostanek do meje je hitri način.
+export const detailedShare = (ceilingUsd) => (ceilingUsd || 0) / (1 + FAST_TAIL);
 // Zajamčeno za stopnjo; EVKLID_AI_GUARANTEE_<OS|SS|FAKS>_USD (za teste in skrbnika) velja za mesečno in letno.
 export const guaranteeUsd = (level, interval = "month") => {
   const v = Number(process.env[`EVKLID_AI_GUARANTEE_${level}_USD`]);
@@ -280,17 +284,36 @@ export const guaranteeUsd = (level, interval = "month") => {
   const table = interval === "year" ? AI_GUARANTEE_YEAR_USD : AI_GUARANTEE_USD;
   return table[level] ?? table.OS;
 };
-// Zajamčeni AI paketa: { usd, pool } (pool = en skupen delež za vse profile paketa) ali null (neznan paket).
+// Brezplačni rep (j 2026-11-04): nad mejo paketa naročnik dela kot brezplačni profil, z enako mesečno mejo
+// (freeStudentMonthlyUsd, 0,2 $ na profil; server/usage.js overFreeTail). Ta rep je vštet v vrednosti iz tabele:
+// meja paketa = vrednost − 0,2 $ × profili paketa (Družina 4), nikoli pod 0. Najslabši primer je tako
+// meja + rep = vrednost iz tabele (ali manj).
+export const subscriptionCeiling = (totalUsd, profiles = 1) => Math.max(0, Math.round(((totalUsd || 0) - freeStudentMonthlyUsd() * profiles) * 1000) / 1000);
+const withTail = (total, profiles, pool) => ({ usd: subscriptionCeiling(total, profiles), total, profiles, pool });
+// Zajamčeni AI paketa: { usd, total, profiles, pool } ali null (neznan paket). usd = meja paketa (podrobni del in
+// hitri način, server/usage.js), total = vrednost iz tabele (meja + brezplačni rep), pool = en skupen delež za vse
+// profile paketa.
 export function planGuarantee(plan) {
   if (!plan) return null;
-  if (plan.school) return { usd: SCHOOL_PLAN_AI_USD, pool: false };
-  if (plan.currency && plan.currency !== "EUR") return { usd: regionalGuaranteeUsd(plan), pool: (plan.seats || 1) > 1 };
+  const seats = plan.seats || 1;
+  if (plan.school) return withTail(SCHOOL_PLAN_AI_USD[plan.interval] ?? SCHOOL_PLAN_AI_USD.year, 1, false);
+  if (plan.currency && plan.currency !== "EUR") return withTail(regionalGuaranteeUsd(plan), seats, seats > 1);
   if (plan.family && plan.legacy) {
-    return { usd: guaranteeFromPrice(plan.amount / 100 / monthsOf(plan.interval), { months: monthsOf(plan.interval), profiles: plan.seats }), pool: true };
+    return withTail(guaranteeFromPrice(plan.amount / 100 / monthsOf(plan.interval), { months: monthsOf(plan.interval), profiles: seats }), seats, true);
   }
-  if (plan.family) return { usd: FAMILY_POOL_USD[plan.familyId]?.[plan.interval] ?? 0, pool: true };
-  return { usd: guaranteeUsd(plan.level || "OS", plan.interval), pool: false };
+  if (plan.family) return withTail(FAMILY_POOL_USD[plan.familyId]?.[plan.interval] ?? 0, seats, true);
+  return withTail(guaranteeUsd(plan.level || "OS", plan.interval), 1, false);
 }
+// Darilna koda: zajamčeni AI kot letna naročnina stopnje (useLevel = stopnja profila, največ stopnja darila).
+// Stara darila brez stopnje (49 €, pred 2026-11-04) po pravilu 75 % iz cene 49 € na leto (≈ 0,6 $).
+export const LEGACY_GIFT_CENTS = 4900;
+export const giftGuarantee = (giftLevel, useLevel) =>
+  STOPNJE.includes(giftLevel)
+    ? withTail(guaranteeUsd(useLevel, "year"), 1, false)
+    : withTail(guaranteeFromPrice(LEGACY_GIFT_CENTS / 100 / 12, { months: 12 }), 1, false);
+// Najmanjša meja naročnika: tudi paket z mejo 0 (majhna regijska cena) ostane »zajamčen« (hitri način, nato
+// brezplačni rep), ne pa brez meje po utežeh skupnega proračuna.
+export const MIN_CEILING_USD = 0.001;
 // Učencu in staršu pokažemo porabo kot število preostalih podrobnih razlag (nikoli € ali $).
 // Ocena za eno podrobno razlago (zmogljivejši model, kratka zgodovina); zaokroženo navzdol.
 export const usdPerExplanation = () => {

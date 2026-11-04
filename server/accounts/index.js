@@ -10,7 +10,7 @@ import { audit, detachAudit } from "../dnevnik-dostopov.js";
 import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
-import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
+import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
@@ -237,12 +237,16 @@ export function mountAccounts(app, store, opts = {}) {
   function subGuarantee(studentId) {
     const r = rightsFor(studentId);
     if (!r.personal) return null;
-    if (r.personalTier === "gift") return { usd: guaranteeUsd(r.useLevel, "year"), pool: false };
-    if (r.personalTier !== "paid") return null;
     const owner = ownerOf(studentId);
-    return planGuarantee(planByKey(getParent(owner)?.sub_plan)) || { usd: guaranteeUsd(r.useLevel), pool: false };
+    if (r.personalTier === "gift") return giftGuarantee(getParent(owner)?.gift_level, r.useLevel);
+    if (r.personalTier !== "paid") return null;
+    return planGuarantee(planByKey(getParent(owner)?.sub_plan)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
   }
-  const guaranteeFor = (studentId) => subGuarantee(studentId)?.usd || 0;
+  // Meja paketa (brez brezplačnega repa, plans.js subscriptionCeiling); naročnik z mejo 0 ostane zajamčen (MIN_CEILING_USD).
+  const guaranteeFor = (studentId) => {
+    const g = subGuarantee(studentId);
+    return g ? Math.max(g.usd || 0, MIN_CEILING_USD) : 0;
+  };
   // Profili s skupnim deležem: profili s sedežem pri družinskem paketu (isPremiumChild), sicer null.
   function poolFor(studentId) {
     if (!subGuarantee(studentId)?.pool) return null;
@@ -258,7 +262,7 @@ export function mountAccounts(app, store, opts = {}) {
   // null = brez meje (stari profili, meja 0 v nastavitvah). Mesečni delež še vedno omeji usage.blockReason.
   const dailyLimitFor = (studentId, r = rightsFor(studentId)) => {
     if (r.dailyQuestions === null) return null;
-    // Nad trdo mesečno mejo naročnine (delež + 15 % v hitrem načinu, plans.js FAST_TAIL): kot brezplačni paket.
+    // Nad trdo mesečno mejo naročnine (zajamčeni AI paketa: podrobni del in hitri način, plans.js FAST_TAIL): kot brezplačni paket.
     if (aiUsage.overCeiling(studentId)) return freeDailyQuestions();
     const owner = ownerOf(studentId);
     const credit = owner ? credits.balance(owner) / Math.max(1, childIds(owner).length) : 0;

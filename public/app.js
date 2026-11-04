@@ -539,6 +539,7 @@ async function selectStudent(id) {
     return selectStudent(open.id);
   }
   state.student = target;
+  state.aiOut = false; // delež drugega profila ne skrije »Razloži podrobneje« (osveži ga naslednji odgovor)
   keptPaper = null;
   state.paperCtx = null; // skrit kontekst pole ne gre v pogovor drugega profila
   // Jezik je del profila: ob menjavi učenca se vmesnik preklopi v njegov jezik (stran se naloži znova).

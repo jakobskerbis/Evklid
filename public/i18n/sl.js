@@ -2520,7 +2520,7 @@ export default {
   "ai.low": "Ta mesec je porabljenih 80 % podrobnih razlag.",
   "ai.out": "Podrobne razlage za ta mesec so porabljene. Inštruktor odgovarja naprej v hitrem načinu.",
   "ai.buy": "Dokupi razlage",
-  "ai.pool": "Skupno za vse profile družine.",
+  "ai.pool": "Razlage si delijo vsi profili v družini.",
   "pay.consentMissing": "Pred plačilom obkljukaj obe potrditvi.",
   "pay.continue": "Nadaljuj na plačilo",
   "pay.payNow": "Plačam zdaj",
