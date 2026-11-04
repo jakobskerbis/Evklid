@@ -641,7 +641,7 @@ export function orderRound(q, ask, tier = 1, rnd = Math.random) {
   };
   add(first);
   const want = tier === 3 ? n + 4 : n;
-  for (let i = 0; i < 30 && pool.length < want; i++) add(orderItems(ask()));
+  for (let i = 0; i < 100 && pool.length < want; i++) add(orderItems(ask())); // redki pojmi (npr. neg_exp) imajo malo različnih vrednosti
   if (pool.length < 4) return null;
   let cards;
   if (pool.length <= n) cards = pool;
