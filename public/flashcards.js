@@ -61,7 +61,7 @@ export async function showFlashcards() {
 function rowHtml(c) {
   const meta = [c.topic, c.source === "own" ? t("cards.own") : ""].filter(Boolean).map(D.escapeHtml).join(" · ");
   return `<li data-id="${c.id}">
-    <div class="fc-row-text"><div class="fc-q">${rich(c.front)}</div><div class="fc-a muted">${rich(c.back)}</div>${meta ? `<small class="muted">${meta}</small>` : ""}</div>
+    <div class="fc-row-text"><div class="fc-q" dir="auto">${rich(c.front)}</div><div class="fc-a muted" dir="auto">${rich(c.back)}</div>${meta ? `<small class="muted">${meta}</small>` : ""}</div>
     <div class="fc-row-btns">
       <button type="button" class="ghost icon-only" data-act="edit" title="${t("cards.edit")}" aria-label="${t("cards.edit")}">${icon("pencil")}</button>
       <button type="button" class="ghost icon-only" data-act="del" title="${t("cards.delete")}" aria-label="${t("cards.delete")}">${icon("trash-2")}</button>
@@ -88,8 +88,8 @@ function renderReview(data) {
   const total = Math.max(session.total, pos);
   el.innerHTML = `<div class="card fc-card">
       <div class="fc-head muted"><span>${t("cards.progress", { i: pos, n: total })}</span>${c.topic ? `<span>${D.escapeHtml(c.topic)}</span>` : ""}</div>
-      <div class="fc-front">${rich(c.front)}</div>
-      <div class="fc-backside" hidden>${rich(c.back)}</div>
+      <div class="fc-front" dir="auto">${rich(c.front)}</div>
+      <div class="fc-backside" dir="auto" hidden>${rich(c.back)}</div>
       <div class="actions fc-show"><button type="button" class="primary" data-act="show">${icon("eye")} ${t("cards.show")}</button></div>
       <div class="actions fc-grade" hidden>
         <button type="button" class="secondary" data-act="again">${icon("rotate-ccw")} ${t("cards.again")}</button>

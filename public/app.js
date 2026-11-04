@@ -1880,7 +1880,7 @@ async function showTestPrep(edit = false) {
     const when = plan.daysLeft === 0 ? t("test.today") : plan.daysLeft === 1 ? t("test.tomorrow") : t("test.inDays", { n: plan.daysLeft });
     box.innerHTML = `<h1 class="with-icon">${icon("clipboard-check")} ${t("mode.test")}</h1>
       <div class="card"><p>${t("test.when", { when, date: escapeHtml(new Date(plan.date).toLocaleDateString(locale())) })}</p>
-      <p class="muted">${t("test.material", { list: (plan.subject && state.pathSubject && plan.subject !== state.pathSubject ? `${escapeHtml(SUBJECT_NAMES[plan.subject] || plan.subject)}: ` : "") + plan.unitTitles.map(escapeHtml).join(", ") })}</p>
+      <p class="muted">${t("test.material", { list: (plan.subject && state.pathSubject && plan.subject !== state.pathSubject ? `${escapeHtml(SUBJECT_NAMES[plan.subject] || plan.subject)} – ` : "") + plan.unitTitles.map(escapeHtml).join(", ") })}</p>
       <p class="muted">${t("test.howto")}</p>
       <div class="actions"><button class="primary" id="tp-start">${t("test.startToday")}</button><button id="tp-edit">${t("common.change")}</button></div></div>`;
     $("#tp-start").addEventListener("click", () => startSession("test-prep"));
