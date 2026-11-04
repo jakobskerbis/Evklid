@@ -46,3 +46,16 @@ Vse lahko spremeniš v Render → Environment.
 ## Varnostna kopija
 
 Render → Disks naredi dnevni posnetek diska samodejno (hrani se 7 dni).
+
+Poleg tega Evklid sam naredi kopijo baze **enkrat na dan** (prvič 2 minuti po zagonu) v `/var/data/kopije/evklid-LLLL-MM-DD.db` in hrani zadnjih 7 (`server/kopije.js`). Taka kopija pomaga, ko je pokvarjena samo baza (napaka v posodobitvi, pomotoma izbrisani podatki), posnetek diska pa, ko odpove cel disk. Stanje: `https://evklid.app/healthz/stanje` → `kopije` (`zadnja`, `kopij`, `napaka`). `EVKLID_BACKUPS=0` kopije izklopi.
+
+V Render → evklid → **Shell**:
+
+| Ukaz | Kaj naredi |
+|---|---|
+| `node scripts/obnovi-kopijo.js` | seznam kopij |
+| `node scripts/obnovi-kopijo.js --zdaj` | kopija takoj (npr. pred tvegano spremembo) |
+| `node scripts/obnovi-kopijo.js --preveri` | **preizkus obnove** brez spreminjanja: kopija je cela, števila vrstic v primerjavi z bazo; enkrat na teden |
+| `node scripts/obnovi-kopijo.js 2026-11-04` | pripravi obnovo iz te kopije, nato Manual Deploy → **Restart service**. Ob zagonu se baza zamenja, sedanja ostane kot `evklid.db.pred-obnovo-<čas>` (obnovo se da razveljaviti). Pokvarjena kopija se ne uporabi. |
+
+Obnova izgubi vse, kar se je zgodilo po kopiji. Pogovori v kopiji so šifrirani z `EVKLID_DATA_KEY`, zato mora ključ ostati isti (docs/varnost-podatkov.md). Kopije so na istem disku kot baza: pred menjavo ali brisanjem diska kopijo prenesi drugam.
