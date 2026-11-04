@@ -2843,5 +2843,8 @@
   "adm.rep.showAll": "Prikaži i ispravljene",
   "adm.rep.onlyOpen": "Samo otvorene",
   "chat.full": "Prikaži cijeli postupak",
-  "chat.fullMsg": "Pokaži mi cijeli postupak ovog zadatka."
+  "chat.fullMsg": "Pokaži mi cijeli postupak ovog zadatka.",
+  "adm.rep.shown": "Ovako je učenik vidio odgovor:",
+  "adm.rep.rerendered": "Odgovor, ponovno prikazan (nema snimke, npr. iz aplikacije):",
+  "adm.rep.raw": "Izvorni tekst instruktora:"
 }

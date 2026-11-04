@@ -2816,5 +2816,8 @@
   "adm.rep.showAll": "Düzeltilenleri de göster",
   "adm.rep.onlyOpen": "Yalnızca açık olanlar",
   "chat.full": "Çözümün tamamını göster",
-  "chat.fullMsg": "Bu sorunun çözümünün tamamını göster."
+  "chat.fullMsg": "Bu sorunun çözümünün tamamını göster.",
+  "adm.rep.shown": "Öğrenci cevabı böyle gördü:",
+  "adm.rep.rerendered": "Cevap yeniden gösterildi (anlık görüntü yok, ör. uygulamadan):",
+  "adm.rep.raw": "Öğretmenin ham metni:"
 }

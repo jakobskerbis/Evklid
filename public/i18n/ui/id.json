@@ -2794,5 +2794,8 @@
   "adm.rep.showAll": "Tampilkan juga yang sudah diperbaiki",
   "adm.rep.onlyOpen": "Hanya yang terbuka",
   "chat.full": "Tampilkan seluruh penyelesaian",
-  "chat.fullMsg": "Tunjukkan seluruh penyelesaian soal ini."
+  "chat.fullMsg": "Tunjukkan seluruh penyelesaian soal ini.",
+  "adm.rep.shown": "Beginilah siswa melihat jawabannya:",
+  "adm.rep.rerendered": "Jawaban ditampilkan ulang (tanpa cuplikan, mis. dari aplikasi):",
+  "adm.rep.raw": "Teks asli tutor:"
 }

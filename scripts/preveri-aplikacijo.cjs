@@ -658,6 +658,30 @@ async function okna(p, label) {
   await screen(p, `okno-kalkulator-${label}`);
   await click(p, '.okno[data-view="graph"] .okno-x');
   if (await p.locator(".okno").count()) throw new Error("okno se ni zaprlo");
+  // Prijava odgovora: skrbnik vidi odgovor tako, kot ga je videl učenec (izrisan HTML in naprava).
+  const ans = "#view-chat .msg.assistant:has(.msg-report) >> nth=-1";
+  if (await p.locator(ans).count()) {
+    await click(p, `${ans} >> .msg-report`, { wait: 150 });
+    await click(p, `${ans} >> .report-box .rep-reasons button >> nth=0`, { wait: 50 });
+    await click(p, `${ans} >> .report-box .rep-send`, { wait: 400 });
+    const seen = await p.evaluate(async () => {
+      const { renderAdminReports } = await import("/prijave.js");
+      const box = document.createElement("div");
+      document.body.append(box);
+      const api = async (u) => {
+        const r = await fetch(u, { credentials: "same-origin" });
+        if (!r.ok) throw new Error(`${u}: ${r.status}`);
+        return r.json();
+      };
+      await renderAdminReports(box, { api });
+      const li = box.querySelector('.adm-rep[data-kind="message"]');
+      const out = { shown: li?.querySelector(".adm-rep-shown .msg")?.textContent.trim().length || 0, device: li?.querySelector("small")?.textContent || "" };
+      box.remove();
+      return out;
+    });
+    if (!seen.shown) throw new Error("prijava odgovora skrbniku ne pokaže odgovora, kot ga je videl učenec");
+    if (!/web-(phone|tablet|desktop) \d+x\d+/.test(seen.device)) throw new Error(`prijava odgovora brez naprave (${seen.device})`);
+  }
   if (!(await p.locator("#view-graph").evaluate((v) => v.hidden && v.parentElement === document.body))) throw new Error("kalkulator se po zaprtju okna ni vrnil na svoje mesto");
   await tab(p, "path");
   await expectVisible(p, "#chat-bubble .cb-main", "mehurček inštruktorja zunaj klepeta");

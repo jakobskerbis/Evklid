@@ -2818,5 +2818,8 @@
   "adm.rep.showAll": "Auch behobene zeigen",
   "adm.rep.onlyOpen": "Nur offene",
   "chat.full": "Ganzen Lösungsweg zeigen",
-  "chat.fullMsg": "Zeig mir den ganzen Lösungsweg dieser Aufgabe."
+  "chat.fullMsg": "Zeig mir den ganzen Lösungsweg dieser Aufgabe.",
+  "adm.rep.shown": "So hat der Schüler die Antwort gesehen:",
+  "adm.rep.rerendered": "Die Antwort, neu dargestellt (keine Momentaufnahme, z. B. aus der App):",
+  "adm.rep.raw": "Rohtext des Tutors:"
 }

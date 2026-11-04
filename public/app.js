@@ -29,7 +29,7 @@ import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
 import { offlineApi, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback } from "./feedback.js";
-import { openAdminBug } from "./prijave.js";
+import { openAdminBug, deviceInfo, shownHtml } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
 import { initGames, showGames, gamesBack, leaveGames } from "./games/index.js";
@@ -1704,7 +1704,8 @@ function openReport(el, foot, btn, id, done) {
     }
     sendBtn.disabled = true;
     try {
-      await api(`/api/conversations/${convId}/messages/${id}/report`, { method: "POST", body: { reason, note: area.value } });
+      // Zraven gre, kar je učenec videl: izrisan HTML sporočila in naprava (napaka v izpisu formule).
+      await api(`/api/conversations/${convId}/messages/${id}/report`, { method: "POST", body: { reason, note: area.value, shown: shownHtml(el), ...deviceInfo() } });
       box.remove();
       done();
       toast(t("rep.thanks"), "check");

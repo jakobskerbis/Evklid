@@ -16,7 +16,7 @@ import { RichText } from "@/components/RichText";
 import { FormulaCtx } from "@/lib/formula-ctx";
 import { useTopicFx } from "@/lib/useTopicFx";
 import { Banner, Button, Card, ErrorView, Icon, Loading } from "@/components/ui";
-import { ReportSheet } from "@/components/ReportSheet";
+import { appDevice, ReportSheet } from "@/components/ReportSheet";
 
 type Msg = { id: number | string; role: "user" | "assistant"; text: string; has_image?: boolean; photo?: string; error?: boolean; streaming?: boolean };
 type Proposal = { settings: Record<string, string>; from: Desc; to: Desc; state?: "done" | "kept" };
@@ -221,7 +221,7 @@ export default function Chat() {
           needNote
           onClose={() => setBugOpen(false)}
           onSend={async ({ note }) => {
-            await api(`/api/students/${student.id}/bug`, { body: { note, conversation_id: Number(id), view: "chat", device: "app" } });
+            await api(`/api/students/${student.id}/bug`, { body: { note, conversation_id: Number(id), view: "chat", ...appDevice() } });
             Alert.alert(t("bug.thanks"));
           }}
         />
@@ -328,7 +328,7 @@ function ReportButton({ conv, mid }: { conv: string; mid: number }) {
   const th = useTheme();
   const [done, setDone] = useState(false);
   const report = (reason: string) =>
-    api(`/api/conversations/${conv}/messages/${mid}/report`, { body: { reason } })
+    api(`/api/conversations/${conv}/messages/${mid}/report`, { body: { reason, ...appDevice() } })
       .then(() => {
         setDone(true);
         Alert.alert(t("rep.thanks"));

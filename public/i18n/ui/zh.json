@@ -2794,5 +2794,8 @@
   "adm.rep.showAll": "也显示已修正的",
   "adm.rep.onlyOpen": "只看未处理的",
   "chat.full": "显示完整解题过程",
-  "chat.fullMsg": "请给我看这道题的完整解题过程。"
+  "chat.fullMsg": "请给我看这道题的完整解题过程。",
+  "adm.rep.shown": "学生看到的回答是这样的：",
+  "adm.rep.rerendered": "重新显示的回答（没有快照，例如来自应用）：",
+  "adm.rep.raw": "辅导老师的原始文本："
 }

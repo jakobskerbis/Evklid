@@ -2794,5 +2794,8 @@
   "adm.rep.showAll": "修正済みも表示",
   "adm.rep.onlyOpen": "未対応のみ",
   "chat.full": "解き方をすべて見る",
-  "chat.fullMsg": "この問題の解き方をすべて見せてください。"
+  "chat.fullMsg": "この問題の解き方をすべて見せてください。",
+  "adm.rep.shown": "生徒にはこのように表示されました：",
+  "adm.rep.rerendered": "回答を再表示（スナップショットなし、例：アプリから）：",
+  "adm.rep.raw": "チューターの元のテキスト："
 }

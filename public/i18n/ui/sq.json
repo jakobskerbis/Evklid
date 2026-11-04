@@ -2818,5 +2818,8 @@
   "adm.rep.showAll": "Shfaq edhe të ndrequrat",
   "adm.rep.onlyOpen": "Vetëm të hapurat",
   "chat.full": "Shfaq gjithë zgjidhjen",
-  "chat.fullMsg": "Më trego gjithë zgjidhjen e kësaj detyre."
+  "chat.fullMsg": "Më trego gjithë zgjidhjen e kësaj detyre.",
+  "adm.rep.shown": "Kështu e pa nxënësi përgjigjen:",
+  "adm.rep.rerendered": "Përgjigja, e shfaqur sërish (pa pamje, p.sh. nga aplikacioni):",
+  "adm.rep.raw": "Teksti origjinal i tutorit:"
 }

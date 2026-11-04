@@ -437,6 +437,8 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .adm-rep .pill { background: var(--surface); color: var(--text); } /* --muted na --surface-2 je v slogih Igriv/Temen pod 4,5 : 1 */
 .adm-rep button.small { min-height: 40px !important; }
 .adm-rep-note { margin: 0; overflow-wrap: anywhere; }
+.adm-rep-shown { justify-self: stretch; display: grid; gap: 4px; }
+.adm-rep-shown .msg { max-width: 100%; margin: 0; }
 .adm-rep details { justify-self: stretch; }
 .adm-rep pre, .adm-rep details p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.85rem; max-height: 320px; overflow-y: auto; }
 .report-box .rep-err { color: var(--text); margin: 0; font-weight: 400; border-inline-start: 3px solid var(--danger); padding-inline-start: 8px; } /* --danger na --surface-2 je pod 4,5 : 1 */

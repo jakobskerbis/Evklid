@@ -2845,5 +2845,8 @@
   "adm.rep.showAll": "Arată și cele reparate",
   "adm.rep.onlyOpen": "Doar deschise",
   "chat.full": "Arată toată rezolvarea",
-  "chat.fullMsg": "Arată-mi toată rezolvarea acestei probleme."
+  "chat.fullMsg": "Arată-mi toată rezolvarea acestei probleme.",
+  "adm.rep.shown": "Așa a văzut elevul răspunsul:",
+  "adm.rep.rerendered": "Răspunsul, afișat din nou (fără instantaneu, de ex. din aplicație):",
+  "adm.rep.raw": "Textul brut al tutorelui:"
 }

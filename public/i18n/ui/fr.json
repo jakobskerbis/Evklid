@@ -2818,5 +2818,8 @@
   "adm.rep.showAll": "Afficher aussi les corrigés",
   "adm.rep.onlyOpen": "Ouverts seulement",
   "chat.full": "Montrer toute la démarche",
-  "chat.fullMsg": "Montre-moi toute la démarche de cet exercice."
+  "chat.fullMsg": "Montre-moi toute la démarche de cet exercice.",
+  "adm.rep.shown": "Voici comment l'élève a vu la réponse :",
+  "adm.rep.rerendered": "La réponse, affichée à nouveau (pas d'instantané, p. ex. depuis l'application) :",
+  "adm.rep.raw": "Texte brut du tuteur :"
 }

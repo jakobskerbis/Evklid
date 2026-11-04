@@ -2872,5 +2872,8 @@
   "adm.rep.showAll": "Pokaż też poprawione",
   "adm.rep.onlyOpen": "Tylko otwarte",
   "chat.full": "Pokaż całe rozwiązanie",
-  "chat.fullMsg": "Pokaż mi całe rozwiązanie tego zadania."
+  "chat.fullMsg": "Pokaż mi całe rozwiązanie tego zadania.",
+  "adm.rep.shown": "Tak uczeń widział odpowiedź:",
+  "adm.rep.rerendered": "Odpowiedź wyświetlona ponownie (brak zrzutu, np. z aplikacji):",
+  "adm.rep.raw": "Surowy tekst korepetytora:"
 }

@@ -2794,5 +2794,8 @@
   "adm.rep.showAll": "수정된 것도 보기",
   "adm.rep.onlyOpen": "열린 것만",
   "chat.full": "전체 풀이 보기",
-  "chat.fullMsg": "이 문제의 전체 풀이를 보여 줘."
+  "chat.fullMsg": "이 문제의 전체 풀이를 보여 줘.",
+  "adm.rep.shown": "학생에게 보인 답변:",
+  "adm.rep.rerendered": "다시 표시한 답변(스냅샷 없음, 예: 앱에서):",
+  "adm.rep.raw": "튜터의 원본 텍스트:"
 }

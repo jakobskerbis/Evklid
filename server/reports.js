@@ -57,6 +57,11 @@ export function ensureReportsTable(db) {
   const cols = new Set(db.prepare("PRAGMA table_info(message_reports)").all().map((c) => c.name));
   if (!cols.has("status")) db.exec("ALTER TABLE message_reports ADD COLUMN status TEXT NOT NULL DEFAULT 'open'");
   if (!cols.has("fixed_at")) db.exec("ALTER TABLE message_reports ADD COLUMN fixed_at TEXT");
+  // Kaj je učenec res videl (j, 4. 11.: napaka v izpisu formule se v prijavi ni videla): naprava,
+  // surovo besedilo modela (šifrirano) in izrisan HTML sporočila s spleta (šifrirano).
+  if (!cols.has("device")) db.exec("ALTER TABLE message_reports ADD COLUMN device TEXT");
+  if (!cols.has("raw")) db.exec("ALTER TABLE message_reports ADD COLUMN raw TEXT");
+  if (!cols.has("shown")) db.exec("ALTER TABLE message_reports ADD COLUMN shown TEXT");
 }
 
 // Odstrani odgovor iz predpomnilnika. Tam je shranjen z {{IME}} namesto imena učenca.
@@ -74,7 +79,10 @@ export function listReports(db, limit = 200) {
 }
 
 // Opomba, vprašanje in odgovor so šifrirani (server/crypto-polje.js).
-export const openReport = (r) => r && { ...r, note: unseal(r.note), question: unseal(r.question), answer: unseal(r.answer) };
+export const openReport = (r) => r && { ...r, note: unseal(r.note), question: unseal(r.question), answer: unseal(r.answer), raw: unseal(r.raw), shown: unseal(r.shown) };
+// Izrisan HTML sporočila s spleta: največ 40 000 znakov, brez skriptov (prikaz za skrbnika ga še očisti z DOMPurify).
+export const SHOWN_MAX = 40000;
+const cleanShown = (v) => (typeof v === "string" && v.length <= SHOWN_MAX && !/<script\b/i.test(v) ? v : null);
 
 const openBug = (r) => r && { ...r, note: unseal(r.note), context: unseal(r.context) };
 
@@ -105,7 +113,9 @@ export function reportsMarkdown({ reports }, topicName = () => null) {
     lines.push(head, `- čas: ${r.created_at} UTC${r.device ? ` · ${r.device}` : ""}`);
     if (r.note) lines.push(`- opomba: ${r.note}`);
     if (r.question) lines.push("", "Vprašanje:", "", "> " + r.question.replace(/\n/g, "\n> "));
-    if (r.answer) lines.push("", "Odgovor:", "", "> " + r.answer.replace(/\n/g, "\n> "));
+    if (r.answer) lines.push("", "Odgovor (kot ga je videl učenec):", "", "> " + r.answer.replace(/\n/g, "\n> "));
+    if (r.raw && r.raw !== r.answer) lines.push("", "Surovo besedilo modela:", "", "```", r.raw, "```");
+    if (r.shown) lines.push("", "Izrisan HTML (splet):", "", "```html", r.shown.slice(0, 6000), "```");
     if (r.context) lines.push("", "Zadnja sporočila:", "", r.context);
     lines.push("");
   }
@@ -114,6 +124,8 @@ export function reportsMarkdown({ reports }, topicName = () => null) {
 
 export function mountReports(app, store, { loadConversation, loadStudent, localOnly, isAdmin = () => false, topicName = () => null }) {
   ensureReportsTable(store.db);
+
+  const deviceOf = (d) => cleanText([d?.device, d?.screen].filter((x) => typeof x === "string").join(" "), 40) || null;
 
   app.post("/api/conversations/:id/messages/:mid/report", (req, res) => {
     const conv = loadConversation(req, res);
@@ -139,8 +151,20 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
     // Odgovor ostane kot zapis dogodka tudi po izbrisu pogovora, zato brez učenčevega imena.
     const anonymize = (t) => (name.length > 1 ? t.replaceAll(name, "[ime]") : t);
     store.db
-      .prepare("INSERT INTO message_reports (student_id, conversation_id, message_id, reason, note, question, answer, purged) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-      .run(conv.student_id, conv.id, mid, reason, seal(cleanText(req.body?.note, 500) || null), seal(question?.display_text?.slice(0, 2000) || null), seal(anonymize(msg.display_text).slice(0, 8000)), purged);
+      .prepare("INSERT INTO message_reports (student_id, conversation_id, message_id, reason, note, question, answer, purged, device, raw, shown) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+      .run(
+        conv.student_id,
+        conv.id,
+        mid,
+        reason,
+        seal(cleanText(req.body?.note, 500) || null),
+        seal(question?.display_text?.slice(0, 2000) || null),
+        seal(anonymize(msg.display_text).slice(0, 8000)),
+        purged,
+        deviceOf(req.body),
+        raw ? seal(anonymize(raw).slice(0, 12000)) : null,
+        cleanShown(req.body?.shown) ? seal(anonymize(req.body.shown)) : null,
+      );
     console.warn(`[evklid] prijava napake ${code} (${reason}), pogovor ${conv.id}`);
     res.status(201).json({ ok: true, code });
   });
@@ -151,8 +175,6 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
   const perDay = (sid) =>
     store.db.prepare("SELECT COUNT(*) AS n FROM bug_reports WHERE student_id = ? AND created_at >= datetime('now','-1 day')").get(sid).n +
     store.db.prepare("SELECT COUNT(*) AS n FROM message_reports WHERE student_id = ? AND created_at >= datetime('now','-1 day')").get(sid).n;
-  const deviceOf = (d) => cleanText([d?.device, d?.screen].filter((x) => typeof x === "string").join(" "), 40) || null;
-
   // »Prijavi napako« v lekciji: razlog, opomba, korak. Skrbnik jo vidi v Računu.
   app.post("/api/students/:id/lesson-report", (req, res) => {
     const s = loadStudent(req, res);

@@ -2818,5 +2818,8 @@
   "adm.rep.showAll": "Mostra anche quelli corretti",
   "adm.rep.onlyOpen": "Solo aperte",
   "chat.full": "Mostra tutto il procedimento",
-  "chat.fullMsg": "Mostrami tutto il procedimento di questo esercizio."
+  "chat.fullMsg": "Mostrami tutto il procedimento di questo esercizio.",
+  "adm.rep.shown": "Così lo studente ha visto la risposta:",
+  "adm.rep.rerendered": "La risposta, mostrata di nuovo (nessuna istantanea, ad es. dall'app):",
+  "adm.rep.raw": "Testo grezzo del tutor:"
 }

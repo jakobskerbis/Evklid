@@ -512,6 +512,9 @@ export default {
   "adm.rep.download": "Prenesi za popravke (.md)",
   "adm.rep.showAll": "Pokaži tudi popravljene",
   "adm.rep.onlyOpen": "Samo odprte",
+  "adm.rep.shown": "Tako je učenec videl odgovor:",
+  "adm.rep.rerendered": "Odgovor, znova izrisan (posnetka zaslona ni, npr. iz aplikacije):",
+  "adm.rep.raw": "Surovo besedilo inštruktorja:",
   "chatMode.A": "Vodenje",
   "chatMode.B": "Celotna rešitev",
 

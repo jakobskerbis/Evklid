@@ -2866,5 +2866,8 @@
   "adm.rep.showAll": "Zobrazit i opravené",
   "adm.rep.onlyOpen": "Jen otevřené",
   "chat.full": "Ukázat celý postup",
-  "chat.fullMsg": "Ukaž mi celý postup této úlohy."
+  "chat.fullMsg": "Ukaž mi celý postup této úlohy.",
+  "adm.rep.shown": "Takto žák viděl odpověď:",
+  "adm.rep.rerendered": "Odpověď znovu vykreslená (bez snímku, např. z aplikace):",
+  "adm.rep.raw": "Původní text lektora:"
 }

@@ -2818,5 +2818,8 @@
   "adm.rep.showAll": "Show fixed ones too",
   "adm.rep.onlyOpen": "Open only",
   "chat.full": "Show the whole solution",
-  "chat.fullMsg": "Show me the whole solution to this task."
+  "chat.fullMsg": "Show me the whole solution to this task.",
+  "adm.rep.shown": "This is how the student saw the answer:",
+  "adm.rep.rerendered": "The answer, drawn again (no snapshot, e.g. from the app):",
+  "adm.rep.raw": "Tutor's raw text:"
 }

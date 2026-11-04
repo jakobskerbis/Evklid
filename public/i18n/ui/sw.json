@@ -2816,5 +2816,8 @@
   "adm.rep.showAll": "Onyesha pia zilizorekebishwa",
   "adm.rep.onlyOpen": "Zilizo wazi tu",
   "chat.full": "Onyesha suluhisho lote",
-  "chat.fullMsg": "Nionyeshe suluhisho lote la swali hili."
+  "chat.fullMsg": "Nionyeshe suluhisho lote la swali hili.",
+  "adm.rep.shown": "Hivi ndivyo mwanafunzi alivyoona jibu:",
+  "adm.rep.rerendered": "Jibu, limeonyeshwa tena (hakuna picha ya skrini, k.m. kutoka programu):",
+  "adm.rep.raw": "Maandishi asili ya mkufunzi:"
 }
