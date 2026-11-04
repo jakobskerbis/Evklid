@@ -867,7 +867,7 @@ float evkSum(vec3 x){ vec3 i = floor(x); vec3 f = fract(x); f = f * f * (3.0 - 2
     nadzor,
     pogled: [-0.2, 0.31, 0.93],
     korak(t) {
-      if (!gib || apZacetek === null) return;
+      if (!gib || apZacetek === null || !Number.isFinite(t)) return;
       if (apZacetek < 0) apZacetek = t;
       const tau = t - apZacetek;
       if (tau > tockeAP.length * KORAK_AP + 0.45) { apZacetek = null; ap.visible = false; return; }
