@@ -416,7 +416,7 @@ export function zgradi(THREE, ctx = {}) {
     for (const x of [stG, cG, kG]) x.rez(rez);
     stRez.visible = memRez.visible = motor.visible = rez;
     kapsula.visible = kap;
-    deli = vsiDeli.filter((d) => (d.id !== "kapsula" || kap) && (d.id !== "bazalno-telo" || rez));
+    deli = vsiDeli.filter((d) => (d.id !== "kapsula" || kap) && ((d.id !== "bazalno-telo" && d.id !== "membrana") || rez));
   };
   const nadzor = [
     { tip: "izbira", id: "prikaz", oznaka: "Prikaz", moznosti: [["prerez", "Prerez"], ["cela", "Cela celica"]], vrednost: "prerez", ob: (v) => { rez = v !== "cela"; posodobi(); } },

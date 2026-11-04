@@ -6,7 +6,7 @@ export const info = {
   naslov: "Koronavirus SARS-CoV-2",
   podrocje: "celice",
   predmet: "BIO",
-  opis: "Virus, ki povzroča covid-19 (premer ovojnice okoli 90 nm). Ima okoli 30 konic S, kot pravi virusi (25 do 40). Odrezan del pokaže nukleokapsido: RNK, ovito okoli beljakovin N.",
+  opis: "Virus, ki povzroča covid-19 (premer ovojnice okoli 90 nm). Model ima 30 konic S, toliko kot pravi virusi (ti jih imajo od okoli 25 do 40). Odrezan del pokaže nukleokapsido: RNK, ovito okoli beljakovin N.",
   merilo: { m: 140e-9, oznaka: "140 nm" },
 };
 

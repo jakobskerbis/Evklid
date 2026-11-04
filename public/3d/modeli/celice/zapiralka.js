@@ -570,7 +570,7 @@ export function zgradi(THREE, ctx = {}) {
     [...stenaZ, konca, kape[0]], t0(-0.5, 0.9, 0));
   del("notranja-stena", "Odebeljena notranja stena", "Stena ob reži je debelejša in se ne raztegne, zato se nabrekla zapiralka upogne kot banana in odmakne od sosede.", "#a08a52",
     [...ventZ], TT([Bc(tau) - rrA(0) + 0.022, Y0 + 0.03, -0.06]));
-  del("kloroplasti", "Kloroplasti", "Zapiralki imata kloroplaste, povrhnjične celice okoli njiju pa ne; v njih poteka fotosinteza.", "#5cbf4a",
+  del("kloroplasti", "Kloroplasti", "Zapiralki imata kloroplaste, v katerih poteka fotosinteza; povrhnjične celice okoli njiju jih nimajo ali imajo le redke drobne.", "#5cbf4a",
     [kloroplasti], TT(kloPol.find((k) => Math.cos(k.a) > 0.5 && k.psi > 0.6)?.p || kloPol[0].p));
   del("jedro", "Jedro", "Vsaka zapiralka ima svoje jedro z DNK, ki upravlja njeno delovanje.", "#7a68d8", [jedri], t0(-0.36, Math.PI * 0.75, 1));
   del("vakuola", "Vakuola", "Ko v zapiralko vstopijo kalijevi ioni (K⁺), za njimi z osmozo priteče voda; vakuola se poveča in turgor naraste.", "#9fe3f0",
@@ -583,7 +583,7 @@ export function zgradi(THREE, ctx = {}) {
   if (!prerez) deli.splice(deli.indexOf(delMem), 1);
   del("reza", "Listna reža", "Odprtina med zapiralkama: skozi njo v list vstopa ogljikov dioksid, izhajata pa kisik in vodna para.", "#3a6a9a",
     [votlina], TT([0, Y0 - 0.02, -0.12]));
-  del("povrhnjica", "Povrhnjične celice", "Ploščate celice v obliki sestavljanke brez kloroplastov; tesno se prilegajo in ščitijo list.", "#dfe8d6",
+  del("povrhnjica", "Povrhnjične celice", "Ploščate prozorne celice v obliki sestavljanke, večinoma brez kloroplastov; tesno se prilegajo in ščitijo list.", "#dfe8d6",
     [povZad, povSpr, dno, strZad, strSpr, luknja, luknjaSpr, ...rez], TT(povrsje(0.45, Math.PI * 1.75, new THREE.Vector3())));
   del("kutikula", "Kutikula", "Voščena plast na zunanji steni povrhnjice, ki zmanjšuje izhlapevanje vode; reža je zato glavna pot za pline.", "#e8cf5a",
     [...kut, kutRob, kutRobSpr], tockaKutRob());

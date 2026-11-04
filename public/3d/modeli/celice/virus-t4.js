@@ -435,7 +435,7 @@ export function zgradi(THREE, ctx = {}) {
   const dDnk = deli[deli.length - 1];
   del("vrat", "Vrat z ovratnikom", "Kratek vrat pod glavo, ki glavo povezuje z repom; na ovratniku so kratke brčice.", "#7f97c4", [vrat], [0.05, yP - 0.035 + YH, 0.07]);
   const dGl = deli[0], dVr = deli[deli.length - 1], tGl = dGl.tocka.slice(), tVr = dVr.tocka.slice();
-  const dPlasc = { id: "plasc", ime: "Krčljivi plašč repa", opis: "Ovoj iz 23 obročev beljakovin okoli repne cevke; ob okužbi se skrči kot vzmet in potisne cevko skozi steno bakterije.", barva: "#5fb3a3", meshes: [plasc], tocka: [0, 0, 0] };
+  const dPlasc = { id: "plasc", ime: "Krčljivi plašč repa", opis: "Ovoj iz 23 obročev s po šestimi beljakovinami okoli repne cevke; ob okužbi se skrči kot vzmet in potisne cevko skozi steno bakterije.", barva: "#5fb3a3", meshes: [plasc], tocka: [0, 0, 0] };
   plasc.userData.del = "plasc"; deli.push(dPlasc);
   const dCev = { id: "cevka", ime: "Repna cevka", opis: "Votla cevka v repu, skozi katero DNK potuje iz glave v bakterijo; vidna je, ko se plašč skrči.", barva: "#e6edf5", meshes: [cevka], tocka: [0, 0, 0] };
   cevka.userData.del = "cevka"; deli.push(dCev);

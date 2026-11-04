@@ -531,7 +531,8 @@ export function zgradi(THREE, ctx = {}) {
 
   return {
     group,
-    deli,
+    // seznam delov kaže le dele, ki so v trenutnem prikazu vidni
+    get deli() { return deli.filter((d) => d.meshes.some((m) => { for (let o = m; o; o = o.parent) if (!o.visible) return false; return true; })); },
     nadzor,
     korak(t) {
       if (!gib) return;

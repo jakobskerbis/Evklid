@@ -468,7 +468,7 @@ export function zgradi(THREE, ctx = {}) {
   del("osteocit", "Osteocit (telo celice)", "Zrela kostna celica, ujeta v medceličnino; zaznava obremenitev kosti in uravnava njeno obnavljanje. Debelina membrane je povečana.", "#d88aa2", [tOut, tRob], L(4, 2.0, 2.6));
   del("citoplazma", "Citoplazma", "Notranjost osteocita z malo organeli, saj celica le še vzdržuje kost.", "#f1c9b6", [tIn], L(-5.5, -0.9, 1.6));
   del("jedro", "Jedro", "Sploščeno jedro z DNK in dvojno ovojnico s porami; zavzema velik del telesa osteocita.", "#7a68d8", [jedro, jRob, jedrce], L(JC.x - 1.6, JC.y + 0.2, JC.z + 1.2));
-  del("izrastki", "Izrastki (dendriti)", "Do 50 tankih izrastkov iz vsake celice teče po kanalikulih; s sosednjimi se dotikajo v presledkovnih stikih, skozi katere prehajajo snovi.", "#e596b0", [izrastki], (() => { const k = krivulje[poti.findIndex((p) => p.od === 0 && p.t[0][1] > 3)] || krivulje[0]; const e = k.getPoint(0.2); return L(e.x, zg(e.x, e.z) + 0.4, e.z); })());
+  del("izrastki", "Izrastki (dendriti)", "Okoli 50 tankih izrastkov iz vsake celice teče po kanalikulih; s sosednjimi se dotikajo v presledkovnih stikih, skozi katere prehajajo snovi.", "#e596b0", [izrastki], (() => { const k = krivulje[poti.findIndex((p) => p.od === 0 && p.t[0][1] > 3)] || krivulje[0]; const e = k.getPoint(0.2); return L(e.x, zg(e.x, e.z) + 0.4, e.z); })());
   del("sosednji-osteociti", "Sosednja osteocita", "Osteocita v sosednjih lakunah; vse celice so povezane v mrežo, ki prepreda celo kost.", "#c77f98", [sosedi], L(-20.5, 1.4, -6));
 
   const premer = 2 / s; // µm na premer enotske krogle

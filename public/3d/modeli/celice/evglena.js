@@ -7,7 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Enocelični bičkar iz mlakuž, dolg okoli 50 µm. Na svetlobi dela fotosintezo kot rastlina, v temi pa vsrkava hrano iz vode. Plava z bičem in se pri tem vrti okoli dolge osi.",
-  merilo: { m: 70e-6, oznaka: "70 µm" },
+  merilo: { m: 76e-6, oznaka: "76 µm" },
 };
 
 export function zgradi(THREE, ctx = {}) {
@@ -252,10 +252,10 @@ export function zgradi(THREE, ctx = {}) {
     m.instanceMatrix.needsUpdate = true;
     m.computeBoundingSphere && m.computeBoundingSphere();
   }
-  // vse gradimo v »tel« (povečano 1,14-krat, 1 enota scene ≈ 35 µm)
+  // vse gradimo v »tel« (povečano 40/38-krat, 1 enota scene = 38 µm; premer enotske krogle 76 µm)
   const tel = new THREE.Group();
-  tel.scale.setScalar(1.14);
-  tel.position.x = 0.09;
+  tel.scale.setScalar(40 / 38);
+  tel.position.x = 0.02;
   group.add(tel);
   tel.updateMatrix();
 
@@ -309,14 +309,14 @@ export function zgradi(THREE, ctx = {}) {
   rezPokrov.visible = false;
   tel.add(pelikula, pelPokrov, memRez, pelRez, citoplazma, rezervoar, rezPokrov);
 
-  // ---------- bič (z zadebelitvijo – svetlobnim čutilom) ----------
-  const L_BIC = 0.82, BAZA = new THREE.Vector3(X1 - 0.17, 0.01, -0.005);
+  // ---------- bič (z zadebelitvijo – svetlobnim čutilom); prosti del biča je dolg skoraj kot telo (≈ 47 µm) ----------
+  const L_BIC = 1.05, BAZA = new THREE.Vector3(X1 - 0.17, 0.01, -0.005);
   const _t = new THREE.Vector3();
   function bicTocka(s, t, out) {
     // s ∈ [0, 1]: v rezervoarju naravnost, zunaj valovanje z naraščajočo amplitudo (val potuje proti konici)
     const x = BAZA.x + s * L_BIC * 0.78;
     const zun = gladko(0.2, 0.45, s);
-    const a = 0.12 * zun * Math.min(1, s * 1.3), f = 2 * Math.PI * (s * 2.1) - t * 5.5;
+    const a = 0.12 * zun * Math.min(1, s * 1.3), f = 2 * Math.PI * (s * 2.8) - t * 5.5;
     const upogib = -0.16 * zun * s * s; // bič je usmerjen nekoliko nazaj in navzdol
     return out.set(x, BAZA.y + a * Math.sin(f) + upogib * 0.4, BAZA.z + a * 0.55 * Math.cos(f) - upogib * 0.25);
   }
@@ -426,7 +426,7 @@ export function zgradi(THREE, ctx = {}) {
   const T = (u, v, d) => telo(u, v, d, new THREE.Vector3()).toArray();
   del("pelikula", "Pelikula", "Prožna ovojnica iz spiralno zvitih beljakovinskih trakov pod celično membrano (rožnati dvosloj na prerezu, debelina je povečana); evglena lahko z njo spreminja obliko.", "#9cc48a",
     [pelikula, pelPokrov, pelRez, memRez], T(0.42, 2.3, 0));
-  del("bic", "Bič", "Dolg nitast izrastek, ki z valovanjem vleče celico naprej; izrašča iz rezervoarja na sprednjem koncu.", "#b9e08a",
+  del("bic", "Bič", "Nitast izrastek, dolg skoraj kot vsa celica, ki z valovanjem vleče celico naprej; izrašča iz rezervoarja na sprednjem koncu.", "#b9e08a",
     [bic], bicTocka(0.35, 0, new THREE.Vector3()).toArray());
   del("svetlobno-cutilo", "Svetlobno čutilo", "Zadebelitev ob dnu biča, ki zazna svetlobo; očesna pega jo z ene strani zasenči, zato evglena zazna smer svetlobe.", "#e8f070",
     [cutilo], cutiloP.clone().add(new THREE.Vector3(0, 0.012, 0.01)).toArray());

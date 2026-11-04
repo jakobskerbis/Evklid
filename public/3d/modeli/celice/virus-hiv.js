@@ -6,7 +6,7 @@ export const info = {
   naslov: "Virus HIV",
   podrocje: "celice",
   predmet: "BIO",
-  opis: "Virus človeške imunske pomanjkljivosti (premer okoli 110 nm), ki povzroča aids. Izrezan klin pokaže stožčasto kapsido z dvema molekulama RNK in encimi; bodic je okoli 10, kot pri pravih virusih.",
+  opis: "Virus človeške imunske pomanjkljivosti (premer okoli 110 nm), ki povzroča aids. Izrezan klin pokaže stožčasto kapsido z dvema molekulama RNK in encimi; model ima 10 bodic, toliko kot pravi virusi (ti jih imajo od okoli 7 do 14).",
   merilo: { m: 150e-9, oznaka: "150 nm" },
 };
 

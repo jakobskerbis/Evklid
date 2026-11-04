@@ -383,7 +383,7 @@ export function zgradi(THREE, ctx = {}) {
     pore.setMatrixAt(k++, o.matrix);
   }
   group.add(pore);
-  del("jedro", "Jedro", "Največji organel; hrani DNK z navodili za delovanje celice. Obdaja ga jedrna ovojnica s porami.", "#7a68d8", [jOut, jRob, jPokrov, pore], [N.x - 0.1, N.y + 0.12, N.z + 0.13]);
+  del("jedro", "Jedro", "Hrani DNK z navodili za delovanje celice; za osrednjo vakuolo je največji organel. Obdaja ga jedrna ovojnica s porami.", "#7a68d8", [jOut, jRob, jPokrov, pore], [N.x - 0.1, N.y + 0.12, N.z + 0.13]);
   const kromGeo = [];
   for (let i = 0; i < (hi ? 12 : 7); i++) {
     const pts = [];
@@ -628,7 +628,8 @@ export function zgradi(THREE, ctx = {}) {
 
   return {
     group,
-    deli,
+    // seznam delov kaže le dele, ki so v trenutnem prikazu vidni
+    get deli() { return deli.filter((d) => d.meshes.some((m) => { for (let o = m; o; o = o.parent) if (!o.visible) return false; return true; })); },
     nadzor,
     korak(t) {
       if (!gib) return;

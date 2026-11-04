@@ -264,7 +264,7 @@ export function zgradi(THREE, ctx = {}) {
       zrnca: { n: 150, r: [0.36, 0.48], barva: 0xf0653a, ime: "Velika oranžno rdeča zrnca", opis: "Velika zrnca s strupenimi beljakovinami za uničevanje zajedavcev; pri barvanju z eozinom se obarvajo oranžno rdeče." },
     },
     bazofilec: {
-      ime: "Bazofilec", d: 15, velikost: "14–16 µm", delez: "manj kot 1 %", cit: 0xe4d6ea, guba: 0.04, nMv: 420,
+      ime: "Bazofilec", d: 13, velikost: "12–15 µm", delez: "manj kot 1 %", cit: 0xe4d6ea, guba: 0.04, nMv: 420,
       opisCel: "Najredkejša bela krvnička; z izločanjem histamina sproži vnetje in alergijski odziv.",
       jedro: { lobi: [[-1.9, 0.9, -0.4, 1.9], [1.8, -0.7, -0.9, 1.85]], most: 0.6, s: true },
       jedroOpis: "Jedro ima dva režnja v obliki črke S; pogosto ga skoraj prekrijejo temna zrnca.",
@@ -445,8 +445,8 @@ export function zgradi(THREE, ctx = {}) {
     const izbJ = () => { const k = krogle.reduce((a, b) => (b.c.z > a.c.z ? b : a)); return L(k.c.clone().add(V(-0.3, 0.45, 0.85).normalize().multiplyScalar(k.r * 0.95)).toArray()); };
     const naj = (arr) => arr.reduce((a, p) => (vIzrezu(p) && p.z - p.x > a.z - a.x ? p : a), arr[0]);
 
-    dd("membrana", "Celična membrana", c.opisCel + " Membrana je nagubana in ima drobne mikrovile; njena debelina je povečana.", "#d88aa2", [memOut, memRob, mv], naCeli(0.55, 0.15, 0.8));
-    dd("citoplazma", "Citoplazma", "Tekočina z organeli, ki zapolnjuje celico med membrano in jedrom.", "#" + new THREE.Color(c.cit).getHexString(), [citIn], L(V(0.45, -0.35, -0.55).normalize().multiplyScalar(R * 0.96).toArray()));
+    dd("membrana", "Celična membrana", "Prožna ovojnica iz dvosloja fosfolipidov; je nagubana in ima drobne mikrovile, s katerimi se bela krvnička oprime stene žile in se preriva skoznjo. Debelina je povečana.", "#d88aa2", [memOut, memRob, mv], naCeli(0.55, 0.15, 0.8));
+    dd("citoplazma", "Citoplazma", c.opisCel + " Citoplazma z organeli zapolnjuje celico med membrano in jedrom.", "#" + new THREE.Color(c.cit).getHexString(), [citIn], L(V(0.45, -0.35, -0.55).normalize().multiplyScalar(R * 0.96).toArray()));
     dd("jedro", "Jedro", c.jedroOpis + " Obdaja ga dvojna ovojnica s porami.", "#7a68d8", [jedro, pore], izbJ());
     if (zrnca && tocke.zrnca.length) dd("zrnca", c.zrnca.ime, c.zrnca.opis, "#" + new THREE.Color(c.zrnca.barva).getHexString(), [zrnca], L(naj(tocke.zrnca).toArray()));
     if (vak && tocke.vak.length) dd("vakuole", "Vakuole", "Mehurčki, v katerih monocit prebavlja pogoltnjene delce.", "#a8e6ef", [vak], L(naj(tocke.vak).toArray()));
