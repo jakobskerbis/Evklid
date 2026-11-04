@@ -183,7 +183,7 @@ export function zgradi(THREE, ctx = {}) {
   // med delitvijo se umaknejo iz območja delitvenega vretena (okoli osi x).
   const _o = new V3(), _o2 = new V3(), _d2 = new V3(), _z = new V3(0, 0, 1), _qo = new THREE.Quaternion();
   const smer = (x, y, z) => new V3(x, y, z).normalize();
-  const G_DIR = [smer(-0.5, 0.78, 0.38), smer(-0.62, 0.66, 0.42), smer(0.62, 0.66, 0.42)]; // Golgi: mati, leva, desna hči
+  const G_DIR = [smer(-0.5, 0.78, 0.38), smer(-0.62, 0.66, 0.42), smer(0.55, 0.72, -0.42)]; // Golgi: mati, leva, desna hči (desni je zadaj, da ne zakrije jedra)
   const C_DIR = smer(-0.07, 0.355, 0.12);
   // smer privzete kamere (azimut 35°, višina 20°): pred jedrom (v tej smeri) ni organelov, da ne zakrijejo kromosomov
   const KAM = smer(Math.sin(0.611) * Math.cos(0.349), Math.sin(0.349), Math.cos(0.611) * Math.cos(0.349));
@@ -256,8 +256,10 @@ export function zgradi(THREE, ctx = {}) {
   let miTock = 0, miBest = -9;
   for (let i = 0; i < NMI; i++) {
     let d, sg;
-    do { d = nakSmer(); sg = d.x + (rnd() - 0.5) * 0.5 >= 0 ? 1 : -1; }
-    while (d.dot(KAM) > 0.7 || d.dot(G_DIR[0]) > 0.84 || d.dot(C_DIR) > 0.9 || d.dot(G_DIR[sg > 0 ? 2 : 1]) > 0.84);
+    // izmenično v levi in desni polovici, da dobita obe hčerinski celici enako mitohondrijev
+    sg = i & 1 ? 1 : -1;
+    do { d = nakSmer(); rnd(); }
+    while (d.x * sg < 0.08 || d.dot(KAM) > 0.7 || d.dot(G_DIR[0]) > 0.84 || d.dot(C_DIR) > 0.9 || d.dot(G_DIR[sg > 0 ? 2 : 1]) > 0.84);
     const rad = 0.68 + 0.2 * rnd();
     miOff[i * 3] = d.x * rad; miOff[i * 3 + 1] = d.y * rad; miOff[i * 3 + 2] = d.z * rad; miSg[i] = sg;
     const a = nakSmer(); miAx[i * 3] = a.x; miAx[i * 3 + 1] = a.y; miAx[i * 3 + 2] = a.z;
@@ -276,16 +278,19 @@ export function zgradi(THREE, ctx = {}) {
   const erDir = [], erDirH = [], erQH = [], erF = new Float32Array(NER), erS = new Float32Array(NER), erSg = new Int8Array(NER), erQ = [], erR = [], erM = [];
   let erTock = 0, erBest = -9;
   {
-    const kand = [], NKAND = 60;
+    const kand = [], NKAND = 240;
     for (let i = 0; i < NKAND; i++) {
       const y = 1 - (2 * (i + 0.5)) / NKAND, rr = Math.sqrt(1 - y * y), f = i * 2.39996;
       const d = new V3(Math.cos(f) * rr, y, Math.sin(f) * rr);
       if (Math.abs(d.dot(KAM)) < 0.22 && d.dot(G_DIR[0]) < 0.74 && d.dot(C_DIR) < 0.87) kand.push(d);
     }
     for (let i = 0; i < NER; i++) {
-      const par = i >> 1, d = kand[Math.floor(((par + 0.5) * kand.length) / (NER / 2))].clone();
+      // pari izmenično v levi in desni polovici, da dobi vsaka hčerinska celica svoj ER
+      const par = i >> 1, sg = par & 1 ? 1 : -1, NP = NER / 2, mp = (NP - (par & 1) + 1) >> 1;
+      const kp = kand.filter((e) => e.x * sg > 0.12), kg = kp.filter((e) => e.dot(G_DIR[sg > 0 ? 2 : 1]) < 0.6), kq = kg.length >= mp ? kg : kp.length ? kp : kand;
+      const d = kq[Math.floor((((par >> 1) + 0.5) * kq.length) / mp)].clone();
       if (i & 1) d.add(nakSmer().multiplyScalar(0.06)).normalize();
-      const sg = d.x + (rnd() - 0.5) * 0.6 >= 0 ? 1 : -1;
+      rnd();
       erDir.push(d); erF[i] = i & 1 ? 1.25 : 1.12; erS[i] = (0.09 + 0.022 * rnd()) * (i & 1 ? 1.05 : 1); erSg[i] = sg;
       erR.push(new THREE.Quaternion().setFromAxisAngle(_z, rnd() * 6.283));
       erQ.push(new THREE.Quaternion().setFromUnitVectors(_z, d).multiply(erR[i]));
@@ -344,7 +349,7 @@ export function zgradi(THREE, ctx = {}) {
     else { vzL[i * 3] = (rnd() - 0.5) * 0.12; vzL[i * 3 + 1] = (rnd() - 0.5) * 0.05; vzL[i * 3 + 2] = rnd() < 0.7 ? -0.06 - 0.03 * rnd() : 0.055 + 0.02 * rnd(); }
     const d = nakSmer(), rad = 0.55 + 0.32 * rnd();
     vzOff[i * 3] = d.x * rad; vzOff[i * 3 + 1] = d.y * rad; vzOff[i * 3 + 2] = d.z * rad;
-    vzSg[i] = i & 1 ? 1 : -1; vzR[i] = 0.0065 + 0.003 * rnd();
+    vzSg[i] = i & 1 ? 1 : -1; vzOff[i * 3] = vzSg[i] * Math.abs(vzOff[i * 3]); vzR[i] = 0.0065 + 0.003 * rnd();
     mesicki.setColorAt(i, new THREE.Color("#E3B070").multiplyScalar(0.9 + 0.15 * rnd()));
   }
   group.add(golgi, mesicki);
@@ -844,7 +849,7 @@ export function zgradi(THREE, ctx = {}) {
     centrosom: { id: "centrosom", ime: "Centrosom s centriolama", opis: "Iz njega rastejo mikrotubuli; v fazi S se podvoji, nato centrosoma odpotujeta na nasprotna pola celice. Centrioli sta v modelu povečani.", barva: "#FFE19A", meshes: [centriole, pcm], tocka: tc() },
     vreteno: { id: "vreteno", ime: "Delitveno vreteno", opis: "Snop mikrotubulov med poloma: eni se pripnejo na kinetohore in vlečejo kromatide, drugi se prekrivajo na sredini ali segajo v citoplazmo.", barva: "#A8F0D2", meshes: [vreteno], tocka: tc() },
     mitohondrij: { id: "mitohondrij", ime: "Mitohondrij", opis: "Organel, v katerem celično dihanje sprošča energijo iz hrane; svetle pregrade nakazujejo nagubano notranjo membrano (kriste), pri delitvi pa se mitohondriji razporedijo med obe hčerinski celici.", barva: "#C46A4E", meshes: [mito], tocka: tc() },
-    er: { id: "er", ime: "Endoplazemski retikulum", opis: "Sistem sploščenih membranskih vrečk okoli jedra; zrnati ER je posejan z ribosomi, ki izdelujejo beljakovine, med delitvijo pa se umakne k robu celice (v modelu je prikazanih le nekaj vrečk).", barva: "#8DB3C4", meshes: [erMesh], tocka: tc() },
+    er: { id: "er", ime: "Zrnati endoplazemski retikulum", opis: "Sistem sploščenih membranskih vrečk okoli jedra, posejan z ribosomi, ki izdelujejo beljakovine; med delitvijo se umakne k robu celice (v modelu je prikazanih le nekaj vrečk).", barva: "#8DB3C4", meshes: [erMesh], tocka: tc() },
     golgi: { id: "golgi", ime: "Golgijev aparat", opis: "Kup sploščenih membranskih vrečk ob centrosomu, ki beljakovine dodela, razvrsti in jih v mešičkih pošlje naprej; med delitvijo razpade na mešičke in se v vsaki hčerinski celici spet sestavi.", barva: "#D9A55E", meshes: [golgi, mesicki], tocka: tc() },
     ribosomi: { id: "ribosomi", ime: "Ribosomi", opis: "Drobna zrnca, na katerih nastajajo beljakovine: nekateri prosto plavajo v citoplazmi, drugi sedijo na endoplazemskem retikulumu; v modelu so močno povečani in jih je veliko manj kot v pravi celici.", barva: "#A383BC", meshes: [zrna], tocka: tc() },
     brazda: { id: "brazda", ime: "Cepitvena brazda", opis: "Obroč beljakovinskih vlaken (aktina in miozina) pod membrano se krči in celico zažame v dve hčerinski celici.", barva: "#FF9A52", meshes: [brazda], tocka: tc() },

@@ -659,7 +659,7 @@ export function zgradi(THREE, ctx = {}) {
       { id: "lamele", ime: "Lamele", opis: "Stromalne tilakoide, ki povezujejo grana, tako da so vse tilakoide ena sama povezana membrana.", barva: "#49B85C", meshes: [lamele], tocka: tLam },
       { id: "ribosomi", ime: "Ribosomi", opis: "Kloroplast ima svoje majhne ribosome, na katerih izdela del svojih beljakovin.", barva: "#7A63C9", meshes: [ribosomi], tocka: tRib },
       { id: "dnk", ime: "Kloroplastna DNK", opis: "Kloroplast ima svojo krožno DNK, podobno bakterijski, z geni za nekatere svoje beljakovine.", barva: "#F08A5D", meshes: [dnk], tocka: tDnk },
-      { id: "plastoglobuli", ime: "Plastoglobuli", opis: "Drobne kapljice maščob (lipidov) ob tilakoidah, v katerih kloroplast hrani snovi za svoje membrane, na primer rumena in oranžna barvila karotenoide.", barva: "#F2C14E", meshes: [plastoglobuli], tocka: tPlg },
+      { id: "plastoglobuli", ime: "Plastoglobuli", opis: "Drobne kapljice maščob (lipidov), pripete na tilakoide; v njih kloroplast hrani snovi za svoje membrane, na primer rumena in oranžna barvila karotenoide.", barva: "#F2C14E", meshes: [plastoglobuli], tocka: tPlg },
       { id: "skrobna-zrna", ime: "Škrobna zrna", opis: "Zaloga škroba, ki nastane iz sladkorja, narejenega pri fotosintezi.", barva: "#F2E9D0", meshes: [skrob], tocka: tSkr },
     ];
     const sij = {

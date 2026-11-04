@@ -875,7 +875,8 @@ export function zgradi(THREE, ctx = {}) {
       const fk = f * AK_VEL[k];
       mt.compose(vB.set(BK[k * 3], BK[k * 3 + 1], BK[k * 3 + 2]), qv.identity(), vS.set(fk, fk, fk));
       kroglice.setMatrixAt(k, mt);
-      AZ.dodaj(AK[k].kr, BK[k * 3], BK[k * 3 + 1] + 0.055, BK[k * 3 + 2], f * (vv >= 11 ? 1 - ss((S.prosta - 0.6) / 0.3) : 1));
+      // oznaka tik nad kroglico; sosednji oznaki na različnih višinah, da se ne prekrivata
+      AZ.dodaj(AK[k].kr, BK[k * 3], BK[k * 3 + 1] + 0.021 + 0.034 * AK_VEL[k] + (k & 1 ? 0.03 : 0), BK[k * 3 + 2], f * (vv >= 11 ? 1 - ss((S.prosta - 0.6) / 0.3) : 1));
       nb++;
     }
     kroglice.visible = nb > 0;
