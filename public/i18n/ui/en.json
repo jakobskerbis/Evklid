@@ -2473,7 +2473,7 @@
   "scan.q.dark": "Not enough light. Turn on a lamp or the phone's flash.",
   "scan.q.glare": "There is glare on the page. Tilt the page or move away from the light.",
   "scan.q.tilt": "Hold the phone parallel to the page.",
-  "scan.q.anyway": "Take it again or press “Read” anyway.",
+  "scan.q.anyway": "Take a new photo or press “Read” anyway.",
   "scan.read": "Read",
   "scan.reading": "Reading the problem …",
   "scan.readFail": "I couldn't find a problem in the picture. Try again closer up and with more light, or type it in.",

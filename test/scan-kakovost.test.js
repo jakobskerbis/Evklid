@@ -52,3 +52,10 @@ test("nagib: vodoravno in pokončno je v redu, vmes ne", () => {
   assert.equal(problemOf(measure(...page()), 45), "tilt");
   assert.equal(problemOf(null, 10), null);
 });
+
+test("temen posnetek zaslona z velikim kontrastom ni »dark«, prazen okvir ni »blur«", () => {
+  assert.equal(problemOf({ brightness: 30, contrast: 200, glare: 0, sharpness: 0.2 }), null);
+  assert.equal(problemOf({ brightness: 30, contrast: 40, glare: 0, sharpness: 0.2 }), "dark");
+  assert.equal(problemOf({ brightness: 200, contrast: 10, glare: 0, sharpness: 0 }), null);
+  assert.equal(problemOf({ brightness: 200, contrast: 10, glare: 0, sharpness: 0 }, 45), "tilt");
+});

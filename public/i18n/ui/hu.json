@@ -2473,7 +2473,7 @@
   "scan.q.dark": "Kevés a fény. Kapcsolj fel egy lámpát vagy a telefon vakuját.",
   "scan.q.glare": "A lapon tükröződés van. Döntsd meg a lapot, vagy állj ki a fényből.",
   "scan.q.tilt": "Tartsd a telefont a lappal párhuzamosan.",
-  "scan.q.anyway": "Fotózd újra, vagy nyomd meg mégis: „Beolvasás”.",
+  "scan.q.anyway": "Fotózd újra, vagy nyomd meg mégis a „Beolvasás” gombot.",
   "scan.read": "Beolvasás",
   "scan.reading": "Olvasom a feladatot …",
   "scan.readFail": "Nem találtam feladatot a képen. Próbáld közelebbről és több fénnyel, vagy írd be.",

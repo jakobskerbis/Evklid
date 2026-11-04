@@ -5,7 +5,8 @@
 // še prebere, zato jih spusti naprej.
 
 export const LIMITS = {
-  dark: 70, // povprečna svetlost 0–255 pod tem: premalo svetlobe
+  dark: 70, // povprečna svetlost 0–255 pod tem in hkrati majhen kontrast (darkContrast): premalo svetlobe
+  darkContrast: 120, // temen posnetek zaslona v temnem načinu (svetlo na črnem) ima velik kontrast in ni pretemen
   glare: 0.04, // delež skoraj belih pik (≥ 250) nad tem: odsev
   blur: 0.03, // ostrina pod tem: močno zamegljeno (glej sharpness; meri se pri 1600 px, kot jo dobi branje)
   tilt: 22, // telefon nagnjen glede na list za več kot toliko stopinj
@@ -77,7 +78,8 @@ export function tiltOff(angle) {
 // Ena težava (najpomembnejša) ali null; ključ i18n »scan.q.<ime>«.
 export function problemOf(m, angle = null) {
   if (!m) return tiltOff(angle) ? "tilt" : null;
-  if (m.brightness < LIMITS.dark) return "dark";
+  if (m.brightness < LIMITS.dark && m.contrast < LIMITS.darkContrast) return "dark";
+  if (m.contrast < 25) return tiltOff(angle) ? "tilt" : null; // prazen list v okvirju: ni česa meriti
   if (tiltOff(angle)) return "tilt";
   if (m.glare > LIMITS.glare) return "glare";
   if (m.sharpness < LIMITS.blur) return "blur";
@@ -85,12 +87,23 @@ export function problemOf(m, angle = null) {
 }
 
 // Pomanjšan izrez vira (video ali slika) → meritve. Vrne null, če brskalnik slike ne da prebrati.
-export function measureSource(src, sx, sy, sw, sh, size = 1600) {
+// win: največja izmera merjenega okna v pikah; večji izrez se ne pomanjša še bolj (ostrina je odvisna od
+// merila), ampak se izmeri le njegova sredina. Kamera tako vsakih 700 ms obdela največ 640 × 360 pik.
+let canvas = null;
+export function measureSource(src, sx, sy, sw, sh, size = 1600, win = Infinity) {
   try {
     const k = Math.min(1, size / Math.max(sw, sh));
+    if (sw * k > win) {
+      sx += (sw - win / k) / 2;
+      sw = win / k;
+    }
+    if (sh * k > win * 0.5625) {
+      sy += (sh - (win * 0.5625) / k) / 2;
+      sh = (win * 0.5625) / k;
+    }
     const w = Math.max(8, Math.round(sw * k));
     const h = Math.max(8, Math.round(sh * k));
-    const c = document.createElement("canvas");
+    const c = (canvas ||= document.createElement("canvas"));
     c.width = w;
     c.height = h;
     const ctx = c.getContext("2d", { willReadFrequently: true });

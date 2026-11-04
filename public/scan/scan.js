@@ -117,7 +117,7 @@ export function leaveScan() {
 function render() {
   const box = $v();
   if (!box) return;
-  if (S.mode !== "capture") stopCamera();
+  stopCamera(); // tudi pri zajemu: renderCapture zamenja <video>, kamero po potrebi zažene znova
   if (graphView && S.mode !== "solution") {
     graphView.destroy?.();
     graphView = null;
@@ -165,7 +165,7 @@ function renderCapture(box) {
     }`;
   const stage = box.querySelector("[data-stage]");
   bindFrame(stage);
-  stage.addEventListener("pointerdown", askTiltPermission, { once: true });
+  stage.addEventListener("pointerup", askTiltPermission, { once: true }); // pointerdown z dotikom ni »user gesture« (iOS)
   box.querySelector('[data-act="gallery"]').addEventListener("click", () => box.querySelector("[data-file]").click());
   box.querySelector("[data-file]").addEventListener("change", (e) => e.target.files[0] && loadFile(e.target.files[0]));
   box.querySelector("[data-shot]").addEventListener("change", (e) => e.target.files[0] && loadFile(e.target.files[0]));
@@ -261,14 +261,16 @@ function onTilt(e) {
 // iOS dovoli senzor nagiba šele po dotiku in vprašanju; drugje je na voljo brez vprašanja.
 function askTiltPermission() {
   const ask = window.DeviceOrientationEvent?.requestPermission;
-  if (typeof ask === "function") ask.call(window.DeviceOrientationEvent).catch(() => {});
+  try {
+    if (typeof ask === "function") ask.call(window.DeviceOrientationEvent).catch(() => {});
+  } catch {}
 }
 function sampleQuality() {
   const video = $v()?.querySelector("video");
   const stage = $v()?.querySelector("[data-stage]");
   if (!stream || !video?.videoWidth || !stage || document.hidden) return;
   const r = frameRect(video.videoWidth, video.videoHeight, stage, "cover");
-  const p = problemOf(measureSource(video, r.sx, r.sy, r.sw, r.sh, 1600), tilt);
+  const p = problemOf(measureSource(video, r.sx, r.sy, r.sw, r.sh, 1600, 640), tilt);
   if (p === qLast || !p) showQuality(p);
   qLast = p;
 }
@@ -304,8 +306,8 @@ function shoot() {
   S.image = { url: snapshot(video), w: video.videoWidth, h: video.videoHeight };
   // zamegljena ali pretemna slika: ne pošljemo je takoj (branje stane in bi verjetno spodletelo);
   // učenec jo vidi z opozorilom in jo posname znova ali vseeno pritisne »Preberi«
-  if (bad === "blur" || bad === "dark") {
-    S.quality = bad;
+  S.quality = bad === "blur" || bad === "dark" ? bad : null;
+  if (S.quality) {
     S.mode = "crop";
     return render();
   }
@@ -396,6 +398,8 @@ function renderCrop(box) {
     </div>`;
   const stage = box.querySelector("[data-stage]");
   if (!reading) bindFrame(stage);
+  // opozorilo in gumba sta na telefonu lahko pod spodnjo vrstico: pokaži ju
+  if (S.quality && !reading) requestAnimationFrame(() => box.querySelector(".scan-actions")?.scrollIntoView?.({ block: "center", behavior: "smooth" }));
   box.querySelector('[data-act="back"]').addEventListener("click", () => {
     S.mode = "capture";
     S.quality = null;
