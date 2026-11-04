@@ -45,4 +45,5 @@ test("app WebView: a deploy (5xx or dropped connection) retries quietly instead 
   assert.match(web, /onError=\{\(\) => failOrWait\(2\)\}/);
   assert.match(web, /failOrWait\(\[502, 503, 504\]\.includes\(e\.nativeEvent\.statusCode\) \? BUSY_WAIT\.length : 0\)/);
   assert.doesNotMatch(web, /onError=\{\(\) => setFailed\(true\)\}/);
+  assert.match(web, /updating \? \(\s*<Text accessibilityLiveRegion="polite"[^>]*>\{t\("off\.updating"\)\}/); // kot splet: obvestilo med čakanjem
 });
