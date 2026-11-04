@@ -40,28 +40,33 @@ export default function narisi(host) {
     crta(g, A[0], A[1], C[0], C[1], "druga", { "stroke-width": 3 }); // b
     crta(g, C[0], C[1], B[0], B[1], "ploskev", { "stroke-width": 3 }); // a
     crta(g, A[0], A[1], B[0], B[1], "glavna", { "stroke-width": 2.5 }); // c
-    const k = 12; // pravi kot pri C
+    const pa = q.a * M, pb = q.b * M; // kateti v enotah SVG
+    const lim = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+    const k = lim(Math.min(pa, pb) * 0.4, 6, 12); // pravi kot pri C (manjši pri ozkem trikotniku)
     s("path", { d: `M${C[0] - k},${C[1]} L${C[0] - k},${C[1] - k} L${C[0]},${C[1] - k}`, class: "sk-s-glavna sk-thin" }, g);
-    const rr = 26; // lok kota α
+    const rr = lim(pb - k - 3, 10, 26); // lok kota α ne seka oznake pravega kota
     const e = [A[0] + rr * Math.cos((alfa * Math.PI) / 180), A[1] - rr * Math.sin((alfa * Math.PI) / 180)];
     s("path", { d: `M${A[0] + rr},${A[1]} A${rr},${rr} 0 0 0 ${e[0]},${e[1]}`, class: "sk-s-izbor" }, g);
-    napis(g, A[0] + rr + 6, A[1] - 6, "α", "izbor");
+    // Oznaka α: v kotu, kadar je dovolj prostora; pri ostrem kotu nad c, pri ozkem trikotniku levo od c.
+    const th = ((alfa < 28 ? alfa + 10 : alfa > 60 ? alfa + 14 : alfa / 2) * Math.PI) / 180;
+    const ra = Math.max(rr + 10, alfa > 60 ? 36 : 40);
+    napis(g, A[0] + ra * Math.cos(th), A[1] - ra * Math.sin(th), "α", "izbor", { "text-anchor": "middle", "dominant-baseline": "central" });
     napis(g, A[0] - 14, A[1] + 16, "A");
     napis(g, C[0] + 6, C[1] + 16, "C");
-    napis(g, B[0] + 8, B[1] - 4, "B");
+    napis(g, B[0] + (alfa < 20 ? 6 : 12), Math.max(16, B[1] - (alfa < 20 ? 14 : 4)), "B");
     napis(g, (A[0] + C[0]) / 2, A[1] + 18, "b", "druga", { "text-anchor": "middle" });
     napis(g, C[0] + 8, (B[1] + C[1]) / 2, "a", "ploskev");
     napis(g, (A[0] + B[0]) / 2 - 14, (A[1] + B[1]) / 2 - 6, "c = 5", "glavna", { "text-anchor": "end" });
     if (tocka) {
       tocka.move(...B);
-      S.svg.append(tocka); // točka ostane nad likom
+      if (S.svg.lastChild !== tocka) S.svg.append(tocka); // točka ostane nad likom (premik bi ji vzel fokus)
     }
     S.cipi([
       { barva: "izbor", oznaka: "\\alpha", vrednost: `${st(q.alfa, 1)}°` },
-      { barva: "ploskev", oznaka: "\\sin\\alpha = \\frac{a}{c}", vrednost: `${st(q.a)} : 5 = ${st(q.sin, 3)}` },
-      { barva: "druga", oznaka: "\\cos\\alpha = \\frac{b}{c}", vrednost: `${st(q.b)} : 5 = ${st(q.cos, 3)}` },
-      { barva: "glavna", oznaka: "\\tan\\alpha = \\frac{a}{b}", vrednost: st(q.tan, 3) },
-      { barva: "glavna", oznaka: "\\cot\\alpha = \\frac{b}{a}", vrednost: st(q.cot, 3) },
+      { barva: "ploskev", oznaka: "\\sin\\alpha = \\frac{a}{c}", vrednost: `${st(q.a)} : 5 ≈ ${st(q.sin, 3)}` },
+      { barva: "druga", oznaka: "\\cos\\alpha = \\frac{b}{c}", vrednost: `${st(q.b)} : 5 ≈ ${st(q.cos, 3)}` },
+      { barva: "glavna", oznaka: "\\tan\\alpha = \\frac{a}{b}", vrednost: `${st(q.a)} : ${st(q.b)} ≈ ${st(q.tan, 3)}` },
+      { barva: "glavna", oznaka: "\\cot\\alpha = \\frac{b}{a}", vrednost: `${st(q.b)} : ${st(q.a)} ≈ ${st(q.cot, 3)}` },
     ]);
     if (Math.abs(sl.get() - alfa) > 0.05) sl.set(Math.round(alfa * 10) / 10, true);
   }
@@ -72,7 +77,11 @@ export default function narisi(host) {
     x: A[0] + q0.b * M,
     y: A[1] - q0.a * M,
     label: "Oglišče B: premikaj ga po loku",
-    onMove: (x, y) => nastavi((Math.atan2(A[1] - y, x - A[0]) * 180) / Math.PI),
+    // Levo spodaj od A (kot pod −90°) je B bližje zgornji meji: ne preskoči z 85° na 5°.
+    onMove: (x, y) => {
+      const d = (Math.atan2(A[1] - y, x - A[0]) * 180) / Math.PI;
+      nastavi(d < -90 ? 180 : d);
+    },
   });
   nastavi(alfa);
   host.append(S.el);

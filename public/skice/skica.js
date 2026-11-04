@@ -7,9 +7,15 @@ import { s, h, svgBox, slider, segmented, draggable, fmt } from "../sim/kit.js";
 
 export const BARVE = ["glavna", "ploskev", "izbor", "druga", "napaka"];
 
+// Oznake čipov se ob vlečenju ne spreminjajo: KaTeX vsako izriše enkrat.
+const texCache = new Map();
 const tex = (t) => {
+  if (texCache.has(t)) return texCache.get(t);
   try {
-    return globalThis.katex ? globalThis.katex.renderToString(t, { throwOnError: false, strict: "ignore" }) : t;
+    if (!globalThis.katex) return t;
+    const html = globalThis.katex.renderToString(t, { throwOnError: false, strict: "ignore" });
+    texCache.set(t, html);
+    return html;
   } catch {
     return t;
   }
@@ -66,7 +72,7 @@ export function skica({ w = 320, h: hgt = 220, navodilo = "", oznaka = "Interakt
     // Vlečna točka: moder krog s prosojnim obročem. onMove(x, y) v enotah SVG; korak: pripenjanje na mrežo.
     tocka({ x, y, onMove, label = "Vlečna točka", korak = 0, merilo = 1, izhodisce = [0, 0] }) {
       const g = s("g", { class: "sk-pt" }, svg);
-      s("circle", { r: 18, class: "sk-hit" }, g);
+      s("circle", { r: 23, class: "sk-hit" }, g);
       s("circle", { r: 11, class: "sk-ring" }, g);
       s("circle", { r: 6, class: "sk-core" }, g);
       g.move = (px, py) => g.setAttribute("transform", `translate(${px},${py})`);

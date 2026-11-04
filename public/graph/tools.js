@@ -539,7 +539,14 @@ const skiceIo = () =>
       const load = host._load;
       host._load = null;
       skIo.unobserve(host);
-      load().then((m) => m.default(host)).catch(() => host.remove());
+      load()
+        .then((m) => m.default(host))
+        .catch((err) => {
+          // Skica se ni naložila: kartica ostane taka kot brez skice.
+          console.warn("skica", err);
+          host.closest(".fm-item")?.classList.remove("has-skica");
+          host.remove();
+        });
     }
   }, { rootMargin: "200px" }));
 
@@ -623,6 +630,8 @@ export function createFormulas(root, opts) {
   async function show(b) {
     book = BOOKS.includes(b) ? b : "MAT-OS";
     markActive();
+    // Vsaka pot spodaj zamenja vsebino lista: skic, ki se še niso naložile, ne opazujemo več.
+    if (skIo) for (const x of body.querySelectorAll(".fm-skica")) skIo.unobserve(x);
     const key = book;
     if (!(key in cache)) {
       body.innerHTML = `<p class="muted">${esc(t("common.loading"))}</p>`;
