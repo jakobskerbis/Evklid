@@ -13,7 +13,7 @@ import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as WebBrowser from "expo-web-browser";
 import Constants from "expo-constants";
-import { API_URL, appHeaders } from "@/lib/api";
+import { API_URL, appHeaders, BUSY_WAIT } from "@/lib/api";
 import { useSession } from "@/lib/session";
 import { t } from "@/lib/i18n";
 import { font, useTheme } from "@/lib/theme";
@@ -91,7 +91,26 @@ export default function Web() {
     return () => sub.remove();
   }, [failed]);
 
+  // Med objavo nove različice je strežnik ~1 minuto ustavljen (gostitelj vrne 502/503/504 ali prekine
+  // povezavo). Takrat aplikacija ne pokaže »Ni povezave«, ampak ob vrtavki tiho poskusi znova (kot splet,
+  // public/restart-retry.js); zaslon »Ni povezave« šele, ko strežnika ni ~70 s (5xx) ali po 2 poskusih (napaka
+  // povezave: telefon je morda res brez interneta). Uspešno nalaganje števec ponastavi.
+  const tries = useRef(0);
+  const waitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => void (waitTimer.current && clearTimeout(waitTimer.current)), []);
+  const failOrWait = useCallback((max: number) => {
+    if (waitTimer.current) return; // en poskus naenkrat
+    const i = tries.current++;
+    if (i >= max) return setFailed(true);
+    setLoading(true);
+    waitTimer.current = setTimeout(() => {
+      waitTimer.current = null;
+      setKey((k) => k + 1);
+    }, BUSY_WAIT[i]);
+  }, []);
+
   const retry = useCallback(() => {
+    tries.current = 0;
     setFailed(false);
     setLoading(true);
     setBar(null);
@@ -146,12 +165,15 @@ export default function Web() {
               else if (/^(mailto|tel|sms):/i.test(req.url)) Linking.openURL(req.url).catch(() => {});
               return false;
             }}
-            onLoadEnd={() => setLoading(false)}
+            onLoadEnd={() => !waitTimer.current && setLoading(false)}
             // onLoad (ne onLoadEnd): na iOS onLoadEnd pride tudi ob napaki povezave, z URL-jem "".
             onLoad={(e: { nativeEvent: { url: string } }) => {
-              if (e.nativeEvent.url.startsWith(ORIGIN) && !e.nativeEvent.url.includes("/api/mobile/web")) setWebPending(false);
+              if (e.nativeEvent.url.startsWith(ORIGIN) && !e.nativeEvent.url.includes("/api/mobile/web")) {
+                setWebPending(false);
+                tries.current = 0;
+              }
             }}
-            onError={() => setFailed(true)}
+            onError={() => failOrWait(2)}
             onHttpError={(e: { nativeEvent: { url: string; statusCode: number } }) => {
               // Seja aplikacije ne velja več (npr. odjava na drugi napravi ali novo geslo): nazaj na prijavo.
               if (e.nativeEvent.url.includes("/api/mobile/web") && e.nativeEvent.statusCode === 401) signOut().catch(() => {});
@@ -160,7 +182,7 @@ export default function Web() {
               else if (e.nativeEvent.url.includes("/api/mobile/web") && e.nativeEvent.statusCode === 404) {
                 setWebPending(true);
                 router.replace(student ? "/(tabs)" : "/profiles");
-              } else if (e.nativeEvent.url.includes("/api/mobile/web")) setFailed(true);
+              } else if (e.nativeEvent.url.includes("/api/mobile/web")) failOrWait([502, 503, 504].includes(e.nativeEvent.statusCode) ? BUSY_WAIT.length : 0);
             }}
             javaScriptEnabled
             domStorageEnabled
