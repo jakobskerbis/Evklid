@@ -5,14 +5,12 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Pri gastroskopiji zdravnik skozi upogljivo cevko vidi steno želodca, čeprav cevka med potjo večkrat zavije. Ko se v bazenu potopiš in pogledaš poševno navzgor proti gladini, ne vidiš neba, temveč srebrno ogledalo, v katerem se zrcali dno. Prvo je medicinska naprava, drugo igra na počitnicah, a za obema stoji isti pojav. Svetloba, ki iz gostejše snovi pod dovolj poševnim kotom zadene mejo z redkejšo, ne more ven in se v celoti odbije: to je **totalni odboj**.
+Pri gastroskopiji zdravnik skozi upogljivo cevko vidi steno želodca, čeprav cevka večkrat zavije; potapljač, ki pogleda poševno navzgor, vidi gladino kot srebrno ogledalo. Za obema stoji **totalni odboj**: svetloba, ki iz gostejše snovi pod dovolj poševnim kotom zadene mejo z redkejšo, se v celoti odbije.
 
-Svetloba je glavni vir informacij o svetu okoli nas in eno najpomembnejših orodij v laboratoriju. Mikroskop, spektrofotometer, refraktometer, optično vlakno, laser in fotoaparat delujejo na podlagi nekaj preprostih zakonov optike. Biolog z mikroskopom opazuje celice, kemik z refraktometrom meri koncentracijo sladkorja, inženir po optičnem vlaknu prenaša podatke, farmacevt s polarimetrom in spektrometrom preverja čistost zdravila.
+Na zakonih optike delujejo mikroskop, refraktometer in optično vlakno. Optiko obravnavamo na dva načina:
 
-Optiko obravnavamo na dva načina:
-
-- **Geometrijska optika** opisuje svetlobo kot žarke, ki se širijo premočrtno, se odbijajo in lomijo. Z njo razložimo leče, prizme, totalni odboj in nastanek slike. Velja, kadar so ovire in odprtine veliko večje od valovne dolžine.
-- **Valovna optika** upošteva, da je svetloba elektromagnetno valovanje z valovno dolžino nekaj sto nanometrov. Z njo razložimo **interferenco** (barve milnih mehurčkov, uklonska mrežica v spektrometru) in **uklon**, ki postavlja mejo, kako drobne podrobnosti lahko vidimo z mikroskopom.
+- **Geometrijska optika** opisuje svetlobo z žarki, ki se odbijajo in lomijo; velja, kadar so ovire in odprtine veliko večje od valovne dolžine.
+- **Valovna optika** upošteva, da je svetloba valovanje, in razloži **interferenco** in **uklon**, ki omejuje ločljivost mikroskopa.
 
 ## Razlaga
 
@@ -24,7 +22,7 @@ Mikavna predstava je, da je svetloba le snop ravnih žarkov in da je ločljivost
 
 $$n = \frac{c_0}{c} \ge 1.$$
 
-Za zrak je $n \approx 1{,}00$, za vodo $1{,}33$, za navadno steklo okoli $1{,}5$. Pri prehodu v drugo snov se frekvenca ne spremeni, valovna dolžina pa je v snovi $\lambda = \lambda_0/n$.
+Za zrak je $n \approx 1{,}00$, za vodo $1{,}33$, za navadno steklo okoli $1{,}5$. Pri prehodu v drugo snov se frekvenca ne spremeni, valovna dolžina pa se v snovi skrajša na $\lambda = \lambda_0/n$, kjer je $\lambda_0$ valovna dolžina v praznem prostoru.
 
 :::premisli
 Rdeča svetloba z valovno dolžino $650\,\mathrm{nm}$ preide iz zraka v vodo. Ali je v vodi še vedno rdeča?
@@ -32,9 +30,11 @@ Rdeča svetloba z valovno dolžino $650\,\mathrm{nm}$ preide iz zraka v vodo. Al
 Da. Barvo določa frekvenca, ta pa se pri prehodu ne spremeni. Valovna dolžina se v vodi sicer skrajša na $650/1{,}33 \approx 489\,\mathrm{nm}$, a to ni »modra« svetloba, saj ima nespremenjeno frekvenco rdeče.
 :::
 
-**2. Odbojni in lomni zakon.** Kote merimo od **vpadne pravokotnice** (normale na mejno ploskev). Pri odboju je odbojni kot enak vpadnemu. Pri lomu velja **lomni zakon** (Snellov zakon):
+**2. Odbojni in lomni zakon.** Kote merimo od **vpadne pravokotnice** (normale na mejno ploskev). Naj svetloba pade na gladko mejo med homogenima izotropnima snovema z lomnima količnikoma $n_1$ in $n_2$. Potem vpadni, odbiti in lomljeni žarek ležijo z vpadno pravokotnico v isti ravnini, odbojni kot je enak vpadnemu, za lomni kot pa velja **lomni zakon** (Snellov zakon):
 
 $$n_1\sin\alpha = n_2\sin\beta.$$
+
+*Izpeljava* (Huygensovo načelo): ravno valovno čelo zadene mejo poševno. V času $t$, ko en njegov rob v prvi snovi prepotuje še $c_1t$ do meje, se elementarni val iz drugega roba, ki je mejo že zadel, v drugi snovi razširi do $c_2t$. Obe razdalji sta kateti pravokotnih trikotnikov s skupno hipotenuzo $l$ na meji, zato $c_1t = l\sin\alpha$ in $c_2t = l\sin\beta$. Kvocient da $\sin\alpha/\sin\beta = c_1/c_2 = n_2/n_1$.
 
 Pri prehodu v optično gostejšo snov ($n_2 > n_1$) se žarek lomi **k pravokotnici**, pri prehodu v redkejšo pa **od nje**.
 
@@ -42,13 +42,15 @@ Pri prehodu v optično gostejšo snov ($n_2 > n_1$) se žarek lomi **k pravokotn
 
 $$\sin\alpha_m = \frac{n_2}{n_1}.$$
 
-Pri večjih vpadnih kotih se svetloba v celoti odbije. Totalni odboj ni odboj od posebej gladke ali zrcalne ploskve: zgodi se na povsem prozorni meji, a le pri prehodu iz optično gostejše v optično redkejšo snov. Na tem delujejo optična vlakna, prizme v daljnogledih in refraktometri.
+*Izpeljava:* pri $n_1 > n_2$ je $\sin\beta = (n_1/n_2)\sin\alpha > \sin\alpha$, zato lomni kot doseže $90^\circ$ že pri $\sin\alpha = n_2/n_1$. Pri večjih vpadnih kotih bi moral biti $\sin\beta > 1$, lomljenega žarka ni in svetloba se v celoti odbije. Totalni odboj ni odboj od posebej gladke ali zrcalne ploskve: zgodi se na povsem prozorni meji, a le pri prehodu iz optično gostejše v optično redkejšo snov. Na tem delujejo optična vlakna, prizme v daljnogledih in refraktometri.
 
 **4. Disperzija.** Lomni količnik je odvisen od valovne dolžine; v steklu je za modro svetlobo večji kot za rdečo. Zato prizma razkloni belo svetlobo v spekter in zato nastane mavrica.
 
-**5. Tanke leče.** Zbiralna leča zbere vzporedne žarke v **gorišču** na razdalji $f$ (**goriščna razdalja**) za lečo; razpršilna leča jih razprši, kot da prihajajo iz navideznega gorišča pred njo, zato ji pripišemo $f < 0$. Če je predmet na razdalji $a$ pred lečo, nastane slika na razdalji $b$ za njo, pri čemer velja **enačba leče**
+**5. Tanke leče.** Zbiralna leča zbere vzporedne žarke v **gorišču** na razdalji $f$ (**goriščna razdalja**) za lečo; razpršilna leča jih razprši, kot da prihajajo iz navideznega gorišča pred njo, zato ji pripišemo $f < 0$. Naj bo leča tanka (njena debelina je zanemarljiva v primerjavi z $a$, $b$ in $f$), naj bo na obeh straneh leče ista snov in naj žarki z osjo oklepajo majhne kote (**obosni žarki**). Če je predmet na razdalji $a$ pred lečo, nastane slika na razdalji $b$ za njo, pri čemer velja **enačba leče**
 
 $$\frac{1}{a} + \frac{1}{b} = \frac{1}{f}.$$
+
+*Izpeljava* (zbiralna leča, $a > f$): žarek skozi središče leče gre naravnost, zato podobna trikotnika dasta $|y'|/y = b/a$. Žarek, vzporeden z osjo, gre za lečo skozi gorišče; trikotnika z vrhom v gorišču dasta $|y'|/y = (b - f)/f$. Iz $b/a = (b - f)/f$ sledi $bf = ab - af$, deljenje z $abf$ pa da enačbo leče.
 
 Če dobimo $b > 0$, je slika **realna** (lahko jo ujamemo na zaslon) in obrnjena; če je $b < 0$, je slika **navidezna**, pokončna in na isti strani kot predmet. **Povečava** je
 
@@ -60,7 +62,7 @@ negativen predznak pomeni obrnjeno sliko. **Lomnost** leče je $1/f$, enota je *
 
 Žarkovna slika ne pove, zakaj se milni mehurček obarva ali zakaj dva snopa svetlobe skupaj lahko dasta temo. Za to potrebujemo valovanje.
 
-**6. Svetloba kot valovanje: interferenca.** Ko se srečata dve **koherentni** valovanji (z enako frekvenco in stalno fazno razliko), se njuni polji seštejeta. Kjer je razlika poti $\Delta$ celoštevilski večkratnik valovne dolžine, je **ojačitev**, kjer je liha polovica valovne dolžine, je **oslabitev**:
+**6. Svetloba kot valovanje: interferenca.** Ko se srečata dve **koherentni** valovanji (z enako frekvenco in stalno fazno razliko, ne pravokotno polarizirani), se njuni polji seštejeta. Če izvora nihata v fazi, velja: kjer je razlika poti $\Delta$ celoštevilski večkratnik valovne dolžine, je **ojačitev**, kjer je liho število polovic valovne dolžine, je **oslabitev**:
 
 $$\Delta = m\lambda \;\;(\text{ojačitev}), \qquad \Delta = \left(m + \tfrac{1}{2}\right)\lambda \;\;(\text{oslabitev}), \qquad m = 0, \pm1, \pm2, \dots$$
 
@@ -68,17 +70,17 @@ $$\Delta = m\lambda \;\;(\text{ojačitev}), \qquad \Delta = \left(m + \tfrac{1}{
 
 $$d\sin\theta = m\lambda.$$
 
-Na zaslonu na razdalji $L \gg d$ so proge enakomerno razmaknjene za $\Delta y = \lambda L/d$.
+*Izpeljava:* zaslon je na razdalji $L$; pri $L \gg d$ sta žarka iz rež proti isti točki zaslona skoraj vzporedna, zato je razlika poti kateta $d\sin\theta$ pravokotnega trikotnika s hipotenuzo $d$. Pri majhnih kotih je $y_m = L\tan\theta_m \approx L\sin\theta_m = m\lambda L/d$, zato so proge enakomerno razmaknjene za $\Delta y = \lambda L/d$.
 
 **8. Uklonska mrežica.** Mrežica ima veliko enako razmaknjenih rež s **konstanto mrežice** $d$ (npr. $600$ rež na milimeter pomeni $d = 1{,}67\,\mu\mathrm{m}$). Ojačitve so pri istih kotih kot pri dveh režah, $d\sin\theta = m\lambda$, a so zelo ozke in svetle. Ker je kot ojačitve odvisen od $\lambda$, mrežica razkloni svetlobo v spekter, zato je srce mnogih spektrometrov. Največji red je $m \le d/\lambda$, ker je $\sin\theta \le 1$.
 
-**9. Interferenca na tankih plasteh.** Svetloba, odbita na zgornji in spodnji ploskvi tanke plasti z debelino $h$ in lomnim količnikom $n$, interferira. Pri pravokotnem vpadu je razlika poti $2nh$, pri odboju na optično gostejši snovi pa se faza dodatno spremeni za pol valovne dolžine. Od tod barve milnih mehurčkov in oljnih madežev ter protiodbojne plasti na lečah.
+**9. Interferenca na tankih plasteh.** Svetloba, odbita na zgornji in spodnji ploskvi tanke plasti z debelino $h$ in lomnim količnikom $n$, interferira. Pri pravokotnem vpadu je razlika poti $2nh$, pri odboju na optično gostejši snovi pa se faza dodatno spremeni za pol valovne dolžine. Pri plasti v zraku (milnica) ima ta skok le en odboj, zato je odbita svetloba ojačena pri $2nh = (m + \tfrac{1}{2})\lambda_0$. Pri protiodbojni plasti na steklu ($n_\mathrm{zrak} < n < n_\mathrm{steklo}$) ga imata oba odboja, zato je odbita svetloba oslabljena pri $2nh = (m + \tfrac{1}{2})\lambda_0$, najtanjša plast ima $h = \lambda_0/(4n)$. Od tod barve milnih mehurčkov in oljnih madežev ter protiodbojne plasti na lečah.
 
 ### Uklon: meja, ki je ne odpravi nobena leča
 
 Zdaj lahko popravimo mikavno predstavo z začetka. Tudi popolna leča ima končno odprtino, svetloba pa se na vsaki odprtini ukloni.
 
-**10. Uklon.** Valovanje se za oviro ali odprtino ukloni, torej zaide tudi v geometrijsko senco. Pri reži s širino $D$ so temne proge pri $D\sin\theta = m\lambda$ ($m = \pm1, \pm2, \dots$); osrednja svetla proga ima kotno polširino $\sin\theta \approx \lambda/D$. Pri okrogli odprtini s premerom $D$ je prvi temni kolobar pri $\sin\theta \approx 1{,}22\,\lambda/D$. Ta kot je **mejna ločljivost**: dveh točk, ki ju vidimo pod manjšim kotom, z napravo ne moremo ločiti.
+**10. Uklon.** Valovanje se za oviro ali odprtino ukloni, torej zaide tudi v geometrijsko senco. Pri reži s širino $D$ so temne proge pri $D\sin\theta = m\lambda$ ($m = \pm1, \pm2, \dots$); osrednja svetla proga ima kotno polširino $\sin\theta \approx \lambda/D$. *Utemeljitev* prvega minimuma: režo razdelimo na polovici; pri $D\sin\theta = \lambda$ ima vsak žarek iz zgornje polovice v spodnji partnerja z razliko poti $\lambda/2$, zato se paroma oslabijo. Pri okrogli odprtini s premerom $D$ je prvi temni kolobar pri $\sin\theta \approx 1{,}22\,\lambda/D$. Ta kot je **mejna ločljivost** (**Rayleighov kriterij**: točki sta še ločeni, ko osrednji maksimum ene leži v prvem minimumu druge); dveh točk, ki ju vidimo pod manjšim kotom, z napravo ne moremo ločiti.
 
 :::premisli
 Ali loči mikroskop drobnejše podrobnosti z modro ali z rdečo svetlobo? Zakaj?
@@ -127,10 +129,10 @@ $\dfrac{1}{a} + \dfrac{1}{b} = \dfrac{1}{f}$, $M = -\dfrac{b}{a}$, $y' = My$
 
 ### Primer 3 (težji)
 
-Zeleni laser z valovno dolžino $532\,\mathrm{nm}$ pravokotno osvetli uklonsko mrežico s $600$ režami na milimeter. Zaslon je $1{,}00\,\mathrm{m}$ za mrežico in vzporeden z njo. Pod kolikšnima kotoma sta ojačitvi prvega in drugega reda in kako daleč od osrednje pege sta na zaslonu? Koliko redov lahko največ opazimo na vsako stran?
+Zeleni laser z valovno dolžino $532\,\mathrm{nm}$ pravokotno osvetli uklonsko mrežico s $600$ režami na milimeter. Zaslon je $1{,}00\,\mathrm{m}$ za mrežico in vzporeden z njo. Pod kolikšnima kotoma sta ojačitvi prvega in drugega reda in kako daleč od osrednje pege sta na zaslonu? Koliko redov lahko največ opazimo na vsako stran? Nato zeleni laser zamenjamo z rdečim in ojačitev prvega reda je na zaslonu $0{,}410\,\mathrm{m}$ od osrednje pege. Kolikšna je valovna dolžina rdečega laserja in koliko redov rdeče svetlobe vidimo?
 
-**Podatki:** $\lambda = 532\,\mathrm{nm} = 5{,}32 \cdot 10^{-7}\,\mathrm{m}$, $600$ rež na $\mathrm{mm}$, $L = 1{,}00\,\mathrm{m}$, pravokoten vpad
-**Iščemo:** kota $\theta_1$, $\theta_2$, odmika $y_1$, $y_2$ na zaslonu, največji red $m_{\max}$
+**Podatki:** $\lambda = 532\,\mathrm{nm} = 5{,}32 \cdot 10^{-7}\,\mathrm{m}$, $600$ rež na $\mathrm{mm}$, $L = 1{,}00\,\mathrm{m}$, pravokoten vpad, rdeča svetloba: $y_1' = 0{,}410\,\mathrm{m}$
+**Iščemo:** kota $\theta_1$, $\theta_2$, odmika $y_1$, $y_2$ na zaslonu, največji red $m_{\max}$; valovno dolžino $\lambda'$ rdeče svetlobe in njen največji red
 
 :::formula
 $d\sin\theta_m = m\lambda$, $y_m = L\tan\theta_m$, $m_{\max} \le d/\lambda$
@@ -143,7 +145,10 @@ $d\sin\theta_m = m\lambda$, $y_m = L\tan\theta_m$, $m_{\max} \le d/\lambda$
 3. Drugi red: $\sin\theta_2 = 0{,}638$, $\theta_2 \approx 39{,}7^\circ$; sinus je dvakrat večji, ker je $m = 2$, kot sam pa ni dvakrat večji.
 4. Odmika: $y_1 = 1{,}00\,\mathrm{m} \cdot \tan 18{,}6^\circ \approx 0{,}337\,\mathrm{m}$, $y_2 = 1{,}00\,\mathrm{m} \cdot \tan 39{,}7^\circ \approx 0{,}829\,\mathrm{m}$. Ker kot ni majhen, približka $y = m\lambda L/d$ tu ne smemo uporabiti.
 5. Največji red: $d/\lambda = 1{,}667 \cdot 10^{-6}/5{,}32 \cdot 10^{-7} \approx 3{,}13$, torej $m_{\max} = 3$ (kot $\theta_3 \approx 73{,}3^\circ$).
-6. Odgovor: ojačitvi prvega in drugega reda sta pod kotoma približno $18{,}6^\circ$ in $39{,}7^\circ$, na zaslonu $33{,}7\,\mathrm{cm}$ in $82{,}9\,\mathrm{cm}$ od osrednje pege; na vsako stran opazimo največ tri rede (na dovolj velikem zaslonu).
+6. Obratna naloga za rdečo svetlobo: iz odmika najprej kot, $\tan\theta_1' = 0{,}410/1{,}00$, $\theta_1' \approx 22{,}3^\circ$, ker je zaslon pravokoten na smer osrednje pege.
+7. $\lambda' = d\sin\theta_1' = 1{,}667 \cdot 10^{-6} \cdot 0{,}3793\,\mathrm{m} \approx 6{,}32 \cdot 10^{-7}\,\mathrm{m} = 632\,\mathrm{nm}$, ker je $m = 1$.
+8. $d/\lambda' = 1{,}667 \cdot 10^{-6}/6{,}32 \cdot 10^{-7} \approx 2{,}64$, zato rdeča svetloba da le dva reda na vsako stran; tretji bi zahteval $\sin\theta > 1$.
+9. Odgovor: ojačitvi prvega in drugega reda zelene svetlobe sta pod kotoma približno $18{,}6^\circ$ in $39{,}7^\circ$, na zaslonu $33{,}7\,\mathrm{cm}$ in $82{,}9\,\mathrm{cm}$ od osrednje pege; na vsako stran opazimo največ tri rede (na dovolj velikem zaslonu). Rdeči laser ima valovno dolžino okoli $632\,\mathrm{nm}$ in da le dva reda.
 
 ### Primer 4 – zdaj ti
 
@@ -170,12 +175,12 @@ $L = s/\theta = 1{,}0 \cdot 10^{-3}/2{,}24 \cdot 10^{-4}\,\mathrm{m} \approx 4{,
 
 ## Pogoste napake
 
-- **Kot od ploskve namesto od pravokotnice.** V lomnem zakonu sta oba kota merjena od vpadne pravokotnice. Če je dan kot med žarkom in gladino, ga najprej odštej od $90^\circ$.
-- **Totalni odboj v napačni smeri.** Totalni odboj je mogoč le pri prehodu iz optično gostejše v redkejšo snov (npr. iz vode v zrak), nikoli obratno.
-- **Predznaki pri lečah.** Razpršilna leča ima $f < 0$, navidezna slika $b < 0$. Kdor predznake izpusti, dobi realno sliko tam, kjer je ni.
-- **Dioptrije in centimetri.** Lomnost je obratna vrednost goriščne razdalje v **metrih**: $f = 25\,\mathrm{cm}$ pomeni $4\,\mathrm{dpt}$, ne $0{,}04\,\mathrm{dpt}$.
-- **Približek majhnih kotov pri mrežici.** Formula $\Delta y = \lambda L/d$ velja le, kadar je $\theta$ majhen (dve reži z velikim razmikom). Pri mrežici računaj s $\sin$ in $\tan$.
-- **Uklonske ojačitve pri eni reži.** Pri eni reži pogoj $D\sin\theta = m\lambda$ da **temne** proge, pri mrežici in dveh režah pa enaka oblika pogoja da **svetle** proge.
+- **Kot od ploskve namesto od pravokotnice.** Kot med žarkom in gladino najprej odštej od $90^\circ$.
+- **Totalni odboj v napačni smeri.** Mogoč je le pri prehodu v optično redkejšo snov.
+- **Predznaki pri lečah.** Razpršilna leča ima $f < 0$, navidezna slika $b < 0$.
+- **Dioptrije in centimetri.** $f$ mora biti v **metrih**: $f = 25\,\mathrm{cm}$ pomeni $4\,\mathrm{dpt}$.
+- **Približek majhnih kotov pri mrežici.** $\Delta y = \lambda L/d$ velja le pri majhnih kotih; pri mrežici računaj s $\sin$ in $\tan$.
+- **Uklonske ojačitve pri eni reži.** Pri eni reži da $D\sin\theta = m\lambda$ **temne** proge, pri mrežici $d\sin\theta = m\lambda$ **svetle**.
 
 ## Povzetek
 
@@ -184,6 +189,45 @@ $L = s/\theta = 1{,}0 \cdot 10^{-3}/2{,}24 \cdot 10^{-4}\,\mathrm{m} \approx 4{,
 - Interferenca: ojačitev pri razliki poti $m\lambda$, oslabitev pri $(m + \tfrac{1}{2})\lambda$.
 - Dve reži in mrežica: $d\sin\theta = m\lambda$; dve reži pri majhnih kotih $\Delta y = \lambda L/d$.
 - Uklon na reži: temne proge pri $D\sin\theta = m\lambda$; okrogla odprtina: mejna ločljivost $\sin\theta \approx 1{,}22\lambda/D$.
+
+## Za izpit
+
+Znati moraš povedati:
+
+- lomni zakon z vsemi pogoji in njegovo izpeljavo iz Huygensovega načela (ali Fermatovega načela iz razdelka Bolj natančno);
+- pogoj za totalni odboj ($n_1 > n_2$) in izpeljavo mejnega kota;
+- enačbo tanke leče s pogoji in dogovorom o predznakih, njeno izpeljavo iz dveh značilnih žarkov in povečavo $M = -b/a$;
+- pogoje za interferenco, izpeljavo $d\sin\theta = m\lambda$, $\Delta y = \lambda L/d$ in $m_{\max} \le d/\lambda$ ter pogoj za tanko plast s faznim skokom;
+- uklon na reži (prvi minimum) in Rayleighov kriterij $\sin\theta \approx 1{,}22\,\lambda/D$.
+
+### Naloga 1
+
+Optično vlakno ima jedro z lomnim količnikom $1{,}48$ in plašč z lomnim količnikom $1{,}46$. Kolikšen je mejni kot na meji jedro–plašč? Pod kolikšnim največjim kotom glede na os sme žarek iz zraka vpasti na ravno čelo vlakna, da ostane ujet v jedru? Za koliko pride v $1{,}00\,\mathrm{km}$ dolgem vlaknu najbolj poševen ujet žarek kasneje od žarka vzdolž osi? $c_0 = 3{,}00 \cdot 10^8\,\mathrm{m/s}$.
+
+**Rešitev:**
+
+1. Mejni kot: $\sin\alpha_m = 1{,}46/1{,}48 \approx 0{,}9865$, $\alpha_m \approx 80{,}6^\circ$; totalni odboj je mogoč, ker je jedro optično gostejše.
+2. Pravokotnica na plašč je pravokotna na os, zato ujet žarek z osjo oklepa največ $\gamma = 90^\circ - \alpha_m \approx 9{,}4^\circ$.
+3. Lom na čelu: $1{,}00 \cdot \sin\theta_0 = n_1\sin\gamma = n_1\cos\alpha_m = n_1\sqrt{1 - (n_2/n_1)^2} = \sqrt{n_1^2 - n_2^2}$.
+4. $\sin\theta_0 = \sqrt{1{,}48^2 - 1{,}46^2} = \sqrt{0{,}0588} \approx 0{,}242$, torej $\theta_0 \approx 14{,}0^\circ$.
+5. Osni žarek potuje s hitrostjo $c_0/n_1$: $t_0 = Ln_1/c_0 = 1000 \cdot 1{,}48/3{,}00 \cdot 10^8\,\mathrm{s} \approx 4{,}93 \cdot 10^{-6}\,\mathrm{s}$.
+6. Najbolj poševen žarek prepotuje pot $L/\cos\gamma = L/\sin\alpha_m = Ln_1/n_2$, zato $t_1 = t_0n_1/n_2 = 4{,}933 \cdot 10^{-6} \cdot 1{,}48/1{,}46\,\mathrm{s} \approx 5{,}00 \cdot 10^{-6}\,\mathrm{s}$.
+7. Zamik: $\Delta t = t_0(n_1/n_2 - 1) = 4{,}933 \cdot 10^{-6} \cdot 0{,}0137\,\mathrm{s} \approx 6{,}8 \cdot 10^{-8}\,\mathrm{s}$.
+8. Odgovor: mejni kot je okoli $80{,}6^\circ$, žarek mora vpasti pod kotom največ okoli $14{,}0^\circ$ glede na os, najbolj poševen ujet žarek pa po $1\,\mathrm{km}$ zamuja okoli $68\,\mathrm{ns}$; zato se kratek utrip po vlaknu razširi.
+
+### Naloga 2
+
+Natančno navedi enačbo tanke leče z vsemi pogoji in dogovorom o predznakih ter jo izpelji za zbiralno lečo in realno sliko. Izpelji povečavo. Utemelji, ali lahko razpršilna leča realnega predmeta da realno sliko.
+
+**Rešitev:**
+
+1. Pogoji: leča je tanka, žarki so obosni, na obeh straneh je ista snov. Predznaki: $a > 0$ za predmet pred lečo; $b > 0$ za realno sliko za lečo, $b < 0$ za navidezno sliko pred njo; $f > 0$ za zbiralno, $f < 0$ za razpršilno lečo.
+2. Predmet z višino $y$ stoji na razdalji $a > f$, slika z višino $|y'|$ nastane na razdalji $b$. Žarek skozi središče se ne lomi, zato podobna trikotnika dasta $|y'|/y = b/a$.
+3. Žarek, vzporeden z osjo, zadene lečo na višini $y$ in gre skozi gorišče za lečo; podobna trikotnika s katetama $f$, $y$ in $b - f$, $|y'|$ dasta $|y'|/y = (b - f)/f$.
+4. Izenačimo: $b/a = (b - f)/f$, torej $bf = ab - af$; deljenje z $abf$ da $1/a + 1/b = 1/f$.
+5. Povečava: realna slika je obrnjena, zato je $y'$ negativen in $M = y'/y = -b/a$; za navidezne slike in razpršilne leče isti postopek z dogovorom o predznakih da isti enačbi.
+6. Razpršilna leča: $f < 0$ in $a > 0$, zato $1/b = 1/f - 1/a < 0$ in $b < 0$ za vsak $a$. Ker je $1/|b| = 1/|f| + 1/a > 1/a$, je $|b| < a$ in $0 < M < 1$.
+7. Odgovor: ne; razpršilna leča da realnemu predmetu vedno navidezno, pokončno in pomanjšano sliko med predmetom in lečo.
 
 ## Drugače: Na sliki
 
@@ -200,47 +244,31 @@ Lom na meji zrak–voda (pravokotnica je navpična črta):
           |  \
 ```
 
-Slika z zbiralno lečo nastane tam, kjer se sekata dva značilna žarka: žarek, vzporeden z osjo, se lomi skozi gorišče za lečo, žarek skozi središče leče pa gre naravnost. Če je predmet znotraj goriščne razdalje, se lomljena žarka razhajata; sekata se njuni podaljšavi nazaj, zato je slika navidezna.
+Slika z lečo nastane v presečišču žarka, vzporednega z osjo, in žarka skozi središče; pri $a < f$ se sekata le podaljška nazaj.
 
-Pri dveh režah si predstavljaj dve skupini krožnih valov, ki se širita iz rež. Kjer se srečata dva hriba, je svetlo, kjer se hrib sreča z dolino, je temno. Na zaslonu nastane vzorec enakomerno razmaknjenih svetlih in temnih prog.
+## Drugače: Uporaba v stroki
 
-## Drugače: Iz vsakdanjega življenja
+**Refraktometrija.** Refraktometer meri mejni kot totalnega odboja med prizmo in vzorcem; ker lomni količnik narašča s koncentracijo, kaže kar masni delež sladkorja.
 
-**Refraktometer.** Lomni količnik raztopine narašča s koncentracijo raztopljene snovi. Ročni refraktometer meri mejni kot totalnega odboja na meji med prizmo in kapljico vzorca, skala pa je umerjena kar v masnem deležu sladkorja (stopinje Brix). Vinarji tako določijo sladkornost grozdja, laboratoriji pa čistost tekočin.
+**Optična vlakna.** Totalni odboj vodi svetlobo kilometre daleč in v endoskopih prenaša sliko; zamik iz Naloge 1 omejuje hitrost prenosa.
 
-**Optično vlakno in endoskop.** Svetloba v steklenem jedru vlakna z večjim lomnim količnikom vpada na mejo s plaščem pod kotom, večjim od mejnega, zato se totalno odbija in po vlaknu potuje kilometre daleč. V medicini snop takih vlaken prenese sliko iz notranjosti telesa.
+**Protiodbojne plasti.** Plast $\mathrm{MgF_2}$ ($n = 1{,}38$) z debelino $h = \lambda_0/(4n) \approx 550\,\mathrm{nm}/(4 \cdot 1{,}38) \approx 100\,\mathrm{nm}$ na lečah skoraj odpravi odboj zelene svetlobe.
 
-**Protiodbojne plasti.** Na leče fotoaparatov in očal nanesejo tanko plast magnezijevega fluorida ($n = 1{,}38$). Pri debelini četrt valovne dolžine v plasti, $h = \lambda_0/(4n) \approx 550\,\mathrm{nm}/(4 \cdot 1{,}38) \approx 100\,\mathrm{nm}$, se žarka, odbita na obeh ploskvah plasti, oslabita in odboj zelene svetlobe skoraj izgine.
-
-**Meja svetlobnega mikroskopa.** Zaradi uklona svetlobni mikroskop ne loči podrobnosti, manjših od približno polovice valovne dolžine, torej okoli $0{,}2\,\mu\mathrm{m}$. Bakterije še vidimo, viruse in posamezne molekule pa ne; zanje potrebujemo elektronski mikroskop ali posebne fluorescenčne metode.
-
-## Drugače: Korak za korakom s številkami
-
-Rdeči laser z valovno dolžino $633\,\mathrm{nm}$ osvetli dve reži na razdalji $0{,}25\,\mathrm{mm}$. Zaslon je $2{,}0\,\mathrm{m}$ stran. Kolikšen je razmik med svetlimi progami?
-
-1. **Podatki v enotah SI:** $\lambda = 6{,}33 \cdot 10^{-7}\,\mathrm{m}$, $d = 2{,}5 \cdot 10^{-4}\,\mathrm{m}$, $L = 2{,}0\,\mathrm{m}$.
-2. **Kot prve ojačitve:** $\sin\theta_1 = \lambda/d = 2{,}53 \cdot 10^{-3}$, torej je kot zelo majhen in velja $\tan\theta \approx \sin\theta$.
-3. **Razmik prog:** $\Delta y = \lambda L/d = 6{,}33 \cdot 10^{-7} \cdot 2{,}0/2{,}5 \cdot 10^{-4}\,\mathrm{m} \approx 5{,}1 \cdot 10^{-3}\,\mathrm{m}$.
-4. **Preizkus smisla:** proge so nekaj milimetrov narazen, kar je dovolj, da jih vidimo s prostim očesom.
-5. **Sprememba:** če reži razmaknemo na $0{,}50\,\mathrm{mm}$, se razmik prog razpolovi na približno $2{,}5\,\mathrm{mm}$; z modro svetlobo bi bile proge bliže kot z rdečo.
+**Ločljivost mikroskopa.** Zaradi uklona svetlobni mikroskop ne loči podrobnosti pod okoli $0{,}2\,\mu\mathrm{m}$; viruse vidimo šele z elektronskim mikroskopom.
 
 ## Drugače: Bolj natančno
 
-**Lomni zakon iz Fermatovega načela.** Svetloba med točkama izbere pot, za katero potrebuje najmanj časa (natančneje: pot s stacionarnim časom). Naj gre žarek iz točke $A$ na višini $h_1$ nad mejo do točke $B$ na globini $h_2$, vodoravna razdalja med njima pa je $D$. Če prečka mejo pri $x$, je čas
+**Lomni zakon iz Fermatovega načela.** Svetloba izbere pot s stacionarnim časom. Žarek gre iz točke $A$ na višini $h_1$ nad mejo do točke $B$ na globini $h_2$, vodoravno za $D$; če prečka mejo pri $x$, je čas
 
 $$t(x) = \frac{n_1\sqrt{h_1^2 + x^2}}{c_0} + \frac{n_2\sqrt{h_2^2 + (D - x)^2}}{c_0}.$$
 
 Pogoj $t'(x) = 0$ da $n_1\,x/\sqrt{h_1^2 + x^2} = n_2\,(D - x)/\sqrt{h_2^2 + (D - x)^2}$, kar je ravno $n_1\sin\alpha = n_2\sin\beta$.
 
-**Jakost pri dveh režah.** Polji iz rež imata fazno razliko $\delta = 2\pi d\sin\theta/\lambda$. Vsota $E_0\cos\omega t + E_0\cos(\omega t + \delta)$ ima amplitudo $2E_0\cos(\delta/2)$, jakost pa je sorazmerna s kvadratom amplitude:
+**Jakost pri dveh režah.** Polji s fazno razliko $\delta = 2\pi d\sin\theta/\lambda$ dasta amplitudo $2E_0\cos(\delta/2)$, jakost pa je sorazmerna s kvadratom amplitude:
 
 $$j(\theta) = 4j_1\cos^2\!\left(\frac{\pi d\sin\theta}{\lambda}\right).$$
 
-Pri mrežici z $N$ režami je jakost $j \propto \sin^2(N\delta/2)/\sin^2(\delta/2)$; glavne ojačitve so $N^2$-krat svetlejše od ene reže in imajo kotno širino reda $\lambda/(Nd)$. Zato ima mrežica z več režami boljšo **ločljivost** $\lambda/\Delta\lambda = mN$.
-
-**Uklon na reži.** Režo s širino $D$ razdelimo na dve polovici. Če je razlika poti med robovoma $D\sin\theta = \lambda$, ima vsak žarek iz zgornje polovice v spodnji partnerja s fazno razliko $\pi$, zato se vsi paroma oslabijo: dobimo prvi minimum. Natančen račun (vsota prispevkov po vsej reži) da $j(\theta) = j_0\left(\frac{\sin\beta}{\beta}\right)^2$ z $\beta = \pi D\sin\theta/\lambda$.
-
-**Kdaj velja geometrijska optika.** Uklonski kot $\lambda/D$ je zanemarljiv, kadar je $D \gg \lambda$. Pri odprtinah in ovirah, velikih nekaj milimetrov, je uklonski kot za vidno svetlobo reda $10^{-4}\,\mathrm{rad}$ in žarki so dober model.
+Pri mrežici z $N$ režami so glavne ojačitve $N^2$-krat svetlejše in široke le okoli $\lambda/(Nd)$, zato ima mrežica **ločljivost** $\lambda/\Delta\lambda = mN$.
 
 ## Preveri se
 

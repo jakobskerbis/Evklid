@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Tok ustvari polje
+  - kompas ob žici se odkloni
+  - silnice ravne žice so krožnice
+- Tuljava
+  - deluje kot paličasti magnet
+  - znotraj je polje najmočnejše
+- Pravilo desne roke
+  - prsti v smeri toka, palec sever
+  - obrnjen tok zamenja pola
+- Železno jedro
+  - polje močno okrepi
+  - mehko železo brez toka izgubi magnetnost
+- Zmnožek ovojev in toka
+  - $N_1 \cdot I_1 = N_2 \cdot I_2$, enota $\mathrm{A}$
+  - $100 \cdot 0{,}6\,\mathrm{A} = 60\,\mathrm{A}$
+- Tok iz napetosti
+  - $I = \dfrac{U}{R}$, nato $N \cdot I$
+  - napaka: več ovojev, večji upor
+- Uporaba
+  - indukcijska plošča, ventil pomivalnega stroja
+  - dvigalo na odpadu, zvonec

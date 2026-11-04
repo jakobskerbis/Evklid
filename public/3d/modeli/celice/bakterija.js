@@ -248,7 +248,7 @@ export function zgradi(THREE, ctx = {}) {
   for (let i = 1; i <= nCap; i++) { const a = Math.PI / 2 - (i / nCap) * (Math.PI / 2); pts.push([H + RB * Math.cos(a), RB * Math.sin(a)]); }
   const P = profil(pts), rezI = pts.length - 1; // izrez po vsej dolžini: četrtina y > 0, z > 0
   const sumF = (x, y, z) => 0.004 * fbm(x * 9 + 2, y * 9, z * 9);
-  const ZS = 0.022, ZM = 0.03, ZC = 0.032, ZK = -0.06; // stena ≈ 37 nm, membrana, citoplazma, kapsula
+  const ZS = 0.03, ZM = 0.041, ZC = 0.041, ZK = -0.06; // ovojnica in membrana povečani (stena ≈ 50 nm), citoplazma, kapsula
   const tocka = (x, th, zamik) => { let i = 0; while (i < P.p.length - 1 && P.p[i][0] < x) i++; return vrtTocka(P, i, th, zamik, sumF, V()); };
   const osDist = (p) => Math.hypot(Math.max(0, Math.abs(p.x) - H), Math.hypot(p.y, p.z));
   const vCeli = (p, m = 0) => osDist(p) < RB - m;
@@ -263,14 +263,16 @@ export function zgradi(THREE, ctx = {}) {
   const stena = new THREE.Mesh(stG.g, mat(0xffffff, { vertexColors: true, roughness: 0.55, clearcoat: 0.5, sheen: 0.4 }));
   // prerez ovojnice po plasteh: zunanja membrana, peptidoglikan, periplazemski prostor
   const plasti = (meje, barve) => zdruzi(meje.slice(0, -1).map((a, i) => vrtRez(P, nK, rezI, a, meje[i + 1], sumF)), barve);
-  const stRez = new THREE.Mesh(plasti([0, 0.0025, 0.0045, 0.007, 0.016, ZS], [0xb4587c, 0xf0d2c2, 0xb4587c, 0xc99a4f, 0xf0e2c0]), mat(0xffffff, { vertexColors: true, roughness: 0.7, clearcoat: 0.2, side: THREE.DoubleSide }));
+  // zunanja membrana (temni glavi, svetli repi), peptidoglikan (rjav), periplazemski prostor (svetel); tanke temne meje
+  const stRez = new THREE.Mesh(plasti([0, 0.0008, 0.0034, 0.0058, 0.0084, 0.0094, 0.0104, 0.0212, 0.0222, ZS],
+    [0x7c2f52, 0xb4587c, 0xf0d2c2, 0xb4587c, 0x7c2f52, 0x6e5326, 0xc99a4f, 0x6e5326, 0xf0e2c0]), mat(0xffffff, { vertexColors: true, roughness: 0.7, clearcoat: 0.2, side: THREE.DoubleSide }));
   group.add(stena, stRez);
   del("celicna-stena", "Celična stena", "Čvrsta plast iz peptidoglikana (mureina, v prerezu rjava), ki daje bakteriji obliko in jo varuje; pri E. coli jo obdaja še tanka zunanja membrana. Debelina plasti je povečana.", "#c8a66e",
     [stena, stRez], tocka(0.2, Math.PI * 0.68, 0).toArray());
 
   // ---------- celična membrana in citoplazma ----------
   const memMat = mat(0xd88aa2, { roughness: 0.3, clearcoat: 1, side: THREE.DoubleSide });
-  const memRez = new THREE.Mesh(plasti([ZS, ZS + 0.0025, ZM - 0.0025, ZM], [0xb4587c, 0xf4d9c4, 0xb4587c]), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
+  const memRez = new THREE.Mesh(plasti([ZS, ZS + 0.0009, ZS + 0.0036, ZM - 0.0036, ZM - 0.0009, ZM], [0x7c2f52, 0xb4587c, 0xf4d9c4, 0xb4587c, 0x7c2f52]), mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   const cG = vrtenina(P, nK, rezI, ZC, sumF);
   const cit = new THREE.Mesh(cG.g, mat(0xeadcbc, { roughness: 0.7, clearcoat: 0.15, sheen: 0.3, side: THREE.BackSide }));
   group.add(memRez, cit);
@@ -299,7 +301,7 @@ export function zgradi(THREE, ctx = {}) {
   }
   const bb = new THREE.Box3().setFromPoints(zanka), bs = bb.getSize(V()), bc = bb.getCenter(V());
   zanka.forEach((p) => p.sub(bc).multiply(V(0.66 / bs.x, 0.25 / bs.y, 0.25 / bs.z)));
-  const dnk = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(zanka, true), nZ * 2, 0.0042, q(5), true), mat(0xa98bf0, { roughness: 0.4, clearcoat: 0.6 }));
+  const dnk = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(zanka, true), Math.round(nZ * 1.6), 0.0042, q(4), true), mat(0xa98bf0, { roughness: 0.4, clearcoat: 0.6 }));
   group.add(dnk);
   const dnkT = zanka.filter((p) => izrezan(p, -0.03)).sort((a, b) => b.dot(KAM) - a.dot(KAM))[0] || zanka[0];
   del("nukleoid", "Nukleoid (krožna DNK)", "Območje, kjer leži ena sama velika krožna molekula DNK, gosto zvita v klobčič. Bakterija nima jedra, zato DNK ni ločena od citoplazme.", "#a98bf0", [dnk], dnkT.toArray());
@@ -320,17 +322,25 @@ export function zgradi(THREE, ctx = {}) {
   del("plazmidi", "Plazmidi", "Majhne krožne molekule DNK poleg nukleoida; nosijo dodatne gene (na primer za odpornost proti antibiotikom) in jih bakterije lahko izmenjajo.", "#e58cc8", [plazmid], plC[0].toArray());
 
   // ---------- ribosomi 70S (velika in mala podenota) ----------
-  const ribGeo = zdruzi([new THREE.IcosahedronGeometry(0.0064, 0), new THREE.IcosahedronGeometry(0.0047, 0).translate(0.005, 0.0042, 0)]);
-  const nRib = hi ? 1300 : 600;
-  const rib = new THREE.InstancedMesh(ribGeo, mat(0x34509f, { roughness: 0.5, clearcoat: 0.4 }), nRib);
+  const ribGeo = zdruzi([new THREE.IcosahedronGeometry(0.0062, 0), new THREE.OctahedronGeometry(0.0048, 0).scale(1.15, 0.8, 1).translate(0.005, 0.0042, 0)]);
+  const nRib = hi ? 1800 : 760;
+  const rib = new THREE.InstancedMesh(ribGeo, mat(0x3a4c92, { roughness: 0.5, clearcoat: 0.45 }), nRib);
+  const X0 = V(0.3, 0.8, 0.5).normalize();
   const vNuk = (p) => (p.x / 0.36) ** 2 + (p.y / 0.14) ** 2 + (p.z / 0.14) ** 2 < 1;
   const ribT = [];
   let k = 0, posk = 0;
   while (k < nRib && posk++ < 300000) {
     smer.set((rnd() * 2 - 1) * (H + RB), (rnd() * 2 - 1) * RB, (rnd() * 2 - 1) * RB);
     if (!vCeli(smer, ZC + 0.012) || izrezan(smer, 0) || (vNuk(smer) && rnd() < 0.85) || plC.some((c) => c.distanceTo(smer) < 0.05)) continue;
-    o.position.copy(smer); o.rotation.set(rnd() * 6, rnd() * 6, rnd() * 6); o.updateMatrix(); rib.setMatrixAt(k++, o.matrix);
-    if (ribT.length < 60 && smer.x < 0) ribT.push(smer.clone());
+    // dobra tretjina v verižicah (poliribosomi na isti mRNK), ostali posamič
+    const n = rnd() < 0.35 ? 4 + Math.floor(rnd() * 6) : 1, kor = nakl(1).setLength(0.014);
+    for (let j = 0; j < n && k < nRib; j++) {
+      if (j && (!vCeli(smer, ZC + 0.012) || izrezan(smer, 0))) break;
+      o.position.copy(smer); o.rotation.set(rnd() * 6, rnd() * 6, rnd() * 6); o.scale.setScalar(0.85 + 0.3 * rnd()); o.updateMatrix(); rib.setMatrixAt(k++, o.matrix);
+      if (ribT.length < 60 && smer.x < 0) ribT.push(smer.clone());
+      kor.applyAxisAngle(X0, 0.6).add(nakl(0.006)).setLength(0.014);
+      smer.add(kor);
+    }
   }
   rib.count = k;
   group.add(rib);
@@ -437,66 +447,60 @@ export function zgradi(THREE, ctx = {}) {
     });
   }
 
-  // ---------- videz: globlje barve, vlažni materiali, drobna površinska tekstura, senčenje v vdolbinah ----------
-  // nast[idDela] = { tex: "zrna" | "gube" | "fino" | "vlakna" | null, rep: [u, v], k: moč normal mape, lisa: lise,
-  //   f: gostota lis, uv: "smer" (krogelni uv), ton: 0 … 1 (poglobitev barve), rough, cc, sheen, temni: zatemnitev, ao(p, n) → faktor }
+  // ---------- videz: vlažna površina z drobnim reliefom (šum v senčilniku), moker lak, senčenje v vdolbinah ----------
+  // nast[idDela] = { tex: "zrna" | "gube" | "fino" | "vlakna" | null, rf: gostota reliefa (na enoto modela), k: moč reliefa,
+  //   b: senca v kotanjah reliefa, s: presevnost roba, lisa: lise, f: gostota lis, ton: 0 … 1 (poglobitev barve),
+  //   rough, cc, ccr, sheen, temni: zatemnitev, ao(p, n) → faktor }
+  const ZV_GLSL = `
+float zvH(vec3 p){ p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3)); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
+float zvS(vec3 x){ vec3 i = floor(x); vec3 f = fract(x); f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(mix(zvH(i), zvH(i + vec3(1, 0, 0)), f.x), mix(zvH(i + vec3(0, 1, 0)), zvH(i + vec3(1, 1, 0)), f.x), f.y),
+    mix(mix(zvH(i + vec3(0, 0, 1)), zvH(i + vec3(1, 0, 1)), f.x), mix(zvH(i + vec3(0, 1, 1)), zvH(i + vec3(1, 1, 1)), f.x), f.y), f.z); }
+vec3 zvRelief(vec3 n, float h, float fd){ // naklon normale iz odvodov višine po zaslonu (kot bumpMap, brez teksture)
+  vec3 dx = dFdx(-vViewPosition), dy = dFdy(-vViewPosition), r1 = cross(dy, n), r2 = cross(n, dx);
+  float det = dot(dx, r1) * fd;
+  return normalize(abs(det) * n - sign(det) * (dFdx(h) * r1 + dFdy(h) * r2)); }`;
+  const zvF = (x) => (Number.isInteger(x) ? x + ".0" : String(+(+x).toPrecision(4)));
+  // Senčilniku doda relief, senco v kotanjah, mokre odseve in mehko presevnost roba. Komplet izbrani del obarva na kopiji
+  // materiala, zato kopija dobi isti dodatek (clone sicer onBeforeCompile izgubi).
+  function vlaga(m, o) {
+    const rf = o.rf || 30, F = zvF(rf), K = zvF(0.1 * (o.k ?? 0.6) / rf), B = zvF(o.b ?? 0.16), S = zvF(o.s ?? 0.14);
+    const sk = o.vr === 3 ? `vec3(${zvF(rf * 0.14)}, ${F}, ${F})` : F; // vlakna vzdolž osi x
+    const osnova = o.vr === 1 ? "(1.0 - abs(2.0 * zvS(zp) - 1.0))" : "zvS(zp)";
+    m.onBeforeCompile = (sh) => {
+      sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vZp;")
+        .replace("#include <begin_vertex>", "#include <begin_vertex>\nvZp = transformed;\n#ifdef USE_INSTANCING\nvZp = (instanceMatrix * vec4(transformed, 1.0)).xyz;\n#endif");
+      sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nvarying vec3 vZp;" + ZV_GLSL)
+        .replace("#include <color_fragment>", `#include <color_fragment>
+          vec3 zp = vZp * ${sk};
+          float zw = length(fwidth(zp));
+          float zn = mix(0.5, ${osnova}, clamp(1.6 - zw * 1.8, 0.0, 1.0));
+          ${hi ? "zn = zn * 0.62 + mix(0.5, zvS(mat3(0.8, 0.36, -0.48, -0.6, 0.48, -0.64, 0.0, 0.8, 0.6) * zp * 2.7 + 7.0), clamp(1.6 - zw * 4.9, 0.0, 1.0)) * 0.38;" : ""}
+          diffuseColor.rgb *= 1.0 - ${B} + ${B} * 1.35 * zn;`)
+        .replace("#include <roughnessmap_fragment>", "#include <roughnessmap_fragment>\nroughnessFactor = clamp(roughnessFactor + (zn - 0.5) * 0.18, 0.05, 1.0);")
+        .replace("#include <normal_fragment_maps>", `#include <normal_fragment_maps>\nnormal = zvRelief(normal, zn * ${K}, faceDirection);`)
+        .replace("#include <opaque_fragment>", `float zfr = 1.0 - abs(dot(normal, normalize(vViewPosition)));
+          outgoingLight += diffuseColor.rgb * ${S} * pow(zfr, 1.6);
+          #include <opaque_fragment>`);
+    };
+    const kl = `zv|${sk}|${o.vr || 0}|${K}|${B}|${S}|${hi}`;
+    m.customProgramCacheKey = () => kl;
+    m.clone = function () { const c = new this.constructor().copy(this); vlaga(c, o); return c; };
+    m.needsUpdate = true;
+  }
   function poliraj(nast = {}, seznam) {
     seznam = seznam || deli;
-    const N = 128, teks = {}, obdelane = new Set(), hsl = {}, c = new THREE.Color(), bel = new THREE.Color(1, 1, 1);
-    const per = (x, y, P, s) => { // periodičen šum vrednosti (ploščica brez šiva)
-      const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
-      const h = (a, b) => hash(((xi + a) % P + P) % P, ((yi + b) % P + P) % P, s);
-      return h(0, 0) * (1 - u) * (1 - v) + h(1, 0) * u * (1 - v) + h(0, 1) * (1 - u) * v + h(1, 1) * u * v;
-    };
-    const vrste = {
-      zrna: (x, y) => 0.5 * per(x * 16, y * 16, 16, 1) + 0.3 * Math.pow(per(x * 32, y * 32, 32, 2), 2) + 0.2 * per(x * 64, y * 64, 64, 3),
-      gube: (x, y) => 0.6 * (1 - Math.abs(2 * per(x * 8, y * 8, 8, 4) - 1)) + 0.25 * per(x * 24, y * 24, 24, 5) + 0.15 * per(x * 64, y * 64, 64, 6),
-      fino: (x, y) => 0.6 * per(x * 32, y * 32, 32, 7) + 0.4 * per(x * 64, y * 64, 64, 8),
-      vlakna: (x, y) => 0.55 * per(x * 4, y * 48, 4, 9) + 0.3 * per(x * 8, y * 96, 8, 10) + 0.15 * per(x * 32, y * 64, 32, 11),
-    };
-    function tekstura(vrsta, rep) {
-      const kl = vrsta + rep;
-      if (teks[kl]) return teks[kl];
-      if (!teks[vrsta]) {
-        const H = new Float32Array(N * N), d = new Uint8Array(N * N * 4), f = vrste[vrsta];
-        for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) H[j * N + i] = f(i / N, j / N);
-        for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
-          const dx = (H[j * N + (i + 1) % N] - H[j * N + (i + N - 1) % N]) * 6, dy = (H[((j + 1) % N) * N + i] - H[((j + N - 1) % N) * N + i]) * 6;
-          const l = Math.hypot(dx, dy, 1), k = (j * N + i) * 4;
-          d[k] = (-dx / l * 0.5 + 0.5) * 255; d[k + 1] = (-dy / l * 0.5 + 0.5) * 255; d[k + 2] = (1 / l * 0.5 + 0.5) * 255; d[k + 3] = 255;
-        }
-        const t = new THREE.DataTexture(d, N, N, THREE.RGBAFormat);
-        t.wrapS = t.wrapT = THREE.RepeatWrapping;
-        t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true;
-        t.needsUpdate = true;
-        odpad.push(t);
-        teks[vrsta] = t;
-      }
-      const t = teks[vrsta].clone();
-      t.repeat.set(rep[0], rep[1]); t.needsUpdate = true;
-      odpad.push(t);
-      return (teks[kl] = t);
-    }
+    const obdelane = new Set(), hsl = {}, c = new THREE.Color(), bel = new THREE.Color(1, 1, 1);
+    const VRSTE = { zrna: 0, gube: 1, fino: 2, vlakna: 3 };
     function poglobi(col, moc) { // nasičenost gor, svetlost dol (pastel → barva znanstvene ilustracije)
       col.getHSL(hsl);
       const s = hsl.s < 0.06 ? hsl.s : Math.min(1, hsl.s * (1 + 0.2 * moc) + 0.03 * moc);
       const l = hsl.l > 0.42 ? hsl.l - (hsl.l - 0.42) * 0.3 * moc : hsl.l * (1 - 0.03 * moc);
       return col.setHSL(hsl.h, s, l);
     }
-    function uvIzSmeri(g) { // manjkajoči uv: krogelna projekcija okoli središča geometrije
-      g.computeBoundingBox();
-      const s = g.boundingBox.getCenter(new THREE.Vector3()), p = g.attributes.position, uv = new Float32Array(p.count * 2), v = new THREE.Vector3();
-      for (let i = 0; i < p.count; i++) {
-        v.fromBufferAttribute(p, i).sub(s);
-        const r = v.length() || 1;
-        uv[i * 2] = Math.atan2(v.z, v.x) / (2 * Math.PI) + 0.5; uv[i * 2 + 1] = Math.acos(Math.max(-1, Math.min(1, v.y / r))) / Math.PI;
-      }
-      g.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
-    }
     function obdelajGeo(g, o, m) { // barve oglišč: poglobitev, lise, zatemnitev v vdolbinah in na notranjih stenah
       if (obdelane.has(g)) return;
       obdelane.add(g);
-      if (!g.attributes.uv || (o.uv === "smer" && !m.map)) uvIzSmeri(g);
       const p = g.attributes.position, nrm = g.attributes.normal;
       if (!(o.lisa || o.ao || m.side === THREE.BackSide || m.vertexColors)) return;
       let col = g.attributes.color;
@@ -520,7 +524,7 @@ export function zgradi(THREE, ctx = {}) {
     for (const d of seznam) for (const x of d.meshes) x.traverse((y) => { if (y.isMesh && y.material && !mati.has(y.material)) mati.set(y.material, d.id); });
     group.traverse((y) => { if (y.isMesh && y.material && !mati.has(y.material)) mati.set(y.material, null); });
     for (const [m, id] of mati) {
-      if (!m.isMeshPhysicalMaterial) continue;
+      if (!m.isMeshPhysicalMaterial || m.userData.rez) continue;
       const o = Object.assign({}, nast["*"] || {}, (id && nast[id]) || {});
       const ton = o.ton == null ? 1 : o.ton, zn = m.side === THREE.BackSide;
       const meshes = [];
@@ -529,28 +533,17 @@ export function zgradi(THREE, ctx = {}) {
       if (!m.vertexColors) poglobi(m.color, ton);
       if (o.temni) m.color.multiplyScalar(o.temni);
       if (zn) m.color.multiplyScalar(0.88);
-      m.roughness = o.rough != null ? o.rough : Math.min(0.74, Math.max(0.44, m.roughness * 0.55 + 0.3 + (zn ? 0.1 : 0)));
-      m.clearcoat = o.cc != null ? o.cc : Math.min(0.5, m.clearcoat * 0.55);
-      m.clearcoatRoughness = 0.2;
-      m.sheen = o.sheen != null ? o.sheen : Math.max(m.sheen, 0.4);
-      m.sheenRoughness = 0.45;
+      m.roughness = o.rough != null ? o.rough : Math.min(0.66, Math.max(0.42, m.roughness * 0.5 + 0.3 + (zn ? 0.1 : 0)));
+      m.clearcoat = o.cc != null ? o.cc : zn ? 0.3 : 0.6;
+      m.clearcoatRoughness = o.ccr != null ? o.ccr : 0.14;
+      m.sheen = o.sheen != null ? o.sheen : Math.max(m.sheen, 0.45);
+      m.sheenRoughness = 0.42;
       const sc = m.vertexColors ? c.set(id ? seznam.find((d) => d.id === id).barva : 0xffffff) : c.copy(m.color);
-      m.sheenColor = sc.clone().lerp(bel, 0.4).multiplyScalar(0.7);
-      m.envMapIntensity = 0.9;
+      m.sheenColor = sc.clone().lerp(bel, 0.45).multiplyScalar(0.75);
+      m.envMapIntensity = 0.95;
       if (o.lisa || o.ao || zn) m.vertexColors = true;
       for (const g of geos) obdelajGeo(g, o, m);
-      if (o.tex !== null) {
-        let rep = o.rep;
-        if (!rep) {
-          const g = geos[0]; g.computeBoundingSphere();
-          const n = Math.max(1, Math.round(g.boundingSphere.radius * 9));
-          rep = [2 * n, n];
-        }
-        m.normalMap = tekstura(o.tex || "zrna", rep);
-        const k = o.k != null ? o.k : 0.3;
-        m.normalScale.set(k, k);
-      }
-      m.userData.pol = (g) => obdelajGeo(g, o, m);
+      if (o.tex !== null) vlaga(m, { vr: VRSTE[o.tex || "zrna"], rf: o.rf || (o.tex === "fino" ? 70 : 36), k: o.k, b: o.b, s: o.s ?? (zn ? 0.06 : 0.14) });
       m.needsUpdate = true;
     }
   }
@@ -583,7 +576,7 @@ export function zgradi(THREE, ctx = {}) {
   }
 
   // drobna zrnca v citoplazmi (beljakovine, zaloge)
-  group.add(zrnca(hi ? 2600 : 1100, () => {
+  group.add(zrnca(hi ? 6500 : 2600, () => {
     const p = V(rnd() * 2 - 1, (rnd() * 2 - 1) * 0.3, (rnd() * 2 - 1) * 0.3);
     return vCeli(p, ZC + 0.008) && !izrezan(p, 0.004) ? p : null;
   }, 0xa89a70, 0.008, 0.5));
@@ -593,12 +586,16 @@ export function zgradi(THREE, ctx = {}) {
   for (const d of vsiDeli) if (vidneT[d.id]) d.tocka = vidneT[d.id];
 
   poliraj({
-    "celicna-stena": { tex: "zrna", rep: [40, 8], k: 0.35, lisa: 0.12, f: 6 },
-    membrana: { tex: "zrna", k: 0.2 },
-    citoplazma: { tex: "fino", rep: [16, 4], k: 0.25, lisa: 0.2, f: 8, temni: 0.85 },
+    "celicna-stena": { tex: "zrna", rf: 85, k: 1.8, b: 0.22, s: 0.16, lisa: 0.12, f: 6, cc: 0.65, ccr: 0.12 },
+    membrana: { tex: null },
+    citoplazma: { tex: "fino", rf: 120, k: 1.1, b: 0.24, lisa: 0.2, f: 8, temni: 0.92,
+      ao: (p) => 0.8 + 0.2 * Math.min(1, Math.max(0, 0.5 + 0.8 * (p.y + p.z) / (Math.hypot(p.y, p.z) * 1.42 || 1))) },
     kapsula: { tex: null, ton: 0.5 },
-    nukleoid: { tex: null },
-    bicki: { tex: "fino", rep: [1, 40], k: 0.3 },
+    nukleoid: { rf: 500, k: 0.4 },
+    plazmidi: { rf: 500, k: 0.4 },
+    ribosomi: { tex: null },
+    bicki: { tex: "fino", rf: 400, k: 0.5 },
+    "bazalno-telo": { rf: 300, k: 0.5 },
     pili: { tex: null },
   }, vsiDeli);
 

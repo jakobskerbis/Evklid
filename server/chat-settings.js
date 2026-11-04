@@ -21,7 +21,8 @@ import { dialectsFor } from "../public/dialects.js";
 import { jeSs, jeFaks, stopnja, imaStopnjo } from "../public/stopnja.js";
 
 // Deli aplikacije, ki jih inštruktor odpre v premičnem oknu (public/okna.js), in načini kalkulatorja.
-export const WINDOW_VIEWS = ["graph", "textbook", "path", "scan", "schedule", "corner", "progress", "games", "competition", "exams", "league", "settings", "lab"];
+// »uci« je zavihek »Uči se« (zadnji uporabljeni od treh); textbook, lab in 3d odprejo njegov zavihek (public/uci-se.js).
+export const WINDOW_VIEWS = ["graph", "uci", "textbook", "lab", "3d", "path", "scan", "schedule", "corner", "progress", "games", "competition", "exams", "league", "settings"];
 export const CALC_MODES = ["sci", "graph", "tools", "pse", "formulas"];
 
 const PATH_KEYS = Object.keys(PROFILE_SETTINGS).filter((k) => PROFILE_SETTINGS[k].confirm);
@@ -114,7 +115,7 @@ export const SETTINGS_TOOLS = [
     input_schema: {
       type: "object",
       properties: {
-        view: { type: "string", enum: WINDOW_VIEWS, description: "graph = calculator; path = learning path; corner = news corner; lab = virtual laboratory (all experiments)" },
+        view: { type: "string", enum: WINDOW_VIEWS, description: "graph = calculator; path = learning path; corner = news corner; uci = »Uči se« (textbook, lab and 3D world in one view); textbook, lab (virtual laboratory, all experiments) and 3d (3D world: body atlas, cells, molecules) open that tab of »Uči se«" },
         calc_mode: { type: "string", enum: CALC_MODES, description: "only for view graph: sci = scientific, graph = graphing, tools = unit converter and tools, pse = periodic table, formulas" },
       },
       required: ["view"],
@@ -618,6 +619,7 @@ const WINDOW_TARGETS = [
   [/^(učbenik\w*|textbook)$/, "textbook", null, "učbenik", "the textbook"],
   [/^(urnik\w*|timetable|schedule)$/, "schedule", null, "urnik", "the timetable"],
   [/^((virtualn\w* )?laboratorij\w*|(the )?lab|laboratory)$/, "lab", null, "laboratorij", "the laboratory"],
+  [/^(3d( svet\w*)?|3d world|(3d )?atlas\w* (človeškega )?telesa|body atlas)$/, "3d", null, "3D svet", "the 3D world"],
 ];
 
 export function openWindowIntent(text) {

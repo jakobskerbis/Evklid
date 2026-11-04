@@ -237,11 +237,70 @@ export function zgradi(THREE, ctx = {}) {
     for (let j = 0; j <= nK / 4; j++) b.push(t(rezI, (j / nK) * Math.PI * 2));
     return zdruzi([trak(a, V(0, 0, 1)), trak(b, V(-1, 0, 0)), trak(c, V(0, 1, 0))]);
   }
+  // ---------- mokri sijaj (kot tkiva.js): relief iz 3D šuma v senčilniku, lise, mehka presevnost ob robu ----------
+  // Višina iz šuma v lokalnih koordinatah mreže (vsak primerek InstancedMesh ima svoj zamik), naklon normale iz odvodov
+  // po zaslonu; prevleka (clearcoat) ostane gladka kot tanek moker film. Brez tekstur in brez dodatnih trikotnikov.
+  // Kit izbrani del poudari s kopijo materiala, zato kopija (clone) obdrži kljuko in ključ programa.
+  const GLSL_SUM = `float evkHash(vec3 p){ p = fract(p * 0.3183099 + vec3(0.1, 0.2, 0.3)); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
+float evkSum(vec3 x){ vec3 i = floor(x); vec3 f = fract(x); f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(mix(evkHash(i), evkHash(i + vec3(1, 0, 0)), f.x), mix(evkHash(i + vec3(0, 1, 0)), evkHash(i + vec3(1, 1, 0)), f.x), f.y),
+    mix(mix(evkHash(i + vec3(0, 0, 1)), evkHash(i + vec3(1, 0, 1)), f.x), mix(evkHash(i + vec3(0, 1, 1)), evkHash(i + vec3(1, 1, 1)), f.x), f.y), f.z); }`;
+  const fl = (x) => (Math.round(x * 1000) / 1000).toFixed(3);
+  // vlazno(m, { f: gostota zrn na enoto mreže, r: moč reliefa, gube: vijugaste gubice namesto zrn, b: lise v barvi,
+  //   s: mehka presevnost ob robu, rough / cc / ccr: hrapavost, moč in hrapavost prevleke (moker film), sheen: barvni sijaj })
+  function vlazno(m, { f = 30, r = 0.5, gube = false, b = 0.1, s = 0.1, rough, cc, ccr = 0.14, sheen } = {}) {
+    if (!m || !m.isMeshPhysicalMaterial) return m;
+    if (rough != null) m.roughness = rough;
+    if (cc != null) m.clearcoat = cc;
+    if (sheen != null) m.sheen = sheen;
+    m.clearcoatRoughness = ccr;
+    const F = fl(f), H = (0.1 * r * (hi ? 1 : 0.7) / f).toExponential(3);
+    const kljuc = `evk3-${F}-${H}-${gube ? 1 : 0}-${fl(b)}-${fl(s)}-${hi ? 2 : 1}`;
+    m.onBeforeCompile = (sh) => {
+      sh.vertexShader = sh.vertexShader
+        .replace("#include <common>", "#include <common>\nvarying vec3 vEvk;")
+        .replace("#include <project_vertex>", `#include <project_vertex>
+        vEvk = transformed;
+        #ifdef USE_INSTANCING
+          vEvk += instanceMatrix[3].xyz * 7.31;
+        #endif`);
+      sh.fragmentShader = sh.fragmentShader
+        .replace("#include <common>", "#include <common>\nvarying vec3 vEvk;\n" + GLSL_SUM)
+        .replace("#include <color_fragment>", `#include <color_fragment>
+        vec3 evkQ = vEvk * ${F};
+        float evkLod = clamp(1.6 - length(fwidth(evkQ)) * 1.1, 0.0, 1.0);
+        float evkA = evkSum(evkQ);${gube ? "\n        evkA = 1.0 - abs(2.0 * evkA - 1.0);" : ""}
+        float evkZ = mix(0.5, ${hi ? "evkA * 0.66 + evkSum(evkQ * 2.37 + 3.1) * 0.34" : "evkA"}, evkLod);
+        diffuseColor.rgb *= ${fl(1 - b * 0.6)} + ${fl(b)} * evkZ;`)
+        .replace("#include <roughnessmap_fragment>", `#include <roughnessmap_fragment>
+        roughnessFactor = clamp(roughnessFactor + (0.5 - evkZ) * 0.16, 0.05, 1.0);`)
+        .replace("#include <normal_fragment_maps>", `#include <normal_fragment_maps>
+        {
+          float evkH = evkZ * ${H};
+          vec3 evkDx = dFdx(-vViewPosition), evkDy = dFdy(-vViewPosition);
+          vec3 evkR1 = cross(evkDy, normal), evkR2 = cross(normal, evkDx);
+          float evkDet = dot(evkDx, evkR1) * faceDirection;
+          vec3 evkG = sign(evkDet) * (dFdx(evkH) * evkR1 + dFdy(evkH) * evkR2);
+          normal = normalize(abs(evkDet) * normal - evkG);
+        }`)
+        .replace("#include <opaque_fragment>", `float evkFr = 1.0 - abs(dot(normal, normalize(vViewPosition)));
+        outgoingLight += diffuseColor.rgb * ${fl(s)} * pow(evkFr, 1.6) * (0.6 + 0.4 * evkZ);
+        #include <opaque_fragment>`);
+    };
+    m.customProgramCacheKey = () => kljuc;
+    m.clone = function () {
+      const c = THREE.MeshPhysicalMaterial.prototype.clone.call(this);
+      c.onBeforeCompile = this.onBeforeCompile; c.customProgramCacheKey = this.customProgramCacheKey; c.clone = this.clone;
+      return c;
+    };
+    m.needsUpdate = true;
+    return m;
+  }
   const o = new THREE.Object3D(), smer = V();
 
   // 1 enota = 70 nm
   const gor = V(0, 1, 0);
-  const RE = 0.62, DB = 0.06; // ovojnica (premer ≈ 87 nm), lipidni dvosloj ≈ 4 nm
+  const RE = 0.62, DB = 0.078; // ovojnica (premer ≈ 87 nm); dvosloj z notranjimi deli beljakovin M ≈ 5 nm (rahlo povečano)
   const oblE = (d) => RE * (1 + 0.025 * fbm(d.x * 1.8 + 2, d.y * 1.8, d.z * 1.8) + 0.005 * sum(d.x * 9, d.y * 9, d.z * 9));
   const fN = (d) => oblE(d) - DB;
 
@@ -251,9 +310,13 @@ export function zgradi(THREE, ctx = {}) {
   const ovOut = new THREE.Mesh(ov.odprta, ovMat);
   const lIn = lupina(fN, q(80), q(52));
   lIn.pokrov.dispose();
-  const ovIn = new THREE.Mesh(lIn.odprta, mat(0xb86f8a, { roughness: 0.6, clearcoat: 0.3, side: THREE.BackSide }));
-  // prerez dvosloja: glave (rožnate) – repi (svetli) – glave
-  const dv = zdruzi([rezR(oblE, (d) => oblE(d) - 0.016, q(70)), rezR((d) => oblE(d) - 0.016, (d) => oblE(d) - 0.044, q(70)), rezR((d) => oblE(d) - 0.044, fN, q(70))], [0xe59ab2, 0xf3e2b8, 0xe59ab2]);
+  const ovIn = new THREE.Mesh(lIn.odprta, mat(0x9a5672, { roughness: 0.6, clearcoat: 0.3, side: THREE.BackSide }));
+  // prerez dvosloja (polna ploskev): temnejše glave – svetli repi s temno sredinsko črto – glave, spodaj pas notranjih
+  // delov beljakovin M; ob zunanjem in notranjem robu ostra svetla obroba
+  const pas = (a, b) => rezR((d) => oblE(d) - a, (d) => oblE(d) - b, q(70));
+  const dv = zdruzi([pas(0, 0.004), pas(0.004, 0.017), pas(0.017, 0.029), pas(0.029, 0.033), pas(0.033, 0.045), pas(0.045, 0.058), pas(0.058, DB),
+    rob(oblE, 0.0045, q(64)), rob((d) => fN(d) + 0.004, 0.0035, q(56))],
+  [0xe7a3ba, 0xa9506f, 0xe9cf9c, 0xc9a77a, 0xe9cf9c, 0xa9506f, 0x7d4a78, 0xeeb2c4, 0x8e5a86]);
   const ovRez = new THREE.Mesh(dv, mat(0xffffff, { vertexColors: true, roughness: 0.5, clearcoat: 0.4, side: THREE.DoubleSide }));
   const ovPok = new THREE.Mesh(ov.pokrov, ovMat);
   ovPok.visible = false;
@@ -282,10 +345,14 @@ export function zgradi(THREE, ctx = {}) {
     }
     for (let k = 0; k < 3; k++) { // glavica: trije režnji (S1) in vezavne domene (RBD) na vrhu
       const a = (k / 3) * Math.PI * 2;
-      g.push(deformiraj(new THREE.SphereGeometry(1, q(13), q(9)), (v) => { v.set(v.x * 0.044, v.y * 0.068, v.z * 0.044); v.x += Math.cos(a) * 0.035 * (1 + v.y * 4); v.z += Math.sin(a) * 0.035 * (1 + v.y * 4); v.y += 0.205; v.multiplyScalar(1 + 0.04 * sum(v.x * 60, v.y * 60, v.z * 60)); })); b.push(0xe0574a);
-      g.push(new THREE.SphereGeometry(0.026, q(9), q(6)).translate(Math.cos(a + 0.6) * 0.045, 0.27, Math.sin(a + 0.6) * 0.045)); b.push(0xf3907a);
+      g.push(deformiraj(new THREE.SphereGeometry(1, q(11), q(8)), (v) => { v.set(v.x * 0.044, v.y * 0.068, v.z * 0.044); v.x += Math.cos(a) * 0.035 * (1 + v.y * 4); v.z += Math.sin(a) * 0.035 * (1 + v.y * 4); v.y += 0.205; v.multiplyScalar(1 + 0.04 * sum(v.x * 60, v.y * 60, v.z * 60)); })); b.push(0xe0574a);
+      g.push(new THREE.SphereGeometry(0.026, q(8), q(5)).translate(Math.cos(a + 0.6) * 0.045, 0.27, Math.sin(a + 0.6) * 0.045)); b.push(0xf3907a);
     }
     g.push(new THREE.CylinderGeometry(0.02, 0.026, 0.03, q(10)).translate(0, -0.01, 0)); b.push(0x8a2a32);
+    if (hi) for (let k = 0; k < 9; k++) { // sladkorni ostanki (glikani), ki prekrivajo konico
+      const a = k * 2.39996, y = 0.15 + (k / 8) * 0.12, rr = 0.068 - (k / 8) * 0.02;
+      g.push(new THREE.IcosahedronGeometry(0.009 + 0.003 * hash(k, 3, 1), 0).translate(Math.cos(a) * rr, y, Math.sin(a) * rr)); b.push(0xe8b49c);
+    }
     return zdruzi(g, b);
   }
   const smS = povrsina(30, 0.12), nS0 = zunaj(smS);
@@ -312,8 +379,11 @@ export function zgradi(THREE, ctx = {}) {
   group.add(spike);
 
   // ---------- beljakovina M (dimeri) in E (peterni kanalčki) ----------
-  const mGeo = zdruzi([new THREE.SphereGeometry(1, q(7), q(5)).scale(0.017, 0.012, 0.013).translate(-0.012, 0, 0), new THREE.SphereGeometry(1, q(7), q(5)).scale(0.017, 0.012, 0.013).translate(0.012, 0, 0)]);
-  const smM = povrsina(hi ? 230 : 140, 0.03, 1.3).filter((d) => smS.every((s) => s.angleTo(d) > 0.09));
+  // dimer M: majhna zunanja dela nad ovojnico in večja notranja dela pod njo (vidna na notranji steni prereza)
+  const mKos = (sx, sy, sz, x, y) => deformiraj(new THREE.SphereGeometry(1, q(6), q(4)), (v) => { v.set(v.x * sx, v.y * sy, v.z * sz); v.multiplyScalar(1 + 0.12 * sum(v.x * 160 + x * 9, v.y * 160, v.z * 160)); v.x += x; v.y += y; });
+  const mGeo = zdruzi([mKos(0.016, 0.011, 0.012, -0.012, 0), mKos(0.016, 0.011, 0.012, 0.012, 0),
+    mKos(0.019, 0.012, 0.015, -0.013, -DB - 0.006), mKos(0.019, 0.012, 0.015, 0.013, -DB - 0.006)]);
+  const smM = povrsina(hi ? 255 : 160, 0.03, 1.3).filter((d) => smS.every((s) => s.angleTo(d) > 0.09));
   const mProt = new THREE.InstancedMesh(mGeo, mat(0x9b7fd0, { roughness: 0.45, clearcoat: 0.6 }), smM.length);
   smM.forEach((d, i) => { o.position.copy(d).multiplyScalar(oblE(d) + 0.002); o.quaternion.setFromUnitVectors(gor, d); o.rotateY(rnd() * 6); o.scale.setScalar(1); o.updateMatrix(); mProt.setMatrixAt(i, o.matrix); });
   const nM0 = zunaj(smM);
@@ -321,7 +391,7 @@ export function zgradi(THREE, ctx = {}) {
   group.add(mProt);
   const eG = [];
   for (let k = 0; k < 5; k++) { const a = (k / 5) * Math.PI * 2; eG.push(new THREE.SphereGeometry(1, q(8), q(6)).scale(0.011, 0.02, 0.011).translate(Math.cos(a) * 0.016, 0.006, Math.sin(a) * 0.016)); }
-  const smE = povrsina(12, 0.1, 2.7).filter((d) => smS.every((s) => s.angleTo(d) > 0.12));
+  const smE = povrsina(20, 0.1, 2.7).filter((d) => smS.every((s) => s.angleTo(d) > 0.12));
   const eProt = new THREE.InstancedMesh(zdruzi(eG), mat(0x6cc47f, { roughness: 0.4, clearcoat: 0.7 }), smE.length);
   smE.forEach((d, i) => { o.position.copy(d).multiplyScalar(oblE(d)); o.quaternion.setFromUnitVectors(gor, d); o.updateMatrix(); eProt.setMatrixAt(i, o.matrix); });
   const nE0 = zunaj(smE);
@@ -329,17 +399,25 @@ export function zgradi(THREE, ctx = {}) {
   group.add(eProt);
 
   // ---------- nukleokapsida: kroglice iz beljakovin N, na katere je navita RNK ----------
-  const RB = 0.085, nKr = hi ? 34 : 26;
-  const kr = [];
-  let p = V(0.15, -0.1, -0.15), posk = 0;
-  kr.push(p.clone());
-  while (kr.length < nKr && posk++ < 20000) {
-    const c = p.clone().add(nakl(1).normalize().multiplyScalar(0.17 + rnd() * 0.03));
-    if (c.length() > fN(c.clone().normalize()) - RB - 0.03 || (c.x < 0.05 && c.y > -0.05 && c.z > -0.05) || kr.some((x) => x.distanceTo(c) < 0.16)) { if (posk % 40 === 0) p = kr[Math.floor(rnd() * kr.length)].clone(); continue; }
-    kr.push(c); p = c;
+  const RB = 0.082, nKr = hi ? 50 : 32;
+  // kroglice enakomerno po notranjosti (zunaj odrezanega dela), nato pot RNK vsakič do najbližje še neobiskane
+  seme = 4242; // razpored nukleokapside ni odvisen od števila beljakovin v ovojnici
+  const kand = [];
+  for (let t = 0; t < 40000 && kand.length < nKr; t++) {
+    const c = nakl(2 * RE);
+    if (c.length() > fN(c.clone().normalize()) - RB - 0.012 || (c.x < 0.05 && c.y > -0.05 && c.z > -0.05) || kand.some((x) => x.distanceTo(c) < 0.15)) continue;
+    kand.push(c);
+  }
+  kand.sort((a, b) => b.x - a.x);
+  const kr = kand.splice(0, 1);
+  while (kand.length) {
+    const z = kr[kr.length - 1];
+    let bi = 0;
+    kand.forEach((x, i) => { if (x.distanceToSquared(z) < kand[bi].distanceToSquared(z)) bi = i; });
+    kr.push(kand.splice(bi, 1)[0]);
   }
   const kG = [];
-  for (let k = 0; k < 7; k++) { const d = k === 6 ? V(0, 0, 0) : V(Math.cos(k * 1.047), (k % 2 ? 0.5 : -0.5), Math.sin(k * 1.047)).normalize(); kG.push(new THREE.SphereGeometry(1, q(9), q(7)).scale(0.04, 0.034, 0.04).translate(d.x * 0.05, d.y * 0.05, d.z * 0.05)); }
+  for (let k = 0; k < 7; k++) { const d = k === 6 ? V(0, 0, 0) : V(Math.cos(k * 1.047), (k % 2 ? 0.5 : -0.5), Math.sin(k * 1.047)).normalize(); kG.push(deformiraj(new THREE.SphereGeometry(1, q(7), q(5)), (v) => { v.set(v.x * 0.039, v.y * 0.034, v.z * 0.039); v.multiplyScalar(1 + 0.1 * sum(v.x * 90 + k, v.y * 90, v.z * 90)); }).translate(d.x * 0.05, d.y * 0.05, d.z * 0.05)); }
   const nMat = mat(0x5fa8d3, { roughness: 0.42, clearcoat: 0.6 });
   const nProt = new THREE.InstancedMesh(zdruzi(kG), nMat, kr.length);
   kr.forEach((c, i) => { o.position.copy(c); o.rotation.set(rnd() * 6, rnd() * 6, rnd() * 6); o.scale.setScalar(0.9 + rnd() * 0.25); o.updateMatrix(); nProt.setMatrixAt(i, o.matrix); });
@@ -354,7 +432,7 @@ export function zgradi(THREE, ctx = {}) {
       rp.push(c.clone().addScaledVector(u, Math.cos(a) * (RB + 0.005)).addScaledVector(w, Math.sin(a) * (RB + 0.005)).addScaledVector(ax, h));
     }
   });
-  const rnk = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rp), rp.length * 3, 0.0085, q(5), false), mat(0xffd36e, { roughness: 0.35, clearcoat: 0.8 }));
+  const rnk = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rp), Math.round(rp.length * 2.1), 0.0095, q(5), false), mat(0xffd36e, { roughness: 0.35, clearcoat: 0.8 }));
   group.add(rnk);
 
   // ---------- deli ----------
@@ -539,6 +617,15 @@ export function zgradi(THREE, ctx = {}) {
     nukleokapsida: { tex: "fino", rep: [2, 1], k: 0.35 },
     rnk: { tex: null },
   });
+  // mokri sijaj in relief: močnejši na ovojnici, rahel na beljakovinah
+  vlazno(ovMat, { f: 34, r: 1.4, b: 0.16, s: 0.16, rough: 0.42, cc: 0.7, ccr: 0.12 });
+  vlazno(ovIn.material, { f: 30, r: 1.0, b: 0.2, s: 0.05, rough: 0.6, cc: 0.25 });
+  vlazno(ovRez.material, { f: 90, r: 0.5, b: 0.12, s: 0.04, rough: 0.5, cc: 0.35 });
+  vlazno(sMat, { f: 70, r: 0.7, gube: true, b: 0.14, s: 0.14, rough: 0.44, cc: 0.6 });
+  vlazno(mProt.material, { f: 150, r: 0.5, b: 0.12, s: 0.12, rough: 0.46, cc: 0.5 });
+  vlazno(eProt.material, { f: 150, r: 0.5, b: 0.12, s: 0.12, rough: 0.44, cc: 0.55 });
+  vlazno(nMat, { f: 60, r: 0.8, b: 0.16, s: 0.12, rough: 0.46, cc: 0.5 });
+  vlazno(rnk.material, { f: 120, r: 0.4, b: 0.08, s: 0.14, rough: 0.36, cc: 0.7, ccr: 0.1 });
 
   return {
     group,

@@ -30,8 +30,12 @@ povezave« (naravni zavihki spodaj). Če je strežnik starejši od aplikacije (p
   istim sporočilom kot na spletu (`public/textbook.js`). Na Androidu je v meniju še »Kopiraj«.
 - **Kalkulator** med vajo (gumb ob Namigu): spletni kalkulator s strani `/kalkulator` (znanstveni, grafični,
   orodja, PSE; pri kemiji se odpre PSE) v WebView, brez prijave in brez »Moji grafi«.
-- **3D svet** (vrstica v zavihku Jaz): stran `/3d` (atlas človeškega telesa, pozneje modeli iz kode, `docs/3d.md`) v
-  WebView `mobile/src/app/atlas.tsx`; »Vprašaj inštruktorja« pošlje `{tip: "vprasaj", besedilo}` in aplikacija odpre
+- **Uči se** (kot na spletu, j 4. 11. 2026): drugi naravni zavihek ima preklopnik Učbenik | Laboratorij | 3D svet
+  (`mobile/src/app/(tabs)/textbook.tsx`, zadnji zavihek v `evklid.uciZavihek`). Učbenik je naravno kazalo, 3D svet
+  zbirka strani `/3d` v WebView, Laboratorij (samo splet) pove, da potrebuje povezavo, in ponudi nov poskus spletne
+  strani. V spletni strani znotraj aplikacije je »Uči se« isti kot na spletu.
+- **3D svet** (zavihek v Uči se in vrstica v zavihku Jaz): stran `/3d` (atlas človeškega telesa in modeli iz kode,
+  `docs/3d.md`) v WebView `mobile/src/components/Web3D.tsx` (`atlas.tsx` čez cel zaslon); »Vprašaj inštruktorja« pošlje `{tip: "vprasaj", besedilo}` in aplikacija odpre
   nov pogovor s tem sporočilom. Modeli ostanejo v predpomnilniku WebView (service worker), ob prvem odprtju je
   potrebna povezava.
 - **Učbenik** s kazalom in iskanjem.
@@ -63,12 +67,12 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Videz sloga Čist | barve, robovi, pisava Instrument Sans, zavihki v istem redu | S | naravno (`theme.ts`, `font()`) | ✓ narejeno; besedilo v WebView (lekcije, klepet) ima Instrument Sans, formule pa KaTeX in `public/sirina.js` s strežnika kot splet (brez povezave MathML) |
 | Razloži ob izboru | označeno besedilo lekcije → inštruktor | S | naravno (meni izbora WebView) | ✓ narejeno |
 | Kalkulator | znanstveni, grafični, orodja, PSE (`public/graph/`) | M | WebView `/kalkulator` | ✓ narejeno med vajo; manjka še gumb v lekciji in klepetu |
-| 3D atlas in modeli | telo v 3D, kviz, modeli iz kode (`public/3d/`) | L | WebView `/3d` (`atlas.tsx`), vstop v zavihku Jaz | ✓ narejeno; manjka še vstop iz lekcije (simulacija `3d-<id>` v katalogu) |
+| 3D atlas in modeli | telo v 3D, kviz, modeli iz kode (`public/3d/`) | L | WebView `/3d` (`Web3D.tsx`), vstop v Uči se → 3D svet in v zavihku Jaz | ✓ narejeno; vstop iz lekcije (»Poglej v 3D«, simulacija `3d-<id>` v katalogu) je na spletu, v naravni lekciji še ne |
 | Formule | zbirka formul (način Formule kalkulatorja) | S | dodati način `formulas` na `/kalkulator` (potrebuje `rich.js`, marked) | ✗ |
 | Klikljive črke v formulah | kartica s pomenom črke iz predmeta, razdelka in lekcije (`public/formula-info.js`; lekcije, razlaga teme z »Bistvom«, naloge, odgovori inštruktorja, list s formulami z oznakami razdelkov) | M | naravno: `RichText` označi črke (`annotateTex`), dotik pošlje kodo iz WebView, kartica (`public/formula-card.js`) se odpre kot spodnji list; predmet in oznake iz `FormulaCtx` (`useTopicFx`, `/api/topic`) | ✓ narejeno v lekciji, nalogah in klepetu; list s formulami čaka na način Formule (vrstica »Formule«) |
 | Moji grafi | shranjeni grafi na strežniku | S | `/kalkulator` s sejo aplikacije (žeton v glavi ali enkratna povezava kot `app-link.js`) | ✗ |
 | Zaslonska tipkovnica | matematične plasti, simboli, enote (`public/tipkovnica*.js`) | L | naravno, iz istih podatkov (`tipkovnica-data.js`); v WebView strani že deluje | ✗ |
-| Laboratorij | poskusi in meritve (`public/laboratorij.js`) | L | WebView samostojne strani | ✗ |
+| Laboratorij | poskusi in meritve (`public/laboratorij.js`), zavihek v Uči se | L | WebView samostojne strani | ✗ (naravni zavihek Uči se → Laboratorij pove, da potrebuje povezavo) |
 | Simulacije | interaktivni poskusi v lekcijah (`public/sim/`) | L | WebView `/simulacija/<id>` v lekciji (zdaj se poskus v aplikaciji ne pokaže) | ✗ |
 | Igre | matematične igre (`public/games/`) | L | WebView | ✗ |
 | Tekmovanja | priprava na tekmovanja (`#view-competition`) | M | WebView, pozneje naravno | ✗ |

@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vezi in energija
+  - trganje vezi energijo porabi
+  - nastanek vezi energijo sprosti
+- Eksotermna reakcija
+  - energija gre v okolico
+  - gorenje, dihanje, grelna blazinica
+- Endotermna reakcija
+  - energija pride iz okolice
+  - fotosinteza, pecilni prašek v pečici
+  - napaka: »oddaja mraz«
+- Merjenje temperature
+  - $\Delta T = T_2 - T_1$
+  - $\Delta T > 0$ eksotermna, $\Delta T < 0$ endotermna
+- Račun iz vezi
+  - sprosti se $E_\mathrm{n} - E_\mathrm{t}$
+  - koeficient pomnoži energijo vezi
+- Aktivacijska energija
+  - začetni sunek: vžigalica, iskra
+  - prižig ne pomeni endotermne reakcije
+- Obratna reakcija
+  - obraten tok energije
+  - fotosinteza sprejme, dihanje odda

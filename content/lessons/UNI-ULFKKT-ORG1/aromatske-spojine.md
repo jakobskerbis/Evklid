@@ -5,9 +5,9 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Nina ima na vajah iz farmacevtske kemije nalogo: na benzenov obroč mora pripeti brom, obroč pa mora ostati cel. Iz poglavja o alkenih ve, da cikloheksen v trenutku razbarva bromovico, ker se brom adira na dvojno vez. Benzen ima na papirju kar tri dvojne vezi, pa bromovice ne razbarva. Z bromom reagira šele ob dodatku katalizatorja $\text{FeBr}_3$, in še takrat ne nastane adicijski produkt, ampak bromobenzen z nedotaknjenim obročem.
+Nina ima na vajah iz farmacevtske kemije nalogo: na benzenov obroč mora pripeti brom, obroč pa mora ostati cel. Ve, da cikloheksen v trenutku razbarva bromovico, ker se brom adira na dvojno vez. Benzen ima na papirju kar tri dvojne vezi, pa bromovice ne razbarva. Z bromom reagira šele s katalizatorjem $\text{FeBr}_3$, in še takrat nastane bromobenzen z nedotaknjenim obročem, ne adicijski produkt.
 
-Za to »upiranje« je kriva **aromatičnost**: posebna stabilnost nekaterih cikličnih sistemov z delokaliziranimi elektroni $\pi$. Aromatske obroče najdeš v velikem delu zdravil (paracetamol, ibuprofen), v barvilih in v biomolekulah (fenilalanin, baze DNA). Kdor jih hoče izdelati in spreminjati, mora poznati njihovo glavno reakcijo: **elektrofilno aromatsko substitucijo**.
+Za to »upiranje« je kriva **aromatičnost**: posebna stabilnost nekaterih cikličnih sistemov z delokaliziranimi elektroni $\pi$. Aromatski obroči so v mnogih zdravilih (paracetamol, ibuprofen), barvilih in biomolekulah (fenilalanin, baze DNA). Njihova glavna reakcija je **elektrofilna aromatska substitucija**.
 
 ## Razlaga
 
@@ -17,17 +17,24 @@ Pri hidrogenaciji cikloheksena (ena dvojna vez) se sprosti približno $120\,\tex
 
 ### Od kod ta stabilnost: zgradba benzena
 
-Vseh šest ogljikov je hibridiziranih $sp^2$, obroč je raven, koti so $120^\circ$. Vsak ogljik ima eno nehibridizirano orbitalo $p$, pravokotno na ravnino obroča. Šest orbital $p$ se prekriva v sklenjen krog nad in pod ravnino, v katerem je šest elektronov $\pi$. Vse vezi C–C so enako dolge ($139\,\text{pm}$), med enojno ($154\,\text{pm}$) in dvojno ($134\,\text{pm}$). Dve Kekuléjevi strukturi sta le resonančni strukturi; prava molekula je hibrid, zato benzen pogosto rišemo kot šestkotnik s krogom.
+Vseh šest ogljikov je hibridiziranih $sp^2$, obroč je raven, koti so $120^\circ$. Vsak ogljik ima eno nehibridizirano orbitalo $p$, pravokotno na ravnino obroča. Šest orbital $p$ se prekriva v sklenjen krog nad in pod ravnino, v katerem je šest elektronov $\pi$. Vse vezi C–C so enako dolge ($139\,\text{pm}$), med enojno ($154\,\text{pm}$) in dvojno ($134\,\text{pm}$). Dve Kekuléjevi strukturi (šestkotnik z izmeničnimi enojnimi in dvojnimi vezmi, enkrat tako, enkrat zamaknjeno) sta le resonančni strukturi; prava molekula je hibrid, zato benzen pogosto rišemo kot šestkotnik s krogom.
 
 ### Posplošitev: Hücklovo pravilo
 
-Benzen ni edini tak obroč. Spojina je **aromatska**, če hkrati velja:
+Benzen ni edini tak obroč. **Hücklovo pravilo:** spojina (molekula ali ion) je **aromatska**, če hkrati velja:
 
 - je ciklična in ravna,
 - vsak atom v obroču ima orbitalo $p$ (sklenjen, nepretrgan sistem $\pi$),
 - v sistemu $\pi$ je $4n + 2$ elektronov ($n = 0, 1, 2, \ldots$), torej $2$, $6$, $10$, $14$ …
 
-Če so prvi dve točki izpolnjeni, elektronov $\pi$ pa je $4n$ ($4$, $8$ …), je spojina **antiaromatska** in posebno nestabilna. Molekule, ki prvih dveh točk ne izpolnijo, so **nearomatske**: obnašajo se kot navadni polieni.
+Če so prvi dve točki izpolnjeni, elektronov $\pi$ pa je $4n$ ($4$, $8$ …), je spojina **antiaromatska** in posebno nestabilna. Molekule, ki prvih dveh točk ne izpolnijo, so **nearomatske**: obnašajo se kot navadni polieni. Pravilo velja strogo za monociklične sisteme; pri zlitih obročih (naftalen) štejemo vse elektrone $\pi$ in ga uporabljamo kot dobro oceno.
+
+**Utemeljitev (teorija MO).** V ravnem, cikličnem sistemu z $N$ orbitalami $p$ da Hücklova metoda energije $E_k = \alpha + 2\beta\cos\dfrac{2\pi k}{N}$, $k = 0, 1, \ldots, N - 1$, kjer je $\beta < 0$.
+1. Najnižja orbitala ($k = 0$, $E = \alpha + 2\beta$) je ena sama; orbitali $k$ in $N - k$ imata enako energijo, zato so višje orbitale v degeneriranih parih (pri sodem $N$ je ena sama še najvišja, $k = N/2$, ki je protivezna in pri štetju veznih elektronov ne nastopi).
+2. Najnižja sprejme $2$ elektrona, vsak naslednji par $4$. Lupina je zaprta natanko pri $2 + 4n$ elektronih.
+3. Pri $4n$ elektronih ostaneta v najvišjem zasedenem paru dva nesparjena elektrona (po Hundu), kar je energijsko neugodno: antiaromatičnost.
+
+Za benzen ($N = 6$) dobimo $\alpha + 2\beta$, dvakrat $\alpha + \beta$, dvakrat $\alpha - \beta$ in $\alpha - 2\beta$. Šest elektronov da $E_\pi = 2(\alpha + 2\beta) + 4(\alpha + \beta) = 6\alpha + 8\beta$, tri izolirane vezi C=C pa $3 \cdot 2(\alpha + \beta) = 6\alpha + 6\beta$. Razlika $2\beta$ je **delokalizacijska energija**, teoretična ustreznica izmerjene resonančne stabilizacije.
 
 ### Pravilo na drugih obročih: štetje elektronov $\pi$
 
@@ -71,18 +78,26 @@ Benzen je šibek nukleofil, zato potrebuje močan elektrofil, ki ga ustvari kata
 | alkiliranje F.–C. | $\text{RCl}$, $\text{AlCl}_3$ | $\text{R}^+$ | $\text{ArR}$ |
 | aciliranje F.–C. | $\text{RCOCl}$, $\text{AlCl}_3$ | $\text{RCO}^+$ | $\text{ArCOR}$ |
 
-Pri Friedel-Craftsovem alkiliranju nastane karbokation, ki se lahko premesti v stabilnejšega, tako kot pri $\text{S}_\text{N}1$ in E1. Acilijev ion je stabiliziran z resonanco in se ne premešča.
+Pri Friedel-Craftsovem alkiliranju nastane karbokation, ki se lahko premesti v stabilnejšega, tako kot pri $\text{S}_\text{N}1$ in E1. Acilijev ion je stabiliziran z resonanco in se ne premešča. Ravno alkilno verigo zato uvedemo z aciliranjem, karbonilno skupino pa nato reduciramo v $\text{CH}_2$, npr. z $\text{Zn(Hg)}/\text{HCl}$ (Clemmensenova redukcija).
+
+Alkil obroč aktivira, zato pri alkiliranju nastajajo tudi polialkilirani produkti; acilna skupina ga deaktivira, zato se aciliranje ustavi pri enem substituentu. Na močno deaktiviranih obročih (nitrobenzen) Friedel-Craftsovi reakciji ne potečeta.
 
 ### Drugi substituent: kako hitro in kam
 
-Skupina, ki je že na obroču, odloči, kako hitro poteče naslednja substitucija in kam gre nova skupina. Odloča stabilnost areniumskega iona:
+Skupina, ki je že na obroču, odloči, kako hitro poteče naslednja substitucija in kam gre nova skupina. Skupina je **aktivirajoča**, če je substitucija na substituiranem benzenu hitrejša kot na benzenu, in **deaktivirajoča**, če je počasnejša. Odloča stabilnost areniumskega iona:
 
 - **Aktivirajoče skupine** ($-\text{OH}$, $-\text{OR}$, $-\text{NH}_2$, alkil) dajejo obroču elektrone. Pri napadu na orto ali para mesto pride pozitivni naboj na ogljik s to skupino, ki ga stabilizira (pri $-\text{OH}$ celo z neveznim parom kisika). Usmerjajo **orto/para**, reakcija je hitrejša kot pri benzenu.
 - **Deaktivirajoče skupine** ($-\text{NO}_2$, $-\text{CN}$, $-\text{CHO}$, $-\text{COR}$, $-\text{COOH}$, $-\text{SO}_3\text{H}$) elektrone odvzemajo. Pri orto/para napadu bi pozitivni naboj sedel tik ob skupini, ki ga ne prenese. Ostane **meta**, reakcija je počasnejša.
 - **Halogeni** so izjema: z induktivnim učinkom obroč deaktivirajo, z neveznim parom pa stabilizirajo orto/para ion. Usmerjajo **orto/para**, a so počasnejši od benzena.
 
+**Utemeljitev usmerjanja.** Naj bo skupina G na C1. Narišemo resonančne strukture areniumskega iona za napad na C2 (orto), C3 (meta) in C4 (para).
+1. Pozitivni naboj je vedno na ogljikih v orto in para položaju glede na mesto napada.
+2. Pri napadu na C2 ali C4 je zato v eni strukturi naboj na C1, ki nosi G; pri napadu na C3 nikoli.
+3. Donor (alkil, nevezni par) to strukturo stabilizira, pri $-\text{OH}$ celo z dodatno strukturo $\text{C{=}O}^+\text{H}$, v kateri imajo vsi atomi oktet. Akceptor jo destabilizira.
+4. Po Hammondovem postulatu je prehodno stanje počasnega koraka podobno ionu, zato stabilnost iona določa hitrost in položaj.
+
 :::premisli
-Zakaj nitrobenzen pri nadaljnjem nitriranju da skoraj samo meta produkt, čeprav je tudi meta napad počasnejši kot pri benzenu?
+Pri nitrobenzenu so vsi trije položaji počasnejši kot pri benzenu. Napovej, kateri kljub temu prevlada pri nadaljnjem nitriranju, in pojasni, zakaj. Namig: kakšen naboj nosi dušik v $-\text{NO}_2$?
 ---
 Ker je meta napad »najmanj slab«. Pri orto in para napadu ena resonančna struktura areniumskega iona postavi pozitivni naboj na ogljik, vezan na $-\text{NO}_2$, ki ima tudi sam pozitivni dušik. Pri meta napadu se tej strukturi izogne, zato je meta ion najmanj nestabilen in nastaja najhitreje.
 :::
@@ -127,22 +142,24 @@ $\text{ArH} + \text{E}^+ \to [\text{Ar(H)E}]^+ \to \text{ArE} + \text{H}^+$
 
 ### Primer 3 (težji): vrstni red korakov v sintezi
 
-Nina za sintezo farmacevtskega intermediata potrebuje 1-bromo-3-nitrobenzen (meta izomer), izhaja pa iz benzena. Na voljo ima $\text{Br}_2/\text{FeBr}_3$ in $\text{HNO}_3/\text{H}_2\text{SO}_4$. V kakšnem vrstnem redu naj izvede reakciji?
+Nina za sintezo farmacevtskega intermediata potrebuje 1-bromo-3-propilbenzen, izhaja pa iz benzena. Na voljo ima $\text{Br}_2/\text{FeBr}_3$, 1-kloropropan z $\text{AlCl}_3$, propanoil klorid ($\text{CH}_3\text{CH}_2\text{COCl}$) z $\text{AlCl}_3$ in $\text{Zn(Hg)}/\text{HCl}$. Predlagaj zaporedje reakcij in utemelji, zakaj krajša pot ne gre.
 
-**Podatki:** izhodna snov benzen; cilj 1-bromo-3-nitrobenzen; reagenta $\text{Br}_2/\text{FeBr}_3$ in $\text{HNO}_3/\text{H}_2\text{SO}_4$
-**Iščemo:** vrstni red obeh substitucij
+**Podatki:** izhodna snov benzen; cilj 1-bromo-3-propilbenzen (substituenta v meta); reagenti $\text{Br}_2/\text{FeBr}_3$, $\text{CH}_3\text{CH}_2\text{CH}_2\text{Cl}/\text{AlCl}_3$, $\text{CH}_3\text{CH}_2\text{COCl}/\text{AlCl}_3$, $\text{Zn(Hg)}/\text{HCl}$
+**Iščemo:** zaporedje reakcij z vmesnimi produkti in utemeljitev
 
 :::formula
-Skupina na obroču usmerja: $-\text{Br}$ orto/para, $-\text{NO}_2$ meta.
+Usmerjanje: $-\text{Br}$ in alkil orto/para, $-\text{COR}$ meta. Alkiliranje s primarnim halidom: premestitev kationa. $\text{Zn(Hg)}/\text{HCl}$: $\text{C{=}O} \to \text{CH}_2$.
 :::
 
 **Rešitev:**
 
-1. Substituenta sta v meta položaju. Meta usmerja le $-\text{NO}_2$, zato mora ta skupina na obroč prva.
-2. Korak 1: nitriranje benzena da nitrobenzen.
-3. Korak 2: bromiranje nitrobenzena. Nitro skupina usmeri brom na meta mesto. Reakcija je počasnejša kot pri benzenu, zato potrebujemo nekoliko ostrejše pogoje.
-4. Kontrola: obraten vrstni red bi dal bromobenzen, ta pa bi nitro skupino usmeril v orto in para položaj, ne v meta.
-5. Odgovor: najprej nitriramo, nato bromiramo.
+1. Substituenta sta v meta položaju, oba ($-\text{Br}$ in propil) pa usmerjata orto/para. Noben vrstni red neposrednih substitucij ne da meta produkta, zato potrebujemo začasno meta usmerjevalno skupino.
+2. Propila ne moremo uvesti z 1-kloropropanom: primarni kation se premesti v sekundarnega in nastane izopropilbenzen.
+3. Korak 1: aciliranje s propanoil kloridom da 1-fenilpropan-1-on ($\text{C}_6\text{H}_5\text{COCH}_2\text{CH}_3$), ker se acilijev ion ne premešča.
+4. Korak 2: bromiranje. Acilna skupina deaktivira obroč in usmerja meta, zato nastane 1-(3-bromofenil)propan-1-on; potrebni so nekoliko ostrejši pogoji kot pri benzenu.
+5. Korak 3: Clemmensenova redukcija pretvori $\text{C{=}O}$ v $\text{CH}_2$; vez C–Br na obroču ostane, nastane 1-bromo-3-propilbenzen.
+6. Kontrola: obraten vrstni red bi dal bromobenzen, ta pa bi acilno skupino usmeril v orto in para položaj (predvsem para), ne v meta. Enako velja za 1-bromo-3-nitrobenzen: meta usmerjevalec $-\text{NO}_2$ mora na obroč prvi, zato najprej nitriramo in nato bromiramo.
+7. Odgovor: aciliranje, bromiranje, redukcija. Meta usmerjanje acilne skupine izkoristimo, preden jo pretvorimo v orto/para usmerjajoči propil.
 
 ### Primer 4: zdaj ti
 
@@ -169,10 +186,10 @@ Nastaneta 2-nitroanizol (orto) in 4-nitroanizol (para); para pogosto prevladuje,
 
 ## Pogoste napake
 
-- **»Tri dvojne vezi v obroču pomenijo aromatičnost.«** Šteje število elektronov $\pi$ v sklenjenem, ravnem sistemu, ne število vezi. Ciklooktatetraen ima štiri dvojne vezi in $8$ elektronov, je upognjen in nearomatski. Vedno preveri vse tri pogoje Hücklovega pravila.
+- **»Tri dvojne vezi v obroču pomenijo aromatičnost.«** Šteje število elektronov $\pi$ v sklenjenem, ravnem sistemu, ne število vezi. Ciklooktatetraen ima štiri dvojne vezi in $8$ elektronov, je upognjen in nearomatski.
 - **»Benzen reagira kot alken.«** Benzen brez katalizatorja ne adira broma, s katalizatorjem pa da substitucijski produkt, ker se tako aromatičnost obnovi. Adicija bi stala okoli $150\,\text{kJ/mol}$ stabilizacije.
 - **»Halogeni deaktivirajo, torej usmerjajo meta.«** Hitrost in usmerjanje sta dve različni vprašanji. Halogeni zmanjšajo hitrost (induktivno), a z neveznim parom stabilizirajo orto/para ion. Rezultat: počasneje, a orto/para.
-- **Alkiliranje z 1-kloropropanom da propilbenzen.** Primarni karbokation se premesti v sekundarnega, zato nastane predvsem izopropilbenzen (kumen). Ravno verigo dobiš z aciliranjem in nato z redukcijo karbonilne skupine.
+- **Alkiliranje z 1-kloropropanom da propilbenzen.** Primarni karbokation se premesti v sekundarnega, zato nastane predvsem izopropilbenzen (kumen). Ravno verigo dobiš z aciliranjem in redukcijo.
 
 ## Povzetek
 
@@ -183,27 +200,57 @@ Nastaneta 2-nitroanizol (orto) in 4-nitroanizol (para); para pogosto prevladuje,
 - Reakcije: halogeniranje ($\text{FeX}_3$), nitriranje ($\text{NO}_2^+$), sulfoniranje, Friedel-Craftsovo alkiliranje (premestitve) in aciliranje.
 - Aktivirajoče skupine in halogeni usmerjajo orto/para, ostale deaktivirajoče skupine meta; v sintezi je vrstni red korakov pomemben.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije aromatske, antiaromatske in nearomatske spojine (Hücklovo pravilo z vsemi pogoji) in utemeljitev pravila $4n + 2$ s teorijo MO;
+- izpeljavo resonančne stabilizacije benzena iz hidrogenacijskih entalpij in delokalizacijske energije $2\beta$;
+- mehanizem elektrofilne aromatske substitucije in nastanek elektrofila v petih osnovnih reakcijah;
+- definicijo aktivirajoče in deaktivirajoče skupine ter utemeljitev usmerjanja z resonančnimi strukturami areniumskega iona;
+- omejitve Friedel-Craftsovega alkiliranja (premestitve, polialkiliranje, deaktivirani obroči).
+
+### Naloga 1
+
+Hidrogenacijske entalpije do cikloheksana so: cikloheksen $-120\,\text{kJ/mol}$, cikloheksa-1,3-dien $-232\,\text{kJ/mol}$, benzen $-208\,\text{kJ/mol}$. (a) Izračunaj resonančno stabilizacijo benzena in stabilizacijo zaradi konjugacije v cikloheksa-1,3-dienu. (b) S Hessovim zakonom izračunaj $\Delta H$ za $\text{C}_6\text{H}_6 + \text{H}_2 \to$ cikloheksa-1,3-dien in razloži, kaj pomeni predznak. (c) Delokalizacijsko energijo $2\beta$ izenači z resonančno stabilizacijo in oceni $\beta$.
+
+**Rešitev:**
+
+1. Tri izolirane dvojne vezi bi dale $3 \cdot (-120) = -360$, v $\text{kJ/mol}$.
+2. Benzen: $-208 - (-360) = 152$, resonančna stabilizacija je $152\,\text{kJ/mol}$.
+3. Dien: pričakovano $2 \cdot (-120) = -240$, izmerjeno $-232$; stabilizacija $-232 - (-240) = 8$, torej le $8\,\text{kJ/mol}$, kar je $152/8 = 19$-krat manj kot pri benzenu. Konjugacija sama ne zadošča, potreben je sklenjen aromatski krog.
+4. Hessov zakon: pot benzen → cikloheksan ($-208$) razdelimo na benzen → dien ($\Delta H_x$) in dien → cikloheksan ($-232$), zato $\Delta H_x = -208 - (-232) = 24$, torej $+24\,\text{kJ/mol}$.
+5. Prva adicija $\text{H}_2$ na benzen je endotermna, na alken pa močno eksotermna ($-120\,\text{kJ/mol}$). Izguba aromatičnosti stane več, kot se sprosti pri adiciji; zato benzen hidrogeniramo le v ostrih pogojih, vmesni dien pa reagira hitreje in ga ne izoliramo.
+6. Energija se z delokalizacijo zniža, zato je $2\beta = -152\,\text{kJ/mol}$ in $\beta = -76\,\text{kJ/mol}$.
+7. Odgovor: stabilizacija benzena je $152\,\text{kJ/mol}$, diena $8\,\text{kJ/mol}$; $\Delta H_x = +24\,\text{kJ/mol}$; $\beta \approx -76\,\text{kJ/mol}$.
+
+### Naloga 2
+
+Natančno navedi Hücklovo pravilo z vsemi pogoji in ga utemelji s teorijo molekulskih orbital. Nato utemelji, ali so aromatski, antiaromatski ali nearomatski: ciklopropenilni kation $\text{C}_3\text{H}_3^+$, furan $\text{C}_4\text{H}_4\text{O}$, raven ciklooktatetraenski dianion $\text{C}_8\text{H}_8^{2-}$ in cikloheptatrien $\text{C}_7\text{H}_8$.
+
+**Rešitev:**
+
+1. Pravilo: monociklična spojina je aromatska, če je ravna, ima vsak atom obroča orbitalo $p$ (sklenjen sistem $\pi$) in je v tem sistemu $4n + 2$ elektronov ($n = 0, 1, 2, \ldots$); pri istih prvih pogojih in $4n$ elektronih je antiaromatska.
+2. MO: $E_k = \alpha + 2\beta\cos(2\pi k/N)$; najnižja orbitala je ena sama, višje so v degeneriranih parih, zato je lupina zaprta pri $2 + 4n$ elektronih, pri $4n$ pa ostaneta dva nesparjena.
+3. $\text{C}_3\text{H}_3^+$: trije ogljiki $sp^2$, ena vez C=C ($2$) in $\text{C}^+$ ($0$), skupaj $2 = 4 \cdot 0 + 2$: aromatski.
+4. Furan: dve vezi C=C ($4$) in en nevezni par kisika v orbitali $p$ ($2$); drugi par leži v ravnini in ne šteje. Skupaj $6 = 4 \cdot 1 + 2$: aromatski.
+5. $\text{C}_8\text{H}_8^{2-}$: štiri vezi C=C ($8$) in dva dodatna elektrona ($2$), skupaj $10 = 4 \cdot 2 + 2$; ion je raven in sklenjen: aromatski.
+6. Cikloheptatrien: skupina $\text{CH}_2$ je $sp^3$ in prekine krog orbital $p$, zato je nearomatski, čeprav ima $6$ elektronov $\pi$; aromatski je šele tropilijev kation (Primer 1).
+7. Odgovor: $\text{C}_3\text{H}_3^+$, furan in $\text{C}_8\text{H}_8^{2-}$ so aromatski, cikloheptatrien je nearomatski.
+
 ## Drugače: Na sliki
 
-Predstavljaj si benzen od strani. Ravnina obroča je kot mizna plošča s šestimi ogljiki. Iz vsakega ogljika štrli orbitala $p$, kot ročka, ena polovica nad mizo in ena pod njo. Šest ročk se dotika in tvori dva obroča elektronske gostote, »krof« nad mizo in »krof« pod njo.
+Benzen je od strani kot miza s šestimi ogljiki; orbitale $p$ štrlijo kot ročke nad in pod mizo in tvorijo »krof« elektronov zgoraj in spodaj. Elektrofil zgrabi par iz zgornjega krofa, en ogljik postane $sp^3$ in krof se pretrga: pet ogljikov si deli štiri elektrone, naboj pa tri od njih. Ko se proton odcepi, je krof spet cel.
 
-Elektrofil prileti od zgoraj in zgrabi par elektronov iz zgornjega krofa. En ogljik pri tem postane $sp^3$, njegova ročka izgine in krof se pretrga: preostalih pet ogljikov si deli štiri elektrone, pozitivni naboj pa tri od njih. Ko se proton odcepi, se ročka vrne in krof je spet cel.
+## Drugače: Uporaba v stroki
 
-Usmerjanje si nariši kot šestkotnik z oznakami: na skupini je položaj 1, orto sta 2 in 6, meta 3 in 5, para 4. Pri napadu na 2 ali 4 se pozitivni naboj v eni resonančni strukturi znajde na 1, pri napadu na 3 nikoli.
-
-## Drugače: Iz vsakdanjega življenja
-
-Aromatski obroč je kot zelo dobro uigrana ekipa šestih ljudi, ki si delijo delo. Če bi jo razbil (adicija), bi izgubil veliko. Zato obroč raje sprejme novega člana tako, da enega starega (proton) pošlje domov, ekipa pa ostane cela. To je substitucija.
-
-Primer iz prakse: TNT (2,4,6-trinitrotoluen) nastane z zaporednim nitriranjem toluena. Metilna skupina usmerja orto/para, zato pridejo nitro skupine na položaje 2, 4 in 6.
+- **Kumenski postopek:** benzen in propen na zeolitu dasta kumen, iz njega pa z oksidacijo in cepitvijo fenol in aceton; tako nastane večina svetovnega fenola.
+- **Farmacija:** sinteza ibuprofena se začne s Friedel-Craftsovim aciliranjem izobutilbenzena v para položaj.
+- **Eksplozivi:** TNT nastane z zaporednim nitriranjem toluena; metil usmerja na 2, 4 in 6, vsaka nitro skupina pa deaktivira, zato so pogoji vsakič ostrejši.
 
 ## Drugače: Bolj natančno
 
-Hücklovo pravilo izhaja iz teorije molekulskih orbital. Za raven cikličen sistem z $N$ orbitalami $p$ je najnižja orbitala $\pi$ nedegenerirana, nad njo pa so orbitale v degeneriranih parih. Najnižja sprejme $2$ elektrona, vsak naslednji par orbital $4$. Zaprto lupino (vse vezne orbitale polne) dobimo pri $2 + 4n$ elektronih. Pri $4n$ elektronih ostaneta dva elektrona nesparjena v degeneriranem paru, kar je energijsko neugodno: od tod antiaromatičnost.
-
-Za benzen ($N = 6$) so energije orbital $\alpha + 2\beta$, dvakrat $\alpha + \beta$, dvakrat $\alpha - \beta$ in $\alpha - 2\beta$ ($\beta < 0$). Šest elektronov napolni tri vezne orbitale. Elektronska energija sistema $\pi$ je $6\alpha + 8\beta$, za tri izolirane etenske vezi pa $6\alpha + 6\beta$; razlika $2\beta$ je delokalizacijska energija.
-
-Po Hammondovem postulatu je prehodno stanje počasnega koraka po energiji blizu areniumskemu ionu, zato vse, kar stabilizira ion, zniža tudi aktivacijsko energijo.
+**Frostov krog.** Energije $E_k$ dobiš grafično: v krog s polmerom $2|\beta|$ okoli $\alpha$ včrtaš pravilni $N$-kotnik z ogliščem spodaj; višine oglišč so nivoji MO. Ciklobutadien ima tako dve nevezni orbitali z enim elektronom vsaka, zato se raztegne v pravokotnik z izmeničnimi vezmi.
 
 ## Preveri se
 

@@ -24,19 +24,19 @@ Kdor te funkcije zanesljivo pozna, kasneje veliko lažje odvaja, integrira in ra
 
 **2. Lastnosti funkcij.**
 
-- **Injektivnost:** iz $x_1 \neq x_2$ sledi $f(x_1) \neq f(x_2)$. Vsaka vodoravna premica seka graf največ enkrat.
-- **Surjektivnost:** $Z_f = B$, torej je vsak element kodomene vrednost funkcije.
+- **Injektivnost:** $f\colon A \to B$ je injektivna, če za vse $x_1, x_2 \in A$ iz $x_1 \neq x_2$ sledi $f(x_1) \neq f(x_2)$. Vsaka vodoravna premica seka graf največ enkrat.
+- **Surjektivnost:** $Z_f = B$, torej za vsak $y \in B$ obstaja $x \in A$ z $f(x) = y$.
 - **Bijektivnost:** funkcija je hkrati injektivna in surjektivna.
-- **Monotonost:** $f$ je **naraščajoča**, če iz $x_1 < x_2$ sledi $f(x_1) \le f(x_2)$, in **strogo naraščajoča**, če sledi $f(x_1) < f(x_2)$. Podobno definiramo (strogo) padajočo funkcijo. Strogo monotona funkcija je injektivna.
-- **Sodost in lihost:** $f$ je **soda**, če je $f(-x) = f(x)$ za vse $x \in D_f$ (graf je simetričen glede na os $y$), in **liha**, če je $f(-x) = -f(x)$ (graf je simetričen glede na izhodišče). Pri tem mora biti $D_f$ simetrično glede na $0$.
-- **Periodičnost:** $f$ je periodična s periodo $\omega > 0$, če je $f(x + \omega) = f(x)$ za vse $x$.
+- **Monotonost:** naj bo $I \subseteq D_f$ (običajno interval). $f$ je na $I$ **naraščajoča**, če za vse $x_1, x_2 \in I$ iz $x_1 < x_2$ sledi $f(x_1) \le f(x_2)$, in **strogo naraščajoča**, če sledi $f(x_1) < f(x_2)$. Podobno definiramo (strogo) padajočo funkcijo.
+- **Sodost in lihost:** naj bo $D_f$ simetrično glede na $0$ (iz $x \in D_f$ sledi $-x \in D_f$). Tedaj je $f$ **soda**, če je $f(-x) = f(x)$ za vse $x \in D_f$ (graf je simetričen glede na os $y$), in **liha**, če je $f(-x) = -f(x)$ za vse $x \in D_f$ (graf je simetričen glede na izhodišče).
+- **Periodičnost:** $f$ je periodična s periodo $\omega > 0$, če za vse $x \in D_f$ velja $x + \omega \in D_f$ in $f(x + \omega) = f(x)$. Najmanjšo tako $\omega$, če obstaja, imenujemo **osnovna perioda**.
 - **Omejenost:** $f$ je omejena, če obstaja $M$, da je $|f(x)| \le M$ za vse $x \in D_f$.
 
 **Premiki in raztegi grafa.** Iz grafa $y = f(x)$ hitro narišemo sorodne grafe. Graf $y = f(x - a)$ je premaknjen za $a$ v desno, graf $y = f(x) + b$ za $b$ navzgor. Graf $y = c \cdot f(x)$ je navpično raztegnjen s faktorjem $c$, graf $y = f(kx)$ pa vodoravno stisnjen s faktorjem $k$ (za $k > 1$). Graf $y = -f(x)$ je zrcaljen čez os $x$, graf $y = f(-x)$ čez os $y$. Tako na primer graf $y = 2\sin(3x) + 1$ dobimo iz sinusoide, ki jo stisnemo na periodo $\frac{2\pi}{3}$, raztegnemo na amplitudo $2$ in dvignemo za $1$.
 
 **3. Kompozitum in inverzna funkcija.** **Kompozitum** funkcij je $(g \circ f)(x) = g(f(x))$: najprej deluje $f$, nato $g$. Na primer za $f(x) = x^2 + 1$ in $g(x) = \ln x$ je $(g \circ f)(x) = \ln(x^2 + 1)$. Kompozitum ni komutativen: $(f \circ g)(x) = (\ln x)^2 + 1$ je druga funkcija.
 
-Če je $f\colon D_f \to Z_f$ bijektivna, obstaja **inverzna funkcija** $f^{-1}\colon Z_f \to D_f$, za katero velja
+**Izrek.** Funkcija $f\colon A \to B$ ima **inverzno funkcijo** $f^{-1}\colon B \to A$ natanko tedaj, ko je bijektivna. (Surjektivnost zagotovi, da ima vsak $y \in B$ vsaj eno prasliko, injektivnost pa, da je ta ena sama.) Za bijektivno $f\colon D_f \to Z_f$ je torej $f^{-1}\colon Z_f \to D_f$ in velja
 
 $$f^{-1}(f(x)) = x \ \text{za } x \in D_f, \qquad f(f^{-1}(y)) = y \ \text{za } y \in Z_f.$$
 
@@ -48,19 +48,29 @@ Zakaj funkcija $x^2$ na vsem $\mathbb{R}$ nima inverza?
 Vodoravna premica $y = 4$ seka graf v točkah $x = -2$ in $x = 2$. Inverz bi moral številu $4$ prirediti dve vrednosti, funkcija pa vsakemu argumentu priredi natanko eno.
 :::
 
+Injektivnost najlaže pokažemo z monotonostjo.
+
+**Izrek.** Naj bo $f\colon D \to \mathbb{R}$ strogo naraščajoča. Tedaj je $f$ injektivna, njen inverz $f^{-1}\colon f(D) \to D$ pa je prav tako strogo naraščajoč. (Enako za strogo padajočo.)
+
+*Dokaz.* Naj bo $x_1 \neq x_2$, recimo $x_1 < x_2$. Tedaj je $f(x_1) < f(x_2)$, torej $f(x_1) \neq f(x_2)$, zato je $f$ injektivna. Naj bosta $y_1 < y_2$ iz $f(D)$ in $x_i = f^{-1}(y_i)$. Če bi bilo $x_1 \ge x_2$, bi zaradi monotonosti veljalo $y_1 = f(x_1) \ge f(x_2) = y_2$, kar je protislovje. Torej $x_1 < x_2$. $\square$
+
 Kadar $f$ ni injektivna, jo **zožimo** na interval, na katerem je strogo monotona. Tako dobimo $\sqrt{x}$ kot inverz funkcije $x^2$, zožene na $[0, \infty)$.
 
-**4. Potence, polinomi, racionalne funkcije.** Potenčna funkcija $x^n$ je za sodi $n$ soda, za lihi $n$ liha. **Polinom** stopnje $n$ je $p(x) = a_n x^n + \dots + a_1 x + a_0$ z $a_n \neq 0$; definiran je na vsem $\mathbb{R}$ in ima največ $n$ realnih ničel. **Racionalna funkcija** je kvocient polinomov $\frac{p(x)}{q(x)}$; definirana je povsod razen v ničlah imenovalca, kjer ima pole ali odpravljive nezveznosti.
+**4. Potence, polinomi, racionalne funkcije.** Potenčna funkcija $x^n$ je za sodi $n$ soda, za lihi $n$ liha. **Polinom** stopnje $n$ je $p(x) = a_n x^n + \dots + a_1 x + a_0$ z $a_n \neq 0$; definiran je na vsem $\mathbb{R}$ in ima največ $n$ realnih ničel. **Racionalna funkcija** je kvocient polinomov $\frac{p(x)}{q(x)}$; definirana je povsod razen v ničlah imenovalca, kjer ima pole (graf ob navpični asimptoti zbeži proti $\pm\infty$) ali luknje, če se ničla imenovalca okrajša s števcem.
 
 **5. Eksponentna funkcija.** Za osnovo $a > 0$, $a \neq 1$, je $f(x) = a^x$ definirana na $\mathbb{R}$, njena zaloga vrednosti je $(0, \infty)$. Za $a > 1$ je strogo naraščajoča, za $0 < a < 1$ strogo padajoča. Vedno gre skozi točko $(0, 1)$. Pravila: $a^{x+y} = a^x a^y$, $(a^x)^y = a^{xy}$, $a^{-x} = \frac{1}{a^x}$. Posebno vlogo ima **naravna eksponentna funkcija** $e^x$ z osnovo $e \approx 2{,}718$, ki jo bomo srečali pri odvodih: je edina eksponentna funkcija, ki je sama sebi enaka po odvajanju.
 
 **6. Logaritemska funkcija.** Pravilo pride za vzorcem. Zapiši nekaj potenc števila $2$:
 
-| $n$ | $1$ | $2$ | $3$ | $4$ | $5$ |
-|---|---|---|---|---|---|
-| $2^n$ | $2$ | $4$ | $8$ | $16$ | $32$ |
+| $n$ | $2^n$ |
+|---|---|
+| $1$ | $2$ |
+| $2$ | $4$ |
+| $3$ | $8$ |
+| $4$ | $16$ |
+| $5$ | $32$ |
 
-Zmnoži dve vrednosti iz spodnje vrstice, na primer $4 \cdot 8 = 32$, in poglej eksponenta: $2 + 3 = 5$. Množenje vrednosti ustreza seštevanju eksponentov. Funkcija, ki vrednosti $2^n$ vrne eksponent $n$, torej množenje spremeni v seštevanje.
+Zmnoži dve vrednosti iz desnega stolpca, na primer $4 \cdot 8 = 32$, in poglej eksponenta: $2 + 3 = 5$. Množenje vrednosti ustreza seštevanju eksponentov. Funkcija, ki vrednosti $2^n$ vrne eksponent $n$, torej množenje spremeni v seštevanje.
 
 :::premisli
 Koliko je $\log_2 (8 \cdot 16)$, ne da bi množil?
@@ -72,7 +82,9 @@ Ta funkcija je **logaritem**: $\log_a x$ je inverz eksponentne funkcije $a^x$:
 
 $$y = \log_a x \iff a^y = x, \qquad x > 0.$$
 
-Zato je $D = (0, \infty)$ in $Z = \mathbb{R}$, graf gre skozi $(1, 0)$. Pravila sledijo iz pravil za potence: $\log_a(xy) = \log_a x + \log_a y$, $\log_a \frac{x}{y} = \log_a x - \log_a y$, $\log_a x^r = r \log_a x$ in prehod na drugo osnovo $\log_a x = \frac{\ln x}{\ln a}$. Naravni logaritem je $\ln x = \log_e x$, desetiški pa $\log x = \log_{10} x$. Velja $e^{\ln x} = x$ za $x > 0$ in $\ln e^x = x$ za vse $x$.
+Zato je $D = (0, \infty)$ in $Z = \mathbb{R}$, graf gre skozi $(1, 0)$. Za $a > 0$, $a \neq 1$, $x, y > 0$ in $r \in \mathbb{R}$ veljajo pravila $\log_a(xy) = \log_a x + \log_a y$, $\log_a \frac{x}{y} = \log_a x - \log_a y$, $\log_a x^r = r \log_a x$ in prehod na drugo osnovo $\log_a x = \frac{\ln x}{\ln a}$.
+
+*Izpeljava.* Naj bo $u = \log_a x$ in $v = \log_a y$, torej $a^u = x$ in $a^v = y$. Tedaj je $a^{u+v} = a^u a^v = xy$, zato $\log_a(xy) = u + v$. Iz $x^r = (a^u)^r = a^{ru}$ sledi $\log_a x^r = r\log_a x$, kvocient pa sledi iz $\frac{x}{y} = x \cdot y^{-1}$ in $\log_a y^{-1} = -\log_a y$. Za prehod na drugo osnovo enakost $x = a^{\log_a x}$ logaritmiramo z $\ln$: $\ln x = \log_a x \cdot \ln a$, delimo z $\ln a \neq 0$. $\square$ Naravni logaritem je $\ln x = \log_e x$, desetiški pa $\log x = \log_{10} x$. Velja $e^{\ln x} = x$ za $x > 0$ in $\ln e^x = x$ za vse $x$.
 
 **7. Krožne (kotne) funkcije.** Na enotski krožnici točka pri kotu $x$ (v radianih) ima koordinati $(\cos x, \sin x)$. Funkciji $\sin$ in $\cos$ sta definirani na $\mathbb{R}$, zaloga vrednosti je $[-1, 1]$, perioda je $2\pi$. Sinus je lih, kosinus sod. Velja $\sin^2 x + \cos^2 x = 1$. Tangens $\tan x = \frac{\sin x}{\cos x}$ ni definiran v točkah $x = \frac{\pi}{2} + k\pi$, $k \in \mathbb{Z}$, ima periodo $\pi$ in je lih; kotangens $\cot x = \frac{\cos x}{\sin x}$ ni definiran v $x = k\pi$. V analizi kote vedno merimo v radianih: $180^\circ = \pi\,\mathrm{rad}$.
 
@@ -82,9 +94,13 @@ Zato je $D = (0, \infty)$ in $Z = \mathbb{R}$, graf gre skozi $(1, 0)$. Pravila 
 - $\arccos\colon [-1, 1] \to [0, \pi]$ je inverz kosinusa, zoženega na $[0, \pi]$,
 - $\arctan\colon \mathbb{R} \to (-\frac{\pi}{2}, \frac{\pi}{2})$ je inverz tangensa, zoženega na $(-\frac{\pi}{2}, \frac{\pi}{2})$.
 
-Zato je na primer $\arcsin(\sin x) = x$ samo za $x \in [-\frac{\pi}{2}, \frac{\pi}{2}]$.
+Zato je na primer $\arcsin(\sin x) = x$ samo za $x \in [-\frac{\pi}{2}, \frac{\pi}{2}]$, $\sin(\arcsin x) = x$ pa velja za vse $x \in [-1, 1]$.
 
-**9. Hiperbolične funkcije.** Pri verižnicah, v termodinamiki in pri reševanju diferencialnih enačb srečamo še $\operatorname{sh} x = \frac{e^x - e^{-x}}{2}$ in $\operatorname{ch} x = \frac{e^x + e^{-x}}{2}$, za kateri velja $\operatorname{ch}^2 x - \operatorname{sh}^2 x = 1$.
+**Trditev.** Za vsak $x \in [-1, 1]$ velja $\arcsin x + \arccos x = \frac{\pi}{2}$ in $\cos(\arcsin x) = \sqrt{1 - x^2}$.
+
+*Dokaz.* Naj bo $\alpha = \arcsin x$, torej $\alpha \in [-\frac{\pi}{2}, \frac{\pi}{2}]$ in $\sin\alpha = x$. Kot $\frac{\pi}{2} - \alpha$ leži v $[0, \pi]$ in $\cos(\frac{\pi}{2} - \alpha) = \sin\alpha = x$; ker je $\arccos x$ edini kot iz $[0, \pi]$ s kosinusom $x$, je $\arccos x = \frac{\pi}{2} - \alpha$. Ker je $\alpha \in [-\frac{\pi}{2}, \frac{\pi}{2}]$, je $\cos\alpha \ge 0$; iz $\cos^2\alpha = 1 - \sin^2\alpha = 1 - x^2$ zato sledi $\cos(\arcsin x) = \sqrt{1 - x^2}$. $\square$
+
+**9. Hiperbolične funkcije.** Pri verižnicah, v termodinamiki in pri reševanju diferencialnih enačb srečamo še $\operatorname{sh} x = \frac{e^x - e^{-x}}{2}$ (liha) in $\operatorname{ch} x = \frac{e^x + e^{-x}}{2}$ (soda), za kateri za vse $x \in \mathbb{R}$ velja $\operatorname{ch}^2 x - \operatorname{sh}^2 x = 1$. Dokaz: $\operatorname{ch}^2 x - \operatorname{sh}^2 x = \frac{(e^{2x} + 2 + e^{-2x}) - (e^{2x} - 2 + e^{-2x})}{4} = \frac{4}{4} = 1$.
 
 **Elementarne funkcije** so vse funkcije, ki jih dobimo iz konstant, potenc, eksponentne, logaritemske, krožnih in ciklometričnih funkcij s končno mnogo seštevanji, odštevanji, množenji, deljenji in kompozitumi.
 
@@ -131,23 +147,25 @@ Iz $y = f(x)$ izrazimo $x$; nato zamenjamo oznaki. Velja $D_{f^{-1}} = Z_f$ in $
 
 ### Primer 3 (težji)
 
-Pri reakciji prvega reda se množinska koncentracija reaktanta s časom spreminja po zakonu $c(t) = c_0 e^{-kt}$. Začetna koncentracija je $c_0 = 0{,}80\,\mathrm{mol/L}$, konstanta hitrosti je $k = 0{,}046\,\mathrm{min^{-1}}$. Izrazi čas kot funkcijo koncentracije, izračunaj razpolovni čas in čas, po katerem koncentracija pade na $0{,}20\,\mathrm{mol/L}$.
+Pri reakciji prvega reda množinska koncentracija reaktanta pada po zakonu $c(t) = c_0 e^{-kt}$, a $c_0$ in $k$ nista znana. V laboratoriju izmerimo $c = 0{,}64\,\mathrm{mol/L}$ ob $t_1 = 5\,\mathrm{min}$ in $c = 0{,}32\,\mathrm{mol/L}$ ob $t_2 = 20\,\mathrm{min}$. Določi konstanto hitrosti $k$, razpolovni čas in začetno koncentracijo $c_0$, izrazi čas kot funkcijo koncentracije (z definicijskim območjem) in izračunaj, kdaj koncentracija pade na $0{,}08\,\mathrm{mol/L}$.
 
-**Podatki:** $c(t) = c_0 e^{-kt}$, $c_0 = 0{,}80\,\mathrm{mol/L}$, $k = 0{,}046\,\mathrm{min^{-1}}$, končna koncentracija $c = 0{,}20\,\mathrm{mol/L}$
-**Iščemo:** inverzno funkcijo $t(c)$, razpolovni čas $t_{1/2}$ in čas $t$, ko je $c = 0{,}20\,\mathrm{mol/L}$
+**Podatki:** $c(t) = c_0 e^{-kt}$, $c(t_1) = 0{,}64\,\mathrm{mol/L}$ pri $t_1 = 5\,\mathrm{min}$, $c(t_2) = 0{,}32\,\mathrm{mol/L}$ pri $t_2 = 20\,\mathrm{min}$, končna koncentracija $c = 0{,}08\,\mathrm{mol/L}$
+**Iščemo:** $k$, razpolovni čas $t_{1/2}$, $c_0$, inverzno funkcijo $t(c)$ in čas $t$, ko je $c = 0{,}08\,\mathrm{mol/L}$
 
 :::formula
-Logaritem je inverz eksponentne funkcije: $e^{u} = v \iff u = \ln v$. Torej iz $c = c_0 e^{-kt}$ sledi $t = \dfrac{1}{k} \ln \dfrac{c_0}{c}$.
+Kvocient meritev: $\dfrac{c(t_1)}{c(t_2)} = e^{k(t_2 - t_1)}$. Logaritem je inverz eksponentne funkcije: $e^{u} = v \iff u = \ln v$. Torej iz $c = c_0 e^{-kt}$ sledi $t = \dfrac{1}{k} \ln \dfrac{c_0}{c}$ in $t_{1/2} = \dfrac{\ln 2}{k}$.
 :::
 
 **Rešitev:**
 
-1. Delimo z $c_0$, da osamimo eksponentno funkcijo: $\dfrac{c}{c_0} = e^{-kt}$.
-2. Logaritmiramo, ker je $\ln$ inverz funkcije $e^x$: $\ln \dfrac{c}{c_0} = -kt$, zato $t(c) = \dfrac{1}{k} \ln \dfrac{c_0}{c}$ za $0 < c \le c_0$.
-3. Razpolovni čas: $c = \frac{c_0}{2}$, torej $t_{1/2} = \dfrac{\ln 2}{k} = \dfrac{0{,}6931}{0{,}046\,\mathrm{min^{-1}}} \approx 15{,}1\,\mathrm{min}$. Neodvisen je od $c_0$.
-4. Za $c = 0{,}20\,\mathrm{mol/L}$: $\dfrac{c_0}{c} = \dfrac{0{,}80}{0{,}20} = 4$ in $t = \dfrac{\ln 4}{0{,}046\,\mathrm{min^{-1}}} = \dfrac{1{,}3863}{0{,}046}\,\mathrm{min} \approx 30{,}1\,\mathrm{min}$.
-5. Preizkus: koncentracija pade na četrtino v dveh razpolovnih časih, $2 \cdot 15{,}07\,\mathrm{min} \approx 30{,}1\,\mathrm{min}$, kar se ujema.
-6. Odgovor: $t(c) = \frac{1}{k}\ln\frac{c_0}{c}$; razpolovni čas je približno $15{,}1\,\mathrm{min}$, koncentracija $0{,}20\,\mathrm{mol/L}$ pa je dosežena po približno $30{,}1\,\mathrm{min}$.
+1. Meritvi delimo, da se neznani $c_0$ okrajša: $\dfrac{c(t_1)}{c(t_2)} = \dfrac{c_0 e^{-kt_1}}{c_0 e^{-kt_2}} = e^{k(t_2 - t_1)}$, torej $e^{15k} = \dfrac{0{,}64}{0{,}32} = 2$ ($k$ v $\mathrm{min^{-1}}$).
+2. Logaritmiramo, ker je $\ln$ inverz funkcije $e^x$: $15k = \ln 2$, zato $k = \dfrac{0{,}6931}{15\,\mathrm{min}} \approx 0{,}0462\,\mathrm{min^{-1}}$.
+3. Razpolovni čas: iz $\frac{c_0}{2} = c_0 e^{-kt_{1/2}}$ sledi $t_{1/2} = \dfrac{\ln 2}{k} = 15\,\mathrm{min}$. To kažeta že meritvi: v $15\,\mathrm{min}$ je koncentracija padla na polovico. Neodvisen je od $c_0$.
+4. Začetna koncentracija iz prve meritve: $c_0 = c(t_1)\, e^{kt_1}$, kjer je $e^{5k} = 2^{5/15} = 2^{1/3} \approx 1{,}260$, torej $c_0 \approx 0{,}64 \cdot 1{,}260\,\mathrm{mol/L} \approx 0{,}806\,\mathrm{mol/L}$.
+5. Inverzna funkcija: iz $\frac{c}{c_0} = e^{-kt}$ z logaritmiranjem $t(c) = \dfrac{1}{k} \ln \dfrac{c_0}{c}$. Ker je $c(t)$ za $t \ge 0$ strogo padajoča z zalogo vrednosti $(0, c_0]$, je $t(c)$ definirana za $0 < c \le c_0$.
+6. Za $c = 0{,}08\,\mathrm{mol/L}$: $\dfrac{1}{k} = \dfrac{15\,\mathrm{min}}{\ln 2} \approx 21{,}64\,\mathrm{min}$ in $\ln\dfrac{0{,}806}{0{,}08} \approx 2{,}310$, torej $t \approx 21{,}64 \cdot 2{,}310\,\mathrm{min} \approx 50{,}0\,\mathrm{min}$.
+7. Preizkus brez kalkulatorja: od $0{,}32$ do $0{,}08\,\mathrm{mol/L}$ koncentracija pade na četrtino, torej v dveh razpolovnih časih: $20\,\mathrm{min} + 2 \cdot 15\,\mathrm{min} = 50\,\mathrm{min}$ ✓.
+8. Odgovor: $k \approx 0{,}0462\,\mathrm{min^{-1}}$, razpolovni čas je $15\,\mathrm{min}$, začetna koncentracija približno $0{,}806\,\mathrm{mol/L}$, $t(c) = \frac{1}{k}\ln\frac{c_0}{c}$ za $0 < c \le c_0$, koncentracija $0{,}08\,\mathrm{mol/L}$ pa je dosežena po $50\,\mathrm{min}$.
 
 ### Primer 4 – zdaj ti
 
@@ -190,29 +208,71 @@ $t = -30\,\mathrm{min} \cdot \ln 0{,}2 = 30\,\mathrm{min} \cdot \ln 5 \approx 48
 - $\sin$, $\cos$: perioda $2\pi$, zaloga $[-1, 1]$; $\tan$: perioda $\pi$. Kote merimo v radianih.
 - $\arcsin\colon [-1,1] \to [-\frac{\pi}{2}, \frac{\pi}{2}]$, $\arccos\colon [-1,1] \to [0, \pi]$, $\arctan\colon \mathbb{R} \to (-\frac{\pi}{2}, \frac{\pi}{2})$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo funkcije, definicijskega območja, zaloge vrednosti ter injektivnosti, surjektivnosti in bijektivnosti;
+- izrek: $f\colon A \to B$ ima inverz natanko tedaj, ko je bijektivna; izrek o strogo monotoni funkciji in njenem inverzu z dokazom;
+- definiciji $a^x$ in $\log_a x$ s pogoji $a > 0$, $a \neq 1$, $x > 0$ ter izpeljavo pravil za logaritme in prehoda na drugo osnovo;
+- definicije $\arcsin$, $\arccos$, $\arctan$ z definicijskimi območji in zalogami vrednosti ter dokaz $\arcsin x + \arccos x = \frac{\pi}{2}$;
+- definiciji $\operatorname{sh}$ in $\operatorname{ch}$ ter dokaz $\operatorname{ch}^2 x - \operatorname{sh}^2 x = 1$.
+
+### Naloga 1
+
+Dana je funkcija $f(x) = 1 + 2\arcsin\dfrac{x - 3}{2}$. Določi $D_f$ in $Z_f$, utemelji, da je $f$ injektivna, izračunaj $f^{-1}$ z definicijskim območjem in zalogo vrednosti ter reši enačbo $f(x) = 1 + \frac{\pi}{2}$.
+
+**Rešitev:**
+
+1. $\arcsin$ je definiran na $[-1, 1]$: $-1 \le \frac{x - 3}{2} \le 1 \iff 1 \le x \le 5$, torej $D_f = [1, 5]$.
+2. Ko $x$ preteče $[1, 5]$, preteče $u = \frac{x - 3}{2}$ ves interval $[-1, 1]$, zato $\arcsin u$ preteče $[-\frac{\pi}{2}, \frac{\pi}{2}]$ in $Z_f = [1 - \pi, 1 + \pi] \approx [-2{,}14;\ 4{,}14]$.
+3. Funkciji $u = \frac{x - 3}{2}$ in $\arcsin$ sta strogo naraščajoči, zato je kompozitum strogo naraščajoč in po izreku iz razlage injektiven. Kot preslikava $D_f \to Z_f$ je torej bijektivna.
+4. Iz $y = 1 + 2\arcsin\frac{x - 3}{2}$ sledi $\arcsin\frac{x - 3}{2} = \frac{y - 1}{2}$; za $y \in Z_f$ leži desna stran v $[-\frac{\pi}{2}, \frac{\pi}{2}]$. Na obeh straneh uporabimo $\sin$ in $\sin(\arcsin u) = u$: $\frac{x - 3}{2} = \sin\frac{y - 1}{2}$ in $x = 3 + 2\sin\frac{y - 1}{2}$.
+5. Preimenujemo spremenljivki: $f^{-1}(x) = 3 + 2\sin\dfrac{x - 1}{2}$, $D_{f^{-1}} = [1 - \pi, 1 + \pi]$, $Z_{f^{-1}} = [1, 5]$.
+6. Enačba: $x = f^{-1}\left(1 + \frac{\pi}{2}\right) = 3 + 2\sin\frac{\pi}{4} = 3 + \sqrt{2} \approx 4{,}414$, kar leži v $D_f$.
+7. Preizkus: $f(4) = 1 + 2\arcsin\frac{1}{2} = 1 + \frac{\pi}{3}$ in $f^{-1}\left(1 + \frac{\pi}{3}\right) = 3 + 2\sin\frac{\pi}{6} = 4$ ✓.
+8. Odgovor: $D_f = [1, 5]$, $Z_f = [1 - \pi, 1 + \pi]$, $f^{-1}(x) = 3 + 2\sin\frac{x - 1}{2}$ na $[1 - \pi, 1 + \pi]$ z zalogo $[1, 5]$, rešitev enačbe je $x = 3 + \sqrt{2}$.
+
+### Naloga 2
+
+Natančno navedi, kdaj ima funkcija $f\colon A \to B$ inverzno funkcijo. Dokaži, da je $\operatorname{sh}\colon \mathbb{R} \to \mathbb{R}$ bijektivna, izpelji formulo za njen inverz $\operatorname{arsh}$ in izračunaj $\operatorname{arsh}\frac{3}{4}$.
+
+**Rešitev:**
+
+1. $f\colon A \to B$ ima inverz $f^{-1}\colon B \to A$ natanko tedaj, ko je bijektivna, torej injektivna in surjektivna.
+2. Injektivnost: $e^x$ strogo narašča, $e^{-x}$ strogo pada, zato $\operatorname{sh} x = \frac{e^x - e^{-x}}{2}$ strogo narašča in je po izreku iz razlage injektivna.
+3. Surjektivnost: za dani $y \in \mathbb{R}$ rešimo $\frac{e^x - e^{-x}}{2} = y$. Pomnožimo z $2e^x \neq 0$: $e^{2x} - 2y\,e^x - 1 = 0$, kar je kvadratna enačba $t^2 - 2yt - 1 = 0$ za $t = e^x$.
+4. Rešitvi sta $t = y \pm \sqrt{y^2 + 1}$. Ker je $\sqrt{y^2 + 1} > |y|$, je $y - \sqrt{y^2 + 1} < 0$ in odpade (saj $e^x > 0$), $y + \sqrt{y^2 + 1} > 0$ pa je dopustna. Za vsak $y$ torej obstaja $x = \ln\left(y + \sqrt{y^2 + 1}\right)$ z $\operatorname{sh} x = y$, zato je $\operatorname{sh}$ surjektivna in s tem bijektivna.
+5. Preimenujemo spremenljivki: $\operatorname{arsh} x = \ln\left(x + \sqrt{x^2 + 1}\right)$ za vse $x \in \mathbb{R}$.
+6. $\operatorname{arsh}\frac{3}{4} = \ln\left(\frac{3}{4} + \sqrt{\frac{9}{16} + 1}\right) = \ln\left(\frac{3}{4} + \frac{5}{4}\right) = \ln 2 \approx 0{,}693$.
+7. Preizkus: $\operatorname{sh}(\ln 2) = \frac{2 - \frac{1}{2}}{2} = \frac{3}{4}$ ✓. Odgovor: $\operatorname{arsh} x = \ln\left(x + \sqrt{x^2 + 1}\right)$ in $\operatorname{arsh}\frac{3}{4} = \ln 2$.
+
 ## Drugače: Na sliki
 
 Nariši v isti koordinatni sistem premico $y = x$, graf $y = e^x$ in graf $y = \ln x$. Graf $e^x$ leži nad osjo $x$, gre skozi točko $(0, 1)$ in se na levi približuje osi $x$ (vodoravna asimptota $y = 0$). Graf $\ln x$ je njegova zrcalna slika čez premico $y = x$: leži desno od osi $y$, gre skozi $(1, 0)$ in se pri $x \to 0^+$ spušča proti $-\infty$ (navpična asimptota $x = 0$).
 
 Enako velja za vsak par funkcija in njen inverz. Točka $(a, b)$ na grafu $f$ ustreza točki $(b, a)$ na grafu $f^{-1}$:
 
-| $x$ | $-1$ | $0$ | $1$ | $2$ |
-|---|---|---|---|---|
-| $e^x$ | $0{,}368$ | $1$ | $2{,}718$ | $7{,}389$ |
+| $x$ | $e^x$ |
+|---|---|
+| $-1$ | $0{,}368$ |
+| $0$ | $1$ |
+| $1$ | $2{,}718$ |
+| $2$ | $7{,}389$ |
 
 Iz preglednice preberemo točke za $\ln x$: $(0{,}368;\ -1)$, $(1;\ 0)$, $(2{,}718;\ 1)$, $(7{,}389;\ 2)$.
 
 Pri sinusu si predstavljaj valovito črto med $-1$ in $1$. Za $\arcsin$ izreži samo kos od $-\frac{\pi}{2}$ do $\frac{\pi}{2}$, kjer sinus strogo narašča, in ga prezrcali čez $y = x$. Dobiš kratko krivuljo od točke $(-1, -\frac{\pi}{2})$ do točke $(1, \frac{\pi}{2})$.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**pH raztopine.** Kemiki uporabljajo desetiški logaritem: $\mathrm{pH} = -\log [\mathrm{H_3O^+}]$, kjer je koncentracija izražena v $\mathrm{mol/L}$. Za $[\mathrm{H_3O^+}] = 10^{-3}\,\mathrm{mol/L}$ je $\mathrm{pH} = 3$. Inverzna funkcija je $[\mathrm{H_3O^+}] = 10^{-\mathrm{pH}}$. Sprememba pH za $1$ pomeni desetkratno spremembo koncentracije.
+**pH-meter.** $\mathrm{pH} = -\log [\mathrm{H_3O^+}]$ (koncentracija v $\mathrm{mol/L}$), inverz je $[\mathrm{H_3O^+}] = 10^{-\mathrm{pH}}$. Steklena elektroda da napetost, ki je po Nernstovi enačbi linearna v pH, pri $25\,^\circ\mathrm{C}$ približno $59\,\mathrm{mV}$ na enoto pH. Zato pH-meter umerimo z dvema pufroma: logaritem spremeni desetkratne spremembe koncentracije v enake korake napetosti.
 
-**Rast bakterij.** Pri neomejeni rasti se število bakterij podvoji v vsakem generacijskem času $T$: $N(t) = N_0 \cdot 2^{t/T}$. Če želimo vedeti, kdaj bo kultura dosegla določeno število celic, uporabimo inverz: $t = T \log_2 \frac{N}{N_0}$.
+**Aktivacijska energija.** Konstanta hitrosti sledi Arrheniusovi enačbi $k = A\,e^{-E_a/(RT)}$. Logaritmiramo: $\ln k = \ln A - \frac{E_a}{R}\cdot\frac{1}{T}$. Meritve $k$ pri več temperaturah v grafu $\ln k$ proti $\frac{1}{T}$ ležijo na premici z naklonom $-\frac{E_a}{R}$; tako $E_a$ odčitamo iz linearne regresije.
 
-**Nihanje.** Odmik uteži na vzmeti ali tok v izmeničnem omrežju opišemo s $A \sin(\omega t + \varphi)$. Perioda je $\frac{2\pi}{\omega}$; za omrežje s frekvenco $50\,\mathrm{Hz}$ je $\omega = 2\pi \cdot 50\,\mathrm{s^{-1}} \approx 314\,\mathrm{s^{-1}}$.
+**Spektrofotometrija.** Prepustnost raztopine $\frac{I}{I_0} = 10^{-\varepsilon l c}$ pada eksponentno s koncentracijo, absorbanca $\log\frac{I_0}{I} = \varepsilon l c$ pa je linearna (Beer-Lambertov zakon). Zato umeritvena premica podaja absorbanco, ne prepustnosti.
 
-**Glasnost.** Raven zvoka v decibelih je $L = 10 \log \frac{I}{I_0}$. Zato desetkrat večja jakost zvoka pomeni le $10\,\mathrm{dB}$ več. Logaritemska lestvica stisne zelo velik razpon vrednosti v pregledno območje.
+**Bioreaktor.** V eksponentni fazi je $N(t) = N_0 \cdot 2^{t/T}$ z generacijskim časom $T$. Čas do želene gostote celic da inverz $t = T \log_2 \frac{N}{N_0}$: od $10^6$ do $10^9$ celic pri $T = 20\,\mathrm{min}$ traja $20\,\mathrm{min} \cdot \log_2 1000 \approx 199\,\mathrm{min}$, dobre $3$ ure.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -228,19 +288,13 @@ Izračunajmo vrednosti in lastnosti funkcije $f(x) = \arctan(2x)$.
 
 ## Drugače: Bolj natančno
 
-**Trditev.** Strogo naraščajoča funkcija $f\colon D \to \mathbb{R}$ je injektivna, njen inverz $f^{-1}\colon f(D) \to D$ pa je prav tako strogo naraščajoč.
-
-*Dokaz.* Naj bo $x_1 \neq x_2$, recimo $x_1 < x_2$. Tedaj je $f(x_1) < f(x_2)$, torej $f(x_1) \neq f(x_2)$, zato je $f$ injektivna. Naj bosta $y_1 < y_2$ iz $f(D)$ in $x_i = f^{-1}(y_i)$. Če bi bilo $x_1 \ge x_2$, bi zaradi monotonosti veljalo $y_1 = f(x_1) \ge f(x_2) = y_2$, kar je protislovje. Torej $x_1 < x_2$. $\square$
-
 **Definicija potence z realnim eksponentom.** Za racionalni $r = \frac{p}{q}$ definiramo $a^r = \sqrt[q]{a^p}$. Za iracionalni $x$ definiramo $a^x$ kot limito $a^{r_n}$, kjer je $(r_n)$ zaporedje racionalnih števil z limito $x$. Ta definicija je dobra, ker je $r \mapsto a^r$ monotona funkcija na $\mathbb{Q}$, realna števila pa so polna. Na podoben način (z vrsto $e^x = \sum_{n \ge 0} \frac{x^n}{n!}$) eksponentno funkcijo pogosto vpeljemo na začetku analize; logaritem je tedaj definiran kot njen inverz.
 
-**Lihost in sodost razcepa.** Vsako funkcijo na simetričnem območju lahko zapišemo kot vsoto sode in lihe:
+**Razcep na sodi in lihi del.** Vsako funkcijo na simetričnem območju lahko zapišemo kot vsoto sode in lihe:
 
 $$f(x) = \underbrace{\frac{f(x) + f(-x)}{2}}_{\text{soda}} + \underbrace{\frac{f(x) - f(-x)}{2}}_{\text{liha}}.$$
 
-Za $f(x) = e^x$ sta to ravno $\operatorname{ch} x$ in $\operatorname{sh} x$.
-
-**Zveza med ciklometričnimi funkcijami.** Za $x \in [-1, 1]$ velja $\arcsin x + \arccos x = \frac{\pi}{2}$. Naj bo $\alpha = \arcsin x \in [-\frac{\pi}{2}, \frac{\pi}{2}]$. Tedaj je $\frac{\pi}{2} - \alpha \in [0, \pi]$ in $\cos(\frac{\pi}{2} - \alpha) = \sin \alpha = x$, zato je $\arccos x = \frac{\pi}{2} - \alpha$.
+Za $f(x) = e^x$ sta to ravno $\operatorname{ch} x$ in $\operatorname{sh} x$. Razcep je enoličen: če je $f = g + h$ z $g$ sodo in $h$ liho, je $f(-x) = g(x) - h(x)$, od koder $g$ in $h$ izrazimo z zgornjima formulama.
 
 ## Preveri se
 
@@ -271,7 +325,7 @@ Za $f(x) = e^x$ sta to ravno $\operatorname{ch} x$ in $\operatorname{sh} x$.
 ? Kaj je inverzna funkcija funkcije $f(x) = e^{2x} + 1$?
 + $f^{-1}(x) = \frac{1}{2}\ln(x - 1)$ za $x > 1$
 - $f^{-1}(x) = \ln\frac{x - 1}{2}$ za $x > 1$
-~ Faktor $2$ stoji v eksponentu, zato deliš z njim šele po logaritmiranju: $2x = \ln(x - 1)$.
+~ Faktor $2$ stoji v eksponentu, zato deliš z njim šele po logaritmiranju: iz $e^{2x} = y - 1$ sledi $2x = \ln(y - 1)$.
 - $f^{-1}(x) = \frac{1}{e^{2x} + 1}$
 ~ To je recipročna vrednost $\frac{1}{f(x)}$; oznaka $^{-1}$ pri funkciji pomeni obrat.
 > Iz $y = e^{2x} + 1$ sledi $e^{2x} = y - 1$ in $x = \frac{1}{2}\ln(y - 1)$. Recipročna vrednost $\frac{1}{f(x)}$ ni inverz.

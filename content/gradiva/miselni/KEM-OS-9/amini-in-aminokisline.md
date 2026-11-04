@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Od amoniaka do amina
+  - H v $\mathrm{NH_3}$ zamenja ostanek alkana
+  - amino skupina $\mathrm{{-}NH_2}$, metilamin $\mathrm{CH_3NH_2}$
+- Amini so baze
+  - sprejmejo $\mathrm{H^+}$, lakmus moder
+  - ribji vonj, limona ga odstrani
+  - napaka: nevtralni kot alkoholi
+- Amini v delavnici
+  - utrjevalec epoksidnega lepila
+  - anilin za barvila
+- Zgradba aminokisline
+  - $\mathrm{{-}NH_2}$ in $\mathrm{{-}COOH}$ na istem ogljiku
+  - glicin $\mathrm{H_2NCH_2COOH}$, $M = 75\,\text{g/mol}$
+- Kislina in baza
+  - raztopina glicina skoraj nevtralna
+  - v trdnem glicinu ion dvojček
+- Peptidna vez
+  - $\mathrm{{-}CO{-}NH{-}}$, odide molekula vode
+  - glicin + alanin: $75 + 89 - 18 = 146$
+- Beljakovine
+  - verige iz $20$ aminokislin, $9$ esencialnih
+  - kolagen, kostni klej, volna, svila
+  - ananas trga verige želatine

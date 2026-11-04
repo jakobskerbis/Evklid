@@ -21,13 +21,19 @@ V varnostni statistiki je naloga ista. Iz števila nezgod, okvar ali izpadov v n
 Večja od $N$ ne more biti nikoli, enaka $N$ pa le, če slučajno izvlečemo prav zadnji listek. Največja številka je torej vedno $\le N$ in pogosto manjša. Ocena zato v povprečju **podceni** $N$; greši sistematično v eno smer.
 :::
 
-**Cenilka in ocena.** Vzorec $X_1, \dots, X_n$ je zaporedje slučajnih spremenljivk. **Cenilka** $\hat{\theta} = T(X_1, \dots, X_n)$ je funkcija vzorca, zato je tudi sama slučajna spremenljivka: pri vsakem novem vzorcu da drugo vrednost. **Ocena** je ena konkretna vrednost, na primer $61$.
+**Cenilka in ocena.** **Enostavni slučajni vzorec** velikosti $n$ so neodvisne slučajne spremenljivke $X_1, \dots, X_n$, porazdeljene enako kot opazovana spremenljivka $X$. (Pri tomboli brez vračanja niso neodvisne, a je zaradi simetrije vsaka $X_i$ enakomerno porazdeljena na $\{1, \dots, N\}$.) **Cenilka** parametra $\theta$ je funkcija vzorca $\hat{\theta} = T(X_1, \dots, X_n)$, ki ne vsebuje neznanih parametrov. Zato je tudi sama slučajna spremenljivka: pri vsakem novem vzorcu da drugo vrednost. **Ocena** je ena konkretna vrednost, na primer $61$.
 
 **Pristranskost** cenilke je razlika med njeno pričakovano vrednostjo in pravim parametrom:
 
 $$b(\hat{\theta}) = E(\hat{\theta}) - \theta$$
 
 Cenilka je **nepristranska**, če je $E(\hat{\theta}) = \theta$ za vsako možno vrednost $\theta$. To ne pomeni, da zadene pri tvojem vzorcu. Pomeni, da bi se njene ocene pri mnogo ponovitvah v povprečju ujele s $\theta$.
+
+**Izrek (vzorčno povprečje).** Naj bodo $X_1, \dots, X_n$ neodvisne z $E(X_i) = \mu$ in $D(X_i) = \sigma^2$. Potem za vzorčno povprečje $\bar X = \frac{1}{n}\sum X_i$ velja $E(\bar X) = \mu$ in $D(\bar X) = \frac{\sigma^2}{n}$.
+
+*Dokaz.* Pričakovana vrednost je linearna: $E(\bar X) = \frac{1}{n}\sum E(X_i) = \frac{1}{n} \cdot n\mu = \mu$. Disperzija neodvisnih spremenljivk je aditivna in $D(aY) = a^2 D(Y)$, zato $D(\bar X) = \frac{1}{n^2} \cdot n\sigma^2 = \frac{\sigma^2}{n}$. $\square$
+
+Za $E(\bar X) = \mu$ zadošča linearnost; neodvisnost je potrebna šele za disperzijo.
 
 Za tombolo velja (preverba na majhnem primeru je v »Korak za korakom«, izpeljava v »Bolj natančno«): če izvlečemo $k$ listkov brez vračanja in je $M$ največja številka, je
 
@@ -57,7 +63,9 @@ $$L(\theta) = \prod_{i=1}^{n} f(x_i;\theta).$$
 2. reši $\ell'(\theta) = 0$,
 3. preveri, da gre za maksimum, in poglej tudi robove dovoljenih $\theta$.
 
-**MLE ni nujno nepristranska.** Za normalno porazdelitev metoda da $\hat{\mu} = \bar X$ in
+**Invariantnost.** Če je $\hat\theta$ MLE za $\theta$ in je $g$ bijektivna, je $g(\hat\theta)$ MLE za $g(\theta)$: verjetje, zapisano s parametrom $g(\theta)$, zavzame iste vrednosti, zato je največje pri $g(\hat\theta)$.
+
+**MLE ni nujno nepristranska.** Za normalno porazdelitev je $\ell(\mu, \sigma^2) = -\frac{n}{2}\ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum (x_i - \mu)^2$. Enačba $\frac{\partial \ell}{\partial \mu} = \frac{1}{\sigma^2}\sum (x_i - \mu) = 0$ da $\hat\mu = \bar x$. Enačba $\frac{\partial \ell}{\partial \sigma^2} = -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4}\sum (x_i - \mu)^2 = 0$ pri $\mu = \bar x$ da $\sigma^2 = \frac{1}{n}\sum (x_i - \bar x)^2$. Metoda torej da $\hat{\mu} = \bar X$ in
 
 $$\hat{\sigma}^2 = \frac1n \sum_{i=1}^{n} (X_i - \bar X)^2.$$
 
@@ -65,13 +73,21 @@ $\bar X$ je nepristranska, $\hat{\sigma}^2$ pa ne: $E(\hat{\sigma}^2) = \dfrac{n
 
 $$s^2 = \frac{1}{n-1}\sum_{i=1}^{n}(X_i - \bar X)^2.$$
 
+**Izrek.** Naj bodo $X_1, \dots, X_n$ ($n \ge 2$) neodvisne z $E(X_i) = \mu$ in $D(X_i) = \sigma^2$. Potem je $E(s^2) = \sigma^2$ in $E(\hat\sigma^2) = \frac{n-1}{n}\sigma^2$. Normalnost ni potrebna.
+
+*Dokaz.* Velja identiteta $\sum (X_i - \bar X)^2 = \sum (X_i - \mu)^2 - n(\bar X - \mu)^2$ (izpeljava v »Bolj natančno«). Prvi člen ima pričakovano vrednost $n\sigma^2$, drugi $n\,D(\bar X) = \sigma^2$. Skupaj je $E\big[\sum (X_i - \bar X)^2\big] = (n-1)\sigma^2$; deljeno z $n - 1$ da $\sigma^2$, deljeno z $n$ pa $\frac{n-1}{n}\sigma^2$. $\square$
+
 :::premisli
 Zakaj deljenje z $n$ disperzijo v povprečju podceni? Namig: od katere točke so podatki v povprečju najmanj oddaljeni?
 ---
 Vsota $\sum (x_i - c)^2$ je najmanjša prav pri $c = \bar x$. Ker $\mu$ ne poznamo, merimo odmike od $\bar x$, ki je podatkom bližje kot pravi $\mu$. Odmiki so zato premajhni, vsota tudi. Delitev z $n-1$ to natanko popravi.
 :::
 
-Pristranskost $\hat{\sigma}^2$ je $-\sigma^2/n$ in gre proti $0$, ko $n$ raste. Taki cenilki rečemo **asimptotično nepristranska**. Pri velikih vzorcih je razlika med $n$ in $n-1$ zanemarljiva, pri petih meritvah pa ne.
+Pristranskost $\hat{\sigma}^2$ je $-\sigma^2/n$ in gre proti $0$, ko $n$ raste. Cenilka je **asimptotično nepristranska**, če gre njena pristranskost proti $0$, ko $n \to \infty$. Pri velikih vzorcih je razlika med $n$ in $n-1$ zanemarljiva, pri petih meritvah pa ne.
+
+**Srednja kvadratna napaka.** Nepristranskost ne pove, kako daleč ocene padajo od $\theta$. To meri $\mathrm{MSE}(\hat\theta) = E\big[(\hat\theta - \theta)^2\big]$ in velja $\mathrm{MSE}(\hat\theta) = D(\hat\theta) + b(\hat\theta)^2$. *Dokaz:* $\hat\theta - \theta = \big(\hat\theta - E(\hat\theta)\big) + b$; po kvadriranju in pričakovani vrednosti je mešani člen $2b\,E\big(\hat\theta - E(\hat\theta)\big) = 0$. Pri nepristranski cenilki je MSE kar disperzija. Od dveh nepristranskih cenilk je boljša tista z manjšo disperzijo.
+
+Cenilka $\hat\theta_n$ je **dosledna**, če za vsak $\varepsilon > 0$ gre $P(|\hat\theta_n - \theta| \ge \varepsilon)$ proti $0$, ko $n \to \infty$. Zadošča, da gre $\mathrm{MSE}(\hat\theta_n)$ proti $0$, saj po neenakosti Markova, uporabljeni na $(\hat\theta_n - \theta)^2$, velja $P(|\hat\theta_n - \theta| \ge \varepsilon) \le \frac{\mathrm{MSE}(\hat\theta_n)}{\varepsilon^2}$. Zato je $\bar X$ dosledna cenilka za $\mu$: $\mathrm{MSE} = \frac{\sigma^2}{n} \to 0$.
 
 ## Rešeni primeri
 
@@ -112,19 +128,19 @@ $\ell(\lambda) = -n\lambda + \Big(\sum x_i\Big)\ln\lambda - \sum \ln(x_i!)$
 2. $\ell'(\lambda) = -n + \dfrac{\sum x_i}{\lambda} = 0$ da $\hat\lambda = \dfrac{\sum x_i}{n} = \bar x$.
 3. $\ell''(\lambda) = -\sum x_i / \lambda^2 < 0$, torej je to maksimum.
 4. $\hat\lambda = \dfrac{16}{10} = 1{,}6$ gola na tekmo.
-5. $P(X=0) = e^{-\lambda}$. MLE za $e^{-\lambda}$ dobimo tako, da vstavimo $\hat\lambda$: $e^{-1{,}6} \approx 0{,}202$.
+5. $P(X=0) = e^{-\lambda}$. Po invariantnosti dobimo MLE za $e^{-\lambda}$ tako, da vstavimo $\hat\lambda$: $e^{-1{,}6} \approx 0{,}202$.
 6. Ker je $E(\bar X) = \lambda$, je $\hat\lambda$ nepristranska.
 7. Odgovor: $\hat\lambda = 1{,}6$; ekipa ostane brez gola na približno $20\,\%$ tekem.
 
 ### Primer 3 (težji): tombola
 
-Listki so oštevilčeni od $1$ do $N$. Brez vračanja izvlečemo $k = 4$ listke: $17$, $52$, $38$, $61$. Poišči MLE za $N$ in nato nepristransko oceno.
+Listki so oštevilčeni od $1$ do $N$. Brez vračanja izvlečemo $k = 4$ listke: $17$, $52$, $38$, $61$. Poišči MLE za $N$ in nepristransko oceno iz največje številke. Sošolka predlaga še cenilko $\tilde N = 2\bar X - 1$. Dokaži, da je tudi ta nepristranska, izračunaj oceno in odloči, kateri cenilki bolj zaupaš. Znani sta disperziji $D(\hat N) = \frac{(N-k)(N+1)}{k(k+2)}$ in $D(\tilde N) = \frac{(N-k)(N+1)}{3k}$.
 
-**Podatki:** $k = 4$, izvlečeno $17, 52, 38, 61$, največja številka $m = 61$, vsaka četverica je enako verjetna
-**Iščemo:** $\hat N_\mathrm{ML}$ in nepristransko $\hat N$
+**Podatki:** $k = 4$, izvlečeno $17, 52, 38, 61$, največja številka $m = 61$, vsaka četverica je enako verjetna; disperziji obeh cenilk zgoraj
+**Iščemo:** $\hat N_\mathrm{ML}$, nepristransko $\hat N$, oceno $\tilde N$ in primerjavo cenilk
 
 :::formula
-$L(N) = \dfrac{1}{\binom{N}{k}}$ za $N \ge m$, sicer $0$; $\quad \hat N = m \cdot \dfrac{k+1}{k} - 1$
+$L(N) = \dfrac{1}{\binom{N}{k}}$ za $N \ge m$, sicer $0$; $\quad \hat N = m \cdot \dfrac{k+1}{k} - 1$; $\quad \mathrm{MSE} = D + b^2$
 :::
 
 **Rešitev:**
@@ -134,7 +150,11 @@ $L(N) = \dfrac{1}{\binom{N}{k}}$ za $N \ge m$, sicer $0$; $\quad \hat N = m \cdo
 3. Odvoda ne izenačimo z $0$: maksimum je na robu, pri najmanjšem dovoljenem $N$. Torej $\hat N_\mathrm{ML} = 61$.
 4. Iz razlage vemo, da je $E(M) < N$, zato ta cenilka podcenjuje.
 5. Popravek: $\hat N = 61 \cdot \dfrac{5}{4} - 1 = 75{,}25$.
-6. Odgovor: MLE da $61$, nepristranska ocena pa približno $75$ listkov.
+6. Druga cenilka: vsaka $X_i$ je enakomerno porazdeljena na $\{1, \dots, N\}$, zato $E(X_i) = \frac{N+1}{2}$ in po linearnosti $E(\bar X) = \frac{N+1}{2}$. Sledi $E(\tilde N) = 2 \cdot \frac{N+1}{2} - 1 = N$: tudi $\tilde N$ je nepristranska. Neodvisnosti za to ne potrebujemo.
+7. Ocena: $\bar x = \frac{168}{4} = 42$, $\tilde N = 2 \cdot 42 - 1 = 83$.
+8. Obe cenilki sta nepristranski, zato je MSE kar disperzija. Razmerje $\frac{D(\hat N)}{D(\tilde N)} = \frac{3}{k+2} = \frac{1}{2}$ je manjše od $1$ za vsak $k > 1$.
+9. Pri $N \approx 75$: $D(\hat N) \approx \frac{71 \cdot 76}{24} \approx 225$, standardni odklon okoli $15$; $D(\tilde N) \approx \frac{71 \cdot 76}{12} \approx 450$, odklon okoli $21$.
+10. Odgovor: MLE da $61$ (podcenjuje), nepristranska ocena iz največje številke je približno $75$ listkov, $\tilde N$ da $83$. Bolj zaupamo $\hat N$, ker ima pri isti (ničelni) pristranskosti pol manjšo disperzijo.
 
 ### Primer 4 – zdaj ti
 
@@ -175,9 +195,51 @@ $\hat{\sigma}^2 = 0{,}13/4 = 0{,}0325\,\mathrm{s^2}$, $s^2 = 0{,}13/3 \approx 0{
 - $\hat{\sigma}^2$ je pristranska ($E = \frac{n-1}{n}\sigma^2$); nepristranska je $s^2$ z $n-1$.
 - Tombola: MLE $= M$ podcenjuje; nepristranska je $M\frac{k+1}{k} - 1$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- natančne definicije enostavnega slučajnega vzorca, cenilke, pristranskosti, nepristranske, asimptotično nepristranske in dosledne cenilke ter srednje kvadratne napake;
+- funkcijo verjetja in cenilko največjega verjetja, recept z robovi in lastnost invariantnosti;
+- izreka $E(\bar X) = \mu$, $D(\bar X) = \frac{\sigma^2}{n}$ in $E(s^2) = \sigma^2$ s pogoji in dokazi;
+- izpeljavo MLE za Bernoullijevo, Poissonovo in normalno porazdelitev;
+- razcep $\mathrm{MSE} = D + b^2$ z dokazom in zakaj MLE ni nujno nepristranska.
+
+### Naloga 1
+
+Življenjske dobe petih senzorjev plina so $120$, $340$, $80$, $210$ in $250\,\mathrm{h}$. Modeliramo jih z eksponentno porazdelitvijo z gostoto $f(x;\lambda) = \lambda e^{-\lambda x}$ za $x \ge 0$. (a) Poišči MLE za $\lambda$ in preveri, da gre za maksimum. (b) Oceni verjetnost, da senzor deluje več kot $100\,\mathrm{h}$. (c) Za $S = X_1 + \dots + X_n$ ($n \ge 2$) velja $E(1/S) = \frac{\lambda}{n-1}$. Ali je $\hat\lambda$ nepristranska? Poišči nepristransko cenilko oblike $c/S$ in izračunaj oceno.
+
+**Rešitev:**
+
+1. (a) $L(\lambda) = \prod \lambda e^{-\lambda x_i} = \lambda^n e^{-\lambda \sum x_i}$, zato $\ell(\lambda) = n\ln\lambda - \lambda\sum x_i$.
+2. $\ell'(\lambda) = \frac{n}{\lambda} - \sum x_i$; ničla odvoda je $\hat\lambda = \frac{n}{\sum x_i} = \frac{1}{\bar x}$.
+3. $\ell''(\lambda) = -\frac{n}{\lambda^2} < 0$, zato je edina kritična točka na $\lambda > 0$ maksimum.
+4. $\sum x_i = 1000\,\mathrm{h}$, $\hat\lambda = \frac{5}{1000} = 0{,}005\,\mathrm{h^{-1}}$.
+5. (b) $P(X > 100) = e^{-100\lambda}$; funkcija $\lambda \mapsto e^{-100\lambda}$ je bijektivna, zato je po invariantnosti MLE enaka $e^{-0{,}5} \approx 0{,}607$.
+6. (c) $\hat\lambda = n/S$, zato $E(\hat\lambda) = n\,E(1/S) = \frac{n}{n-1}\lambda > \lambda$: cenilka je pristranska (precenjuje), pristranskost je $\frac{\lambda}{n-1}$ in gre proti $0$, torej je asimptotično nepristranska.
+7. Iz $E(c/S) = \frac{c\lambda}{n-1} = \lambda$ za vsak $\lambda$ sledi $c = n - 1$; nepristranska je $\tilde\lambda = \frac{n-1}{S}$.
+8. Ocena: $\tilde\lambda = \frac{4}{1000} = 0{,}004\,\mathrm{h^{-1}}$.
+9. Odgovor: $\hat\lambda = 0{,}005\,\mathrm{h^{-1}}$ (pristranska), ocenjena verjetnost delovanja nad $100\,\mathrm{h}$ je okoli $61\,\%$, nepristranska ocena pa je $0{,}004\,\mathrm{h^{-1}}$.
+
+### Naloga 2
+
+Naj bodo $X_1, \dots, X_n$ ($n \ge 2$) neodvisne z $E(X_i) = \mu$ in $D(X_i) = \sigma^2 > 0$. (a) Natančno navedi in dokaži izrek o nepristranskosti $s^2$. (b) Utemelji, ali je $s$ nepristranska cenilka za $\sigma$. (c) Za normalni vzorec velja $D(s^2) = \frac{2\sigma^4}{n-1}$. Izračunaj MSE cenilk $s^2$ in $\hat\sigma^2$ ter utemelji, ali je nepristranska cenilka vedno boljša.
+
+**Rešitev:**
+
+1. (a) Izrek: pri danih pogojih je $E(s^2) = \sigma^2$. Identiteta: $X_i - \bar X = (X_i - \mu) - (\bar X - \mu)$; kvadriramo in seštejemo, mešani člen je $-2(\bar X - \mu)\sum (X_i - \mu) = -2n(\bar X - \mu)^2$, zato $\sum (X_i - \bar X)^2 = \sum (X_i - \mu)^2 - n(\bar X - \mu)^2$.
+2. $E\big[\sum (X_i - \mu)^2\big] = n\sigma^2$ in $E\big[n(\bar X - \mu)^2\big] = n\,D(\bar X) = \sigma^2$, zato $E\big[\sum (X_i - \bar X)^2\big] = (n-1)\sigma^2$ in $E(s^2) = \sigma^2$.
+3. (b) Za vsako slučajno spremenljivko velja $D(s) = E(s^2) - E(s)^2 \ge 0$, zato $E(s)^2 = \sigma^2 - D(s)$.
+4. Pri $\sigma^2 > 0$ $s$ ni konstanta (pri normalnem vzorcu zavzame različne vrednosti), zato je $D(s) > 0$ in $E(s) < \sigma$. Cenilka $s$ je pristranska: v povprečju podcenjuje $\sigma$.
+5. (c) $s^2$ je nepristranska, zato $\mathrm{MSE}(s^2) = D(s^2) = \frac{2\sigma^4}{n-1}$.
+6. $\hat\sigma^2 = \frac{n-1}{n}s^2$, zato $D(\hat\sigma^2) = \frac{(n-1)^2}{n^2} \cdot \frac{2\sigma^4}{n-1} = \frac{2(n-1)\sigma^4}{n^2}$; pristranskost je $-\frac{\sigma^2}{n}$.
+7. $\mathrm{MSE}(\hat\sigma^2) = \frac{2(n-1)\sigma^4}{n^2} + \frac{\sigma^4}{n^2} = \frac{(2n-1)\sigma^4}{n^2}$.
+8. Primerjava: $\frac{2n-1}{n^2} < \frac{2}{n-1}$ je isto kot $(2n-1)(n-1) < 2n^2$, to je $2n^2 - 3n + 1 < 2n^2$ oziroma $3n > 1$, kar velja za vsak $n$. Pri $n = 4$: $\mathrm{MSE}(s^2) \approx 0{,}667\,\sigma^4$, $\mathrm{MSE}(\hat\sigma^2) = 0{,}4375\,\sigma^4$.
+9. Odgovor: $s^2$ je nepristranska, $s$ pa ne ($E(s) < \sigma$). Pristranska $\hat\sigma^2$ ima pri normalnem vzorcu za vsak $n$ manjšo srednjo kvadratno napako, zato nepristranska cenilka ni vedno boljša.
+
 ## Drugače: Kot zgodba
 
-Ana in Bor ugibata, koliko listkov je v bobnu tombole. Vsak večer izvlečejo štiri, vsak večer bobna ne poznata. Ana vedno reče največjo številko, ki jo vidi. Bor vzame največjo, prišteje četrtino in odšteje ena.
+Ana in Bor ugibata, koliko listkov je v bobnu tombole. Vsak večer izvlečejo štiri, vsak večer bobna ne poznata. Ana vedno reče največjo številko, ki jo vidi. Bor vzame največjo, ji prišteje njeno četrtino in odšteje ena.
 
 Po mesecu pogledata zapisnik. Anine ocene niso bile nikoli previsoke, skoraj vedno pa prenizke. Borove so bile včasih previsoke, včasih prenizke, v povprečju pa so se ujele s pravim številom. Ana je ravnala po verjetju: njena številka je bila vsak večer tista, pri kateri je bil izvlečeni izid najbolj verjeten. Bor je ravnal nepristransko. Nobeden ni zadel vsak večer. Razlika je bila v tem, ali je napaka imela smer.
 
@@ -198,11 +260,11 @@ Vzemimo majhen boben: $N = 5$ listkov, izvlečemo $k = 2$. Možnih parov je $\bi
 
 ## Drugače: Bolj natančno
 
-Dokaz, da je $E(\hat{\sigma}^2) = \frac{n-1}{n}\sigma^2$. Naj bo $E(X_i) = \mu$, $D(X_i) = \sigma^2$, neodvisni. Razpišemo:
+Identiteta iz dokaza izreka o $s^2$: zapišemo $X_i - \bar X = (X_i - \mu) - (\bar X - \mu)$ in kvadriramo. Ker je $\sum (X_i - \mu) = n(\bar X - \mu)$, je vsota mešanih členov $-2n(\bar X - \mu)^2$, vsota zadnjih pa $n(\bar X - \mu)^2$:
 
 $$\sum (X_i - \bar X)^2 = \sum (X_i - \mu)^2 - n(\bar X - \mu)^2.$$
 
-Prvi člen ima pričakovano vrednost $n\sigma^2$. Ker je $D(\bar X) = \sigma^2/n$, ima drugi pričakovano vrednost $n \cdot \sigma^2/n = \sigma^2$. Skupaj $(n-1)\sigma^2$; deljeno z $n$ da $\frac{n-1}{n}\sigma^2$, deljeno z $n-1$ pa $\sigma^2$.
+Isti razcep za poljuben $c$ namesto $\mu$ pove, da je $\sum (x_i - c)^2$ najmanjša pri $c = \bar x$. Zato je vsota kvadratov odmikov od $\bar X$ manjša kot od $\mu$ in delitev z $n$ podceni. Število $n - 1$ je število prostostnih stopenj: odmiki $X_i - \bar X$ se seštejejo v $0$, zato je prostih le $n - 1$.
 
 Za tombolo: $P(M \le j) = \binom{j}{k}/\binom{N}{k}$, torej $P(M = j) = \binom{j-1}{k-1}/\binom{N}{k}$. Z identiteto $\sum_{j=k}^{N} j\binom{j-1}{k-1} = k\binom{N+1}{k+1}$ dobimo $E(M) = \frac{k(N+1)}{k+1}$.
 
@@ -259,6 +321,7 @@ Za tombolo: $P(M \le j) = \binom{j}{k}/\binom{N}{k}$, torej $P(M = j) = \binom{j
 \hat{\theta} | cenilka parametra θ | | | funkcija vzorca, zato slučajna spremenljivka
 b | pristranskost cenilke | b(\hat{\theta}) = E(\hat{\theta}) - \theta | | nepristranska, če je b = 0
 E | pričakovana vrednost | | |
+D | disperzija (varianca) | | |
 M | največja izvlečena številka (slučajna spremenljivka) | | |
 k | število izvlečenih listkov | | | pri binomskem zgledu število zadetkov
 N | število vseh listkov (neznani parameter) | | |

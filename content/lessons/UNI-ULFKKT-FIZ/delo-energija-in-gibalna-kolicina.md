@@ -19,11 +19,11 @@ Lukov kovček izračunajmo kar z ohranitvijo energije, ki jo poznaš iz gimnazij
 
 $$A = \vec{F}\cdot\Delta\vec{r} = F\,\Delta r\cos\varphi,$$
 
-kjer je $\varphi$ kot med silo in premikom. Enota je joule: $1\,\mathrm{J} = 1\,\mathrm{N\,m}$. Delo je pozitivno, če ima sila komponento v smeri gibanja, negativno, če ima komponento proti gibanju (trenje), in nič, če je sila pravokotna na premik (normalna sila podlage, sila pri enakomernem kroženju). Če se sila vzdolž poti spreminja, delo zapišemo z integralom:
+kjer je $\varphi$ kot med silo in premikom. Enota je joule: $1\,\mathrm{J} = 1\,\mathrm{N\,m}$. Delo je pozitivno, če ima sila komponento v smeri gibanja, negativno, če ima komponento proti gibanju (trenje), in nič, če je sila pravokotna na premik (normalna sila podlage, sila pri enakomernem kroženju). Splošno: naj se telo giblje po krivulji od lege $\vec{r}_1$ do lege $\vec{r}_2$ in naj nanj deluje sila $\vec{F}$, ki se vzdolž poti lahko spreminja. Delo sile je krivuljni integral
 
 $$A = \int_{\vec{r}_1}^{\vec{r}_2} \vec{F}\cdot\mathrm{d}\vec{r}.$$
 
-V eni razsežnosti je to ploščina pod grafom $F(x)$. Za vzmet s silo $F = -kx$ je delo, ki ga moramo opraviti, da jo raztegnemo za $x$, enako $\tfrac{1}{2}kx^2$.
+V eni razsežnosti je to ploščina pod grafom $F(x)$. Vzmet deluje s silo $F = -kx$; da jo raztegnemo za $x$, moramo delovati s silo $kx'$ pri vsakem vmesnem raztezku $x'$, zato je potrebno delo $A = \int_0^x kx'\,\mathrm{d}x' = \tfrac{1}{2}kx^2$.
 
 :::premisli
 Težko torbo neseš s stalno hitrostjo po vodoravnem hodniku. Ali sila tvoje roke opravi delo na torbi?
@@ -31,43 +31,43 @@ Težko torbo neseš s stalno hitrostjo po vodoravnem hodniku. Ali sila tvoje rok
 Ne. Roka drži torbo s silo navpično navzgor, premik pa je vodoraven, zato je $\cos\varphi = \cos 90^\circ = 0$ in $A = 0$. Utrujenost je posledica porabe kemijske energije v mišicah samih (vlakna se ves čas krčijo), ne dela na torbi.
 :::
 
-**2. Moč.** Moč je delo na časovno enoto: $P = \mathrm{d}A/\mathrm{d}t = \vec{F}\cdot\vec{v}$. Enota je watt, $1\,\mathrm{W} = 1\,\mathrm{J/s}$.
+**2. Moč.** Moč je delo na časovno enoto: $P = \mathrm{d}A/\mathrm{d}t$. Ker je $\mathrm{d}A = \vec{F}\cdot\mathrm{d}\vec{r}$ in $\mathrm{d}\vec{r} = \vec{v}\,\mathrm{d}t$, je $P = \vec{F}\cdot\vec{v}$. Enota je watt, $1\,\mathrm{W} = 1\,\mathrm{J/s}$.
 
 ### Energija
 
-**3. Kinetična energija in izrek o kinetični energiji.** Kinetična energija telesa z maso $m$ in hitrostjo $v$ je $W_k = \tfrac{1}{2}mv^2$. **Izrek o kinetični energiji** pravi:
+**3. Kinetična energija in izrek o kinetični energiji.** Kinetična energija telesa z maso $m$ in hitrostjo $v$ je $W_k = \tfrac{1}{2}mv^2$. **Izrek o kinetični energiji:** naj na točkasto telo s stalno maso $m$ deluje več sil in naj se telo premakne iz lege 1 (hitrost $v_1$) v lego 2 (hitrost $v_2$). Potem je delo rezultante vseh sil
 
 $$A_{\text{vseh sil}} = \Delta W_k = \tfrac{1}{2}mv_2^2 - \tfrac{1}{2}mv_1^2.$$
 
-Delo **vseh** sil (rezultante) je enako spremembi kinetične energije. Izrek sledi neposredno iz drugega Newtonovega zakona (izpeljava je v razdelku »Bolj natančno«).
+*Dokaz.* Iz $\sum\vec{F} = m\,\mathrm{d}\vec{v}/\mathrm{d}t$ in $\mathrm{d}\vec{r} = \vec{v}\,\mathrm{d}t$ sledi $\sum\vec{F}\cdot\mathrm{d}\vec{r} = m\vec{v}\cdot\mathrm{d}\vec{v} = \mathrm{d}\left(\tfrac{1}{2}mv^2\right)$. Integral od lege 1 do lege 2 da $A_{\text{vseh sil}} = \tfrac{1}{2}mv_2^2 - \tfrac{1}{2}mv_1^2$.
 
-**4. Konservativne sile in potencialna energija.** Sila je **konservativna**, če njeno delo ni odvisno od poti, ampak le od začetne in končne lege (teža, sila vzmeti, gravitacija, električna sila). Za takšno silo vpeljemo potencialno energijo $W_p$, tako da je $A_{\text{kons}} = -\Delta W_p$:
+**4. Konservativne sile in potencialna energija.** Sila $\vec{F}(\vec{r})$, ki je odvisna le od lege, je **konservativna**, če je njeno delo med poljubnima legama enako po vseh poteh; enakovredno: delo po vsaki sklenjeni poti je nič (teža, sila vzmeti, gravitacija, električna sila). Za takšno silo izberemo referenčno lego $\vec{r}_0$ in definiramo **potencialno energijo** $W_p(\vec{r}) = -\int_{\vec{r}_0}^{\vec{r}}\vec{F}\cdot\mathrm{d}\vec{r}$; tedaj je $A_{\text{kons}} = -\Delta W_p$:
 
-- teža ob površju: $W_p = mgh$,
-- prožnostna energija vzmeti: $W_p = \tfrac{1}{2}kx^2$,
-- gravitacija: $W_p = -G\dfrac{mM}{r}$.
+- teža ob površju ($F_z = -mg$, os $z$ navzgor, referenca $z = 0$): $W_p = -\int_0^h(-mg)\,\mathrm{d}z = mgh$,
+- prožnostna energija vzmeti (referenca $x = 0$): $W_p = \tfrac{1}{2}kx^2$,
+- gravitacija (referenca v neskončnosti): $W_p = -\int_\infty^r\left(-\dfrac{GmM}{r'^2}\right)\mathrm{d}r' = -G\dfrac{mM}{r}$.
 
 Trenje in upor nista konservativna: njuno delo je odvisno od dolžine poti in je pri drsenju po mirujoči podlagi negativno.
 
-**5. Ohranitev mehanske energije.** Razdelimo delo na delo konservativnih sil in delo ostalih sil $A'$. Iz izreka o kinetični energiji sledi
+**5. Izrek o ohranitvi mehanske energije.** Če so vse sile, ki opravljajo delo na telo, konservativne (delo ostalih sil je $A' = 0$), potem je **mehanska energija** $W_k + W_p$ stalna. *Dokaz.* Delo vseh sil razdelimo: $A_{\text{vseh sil}} = A_{\text{kons}} + A' = -\Delta W_p + A'$. Po izreku o kinetični energiji je to $\Delta W_k$, torej
 
-$$\Delta W_k + \Delta W_p = A'.$$
+$$\Delta W_k + \Delta W_p = A',$$
 
-Če opravljajo delo le konservativne sile ($A' = 0$), se **mehanska energija** $W_k + W_p$ ohranja. Trenje mehansko energijo zmanjša ($A' < 0$), motor ali mišice jo povečajo ($A' > 0$). Celotna energija, ki vključuje tudi notranjo energijo, pa se ohrani vedno: »izgubljena« mehanska energija se pretvori v notranjo energijo (segrevanje).
+pri $A' = 0$ pa $\Delta(W_k + W_p) = 0$. Trenje mehansko energijo zmanjša ($A' < 0$), motor ali mišice jo povečajo ($A' > 0$). Celotna energija, ki vključuje tudi notranjo energijo, pa se ohrani vedno: »izgubljena« mehanska energija se pretvori v notranjo energijo (segrevanje).
 
 ### Gibalna količina in trki
 
-**6. Gibalna količina in sunek sile.** Gibalna količina je vektor $\vec{G} = m\vec{v}$, enota $\mathrm{kg\,m/s}$. Drugi Newtonov zakon v splošni obliki je $\sum\vec{F} = \mathrm{d}\vec{G}/\mathrm{d}t$. Z integriranjem dobimo **izrek o gibalni količini**:
+**6. Gibalna količina in sunek sile.** Gibalna količina je vektor $\vec{G} = m\vec{v}$, enota $\mathrm{kg\,m/s}$. Drugi Newtonov zakon v splošni obliki je $\sum\vec{F} = \mathrm{d}\vec{G}/\mathrm{d}t$. Z integriranjem od $t_1$ do $t_2$ dobimo **izrek o gibalni količini**:
 
 $$\Delta\vec{G} = \int_{t_1}^{t_2}\sum\vec{F}\,\mathrm{d}t.$$
 
 Integral na desni je **sunek sile**. Enak sunek lahko dosežemo z veliko silo v kratkem času ali z majhno silo v dolgem času.
 
-**7. Ohranitev gibalne količine.** V sistemu več teles se notranje sile po tretjem Newtonovem zakonu pojavljajo v parih $\vec{F}_{AB} = -\vec{F}_{BA}$ in se pri seštevanju odštejejo. Zato je sprememba celotne gibalne količine enaka le sunku **zunanjih** sil. Če je vsota zunanjih sil nič (ali je med kratkim trkom zanemarljiva), se celotna gibalna količina ohranja:
+**7. Izrek o ohranitvi gibalne količine.** Naj bo sistem $N$ teles, med katerimi delujejo notranje sile $\vec{F}_{ij}$ (sila telesa $j$ na telo $i$), na telesa pa še zunanje sile. Če je vsota zunanjih sil na sistem nič (ali je med kratkim trkom zanemarljiva), potem je celotna gibalna količina stalna:
 
 $$\sum_i m_i\vec{v}_i = \sum_i m_i\vec{v}_i\,'.$$
 
-Enačba je vektorska, zato velja po vsaki komponenti posebej.
+*Dokaz.* $\dfrac{\mathrm{d}}{\mathrm{d}t}\sum_i\vec{G}_i = \sum_i\vec{F}_i^{\text{zun}} + \sum_i\sum_{j\neq i}\vec{F}_{ij}$. Po tretjem Newtonovem zakonu je $\vec{F}_{ij} = -\vec{F}_{ji}$, zato se v dvojni vsoti členi odštejejo v parih in ostane $\mathrm{d}\vec{G}/\mathrm{d}t = \sum\vec{F}^{\text{zun}} = 0$. Enačba je vektorska: če je nič le ena komponenta zunanjih sil (na primer vodoravna), se ohranja le ta komponenta $\vec{G}$.
 
 **8. Trki.** Pri vsakem trku (ko so zunanje sile zanemarljive) se ohranja gibalna količina. Vrste trkov se razlikujejo po tem, kaj se zgodi s kinetično energijo:
 
@@ -83,6 +83,8 @@ Za čelni prožni trk, pri katerem drugo telo pred trkom miruje, iz obeh ohranit
 
 $$v_1' = \frac{m_1 - m_2}{m_1 + m_2}\,v_1, \qquad v_2' = \frac{2m_1}{m_1 + m_2}\,v_1.$$
 
+*Izpeljava.* Ohranitvena zakona zapišemo kot $m_1(v_1 - v_1') = m_2v_2'$ in $m_1(v_1^2 - v_1'^2) = m_2v_2'^2$. Drugo enačbo delimo s prvo (za $v_1' \neq v_1$) in dobimo $v_1 + v_1' = v_2'$: relativna hitrost le spremeni predznak. To vstavimo v prvo enačbo in izrazimo $v_1'$, nato še $v_2'$.
+
 Pri enakih masah si telesi zamenjata hitrosti. Lahko telo se od težkega odbije skoraj z nespremenjeno hitrostjo, težko telo pa lahkega odnese naprej s skoraj dvakratno svojo hitrostjo.
 
 :::premisli
@@ -91,7 +93,7 @@ Ali se lahko pri trku dveh teles v notranjo energijo pretvori **vsa** kinetična
 Le če je celotna gibalna količina pred trkom nič, na primer ko se dve enaki telesi z enako velikima nasprotnima hitrostma zaletita in sprimeta. Ker se gibalna količina ohrani, se morata telesi po trku gibati, če je bila pred trkom različna od nič, in del kinetične energije ostane.
 :::
 
-**9. Masno središče.** Za sistem teles definiramo masno središče $\vec{r}_{ms} = \sum m_i\vec{r}_i / \sum m_i$. Celotna gibalna količina je $\vec{G} = m_{\text{cel}}\vec{v}_{ms}$, zato se masno središče sistema brez zunanjih sil giblje premo enakomerno, kar koli se dogaja med telesi.
+**9. Masno središče.** Za sistem teles definiramo masno središče $\vec{r}_{ms} = \sum m_i\vec{r}_i / \sum m_i$. Z odvajanjem dobimo $\vec{G} = m_{\text{cel}}\vec{v}_{ms}$, iz dokaza v točki 7 pa $m_{\text{cel}}\vec{a}_{ms} = \sum\vec{F}^{\text{zun}}$. Masno središče sistema brez zunanjih sil se zato giblje premo enakomerno, kar koli se dogaja med telesi.
 
 ## Rešeni primeri
 
@@ -134,23 +136,23 @@ $\Delta W_k + \Delta W_p = A_{tr}$; brez trenja $\tfrac{1}{2}mv_0^2 = mgh$
 
 ### Primer 3 (težji)
 
-Izstrelek z maso $10\,\mathrm{g}$ prileti vodoravno s hitrostjo $400\,\mathrm{m/s}$ v leseno klado z maso $2{,}0\,\mathrm{kg}$, ki visi na dolgih vrvicah (balistično nihalo), in obtiči v njej. Kolikšna je hitrost klade takoj po trku, za koliko se klada dvigne in kolikšen delež kinetične energije se pri trku pretvori v notranjo energijo? Vzemi $g = 9{,}81\,\mathrm{m/s^2}$.
+Lesena klada z maso $2{,}0\,\mathrm{kg}$ visi na vrvicah dolžine $1{,}50\,\mathrm{m}$ (balistično nihalo). Vanjo vodoravno prileti izstrelek z maso $10\,\mathrm{g}$ in obtiči v njej, klada se nato odkloni za največ $30{,}0^\circ$ od navpičnice. Kolikšna je bila hitrost izstrelka in kolikšen delež njegove kinetične energije se pri trku pretvori v notranjo energijo? Vzemi $g = 9{,}81\,\mathrm{m/s^2}$.
 
-**Podatki:** $m = 10\,\mathrm{g} = 0{,}010\,\mathrm{kg}$, $v = 400\,\mathrm{m/s}$, $M = 2{,}0\,\mathrm{kg}$ (na začetku miruje), trk je popolnoma neprožen, $g = 9{,}81\,\mathrm{m/s^2}$
-**Iščemo:** hitrost $v'$ po trku, dvig $h$, delež izgubljene kinetične energije
+**Podatki:** $m = 10\,\mathrm{g} = 0{,}010\,\mathrm{kg}$, $M = 2{,}0\,\mathrm{kg}$ (na začetku miruje), $l = 1{,}50\,\mathrm{m}$, $\vartheta = 30{,}0^\circ$, trk je popolnoma neprožen, $g = 9{,}81\,\mathrm{m/s^2}$
+**Iščemo:** hitrost izstrelka $v$, delež izgubljene kinetične energije
 
 :::formula
-Trk: $mv = (m + M)v'$. Nihanje po trku: $\tfrac{1}{2}(m + M)v'^2 = (m + M)gh$.
+Nihanje po trku: $h = l(1 - \cos\vartheta)$, $\tfrac{1}{2}(m + M)v'^2 = (m + M)gh$. Trk: $mv = (m + M)v'$.
 :::
 
 **Rešitev:**
 
-1. Med kratkim trkom vrvici ostaneta navpični, zato so vodoravne zunanje sile nič in se vodoravna gibalna količina ohranja. Energija se pri trku ne ohranja.
-2. Pred trkom ima gibalno količino le izstrelek, po trku pa se izstrelek in klada gibljeta skupaj: $v' = \dfrac{mv}{m + M} = \dfrac{0{,}010 \cdot 400}{2{,}010}\,\mathrm{m/s} \approx 1{,}99\,\mathrm{m/s}$.
-3. Po trku se ohranja mehanska energija (vrvici ne opravljata dela): $h = \dfrac{v'^2}{2g} = \dfrac{1{,}990^2}{2 \cdot 9{,}81}\,\mathrm{m} \approx 0{,}202\,\mathrm{m}$.
-4. Kinetična energija pred trkom: $\tfrac{1}{2} \cdot 0{,}010 \cdot 400^2\,\mathrm{J} = 800\,\mathrm{J}$; po trku: $\tfrac{1}{2} \cdot 2{,}010 \cdot 1{,}990^2\,\mathrm{J} \approx 3{,}98\,\mathrm{J}$.
-5. Delež izgube: $1 - 3{,}98/800 \approx 0{,}995$. Splošno je ta delež $M/(m + M) = 2{,}0/2{,}010 \approx 99{,}5\,\%$.
-6. Odgovor: klada se po trku giblje s hitrostjo približno $1{,}99\,\mathrm{m/s}$, dvigne se za približno $20\,\mathrm{cm}$, v notranjo energijo pa preide približno $99{,}5\,\%$ začetne kinetične energije.
+1. Dogodek razdelimo na dva dela z različnima ohranitvenima zakonoma: pri trku se ohranja vodoravna gibalna količina (energija ne), pri nihanju po trku mehanska energija (vrvici sta pravokotni na gibanje in ne opravljata dela). Računamo od konca nazaj.
+2. Dvig klade iz geometrije: $h = l(1 - \cos\vartheta) = 1{,}50 \cdot (1 - \cos 30{,}0^\circ)\,\mathrm{m} \approx 0{,}201\,\mathrm{m}$.
+3. Hitrost takoj po trku iz ohranitve mehanske energije (masa se pokrajša): $v' = \sqrt{2gh} = \sqrt{2 \cdot 9{,}81 \cdot 0{,}201}\,\mathrm{m/s} \approx 1{,}99\,\mathrm{m/s}$.
+4. Med kratkim trkom vrvici ostaneta navpični, zato vodoravnih zunanjih sil ni in $mv = (m + M)v'$: $v = \dfrac{(m + M)v'}{m} = \dfrac{2{,}010 \cdot 1{,}986}{0{,}010}\,\mathrm{m/s} \approx 399\,\mathrm{m/s}$.
+5. Delež splošno: ker je $v' = mv/(m + M)$, je $W_k' = \tfrac{1}{2}(m + M)v'^2 = \dfrac{(mv)^2}{2(m + M)}$ in $W_k = \dfrac{(mv)^2}{2m}$, zato $W_k'/W_k = m/(m + M)$ in v notranjo energijo preide delež $\dfrac{M}{m + M} = \dfrac{2{,}0}{2{,}010} \approx 0{,}995$.
+6. Odgovor: izstrelek je priletel s hitrostjo približno $400\,\mathrm{m/s}$, pri trku pa se približno $99{,}5\,\%$ njegove kinetične energije pretvori v notranjo energijo klade in izstrelka.
 
 ### Primer 4 – zdaj ti
 
@@ -193,32 +195,60 @@ $v = \sqrt{2W_p/m} = \sqrt{2 \cdot 1{,}0\,\mathrm{J}/0{,}50\,\mathrm{kg}} = 2{,}
 - $\vec{G} = m\vec{v}$, $\Delta\vec{G} = \int\vec{F}\,\mathrm{d}t$; brez zunanjih sil se celotna gibalna količina ohranja.
 - Trki: gibalna količina se ohrani vedno, kinetična energija le pri prožnem trku; popolnoma neprožni trk: skupna hitrost $\sum m_i v_i / \sum m_i$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicijo dela kot krivuljnega integrala in moči ter izpeljavo $P = \vec{F}\cdot\vec{v}$ in dela pri raztezanju vzmeti;
+- izrek o kinetični energiji s pogoji in dokazom iz drugega Newtonovega zakona;
+- definicijo konservativne sile in potencialne energije ter izrek o ohranitvi mehanske energije s pogojem in dokazom;
+- izrek o gibalni količini in izrek o ohranitvi gibalne količine sistema (pogoj: vsota zunanjih sil je nič) z dokazom iz tretjega Newtonovega zakona;
+- izpeljavo hitrosti po čelnem prožnem trku in deleža kinetične energije, ki se izgubi pri popolnoma neprožnem trku.
+
+### Naloga 1
+
+Klada A z maso $0{,}40\,\mathrm{kg}$ zdrsne iz mirovanja po gladki ukrivljeni klančini z višine $0{,}80\,\mathrm{m}$ na vodoravno podlago. Prvi del podlage je dolg $1{,}0\,\mathrm{m}$ in hrapav (koeficient trenja $0{,}20$), za njim je gladek del. Na začetku gladkega dela miruje klada B z maso $1{,}20\,\mathrm{kg}$, za njo je vodoravna vzmet s koeficientom $480\,\mathrm{N/m}$. Klada A čelno in prožno trči v B. Izračunaj hitrost A tik pred trkom, hitrosti obeh klad po trku, največji skrček vzmeti in kje se A ustavi. Vzemi $g = 9{,}81\,\mathrm{m/s^2}$.
+
+**Rešitev:**
+
+1. Od vrha do trka: normalni sili ne opravljata dela, trenje opravi $A_{tr} = -\mu m_A g s$. Iz $\Delta W_k + \Delta W_p = A_{tr}$ sledi $\tfrac{1}{2}m_Av_A^2 = m_Agh - \mu m_Ags$, torej $v_A = \sqrt{2g(h - \mu s)}$. Ker je $h - \mu s = 0{,}80\,\mathrm{m} - 0{,}20 \cdot 1{,}0\,\mathrm{m} = 0{,}60\,\mathrm{m}$, je $v_A = \sqrt{2 \cdot 9{,}81 \cdot 0{,}60}\,\mathrm{m/s} \approx 3{,}43\,\mathrm{m/s}$.
+2. Prožni trk z mirujočo B: $v_A' = \dfrac{0{,}40 - 1{,}20}{1{,}60} \cdot 3{,}431\,\mathrm{m/s} \approx -1{,}72\,\mathrm{m/s}$ (A se odbije nazaj), $v_B' = \dfrac{2 \cdot 0{,}40}{1{,}60} \cdot 3{,}431\,\mathrm{m/s} \approx 1{,}72\,\mathrm{m/s}$.
+3. Preizkus gibalne količine: pred trkom $0{,}40 \cdot 3{,}431 \approx 1{,}37\,\mathrm{kg\,m/s}$, po trku $0{,}40 \cdot (-1{,}716) + 1{,}20 \cdot 1{,}716 \approx 1{,}37\,\mathrm{kg\,m/s}$.
+4. Vzmet: na gladkem delu se mehanska energija ohranja, $\tfrac{1}{2}m_Bv_B'^2 = \tfrac{1}{2}kx^2$, zato $x = v_B'\sqrt{m_B/k} = 1{,}716 \cdot \sqrt{1{,}20/480}\,\mathrm{m} \approx 0{,}086\,\mathrm{m}$.
+5. Klada A se vrne na hrapavi del in ga trenje ustavi: $\tfrac{1}{2}m_Av_A'^2 = \mu m_Agd$, torej $d = \dfrac{v_A'^2}{2\mu g} = \dfrac{1{,}716^2}{2 \cdot 0{,}20 \cdot 9{,}81}\,\mathrm{m} \approx 0{,}75\,\mathrm{m}$. To je manj od $1{,}0\,\mathrm{m}$, zato A klančine ne doseže več.
+6. Odgovor: tik pred trkom ima A hitrost $3{,}43\,\mathrm{m/s}$; po trku se A giblje nazaj z $1{,}72\,\mathrm{m/s}$, B naprej z $1{,}72\,\mathrm{m/s}$; vzmet se skrči za največ $8{,}6\,\mathrm{cm}$, A pa se ustavi $0{,}75\,\mathrm{m}$ pred mestom trka (to je $0{,}25\,\mathrm{m}$ od vznožja klančine).
+
+### Naloga 2
+
+Natančno navedi izrek o ohranitvi gibalne količine za sistem teles in ga dokaži. Telo z maso $m_1$ in hitrostjo $v_1$ čelno trči v mirujoče telo z maso $m_2$. Izpelji hitrosti po prožnem trku in delež kinetične energije, ki se pri popolnoma neprožnem trku pretvori v notranjo energijo. Utemelji, ali se lahko pri tem trku v notranjo energijo pretvori vsa kinetična energija.
+
+**Rešitev:**
+
+1. Izrek: če je vsota zunanjih sil na sistem teles nič, je celotna gibalna količina $\vec{G} = \sum_i m_i\vec{v}_i$ stalna.
+2. Dokaz: $\dfrac{\mathrm{d}\vec{G}}{\mathrm{d}t} = \sum_i\vec{F}_i^{\text{zun}} + \sum_i\sum_{j\neq i}\vec{F}_{ij}$. Po tretjem Newtonovem zakonu je $\vec{F}_{ij} = -\vec{F}_{ji}$, zato je dvojna vsota nič, in pri $\sum\vec{F}^{\text{zun}} = 0$ je $\mathrm{d}\vec{G}/\mathrm{d}t = 0$.
+3. Prožni trk: $m_1(v_1 - v_1') = m_2v_2'$ in $m_1(v_1^2 - v_1'^2) = m_2v_2'^2$. Deljenje druge enačbe s prvo da $v_2' = v_1 + v_1'$.
+4. Vstavimo v prvo: $m_1(v_1 - v_1') = m_2(v_1 + v_1')$, torej $v_1' = \dfrac{m_1 - m_2}{m_1 + m_2}\,v_1$ in $v_2' = v_1 + v_1' = \dfrac{2m_1}{m_1 + m_2}\,v_1$.
+5. Popolnoma neprožni trk: $v' = \dfrac{m_1v_1}{m_1 + m_2}$, $W_k' = \tfrac{1}{2}(m_1 + m_2)v'^2 = \dfrac{m_1}{m_1 + m_2} \cdot \tfrac{1}{2}m_1v_1^2$. V notranjo energijo preide delež $1 - \dfrac{m_1}{m_1 + m_2} = \dfrac{m_2}{m_1 + m_2}$.
+6. Ta delež je pri $m_1 > 0$ vedno manjši od 1: gibalna količina $m_1v_1 \neq 0$ se ohrani, zato se telesi po trku gibljeta in nekaj kinetične energije ostane. Vsa bi se pretvorila le, če bi bila celotna gibalna količina pred trkom nič.
+7. Odgovor: $v_1' = \dfrac{m_1 - m_2}{m_1 + m_2}v_1$, $v_2' = \dfrac{2m_1}{m_1 + m_2}v_1$; pri popolnoma neprožnem trku se izgubi delež $m_2/(m_1 + m_2)$, nikoli vsa kinetična energija.
+
 ## Drugače: Na sliki
 
-Predstavljaj si energijo kot vodo v posodah. Na vrhu hriba je vsa v posodi »potencialna«, med spustom se pretaka v posodo »kinetična«. Trenje je luknja, skozi katero voda odteka v tretjo posodo »notranja energija«. Skupna količina vode v vseh treh posodah je ves čas enaka.
+Energija je kot voda v treh posodah: med spustom se pretaka iz posode »potencialna« v posodo »kinetična«, trenje je luknja, skozi katero odteka v posodo »notranja energija«. Vsota v vseh treh je ves čas enaka.
 
-Pri trku nariši puščice gibalnih količin pred trkom in po njem. Vektorska vsota puščic pred trkom mora biti enaka vsoti po trku:
+Pri trku nariši puščice gibalnih količin pred trkom in po njem: njihova vektorska vsota je pred trkom in po njem enaka.
 
-```
-pred:   [m1] ---->            [m2]           G = m1 v1
-po:          [m1+m2] -->                     G = (m1+m2) v'
-```
+Graf $F(t)$ med trkom je ozek vrh; ploščina pod njim je sunek sile, enak spremembi gibalne količine. Blazina naredi vrh nižji in širši pri enaki ploščini.
 
-Pri poševnem trku (biljard) puščice sestavljaš kot vektorje: vsota ostane enaka, krogli pa se po trku razletita pod kotom.
+## Drugače: Uporaba v stroki
 
-Graf $F(t)$ med trkom je ozek vrh. Ploščina pod vrhom je sunek sile, ki je enak spremembi gibalne količine. Blazina naredi vrh nižji in širši pri enaki ploščini.
+**Udarna žilavost (Charpyjev preizkus).** Kladivo nihala ($20\,\mathrm{kg}$) spustijo z višine $1{,}50\,\mathrm{m}$; ko prelomi zarezan preizkušanec, se dvigne le na $1{,}10\,\mathrm{m}$. Za lom je porabljeno $mg\Delta h = 20 \cdot 9{,}81 \cdot 0{,}40\,\mathrm{J} \approx 78\,\mathrm{J}$.
 
-## Drugače: Iz vsakdanjega življenja
+**Moderiranje nevtronov.** V jedrskem reaktorju nevtrone upočasnijo s prožnimi trki z jedri moderatorja. Po formuli za čelni prožni trk nevtron na protonu (enaka masa) obstane, na jedru ogljika ($m_2 \approx 12m_1$) pa obdrži $(11/13)^2 \approx 72\,\%$ kinetične energije, zato v vodi potrebuje manj trkov kot v grafitu.
 
-**Zračna blazina in čelada.** Potnik z maso $70\,\mathrm{kg}$ se pri $50\,\mathrm{km/h}$ ($13{,}9\,\mathrm{m/s}$) ustavi. Sprememba gibalne količine je ista, sila pa je odvisna od časa ustavljanja: pri $0{,}10\,\mathrm{s}$ (blazina) je povprečna sila okoli $9{,}7\,\mathrm{kN}$, pri $0{,}010\,\mathrm{s}$ (udarec v trdo) pa okoli $97\,\mathrm{kN}$.
+**Masna spektrometrija.** Ion z nabojem $e$, pospešen z napetostjo $U$, dobi $\tfrac{1}{2}mv^2 = eU$, zato je čas, v katerem ion preleti isto razdaljo, sorazmeren s $\sqrt{m}$; na tem temelji spektrometer na čas preleta (TOF).
 
-**Hoja po stopnicah in presnova.** Človek z maso $70\,\mathrm{kg}$, ki se povzpne za eno nadstropje ($3\,\mathrm{m}$), opravi koristno delo okoli $2{,}1\,\mathrm{kJ}$. Ker je izkoristek mišic le okoli $25\,\%$, porabi približno $8\,\mathrm{kJ}$ kemijske energije iz hrane; preostanek se sprosti kot toplota.
-
-**Reaktivni pogon.** Raketa, lignji in meduze se poganjajo tako, da izvržejo snov nazaj. Gibalna količina sistema se ohranja, zato telo dobi gibalno količino naprej.
-
-**Trki molekul.** V kinetični teoriji plinov so trki molekul s steno posode prožni: molekula se odbije in spremeni gibalno količino za $2mv_x$. Vsota teh sunkov na enoto ploščine in časa je tlak plina.
-
-**Elektrarne.** Pri hidroelektrarni se potencialna energija vode pretvarja v kinetično, nato v delo turbine in v električno energijo. Moč je $P = \eta\,\Phi_m g h$, kjer je $\Phi_m$ masni pretok.
+**Črpalke.** Za dvig $10\,\mathrm{L/s}$ vode za $20\,\mathrm{m}$ pri izkoristku $70\,\%$ potrebuje črpalka moč $P = \rho Q g h/\eta = 1000 \cdot 0{,}010 \cdot 9{,}81 \cdot 20/0{,}70\,\mathrm{W} \approx 2{,}8\,\mathrm{kW}$.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -228,23 +258,13 @@ Kroglica z maso $1{,}0\,\mathrm{kg}$ in hitrostjo $6{,}0\,\mathrm{m/s}$ čelno p
 2. **Ohranitev kinetične energije:** $\tfrac{1}{2} \cdot 1{,}0 \cdot 36 = \tfrac{1}{2} \cdot 1{,}0\,v_1'^2 + \tfrac{1}{2} \cdot 2{,}0\,v_2'^2$.
 3. **Formula za prožni trk:** $v_1' = \frac{1{,}0 - 2{,}0}{3{,}0} \cdot 6{,}0\,\mathrm{m/s} = -2{,}0\,\mathrm{m/s}$.
 4. **Druga kroglica:** $v_2' = \frac{2 \cdot 1{,}0}{3{,}0} \cdot 6{,}0\,\mathrm{m/s} = 4{,}0\,\mathrm{m/s}$.
-5. **Preizkus gibalne količine:** $1{,}0 \cdot (-2{,}0) + 2{,}0 \cdot 4{,}0 = 6{,}0\,\mathrm{kg\,m/s}$. ✓
-6. **Preizkus energije:** $\tfrac{1}{2} \cdot 1{,}0 \cdot 4{,}0 + \tfrac{1}{2} \cdot 2{,}0 \cdot 16 = 2{,}0 + 16 = 18\,\mathrm{J}$, enako kot pred trkom. ✓
-7. **Pomen:** lažja kroglica se odbije nazaj s $2{,}0\,\mathrm{m/s}$, težja odleti naprej s $4{,}0\,\mathrm{m/s}$.
+5. **Preizkus:** $1{,}0 \cdot (-2{,}0) + 2{,}0 \cdot 4{,}0 = 6{,}0\,\mathrm{kg\,m/s}$ ✓ in $\tfrac{1}{2} \cdot 1{,}0 \cdot 4{,}0 + \tfrac{1}{2} \cdot 2{,}0 \cdot 16 = 18\,\mathrm{J}$ ✓. Lažja kroglica se odbije nazaj.
 
 ## Drugače: Bolj natančno
 
-**Izpeljava izreka o kinetični energiji.** Iz $\vec{F} = m\,\mathrm{d}\vec{v}/\mathrm{d}t$ in $\mathrm{d}\vec{r} = \vec{v}\,\mathrm{d}t$ sledi
+**Konservativna sila in gradient.** Če je $\oint\vec{F}\cdot\mathrm{d}\vec{r} = 0$ po vsaki sklenjeni poti, obstaja $W_p(\vec{r})$, da je $\vec{F} = -\nabla W_p$; v eni razsežnosti $F = -\mathrm{d}W_p/\mathrm{d}x$. Ravnovesne lege so v točkah, kjer je $\mathrm{d}W_p/\mathrm{d}x = 0$; minimum je stabilno ravnovesje.
 
-$$\int_1^2\vec{F}\cdot\mathrm{d}\vec{r} = \int_{t_1}^{t_2} m\frac{\mathrm{d}\vec{v}}{\mathrm{d}t}\cdot\vec{v}\,\mathrm{d}t = \int_{t_1}^{t_2}\frac{\mathrm{d}}{\mathrm{d}t}\left(\tfrac{1}{2}m\,\vec{v}\cdot\vec{v}\right)\mathrm{d}t = \tfrac{1}{2}mv_2^2 - \tfrac{1}{2}mv_1^2.$$
-
-**Konservativna sila in gradient.** Sila je konservativna natanko tedaj, ko je njen krivuljni integral po vsaki sklenjeni poti nič, $\oint\vec{F}\cdot\mathrm{d}\vec{r} = 0$. Takrat obstaja funkcija $W_p(\vec{r})$, da je $\vec{F} = -\nabla W_p$; v eni razsežnosti $F = -\mathrm{d}W_p/\mathrm{d}x$. Na primer iz $W_p = \tfrac{1}{2}kx^2$ dobimo $F = -kx$. Ravnovesne lege so v točkah, kjer je $\mathrm{d}W_p/\mathrm{d}x = 0$; minimum je stabilno ravnovesje.
-
-**Ohranitev gibalne količine za sistem.** Za $N$ teles je $\frac{\mathrm{d}}{\mathrm{d}t}\sum_i\vec{G}_i = \sum_i\vec{F}_i^{\text{zun}} + \sum_i\sum_{j\neq i}\vec{F}_{ij}$. Dvojna vsota je nič, ker je $\vec{F}_{ij} = -\vec{F}_{ji}$. Ostane $\mathrm{d}\vec{G}/\mathrm{d}t = \sum\vec{F}^{\text{zun}}$.
-
-**Izpeljava prožnega trka.** Ohranitvena zakona zapišemo kot $m_1(v_1 - v_1') = m_2v_2'$ in $m_1(v_1^2 - v_1'^2) = m_2v_2'^2$. Drugo enačbo delimo s prvo (za $v_1 \neq v_1'$) in dobimo $v_1 + v_1' = v_2'$: relativna hitrost pri prožnem čelnem trku le spremeni predznak. Od tod sledita formuli iz razlage.
-
-**Sistem masnega središča.** Kinetično energijo sistema lahko zapišemo kot $W_k = \tfrac{1}{2}m_{\text{cel}}v_{ms}^2 + W_k'$, kjer je $W_k'$ kinetična energija glede na masno središče. Pri trku se prvi člen ohrani (ker se ohrani $\vec{G}$), zato se lahko v notranjo energijo pretvori največ $W_k'$. Pri popolnoma neprožnem trku se pretvori ves $W_k'$.
+**Sistem masnega središča.** Velja $W_k = \tfrac{1}{2}m_{\text{cel}}v_{ms}^2 + W_k'$, kjer je $W_k'$ kinetična energija glede na masno središče. Prvi člen se pri trku ohrani (ker se ohrani $\vec{G}$), zato se v notranjo energijo pretvori največ $W_k'$, pri popolnoma neprožnem trku ves.
 
 ## Preveri se
 
@@ -318,4 +338,6 @@ h | višina | | m
 M | masa klade | | kg | drugje: masa Zemlje v −GmM/r
 k | koeficient vzmeti | | N/m
 x | raztezek vzmeti | | m
+l | dolžina vrvic nihala | | m
+\vartheta | največji odklon nihala od navpičnice | h = l(1 - \cos\vartheta) | °
 :::

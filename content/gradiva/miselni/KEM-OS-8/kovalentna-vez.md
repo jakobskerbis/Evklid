@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Oddaja ne gre
+  - Cl: $7$ zunanjih, oba bi sprejela
+  - po oddaji bi imel en atom le $6$
+- Skupni elektronski par
+  - vsak atom prispeva en elektron
+  - par šteje obema atomoma
+- Kovalentna vez
+  - med atomi nekovin
+  - jedri privlačita isti par
+- Molekula
+  - atomi, povezani s kovalentnimi vezmi
+  - element $\mathrm{O_2}$, spojina $\mathrm{H_2O}$
+- Število vezi
+  - $v = 8 - z$, vodik $v = 1$
+  - O $2$, N $3$, C $4$
+- Lewisova formula
+  - črtica je vezni par
+  - dve piki sta nevezni par
+  - napaka: pozabljeni nevezni pari
+- Večkratne vezi
+  - dvojna v $\mathrm{O_2}$ in $\mathrm{CO_2}$
+  - trojna v $\mathrm{N_2}$
+  - indeks $2$ ni dvojna vez

@@ -21,21 +21,23 @@ Zamikajoča predstava je, da val nese snov s seboj: da zvok »priteče« od zvo�
 
 $$s(x, t) = s_0\sin(kx - \omega t).$$
 
-Pri tem je $s_0$ amplituda, $\omega = 2\pi\nu$ krožna frekvenca, $k = 2\pi/\lambda$ **valovno število**, $\lambda$ **valovna dolžina**. Točka z enako fazo (npr. vrh vala) se premika s **hitrostjo valovanja**
+Pri tem je $s_0$ amplituda, $\omega = 2\pi\nu$ krožna frekvenca, $k = 2\pi/\lambda$ **valovno število**, $\lambda$ **valovna dolžina**. Točka z enako fazo (npr. vrh vala) se premika s **hitrostjo valovanja** (fazno hitrostjo): iz $kx - \omega t = \text{konst.}$ sledi $k\,\mathrm{d}x = \omega\,\mathrm{d}t$, torej
 
-$$c = \frac{\omega}{k} = \lambda\nu.$$
+$$c = \frac{\mathrm{d}x}{\mathrm{d}t} = \frac{\omega}{k} = \lambda\nu.$$
 
 Valovanje v smeri $-x$ zapišemo s $\sin(kx + \omega t)$. Pozor: $c$ je hitrost širjenja motnje; hitrost delca $\partial s/\partial t$ je nekaj drugega in ima amplitudo $\omega s_0$.
 
-**3. Valovna enačba.** Za majhen kos napete strune z dolžinsko gostoto $\mu = m/l$ in silo $F$ v struni da drugi Newtonov zakon (izpeljava v »Bolj natančno«)
+**3. Valovna enačba.** Naj bo struna homogena z dolžinsko gostoto $\mu = m/l$, napeta s silo $F$, odmiki pa majhni ($|\partial s/\partial x| \ll 1$, sila v struni se zato ne spremeni); težo in dušenje zanemarimo. Potem prečni odmik zadošča
 
 $$\frac{\partial^2 s}{\partial t^2} = c^2\,\frac{\partial^2 s}{\partial x^2}, \qquad c = \sqrt{\frac{F}{\mu}}.$$
 
-To je **valovna enačba**. Rešitev je vsaka funkcija oblike $s = f(x - ct) + g(x + ct)$: motnja poljubne oblike potuje nespremenjena v obe smeri. Za zvok v plinu velja enaka enačba za tlak ali odmik, hitrost pa je
+*Izpeljava:* na kos med $x$ in $x + \mathrm{d}x$ z maso $\mu\,\mathrm{d}x$ deluje prečna sila $F\left[\frac{\partial s}{\partial x}(x + \mathrm{d}x) - \frac{\partial s}{\partial x}(x)\right] = F\frac{\partial^2 s}{\partial x^2}\mathrm{d}x$, drugi Newtonov zakon pa da $\mu\,\mathrm{d}x\,\frac{\partial^2 s}{\partial t^2} = F\frac{\partial^2 s}{\partial x^2}\mathrm{d}x$.
+
+To je **valovna enačba**. Rešitev je vsaka dvakrat odvedljiva funkcija oblike $s = f(x - ct) + g(x + ct)$; za $s = f(x - ct)$ je namreč $\partial^2 s/\partial t^2 = c^2f''$ in $\partial^2 s/\partial x^2 = f''$. Motnja poljubne oblike torej potuje nespremenjena v obe smeri. Za zvok v plinu velja enaka enačba za tlak ali odmik, hitrost pa je
 
 $$c = \sqrt{\frac{\kappa RT}{M}},$$
 
-kjer je $\kappa = c_p/c_V$ razmerje specifičnih toplot (za zrak $1{,}4$), $T$ absolutna temperatura in $M$ molska masa. V tekočini je $c = \sqrt{K/\rho}$ s stisljivostnim modulom $K$; v vodi je zvok okoli $1500\,\mathrm{m/s}$, v zraku pri $20\,^\circ\mathrm{C}$ pa okoli $343\,\mathrm{m/s}$.
+kjer je $\kappa = c_p/c_V$ razmerje specifičnih toplot (za zrak $1{,}4$), $T$ absolutna temperatura in $M$ molska masa. *Izpeljava (Laplace):* v snovi je $c = \sqrt{K/\rho}$ s stisljivostnim modulom $K = -V\,\mathrm{d}p/\mathrm{d}V$. Stiskanja v zvočnem valu so hitra, zato adiabatna: iz $pV^\kappa = \text{konst.}$ je $\mathrm{d}p/\mathrm{d}V = -\kappa p/V$ in $K = \kappa p$. Za idealni plin je $\rho = pM/(RT)$, zato $c = \sqrt{\kappa p/\rho} = \sqrt{\kappa RT/M}$. Ista formula $c = \sqrt{K/\rho}$ velja v tekočini; v vodi je zvok okoli $1500\,\mathrm{m/s}$, v zraku pri $20\,^\circ\mathrm{C}$ pa okoli $343\,\mathrm{m/s}$.
 
 :::premisli
 Če vrv tresemo hitreje (z večjo frekvenco), ali val po njej steče hitreje?
@@ -45,7 +47,7 @@ Ne. Hitrost določata le sila v vrvi in njena dolžinska gostota, $c = \sqrt{F/\
 
 ### Energija in zvok
 
-**4. Energija in jakost.** Valovanje prenaša energijo. **Gostota energijskega toka** (jakost) $j$ je moč, ki preteče skozi enoto površine pravokotno na smer širjenja, $j = P/S$, enota $\mathrm{W/m^2}$. Za sinusno valovanje je $j \propto s_0^2\omega^2$. Točkast izvir z močjo $P$ seva enakomerno na vse strani, zato je na razdalji $r$
+**4. Energija in jakost.** Valovanje prenaša energijo. **Gostota energijskega toka** (jakost) $j$ je moč, ki preteče skozi enoto površine pravokotno na smer širjenja, $j = P/S$, enota $\mathrm{W/m^2}$. Za sinusno valovanje je $j \propto s_0^2\omega^2$; za zvok v snovi z gostoto $\rho$ je $j = \tfrac12\rho c\,\omega^2s_0^2$. Naj točkast izvir z močjo $P$ seva enakomerno na vse strani in naj snov energije ne absorbira. Potem skozi vsako sfero s polmerom $r$ v stacionarnem stanju preteče vsa moč $P$, zato je na razdalji $r$
 
 $$j = \frac{P}{4\pi r^2}.$$
 
@@ -57,15 +59,15 @@ Desetkrat večja jakost pomeni $10\,\mathrm{dB}$ več, dvakrat večja pa okoli $
 
 ### Stoječe valovanje
 
-**6. Superpozicija in odboj.** Ker je valovna enačba linearna, se odmika dveh valovanj seštejeta. Na trdno vpetem koncu strune se val odbije z obrnjeno fazo (odmik mora biti tam nič), na prostem koncu pa brez spremembe faze.
+**6. Superpozicija in odboj.** Ker je valovna enačba linearna, se odmika dveh valovanj seštejeta. Na trdno vpetem koncu strune se val odbije z obrnjeno fazo (odmik mora biti tam nič), na prostem koncu pa brez spremembe faze. Če se seštejeta valovanji z bližnjima frekvencama $\nu_1$ in $\nu_2$, glasnost niha s frekvenco $|\nu_1 - \nu_2|$; temu pravimo **utripanje**.
 
-**7. Stoječe valovanje.** Seštejmo dve enaki valovanji, ki potujeta v nasprotnih smereh:
+**7. Stoječe valovanje.** Seštejmo dve enaki valovanji, ki potujeta v nasprotnih smereh (z $\sin a + \sin b = 2\sin\frac{a+b}{2}\cos\frac{a-b}{2}$):
 
 $$s = s_0\sin(kx - \omega t) + s_0\sin(kx + \omega t) = 2s_0\sin(kx)\cos(\omega t).$$
 
 To ni več potujoče valovanje: vsak delec niha z amplitudo $2s_0|\sin kx|$. V **vozlih** ($\sin kx = 0$, vsako polovico valovne dolžine) delci mirujejo, v **hrbtih** pa nihajo z največjo amplitudo. Razdalja med sosednjima vozloma je $\lambda/2$.
 
-**8. Lastna nihanja.** Struna z dolžino $l$, vpeta na obeh koncih, ima vozla na obeh koncih. Na dolžino mora iti celo število polovic valovne dolžine, $l = n\lambda_n/2$, zato so **lastne frekvence**
+**8. Lastna nihanja.** Naj bo struna z dolžino $l$ vpeta na obeh koncih: $s(0, t) = s(l, t) = 0$ za vsak $t$. Stoječe valovanje $2s_0\sin(kx)\cos(\omega t)$ izpolni prvi pogoj samo po sebi, drugi pa zahteva $\sin kl = 0$, torej $kl = n\pi$. Na dolžino gre celo število polovic valovne dolžine, $l = n\lambda_n/2$, zato so **lastne frekvence**
 
 $$\nu_n = n\,\frac{c}{2l}, \qquad n = 1, 2, 3, \dots$$
 
@@ -83,13 +85,13 @@ V zaprti piščali je pri osnovnem nihanju na dolžini le četrtina valovne dol�
 
 ### Dopplerjev pojav
 
-Zamikajoča razlaga je, da sirena zveni višje, ker je bližje. Bližina pa spremeni le glasnost; višina tona je odvisna od smeri gibanja: ton je visok ves čas približevanja in pade v trenutku, ko gre avto mimo.
+Pogosto slišiš, da sirena zveni višje, ker je bližje. Bližina pa spremeni le glasnost; višina tona je odvisna od smeri gibanja: ton je visok ves čas približevanja in pade v trenutku, ko gre avto mimo.
 
-**9. Dopplerjev pojav.** Izvir oddaja zvok s frekvenco $\nu$, hitrost zvoka glede na zrak je $c$. Če se opazovalec giblje proti izviru s hitrostjo $v_o$, se izvir pa proti opazovalcu s hitrostjo $v_i$ (obe glede na zrak), opazovalec sliši frekvenco
+**9. Dopplerjev pojav.** Naj izvir oddaja zvok s frekvenco $\nu$, hitrost zvoka glede na mirujoči zrak naj bo $c$. Če se opazovalec giblje proti izviru s hitrostjo $v_o$, izvir pa proti opazovalcu s hitrostjo $v_i < c$ (obe glede na zrak in vzdolž njune zveznice), opazovalec sliši frekvenco
 
 $$\nu' = \nu\,\frac{c + v_o}{c - v_i}.$$
 
-Pri oddaljevanju vstavimo negativni hitrosti. Gibanje izvira zgosti ali razredči valovne fronte (spremeni valovno dolžino), gibanje opazovalca pa spremeni, kako pogosto fronte srečuje. Ko je hitrost izvira večja od $c$, nastane udarni val (Machov stožec, pok letala).
+*Izpeljava:* izvir odda fronto vsako periodo $1/\nu$ in se medtem premakne za $v_i/\nu$, zato je razmik front pred njim $\lambda' = (c - v_i)/\nu$. Opazovalec jih srečuje z relativno hitrostjo $c + v_o$, torej s frekvenco $\nu' = (c + v_o)/\lambda'$. Pri oddaljevanju vstavimo negativni hitrosti. Gibanje izvira zgosti ali razredči valovne fronte (spremeni valovno dolžino), gibanje opazovalca pa spremeni, kako pogosto fronte srečuje. Ko je hitrost izvira večja od $c$, nastane udarni val (Machov stožec, pok letala).
 
 ## Rešeni primeri
 
@@ -131,13 +133,13 @@ $c = \sqrt{\kappa RT/M}$, zaprta piščal: $\nu_n = (2n - 1)\,\dfrac{c}{4l}$
 
 ### Primer 3 (težji)
 
-Mimo opazovalca, ki stoji ob cesti, pelje rešilni avto s sireno. Ko se avto približuje, opazovalec sliši frekvenco $760\,\mathrm{Hz}$, ko se oddaljuje, pa $650\,\mathrm{Hz}$. Hitrost zvoka je $340\,\mathrm{m/s}$, zrak miruje. S kolikšno hitrostjo pelje avto in kolikšno frekvenco oddaja sirena?
+Mimo opazovalca, ki stoji ob cesti, pelje rešilni avto s sireno. Ko se avto približuje, opazovalec sliši frekvenco $760\,\mathrm{Hz}$, ko se oddaljuje, pa $650\,\mathrm{Hz}$. Hitrost zvoka je $340\,\mathrm{m/s}$, zrak miruje. S kolikšno hitrostjo pelje avto in kolikšno frekvenco oddaja sirena? Kolikšno frekvenco sliši kolesar, ki se avtu pelje naproti s hitrostjo $6{,}0\,\mathrm{m/s}$?
 
-**Podatki:** $\nu_\mathrm{p} = 760\,\mathrm{Hz}$ (približevanje), $\nu_\mathrm{o} = 650\,\mathrm{Hz}$ (oddaljevanje), $c = 340\,\mathrm{m/s}$, opazovalec miruje ($v_o = 0$), zrak miruje
-**Iščemo:** hitrost avtomobila $v_i$ in frekvenco sirene $\nu$
+**Podatki:** $\nu_\mathrm{p} = 760\,\mathrm{Hz}$ (približevanje), $\nu_\mathrm{o} = 650\,\mathrm{Hz}$ (oddaljevanje), $c = 340\,\mathrm{m/s}$, opazovalec miruje ($v_o = 0$), zrak miruje; kolesar $v_o = 6{,}0\,\mathrm{m/s}$ proti avtu
+**Iščemo:** hitrost avtomobila $v_i$, frekvenco sirene $\nu$, frekvenco $\nu_\mathrm{k}$, ki jo sliši kolesar
 
 :::formula
-Mirujoč opazovalec: $\nu_\mathrm{p} = \nu\,\dfrac{c}{c - v_i}$, $\nu_\mathrm{o} = \nu\,\dfrac{c}{c + v_i}$
+Mirujoč opazovalec: $\nu_\mathrm{p} = \nu\,\dfrac{c}{c - v_i}$, $\nu_\mathrm{o} = \nu\,\dfrac{c}{c + v_i}$; splošno $\nu' = \nu\,\dfrac{c + v_o}{c - v_i}$, $\lambda' = \dfrac{c - v_i}{\nu}$
 :::
 
 **Rešitev:**
@@ -146,7 +148,8 @@ Mirujoč opazovalec: $\nu_\mathrm{p} = \nu\,\dfrac{c}{c - v_i}$, $\nu_\mathrm{o}
 2. Rešimo za $v_i$: $\nu_\mathrm{p}(c - v_i) = \nu_\mathrm{o}(c + v_i)$, torej $v_i = c\,\dfrac{\nu_\mathrm{p} - \nu_\mathrm{o}}{\nu_\mathrm{p} + \nu_\mathrm{o}} = 340\,\mathrm{m/s} \cdot \dfrac{110}{1410} \approx 26{,}5\,\mathrm{m/s}$.
 3. Frekvenca sirene: $\nu = \nu_\mathrm{p}\,(c - v_i)/c = 760\,\mathrm{Hz} \cdot 313{,}5/340 \approx 701\,\mathrm{Hz}$.
 4. Preizkus z drugo enačbo: $\nu = \nu_\mathrm{o}\,(c + v_i)/c = 650\,\mathrm{Hz} \cdot 366{,}5/340 \approx 701\,\mathrm{Hz}$ ✓.
-5. Odgovor: avto pelje s hitrostjo približno $26{,}5\,\mathrm{m/s}$ (okoli $95\,\mathrm{km/h}$), sirena pa oddaja frekvenco približno $700\,\mathrm{Hz}$.
+5. Kolesar je pred avtom, kjer je valovna dolžina skrajšana: $\lambda' = (c - v_i)/\nu = c/\nu_\mathrm{p} = 340/760\,\mathrm{m} \approx 0{,}447\,\mathrm{m}$. Fronte srečuje z relativno hitrostjo $c + v_o = 346\,\mathrm{m/s}$, zato $\nu_\mathrm{k} = (c + v_o)/\lambda' = 346 \cdot 760/340\,\mathrm{Hz} \approx 773\,\mathrm{Hz}$.
+6. Odgovor: avto pelje s hitrostjo približno $26{,}5\,\mathrm{m/s}$ (okoli $95\,\mathrm{km/h}$), sirena oddaja frekvenco približno $700\,\mathrm{Hz}$, kolesar pa sliši približno $773\,\mathrm{Hz}$.
 
 ### Primer 4 – zdaj ti
 
@@ -189,6 +192,55 @@ $F = \mu c^2 = 4{,}0 \cdot 10^{-4}\,\mathrm{kg/m} \cdot (308\,\mathrm{m/s})^2 \a
 - Stoječe valovanje $2s_0\sin kx\cos\omega t$: vozli na razmiku $\lambda/2$; struna in odprta piščal $\nu_n = nc/(2l)$, zaprta piščal $\nu_n = (2n - 1)c/(4l)$.
 - Dopplerjev pojav: $\nu' = \nu(c + v_o)/(c - v_i)$, hitrosti pozitivne pri približevanju.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije valovne dolžine, valovnega števila, krožne frekvence in fazne hitrosti ter izpeljavo $c = \omega/k = \lambda\nu$;
+- izpeljavo valovne enačbe za struno s predpostavkami in dokaz, da je $f(x - ct) + g(x + ct)$ njena rešitev;
+- stoječe valovanje kot vsoto dveh nasprotnih valovanj in izpeljavo lastnih frekvenc strune ter odprte in zaprte piščali iz robnih pogojev;
+- izpeljavo hitrosti zvoka v plinu $c = \sqrt{\kappa RT/M}$ in zakaj je stiskanje adiabatno;
+- Dopplerjevo formulo s pogoji in izpeljavo.
+
+### Naloga 1
+
+Jeklena struna z dolžino $0{,}60\,\mathrm{m}$ in maso $3{,}0\,\mathrm{g}$ je vpeta na obeh koncih. Njeno drugo lastno nihanje je pri $20\,^\circ\mathrm{C}$ v resonanci z osnovnim tonom piščali, dolge $0{,}25\,\mathrm{m}$ in zaprte na enem koncu; hitrost zvoka pri $20\,^\circ\mathrm{C}$ je $343\,\mathrm{m/s}$. S kolikšno silo je napeta struna? Dvorana se segreje na $30\,^\circ\mathrm{C}$, struna pa se ne spremeni. Koliko utripov na sekundo slišimo, ko zvenita struna (drugi ton) in piščal hkrati?
+
+**Rešitev:**
+
+1. Osnovni ton zaprte piščali: $\nu_1 = c/(4l) = 343/(4 \cdot 0{,}25)\,\mathrm{Hz} = 343\,\mathrm{Hz}$.
+2. Drugi ton strune je $\nu_2 = 2c_s/(2l_s) = c_s/l_s$; enačimo z $343\,\mathrm{Hz}$: $c_s = 343\,\mathrm{Hz} \cdot 0{,}60\,\mathrm{m} = 205{,}8\,\mathrm{m/s}$.
+3. Dolžinska gostota: $\mu = 3{,}0 \cdot 10^{-3}\,\mathrm{kg}/0{,}60\,\mathrm{m} = 5{,}0 \cdot 10^{-3}\,\mathrm{kg/m}$.
+4. Sila iz $c_s = \sqrt{F/\mu}$: $F = \mu c_s^2 = 5{,}0 \cdot 10^{-3} \cdot 205{,}8^2\,\mathrm{N} \approx 212\,\mathrm{N}$.
+5. Hitrost zvoka je sorazmerna s $\sqrt{T}$: $c' = 343\,\mathrm{m/s} \cdot \sqrt{303{,}15/293{,}15} \approx 348{,}8\,\mathrm{m/s}$, zato ima piščal ($4l = 1{,}0\,\mathrm{m}$) $\nu_1' = 348{,}8/1{,}0\,\mathrm{Hz} \approx 348{,}8\,\mathrm{Hz}$.
+6. Frekvenca strune je odvisna le od $F$, $\mu$ in $l_s$, zato ostane $343\,\mathrm{Hz}$. Frekvenca utripanja je razlika frekvenc: $348{,}8 - 343 \approx 5{,}8\,\mathrm{Hz}$.
+7. Odgovor: struna je napeta s silo približno $212\,\mathrm{N}$; v topli dvorani slišimo okoli $5{,}8$ utripa na sekundo.
+
+### Naloga 2
+
+Navedi predpostavke in izpelji valovno enačbo za napeto struno. Dokaži, da je $s = f(x - ct)$ njena rešitev, in iz robnih pogojev izpelji lastne frekvence strune, vpete na obeh koncih.
+
+**Rešitev:**
+
+1. Predpostavke: homogena struna z dolžinsko gostoto $\mu$, sila $F$ povsod enaka, majhni prečni odmiki ($|\partial s/\partial x| \ll 1$, zato $\sin\vartheta \approx \tan\vartheta = \partial s/\partial x$), teže in dušenja ni.
+2. Na kos $[x, x + \mathrm{d}x]$ delujeta na koncih sili $F$ v smeri tangent; prečni komponenti sta $F\,\partial s/\partial x$ pri $x + \mathrm{d}x$ in $-F\,\partial s/\partial x$ pri $x$.
+3. Rezultanta je $F\,\frac{\partial^2s}{\partial x^2}\mathrm{d}x$, masa $\mu\,\mathrm{d}x$; Newtonov zakon da $\frac{\partial^2s}{\partial t^2} = \frac{F}{\mu}\frac{\partial^2s}{\partial x^2}$, torej $c = \sqrt{F/\mu}$.
+4. Za $s = f(u)$, $u = x - ct$, je $\partial s/\partial x = f'$, $\partial^2s/\partial x^2 = f''$, $\partial s/\partial t = -cf'$, $\partial^2s/\partial t^2 = c^2f''$; enačba je izpolnjena za vsako dvakrat odvedljivo $f$.
+5. Nastavek $s = X(x)\cos\omega t$ da $X'' + k^2X = 0$ s $k = \omega/c$, torej $X = A\sin kx + B\cos kx$.
+6. $X(0) = 0$ da $B = 0$; $X(l) = 0$ pri $A \neq 0$ zahteva $\sin kl = 0$, torej $k_n = n\pi/l$, $n = 1, 2, \dots$
+7. Odgovor: $\nu_n = \dfrac{\omega_n}{2\pi} = \dfrac{ck_n}{2\pi} = n\,\dfrac{c}{2l}$.
+
+### Naloga 3
+
+Utemelji, ali opazovalec sliši enako frekvenco, če se izvir z hitrostjo $v$ približuje mirujočemu opazovalcu ali pa se opazovalec z enako hitrostjo približuje mirujočemu izviru (zrak miruje). Odgovor podpri z izračunom za $v = 34\,\mathrm{m/s}$, $c = 340\,\mathrm{m/s}$.
+
+**Rešitev:**
+
+1. Gibajoč se izvir: $\nu'/\nu = c/(c - v)$; gibajoč se opazovalec: $\nu'/\nu = (c + v)/c$.
+2. Razlika: $\dfrac{c}{c - v} - \dfrac{c + v}{c} = \dfrac{c^2 - (c^2 - v^2)}{c(c - v)} = \dfrac{v^2}{c(c - v)} > 0$.
+3. Izračun: $340/306 \approx 1{,}111$ in $374/340 = 1{,}100$; razlika je $34^2/(340 \cdot 306) \approx 0{,}011$.
+4. Odgovor: ne; gibanje izvira da višjo frekvenco, ker skrajša valovno dolžino v zraku, gibanje opazovalca pa le poveča hitrost srečevanja front. Pri $v \ll c$ se razlika zmanjša na člen reda $(v/c)^2$; za zvok šteje gibanje glede na zrak, ne le relativna hitrost.
+
 ## Drugače: Na sliki
 
 Prva tri lastna nihanja strune, vpete na obeh koncih (V = vozel, H = hrbet):
@@ -208,15 +260,15 @@ n = 2:   V~~~~H~~~~V~~~~H             l = 3λ/4
 
 Dopplerjev pojav si predstavljaj kot krožne valovne fronte, ki jih izvir odda vsako periodo. Pri mirujočem izviru so krogi koncentrični. Ko se izvir premika v desno, je središče vsakega novega kroga bolj desno, zato so krogi pred izvirom zgoščeni (krajša valovna dolžina, višja frekvenca), za njim pa razredčeni.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**Dopplerjev ultrazvok v medicini.** Ultrazvok s frekvenco $5\,\mathrm{MHz}$ se odbije od rdečih krvničk, ki se gibljejo s hitrostjo $0{,}30\,\mathrm{m/s}$ proti sondi. Krvničke so najprej gibajoči se opazovalec, nato gibajoč se izvir, zato je frekvenčni premik dvojni: $\Delta\nu \approx 2\nu v/c = 2 \cdot 5 \cdot 10^6\,\mathrm{Hz} \cdot 0{,}30/1540 \approx 1{,}9\,\mathrm{kHz}$. Ta razlika je v slišnem območju, zato jo aparat lahko predvaja kot zvok.
+**Dopplerjev ultrazvok v medicini.** Ultrazvok s frekvenco $5\,\mathrm{MHz}$ se odbije od rdečih krvničk, ki se gibljejo s hitrostjo $0{,}30\,\mathrm{m/s}$ proti sondi; v mehkem tkivu je hitrost zvoka okoli $1540\,\mathrm{m/s}$. Krvničke so najprej gibajoči se opazovalec, nato gibajoč se izvir, zato je frekvenčni premik dvojni: $\Delta\nu \approx 2\nu v/c = 2 \cdot 5 \cdot 10^6\,\mathrm{Hz} \cdot 0{,}30/1540 \approx 1{,}9\,\mathrm{kHz}$, kar aparat predvaja kot zvok.
 
-**Pihala in temperatura.** Ker je hitrost zvoka sorazmerna s $\sqrt{T}$, se orgle in flavte v topli dvorani uglasijo višje kot v hladni. Pri $0\,^\circ\mathrm{C}$ je hitrost zvoka okoli $331\,\mathrm{m/s}$, pri $20\,^\circ\mathrm{C}$ okoli $343\,\mathrm{m/s}$; to je razlika več kot pol poltona.
+**Neporušne preiskave.** Ultrazvočni defektoskop pošlje v jekleni ulitek sunek s frekvenco $5\,\mathrm{MHz}$; v jeklu je hitrost longitudinalnega valovanja okoli $5900\,\mathrm{m/s}$. Odmev od razpoke, ki pride po $10\,\mathrm{\mu s}$, pomeni globino $d = ct/2 \approx 3\,\mathrm{cm}$. Valovna dolžina $\lambda \approx 1{,}2\,\mathrm{mm}$ omejuje, kako majhno napako še zaznamo.
 
-**Helijev glas.** Helij ima okoli sedemkrat manjšo molsko maso kot zrak in nekoliko večji $\kappa$, zato je hitrost zvoka v njem skoraj trikrat večja. Lastne frekvence votlin v grlu in ustih se povečajo, glas zveni višje, čeprav glasilke nihajo enako.
+**Merjenje $\kappa$ plina.** V resonančni (Kundtovi) cevi izmerimo razmik med vozloma $d = \lambda/2$ pri znani frekvenci, izračunamo $c = 2d\nu$ in $\kappa = Mc^2/(RT)$. Tako ločimo enoatomne pline ($\kappa = 5/3$) od dvoatomnih ($7/5$).
 
-**Hrup.** Promet na prometni cesti je okoli $70$ do $80\,\mathrm{dB}$, rock koncert okoli $110\,\mathrm{dB}$. Pri dolgotrajni izpostavljenosti ravni nad približno $85\,\mathrm{dB}$ se sluh trajno poškoduje, zato je zaščita sluha obvezna na delovnih mestih s hrupom.
+**Hrup na delovnem mestu.** Pri dnevni ravni izpostavljenosti nad $80\,\mathrm{dB}$ mora delodajalec delavcem dati na voljo glušnike, nad $85\,\mathrm{dB}$ pa jih morajo delavci nositi. Ker se jakosti seštevajo, dva stroja po $83\,\mathrm{dB}$ skupaj dasta okoli $86\,\mathrm{dB}$.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -231,17 +283,13 @@ Zvočnik seva enakomerno na vse strani z zvočno močjo $0{,}10\,\mathrm{W}$. Ko
 
 ## Drugače: Bolj natančno
 
-**Izpeljava valovne enačbe za struno.** Opazujmo kos strune med $x$ in $x + \mathrm{d}x$ z maso $\mu\,\mathrm{d}x$. Sila $F$ v struni deluje na obeh koncih v smeri tangente. Pri majhnih odmikih je navpična komponenta sile na desnem koncu $F\,\partial s/\partial x\,(x + \mathrm{d}x)$, na levem pa $-F\,\partial s/\partial x\,(x)$. Rezultanta je $F\,\frac{\partial^2s}{\partial x^2}\mathrm{d}x$, zato
-
-$$\mu\,\mathrm{d}x\,\frac{\partial^2s}{\partial t^2} = F\,\frac{\partial^2s}{\partial x^2}\,\mathrm{d}x \quad\Longrightarrow\quad \frac{\partial^2s}{\partial t^2} = \frac{F}{\mu}\,\frac{\partial^2s}{\partial x^2}.$$
-
 **D'Alembertova rešitev.** Z novima spremenljivkama $\xi = x - ct$ in $\eta = x + ct$ se valovna enačba prevede v $\partial^2s/\partial\xi\,\partial\eta = 0$, katere splošna rešitev je $s = f(\xi) + g(\eta)$. Funkciji določita začetna oblika in začetna hitrost strune.
 
-**Lastna nihanja kot robni problem.** Nastavek $s = X(x)\cos\omega t$ da $X'' + k^2X = 0$ s $k = \omega/c$. Robna pogoja $X(0) = X(l) = 0$ dopuščata le $X = \sin(n\pi x/l)$, torej $k_n = n\pi/l$ in $\nu_n = nc/(2l)$. Splošno nihanje strune je vsota (Fourierjeva vrsta) lastnih nihanj; razmerje amplitud višjih harmonik določa barvo zvoka.
+**Lastna nihanja in barva zvoka.** Robni problem za lastna nihanja je rešen v Nalogi 2. Splošno nihanje strune je vsota (Fourierjeva vrsta) lastnih nihanj; razmerje amplitud višjih harmonik določa barvo zvoka.
 
-**Hitrost zvoka v plinu.** Stiskanja v zvočnem valu so tako hitra, da toplota ne uteče: proces je adiabaten, $pV^\kappa = \mathrm{konst.}$ Stisljivostni modul je zato $K = \kappa p$ in $c = \sqrt{\kappa p/\rho} = \sqrt{\kappa RT/M}$. Newton je vzel izotermni modul $K = p$ in dobil približno $15\,\%$ premajhno hitrost.
+**Newtonova napaka.** Newton je za zrak vzel izotermni stisljivostni modul $K = p$ namesto adiabatnega $K = \kappa p$ in dobil $\sqrt{1{,}4} \approx 1{,}18$-krat, torej približno $15\,\%$ premajhno hitrost.
 
-**Izpeljava Dopplerjeve formule.** Mirujoč izvir odda valovne fronte z razmikom $\lambda = c/\nu$. Če se izvir giblje proti opazovalcu s hitrostjo $v_i$, se v eni periodi $1/\nu$ premakne za $v_i/\nu$, zato je razmik pred njim $\lambda' = (c - v_i)/\nu$. Opazovalec, ki se giblje proti izviru s hitrostjo $v_o$, srečuje fronte z relativno hitrostjo $c + v_o$, zato zaznava frekvenco $\nu' = (c + v_o)/\lambda' = \nu(c + v_o)/(c - v_i)$. Za svetlobo, kjer snovi ni, velja relativistična formula, ki je odvisna le od relativne hitrosti.
+**Doppler za svetlobo.** Za svetlobo, kjer snovi ni, velja relativistična formula, odvisna le od relativne hitrosti.
 
 ## Preveri se
 
@@ -277,7 +325,7 @@ $$\mu\,\mathrm{d}x\,\frac{\partial^2s}{\partial t^2} = F\,\frac{\partial^2s}{\pa
 ~ Raven je logaritemska: množenju jakosti ustreza prištevanje k ravni, ne množenje ravni.
 > $\Delta L = 10\,\mathrm{dB} \cdot \log_{10}10 = 10\,\mathrm{dB}$. Raven je logaritemska, zato se ne pomnoži z istim faktorom kot jakost.
 
-? V trgovini z zvočniki prodajalec pravi, da dražji zvočnik z dvakratno zvočno močjo igra »dvakrat glasneje«. Za koliko se na istem mestu poveča raven jakosti zvoka?
+? Sosed se hvali, da njegov novi zvočnik z dvakratno zvočno močjo igra »dvakrat glasneje«. Za koliko se na istem mestu poveča raven jakosti zvoka?
 + Za približno $3\,\mathrm{dB}$.
 - Za približno $6\,\mathrm{dB}$.
 ~ Uporabil si $20\,\mathrm{dB} \cdot \log_{10}$, ki velja za razmerje amplitud, ne jakosti. $6\,\mathrm{dB}$ ustreza štirikratni jakosti; dvakratna moč da na istem mestu le dvakratno jakost.
