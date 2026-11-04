@@ -2811,7 +2811,6 @@
   "adm.rep.app": "Uygulama hatası (yönetici)",
   "adm.rep.more": "Ayrıntılar",
   "adm.rep.question": "Soru:",
-  "adm.rep.answer": "Cevap:",
   "adm.rep.fixed": "Düzeltildi",
   "adm.rep.reopen": "Yeniden aç",
   "adm.rep.none": "Bildirim yok.",
@@ -2864,5 +2863,10 @@
   "sc.tab.range": "Başlangıç, adım (0 olmaz) ve satır sayısı (1–200) sayı olmalı.",
   "gc.reg.quart": "Dördüncü derece",
   "gc.reg.logistic": "Lojistik",
-  "gc.reg.sin": "Sinüsoidal"
+  "gc.reg.sin": "Sinüsoidal",
+  "chat.full": "Çözümün tamamını göster",
+  "chat.fullMsg": "Bu sorunun çözümünün tamamını göster.",
+  "adm.rep.shown": "Öğrenci cevabı böyle gördü:",
+  "adm.rep.rerendered": "Cevap yeniden gösterildi (anlık görüntüsü olmayan eski bildirim):",
+  "adm.rep.raw": "Öğretmenin ham metni:"
 }

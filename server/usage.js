@@ -32,6 +32,9 @@ export const LIMITS = {
   deepHistoryTurns: () => num("EVKLID_DEEP_HISTORY_TURNS", 3),
   // Tekmovanja: privzeto hitri model z več razmisleka; 1 = vedno zmogljivejši model (prej).
   competitionDeep: () => process.env.EVKLID_COMPETITION_DEEP === "1",
+  // Srednja šola: hitri model z več razmisleka namesto navadnega (j 2026-11-04 po primerjavi modelov:
+  // napake Haikuja pri SŠ 27 % → 7 %, Sonnet 0 %, a ~15× dražji). 0 = navadni hitri model.
+  secondaryThink: () => process.env.EVKLID_SS_THINK !== "0",
 };
 
 // Za prikaz v evrih (Claude API zaračunava v dolarjih).
@@ -240,7 +243,8 @@ export class Usage {
   // wantThink: prva ponovna razlaga (Haiku z več razmisleka); wantDeep: ponovna prošnja zapored (Opus).
   // free: brezplačni paket (brez naročnine, preizkusa ali kode) nikoli ne dobi zmogljivejšega modela.
   // capped: namesto Opusa Sonnet (šolska licenca vedno; Osebno in aktivacijska koda pred 3. zaporedno prošnjo, glej app.js).
-  chooseMode(studentId, { wantDeep = false, wantThink = false, competition = false, lite = false, free = false, deepModel = "claude-opus", capped = false } = {}) {
+  // secondary: srednješolec (privzeto Haiku z več razmisleka, LIMITS.secondaryThink).
+  chooseMode(studentId, { wantDeep = false, wantThink = false, competition = false, secondary = false, lite = false, free = false, deepModel = "claude-opus", capped = false } = {}) {
     if (competition && !wantDeep && !LIMITS.competitionDeep()) return { mode: "think", note: null };
     if (free && (wantDeep || competition)) return { mode: "think", note: wantDeep ? NOTES.free : null };
     if (wantDeep || competition) {
@@ -259,6 +263,9 @@ export class Usage {
       return { mode: capped ? "mid" : "deep", note: null };
     }
     if (wantThink) return { mode: "think", note: null };
+    // Brezplačni paket ostane pri navadnem Haikuju (0,2 $ na mesec bi sicer zadoščalo za ~3× manj odgovorov).
+    // Prva »Razloži podrobneje« je pri SŠ isti model z novo, podrobnejšo prošnjo; druga gre višje kot doslej.
+    if (secondary && !lite && !free && LIMITS.secondaryThink()) return { mode: "think", note: null };
     return { mode: lite ? "lite" : "chat", note: null };
   }
   // Odgovor brez klica modela (ponovna raba ali namig iz generatorja): zapišemo, da je viden prihranek.

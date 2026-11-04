@@ -9,6 +9,7 @@ import { getTopic, getPath } from "./curriculum.js";
 import { parseLesson } from "./textbook.js";
 import { renderMd, shell } from "./textbook-print.js";
 import { speakMarkdown } from "./govor.js";
+import { checkIdentities } from "./lesson-identity.js";
 import { ENGINES } from "../public/sim/index.js";
 
 export const GRADIVA_DIR = process.env.EVKLID_GRADIVA || path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "content", "gradiva");
@@ -148,6 +149,8 @@ export function checkGradivo(vrsta, src, topicId = null) {
     }
   }
   if (/PhET/i.test(src)) errs.push("brez omembe PhET");
+  // Formule, ki si jih učenec zapomni: enakost mora veljati za vse vrednosti (lesson-identity.js).
+  for (const m of checkIdentities(src).mismatches) errs.push(`vrstica ${m.line}: enakost ne velja za vse vrednosti: $${m.tex}$`);
   return errs;
 }
 

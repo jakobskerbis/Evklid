@@ -2811,7 +2811,6 @@
   "adm.rep.app": "Hitilafu ya programu (msimamizi)",
   "adm.rep.more": "Maelezo zaidi",
   "adm.rep.question": "Swali:",
-  "adm.rep.answer": "Jibu:",
   "adm.rep.fixed": "Imerekebishwa",
   "adm.rep.reopen": "Fungua tena",
   "adm.rep.none": "Hakuna ripoti.",
@@ -2864,5 +2863,10 @@
   "sc.tab.range": "Mwanzo, hatua (si 0) na idadi ya safu (1–200) lazima ziwe nambari.",
   "gc.reg.quart": "Daraja la nne",
   "gc.reg.logistic": "Lojistiki",
-  "gc.reg.sin": "Sainusoidi"
+  "gc.reg.sin": "Sainusoidi",
+  "chat.full": "Onyesha suluhisho lote",
+  "chat.fullMsg": "Nionyeshe suluhisho lote la swali hili.",
+  "adm.rep.shown": "Hivi ndivyo mwanafunzi alivyoona jibu:",
+  "adm.rep.rerendered": "Jibu, limeonyeshwa tena (ripoti ya zamani bila picha ya skrini):",
+  "adm.rep.raw": "Maandishi asili ya mkufunzi:"
 }

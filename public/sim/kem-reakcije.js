@@ -72,7 +72,7 @@ export function energijaReakcije(el) {
   const info = () => {
     const [name, eq, dH, Ea, note] = RX_E[k];
     out.innerHTML = `<p><b>${name}:</b> ${eq}</p><p>${dH < 0 ? `Reakcija je <b>eksotermna</b> (ΔH < 0): produkti imajo manj energije kot reaktanti, razlika se sprosti kot toplota. Okolica se <b>segreje</b>.` : `Reakcija je <b>endotermna</b> (ΔH > 0): produkti imajo več energije kot reaktanti, energijo reakcija prejme iz okolice. Okolica se <b>ohladi</b>.`}</p>
-      <p>${note}</p><p class="muted">Aktivacijska energija Eₐ je »hrib«, ki ga morajo delci preplezati, da reakcija steče.${cat ? " <b>Katalizator</b> ponudi drugo pot z nižjo Eₐ (zelena črta), ΔH pa ostane enak." : ""} Diagram ni v merilu med reakcijami.</p>`;
+      <p>${note}</p><p class="muted">Aktivacijska energija Eₐ je »hrib«, ki ga morajo delci preplezati, da reakcija steče.${cat ? " <b>Katalizator</b> ponudi drugo pot z nižjo Eₐ (zelena črtkana črta), ΔH pa ostane enak." : ""} Diagram ni v merilu med reakcijami.</p>`;
   };
   const anim = animate(el, (dt) => {
     ball += dt * 0.35;
@@ -359,7 +359,7 @@ export function titracija(el, { mode = "os" } = {}) {
     out.innerHTML =
       texBlock(`V_{\\mathrm{TE}} = \\frac{c_{\\text{analit}}\\, V_{\\text{analit}}}{c_{\\text{titrant}}} = \\frac{${fmt(ca, 2)} \\cdot ${Va}}{${fmt(ct, 2)}} = ${fmt(ve, 1)}\\ \\text{mL}`) +
       `<p>Pri ${fmt(Vt, 1)} mL ${tt} je pH = <b>${fmt(pH, 2)}</b>. V točki ekvivalence (TE) je pH = <b>${fmt(pe, 2)}</b>${K < 1 ? (type === "acid" ? ": nastane acetatni ion, ki je šibka baza, zato je pH > 7" : ": nastane amonijev ion, ki je šibka kislina, zato je pH < 7") : ""}.</p>
-       ${K < 1 ? `<p>Pri polovični nevtralizaciji (${fmt(ve / 2, 1)} mL, zelena pika) velja pH = p${type === "acid" ? "K<sub>a</sub>" : "K<sub>a</sub>(NH₄⁺)"} = ${fmt(type === "acid" ? -Math.log10(K) : 14 + Math.log10(K), 2)}. Tam je raztopina pufer.</p>` : ""}
+       ${K < 1 ? `<p>Pri polovični nevtralizaciji (${fmt(ve / 2, 1)} mL, turkizna pika) velja pH = p${type === "acid" ? "K<sub>a</sub>" : "K<sub>a</sub>(NH₄⁺)"} = ${fmt(type === "acid" ? -Math.log10(K) : 14 + Math.log10(K), 2)}. Tam je raztopina pufer.</p>` : ""}
        <p class="muted">Primerni indikatorji (preskok blizu pH v TE): ${good.join(", ") || "noben od ponujenih"}. Pas na grafu kaže območje preskoka barve izbranega indikatorja.</p>`;
   };
   let target = null;
@@ -638,7 +638,7 @@ export function disociacija(el) {
           s("circle", { cx: x2 - j, cy: y2, r: 8, class: "fill-b" }, svg);
           label(svg, x2 - j, y2, "−", "tick small inv b");
         } else {
-          s("circle", { cx: x + j, cy: y, r: 6, class: "fill-accent" }, svg);
+          s("circle", { cx: x + j, cy: y, r: 6, class: "fill-a" }, svg);
           label(svg, x + j, y, "−", "tick small inv b");
           s("circle", { cx: x2 - j, cy: y2, r: 8, class: "fill-c" }, svg);
           label(svg, x2 - j, y2, "+", "tick small inv b");
@@ -653,7 +653,7 @@ export function disociacija(el) {
     s("rect", { x: 260, y: 30, width: 40, height: 180, class: "bar-frame" }, svg);
     s("rect", { x: 260, y: 30 + 180 * (1 - a), width: 40, height: 180 * a, class: "bar fill-a" }, svg);
     label(svg, 280, 20, `α = ${fmt(a * 100, a < 0.1 ? 2 : 1)} %`, "tick small b");
-    label(svg, 120, 12, type === "acid" ? `rdeči: H₃O⁺, zeleni: ${an}⁻` : `modri: OH⁻, vijolični: ${an}⁺`, "tick small");
+    label(svg, 120, 12, type === "acid" ? `rdeči: H₃O⁺, turkizni: ${an}⁻` : `oranžni: OH⁻, vijolični: ${an}⁺`, "tick small");
   };
   const info = () => {
     const [f, ime, type, K, an] = DIS[k], C = 10 ** lc, a = alpha();

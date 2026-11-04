@@ -6,6 +6,7 @@
 // predpomnilnik deluje. Strošek: en kratek klic Haikuja na 10 izmenjav (~0,0007 $), vrsta `povzetek`.
 // Shranjen je šifriran (tabela conversation_summaries) in se izbriše s pogovorom.
 import { stripMeta } from "./meta.js";
+import { isHiddenNote } from "./skrite-opombe.js";
 
 export const summaryOn = () => process.env.EVKLID_CHAT_SUMMARY !== "0";
 const TAG = "povzetek_pogovora";
@@ -13,7 +14,7 @@ export const SUMMARY_HEAD = `<${TAG}>`;
 const TIMEOUT_MS = 8000;
 // Skrite opombe v učenčevih sporočilih (pola z našo rešitvijo, preverjen račun) ne gredo v povzetek,
 // sicer bi rešitev prišla v besedilo, ki ga inštruktor bere kot zgodovino.
-const HIDDEN = ["<kontekst_pole>", "<preverjen_racun>", SUMMARY_HEAD];
+// (server/skrite-opombe.js)
 // Neuspel poskus za ta rez (napaka, zavrnitev, časovna omejitev): do naslednjega reza ne poskusimo znova,
 // da učenec ne čaka in ne plačuje vsake poteze. Le v pomnilniku (ob ponovnem zagonu en nov poskus).
 const failures = new WeakMap();
@@ -35,7 +36,7 @@ Rules: at most ${MAX_WORDS} words; plain sentences or short bullet lines; write 
 
 const textOf = (content) =>
   (typeof content === "string" ? [{ type: "text", text: content }] : content || [])
-    .map((b) => (b.type === "text" ? (HIDDEN.some((h) => b.text.startsWith(h)) ? "" : b.text) : b.type === "image" ? "[slika]" : ""))
+    .map((b) => (b.type === "text" ? (isHiddenNote(b.text) ? "" : b.text) : b.type === "image" ? "[slika]" : ""))
     .filter(Boolean)
     .join("\n");
 
