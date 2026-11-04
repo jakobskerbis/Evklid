@@ -36,7 +36,7 @@ function razberi() {
 // Nazaj na zbirko: če smo prišli z nje, z zgodovino (tipka Nazaj ostane naravna), sicer zamenjamo naslov.
 // V okvirju aplikacije (3D svet v »Uči se«) je zbirka aplikacija sama: okvir se zapre.
 function nazaj() {
-  if (history.state?.k3Iz === "hub") history.back();
+  if (history.state?.k3Iz) history.back(); // z zbirke ("hub") ali iz organa (»Poglej pod povečavo«, "povecava")
   else if (vgrajeno) starsu({ tip: "zapri3d" });
   else location.hash = "";
 }
@@ -413,7 +413,12 @@ async function model(id, param, moj) {
   zapomni(id);
   const { odpriModel } = await import("./pregledovalnik.js");
   if (moj !== zaporedje) return null;
-  return odpriModel(mount, mod, { zacetek: param, stran: true });
+  // »Poglej pod povečavo« (del s `povecava`): nov vnos v zgodovini, da Nazaj (gumb, tipka, Esc) vrne na organ.
+  const povecava = (cilj) => {
+    history.pushState({ k3Iz: "povecava" }, "", `#${encodeURIComponent(cilj)}`);
+    usmeri();
+  };
+  return odpriModel(mount, mod, { zacetek: param, stran: true, povecava });
 }
 
 async function usmeri() {

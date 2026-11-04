@@ -631,11 +631,13 @@ export async function zgradiOrgan(ime, ctx = {}) {
       .map((x) => ({
         id: x.d.id,
         ime: x.d.ime,
+        la: x.d.la,
         opis: x.d.opis,
         barva: x.d.barva || "#6E9BFF",
         meshes: x.moje.filter((m) => m.visible),
         tocka: tockaZa(x),
         skrijTocko: !tocke.has(x.d.id),
+        povecava: x.d.povecava, // id modela za »Poglej pod povečavo« (npr. mrežnica → organ-mreznica)
       }));
   };
   uporabi();
