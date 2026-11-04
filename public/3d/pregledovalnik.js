@@ -296,6 +296,18 @@ export function odpriModel(el, mod, opts = {}) {
         inp.setAttribute("aria-label", c.oznaka);
         const sd = { c, zadnja: c.vrednost, nastavi: (v) => ((inp.value = v), (out.textContent = stevilo(v, c.korak))) };
         sinh.push(sd);
+        // Med vlečenjem drsnika ostaneta vidna le njegov gumb in tirnica (j, 4. 11.: »da vidiš, kje ustaviti«): plošča,
+        // orodja, točke in napisi postanejo prosojni, ob spustu se vrnejo.
+        inp.addEventListener("pointerdown", () => {
+          lab.classList.add("k3-aktiven");
+          document.documentElement.classList.add("k3-drsam");
+          const konec = () => {
+            lab.classList.remove("k3-aktiven");
+            document.documentElement.classList.remove("k3-drsam");
+            for (const ev of ["pointerup", "pointercancel", "blur"]) window.removeEventListener(ev, konec);
+          };
+          for (const ev of ["pointerup", "pointercancel", "blur"]) window.addEventListener(ev, konec);
+        });
         inp.addEventListener("input", () => {
           const v = Number(inp.value);
           c.vrednost = sd.zadnja = v;
