@@ -233,7 +233,7 @@ async function screen(p, name) {
       const down = document.querySelector("#tabbar") ? document.documentElement.scrollHeight - innerHeight : 0;
       // Mali navpični drsnik s puščicama ▲▼ ob vrstici (j 2026-11-04: »never use scrollbars like that again«).
       const mini = [...document.querySelectorAll("body *")]
-        .filter((el) => !/^(TEXTAREA|INPUT|SELECT)$/.test(el.nodeName) && el.clientHeight > 0 && el.clientHeight < 80 && el.scrollHeight > el.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(el).overflowY) && vis(el))
+        .filter((el) => !/^(TEXTAREA|INPUT|SELECT)$/.test(el.nodeName) && el.clientHeight > 0 && el.clientHeight < 80 && el.scrollHeight > el.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(el).overflowY) && getComputedStyle(el).scrollbarWidth !== "none" && vis(el))
         .map((el) => `${el.nodeName.toLowerCase()}.${[...el.classList].join(".")}`);
       return { raw: [...raw], over, down, mini: [...new Set(mini)] };
     }, KEYS)

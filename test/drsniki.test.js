@@ -41,7 +41,7 @@ test("drsne vrstice nimajo navpičnega drsnika, razen namenoma navpičnih", asyn
   for (const f of readdirSync(pub).filter((f) => f.endsWith(".css"))) {
     const css = readFileSync(new URL(f, pub), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
     for (const [, sel, telo] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
-      if (!/overflow-x\s*:\s*(?:auto|scroll)\b/.test(telo) || /overflow-y\s*:/.test(telo) || !/(?:^|;)\s*(?:max-)?height\s*:/.test(telo)) continue;
+      if (!/overflow-x\s*:\s*(?:auto|scroll)\b/.test(telo) || /overflow-y\s*:/.test(telo) || !/(?:^|;)\s*(?:max-)?(?:height|block-size)\s*:/.test(telo)) continue;
       for (const s of sel.split(",").map((x) => x.trim().replace(/\s+/g, " "))) {
         const d = BREZ_NAVPICNEGA.find((k) => s === k || s.endsWith(` ${k}`));
         if (d) manjka.push(`${f}: ${s}`);

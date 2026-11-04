@@ -26,9 +26,10 @@ export const IZVZETO = [".topbar .tabs"];
 // (meje integrala, potence), Windows pokaže drsnik s puščicama. Vse drsne vrstice zato navpično obrežemo
 // (clip: v vrstici, ki se pomika vstran, velja kot hidden; kjer se ne, ne postane drsna), razen teh:
 // NAVPICNE se namenoma pomikajo tudi navzdol, SKRITE so vrstice gumbov s skritim drsnikom, ki na
-// računalniku niso drsne (obrezali bi jim obrobo fokusa).
+// računalniku niso drsne (obrezali bi jim obrobo fokusa). ».katex-display« je drsna le v klepetu, učbeniku,
+// tekmovanju in karticah, kjer ima že »overflow-y: hidden«; drugje bi ji obrezali meje integrala.
 export const NAVPICNE = [".lab-table-wrap", ".tl-vt-wrap", ".lab-bench"];
-export const SKRITE = [".seg", ".chip-row", ".tk-ctx", ".tk-tablist", ".tk-sub", ".tabs", "#chat-state"];
+export const SKRITE = [".seg", ".chip-row", ".tk-ctx", ".tk-tablist", ".tk-sub", ".tabs", "#chat-state", ".katex-display"];
 export const BREZ_NAVPICNEGA = DRSNE.filter((s) => !NAVPICNE.includes(s) && !SKRITE.includes(s));
 
 const SEL = DRSNE.join(",");
