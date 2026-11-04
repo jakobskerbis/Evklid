@@ -39,6 +39,8 @@ test("app.js loads the games code lazily (import(), not a static import)", () =>
   const src = fs.readFileSync(path.join(PUBLIC, "app.js"), "utf8");
   assert.ok(!/^import[^;]*from\s+["']\.\/games\/index\.js["']/m.test(src));
   assert.match(src, /import\("\.\/games\/index\.js"\)/);
+  // Neuspel modul si brskalnik zapomni: nov poskus (npr. po izpadu povezave) mora uporabiti drug naslov.
+  assert.match(src, /import\(`\.\/games\/index\.js\?r=/);
 });
 
 test("compressedStatic: warm() prepares files, parallel requests compress once, edits are picked up", async () => {

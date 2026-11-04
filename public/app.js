@@ -37,8 +37,10 @@ import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
 let gamesMod = null;
 let gamesCtx = null;
 let gamesP = null;
+let gamesTries = 0;
+// Brskalnik si neuspel modul zapomni do ponovnega nalaganja strani: nov poskus zato z drugim naslovom (?r=).
 const loadGames = () =>
-  (gamesP ||= import("./games/index.js").then((m) => {
+  (gamesP ||= (gamesTries++ ? import(`./games/index.js?r=${gamesTries}`) : import("./games/index.js")).then((m) => {
     gamesMod = m;
     if (gamesCtx) m.initGames(gamesCtx);
     return m;
@@ -50,7 +52,12 @@ const initGames = (c) => {
   gamesCtx = c;
   gamesMod?.initGames(c);
 };
-const showGames = () => loadGames().then((m) => m.showGames()).catch(() => {});
+const gamesNote = (key) =>
+  document.querySelector("#games-content")?.replaceChildren(Object.assign(document.createElement("p"), { className: "muted", textContent: t(key) }));
+const showGames = () => {
+  if (!gamesMod) gamesNote("common.loading");
+  return loadGames().then((m) => m.showGames()).catch(() => gamesMod || gamesNote("off.noConnection"));
+};
 const gamesBack = () => gamesMod?.gamesBack() ?? false;
 const leaveGames = () => gamesMod?.leaveGames();
 import { gamesOn } from "./games/stage.js";

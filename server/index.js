@@ -21,7 +21,7 @@ app.listen(port, () => {
   console.log(isMockMode() ? "Preizkusni način (brez API ključa)." : `Model: ${MODEL}`);
   // Datoteke prvega odprtja strani stisnemo v ozadju takoj po zagonu (server/compress.js).
   const t0 = Date.now();
-  Promise.resolve(app.locals.warmStatic?.())
+  app.locals.warmStatic?.()
     .then((n) => console.log(`[evklid] pripravljenih ${n} stisnjenih datotek v ${Date.now() - t0} ms`))
     .catch(() => {});
 });
