@@ -8,6 +8,7 @@ import { hasGenerator } from "./practice/index.js";
 import { checkAnswer } from "./practice/check.js";
 import { worksheetTasks, answerHtml, optionHtml } from "./gradiva.js";
 import { renderMd } from "./textbook-print.js";
+import { recordSkill } from "./weaknesses.js";
 
 export const KVIZ = {
   questions: [5, 8, 10, 12],
@@ -320,6 +321,9 @@ export function mountKviz(app, store, { loadStudent, leagues, kvizi = new Kvizi(
     const out = kvizi.answer(g, s.id, Number(req.body?.q), typeof input === "number" ? input : String(input ?? "").slice(0, 80));
     if (out.error) return send(res, out);
     if (out.retry) return res.status(422).json({ error: out.message, code: out.code, params: out.params });
+    // Šibke točke iz vseh virov (server/weaknesses.js): odgovor šteje pri temi kviza.
+    const a = g.players.get(s.id)?.answers[Number(req.body?.q)];
+    if (a) recordSkill(db, s.id, { source: "kviz", topicId: g.topic.id, n: 1, wrong: a.ok ? 0 : 1 });
     res.json(playerView(g, s.id, kvizi.now()));
   });
   return kvizi;

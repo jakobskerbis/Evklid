@@ -29,7 +29,7 @@ import { lessonView, tocView, bookView, listBooks, searchTextbook, lessonSummary
 import { printPage } from "./textbook-print.js";
 import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
-import { detectWeakTopics, weaknessesForPrompt } from "./weaknesses.js";
+import { skillStats, detectWeakTopics, weaknessesForPrompt, topicIdFor, recordSkill, mountSkillChecks } from "./weaknesses.js";
 import { cleanText, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
 import { paperContext } from "./paper-context.js";
 import { isHiddenNote } from "./skrite-opombe.js";
@@ -411,10 +411,12 @@ export function createApp(store, opts = {}) {
   app.get("/api/students/:id/progress", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const topics = store.topicStats(s.id).map((t) => ({ ...t, rate: t.turns ? t.errors / t.turns : 0 }));
+    // Vsi viri (klepet, Vadnica, igre, učbenik, pole, kartice, kviz) skupaj, po temi učne poti.
+    const stats = skillStats(store, s);
+    const topics = stats.map(({ subject, topic, topic_id, turns, errors, last_seen, sources }) => ({ subject, topic, topic_id, turns, errors, last_seen, sources, rate: turns ? errors / turns : 0 }));
     res.json({
       topics,
-      weak: detectWeakTopics(store.topicStats(s.id)),
+      weak: detectWeakTopics(stats),
       manual_weaknesses: s.manual_weaknesses,
       flags: store.flagEvents(s.id),
       activity: store.activityByDay(s.id),
@@ -889,7 +891,9 @@ export function createApp(store, opts = {}) {
       // Nepreverjenih kartic učenec še ne vidi (tudi ne v obvestilu »dodane kartice«).
       if (cards.length && !liveCards) send("cards", { cards: cards.map((c) => ({ id: c.id, front: c.front })), due: store.cards.dueCount(student.id, student.settings.subject || null) });
       if (meta) {
-        store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: assistantId, ...meta });
+        // Tema učne poti: tema pogovora, sicer ime iz META, preslikano lokalno (šibke točke iz vseh virov).
+        const topicId = meta.topic ? (conv.path_topic && getTopic(conv.path_topic) ? conv.path_topic : topicIdFor(student.settings, meta.subject, meta.topic)) : null;
+        store.addEvent({ student_id: student.id, conversation_id: conv.id, message_id: assistantId, ...meta, topic_id: topicId });
         if (meta.done && conv.path_topic && progress.markMastered(student.id, conv.path_topic, "chat")) {
           send("mastered", { topic: getTopic(conv.path_topic)?.name, unlocked: knowledge.sync(student.id) });
         }
@@ -1103,6 +1107,9 @@ export function createApp(store, opts = {}) {
     if (!s) return;
     const c = store.cards.review(s.id, cardId(req), req.body?.ok === true);
     if (!c) return res.status(404).json({ error: "Kartica ne obstaja." });
+    // Šibke točke: »še ne znam« je napaka pri temi kartice (tema poti ali ime iz klepeta, preslikano lokalno).
+    const topicId = c.topic_id && getTopic(c.topic_id) ? c.topic_id : topicIdFor(s.settings, c.subject, c.topic);
+    recordSkill(store.db, s.id, { source: "cards", topicId, subject: c.subject, topic: c.topic, n: 1, wrong: req.body?.ok === true ? 0 : 1 });
     res.json({ card: c, due: store.cards.dueCount(s.id, subjectFor(s, req.body?.path)) });
   });
   app.post("/api/students/:id/daily", (req, res) => {
@@ -1319,6 +1326,7 @@ export function createApp(store, opts = {}) {
   mountSchoolOrders(app, store, { accounts: !!accounts, isLocalRequest }); // naročila šol in predračun (skrbnik)
   mountGradiva(app, store, { loadStudent, accounts, leagues }); // povzetek na eni strani, zvočni povzetek, delovni listi
   mountKviz(app, store, { loadStudent, leagues }); // kviz v živo za razred
+  mountSkillChecks(app, store, { loadStudent }); // šibke točke: »Preveri se« v učbeniku in naše pole
   mountGraphs(app, store, { loadStudent });
   mountGames(app, store, { loadStudent, progress, avatars, knowledge });
   mountDailyPuzzle(app, store, { loadStudent, leagues, ...(opts.dailyNow ? { now: opts.dailyNow } : {}) }); // dnevna uganka in lestvica po času

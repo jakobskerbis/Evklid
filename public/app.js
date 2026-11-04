@@ -3535,6 +3535,8 @@ async function openOurs(entry, subjectName) {
         set: (v) => localStorageSet(key, JSON.stringify(v)),
       },
       onTutor: (task, part) => oursTutor(entry, title, task, part),
+      // Šibke točke: deli z odprto rešitvijo ali oznako »Imam prav« (strežnik vsak del šteje enkrat).
+      onChecked: (parts) => api(`/api/students/${state.student.id}/paper-check`, { method: "POST", body: { paper: entry.id, parts } }).catch(() => {}),
     });
   } catch (err) {
     toast(err.message);

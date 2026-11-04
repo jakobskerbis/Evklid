@@ -119,6 +119,17 @@ export function lessonForQuestion(text, settings) {
   return { id, name, path, pathLabel, summary, score: Math.round(best.score * 10) / 10 };
 }
 
+// Tema učne poti za kratko ime teme (META iz klepeta, kartica, besedilo naloge na poli) ali null: ista pravila
+// kot lessonForQuestion, le da tema ne potrebuje lekcije. Za šibke točke (server/weaknesses.js), da se
+// rezultati iz klepeta, vaj, iger, učbenika in pol zberejo pod isto temo. Brez klica modela.
+export function topicForName(text, settings) {
+  const [best, second] = rankLessons(text, settings);
+  if (!best || !best.inTitle || best.score < MIN_SCORE) return null;
+  const whole = best.inTitle === best.d.title.size;
+  if (!whole && (best.inTitle === 1 || (second && best.score < second.score * MIN_LEAD))) return null;
+  return best.d.id;
+}
+
 // Vse lekcije z oceno, od najboljše (za lessonForQuestion in umerjanje).
 export function rankLessons(text, settings) {
   const lvl = levelOf(settings);

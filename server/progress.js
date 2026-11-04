@@ -812,6 +812,7 @@ export class Progress {
       message_id: null,
       subject: topic?.subject ?? null,
       topic: topic?.name ?? null,
+      topic_id: topic ? row.topic_id : null,
       error: correct ? 0 : 1,
       mode: "V",
       flag: "none",

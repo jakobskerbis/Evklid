@@ -991,7 +991,9 @@ export function mountAccounts(app, store, opts = {}) {
           // Sprotni povzetek starejšega dela pogovora (server/povzetek.js), ki ga vidi le inštruktor.
           summary: store.getSummary(conv.id)?.text || null,
         })),
-        events: q("SELECT subject, topic, error, mode, flag, created_at FROM events WHERE student_id = ?", c.id),
+        events: q("SELECT subject, topic, topic_id, error, mode, flag, created_at FROM events WHERE student_id = ?", c.id),
+        // Šibke točke iz iger, učbenika, pol, kartic in kviza (server/weaknesses.js): dnevne vsote po temi.
+        weak_points: q("SELECT day, source, topic_id, subject, topic, n, wrong FROM skill_results WHERE student_id = ?", c.id),
         topics: q("SELECT * FROM topic_state WHERE student_id = ?", c.id),
         tasks: q("SELECT topic_id, mode, level, attempts, hint_used, solved, first_try_correct, last_answer, created_at FROM tasks WHERE student_id = ?", c.id),
         xp: q("SELECT amount, reason, created_at FROM xp_events WHERE student_id = ?", c.id),
