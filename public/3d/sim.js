@@ -29,7 +29,7 @@ export function sim3d(el, opts = {}) {
     console.error("3D simulacija:", err);
     // Napaka (npr. brez WebGL): sporočilo namesto praznega okvirja (p je ob gradnji že odstranjen).
     const { t } = await import("/i18n.js").catch(() => ({ t: () => "3D" }));
-    p.textContent = t("a3.loadError");
+    p.textContent = t(err?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError");
     el.querySelector(".k3-pregled")?.remove();
     if (el.isConnected) el.append(p);
   });

@@ -102,7 +102,7 @@ function topicsHtml(x) {
 // Kartica 3D atlasa in modelov (stran /3d, docs/3d.md) nad poskusi: odpre se čez cel zaslon.
 const card3d = () => `<a class="card lab-3d" href="/3d" data-lab-3d>
     <span class="lab-3d-ic">${icon("box")}</span>
-    <span class="lab-3d-txt"><small>${esc(t("a3.eyebrow"))}</small><b>${esc(t("lab.3dTitle"))}</b><span>${esc(t("lab.3dText"))}</span></span>
+    <span class="lab-3d-txt"><small>${esc(t("lab.3dEyebrow"))}</small><b>${esc(t("lab.3dTitle"))}</b><span>${esc(t("lab.3dText"))}</span></span>
     ${icon("chevron-right")}
   </a>`;
 

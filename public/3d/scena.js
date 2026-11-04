@@ -80,7 +80,13 @@ export function ustvariSceno(el, opts = {}) {
   // Ozadje nariše CSS (barva odra pod prosojnim platnom), ne WebGL: tako je barva točno ista z učinki (GTAO) ali
   // brez njih (prej je kompozitor barvo brisanja dvakrat pretvoril v sRGB: 0x0e131c → rgb(53,66,87)), oder ima lahko
   // mehak prelivni sij, platno pa riše samo predmete (premultiplicirana prosojnost, robovi gladki prek ozadja).
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance", alpha: true, premultipliedAlpha: true, stencil: false });
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance", alpha: true, premultipliedAlpha: true, stencil: false });
+  } catch (err) {
+    // Brez WebGL (izklopljen v brskalniku, star gonilnik): klicatelj pokaže a3.noWebgl namesto »Preveri povezavo«.
+    throw Object.assign(new Error("WebGL ni na voljo", { cause: err }), { koda: "webgl" });
+  }
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = opts.osvetlitev ?? 0.95;

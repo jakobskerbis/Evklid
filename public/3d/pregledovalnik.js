@@ -133,7 +133,11 @@ export function odpriModel(el, mod, opts = {}) {
     }
     const v = svetovnaTocka(d)(new THREE.Vector3());
     kit.pokaziOznako(d.id, d.ime, d.opis, v);
-    if (leti) {
+    if (leti && model.postavitev === "organ") {
+      // Organ: ista smer pogleda, le rahlo bližje k točki (organ ostane v kadru, točka ostane vidna).
+      const [c, r] = zacetniOkvir();
+      kit.poleti(c.lerp(v, 0.35), r * 0.8);
+    } else if (leti) {
       // Prelet: proti točki, a celica ostane v kadru (polmer 0,6 namesto celega modela).
       const smer = v.clone().sub(model.group.getWorldPosition(new THREE.Vector3()));
       kit.poleti(v.clone().multiplyScalar(0.5), 0.75, smer.lengthSq() > 1e-6 ? { smer: smer.add(kit.camera.position.clone().normalize().multiplyScalar(1.5)) } : {});
@@ -158,7 +162,7 @@ export function odpriModel(el, mod, opts = {}) {
     }
     deliEl.hidden = !seznam.length;
     kit.nastaviTocke(
-      seznam.filter((d) => Array.isArray(d.tocka)).map((d) => ({ id: d.id, ime: d.ime, barva: d.barva, pos: svetovnaTocka(d) })),
+      seznam.filter((d) => Array.isArray(d.tocka) && !d.skrijTocko).map((d) => ({ id: d.id, ime: d.ime, barva: d.barva, pos: svetovnaTocka(d) })),
       { ob: (id) => izberi(id === izbran ? null : id), zakriva: () => (model?.group ? [model.group] : []) },
     );
     if (izbran && !seznam.some((d) => d.id === izbran)) izberi(null, { leti: false });
@@ -176,6 +180,15 @@ export function odpriModel(el, mod, opts = {}) {
     } catch {}
     const v = Array.isArray(p) && p.length === 3 && p.every(Number.isFinite) ? new THREE.Vector3(...p) : null;
     return v && v.lengthSq() > 1e-9 ? v : new THREE.Vector3(0.35, 0.3, 1);
+  };
+  // Okvir ob odprtju in »Ponastavi«: model.okvir() → { sredisce: [x, y, z], polmer }, sicer izhodišče in polmer 1.
+  const zacetniOkvir = () => {
+    let o = null;
+    try {
+      o = typeof model?.okvir === "function" ? model.okvir() : model?.okvir;
+    } catch {}
+    const c = Array.isArray(o?.sredisce) && o.sredisce.length === 3 && o.sredisce.every(Number.isFinite) ? new THREE.Vector3(...o.sredisce) : new THREE.Vector3();
+    return [c, o?.polmer > 0 ? o.polmer : 1];
   };
   const osveziIzpise = () => {
     for (const [c, out] of izpisi) {
@@ -196,6 +209,7 @@ export function odpriModel(el, mod, opts = {}) {
     nadzorEl.hidden = ![...nadzorEl.children].some((e) => !e.hidden);
   };
   const poSpremembi = () => {
+    if (typeof model?.ao === "function") kit.nastaviAO(model.ao() !== false);
     deli();
     merilo();
     osveziVidnost();
@@ -211,12 +225,15 @@ export function odpriModel(el, mod, opts = {}) {
     for (const c of Array.isArray(model?.nadzor) ? model.nadzor : []) {
       const prej = nadzorEl.lastElementChild;
       const klic = (v) => {
+        // ponastaviPogled: preklop pogleda (npr. prerez organa) prekliče izbiro in kamero obrne v novo začetno smer.
+        if (c.ponastaviPogled && izbran) izberi(null, { leti: false });
         try {
           c.ob?.(v);
         } catch (err) {
           console.error("3D nadzor", c.id, err);
         }
         poSpremembi();
+        if (c.ponastaviPogled) kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7 });
       };
       if (c.tip === "drsnik") {
         const lab = mk("label", "k3-drsnik");
@@ -243,6 +260,29 @@ export function odpriModel(el, mod, opts = {}) {
       } else if (c.tip === "izbira") {
         const box = mk("div", "k3-izbira");
         box.append(mk("span", "k3-izbira-oznaka", c.oznaka));
+        // Dolg seznam (npr. 44 molekul): spustni meni namesto stene gumbov.
+        if ((c.moznosti || []).length > 8) {
+          const sel = mk("select", "k3-izbor");
+          sel.setAttribute("aria-label", c.oznaka);
+          for (const [k, ime] of c.moznosti) {
+            const o = mk("option", "", ime);
+            o.value = String(k);
+            sel.append(o);
+          }
+          sel.value = String(c.vrednost);
+          const si = { c, zadnja: c.vrednost, nastavi: (v) => (sel.value = String(v)) };
+          sinh.push(si);
+          sel.addEventListener("change", () => {
+            const k = c.moznosti.find(([x]) => String(x) === sel.value)?.[0];
+            if (k === undefined) return;
+            c.vrednost = si.zadnja = k;
+            klic(k);
+          });
+          box.append(sel);
+          nadzorEl.append(box);
+          if (typeof c.vidno === "function") vidni.push([c, box]);
+          continue;
+        }
         const seg = mk("div", "seg k3-seg");
         seg.setAttribute("role", "radiogroup");
         seg.setAttribute("aria-label", c.oznaka);
@@ -305,6 +345,8 @@ export function odpriModel(el, mod, opts = {}) {
     osveziIzpise();
   }
 
+  let gradnja = 0;
+  let unicen = false;
   function zgradiVse(ponastavi) {
     izbran = null;
     sij.clear();
@@ -354,8 +396,133 @@ export function odpriModel(el, mod, opts = {}) {
       );
       if (kit.kakovost === "visoka") kit.pripraviAO(0.3);
     }
-    const ctx = { kakovost: kit.kakovost, gibanje: kit.gibanje, zacetek: { ...zacetek } };
-    model = zgradi(THREE, ctx) || {};
+    const moj = ++gradnja;
+    const ctx = {
+      kakovost: kit.kakovost,
+      gibanje: kit.gibanje,
+      zacetek: { ...zacetek },
+      t,
+      // Modeli iz datotek (docs/3d.md): naloziGLB(pot glede na public/3d/modeli/) in organi iz modeli/organi-3d (organ.js).
+      naloziGLB: (pot, napredek) => import("./organ.js").then((m) => m.naloziGLB(new URL(pot, new URL("./modeli/", import.meta.url)).href, napredek)),
+      organ: (ime) => import("./organ.js").then((m) => m.zgradiOrgan(ime, ctx)),
+      napredek: (d) => nalaganje(d),
+    };
+    let r;
+    try {
+      r = zgradi(THREE, ctx);
+    } catch (err) {
+      return napaka(err);
+    }
+    if (r && typeof r.then === "function") {
+      model = null;
+      nalaganje(0);
+      r.then(
+        (m) => moj === gradnja && !unicen && dokoncaj(m || {}, ponastavi),
+        (err) => moj === gradnja && !unicen && napaka(err),
+      );
+      return;
+    }
+    dokoncaj(r || {}, ponastavi);
+  }
+
+  // Nalaganje (graditelj vrne obljubo): prekrivna plast z deležem prenosa; napaka: sporočilo namesto praznega odra.
+  let nalagEl = null;
+  function nalaganje(d) {
+    if (d == null) {
+      nalagEl?.remove();
+      nalagEl = null;
+      return;
+    }
+    if (!nalagEl) {
+      nalagEl = mk("div", "k3-nalaganje");
+      nalagEl.setAttribute("role", "status");
+      nalagEl.append(mk("p", "", t("a3.organLoading")), mk("span", "k3-nalaganje-trak"));
+      nalagEl.lastChild.append(mk("i", ""));
+      oder.append(nalagEl);
+    }
+    nalagEl.lastChild.firstChild.style.width = `${Math.round(Math.max(0.04, Math.min(1, d)) * 100)}%`;
+  }
+  function napaka(err) {
+    console.error("3D model", err);
+    nalaganje(0);
+    nalagEl.classList.add("napaka");
+    nalagEl.firstChild.textContent = t("a3.loadError");
+    nalagEl.lastChild.hidden = true;
+  }
+
+  // »Podrobnosti organa«: gumb pod odrom in list z besedilom (model.podrobnosti = { naslov, odseki: [{ naslov, besedilo }] }).
+  let listEl = null;
+  function podrobnostiGumb() {
+    el.querySelector(".k3-podrobnosti-gumb")?.remove();
+    if (!model?.podrobnosti?.odseki?.length) return;
+    const b = mk("button", "k3-pill k3-podrobnosti-gumb");
+    b.type = "button";
+    b.innerHTML = `<span></span>${icon("arrow-right")}`;
+    b.firstChild.textContent = t("a3.organDetails");
+    b.setAttribute("aria-haspopup", "dialog");
+    b.addEventListener("click", () => odpriList(b));
+    spodaj.append(b);
+  }
+  function zapriList() {
+    if (!listEl) return;
+    const vrni = listEl._vrni;
+    listEl.remove();
+    listEl = null;
+    vrni?.focus();
+  }
+  function odpriList(vrni) {
+    zapriList();
+    const p = model.podrobnosti;
+    const ozadje = mk("div", "k3-list-ozadje");
+    const list = mk("section", "k3-list");
+    list.setAttribute("role", "dialog");
+    list.setAttribute("aria-modal", "true");
+    const h = mk("h2", "", p.naslov || info.naslov);
+    h.id = `k3-list-${info.id}`;
+    list.setAttribute("aria-labelledby", h.id);
+    const zapri = mk("button", "k3-krog");
+    zapri.type = "button";
+    zapri.innerHTML = icon("x");
+    zapri.setAttribute("aria-label", t("a3.close"));
+    zapri.title = t("a3.close");
+    zapri.addEventListener("click", zapriList);
+    const glava = mk("header", "k3-list-glava");
+    glava.append(mk("div", ""), zapri);
+    glava.firstChild.append(mk("p", "k3-nadnaslov", t("a3.organDetails")), h);
+    const vsebina = mk("div", "k3-list-vsebina");
+    for (const o of p.odseki) {
+      const art = mk("article", "");
+      art.append(mk("h3", "", o.naslov), mk("p", "", o.besedilo));
+      vsebina.append(art);
+    }
+    list.append(glava, vsebina);
+    ozadje.append(list);
+    ozadje.addEventListener("click", (e) => e.target === ozadje && zapriList());
+    ozadje.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        zapriList();
+      } else if (e.key === "Tab") {
+        // Fokus ostane v listu (en sam gumb in drsno besedilo).
+        e.preventDefault();
+        (document.activeElement === zapri ? vsebina : zapri).focus();
+      }
+    });
+    vsebina.tabIndex = 0;
+    el.append(ozadje);
+    listEl = ozadje;
+    listEl._vrni = vrni;
+    zapri.focus();
+  }
+
+  function dokoncaj(m, ponastavi) {
+    model = m;
+    nalaganje(null);
+    el.classList.toggle("k3-organ", model.postavitev === "organ");
+    // Organ: nadzor (npr. stikalo »Prerez«) lebdi na odru levo zgoraj, spodaj ostanejo deli in »Podrobnosti organa«.
+    if (model.postavitev === "organ") oder.append(nadzorEl);
+    else if (nadzorEl.parentNode !== spodaj) spodaj.prepend(nadzorEl);
     if (model.group) kit.scene.add(model.group);
     kit.nastaviLuci(model.luci !== false);
     // Začetne vrednosti kontrol (katalog ali naslov): nastavimo in pokličemo ob().
@@ -376,10 +543,16 @@ export function odpriModel(el, mod, opts = {}) {
     deli();
     merilo();
     kit.pokaziOznako(null);
+    podrobnostiGumb();
+    if (typeof model.ao === "function") kit.nastaviAO(model.ao() !== false);
     if (ponastavi || !opts.ohraniPogled) {
       kit.controls.minDistance = 0.4;
       kit.controls.maxDistance = 12;
-      kit.poleti(new THREE.Vector3(0, 0, 0), 1, { smer: zacetnaSmer(), trajanje: ponastavi ? 0.6 : 0 });
+      const leti = () => kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: ponastavi ? 0.6 : 0 });
+      leti();
+      // Postavitev »organ« spremeni višino odra šele ob naslednji postavitvi strani (ResizeObserver): kader ponovimo,
+      // da organ pade v ožji zorni kot (pokončen telefon).
+      if (model.postavitev === "organ" && !ponastavi) requestAnimationFrame(() => requestAnimationFrame(() => !unicen && model === m && leti()));
     }
     kit.narisi();
   }
@@ -395,6 +568,7 @@ export function odpriModel(el, mod, opts = {}) {
     izberi,
     unici() {
       for (const f of pocisti) f();
+      unicen = true;
       try {
         model?.dispose?.();
       } catch {}

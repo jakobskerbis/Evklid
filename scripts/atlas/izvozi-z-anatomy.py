@@ -67,6 +67,25 @@ def prevladujoc_material(o, me):
     best = max(range(len(mats)), key=lambda i: count[i])
     return mats[best] or o.active_material
 
+def obrni_ce_navznoter(me, srcmat):
+    """Mnoge mreže v viru so obrnjene navznoter (normale kažejo v notranjost). Zaprte mreže z negativno
+    predznačeno prostornino obrnemo, preden zapečemo senco, sicer se ves del zapeče kot vdolbina.
+    Ovojnic (tanke odprte plošče) ne obračamo; pregledovalnik jih riše dvostransko."""
+    import numpy as np
+    if srcmat and srcmat.name.startswith("Fascia"):
+        return
+    me.calc_loop_triangles()
+    nt = len(me.loop_triangles)
+    if nt == 0:
+        return
+    co = np.empty(len(me.vertices) * 3); me.vertices.foreach_get("co", co); co = co.reshape(-1, 3)
+    tri = np.empty(nt * 3, dtype=np.int64); me.loop_triangles.foreach_get("vertices", tri); tri = tri.reshape(-1, 3)
+    c = co.mean(0)
+    a, b, d = co[tri[:, 0]] - c, co[tri[:, 1]] - c, co[tri[:, 2]] - c
+    vol = np.einsum("ij,ij->i", a, np.cross(b, d)).sum() / 6.0
+    if vol < 0:
+        me.flip_normals()
+
 def zapeci_senco(me, moc=2.2, gladi=3):
     """Senca v pregibih (»dirt«): oglišča v vdolbinah so temnejša. Shrani se kot barva oglišč COLOR_0,
     pregledovalnik z njo pomnoži barvo materiala (deluje tudi na telefonih brez dragega SSAO)."""
@@ -126,6 +145,7 @@ for key, (prefix, target) in SISTEMI.items():
         me.transform(o.matrix_world)
         srcmat = prevladujoc_material(o, me)
         me.materials.clear(); me.materials.append(preprost_material(srcmat))
+        obrni_ce_navznoter(me, srcmat)
         zapeci_senco(me)
         n = tris_of(me); raw_tris += n
         if n > MIN_TRI and ratio < 1:

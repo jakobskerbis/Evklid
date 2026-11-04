@@ -91,6 +91,9 @@
   color: var(--k3-muted); font-weight: 600; cursor: pointer; white-space: nowrap; box-shadow: none;
 }
 .k3 .seg > button.active { background: var(--k3-povrsina-2) !important; color: var(--k3-besedilo); box-shadow: inset 0 0 0 1px var(--k3-rob); }
+/* Izbira v pregledovalniku: več možnosti se prelomi v drugo vrsto (nobena ni skrita za robom, npr. 5 ravni mišice pri 360 px). */
+.k3 .seg.k3-seg { flex-wrap: wrap; overflow: visible; border-radius: 22px; }
+.k3 .seg.k3-seg > button { flex: 1 1 auto; padding: 0 10px; }
 .k3 .switch { flex: none; position: relative; width: 52px; height: 30px; min-height: 30px; padding: 0; border: 0; border-radius: 999px; background: var(--k3-rob); cursor: pointer; transition: background 0.2s; }
 .k3 .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); transition: transform 0.2s; }
 .k3 .switch[aria-checked="true"] { background: var(--k3-accent); }
@@ -108,6 +111,14 @@
 .k3-drsnik-vrh { display: flex; justify-content: space-between; gap: 8px; font-size: 0.92rem; color: var(--k3-muted); }
 .k3-drsnik-vrh output { color: var(--k3-besedilo); font-variant-numeric: tabular-nums; font-weight: 600; }
 .k3-izbira { flex: 1 1 260px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.k3 .k3-izbor {
+  width: 100%; min-height: 44px; padding: 0 40px 0 16px; border-radius: 999px; border: 1px solid var(--k3-rob); color: var(--k3-besedilo); font: inherit; font-weight: 600; cursor: pointer;
+  appearance: none; -webkit-appearance: none; color-scheme: dark;
+  background: var(--k3-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa6bd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center;
+}
+.k3 .k3-izbor:hover { border-color: #3a4760; }
+[dir="rtl"] .k3 .k3-izbor { padding: 0 16px 0 40px; background-position: left 16px center; }
+.k3 .k3-izbor option { background: #141b27; color: #e8edf6; }
 .k3-izbira-oznaka, .k3-izpis span:first-child { font-size: 0.92rem; color: var(--k3-muted); }
 .k3-stikalo { display: flex; align-items: center; gap: 12px; min-height: 44px; }
 .k3-izpis { flex: 1 1 100%; display: flex; justify-content: space-between; gap: 12px; padding: 8px 12px; border-radius: 12px; background: var(--k3-povrsina); font-variant-numeric: tabular-nums; }
@@ -153,7 +164,8 @@ html.k3-stran body { overflow: hidden; }
 .k3-model-telo { flex: 1; min-height: 0; overflow: auto; padding: 0 16px max(16px, env(safe-area-inset-bottom)); }
 .k3-model-telo .k3-pregled { border-radius: 18px; }
 .k3-model-telo .k3-oder-ovoj { height: clamp(320px, 62vh, 760px); }
-.k3-napaka { padding: 40px 16px; text-align: center; color: var(--k3-muted); }
+.k3-napaka { max-width: 520px; margin: 0 auto; padding: 40px 16px; text-align: center; color: var(--k3-muted); line-height: 1.5; }
+.k3-napaka .a3-pill { text-decoration: none; }
 
 /* ---------- atlas ---------- */
 .a3 { position: fixed; inset: 0; overflow: hidden; background: var(--k3-bg); }
@@ -167,6 +179,9 @@ html.k3-stran body { overflow: hidden; }
 }
 .a3-vrh { position: absolute; left: 0; right: 0; top: 0; z-index: 3; display: flex; flex-direction: column; gap: 12px; padding: max(14px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left)); pointer-events: none; }
 .a3-vrh > * { pointer-events: auto; }
+/* Mehka senca za naslovom in iskanjem: besedilo ostane berljivo tudi nad svetlimi kostmi in organi. */
+.a3-vrh::before { content: ""; position: absolute; z-index: -1; left: 0; right: 0; top: 0; height: calc(env(safe-area-inset-top) + 128px); background: linear-gradient(to bottom, rgba(11, 15, 22, 0.72), rgba(11, 15, 22, 0.38) 55%, rgba(11, 15, 22, 0)); pointer-events: none; }
+.a3-naslov, .a3-nadnaslov { text-shadow: 0 1px 10px rgba(11, 15, 22, 0.85); }
 .a3-glava { display: flex; align-items: center; gap: 12px; }
 .a3-znak { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; flex: none; background: linear-gradient(145deg, #6e9bff, #3555b8); color: #0b0f16; box-shadow: 0 6px 18px rgba(110, 155, 255, 0.25); }
 .a3-znak svg.i { width: 24px; height: 24px; }
@@ -176,7 +191,10 @@ html.k3-stran body { overflow: hidden; }
 .a3-vrsta3 { justify-content: space-between; align-items: flex-start; pointer-events: none; }
 .a3-vrsta3 > * { pointer-events: auto; }
 .a3-iskanje { position: relative; flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--k3-rob); background: var(--k3-steklo); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--k3-muted); }
-.a3-iskanje:focus-within { border-color: var(--k3-accent); }
+.a3-iskanje:focus-within { z-index: 1; border-color: var(--k3-accent); box-shadow: 0 0 0 3px rgba(110, 155, 255, 0.22); }
+/* Rezultati iskanja nad gumbi za povečavo in nad spodnjo vrstico (steklena podlaga ustvari svoj sloj). */
+.a3-vrh:focus-within { z-index: 5; }
+.a3 .a3-iskanje input:focus-visible { outline: none; box-shadow: none; }
 .a3-iskanje input { flex: 1; min-width: 0; height: 46px; border: 0; background: transparent; color: var(--k3-besedilo); font: inherit; font-size: 1rem; outline: none; }
 .a3-iskanje input::placeholder { color: var(--k3-muted); }
 .a3-iskanje input::-webkit-search-cancel-button { filter: invert(0.7); }
@@ -206,12 +224,12 @@ html.k3-stran body { overflow: hidden; }
 .a3-nast { flex: none; }
 .a3-kartica, .a3-kviz { padding: 14px 16px 16px; border-radius: 22px; border: 1px solid var(--k3-rob); background: var(--k3-steklo); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4); max-height: 46vh; overflow: auto; animation: a3-gor 0.22s ease-out; }
 @keyframes a3-gor { from { transform: translateY(10px); opacity: 0; } }
-.a3-pot { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--k3-muted); line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 44px; }
+.a3-pot { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--k3-muted); line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-inline-end: 44px; }
 .a3-pot::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--barva); }
 .a3-kartica { position: relative; }
 .a3-k-vrh { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-top: 2px; }
-.a3-k-vrh .a3-krog { position: absolute; top: 10px; right: 10px; }
-.a3-k-vrh h2 { margin: 0; font-size: 1.3rem; line-height: 1.2; }
+.a3-k-vrh .a3-krog { position: absolute; top: 10px; inset-inline-end: 10px; }
+.a3-k-vrh h2 { margin: 0; padding-inline-end: 36px; font-size: 1.3rem; line-height: 1.2; }
 .a3-latinsko { margin: 2px 0 0; font-style: italic; color: var(--k3-muted); }
 .a3-oznake { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .a3-oznaka { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; padding: 3px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); }
@@ -324,4 +342,61 @@ html.k3-stran body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .a3-kartica, .a3-kviz, .a3-list { animation: none; }
   .k3 * { transition: none !important; }
+}
+
+/* ---------- organi iz GLB (organ.js, postavitev »organ«) ---------- */
+/* Velik organ na toplem temnem odru, točke, kartica ob točki in gumb »Podrobnosti organa«; prerez kot stikalo na odru. */
+.k3-pregled { position: relative; }
+.k3-organ .k3-oder-ovoj { height: clamp(380px, 72vh, 760px); }
+.k3-organ .k3-oder {
+  background-color: #0f0f12 !important;
+  background-image: radial-gradient(ellipse 62% 54% at 50% 47%, rgba(118, 84, 80, 0.30) 0%, rgba(62, 44, 46, 0.18) 42%, transparent 74%);
+}
+.k3-organ .k3-oder::after { background: radial-gradient(ellipse 80% 75% at 50% 46%, transparent 52%, rgba(5, 5, 7, 0.6) 100%); }
+.k3-organ .k3-tocka { left: -8px; top: -8px; width: 16px; height: 16px; border-width: 2px; box-shadow: 0 0 0 3px color-mix(in srgb, var(--barva) 30%, transparent), 0 1px 6px rgba(0, 0, 0, 0.55); }
+.k3-organ .k3-tocka::before { inset: -12px; } /* tarča za prst ostane 40 px */
+.k3-organ .k3-nadzor {
+  position: absolute; z-index: 2; top: 12px; left: 12px; gap: 8px; padding: 4px 6px 4px 14px; border-radius: 999px;
+  background: var(--k3-steklo); border: 1px solid var(--k3-rob); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.k3-organ .k3-nadzor .k3-stikalo { min-height: 40px; gap: 10px; font-weight: 500; }
+.k3-organ .k3-spodaj { gap: 12px; padding: 12px 16px 16px; }
+.k3-organ .k3-deli { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 2px 16px; mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent); }
+.k3-organ .k3-deli::-webkit-scrollbar { display: none; }
+.k3-organ .k3-del { flex: none; min-height: 38px; font-size: 0.9rem; }
+.k3 .k3-podrobnosti-gumb { width: 100%; min-height: 52px; justify-content: center; gap: 10px; font-size: 1rem; font-weight: 600; background: var(--k3-povrsina); }
+.k3-nalaganje {
+  position: absolute; z-index: 3; left: 50%; top: 50%; translate: -50% -50%; width: min(300px, calc(100% - 32px)); padding: 18px 20px;
+  border-radius: 18px; background: var(--k3-steklo); border: 1px solid var(--k3-rob); text-align: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.k3-nalaganje p { margin: 0 0 12px; font-weight: 600; }
+.k3-nalaganje.napaka p { margin: 0; font-weight: 500; color: var(--k3-muted); }
+.k3-nalaganje-trak { display: block; height: 6px; border-radius: 999px; background: var(--k3-rob); overflow: hidden; }
+.k3-nalaganje-trak i { display: block; height: 100%; width: 4%; border-radius: inherit; background: var(--k3-accent); transition: width 0.2s; }
+.k3-list-ozadje { position: absolute; inset: 0; z-index: 5; display: flex; align-items: flex-end; background: rgba(5, 7, 11, 0.55); }
+.k3-list {
+  width: 100%; max-height: 86%; display: flex; flex-direction: column; border-radius: 22px 22px 0 0; background: var(--k3-povrsina);
+  border: 1px solid var(--k3-rob); border-bottom: 0; box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45); animation: k3-gor 0.22s ease-out;
+}
+.k3-list-glava { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 18px 18px 8px 20px; }
+.k3-list-glava h2 { margin: 2px 0 0; font-size: 1.35rem; }
+.k3-list-vsebina { overflow-y: auto; overscroll-behavior: contain; padding: 4px 20px max(22px, env(safe-area-inset-bottom)); outline: none; }
+.k3-list-vsebina article + article { margin-top: 16px; }
+.k3-list-vsebina h3 { margin: 0 0 4px; font-size: 1rem; color: var(--k3-accent); font-weight: 600; }
+.k3-list-vsebina p { margin: 0; line-height: 1.55; color: var(--k3-besedilo); }
+@keyframes k3-gor { from { transform: translateY(24px); opacity: 0; } }
+/* Stran /3d: organ zapolni zaslon brez okvirja (kot atlas), list ob desnem robu na širokih zaslonih. */
+.k3-model-telo:has(> .k3-organ) { padding: 0; overflow: hidden; display: flex; }
+.k3-model-telo > .k3-organ { flex: 1; min-height: 0; border: 0; border-radius: 0; background: transparent; }
+.k3-model-telo > .k3-organ .k3-oder-ovoj { flex: 1 1 auto; height: auto; min-height: 300px; }
+.k3-model-telo > .k3-organ .k3-spodaj { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+@media (min-width: 900px) {
+  .k3-list-ozadje { align-items: stretch; justify-content: flex-end; background: rgba(5, 7, 11, 0.35); }
+  .k3-list { width: 420px; max-height: none; margin: 12px; border-radius: 22px; border-bottom: 1px solid var(--k3-rob); }
+  .k3-model-telo > .k3-organ .k3-spodaj { flex-direction: row; align-items: center; }
+  .k3-model-telo > .k3-organ .k3-deli { flex: 1; min-width: 0; margin: 0; }
+  .k3-model-telo > .k3-organ .k3-podrobnosti-gumb { width: auto; flex: none; padding: 0 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .k3-list { animation: none; }
 }

@@ -163,6 +163,8 @@ async function preveriGraditelja(file) {
   const ime = path.relative(ROOT, file);
   assert.deepEqual(preveriInfo(mod.info), [], `${ime}: info`);
   assert.equal(typeof mod.zgradi, "function", `${ime}: zgradi`);
+  // Organ iz GLB (export organ = "<ime>"): zgradi vrne ctx.organ(...), preveri ga test/3d-organi-glb.test.js.
+  if (typeof mod.organ === "string") return mod.info;
   let model;
   try {
     model = mod.zgradi(THREE, { kakovost: "nizka", gibanje: false, zacetek: {} });

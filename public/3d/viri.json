@@ -11,7 +11,8 @@
       "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "datoteke": [
         "telo/*.glb",
-        "telo-hd/*.glb"
+        "telo-hd/*.glb",
+        "organi-3d/*.glb"
       ]
     },
     {
@@ -24,7 +25,8 @@
       "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
       "datoteke": [
         "telo/*.glb",
-        "telo-hd/*.glb"
+        "telo-hd/*.glb",
+        "organi-3d/*.glb"
       ]
     },
     {
@@ -37,7 +39,8 @@
       "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
       "datoteke": [
         "telo/*.glb",
-        "telo-hd/*.glb"
+        "telo-hd/*.glb",
+        "organi-3d/*.glb"
       ]
     },
     {

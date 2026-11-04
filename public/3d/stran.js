@@ -165,7 +165,7 @@ async function usmeri() {
     console.error("3D:", err);
     if (moj !== zaporedje) return;
     const p = mk("div", "k3-napaka");
-    p.append(mk("p", "", t("a3.loadError")));
+    p.append(mk("p", "", t(err?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError")));
     const b = mk("a", "a3-pill");
     b.href = "#";
     b.textContent = t("a3.hubTitle");

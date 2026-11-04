@@ -163,7 +163,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   });
 
   const dno = mk("div", "a3-dno");
-  const namig = mk("p", "a3-namig", t("a3.hint"));
+  const namig = mk("p", "a3-namig", t(typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches ? "a3.hintMouse" : "a3.hint"));
   const btnNastavitve = gumb("a3-krog a3-nast", icon("sliders-horizontal"), t("a3.viewSettings"));
   const namigVrsta = mk("div", "a3-namig-vrsta");
   namigVrsta.append(namig, btnNastavitve);
@@ -269,7 +269,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   let kvizStanje = null;
   const skupno = { uAlfa: { value: 1 }, uRob: { value: 0 }, uSvetlost: { value: 1 } };
   const materiali = new Map(); // razred → material (vsi BatchedMesh tega razreda)
-  const svetSkupno = { uAlfa: { value: 1 }, uRob: { value: 0 }, uSvetlost: { value: 1 }, uObroba: { value: 0.85 } };
+  const svetSkupno = { uAlfa: { value: 1 }, uRob: { value: 0 }, uSvetlost: { value: 1 }, uObroba: { value: 0.35 } };
   const materialiSij = new Map();
   const ravnina = new THREE.Plane(new THREE.Vector3(0, -1, 0), 1);
   const meje = new THREE.Box3(new THREE.Vector3(-0.45, 0, -0.2), new THREE.Vector3(0.45, 1.8, 0.2));
@@ -455,7 +455,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     }
     return v;
   }
-  function obrniNotranjost(g) {
+  function obrniVrstniRed(g) {
     const ix = g.index.array;
     for (let t = 0; t < ix.length; t += 3) {
       const x = ix[t + 1];
@@ -463,6 +463,28 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       ix[t + 2] = x;
     }
     g.index.needsUpdate = true;
+  }
+  // Ali se normale oglišč ujemajo z vrstnim redom oglišč (vsota normala · ploskovna normala). Vrstni red in normale v
+  // izvozu nista vedno obrnjena skupaj: pri delu zrcaljenih mišic (npr. desna zunanja poševna trebušna mišica) je bil
+  // obrnjen samo vrstni red, zato je skupno obračanje normale postavilo navznoter (polovica telesa temna in mlečna).
+  function soglasjeNormal(g) {
+    const [p, k, o] = surovo(g.attributes.position);
+    const [n, kn, on] = surovo(g.attributes.normal);
+    const ix = g.index.array;
+    let s = 0;
+    for (let t = 0; t < ix.length; t += 3) {
+      const a = ix[t], b = ix[t + 1], c = ix[t + 2];
+      const ax = p[a * k + o], ay = p[a * k + o + 1], az = p[a * k + o + 2];
+      const ux = p[b * k + o] - ax, uy = p[b * k + o + 1] - ay, uz = p[b * k + o + 2] - az;
+      const wx = p[c * k + o] - ax, wy = p[c * k + o + 1] - ay, wz = p[c * k + o + 2] - az;
+      const nx = n[a * kn + on] + n[b * kn + on] + n[c * kn + on];
+      const ny = n[a * kn + on + 1] + n[b * kn + on + 1] + n[c * kn + on + 1];
+      const nz = n[a * kn + on + 2] + n[b * kn + on + 2] + n[c * kn + on + 2];
+      s += Math.sign(nx * (uy * wz - uz * wy) + ny * (uz * wx - ux * wz) + nz * (ux * wy - uy * wx));
+    }
+    return s;
+  }
+  function obrniNormale(g) {
     const nrm = g.attributes.normal;
     const [a, k, o] = surovo(nrm);
     const maks = a instanceof Int16Array ? 32767 : a instanceof Int8Array ? 127 : Infinity;
@@ -475,6 +497,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     const json = gltf.parser.json;
     const assoc = gltf.parser.associations;
     const kandidati = [];
+    const videno = new Set();
     gltf.scene.traverse((o) => {
       if (!o.isMesh) return;
       let n = o;
@@ -494,6 +517,13 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
         const n2 = g.attributes.position.count;
         g.setIndex([...Array(n2).keys()]);
       }
+      // Zrcalni par (».l« in ».r«) ima v izvozu lahko skupen seznam indeksov ali normal; obračanje enega bi obrnilo tudi
+      // drugega (desna polovica mišic je bila zato temna), zato vsak del dobi svojo kopijo.
+      if (videno.has(g.index.array)) g.setIndex(new THREE.BufferAttribute(g.index.array.slice(), 1));
+      videno.add(g.index.array);
+      const nrmA = g.attributes.normal.isInterleavedBufferAttribute ? g.attributes.normal.data.array : g.attributes.normal.array;
+      if (videno.has(nrmA)) g.setAttribute("normal", g.attributes.normal.clone());
+      else videno.add(nrmA);
       g.computeBoundingBox();
       g.computeBoundingSphere();
       const t0 = tkivo(row);
@@ -502,7 +532,42 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     });
     // Zaprte mreže z negativno prostornino so zrcaljene navznoter: obrnemo jih. Odprte ploskve (ovojnice) nimajo
     // zanesljivega predznaka; njihov material je dvostranski (tkiva.js), zato smer zanje ni pomembna.
-    for (const k of kandidati) if (k.v < 0 && k.razred !== "ovojnica") obrniNotranjost(k.g);
+    // Normale nato poravnamo z (popravljenim) vrstnim redom, za vse dele, tudi ovojnice (dvostranski material obrne
+    // normalo na hrbtni strani, zato mora biti na sprednji pravilna).
+    // Zapečena senca (scripts/atlas/izvozi-z-anatomy.py) je iz normal: pri delu z normalami navznoter v viru je izbočeno
+    // brala kot vdolbino (večina leve polovice enakomerno temnejša, pregibi napačni). Pravilna senca izbočene mišice ali
+    // kosti je skoraj povsod 1, zato pri zrcalnem paru z enako zgradbo (preverimo nekaj oglišč, zrcaljenih čez sredino)
+    // temnejšo senco prepišemo s svetlejše.
+    const poId = new Map(kandidati.map((k) => [k.row.id, k]));
+    const pv = new THREE.Vector3(), pw = new THREE.Vector3();
+    for (const k of kandidati) {
+      const st = /\.(l|r)$/.exec(k.row.id);
+      const par = st && poId.get(k.row.id.slice(0, -1) + (st[1] === "l" ? "r" : "l"));
+      if (!par) continue;
+      const P = k.g.attributes.position, Q = par.g.attributes.position;
+      if (P.count !== Q.count || !k.g.attributes.color || !par.g.attributes.color) continue;
+      const povp = (A) => {
+        let v = 0;
+        for (let i = 0; i < A.count; i++) v += A.getX(i);
+        return v / Math.max(1, A.count);
+      };
+      if (povp(par.g.attributes.color) - povp(k.g.attributes.color) < 0.02) continue;
+      let enako = true;
+      for (let j = 0; j < 9 && enako; j++) {
+        const i = Math.floor((j / 9) * P.count);
+        pv.fromBufferAttribute(P, i).applyMatrix4(k.m0);
+        pw.fromBufferAttribute(Q, i).applyMatrix4(par.m0);
+        enako = Math.abs(Math.abs(pv.x) - Math.abs(pw.x)) + Math.abs(pv.y - pw.y) + Math.abs(pv.z - pw.z) < 0.003;
+      }
+      if (!enako) continue;
+      const C = k.g.attributes.color, D = par.g.attributes.color;
+      for (let i = 0; i < C.count; i++) C.setXYZW(i, D.getX(i), D.getY(i), D.getZ(i), D.getW(i));
+      C.needsUpdate = true;
+    }
+    for (const k of kandidati) {
+      if (k.v < 0 && k.razred !== "ovojnica") obrniVrstniRed(k.g);
+      if (soglasjeNormal(k.g) < 0) obrniNormale(k.g);
+    }
     const skupine = new Map();
     for (const k of kandidati) {
       if (!skupine.has(k.kljuc)) skupine.set(k.kljuc, []);
@@ -688,7 +753,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (!materialiSij.has(razred)) {
       const m = ustvariMaterial(razred, kakovost, svetSkupno);
       m.userData.sij = true;
-      m.emissiveIntensity = 1; // emissive = barva dela × 0,14 (izberi): izbrani del rahlo zažari v svoji barvi
+      m.emissiveIntensity = 1; // emissive = barva dela × 0,06 (izberi): izbrani del rahlo zažari v svoji barvi
       if (m.transparent) {
         m.transparent = false;
         m.opacity = 1;
@@ -720,7 +785,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (lebdiId === izbran) oznaciLebdenje(null);
     sij.material = materialSij(d.razred);
     sij.material.color.copy(d.barva);
-    sij.material.emissive.copy(d.barva).multiplyScalar(0.14);
+    sij.material.emissive.copy(d.barva).multiplyScalar(0.06);
     sij.matrix.copy(d.m);
     sij.matrixWorldNeedsUpdate = true;
     sij.visible = true;
