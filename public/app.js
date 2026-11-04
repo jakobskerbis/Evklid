@@ -295,7 +295,7 @@ function initView(name) {
 // ---------- spodnja vrstica se pri branju umakne (telefon, tablica na dotik; touch.css) ----------
 // Kje se umakne, določa touch.css (vrstica je takrat position: fixed in skrita pod robom). Poteg navzdol (drsenje
 // nazaj gor) ali kolešček gor jo pokaže (body.tb-peek), poteg navzgor jo spet skrije; v lekciji Učbenika samo ob
-// robu (lessonEdge). Med pisanjem (odprta tipkovnica) se ne pokaže. Na vseh teh zaslonih je v glavi gumb Nazaj.
+// robu (lessonEdge) ali ko drsenje udari v vrh ali dno. Med pisanjem (odprta tipkovnica) se ne pokaže. Na vseh teh zaslonih je v glavi gumb Nazaj.
 const tabbarEl = $("#tabbar");
 const barAuto = () => !!tabbarEl && getComputedStyle(tabbarEl).position === "fixed";
 const typing = () => !!document.activeElement?.matches?.('textarea, [contenteditable="true"], input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"])');
@@ -326,7 +326,9 @@ document.addEventListener("touchmove", (e) => {
   const t = e.touches[0];
   const dy = t.clientY - swipe.y;
   if (Math.abs(dy) < 24 || Math.abs(t.clientX - swipe.x) > Math.abs(dy)) return;
-  const on = barWanted(dy > 0, swipe.edge);
+  // Rob ob začetku ali že zdaj: poteg, ki se začne tik ob robu in vanj udari, vrstice ne skrije (j 2026-11-04).
+  const now = lessonEdge(e.target);
+  const on = barWanted(dy > 0, swipe.edge) || !!(now && (dy > 0 ? now.top : now.bottom));
   swipe = null;
   requestAnimationFrame(() => barAuto() && peekBar(on));
 }, { passive: true });
@@ -339,9 +341,26 @@ document.addEventListener("wheel", (e) => {
     if (barAuto()) peekBar(on);
   });
 }, { passive: true });
+// Drsenje v lekciji, ki udari v vrh ali dno (j 2026-11-04), vrstico pokaže, tudi ko lekcija pride do roba z zagonom
+// po potegu ali isti poteg pripelje do dna. Šteje samo drsenje uporabnika (poteg ali kolešček v zadnjih 4 s, dolg zamah);
+// dotik gumba (npr. Naprej, ki korak prestavi na vrh) ni drsenje. rAF: pride za umikom ob istem potegu ali koleščku.
+let lessonTop = null, userScrollAt = 0;
+const userScroll = () => { userScrollAt = performance.now(); };
+document.addEventListener("touchmove", userScroll, { passive: true });
+document.addEventListener("touchend", () => userScrollAt && userScroll(), { passive: true });
+document.addEventListener("wheel", userScroll, { passive: true });
+document.addEventListener("click", () => { userScrollAt = 0; }, true);
+document.addEventListener("scroll", (e) => {
+  if (e.target?.id !== "view-textbook" || e.target.closest(".in-okno")) return;
+  const prev = lessonTop;
+  lessonTop = e.target.scrollTop;
+  if (prev == null || prev === lessonTop || performance.now() - userScrollAt > 4000) return;
+  const edge = lessonEdge(e.target);
+  if (edge && (lessonTop < prev ? edge.top : edge.bottom)) requestAnimationFrame(() => barAuto() && peekBar(true));
+}, { capture: true, passive: true });
 document.addEventListener("focusin", () => document.body.classList.contains("tb-peek") && typing() && peekBar(false));
 // Odprta lekcija v Učbeniku (vrstica se umakne) ali nazaj na kazalo: pogled ostane isti, vsebina se zamenja.
-new MutationObserver(() => peekBar(false)).observe($("#view-textbook"), { childList: true });
+new MutationObserver(() => { lessonTop = null; peekBar(false); }).observe($("#view-textbook"), { childList: true });
 $("#chat-back").addEventListener("click", () => showView(!["chat", "onboard", "auth"].includes(prevView) && !isFloating(prevView) ? prevView : "path"));
 
 // Zavihek pogleda v premičnem oknu okno le prinese v ospredje (branje, vnos in drsenje v njem ostanejo).

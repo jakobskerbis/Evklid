@@ -105,7 +105,7 @@
    igranjem, tipkovnica kalkulatorja, plošča za vnos, Oglasna deska in video gradiv jo že prekrijejo ali skrijejo.
    Vrstica je takrat pritrjena pod spodnjim robom (ne vzame prostora); poteg navzdol ali kolešček gor jo pokaže
    (body.tb-peek, app.js), poteg navzgor skrije; v lekciji Učbenika se pokaže samo ob robu (poteg navzgor na dnu
-   ali navzdol na vrhu, j 2026-11-04). Na teh zaslonih je v glavi gumb Nazaj. app.js iz position: fixed
+   ali navzdol na vrhu, j 2026-11-04) ali ko drsenje udari v vrh ali dno. Na teh zaslonih je v glavi gumb Nazaj. app.js iz position: fixed
    prepozna, da se vrstica umika, zato pogoje pišemo samo tu. */
 .chat-back { display: none; }
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
