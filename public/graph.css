@@ -654,3 +654,11 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
   background: linear-gradient(to right, var(--sk-c) var(--sk-p, 0%), transparent var(--sk-p, 0%)) center / 100% 4px no-repeat; }
 .sk-ctl output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; min-width: 4.5ch; text-align: end; }
 .sk-hint { margin: 0; color: var(--muted); font-size: 0.9rem; unicode-bidi: plaintext; }
+
+/* statistični testi, finance, tabela vrednosti */
+.tl-dec { margin: 0; padding: 8px 10px; border-radius: 10px; border: 1.5px solid var(--border); }
+.tl-dec-no { border-color: var(--danger); }
+.tl-vt-wrap { overflow-x: auto; max-height: 60vh; }
+.tl-vt { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.tl-vt th, .tl-vt td { text-align: right; padding: 6px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.tl-vt th { position: sticky; top: 0; background: var(--surface, var(--bg)); }
