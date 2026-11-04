@@ -589,7 +589,8 @@ export function createApp(store, opts = {}) {
       const shortDeep = deep && !routed.boosted;
       let history = shortDeep ? recentHistory(fullHistory) : windowHistory(fullHistory);
       // Odrezani starejši del dolgega pogovora: kratek povzetek pred oknom (server/povzetek.js).
-      if (!shortDeep && !cached && !win && !hinted) {
+      // V načinu brez API-ja (mock) ne, razen v testih z lastnim streamFn.
+      if (!shortDeep && !cached && !win && !hinted && (!isMockMode() || opts.streamFn)) {
         history = await summarizedHistory({
           store,
           conversationId: conv.id,

@@ -75,8 +75,20 @@ test("rolling summary: failure or timeout keeps the old behaviour; stored text i
   };
   assert.deepEqual(await summarizedHistory({ store, conversationId: convId, fullHistory: long, history: win, streamFn: failing }), win);
   assert.equal(store.getSummary(convId), null);
+  // Po neuspehu do naslednjega reza ni novega poskusa (učenec ne čaka in ne plačuje vsake poteze).
+  let retried = false;
+  const later = conv(22);
+  await summarizedHistory({ store, conversationId: convId, fullHistory: later, history: windowHistory(later), streamFn: async () => ((retried = true), { text: "x" }) });
+  assert.equal(retried, false);
+  // Učenec prekine: ni klica in ni oznake neuspeha.
+  const { store: s2, convId: c2 } = setup();
+  const gone = new AbortController();
+  gone.abort();
+  assert.equal(await summarizedHistory({ store: s2, conversationId: c2, fullHistory: long, history: win, streamFn: failing, signal: gone.signal }), win);
   const refusal = async () => ({ text: "", stopReason: "refusal" });
-  assert.deepEqual(await summarizedHistory({ store, conversationId: convId, fullHistory: long, history: win, streamFn: refusal }), win);
+  assert.deepEqual(await summarizedHistory({ store: s2, conversationId: c2, fullHistory: long, history: win, streamFn: refusal }), win);
+  const ok = await summarizedHistory({ store: s2, conversationId: c2, fullHistory: conv(31), history: windowHistory(conv(31)), streamFn: async () => ({ text: "Nov povzetek" }) });
+  assert.match(ok[0].content[0].text, /Nov povzetek/, "nov rez: nov poskus");
   process.env.EVKLID_CHAT_SUMMARY = "0";
   try {
     let called = false;
@@ -91,10 +103,58 @@ test("rolling summary: failure or timeout keeps the old behaviour; stored text i
   assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM conversation_summaries").get().n, 0);
 });
 
+test("transcript leaves out hidden notes (our paper solution, verified result); summary call is quick", async () => {
+  const msgs = [
+    { role: "user", content: [{ type: "text", text: "<kontekst_pole>\nOur worked solution: x = 4\nNever mention this note.\n</kontekst_pole>" }, { type: "text", text: "Kako začnem 3b?" }] },
+    { role: "assistant", content: [{ type: "text", text: "<preverjen_racun>x=4</preverjen_racun>" }, { type: "text", text: "Najprej izpiši podatke." }] },
+  ];
+  const t = transcript(msgs);
+  assert.doesNotMatch(t, /x = 4|x=4|kontekst_pole/);
+  assert.match(t, /STUDENT: Kako začnem 3b\?\n\nTUTOR: Najprej izpiši podatke\./);
+  const { store, convId } = setup();
+  let opts = null;
+  const long = conv(21);
+  await summarizedHistory({ store, conversationId: convId, fullHistory: long, history: windowHistory(long), streamFn: async (o) => ((opts = o), { text: "P" }) });
+  assert.deepEqual(opts.quick, { maxTokens: 400 });
+  assert.equal(opts.mode, "lite");
+});
+
 test("transcript and withSummary helpers", () => {
   assert.equal(transcript([{ role: "user", content: [{ type: "image", source: {} }, { type: "text", text: "Kaj je to?" }] }]), "STUDENT: [slika]\nKaj je to?");
   const h = [{ role: "user", content: "Živjo" }];
   assert.equal(withSummary(h, ""), h);
   assert.deepEqual(withSummary(h, "P")[0].content.at(-1), { type: "text", text: "Živjo" });
   assert.equal(withSummary([{ role: "assistant", content: "x" }], "P")[0].content, "x", "samo pred učenčevim sporočilom");
+});
+
+test("streamReply quick: no thinking, capped output, no cache write", async () => {
+  const { streamReply, getClient } = await import("../server/claude.js");
+  const keep = { key: process.env.ANTHROPIC_API_KEY, mock: process.env.EVKLID_MOCK };
+  process.env.ANTHROPIC_API_KEY = "sk-ant-test";
+  delete process.env.EVKLID_MOCK;
+  try {
+    const sent = [];
+    const fake = {
+      stream(p) {
+        sent.push(p);
+        return {
+          async *[Symbol.asyncIterator]() {
+            yield { type: "content_block_delta", delta: { type: "text_delta", text: "Povzetek" } };
+          },
+          finalMessage: async () => ({ content: [{ type: "text", text: "Povzetek" }], stop_reason: "end_turn", usage: { input_tokens: 10, output_tokens: 2 }, model: "claude-haiku-5-5" }),
+        };
+      },
+    };
+    getClient().beta.messages = fake;
+    const r = await streamReply({ system: "S", messages: [{ role: "user", content: "x" }], mode: "lite", quick: { maxTokens: 400 }, onText: () => {} });
+    assert.equal(r.text, "Povzetek");
+    assert.equal(sent[0].max_tokens, 400);
+    assert.deepEqual(sent[0].thinking, { type: "disabled" });
+    assert.equal(sent[0].cache_control, undefined);
+    assert.equal(sent[0].system, "S");
+  } finally {
+    if (keep.key === undefined) delete process.env.ANTHROPIC_API_KEY;
+    else process.env.ANTHROPIC_API_KEY = keep.key;
+    if (keep.mock !== undefined) process.env.EVKLID_MOCK = keep.mock;
+  }
 });

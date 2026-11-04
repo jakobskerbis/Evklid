@@ -130,7 +130,7 @@ const supportsFallback = (model) => !/haiku/.test(model);
  * Pretoči odgovor modela.
  * @returns {Promise<{content, text, stopReason, usage, model}>}
  */
-export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, signal, tools = null, onToolUse = null }) {
+export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, signal, tools = null, onToolUse = null, quick = null }) {
   const { model, effort, max_tokens } = modeParams(mode);
   if (isMockMode()) return mockReply({ messages, onText, signal, model, onToolUse: tools?.length ? onToolUse : null });
 
@@ -147,6 +147,13 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     // sporočilu se prebere iz predpomnilnika za ~10 % cene.
     cache_control: { type: "ephemeral" },
   };
+  // Kratko opravilo (npr. povzetek pogovora, server/povzetek.js): brez razmišljanja, z manj izhoda in
+  // brez predpomnilnika (prompt se ne ponovi, zapis bi le stal).
+  if (quick) {
+    Object.assign(params, quickParams(model), { max_tokens: Math.min(max_tokens, quick.maxTokens || max_tokens) });
+    params.system = system;
+    delete params.cache_control;
+  }
   // Orodja (npr. nastavitve iz klepeta) so pred sistemskim promptom in enaka za vse učence,
   // zato ostanejo v istem predpomnjenem začetku.
   if (tools?.length) params.tools = tools;
@@ -219,7 +226,7 @@ function lastUserText(messages) {
   if (typeof last.content === "string") return last.content;
   // Skriti opombi s preverjenim rezultatom (server/live-check.js) in pole (server/paper-context.js) nista del učenčevega besedila.
   return last.content
-    .filter((b) => b.type === "text" && !b.text.startsWith("<preverjen_racun>") && !b.text.startsWith("<kontekst_pole>"))
+    .filter((b) => b.type === "text" && !b.text.startsWith("<preverjen_racun>") && !b.text.startsWith("<kontekst_pole>") && !b.text.startsWith("<povzetek_pogovora>"))
     .map((b) => b.text)
     .join(" ");
 }
