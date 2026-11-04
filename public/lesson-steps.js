@@ -32,7 +32,7 @@ export function mdBlocks(md) {
 const kindOf = (title) =>
   /zakaj/i.test(title) ? "why"
   : /razlag/i.test(title) ? "explain"
-  : /rešen/i.test(title) ? "examples"
+  : /rešen|za izpit/i.test(title) ? "examples" // ena naloga »Za izpit« = en korak, rešitev ob besedilu
   : /napak/i.test(title) ? "mistakes"
   : /povzetek/i.test(title) ? "summary"
   : "other";

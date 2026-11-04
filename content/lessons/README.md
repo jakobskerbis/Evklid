@@ -129,7 +129,13 @@ Fakultetna tema z enakim naslovom in predmetom se pojavi v več predmetih (npr.
 predmeta (`sameTopics(id)[0]` v `server/curriculum.js`), in velja za vse
 predmete s to temo. Lastna datoteka v mapi drugega predmeta ima prednost.
 Zato naj bo fakultetna lekcija splošna (brez imena enega predmeta ali
-fakultete), strožje dokaze pa daj v »Drugače: Bolj natančno«.
+fakultete).
+
+Fakultetna lekcija ima zgradbo, prilagojeno izpitom (j, 4. 11. 2026, `docs/kakovost.md` §1c):
+natančne definicije, izreki s pogoji in dokazi, ki jih izpit zahteva, so v »Razlaga«;
+Primer 3 je na ravni izpita; za »## Povzetek« pride razdelek »## Za izpit«
+(»Znati moraš povedati:« in 2–3 »### Naloga« z »**Rešitev:**«, ki je v aplikaciji
+skrita za gumbom); namesto »Drugače: Iz vsakdanjega življenja« je »Drugače: Uporaba v stroki«.
 
 Katere teme še nimajo lekcije, urejeno po številu programov:
 `node scripts/fakultetne-lekcije.js --letnik 1 --n 40`.

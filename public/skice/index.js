@@ -15,6 +15,10 @@ export const SKICE = {
   "MAT-SS|Definicija": () => import("./eksponentna.js"), // edina kartica »Definicija« na listu (Eksponentna funkcija in logaritmi)
   "MAT-SS|Skalarni produkt": () => import("./vektorja.js"),
   "MAT-SS|Razdalja točk": () => import("./tocke.js"),
+  "MAT-SS|Krožnica": () => import("./kroznica.js"),
+  "MAT-SS|Elipsa": () => import("./elipsa.js"),
+  "MAT-SS|Hiperbola": () => import("./hiperbola.js"),
+  "MAT-SS|Parabola": () => import("./parabola.js"),
   "MAT-SS|Premica": () => import("./linearna.js"),
   "MAT-OS|Linearna funkcija": () => import("./linearna-os.js"),
 };

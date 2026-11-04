@@ -21,6 +21,12 @@ test("explanation splits after every Premisli and at ### headings; examples stay
   assert.equal(splitSection("Kratko.", "why").length, 1);
 });
 
+test("»Za izpit«: one exam task with its long solution is one step", () => {
+  const sol = `<details class="tb-solution"><summary>Pokaži rešitev</summary>\n\n${"Korak. ".repeat(250)}\n\n</details>`;
+  const S = [{ title: "Za izpit", md: `Znati moraš povedati:\n- izrek\n\n### Naloga 1\n\n${"Besedilo. ".repeat(70)}\n\n${sol}\n\n### Naloga 2\n\nUtemelji.` }];
+  assert.deepEqual(lessonSteps(S).map((s) => s.md.slice(0, 12)), ["Znati moraš ", "### Naloga 1", "### Naloga 2"]);
+});
+
 test("long explanation is cut at a paragraph, never into tiny pieces", () => {
   const p = "Odstavek z nekaj besedami. ".repeat(20); // ~540 znakov
   const parts = splitSection(Array(6).fill(p).join("\n\n"), "explain");
