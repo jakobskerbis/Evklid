@@ -161,6 +161,25 @@ export function chi2(k) {
   };
 }
 
+/** Fisherjeva porazdelitev F(d1, d2) (TI-84 Fcdf, Fpdf; inverzna kot pri Casio). */
+export function fisherF(d1, d2) {
+  const lc = (d1 / 2) * Math.log(d1) + (d2 / 2) * Math.log(d2) - (lnGamma(d1 / 2) + lnGamma(d2 / 2) - lnGamma((d1 + d2) / 2));
+  const cdf = (x) => (x <= 0 ? 0 : betaI((d1 * x) / (d1 * x + d2), d1 / 2, d2 / 2));
+  let hi = 10;
+  while (cdf(hi) < 0.995 && hi < 1e6) hi *= 2;
+  const mean = d2 > 2 ? d2 / (d2 - 2) : NaN;
+  return {
+    discrete: false,
+    pdf: (x) => (x <= 0 ? 0 : Math.exp(lc + (d1 / 2 - 1) * Math.log(x) - ((d1 + d2) / 2) * Math.log(d1 * x + d2))),
+    cdf,
+    inv: (p) => invert(cdf, p, 0, Math.max(1e4, hi * 10)),
+    mean,
+    sd: d2 > 4 ? Math.sqrt((2 * d2 * d2 * (d1 + d2 - 2)) / (d1 * (d2 - 2) ** 2 * (d2 - 4))) : NaN,
+    // pri majhnih d2 je rep zelo dolg (F(1;1): 0,995-kvantil ≈ 16 000), zato os omejimo, da krivulja ni le špica pri 0
+    range: [0, Math.min(invert(cdf, 0.995, 0, hi), Math.max(5, 4 * invert(cdf, 0.75, 0, hi)))],
+  };
+}
+
 export function binomial(n, p) {
   const lnC = (k) => lnGamma(n + 1) - lnGamma(k + 1) - lnGamma(n - k + 1);
   const pmf = (k) => {

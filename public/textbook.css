@@ -674,11 +674,14 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .lab-tit-top { display: flex; flex-wrap: wrap; align-items: flex-start; column-gap: 24px; }
 .lab-tit-top > * { flex: 1 1 100%; min-width: 0; }
 @container labtit (min-width: 800px) {
-  .lab-tit-top > .demo-stage { flex: 0 0 380px; position: sticky; top: calc(var(--lab-vrh, 0px) + 8px); }
+  /* levi stolpec raste s širino (380 px pri 800, ~470 px v Laboratoriju na računalniku), kontrole ostanejo vsaj ~600 px */
+  .lab-tit-top > .demo-stage { flex: 0 0 clamp(380px, 42%, 500px); position: sticky; top: calc(var(--lab-vrh, 0px) + 8px); }
   .lab-tit-top > .demo-controls { flex: 1 1 0; margin-top: 0; }
   /* risba levo vedno cela na zaslonu (--lab-okno = višina drsnega dela; --lab-risba-h natančno izračuna lab.js) */
   .lab-tit-top > .demo-stage { --lab-risba-h: max(240px, calc(var(--lab-okno, 100dvh) - 150px)); }
   .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage .demo-svg { max-height: var(--lab-risba-h); width: min(100%, calc(var(--lab-risba-h) * var(--lab-ar, 1.4))); }
+  /* merilniki pod risbo v levem stolpcu: največ trije v vrsti, da gre »−0,1 mA« ali »97,3 kPa« v okvir */
+  .demo.lab .lab-tit-top > .demo-stage .lab-meters { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); }
   /* široko je risba že cela ob kontrolah: gumba ne rabimo (in ne prekrije risbe) */
   .demo.lab:not(.lab-odpeto) .lab-pin { display: none; }
 }
@@ -745,6 +748,28 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
     .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage .lab-lcd-val { font-size: 1rem; }
     .demo.lab:not(.lab-odpeto) .lab-tit-top > .demo-stage .lab-lcd-note { font-size: 0.68rem; min-height: 1.25em; line-height: 1.25; overflow-wrap: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
   }
+}
+/* Široka risba (razmerje ≥ 1,55, lab.js → .lab-siroka: proga, vezje) na širokem: čez vso širino zgoraj in pripeta, ~45 % vidne
+   višine, merilniki desno od nje; kontrole pod njo v dveh stolpcih. V levem stolpcu (380 px) bi bila proga le ~380 × 160 px. */
+@container labtit (min-width: 800px) {
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage {
+    flex: 1 1 100%; display: grid; grid-template-columns: minmax(0, calc(var(--lab-risba-h) * var(--lab-ar, 2))) minmax(180px, 250px); justify-content: center; align-content: center; align-items: center;
+    gap: 8px 20px; padding: 8px 52px 10px; z-index: 3; background: var(--surface); border-radius: 0 0 12px 12px; transition: box-shadow 0.2s ease;
+  }
+  .demo.lab.lab-siroka:not(.lab-odpeto) .lab-tit-top > .demo-stage { --lab-risba-h: clamp(200px, calc(var(--lab-okno, 85dvh) * 0.45 - 18px), 460px); }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage:not(:has(> .lab-meters, > .lab-status)) { grid-template-columns: minmax(0, calc(var(--lab-risba-h) * var(--lab-ar, 2))); }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage .demo-svg { width: 100%; max-width: none; max-height: var(--lab-risba-h); }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage > .lab-slika { grid-column: 1; grid-row: 1 / span 6; justify-self: center; }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage > :not(.lab-slika, .lab-pin) { grid-column: 2; margin: 0; }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage .lab-meters { grid-template-columns: 1fr; max-width: none; }
+  /* trije merilniki ali več: v dveh stolpcih, da pripeti del ne preraste risbe */
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage:has(.lab-meters > :nth-child(3)) { grid-template-columns: minmax(0, calc(var(--lab-risba-h) * var(--lab-ar, 2))) minmax(300px, 420px); }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage .lab-meters:has(> :nth-child(3)) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-stage.lab-prilepljeno { box-shadow: 0 1px 0 var(--border), 0 10px 14px -10px rgba(0, 0, 0, 0.35); }
+  .demo.lab.lab-siroka:not(.lab-odpeto) .lab-pin { display: grid; }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-controls { flex: 1 1 100%; display: block; columns: 2 320px; column-gap: 20px; margin-top: 12px; }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-controls > * { break-inside: avoid; margin: 0 0 10px; }
+  .demo.lab.lab-siroka .lab-tit-top > .demo-controls > :is(.demo-seg, .demo-buttons) { width: fit-content; max-width: 100%; }
 }
 /* Odpeto: risba v polni velikosti in ne drsi s stranjo (tudi na širokem). */
 .demo.lab.lab-odpeto .lab-tit-top > .demo-stage { position: relative; top: auto; }
@@ -1066,6 +1091,89 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo-svg .lab-ek-spill-rob { fill: none; stroke: #9d9d90; stroke-width: 5.4; stroke-linecap: round; }
 .demo-svg .lab-ek-sonda { stroke: #aeb5bc; }
 .demo-svg .lab-ek-cevka { fill: none; stroke: #9aa9b5; stroke-width: 3; stroke-linejoin: round; }
+/* gibanje (lab-klanec, lab-prosti-pad, lab-newton2; public/sim/lab-gibanje.js): isti okvir kot elektrokemija */
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) { min-width: 0; max-width: 100%; container: labtit / inline-size; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) :is(button, select, .seg-btn, .demo-check, .layer-chip, input[type=range]) { min-height: 44px !important; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .seg-btn { min-width: 44px; }
+.lab-bench:has(> :is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2)) { overflow-x: clip; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) select { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); border-radius: 10px; padding: 0 8px; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table-wrap { max-width: 100%; contain: inline-size; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table :is(th, td) { white-space: normal; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table { overflow: visible; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad) .lab-table td:nth-child(2) { text-align: left; }
+/* zaslon časovnika je tudi v RTL kot na napravi: število levo od enote */
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-lcd-screen { direction: ltr; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) :is(.lab-lcd-note, .lab-lcd-name) { unicode-bidi: plaintext; }
+.demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .demo-svg :is(.lab-gib-lcdtxt, .lab-gib-cm, .lab-gib-st) { direction: ltr; unicode-bidi: plaintext; }
+@media (max-width: 480px) {
+  .demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table { font-size: 0.8rem; }
+  .demo:is(.demo-lab-klanec, .demo-lab-prosti-pad, .demo-lab-newton2) .lab-table :is(th, td) { padding: 5px 4px; }
+}
+.lab-gib-calc { margin: 8px 0; display: flex; flex-direction: column; gap: 6px; font-size: 0.92rem; }
+.lab-gib-calc p, .lab-gib-stanje { margin: 0; }
+.lab-gib-stanje { color: var(--text); }
+.demo-svg.lab-gib .lab-scale { fill: none; }
+.demo-svg .lab-gib-cm { font-size: 8px; fill: var(--text); }
+.demo-svg .lab-gib-st { font-size: 8px; font-weight: 700; fill: var(--text); }
+.demo-svg .lab-gib-slow { font-size: 10px; font-weight: 800; fill: var(--danger); letter-spacing: 0.06em; }
+.demo-svg .lab-gib-miza { stroke: #8d959d; stroke-width: 0.6; }
+.demo-svg .lab-gib-tla { fill: #b9a68a; }
+.dark .demo-svg .lab-gib-tla { fill: #5d5345; }
+.demo-svg .lab-gib-noga-miza { fill: #8d959d; }
+.demo-svg .lab-gib-noga { fill: #3a3f45; }
+.demo-svg .lab-gib-alu { stroke: #7d868f; stroke-width: 0.5; }
+.demo-svg .lab-gib-zleb { stroke: rgb(70 80 90 / 0.35); stroke-width: 0.6; }
+.demo-svg .lab-gib-crtica { stroke: #1f2933; stroke-width: 0.5; }
+.dark .demo-svg .lab-gib-trak ~ .lab-gib-crtica { stroke: #1f2933; }
+.demo-svg .lab-gib-pol { fill: #b7bec6; }
+.demo-svg .lab-gib-vzmet { fill: none; stroke: #b7bec6; stroke-width: 1.4; }
+.demo-svg .lab-gib-objemka { fill: #6b737c; }
+.demo-svg .lab-gib-oddajnik { fill: #5a1010; stroke: #c94a4a; stroke-width: 0.5; }
+.demo-svg .lab-gib-vrata-spr { fill: rgb(40 44 50 / 0.28); stroke: #22262b; stroke-width: 0.7; }
+.demo-svg .lab-gib-led { fill: #4a1414; stroke: #222; stroke-width: 0.5; }
+.demo-svg .lab-gib-led.on { fill: #ff3b30; stroke: #ffb3ad; }
+.demo-svg .lab-gib-telo { stroke: #173e72; stroke-width: 0.5; }
+.demo-svg .lab-gib-odsev { fill: rgb(255 255 255 / 0.35); }
+.demo-svg .lab-gib-kolo { fill: #202327; }
+.demo-svg .lab-gib-os { fill: #b7bec6; }
+.demo-svg .lab-gib-palica { stroke: #4b525a; stroke-width: 0.4; }
+.demo-svg .lab-gib-utez { stroke: #7d5f1e; stroke-width: 0.3; }
+.demo-svg .lab-gib-zast { fill: #f2f2f2; stroke: #30353b; stroke-width: 0.5; }
+.demo-svg .lab-gib-drog { stroke: #6b737c; stroke-width: 0.9; }
+.demo-svg .lab-gib-kavelj { fill: none; stroke: #30353b; stroke-width: 0.7; }
+.demo-svg .lab-gib-kvader { stroke: #8a6234; stroke-width: 0.5; }
+.demo-svg .lab-gib-podlozka { fill: #e9dfc4; stroke: #8a7a52; stroke-width: 0.4; }
+.demo-svg .lab-gib-kabel { fill: none; stroke: #2b2f34; stroke-width: 1; opacity: 0.75; }
+.dark .demo-svg .lab-gib-kabel { stroke: #9aa3ad; }
+.demo-svg .lab-gib-ohisje { stroke: #15181b; stroke-width: 0.6; }
+.demo-svg .lab-gib-panel { font-size: 6.5px; font-weight: 700; fill: #e3e8ee; letter-spacing: 0.05em; }
+.demo-svg .lab-gib-jack { fill: #d9a514; stroke: #15181b; stroke-width: 0.5; }
+.demo-svg .lab-gib-lcdbg { fill: #b9c4a2; stroke: #6f7a5c; stroke-width: 0.6; }
+.demo-svg .lab-gib-lcdtxt { fill: #1d2414; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 9.5px; font-weight: 700; }
+.demo-svg .lab-gib-lupa-bg { fill: var(--surface); stroke: none; }
+.demo-svg .lab-gib-lupa-rob { fill: none; stroke: var(--muted); stroke-width: 1.4; }
+.demo-svg .lab-gib-zarek { stroke: #e53935; stroke-width: 1.2; stroke-dasharray: 3 2; }
+.demo-svg .lab-gib-clovek { fill: none; stroke: var(--muted); stroke-width: 6; stroke-linecap: round; opacity: 0.35; }
+.demo-svg .lab-gib-clovek-g { fill: var(--muted); opacity: 0.35; }
+.demo-svg .lab-gib-tuljava { fill: #b8642a; stroke: #6d3511; stroke-width: 0.6; }
+.demo-svg .lab-gib-klesce { fill: none; stroke: #4b525a; stroke-width: 1.6; stroke-linecap: round; }
+.demo-svg .lab-gib-trak { fill: #f4d03f; stroke: #a8842a; stroke-width: 0.4; }
+.demo-svg .lab-gib-vrata-pad { fill: none; stroke: #22262b; stroke-width: 3; stroke-linejoin: round; }
+.dark .demo-svg :is(.lab-gib-vrata-pad, .lab-gib-vrata-spr) { stroke: #69717a; }
+.demo-svg .lab-gib-posoda { fill: #6d8aa3; stroke: #3d5468; stroke-width: 0.5; }
+.demo-svg .lab-gib-krogla { stroke: rgb(0 0 0 / 0.35); stroke-width: 0.3; }
+.demo-svg .lab-gib-pero { fill: none; stroke: #8c7a64; stroke-width: 1.6; stroke-linecap: round; }
+.demo-svg .lab-gib-papir { fill: #f4ecd8; stroke: #a59572; stroke-width: 0.6; }
+.demo-svg .lab-gib-obris { fill: rgb(150 160 170 / 0.25); stroke: var(--text); stroke-width: 1; stroke-dasharray: 4 2; }
+.demo-svg .lab-gib-kriz { fill: none; stroke: var(--accent); stroke-width: 1.2; }
+.demo-svg .lab-gib-nosilec { stroke: #4b525a; stroke-width: 2; }
+.demo-svg .lab-gib-skripec { fill: #d7dbe0; stroke: #4b525a; stroke-width: 1; }
+.demo-svg .lab-gib-vrvica { fill: none; stroke: #6b4a2b; stroke-width: 0.8; }
+.dark .demo-svg .lab-gib-vrvica { stroke: #d8b48a; }
+.demo-svg .lab-gib-drog-st { stroke: #59616a; stroke-width: 0.4; }
 
 /* kratek video iz simulacije (public/gradiva.js) */
 .gr-video { width: min(760px, calc(100vw - 16px)); max-height: calc(100dvh - 16px); padding: 12px 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text); overflow-y: auto; }
