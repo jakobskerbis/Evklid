@@ -237,6 +237,9 @@ test("daily puzzle: server checks answers, one attempt, hints, time, leaderboard
     clock += 864e5;
     assert.equal((await get(u(a, ""))).body.day, "2026-11-05");
     assert.equal((await get(u(a, ""))).body.status.medium.started, false);
+    // namig po polnoči: brskalnik pošlje dan uganke, sicer bi strežnik iskal današnjo (nezačeto)
+    assert.equal((await post(u(a, "/hint"), { level: "medium" })).status, 400);
+    assert.equal((await post(u(a, "/hint"), { level: "medium", day })).body.hints, 1);
     const y = puzzleFor(day, "medium").answer;
     const late = await post(u(a, "/answer"), { level: "medium", day, answer: String(y) });
     assert.equal(late.status, 200, JSON.stringify(late.body));

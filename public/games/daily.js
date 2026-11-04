@@ -162,7 +162,11 @@ function box(level, rnd) {
     return mk(`${n_(m)} · (□ ${MINUS} ${n_(a)}) = ${right}`, x, [H("dz.h.collect"), H("dz.h.eq", { eq: `${cx(m)} ${MINUS} ${n_(m * a)} = ${rx}` })], [`${cx(m)} ${MINUS} ${n_(m * a)} = ${rx}`, `${cx(m - k)} = ${n_(b + m * a)}`, Math.abs(m - k) === 1 ? `x = ${n_(x)}` : `x = ${n_(b + m * a)} : ${m - k < 0 ? `(${n_(m - k)})` : n_(m - k)} = ${n_(x)}`]);
   }
   // ostanek potence: ostanki se ponavljajo v krogu
-  const a = R(rnd, 2, 9), m = R(rnd, 5, 13), n = R(rnd, 25, 199);
+  // a ≡ 0, 1 ali −1 (mod m) da prazen ali dolgočasen krog (vedno 0, vedno 1, izmenično): taka a izpusti
+  let a, m;
+  do [a, m] = [R(rnd, 2, 9), R(rnd, 5, 13)];
+  while ([0, 1, m - 1].includes(a % m));
+  const n = R(rnd, 25, 199);
   const res = [];
   const seen = new Map();
   let first = 0, L = 0;

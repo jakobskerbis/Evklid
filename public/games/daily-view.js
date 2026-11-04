@@ -290,7 +290,7 @@ export function openDaily(root, ctx) {
       });
     if (a === "hint")
       return act(async () => {
-        const r = await post("hint", {});
+        const r = await post("hint", { day: info.day }); // po polnoči (UTC) velja še včerajšnja uganka
         st.hints = r.hints;
         render();
       });
