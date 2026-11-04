@@ -8,6 +8,8 @@ import { GENRE_IDS, cleanTitles } from "../public/games/childhood.js";
 import { isLocalRequest } from "./feedback.js";
 import { jeFaks } from "../public/stopnja.js";
 import { weakConcepts } from "../public/games/learn-link.js";
+import { LESSONS } from "../public/games/lessons.js";
+import { recordSkill, topicForGame, weakTopicsFor } from "./weaknesses.js";
 
 const GAME_ID = /^[a-z]{2,20}:[a-z0-9_]{2,30}$/;
 const XP_PER_GAME = 20; // največ na igro (1 XP za vsaka 2 pravilna odgovora)
@@ -89,7 +91,7 @@ export function mountGames(app, store, { loadStudent, progress, avatars, knowled
     const passed = db.prepare("SELECT concept FROM game_unlocks WHERE student_id = ?").all(s.id).map((r) => r.concept);
     const rated = Object.fromEntries(db.prepare("SELECT engine, up FROM game_ratings WHERE student_id = ?").all(s.id).map((r) => [r.engine, !!r.up]));
     const wish = db.prepare("SELECT genre FROM game_wishes WHERE student_id = ? AND week = ?").get(s.id, weekKey())?.genre || null;
-    res.json({ year: schoolYear(s.settings), games, concepts, known: [...known], passed, xpToday: xpToday(s.id), xpPerDay: XP_PER_DAY, rated, wish, weak: weakFor(db, s.id) });
+    res.json({ year: schoolYear(s.settings), games, concepts, known: [...known], passed, xpToday: xpToday(s.id), xpPerDay: XP_PER_DAY, rated, wish, weak: weakFor(db, s.id, s) });
   });
 
   // Preizkus pred igrami: 4 od 5 pravilnih odklene mirne igre te snovi.
@@ -119,7 +121,11 @@ export function mountGames(app, store, { loadStudent, progress, avatars, knowled
        ON CONFLICT(student_id, game) DO UPDATE SET best = MAX(best, excluded.best), plays = plays + 1, tier = excluded.tier,
          correct = correct + excluded.correct, wrong = wrong + excluded.wrong, cleared = MAX(cleared, excluded.cleared), updated_at = datetime('now')`,
     ).run(s.id, game, score, tier, correct, wrong, cleared);
-    noteGame(db, s.id, game.split(":")[1], correct, wrong);
+    const concept = game.split(":")[1];
+    noteGame(db, s.id, concept, correct, wrong, s);
+    // Šibke točke iz vseh virov: igra šteje pri temi učne poti, ki uči njen pojem (server/weaknesses.js).
+    const topicId = topicForGame(Object.hasOwn(LESSONS, concept) ? LESSONS[concept] : [], schoolYear(s.settings));
+    if (topicId) recordSkill(db, s.id, { source: "game", topicId, n: correct + wrong, wrong });
     const room = Math.max(0, XP_PER_DAY - xpToday(s.id));
     const xp = Math.min(XP_PER_GAME, Math.floor(correct / 2), room);
     const summary = xp > 0 ? progress.award(s.id, [[xp, `igra: ${game}`]]) : null;
@@ -254,8 +260,9 @@ export function migrateGameDays(db) {
   pruneGameDays(db); // rok hrambe tudi, ko nihče ne igra (ob zagonu)
 }
 
-// Šibke teme učenca: napake na učni poti (napačen prvi odgovor) in v igrah v zadnjih 7 dneh.
-export function weakFor(db, studentId) {
+// Šibke teme učenca: napake na učni poti (napačen prvi odgovor) in v igrah v zadnjih 7 dneh, z učencem
+// (student) pa še šibke teme iz vseh virov (klepet, učbenik, pole, kartice …; server/weaknesses.js).
+export function weakFor(db, studentId, student = null) {
   const path = db
     .prepare(
       `SELECT topic_id, COUNT(*) AS n FROM tasks WHERE student_id = ? AND attempts > 0 AND COALESCE(first_try_correct, 0) = 0
@@ -265,13 +272,14 @@ export function weakFor(db, studentId) {
   const games = db
     .prepare("SELECT concept, SUM(wrong) AS n FROM game_concept_days WHERE student_id = ? AND day >= date('now', '-6 days') GROUP BY concept")
     .all(studentId);
+  if (student) for (const w of weakTopicsFor({ db }, student)) if (w.topic_id) path.push({ topic_id: w.topic_id, n: w.errors - (w.sources.game?.wrong || 0) }); // igre so že zgoraj
   return weakConcepts(path, games, baseTopicIds);
 }
 
 // Konec igre: števec iger, čakanje na vrnitev na pot, točnost (šibka tema ali ne, pred to igro).
 // pending = igre v nizu (razmik največ RETURN_MINUTES), ki še čakajo na vrnitev; starejši niz se ne šteje več.
-export function noteGame(db, studentId, concept, correct, wrong) {
-  const weak = weakFor(db, studentId).some((x) => x.concept === concept) ? 1 : 0;
+export function noteGame(db, studentId, concept, correct, wrong, student = null) {
+  const weak = weakFor(db, studentId, student).some((x) => x.concept === concept) ? 1 : 0;
   db.prepare(
     `INSERT INTO game_days (student_id, day, plays, pending, last_end) VALUES (?, date('now'), 1, 1, datetime('now'))
      ON CONFLICT(student_id, day) DO UPDATE SET plays = plays + 1,

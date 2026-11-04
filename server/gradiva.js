@@ -11,6 +11,7 @@ import { renderMd, shell } from "./textbook-print.js";
 import { generateTask, hasGenerator, optionsAreTex } from "./practice/index.js";
 import { speakMarkdown } from "./govor.js";
 import { GRADIVA_DIR, hasGradivo, gradivoPage, videoFor } from "./gradiva-vsebina.js";
+import { weakTopicsFor } from "./weaknesses.js";
 
 // free: brezplačno kot besedilo učbenika (narejeno iz lekcije, brez stroškov).
 // Ostalo velja za šolsko licenco (šolski predmeti) in Evklid Osebno (vsi predmeti).
@@ -284,18 +285,19 @@ export function worksheetPage({ topicIds, perTopic = 4, seed = 1, title = null, 
   return shell(`${name} · delovni list`, content, WORKSHEET_CSS);
 }
 
-// Šibke teme učenca iz nalog zadnjih 60 dni: vsaj 3 naloge in vsaj 40 % napačnih v prvem poskusu.
-export function weakTopicIds(db, studentId, limit = 3) {
-  return db
+// Šibke teme učenca: z učencem (student) najprej šibke teme iz vseh virov (server/weaknesses.js), nato
+// naloge zadnjih 60 dni: vsaj 3 naloge in vsaj 40 % napačnih v prvem poskusu. Le teme z nalogami.
+export function weakTopicIds(db, studentId, limit = 3, student = null) {
+  const all = student ? weakTopicsFor({ db }, student).map((w) => w.topic_id).filter(Boolean) : [];
+  const fromTasks = db
     .prepare(
       `SELECT topic_id, COUNT(*) AS n, SUM(first_try_correct = 0) AS wrong FROM tasks
        WHERE student_id = ? AND mode != 'pretest' AND first_try_correct IS NOT NULL AND created_at >= datetime('now', '-60 days')
        GROUP BY topic_id HAVING n >= 3 AND wrong * 1.0 / n >= 0.4 ORDER BY wrong * 1.0 / n DESC, n DESC LIMIT ?`,
     )
     .all(studentId, limit * 3)
-    .map((r) => r.topic_id)
-    .filter((id) => getTopic(id) && hasGenerator(id))
-    .slice(0, limit);
+    .map((r) => r.topic_id);
+  return [...new Set([...all, ...fromTasks])].filter((id) => getTopic(id) && hasGenerator(id)).slice(0, limit);
 }
 
 // --- HTTP ---
@@ -343,7 +345,7 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
   app.get("/api/students/:id/gradiva/sibke", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const topics = weakTopicIds(store.db, s.id).map((id) => ({ id, name: getTopic(id).name }));
+    const topics = weakTopicIds(store.db, s.id, 3, s).map((id) => ({ id, name: getTopic(id).name }));
     res.json({ topics, locked: !canUse(s, "delovni-list") });
   });
 
@@ -392,7 +394,7 @@ export function mountGradiva(app, store, { loadStudent, accounts, leagues = null
     let ids;
     if (weak) {
       if (!canUse(s, "delovni-list")) return locked();
-      ids = weakTopicIds(store.db, s.id);
+      ids = weakTopicIds(store.db, s.id, 3, s);
       if (!ids.length) return res.status(404).json({ error: "Še nimaš šibkih tem. Najprej reši nekaj nalog.", code: "gr.noWeak" });
     } else {
       const t = topicOf(req, res);

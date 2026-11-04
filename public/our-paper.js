@@ -20,11 +20,14 @@ export function closeOurPaper() {
 }
 
 // paper: JSON pole; title: oznaka (»Naša pola v slogu NPZ 9 – Matematika, 2026«); rich(md) → HTML;
-// onTutor(task, part): vprašaj inštruktorja; score: { get() → { "1a": true }, set(obj) } (shrani napravo).
-export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
+// onTutor(task, part): vprašaj inštruktorja; score: { get() → { "1a": true }, set(obj) } (shrani napravo);
+// onChecked([{ key, ok }]): ob zaprtju deli, pri katerih je učenec odprl rešitev ali (od)označil »Imam prav«
+// (za šibke točke; ok = označeno).
+export function openOurPaper(paper, { title, rich, onTutor, score = null, onChecked = null }) {
   closeOurPaper();
   const back = document.activeElement;
   const got = { ...(score?.get?.() || {}) };
+  const touched = new Set();
   // maxPoints: izpit, pri katerem učenec izbere le nekaj nalog (pola našteje vse, šteje pa le izbrane).
   const max = paper.maxPoints || paper.tasks.reduce((s, tk) => s + tk.parts.reduce((a, p) => a + p.points, 0), 0);
   const el = document.createElement("div");
@@ -120,6 +123,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
     if (show) {
       const sol = show.closest("[data-op]").querySelector(".op-sol");
       sol.hidden = !sol.hidden;
+      touched.add(show.closest("[data-op]").dataset.op);
       show.setAttribute("aria-expanded", String(!sol.hidden));
       show.querySelector("span").textContent = t(sol.hidden ? "pp.oursShow" : "pp.oursHide");
       return;
@@ -137,6 +141,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
     const box = e.target.closest("[data-op-got]");
     const f = box && find(box);
     if (!f) return;
+    touched.add(label(f.tk, f.p));
     if (box.checked) got[label(f.tk, f.p)] = true;
     else delete got[label(f.tk, f.p)];
     score?.set?.(got);
@@ -151,6 +156,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null }) {
   const close = () => {
     if (!current) return;
     current = null;
+    if (touched.size && onChecked) onChecked([...touched].map((key) => ({ key, ok: !!got[key] })));
     el.remove();
     document.documentElement.classList.remove("pv-open");
     back?.focus?.();

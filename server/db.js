@@ -8,6 +8,9 @@ import { DEFAULT_SETTINGS, normalizeSettings, normalizeWeaknessList } from "./se
 import { Flashcards } from "./flashcards.js";
 import { seal, unseal, sealJson, unsealJson, UNREADABLE } from "./crypto-polje.js";
 
+// Šibke točke: kako dolgo hranimo dnevne vsote (skill_results) in oznake »že šteto« (skill_seen).
+export const SKILL_KEEP_DAYS = 365;
+
 // Baza ima ime aplikacije (data/<ime>.db). Ob prvem zagonu po preimenovanju prepišemo najnovejšo
 // bazo s prejšnjim imenom (brand.json → legacy) v novo (VACUUM INTO zajame tudi neshranjeni WAL).
 // Stara datoteka ostane kot varnostna kopija in za morebitno vrnitev na prejšnjo različico.
@@ -64,7 +67,8 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       error INTEGER NOT NULL DEFAULT 0,
       mode TEXT,
       flag TEXT NOT NULL DEFAULT 'none',
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      topic_id TEXT                              -- tema učne poti (šibke točke, server/weaknesses.js)
     );
     -- Stanje učenca pri posamezni temi učne poti
     CREATE TABLE IF NOT EXISTS topic_state (
@@ -176,6 +180,29 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       UNIQUE (student_id, norm)
     );
     CREATE INDEX IF NOT EXISTS idx_cards_due ON flashcards(student_id, due);
+    -- Šibke točke iz iger, učbenika, pol, kartic in kviza (server/weaknesses.js): samo dnevne vsote po temi,
+    -- brez odgovorov in časov posameznih nalog. Klepet in Vadnica sta v events.
+    CREATE TABLE IF NOT EXISTS skill_results (
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      day TEXT NOT NULL,                         -- YYYY-MM-DD (UTC)
+      source TEXT NOT NULL,                      -- game | lesson | paper | cards | kviz
+      key TEXT NOT NULL,                         -- id teme ali »~ime« (tema, ki je ni bilo mogoče preslikati)
+      topic_id TEXT,
+      subject TEXT,
+      topic TEXT,
+      n INTEGER NOT NULL DEFAULT 0,
+      wrong INTEGER NOT NULL DEFAULT 0,
+      last_at TEXT NOT NULL DEFAULT (datetime('now')),
+      PRIMARY KEY (student_id, day, source, key)
+    );
+    CREATE INDEX IF NOT EXISTS idx_skill_results_day ON skill_results(day);
+    -- Kar je za šibke točke že šteto (vprašanje lekcije na dan, del pole enkrat).
+    CREATE TABLE IF NOT EXISTS skill_seen (
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      item TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (date('now')), -- samo dan (brez ure)
+      PRIMARY KEY (student_id, item)
+    );
     CREATE INDEX IF NOT EXISTS idx_msg_conv ON messages(conversation_id, id);
     CREATE INDEX IF NOT EXISTS idx_events_student ON events(student_id, created_at);
     -- Sprotni povzetek starejšega dela dolgega pogovora (server/povzetek.js), šifriran; upto = število
@@ -233,6 +260,12 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       COMMIT;
     `);
   }
+  // Tema učne poti pri dogodku (šibke točke iz vseh virov pod istim ključem, server/weaknesses.js).
+  const eventCols = db.prepare("PRAGMA table_info(events)").all().map((c) => c.name);
+  if (!eventCols.includes("topic_id")) db.exec("ALTER TABLE events ADD COLUMN topic_id TEXT");
+  // Rok hrambe dnevnih vsot za šibke točke.
+  db.prepare("DELETE FROM skill_results WHERE day < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
+  db.prepare("DELETE FROM skill_seen WHERE created_at < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
@@ -372,10 +405,10 @@ export class Store {
   addEvent(e) {
     this.db
       .prepare(
-        `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO events (student_id, conversation_id, message_id, subject, topic, error, mode, flag, topic_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, e.topic, e.error, e.mode, e.flag);
+      .run(e.student_id, e.conversation_id, e.message_id ?? null, e.subject, e.topic, e.error, e.mode, e.flag, e.topic_id ?? null);
   }
   lastEvent(conversationId) {
     return this.db

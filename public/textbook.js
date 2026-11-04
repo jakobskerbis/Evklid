@@ -616,13 +616,20 @@ async function renderLesson(topicId) {
     if (!altBox.hidden) showAlt(0);
   });
   box.querySelectorAll("[data-alt]").forEach((b) => b.addEventListener("click", () => showAlt(Number(b.dataset.alt))));
-  // Preveri se
+  // Preveri se. Prvi odgovor na vsako vprašanje gre tudi med šibke točke (strežnik sam preveri pravilnost).
+  const answered = new Set();
   if (L.interactive) box.querySelectorAll(".tb-check").forEach((el) => {
-    const c = lesson.checks[Number(el.dataset.q)];
+    const qi = Number(el.dataset.q);
+    const c = lesson.checks[qi];
     el.querySelectorAll(".tb-opt").forEach((b) =>
       b.addEventListener("click", () => {
         const o = Number(b.dataset.o);
         const ok = o === c.correct;
+        const sid = ctx.getStudent()?.id;
+        if (sid && !answered.has(qi)) {
+          answered.add(qi);
+          ctx.api(`/api/students/${sid}/lesson-check`, { method: "POST", body: { topic: L.id, q: qi, o } }).catch(() => {});
+        }
         b.classList.add(ok ? "ok" : "bad");
         const why = el.querySelector(".tb-why");
         why.hidden = false;

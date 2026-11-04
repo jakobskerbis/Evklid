@@ -1,7 +1,7 @@
 // Tedensko poročilo: kaj se je učenec ta teden učil, kaj mu gre, kje se zatika in kaj naj naredi naslednji teden.
 // Staršem (ali učencu samemu, če je profil »Zame«). Brez dejavnosti dva tedna zapored se ne pošlje (gl. isQuiet).
 import { getTopic, localTopic, pathKeyFor } from "../curriculum.js";
-import { detectWeakTopics } from "../weaknesses.js";
+import { weakTopicsFor } from "../weaknesses.js";
 import { Progress } from "../progress.js";
 import { SUBJECT_NAMES } from "../subjects.js";
 import { GOALS, daysUntil, fmtDateSl, validDate } from "../../public/goal-data.js";
@@ -26,6 +26,15 @@ const topicName = (id) => {
   return (t && localTopic(t, "sl").name) || String(id).split("/").pop();
 };
 const subjectName = (code) => SUBJECT_NAMES[code] || code || "Drugo";
+// Kje so bile napake (viri šibkih točk, server/weaknesses.js), od največ napak.
+const SOURCE_SL = { chat: "v klepetu", practice: "pri vajah", game: "v igrah", lesson: "pri vprašanjih v učbeniku", paper: "na vadbenih polah", cards: "pri karticah", kviz: "v kvizu v razredu" };
+export const sourceWords = (sources = {}) =>
+  Object.entries(sources)
+    .filter(([k, v]) => SOURCE_SL[k] && v.wrong > 0)
+    .sort((a, b) => b[1].wrong - a[1].wrong)
+    .slice(0, 2)
+    .map(([k]) => SOURCE_SL[k])
+    .join(" in ") || "pri nalogah";
 
 // Zbrani podatki za enega učenca (zadnjih 7 koledarskih dni z današnjim, in 7 dni pred tem).
 export function childWeek(db, student) {
@@ -107,13 +116,17 @@ export function childWeek(db, student) {
     .filter((t) => t.judged >= 3 && t.rate < 0.5)
     .sort((a, b) => a.rate - b.rate)
     .map((t) => ({ name: t.name, topic_id: t.topic_id, detail: `${t.first_ok} od ${t.judged} pravilno v prvem poskusu` }));
-  const chatStats = db
-    .prepare(`SELECT subject, topic, COUNT(*) AS turns, SUM(error) AS errors FROM events WHERE student_id = ? AND topic IS NOT NULL AND created_at >= datetime('now','-30 days') GROUP BY subject, topic`)
-    .all(id);
-  const hardChat = detectWeakTopics(chatStats)
-    .filter((w) => !hardPractice.some((h) => h.name.toLowerCase() === String(w.topic).toLowerCase()))
+  // Šibke teme iz vseh drugih virov (klepet, igre, učbenik, pole, kartice, kviz; server/weaknesses.js).
+  const hardChat = weakTopicsFor({ db }, student, 30)
+    .filter((w) => !hardPractice.some((h) => (w.topic_id && h.topic_id === w.topic_id) || h.name.toLowerCase() === String(w.topic).toLowerCase()))
     .filter((w, i, all) => all.findIndex((x) => String(x.topic).toLowerCase() === String(w.topic).toLowerCase()) === i) // ista tema pri dveh predmetih
-    .map((w) => ({ name: w.topic, detail: `v klepetu pogosto napake${w.subject ? ` (${subjectName(w.subject).toLowerCase()})` : ""}` }));
+    .map((w) => ({
+      // Ime iz klepeta brez teme učne poti je z malo začetnico (»ulomki«); v seznamu kot ime teme.
+      name: w.topic_id ? topicName(w.topic_id) : String(w.topic).charAt(0).toUpperCase() + String(w.topic).slice(1),
+      ...(w.topic_id ? { topic_id: w.topic_id } : {}),
+      // V e-pošti v oklepaju za imenom: »Gostota (fizika: veliko napak v klepetu in pri karticah)«.
+      detail: `${w.subject ? `${subjectName(w.subject).toLowerCase()}: ` : ""}veliko napak ${sourceWords(w.sources)}`,
+    }));
   const weak = [...hardPractice, ...hardChat].slice(0, 3);
 
   const due = one(`SELECT COUNT(*) AS n FROM topic_state WHERE student_id = ? AND status = 'mastered' AND review_due IS NOT NULL AND review_due <= datetime('now')`).n;

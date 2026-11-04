@@ -1,6 +1,6 @@
 // Lekcija teme: po korakih (kratke kartice z vprašanji »Preveri se« vmes, public/lesson-steps.js)
 // ali vsa naenkrat, »Razloži drugače«, nato Vadi naloge ali razlaga z inštruktorjem.
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import Storage from "expo-sqlite/kv-store";
 import { router, Stack, useLocalSearchParams } from "expo-router";
@@ -44,6 +44,13 @@ export default function Topic() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const student = useStudent();
   const { data: L, error, loading, reload } = useLoad(() => api<Lesson>(`/api/students/${student.id}/lesson?id=${encodeURIComponent(id)}`), [id, student.id]);
+  // Prvi odgovor na vsako vprašanje »Preveri se« gre med šibke točke (strežnik sam preveri pravilnost).
+  const answered = useRef(new Set<number>());
+  const sendCheck = (qi: number, o: number) => {
+    if (!L || answered.current.has(qi)) return;
+    answered.current.add(qi);
+    api(`/api/students/${student.id}/lesson-check`, { body: { topic: L.id, q: qi, o } }).catch(() => null);
+  };
   const [byStep, setByStep] = useState(() => Storage.getItemSync(STEP_PREF) !== "0");
   const [step, setStep] = useState(0);
   const [alt, setAlt] = useState<number | null>(null);
@@ -154,7 +161,7 @@ export default function Topic() {
               <RichText key={step} text={cur.md} onExplain={explain} />
             </Card>
           ) : (
-            <Checks checks={cur.checks.map((i) => lesson.checks![i])} title={cur.final ? t("mob.checkYourself") : t("tb.steps.quick")} interactive={L.interactive} />
+            <Checks checks={cur.checks.map((i) => lesson.checks![i])} idx={cur.checks} onPick={sendCheck} title={cur.final ? t("mob.checkYourself") : t("tb.steps.quick")} interactive={L.interactive} />
           )}
           <View style={{ flexDirection: "row", gap: 10 }}>
             <Button title={t("tb.steps.prev")} kind="secondary" disabled={step === 0} onPress={() => setStep((s) => Math.max(0, s - 1))} style={{ flex: 1 }} />
@@ -169,7 +176,7 @@ export default function Topic() {
               <RichText text={s.md} onExplain={explain} />
             </Card>
           ))}
-          {lesson.checks?.length ? <Checks checks={lesson.checks} title={t("mob.checkYourself")} interactive={L.interactive} /> : null}
+          {lesson.checks?.length ? <Checks checks={lesson.checks} idx={lesson.checks.map((_, i) => i)} onPick={sendCheck} title={t("mob.checkYourself")} interactive={L.interactive} /> : null}
         </>
       )}
 
@@ -214,18 +221,18 @@ function NavLink({ label, dir, onPress }: { label: string; dir: "prev" | "next";
 }
 
 // »Preveri se«: z dotikom odgovora (v paketu in preizkusu); sicer vprašanja z rešitvijo na dotik.
-function Checks({ checks, title, interactive }: { checks: Check[]; title: string; interactive: boolean }) {
+function Checks({ checks, idx, onPick, title, interactive }: { checks: Check[]; idx: number[]; onPick: (qi: number, o: number) => void; title: string; interactive: boolean }) {
   return (
     <Card tone="accent">
       <Title size={18}>{title}</Title>
       {checks.map((c, i) => (
-        <CheckItem key={c.q + i} c={c} interactive={interactive} />
+        <CheckItem key={c.q + i} c={c} interactive={interactive} onPick={(o) => onPick(idx[i], o)} />
       ))}
     </Card>
   );
 }
 
-function CheckItem({ c, interactive }: { c: Check; interactive: boolean }) {
+function CheckItem({ c, interactive, onPick }: { c: Check; interactive: boolean; onPick: (o: number) => void }) {
   const th = useTheme();
   const [picked, setPicked] = useState<number | null>(null);
   const [shown, setShown] = useState(false);
@@ -244,6 +251,7 @@ function CheckItem({ c, interactive }: { c: Check; interactive: boolean }) {
             accessibilityState={{ selected: picked === oi }}
             onPress={() => {
               setPicked(oi);
+              onPick(oi);
               (oi === c.correct ? success : failure)();
             }}
             style={{ flexDirection: "row", gap: 10, alignItems: "center", padding: 10, borderRadius: radius.button, borderWidth: state ? 2 : 1, borderColor: state === "ok" ? th.ok : state === "bad" ? th.danger : th.border, backgroundColor: state === "ok" ? th.okSoft : state === "bad" ? th.dangerSoft : th.surface }}

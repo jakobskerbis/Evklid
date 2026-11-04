@@ -1937,7 +1937,7 @@ async function loadProgress() {
     ? p.topics
         .map(
           (t) => `<tr><td>${t.subject ?? "–"}</td><td>${escapeHtml(t.topic)}</td><td>${t.turns}</td>
-            <td class="${t.rate >= 0.4 && t.turns >= 3 ? "bad" : ""}">${t.errors} (${Math.round(t.rate * 100)} %)<span class="tp-bar" aria-hidden="true"><i style="width:${Math.round((1 - t.rate) * 100)}%"></i></span></td></tr>`,
+            <td class="${(t.weak ?? (t.rate >= 0.4 && t.turns >= 3)) ? "bad" : ""}">${t.errors} (${Math.round(t.rate * 100)} %)<span class="tp-bar" aria-hidden="true"><i style="width:${Math.round((1 - t.rate) * 100)}%"></i></span></td></tr>`,
         )
         .join("")
     : `<tr><td colspan="4" class="muted">${t("common.noData")}</td></tr>`;
@@ -3535,6 +3535,8 @@ async function openOurs(entry, subjectName) {
         set: (v) => localStorageSet(key, JSON.stringify(v)),
       },
       onTutor: (task, part) => oursTutor(entry, title, task, part),
+      // Šibke točke: deli z odprto rešitvijo ali oznako »Imam prav« (strežnik vsak del šteje enkrat).
+      onChecked: (parts) => api(`/api/students/${state.student.id}/paper-check`, { method: "POST", body: { paper: entry.id, parts } }).catch(() => {}),
     });
   } catch (err) {
     toast(err.message);
