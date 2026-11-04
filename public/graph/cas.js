@@ -7,6 +7,7 @@
 // π in e sta simbola (transcendentni števili), zato x·π − π = π(x − 1); pri preverjanju dobita svojo vrednost.
 import { Q, P, AlgebraError, gcdInt, lcmInt } from "../scan/algebra.js";
 import { compileLine, lineTex, splitTop, HIDDEN_VARS } from "./scicore.js";
+import { runCalc, CALC_OPS } from "./calculus.js";
 
 const BUDGET_MS = 1500; // kot reševalnik enačb: potem »preveč zapleteno«
 const LIVE_MS = 200; // sprotni predogled med tipkanjem
@@ -689,11 +690,18 @@ const CMDS = {
   solve: "solve",
   reši: "solve",
   resi: "solve",
+  // 2. faza (public/graph/calculus.js)
+  integrate: "integrate",
+  integriraj: "integrate",
+  limit: "limit",
+  limita: "limit",
+  lim: "limit",
+  taylor: "taylor",
 };
 /** Imena ukazov v jeziku vmesnika (slovenski zapis za sl, sicer angleški, kot na kalkulatorjih CAS). */
 export function commandName(op, locale = "sl") {
   const sl = /^sl/i.test(locale || "");
-  return sl ? { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši" }[op] : op;
+  return sl ? { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši", integrate: "integriraj", limit: "limita", taylor: "taylor" }[op] : op;
 }
 
 /** Se besedilo začne z imenom ukaza CAS in oklepajem (tudi če za zaklepajem sledi še kaj)? */
@@ -721,6 +729,8 @@ export function parseCommand(text) {
   const op = CMDS[m[1].toLowerCase()];
   const parts = splitTop(body, ";").map((x) => x.trim());
   if (op === "solve") return { op, name: m[1], inner: parts[0] || "", v: (parts[1] || "").trim() || null };
+  // integriraj(f; x), limita(f; x; a), taylor(f; x; a; n)
+  if (CALC_OPS.has(op)) return parts.length <= { integrate: 2, limit: 3, taylor: 4 }[op] ? { op, name: m[1], inner: parts[0] || "", args: parts.slice(1) } : null;
   if (parts.length !== 1) return null;
   return { op, name: m[1], inner: parts[0] };
 }
@@ -738,6 +748,11 @@ export function runCas(cmd, env = {}) {
     if (!line) return { error: { code: "casEmpty", info: {} } };
   } catch (e) {
     return { error: { code: e.code || "other", info: e.info || {} } };
+  }
+  if (CALC_OPS.has(cmd.op)) {
+    // analiza je vedno v radianih; v načinu DEG/GRA to povemo pod rezultatom
+    const r = runCalc(cmd, env);
+    return (env.deg || env.grad) && !r.error ? { ...r, rad: true } : r;
   }
   const innerTex = lineTex(line.ast, comma);
   const name = `\\operatorname{${cmd.name}}`;
@@ -991,6 +1006,9 @@ function sqrtConst(q) {
   if (inn.one) return { tex: out.tex(), value };
   return { tex: `${out.one ? "" : out.tex()}\\sqrt{${inn.tex()}}`, value };
 }
+
+// za 2. fazo (calculus.js): notranje funkcije brez lastnega izvoza
+export const KIT = { tick, rat, coeffsIn, coefIn, factorP, points, varTex };
 
 /**
  * Ali lahko izraz (brez ukaza) obdelamo simbolno? Za gumbe Poenostavi / Razvij / Razstavi in Reši za … pod vrstico.
