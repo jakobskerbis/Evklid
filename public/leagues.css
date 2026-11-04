@@ -154,7 +154,8 @@
 }
 
 /* Čez vso širino (j, 4. 11. 2026): glava lige in tedenska lestvica čez vse stolpce, lestvica s 30 mesti v stolpcih
-   (prosta mesta so prazne vrstice, da vidiš, kje so meje); mesečna lestvica in skupine pod njima. */
+   (prosta mesta so prazne vrstice: vidiš, koliko učencev še lahko pride v skupino); mesečna lestvica in skupine pod njima. */
+#league-content { columns: 400px 2; } /* pod lestvico največ dva stolpca, da ne ostane prazna desna polovica */
 #league-content > :is(.league-hero, .lg-weekly) { column-span: all; }
 .lg-weekly .league-board { columns: 300px; column-gap: 16px; }
 .lg-weekly .league-board > li { break-inside: avoid; min-height: 60px; }

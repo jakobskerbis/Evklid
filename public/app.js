@@ -449,8 +449,11 @@ async function loadMeOverview() {
   const box = $("#me-overview");
   const id = state.student?.id;
   if (!box || !id) return;
+  if (box.dataset.for !== String(id)) box.innerHTML = ""; // pregled prejšnjega profila ne ostane na zaslonu
+  box.dataset.for = id;
   const [p, sch] = await Promise.all([api(`/api/students/${id}/progress`).catch(() => null), api(`/api/students/${id}/schedule`).catch(() => null)]);
   if (state.student?.id !== id) return;
+  if (!p && !sch) return void (box.innerHTML = `<p class="muted">${t("lock.offline")}</p>`);
   const events = (sch?.schedule?.events || []).filter((e) => e.daysLeft >= 0).slice(0, 4);
   const when = (n) => (n === 0 ? t("test.today") : n === 1 ? t("test.tomorrow") : t("test.inDays", { n }));
   const row = (go, ic, title, sub = "") =>
@@ -669,6 +672,7 @@ async function selectStudent(id) {
   else renderEmptyChat();
   if (!$("#view-settings").hidden) fillSettingsForm();
   if (!$("#view-progress").hidden) loadProgress();
+  if (!$("#view-me").hidden) renderMe(); // pregled (aktivnost, testi) novega profila
   if (!$("#view-league").hidden) loadLeague(state.student.id);
   if (!$("#view-scan").hidden) showScan(); // naloga prejšnjega profila ne ostane na zaslonu
   if (!$("#view-lab").closest("[hidden]")) showLab(); // zaklep in vrstni red poskusov sta po profilu
@@ -1866,6 +1870,7 @@ async function loadProgress() {
     return byDay[d] || { day: d, turns: 0, errors: 0 };
   });
   const max = Math.max(1, ...days.map((a) => a.turns));
+  $("#prog-turns").hidden = !p.activity.length; // koledar zgoraj že pokaže, da še ni aktivnosti
   $("#activity").innerHTML = p.activity.length
     ? days
         .map(

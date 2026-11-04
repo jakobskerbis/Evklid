@@ -122,7 +122,11 @@ function moreHtml(s) {
     .join("")}</div></section>`;
 }
 
+let adding = false; // med shranjevanjem ne sprejmemo drugega klika (sicer bi drugi PUT povozil prvega)
 async function addInterest(id) {
+  if (adding) return;
+  adding = true;
+  document.querySelectorAll("[data-add-int]").forEach((b) => (b.disabled = true));
   const s = student().settings;
   const interests = [...new Set([...(s.interests || []), id])].slice(0, MAX_INTERESTS);
   try {
@@ -133,6 +137,9 @@ async function addInterest(id) {
     showCorner();
   } catch (err) {
     ctx.toast?.(err.message);
+    document.querySelectorAll("[data-add-int]").forEach((b) => (b.disabled = false));
+  } finally {
+    adding = false;
   }
 }
 

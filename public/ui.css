@@ -931,7 +931,7 @@ body:has(> #boot-down) > :not(#boot-down) { visibility: hidden; }
 .hm-grid { display: grid; grid-template-rows: auto repeat(7, auto); grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 3px; }
 @container (max-width: 560px) { .hm-grid > :nth-child(-n + 216) { display: none; } }
 .hm-d { display: block; aspect-ratio: 1; min-width: 0; border-radius: 3px; background: var(--surface-2); }
-.hm-d.l1 { background: color-mix(in srgb, var(--accent) 35%, var(--surface-2)); }
+.hm-d.l1 { background: color-mix(in srgb, var(--accent) 45%, var(--surface-2)); }
 .hm-d.l2 { background: color-mix(in srgb, var(--accent) 60%, var(--surface-2)); }
 .hm-d.l3 { background: color-mix(in srgb, var(--accent) 80%, var(--surface-2)); }
 .hm-d.l4 { background: var(--accent); }
@@ -946,6 +946,8 @@ body:has(> #boot-down) > :not(#boot-down) { visibility: hidden; }
 .wk span { display: block; width: 100%; height: calc((100% - 38px) * var(--h, 0)); min-height: 2px; border-radius: 4px 4px 0 0; background: var(--accent); }
 .wk b { font-size: 0.72rem; font-weight: 700; color: var(--muted); min-height: 1em; }
 .wk small { font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+#prog-weeks { container-type: inline-size; }
+@container (max-width: 520px) { .wk:nth-child(even):not(:last-child) small { visibility: hidden; } } /* na telefonu vsak drugi datum */
 .tp-bar { display: block; height: 4px; margin-top: 4px; border-radius: 2px; overflow: hidden; background: color-mix(in srgb, var(--danger) 70%, transparent); }
 .tp-bar i { display: block; height: 100%; background: var(--ok); }
 /* Jaz: pod povezavami koledar aktivnosti čez vso širino, Nadaljuj in testi ob njem. */
@@ -954,4 +956,4 @@ body:has(> #boot-down) > :not(#boot-down) { visibility: hidden; }
 .me-overview > .me-akt { flex-basis: 100%; }
 .me-overview h2 { margin: 0 0 10px; font-size: 1.05rem; }
 .me-ov-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.me-overview .list-card { box-shadow: none; border: 0; padding: 0; background: none; }
+.me-overview .list-card { box-shadow: none; border: 0; padding: 0; background: none; columns: auto; }

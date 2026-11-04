@@ -28,7 +28,7 @@
 @container (min-width: 640px) {
   .sch-list { display: none; }
   /* široko: kratke kartice (uvod, uvoz, testi, opomnik) v stolpcih nad urnikom */
-  .sch-top { display: block; columns: 340px; column-gap: 20px; }
+  .sch-top { display: block; columns: 340px 3; column-gap: 20px; }
   .sch-top > * { break-inside: avoid; }
   .sch-grid {
     display: grid; grid-template-columns: 4.6em repeat(var(--sch-dni, 5), minmax(0, 1fr)); grid-template-rows: auto; grid-auto-rows: minmax(64px, auto); gap: 6px;
@@ -44,12 +44,13 @@
 .sch-g-cell .sch-lesson { flex: 1; justify-content: center; }
 button.sch-g-add {
   display: grid; place-items: center; margin: 0; padding: 0; min-height: 0; border-radius: 10px; cursor: pointer;
-  border: 1px dashed var(--border); background: color-mix(in srgb, var(--surface) 55%, transparent); color: transparent; box-shadow: none;
+  border: 1px dashed color-mix(in srgb, var(--muted) 40%, var(--border)); background: color-mix(in srgb, var(--surface) 55%, transparent); color: color-mix(in srgb, var(--muted) 45%, transparent); box-shadow: none;
 }
 button.sch-g-add.today { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
 button.sch-g-add:hover, button.sch-g-add:focus-visible { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 button.sch-g-add svg.i { width: 20px; height: 20px; }
 @media (hover: none) { button.sch-g-add { color: var(--muted); } }
+.sch-time { direction: ltr; unicode-bidi: isolate; } /* 08:20–09:05 tudi v arabščini */
 
 /* teden v ozkem vsebniku: dnevi drug pod drugim (širši vsebnik pokaže mrežo zgoraj) */
 .sch-week { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }

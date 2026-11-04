@@ -101,7 +101,9 @@ function bellOf(l) {
 // V ozkem vsebniku (telefon, majhno okno) CSS namesto mreže pokaže dneve drugega pod drugim (.sch-week).
 function gridHtml(s, days) {
   const L = s.lessons;
-  const school = !jeFaks(D.getStudent()?.settings) && L.every((l) => bellOf(l) != null);
+  // Šolski zvonec samo, ko vse ure sledijo zvoncu in nobena ne traja dlje od ene šolske ure (dvourno predavanje → polne ure).
+  const short = (l) => l.period != null || !l.start || !l.end || toMin(l.end) - toMin(l.start) <= 60;
+  const school = !jeFaks(D.getStudent()?.settings) && L.every((l) => bellOf(l) != null && short(l));
   let rows;
   const place = new Map(); // "dan:vrstica" → { span, items }
   if (school) {
@@ -118,13 +120,19 @@ function gridHtml(s, days) {
     const ends = L.filter((l) => l.end).map((l) => Math.ceil(toMin(l.end) / 60) - 1);
     const lo = Math.min(8, ...starts), hi = Math.max(lo + 7, ...starts, ...ends);
     rows = [...Array(hi - lo + 1)].map((_, i) => lo + i);
-    for (const l of L) {
+    // Ura, ki se začne med daljšo uro istega dne (vzporedne skupine), gre v isto polje, ki se po potrebi podaljša.
+    for (const l of [...L].sort((a, b) => a.day - b.day || toMin(a.start) - toMin(b.start))) {
       const h = l.start ? Math.floor(toMin(l.start) / 60) : lo;
       const span = l.start && l.end ? Math.max(1, Math.min(hi + 1, Math.ceil(toMin(l.end) / 60)) - h) : 1;
-      const k = `${l.day}:${h}`;
+      let h0 = h;
+      for (const [k, c] of place) {
+        const [d, r] = k.split(":").map(Number);
+        if (d === l.day && r <= h && h < r + c.span) h0 = r;
+      }
+      const k = `${l.day}:${h0}`;
       if (!place.has(k)) place.set(k, { span: 1, items: [] });
       const c = place.get(k);
-      c.span = Math.max(c.span, span);
+      c.span = Math.max(c.span, h + span - h0);
       c.items.push(l);
     }
   }
@@ -137,13 +145,13 @@ function gridHtml(s, days) {
     })
     .join("");
   for (const [ci, d] of days.entries()) {
-    let covered = 0;
+    let covered = -Infinity; // zadnja vrstica, ki jo prekriva že narisano polje (šolska ura 0 je prava vrstica)
     for (const r of rows) {
       const gr = r - row0 + 2;
       const c = place.get(`${d}:${r}`);
       if (c) {
         const span = Math.min(c.span, rows.length - (r - row0));
-        covered = r + span - 1;
+        covered = Math.max(covered, r + span - 1);
         html += `<div class="sch-g-cell ${d === s.now.day ? "today" : ""}" style="grid-row:${gr} / span ${span};grid-column:${ci + 2}">${c.items
           .sort((a, b) => toMin(a.start) - toMin(b.start))
           .map((l) => `<button type="button" class="sch-lesson" data-lesson="${l.id}"><b>${esc(l.name)}</b><span class="sch-time">${l.start}–${l.end}</span>${
