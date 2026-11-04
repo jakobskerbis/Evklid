@@ -19,4 +19,9 @@ const port = Number(process.env.PORT || 3000);
 app.listen(port, () => {
   console.log(`Evklid teče na http://localhost:${port}`);
   console.log(isMockMode() ? "Preizkusni način (brez API ključa)." : `Model: ${MODEL}`);
+  // Datoteke prvega odprtja strani stisnemo v ozadju takoj po zagonu (server/compress.js).
+  const t0 = Date.now();
+  Promise.resolve(app.locals.warmStatic?.())
+    .then((n) => console.log(`[evklid] pripravljenih ${n} stisnjenih datotek v ${Date.now() - t0} ms`))
+    .catch(() => {});
 });

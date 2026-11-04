@@ -40,6 +40,7 @@ import { competitionInfo, competitionKeyFor, isCompetitionPath } from "./competi
 import { PAPERS_SI, PAPERS_SOURCE } from "./exam-papers-si.js";
 import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, localizeExamView, localizeExamTopic } from "./exams.js";
 import { compressedStatic, compressedJson } from "./compress.js";
+import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode } from "./reports.js";
 import { verifyAnswer, codeCheck } from "./verify.js";
@@ -244,17 +245,18 @@ export function createApp(store, opts = {}) {
   mountSolePage(app); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
-    app.use(
-      compressedStatic([
-        ["/vendor/katex/", path.join(modules, "katex", "dist")],
-        ["/vendor/pdfjs/", path.join(modules, "pdfjs-dist")],
-        ["/vendor/marked/", path.join(modules, "marked")],
-        ["/vendor/dompurify/", path.join(modules, "dompurify", "dist")],
-        ...FONTS.map(([dir, pkg]) => [`/vendor/${dir}/`, path.join(modules, "@fontsource-variable", pkg)]),
-        ["/practice/", path.join(here, "practice")],
-        ["/", publicDir],
-      ]),
-    );
+    const statics = compressedStatic([
+      ["/vendor/katex/", path.join(modules, "katex", "dist")],
+      ["/vendor/pdfjs/", path.join(modules, "pdfjs-dist")],
+      ["/vendor/marked/", path.join(modules, "marked")],
+      ["/vendor/dompurify/", path.join(modules, "dompurify", "dist")],
+      ...FONTS.map(([dir, pkg]) => [`/vendor/${dir}/`, path.join(modules, "@fontsource-variable", pkg)]),
+      ["/practice/", path.join(here, "practice")],
+      ["/", publicDir],
+    ]);
+    app.use(statics);
+    // server/index.js po zagonu vnaprej stisne datoteke prvega odprtja strani (prvi obiski po posodobitvi hitri).
+    app.locals.warmStatic = () => statics.warm(startupFiles(publicDir, "index.html", ["games/index.js"]));
     app.use("/api", compressedJson());
   }
   app.use(express.static(publicDir));
