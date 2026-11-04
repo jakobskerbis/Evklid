@@ -29,6 +29,7 @@ import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
 import { offlineApi, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback } from "./feedback.js";
+import { openAdminBug } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
 import { initFlashcards, showFlashcards, addCardsNote } from "./flashcards.js";
 import { initGames, showGames, gamesBack, leaveGames } from "./games/index.js";
@@ -644,8 +645,11 @@ function renderEmptyChat() {
     ${greekFactHtml("gr-chat")}</div>`;
   templeParts();
   wireGreekFacts($("#messages"));
+  // Predlog se pošlje takoj in inštruktor nanj odgovori (j, 3. 11.): ni ga treba še enkrat poslati.
+  // Če je učenec že kaj napisal ali dodal fotografijo, predlog gre v polje (da se nič ne izgubi).
   $("#messages").querySelectorAll("[data-idea]").forEach((b) =>
     b.addEventListener("click", () => {
+      if (!$("#input").value.trim() && !state.image) return send(b.dataset.idea);
       $("#input").value = b.dataset.idea;
       $("#input").focus();
     }),
@@ -728,6 +732,24 @@ $("#toggle-sidebar").addEventListener("click", () => (chatSplit?.collapsed ? cha
 $("#conversation-list").addEventListener("click", () => setSidebar(false));
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && $(".sidebar").classList.contains("open")) setSidebar(false);
+});
+
+$("#chat-bug").addEventListener("click", (e) => {
+  const btn = e.currentTarget;
+  const open = $("#view-chat .bug-box");
+  if (open) return open.focusFirst();
+  btn.setAttribute("aria-expanded", "true");
+  openAdminBug($("#view-chat .chat-head"), {
+    api,
+    studentId: state.student.id,
+    conversationId: () => state.conversationId,
+    view: "chat",
+    toast,
+    onClose: () => {
+      btn.setAttribute("aria-expanded", "false");
+      btn.focus();
+    },
+  });
 });
 
 $("#new-chat").addEventListener("click", () => {
@@ -3715,6 +3737,7 @@ initTextbook({
   nextPractice,
   learnWithTutor,
   showView,
+  toast,
 });
 
 // ---------- zagon ----------
@@ -3731,6 +3754,8 @@ initFormulaInfo();
   $("#mock-banner").hidden = !cfg.mock;
   initTestNotice(cfg.test_notice, { showView });
   $("#chat-off").hidden = !cfg.chat_off;
+  // Skrbnik: »Prijavi napako« v glavi klepeta (napaka v aplikaciji ali pri inštruktorju, public/prijave.js).
+  $("#chat-bug").hidden = !cfg.admin;
   initFeedback({ api, getStudent: () => state.student, showView, toast, currentLang }, cfg);
   initGames({ api, getStudent: () => state.student, setStudent: studentUpdated, toast: (m, ic = "check") => toast(m, ic), refreshXp, currentLang });
   initZbirke({ api, getStudent: () => state.student, currentLang, showView });
@@ -3750,6 +3775,8 @@ initFormulaInfo();
   // Starševski računi (account.js): prijava, potrditev, prvi otrok.
   let first = true;
   const start = async (o) => {
+    // Prijava brez ponovnega nalaganja strani: /api/config pred prijavo še ni vedel, da je to skrbnik.
+    if (!cfg.admin) api("/api/config").then((c) => ($("#chat-bug").hidden = !c.admin)).catch(() => {});
     await loadStudents();
     if (first) initUsageMeter({ escapeHtml, showView, toast });
     else refreshUsageMeter();

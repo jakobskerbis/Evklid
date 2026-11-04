@@ -9,6 +9,7 @@ import { t } from "./i18n.js";
 import { icon } from "./icons.js";
 import { makeRowSortable, resetRows } from "./vrstice.js";
 import { resetSplits, refreshSplitters } from "./razdelilnik.js";
+import { addSample, inMagnet, shouldClose } from "./magnet.js";
 
 const KEY = "evklid.okna";
 const ON_KEY = "evklid.windows";
@@ -451,12 +452,14 @@ function bubbleEl() {
   main.addEventListener("pointerdown", (ev) => {
     if (ev.pointerType === "mouse" && ev.button !== 0) return;
     const r = bubble.getBoundingClientRect();
-    p = { x: ev.clientX, y: ev.clientY, dx: ev.clientX - r.left, dy: ev.clientY - r.top, moved: false, id: ev.pointerId };
+    p = { x: ev.clientX, y: ev.clientY, dx: ev.clientX - r.left, dy: ev.clientY - r.top, moved: false, id: ev.pointerId, samples: [] };
+    addSample(p.samples, ev.clientX, ev.clientY, ev.timeStamp);
     main.setPointerCapture(ev.pointerId);
     if (ev.pointerType !== "mouse") p.timer = setTimeout(() => p && !p.moved && bubble.classList.add("show-x"), 500);
   });
   main.addEventListener("pointermove", (ev) => {
     if (!p || ev.pointerId !== p.id) return;
+    addSample(p.samples, ev.clientX, ev.clientY, ev.timeStamp);
     if (!p.moved && Math.hypot(ev.clientX - p.x, ev.clientY - p.y) < 6) return;
     if (!p.moved) {
       p.moved = true;
@@ -465,23 +468,32 @@ function bubbleEl() {
       hidePreview();
       drop.hidden = false;
     }
-    bubble.style.left = `${ev.clientX - p.dx}px`;
-    bubble.style.top = `${ev.clientY - p.dy}px`;
-    drop.classList.toggle("hot", overDrop(ev));
+    // Blizu X-a se mehurček prilepi nanj (magnet), sicer sledi prstu.
+    const c = dropCenter();
+    const hot = inMagnet({ x: ev.clientX, y: ev.clientY }, c);
+    if (hot && !drop.classList.contains("hot")) navigator.vibrate?.(8);
+    drop.classList.toggle("hot", hot);
+    bubble.classList.toggle("magnet", hot);
+    bubble.style.left = `${hot ? c.x - 28 : ev.clientX - p.dx}px`;
+    bubble.style.top = `${hot ? c.y - 28 : ev.clientY - p.dy}px`;
   });
   const up = (ev, cancel) => {
     if (!p || ev.pointerId !== p.id) return;
     clearTimeout(p.timer);
-    const { moved } = p;
+    // Vzorec ob spustu: kdor se ustavi in šele nato spusti, nima več hitrosti (ni flik).
+    addSample(p.samples, ev.clientX, ev.clientY, ev.timeStamp);
+    const { moved, samples } = p;
     p = null;
-    bubble.classList.remove("dragging");
+    // Prej je bil X ob spustu že skrit (getBoundingClientRect = 0), zato poteg nanj ni zaprl mehurčka.
+    const close = moved && !cancel && shouldClose({ x: ev.clientX, y: ev.clientY }, samples, dropCenter());
+    bubble.classList.remove("dragging", "magnet");
+    if (close) return flyToDrop();
     drop.hidden = true;
     drop.classList.remove("hot");
     if (!moved) {
       if (!cancel && !bubble.classList.contains("show-x")) openChat();
       return;
     }
-    if (!cancel && overDrop(ev)) return dismissBubble();
     bstate.side = ev.clientX < window.innerWidth / 2 ? "left" : "right";
     bstate.y = Math.min(0.92, Math.max(0.08, ev.clientY / window.innerHeight));
     ls.set(BUBBLE_KEY, JSON.stringify(bstate));
@@ -498,9 +510,24 @@ function bubbleEl() {
   });
   return bubble;
 }
-function overDrop(ev) {
+function dropCenter() {
   const r = drop.getBoundingClientRect();
-  return Math.hypot(ev.clientX - (r.left + r.width / 2), ev.clientY - (r.top + r.height / 2)) < 64;
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+}
+// Flik ali spust na X: mehurček odleti v X, se skrči in izgine.
+function flyToDrop() {
+  const c = dropCenter();
+  drop.classList.add("hot");
+  bubble.classList.add("closing");
+  bubble.style.left = `${c.x - 28}px`;
+  bubble.style.top = `${c.y - 28}px`;
+  navigator.vibrate?.(12);
+  setTimeout(() => {
+    bubble.classList.remove("closing");
+    drop.hidden = true;
+    drop.classList.remove("hot");
+    dismissBubble();
+  }, matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 220);
 }
 // Mehurček ne prekrije okna (npr. tipk kalkulatorja spodaj desno): najbližje prosto mesto ob robu,
 // najprej na izbrani strani, nato na drugi.
