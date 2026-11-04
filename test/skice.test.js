@@ -405,6 +405,7 @@ test("zaporedja: a_n in s_n se ujemata s seštevanjem členov, tudi z negativnim
           for (let i = 1; i <= n; i++) vsota += q.clen(i);
           assert.ok(Math.abs(q.sn - vsota) < 1e-9, `${vrsta} a1=${a1} k=${k} n=${n}`);
           assert.ok(Math.abs(q.an - q.clen(n)) < 1e-12);
+          assert.equal(q.clen(1), a1);
           if (n > 1) assert.ok(Math.abs(vrsta === "aritmeticno" ? q.clen(n) - q.clen(n - 1) - k : q.clen(n) - q.clen(n - 1) * k) < 1e-9);
         }
 });
@@ -439,4 +440,12 @@ test("odvod in diferencial: Δf/Δx → f′(x₀), ko gre h proti 0; Δf − df
   }
   assert.equal(brezNic(0, 0.1, 0.1), -0.1);
   assert.equal(brezNic(0, -0.1, 0.1), 0.1);
+});
+
+test("skice: »≈« je vedno pred nedeljivim presledkom (v ozkem čipu se ne loči od števila)", () => {
+  const dir = new URL("../public/skice/", import.meta.url);
+  for (const ime of fs.readdirSync(dir).filter((x) => x.endsWith(".js"))) {
+    const koda = fs.readFileSync(new URL(ime, dir), "utf8").split("\n").filter((l) => !l.trim().startsWith("//"));
+    koda.forEach((l, i) => assert.ok(!/≈ /.test(l.replace(/\/\/.*$/, "")), `${ime}:${i + 1}`));
+  }
 });

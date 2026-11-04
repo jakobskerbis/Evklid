@@ -25,9 +25,9 @@ export default function narisi(host) {
     const P = [A.X(a), A.Y(q.b)];
     crta(zg, P[0], P[1], P[0], A.Y(0), "glavna", { class: "sk-s-glavna sk-thin sk-dash" });
     crta(zg, P[0], P[1], A.X(0), P[1], "glavna", { class: "sk-s-glavna sk-thin sk-dash" });
-    napis(g, P[0], A.Y(0) + 15, "a", "druga", { "text-anchor": "middle" });
+    napis(g, P[0] + 5, A.Y(0) - 6, "a", "druga"); // nad osjo: pod njo so števila
     napis(g, A.X(0) + (a > 0 ? -6 : 6), P[1] - 5, "b", "izbor", { "text-anchor": a > 0 ? "end" : "start" });
-    napis(g, A.L + 4, A.T + 12, "f(x) = x²/2", "glavna", { style: "font-size: 12px" });
+    napis(g, A.X(0) + 6, A.T + 12, "f(x) = x²/2", "glavna", { style: "font-size: 12px" });
     tocka?.move(...P);
     S.cipi([
       { barva: "druga", oznaka: "a", vrednost: st(a, 1) },

@@ -42,7 +42,7 @@ export default function narisi(host) {
     if (tocka) tocka.move(...T);
     S.cipi([
       { barva: "ploskev", oznaka: "e = \\sqrt{a^2 + b^2}", vrednost: vr(q.e) },
-      { barva: "glavna", oznaka: "\\pm\\frac{b}{a}", vrednost: `±${vr(q.k)}`.replace("±≈ ", "≈ ±") },
+      { barva: "glavna", oznaka: "\\pm\\frac{b}{a}", vrednost: `±${vr(q.k)}`.replace("±≈\u00a0", "≈\u00a0±") },
       { barva: "druga", oznaka: "r_1", vrednost: vr(q.r1) },
       { barva: "izbor", oznaka: "r_2", vrednost: vr(q.r2) },
       { barva: "glavna", oznaka: "|r_1 - r_2| = 2a", vrednost: vr(Math.abs(q.r1 - q.r2)) },

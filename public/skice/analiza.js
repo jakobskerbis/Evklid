@@ -44,3 +44,9 @@ export function okvir(navodilo, oznaka) {
   const A = osi(S.svg, { W, H, x: [-3.5, 3.5], y: [-1.2, 5.6], rob: 8, xOznake: oz, yOznake: [1, 2, 3, 4, 5].map((v) => [v, st(v, 0)]) });
   return { S, A, W, H };
 }
+
+// Točka x₀ na korak 0,1 v [−2,5; 2,5], tako da je tudi x₀ + d (h ali dx) v okvirju: |x₀ + d| ≤ 3,2, f ≤ 5,12.
+export function omejiX0(x0, d) {
+  const lo = Math.max(-2.5, -3.2 - d), hi = Math.min(2.5, 3.2 - d);
+  return Math.round(Math.min(hi, Math.max(lo, x0)) * 10) / 10 || 0; // || 0: brez »−0«
+}

@@ -37,7 +37,7 @@ export const SKICE = {
   "MAT-SS|Limita funkcije": () => import("./limita.js"),
   "MAT-SS|Odvodi": () => import("./odvod.js"),
   "MAT-SS|Diferencial": () => import("./diferencial.js"),
-  "MAT-UNI|Definicija": () => import("./odvod.js"), // edina kartica »Definicija« na listu za faks (Odvodi)
+  "MAT-UNI|Definicija": z(() => import("./odvod.js"), "h"), // edina kartica »Definicija« na listu za faks (Odvodi)
   ...Object.fromEntries(["Kvadrat", "Pravokotnik", "Paralelogram", "Romb", "Trapez", "Deltoid"].map((ime) => [`MAT-OS|${ime}`, z(() => import("./liki.js"), ime.toLowerCase())])),
 };
 

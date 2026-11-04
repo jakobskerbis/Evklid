@@ -2,9 +2,7 @@
 // pri x + dx: df do tangente (zeleno), Δf do grafa (rumeno, ob strani), razlika Δf − df (rdeče).
 import { st, crta, napis, vr } from "./skica.js";
 import { s, fnPath } from "../sim/kit.js";
-import { f, diferencial, brezNic, okvir } from "./analiza.js";
-
-export const X_MEJA = 2.5;
+import { f, diferencial, brezNic, okvir, omejiX0 } from "./analiza.js";
 
 export default function narisi(host) {
   const { S, A } = okvir("Povleci točko po grafu in spreminjaj dx.", "Diferencial: Δf in df");
@@ -12,6 +10,7 @@ export default function narisi(host) {
   const sd = S.drsnik({ label: "dx", min: -2, max: 2, step: 0.1, value: dx, digits: 1, barva: "ploskev", onInput: (v) => ((dx = brezNic(v, dx, 0.1)), dx !== v && sd.set(dx, true), izris()) });
 
   function izris() {
+    x0 = omejiX0(x0, dx); // drsnik lahko potisne x₀ + dx iz okvirja
     const q = diferencial(x0, dx);
     const g = S.plast("graf");
     const zg = s("g", { "clip-path": A.izrez }, g);
@@ -26,10 +25,10 @@ export default function narisi(host) {
     crta(zg, D[0], D[1], D[0] + ob, D[1], "izbor", { class: "sk-s-izbor sk-thin" });
     crta(zg, F[0], F[1], F[0] + ob, F[1], "izbor", { class: "sk-s-izbor sk-thin" });
     const st_ = dx > 0 ? "start" : "end";
-    napis(g, (P[0] + D[0]) / 2, D[1] + (q.Df >= 0 ? 15 : -7), "dx", "ploskev", { "text-anchor": "middle", style: "font-size: 12px" });
+    napis(g, (P[0] + D[0]) / 2, D[1] + (q.df >= 0 ? 15 : -7), "dx", "ploskev", { "text-anchor": "middle", style: "font-size: 12px" });
     if (Math.abs(F[1] - D[1]) > 14) napis(g, D[0] + ob * 1.6, (D[1] + F[1]) / 2 + 4, "Δf", "izbor", { "text-anchor": st_, style: "font-size: 12px" });
     if (Math.abs(Td[1] - D[1]) > 14) napis(g, D[0] - ob * 0.6, (D[1] + Td[1]) / 2 + 4, "df", "druga", { "text-anchor": dx > 0 ? "end" : "start", style: "font-size: 12px" });
-    napis(g, A.L + 4, A.T + 12, "f(x) = x²/2", "glavna", { style: "font-size: 12px" });
+    napis(g, A.X(0) + 6, A.T + 12, "f(x) = x²/2", "glavna", { style: "font-size: 12px" });
     tocka?.move(...P);
     S.cipi([
       { barva: "ploskev", oznaka: "dx = \\Delta x", vrednost: st(dx, 1) },
@@ -43,7 +42,7 @@ export default function narisi(host) {
     x: A.X(x0),
     y: A.Y(f(x0)),
     label: "Točka x: premikaj jo po grafu",
-    onMove: (x) => ((x0 = Math.max(-X_MEJA, Math.min(X_MEJA, Math.round(A.inv(x, 0)[0] * 10) / 10)) || 0), izris()),
+    onMove: (x) => ((x0 = omejiX0(A.inv(x, 0)[0], dx)), izris()),
   });
   izris();
   host.append(S.el);
