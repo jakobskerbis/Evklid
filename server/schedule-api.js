@@ -66,8 +66,8 @@ export function mountSchedule(app, store, { loadStudent, progress, usage, schedu
     if (!s) return;
     const m = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(String(req.body?.image || ""));
     if (!m || m[2].length > 7 * 1024 * 1024) return res.status(400).json({ error: "Slika urnika manjka ali je prevelika." });
-    const blocked = usage?.blockReason(s.id);
-    if (blocked) return res.status(429).json({ error: blocked });
+    const blocked = usage?.blockInfo(s.id);
+    if (blocked) return res.status(429).json(blocked);
     try {
       const out = await photoFn({ imageBase64: m[2], mediaType: m[1], capped: !!modelCapFor(s.id) });
       if (out.mock) return res.json({ lessons: [], events: [], mock: true });

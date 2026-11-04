@@ -38,12 +38,41 @@ export function migrateGuarantee(db) {
   `);
 }
 
-// Teden k (0–7) od začetka: koliko različnih dni je otrok vadil. Pure, za teste.
+// Hramba zapisa (j 2026-11-04, kartica »10 let po odločitvi«): zapis se izbriše 10 let po odločitvi (vračilo, zavrnitev,
+// boljša ocena); zapis brez odločitve (starš ni sporočil ocene) 10 let po začetku. Zahtevek, o katerem še ni odločeno,
+// ostane. Poganja ga dnevno opravilo v server/accounts/index.js.
+export const RETENTION_YEARS = 10;
+export function purgeOldGuarantees(db, now = Date.now()) {
+  const d = new Date(now);
+  d.setUTCFullYear(d.getUTCFullYear() - RETENTION_YEARS);
+  const cutoff = sqlTime(d.getTime());
+  // started_at je ISO (»…T…Z«), claimed_at/decided_at iz datetime('now'): datetime() oboje poenoti, sicer bi se zapis
+  // na dan roka primerjal kot niz (»T« > presledek) in izbrisal dan pozneje.
+  return db
+    .prepare("DELETE FROM guarantees WHERE status != 'claimed' AND datetime(COALESCE(decided_at, claimed_at, started_at)) < ?")
+    .run(cutoff).changes;
+}
+
+// Dnevi in tedni vaje štejejo po času v Ljubljani (vaja ob 0.30 v ponedeljek je ponedeljek, ne nedelja v UTC).
+const LJ_DATE = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Ljubljana", year: "numeric", month: "2-digit", day: "2-digit" });
+const LJ_HOUR = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Ljubljana", hour: "2-digit", hourCycle: "h23" });
+// Datum v Ljubljani (»YYYY-MM-DD«) za trenutek ms.
+export const ljDate = (ms) => LJ_DATE.format(new Date(ms));
+// Polnoč v Ljubljani (ms) na dan trenutka ms, premaknjeno za addDays koledarskih dni (upošteva poletni čas:
+// ob polnoči je zamik do UTC enak kot ob 0.00 UTC istega dne, preklop je šele ob 1.00 UTC).
+export function ljMidnight(ms, addDays = 0) {
+  const [y, m, d] = ljDate(ms).split("-").map(Number);
+  const utc = Date.UTC(y, m - 1, d + addDays);
+  return utc - Number(LJ_HOUR.format(new Date(utc))) * 3600000;
+}
+
+// Teden k (0–7) od začetka: koliko različnih dni je otrok vadil. Pure, za teste. Tedni so celi dnevi v
+// Ljubljani od dneva prijave (start), da en dan vaje ne šteje v dva tedna.
 export function weeksFor(start, practiceDays, now = Date.now()) {
   const out = [];
   for (let k = 0; k < GUARANTEE.weeks; k++) {
-    const from = start + k * 7 * DAY;
-    const to = from + 7 * DAY;
+    const from = ljMidnight(start, k * 7);
+    const to = ljMidnight(start, (k + 1) * 7);
     const days = practiceDays(from, to);
     const state = now >= to ? (days >= GUARANTEE.minDays ? "ok" : "miss") : now >= from ? (days >= GUARANTEE.minDays ? "ok" : "now") : "future";
     out.push({ week: k + 1, days, state });
@@ -59,21 +88,25 @@ export function mountGuarantee(app, ctx) {
   const refunding = new Set(); // vračilo, ki že teče (dvojni klik ali dva skrbnika hkrati)
   migrateGuarantee(db);
 
+  // Različni dnevi vaje (datum v Ljubljani) med from in to; created_at je UTC.
   const practiceDays = (studentId) => (from, to) =>
-    db
-      .prepare("SELECT COUNT(DISTINCT date(created_at)) AS n FROM xp_events WHERE student_id = ? AND created_at >= ? AND created_at < ?")
-      .get(studentId, sqlTime(from), sqlTime(to)).n;
+    new Set(
+      db
+        .prepare("SELECT created_at FROM xp_events WHERE student_id = ? AND created_at >= ? AND created_at < ?")
+        .all(studentId, sqlTime(from), sqlTime(to))
+        .map((r) => ljDate(Date.parse(`${String(r.created_at).replace(" ", "T")}Z`))),
+    ).size;
 
   const rowFor = (p) => db.prepare("SELECT * FROM guarantees WHERE parent_id = ? OR email_hash = ?").get(p.id, emailHash(p.email)) || null;
 
   function stateOf(g, now = Date.now()) {
-    // Tedni so cele datumske enote UTC od dneva prijave, da en dan vaje ne šteje v dva tedna.
-    const start = Math.floor(Date.parse(g.started_at) / DAY) * DAY;
+    // Tedni so celi dnevi v Ljubljani od dneva prijave, da en dan vaje ne šteje v dva tedna.
+    const start = ljMidnight(Date.parse(g.started_at));
     const weeks = g.student_id ? weeksFor(start, practiceDays(g.student_id), now) : [];
     const practiceOk = weeks.length === GUARANTEE.weeks && weeks.every((w) => w.state === "ok");
     const missed = weeks.find((w) => w.state === "miss")?.week || (g.student_id ? null : 1);
-    const opens = start + GUARANTEE.weeks * 7 * DAY;
-    const until = opens + GUARANTEE.claimDays * DAY;
+    const opens = ljMidnight(start, GUARANTEE.weeks * 7);
+    const until = ljMidnight(start, GUARANTEE.weeks * 7 + GUARANTEE.claimDays);
     let phase = g.status;
     if (g.status === "active") phase = missed ? "lapsed" : now < opens ? "practice" : now <= until ? "claim" : "expired";
     return { weeks, practiceOk, missed, opens, until, phase };

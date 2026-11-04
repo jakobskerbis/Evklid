@@ -335,7 +335,7 @@ test("weekly report, export and account deletion", async () => {
   await withServer(async ({ client, calls, store }) => {
     const a = client();
     await registerVerified(a, calls, "gal@primer.si");
-    const kid = (await a("/api/students", { method: "POST", body: { name: "Zala", birth_year: YEAR - 13, consent: true } })).body;
+    const kid = (await a("/api/students", { method: "POST", body: { name: "Zala", birth_year: YEAR - 13, consent: true, vir: "Šola Bežigrad" } })).body;
     store.db.prepare("INSERT INTO xp_events (student_id, amount, reason) VALUES (?, 40, 'test')").run(kid.id);
 
     const preview = await a("/api/account/weekly-report/preview");
@@ -361,10 +361,17 @@ test("weekly report, export and account deletion", async () => {
     store.setSummary(kidConv.id, "Rešujeta 2x = 10", 20);
     assert.equal((await a("/api/account/export")).status, 404);
     assert.equal((await a("/api/account/export", { method: "POST", body: { password: "narobe123" } })).status, 401);
+    store.db.prepare("INSERT INTO game_scores (student_id, game, best, plays) VALUES (?, 'numline:frac', 12, 3)").run(kid.id);
+    store.db.prepare("INSERT INTO daily_puzzle (student_id, day, level, started_at, solved, total_ms) VALUES (?, '2026-11-04', 'easy', 1, 1, 42000)").run(kid.id);
     const exp = await a("/api/account/export", { method: "POST", body: { password: "geslo1234" } });
     assert.equal(exp.body.children[0].name, "Zala");
+    assert.equal(exp.body.children[0].vir, "sola-bezigrad", "vir profila (server/rast.js) je v izvozu");
     assert.equal(exp.body.parent.password_hash, undefined);
     assert.deepEqual(exp.body.children[0].reports, [], "prijave napak so v izvozu");
+    const games = exp.body.children[0].games;
+    assert.equal(games.scores[0].best, 12, "rezultati iger so v izvozu");
+    assert.equal(games.daily_puzzle[0].total_ms, 42000, "dnevna uganka je v izvozu");
+    assert.ok(Array.isArray(games.concept_days) && Array.isArray(games.ratings));
     assert.equal(exp.body.children[0].conversations.find((c) => c.id === kidConv.id).summary, "Rešujeta 2x = 10", "povzetek pogovora je v izvozu");
 
     assert.equal((await a("/api/account", { method: "DELETE", body: { password: "narobe123" } })).status, 401);

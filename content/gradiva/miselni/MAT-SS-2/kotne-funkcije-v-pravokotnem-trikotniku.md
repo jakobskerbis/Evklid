@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Katete in kot
+  - nasprotna kateta leži nasproti kota
+  - priležna kateta je krak kota
+- Definicije
+  - $\sin \alpha = \dfrac{a}{c}$, $\cos \alpha = \dfrac{b}{c}$
+  - $\tan \alpha = \dfrac{a}{b}$
+  - odvisne le od kota (podobnost)
+- Meje vrednosti
+  - $0 < \sin \alpha < 1$, $0 < \cos \alpha < 1$
+  - $\tan \alpha$ poljubno pozitiven
+- Zveze
+  - $\sin^2 \alpha + \cos^2 \alpha = 1$
+  - $\sin \alpha = \cos (90^\circ - \alpha)$
+- Posebni koti
+  - $\sin 30^\circ = \dfrac{1}{2}$, $\tan 45^\circ = 1$
+  - $\tan 60^\circ = \sqrt{3}$
+- Računalo
+  - način DEG, ne RAD
+  - $\sin^{-1}$ vrne kot, ni $\dfrac{1}{\sin}$
+- Reševanje trikotnika
+  - $a = c \cdot \sin \alpha$, ne $\dfrac{c}{\sin \alpha}$
+  - senca: $s = \dfrac{1{,}75\,\mathrm{m}}{\tan 25^\circ} \approx 3{,}75\,\mathrm{m}$
