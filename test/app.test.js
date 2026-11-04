@@ -260,3 +260,17 @@ test("adaptive difficulty: practice results raise the suggested level for a path
   store.db.prepare("INSERT INTO topic_state (student_id, topic_id, status) VALUES (?, 'T2', 'mastered')").run(s.id);
   assert.equal(studentResults(store, s.id, "T2").tier, "višja");
 });
+
+test("/favicon.ico sends the logo icon (no 404)", async () => {
+  const app = createApp(openDb(":memory:"), { streamFn: fakeStream([], []) });
+  const server = app.listen(0);
+  try {
+    const res = await fetch(`http://127.0.0.1:${server.address().port}/favicon.ico`);
+    assert.equal(res.status, 200);
+    assert.match(res.headers.get("content-type"), /image\/(x-icon|vnd\.microsoft\.icon)/);
+    const buf = Buffer.from(await res.arrayBuffer());
+    assert.equal(buf.readUInt16LE(2), 1, "ICO");
+  } finally {
+    server.close();
+  }
+});

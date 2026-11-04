@@ -31,7 +31,8 @@ function loginPage({ next = "/", error = "" } = {}) {
 <title>Evklid – prijava</title>
 <meta name="theme-color" content="#2563eb">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/icons/icon-192.png?v=kristal">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=kristal">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Evklid">
