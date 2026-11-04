@@ -369,7 +369,7 @@ html.lite[data-era] .view::before { display: none; }
 /* Žetoni (XP, niz dni, stanje pogovora) v odtenku poudarka. */
 /* Kartica Današnji trening: neobvezen tanek okvir v barvi obdobja (ERAS[…].light/dark.hero[2], Egipt zlato). */
 :root[data-era] .hero { outline: 1.5px solid var(--hero-line, transparent); outline-offset: -7px; }
-@media (forced-colors: active) { :root[data-era] .hero { outline-color: transparent; } }
+@media (forced-colors: active) { :root[data-era] .hero { outline: none; } }
 :root[data-era] .stat { background: var(--accent-soft); }
 :root[data-era] .chip { background: var(--accent-soft); color: var(--accent); }
 /* Iskalnik v spustnem seznamu: privzeto belo polje bi na temnem meniju dobilo svetlo besedilo menija. */
@@ -503,7 +503,7 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-ent svg { width: 100%; height: 100%; }
   :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-ent::after {
     content: ""; position: absolute; inset-inline: 3px; top: 7.5px; height: 8px; background: var(--t-line);
-    -webkit-mask: var(--band) repeat-x center / 8px 8px; mask: var(--band) repeat-x center / 8px 8px;
+    -webkit-mask: var(--band) repeat-x center / auto 8px; mask: var(--band) repeat-x center / auto 8px;
   }
   :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col { grid-row: 3 / 6; display: flex; flex-direction: column; align-items: center; min-height: 0; }
   :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col .t-shaft { flex: 1; width: 22px; min-height: 40px; }

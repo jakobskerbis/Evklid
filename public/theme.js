@@ -110,9 +110,9 @@
     // snopi trstja) nad pasom pisanih pravokotnikov: svetlo črne obrobe (poslikava), temno zlate (vložki v nakitu).
     // Brez verskih simbolov (ne oko, ankh, skarabej, sončni disk, krilati disk, božanstva) in brez hieroglifov.
     egipt: {
-      light: { bg: "#f4ead3", surface: "#fffaf0", menu: "#e6cb8e", menuAccent: "#1b3f86", text: "#24190d", accent: "#1d4796", band: "#a2401f", bar: "#f7ecd3", banner: "#f2ddac", paper: "#f4e4bf", wood: "#8c5a26",
+      light: { bg: "#f4ead3", surface: "#fffaf0", menu: "#e6cb8e", menuAccent: "#1b3f86", text: "#24190d", accent: "#1d4796", band: "#a2401f", bar: "#f7ecd3", banner: "#f2ddac", paper: "#f4e4bf", wood: "#8c5a26", soft: "#dfe6f4", menuSoft: "#f0dfb5",
         hero: ["#183a82", "#1d5bb4", "#e2b65a"], frieze: { K: "#2a1d10", B: "#2351a8", R: "#b5452a", G: "#2c8a6e", Y: "#dcaa3e" } },
-      dark: { bg: "#0c1430", surface: "#141f42", menu: "#13285a", menuAccent: "#ecc25f", text: "#f4ecd9", accent: "#e6b955", band: "#d6a64a", bar: "#101a39", banner: "#1c2852", paper: "#18244a", wood: "#b88a45",
+      dark: { bg: "#0c1430", surface: "#141f42", menu: "#13285a", menuAccent: "#ecc25f", text: "#f4ecd9", accent: "#e6b955", band: "#d6a64a", bar: "#101a39", banner: "#1c2852", paper: "#18244a", wood: "#b88a45", soft: "#3a3320", menuSoft: "#3a3320",
         hero: ["#1b3a86", "#2154b0", "#e8c063"], frieze: { K: "#e2b65a", B: "#3466c8", R: "#c55a3c", G: "#38ae9a", Y: "#e2b65a" } },
       font: ["El Messiri Variable", "el-messiri"], hero: 10, band: ["kheker", 36, 16], edge: 1, glyph: "ikona",
       motifs: ["piramide", "papirus", "ladja", "lotos", "paleta", "gos", "vrv", "steber"],
@@ -313,7 +313,7 @@
       "--accent": accent,
       "--accent-2": mix(accent, surface, 0.2),
       "--accent-grad": hsl(ah + 28, as, toHsl(accent)[2]),
-      "--accent-soft": softOf(surface, accent, dark ? 0.22 : 0.13, era && text),
+      "--accent-soft": (era && !s.accent && hexToRgb(base.soft)) ? base.soft : softOf(surface, accent, dark ? 0.22 : 0.13, era && text),
       "--accent-text": accentText,
       "--hero-a": heroA,
       "--hero-b": heroB,
@@ -356,7 +356,8 @@
       const mOn = [menu, ...menuMotif];
       const mWish = era && base.menuAccent && !s.accent && !hexToRgb(pal.menu) ? base.menuAccent : accent;
       const mAccent = fit(mWish, mOn, MIN.accent);
-      const mSoft = softOf(menu, mAccent, lum(menu) < 0.18 ? 0.24 : 0.14, era && mText);
+      // Neobvezna lastna podlaga izbranega (ERAS[…].light/dark.soft, menuSoft), kadar mešanica poudarka in podlage posivi (Egipt).
+      const mSoft = era && !s.accent && !hexToRgb(pal.menu) && hexToRgb(base.menuSoft) ? base.menuSoft : softOf(menu, mAccent, lum(menu) < 0.18 ? 0.24 : 0.14, era && mText);
       Object.assign(vars, {
         "--menu": menu,
         "--menu-text": mText,
