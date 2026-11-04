@@ -607,3 +607,50 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 [dir="rtl"] .sc-h-row { align-items: flex-start; }
 [dir="rtl"] .sc-acts, [dir="rtl"] .sc-err { justify-content: flex-start; }
 [dir="rtl"] .sc-const { text-align: right; }
+
+/* ---------- interaktivne skice v karticah formul (public/skice/) ---------- */
+/* Temen okvir v obeh temah; barve količin so enake v skici, čipu in drsniku. */
+.fm-item.has-skica { grid-template-columns: minmax(0, 1fr); }
+.fm-skica { min-height: 120px; }
+.sk { --sk-bg: #10131f; --sk-line: rgb(255 255 255 / 0.16); --sk-glavna: #f4f5fb; --sk-ploskev: #8f8cff; --sk-izbor: #f5c542; --sk-druga: #4fd18b; --sk-napaka: #ff6b6b; --sk-pt: #4f8cff;
+  display: grid; gap: 10px; margin: 6px 0 4px; }
+.sk-frame { background: var(--sk-bg); border: 1px solid var(--sk-line); border-radius: 14px; padding: 6px; }
+.sk-svg { display: block; width: 100%; max-width: 520px; height: auto; margin: 0 auto; touch-action: none; user-select: none; }
+.sk-svg line, .sk-svg path, .sk-svg polygon { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+.sk-svg .sk-thin { stroke-width: 1.4; }
+.sk-svg .sk-dash { stroke-dasharray: 4 5; }
+.sk-svg .sk-faint { opacity: 0.35; }
+.sk-s-glavna { stroke: var(--sk-glavna); }
+.sk-s-ploskev { stroke: var(--sk-ploskev); }
+.sk-s-izbor { stroke: var(--sk-izbor); }
+.sk-s-druga { stroke: var(--sk-druga); }
+.sk-s-napaka { stroke: var(--sk-napaka); }
+.sk-svg .sk-f-ploskev { fill: color-mix(in srgb, var(--sk-ploskev) 22%, transparent); stroke: none; }
+.sk-t { font: 600 14px/1 var(--font, system-ui), sans-serif; fill: var(--sk-glavna); font-style: italic; }
+.sk-t-ploskev { fill: var(--sk-ploskev); }
+.sk-t-izbor { fill: var(--sk-izbor); }
+.sk-t-druga { fill: var(--sk-druga); }
+.sk-t-napaka { fill: var(--sk-napaka); }
+.sk-pt { cursor: grab; outline: none; }
+.sk-pt:active { cursor: grabbing; }
+.sk-pt .sk-hit { fill: transparent; }
+.sk-pt .sk-ring { fill: color-mix(in srgb, var(--sk-pt) 28%, transparent); stroke: none; }
+.sk-pt .sk-core { fill: var(--sk-pt); stroke: #fff; stroke-width: 2; }
+.sk-pt:focus-visible .sk-ring { stroke: #fff; stroke-width: 2; }
+.sk-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.sk-chip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: 0.92rem; }
+.sk-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--sk-c); flex: none; }
+.sk-val { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; }
+.sk-glavna { --sk-c: #8a8fa8; }
+.sk-ploskev { --sk-c: var(--sk-ploskev); }
+.sk-izbor { --sk-c: var(--sk-izbor); }
+.sk-druga { --sk-c: var(--sk-druga); }
+.sk-napaka { --sk-c: var(--sk-napaka); }
+.sk-ctl { display: grid; gap: 8px; }
+.sk-ctl .demo-slider { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; }
+.sk-ctl .demo-slider-label { font-weight: 700; }
+.sk-ctl .demo-slider-label::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--sk-c); margin-inline-end: 6px; }
+.sk-ctl input[type="range"] { accent-color: var(--sk-c); min-height: 40px;
+  background: linear-gradient(to right, var(--sk-c) var(--sk-p, 0%), transparent var(--sk-p, 0%)) center / 100% 4px no-repeat; }
+.sk-ctl output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; min-width: 4.5ch; text-align: end; }
+.sk-hint { margin: 0; color: var(--muted); font-size: 0.9rem; }
