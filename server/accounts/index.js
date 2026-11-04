@@ -1438,13 +1438,13 @@ export function mountAccounts(app, store, opts = {}) {
     ageOf: ageOfStudent,
   });
   gifts = mountGifts(app, { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, recordConsent: billing.recordConsent, paidActive });
-  podari = mountPodari(app, { db, stripe, json, log, ensureCustomer, baseUrl, isMinor, recordConsent: billing.recordConsent });
+  podari = mountPodari(app, { db, stripe, json, log, ensureCustomer, baseUrl, isMinor });
   // Garancija: ob vračilu se naročnina takoj prekliče (profili preidejo na brezplačni paket).
   async function cancelSubscription(p) {
     const sub = await stripe.request("DELETE", `/subscriptions/${p.sub_id}`);
     await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } });
   }
-  guarantee = mountGuarantee(app, { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, cancelSubscription });
+  guarantee = mountGuarantee(app, { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, cancelSubscription, addonOf: podari.addonOf });
 
   // Naročnina iz dogodka: sveže stanje iz Stripa (dogodki lahko pridejo v napačnem vrstnem redu).
   async function freshSubscription(obj) {
@@ -1500,8 +1500,9 @@ export function mountAccounts(app, store, opts = {}) {
       }
       case "invoice.paid": {
         const p = parentFor();
-        if (p && obj.amount_paid > 0) await maybeRewardReferral(p.id);
         podari.invoicePaid(obj); // dodatek »Podari Evklid« pri prvem plačilu naročnine
+        // Nagrada za priporočilo šele ob plačilu naročnine (sam dodatek ob začetku preizkusa ne šteje).
+        if (p && obj.amount_paid - podari.addonOf(obj).amount > 0) await maybeRewardReferral(p.id);
         break;
       }
       case "invoice.payment_failed": {
@@ -1516,7 +1517,7 @@ export function mountAccounts(app, store, opts = {}) {
         // Vračilo dokupa: kredit se odvzame (porabljeni del ostane porabljen).
         if (obj.amount_refunded > 0 && credits.refund(obj.payment_intent)) break;
         // »Podari«: samostojen nakup se konča tu; dodatek je na plačilu naročnine, zato obdelava teče naprej.
-        if (obj.amount_refunded > 0 && podari.end(obj.payment_intent, "refunded") === "month") break;
+        if (obj.amount_refunded > 0 && podari.end(obj.payment_intent, "refunded", obj) === "month") break;
         const pass = billing.passes.byPayment(obj.payment_intent);
         if (pass && obj.amount_refunded > 0) billing.passes.end(pass.id, "refunded"); // tudi delno vračilo ob odstopu
         if (obj.amount_refunded > 0) gifts.end(obj.payment_intent, "refunded"); // darilna koda: tudi delno vračilo

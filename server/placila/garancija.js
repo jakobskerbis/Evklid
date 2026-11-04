@@ -51,9 +51,12 @@ export function weeksFor(start, practiceDays, now = Date.now()) {
   return out;
 }
 
-// ctx: { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, cancelSubscription }
+// ctx: { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, cancelSubscription, addonOf }
+// addonOf(invoice) → { amount, held }: dodatek »Podari Evklid« na računu (ni plačilo naročnine, server/placila/podari.js).
 export function mountGuarantee(app, ctx) {
   const { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, cancelSubscription } = ctx;
+  const addonOf = ctx.addonOf || (() => ({ amount: 0, held: 0 }));
+  const refunding = new Set(); // vračilo, ki že teče (dvojni klik ali dva skrbnika hkrati)
   migrateGuarantee(db);
 
   const practiceDays = (studentId) => (from, to) =>
@@ -64,7 +67,8 @@ export function mountGuarantee(app, ctx) {
   const rowFor = (p) => db.prepare("SELECT * FROM guarantees WHERE parent_id = ? OR email_hash = ?").get(p.id, emailHash(p.email)) || null;
 
   function stateOf(g, now = Date.now()) {
-    const start = Date.parse(g.started_at);
+    // Tedni so cele datumske enote UTC od dneva prijave, da en dan vaje ne šteje v dva tedna.
+    const start = Math.floor(Date.parse(g.started_at) / DAY) * DAY;
     const weeks = g.student_id ? weeksFor(start, practiceDays(g.student_id), now) : [];
     const practiceOk = weeks.length === GUARANTEE.weeks && weeks.every((w) => w.state === "ok");
     const missed = weeks.find((w) => w.state === "miss")?.week || (g.student_id ? null : 1);
@@ -80,7 +84,7 @@ export function mountGuarantee(app, ctx) {
     if (!p || p.is_guest || isMinor(p)) return null;
     const g = rowFor(p);
     if (!g) {
-      const stripeSub = paidActive(p) && (p.sub_provider || "stripe") === "stripe" && String(p.sub_id || "").startsWith("sub_");
+      const stripeSub = paidActive(p) && (p.sub_provider || "stripe") === "stripe" && !!p.stripe_customer_id && String(p.sub_id || "").startsWith("sub_");
       const kids = childIds(p.id).filter((id) => levelOf(id) !== "FAKS");
       return { terms: GUARANTEE, subjects: GUARANTEE_SUBJECTS, can_enroll: stripeSub && kids.length > 0, students: kids };
     }
@@ -110,17 +114,18 @@ export function mountGuarantee(app, ctx) {
     const out = [];
     let after = null;
     for (let i = 0; i < 10; i++) {
-      const page = await stripe.request("GET", "/invoices", { customer, status: "paid", limit: 100, ...(after ? { starting_after: after } : {}) });
+      const page = await stripe.request("GET", "/invoices", { customer, status: "paid", limit: 100, expand: ["data.charge"], ...(after ? { starting_after: after } : {}) });
       out.push(...(page.data || []));
       if (!page.has_more || !page.data?.length) break;
       after = page.data.at(-1).id;
     }
-    return out.filter((i) => i.amount_paid > 0).sort((a, b) => a.created - b.created);
+    // Račun samo z dodatkom »Podari« (npr. ob začetku preizkusa) ni plačilo naročnine.
+    return out.filter((i) => i.amount_paid - addonOf(i).amount > 0).sort((a, b) => a.created - b.created);
   }
 
   const grade = (v, min, max) => {
-    const n = Number(v);
-    return Number.isInteger(n) && n >= min && n <= max ? n : null;
+    // Samo število (ne true ali "2"), da napačen odjemalec ne vpiše ocene 1 po pomoti.
+    return typeof v === "number" && Number.isInteger(v) && v >= min && v <= max ? v : null;
   };
 
   app.get("/api/guarantee", (req, res) => res.json({ guarantee: viewFor(req.parent) }));
@@ -231,6 +236,16 @@ export function mountGuarantee(app, ctx) {
       return res.status(409).json({ error: "Vračila prek garancije delujejo samo v testnem načinu Stripa (do s.p.)." });
     const p = g.parent_id ? getParent(g.parent_id) : null;
     if (!p?.stripe_customer_id) return res.status(409).json({ error: "Račun nima plačil pri Stripu." });
+    if (refunding.has(g.id)) return res.status(409).json({ error: "Vračilo že teče." });
+    refunding.add(g.id);
+    try {
+      await refundAll(req, res, g, p);
+    } finally {
+      refunding.delete(g.id);
+    }
+  });
+
+  async function refundAll(req, res, g, p) {
     const done = new Set(JSON.parse(g.refunded_payments || "[]"));
     let cents = g.refunded_cents;
     try {
@@ -241,7 +256,20 @@ export function mountGuarantee(app, ctx) {
         // Samo plačila naročnine (paketi, dokup in darila imajo svoja pravila in svoje vračilo).
         if (!pi || !invSub || done.has(pi)) continue;
         if (g.first_paid_at && inv.created * 1000 < Date.parse(g.first_paid_at) - DAY) continue; // samo od prvega plačila te naročnine
-        const r = await stripe.request("POST", "/refunds", { payment_intent: pi, reason: "requested_by_customer", metadata: { kind: "guarantee", guarantee_id: String(g.id) } });
+        // Dodatek »Podari« ostane v skladu; že vrnjen del (npr. odstop) se ne vrača znova.
+        const held = addonOf(inv).held;
+        const before = typeof inv.charge === "object" && inv.charge ? Number(inv.charge.amount_refunded || 0) : 0;
+        const amount = inv.amount_paid - before - held;
+        if (amount <= 0) {
+          done.add(pi);
+          continue;
+        }
+        const r = await stripe.request("POST", "/refunds", {
+          payment_intent: pi,
+          ...(held || before ? { amount } : {}),
+          reason: "requested_by_customer",
+          metadata: { kind: "guarantee", guarantee_id: String(g.id) },
+        });
         done.add(pi);
         cents += Number(r.amount || inv.amount_paid || 0);
         db.prepare("UPDATE guarantees SET refunded_payments = ?, refunded_cents = ? WHERE id = ?").run(JSON.stringify([...done]), cents, g.id);
@@ -254,7 +282,7 @@ export function mountGuarantee(app, ctx) {
     db.prepare("UPDATE guarantees SET status = 'refunded', decided_at = datetime('now') WHERE id = ?").run(g.id);
     audit(db, { req, parentId: req.parent.id, actor: "admin", action: "guarantee_refund" });
     res.json({ guarantees: adminList() });
-  });
+  }
 
   app.post("/api/admin/guarantees/:id/reject", json, (req, res) => {
     if (!admin(req, res)) return;

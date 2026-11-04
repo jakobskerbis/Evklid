@@ -34,7 +34,7 @@ function fakeStripe() {
     if (p === "/invoices") return ok({ data: state.invoices, has_more: false });
     if (p === "/refunds") {
       const inv = state.invoices.find((i) => i.payment_intent === body.payment_intent);
-      return ok({ id: "re_" + ++n, amount: inv?.amount_paid || 0 });
+      return ok({ id: "re_" + ++n, amount: Number(body.amount) || inv?.amount_paid || 0 });
     }
     const sub = /^\/subscriptions\/(\w+)$/.exec(p);
     if (sub && init.method === "DELETE") return ok({ id: sub[1], status: "canceled", customer: "cus_x", items: { data: [] } });
@@ -118,7 +118,7 @@ test("garancija: prijava v 14 dneh, 8 tednov vaje, zahtevek in vračilo skrbnika
       assert.match(r.body.error, /14 dneh/);
       stripe.state.invoices[0].created = Math.floor((Date.now() - 3 * DAY) / 1000);
       // Napačni vnosi so 4xx.
-      for (const body of [{ student_id: 999, subject: "MAT", grade: 2, terms: true }, { student_id: kid.id, subject: "ZGO", grade: 2, terms: true }, { student_id: kid.id, subject: "MAT", grade: 5, terms: true }, { student_id: kid.id, subject: "MAT", grade: "x", terms: true }, { student_id: kid.id, subject: "MAT", grade: 2 }]) {
+      for (const body of [{ student_id: 999, subject: "MAT", grade: 2, terms: true }, { student_id: kid.id, subject: "ZGO", grade: 2, terms: true }, { student_id: kid.id, subject: "MAT", grade: 5, terms: true }, { student_id: kid.id, subject: "MAT", grade: "x", terms: true }, { student_id: kid.id, subject: "MAT", grade: true, terms: true }, { student_id: kid.id, subject: "MAT", grade: "2", terms: true }, { student_id: kid.id, subject: "MAT", grade: 2 }]) {
         r = await a("/api/guarantee/enroll", { method: "POST", body });
         assert.ok(r.status >= 400 && r.status < 500, JSON.stringify(body));
       }
@@ -265,6 +265,92 @@ test("Podari Evklid: pilotne kode z mejami, sklad iz dodatka in »Podari mesec«
       assert.equal((await adm(`/api/admin/podari/codes/${skladCode.id}/revoke`, { method: "POST", body: {} })).status, 409);
       // Navaden uporabnik do skrbniških poti ne pride.
       assert.equal((await a("/api/admin/podari")).status, 403);
+    });
+  } finally {
+    delete process.env.EVKLID_ADMIN_EMAILS;
+  }
+});
+
+test("garancija: dodatek »Podari« ni plačilo naročnine (prijava, vračilo, priporočilo), dvojni klik ne vrne dvakrat", async () => {
+  process.env.EVKLID_ADMIN_EMAILS = "skrbnik@gar2.si";
+  try {
+    await withServer(async ({ client, stripe, store, hook }) => {
+      const adm = client();
+      const admin = await registerVerified(adm, stripe, "skrbnik@gar2.si");
+      const a = client();
+      const parent = await registerVerified(a, stripe, "mama@gar2.si");
+      const kid = (await a("/api/students", { method: "POST", body: { name: "Lan", birth_year: YEAR - 12, consent: true } })).body;
+      paid(store, parent.id);
+      store.db.prepare("UPDATE parents SET referred_by = ? WHERE id = ?").run(admin.id, parent.id);
+      const fund = (pi, status = "paid") => Number(store.db.prepare("INSERT INTO podari_fund (parent_id, kind, amount, status, payment_id) VALUES (?, 'addon', 500, ?, ?)").run(parent.id, status, pi).lastInsertRowid);
+      // Dodatek ob začetku preizkusa (račun samo z dodatkom): ne potrdi nagrade za priporočilo.
+      const pending = fund(null, "pending");
+      await hook({ id: "evt_t", type: "invoice.paid", data: { object: { id: "in_t", customer: "cus_x", amount_paid: 500, payment_intent: "pi_a", billing_reason: "subscription_create", subscription: "sub_1", subscription_details: { metadata: { podari_id: String(pending), parent_id: String(parent.id) } } } } });
+      assert.equal(store.db.prepare("SELECT status FROM podari_fund WHERE id = ?").get(pending).status, "paid");
+      assert.equal(store.db.prepare("SELECT referral_rewarded FROM parents WHERE id = ?").get(parent.id).referral_rewarded, 0);
+      // Prvo plačilo naročnine je pred 3 dnevi (račun z dodatkom pred 20 dnevi ne šteje); drugo ima tudi dodatek.
+      fund("pi_2");
+      stripe.state.invoices = [
+        { id: "in_t", amount_paid: 500, created: Math.floor((Date.now() - 20 * DAY) / 1000), payment_intent: "pi_a", subscription: "sub_1" },
+        { id: "in_2", amount_paid: 1499, created: Math.floor((Date.now() - 3 * DAY) / 1000), payment_intent: "pi_2", subscription: "sub_1", charge: { id: "ch_2", amount_refunded: 0 } },
+      ];
+      let r = await a("/api/guarantee/enroll", { method: "POST", body: { student_id: kid.id, subject: "MAT", grade: 2, terms: true } });
+      assert.equal(r.status, 201, JSON.stringify(r.body));
+      store.db.prepare("UPDATE guarantees SET status = 'claimed', grade_after = 2").run();
+      // Dva klika hkrati: eno vračilo, brez dodatka (999 od 1499), račun samo z dodatkom se ne vrača.
+      const id = store.db.prepare("SELECT id FROM guarantees").get().id;
+      const both = await Promise.all([1, 2].map(() => adm(`/api/admin/guarantees/${id}/refund`, { method: "POST", body: {} })));
+      assert.deepEqual(both.map((x) => x.status).sort(), [200, 409]);
+      const refunds = stripe.calls.filter((c) => c.path === "/v1/refunds");
+      assert.equal(refunds.length, 1);
+      assert.equal(refunds[0].body.payment_intent, "pi_2");
+      assert.equal(refunds[0].body.amount, "999");
+      assert.equal(store.db.prepare("SELECT refunded_cents FROM guarantees").get().refunded_cents, 999);
+      // Delno vračilo naročnine pusti dodatek v skladu; vračilo še dodatka ga vzame.
+      await hook({ id: "evt_r1", type: "charge.refunded", data: { object: { payment_intent: "pi_2", amount: 1499, amount_refunded: 999 } } });
+      assert.equal(store.db.prepare("SELECT status FROM podari_fund WHERE payment_id = 'pi_2'").get().status, "paid");
+      await hook({ id: "evt_r2", type: "charge.refunded", data: { object: { payment_intent: "pi_2", amount: 1499, amount_refunded: 1499 } } });
+      assert.equal(store.db.prepare("SELECT status FROM podari_fund WHERE payment_id = 'pi_2'").get().status, "refunded");
+    });
+  } finally {
+    delete process.env.EVKLID_ADMIN_EMAILS;
+  }
+});
+
+test("garancija: dan vaje (datum UTC) šteje samo v en teden", async () => {
+  await withServer(async ({ client, stripe, store }) => {
+    const a = client();
+    const parent = await registerVerified(a, stripe, "oce@gar3.si");
+    const kid = (await a("/api/students", { method: "POST", body: { name: "Ana", birth_year: YEAR - 12, consent: true } })).body;
+    paid(store, parent.id);
+    stripe.state.invoices = [{ id: "in_1", amount_paid: 999, created: Math.floor(Date.now() / 1000), payment_intent: "pi_1", subscription: "sub_1" }];
+    assert.equal((await a("/api/guarantee/enroll", { method: "POST", body: { student_id: kid.id, subject: "MAT", grade: 3, terms: true } })).status, 201);
+    // Prijava ob 12.00 UTC; vaja 7. dan ob 10.00 in 14.00 UTC je en datum in šteje samo v 2. teden.
+    const day0 = Math.floor((Date.now() - 20 * DAY) / DAY) * DAY;
+    store.db.prepare("UPDATE guarantees SET started_at = ?").run(new Date(day0 + 12 * 3600000).toISOString());
+    const ins = store.db.prepare("INSERT INTO xp_events (student_id, amount, reason, created_at) VALUES (?, 10, 'vaja', ?)");
+    for (const h of [10, 14]) ins.run(kid.id, sql(day0 + 7 * DAY + h * 3600000));
+    const g = (await a("/api/guarantee")).body.guarantee;
+    assert.deepEqual(g.weeks.slice(0, 2).map((w) => w.days), [0, 1]);
+  });
+});
+
+test("Podari Evklid: meja na šolo velja tudi za razstavljene črke in nevidne znake; soglasje brez besedila o odstopu", async () => {
+  process.env.EVKLID_ADMIN_EMAILS = "skrbnik@pod2.si";
+  try {
+    await withServer(async ({ client, stripe, store }) => {
+      const adm = client();
+      await registerVerified(adm, stripe, "skrbnik@pod2.si");
+      assert.equal((await adm("/api/admin/podari/codes", { method: "POST", body: { school: "OŠ Prule", count: 3, source: "pilot" } })).status, 201);
+      for (const school of ["OS\u030C Prule", "OŠ\u200B Prule", "  oš   prule "]) {
+        assert.equal((await adm("/api/admin/podari/codes", { method: "POST", body: { school, count: 1, source: "pilot" } })).status, 409, JSON.stringify(school));
+      }
+      const a = client();
+      const parent = await registerVerified(a, stripe, "kupec@pod2.si");
+      assert.equal((await a("/api/billing/podari", { method: "POST", body: { adult: true, understand: true } })).status, 200);
+      const rows = store.db.prepare("SELECT text FROM billing_consents WHERE parent_id = ?").all(parent.id);
+      assert.equal(rows.length, 1);
+      assert.ok(!/odstop/i.test(rows[0].text), rows[0].text);
     });
   } finally {
     delete process.env.EVKLID_ADMIN_EMAILS;

@@ -14,7 +14,8 @@ export const PODARI_ADDONS = [200, 500, 1000];
 export const PODARI_DAYS = 90; // 3 mesece
 export const PODARI_MONTHS = 3;
 export const PODARI_TEXT =
-  "Razumem, da to ni donacija dobrodelni organizaciji: kupujem darilo (mesece naročnine Evklid) za otroka, ki ga izbere šola. Davčne olajšave ni.";
+  "Razumem, da to ni donacija dobrodelni organizaciji in da davčne olajšave ni."; // enako kot potrditev pod.notDonation
+export const PODARI_ADULT = "Sem polnoletna oseba.";
 const num = (k, d) => {
   const v = Number(process.env[k]);
   return Number.isInteger(v) && v >= 0 && process.env[k] !== "" && process.env[k] !== undefined ? v : d;
@@ -44,9 +45,9 @@ export function migratePodari(db) {
   if (!cols.includes("school")) db.exec("ALTER TABLE gifts ADD COLUMN school TEXT");
 }
 
-// ctx: { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, recordConsent }
+// ctx: { db, stripe, json, log, ensureCustomer, baseUrl, isMinor }
 export function mountPodari(app, ctx) {
-  const { db, stripe, json, log, ensureCustomer, baseUrl, isMinor, recordConsent } = ctx;
+  const { db, stripe, json, log, ensureCustomer, baseUrl, isMinor } = ctx;
   migratePodari(db);
 
   const paidSum = () => db.prepare("SELECT COALESCE(SUM(amount), 0) AS c FROM podari_fund WHERE status = 'paid'").get().c;
@@ -94,6 +95,18 @@ export function mountPodari(app, ctx) {
     return db.prepare("UPDATE podari_fund SET status = 'paid', payment_id = ?, paid_at = datetime('now') WHERE id = ? AND status = 'pending'").run(pi, id).changes > 0;
   }
 
+  // Dodatek na računu naročnine: amount = znesek dodatka na tem računu, held = koliko ga je še v skladu
+  // (za garancijo in nagrado za priporočilo: dodatek ni plačilo naročnine).
+  function addonOf(inv) {
+    const pi = typeof inv?.payment_intent === "string" ? inv.payment_intent : inv?.payment_intent?.id;
+    const row = pi && db.prepare("SELECT amount, status FROM podari_fund WHERE payment_id = ? AND kind = 'addon'").get(pi);
+    if (row) return { amount: row.amount, held: row.status === "paid" ? row.amount : 0 };
+    // invoice.paid še ni obdelan: dodatek je na prvem računu naročnine.
+    const id = Number(inv?.subscription_details?.metadata?.podari_id);
+    const pending = id && inv.billing_reason === "subscription_create" && db.prepare("SELECT amount FROM podari_fund WHERE id = ? AND kind = 'addon' AND status = 'pending'").get(id);
+    return pending ? { amount: pending.amount, held: pending.amount } : { amount: 0, held: 0 };
+  }
+
   // Samostojen nakup »Podari mesec« je plačan (Checkout Session v načinu payment).
   function complete(session) {
     if (session?.metadata?.kind !== "podari" || session.payment_status !== "paid") return false;
@@ -105,9 +118,12 @@ export function mountPodari(app, ctx) {
 
   // Vračilo ali spor: znesek gre iz sklada (kode, ki so že izdane, ostanejo). Vrne vrsto vnosa ali null,
   // da webhook ve, ali je plačilo samo »Podari« (month) ali tudi naročnina (addon na istem plačilu).
-  function end(paymentId, status) {
+  // charge (pri vračilu): dodatek se konča šele, ko od plačila ostane manj kot dodatek (delno vračilo naročnine,
+  // npr. garancija ali odstop, dodatka ne vzame iz sklada).
+  function end(paymentId, status, charge = null) {
     const row = paymentId && db.prepare("SELECT * FROM podari_fund WHERE payment_id = ?").get(paymentId);
     if (!row) return null;
+    if (row.kind === "addon" && charge && Number(charge.amount) - Number(charge.amount_refunded || 0) >= row.amount) return row.kind;
     db.prepare("UPDATE podari_fund SET status = ? WHERE id = ? AND status = 'paid'").run(status, row.id);
     return row.kind;
   }
@@ -128,7 +144,8 @@ export function mountPodari(app, ctx) {
       const customer = await ensureCustomer(p);
       const id = Number(db.prepare("INSERT INTO podari_fund (parent_id, kind, amount) VALUES (?, 'month', ?)").run(p.id, amount).lastInsertRowid);
       const lang = /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(String(req.body?.lang || "")) ? req.body.lang : "sl";
-      db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, 'podari', ?)").run(p.id, p.email, `${PODARI_TEXT}\n[jezik: ${lang}]`);
+      // Shrani se samo to, kar je kupec potrdil (polnoletnost in »ni donacija«), ne besedilo o odstopu pri naročnini.
+      db.prepare("INSERT INTO billing_consents (parent_id, payer_email, kind, text) VALUES (?, ?, 'podari', ?)").run(p.id, p.email, `${PODARI_ADULT}\n${PODARI_TEXT}\n[jezik: ${lang}]`);
       const meta = { kind: "podari", fund_id: id, parent_id: p.id };
       const base = baseUrl(req);
       const session = await stripe.request("POST", "/checkout/sessions", {
@@ -143,7 +160,6 @@ export function mountPodari(app, ctx) {
         payment_intent_data: { metadata: meta },
       });
       db.prepare("UPDATE podari_fund SET checkout_id = ? WHERE id = ?").run(session.id, id);
-      recordConsent?.(p.id, p.email, "podari", req.body?.lang);
       res.json({ url: session.url });
     } catch (err) {
       log.error?.("[evklid] Stripe podari:", err.message);
@@ -190,7 +206,8 @@ export function mountPodari(app, ctx) {
 
   app.post("/api/admin/podari/codes", json, (req, res) => {
     if (!admin(req, res)) return;
-    const school = String(req.body?.school || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    // NFKC in brez nevidnih znakov, da »OŠ« (Š kot S + strešica) ali ničelni presledek ne obide meje na šolo.
+    const school = String(req.body?.school || "").normalize("NFKC").replace(/[\u200B-\u200D\u2060\uFEFF\u00AD]/g, "").replace(/\s+/g, " ").trim().slice(0, 80);
     if (school.length < 2) return res.status(400).json({ error: "Vpiši ime šole." });
     const count = Number(req.body?.count);
     if (!Number.isInteger(count) || count < 1 || count > 10) return res.status(400).json({ error: "Število kod mora biti od 1 do 10." });
@@ -203,7 +220,7 @@ export function mountPodari(app, ctx) {
       if (source === "pilot") {
         // Ime šole brez ozira na velike črke (SQLite lower() ne pozna Š, Č, Ž).
         const key = school.toLocaleLowerCase("sl");
-        const atSchool = db.prepare("SELECT school FROM gifts WHERE source = 'pilot' AND status = 'paid'").all().filter((g) => String(g.school || "").toLocaleLowerCase("sl") === key).length;
+        const atSchool = db.prepare("SELECT school FROM gifts WHERE source = 'pilot' AND status = 'paid'").all().filter((g) => String(g.school || "").normalize("NFKC").toLocaleLowerCase("sl") === key).length;
         if (atSchool + count > pilotPerSchool()) return { error: `Ta šola ima že ${atSchool} pilotnih kod (največ ${pilotPerSchool()}).` };
         const thisMonth = db.prepare("SELECT COUNT(*) AS n FROM gifts WHERE source = 'pilot' AND created_at >= date('now', 'start of month')").get().n;
         if (thisMonth + count > pilotPerMonth()) return { error: `Ta mesec je ostalo še ${Math.max(0, pilotPerMonth() - thisMonth)} pilotnih kod.` };
@@ -245,5 +262,5 @@ export function mountPodari(app, ctx) {
     res.json(adminView());
   });
 
-  return { stats, addonFor, invoicePaid, complete, end };
+  return { stats, addonFor, addonOf, invoicePaid, complete, end };
 }

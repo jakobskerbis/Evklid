@@ -27,14 +27,14 @@ export const podariAddon = (acc) =>
 function weekList(g) {
   return `<ol class="gar-weeks" aria-label="${esc(t("gar.weeksLabel"))}">${g.weeks
     .map((w) => {
-      const label = t("gar.weekState", { week: w.week, days: Math.min(w.days, 7), min: g.terms.minDays });
+      const label = t("gar.weekState", { week: w.week, days: Math.min(w.days, g.terms.minDays), min: g.terms.minDays });
       const mark = w.state === "ok" ? icon("check") : w.state === "miss" ? icon("x") : `${Math.min(w.days, g.terms.minDays)}/${g.terms.minDays}`;
       return `<li class="gar-week ${w.state}" title="${esc(label)}"><span class="sr-only">${esc(label)}</span><span aria-hidden="true">${mark}</span></li>`;
     })
     .join("")}</ol>`;
 }
 
-const gradeOptions = (max) => Array.from({ length: max }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join("");
+const gradeOptions = (max) => `<option value="" selected>–</option>` + Array.from({ length: max }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join("");
 
 export function guaranteeBox(acc) {
   const g = acc.guarantee;
@@ -59,8 +59,9 @@ export function guaranteeBox(acc) {
   const who = `<p class="muted">${esc(t("gar.who", { name, subject: SUBJ(g.subject), grade: g.grade_before }))}</p>`;
   let body = "";
   if (g.phase === "practice") {
-    const now = g.weeks.find((w) => w.state === "now") || g.weeks.find((w) => w.state === "future");
-    body = `${weekList(g)}<p>${esc(t("gar.practice", { week: now?.week || g.terms.weeks, weeks: g.terms.weeks, days: Math.min(now?.days || 0, 7), min: g.terms.minDays }))}</p>
+    // Tekoči teden = zadnji, ki se je že začel (lahko je že »ok«, če so 3 dnevi že zbrani).
+    const now = g.weeks.filter((w) => w.state !== "future").at(-1) || g.weeks[0];
+    body = `${weekList(g)}<p>${esc(t("gar.practice", { week: now?.week || g.terms.weeks, weeks: g.terms.weeks, days: Math.min(now?.days || 0, g.terms.minDays), min: g.terms.minDays }))}</p>
       <p class="muted">${esc(t("gar.claimFrom", { date: fmtDate(g.claim_opens) }))}</p>`;
   } else if (g.phase === "claim") {
     body = `${weekList(g)}<p>${esc(t("gar.claimOpen", { date: fmtDate(g.claim_until) }))}</p>

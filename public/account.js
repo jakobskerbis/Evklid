@@ -1308,6 +1308,12 @@ export async function renderAccount() {
     const first = f.querySelector(`.plan-row[data-who="${e.target.value}"] input[name=plan]`);
     if (first) first.checked = true;
     $("#plan-rest", f).hidden = false;
+    // Dodatek »Podari Evklid« ni na voljo pri šolski ceni (strežnik ga tam ne doda).
+    const addon = f.querySelector(".podari-addon");
+    if (addon) {
+      addon.hidden = e.target.value === "s";
+      if (addon.hidden) f.querySelector('input[name=podari][value="0"]').checked = true;
+    }
   });
   $("#plan-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
