@@ -9,13 +9,6 @@ Znanih organskih spojin je več deset milijonov in vsak dan jih nastane še na t
 
 Imena srečaš v laboratorijskih navodilih, na varnostnih listih, na deklaracijah zdravil in živil ter v vsaki strokovni literaturi. Kdor zna brati ime, iz njega razbere tudi lastnosti: končnica *-ol* pove, da je spojina alkohol in tvori vodikove vezi, končnica *-ojska kislina*, da je spojina kislina.
 
-V tej lekciji se naučimo:
-
-- poimenovati alkane, alkene in alkine z razvejanimi verigami,
-- prepoznati **glavno karakteristično skupino** in jo izraziti s **končnico**, druge skupine pa s **predponami**,
-- pravilno **oštevilčiti** verigo in sestaviti ime v pravem vrstnem redu,
-- iz imena narisati strukturo.
-
 ## Razlaga
 
 **1. Sestava sistematičnega imena.** Ime v substitucijski nomenklaturi ima tri dele:
@@ -23,6 +16,8 @@ V tej lekciji se naučimo:
 $$\underbrace{\text{predpone}}_{\text{substituenti}}\ +\ \underbrace{\text{osnova}}_{\text{glavna veriga}}\ +\ \underbrace{\text{končnica}}_{\text{glavna skupina}}$$
 
 Primer: *4-hidroksi-4-metilpentan-2-on*: predponi *4-hidroksi* in *4-metil*, osnova *pentan* (pet ogljikovih atomov, same enojne vezi), končnica *-2-on* (keton na drugem ogljiku).
+
+**Pojmi.** **Glavna veriga** je veriga ogljikovih atomov, ki da osnovo imena. **Substituent** je atom ali skupina, ki v osnovnem hidridu nadomesti vodik. **Karakteristična skupina** je skupina s heteroatomom ($-\mathrm{OH}$, $\mathrm{C{=}O}$, $-\mathrm{COOH}$ …); **glavna karakteristična skupina** je tista z najvišjo prednostjo in jo izrazimo s končnico. **Lokant** je številka atoma glavne verige, na katerem je substituent, skupina ali začetek večkratne vezi.
 
 **2. Osnove imen.** Število ogljikovih atomov v glavni verigi povedo korenine:
 
@@ -43,10 +38,16 @@ Obroč označimo s predpono **ciklo-**: ciklopropan, cikloheksan, cikloheksen. B
 **4. Pravila za alkane.**
 
 1. Poiščemo **najdaljšo verigo** ogljikovih atomov (ni nujno narisana v ravni vrsti). Če je več enako dolgih, izberemo tisto z **več substituenti**.
-2. Verigo **oštevilčimo** z enega konca tako, da dobijo substituenti **čim nižje lokante**. Lokante primerjamo člen za členom; odloči prva razlika: $\{2, 4\}$ je nižje od $\{3, 5\}$, $\{2, 3, 6\}$ nižje od $\{2, 4, 5\}$.
+2. Verigo **oštevilčimo** z enega konca tako, da dobijo substituenti **čim nižje lokante**. Lokante primerjamo člen za členom; odloči prva razlika: $\{2, 4\}$ je nižje od $\{3, 5\}$, $\{2, 3, 6\}$ nižje od $\{2, 4, 5\}$. Natančno: naraščajoče urejen niz $\{a_1, \ldots, a_k\}$ je nižji od $\{b_1, \ldots, b_k\}$, če je na prvem mestu $i$, kjer se niza razlikujeta, $a_i < b_i$ (vsota lokantov ne odloča).
 3. Substituente navedemo po **abecednem vrstnem redu**, vsakega s svojim lokantom. Enake substituente združimo z množilnimi predponami *di-*, *tri-*, *tetra-*, ki pri abecednem razvrščanju ne štejejo: *3-etil-2,2-dimetilpentan* (e pred m).
 4. Lokante ločimo z vejicami, številke od črk pa z vezajem; ime pišemo skupaj: *2,3-dimetilbutan*.
 5. Če sta oštevilčenji enakovredni, dobi nižji lokant substituent, ki je prvi po abecedi.
+
+:::premisli
+Zakaj je ime *2,4,4-trimetilpentan* napačno?
+---
+Z drugega konca dobimo $\{2, 2, 4\}$, ki je na drugem mestu nižje od $\{2, 4, 4\}$. Pravilno: *2,2,4-trimetilpentan*.
+:::
 
 **5. Karakteristične skupine in prednost.** Kadar spojina vsebuje skupine s kisikom, dušikom ali halogeni, izberemo eno **glavno skupino**, ki jo izrazimo s končnico. Vse druge zapišemo kot predpone. Vrstni red prednosti (od najvišje):
 
@@ -66,11 +67,26 @@ Halogeni, nitro skupina in etri (*alkoksi-*) so vedno le predpone; *metoksimetan
 **6. Splošni postopek.**
 
 1. Določi **glavno skupino** (najvišja v tabeli).
-2. Izberi **glavno verigo**: vsebovati mora glavno skupino (oziroma čim več takih skupin) in biti čim daljša.
+2. Izberi **glavno verigo**. Pri acikličnih spojinah si merila (IUPAC 2013) sledijo po vrsti, naslednje uporabimo le, če prejšnje ne odloči: (a) največ glavnih karakterističnih skupin, (b) največja dolžina, (c) največ večkratnih vezi, (d) največ substituentov.
 3. **Oštevilči** verigo, tako da dobijo čim nižje lokante po vrsti: (a) glavna skupina, (b) večkratne vezi (najprej skupaj, pri izenačenju dvojna vez pred trojno), (c) vse predpone skupaj, (d) predpona, ki je prva po abecedi.
 4. **Sestavi ime:** predpone po abecedi, osnova z lokanti večkratnih vezi, končnica z lokantom. Lokant pišemo neposredno pred del imena, na katerega se nanaša: *propan-2-ol*, *but-3-en-2-ol*, *pent-4-enojska kislina*, *heksan-2,4-dion*.
 
 Pri spojinah z dvojnimi vezmi pride v poštev še **stereodeskriptor** *(E)* ali *(Z)* (oziroma starejši *cis*/*trans*), pri kiralnih središčih pa *(R)* ali *(S)*. Pišemo ju na začetek imena: *(E)-but-2-en*.
+
+:::premisli
+Spojino $\mathrm{CH_3{-}CH{=}CH{-}CH(OH){-}CH_3}$ lahko oštevilčiš z leve ali z desne: enkrat dobi nižji lokant dvojna vez, drugič skupina OH. Je pravilno *pent-2-en-4-ol* ali *pent-3-en-2-ol*?
+---
+Najnižji lokant dobi najprej glavna skupina ($\mathrm{{-}OH}$), šele nato dvojna vez.
+:::
+
+**7. Splošna formula in stopnja nenasičenosti.** Iz imena izračunamo formulo, iz formule pa preverimo ime.
+
+**Trditev.** Če je ogljikovodik nasičen in acikličen ter ima $n$ ogljikovih atomov, potem ima $2n + 2$ vodikovih atomov: $\mathrm{C}_n\mathrm{H}_{2n+2}$.
+
+**Dokaz.** Ogljikovi atomi brez obročev tvorijo drevo, zato je med njimi natanko $n - 1$ vezi C–C. Vsak ogljik ima $4$ vezi, skupaj $4n$ mest; vezi C–C zasedejo $2(n - 1)$ mest, za vodik ostane $4n - 2(n - 1) = 2n + 2$ mest.
+
+Vsak obroč ali vez $\pi$ zmanjša število vodikov za $2$. Halogen nadomesti vodik (štejemo ga kot H), kisik se vrine v vez in števila vodikov ne spremeni, dušik s tremi vezmi prinese en vodik več. Za spojino s $c$ atomi C, $h$ atomi H, $x$ halogeni in $d$ atomi N je zato **stopnja nenasičenosti** (število obročev + vezi $\pi$)
+$$U = \dfrac{2c + 2 + d - h - x}{2}.$$
 
 ## Rešeni primeri
 
@@ -117,24 +133,25 @@ Najdaljša veriga (pri izenačenju tista z več substituenti), najnižji niz lok
 
 ### Primer 3 (težji)
 
-Poimenuj spojino $\mathrm{CH_2{=}CH{-}CH(OH){-}CH_2{-}COOH}$ in zapiši njeno molekulsko formulo.
+Poimenuj spojino $\mathrm{CH_2{=}CH{-}CH(OH){-}CH(CH_2CH_2CH_3){-}COOH}$, zapiši njeno molekulsko formulo in jo preveri s stopnjo nenasičenosti.
 
-**Podatki:** zgradba $\mathrm{CH_2{=}CH{-}CH(OH){-}CH_2{-}COOH}$: karboksilna skupina, hidroksilna skupina in dvojna vez $\mathrm{C{=}C}$
-**Iščemo:** sistematično ime in molekulsko formulo
+**Podatki:** zgradba $\mathrm{CH_2{=}CH{-}CH(OH){-}CH(CH_2CH_2CH_3){-}COOH}$: karboksilna skupina, hidroksilna skupina, dvojna vez $\mathrm{C{=}C}$ in propilna veja na ogljiku ob skupini $\mathrm{{-}COOH}$
+**Iščemo:** sistematično ime, molekulsko formulo, stopnjo nenasičenosti
 
 :::formula
-Prednost: karboksilna kislina $>$ alkohol. Ogljik skupine $\mathrm{{-}COOH}$ je C1. Ime: predpone + osnova z lokantom vezi + *-ojska kislina*.
+Prednost: karboksilna kislina $>$ alkohol. Glavna veriga: glavna skupina, nato dolžina, nato večkratne vezi. Ogljik skupine $\mathrm{{-}COOH}$ je C1. $U = \dfrac{2c + 2 - h}{2}$ (brez N in halogenov).
 :::
 
 **Rešitev:**
 
 1. Najvišjo prednost ima karboksilna skupina, zato je spojina **kislina** s končnico *-ojska kislina*. Skupina $\mathrm{{-}OH}$ postane predpona *hidroksi-*.
-2. Glavna veriga vsebuje ogljik skupine $\mathrm{{-}COOH}$ in ima $5$ atomov C: osnova *pent-*.
-3. Oštevilčimo od $\mathrm{{-}COOH}$: C1 je $\mathrm{COOH}$, C2 je $\mathrm{CH_2}$, C3 je $\mathrm{CH(OH)}$, C4 in C5 sta povezana z dvojno vezjo.
-4. Dvojna vez se začne pri C4: *pent-4-en*; hidroksi skupina je na C3: *3-hidroksi*.
-5. Ime: *3-hidroksipent-4-enojska kislina*.
-6. Formula: $5$ atomov C; vodiki $2 + 1 + 1 + 2 + 1 + 1 = 8$ (vključno z vodikoma skupin $\mathrm{OH}$ in $\mathrm{COOH}$); kisikovi atomi $1 + 2 = 3$. Molekulska formula je $\mathrm{C_5H_8O_3}$.
-7. Odgovor: spojina je *3-hidroksipent-4-enojska kislina*, $\mathrm{C_5H_8O_3}$.
+2. Glavna veriga vsebuje ogljik skupine $\mathrm{{-}COOH}$. Pri C2 se razcepi: proti $\mathrm{CH(OH){-}CH{=}CH_2}$ ima $2 + 3 = 5$ atomov, proti propilu prav tako $2 + 3 = 5$. Dolžina ne odloči, zato odloči naslednje merilo: več večkratnih vezi. Glavna veriga je tista z dvojno vezjo, propil je predpona.
+3. Oštevilčimo od $\mathrm{{-}COOH}$: C1 je $\mathrm{COOH}$, C2 je $\mathrm{CH}$ s propilom, C3 je $\mathrm{CH(OH)}$, C4 in C5 sta povezana z dvojno vezjo.
+4. Lokanti: dvojna vez *pent-4-en*, *3-hidroksi*, *2-propil*; po abecedi *h* pred *p*.
+5. Ime: *3-hidroksi-2-propilpent-4-enojska kislina*. Brez propila bi bila to *3-hidroksipent-4-enojska kislina*, $\mathrm{C_5H_8O_3}$.
+6. Formula: $5 + 3 = 8$ atomov C; vodiki $2 + 1 + 2 + 1 + 7 + 1 = 14$ ($\mathrm{CH_2{=}}$, $\mathrm{{=}CH}$, $\mathrm{CH(OH)}$, $\mathrm{CH}$, propil, $\mathrm{COOH}$); kisikovi atomi $1 + 2 = 3$. Molekulska formula je $\mathrm{C_8H_{14}O_3}$.
+7. Preverba: $U = \dfrac{2 \cdot 8 + 2 - 14}{2} = 2$, kar ustreza vezi $\mathrm{C{=}C}$ in vezi $\mathrm{C{=}O}$ v skupini $\mathrm{{-}COOH}$.
+8. Odgovor: spojina je *3-hidroksi-2-propilpent-4-enojska kislina*, $\mathrm{C_8H_{14}O_3}$, s stopnjo nenasičenosti $2$.
 
 ## Pogoste napake
 
@@ -155,11 +172,51 @@ Prednost: karboksilna kislina $>$ alkohol. Ogljik skupine $\mathrm{{-}COOH}$ je 
 - Pri kislinah, aldehidih, nitrilih in amidih je ogljik skupine C1 in lokanta ne pišemo.
 - Množilne predpone *di-, tri-* pri abecednem razvrščanju ne štejejo.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- definicije glavne verige, substituenta, (glavne) karakteristične skupine in lokanta;
+- merila za izbiro glavne verige po vrsti (IUPAC 2013) in vrstni red meril pri oštevilčenju;
+- pravilo najnižjih lokantov z leksikografsko primerjavo in abecedni vrstni red (množilne predpone ne štejejo);
+- vrstni red prednosti karakterističnih skupin s končnicami in predponami;
+- dokaz formule $\mathrm{C}_n\mathrm{H}_{2n+2}$ in izpeljavo stopnje nenasičenosti.
+
+### Naloga 1
+
+Študent je spojinama dal imeni (a) *4-etil-2-hidroksipentanal* in (b) *heks-5-en-1-in*. Nariši strukturi, utemelji, ali sta imeni pravilni, napačni popravi in za obe spojini izračunaj molekulsko formulo, molsko maso in stopnjo nenasičenosti. $M(\mathrm{C}) = 12{,}011\,\mathrm{g/mol}$, $M(\mathrm{H}) = 1{,}008\,\mathrm{g/mol}$, $M(\mathrm{O}) = 15{,}999\,\mathrm{g/mol}$.
+
+**Rešitev:**
+
+1. (a) Struktura po imenu: $\mathrm{OHC{-}CH(OH){-}CH_2{-}CH(CH_2CH_3){-}CH_3}$.
+2. Glavna skupina je aldehid (C1). Veriga, ki pri C4 zavije v etilno skupino, ima $4 + 2 = 6$ atomov, zapisana pa le $5$. Ime je napačno: etil na predzadnjem ogljiku podaljša verigo.
+3. Nova veriga: C1 $\mathrm{CHO}$, C2 $\mathrm{CH(OH)}$, C3 $\mathrm{CH_2}$, C4 $\mathrm{CH(CH_3)}$, C5 $\mathrm{CH_2}$, C6 $\mathrm{CH_3}$; substituenta *2-hidroksi* in *4-metil*, *h* pred *m*. Pravilno ime je *2-hidroksi-4-metilheksanal*.
+4. Formula: $7$ atomov C; vodiki $1 + 1 + 1 + 2 + 1 + 3 + 2 + 3 = 14$; $2$ atoma O: $\mathrm{C_7H_{14}O_2}$.
+5. $M = 7 \cdot 12{,}011 + 14 \cdot 1{,}008 + 2 \cdot 15{,}999 = 130{,}187$, torej $130{,}19\,\mathrm{g/mol}$; $U = \dfrac{2 \cdot 7 + 2 - 14}{2} = 1$ (vez $\mathrm{C{=}O}$).
+6. (b) Struktura: $\mathrm{CH_2{=}CH{-}CH_2{-}CH_2{-}C{\equiv}CH}$. Z obeh koncev je niz lokantov večkratnih vezi $\{1, 5\}$; ob izenačenju dobi nižji lokant dvojna vez. Pravilno ime je *heks-1-en-5-in*.
+7. Formula: vodiki $2 + 1 + 2 + 2 + 1 = 8$, torej $\mathrm{C_6H_8}$; $M = 6 \cdot 12{,}011 + 8 \cdot 1{,}008 = 80{,}130$, torej $80{,}13\,\mathrm{g/mol}$; $U = \dfrac{2 \cdot 6 + 2 - 8}{2} = 3$ (ena vez $\pi$ v dvojni in dve v trojni vezi).
+8. Odgovor: (a) *2-hidroksi-4-metilheksanal*, $\mathrm{C_7H_{14}O_2}$, $130{,}19\,\mathrm{g/mol}$, $U = 1$; (b) *heks-1-en-5-in*, $\mathrm{C_6H_8}$, $80{,}13\,\mathrm{g/mol}$, $U = 3$.
+
+### Naloga 2
+
+Natančno navedi in dokaži, koliko vodikovih atomov ima nasičen acikličen ogljikovodik z $n$ atomi C. Izpelji izraz za stopnjo nenasičenosti spojine z atomi C, H, N, O in halogeni ter utemelji vpliv vsakega heteroatoma. Izraz uporabi za paracetamol $\mathrm{C_8H_9NO_2}$ (*N*-(4-hidroksifenil)etanamid) in preveri, ali se ujema s strukturo.
+
+**Rešitev:**
+
+1. Trditev: nasičen acikličen ogljikovodik z $n$ atomi C ima formulo $\mathrm{C}_n\mathrm{H}_{2n+2}$.
+2. Dokaz: povezan skelet brez ciklov z $n$ atomi je drevo in ima natanko $n - 1$ vezi C–C. Ogljiki imajo skupaj $4n$ mest za vezi, vezi C–C jih zasedejo $2(n - 1)$, za vodik ostane $4n - 2(n - 1) = 2n + 2$.
+3. Obroč nastane z dodatno vezjo C–C, vez $\pi$ z dodatno vezjo med že povezanima atomoma; vsaka porabi dve mesti, torej dva vodika. Zato je pri ogljikovodiku $U = \dfrac{2c + 2 - h}{2}$.
+4. Halogen je enovezen kot vodik, zato ga prištejemo k $h$ ($-x$ v števcu). Kisik je dvovezen: vrine se v vez (C–O–H, C–O–C) in ne spremeni števila mest za vodik. Dušik je trivezen: vrinjen v vez prinese eno mesto več, zato $+d$.
+5. Izraz: $U = \dfrac{2c + 2 + d - h - x}{2}$.
+6. Paracetamol: $U = \dfrac{2 \cdot 8 + 2 + 1 - 9}{2} = 5$.
+7. Struktura: benzenov obroč da $1$ obroč in $3$ vezi $\pi$, amidna skupina eno vez $\mathrm{C{=}O}$: $1 + 3 + 1 = 5$.
+8. Odgovor: $\mathrm{C}_n\mathrm{H}_{2n+2}$; $U = \dfrac{2c + 2 + d - h - x}{2}$; za paracetamol $U = 5$, kar se ujema s strukturo.
+
 ## Drugače: Na sliki
 
 V organski kemiji pogosto rišemo **skeletne** (črtne) formule: vsak vrh in konec cik-cak črte je ogljikov atom, vodikov na ogljiku ne rišemo, heteroatome (O, N, Cl) pa zapišemo. Skeletna formula *4-etil-2-metilheksana* je cik-cak črta s šestimi ogljikovimi atomi (vrhovi in konca), s kratko črtico na drugem atomu (metil) in daljšo, dvočlensko vejo na četrtem (etil).
 
-Pri iskanju najdaljše verige si pomagaj tako, da s prstom potuješ od enega konca molekule do drugega in šteješ atome. Primer, kjer je veriga skrita:
+Pri iskanju najdaljše verige si pomagaj tako, da s prstom potuješ od enega konca molekule do drugega in šteješ atome. Pri vsakem razvejišču preizkusi vse poti, kot tukaj:
 
 ```
         CH3
@@ -169,17 +226,12 @@ CH3-CH2-CH-CH3        zapisano kot "veriga s 4 C in metilom"
 
 Z leve proti desni preko razvejišča je veriga $\mathrm{CH_3{-}CH_2{-}CH{-}CH_3}$ s štirimi atomi, enako dolga pa je tudi pot, ki pri razvejišču zavije navzgor v skupino $\mathrm{CH_3}$. Ime je *2-metilbutan*, ne glede na to, katero pot izberemo.
 
-Pri karakterističnih skupinah si glavno verigo predstavljaj kot »hrbtenico«, na katero je pripeta glavna skupina z najnižjo možno številko; vse ostalo visi z nje kot predpone.
+## Drugače: Uporaba v stroki
 
-## Drugače: Iz vsakdanjega življenja
-
-- **Kis** je približno $4$- do $8$-odstotna vodna raztopina *etanojske kisline* (ocetne kisline), $\mathrm{CH_3COOH}$.
-- **Odstranjevalec laka za nohte** vsebuje *propanon* (aceton) ali *etil etanoat* (etil acetat).
-- **Sredstvo proti zmrzovanju** v avtomobilskem hladilniku je *etan-1,2-diol* (etilenglikol), v kozmetiki pa najdeš *propan-1,2,3-triol* (glicerol).
-- **Kislo mleko in mišice:** *2-hidroksipropanojska kislina* (mlečna kislina) nastaja pri mlečnokislinskem vrenju in pri napornem delu mišic.
-- **Bencin:** oktansko število se meri glede na *2,2,4-trimetilpentan* (izooktan), ki mu pripišemo vrednost $100$.
-- **Zdravila:** paracetamol je *N-(4-hidroksifenil)etanamid*. Iz imena razbereš, da ima amidno skupino in fenolno skupino OH na mestu *para*.
-- **Arome:** *3-metilbutil etanoat* (izoamil acetat) diši po bananah, *etil butanoat* po ananasu.
+- **Laboratorij in varnostni listi:** snov je na etiketi označena s kemijskim imenom in številko CAS. Po imenu preveriš, ali je v steklenici res predpisani izomer: *propan-1-ol* vre pri $97\,^\circ\mathrm{C}$, *propan-2-ol* pri $82\,^\circ\mathrm{C}$.
+- **Baze podatkov:** PubChem, Reaxys in risarski programi pretvarjajo ime v strukturo in nazaj; iskanje po strukturi (SMILES, InChI) je zanesljivejše od iskanja po trivialnem imenu.
+- **Farmacija:** učinkovina ima mednarodno nelastniško ime (paracetamol), v dokumentaciji pa tudi sistematično, *N-(4-hidroksifenil)etanamid*, iz katerega razbereš amidno skupino in fenolno skupino OH v para položaju.
+- **Goriva:** oktansko število je določeno z *2,2,4-trimetilpentanom* (izooktan, $100$) in *heptanom* ($0$).
 
 ## Drugače: Korak za korakom s številkami
 
@@ -192,16 +244,14 @@ Nariši strukturo spojine *4-metilpent-3-en-2-on* in zapiši molekulsko formulo.
 5. **Dopolnimo vodike** tako, da ima vsak ogljik štiri vezi: C1 je $\mathrm{CH_3}$, C2 nima vodika ($\mathrm{C{=}O}$ in dve vezi C–C), C3 je $\mathrm{CH}$, C4 nima vodika (dvojna vez, C5 in metil), C5 je $\mathrm{CH_3}$.
 6. **Struktura:** $\mathrm{CH_3{-}CO{-}CH{=}C(CH_3){-}CH_3}$.
 7. **Formula:** ogljikov je $5 + 1 = 6$, vodikov $3 + 1 + 3 + 3 = 10$, kisik $1$: $\mathrm{C_6H_{10}O}$.
-8. **Preizkus:** stopnja nenasičenosti $\frac{2 \cdot 6 + 2 - 10}{2} = 2$ ustreza eni vezi $\mathrm{C{=}O}$ in eni vezi $\mathrm{C{=}C}$.
+8. **Preizkus:** $U = \frac{2 \cdot 6 + 2 - 10}{2} = 2$ ustreza eni vezi $\mathrm{C{=}O}$ in eni vezi $\mathrm{C{=}C}$.
 9. **Preizkus oštevilčenja:** z drugega konca bi bil keton na C4, zato je oštevilčenje pravo (glavna skupina ima prednost pred vsem drugim).
 
 ## Drugače: Bolj natančno
 
 **Vrste nomenklature.** Opisana je **substitucijska** nomenklatura: vodike v osnovnem hidridu (alkanu, benzenu) nadomestimo s substituenti. Poleg nje IUPAC dovoljuje **funkcijsko-razredno** nomenklaturo (*dietil eter*, *metil klorid*, *etil etanoat*) in nekaj **ohranjenih** trivialnih imen (*benzen*, *fenol*, *anilin*, *toluen*, *aceton*, *ocetna kislina*). Priporočila IUPAC iz leta 2013 določajo *prednostna* imena (PIN), ki jih uporabljamo v uradnih dokumentih.
 
-**Izbira glavne verige po priporočilih 2013.** Kriteriji si sledijo po vrsti: (1) največje število glavnih karakterističnih skupin, (2) obroč ali veriga (obroč ima prednost), (3) **največja dolžina** verige, (4) največje število večkratnih vezi, (5) največje število substituentov. Starejša pravila (1979, 1993) so dajala prednost verigi z več večkratnimi vezmi pred daljšo verigo. Pri spojinah, kjer najdaljša veriga ne vsebuje vseh večkratnih vezi, se imeni po obeh pravilih zato razlikujeta. Kadar lekcija ali izpit ne določa drugače, uporabljaj veljavna pravila.
-
-**Pravilo najnižjih lokantov** je leksikografsko: niza lokantov zapišemo naraščajoče in primerjamo prvo mesto, na katerem se razlikujeta. Pri *2,2,4-trimetilpentanu* je niz $\{2, 2, 4\}$ nižji od $\{2, 4, 4\}$, ki bi ga dalo nasprotno oštevilčenje.
+**Glavna veriga pred letom 2013.** Pri spojinah z obroči ima po priporočilih 2013 obroč prednost pred verigo. Starejša pravila (1979, 1993) so dajala prednost verigi z več večkratnimi vezmi pred daljšo verigo, zato se imeni razlikujeta, kadar najdaljša veriga ne vsebuje vseh večkratnih vezi. Kadar izpit ne določa drugače, uporabljaj veljavna pravila. Primer leksikografske primerjave: pri *2,2,4-trimetilpentanu* je $\{2, 2, 4\}$ nižje od $\{2, 4, 4\}$.
 
 **Stereodeskriptorji.** Pri dvojni vezi s po dvema različnima substituentoma na vsakem ogljiku določimo prednost substituentov po **Cahn-Ingold-Prelogovih pravilih** (višje vrstno število atoma ima prednost, pri izenačenju gledamo naslednje atome). Če sta substituenta z višjo prednostjo na isti strani, je izomer *(Z)* (nem. *zusammen*), sicer *(E)* (*entgegen*). Enaka pravila dajo deskriptor *(R)* ali *(S)* za kiralno središče: najnižji substituent usmerimo stran od opazovalca in pogledamo, ali si preostali trije po prednosti sledijo v smeri urinega kazalca (*R*) ali v nasprotni (*S*). Primer: (*S*)-2-hidroksipropanojska kislina je L-mlečna kislina v mišicah.
 
@@ -242,4 +292,9 @@ Nariši strukturo spojine *4-metilpent-3-en-2-on* in zapiši molekulsko formulo.
 \text{osnova} | osnova imena (glavna veriga) | | | npr. pent- za 5 atomov C
 \text{končnica} | končnica imena (glavna skupina) | | | npr. -ojska kislina
 n | število ogljikovih atomov v alkanu | | – | splošna formula alkanov $\mathrm{C}_n\mathrm{H}_{2n+2}$
+U | stopnja nenasičenosti | U = \dfrac{2c + 2 + d - h - x}{2} | – | število obročev + vezi π
+c | število atomov C | | – |
+h | število atomov H | | – |
+d | število atomov N | | – |
+x | število atomov halogenov | | – | F, Cl, Br, I
 :::

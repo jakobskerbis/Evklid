@@ -5,15 +5,7 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Sošolec trdi: »Če v tuljavo vtaknem močan magnet in ga pustim v njej, bo svetleča dioda, priključena na konca tuljave, svetila, dokler je magnet notri.« Poskus ga ovrže: dioda utripne le za hip, ko se magnet giblje (ob potiskanju noter ali vlečenju ven, odvisno od tega, kako je dioda obrnjena). Na istem pojavu deluje detektor kovin, s katerim mojster pred vrtanjem poišče armaturo in kable v steni. Tok ustvarja magnetno polje, magnetno polje deluje na gibajoče se naboje, **spreminjajoče se** magnetno polje pa v vodniku inducira napetost. Na teh treh pojavih temelji večina elektrotehnike: elektromotor, generator v elektrarni, transformator, indukcijska kuhalna plošča, brezžično polnjenje telefona.
-
-V naravoslovju in medicini so magnetna polja merilno orodje. **Masni spektrometer** loči ione po masi, ker jih magnetno polje ukrivi različno močno. **Jedrska magnetna resonanca** (NMR) v kemiji in **magnetnoresonančno slikanje** (MRI) v medicini uporabljata močna polja tuljav s superprevodnimi navitji. Ptice selivke in nekatere bakterije se orientirajo po zemeljskem magnetnem polju.
-
-Pot do tja vodi čez tri korake:
-
-- **Lorentzovo silo** na gibajoč se naboj in silo na vodnik s tokom,
-- **Amperov zakon**, s katerim izračunamo polje ravnega vodnika in tuljave,
-- **indukcijski zakon** in Lenzovo pravilo, ki opisujeta nastanek inducirane napetosti.
+Sošolec trdi: »Če v tuljavo vtaknem močan magnet in ga pustim v njej, bo svetleča dioda, priključena na konca tuljave, svetila, dokler je magnet notri.« Poskus ga ovrže: dioda utripne le za hip, ko se magnet giblje. Tok ustvarja magnetno polje, magnetno polje deluje na gibajoče se naboje, **spreminjajoče se** magnetno polje pa v vodniku inducira napetost. Na teh treh pojavih temeljijo elektromotor, generator, transformator, pa tudi **masni spektrometer** in **jedrska magnetna resonanca** (NMR) v kemiji.
 
 ## Razlaga
 
@@ -23,9 +15,9 @@ Pot do tja vodi čez tri korake:
 
 $$\vec{F} = q\,\vec{v} \times \vec{B}, \qquad F = |q|vB\sin\theta.$$
 
-Sila je pravokotna na hitrost in na polje; smer dobimo s pravilom desne roke (za negativen naboj je nasprotna). Naboj, ki se giblje vzporedno s poljem, ne čuti sile. Ker je sila pravokotna na hitrost, **ne opravlja dela**: spremeni smer, ne pa velikosti hitrosti. Če sta prisotni tudi električno in magnetno polje, je celotna sila $\vec{F} = q(\vec{E} + \vec{v} \times \vec{B})$.
+Sila je pravokotna na hitrost in na polje; smer dobimo s pravilom desne roke (za negativen naboj je nasprotna). Naboj, ki se giblje vzporedno s poljem, ne čuti sile. Ker je sila pravokotna na hitrost, **ne opravlja dela** (njena moč je $P = \vec{F} \cdot \vec{v} = q(\vec{v} \times \vec{B}) \cdot \vec{v} = 0$): spremeni smer, ne pa velikosti hitrosti. Če sta prisotni tudi električno in magnetno polje, je celotna sila $\vec{F} = q(\vec{E} + \vec{v} \times \vec{B})$.
 
-**3. Kroženje naboja.** Če naboj prileti pravokotno na homogeno polje, ga Lorentzova sila sili na krožnico. Ta sila je centripetalna, $|q|vB = mv^2/r$, zato je polmer
+**3. Kroženje naboja.** Naj naboj prileti pravokotno na homogeno polje in naj druge sile ne delujejo. Potem ima sila stalno velikost $|q|vB$ in je ves čas pravokotna na hitrost, zato naboj enakomerno kroži. Sila je centripetalna, $|q|vB = mv^2/r$, iz tega in $\omega = v/r$ sledi
 
 $$r = \frac{mv}{|q|B}, \qquad \omega = \frac{|q|B}{m}.$$
 
@@ -41,18 +33,18 @@ Elektron. Naboja sta po velikosti enaka, elektron pa ima okoli $1836$-krat manj�
 
 $$\vec{F} = I\,\vec{l} \times \vec{B}, \qquad F = IlB\sin\theta,$$
 
-kjer $\vec{l}$ kaže v smeri toka. Na zanko s tokom v polju deluje navor; na tem deluje elektromotor in merilnik toka z vrtljivo tuljavico.
+kjer $\vec{l}$ kaže v smeri toka; velja za raven vodnik v homogenem polju. *Izpeljava:* v vodniku s presekom $S$ je $n$ nosilcev osnovnega naboja $e_0$ na enoto prostornine, ki potujejo s povprečno hitrostjo $v_d$, zato je $I = ne_0v_dS$. Na $nSl$ nosilcev deluje skupna sila $nSl\,e_0v_dB\sin\theta = IlB\sin\theta$. Na zanko s tokom v polju deluje navor; na tem deluje elektromotor in merilnik toka z vrtljivo tuljavico.
 
-**5. Amperov zakon.** Tok ustvarja magnetno polje. Za vsako sklenjeno pot velja **Amperov zakon**:
+**5. Amperov zakon.** Tok ustvarja magnetno polje. Naj bodo tokovi stacionarni (časovno nespremenljivi). Potem za vsako sklenjeno pot velja **Amperov zakon**:
 
 $$\oint\vec{B} \cdot \mathrm{d}\vec{s} = \mu_0I,$$
 
-kjer je $I$ celotni tok, ki gre skozi ploskev, ki jo pot objema, in $\mu_0 = 4\pi \cdot 10^{-7}\,\mathrm{V\,s/(A\,m)}$ **indukcijska konstanta**. Zakon je uporaben, kadar ima polje veliko simetrije.
+kjer je $I$ celotni tok skozi ploskev, ki jo pot objema, in $\mu_0 = 4\pi \cdot 10^{-7}\,\mathrm{V\,s/(A\,m)}$ **indukcijska konstanta**. Zakon je uporaben, kadar ima polje veliko simetrije.
 
-- **Dolg raven vodnik.** Silnice so krožnice okoli vodnika. Za krožnico s polmerom $r$ je $B \cdot 2\pi r = \mu_0I$, torej
+- **Dolg raven vodnik.** Silnice so krožnice okoli vodnika; zaradi simetrije je $B$ na krožnici s polmerom $r$ povsod enako velik in tangenten nanjo, zato je $B \cdot 2\pi r = \mu_0I$, torej
 $$B = \frac{\mu_0I}{2\pi r}.$$
 Smer: palec desne roke v smeri toka, prsti kažejo smer silnic.
-- **Dolga tuljava** z $N$ ovoji na dolžini $l$. V notranjosti je polje homogeno in vzporedno z osjo, zunaj pa skoraj nič. Pravokotna pot z eno stranico dolžine $x$ v notranjosti objame $Nx/l$ ovojev:
+- **Dolga tuljava** z $N$ ovoji na dolžini $l$. V notranjosti je polje homogeno in vzporedno z osjo, zunaj pa skoraj nič. Pot v obliki pravokotnika z eno stranico dolžine $x$ v notranjosti objame $Nx/l$ ovojev. K integralu prispeva le notranja stranica ($Bx$): zunaj je polje zanemarljivo, na stranicah, pravokotnih na os, pa je $\vec{B}$ pravokoten na pot. Iz $Bx = \mu_0NIx/l$ sledi
 $$B = \frac{\mu_0NI}{l}.$$
 
 Polje v središču krožne zanke s polmerom $R$ je $B = \mu_0I/(2R)$; to izračunamo z Biot-Savartovim zakonom, ker Amperov tu ni dovolj.
@@ -63,7 +55,7 @@ Polje v središču krožne zanke s polmerom $R$ je $B = \mu_0I/(2R)$; to izraču
 
 $$\Phi_m = BS\cos\theta = \vec{B} \cdot \vec{S},$$
 
-kjer je $\theta$ kot med poljem in normalo na ploskev. Enota je **weber**, $1\,\mathrm{Wb} = 1\,\mathrm{V\,s}$.
+kjer je $\theta$ kot med poljem in normalo na ploskev. Enota je **weber**, $1\,\mathrm{Wb} = 1\,\mathrm{V\,s}$. Za nehomogeno polje je $\Phi_m = \int\vec{B} \cdot \mathrm{d}\vec{S}$; skozi vsako sklenjeno ploskev je magnetni pretok nič, ker so silnice sklenjene.
 
 ### Odkrij vzorec: kdaj se inducira napetost?
 
@@ -84,21 +76,21 @@ Kaj imajo skupnega vsi poskusi, pri katerih se voltmeter odkloni? Zakaj velik mi
 V vseh se s časom **spreminja** magnetni pretok skozi tuljavo: zaradi spremembe polja, lege ali kota. Mirujoč magnet da stalen pretok, zato napetosti ni, ne glede na to, kako močan je. Hitrejša sprememba da večjo napetost, obratna sprememba nasprotno.
 :::
 
-**8. Indukcijski zakon.** Vzorec iz tabele zapišemo kot zakon. Ko se magnetni pretok skozi zanko spreminja, se v zanki **inducira napetost**:
+**8. Indukcijski zakon.** Vzorec iz tabele zapišemo kot zakon. Naj se magnetni pretok skozi ploskev, ki jo objema sklenjena zanka, s časom spreminja. Potem se v zanki **inducira napetost**:
 
 $$U_i = -N\,\frac{\mathrm{d}\Phi_m}{\mathrm{d}t}$$
 
-za tuljavo z $N$ ovoji. Pretok lahko spremenimo s spremembo polja, površine ali kota. **Lenzovo pravilo** (minus v enačbi) pove smer: inducirani tok teče tako, da njegovo magnetno polje nasprotuje spremembi pretoka, ki ga je povzročila. To je posledica ohranitve energije.
+za tuljavo z $N$ ovoji, od katerih vsak objema enak pretok. Pretok lahko spremenimo s spremembo polja, površine ali kota. **Lenzovo pravilo** (minus v enačbi) pove smer: inducirani tok teče tako, da njegovo magnetno polje nasprotuje spremembi pretoka, ki ga je povzročila. To je posledica ohranitve energije: če bi inducirani tok spremembo krepil, bi se sam od sebe večal brez vloženega dela.
 
 **9. Gibajoč se vodnik.** Palica z dolžino $l$, ki se giblje s hitrostjo $v$ pravokotno na polje $B$, pri čemer je tudi sama pravokotna na polje, ima med koncema inducirano napetost
 
 $$U_i = Blv.$$
 
-To sledi iz Lorentzove sile na elektrone v palici ali iz spremembe pretoka skozi zanko, ki jo palica zapira.
+*Izpeljava:* na elektron v palici deluje sila $e_0vB$ vzdolž palice. Elektroni se premikajo, dokler električno polje nabojev na koncih ne uravnoteži magnetne sile, $e_0E = e_0vB$, zato je $U = El = Blv$. Enako da indukcijski zakon: površina zanke, ki jo zapira palica, raste s hitrostjo $\mathrm{d}S/\mathrm{d}t = lv$, zato $\mathrm{d}\Phi_m/\mathrm{d}t = Blv$.
 
-**10. Generator in transformator.** Tuljava z $N$ ovoji in površino $S$, ki se vrti s kotno hitrostjo $\omega$ v homogenem polju, ima pretok $BS\cos\omega t$, zato se v njej inducira izmenična napetost $U_i = NBS\omega\sin\omega t$. V **transformatorju** dve tuljavi na skupnem železnem jedru objemata isti pretok, zato je razmerje napetosti enako razmerju števil ovojev: $U_2/U_1 = N_2/N_1$.
+**10. Generator in transformator.** Tuljava z $N$ ovoji in površino $S$, ki se vrti s kotno hitrostjo $\omega$ v homogenem polju, ima pretok $BS\cos\omega t$; njegov časovni odvod je $-BS\omega\sin\omega t$, zato se v njej inducira izmenična napetost $U_i = NBS\omega\sin\omega t$. V **idealnem transformatorju** (ves pretok ostane v železnem jedru, izgub ni) dve tuljavi objemata isti pretok, zato se v vsakem ovoju inducira enaka napetost $-\mathrm{d}\Phi_m/\mathrm{d}t$ in je razmerje napetosti enako razmerju števil ovojev: $U_2/U_1 = N_2/N_1$.
 
-**11. Samoindukcija.** Tok skozi tuljavo ustvari pretok skozi lastne ovoje. Ko se tok spreminja, se inducira napetost $U_i = -L\,\mathrm{d}I/\mathrm{d}t$, kjer je $L$ **induktivnost** (enota henry, $1\,\mathrm{H} = 1\,\mathrm{V\,s/A}$). Za dolgo tuljavo je $L = \mu_0N^2S/l$, shranjena energija pa $W = \tfrac{1}{2}LI^2$.
+**11. Samoindukcija.** Tok skozi tuljavo ustvari pretok skozi lastne ovoje; skupni pretok skozi vse ovoje je sorazmeren s tokom, $N\Phi_m = LI$, kjer je $L$ **induktivnost** (enota henry, $1\,\mathrm{H} = 1\,\mathrm{V\,s/A}$). Ko se tok spreminja, se inducira napetost $U_i = -L\,\mathrm{d}I/\mathrm{d}t$. Za dolgo tuljavo je $L = \mu_0N^2S/l$, shranjena energija pa $W = \tfrac{1}{2}LI^2$. *Izpeljava:* z $B = \mu_0NI/l$ je $N\Phi_m = NBS = \mu_0N^2SI/l$. Ko tok narašča, vir opravlja delo proti inducirani napetosti z močjo $P = LI\,\mathrm{d}I/\mathrm{d}t$; integracija od $0$ do $I$ da $W = \tfrac{1}{2}LI^2$.
 
 ## Rešeni primeri
 
@@ -142,13 +134,13 @@ $e_0U = \tfrac{1}{2}mv^2$, $r = \dfrac{mv}{e_0B} = \dfrac{1}{B}\sqrt{\dfrac{2mU}
 
 ### Primer 3 (težji)
 
-Kovinska palica z dolžino $0{,}50\,\mathrm{m}$ drsi brez trenja po dveh vzporednih vodoravnih tirnicah, ki sta na enem koncu povezani z uporom $0{,}80\,\Omega$. Sistem je v navpičnem homogenem magnetnem polju $0{,}40\,\mathrm{T}$. Palico vlečemo s stalno hitrostjo $2{,}0\,\mathrm{m/s}$. Kolikšna je inducirana napetost, kolikšen tok teče, s kolikšno silo moramo vleči palico in kolikšna je moč vlečenja? Upor palice in tirnic zanemarimo.
+Kovinska palica z dolžino $0{,}50\,\mathrm{m}$ drsi brez trenja po dveh vzporednih vodoravnih tirnicah, ki sta na enem koncu povezani z uporom $0{,}80\,\Omega$. Sistem je v navpičnem homogenem magnetnem polju $0{,}40\,\mathrm{T}$. Palico z maso $0{,}10\,\mathrm{kg}$ vlečemo s stalno hitrostjo $2{,}0\,\mathrm{m/s}$. Kolikšna je inducirana napetost, kolikšen tok teče, s kolikšno silo moramo vleči palico in kolikšna je moč vlečenja? Nato palico spustimo. Kolikšno pot še prevozi in koliko toplote se pri tem sprosti na uporu? Upor palice in tirnic zanemarimo.
 
-**Podatki:** $l = 0{,}50\,\mathrm{m}$, $R = 0{,}80\,\Omega$, $B = 0{,}40\,\mathrm{T}$ (pravokotno na ravnino tirnic), $v = 2{,}0\,\mathrm{m/s}$ (stalna), brez trenja, upor palice in tirnic zanemarljiv
-**Iščemo:** $U_i$, $I$, silo vlečenja $F$, moč $P$
+**Podatki:** $l = 0{,}50\,\mathrm{m}$, $R = 0{,}80\,\Omega$, $B = 0{,}40\,\mathrm{T}$ (pravokotno na ravnino tirnic), $v = 2{,}0\,\mathrm{m/s}$ (stalna), $m = 0{,}10\,\mathrm{kg}$, brez trenja, upor palice in tirnic zanemarljiv
+**Iščemo:** $U_i$, $I$, silo vlečenja $F$, moč $P$; pot $x$ po spustu, toploto $Q$
 
 :::formula
-$U_i = Blv$, $I = U_i/R$, $F = IlB$, $P = Fv = I^2R$
+$U_i = Blv$, $I = U_i/R$, $F = IlB = \dfrac{B^2l^2v}{R}$, $P = Fv = I^2R$; $m\dfrac{\mathrm{d}v}{\mathrm{d}t} = -\dfrac{B^2l^2v}{R}$
 :::
 
 **Rešitev:**
@@ -158,7 +150,11 @@ $U_i = Blv$, $I = U_i/R$, $F = IlB$, $P = Fv = I^2R$
 3. Na palico s tokom deluje magnetna sila $F_m = IlB = 0{,}50 \cdot 0{,}50 \cdot 0{,}40\,\mathrm{N} = 0{,}10\,\mathrm{N}$. Po Lenzovem pravilu nasprotuje gibanju (zavira palico).
 4. Za stalno hitrost mora biti vlečna sila enako velika: $F = 0{,}10\,\mathrm{N}$.
 5. Moč vlečenja: $P = Fv = 0{,}10\,\mathrm{N} \cdot 2{,}0\,\mathrm{m/s} = 0{,}20\,\mathrm{W}$. Preizkus: $I^2R = 0{,}25 \cdot 0{,}80\,\mathrm{W} = 0{,}20\,\mathrm{W}$ ✓.
-6. Odgovor: inducira se napetost $0{,}40\,\mathrm{V}$, teče tok $0{,}50\,\mathrm{A}$, palico vlečemo s silo $0{,}10\,\mathrm{N}$ in z močjo $0{,}20\,\mathrm{W}$, ki se v celoti pretvori v toploto na uporu.
+6. Po spustu je edina vodoravna sila zaviralna magnetna sila; iz korakov 1 do 3 za poljubno hitrost $F_m = B^2l^2v/R$, zato $m\,\mathrm{d}v/\mathrm{d}t = -B^2l^2v/R$.
+7. Zanima nas pot, zato zapišemo $\mathrm{d}v/\mathrm{d}t = v\,\mathrm{d}v/\mathrm{d}x$ in krajšamo $v$: $m\,\mathrm{d}v = -(B^2l^2/R)\,\mathrm{d}x$. Hitrost torej pada linearno s potjo.
+8. Do ustavitve: $x = \dfrac{mvR}{B^2l^2} = \dfrac{0{,}10 \cdot 2{,}0 \cdot 0{,}80}{0{,}40^2 \cdot 0{,}50^2}\,\mathrm{m} = 4{,}0\,\mathrm{m}$. (S časom hitrost pada eksponentno s časovno konstanto $mR/(B^2l^2) = 2{,}0\,\mathrm{s}$, pot pa je končna.)
+9. Vsa kinetična energija se pretvori v toploto na uporu: $Q = \tfrac{1}{2}mv^2 = 0{,}5 \cdot 0{,}10 \cdot 2{,}0^2\,\mathrm{J} = 0{,}20\,\mathrm{J}$.
+10. Odgovor: inducira se napetost $0{,}40\,\mathrm{V}$, teče tok $0{,}50\,\mathrm{A}$, palico vlečemo s silo $0{,}10\,\mathrm{N}$ in z močjo $0{,}20\,\mathrm{W}$, ki se v celoti pretvori v toploto na uporu. Spuščena palica prevozi še $4{,}0\,\mathrm{m}$, na uporu se sprosti $0{,}20\,\mathrm{J}$ toplote.
 
 ### Primer 4 – zdaj ti
 
@@ -185,10 +181,10 @@ $|U_i| = 800 \cdot 1{,}01 \cdot 10^{-6}\,\mathrm{Wb}/(2{,}0 \cdot 10^{-3}\,\math
 
 ## Pogoste napake
 
-- **Lorentzova sila v smeri polja.** Sila je pravokotna na $\vec{B}$ in na $\vec{v}$, ne vzporedna s poljem. Pri gibanju vzdolž silnic je sila nič. Za elektron je smer sile nasprotna od tiste, ki jo da pravilo desne roke za $\vec{v} \times \vec{B}$.
+- **Lorentzova sila v smeri polja.** Sila je pravokotna na $\vec{B}$ in na $\vec{v}$, ne vzporedna s poljem. Pri gibanju vzdolž silnic je sila nič.
 - **Magnetna sila opravlja delo.** Lorentzova sila je pravokotna na hitrost, zato ne spremeni kinetične energije delca. Ione pospeši električno polje, magnetno jih le ukrivi.
 - **Polje vodnika z $1/r^2$.** Polje dolgega ravnega vodnika pada z $1/r$, ne z $1/r^2$.
-- **Napetost se inducira zaradi polja.** Napetost povzroči **sprememba** pretoka, ne pretok sam. Mirujoča zanka v stalnem polju nima inducirane napetosti, ne glede na velikost polja.
+- **Napetost se inducira zaradi polja.** Napetost povzroči **sprememba** pretoka, ne pretok sam.
 - **Pozabljeno število ovojev.** Pri tuljavi pomnoži spremembo pretoka skozi en ovoj z $N$.
 
 ## Povzetek
@@ -199,19 +195,44 @@ $|U_i| = 800 \cdot 1{,}01 \cdot 10^{-6}\,\mathrm{Wb}/(2{,}0 \cdot 10^{-3}\,\math
 - Indukcijski zakon $U_i = -N\,\mathrm{d}\Phi_m/\mathrm{d}t$; Lenzovo pravilo: inducirani tok nasprotuje spremembi; gibajoča palica $U_i = Blv$.
 - Generator $U_i = NBS\omega\sin\omega t$; transformator $U_2/U_1 = N_2/N_1$; samoindukcija $U_i = -L\,\mathrm{d}I/\mathrm{d}t$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- Lorentzovo silo, dokaz, da ne opravlja dela, in izpeljavo $r = mv/(|q|B)$, $\omega = |q|B/m$ s pogoji;
+- silo na vodnik s tokom in njeno izpeljavo iz Lorentzove sile;
+- Amperov zakon s pogojem (stacionarni tokovi) in izpeljavo polja dolgega ravnega vodnika in dolge tuljave;
+- definicijo magnetnega pretoka, indukcijski zakon in Lenzovo pravilo z utemeljitvijo iz ohranitve energije;
+- izpeljavo $U_i = Blv$ na dva načina ter izpeljavo $L = \mu_0N^2S/l$ in $W = \tfrac{1}{2}LI^2$.
+
+### Naloga 1
+
+Vzporedni tirnici z razmikom $0{,}40\,\mathrm{m}$ sta nagnjeni za $30^\circ$ proti vodoravnici in na spodnjem koncu povezani z uporom $0{,}50\,\Omega$. Sistem je v **navpičnem** homogenem polju $0{,}60\,\mathrm{T}$. Po tirnicah iz mirovanja brez trenja drsi vodoravna palica z maso $50\,\mathrm{g}$, pravokotna na tirnici. Upor palice in tirnic zanemari, $g = 9{,}81\,\mathrm{m/s^2}$. Izpelji izraz za končno hitrost palice in jo izračunaj. Kolikšen je tok pri tej hitrosti? Pokaži, da je moč teže enaka toplotni moči na uporu.
+
+**Rešitev:**
+
+1. Normala na ravnino tirnic oklepa z navpičnim poljem kot $\alpha$, zato je pretok skozi zanko $BS\cos\alpha$. Palica s hitrostjo $v$ vzdolž tirnic spreminja površino zanke s hitrostjo $lv$, zato $|U_i| = Blv\cos\alpha$ in $I = Blv\cos\alpha/R$.
+2. Palica je vodoravna, polje navpično, zato je sila $I\vec{l} \times \vec{B}$ vodoravna, velikosti $IlB$ in pravokotna na palico. Po Lenzovem pravilu zavira gibanje; komponenta vzdolž klanca je $IlB\cos\alpha$.
+3. Drugi Newtonov zakon vzdolž klanca: $ma = mg\sin\alpha - \dfrac{B^2l^2v\cos^2\alpha}{R}$. Zaviralna sila raste s hitrostjo, zato pospešek pada proti nič.
+4. Končna hitrost ($a = 0$): $v_k = \dfrac{mgR\sin\alpha}{B^2l^2\cos^2\alpha} = \dfrac{0{,}050 \cdot 9{,}81 \cdot 0{,}50 \cdot 0{,}50}{0{,}60^2 \cdot 0{,}40^2 \cdot 0{,}75}\,\mathrm{m/s} \approx 2{,}84\,\mathrm{m/s}$.
+5. Tok: $I = \dfrac{0{,}60 \cdot 0{,}40 \cdot 2{,}84 \cdot 0{,}866}{0{,}50}\,\mathrm{A} \approx 1{,}18\,\mathrm{A}$.
+6. Moč teže: $mg\sin\alpha \cdot v_k = 0{,}050 \cdot 9{,}81 \cdot 0{,}50 \cdot 2{,}84\,\mathrm{W} \approx 0{,}696\,\mathrm{W}$; toplotna moč $I^2R = 1{,}18^2 \cdot 0{,}50\,\mathrm{W} \approx 0{,}696\,\mathrm{W}$. Splošno: pri $a = 0$ je $mg\sin\alpha = B^2l^2v_k\cos^2\alpha/R$, pomnoženo z $v_k$ to da $mg\sin\alpha\,v_k = (Blv_k\cos\alpha)^2/R = I^2R$.
+7. Odgovor: $v_k = mgR\sin\alpha/(B^2l^2\cos^2\alpha) \approx 2{,}84\,\mathrm{m/s}$, tok je okoli $1{,}18\,\mathrm{A}$; vsa sproščena potencialna energija se pretvori v toploto na uporu.
+
+### Naloga 2
+
+Natančno navedi Amperov zakon z vsemi pogoji in z njim izpelji gostoto polja dolgega ravnega vodnika in dolge tuljave. Utemelji, ali lahko z Amperovim zakonom izračunaš polje v središču krožne zanke.
+
+**Rešitev:**
+
+1. Naj bodo tokovi stacionarni. Potem je za vsako sklenjeno pot $\oint\vec{B} \cdot \mathrm{d}\vec{s} = \mu_0I$, kjer je $I$ celotni tok skozi ploskev, ki jo pot objema (tokovi, ki je ne prebodejo, ne štejejo).
+2. Raven vodnik: zaradi osne simetrije je $B$ odvisen le od $r$ in tangenten na krožnice okoli vodnika. Za pot po krožnici s polmerom $r$ je integral $B \cdot 2\pi r = \mu_0I$, torej $B = \mu_0I/(2\pi r)$.
+3. Tuljava: v notranjosti je polje homogeno in vzporedno z osjo, zunaj zanemarljivo. Pot v obliki pravokotnika z notranjo stranico $x$ da integral $Bx$; zunanja stranica prispeva nič, stranici, pravokotni na os, tudi nič ($\vec{B} \perp \mathrm{d}\vec{s}$).
+4. Pot objame $Nx/l$ ovojev, torej tok $NIx/l$; iz $Bx = \mu_0NIx/l$ sledi $B = \mu_0NI/l$.
+5. Krožna zanka: zakon sicer velja, ni pa poti, na kateri bi bil $B$ zaradi simetrije stalen in povsod vzporeden ali pravokoten na pot, zato integrala ne moremo izraziti z $B$ v središču.
+6. Odgovor: z Amperovim zakonom polja v središču zanke ne izračunamo; uporabimo Biot-Savartov zakon, ki da $B = \mu_0I/(2R)$.
+
 ## Drugače: Na sliki
-
-Silnice okoli ravnega vodnika, ko tok teče iz lista proti tebi ($\odot$):
-
-```
-        . - - - .
-      /   . - .   \
-     |   |  ⊙  |   |      silnice: koncentrične krožnice,
-      \   ' - '   /       smer proti urinemu kazalcu
-        ' - - - '
-```
-
-Čim dlje od vodnika, tem redkejše so silnice, ker polje pada z $1/r$.
 
 Palica na tirnicah iz Primera 3 (polje kaže iz lista, $\odot$):
 
@@ -223,32 +244,19 @@ Palica na tirnicah iz Primera 3 (polje kaže iz lista, $\odot$):
    o------------------------o
 ```
 
-Ko palica drsi v desno, se površina zanke in s tem pretok povečujeta. Inducirani tok teče tako, da njegovo polje v zanki kaže v list, torej proti povečanju pretoka; sila na palico s tem tokom kaže v levo, proti gibanju.
+Palica drsi v desno, pretok narašča; inducirani tok ustvari polje v list, magnetna sila na palico pa kaže v levo, proti gibanju.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-**NMR in MRI.** Jedra vodika imajo magnetni moment, ki v polju $B$ precesira s frekvenco $\nu = \gamma B/(2\pi)$, kjer je za proton $\gamma/(2\pi) \approx 42{,}6\,\mathrm{MHz/T}$. V polju $1{,}5\,\mathrm{T}$ je to okoli $64\,\mathrm{MHz}$. Radijski impulz jedra vzbudi, njihova precesija pa v tuljavi inducira napetost, ki jo izmerimo: indukcijski zakon je torej zadnji člen meritve. Kemijski premik v spektru NMR nastane, ker elektroni okoli jedra nekoliko oslabijo polje, ki ga jedro čuti.
+**NMR in MRI.** Protoni v polju $B$ precesirajo s frekvenco $\nu = \gamma B/(2\pi)$, kjer je $\gamma/(2\pi) \approx 42{,}6\,\mathrm{MHz/T}$; v polju $1{,}5\,\mathrm{T}$ je to okoli $64\,\mathrm{MHz}$. Precesija vzbujenih jeder inducira v sprejemni tuljavi napetost, ki jo izmerimo. Kemijski premik nastane, ker elektroni okoli jedra nekoliko oslabijo polje, ki ga jedro čuti.
 
-**Indukcijska kuhalna plošča.** Pod steklom je tuljava z izmeničnim tokom s frekvenco nekaj deset kilohertzov. Spreminjajoče se polje inducira v dnu posode vrtinčne tokove, ki posodo segrejejo; steklo ostane hladno. Posoda mora biti iz feromagnetne kovine, sicer je segrevanje slabo.
+**Elektromagnetni merilnik pretoka.** Prevodna kapljevina (voda, kri, kisline) teče skozi cev v polju $B$; Lorentzova sila loči ione, zato se med elektrodama na steni pojavi napetost $U = Bdv$ ($d$ je notranji premer cevi, $v$ povprečna hitrost toka); iz nje dobimo pretok brez delov, ki bi ovirali tok.
 
-**Elektrarna in daljnovod.** Generator v hidroelektrarni pretvori mehansko delo vode v električno energijo z indukcijo. Transformatorji napetost dvignejo na več sto kilovoltov, da je tok v daljnovodu majhen in so izgube $I^2R$ majhne, pred porabniki pa jo spet znižajo.
+**Indukcijsko segrevanje.** Izmenično polje tuljave inducira v kovini vrtinčne tokove, ki jo segrejejo: v industriji tako talijo in kalijo kovine in v laboratoriju segrevajo talilne lončke.
 
-**Merjenje pretoka krvi.** Kri vsebuje ione. Ko teče skozi magnetno polje, Lorentzova sila potiska pozitivne in negativne ione na nasprotni strani žile, kar ustvari napetost $U = Bdv$ med elektrodama na straneh žile. Iz nje izračunamo hitrost toka; tako deluje elektromagnetni merilnik pretoka, ki ga uporabljajo tudi v industriji za prevodne tekočine.
-
-## Drugače: Korak za korakom s številkami
-
-Tuljava z $200$ ovoji in površino preseka $4{,}0\,\mathrm{cm^2}$ je v magnetnem polju, ki je vzporedno z osjo tuljave. Polje v $0{,}10\,\mathrm{s}$ enakomerno naraste z $0$ na $0{,}50\,\mathrm{T}$. Konca tuljave sta povezana, celotni upor je $2{,}0\,\Omega$.
-
-1. **Površina v SI:** $S = 4{,}0\,\mathrm{cm^2} = 4{,}0 \cdot 10^{-4}\,\mathrm{m^2}$.
-2. **Sprememba pretoka skozi en ovoj:** $\Delta\Phi_m = \Delta B \cdot S = 0{,}50 \cdot 4{,}0 \cdot 10^{-4}\,\mathrm{Wb} = 2{,}0 \cdot 10^{-4}\,\mathrm{Wb}$.
-3. **Inducirana napetost:** $|U_i| = N\,\Delta\Phi_m/\Delta t = 200 \cdot 2{,}0 \cdot 10^{-4}/0{,}10\,\mathrm{V} = 0{,}40\,\mathrm{V}$.
-4. **Tok:** $I = 0{,}40\,\mathrm{V}/2{,}0\,\Omega = 0{,}20\,\mathrm{A}$.
-5. **Pretečeni naboj:** $Q = I\Delta t = 0{,}20 \cdot 0{,}10\,\mathrm{C} = 0{,}020\,\mathrm{C}$. Enako da $Q = N\Delta\Phi_m/R$, kar ni odvisno od tega, kako hitro se polje spremeni.
-6. **Smer:** po Lenzovem pravilu inducirani tok ustvari polje, ki v tuljavi kaže nasproti zunanjemu polju.
+**Prenos energije.** Transformatorji dvignejo napetost na več sto kilovoltov, da so tok in izgube $I^2R$ v daljnovodu majhni.
 
 ## Drugače: Bolj natančno
-
-**Amperov zakon za tuljavo.** Za pravokotno pot z eno stranico dolžine $x$ v notranjosti vzdolž osi in drugo zunaj prispevata k integralu le notranja stranica ($Bx$) in nič od zunanje, ker je tam polje zanemarljivo, stranici pravokotno na os pa nič, ker je $\vec{B}$ pravokoten na pot. Objeti tok je $NIx/l$, zato je $Bx = \mu_0NIx/l$.
 
 **Biot-Savartov zakon.** Splošno polje toka izračunamo z
 
@@ -256,11 +264,7 @@ $$\mathrm{d}\vec{B} = \frac{\mu_0I}{4\pi}\,\frac{\mathrm{d}\vec{l} \times \hat{r
 
 Za središče krožne zanke so vsi prispevki vzporedni in $r = R$, zato je $B = \frac{\mu_0I}{4\pi R^2} \cdot 2\pi R = \frac{\mu_0I}{2R}$. Amperov zakon je integralna oblika istih zakonitosti za stacionarne tokove.
 
-**Indukcijski zakon iz Lorentzove sile.** Na elektron v palici, ki se giblje s hitrostjo $v$, deluje sila $e_0vB$ vzdolž palice. Elektroni se premikajo, dokler električno polje nabojev na koncih ne uravnoteži magnetne sile: $e_0E = e_0vB$, zato je napetost $U = El = Blv$. Hkrati se površina zanke spreminja s hitrostjo $\mathrm{d}S/\mathrm{d}t = lv$, zato je $\mathrm{d}\Phi_m/\mathrm{d}t = Blv$, kar se ujema z indukcijskim zakonom. Pri mirujoči zanki v spreminjajočem se polju Lorentzova sila ne pojasni napetosti; tam spreminjajoče se magnetno polje ustvari vrtinčno električno polje, $\oint\vec{E} \cdot \mathrm{d}\vec{s} = -\mathrm{d}\Phi_m/\mathrm{d}t$. To je ena od Maxwellovih enačb.
-
-**Energijska bilanca pri Lenzovem pravilu.** Če bi inducirani tok pomagal gibanju, bi se palica sama pospeševala in proizvajala toploto brez vloženega dela, kar bi kršilo ohranitev energije. Natančno: mehanska moč $Fv = (IlB)v$ je enaka električni moči $U_iI = (Blv)I$.
-
-**Generator.** Pri $N = 100$, $S = 0{,}010\,\mathrm{m^2}$, $B = 0{,}20\,\mathrm{T}$ in frekvenci $50\,\mathrm{Hz}$ ($\omega = 314\,\mathrm{s^{-1}}$) je amplituda inducirane napetosti $NBS\omega \approx 62{,}8\,\mathrm{V}$, efektivna vrednost pa $62{,}8/\sqrt{2} \approx 44{,}4\,\mathrm{V}$.
+**Vrtinčno električno polje.** Pri mirujoči zanki v spreminjajočem se polju Lorentzova sila ne pojasni napetosti; tam spreminjajoče se magnetno polje ustvari vrtinčno električno polje, $\oint\vec{E} \cdot \mathrm{d}\vec{s} = -\mathrm{d}\Phi_m/\mathrm{d}t$. To je ena od Maxwellovih enačb.
 
 ## Preveri se
 
@@ -294,7 +298,7 @@ Za središče krožne zanke so vsi prispevki vzporedni in $r = R$, zato je $B = 
 + $11{,}5\,\mathrm{V}$
 - $230\,\mathrm{V}$
 ~ Transformator napetosti ne prenese nespremenjene: v vsakem ovoju se inducira enaka napetost, zato je skupna sorazmerna s številom ovojev.
-> $U_2 = U_1N_2/N_1 = 230 \cdot 50/1000\,\mathrm{V} = 11{,}5\,\mathrm{V}$. $4600\,\mathrm{V}$ dobiš z obrnjenim razmerjem.
+> $U_2 = U_1N_2/N_1 = 230 \cdot 50/1000\,\mathrm{V} = 11{,}5\,\mathrm{V}$.
 
 ? Sošolka pri palici na tirnicah (Primer 3) zapiše: »Inducirani tok ustvari magnetno silo v smeri gibanja, zato se palica, ko jo enkrat sunemo, giblje sama in na uporu greje.« Kje je napaka?
 - Napaka je le v velikosti sile; smer je pravilna.
@@ -302,7 +306,7 @@ Za središče krožne zanke so vsi prispevki vzporedni in $r = R$, zato je $B = 
 + Po Lenzovem pravilu sila nasprotuje gibanju; brez vlečenja se palica ustavi.
 - Napake ni, saj magnetna sila ne opravlja dela.
 ~ Lorentzova sila na posamezen naboj res ne opravlja dela, sila $IlB$ na palico pa jo zavira in pretvarja njeno kinetično energijo v toploto.
-> Če bi sila pomagala gibanju, bi palica dobivala kinetično energijo in hkrati grela upor brez vloženega dela, kar krši ohranitev energije. Zato inducirani tok vedno nasprotuje spremembi, ki ga povzroča.
+> Sila v smeri gibanja bi palico pospeševala in grela upor brez vloženega dela, kar krši ohranitev energije.
 
 :::simboli
 \vec{F} | magnetna (Lorentzova) sila | \vec{F} = q\,\vec{v} \times \vec{B} | N | pravokotna na hitrost in na polje
@@ -336,4 +340,14 @@ U | pospeševalna napetost | | V
 R | električni upor tokokroga | | Ω | pri krožni zanki njen polmer
 P | moč | P = Fv = I^2R | W
 \hat{r} | enotski vektor od elementa vodnika do točke | | –
+x | pot palice do ustavitve; pri tuljavi dolžina notranje stranice poti | x = \frac{mvR}{B^2l^2} | m
+Q | toplota na uporu | | J
+v_k | končna hitrost palice na klancu | | m/s
+\alpha | naklon tirnic | | °
+g | težni pospešek | | m/s^2 | 9,81 m/s²
+a | pospešek palice | | m/s^2
+L | induktivnost | N\Phi_m = LI | H
+W | energija magnetnega polja tuljave | W = \tfrac{1}{2}LI^2 | J
+n | število nosilcev naboja na enoto prostornine | | m^{-3}
+v_d | povprečna (potovalna) hitrost nosilcev naboja | | m/s
 :::

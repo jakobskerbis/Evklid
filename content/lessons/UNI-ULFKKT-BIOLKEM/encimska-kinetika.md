@@ -46,6 +46,14 @@ $$v_0 = \frac{V_\mathrm{max}\,[S]}{K_\mathrm{M} + [S]}$$
 
 **Michaelisova konstanta** $K_\mathrm{M}$ je koncentracija substrata, pri kateri je $v_0 = \tfrac{1}{2}V_\mathrm{max}$. Ima enoto koncentracije (npr. mM). Manjša $K_\mathrm{M}$ pomeni, da encim doseže polovico največje hitrosti že pri nizki $[S]$.
 
+### Izpeljava Michaelis-Mentenove enačbe
+
+Naj velja shema $E + S \underset{k_{-1}}{\overset{k_1}{\rightleftharpoons}} ES \overset{k_2}{\rightarrow} E + P$ in naj bodo izpolnjeni trije pogoji: (1) merimo začetno hitrost, zato je $[P] \approx 0$ in povratne reakcije iz $P$ ni; (2) $[S] \gg [E]_\mathrm{t}$ (skupna koncentracija encima), zato vezava v kompleks prosto $[S]$ opazno ne zmanjša; (3) **stacionarno stanje**: $[ES]$ se kmalu po začetku ne spreminja, $\mathrm{d}[ES]/\mathrm{d}t = 0$. Potem nastajanje in razpad $ES$ izenačimo in vstavimo bilanco encima $[E] = [E]_\mathrm{t} - [ES]$:
+
+$$k_1([E]_\mathrm{t} - [ES])[S] = (k_{-1} + k_2)[ES] \;\Rightarrow\; [ES] = \frac{[E]_\mathrm{t}[S]}{K_\mathrm{M} + [S]}, \quad K_\mathrm{M} = \frac{k_{-1} + k_2}{k_1}$$
+
+Hitrost je $v_0 = k_2[ES]$; ko je ves encim v $ES$, je hitrost največja, $V_\mathrm{max} = k_2[E]_\mathrm{t}$. S tem dobimo Michaelis-Mentenovo enačbo. Pri $[S] = K_\mathrm{M}$ je $v_0 = V_\mathrm{max}K_\mathrm{M}/(2K_\mathrm{M}) = V_\mathrm{max}/2$, kar dokaže, da je konstanta iz izpeljave res koncentracija za polovično hitrost.
+
 :::premisli
 Kolikšen delež $V_\mathrm{max}$ doseže encim pri $[S] = 99\,K_\mathrm{M}$? Napovej, preden izračunaš.
 ---
@@ -58,11 +66,11 @@ Pri $[S] \ll K_\mathrm{M}$ v imenovalcu ostane le $K_\mathrm{M}$: $v_0 \approx \
 
 ### Katalitska konstanta
 
-$V_\mathrm{max}$ je odvisna od količine encima: $V_\mathrm{max} = k_\mathrm{cat}[E]_\mathrm{t}$, kjer je $[E]_\mathrm{t}$ skupna koncentracija encima. **Katalitska konstanta** ali **obratno število** $k_\mathrm{cat}$ pove, koliko molekul substrata eno aktivno mesto v sekundi pretvori v produkt. Količnik $k_\mathrm{cat}/K_\mathrm{M}$ je **katalitska učinkovitost**: z njo primerjamo, kateri substrat encim pretvarja raje.
+$V_\mathrm{max}$ je odvisna od količine encima: $V_\mathrm{max} = k_\mathrm{cat}[E]_\mathrm{t}$, kjer je $[E]_\mathrm{t}$ skupna koncentracija encima. **Katalitska konstanta** ali **obratno število** $k_\mathrm{cat}$ pove, koliko molekul substrata eno aktivno mesto v sekundi pretvori v produkt, ko je encim nasičen; enota je $\mathrm{s^{-1}}$. Pri naši shemi je $k_\mathrm{cat} = k_2$. Količnik $k_\mathrm{cat}/K_\mathrm{M}$ je **katalitska učinkovitost**: z njo primerjamo, kateri substrat encim pretvarja raje.
 
 ### Dvojni recipročni diagram
 
-Iz hiperbole je težko natančno odčitati $V_\mathrm{max}$. Zato enačbo obrnemo (Lineweaver-Burkova oblika):
+Iz hiperbole je težko natančno odčitati $V_\mathrm{max}$. Zato enačbo obrnemo, $\dfrac{1}{v_0} = \dfrac{K_\mathrm{M} + [S]}{V_\mathrm{max}[S]}$, in ulomek razbijemo na dva člena (Lineweaver-Burkova oblika):
 
 $$\frac{1}{v_0} = \frac{K_\mathrm{M}}{V_\mathrm{max}}\cdot\frac{1}{[S]} + \frac{1}{V_\mathrm{max}}$$
 
@@ -84,12 +92,18 @@ Glede na to, kam se inhibitor veže, ločimo:
 
 Pri akompetitivni inhibiciji je $\alpha' = 1 + [I]/K_\mathrm{i}'$, kjer $K_\mathrm{i}'$ opisuje vezavo na $ES$. Če se inhibitor na $E$ in $ES$ veže različno močno, govorimo o **mešani inhibiciji**.
 
+*Izpeljava za kompetitivno inhibicijo.* Naj se $I$ veže le na prost encim, $E + I \rightleftharpoons EI$ s $K_\mathrm{i} = \dfrac{[E][I]}{[EI]}$, in naj bo $[I] \gg [E]_\mathrm{t}$, da je prosta $[I]$ enaka dodani. Bilanca encima je zdaj $[E]_\mathrm{t} = [E] + [ES] + [EI] = \alpha[E] + [ES]$. Stacionarno stanje za $ES$ še vedno da $[E] = K_\mathrm{M}[ES]/[S]$. Vstavimo: $[E]_\mathrm{t} = [ES]\left(\dfrac{\alpha K_\mathrm{M}}{[S]} + 1\right)$, od tod
+
+$$v_0 = k_2[ES] = \frac{V_\mathrm{max}[S]}{\alpha K_\mathrm{M} + [S]}$$
+
+Inhibitor torej le pomnoži $K_\mathrm{M}$ z $\alpha$; pri $[S] \to \infty$ je $v_0 \to V_\mathrm{max}$.
+
 Na dvojnem recipročnem diagramu se ločijo takole. Pri kompetitivni se premice z inhibitorjem in brez njega sekajo na osi $y$ (enak $1/V_\mathrm{max}$). Pri nekompetitivni se sekajo na osi $x$ (enak $-1/K_\mathrm{M}$). Pri akompetitivni so vzporedne (enak naklon).
 
 :::premisli
-Zakaj lahko učinek kompetitivnega inhibitorja premagamo z zelo veliko $[S]$, nekompetitivnega pa ne?
+Inhibitorja A in B pri majhni $[S]$ hitrost zmanjšata enako. Pri zelo veliki $[S]$ se hitrost z A vrne skoraj na $V_\mathrm{max}$, z B pa ostane nižja. Kateri je kompetitiven in zakaj?
 ---
-Kompetitivni inhibitor in substrat tekmujeta za isto aktivno mesto. Pri zelo veliki $[S]$ substrat izpodrine inhibitor, zato encim spet doseže $V_\mathrm{max}$. Nekompetitivni inhibitor se veže drugje in deaktivira tudi kompleks $ES$. Del encima je zato vedno izklopljen, ne glede na $[S]$, in $V_\mathrm{max}$ ostane nižja.
+A je kompetitiven, B nekompetitiven. Kompetitivni inhibitor in substrat tekmujeta za isto aktivno mesto. Pri zelo veliki $[S]$ substrat izpodrine inhibitor, zato encim spet doseže $V_\mathrm{max}$. Nekompetitivni inhibitor se veže drugje in deaktivira tudi kompleks $ES$. Del encima je zato vedno izklopljen, ne glede na $[S]$, in $V_\mathrm{max}$ ostane nižja.
 :::
 
 ### Ireverzibilna inhibicija
@@ -139,10 +153,10 @@ $\dfrac{1}{v_0} = \dfrac{K_\mathrm{M}}{V_\mathrm{max}}\cdot\dfrac{1}{[S]} + \dfr
 
 ### Primer 3 (težji): kompetitivni inhibitor in obratno vprašanje
 
-Encimu iz primera 1 ($V_\mathrm{max} = 120\,\mu\mathrm{mol/min}$, $K_\mathrm{M} = 2\,\mathrm{mM}$, $[S] = 3\,\mathrm{mM}$) dodamo kompetitivni inhibitor s koncentracijo $[I] = 0{,}5\,\mathrm{mM}$ in $K_\mathrm{i} = 0{,}25\,\mathrm{mM}$. Kolikšna je zdaj začetna hitrost? Kolikšno $[S]$ bi potrebovali, da bi encim ob inhibitorju spet dosegel $72\,\mu\mathrm{mol/min}$?
+Encimu iz primera 1 ($V_\mathrm{max} = 120\,\mu\mathrm{mol/min}$, $K_\mathrm{M} = 2\,\mathrm{mM}$, $[S] = 3\,\mathrm{mM}$) dodamo kompetitivni inhibitor s koncentracijo $[I] = 0{,}5\,\mathrm{mM}$ in $K_\mathrm{i} = 0{,}25\,\mathrm{mM}$. Kolikšna je zdaj začetna hitrost? Kolikšno $[S]$ bi potrebovali, da bi encim ob inhibitorju spet dosegel $72\,\mu\mathrm{mol/min}$? Pri kateri koncentraciji inhibitorja bi pri $[S] = 3\,\mathrm{mM}$ hitrost padla na polovico prvotne ($36\,\mu\mathrm{mol/min}$)?
 
 **Podatki:** $V_\mathrm{max} = 120\,\mu\mathrm{mol/min}$, $K_\mathrm{M} = 2\,\mathrm{mM}$, $[S] = 3\,\mathrm{mM}$, $[I] = 0{,}5\,\mathrm{mM}$, $K_\mathrm{i} = 0{,}25\,\mathrm{mM}$, ciljna hitrost $v_0 = 72\,\mu\mathrm{mol/min}$
-**Iščemo:** $v_0$ z inhibitorjem in potrebno $[S]$
+**Iščemo:** $v_0$ z inhibitorjem, potrebno $[S]$ in $[I]$ za polovično hitrost
 
 :::formula
 $\alpha = 1 + \dfrac{[I]}{K_\mathrm{i}}$, $\quad v_0 = \dfrac{V_\mathrm{max}\,[S]}{\alpha K_\mathrm{M} + [S]}$
@@ -157,7 +171,9 @@ Obrnjena oblika: $[S] = \dfrac{\alpha K_\mathrm{M}\,v_0}{V_\mathrm{max} - v_0}$
 3. $v_0 = \dfrac{120 \cdot 3}{6 + 3}\,\mu\mathrm{mol/min} = 40\,\mu\mathrm{mol/min}$. Hitrost je padla s $72$ na $40\,\mu\mathrm{mol/min}$.
 4. Za obratno vprašanje enačbo rešimo na $[S]$: $v_0(\alpha K_\mathrm{M} + [S]) = V_\mathrm{max}[S]$, od tod $[S] = \dfrac{\alpha K_\mathrm{M}\,v_0}{V_\mathrm{max} - v_0}$.
 5. $[S] = \dfrac{6 \cdot 72}{120 - 72}\,\mathrm{mM} = 9\,\mathrm{mM}$.
-6. Odgovor: z inhibitorjem je $v_0 = 40\,\mu\mathrm{mol/min}$. Za prvotnih $72\,\mu\mathrm{mol/min}$ potrebujemo $[S] = 9\,\mathrm{mM}$, trikrat več kot brez inhibitorja (kar je ravno $\alpha$).
+6. Polovična hitrost: iz $36(\alpha K_\mathrm{M} + 3) = 120 \cdot 3$ sledi $\alpha K_\mathrm{M} + 3 = 10$, torej $\alpha K_\mathrm{M} = 7\,\mathrm{mM}$ in $\alpha = 3{,}5$.
+7. Iz $\alpha = 1 + [I]/K_\mathrm{i}$: $[I] = (\alpha - 1)K_\mathrm{i} = 2{,}5 \cdot 0{,}25\,\mathrm{mM} = 0{,}625\,\mathrm{mM}$. To je $K_\mathrm{i}(1 + [S]/K_\mathrm{M})$: koncentracija za polovično zaviranje je odvisna od $[S]$.
+8. Odgovor: z inhibitorjem je $v_0 = 40\,\mu\mathrm{mol/min}$. Za prvotnih $72\,\mu\mathrm{mol/min}$ potrebujemo $[S] = 9\,\mathrm{mM}$, trikrat več kot brez inhibitorja (kar je ravno $\alpha$). Hitrost se razpolovi pri $[I] \approx 0{,}63\,\mathrm{mM}$.
 
 ### Primer 4: zdaj ti
 
@@ -199,6 +215,46 @@ $v_0 = 36\,\mu\mathrm{mol/min}$, natanko polovica od $72$. Potrojena $[S]$ bi hi
 - $\alpha = 1 + [I]/K_\mathrm{i}$. Kompetitivna: $K_\mathrm{M} \to \alpha K_\mathrm{M}$, $V_\mathrm{max}$ ostane. Nekompetitivna: $V_\mathrm{max} \to V_\mathrm{max}/\alpha$, $K_\mathrm{M}$ ostane. Akompetitivna: oba padeta za $\alpha'$.
 - Ireverzibilni inhibitorji se vežejo kovalentno in trajno izklopijo encim.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- Michaelis-Mentenovo enačbo z vsemi predpostavkami (začetna hitrost, $[S] \gg [E]_\mathrm{t}$, stacionarno stanje) in njeno izpeljavo;
+- natančne definicije $K_\mathrm{M}$, $V_\mathrm{max}$, $k_\mathrm{cat}$ in $k_\mathrm{cat}/K_\mathrm{M}$ z enotami ter kdaj je $K_\mathrm{M} \approx K_\mathrm{d}$;
+- izpeljavo Lineweaver-Burkove oblike in odčitavanje parametrov iz nje;
+- izpeljavo hitrosti pri kompetitivni inhibiciji ter vpliv vseh treh vrst reverzibilne inhibicije na navidezni $K_\mathrm{M}$, $V_\mathrm{max}$ in na dvojni recipročni diagram.
+
+### Naloga 1
+
+Encim s skupno koncentracijo $[E]_\mathrm{t} = 20\,\mathrm{nM}$ smo merili brez inhibitorja in z inhibitorjem $[I] = 0{,}40\,\mathrm{mM}$. Brez inhibitorja: pri $[S] = 2\,\mathrm{mM}$ je $v_0 = 60\,\mu\mathrm{M/min}$, pri $[S] = 6\,\mathrm{mM}$ je $v_0 = 90\,\mu\mathrm{M/min}$. Z inhibitorjem pri istih $[S]$: $30$ in $60\,\mu\mathrm{M/min}$. (a) Z dvojnim recipročnim diagramom določi $K_\mathrm{M}$ in $V_\mathrm{max}$ v obeh primerih. (b) Določi vrsto inhibicije in $K_\mathrm{i}$. (c) Izračunaj $k_\mathrm{cat}$ in $k_\mathrm{cat}/K_\mathrm{M}$ v $\mathrm{M^{-1}s^{-1}}$.
+
+**Rešitev:**
+
+1. Brez inhibitorja: točki $(1/[S],\,1/v_0) = (0{,}5;\ 0{,}016667)$ in $(0{,}16667;\ 0{,}011111)$, v $\mathrm{mM^{-1}}$ in $\mathrm{min/\mu M}$.
+2. Naklon $= \dfrac{0{,}016667 - 0{,}011111}{0{,}5 - 0{,}16667} \approx 0{,}016667$; odsek $= 0{,}016667 - 0{,}016667 \cdot 0{,}5 \approx 0{,}008333$. Zato $V_\mathrm{max} = 1/0{,}008333 \approx 120\,\mu\mathrm{M/min}$ in $K_\mathrm{M} = 0{,}016667 \cdot 120 \approx 2{,}0\,\mathrm{mM}$.
+3. Z inhibitorjem: točki $(0{,}5;\ 0{,}033333)$ in $(0{,}16667;\ 0{,}016667)$; naklon $= \dfrac{0{,}016667}{0{,}33333} = 0{,}05$, odsek $= 0{,}033333 - 0{,}025 \approx 0{,}008333$.
+4. Navidezno: $V_\mathrm{max} \approx 120\,\mu\mathrm{M/min}$ (enak odsek), $K_\mathrm{M}' = 0{,}05 \cdot 120 = 6{,}0\,\mathrm{mM}$.
+5. $V_\mathrm{max}$ ostane, $K_\mathrm{M}$ naraste: premici se sekata na osi $y$, inhibicija je kompetitivna. $\alpha = 6{,}0/2{,}0 = 3$.
+6. $K_\mathrm{i} = \dfrac{[I]}{\alpha - 1} = \dfrac{0{,}40}{2}\,\mathrm{mM} = 0{,}20\,\mathrm{mM}$.
+7. $V_\mathrm{max} = 120\,\mu\mathrm{M/min} = 2{,}0\,\mu\mathrm{M/s}$, zato $k_\mathrm{cat} = \dfrac{2{,}0 \cdot 10^{-6}}{20 \cdot 10^{-9}}\,\mathrm{s^{-1}} = 100\,\mathrm{s^{-1}}$.
+8. $k_\mathrm{cat}/K_\mathrm{M} = \dfrac{100\,\mathrm{s^{-1}}}{2{,}0 \cdot 10^{-3}\,\mathrm{M}} = 5{,}0 \cdot 10^{4}\,\mathrm{M^{-1}s^{-1}}$, daleč pod difuzijsko mejo.
+9. Odgovor: $K_\mathrm{M} = 2{,}0\,\mathrm{mM}$, $V_\mathrm{max} = 120\,\mu\mathrm{M/min}$; z inhibitorjem $K_\mathrm{M}' = 6{,}0\,\mathrm{mM}$; kompetitivna inhibicija s $K_\mathrm{i} = 0{,}20\,\mathrm{mM}$; $k_\mathrm{cat} = 100\,\mathrm{s^{-1}}$, $k_\mathrm{cat}/K_\mathrm{M} = 5{,}0 \cdot 10^4\,\mathrm{M^{-1}s^{-1}}$.
+
+### Naloga 2
+
+Natančno navedi predpostavke in izpelji Michaelis-Mentenovo enačbo za shemo $E + S \rightleftharpoons ES \rightarrow E + P$. Dokaži, da je $K_\mathrm{M}$ koncentracija substrata, pri kateri je $v_0 = V_\mathrm{max}/2$. Utemelji, ali je $K_\mathrm{M}$ vedno enaka disociacijski konstanti kompleksa $ES$.
+
+**Rešitev:**
+
+1. Predpostavke: začetna hitrost ($[P] \approx 0$, brez povratne reakcije iz $P$), $[S] \gg [E]_\mathrm{t}$ (prosta $[S]$ je enaka dodani), stacionarno stanje $\mathrm{d}[ES]/\mathrm{d}t = 0$.
+2. Stacionarnost: $k_1[E][S] = (k_{-1} + k_2)[ES]$.
+3. Bilanca encima: $[E] = [E]_\mathrm{t} - [ES]$. Vstavimo in uredimo: $[ES]\,(k_1[S] + k_{-1} + k_2) = k_1[E]_\mathrm{t}[S]$.
+4. Delimo s $k_1$: $[ES] = \dfrac{[E]_\mathrm{t}[S]}{K_\mathrm{M} + [S]}$ s $K_\mathrm{M} = \dfrac{k_{-1} + k_2}{k_1}$.
+5. $v_0 = k_2[ES]$; ko je ves encim v $ES$, je $v_0 = V_\mathrm{max} = k_2[E]_\mathrm{t}$, zato $v_0 = \dfrac{V_\mathrm{max}[S]}{K_\mathrm{M} + [S]}$.
+6. Pri $[S] = K_\mathrm{M}$: $v_0 = \dfrac{V_\mathrm{max}K_\mathrm{M}}{2K_\mathrm{M}} = \dfrac{V_\mathrm{max}}{2}$; ker $v_0$ z $[S]$ strogo narašča, je to edina taka koncentracija.
+7. Disociacijska konstanta kompleksa je ravnotežna konstanta za $ES \rightleftharpoons E + S$, $K_\mathrm{d} = \dfrac{k_{-1}}{k_1}$ (v stacionarnem stanju je razmerje $[E][S]/[ES]$ enako $K_\mathrm{M}$, ne $K_\mathrm{d}$), torej $K_\mathrm{M} = K_\mathrm{d} + \dfrac{k_2}{k_1} > K_\mathrm{d}$.
+8. Odgovor: ne; $K_\mathrm{M} \approx K_\mathrm{d}$ le, kadar je $k_2 \ll k_{-1}$ (kompleks veliko pogosteje razpade nazaj, kot se pretvori v produkt).
+
 ## Drugače: Na sliki
 
 Nariši graf $v_0$ (os $y$) v odvisnosti od $[S]$ (os $x$). Na višini $V_\mathrm{max}$ potegni vodoravno črtkano črto. Krivulja se od izhodišča najprej dviga strmo, skoraj kot premica, nato se upogne in se počasi bliža črtkani črti.
@@ -207,26 +263,16 @@ Na polovici višine, pri $V_\mathrm{max}/2$, potegni vodoravno črto do krivulje
 
 Dodaj kompetitivni inhibitor: krivulja se raztegne v desno (polovico višine doseže kasneje), a na daleč se bliža isti črtkani črti. Pri nekompetitivnem inhibitorju se celotna krivulja stisne navzdol k nižji črti, polovico svoje višine pa doseže pri isti $[S]$.
 
-## Drugače: Iz vsakdanjega življenja
+## Drugače: Uporaba v stroki
 
-Predstavljaj si avtopralnico z nekaj boksi. Boks je aktivno mesto, avto je substrat, oprani avto je produkt.
-
-- Ko pride malo avtov, je pralnica napol prazna. Dvakrat več avtov pomeni dvakrat več opranih na uro.
-- Ko je vrsta dolga, so vsi boksi ves čas polni. Pralnica pere s polno zmogljivostjo $V_\mathrm{max}$; daljša vrsta tega ne spremeni.
-- **Kompetitivni inhibitor** je avto, ki se zapelje v boks, a se ne pere. Če je pravih avtov ogromno, ga hitro preženejo.
-- **Nekompetitivni inhibitor** je pokvarjena krtača v nekaterih boksih. Ne glede na dolžino vrste ti boksi perejo počasneje ali sploh ne.
+- **Klinični laboratorij:** aktivnost encimov v serumu (npr. ALT in AST pri okvari jeter) merimo pri nasičujoči $[S]$, ko je $v_0 \approx V_\mathrm{max} = k_\mathrm{cat}[E]_\mathrm{t}$ sorazmerna s količino encima. Rezultat podajamo v enotah U/L ($1\,\mathrm{U} = 1\,\mu\mathrm{mol/min}$).
+- **Razvoj zdravil:** spojine razvrščamo po $K_\mathrm{i}$ in $\mathrm{IC_{50}}$ (koncentraciji inhibitorja, pri kateri hitrost pade na polovico). Pri kompetitivnem inhibitorju velja $\mathrm{IC_{50}} = K_\mathrm{i}(1 + [S]/K_\mathrm{M})$ (Primer 3), zato mora protokol navesti $[S]$. Statini so kompetitivni inhibitorji HMG-CoA-reduktaze.
+- **Toksikologija:** pri zastrupitvi z metanolom bolnik dobi fomepizol ali etanol, ki kompetitivno zasedeta alkohol-dehidrogenazo, zato nastaja manj strupenih produktov, formaldehida in mravljične kisline.
+- **Biokataliza v industriji:** imobilizirana glukoza-izomeraza v koloni pretvarja glukozo v fruktozo; proteaze in lipaze za pralne praške izbiramo po $k_\mathrm{cat}/K_\mathrm{M}$ in stabilnosti.
 
 ## Drugače: Bolj natančno
 
-**Izpeljava (stacionarno stanje, Briggs in Haldane).** Za $E + S \underset{k_{-1}}{\overset{k_1}{\rightleftharpoons}} ES \overset{k_2}{\rightarrow} E + P$ predpostavimo, da se $[ES]$ kmalu po začetku ne spreminja:
-
-$$k_1[E][S] = (k_{-1} + k_2)[ES]$$
-
-Z bilanco encima $[E] = [E]_\mathrm{t} - [ES]$ dobimo
-
-$$[ES] = \frac{[E]_\mathrm{t}[S]}{K_\mathrm{M} + [S]}, \qquad K_\mathrm{M} = \frac{k_{-1} + k_2}{k_1}$$
-
-Hitrost je $v_0 = k_2[ES]$, zato je $V_\mathrm{max} = k_2[E]_\mathrm{t}$ in $k_\mathrm{cat} = k_2$. Le kadar je $k_2 \ll k_{-1}$, je $K_\mathrm{M} \approx k_{-1}/k_1 = K_\mathrm{d}$, tj. disociacijska konstanta kompleksa $ES$. Zato je $K_\mathrm{M}$ v splošnem le *navidezna* mera afinitete.
+**Ravnotežje ali stacionarno stanje.** Michaelis in Mentenova sta leta 1913 predpostavila hitro ravnotežje $E + S \rightleftharpoons ES$; Briggs in Haldane sta ga nadomestila s splošnejšim stacionarnim stanjem (izpeljava v Razlagi). Pri enostopenjski shemi je $k_\mathrm{cat} = k_2$. Le kadar je $k_2 \ll k_{-1}$, je $K_\mathrm{M} \approx k_{-1}/k_1 = K_\mathrm{d}$, tj. disociacijska konstanta kompleksa $ES$. Zato je $K_\mathrm{M}$ v splošnem le *navidezna* mera afinitete.
 
 **Meja učinkovitosti.** Pri $[S] \ll K_\mathrm{M}$ je $v_0 = \dfrac{k_\mathrm{cat}}{K_\mathrm{M}}[E][S]$. Konstanta $k_\mathrm{cat}/K_\mathrm{M}$ ne more preseči hitrosti difuzijskega trčenja, približno $10^8$ do $10^9\,\mathrm{M^{-1}s^{-1}}$. Encimi blizu te meje (npr. karboanhidraza) so »katalitsko popolni«.
 
@@ -292,4 +338,6 @@ K_\mathrm{i} | inhibicijska konstanta | | mM | manjša K_i pomeni močnejšo vez
 k_1 | konstanta hitrosti nastanka ES | | 1/(mM s)
 k_{-1} | konstanta hitrosti razpada ES nazaj v E in S | | 1/s
 k_2 | konstanta hitrosti nastanka produkta | | 1/s | k_cat = k₂
+k_\mathrm{cat} | katalitska konstanta (obratno število) | k_\mathrm{cat} = \frac{V_\mathrm{max}}{[E]_\mathrm{t}} | 1/s |
+K_\mathrm{d} | disociacijska konstanta kompleksa ES | K_\mathrm{d} = \frac{k_{-1}}{k_1} | mM |
 :::
