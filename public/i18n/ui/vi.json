@@ -3108,6 +3108,8 @@
   "a3.visible": "Cấu trúc đang hiện: {n}",
   "a3.showAll": "Hiện tất cả",
   "a3.zoomIn": "Phóng to",
+  "a3.rotFree": "Xoay mọi hướng (chuyển sang thẳng đứng)",
+  "a3.rotUpright": "Xoay thẳng đứng (chuyển sang mọi hướng)",
   "a3.zoomOut": "Thu nhỏ",
   "a3.reset": "Đặt lại",
   "a3.compass": "Hướng nhìn",

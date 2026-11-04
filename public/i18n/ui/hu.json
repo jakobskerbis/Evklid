@@ -3131,6 +3131,8 @@
   "a3.visible": "Látható struktúrák: {n}",
   "a3.showAll": "Összes mutatása",
   "a3.zoomIn": "Nagyítás",
+  "a3.rotFree": "Forgatás minden irányban (váltás függőlegesre)",
+  "a3.rotUpright": "Függőleges forgatás (váltás minden irányra)",
   "a3.zoomOut": "Kicsinyítés",
   "a3.reset": "Alaphelyzet",
   "a3.compass": "Nézési irány",

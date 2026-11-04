@@ -3161,6 +3161,8 @@
   "a3.visible": "Structuri vizibile: {n}",
   "a3.showAll": "Arată tot",
   "a3.zoomIn": "Apropie",
+  "a3.rotFree": "Rotire în toate direcțiile (comută la vertical)",
+  "a3.rotUpright": "Rotire verticală (comută la toate direcțiile)",
   "a3.zoomOut": "Depărtează",
   "a3.reset": "Resetează",
   "a3.compass": "Direcția privirii",

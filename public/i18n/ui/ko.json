@@ -3108,6 +3108,8 @@
   "a3.visible": "보이는 구조: {n}",
   "a3.showAll": "모두 보기",
   "a3.zoomIn": "확대",
+  "a3.rotFree": "모든 방향으로 회전 (세로 회전으로 전환)",
+  "a3.rotUpright": "세로 회전 (모든 방향으로 전환)",
   "a3.zoomOut": "축소",
   "a3.reset": "초기화",
   "a3.compass": "보는 방향",

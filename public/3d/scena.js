@@ -62,6 +62,34 @@ export function lepaDolzina(maks) {
   return { m: n, oznaka: `${String(v).replace(".", ",")} ${e}` };
 }
 
+// Gumb za preklop načina vrtenja (orodja odra v pregledovalniku in atlasu): ikona in napis kažeta trenutni način.
+export function poveziGumbVrtenja(b, kit, icon, t) {
+  const osvezi = () => {
+    const prosto = kit.nacinVrtenja() === "prosto";
+    b.innerHTML = icon(prosto ? "rotate-3d" : "globe");
+    const l = t(prosto ? "a3.rotFree" : "a3.rotUpright");
+    b.setAttribute("aria-label", l);
+    b.title = l;
+  };
+  b.addEventListener("click", () => {
+    kit.nacinVrtenja(kit.nacinVrtenja() === "prosto" ? "pokoncno" : "prosto");
+    osvezi();
+  });
+  osvezi();
+}
+
+// Način vrtenja, ki ga uporabnik izbere v kateremkoli 3D modelu: »prosto« (v vse smeri, čez vrh) ali »pokoncno« (okoli
+// navpične osi). Brez izbire ima vsak oder svoj privzeti način (modeli prosto, atlas pokončno).
+const KLJUC_NACINA = "evklid.3d.vrtenje";
+export function shranjenNacin() {
+  try {
+    const v = localStorage.getItem(KLJUC_NACINA);
+    return v === "prosto" || v === "pokoncno" ? v : null;
+  } catch {
+    return null;
+  }
+}
+
 export function ustvariSceno(el, opts = {}) {
   const kakovost = opts.kakovost || kakovostNaprave();
   const visoka = kakovost === "visoka";
@@ -135,7 +163,8 @@ export function ustvariSceno(el, opts = {}) {
   // Prosto vrtenje (opts.prostoVrtenje, j 4. 11.: »okoli točke, ne osi«): model se obrača okoli središča v vse smeri
   // kot krogla v roki (brez zaklenjene navpične osi in brez ustavljanja na polu). Kamera kroži okoli controls.target,
   // njen »gor« se vrti z njo; OrbitControls ostane za povečavo in premik (dva prsta, desna tipka).
-  const prosto = opts.prostoVrtenje === true;
+  // Način izbere uporabnik z gumbom (nacinVrtenja, shranjen na napravi za vse modele); brez izbire velja opts.
+  let prosto = shranjenNacin() ? shranjenNacin() === "prosto" : opts.prostoVrtenje === true;
   const vztr = { x: 0, y: 0 }; // hitrost po spustu (rad/s), pojema
   function zavrti(kotX, kotY) {
     zavrtiOkoli(THREE, camera.position, camera.up, controls.target, kotX, kotY);
@@ -143,15 +172,19 @@ export function ustvariSceno(el, opts = {}) {
     narisi();
   }
   const prsti = new Map(); // prsti / leva tipka na platnu (id → zadnji položaj)
-  if (prosto) {
-    controls.enableRotate = false;
-    // En prst: OrbitControls brez stanja (ne ROTATE): pri enableRotate = false bi po dvigu enega od dveh prstov ostal v
-    // stanju povečave in ob vsakem premiku preostalega prsta vrgel napako (_handleTouchMoveDolly brez drugega prsta).
-    controls.touches.ONE = null;
+  // En prst pri prostem vrtenju: OrbitControls brez stanja (ne ROTATE): pri enableRotate = false bi po dvigu enega od
+  // dveh prstov ostal v stanju povečave in ob vsakem premiku preostalega prsta vrgel napako (_handleTouchMoveDolly).
+  const enPrst = controls.touches.ONE;
+  const uporabiNacin = () => {
+    controls.enableRotate = !prosto;
+    controls.touches.ONE = prosto ? null : enPrst;
+  };
+  uporabiNacin();
+  {
     let zadnjiCas = 0;
     let pot = 0; // pot od pritiska (px): tap (< 7 px, kot naTap) ne zavrti naprej
     canvas.addEventListener("pointerdown", (e) => {
-      if (e.pointerType === "mouse" && e.button !== 0) return;
+      if (!prosto || (e.pointerType === "mouse" && e.button !== 0)) return;
       prsti.set(e.pointerId, { x: e.clientX, y: e.clientY });
       vztr.x = vztr.y = 0;
       pot = 0;
@@ -389,6 +422,22 @@ export function ustvariSceno(el, opts = {}) {
     camera.position.copy(controls.target).addScaledVector(smer, la + (lb - la) * e);
     if (let_.t >= 1) let_ = null;
     return true;
+  }
+  // Preklop načina: v pokončnem se kamera gladko postavi pokonci (OrbitControls kroži okoli navpične osi).
+  function nacinVrtenja(nov) {
+    if (nov === undefined) return prosto ? "prosto" : "pokoncno";
+    const p = nov === "prosto";
+    try {
+      localStorage.setItem(KLJUC_NACINA, p ? "prosto" : "pokoncno");
+    } catch {}
+    if (p === prosto) return nov;
+    prosto = p;
+    vztr.x = vztr.y = 0;
+    prsti.clear();
+    uporabiNacin();
+    if (!prosto) poleti(controls.target, 1, { razdalja: camera.position.distanceTo(controls.target), pokonci: true, trajanje: 0.5 });
+    narisi();
+    return nov;
   }
   const obrni = (az, pol) => {
     if (prosto) {
@@ -689,6 +738,7 @@ export function ustvariSceno(el, opts = {}) {
     plast,
     narisi,
     poleti,
+    nacinVrtenja,
     fitRazdalja,
     obrni,
     priblizaj,

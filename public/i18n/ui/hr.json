@@ -3159,6 +3159,8 @@
   "a3.visible": "Vidljive strukture: {n}",
   "a3.showAll": "Prikaži sve",
   "a3.zoomIn": "Približi",
+  "a3.rotFree": "Okretanje u svim smjerovima (prebaci na uspravno)",
+  "a3.rotUpright": "Uspravno okretanje (prebaci na sve smjerove)",
   "a3.zoomOut": "Udalji",
   "a3.reset": "Vrati na početno",
   "a3.compass": "Smjer pogleda",

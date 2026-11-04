@@ -2,7 +2,7 @@
 // točkami in seznamom gumbov (tipkovnica: Tab do seznama, Enter izbere), nadzor iz `nadzor` (drsnik, izbira, gumb,
 // stikalo, izpis), merilo iz `merilo`, »Ponastavi«, predvajaj/ustavi, ko ima model `korak`. Uporabljata ga stran /3d
 // in pogon simulacij »3d-<id>« v lekcijah (public/3d/sim.js).
-import { THREE, ustvariSceno, kakovostNaprave, gibanje } from "./scena.js";
+import { THREE, ustvariSceno, kakovostNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
 
@@ -103,7 +103,9 @@ export function odpriModel(el, mod, opts = {}) {
     b.addEventListener("click", () => kit?.priblizaj(f));
     return b;
   };
-  orodja.append(povecava(1 / 1.35, "zoom-out", "a3.zoomOut"), povecava(1.35, "zoom-in", "a3.zoomIn"), btnTeci, btnPonastavi);
+  const btnVrtenje = mk("button", "k3-krog k3-vrtenje");
+  btnVrtenje.type = "button";
+  orodja.append(btnVrtenje, povecava(1 / 1.35, "zoom-out", "a3.zoomOut"), povecava(1.35, "zoom-in", "a3.zoomIn"), btnTeci, btnPonastavi);
 
   function nastaviTek(on) {
     tece = on;
@@ -391,6 +393,7 @@ export function odpriModel(el, mod, opts = {}) {
     if (model?.group) kit?.scene.remove(model.group);
     if (!kit) {
       kit = ustvariSceno(oder, { kakovost: opts.kakovost, oznaka: info.naslov, ponastavi: () => zgradiVse(true), prostoVrtenje: true });
+      poveziGumbVrtenja(btnVrtenje, kit, icon, t);
       oder.append(orodja);
       // Barvne točke po 4 s mirovanja zbledijo (j, 4. 11.) in se vrnejo ob dotiku, premiku kamere, koleščku ali tipki;
       // izbrana točka ostane vidna. Velja na strani /3d in v lekcijah.

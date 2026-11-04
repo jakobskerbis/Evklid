@@ -3133,6 +3133,8 @@
   "a3.visible": "Sichtbare Strukturen: {n}",
   "a3.showAll": "Alle zeigen",
   "a3.zoomIn": "Vergrößern",
+  "a3.rotFree": "Drehen in alle Richtungen (zu aufrecht wechseln)",
+  "a3.rotUpright": "Aufrechtes Drehen (zu allen Richtungen wechseln)",
   "a3.zoomOut": "Verkleinern",
   "a3.reset": "Zurücksetzen",
   "a3.compass": "Blickrichtung",

@@ -3131,6 +3131,8 @@
   "a3.visible": "Miundo inayoonekana: {n}",
   "a3.showAll": "Onyesha yote",
   "a3.zoomIn": "Kuza",
+  "a3.rotFree": "Zungusha pande zote (badilisha kuwa wima)",
+  "a3.rotUpright": "Mzunguko wima (badilisha kuwa pande zote)",
   "a3.zoomOut": "Punguza",
   "a3.reset": "Weka upya",
   "a3.compass": "Mwelekeo wa kutazama",

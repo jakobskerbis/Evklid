@@ -3108,6 +3108,8 @@
   "a3.visible": "Struktur terlihat: {n}",
   "a3.showAll": "Tampilkan semua",
   "a3.zoomIn": "Perbesar",
+  "a3.rotFree": "Putar ke segala arah (beralih ke tegak)",
+  "a3.rotUpright": "Putar tegak (beralih ke segala arah)",
   "a3.zoomOut": "Perkecil",
   "a3.reset": "Atur ulang",
   "a3.compass": "Arah pandang",
