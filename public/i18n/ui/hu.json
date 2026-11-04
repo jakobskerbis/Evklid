@@ -2480,6 +2480,7 @@
   "scan.mock": "A fotók beolvasása most nem működik. Írd be a feladatot a billentyűzettel.",
   "scan.offline": "A fotó beolvasásához internetkapcsolat kell. A feladatot beírhatod, kapcsolat nélkül is megoldom.",
   "scan.readAs": "Ezt olvastam be",
+  "scan.given": "Adott",
   "scan.pick": "Több feladat is van a képen. Válassz egyet:",
   "scan.inputLabel": "Feladat (javítsd ki, ha valamit rosszul olvastam be)",
   "scan.typeLabel": "Feladat",

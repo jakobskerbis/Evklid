@@ -26,14 +26,19 @@ const textOf = (msg) => msg.content.filter((b) => b.type === "text").map((b) => 
 
 export const READ_PROMPT =
   "The image shows a maths task (printed or handwritten) that a student photographed to get a step-by-step solution. " +
-  "Transcribe every separate maths problem you can see, exactly as written (do not solve, do not fix mistakes, do not invent missing parts).\n" +
+  "Transcribe every separate maths problem you can see, exactly as written (do not solve, do not fix mistakes, do not invent missing parts). " +
+  "A page often holds several tasks (numbered, side by side or one below another): list each of them, not only the first.\n" +
+  "Give each task as originally stated, never a line of the student's working or a result: if a task is followed by its solution, give only the task; if only working is visible, give its first line.\n" +
   "For each problem give:\n" +
   '- "text": the problem in calculator syntax: * for multiplication, / for division and fractions with parentheses ((x+1)/2), ^ for powers, sqrt(), abs(), sin(), ln(), log(), pi, e; ' +
   "decimal point as a dot; an equation with =, inequalities with <, >, <=, >=; a system as equations separated by ; ; a derivative as d/dx(...); an integral as ∫ f dx or ∫_a^b f dx; " +
-  "a limit as lim_(x->a) f. Keep the student's letters for variables.\n" +
+  "a limit as lim_(x->a) f; a binomial coefficient (n choose k) or C_n^k as nCr(n,k); variations V_n^k as nPr(n,k); a factorial as n!; " +
+  "a double inequality as a<x<b. Keep the student's letters for variables.\n" +
+  '- "given": only if the task states conditions needed to solve it (a point on the graph, an asymptote, a pole, a zero, a domain, a value such as f(0)=5): ' +
+  'a list of them in LaTeX, one condition each, in the words of the page (e.g. ["T(7,2)", "\\text{pol: } x=3", "f(0)=5"]). Otherwise leave it out.\n' +
   '- "tex": the same problem in LaTeX.\n' +
   "Ignore task numbers (1., a)), instructions and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve.\n" +
-  'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"..."}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
+  'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."]}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
   // Fotografije, ki niso učno gradivo, zavrnemo (j, 2026-10-30); slike strežnik nikoli ne shrani.
   'Accept schoolwork even if people appear in the frame (book illustrations, a teacher at a whiteboard, hands). Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message) or it is a random scene, do not describe it and return only {"problems":[],"unrelated":true}. If unsure, read it.';
 
@@ -42,7 +47,7 @@ export async function readMathPhoto({ imageBase64, mediaType = "image/jpeg" }) {
   if (isMockMode()) return { mock: true, problems: [], usage: null, model };
   const final = await getClient().messages.create({
     model,
-    max_tokens: 1500,
+    max_tokens: 2000, // več nalog na strani in njihovi podatki
     ...quickParams(model),
     messages: [
       {
@@ -63,11 +68,25 @@ export function cleanProblems(list) {
   return (Array.isArray(list) ? list : [])
     .filter((p) => p && typeof p.text === "string" && p.text.trim())
     .slice(0, 6)
-    .map((p) => ({
-      text: p.text.trim().slice(0, MAX_TEXT),
-      tex: typeof p.tex === "string" ? p.tex.trim().slice(0, MAX_TEXT * 2) : "",
-      goal: GOALS.includes(p.goal) ? p.goal : null,
-    }));
+    .map((p) => {
+      const given = cleanGiven(p.given);
+      return {
+        text: p.text.trim().slice(0, MAX_TEXT),
+        tex: typeof p.tex === "string" ? p.tex.trim().slice(0, MAX_TEXT * 2) : "",
+        goal: GOALS.includes(p.goal) ? p.goal : null,
+        ...(given.length ? { given } : {}),
+      };
+    });
+}
+
+// Pogoji naloge »določi parametre« (točka, asimptota, pol, ničla …): brez njih naloga ni rešljiva.
+const MAX_GIVEN = 6;
+const MAX_GIVEN_LEN = 160;
+export function cleanGiven(list) {
+  return (Array.isArray(list) ? list : [])
+    .filter((g) => typeof g === "string" && g.trim())
+    .slice(0, MAX_GIVEN)
+    .map((g) => g.trim().slice(0, MAX_GIVEN_LEN));
 }
 
 // Cilj, ki ga je učenec izbral na zaslonu (npr. »Razstavi«): brez njega bi AI izraz morda le poenostavil.
@@ -79,9 +98,10 @@ const GOAL_TEXT = {
   solve: "Task: solve it.",
 };
 
-export function solvePrompt(text, lang, feedback = null, goal = null) {
+export function solvePrompt(text, lang, feedback = null, goal = null, given = []) {
   return (
     `A student wants a step-by-step solution of this maths problem (calculator syntax): ${text}\n` +
+    (given.length ? `Conditions stated in the task (LaTeX; use them, e.g. to find the parameters): ${given.join("; ")}\n` : "") +
     (GOAL_TEXT[goal] ? `${GOAL_TEXT[goal]}\n` : "") +
     `Write every title and explanation in ${lang}, simply, for a student at school level; use the notation of Slovenian schools (decimal comma in LaTeX as {,}, intervals with ( ) and [ ], »D« for the discriminant).\n` +
     "Solve it correctly; check your result yourself before answering. Steps must be small (one idea each), as a good teacher writes them on the board. Give a second method only if it is commonly taught.\n" +
@@ -116,7 +136,7 @@ export function cleanSolution(s) {
   };
 }
 
-export async function solveWithAi({ text, lang = "sl", goal = null }) {
+export async function solveWithAi({ text, lang = "sl", goal = null, given = [] }) {
   const model = SOLVE_MODEL();
   if (isMockMode()) return { mock: true, solution: null, usage: null, model };
   const ask = async (feedback) => {
@@ -125,15 +145,16 @@ export async function solveWithAi({ text, lang = "sl", goal = null }) {
       max_tokens: 8000,
       thinking: { type: "adaptive" },
       output_config: { effort: "medium" },
-      messages: [{ role: "user", content: solvePrompt(text, languagePrompt(lang), feedback, goal) }],
+      messages: [{ role: "user", content: solvePrompt(text, languagePrompt(lang), feedback, goal, given) }],
     });
     return { sol: cleanSolution(jsonFrom(textOf(final))), usage: final.usage, model: final.model || model };
   };
   let out = await ask(null);
   let usage = [out.usage];
   let check = out.sol ? verifyAi(text, out.sol) : { verified: false, reason: "parse" };
-  // Ena ponovitev, kadar preverjanje pokaže napačno ali manjkajočo rešitev.
-  if (out.sol && !check.verified && (check.reason === "wrong" || check.reason === "missing")) {
+  // Ena ponovitev, kadar preverjanje pokaže napačno ali manjkajočo rešitev. Pri nalogi s podatki (parametri)
+  // preverjanje vidi le predlogo f(x) = …, zato ponovitve ne sproži (rešitev ostane označena kot nepreverjena).
+  if (out.sol && !given.length && !check.verified && (check.reason === "wrong" || check.reason === "missing")) {
     const fb = check.reason === "missing" ? `x ≈ ${check.missing.slice(0, 6).map((m) => m.toFixed(4)).join(", ")} also satisfies the equation` : "substituting your result back does not give the original";
     const again = await ask(fb);
     usage.push(again.usage);
@@ -172,10 +193,14 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     if (!text || text.length > MAX_TEXT) return res.status(400).json({ error: "Naloga manjka ali je predolga." });
     const goal = req.body?.goal ?? null;
     if (goal !== null && !GOALS.includes(goal)) return res.status(400).json({ error: "Neznan cilj naloge." });
+    const rawGiven = req.body?.given ?? [];
+    if (!Array.isArray(rawGiven) || rawGiven.length > MAX_GIVEN || rawGiven.some((g) => typeof g !== "string" || g.length > MAX_GIVEN_LEN))
+      return res.status(400).json({ error: "Podatki naloge niso veljavni." });
+    const given = cleanGiven(rawGiven);
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
     try {
-      const out = await solveFn({ text, goal, lang: s.settings?.language || "sl" });
+      const out = await solveFn({ text, goal, given, lang: s.settings?.language || "sl" });
       if (out.mock) return res.json({ solution: null, mock: true });
       for (const u of [].concat(out.usage || [])) if (u) usage?.log(s.id, out.model, u, "skeniranje");
       if (!out.solution) return res.status(502).json({ error: "Rešitve ni bilo mogoče sestaviti. Poskusi znova ali vprašaj inštruktorja." });

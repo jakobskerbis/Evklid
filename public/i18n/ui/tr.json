@@ -2480,6 +2480,7 @@
   "scan.mock": "Fotoğraf okuma şu anda çalışmıyor. Soruyu klavyeyle yaz.",
   "scan.offline": "Fotoğrafı okumak için bağlantı gerekiyor. Soruyu yazabilirsin, onu bağlantı olmadan da çözerim.",
   "scan.readAs": "Okuduğum",
+  "scan.given": "Verilenler",
   "scan.pick": "Resimde birden fazla soru var. Birini seç:",
   "scan.inputLabel": "Soru (yanlış okuduğum bir yer varsa düzelt)",
   "scan.typeLabel": "Soru",

@@ -2463,6 +2463,7 @@
   "scan.mock": "Tính năng đọc ảnh hiện không hoạt động. Hãy nhập đề bài bằng bàn phím.",
   "scan.offline": "Cần kết nối mạng để đọc ảnh. Bạn có thể nhập đề bài, mình vẫn giải được khi không có mạng.",
   "scan.readAs": "Mình đã đọc được",
+  "scan.given": "Cho biết",
   "scan.pick": "Trong ảnh có nhiều bài. Hãy chọn một bài:",
   "scan.inputLabel": "Đề bài (sửa lại nếu mình đọc sai chỗ nào)",
   "scan.typeLabel": "Bài tập",

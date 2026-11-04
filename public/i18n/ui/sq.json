@@ -2480,6 +2480,7 @@
   "scan.mock": "Leximi i fotove nuk funksionon tani. Shkruaje ushtrimin me tastierë.",
   "scan.offline": "Për të lexuar një foto të duhet lidhje me internetin. Ushtrimin mund ta shkruash, e zgjidh edhe pa lidhje.",
   "scan.readAs": "Lexova",
+  "scan.given": "Të dhëna",
   "scan.pick": "Në figurë ka disa ushtrime. Zgjidh njërin:",
   "scan.inputLabel": "Ushtrimi (korrigjoje nëse kam lexuar diçka gabim)",
   "scan.typeLabel": "Detyra",

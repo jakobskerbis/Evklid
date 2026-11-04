@@ -2463,6 +2463,7 @@
   "scan.mock": "目前无法识别照片。请用键盘输入题目。",
   "scan.offline": "识别照片需要联网。你可以直接输入题目，离线我也能解。",
   "scan.readAs": "识别结果",
+  "scan.given": "已知",
   "scan.pick": "图片里有好几道题。选一道：",
   "scan.inputLabel": "题目（如果我识别错了，请改正）",
   "scan.typeLabel": "题目",

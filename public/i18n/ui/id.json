@@ -2463,6 +2463,7 @@
   "scan.mock": "Membaca foto sedang tidak berfungsi. Ketik soalnya dengan keyboard.",
   "scan.offline": "Kamu perlu koneksi untuk membaca foto. Kamu bisa mengetik soalnya, aku bisa menyelesaikannya tanpa koneksi.",
   "scan.readAs": "Yang kubaca",
+  "scan.given": "Diketahui",
   "scan.pick": "Ada beberapa soal di gambar. Pilih satu:",
   "scan.inputLabel": "Soal (perbaiki kalau ada yang salah kubaca)",
   "scan.typeLabel": "Soal",

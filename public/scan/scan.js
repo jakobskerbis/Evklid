@@ -22,6 +22,7 @@ const fresh = () => ({
   shown: 1, // koliko korakov je razkritih
   ai: null, // { loading, error }
   note: null, // obvestilo nad poljem (npr. brez povezave)
+  given: [], // podatki naloge s fotografije (točka, asimptota …), gredo k AI rešitvi
   quality: null, // težava fotografije (blur | dark | glare), ki jo zaznamo na napravi pred branjem
 });
 const S = fresh();
@@ -87,6 +88,7 @@ export function showScan({ text = null, goal = null } = {}) {
   if (text) {
     S.text = text;
     S.problems = [];
+    S.given = [];
     S.goal = goal; // npr. »factor« iz kalkulatorja (razstavi)
     return solveNow();
   }
@@ -172,6 +174,7 @@ function renderCapture(box) {
   box.querySelector('[data-act="type"]').addEventListener("click", () => {
     S.text = "";
     S.problems = [];
+    S.given = [];
     S.note = null;
     S.mode = "confirm";
     render();
@@ -194,6 +197,7 @@ function renderCapture(box) {
       S.text = h.text;
       S.goal = h.goal || null;
       S.problems = [];
+      S.given = [];
       solveNow();
     }),
   );
@@ -481,6 +485,7 @@ async function readImage(dataUrl) {
     if (out.mock) {
       S.note = t("scan.mock");
       S.problems = [];
+      S.given = [];
       S.text = "";
       S.mode = "confirm";
       return render();
@@ -493,6 +498,7 @@ async function readImage(dataUrl) {
     }
     S.note = null;
     S.text = S.problems[0].text;
+    S.given = S.problems[0].given || [];
     S.goal = S.problems[0].goal || null;
     S.mode = "confirm";
     render();
@@ -514,6 +520,7 @@ function renderConfirm(box) {
     <div class="card scan-confirm">
       ${S.problems.length ? `<p class="scan-label">${esc(t("scan.readAs"))}</p>` : ""}
       <div class="scan-preview" aria-live="polite"></div>
+      ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item">${math(g)}</span>`).join("")}</p>` : ""}
       <label class="scan-label" for="scan-input">${esc(S.problems.length ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
       <div class="scan-input-row">
         <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(S.text)}">
@@ -560,6 +567,7 @@ function renderConfirm(box) {
     b.addEventListener("click", () => {
       const p = S.problems[Number(b.dataset.pick)];
       S.text = p.text;
+      S.given = p.given || [];
       S.goal = p.goal || null;
       render();
     }),
@@ -589,7 +597,8 @@ function renderConfirm(box) {
 
 function solveNow() {
   const complex = !jeOs(D.getStudent()?.settings) || /SŠ|faks/i.test(D.getStudent()?.settings?.curriculum_level || "");
-  const r = solve(S.text, { goal: S.goal, complex });
+  // naloga s podatki (»določi a, b, c, če gre graf skozi T(7,2) …«): lastni reševalnik podatkov ne pozna, reši jo AI
+  const r = S.given.length ? { ok: false, goals: [] } : solve(S.text, { goal: S.goal, complex });
   S.result = r.ok ? r : null;
   S.goals = r.goals || [];
   S.goal = r.goal || S.goal;
@@ -614,6 +623,7 @@ async function solveAi() {
   // izbrani cilj gre zraven (»Razstavi«, »Odvod« …); ničle izraza = rešitve enačbe izraz = 0
   const text = prep(S.text);
   const body = S.goal === "zeros" ? { text: `${text}=0`, goal: "solve" } : { text, goal: S.goal || null };
+  if (S.given.length) body.given = S.given;
   try {
     const out = await D.api(`/api/students/${sid()}/scan/solve`, { method: "POST", body });
     if (seq !== aiSeq || S.mode !== "solution") return;
@@ -762,6 +772,7 @@ function bindSolution(box) {
     S.mode = "capture";
     S.result = null;
     S.problems = [];
+    S.given = [];
     S.text = "";
     S.goal = null;
     frame = { x: 0.06, y: 0.34, w: 0.88, h: 0.26 };

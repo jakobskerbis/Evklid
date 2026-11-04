@@ -134,3 +134,6 @@
 
 .scan-spin, .scan-body .spinner { display: inline-block; width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--accent-soft); border-top-color: var(--accent); animation: scan-rot 0.8s linear infinite; }
 @keyframes scan-rot { to { transform: rotate(360deg); } }
+.scan-given { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 8px 0 0; }
+.scan-given .scan-label { margin: 0; }
+.scan-given-item { padding: 4px 10px; border-radius: 999px; background: var(--surface-2); max-width: 100%; }
