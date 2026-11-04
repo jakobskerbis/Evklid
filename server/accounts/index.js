@@ -12,7 +12,7 @@ import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
-import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail } from "./email.js";
+import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
 import { buildWeeklyReport, weekKey, isSendTime } from "./weekly.js";
 import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-reminder.js";
@@ -90,6 +90,9 @@ export function mountAccounts(app, store, opts = {}) {
   // Povezava za potrditev ali novo geslo v odgovoru (ko e-pošta ni nastavljena) samo na računalniku s strežnikom
   // ali za skupnim geslom; sicer bi kdorkoli prevzel tuj račun (»pozabljeno geslo«) ali potrdil izmišljen e-naslov.
   const forgotThrottle = new Throttle(5, 3600000); // pošiljanje povezav za novo geslo: 5 na uro
+  // Prošnja za starše (premlad za lasten račun): z enega naslova IP 3 na uro, na isti e-naslov 2 na dan.
+  const inviteIpThrottle = new Throttle(3, 3600000);
+  const inviteToThrottle = new Throttle(2, 24 * 3600000);
   const devLinks = (req) => !mailer.enabled && (isLocalRequest(req) || gateNeeded(env));
   const locks = new ProfileLocks(db);
   // Geslo profila ločuje profile na istem računu (brat ne odpre sestrinega). Račun z enim profilom ga ne
@@ -622,6 +625,23 @@ export function mountAccounts(app, store, opts = {}) {
     clearSessionCookie(req, res);
     // Gumb »Odjava« na zaslonu za geslo profila je navaden obrazec (deluje tudi, če skript odpove).
     if (req.accepts(["json", "html"]) === "html") return res.redirect(303, "/");
+    res.json({ ok: true });
+  });
+
+  // Premlad za lasten račun (checkAge): Evklid pošlje staršu povezavo na stran za starše.
+  // Naslova ne shranimo; besedilo je stalno, zato ga ni mogoče zlorabiti za poljubna sporočila.
+  app.post("/api/auth/ask-parent", json, async (req, res) => {
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    if (!EMAIL_RE.test(email) || email.length > 200) return res.status(400).json({ error: "Vpiši veljaven e-naslov starša." });
+    const net = netKey(req.ip);
+    if (inviteIpThrottle.blocked(net) || inviteToThrottle.blocked(email)) return res.status(429).json({ error: "Preveč sporočil. Poskusi čez eno uro ali pošlji povezavo drugače." });
+    if (!mailer.enabled && !devLinks(req)) return res.status(503).json({ error: "Pošiljanje e-pošte trenutno ne deluje. Pošlji povezavo drugače.", mail: false });
+    inviteIpThrottle.fail(net);
+    inviteToThrottle.fail(email);
+    const name = String(req.body?.name || "").replace(/[^\p{L}\p{M} '-]/gu, "").replace(/\s+/g, " ").trim().slice(0, 30);
+    const url = `${baseUrl(req)}/starsi.html${name ? `?ime=${encodeURIComponent(name)}` : ""}`;
+    const sent = await sendMail(email, parentInviteEmail(url, name));
+    if (!sent) return res.status(502).json({ error: "Sporočila ni bilo mogoče poslati. Pošlji povezavo drugače.", mail: false });
     res.json({ ok: true });
   });
 

@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { openDb } from "../server/db.js";
-import { makeBackup, listBackups, startBackups, restoreFile, applyPendingRestore } from "../server/kopije.js";
+import { makeBackup, listBackups, startBackups, restoreFile, applyPendingRestore, savedBeforeRestore } from "../server/kopije.js";
 import { verifyBackup, prepareRestore } from "../scripts/obnovi-kopijo.js";
 
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), "evklid-kopije-"));
@@ -43,8 +43,15 @@ test("kopije: ena na dan, zadnjih 7, preizkus obnove in obnova ob naslednjem zag
   store = openDb(file);
   assert.deepEqual(names(store), ["Ana"]);
   assert.equal(fs.existsSync(restoreFile(file)), false);
-  const saved = fs.readdirSync(dir).filter((f) => /^evklid\.db\.pred-obnovo-.*Z$/.test(f));
+  const saved = savedBeforeRestore(file);
   assert.equal(saved.length, 1, "prejšnja baza ostane za razveljavitev");
+
+  // Razveljavitev: nazaj na bazo izpred obnove (tudi z neshranjeno WAL).
+  prepareRestore(file, saved[0]);
+  store.db.close();
+  assert.equal(applyPendingRestore(file, { log: quiet }).restored, true);
+  store = openDb(file);
+  assert.deepEqual(names(store), ["Napaka"]);
   store.db.close();
   fs.rmSync(dir, { recursive: true, force: true });
 });
@@ -73,8 +80,36 @@ test("kopije: stanje za /healthz/stanje; brez kopij za bazo v pomnilniku", () =>
   b.run();
   assert.equal(b.status().kopij, 1);
   assert.equal(b.status().zadnja, "2026-11-04");
-  assert.equal(b.status().napaka, null);
+  assert.equal(b.status().napaka, false);
+  assert.equal(b.status().obnovaCaka, false);
   assert.equal(startBackups(store.db, ":memory:", { scheduler: false }).status(), null);
+  store.db.close();
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test("kopije: ročna kopija ne prepiše dnevne; obnova, starejša od 1 ure, se ne uporabi", () => {
+  const dir = tmp();
+  const file = path.join(dir, "evklid.db");
+  let store = openDb(file);
+  store.db.prepare("INSERT INTO students (name, settings) VALUES (?, '{}')").run("Ana");
+  const now = new Date("2026-11-04T06:30:00Z");
+  assert.equal(makeBackup(store.db, file, { now }).made, true);
+  const m = makeBackup(store.db, file, { now, manual: true });
+  assert.equal(m.made, true);
+  assert.deepEqual(listBackups(file).map((b) => [b.date, b.manual]), [["2026-11-04-0630", true], ["2026-11-04", false]]);
+  // Ostanek nedokončane kopije se pobriše ob naslednji.
+  fs.writeFileSync(path.join(dir, "kopije", "evklid-2026-11-01.db.tmp"), "x");
+  makeBackup(store.db, file, { now: new Date("2026-11-05T01:00:00Z") });
+  assert.equal(fs.existsSync(path.join(dir, "kopije", "evklid-2026-11-01.db.tmp")), false);
+
+  prepareRestore(file, listBackups(file).at(-1).file);
+  store.db.prepare("INSERT INTO students (name, settings) VALUES (?, '{}')").run("Bor");
+  store.db.close();
+  const later = new Date(Date.now() + 2 * 60 * 60 * 1000);
+  assert.equal(applyPendingRestore(file, { log: quiet, now: later }).reason, "potekla");
+  assert.ok(fs.existsSync(`${restoreFile(file)}.potekla`));
+  store = openDb(file);
+  assert.deepEqual(names(store), ["Ana", "Bor"]);
   store.db.close();
   fs.rmSync(dir, { recursive: true, force: true });
 });

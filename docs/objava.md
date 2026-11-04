@@ -47,15 +47,22 @@ Vse lahko spremeniš v Render → Environment.
 
 Render → Disks naredi dnevni posnetek diska samodejno (hrani se 7 dni).
 
-Poleg tega Evklid sam naredi kopijo baze **enkrat na dan** (prvič 2 minuti po zagonu) v `/var/data/kopije/evklid-LLLL-MM-DD.db` in hrani zadnjih 7 (`server/kopije.js`). Taka kopija pomaga, ko je pokvarjena samo baza (napaka v posodobitvi, pomotoma izbrisani podatki), posnetek diska pa, ko odpove cel disk. Stanje: `https://evklid.app/healthz/stanje` → `kopije` (`zadnja`, `kopij`, `napaka`). `EVKLID_BACKUPS=0` kopije izklopi.
+Poleg tega Evklid sam naredi kopijo baze **enkrat na dan** (prvič 2 minuti po zagonu; datum je v času UTC) v `/var/data/kopije/evklid-LLLL-MM-DD.db` in hrani zadnjih 7 (`server/kopije.js`). Ko zmanjkuje prostora na disku, najprej pobriše najstarejše kopije. Taka kopija pomaga, ko je pokvarjena samo baza (napaka v posodobitvi, pomotoma izbrisani podatki), posnetek diska pa, ko odpove cel disk. Stanje: `https://evklid.app/healthz/stanje` → `kopije` (`zadnja`, `kopij`, `napaka`, `obnovaCaka`). `EVKLID_BACKUPS=0` kopije izklopi.
 
 V Render → evklid → **Shell**:
 
 | Ukaz | Kaj naredi |
 |---|---|
-| `node scripts/obnovi-kopijo.js` | seznam kopij |
-| `node scripts/obnovi-kopijo.js --zdaj` | kopija takoj (npr. pred tvegano spremembo) |
-| `node scripts/obnovi-kopijo.js --preveri` | **preizkus obnove** brez spreminjanja: kopija je cela, števila vrstic v primerjavi z bazo; enkrat na teden |
-| `node scripts/obnovi-kopijo.js 2026-11-04` | pripravi obnovo iz te kopije, nato Manual Deploy → **Restart service**. Ob zagonu se baza zamenja, sedanja ostane kot `evklid.db.pred-obnovo-<čas>` (obnovo se da razveljaviti). Pokvarjena kopija se ne uporabi. |
+| `node scripts/obnovi-kopijo.js` | seznam kopij; pove tudi, če obnova čaka |
+| `node scripts/obnovi-kopijo.js --zdaj` | dodatna kopija takoj (npr. pred tvegano spremembo); obstoječih ne prepiše, ročne se hranijo 3 |
+| `node scripts/obnovi-kopijo.js --preveri` | **preizkus obnove** brez spreminjanja: kopija je cela, pogovori se dajo prebrati s sedanjim ključem, števila vrstic |
+| `node scripts/obnovi-kopijo.js 2026-11-04` | pripravi obnovo iz te kopije. V naslednji uri: Manual Deploy → **Restart service**. Pozneje ne velja več. |
+| `node scripts/obnovi-kopijo.js --preklici` | prekliče pripravljeno obnovo |
+| `node scripts/obnovi-kopijo.js --razveljavi` | po obnovi: pripravi vrnitev na bazo izpred obnove (hrani se 14 dni), nato Restart service |
 
-Obnova izgubi vse, kar se je zgodilo po kopiji. Pogovori v kopiji so šifrirani z `EVKLID_DATA_KEY`, zato mora ključ ostati isti (docs/varnost-podatkov.md). Kopije so na istem disku kot baza: pred menjavo ali brisanjem diska kopijo prenesi drugam.
+Obnova izgubi vse, kar se je zgodilo po kopiji. Pogovori v kopiji so šifrirani z `EVKLID_DATA_KEY`, zato mora ključ ostati isti (docs/varnost-podatkov.md). Kopije so na istem disku kot baza; ob odpovedi diska pomaga posnetek diska v Render → Disks.
+
+### Vaja obnove (enkrat pred pilotom, nato enkrat na mesec)
+
+1. `node scripts/obnovi-kopijo.js --zdaj`, nato `node scripts/obnovi-kopijo.js --preveri`: mora pisati »OBNOVA BI USPELA«.
+2. Prava vaja (ko nihče ne uporablja Evklida; kar se vpiše med vajo, se izgubi): `node scripts/obnovi-kopijo.js <datum ročne kopije iz 1. koraka>`, Restart service, preveri prijavo in profil, nato `--razveljavi` in še en Restart service.
