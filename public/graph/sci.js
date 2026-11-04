@@ -4,6 +4,7 @@
 import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
 import { analyze, previewTex, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName, parseCommand } from "./cas.js";
+import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -41,7 +42,7 @@ const store = {
 };
 
 // Tipke: [napis, vstavi, 2nd napis, 2nd vstavi]. »@« je mesto kazalca po vstavljanju.
-const FN_KEYS = [
+export const FN_KEYS = [
   ["2nd", "#2nd"], ["x²", "²", "x³", "³"], ["xʸ", "^(", "ⁿ√x", "root(@;)"], ["√", "√(", "∛", "∛("], ["x⁻¹", "⁻¹", "|x|", "abs("], ["◀", "#left"],
   ["sin", "sin(", "sin⁻¹", "arcsin("], ["cos", "cos(", "cos⁻¹", "arccos("], ["tan", "tan(", "tan⁻¹", "arctan("], ["ln", "ln(", "eˣ", "e^("], ["log", "log(", "10ˣ", "10^("], ["▶", "#right"],
   ["(", "(", "M+", "#m+"], [")", ")", "M−", "#m-"], ["π", "π", "e", "e"], ["n!", "!", "nCr", "nCr(@;)"], ["°′″", "#dms", "nPr", "nPr(@;)"], ["%", "%", "logₐ", "logb(@;)"],
@@ -64,7 +65,7 @@ const MORE = [
   ["ana", null], // odvod, integral, vsota, produkt; integriraj, limita, taylor (imena v jeziku vmesnika, glej anaKeys)
   ["trig", [["\\sin", "sin("], ["\\cos", "cos("], ["\\tan", "tan("], ["\\cot", "cot("], ["\\arcsin", "arcsin("], ["\\arccos", "arccos("], ["\\arctan", "arctan("], ["\\sinh", "sinh("], ["\\cosh", "cosh("], ["\\tanh", "tanh("], ["\\text{°}", "°"], ["\\text{′}", "′"], ["\\text{″}", "″"]]],
   ["num", [["\\gcd", "gcd(@;)"], ["\\operatorname{lcm}", "lcm(@;)"], ["\\bmod", "mod(@;)"], ["\\operatorname{round}", "round(@;)"], ["\\lfloor x\\rfloor", "floor("], ["\\lceil x\\rceil", "ceil("], ["\\binom{n}{k}", "nCr(@;)"], ["n!", "!"], ["\\%", "%"], ["\\operatorname{sgn}", "sgn("], ["\\operatorname{Int}", "Int("], ["\\operatorname{frac}", "frac("], ["\\mathrm{Ran\\#}", "rand"], ["\\operatorname{RanInt}", "randint(@;)"], ["\\operatorname{Pol}", "Pol(@;)"], ["\\operatorname{Rec}", "Rec(@;)"]]],
-  ["stat", [["\\operatorname{mean}", "mean(@)"], ["\\operatorname{median}", "median(@)"], ["\\sigma", "stdev(@)"], ["\\min", "min(@)"], ["\\max", "max(@)"], ["\\Sigma", "total(@)"]]],
+  ["stat", [["\\bar{x}", "mean(@)"], ["\\mathrm{Me}", "median(@)"], ["\\sigma", "stdevp(@)"], ["s", "stdev(@)"], ["\\min", "min(@)"], ["\\max", "max(@)"], ["\\Sigma", "total(@)"]]],
   ["cplx", [["i", "i"], ["|z|", "abs("]]],
   ["mem", [["\\mathrm{M+}", "#m+"], ["\\mathrm{M-}", "#m-"], ["\\mathrm{MR}", "M"], ["\\mathrm{MC}", "#mc"]]],
 ];
@@ -179,7 +180,15 @@ export function createScientific(root, opts) {
     const c = [cls, k[1] === "#eq" ? "eq" : "", k[1] === "#ac" || k[1] === "#del" ? "warn" : "", k[1] === "#2nd" ? "second" : "", k[1] === "#more" ? "more" : "", /^[0-9]$/.test(k[1]) || k[1] === "#dec" ? "digit" : ""].filter(Boolean).join(" ");
     return `<button type="button" class="sc-key ${c}" data-ins="${esc(k[1])}"${k[3] ? ` data-ins2="${esc(k[3])}" data-l1="${esc(k[0])}" data-l2="${esc(k[2])}"` : ""}${label}${k[1] === "#more" ? ' aria-expanded="false"' : ""}>${k[1] === "#dec" ? (comma() ? "," : ".") : esc(k[0])}</button>`;
   };
-  $(".sc-fn").innerHTML = FN_KEYS.map((k) => keyHtml(k, "fn")).join("");
+  // funkcijske tipke po poglavju, iz katerega je kalkulator odprt (tipke-poglavja.js)
+  let profile = null;
+  function renderFn() {
+    profile = chapterProfile(opts.chapter?.());
+    const box = $(".sc-fn");
+    box.dataset.profile = profile || "";
+    box.innerHTML = adaptKeys(FN_KEYS, profile).map((k) => keyHtml(k, "fn")).join("");
+  }
+  renderFn();
   $(".sc-num").innerHTML = NUM_KEYS.map((k) => keyHtml(k, "n")).join("");
 
   function setSecond(on) {
@@ -211,7 +220,7 @@ export function createScientific(root, opts) {
     if (s !== e) input.value = input.value.slice(0, s) + input.value.slice(e);
     else if (s > 0) {
       // celo ime funkcije z oklepajem naenkrat (sin( …)
-      const m = /(?:arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|Int|frac|randint|Pol|Rec|mean|median|stdev|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(input.value.slice(0, s));
+      const m = /(?:arcsin|arccos|arctan|arccot|sinh|cosh|tanh|sin|cos|tan|cot|ln|log|logb|abs|root|nCr|nPr|gcd|lcm|mod|round|floor|ceil|sgn|Int|frac|randint|Pol|Rec|mean|median|stdevp|stdev|count|min|max|total|d\/dx|√|∛|∫)\($|[a-z]\([a-z]\)=$|Ans$|×10\^\($|.$/u.exec(input.value.slice(0, s));
       const n = m ? m[0].length : 1;
       input.value = input.value.slice(0, s - n) + input.value.slice(s);
       input.setSelectionRange(s - n, s - n);
@@ -869,6 +878,12 @@ export function createScientific(root, opts) {
     resize() {
       hist.scrollTop = st.history.length ? hist.scrollHeight : 0;
       if (!touch && root.isConnected) input.focus({ preventScroll: true });
+    },
+    // drugo poglavje: druge funkcijske tipke
+    adapt() {
+      if (chapterProfile(opts.chapter?.()) === profile) return;
+      setSecond(false);
+      renderFn();
     },
     reload() {
       st = load();

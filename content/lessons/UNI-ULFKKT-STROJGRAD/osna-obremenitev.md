@@ -39,7 +39,19 @@ $$\Delta L = \frac{F L}{E A}$$
 
 Ni nova fizika: v $\Delta L = \varepsilon L$ vstavi $\varepsilon = \sigma / E$ (Hookov zakon), nato še $\sigma = F / A$.
 
-Produkt $EA$ imenujemo **osna togost preseka**. Palica se obnaša kot vzmet s konstanto $k = EA/L$: daljša palica je mehkejša vzmet. Pri nategu je $F > 0$ in $\Delta L > 0$, pri tlaku sta obe negativni. Formula velja, dokler je $\sigma$ pod mejo elastičnosti.
+**Predpostavke.** Palica je ravna in prizmatična (stalen prerez $A$), material je homogen in linearno elastičen: Hookov zakon $\sigma = E\varepsilon$ velja do meje proporcionalnosti $\sigma_\mathrm{p}$. Notranjo osno silo $N$ dobimo z **metodo prereza**: palico v mislih prerežemo in iz ravnovesja enega dela izračunamo $N$ (natezna je pozitivna). Predpostavimo, da deluje v težišču prereza.
+
+**Trditev.** Če ob teh predpostavkah prerezi ostanejo ravni, pravokotni na os in med seboj vzporedni (Bernoullijeva hipoteza za osno obremenitev), potem je normalna napetost po prerezu enakomerna, $\sigma = N/A$.
+
+*Dokaz.* Dva prereza na razdalji $\mathrm{d}x$ po hipotezi ostaneta ravna in vzporedna, torej se le vzporedno odmakneta, zato imajo vsa vlakna med njima enako deformacijo $\varepsilon$. Po Hookovem zakonu je povsod enaka tudi $\sigma = E\varepsilon$. Ravnovesje dela palice da $N = \int_A \sigma\,\mathrm{d}A = \sigma A$. $\square$
+
+Blizu mest, kjer sila vstopa v palico ali se prerez nenadno spremeni, napetost ni enakomerna; po **Saint-Venantovem načelu** se izravna na razdalji približno ene širine prereza. Če se $N$, $E$ ali $A$ spreminjajo po odsekih, podaljške odsekov seštejemo, $\Delta L = \sum_i \frac{N_i L_i}{E_i A_i}$, pri zveznem spreminjanju pa $\Delta L = \int_0^L \frac{N(x)}{E A(x)}\,\mathrm{d}x$.
+
+Produkt $EA$ imenujemo **osna togost preseka**. Palica se obnaša kot vzmet s konstanto $k = EA/L$: daljša palica je mehkejša vzmet. Pri nategu je $F > 0$ in $\Delta L > 0$, pri tlaku sta obe negativni. Formula velja, dokler je $|\sigma|$ pod mejo proporcionalnosti $\sigma_\mathrm{p}$.
+
+Natezana palica se hkrati prečno zoži: prečna deformacija je $\varepsilon_\mathrm{q} = -\nu\,\varepsilon$, kjer je $\nu$ Poissonovo število (jeklo $\nu \approx 0{,}3$).
+
+**Trdnostni pogoj.** Palica je pravilno dimenzionirana, če je $|\sigma| = |N|/A \le \sigma_\mathrm{dop} = R_\mathrm{e}/S$, kjer je $R_\mathrm{e}$ meja tečenja in $S > 1$ varnostni faktor. Pri tlaku vitke palice preverimo še **uklon**: vitka tlačena palica se lahko izboči vstran, preden doseže mejo tečenja.
 
 Pozor na enote. Najlažje je računati v $\mathrm{N}$ in $\mathrm{mm}$, saj je $1\,\mathrm{MPa} = 1\,\mathrm{N/mm^2}$ in $200\,\mathrm{GPa} = 200\,000\,\mathrm{MPa}$.
 
@@ -60,13 +72,15 @@ $$\sigma_T = -E\,\alpha\,\Delta T$$
 
 Minus pomeni tlak. Ohlajena vpeta palica ($\Delta T < 0$) je napeta natezno.
 
+**Statično nedoločeni primeri.** Vpeta palica je statično nedoločena: ravnovesje pove le, da sta reakciji sten enako veliki, ne pa, kolikšni. Manjkajočo enačbo da **pogoj skladnosti deformacij**: celotni podaljšek mora biti tak, kot ga dopuščajo podpore. Pri tem seštevamo mehansko in toplotno deformacijo (superpozicija), $\varepsilon = \frac{\sigma}{E} + \alpha\,\Delta T$. Postopek je vedno enak: (1) ravnovesje, (2) skladnost deformacij, (3) Hookov zakon s toplotnim členom. Za vpeto palico: $\varepsilon = 0$, zato $\sigma = -E\alpha\,\Delta T$.
+
 :::premisli
 Imaš dve enaki jekleni palici, vpeti med stene, ena je dolga $0{,}5\,\mathrm{m}$, druga $5\,\mathrm{m}$. Obe segreješ za $30\,\mathrm{K}$. Daljša bi se prosto podaljšala desetkrat bolj. Ima zato tudi večjo toplotno napetost? Razloži brez formule.
 ---
 Napetost je enaka. Daljša palica bi se prosto res podaljšala desetkrat bolj, a jo je treba stisniti za desetkrat daljši kos na desetkrat daljši dolžini. Deformacija, ki jo stena prepreči, je v obeh $\alpha\,\Delta T$.
 :::
 
-Če je med palico in steno reža $\delta$, se palica najprej prosto podaljša. Napetost začne rasti šele, ko se reža zapre. Stena tedaj prepreči samo preostanek $\alpha\,\Delta T\,L - \delta$.
+Če je med palico in steno reža $\delta$, se palica najprej prosto podaljša. Napetost začne rasti šele, ko se reža zapre. Stena tedaj prepreči samo preostanek $\alpha\,\Delta T\,L - \delta$, zato je za $\alpha\,\Delta T\,L > \delta$ napetost $\sigma = -E\,\dfrac{\alpha\,\Delta T\,L - \delta}{L}$.
 
 ## Rešeni primeri
 
@@ -108,10 +122,10 @@ $\Delta L_T = \alpha\,\Delta T\,L$, $\quad \sigma_T = -E\,\alpha\,\Delta T$
 
 ### Primer 3: rešetka v pečici z režo
 
-Jeklena rešetka je dolga $450\,\mathrm{mm}$. Med njo in stenama pečice je pri $20\,^\circ\mathrm{C}$ skupna reža $0{,}6\,\mathrm{mm}$. Pri kateri temperaturi se rešetka dotakne obeh sten? Kolikšna napetost je v njej pri $220\,^\circ\mathrm{C}$, če sta steni togi?
+Jeklena rešetka je dolga $450\,\mathrm{mm}$. Med njo in stenama pečice je pri $20\,^\circ\mathrm{C}$ skupna reža $0{,}6\,\mathrm{mm}$. Pri kateri temperaturi se rešetka dotakne obeh sten? Kolikšna napetost je v njej pri $220\,^\circ\mathrm{C}$, če sta steni togi? Kolikšna bi morala biti reža, da napetost pri $220\,^\circ\mathrm{C}$ ne preseže $100\,\mathrm{MPa}$ (tlak)?
 
 **Podatki:** $L = 450\,\mathrm{mm}$, $\delta = 0{,}6\,\mathrm{mm}$, $T_0 = 20\,^\circ\mathrm{C}$, $T = 220\,^\circ\mathrm{C}$, $\alpha = 12 \cdot 10^{-6}\,\mathrm{K^{-1}}$, $E = 200\,000\,\mathrm{MPa}$
-**Iščemo:** temperaturo dotika $T_d$ in napetost $\sigma$ pri $220\,^\circ\mathrm{C}$
+**Iščemo:** temperaturo dotika $T_d$, napetost $\sigma$ pri $220\,^\circ\mathrm{C}$ in najmanjšo režo $\delta_\mathrm{min}$ za $|\sigma| \le 100\,\mathrm{MPa}$
 
 :::formula
 Dotik: $\alpha\,\Delta T_d\,L = \delta$. Napetost: $\sigma = -E\,\dfrac{\alpha\,\Delta T\,L - \delta}{L}$
@@ -124,7 +138,9 @@ Dotik: $\alpha\,\Delta T_d\,L = \delta$. Napetost: $\sigma = -E\,\dfrac{\alpha\,
 3. Pri $220\,^\circ\mathrm{C}$ je $\Delta T = 200\,\mathrm{K}$, prosti podaljšek bi bil $12 \cdot 10^{-6} \cdot 200 \cdot 450\,\mathrm{mm} = 1{,}08\,\mathrm{mm}$.
 4. Steni preprečita le del nad režo: $1{,}08\,\mathrm{mm} - 0{,}6\,\mathrm{mm} = 0{,}48\,\mathrm{mm}$.
 5. Preprečena deformacija: $\varepsilon = \dfrac{0{,}48\,\mathrm{mm}}{450\,\mathrm{mm}} \approx 0{,}00107$, napetost $\sigma \approx -200\,000\,\mathrm{MPa} \cdot 0{,}00107 \approx -213\,\mathrm{MPa}$.
-6. Odgovor: rešetka se sten dotakne pri okoli $131\,^\circ\mathrm{C}$; pri $220\,^\circ\mathrm{C}$ bi bila stisnjena z okoli $213\,\mathrm{MPa}$, blizu meje tečenja navadnega jekla. Zato prave rešetke v pečici samo ležijo na vodilih in lahko drsijo.
+6. Obratno vprašanje: pri $|\sigma| = 100\,\mathrm{MPa}$ sme stena preprečiti le $\dfrac{100\,\mathrm{MPa}}{200\,000\,\mathrm{MPa}} \cdot 450\,\mathrm{mm} = 0{,}225\,\mathrm{mm}$.
+7. Ostanek mora pobrati reža: $\delta_\mathrm{min} = 1{,}08\,\mathrm{mm} - 0{,}225\,\mathrm{mm} = 0{,}855\,\mathrm{mm}$.
+8. Odgovor: rešetka se sten dotakne pri okoli $131\,^\circ\mathrm{C}$; pri $220\,^\circ\mathrm{C}$ bi bila stisnjena z okoli $213\,\mathrm{MPa}$, blizu meje tečenja navadnega jekla. Za največ $100\,\mathrm{MPa}$ bi potrebovali režo vsaj $0{,}86\,\mathrm{mm}$. Zato prave rešetke v pečici samo ležijo na vodilih in lahko drsijo.
 
 ### Primer 4: zdaj ti
 
@@ -165,6 +181,47 @@ $F = \dfrac{200\,000\,\mathrm{MPa} \cdot 3{,}14\,\mathrm{mm^2} \cdot 0{,}5\,\mat
 - Vpeta palica pri segretju: $\sigma_T = -E\alpha\,\Delta T$ (tlak), neodvisno od dolžine in preseka. Z režo $\delta$ šteje le preostanek $\alpha\,\Delta T\,L - \delta$.
 - Računaj v $\mathrm{N}$, $\mathrm{mm}$, $\mathrm{MPa}$; jeklo $E = 200\,\mathrm{GPa}$, $\alpha = 12 \cdot 10^{-6}\,\mathrm{K^{-1}}$.
 
+## Za izpit
+
+Znati moraš povedati:
+
+- predpostavke osne obremenitve (prizmatična palica, homogen linearno elastičen material, sila v težišču) in metodo prereza za notranjo silo $N$;
+- dokaz, da je ob Bernoullijevi hipotezi $\sigma = N/A$ po prerezu enakomerna, in kje to ne velja (Saint-Venantovo načelo);
+- izpeljavo $\Delta L = \frac{NL}{EA}$ in splošno $\Delta L = \int_0^L \frac{N}{EA}\,\mathrm{d}x$, tudi za palico pod lastno težo;
+- trdnostni pogoj $|\sigma| \le R_\mathrm{e}/S$ in prečno deformacijo $\varepsilon_\mathrm{q} = -\nu\varepsilon$;
+- reševanje statično nedoločenih primerov (ravnovesje, skladnost, $\varepsilon = \sigma/E + \alpha\,\Delta T$) in izpeljavo $\sigma_T = -E\alpha\,\Delta T$.
+
+### Naloga 1
+
+Med togi steni sta zaporedno vpeti jeklena palica ($L_1 = 300\,\mathrm{mm}$, $A_1 = 400\,\mathrm{mm^2}$, $E_1 = 200\,\mathrm{GPa}$, $\alpha_1 = 12 \cdot 10^{-6}\,\mathrm{K^{-1}}$) in aluminijasta palica ($L_2 = 200\,\mathrm{mm}$, $A_2 = 800\,\mathrm{mm^2}$, $E_2 = 70\,\mathrm{GPa}$, $\alpha_2 = 23 \cdot 10^{-6}\,\mathrm{K^{-1}}$), jeklena je pritrjena na levo steno. Pri montaži je med aluminijasto palico in desno steno reža $\delta = 0{,}1\,\mathrm{mm}$. Sklop enakomerno segrejemo za $\Delta T = 50\,\mathrm{K}$. (a) Pri katerem segretju se reža zapre? (b) Izračunaj napetosti v obeh palicah. (c) Za koliko in v katero smer se premakne stik palic?
+
+**Rešitev:**
+
+1. (a) Prosti podaljšek sklopa na kelvin: $\alpha_1 L_1 + \alpha_2 L_2 = 0{,}0036 + 0{,}0046 = 0{,}0082\,\mathrm{mm/K}$, zato se reža zapre pri $\Delta T_d = 0{,}1/0{,}0082 \approx 12{,}2\,\mathrm{K}$.
+2. (b) Prosta podaljška pri $50\,\mathrm{K}$: jeklo $12 \cdot 10^{-6} \cdot 50 \cdot 300 = 0{,}18\,\mathrm{mm}$, aluminij $23 \cdot 10^{-6} \cdot 50 \cdot 200 = 0{,}23\,\mathrm{mm}$, skupaj $0{,}41\,\mathrm{mm}$.
+3. Ravnovesje: palici sta zaporedni, zato v obeh deluje ista tlačna sila $N$.
+4. Skladnost: skupni podaljšek sme biti le $\delta$, zato mora sila odvzeti $0{,}41 - 0{,}1 = 0{,}31\,\mathrm{mm}$: $N\big(\frac{L_1}{E_1 A_1} + \frac{L_2}{E_2 A_2}\big) = 0{,}31\,\mathrm{mm}$.
+5. Podajnosti: $\frac{300}{200\,000 \cdot 400} = 3{,}75 \cdot 10^{-6}\,\mathrm{mm/N}$ in $\frac{200}{70\,000 \cdot 800} \approx 3{,}571 \cdot 10^{-6}\,\mathrm{mm/N}$, vsota $7{,}321 \cdot 10^{-6}\,\mathrm{mm/N}$.
+6. $N = 0{,}31/(7{,}321 \cdot 10^{-6}) \approx 42\,340\,\mathrm{N}$, tlačna.
+7. Napetosti: $\sigma_1 = -42\,340/400 \approx -105{,}9\,\mathrm{MPa}$, $\sigma_2 = -42\,340/800 \approx -52{,}9\,\mathrm{MPa}$.
+8. (c) Jeklo se skupaj podaljša za $0{,}18 - 42\,340 \cdot 3{,}75 \cdot 10^{-6} \approx 0{,}18 - 0{,}159 = 0{,}021\,\mathrm{mm}$; za kontrolo aluminij za $0{,}23 - 0{,}151 = 0{,}079\,\mathrm{mm}$, vsota je $0{,}1\,\mathrm{mm} = \delta$.
+9. Odgovor: reža se zapre pri segretju okoli $12\,\mathrm{K}$; pri $50\,\mathrm{K}$ je jeklo stisnjeno z okoli $106\,\mathrm{MPa}$, aluminij z okoli $53\,\mathrm{MPa}$; stik se premakne za okoli $0{,}021\,\mathrm{mm}$ proti desni steni.
+
+### Naloga 2
+
+Navedi predpostavke, pri katerih je normalna napetost v osno obremenjeni palici enakomerna. Izpelji $\Delta L = \int_0^L \frac{N(x)}{E A(x)}\,\mathrm{d}x$ in iz nje podaljšek prizmatične palice, ki visi pod lastno težo. Utemelji, ali se ta podaljšek zmanjša, če palici povečamo presek, in ga izračunaj za jekleno palico dolžine $100\,\mathrm{m}$ ($\rho = 7850\,\mathrm{kg/m^3}$, $E = 200\,\mathrm{GPa}$, $g = 9{,}81\,\mathrm{m/s^2}$).
+
+**Rešitev:**
+
+1. Predpostavke: ravna palica, homogen linearno elastičen material, $N$ v težišču, prerezi ostanejo ravni (Bernoulli), opazujemo prerez dovolj daleč od vnosa sile (Saint-Venant). Tedaj $\sigma = N/A$.
+2. Košček dolžine $\mathrm{d}x$ ima $\varepsilon = \frac{\sigma}{E} = \frac{N(x)}{E A(x)}$ in se podaljša za $\varepsilon\,\mathrm{d}x$.
+3. Seštejemo vse koščke: $\Delta L = \int_0^L \frac{N(x)}{E A(x)}\,\mathrm{d}x$.
+4. Lastna teža: z $x$ od spodnjega konca prerez na višini $x$ nosi težo dela pod seboj, $N(x) = \rho g A x$.
+5. $\Delta L = \int_0^L \frac{\rho g A x}{E A}\,\mathrm{d}x = \frac{\rho g}{E} \cdot \frac{L^2}{2} = \frac{\rho g L^2}{2E}$.
+6. $A$ se pokrajša: večji presek pomeni sorazmerno večjo težo, zato se podaljšek ne zmanjša.
+7. Številsko: $\Delta L = \frac{7850 \cdot 9{,}81 \cdot 100^2}{2 \cdot 200 \cdot 10^9}\,\mathrm{m} \approx 1{,}93 \cdot 10^{-3}\,\mathrm{m}$.
+8. Odgovor: podaljšek je $\frac{\rho g L^2}{2E}$, neodvisen od preseka; za $100\,\mathrm{m}$ jekla je okoli $1{,}9\,\mathrm{mm}$, največja napetost je na vrhu, kjer je $N = \rho g A L$, torej $\sigma = \rho g L \approx 7{,}7\,\mathrm{MPa}$.
+
 ## Drugače: Korak za korakom s številkami
 
 Vzemimo jekleno palico, dolgo $1000\,\mathrm{mm}$, s presekom $50\,\mathrm{mm^2}$, vpeto med togi steni, in jo segrejemo za $50\,\mathrm{K}$. Sledimo milimetrom.
@@ -175,13 +232,15 @@ Vzemimo jekleno palico, dolgo $1000\,\mathrm{mm}$, s presekom $50\,\mathrm{mm^2}
 4. Sila na steno: $F = \sigma A = 120\,\mathrm{MPa} \cdot 50\,\mathrm{mm^2} = 6000\,\mathrm{N}$, približno teža osmih odraslih ljudi.
 5. Preizkus z dvakrat daljšo palico: v 1. koraku dobiš $1{,}2\,\mathrm{mm}$, v 2. koraku $1{,}2/2000$, kar je spet $0{,}0006$. Napetost ostane $120\,\mathrm{MPa}$.
 
-## Drugače: Kot zgodba
+## Drugače: Uporaba v stroki
 
-Kuhar Marko vsako jutro prižge pečico. Jeklena rešetka v njej se začne raztezati: na vsak meter in vsako stopinjo za dvanajst tisočink milimetra. Dokler okrog nje ni ničesar, se raztegne v miru in ne čuti nobene napetosti.
+- **Cevovodi v kemijskih obratih.** Jeklen parni cevovod dolžine $50\,\mathrm{m}$, segret z $20\,^\circ\mathrm{C}$ na $180\,^\circ\mathrm{C}$, se prosto podaljša za $12 \cdot 10^{-6} \cdot 160 \cdot 50\,000\,\mathrm{mm} = 96\,\mathrm{mm}$. Vpet bi imel $\sigma_T = -384\,\mathrm{MPa}$, več kot meja tečenja jekla S235. Zato ima cevovod fiksne točke, drsne podpore in kompenzatorje (U-loke ali valovite mehove).
+- **Vijačni spoji.** Vijak na prirobnici reaktorja je vzmet s togostjo $EA/L$. S predpisanim prednapetjem (momentni ključ) mora tesnilo ostati stisnjeno tudi pri tlaku in segrevanju.
+- **Dvižne naprave.** Vrvi, verige in obesne palice dimenzioniramo po trdnostnem pogoju z varnostnim faktorjem in jih po predpisih periodično preizkušamo.
+- **Brezstični tir.** Varjene tirnice so vpete; zato jih polagajo pri nevtralni temperaturi, da poleti tlačna napetost ne povzroči izbočenja tira.
+- **Natezni preizkus** (SIST EN ISO 6892-1): $E$ in $R_\mathrm{e}$ določimo iz diagrama $\sigma$–$\varepsilon$, podaljšek merimo z ekstenzometrom.
 
-Nekega dne Marko rešetko zagozdi tesno med steni, da ne bi ropotala. Rešetka se hoče raztegniti kot vsak dan, a steni ji ne pustita. Vsak milimeter, ki ga ne sme dobiti, jo stiska. Stene jo tlačijo s tisoči newtonov.
-
-Naslednji dan pusti Marko med rešetko in steno pol milimetra prostora. Do neke temperature je spet vse mirno. Ko reža izgine, se zgodba s stiskanjem ponovi, a z manjšo silo. Nauk inženirjev: toplotni raztezek je treba bodisi dopustiti bodisi zanj izračunati napetost.
+Toplotni raztezek je treba bodisi dopustiti bodisi zanj izračunati napetost.
 
 ## Drugače: Bolj natančno
 
@@ -261,4 +320,7 @@ g | težni pospešek | | m/s^2 | 9,81 m/s²
 \Delta T_d | segretje, pri katerem se reža zapre | \alpha\,\Delta T_d\,L = \delta | K |
 \delta | reža med palico in steno | | m |
 d | premer palice | | m |
+\nu | Poissonovo število | \varepsilon_\mathrm{q} = -\nu\,\varepsilon | – | jeklo ≈ 0,3
+R_\mathrm{e} | meja tečenja | | Pa |
+S | varnostni faktor | \sigma_\mathrm{dop} = R_\mathrm{e}/S | – | S > 1
 :::

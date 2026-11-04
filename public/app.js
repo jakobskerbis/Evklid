@@ -836,7 +836,7 @@ async function setChatFx(conv) {
     if (!topicCache.has(id)) topicCache.set(id, await api(`/api/topic?id=${encodeURIComponent(id)}`));
     if (state.conversationId !== conv.id) return; // medtem odprt drug pogovor
     const tp = topicCache.get(id);
-    state.chatFx = { subject: topicSubject(tp) || state.chatFx.subject, symbols: tp?.symbols || null };
+    state.chatFx = { subject: topicSubject(tp) || state.chatFx.subject, symbols: tp?.symbols || null, topic: tp?.id ? { id: tp.id, unit: tp.unit, name: tp.name, subject: tp.subject } : null };
   } catch { /* brez oznak lekcije */ }
 }
 const chatRich = (text) => withFormulaSubject(state.chatFx?.subject || state.student?.settings?.subject || "MAT", () => renderRich(text), state.chatFx?.symbols);
@@ -1223,7 +1223,7 @@ attachMic($("#mic-btn"), input, { onMessage: (m) => toast(m, "mic"), onChange: a
 initKeyboard();
 initSirina();
 initDrsniki();
-setKeyboardContext({ settings: () => state.student?.settings });
+setKeyboardContext({ settings: () => state.student?.settings, chapter: calcChapter });
 mountKeyboardSettings($("#tipkovnica-card"));
 configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx: TUTOR_CHIPS });
 $("#sym-btn").addEventListener("click", () => toggleKeyboard(input, { layer: "sym" }));
@@ -3879,6 +3879,12 @@ function calcSubject() {
   const id = !$("#view-topic").hidden ? state.topic?.id : null;
   return (id && /^[A-Z]+/.exec(id)?.[0]) || state.student?.settings?.subject || "MAT";
 }
+// Poglavje, iz katerega je odprt kalkulator (tema učne poti ali pogovor o temi): tipke se mu prilagodijo.
+function calcChapter() {
+  if (!$("#view-topic").hidden && state.topic?.id) return { id: state.topic.id, unit: state.topic.unit, name: state.topic.name, subject: state.topic.subject };
+  if (!$("#view-chat").hidden && state.chatFx?.topic) return state.chatFx.topic;
+  return null;
+}
 function formulaBook() {
   const s = calcSubject();
   const subj = ["MAT", "FIZ", "KEM"].includes(s) ? s : "MAT";
@@ -3898,6 +3904,7 @@ function calcTool(mode) {
       return m.createScientific(host, {
         ...base,
         toast: (msg) => toast(msg, "check"),
+        chapter: calcChapter,
         storageKey: () => `evklid.sci.${state.student?.id ?? 0}`,
         // »Nariši graf«: isti zaslon, način Grafični z vpisanimi izrazi
         openGraph: async (exprs) => (await setCalcMode("graph"))?.show(exprs),
@@ -3937,6 +3944,7 @@ async function setCalcMode(mode) {
     tool._student = state.student?.id;
   }
   if (mode === "formulas" || mode === "tools") tool.reload();
+  if (mode === "sci") tool.adapt?.();
   const slot = calcSlot();
   if (tool.root.parentElement !== slot) slot.replaceChildren(tool.root);
   tool.resize?.();
@@ -3984,6 +3992,7 @@ document.querySelectorAll(".calc-open").forEach((b) =>
     if (isFloating("graph")) {
       focusWindow("graph");
       if (calcSubject() === "KEM") setCalcMode("pse");
+      else calcTools.sci?.then((tool) => tool.adapt?.()); // tipke poglavja, iz katerega je odprt
       return;
     }
     const view = document.querySelector("main.view:not([hidden]):not(.in-okno)")?.id;
