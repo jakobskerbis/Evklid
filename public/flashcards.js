@@ -4,7 +4,7 @@
 import { icon } from "./icons.js";
 import { t, locale } from "./i18n.js";
 
-let D = null; // { api, renderRich, escapeHtml, toast, showView, getStudent, onDue }
+let D = null; // { api, renderRich, escapeHtml, toast, showView, getStudent, getPath, onDue }
 const $ = (sel) => document.querySelector(sel);
 const box = () => $("#view-cards");
 let session = null; // { queue, done, shown, total }
@@ -17,6 +17,8 @@ export function initFlashcards(deps) {
 // SQLite datetime (UTC, »YYYY-MM-DD HH:MM:SS«) → Date.
 const sqlDate = (s) => new Date(String(s).replace(" ", "T") + "Z");
 const sid = () => D.getStudent()?.id;
+// Kartice izbranega predmeta (predmet učne poti); brez poti strežnik vzame predmet iz profila.
+const pathQ = () => (D.getPath?.() ? `?path=${encodeURIComponent(D.getPath())}` : "");
 const rich = (s) => D.renderRich(s);
 
 export async function showFlashcards() {
@@ -25,7 +27,7 @@ export async function showFlashcards() {
   v.innerHTML = `<p class="muted">${t("common.loading")}</p>`;
   let data;
   try {
-    data = await D.api(`/api/students/${sid()}/flashcards`);
+    data = await D.api(`/api/students/${sid()}/flashcards${pathQ()}`);
   } catch (err) {
     v.innerHTML = `<p class="muted">${D.escapeHtml(err.message)}</p>`;
     return;
@@ -118,7 +120,7 @@ async function grade(ok) {
   const id = session.queue.shift();
   session.shown = false;
   try {
-    const r = await D.api(`/api/students/${sid()}/flashcards/${id}/review`, { method: "POST", body: { ok } });
+    const r = await D.api(`/api/students/${sid()}/flashcards/${id}/review`, { method: "POST", body: { ok, path: D.getPath?.() || undefined } });
     session.cards.set(id, r.card);
     D.onDue?.(r.due);
   } catch (err) {
@@ -152,7 +154,7 @@ async function addOwn(e) {
   const f = new FormData(e.target);
   const err = e.target.querySelector(".fc-err");
   try {
-    await D.api(`/api/students/${sid()}/flashcards`, { method: "POST", body: { front: f.get("front"), back: f.get("back") } });
+    await D.api(`/api/students/${sid()}/flashcards`, { method: "POST", body: { front: f.get("front"), back: f.get("back"), path: D.getPath?.() || undefined } });
     D.toast(t("common.saved"), "check");
     showFlashcards();
   } catch (x) {
