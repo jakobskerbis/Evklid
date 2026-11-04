@@ -214,13 +214,13 @@ yellow-brown vs temperature; conclusion after 15 min. Tests: 37 °C in 5 ± 1 mi
 5 % starch > 3× slower; with sampling 0 °C, 70 °C, boiled and control stay blue for 30 min; dirty dropper lets boiled saliva digest; deterministic seeds.
 ### `lab-lom` – reflection and refraction on the optical disc (FIZ-OS-8 odboj svetlobe, lom svetlobe; FIZ-SS-3 geometrijska optika)
 Optical disc with a 1° scale (radius 120 mm, ocena), red 650 nm class 2 laser (safety note on switch-on: never into the eye), plane mirror (R 90 %, ocena) or a
-semicircular block (radius 50 mm, ocena) of acrylic PMMA n = 1,4892 (Sultanova 2009), glass N-BK7 1,5145 (Schott) or water 1,3314 (Daimon & Masumura 2007), air 1,00028
+semicircular block (radius 50 mm, ocena) of acrylic PMMA n = 1,4881 (Sultanova 2009), glass N-BK7 1,5145 (Schott) or water 1,3314 (Daimon & Masumura 2007), air 1,00028
 (Ciddor 1996; all at 650 nm, refractiveindex.info). Light from air into the block through the flat face, or from the block into air (enters radially through the curved face).
-Every ray is traced in 2D and split by the Fresnel equations (unpolarised), so the weak reflected ray (3,9 % at normal incidence for PMMA) is drawn faint and its share is shown.
+Every ray is traced in 2D and split by the Fresnel equations (unpolarised), so the weak reflected ray (3,85 % at normal incidence for PMMA) is drawn faint and its share is shown.
 Reading: the disc is set to a mark within ±0,25° (ocena), angles are read to 0,5° with an eye error ≤ 0,24° (total ±0,5°). Table α, odbojni, β, sin α, sin β; graph sin β vs sin α
 with a fit through the origin, slope 1/n (air → block) or n (block → air); total internal reflection above the critical angle (PMMA 42,2°). Mistakes: angles measured from the surface,
 laser 0,5–5 mm off the centre (the ray then also bends at the curved face, readings are off). Tests: Snell 30° → 19,6° ± 0,3°, reflection = incidence (mirror and block, both directions),
-critical angles PMMA 42,2 / water 48,7 / BK7 41,3 (±0,3°) and TIR above, Fresnel 3,9 %, slope 1/n ± 2 % (3 materials × 20 seeds) and n from block → air, readings within ±0,5° (500 seeds),
+critical angles PMMA 42,2 / water 48,7 / BK7 41,3 (±0,3°) and TIR above, Fresnel 3,85 % and n(PMMA) from Sultanova's Sellmeier formula, slope 1/n ± 2 % (3 materials × 20 seeds) and n from block → air, readings within ±0,5° (500 seeds),
 3 mm offset changes both readings by > 0,5°, a 4 mm offset spoils the slope by > 2 %, measuring from the surface makes sin β/sin α non-constant, deterministic seeds.
 
 ### `lab-leca` – converging lens on an optical bench (FIZ-OS-8 lom svetlobe (leče); FIZ-SS-3 geometrijska optika)

@@ -8,12 +8,12 @@ const RAD = Math.PI / 180;
 
 // ------------------------------------------------------------------ snovi (lomni količnik pri 650 nm, rdeči laser)
 // Zrak: n = 1,00028 pri 15 °C in 101,325 kPa (Ciddor 1996, refractiveindex.info).
-// Akril (PMMA): n = 1,4892 pri 650 nm (Sultanova in sod. 2009, refractiveindex.info).
+// Akril (PMMA): n = 1,4881 pri 650 nm (Sultanova in sod. 2009, Sellmeierjeva enačba z refractiveindex.info; pri 587,6 nm 1,4905).
 // Steklo BK7: n = 1,5145 pri 650 nm (Schott N-BK7, Sellmeierjeva enačba; n_C = 1,51432 pri 656,3 nm).
 // Voda pri 20 °C: n = 1,3314 pri 650 nm (Daimon in Masumura 2007; Hale in Querry 1973).
 export const N_ZRAK = 1.00028;
 export const SNOVI = {
-  pmma: { name: "polvalj iz akrila (PMMA)", kratko: "akril", n: 1.4892 },
+  pmma: { name: "polvalj iz akrila (PMMA)", kratko: "akril", n: 1.4881 },
   bk7: { name: "polvalj iz stekla (BK7)", kratko: "steklo", n: 1.5145 },
   voda: { name: "voda v polkrožni posodi", kratko: "voda", n: 1.3314 },
   zrcalo: { name: "ravno zrcalo", kratko: "zrcalo", n: null },
@@ -207,10 +207,10 @@ export class LecaBench {
     const sl = slika(a, f), c = nejasnost(a, s, f);
     return { f, a, s, ...sl, c, ostro: c <= this.cMeja, y: (-KLOP.h * s) / a, L: this.xZ - this.xP, viden: a > f };
   }
-  // Pri trenutni razdalji predmeta: kje med s1 in s2 je slika še videti ostra (globinska ostrina).
+  // Pri trenutni razdalji predmeta: kje med s1 in s2 je slika še videti ostra (globinska ostrina): D·|1 − s/b| ≤ cMeja.
   ostroObmocje() {
     const { b, realna } = this.stanje(), k = this.cMeja / KLOP.D;
-    return realna ? [b / (1 + k), b / (1 - k)] : null;
+    return realna ? [b * (1 - k), b * (1 + k)] : null;
   }
   // Odčitek: lege jahačev na mm in velikost slike na zaslonu (z ravnilom). od: "leca" (prav) | "konec" (od konca tračnice).
   odcitaj({ od = "leca" } = {}) {
@@ -229,7 +229,7 @@ export const fIzMeritev = (rows) => rows.reduce((s, r) => s + (r.a * r.b) / (r.a
 export const POENOSTAVITVE_OPTIKA = {
   lom: [
     "Laserski žarek je tanka črta (v resnici je širok približno 1 mm). Svetloba je nepolarizirana; laserska dioda je v resnici delno polarizirana, zato se odbije malo drugačen delež.",
-    "Lomni količniki veljajo za rdečo svetlobo 650 nm: akril 1,489, steklo BK7 1,515, voda 1,331 (pri 20 °C), zrak 1,0003. Za modro svetlobo so malo večji.",
+    "Lomni količniki veljajo za rdečo svetlobo 650 nm: akril 1,488, steklo BK7 1,515, voda 1,331 (pri 20 °C), zrak 1,0003. Za modro svetlobo so malo večji.",
     "Tanko steno plastične posode za vodo smo zanemarili. Polvalj nič svetlobe ne vpije.",
     "Kot odčitaš na pol stopinje natančno (±0,5°). Ko zasučeš disk na razdelek, je pravi kot lahko do 0,25° drugačen.",
     "Koliko svetlobe se odbije, izračunamo s Fresnelovimi enačbami. Zrcalo odbije 90 % (ocena), drugo vpije.",

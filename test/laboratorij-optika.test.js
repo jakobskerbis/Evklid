@@ -9,7 +9,7 @@ import {
 const near = (a, b, tol, msg) => assert.ok(Math.abs(a - b) <= tol, `${msg}: ${a} ni ${b} ± ${tol}`);
 const RAD = Math.PI / 180;
 
-test("Snell: 30° from air into PMMA gives 19,6° ± 0,3° (n = 1,489 at 650 nm), the same in the ray tracer", () => {
+test("Snell: 30° from air into PMMA gives 19,6° ± 0,3° (n = 1,4881 at 650 nm, Sultanova 2009), the same in the ray tracer", () => {
   near(snell(N_ZRAK, SNOVI.pmma.n, 30), 19.6, 0.3, "snell");
   const T = sledi({ snov: "pmma", smer: "zrak", alfa: 30 });
   near(T.lom.kot, 19.6, 0.3, "sledenje");
@@ -45,14 +45,16 @@ test("critical angle PMMA 42,2° ± 0,3°; total internal reflection above it, r
   assert.equal(b.odcitaj().popolni, true);
 });
 
-test("Fresnel: normal incidence (n−1)²/(n+1)² = 3,9 % for PMMA; the weak reflected ray grows towards grazing incidence", () => {
-  near(fresnel(1, SNOVI.pmma.n, 0), ((1.4892 - 1) / (1.4892 + 1)) ** 2, 1e-12, "formula");
-  near(fresnel(1, SNOVI.pmma.n, 0) * 100, 3.9, 0.05, "3,9 %");
+test("Fresnel: normal incidence (n−1)²/(n+1)² = 3,85 % for PMMA; the weak reflected ray grows towards grazing incidence", () => {
+  near(fresnel(1, SNOVI.pmma.n, 0), ((1.4881 - 1) / (1.4881 + 1)) ** 2, 1e-12, "formula");
+  near(fresnel(1, SNOVI.pmma.n, 0) * 100, 3.85, 0.05, "3,85 %");
+  // lomni količnik iz Sultanove Sellmeierjeve enačbe pri 650 nm, n² − 1 = 1,1819 λ²/(λ² − 0,011313), λ v µm (± 0,0002)
+  near(SNOVI.pmma.n, Math.sqrt(1 + (1.1819 * 0.4225) / (0.4225 - 0.011313)), 2e-4, "Sultanova");
   near(sledi({ snov: "pmma", alfa: 0 }).odboj.I, fresnel(N_ZRAK, SNOVI.pmma.n, 0), 1e-12, "sledenje");
-  assert.ok(fresnel(1, 1.4892, 80) > 0.35 && fresnel(1, 1.4892, 60) < 0.1, "pri 80° se odbije več kot tretjina");
+  assert.ok(fresnel(1, 1.4881, 80) > 0.35 && fresnel(1, 1.4881, 60) < 0.1, "pri 80° se odbije več kot tretjina");
   // pri Brewstrovem kotu p-del izgine: R = Rs/2
-  const tb = Math.atan(1.4892) / RAD;
-  assert.ok(fresnel(1, 1.4892, tb) < fresnel(1, 1.4892, tb - 10) + 0.05);
+  const tb = Math.atan(1.4881) / RAD;
+  assert.ok(fresnel(1, 1.4881, tb) < fresnel(1, 1.4881, tb - 10) + 0.05);
 });
 
 // Učenec: α = 10° … 80°, odčita lomni kot, nariše sin β od sin α.
@@ -143,6 +145,8 @@ test("lens: 1/a + 1/b = 1/f within the depth of focus; fit of f within ±3 % (20
         if (a + 4 * f > 1000) continue;
         B.xP = 0; B.xZ = 1000; B.premakni("L", a); B.premakni("P", 0);
         const [s1, s2] = B.ostroObmocje();
+        // meji globinske ostrine: krog nejasnosti D·|1 − s/b| je tam natanko meja ostrine (± 1e-9 mm)
+        for (const sm of [s1, s2]) near(nejasnost(B.stanje().a, sm, B.fPravi[f]), B.cMeja, 1e-9, "meja ostrine");
         const xl = B.xL + B.dL;
         // učenec postavi zaslon nekam v območje, kjer se slika zdi ostra
         const xz = Math.round(xl + s1 + (s2 - s1) * (0.1 + 0.8 * r()));

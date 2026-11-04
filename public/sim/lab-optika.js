@@ -60,13 +60,13 @@ export function labLom(el) {
     extra: [
       h("div", { class: "lab-tit-top" }, stageBox(svg, h("div", { class: "lab-meters" }, aL, rL, bL)), controlsBox(
         grp("1. Pripomočki", snovSel, smerRow),
-        grp("2. Laser", hint("Rdeči laser 650 nm (razred 2). Žarek naj gre skozi <b>središče</b> diska, kjer je sredina ravne ploskve."), laserT, aSl, zSl),
-        grp("3. Merjenje", hint("Kote meriš od <b>vpadne pravokotnice</b> (črtkana črta skozi središče). Skala ima razdelke po 1°; odčitaš na pol stopinje."), row("kot merim od", odSeg), buttons(recBtn, clrBtn)),
+        grp("2. Laser", hint(`Rdeči laser 650${NB}nm (razred 2): <b>nikoli ne glej v žarek</b>. Žarek naj gre skozi <b>središče</b> diska, kjer je sredina ravne ploskve.`), laserT, aSl, zSl),
+        grp("3. Merjenje", hint("Kote meriš od <b>vpadne pravokotnice</b> (črtkana črta skozi središče). Skala ima razdelke po 1°; odčitaš na pol stopinje natančno."), row("kot merim od", odSeg), buttons(recBtn, clrBtn)),
         log,
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table, calc,
       h("h4", { class: "lab-h" }, "Graf: sin β v odvisnosti od sin α"), graph, qBox,
-      notes(POENOSTAVITVE_OPTIKA.lom, `Snellov zakon <i>n</i>₁ sin α = <i>n</i>₂ sin β; odbojni zakon: odbojni kot = vpadni kot. Lomni količniki pri 650${NB}nm: akril (PMMA) 1,489 (Sultanova 2009), steklo N-BK7 1,515 (Schott), voda 1,331 (Daimon in Masumura 2007), zrak 1,0003 (Ciddor 1996), vsi z refractiveindex.info. Delež odbite svetlobe: Fresnelove enačbe, pri pravokotnem vpadu ((<i>n</i> − 1)/(<i>n</i> + 1))² = 3,9${NB}% za akril. Ocene: velikost diska in polvalja, odbojnost zrcala, natančnost odčitka.`),
+      notes(POENOSTAVITVE_OPTIKA.lom, `Snellov zakon <i>n</i>₁ sin α = <i>n</i>₂ sin β; odbojni zakon: odbojni kot = vpadni kot. Lomni količniki pri 650${NB}nm: akril (PMMA) 1,488 (Sultanova in sod. 2009), steklo N-BK7 1,515 (Schott), voda 1,331 (Daimon in Masumura 2007), zrak 1,0003 (Ciddor 1996), vsi z refractiveindex.info. Delež odbite svetlobe: Fresnelove enačbe, pri pravokotnem vpadu ((<i>n</i> − 1)/(<i>n</i> + 1))² = 3,8${NB}% za akril. Ocene: velikost diska in polvalja, odbojnost zrcala, natančnost odčitka.`),
     ],
     tryText: "Izberi akrilni polvalj in izmeri lomni kot pri vpadnih kotih 10°, 20° … 80°. Iz naklona grafa izračunaj lomni količnik. Nato obrni smer (iz snovi v zrak) in poišči kot, pri katerem lomljeni žarek izgine.",
   });
@@ -92,7 +92,7 @@ export function labLom(el) {
     if (!B.laser) return log.push("Najprej vklopi laser.", "warn");
     const S = SNOVI[B.snov], smer = S.n ? B.smer : "zrak";
     const key = `${B.snov}:${smer}`;
-    const name = S.n ? `${S.kratko}, ${smer === "zrak" ? "zrak → snov" : "snov → zrak"}` : "zrcalo";
+    const name = S.n ? (smer === "zrak" ? `zrak → ${S.kratko}` : `${S.kratko} → zrak`) : "zrcalo";
     const sa = Math.sin(cur.alfa * RAD), sb = cur.lom != null ? Math.sin(cur.lom * RAD) : null;
     table.add({ snov: name, a: kot(cur.alfa, 0), r: kot(cur.odboj), b: !S.n ? "–" : cur.popolni ? "popolni odboj" : kot(cur.lom), sa: fixed(sa, 3), sb: sb == null ? "–" : fixed(sb, 3) });
     if (odPloskve) log.push("Kote si meril od ploskve. Vpadni, odbojni in lomni kot merimo od <b>vpadne pravokotnice</b>, sicer Snellov zakon ne velja.", "bad");
@@ -111,7 +111,7 @@ export function labLom(el) {
           { t: "Lomni kot je manjši od vpadnega, razmerje sin α / sin β pa je pri vseh kotih enako (lomni količnik).", ok: true, why: "Točke na grafu sin β od sin α ležijo na premici skozi izhodišče. Njen naklon je 1/<i>n</i>; za akril je okoli 0,67, torej <i>n</i> ≈ 1,49. Žarek se v snovi z večjim lomnim količnikom lomi <b>k</b> vpadni pravokotnici." },
           { t: "Lomni kot je vedno za enako število stopinj manjši od vpadnega.", ok: false, why: "Pri 10° je razlika za akril le ~3°, pri 60° pa ~25°. Stalno je razmerje sinusov, ne razlika kotov." },
           { t: "Razmerje α/β je pri vseh kotih enako.", ok: false, why: "Pri majhnih kotih je skoraj res (sin α ≈ α), pri velikih ne: pri 80° je α/β za akril ~1,9, pri 10° pa ~1,5." },
-          { t: "Vsa svetloba gre v snov, nič se je ne odbije.", ok: false, why: "Šibek odbiti žarek vidiš na disku: pri pravokotnem vpadu se od akrila odbije ~4 % svetlobe, pri velikih vpadnih kotih precej več." },
+          { t: "Vsa svetloba gre v snov, nič se je ne odbije.", ok: false, why: `Šibek odbiti žarek vidiš na disku: pri pravokotnem vpadu se od akrila odbije ~4${NB}% svetlobe, pri velikih vpadnih kotih precej več.` },
         ],
       }));
     }
@@ -162,7 +162,10 @@ export function labLom(el) {
     }
     // laser
     const T = B.sledi(), u = T.u, p0 = P(T.p0), ang = Math.atan2(-u[1], u[0]) / RAD;
-    s("rect", { x: -34, y: -6, width: 32, height: 12, rx: 3, class: `lab-opt-laser${B.laser ? " on" : ""}`, transform: `translate(${p0[0].toFixed(1)},${p0[1].toFixed(1)}) rotate(${(-ang).toFixed(2)})` }, svg);
+    // ohišje laserja zunaj diska (za skalo), da ne prekrije številk in razdelkov; žarek do roba diska nariše spodnja črta
+    const off = Rs + 15 - 160, tr = `translate(${p0[0].toFixed(1)},${p0[1].toFixed(1)}) rotate(${(-ang).toFixed(2)})`;
+    if (B.laser) s("line", { x1: -off, y1: 0, x2: 0, y2: 0, class: "lab-opt-ray", transform: tr }, svg);
+    s("rect", { x: -off - 24, y: -6, width: 24, height: 12, rx: 3, class: `lab-opt-laser${B.laser ? " on" : ""}`, transform: `translate(${p0[0].toFixed(1)},${p0[1].toFixed(1)}) rotate(${(-ang).toFixed(2)})` }, svg);
     if (B.laser) {
       for (const o of T.odseki) {
         const [x1, y1] = P(o.p0), [x2, y2] = P(o.p1);
@@ -227,7 +230,7 @@ export function labLeca(el) {
     extra: [
       h("div", { class: "lab-tit-top" }, stageBox(svg, h("div", { class: "lab-meters" }, pL, lL, zL)), controlsBox(
         grp("1. Leča", row("goriščna razdalja (napisana)", fSeg)),
-        grp("2. Lege na optični klopi", hint("Predmet je svetleča puščica (2 cm). Premikaj lečo ali zaslon, dokler slika na zaslonu ni ostra."), pSl, lSl, zSl, row("fino premikanje (mm)", finoSeg), buttons(korak(-5), korak(-1), korak(1), korak(5))),
+        grp("2. Lege na optični klopi", hint(`Predmet je svetleča puščica (2${NB}cm). Premikaj lečo ali zaslon, dokler slika na zaslonu ni ostra. Na tračnici so predmeti v pravem merilu in zato majhni; sliko na zaslonu vidiš povečano spodaj desno.`), pSl, lSl, zSl, row("fino premikanje (mm)", finoSeg), buttons(korak(-5), korak(-1), korak(1), korak(5))),
         grp("3. Merjenje", odSel, buttons(recBtn, lupaBtn, clrBtn)),
         log,
       )),
@@ -235,7 +238,7 @@ export function labLeca(el) {
       h("h4", { class: "lab-h" }, "Graf: 1/b v odvisnosti od 1/a"), graph, qBox,
       notes(POENOSTAVITVE_OPTIKA.leca, `Enačba leče 1/<i>a</i> + 1/<i>b</i> = 1/<i>f</i>, povečava <i>M</i> = −<i>b</i>/<i>a</i> (minus: slika je obrnjena). Ostra slika na zaslonu obstaja le, če je zaslon od predmeta oddaljen vsaj 4<i>f</i>. Ocene: odstopanje leče ±2${NB}%, odprtina 30${NB}mm, meja ostrine 0,5${NB}mm, zamik sredine leče od oznake ±1${NB}mm.`),
     ],
-    tryText: "Z lečo f = 100 mm postavi predmet 200 mm pred lečo in poišči ostro sliko. Kje je in kako velika je? Nato zapiši vsaj pet meritev pri različnih a in iz grafa 1/b od 1/a določi goriščno razdaljo. Kaj vidiš, ko je predmet bližje kot f?",
+    tryText: "Z lečo f = 100 mm postavi predmet 200 mm pred lečo in poišči ostro sliko. Kje je in kako velika je? Nato zapiši vsaj pet meritev pri različnih a in iz grafa 1/b od 1/a določi goriščno razdaljo. Kaj vidiš, ko je predmet bližje kot f?",
   });
   el.classList.add("lab");
 
@@ -260,7 +263,7 @@ export function labLeca(el) {
     }
     const r = B.odcitaj({ od });
     table.add({ f: `${f}${NB}mm`, a: String(r.a), b: String(r.b), y: `${fixed(r.y, 1)}, ${r.obrnjena ? "obrnjena" : "pokončna"}`, ia: fixed(1000 / r.a, 2), ib: fixed(1000 / r.b, 2) });
-    if (od === "konec") log.push(`<i>a</i> in <i>b</i> si odčital od začetka tračnice. Razdalje merimo od <b>sredine leče</b>: <i>a</i> = ${r.xL} − ${r.xP} mm, <i>b</i> = ${r.xZ} − ${r.xL} mm.`, "bad");
+    if (od === "konec") log.push(`<i>a</i> in <i>b</i> si odčital od začetka tračnice. Razdalje merimo od <b>sredine leče</b>: <i>a</i> = ${r.xL} − ${r.xP}${NB}mm, <i>b</i> = ${r.xZ} − ${r.xL}${NB}mm.`, "bad");
     else if (Math.abs(r.a - r.b) <= 5) log.push(`<i>a</i> ≈ <i>b</i>: predmet je v dvojni goriščni razdalji, slika je enako velika (${fixed(r.y, 1)}${NB}mm) in obrnjena.`, "ok");
     if (!meritve.has(f)) meritve.set(f, []);
     meritve.get(f).push({ a: r.a, b: r.b });
@@ -270,9 +273,9 @@ export function labLeca(el) {
       qBox.append(conclusion({
         text: "Kaj pove graf 1/<i>b</i> v odvisnosti od 1/<i>a</i>?",
         options: [
-          { t: "Točke ležijo na premici z naklonom −1, ki seka obe osi pri 1/<i>f</i>: velja 1/<i>a</i> + 1/<i>b</i> = 1/<i>f</i>.", ok: true, why: "Za vsako meritev je vsota 1/<i>a</i> + 1/<i>b</i> skoraj enaka. Za lečo s <i>f</i> = 100 mm je 10 m⁻¹ (to je tudi njena jakost v dioptrijah). Majhen raztros je zaradi tega, ker je slika ostra v območju nekaj milimetrov." },
-          { t: "Razdalja slike <i>b</i> je sorazmerna z razdaljo predmeta <i>a</i>.", ok: false, why: "Ko predmet odmikaš, se slika <i>približuje</i> leči in gre proti gorišču. Če bi bila sorazmerna, bi točke v grafu 1/<i>b</i> od 1/<i>a</i> ležale na premici skozi izhodišče z naklonom +1." },
-          { t: "Slika je vedno v gorišču leče.", ok: false, why: "V gorišču je slika le zelo oddaljenega predmeta (1/<i>a</i> ≈ 0). Pri <i>a</i> = 2<i>f</i> je slika pri <i>b</i> = 2<i>f</i>." },
+          { t: "Točke ležijo na premici z naklonom −1, ki seka obe osi pri 1/<i>f</i>: velja 1/<i>a</i> + 1/<i>b</i> = 1/<i>f</i>.", ok: true, why: `Za vsako meritev je vsota 1/<i>a</i> + 1/<i>b</i> skoraj enaka. Za lečo z <i>f</i> = 100${NB}mm je 10${NB}m⁻¹ (to je tudi njena lomnost v dioptrijah). Točke so malo raztresene, ker je slika ostra v nekaj milimetrov širokem območju lege zaslona.` },
+          { t: "Razdalja slike <i>b</i> je sorazmerna z razdaljo predmeta <i>a</i>.", ok: false, why: "Ko predmet odmikaš, se slika <i>približuje</i> leči in gre proti gorišču. Če bi bila sorazmerna, bi točke v grafu 1/<i>b</i> od 1/<i>a</i> ležale na premici skozi izhodišče s pozitivnim naklonom." },
+          { t: "Slika je vedno v gorišču leče.", ok: false, why: "V gorišču je slika le zelo oddaljenega predmeta (1/<i>a</i> ≈ 0). Pri <i>a</i> = 2<i>f</i> je na primer slika pri <i>b</i> = 2<i>f</i>." },
           { t: "Ostro sliko dobiš pri vsaki legi predmeta, le zaslon moraš dovolj odmakniti.", ok: false, why: "Če je predmet bližje kot <i>f</i>, je slika navidezna (lupa) in je na zaslonu nikoli ne ujameš." },
         ],
       }));
@@ -285,7 +288,7 @@ export function labLeca(el) {
     for (const [f, rows] of meritve) {
       const fm = fIzMeritev(rows), cls = RAZREDI[i % 3];
       out.push(`<p>Leča ${f}${NB}mm: iz ${rows.length} ${rows.length === 1 ? "meritve" : "meritev"} <i>f</i> = povprečje <i>ab</i>/(<i>a</i> + <i>b</i>) = <b>${fixed(fm, 1)}${NB}mm</b>, 1/<i>f</i> = ${fixed(1000 / fm, 2)}${NB}m⁻¹.</p>`);
-      ser.push({ id: `f${f}`, pts: rows.map((r) => [1000 / r.a, 1000 / r.b]), cls, shape: i % 2 ? "^" : "o", label: `f = ${f} mm`, line: (x) => 1000 / fm - x });
+      ser.push({ id: `f${f}`, pts: rows.map((r) => [1000 / r.a, 1000 / r.b]), cls, shape: i % 2 ? "^" : "o", label: `f = ${f}${NB}mm`, line: (x) => 1000 / fm - x });
       i++;
     }
     const top = Math.max(25, ...[...meritve.keys()].map((f) => Math.ceil((1000 / f + 1) / 5) * 5));
@@ -340,7 +343,7 @@ export function labLeca(el) {
 
     // pogled na zaslon (bel zaslon 100 mm × 90 mm), 1 mm = 1,6 px
     const kz = 1.6, zx = 220, zy = 162, zw = 100 * kz, zh = 90 * kz, ox = zx + zw / 2, oy = zy + 18 + 40 * kz;
-    label(svg, zx + zw / 2, zy - 4, "pogled na zaslon", "tick small");
+    label(svg, zx + zw / 2, zy - 4, "pogled na zaslon (povečano)", "tick small");
     s("rect", { x: zx, y: zy, width: zw, height: zh, rx: 3, class: "lab-opt-screenview" }, svg);
     const defs = s("defs", {}, svg), flt = s("filter", { id: fid, x: "-50%", y: "-50%", width: "200%", height: "200%" }, defs);
     // krog nejasnosti c (premer) → standardni odklon zamegljenosti ~c/4; v meji ostrine ga oko ne opazi
@@ -355,7 +358,7 @@ export function labLeca(el) {
     s("path", { d: `M${ox},${oy} V${oy - yi} m-5,${ht} l5,${-ht} l5,${ht}`, class: "lab-opt-image" }, img);
     if (S.c > 2) s("circle", { cx: ox, cy: oy - yi / 2, r: clamp((S.c * kz) / 2, 3, zh / 2), class: "lab-opt-patch", opacity: clamp(0.5 / (1 + S.c / 20), 0.08, 0.4).toFixed(2) }, g);
     s("path", { d: `M${zx + 8},${zy + zh - 8} h${10 * kz}`, class: "lab-scale" }, svg);
-    label(svg, zx + 8 + 5 * kz, zy + zh - 12, "1 cm", "tick small lab-opt-ink");
+    label(svg, zx + 8, zy + zh - 12, "1 cm", "tick small lab-opt-ink", "start");
     label(svg, zx + zw - 6, zy + zh - 8, S.ostro ? "ostra" : S.c < 3 ? "skoraj ostra" : "zamegljena", `tick small lab-opt-ink${S.ostro ? " lab-opt-sharp" : ""}`, "end");
 
     // levo spodaj: pogled skozi lečo (lupa) ali kratka razlaga
@@ -365,12 +368,12 @@ export function labLeca(el) {
       s("rect", { x: lx, y: ly, width: 180, height: zh, rx: 90, class: "lab-opt-loupe" }, svg);
       const hh = clamp(KLOP.h * S.M * 1.2, 0, zh - 30);
       s("path", { d: `M${lx + 90},${ly + zh - 18} V${ly + zh - 18 - hh} m-6,8 l6,-8 l6,8`, class: "lab-opt-image" }, svg);
-      label(svg, lx + 90, ly + zh - 4, `pokončna, ${fixed(S.M, 1)}-krat večja`, "tick small");
+      label(svg, lx + 90, ly + zh + 13, `pokončna, ${fixed(S.M, 1)}-krat večja`, "tick small");
     }
     label(svg, W - x0, 12, "tračnica 1 m, skala v cm", "tick small", "end");
 
     pL.set(String(B.xP), "mm", "na tračnici");
-    lL.set(String(B.xL), "mm", `f = ${B.f} mm`);
+    lL.set(String(B.xL), "mm", `f = ${B.f}${NB}mm`);
     zL.set(String(B.xZ), "mm", S.ostro ? "slika ostra" : "");
     svg.setAttribute("aria-label", `Optična klop 1 m: predmet pri ${B.xP} mm, leča f = ${B.f} mm pri ${B.xL} mm, zaslon pri ${B.xZ} mm. Slika na zaslonu je ${S.ostro ? "ostra" : "zamegljena"}.`);
   }
