@@ -31,6 +31,7 @@ export function reportBox({ ask, reasons = [], notePh, needNote = false, sendLab
   area.setAttribute("aria-label", notePh);
   const err = box.querySelector(".rep-err");
   const sendBtn = box.querySelector(".rep-send");
+  area.addEventListener("input", () => (err.hidden = true));
   let reason = null;
   for (const [key, label] of reasons) {
     const rb = document.createElement("button");
@@ -125,7 +126,7 @@ export function openAdminBug(anchor, { api, studentId, conversationId, view, toa
     notePh: t("bug.notePh"),
     needNote: true,
     onSend: async ({ note }) => {
-      await api(`/api/students/${studentId}/bug`, { method: "POST", body: { note, conversation_id: conversationId || undefined, view, ...deviceInfo() } });
+      await api(`/api/students/${studentId}/bug`, { method: "POST", body: { note, conversation_id: (typeof conversationId === "function" ? conversationId() : conversationId) || undefined, view, ...deviceInfo() } });
       toast(t("bug.thanks"), "check");
       onClose?.();
     },
@@ -164,7 +165,7 @@ export async function renderAdminReports(box, { api, toast, showAll = false }) {
     .map(
       (r) => `<li class="adm-rep${r.status === "fixed" ? " fixed" : ""}" data-kind="${esc(r.kind)}" data-id="${esc(r.id)}">
         <div class="adm-rep-head">${icon(KIND_ICON[r.kind] || "flag")}<b>${esc(reportTitle(r))}</b>${reasonText(r) ? `<span class="pill">${esc(reasonText(r))}</span>` : ""}</div>
-        <small class="muted">${esc(r.created_at)} UTC${r.device ? ` · ${esc(r.device)}` : ""}</small>
+        <small class="muted" dir="auto">${esc(r.created_at)} UTC${r.device ? ` · ${esc(r.device)}` : ""}</small>
         ${r.note ? `<p class="adm-rep-note" dir="auto">${esc(r.note)}</p>` : ""}
         ${r.question || r.answer || r.context ? `<details><summary>${esc(t("adm.rep.more"))}</summary>${r.question ? `<p dir="auto"><b>${esc(t("adm.rep.question"))}</b> ${esc(r.question)}</p>` : ""}${r.answer ? `<p dir="auto"><b>${esc(t("adm.rep.answer"))}</b> ${esc(r.answer)}</p>` : ""}${r.context ? `<pre dir="auto">${esc(r.context)}</pre>` : ""}</details>` : ""}
         <button type="button" class="secondary small" data-rep-status="${r.status === "fixed" ? "open" : "fixed"}">${icon(r.status === "fixed" ? "rotate-ccw" : "check")}<span>${esc(t(r.status === "fixed" ? "adm.rep.reopen" : "adm.rep.fixed"))}</span></button>

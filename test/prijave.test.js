@@ -119,7 +119,7 @@ test("tutor bubble: X attracts it, a flick toward X closes it, other drags do no
 
 test("tutor window: a suggested reply is sent at once, the X check runs before the X hides", () => {
   const app = readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
-  assert.match(app, /\[data-idea\]"\)\.forEach\(\(b\) => b\.addEventListener\("click", \(\) => send\(b\.dataset\.idea\)\)\)/);
+  assert.match(app, /if \(!\$\("#input"\)\.value\.trim\(\) && !state\.image\) return send\(b\.dataset\.idea\);/);
   const okna = readFileSync(new URL("../public/okna.js", import.meta.url), "utf8");
   const up = okna.slice(okna.indexOf("const up = (ev, cancel)"));
   assert.ok(up.indexOf("shouldClose(") < up.indexOf("drop.hidden = true"), "spust na X se preveri, preden se X skrije");

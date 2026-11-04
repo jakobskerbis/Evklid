@@ -422,12 +422,17 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .report-box textarea { width: 100%; min-height: 56px; resize: vertical; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); box-sizing: border-box; }
 /* Skrbnikova prijava napake v klepetu (public/prijave.js) in seznam prijav v Računu. */
 .chat-head .chat-bug { flex-shrink: 0; }
+/* Ozek telefon (samo skrbnik): zastavica bi naslov stisnila v eno črko, zato se oznake predmeta skrijejo. */
+@media (max-width: 400px) { .chat-head:has(#chat-bug:not([hidden])) #chat-state { display: none; } }
 .bug-box { margin: 8px 12px 0; }
 .adm-rep-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
 .adm-rep { display: grid; gap: 4px; justify-items: start; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); }
-.adm-rep.fixed { opacity: 0.7; }
+.adm-rep.fixed { border-style: dashed; background: var(--surface); } /* brez prosojnosti: besedilo ostane nad 4,5 : 1 */
 .adm-rep-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .adm-rep-head svg.i { width: 16px; height: 16px; }
+.adm-rep-head > b { flex: 1 1 60%; } /* dolg naslov lekcije ostane ob ikoni, oznaka razloga gre po potrebi v novo vrstico */
+.adm-rep .pill { background: var(--surface); color: var(--text); } /* --muted na --surface-2 je v slogih Igriv/Temen pod 4,5 : 1 */
+.adm-rep button.small { min-height: 40px !important; }
 .adm-rep-note { margin: 0; overflow-wrap: anywhere; }
 .adm-rep details { justify-self: stretch; }
 .adm-rep pre, .adm-rep details p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.85rem; max-height: 320px; overflow-y: auto; }

@@ -638,7 +638,14 @@ function renderEmptyChat() {
   templeParts();
   wireGreekFacts($("#messages"));
   // Predlog se pošlje takoj in inštruktor nanj odgovori (j, 3. 11.): ni ga treba še enkrat poslati.
-  $("#messages").querySelectorAll("[data-idea]").forEach((b) => b.addEventListener("click", () => send(b.dataset.idea)));
+  // Če je učenec že kaj napisal ali dodal fotografijo, predlog gre v polje (da se nič ne izgubi).
+  $("#messages").querySelectorAll("[data-idea]").forEach((b) =>
+    b.addEventListener("click", () => {
+      if (!$("#input").value.trim() && !state.image) return send(b.dataset.idea);
+      $("#input").value = b.dataset.idea;
+      $("#input").focus();
+    }),
+  );
   renderState(null);
 }
 
@@ -710,7 +717,7 @@ $("#chat-bug").addEventListener("click", (e) => {
   openAdminBug($("#view-chat .chat-head"), {
     api,
     studentId: state.student.id,
-    conversationId: state.conversationId,
+    conversationId: () => state.conversationId,
     view: "chat",
     toast,
     onClose: () => {
@@ -3726,6 +3733,8 @@ initFormulaInfo();
   // Starševski računi (account.js): prijava, potrditev, prvi otrok.
   let first = true;
   const start = async (o) => {
+    // Prijava brez ponovnega nalaganja strani: /api/config pred prijavo še ni vedel, da je to skrbnik.
+    if (!cfg.admin) api("/api/config").then((c) => ($("#chat-bug").hidden = !c.admin)).catch(() => {});
     await loadStudents();
     if (first) initUsageMeter({ escapeHtml, showView, toast });
     else refreshUsageMeter();

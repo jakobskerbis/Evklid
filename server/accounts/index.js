@@ -827,6 +827,13 @@ export function mountAccounts(app, store, opts = {}) {
         xp: q("SELECT amount, reason, created_at FROM xp_events WHERE student_id = ?", c.id),
         // Prijave napak (server/reports.js): tudi opomba učenca so njegovi podatki.
         reports: q("SELECT message_id, reason, note, question, answer, created_at FROM message_reports WHERE student_id = ?", c.id).map(openReport),
+        lesson_reports: (() => {
+          try {
+            return q("SELECT kind, topic_id, step, reason, note, created_at FROM bug_reports WHERE student_id = ? AND kind = 'lesson'", c.id).map((r) => ({ ...r, note: unseal(r.note) }));
+          } catch {
+            return [];
+          }
+        })(),
         flashcards: (() => {
           try {
             return q("SELECT front, back, subject, topic, source, box, due, reviews, created_at FROM flashcards WHERE student_id = ? AND verified = 1", c.id).map((f) => ({ ...f, front: unseal(f.front), back: unseal(f.back) }));

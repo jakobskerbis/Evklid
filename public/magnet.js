@@ -1,5 +1,5 @@
 // Magnetni X za mehurček inštruktorja (okna.js): blizu X-a mehurček skoči nanj, hiter poteg (flik) proti
-// X-u ga zapre tudi od daleč. Čista matematika brez DOM-a, da jo preverijo testi (test/magnet.test.js).
+// X-u ga zapre tudi od daleč. Čista matematika brez DOM-a, da jo preverijo testi (test/prijave.test.js).
 
 export const MAGNET_R = 96; // px okoli središča X-a: mehurček se prilepi nanj
 const FLICK_SPEED = 0.5; // px/ms: počasnejši poteg ni flik

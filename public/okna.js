@@ -480,6 +480,8 @@ function bubbleEl() {
   const up = (ev, cancel) => {
     if (!p || ev.pointerId !== p.id) return;
     clearTimeout(p.timer);
+    // Vzorec ob spustu: kdor se ustavi in šele nato spusti, nima več hitrosti (ni flik).
+    addSample(p.samples, ev.clientX, ev.clientY, ev.timeStamp);
     const { moved, samples } = p;
     p = null;
     // Prej je bil X ob spustu že skrit (getBoundingClientRect = 0), zato poteg nanj ni zaprl mehurčka.
