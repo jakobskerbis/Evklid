@@ -586,7 +586,9 @@ export function zgradi(THREE, ctx) {
     // skrči (»se približa ali oddalji«), nato se kamera mehko umakne ali približa na novo merilo (korak).
     const sPrej = s * group.scale.x;
     s = 2 / D;
-    if (ctx.gibanje !== false && MERE.includes(zadnja) && sPrej > 0) group.scale.setScalar(Math.min(1.6, Math.max(0.6, sPrej / s)));
+    // med prehodom tudi druge spremembe (prosojno, prerez, razpri) nadaljujejo prehod brez skoka; novo telo začne pri 1
+    const zvezno = MERE.includes(zadnja) || (zadnja !== "telo" && group.scale.x !== 1);
+    if (ctx.gibanje !== false && zvezno && sPrej > 0) group.scale.setScalar(Math.min(1.6, Math.max(0.6, sPrej / s)));
     else group.scale.setScalar(1);
     telo.scale.setScalar(s); telo.position.copy(sred).multiplyScalar(-s);
     telo.updateMatrix();
@@ -1167,7 +1169,7 @@ export function zgradi(THREE, ctx) {
       d.push({ id: "podlaga", ime: "Karirasta podlaga", opis: `Podlaga je razdeljena na kvadratke s stranico ${k} cm (debelejše črte so na vsakih ${K} cm) kot v karirastem zvezku; z njimi oceniš velikost telesa in njegove mreže.`, barva: "#A9BCE8", meshes: [tla], tocka: tk(V(sred.x - 0.6 * R, 0, sred.z + 0.6 * R)) });
       if (osInfo) {
         const [mx, my, mz] = osInfo.mere.map((m) => cm(m));
-        d.push({ id: "osi", ime: "Koordinatni sistem", opis: `Osi x (proti tebi), y (v desno) in z (navzgor) imajo izhodišče 0 ${osInfo.kot ? "v zadnjem levem spodnjem kotu telesa" : "v središču osnovne ploskve"}; številke so v cm na vsakih ${osInfo.korak} cm. Telo sega do x = ${mx}, y = ${my} in z = ${mz} (poudarjene črtice). Ko spreminjaš mere, telo na zaslonu ostane enako veliko, podlaga in osi pa se povečajo ali skrčijo, zato številke vedno kažejo prave mere.`, barva: "#7FA8FF", meshes: [osiCev, osiKon], tocka: tk(osiTocka) });
+        d.push({ id: "osi", ime: "Koordinatni sistem", opis: `Osi x (proti tebi), y (v desno) in z (navzgor) imajo izhodišče 0 ${osInfo.kot ? "v zadnjem levem spodnjem kotu telesa" : "v središču osnovne ploskve"}; številke so v cm na vsakih ${osInfo.korak} cm. Telo sega do x = ${mx}, y = ${my} in z = ${mz} (poudarjene črtice). Ko spreminjaš mere, se podlaga in osi prilagodijo, številke pa vedno kažejo prave mere; tanek obris kaže začetno velikost.`, barva: "#7FA8FF", meshes: [osiCev, osiKon], tocka: tk(osiTocka) });
       }
     }
     if (prerezInfo) {
@@ -1218,7 +1220,7 @@ export function zgradi(THREE, ctx) {
         return `${prerezInfo.ime}, S = ${cm2(prerezInfo.S)}`;
       } },
     ],
-    merilo: () => ({ m: D / 100, oznaka: kratko(D) + NB + "cm" }),
+    merilo: () => ({ m: D / 100 / group.scale.x, oznaka: kratko(D) + NB + "cm" }), // med prehodom je prizor povečan za group.scale
     // mehak prehod merila po spremembi mer (glej obnovi); false, ko miruje
     korakBrezGumba: true,
     korak(t, dt) {
