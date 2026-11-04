@@ -72,12 +72,38 @@ const FORM = {
     ["Z analogijo", "Bolj natančno"],
   ],
 };
+// Fakultetne lekcije (j 2026-11-04): strokovni okviri namesto šolskih, »Uporaba v stroki« namesto »Iz vsakdanjega življenja«.
+const UNI_FORM = {
+  hook: [
+    "a problem from a lab, plant, clinic or field site that this topic solves",
+    "a puzzle or counter-intuitive result the student tries before any theory",
+    "a surprising fact or paradox from research or engineering practice",
+    "a real measurement or data set that the old tools cannot explain",
+    "a historical moment: who needed this idea and why (no invented quotes or dates)",
+    "a wrong claim from a fellow student that the lesson will settle",
+    "two situations from different fields that hide the same structure",
+    "an exam-style question the student cannot solve yet, answered at the end",
+  ],
+  context: [
+    "chemical laboratory", "industrial process and plant", "environment and climate", "medicine and pharmacy", "materials and structures",
+    "energy and electrical systems", "data, computing and measurement", "biology and biotechnology", "physics experiment", "economics and optimisation",
+  ],
+  alts: [
+    ["Na sliki", "Uporaba v stroki"],
+    ["Uporaba v stroki", "Korak za korakom s številkami"],
+    ["Na sliki", "Bolj natančno"],
+    ["Z analogijo", "Uporaba v stroki"],
+    ["Korak za korakom s številkami", "Bolj natančno"],
+    ["Z analogijo", "Bolj natančno"],
+  ],
+};
 const hash = (str) => [...str].reduce((h, c) => (h * 31 + c.codePointAt(0)) >>> 0, 7);
 const formPlan = (id, i) => {
   const h = hash(id) + i * 3; // i: položaj v paru → sosednji lekciji nikoli enaki
   const pick = (arr, salt) => arr[(h + salt) % arr.length];
-  const alts = pick(FORM.alts, 5);
-  return { hook: pick(FORM.hook, 0), path: pick(FORM.path, 1), context: pick(FORM.context, 2), quiz: pick(FORM.quiz, 3), drugace: alts.map((a) => `Drugače: ${a}`) };
+  const F = id.startsWith("UNI-") ? { ...FORM, ...UNI_FORM } : FORM;
+  const alts = pick(F.alts, 5);
+  return { hook: pick(F.hook, 0), path: pick(F.path, 1), context: pick(F.context, 2), quiz: pick(F.quiz, 3), drugace: alts.map((a) => `Drugače: ${a}`) };
 };
 
 const WRITER = `# Evklid lesson brief: write ${topics.length} lesson${topics.length > 1 ? "s" : ""}
@@ -100,7 +126,13 @@ Quality bar (docs/kakovost.md §1, all required):
 
 House rules: Slovenian with the terminology of the level; decimal comma \`$3{,}5$\`; all math in LaTeX; the formula of an example only inside \`:::formula\`; header \`stanje: osnutek\` and \`avtor: AI\`; never mention PhET or a model name.${
   uni
-    ? "\nUniversity (UNI-*) lessons are shared by every course with the same topic: write them generically (no faculty or course name), put stricter proofs in »Drugače: Bolj natančno«, save to the listed `file`."
+    ? `\nUniversity (UNI-*) structure (j 2026-11-04, after comparing lessons with real past exams: exams are harder than our examples and about 40 % of an exam is theory). These rules replace the school ones where they differ:
+- Generic: shared by every course with this topic; no faculty or course name; save to the listed \`file\`.
+- Razlaga: precise definitions (**Definicija.**) and theorems with all their conditions (**Izrek.**) in the main explanation, with the short proofs or derivations an exam may ask (**Dokaz.** / **Izpeljava.**). »Drugače: Bolj natančno« is only for deeper or more general material. A topic without theorems (technical drawing, SQL, lab methods) states its exact definitions, rules and standards instead.
+- Rešeni primeri: Primer 3 at real 1st-year exam level (several steps, the combination of methods an exam asks).
+- New section \`## Za izpit\` right after \`## Povzetek\`: first »Znati moraš povedati:« with 3–6 bullets (exact definitions, theorems with conditions, the proofs or derivations to know); then 2–3 \`### Naloga N\` at real exam level, in your own words (never copy a real exam): at least one computational problem harder than Primer 3 and one theory task (»Natančno navedi … in dokaži …«, »Utemelji, ali …«, »Izpelji …«). Each task: full text with all data, then \`**Rešitev:**\` with complete numbered steps and the answer (the app hides it behind a button).
+- Drugače: »Uporaba v stroki« (lab, industry, research, the profession) instead of »Iz vsakdanjega življenja«.
+- Length 1800–3000 words.`
     : ""
 }${
   tek
@@ -125,7 +157,7 @@ Run first: \`node scripts/check-lesson.js -q ${files}\` and \`node scripts/check
 5. Slovenian terminology of the level, decimal comma, tables ≤ 4 columns.
 6. Not monotone: the opening, the explanation path and the quiz types are not the same template as the other lesson in this brief; no stock phrases (»V tej lekciji se bomo naučili«, »Poglejmo si«); fix the worst repetition with a small Edit.
 7. \`:::simboli\`: every name, relation and unit matches its meaning in this lesson and the level (the card a student sees when tapping the symbol).
-8. Mind map \`${maps}\`: every branch matches the lesson and adds nothing new; the lesson's main idea is a branch; maths renders.${uni ? "\n9. University lesson: generic (no faculty or course name), proofs in »Drugače: Bolj natančno«." : ""}${
+8. Mind map \`${maps}\`: every branch matches the lesson and adds nothing new; the lesson's main idea is a branch; maths renders.${uni ? "\n9. University lesson: generic (no faculty or course name); definitions and theorems with all conditions and the exam proofs in Razlaga; Primer 3 at exam level; »## Za izpit« after Povzetek with »Znati moraš povedati:« and 2–3 »### Naloga« (one harder computation, one theory task), each with a complete, correct »**Rešitev:**« (recompute it); »Uporaba v stroki« instead of »Iz vsakdanjega življenja«." : ""}${
   tek ? "\n9. Competition lesson: strategies and typical problem types at competition level (easy ≈ school round, hard ≈ national round), complete solutions, no real past problems, years or results cited." : ""
 }
 Fix with small \`Edit\`s, never rewrite. Do not read the exemplar or the README. Reply per lesson: \`<id>: N popravkov – <5–10 words each>\`, ≤ 5 lines.
@@ -141,7 +173,7 @@ The checker and a second reviewer have already verified numbers, keys, level and
 3. Not monotone (docs/kakovost.md §1b): the opening, the explanation path and the quiz do not feel like the same template as the other lessons in this brief; vary the worst repetition.
 4. Flow: Zakaj → Razlaga → examples → quiz builds up; a jump that needs an unstated step gets one sentence.
 5. Phone: no table wider than 4 columns, long formulas split, nothing conveyed only by colour.
-6. Mind map \`${maps}\`: every branch matches the lesson and adds nothing new; the lesson's main idea is a branch; maths renders.
+6. Mind map \`${maps}\`: every branch matches the lesson and adds nothing new; the lesson's main idea is a branch; maths renders.${uni ? "\n7. University lesson: each »Za izpit« task can be solved with what the lesson teaches, and every step of its »**Rešitev:**« follows from the one before." : ""}
 Small \`Edit\`s only (≤ 8 per lesson), never a rewrite. Keep every number, formula, structure and \`+\`/\`-\` key unchanged; if you believe a number or key is wrong, do not change it: add a reply line \`DVOM: <id> line <n>: <why>\` (the orchestrator checks every DVOM line). Then run \`node scripts/check-lesson.js -q ${files}\` and \`node scripts/check-gradivo.js -q ${maps}\` once. Do not read the exemplar or the README. Reply per lesson: \`<id>: N popravkov – <5–10 words each>\`, ≤ 4 lines.
 
 ## Lessons
