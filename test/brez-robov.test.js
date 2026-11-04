@@ -63,3 +63,11 @@ test("glava Inštruktorja na telefonu: oznake cele v svoji vrstici, »Preberi le
   assert.match(style, /\.chat-head #chat-state \.chip:not\(\.chip-btn\) \{[^}]*background: none/);
   assert.match(style, /\.chat-head #chat-state \{[^}]*flex: 1 1 auto/);
 });
+
+test("krogi lekcije ob pokazani spodnji vrstici: samo odmik pogleda, ne še »bottom« (prej dvojna višina)", () => {
+  const touch = css("touch.css");
+  const peek = [...touch.matchAll(/body\.tb-peek[^{]*\.tb-stepper\s*\{([^}]*)\}/g)].map((m) => m[1]);
+  assert.ok(peek.length, "pravilo za kroge ob pokazani vrstici obstaja");
+  for (const body of peek) assert.doesNotMatch(body, /(^|;)\s*bottom\s*:/);
+  assert.match(touch, /body\.tb-peek[^{]*#view-textbook:has\(\.tb-stepper\)\s*\{[^}]*padding-bottom:\s*var\(--tabbar-h/);
+});
