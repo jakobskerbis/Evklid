@@ -466,7 +466,7 @@ function renderConfirm(box) {
   });
   update();
   // Σ odpre Evklidovo tipkovnico na plasti simbolov (public/tipkovnica.js); Enter = Reši.
-  configureKeyboard(input, { math: true, layers: ["num", "fx", "sym", "abc"], start: "num", enter: "go", enterText: t("scan.solve") });
+  configureKeyboard(input, { math: true, layers: ["num", "fx", "sym", "abc"], start: "num", enter: "go", enterText: t("scan.solve"), parsed: true });
   const symBtn = box.querySelector('[data-act="sym"]');
   symBtn.addEventListener("click", () => toggleKeyboard(input, { layer: "sym" }));
   const sync = () => {

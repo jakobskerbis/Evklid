@@ -5,8 +5,9 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import {
+  prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, digitFor,
   fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, KEM_ROWS,
-  NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest,
+  NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest, glideDecode,
 } from "../public/tipkovnica-data.js";
 import { WORDS } from "../public/tipkovnica-besede.js";
 import { GROUPS } from "../public/symbols.js";
@@ -149,16 +150,17 @@ test("settings: registry keys for the tutor, defaults, stored per device", () =>
   assert.deepEqual(DEVICE_SETTINGS.keyboard.values, ["always", "math", "never"]);
   assert.deepEqual(DEVICE_SETTINGS.keyboard_words.values, ["on", "off"]);
   assert.deepEqual(DEVICE_SETTINGS.keyboard_vibration.values, ["on", "off"]);
+  assert.deepEqual(DEVICE_SETTINGS.keyboard_glide.values, ["on", "off"]);
   assert.equal(deviceValue("keyboard", "math"), "math");
   assert.equal(deviceValue("keyboard", "sometimes"), null);
   assert.equal(PREF_KEY, `${JSON.parse(read("brand.json")).slug}.tipkovnica`);
   assert.deepEqual(parsePrefs(null), DEFAULT_PREFS);
-  assert.deepEqual(DEFAULT_PREFS, { mode: "always", words: false, buzz: true }, "privzeto: Vedno, brez predlogov, s tresljajem");
-  assert.deepEqual(parsePrefs('{"mode":"never","words":true}'), { mode: "never", words: true, buzz: true });
+  assert.deepEqual(DEFAULT_PREFS, { mode: "always", words: false, buzz: true, glide: true }, "privzeto: Vedno, brez predlogov, s tresljajem, z drsenjem");
+  assert.deepEqual(parsePrefs('{"mode":"never","words":true,"glide":false}'), { mode: "never", words: true, buzz: true, glide: false });
   assert.deepEqual(parsePrefs("{pokvarjeno"), DEFAULT_PREFS);
   assert.deepEqual(parsePrefs('{"mode":"x"}').mode, "always");
   const cs = read("public/chat-settings.js");
-  for (const k of ["keyboard", "keyboard_words", "keyboard_vibration"]) assert.ok(cs.includes(k), `chat-settings.js: ${k}`);
+  for (const k of ["keyboard", "keyboard_words", "keyboard_vibration", "keyboard_glide"]) assert.ok(cs.includes(k), `chat-settings.js: ${k}`);
   // predlogi besed: lokalni seznam, brez klicev
   assert.ok(WORDS.sl.length > 200 && WORDS.sl.includes("enačba"));
   assert.deepEqual(suggest(WORDS.sl, "enač").slice(0, 1), ["enačba"]);
@@ -235,4 +237,107 @@ test("tablica: tipkovnica čez celo širino, ⌄ v vrstici zavihkov (j, 2. 11.)"
   const blk = css.slice(i, css.indexOf("\n}\n", i));
   assert.match(blk, /\.tk-in \{[^}]*max-width: none/);
   assert.match(blk, /\.tk-hide \{[^}]*position: static/);
+});
+
+test("tipke v poljih za ljudi: |x| namesto abs(), ⌊x⌋, σ … (j, 2. 11.); kalkulator dobi imena funkcij", () => {
+  const raw = /\b(abs|floor|ceil|stdev|total|root|logb|gcd|lcm)\(/;
+  const all = [...FX_GROUPS.flatMap((g) => g[2].map((k) => k[1])), ...Object.values(GROUPS).flatMap((g) => g.keys.map((k) => k.ins))];
+  for (const ins of all) assert.doesNotMatch(prettyIns(ins, false), raw, ins);
+  assert.equal(prettyIns("abs(@)", true), "|@|"); // math.js razume |x|
+  assert.equal(prettyIns("floor(@)", true), "floor(@)");
+  assert.equal(prettyIns("sin(@)", false), "sin(@)");
+});
+
+test("črke kot Gboard: velika začetnica, dva presledka, poteg po ⌫, številke v zgornji vrsti, samopopravek", () => {
+  assert.ok(autoCapNeeded("") && autoCapNeeded("Ok. ") && autoCapNeeded("Kaj? ") && autoCapNeeded("a\n"));
+  assert.ok(!autoCapNeeded("ok ") && !autoCapNeeded("3.5"));
+  assert.equal(doubleSpaceAt("ok "), 2);
+  assert.equal(doubleSpaceAt("ok. "), -1);
+  assert.equal(wordsBack("ena dve  tri", 12, 2), 4);
+  assert.equal(wordsBack("ena", 3, 5), 0);
+  assert.equal(digitFor([[..."qwertzuiopš"]], "q"), "1");
+  assert.equal(digitFor([[..."qwertzuiopš"]], "p"), "0");
+  assert.equal(digitFor([[..."qwertzuiopš"]], "š"), "");
+  const w = ["rešitev", "koliko", "enačba", "kako"];
+  assert.equal(autocorrect("resitev", w), "rešitev");
+  assert.equal(autocorrect("Resitev", w), "Rešitev");
+  assert.equal(autocorrect("koilko", w), "koliko");
+  assert.equal(autocorrect("kako", w), null);
+  assert.equal(autocorrect("mačka", w), null); // neznane besede ostanejo
+  assert.equal(autocorrect("NASA", w), null);
+});
+
+// ---------- drsenje po črkah ----------
+// Mreža tipk kot v razporeditvi: tipka 40 × 50, tretja vrstica zamaknjena.
+function keyGrid(lang = "sl") {
+  const centers = {};
+  layoutFor(lang).rows.forEach((row, r) => row.forEach((c, i) => (centers[c] = { x: 20 + i * 40 + (r === 2 ? 40 : r === 1 ? 10 : 0), y: 25 + r * 50 })));
+  return centers;
+}
+// pot prsta: ravne črte skozi središča tipk besede, z malo šuma
+function pathFor(word, centers, jitter = 6) {
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647 - 0.5) * 2 * jitter;
+  const ks = [...word].filter((c, i, a) => c !== a[i - 1]).map((c) => centers[c]);
+  const out = [];
+  for (let i = 0; i < ks.length - 1; i++) for (let t = 0; t < 8; t++) out.push({ x: ks[i].x + ((ks[i + 1].x - ks[i].x) * t) / 8 + rnd(), y: ks[i].y + ((ks[i + 1].y - ks[i].y) * t) / 8 + rnd() });
+  out.push({ x: ks.at(-1).x + rnd(), y: ks.at(-1).y + rnd() });
+  return out;
+}
+test("glide: besedo prepozna iz poti prsta (k-e-m-i-j-a)", async () => {
+  const { GLIDE_SL } = await import("../public/tipkovnica-glide-sl.js");
+  const g = keyGrid();
+  const list = ["kemija", "kemijo", "kamera", "kosi", "enačba", "reši", "rešitev", "čas", "šola", "žoga", "kot", "bit", "pot", "pit"];
+  for (const w of ["kemija", "enačba", "rešitev", "žoga", "šola", "čas"]) {
+    assert.equal(glideDecode(pathFor(w, g), g, list)[0], w, w);
+  }
+  // veliki seznam (13 tisoč besed): pravilna beseda je skoraj vedno prva, v prvih treh pa skoraj vedno
+  let tried = 0;
+  let top1 = 0;
+  let top3 = 0;
+  for (const w of WORDS.sl.filter((x) => x.length >= 4)) {
+    if (![...w].every((c) => g[c])) continue;
+    tried++;
+    const r = glideDecode(pathFor(w, g), g, GLIDE_SL, { n: 3 });
+    if (r[0] === w) top1++;
+    if (r.includes(w)) top3++;
+  }
+  assert.ok(tried > 100);
+  assert.ok(top1 / tried > 0.93 && top3 / tried > 0.97, `prva ${top1}/${tried}, prve tri ${top3}/${tried}`);
+});
+test("glide: prva in zadnja črka določata kandidate, podvojene črke se strnejo", () => {
+  const g = keyGrid();
+  const out = glideDecode(pathFor("sedaj", g), g, ["tedaj", "sedaj", "sedem", "seja"], { n: 3 });
+  assert.equal(out[0], "sedaj");
+  assert.ok(!out.includes("sedem"), "zadnja črka m je predaleč od j");
+  const dbl = glideDecode(pathFor("pomoč", g), g, ["pomoč", "poomoč", "pomooč"]);
+  assert.ok(dbl.includes("pomoč"));
+  assert.deepEqual(glideDecode(pathFor("ta", g), g, ["tt", "ta", "tat"]).slice(0, 1), ["ta"]);
+  assert.deepEqual(glideDecode([{ x: 5000, y: 5000 }, { x: 5100, y: 5000 }], g, ["ta"]), [], "prst zunaj tipk");
+  assert.deepEqual(glideDecode([{ x: 20, y: 25 }], g, ["ta"]), []);
+  assert.deepEqual(glideDecode(pathFor("ta", g), g, []), []);
+});
+test("glide: š č ž so svoje tipke v sl; drugje gre črka na osnovno tipko", () => {
+  const sl = keyGrid("sl");
+  assert.ok(sl["š"] && sl["č"] && sl["ž"]);
+  assert.equal(glideDecode(pathFor("šola", sl), sl, ["sola", "šola", "pola"])[0], "šola");
+  const en = keyGrid("qwerty");
+  assert.ok(!en["š"]);
+  assert.equal(glideDecode(pathFor("sola", en), en, ["šola", "pola", "kola"])[0], "šola", "š na tipki s");
+});
+test("glide: dovolj hitro tudi pri velikem seznamu", async () => {
+  const { GLIDE_SL } = await import("../public/tipkovnica-glide-sl.js");
+  const g = keyGrid();
+  const t0 = performance.now();
+  for (let i = 0; i < 10; i++) glideDecode(pathFor("kemija", g), g, GLIDE_SL);
+  assert.ok((performance.now() - t0) / 10 < 60, "pod 60 ms na drsenje");
+});
+test("glide: slovar je veljaven, WORDS.sl na začetku, brez dvojnikov, pod 150 KB", async () => {
+  const { GLIDE_SL } = await import("../public/tipkovnica-glide-sl.js");
+  assert.ok(GLIDE_SL.length > 5000);
+  assert.deepEqual(GLIDE_SL.slice(0, new Set(WORDS.sl).size), [...new Set(WORDS.sl)]);
+  assert.equal(new Set(GLIDE_SL).size, GLIDE_SL.length, "brez dvojnikov");
+  assert.ok(GLIDE_SL.every((w) => /^\p{L}{1,20}$/u.test(w)), "samo črke");
+  assert.ok(fs.statSync(path.join(ROOT, "public/tipkovnica-glide-sl.js")).size < 150 * 1024);
+  assert.ok(GLIDE_SL.includes("enačba") && GLIDE_SL.includes("kemija"));
 });

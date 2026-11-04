@@ -57,6 +57,8 @@
 .gm-k-blocks::before { background: linear-gradient(90deg, rgba(255, 255, 255, 0.16) 2px, transparent 2px) 0 0 / 20px 20px, linear-gradient(0deg, rgba(255, 255, 255, 0.16) 2px, transparent 2px) 0 0 / 20px 20px; }
 .gm-k-match::before { background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.22) 5px, transparent 6px) 0 0 / 22px 22px; }
 .gm-k-impostor::before { background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.5) 1px, transparent 1.5px) 0 0 / 18px 18px, radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3) 1px, transparent 1.5px) 9px 7px / 26px 26px; }
+.gm-k-numline::before { background: linear-gradient(rgba(255, 255, 255, 0.45) 0 0) 0 62% / 100% 3px no-repeat, repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.45) 0 2px, transparent 2px 16px) 0 58% / 100% 14px no-repeat, repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.55) 0 3px, transparent 3px 80px) 0 56% / 100% 24px no-repeat; }
+.gm-k-typed::before { background: linear-gradient(90deg, transparent 0 4px, rgba(255, 255, 255, 0.16) 4px) 0 0 / 22px 22px, linear-gradient(transparent 0 4px, rgba(255, 255, 255, 0.16) 4px) 0 0 / 22px 22px; }
 .gm-k-cards::before { background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.12) 0 6px, transparent 6px 14px), repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.12) 0 6px, transparent 6px 14px); }
 .gm-tile::after { content: ""; position: absolute; left: 6%; right: 6%; top: 4%; height: 38%; border-radius: 14px 14px 50% 50% / 14px 14px 30% 30%; background: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0)); pointer-events: none; }
 .gm-tile:hover { transform: translateY(-3px) rotate(-1deg); box-shadow: 0 8px 0 var(--gm-ink), 0 14px 26px rgba(20, 33, 61, 0.22); }
@@ -156,10 +158,13 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 .gm-qbox { flex: 1; min-width: 0; text-align: center; }
 .gm-q { font-size: clamp(1.05rem, 3.4vw, 1.6rem); font-weight: 900; line-height: 1.2; overflow-wrap: anywhere; -webkit-text-stroke: 1px var(--gm-ink); paint-order: stroke fill; text-shadow: 0 2px 0 var(--gm-ink); }
+/* naloga in odgovori: smer po vsebini (račun »2/4 − 2/5« ostane LTR tudi v arabščini, besedilo v arabščini RTL) */
+.gm-q, .gm-fb, .gm-mist li > * { unicode-bidi: plaintext; }
 .gm-fb { min-height: 1.2em; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; }
 .gm-fb svg.i { width: 15px; height: 15px; }
 .gm-fb.ok { color: #bbf7d0; }
 .gm-fb.bad { color: #fecaca; }
+.gm-fb.hint { color: #fde68a; }
 .gm-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-weight: 800; font-size: 0.9rem; }
 .gm-score { display: inline-flex; align-items: center; gap: 4px; }
 .gm-score svg.i { width: 16px; height: 16px; color: #fde047; }
@@ -199,6 +204,45 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-mist li { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-top: 1px solid var(--border); font-size: 0.92rem; }
 .gm-mist li:first-child { border-top: 0; }
 .gm-mist li b { color: var(--ok); white-space: nowrap; }
+/* Gumbi igre pod prizorom (engine.ui: številčnica, premikanje po premici); premica in številke ostanejo LTR. */
+.gm-ui { padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(90deg, var(--gm-a), var(--gm-b)); border-top: 3px solid var(--gm-ink); font-family: var(--gm-font); }
+.gm-ui[inert] { opacity: 0.55; }
+.gm-key { min-width: 0; min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 8px; border: 3px solid var(--gm-ink); border-radius: 14px; background: linear-gradient(#fff, #fef3c7); color: #1b1b2f; font: 900 1.5rem/1 var(--gm-font); box-shadow: 0 4px 0 var(--gm-ink); cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+.gm-key:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gm-ink); }
+.gm-key:hover { border-color: var(--gm-ink); } /* ne splošni rob gumba ob lebdenju (na telefonu ostane po tapu) */
+.gm-key:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.gm-key svg.i { width: 24px; height: 24px; }
+.gm-key-op { background: linear-gradient(#e0f2fe, #bae6fd); }
+.gm-key-del { background: linear-gradient(#ffedd5, #fdba74); }
+.gm-key-ok { background: linear-gradient(#86efac, #22c55e); font-size: 1.25rem; }
+.gm-pad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; max-width: 460px; margin: 0 auto; }
+.gm-pad .gm-wide { grid-column: span 2; }
+.gm-pad .gm-span2 { grid-row: span 2; }
+.gm-pad .gm-span3 { grid-row: span 3; }
+.gm-nl { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 10px; max-width: 460px; margin: 0 auto; }
+.gm-nl .gm-key { min-height: 52px; }
+/* besedilna naloga je v celoti na tabli v prizoru: v glavi največ 2 vrstici, da glava ne poskakuje (bralnik prebere vse) */
+.gm-has-ui .gm-q { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+.gm-calm .gm-ui { border-top: 0; }
+.gm-calm .gm-key { border: 1px solid rgba(15, 23, 42, 0.25); border-radius: 10px; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.2); font-family: var(--font); font-weight: 700; }
+.gm-calm .gm-key:active { transform: none; box-shadow: none; background: #f1f5f9; }
+.gm-calm .gm-key:hover { border-color: rgba(15, 23, 42, 0.25); }
+.gm-calm .gm-key-op { background: #f0f9ff; }
+.gm-calm .gm-key-del { background: #fff7ed; }
+.gm-calm .gm-key-ok { background: #16a34a; color: #fff; }
+/* visok telefon: večje tipke (lažje z eno roko), prizor ima še vedno dovolj prostora */
+@media (max-width: 600px) and (min-height: 820px) { .gm-pad .gm-key { min-height: 58px; } .gm-nl .gm-key { min-height: 60px; } }
+/* telefon položeno: gumbi ob strani prizora, da prizor ne postane trak */
+@media (orientation: landscape) and (max-height: 560px) {
+  .gm-play.gm-has-ui { display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, 36%); grid-template-rows: auto auto minmax(0, 1fr); }
+  .gm-has-ui > .gm-hud, .gm-has-ui > .gm-timer { grid-column: 1 / -1; }
+  .gm-has-ui > .gm-stage { grid-column: 1; grid-row: 3; }
+  .gm-has-ui > .gm-ui { grid-column: 2; grid-row: 3; display: flex; flex-direction: column; justify-content: center; border-top: 0; border-left: 3px solid var(--gm-ink); overflow-y: auto; }
+  .gm-has-ui .gm-key { min-height: 40px; font-size: 1.2rem; }
+  .gm-has-ui .gm-pad { gap: 5px; width: 100%; }
+  .gm-has-ui .gm-nl { grid-template-columns: 1fr 1fr; width: 100%; }
+  .gm-has-ui .gm-nl .gm-key-ok { grid-column: 1 / -1; grid-row: 2; }
+}
 @media (max-width: 480px) {
   .gm-hud { gap: 6px; padding: 6px; }
   .gm-btn { width: 40px; height: 44px; border-radius: 12px; }
@@ -231,8 +275,8 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 /* Okvir po redkosti (trgovina, zbirke): višja redkost ima bogatejši okvir. Od legendarnih naprej je rob
    preliv (border-box), od kozmičnih se vrti, večni še utripa in ima znak ∞. Sij je filter, da ostane
    box-shadow za »oblečeno« in »izbrano«. */
-@property --gm-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-@keyframes gm-spin { to { --gm-a: 360deg; } }
+@property --gm-spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes gm-spin { to { --gm-spin: 360deg; } }
 @keyframes gm-pulse { 50% { filter: drop-shadow(0 0 12px rgba(250, 204, 21, 0.75)); } }
 .gm-r-rare, .zb-card.gm-r-rare { border-color: #3b82f6; background-image: linear-gradient(160deg, rgba(59, 130, 246, 0.13), transparent 55%); }
 .gm-r-epic, .zb-card.gm-r-epic { border-color: #a855f7; background-image: linear-gradient(160deg, rgba(168, 85, 247, 0.18), transparent 60%); }
@@ -253,12 +297,12 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
   --gm-glow: rgba(225, 29, 72, 0.45);
 }
 .gm-r-cosmic {
-  --gm-edge: conic-gradient(from var(--gm-a, 0deg), #22d3ee, #6366f1, #a855f7, #0ea5e9, #e0f2fe, #22d3ee);
+  --gm-edge: conic-gradient(from var(--gm-spin, 0deg), #22d3ee, #6366f1, #a855f7, #0ea5e9, #e0f2fe, #22d3ee);
   --gm-tint: radial-gradient(1.5px 1.5px at 18% 22%, #a5b4fc 99%, transparent), radial-gradient(1.5px 1.5px at 82% 14%, #67e8f9 99%, transparent), radial-gradient(1.5px 1.5px at 88% 70%, #c4b5fd 99%, transparent), linear-gradient(160deg, rgba(99, 102, 241, 0.3), rgba(34, 211, 238, 0.14) 55%, transparent 85%);
   --gm-glow: rgba(56, 189, 248, 0.55);
 }
 .gm-r-eternal {
-  --gm-edge: conic-gradient(from var(--gm-a, 0deg), #f87171, #fbbf24, #4ade80, #22d3ee, #818cf8, #f472b6, #f87171);
+  --gm-edge: conic-gradient(from var(--gm-spin, 0deg), #f87171, #fbbf24, #4ade80, #22d3ee, #818cf8, #f472b6, #f87171);
   --gm-tint: radial-gradient(circle at 50% 0, rgba(253, 224, 71, 0.4), transparent 60%), linear-gradient(160deg, rgba(244, 114, 182, 0.16), rgba(34, 211, 238, 0.16));
   --gm-glow: rgba(250, 204, 21, 0.55);
 }
@@ -309,3 +353,27 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-pager button:disabled { opacity: 0.4; cursor: default; }
 .gm-pager .gm-gap { color: var(--muted); padding: 0 2px; }
 [dir="rtl"] .gm-pager svg.i { transform: scaleX(-1); }
+
+/* Srednja šola in fakulteta (stage.js, j 2. 11. 2026): iste igre v resnejšem videzu: običajna pisava,
+   tanke obrobe, brez izbočenih senc, nagnjenih črk in sijaja, umirjene barve ploščic. OŠ ostane igriva. */
+.gm-calm { --gm-font: var(--font); }
+.gm-calm .gm-tile { border: 1px solid color-mix(in srgb, var(--gm-ink) 35%, transparent); border-radius: 12px; box-shadow: var(--shadow-sm, 0 1px 3px rgba(20, 33, 61, 0.14)); filter: saturate(0.6) brightness(0.92); }
+.gm-calm .gm-tile::before { opacity: 0.15; }
+.gm-calm .gm-tile::after { display: none; }
+.gm-calm .gm-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(20, 33, 61, 0.2); }
+.gm-calm .gm-tile:active { transform: none; box-shadow: none; }
+.gm-calm .gm-tile.gm-path { border-color: #facc15; box-shadow: 0 0 0 2px #facc15; }
+.gm-calm .gm-glyph { font-weight: 700; -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35); transform: none; }
+.gm-calm .gm-name b { font-weight: 700; }
+.gm-calm .gm-hud { background: linear-gradient(90deg, var(--gm-a), var(--gm-b)); border-bottom: 0; }
+.gm-calm .gm-q { font-weight: 700; -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); }
+.gm-calm .gm-btn { border: 1px solid rgba(255, 255, 255, 0.45); border-radius: 10px; background: rgba(255, 255, 255, 0.16); box-shadow: none; }
+.gm-calm .gm-btn:active { transform: none; box-shadow: none; }
+.gm-calm .gm-timer { border-bottom: 0; }
+.gm-calm .gm-stage::after { display: none; }
+.gm-calm :is(.gm-card, .gm-me) { border: 1px solid var(--border); border-radius: var(--radius, 16px); box-shadow: var(--shadow-lg); }
+.gm-calm .gm-card .primary.big { border: 0; border-radius: var(--radius-sm, 12px); box-shadow: none; background-image: none; text-shadow: none; }
+.gm-calm .gm-card .primary.big:active { transform: none; }
+.gm-calm .gm-title::before { display: none; }
+.gm-calm .gm-big { font-weight: 700; }
+.gm-calm .gm-kidnew .gm-tile { animation: none; }

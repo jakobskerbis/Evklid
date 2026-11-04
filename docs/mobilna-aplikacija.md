@@ -43,10 +43,11 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 
 | Na spletu | Kaj je | Velikost | Predlog | Stanje |
 |---|---|---|---|---|
-| Videz sloga Čist | barve, robovi, pisava Instrument Sans, zavihki v istem redu | S | naravno (`theme.ts`, `font()`) | ✓ narejeno (besedilo v WebView, npr. formule v lekciji, je še v sistemski pisavi) |
+| Videz sloga Čist | barve, robovi, pisava Instrument Sans, zavihki v istem redu | S | naravno (`theme.ts`, `font()`) | ✓ narejeno; besedilo v WebView (lekcije, klepet) ima Instrument Sans, formule pa KaTeX in `public/sirina.js` s strežnika kot splet (brez povezave MathML) |
 | Razloži ob izboru | označeno besedilo lekcije → inštruktor | S | naravno (meni izbora WebView) | ✓ narejeno |
 | Kalkulator | znanstveni, grafični, orodja, PSE (`public/graph/`) | M | WebView `/kalkulator` | ✓ narejeno med vajo; manjka še gumb v lekciji in klepetu |
 | Formule | zbirka formul (način Formule kalkulatorja) | S | dodati način `formulas` na `/kalkulator` (potrebuje `rich.js`, marked) | ✗ |
+| Klikljive črke v formulah | kartica s pomenom črke iz predmeta, razdelka in lekcije (`public/formula-info.js`; lekcije, razlaga teme z »Bistvom«, naloge, odgovori inštruktorja, list s formulami z oznakami razdelkov) | M | naravno: `RichText` označi črke (`annotateTex`), dotik pošlje kodo iz WebView, kartica (`public/formula-card.js`) se odpre kot spodnji list; predmet in oznake iz `FormulaCtx` (`useTopicFx`, `/api/topic`) | ✓ narejeno v lekciji, nalogah in klepetu; list s formulami čaka na način Formule (vrstica »Formule«) |
 | Moji grafi | shranjeni grafi na strežniku | S | `/kalkulator` s sejo aplikacije (žeton v glavi ali enkratna povezava kot `app-link.js`) | ✗ |
 | Zaslonska tipkovnica | matematične plasti, simboli, enote (`public/tipkovnica*.js`) | L | naravno, iz istih podatkov (`tipkovnica-data.js`); v WebView strani že deluje | ✗ |
 | Laboratorij | poskusi in meritve (`public/laboratorij.js`) | L | WebView samostojne strani | ✗ |
@@ -55,6 +56,7 @@ novo gradnjo APK (posodobitev OTA jih ne prinese).
 | Tekmovanja | priprava na tekmovanja (`#view-competition`) | M | WebView, pozneje naravno | ✗ |
 | NPZ in matura | preizkusi s časom (`#view-exams`) | M | naravno, kot vaje | ✗ |
 | Pretekle pole RIC v Evklidu | prenešena pola se odpre v aplikaciji, razdelitev na naloge, »Pomoč pri tej nalogi« (`public/paper-viewer.js`, `public/paper-tasks.js`) | M | naravno: aplikacija polo prenese z ric.si na napravi in jo odpre sama (brez izbire datoteke); razdelilnik `paper-tasks.js` je čista funkcija, uporabna tudi tu | ✗ |
+| Naše pole v slogu NPZ in mature | »Reši našo polo v tem slogu«: naloge Evklida z rešitvami, načini razlage, lastnim štetjem točk in »Vprašaj inštruktorja« (`public/our-paper.js`, `/api/exam-papers/ours/:id`) | M | naravno: podatki so JSON, besedila z `RichText` | ✗ |
 | Kartice | ponavljanje s karticami (`flashcards.js`) | M | naravno | ✗ |
 | Napredek | statistika in grafi po temah (`#view-progress`) | M | naravno, grafi v WebView | ✗ |
 | Lige | tedenska lestvica (`leagues.js`) | S | naravno | ✗ |

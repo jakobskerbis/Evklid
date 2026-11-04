@@ -12,6 +12,11 @@ import { celebrate, failure, success, tap } from "@/lib/haptics";
 import { offlineAnswer, offlineHint, offlineNext } from "@/lib/offline";
 import { figureHtml, type Figure } from "@/lib/figures";
 import { RichText } from "@/components/RichText";
+import { FormulaCtx } from "@/lib/formula-ctx";
+import { useTopicFx } from "@/lib/useTopicFx";
+import Storage from "expo-sqlite/kv-store";
+import { key } from "@/lib/keys";
+import { expectedMs, progressAt, addDuration } from "../../../public/check-progress.js";
 import { Banner, Body, Button, Card, ErrorView, Icon, Loading, ProgressBar, Screen, Title } from "@/components/ui";
 
 type Task = {
@@ -25,6 +30,7 @@ type Task = {
   unit?: string | null;
   options?: string[] | null;
   optionsTex?: boolean; // možnosti so formule brez $ (kot renderMath na spletu)
+  topicId?: string | null; // tema naloge (za pomen črk v formulah)
   coefficientCount?: number | null;
   data?: { given?: string[]; find?: string[] } | null;
   hintSteps?: number;
@@ -135,6 +141,7 @@ export default function Practice() {
       return;
     }
     setChecking(true);
+    const started = Date.now();
     try {
       let r: Result | null = null;
       if (offline) r = offlineAnswer(sid, String(task.id), answer) as Result | null;
@@ -148,6 +155,7 @@ export default function Practice() {
           return;
         }
       if (!r) return;
+      if (!offline) saveCheckTime(Date.now() - started);
       setResult(r);
       if (r.retry) failure();
       else if (r.correct) (r.mastered || r.next?.finished ? celebrate : success)();
@@ -190,12 +198,15 @@ export default function Practice() {
     } else load();
   };
 
+  // Klikljive črke: predmet in oznake lekcije teme te naloge (pri mešanih vajah vsaka naloga svojo).
+  const fx = useTopicFx(task?.topicId || example?.topicId || topic, student.settings?.subject);
   const title = mode === "daily" ? t("daily.title") : mode === "review" ? t("session.review") : task?.topicName || t("mob.practice");
   if (loading) return <Loading />;
   if (error) return <ErrorView message={t("task.loadError", { msg: error })} onRetry={load} retryLabel={t("mob.retry")} />;
 
   if (done) {
     return (
+      <FormulaCtx.Provider value={fx}>
       <Screen>
         <Stack.Screen options={{ title }} />
         <Card style={{ alignItems: "center", paddingVertical: 28 }}>
@@ -214,12 +225,14 @@ export default function Practice() {
           <Button title={t("result.toPath")} onPress={() => router.back()} style={{ alignSelf: "stretch" }} />
         </Card>
       </Screen>
+    </FormulaCtx.Provider>
     );
   }
 
   // Rešen zgled pred prvo nalogo teme (učenje iz zgleda).
   if (example) {
     return (
+      <FormulaCtx.Provider value={fx}>
       <Screen>
         <Stack.Screen options={{ title }} />
         <Card tone="accent">
@@ -230,6 +243,7 @@ export default function Practice() {
         </Card>
         <Button title={t("task.yourTurn")} icon={{ ios: "arrow.right", android: "arrow_forward" }} onPress={load} />
       </Screen>
+    </FormulaCtx.Provider>
     );
   }
 
@@ -238,6 +252,7 @@ export default function Practice() {
   const fig = figureHtml(task.figure, th);
 
   return (
+    <FormulaCtx.Provider value={fx}>
     <Screen>
       <Stack.Screen options={{ title }} />
       {offline ? <Banner text={t("mob.offlinePractice")} tone="gold" icon={{ ios: "wifi.slash", android: "wifi_off" }} /> : null}
@@ -276,6 +291,7 @@ export default function Practice() {
       {!closed ? (
         <View style={{ gap: 10 }}>
           <Button title={checking ? t("task.checking") : t("task.check")} onPress={check} loading={checking} />
+          {checking && !offline ? <CheckWait /> : null}
           <View style={{ flexDirection: "row", gap: 10 }}>
             {steps.length < (hintTotal || 1) && hintTotal > 0 ? (
               <Button title={steps.length ? t("task.hintMore") : t("task.hintBtn")} kind="secondary" icon={{ ios: "lightbulb", android: "lightbulb" }} onPress={hint} style={{ flex: 1 }} />
@@ -302,6 +318,7 @@ export default function Practice() {
         </View>
       )}
     </Screen>
+  </FormulaCtx.Provider>
   );
 }
 
@@ -327,7 +344,7 @@ function AnswerInput({ task, value, onChange, onSubmit, inputRef }: { task: Task
                 <Text style={{ color: on ? th.accentText : th.text, fontWeight: "800" }}>{String.fromCharCode(65 + i)}</Text>
               </View>
               <View style={{ flex: 1 }} pointerEvents="none">
-                <RichText text={task.optionsTex ? `$${o}$` : o} size={16} />
+                <RichText text={task.optionsTex ? `$${o}$` : o} size={16} noFx />
               </View>
             </Pressable>
           );
@@ -444,4 +461,36 @@ function stepMd(s: Step) {
   }
   if (s.kind === "formula") return `${t("task.hintFormula")}\n\n${(s.formula || []).map((x) => `$$${x}$$`).join("\n\n")}`;
   return s.text || "";
+}
+
+// Preverjanje nad 2 s: vrstica napredka z oceno preostalega časa, kot na spletu (public/check-progress.js).
+const CHECK_TIMES = key("checkTimes");
+const checkTimes = (): number[] => {
+  try {
+    return JSON.parse(Storage.getItemSync(CHECK_TIMES) || "[]");
+  } catch {
+    return [];
+  }
+};
+const saveCheckTime = (ms: number) => {
+  try {
+    Storage.setItemSync(CHECK_TIMES, JSON.stringify(addDuration(checkTimes(), ms)));
+  } catch {}
+};
+
+function CheckWait() {
+  const th = useTheme();
+  const [state] = useState(() => ({ start: Date.now(), expected: expectedMs(checkTimes()) }));
+  const [p, setP] = useState<{ pct: number; left: number } | null>(null);
+  useEffect(() => {
+    const id = setInterval(() => setP(progressAt(Date.now() - state.start, state.expected)), 250);
+    return () => clearInterval(id);
+  }, [state]);
+  if (!p) return null;
+  return (
+    <View style={{ gap: 8 }} accessibilityLiveRegion="polite">
+      <Text style={{ color: th.muted, fontWeight: "600" }}>{`${t("task.checking")} ${p.left ? t("task.checkLeft", { n: p.left }) : t("task.checkAlmost")}`}</Text>
+      <ProgressBar value={p.pct} />
+    </View>
+  );
 }

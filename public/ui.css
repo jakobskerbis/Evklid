@@ -161,6 +161,12 @@ a.btn-secondary svg, label.btn-secondary svg { color: var(--accent); }
 .list-row .lr-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .list-row .lr-text small { color: var(--muted); font-weight: 600; font-size: 0.85rem; }
 .list-row > svg.i { color: var(--muted); }
+/* Vodič po aplikaciji v Nastavitvah (app.js, public/vodic.js): seznam v kartici Pomoč. */
+.help-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.guide-list { margin-top: 12px; padding: 0; }
+.guide-list .guide-intro { margin: 0 0 6px; }
+.guide-list div.list-row:hover { background: none !important; }
+.guide-list .list-row .lr-text small { font-weight: 500; line-height: 1.4; }
 
 /* ---------- Jaz (profil na telefonu) ---------- */
 /* Kartica s profilom je gumb: odpre Nastavitve (šola in letnik, račun). */
@@ -367,6 +373,9 @@ html.lite[data-era] .view::before { display: none; }
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) { :root[data-era] .topbar { padding-bottom: calc(8px + var(--edge-h, var(--band-h))); } }
 :root[data-era] :is(.quick-pop, .profile-pop, .usage-pop, .dd-list, .overlay-card, .iq.card) { border-top: 3px solid var(--edge-c, var(--band-c)); }
 /* Žetoni (XP, niz dni, stanje pogovora) v odtenku poudarka. */
+/* Kartica Današnji trening: neobvezen tanek okvir v barvi obdobja (ERAS[…].light/dark.hero[2], Egipt zlato). */
+:root[data-era] .hero { outline: 1.5px solid var(--hero-line, transparent); outline-offset: -7px; }
+@media (forced-colors: active) { :root[data-era] .hero { outline: none; } }
 :root[data-era] .stat { background: var(--accent-soft); }
 :root[data-era] .chip { background: var(--accent-soft); color: var(--accent); }
 /* Iskalnik v spustnem seznamu: privzeto belo polje bi na temnem meniju dobilo svetlo besedilo menija. */
@@ -408,12 +417,25 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   :root[data-era] .chat-view .sidebar { border-inline-end: 1px solid; }
 }
 
+/* Pisani pas (ERAS[…].frieze; theme.js → --frieze in data-frieze): pas v barvah obdobja (Egipt: friz kheker nad
+   pasom pisanih pravokotnikov, svetlo s črno obrobo, temno z zlato) kot slika namesto enobarvne maske, na kartici
+   dejstev, ob robovih okvirja in v arhitravu pročelja. Z lastnim poudarkom, ob forced-colors in pri tisku ostane maska. */
+@media screen and (forced-colors: none) {
+  :root[data-frieze] .gr-fact::before { background: var(--frieze) repeat-x 0 0 / var(--band-w) var(--band-h); -webkit-mask: none; mask: none; }
+  :root[data-frieze] :is(.topbar, .tabbar, .composer)::after, :root[data-frieze] .chat-view .sidebar::after {
+    background: var(--frieze) repeat-x left center / var(--edge-w) var(--edge-h); -webkit-mask: none; mask: none;
+  }
+  :root[data-frieze][data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-ent::after {
+    top: 5px; height: 16px; background: var(--frieze) repeat-x left center / auto 16px; -webkit-mask: none; mask: none;
+  }
+}
+
 /* ---------- Klepet obdobja (ERAS[…].chat; docs/oblikovanje.md → »Klepet obdobja«) ----------
    theme.js nastavi atribute iz ERAS[slog].chat: data-tutor-surface (mehurček inštruktorja), data-user-shape (mehurček
    učenca), data-chat-frame (okvir pozdrava v praznem klepetu), data-composer (polje za pisanje). Vsaka vrednost je
    samostojen videz, ki ga lahko vzame tudi drug slog. Barve so spremenljivke iz theme.js (--paper, --paper-2,
    --paper-fibre, --wood), kontrast preveri check(). Samo na zaslonu brez forced-colors: tisk in visok kontrast
-   dobita navaden klepet; lahki način brez stebrov. */
+   dobita navaden klepet; lahki način brez stebrov in pilona. */
 .empty-hall { display: contents; }
 .t-part { display: none; }
 @media screen and (forced-colors: none) {
@@ -455,13 +477,16 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
     box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 16%, transparent), inset 0 -2px 0 color-mix(in srgb, #000 16%, transparent);
   }
 
-  /* Pročelje templa ob pozdravu (ERAS[…].arch.temple, deli iz theme.js temple() kot vrstični SVG): zatrep s
+  /* Stavba ob pozdravu: v Antičnem tempelj (data-chat-frame="stebri"), v drugih zgodovinskih slogih stavba iz obdobja
+     (data-chat-frame="stavba", ERAS[…].building: Tadž Mahal, kupola Firenc, ivan) z istimi deli in razporeditvijo;
+     pas pod streho (.t-ent) je neobvezen. Spodaj opis templa.
+     Pročelje templa ob pozdravu (ERAS[…].arch.temple, deli iz theme.js temple() kot vrstični SVG): zatrep s
      timpanonom (v njem ikona inštruktorja kot ščit), zobci, friz z meandrom, arhitrav, jonski stebri (2, na širokem
      4) in tri stopnice. Pozdrav in predlogi stojijo med stebroma, kartica dejstev pod stopnicami v širini templa.
      Ozko (< 540 px): samo zatrep, entablatura in stopnice. Barve iz --edge-c in --surface (temno, lastne barve). */
-  :root[data-chat-frame="stebri"]:not(.lite) .messages:has(.t-roof) { container: hram / inline-size; padding-block: 6px; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty:has(.t-roof) { width: min(100%, 640px); max-width: none; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) {
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .messages:has(.t-roof) { container: hram / inline-size; padding-block: 6px; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty:has(.t-roof) { width: min(100%, 640px); max-width: none; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) {
     --t-line: color-mix(in srgb, var(--edge-c) 82%, var(--surface));
     --t-fill: color-mix(in srgb, var(--edge-c) 7%, var(--surface));
     --t-tint: color-mix(in srgb, var(--edge-c) 16%, var(--surface));
@@ -471,8 +496,8 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
     grid-template-columns: 2.5% var(--t-o) var(--t-og) var(--t-c) minmax(0, 1fr) var(--t-c) var(--t-og) var(--t-o) 2.5%;
     grid-template-rows: auto auto auto auto 1fr auto;
   }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof)::before { content: ""; grid-area: 3 / 2 / 6 / 9; background: linear-gradient(color-mix(in srgb, var(--edge-c) 12%, transparent), transparent 22px), var(--t-wall); }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall .t-part { display: block; pointer-events: none; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof)::before { content: ""; grid-area: 3 / 2 / 6 / 9; background: linear-gradient(color-mix(in srgb, var(--edge-c) 12%, transparent), transparent 22px), var(--t-wall); }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall .t-part { display: block; pointer-events: none; }
   .empty-hall .t-part * { vector-effect: non-scaling-stroke; }
   .empty-hall .t-part svg, .empty-hall svg.t-part { overflow: visible; fill: none; stroke: var(--t-line); stroke-width: 1.5px; stroke-linejoin: round; }
   .empty-hall .t-part .f { fill: var(--t-fill); }
@@ -482,64 +507,64 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   .empty-hall .t-part .s { fill: var(--t-line); stroke: none; }
   .empty-hall .t-part .v { stroke-width: 1px; stroke-opacity: 0.85; }
   .empty-hall .t-part .d { stroke-width: 4.5px; stroke-dasharray: 4.5 3.5; stroke-opacity: 0.75; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-roof { grid-area: 1 / 1 / 2 / -1; width: 100%; height: auto; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-ent { grid-area: 2 / 2 / 3 / -2; position: relative; height: 26px; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-ent svg { width: 100%; height: 100%; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-ent::after {
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-roof { grid-area: 1 / 1 / 2 / -1; width: 100%; height: auto; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-ent { grid-area: 2 / 2 / 3 / -2; position: relative; height: 26px; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-ent svg { width: 100%; height: 100%; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-ent::after {
     content: ""; position: absolute; inset-inline: 3px; top: 7.5px; height: 8px; background: var(--t-line);
-    -webkit-mask: var(--band) repeat-x center / 8px 8px; mask: var(--band) repeat-x center / 8px 8px;
+    -webkit-mask: var(--band) repeat-x center / auto 8px; mask: var(--band) repeat-x center / auto 8px;
   }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col { grid-row: 3 / 6; display: flex; flex-direction: column; align-items: center; min-height: 0; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col .t-shaft { flex: 1; width: 22px; min-height: 40px; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col.t1 { grid-column: 2; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col.t2 { grid-column: 4; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col.t3 { grid-column: 6; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col.t4 { grid-column: 8; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > :is(.t-col.t1, .t-col.t4) { display: none; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-steps { grid-area: 6 / 1 / 7 / -1; width: 100%; height: 16px; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col { grid-row: 3 / 6; display: flex; flex-direction: column; align-items: center; min-height: 0; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col .t-shaft { flex: 1; width: 22px; min-height: 40px; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t1 { grid-column: 2; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t2 { grid-column: 4; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t3 { grid-column: 6; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t4 { grid-column: 8; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > :is(.t-col.t1, .t-col.t4) { display: none; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-steps { grid-area: 6 / 1 / 7 / -1; width: 100%; height: 16px; }
   /* Ikona inštruktorja kot okrogel ščit sredi timpanona (rob v barvi črte, okrog pas timpanona). */
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .tutor-avatar.big {
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .tutor-avatar.big {
     grid-area: 1 / 1 / 2 / -1; justify-self: center; align-self: end; margin-bottom: max(6.6% - 0.5 * var(--t-badge), 1.4% + 8px);
     --t-badge: clamp(26px, 6cqi, 40px); width: var(--t-badge); height: var(--t-badge); border-radius: 50%;
     box-shadow: 0 0 0 3px var(--t-tint), 0 0 0 4.5px var(--t-line);
   }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .tutor-avatar.big svg.i { width: 62%; height: 62%; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { grid-column: 5; margin-inline: 14px; width: auto; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) > p.big { grid-row: 3; margin-top: 14px; margin-bottom: 2px; line-height: 1.25; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) > p:not(.big) { grid-row: 4; margin-block: 0; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) > .ideas { grid-row: 5; margin-top: 10px; margin-bottom: 14px; gap: 6px; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .tutor-avatar.big svg.i { width: 62%; height: 62%; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { grid-column: 5; margin-inline: 14px; width: auto; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > p.big { grid-row: 3; margin-top: 14px; margin-bottom: 2px; line-height: 1.25; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > p:not(.big) { grid-row: 4; margin-block: 0; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > .ideas { grid-row: 5; margin-top: 10px; margin-bottom: 14px; gap: 6px; }
   /* Predlogi kot ploščice v vrsti (kratki v isto vrsto), da je pročelje nizko; ozko spet en pod drugim. */
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) .ideas { flex-flow: row wrap; justify-content: center; align-content: flex-start; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) .idea { flex: 1 1 auto; padding-block: 8px; text-align: center; }
-  :root[data-chat-frame="stebri"]:not(.lite) .empty:has(.t-roof) .gr-chat { margin: 8px 0 0; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) .ideas { flex-flow: row wrap; justify-content: center; align-content: flex-start; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) .idea { flex: 1 1 auto; padding-block: 8px; text-align: center; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty:has(.t-roof) .gr-chat { margin: 8px 0 0; }
   /* Široko: štirje stebri (ozka zunanja medstebrja, pozdrav v širokem srednjem). */
   @container hram (min-width: 1000px) {
-    :root[data-chat-frame="stebri"]:not(.lite) .empty:has(.t-roof) { width: min(100%, 800px); }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) { --t-o: var(--t-c); --t-og: 26px; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { margin-inline: 10px; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > :is(.t-col.t1, .t-col.t4) { display: flex; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty:has(.t-roof) { width: min(100%, 800px); }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) { --t-o: var(--t-c); --t-og: 26px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { margin-inline: 10px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > :is(.t-col.t1, .t-col.t4) { display: flex; }
   }
   /* Ozko (telefon): zatrep, entablatura in stopnice čez vso širino (isti rob kot glava, kartica dejstev in vrstica za
      pisanje); stebra sta ozka bleda risba na zunanjem robu (pod zatrepom do stopnic). Pozdrav in predlogi stojijo
      v templu med njima, z odmikom vsaj 8 px od stebrov (j, 2026-10-31: besedilo ne gre čez tempelj). Enakomeren
      ritem: 20 px do pozdrava, 16 px do predlogov, 18 px do stopnic, 16 px do kartice dejstev. */
   @container hram (max-width: 539.98px) {
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) { --t-c: 0px; grid-template-columns: 0 0 0 0 minmax(0, 1fr) 0 0 0 0; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > :is(.t-col.t1, .t-col.t4), :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof)::before { display: none; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > :is(.t-col.t2, .t-col.t3) { grid-column: 5; width: 24px; opacity: 0.55; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col.t2 { justify-self: start; margin-inline-start: 2px; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col.t3 { justify-self: end; margin-inline-end: 2px; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col :is(.t-cap, .t-base) { width: 100%; height: auto; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall > .t-col .t-shaft { width: 11px; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { position: relative; z-index: 1; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { margin-inline: 34px; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) > p.big { margin-top: 20px; margin-bottom: 6px; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) > .ideas { margin-block: 16px 18px; gap: 8px; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) .ideas { flex-flow: column nowrap; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty-hall:has(.t-roof) .idea { text-align: start; padding: 11px 12px; }
-    :root[data-chat-frame="stebri"]:not(.lite) .empty:has(.t-roof) .gr-chat { margin-top: 16px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) { --t-c: 0px; grid-template-columns: 0 0 0 0 minmax(0, 1fr) 0 0 0 0; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > :is(.t-col.t1, .t-col.t4), :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof)::before { display: none; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > :is(.t-col.t2, .t-col.t3) { grid-column: 5; width: 24px; opacity: 0.55; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t2 { justify-self: start; margin-inline-start: 2px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col.t3 { justify-self: end; margin-inline-end: 2px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col :is(.t-cap, .t-base) { width: 100%; height: auto; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall > .t-col .t-shaft { width: 11px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { position: relative; z-index: 1; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > :is(p, .ideas) { margin-inline: 34px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > p.big { margin-top: 20px; margin-bottom: 6px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) > .ideas { margin-block: 16px 18px; gap: 8px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) .ideas { flex-flow: column nowrap; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty-hall:has(.t-roof) .idea { text-align: start; padding: 11px 12px; }
+    :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]):not(.lite) .empty:has(.t-roof) .gr-chat { margin-top: 16px; }
   }
-  :root[data-chat-frame="stebri"] .idea {
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]) .idea {
     position: relative; border-width: 1px; border-radius: 5px;
     box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--text) 6%, transparent);
     background:
@@ -547,12 +572,59 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
       radial-gradient(ellipse 40% 120% at 85% 100%, color-mix(in srgb, var(--text) 3%, transparent), transparent 70%),
       var(--surface);
   }
-  :root[data-chat-frame="stebri"] .idea::after {
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]) .idea::after {
     content: ""; position: absolute; inset-inline: 14px; bottom: 3px; height: 6px; opacity: 0; transition: opacity 0.15s; background: var(--edge-c, var(--band-c));
-    -webkit-mask: var(--band) repeat-x left center / 6px 6px; mask: var(--band) repeat-x left center / 6px 6px;
+    --m: var(--band) repeat-x left center / calc(var(--band-w) * 0.75) calc(var(--band-h) * 0.75); -webkit-mask: var(--m); mask: var(--m);
   }
-  :root[data-chat-frame="stebri"] .idea:is(:hover, :focus-visible)::after { opacity: 1; }
-  :root[data-chat-frame="stebri"] .idea:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]) .idea:is(:hover, :focus-visible)::after { opacity: 1; }
+  :root:is([data-chat-frame="stebri"], [data-chat-frame="stavba"]) .idea:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+
+  /* Pilon (Egipt; j, 2026-11-04: stebri samo v antiki, drugi slogi stavbo iz obdobja): pozdrav pred templjem s
+     pilonom (ERAS[…].building.front, ena risba iz theme.js temple() z nespremenljivim razmerjem 600 : 262). Stolpa
+     sta široka skoraj kot visoka (venec kavetto, torus, vdolbini z drogovoma), vmes nižji portal s podboji; v
+     odprtini vrat stoji ikona inštruktorja (zaobljen kvadrat), pozdrav in predlogi so pod stavbo, kartica dejstev
+     pod njimi. Stavba je nizka (največ 28 % višine zaslona), da so predlogi vidni tudi na 1100 × 800. Črte v
+     --edge-c (obrobe poslikav), kamen v peščenjaku iz --wood (v temnem les na temno rjavi, ne na modri
+     podlagi, da ni siv), odprtina temnejša. Brez stebrov in
+     verskih znamenj. --p-h = višina risbe (širina pozdrava × 262/600, omejena), iz nje mesto in velikost ikone. */
+  :root[data-chat-frame="pilon"]:not(.lite) .messages:has(.t-front) { container: pilon / inline-size; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty:has(.t-front) { width: min(100%, 700px); max-width: none; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) {
+    --t-line: color-mix(in srgb, var(--edge-c) 82%, var(--surface));
+    --t-fill: color-mix(in srgb, var(--wood) 12%, var(--surface));
+    --t-tint: color-mix(in srgb, var(--wood) 24%, var(--surface));
+    --t-door: color-mix(in srgb, var(--wood) 42%, var(--surface));
+    --p-h: min(min(100cqi, 700px) * 0.4367, max(140px, 28svh));
+    --p-a: clamp(26px, var(--p-h) * 0.19, 46px);
+    display: grid; grid-template-columns: minmax(0, 1fr); width: 100%; padding: 0;
+  }
+  :root.dark[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) {
+    --t-fill: color-mix(in srgb, var(--wood) 36%, #17120b);
+    --t-tint: color-mix(in srgb, var(--wood) 46%, #17120b);
+    --t-door: color-mix(in srgb, #000 35%, var(--surface));
+  }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall > .t-front { display: block; grid-area: 1 / 1; width: 100%; height: var(--p-h); pointer-events: none; }
+  .empty-hall .t-part .o { fill: var(--t-door); }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .tutor-avatar.big {
+    grid-area: 1 / 1; justify-self: center; align-self: end; position: relative;
+    width: var(--p-a); height: var(--p-a); border-radius: 22%; margin-bottom: calc(var(--p-h) * 0.229 - var(--p-a) / 2);
+    box-shadow: 0 0 0 2px var(--t-door), 0 0 0 3.5px var(--t-line);
+  }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .tutor-avatar.big svg.i { width: 58%; height: 58%; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > p.big { margin: 14px 0 4px; line-height: 1.25; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > p:not(.big) { margin: 0; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) > .ideas { margin-top: 14px; gap: 8px; }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .idea {
+    border-width: 1px; border-radius: 5px; text-wrap: balance;
+    box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--wood) 16%, transparent);
+  }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .idea:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+  :root[data-chat-frame="pilon"]:not(.lite) .empty:has(.t-front) .gr-chat { margin-top: 18px; }
+  /* Širše (vsebnik ≥ 600 px): predlogi kot ploščice v vrsti, da je pozdrav nižji. */
+  @container pilon (min-width: 600px) {
+    :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .ideas { flex-flow: row wrap; justify-content: center; }
+    :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .idea { flex: 1 1 auto; padding-block: 9px; text-align: center; }
+  }
 
   /* Voščena tablica: polje ostane čisto (--surface), okvir iz lesa (--wood, 3:1) z notranjo svetlejšo letvico. */
   :root[data-composer="vosek"] .composer-row {
@@ -599,25 +671,26 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
     background-position: left 3px top, right 3px top;
   }
   /* Stebri ob klepetu (samo v glavnem oknu, ne v premičnem/pripetem oknu): steber v seznamu pogovorov ob robu
-     (namesto navpičnega pasu) in steber na koncu klepeta; kapitela sta tik pod preklado. */
+     (namesto navpičnega pasu) in steber na koncu klepeta; kapitela sta tik pod preklado. Samo s klepetom »stebri«
+     (antika; j, 2026-11-04: »Stebri v inštruktorju so bili mišljeni samo za staro Grčijo«). */
   @media (min-width: 761px) {
-    :root[data-arch]:not(.lite) body:not(.docked) > .chat-view .sidebar {
+    :root[data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view .sidebar {
       padding-inline-end: 32px;
       background-image: var(--arch-cap-m), var(--arch-base-m), var(--arch-shaft-m); background-repeat: no-repeat, no-repeat, repeat-y;
       background-size: 20px 13px, 20px 10px, 20px 8px; background-position: right 2px top, right 2px bottom, right 2px top;
     }
-    :root[data-arch]:not(.lite) body:not(.docked) > .chat-view .sidebar::after { display: none; }
-    :root[data-arch]:not(.lite) body:not(.docked) > .chat-view .sidebar::before { inset-inline-end: 24px; }
+    :root[data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view .sidebar::after { display: none; }
+    :root[data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view .sidebar::before { inset-inline-end: 24px; }
   }
   @media (min-width: 1000px) {
-    :root[data-arch]:not(.lite) body:not(.docked) > .chat-view > .chat {
+    :root[data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view > .chat {
       padding-inline-end: 24px;
       background: var(--arch-cap) right 2px top / 20px 13px no-repeat, var(--arch-base) right 2px bottom / 20px 10px no-repeat, var(--arch-shaft) right 2px top / 20px 8px repeat-y;
     }
-    :root[dir="rtl"][data-arch]:not(.lite) body:not(.docked) > .chat-view > .chat { background-position: left 2px top, left 2px bottom, left 2px top; }
+    :root[dir="rtl"][data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view > .chat { background-position: left 2px top, left 2px bottom, left 2px top; }
   }
   @media (min-width: 761px) {
-    :root[dir="rtl"][data-arch]:not(.lite) body:not(.docked) > .chat-view .sidebar { background-position: left 2px top, left 2px bottom, left 2px top; }
+    :root[dir="rtl"][data-arch][data-chat-frame="stebri"]:not(.lite) body:not(.docked) > .chat-view .sidebar { background-position: left 2px top, left 2px bottom, left 2px top; }
   }
   /* Učna pot na širokem zaslonu: steber ob stranskem stolpcu (v presledku med stolpcema); ne v oknu ali ob pripetem
      oknu (tam je pot en stolpec, okna.css → @container okno). */

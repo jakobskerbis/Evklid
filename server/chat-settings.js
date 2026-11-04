@@ -230,6 +230,7 @@ function profileView(student) {
     interest_custom: s.interest_custom || "",
     news_level: s.news_level,
     news_lang: s.news_lang,
+    games: s.games || "on",
     game_childhood: s.game_childhood ?? [],
     game_titles: s.game_titles ?? [],
     weak_points: student.manual_weaknesses || [],
@@ -347,7 +348,7 @@ function validateProfile(changes, student) {
   }
   if (changes.game_titles !== undefined) patch.game_titles = cleanTitles(Array.isArray(changes.game_titles) ? changes.game_titles : String(changes.game_titles ?? "").split(","));
   if (changes.interest_custom !== undefined) patch.interest_custom = cleanText(String(changes.interest_custom ?? ""), 40);
-  for (const key of ["track", "solving_mode", "data_mode", "news_level", "news_lang"]) {
+  for (const key of ["track", "solving_mode", "data_mode", "news_level", "news_lang", "games"]) {
     if (changes[key] === undefined) continue;
     if (PROFILE_SETTINGS[key].values.includes(changes[key])) patch[key] = changes[key];
     else errors.push(`${key}: allowed ${PROFILE_SETTINGS[key].values.join(", ")}`);

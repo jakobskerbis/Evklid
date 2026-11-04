@@ -23,7 +23,8 @@ const envNum = (k, d) => {
     ? v
     : d;
 };
-// 0 = brez omejitve.
+// 0 = brez omejitve. Spodnja meja: s proračunom AI meja plačljivih virov zraste (server/usage.js dailyLimit,
+// accounts/index.js dailyLimitFor).
 export const schoolDailyQuestions = () =>
   envNum("EVKLID_SOLA_DAILY_QUESTIONS", 15);
 // Osebno: 60 vprašanj na dan (OŠ, SŠ), faks 100 (j 2026-11-01).

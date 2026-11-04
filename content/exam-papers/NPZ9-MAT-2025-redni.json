@@ -1,0 +1,751 @@
+{
+ "id": "NPZ9-MAT-2025-redni",
+ "exam": "NPZ9",
+ "subject": "MAT",
+ "minutes": 60,
+ "points": 50,
+ "author": "AI",
+ "tools": "Dovoljeni so pisalo (nalivno pero ali kemični svinčnik), svinčnik, radirka in geometrijsko orodje (ravnilo, geotrikotnik, šestilo); računalo ni dovoljeno.",
+ "tasks": [
+  {
+   "n": 1,
+   "intro": "Izračunaj vrednosti izrazov. Rezultate zapiši okrajšane.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "$\\frac{3}{4} + \\frac{5}{6} =$",
+     "answer": "$\\frac{19}{12} = 1\\frac{7}{12}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Za skupni imenovalec vzamemo najmanjši skupni večkratnik števil $4$ in $6$, to je $12$.\n\nUlomka razširimo: $\\frac{3}{4} = \\frac{9}{12}$ in $\\frac{5}{6} = \\frac{10}{12}$.\n\nSeštejemo števca: $\\frac{9}{12} + \\frac{10}{12} = \\frac{19}{12}$.\n\nUlomka ne moremo okrajšati, ker je $19$ praštevilo. Kot mešano število: $\\frac{19}{12} = 1\\frac{7}{12}$."
+      },
+      {
+       "title": "Drugače: s produktom imenovalcev",
+       "text": "Za skupni imenovalec lahko vzamemo tudi $4 \\cdot 6 = 24$:\n\n$\\frac{3}{4} + \\frac{5}{6} = \\frac{3 \\cdot 6 + 5 \\cdot 4}{24} = \\frac{18 + 20}{24} = \\frac{38}{24}$.\n\nOkrajšamo z $2$: $\\frac{38}{24} = \\frac{19}{12}$."
+      }
+     ],
+     "mistake": "Seštevanje števcev in imenovalcev je napačno: $\\frac{3 + 5}{4 + 6} = \\frac{8}{10}$ ni vsota ulomkov – imenovalca morata biti najprej enaka."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "$-1{,}25 - \\left(-\\frac{3}{4}\\right) =$",
+     "answer": "$-0{,}5 = -\\frac{1}{2}$",
+     "ways": [
+      {
+       "title": "Z decimalnimi števili",
+       "text": "Ulomek zapišemo kot decimalno število: $\\frac{3}{4} = 0{,}75$.\n\nOdšteti negativno število pomeni prišteti nasprotno število: $-1{,}25 - (-0{,}75) = -1{,}25 + 0{,}75 = -0{,}5$."
+      },
+      {
+       "title": "Drugače: z ulomki",
+       "text": "$-1{,}25 = -\\frac{125}{100} = -\\frac{5}{4}$.\n\n$-\\frac{5}{4} - \\left(-\\frac{3}{4}\\right) = -\\frac{5}{4} + \\frac{3}{4} = -\\frac{2}{4} = -\\frac{1}{2}$."
+      },
+      {
+       "title": "S številsko premico",
+       "text": "Začnemo pri $-1{,}25$. Ker odštevamo negativno število, se premaknemo za $0{,}75$ v **desno** in pristanemo pri $-0{,}5$."
+      }
+     ],
+     "mistake": "Pogosto kdo pozabi spremeniti »minus minus« v plus in dobi narobe $-1{,}25 - 0{,}75 = -2$."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "$(-0{,}2)^3 \\cdot 50 =$",
+     "answer": "$-0{,}4$",
+     "ways": [
+      {
+       "title": "Po korakih: najprej potenca",
+       "text": "$(-0{,}2)^3 = (-0{,}2) \\cdot (-0{,}2) \\cdot (-0{,}2) = -0{,}008$.\n\nPredznak: trije negativni faktorji dajo negativen rezultat. Števke: $2 \\cdot 2 \\cdot 2 = 8$; decimalna mesta: $1 + 1 + 1 = 3$.\n\nNato pomnožimo: $-0{,}008 \\cdot 50 = -0{,}4$."
+      },
+      {
+       "title": "Drugače: z ulomkom",
+       "text": "$-0{,}2 = -\\frac{1}{5}$, zato $\\left(-\\frac{1}{5}\\right)^3 = -\\frac{1}{125}$.\n\n$-\\frac{1}{125} \\cdot 50 = -\\frac{50}{125} = -\\frac{2}{5} = -0{,}4$."
+      }
+     ],
+     "mistake": "Napačno je $(-0{,}2)^3 = -0{,}6$ (eksponent ni faktor) ali $(-0{,}2)^3 = 0{,}008$ (izgubljen predznak)."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "open",
+     "text": "$4{,}86 : 0{,}6 =$",
+     "answer": "$8{,}1$",
+     "ways": [
+      {
+       "title": "Razširimo količnik",
+       "text": "Deljenec in delitelj pomnožimo z $10$, da je delitelj naravno število: $4{,}86 : 0{,}6 = 48{,}6 : 6$.\n\n$48{,}6 : 6 = 8{,}1$, ker je $6 \\cdot 8 = 48$ in $6 \\cdot 0{,}1 = 0{,}6$."
+      },
+      {
+       "title": "Preizkus z množenjem",
+       "text": "$8{,}1 \\cdot 0{,}6 = 4{,}86$ ✓ (števke: $81 \\cdot 6 = 486$, decimalni mesti $2$)."
+      }
+     ],
+     "mistake": "Vejica na napačnem mestu da $0{,}81$ ali $81$. Pomaga ocena: $4{,}86$ je približno $5$, v $5$ pa gre $0{,}6$ približno osemkrat."
+    },
+    {
+     "id": "e",
+     "points": 2,
+     "format": "open",
+     "text": "$18 - 2 \\cdot (1 - 3^2) : 4 =$",
+     "answer": "$22$",
+     "ways": [
+      {
+       "title": "Po korakih (vrstni red računskih operacij)",
+       "text": "1. Potenca v oklepaju: $3^2 = 9$.\n2. Oklepaj: $1 - 9 = -8$.\n3. Množenje in deljenje od leve proti desni: $2 \\cdot (-8) = -16$, nato $-16 : 4 = -4$.\n4. Odštevanje: $18 - (-4) = 18 + 4 = 22$."
+      },
+      {
+       "title": "Drugače: deljenje kot ulomek",
+       "text": "Deljenje s $4$ zapišemo z ulomkovo črto:\n\n$18 - \\frac{2 \\cdot (1 - 9)}{4} = 18 - \\frac{-16}{4} = 18 - (-4) = 22$."
+      }
+     ],
+     "scoring": "1 t. za pravilno izračunan oklepaj s potenco ($-8$) ali delni rezultat $-4$, 1 t. za končni rezultat $22$.",
+     "mistake": "Narobe je začeti z $18 - 2 = 16$, ker imata množenje in deljenje prednost pred odštevanjem. Napačno je tudi $1 - 3^2 = (1 - 3)^2 = 4$: potenca velja samo za $3$."
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "intro": "Dan je seznam desetih naravnih števil:\n\n**27, 64, 1, 49, 90, 19, 72, 15, 31, 23**\n\nV vsakem delu zapiši število ali števila iz tega seznama.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Katero je najmanjše praštevilo v seznamu?",
+     "answer": "$19$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Praštevilo ima natanko dva delitelja: $1$ in samega sebe.\n\nŠtevilo $1$ ni praštevilo (ima en sam delitelj). Sestavljena so: $15 = 3 \\cdot 5$, $27 = 3 \\cdot 9$, $49 = 7 \\cdot 7$, $64 = 8 \\cdot 8$, $72 = 8 \\cdot 9$, $90 = 9 \\cdot 10$.\n\nOstanejo praštevila $19$, $23$ in $31$. Najmanjše je $19$."
+      },
+      {
+       "title": "Drugače: od najmanjšega navzgor",
+       "text": "Števila uredimo po velikosti: $1$, $15$, $19$, … Pri vsakem preverimo, ali je praštevilo: $1$ ni, $15$ je deljivo s $3$, $19$ pa ni deljivo z $2$, $3$ in ne s $5$ (preverjati večjih ni treba, ker je $5 \\cdot 5 = 25 > 19$). Prvo praštevilo je $19$."
+      }
+     ],
+     "mistake": "Kdor odgovori $1$, pozabi, da $1$ ni praštevilo."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Katero število ima natanko tri delitelje?",
+     "answer": "$49$",
+     "ways": [
+      {
+       "title": "S kvadrati praštevil",
+       "text": "Natanko tri delitelje ima kvadrat praštevila $p^2$: delitelji so $1$, $p$ in $p^2$.\n\nKvadrati v seznamu so $1 = 1^2$, $49 = 7^2$ in $64 = 8^2$. Praštevilo je le osnova $7$, zato je odgovor $49$ (delitelji $1$, $7$, $49$)."
+      },
+      {
+       "title": "Drugače: naštejemo delitelje",
+       "text": "$49$: $1$, $7$, $49$ – trije. Za primerjavo $64$: $1$, $2$, $4$, $8$, $16$, $32$, $64$ – sedem; $15$: $1$, $3$, $5$, $15$ – štirje; praštevila imajo dva, $1$ pa enega."
+      }
+     ],
+     "mistake": "Kdor izbere $64$, misli, da ima vsak kvadrat tri delitelje – to drži le za kvadrate praštevil."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Zapiši vse večkratnike števila $9$.",
+     "answer": "$27$, $72$ in $90$",
+     "ways": [
+      {
+       "title": "Z deljenjem",
+       "text": "Večkratnik števila $9$ je deljiv z $9$ brez ostanka: $27 = 3 \\cdot 9$, $72 = 8 \\cdot 9$, $90 = 10 \\cdot 9$. Druga števila niso deljiva z $9$."
+      },
+      {
+       "title": "S pravilom za deljivost z 9",
+       "text": "Število je deljivo z $9$, če je vsota njegovih števk deljiva z $9$: pri $27$ je $2 + 7 = 9$, pri $72$ je $7 + 2 = 9$, pri $90$ je $9 + 0 = 9$. Drugod ne: $6 + 4 = 10$, $4 + 9 = 13$, $1 + 9 = 10$, $1 + 5 = 6$, $3 + 1 = 4$, $2 + 3 = 5$, $1$."
+      }
+     ],
+     "mistake": "Pogosto kdo spregleda $90$ ali zamenja večkratnike z delitelji in doda $1$."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "open",
+     "text": "Katero število je vrednost potence $4^3$?",
+     "answer": "$64$",
+     "ways": [
+      {
+       "title": "Po definiciji potence",
+       "text": "$4^3 = 4 \\cdot 4 \\cdot 4 = 16 \\cdot 4 = 64$."
+      },
+      {
+       "title": "Drugače: s potencami števila 2",
+       "text": "$4 = 2^2$, zato $4^3 = (2^2)^3 = 2^6 = 64$."
+      }
+     ],
+     "mistake": "Napačno je računati $4 \\cdot 3 = 12$: eksponent pove, kolikokrat osnovo pomnožimo samo s seboj."
+    },
+    {
+     "id": "e",
+     "points": 1,
+     "format": "open",
+     "text": "Največje število v seznamu razcepi na prafaktorje.",
+     "answer": "$90 = 2 \\cdot 3^2 \\cdot 5$",
+     "ways": [
+      {
+       "title": "Z zaporednim deljenjem",
+       "text": "Največje število je $90$. Delimo s praštevili, dokler ne pridemo do $1$:\n\n$90 : 2 = 45$, $45 : 3 = 15$, $15 : 3 = 5$, $5 : 5 = 1$.\n\nTorej $90 = 2 \\cdot 3 \\cdot 3 \\cdot 5 = 2 \\cdot 3^2 \\cdot 5$."
+      },
+      {
+       "title": "Drugače: z drevesom",
+       "text": "$90 = 9 \\cdot 10$, $9 = 3 \\cdot 3$, $10 = 2 \\cdot 5$. Na koncu vej so sama praštevila: $90 = 2 \\cdot 3 \\cdot 3 \\cdot 5 = 2 \\cdot 3^2 \\cdot 5$."
+      }
+     ],
+     "mistake": "Razcep $90 = 9 \\cdot 10$ ni končan, ker $9$ in $10$ nista praštevili."
+    },
+    {
+     "id": "f",
+     "points": 1,
+     "format": "open",
+     "text": "Katero število ima največjo nasprotno vrednost?",
+     "answer": "$1$ (njegova nasprotna vrednost je $-1$)",
+     "ways": [
+      {
+       "title": "Po definiciji",
+       "text": "Nasprotna vrednost števila $n$ je $-n$. Vsa števila v seznamu so pozitivna, zato so njihove nasprotne vrednosti negativne, med negativnimi števili pa je največje tisto, ki je najbližje $0$. To je $-1$, nasprotna vrednost najmanjšega števila v seznamu, torej števila $1$."
+      },
+      {
+       "title": "S številsko premico",
+       "text": "Na številski premici so nasprotne vrednosti $-1$, $-15$, $-19$, … $-90$ levo od $0$. Najbolj desno (največja) je $-1$, ki pripada številu $1$."
+      }
+     ],
+     "mistake": "Kdor odgovori $90$, pozabi, da je $-90$ najmanjše med nasprotnimi vrednostmi."
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "intro": "Vsak delež zapiši na dva načina, kot zahteva naloga. Ulomke okrajšaj.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "fill",
+     "text": "$62{,}5\\,\\%$ zapiši z decimalnim številom in z okrajšanim ulomkom.",
+     "answer": "$0{,}625$ in $\\frac{5}{8}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Odstotek je stotinka celote: $62{,}5\\,\\% = \\frac{62{,}5}{100} = 0{,}625$ (vejico premaknemo za dve mesti v levo).\n\nDecimalno število zapišemo s tisočinkami in okrajšamo: $0{,}625 = \\frac{625}{1000} = \\frac{125}{200} = \\frac{5}{8}$ (delimo s $5$, nato s $25$)."
+      },
+      {
+       "title": "Drugače: prek osmine",
+       "text": "Ena osmina je $100\\,\\% : 8 = 12{,}5\\,\\%$, torej $12{,}5\\,\\% = \\frac{1}{8}$.\n\n$62{,}5\\,\\% = 5 \\cdot 12{,}5\\,\\% = \\frac{5}{8}$, decimalno pa $5 : 8 = 0{,}625$."
+      }
+     ],
+     "scoring": "1 t. za $0{,}625$, 1 t. za okrajšan ulomek $\\frac{5}{8}$ (neokrajšan ulomek, npr. $\\frac{625}{1000}$, točke ne prinese).",
+     "mistake": "Napačno je $62{,}5\\,\\% = 6{,}25$: pri odstotku delimo s $100$, ne z $10$."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "fill",
+     "text": "$1{,}24$ zapiši z okrajšanim ulomkom (lahko tudi z mešanim številom) in z odstotkom.",
+     "answer": "$\\frac{31}{25} = 1\\frac{6}{25}$ in $124\\,\\%$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "$1{,}24 = \\frac{124}{100}$. Števec in imenovalec delimo s $4$: $\\frac{124}{100} = \\frac{31}{25} = 1\\frac{6}{25}$.\n\nZa odstotek pomnožimo s $100\\,\\%$: $1{,}24 = 1{,}24 \\cdot 100\\,\\% = 124\\,\\%$."
+      },
+      {
+       "title": "Drugače: celi del posebej",
+       "text": "$1{,}24 = 1 + 0{,}24$ in $0{,}24 = \\frac{24}{100} = \\frac{6}{25}$, zato $1{,}24 = 1\\frac{6}{25}$.\n\nCela je $100\\,\\%$, $0{,}24$ pa je $24\\,\\%$, skupaj $100\\,\\% + 24\\,\\% = 124\\,\\%$. Delež je večji od celote, zato je več kot $100\\,\\%$."
+      }
+     ],
+     "scoring": "1 t. za okrajšan ulomek $\\frac{31}{25}$ ali mešano število $1\\frac{6}{25}$, 1 t. za $124\\,\\%$.",
+     "mistake": "Napačno je $1{,}24 = 12{,}4\\,\\%$ ali $1{,}24\\,\\%$: število, večje od $1$, je več kot $100\\,\\%$."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "fill",
+     "text": "$\\frac{3}{40}$ zapiši z decimalnim številom in z odstotkom.",
+     "answer": "$0{,}075$ in $7{,}5\\,\\%$",
+     "ways": [
+      {
+       "title": "Razširimo na tisočinke",
+       "text": "Ker je $40 \\cdot 25 = 1000$, ulomek razširimo s $25$: $\\frac{3}{40} = \\frac{3 \\cdot 25}{40 \\cdot 25} = \\frac{75}{1000} = 0{,}075$.\n\nOdstotek: $0{,}075 = \\frac{7{,}5}{100} = 7{,}5\\,\\%$."
+      },
+      {
+       "title": "Drugače: najprej odstotek",
+       "text": "Ena štiridesetina celote je $100\\,\\% : 40 = 2{,}5\\,\\%$.\n\nZato $\\frac{3}{40} = 3 \\cdot 2{,}5\\,\\% = 7{,}5\\,\\%$, decimalno pa $7{,}5\\,\\% = 0{,}075$."
+      },
+      {
+       "title": "Preizkus",
+       "text": "$40 \\cdot 0{,}075 = 3$ ✓, zato je $3 : 40 = 0{,}075$."
+      }
+     ],
+     "scoring": "1 t. za $0{,}075$, 1 t. za $7{,}5\\,\\%$.",
+     "mistake": "Napačno je $\\frac{3}{40} = 0{,}75$ (manjka ničla za vejico) ali $75\\,\\%$; preveri: $\\frac{3}{40}$ je manj kot $\\frac{4}{40} = \\frac{1}{10}$, torej manj kot $10\\,\\%$."
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "intro": "Pravokotni trikotnik $ABC$ ima pravi kot pri oglišču $C$. Kateti merita $a = 5\\,\\mathrm{cm}$ in $b = 12\\,\\mathrm{cm}$, hipotenuza meri $c = 13\\,\\mathrm{cm}$.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 330 190\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><path d=\"M280,150 L40,50 L40,150 Z\" fill=\"currentColor\" fill-opacity=\"0.08\"/><path d=\"M40,138 L52,138 L52,150\" stroke-width=\"1.2\"/><circle cx=\"47\" cy=\"143\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/><text x=\"286\" y=\"166\" fill=\"currentColor\" stroke=\"none\">A</text><text x=\"28\" y=\"46\" fill=\"currentColor\" stroke=\"none\">B</text><text x=\"26\" y=\"166\" fill=\"currentColor\" stroke=\"none\">C</text><text x=\"30\" y=\"96\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"end\">a</text><text x=\"30\" y=\"112\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"end\" font-size=\"11\">5 cm</text><text x=\"160\" y=\"168\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"middle\">b</text><text x=\"160\" y=\"182\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">12 cm</text><text x=\"86\" y=\"60\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">c</text><text x=\"97\" y=\"60\" fill=\"currentColor\" stroke=\"none\" font-size=\"11\">= 13 cm</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Obkroži pravilno izjavo.",
+     "choices": [
+      "Višina na stranico $a$ je kateta $b$, zato je $v_a = 12\\,\\mathrm{cm}$.",
+      "Višina na stranico $c$ je enaka kateti $a$.",
+      "Višina na stranico $b$ meri $13\\,\\mathrm{cm}$.",
+      "Višina na stranico $c$ leži zunaj trikotnika."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "Višina na stranico $a$ je kateta $b$, $v_a = 12\\,\\mathrm{cm}$.",
+     "ways": [
+      {
+       "title": "Po definiciji višine",
+       "text": "Višina na stranico je daljica iz nasprotnega oglišča, pravokotna na to stranico.\n\nKot pri $C$ je pravi, zato je kateta $b$ že pravokotna na $a$ in gre iz oglišča $A$: $v_a = b = 12\\,\\mathrm{cm}$. Prav tako je $v_b = a = 5\\,\\mathrm{cm}$, ne $13\\,\\mathrm{cm}$.\n\nVišina $v_c$ gre iz $C$ pravokotno na hipotenuzo, leži v notranjosti trikotnika in je krajša od obeh katet: $v_c = \\frac{60}{13}\\,\\mathrm{cm}$, to je približno $4{,}6\\,\\mathrm{cm}$."
+      },
+      {
+       "title": "S sliko",
+       "text": "Na sliki je $BC$ navpična, $AC$ vodoravna. Pravokotnica iz $A$ na premico $BC$ je ravno daljica $AC$, torej $v_a = |AC| = 12\\,\\mathrm{cm}$."
+      }
+     ],
+     "mistake": "Višino pogosto zamenjamo s stranico, ki je nasproti oglišča; višina mora biti pravokotna na stranico, na katero jo rišemo."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "choice",
+     "text": "Kje leži središče trikotniku $ABC$ očrtane krožnice? Obkroži pravilni odgovor.",
+     "choices": [
+      "V razpolovišču hipotenuze $c$.",
+      "V oglišču $C$.",
+      "Zunaj trikotnika.",
+      "V notranjosti trikotnika, v presečišču višin."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "V razpolovišču hipotenuze; polmer je $6{,}5\\,\\mathrm{cm}$.",
+     "ways": [
+      {
+       "title": "S Talesovim izrekom",
+       "text": "Oglišče s pravim kotom leži na Talesovi krožnici nad hipotenuzo. Ta krožnica gre skozi $A$, $B$ in $C$, zato je trikotniku očrtana. Njeno središče je razpolovišče hipotenuze $AB$, polmer pa $\\frac{13}{2} = 6{,}5\\,\\mathrm{cm}$."
+      },
+      {
+       "title": "Drugače: s simetralama katet",
+       "text": "Središče očrtane krožnice je presečišče simetral stranic. Simetrala katete $a$ je vodoravna premica na polovici višine $BC$, simetrala katete $b$ je navpična premica na polovici $AC$. Sekata se v točki, ki je od $C$ oddaljena $6\\,\\mathrm{cm}$ vodoravno in $2{,}5\\,\\mathrm{cm}$ navpično – to je ravno razpolovišče daljice $AB$."
+      }
+     ],
+     "mistake": "Presečišče višin je pri pravokotnem trikotniku v oglišču $C$; ne zamenjaj ga s središčem očrtane krožnice."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "construct",
+     "text": "Načrtaj trikotnik $ABC$ v naravni velikosti in nato še simetralo stranice $c$. Presečišče simetrale s stranico $c$ označi s $S$.",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 -10 330 215\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><path d=\"M280,150 L40,50 L40,150 Z\" fill=\"currentColor\" fill-opacity=\"0.08\"/><path d=\"M40,138 L52,138 L52,150\" stroke-width=\"1.2\"/><circle cx=\"47\" cy=\"143\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/><text x=\"286\" y=\"166\" fill=\"currentColor\" stroke=\"none\">A</text><text x=\"28\" y=\"46\" fill=\"currentColor\" stroke=\"none\">B</text><text x=\"26\" y=\"166\" fill=\"currentColor\" stroke=\"none\">C</text><text x=\"30\" y=\"96\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"end\">a</text><text x=\"30\" y=\"112\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"end\" font-size=\"11\">5 cm</text><text x=\"160\" y=\"168\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"middle\">b</text><text x=\"160\" y=\"182\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"11\">12 cm</text><text x=\"86\" y=\"60\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">c</text><text x=\"97\" y=\"60\" fill=\"currentColor\" stroke=\"none\" font-size=\"11\">= 13 cm</text><path d=\"M181.4,24 A160,160 0 0 1 211.3,5.5\" stroke-width=\"1\" stroke-opacity=\"0.7\"/><path d=\"M191,-3 A160,160 0 0 1 198.9,31.2\" stroke-width=\"1\" stroke-opacity=\"0.7\"/><path d=\"M129,203 A160,160 0 0 1 121.1,168.8\" stroke-width=\"1\" stroke-opacity=\"0.7\"/><path d=\"M138.6,176 A160,160 0 0 1 108.7,194.5\" stroke-width=\"1\" stroke-opacity=\"0.7\"/><path d=\"M198.5,7.7 L121.5,192.3\" stroke-width=\"2\"/><circle cx=\"160\" cy=\"100\" r=\"2.6\" fill=\"currentColor\" stroke=\"none\"/><text x=\"142\" y=\"94\" fill=\"currentColor\" stroke=\"none\">S</text><text x=\"204.5\" y=\"17.7\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\">s</text><text x=\"211.5\" y=\"21.7\" fill=\"currentColor\" stroke=\"none\" font-size=\"9\" font-style=\"italic\">c</text></svg>",
+     "answer": "Simetrala $s_c$ je premica skozi razpolovišče $S$ stranice $c$, pravokotna na $AB$; $|AS| = |SB| = 6{,}5\\,\\mathrm{cm}$.",
+     "ways": [
+      {
+       "title": "Načrtovanje s šestilom",
+       "text": "1. Nariši pravi kot z vrhom $C$. Na en krak nanesi $12\\,\\mathrm{cm}$ (točka $A$), na drugega $5\\,\\mathrm{cm}$ (točka $B$). Poveži $A$ in $B$ ter preveri, da $|AB|$ meri $13\\,\\mathrm{cm}$.\n2. Šestilo razpri na več kot polovico daljice $AB$, torej na več kot $6{,}5\\,\\mathrm{cm}$ (npr. $8\\,\\mathrm{cm}$).\n3. S središčem v $A$ nariši lok nad daljico $AB$ in pod njo.\n4. Z enako razpetino nariši lok še s središčem v $B$.\n5. Loka se sekata v dveh točkah. Skozi njiju nariši premico – to je simetrala $s_c$.\n6. Presečišče simetrale z $AB$ označi s $S$."
+      },
+      {
+       "title": "Preizkus z merjenjem",
+       "text": "Z ravnilom izmeri $|AS|$ in $|SB|$ – obe merita $6{,}5\\,\\mathrm{cm}$. Z geotrikotnikom preveri, da simetrala in $AB$ oklepata pravi kot. Ker je $S$ središče očrtane krožnice (del b), meri tudi $|SC|$ $6{,}5\\,\\mathrm{cm}$."
+      }
+     ],
+     "mistake": "Če razpetina šestila ni večja od polovice $AB$, se loka ne sekata. Pravokotnica iz $C$ na $AB$ je višina $v_c$, ne simetrala."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "open",
+     "text": "Zapiši Pitagorov izrek za ta trikotnik z oznakami stranic in ga preveri z danimi dolžinami.",
+     "answer": "$a^2 + b^2 = c^2$; res je $5^2 + 12^2 = 169 = 13^2$.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Pitagorov izrek: vsota kvadratov katet je enaka kvadratu hipotenuze. Kateti sta $a$ in $b$ (ob pravem kotu), hipotenuza je $c$ (nasproti pravega kota):\n\n$a^2 + b^2 = c^2$.\n\nPreverimo: $5^2 + 12^2 = 25 + 144 = 169$ in $13^2 = 169$ ✓."
+      },
+      {
+       "title": "S kvadrati nad stranicami",
+       "text": "Ploščina kvadrata nad hipotenuzo ($169\\,\\mathrm{cm}^2$) je enaka vsoti ploščin kvadratov nad katetama: $25\\,\\mathrm{cm}^2 + 144\\,\\mathrm{cm}^2 = 169\\,\\mathrm{cm}^2$."
+      }
+     ],
+     "mistake": "Napačno je $a^2 + c^2 = b^2$: na desni strani je vedno kvadrat hipotenuze, najdaljše stranice."
+    },
+    {
+     "id": "e",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj ploščino trikotnika $ABC$.",
+     "answer": "$p = 30\\,\\mathrm{cm}^2$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $a = 5\\,\\mathrm{cm}$, $b = 12\\,\\mathrm{cm}$, $c = 13\\,\\mathrm{cm}$, pravi kot pri $C$.\n\n**Iščemo:** ploščino $p$.\n\nKateti sta pravokotni druga na drugo, zato je ena osnovnica, druga pa pripadajoča višina:\n\n$p = \\frac{a \\cdot b}{2} = \\frac{5 \\cdot 12}{2}\\,\\mathrm{cm}^2 = 30\\,\\mathrm{cm}^2$."
+      },
+      {
+       "title": "S sliko: polovica pravokotnika",
+       "text": "Trikotnik dopolnimo s skladnim trikotnikom do pravokotnika s stranicama $5\\,\\mathrm{cm}$ in $12\\,\\mathrm{cm}$. Ploščina pravokotnika je $5 \\cdot 12 = 60\\,\\mathrm{cm}^2$, trikotnik je njegova polovica: $60 : 2 = 30$, torej $30\\,\\mathrm{cm}^2$."
+      }
+     ],
+     "scoring": "1 t. za pravilen račun s katetama ($\\frac{5 \\cdot 12}{2}$), 1 t. za rezultat $30\\,\\mathrm{cm}^2$ z enoto.",
+     "mistake": "Napačno je računati s hipotenuzo, npr. $\\frac{5 \\cdot 13}{2}$, ker $c$ ni pravokotna na $a$. Kdor pozabi deliti z $2$, dobi ploščino pravokotnika ($60\\,\\mathrm{cm}^2$), kar je narobe."
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "intro": "Pri vsakem delu obkroži **vse** količine, ki so enake dani količini.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Enako kot $0{,}45\\,\\mathrm{m}$:",
+     "choices": [
+      "$45\\,\\mathrm{cm}$",
+      "$4{,}5\\,\\mathrm{dm}$",
+      "$4500\\,\\mathrm{mm}$",
+      "$0{,}0045\\,\\mathrm{km}$",
+      "$450\\,\\mathrm{mm}$"
+     ],
+     "correct": [
+      0,
+      1,
+      4
+     ],
+     "answer": "$45\\,\\mathrm{cm}$, $4{,}5\\,\\mathrm{dm}$ in $450\\,\\mathrm{mm}$",
+     "ways": [
+      {
+       "title": "S pretvorbami",
+       "text": "$1\\,\\mathrm{m} = 10\\,\\mathrm{dm} = 100\\,\\mathrm{cm} = 1000\\,\\mathrm{mm}$, zato $0{,}45\\,\\mathrm{m} = 4{,}5\\,\\mathrm{dm} = 45\\,\\mathrm{cm} = 450\\,\\mathrm{mm}$.\n\n$4500\\,\\mathrm{mm}$ je $4{,}5\\,\\mathrm{m}$ – desetkrat preveč. Ker je $1\\,\\mathrm{km} = 1000\\,\\mathrm{m}$, je $0{,}45\\,\\mathrm{m} = 0{,}00045\\,\\mathrm{km}$, zato tudi $0{,}0045\\,\\mathrm{km}$ ni prava izbira."
+      },
+      {
+       "title": "S preglednico mest",
+       "text": "$0{,}45\\,\\mathrm{m}$ vpišemo v preglednico m | dm | cm | mm: $0 \\mid 4 \\mid 5 \\mid 0$. Preberemo $4{,}5\\,\\mathrm{dm}$, $45\\,\\mathrm{cm}$ in $450\\,\\mathrm{mm}$."
+      }
+     ],
+     "mistake": "Med metrom in kilometrom je preskok $1000$, ne $100$; kdor deli s $100$, dobi napačno $0{,}0045\\,\\mathrm{km}$."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "choice",
+     "text": "Enako kot $2{,}25\\,\\mathrm{h}$:",
+     "choices": [
+      "$2\\,\\mathrm{h}\\ 25\\,\\mathrm{min}$",
+      "$2\\,\\mathrm{h}\\ 15\\,\\mathrm{min}$",
+      "$135\\,\\mathrm{min}$",
+      "$8100\\,\\mathrm{s}$",
+      "$225\\,\\mathrm{min}$"
+     ],
+     "correct": [
+      1,
+      2,
+      3
+     ],
+     "answer": "$2\\,\\mathrm{h}\\ 15\\,\\mathrm{min}$, $135\\,\\mathrm{min}$ in $8100\\,\\mathrm{s}$",
+     "ways": [
+      {
+       "title": "Decimalni del ure v minute",
+       "text": "$0{,}25\\,\\mathrm{h} = 0{,}25 \\cdot 60\\,\\mathrm{min} = 15\\,\\mathrm{min}$, zato je $2{,}25\\,\\mathrm{h}$ enako $2\\,\\mathrm{h}\\ 15\\,\\mathrm{min}$.\n\nV minutah: $2{,}25 \\cdot 60 = 135$, torej $135\\,\\mathrm{min}$.\n\nV sekundah: $135 \\cdot 60 = 8100$, torej $8100\\,\\mathrm{s}$."
+      },
+      {
+       "title": "Drugače: z ulomkom",
+       "text": "$0{,}25 = \\frac{1}{4}$, četrt ure je $15\\,\\mathrm{min}$. Dve uri sta $120\\,\\mathrm{min}$, skupaj $120 + 15 = 135$ minut, kar je $135 \\cdot 60 = 8100$ sekund."
+      }
+     ],
+     "mistake": "Napačno je $2{,}25\\,\\mathrm{h}$ prebrati kot $2\\,\\mathrm{h}\\ 25\\,\\mathrm{min}$: ura ima $60$ minut, ne $100$."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "choice",
+     "text": "Enako kot $1{,}2\\,\\mathrm{dm}^3$:",
+     "choices": [
+      "$1{,}2\\,\\mathrm{l}$",
+      "$120\\,\\mathrm{cm}^3$",
+      "$1200\\,\\mathrm{ml}$",
+      "$0{,}012\\,\\mathrm{m}^3$",
+      "$12\\,\\mathrm{dl}$"
+     ],
+     "correct": [
+      0,
+      2,
+      4
+     ],
+     "answer": "$1{,}2\\,\\mathrm{l}$, $1200\\,\\mathrm{ml}$ in $12\\,\\mathrm{dl}$",
+     "ways": [
+      {
+       "title": "Prek litra",
+       "text": "$1\\,\\mathrm{dm}^3 = 1\\,\\mathrm{l}$, zato je $1{,}2\\,\\mathrm{dm}^3$ enako $1{,}2\\,\\mathrm{l}$. Ker je $1\\,\\mathrm{l} = 10\\,\\mathrm{dl} = 1000\\,\\mathrm{ml}$, je $1{,}2\\,\\mathrm{l} = 12\\,\\mathrm{dl} = 1200\\,\\mathrm{ml}$.\n\nPri kubičnih enotah je preskok $1000$: $1{,}2\\,\\mathrm{dm}^3 = 1200\\,\\mathrm{cm}^3$ (ne $120$) in $1{,}2\\,\\mathrm{dm}^3 = 0{,}0012\\,\\mathrm{m}^3$ (ne $0{,}012$)."
+      },
+      {
+       "title": "Drugače: mililiter je kubični centimeter",
+       "text": "$1\\,\\mathrm{ml} = 1\\,\\mathrm{cm}^3$ in $1\\,\\mathrm{dm}^3 = 1000\\,\\mathrm{cm}^3$. Torej je $1{,}2\\,\\mathrm{dm}^3$ enako $1200\\,\\mathrm{cm}^3$ oziroma $1200\\,\\mathrm{ml}$; $120\\,\\mathrm{cm}^3$ je desetkrat premalo."
+      }
+     ],
+     "mistake": "Napačno je pretvarjati kubične enote s preskokom $10$ ali $100$, npr. $1{,}2\\,\\mathrm{dm}^3 = 120\\,\\mathrm{cm}^3$."
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "choice",
+     "text": "Enako kot $3\\,\\mathrm{m}^2 + 40\\,\\mathrm{dm}^2$:",
+     "choices": [
+      "$3{,}4\\,\\mathrm{m}^2$",
+      "$3{,}04\\,\\mathrm{m}^2$",
+      "$340\\,\\mathrm{dm}^2$",
+      "$34\\,000\\,\\mathrm{cm}^2$",
+      "$43\\,\\mathrm{dm}^2$"
+     ],
+     "correct": [
+      0,
+      2,
+      3
+     ],
+     "answer": "$3{,}4\\,\\mathrm{m}^2$, $340\\,\\mathrm{dm}^2$ in $34\\,000\\,\\mathrm{cm}^2$",
+     "ways": [
+      {
+       "title": "Vse v kvadratnih decimetrih",
+       "text": "Pri ploščinskih enotah je preskok $100$: $3\\,\\mathrm{m}^2 = 300\\,\\mathrm{dm}^2$.\n\n$300\\,\\mathrm{dm}^2 + 40\\,\\mathrm{dm}^2 = 340\\,\\mathrm{dm}^2$.\n\n$340\\,\\mathrm{dm}^2$ je enako $3{,}4\\,\\mathrm{m}^2$ in $34\\,000\\,\\mathrm{cm}^2$ (vsakič preskok $100$)."
+      },
+      {
+       "title": "Drugače: vse v kvadratnih metrih",
+       "text": "$40\\,\\mathrm{dm}^2 = 0{,}4\\,\\mathrm{m}^2$, ker je $1\\,\\mathrm{m}^2 = 100\\,\\mathrm{dm}^2$. Vsota: $3 + 0{,}4 = 3{,}4$, torej $3{,}4\\,\\mathrm{m}^2$. Izbira $3{,}04\\,\\mathrm{m}^2$ bi pomenila $304\\,\\mathrm{dm}^2$."
+      }
+     ],
+     "mistake": "Seštevanje števil brez pretvorbe je napačno ($3 + 40 = 43$): sešteti smemo le količine v isti enoti."
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "intro": "Kvadrat je razdeljen na dva kvadrata in dva pravokotnika (slika). Dolžini $x$ in $y$ sta v centimetrih in $x > y$. Osenčen je lik, ki ostane, ko kvadratu odvzamemo neosenčeni pravokotnik v zgornjem levem kotu.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 230 215\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><path d=\"M150,20 L200,20 L200,190 L30,190 L30,70 L150,70 Z\" fill=\"currentColor\" fill-opacity=\"0.22\" stroke=\"none\"/><rect x=\"30\" y=\"20\" width=\"170\" height=\"170\"/><path d=\"M150,20 L150,190 M30,70 L200,70\" stroke-width=\"1.2\"/><text x=\"90\" y=\"14\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"middle\">x</text><text x=\"175\" y=\"14\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"middle\">y</text><text x=\"90\" y=\"206\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"middle\">x</text><text x=\"175\" y=\"206\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"middle\">y</text><text x=\"20\" y=\"49\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"middle\">y</text><text x=\"20\" y=\"134\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"middle\">x</text><text x=\"212\" y=\"49\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"middle\">y</text><text x=\"212\" y=\"134\" fill=\"currentColor\" stroke=\"none\" font-style=\"italic\" text-anchor=\"middle\">x</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 3,
+     "format": "open",
+     "text": "Izračunaj ploščino osenčenega lika za $x = 6\\,\\mathrm{cm}$ in $y = 2{,}5\\,\\mathrm{cm}$.",
+     "answer": "$57{,}25\\,\\mathrm{cm}^2$",
+     "ways": [
+      {
+       "title": "Po korakih: kvadrat brez pravokotnika",
+       "text": "**Podatki:** $x = 6\\,\\mathrm{cm}$, $y = 2{,}5\\,\\mathrm{cm}$; stranica velikega kvadrata je $x + y$, neosenčeni pravokotnik ima stranici $x$ in $y$.\n\n**Iščemo:** ploščino osenčenega lika $p$.\n\nStranica kvadrata: $x + y = 6 + 2{,}5 = 8{,}5\\,\\mathrm{cm}$.\n\nPloščina kvadrata: $8{,}5^2 = 8{,}5 \\cdot 8{,}5 = 72{,}25\\,\\mathrm{cm}^2$.\n\nPloščina neosenčenega pravokotnika: $x \\cdot y = 6 \\cdot 2{,}5 = 15\\,\\mathrm{cm}^2$.\n\nOsenčeni lik: $p = 72{,}25 - 15 = 57{,}25\\,\\mathrm{cm}^2$."
+      },
+      {
+       "title": "Drugače: seštejemo osenčene dele",
+       "text": "Osenčeni lik sestavljajo kvadrat s stranico $x$, kvadrat s stranico $y$ in pravokotnik s stranicama $x$ in $y$, zato je $p = x^2 + x \\cdot y + y^2$.\n\n$x^2 = 6^2 = 36\\,\\mathrm{cm}^2$, $x \\cdot y = 6 \\cdot 2{,}5 = 15\\,\\mathrm{cm}^2$, $y^2 = 2{,}5^2 = 6{,}25\\,\\mathrm{cm}^2$.\n\n$p = 36 + 15 + 6{,}25 = 57{,}25\\,\\mathrm{cm}^2$."
+      },
+      {
+       "title": "Preizkus",
+       "text": "Osenčeni lik in neosenčeni pravokotnik skupaj tvorita cel kvadrat: $57{,}25 + 15 = 72{,}25$ ✓ in $72{,}25 = 8{,}5^2$ ✓."
+      }
+     ],
+     "scoring": "1 t. za pravilno zamisel (kvadrat brez pravokotnika ali vsota treh delov), 1 t. za pravilne delne ploščine ($72{,}25$ in $15$ ali $36$, $15$ in $6{,}25$), 1 t. za rezultat $57{,}25\\,\\mathrm{cm}^2$ z enoto.",
+     "mistake": "Pogosta napaka je napačno kvadriranje decimalnega števila, npr. $8{,}5^2 = 64{,}25$ ali $17$. Pravilno: $8{,}5 \\cdot 8{,}5 = 64 + 4 + 4 + 0{,}25 = 72{,}25$."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Zapiši izraz za obseg osenčenega lika in ga poenostavi.",
+     "answer": "$o = 4x + 4y$ (oziroma $4(x + y)$)",
+     "ways": [
+      {
+       "title": "Obhod po robu",
+       "text": "Začnemo v spodnjem levem oglišču in obhodimo rob osenčenega lika: spodaj $x + y$, desno navzgor $x + y$, zgoraj v levo $y$, navzdol ob neosenčenem pravokotniku $y$, v levo ob njem $x$ in levo navzdol $x$.\n\n$o = (x + y) + (x + y) + y + y + x + x = 4x + 4y$."
+      },
+      {
+       "title": "Drugače: premik stranic",
+       "text": "Notranja »stopnica« ima vodoravni del dolžine $x$ in navpični del dolžine $y$. Če ju premaknemo na zgornjo in levo stranico velikega kvadrata, dobimo ravno obseg kvadrata s stranico $x + y$: $o = 4(x + y) = 4x + 4y$. Pri danih podatkih iz dela a je to $4 \\cdot 8{,}5 = 34\\,\\mathrm{cm}$."
+      }
+     ],
+     "mistake": "Kdor pozabi notranji stranici ob neosenčenem pravokotniku (dolžini $x$ in $y$), dobi napačno $3x + 3y$."
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Od zmnožka vsote in razlike izrazov $2a$ in $3$ odštej kvadrat izraza $a$. Zapiši izraz in ga poenostavi.",
+     "answer": "$(2a + 3)(2a - 3) - a^2 = 3a^2 - 9$",
+     "ways": [
+      {
+       "title": "Po korakih: razlika kvadratov",
+       "text": "Vsota: $2a + 3$, razlika: $2a - 3$, njun zmnožek: $(2a + 3)(2a - 3)$. Odštejemo $a^2$:\n\n$(2a + 3)(2a - 3) - a^2$.\n\nZmnožek vsote in razlike je razlika kvadratov: $(2a + 3)(2a - 3) = (2a)^2 - 3^2 = 4a^2 - 9$.\n\n$4a^2 - 9 - a^2 = 3a^2 - 9$."
+      },
+      {
+       "title": "Drugače: vsak člen z vsakim",
+       "text": "$(2a + 3)(2a - 3) = 4a^2 - 6a + 6a - 9 = 4a^2 - 9$, nato $4a^2 - 9 - a^2 = 3a^2 - 9$."
+      },
+      {
+       "title": "Preizkus s številom",
+       "text": "Za $a = 2$: $(4 + 3) \\cdot (4 - 3) - 4 = 7 - 4 = 3$ in $3 \\cdot 2^2 - 9 = 12 - 9 = 3$ ✓."
+      }
+     ],
+     "scoring": "1 t. za pravilno zapisan izraz $(2a + 3)(2a - 3) - a^2$, 1 t. za poenostavljen izraz $3a^2 - 9$.",
+     "mistake": "Napačno je $(2a)^2 = 2a^2$: kvadrirati je treba tudi koeficient, $(2a)^2 = 4a^2$."
+    },
+    {
+     "id": "b",
+     "points": 4,
+     "format": "open",
+     "text": "Reši enačbo in naredi preizkus:\n\n$(x - 3)^2 - (x + 2)(x - 1) = 3(x - 1) - 2(x + 1)$",
+     "answer": "$x = 2$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "Kvadrat dvočlenika: $(x - 3)^2 = x^2 - 6x + 9$.\n\nZmnožek dvočlenikov: $(x + 2)(x - 1) = x^2 - x + 2x - 2 = x^2 + x - 2$.\n\nLeva stran (pozor na minus pred oklepajem): $x^2 - 6x + 9 - (x^2 + x - 2) = x^2 - 6x + 9 - x^2 - x + 2 = -7x + 11$.\n\nDesna stran: $3(x - 1) - 2(x + 1) = 3x - 3 - 2x - 2 = x - 5$.\n\nKvadratna člena sta se odštela, enačba je linearna: $-7x + 11 = x - 5$.\n\n$-7x - x = -5 - 11$\n\n$-8x = -16$\n\n$x = 2$"
+      },
+      {
+       "title": "Drugače: vse na levo stran",
+       "text": "Odpravimo oklepaje in vse člene prenesemo na levo:\n\n$x^2 - 6x + 9 - x^2 - x + 2 - 3x + 3 + 2x + 2 = 0$\n\nUredimo: $x^2 - x^2 = 0$, $-6x - x - 3x + 2x = -8x$, $9 + 2 + 3 + 2 = 16$.\n\n$-8x + 16 = 0$, $8x = 16$, $x = 2$."
+      },
+      {
+       "title": "Preizkus",
+       "text": "Leva stran pri $x = 2$: $(2 - 3)^2 - (2 + 2)(2 - 1) = 1 - 4 = -3$.\n\nDesna stran: $3 \\cdot (2 - 1) - 2 \\cdot (2 + 1) = 3 - 6 = -3$.\n\nObe strani sta $-3$, zato je $x = 2$ rešitev ✓."
+      }
+     ],
+     "scoring": "1 t. za pravilno kvadriran dvočlenik, 1 t. za pravilno zmnožen in odštet zmnožek $(x + 2)(x - 1)$, 1 t. za rešitev $x = 2$, 1 t. za pravilen preizkus.",
+     "mistake": "Najpogostejša napaka je minus pred oklepajem: napačno $-(x^2 + x - 2) = -x^2 + x - 2$. Narobe je tudi $(x - 3)^2 = x^2 - 9$ (manjka člen $-6x$)."
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "intro": "Vseh $25$ učencev 9. b je glasovalo, kam naj gre zaključni izlet. Vsak je izbral natanko eno možnost.\n\n| Cilj izleta | Število učencev |\n|---|---|\n| Piran | 8 |\n| Bohinj | 6 |\n| Postojnska jama | 5 |\n| Pohorje | 4 |\n| Kranjska Gora | 2 |\n| **Skupaj** | **25** |",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko učencev je izbralo Bohinj ali Postojnsko jamo?",
+     "answer": "$11$ učencev",
+     "ways": [
+      {
+       "title": "Seštejemo",
+       "text": "Bohinj: $6$, Postojnska jama: $5$. Skupaj $6 + 5 = 11$ učencev."
+      },
+      {
+       "title": "Preizkus z ostalimi",
+       "text": "Od vseh odštejemo tiste, ki so izbrali kaj drugega: $25 - 8 - 4 - 2 = 11$ ✓."
+      }
+     ]
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Iz razreda naključno izberemo enega učenca. Kolikšna je verjetnost, da je glasoval za Piran? Zapiši z okrajšanim ulomkom.",
+     "answer": "$\\frac{8}{25}$",
+     "ways": [
+      {
+       "title": "Ugodni izidi : vsi izidi",
+       "text": "Ugodnih izidov je $8$ (učenci, ki so izbrali Piran), vseh izidov je $25$. Verjetnost je $P = \\frac{8}{25}$. Ulomka ni mogoče okrajšati ($8$ in $25$ nimata skupnega delitelja, večjega od $1$)."
+      },
+      {
+       "title": "Za preverjanje: decimalno",
+       "text": "$\\frac{8}{25} = \\frac{32}{100} = 0{,}32$; verjetnost je med $0$ in $1$, kot mora biti."
+      }
+     ],
+     "mistake": "Napačno je $\\frac{8}{17}$: v imenovalcu so vsi učenci, ne le tisti, ki niso izbrali Pirana."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Kolikšna je verjetnost, da naključno izbran učenec **ni** glasoval za Piran? Zapiši v odstotkih.",
+     "answer": "$68\\,\\%$",
+     "ways": [
+      {
+       "title": "Preštejemo",
+       "text": "Pirana ni izbralo $25 - 8 = 17$ učencev. $P = \\frac{17}{25} = \\frac{68}{100} = 68\\,\\%$."
+      },
+      {
+       "title": "Drugače: nasprotni dogodek",
+       "text": "Verjetnost nasprotnega dogodka je $1$ minus verjetnost dogodka: $1 - \\frac{8}{25} = 1 - 0{,}32 = 0{,}68 = 68\\,\\%$."
+      }
+     ],
+     "mistake": "Napačno je $17\\,\\%$: število učencev še ni odstotek, deliti je treba s $25$."
+    },
+    {
+     "id": "d",
+     "points": 3,
+     "format": "open",
+     "text": "Razred gre v Piran. Najem avtobusa stane $750$ €, strošek pa si enakomerno razdelijo vsi učenci razreda. Tik pred izletom se $5$ učencev izleta ne more udeležiti, zato si isti znesek razdelijo le tisti, ki gredo. Za koliko evrov se strošek na učenca poveča?",
+     "answer": "Za $7{,}50$ €.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** najem avtobusa $750$ €; prvotno $25$ učencev; na izlet gre $25 - 5 = 20$ učencev.\n\n**Iščemo:** za koliko evrov se poveča strošek na učenca.\n\nPrvotno na učenca: $750 : 25 = 30$, torej $30$ €.\n\nZdaj na učenca: $750 : 20 = 37{,}5$, torej $37{,}50$ €.\n\nPovečanje: $37{,}50 - 30 = 7{,}50$, torej $7{,}50$ €.\n\nStrošek na učenca se poveča za $7{,}50$ €."
+      },
+      {
+       "title": "Drugače: delež manjkajočih",
+       "text": "Manjkajočih $5$ učencev bi skupaj plačalo $5 \\cdot 30 = 150$ €. Ta znesek si zdaj razdeli $20$ učencev: $\\frac{150}{20} = 7{,}5$, zato vsak plača $7{,}50$ € več."
+      },
+      {
+       "title": "Preizkus",
+       "text": "$20 \\cdot 37{,}5 = 750$ ✓ in $25 \\cdot 30 = 750$ ✓ – v obeh primerih je zbran ves znesek."
+      }
+     ],
+     "scoring": "1 t. za prvotni strošek na učenca ($30$ €), 1 t. za novi strošek ($37{,}50$ €), 1 t. za odgovor: poveča se za $7{,}50$ €.",
+     "mistake": "Napačno je $750 : 5 = 150$ € kot odgovor: $150$ € je znesek, ki ga je treba na novo razdeliti, ne povečanje na učenca."
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "intro": "Okrasna vrtna hiška je iz betona in je polna (v njej ni votlin). Sestavljena je iz kocke z robom $20\\,\\mathrm{cm}$ in pravilne tristrane enakorobe prizme z robom $20\\,\\mathrm{cm}$, ki je »streha«. Prizma leži na kocki tako, da ena njena stranska ploskev natanko prekrije zgornjo ploskev kocke (skica).",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 -12 225 250\" font-family=\"sans-serif\" font-size=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><path d=\"M40,120 L140,120 L140,220 L40,220 Z\" fill=\"currentColor\" fill-opacity=\"0.10\"/><path d=\"M140,120 L180,90 L180,190 L140,220 Z\" fill=\"currentColor\" fill-opacity=\"0.18\"/><path d=\"M40,120 L90,33.4 L140,120 Z\" fill=\"currentColor\" fill-opacity=\"0.10\"/><path d=\"M140,120 L90,33.4 L130,3.4 L180,90 Z\" fill=\"currentColor\" fill-opacity=\"0.24\"/><path d=\"M80,90 L130,3.4 M80,90 L180,90 M80,90 L80,190 M80,190 L40,220 M80,190 L180,190 M40,120 L80,90\" stroke-dasharray=\"4 3\" stroke-width=\"1\" stroke-opacity=\"0.7\"/><text x=\"90\" y=\"236\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-size=\"12\">20 cm</text><text x=\"186\" y=\"145\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">20 cm</text><text x=\"166\" y=\"216\" fill=\"currentColor\" stroke=\"none\" font-size=\"12\">20 cm</text><text x=\"58\" y=\"74\" fill=\"currentColor\" stroke=\"none\" text-anchor=\"end\" font-size=\"12\">20 cm</text></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 6,
+     "format": "open",
+     "text": "Koliko litrov betona potrebujemo za eno hiško? Uporabi $\\sqrt{3} \\approx 1{,}73$ in rezultat zaokroži na dve decimalni mesti. Zapiši postopek.",
+     "answer": "približno $11{,}46\\,\\mathrm{l}$ betona",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** rob kocke $a = 20\\,\\mathrm{cm}$; prizma je pravilna tristrana in enakoroba, zato je njena osnovna ploskev enakostranični trikotnik s stranico $a = 20\\,\\mathrm{cm}$, višina prizme pa je $v = 20\\,\\mathrm{cm}$; $\\sqrt{3} \\approx 1{,}73$.\n\n**Iščemo:** prostornino hiške $V$ v litrih, zaokroženo na dve decimalni mesti.\n\n1. Prostornina kocke: $V_1 = a^3 = 20^3 = 8000\\,\\mathrm{cm}^3$.\n2. Višina enakostraničnega trikotnika: $v_t = \\frac{a\\sqrt{3}}{2} = \\frac{20 \\cdot 1{,}73}{2} = 17{,}3\\,\\mathrm{cm}$.\n3. Ploščina osnovne ploskve prizme: $O = \\frac{a \\cdot v_t}{2} = \\frac{20 \\cdot 17{,}3}{2} = 173\\,\\mathrm{cm}^2$.\n4. Prostornina prizme: $V_2 = O \\cdot v = 173 \\cdot 20 = 3460\\,\\mathrm{cm}^3$.\n5. Skupna prostornina: $V = V_1 + V_2 = 8000 + 3460 = 11\\,460\\,\\mathrm{cm}^3$.\n6. V litre: $1\\,\\mathrm{l} = 1\\,\\mathrm{dm}^3 = 1000\\,\\mathrm{cm}^3$, zato je $11\\,460\\,\\mathrm{cm}^3$ enako $11{,}46\\,\\mathrm{dm}^3$ oziroma $11{,}46\\,\\mathrm{l}$.\n\nZa eno hiško potrebujejo približno $11{,}46\\,\\mathrm{l}$ betona."
+      },
+      {
+       "title": "Drugače: z obrazcem za enakostranični trikotnik",
+       "text": "Ploščina enakostraničnega trikotnika: $O = \\frac{a^2\\sqrt{3}}{4} = \\frac{400 \\cdot 1{,}73}{4} = 100 \\cdot 1{,}73 = 173\\,\\mathrm{cm}^2$, zato $V_2 = 173 \\cdot 20 = 3460\\,\\mathrm{cm}^3$.\n\nVse skupaj lahko zapišemo z enim izrazom: $V = a^3 + \\frac{a^2\\sqrt{3}}{4} \\cdot a = a^3 \\cdot \\left(1 + \\frac{\\sqrt{3}}{4}\\right)$.\n\n$8000 \\cdot \\left(1 + \\frac{1{,}73}{4}\\right) = 8000 \\cdot 1{,}4325 = 11\\,460$, torej $11\\,460\\,\\mathrm{cm}^3$, kar je $11{,}46\\,\\mathrm{l}$."
+      },
+      {
+       "title": "Drugače: računamo v decimetrih",
+       "text": "$20\\,\\mathrm{cm} = 2\\,\\mathrm{dm}$, in ker je $1\\,\\mathrm{dm}^3 = 1\\,\\mathrm{l}$, na koncu ni treba pretvarjati.\n\nKocka: $2^3 = 8$, torej $8\\,\\mathrm{dm}^3$.\n\nPrizma: $O = \\frac{2^2 \\cdot 1{,}73}{4} = 1{,}73\\,\\mathrm{dm}^2$, $V_2 = 1{,}73 \\cdot 2 = 3{,}46\\,\\mathrm{dm}^3$.\n\nSkupaj: $8 + 3{,}46 = 11{,}46\\,\\mathrm{dm}^3$, to je $11{,}46\\,\\mathrm{l}$."
+      },
+      {
+       "title": "Preizkus smiselnosti",
+       "text": "Z natančnejšim $\\sqrt{3} \\approx 1{,}732$ je prostornina prizme $V_2 = \\frac{a^3\\sqrt{3}}{4} = 2000 \\cdot 1{,}732 = 3464\\,\\mathrm{cm}^3$, skupaj $11\\,464\\,\\mathrm{cm}^3$, zaokroženo spet $11{,}46\\,\\mathrm{l}$. Rezultat je smiseln: kocka sama ima $8\\,\\mathrm{l}$, streha pa manj kot pol kocke."
+      }
+     ],
+     "scoring": "1 t. za prostornino kocke ($8000\\,\\mathrm{cm}^3$), 1 t. za višino trikotnika ali pravilen obrazec za ploščino enakostraničnega trikotnika, 1 t. za ploščino osnovne ploskve ($173\\,\\mathrm{cm}^2$), 1 t. za prostornino prizme ($3460\\,\\mathrm{cm}^3$), 1 t. za skupno prostornino ($11\\,460\\,\\mathrm{cm}^3$), 1 t. za pretvorbo v litre in zaokrožen rezultat ($11{,}46\\,\\mathrm{l}$).",
+     "mistake": "Napačno je računati prostornino prizme kot pri kocki ($20 \\cdot 20 \\cdot 20$) ali pozabiti deliti ploščino trikotnika z $2$. Pogosta je tudi napaka pri pretvorbi: $1\\,\\mathrm{l}$ je $1000\\,\\mathrm{cm}^3$, ne $100\\,\\mathrm{cm}^3$."
+    }
+   ]
+  }
+ ]
+}

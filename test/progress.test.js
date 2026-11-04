@@ -116,6 +116,24 @@ test("review mixes due topics and pushes the next review out", () => {
   assert.ok(p.state(s.id, "MAT-OS-8/pitagorov-izrek").review_stage >= 1);
 });
 
+test("review and its badge cover only the selected subject (NAR also matches FIZ/KEM/BIO)", () => {
+  const { p, s, store } = setup();
+  for (const t of ["MAT-OS-8/pitagorov-izrek", "FIZ-OS-8/merske-napake"]) p.markMastered(s.id, t, "manual");
+  store.db.prepare("UPDATE topic_state SET review_due = datetime('now','-1 hour')").run();
+  assert.deepEqual(p.dueTopics(s.id, "MAT"), ["MAT-OS-8/pitagorov-izrek"]);
+  assert.deepEqual(p.dueTopics(s.id, "FIZ"), ["FIZ-OS-8/merske-napake"]);
+  assert.equal(p.dueTopics(s.id).length, 2);
+  assert.equal(p.dueTopics(s.id, "NAR").length, 1); // fizika iz 8. razreda šteje k naravoslovju
+  assert.equal(p.modes(s.id, "FIZ-OS-8").dueCount, 1);
+  assert.equal(p.pathView(s.id, "MAT-OS-8").dueCount, 1);
+  const mat = p.startReview(s.id, { subject: "MAT" });
+  assert.equal(p.getTask(mat.task.id).topic_id, "MAT-OS-8/pitagorov-izrek");
+  // Odprta serija drugega predmeta se ne nadaljuje: fizika dobi svojo.
+  const fiz = p.startReview(s.id, { subject: "FIZ" });
+  assert.equal(p.getTask(fiz.task.id).topic_id, "FIZ-OS-8/merske-napake");
+  assert.equal(p.startReview(s.id, { subject: "MAT" }).sessionId, mat.sessionId);
+});
+
 test("history window trims in chunks so the cached prefix stays stable", () => {
   const msgs = (n) => Array.from({ length: n }, (_, i) => ({ role: i % 2 ? "assistant" : "user", content: String(i) }));
   assert.equal(windowHistory(msgs(19), 10).length, 19); // 10 izmenjav

@@ -1,7 +1,7 @@
 /* Učbenik in interaktivne demonstracije. Barve samo iz spremenljivk v :root. */
 
-.textbook { --demo-a: #e8833a; --demo-b: #2f9e8f; --demo-c: #7b61d1; }
-.dark .textbook { --demo-a: #f2a061; --demo-b: #4cc3b2; --demo-c: #a58ff0; }
+.textbook, .lab-view { --demo-a: #e8833a; --demo-b: #2f9e8f; --demo-c: #7b61d1; }
+.dark .textbook, .dark .lab-view { --demo-a: #f2a061; --demo-b: #4cc3b2; --demo-c: #a58ff0; }
 
 /* Ikone v učbeniku. Ne KaTeX: njegovi SVG-ji (znak korena s črto, puščice, oklepaji) imajo svojo širino (j 2026-10-31). */
 .textbook svg:not(.demo-svg):not(.katex svg) { width: 1.1em; height: 1.1em; vertical-align: -0.15em; margin-right: 6px; }
@@ -109,7 +109,8 @@
 /* Lekcija po korakih */
 .tb-mode-btn { margin: 0 0 4px; font-size: 0.9rem; }
 .tb-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
-.tb-tools .tb-mode-btn { margin: 0; padding-inline: 4px; }
+.tb-tools .tb-mode-btn, .tb-tools .tb-report-btn { margin: 0; padding-inline: 4px; }
+.tb-tools + .report-box { margin-bottom: 12px; }
 .tb-gradiva { display: contents; }
 .tb-gr-btn { background: none; border: 0; padding: 0; font: inherit; font-size: 0.92rem; font-weight: 600; cursor: pointer; min-height: 0; }
 .tb-gr-btn[aria-pressed="true"] { text-decoration: underline; }
@@ -713,6 +714,45 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo-svg .lab-tit-drop { fill: #bfe0f7; stroke: #5d8db5; stroke-width: 0.8; }
 .demo-svg .lab-tit-sol { stroke: #8aa3bb; stroke-width: 0.7; }
 
+
+/* toplota (lab-grelnik, lab-mesanje, lab-faze, lab-ohlajanje; public/sim/lab-toplota.js): isti okvir kot titracija in elektrika */
+.demo:is(.demo-lab-grelnik, .demo-lab-mesanje, .demo-lab-faze, .demo-lab-ohlajanje) { min-width: 0; max-width: 100%; container: labtit / inline-size; }
+.demo:is(.demo-lab-grelnik, .demo-lab-mesanje, .demo-lab-faze, .demo-lab-ohlajanje) :is(button, select, .seg-btn, .demo-check, .layer-chip) { min-height: 44px !important; }
+.demo:is(.demo-lab-grelnik, .demo-lab-mesanje, .demo-lab-faze, .demo-lab-ohlajanje) .seg-btn { min-width: 44px; }
+.lab-bench:has(> :is(.demo-lab-grelnik, .demo-lab-mesanje, .demo-lab-faze, .demo-lab-ohlajanje)) { overflow-x: clip; }
+.demo:is(.demo-lab-grelnik, .demo-lab-mesanje, .demo-lab-faze, .demo-lab-ohlajanje) .lab-meters { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.demo:is(.demo-lab-faze, .demo-lab-ohlajanje) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; } /* dolga imena (»porcelanska skodelica s pokrovčkom«, »Ljubljana (295 m), 97,8 kPa«) */
+.lab-top-calc { font-size: 0.92rem; overflow-wrap: anywhere; }
+.lab-top-calc p { margin: 4px 0; }
+.lab-top-calc ul { margin: 4px 0; padding-inline-start: 1.2em; color: var(--muted); }
+.lab-top-warn { padding: 6px 10px; border-radius: 8px; border-inline-start: 4px solid var(--demo-a); background: var(--surface-2); }
+@container labtit (max-width: 600px) { .demo-lab-mesanje .lab-table { font-size: 0.8rem; } .demo-lab-mesanje .lab-table :is(th, td) { padding: 6px 4px; white-space: normal; min-width: 3.2em; } }
+.demo-svg .lab-top-water { stroke: none; opacity: 0.9; }
+.demo-svg .lab-top-surface { stroke: #6b9cc3; stroke-width: 1.2; }
+.demo-svg .lab-top-bubble { fill: #fff; stroke: #6b9cc3; stroke-width: 0.8; }
+.demo-svg .lab-top-steam { fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; }
+.demo-svg .lab-top-probe { stroke: #9aa3ad; stroke-width: 3.2; stroke-linecap: round; }
+.demo-svg .lab-top-handle { fill: #3f4752; }
+.demo-svg .lab-top-cable { fill: none; stroke: #3f4752; stroke-width: 2; }
+.demo-svg .lab-top-coil { fill: none; stroke: #8d96a3; stroke-width: 3.2; stroke-linecap: round; }
+.demo-svg .lab-top-coil.burnt { stroke: #2b2420; }
+.demo-svg .lab-top-lid { fill: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); stroke: var(--muted); stroke-width: 1.2; }
+.demo-svg .lab-top-rod { stroke: #a9c7de; stroke-width: 4; stroke-linecap: round; opacity: 0.9; }
+.demo-svg .lab-top-foam { fill: #f6f4ee; fill-opacity: 0.55; stroke: #b9b3a3; stroke-width: 1.5; stroke-linejoin: round; }
+.demo-svg .lab-top-foam-in { fill: none; stroke: #d8d2c3; stroke-width: 1; stroke-dasharray: 2 3; }
+.demo-svg .lab-top-plate { fill: #4a4f57; }
+.demo-svg .lab-top-plate-top { fill: #8a9099; }
+.demo-svg .lab-top-knob { fill: #d6dae0; stroke: #2f343b; stroke-width: 1.5; }
+.demo-svg .lab-top-ice { fill: #eef7fd; stroke: #8fb8d6; stroke-width: 1; opacity: 0.95; }
+.demo-svg .lab-top-salt { fill: #fff; stroke: #9aa3ad; stroke-width: 0.6; }
+.demo-svg .lab-top-thermos { fill: #b8c0c8; stroke: #6f7882; stroke-width: 1.5; }
+.demo-svg .lab-top-stopper { fill: #3f4752; }
+.demo-svg .lab-top-tea { fill: #b5712c; opacity: 0.85; }
+.demo-svg .lab-top-tea-in { opacity: 0.35; }
+.demo-svg .lab-top-porc { fill: #f7f5f0; stroke: #9a948a; stroke-width: 1.5; }
+.demo-svg .lab-top-porc-h { fill: none; stroke: #9a948a; stroke-width: 6; stroke-linecap: round; }
+.demo-svg .lab-top-enamel { fill: #4f7fb0; stroke: #2d5276; stroke-width: 1.5; }
+.demo-svg .lab-top-enamel-h { fill: none; stroke: #2d5276; stroke-width: 6; stroke-linecap: round; }
 
 /* kratek video iz simulacije (public/gradiva.js) */
 .gr-video { width: min(760px, calc(100vw - 16px)); max-height: calc(100dvh - 16px); padding: 12px 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text); overflow-y: auto; }

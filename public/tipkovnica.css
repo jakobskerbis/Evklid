@@ -108,6 +108,7 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
   .tk-k, .tk-chip, .tk-subtab, .tk-tab, .tk-pop button { border: 1px solid ButtonText; forced-color-adjust: auto; }
   .tk-tab.on, .tk-subtab.on, .tk-k.shift.on { outline: 2px solid Highlight; }
   .tk-k.go { background: ButtonText; color: ButtonFace; }
+  .tk-prev { border: 1px solid ButtonText; }
 }
 .tk-say { inset-inline: 8px; bottom: calc(100% + 6px); padding: 8px 12px; font-size: 0.86rem; color: var(--text); }
 .tk-chip.paste { font-weight: 800; color: var(--accent); }
@@ -125,4 +126,31 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
   .tk-rows[data-layer="abc"] .tk-k:not(.fn):not(.go):not(.space) { font-size: 1.5rem; }
   .tk:has(.tk-rows[data-layer="abc"]) .tk-hide { position: static; min-height: 44px; }
   .tk-tab { font-size: 1rem; }
+}
+/* vrstice zavihkov, skupin in čipov: brez drsnika (j, 2. 11.); bledenje roba (drsniki.css) ostane kot namig */
+.tk .drs[class] { background-image: none; scrollbar-width: none; }
+.tk :is(.tk-ctx, .tk-tablist, .tk-sub)::-webkit-scrollbar { display: none; }
+@media (pointer: coarse) { .tk .tk-ctx { padding-bottom: 0; } }
+/* animacije kot Gboard (j, 3. 11.), v Evklidovi pisavi in barvah: povečana tipka nad prstom, tipka ob
+   pritisku le potemni (brez pogrezanja), različice in plošča se pokažejo z blagim vzponom */
+.tk-prev { position: absolute; z-index: 4; display: grid; place-items: center; pointer-events: none; background: var(--tk-key, var(--surface)); color: var(--tk-ink, var(--text)); font: 500 1.9rem var(--font); border-radius: 10px; box-shadow: 0 4px 14px color-mix(in srgb, #000 22%, transparent); animation: tk-prev-in 60ms ease-out; }
+.tk-prev.out { opacity: 0; transition: opacity 70ms linear; }
+@keyframes tk-prev-in { from { opacity: 0; transform: translateY(6px) scale(0.85); } }
+.tk-pop { animation: tk-pop-in 90ms ease-out; transform-origin: 50% 100%; }
+@keyframes tk-pop-in { from { opacity: 0; transform: scale(0.9); } }
+.tk:not([hidden]) { animation: tk-up 160ms cubic-bezier(0.2, 0, 0, 1); }
+@keyframes tk-up { from { transform: translateY(24px); opacity: 0.6; } }
+@media (pointer: coarse) {
+  .tk-rows[data-layer="abc"] .tk-k.down { transform: none; filter: brightness(0.86); transition: filter 0s; }
+  .tk-rows[data-layer="abc"] .tk-k { transition: filter 120ms ease-out; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-prev, .tk-pop, .tk:not([hidden]) { animation: none; }
+}
+/* drsenje po črkah: sled prsta (barva poudarka, v zgodovinskih slogih poudarek menija) bledi ~200 ms po dvigu */
+.tk-trail { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+.tk-trail.out { opacity: 0; transition: opacity 200ms linear; }
+.tk-rows[data-layer="abc"] { touch-action: none; }
+@media (prefers-reduced-motion: reduce) {
+  .tk-trail.out { transition: none; }
 }

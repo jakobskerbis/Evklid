@@ -39,7 +39,14 @@ export function pageLines(page) {
   return lines.sort((a, b) => a.top - b.top || a.x - b.x);
 }
 
-const body = (page, l) => l.top >= HEAD - 10 && l.bottom <= page.height - HEAD + 25;
+// Vrstice, ki niso del naloge, tudi kadar padejo v telo strani: številka strani (»5«, »5/16«, »Stran 5«) blizu
+// vrha ali dna, črtna koda (»*M26140111*«), koda pole (»M261-401-1-1«), »Obrnite list.«, »Prazna stran«.
+const EDGE = HEAD + 45;
+const PAGE_NO = /^(?:stran\s*)?\d{1,3}(?:\s*(?:\/|od)\s*\d{1,3})?$/i;
+const CHROME = [/^\*[A-Z0-9]{5,}\*$/, /^[A-Z]\d{3}-\d{3}-\d-\d\b/, /^obrnite list\.?$/i, /^prazna stran$/i, /^tukaj ne pi[sš]i/i, /^skupno število točk/i];
+export const isChrome = (page, l) =>
+  CHROME.some((re) => re.test(l.text)) || (PAGE_NO.test(l.text) && (l.top < EDGE || page.height - l.bottom < EDGE));
+const body = (page, l) => l.top >= HEAD - 10 && l.bottom <= page.height - HEAD + 25 && !isChrome(page, l);
 
 // Levi rob številk: najpogostejši x kandidatov v levi petini strani (prek vse pole).
 function marginX(pages, linesOf) {
@@ -112,7 +119,7 @@ export function textInBox(page, box) {
   return pageLines(page)
     .filter((l) => {
       const mid = (l.top + l.bottom) / 2;
-      return mid >= box.y0 && mid <= box.y1 && l.x >= box.x0 - 4 && l.x <= box.x1;
+      return mid >= box.y0 && mid <= box.y1 && l.x >= box.x0 - 4 && l.x <= box.x1 && !isChrome(page, l);
     })
     .map((l) => l.text)
     .join("\n")

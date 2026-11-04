@@ -22,7 +22,7 @@ export const ZNAKI = [
   "circle-check", "circle-x", "circle-arrow-up", "info", "circle-help", "lock", "unlock", "pin", "pin-off", "link", "log-out",
   "download", "cloud-upload", "save", "image-down", "folder-open", "share", "wifi-off", "volume-2", "volume-x", "sliders-horizontal",
   "camera", "keyboard", "mic", "eraser", "text", "image", "smartphone", "monitor-play", "sun", "moon", "sun-moon", "user-plus", "users",
-  "badge-check", "zap", "heart", "bell", "wallet", "coins", "gem", "spade", "bomb", "venetian-mask",
+  "badge-check", "zap", "heart", "bell", "wallet", "coins", "gem", "spade", "bomb", "venetian-mask", "ruler-dimension-line", "train-front",
   // grafični kalkulator (orodja in vrste funkcij)
   "house", "table", "wrench", "activity", "chart-area", "chart-spline", "flower", "infinity", "spline", "square-function",
   // logotip
@@ -154,6 +154,8 @@ const SURF = {
   renesansa: [p("M19 17V5a2 2 0 0 0-2-2H4") + p("M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"), 12.5, 10], // pergament
   bagdad: [p("M5 21V10.5C5 7 8 4.5 12 3c4 1.5 7 4 7 7.5V21z"), 12, 14], // list s šilastim lokom
   indija: [rect(4, 7, 16, 14, 2) + p("M10 7V3h4v4") + c(12, 5, 0.4), 12, 14], // takhti (lesena šolska tablica z ročajem) // palmov list z luknjo za vrvico
+  // list papirusa pod zvitkom: zvitek z okroglima, navitima koncema (da ni videti kot škatla za arhiv)
+  egipt: [p("M5 2.75h14M5 7.25h14") + c(5, 5, 2.25) + c(19, 5, 2.25) + dot(5, 5, 0.55) + dot(19, 5, 0.55) + p("M5 7.25V19.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V7.25"), 12, 14.25],
 };
 const onSurf = (s, mark) => SURF[s][0] + mark(SURF[s][1], SURF[s][2]);
 
@@ -404,6 +406,74 @@ export function tabele() {
       vrc: [c(12, 15, 6) + p("M9.5 9.5V6h5v3.5") + p("M8.5 4h7"), ["droplet"]],
       zid: [lucide("brick-wall"), ["blocks"]],
     },
+    egipt: {
+      // inštruktor: nizka piramida z robom (osnovnica širša od višine, da ni videti kot ⚠) na tleh in iskrica
+      // (brez verskih simbolov: ne oko, ankh, skarabej, sončni disk)
+      piramida: [p("M2 20h20") + p("M3.5 20L11 10.5 18.5 20") + p("M11 10.5l3 9.5") + sparkle(19, 5, 3), ["sparkles", "message-circle", "bot"]],
+      zemljevid: [scrollMap((x, y) => p(`M${x - 2.6} ${y + 1.8}L${x} ${y - 2.4}L${x + 2.6} ${y + 1.8}z`)), ["map"]],
+      // zvitek papirusa: dva zvitka in list med njima
+      zvitek: [rect(3, 4, 4, 16, 2) + rect(17, 4, 4, 16, 2) + p("M7 5.5h10M7 18.5h10") + mk.lines(12, 12, 2.75), ["book-open"]],
+      knjiznica: [lucide("library-big"), ["library"]],
+      karte: [cards, ["layers"]],
+      oko: [scanFrame + eye, ["scan-line", "scan-text"]],
+      // množenje s podvajanjem (Rhindov papirus): vrstice z 1, 2 in 4 kamenčki, plus in črta vsote (brez okvirja, da ni kocka)
+      podvajanje: [dot(5, 5, 1.6) + dot(5, 10, 1.6) + dot(9.5, 10, 1.6) + dot(5, 15, 1.6) + dot(9.5, 15, 1.6) + dot(14, 15, 1.6) + dot(18.5, 15, 1.6) + p("M3 19.5h18") + p("M16.5 4v6M13.5 7h6"), ["calculator"]],
+      kolajna: [ribbonMedal((x, y) => p(`M${x - 2.6} ${y + 1.8}L${x} ${y - 2.4}L${x + 2.6} ${y + 1.8}z`)), ["medal"]],
+      rozeta: [petals(12, 9.5, 6, 2.2, 7.5, 1.8) + c(12, 9.5, 2.2) + p("M9.5 16l-1.5 5 3-1.2M14.5 16l1.5 5-3-1.2"), ["award"]],
+      // čaša v obliki lotosovega cveta na nogi
+      kelih: [p("M5.5 3.5h13c0 5.5-2.9 9-6.5 9s-6.5-3.5-6.5-9z") + p("M9 4c.4 3.4 1.5 6.2 3 8.3M15 4c-.4 3.4-1.5 6.2-3 8.3", thin) + p("M12 12.5V18") + p("M8 21h8l-1.5-3h-5z"), ["trophy"]],
+      // igralna deska s polji in dvema figurama
+      deska: [rect(2.5, 7.5, 19, 9, 1.5) + p("M2.5 12h19M8.83 7.5v9M15.17 7.5v9") + dot(5.67, 9.75, 1.3) + dot(18.33, 14.25, 1.3), ["gamepad-2", "joystick"]],
+      kocka: [lucide("dice-4"), ["dices"]],
+      koledar: [calFrame((x, y) => p(`M${x - 2.6} ${y + 1.8}L${x} ${y - 2.4}L${x + 2.6} ${y + 1.8}z`)), ["calendar", "calendar-days", "calendar-clock"]],
+      // tri piramide, vsaka višja (kot v Gizi, a naraščajoče)
+      piramide: [p("M2.5 20l3-5.5 3 5.5M8.5 20L12 11l3.5 9M15.5 20l3-15 3 15") + p("M2 20h20"), ["chart-column"]],
+      klas: [lucide("wheat"), ["trending-up"]],
+      zobnik: [gear(12, 12, 9, 9.5, 7.2) + c(12, 12, 3), ["settings"]],
+      // obraz z lasuljo do ramen
+      portret: [p("M7 14V8.5a5 5 0 0 1 10 0V14z") + c(12, 9.4, 2.7) + p("M4.5 21c0-3.5 3-6 7.5-6s7.5 2.5 7.5 6"), ["user"]],
+      zvezda: [star(12, 12, 5, [10, 4]), ["star"]],
+      ogenj: [lucide("flame-kindling"), ["flame"]],
+      // glinena oljenka (skodelica s plamenom)
+      svetilka: [p("M3 13h18c-1 4.5-5 7-9 7s-8-2.5-9-7z") + p("M12 3c2 2.8 3 4.3 3 6a3 3 0 0 1-6 0c0-1.7 1-3.2 3-6z"), ["lightbulb"]],
+      lok: [lucide("bow-arrow"), ["target"]],
+      zastava: [lucide("flag-triangle-right"), ["flag"]],
+      sigma: [onSurf("egipt", mk.sigma), ["sigma"]],
+      puscica: [arrow, ["send"]],
+      // stranice Keopsove piramide kažejo proti štirim smerem neba
+      vetrovnica: [c(12, 12, 9.5) + star(12, 12, 4, [7.5, 2]), ["compass"]],
+      kolo: [wheel(4, true), ["repeat"]],
+      naloge: [onSurf("egipt", mk.check), ["clipboard-check", "list-checks"]],
+      mnenje: [onSurf("egipt", mk.heart), ["message-square-heart"]],
+      besedilo: [onSurf("egipt", mk.lines), ["file-text"]],
+      edikt: [onSurf("egipt", (x, y) => p(`M${x - 4.5} ${y - 1.75}h3.5M${x + 1} ${y - 1.75}h3.5M${x - 4.5} ${y + 1.75}h3.5M${x + 1} ${y + 1.75}h3.5`)), ["newspaper"]],
+      // trstno pero pisarja
+      trst: [p("M3.5 20.5l1-4L16 5a2 2 0 0 1 3 3L7.5 19.5z") + p("M4.5 16.5l3 3M7 17l3.5-3.5"), ["pencil", "notebook-pen", "feather"]],
+      labirint: [p("M4 4h16v16H4V8h12v8H8v-4h4"), ["puzzle"]],
+      // dvorana s stebri (venec, trije stebri s kapiteli, podstavek)
+      dvorana: [p("M3 3.5h18l-1.5 3h-15z") + p("M6.5 6.5v12.5M12 6.5v12.5M17.5 6.5v12.5") + p("M5 6.5l1.5 2 1.5-2M10.5 6.5l1.5 2 1.5-2M16 6.5l1.5 2 1.5-2", thin) + p("M3 20.5h18"), ["graduation-cap", "castle"]],
+      skrinja: [chest, ["gift"]],
+      bucka: [lucide("flask-round"), ["flask-conical"]],
+      atomi: [atoms, ["atom"]],
+      globus: [globe, ["globe"]],
+      // vodna ura (klepsidra) je egipčanska
+      klepsidra: [clepsydra, ["timer"]],
+      // pisarjeva paleta: dve jamici za črnilo in reža za trstike
+      paleta: [rect(2.5, 7.5, 19, 9, 2) + dot(6.5, 12, 1.6) + dot(10.5, 12, 1.6) + p("M14 12h4"), ["palette", "paintbrush", "grid-2x2"]],
+      // sedemkraka (šestkraka bi pri 16 px lahko brala kot heksagram)
+      utrinek: [star(12, 12, 7, [9.5, 4]) + dot(4, 4) + dot(20, 4) + dot(20, 20) + dot(4, 20), ["party-popper"]],
+      // libela gradbenikov: A-okvir z grezilom
+      libela: [p("M5 20.5L12 4l7 16.5") + p("M8.2 13h7.6") + p("M12 4v11", thin) + dot(12, 16.3, 1.5), ["ruler"]],
+      lonec: [lucide("cooking-pot"), ["chef-hat"]],
+      // ladja na Nilu s kvadratnim jadrom
+      ladja: [p("M2 14h20c-1.5 3.5-5 5.5-10 5.5S3.5 17.5 2 14z") + p("M12 14V3") + p("M7 4h10l-1 7.5H8z"), ["car"]],
+      riba: [lucide("fish"), ["paw-print"]],
+      // hekat: košara za merjenje žita
+      hekat: [p("M5 11h14l-1.5 9h-11z") + p("M6 11c1.2-3.5 3.5-5 6-5s4.8 1.5 6 5") + p("M5.8 15.5h12.4", thin), ["shopping-basket"]],
+      grozdje: [lucide("grape"), ["cherry"]],
+      vrc: [c(12, 15, 6) + p("M9.5 9.5V6h5v3.5") + p("M8.5 4h7"), ["droplet"]],
+      zid: [lucide("brick-wall"), ["blocks"]],
+    },
   };
   return S;
 }
@@ -416,6 +486,7 @@ const OKVIR = {
   renesansa: { pero: [1, -0.5, -0.25], portolan: [1, -0.25], kodeks: [1, -0.5], lovor: [0.88, 0, 0.5], kolajna: [0.95, 0, -0.5], krona: [0.9, 0, -0.25], skakac: [0.9, 0.25, -0.5], arkade: [0.9, -0.5, -1.5], vzhod: [0.9, 0, -0.5], zobnik: [0.95], kameja: [0.9], zvezda: [0.9], bakla: [0.9, 0, -0.25], sveca: [0.97, 0, -0.25], tarca: [1, 0.75, -0.75], prapor: [1, 0, 1.5], sigma: [0.9], pismo: [0.9], vetrovnica: [0.9], orbita: [0.9], naloge: [0.9], mnenje: [0.9, 0, 0.25], besedilo: [0.9], univerza: [0.9, 0, -0.25], bucka: [0.9, 0, -0.25], armila: [1, 0, 0.25], globus: [1, -1.25], "pescena-ura": [0.9], paleta: [0.9, 0.25, 0.25], maske: [0.9, -0.25, 0.25], knjiznica: [1, 0.75], kotnik: [1, 1, -1], karte: [1, 0.25, -0.75], grad: [0.9, 0, -0.25], lonec: [0.9, 0, -0.25], ladja: [0.9], pes: [0.93, 0, 0.25], tehtnica: [0.9, 0, -0.25], jabolko: [0.9, 0, -0.25], kaplje: [0.95, 0, -0.75] },
   bagdad: { zemljevid: [1, -0.25, 0.25], kolajna: [0.95, 0, -0.5], rozeta: [0.97], krona: [0.9, 0, -0.25], trdnjava: [0.9, 0, -0.25], loki: [0.9, -0.5, -1.5], vzhod: [0.9, 0, -0.5], zobnik: [0.97], portret: [1, 0, -0.5], zvezda: [0.95], ogenj: [0.9, 0, -0.5], svecnik: [0.95, 0, -0.5], tarca: [1, 0.75, -0.75], zastava: [0.95, 0.5], sigma: [1, 0, -0.5], golob: [0.9, -0.25, -0.25], vetrovnica: [0.95], noria: [1, -0.25, 0.25], "pescena-ura": [0.9], naloge: [1, 0, -0.5], mnenje: [1, 0, -0.5], besedilo: [1, 0, -0.5], trstika: [1, 0.75, -0.75], girih: [0.97], vrata: [1, 0, -2], alembik: [0.95, 0.25, -1.5], armila: [1, 0, 0.25], globus: [1, -1.25], knjiznica: [1, 0.75], kvadrant: [1, 0.5, -0.5], karte: [1, 0.25, -0.75], lonec: [0.9, 0, -0.25], ladjica: [0.9, 0.25, -0.5], macka: [1, 0, 0.25], tehtnica: [0.9, 0, -0.25], granatno: [1, 0, -0.5], vodnjak: [1, 0, -2.25] },
   indija: { sunja: [1, -1.25, 0.25], zemljevid: [1, -0.25, 0.25], "palmovi-listi": [0.95, 0.25], knjiznica: [1, 0.75], karte: [1, 0.25, -0.75], kolajna: [0.95, 0, -0.5], rozeta: [0.95, 0, 0.5], krona: [0.9, 0, -0.25], kmet: [0.9, 0, -0.5], pasa: [0.9], stopnice: [1, -0.25, -1.5], poganjek: [1, -0.25, -0.25], zobnik: [0.9], portret: [1, 0, -1.25], zvezda: [0.9], ogenj: [0.9, 0, -0.5], dija: [1, 0, -0.25], zastava: [0.9, 0.5, 0.5], sigma: [1, 0, -0.25], puscica: [0.95, 0.5], roza: [0.95], orbita: [0.9], naloge: [1, 0, -0.25], mnenje: [1, 0, -0.25], besedilo: [1, 0, -0.25], edikt: [1, 0, -0.25], pisalo: [1, 0.25, -0.25], paviljon: [1, 0, -0.5], alembik: [0.95, 0.25, -1.5], atomi: [1.1, 0, -0.75], globus: [1, -1.25], klepsidra: [1, 0, -0.25], rangoli: [0.9], utrinek: [0.9], kotnik: [1, 1, -1], lonec: [0.9, 0, -0.25], ladja: [0.9], ptica: [0.9, -0.25, -0.25], kovanci: [0.9], mango: [0.96, -0.25, 0.5], vrc: [1, 0, -0.25] },
+  egipt: { piramida: [0.9, -0.5, -0.5], zemljevid: [1, -0.25], knjiznica: [1, 0.75], karte: [1, 0.25, -0.75], podvajanje: [1, 0, -0.5], kolajna: [0.95, 0, -0.5], rozeta: [0.95, 0, 0.5], kelih: [1, 0, 0.25], deska: [0.95], piramide: [0.9, -0.5, -1.75], klas: [0.9], zobnik: [0.95], zvezda: [0.95, 0, 0.5], ogenj: [0.9, 0, -0.5], svetilka: [1, 0, -0.25], zastava: [0.9, 0.5, 0.5], sigma: [0.97, 0, 0.5], puscica: [0.95, 0.5], vetrovnica: [0.95], kolo: [1, -0.25, 0.25], naloge: [0.97, 0, 0.75], mnenje: [0.97, 0, 0.5], besedilo: [0.97, 0, 0.5], edikt: [0.97, 0, 0.5], trst: [1, 0.75, -0.75], dvorana: [1, 0, 0.25], bucka: [0.9, 0, -0.25], atomi: [1.1, 0, -0.75], globus: [1, -1.25], klepsidra: [1, 0, -0.25], paleta: [0.95], utrinek: [0.97, 0, 0.25], libela: [1, 0, -0.5], lonec: [0.9, 0, -0.25], ladja: [0.9, 0, 0.25], riba: [0.9, 0.25], hekat: [1.18, 0, -1.5], grozdje: [0.9], vrc: [1, 0, -0.25] },
 };
 
 export function sestavi(id) {
