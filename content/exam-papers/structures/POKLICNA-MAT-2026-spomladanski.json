@@ -1,0 +1,187 @@
+{
+ "id": "POKLICNA-MAT-2026-spomladanski",
+ "points": 70,
+ "maxListed": 80,
+ "minutes": 120,
+ "tools": "Nalivno pero ali kemični svinčnik, svinčnik (za grafe, skice in risbe), radirka, računalo in geometrijsko orodje; kandidat dobi dva konceptna lista in zbirko formul v poli. Pot do rezultata mora biti zapisana z vmesnimi računi.",
+ "sections": {
+  "A": "1. del: 11 nalog po 4–6 točk (skupaj 50 točk), rešiti je treba vse; enostopenjske naloge brez delov",
+  "B": "2. del: 3 strukturirane naloge po 10 točk z deli 1.1, 1.2 …; kandidat izbere in reši dve (ocenita se dve, skupaj 20 točk), zato je vsota točk vseh nalog 80, dosegljivih pa 70"
+ },
+ "choose": {
+  "section": "B",
+  "solve": 2,
+  "of": 3,
+  "points": 20
+ },
+ "tasks": [
+  {
+   "section": "A",
+   "n": 1,
+   "points": [
+    4
+   ],
+   "format": [
+    "table"
+   ],
+   "topic": "v preglednico zapisati decimalni zapis štirih števil (ulomki, negativni ulomek, izraz z ulomkom in decimalnim številom) in jih nato urediti po velikosti z znaki <",
+   "figure": "preglednica »število – decimalni zapis« in vrsta okvirčkov za urejanje"
+  },
+  {
+   "section": "A",
+   "n": 2,
+   "points": [
+    4
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "deljenje z ostankom: največje trimestno naravno število, ki da pri deljenju z danim dvomestnim številom dani ostanek"
+  },
+  {
+   "section": "A",
+   "n": 3,
+   "points": [
+    4
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "kvadrat z dano stranico in včrtan krog: obseg kvadrata ter obseg in ploščina kroga",
+   "figure": "skica kvadrata z včrtanim krogom"
+  },
+  {
+   "section": "A",
+   "n": 4,
+   "points": [
+    4
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "kvadratno funkcijo v splošni obliki (vodilni koeficient različen od 1) zapisati v temenski obliki"
+  },
+  {
+   "section": "A",
+   "n": 5,
+   "points": [
+    4
+   ],
+   "format": [
+    "fill"
+   ],
+   "topic": "iz grafa polinoma četrte stopnje vpisati znake =, >, < za vodilni koeficient, prosti člen in vrednost odvoda v dani točki ter zapisati interval, kjer je polinom pozitiven",
+   "figure": "graf polinoma četrte stopnje v mreži"
+  },
+  {
+   "section": "A",
+   "n": 6,
+   "points": [
+    4
+   ],
+   "format": [
+    "choice"
+   ],
+   "topic": "v preglednici poenostaviti izraze in v vsaki vrstici obkrožiti pravilni rezultat med tremi ponujenimi; prva vrstica (potence z isto osnovo) je rešen primer, ocenijo se štiri: kvadrat binoma, koren produkta potenc dveh spremenljivk, kvocient sinusa dvojnega kota in sinusa, odpravljanje oklepajev v linearnem izrazu",
+   "figure": "preglednica izrazov s tremi ponujenimi rešitvami v vsaki vrstici"
+  },
+  {
+   "section": "A",
+   "n": 7,
+   "points": [
+    4
+   ],
+   "format": [
+    "construct"
+   ],
+   "topic": "narisati graf sinusne funkcije na intervalu od −2π do 2π in izračunati natančno vrednost funkcije pri negativnem kotu, ki je večkratnik π/4",
+   "figure": "koordinatni sistem z abscisno osjo, označeno v večkratnikih π"
+  },
+  {
+   "section": "A",
+   "n": 8,
+   "points": [
+    5
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "besedilna naloga z razdelitvijo zneska med tri osebe v danem razmerju; dana sta razlika največjega in najmanjšega deleža ter vsota dveh deležev, izračunati celoten znesek"
+  },
+  {
+   "section": "A",
+   "n": 9,
+   "points": [
+    5
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "pravilna štiristrana prizma z danim osnovnim robom in vsoto dolžin vseh robov: izračun višine in ploščine plašča"
+  },
+  {
+   "section": "A",
+   "n": 10,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "racionalna funkcija (linearni števec in imenovalec): ničla, pol, začetna vrednost, enačba vodoravne asimptote in graf",
+   "figure": "prazen koordinatni sistem za risanje grafa"
+  },
+  {
+   "section": "A",
+   "n": 11,
+   "points": [
+    6
+   ],
+   "format": [
+    "open"
+   ],
+   "topic": "paralelogram z danima stranicama in ostrim kotom: skica, ploščina, kot pri sosednjem oglišču in dolžina daljše diagonale (kosinusni izrek)"
+  },
+  {
+   "section": "B",
+   "n": 1,
+   "points": [
+    4,
+    6
+   ],
+   "format": [
+    "construct",
+    "open"
+   ],
+   "topic": "polinom četrte stopnje v razcepljeni obliki z dvojno ničlo: 1) ničle, začetna vrednost in graf; 2) iz razvite oblike izračunati odvod in zapisati enačbo tangente v točki z dano absciso",
+   "figure": "prazen koordinatni sistem za risanje grafa"
+  },
+  {
+   "section": "B",
+   "n": 2,
+   "points": [
+    7,
+    3
+   ],
+   "format": [
+    "table",
+    "open"
+   ],
+   "topic": "statistika: frekvenčna preglednica s petimi razredi in nekaj manjkajočimi podatki (frekvence, sredine razredov, relativne frekvence): 1) iz relativne frekvence izračunati število vseh enot, dopolniti preglednico in izračunati aritmetično sredino iz grupiranih podatkov; 2) verjetnost, da so vsi trije naključno izbrani iz zgornjih razredov (kombinacije)",
+   "figure": "frekvenčna preglednica z delno praznimi celicami"
+  },
+  {
+   "section": "B",
+   "n": 3,
+   "points": [
+    6,
+    4
+   ],
+   "format": [
+    "open",
+    "open"
+   ],
+   "topic": "1) rešiti tri enačbe: logaritemsko z osnovo 2, kvadratno (po odpravi oklepajev nepopolna, brez prostega člena) in eksponentno z osnovo 5 in koeficientom pred potenco; 2) desne strani teh enačb so prvi trije členi aritmetičnega zaporedja: splošni člen in vsota prvih n členov za večji n (reda sto)"
+  }
+ ]
+}

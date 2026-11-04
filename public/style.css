@@ -1,6 +1,7 @@
 /* Evklid – videz. Barve so v spremenljivkah; temni način je razred .dark na <html> (nastavi ga theme.js).
    Lastne barve iz Nastavitve → Videz theme.js zapiše kot slog na <html> in prepišejo te privzete. */
 :root {
+  --rob-strani: clamp(16px, 2.5vw, 40px); /* rob vsebine ob straneh pogleda, brez praznega pasu (j 2026-11-04) */
   /* Slog Čist (privzeti, docs/oblikovanje.md); Igriv in Temen sta v ui.css (»Slogi«) in theme.js. */
   --bg: #f6f7f9;
   --surface: #ffffff;
@@ -264,7 +265,9 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 /* ---------- pogledi, kartice, obrazci ---------- */
 .view { flex: 1; min-height: 0; }
 .view[hidden] { display: none !important; }
-.narrow { max-width: 780px; width: 100%; margin: 0 auto; padding: 24px 16px 48px; overflow-y: auto; overscroll-behavior: contain; }
+/* Pogled čez vso širino okna (j 2026-11-04: ob straneh ne sme biti praznega prostora): rob 16 px na telefonu, do 40 px
+   na širokem zaslonu; kartice se na širšem zaslonu razvrstijo v stolpce (ui.css → »Brez praznih robov«). */
+.narrow { width: 100%; margin: 0 auto; padding: 24px var(--rob-strani) 48px; overflow-y: auto; overscroll-behavior: contain; }
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
 .form { display: flex; flex-direction: column; gap: 14px; }
 .form label { display: flex; flex-direction: column; gap: 6px; font-weight: 800; font-size: 0.92rem; }
@@ -317,7 +320,7 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 /* Tabela iz Markdowna: tako široka kot vsebina; na ozkem zaslonu se pomika vstran, ne stisne.
    Kratke celice in formule se ne prelamljajo (ulomki ostanejo celi), daljše besedilo se. */
 .md-table-wrap { max-width: 100%; overflow-x: auto; margin: 10px 0; -webkit-overflow-scrolling: touch; }
-.md-table-wrap > .md-table { margin: 0; }
+.md-table-wrap > :is(.md-table, .table) { margin: 0; }
 .md-table :is(th, td) { white-space: nowrap; }
 .md-table :is(th, td).wrap { white-space: normal; min-width: 11em; max-width: 26em; }
 .md-table .katex { white-space: nowrap; }
@@ -362,7 +365,10 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 .chat { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
 .chat-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--surface); }
 .chat-head h1 { font-size: 1.05rem; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.chips { display: flex; gap: 6px; }
+.chips { display: flex; align-items: center; gap: 6px; }
+/* Oznake pogovora (predmet, način, raven) in »Preberi lekcijo« z ikono knjige; poravnane na sredino vrstice. */
+.chat-head #chat-state .chip { display: inline-flex; align-items: center; gap: 5px; flex: none; }
+.chat-head .chat-lesson svg.i { width: 15px; height: 15px; flex: none; }
 .chip { background: var(--surface-2); border-radius: 999px; padding: 3px 11px; font-size: 0.82rem; color: var(--muted); white-space: nowrap; font-weight: 700; }
 .messages { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; }
 .empty { margin: auto; text-align: center; color: var(--muted); max-width: 440px; display: flex; flex-direction: column; align-items: center; }
@@ -373,10 +379,10 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 .tutor-avatar { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #fff; background: linear-gradient(135deg, var(--hero-a), var(--hero-b)); }
 .tutor-avatar.big { width: 64px; height: 64px; border-radius: 20px; box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 35%, transparent); }
 .tutor-avatar.big svg.i { width: 30px; height: 30px; }
-.msg { max-width: 720px; width: fit-content; padding: 12px 16px; border-radius: 20px; overflow-wrap: anywhere; line-height: 1.6; animation: msg-in 0.2s ease; }
+.msg { max-width: 85%; width: fit-content; padding: 12px 16px; border-radius: 20px; overflow-wrap: anywhere; line-height: 1.6; animation: msg-in 0.2s ease; }
 @keyframes msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .msg.user { align-self: flex-end; background: var(--user-bubble); color: var(--user-text); border-end-end-radius: 6px; white-space: pre-wrap; font-weight: 600; }
-.msg.assistant { align-self: flex-start; background: var(--surface); border: 1px solid var(--border); border-end-start-radius: 6px; box-shadow: var(--shadow); position: relative; margin-inline-start: 44px; }
+.msg.assistant { align-self: flex-start; background: var(--surface); border: 1px solid var(--border); border-end-start-radius: 6px; box-shadow: var(--shadow); position: relative; margin-inline-start: 44px; max-width: calc(100% - 44px); }
 .msg.assistant::before {
   content: ""; position: absolute; inset-inline-start: -44px; bottom: 0; width: 34px; height: 34px; border-radius: 50%;
   background: linear-gradient(135deg, var(--hero-a), var(--hero-b));
@@ -427,8 +433,6 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .report-box textarea { width: 100%; min-height: 56px; resize: vertical; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); box-sizing: border-box; }
 /* Skrbnikova prijava napake v klepetu (public/prijave.js) in seznam prijav v Računu. */
 .chat-head .chat-bug { flex-shrink: 0; }
-/* Ozek telefon (samo skrbnik): zastavica bi naslov stisnila v eno črko, zato se oznake predmeta skrijejo. */
-@media (max-width: 400px) { .chat-head:has(#chat-bug:not([hidden])) #chat-state { display: none; } }
 .bug-box { margin: 8px 12px 0; }
 .adm-rep-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
 .adm-rep { display: grid; gap: 4px; justify-items: start; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); }
@@ -445,17 +449,17 @@ button.ghost.msg-report { font-size: 0.78rem; font-weight: 600; padding: 4px 8px
 .adm-rep details { justify-self: stretch; }
 .adm-rep pre, .adm-rep details p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.85rem; max-height: 320px; overflow-y: auto; }
 .report-box .rep-err { color: var(--text); margin: 0; font-weight: 400; border-inline-start: 3px solid var(--danger); padding-inline-start: 8px; } /* --danger na --surface-2 je pod 4,5 : 1 */
-.ai-note { font-size: 0.75rem; color: var(--muted); text-align: center; margin: 6px auto 0; max-width: 900px; }
-.chat-off { max-width: 900px; margin: 0 auto 8px; width: calc(100% - 32px); box-sizing: border-box; padding: 10px 14px; border: 1px solid var(--danger); border-radius: 12px; background: var(--danger-bg); color: var(--text); font-size: 0.9rem; text-align: center; } /* --danger na --danger-bg je v svetlem načinu 4,1 : 1 */
+.ai-note { font-size: 0.75rem; color: var(--muted); text-align: center; margin: 6px auto 0; }
+.chat-off { margin: 0 auto 8px; width: calc(100% - 32px); box-sizing: border-box; padding: 10px 14px; border: 1px solid var(--danger); border-radius: 12px; background: var(--danger-bg); color: var(--text); font-size: 0.9rem; text-align: center; } /* --danger na --danger-bg je v svetlem načinu 4,1 : 1 */
 .composer { border-top: 1px solid var(--border); padding: 12px 16px 14px; background: var(--surface); }
-.composer-row { display: flex; gap: 8px; align-items: flex-end; max-width: 900px; margin: 0 auto; background: var(--bg); border: 1.5px solid var(--border); border-radius: 22px; padding: 6px; }
+.composer-row { display: flex; gap: 8px; align-items: flex-end; margin: 0 auto; background: var(--bg); border: 1.5px solid var(--border); border-radius: 22px; padding: 6px; }
 .composer-row:focus-within { border-color: var(--accent); }
 .composer textarea { flex: 1; resize: none; max-height: 200px; padding: 9px 6px; border: 0; background: none; outline: none; min-height: 40px; }
 .icon-btn { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; color: var(--muted); }
 .icon-btn:hover { background: var(--surface-2); color: var(--accent); }
 .icon-btn svg.i { width: 22px; height: 22px; }
 button.send { border-radius: 18px; min-height: 42px; padding: 8px 16px; box-shadow: none; }
-.composer > .hint { font-size: 0.8rem; color: var(--muted); margin: 6px auto 0; max-width: 900px; text-align: center; }
+.composer > .hint { font-size: 0.8rem; color: var(--muted); margin: 6px auto 0; text-align: center; }
 
 /* Inštruktor: mikrofon (glasovni vnos) in napredna tipkovnica s simboli */
 button.icon-btn { border: 0; background: none; padding: 0; min-height: 0; box-shadow: none; flex: none; }
@@ -796,7 +800,9 @@ label.check input { width: 18px; height: 18px; accent-color: var(--accent); }
   .sidebar.open { display: block; position: absolute; inset: 0; z-index: 5; padding-top: 72px; border-inline-end: 0; }
   .messages { padding: 16px 12px; }
   .msg { max-width: 100%; }
-  .msg.assistant { margin-inline-start: 40px; max-width: calc(100% - 40px); } /* sicer široka tabela ali formula potisne oblaček 40 px čez rob (in z njim bledi rob ter drsnik) */
+  /* Odgovor čez vso širino: brez praznega pasu 40 px za ikono inštruktorja ob levem robu (j 2026-11-04). */
+  .msg.assistant { margin-inline-start: 0; max-width: 100%; }
+  .msg.assistant::before, .msg.assistant::after { display: none; }
   .chat-head { padding: 8px 12px; }
   .composer > .hint { display: none; }
   .ai-note { margin-top: 4px; font-size: 0.7rem; }
@@ -811,7 +817,7 @@ label.check input { width: 18px; height: 18px; accent-color: var(--accent); }
   max-height: 66vh; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column;
   background: var(--surface); border-top: 1px solid var(--border);
   border-radius: 16px 16px 0 0; box-shadow: 0 -8px 24px rgba(0,0,0,.12);
-  padding: 6px 12px calc(10px + env(safe-area-inset-bottom));
+  padding: 6px 12px calc(10px + var(--varno-sp, env(safe-area-inset-bottom, 0px)));
 }
 .pad-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .pad-tabs { display: flex; gap: 4px; }
@@ -869,14 +875,13 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
   .pad[data-tab="draw"] .pad-draw { display: flex; flex-direction: column; flex: 1; min-height: 0; }
   .pad .canvas-wrap { flex: 1; height: auto; min-height: 120px; }
   body.pad-open #view-topic { padding-bottom: 40px; margin-right: 400px; width: calc(100% - 400px); max-width: none; }
-  body.pad-open #view-topic > * { max-width: 760px; margin-left: auto; margin-right: auto; }
 }
 /* Telefon ležeče: plošča spodaj bi prekrila nalogo, zato je tudi tu ob strani. */
 @media (max-width: 899px) and (min-width: 600px) and (max-height: 500px) {
   .pad {
     top: var(--pad-top, 60px); left: auto; width: min(400px, 48vw); max-height: none; overflow-y: auto;
     border-top: 0; border-left: 1px solid var(--border); border-radius: 0; box-shadow: -8px 0 24px rgba(0,0,0,.08);
-    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    padding: 8px 12px calc(8px + var(--varno-sp, env(safe-area-inset-bottom, 0px)));
   }
   .pad[data-tab="draw"] .pad-draw { display: flex; flex-direction: column; flex: 1; min-height: 0; }
   .pad .canvas-wrap { flex: 1; height: auto; min-height: 90px; margin: 0; }
@@ -897,7 +902,8 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 
 
 /* ---------- načini učenja (kartice na učni poti) ---------- */
-.modes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 16px; }
+.modes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0 0 16px; }
+.modes.goal-modes { grid-template-columns: repeat(2, minmax(0, 1fr)); } /* bližnjici po cilju (app.js → renderGoalModes) */
 .modes button {
   display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: start; min-height: 0;
   padding: 14px; border: 1.5px solid var(--border); border-radius: var(--radius); background: var(--surface);
@@ -906,9 +912,9 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 .modes button:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
 .modes button:active { transform: translateY(calc(var(--press) * 0.66)); box-shadow: 0 calc(var(--press) / 3) 0 var(--border); }
 .modes button.active { border-color: var(--accent); background: var(--accent-soft); }
-.modes .ic { position: relative; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); margin-bottom: 6px; }
+.modes .ic { position: relative; flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); margin-bottom: 6px; }
 .modes .ic svg.i { width: 22px; height: 22px; }
-.modes .m-name { font-weight: 800; line-height: 1.25; }
+.modes .m-name { font-weight: 800; line-height: 1.25; min-width: 0; overflow-wrap: anywhere; hyphens: auto; } /* dolge besede (de, mk) ne silijo čez rob */
 .modes .m-sub { font-size: 0.8rem; color: var(--muted); font-weight: 600; line-height: 1.3; }
 .modes .badge, .tabbar .badge {
   position: absolute; top: -6px; right: -8px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 99px;
@@ -916,7 +922,7 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 }
 @media (max-width: 520px) {
   /* Telefon: štirje načini v mreži 2 × 2, ikona levo od imena. */
-  .modes { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .modes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .modes button { flex-direction: row; align-items: center; text-align: start; gap: 10px; padding: 10px; }
   .modes .ic { margin: 0; width: 36px; height: 36px; flex: none; }
   .modes .m-name { font-size: 0.9rem; }
@@ -980,12 +986,12 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
   .topbar .tabs { display: none; }
   .tabbar {
     display: flex; flex-shrink: 0; position: relative; z-index: 4;
-    padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+    padding: 6px 4px calc(6px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); /* 4 px ob strani: »Tekmovanja« še cela na 360 px */
     background: var(--surface); border-top: 1px solid var(--border);
   }
   .tabbar .tab {
     flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px;
-    padding: 4px 2px; border-radius: 14px; font-size: 0.72rem; font-weight: 800; line-height: 1.15; background: none;
+    padding: 4px 1px; border-radius: 14px; font-size: 0.72rem; font-weight: 800; line-height: 1.15; background: none;
   }
   .tabbar .tab span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .tabbar .tab svg.i { width: 46px; height: 30px; padding: 4px 12px; border-radius: 99px; transition: background 0.15s; }
@@ -1032,7 +1038,7 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .stat.usage-meter svg.i { color: var(--accent); }
 .stat.usage-meter:hover { background: var(--accent-soft); }
 .usage-pop {
-  position: fixed; z-index: 60; top: 64px; right: 16px; width: min(440px, calc(100vw - 32px));
+  position: fixed; z-index: 60; top: 64px; inset-inline-end: 16px; width: min(440px, calc(100vw - 32px));
   max-height: calc(100vh - 88px); overflow-y: auto; margin: 0; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
 }
 .usage-pop[hidden] { display: none; }
@@ -1044,7 +1050,7 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .um-totals b { font-size: 1.15rem; }
 .um-totals small, .um-totals span { font-size: 0.8rem; }
 .um-table { font-size: 0.88rem; }
-.um-table td:not(:first-child), .um-table th:not(:first-child) { text-align: right; }
+.um-table td:not(:first-child), .um-table th:not(:first-child) { text-align: end; }
 .um-table td:not(:first-child) { white-space: nowrap; }
 .um-table th { white-space: normal; vertical-align: bottom; }
 .um-table td:first-child { overflow-wrap: anywhere; }
@@ -1065,7 +1071,7 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .um-budget-form input { width: 100%; font-weight: 600; padding: 8px 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--bg); min-height: 44px; }
 .um-budget-form input:focus { border-color: var(--accent); outline: none; }
 @media (max-width: 760px) {
-  .usage-pop { top: 56px; right: 16px; }
+  .usage-pop { top: 56px; inset-inline-end: 16px; }
   .stat.usage-meter { font-size: 0.85rem; }
 }
 @media (max-width: 420px) {
@@ -1074,6 +1080,7 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 }
 @media (max-width: 400px) {
   .um-totals { grid-template-columns: 1fr 1fr; }
+  .um-table :is(th, td) { padding-inline: 7px; }
   .um-totals > div:last-child { grid-column: 1 / -1; }
 }
 
@@ -1108,3 +1115,13 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
   .credit-pack:has(> input:checked)::before { inset-inline-end: 18px; }
   .credit-custom .credit-amount { margin: 6px 0 4px; }
 }
+/* Igra kot nagrada na koncu treninga (app.js rewardHtml, public/games/reward.js) */
+.reward-offer { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; margin: 16px auto 0; max-width: 520px; padding: 12px 14px; border: 2px dashed color-mix(in srgb, var(--accent) 45%, var(--border)); border-radius: var(--radius-sm, 12px); background: var(--accent-soft); text-align: start; }
+.reward-ic { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff; flex-shrink: 0; }
+.reward-ic svg.i { width: 24px; height: 24px; }
+.reward-t { flex: 1 1 160px; min-width: 0; }
+.reward-t b, .reward-t small { display: block; }
+.reward-t small { color: var(--muted); font-weight: 600; margin-top: 2px; }
+.reward-offer button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+.reward-offer.calm { border-style: solid; border-width: 1px; background: var(--surface); }
+.reward-offer.calm .reward-ic { background: var(--accent-soft); color: var(--accent); }

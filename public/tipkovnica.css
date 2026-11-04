@@ -9,14 +9,14 @@
   --tk-dvig: 8px;
   position: fixed; left: 0; right: 0; bottom: var(--tk-vv, 0px); z-index: 500;
   background: var(--tk-board); color: var(--tk-ink); border-top: 1px solid var(--border);
-  padding: 6px max(4px, env(safe-area-inset-right)) calc(var(--tk-dvig) + env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left));
+  padding: 6px max(4px, env(safe-area-inset-right)) calc(var(--tk-dvig) + var(--varno-sp, env(safe-area-inset-bottom, 0px))) max(4px, env(safe-area-inset-left));
   font-family: var(--font); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: manipulation;
 }
 .tk[hidden] { display: none !important; }
 /* telefon in tablica: spodnja vrsta tipk ne sme biti na robu, kjer je poteza za domov (kot pri tipkovnici telefona);
    skupaj vsaj 26px, pri varnem robu (iPhone 34px) le 8px nad njim */
 @media (pointer: coarse) {
-  .tk { --tk-dvig: max(8px, calc(26px - env(safe-area-inset-bottom))); }
+  .tk { --tk-dvig: max(8px, calc(26px - var(--varno-sp, env(safe-area-inset-bottom, 0px)))); }
   /* črke (ABC) kot tipkovnica telefona (j, 1. 11.): višje tipke, večji razmik med vrstami, spodaj pas s ⌄;
      ostale plasti (123, f(x), Σ, Kem) ohranijo svojo obliko */
   .tk:has(.tk-rows[data-layer="abc"]) { --tk-dvig: 56px; }
@@ -117,8 +117,8 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
 /* tablica (j, 2. 11.: »Tipkovnica je v obliki za telefon«): čez celo širino kot tipkovnica iPada,
    višje in širše tipke; ⌄ ostane v vrstici zavihkov, zato spodaj ni praznega pasu */
 @media (pointer: coarse) and (min-width: 700px) and (min-height: 600px) {
-  .tk { --tk-dvig: max(12px, calc(20px - env(safe-area-inset-bottom))); }
-  .tk:has(.tk-rows[data-layer="abc"]) { --tk-dvig: max(12px, calc(20px - env(safe-area-inset-bottom))); }
+  .tk { --tk-dvig: max(12px, calc(20px - var(--varno-sp, env(safe-area-inset-bottom, 0px)))); }
+  .tk:has(.tk-rows[data-layer="abc"]) { --tk-dvig: max(12px, calc(20px - var(--varno-sp, env(safe-area-inset-bottom, 0px)))); }
   .tk-in { max-width: none; margin: 0; padding-inline: 8px; gap: 8px; }
   .tk-row, .tk-grid { gap: 8px; }
   .tk-k { height: 56px; min-height: 56px; font-size: 1.25rem; border-radius: 10px; }

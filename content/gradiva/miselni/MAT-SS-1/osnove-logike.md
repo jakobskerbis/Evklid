@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Izjava
+  - pravilna (P) ali nepravilna (N)
+  - ukaz in vprašanje nista izjavi
+- Negacija
+  - $\neg A$ ima nasprotno vrednost
+  - »vsi so« zanikaš z »vsaj eden ni«
+- Konjunkcija in disjunkcija
+  - $A \wedge B$: P le, ko sta obe P
+  - $A \vee B$: P, ko je vsaj ena P
+  - »ali« je vključni
+- Implikacija
+  - $A \Rightarrow B$: N le pri $A$ = P, $B$ = N
+  - kot obljuba: nepravilna predpostavka je ne prelomi
+- Ekvivalenca
+  - $A \Leftrightarrow B$: P pri enakih vrednostih
+- Pravilnostna tabela
+  - $n$ izjav da $2^n$ vrstic
+  - računaj od notranjih delov navzven
+- Tavtologija
+  - P v vseh vrsticah, npr. $A \vee \neg A$
+  - protislovje: N v vseh vrsticah
+- Enakovredne izjave
+  - $A \Rightarrow B \equiv \neg B \Rightarrow \neg A$
+  - obrat $B \Rightarrow A$ ni enakovreden
+  - $\neg(A \wedge B) \equiv \neg A \vee \neg B$

@@ -13,6 +13,7 @@ export const info = {
   predmet: "KEM",
   opis: "Ionski, kovalentni, kovinski in molekulski kristali: NaCl, CsCl, diamant, grafit, železo, baker, magnezij in led. Razdalje so v pravem razmerju; pokaži osnovno celico, kaloto ali koordinacijo izbranega delca.",
   merilo: { m: 1.2e-9, oznaka: "1,2 nm" },
+  poskusi: "Vklopi koordinacijo in preštej najbližje sosede; primerjaj NaCl, CsCl in kovine.",
 };
 
 const S3 = Math.sqrt(3);

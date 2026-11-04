@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Celica bele maščobe s premerom okoli 100 µm. Skoraj vso celico zapolni ena maščobna kapljica, zato sta citoplazma in sploščeno jedro potisnjena ob membrano kot pečatni prstan. Z drsnikom spremeniš količino shranjene maščobe: kapljica in celica se povečata ali skrčita.",
+  poskusi: "Premikaj drsnik »Shranjena maščoba« in opazuj, kako se celica poveča.",
   merilo: { m: 124e-6, oznaka: "124 µm" },
 };
 

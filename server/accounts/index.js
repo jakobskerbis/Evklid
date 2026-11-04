@@ -10,7 +10,7 @@ import { audit, detachAudit } from "../dnevnik-dostopov.js";
 import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
-import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
+import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
@@ -32,6 +32,8 @@ import { Credits } from "../placila/krediti.js";
 import { SHARE } from "../proracun.js";
 import { stopnja, rang, STOPNJE } from "../../public/stopnja.js";
 import { mountGifts } from "../placila/darila.js";
+import { mountGuarantee } from "../placila/garancija.js";
+import { mountPodari } from "../placila/podari.js";
 import { Schedules, nowParts } from "../schedule.js";
 
 export const CONSENT_TEXT =
@@ -125,6 +127,8 @@ export function mountAccounts(app, store, opts = {}) {
   const accessOf = (p) => accessFor(p, Date.now(), p.promo_until ? promo.termsOf(p.id).seats : promoCfg.seats);
   let billing = null; // paketi pred testom, povezave za starše (mountBilling spodaj)
   let gifts = null; // darilne kode (mountGifts spodaj)
+  let guarantee = null; // garancija »Boljša ocena ali vrnemo denar« (mountGuarantee spodaj)
+  let podari = null; // »Podari Evklid« (mountPodari spodaj)
 
   const baseUrl = (req) => (env.EVKLID_BASE_URL || (req ? `${req.protocol}://${req.get("host")}` : `http://localhost:${env.PORT || 3000}`)).replace(/\/$/, "");
 
@@ -218,6 +222,12 @@ export function mountAccounts(app, store, opts = {}) {
     return r.personal || r.school;
   }
 
+  // Plačan AI iz katerega koli vira; šola, ki je porabila mesečno mejo AI, za AI šteje kot brezplačni paket.
+  function aiPremiumFor(studentId) {
+    const r = rightsFor(studentId);
+    return r.personal || (r.school && !r.schoolAiOut);
+  }
+
   // Utež profila pri delitvi mesečnega proračuna AI (server/proracun.js): plačljiva naročnina po mesečni
   // ceni na otroka v €, preizkus/koda/bonus/paket kot mesečna naročnina za enega otroka, šola in brezplačni po SHARE.
   function shareWeightFor(studentId) {
@@ -230,12 +240,12 @@ export function mountAccounts(app, store, opts = {}) {
       if (!plan || plan.currency && plan.currency !== "EUR") return standard;
       return plan.amount / 100 / (plan.interval === "year" ? 12 : 1) / Math.max(1, plan.seats || 1);
     }
-    return r.school ? SHARE.school() : SHARE.free();
+    return r.school && !r.schoolAiOut ? SHARE.school() : SHARE.free();
   }
   // Dokupljena poraba AI, vezana na račun (server/placila/krediti.js).
   const credits = new Credits(db);
   // Brezplačni profil nad mejo paketa: s kreditom nadaljuje, strošek gre iz kredita (server/usage.js chargeCredit).
-  const freeOver = (studentId) => !premiumFor(studentId) && !!freeBudgetReason(studentId);
+  const freeOver = (studentId) => !aiPremiumFor(studentId) && !!freeBudgetReason(studentId);
   // Zajamčena poraba AI na mesec (j 2026-11-04, plans.js planGuarantee): naročnina po paketu (stopnja in obdobje,
   // Družina en skupen delež za ves račun, šolska cena, regijska cena po pravilu 75 %), darilna koda kot letna
   // naročnina stopnje; ima prednost pred deleži brezplačnih v skupnem proračunu, nad njo hitri model (server/usage.js).
@@ -245,7 +255,12 @@ export function mountAccounts(app, store, opts = {}) {
     const owner = ownerOf(studentId);
     if (r.personalTier === "gift") return giftGuarantee(getParent(owner)?.gift_level, r.useLevel);
     if (r.personalTier !== "paid") return null;
-    return planGuarantee(planByKey(getParent(owner)?.sub_plan)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
+    const g = planGuarantee(planByKey(getParent(owner)?.sub_plan)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
+    // Nadgradnja ta mesec (applySubscription): stari paket za pretekle dni, novi za preostale (plans.js upgradeMonthUsd).
+    // Zapis velja samo za isto naročnino (id računa se po izbrisu lahko ponovno uporabi, nova naročnina začne znova).
+    const up = JSON.parse(kv.get(`ai_upgrade_${owner}`) || "null");
+    const was = up && up.sub && up.sub === getParent(owner)?.sub_id ? (up.usd ?? planGuarantee(planByKey(up.from))?.usd) : null;
+    return was != null ? { ...g, usd: upgradeMonthUsd(was || 0, g.usd || 0, up.at) } : g;
   }
   // Meja paketa (brez brezplačnega repa, plans.js subscriptionCeiling); naročnik z mejo 0 ostane zajamčen (MIN_CEILING_USD).
   const guaranteeFor = (studentId) => {
@@ -291,7 +306,7 @@ export function mountAccounts(app, store, opts = {}) {
   function modelCapFor(studentId) {
     const r = rightsFor(studentId);
     if (r.personalTier === "promo") return promo.termsOf(ownerOf(studentId)).maxModel;
-    return !r.personal && r.school ? "sonnet" : null;
+    return !r.personal && r.school && !r.schoolAiOut ? "sonnet" : null;
   }
 
   // Poraba AI brezplačnih učencev v tem mesecu (učenci brez naročnine, preizkusa, bonusa ali kode).
@@ -352,7 +367,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
     const pool = freeMonthlyPoolUsd();
     const gone = db.prepare("SELECT COALESCE(SUM(usd),0) AS usd FROM guest_spent WHERE day >= date('now','start of month')").get().usd;
-    if (pool && rows.filter((r) => !premiumFor(r.id)).reduce((t, r) => t + r.usd, gone) >= pool) {
+    if (pool && rows.filter((r) => !aiPremiumFor(r.id)).reduce((t, r) => t + r.usd, gone) >= pool) {
       return `Brezplačna vprašanja za inštruktorja so ta mesec za vse porabljena. Vadnica in lekcije delujejo naprej neomejeno. ${moreHint(studentId)}`.trim();
     }
     return null;
@@ -384,7 +399,7 @@ export function mountAccounts(app, store, opts = {}) {
     next();
   });
 
-  const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/];
+  const PUBLIC = [/^\/kozmetika\/export$/, /^\/app-links$/, /^\/auth\//, /^\/account\/status$/, /^\/account\/prices$/, /^\/account\/unsubscribe$/, /^\/stripe\/webhook$/, /^\/config$/, /^\/school-orders$/, /^\/podari$/, /^\/pay\/[^/]+(\/checkout|\/confirm)?$/];
   app.use("/api", (req, res, next) => {
     if (PUBLIC.some((re) => re.test(req.path))) return next();
     const p = req.parent;
@@ -451,7 +466,7 @@ export function mountAccounts(app, store, opts = {}) {
     // šolske licence (15) in Osebno (60), s proračunom AI več (dailyLimitFor).
     if (c && req.method === "POST" && /\/messages$/i.test(req.path)) {
       const r = rightsFor(studentId);
-      if (!r.personal && !r.school) {
+      if (!r.personal && (!r.school || r.schoolAiOut)) {
         const limit = freeDailyQuestions();
         if (questionsToday(studentId) >= limit) {
           return res.status(429).json({
@@ -472,7 +487,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
     // Mesečna meja porabe brezplačnega paketa velja za vse klice AI (inštruktor, branje zapisa, fotografija urnika).
     // Z dokupljenim kreditom ta meja ne velja (poraba gre iz kredita, server/usage.js chargeCredit).
-    if (studentId !== null && req.method === "POST" && /(\/messages|\/tasks\/\d+\/read|\/schedule\/photo)$/i.test(req.path) && !premiumFor(studentId) && !(credits.balance(ownerOf(studentId)) > 0)) {
+    if (studentId !== null && req.method === "POST" && /(\/messages|\/tasks\/\d+\/read|\/schedule\/photo)$/i.test(req.path) && !aiPremiumFor(studentId) && !(credits.balance(ownerOf(studentId)) > 0)) {
       const blocked = freeBudgetReason(studentId);
       if (blocked) return res.status(429).json({ error: blocked, limit: true, upgrade: !!guests.netOf(studentId) || upsell(studentId) });
     }
@@ -843,6 +858,8 @@ export function mountAccounts(app, store, opts = {}) {
       // Osebno ob šolski licenci: ponudi se, ko ima vsaj en otrok šolsko licenco (samo v evrih).
       school_plans: childIds(p.id).some((id) => schools.hasLicence(id)) && currencyOf(req, p) === "EUR" ? SCHOOL_PLANS : [],
       gifts: gifts ? gifts.listFor(p.id) : [],
+      guarantee: guarantee ? guarantee.viewFor(p) : null,
+      podari: podari ? podari.stats() : null,
       // Darilna koda po letni ceni stopnje (99 / 139 / 199 €).
       gift_prices: GIFT_PRICES,
       gift_price: GIFT_PRICES.OS,
@@ -1246,12 +1263,15 @@ export function mountAccounts(app, store, opts = {}) {
         Math.max(Date.parse(p.trial_ends_at || 0) || 0, Date.parse(p.promo_until || 0) || 0, giftCarries ? Date.parse(p.gift_until || 0) || 0 : 0),
       );
       const subscription_data = { metadata: { parent_id: p.id } };
+      // »Podari Evklid«: neobvezen dodatek 2/5/10 € k prvemu plačilu (enkratna vrstica), potrdi ga invoice.paid.
+      const addon = !school && currency === "EUR" && req.body?.podari ? podari.addonFor(p.id, req.body.podari) : null;
+      if (addon) subscription_data.metadata.podari_id = addon.id;
       if (trialEnd - Date.now() > 49 * 3600000) subscription_data.trial_end = Math.floor(trialEnd / 1000);
       const session = await stripe.request("POST", "/checkout/sessions", {
         mode: "subscription",
         customer,
         client_reference_id: String(p.id),
-        line_items: [{ price: prices[plan.key], quantity: 1 }],
+        line_items: [{ price: prices[plan.key], quantity: 1 }, ...(addon ? [addon.line_item] : [])],
         success_url: `${base}/?billing=success&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: currency === "EUR" ? "sl" : "auto",
@@ -1332,6 +1352,16 @@ export function mountAccounts(app, store, opts = {}) {
     if (before?.sub_provider && before.sub_provider !== "stripe" && paidActive(before) && sub.id !== before.sub_id) {
       log.error?.("[evklid] Stripe naročnina prezrta: račun ima veljavno naročnino", before.sub_provider, parentId);
       return;
+    }
+    // Zamenjava paketa med veljavno naročnino: zapomnimo si stari paket za zajamčeni AI tega meseca (subGuarantee).
+    const planKey = plan?.key || price.lookup_key || price.id || null;
+    const fromG = before?.sub_plan && planGuarantee(planByKey(before.sub_plan));
+    if (fromG && planKey && planKey !== (planByKey(before.sub_plan)?.key || before.sub_plan) && paidActive(before) && before.sub_id === sub.id) {
+      // Druga zamenjava v istem mesecu: dnevi pred prvo ostanejo pri prvotnem deležu (plans.js upgradeFromUsd).
+      const prev = JSON.parse(kv.get(`ai_upgrade_${parentId}`) || "null");
+      const now = Date.now();
+      const usd = upgradeFromUsd(prev?.sub === sub.id ? prev : null, fromG.usd || 0, now);
+      kv.set(`ai_upgrade_${parentId}`, JSON.stringify({ from: before.sub_plan, usd, at: now, sub: sub.id }));
     }
     update(parentId, {
       // Prvo neuspelo plačilo začne odlog (GRACE_DAYS); ob uspešnem plačilu se ponastavi.
@@ -1431,6 +1461,13 @@ export function mountAccounts(app, store, opts = {}) {
     ageOf: ageOfStudent,
   });
   gifts = mountGifts(app, { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, recordConsent: billing.recordConsent, paidActive });
+  podari = mountPodari(app, { db, stripe, json, log, ensureCustomer, baseUrl, isMinor });
+  // Garancija: ob vračilu se naročnina takoj prekliče (profili preidejo na brezplačni paket).
+  async function cancelSubscription(p) {
+    const sub = await stripe.request("DELETE", `/subscriptions/${p.sub_id}`);
+    await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } });
+  }
+  guarantee = mountGuarantee(app, { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, cancelSubscription, addonOf: podari.addonOf });
 
   // Naročnina iz dogodka: sveže stanje iz Stripa (dogodki lahko pridejo v napačnem vrstnem redu).
   async function freshSubscription(obj) {
@@ -1463,6 +1500,10 @@ export function mountAccounts(app, store, opts = {}) {
           gifts.complete(obj);
           break;
         }
+        if (obj.metadata?.kind === "podari") {
+          podari.complete(obj);
+          break;
+        }
         if (obj.metadata?.pay_link && obj.subscription && stripe.enabled) {
           await billing.completeSubSession(obj);
           break;
@@ -1482,7 +1523,9 @@ export function mountAccounts(app, store, opts = {}) {
       }
       case "invoice.paid": {
         const p = parentFor();
-        if (p && obj.amount_paid > 0) await maybeRewardReferral(p.id);
+        podari.invoicePaid(obj); // dodatek »Podari Evklid« pri prvem plačilu naročnine
+        // Nagrada za priporočilo šele ob plačilu naročnine (sam dodatek ob začetku preizkusa ne šteje).
+        if (p && obj.amount_paid - podari.addonOf(obj).amount > 0) await maybeRewardReferral(p.id);
         break;
       }
       case "invoice.payment_failed": {
@@ -1496,6 +1539,8 @@ export function mountAccounts(app, store, opts = {}) {
       case "charge.refunded": {
         // Vračilo dokupa: kredit se odvzame (porabljeni del ostane porabljen).
         if (obj.amount_refunded > 0 && credits.refund(obj.payment_intent)) break;
+        // »Podari«: samostojen nakup se konča tu; dodatek je na plačilu naročnine, zato obdelava teče naprej.
+        if (obj.amount_refunded > 0 && podari.end(obj.payment_intent, "refunded", obj) === "month") break;
         const pass = billing.passes.byPayment(obj.payment_intent);
         if (pass && obj.amount_refunded > 0) billing.passes.end(pass.id, "refunded"); // tudi delno vračilo ob odstopu
         if (obj.amount_refunded > 0) gifts.end(obj.payment_intent, "refunded"); // darilna koda: tudi delno vračilo
@@ -1504,6 +1549,7 @@ export function mountAccounts(app, store, opts = {}) {
       case "charge.dispute.created": {
         if (credits.refund(obj.payment_intent)) break;
         if (gifts.end(obj.payment_intent, "disputed")) break;
+        if (podari.end(obj.payment_intent, "disputed") === "month") break;
         const pass = billing.passes.byPayment(obj.payment_intent);
         if (pass) {
           billing.passes.end(pass.id, "disputed");
@@ -1630,6 +1676,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { credits, shareWeightFor, ownerOf, freeOver, guaranteeFor, poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { credits, shareWeightFor, ownerOf, freeOver, guaranteeFor, poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

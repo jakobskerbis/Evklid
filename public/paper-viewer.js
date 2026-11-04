@@ -178,6 +178,8 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
     const mid = scroller.scrollTop + scroller.clientHeight / 3;
     let i = 0;
     pages.forEach((p, k) => p.el.offsetTop <= mid && (i = k));
+    // Na širokem zaslonu sta dve strani v vrsti (competition.css → .pv-pages): šteje prva v vrsti.
+    while (i > 0 && pages[i - 1].el.offsetTop === pages[i].el.offsetTop) i--;
     return i;
   };
   const showNo = () => ($(".pv-no").textContent = t("pp.pageOf", { n: pageAt() + 1, total: pages.length }));
@@ -287,7 +289,12 @@ export async function openPaperViewer(file, { title, onHelp, onClose, page: star
   el.addEventListener("click", (e) => {
     const step = e.target.closest("[data-pv-step]");
     if (step) {
-      const i = Math.max(0, Math.min(pages.length - 1, pageAt() + Number(step.dataset.pvStep)));
+      // Premik za vrstico strani: strani v isti vrstici (dve druga ob drugi) preskočimo.
+      const d = Number(step.dataset.pvStep);
+      const top = pages[pageAt()].el.offsetTop;
+      let i = pageAt() + d;
+      while (i > 0 && i < pages.length - 1 && pages[i].el.offsetTop === top) i += d;
+      i = Math.max(0, Math.min(pages.length - 1, i));
       return scroller.scrollTo({ top: pages[i].el.offsetTop - 8, behavior: "smooth" });
     }
     if (e.target.closest("[data-pv-mark]")) return setMarking(!el.classList.contains("pv-boxing"));

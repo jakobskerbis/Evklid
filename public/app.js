@@ -60,12 +60,14 @@ const showGames = () => {
 };
 const gamesBack = () => gamesMod?.gamesBack() ?? false;
 const leaveGames = () => gamesMod?.leaveGames();
-import { gamesOn } from "./games/stage.js";
+import { gamesOn, stageOf, STAGES } from "./games/stage.js";
+import { rewardOffer } from "./games/reward.js";
 import { initCorner, showCorner, cornerBack, closeBoard, askInterests, maybeAskInterests, interestsSummary } from "./corner.js";
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
 import { initFullscreen } from "./fullscreen.js";
 import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-settings.js";
-import { initSchedule, showSchedule, renderScheduleCard } from "./schedule.js";
+import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./schedule.js";
+import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
 import { initScan, showScan, leaveScan, scanBack } from "./scan/scan.js";
 import { initLab, showLab, labBack } from "./laboratorij.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
@@ -73,10 +75,11 @@ import { initTestNotice } from "./testna-verzija.js";
 import { initFormulaInfo, annotateTex, setFormulaSubject, withFormulaSubject, subjectWithGlossary } from "./formula-info.js";
 import { xpStatsHtml, xpItemsHtml, levelRowHtml, paintBadge, celebrateXp } from "./xp-fx.js";
 import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName, countdown, hasGoal, reminderDue, dismissReminder, reminderCardHtml, fmtDate } from "./goal.js";
-import { validDate } from "./goal-data.js";
+import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
 import { openOurPaper, closeOurPaper } from "./our-paper.js";
+import { partKey, partLabel } from "./our-paper-key.js";
 import { initDrsniki } from "./drsniki.js";
 import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
@@ -118,6 +121,16 @@ async function fetchThroughRestart(url, init) {
   }
 }
 
+// Napaka strežnika v jeziku vmesnika: code je ključ i18n (npr. »block.daily« iz server/usage.js blockInfo),
+// error je slovensko besedilo strežnika (rezerva, če ključa ni). Samo imenski prostori, ki jih strežnik
+// pošilja kot kode napak (usage.js block.*, gradiva.js gr.*, kviz.js kv.*/comp.*, progress.js chk.*), da
+// drugačna koda (npr. iz drugega vira) ne pokaže nepovezanega besedila.
+const ERROR_CODE = /^(block|gr|kv|comp|chk)\.[A-Za-z]+$/;
+const serverError = (err, status) => {
+  const own = typeof err?.code === "string" && ERROR_CODE.test(err.code) ? t(err.code, err.params || {}) : null;
+  return own && own !== err.code ? own : err?.error || t("common.error", { status });
+};
+
 const api = async (url, opts = {}) => {
   if (/\/tasks\/off-/.test(url)) {
     const local = fromPack(url, opts);
@@ -138,7 +151,7 @@ const api = async (url, opts = {}) => {
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     // status: strežnik je odgovoril (napaka ni v povezavi); body: dodatni podatki (npr. unavailable).
-    throw Object.assign(new Error(err.error || t("common.error", { status: res.status })), { status: res.status, body: err });
+    throw Object.assign(new Error(serverError(err, res.status)), { status: res.status, body: err });
   }
   return res.json();
 };
@@ -726,10 +739,10 @@ function renderState(convState) {
   if (topicId) {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "chip chip-btn";
-    b.textContent = t("chat.readLesson");
+    b.className = "chip chip-btn chat-lesson";
+    b.innerHTML = `${icon("book-open")}<span>${escapeHtml(t("chat.readLesson"))}</span>`;
     b.addEventListener("click", () => openLesson(topicId));
-    $("#chat-state").append(b);
+    $("#chat-state").prepend(b); // prvi tudi za tipko Tab, ne le na zaslonu
   }
 }
 
@@ -890,7 +903,7 @@ async function send(text, { deep = false } = {}) {
       bubble.remove();
       if (serverDown(res)) throw new Error(t("off.serverBusy"));
       if (err.chat_off) throw Object.assign(new Error(t("chat.off")), { chatOff: true });
-      throw new Error(err.error || t("common.error", { status: res.status }));
+      throw new Error(serverError(err, res.status));
     }
 
     if (paperCtx && state.paperCtx === paperCtx) state.paperCtx = null; // strežnik ga je shranil s sporočilom
@@ -1497,6 +1510,7 @@ function studentUpdated(updated) {
   leaveHiddenGames();
   refreshProfileButton();
   renderState(null);
+  if (before.goal !== updated.settings.goal || before.games !== updated.settings.games) renderGoal(); // bližnjici po cilju na Učni poti
   if (levelChanged(before, updated.settings) || before.subject !== updated.settings.subject || before.study_course !== updated.settings.study_course) {
     state.pathKey = null;
     refreshModes(); // številki na gumbih Ponavljanje in Kartice za novi predmet
@@ -1620,7 +1634,67 @@ function renderGoal() {
   const due = reminderDue(st);
   rem.hidden = !due;
   if (due) rem.innerHTML = reminderCardHtml(st);
+  renderGoalModes();
 }
+
+// Domači zaslon po cilju: dve bližnjici na Učni poti, pri NPZ, maturi, tekmovanju in izpitu nad načini učenja
+// (public/goal-data.js → goalShortcuts). Videz je isti kot pri načinih; vse ostane dosegljivo tudi v meniju.
+const GOAL_MODES = {
+  scan: ["scan-line", "scan.title", "scan.meSub"],
+  games: ["gamepad-2", "nav.games", "games.meSub"],
+  chat: ["message-circle", "nav.chat", "goal.mChatSub"],
+  textbook: ["book-open", "nav.textbook", "goal.mTextbookSub"],
+  exams: ["clipboard-check", "nav.examsSi", "exam.meSub"],
+  izpiti: ["clipboard-check", "nav.exams", "exam.title"],
+  tek: ["medal", "session.tek", "goal.mTekSub"],
+  contest: ["timer", "session.contest", "goal.mContestSub"],
+};
+// Cilj »test« premakne Pripravo na test na prvo mesto; ob drugem cilju gre nazaj pred svojega prejšnjega soseda.
+// Le ta gumb, da ostane red, ki ga je učenec nastavil s potegom (public/vrstice.js).
+let testModeNext; // undefined: ni premaknjen; sicer gumb (ali null = konec), pred katerim je bil
+function renderGoalModes() {
+  const st = state.student;
+  const box = $("#goal-modes");
+  const bar = $("#modebar");
+  if (!st || !box || !bar) return;
+  const s = st.settings;
+  const { first, items } = goalShortcuts(s);
+  // Kar že odpre kartica stopnje (public/zacetna.js: OŠ igre, SŠ matura, faks Moj študij), tu nadomesti druga bližnjica.
+  const shown = stageRows(stopnja(s), { games: gamesOn(s), exams: siExams() });
+  const list = items
+    .map((k) => (k === "games" && !gamesOn(s) ? "chat" : k))
+    .filter((k) => !(k === "exams" && !siExams()) && !(k === "izpiti" && !regionalExams()))
+    .filter((k) => !shown.includes(k))
+    .filter((k, i, a) => a.indexOf(k) === i);
+  for (const alt of ["scan", "chat"]) if (list.length < 2 && !list.includes(alt)) list.push(alt);
+  box.innerHTML = list
+    .map((k) => {
+      const [ic, name, sub] = GOAL_MODES[k];
+      return `<button type="button" data-gm="${k}"><span class="ic">${icon(ic)}</span><span class="m-name">${t(name)}</span><span class="m-sub">${t(sub)}</span></button>`;
+    })
+    .join("");
+  box.hidden = !list.length;
+  if (first) bar.before(box);
+  else bar.after(box);
+  const test = bar.querySelector('[data-mode="test"]');
+  if (!test) return;
+  if (s.goal === "test" && testModeNext === undefined && bar.firstElementChild !== test) {
+    testModeNext = test.nextElementSibling;
+    bar.prepend(test);
+  } else if (s.goal !== "test" && testModeNext !== undefined) {
+    if (testModeNext?.parentElement === bar && testModeNext !== test) testModeNext.before(test);
+    else bar.append(test);
+    testModeNext = undefined;
+  }
+}
+$("#goal-modes")?.addEventListener("click", (e) => {
+  const k = e.target.closest("[data-gm]")?.dataset.gm;
+  if (!k || !state.student) return;
+  if (k === "tek" || k === "contest") {
+    state.compAction = k;
+    showView("competition");
+  } else showView({ izpiti: "competition" }[k] || k);
+});
 document.addEventListener("click", (e) => {
   if (e.target.closest("[data-goal-edit], #goal-chip")) {
     showView("settings");
@@ -2108,7 +2182,7 @@ async function loadPath(key = state.pathKey) {
   state.pathSubject = paths.find((x) => x.key === p.key)?.subject || state.student.settings.subject;
   if (changed) refreshModes(); // fakulteta: drug predmet iz seznama poti
   showLevelCard();
-  renderScheduleCard($("#schedule-card"));
+  renderStageHome();
   syncOfflineBanner();
   // Naloge za vadbo brez povezave (enkrat na dan, v ozadju).
   if (!p.offline) refreshPack(api, state.student.id, p.key).then(syncOfflineBanner);
@@ -2139,7 +2213,18 @@ async function loadPath(key = state.pathKey) {
         ? `<button class="next-row" data-open="${p.next.id}"><span class="eyebrow">${t("path.next")}</span><span class="next-name">${escapeHtml(p.next.name)}</span>${icon("chevron-right")}</button>`
         : `<div class="next-row done">${icon("trophy")}<span class="next-name">${t("path.allDone")}</span></div>`
     }
+    ${gamesOn(state.student.settings) ? `<button type="button" class="next-row dz-path-row" data-dnevna><span class="eyebrow">${t("dz.title")}</span><span class="next-name">${t("dz.statusNew")}</span>${icon("puzzle")}</button>` : ""}
     <div class="xp-stats">${xpStatsHtml(x)}</div>`;
+  // Dnevna uganka (public/games/daily.js): stanje v ozadju; rešena danes → niz dni.
+  if (gamesOn(state.student.settings)) {
+    const sid = state.student.id;
+    api(`/api/students/${sid}/daily`)
+      .then((d) => {
+        const el = $("#xp-card .dz-path-row .next-name");
+        if (el && state.student?.id === sid && d?.streak?.today) el.textContent = t("dz.streak", { n: d.streak.days });
+      })
+      .catch(() => {});
+  }
 
   content.innerHTML =
     `<div class="legend">${["mastered", "learning", "due"].map((k) => `<span class="lg ${k}">${icon(NODE[k][0])}${NODE[k][1]}</span>`).join("")}</div>` +
@@ -2198,6 +2283,15 @@ document.addEventListener("click", (e) => {
   const un = e.target.closest("[data-unit]");
   if (un) startSession("unit-practice", { path: state.pathKey, unit: Number(un.dataset.unit) });
   if (e.target.closest("[data-daily]")) startSession("daily", { path: state.pathKey });
+  if (e.target.closest("[data-dnevna]")) {
+    showView("games");
+    loadGames().then((m) => m.openDailyPuzzle()).catch(() => {});
+  }
+  const rw = e.target.closest("[data-reward]");
+  if (rw) {
+    showView("games");
+    loadGames().then((m) => m.openReward(rw.dataset.reward.split(","))).catch(() => null);
+  }
 });
 $("#back-to-path").addEventListener("click", () => showView(state.backTo || "path"));
 // Tekmovanja so za osnovno in srednjo šolo; fakulteta zavihka nima.
@@ -2211,11 +2305,13 @@ const siExams = () => !!state.student && !regionalExams() && Object.hasOwn(SI_EX
 const examMode = () => regionalExams() || state.backTo === "exams";
 const prepLabel = () => (regionalExams() ? t("nav.exams") : t("nav.competition"));
 const prepBack = () => (examMode() ? t("exam.back") : t("result.toCompetitions"));
-// Telefon: na četrtem mestu »NPZ in matura«, ko je cilj NPZ ali matura, sicer Laboratorij (j, 1. 11.); Tekmovanja so pod Jaz.
-const examsInTabbar = () => siExams() && ["npz", "matura"].includes(state.student.settings.goal);
+// Telefon: na četrtem mestu »NPZ in matura«, ko je cilj NPZ ali matura, Tekmovanja pri cilju tekmovanje, sicer
+// Laboratorij (j, 1. 11.); kar ni na spodnji vrstici, je pod Jaz (public/goal-data.js → goalTabbarView).
+const tabbarFourth = () => (state.student ? goalTabbarView(state.student.settings, { siExams: siExams() }) : "lab");
 function offTabbarViews() {
   if (!state.student) return ["competition"];
-  return examsInTabbar() ? ["competition", "lab"] : siExams() ? ["competition", "exams"] : ["competition"];
+  const v = tabbarFourth();
+  return ["competition", "lab", ...(siExams() ? ["exams"] : [])].filter((x) => x !== v);
 }
 const meBackHtml = () => `<button type="button" class="ghost back me-back">${icon("arrow-left")}<span>${t("nav.me")}</span></button>`;
 // »Skrij igre« (nastavitev profila games: off): brez zavihka, vrstice pod Jaz in koraka v uvodnem ogledu.
@@ -2239,18 +2335,20 @@ function syncCompetitionTab() {
   span.textContent = prepLabel();
   $("#competition-tab").querySelector("i, svg").outerHTML = icon(regionalExams() ? "clipboard-check" : "medal");
   const m = $("#competition-tab-m");
-  const exams = examsInTabbar();
+  const fourth = tabbarFourth();
+  const exams = fourth === "exams";
+  const comp = fourth === "competition";
   m.hidden = false;
-  m.dataset.view = exams ? "exams" : "lab";
+  m.dataset.view = fourth;
   const ms = m.querySelector("span");
   // Na ozki spodnji vrstici kratko: »NPZ« v OŠ, »Matura« v SŠ (zgoraj »NPZ in matura«).
-  const short = jeOs(state.student?.settings) ? "goal.npz" : "goal.matura";
-  ms.dataset.i18n = exams ? short : "nav.lab";
-  ms.textContent = exams ? t(short) : t("nav.lab");
-  m.querySelector("i, svg").outerHTML = icon(exams ? "clipboard-check" : "flask-conical");
+  const short = exams ? (jeOs(state.student?.settings) ? "goal.npz" : "goal.matura") : comp ? "nav.competition" : "nav.lab";
+  ms.dataset.i18n = short;
+  ms.textContent = t(short);
+  m.querySelector("i, svg").outerHTML = icon(exams ? "clipboard-check" : comp ? "medal" : "flask-conical");
   m.classList.toggle("active", currentView === m.dataset.view);
   $("#me-exams").hidden = !siExams() || exams;
-  $("#me-competition").hidden = noComp;
+  $("#me-competition").hidden = noComp || comp;
   // Regijski sistemi: isti vnos pod Jaz je »Izpiti« (pogled competition naloži loadExams).
   const mc = $("#me-competition");
   const [mb, msub] = mc.querySelectorAll("b, small");
@@ -2259,8 +2357,8 @@ function syncCompetitionTab() {
   msub.dataset.i18n = regionalExams() ? "exam.title" : "comp.meSub";
   msub.textContent = t(msub.dataset.i18n);
   mc.querySelector(".ic").innerHTML = icon(regionalExams() ? "clipboard-check" : "medal");
-  $("#me-lab").hidden = !exams;
-  $("#view-lab > .me-back").hidden = !exams;
+  $("#me-lab").hidden = fourth === "lab";
+  $("#view-lab > .me-back").hidden = fourth === "lab";
 }
 // Gumb »nazaj« na temi oziroma pri seriji nalog vodi tja, od koder je učenec prišel.
 function setBack(view) {
@@ -2425,10 +2523,19 @@ async function startSession(kind, body = {}) {
   renderTask(out.task, { mode: cfg.mode, index: out.index, total: out.total });
 }
 
-function sessionDoneCard(mode, n) {
+function sessionDoneCard(mode, n, xp = null) {
   return `<div class="card result celebrate"><div class="result-icon">${icon("trophy")}</div><h2>${SESSION_DONE[mode] || t("common.done")}!</h2>
     <p>${t("result.firstTry", { correct: n.correct, total: n.total })}${n.xp ? ` · +${n.xp.gained} XP` : ""}</p>
-    <button class="primary big" id="fb-back">${state.backTo === "competition" || state.backTo === "exams" ? prepBack() : t("result.toPath")}</button></div>`;
+    <button class="primary big" id="fb-back">${state.backTo === "competition" || state.backTo === "exams" ? prepBack() : t("result.toPath")}</button>${rewardHtml(mode, n, xp)}</div>`;
+}
+// Igra kot nagrada (public/games/reward.js): po dnevnem treningu ali doseženem dnevnem cilju ponudba ene igre
+// iz pravkar vadene snovi; nikoli med učenjem, »Skrij igre« jo skrije, videz po stopnji (SŠ, fakulteta umirjeno).
+function rewardHtml(mode, n, xp) {
+  const list = state.student && rewardOffer(state.student.settings, mode, n, xp || state.xp);
+  if (!list) return "";
+  const calm = STAGES[stageOf(state.student.settings)].calm;
+  return `<div class="reward-offer${calm ? " calm" : ""}"><span class="reward-ic" aria-hidden="true">${icon("gamepad-2")}</span><span class="reward-t"><b>${t("reward.title")}</b><small>${t("reward.sub")}</small></span>
+    <button type="button" class="secondary" data-reward="${escapeHtml(list.join(","))}">${icon("gamepad-2")}${t("reward.play")}</button></div>`;
 }
 
 // Slike pri nalogah: graf premice in številska premica. Barve so enake v svetlem
@@ -2869,7 +2976,7 @@ async function checkTask(task, ctx, value) {
   } else if (r.closed) {
     html = `<div class="fb ${r.correct ? "ok" : "bad"}">${icon(r.correct ? "circle-check" : "circle-x")}<span>${r.correct ? t("task.correct") : t("task.wrong")}</span></div>${closedNote}
       ${r.solution ? workedBlock(task, r.solution, r.correct ? t("task.solution") : t("task.example")) : ""}`;
-    html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next) : next(ctx.mode === "practice" && !r.correct ? t("task.similar") : t("task.next"));
+    html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next, r.xp) : next(ctx.mode === "practice" && !r.correct ? t("task.similar") : t("task.next"));
   } else if (r.correct) {
     html = `<div class="fb ok pop">${icon("circle-check")}<span><b>${t("task.correctBang")}</b>${r.levelUp ? t("task.harder") : ""}</span><span class="xp-gain">${r.offline ? t("off.xpLater") : `<bdi dir="ltr">+${r.xp.gained} XP</bdi>`}</span></div>
       ${r.offline ? "" : xpItemsHtml(r.xp)}
@@ -2878,7 +2985,7 @@ async function checkTask(task, ctx, value) {
       ${workedBlock(task, r.solution)}
       ${r.selfExplain ? `<div class="fb info">${icon("circle-help")}<span>${escapeHtml(r.selfExplain)}</span></div>` : ""}
       ${r.offline ? "" : tutorRow(task.id)}`;
-    html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next) : next();
+    html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next, r.xp) : next();
   } else {
     html = `<div class="fb bad shake">${icon("circle-x")}<span>${escapeHtml(fbText(r) || t("task.wrong"))}</span></div>
       ${mistakeHtml(r.mistake)}
@@ -2887,7 +2994,7 @@ async function checkTask(task, ctx, value) {
     if (r.solution) {
       html += workedBlock(task, r.solution, t("task.example"));
       if (!r.offline) html += tutorRow(task.id);
-      html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next) : next(ctx.mode === "practice" ? t("task.similar") : t("task.next"));
+      html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next, r.xp) : next(ctx.mode === "practice" ? t("task.similar") : t("task.next"));
     } else {
       html += `<div class="actions"><button id="fb-retry" class="primary big">${t("task.retry")}</button>
         ${r.offline ? "" : `<button id="fb-help" class="secondary">${icon("message-circle")}${t("task.askTutor")}</button>`}</div>
@@ -2954,6 +3061,8 @@ const SCHOOL_NAMES = { OS: t("comp.os"), SS: t("comp.ss") };
 
 async function loadCompetition(key = state.compKey) {
   const box = $("#competition-content");
+  const act = state.compAction; // bližnjica s Učne poti (renderGoalModes)
+  state.compAction = null;
   const q = key ? `?key=${encodeURIComponent(key)}` : "";
   let c;
   try {
@@ -2975,7 +3084,7 @@ async function loadCompetition(key = state.compKey) {
     : `<p class="muted small-note">${t("comp.historyEmpty")}</p>`;
   const learning = c.units.flatMap((u) => u.topics).filter((t) => t.status !== "new").length;
   box.innerHTML = `
-    ${meBackHtml()}
+    ${offTabbarViews().includes("competition") ? meBackHtml() : ""}
     <h1>${t("comp.title")}</h1>
     <div class="comp-pickers">
       ${seg(["MAT", "FIZ", "KEM"].map((k) => [k, SUBJECT_NAMES[k] || k]), c.subject, "data-comp-subject")}
@@ -3016,6 +3125,12 @@ async function loadCompetition(key = state.compKey) {
           .join("")}</ol></section>`,
       )
       .join("")}`;
+  // Bližnjica s Učne poti (cilj tekmovanje): trening se začne takoj, pri poskusnem tekmovanju (na čas) le pokažemo kartico.
+  if (act === "tek") box.querySelector("[data-comp-train]")?.click();
+  if (act === "contest") {
+    box.querySelector(".contest-card")?.scrollIntoView({ block: "center" });
+    box.querySelector("[data-comp-contest]")?.focus({ preventScroll: true });
+  }
 }
 
 document.addEventListener("click", (e) => {
@@ -3250,12 +3365,13 @@ async function oursTutor(entry, title, task, part) {
   paperBusy = true;
   try {
     await newTutorChat();
-    const n = `${task.n}${part.id || ""}`;
+    const n = partLabel(task, part);
+    const pola = task.pola ? `${t("pp.oursPola", { n: task.pola })} · ` : "";
     const strip = (md) => String(md || "").replace(/<svg[\s\S]*?<\/svg>/g, "").trim();
     const choices = part.format === "choice" && part.choices ? part.choices.map((c, i) => `${String.fromCharCode(65 + i)}) ${strip(c)}`).join("\n") : "";
     const body = [strip(task.intro), strip(part.text), choices].filter(Boolean).join("\n\n").slice(0, 1500);
-    state.paperCtx = { conv: state.conversationId, paper: title, task: n, ours: entry.id };
-    await send(`${title} · ${t("pp.oursTask", { n })}\n\n${body}`);
+    state.paperCtx = { conv: state.conversationId, paper: title, task: partKey(task, part), ours: entry.id };
+    await send(`${title} · ${pola}${t("pp.oursTask", { n })}\n\n${body}`);
   } catch (err) {
     toast(err.message);
   } finally {
@@ -3475,22 +3591,22 @@ async function loadUsage() {
   if (card) card.hidden = !res?.ok;
   if (!res?.ok) return;
   const u = await res.json();
-  const eur = (x) => (x || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+  const eur = (x) => (x || 0).toLocaleString(locale(), { minimumFractionDigits: 2, maximumFractionDigits: x && x < 1 ? 3 : 2 }); // kot števec zgoraj: 3 decimalke le pod 1 €
   const L = u.limits || {};
-  $("#usage").innerHTML = `<p>${t("usage.total", { usd: u.month_usd.toFixed(2) })}${t("usage.eur", { eur: eur(u.month_eur) })}${u.budget_usd ? t("usage.budget", { budget: u.budget_usd }) : ""}${
+  $("#usage").innerHTML = `<p>${t("usage.total", { usd: (u.month_usd || 0).toLocaleString(locale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })}${t("usage.eur", { eur: eur(u.month_eur) })}${u.budget_usd ? t("usage.budget", { budget: u.budget_usd.toLocaleString(locale()) }) : ""}${
     u.daily_questions ? t("usage.limit", { n: u.daily_questions }) : ""
   }</p>
   <p>${t("usage.summary", { active: u.active_students, avg: eur(u.per_active_eur), msg: eur(u.per_message_eur), proj: eur(u.projected_eur) })}</p>
   <p class="muted">${t("usage.saved", { count: u.saved_answers || 0 })}</p>
   ${L.daily_deep || L.student_soft_usd || L.student_hard_usd ? `<p class="muted">${t("usage.limits", { deep: L.daily_deep ?? "∞", soft: L.student_soft_usd ?? "∞", hard: L.student_hard_usd ?? "∞" })}</p>` : ""}
-  <table class="table"><thead><tr><th>${t("usage.student")}</th><th>${t("usage.calls")}</th><th>${t("usage.savedCol")}</th><th>${t("usage.tokens")}</th><th>${t("usage.cost")}</th></tr></thead><tbody>
+  <div class="md-table-wrap"><table class="table"><thead><tr><th>${t("usage.student")}</th><th>${t("usage.calls")}</th><th>${t("usage.savedCol")}</th><th>${t("usage.tokens")}</th><th>${t("usage.cost")}</th></tr></thead><tbody>
   ${u.students
-    .map((s) => `<tr><td>${escapeHtml(s.name)}</td><td>${s.calls}</td><td>${s.saved || 0}</td><td>${s.input_tokens} / ${s.output_tokens} / ${s.cache_read_tokens}</td><td>${eur(s.cost_eur)} € <span class="muted">(${s.cost_usd.toFixed(3)} $)</span></td></tr>`)
-    .join("")}</tbody></table>
-  ${(u.by_model || []).length ? `<table class="table"><thead><tr><th>${t("usage.model")}</th><th>${t("usage.calls")}</th><th>${t("usage.tokens")}</th><th>${t("usage.cost")}</th></tr></thead><tbody>
+    .map((s) => `<tr><td>${escapeHtml(s.name)}</td><td>${s.calls}</td><td>${s.saved || 0}</td><td>${s.input_tokens} / ${s.output_tokens} / ${s.cache_read_tokens}</td><td>${eur(s.cost_eur)} € <span class="muted">(${(s.cost_usd || 0).toLocaleString(locale(), { minimumFractionDigits: 3, maximumFractionDigits: 3 })} $)</span></td></tr>`)
+    .join("")}</tbody></table></div>
+  ${(u.by_model || []).length ? `<div class="md-table-wrap"><table class="table"><thead><tr><th>${t("usage.model")}</th><th>${t("usage.calls")}</th><th>${t("usage.tokens")}</th><th>${t("usage.cost")}</th></tr></thead><tbody>
   ${u.by_model
     .map((m) => `<tr><td>${escapeHtml(m.model)} <span class="muted">· ${escapeHtml(m.kind)}</span></td><td>${m.calls}</td><td>${m.input_tokens} / ${m.output_tokens} / ${m.cache_read_tokens}</td><td>${eur(m.cost_eur)} €</td></tr>`)
-    .join("")}</tbody></table>` : ""}`;
+    .join("")}</tbody></table></div>` : ""}`;
 }
 
 // ---------- uvodni ogled ----------
@@ -3919,10 +4035,29 @@ initFlashcards({ api, renderRich, escapeHtml, toast, showView, getStudent: () =>
 // Urnik (public/schedule.js): po spremembi se osvežita kartica »Danes imaš …« in Priprava na test.
 function scheduleChanged() {
   if (currentView === "schedule") showSchedule();
-  renderScheduleCard($("#schedule-card"));
+  renderStageHome();
   refreshModes();
 }
-initSchedule({ api, escapeHtml, toast, showView, startSession, getStudent: () => state.student, onChange: () => (renderScheduleCard($("#schedule-card")), refreshModes()) });
+initSchedule({ api, escapeHtml, toast, showView, startSession, getStudent: () => state.student, onChange: () => (renderStageHome(), refreshModes()) });
+
+// Začetna stran po stopnji (public/zacetna.js, j 2026-11-01): kartica »Danes imaš …«, kartica stopnje
+// (OŠ igre, SŠ matura, faks Moj študij z izpitnimi roki) in vrstni red kartic na Učni poti.
+async function renderStageHome() {
+  if (!state.student) return;
+  const sid = state.student.id;
+  await renderScheduleCard($("#schedule-card"));
+  if (state.student?.id !== sid) return; // med nalaganjem zamenjan profil
+  const level = stopnja(state.student.settings);
+  const schedule = lastSchedule(sid);
+  const box = $("#stage-card");
+  box.innerHTML = stageCardHtml(level, { games: gamesOn(state.student.settings), exams: siExams(), schedule, t, esc: escapeHtml });
+  box.hidden = !box.innerHTML;
+  uvrstiKartice($("#view-path .path-side"), vrstniRed(level, schedule));
+}
+$("#stage-card").addEventListener("click", (e) => {
+  const go = e.target.closest("[data-home-go]")?.dataset.homeGo;
+  if (go) showView(go);
+});
 // Skeniranje nalog (public/scan/): fotografija ali vpis → rešitev po korakih.
 initScan({
   api,
@@ -3956,8 +4091,10 @@ initTextbook({
 
 // ---------- zagon ----------
 
-// Bližnjica z ikone aplikacije (dolg pritisk na ikono): /?pogled=chat odpre Inštruktorja.
-const START_VIEW = ["chat", "textbook", "graph"].find((v) => v === new URLSearchParams(location.search).get("pogled"));
+// Bližnjica z ikone aplikacije (dolg pritisk na ikono): /?pogled=chat odpre Inštruktorja. Iz 3D atlasa (/3d)
+// »Vprašaj inštruktorja«: /?pogled=chat&vprasaj=… odpre klepet z vpisanim vprašanjem (pošlje ga učenec sam).
+const START_VIEW = ["chat", "textbook", "graph", "lab"].find((v) => v === new URLSearchParams(location.search).get("pogled"));
+const START_ASK = START_VIEW === "chat" ? (new URLSearchParams(location.search).get("vprasaj") || "").slice(0, 2000) : "";
 if (new URLSearchParams(location.search).has("pogled")) history.replaceState(null, "", location.pathname);
 initInstall({ toast, onSheet: (open) => (open ? overlayOpened() : overlayClosed()) });
 initFullscreen();
@@ -4006,6 +4143,12 @@ initFormulaInfo();
     else refreshUsageMeter();
     if (!o?.keepView) showView("path");
     if (first && START_VIEW && !o?.keepView) showView(START_VIEW);
+    if (first && START_ASK && !o?.keepView) {
+      const box = $("#input");
+      box.value = START_ASK;
+      autoGrow();
+      box.focus();
+    }
     if (first) restoreWindows();
     first = false;
   };

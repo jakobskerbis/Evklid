@@ -1,7 +1,8 @@
 // Napredovanje: prilagodljiva težavnost, obvladanje tem, odklepanje sklopov,
 // preizkus znanja, razmaknjeno ponavljanje, XP in lestvica.
 import crypto from "node:crypto";
-import { getPath, getTopic, localTopic, localUnitTitle } from "./curriculum.js";
+import { getPath, getTopic, localTopic, localUnitTitle, baseTopicIds } from "./curriculum.js";
+import { conceptsOfTopics } from "../public/games/learn-link.js";
 import { sameSubject } from "./subjects.js";
 import { uiLanguage } from "../public/i18n/languages.js";
 import { generateTask, hasGenerator, publicTask, hintSteps } from "./practice/index.js";
@@ -286,6 +287,8 @@ export class Progress {
     if (!open) {
       const out = { finished: true, sessionId, kind, total: all.length, correct: all.filter((t) => t.first_try_correct).length };
       if (sess?.kind === "contest") return { ...out, contest: this.finishContest(sess) };
+      // Pojmi iger iz pravkar vadenih tem: nagradna igra na koncu (public/games/reward.js).
+      out.reward = conceptsOfTopics(all.map((t) => t.topic_id), baseTopicIds);
       if (sess && !sess.finished) {
         this.db.prepare("UPDATE sessions SET finished = 1 WHERE id = ?").run(sessionId);
         if (sess.kind === "daily") out.xp = this.award(sess.student_id, [[XP.daily, "dnevni trening"]]);

@@ -55,7 +55,7 @@
 
 /* Pasica: dnevni cilj, mejnik. */
 .xp-banner {
-  position: fixed; z-index: 70; top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%);
+  position: fixed; z-index: 70; top: calc(12px + var(--varno-zg, env(safe-area-inset-top, 0px))); left: 50%; transform: translateX(-50%);
   display: flex; align-items: center; gap: 12px; width: max-content; max-width: calc(100% - 32px); padding-block: 12px; padding-inline: 12px 18px;
   background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg);
   cursor: pointer; animation: xp-drop 0.3s ease both; transition: opacity 0.25s, transform 0.25s;

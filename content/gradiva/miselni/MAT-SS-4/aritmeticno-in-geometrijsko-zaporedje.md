@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Aritmetično zaporedje
+  - stalna diferenca $d = a_{n+1} - a_n$
+  - točke $(n, a_n)$ ležijo na premici
+- Aritmetični splošni člen
+  - $a_n = a_1 + (n-1)\,d$
+  - $n - 1$ korakov, preveri pri $n = 1$
+- Gaussova vsota
+  - $S_n = \frac{n}{2}\,(a_1 + a_n)$
+  - $1 + 2 + \ldots + 20 = 210$, ne dvakrat $55$
+- Geometrijsko zaporedje
+  - stalni količnik $q = \frac{a_{n+1}}{a_n}$
+  - padec za $20\,\%$ pomeni $q = 0{,}8$
+  - pri $q < 0$ alternirajoče
+- Geometrijski splošni člen
+  - $a_n = a_1 \cdot q^{\,n-1}$
+  - napaka: $q^n$ namesto $q^{n-1}$
+- Geometrijska vsota
+  - za $q \ne 1$: $S_n = a_1 \cdot \frac{q^n - 1}{q - 1}$
+  - za $q = 1$: $S_n = n \cdot a_1$
+- Prepoznavanje vrste
+  - razliko ali količnik preveri pri vseh parih
+  - iz $2, 4$ vrste še ne veš

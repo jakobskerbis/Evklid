@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Dolgo valjasto vlakno z mnogimi jedri ob robu, polno prečno progastih miofibril. Pogled »Sarkomera« pokaže, kako aktinski filamenti drsijo med miozinske; filamentov je manj in so debelejši kot v resnici.",
+  poskusi: "Izberi »Sarkomera« in premikaj »Krčenje«: kateri pas ostane enako dolg?",
   merilo: { m: 100e-6, oznaka: "100 µm" },
 };
 

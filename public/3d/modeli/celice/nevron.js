@@ -7,6 +7,7 @@ export const info = {
   podrocje: "celice",
   predmet: "BIO",
   opis: "Gibalni nevron z dendriti, celičnim telesom v prerezu in aksonom z mielinsko ovojnico. Akson je močno skrajšan: v resnici je lahko dolg do 1 m, odsek med dvema Ranvierjevima zažemkoma pa meri okoli 1 mm.",
+  poskusi: "Pritisni »Pošlji signal« in opazuj, kako signal skače med Ranvierjevimi zažemki.",
   merilo: { m: 200e-6, oznaka: "200 µm" },
 };
 

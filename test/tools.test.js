@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { evaluate, prepare, exactTex, formatNumber, convert, toFraction, CONSTANTS, QUANTITIES, mixedTex, primeFactors, factorsTex } from "../public/graph/scicore.js";
+import { evaluate, prepare, exactTex, formatNumber, convert, toFraction, CONSTANTS, QUANTITIES, mixedTex, primeFactors, factorsTex, dmsOf } from "../public/graph/scicore.js";
 import { analyze, solutionTex, intervalsTex, systemTex, polyCoeffs, previewTex } from "../public/graph/scisolve.js";
-import { stats, evalComplex, polyRoots, M, readMatrix, convertBase, molarMass } from "../public/graph/toolscore.js";
+import { stats, evalComplex, polyRoots, M, readMatrix, convertBase, molarMass, solveRatio } from "../public/graph/toolscore.js";
 import { ELEMENTS, MASSES, CATEGORIES, shells, fullConfig, EXTRA } from "../public/graph/pse-data.js";
 import { balance, parseSpecies, stoich, phOf, phAll, solveConc, dilution, massFraction, saltFormula, solubility, SOL_CATIONS, SOL_ANIONS } from "../public/graph/chemcore.js";
 import { normal, studentT, chi2, binomial, poisson, geometric, hypergeometric, probability, phiInv } from "../public/graph/probcore.js";
@@ -433,7 +433,7 @@ test("verjetnost: geometrijska in hipergeometrijska porazdelitev", () => {
 // ---------- preizkusi domnev, intervali, regresije, TVM, tabela vrednosti ----------
 
 import * as TC from "../public/graph/testcore.js";
-import { regression } from "../public/graph/model.js";
+import { regression, buildModel, emptyState } from "../public/graph/model.js";
 
 // neodvisen p: Simpson po gostoti t (ne uporablja probcore); Lanczos za ln Γ
 const lnG = (z) => {
@@ -603,4 +603,262 @@ test("tabela vrednosti: f(x), g(x), korak, omejitve", () => {
   assert.equal(TC.valueTable({ f: "x+a", start: 0, step: 1, rows: 3 }).error, "var");
   assert.equal(TC.valueTable({ f: "x", start: 0, step: 1, rows: 3 }).g, null);
   assert.ok(!Number.isFinite(TC.valueTable({ f: "1/x", start: 0, step: 1, rows: 2 }).f[0]));
+});
+
+test("ANOVA, F-test in F-porazdelitev (TI-84 ANOVA, 2-SampFTest)", () => {
+  const a = TC.anova([[3, 4, 5, 4], [6, 7, 6, 8], [5, 5, 6, 4]]);
+  assert.deepEqual([a.factor.df, a.error.df], [2, 9]);
+  assert.ok(Math.abs(a.factor.ss - 15.5) < 1e-9 && Math.abs(a.error.ss - 6.75) < 1e-9);
+  assert.ok(Math.abs(a.stat - 31 / 3) < 1e-9);
+  // F(2, d2): P(F > x) = (1 + 2x/d2)^(−d2/2)
+  assert.ok(Math.abs(a.p - (1 + (2 * a.stat) / 9) ** -4.5) < 1e-9, `p = ${a.p}`);
+  assert.equal(a.reject, true);
+  assert.ok(Math.abs(a.sxp - Math.sqrt(0.75)) < 1e-12);
+  assert.equal(TC.anova([[1, 2]]), null, "ena skupina");
+  assert.equal(TC.anova([[1], [2]]), null, "brez prostostnih stopenj znotraj skupin");
+  // F(d1, d2): gostota se integrira v cdf
+  const f = TC.fDist(3, 10);
+  let s = 0;
+  for (let i = 0; i < 10000; i++) s += f.pdf(1 + (i + 0.5) * 1e-4) * 1e-4;
+  assert.ok(Math.abs(s - (f.cdf(2) - f.cdf(1))) < 1e-5);
+  // F-test: F = s1²/s2², dvostranski p = 2·min(rep); F(1, 1) je simetričen okoli 1 v log merilu
+  const ft = TC.fTest2({ s: 2, n: 10 }, { s: 1.5, n: 12 });
+  assert.ok(Math.abs(ft.stat - 16 / 9) < 1e-12);
+  assert.deepEqual([ft.df1, ft.df2], [9, 11]);
+  assert.ok(ft.p > 0.3 && ft.p < 0.4 && !ft.reject);
+  assert.ok(Math.abs(TC.fTest2({ s: 3, n: 5 }, { s: 1, n: 5 }, "gt").p - (1 - TC.fDist(4, 4).cdf(9))) < 1e-12);
+  assert.ok(Math.abs(TC.fTest2({ s: 1, n: 5 }, { s: 1, n: 5 }).p - 1) < 1e-9);
+});
+
+test("Denarni tokovi: NPV, IRR, NFV, vračilna doba; amortizacija ΣInt, ΣPrn, bal kot TI-84", () => {
+  const cf = [-1000, 300, 400, 500];
+  assert.ok(Math.abs(TC.npv(10, cf) - (-1000 + 300 / 1.1 + 400 / 1.21 + 500 / 1.331)) < 1e-9);
+  const irr = TC.irr(cf);
+  assert.ok(Math.abs(TC.npv(irr, cf)) < 1e-7, `IRR ${irr}`);
+  assert.ok(Math.abs(irr - 8.896) < 0.001);
+  assert.equal(TC.irr([100, 200]), null, "isti predznak");
+  const r = TC.cashFlow(10, cf);
+  assert.ok(Math.abs(r.nfv - r.npv * 1.331) < 1e-9);
+  assert.ok(Math.abs(r.pbp - 2.6) < 1e-12, "−700, −300, +200 → 2 + 300/500");
+  assert.equal(r.dpbp, null, "z diskontiranjem se ne povrne");
+  assert.deepEqual(TC.readFlows([[-1000], [300, 3]]), [-1000, 300, 300, 300]);
+  assert.equal(TC.readFlows([[300, 0]]), null);
+  // posojilo 200 000, 30 let, 6 %: PMT = −1199,10; prvo plačilo 1000 obresti, ΣInt za 1. leto −11 933,19
+  const v = { N: 360, I: 6, PV: 200000, FV: 0, PY: 12, CY: 12, begin: false };
+  const pmt = TC.tvm({ ...v, PMT: NaN }, "PMT").PMT;
+  const rows = TC.amortize({ ...v, PMT: pmt });
+  assert.equal(rows.length, 360);
+  assert.ok(Math.abs(rows[0].int + 1000) < 1e-6 && Math.abs(rows[0].prn - (pmt + 1000)) < 1e-6);
+  assert.ok(Math.abs(rows[359].bal) < 1e-5, "na koncu ni dolga");
+  const y1 = TC.amortSum(rows, 1, 12);
+  assert.ok(Math.abs(y1.int + 11933.19) < 0.01 && Math.abs(y1.prn + 2456.02) < 0.01 && Math.abs(y1.bal - 197543.98) < 0.01);
+  assert.ok(Math.abs(y1.int + y1.prn - 12 * pmt) < 1e-6);
+  assert.equal(TC.amortSum(rows, 0, 12), null);
+  // plačilo na začetku obdobja: prvo plačilo je samo glavnica
+  const pb = TC.tvm({ ...v, begin: true, PMT: NaN }, "PMT").PMT;
+  const rb = TC.amortize({ ...v, begin: true, PMT: pb });
+  assert.equal(rb[0].int, 0);
+  assert.ok(Math.abs(rb[359].bal) < 1e-5);
+});
+
+test("Pol/Rec sredi izraza: vektorji, skalarni produkt, dolžina; Pol le zunaj", () => {
+  const env = { deg: true };
+  const pair = (s) => analyze(s, env).items.map((x) => x.v);
+  const near2 = (a, b) => a.every((x, i) => Math.abs(x - b[i]) < 1e-9);
+  assert.ok(near2(pair("Pol(3;4)"), [5, Math.atan2(4, 3) * (180 / Math.PI)]));
+  assert.ok(near2(pair("pol(3;4)"), [5, Math.atan2(4, 3) * (180 / Math.PI)]));
+  const c = Math.sqrt(3) / 2;
+  assert.ok(near2(pair("Rec(5;30)+Rec(3;120)"), [5 * c - 1.5, 2.5 + 3 * c]));
+  assert.ok(near2(pair("Pol(Rec(5;30)+Rec(3;120))"), [Math.sqrt(34), 30 + (Math.atan2(3, 5) * 180) / Math.PI]));
+  assert.ok(near2(pair("2Rec(2;30)-Rec(1;0)/2"), [4 * c - 0.5, 2]));
+  assert.ok(near2(pair("-Rec(2;90)"), [0, -2]));
+  assert.ok(Math.abs(analyze("Rec(2;0)·Rec(3;60)", env).value - 3) < 1e-9, "skalarni produkt");
+  assert.ok(Math.abs(analyze("|Rec(5;30)-Rec(3;120)|", env).value - Math.sqrt(34)) < 1e-9, "dolžina");
+  assert.ok(near2(pair("Rec(2;π/6)").slice(0, 1), [2 * Math.cos(Math.PI / 6 * Math.PI / 180)]), "v stopinjah je π/6 kot v stopinjah");
+  assert.ok(near2(analyze("Rec(2;π/6)", { deg: false }).items.map((x) => x.v), [Math.sqrt(3), 1]));
+  for (const [s, code] of [["2Pol(3;4)", "polInside"], ["√(Pol(3;4))", "polInside"], ["Pol(1;1)·Rec(2;0)", "polInside"], ["Rec(2;30)+1", "vecMix"], ["sin(Rec(1;2))", "vecOp"], ["1/Rec(1;2)", "vecOp"]]) assert.equal(analyze(s, env).error?.code, code, s);
+  assert.deepEqual(analyze("Pol(a;4)", env).error, { code: "missing", info: { names: ["a"] } });
+  assert.equal(analyze("Pol(a;4)", { ...env, vars: { a: 3 } }).items[0].v, 5);
+  // način graf: Rec je točka, z drsnikom ali t tudi krivulja
+  const m = (texts) => {
+    const s = emptyState();
+    s.items = texts.map((t, i) => ({ id: `i${i}`, type: "expr", text: t, color: i }));
+    return buildModel(s);
+  };
+  const g = m(["Rec(2, π/6)", "Rec(1, 0) + Rec(1, π/2)", "Rec(2, t)", "Rec(1, 0) + 1"]);
+  assert.deepEqual(g.items.map((o) => o.kind), ["points", "points", "param", "error"]);
+  assert.ok(near2(g.items[0].evalPoints()[0], [Math.sqrt(3), 1]));
+  assert.ok(near2(g.items[1].evalPoints()[0], [1, 1]));
+  assert.ok(Math.abs(g.items[2].fy(Math.PI / 2) - 2) < 1e-12);
+});
+
+test("Denarni tokovi: robni primeri (velik IRR, prvi tok 0, brez ničle)", () => {
+  assert.ok(Math.abs(TC.irr([-1, 100]) - 9900) < 0.01, "IRR 9900 %");
+  assert.ok(Math.abs(TC.cashFlow(0, [0, -100, 200]).pbp - 1.5) < 1e-12, "prvi tok 0");
+  assert.equal(TC.irr([-100, 200, -500]), null, "mešani predznaki, NPV nikoli 0");
+  assert.equal(TC.cashFlow(0, [-100, 50]).pbp, null);
+});
+
+import { regressionX, regressionTex, MODELS } from "../public/graph/model.js";
+import { stats2, expandFreq, logic32 } from "../public/graph/toolscore.js";
+import { fisherF } from "../public/graph/probcore.js";
+
+test("regresija: logistična z leti kot x (brez a = ∞), e^x in 1/x, obratna napoved x̂", () => {
+  assert.ok(MODELS.includes("expe") && MODELS.includes("inv"));
+  const L = (x) => 300 / (1 + Math.exp(-0.6 * (x - 2007)));
+  const yr = [...Array(15).keys()].map((i) => 2000 + i);
+  const lg = regression(yr, yr.map(L), "logistic");
+  assert.ok(lg.r2 > 0.999999 && Number.isFinite(lg.p[1] + lg.p[2] + lg.xm), JSON.stringify(lg));
+  near(lg.fn(2010), L(2010), 1e-4);
+  near(lg.xm, 2007, 1e-4);
+  assert.match(regressionTex(lg), /2007/); // pri velikem a zapis c/(1 + e^{−b(x − xm)})
+  near(regressionX(lg, 150)[0], 2007, 1e-4);
+  const xs = [1, 2, 3, 4, 5, 6];
+  const ee = regression(xs, xs.map((x) => 2 * Math.exp(0.3 * x)), "expe");
+  near(ee.p[0], 2, 1e-6);
+  near(ee.p[1], 0.3, 1e-6);
+  near(regressionX(ee, 2 * Math.exp(0.9))[0], 3, 1e-6);
+  const iv = regression(xs, xs.map((x) => 4 + 6 / x), "inv");
+  near(iv.p[0], 4, 1e-9);
+  near(iv.p[1], 6, 1e-9);
+  near(regressionX(iv, 7)[0], 2, 1e-9);
+  const lin = regression([1, 2, 3, 4, 5], [2, 4, 5, 4, 5], "lin");
+  near(lin.p[0], 0.6);
+  near(lin.p[1], 2.2);
+  near(regressionX(lin, 5)[0], 14 / 3);
+  const q = regression([-2, -1, 0, 1, 2], [4, 1, 0, 1, 4], "quad");
+  assert.deepEqual(regressionX(q, 9).map((v) => +v.toFixed(6)), [-3, 3]);
+  assert.deepEqual(regressionX(q, -1), []);
+  assert.equal(regressionX(regression(xs, xs.map((x) => x ** 3), "cubic"), 8), null);
+});
+
+test("statistika 2 spremenljivk in pogostosti (kot Casio fx-991CW)", () => {
+  const s = stats2([1, 2, 3, 4, 5], [2, 4, 5, 4, 5]);
+  assert.equal(s.n, 5);
+  assert.deepEqual([s.sx, s.sy, s.sxx, s.syy, s.sxy], [15, 20, 55, 86, 66]);
+  near(s.mx, 3);
+  near(s.my, 4);
+  near(s.sdPx, Math.SQRT2);
+  near(s.sdSx, Math.sqrt(2.5));
+  near(s.r, 0.7745966692);
+  assert.equal(stats2([1, 2], [3]), null);
+  assert.ok(Number.isNaN(stats2([1, 1, 1], [1, 2, 3]).r));
+  near(stats2([1e200, 2e200, 3e200], [1, 2, 3]).r, 1); // Σx² = ∞, r pa ostane 1
+  assert.deepEqual(expandFreq([1, 2, 3], [2, 0, 1]), [1, 1, 3]);
+  assert.equal(expandFreq([1, 2], [1]), null);
+  assert.equal(expandFreq([1, 2], [1, 1.5]), null);
+  const st = stats(expandFreq([2, 4, 5], [1, 3, 2]));
+  near(st.mean, 24 / 6);
+  near(st.sumSq, 4 + 48 + 50);
+});
+
+test("številski sistemi: logične operacije na 32 bitih", () => {
+  assert.equal(logic32(12n, 10n, "and")[10], "8");
+  assert.equal(logic32(12n, 10n, "or")[2], "1110");
+  assert.equal(logic32(2024n, 1000n, "xor")[16], "400");
+  assert.equal(logic32(5n, 0n, "not")[10], "-6");
+  assert.equal(logic32(5n, 0n, "not")[16], "FFFFFFFA");
+  assert.equal(logic32(1n, 0n, "neg")[2], "1".repeat(32));
+  assert.equal(logic32(0n, 0n, "xnor")[10], "-1");
+  assert.equal(logic32(2n ** 31n, 1n, "and"), null);
+  assert.equal(logic32(-(2n ** 31n), 0n, "neg")[10], "-2147483648");
+  assert.equal(convertBase("FF", 16).value, 255n);
+});
+
+test("matrike: sled, karakteristični polinom, lastne vrednosti", () => {
+  assert.equal(M.trace([[2, 1], [1, 3]]), 5);
+  assert.deepEqual(M.charPoly([[2, 1], [1, 3]]).map((v) => Math.round(v * 1e9) / 1e9), [1, -5, 5]);
+  const ev = M.eigen([[2, 0, 0], [0, 3, 4], [0, 4, 9]]);
+  assert.deepEqual(ev.map(([re, im]) => [+re.toFixed(9), +im.toFixed(9)]), [[1, 0], [2, 0], [11, 0]]);
+  const rot = M.eigen([[0, -1], [1, 0]]); // ±i
+  assert.deepEqual(rot.map(([re, im]) => [+re.toFixed(9) + 0, Math.abs(+im.toFixed(9))]), [[0, 1], [0, 1]]);
+  assert.equal(M.trace([[1, 2, 3]]), null);
+  // večkratne lastne vrednosti (QR, ne ničle polinoma): I in Jordanov blok brez »kompleksnega« šuma
+  const I10 = Array.from({ length: 10 }, (_, i) => Array.from({ length: 10 }, (_, j) => (i === j ? 1 : 0)));
+  assert.deepEqual(M.eigen(I10), Array(10).fill([1, 0]));
+  assert.deepEqual(M.eigen([[2, 1, 0], [0, 2, 1], [0, 0, 2]]), [[2, 0], [2, 0], [2, 0]]);
+  assert.deepEqual(M.eigen([[5]]), [[5, 0]]);
+});
+
+test("Fisherjeva F: kvantil, pričakovana vrednost, isto kot F-test", () => {
+  const F = fisherF(5, 10);
+  near(F.inv(0.95), 3.325834530, 1e-6);
+  near(F.cdf(F.inv(0.3)), 0.3, 1e-9);
+  near(F.mean, 10 / 8);
+  near(TC.fDist(5, 10).cdf(2), F.cdf(2), 1e-12);
+});
+
+test("enota kota GRA (gradi): 400 v polnem krogu, kot Casio", () => {
+  const G = { grad: true };
+  near(ev("sin(100)", G), 1);
+  near(ev("tan(50)", G), 1);
+  assert.equal(ev("cos(100)", G), 0); // točno 0, ne 10⁻¹⁶
+  near(ev("arcsin(1)", G), 100);
+  near(ev("arctan(1)", G), 50);
+  near(ev("90°", G), 100); // stopinje v gradih
+  near(ev("sin(90°)", G), 1);
+  // enačbe: rešitve na eni periodi [0; 400)
+  const r = analyze("sin(x) = 1", G);
+  assert.deepEqual(r.roots.map(Math.round), [100]);
+  assert.equal(r.grad, true);
+  assert.match(r.interval, /400\^\{\\mathrm\{g\}\}/);
+  assert.match(solutionTex(r), /100\^\{\\mathrm\{g\}\}/);
+  // Pol v gradih, odvod vedno v radianih
+  const p = analyze("Pol(1; 1)", G);
+  near(p.items[1].v, 50);
+  assert.equal(p.grad, true);
+  assert.equal(analyze("d/dx(sin(x))", G).resTex, "\\cos\\left(x\\right)");
+});
+
+test("točne vrednosti kotnih funkcij na pravih kotih (cos 90° = 0, tan 90° ne obstaja)", () => {
+  assert.equal(ev("cos(90)", { deg: true }), 0);
+  assert.equal(ev("sin(180)", { deg: true }), 0);
+  assert.equal(ev("sin(-90)", { deg: true }), -1);
+  assert.equal(ev("cos(π)"), -1);
+  assert.equal(ev("sin(π)"), 0);
+  assert.ok(Number.isNaN(evaluate("tan(90)", { deg: true }).value));
+  assert.ok(Number.isNaN(evaluate("1/cos(90)", { deg: true }).value) || !Number.isFinite(evaluate("1/cos(90)", { deg: true }).value));
+  near(ev("tan(45)", { deg: true }), 1);
+  near(ev("sin(30)", { deg: true }), 0.5);
+});
+
+test("stopinje, minute, sekunde: vnos 30°15′20″ in izpis °′″", () => {
+  const D = { deg: true };
+  near(ev("30°15′20″", D), 30 + 15 / 60 + 20 / 3600);
+  near(ev("-30°15′", D), -30.25); // minus velja za ves kot
+  near(ev("2·30°15′", D), 60.5);
+  near(ev("15′", D), 0.25);
+  near(ev("30°15′ + 10°50′", D), 41.0833333333);
+  near(ev("sin(30°0′)", D), 0.5);
+  near(ev("30°30′", {}), (30.5 * Math.PI) / 180); // v radianih
+  near(ev("1,5°30′", D), 2);
+  assert.equal(evaluate("30°15′20″", D).tex, "30^{\\circ}15^{\\prime}20^{\\prime\\prime}");
+  assert.deepEqual(dmsOf(30 + 15 / 60 + 20 / 3600), { text: "30°15′20″", tex: "30^{\\circ}15^{\\prime}20^{\\prime\\prime}" });
+  assert.equal(dmsOf(-30.25).text, "−30°15′0″");
+  assert.equal(dmsOf(359.99999).text, "359°59′59,96″");
+  assert.equal(dmsOf(12.5, { comma: false }).text, "12°30′0″");
+  assert.equal(dmsOf(NaN), null);
+  // izpis gre nazaj v vnos
+  near(ev(dmsOf(48.123456).text.replace("−", "-"), D), 48.123456, 1e-5);
+});
+
+test("matrike: enotska matrika I_n in potenca A^n", () => {
+  assert.deepEqual(M.identity(3), [[1, 0, 0], [0, 1, 0], [0, 0, 1]]);
+  const A = [[1, 1], [1, 0]];
+  assert.deepEqual(M.pow(A, 10), [[89, 55], [55, 34]]); // Fibonaccijeva števila
+  assert.deepEqual(M.pow(A, 0), M.identity(2));
+  assert.deepEqual(M.pow([[2, 0], [0, 4]], -1), [[0.5, 0], [0, 0.25]]);
+  assert.equal(M.pow([[1, 2], [2, 4]], -1), null); // singularna
+  assert.equal(M.pow([[1, 2, 3]], 2), null); // ni kvadratna
+});
+
+test("razmerje a : b = c : d z neznanko na katerem koli mestu", () => {
+  assert.deepEqual(solveRatio([2, 3, 4, NaN]), { i: 3, value: 6 });
+  assert.deepEqual(solveRatio([NaN, 3, 4, 6]), { i: 0, value: 2 });
+  assert.deepEqual(solveRatio([2, NaN, 4, 6]), { i: 1, value: 3 });
+  assert.deepEqual(solveRatio([2, 3, NaN, 6]), { i: 2, value: 4 });
+  near(solveRatio([3, 7, 1, NaN]).value, 7 / 3);
+  assert.deepEqual(solveRatio([0, 3, 4, NaN]), { error: "zero" });
+  assert.deepEqual(solveRatio([2, 3, NaN, NaN]), { error: "count" });
+  assert.deepEqual(solveRatio([2, 3, 4, 6]), { error: "count" });
 });

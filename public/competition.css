@@ -143,7 +143,7 @@
 .pp-local-hint { margin: 0 0 8px; color: var(--muted); font-size: 0.86rem; }
 html.pv-open, html.pv-open body { overflow: hidden; }
 .pv { position: fixed; inset: 0; z-index: 900; display: flex; flex-direction: column; background: var(--bg); color: var(--text); }
-.pv-bar { display: flex; align-items: center; gap: 8px; padding: 6px 10px; padding-top: max(6px, env(safe-area-inset-top)); background: var(--surface); border-bottom: 1px solid var(--border); }
+.pv-bar { display: flex; align-items: center; gap: 8px; padding: 6px 10px; padding-top: max(6px, var(--varno-zg, env(safe-area-inset-top, 0px))); background: var(--surface); border-bottom: 1px solid var(--border); }
 .pv-ic { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; padding: 0 !important; }
 .pv-up svg { transform: rotate(180deg); }
 .pv-title { flex: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -154,8 +154,9 @@ html.pv-open, html.pv-open body { overflow: hidden; }
 .pv button.pv-mark { display: inline-flex; align-items: center; gap: 6px; min-height: 44px !important; } /* button.small je sicer 38 px */
 .pv-mark[aria-pressed="true"], .pv-none [aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 .pv-boxhint { margin: 0; padding: 6px 12px; background: var(--accent-soft); color: var(--text); font-size: 0.9rem; text-align: center; }
-.pv-scroll { position: relative; flex: 1; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding: 12px 12px max(24px, env(safe-area-inset-bottom)); }
-.pv-pages { display: flex; flex-direction: column; gap: 14px; max-width: 900px; margin: 0 auto; }
+.pv-scroll { position: relative; flex: 1; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding: 12px 12px max(24px, var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+/* Strani pole čez vso širino; na zelo širokem zaslonu dve strani druga ob drugi kot odprta knjiga (j 2026-11-04). */
+.pv-pages { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 760px), 1fr)); gap: 14px; align-items: start; margin: 0 auto; }
 .pv-page { position: relative; width: 100%; background: #fff; border-radius: 4px; box-shadow: var(--shadow); overflow: hidden; direction: ltr; }
 .pv-page canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .pv-task { position: absolute; border: 2px solid transparent; border-radius: 6px; transition: border-color 0.15s, background-color 0.15s; }
@@ -187,11 +188,18 @@ html.pv-open, html.pv-open body { overflow: hidden; }
 .op-score { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; padding: 0 6px; unicode-bidi: isolate; }
 /* Besedilo pole je slovensko (NPZ), zato v RTL ostane od leve proti desni; gumbi in naslovi sledijo jeziku vmesnika. */
 [dir="rtl"] .op :is(.op-tools, .op-q, .op-way, .op-answer, .op-note), [dir="rtl"] .op-task > :not(h3, .op-parts, .op-fig) { direction: ltr; text-align: left; }
+[dir="rtl"] .op :is(.op-section, .op-fig) { direction: ltr; } /* ime dela in napisi na sliki so v jeziku pole */
+[dir="rtl"] .op .op-section { text-align: left; }
 @media (max-width: 560px) { .op .pv-title { flex-basis: 0; } } /* telefon: točke ostanejo v vrstici z naslovom (pregledovalnik pole jih prelomi) */
-.op-body { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+/* Naloge pole v stolpcih, kolikor jih gre v širino (vrstni red po vrsticah: 1 2 / 3 4). */
+.op-body { margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 560px), 1fr)); gap: 16px; align-items: start; }
+.op-body > :not(.op-task) { grid-column: 1 / -1; }
 .op-about { display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--accent-soft); font-size: 0.92rem; }
 .op-about svg.i { flex: none; width: 18px; height: 18px; margin-top: 2px; }
 .op-tools { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.op-pola { margin: 8px 0 0; font-size: 1.2rem; display: flex; align-items: baseline; gap: 8px; }
+.op-pola small { color: var(--muted); font-size: 0.85rem; font-weight: 400; }
+.op-section { margin: 4px 0 0; font-size: 1.05rem; }
 .op-task { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: 14px 16px; }
 .op-task > h3 { margin: 0 0 8px; font-size: 1.05rem; }
 .op-parts { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
@@ -203,6 +211,12 @@ html.pv-open, html.pv-open body { overflow: hidden; }
 .op-text > :first-child { margin-top: 0; }
 .op-text > :last-child { margin-bottom: 0; }
 .op-pts { color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
+@media (max-width: 560px) { /* telefon: točke pod številko naloge, besedilo dobi vso širino */
+  .op-q { grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; row-gap: 2px; }
+  .op-no { grid-area: 1 / 1; }
+  .op-text { grid-area: 1 / 2 / 3 / 3; }
+  .op-pts { grid-area: 2 / 1; }
+}
 .op-fig { margin: 10px 0; text-align: center; color: var(--text); }
 .op-fig svg { max-width: min(100%, 420px); height: auto; }
 .op-choices { margin: 8px 0 0; padding-inline-start: 1.6em; }
