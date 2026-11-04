@@ -29,7 +29,9 @@ import { programReferences, referencesFor, themesFor } from "./references.js";
 import { SETTINGS_TOOLS, createSettingsTools, cleanDevice, looksLikeSettings, openWindowIntent } from "./chat-settings.js";
 import { detectWeakTopics, weaknessesForPrompt } from "./weaknesses.js";
 import { cleanText, ENUMS, DEFAULT_SETTINGS } from "./settings.js";
-import { paperContext, PAPER_NOTE_HEAD } from "./paper-context.js";
+import { paperContext } from "./paper-context.js";
+import { isHiddenNote } from "./skrite-opombe.js";
+import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
 import { mountAccounts } from "./accounts/index.js";
 import { passwordGate, gateNeeded } from "./gate.js";
@@ -508,8 +510,12 @@ export function createApp(store, opts = {}) {
     // Naloga iz pretekle pole: navodilo za inštruktorja kot skrit blok (server/paper-context.js), učenec vidi le text.
     const paperNote = paperContext(req.body?.paper, { loadOurs: loadOurPaper });
     if (paperNote) userContent.push({ type: "text", text: paperNote });
-    userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     const isFirst = store.listMessages(conv.id).length === 0;
+    // Prvo vprašanje prostega pogovora: povzetek ujemajoče se lekcije iz učbenika kot skrita opomba
+    // (server/lekcija-za-vprasanje.js). Shranjen s sporočilom, zato se začetek zgodovine ne spreminja.
+    const lesson = isFirst && !conv.path_topic && !paperNote && text ? lessonForQuestion(text, student.settings) : null;
+    if (lesson) userContent.push({ type: "text", text: lessonNote(lesson) });
+    userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     const userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
     const help = isFirst && !image ? helpTasks.get(conv.id) : null;
     if (help) helpTasks.delete(conv.id);
@@ -613,7 +619,7 @@ export function createApp(store, opts = {}) {
       let firstPre = null;
       if (claim) {
         // Brez skrite opombe pole (server/paper-context.js), sicer reševalnik prve naloge ne prepozna.
-        const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !x.text?.startsWith(PAPER_NOTE_HEAD)) } : m);
+        const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !isHiddenNote(x.text)) } : m);
         const earlier = fullHistory.filter((m) => m.role === "user").slice(0, -1).map(ownText);
         let at = -1;
         for (let i = earlier.length - 1; i >= 0 && !firstPre; i--) {

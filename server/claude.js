@@ -2,6 +2,7 @@
 import "./env.js";
 import Anthropic from "@anthropic-ai/sdk";
 import { systemBlocks } from "./prompt.js";
+import { isHiddenNote } from "./skrite-opombe.js";
 import { mockToolCall, mockToolText } from "./chat-settings.js";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
@@ -226,7 +227,7 @@ function lastUserText(messages) {
   if (typeof last.content === "string") return last.content;
   // Skriti opombi s preverjenim rezultatom (server/live-check.js) in pole (server/paper-context.js) nista del učenčevega besedila.
   return last.content
-    .filter((b) => b.type === "text" && !b.text.startsWith("<preverjen_racun>") && !b.text.startsWith("<kontekst_pole>") && !b.text.startsWith("<povzetek_pogovora>"))
+    .filter((b) => b.type === "text" && !isHiddenNote(b.text))
     .map((b) => b.text)
     .join(" ");
 }
