@@ -6,7 +6,7 @@ import { parse, compile, freeVars, toTex, normalize, simplify, diff, inlineUfn, 
 export const RESERVED = new Set(["x", "y", "r", "θ"]);
 const DEF_RE = /^\s*([A-Za-zα-ωΑ-Ω](?:_\w+)?)\s*\(\s*([A-Za-zθ](?:\s*,\s*[A-Za-zθ])*)\s*\)\s*=(?!=)/;
 
-export const MODELS = ["lin", "quad", "cubic", "exp", "pow", "log"];
+export const MODELS = ["lin", "quad", "cubic", "quart", "exp", "pow", "log", "logistic", "sin"];
 
 let idSeq = 0;
 export const newId = () => `i${Date.now().toString(36)}${(idSeq++).toString(36)}`;
@@ -628,16 +628,58 @@ function polyfit(xs, ys, deg) {
   return solve(A, b); // [c0, c1, …]
 }
 
+/** Levenberg–Marquardt: najboljši parametri za y ≈ f(p, x), začetek p0. */
+function levMar(f, p0, xs, ys) {
+  let p = p0.slice();
+  const sse = (q) => xs.reduce((s, x, i) => s + (ys[i] - f(q, x)) ** 2, 0);
+  let cur = sse(p);
+  let lam = 1e-3;
+  for (let it = 0; it < 200; it++) {
+    const n = p.length;
+    const J = xs.map((x) =>
+      p.map((v, k) => {
+        const h = 1e-7 * Math.max(1, Math.abs(v));
+        const q = p.slice();
+        q[k] += h;
+        return (f(q, x) - f(p, x)) / h;
+      }),
+    );
+    const res = xs.map((x, i) => ys[i] - f(p, x));
+    const A = Array.from({ length: n }, (_, a) => Array.from({ length: n }, (_, b) => J.reduce((s, r) => s + r[a] * r[b], 0)));
+    const g = Array.from({ length: n }, (_, a) => J.reduce((s, r, i) => s + r[a] * res[i], 0));
+    let moved = false;
+    for (let tries = 0; tries < 12; tries++) {
+      const d = solve(A.map((r, a) => r.map((v, b) => (a === b ? v * (1 + lam) + 1e-12 : v))), g);
+      if (d) {
+        const q = p.map((v, k) => v + d[k]);
+        const e = sse(q);
+        if (Number.isFinite(e) && e <= cur) {
+          const done = cur - e <= 1e-16 * (1 + cur);
+          p = q;
+          cur = e;
+          lam = Math.max(lam / 5, 1e-12);
+          moved = !done;
+          break;
+        }
+      }
+      lam *= 5;
+    }
+    if (!moved) break;
+  }
+  return p;
+}
+
 /**
  * Regresija po metodi najmanjših kvadratov.
- * model: lin (y = ax + b), quad, cubic, exp (y = a·bˣ), pow (y = a·xᵇ), log (y = a + b ln x)
+ * model: lin (y = ax + b), quad, cubic, quart, exp (y = a·bˣ), pow (y = a·xᵇ), log (y = a + b ln x),
+ * logistic (y = c/(1 + a·e^(−bx)), p = [a, b, c]), sin (y = a·sin(bx + c) + d, p = [a, b, c, d]) – kot TI-84
  * @returns {{ model, p: number[], fn: (x)=>number, r2: number } | null}
  */
 export function regression(xs, ys, model) {
   let fn;
   let p;
-  if (model === "lin" || model === "quad" || model === "cubic") {
-    const deg = { lin: 1, quad: 2, cubic: 3 }[model];
+  if (model === "lin" || model === "quad" || model === "cubic" || model === "quart") {
+    const deg = { lin: 1, quad: 2, cubic: 3, quart: 4 }[model];
     const c = polyfit(xs, ys, deg);
     if (!c) return null;
     p = c.slice().reverse(); // od najvišje potence
@@ -672,6 +714,53 @@ export function regression(xs, ys, model) {
     if (!c) return null;
     p = [c[0], c[1]];
     fn = (x) => p[0] + p[1] * Math.log(x);
+  } else if (model === "logistic") {
+    const ok = xs.every(Number.isFinite) && ys.every(Number.isFinite) && xs.length >= 4;
+    if (!ok) return null;
+    const top = Math.max(...ys);
+    const span = Math.max(1e-9, top - Math.min(...ys));
+    let best = null;
+    for (const k of [0.02, 0.1, 0.3, 0.6, 1, 2, 4, 8]) {
+      const c = top + k * span;
+      const pts = xs.map((x, i) => [x, ys[i]]).filter(([, y]) => y > 0 && y < c);
+      const l = pts.length >= 2 ? polyfit(pts.map((q) => q[0]), pts.map((q) => Math.log(c / q[1] - 1)), 1) : null;
+      if (!l) continue;
+      const q = [Math.exp(l[0]), -l[1], c];
+      const sse = xs.reduce((a, x, i) => a + (ys[i] - q[2] / (1 + q[0] * Math.exp(-q[1] * x))) ** 2, 0);
+      if (!best || sse < best.sse) best = { q, sse };
+    }
+    if (!best) return null;
+    const f = (q, x) => q[2] / (1 + q[0] * Math.exp(-q[1] * x));
+    p = levMar(f, best.q, xs, ys);
+    fn = (x) => f(p, x);
+  } else if (model === "sin") {
+    if (xs.length < 4 || !xs.every(Number.isFinite) || !ys.every(Number.isFinite)) return null;
+    const lo = Math.min(...xs);
+    const hi = Math.max(...xs);
+    if (!(hi > lo)) return null;
+    const sorted = [...xs].sort((a, b) => a - b);
+    let dmin = Infinity;
+    for (let i = 1; i < sorted.length; i++) if (sorted[i] > sorted[i - 1]) dmin = Math.min(dmin, sorted[i] - sorted[i - 1]);
+    // za vsako frekvenco linearna prilagoditev (sin, cos, 1); izberemo najboljšo
+    let best = null;
+    const bMax = Math.PI / dmin;
+    for (let j = 1; j <= 600; j++) {
+      const b = (bMax * j) / 600;
+      const cs = [(x) => Math.sin(b * x), (x) => Math.cos(b * x), () => 1];
+      const A = cs.map((u) => cs.map((v) => xs.reduce((s, x) => s + u(x) * v(x), 0)));
+      const r = cs.map((u) => xs.reduce((s, x, i) => s + u(x) * ys[i], 0));
+      const c = solve(A, r);
+      if (!c) continue;
+      const sse = xs.reduce((s, x, i) => s + (ys[i] - c[0] * Math.sin(b * x) - c[1] * Math.cos(b * x) - c[2]) ** 2, 0);
+      if (!best || sse < best.sse) best = { b, c, sse };
+    }
+    if (!best) return null;
+    const f = (q, x) => q[0] * Math.sin(q[1] * x + q[2]) + q[3];
+    const q0 = [Math.hypot(best.c[0], best.c[1]), best.b, Math.atan2(best.c[1], best.c[0]), best.c[2]];
+    p = levMar(f, q0, xs, ys);
+    if (p[0] < 0) p = [-p[0], p[1], p[2] + Math.PI, p[3]];
+    p[2] = ((((p[2] + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) - Math.PI;
+    fn = (x) => f(p, x);
   } else return null;
   const m = ys.reduce((s, y) => s + y, 0) / ys.length;
   const ssTot = ys.reduce((s, y) => s + (y - m) ** 2, 0);
@@ -698,7 +787,8 @@ function fitTex(fit, comma) {
   switch (fit.model) {
     case "lin":
     case "quad":
-    case "cubic": {
+    case "cubic":
+    case "quart": {
       const deg = p.length - 1;
       const s = p.map((c, i) => term(c, deg - i, i === 0 || p.slice(0, i).every((q) => r4(q) === 0))).join("");
       return `y = ${s || "0"}`;
@@ -709,6 +799,10 @@ function fitTex(fit, comma) {
       return `y = ${n(p[0])}x^{${n(p[1])}}`;
     case "log":
       return `y = ${n(p[0])}${p[1] < 0 ? "-" : "+"}${n(Math.abs(p[1]))}\\ln x`;
+    case "logistic":
+      return `y = \\dfrac{${n(p[2])}}{1+${n(p[0])}e^{${n(-p[1])}x}}`;
+    case "sin":
+      return `y = ${n(p[0])}\\sin(${n(p[1])}x${p[2] < 0 ? "-" : "+"}${n(Math.abs(p[2]))})${p[3] < 0 ? "-" : "+"}${n(Math.abs(p[3]))}`;
   }
   return "";
 }

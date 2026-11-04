@@ -167,7 +167,7 @@ export function statistika(el) {
     label(svg, X(q1), y + 26, "Q₁", "tick");
     label(svg, X(q2), y + 26, "Me", "tick");
     label(svg, X(q3), y + 26, "Q₃", "tick");
-    out.innerHTML = `<p>Višine ${n} dijakov (cm). <span class="dot dot-c"></span> Aritmetična sredina ${tex(`\\bar x = ${tfmt(mean, 1)}`)}, standardni odklon ${tex(`\\sigma = ${tfmt(sdv, 1)}`)} (pas zgoraj: x̄ ± σ).</p>
+    out.innerHTML = `<p>Višine ${n} dijakov (cm). <span class="dot dot-c"></span> Aritmetična sredina ${tex(`\\bar x = ${tfmt(mean, 1)}`)}, standardni odklon ${tex(`\\sigma = ${tfmt(sdv, 1)}`)} (pas zgoraj: ${tex("\\bar x \\pm \\sigma")}).</p>
       <p>Škatla z brki: min ${sorted[0]}, Q₁ = ${fmt(q1, 1)}, mediana ${fmt(q2, 1)}, Q₃ = ${fmt(q3, 1)}, max ${sorted[n - 1]}. Medčetrtinski razmik ${fmt(q3 - q1, 1)}: v škatli je srednja polovica podatkov.</p>
       <p class="muted">Večji σ pomeni bolj razpršene podatke (širši histogram in daljša škatla). Število razredov spremeni videz histograma, ne pa podatkov.</p>`;
   };

@@ -686,7 +686,7 @@ export function zaporedje(el, { mode = "ag" } = {}) {
     } else {
       const inc = terms.every((t, i) => !i || t >= terms[i - 1] - 1e-12), dec = terms.every((t, i) => !i || t <= terms[i - 1] + 1e-12);
       out.innerHTML = `<p>${inc ? "Zaporedje <b>narašča</b>." : dec ? "Zaporedje <b>pada</b>." : "Zaporedje ni monotono."} ${L != null || key === "osc" ? "Je <b>omejeno</b>." : "Ni navzgor omejeno."}</p>
-        <p>${L != null ? `Limita je ${fmt(L, 4)}. Za ε = ${fmt(eps, 2)} so vsi členi od n = ${Ne + 1} naprej v pasu (vijolični): to pomeni, da je ${fmt(L, 4)} limita. Manjši ε zahteva večji n.` : key === "osc" ? "Členi skačejo med −1 in 1: limite ni (zaporedje ima dve stekališči)." : "Členi rastejo čez vse meje: zaporedje je divergentno."}</p>`;
+        <p>${L != null ? `Limita je ${fmt(L, 4)}. Za ε = ${fmt(eps, 2)} so vsi členi od n = ${Ne + 1} naprej (vijolične pike) v senčenem pasu: to pomeni, da je ${fmt(L, 4)} limita. Manjši ε zahteva večji n.` : key === "osc" ? "Členi skačejo med −1 in 1: limite ni (zaporedje ima dve stekališči)." : "Členi rastejo čez vse meje: zaporedje je divergentno."}</p>`;
     }
   };
   layout(el, { stage: [svg], controls: ctl, out, tryText: mode === "ag" ? "Kateri pogoj mora veljati za q, da gredo členi geometrijskega zaporedja proti 0?" : "Zmanjšaj ε na 0,01 pri 1/n. Od katerega člena naprej so vsi v pasu?" });
@@ -826,7 +826,7 @@ export function kompleksna(el) {
     const nm = op === "z̄" ? "\\bar z" : op === "^" ? `z^{${npow}}` : `z ${{ "+": "+", "−": "-", "·": "\\cdot", ":": ":" }[op]} w`;
     out.innerHTML = texBlock(`${nm} = ${ztex(r)}`) +
       `<p>z = ${ztex(z).replace(/\{,\}/g, ",")}: |z| = ${fmt(abs(z))}, kot ${fmt(arg(z), 1)}°.${useW ? ` w: |w| = ${fmt(abs(w))}, kot ${fmt(arg(w), 1)}°.` : ""}</p>
-       <p>${op === "+" || op === "−" ? "Seštevamo kot vektorje: realne dele posebej, imaginarne posebej (paralelogram)." : op === "·" ? `Pri množenju se absolutni vrednosti zmnožita (${fmt(abs(z))} · ${fmt(abs(w))} = ${fmt(abs(r))}), kota pa seštejeta (${fmt(arg(z), 1)}° + ${fmt(arg(w), 1)}° = ${fmt((arg(z) + arg(w)) % 360, 1)}°). Množenje z i je zasuk za 90°.` : op === ":" ? "Pri deljenju se absolutni vrednosti delita, kota odštejeta." : op === "z̄" ? "Konjugirano število je zrcalna slika čez realno os. z · z̄ = |z|² je realno." : `Potenciranje: |z|ⁿ = ${fmt(abs(z) ** npow)}, kot se pomnoži z n.`}</p>`;
+       <p>${op === "+" || op === "−" ? "Seštevamo kot vektorje: realne dele posebej, imaginarne posebej (paralelogram)." : op === "·" ? `Pri množenju se absolutni vrednosti zmnožita (${fmt(abs(z))} · ${fmt(abs(w))} = ${fmt(abs(r))}), kota pa seštejeta (${fmt(arg(z), 1)}° + ${fmt(arg(w), 1)}° = ${fmt((arg(z) + arg(w)) % 360, 1)}°). Množenje z i je zasuk za 90°.` : op === ":" ? "Pri deljenju se absolutni vrednosti delita, kota odštejeta." : op === "z̄" ? `Konjugirano število je zrcalna slika čez realno os. ${tex("z \\cdot \\bar{z} = |z|^2")} je realno.` : `Potenciranje: |z|ⁿ = ${fmt(abs(z) ** npow)}, kot se pomnoži z n.`}</p>`;
   };
   layout(el, {
     stage: [svg],

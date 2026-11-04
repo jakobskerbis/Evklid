@@ -475,7 +475,7 @@ export function lorentz(el) {
       arrow(svg, st.x, st.y, st.x + st.vy * sg * fl, st.y - st.vx * sg * fl, "c", 2.5);
     }
     out.innerHTML = texBlock(`F = e v B = ${T(pr.F * 1e14, 2)}\\cdot 10^{-14}\\ \\text{N},\\quad r = \\frac{m v}{e B} = ${T(pr.r * 100, 1)}\\ \\text{cm}`) +
-      `<p>Magnetna sila je vedno <b>pravokotna na hitrost</b> (vijolična puščica), zato spreminja le smer gibanja, ne velikosti hitrosti: delec kroži. ${pr.q < 0 ? "Negativni delec kroži v nasprotno smer." : ""}</p>
+      `<p>Magnetna sila (vijolična puščica) je vedno <b>pravokotna na hitrost</b> (turkizna puščica), zato spreminja le smer gibanja, ne velikosti hitrosti: delec kroži. ${pr.q < 0 ? "Negativni delec kroži v nasprotno smer." : ""}</p>
        <p class="muted">Večja masa ali hitrost → večji polmer; močnejše polje ali večji naboj → manjši polmer. Tako deluje masni spektrometer.</p>`;
   };
   const anim = animate(el, (dt) => {

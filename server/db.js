@@ -231,7 +231,9 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       COMMIT;
     `);
   }
-  return new Store(db);
+  const store = new Store(db);
+  store.file = file; // za dnevne varnostne kopije (server/kopije.js)
+  return store;
 }
 
 const parseStudent = (row) =>
