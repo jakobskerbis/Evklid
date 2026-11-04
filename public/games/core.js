@@ -71,6 +71,8 @@ export function textWidth(g, text, size, weight = 800) {
   g.font = `${weight} ${size}px Nunito, system-ui, sans-serif`;
   return g.measureText(text).width;
 }
+// Račun ali odgovor sredi prevedenega besedila: smer po vsebini (»−11« ostane »−11« tudi v RTL).
+export const iso = (s) => `\u2068${s}\u2069`;
 export function roundRect(g, x, y, w, h, r) {
   g.beginPath();
   g.moveTo(x + r, y);
@@ -219,7 +221,8 @@ export function runGame(host, opts) {
       beep("bad");
       // Če naloga ostane (izbira med več predmeti), pravilnega odgovora še ne izdamo.
       // note: igra lahko pove svojo razlago (npr. kateri robotek je bil slepar)
-      showFb(`${icon("x")} ${esc(note || (keep ? t("games.tryAgain") : t("games.correctWas", { a: G.q.a })))}`, "bad");
+      // odgovor osamljen (FSI … PDI), da »−11« v arabščini ne postane »11−«
+      showFb(`${icon("x")} ${esc(note || (keep ? t("games.tryAgain") : t("games.correctWas", { a: iso(G.q.a) })))}`, "bad");
       if (G.badStreak >= 2 && G.tier > 1) {
         G.tier--;
         G.badStreak = 0;
@@ -361,7 +364,8 @@ export function runGame(host, opts) {
     if (!host.isConnected) return;
     if (e.target.closest?.("input, textarea, select")) return;
     if (e.key === "Escape" || e.key === "p" || e.key === "P") {
-      if (G.running && !G.over) {
+      // samo ob pritisku: onKey posluša tudi spust tipke, ki bi premor takoj spet končal
+      if (e.type === "keydown" && G.running && !G.over) {
         togglePause();
         e.preventDefault();
       }

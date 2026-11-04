@@ -11,6 +11,8 @@ import { FITS } from "./produce-fits.js";
 
 const MINUS = "−";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+// odgovor sredi prevedenega besedila osamljen (FSI … PDI), da »−3/4« v arabščini ne postane »3/4−«
+const iso = (s) => `\u2068${s}\u2069`;
 const gcd = (a, b) => (b ? gcd(b, a % b) : Math.abs(a));
 // decimalni ločilnik trenutnega jezika (setNumberStyle v topics.js)
 export const decSep = () => (fmt(1.5).includes(",") ? "," : ".");
@@ -56,7 +58,7 @@ const same = (a, b) => a.n * b.d === b.n * a.d;
 
 // Naloga z izbiro (»Največje?«, »Kateri je delitelj …?«, »Višina vrat je približno?«): odgovor je ena od
 // ponujenih možnosti, ki jih ti igri ne pokažeta, zato je tu ni.
-const PICK_W = /\b(kater|which|približn|about|roughly|approx|najbolj|največj|najmanjš|most|least|largest|smallest|greatest|highest|lowest|praštevil|prime|sestavljen|composite|deljiv|divisible)/i;
+const PICK_W = /\b(kater|which|približn|about|roughly|approx|najbolj|največj|kaj je največ|najmanj|najdalj|najkrajš|najtež|najlaž|najviš|najniž|most|least|largest|smallest|greatest|highest|lowest|praštevil|prime|sestavljen|composite|deljiv|divisible)/i;
 export function isPick(q) {
   if (statement(q.q, q.a)[1] !== q.a) return false;
   return PICK_W.test(q.q) || q.q.trim().split(/\s+/).length <= 2;
@@ -129,7 +131,9 @@ export function lineTask(q) {
   for (const w of (q.w || []).map(readNumber)) if (w && Math.abs(w.v - p.v) < 1e-9) return null;
   return p;
 }
-const TOL = [1, 1, 0]; // dovoljen odmik v razdelkih po stopnjah (docs/igre-smernice.md §2.7)
+// Dovoljen odmik v razdelkih po stopnjah (docs/igre-smernice.md §2.7). Razdelek premice je natanko natančnost
+// odgovora in Pina med merjenjem kaže vrednost, zato bi odmik ±1 sprejel drugo število (3² = 8): vedno natanko.
+const TOL = [0, 0, 0];
 // Premica za nalogo: { lo, u (korak), cells, major (razdelkov med oznakami), at (razdelek odgovora), tol,
 // labels: [[razdelek, besedilo]], frac (imenovalec ali 0), task }. Brez Math.random, če je podan rnd.
 export function lineFor(q, tier = 1, rnd = Math.random) {
@@ -158,12 +162,17 @@ export function lineFor(q, tier = 1, rnd = Math.random) {
     lo = L;
     at = n - L * d;
   } else {
-    // cela in decimalna števila: korak 10^−mesta; celo število z ničlami na koncu (9600) ima večji korak
+    // cela in decimalna števila: korak 10^−mesta; celo število z ničlami na koncu (9600) ima večji korak, a vsaj
+    // dve mesti (20 na premici po 1, ne po 10: tudi 19 in 21 imata svoj razdelek)
     let e = -p.places;
     if (p.kind === "int" && p.n !== 0) {
       const s = String(Math.abs(p.n)), tz = s.length - s.replace(/0+$/, "").length;
-      e = Math.min(tz, s.length - 1);
+      e = Math.min(tz, Math.max(0, s.length - 2));
     }
+    // tipična napaka, ki bi se ujela na razdelek odgovora (8,01 ≈ ? (0,1) → 8 ob 8,1; 1,2 km → 1200 ob 1201), dobi
+    // svoj razdelek: korak se zmanjša, sicer bi skok na najbližji razdelek štel kot zadetek
+    const near = wrongNums(q, p).filter((w) => w.kind !== "frac" && w.v !== p.v);
+    while (e > -6 && near.some((w) => Math.abs(w.v - p.v) <= 10 ** e / 2 + 1e-12)) e--;
     const scale = 10 ** Math.max(0, -e); // v celih enotah koraka, brez napak plavajoče vejice
     const V = e < 0 ? p.n * (scale / p.d) : p.n / 10 ** e; // vrednost v korakih (celo število)
     cells = tier === 1 ? 10 : 20;
@@ -177,7 +186,7 @@ export function lineFor(q, tier = 1, rnd = Math.random) {
     u = e < 0 ? 1 / scale : 10 ** e;
     lo = e < 0 ? L / scale : L * 10 ** e;
   }
-  // strpnost: na stopnji 1 in 2 en razdelek, na 3 natanko; nikoli toliko, da bi sprejela tipično napako
+  // strpnost (zdaj vedno 0, glej TOL); nikoli toliko, da bi sprejela tipično napako
   let tol = TOL[tier - 1] ?? 0;
   for (const w of wrongNums(q, p)) {
     const k = Math.abs(w.v - p.v) / u;
@@ -368,6 +377,25 @@ function mailbox(g, x, y, r, open) {
   g.strokeRect(x + w / 2 - 2, top - (open ? r * 0.5 : 0), 5, r * 0.5);
 }
 
+// Naloga na tabli: račun v eni vrstici (pomanjša se), besedilna naloga v več vrsticah, da ostane berljiva.
+function boardText(G, text, cx, cy, maxW, maxH, size, opts) {
+  if (!/\p{L}{3}/u.test(text)) return G.fit(text, cx, cy, maxW, size, { ...opts, min: 12 });
+  // znak ali enota brez črk in številk (€, %, »,«) ostane ob prejšnji besedi
+  const words = text.split(/\s+/).reduce((a, w) => (a.length && !/[\p{L}\p{N}]/u.test(w) ? (a[a.length - 1] += ` ${w}`) : a.push(w), a), []);
+  for (let s = Math.round(size); ; s--) {
+    const lines = [];
+    for (const w of words) {
+      const last = lines[lines.length - 1];
+      if (last && G.tw(`${last} ${w}`, s, opts.weight) <= maxW) lines[lines.length - 1] = `${last} ${w}`;
+      else lines.push(w);
+    }
+    if (lines.length * s * 1.18 <= maxH || s <= 12) {
+      lines.forEach((ln, i) => G.fit(ln, cx, cy + (i - (lines.length - 1) / 2) * s * 1.18, maxW, s, { ...opts, min: 10 }));
+      return s;
+    }
+  }
+}
+
 // Gumb s tipko za G.ui (core.js): velik cilj za prst, aria-label, brez kraje fokusa platnu ob tapu.
 function keyBtn(k, html, label, cls = "") {
   return `<button type="button" class="gm-key ${cls}" data-k="${esc(k)}"${label ? ` aria-label="${esc(label)}"` : ""}>${html}</button>`;
@@ -459,8 +487,8 @@ export const numline = {
         G.answer(true, cellX(cur), lineY - r * 2.4, { note: `${ans}${fracDec}`, delay: 1.1 });
         if (!G.reduced) for (let i = 0; i < 10; i++) sparks.push({ x: cellX(L.at), y: lineY - r * 3.2, vx: (Math.random() - 0.5) * 160, vy: -Math.random() * 160, life: 0.8 });
       } else {
-        const off = t(dx < 0 ? "games.e.numline.low" : "games.e.numline.high", { d: lineDiffText(L, dx) });
-        G.answer(false, cellX(cur), lineY - r * 2.4, { note: `${t("games.correctWas", { a: `${ans}${fracDec}` })} · ${off}`, delay: 2.8 });
+        const off = t(dx < 0 ? "games.e.numline.low" : "games.e.numline.high", { d: iso(lineDiffText(L, dx)) });
+        G.answer(false, cellX(cur), lineY - r * 2.4, { note: `${t("games.correctWas", { a: iso(`${ans}${fracDec}`) })} · ${off}`, delay: 2.8 });
       }
     };
     const eng = {
@@ -468,8 +496,9 @@ export const numline = {
       resize() {
         x0 = clamp(G.W * 0.08, 24, 64);
         x1 = G.W - x0 - 10;
-        lineY = Math.round(clamp(G.H * 0.62, 200, G.H - 90));
-        r = clamp(Math.min(G.W * 0.075, G.H * 0.06), 16, 34);
+        // visok telefon: premica niže (pod njo ostane prostor za oznake in oklepaj razlike), da ni praznega travnika
+        lineY = Math.round(G.H > G.W * 1.25 ? G.H - clamp(G.H * 0.2, 110, 170) : clamp(G.H * 0.62, 200, G.H - 90));
+        r = clamp(G.H > G.W * 1.25 ? G.W * 0.085 : Math.min(G.W * 0.075, G.H * 0.06), 16, 36);
       },
       reset() {
         L = null;
@@ -498,7 +527,7 @@ export const numline = {
         phase = "done";
         shownAt = L.at;
         mood = -1;
-        return { note: t("games.correctWas", { a: G.q.a }), delay: 2.4 };
+        return { note: t("games.correctWas", { a: iso(G.q.a) }), delay: 2.4 };
       },
       update(dt) {
         tick(dt);
@@ -560,7 +589,8 @@ export const numline = {
         g.fillRect(-20, lineY, G.W + 40, G.H - lineY + 20);
         if (!L) return;
         // naslov paketa: naloga (kam spada odgovor), velika, da je pogled na prizoru
-        const bw = Math.min(G.W - 24, 520), by = clamp(G.H * 0.04, 8, 24), bh = clamp(G.H * 0.17, 56, 110);
+        // tabla z nalogo: na visokem telefonu višja, a vedno nad Pinino oznako
+        const bw = Math.min(G.W - 24, 520), by = clamp(G.H * 0.04, 8, 24), bh = clamp(Math.min(G.H * (G.H > G.W * 1.25 ? 0.24 : 0.17), lineY - r * 2.6 - 80 - by), 56, 160);
         G.rr((G.W - bw) / 2, by, bw, bh, 14);
         g.fillStyle = "#fef3c7";
         g.fill();
@@ -570,7 +600,7 @@ export const numline = {
         g.fillStyle = "#b45309";
         g.fillRect((G.W - bw) / 2 + 3, by + bh * 0.42, 14, bh * 0.16);
         g.fillRect((G.W + bw) / 2 - 17, by + bh * 0.42, 14, bh * 0.16);
-        G.fit(G.q?.q || "", G.W / 2, by + bh / 2 + 1, bw - 44, clamp(bh * 0.42, 18, 40), { color: INK, weight: 900, min: 12 });
+        boardText(G, G.q?.q || "", G.W / 2, by + bh / 2 + 1, bw - 44, bh - 14, clamp(bh * 0.42, 18, 40), { color: INK, weight: 900 });
         const ink = G.chapter >= 4 ? "#f8fafc" : INK;
         // premica s puščico na pozitivni strani
         g.lineCap = "round";
@@ -600,9 +630,15 @@ export const numline = {
         }
         const ls = clamp(Math.min(G.W / (L.labels.length * 3.2), 22), 13, 22);
         const gap = (x1 - x0) / Math.max(1, L.labels.length - 1);
-        for (const [k, txt] of L.labels) G.fit(txt, cellX(k), lineY + 18 + ls * 0.6, gap - 4, ls, { color: ink === INK ? INK : "#f8fafc", weight: 900, stroke: ink === INK ? "rgba(255,255,255,0.85)" : INK, sw: 4 });
-        const unit = L.task.unit.trim();
-        if (unit && unit !== "%" && unit !== "°") G.fit(unit, x1 + 12, lineY + 18 + ls * 0.6, 60, ls * 0.85, { color: ink === INK ? INK : "#f8fafc", weight: 800, stroke: ink === INK ? "rgba(255,255,255,0.85)" : INK, sw: 3 });
+        // enota (€, cm) ob zadnji oznaki; oznaka se umakne od roba, da je ne odreže (prej je enota prekrila številko)
+        const unit = L.task.unit.trim(), kEnd = Math.max(...L.labels.map(([k]) => k));
+        for (const [k, txt] of L.labels) {
+          const s = k === kEnd && unit && unit !== "%" && unit !== "°" ? `${txt} ${unit}` : txt;
+          // zadnja sme seči levo do polovice razmika in desno do roba
+          const room = (gap - 4) / 2 + G.W - 6 - cellX(k), w = k === kEnd ? Math.min(G.tw(s, ls, 900), room) : gap - 4;
+          const x = k === kEnd ? Math.min(cellX(k), G.W - 6 - w / 2) : cellX(k);
+          G.fit(s, x, lineY + 18 + ls * 0.6, w, ls, { color: ink === INK ? INK : "#f8fafc", weight: 900, stroke: ink === INK ? "rgba(255,255,255,0.85)" : INK, sw: 4 });
+        }
         // pravo mesto po odgovoru: nabiralnik z odgovorom
         if (shownAt >= 0) {
           const vx = cellX(shownAt);
@@ -641,7 +677,8 @@ export const numline = {
           g.setLineDash([]);
         }
         pina(g, px, lineY - 6 - up, r, mood, sq, !(phase === "done" && hit));
-        if (!hit) pill(G, g, lineValueText(L, cur), px, lineY - 28 - r * 2.6 - up - (shownAt >= 0 && Math.abs(px - cellX(shownAt)) < 90 ? 36 : 0), G.W * 0.5, 30, answered ? "#fecaca" : "#fff", 18);
+        // Vrednost pod Pino med premikanjem le na 1. ravni; višje mora učenec mesto oceniti sam (vidi jo po odgovoru).
+        if (!hit && (answered || G.tier < 2)) pill(G, g, lineValueText(L, cur), px, lineY - 28 - r * 2.6 - up - (shownAt >= 0 && Math.abs(px - cellX(shownAt)) < 90 ? 36 : 0), G.W * 0.5, 30, answered ? "#fecaca" : "#fff", 18);
         for (const s of sparks) {
           g.globalAlpha = Math.max(0, s.life);
           g.fillStyle = "#facc15";
@@ -755,6 +792,13 @@ export const typed = {
       },
       question(q) {
         task = typedTask(q);
+        // redka naloga, ki potrebuje tipko, ki je vzorec ni pokazal (decimalna vejica, minus): tipka se doda,
+        // sicer naloge na telefonu ne bi mogel rešiti
+        const need = padKeys([task]);
+        if (keys && Object.keys(need).some((k) => need[k] && !keys[k])) {
+          for (const k in need) keys[k] = keys[k] || need[k];
+          render();
+        }
         buf = "";
         reveal = "";
         nudge = "";
@@ -868,7 +912,7 @@ export const typed = {
         g.strokeStyle = INK;
         g.stroke();
         const qs = clamp(bh * 0.24, 18, 40);
-        G.fit(G.q.q, G.W / 2, by + bh * 0.3, bw - 24, qs, { color: INK, weight: 900, min: 12 });
+        boardText(G, G.q.q, G.W / 2, by + bh * 0.3, bw - 24, bh * 0.46, qs, { color: INK, weight: 900 });
         // polje za odgovor: predpona (x =), vtipkano, enota; utripajoča črta
         const shown = buf || "";
         const as = clamp(bh * 0.26, 20, 44);
@@ -898,7 +942,7 @@ export const typed = {
     };
     // tipke za ta pojem iz vzorca nalog (minus, vejica, ulomek), enake za vse naloge igre
     const sample = [];
-    for (let tier = 1; tier <= 3; tier++) for (let i = 0; i < 12; i++) sample.push(typedTask(G.ask(tier)));
+    for (let tier = 1; tier <= 3; tier++) for (let i = 0; i < 40; i++) sample.push(typedTask(G.ask(tier)));
     keys = padKeys(sample);
     render();
     wireKeys(G, eng);

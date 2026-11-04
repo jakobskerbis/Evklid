@@ -86,7 +86,6 @@ export const FITS = {
     "m_frac_of",
     "m_perim",
     "m_conv",
-    "m_dec_units",
     "m_pict",
     "m_combos",
     "m_skip",

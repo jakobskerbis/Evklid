@@ -421,6 +421,14 @@ test("games: produce-the-answer games apply only to concepts with one-number ans
   for (const id of ["add", "frac_add", "dec_add", "lin2", "neg_add", "round", "angles_tri"]) assert.ok(numline.fits(CONCEPTS.find((c) => c.id === id)), id);
   assert.ok(isPick({ q: "Največje?", a: "2/3", w: [] }) && isPick({ q: "Katero število je sodo?", a: "18", w: [] }) && isPick({ q: "Višina vrat je približno?", a: "2 m", w: [] }));
   assert.ok(!isPick({ q: "Imam 5 piškotov. Dobim še 4. Koliko jih imam?", a: "9", w: [] }) && !isPick({ q: "7 · 8", a: "56", w: [] }) && !isPick({ q: "? + 7 = 8", a: "1", w: [] }));
+  // izbira med ponujenimi količinami (pregled 2): brez možnosti naloge ni mogoče rešiti
+  for (const qq of ["Kaj je najdaljše?", "Kaj je najlažje?", "Kaj je največ denarja?", "Kaj je najmanj denarja?"]) assert.ok(isPick({ q: qq, a: "4,05 €", w: [] }), qq);
+  // premica: razdelek je natančnost odgovora, zato brez odmika (3² ≠ 8); bližnja napaka ima svoj razdelek
+  setNumberStyle("sl");
+  for (let tier = 1; tier <= 3; tier++) assert.equal(lineFor({ q: "3²", a: "9", w: ["6", "−9", "12"] }, tier).tol, 0);
+  assert.equal(lineFor({ q: "397 ≈ ? (10)", a: "400", w: ["390", "420", "410"] }, 1).u, 10);
+  assert.equal(lineFor({ q: "34 − 14", a: "20", w: ["48", "30", "10"] }, 2).u, 1);
+  assert.equal(lineFor({ q: "8,01 ≈ ? (0,1)", a: "8", w: ["8,2", "7,9", "8,1"] }, 3).u, 0.1);
   // portal: ploščice teh dveh iger le za ustrezne pojme
   const n = CONCEPTS.length * (ENGINES.length - 2) + FITS.numline.length + FITS.typed.length;
   assert.ok(n > CONCEPTS.length * (ENGINES.length - 2));
