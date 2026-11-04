@@ -652,3 +652,350 @@ test("games: new game kinds have names, how-to text, pace, tile pattern and icon
   for (const k of ["games.confirm", "games.yourAnswer", "games.e.numline.less", "games.e.numline.more", "games.e.numline.low", "games.e.numline.high", "games.e.typed.erase", "games.e.typed.neg", "games.e.typed.comma", "games.e.typed.slash", "games.e.typed.reduce", "games.e.typed.asFrac", "games.e.typed.asDec"]) assert.ok(sl[k], k);
   assert.match(css, /\.gm-calm \.gm-key/);
 });
+
+// Sestavi enačbo in Razvrsti po velikosti (public/games/produce2.js): odgovor sestaviš iz ploščic ali razvrstiš.
+const produce2 = await import("../public/games/produce2.js");
+const { tiles, order, tilesTask, tilesModel, orderItems, orderRound, orderOk, fitNow2, ORDER_N } = produce2;
+// Neodvisen račun v plavajoči vejici (JavaScript), da preverjanje igre ne preverja samo sebe.
+function jsEval(src, env = {}, lang = "sl") {
+  let s = String(src).trim();
+  const SUP = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+  s = s.replace(/⁻?[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, (m) => `^(${m.replace("⁻", "-").replace(/./g, (c) => (SUP.includes(c) ? SUP.indexOf(c) : c))})`);
+  s = s.replace(/−/g, "-");
+  if (lang === "sl") s = s.replace(/(\d),(\d)/g, "$1.$2");
+  // ulomek brez presledkov (3/7) je eno število; » / « s presledki je deljenje
+  s = s.replace(/(\d+(?:\.\d+)?)\/(\d+)/g, "($1/$2)");
+  s = s.replace(/·|×/g, "*").replace(/:|÷/g, "/").replace(/%/g, "/100");
+  // člen s koeficientom je celota: 2a⁷ = (2·a⁷), tudi ob deljenju (2a⁹ : 2a⁷)
+  s = s.replace(/(\d+(?:\.\d+)?)([xyabC])(\^\(-?\d+\))?/g, "($1*$2$3)");
+  // absolutna vrednost: | odpre na začetku ali za znakom/oklepajem, sicer zapre
+  let out = "";
+  for (const ch of s) {
+    if (ch === "|") out += /(^|[-+*/(=^]\s*)$/.test(out) || !out.trim() ? "ABS(" : ")";
+    else out += ch;
+  }
+  s = out;
+  // fakulteta: število! ali (…)!
+  for (let k = 0; k < 5 && s.includes("!"); k++) {
+    s = s.replace(/(\d+)!/g, "FAKT($1)");
+    const i = s.indexOf(")!");
+    if (i >= 0) {
+      let d = 0, j = i;
+      for (; j >= 0; j--) {
+        if (s[j] === ")") d++;
+        if (s[j] === "(") d--;
+        if (d === 0) break;
+      }
+      s = `${s.slice(0, j)}FAKT${s.slice(j, i + 1)}${s.slice(i + 2)}`;
+    }
+  }
+  s = s.replace(/√/g, "SQRT").replace(/∛/g, "KBRT");
+  s = s.replace(/(SQRT|KBRT)(\d+(?:\.\d+)?|[xyabC])/g, "$1($2)");
+  // množenje brez znaka: 13x, 2(, )(, x(, 2sqrt, )x
+  s = s.replace(/(\d|\))\s*(?=[xyabC(]|SQRT|KBRT|ABS|FAKT)/g, "$1*").replace(/([xyabC])\s*(?=\(|[xyabC])/g, "$1*");
+  // potenca pred minusom spredaj: −3^(2) = −(3^(2))
+  s = s.replace(/\^/g, "**");
+  s = s.replace(/(^|[-+*/(=,]\s*)-(\d+(?:\.\d+)?|[xyabC])\*\*\((-?\d+)\)/g, "$1-($2**($3))");
+  const fact = (n) => (Number.isInteger(n) && n >= 0 ? [...Array(n)].reduce((f, _, i) => f * (i + 1), 1) : NaN);
+  return Function("ABS", "SQRT", "KBRT", "FAKT", ...Object.keys(env), `return (${s});`)(Math.abs, Math.sqrt, Math.cbrt, fact, ...Object.values(env));
+}
+const near9 = (a, b) => Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) <= 1e-7 * Math.max(1, Math.abs(a), Math.abs(b));
+const POINTS = [[2, 3, 5, 7, 11], [3, -1, 4, 1.5, -2], [-2.5, 6, 0.5, 9, 13], [7, 2, -3, 5, 0.25]];
+const envAt = (vars, k) => Object.fromEntries([...vars].map((v, j) => [v, POINTS[k % 4][j]]));
+const varsIn = (s) => new Set((String(s).match(/[xyabC]/g) || []));
+// Ali je sestavljena enačba ali odgovor res pravilen (neodvisno od igre).
+function trulyRight(T, q, f, lang) {
+  const built = T.fill(f);
+  if (T.mode === "blank") {
+    const [l, r] = built.split("=");
+    const vars = varsIn(built);
+    let ok = 0;
+    for (let k = 0; k < 4; k++) {
+      const env = envAt(vars, k);
+      let a, b;
+      try {
+        [a, b] = [jsEval(l, env, lang), jsEval(r, env, lang)];
+      } catch {
+        return false;
+      }
+      if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+      if (!near9(a, b)) return false;
+      ok++;
+      if (!vars.size) break;
+    }
+    return ok > 0;
+  }
+  const want = q.a.replace(/^y\s?=\s?/, "");
+  const vars = varsIn(want + built);
+  let ok = 0;
+  for (let k = 0; k < 4; k++) {
+    const env = envAt(vars, k);
+    const a = jsEval(built, env, lang), b = jsEval(want, env, lang);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+    if (!near9(a, b)) return false;
+    ok++;
+  }
+  if (!ok) return false;
+  // brez spremenljivk (2 · 3 · 5, 1 : 4) mora biti oblika ista: iste ploščice, le v drugem vrstnem redu
+  if (!vars.size) return f.filter((_, k) => T.slots[k].kind === "t").sort().join("|") === T.canon.filter((_, k) => T.slots[k].kind === "t").sort().join("|");
+  return true;
+}
+// vse (ali naključne) razporeditve ploščic na mesta
+function* arrangements(T, rnd, cap = 4000) {
+  const term = T.slots.map((s, k) => (s.kind === "t" ? k : -1)).filter((k) => k >= 0);
+  const ops = T.slots.map((s, k) => (s.kind === "o" ? k : -1)).filter((k) => k >= 0);
+  const n = T.tiles.length;
+  let total = 1;
+  for (let i = 0; i < term.length; i++) total *= n - i;
+  total *= T.stamps.length ** ops.length;
+  const build = (perm, opc) => {
+    const f = T.slots.map(() => null);
+    term.forEach((k, i) => (f[k] = T.tiles[perm[i]].s));
+    ops.forEach((k, i) => (f[k] = T.stamps[opc[i]]));
+    return f;
+  };
+  if (total <= cap) {
+    const rec = function* (perm) {
+      if (perm.length === term.length) {
+        const opsAll = (function* go(o) {
+          if (o.length === ops.length) yield o;
+          else for (let i = 0; i < T.stamps.length; i++) yield* go([...o, i]);
+        })([]);
+        for (const opc of opsAll) yield build(perm, opc);
+        return;
+      }
+      for (let i = 0; i < n; i++) if (!perm.includes(i)) yield* rec([...perm, i]);
+    };
+    yield* rec([]);
+  } else {
+    for (let s = 0; s < cap; s++) {
+      const idx = [...Array(n).keys()].sort(() => rnd() - 0.5).slice(0, term.length);
+      yield build(idx, ops.map(() => Math.floor(rnd() * T.stamps.length)));
+    }
+  }
+}
+
+test("games: »Sestavi enačbo« and »Razvrsti po velikosti« apply only to fitting concepts; the list is fresh", () => {
+  setNumberStyle("sl");
+  for (const e of [tiles, order]) {
+    assert.ok(ENGINES.includes(e), e.id);
+    assert.equal(e.added, "2026-11-04");
+    assert.equal(PACE[e.id], 1, `${e.id}: mirna igra`);
+    const mine = CONCEPTS.filter((c) => e.fits(c)).map((c) => c.id);
+    const now = CONCEPTS.filter((c) => fitNow2[e.id](c)).map((c) => c.id);
+    assert.deepEqual(mine, now, `${e.id}: seznam pojmov je star – zaženi node scripts/igre-pojmi.js`);
+    assert.ok(mine.length >= 20, `${e.id}: samo ${mine.length} pojmov`);
+    assert.ok(mine.length < CONCEPTS.length / 4, `${e.id}: preveč pojmov (${mine.length})`);
+    for (const id of FITS[e.id]) assert.ok(CONCEPTS.some((c) => c.id === id), `${e.id}: neznan pojem ${id}`);
+  }
+  const has = (e, id) => e.fits(CONCEPTS.find((c) => c.id === id));
+  for (const id of ["add", "mul", "order", "frac_add", "dec_mul", "sqrt", "pow_rules", "factor", "expand", "binom", "factor_alg", "line_eq", "der_poly"]) assert.ok(has(tiles, id), `tiles ${id}`);
+  for (const id of ["prime", "frac_compare", "m_word1", "lin1", "quad", "units", "m_clock"]) assert.ok(!has(tiles, id), `tiles ne ${id}`);
+  for (const id of ["add", "mul", "frac_add", "frac_compare", "sqrt", "neg_exp", "abs"]) assert.ok(has(order, id), `order ${id}`);
+  for (const id of ["prime", "m_even", "divrule", "lin1", "expand", "m_word1"]) assert.ok(!has(order, id), `order ne ${id}`);
+  // ura (8:30) ni deljenje, besedilna naloga ni račun, napačno razumljen odstotek (180 + 20 %) ni pravilna enačba
+  assert.equal(tilesModel({ q: "Koliko je ura?", a: "8:30", w: ["9:30", "8:00", "7:30"] }), null);
+  assert.equal(tilesModel({ q: "180 + 20 %", a: "216", w: ["144", "200", "36"] }), null);
+  assert.equal(tilesModel({ q: "4/8 = ?", a: "1/2", w: ["4/2", "1/8", "1"] }), null);
+  assert.ok(tilesModel({ q: "10 % · 280", a: "28", w: ["252", "290", "280"] }));
+  // kartice: le vprašanja o velikosti, vrednosti morajo biti različne
+  assert.equal(orderItems({ q: "Katero število je sodo?", a: "4", w: ["17", "1", "3"] }), null);
+  assert.equal(orderItems({ q: "Največje?", a: "2/4", w: ["1/2", "1/3", "1/5"] }), null);
+  assert.equal(orderItems({ q: "Imam 5 jabolk. Dobim 3. Koliko jih imam?", a: "8", w: ["7", "9", "2"] }), null);
+  assert.ok(orderItems({ q: "Katero število je največje?", a: "7/2", w: ["√8", "1,8", "3,2"] }));
+  // »1(x + 8)« ni naloga; »−1(x + 4)« se pokaže kot »−(x + 4)«
+  assert.equal(tilesModel({ q: "1(x + 8)", a: "x + 8", w: ["x + 1", "x − 8", "8x + 8"] }), null);
+  assert.equal(tilesTask({ q: "−1(x + 4)", a: "−x − 4", w: ["−x + 4", "x − 4", "−4x − 4"] }, 1).lead, "−(x + 4)");
+  // razstavljanje: enakovreden, a ne do konca razstavljen izraz (3(2x + 6)) ne šteje; isti členi v drugem redu da
+  const fa = tilesTask({ q: "6x + 18", a: "6(x + 3)", w: ["3(2x + 6)", "6(x + 18)", "x(6 + 18)"] }, 1);
+  const by = (a) => fa.slots.map((s, k) => (s.kind === "o" ? "+" : a[k]));
+  assert.equal(fa.check(by(["3", "2x", null, "6"])).ok, false);
+  assert.ok(fa.check(by(["6", "3", null, "x"])).ok);
+  // negativen člen za računskim znakom dobi oklepaj (6 + (−5x), ne »6 + −5x«)
+  const ln = tilesTask({ q: "k = −5, n = 6", a: "y = −5x + 6", w: ["y = 6x − 5", "y = 5x + 6", "y = −5x − 6"] }, 1);
+  assert.equal(ln.fill(["6", "+", "−5x"]), "6 + (−5x)");
+  assert.ok(ln.check(["6", "+", "−5x"]).ok);
+});
+
+test("games: »Sestavi enačbo« – always solvable, the canonical tiles count, every accepted arrangement is truly right", () => {
+  let checked = 0, alt = 0;
+  for (const lang of ["sl", "en"]) {
+    setNumberStyle(lang);
+    let seed = 7;
+    const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    for (const c of CONCEPTS.filter((x) => tiles.fits(x))) {
+      for (let tier = 1; tier <= 3; tier++) {
+        let tries = 0;
+        for (let i = 0; i < (lang === "sl" ? 12 : 5); i++) {
+          const [q, k] = drawFor(tiles, c.id, tier);
+          tries += k + 1;
+          const where = `${lang} ${c.id} ${tier}: ${q && `${q.q} → ${q.a}`}`;
+          assert.ok(q, `${where}: ni sprejete naloge`);
+          const T = tilesTask(q, tier);
+          assert.ok(T, where);
+          assert.ok(T.slots.length >= 2 && T.slots.length <= 9, `${where}: ${T.slots.length} mest`);
+          // rešljivo z danimi ploščicami: pravilne ploščice so v pladnju, znak med pečati
+          const pool = T.tiles.map((x) => x.s);
+          for (const [k, s] of T.slots.entries()) {
+            if (s.kind === "o") assert.ok(T.stamps.includes(T.canon[k]), `${where}: manjka znak ${T.canon[k]}`);
+            else {
+              const at = pool.indexOf(T.canon[k]);
+              assert.ok(at >= 0, `${where}: manjka ploščica ${T.canon[k]}`);
+              pool.splice(at, 1);
+            }
+          }
+          assert.ok(T.tiles.length > T.slots.filter((s) => s.kind === "t").length, `${where}: brez napačnih ploščic`);
+          assert.equal(new Set(T.tiles.map((x) => x.s)).size + T.canon.filter((s, k, a) => T.slots[k].kind === "t" && a.indexOf(s) !== k).length, T.tiles.length, `${where}: podvojena napačna ploščica`);
+          const canon = T.check(T.canon);
+          assert.ok(canon.ok, `${where}: pravilna razporeditev ni sprejeta`);
+          assert.ok(trulyRight(T, q, T.canon, lang), `${where}: pravilna razporeditev ni prava (${T.fill(T.canon)})`);
+          assert.ok(!/NaN|undefined|Infinity/.test(T.right), where);
+          // vsaka sprejeta razporeditev je res pravilna
+          for (const f of arrangements(T, rnd, lang === "sl" ? 3000 : 600)) {
+            const r = T.check(f);
+            if (!r.ok) continue;
+            checked++;
+            if (f.join("|") !== T.canon.join("|")) alt++;
+            assert.ok(trulyRight(T, q, f, lang), `${where}: sprejeto napačno »${T.fill(f)}«`);
+          }
+          // nepopolna razporeditev ni odgovor
+          assert.equal(T.check(T.canon.map((s, k) => (k ? s : null))).ok, false, where);
+        }
+        assert.ok(tries <= (lang === "sl" ? 12 : 5) * 5, `${lang} ${c.id} ${tier}: ${tries} poskusov`);
+      }
+    }
+  }
+  setNumberStyle("sl");
+  assert.ok(checked > 1000 && alt > 50, `${checked} sprejetih, ${alt} drugačnih pravilnih`);
+});
+
+test("games: »Razvrsti po velikosti« – distinct values, the stated order is the true order, shown forms are right", () => {
+  for (const lang of ["sl", "en"]) {
+    setNumberStyle(lang);
+    const D = lang === "sl" ? "," : ".";
+    for (const c of CONCEPTS.filter((x) => order.fits(x))) {
+      for (let tier = 1; tier <= 3; tier++) {
+        const ask = () => drawFor(order, c.id, tier)[0];
+        for (let i = 0; i < (lang === "sl" ? 20 : 6); i++) {
+          const q = ask();
+          const R = orderRound(q, ask, tier);
+          const where = `${lang} ${c.id} ${tier}: ${q.q} → ${q.a}`;
+          assert.ok(R, where);
+          const n = R.cards.length;
+          assert.ok(n >= 4 && n <= ORDER_N[tier - 1], `${where}: ${n} kartic`);
+          if (tier === 1) assert.equal(R.dir, 1, where);
+          assert.equal(new Set(R.cards.map((x) => x.s)).size, n, `${where}: enaki kartici`);
+          // vrednost vsake kartice neodvisno: račun na kartici ali zapis števila (3/4, 0,75, √8, 45 %)
+          const vals = R.cards.map((x) => {
+            const v = jsEval(x.s.replace(/\s*(%|€|°)$/, ""), {}, lang);
+            assert.ok(near9(v, x.v), `${where}: ${x.s} = ${v}, ne ${x.v}`);
+            if (x.a != null) assert.ok(near9(readNumber(x.a).v, v), `${where}: ${x.s} = ${x.a}`);
+            return x.v;
+          });
+          for (let a = 0; a < n; a++) for (let b = 0; b < a; b++) assert.ok(Math.abs(vals[a] - vals[b]) > 1e-9 * Math.max(1, Math.abs(vals[a])), `${where}: enaki vrednosti ${R.cards[a].s}, ${R.cards[b].s}`);
+          // pravilni vrstni red je res urejen v napisani smeri in edini sprejet
+          assert.deepEqual([...R.right].sort(), [...Array(n).keys()], where);
+          for (let k = 1; k < n; k++) assert.ok(R.dir * (vals[R.right[k]] - vals[R.right[k - 1]]) > 0, `${where}: vrstni red`);
+          assert.ok(orderOk(R.cards, R.right, R.dir), where);
+          assert.ok(!orderOk(R.cards, [...R.right].reverse(), R.dir), where);
+          const swap = [...R.right];
+          [swap[0], swap[1]] = [swap[1], swap[0]];
+          assert.ok(!orderOk(R.cards, swap, R.dir), where);
+          assert.ok(!orderOk(R.cards, R.cards.map((_, k) => k), R.dir) || R.cards.length < 2, `${where}: kartice so že urejene`);
+          // razkrite vrednosti: pravi zapis (decimalna vejica po jeziku) in prava vrednost
+          for (const x of R.cards) {
+            if (!x.val) {
+              assert.ok(!/\//.test(x.s) && !/√|∛/.test(x.s), `${where}: ${x.s} brez razkrite vrednosti`);
+              continue;
+            }
+            assert.ok(!/NaN|undefined|Infinity/.test(x.val), where);
+            const last = x.val.split(/[=≈]/).pop().trim();
+            if (/\d[.,]\d/.test(last)) assert.ok(last.includes(D) && !last.includes(D === "," ? "." : ","), `${where}: ${x.val}`);
+            const r = readNumber(last);
+            assert.ok(r, `${where}: ${x.val}`);
+            const tol = x.val.includes("≈") ? 0.5 * 10 ** -((last.split(D)[1] || "").length) + 1e-12 : 1e-9;
+            assert.ok(Math.abs(r.v - x.v) <= tol * Math.max(1, x.val.includes("≈") ? 1 : Math.abs(x.v)), `${where}: ${x.s} ${x.val}`);
+          }
+        }
+      }
+    }
+  }
+  setNumberStyle("sl");
+});
+
+test("games: »Sestavi enačbo« and »Razvrsti po velikosti« engines – keys place, undo and judge like the rules", async () => {
+  setNumberStyle("sl");
+  const keyOf = (s) => String(s).replace(/−|⁻/g, "-").replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, (c) => "⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(c)).replace(/,/g, ".").replace(/·/g, "*");
+  for (const cid of ["add", "mul", "order", "frac_add", "expand", "factor", "line_eq", "pow_rules", "factorial"]) {
+    for (let round = 0; round < 9; round++) {
+      const G = fakeG(cid, 1 + (round % 3));
+      G.ask = (tier = G.tier) => drawFor(tiles, cid, tier)[0];
+      const e = tiles.create(G);
+      e.reset();
+      const [q] = drawFor(tiles, cid, G.tier);
+      G.q = q;
+      e.question(q);
+      const { T } = e.peek();
+      assert.ok(T, `${cid}: ${q.q}`);
+      assert.ok(e.headline());
+      // prazno ni odgovor: le namig
+      e.key("Confirm", true);
+      assert.equal(G.got.length, 0, cid);
+      // vtipkaj pravilne ploščice po vrsti (znak za + in −, števke in črke za ploščico)
+      for (const [k, s] of T.canon.entries()) {
+        if (T.slots[k].kind === "o") e.key(s === "+" ? "+" : s === "·" ? "*" : s === ":" ? ":" : "-", true);
+        else {
+          for (const ch of keyOf(s)) e.key(ch, true);
+          if (e.peek().fill[k] == null) e.key("Enter", true);
+        }
+        assert.equal(e.peek().fill[k], s, `${cid}: ${q.q} → mesto ${k} (${T.canon.join(" ")}) ima ${e.peek().fill.join(" ")}`);
+      }
+      // Backspace vzame zadnjo ploščico, ponovno jo položi tipka
+      e.key("Backspace", true);
+      assert.equal(e.peek().fill.filter((x) => x == null).length, 1, cid);
+      const k = e.peek().fill.indexOf(null), s = T.canon[k];
+      if (T.slots[k].kind === "o") e.key(s === "+" ? "+" : s === "·" ? "*" : s === ":" ? ":" : "-", true);
+      else {
+        for (const ch of keyOf(s)) e.key(ch, true);
+        if (e.peek().fill[k] == null) e.key("Enter", true);
+      }
+      e.key("Confirm", true);
+      assert.equal(G.got.length, 1, `${cid}: ${q.q}`);
+      assert.equal(G.got[0][0], true, `${cid}: ${q.q} → ${T.fill(e.peek().fill)}`);
+      // po odgovoru tipke ne štejejo
+      e.key("Confirm", true);
+      assert.equal(G.got.length, 1);
+    }
+  }
+  for (const cid of ["add", "frac_compare", "sqrt", "frac_add"]) {
+    for (let round = 0; round < 8; round++) {
+      const G = fakeG(cid, 1 + (round % 3));
+      G.ask = (tier = G.tier) => drawFor(order, cid, tier)[0];
+      const e = order.create(G);
+      e.reset();
+      const q = G.ask();
+      G.q = q;
+      e.question(q);
+      const { R } = e.peek();
+      assert.ok(R, cid);
+      assert.ok(e.headline() === `games.e.order.${R.dir > 0 ? "up" : "down"}`);
+      // naloga za seznam »Ponovi« je cel krog
+      assert.ok(G.q.a.includes(R.dir > 0 ? " < " : " > "), G.q.a);
+      const right = round % 2 === 0;
+      const want = right ? R.right : [R.right[1], R.right[0], ...R.right.slice(2)];
+      for (const i of want) {
+        // kazalec s puščicami na kartico i, preslednica jo položi na naslednje mesto
+        for (let s = 0; s < 10 && e.peek().cur !== i; s++) e.key("ArrowDown", true);
+        assert.equal(e.peek().cur, i, cid);
+        e.key(" ", true);
+      }
+      assert.deepEqual(e.peek().slot, want, cid);
+      e.key("Enter", true);
+      assert.equal(G.got.length, 1, cid);
+      assert.equal(G.got[0][0], right, `${cid}: ${G.q.a}`);
+      if (!right) assert.match(G.got[0][1].note, /games\.correctWas/);
+    }
+  }
+  const sl = (await import("../public/i18n/sl.js")).default;
+  for (const k of ["games.undo", "games.fillAll", "games.e.tiles.ask", "games.e.tiles.build", "games.e.tiles.sides", "games.e.tiles.pieces", "games.e.order.up", "games.e.order.down", "games.e.order.small", "games.e.order.big", "games.e.order.right"]) assert.ok(sl[k], k);
+});

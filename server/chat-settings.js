@@ -18,6 +18,7 @@ import { ITEMS, SLOTS, MULTI_MAX, isMulti, itemOf, wear } from "../public/avatar
 import { INTERESTS, cleanInterests } from "../public/interests.js";
 import { GENRE_IDS, cleanChildhood, cleanTitles } from "../public/games/childhood.js";
 import { dialectsFor } from "../public/dialects.js";
+import { jeSs, jeFaks, stopnja, imaStopnjo } from "../public/stopnja.js";
 
 // Deli aplikacije, ki jih inštruktor odpre v premičnem oknu (public/okna.js), in načini kalkulatorja.
 export const WINDOW_VIEWS = ["graph", "textbook", "path", "scan", "schedule", "corner", "progress", "games", "competition", "exams", "league", "settings", "lab"];
@@ -188,7 +189,7 @@ function canonicalLevel(input, track, cur, program) {
   if (track === "SREDNJA_SOLA") {
     if (!(n >= 1 && n <= 4)) return { error: "SŠ years are '1. letnik' to '4. letnik' (optionally with OR/VR)" };
     const raw = String(input).toUpperCase();
-    const suffix = /\bVR\b|VIŠJ|VISJ/.test(raw) ? " VR" : /\bOR\b|OSNOVN/.test(raw) ? " OR" : cur.educational_track === "SREDNJA_SOLA" ? (cur.curriculum_level.match(/ (OR|VR)$/)?.[0] ?? "") : "";
+    const suffix = /\bVR\b|VIŠJ|VISJ/.test(raw) ? " VR" : /\bOR\b|OSNOVN/.test(raw) ? " OR" : jeSs(cur) ? (cur.curriculum_level.match(/ (OR|VR)$/)?.[0] ?? "") : "";
     return { level: `${n}. letnik${suffix}` };
   }
   const years = PROGRAMS[program]?.years.length || 4;
@@ -202,7 +203,7 @@ export function describeSchool(s) {
     system: isRegional(s.school_system) ? SCHOOL_SYSTEMS[s.school_system]?.name || s.school_system : null,
     track: s.educational_track,
     level: s.curriculum_level,
-    program: s.educational_track === "UNIVERZA" ? programLabel(s.study_program) : null,
+    program: jeFaks(s) ? programLabel(s.study_program) : null,
   };
 }
 
@@ -280,7 +281,7 @@ function validateProfile(changes, student) {
           ? `study_program is ambiguous, ask which one: ${r.candidates.slice(0, 8).map((c) => c.label).join("; ")}`
           : "study_program: no such programme (get_settings options=study_program lists all)",
       );
-    if (patch.study_program && !patch.educational_track && cur.educational_track !== "UNIVERZA") patch.educational_track = "UNIVERZA";
+    if (patch.study_program && !patch.educational_track && !jeFaks(cur)) patch.educational_track = "UNIVERZA";
   }
 
   let track = patch.educational_track ?? cur.educational_track;
@@ -303,7 +304,7 @@ function validateProfile(changes, student) {
         else errors.push(`curriculum_level: ${r.error}`);
       }
     }
-  } else if (patch.educational_track && patch.educational_track !== cur.educational_track && !isRegional(system)) {
+  } else if (imaStopnjo(patch) && stopnja(patch) !== stopnja(cur) && !isRegional(system)) {
     errors.push("curriculum_level is required when the school stage changes – ask which grade/year");
   }
   if (track === "UNIVERZA" && !program && !isRegional(system)) errors.push("study_program is required for faculty – ask which programme");
@@ -422,7 +423,7 @@ export function createSettingsTools({ store, studentId, conversationId, device =
     const s = student.settings;
     if (input.options === "study_program") out.options = programItems().map((p) => `${p.id}: ${p.label}`);
     if (input.options === "study_course")
-      out.options = s.educational_track === "UNIVERZA" ? courseItems(s.study_program, s.curriculum_level).map((c) => c.name) : "only for faculty students";
+      out.options = jeFaks(s) ? courseItems(s.study_program, s.curriculum_level).map((c) => c.name) : "only for faculty students";
     if (input.options === "dialect") out.options = ["'' = standard", ...dialectsFor(s.language).map((d) => `${d.id}: ${d.name}`)];
     if (input.options === "school_system") out.options = SYSTEM_IDS.map((id) => `${id}: ${SCHOOL_SYSTEMS[id].name}`);
     return { content: JSON.stringify(out) };

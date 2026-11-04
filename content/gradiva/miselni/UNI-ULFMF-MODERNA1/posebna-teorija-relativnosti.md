@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Einsteinova načela
+  - zakoni enaki v inercialnih sistemih
+  - $c$ enaka za vse opazovalce
+- Podaljšanje časa
+  - $\gamma = 1/\sqrt{1 - v^2/c^2}$
+  - $\Delta t = \gamma\,\Delta\tau$, lastni čas najkrajši
+  - Proksima pri $0{,}98\,c$: $0{,}86$ leta
+- Krčenje dolžin
+  - $L = L_0/\gamma$, le vzdolž gibanja
+  - lastna dolžina $L_0$ je najdaljša
+- Lorentzove transformacije
+  - $x' = \gamma(x - vt)$
+  - $t' = \gamma(t - vx/c^2)$
+  - pri $v \ll c$ Galilejeva
+- Relativnost sočasnosti
+  - $\Delta t' = -\gamma v \Delta x/c^2$
+  - vrstni red se lahko obrne
+- Gibalna količina
+  - $p = \gamma m v$, enota $\mathrm{MeV}/c$
+  - napaka: klasični $p = mv$
+- Relativistična energija
+  - $E = \gamma m c^2$, $E_0 = mc^2$
+  - $E_k = (\gamma - 1)mc^2$, ne $\tfrac12 mv^2$
+  - $E^2 = (pc)^2 + (mc^2)^2$; foton $E = pc$

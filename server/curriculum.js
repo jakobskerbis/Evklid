@@ -5,6 +5,7 @@ import { ALL_SUBJECTS } from "./subjects.js";
 import { EN, EN_UNITS, INT_LEVELS, IN_PATHS, SUBJECT_EN } from "./region-curricula.js";
 import { SCHOOL_SYSTEMS, isRegional, gradeInfo, gradesOf } from "../public/regions.js";
 import { BANK, EXAMS, SUBJECT_NAMES_EN } from "./exam-data.js";
+import { jeFaks, jeSs } from "../public/stopnja.js";
 
 export function slugify(s) {
   return s
@@ -272,8 +273,8 @@ export function topicOrder(key) {
 export function pathKeyFor(settings) {
   const level = settings.curriculum_level || "";
   if (isRegional(settings.school_system)) return regionPathKeyFor(settings);
-  if (settings.educational_track === "UNIVERZA") return uniPathKeyFor(settings);
-  const school = settings.educational_track === "SREDNJA_SOLA" ? "SS" : "OS";
+  if (jeFaks(settings)) return uniPathKeyFor(settings);
+  const school = jeSs(settings) ? "SS" : "OS";
   const num = Number((level.match(/([1-9])\s*\.?/) || [])[1]);
   const candidates = listPaths(settings.subject).filter((p) => p.school === school);
   if (!candidates.length) return null;
@@ -320,7 +321,7 @@ function uniPathKeyFor(settings) {
 
 // Opis programa za sistemski prompt.
 export function studyProgramPrompt(settings) {
-  if (settings.educational_track !== "UNIVERZA") return "(ni fakultete)";
+  if (!jeFaks(settings)) return "(ni fakultete)";
   const p = PROGRAMS[settings.study_program];
   if (!p) return "(program ni izbran)";
   const year = Number((String(settings.curriculum_level || "").match(/([1-4])/) || [])[1]) || 1;

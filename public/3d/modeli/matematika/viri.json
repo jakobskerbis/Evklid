@@ -1,0 +1,14 @@
+{
+  "viri": [
+    {
+      "id": "evklid-matematika",
+      "ime": "Modeli, izdelani v kodi",
+      "avtor": "Evklid",
+      "opis": "Geometrijska telesa in grafi ploskev so izračunani iz šolskih obrazcev in enačb; vse narisano v kodi.",
+      "licenca": "Lastno delo Evklida",
+      "datoteke": [
+        "matematika/*.js"
+      ]
+    }
+  ]
+}

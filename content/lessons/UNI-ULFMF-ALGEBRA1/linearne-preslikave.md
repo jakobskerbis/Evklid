@@ -5,21 +5,31 @@ avtor: AI
 
 ## Zakaj se tega učimo
 
-Zavrti ravnino okoli izhodišča za $90^\circ$. Če najprej sešteješ dva vektorja in nato zavrtiš vsoto, dobiš isto, kot če najprej zavrtiš vsakega posebej in nato sešteješ. Pri raztegu vektorja za faktor $2$ je vseeno, ali raztegneš pred vrtenjem ali po njem.
-
-Isto lastnost ima odvajanje polinomov: $(p + q)' = p' + q'$ in $(\lambda p)' = \lambda p'$. Ima jo tudi množenje z matriko: $A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y}$. Preslikavam s to lastnostjo pravimo **linearne**.
-
-Linearne preslikave so »dovoljeni premiki« med vektorskimi prostori, saj ohranjajo seštevanje in množenje s skalarjem. Vsako lahko zapišemo z matriko, zato se računanje z njimi prevede na računanje z matrikami. V tej lekciji spoznaš **jedro** in **sliko**, **matriko preslikave** in kako se matrika spremeni, ko **zamenjamo bazo**.
+Dietetičarka sestavlja bolniku jedilnik: vsaka porcija živila prinese določeno količino beljakovin, maščob in ogljikovih hidratov. Dvojna porcija prinese dvakrat toliko, dve živili skupaj pa vsoto svojih prispevkov. Radiolog na zaslonu zavrti rentgensko sliko okoli središča za $90^\circ$: dve puščici, narisani na sliko, lahko sešteje pred vrtenjem ali po njem in dobi isto, enako velja za raztegnitev puščice za faktor $2$. Krožnik in rentgenska slika nimata nič skupnega, obe preslikavi pa ohranjata seštevanje in množenje s skalarjem; takim pravimo **linearne**. Enako se obnašata odvajanje polinomov, $(p + q)' = p' + q'$ in $(\lambda p)' = \lambda p'$, ter množenje z matriko, $A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y}$. Vsako linearno preslikavo zapišemo z **matriko preslikave**, zato se računanje z njimi prevede na računanje z matrikami. Spoznaš še **jedro** in **sliko** preslikave ter kako se matrika spremeni, ko **zamenjamo bazo**.
 
 ## Razlaga
 
-**1. Definicija.** Naj bosta $U$ in $V$ vektorska prostora. Preslikava $L\colon U \to V$ je **linearna**, če za vse $u, v \in U$ in $\lambda \in \mathbb{R}$ velja
+### Najprej slika: kaj se zgodi z mrežo
+
+Nariši kvadratno mrežo z izhodiščem in opazuj, kaj preslikava naredi z njo:
+
+| Preslikava | Kaj se zgodi z izhodiščem in mrežo | Linearna? |
+|---|---|---|
+| vrtenje ravnine okoli izhodišča | izhodišče ostane, mreža se zavrti | da |
+| pravokotna projekcija na ravnino skozi izhodišče | izhodišče ostane, prostor se sploči na ravnino | da |
+| množenje z matriko $\mathbf{x} \mapsto A\mathbf{x}$ | izhodišče ostane, kvadratki postanejo paralelogrami | da |
+| premik $\mathbf{x} \mapsto \mathbf{x} + \mathbf{b}$, $\mathbf{b} \neq \mathbf{0}$ | izhodišče se premakne v $\mathbf{b}$ | ne |
+| $(x, y) \mapsto (x^2, y)$ | premica $y = x$ se ukrivi v parabolo $x = y^2$ | ne |
+
+Linearno je tudi odvajanje $D\colon \mathbb{R}_n[x] \to \mathbb{R}_{n-1}[x]$, čeprav ga ne narišemo kot mrežo.
+
+### Nato simboli: definicija
+
+Naj bosta $U$ in $V$ vektorska prostora. Preslikava $L\colon U \to V$ je **linearna**, če za vse $u, v \in U$ in $\lambda \in \mathbb{R}$ velja
 
 $$L(u + v) = L(u) + L(v), \qquad L(\lambda u) = \lambda L(u).$$
 
-Takoj sledi $L(\mathbf{0}) = L(0 \cdot \mathbf{0}) = 0 \cdot L(\mathbf{0}) = \mathbf{0}$. Linearna preslikava vedno slika ničelni vektor v ničelnega.
-
-Primeri: množenje z matriko $\mathbf{x} \mapsto A\mathbf{x}$, vrtenje ravnine okoli izhodišča, pravokotna projekcija na ravnino skozi izhodišče, odvajanje $D\colon \mathbb{R}_n[x] \to \mathbb{R}_{n-1}[x]$. Niso linearne: premik $\mathbf{x} \mapsto \mathbf{x} + \mathbf{b}$ za $\mathbf{b} \neq \mathbf{0}$ in $(x, y) \mapsto (x^2, y)$.
+Takoj sledi $L(\mathbf{0}) = L(0 \cdot \mathbf{0}) = 0 \cdot L(\mathbf{0}) = \mathbf{0}$. Linearna preslikava vedno slika ničelni vektor v ničelnega, zato premik iz tabele odpade že na prvem preizkusu.
 
 :::premisli
 Funkciji $f(x) = 2x + 1$ v srednji šoli rečemo »linearna funkcija«. Ali je linearna preslikava $\mathbb{R} \to \mathbb{R}$ v smislu zgornje definicije? Napovej, nato preveri z $L(\mathbf{0})$.
@@ -27,31 +37,35 @@ Funkciji $f(x) = 2x + 1$ v srednji šoli rečemo »linearna funkcija«. Ali je l
 Ni. Velja $f(0) = 1 \neq 0$, linearna preslikava pa mora $0$ slikati v $0$. Tudi $f(1 + 1) = 5$, $f(1) + f(1) = 6$. Linearne preslikave $\mathbb{R} \to \mathbb{R}$ so natanko $x \mapsto kx$. Funkcija $2x + 1$ je *afina*: linearna preslikava, ki ji sledi premik.
 :::
 
-**2. Preslikavo določijo slike baznih vektorjev.** Naj bo $u_1, \ldots, u_n$ baza prostora $U$. Vsak $u$ zapišemo kot $u = \alpha_1 u_1 + \ldots + \alpha_n u_n$. Zaradi linearnosti je
+### Preslikavo določijo slike baznih vektorjev
+
+Na mreži je dovolj vedeti, kam gresta puščici $e_1 = (1, 0)$ in $e_2 = (0, 1)$; vse ostalo sledi. Splošno: naj bo $u_1, \ldots, u_n$ baza prostora $U$. Vsak $u$ zapišemo kot $u = \alpha_1 u_1 + \ldots + \alpha_n u_n$. Zaradi linearnosti je
 
 $$L(u) = \alpha_1 L(u_1) + \ldots + \alpha_n L(u_n).$$
 
 Ko poznaš $L(u_1), \ldots, L(u_n)$, poznaš $L$ povsod. Za opis preslikave zadošča končno mnogo podatkov.
 
-**3. Matrika preslikave.** Izberemo bazo $B = \{u_1, \ldots, u_n\}$ prostora $U$ in bazo $C = \{v_1, \ldots, v_m\}$ prostora $V$. **Matrika** $A$ preslikave $L$ glede na $B$ in $C$ ima v $j$-tem **stolpcu** koordinate vektorja $L(u_j)$ v bazi $C$. Matrika je velikosti $m \times n$ in velja
+### Matrika preslikave
 
-$$[L(u)]_C = A\,[u]_B.$$
-
-Primer: vrtenje ravnine za $90^\circ$ v pozitivni smeri pošlje $e_1 = (1, 0)$ v $(0, 1)$, $e_2 = (0, 1)$ pa v $(-1, 0)$. Ti sliki sta stolpca:
+Začni pri sliki: vrtenje ravnine za $90^\circ$ v pozitivni smeri pošlje puščico $e_1 = (1, 0)$ v $(0, 1)$, puščico $e_2 = (0, 1)$ pa v $(-1, 0)$. Ti sliki zložimo v stolpca:
 
 $$A = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}.$$
 
-**4. Jedro in slika.** **Jedro** preslikave je $\ker L = \{u \in U : L(u) = \mathbf{0}\}$, vse kar se »zbriše«. **Slika** je $\operatorname{im} L = \{L(u) : u \in U\}$, vse kar preslikava doseže. Jedro je podprostor v $U$, slika pa podprostor v $V$.
+Splošno izberemo bazo $B = \{u_1, \ldots, u_n\}$ prostora $U$ in bazo $C = \{v_1, \ldots, v_m\}$ prostora $V$. **Matrika** $A$ preslikave $L$ glede na $B$ in $C$ ima v $j$-tem **stolpcu** koordinate vektorja $L(u_j)$ v bazi $C$. Matrika je velikosti $m \times n$ in velja
+
+$$[L(u)]_C = A\,[u]_B.$$
+
+### Jedro in slika
+
+Na mreži: če se paralelogram sploči, se vsaj ena cela premica vektorjev zlije v izhodišče. **Jedro** preslikave je $\ker L = \{u \in U : L(u) = \mathbf{0}\}$, vse kar se »zbriše«. **Slika** je $\operatorname{im} L = \{L(u) : u \in U\}$, vse kar preslikava doseže. Jedro je podprostor v $U$, slika pa podprostor v $V$.
 
 Za $L(\mathbf{x}) = A\mathbf{x}$ je jedro množica rešitev homogenega sistema $A\mathbf{x} = \mathbf{0}$. Slika je ogrinjača stolpcev matrike $A$, ker je $A\mathbf{x} = x_1 \mathbf{a}_1 + \ldots + x_n \mathbf{a}_n$.
 
 Jedro meri, koliko informacije se izgubi. Velja: $L$ je **injektivna** natanko tedaj, ko je $\ker L = \{\mathbf{0}\}$. Iz $L(u) = L(v)$ namreč sledi $L(u - v) = \mathbf{0}$.
 
-**5. Dimenzijska formula.** Za $L\colon U \to V$ s končnorazsežnim $U$ velja
+### Dimenzijska formula
 
-$$\dim \ker L + \dim \operatorname{im} L = \dim U.$$
-
-Število $\dim \operatorname{im} L$ je **rang** preslikave in je enak rangu njene matrike. Primeri v $\mathbb{R}^3$:
+Najprej tabela štirih preslikav $\mathbb{R}^3 \to \mathbb{R}^3$:
 
 | Preslikava $\mathbb{R}^3 \to \mathbb{R}^3$ | $\ker L$ | $\operatorname{im} L$ | $\dim$ jedra $+$ slike |
 |---|---|---|---|
@@ -60,7 +74,11 @@ $$\dim \ker L + \dim \operatorname{im} L = \dim U.$$
 | projekcija na os $x$ | ravnina $yz$ | os $x$ | $2 + 1$ |
 | ničelna preslikava | $\mathbb{R}^3$ | $\{\mathbf{0}\}$ | $3 + 0$ |
 
-Kar jedro »vzame«, slika »izgubi«. Vsota je vedno $3$.
+Kar jedro »vzame«, slika »izgubi«. Vsota je vedno $3$. S simboli: za $L\colon U \to V$ s končnorazsežnim $U$ velja
+
+$$\dim \ker L + \dim \operatorname{im} L = \dim U.$$
+
+Število $\dim \operatorname{im} L$ je **rang** preslikave in je enak rangu njene matrike.
 
 :::premisli
 Ali obstaja injektivna linearna preslikava $\mathbb{R}^3 \to \mathbb{R}^2$? Zakaj?
@@ -68,7 +86,9 @@ Ali obstaja injektivna linearna preslikava $\mathbb{R}^3 \to \mathbb{R}^2$? Zaka
 Ne obstaja. Slika leži v $\mathbb{R}^2$, zato je $\dim \operatorname{im} L \le 2$. Iz formule sledi $\dim \ker L = 3 - \dim \operatorname{im} L \ge 1$. Jedro torej vsebuje neničelni vektor in $L$ ni injektivna. Iz prostora večje dimenzije v manjšega se vedno nekaj zbriše.
 :::
 
-**6. Prehod med bazami.** Isti vektor ima v različnih bazah različne koordinate. Naj bo $B = \{e_1, e_2\}$ standardna baza ravnine in $B' = \{b_1, b_2\}$ nova baza z $b_1 = (1, 1)$, $b_2 = (1, -1)$. **Prehodna matrika** $P$ ima v stolpcih nove bazne vektorje, zapisane v stari bazi:
+### Prehod med bazami
+
+Nova baza je kot nova, zasukana mreža na istem papirju. Isti vektor ima v različnih bazah različne koordinate. Naj bo $B = \{e_1, e_2\}$ standardna baza ravnine in $B' = \{b_1, b_2\}$ nova baza z $b_1 = (1, 1)$, $b_2 = (1, -1)$. **Prehodna matrika** $P$ ima v stolpcih nove bazne vektorje, zapisane v stari bazi:
 
 $$P = \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}, \qquad [u]_B = P\,[u]_{B'}.$$
 
@@ -84,7 +104,7 @@ Beri od desne proti levi: $P$ pretvori nove koordinate v stare, $A$ preslika, $P
 
 ### Primer 1 (lažji): matrika preslikave
 
-Preslikava $L\colon \mathbb{R}^3 \to \mathbb{R}^2$ je dana z $L(x, y, z) = (x - y,\ y - z)$. Zapiši njeno matriko v standardnih bazah in izračunaj $L(2, 5, 1)$.
+Monitor ob bolniški postelji iz treh zaporednih odčitkov izračuna razliki sosednjih odčitkov. To je preslikava $L\colon \mathbb{R}^3 \to \mathbb{R}^2$, $L(x, y, z) = (x - y,\ y - z)$. Zapiši njeno matriko v standardnih bazah in izračunaj $L(2, 5, 1)$.
 
 **Podatki:** $L(x, y, z) = (x - y,\ y - z)$, standardni bazi $e_1, e_2, e_3$ v $\mathbb{R}^3$ in $\mathbb{R}^2$, vektor $(2, 5, 1)$
 **Iščemo:** matriko $A$ in $L(2, 5, 1)$

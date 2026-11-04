@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- U-I metoda
+  - $R_m = \dfrac{U}{I}$, enota $\Omega$
+  - napaka zaradi $R_A$ in $R_V$
+- Vezava A
+  - voltmeter neposredno na merjencu
+  - $R_x = \dfrac{U}{I - U/R_V}$, rezultat premajhen
+- Vezava B
+  - ampermeter neposredno v veji merjenca
+  - $R_x = \dfrac{U}{I} - R_A$, rezultat prevelik
+- Izbira vezave
+  - mejna upornost $R_g = \sqrt{R_A R_V}$
+  - pod $R_g$ vezava A, nad njo B
+- Wheatstonov most
+  - ničelna metoda, indikator kaže nič
+  - $R_x R_4 = R_2 R_3$
+  - napaka: množiš sosednji veji
+- Impedanca
+  - $Z = \dfrac{U}{I}$ z efektivnima vrednostma
+  - $Z = \sqrt{R^2 + X_L^2}$, $X_L = 2\pi f L$
+  - ohmmeter pokaže le $R$
+- Izmenični most
+  - $Z_x Z_4 = Z_2 Z_3$ kompleksno
+  - nastaviš dva elementa

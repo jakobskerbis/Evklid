@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Podhladitev
+  - $\Delta T = T_m - T$, v kelvinih
+  - točno pri $T_m$ se nič ne strdi
+- Nukleacija
+  - prihranek $\tfrac{4}{3}\pi r^3\,\Delta G_v$ proti ceni $4\pi r^2\gamma$
+  - stabilna kal: $r > r_{kr}$
+- Kritični radij
+  - $r_{kr} = \dfrac{2\gamma\,T_m}{\Delta H_f\,\Delta T}$
+  - večja podhladitev, manjši $r_{kr}$ in več kali
+- Heterogena nukleacija
+  - stena forme, cepiva, npr. $\mathrm{TiB_2}$
+  - $\Delta G_{het} = S\,\Delta G_{kr}$, $S$ med $0$ in $1$
+- Rast zrn
+  - dendriti v smereh $\langle 100 \rangle$
+  - meja zrn, kjer se zrni srečata
+- Cone ingota
+  - skorjasta, stebričasta, središčna enakoosna
+- Velikost zrn
+  - $\sigma_y = \sigma_0 + k\,d^{-1/2}$
+  - merjenje: $\bar{l} = \dfrac{L}{N\,M}$
+  - počasno ohlajanje da groba zrna, ne drobna

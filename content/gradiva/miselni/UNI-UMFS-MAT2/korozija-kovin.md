@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Anoda
+  - $\mathrm{Fe} \rightarrow \mathrm{Fe^{2+}} + 2e^-$
+  - tu se kovina raztaplja
+- Katoda
+  - $\mathrm{O_2} + 2\mathrm{H_2O} + 4e^- \rightarrow 4\,\mathrm{OH^-}$
+  - v kislini nastaja $\mathrm{H_2}$
+- Korozijski člen
+  - anoda, katoda, elektrolit, električni stik
+  - kapljica: sredina je anoda, rob katoda
+- Galvanski par
+  - korodira kovina z bolj negativnim potencialom
+  - $\Delta E = E_k - E_a$
+  - v praksi galvanska vrsta, pasivne kovine plemenitejše
+- Faradayev zakon
+  - $m = \dfrac{I\,t\,M}{z\,F}$, za Fe $z = 2$
+  - $h = \dfrac{i\,t\,M}{z\,F\,\rho}$ z $i = I/A$
+- Razmerje ploščin
+  - majhna anoda ob veliki katodi je najslabša
+- Vrste korozije
+  - enakomerna, galvanska, jamičasta, špranjska
+  - interkristalna (senzibilizacija), selektivna (decinkacija)
+  - napetostna, erozijska

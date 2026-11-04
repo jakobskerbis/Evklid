@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vzbujanje
+  - $\Theta = N I$, enota A
+  - napaka: pozabljeni ovoji $N$
+- Magnetni pretok
+  - $\Phi = B A$, enota Wb
+  - v nerazvejanem jedru povsod enak
+- Magnetni upor
+  - $R_\mathrm{m} = l/(\mu_0 \mu_\mathrm{r} A)$
+  - enota $\mathrm{A/Wb}$
+  - $\mathrm{cm^2}$ pretvori v $\mathrm{m^2}$
+- Ohmov zakon
+  - $\Theta = R_\mathrm{m} \Phi$
+  - padec na odseku $V_\mathrm{m} = H l$
+- Zračna reža
+  - zaporedno: upori se seštejejo
+  - $1\,\mathrm{mm}$ reže pogosto prevlada nad železom
+  - enakovredni zrak železa $l_\mathrm{Fe}/\mu_\mathrm{r}$
+- Razvejani krog
+  - razcepišče: $\Phi_\mathrm{s} = \Phi_1 + \Phi_2$
+  - stranska stebra vzporedno
+  - napaka: cela $\Theta$ na stranski steber
+- Meja modela
+  - nasičenje nad približno $1{,}5\,\mathrm T$
+  - tedaj krivulja $B(H)$
