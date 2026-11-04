@@ -302,7 +302,6 @@
   "chat.symbolsTitle": "Symboly: √, π, ∫, H₂O …",
   "chat.mic": "Řekni otázku",
   "chat.delete": "Smazat konverzaci",
-  "chat.confirmDelete": "Smazat tuto konverzaci?",
   "chat.hello": "Ahoj, {name}!",
   "chat.intro": "Napiš úlohu nebo ji vyfoť. Vyřešíme ji spolu krok za krokem.",
   "chat.idea1": "Jak vyřeším rovnici 2x + 3 = 11?",
@@ -2950,5 +2949,6 @@
   "ai.pool": "Společné pro všechny profily rodiny.",
   "gift.level": "Stupeň",
   "meter.levelsTitle": "Ceny podle stupně",
-  "chat.choices": "Rychlé odpovědi"
+  "chat.choices": "Rychlé odpovědi",
+  "chat.deleted": "Konverzace smazána."
 }

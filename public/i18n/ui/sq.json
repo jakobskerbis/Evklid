@@ -290,7 +290,6 @@
   "chat.symbolsTitle": "Simbole: √, π, ∫, H₂O …",
   "chat.mic": "Thuaje pyetjen",
   "chat.delete": "Fshi bisedën",
-  "chat.confirmDelete": "Ta fshij këtë bisedë?",
   "chat.hello": "Përshëndetje, {name}!",
   "chat.intro": "Shkruaj një ushtrim ose fotografoje. Do ta zgjidhim bashkë hap pas hapi.",
   "chat.idea1": "Si ta zgjidh ekuacionin 2x + 3 = 11?",
@@ -2902,5 +2901,6 @@
   "ai.pool": "E përbashkët për të gjitha profilet e familjes.",
   "gift.level": "Niveli",
   "meter.levelsTitle": "Çmimet sipas nivelit",
-  "chat.choices": "Përgjigje të shpejta"
+  "chat.choices": "Përgjigje të shpejta",
+  "chat.deleted": "Biseda u fshi."
 }

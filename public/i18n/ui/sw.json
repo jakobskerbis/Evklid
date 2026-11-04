@@ -290,7 +290,6 @@
   "chat.symbolsTitle": "Alama: √, π, ∫, H₂O …",
   "chat.mic": "Sema swali lako",
   "chat.delete": "Futa mazungumzo",
-  "chat.confirmDelete": "Futa mazungumzo haya?",
   "chat.hello": "Habari, {name}!",
   "chat.intro": "Andika swali au lipige picha. Tutalitatua pamoja hatua kwa hatua.",
   "chat.idea1": "Ninatatuaje 2x + 3 = 11?",
@@ -2900,5 +2899,6 @@
   "ai.pool": "Kinashirikiwa na wasifu wote wa familia.",
   "gift.level": "Ngazi",
   "meter.levelsTitle": "Bei kwa ngazi",
-  "chat.choices": "Majibu ya haraka"
+  "chat.choices": "Majibu ya haraka",
+  "chat.deleted": "Mazungumzo yamefutwa."
 }

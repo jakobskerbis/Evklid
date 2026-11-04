@@ -296,7 +296,6 @@
   "chat.symbolsTitle": "Simboli: √, π, ∫, H₂O …",
   "chat.mic": "Izgovori pitanje",
   "chat.delete": "Izbriši razgovor",
-  "chat.confirmDelete": "Izbrisati ovaj razgovor?",
   "chat.hello": "Zdravo, {name}!",
   "chat.intro": "Napiši zadatak ili ga fotografiši. Zajedno ćemo ga riješiti korak po korak.",
   "chat.idea1": "Kako riješiti jednačinu 2x + 3 = 11?",
@@ -2927,5 +2926,6 @@
   "ai.pool": "Zajedničko za sve profile porodice.",
   "gift.level": "Nivo",
   "meter.levelsTitle": "Cijene po nivoima",
-  "chat.choices": "Brzi odgovori"
+  "chat.choices": "Brzi odgovori",
+  "chat.deleted": "Razgovor je izbrisan."
 }
