@@ -74,3 +74,15 @@ test("poved: okrajšave in formula sama v vrstici", () => {
   assert.equal(sentenceAt("Npr. sila @@MATH0@@ je 1. Newtonov zakon. Drugo.", "@@MATH0@@"), "Npr. sila je 1. Newtonov zakon");
   assert.equal(sentenceAt("Planckova konstanta:\n\n@@MATH0@@\n\nNaprej.", "@@MATH0@@"), "Planckova konstanta:");
 });
+
+test("pomen, ki ga ni več na strani, sprosti svoj ton", () => {
+  const sym = parseSymbolsBlock("a | realni del kompleksnega števila $z$ | | –").list;
+  const az = withFormulaSubject("MAT", () => codes(annotateTex("z = a + bi")), sym).find((c) => c.endsWith(":a"));
+  const fa = codes(annotateTex("F = m a", "FIZ")).find((c) => c.endsWith(":a"));
+  const page = createMarkPage();
+  const A = {}, B = {};
+  claimMarks(page, A, [az]);
+  releaseMarks(page, A);
+  assert.equal(claimMarks(page, B, [fa])[0].tone, 0, "sam pomen na strani je v barvi poudarka");
+  assert.equal(sentenceAt("Glej št. 5 @@MATH0@@ tu.", "@@MATH0@@"), "Glej št. 5 tu");
+});

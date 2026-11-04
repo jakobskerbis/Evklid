@@ -141,7 +141,7 @@ export function meaningOf(code) {
 }
 // Stran: kdo ima oznako pomena (owners) in ton vsakega pomena; ton ostane, dokler stran živi, da barva
 // pomena ne skače. version se poveča, ko lastnik sprosti oznake (aplikacija: druga besedila jih prevzamejo).
-export const createMarkPage = () => ({ owners: new Map(), tones: new Map(), next: new Map(), version: 0, subs: new Set() });
+export const createMarkPage = () => ({ owners: new Map(), tones: new Map(), version: 0, subs: new Set() });
 const TONES = 4;
 // codes: kode data-fx enega lastnika (spletna stran, besedilo v aplikaciji) po vrsti; vrne { dup, tone } za vsako.
 export function claimMarks(page, owner, codes) {
@@ -154,16 +154,23 @@ export function claimMarks(page, owner, codes) {
     mine.add(m.id);
     page.owners.set(m.id, owner);
     if (!page.tones.has(m.id)) {
-      const n = page.next.get(m.letter) || 0;
-      page.next.set(m.letter, n + 1);
-      page.tones.set(m.id, Math.min(n, TONES - 1));
+      // najnižji ton, ki ga nima noben drug pomen te črke na strani
+      const used = new Set([...page.tones.values()].filter((x) => x.letter === m.letter).map((x) => x.tone));
+      let n = 0;
+      while (used.has(n) && n < TONES - 1) n++;
+      page.tones.set(m.id, { letter: m.letter, tone: n });
     }
-    return { dup: false, tone: page.tones.get(m.id) };
+    return { dup: false, tone: page.tones.get(m.id).tone };
   });
+}
+// Pozabi tone pomenov, ki jih nihče več nima (splet: po vsakem preračunu strani).
+export function pruneTones(page) {
+  for (const id of page.tones.keys()) if (!page.owners.has(id)) page.tones.delete(id);
 }
 export function releaseMarks(page, owner) {
   let freed = false;
   for (const [id, o] of page.owners) if (o === owner) { page.owners.delete(id); freed = true; }
+  pruneTones(page);
   if (freed) {
     page.version++;
     for (const f of page.subs) f();

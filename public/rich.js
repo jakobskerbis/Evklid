@@ -60,7 +60,7 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
 
 // Poved, v kateri stoji formula (do pike, klicaja, vprašaja ali nove vrstice), brez drugih formul in Markdowna.
 // »npr.«, »oz.«, »1. Newtonov« ne končajo povedi; formula sama v vrstici ($$…$$) vzame vrstico pred njo.
-const NOT_END = /(?:\d|\b(?:npr|oz|tj|t\. i|prim|str|št|itn|ipd|gl|pribl|cca|e\.g|i\.e|vs))$/i;
+const NOT_END = /(?:\d|(?<!\p{L})(?:npr|oz|tj|t\. i|prim|str|št|itn|ipd|gl|pribl|cca|e\.g|i\.e|vs))$/iu;
 function splitSentences(text) {
   const out = [];
   let from = 0;

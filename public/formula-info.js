@@ -1,6 +1,6 @@
 // Klikljive formule: kartica ob kliku na simbol ali enoto (slovar in označevanje sta v formula-data.js).
 import { t, currentLang } from "./i18n.js";
-import { cardFor, configureCard, claimMarks, createMarkPage } from "./formula-card.js";
+import { cardFor, configureCard, claimMarks, createMarkPage, pruneTones } from "./formula-card.js";
 
 configureCard({ t, lang: currentLang, katex: () => window.katex });
 
@@ -121,6 +121,7 @@ function refreshMarks() {
     if (!page) pages.set(root, (page = createMarkPage()));
     page.owners.clear();
     const plan = claimMarks(page, root, shown.map((el) => decode(el.dataset.fx)));
+    pruneTones(page);
     plans.push([els, new Map(shown.map((el, i) => [el, plan[i]]))]);
   }
   for (const [els, plan] of plans) {

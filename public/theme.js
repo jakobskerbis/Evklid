@@ -282,13 +282,15 @@
     return darkBg ? "#ffffff" : "#000000";
   }
   // Barve za drug, tretji in četrti pomen iste črke na strani (formula-info.js data-fx-tone, ui.css --fx-tone-N):
-  // prvi ton leži na osi modra–oranžna nasproti poudarka (ločita ju tudi barvno slepi), nato vijolična in zelena,
+  // prvi ton leži na osi modra–oranžna stran od poudarka (ločita ju tudi barvno slepi), nato vijolična in zelena,
   // vsak z vsaj 4,5 kontrasta na vseh podlagah (tudi na --accent-soft ob dotiku).
   function tonesOf(accent, on, dark) {
     const [h] = toHsl(accent);
     const far = (a, b) => Math.min(Math.abs(a - b), 360 - Math.abs(a - b)) >= 45;
-    const hues = [h < 100 || h > 300 ? 215 : 28];
-    for (const x of [320, 145, 270, 28, 215]) if (hues.length < 3 && far(x, h) && hues.every((y) => far(x, y))) hues.push(x);
+    // oranžna le ob modrem in vijoličnem poudarku; zelen in topel poudarek dobita modro (rdeče-zeleno slepi)
+    const hues = [h >= 180 && h <= 300 ? 28 : 215];
+    const red = h < 30 || h > 330;
+    for (const x of [320, 145, 270, 28, 215, 70, 180]) if (hues.length < 3 && far(x, h) && !(red && x === 145) && hues.every((y) => far(x, y))) hues.push(x);
     return hues.map((x) => fit(hsl(x, 85, dark ? 66 : 36), on, MIN.accent));
   }
   // Barva besedila, ki je dobro berljiva na vseh podlagah: najprej poskusi želeno, sicer temno ali svetlo.
