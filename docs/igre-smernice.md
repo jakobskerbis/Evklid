@@ -291,7 +291,7 @@ results in `game_scores.cleared` and passed checks in `game_unlocks`.
 
 Logic in `public/games/learn-link.js` (shared by server and portal), offer in `public/games/reward.js`.
 **Reward game:** when a daily training ends (or any session ends with today's XP goal reached), the
-done card offers »Igraj nagradno igro«: one game on a concept of the topics just practised (`reward`
+done card offers »Igraj igro za nagrado«: one game on a concept of the topics just practised (`reward`
 in the finished session, topic → concept via `lessons.js`), produce-the-answer games first
 (`REWARD_ENGINES`), else a calm game. Only an offer on the done screen, never during learning; none
 with »Skrij igre«; calm look for SŠ and faculty. **»Ponovi šibke teme«:** a row at the top of the
