@@ -99,6 +99,8 @@ test("kopije: ročna kopija ne prepiše dnevne; obnova, starejša od 1 ure, se n
   assert.deepEqual(listBackups(file).map((b) => [b.date, b.manual]), [["2026-11-04-0630", true], ["2026-11-04", false]]);
   // Ostanek nedokončane kopije se pobriše ob naslednji.
   fs.writeFileSync(path.join(dir, "kopije", "evklid-2026-11-01.db.tmp"), "x");
+  const hourAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+  fs.utimesSync(path.join(dir, "kopije", "evklid-2026-11-01.db.tmp"), hourAgo, hourAgo);
   makeBackup(store.db, file, { now: new Date("2026-11-05T01:00:00Z") });
   assert.equal(fs.existsSync(path.join(dir, "kopije", "evklid-2026-11-01.db.tmp")), false);
 

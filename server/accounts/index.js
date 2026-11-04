@@ -93,6 +93,8 @@ export function mountAccounts(app, store, opts = {}) {
   // Prošnja za starše (premlad za lasten račun): z enega naslova IP 3 na uro, na isti e-naslov 2 na dan.
   const inviteIpThrottle = new Throttle(3, 3600000);
   const inviteToThrottle = new Throttle(2, 24 * 3600000);
+  // Skupaj največ 30 na dan za ves strežnik, da prošnje ne porabijo kvote Resend za potrditve in gesla.
+  const inviteAllThrottle = new Throttle(30, 24 * 3600000);
   const devLinks = (req) => !mailer.enabled && (isLocalRequest(req) || gateNeeded(env));
   const locks = new ProfileLocks(db);
   // Geslo profila ločuje profile na istem računu (brat ne odpre sestrinega). Račun z enim profilom ga ne
@@ -634,10 +636,11 @@ export function mountAccounts(app, store, opts = {}) {
     const email = String(req.body?.email || "").trim().toLowerCase();
     if (!EMAIL_RE.test(email) || email.length > 200) return res.status(400).json({ error: "Vpiši veljaven e-naslov starša." });
     const net = netKey(req.ip);
-    if (inviteIpThrottle.blocked(net) || inviteToThrottle.blocked(email)) return res.status(429).json({ error: "Preveč sporočil. Poskusi čez eno uro ali pošlji povezavo drugače." });
+    if (inviteIpThrottle.blocked(net) || inviteToThrottle.blocked(email) || inviteAllThrottle.blocked("*")) return res.status(429).json({ error: "Preveč sporočil. Poskusi čez eno uro ali pošlji povezavo drugače." });
     if (!mailer.enabled && !devLinks(req)) return res.status(503).json({ error: "Pošiljanje e-pošte trenutno ne deluje. Pošlji povezavo drugače.", mail: false });
     inviteIpThrottle.fail(net);
     inviteToThrottle.fail(email);
+    inviteAllThrottle.fail("*");
     const name = String(req.body?.name || "").replace(/[^\p{L}\p{M} '-]/gu, "").replace(/\s+/g, " ").trim().slice(0, 30);
     const url = `${baseUrl(req)}/starsi.html${name ? `?ime=${encodeURIComponent(name)}` : ""}`;
     const sent = await sendMail(email, parentInviteEmail(url, name));

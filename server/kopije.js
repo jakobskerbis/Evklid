@@ -54,7 +54,10 @@ function prune(dbFile, keepDaily, keepManual) {
   const list = listBackups(dbFile);
   for (const b of [...list.filter((x) => !x.manual).slice(keepDaily), ...list.filter((x) => x.manual).slice(keepManual)]) fs.rmSync(b.file, { force: true });
   const dir = backupDir(dbFile);
-  if (fs.existsSync(dir)) for (const n of fs.readdirSync(dir)) if (n.endsWith(".db.tmp")) fs.rmSync(path.join(dir, n), { force: true });
+  // Ostanki prekinjenih kopij (starejši od 1 ure; mlajšega morda prav zdaj piše druga kopija).
+  if (fs.existsSync(dir))
+    for (const n of fs.readdirSync(dir))
+      if (n.endsWith(".db.tmp") && Date.now() - fs.statSync(path.join(dir, n)).mtimeMs > HOUR) fs.rmSync(path.join(dir, n), { force: true });
 }
 
 /**
@@ -72,11 +75,14 @@ export function makeBackup(db, dbFile, { now = new Date(), keep = KEEP_DAYS, man
   const size = fs.existsSync(dbFile) ? fs.statSync(dbFile).size : 0;
   const need = size * 2 + 20 * MB;
   let free = freeBytes(dir);
-  for (const old of listBackups(dbFile).slice(1).reverse()) {
-    if (free == null || free >= need) break;
-    fs.rmSync(old.file, { force: true });
-    free = freeBytes(dir);
-  }
+  // Stare kopije brišemo le, če to res sprosti dovolj prostora (sicer ostane vsa zgodovina).
+  const older = listBackups(dbFile).slice(1).reverse();
+  if (free != null && free < need && free + older.reduce((a, b) => a + b.bytes, 0) >= need)
+    for (const old of older) {
+      if (free >= need) break;
+      fs.rmSync(old.file, { force: true });
+      free = freeBytes(dir) ?? free + old.bytes;
+    }
   if (free != null && free < need) return { made: false, reason: `premalo prostora na disku (${mb(free)} MB prostih)` };
   const tmp = `${file}.tmp`;
   try {
@@ -145,10 +151,11 @@ function moveDb(from, to) {
 export function applyPendingRestore(dbFile, { log = console, now = new Date() } = {}) {
   if (!dbFile || dbFile === ":memory:") return null;
   const dir = path.dirname(path.resolve(dbFile));
-  // Shranjene baze pred obnovo po 14 dneh (disk ima 1 GB).
+  // Shranjene baze pred obnovo ter potekle in pokvarjene obnove po 14 dneh (disk ima 1 GB).
+  const leftover = (n) => n.startsWith(`${path.basename(dbFile)}.pred-obnovo-`) || /^obnovi\.db\.(potekla|pokvarjena)$/.test(n);
   if (fs.existsSync(dir))
     for (const n of fs.readdirSync(dir))
-      if (n.startsWith(`${path.basename(dbFile)}.pred-obnovo-`) && now - fs.statSync(path.join(dir, n)).mtimeMs > SAVED_DAYS * 24 * HOUR) fs.rmSync(path.join(dir, n), { force: true });
+      if (leftover(n) && now - fs.statSync(path.join(dir, n)).mtimeMs > SAVED_DAYS * 24 * HOUR) fs.rmSync(path.join(dir, n), { force: true });
   const src = restoreFile(dbFile);
   if (!fs.existsSync(src)) return null;
   if (now - fs.statSync(src).mtimeMs > RESTORE_TTL_MS) {

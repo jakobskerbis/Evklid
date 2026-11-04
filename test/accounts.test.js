@@ -1282,7 +1282,8 @@ test("premlad za račun: Evklid pošlje staršu povezavo, naslova ne shrani, ome
     assert.equal(r.status, 200);
     const mail = calls.filter((x) => x.host === "api.resend.com").at(-1);
     assert.deepEqual(mail.body.to, ["mama@primer.si"]);
-    assert.match(mail.body.subject, /^Mihascript vas prosi/);
+    assert.equal(mail.body.subject, "Prošnja za dovoljenje za Evklid");
+    assert.match(mail.body.text, /^Mihascript bi rad/);
     assert.match(mail.body.text, /\/starsi\.html\?ime=Mihascript/);
     assert.doesNotMatch(mail.body.html, /<script/);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM parents").get().n, 0);

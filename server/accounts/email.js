@@ -86,12 +86,12 @@ export function verifyEmail(url) {
 export function parentInviteEmail(url, name = "") {
   const who = name ? esc(name) : "Vaš otrok";
   return {
-    subject: name ? `${name} vas prosi za dovoljenje za Evklid` : "Prošnja za dovoljenje za Evklid",
+    subject: "Prošnja za dovoljenje za Evklid", // stalna zadeva: ime, ki ga vpiše obiskovalec, je samo v besedilu
     html: layout(
       "Prošnja za dovoljenje",
-      `<p>${who} bi rad(a) uporabljal(a) Evklid, AI inštruktorja za matematiko, fiziko, kemijo in biologijo. Za mlajše od 15 let račun ustvari starš ali skrbnik.</p><p>Na spodnji povezavi piše, kaj je Evklid, katere podatke hranimo in koliko stane. Ko ustvarite račun in dodate otrokov profil, se lahko začne učiti.</p>${button(url, "Preberite več in ustvarite račun")}<p style="font-size:13px;color:#5f6779">Če otroka ne poznate, sporočilo prezrite. Vašega e-naslova nismo shranili.</p>`,
+      `<p>${who} bi rad(a) uporabljal(a) Evklid, inštruktorja AI za matematiko, fiziko in kemijo. Za otroke račun ustvari starš ali skrbnik.</p><p>Na spodnji povezavi piše, kaj je Evklid, katere podatke hranimo in koliko stane. Ko ustvarite račun in dodate otrokov profil, se lahko začne učiti.</p>${button(url, "Preberite več in ustvarite račun")}<p style="font-size:13px;color:#5f6779">Če otroka ne poznate, sporočilo prezrite. Vašega e-naslova nismo shranili.</p>`,
     ),
-    text: `${name || "Vaš otrok"} bi rad(a) uporabljal(a) Evklid. Za mlajše od 15 let račun ustvari starš ali skrbnik. Več in registracija: ${url}`,
+    text: `${name || "Vaš otrok"} bi rad(a) uporabljal(a) Evklid, inštruktorja AI za matematiko, fiziko in kemijo. Za otroke račun ustvari starš ali skrbnik. Več in registracija: ${url}`,
   };
 }
 

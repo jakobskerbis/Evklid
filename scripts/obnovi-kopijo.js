@@ -97,7 +97,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     if (!list.length) console.log("Kopij še ni. Strežnik naredi prvo 2 minuti po zagonu (ali: --zdaj).");
     for (const b of list) console.log(`${b.date.padEnd(15)} ${mbs(b.bytes).padStart(7)} MB${b.manual ? "  (ročna)" : ""}`);
     if (fs.existsSync(pending)) console.log(`\n! Obnova je pripravljena (${fs.statSync(pending).mtime.toISOString().slice(0, 16)} UTC) in čaka na ponovni zagon.`);
-    console.log("\nDatumi so v času UTC (pri nas 1 ali 2 uri manj).");
+    console.log("\nDatumi in ure so v času UTC (pri nas je ura 1 ali 2 uri več: 23.30 UTC je že naslednji dan).");
   } else if (arg === "--zdaj") {
     const db = new DatabaseSync(file);
     try {
