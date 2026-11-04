@@ -68,7 +68,8 @@ const parseTime = (iso) => (iso ? Date.parse(String(iso).replace(" ", "T") + (/[
 export function levelUpSuggestion(student, now = new Date()) {
   // Šolsko leto se v regijskih sistemih začne ob drugem mesecu (Indija aprila, Kenija januarja …):
   // predlog od 12 dni pred začetkom do konca naslednjega meseca. Slovenija: 20. avgust–31. oktober.
-  const start = SCHOOL_SYSTEMS[student.settings?.school_system]?.yearStart || 9;
+  // Fakulteta v Sloveniji: študijsko leto se začne 1. oktobra (j 2026-11-01), predlog od 19. septembra do 30. novembra.
+  const start = isRegional(student.settings?.school_system) ? SCHOOL_SYSTEMS[student.settings.school_system]?.yearStart || 9 : stageOf(student.settings) === "UNI" ? 10 : 9;
   const t = now.getTime();
   // Pri začetku v januarju okno seže v december prejšnjega leta.
   const y = [now.getUTCFullYear(), now.getUTCFullYear() + 1].find((yy) => t >= Date.UTC(yy, start - 1, 1) - 12 * 86400000 && t <= Date.UTC(yy, start + 1, 1) - 60000);
@@ -77,5 +78,5 @@ export function levelUpSuggestion(student, now = new Date()) {
   if (!(since < Date.UTC(y, start - 3, 1))) return null;
   const next = nextLevel(student.settings);
   if (!next) return null;
-  return { ...next, current: student.settings.curriculum_level, schoolYear: start >= 7 ? `${y}/${String(y + 1).slice(2)}` : `${y}` };
+  return { ...next, current: student.settings.curriculum_level, schoolYear: start >= 7 ? `${y}/${String(y + 1).slice(2)}` : `${y}`, study: start === 10 && !isRegional(student.settings?.school_system) };
 }

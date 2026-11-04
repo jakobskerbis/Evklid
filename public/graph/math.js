@@ -67,18 +67,43 @@ function pow(a, b) {
   return r;
 }
 
-// trig: d = true → stopinje
+// trig: u = enota kota v radianih (1 radiani, π/180 stopinje, π/200 gradi).
+// Na večkratnikih pravega kota so vrednosti točne (cos 90° = 0, ne 6·10⁻¹⁷; tan 90° ne obstaja), kot na kalkulatorju.
+const GRA = Math.PI / 200;
+// Stopinje in gradi najprej točno zmanjšamo na en krog (x % 360 je v plavajoči vejici točen), sicer bi bil
+// sin(1e20°) šum; radiane pustimo Math.sin (ta jih zmanjša sam), večkratnik π/2 iščemo le pri |q| < 2³¹
+// (pri velikih x je vsak x/(π/2) celo število, sin(1e20) pa ni 0).
+const reduce = (x, u) => (u === DEG ? x % 360 : u === GRA ? x % 400 : x);
+const quarter = (x, u) => {
+  const q = x / (u === DEG ? 90 : u === GRA ? 100 : Math.PI / 2);
+  return Number.isInteger(q) && Math.abs(q) < 2 ** 31 ? ((q % 4) + 4) % 4 : -1;
+};
+const SIN_Q = [0, 1, 0, -1];
+const COS_Q = [1, 0, -1, 0];
+const exactTrig = (f, x, u) => {
+  const r = reduce(x, u);
+  const q = quarter(r, u);
+  if (q < 0) return f(r * u);
+  return f === Math.sin ? SIN_Q[q] : COS_Q[q];
+};
+const tanQ = (x, u, cot) => {
+  const r = reduce(x, u);
+  const q = quarter(r, u);
+  if (q < 0) return cot ? 1 / Math.tan(r * u) : Math.tan(r * u);
+  return q % 2 === (cot ? 0 : 1) ? NaN : 0;
+};
+const inv = (c) => (c === 0 ? NaN : 1 / c);
 const TRIG = {
-  sin: (x, d) => Math.sin(d ? x * DEG : x),
-  cos: (x, d) => Math.cos(d ? x * DEG : x),
-  tan: (x, d) => Math.tan(d ? x * DEG : x),
-  cot: (x, d) => 1 / Math.tan(d ? x * DEG : x),
-  sec: (x, d) => 1 / Math.cos(d ? x * DEG : x),
-  csc: (x, d) => 1 / Math.sin(d ? x * DEG : x),
-  arcsin: (x, d) => Math.asin(x) / (d ? DEG : 1),
-  arccos: (x, d) => Math.acos(x) / (d ? DEG : 1),
-  arctan: (x, d) => Math.atan(x) / (d ? DEG : 1),
-  arccot: (x, d) => (Math.PI / 2 - Math.atan(x)) / (d ? DEG : 1),
+  sin: (x, u) => exactTrig(Math.sin, x, u),
+  cos: (x, u) => exactTrig(Math.cos, x, u),
+  tan: (x, u) => tanQ(x, u, false),
+  cot: (x, u) => tanQ(x, u, true),
+  sec: (x, u) => inv(exactTrig(Math.cos, x, u)), // sec 90° ne obstaja (ne ∞)
+  csc: (x, u) => inv(exactTrig(Math.sin, x, u)),
+  arcsin: (x, u) => Math.asin(x) / u,
+  arccos: (x, u) => Math.acos(x) / u,
+  arctan: (x, u) => Math.atan(x) / u,
+  arccot: (x, u) => (Math.PI / 2 - Math.atan(x)) / u,
 };
 const UNARY = {
   sinh: Math.sinh,
@@ -687,10 +712,11 @@ let depthGuard = 0;
 
 /**
  * Prevede drevo v funkcijo (scope) => vrednost (število ali seznam števil).
- * ctx: { deg: bool, funcs: { ime: { params, body } }, global }
+ * ctx: { deg: bool, grad: bool (gradi, 400 v krogu; ima prednost pred deg), funcs: { ime: { params, body } }, global }
  */
 export function compile(node, ctx = {}) {
   const deg = !!ctx.deg;
+  const u = ctx.grad ? GRA : deg ? DEG : 1; // enota kota v radianih
   const c = (n) => compile(n, ctx);
   switch (node.k) {
     case "num": {
@@ -736,7 +762,7 @@ export function compile(node, ctx = {}) {
     }
     case "deg": {
       const a = c(node.a);
-      return (s) => lift1((v) => (deg ? v : v * DEG))(a(s));
+      return (s) => lift1((v) => (v * DEG) / u)(a(s));
     }
     case "pct": {
       const a = c(node.a);
@@ -749,7 +775,7 @@ export function compile(node, ctx = {}) {
       if (f === "Pol" || f === "Rec") {
         // Pol(x; y) → [r, θ], Rec(r; θ) → [x, y]; kot v enoti kota (Casio Pol/Rec)
         if (args.length !== 2) throw new MathError("arity", { f, n: 2 });
-        const k = deg ? Math.PI / 180 : 1;
+        const k = u;
         return (s) => {
           const [p, q] = args.map((a) => a(s));
           return f === "Pol" ? [Math.hypot(p, q), Math.atan2(q, p) / k] : [p * Math.cos(q * k), p * Math.sin(q * k)];
@@ -758,7 +784,7 @@ export function compile(node, ctx = {}) {
       if (TRIG[f]) {
         const g = TRIG[f];
         const a = args[0];
-        return (s) => lift1((v) => g(v, deg))(a(s));
+        return (s) => lift1((v) => g(v, u))(a(s));
       }
       if (UNARY[f]) {
         const g = UNARY[f];
@@ -1032,7 +1058,7 @@ export function inlineUfn(n, ctx, depth = 0) {
 export function diff(node, v, ctx = {}) {
   const n = unwrap(node);
   const d = (x) => diff(x, v, ctx);
-  const degF = ctx.deg ? N(DEG) : null; // v stopinjah: (sin x)' = π/180 · cos x
+  const degF = ctx.grad ? N(GRA) : ctx.deg ? N(DEG) : null; // v stopinjah: (sin x)' = π/180 · cos x (v gradih π/200)
   const chain = (outer, inner) => (isNum(simplify(d(inner)), 1) ? outer : mulN(outer, d(inner)));
   switch (n.k) {
     case "num":

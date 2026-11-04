@@ -1,6 +1,6 @@
 // Poraba AI: beleženje žetonov in stroška, dnevne omejitve, mesečni proračun.
 import "./env.js";
-import { costUsd } from "./claude.js";
+import { costUsd, MODEL_MID } from "./claude.js";
 import { BUDGET, MAX_BUDGET_USD, paceLevel, periodOf, budgetMode, fastMode } from "./proracun.js";
 import { explanationsFor, allowanceStage, detailedShare, freeStudentMonthlyUsd } from "./accounts/plans.js";
 
@@ -36,6 +36,9 @@ export const LIMITS = {
   // Srednja šola: hitri model z več razmisleka namesto navadnega (j 2026-11-04 po primerjavi modelov:
   // napake Haikuja pri SŠ 27 % → 7 %, Sonnet 0 %, a ~15× dražji). 0 = navadni hitri model.
   secondaryThink: () => process.env.EVKLID_SS_THINK !== "0",
+  // Fakulteta (j 2026-11-01, načrt stopenj: »daljše razlage, več dokazov, pogosteje Sonnet«): privzeto hitri model z
+  // več razmisleka (kot SŠ), prva »Razloži podrobneje« pri naročnini Sonnet. 0 = kot drugi učenci.
+  universityMid: () => process.env.EVKLID_UNI_MID !== "0",
 };
 
 // Za prikaz v evrih (Claude API zaračunava v dolarjih).
@@ -49,6 +52,19 @@ export const NOTES = {
   softBudget: "*(Ta mesec si že veliko uporabljal podrobne razlage. Do konca meseca so malo manj poglobljene, a še vedno skrbno premišljene.)*\n\n",
   // Skupni mesečni proračun aplikacije je skoraj porabljen (server/proracun.js, raven 0).
   appBudget: "*(Ta mesec je v Evklidu veliko vprašanj, zato so podrobne razlage malo manj poglobljene, a še vedno skrbno premišljene.)*\n\n",
+};
+
+// Razlogi, zakaj inštruktor ne odgovori (blockInfo). Enako besedilo je v public/i18n/sl.js pod istim ključem.
+export const BLOCK_TEXT = {
+  "block.daily": "Današnja vprašanja za inštruktorja so porabljena (na dan jih je {n}). Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
+  "block.creditOut": "Inštruktor je za nekaj minut nedosegljiv (dobroimetje za AI je porabljeno). Vadnica in razlage tem delujejo naprej.",
+  "block.freeTailTopup": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
+  "block.freeTail": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
+  "block.capOut": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej.",
+  "block.shareOut": "Ta mesec si porabil svoj del inštruktorja. Spet ga dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
+  "block.capOutTopup": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj. Vadnica in razlage tem delujejo naprej.",
+  "block.shareOutTopup": "Ta mesec si porabil svoj del inštruktorja. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
+  "block.monthLimit": "Ta mesec si dosegel omejitev vprašanj za inštruktorja. Vadnica in razlage tem delujejo naprej.",
 };
 
 // Kako dolgo po napaki »ni dobroimetja« inštruktor ne kliče API-ja (en neuspel klic na 10 minut).
@@ -341,19 +357,25 @@ export class Usage {
   // free: brezplačni paket (brez naročnine, preizkusa ali kode) nikoli ne dobi zmogljivejšega modela.
   // capped: namesto Opusa Sonnet (šolska licenca vedno; Osebno in aktivacijska koda pred 3. zaporedno prošnjo, glej app.js).
   // secondary: srednješolec (privzeto Haiku z več razmisleka, LIMITS.secondaryThink).
-  chooseMode(studentId, { wantDeep = false, wantThink = false, competition = false, secondary = false, lite = false, free = false, deepModel = "claude-opus", capped = false } = {}) {
+  // university: študent; brez lahkega načina in brezplačnega paketa privzeto Haiku z več razmisleka, prva
+  // »Razloži podrobneje« Sonnet (»mid«) z istimi mejami kot podrobna razlaga (LIMITS.universityMid).
+  chooseMode(studentId, { wantDeep = false, wantThink = false, competition = false, secondary = false, university = false, lite = false, free = false, deepModel = "claude-opus", capped = false } = {}) {
     if (competition && !wantDeep && !LIMITS.competitionDeep()) return { mode: "think", note: null };
     if (free && (wantDeep || competition)) return { mode: "think", note: wantDeep ? NOTES.free : null };
-    if (wantDeep || competition) {
+    const uni = university && !free && !lite && LIMITS.universityMid();
+    const uniMid = uni && wantThink && !wantDeep;
+    if (wantDeep || competition || uniMid) {
       const daily = LIMITS.dailyDeep();
-      if (daily && this.deepToday(studentId, deepModel) >= daily) return { mode: "think", note: NOTES.dailyDeep(daily) };
+      // Prva podrobna razlaga na faksu je Sonnet: dnevna meja šteje odgovore Sonneta, tudi brez računov (deepModel Opus).
+      const counted = uniMid ? MODEL_MID : deepModel;
+      if (daily && this.deepToday(studentId, counted) >= daily) return { mode: "think", note: NOTES.dailyDeep(daily) };
       // S proračunom: blizu svojega dela proračuna (brez dokupljenega kredita); brez njega mehka meja v $.
       const state = this.budgetState();
       // Naročnik (zajamčeni delež): podrobne razlage do 100 % deleža, potem hitri način (obvestilo pošlje app.js).
       const sb = this.studentBudget(studentId, state);
       if (sb.guaranteed) {
         if (sb.spent >= sb.allowance && sb.credit <= 0) return { mode: "think", note: null, fast: true };
-        return { mode: capped ? "mid" : "deep", note: null };
+        return { mode: capped || uniMid ? "mid" : "deep", note: null };
       }
       if (state.cap) {
         const sb = this.studentBudget(studentId, state);
@@ -362,13 +384,14 @@ export class Usage {
         const soft = LIMITS.studentSoftUsd();
         if (soft && this.monthTotal(studentId) >= soft) return { mode: "think", note: NOTES.softBudget };
       }
-      // Aktivacijska koda (capped): Sonnet (mode "mid") namesto Opusa.
-      return { mode: capped ? "mid" : "deep", note: null };
+      // Aktivacijska koda (capped) in prva podrobna razlaga na faksu: Sonnet (mode "mid") namesto Opusa.
+      return { mode: capped || uniMid ? "mid" : "deep", note: null };
     }
     if (wantThink) return { mode: "think", note: null };
     // Brezplačni paket ostane pri navadnem Haikuju (0,2 $ na mesec bi sicer zadoščalo za ~3× manj odgovorov).
     // Prva »Razloži podrobneje« je pri SŠ isti model z novo, podrobnejšo prošnjo; druga gre višje kot doslej.
     if (secondary && !lite && !free && LIMITS.secondaryThink()) return { mode: "think", note: null };
+    if (uni) return { mode: "think", note: null };
     return { mode: lite ? "lite" : "chat", note: null };
   }
   // Odgovor brez klica modela (ponovna raba ali namig iz generatorja): zapišemo, da je viden prihranek.
@@ -406,37 +429,30 @@ export class Usage {
   }
   // Vrne besedilo razloga, če je klepet trenutno onemogočen, sicer null.
   blockReason(studentId) {
+    return this.blockInfo(studentId)?.error ?? null;
+  }
+  // Razlog za odgovor 429: { error, code, params? }. code je ključ i18n (public/i18n/sl.js »block.*«), da ga
+  // odjemalec pokaže v jeziku vmesnika; error ostane slovensko besedilo (rezerva, če ključa ni).
+  blockInfo(studentId) {
     const daily = LIMITS.dailyQuestions();
     if (daily && this.questionsToday(studentId) >= daily) {
-      return `Danes si porabil vseh ${daily} vprašanj za inštruktorja. Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.`;
+      return { error: BLOCK_TEXT["block.daily"].replace("{n}", daily), code: "block.daily", params: { n: daily } };
     }
-    if (this.creditOut()) {
-      return "Inštruktor je za nekaj minut nedosegljiv (dobroimetje za AI je porabljeno). Vadnica in razlage tem delujejo naprej.";
-    }
+    const out = (code) => ({ error: BLOCK_TEXT[code], code });
+    if (this.creditOut()) return out("block.creditOut");
     // Skupni proračun se deli po profilih (server/proracun.js); nad svojim delom učenec nadaljuje z dokupljenim kreditom.
     const state = this.budgetState();
-    if (this.overFreeTail(studentId, state)) {
-      return this.topupPrompt(studentId)
-        ? "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej."
-        : "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.";
-    }
+    if (this.overFreeTail(studentId, state)) return out(this.topupPrompt(studentId) ? "block.freeTailTopup" : "block.freeTail");
     if (state.cap) {
       if (!this.overShare(studentId, state)) return null;
       // Pod 15 let ali ob ponudbi paketa pred testom brez poziva k dokupu (ponudbe.js, ena ponudba naenkrat).
-      if (!this.topupPrompt(studentId)) {
-        return state.spent >= state.cap
-          ? "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej."
-          : "Ta mesec si porabil svoj del inštruktorja. Spet ga dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.";
-      }
-      return state.spent >= state.cap
-        ? "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj. Vadnica in razlage tem delujejo naprej."
-        : "Ta mesec si porabil svoj del inštruktorja. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.";
+      const capped = state.spent >= state.cap;
+      if (!this.topupPrompt(studentId)) return out(capped ? "block.capOut" : "block.shareOut");
+      return out(capped ? "block.capOutTopup" : "block.shareOutTopup");
     }
     const per = LIMITS.studentMonthlyUsd();
     // Naročnika mesečna meja ne ustavi: nad zajamčenim deležem odgovarja hitri model (dnevna meja vprašanj velja).
-    if (per && !(this.guaranteeOf(studentId) > 0) && this.monthTotal(studentId) >= per) {
-      return "Ta mesec si dosegel omejitev vprašanj za inštruktorja. Vadnica in razlage tem delujejo naprej.";
-    }
+    if (per && !(this.guaranteeOf(studentId) > 0) && this.monthTotal(studentId) >= per) return out("block.monthLimit");
     return null;
   }
   summary() {

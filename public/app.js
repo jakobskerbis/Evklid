@@ -66,7 +66,8 @@ import { initCorner, showCorner, cornerBack, closeBoard, askInterests, maybeAskI
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
 import { initFullscreen } from "./fullscreen.js";
 import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-settings.js";
-import { initSchedule, showSchedule, renderScheduleCard } from "./schedule.js";
+import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./schedule.js";
+import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
 import { initScan, showScan, leaveScan, scanBack } from "./scan/scan.js";
 import { initLab, showLab, labBack } from "./laboratorij.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
@@ -120,6 +121,16 @@ async function fetchThroughRestart(url, init) {
   }
 }
 
+// Napaka strežnika v jeziku vmesnika: code je ključ i18n (npr. »block.daily« iz server/usage.js blockInfo),
+// error je slovensko besedilo strežnika (rezerva, če ključa ni). Samo imenski prostori, ki jih strežnik
+// pošilja kot kode napak (usage.js block.*, gradiva.js gr.*, kviz.js kv.*/comp.*, progress.js chk.*), da
+// drugačna koda (npr. iz drugega vira) ne pokaže nepovezanega besedila.
+const ERROR_CODE = /^(block|gr|kv|comp|chk)\.[A-Za-z]+$/;
+const serverError = (err, status) => {
+  const own = typeof err?.code === "string" && ERROR_CODE.test(err.code) ? t(err.code, err.params || {}) : null;
+  return own && own !== err.code ? own : err?.error || t("common.error", { status });
+};
+
 const api = async (url, opts = {}) => {
   if (/\/tasks\/off-/.test(url)) {
     const local = fromPack(url, opts);
@@ -140,7 +151,7 @@ const api = async (url, opts = {}) => {
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     // status: strežnik je odgovoril (napaka ni v povezavi); body: dodatni podatki (npr. unavailable).
-    throw Object.assign(new Error(err.error || t("common.error", { status: res.status })), { status: res.status, body: err });
+    throw Object.assign(new Error(serverError(err, res.status)), { status: res.status, body: err });
   }
   return res.json();
 };
@@ -892,7 +903,7 @@ async function send(text, { deep = false } = {}) {
       bubble.remove();
       if (serverDown(res)) throw new Error(t("off.serverBusy"));
       if (err.chat_off) throw Object.assign(new Error(t("chat.off")), { chatOff: true });
-      throw new Error(err.error || t("common.error", { status: res.status }));
+      throw new Error(serverError(err, res.status));
     }
 
     if (paperCtx && state.paperCtx === paperCtx) state.paperCtx = null; // strežnik ga je shranil s sporočilom
@@ -1648,10 +1659,14 @@ function renderGoalModes() {
   if (!st || !box || !bar) return;
   const s = st.settings;
   const { first, items } = goalShortcuts(s);
+  // Kar že odpre kartica stopnje (public/zacetna.js: OŠ igre, SŠ matura, faks Moj študij), tu nadomesti druga bližnjica.
+  const shown = stageRows(stopnja(s), { games: gamesOn(s), exams: siExams() });
   const list = items
     .map((k) => (k === "games" && !gamesOn(s) ? "chat" : k))
     .filter((k) => !(k === "exams" && !siExams()) && !(k === "izpiti" && !regionalExams()))
+    .filter((k) => !shown.includes(k))
     .filter((k, i, a) => a.indexOf(k) === i);
+  for (const alt of ["scan", "chat"]) if (list.length < 2 && !list.includes(alt)) list.push(alt);
   box.innerHTML = list
     .map((k) => {
       const [ic, name, sub] = GOAL_MODES[k];
@@ -2167,7 +2182,7 @@ async function loadPath(key = state.pathKey) {
   state.pathSubject = paths.find((x) => x.key === p.key)?.subject || state.student.settings.subject;
   if (changed) refreshModes(); // fakulteta: drug predmet iz seznama poti
   showLevelCard();
-  renderScheduleCard($("#schedule-card"));
+  renderStageHome();
   syncOfflineBanner();
   // Naloge za vadbo brez povezave (enkrat na dan, v ozadju).
   if (!p.offline) refreshPack(api, state.student.id, p.key).then(syncOfflineBanner);
@@ -2198,7 +2213,18 @@ async function loadPath(key = state.pathKey) {
         ? `<button class="next-row" data-open="${p.next.id}"><span class="eyebrow">${t("path.next")}</span><span class="next-name">${escapeHtml(p.next.name)}</span>${icon("chevron-right")}</button>`
         : `<div class="next-row done">${icon("trophy")}<span class="next-name">${t("path.allDone")}</span></div>`
     }
+    ${gamesOn(state.student.settings) ? `<button type="button" class="next-row dz-path-row" data-dnevna><span class="eyebrow">${t("dz.title")}</span><span class="next-name">${t("dz.statusNew")}</span>${icon("puzzle")}</button>` : ""}
     <div class="xp-stats">${xpStatsHtml(x)}</div>`;
+  // Dnevna uganka (public/games/daily.js): stanje v ozadju; rešena danes → niz dni.
+  if (gamesOn(state.student.settings)) {
+    const sid = state.student.id;
+    api(`/api/students/${sid}/daily`)
+      .then((d) => {
+        const el = $("#xp-card .dz-path-row .next-name");
+        if (el && state.student?.id === sid && d?.streak?.today) el.textContent = t("dz.streak", { n: d.streak.days });
+      })
+      .catch(() => {});
+  }
 
   content.innerHTML =
     `<div class="legend">${["mastered", "learning", "due"].map((k) => `<span class="lg ${k}">${icon(NODE[k][0])}${NODE[k][1]}</span>`).join("")}</div>` +
@@ -2257,6 +2283,10 @@ document.addEventListener("click", (e) => {
   const un = e.target.closest("[data-unit]");
   if (un) startSession("unit-practice", { path: state.pathKey, unit: Number(un.dataset.unit) });
   if (e.target.closest("[data-daily]")) startSession("daily", { path: state.pathKey });
+  if (e.target.closest("[data-dnevna]")) {
+    showView("games");
+    loadGames().then((m) => m.openDailyPuzzle()).catch(() => {});
+  }
   const rw = e.target.closest("[data-reward]");
   if (rw) {
     showView("games");
@@ -3561,22 +3591,22 @@ async function loadUsage() {
   if (card) card.hidden = !res?.ok;
   if (!res?.ok) return;
   const u = await res.json();
-  const eur = (x) => (x || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+  const eur = (x) => (x || 0).toLocaleString(locale(), { minimumFractionDigits: 2, maximumFractionDigits: x && x < 1 ? 3 : 2 }); // kot števec zgoraj: 3 decimalke le pod 1 €
   const L = u.limits || {};
-  $("#usage").innerHTML = `<p>${t("usage.total", { usd: u.month_usd.toFixed(2) })}${t("usage.eur", { eur: eur(u.month_eur) })}${u.budget_usd ? t("usage.budget", { budget: u.budget_usd }) : ""}${
+  $("#usage").innerHTML = `<p>${t("usage.total", { usd: (u.month_usd || 0).toLocaleString(locale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })}${t("usage.eur", { eur: eur(u.month_eur) })}${u.budget_usd ? t("usage.budget", { budget: u.budget_usd.toLocaleString(locale()) }) : ""}${
     u.daily_questions ? t("usage.limit", { n: u.daily_questions }) : ""
   }</p>
   <p>${t("usage.summary", { active: u.active_students, avg: eur(u.per_active_eur), msg: eur(u.per_message_eur), proj: eur(u.projected_eur) })}</p>
   <p class="muted">${t("usage.saved", { count: u.saved_answers || 0 })}</p>
   ${L.daily_deep || L.student_soft_usd || L.student_hard_usd ? `<p class="muted">${t("usage.limits", { deep: L.daily_deep ?? "∞", soft: L.student_soft_usd ?? "∞", hard: L.student_hard_usd ?? "∞" })}</p>` : ""}
-  <table class="table"><thead><tr><th>${t("usage.student")}</th><th>${t("usage.calls")}</th><th>${t("usage.savedCol")}</th><th>${t("usage.tokens")}</th><th>${t("usage.cost")}</th></tr></thead><tbody>
+  <div class="md-table-wrap"><table class="table"><thead><tr><th>${t("usage.student")}</th><th>${t("usage.calls")}</th><th>${t("usage.savedCol")}</th><th>${t("usage.tokens")}</th><th>${t("usage.cost")}</th></tr></thead><tbody>
   ${u.students
-    .map((s) => `<tr><td>${escapeHtml(s.name)}</td><td>${s.calls}</td><td>${s.saved || 0}</td><td>${s.input_tokens} / ${s.output_tokens} / ${s.cache_read_tokens}</td><td>${eur(s.cost_eur)} € <span class="muted">(${s.cost_usd.toFixed(3)} $)</span></td></tr>`)
-    .join("")}</tbody></table>
-  ${(u.by_model || []).length ? `<table class="table"><thead><tr><th>${t("usage.model")}</th><th>${t("usage.calls")}</th><th>${t("usage.tokens")}</th><th>${t("usage.cost")}</th></tr></thead><tbody>
+    .map((s) => `<tr><td>${escapeHtml(s.name)}</td><td>${s.calls}</td><td>${s.saved || 0}</td><td>${s.input_tokens} / ${s.output_tokens} / ${s.cache_read_tokens}</td><td>${eur(s.cost_eur)} € <span class="muted">(${(s.cost_usd || 0).toLocaleString(locale(), { minimumFractionDigits: 3, maximumFractionDigits: 3 })} $)</span></td></tr>`)
+    .join("")}</tbody></table></div>
+  ${(u.by_model || []).length ? `<div class="md-table-wrap"><table class="table"><thead><tr><th>${t("usage.model")}</th><th>${t("usage.calls")}</th><th>${t("usage.tokens")}</th><th>${t("usage.cost")}</th></tr></thead><tbody>
   ${u.by_model
     .map((m) => `<tr><td>${escapeHtml(m.model)} <span class="muted">· ${escapeHtml(m.kind)}</span></td><td>${m.calls}</td><td>${m.input_tokens} / ${m.output_tokens} / ${m.cache_read_tokens}</td><td>${eur(m.cost_eur)} €</td></tr>`)
-    .join("")}</tbody></table>` : ""}`;
+    .join("")}</tbody></table></div>` : ""}`;
 }
 
 // ---------- uvodni ogled ----------
@@ -4005,10 +4035,29 @@ initFlashcards({ api, renderRich, escapeHtml, toast, showView, getStudent: () =>
 // Urnik (public/schedule.js): po spremembi se osvežita kartica »Danes imaš …« in Priprava na test.
 function scheduleChanged() {
   if (currentView === "schedule") showSchedule();
-  renderScheduleCard($("#schedule-card"));
+  renderStageHome();
   refreshModes();
 }
-initSchedule({ api, escapeHtml, toast, showView, startSession, getStudent: () => state.student, onChange: () => (renderScheduleCard($("#schedule-card")), refreshModes()) });
+initSchedule({ api, escapeHtml, toast, showView, startSession, getStudent: () => state.student, onChange: () => (renderStageHome(), refreshModes()) });
+
+// Začetna stran po stopnji (public/zacetna.js, j 2026-11-01): kartica »Danes imaš …«, kartica stopnje
+// (OŠ igre, SŠ matura, faks Moj študij z izpitnimi roki) in vrstni red kartic na Učni poti.
+async function renderStageHome() {
+  if (!state.student) return;
+  const sid = state.student.id;
+  await renderScheduleCard($("#schedule-card"));
+  if (state.student?.id !== sid) return; // med nalaganjem zamenjan profil
+  const level = stopnja(state.student.settings);
+  const schedule = lastSchedule(sid);
+  const box = $("#stage-card");
+  box.innerHTML = stageCardHtml(level, { games: gamesOn(state.student.settings), exams: siExams(), schedule, t, esc: escapeHtml });
+  box.hidden = !box.innerHTML;
+  uvrstiKartice($("#view-path .path-side"), vrstniRed(level, schedule));
+}
+$("#stage-card").addEventListener("click", (e) => {
+  const go = e.target.closest("[data-home-go]")?.dataset.homeGo;
+  if (go) showView(go);
+});
 // Skeniranje nalog (public/scan/): fotografija ali vpis → rešitev po korakih.
 initScan({
   api,

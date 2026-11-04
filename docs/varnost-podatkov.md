@@ -40,7 +40,8 @@ profilov), e-naslov starša (prijava), `answer_cache` (skupni preverjeni odgovor
 2. V Render nastavi `EVKLID_DATA_KEY=<nov>` in `EVKLID_DATA_KEYS_OLD=star:<prejšnji>` (več starih: z vejico).
 3. Ob zagonu strežnik vse vrstice znova zašifrira z novim ključem.
 4. Ko `--preveri` ne pokaže več vrstic »s starim ključem«, `EVKLID_DATA_KEYS_OLD` odstrani. Stari ključ hrani še
-   toliko časa, kolikor se hranijo varnostne kopije diska (7 dni).
+   toliko časa, kolikor se hranijo varnostne kopije: 7 dni na disku, 30 dni zunaj Renderja (kopije zunaj so
+   šifrirane s ključem, izpeljanim iz `EVKLID_DATA_KEY`; brez starega ključa se jih ne da odpreti).
 
 Ključ zamenjaj takoj, če je kdaj prišel v napačne roke (in sledi kriznemu načrtu).
 

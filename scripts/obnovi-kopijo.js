@@ -7,6 +7,10 @@
 //                                               (Render → Manual Deploy → Restart service)
 //   node scripts/obnovi-kopijo.js --preklici    prekliče pripravljeno obnovo
 //   node scripts/obnovi-kopijo.js --razveljavi  pripravi vrnitev baze, kakršna je bila pred zadnjo obnovo
+//   node scripts/obnovi-kopijo.js --oblak       seznam kopij zunaj strežnika (server/kopije-oblak.js)
+//   node scripts/obnovi-kopijo.js --oblak-zdaj  naloži najnovejšo kopijo zunaj strežnika takoj (preizkus nastavitev)
+//   node scripts/obnovi-kopijo.js --oblak-prenesi 2026-11-04
+//                                               prenese kopijo od zunaj med lokalne kot 2026-11-04-0000 (nato obnova)
 import "../server/env.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -15,6 +19,7 @@ import { DatabaseSync } from "node:sqlite";
 import { BRAND } from "../server/brand.js";
 import { listBackups, checkFile, makeBackup, restoreFile, savedBeforeRestore } from "../server/kopije.js";
 import { encryptionStats } from "../server/zasebnost.js";
+import { cloudConfig, listCloud, uploadBackup, downloadBackup } from "../server/kopije-oblak.js";
 
 const TABLES = ["parents", "students", "conversations", "messages", "events", "tasks"];
 const HELP = `Uporaba:
@@ -23,7 +28,10 @@ const HELP = `Uporaba:
   node scripts/obnovi-kopijo.js --preveri     preizkus obnove (nič ne spremeni)
   node scripts/obnovi-kopijo.js LLLL-MM-DD    obnova iz kopije s tem datumom (npr. 2026-11-04)
   node scripts/obnovi-kopijo.js --preklici    prekliči pripravljeno obnovo
-  node scripts/obnovi-kopijo.js --razveljavi  vrni bazo, kakršna je bila pred zadnjo obnovo`;
+  node scripts/obnovi-kopijo.js --razveljavi  vrni bazo, kakršna je bila pred zadnjo obnovo
+  node scripts/obnovi-kopijo.js --oblak       seznam kopij zunaj strežnika
+  node scripts/obnovi-kopijo.js --oblak-zdaj  takoj naloži najnovejšo kopijo v shrambo zunaj strežnika
+  node scripts/obnovi-kopijo.js --oblak-prenesi LLLL-MM-DD   prenese kopijo od zunaj (nato obnova z LLLL-MM-DD-0000)`;
 
 /** Preizkus obnove: kopija je cela, pogovori berljivi s sedanjim ključem, števila vrstic v primerjavi z bazo. */
 export function verifyBackup(dbFile, backupFile) {
@@ -118,6 +126,35 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     for (const [t, c] of Object.entries(r.counts)) console.log(`  ${t.padEnd(14)} kopija ${String(c.kopija).padStart(7)}   zdaj ${String(c.baza).padStart(7)}`);
     for (const n of r.notes) console.log(`  ! ${n}`);
     if (!r.ok) process.exitCode = 1;
+  } else if (arg.startsWith("--oblak")) {
+    const cfg = cloudConfig();
+    if (!cfg) {
+      console.log("Kopija zunaj strežnika ni nastavljena (EVKLID_KOPIJE_S3_URL, _BUCKET, _KEY_ID, _SECRET; docs/objava.md).");
+      process.exit(1);
+    }
+    try {
+      if (arg === "--oblak") {
+        const remote = await listCloud(cfg, file);
+        if (!remote.length) console.log("Zunaj strežnika še ni nobene kopije (strežnik jo naloži 10 minut po zagonu; takoj: --oblak-zdaj).");
+        for (const b of remote) console.log(b.date);
+      } else if (arg === "--oblak-zdaj") {
+        const b = list.find((x) => !x.manual) ?? list[0];
+        if (!b) throw new Error("lokalne kopije še ni; najprej: node scripts/obnovi-kopijo.js --zdaj");
+        const date = b.date.slice(0, 10);
+        const r = await uploadBackup(cfg, file, b.file, date);
+        console.log(`Naložena kopija ${date} (${Math.round(r.bytes / 1024)} kB, šifrirana).${r.deleted.length ? ` Pobrisane stare: ${r.deleted.join(", ")}.` : ""}`);
+      } else if (arg === "--oblak-prenesi" && /^\d{4}-\d{2}-\d{2}$/.test(process.argv[3] || "")) {
+        const r = await downloadBackup(cfg, file, process.argv[3]);
+        console.log(`Prenesena in preverjena kot lokalna kopija ${r.name}.`);
+        console.log(`Preizkus: node scripts/obnovi-kopijo.js --preveri ${r.name}   Obnova: node scripts/obnovi-kopijo.js ${r.name}`);
+      } else {
+        console.log(`Ne razumem »${process.argv.slice(2).join(" ")}«.\n\n${HELP}`);
+        process.exitCode = 1;
+      }
+    } catch (e) {
+      console.log(`Napaka: ${e.message}`);
+      process.exitCode = 1;
+    }
   } else if (arg === "--preklici") {
     if (!fs.existsSync(pending)) console.log("Nobena obnova ni pripravljena.");
     else {
