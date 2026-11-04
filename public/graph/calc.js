@@ -261,6 +261,11 @@ export function createCalculator(root, opts) {
         return t("gc.errChar", { ch: e.info.ch });
       case "unknownFn":
         return t("gc.errChar", { ch: e.info.f });
+      case "polInside":
+        return t("sc.errPolInside");
+      case "vecMix":
+      case "vecOp":
+        return t("sc.errVec");
       case "end":
       case "unexpected":
       case "needArg":

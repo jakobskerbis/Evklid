@@ -10,6 +10,7 @@ export const info = {
   predmet: "KEM",
   opis: "Zgradba atomov od vodika do kriptona: Bohrov model z lupinami K–N ali elektronski oblak iz izračunanih orbital. Jedro je narisano močno povečano (v resnici je od 10 000- do 100 000-krat manjše od atoma), Bohrove tirnice pa so poenostavljena slika.",
   merilo: { m: 1.41e-10, oznaka: "0,14 nm" },
+  poskusi: "Z drsnikom povečuj vrstno število in opazuj, kdaj se začne polniti nova lupina; nato preklopi na elektronski oblak.",
 };
 
 const A0 = 5.29177e-11; // Bohrov polmer v metrih

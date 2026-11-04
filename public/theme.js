@@ -28,6 +28,19 @@
   } catch {}
 })();
 
+// Aplikacija za Android/iOS (mobile/src/app/web.tsx) sama pusti prostor za uro zgoraj in gumbe spodaj, WebView pa
+// strani vseeno sporoči ta odmik (env(safe-area-inset-*)). Brez tega je bil nad glavo in pod spodnjo vrstico
+// dvojni prazen pas (j 2026-11-04). CSS piše odmik kot var(--varno-zg/--varno-sp, env(…)); v aplikaciji je 0.
+(function () {
+  try {
+    if (!/ EvklidApp\//.test(navigator.userAgent)) return;
+    const r = document.documentElement;
+    r.classList.add("v-aplikaciji");
+    r.style.setProperty("--varno-zg", "0px");
+    r.style.setProperty("--varno-sp", "0px");
+  } catch {}
+})();
+
 (function () {
   const KEY = "evklid.theme";
   // Zgodovinski slogi: VSE o slogu na enem mestu (docs/oblikovanje.md → »Kako dodati novo zgodovinsko temo«).

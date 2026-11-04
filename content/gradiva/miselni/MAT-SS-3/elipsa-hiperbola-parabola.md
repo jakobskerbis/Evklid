@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Elipsa z vrvico
+  - vsota razdalj do gorišč je $2a$
+  - dva žebljička in napeta vrvica
+- Enačba elipse
+  - $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$
+  - $e = \sqrt{a^2 - b^2}$, $\varepsilon = \frac{e}{a}$
+  - napaka: $a$ je koren imenovalca
+- Hiperbola z razliko
+  - absolutna razlika razdalj je $2a$
+  - dve veji, gorišči zunaj temen
+- Enačba hiperbole
+  - $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$
+  - $e = \sqrt{a^2 + b^2}$
+  - asimptoti $y = \pm \frac{b}{a} x$
+- Parabola z vodnico
+  - enako daleč od gorišča in vodnice
+  - $y^2 = 2px$, gorišče $\left(\frac{p}{2}, 0\right)$
+  - napaka: gorišče ni pri $p$
+- Stožnice okoli nas
+  - satelitska antena: sprejemnik v gorišču
+  - ovalno ogledalo je elipsa

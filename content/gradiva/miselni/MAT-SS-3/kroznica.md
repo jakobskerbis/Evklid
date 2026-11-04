@@ -1,0 +1,25 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Razdalja od središča
+  - vse točke so od $S(p, q)$ oddaljene za $r$
+  - primer: doseg oddajnika na zemljevidu
+- Središčna oblika
+  - $(x - p)^2 + (y - q)^2 = r^2$
+  - napaka: $x + 2$ pomeni $p = -2$
+  - napaka: na desni je $r^2$, ne $r$
+- Splošna oblika
+  - $x^2 + y^2 + Dx + Ey + F = 0$
+  - dopolni do popolnega kvadrata
+  - $x^2 - 6x = (x - 3)^2 - 9$
+- Lega točke
+  - levo stran primerjaj z $r^2$
+  - manj znotraj, enako na krožnici, več zunaj
+- Lega premice
+  - vstavi premico, dobiš kvadratno enačbo
+  - diskriminanta pozitivna: sekanta, dve točki
+  - diskriminanta $0$: tangenta; negativna: mimobežnica
+- Tangenta
+  - pravokotna na polmer v dotikališču
+  - skalarni produkt $\overrightarrow{ST}$ in smeri tangente je $0$

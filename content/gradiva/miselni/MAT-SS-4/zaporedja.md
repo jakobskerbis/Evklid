@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Zaporedje
+  - vsakemu naravnemu $n$ priredi člen $a_n$
+  - splošni člen ali rekurzivno pravilo
+- Graf zaporedja
+  - posamezne pike $(n, a_n)$, ne neprekinjena črta
+- Monotonost
+  - strogo narašča, če je $a_{n+1} - a_n > 0$ za vsak $n$
+  - napaka: sklep iz prvih treh členov
+- Omejenost
+  - $m \le a_n \le M$ za vsak $n$
+  - meje ni treba doseči
+- Okolica
+  - odprti interval $(L - \varepsilon, L + \varepsilon)$
+  - rob okolice ne spada vanjo
+- Limita
+  - v vsaki okolici vsi členi od nekod naprej
+  - $\lim\limits_{n \to \infty} \frac{1}{n} = 0$
+  - napaka: približevanje še ni limita
+- Konvergenca
+  - konvergentno zaporedje je omejeno
+  - monotono in omejeno zaporedje je konvergentno
+  - $(-1)^n$ je omejeno, a divergentno
+- Računanje limit
+  - deli z najvišjo potenco $n$ v imenovalcu
+  - $\frac{200n}{2n+1} \to 100$

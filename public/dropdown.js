@@ -4,7 +4,9 @@
 // Izjema: <select data-native> ostane sistemski.
 // Dolg seznam (z iskalnikom) se odpre čez gumb: izbrana možnost je v iskalnem okencu na vrhu,
 // seznam pod njim pa se začne za njo (j, 31. 10.).
+// Iskalnik piše z Evklidovo tipkovnico (j, 1. 11.: telefonova le za prijavne podatke).
 import { t } from "./i18n.js";
+import { hideKeyboard, keyboardOpenFor } from "./tipkovnica.js";
 
 const CHEVRON = '<svg class="dd-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
 const CHECK = '<svg class="dd-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -94,7 +96,7 @@ function open(sel, btn) {
   const chosen = sel.options[current];
   const shown = chosen && chosen.value !== "" ? chosen.textContent : "";
   const empty = `<div class="dd-group dd-empty"${html ? " hidden" : ""}>${esc(sel.dataset.emptyText || tr("common.noOptions", "Ni možnosti"))}</div>`;
-  const search = `<div class="dd-search${shown ? " has-value" : ""}"><input type="search" autocomplete="off" data-system-kb placeholder="${esc(shown || ph)}" aria-label="${esc(shown ? `${shown}. ${ph}` : ph)}">${shown ? CHECK : ""}</div>`;
+  const search = `<div class="dd-search${shown ? " has-value" : ""}"><input type="search" autocomplete="off" enterkeyhint="search" placeholder="${esc(shown || ph)}" aria-label="${esc(shown ? `${shown}. ${ph}` : ph)}">${shown ? CHECK : ""}</div>`;
   list.innerHTML = (searchable ? search : "") + html + empty;
   list.querySelectorAll(".dd-opt").forEach((el) => items.push(el));
   if (searchable) list.classList.add("dd-searchable");
@@ -186,10 +188,20 @@ function hideEmptyGroups(list) {
 
 // Seznam pod gumbom (ali nad njim, če spodaj ni prostora), nikoli čez rob zaslona.
 // Seznam z iskalnikom pa leži čez gumb: iskalno okence je točno tam, kjer je bil gumb.
+// Odprta Evklidova tipkovnica zaseda spodnji del zaslona: seznam je nad njo.
+function viewBottom() {
+  const vh = window.visualViewport?.height || window.innerHeight;
+  const kb = document.getElementById("tipkovnica");
+  if (!kb || kb.hidden) return vh;
+  // po višini, ne po legi: tipkovnica ob odpiranju še drsi navzgor
+  const vv = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--tk-vv")) || 0;
+  return Math.min(vh, window.innerHeight - vv - kb.offsetHeight);
+}
+
 function place(btn, list, overGap = false) {
   const r = btn.getBoundingClientRect();
   const vw = document.documentElement.clientWidth;
-  const vh = window.visualViewport?.height || window.innerHeight;
+  const vh = viewBottom();
   const gap = 6, margin = 12;
   if (overGap) {
     const pad = 7; // rob seznama (1 px) + odmik okenca (6 px)
@@ -286,8 +298,9 @@ function choose(state, i) {
 
 export function closeMenu(refocus = false) {
   if (!openMenu) return;
-  const { btn, list } = openMenu;
+  const { btn, list, search } = openMenu;
   openMenu = null;
+  if (search && keyboardOpenFor(search)) hideKeyboard();
   list.remove();
   btn.setAttribute("aria-expanded", "false");
   btn.removeAttribute("aria-controls");
@@ -296,8 +309,14 @@ export function closeMenu(refocus = false) {
 }
 
 document.addEventListener("pointerdown", (e) => {
-  if (openMenu && !openMenu.list.contains(e.target) && !openMenu.btn.contains(e.target)) closeMenu();
+  if (!openMenu || openMenu.list.contains(e.target) || openMenu.btn.contains(e.target)) return;
+  if (e.target.closest?.("#tipkovnica")) return; // tipka Evklidove tipkovnice piše v iskalnik
+  closeMenu();
 }, true);
+// Tipkovnica se odpre ali zapre: seznam z iskalnikom se postavi na novo, da ga ne prekrije.
+window.addEventListener("evklid:tipkovnica", () => {
+  if (openMenu?.search) place(openMenu.btn, openMenu.list, true);
+});
 // Med iskanjem (tipkovnica na telefonu premakne ali pomanjša zaslon) seznam ostane odprt.
 document.addEventListener("scroll", (e) => {
   if (openMenu && !openMenu.searching && !openMenu.list.contains(e.target)) closeMenu();
