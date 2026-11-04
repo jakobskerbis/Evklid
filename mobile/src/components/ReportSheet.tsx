@@ -1,10 +1,16 @@
 // Okno »Prijavi napako« (kot na spletu, public/prijave.js): razlogi, opomba, Pošlji / Prekliči.
 // Lekcija: razlogi + neobvezna opomba. Skrbnik v klepetu: samo opis napake (obvezen).
 import React, { useState } from "react";
-import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from "react-native";
+import { Dimensions, KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from "react-native";
 import { t } from "@/lib/i18n";
 import { radius, useTheme } from "@/lib/theme";
 import { Button, Chip } from "@/components/ui";
+
+/** Naprava ob prijavi (kot deviceInfo v public/prijave.js): app-android / app-ios in velikost zaslona. */
+export function appDevice() {
+  const { width, height } = Dimensions.get("window");
+  return { device: `app-${Platform.OS}`, screen: `${Math.round(width)}x${Math.round(height)}` };
+}
 
 type Props = {
   visible: boolean;

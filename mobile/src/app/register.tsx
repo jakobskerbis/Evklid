@@ -22,6 +22,8 @@ export default function Register() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [underAge, setUnderAge] = useState(false);
+  const [parentEmail, setParentEmail] = useState("");
+  const [parentSent, setParentSent] = useState(false);
 
   async function submit() {
     setBusy(true);
@@ -33,6 +35,21 @@ export default function Register() {
       await refresh();
     } catch (err) {
       if (err instanceof ApiError && err.body?.under_age) setUnderAge(true);
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Premlad za lasten račun: Evklid pošlje staršu e-pošto s povezavo na stran za starše (kot na spletu).
+  async function askParent() {
+    setBusy(true);
+    setError(null);
+    try {
+      await api("/api/auth/ask-parent", { body: { email: parentEmail.trim() } });
+      setParentSent(true);
+      setParentEmail("");
+    } catch (err) {
       setError((err as Error).message);
     } finally {
       setBusy(false);
@@ -53,7 +70,14 @@ export default function Register() {
         </Check>
         {error ? <Banner text={error} tone="danger" /> : null}
         {/* starsi.html kaže spletne cene; različica iz trgovine nanje ne sme voditi (Apple 3.1.1, Google Play) */}
-        {underAge && !usesStoreBilling ? <Button title={t("mob.parentsPage")} kind="secondary" onPress={() => WebBrowser.openBrowserAsync(webUrl("/starsi.html"))} /> : null}
+        {underAge && !usesStoreBilling ? (
+          <>
+            <Field label={t("mob.parentEmail")} value={parentEmail} onChangeText={setParentEmail} autoCapitalize="none" autoComplete="off" keyboardType="email-address" />
+            <Button title={t("mob.parentSend")} onPress={askParent} loading={busy} disabled={!parentEmail.includes("@")} />
+            {parentSent ? <Banner text={t("mob.parentSent")} tone="ok" /> : null}
+            <Button title={t("mob.parentsPage")} kind="secondary" onPress={() => WebBrowser.openBrowserAsync(webUrl("/starsi.html"))} />
+          </>
+        ) : null}
         <Button title={t("mob.register")} onPress={submit} loading={busy} disabled={!email || password.length < 8 || !birthIso(birth) || !agree} />
       </Screen>
     </KeyboardAvoidingView>

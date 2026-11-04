@@ -36,7 +36,7 @@ export function meritve(el) {
       s("line", { x1: X(cm), y1: 36, x2: X(cm), y2: 36 + (big ? 16 : mid ? 11 : 7), class: "axis thin" }, svg);
       if (big) label(svg, X(cm), 64, String(cm), "tick");
     }
-    label(svg, 322, 70, "cm", "tick", "end");
+    label(svg, 328, 26, "cm", "tick", "end"); // nad desnim koncem ravnila, ne čez »10«
     // točkovni diagram meritev
     if (vals.length) {
       const lo = Math.min(...vals, L) - res * 2, hi = Math.max(...vals, L) + res * 2;
@@ -59,8 +59,8 @@ export function meritve(el) {
       const rel = (dx / mean) * 100;
       out.innerHTML = `<p>Meritve (${vals.length}): ${vals.map((v) => fmt(v, dg())).join("; ")} cm</p>` +
         texBlock(`\\bar{x} = \\frac{x_1 + x_2 + \\dots + x_n}{n} = ${T(mean, dg() + 2)}\\ \\text{cm}`) +
-        `<p>Absolutna napaka (največje odstopanje od povprečja${dev > 1e-9 ? "" : "; ker so vse meritve enake, vzamemo najmanjši razdelek merila"}): Δx = ${fmt(dx, dg() + 1)} cm. Relativna napaka: δ = Δx / x̄ = ${fmt(rel, 1)} %.</p>
-         <p><b>Rezultat: l = (${fmt(mean, dg() + 1)} ± ${fmt(dx, dg() + 1)}) cm.</b> Pas (modro) kaže območje x̄ ± Δx.</p>
+        `<p>Absolutna napaka (največje odstopanje od povprečja${dev > 1e-9 ? "" : "; ker so vse meritve enake, vzamemo najmanjši razdelek merila"}): <span style="white-space: nowrap">${tex(`\\Delta x = ${T(dx, dg() + 1)}\\ \\text{cm}`)}.</span> Relativna napaka: <span style="white-space: nowrap">${tex(`\\delta = \\Delta x / \\bar{x} = ${T(rel, 1)}\\ \\%`)}.</span></p>
+         <p><b>Rezultat: l = (${fmt(mean, dg() + 1)} ± ${fmt(dx, dg() + 1)}) cm.</b> Senčeni pas kaže območje ${tex("\\bar{x} \\pm \\Delta x")}.</p>
          <p class="muted">Vsaka meritev je malo drugačna (odčitavanje, paralaksa). Več meritev da zanesljivejše povprečje. Natančnejše merilo (mm) zmanjša napako.</p>`;
     } else out.innerHTML = `<p>Klikni <b>Izmeri</b> nekajkrat. Vsaka meritev je odčitek z ravnila z razdelki po ${res === 1 ? "1 cm" : "1 mm"}.</p>`;
   };

@@ -507,7 +507,7 @@ export function periodni(el, { highlight = "skupine" } = {}) {
         ? `<p><b>${selGroup}. skupina: ${GROUP_NAME[selGroup] || "prehodni elementi"}</b>. ${GROUP_NAME[selGroup] ? `Vsi elementi imajo v zunanji lupini ${selGroup === 18 ? "8 elektronov (helij 2)" : `${selGroup > 12 ? selGroup - 10 : selGroup} ${selGroup === 1 ? "elektron" : selGroup === 2 ? "elektrona" : "elektrone"}`}, zato imajo podobne kemijske lastnosti.` : "Prehodne kovine polnijo notranjo d-podlupino."}</p>`
         : `<p><b>Skupine</b> so stolpci (1–18), <b>periode</b> so vrstice (1–7). Elementi iste skupine imajo enako število valenčnih elektronov in podobne lastnosti. Perioda pove, koliko lupin ima atom.</p><p class="muted">Klikni številko skupine ali element.</p>`;
     else if (mode === "vrste") out.innerHTML = `<p>Večina elementov so <b>kovine</b> (levo in na sredini). <b>Nekovine</b> so desno zgoraj, med njimi pa so <b>polkovine</b> (B, Si, Ge, As, Sb, Te), ki imajo lastnosti obeh.</p><p class="muted">Klikni element za podrobnosti.</p>`;
-    else out.innerHTML = `<p><b>${PROPS[prop][0][0].toUpperCase() + PROPS[prop][0].slice(1)}</b> ${PROPS[prop][5]}</p><p class="muted">Modra = majhna vrednost, oranžna = velika. Graf spodaj kaže vrednosti od H do Ba: oranžne pike so alkalijske kovine, zelene žlahtni plini.</p>`;
+    else out.innerHTML = `<p><b>${PROPS[prop][0][0].toUpperCase() + PROPS[prop][0].slice(1)}</b> ${PROPS[prop][5]}</p><p class="muted">Modra = majhna vrednost, oranžna = velika. Graf spodaj kaže vrednosti od H do Ba: oranžne pike so alkalijske kovine, turkizne žlahtni plini.</p>`;
   };
   const propSel = select({ label: "lastnost", options: Object.entries(PROPS).map(([k, v]) => [k, v[0]]), value: prop, onChange: (v) => ((prop = v), draw(), info()) });
   propSel.hidden = mode !== "trendi";
@@ -835,7 +835,7 @@ export function medmolekulske(el) {
     }
     const [, list, text] = NIZI[set];
     const it = sel != null ? list[sel] : null;
-    out.innerHTML = `<p>${text}</p>` + (it ? `<p><b>${it[4] || sub(it[0])}</b>: M = ${it[1]} g/mol, vrelišče ${fmt(it[2], 0)} °C, prevladujejo ${FORCE[it[3]][0]}.</p>` : `<p class="muted">Klikni stolpec za podrobnosti. Barva pove vrsto sil: zelena disperzijske, vijolična dipol-dipol, rdeča vodikove vezi.</p>`);
+    out.innerHTML = `<p>${text}</p>` + (it ? `<p><b>${it[4] || sub(it[0])}</b>: M = ${it[1]} g/mol, vrelišče ${fmt(it[2], 0)} °C, prevladujejo ${FORCE[it[3]][0]}.</p>` : `<p class="muted">Klikni stolpec za podrobnosti. Barva pove vrsto sil: turkizna disperzijske, vijolična dipol-dipol, rdeča vodikove vezi.</p>`);
   };
   draw();
   info();

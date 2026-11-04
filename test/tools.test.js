@@ -10,7 +10,7 @@ import { fn, derivative, roots, limit, taylor, V, odeSolve, measurement, propaga
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 
-const near = (a, b, eps = 1e-6) => assert.ok(Math.abs(a - b) <= eps * (1 + Math.abs(b)), `${a} ≉ ${b}`);
+const near = (a, b, eps = 1e-6, rel = false) => assert.ok(Math.abs(a - b) <= eps * (rel ? Math.abs(b) : 1 + Math.abs(b)), `${a} ≉ ${b}`);
 const ev = (text, opts) => {
   const r = evaluate(text, opts);
   assert.ok(!r.error, `${text}: ${JSON.stringify(r.error)}`);
@@ -428,4 +428,179 @@ test("verjetnost: geometrijska in hipergeometrijska porazdelitev", () => {
   close(probability(h, "le", 2), (1287 + 7 * 715 + 21 * 286) / 15504); // C(13,5)=1287, C(13,4)=715
   close(probability(h, "le", 5), 1);
   close(h.mean, (5 * 7) / 20);
+});
+
+// ---------- preizkusi domnev, intervali, regresije, TVM, tabela vrednosti ----------
+
+import * as TC from "../public/graph/testcore.js";
+import { regression } from "../public/graph/model.js";
+
+// neodvisen p: Simpson po gostoti t (ne uporablja probcore); Lanczos za ln Γ
+const lnG = (z) => {
+  const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5];
+  let y = z;
+  let t = z + 5.5;
+  t -= (z + 0.5) * Math.log(t);
+  let s = 1.000000000190015;
+  for (const k of c) s += k / ++y;
+  return -t + Math.log((2.5066282746310005 * s) / z);
+};
+const tPdf = (x, v) => (Math.exp(lnG((v + 1) / 2) - lnG(v / 2)) / Math.sqrt(v * Math.PI)) * (1 + (x * x) / v) ** (-(v + 1) / 2);
+const tTail2 = (t, v) => {
+  const N = 20000;
+  const a = Math.abs(t);
+  const h = (400 - a) / N;
+  let s = tPdf(a, v) + tPdf(400, v);
+  for (let i = 1; i < N; i++) s += tPdf(a + i * h, v) * (i % 2 ? 4 : 2);
+  return 2 * ((s * h) / 3); // dva repa
+};
+
+test("preizkusi: t-test za povprečje (x̄=5,1, s=0,8, n=16, μ0=5 → t=0,5, df=15, p≈0,6243)", () => {
+  const a = { mean: 5.1, mu0: 5, s: 0.8, n: 16 };
+  const r = TC.tTest1(a);
+  near(r.stat, 0.5, 1e-9);
+  assert.equal(r.df, 15);
+  near(r.p, 0.6243, 2e-4);
+  assert.equal(r.reject, false);
+  near(TC.tTest1(a, "gt").p, 0.6243 / 2, 2e-4);
+  near(TC.tTest1(a, "lt").p, 1 - 0.6243 / 2, 2e-4);
+  assert.equal(TC.tTest1({ ...a, mean: 7 }).reject, true);
+});
+
+test("preizkusi: z-test (x̄=103, μ0=100, σ=15, n=36 → z=1,2, p=2·0,11507=0,23014)", () => {
+  const a = { mean: 103, mu0: 100, sigma: 15, n: 36 };
+  near(TC.zTest1(a).stat, 1.2, 1e-9);
+  near(TC.zTest1(a).p, 0.230139, 1e-4);
+  near(TC.zTest1(a, "gt").p, 0.115070, 1e-4);
+  // 2 vzorca: se = √(25/40 + 16/50) = 0,97468; z = 2/se = 2,05196; p = 0,0402
+  const r2 = TC.zTest2({ mean: 50, sigma: 5, n: 40 }, { mean: 48, sigma: 4, n: 50 });
+  near(r2.stat, 2 / Math.sqrt(25 / 40 + 16 / 50), 1e-9);
+  near(r2.p, 0.04019, 2e-3);
+});
+
+test("preizkusi: 2 vzorca t – Welch df in pooled", () => {
+  const a = { mean: 20, s: 4, n: 10 };
+  const b = { mean: 17, s: 2, n: 15 };
+  const w = TC.tTest2(a, b);
+  // df = (1,6 + 0,26667)² / (1,6²/9 + 0,26667²/14) = 3,484444/0,289524 = 12,0352
+  near(w.df, 3.484444 / 0.289524, 1e-4);
+  near(w.stat, 3 / Math.sqrt(1.6 + 4 / 15), 1e-9);
+  near(w.p, tTail2(w.stat, w.df), 1e-4);
+  // pooled: sp² = (9·16 + 14·4)/23 = 8,6957; se = √(8,6957·(1/10 + 1/15)) = 1,20386; df = 23
+  const p = TC.tTest2(a, b, "ne", 0.05, true);
+  assert.equal(p.df, 23);
+  near(p.stat, 3 / 1.20386, 1e-4);
+  near(p.p, tTail2(p.stat, 23), 1e-4);
+});
+
+test("preizkusi: deleži (58/100 proti 0,5 → z=1,6, p≈0,1096; 45/100 proti 30/100 → z=2,1909)", () => {
+  const r = TC.propTest1({ x: 58, n: 100, p0: 0.5 });
+  near(r.stat, 1.6, 1e-9);
+  near(r.p, 0.1096, 1e-3);
+  // pc = 0,375; se = √(0,375·0,625·0,02) = 0,068465
+  const r2 = TC.propTest2({ x1: 45, n1: 100, x2: 30, n2: 100 });
+  near(r2.stat, 0.15 / 0.068465, 1e-4);
+  near(r2.p, 0.02846, 2e-3);
+  assert.equal(r2.reject, true);
+});
+
+test("preizkusi: χ² prileganje (18, 22, 20, 40 → χ² = 308/25 = 12,32, df=3) in neodvisnost 2×2", () => {
+  const g = TC.chiGof([18, 22, 20, 40]);
+  near(g.stat, 12.32, 1e-9);
+  assert.equal(g.df, 3);
+  // df = 3: P(χ² > x) = 2(1 − Φ(√x)) + √(2x/π)·e^(−x/2) = 0,006353 (zapis z χ² = 12,8 bi dal 0,00508)
+  near(g.p, 2 * normal(0, 1).cdf(-Math.sqrt(12.32)) + Math.sqrt((2 * 12.32) / Math.PI) * Math.exp(-6.16), 1e-6, true);
+  near(TC.chiGof([20, 20, 20, 40], [25, 25, 25, 25]).stat, 12, 1e-9);
+  near(1 - chi2(3).cdf(12.8), 0.00508, 1e-2, true);
+  assert.equal(g.reject, true);
+  // [[20,30],[30,20]]: vse pričakovane 25 → χ² = 4·25/25 = 4, df 1, p = 2(1−Φ(2)) = 0,0455
+  const i = TC.chiIndep([[20, 30], [30, 20]]);
+  near(i.stat, 4, 1e-9);
+  assert.equal(i.df, 1);
+  near(i.p, 0.0455, 2e-3);
+  assert.equal(TC.chiIndep([[1, 2]]), null);
+});
+
+test("preizkusi: t-test za naklon (x=1..5, y=2,4,5,4,5 → b=0,6, a=2,2, r²=0,6, t=2,1213, df=3, p≈0,124)", () => {
+  const r = TC.regTest([1, 2, 3, 4, 5], [2, 4, 5, 4, 5]);
+  near(r.b, 0.6, 1e-9);
+  near(r.a, 2.2, 1e-9);
+  near(r.r2, 0.6, 1e-9);
+  near(r.stat, 0.6 / (Math.sqrt(2.4 / 3) / Math.sqrt(10)), 1e-9);
+  assert.equal(r.df, 3);
+  near(r.p, tTail2(r.stat, 3), 1e-4);
+});
+
+test("intervali zaupanja: t, z, 2 vzorca, deleži", () => {
+  // x̄=10, s=2, n=25: t* = 2,0639 → 10 ± 0,82556
+  const t = TC.tInt1({ mean: 10, s: 2, n: 25 });
+  near(t.crit, 2.0639, 1e-4);
+  near(t.lo, 9.1744, 1e-4);
+  near(t.hi, 10.8256, 1e-4);
+  const z = TC.zInt1({ mean: 10, sigma: 2, n: 25 });
+  near(z.lo, 10 - 1.959964 * 0.4, 1e-5);
+  near(z.hi, 10 + 1.959964 * 0.4, 1e-5);
+  near(TC.zInt1({ mean: 10, sigma: 2, n: 25 }, 0.99).crit, 2.575829, 1e-5);
+  // 1 delež 58/100: 0,58 ± 1,95996·√(0,58·0,42/100)
+  near(TC.propInt1({ x: 58, n: 100 }).margin, 1.959964 * Math.sqrt((0.58 * 0.42) / 100), 1e-6);
+  // 2 deleža: 0,45−0,30 ± 1,95996·√(0,45·0,55/100 + 0,3·0,7/100)
+  near(TC.propInt2({ x1: 45, n1: 100, x2: 30, n2: 100 }).margin, 1.959964 * Math.sqrt(0.002475 + 0.0021), 1e-6);
+  // 2 vzorca: razlika 3, se (Welch) = 1,36626, df = 12,0352
+  const w = TC.tInt2({ mean: 20, s: 4, n: 10 }, { mean: 17, s: 2, n: 15 });
+  near(w.margin, w.crit * 1.36626, 1e-4);
+  near(w.df, 12.0352, 1e-3);
+  near(TC.zInt2({ mean: 20, sigma: 4, n: 10 }, { mean: 17, sigma: 2, n: 15 }).margin, 1.959964 * 1.36626, 1e-4);
+  assert.equal(TC.tInt2({ mean: 20, s: 4, n: 10 }, { mean: 17, s: 2, n: 15 }, 0.95, true).df, 23);
+});
+
+test("regresije: kvartična, logistična, sinusna iz točnih podatkov; ln, a·bˣ, a·xᵇ", () => {
+  const xs = Array.from({ length: 21 }, (_, i) => i * 0.5);
+  const q = regression(xs, xs.map((x) => x ** 4 - 2 * x * x + x + 1), "quart");
+  [1, 0, -2, 1, 1].forEach((c, i) => near(q.p[i], c, 1e-6));
+  near(q.r2, 1, 1e-9);
+  const lg = regression(xs, xs.map((x) => 3 / (1 + 4 * Math.exp(-0.9 * x))), "logistic");
+  [4, 0.9, 3].forEach((c, i) => near(lg.p[i], c, 1e-5));
+  const x2 = Array.from({ length: 25 }, (_, i) => i * 0.4);
+  const sn = regression(x2, x2.map((x) => 2.5 * Math.sin(1.3 * x + 0.7) + 4), "sin");
+  [2.5, 1.3, 0.7, 4].forEach((c, i) => near(sn.p[i], c, 1e-5));
+  near(sn.r2, 1, 1e-9);
+  const px = [1, 2, 3, 4, 5, 6];
+  const ln = regression(px, px.map((x) => 2 + 3 * Math.log(x)), "log");
+  near(ln.p[0], 2, 1e-9);
+  near(ln.p[1], 3, 1e-9);
+  const ex = regression(px, px.map((x) => 5 * 1.5 ** x), "exp");
+  near(ex.p[0], 5, 1e-9);
+  near(ex.p[1], 1.5, 1e-9);
+  const pw = regression(px, px.map((x) => 4 * x ** 0.5), "pow");
+  near(pw.p[0], 4, 1e-9);
+  near(pw.p[1], 0.5, 1e-9);
+});
+
+test("TVM: posojilo 200000, 30 let, 6 % → PMT = −1199,10; nazaj I, N, PV, FV; konec/začetek", () => {
+  const v = { N: 360, I: 6, PV: 200000, PMT: NaN, FV: 0, PY: 12, CY: 12, begin: false };
+  const r = TC.tvm(v, "PMT");
+  near(r.PMT, -1199.101, 1e-6);
+  near(TC.tvm({ ...v, PMT: r.PMT, I: NaN }, "I").I, 6, 1e-8);
+  near(TC.tvm({ ...v, PMT: r.PMT, N: NaN }, "N").N, 360, 1e-8);
+  near(TC.tvm({ ...v, PMT: r.PMT, PV: NaN }, "PV").PV, 200000, 1e-6);
+  // 12 × 100 € mesečno po 12 % (i = 1 %): FV = 100·(1,01¹² − 1)/0,01 = 1268,25; na začetku ×1,01 = 1280,93
+  const s = { N: 12, I: 12, PV: 0, PMT: -100, FV: NaN, PY: 12, CY: 12, begin: false };
+  near(TC.tvm(s, "FV").FV, 1268.2503, 1e-6);
+  near(TC.tvm({ ...s, begin: true }, "FV").FV, 1280.9328, 1e-6);
+  // letno obrestovanje, mesečna plačila: i = 1,06^(1/12) − 1
+  const ip = 1.06 ** (1 / 12) - 1;
+  near(TC.tvm({ N: 12, I: 6, PV: 1000, PMT: NaN, FV: 0, PY: 12, CY: 1, begin: false }, "PMT").PMT, (-1000 * ip) / (1 - (1 + ip) ** -12), 1e-9);
+  near(TC.tvm({ N: 10, I: 0, PV: 500, PMT: NaN, FV: 0, PY: 1, CY: 1, begin: false }, "PMT").PMT, -50, 1e-12);
+  assert.equal(TC.tvm({ ...v, N: NaN }, "PMT"), null);
+});
+
+test("tabela vrednosti: f(x), g(x), korak, omejitve", () => {
+  const r = TC.valueTable({ f: "x^2", g: "2x+1", start: -1, step: 0.5, rows: 5 });
+  assert.deepEqual(r.xs, [-1, -0.5, 0, 0.5, 1]);
+  assert.deepEqual(r.f, [1, 0.25, 0, 0.25, 1]);
+  assert.deepEqual(r.g, [-1, 0, 1, 2, 3]);
+  assert.equal(TC.valueTable({ f: "x", start: 0, step: 1, rows: 201 }).error, "range");
+  assert.equal(TC.valueTable({ f: "x+a", start: 0, step: 1, rows: 3 }).error, "var");
+  assert.equal(TC.valueTable({ f: "x", start: 0, step: 1, rows: 3 }).g, null);
+  assert.ok(!Number.isFinite(TC.valueTable({ f: "1/x", start: 0, step: 1, rows: 2 }).f[0]));
 });

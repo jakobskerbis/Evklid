@@ -304,7 +304,7 @@ export function met(el, { mode = "posevni" } = {}) {
     } else {
       const D = vx * tf;
       out.innerHTML = texBlock(`D = v_0\\cos\\alpha\\cdot t = ${T(vx, 2)}\\ \\tfrac{\\text{m}}{\\text{s}}\\cdot ${T(tf, 2)}\\ \\text{s} = ${T(D, 1)}\\ \\text{m}`) +
-        `<p>Vodoravna komponenta hitrosti (zelena) je <b>stalna</b> (${fmt(vx, 1)} m/s), navpična (oranžna) se enakomerno spreminja kot pri navpičnem metu. Največja višina ${fmt(H, 1)} m, čas leta ${fmt(tf, 2)} s.</p>
+        `<p>Vodoravna komponenta hitrosti (turkizna) je <b>stalna</b> (${fmt(vx, 1)} m/s), navpična (oranžna) se enakomerno spreminja kot pri navpičnem metu. Največja višina ${fmt(H, 1)} m, čas leta ${fmt(tf, 2)} s.</p>
          <p class="muted">${h0 ? "Z višine leti telo dlje pri kotu, manjšem od 45°." : "Pri h₀ = 0 je domet največji pri 45°; kota α in 90° − α dasta enak domet."} Sivo: prejšnji meti.</p>`;
     }
   };
