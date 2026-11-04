@@ -8,6 +8,7 @@ import { mountPush } from "./push.js";
 import { mountDownload } from "./download.js";
 import { mountCalculator } from "./calculator.js";
 import { createAppLinks, mountAppLink } from "./app-link.js";
+import { mountWebSession } from "./web-session.js";
 
 const TOKEN = /^[A-Za-z0-9_-]{20,200}$/;
 
@@ -46,6 +47,7 @@ export function mountMobile(app, accounts, opts = {}) {
   mountCalculator(app); // /kalkulator za WebView v aplikaciji, brez prijave
   if (!ctx) return null; // brez računov (EVKLID_ACCOUNTS) aplikacija za trgovine ne deluje
   mountAppLink(app, ctx, appLinks);
+  mountWebSession(app, ctx); // spletna stran v aplikaciji, prijavljena s sejo aplikacije
   mountAppleSignIn(app, ctx, opts);
   const billing = mountStoreBilling(app, ctx, opts);
   const push = mountPush(app, ctx, { ...opts, scheduler: opts.scheduler });
