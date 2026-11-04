@@ -152,13 +152,16 @@ export function zgradi(THREE, ctx = {}) {
   const vsebina = new THREE.Group();
   group.add(vsebina);
 
-  const matProton = new THREE.MeshPhysicalMaterial({ color: "#e8574a", roughness: 0.3, clearcoat: 0.5, clearcoatRoughness: 0.25 });
-  const matNevtron = new THREE.MeshPhysicalMaterial({ color: "#aab4c6", roughness: 0.3, clearcoat: 0.5, clearcoatRoughness: 0.25 });
-  const matElektron = new THREE.MeshPhysicalMaterial({ color: "#5b8ff5", emissive: "#1d3a8a", roughness: 0.28, clearcoat: 0.6 });
-  const matValenca = new THREE.MeshPhysicalMaterial({ color: "#ffd166", emissive: "#7a5a10", roughness: 0.25, clearcoat: 0.6 });
-  const matObroc = BARVA_LUP.map((b) => new THREE.MeshBasicMaterial({ color: b, transparent: true, opacity: 0.5, depthWrite: false }));
-  const geoNukleon = new THREE.SphereGeometry(R_NUKLEON, visoka ? 20 : 10, visoka ? 14 : 7);
-  const geoElektron = new THREE.SphereGeometry(R_ELEKTRON, visoka ? 18 : 10, visoka ? 12 : 7);
+  // skupni videz kroglic (kot atomi v modelih molekule, kristali, periodni sistem): sijoč lak in mehak rob
+  const fiz = (o) => new THREE.MeshPhysicalMaterial({ roughness: 0.32, metalness: 0, clearcoat: 0.7, clearcoatRoughness: 0.14, sheen: 0.35, sheenRoughness: 0.45, sheenColor: "#dfe7ff", ...o });
+  const matProton = fiz({ color: "#e8574a" });
+  const matNevtron = fiz({ color: "#aab4c6" });
+  // elektroni rahlo žarijo, da jih ločimo od delcev jedra
+  const matElektron = fiz({ color: "#6f9dff", emissive: "#2f5fd8", emissiveIntensity: 0.85, roughness: 0.25, sheen: 0 });
+  const matValenca = fiz({ color: "#ffd56e", emissive: "#c08a1a", emissiveIntensity: 0.8, roughness: 0.25, sheen: 0 });
+  const matObroc = BARVA_LUP.map((b) => new THREE.MeshBasicMaterial({ color: b, transparent: true, opacity: 0.55, depthWrite: false }));
+  const geoNukleon = new THREE.SphereGeometry(R_NUKLEON, visoka ? 24 : 10, visoka ? 16 : 7);
+  const geoElektron = new THREE.SphereGeometry(R_ELEKTRON, visoka ? 20 : 10, visoka ? 14 : 7);
   let sprite = null;
   if (typeof document !== "undefined") {
     const cv = document.createElement("canvas"); cv.width = cv.height = 64;
@@ -170,6 +173,12 @@ export function zgradi(THREE, ctx = {}) {
       sprite = new THREE.CanvasTexture(cv); sprite.colorSpace = THREE.SRGBColorSpace;
     }
   }
+  // mehak sij okoli elektronov in jedra (le v brskalniku, kjer je platno)
+  // velikost točk: three jih meri v višini zaslona/2, zato faktor 2,7 (vidni kot 40°) da približno svetovne enote
+  const matSijE = sprite && new THREE.PointsMaterial({ color: "#5d8fff", size: 0.15 * 2.7, map: sprite, transparent: true, opacity: 0.5, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+  const matSijV = sprite && new THREE.PointsMaterial({ color: "#ffc24d", size: 0.18 * 2.7, map: sprite, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+  // sij jedra je točka (ne Sprite), da ga senčenje okolice (GTAO) izpusti
+  const matSijJ = sprite && new THREE.PointsMaterial({ map: sprite, color: "#ff8a6a", size: 1, transparent: true, opacity: 0.32, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
   const matTocke = new Map();
   const tockeMat = (barva, vel, sij = false) => {
     const kl = barva + vel.toFixed(3) + sij;
@@ -249,13 +258,23 @@ export function zgradi(THREE, ctx = {}) {
         el.boundingSphere = new THREE.Sphere(new THREE.Vector3(), r + R_ELEKTRON);
         odvrzi.push(el);
         sk.add(el);
-        vrtenje.push({ el, r, e, w: 0.55 / (k + 1), faza: 0.4 * k });
+        let sij = null;
+        if (sprite) {
+          const gs = new THREE.BufferGeometry();
+          gs.setAttribute("position", new THREE.BufferAttribute(new Float32Array(e * 3), 3));
+          gs.boundingSphere = new THREE.Sphere(new THREE.Vector3(), r + 0.1);
+          odvrzi.push(gs);
+          sij = new THREE.Points(gs, zunanja ? matSijV : matSijE);
+          sij.renderOrder = 5; sij.raycast = () => {}; // sij ni tarča tapa (prag točk bi bil cel model)
+          sk.add(sij);
+        }
+        vrtenje.push({ el, sij, r, e, w: 0.55 / (k + 1), faza: 0.4 * k });
         vsebina.add(obroc, sk);
         const f = (-35 * PI) / 180;
         tockaLup.push([r * Math.cos(f), r * Math.sin(f), 0]);
         const pod = konf.filter((x) => x.n === k + 1).map((x) => `${x.n}${CRKE[x.l]}${nad(x.e)}`).join(" ");
         deli.push({
-          id: "lupina-" + LUPINE[k], ime: `Lupina ${LUPINE[k]}`, barva: BARVA_LUP[k], meshes: [obroc, el], tocka: tockaLup[k],
+          id: "lupina-" + LUPINE[k], ime: `Lupina ${LUPINE[k]}`, barva: BARVA_LUP[k], meshes: sij ? [obroc, el, sij] : [obroc, el], tocka: tockaLup[k],
           opis: `V lupini ${LUPINE[k]} (${k + 1}. lupina) ${e === 2 ? "sta" : e === 3 || e === 4 ? "so" : "je"} ${elektronov(e)}: ${pod}.`,
         });
         if (zunanja) {
@@ -263,7 +282,7 @@ export function zgradi(THREE, ctx = {}) {
           const f0 = 0.4 * k, ie = Math.round((((140 * PI) / 180 - f0) * e) / (2 * PI));
           const fv = f0 + (2 * PI * ie) / e;
           deli.push({
-            id: "valencni", ime: "Valenčni elektroni", barva: "#ffd166", meshes: [el], tocka: [r * Math.cos(fv), r * Math.sin(fv), 0],
+            id: "valencni", ime: "Valenčni elektroni", barva: "#ffd166", meshes: sij ? [el, sij] : [el], tocka: [r * Math.cos(fv), r * Math.sin(fv), 0],
             opis: opisValence(val, k),
           });
         }
@@ -340,6 +359,16 @@ export function zgradi(THREE, ctx = {}) {
       m.merilo = { m: (2 / sc) * A0, oznaka: nm((2 / sc) * A0) };
     }
 
+    if (matSijJ) {
+      // topel sij za jedrom (v oblaku manjši, da ne prekrije notranje podlupine)
+      const gj = new THREE.BufferGeometry();
+      gj.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
+      odvrzi.push(gj);
+      matSijJ.size = (prikaz === "bohr" ? J.rN * 4.2 : 0.11) * 2.7;
+      const sj = new THREE.Points(gj, matSijJ);
+      sj.renderOrder = -1; sj.raycast = () => {};
+      vsebina.add(sj);
+    }
     const sJ = J.g.scale.x;
     const v3 = (p) => p.map((q) => q * sJ);
     const bohr = prikaz === "bohr"; // v oblaku je jedro le pika: protonov in nevtronov ne ponudimo posebej
@@ -362,10 +391,15 @@ export function zgradi(THREE, ctx = {}) {
   }
 
   function korak(t) {
-    for (const { el, r, e, w, faza } of vrtenje) {
-      const f0 = faza + (gibanje ? w * (t || 0) : 0);
-      for (let i = 0; i < e; i++) { const f = f0 + (2 * PI * i) / e; el.setMatrixAt(i, _M.makeTranslation(r * Math.cos(f), r * Math.sin(f), 0)); }
+    for (const { el, sij, r, e, w, faza } of vrtenje) {
+      const f0 = faza + (gibanje ? w * (t || 0) : 0), sp = sij && sij.geometry.attributes.position;
+      for (let i = 0; i < e; i++) {
+        const f = f0 + (2 * PI * i) / e, x = r * Math.cos(f), y = r * Math.sin(f);
+        el.setMatrixAt(i, _M.makeTranslation(x, y, 0));
+        if (sp) sp.setXYZ(i, x, y, 0);
+      }
       el.instanceMatrix.needsUpdate = true;
+      if (sp) sp.needsUpdate = true;
     }
   }
 
@@ -381,7 +415,7 @@ export function zgradi(THREE, ctx = {}) {
 
   function dispose() {
     pocisti();
-    for (const x of [matProton, matNevtron, matElektron, matValenca, ...matObroc, ...matTocke.values(), geoNukleon, geoElektron]) x.dispose();
+    for (const x of [matProton, matNevtron, matElektron, matValenca, ...matObroc, ...matTocke.values(), geoNukleon, geoElektron, matSijE, matSijV, matSijJ]) if (x) x.dispose();
     sprite && sprite.dispose();
   }
   return m;

@@ -429,9 +429,11 @@ function zlepi(THREE, geos) {
   return r;
 }
 
+// Oznaka kota je točka (Points) s kvadratno teksturo, ne Sprite: senčenje okolice (GTAO) točke izpusti,
+// Sprite pa bi v njem dobil temen pravokotnik.
 function napis(THREE, besedilo) {
   if (typeof document === "undefined") return null;
-  const cv = document.createElement("canvas"), w = 256, h = 96;
+  const cv = document.createElement("canvas"), w = 256, h = 256, y0 = 80;
   cv.width = w; cv.height = h;
   const g = cv.getContext("2d");
   if (!g) return null;
@@ -440,14 +442,17 @@ function napis(THREE, besedilo) {
   const x0 = (w - tw) / 2, r = 26;
   g.fillStyle = "rgba(11,15,22,0.82)"; g.strokeStyle = "rgba(110,155,255,0.9)"; g.lineWidth = 3;
   g.beginPath();
-  g.moveTo(x0 + r, 14); g.lineTo(x0 + tw - r, 14); g.arcTo(x0 + tw, 14, x0 + tw, 48, r); g.arcTo(x0 + tw, 82, x0 + tw - r, 82, r);
-  g.lineTo(x0 + r, 82); g.arcTo(x0, 82, x0, 48, r); g.arcTo(x0, 14, x0 + r, 14, r); g.closePath(); g.fill(); g.stroke();
-  g.fillStyle = "#e8ecf3"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(besedilo, w / 2, 50);
+  g.moveTo(x0 + r, y0 + 14); g.lineTo(x0 + tw - r, y0 + 14); g.arcTo(x0 + tw, y0 + 14, x0 + tw, y0 + 48, r); g.arcTo(x0 + tw, y0 + 82, x0 + tw - r, y0 + 82, r);
+  g.lineTo(x0 + r, y0 + 82); g.arcTo(x0, y0 + 82, x0, y0 + 48, r); g.arcTo(x0, y0 + 14, x0 + r, y0 + 14, r); g.closePath(); g.fill(); g.stroke();
+  g.fillStyle = "#e8ecf3"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(besedilo, w / 2, y0 + 50);
   const tex = new THREE.CanvasTexture(cv);
   tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-  const mat = new THREE.SpriteMaterial({ map: tex, depthTest: false, depthWrite: false, transparent: true });
-  const s = new THREE.Sprite(mat);
-  s.scale.set(0.3, 0.1125, 1); s.renderOrder = 20;
+  // three meri velikost točke v polovici višine zaslona: faktor 2,7 pri vidnem kotu 40° da širino ≈ 0,3 enote
+  const mat = new THREE.PointsMaterial({ map: tex, size: 0.3 * 2.7, sizeAttenuation: true, depthTest: false, depthWrite: false, transparent: true });
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(3), 3));
+  const s = new THREE.Points(geo, mat);
+  s.renderOrder = 20; s.raycast = () => {}; // napis ni tarča tapa (prag točk v Raycasterju je 1 enota)
   return s;
 }
 
@@ -469,21 +474,29 @@ export function zgradi(THREE, ctx = {}) {
 
   // skupne geometrije in materiali
   const gSfera = new THREE.SphereGeometry(1, visoka ? 40 : 18, visoka ? 28 : 12);
-  const gPar = new THREE.SphereGeometry(1, visoka ? 28 : 14, visoka ? 18 : 10);
+  // reženj prostega para: kapljica, ozka ob atomu in zaobljena navzven (vrtenina okoli osi y, y od −1 do 1)
+  const nPar = visoka ? 22 : 12;
+  const gPar = new THREE.LatheGeometry(Array.from({ length: nPar + 1 }, (_, k) => {
+    const t = k / nPar, sir = Math.sin(Math.PI * t) * (0.5 + 0.6 * Math.sin((Math.PI * t) / 2));
+    return new THREE.Vector2(k === 0 || k === nPar ? 0 : sir, -Math.cos(Math.PI * t));
+  }), visoka ? 28 : 14);
   const gPika = new THREE.SphereGeometry(1, visoka ? 12 : 8, visoka ? 8 : 6);
   const seg = visoka ? 20 : 10;
   const gValj = new THREE.CylinderGeometry(1, 1, 1, seg, 1, true);
   const gCrtka = zlepi(THREE, [0, 1, 2].map((k) => { const g = new THREE.CylinderGeometry(1, 1, 0.2, seg, 1, false); g.translate(0, -0.4 + k * 0.333, 0); return g; }));
   const skupne = [gSfera, gPar, gPika, gValj, gCrtka];
   const matAtom = {}, matVez = {};
-  const fizMat = (barva, o = {}) => new THREE.MeshPhysicalMaterial({ color: barva, roughness: 0.3, metalness: 0, clearcoat: 0.5, clearcoatRoughness: 0.22, ...o });
+  // skupni videz atomov (enako v modelih atom, kristali, periodni sistem): sijoč lak in mehak rob (sheen)
+  const fizMat = (barva, o = {}) => new THREE.MeshPhysicalMaterial({ color: barva, roughness: 0.32, metalness: 0, clearcoat: 0.7, clearcoatRoughness: 0.14, sheen: 0.35, sheenRoughness: 0.45, sheenColor: "#dfe7ff", ...o });
   const atomMat = (el) => (matAtom[el] ||= fizMat(ELEMENTI[el].barva));
-  const vezMat = (el) => (matVez[el] ||= fizMat(ELEMENTI[el].barva, { roughness: 0.38, clearcoat: 0.3 }));
-  const matPar = fizMat("#b48dff", { transparent: true, opacity: 0.55, roughness: 0.3, clearcoat: 0.5, emissive: "#7a45ff", emissiveIntensity: 0.9, depthWrite: false });
-  const matPika = fizMat("#efe6ff", { roughness: 0.4, emissive: "#3a2a66", emissiveIntensity: 0.6 });
-  const matObroc = fizMat("#d3d9e4", { roughness: 0.35, clearcoat: 0.4 });
-  const matKot = new THREE.MeshBasicMaterial({ color: "#7fa6ff", transparent: true, opacity: 0.3, side: THREE.DoubleSide, depthWrite: false });
-  const matRob = fizMat("#8fb2ff", { roughness: 0.4, clearcoat: 0.2, emissive: "#2a4fa8", emissiveIntensity: 0.5 });
+  const vezMat = (el) => (matVez[el] ||= fizMat(ELEMENTI[el].barva, { roughness: 0.36, clearcoat: 0.45, sheen: 0.2 }));
+  // prosti pari: steklasti režnji z mehkim robom, elektroni v njih rahlo žarijo
+  const matPar = fizMat("#a77dff", { transparent: true, opacity: 0.58, roughness: 0.38, clearcoat: 0.55, clearcoatRoughness: 0.1, emissive: "#7a3dff", emissiveIntensity: 1.2, sheen: 0.8, sheenRoughness: 0.35, sheenColor: "#b48cff", depthWrite: false });
+  const matPika = fizMat("#f6f1ff", { roughness: 0.3, emissive: "#a487ff", emissiveIntensity: 0.75, sheen: 0 });
+  const matObroc = fizMat("#d9defa", { roughness: 0.3, clearcoat: 0.6, emissive: "#5b4bd6", emissiveIntensity: 0.22 });
+  // polnilo kota: od vrha proti loku vse manj prosojno (barve oglišč z alfo)
+  const matKot = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, side: THREE.DoubleSide, depthWrite: false });
+  const matRob = fizMat("#9cbcff", { roughness: 0.35, clearcoat: 0.3, emissive: "#3a64d0", emissiveIntensity: 0.6, sheen: 0 });
   const skupniMat = [matPar, matPika, matObroc, matKot, matRob];
 
   let zacasno = []; // geometrije, materiali, teksture te gradnje
@@ -645,7 +658,10 @@ export function zgradi(THREE, ctx = {}) {
         const rSos = Math.max(rA(q.i), rA(q.j)) * s;
         const rad = Math.max(rc + 0.03, Math.min(Lmin * 0.68, Lmin - rSos - 0.02));
         const segm = Math.max(12, Math.round((visoka ? 48 : 24) * th / Math.PI));
-        const gf = new THREE.CircleGeometry(rad, segm, 0, th), gr = new THREE.TorusGeometry(rad, 0.0075, 6, segm, th);
+        const gf = new THREE.CircleGeometry(rad, segm, 0, th), gr = new THREE.TorusGeometry(rad, 0.0075, visoka ? 10 : 6, segm, th);
+        const bk = new Float32Array(gf.attributes.position.count * 4), KC = [0.24, 0.4, 1];
+        for (let v = 0; v < bk.length / 4; v++) { bk.set(KC, v * 4); bk[v * 4 + 3] = v === 0 ? 0.04 : 0.38; }
+        gf.setAttribute("color", new THREE.BufferAttribute(bk, 4));
         // pri iztegnjenem kotu (180°) le lok, brez polnila
         zacasno.push(gf, gr);
         const baza = new THREE.Matrix4().makeBasis(new THREE.Vector3(...u), new THREE.Vector3(...w), new THREE.Vector3(...n)).setPosition(c[0], c[1], c[2]);
@@ -658,7 +674,7 @@ export function zgradi(THREE, ctx = {}) {
         const sp = napis(THREE, stopinje(g.kot));
         if (sp) {
           sp.position.set(...sim.map((x, k) => c[k] + x * (rad + 0.13)));
-          vsebina.add(sp); zacasno.push(sp.material.map, sp.material);
+          vsebina.add(sp); zacasno.push(sp.material.map, sp.material, sp.geometry);
         }
       }
     }

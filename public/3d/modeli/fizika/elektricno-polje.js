@@ -268,7 +268,7 @@ function silaBesedilo(F) {
 const BARVE = {
   plus: "#e5564d", minus: "#4f7ff0", znak: "#f7f8fb", preizkusni: "#f5b942", sila: "#6fe0a0",
   ploscaPlus: "#b8564f", ploscaMinus: "#5574c4",
-  silnicaTemna: "#7a6436", silnicaSvetla: "#ffe6a6", ozadje: "#0b0f16",
+  silnicaTemna: "#5a3210", silnicaSrednja: "#ec9230", silnicaSvetla: "#ffeec4", ozadje: "#0b0f16",
   ekviPlus: "#ff8c7c", ekviMinus: "#88a8ff", ekviNic: "#dfe4ee",
 };
 const POSTAVITVE = [
@@ -303,11 +303,26 @@ function zdruzi(THREE, geos) {
   return out;
 }
 
-/** Cevke vzdolž silnic (ena geometrija, barve po ogliščih). */
+/** Osvetljena cevka, ki tudi sama sveti (emisija = lastna barva · sij), da so silnice vidne na temnem ozadju. */
+function sijocMaterial(THREE, sij, o = {}) {
+  const m = new THREE.MeshStandardMaterial({ roughness: 0.3, metalness: 0, ...o });
+  m.onBeforeCompile = (sh) => {
+    sh.fragmentShader = sh.fragmentShader.replace("#include <emissivemap_fragment>", `#include <emissivemap_fragment>\n\ttotalEmissiveRadiance += diffuseColor.rgb * ${sij.toFixed(3)};`);
+  };
+  m.customProgramCacheKey = () => `sij${sij}`;
+  return m;
+}
+
+/** Barvni prelivi v treh postankih (šibko → srednje → močno polje), t ∈ [0, 1]. */
+function preliv(out, c0, c1, c2, t) {
+  return t < 0.55 ? out.copy(c0).lerp(c1, t / 0.55) : out.copy(c1).lerp(c2, ((t - 0.55) / 0.45) ** 1.5);
+}
+
+/** Cevke vzdolž silnic (ena geometrija, barve po ogliščih; barva() lahko vrne še 5. člen: faktor debeline). */
 function cevi(THREE, crte, polmer, rad, barva) {
   let nv = 0, ni = 0;
   for (const c of crte) if (c.tocke.length > 1) { nv += c.tocke.length * rad; ni += (c.tocke.length - 1) * rad * 6; }
-  const pos = new Float32Array(nv * 3), col = new Float32Array(nv * 4);
+  const pos = new Float32Array(nv * 3), nor = new Float32Array(nv * 3), col = new Float32Array(nv * 4);
   const idx = nv > 65535 ? new Uint32Array(ni) : new Uint16Array(ni);
   let v = 0, ii = 0;
   for (const c of crte) {
@@ -326,9 +341,10 @@ function cevi(THREE, crte, polmer, rad, barva) {
       if (ln < 1e-6) { const ref = Math.abs(T[0]) < 0.9 ? [1, 0, 0] : [0, 1, 0]; const d = dot3(ref, T); N = [ref[0] - d * T[0], ref[1] - d * T[1], ref[2] - d * T[2]]; ln = len3(N); }
       N = [N[0] / ln, N[1] / ln, N[2] / ln];
       const B = [T[1] * N[2] - T[2] * N[1], T[2] * N[0] - T[0] * N[2], T[0] * N[1] - T[1] * N[0]];
-      const [r, g, bb, al = 1] = barva(c, i);
+      const [r, g, bb, al = 1, deb = 1] = barva(c, i);
       for (let k = 0; k < rad; k++) {
-        const f = (k / rad) * Math.PI * 2, cs = Math.cos(f) * polmer, sn = Math.sin(f) * polmer;
+        const f = (k / rad) * Math.PI * 2, cf = Math.cos(f), sf = Math.sin(f), cs = cf * polmer * deb, sn = sf * polmer * deb;
+        nor[v * 3] = cf * N[0] + sf * B[0]; nor[v * 3 + 1] = cf * N[1] + sf * B[1]; nor[v * 3 + 2] = cf * N[2] + sf * B[2];
         pos[v * 3] = P[i][0] + cs * N[0] + sn * B[0];
         pos[v * 3 + 1] = P[i][1] + cs * N[1] + sn * B[1];
         pos[v * 3 + 2] = P[i][2] + cs * N[2] + sn * B[2];
@@ -345,6 +361,7 @@ function cevi(THREE, crte, polmer, rad, barva) {
   }
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  g.setAttribute("normal", new THREE.BufferAttribute(nor, 3));
   g.setAttribute("color", new THREE.BufferAttribute(col, 4));
   g.setIndex(new THREE.BufferAttribute(idx, 1));
   g.computeBoundingSphere();
@@ -536,6 +553,9 @@ function odreziZ(tri) {
   return out;
 }
 
+// Velikost točke (PointsMaterial, sizeAttenuation) je v enotah višine zaslona/razdalje; za premer w v sceni pri vidnem kotu ~40° je size ≈ w / tan(20°).
+const TOCKA_V_SVET = 2.75;
+
 export function zgradi(THREE, ctx = {}) {
   const visoka = ctx.kakovost !== "nizka";
   const gib = ctx.gibanje !== false;
@@ -556,9 +576,28 @@ export function zgradi(THREE, ctx = {}) {
 
   const segK = visoka ? 48 : 24, segV = visoka ? 32 : 16;
   const kroglaG = geo(new THREE.SphereGeometry(R_KROGLE, segK, segV));
-  const matPlus = mat({ color: BARVE.plus, roughness: 0.28, clearcoat: 0.6, clearcoatRoughness: 0.2 });
-  const matMinus = mat({ color: BARVE.minus, roughness: 0.28, clearcoat: 0.6, clearcoatRoughness: 0.2 });
-  const matZnak = mat({ color: BARVE.znak, roughness: 0.4, clearcoat: 0.3 });
+  // naboja: lakirani kroglici, ki rahlo žarita v svoji barvi (+ mehak sij za njima, če je na voljo platno)
+  const kroglaMat = (b, sheen) => mat({ color: b, roughness: 0.22, clearcoat: 1, clearcoatRoughness: 0.08, emissive: b, emissiveIntensity: 0.3, sheen: 0.6, sheenRoughness: 0.4, sheenColor: sheen });
+  const matPlus = kroglaMat(BARVE.plus, "#ffd2c8");
+  const matMinus = kroglaMat(BARVE.minus, "#cfe0ff");
+  const matZnak = mat({ color: BARVE.znak, roughness: 0.3, clearcoat: 0.6, emissive: "#ffffff", emissiveIntensity: 0.25 });
+  const halo = (barva) => {
+    if (typeof document === "undefined") return null;
+    const c = document.createElement("canvas"); c.width = c.height = 128;
+    const x = c.getContext && c.getContext("2d");
+    if (!x) return null;
+    const col = new THREE.Color(barva), rgb = `${Math.round(col.r * 255)},${Math.round(col.g * 255)},${Math.round(col.b * 255)}`;
+    const gr = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gr.addColorStop(0, `rgba(${rgb},0.55)`); gr.addColorStop(0.35, `rgba(${rgb},0.22)`); gr.addColorStop(1, `rgba(${rgb},0)`);
+    x.fillStyle = gr; x.fillRect(0, 0, 128, 128);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; smeti.add(t);
+    // točka (Points) namesto sprite: prekrivanje okolice (GTAO) črt in točk ne upošteva, sprite bi dal temen kvadrat
+    const m = new THREE.PointsMaterial({ map: t, size: R_KROGLE * 6 * TOCKA_V_SVET, sizeAttenuation: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+    smeti.add(m);
+    return m;
+  };
+  const tockaG = geo(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute([0, 0, 0], 3)));
+  const haloPlus = halo(BARVE.plus), haloMinus = halo(BARVE.minus);
   // znak + ali − : letvici, ki gledata iz kroglice spredaj in zadaj (os z)
   const znakG = (plus, s = 1) => {
     const g = [new THREE.BoxGeometry(0.07 * s, 0.016 * s, 0.13 * s)];
@@ -568,20 +607,26 @@ export function zgradi(THREE, ctx = {}) {
   const plusG = znakG(true), minusG = znakG(false);
   const ploscaG = geo(new THREE.BoxGeometry(PLOSCA.deb, PLOSCA.pol * 2, PLOSCA.pol * 2));
   // plošči sta prosojni, da se vidijo silnice v reži
-  const prosojna = { roughness: 0.3, metalness: 0.2, clearcoat: 0.5, transparent: true, opacity: 0.38, depthWrite: false, side: THREE.DoubleSide };
-  const matPlPlus = mat({ color: BARVE.ploscaPlus, ...prosojna });
-  const matPlMinus = mat({ color: BARVE.ploscaMinus, ...prosojna });
-  const matZnPlus = mat({ color: BARVE.ploscaPlus, roughness: 0.35, clearcoat: 0.4 });
-  const matZnMinus = mat({ color: BARVE.ploscaMinus, roughness: 0.35, clearcoat: 0.4 });
+  const prosojna = { roughness: 0.18, metalness: 0.1, clearcoat: 1, clearcoatRoughness: 0.1, transparent: true, opacity: 0.32, depthWrite: false, side: THREE.DoubleSide, emissiveIntensity: 0.18 };
+  const matPlPlus = mat({ color: BARVE.ploscaPlus, emissive: BARVE.ploscaPlus, ...prosojna });
+  const matPlMinus = mat({ color: BARVE.ploscaMinus, emissive: BARVE.ploscaMinus, ...prosojna });
+  // svetla roba plošč, da se plošči berljivo ločita od silnic
+  const robG = geo(new THREE.EdgesGeometry(ploscaG));
+  const matRobPlus = new THREE.LineBasicMaterial({ color: "#ff9a8f", transparent: true, opacity: 0.85 });
+  const matRobMinus = new THREE.LineBasicMaterial({ color: "#9fb8ff", transparent: true, opacity: 0.85 });
+  smeti.add(matRobPlus); smeti.add(matRobMinus);
+  const matZnPlus = mat({ color: BARVE.plus, roughness: 0.25, clearcoat: 0.9, emissive: BARVE.plus, emissiveIntensity: 0.25 });
+  const matZnMinus = mat({ color: BARVE.minus, roughness: 0.25, clearcoat: 0.9, emissive: BARVE.minus, emissiveIntensity: 0.25 });
   const plusVelikG = (() => { const g = new THREE.BoxGeometry(0.11, 0.024, 0.024); const g2 = new THREE.BoxGeometry(0.024, 0.11, 0.024); return geo(zdruzi(THREE, [g, g2])); })();
   const minusVelikG = geo(zdruzi(THREE, [new THREE.BoxGeometry(0.11, 0.024, 0.024)]));
 
-  const matSilnice = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true });
+  const matSilnice = sijocMaterial(THREE, 0.6, { vertexColors: true, transparent: true });
   smeti.add(matSilnice);
-  const stozecG = geo(new THREE.ConeGeometry(0.018, 0.05, visoka ? 14 : 8));
-  const matStozec = new THREE.MeshStandardMaterial({ color: "#ffffff", roughness: 0.45, metalness: 0, emissive: "#3a2f18" });
+  const stozecG = geo(new THREE.ConeGeometry(0.021, 0.056, visoka ? 18 : 8));
+  const matStozec = sijocMaterial(THREE, 0.55, { color: "#ffffff" });
   smeti.add(matStozec);
-  const matEkvi = new THREE.MeshStandardMaterial({ vertexColors: true, transparent: true, depthWrite: false, side: THREE.DoubleSide, roughness: 0.35, metalness: 0 });
+  // prosojna dvostranska ploskev se nariše dvakrat (zadnja, nato sprednja stran); pri nizki kakovosti le enkrat (proračun ≤ 60k)
+  const matEkvi = new THREE.MeshStandardMaterial({ vertexColors: true, transparent: true, depthWrite: false, side: THREE.DoubleSide, forceSinglePass: !visoka, roughness: 0.35, metalness: 0 });
   smeti.add(matEkvi);
 
   // preizkusni naboj, sila, sled
@@ -622,6 +667,7 @@ export function zgradi(THREE, ctx = {}) {
     if (st.postavitev === "kondenzator") {
       const a = new THREE.Mesh(ploscaG, matPlPlus); a.position.x = -PLOSCA.x;
       const b = new THREE.Mesh(ploscaG, matPlMinus); b.position.x = PLOSCA.x;
+      a.add(new THREE.LineSegments(robG, matRobPlus)); b.add(new THREE.LineSegments(robG, matRobMinus));
       a.renderOrder = b.renderOrder = 3;
       const za = new THREE.Mesh(plusVelikG, matZnPlus); za.position.set(-PLOSCA.x, PLOSCA.pol + 0.11, 0);
       const zb = new THREE.Mesh(minusVelikG, matZnMinus); zb.position.set(PLOSCA.x, PLOSCA.pol + 0.11, 0);
@@ -639,6 +685,8 @@ export function zgradi(THREE, ctx = {}) {
       const z = new THREE.Mesh(plus ? plusG : minusG, matZnak);
       k.position.set(...s); z.position.set(...s);
       nabojiSk.add(k, z);
+      const hm = plus ? haloPlus : haloMinus;
+      if (hm) { const h = new THREE.Points(tockaG, hm); h.raycast = () => {}; h.position.set(...s); h.renderOrder = 0; nabojiSk.add(h); }
       (plus ? plusM : minusM).push(k, z);
     }
     const qT = `${lepo(st.q)} nC`;
@@ -656,17 +704,19 @@ export function zgradi(THREE, ctx = {}) {
       });
   }
 
-  const cT = new THREE.Color(BARVE.silnicaTemna), cS = new THREE.Color(BARVE.silnicaSvetla), cO = new THREE.Color(BARVE.ozadje);
+  const cT = new THREE.Color(BARVE.silnicaTemna), cM = new THREE.Color(BARVE.silnicaSrednja), cS = new THREE.Color(BARVE.silnicaSvetla);
   const tmpC = new THREE.Color();
-  const svetlost = (E) => smoothstep(0, 1, (Math.log10(Math.max(E, 1)) - 3) / 2.5);
+  const svetlost = (E) => smoothstep(0, 1, (Math.log10(Math.max(E, 1)) - 3.5) / 2.8); // ≈ 3 kN/C → 0, ≈ 2 MN/C → 1
   const zatemni = (p) => 1 - smoothstep(R_POGLED - 0.2, R_POGLED, len3(p));
 
   function silniceVidne() {
     for (const m of [silniceM, puscM]) if (m) { group.remove(m); m.geometry !== stozecG && m.geometry.dispose(); if (m.isInstancedMesh) m.dispose(); }
     crte = silnice(st.postavitev, st.q, st.predznak === "minus" ? -1 : 1);
-    const g = cevi(THREE, crte, visoka ? 0.0055 : 0.0065, visoka ? 6 : 4, (c, i) => {
-      tmpC.copy(cT).lerp(cS, svetlost(c.jakost[i]));
-      return [tmpC.r, tmpC.g, tmpC.b, zatemni(c.tocke[i])];
+    // barva in debelina po jakosti polja: šibko polje temno jantarno in tanko, močno svetlo in debelejše
+    const g = cevi(THREE, crte, visoka ? 0.0072 : 0.0078, visoka ? 8 : 4, (c, i) => {
+      const t = svetlost(c.jakost[i]);
+      preliv(tmpC, cT, cM, cS, t);
+      return [tmpC.r, tmpC.g, tmpC.b, zatemni(c.tocke[i]) * (0.75 + 0.25 * t), 0.7 + 0.6 * t];
     });
     silniceM = new THREE.Mesh(g, matSilnice);
     silniceM.renderOrder = 1;
@@ -681,7 +731,7 @@ export function zgradi(THREE, ctx = {}) {
       dv.set(...a.d); q.setFromUnitVectors(up, dv); pv.set(...a.p);
       m4.compose(pv, q, one); puscM.setMatrixAt(k, m4);
       const c = crte[a.ci];
-      tmpC.copy(cT).lerp(cS, 0.35 + 0.65 * svetlost(c.jakost[a.i]));
+      preliv(tmpC, cT, cM, cS, 0.35 + 0.65 * svetlost(c.jakost[a.i]));
       puscM.setColorAt(k, tmpC);
     });
     puscM.instanceMatrix.needsUpdate = true;

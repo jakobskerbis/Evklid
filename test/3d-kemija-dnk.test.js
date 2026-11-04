@@ -1,8 +1,12 @@
 // Znanstvene preverbe 3D modelov DNK/RNK in beljakovin (public/3d/modeli/kemija/dnk.js, beljakovina.js).
 // Mere se preverjajo na ustvarjeni geometriji (položaji fosfatov v sceni), ne na konstantah.
-import { test } from "node:test";
+import { test as nodeTest } from "node:test";
+import { naloziThree } from "./fixtures/3d-modeli.js";
+
+// three pride s kompletom 3D (package.json); brez njega se preverbe preskočijo, kot v test/3d-kemija.test.js.
+const THREE = await naloziThree();
+const test = (ime, fn) => nodeTest(ime, { skip: !THREE && "three ni nameščen" }, fn);
 import assert from "node:assert/strict";
-import * as THREE from "three";
 import { zgradi as zgradiDNK } from "../public/3d/modeli/kemija/dnk.js";
 import { zgradi as zgradiBelj, beljakovina } from "../public/3d/modeli/kemija/beljakovina.js";
 

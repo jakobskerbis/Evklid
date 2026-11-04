@@ -228,7 +228,8 @@ export function zgradi(THREE, ctx = {}) {
   // ploščice: zaobljen pravokotnik, iztisnjen za 1 (višino nastavi merilo z instance)
   const gPlosc = new THREE.ExtrudeGeometry(oblika(PLOSCICA, PLOSCICA, ZAOBL), { depth: 1, bevelEnabled: false, curveSegments: visoka ? 4 : 2 });
   odvrzi.push(gPlosc);
-  const matPlosc = new THREE.MeshPhysicalMaterial({ color: "#ffffff", roughness: 0.42, metalness: 0.05, clearcoat: 0.35, clearcoatRoughness: 0.35 });
+  // ploščice kot lakirana keramika: mehak odsev na robovih, barva ostane nasičena
+  const matPlosc = new THREE.MeshPhysicalMaterial({ color: "#ffffff", roughness: 0.4, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.22, sheen: 0.25, sheenRoughness: 0.5, sheenColor: "#e4ebff" });
   odvrzi.push(matPlosc);
   // ena InstancedMesh na skupino trenutnega barvanja (kategorija, blok ali stanje), da tap in deli sledijo barvam
   let skupine = [], poKat = new Map(), mreze = new Map();
@@ -316,11 +317,12 @@ export function zgradi(THREE, ctx = {}) {
   const vrtljiv = new THREE.Group();
   atom.add(vrtljiv);
   const gJedro = new THREE.SphereGeometry(1, visoka ? 28 : 14, visoka ? 18 : 10);
-  const matJedro = new THREE.MeshPhysicalMaterial({ color: "#e8574a", emissive: "#7a1d14", emissiveIntensity: 0.6, roughness: 0.3, clearcoat: 0.5 });
+  // jedro in elektroni kot v modelu atom (skupni videz kroglic: lak in mehak rob)
+  const matJedro = new THREE.MeshPhysicalMaterial({ color: "#e8574a", emissive: "#7a1d14", emissiveIntensity: 0.6, roughness: 0.32, clearcoat: 0.7, clearcoatRoughness: 0.14, sheen: 0.35, sheenRoughness: 0.45, sheenColor: "#dfe7ff" });
   const jedro = new THREE.Mesh(gJedro, matJedro);
   const gElektron = new THREE.SphereGeometry(0.0075, visoka ? 12 : 8, visoka ? 8 : 6);
-  const matElektron = new THREE.MeshPhysicalMaterial({ color: "#5b8ff5", emissive: "#1d3a8a", roughness: 0.28, clearcoat: 0.6 });
-  const matValenca = new THREE.MeshPhysicalMaterial({ color: "#ffd166", emissive: "#7a5a10", roughness: 0.25, clearcoat: 0.6 });
+  const matElektron = new THREE.MeshPhysicalMaterial({ color: "#6f9dff", emissive: "#2f5fd8", emissiveIntensity: 0.85, roughness: 0.25, clearcoat: 0.7, clearcoatRoughness: 0.14 });
+  const matValenca = new THREE.MeshPhysicalMaterial({ color: "#ffd56e", emissive: "#c08a1a", emissiveIntensity: 0.8, roughness: 0.25, clearcoat: 0.7, clearcoatRoughness: 0.14 });
   const elNotr = new THREE.InstancedMesh(gElektron, matElektron, 118), elZun = new THREE.InstancedMesh(gElektron, matValenca, 32);
   const gOzadje = new THREE.CircleGeometry(1, visoka ? 64 : 32);
   const matOzadje = new THREE.MeshBasicMaterial({ color: "#0b0f16", transparent: true, opacity: 0.78, depthWrite: false });
