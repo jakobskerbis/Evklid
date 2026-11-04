@@ -15,8 +15,8 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 3. **Mistakes have consequences** that a real lab would show: overrange (OL), blown fuse, burnt resistor,
    short circuit (supply current limit), foam overflow, popped stopper, missing goggles.
 4. **Table + graph + conclusion question** (one correct option, an explanation for every option).
-5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, »Kaj je poenostavljeno?«) and here.
-6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`) with the allowed deviation stated.
+5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, `POENOSTAVITVE_INDIKATORJI`, »Kaj je poenostavljeno?«) and here.
+6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`, indicators: `test/laboratorij-indikatorji.test.js`) with the allowed deviation stated.
 7. **Review:** pass 1 automatic, pass 2 an Opus expert check of the science and function, pass 3 look/phone/pedagogy
    (`docs/pregled.md`). Dangerous experiments are only simulated; a short video only when no realistic
    simulation is possible; home experiments get a safety note and an equipment list.
@@ -35,6 +35,8 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 | `public/sim/lab-elektrika.js` | `labVezava` (engine `lab-vezava`), `labPrevodnost` (engine `lab-prevodnost`); circuit parts `drawMeter`, `drawResistor`, `drawLamp` shared with `labOhm` (`lab-fiz.js`) |
 | `public/sim/lab-model-toplota.js` | heat models, no DOM: `Voda` (water + vessel, two nodes, losses through wall, bottom and surface incl. evaporation), `POSODE`, thermometer and balance, `GrelnikBench`, `MesanjeBench`, `FazeBench` (enthalpy model ice/brine/water/steam), `OhlajanjeBench`, `vrelisce` (Antoine), `talisceSoli` (CRC table) |
 | `public/sim/lab-toplota.js` | `labGrelnik` (engine `lab-grelnik`), `labMesanje` (`lab-mesanje`), `labFaze` (`lab-faze`), `labOhlajanje` (`lab-ohlajanje`); time-speed control (×1 … ×300), auto-record at round times |
+| `public/sim/lab-model-indikatorji.js` | indicator models, no DOM: `phMesanice` (charge balance with HCl, NaOH, acetic acid, carbonate, ammonia; `solvePH` from the titration model when only those three), `PH_VZORCI`, red cabbage scale `ZELJE`, universal paper `PAPIR`, `PhBench` (pH meter: calibration, carry-over), `DokazBench` (`ZIVILA`, `PRESKUSI`), `SlinaBench` (`AMILAZA`, `EPRUVETE`, `casRazgradnje`) |
+| `public/sim/lab-indikatorji.js` | `labPh` (engine `lab-ph`), `labDokaz` (`lab-dokaz`), `labSlina` (`lab-slina`); CSS prefix `lab-ind-` |
 
 Engines are registered in `public/sim/index.js` and shown at topics through `public/sim/katalog.js`.
 The »Laboratorij« tab (`public/laboratorij.js`, `server/laboratorij.js`, `GET /api/students/:id/lab`) lists every `lab-` engine
@@ -148,9 +150,41 @@ Tests: ideal plateau length m L_f / P (±1,5 s); real heat during melting = m L_
 Same `Voda` model (Newton cooling through the wall plus evaporation from an open surface), three thermometers, speed ×10/×60/×300, auto-record every minute, graph T(t)
 with three series, conclusion question (thermos, lid, evaporation). Tests: porcelain 90 → 55–68 °C in 10 min (ocena), lid and thermos slower, closed thermos k constant ±15 %, full closed thermos (350 g) loses 8–12 K in 6 h (calibration). Meters: thermometer at −20…120 °C within ±0,5 (500 seeds and the worst-case sum), balance ±0,2 g.
 
+### `lab-ph` – pH of household substances (KEM-OS-8 kisline in baze, pH lestvica; KEM-SS-2 pH)
+Goggles first (nothing starts without them). 13 samples: lemon juice, vinegar, cola, coffee, milk, tap water, distilled water, 1 % baking soda, soap,
+toothpaste slurry, ammonia cleaner, drain cleaner, HCl 0,1 mol/L. Computed from the charge balance where one solute fits (vinegar 0,8 M acetic acid, 1 % NaHCO₃
+= 0,119 M, 1 M NH₃, 0,5 M NaOH, HCl, distilled water with CO₂ from air: kH 0,034 mol/(L·atm), 420 ppm, pKa 6,35/10,33, NH₄⁺ 9,25, CRC); these can be diluted
+1 : 10 and 1 : 100. Others take a seeded value in a literature range (FDA Approximate pH of Foods: lemon 2,0–2,6, vinegar 2,4–3,4, milk 6,4–6,8; cola 2,3–2,5
+Reddy 2016; soap 9–10 Tarun 2014; coffee 4,8–5,2, tap water 7,2–8,0, toothpaste 7,5–9,5 ocena). Three ways to measure: red cabbage extract (8 colour bands,
+Fossen 1998 / RSC scale, shown as a pH range), universal indicator paper (chart 0–14, read to the nearest field, error ≤ 1), pH meter (uncalibrated: offset
+0,3–0,8, slope 90–97 %, ocena; calibrated with buffers 4,01/7,00/10,01: ±0,05; not rinsed between samples: 15 % of the difference to the previous sample,
+decaying with τ 30 s, ocena). Coloured samples (cola, coffee) mask the indicator colour. The student sorts each measured sample into kislo/nevtralno/bazično
+(true pH < 6,5 / 6,5–7,5 / > 7,5, both accepted within 0,2 of a boundary) on a pH line; table, scatter graph pH vs sample number per method; conclusion question
+after five sorted samples and a second one after measuring a diluted acid. Tests: 0,8 M acetic acid 2,43 (±0,1), 1 % NaHCO₃ 8,34 (±0,2, unchanged by dilution),
+0,1 M HCl 1,00, distilled water 5,6, NH₃ 11,6, NaOH 13,7; dilution 10× +1,00 (HCl) and +0,50 (vinegar); literature ranges; paper within ±1 (2000 draws);
+cabbage bands; uncalibrated offset ≥ 0,15 at pH 5,6, calibrated within ±0,05 over 300 seeds × 5 samples; carry-over from drain cleaner > 0,5 pH.
+
+### `lab-dokaz` – food tests (KEM-OS-9 ogljikovi hidrati, beljakovine; BIO-OS-8 prebavila in prehrana)
+Samples: white bread, raw potato, apple juice, honey, egg white, milk, sunflower oil, table sugar, glucose, water (control); composition per 100 g from USDA
+FoodData Central; solids mashed ~1 g in 5 mL (ocena). Tests: iodine (Lugol) yellow-brown → blue-black with starch (≥ 0,01 %, ocena); Fehling's reagent only in a
+boiling water bath (otherwise stays blue: mistake), colour steps blue/green/yellow/orange/brick-red as the Benedict semi-quantitative scale (0,1/0,5/1/1,5 %);
+sucrose negative unless hydrolysed with a drop of HCl; biuret light blue → violet (≥ 0,2 %, ocena); grease spot on paper (≥ 2 % faint, ≥ 20 % clear; ocena).
+Dirty dropper carries 5 % of the previous sample (false positive). The student decides »present / absent«; table with colour swatches, colour grid
+(foods × tests) as the graph, conclusion about reducing sugars. Tests: starch–iodine, sucrose negative, hydrolysed sucrose and heated glucose positive,
+unheated glucose negative, egg white and milk biuret positive, oil grease spot, water control negative in all four, dirty dropper false positive, goggles.
+
+### `lab-slina` – salivary amylase digests starch (NAR-OS-7 prehranjevanje in prebava; BIO-OS-8 prebavila; BIO-OS-9 načrtovanje poskusa)
+Six tubes of 1 % (or 5 %, mistake) starch with diluted saliva at 0, 20, 37, 70 °C, boiled saliva at 37 °C and a control without saliva; real minutes with
+time speed ×1/×10/×60, an iodine drop from each tube every minute (colour by remaining starch: blue-black / dark blue / violet-brown / yellow-brown below 0,1 %, ocena).
+Model (shape ocena, optimum ~37 °C and inactivation above ~60 °C as in Bernfeld 1955): V(T) = V37 · 2^((T−37)/10) · f(T)/f(37) with reversible loss
+f = 1/(1 + e^((T−42)/4)), irreversible denaturation half-life 1 min at 60 °C (e-fold per 3 K), Michaelis–Menten Km 0,2 %, V37 so that 1 % starch clears in ~5 min;
+saliva activity ±15 % per seed. Same dropper for all tubes carries 0,8 % of the enzyme into the next tube (boiled saliva then digests: mistake). Graph: time to
+yellow-brown vs temperature; conclusion after 15 min. Tests: 37 °C in 5 ± 1 min, faster than 20 °C, faster than 0 °C; 70 °C and boiled never; curve peak 38 ± 3 °C;
+5 % starch > 3× slower; with sampling 0 °C, 70 °C, boiled and control stay blue for 30 min; dirty dropper lets boiled saliva digest; deterministic seeds.
+
 The colours of graph series (`--demo-a/b/c`) are now also defined for the Laboratorij tab (`.lab-view` in `textbook.css`); before, points there were black.
 
 ## Next (from j's list)
 FIZ: pendulum and stopwatch, density and buoyancy in a measuring cylinder, refraction through a lens. KEM: flame test, electrolysis of water.
-NAR: the same engines on more NAR-OS-6/7 topics. Heat: specific heat of metals (hot metal block into a calorimeter, reuses `MesanjeBench`),
+NAR: the same engines on more NAR-OS-6/7 topics. Indicators: enzyme pH dependence (amylase at pH 4/7/9, reuses `SlinaBench`), the 0 °C tube warmed to 37 °C, a home version of `lab-ph` with only red cabbage, Sudan III for fats, pH meter alkaline error. Heat: specific heat of metals (hot metal block into a calorimeter, reuses `MesanjeBench`),
 solidification curve (cooling of stearic acid / salol), a separate stopwatch for `lab-grelnik` (now started by the switch), stirring as a choice in `lab-faze`. Each one: model + test first, then UI, then the three reviews.
