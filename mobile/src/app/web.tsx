@@ -6,7 +6,7 @@
 // - Odjava na spletu (»/?odjava=1«) odjavi tudi aplikacijo; povezave na druge strani odpre brskalnik.
 // - Vrstici telefona (ura zgoraj, gumbi spodaj) dobita barvo roba strani, tudi ko učenec slog zamenja.
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, BackHandler, Linking, Platform, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, BackHandler, Linking, Platform, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -17,6 +17,7 @@ import { API_URL, appHeaders } from "@/lib/api";
 import { useSession } from "@/lib/session";
 import { t } from "@/lib/i18n";
 import { font, useTheme } from "@/lib/theme";
+import { Button } from "@/components/ui";
 
 const ORIGIN = API_URL.replace(/\/+$/, "");
 const START = `${ORIGIN}/api/mobile/web?to=${encodeURIComponent("/")}`;
@@ -24,12 +25,22 @@ const START = `${ORIGIN}/api/mobile/web?to=${encodeURIComponent("/")}`;
 // Barva zgornjega in spodnjega roba strani (zgornja vrstica, spodnji zavihki ali polje za pisanje): vrstici
 // telefona (ura, gumbi) dobita isto barvo, tudi ko učenec zamenja slog ali zaslon. Pošlje le ob spremembi.
 const BAR_JS = `(function(){
-  var last="";
+  var last="",under={},RE=/rgba?\\(([\\d.]+)[, ]+([\\d.]+)[, ]+([\\d.]+)(?:[,/ ]+([\\d.]+))?/;
   // Barve vseh plasti v točki (spredaj → zadaj), npr. temna podlaga odprtega okna čez zgornjo vrstico.
-  function col(y){var els=document.elementsFromPoint(Math.round(innerWidth/2),y),r=0,g=0,b=0,a=0;
-    for(var i=0;i<els.length&&a<0.99;i++){var m=/rgba?\\(([\\d.]+)[, ]+([\\d.]+)[, ]+([\\d.]+)(?:[,/ ]+([\\d.]+))?/.exec(getComputedStyle(els[i]).backgroundColor);
+  // Okno <dialog> (showModal) zunaj svojega okvira pokaže ::backdrop; strani pod njim elementsFromPoint ne vrne
+  // (inert), zato je pod zatemnitvijo barva roba, kot je bila tik pred odprtjem okna.
+  function col(y){var x=Math.round(innerWidth/2),els=document.elementsFromPoint(x,y),r=0,g=0,b=0,a=0,modal=false;
+    for(var i=0;i<els.length&&a<0.99;i++){var el=els[i],q=el.getBoundingClientRect(),md=false;try{md=el.matches(':modal');}catch(e){}
+      var out=md&&(x<q.left||x>q.right||y<q.top||y>q.bottom);if(out)modal=true;
+      var m=RE.exec(getComputedStyle(el,out?'::backdrop':null).backgroundColor);
       if(!m)continue;var k=(m[4]===undefined?1:+m[4])*(1-a);if(!k)continue;r+=m[1]*k;g+=m[2]*k;b+=m[3]*k;a+=k;}
-    if(a<0.99){var w=(1-a)*255;r+=w;g+=w;b+=w;}
+    var u=(modal&&under[y])||[255,255,255];if(a<0.99){r+=(1-a)*u[0];g+=(1-a)*u[1];b+=(1-a)*u[2];}
+    if(!modal)under[y]=[r,g,b];
+    // Zatemnitev s senco (uvodni ogled .tour-spot, okvir slikanja .scan-frame): ni v elementsFromPoint.
+    var sp=document.querySelectorAll('.tour-spot,.scan-frame');for(var j=0;j<sp.length;j++){var c=sp[j].getBoundingClientRect();
+      if(!sp[j].getClientRects().length||(y>=c.top&&y<=c.bottom&&x>=c.left&&x<=c.right))continue;
+      var s=/rgba?\\(([\\d.]+)[, ]+([\\d.]+)[, ]+([\\d.]+)(?:[,/ ]+([\\d.]+))?\\)[^,]*?(\\d+)px\\s*$/.exec(getComputedStyle(sp[j]).boxShadow);
+      if(!s||+s[5]<500)continue;var o=s[4]===undefined?1:+s[4];r=r*(1-o)+s[1]*o;g=g*(1-o)+s[2]*o;b=b*(1-o)+s[3]*o;}
     return 'rgb('+Math.round(r)+','+Math.round(g)+','+Math.round(b)+')';}
   function send(){try{var v=col(1)+'|'+col(innerHeight-2);if(v!==last&&window.ReactNativeWebView){last=v;var p=v.split('|');
     window.ReactNativeWebView.postMessage(JSON.stringify({t:'bar',top:p[0],bottom:p[1]}));}}catch(e){}}
@@ -82,10 +93,12 @@ export default function Web() {
   const retry = useCallback(() => {
     setFailed(false);
     setLoading(true);
+    setBar(null);
     setKey((k) => k + 1);
   }, []);
 
-  const top = bar?.top || th.bg;
+  // »Ni povezave«: vrstica stanja v barvi tega zaslona, ne zadnje spletne strani.
+  const top = (!failed && bar?.top) || th.bg;
   const bottom = bar?.bottom || th.bg;
   const light = isLight(top);
   const offline = () => router.push(student ? "/(tabs)" : "/profiles");
@@ -94,14 +107,13 @@ export default function Web() {
     <View style={{ flex: 1, backgroundColor: top, paddingTop: insets.top }}>
       <StatusBar style={light === null ? "auto" : light ? "dark" : "light"} />
       {failed ? (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 14, padding: 24, backgroundColor: th.bg }}>
-          <Text style={[{ color: th.text, fontSize: 17, textAlign: "center" }, font(600)]}>{t("off.noConnection")}</Text>
-          <Pressable accessibilityRole="button" onPress={retry} style={{ backgroundColor: th.accent, borderRadius: 10, paddingVertical: 12, paddingHorizontal: 22 }}>
-            <Text style={[{ color: th.accentText, fontSize: 16 }, font(700)]}>{t("mob.retry")}</Text>
-          </Pressable>
-          <Pressable accessibilityRole="button" onPress={offline} style={{ borderColor: th.accent, borderWidth: 1.5, borderRadius: 10, paddingVertical: 12, paddingHorizontal: 22 }}>
-            <Text style={[{ color: th.accent, fontSize: 16 }, font(700)]}>{t("mob.offlineTitle")}</Text>
-          </Pressable>
+        <View style={{ flex: 1, justifyContent: "center", padding: 24, backgroundColor: th.bg }}>
+          {/* Gumba iz src/components/ui.tsx: visoka vsaj 50 px, odziv ob dotiku, rasteta s pisavo telefona. */}
+          <View style={{ width: "100%", maxWidth: 420, alignSelf: "center", gap: 14 }}>
+            <Text accessibilityRole="header" style={[{ color: th.text, fontSize: 18, textAlign: "center", marginBottom: 6 }, font(600)]}>{t("off.noConnection")}</Text>
+            <Button title={t("mob.retry")} onPress={retry} />
+            <Button title={t("mob.offlineTitle")} kind="secondary" onPress={offline} />
+          </View>
         </View>
       ) : (
         <View style={{ flex: 1, backgroundColor: bottom, paddingBottom: insets.bottom }}>

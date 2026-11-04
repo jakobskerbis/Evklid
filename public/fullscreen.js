@@ -78,8 +78,9 @@ export function initFullscreen() {
   });
 }
 
+// Ne v nameščeni aplikaciji (PWA ali splet v mobilni aplikaciji): tam je že cel zaslon in stikalo ne bi naredilo nič.
 function mountSetting(box) {
-  if (!box) return;
+  if (!box || isStandalone()) return;
   box.hidden = false;
   box.innerHTML = `<label class="check-row"><input type="checkbox" id="fullscreen-toggle"${fullscreenOn() ? " checked" : ""}>
       <span><b>${t("set.fullscreen")}</b><small class="muted">${t("set.fullscreenNote")}</small></span></label>`;
