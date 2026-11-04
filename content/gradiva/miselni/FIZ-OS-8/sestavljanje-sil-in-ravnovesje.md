@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Rezultanta
+  - ena sila z enakim učinkom kot vse
+  - oznaka $R$, enota $\mathrm{N}$
+- Sili v isti smeri
+  - $R = F_1 + F_2$
+  - kolo in veter v hrbet: $110\,\mathrm{N}$
+- Nasprotni sili
+  - od večje odštej manjšo
+  - rezultanta kaže v smer večje
+  - napaka: sile vedno seštevaš
+- Sili pod kotom
+  - paralelogram sil v merilu
+  - diagonala je rezultanta
+  - $3\,\mathrm{N}$ in $4\,\mathrm{N}$ pod pravim kotom: $5\,\mathrm{N}$
+- Meje rezultante
+  - med razliko in vsoto obeh sil
+- Ravnovesje dveh sil
+  - enako veliki, nasprotni, na isti premici
+  - rezultanta je nič
+  - napaka: ravnovesje ne pomeni brez sil
+- Ravnovesje v naravi
+  - jabolko na veji: pecelj uravnovesi težo
+  - $F_g = m \cdot g$

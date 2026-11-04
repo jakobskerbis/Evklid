@@ -1,0 +1,29 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Fosilni gorivi
+  - iz ostankov davnega planktona
+  - neobnovljivi, nastajata milijone let
+- Zemeljski plin
+  - večinoma metan $\mathrm{CH_4}$
+  - napaka: jeklenka ima propan in butan
+- Nafta
+  - tekoča zmes alkanov s $5$ do več kot $40$ C
+  - vrelišče raste z dolžino verige
+- Frakcionirna destilacija
+  - zgoraj hladno: plin, bencin
+  - spodaj vroče: olja, bitumen
+  - ločevanje, molekule se ne spremenijo
+- Popolno gorenje
+  - $\mathrm{CH_4 + 2\,O_2 \rightarrow CO_2 + 2\,H_2O}$
+  - bel oblak iz izpuha je voda
+- Nepopolno gorenje
+  - premalo kisika: $\mathrm{CO}$ in saje
+  - $\mathrm{CO}$ brez vonja, zelo strupen
+- Računanje z gorivi
+  - atomi C = molekule $\mathrm{CO_2}$
+  - $1\,\text{kg}$ propana da $3\,\text{kg}$ $\mathrm{CO_2}$
+- Podnebje
+  - $\mathrm{CO_2}$ je toplogredni plin
+  - tudi metan segreva ozračje
