@@ -271,4 +271,6 @@ test("university lessons: check-lesson asks for the exam-oriented structure", ()
   const w = warns(base.replace(/\n## Drugače/, `${exam}\n## Drugače`));
   assert.doesNotMatch(w, /manjka razdelek »## Za izpit«/);
   assert.match(w, /1 nalog nima celotne rešitve/);
+  // Enovrstična rešitev zadnje naloge na koncu razdelka je tudi skrita za gumbom.
+  assert.match(hideSolutions("### Naloga 2\nUtemelji.\n\n**Rešitev:** Ker velja $2+2=4$."), /<details class="tb-solution">[\s\S]*Ker velja/);
 });

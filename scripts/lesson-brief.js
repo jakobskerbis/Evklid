@@ -25,6 +25,7 @@ if (missing.length) {
   process.exit(1);
 }
 const uni = topics.some((t) => t.id.startsWith("UNI-"));
+const onlyUni = topics.every((t) => t.id.startsWith("UNI-")); // šolska pravila, ki jih fakultetna zamenjajo, izpustimo
 const tek = topics.some((t) => /(^|-)TEK(-|$)/.test(t.id.split("/")[0])); // tekmovanja
 const exemplar = topics[0].exemplar;
 const files = topics.map((t) => t.file).join(" ");
@@ -115,13 +116,13 @@ Quality bar (docs/kakovost.md §1, all required):
 - Level. Use only what \`before\` / \`previousSummaries\` taught; cover every goal in \`goals\`.
 - Zakaj: start from a concrete situation or question the student knows, not a definition.
 - Razlaga: concrete → picture → symbols; define each new term at first use; one idea per paragraph; at least one picture-like representation (table ≤ 4 columns, number line, diagram in words, or »simulacija spodaj« with one thing to try and what to notice). Exactly 2 \`:::premisli\` blocks that ask for a prediction or a »zakaj«, not a copy of the sentence above.
-- Rešeni primeri: 3, easy → hard. Each: **Podatki:** (all given data with units) / **Iščemo:** / \`:::formula … :::\` / **Rešitev:** numbered steps with intermediate results and a short »why« clause / answer in a sentence. Primer 3 is a transfer case (word problem, reverse question or two steps). The last example (or »Primer 4 – zdaj ti«) leaves the final 1–2 steps to the student, answer hidden in a \`:::premisli\` block.
+- Rešeni primeri: 3, easy → hard. Each: **Podatki:** (all given data with units) / **Iščemo:** / \`:::formula … :::\` / **Rešitev:** numbered steps with intermediate results and a short »why« clause / answer in a sentence. Primer 3 is ${onlyUni ? "at exam level (see University below)" : "a transfer case (word problem, reverse question or two steps)"}. The last example (or »Primer 4 – zdaj ti«) leaves the final 1–2 steps to the student, answer hidden in a \`:::premisli\` block.
 - Pogoste napake: 3–5 real misconceptions of this topic, each with the wrong reasoning, why it is wrong and the fix; the quiz distractors use the same misconceptions.
 - Povzetek: a few bullet lines (the tutor gets it as context).
-- Drugače: at least 2 truly different alternatives (»Na sliki«, »Iz vsakdanjega življenja«, »Korak za korakom s številkami«, »Bolj natančno«).
+- Drugače: at least 2 truly different alternatives (»Na sliki«, »${onlyUni ? "Uporaba v stroki" : "Iz vsakdanjega življenja"}«, »Korak za korakom s številkami«, »Bolj natančno«).
 - Preveri se: 5 questions (1 recall, 2 understanding, 2 application), ≥ 3 options, exactly one \`+\`, every \`-\` option has its own \`~\` line (why a student picks it), \`>\` explains the right answer.
 - Variety (docs/kakovost.md §1b): follow each topic's \`form\` plan below for the Zakaj opening, the Razlaga path, the main context (Zakaj and at least one example; other examples may use other contexts), the quiz question types and the 2 Drugače titles (add more alternatives only if they add something). Use the exemplar for format only, never copy its structure, openings or phrasing. Vary sentence openings and paragraph lengths; no stock phrases (»V tej lekciji se bomo naučili«, »Poglejmo si«, »Kot vidimo«) and no section that starts the same way as in the other lesson you write.
-- Phone: no information only in colour; formulas fit 360 px or are split. 1300–2300 words, short sentences.
+- Phone: no information only in colour; formulas fit 360 px or are split. ${onlyUni ? "1800–3000" : "1300–2300"} words, short sentences.
 - Tappable formulas: end the file with one \`:::simboli\` block, one line per symbol of every \`$$…$$\` and \`:::formula\` formula: \`<TeX symbol> | <Slovenian name as in the lesson> | <defining relation in TeX or empty> | <unit in TeX, e.g. kg/m^3, mol/L, L\\,mol^{-1}\\,cm^{-1}; – if dimensionless; empty for pure maths> | <optional note ≤ 12 words>\`; maths inside a name or note goes in \`$…$\`. Meaning as used in THIS lesson (T in $T = I/I_0$ is »prepustnost«, not temperature). The checker lists symbols still missing.
 
 House rules: Slovenian with the terminology of the level; decimal comma \`$3{,}5$\`; all math in LaTeX; the formula of an example only inside \`:::formula\`; header \`stanje: osnutek\` and \`avtor: AI\`; never mention PhET or a model name.${
@@ -152,7 +153,7 @@ const REVIEWER = `# Evklid review brief: ${topics.length} lesson${topics.length 
 Run first: \`node scripts/check-lesson.js -q ${files}\` and \`node scripts/check-gradivo.js -q ${maps}\`. Format, LaTeX and pure-number steps are then already checked (it prints how many steps it recomputed and any mismatch). Read for content only and check:
 1. Remaining numbers: substitutions, rounding, units and significant figures in every worked example (batch them into one \`node -e\`); every \`+\` quiz answer truly correct, every \`-\` truly wrong; every \`~\` names the real error.
 2. Level fits the path: nothing used that the path has not taught yet; every goal covered.
-3. »Podatki« lists all given data; steps say why; Primer 3 is a transfer case; the faded final step exists.
+3. »Podatki« lists all given data; steps say why; Primer 3 is ${onlyUni ? "at exam level" : "a transfer case"}; the faded final step exists.
 4. Pogoste napake are real misconceptions of this topic and match the distractors; the 2 »premisli« ask for a prediction or a »zakaj«.
 5. Slovenian terminology of the level, decimal comma, tables ≤ 4 columns.
 6. Not monotone: the opening, the explanation path and the quiz types are not the same template as the other lesson in this brief; no stock phrases (»V tej lekciji se bomo naučili«, »Poglejmo si«); fix the worst repetition with a small Edit.
