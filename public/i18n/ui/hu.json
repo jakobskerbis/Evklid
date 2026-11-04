@@ -515,6 +515,8 @@
   "set.dataLite": "Mindig be",
   "set.dataNormal": "Ki",
   "set.dataNote": "Rövidebb tutorválaszok, kisebb fotók, animációk és extra betűtípus nélkül. A tanulási út feladatai elmentődnek offline gyakorláshoz.",
+  "set.hideGames": "Játékok elrejtése",
+  "set.hideGamesNote": "A Játékok rész elrejtődik. Az előrehaladásod, az érméid és az avatarod megmaradnak.",
   "set.xpGoal": "Napi XP-cél",
   "set.xpGoal30": "30 XP – lazán",
   "set.xpGoal50": "50 XP – átlagosan",
@@ -2738,5 +2740,9 @@
   "pp.taskN": "{n}. feladat",
   "pp.taskMsg": "Egy korábbi feladatlapot oldok meg: {paper}, {n}. feladat. Küldök egy képet a feladatról. Vezess rávezető tippekkel ennek a vizsgának a stílusában, és ne áruld el a megoldást, amíg magam meg nem próbálom.",
   "pp.boxMsg": "Egy korábbi feladatlapot oldok meg: {paper}, {page}. oldal. Küldök egy képet a feladatról. Vezess rávezető tippekkel ennek a vizsgának a stílusában, és ne áruld el a megoldást, amíg magam meg nem próbálom.",
-  "pp.taskText": "A feladat szövege a feladatlapról (a képletek sérültek lehetnek, a kép a mérvadó):"
+  "pp.taskText": "A feladat szövege a feladatlapról (a képletek sérültek lehetnek, a kép a mérvadó):",
+  "task.checkLeft": "még kb. {n} mp",
+  "task.checkAlmost": "mindjárt kész",
+  "guide.title": "Útmutató az alkalmazáshoz",
+  "guide.intro": "Mi hol van az alkalmazásban. Koppints egy részre a megnyitáshoz."
 }

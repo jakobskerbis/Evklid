@@ -521,6 +521,8 @@
   "set.dataLite": "Mereu activ",
   "set.dataNormal": "Dezactivat",
   "set.dataNote": "Răspunsuri mai scurte ale tutorelui, fotografii mai mici, fără animații și fără font suplimentar. Exercițiile traseului se salvează pentru exersare offline.",
+  "set.hideGames": "Ascunde jocurile",
+  "set.hideGamesNote": "Secțiunea Jocuri se ascunde. Progresul, monedele și avatarul rămân.",
   "set.xpGoal": "Obiectiv zilnic XP",
   "set.xpGoal30": "30 XP – relaxat",
   "set.xpGoal50": "50 XP – obișnuit",
@@ -2767,5 +2769,9 @@
   "pp.taskN": "Exercițiul {n}",
   "pp.taskMsg": "Rezolv lucrarea din anii trecuți {paper}, exercițiul {n}. Trimit o imagine a exercițiului. Ghidează-mă cu indicii în stilul acestui examen și nu-mi dezvălui soluția până nu încerc singur sau singură.",
   "pp.boxMsg": "Rezolv lucrarea din anii trecuți {paper}, pagina {page}. Trimit o imagine a exercițiului. Ghidează-mă cu indicii în stilul acestui examen și nu-mi dezvălui soluția până nu încerc singur sau singură.",
-  "pp.taskText": "Textul exercițiului din lucrare (formulele pot fi deteriorate; contează imaginea):"
+  "pp.taskText": "Textul exercițiului din lucrare (formulele pot fi deteriorate; contează imaginea):",
+  "task.checkLeft": "încă aproximativ {n} s",
+  "task.checkAlmost": "aproape gata",
+  "guide.title": "Ghidul aplicației",
+  "guide.intro": "Ce găsești în fiecare parte a aplicației. Atinge o parte ca să o deschizi."
 }

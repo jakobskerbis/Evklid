@@ -515,6 +515,8 @@
   "set.dataLite": "Gjithmonë i ndezur",
   "set.dataNormal": "I fikur",
   "set.dataNote": "Përgjigje më të shkurtra nga tutori, foto më të vogla, pa animacione dhe pa shkronja shtesë. Ushtrimet e rrugës ruhen për praktikë pa lidhje.",
+  "set.hideGames": "Fshih lojërat",
+  "set.hideGamesNote": "Seksioni Lojëra fshihet. Përparimi, monedhat dhe avatari mbeten.",
   "set.xpGoal": "Qëllimi ditor XP",
   "set.xpGoal30": "30 XP – qetë",
   "set.xpGoal50": "50 XP – zakonshëm",
@@ -2740,5 +2742,9 @@
   "pp.taskN": "Detyra {n}",
   "pp.taskMsg": "Po zgjidh provimin e kaluar {paper}, detyra {n}. Po dërgoj një foto të detyrës. Më udhëhiq me sugjerime në stilin e këtij provimi dhe mos ma zbulo zgjidhjen derisa ta provoj vetë.",
   "pp.boxMsg": "Po zgjidh provimin e kaluar {paper}, faqja {page}. Po dërgoj një foto të detyrës. Më udhëhiq me sugjerime në stilin e këtij provimi dhe mos ma zbulo zgjidhjen derisa ta provoj vetë.",
-  "pp.taskText": "Teksti i detyrës nga provimi (formulat mund të jenë të dëmtuara; vlen fotoja):"
+  "pp.taskText": "Teksti i detyrës nga provimi (formulat mund të jenë të dëmtuara; vlen fotoja):",
+  "task.checkLeft": "edhe rreth {n} s",
+  "task.checkAlmost": "pothuajse gati",
+  "guide.title": "Udhëzuesi i aplikacionit",
+  "guide.intro": "Çfarë ka ku në aplikacion. Prek një pjesë për ta hapur."
 }

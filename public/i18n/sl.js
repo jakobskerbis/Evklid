@@ -349,6 +349,8 @@ export default {
   "pad.okCheck": "Da, preveri",
   "pad.fix": "Popravi s tipkami",
   "task.checking": "Preverjam …",
+  "task.checkLeft": "še približno {n} s",
+  "task.checkAlmost": "še malo",
   "task.checkError": "Odgovora nisem mogel preveriti ({msg}). Preveri povezavo in poskusi znova.",
   "task.checkFailed": "Odgovora nisem mogel preveriti: {msg}",
   "task.alreadyChecked": "Odgovor na to nalogo je že shranjen. Velja prvi odgovor.",
@@ -652,6 +654,8 @@ export default {
   "tour.profileText": "Tu zamenjaš ali dodaš profil in odpreš nastavitve.",
   "tour.end": "To je vse",
   "tour.endText": "Ogled lahko kadar koli ponoviš v Nastavitvah (»Ponovi uvodni ogled«). Če česa ne najdeš, vprašaj inštruktorja.",
+  "guide.title": "Vodič po aplikaciji",
+  "guide.intro": "Kaj je kje v aplikaciji. Tapni del, da ga odpreš.",
 
   // videz
   "ap.title": "Videz",
@@ -743,6 +747,8 @@ export default {
   "set.dataLite": "Vedno vklopljen",
   "set.dataNormal": "Izklopljen",
   "set.dataNote": "Krajši odgovori inštruktorja, manjše fotografije, brez animacij in brez dodatne pisave. Naloge za učno pot se shranijo za vadbo brez povezave.",
+  "set.hideGames": "Skrij igre",
+  "set.hideGamesNote": "Razdelek Igre se skrije. Napredek, kovanci in avatar ostanejo.",
   "set.xpGoal": "Dnevni cilj XP",
   "set.xpGoal30": "30 XP – sproščeno",
   "set.xpGoal50": "50 XP – običajno",

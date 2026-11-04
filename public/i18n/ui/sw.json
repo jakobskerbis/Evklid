@@ -515,6 +515,8 @@
   "set.dataLite": "Imewashwa daima",
   "set.dataNormal": "Imezimwa",
   "set.dataNote": "Majibu mafupi ya mwalimu, picha ndogo, bila uhuishaji wala fonti ya ziada. Mazoezi ya njia yako huhifadhiwa ili ufanye mazoezi bila mtandao.",
+  "set.hideGames": "Ficha michezo",
+  "set.hideGamesNote": "Sehemu ya Michezo inafichwa. Maendeleo yako, sarafu na avatar vinabaki.",
   "set.xpGoal": "Lengo la XP la siku",
   "set.xpGoal30": "XP 30 – kwa utulivu",
   "set.xpGoal50": "XP 50 – kawaida",
@@ -2738,5 +2740,9 @@
   "pp.taskN": "Swali {n}",
   "pp.taskMsg": "Ninafanya mtihani wa zamani {paper}, swali {n}. Ninatuma picha ya swali. Niongoze kwa vidokezo kwa mtindo wa mtihani huu na usinifunulie jibu mpaka nijaribu mwenyewe.",
   "pp.boxMsg": "Ninafanya mtihani wa zamani {paper}, ukurasa {page}. Ninatuma picha ya swali. Niongoze kwa vidokezo kwa mtindo wa mtihani huu na usinifunulie jibu mpaka nijaribu mwenyewe.",
-  "pp.taskText": "Maandishi ya swali kutoka kwenye mtihani (fomula zinaweza kuharibika; picha ndiyo sahihi):"
+  "pp.taskText": "Maandishi ya swali kutoka kwenye mtihani (fomula zinaweza kuharibika; picha ndiyo sahihi):",
+  "task.checkLeft": "zimebaki sekunde {n} hivi",
+  "task.checkAlmost": "karibu tayari",
+  "guide.title": "Mwongozo wa programu",
+  "guide.intro": "Nini kiko wapi kwenye programu. Gusa sehemu ili kuifungua."
 }

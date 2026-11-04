@@ -509,6 +509,8 @@
   "set.dataLite": "Luôn bật",
   "set.dataNormal": "Tắt",
   "set.dataNote": "Gia sư trả lời ngắn hơn, ảnh nhỏ hơn, không có hiệu ứng và phông chữ bổ sung. Bài tập của lộ trình được lưu để luyện tập khi không có mạng.",
+  "set.hideGames": "Ẩn trò chơi",
+  "set.hideGamesNote": "Mục Trò chơi sẽ được ẩn. Tiến độ, xu và hình đại diện của bạn vẫn được giữ.",
   "set.xpGoal": "Mục tiêu XP mỗi ngày",
   "set.xpGoal30": "30 XP – thoải mái",
   "set.xpGoal50": "50 XP – bình thường",
@@ -2716,5 +2718,9 @@
   "pp.taskN": "Câu {n}",
   "pp.taskMsg": "Mình đang làm đề cũ {paper}, câu {n}. Mình gửi ảnh của câu. Hãy hướng dẫn mình bằng gợi ý theo phong cách kỳ thi này và đừng tiết lộ lời giải cho đến khi mình tự thử.",
   "pp.boxMsg": "Mình đang làm đề cũ {paper}, trang {page}. Mình gửi ảnh của câu. Hãy hướng dẫn mình bằng gợi ý theo phong cách kỳ thi này và đừng tiết lộ lời giải cho đến khi mình tự thử.",
-  "pp.taskText": "Nội dung câu lấy từ đề (công thức có thể bị lỗi, hãy dựa vào ảnh):"
+  "pp.taskText": "Nội dung câu lấy từ đề (công thức có thể bị lỗi, hãy dựa vào ảnh):",
+  "task.checkLeft": "còn khoảng {n} giây",
+  "task.checkAlmost": "sắp xong",
+  "guide.title": "Hướng dẫn ứng dụng",
+  "guide.intro": "Mỗi phần của ứng dụng có gì. Chạm vào một phần để mở."
 }

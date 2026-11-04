@@ -515,6 +515,8 @@
   "set.dataLite": "Her zaman açık",
   "set.dataNormal": "Kapalı",
   "set.dataNote": "Daha kısa öğretmen yanıtları, daha küçük fotoğraflar, animasyon ve ek yazı tipi yok. Öğrenme yolundaki alıştırmalar çevrimdışı çalışma için kaydedilir.",
+  "set.hideGames": "Oyunları gizle",
+  "set.hideGamesNote": "Oyunlar bölümü gizlenir. İlerlemen, paraların ve avatarın kalır.",
   "set.xpGoal": "Günlük XP hedefi",
   "set.xpGoal30": "30 XP – rahat",
   "set.xpGoal50": "50 XP – normal",
@@ -2738,5 +2740,9 @@
   "pp.taskN": "Soru {n}",
   "pp.taskMsg": "Geçmiş sınavı çözüyorum: {paper}, soru {n}. Sorunun resmini gönderiyorum. Bu sınavın tarzında ipuçlarıyla bana yol göster ve kendim denemeden çözümü söyleme.",
   "pp.boxMsg": "Geçmiş sınavı çözüyorum: {paper}, sayfa {page}. Sorunun resmini gönderiyorum. Bu sınavın tarzında ipuçlarıyla bana yol göster ve kendim denemeden çözümü söyleme.",
-  "pp.taskText": "Sınavdan alınan soru metni (formüller bozuk olabilir, esas olan resimdir):"
+  "pp.taskText": "Sınavdan alınan soru metni (formüller bozuk olabilir, esas olan resimdir):",
+  "task.checkLeft": "yaklaşık {n} sn kaldı",
+  "task.checkAlmost": "neredeyse bitti",
+  "guide.title": "Uygulama rehberi",
+  "guide.intro": "Uygulamada ne nerede. Açmak için bir bölüme dokun."
 }

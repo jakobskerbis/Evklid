@@ -39,6 +39,7 @@ export const PROFILE_SETTINGS = {
   interest_custom: { desc: "own extra topic for the news corner, max 40 chars of keywords, e.g. 'črne luknje' (English keywords find more news); '' clears it" },
   news_level: { values: NEWS_LEVELS, desc: "news corner depth: simple = written for kids and teens, all = also research news, auto = by school stage" },
   news_lang: { values: NEWS_LANGS, desc: "news corner: all = also English sources, mine = only news in the app language (fewer)" },
+  games: { values: ["on", "off"], desc: "games section (Igre) shown (on, default) or hidden (off = »Skrij igre« in Settings); progress, coins and avatar stay" },
   game_childhood: { list: true, values: GENRE_IDS, desc: `kinds of games the student played as a child (games questionnaire); the games section shows Evklid's own learning games in these styles; whole new list, ids: ${GENRE_IDS.join(", ")}` },
   game_titles: { list: true, desc: "student's own titles of childhood games typed in the games questionnaire (max 5 × 40 chars, whole new list); Evklid maps them to similar game kinds or to wishes for new games" },
   weak_points: { list: true, desc: "student's own list of weak points (whole new list, replaces the old one), e.g. ['ulomki', 'pretvarjanje enot']" },

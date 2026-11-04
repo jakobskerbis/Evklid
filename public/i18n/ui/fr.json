@@ -515,6 +515,8 @@
   "set.dataLite": "Toujours activé",
   "set.dataNormal": "Désactivé",
   "set.dataNote": "Réponses du tuteur plus courtes, photos plus petites, pas d'animations ni de police supplémentaire. Les exercices de ton parcours sont enregistrés pour t'entraîner hors connexion.",
+  "set.hideGames": "Masquer les jeux",
+  "set.hideGamesNote": "La section Jeux est masquée. Ta progression, tes pièces et ton avatar sont conservés.",
   "set.xpGoal": "Objectif XP du jour",
   "set.xpGoal30": "30 XP – tranquille",
   "set.xpGoal50": "50 XP – normal",
@@ -2740,5 +2742,9 @@
   "pp.taskN": "Exercice {n}",
   "pp.taskMsg": "Je travaille sur l'ancienne épreuve {paper}, exercice {n}. J'envoie une image de l'exercice. Guide-moi avec des indices dans le style de cet examen et ne me donne pas la solution tant que je n'ai pas essayé moi-même.",
   "pp.boxMsg": "Je travaille sur l'ancienne épreuve {paper}, page {page}. J'envoie une image de l'exercice. Guide-moi avec des indices dans le style de cet examen et ne me donne pas la solution tant que je n'ai pas essayé moi-même.",
-  "pp.taskText": "Texte de l'exercice tiré de l'épreuve (les formules peuvent être abîmées ; l'image fait foi) :"
+  "pp.taskText": "Texte de l'exercice tiré de l'épreuve (les formules peuvent être abîmées ; l'image fait foi) :",
+  "task.checkLeft": "encore environ {n} s",
+  "task.checkAlmost": "presque fini",
+  "guide.title": "Guide de l'appli",
+  "guide.intro": "Ce qui se trouve où dans l'appli. Touche une partie pour l'ouvrir."
 }

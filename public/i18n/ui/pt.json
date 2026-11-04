@@ -515,6 +515,8 @@
   "set.dataLite": "Sempre ligado",
   "set.dataNormal": "Desligado",
   "set.dataNote": "Respostas do tutor mais curtas, fotos mais pequenas, sem animações e sem tipo de letra extra. Os exercícios do percurso ficam guardados para praticares sem ligação.",
+  "set.hideGames": "Ocultar jogos",
+  "set.hideGamesNote": "A secção Jogos fica oculta. O teu progresso, moedas e avatar mantêm-se.",
   "set.xpGoal": "Meta diária de XP",
   "set.xpGoal30": "30 XP – tranquilo",
   "set.xpGoal50": "50 XP – normal",
@@ -2744,5 +2746,9 @@
   "pp.taskN": "Questão {n}",
   "pp.taskMsg": "Estou resolvendo a prova anterior {paper}, questão {n}. Envio uma imagem da questão. Guie-me com dicas no estilo deste exame e não revele a solução antes que eu tente sozinho ou sozinha.",
   "pp.boxMsg": "Estou resolvendo a prova anterior {paper}, página {page}. Envio uma imagem da questão. Guie-me com dicas no estilo deste exame e não revele a solução antes que eu tente sozinho ou sozinha.",
-  "pp.taskText": "Texto da questão extraído da prova (as fórmulas podem estar corrompidas; vale a imagem):"
+  "pp.taskText": "Texto da questão extraído da prova (as fórmulas podem estar corrompidas; vale a imagem):",
+  "task.checkLeft": "faltam cerca de {n} s",
+  "task.checkAlmost": "quase pronto",
+  "guide.title": "Guia da app",
+  "guide.intro": "O que há em cada parte da app. Toca numa parte para a abrir."
 }

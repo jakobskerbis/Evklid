@@ -527,6 +527,8 @@
   "set.dataLite": "Zawsze włączony",
   "set.dataNormal": "Wyłączony",
   "set.dataNote": "Krótsze odpowiedzi tutora, mniejsze zdjęcia, bez animacji i dodatkowej czcionki. Zadania ze ścieżki zapisują się do ćwiczeń offline.",
+  "set.hideGames": "Ukryj gry",
+  "set.hideGamesNote": "Sekcja Gry zostanie ukryta. Postępy, monety i awatar zostają.",
   "set.xpGoal": "Dzienny cel XP",
   "set.xpGoal30": "30 XP – na luzie",
   "set.xpGoal50": "50 XP – zwykle",
@@ -2794,5 +2796,9 @@
   "pp.taskN": "Zadanie {n}",
   "pp.taskMsg": "Rozwiązuję arkusz z poprzednich lat: {paper}, zadanie {n}. Przesyłam zdjęcie zadania. Prowadź mnie wskazówkami w stylu tego egzaminu i nie zdradzaj rozwiązania, zanim nie spróbuję.",
   "pp.boxMsg": "Rozwiązuję arkusz z poprzednich lat: {paper}, strona {page}. Przesyłam zdjęcie zadania. Prowadź mnie wskazówkami w stylu tego egzaminu i nie zdradzaj rozwiązania, zanim nie spróbuję.",
-  "pp.taskText": "Treść zadania z arkusza (wzory mogą być zniekształcone, liczy się obraz):"
+  "pp.taskText": "Treść zadania z arkusza (wzory mogą być zniekształcone, liczy się obraz):",
+  "task.checkLeft": "jeszcze około {n} s",
+  "task.checkAlmost": "prawie gotowe",
+  "guide.title": "Przewodnik po aplikacji",
+  "guide.intro": "Co gdzie jest w aplikacji. Dotknij części, aby ją otworzyć."
 }

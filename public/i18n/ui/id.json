@@ -509,6 +509,8 @@
   "set.dataLite": "Selalu aktif",
   "set.dataNormal": "Mati",
   "set.dataNote": "Jawaban tutor lebih singkat, foto lebih kecil, tanpa animasi dan tanpa font tambahan. Latihan jalur belajar disimpan agar bisa berlatih tanpa koneksi.",
+  "set.hideGames": "Sembunyikan game",
+  "set.hideGamesNote": "Bagian Game disembunyikan. Kemajuan, koin, dan avatarmu tetap tersimpan.",
   "set.xpGoal": "Target XP harian",
   "set.xpGoal30": "30 XP – santai",
   "set.xpGoal50": "50 XP – biasa",
@@ -2716,5 +2718,9 @@
   "pp.taskN": "Soal {n}",
   "pp.taskMsg": "Saya sedang mengerjakan soal ujian lalu {paper}, soal {n}. Saya kirim gambar soalnya. Bimbing saya dengan petunjuk sesuai gaya ujian ini dan jangan beri tahu jawabannya sebelum saya mencoba sendiri.",
   "pp.boxMsg": "Saya sedang mengerjakan soal ujian lalu {paper}, halaman {page}. Saya kirim gambar soalnya. Bimbing saya dengan petunjuk sesuai gaya ujian ini dan jangan beri tahu jawabannya sebelum saya mencoba sendiri.",
-  "pp.taskText": "Teks soal dari lembar ujian (rumus bisa rusak; yang berlaku gambarnya):"
+  "pp.taskText": "Teks soal dari lembar ujian (rumus bisa rusak; yang berlaku gambarnya):",
+  "task.checkLeft": "sekitar {n} dtk lagi",
+  "task.checkAlmost": "hampir selesai",
+  "guide.title": "Panduan aplikasi",
+  "guide.intro": "Apa saja yang ada di aplikasi. Ketuk bagian untuk membukanya."
 }

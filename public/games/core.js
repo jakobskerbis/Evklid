@@ -81,7 +81,8 @@ export function roundRect(g, x, y, w, h, r) {
   g.closePath();
 }
 
-// Zažene igro v elementu host. opts: { engine, concept, tier, best, t, title, onEnd(result) → Promise<info>, onExit() }
+// Zažene igro v elementu host. opts: { engine, concept, tier, tierUp, best, t, title, onEnd(result) → Promise<info>, onExit() }
+// tierUp: po koliko pravilnih zaporedoma igra preide na težje naloge (stage.js, privzeto 5).
 export function runGame(host, opts) {
   const { engine, concept, t } = opts;
   host.innerHTML = `
@@ -184,7 +185,7 @@ export function runGame(host, opts) {
         G.lives++;
         G.float(G.W / 2, G.H / 3, "+❤", "#ef4444");
       }
-      if (G.streak % 5 === 0 && G.tier < 3) {
+      if (G.streak % (opts.tierUp || 5) === 0 && G.tier < 3) {
         G.tier++;
         beep("up");
         G.float(G.W / 2, G.H / 2, t("games.harder"), "#f59e0b", 28);

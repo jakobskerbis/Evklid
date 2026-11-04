@@ -354,3 +354,35 @@ test("games: grid pages of 60 across area sections (j: »največ 50 iger naenkra
   assert.deepEqual(pageNums(0, 111, 1), [0, 1, 110]);
   assert.deepEqual(pageNums(0, 1), [0]);
 });
+
+test("games: adapt to the student's stage, and »Skrij igre« is a saved profile setting", async () => {
+  const { STAGES, stageOf, startTierFor, gamesOn } = await import("../public/games/stage.js");
+  const { normalizeSettings } = await import("../server/settings.js");
+  // OŠ igrivo in od lahkega naprej; SŠ in fakulteta resnejši videz, težji začetek, hitreje težje.
+  assert.equal(stageOf({ educational_track: "OSNOVNA_SOLA" }), "os");
+  assert.equal(stageOf({ educational_track: "SREDNJA_SOLA" }), "ss");
+  assert.equal(stageOf({ educational_track: "UNIVERZA" }), "faks");
+  assert.equal(stageOf(null), "os");
+  assert.equal(STAGES.os.calm, false);
+  assert.ok(STAGES.ss.calm && STAGES.faks.calm);
+  assert.ok(STAGES.os.tierUp > STAGES.ss.tierUp && STAGES.ss.tierUp >= STAGES.faks.tierUp);
+  assert.equal(startTierFor("os", undefined), 1);
+  assert.equal(startTierFor("ss", 1), 2);
+  assert.equal(startTierFor("ss", 3), 3);
+  assert.equal(startTierFor("faks", 1), 3);
+  // Stikalo: privzeto vidno, »off« se ohrani, neveljavna vrednost ne.
+  assert.equal(normalizeSettings({}).games, "on");
+  assert.equal(normalizeSettings({ games: "off" }).games, "off");
+  assert.equal(normalizeSettings({ games: "maybe" }).games, "on");
+  assert.equal(gamesOn(normalizeSettings({})), true);
+  assert.equal(gamesOn(normalizeSettings({ games: "off" })), false);
+  // Splet in aplikacija imata isti obrazec: polje, besedilo v vseh jezikih in resnejši videz v CSS.
+  const fs = await import("node:fs");
+  const html = fs.readFileSync(new URL("../public/index.html", import.meta.url), "utf8");
+  assert.match(html, /name="games"/);
+  for (const f of fs.readdirSync(new URL("../public/i18n/ui/", import.meta.url))) {
+    const ui = JSON.parse(fs.readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8"));
+    assert.ok(ui["set.hideGames"] && ui["set.hideGamesNote"], f);
+  }
+  assert.match(fs.readFileSync(new URL("../public/games.css", import.meta.url), "utf8"), /\.gm-calm \.gm-tile/);
+});

@@ -509,6 +509,8 @@
   "set.dataLite": "始终开启",
   "set.dataNormal": "关闭",
   "set.dataNote": "导师回答更简短、照片更小、无动画、不加载额外字体。学习路径的练习会保存下来，便于离线练习。",
+  "set.hideGames": "隐藏游戏",
+  "set.hideGamesNote": "“游戏”栏目将被隐藏。你的进度、金币和头像都会保留。",
   "set.xpGoal": "每日 XP 目标",
   "set.xpGoal30": "30 XP – 轻松",
   "set.xpGoal50": "50 XP – 普通",
@@ -2716,5 +2718,9 @@
   "pp.taskN": "第 {n} 题",
   "pp.taskMsg": "我在做往年试卷 {paper}，第 {n} 题。我发送这道题的图片。请按这场考试的风格用提示引导我，在我自己尝试之前不要透露答案。",
   "pp.boxMsg": "我在做往年试卷 {paper}，第 {page} 页。我发送这道题的图片。请按这场考试的风格用提示引导我，在我自己尝试之前不要透露答案。",
-  "pp.taskText": "从试卷中提取的题目文字（公式可能有误，以图片为准）："
+  "pp.taskText": "从试卷中提取的题目文字（公式可能有误，以图片为准）：",
+  "task.checkLeft": "还需约 {n} 秒",
+  "task.checkAlmost": "马上就好",
+  "guide.title": "应用指南",
+  "guide.intro": "应用里各部分是做什么的。点一下即可打开。"
 }

@@ -527,6 +527,8 @@
   "set.dataLite": "Vždy zapnutý",
   "set.dataNormal": "Vypnutý",
   "set.dataNote": "Kratšie odpovede tútora, menšie fotky, bez animácií a bez ďalšieho písma. Úlohy zo študijnej cesty sa uložia na precvičovanie bez pripojenia.",
+  "set.hideGames": "Skryť hry",
+  "set.hideGamesNote": "Sekcia Hry sa skryje. Pokrok, mince a avatar zostanú.",
   "set.xpGoal": "Denný cieľ XP",
   "set.xpGoal30": "30 XP – pohodovo",
   "set.xpGoal50": "50 XP – bežne",
@@ -2792,5 +2794,9 @@
   "pp.taskN": "Úloha {n}",
   "pp.taskMsg": "Riešim staršiu písomku {paper}, úloha {n}. Posielam obrázok úlohy. Veď ma nápovedami v štýle tejto skúšky a neprezraď riešenie, kým sa oň nepokúsim.",
   "pp.boxMsg": "Riešim staršiu písomku {paper}, strana {page}. Posielam obrázok úlohy. Veď ma nápovedami v štýle tejto skúšky a neprezraď riešenie, kým sa oň nepokúsim.",
-  "pp.taskText": "Text úlohy z písomky (vzorce môžu byť poškodené, platí obrázok):"
+  "pp.taskText": "Text úlohy z písomky (vzorce môžu byť poškodené, platí obrázok):",
+  "task.checkLeft": "ešte asi {n} s",
+  "task.checkAlmost": "takmer hotovo",
+  "guide.title": "Sprievodca aplikáciou",
+  "guide.intro": "Čo je v aplikácii kde. Ťukni na časť a otvorí sa."
 }

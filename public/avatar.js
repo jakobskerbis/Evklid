@@ -51,6 +51,7 @@ export const ITEMS = [
   it("hat_beanie", "hat", 30, "Zimska kapa", "Beanie"),
   it("hat_party", "hat", 40, "Zabavna kapa", "Party hat"),
   it("hat_flower", "hat", 40, "Rožica", "Flower"),
+  it("hat_chef", "hat", 40, "Kuharska kapa", "Chef's hat"),
   it("hat_phones", "hat", 60, "Slušalke", "Headphones"),
   it("hat_grad", "hat", 80, "Diplomska kapa", "Graduation cap"),
   it("hat_viking", "hat", 110, "Vikinška čelada", "Viking helmet"),
@@ -64,6 +65,7 @@ export const ITEMS = [
   it("outfit_scarf", "outfit", 30, "Šal", "Scarf"),
   it("outfit_hoodie", "outfit", 50, "Pulover", "Hoodie"),
   it("outfit_lab", "outfit", 70, "Laboratorijska halja", "Lab coat"),
+  it("outfit_puffer", "outfit", 90, "Puhovka", "Puffer jacket"),
   it("outfit_hero", "outfit", 150, "Junak s plaščem", "Hero cape"),
   it("outfit_armor", "outfit", 280, "Zlati oklep", "Golden armour"),
   it("outfit_starcape", "outfit", 2500, "Zvezdni plašč", "Starry cloak"),
@@ -74,6 +76,7 @@ export const ITEMS = [
   it("acc_monocle", "acc", 60, "Monokel", "Monocle"),
   it("acc_goggles", "acc", 90, "Zaščitna očala", "Lab goggles"),
   it("acc_blush", "acc", 20, "Rdeča lička", "Blush"),
+  it("acc_bubble", "acc", 25, "Balonček iz žvečilke", "Bubble gum"),
   // ozadje
   it("bg_sky", "bg", 0, "Nebo", "Sky"),
   it("bg_mint", "bg", 0, "Meta", "Mint"),
@@ -81,6 +84,7 @@ export const ITEMS = [
   it("bg_sun", "bg", 40, "Sonce", "Sunburst"),
   it("bg_ocean", "bg", 60, "Morje", "Ocean"),
   it("bg_stars", "bg", 90, "Zvezdna noč", "Starry night"),
+  it("bg_pyramids", "bg", 120, "Piramide", "Pyramids"),
   it("bg_space", "bg", 150, "Vesolje", "Space"),
   it("bg_lava", "bg", 260, "Vulkan", "Volcano"),
   it("bg_nebula", "bg", 2000, "Meglica", "Nebula"),
@@ -96,6 +100,7 @@ export const ITEM = Object.fromEntries(ITEMS.map((x) => [x.id, x]));
 export const ADDED = {
   ...Object.fromEntries(["hat_flame", "bg_nebula", "outfit_starcape", "pot_blackhole", "pot_comet", "pot_starcrown", "kind_phoenix", "kind_whale", "meme_pica", "meme_gelato", "meme_tung", "meme_tungfx", "meme_kavicina", "meme_bananini", "meme_saturnita", "meme_slonini", "meme_smrekini"].map((id) => [id, "2026-10-30"])),
   ...Object.fromEntries(["meme_limone", "meme_spageti", "meme_skampi", "meme_testenine", "meme_kokos", "meme_frigo", "meme_luna", "meme_cajnik", "meme_lubenica"].map((id) => [id, "2026-10-30"])),
+  ...Object.fromEntries(["hat_chef", "acc_bubble", "outfit_puffer", "bg_pyramids", "pot_rhind"].map((id) => [id, "2026-11-04"])),
 };
 export const NEW_DAYS = 7;
 // Splošno: datum »YYYY-MM-DD« je mlajši od NEW_DAYS dni (tudi za nove vrste iger, oznaka .gm-new v games.css).
@@ -110,10 +115,10 @@ export const itemOf = (id) => ITEM[baseId(id)] || null;
 // mestu (npr. dvoje očal) se izključujeta: novi zamenja starega. Ostali predali imajo en predmet.
 export const MULTI = ["hat", "outfit", "acc", "badge", "fx"];
 export const MULTI_MAX = 6;
-const SPOT = { hat_phones: "ears", hat_flower: "flower", pot_laurel: "wreath", outfit_bow: "neck", outfit_scarf: "neck", acc_blush: "cheeks", pot_pregl: "hand", pass_pencil: "pencil", acc_joystick: "controller" };
+const SPOT = { hat_phones: "ears", hat_flower: "flower", pot_laurel: "wreath", outfit_bow: "neck", outfit_scarf: "neck", acc_blush: "cheeks", acc_bubble: "bubble", pot_pregl: "hand", pass_pencil: "pencil", acc_joystick: "controller" };
 const SPOT_MAIN = { hat: "head", outfit: "body", acc: "eyes" };
 // Vrstni red risanja (spodaj → zgoraj); značke in efekti po vrsti oblačenja.
-const SPOT_ORDER = { hat: ["wreath", "head", "ears", "flower"], outfit: ["body", "neck"], acc: ["cheeks", "eyes", "hand", "pencil", "controller"] };
+const SPOT_ORDER = { hat: ["wreath", "head", "ears", "flower"], outfit: ["body", "neck"], acc: ["cheeks", "bubble", "eyes", "hand", "pencil", "controller"] };
 export const spotOf = (x) => SPOT[x.id] || SPOT_MAIN[x.slot] || x.id;
 export const isMulti = (slot) => MULTI.includes(slot);
 
@@ -224,6 +229,8 @@ const BG = {
   bg_space: () => `<rect width="100" height="100" fill="#2e1065"/><g fill="#e9d5ff">${[[10, 10], [30, 6], [92, 30], [6, 70], [94, 90], [70, 6]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.3"/>`).join("")}</g><circle cx="14" cy="30" r="8" fill="#f472b6"/><ellipse cx="14" cy="30" rx="13" ry="3" fill="none" stroke="#fbcfe8" stroke-width="1.5"/>`,
   bg_nebula: (u) =>
     `<defs><radialGradient id="neb1${u}" cx=".25" cy=".3" r=".6"><stop offset="0" stop-color="#f472b6" stop-opacity=".95"/><stop offset="1" stop-color="#f472b6" stop-opacity="0"/></radialGradient><radialGradient id="neb2${u}" cx=".8" cy=".7" r=".6"><stop offset="0" stop-color="#22d3ee" stop-opacity=".85"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient><radialGradient id="neb3${u}" cx=".7" cy=".15" r=".4"><stop offset="0" stop-color="#a78bfa" stop-opacity=".9"/><stop offset="1" stop-color="#a78bfa" stop-opacity="0"/></radialGradient></defs><rect width="100" height="100" fill="#0b1026"/><rect width="100" height="100" fill="url(#neb1${u})"/><rect width="100" height="100" fill="url(#neb2${u})"/><rect width="100" height="100" fill="url(#neb3${u})"/><g fill="#fff">${[[8, 8, 1.4], [30, 14, 1], [52, 6, 1.6], [90, 12, 1.2], [94, 44, 1], [6, 46, 1.2], [12, 92, 1.4], [88, 92, 1]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join("")}</g><path d="M78 30l1.4 3.6 3.6 1.4-3.6 1.4-1.4 3.6-1.4-3.6-3.6-1.4 3.6-1.4z" fill="#fef9c3"/>`,
+  bg_pyramids: (u) =>
+    `<defs><linearGradient id="py${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdba74"/><stop offset="1" stop-color="#fef3c7"/></linearGradient></defs><rect width="100" height="100" fill="url(#py${u})"/><circle cx="84" cy="16" r="7" fill="#fef9c3"/><path d="M0 80L24 44 48 80z" fill="#e0b070" stroke="#a16207" stroke-width="1.2" stroke-linejoin="round"/><path d="M24 44L48 80H30z" fill="#c08a4f"/><path d="M60 80L80 52 100 80z" fill="#e0b070" stroke="#a16207" stroke-width="1.2" stroke-linejoin="round"/><path d="M80 52L100 80H86z" fill="#c08a4f"/><path d="M0 78q25-5 50 0t50 0V100H0z" fill="#ecc994"/><path d="M0 90q30-4 60 0t40 0" stroke="#d6a86b" stroke-width="1.5" fill="none"/>`,
   bg_lava: (u) => `<defs><linearGradient id="lv${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7f1d1d"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs><rect width="100" height="100" fill="url(#lv${u})"/><path d="M0 100L18 62 30 70 42 52 58 72 70 58 84 70 100 56V100z" fill="#292524"/><g fill="#fdba74">${[[20, 20], [70, 14], [86, 34]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.4"/>`).join("")}</g>`,
 };
 
@@ -254,6 +261,7 @@ const MOUTH = {
 
 const ACC = {
   acc_none: () => "",
+  acc_bubble: () => `<circle cx="50" cy="69" r="8.5" fill="#f9a8d4" fill-opacity=".92" stroke="#db2777" stroke-width="1.8"/><path d="M45.5 65.5q2-3 5-3" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
   acc_blush: () => `<ellipse cx="32" cy="62" rx="5" ry="3" fill="#fb7185" opacity=".6"/><ellipse cx="68" cy="62" rx="5" ry="3" fill="#fb7185" opacity=".6"/>`,
   acc_glasses: () => `<g fill="none" stroke="${INK}" stroke-width="2.5"><circle cx="40" cy="52" r="8"/><circle cx="60" cy="52" r="8"/><path d="M48 52h4M32 50l-8-3M68 50l8-3"/></g>`,
   acc_shades: () => `<path d="M30 46h18v7q0 7-9 7t-9-7zM52 46h18v7q0 7-9 7t-9-7z" fill="#111827" stroke="${INK}" stroke-width="2"/><path d="M48 49h4M30 48l-6-2M70 48l6-2" stroke="${INK}" stroke-width="2.5"/><path d="M34 50l4-2" stroke="#fff" stroke-width="1.5" opacity=".7"/>`,
@@ -263,6 +271,8 @@ const ACC = {
 
 const HAT = {
   hat_none: () => "",
+  hat_chef: () =>
+    `<path d="M32 26q-11-2-9-12 3-8 12-5 2-8 15-8t15 8q9-3 12 5 2 10-9 12z" fill="#fff" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/><path d="M40 14q2 5 0 10M60 14q-2 5 0 10" stroke="#e2e8f0" stroke-width="1.6" fill="none"/><rect x="32" y="23" width="36" height="11" rx="2" fill="#f8fafc" stroke="${INK}" stroke-width="2.5"/><path d="M41 24v9M50 24v9M59 24v9" stroke="#cbd5e1" stroke-width="1.5"/>`,
   hat_cap: () => `<path d="M24 34q2-18 26-18t26 18z" fill="#ef4444" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/><path d="M60 34h26q0 5-6 5H60z" fill="#b91c1c" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/><circle cx="50" cy="16" r="2.5" fill="#b91c1c"/>`,
   hat_beanie: () => `<path d="M23 36q0-22 27-22t27 22z" fill="#14b8a6" stroke="${INK}" stroke-width="2.5"/><rect x="21" y="32" width="58" height="8" rx="4" fill="#0f766e" stroke="${INK}" stroke-width="2.5"/><circle cx="50" cy="12" r="5" fill="#f8fafc" stroke="${INK}" stroke-width="2"/>`,
   hat_party: () => `<path d="M36 30L50 2l14 28z" fill="#a855f7" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/><path d="M40 22l6 3M43 14l6 3M46 7l4 2" stroke="#fde047" stroke-width="2.5" stroke-linecap="round"/><circle cx="50" cy="3" r="3" fill="#fde047" stroke="${INK}" stroke-width="1.5"/>`,
@@ -287,6 +297,8 @@ const OUTFIT = {
   outfit_none: () => "",
   outfit_bow: () => `<path d="M50 78l-11-6v12zM50 78l11-6v12z" fill="#ef4444" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/><circle cx="50" cy="78" r="3" fill="#b91c1c" stroke="${INK}" stroke-width="1.5"/>`,
   outfit_scarf: () => `<path d="M20 74q30 10 60 0v8q-30 10-60 0z" fill="#f59e0b" stroke="${INK}" stroke-width="2"/><path d="M62 80l4 16h8l-3-17z" fill="#d97706" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>`,
+  outfit_puffer: (u) =>
+    `<g clip-path="url(#c${u})"><path d="M0 76h100v28H0z" fill="#38bdf8" stroke="${INK}" stroke-width="2"/><path d="M0 85q50 5 100 0M0 93q50 5 100 0" stroke="#0284c7" stroke-width="2" fill="none"/><path d="M50 80v24" stroke="#0369a1" stroke-width="2"/></g><path d="M30 76q20 6 40 0" stroke="#7dd3fc" stroke-width="4" fill="none" stroke-linecap="round"/><rect x="48.5" y="82" width="3" height="6" rx="1.2" fill="#e2e8f0" stroke="${INK}" stroke-width="1"/>`,
   outfit_hoodie: (u) => `<g clip-path="url(#c${u})"><path d="M0 76q50 10 100 0v30H0z" fill="#22c55e" stroke="${INK}" stroke-width="2"/><path d="M44 80v10M56 80v10" stroke="#f8fafc" stroke-width="2"/><rect x="38" y="88" width="24" height="8" rx="3" fill="#16a34a"/></g>`,
   outfit_lab: (u) => `<g clip-path="url(#c${u})"><path d="M0 74h100v30H0z" fill="#f8fafc" stroke="${INK}" stroke-width="2"/><path d="M50 74v26M50 74l-10 10M50 74l10 10" stroke="#cbd5e1" stroke-width="2" fill="none"/><rect x="58" y="84" width="10" height="8" fill="none" stroke="#94a3b8" stroke-width="1.5"/><path d="M61 80v8" stroke="#3b82f6" stroke-width="2"/></g>`,
   outfit_hero: (u) => `<g clip-path="url(#c${u})"><path d="M0 74h100v30H0z" fill="#2563eb"/></g><path d="M50 76l3 6 6 .6-4.5 4 1.4 6-5.9-3.3-5.9 3.3 1.4-6-4.5-4 6-.6z" fill="#facc15" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/>`,

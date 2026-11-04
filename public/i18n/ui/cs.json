@@ -527,6 +527,8 @@
   "set.dataLite": "Vždy zapnuto",
   "set.dataNormal": "Vypnuto",
   "set.dataNote": "Kratší odpovědi tutora, menší fotky, bez animací a bez dalšího písma. Úlohy ze studijní cesty se uloží pro procvičování bez připojení.",
+  "set.hideGames": "Skrýt hry",
+  "set.hideGamesNote": "Sekce Hry se skryje. Pokrok, mince a avatar zůstanou.",
   "set.xpGoal": "Denní cíl XP",
   "set.xpGoal30": "30 XP – v klidu",
   "set.xpGoal50": "50 XP – běžně",
@@ -2788,5 +2790,9 @@
   "pp.taskN": "Úloha {n}",
   "pp.taskMsg": "Řeším starší písemku {paper}, úloha {n}. Posílám obrázek úlohy. Veď mě nápovědami ve stylu této zkoušky a neprozrazuj řešení, dokud se o něj nepokusím.",
   "pp.boxMsg": "Řeším starší písemku {paper}, strana {page}. Posílám obrázek úlohy. Veď mě nápovědami ve stylu této zkoušky a neprozrazuj řešení, dokud se o něj nepokusím.",
-  "pp.taskText": "Text úlohy z písemky (vzorce mohou být poškozené, platí obrázek):"
+  "pp.taskText": "Text úlohy z písemky (vzorce mohou být poškozené, platí obrázek):",
+  "task.checkLeft": "ještě asi {n} s",
+  "task.checkAlmost": "skoro hotovo",
+  "guide.title": "Průvodce aplikací",
+  "guide.intro": "Co je v aplikaci kde. Klepni na část a otevře se."
 }

@@ -22,6 +22,7 @@ import { ITEMS, SLOTS, DEFAULT_AVATAR, MULTI_MAX, avatarSvg, itemName, itemOf, i
 import { seasonOf } from "../zbirke.js";
 import { unlockedText } from "../zbirke-view.js";
 import { pageSlice, pageNums } from "./pages.js";
+import { STAGES, stageOf, startTierFor } from "./stage.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const FILTER_KEY = "evklid.gamesFilter";
@@ -80,8 +81,12 @@ const tileColor = (c) => `hsl(${(CONCEPTS.indexOf(c) * 137.5) % 360} 78% 52%)`;
 const areaColor = (id) => AREAS.find((a) => a[0] === id)?.[2] || "#2563eb";
 // Pojem je »zate«, če je blizu tvojemu letu šolanja (malo za nazaj, eno leto naprej).
 const forYou = (c) => (data.year >= 13 ? c.year >= 10 : c.year <= data.year + 1 && c.year >= data.year - 4);
-// Vsaka igra se začne lahko; težje gre šele, ko učencu gre (shranjena raven pojma).
-const startTier = (c) => data.concepts[c.id] || 1;
+// Stopnja učenca (stage.js): OŠ igrivo, SŠ in fakulteta resnejši videz in težji začetek.
+const stage = () => stageOf(ctx?.getStudent()?.settings);
+// V OŠ se vsaka igra začne lahko; težje gre šele, ko učencu gre (shranjena raven pojma).
+const startTier = (c) => startTierFor(stage(), data.concepts[c.id]);
+// Videz po stopnji velja za ves pogled iger (mreža, igra, kartice).
+const applyStageLook = () => document.querySelector("#view-games")?.classList.toggle("gm-calm", STAGES[stage()].calm);
 
 export function initGames(c) {
   ctx = c;
@@ -96,6 +101,7 @@ export async function showGames() {
   root = document.querySelector("#games-content");
   if (!root || !ctx) return;
   setNumberStyle(ctx.currentLang());
+  applyStageLook();
   if (game) return; // igra ostane odprta
   renderPortal();
   try {
@@ -544,6 +550,7 @@ function openGame(id) {
     engine,
     concept,
     tier: startTier(concept),
+    tierUp: STAGES[stage()].tierUp,
     best: data.games[id]?.best || 0,
     title,
     t,
