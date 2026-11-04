@@ -90,7 +90,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 button, input, select, textarea { font: inherit; color: inherit; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+/* Skrit napis (samo za bralnik zaslona): top/start 0, da ostane na vrhu svojega okvirja. Brez tega je napis brez
+   postavljenega prednika (npr. »Jezik« na dnu Nastavitev) stal na svojem mestu v drsni vsebini in podaljšal celo stran:
+   gumb s kartico z imenom (scrollIntoView) je nato premaknil stran in spodnja vrstica je obvisela sredi zaslona (j 2026-11-04). */
+.sr-only { position: absolute; top: 0; inset-inline-start: 0; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .muted { color: var(--muted); font-size: 0.93em; }
 svg.i { width: 1.15em; height: 1.15em; flex: none; vertical-align: -0.2em; }
 h1 { font-size: 1.55rem; line-height: 1.25; margin: 0 0 8px; font-weight: 800; letter-spacing: -0.01em; }
