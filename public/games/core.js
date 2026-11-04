@@ -158,6 +158,9 @@ export function runGame(host, opts) {
     if (sec) startTimer(sec / Math.max(0.8, Math.min(1.4, G.speed)));
     // igra lahko vrne opis prizora za bralnik zaslona (npr. vse naloge robotkov, ki so samo na platnu)
     const said = eng.question?.(q);
+    // igra lahko v glavi pokaže svoje navodilo za to nalogo (npr. »Razvrsti od največjega do najmanjšega.«)
+    const head = eng.headline?.();
+    if (head) $(".gm-q").textContent = head;
     if (typeof said === "string") {
       const sr = document.createElement("span");
       sr.className = "sr-only";
