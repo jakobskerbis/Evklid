@@ -59,22 +59,24 @@ export function paperLabel(e, subjectName = (s) => s) {
   return `${examName(e.exam)} – ${subjectName(e.subject)}${level}, ${e.year}, ${termText(e)}`;
 }
 
-function rowHtml(e, i, tutor, local) {
+function rowHtml(e, i, tutor, local, ours) {
   const files = e.files
     .map((f) => `<a class="btn-secondary small pp-file" href="${esc(f.url)}" target="_blank" rel="noopener noreferrer" title="${esc(t("pp.opens"))}">${icon("file-text")}<span>${esc(fileText(f, e))}</span>${icon("external-link")}</a>`)
     .join("");
   // Nalog RIC ne prepisujemo, uporabimo le zgradbo pole (structure). Naša pola v istem slogu (ours) z razlagami
   // pride pozneje (Opus s trojnim pregledom); do takrat »Naša pola v tem slogu je v pripravi«, povezava na ric.si ostane.
+  // Naša pola obstaja: gumb »Reši našo polo v tem slogu« pred povezavami na ric.si (public/our-paper.js).
   const expl = e.ours ? "" : `<span class="pp-expl">${icon("notebook-pen")}${esc(t("pp.oursSoon"))}</span>`;
+  const oursBtn = e.ours && ours ? `<button type="button" class="pp-ours small" data-pp-ours="${i}">${icon("notebook-pen")}<span>${esc(t("pp.oursOpen"))}</span></button>` : "";
   // »Rešuj z inštruktorjem«: pogovor z inštruktorjem, ki ve, katero polo učenec rešuje (nalogo pošlje s fotografijo ali prepisom).
   const help = tutor ? `<button type="button" class="secondary small pp-tutor" data-pp-tutor="${i}">${icon("message-circle")}<span>${esc(t("pp.tutor"))}</span></button>` : "";
   // »Odpri preneseno polo«: PDF, ki ga je učenec prenesel z ric.si, ostane v napravi (public/paper-viewer.js).
   const open = local ? `<label class="btn-secondary small pp-file pp-local">${icon("folder-open")}<span>${esc(t("pp.openLocal"))}</span><input type="file" accept="application/pdf,.pdf" data-pp-local="${i}"></label>` : "";
-  return `<li class="pp-row"><div class="pp-when"><b>${e.year}</b><span>${esc(termText(e))}</span></div><div class="pp-files">${files}${help}${open}</div>${expl}</li>`;
+  return `<li class="pp-row"><div class="pp-when"><b>${e.year}</b><span>${esc(termText(e))}</span></div><div class="pp-files">${oursBtn}${files}${help}${open}</div>${expl}</li>`;
 }
 
 // Namesti izbirnik v `box`. start: { track, exam, subject, level } (privzeto učenčeva raven).
-export function mountPapers(box, papers, start, { subjectName = (s) => s, onTutor = null, onLocal = null, onReopen = null } = {}) {
+export function mountPapers(box, papers, start, { subjectName = (s) => s, onTutor = null, onLocal = null, onReopen = null, onOurs = null } = {}) {
   const v = { ...start };
   // Neveljavna začetna izbira (npr. predmet, ki ga izpit nima) se izbriše od tam naprej.
   for (const key of ["track", "exam", "subject", "level"]) {
@@ -106,7 +108,7 @@ export function mountPapers(box, papers, start, { subjectName = (s) => s, onTuto
           .map(([val, label, sub]) => `<button type="button" class="choice lp-opt ${val === v[current[0]] ? "on" : ""}" data-pp-key="${current[0]}" data-pp-val="${esc(val)}"><span>${esc(label)}</span>${sub ? `<small>${esc(sub)}</small>` : ""}</button>`)
           .join("")}</div>`
           : entries.length
-            ? `${onLocal ? `<p class="pp-local-hint">${esc(t("pp.openLocalHint"))}</p>` : ""}<ul class="pp-list">${shown.map((e, i) => rowHtml(e, i, !!onTutor, !!onLocal)).join("")}</ul>${entries.length > shown.length ? `<button type="button" class="text-btn pp-more" data-pp-more>${esc(t("pp.more", { n: entries.length - shown.length }))}</button>` : ""}`
+            ? `${onLocal ? `<p class="pp-local-hint">${esc(t("pp.openLocalHint"))}</p>` : ""}<ul class="pp-list">${shown.map((e, i) => rowHtml(e, i, !!onTutor, !!onLocal, !!onOurs)).join("")}</ul>${entries.length > shown.length ? `<button type="button" class="text-btn pp-more" data-pp-more>${esc(t("pp.more", { n: entries.length - shown.length }))}</button>` : ""}`
             : `<p class="muted">${esc(t("pp.empty"))}</p>`
       }`;
   };
@@ -121,6 +123,8 @@ export function mountPapers(box, papers, start, { subjectName = (s) => s, onTuto
     // Pola, ki je po »Pomoč pri tej nalogi« še v pomnilniku, se odpre znova brez izbire datoteke.
     const local = e.target.closest(".pp-local");
     if (local && onReopen?.(shown[Number(local.querySelector("[data-pp-local]").dataset.ppLocal)], subjectName)) return e.preventDefault();
+    const ours = e.target.closest("[data-pp-ours]");
+    if (ours && onOurs) return onOurs(shown[Number(ours.dataset.ppOurs)], subjectName);
     const tutor = e.target.closest("[data-pp-tutor]");
     if (tutor && onTutor) return onTutor(shown[Number(tutor.dataset.ppTutor)], subjectName);
     const step = e.target.closest("[data-pp-step]");

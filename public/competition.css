@@ -116,6 +116,7 @@
 .pp-when span { color: var(--muted); font-size: 0.86rem; }
 .pp-files { display: flex; flex-wrap: wrap; gap: 6px; }
 .pp-file { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; }
+.pp-files button.pp-ours { display: inline-flex; align-items: center; gap: 6px; min-height: 40px !important; }
 .pp-files button.pp-tutor { display: inline-flex; align-items: center; gap: 6px; min-height: 40px !important; } /* dotik: button.small je sicer 38 px */
 .pp-file svg.i:last-child { width: 14px; height: 14px; opacity: 0.7; }
 .pp-expl { grid-column: 2; display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.84rem; }
@@ -181,3 +182,37 @@ html.pv-open, html.pv-open body { overflow: hidden; }
   .pv-task > button.pv-help { top: auto; bottom: 4px; } /* telefon: gumb v prostoru za odgovor, ne čez besedilo naloge */
 }
 @media (prefers-reduced-motion: reduce) { .pv-task { transition: none; } }
+
+/* Naša pola v slogu pretekle pole (public/our-paper.js): isti zaslon kot pregledovalnik pole (.pv). */
+.op-score { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; padding: 0 6px; }
+.op-body { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.op-about { display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--accent-soft); font-size: 0.92rem; }
+.op-about svg.i { flex: none; width: 18px; height: 18px; margin-top: 2px; }
+.op-tools { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.op-task { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: 14px 16px; }
+.op-task > h3 { margin: 0 0 8px; font-size: 1.05rem; }
+.op-parts { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.op-part { border-top: 1px solid var(--border); padding-top: 12px; }
+.op-q { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: start; }
+.op-no { font-weight: 600; min-width: 1.6em; }
+.op-text > :first-child { margin-top: 0; }
+.op-text > :last-child { margin-bottom: 0; }
+.op-pts { color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
+.op-fig { margin: 10px 0; text-align: center; color: var(--text); }
+.op-fig svg { max-width: min(100%, 420px); height: auto; }
+.op-choices { margin: 8px 0 0; padding-inline-start: 1.6em; }
+.op-choices li { margin: 4px 0; }
+.op-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+.op-actions button { display: inline-flex; align-items: center; gap: 6px; min-height: 40px !important; }
+.op-got { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; cursor: pointer; }
+.op-got input { width: 20px; height: 20px; }
+.op-sol { margin-top: 10px; padding: 10px 12px; border-inline-start: 3px solid var(--accent); background: var(--bg); border-radius: var(--radius-sm); }
+.op-answer { margin: 0 0 8px; }
+.op-answer p { display: inline; }
+.op-way h4 { margin: 10px 0 4px; font-size: 0.95rem; }
+.op-way > :last-child { margin-bottom: 0; }
+.op-note { margin: 10px 0 0; font-size: 0.92rem; }
+.op-note p { display: inline; }
+.op-mistake { color: var(--muted); }
+.op table { border-collapse: collapse; margin: 8px 0; }
+.op th, .op td { border: 1px solid var(--border); padding: 4px 8px; text-align: center; }

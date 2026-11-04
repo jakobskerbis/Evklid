@@ -203,9 +203,9 @@ function lastUserText(messages) {
   const last = messages[messages.length - 1];
   if (!last) return "";
   if (typeof last.content === "string") return last.content;
-  // Skrita opomba s preverjenim rezultatom (server/live-check.js) ni del učenčevega besedila.
+  // Skriti opombi s preverjenim rezultatom (server/live-check.js) in pole (server/paper-context.js) nista del učenčevega besedila.
   return last.content
-    .filter((b) => b.type === "text" && !b.text.startsWith("<preverjen_racun>"))
+    .filter((b) => b.type === "text" && !b.text.startsWith("<preverjen_racun>") && !b.text.startsWith("<kontekst_pole>"))
     .map((b) => b.text)
     .join(" ");
 }

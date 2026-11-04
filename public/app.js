@@ -49,6 +49,7 @@ import { goalFieldsHtml, wireGoalFields, readGoalFields, goalLineHtml, goalName,
 import { validDate } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
+import { openOurPaper, closeOurPaper } from "./our-paper.js";
 import { initDrsniki } from "./drsniki.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
 import { GUIDE } from "./vodic.js";
@@ -320,7 +321,7 @@ window.addEventListener("popstate", () => {
   overlayEntry = false;
   const keep = () => currentView !== "path" && history.pushState({ stm: 1, v: currentView }, "");
   // Odprt meni (klobuk ali profil) Nazaj le zapre, pogled ostane.
-  if (closePaperViewer() || closeQuickStart() || closeProfileMenu()) return keep();
+  if (closePaperViewer() || closeOurPaper() || closeQuickStart() || closeProfileMenu()) return keep();
   if (installSheetOpen()) {
     closeInstallSheet({ fromBack: true });
     return keep();
@@ -538,6 +539,7 @@ async function selectStudent(id) {
   }
   state.student = target;
   keptPaper = null;
+  state.paperCtx = null; // skrit kontekst pole ne gre v pogovor drugega profila
   // Jezik je del profila: ob menjavi učenca se vmesnik preklopi v njegov jezik (stran se naloži znova).
   const want = state.student.settings.language;
   if (want && want !== currentLang()) {
@@ -621,6 +623,7 @@ function renderConversationList() {
       e.stopPropagation();
       if (!confirm(t("chat.confirmDelete"))) return;
       await api(`/api/conversations/${c.id}`, { method: "DELETE" });
+      if (state.paperCtx?.conv === c.id) state.paperCtx = null; // id se lahko ponovi pri novem pogovoru
       if (state.conversationId === c.id) {
         state.conversationId = null;
         renderEmptyChat();
@@ -3032,6 +3035,7 @@ async function showPapers(c) {
   mountPapers(slot, papers, { track: s.educational_track, exam: c.exam, subject: c.subject, level }, {
     subjectName: (k) => SUBJECT_NAMES[k] || k,
     onTutor: paperTutor,
+    onOurs: openOurs,
     onLocal: (entry, file, subjectName) => openLocalPaper(entry, file, subjectName),
     onReopen: (entry, subjectName) => {
       const k = keptPaper;
@@ -3057,6 +3061,54 @@ async function paperTutor(entry, subjectName) {
     box.value = `${t("pp.tutorMsg", { paper })} `;
     autoGrow();
     box.focus();
+  } catch (err) {
+    toast(err.message);
+  } finally {
+    paperBusy = false;
+  }
+}
+// »Reši našo polo v tem slogu« (public/our-paper.js): naloge Evklida z zgradbo izvirne pole. Točke, ki si jih
+// učenec označi, ostanejo v tej napravi. »Vprašaj inštruktorja«: nov pogovor z nalogo, naša rešitev gre
+// inštruktorju kot skrit kontekst (server/paper-context.js), učenec vidi le nalogo.
+async function openOurs(entry, subjectName) {
+  if (!entry?.ours || paperBusy) return;
+  paperBusy = true;
+  try {
+    const paper = await api(`/api/exam-papers/ours/${encodeURIComponent(entry.id)}`);
+    const title = t("pp.oursTitle", { paper: paperLabel(entry, subjectName) });
+    const key = `ours.${state.student.id}.${entry.id}`;
+    openOurPaper(paper, {
+      title,
+      rich: (md) => withFormulaSubject(entry.subject, () => renderRich(String(md ?? ""))),
+      score: {
+        get: () => {
+          try {
+            return JSON.parse(localStorageGet(key) || "{}");
+          } catch {
+            return {};
+          }
+        },
+        set: (v) => localStorageSet(key, JSON.stringify(v)),
+      },
+      onTutor: (task, part) => oursTutor(entry, title, task, part),
+    });
+  } catch (err) {
+    toast(err.message);
+  } finally {
+    paperBusy = false;
+  }
+}
+async function oursTutor(entry, title, task, part) {
+  if (paperBusy) return;
+  paperBusy = true;
+  try {
+    await newTutorChat();
+    const n = `${task.n}${part.id || ""}`;
+    const strip = (md) => String(md || "").replace(/<svg[\s\S]*?<\/svg>/g, "").trim();
+    const choices = part.format === "choice" && part.choices ? part.choices.map((c, i) => `${String.fromCharCode(65 + i)}) ${strip(c)}`).join("\n") : "";
+    const body = [strip(task.intro), strip(part.text), choices].filter(Boolean).join("\n\n").slice(0, 1500);
+    state.paperCtx = { conv: state.conversationId, paper: title, task: n, ours: entry.id };
+    await send(`${t("pp.taskMsg", { paper: title, n })}\n\n${body}`);
   } catch (err) {
     toast(err.message);
   } finally {

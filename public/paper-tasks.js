@@ -43,7 +43,7 @@ export function pageLines(page) {
 // vrha ali dna, črtna koda (»*M26140111*«), koda pole (»M261-401-1-1«), »Obrnite list.«, »Prazna stran«.
 const EDGE = HEAD + 45;
 const PAGE_NO = /^(?:stran\s*)?\d{1,3}(?:\s*(?:\/|od)\s*\d{1,3})?$/i;
-const CHROME = [/^\*[A-Z0-9]{5,}\*$/, /^[A-Z]\d{3}-\d{3}-\d-\d\b/, /^obrnite list\.?$/i, /^prazna stran$/i, /^tukaj ne pi[sš]i/i];
+const CHROME = [/^\*[A-Z0-9]{5,}\*$/, /^[A-Z]\d{3}-\d{3}-\d-\d\b/, /^obrnite list\.?$/i, /^prazna stran$/i, /^tukaj ne pi[sš]i/i, /^skupno število točk/i];
 export const isChrome = (page, l) =>
   CHROME.some((re) => re.test(l.text)) || (PAGE_NO.test(l.text) && (l.top < EDGE || page.height - l.bottom < EDGE));
 const body = (page, l) => l.top >= HEAD - 10 && l.bottom <= page.height - HEAD + 25 && !isChrome(page, l);
