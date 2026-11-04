@@ -63,10 +63,10 @@ export default function narisi(host) {
     }
     S.cipi([
       { barva: "izbor", oznaka: "\\alpha", vrednost: `${st(q.alfa, 1)}°` },
-      { barva: "ploskev", oznaka: "\\sin\\alpha = \\frac{a}{c}", vrednost: `${st(q.a)} : 5 ≈ ${st(q.sin, 3)}` },
-      { barva: "druga", oznaka: "\\cos\\alpha = \\frac{b}{c}", vrednost: `${st(q.b)} : 5 ≈ ${st(q.cos, 3)}` },
-      { barva: "glavna", oznaka: "\\tan\\alpha = \\frac{a}{b}", vrednost: `${st(q.a)} : ${st(q.b)} ≈ ${st(q.tan, 3)}` },
-      { barva: "glavna", oznaka: "\\cot\\alpha = \\frac{b}{a}", vrednost: `${st(q.b)} : ${st(q.a)} ≈ ${st(q.cot, 3)}` },
+      { barva: "ploskev", oznaka: "\\sin\\alpha = \\frac{a}{c}", vrednost: `${st(q.a)} : 5 ≈\u00a0${st(q.sin, 3)}` },
+      { barva: "druga", oznaka: "\\cos\\alpha = \\frac{b}{c}", vrednost: `${st(q.b)} : 5 ≈\u00a0${st(q.cos, 3)}` },
+      { barva: "glavna", oznaka: "\\tan\\alpha = \\frac{a}{b}", vrednost: `${st(q.a)} : ${st(q.b)} ≈\u00a0${st(q.tan, 3)}` },
+      { barva: "glavna", oznaka: "\\cot\\alpha = \\frac{b}{a}", vrednost: `${st(q.b)} : ${st(q.a)} ≈\u00a0${st(q.cot, 3)}` },
     ]);
     if (Math.abs(sl.get() - alfa) > 0.05) sl.set(Math.round(alfa * 10) / 10, true);
   }

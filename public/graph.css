@@ -624,7 +624,7 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-frame { background: var(--sk-bg); border: 1px solid var(--sk-line); border-radius: 14px; padding: 6px; }
 .sk-svg { stroke-width: 2; display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto; touch-action: pan-y; user-select: none; }
 /* Debelina 2 se deduje s .sk-svg, da atribut stroke-width na posameznem elementu velja (CSS bi ga povozil). */
-.sk-svg line, .sk-svg path, .sk-svg polygon, .sk-svg circle, .sk-svg ellipse { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.sk-svg line, .sk-svg path, .sk-svg polygon, .sk-svg circle, .sk-svg ellipse, .sk-svg polyline { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .sk-svg .sk-thin { stroke-width: 1.4; }
 .sk-svg .sk-dash { stroke-dasharray: 4 5; }
 .sk-svg .sk-faint { opacity: 0.35; }
@@ -635,6 +635,8 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-s-napaka { stroke: var(--sk-napaka); }
 .sk-svg .sk-f-ploskev { fill: color-mix(in srgb, var(--sk-ploskev) 22%, transparent); stroke: none; }
 .sk-svg .sk-f-izbor { fill: color-mix(in srgb, var(--sk-izbor) 22%, transparent); stroke: none; }
+.sk-svg .sk-f-druga { fill: color-mix(in srgb, var(--sk-druga) 20%, transparent); stroke: none; }
+.sk-svg .sk-f-napaka { fill: color-mix(in srgb, var(--sk-napaka) 45%, transparent); stroke: none; }
 .sk-t { font: 600 14px/1 var(--font, system-ui), sans-serif; fill: var(--sk-glavna); font-style: italic; }
 .sk-t-ploskev { fill: var(--sk-ploskev); }
 .sk-t-izbor { fill: var(--sk-izbor); }
@@ -647,10 +649,10 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 .sk-pt .sk-core { fill: var(--sk-pt); stroke: #fff; stroke-width: 2; }
 .sk-pt:focus-visible .sk-ring { stroke: #fff; stroke-width: 2; }
 .sk-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.sk-chip { direction: ltr; display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: 0.92rem; }
+.sk-chip { direction: ltr; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 2px 7px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); font-size: 0.92rem; }
 .sk-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--sk-c); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.18); flex: none; }
 .sk-tex .katex { white-space: nowrap; }
-.sk-val { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; white-space: nowrap; }
+.sk-val { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; }
 .sk-glavna { --sk-c: #8a8fa8; }
 .sk-ploskev { --sk-c: var(--sk-ploskev); }
 .sk-izbor { --sk-c: var(--sk-izbor); }

@@ -157,7 +157,8 @@ export const par = (x, y, d = 2) => {
   return `(${t.join(t.some((v) => v.includes(",")) ? "; " : ", ")})`;
 };
 // Število z »≈«, kadar je zaokroženo na d decimalk, sicer brez.
-export const vr = (v, d = 2) => (Math.abs(v - Number(v.toFixed(d))) < 1e-9 ? st(v, d) : `≈ ${st(v, d)}`);
+// (Nedeljiv presledek za »≈« in »=«: v ozkem čipu se znak ne loči od števila.)
+export const vr = (v, d = 2) => (Math.abs(v - Number(v.toFixed(d))) < 1e-9 ? st(v, d) : `≈\u00a0${st(v, d)}`);
 
 // Lok kota v oglišču V med krakoma proti P in Q (enote SVG, krajši lok). Vrne (razdalja) → točka na simetrali kota za oznako.
 export function lokKota(g, V, P, Q, r, barva = "glavna", extra = {}) {

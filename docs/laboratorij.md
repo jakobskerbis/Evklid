@@ -15,9 +15,28 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 3. **Mistakes have consequences** that a real lab would show: overrange (OL), blown fuse, burnt resistor,
    short circuit (supply current limit), foam overflow, popped stopper, missing goggles.
 4. **Table + graph + conclusion question** (one correct option, an explanation for every option).
-5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, `POENOSTAVITVE_SILE`, `POENOSTAVITVE_INDIKATORJI`, `POENOSTAVITVE_OPTIKA`, »Kaj je poenostavljeno?«) and here.
-6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`, forces: `test/laboratorij-sile.test.js`, indicators: `test/laboratorij-indikatorji.test.js`, optics: `test/laboratorij-optika.test.js`) with the allowed deviation stated.
-7. **Review:** pass 1 automatic, pass 2 an Opus expert check of the science and function, pass 3 look/phone/pedagogy
+5. **Simplifications are written in the sim** (`POENOSTAVITVE`, `POENOSTAVITVE_TITRACIJA`, `POENOSTAVITVE_ELEKTRIKA`, `POENOSTAVITVE_TOPLOTA`, `POENOSTAVITVE_SILE`, `POENOSTAVITVE_INDIKATORJI`, `POENOSTAVITVE_OPTIKA`, `POENOSTAVITVE_ELEKTROKEMIJA`, »Kaj je poenostavljeno?«) and here.
+6. **Test against literature** in `test/laboratorij.test.js` (titration: `test/laboratorij-titracija.test.js`, electricity: `test/laboratorij-elektrika.test.js`, heat: `test/laboratorij-toplota.test.js`, forces: `test/laboratorij-sile.test.js`, indicators: `test/laboratorij-indikatorji.test.js`, optics: `test/laboratorij-optika.test.js`, electrochemistry: `test/laboratorij-elektrokemija.test.js`) with the allowed deviation stated.
+7. **Na telefonu ostane risba vidna** (j, 2026-11-04: »s scrollanjem do gumbov skriješ animacijo«). Shared, nothing per
+   experiment: `mountSim` (`public/sim/index.js`) calls `pripni(el)` (`public/sim/lab.js`) for every engine that marks
+   itself `.lab`. It puts the drawing (`.demo-stage`, with the meters `.lab-meters` and status) and the controls
+   (`.demo-controls`) into one `.lab-tit-top` (wraps them when the engine used `layout({ stage, controls })`), adds the
+   toggle »Pripni sliko« (`.lab-pin`, `sim.lab.pin`, `aria-pressed`, remembered in `localStorage` `evklid.lab.pripni`),
+   measures the visible height of the scroll area (`--lab-okno`, `--lab-vrh`) and sizes the drawing (`--lab-risba-h`,
+   aspect from the SVG viewBox). CSS in `public/textbook.css` (»Na telefonu ostane risba vidna«, container `labtit` on
+   `.demo.lab`): narrow (container < 800 px) → drawing + meters sticky at the top of the scroll area below the app
+   header, together ~45 % of the visible height (~52 % for an upright drawing such as the titration, 60 % with a mouse),
+   compact LCDs (note up to 3 lines, never cut to »…«), shadow once stuck, controls scroll under it and carry
+   `scroll-margin-top: var(--lab-pin-h)` so `scrollIntoView`/focus never park one under the drawing; landscape phone (height ≤ 560 px, container ≥ 520 px) and wide (container ≥ 800 px) → drawing
+   pinned left beside the controls and fully visible. Pinning lives only inside `.lab-tit-top`, so the table, graph and
+   conclusion below are never covered. Very low visible height (< 330 px, e.g. keyboard on a small phone) unpins in
+   portrait (`.lab-nizko`); a focused control under the drawing or under the keyboard is scrolled into view. The phone
+   bottom bar hides in an open experiment like in a lesson (`touch.css`). Every lab table (`dataTable`) scrolls in its
+   `.lab-table-wrap`, not in the table, so the header row stays visible (sticky `thead th`). Check: `test/laboratorij-telefon.test.js`
+   (every `lab-` engine at 360 × 740: drawing ≥ 80 % visible at every control, no control under it, ≤ 62 % of the
+   view; toggle; landscape and desktop beside). A new experiment only needs `el.classList.add("lab")` and its drawing
+   in a `.demo-stage` directly followed by `.demo-controls` (or both inside `.lab-tit-top`).
+8. **Review:** pass 1 automatic, pass 2 an Opus expert check of the science and function, pass 3 look/phone/pedagogy
    (`docs/pregled.md`). Dangerous experiments are only simulated; a short video only when no realistic
    simulation is possible; home experiments get a safety note and an equipment list.
 
@@ -26,7 +45,7 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 | File | What |
 |---|---|
 | `public/sim/lab-model.js` | models, no DOM (tests import it): `OhmBench`, `Co2Bench`, multimeter, fuse, lamp, `rng`/`gauss` |
-| `public/sim/lab.js` | UI parts: `ticker` (real time, also with reduced motion), `lcd`, `dataTable`, `dataGraph`, `conclusion`, `eventLog`, `notes`, `fixed` |
+| `public/sim/lab.js` | UI parts: `ticker` (real time, also with reduced motion), `lcd`, `dataTable`, `dataGraph`, `conclusion`, `eventLog`, `notes`, `fixed`; `pripni` (drawing stays visible on a phone, rule 7) |
 | `public/sim/lab-fiz.js` | `labOhm` (engine `lab-ohm`) |
 | `public/sim/lab-kem.js` | `labCo2` (engine `lab-co2`), `flaskLevel` |
 | `public/sim/lab-model-titracija.js` | titration model, no DOM: `TitrBench`, `solvePH` (charge balance), indicators, burette/pipette/pH meter |
@@ -41,6 +60,8 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 | `public/sim/lab-sile.js` | `labHooke` (`lab-hooke`), `labGostota` (`lab-gostota`), `labVzgon` (`lab-vzgon`), `labTlak` (`lab-tlak`); `lupa` = magnified analog scale (ruler, meniscus, spring scale, manometer legs) |
 | `public/sim/lab-model-indikatorji.js` | indicator models, no DOM: `phMesanice` (charge balance with HCl, NaOH, acetic acid, carbonate, ammonia; `solvePH` from the titration model when only those three), `PH_VZORCI`, red cabbage scale `ZELJE`, universal paper `PAPIR`, `PhBench` (pH meter: calibration, carry-over), `DokazBench` (`ZIVILA`, `PRESKUSI`), `SlinaBench` (`AMILAZA`, `EPRUVETE`, `casRazgradnje`) |
 | `public/sim/lab-indikatorji.js` | `labPh` (engine `lab-ph`), `labDokaz` (`lab-dokaz`), `labSlina` (`lab-slina`); CSS prefix `lab-ind-` |
+| `public/sim/lab-model-elektrokemija.js` | electrochemistry models, no DOM: `ElektrolizaBench` (Hofmann apparatus: Tafel kinetics on Pt/graphite, competing O₂/Cl₂ at the anode, arm pH, gas dissolution, ρgΔh and water vapour in the tubes, Joule heating, fuse), `GalvanBench` (half-cells, Nernst, Mg mixed potential, foreign salts, bridge resistance, loads), `KovineBench` (metal + acid rate law, displacement by diffusion, heat, foam, gas syringe), `faradayMol`, `nernst`, `hH2SO4`, `barvaRaztopine` (Beer–Lambert), `KOVINE`, `SOLI`, `TEKOCINE_EL`; reuses the multimeter, fuse, supply, `rng`/`gauss` (`lab-model.js`), thermometer and `pNas` (`lab-model-toplota.js`), LED (`lab-model-elektrika.js`), indicator colours (`lab-model-indikatorji.js`) |
+| `public/sim/lab-elektrokemija.js` | `labElektroliza` (engine `lab-elektroliza`), `labGalvanski` (`lab-galvanski`), `labKovine` (`lab-kovine`); drawing helpers for glass (thickness, highlight), metals with sheen, DMM, bench supply, crocodile clips, stand and clamp, bubbles (CSS animation, phase from the clock, still under reduced motion), magnifiers; CSS prefix `lab-ek-` |
 
 Engines are registered in `public/sim/index.js` and shown at topics through `public/sim/katalog.js`.
 The »Laboratorij« tab (`public/laboratorij.js`, `server/laboratorij.js`, `GET /api/students/:id/lab`) lists every `lab-` engine
@@ -232,9 +253,48 @@ through 1/f = mean of 1/a + 1/b; conclusion question. Mistakes: object inside f,
 Tests: a = 2f → b = 2f and M = −1, a < f virtual and upright (M = 2,5 at a = 60, f = 100), f from students' readings within ±3 % (20 seeds × 3 lenses, screen placed randomly inside the sharp interval),
 a < f never sharp on the whole rail, object–screen 3,8f never sharp but 4,2f is, reading from the rail end shifts a by the object position, image size within ±0,5 mm (300 seeds), deterministic seeds.
 
+### Electrochemistry: shared data (`lab-model-elektrokemija.js`)
+F = 96 485,332 C/mol (CODATA 2018); Nernst factor RT/zF at the lab temperature; E° (CRC »Electrochemical series«): Mg −2,372, Zn −0,7618, Fe −0,447, Pb −0,1262, Cu +0,3419, Ag +0,7996 V;
+ΔfH of ions (NBS tables, Wagman 1982): Mg²⁺ −466,85, Zn²⁺ −153,89, Fe²⁺ −89,1, Cu²⁺ +64,77, Ag⁺ +105,58 kJ/mol; ion diffusion coefficients (CRC); Ka2(H₂SO₄) = 1,02·10⁻² (CRC).
+Lab: 20–24 °C and ~98 kPa (Ljubljana, ISA), digital barometer ±0,2 kPa (ocena). Every `lab-model*` number has a source or »ocena«.
+
+### `lab-elektroliza` – electrolysis in a Hofmann apparatus (KEM-SS-2 galvanski členi in elektroliza; KEM-TEK-SS redoks in elektrokemija; KEM-OS-8 kemijska reakcija, ionska vez)
+Liquids: distilled water, tap water, dilute H₂SO₄, Na₂SO₄, NaOH, NaCl (0,1 / 0,5 / 1 mol/L); Pt or graphite electrodes; optional universal indicator. Apparatus (ocena from suppliers): tubes 0–50 mL by 0,1 mL,
+Ø 14,1 mm, 7 mL below the 50 mark before gas escapes, reservoir bulb 12 cm², cell constant 700 m⁻¹, scale error ≤ 0,1 mL. Supply 0–12 V with adjustable current limit (CV/CC), multimeter as ammeter in series
+(F 200 mA fuse on the mA input), stopwatch, thermometer probe in the bulb, barometer. Physics: κ at 20 °C (CRC, +2 %/K), I from U = E_rev + η_a + η_c + IR with Tafel/asinh kinetics
+(H₂ on Pt i₀ 10⁻³ A/cm², Bard & Faulkner; O₂ and Cl₂ on Pt, all on graphite: ocena), E_rev = 1,229 V + 0,059·(pH_cathode − pH_anode) (both arms' pH tracked from the charge),
+Cl₂ and O₂ compete at the anode (E°(Cl₂) 1,358 V, chloride mass-transport limit F·D·c/δ, δ 0,025 cm under bubbles, ocena), graphite oxidises (8 % of anode charge → CO₂, ocena). Gas: n = Q/zF, a share dissolves near the electrode
+(Henry constants Sander 2015; Cl₂ 0,10 mol/L CRC; fraction ocena), V = nRT/(p + ρgΔh − p_H₂O) with the liquid column to the bulb. Joule heat (U − U_tn)·I, U_tn = 1,481 V for O₂, 2,311 V for Cl₂ (2NaCl + 2H₂O, NBS ΔfH), 0,462 V for CO₂, weighted by the current shares. Universal indicator bleached by dissolved Cl₂ (ocena).
+Mistakes: taps closed while filling (air trapped), tap open (gas escapes), distilled water (µA, no gas), polarity swapped (H₂ under the other tube), 200 mA range at ~0,5 A (fuse), high current (warming, CC),
+tube full (gas escapes under the tube), NaCl (chlorine, warning, ratio ≫ 2). Gas tests: glowing splint relights above 50 % O₂ (ocena), burning splint pops with H₂, moist litmus bleached by Cl₂.
+Table t, I, V(katoda), V(anoda); graph V vs Q (Q from the student's own readings, trapezoid) with the Faraday lines at the measured p and T; F computed from the student's data; conclusion 2 : 1 and why.
+Tests: 1,000 A · 965 s → 5,00 mmol H₂ (±0,5 %), gas collected ≥ 99,5 %; V(H₂)/V(O₂) > 2,05 at 2 mL (O₂ lag) and 2,00 ± 0,05 at 40 mL (H₂SO₄, Na₂SO₄, NaOH); ρgΔh and p_H₂O in V (±0,01 mL);
+Pt onset 1,6–1,9 V, none below 1,23 V, graphite higher; distilled water at 12 V < 1 mA, H₂SO₄ and Na₂SO₄ 0,5 M > 30 mA; swapped polarity; open tap; trapped air; heating > 3 K in 10 min at ~0,5 A and < 0,6 K at 50 mA with the supply in CC; U_tn(Cl₂) = 2,311 V from ΔfH (±1 mV); fuse;
+NaCl Cl₂ share > 0,8 at 1 M (less at 0,1 M), ratio > 2,5, pH > 11 / < 4; graphite ratio > 2,08; splint tests; indicator in Na₂SO₄; ammeter within spec and tube reading within 0,1 + 0,05 mL (300 seeds).
+
+### `lab-galvanski` – galvanic cell (KEM-SS-2 galvanski členi in elektroliza; KEM-TEK-SS redoks in elektrokemija)
+Two 100 mL beakers, strips of Mg, Zn, Fe, Pb, Cu, Ag (polish with sandpaper or not), any of six salt solutions (0,001–1 mol/L), salt bridge: none, filter paper with KNO₃ (8 kΩ, ocena), dry paper (5 GΩ), agar U-tube (0,4 kΩ);
+voltmeter 10 MΩ ±(0,5 % + 2), red/black lead on either beaker, load (100 Ω–100 kΩ, red LED, small motor) with ammeter. Model: Nernst with activities a = γ± c (`GAMA`, 25 °C, Robinson & Stokes 1959 app. 8.10 and CRC »Mean activity coefficients«: CuSO₄ 0,74 / 0,41 / 0,150 / 0,0423 at 0,001 / 0,01 / 0,1 / 1 mol/L, ZnSO₄, MgSO₄, AgNO₃; Pb(NO₃)₂ outside 0,1 M and FeSO₄ ocena; log interpolation, γ = 1 at 10⁻⁵ M); `napovedNernst` is the ideal (concentration) prediction, `napovedAktivnost` the activity one; they cancel in a Daniell cell with equal c, a Cu 0,01 | Cu 1 cell gives 0,030 V instead of the ideal 0,059 V, E° at 25 °C with RT/zF at the lab temperature;
+Mg mixed potential −1,55 V vs SHE (Song & Atrens 1999 give ~−1,7 V vs SCE ≈ −1,46 V vs SHE in dilute chloride; school Mg | Cu 1,7–2,0 V; weak c dependence and ±15 mV drift, ocena); oxide film on unpolished metals (ocena); metal in a foreign salt: coated (drifts to the deposited metal's potential, τ 90 s) or undefined (trace ions 10⁻⁶ M, drift);
+internal resistance = bridge + solutions (κ ≈ κ₁·c^0,8, ocena); terminal voltage from (E − U)/Ri = U/R_V + I_load(U); LED exponential (Vf 1,8 V at 20 mA), motor starts at 15 mA (ocena); open input floats ±6 mV.
+Table pairs, U, ΔE°; graph U vs ΔE° with y = x (Mg below); graph U (mV) vs lg(c ratio) for concentration cells: ideal Nernst line RT ln10/2F, activity prediction (triangles) and measured points below the line; two conclusion questions (negative pole and series distance; concentration cell).
+Tests: Daniell 1,10 ± 0,01 V (EMF and reading, also at 0,01 | 0,01); ideal Nernst slope 0,0296 ± 0,0005 V (n = 2) and 0,0592 (Ag); with activities Zn 1 | Cu 1→0,001 drops 0,052 ± 0,003 V and Ag 0,0497 ± 0,002 V per decade; Cu 0,01 | Cu 1 = 0,030 ± 0,003 V (γ± uncertainty ~10 %), ideal 0,059; same metal and c < 5 mV; no or dry bridge |U| < 0,01 V (100 seeds × 20 readings);
+swapped leads negative, negative pole is the more reactive metal, U grows with series distance; Mg ≥ 0,5 V below E° prediction, unpolished Zn lower; 1 kΩ load drops U to 0,05–0,3 V and I = E/(Ri + R) ± 2 µA, LED and motor off for Daniell, LED faintly on for Mg | Ag, OL on 2 V;
+Zn in CuSO₄ drifts > 0,9 V towards Cu; voltmeter within spec (500 seeds).
+
+### `lab-kovine` – metals in acids and salt solutions (KEM-OS-8 kovine; KEM-SS-2 redoks reakcije; KEM-TEK-SS redoks in elektrokemija)
+Goggles first. 50 mL of HCl (0,5–2, 6 mol/L = mistake, ~20 %, irritating HCl vapour; only ~37 % fumes visibly) or H₂SO₄ (0,5–2) in a 100 mL Erlenmeyer flask with a 100 mL gas syringe, or MgSO₄, ZnSO₄, FeSO₄, CuSO₄ (0,1 / 0,5), AgNO₃ (0,05 / 0,1) in a beaker;
+Mg, Zn, Fe, Cu as strip, granules or powder, 0,05–0,5 g (0,01 g balance); shaking; time ×1/×10/×60. Model: r = k·A·[H⁺]·Arrhenius (Ea 40 kJ/mol, k: Mg 1,0·10⁻⁵ from RSC »Disappearing magnesium«, Zn 6·10⁻⁷, Fe 6·10⁻⁸, Cu 0; ocena),
+area from shape (strip 2/(dρ), granules, powder; shrinking), [H⁺] of H₂SO₄ from Ka2, acid can run out; Mg + water slowly; displacement only when E°(metal) < E°(ion), flux D·c/δ (δ 0,02 cm still, 0,004 cm shaken; ocena)
+with a driving-force factor (ΔE°/0,8)³ (ocena); Mg in a salt of a nobler metal evolves H₂ on the deposit (micro-cells, 1,5·10⁻⁷ mol/(s cm²) at full cover, ×0,1 on Zn, ocena; ΔH −355,2 kJ/mol with ΔfH(OH⁻) NBS), coating cover 1 − e^(−n/(A·5·10⁻⁷)); heat from ΔfH; foam (1,2 mL per mL gas, τ 3 s) over 130 mL spills; syringe reads gas plus headspace expansion and water vapour, plunger pops at 110 mL.
+Colours: CuSO₄ blue and FeSO₄ pale green by Beer–Lambert (effective absorptivities, ocena), deposits Cu red-brown, Ag grey crystals, Fe black, Zn dark grey; ~4× magnifier of the metal in a salt solution.
+Student fills a ✓/✗ grid (4 metals × 7 liquids) after observing ≥ 30 s, records V(t) and T, orders the 5 metals; conclusion question on the reactivity series.
+Tests: rate Mg > 10× Zn > 5× Fe > 0, Cu no gas and no mass loss in 2 M HCl after 10 min, 1 M H₂SO₄ ≈ 1 M HCl initially (±3 %); 0,05 g Mg in 1 M HCl: 95 % in 40–200 s, n(H₂) = n(Mg), ΔT > 3 K; displacement grid matches Mg > Zn > Fe > Cu > Ag after 10 min;
+Zn powder bleaches 0,1 M CuSO₄ (shaken, 30 min), zinc limiting in 0,5 M; Mg in CuSO₄ bubbles (≥ »zmerno«) and warms, in MgSO₄ ≤ single bubbles, on a Zn deposit < 1/3; Cu in AgNO₃: one Cu²⁺ per 2 Ag; goggles, 6 M fumes, powder foam overflow and popped plunger, acid limiting (0,196 ± 0,002 g Mg left); syringe within ±0,95 mL (200 seeds), deterministic seed.
+
 The colours of graph series (`--demo-a/b/c`) are now also defined for the Laboratorij tab (`.lab-view` in `textbook.css`); before, points there were black.
 
 ## Next (from j's list)
-FIZ: pendulum and stopwatch; optics: concave mirror on the optical bench (`lab-zrcalo`, reuses `LecaBench` with 1/a + 1/b = 2/R), diverging lens with a converging one, dispersion with a prism (white light), lens defects; forces: series/parallel springs and a digital force sensor, Pascal's vessels, a typed reading (student enters the value) in `lab-hooke`/`lab-gostota`. KEM: flame test, electrolysis of water.
+FIZ: pendulum and stopwatch; optics: concave mirror on the optical bench (`lab-zrcalo`, reuses `LecaBench` with 1/a + 1/b = 2/R), diverging lens with a converging one, dispersion with a prism (white light), lens defects; forces: series/parallel springs and a digital force sensor, Pascal's vessels, a typed reading (student enters the value) in `lab-hooke`/`lab-gostota`. KEM: flame test, electroplating (copper on a key, mass vs charge, reuses `ElektrolizaBench` kinetics), corrosion of iron (nails in water, salt water, oil, with zinc/copper contact), Daniell cell with a Zn | Cu series battery for an LED, electrolysis of CuSO₄ with copper electrodes (mass change).
 NAR: the same engines on more NAR-OS-6/7 topics. Indicators: enzyme pH dependence (amylase at pH 4/7/9, reuses `SlinaBench`), the 0 °C tube warmed to 37 °C, a home version of `lab-ph` with only red cabbage, Sudan III for fats, pH meter alkaline error. Heat: specific heat of metals (hot metal block into a calorimeter, reuses `MesanjeBench`),
 solidification curve (cooling of stearic acid / salol), a separate stopwatch for `lab-grelnik` (now started by the switch), stirring as a choice in `lab-faze`. Each one: model + test first, then UI, then the three reviews.

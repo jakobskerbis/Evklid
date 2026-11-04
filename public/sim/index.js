@@ -166,18 +166,27 @@ export const ENGINES = {
   "lab-ph": ["lab-indikatorji.js", "labPh"],
   "lab-dokaz": ["lab-indikatorji.js", "labDokaz"],
   "lab-slina": ["lab-indikatorji.js", "labSlina"],
+  "lab-elektroliza": ["lab-elektrokemija.js", "labElektroliza"],
+  "lab-galvanski": ["lab-elektrokemija.js", "labGalvanski"],
+  "lab-kovine": ["lab-elektrokemija.js", "labKovine"],
   // teme, dodane po primerjavi z učnimi načrti (2026-10-30)
   logika: ["vrzeli.js", "logika"], prostor: ["vrzeli.js", "prostor"], "koord-trikotnik": ["vrzeli.js", "koordTrikotnik"],
   "vezava-vzmeti": ["vrzeli.js", "vezavaVzmeti"], izmenicni: ["vrzeli.js", "izmenicni"], "em-spekter": ["vrzeli.js", "emSpekter"], zvezde: ["vrzeli.js", "zvezde"], domine: ["vrzeli.js", "domine"],
   // zbirka več simulacij (za mešane maturitetne naloge)
   zbirka: ["index.js", "zbirka"],
+  // 3D modeli iz kode (docs/3d.md): id »3d-<id modela>«, npr. "3d-celica-zivalska"; pogon naloži prizor šele ob prikazu
+  "3d": ["../3d/sim.js", "sim3d"],
 };
 
-export const hasEngine = (id) => Object.hasOwn(ENGINES, id);
+// »3d-<id>« je pogon "3d" z izbranim modelom (seznam modelov je po področjih v public/3d/modeli/<podrocje>/index.js).
+const TRI_D = /^3d-([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+export const hasEngine = (id) => Object.hasOwn(ENGINES, id) || TRI_D.test(id);
 
 // Nariše simulacijo v el. Vrne true, če je uspelo.
 export async function mountSim(id, el, opts = {}) {
-  const e = ENGINES[id];
+  const m3 = TRI_D.exec(id);
+  if (m3) opts = { ...(opts || {}), model: m3[1], noReset: true }; // pregledovalnik ima svoj »Ponastavi«
+  const e = ENGINES[m3 ? "3d" : id];
   if (!e) return false;
   const mod = await import(new URL(e[0], import.meta.url).href);
   const fn = mod[e[1]] || mod.DEMOS?.[e[1]];
@@ -186,6 +195,8 @@ export async function mountSim(id, el, opts = {}) {
   el.classList.add("demo", `demo-${id}`);
   try {
     fn(el, opts || {});
+    // Laboratorij: na telefonu ostane risba vidna med uporabo kontrol (lab.js → pripni, docs/laboratorij.md).
+    if (el.classList.contains("lab")) (await import("./lab.js")).pripni(el);
     focusableTargets(el);
     // Ponastavi: simulacijo postavi znova v začetno stanje (ne pri zbirki, ki ima svoje podsimulacije).
     if (id !== "zbirka" && !opts?.noReset) {
@@ -198,7 +209,7 @@ export async function mountSim(id, el, opts = {}) {
       el.append(b);
     }
     // Prikaz na grafu: gumbi za vklop in izklop krivulj, točk, oznak in mreže (public/sim/prikaz.js).
-    if (id !== "zbirka")
+    if (id !== "zbirka" && !m3 && id !== "3d")
       Promise.all([import("./prikaz.js"), import("../i18n.js")])
         .then(([m, i18n]) => m.layerToggles(el, i18n.t))
         .catch((err) => console.error("Prikaz na grafu:", err));

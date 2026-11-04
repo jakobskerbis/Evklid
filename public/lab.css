@@ -53,3 +53,14 @@
   .lab-bench { padding: 10px; }
   .lab-start { align-self: stretch; justify-content: center; }
 }
+
+/* Kartica 3D atlasa nad poskusi (public/laboratorij.js → /3d): temna kot 3D oder, modra ikona. */
+.lab-3d { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; padding: 16px 18px; text-decoration: none; color: #e8ecf3; background: radial-gradient(120% 160% at 90% 10%, #22335a 0%, #141a25 60%); border: 1px solid #273142; }
+.lab-3d:hover { border-color: #6e9bff; }
+.lab-3d-ic { flex: none; width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(145deg, #6e9bff, #3b5fc4); color: #0b0f16; }
+.lab-3d-ic svg.i { width: 26px; height: 26px; }
+.lab-3d-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.lab-3d-txt small { font-size: 0.74rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #9aa6ba; }
+.lab-3d-txt b { font-size: 1.08rem; }
+.lab-3d-txt span { color: #9aa6ba; line-height: 1.4; }
+.lab-3d > svg.i { flex: none; color: #9aa6ba; }

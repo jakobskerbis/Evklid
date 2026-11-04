@@ -99,7 +99,8 @@
 
 /* ---------- Spodnja vrstica se umakne pri branju in gledanju (j, 2026-10-31) ----------
    Telefon in tablica na dotik, vsi slogi: v klepetu z inštruktorjem (prazen ali s sporočili), v temi (lekcija, naloge,
-   vaja, simulacije), pri karticah za ponavljanje, v odprti lekciji Učbenika in v kalkulatorju (cel pogled). Igra med
+   vaja, simulacije), pri karticah za ponavljanje, v odprti lekciji Učbenika, v odprtem poskusu Laboratorija (več prostora
+   za pripeto risbo, docs/laboratorij.md) in v kalkulatorju (cel pogled). Igra med
    igranjem, tipkovnica kalkulatorja, plošča za vnos, Oglasna deska in video gradiv jo že prekrijejo ali skrijejo.
    Vrstica je takrat pritrjena pod spodnjim robom (ne vzame prostora); poteg navzdol ali kolešček gor jo pokaže
    (body.tb-peek, app.js), poteg navzgor skrije. Na teh zaslonih je v glavi gumb Nazaj. app.js iz position: fixed
@@ -108,7 +109,7 @@
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
   body:is(:has(> #view-chat:not([hidden]):not(.in-okno)), :has(> #view-topic:not([hidden]):not(.in-okno)),
     :has(> #view-cards:not([hidden]):not(.in-okno)), :has(> #view-graph:not([hidden]):not(.in-okno)),
-    :has(> #view-textbook:not([hidden]):not(.in-okno) .tb-lesson-grid)) > .tabbar {
+    :has(> #view-textbook:not([hidden]):not(.in-okno) .tb-lesson-grid), :has(> #view-lab.lab-open:not([hidden]):not(.in-okno))) > .tabbar {
     position: fixed; inset-inline: 0; bottom: 0; z-index: 30;
     transform: translateY(var(--tb-y, 100%)); visibility: var(--tb-vis, hidden);
     transition: transform 0.22s ease, visibility 0s linear var(--tb-vd, 0.22s);

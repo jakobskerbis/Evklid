@@ -32,6 +32,19 @@ export const SKICE = {
   "MAT-OS|Pitagorov izrek": () => import("./pitagora.js"),
   "MAT-OS|Diagonale $n$-kotnika": () => import("./nkotnik.js"),
   "MAT-OS|Krožni lok, izsek": () => import("./izsek.js"),
+  "MAT-SS|Aritmetično zaporedje": z(() => import("./zaporedje.js"), "aritmeticno"),
+  "MAT-SS|Geometrijsko zaporedje": z(() => import("./zaporedje.js"), "geometrijsko"),
+  "MAT-SS|Limita funkcije": () => import("./limita.js"),
+  "MAT-SS|Odvodi": () => import("./odvod.js"),
+  "MAT-SS|Diferencial": () => import("./diferencial.js"),
+  "MAT-SS|Integrali": () => import("./riemann.js"),
+  "MAT-SS|Trapezna metoda": () => import("./trapezna.js"),
+  "MAT-SS|Ploščina, vrtenina": () => import("./vrtenina.js"),
+  "MAT-SS|Kombinacije": () => import("./pascal.js"),
+  "MAT-SS|Binomski izrek": z(() => import("./pascal.js"), { binom: true }),
+  "MAT-SS|Bernoullijevo zaporedje": () => import("./bernoulli.js"),
+  "MAT-SS|Povprečje, odklon": () => import("./odklon.js"),
+  "MAT-UNI|Definicija": z(() => import("./odvod.js"), "h"), // edina kartica »Definicija« na listu za faks (Odvodi)
   ...Object.fromEntries(["Kvadrat", "Pravokotnik", "Paralelogram", "Romb", "Trapez", "Deltoid"].map((ime) => [`MAT-OS|${ime}`, z(() => import("./liki.js"), ime.toLowerCase())])),
 };
 
