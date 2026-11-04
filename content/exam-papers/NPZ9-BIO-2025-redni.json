@@ -1,0 +1,892 @@
+{
+ "id": "NPZ9-BIO-2025-redni",
+ "exam": "NPZ9",
+ "subject": "BIO",
+ "minutes": 60,
+ "points": 35,
+ "author": "AI",
+ "tools": "Dovoljeno je samo pisalo (nalivno pero ali kemični svinčnik); računalo in druga gradiva niso dovoljeni.",
+ "tasks": [
+  {
+   "n": 1,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Jan je zbolel za gripo. Zdravnica mu je svetovala počitek in veliko tekočine, antibiotika pa mu ni predpisala. Zakaj antibiotik pri gripi ne bi pomagal?\n\nObkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Gripo povzročajo bakterije, ki so na antibiotike vedno odporne.",
+      "Antibiotiki uničijo bakterije ali zavrejo njihovo rast, gripo pa povzroča virus, ki ni celica in nima zgradb, na katere bi antibiotik deloval.",
+      "Antibiotiki delujejo samo proti glivam, gripo pa povzročajo zajedavci.",
+      "Antibiotik bi virus gripe uničil, hkrati pa tudi vse bele krvničke, zato ga pri gripi ne smemo jemati."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "Antibiotiki delujejo na bakterije, gripo pa povzroča virus, na katerega antibiotik ne deluje.",
+     "ways": [
+      {
+       "title": "Po vrstah povzročiteljev",
+       "text": "Gripo povzroča **virus gripe**. Virus ni celica: sestavljen je le iz dedne snovi in beljakovinskega ovoja, nima lastne presnove, ribosomov ali celične stene, razmnožuje pa se samo v celicah gostitelja.\n\n**Antibiotiki** so zdravila proti **bakterijam**: poškodujejo zgradbe, ki jih imajo le bakterijske celice (npr. celično steno ali bakterijske ribosome), ali zavrejo njihovo rast. Ker virus teh zgradb nima, antibiotik nanj ne deluje. Pri gripi pomagajo počitek, tekočina in zdravila, ki lajšajo težave, telo pa virus premaga z imunskim odzivom (pred gripo nas lahko zaščiti tudi cepljenje).\n\nZakaj so drugi odgovori napačni:\n\n- *Bakterije, ki so vedno odporne* – gripe ne povzročajo bakterije.\n- *Samo proti glivam* – proti glivam delujejo protiglivna zdravila, antibiotiki delujejo proti bakterijam; gripe tudi ne povzročajo zajedavci.\n- *Uničil bi virus in bele krvničke* – antibiotik virusa ne uniči, belih krvničk pa ne uničuje."
+      }
+     ],
+     "mistake": "Misliti, da antibiotik pomaga pri vsaki vročini ali prehladu. Nepotrebno jemanje antibiotikov ne pozdravi virusne bolezni, pospešuje pa nastanek bakterij, odpornih proti antibiotikom."
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "intro": "Na shemah A, B in C so poenostavljeno prikazani srce in krvni obtoki treh vretenčarjev. Črka P pomeni preddvor, črka K pa prekat; puščice kažejo smer pretakanja krvi.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 460 245\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><defs><marker id=\"m2\" viewBox=\"0 0 8 8\" refX=\"7\" refY=\"4\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0,0L8,4L0,8Z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><rect x=\"35\" y=\"10\" width=\"80\" height=\"26\" rx=\"5\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"35\" y=\"184\" width=\"80\" height=\"26\" rx=\"5\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"45\" y=\"85\" width=\"60\" height=\"60\" rx=\"8\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M45,115H105M75,85V115\"/><path d=\"M45,130H20V23H35\" marker-end=\"url(#m2)\"/><path d=\"M115,23H130V100H105\" marker-end=\"url(#m2)\"/><path d=\"M105,130H140V197H115\" marker-end=\"url(#m2)\"/><path d=\"M35,197H10V100H45\" marker-end=\"url(#m2)\"/><g fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\"><text x=\"75\" y=\"27\">pljuča</text><text x=\"75\" y=\"201\">telo</text><text x=\"75\" y=\"238\" font-weight=\"bold\" font-size=\"15\">A</text><text x=\"60\" y=\"104\">P</text><text x=\"90\" y=\"104\">P</text><text x=\"75\" y=\"134\">K</text></g><rect x=\"190\" y=\"10\" width=\"80\" height=\"26\" rx=\"5\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"190\" y=\"184\" width=\"80\" height=\"26\" rx=\"5\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"200\" y=\"85\" width=\"60\" height=\"60\" rx=\"8\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M200,115H260M230,85V145\"/><path d=\"M200,130H175V23H190\" marker-end=\"url(#m2)\"/><path d=\"M270,23H285V100H260\" marker-end=\"url(#m2)\"/><path d=\"M260,130H295V197H270\" marker-end=\"url(#m2)\"/><path d=\"M190,197H165V100H200\" marker-end=\"url(#m2)\"/><g fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\"><text x=\"230\" y=\"27\">pljuča</text><text x=\"230\" y=\"201\">telo</text><text x=\"230\" y=\"238\" font-weight=\"bold\" font-size=\"15\">B</text><text x=\"215\" y=\"104\">P</text><text x=\"245\" y=\"104\">P</text><text x=\"215\" y=\"134\">K</text><text x=\"245\" y=\"134\">K</text></g><rect x=\"345\" y=\"10\" width=\"80\" height=\"26\" rx=\"5\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"345\" y=\"184\" width=\"80\" height=\"26\" rx=\"5\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"355\" y=\"85\" width=\"60\" height=\"60\" rx=\"8\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M355,115H415\"/><path d=\"M355,130H330V23H345\" marker-end=\"url(#m2)\"/><path d=\"M425,23H450V197H425\" marker-end=\"url(#m2)\"/><path d=\"M345,197H320V100H355\" marker-end=\"url(#m2)\"/><g fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\"><text x=\"385\" y=\"27\">škrge</text><text x=\"385\" y=\"201\">telo</text><text x=\"385\" y=\"238\" font-weight=\"bold\" font-size=\"15\">C</text><text x=\"385\" y=\"104\">P</text><text x=\"385\" y=\"134\">K</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera shema ustreza človeku? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "shema A",
+      "shema B",
+      "shema C",
+      "Vse tri sheme, saj imajo vsi vretenčarji enako zgrajeno srce."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "Shema B (srce s štirimi votlinami in dvema ločenima krvnima obtokoma).",
+     "ways": [
+      {
+       "title": "Po zgradbi srca",
+       "text": "Človek je sesalec. Njegovo srce ima **štiri votline: dva preddvora in dva prekata**. Desna in leva polovica srca sta popolnoma ločeni, zato ima človek **dva krvna obtoka**: mali (pljučni) obtok vodi kri iz srca v pljuča in nazaj, veliki (telesni) obtok pa iz srca po telesu in nazaj. Kri, bogata s kisikom, se ne meša s krvjo, revno s kisikom.\n\nTo prikazuje **shema B**.\n\n- **Shema A**: dva preddvora in **en** prekat – v prekatu se kri iz obeh obtokov delno meša. Tako srce imajo dvoživke (npr. žabe).\n- **Shema C**: en preddvor in en prekat ter **en sam** krvni obtok, ki vodi kri skozi škrge in nato po telesu – tako srce imajo ribe.\n- *Vse tri* – srca vretenčarjev se med skupinami razlikujejo, prav to kažejo sheme."
+      },
+      {
+       "title": "Drugače: po dihalih in obtokih",
+       "text": "Človek diha s **pljuči**, zato shema C s škrgami odpade. Ostaneta A in B, ki imata oba obtoka (pljuča in telo). Pri človeku sta obtoka popolnoma ločena, kar je mogoče le, če ima srce **dva prekata** – en prekat poganja kri v pljuča, drugi v telo. Dva prekata (dve črki K) ima le shema B."
+      }
+     ],
+     "mistake": "Izbrati shemo A, ker ima dva obtoka in pljuča. Človeško srce ima dva prekata; en sam prekat (shema A) imajo dvoživke."
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Naravovarstveniki so poleti na območju pod Mangartom v Julijskih Alpah prešteli vse alpske kozoroge, ki tam živijo. Kako imenujemo vse osebke ene vrste, ki ob istem času živijo na istem območju? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "organizem",
+      "populacija",
+      "združba",
+      "ekosistem"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "populacija",
+     "ways": [
+      {
+       "title": "Po ravneh organizacije",
+       "text": "Ravni organizacije v ekologiji si sledijo od najmanjše do največje:\n\n- **organizem (osebek)** – en sam kozorog;\n- **populacija** – vsi osebki **ene vrste** na istem območju ob istem času, npr. vsi alpski kozorogi pod Mangartom;\n- **združba** – vse populacije **različnih vrst** na istem območju (kozorogi, gamsi, planinski orli, ruševje, rastline alpskih trat …);\n- **ekosistem** – združba skupaj z neživim okoljem (skale, prst, voda, podnebje) in odnosi med njimi.\n\nNaravovarstveniki so šteli samo kozoroge, torej populacijo."
+      }
+     ],
+     "mistake": "Zamenjati populacijo in združbo: združba vedno vključuje več različnih vrst, populacija pa samo eno."
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "intro": "Jazbec je pogost prebivalec slovenskih gozdov. Raziskovalci so v različnih letnih časih pregledovali ostanke hrane v njegovih iztrebkih. Graf prikazuje, kolikšen delež (v odstotkih) je v posameznem letnem času predstavljala posamezna vrsta hrane.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 345 290\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M50,200H330\" stroke-width=\"0.8\" stroke-opacity=\"1\"/><path d=\"M50,182H330\" stroke-width=\"0.5\" stroke-opacity=\"0.3\"/><path d=\"M50,164H330\" stroke-width=\"0.8\" stroke-opacity=\"0.3\"/><path d=\"M50,146H330\" stroke-width=\"0.5\" stroke-opacity=\"0.3\"/><path d=\"M50,128H330\" stroke-width=\"0.8\" stroke-opacity=\"0.3\"/><path d=\"M50,110H330\" stroke-width=\"0.5\" stroke-opacity=\"0.3\"/><path d=\"M50,92H330\" stroke-width=\"0.8\" stroke-opacity=\"0.3\"/><path d=\"M50,74H330\" stroke-width=\"0.5\" stroke-opacity=\"0.3\"/><path d=\"M50,56H330\" stroke-width=\"0.8\" stroke-opacity=\"0.3\"/><path d=\"M50,38H330\" stroke-width=\"0.5\" stroke-opacity=\"0.3\"/><path d=\"M50,20H330\" stroke-width=\"0.8\" stroke-opacity=\"0.3\"/><path d=\"M50,20V200\"/><rect x=\"75\" y=\"173\" width=\"40\" height=\"27\" fill=\"currentColor\" fill-opacity=\"0.12\"/><rect x=\"75\" y=\"74\" width=\"40\" height=\"99\" fill=\"currentColor\" fill-opacity=\"0.75\"/><rect x=\"75\" y=\"20\" width=\"40\" height=\"54\" fill=\"currentColor\" fill-opacity=\"0.4\"/><rect x=\"145\" y=\"137\" width=\"40\" height=\"63\" fill=\"currentColor\" fill-opacity=\"0.12\"/><rect x=\"145\" y=\"56\" width=\"40\" height=\"81\" fill=\"currentColor\" fill-opacity=\"0.75\"/><rect x=\"145\" y=\"20\" width=\"40\" height=\"36\" fill=\"currentColor\" fill-opacity=\"0.4\"/><rect x=\"215\" y=\"92\" width=\"40\" height=\"108\" fill=\"currentColor\" fill-opacity=\"0.12\"/><rect x=\"215\" y=\"47\" width=\"40\" height=\"45\" fill=\"currentColor\" fill-opacity=\"0.75\"/><rect x=\"215\" y=\"20\" width=\"40\" height=\"27\" fill=\"currentColor\" fill-opacity=\"0.4\"/><rect x=\"285\" y=\"164\" width=\"40\" height=\"36\" fill=\"currentColor\" fill-opacity=\"0.12\"/><rect x=\"285\" y=\"92\" width=\"40\" height=\"72\" fill=\"currentColor\" fill-opacity=\"0.75\"/><rect x=\"285\" y=\"20\" width=\"40\" height=\"72\" fill=\"currentColor\" fill-opacity=\"0.4\"/><rect x=\"60\" y=\"232\" width=\"12\" height=\"12\" fill=\"currentColor\" fill-opacity=\"0.12\"/><rect x=\"60\" y=\"250\" width=\"12\" height=\"12\" fill=\"currentColor\" fill-opacity=\"0.75\"/><rect x=\"60\" y=\"268\" width=\"12\" height=\"12\" fill=\"currentColor\" fill-opacity=\"0.4\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"50\" y=\"12\" text-anchor=\"middle\">delež hrane (%)</text><text x=\"44\" y=\"204\" text-anchor=\"end\">0</text><text x=\"44\" y=\"168\" text-anchor=\"end\">20</text><text x=\"44\" y=\"132\" text-anchor=\"end\">40</text><text x=\"44\" y=\"96\" text-anchor=\"end\">60</text><text x=\"44\" y=\"60\" text-anchor=\"end\">80</text><text x=\"44\" y=\"24\" text-anchor=\"end\">100</text><text x=\"95\" y=\"216\" text-anchor=\"middle\">pomlad</text><text x=\"165\" y=\"216\" text-anchor=\"middle\">poletje</text><text x=\"235\" y=\"216\" text-anchor=\"middle\">jesen</text><text x=\"305\" y=\"216\" text-anchor=\"middle\">zima</text><text x=\"80\" y=\"243\">rastlinska hrana (plodovi, žir, koreninice)</text><text x=\"80\" y=\"261\">deževniki in žuželke</text><text x=\"80\" y=\"279\">mali sesalci in ptičja jajca</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera trditev je pravilna? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Jazbec je rastlinojedec, saj jeseni poje največ rastlinske hrane.",
+      "Jazbec je mesojedec, saj v vsakem letnem času poje več kot polovico živalske hrane.",
+      "Jazbec je vsejedec; jeseni je bila rastlinska hrana več kot polovica vse njegove hrane.",
+      "Jazbec je vsejedec; poleti so bili mali sesalci in ptičja jajca največji del njegove hrane."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "Jazbec je vsejedec; jeseni je rastlinska hrana več kot polovica njegove hrane (okoli $60\\,\\%$).",
+     "ways": [
+      {
+       "title": "Branje grafa po letnih časih",
+       "text": "Iz grafa odčitamo (spodnji del stolpca je rastlinska hrana, srednji deževniki in žuželke, zgornji mali sesalci in jajca – glej legendo):\n\n| letni čas | rastlinska hrana | deževniki in žuželke | mali sesalci in jajca |\n|---|---|---|---|\n| pomlad | $15\\,\\%$ | $55\\,\\%$ | $30\\,\\%$ |\n| poletje | $35\\,\\%$ | $45\\,\\%$ | $20\\,\\%$ |\n| jesen | $60\\,\\%$ | $25\\,\\%$ | $15\\,\\%$ |\n| zima | $20\\,\\%$ | $40\\,\\%$ | $40\\,\\%$ |\n\nJazbec jé **rastlinsko in živalsko hrano**, zato je **vsejedec**. Jeseni sega rastlinski del stolpca do $60\\,\\%$, kar je več kot polovica. Trditev C je pravilna.\n\nZakaj so druge napačne:\n\n- **A**: jeseni res poje največ rastlinske hrane, a v drugih letnih časih jé večinoma živalsko hrano – ni rastlinojedec.\n- **B**: jeseni je živalske hrane le $25\\,\\% + 15\\,\\% = 40\\,\\%$, torej manj kot polovica; poleg tega jé tudi rastline, zato ni mesojedec.\n- **D**: poleti so mali sesalci in jajca najmanjši del ($20\\,\\%$), največ je deževnikov in žuželk ($45\\,\\%$)."
+      },
+      {
+       "title": "Drugače: najprej uvrstitev, nato graf",
+       "text": "Uvrstitev: v vsakem stolpcu so vse tri vrste hrane, torej jazbec redno jé rastline in živali – **vsejedec**. S tem odpadeta A in B.\n\nOstaneta C in D, ki ju preverimo na grafu: poleti je zgornji del stolpca (mali sesalci in jajca) najnižji, zato D ne drži. Jeseni spodnji del (rastlinska hrana) preseže črto pri $50\\,\\%$, zato C drži."
+      }
+     ],
+     "mistake": "Uvrščati žival le po enem letnem času: če jeseni jé pretežno plodove, to še ne pomeni, da je rastlinojedec – upoštevati moramo prehrano skozi vse leto."
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katerih dveh zgradb bakterijska (prokariontska) celica **nima**? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "celične membrane in citoplazme",
+      "ribosomov in dedne snovi (DNA)",
+      "jedra z jedrno ovojnico in mitohondrijev",
+      "celične stene in ribosomov"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "jedra (z jedrno ovojnico) in mitohondrijev",
+     "ways": [
+      {
+       "title": "Primerjava prokariontske in evkariontske celice",
+       "text": "Bakterijska celica ima **celično membrano**, **citoplazmo**, **ribosome** in **dedno snov DNA**, večina bakterij tudi **celično steno**. Njena DNA leži prosto v citoplazmi, ker celica **nima jedra** z jedrno ovojnico – zato jo imenujemo *prokariontska* (»pred jedrom«). Prav tako nima organelov, obdanih z membrano, kot so **mitohondriji**, kloroplasti ali endoplazemski retikulum.\n\n- Celična membrana in citoplazma: ima ju vsaka celica.\n- Ribosomi in DNA: bakterija ju ima – brez DNA ne bi imela navodil, brez ribosomov ne bi mogla izdelovati beljakovin.\n- Celična stena in ribosomi: bakterije ju imajo (celična stena je prav tarča nekaterih antibiotikov)."
+      }
+     ],
+     "mistake": "Misliti, da bakterija nima DNA, ker nima jedra. DNA ima, le da ni zaprta v jedro."
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Na sončen poletni dan opazujemo liste paradižnika na vrtu. Kateri proces oziroma procesi potekajo v celicah teh zelenih listov? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "samo fotosinteza, saj rastline podnevi ne dihajo",
+      "samo celično dihanje",
+      "fotosinteza in celično dihanje",
+      "fotosinteza, celično dihanje pa poteka samo v koreninah"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "fotosinteza in celično dihanje",
+     "ways": [
+      {
+       "title": "Kje poteka kateri proces",
+       "text": "**Fotosinteza** poteka v kloroplastih zelenih delov rastline, kadar je svetloba: iz ogljikovega dioksida in vode nastaneta glukoza in kisik.\n\n**Celično dihanje** poteka v mitohondrijih **vseh živih celic** rastline – v listih, steblu in koreninah – **podnevi in ponoči**. Pri njem se iz glukoze ob porabi kisika sprosti energija, ki jo celice potrebujejo za rast in delovanje.\n\nV zelenih listih na soncu torej potekata oba procesa hkrati. Podnevi je fotosinteza navadno hitrejša od dihanja, zato list navzven več kisika oddaja kot porabi – zato se zdi, kot da rastlina »ne diha«, a celično dihanje vseeno poteka."
+      }
+     ],
+     "mistake": "»Rastline podnevi delajo fotosintezo, ponoči pa dihajo.« Napačno: rastline dihajo ves čas, ponoči le ni fotosinteze."
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "intro": "Na slikah so štirje členonožci: A – pajek križevec, B – potočni rak, C – rogač, D – strige. Slike niso v istem merilu.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 145\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><ellipse cx=\"60\" cy=\"78\" rx=\"20\" ry=\"25\" fill=\"currentColor\" fill-opacity=\"0.35\"/><circle cx=\"60\" cy=\"44\" r=\"12\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M56,33L54,26M64,33L66,26M50,38L28,22L14,34M70,38L92,22L106,34M50,42L28,36L14,54M70,42L92,36L106,54M50,46L28,50L14,74M70,46L92,50L106,74M50,50L28,64L14,94M70,50L92,64L106,94\"/><ellipse cx=\"180\" cy=\"55\" rx=\"13\" ry=\"22\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"169\" y=\"78\" width=\"22\" height=\"7\" rx=\"2\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"170\" y=\"85\" width=\"20\" height=\"7\" rx=\"2\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"171\" y=\"92\" width=\"18\" height=\"7\" rx=\"2\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"172\" y=\"99\" width=\"16\" height=\"7\" rx=\"2\" fill=\"currentColor\" fill-opacity=\"0.35\"/><rect x=\"173\" y=\"106\" width=\"14\" height=\"7\" rx=\"2\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M180,113L168,122H192Z\" fill=\"currentColor\" fill-opacity=\"0.35\"/><ellipse cx=\"143\" cy=\"24\" rx=\"6\" ry=\"11\" transform=\"rotate(-30 143 24)\" fill=\"currentColor\" fill-opacity=\"0.35\"/><ellipse cx=\"217\" cy=\"24\" rx=\"6\" ry=\"11\" transform=\"rotate(30 217 24)\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M169,42L148,32M191,42L212,32M176,34Q160,14 146,2M184,34Q200,14 214,2M178,34L174,24M182,34L186,24M168,50L154,54L150,66M192,50L206,54L210,66M168,56L154,63L150,76M192,56L206,63L210,76M168,62L154,72L150,86M192,62L206,72L210,86M168,68L154,81L150,96M192,68L206,81L210,96\"/><ellipse cx=\"300\" cy=\"36\" rx=\"9\" ry=\"7\" fill=\"currentColor\" fill-opacity=\"0.45\"/><ellipse cx=\"300\" cy=\"53\" rx=\"13\" ry=\"9\" fill=\"currentColor\" fill-opacity=\"0.45\"/><ellipse cx=\"300\" cy=\"88\" rx=\"16\" ry=\"26\" fill=\"currentColor\" fill-opacity=\"0.45\"/><path d=\"M300,63V113M295,30Q286,20 290,6M288,18L295,16M305,30Q314,20 310,6M312,18L305,16M292,34L283,33L280,25M308,34L317,33L320,25M288,52L272,44L264,50M312,52L328,44L336,50M288,61L272,60L264,72M312,61L328,60L336,72M288,70L272,76L264,94M312,70L328,76L336,94\"/><ellipse cx=\"420\" cy=\"20\" rx=\"6\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.4\"/><path d=\"M414,26h12v6h-12ZM414,32.5h12v6h-12ZM414,39h12v6h-12ZM414,45.5h12v6h-12ZM414,52h12v6h-12ZM414,58.5h12v6h-12ZM414,65h12v6h-12ZM414,71.5h12v6h-12ZM414,78h12v6h-12ZM414,84.5h12v6h-12ZM414,91h12v6h-12ZM414,97.5h12v6h-12ZM414,104h12v6h-12ZM414,110.5h12v6h-12Z\" fill=\"currentColor\" fill-opacity=\"0.4\"/><path d=\"M417,16Q408,6 398,4M423,16Q432,6 442,4M414,29L402,32M426,29L438,32M414,35.5L402,38.5M426,35.5L438,38.5M414,42L402,45M426,42L438,45M414,48.5L402,51.5M426,48.5L438,51.5M414,55L402,58M426,55L438,58M414,61.5L402,64.5M426,61.5L438,64.5M414,68L402,71M426,68L438,71M414,74.5L402,77.5M426,74.5L438,77.5M414,81L402,84M426,81L438,84M414,87.5L402,90.5M426,87.5L438,90.5M414,94L402,97M426,94L438,97M414,100.5L402,103.5M426,100.5L438,103.5M414,107L402,110M426,107L438,110M414,113.5L402,116.5M426,113.5L438,116.5\" stroke-width=\"1.2\"/><g fill=\"currentColor\" stroke=\"none\" text-anchor=\"middle\" font-weight=\"bold\" font-size=\"14\"><text x=\"60\" y=\"140\">A</text><text x=\"180\" y=\"140\">B</text><text x=\"300\" y=\"140\">C</text><text x=\"420\" y=\"140\">D</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera lastnost je značilna **samo za eno** od teh štirih živali? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Telo pokriva zunanji skelet iz hitina.",
+      "Ima členjene okončine.",
+      "Ima tri pare nog.",
+      "Ima tipalke."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "Tri pare nog ima samo rogač (žuželka).",
+     "ways": [
+      {
+       "title": "Štetje nog in primerjava",
+       "text": "Na slikah preštejemo noge (brez tipalk):\n\n- **A pajek križevec** (pajkovci): $4$ pari nog, telo iz glavoprsja in zadka, brez tipalk.\n- **B potočni rak** (raki): $5$ parov nog (prvi par nosi klešče) in $2$ para tipalk.\n- **C rogač** (žuželke): **$3$ pari nog**, telo iz glave, oprsja in zadka, $1$ par tipalk.\n- **D strige** (stonoge): veliko členov, na vsakem en par nog, $1$ par tipalk.\n\nTri pare nog ima samo rogač – to je značilnost žuželk.\n\n- Zunanji skelet iz hitina in členjene okončine imajo **vsi** členonožci (ime »členonožci« pove prav to).\n- Tipalke imajo **trije** (rak, rogač, strige), nima jih le pajek – lastnost torej ni značilna samo za eno žival."
+      }
+     ],
+     "mistake": "Zamenjati število nog in število parov nog: pajek ima na vsaki strani $4$ noge, skupaj $8$ nog ($4$ pare), žuželka pa $6$ nog ($3$ pare). Tudi tipalk ne štejemo med noge."
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Kateri organ precedi (filtrira) kri in iz nje odstrani presnovne odpadke, kot je sečnina, ter odvečno vodo? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "jetra",
+      "ledvice",
+      "sečni mehur",
+      "pljuča"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "ledvice",
+     "ways": [
+      {
+       "title": "Po nalogah organov",
+       "text": "**Ledvice** so glavni izločalni organ. Kri teče skozi njihove drobne enote (nefrone), kjer se iz nje precedijo voda, sečnina, odvečne soli in druge odpadne snovi. Potrebne snovi se vrnejo v kri, ostanek pa je **seč**, ki odteče po sečevodih v sečni mehur.\n\n- **Jetra** sečnino *izdelajo* (iz razgradnih produktov beljakovin), krvi pa ne precejajo – sečnina iz jeter s krvjo potuje do ledvic.\n- **Sečni mehur** seč le shranjuje, dokler ga ne izločimo.\n- **Pljuča** iz krvi oddajajo ogljikov dioksid in nekaj vodne pare, sečnine pa ne."
+      }
+     ],
+     "mistake": "Izbrati jetra, ker v njih nastaja sečnina. Organ, ki sečnino izloči iz krvi, so ledvice."
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Pri katerem postopku pridelave hrane sodelujejo mikroorganizmi? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "stiskanje olja iz praženih bučnih semen",
+      "sušenje jabolčnih krhljev",
+      "kisanje zelja in repe",
+      "mletje pšeničnega zrnja v moko"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "kisanje zelja in repe",
+     "ways": [
+      {
+       "title": "Kje delajo mikroorganizmi",
+       "text": "Pri **kisanju zelja in repe** naribano zelenjavo nasolimo in potlačimo, da ni zraka. **Mlečnokislinske bakterije** razgrajujejo sladkorje v zelenjavi v **mlečno kislino** (mlečnokislinsko vrenje). Kislina da zelju kisel okus in ga konzervira, saj v kislem okolju ne morejo rasti bakterije, ki povzročajo gnitje.\n\nDrugi postopki so fizikalni in mikroorganizmov ne potrebujejo:\n\n- **stiskanje bučnega olja** – olje iztisnemo iz semen s pritiskom;\n- **sušenje krhljev** – odstranimo vodo; prav pomanjkanje vode mikroorganizmom onemogoči rast, zato se suho sadje ne pokvari;\n- **mletje** – zrnje mehansko zdrobimo."
+      }
+     ],
+     "mistake": "Izbrati sušenje, ker »se nekaj spremeni«. Pri sušenju mikroorganizme želimo prav zavreti, ne uporabiti."
+    }
+   ]
+  },
+  {
+   "n": 10,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Lana se je pri rezanju kruha urezala v prst. Po nekaj minutah je rana prenehala krvaveti, ker se je kri strdila. Katere sestavine krvi imajo pri strjevanju krvi glavno vlogo? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "rdeče krvničke (eritrociti)",
+      "bele krvničke (levkociti)",
+      "krvne ploščice (trombociti)"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "krvne ploščice (trombociti)",
+     "ways": [
+      {
+       "title": "Po nalogah krvnih celic",
+       "text": "- **Krvne ploščice** se ob poškodbi žile zlepijo na mestu rane in sprožijo strjevanje: iz beljakovin plazme nastanejo niti (fibrin), ki ujamejo krvne celice in nastane **krvni strdek** (krasta), ki rano zapre.\n- **Rdeče krvničke** vsebujejo hemoglobin in **prenašajo kisik** (in del ogljikovega dioksida). V strdku so sicer ujete, a strjevanja ne sprožijo.\n- **Bele krvničke** skrbijo za **obrambo** telesa – uničujejo bakterije in druge povzročitelje bolezni, ki bi skozi rano prišli v telo."
+      }
+     ],
+     "mistake": "Izbrati rdeče krvničke, ker je strdek rdeč. Barvo mu dajejo ujete rdeče krvničke, strjevanje pa sprožijo krvne ploščice."
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "intro": "Velika njorka je bila črno-bela morska ptica, visoka do približno $80\\,\\mathrm{cm}$. Imela je kratke peruti, s katerimi ni mogla leteti, pod vodo pa je z njimi odlično plavala in lovila ribe. Na kopnem je hodila pokončno in počasi. Gnezdila je v velikih kolonijah na redkih skalnatih otokih severnega Atlantika, kjer je samica vsako leto izlegla le eno jajce. Od 16. stoletja so mornarji in ribiči vse pogosteje pristajali na teh otokih. Zadnja dva znana osebka so videli leta 1844 na otočku ob Islandiji. Na zemljevidu so označena nekdanja gnezdišča velike njorke.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 422 190\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><ellipse cx=\"55\" cy=\"112\" rx=\"25\" ry=\"46\"/><path d=\"M38,76C28,100 28,130 36,150C46,140 50,110 48,80Z\" fill=\"currentColor\" fill-opacity=\"0.75\"/><path d=\"M72,80C82,100 84,128 76,150C70,135 66,105 66,85Z\" fill=\"currentColor\" fill-opacity=\"0.75\"/><circle cx=\"55\" cy=\"56\" r=\"15\" fill=\"currentColor\" fill-opacity=\"0.75\"/><path d=\"M66,49L92,55L68,63Z\" fill=\"currentColor\" fill-opacity=\"0.75\"/><path d=\"M67,52L84,55\" stroke-width=\"1\"/><circle cx=\"59\" cy=\"52\" r=\"2.2\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M42,156L34,165H50ZM62,156L58,165H74Z\" fill=\"currentColor\" fill-opacity=\"0.75\"/><rect x=\"130\" y=\"4\" width=\"288\" height=\"158\" rx=\"4\"/><polygon points=\"130,66 149.2,70.4 158.8,88 171.6,105.6 162,118.8 146,136.4 130,145.2 130,66\" fill=\"currentColor\" fill-opacity=\"0.18\"/><polygon points=\"165.2,123.2 184.4,127.6 184.4,110 174.8,107.8\" fill=\"currentColor\" fill-opacity=\"0.18\"/><polygon points=\"168.4,0 290,0 293.2,17.6 264.4,35.2 226,52.8 213.2,70.4 194,57.2 181.2,35.2 168.4,13.2\" fill=\"currentColor\" fill-opacity=\"0.18\"/><polygon points=\"277.2,46.2 306,41.8 312.4,49.3 296.4,55.4 282,53.2\" fill=\"currentColor\" fill-opacity=\"0.18\"/><polygon points=\"336.4,77 347.6,81 354,99 358.8,109.1 336.4,114.4 343.8,99 338,90.2 333.8,83.6\" fill=\"currentColor\" fill-opacity=\"0.18\"/><polygon points=\"322,96.8 334.8,91.5 334.8,105.6 322,107.8\" fill=\"currentColor\" fill-opacity=\"0.18\"/><polygon points=\"418,22 402,28.6 386,50.6 370,63.8 373.2,79.2 382.8,79.2 386,90.2 379.6,96.8 366.8,105.6 360.4,110 347.6,118.8 339.6,121 349.2,132 347.6,143 325.2,145.2 325.2,154 418,154\" fill=\"currentColor\" fill-opacity=\"0.18\"/><circle cx=\"183.8\" cy=\"115.3\" r=\"3.2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"157.2\" cy=\"124.1\" r=\"3.2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"280.7\" cy=\"54.1\" r=\"3.2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"326.5\" cy=\"80.1\" r=\"3.2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"331.6\" cy=\"61.6\" r=\"3.2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"298\" cy=\"55.9\" r=\"3.2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"300\" cy=\"176\" r=\"3.2\" fill=\"currentColor\" stroke=\"none\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"55\" y=\"182\" text-anchor=\"middle\">velika njorka</text><text x=\"238.8\" y=\"101.2\" text-anchor=\"middle\" font-size=\"10\">SEVERNI ATLANTSKI</text><text x=\"238.8\" y=\"112.2\" text-anchor=\"middle\" font-size=\"10\">OCEAN</text><text x=\"226\" y=\"22\" text-anchor=\"middle\" font-size=\"10\">Grenlandija</text><text x=\"316\" y=\"40\" font-size=\"10\">Islandija</text><text x=\"386\" y=\"127.6\" text-anchor=\"middle\" font-size=\"10\">Evropa</text><text x=\"152.4\" y=\"52.8\" text-anchor=\"middle\" font-size=\"10\">Severna</text><text x=\"152.4\" y=\"61.6\" text-anchor=\"middle\" font-size=\"10\">Amerika</text><text x=\"308\" y=\"180\" font-size=\"10\">nekdanje gnezdišče</text></g></svg>",
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Kaj je najverjetneje glavni vzrok, da je velika njorka izumrla? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Ob koncu zadnje ledene dobe se je podnebje ogrelo in morje je postalo zanjo pretoplo.",
+      "Morje so onesnažile plastične vrečke, ki so jih ptice pogoltnile.",
+      "Ljudje so jo množično lovili zaradi mesa, maščobe, perja in jajc; na kopnem je bila lahek plen, z enim jajcem na leto pa se njena populacija ni mogla dovolj hitro obnavljati.",
+      "Ker ni znala leteti, so vse osebke pojedli naravni plenilci, na primer morski orli."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "Prekomerni lov ljudi (meso, maščoba, perje, jajca) ob počasnem razmnoževanju.",
+     "ways": [
+      {
+       "title": "Prilagoditve in čas izumrtja",
+       "text": "Iz opisa preberemo, kaj je bilo za vrsto usodno:\n\n- **Ni letela** in je na kopnem hodila počasi – na gnezdiščih ni mogla pobegniti ljudem.\n- Gnezdila je v **velikih kolonijah na redkih otokih** – ko so ljudje odkrili gnezdišče, so lahko pobili veliko ptic naenkrat.\n- Samica je izlegla **le eno jajce na leto** – populacija se je obnavljala počasi, zato izgub ni mogla nadomestiti.\n- Izumirati je začela, ko so **od 16. stoletja** na otoke vse pogosteje prihajali ljudje, zadnja osebka pa so videli leta 1844.\n\nNajverjetnejši vzrok je torej **prekomerni lov ljudi** – primer, kako človek z izkoriščanjem povzroči izumrtje vrste.\n\nZakaj drugi odgovori niso verjetni:\n\n- **Konec ledene dobe** je bil pred okoli $12\\,000$ leti, njorka pa je živela še do 19. stoletja – otoplitev je preživela.\n- **Plastika** se je množično začela uporabljati šele v 20. stoletju, ko njorke že ni bilo več.\n- **Naravni plenilci** so z njorko živeli že več tisoč let, ne da bi jo iztrebili; plenilec in plen sta bila v ravnovesju."
+      }
+     ],
+     "mistake": "Izbrati naravne plenilce, ker ptica ni znala leteti. Plenilci so bili ob njej že zelo dolgo; izumrla je šele, ko je na njene otoke prišel človek."
+    }
+   ]
+  },
+  {
+   "n": 12,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Ta proces poteka neprestano v vseh živih celicah človeka – v mišičnih in kožnih celicah, celo v kostnih celicah. Pri njem se ob porabi kisika iz hranilnih snovi sprosti energija, ki jo celice potrebujejo za delovanje. Kateri proces je opisan? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "pljučno dihanje",
+      "celično dihanje",
+      "fotosinteza",
+      "transpiracija"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "celično dihanje",
+     "ways": [
+      {
+       "title": "Po ključnih besedah v opisu",
+       "text": "Ključni podatki: proces poteka **v vsaki živi celici**, **porablja kisik** in iz hranilnih snovi (glukoze) **sprosti energijo**. To je **celično dihanje**, ki poteka v mitohondrijih; nastaneta tudi ogljikov dioksid in voda.\n\n- **Pljučno dihanje** je izmenjava plinov v pljučih (vdih in izdih, kisik prehaja v kri, ogljikov dioksid iz nje). Poteka samo v pljučih, ne v vsaki celici, in pri njem se energija iz hrane ne sprošča.\n- **Fotosinteza** poteka v kloroplastih rastlin, kisik pri njej nastaja, ne porablja se; človek je ne more opravljati.\n- **Transpiracija** je izhlapevanje vode skozi listne reže rastlin."
+      }
+     ],
+     "mistake": "Zamenjati celično in pljučno dihanje. Pljučno dihanje le dovaja kisik v kri; energijo sprošča celično dihanje v vsaki celici."
+    }
+   ]
+  },
+  {
+   "n": 13,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Čebele so spomladi v sadovnjaku obletavale cvetove češenj. Kako iz cveta nastane seme? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Seme nastane takoj, ko pelod (cvetni prah) pristane na brazdi pestiča.",
+      "Seme se razvije iz prašnika, ko čebela z njega odnese pelod.",
+      "Seme se razvije iz semenske zasnove, potem ko se semenska celica iz peloda združi z jajčno celico v njej.",
+      "Seme se razvije iz cele plodnice, ki se po opraševanju zapre."
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "Iz semenske zasnove po oploditvi (združitvi semenske in jajčne celice).",
+     "ways": [
+      {
+       "title": "Od opraševanja do semena",
+       "text": "1. **Opraševanje**: čebela prenese pelod s prašnikov na **brazdo** pestiča.\n2. Pelodno zrno na brazdi požene **pelodno cev**, ki zraste skozi vrat pestiča do **semenske zasnove** v plodnici.\n3. **Oploditev**: semenska celica iz pelodnega zrna se združi z **jajčno celico** v semenski zasnovi.\n4. Iz oplojene semenske zasnove se razvije **seme** (v njem je zarodek nove rastline), iz stene **plodnice** pa **plod** – pri češnji sočno meso in koščica.\n\n- *Takoj ko pelod pristane na brazdi* – to je le opraševanje; brez oploditve seme ne nastane.\n- *Iz prašnika* – prašnik je moški del cveta, v katerem nastaja pelod, iz njega se ne razvije nič.\n- *Iz cele plodnice* – iz plodnice nastane plod, seme pa iz semenske zasnove v njej."
+      }
+     ],
+     "mistake": "Enačiti opraševanje in oploditev. Opraševanje je prenos peloda, oploditev pa združitev spolnih celic; seme nastane šele po oploditvi."
+    }
+   ]
+  },
+  {
+   "n": 14,
+   "intro": "Na sliki so možgani človeka, gledani od strani, in začetek hrbtenjače. Nekateri deli so označeni s črkami.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 250\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M45,120C25,75 70,25 145,22C225,20 270,60 262,108C258,128 240,134 222,130C200,126 190,128 182,132C150,140 110,142 80,138C60,136 50,130 45,120Z\" fill=\"currentColor\" fill-opacity=\"0.12\"/><path d=\"M70,80C90,70 100,95 120,85M150,40C150,60 170,65 165,85M200,45C195,65 215,75 232,70M100,112C120,100 140,122 160,106M210,95C225,105 240,95 250,102M95,124C130,104 160,98 190,110\" stroke-width=\"1.1\"/><path d=\"M165,133C166,160 168,185 170,205L188,205C188,185 190,160 196,135\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"230\" cy=\"152\" rx=\"34\" ry=\"19\" fill=\"currentColor\" fill-opacity=\"0.25\"/><path d=\"M203,147Q230,137 257,147M200,155Q230,145 260,155M204,163Q230,154 256,163\" stroke-width=\"1\"/><path d=\"M170,205L171,244M188,205L187,244\" /><path d=\"M171,244H187\" stroke-dasharray=\"3 3\"/><rect x=\"171\" y=\"205\" width=\"16\" height=\"39\" fill=\"currentColor\" fill-opacity=\"0.15\" stroke=\"none\"/><path d=\"M286,52L205,58M286,140L250,148M286,184L182,182M286,228L181,228\" stroke-width=\"0.9\"/><g fill=\"currentColor\" stroke=\"none\" font-weight=\"bold\" font-size=\"14\"><text x=\"292\" y=\"56\">A</text><text x=\"292\" y=\"144\">B</text><text x=\"292\" y=\"188\">C</text><text x=\"292\" y=\"232\">D</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Ema hodi po napeti vrvi (slacklinu) med dvema drevesoma. Kateri označeni del ima glavno vlogo pri ohranjanju ravnotežja in usklajevanju njenih gibov? Obkroži črko.",
+     "choices": [
+      "A",
+      "B",
+      "C",
+      "D"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – mali možgani",
+     "ways": [
+      {
+       "title": "Po nalogah delov živčevja",
+       "text": "Na sliki so:\n\n- **A – veliki možgani**: zavestno mišljenje, učenje, spomin, zaznavanje (vid, sluh, tip), zavestno sproženi gibi;\n- **B – mali možgani**: ležijo pod zadnjim delom velikih možganov; skrbijo za **ravnotežje**, natančnost in **usklajenost gibov**;\n- **C – podaljšana hrbtenjača** (del možganskega debla): uravnava dihanje in bitje srca ter reflekse, kot sta požiranje in kašljanje;\n- **D – hrbtenjača**: prevaja živčne impulze med možgani in telesom ter je središče hrbteničnih refleksov.\n\nZa ravnotežje pri hoji po vrvi so ključni mali možgani, ki sprejemajo podatke iz ravnotežnega organa v notranjem ušesu, iz oči in mišic ter sproti popravljajo gibe. Pravilna je **B**."
+      }
+     ],
+     "mistake": "Izbrati A, ker so veliki možgani »glavni«. Odločitev za hojo je res v velikih možganih, ravnotežje in usklajenost gibov pa uravnavajo mali možgani."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Del, ki si ga izbral v nalogi a), dobiva sporočila iz ravnotežnega organa in oči ter pošilja ukaze mišicam. V kakšni obliki in po čem se informacije prenašajo med živčnimi celicami tega dela in drugimi celicami v telesu?",
+     "answer": "Z živčnimi impulzi (električnimi signali), ki potujejo po živčnih celicah (nevronih) in živcih; med celicami se prenesejo s kemičnimi prenašalci v sinapsah.",
+     "ways": [
+      {
+       "title": "Pot sporočila",
+       "text": "Živčne celice (**nevroni**) prenašajo informacije v obliki **živčnih impulzov** – kratkih električnih signalov, ki zelo hitro potujejo vzdolž živčnih vlaken. Več živčnih vlaken skupaj tvori **živec**.\n\nPot pri hoji po vrvi:\n\n1. čutilne celice v ravnotežnem organu in očeh sprožijo impulze, ki po **čutilnih živcih** pridejo do malih možganov;\n2. mali možgani podatke obdelajo;\n3. impulzi po **gibalnih živcih** (prek hrbtenjače) potujejo do mišic, ki se skrčijo in popravijo držo.\n\nKjer se živčna celica stika z drugo celico (stik se imenuje **sinapsa**), impulz ne preskoči neposredno: konec vlakna izloči **kemični prenašalec**, ki v naslednji celici sproži nov impulz."
+      },
+      {
+       "title": "Drugače: primerjava s hormoni",
+       "text": "Telo ima dva sistema za sporočanje. **Hormoni** potujejo po krvi in delujejo počasneje, a dolgo. **Živčevje** sporočila prenaša z **živčnimi impulzi** po živcih – hitro (v delčku sekunde) in natančno do določene mišice. Za ohranjanje ravnotežja potrebujemo bliskovite popravke, zato gre tu za živčne impulze, ne za hormone."
+      }
+     ],
+     "scoring": "1 t. za odgovor, da se informacije prenašajo z živčnimi impulzi (električnimi signali) po živčnih celicah oziroma živcih. Odgovor »po krvi« ali »s hormoni« ni pravilen.",
+     "mistake": "Zapisati, da možgani »pošljejo kri« ali hormone v mišice. Ukazi mišicam potujejo po živcih kot živčni impulzi."
+    }
+   ]
+  },
+  {
+   "n": 15,
+   "intro": "Tim je s tal dvignil težko škatlo z upognjenim hrbtom in iztegnjenimi nogami. Čez nekaj dni ga je začelo boleti v križu, bolečina pa se je širila po zadnji strani noge do stopala, ki ga je tudi mravljinčilo. Zdravnik je ugotovil, da se je ena od medvretenčnih ploščic v spodnjem delu hrbtenice izbočila. Slika prikazuje poenostavljen zdrav in poškodovan del hrbtenice, gledan od spredaj.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 470 245\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M69,4V218M81,4V218\" stroke-dasharray=\"4 3\" stroke-width=\"1\"/><rect x=\"45\" y=\"12\" width=\"60\" height=\"38\" rx=\"6\" fill=\"currentColor\" fill-opacity=\"0.2\"/><rect x=\"45\" y=\"66\" width=\"60\" height=\"38\" rx=\"6\" fill=\"currentColor\" fill-opacity=\"0.2\"/><rect x=\"45\" y=\"120\" width=\"60\" height=\"38\" rx=\"6\" fill=\"currentColor\" fill-opacity=\"0.2\"/><rect x=\"45\" y=\"174\" width=\"60\" height=\"38\" rx=\"6\" fill=\"currentColor\" fill-opacity=\"0.2\"/><rect x=\"48\" y=\"53\" width=\"54\" height=\"12\" rx=\"4\" fill=\"currentColor\" fill-opacity=\"0.45\"/><rect x=\"48\" y=\"107\" width=\"54\" height=\"12\" rx=\"4\" fill=\"currentColor\" fill-opacity=\"0.45\"/><rect x=\"48\" y=\"161\" width=\"54\" height=\"12\" rx=\"4\" fill=\"currentColor\" fill-opacity=\"0.45\"/><path d=\"M45,59C30,61 20,71 8,85M105,59C120,61 130,71 142,85M45,113C30,115 20,125 8,139M105,113C120,115 130,125 142,139M45,167C30,169 20,179 8,193M105,167C120,169 130,179 142,193\" stroke-width=\"2\"/><path d=\"M239,4V218M251,4V218\" stroke-dasharray=\"4 3\" stroke-width=\"1\"/><rect x=\"215\" y=\"12\" width=\"60\" height=\"38\" rx=\"6\" fill=\"currentColor\" fill-opacity=\"0.2\"/><rect x=\"215\" y=\"66\" width=\"60\" height=\"38\" rx=\"6\" fill=\"currentColor\" fill-opacity=\"0.2\"/><rect x=\"215\" y=\"120\" width=\"60\" height=\"38\" rx=\"6\" fill=\"currentColor\" fill-opacity=\"0.2\"/><rect x=\"215\" y=\"174\" width=\"60\" height=\"38\" rx=\"6\" fill=\"currentColor\" fill-opacity=\"0.2\"/><rect x=\"218\" y=\"53\" width=\"54\" height=\"12\" rx=\"4\" fill=\"currentColor\" fill-opacity=\"0.45\"/><rect x=\"218\" y=\"107\" width=\"54\" height=\"12\" rx=\"4\" fill=\"currentColor\" fill-opacity=\"0.45\"/><rect x=\"218\" y=\"161\" width=\"54\" height=\"12\" rx=\"4\" fill=\"currentColor\" fill-opacity=\"0.45\"/><path d=\"M215,59C200,61 190,71 178,85M275,59C290,61 300,71 312,85M215,113C200,115 190,125 178,139M275,113C290,115 300,125 312,139M215,167C200,169 190,179 178,193M275,167C290,169 300,179 312,193\" stroke-width=\"2\"/><path d=\"M270,107C294,101 302,121 270,120Z\" fill=\"currentColor\" fill-opacity=\"0.6\"/><path d=\"M336,31H276M336,59H272M336,112H295M336,146L313,140M336,212L252,197\" stroke-width=\"0.9\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"75\" y=\"238\" text-anchor=\"middle\">zdrava hrbtenica</text><text x=\"245\" y=\"238\" text-anchor=\"middle\">poškodovana hrbtenica</text><text x=\"340\" y=\"35\">vretence</text><text x=\"340\" y=\"63\">medvretenčna ploščica</text><text x=\"340\" y=\"116\">izbočena ploščica</text><text x=\"340\" y=\"150\">živec</text><text x=\"340\" y=\"216\">hrbtenjača</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Kosti same telesa ne morejo premikati. Kateri del gibal je Timu poleg okostja omogočil, da je škatlo dvignil? Poimenuj ga.",
+     "answer": "skeletne (prečno progaste) mišice",
+     "ways": [
+      {
+       "title": "Aktivni in pasivni del gibal",
+       "text": "Gibala sestavljata **okostje** (kosti in sklepi) – *pasivni* del, ki daje oporo in vzvode – in **skeletne mišice** – *aktivni* del. Mišice so s **kitami** pritrjene na kosti. Ko se mišica na ukaz živčevja **skrči**, se skrajša in potegne kost, ki se v sklepu premakne.\n\nPri dvigovanju škatle so delovale predvsem mišice nog, hrbta in rok."
+      }
+     ],
+     "scoring": "1 t. za odgovor mišice (skeletne, prečno progaste mišice). Odgovor »sklepi« ali »kite« ne zadošča, ker sta to dela, ki gibanje omogočata, a ga ne poganjata.",
+     "mistake": "Zapisati »sklepi«: sklepi so gibljive povezave kosti in spadajo k okostju; sile za gibanje ne ustvarijo."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "S pomočjo slike razloži, zakaj Tima boli in mravljinči noga, čeprav je poškodba v hrbtu.",
+     "answer": "Izbočena medvretenčna ploščica pritiska na živec, ki izhaja iz hrbtenjače in vodi v nogo; stisnjen živec prevaja motene impulze, zato bolečino in mravljinčenje čutimo v nogi.",
+     "ways": [
+      {
+       "title": "S sliko",
+       "text": "Na sliki zdrave hrbtenice so medvretenčne ploščice v celoti med vretenci, **živci**, ki izhajajo iz **hrbtenjače** med vretenci, pa so prosti. Na sliki poškodovane hrbtenice se srednja ploščica **izboči** vstran in **pritisne na živec**.\n\nTa živec vodi iz hrbtenjače **v nogo**: prinaša občutke iz kože noge in ukaze mišicam noge. Ko je stisnjen, po njem potujejo moteni živčni impulzi. Možgani jih razumejo, kot da prihajajo iz dela telesa, ki ga živec oživčuje – zato Tim bolečino in mravljinčenje čuti **v nogi**, ne le v hrbtu. Ob močnem pritisku bi lahko oslabele tudi mišice noge."
+      },
+      {
+       "title": "Drugače: pot živčnega impulza",
+       "text": "Občutek bolečine nastane v **možganih**, ki prejmejo impulz po živcu. Možgani »ne vedo«, na katerem mestu poti je živec dražen – vedno občutek pripišejo koncu živca, torej koži in mišicam noge. Zato poškodba v hrbtu, ki draži živec za nogo, povzroči bolečino in mravljinčenje v nogi."
+      }
+     ],
+     "scoring": "1 t. za razlago, da izbočena ploščica pritiska na živec (iz hrbtenjače), ki vodi v nogo, zato se posledice čutijo v nogi. Odgovor brez omembe živca (npr. »ker je poškodovana hrbtenica«) ne prinese točke.",
+     "mistake": "Odgovoriti, da je poškodovana noga ali mišica v nogi. Na sliki je poškodba v hrbtenici; noga je prizadeta, ker je stisnjen živec, ki vodi vanjo."
+    }
+   ]
+  },
+  {
+   "n": 16,
+   "intro": "Navadni repik je pogosta travniška rastlina, ki zraste do $1\\,\\mathrm{m}$ visoko. Poleti na vrhu stebla cveti veliko drobnih **rumenih** cvetov s petimi venčnimi listi, ki rahlo dišijo. V krogu je povečan njegov zrel plod: na vrhu ima venec trdih ščetin, ki so na koncu ukrivljene v kaveljčke.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 250\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M90,240V30\"/><ellipse cx=\"77\" cy=\"210\" rx=\"4\" ry=\"8\" transform=\"rotate(-20 77 210)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"73\" cy=\"225\" rx=\"4\" ry=\"8\" transform=\"rotate(-70 73 225)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"64\" cy=\"201\" rx=\"4\" ry=\"8\" transform=\"rotate(-20 64 201)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"60\" cy=\"216\" rx=\"4\" ry=\"8\" transform=\"rotate(-70 60 216)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"51\" cy=\"192\" rx=\"4\" ry=\"8\" transform=\"rotate(-20 51 192)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"47\" cy=\"207\" rx=\"4\" ry=\"8\" transform=\"rotate(-70 47 207)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"103\" cy=\"210\" rx=\"4\" ry=\"8\" transform=\"rotate(20 103 210)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"107\" cy=\"225\" rx=\"4\" ry=\"8\" transform=\"rotate(70 107 225)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"116\" cy=\"201\" rx=\"4\" ry=\"8\" transform=\"rotate(20 116 201)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"120\" cy=\"216\" rx=\"4\" ry=\"8\" transform=\"rotate(70 120 216)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"129\" cy=\"192\" rx=\"4\" ry=\"8\" transform=\"rotate(20 129 192)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"133\" cy=\"207\" rx=\"4\" ry=\"8\" transform=\"rotate(70 133 207)\" fill=\"currentColor\" fill-opacity=\"0.3\"/><path d=\"M90,226L38,190M90,226L142,190M90,170L66,156M90,150L113,138\"/><ellipse cx=\"62\" cy=\"153\" rx=\"7\" ry=\"4\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"117\" cy=\"135\" rx=\"7\" ry=\"4\" fill=\"currentColor\" fill-opacity=\"0.3\"/><circle cx=\"83\" cy=\"34\" r=\"4.5\" fill=\"currentColor\" fill-opacity=\"0.55\"/><path d=\"M90,37L83,34\"/><circle cx=\"97\" cy=\"44\" r=\"4.5\" fill=\"currentColor\" fill-opacity=\"0.55\"/><path d=\"M90,47L97,44\"/><circle cx=\"83\" cy=\"54\" r=\"4.5\" fill=\"currentColor\" fill-opacity=\"0.55\"/><path d=\"M90,57L83,54\"/><circle cx=\"97\" cy=\"64\" r=\"4.5\" fill=\"currentColor\" fill-opacity=\"0.55\"/><path d=\"M90,67L97,64\"/><circle cx=\"83\" cy=\"74\" r=\"4.5\" fill=\"currentColor\" fill-opacity=\"0.55\"/><path d=\"M90,77L83,74\"/><circle cx=\"97\" cy=\"84\" r=\"4.5\" fill=\"currentColor\" fill-opacity=\"0.55\"/><path d=\"M90,87L97,84\"/><path d=\"M90,97L83,94M80,92L86,92L83,99Z\" fill=\"currentColor\" fill-opacity=\"0.4\"/><path d=\"M90,107L97,104M94,102L100,102L97,109Z\" fill=\"currentColor\" fill-opacity=\"0.4\"/><path d=\"M90,117L83,114M80,112L86,112L83,119Z\" fill=\"currentColor\" fill-opacity=\"0.4\"/><circle cx=\"97\" cy=\"114\" r=\"9\" stroke-width=\"1\"/><path d=\"M106,114L172,118\" stroke-dasharray=\"3 3\" stroke-width=\"1\"/><circle cx=\"238\" cy=\"120\" r=\"66\"/><path d=\"M212,124L264,124L250,178Q238,186 226,178Z\" fill=\"currentColor\" fill-opacity=\"0.22\"/><path d=\"M225,126L233,180M238,126V184M251,126L243,180\" stroke-width=\"1\"/><path d=\"M212,124L206,98q0,-5 4,-3M218.5,124L214,95.5q0,-5 4,-3M225,124L222,93q0,-5 4,-3M231.5,124L230,90.5q0,-5 4,-3M238,124L238,88q0,-5 4,-3M244.5,124L246,90.5q0,-5 4,-3M251,124L254,93q0,-5 4,-3M257.5,124L262,95.5q0,-5 4,-3M264,124L270,98q0,-5 4,-3\" stroke-width=\"1.3\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"90\" y=\"248\" text-anchor=\"middle\" font-size=\"11\">navadni repik</text><text x=\"238\" y=\"205\" text-anchor=\"middle\" font-size=\"11\">povečan plod</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Ali cvetove navadnega repika oprašuje veter? Obkroži DA ali NE in odgovor utemelji z lastnostmi cveta.\n\nDA      NE",
+     "answer": "NE – cvetovi so rumeni, opazni in dišeči, kar privablja žuželke, ki prenašajo pelod.",
+     "ways": [
+      {
+       "title": "Primerjava žužkocvetk in vetrocvetk",
+       "text": "| lastnost cveta | oprašujejo žuželke | oprašuje veter |\n|---|---|---|\n| venčni listi | pisani, opazni | majhni ali jih ni |\n| vonj, medičina | pogosto | ne |\n| pelod | lepljiv, manj ga je | suh, lahek, zelo veliko ga je |\n| prašniki, brazde | v cvetu | viseči prašniki, pernate brazde |\n\nRepik ima **rumene venčne liste** in cvetovi **dišijo** – to so lastnosti, s katerimi rastlina **privablja žuželke** (čebele, muhe), ki pelod prenesejo na drug cvet. Odgovor je **NE**.\n\nTipične vetrocvetke so trave, leska in koprive: imajo neopazne zelenkaste cvetove brez vonja."
+      }
+     ],
+     "scoring": "1 t. za NE z utemeljitvijo (npr. rumeni/opazni venčni listi ali vonj privabljajo žuželke). Samo obkrožen NE brez utemeljitve ne prinese točke.",
+     "mistake": "Sklepati, da ga oprašuje veter, ker raste na travniku kot trave. O načinu opraševanja odločajo lastnosti cveta, ne rastišče."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Čemu služijo kaveljčki na plodu navadnega repika? Razloži, kako to koristi rastlini.",
+     "answer": "Za razširjanje plodov (s semeni) z živalmi: kaveljčki se zataknejo v dlako živali ali v oblačila ljudi, ki plod odnesejo daleč od matične rastline.",
+     "ways": [
+      {
+       "title": "Razširjanje z živalmi",
+       "text": "Kaveljčki se **zataknejo v dlako** živali (srne, lisice, psa) ali v oblačila človeka, ki gre mimo. Žival plod nosi s sabo, dokler ne odpade ali ga ne izčeše – pogosto daleč stran. Tako se **plodovi in v njih semena razširijo z živalmi**.\n\nKorist za rastlino: semena pridejo na **nova rastišča**, kjer mlade rastline ne tekmujejo z matično rastlino in med sabo za svetlobo, vodo in rudninske snovi, vrsta pa se lahko razširi na večje območje."
+      },
+      {
+       "title": "Drugače: primerjava z drugimi plodovi",
+       "text": "Oblika ploda pove, kako se razširja: **krilca ali padalca** – veter (javor, regrat), **sočno meso** – živali plod pojedo in semena izločijo (češnja, bezeg), plodovi, ki **počijo** – rastlina sama izstreli semena (nedotika). **Kaveljčki** so prilagoditev za prenos na zunanjosti živali, podobno kot pri repincu."
+      }
+     ],
+     "scoring": "1 t. za razširjanje plodov/semen z živalmi (kaveljčki se oprimejo dlake ali oblačil) z razlago, da pridejo daleč od matične rastline. Odgovor »za zaščito pred živalmi« ni pravilen.",
+     "mistake": "Misliti, da so kaveljčki bodice za obrambo pred rastlinojedci. Ukrivljene ščetine se oprimejo dlake – rastlini pomagajo razširjati plodove."
+    }
+   ]
+  },
+  {
+   "n": 17,
+   "intro": "Na slikah sta vrtni polž, ki prosto živi na vrtovih in se hrani z listi rastlin, in navadni klop, ki je zajedavec: prisesa se na kožo živali ali človeka in sesa kri. Sliki nista v istem merilu.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 380 160\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M18,122C18,110 36,106 70,106L150,106C162,104 168,94 170,82C178,80 186,88 186,100C186,112 176,122 160,122Z\" fill=\"currentColor\" fill-opacity=\"0.25\"/><path d=\"M172,84L180,52M167,86L160,55M182,96L194,90M178,98L188,98\"/><circle cx=\"180\" cy=\"51\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"160\" cy=\"54\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"95\" cy=\"70\" r=\"40\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M97,70A2,2 0 0,0 93,70A5,5 0 0,0 103,70A9,9 0 0,0 85,70A13,13 0 0,0 111,70A18,18 0 0,0 75,70A24,24 0 0,0 123,70A30,30 0 0,0 63,70\" stroke-width=\"1.3\"/><path d=\"M284,62L264,52L256,70M316,62L336,52L344,70M284,70L264,64L256,86M316,70L336,64L344,86M284,78L264,76L256,102M316,78L336,76L344,102M284,86L264,88L256,118M316,86L336,88L344,118\"/><ellipse cx=\"300\" cy=\"88\" rx=\"22\" ry=\"32\" fill=\"currentColor\" fill-opacity=\"0.45\"/><ellipse cx=\"300\" cy=\"64\" rx=\"12\" ry=\"10\" fill=\"currentColor\" fill-opacity=\"0.8\"/><path d=\"M296,54L294,42L300,38L306,42L304,54Z\" fill=\"currentColor\" fill-opacity=\"0.8\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"100\" y=\"150\" text-anchor=\"middle\">A – vrtni polž</text><text x=\"300\" y=\"150\" text-anchor=\"middle\">B – navadni klop</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Razloži, zakaj tako vrtnega polža kot klopa uvrščamo med potrošnike.",
+     "answer": "Ker ne moreta sama izdelovati organskih snovi (nimata klorofila, ne opravljata fotosinteze), ampak hrano dobita od drugih organizmov: polž jé rastline, klop sesa kri živali.",
+     "ways": [
+      {
+       "title": "Proizvajalci in potrošniki",
+       "text": "**Proizvajalci** (zelene rastline, alge) s fotosintezo iz ogljikovega dioksida in vode izdelajo organske snovi. **Potrošniki** tega ne zmorejo, zato morajo organske snovi – in z njimi energijo – dobiti s hrano, torej od drugih organizmov.\n\n- **Vrtni polž** se hrani z listi, je **rastlinojedec**, potrošnik 1. reda.\n- **Klop** sesa kri živali ali človeka, je **zajedavec**. Tudi zajedavec dobiva hrano od drugega organizma (gostitelja), zato je potrošnik – le da gostitelja navadno ne ubije.\n\nNačin življenja je različen (prostoživeč, zajedavski), skupno pa jima je, da se hranita z že izdelanimi organskimi snovmi."
+      }
+     ],
+     "scoring": "1 t. za razlago, da organskih snovi ne izdelata sama (ne fotosintetizirata) in jih dobita s hranjenjem z drugimi organizmi (rastline, kri). Odgovor »ker jesta« brez razlage ne zadošča.",
+     "mistake": "Misliti, da klop ni potrošnik, ker je »samo zajedavec«. Zajedavci so potrošniki, ki se hranijo z gostiteljem."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Celice polža za delovanje potrebujejo energijo. Navedi dva organska sistema, ki celice oskrbujeta s snovmi, potrebnimi za pridobivanje energije, in opiši, kako delujeta skupaj.",
+     "answer": "Na primer prebavila in obtočila: prebavila razgradijo hrano na hranilne snovi (npr. glukozo), ki preidejo v kri (hemolimfo), obtočila pa jih raznesejo do vseh celic, kjer se pri celičnem dihanju sprosti energija. (Sprejemljivo tudi dihala in obtočila: dihala sprejmejo kisik, obtočila ga prenesejo do celic.)",
+     "ways": [
+      {
+       "title": "Prebavila in obtočila",
+       "text": "Za celično dihanje celica potrebuje **hranilne snovi** (glukozo) in **kisik**.\n\n- **Prebavila** (usta z radulo, požiralnik, želodec, črevo, prebavna žleza) hrano – liste – razgradijo na majhne molekule hranilnih snovi, ki skozi steno črevesa preidejo v telesno tekočino.\n- **Obtočila** (srce in žile) to tekočino poganjajo po telesu in hranilne snovi **prinesejo do vsake celice**.\n\nSkupaj: prebavila hranilne snovi pripravijo, obtočila jih dostavijo. V celicah se pri celičnem dihanju iz njih sprosti energija."
+      },
+      {
+       "title": "Drugače: dihala in obtočila",
+       "text": "Polž diha s **pljučno votlino** (dihala), kjer kisik iz zraka preide v telesno tekočino, ogljikov dioksid pa iz nje v zrak. **Obtočila** kisik razvažajo do celic in odvažajo ogljikov dioksid nazaj do dihal.\n\nObtočila so pri obeh parih »vez«: noben drug sistem ne bi mogel snovi razvoziti do vseh celic."
+      }
+     ],
+     "scoring": "1 t. za dva pravilna organska sistema (npr. prebavila in obtočila ali dihala in obtočila) skupaj z opisom, kako sodelujeta. Samo naštevanje sistemov brez opisa ne prinese točke.",
+     "mistake": "Navesti izločala ali živčevje. Izločala odstranjujejo odpadke, živčevje uravnava delovanje – nobeden celic ne oskrbuje s hranilnimi snovmi ali kisikom."
+    }
+   ]
+  },
+  {
+   "n": 18,
+   "intro": "Na sliki so notranji organi človeka. Nekateri organi so že poimenovani.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"-60 0 380 330\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M90,20C90,10 170,10 170,20L200,60C212,120 208,200 202,250C198,292 185,318 130,320C75,318 62,292 58,250C52,200 48,120 60,60Z\"/><path d=\"M130,26L140,150\" stroke-width=\"5\" stroke-opacity=\"0.5\"/><ellipse cx=\"98\" cy=\"92\" rx=\"27\" ry=\"48\" fill=\"currentColor\" fill-opacity=\"0.12\"/><ellipse cx=\"164\" cy=\"92\" rx=\"27\" ry=\"48\" fill=\"currentColor\" fill-opacity=\"0.12\"/><path d=\"M134,100C154,95 168,110 161,128C153,142 138,148 131,150C121,140 115,125 121,110C123,104 128,101 134,100Z\" fill=\"currentColor\" fill-opacity=\"0.45\"/><path d=\"M68,150C100,140 150,142 152,152C145,170 115,185 72,182C64,172 64,158 68,150Z\" fill=\"currentColor\" fill-opacity=\"0.3\"/><path d=\"M150,152C165,145 192,150 190,170C188,192 170,205 150,200C142,196 145,186 155,184C168,180 170,168 158,165Z\" fill=\"currentColor\" fill-opacity=\"0.2\"/><path d=\"M88,292L86,222C86,212 95,209 105,209L168,209C180,209 184,216 184,226L182,285C180,295 160,298 140,296\" stroke-width=\"10\" stroke-opacity=\"0.35\"/><path d=\"M105,230C120,222 150,222 165,232C150,242 120,240 105,248C120,256 150,256 165,264C150,274 120,272 108,280C125,290 150,288 160,282\" stroke-width=\"4\" stroke-opacity=\"0.6\"/><ellipse cx=\"124\" cy=\"308\" rx=\"12\" ry=\"7\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M218,36H134M218,72H188M218,124H160M218,312H136\" stroke-width=\"0.9\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"222\" y=\"40\">požiralnik</text><text x=\"222\" y=\"76\">pljuča</text><text x=\"222\" y=\"128\">srce</text><text x=\"222\" y=\"316\">sečni mehur</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Žleze v steni želodca izločajo želodčni sok. Kakšna je njegova vloga pri prebavi? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "Maščobe razbije na drobne kapljice.",
+      "V kislem okolju začne razgrajevati beljakovine iz hrane.",
+      "Začne razgrajevati škrob že v ustih.",
+      "Iz neprebavljenih ostankov hrane vsrka vodo."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "V kislem okolju začne razgrajevati beljakovine.",
+     "ways": [
+      {
+       "title": "Kateri sok kaj prebavlja",
+       "text": "**Želodčni sok** vsebuje **solno kislino** in **encim pepsin**. Kislina ustvari zelo kislo okolje in uniči večino bakterij v hrani, pepsin pa v tem okolju **začne razgrajevati beljakovine** na krajše dele.\n\n- Maščobe na drobne kapljice razbije **žolč**, ki ga izdelujejo jetra in se izliva v dvanajstnik.\n- Škrob začne razgrajevati encim v **slini**, ki ga izločajo slinavke v ustih.\n- Vodo iz ostankov hrane vsrkava **debelo črevo**."
+      }
+     ],
+     "mistake": "Misliti, da se v želodcu prebavi vse. Želodec začne prebavo beljakovin, večina prebave in vsrkavanja pa poteka v tankem črevesu."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "construct",
+     "text": "Na sliki s puščicami označi in poimenuj **tri** prebavne organe, ki še niso poimenovani.",
+     "answer": "Na primer jetra, želodec in tanko črevo (ali debelo črevo).",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"-100 0 420 330\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M90,20C90,10 170,10 170,20L200,60C212,120 208,200 202,250C198,292 185,318 130,320C75,318 62,292 58,250C52,200 48,120 60,60Z\"/><path d=\"M130,26L140,150\" stroke-width=\"5\" stroke-opacity=\"0.5\"/><ellipse cx=\"98\" cy=\"92\" rx=\"27\" ry=\"48\" fill=\"currentColor\" fill-opacity=\"0.12\"/><ellipse cx=\"164\" cy=\"92\" rx=\"27\" ry=\"48\" fill=\"currentColor\" fill-opacity=\"0.12\"/><path d=\"M134,100C154,95 168,110 161,128C153,142 138,148 131,150C121,140 115,125 121,110C123,104 128,101 134,100Z\" fill=\"currentColor\" fill-opacity=\"0.45\"/><path d=\"M68,150C100,140 150,142 152,152C145,170 115,185 72,182C64,172 64,158 68,150Z\" fill=\"currentColor\" fill-opacity=\"0.3\"/><path d=\"M150,152C165,145 192,150 190,170C188,192 170,205 150,200C142,196 145,186 155,184C168,180 170,168 158,165Z\" fill=\"currentColor\" fill-opacity=\"0.2\"/><path d=\"M88,292L86,222C86,212 95,209 105,209L168,209C180,209 184,216 184,226L182,285C180,295 160,298 140,296\" stroke-width=\"10\" stroke-opacity=\"0.35\"/><path d=\"M105,230C120,222 150,222 165,232C150,242 120,240 105,248C120,256 150,256 165,264C150,274 120,272 108,280C125,290 150,288 160,282\" stroke-width=\"4\" stroke-opacity=\"0.6\"/><ellipse cx=\"124\" cy=\"308\" rx=\"12\" ry=\"7\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M218,36H134M218,72H188M218,124H160M218,312H136\" stroke-width=\"0.9\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"222\" y=\"40\">požiralnik</text><text x=\"222\" y=\"76\">pljuča</text><text x=\"222\" y=\"128\">srce</text><text x=\"222\" y=\"316\">sečni mehur</text></g><path d=\"M2,166H80M218,176H182M218,252H162M2,252H83\" stroke-width=\"1.2\" marker-end=\"url(#m18)\"/><defs><marker id=\"m18\" viewBox=\"0 0 8 8\" refX=\"7\" refY=\"4\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0,0L8,4L0,8Z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><g fill=\"currentColor\" stroke=\"none\" font-weight=\"bold\"><text x=\"-2\" y=\"170\" text-anchor=\"end\">jetra</text><text x=\"222\" y=\"180\">želodec</text><text x=\"222\" y=\"256\">tanko črevo</text><text x=\"-2\" y=\"256\" text-anchor=\"end\">debelo črevo</text></g></svg>",
+     "ways": [
+      {
+       "title": "Pot hrane skozi telo",
+       "text": "Hrana gre skozi prebavno cev: usta → **požiralnik** (že poimenovan) → **želodec** → **tanko črevo** → **debelo črevo** → zadnjik. K prebavilom spadajo tudi žleze: slinavke, **jetra** in trebušna slinavka.\n\nNa sliki so neoznačeni:\n\n- **jetra** – velik organ pod prepono na desni strani telesa (na sliki levo);\n- **želodec** – vrečast organ pod prepono na levi strani telesa (na sliki desno);\n- **tanko črevo** – dolga, zvita cev v sredini trebušne votline;\n- **debelo črevo** – debelejša cev, ki kot okvir obdaja tanko črevo.\n\nZadoščajo trije od teh organov s puščico in pravilnim imenom."
+      },
+      {
+       "title": "Drugače: najprej izločimo organe, ki niso prebavni",
+       "text": "Med poimenovanimi so **pljuča** (dihala), **srce** (obtočila) in **sečni mehur** (izločala) – ti niso prebavni organi. Požiralnik je prebaven, a že poimenovan. Vsi preostali organi v trebušni votlini na sliki – jetra, želodec, tanko in debelo črevo – so prebavni, zato izberemo tri med njimi."
+      }
+     ],
+     "scoring": "1 t. za tri pravilno označene in pravilno poimenovane prebavne organe. Organ, označen s puščico na napačnem mestu, ali neprebavni organ (npr. ledvica) ne šteje.",
+     "mistake": "Zamenjati strani: jetra so na desni strani telesa, kar je na sliki osebe, obrnjene proti nam, na levi."
+    }
+   ]
+  },
+  {
+   "n": 19,
+   "intro": "Učenci so raziskovali, kako količina vode vpliva na rast fižola. Postavili so hipotezo: »Več vode kot dobi fižol, višje zraste.«\n\nV tri enake lončke z enako količino enake prsti so posadili po tri semena iste sorte fižola. Lončke so postavili na isto okensko polico. Vsak dan so jih zalili: lonček A z $10\\,\\mathrm{mL}$, lonček B s $30\\,\\mathrm{mL}$ in lonček C s $60\\,\\mathrm{mL}$ vode. Po $14$ dneh so izmerili višino rastlin in izračunali povprečje.\n\n| lonček | dnevna količina vode | povprečna višina po 14 dneh | opažanje |\n|---|---|---|---|\n| A | $10\\,\\mathrm{mL}$ | $6\\,\\mathrm{cm}$ | listi so oveneli in povešeni |\n| B | $30\\,\\mathrm{mL}$ | $17\\,\\mathrm{cm}$ | listi so zeleni in napeti |\n| C | $60\\,\\mathrm{mL}$ | $11\\,\\mathrm{cm}$ | prst je razmočena, spodnji listi rumenijo |",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 330 195\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M30,150H90L82,190H38Z\" fill=\"currentColor\" fill-opacity=\"0.25\"/><path d=\"M60,150V114\"/><path d=\"M60,114C52,114 44,120 42,132C50,128 56,122 60,114C68,114 76,120 78,132C70,128 64,122 60,114Z\" fill=\"currentColor\" fill-opacity=\"0.35\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"60\" y=\"178\" text-anchor=\"middle\" font-weight=\"bold\" font-size=\"14\">A</text></g><path d=\"M135,150H195L187,190H143Z\" fill=\"currentColor\" fill-opacity=\"0.25\"/><path d=\"M165,150V48\"/><ellipse cx=\"153\" cy=\"54\" rx=\"12\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.4\"/><ellipse cx=\"177\" cy=\"54\" rx=\"12\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.4\"/><ellipse cx=\"153\" cy=\"93.9\" rx=\"12\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.4\"/><ellipse cx=\"177\" cy=\"93.9\" rx=\"12\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.4\"/><ellipse cx=\"153\" cy=\"124.5\" rx=\"12\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.4\"/><ellipse cx=\"177\" cy=\"124.5\" rx=\"12\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.4\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"165\" y=\"178\" text-anchor=\"middle\" font-weight=\"bold\" font-size=\"14\">B</text></g><path d=\"M240,150H300L292,190H248Z\" fill=\"currentColor\" fill-opacity=\"0.25\"/><path d=\"M270,150V84\"/><ellipse cx=\"258\" cy=\"90\" rx=\"12\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.4\"/><ellipse cx=\"282\" cy=\"90\" rx=\"12\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.4\"/><ellipse cx=\"258\" cy=\"123.6\" rx=\"12\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.08\"/><ellipse cx=\"282\" cy=\"123.6\" rx=\"12\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.08\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"270\" y=\"178\" text-anchor=\"middle\" font-weight=\"bold\" font-size=\"14\">C</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Zakaj so učenci v vse tri lončke posadili fižol iste sorte?",
+     "answer": "Da se lončki razlikujejo le v enem dejavniku (količini vode); različne vrste ali sorte rastejo različno hitro, zato bi razlike v višini lahko povzročila vrsta in rezultatov ne bi mogli primerjati.",
+     "ways": [
+      {
+       "title": "Ena spremenljivka",
+       "text": "V poskusu namerno spreminjamo **samo en dejavnik** – tu **količino vode**. Vse drugo (vrsta in sorta rastline, prst, lonček, svetloba, temperatura, čas) mora biti **enako** – to so **stalnice** (konstante).\n\nRazlične rastline rastejo različno hitro: fižol v dveh tednih zraste precej, koleraba ali bor bi zrasla komaj nekaj centimetrov. Če bi v lončke posadili različne rastline, ne bi vedeli, ali je razlika v višini posledica vode ali vrste rastline. Z isto sorto so lahko razlike pripisali le količini vode."
+      },
+      {
+       "title": "Drugače: miselni preizkus",
+       "text": "Predstavljajmo si, da bi v lonček B posadili hitro rastoč fižol, v lonček A pa počasi rastočo rastlino. Če bi bila rastlina v B višja, ne bi mogli reči, ali je to zaradi $30\\,\\mathrm{mL}$ vode ali ker ta vrsta sama po sebi raste hitreje. Poskus bi bil **nepošten** in hipoteze ne bi mogli preveriti."
+      }
+     ],
+     "scoring": "1 t. za razlago, da mora biti vrsta (sorta) stalnica, saj se lončki smejo razlikovati le v količini vode / da so rezultati primerljivi. Odgovor »ker so imeli tak fižol« ne prinese točke.",
+     "mistake": "Odgovoriti »ker je fižol najlepši« ali »ker hitro raste«. Hitra rast je razlog, zakaj so izbrali fižol, vprašanje pa sprašuje, zakaj v vseh lončkih **isto** sorto."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Maja predlaga, da bi z istim poskusom hkrati preverili še, kako na rast vpliva svetloba: lonček A bi postavili v temno omaro, lončka B in C pa bi pustili na oknu, zalivanje pa bi ostalo enako kot prej. Ali bi tako lahko ugotovili, kako na rast fižola vpliva svetloba? Obkroži DA ali NE in odgovor utemelji.\n\nDA      NE",
+     "answer": "NE – lonček A bi se od drugih razlikoval v dveh dejavnikih hkrati (manj vode in brez svetlobe), zato ne bi vedeli, kateri je povzročil razliko v rasti. V poskusu spreminjamo le en dejavnik.",
+     "ways": [
+      {
+       "title": "Dva dejavnika hkrati",
+       "text": "Po Majinem predlogu bi lonček A dobil **manj vode** ($10\\,\\mathrm{mL}$ namesto $30$ ali $60\\,\\mathrm{mL}$) **in** bi bil **v temi**. Če bi bila rastlina v A drugačna, ne bi vedeli, ali je kriva tema ali pomanjkanje vode – vpliva bi se pomešala.\n\nPravilo: v enem poskusu spreminjamo **le en dejavnik**, vse drugo ostane enako. Odgovor je **NE**."
+      },
+      {
+       "title": "Drugače: kako bi poskus izboljšali",
+       "text": "Za vpliv svetlobe bi naredili **nov poskus**: vsi lončki bi dobili **enako vode** (npr. $30\\,\\mathrm{mL}$ na dan) in imeli enako prst, temperaturo in sorto fižola, razlikovali pa bi se **le v svetlobi** (npr. en lonček v temi, eden v senci, eden na soncu). Šele takrat bi razlike v rasti lahko pripisali svetlobi."
+      }
+     ],
+     "scoring": "1 t. za NE z utemeljitvijo, da bi se spreminjala dva dejavnika hkrati (voda in svetloba), zato vpliva svetlobe ne bi mogli ločiti. Samo NE brez utemeljitve ne prinese točke.",
+     "mistake": "Odgovoriti DA, ker »bi videli, da v temi raste slabše«. Res bi rasel slabše, a ne bi vedeli, ali zaradi teme ali zaradi manj vode."
+    }
+   ]
+  },
+  {
+   "n": 20,
+   "intro": "Sliki prikazujeta delitev dveh vrst celic.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 425 222\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><defs><marker id=\"m20\" viewBox=\"0 0 8 8\" refX=\"7\" refY=\"4\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0,0L8,4L0,8Z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><rect x=\"10\" y=\"38\" width=\"56\" height=\"26\" rx=\"13\" fill=\"currentColor\" fill-opacity=\"0.15\"/><ellipse cx=\"38\" cy=\"51\" rx=\"9\" ry=\"5\"/><rect x=\"102\" y=\"38\" width=\"80\" height=\"26\" rx=\"13\" fill=\"currentColor\" fill-opacity=\"0.15\"/><ellipse cx=\"128\" cy=\"51\" rx=\"9\" ry=\"5\"/><ellipse cx=\"156\" cy=\"51\" rx=\"9\" ry=\"5\"/><path d=\"M232,38C224,38 218,44 218,51C218,58 224,64 232,64H250C254,64 256,58 258,56C260,58 262,64 266,64H284C292,64 298,58 298,51C298,44 292,38 284,38H266C262,38 260,44 258,46C256,44 254,38 250,38Z\" fill=\"currentColor\" fill-opacity=\"0.15\"/><ellipse cx=\"240\" cy=\"51\" rx=\"9\" ry=\"5\"/><ellipse cx=\"276\" cy=\"51\" rx=\"9\" ry=\"5\"/><rect x=\"334\" y=\"38\" width=\"38\" height=\"26\" rx=\"13\" fill=\"currentColor\" fill-opacity=\"0.15\"/><rect x=\"378\" y=\"38\" width=\"38\" height=\"26\" rx=\"13\" fill=\"currentColor\" fill-opacity=\"0.15\"/><ellipse cx=\"353\" cy=\"51\" rx=\"8\" ry=\"5\"/><ellipse cx=\"397\" cy=\"51\" rx=\"8\" ry=\"5\"/><path d=\"M72,51H94\" marker-end=\"url(#m20)\"/><path d=\"M188,51H210\" marker-end=\"url(#m20)\"/><path d=\"M304,51H326\" marker-end=\"url(#m20)\"/><circle cx=\"50\" cy=\"170\" r=\"36\" fill=\"currentColor\" fill-opacity=\"0.12\"/><circle cx=\"50\" cy=\"170\" r=\"21\" stroke-dasharray=\"3 2\" stroke-width=\"1\"/><ellipse cx=\"180\" cy=\"170\" rx=\"42\" ry=\"33\" fill=\"currentColor\" fill-opacity=\"0.12\"/><path d=\"M146,170L180,148L214,170L180,192ZM146,170L180,160L214,170L180,180Z\" stroke-width=\"0.6\" stroke-opacity=\"0.6\"/><circle cx=\"312\" cy=\"170\" r=\"29\" fill=\"currentColor\" fill-opacity=\"0.12\"/><circle cx=\"312\" cy=\"170\" r=\"16\" stroke-dasharray=\"3 2\" stroke-width=\"1\"/><circle cx=\"384\" cy=\"170\" r=\"29\" fill=\"currentColor\" fill-opacity=\"0.12\"/><circle cx=\"384\" cy=\"170\" r=\"16\" stroke-dasharray=\"3 2\" stroke-width=\"1\"/><path d=\"M38.5,155L43.5,169M43.5,155L38.5,169M54.5,155L59.5,169M59.5,155L54.5,169M40.5,175.5L45.5,184.5M45.5,175.5L40.5,184.5M55.5,174.5L60.5,183.5M60.5,174.5L55.5,183.5M177.5,146L182.5,158M182.5,146L177.5,158M177.5,160L182.5,172M182.5,160L177.5,172M177.5,173L182.5,181M182.5,173L177.5,181M177.5,183L182.5,191M182.5,183L177.5,191M305,159V171M313,159V171M308,175V183M319,173V181M377,159V171M385,159V171M380,175V183M391,173V181\" stroke-width=\"2.2\"/><path d=\"M92,170H130\" marker-end=\"url(#m20)\"/><path d=\"M228,170H276\" marker-end=\"url(#m20)\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"10\" y=\"20\" font-weight=\"bold\">Slika 1: bakterija</text><text x=\"10\" y=\"120\" font-weight=\"bold\">Slika 2: telesna celica živali</text><text x=\"38\" y=\"82\" text-anchor=\"middle\" font-size=\"10\">DNA</text><text x=\"50\" y=\"218\" text-anchor=\"middle\" font-size=\"10\">jedro s kromosomi</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Kako se razmnožuje bakterija na sliki 1? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "spolno, z združitvijo dveh spolnih celic (oploditvijo)",
+      "nespolno, z delitvijo ene celice na dve enaki celici",
+      "z brstenjem, pri katerem iz celice zraste manjša hčerinska celica",
+      "s trosi, ki jih raznaša veter"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "nespolno, z delitvijo (cepitvijo) celice na dve enaki celici",
+     "ways": [
+      {
+       "title": "S sliko",
+       "text": "Na sliki 1 sledimo korakom: bakterija ima eno molekulo **DNA** (brez jedra) → DNA se **podvoji** in celica se podaljša → celica se na sredini **zoži** → nastaneta **dve enaki hčerinski celici**, vsaka s svojo DNA.\n\nTo je **nespolno razmnoževanje z delitvijo (cepitvijo)**. Pri ugodnih razmerah se nekatere bakterije razdelijo vsakih $20$ minut, zato se zelo hitro namnožijo.\n\n- Spolno razmnoževanje z oploditvijo zahteva dve spolni celici – na sliki je ena sama celica.\n- Pri brstenju (npr. pri kvasovkah) nastane manjša celica, na sliki pa sta hčerinski celici enako veliki.\n- S trosi se razmnožujejo glive, mahovi in praproti, ne bakterija s slike."
+      }
+     ],
+     "mistake": "Misliti, da sta nastali celici »starša in otrok«. Pri delitvi materinska celica izgine – nastaneta dve enakovredni, enaki hčerinski celici."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Po čem na sliki 2 prepoznaš, da gre za mitozo?",
+     "answer": "Iz ene telesne celice nastaneta dve hčerinski celici, ki imata vsaka enako število kromosomov (4) kot materinska celica.",
+     "ways": [
+      {
+       "title": "Štetje kromosomov",
+       "text": "Na sliki 2 preštejemo kromosome:\n\n- materinska celica: $4$ kromosomi (podvojeni, zato imajo obliko črke X);\n- na srednji sličici se kromosomi razporedijo v ravnino na sredini celice, niti delitvenega vretena jih razvlečejo na dva pola;\n- vsaka od **dveh** hčerinskih celic ima **$4$ kromosome**.\n\nPri **mitozi** iz ene celice nastaneta **dve** celici z **enakim številom kromosomov** in enako dedno snovjo kot materinska celica. Tako se delijo telesne celice pri rasti in obnovi tkiv (npr. pri celjenju rane)."
+      },
+      {
+       "title": "Drugače: primerjava z mejozo",
+       "text": "Pri **mejozi**, s katero nastajajo spolne celice, bi iz ene celice s $4$ kromosomi nastale **štiri** celice z **dvema** kromosomoma (polovično število). Na sliki pa sta **dve** celici s **štirimi** kromosomi – število se ni prepolovilo, zato je to mitoza."
+      }
+     ],
+     "scoring": "1 t. za odgovor, da imata hčerinski celici enako število kromosomov kot materinska (4), oziroma da iz ene celice nastaneta dve enaki celici z enakim številom kromosomov.",
+     "mistake": "Odgovoriti le »ker se celica deli«. Deli se tudi pri mejozi; za mitozo je odločilno, da se število kromosomov ohrani."
+    }
+   ]
+  },
+  {
+   "n": 21,
+   "intro": "Cistična fibroza je dedna bolezen, pri kateri se v pljučih in prebavilih nabira gosta sluz. Povzroča jo recesivni alel. Rodovnik prikazuje tri generacije ene družine. Kvadrat pomeni moškega, krog žensko; osebe so v vsaki generaciji oštevilčene.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"-25 0 375 295\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M160,30H200M180,30V70M120,70H240M120,70V95M240,70V95M70,105H110M250,105H290M90,105V145M30,145H150M30,145V170M70,145V170M110,145V170M150,145V170M270,105V145M250,145H290M250,145V170M290,145V170\"/><rect x=\"140\" y=\"20\" width=\"20\" height=\"20\"/><rect x=\"140\" y=\"20\" width=\"10\" height=\"20\" fill=\"currentColor\" fill-opacity=\"0.8\"/><circle cx=\"210\" cy=\"30\" r=\"10\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"50\" y=\"95\" width=\"20\" height=\"20\"/><rect x=\"50\" y=\"95\" width=\"10\" height=\"20\" fill=\"currentColor\" fill-opacity=\"0.8\"/><circle cx=\"120\" cy=\"105\" r=\"10\"/><path d=\"M120,95A10,10 0 0,0 120,115Z\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"230\" y=\"95\" width=\"20\" height=\"20\" fill=\"currentColor\" fill-opacity=\"0.8\"/><circle cx=\"300\" cy=\"105\" r=\"10\"/><circle cx=\"30\" cy=\"180\" r=\"10\"/><rect x=\"60\" y=\"170\" width=\"20\" height=\"20\" fill=\"currentColor\" fill-opacity=\"0.8\"/><circle cx=\"110\" cy=\"180\" r=\"10\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"140\" y=\"170\" width=\"20\" height=\"20\"/><rect x=\"140\" y=\"170\" width=\"10\" height=\"20\" fill=\"currentColor\" fill-opacity=\"0.8\"/><circle cx=\"250\" cy=\"180\" r=\"10\"/><path d=\"M250,170A10,10 0 0,0 250,190Z\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"280\" y=\"170\" width=\"20\" height=\"20\"/><rect x=\"280\" y=\"170\" width=\"10\" height=\"20\" fill=\"currentColor\" fill-opacity=\"0.8\"/><path d=\"M-20,212H340\" stroke-width=\"0.6\" stroke-opacity=\"0.5\"/><rect x=\"-18\" y=\"220\" width=\"20\" height=\"20\"/><circle cx=\"16\" cy=\"230\" r=\"10\"/><rect x=\"-18\" y=\"244\" width=\"20\" height=\"20\"/><rect x=\"-18\" y=\"244\" width=\"10\" height=\"20\" fill=\"currentColor\" fill-opacity=\"0.8\"/><circle cx=\"16\" cy=\"254\" r=\"10\"/><path d=\"M16,244A10,10 0 0,0 16,264Z\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"-18\" y=\"268\" width=\"20\" height=\"20\" fill=\"currentColor\" fill-opacity=\"0.8\"/><circle cx=\"16\" cy=\"278\" r=\"10\" fill=\"currentColor\" fill-opacity=\"0.8\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"-18\" y=\"34\">I</text><text x=\"-18\" y=\"109\">II</text><text x=\"-18\" y=\"184\">III</text><text x=\"150\" y=\"54\" text-anchor=\"middle\" font-size=\"10\">1</text><text x=\"210\" y=\"54\" text-anchor=\"middle\" font-size=\"10\">2</text><text x=\"60\" y=\"129\" text-anchor=\"middle\" font-size=\"10\">1</text><text x=\"120\" y=\"129\" text-anchor=\"middle\" font-size=\"10\">2</text><text x=\"240\" y=\"129\" text-anchor=\"middle\" font-size=\"10\">3</text><text x=\"300\" y=\"129\" text-anchor=\"middle\" font-size=\"10\">4</text><text x=\"30\" y=\"204\" text-anchor=\"middle\" font-size=\"10\">1</text><text x=\"70\" y=\"204\" text-anchor=\"middle\" font-size=\"10\">2</text><text x=\"110\" y=\"204\" text-anchor=\"middle\" font-size=\"10\">3</text><text x=\"150\" y=\"204\" text-anchor=\"middle\" font-size=\"10\">4</text><text x=\"250\" y=\"204\" text-anchor=\"middle\" font-size=\"10\">5</text><text x=\"290\" y=\"204\" text-anchor=\"middle\" font-size=\"10\">6</text><text x=\"34\" y=\"234\" font-size=\"10\">zdrav moški, zdrava ženska</text><text x=\"34\" y=\"258\" font-size=\"10\">zdrav prenašalec, zdrava prenašalka</text><text x=\"34\" y=\"282\" font-size=\"10\">moški, ženska s cistično fibrozo</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Koliko oseb v III. generaciji ima cistično fibrozo?",
+     "answer": "$2$ (osebi III-2 in III-3)",
+     "ways": [
+      {
+       "title": "Branje legende",
+       "text": "Po legendi pomeni **povsem zapolnjen** znak osebo s cistično fibrozo, **na pol zapolnjen** znak zdravega prenašalca (prenašalko), prazen znak pa zdravo osebo brez alela za bolezen.\n\nV III. generaciji je šest oseb:\n\n- III-1 zdrava ženska,\n- **III-2 moški s cistično fibrozo**,\n- **III-3 ženska s cistično fibrozo**,\n- III-4, III-5 in III-6 so zdravi prenašalci.\n\nCistično fibrozo imata **$2$ osebi**."
+      }
+     ],
+     "mistake": "Šteti tudi prenašalce (dobili bi $5$). Prenašalci imajo en recesivni alel, a so zdravi – bolezen se pokaže le pri dveh recesivnih alelih."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Po čem v rodovniku vidiš, da je alel za cistično fibrozo recesiven? Navedi osebe, pri katerih to vidiš, in utemelji.",
+     "answer": "Starša II-1 in II-2 sta zdrava, njuna otroka III-2 in III-3 pa imata cistično fibrozo; zdrava starša lahko imata bolnega otroka le, če je alel recesiven (oba sta prenašalca).",
+     "ways": [
+      {
+       "title": "Zdrava starša, bolan otrok",
+       "text": "Oglejmo si **II-1 in II-2**: oba sta **zdrava** (prenašalca), njuna otroka **III-2 in III-3** pa imata **cistično fibrozo**.\n\nOznačimo zdravi alel z **A**, alel za bolezen z **a**. Bolan otrok ima genotip **aa** – en alel a je dobil od očeta, drugega od matere. Starša sta torej imela alel a, pa vseeno nista bolna: njun genotip je **Aa**. Alel a se je pri njiju »skril« za alelom A – to pomeni, da je **recesiven**."
+      },
+      {
+       "title": "Drugače: kaj bi bilo, če bi bil alel dominanten",
+       "text": "Če bi bil alel za bolezen **dominanten**, bi bila bolna vsaka oseba, ki ima vsaj en tak alel. Bolan otrok bi moral imeti **vsaj enega bolnega starša**. III-2 in III-3 pa imata oba starša (II-1, II-2) zdrava – torej alel ne more biti dominanten, je recesiven."
+      }
+     ],
+     "scoring": "1 t. za navedbo zdravih staršev II-1 in II-2 z bolnim otrokom (III-2 ali III-3) in razlago, da zdrava starša prenašalca lahko imata bolnega otroka le pri recesivnem alelu.",
+     "mistake": "Navesti I-1 in I-2 z bolnim sinom II-3. Mati I-2 je bolna, zato iz te družine recesivnosti ne moremo dokazati – bolan otrok bolne matere je mogoč tudi pri dominantnem alelu."
+    }
+   ]
+  },
+  {
+   "n": 22,
+   "intro": "DNA je dedna snov, ki je v jedru celice shranjena v kromosomih.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Telesna celica mačke ima v jedru $38$ kromosomov. Koliko molekul DNA je v jedru te celice, preden se DNA začne podvojevati? Obkroži črko pred pravilnim odgovorom.",
+     "choices": [
+      "$1$",
+      "$19$",
+      "$38$",
+      "$76$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "$38$",
+     "ways": [
+      {
+       "title": "En kromosom – ena molekula",
+       "text": "Vsak (nepodvojen) kromosom je **ena sama dolga molekula DNA**, navita okrog beljakovin. Koliko je kromosomov, toliko je molekul DNA: $38$ kromosomov → **$38$ molekul DNA**.\n\n- **$1$**: DNA v jedru ni ena sama molekula, razdeljena je na kromosome.\n- **$19$**: to je število **parov** kromosomov ($38 : 2 = 19$); vsak par sestavljata dve molekuli DNA.\n- **$76$**: tako bi šteli, če bi vsako od dveh **verig** dvojne vijačnice šteli kot svojo molekulo (ali po podvojevanju DNA, ko ima vsak kromosom dve enaki kromatidi). Dvojna vijačnica iz dveh verig je ena molekula."
+      }
+     ],
+     "mistake": "Zamenjati število kromosomov s številom parov ($19$). Celica ima $19$ parov, a $38$ kromosomov in zato $38$ molekul DNA."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "choice",
+     "text": "Na sliki so trije modeli, kako bi se lahko podvojila molekula DNA. Kateri model pravilno prikazuje podvojevanje DNA? Obkroži črko pred pravilnim odgovorom.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 235\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><defs><marker id=\"m22\" viewBox=\"0 0 8 8\" refX=\"7\" refY=\"4\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto\"><path d=\"M0,0L8,4L0,8Z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><rect x=\"40\" y=\"30\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"40\" y=\"42\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><path d=\"M118,40H150\" marker-end=\"url(#m22)\"/><rect x=\"162\" y=\"30\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"162\" y=\"42\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"258\" y=\"30\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"258\" y=\"42\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"40\" y=\"92\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"40\" y=\"104\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><path d=\"M118,102H150\" marker-end=\"url(#m22)\"/><rect x=\"162\" y=\"92\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"179.5\" y=\"92\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"197\" y=\"92\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"214.5\" y=\"92\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"162\" y=\"104\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"179.5\" y=\"104\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"197\" y=\"104\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"214.5\" y=\"104\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"258\" y=\"92\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"275.5\" y=\"92\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"293\" y=\"92\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"310.5\" y=\"92\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"258\" y=\"104\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"275.5\" y=\"104\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"293\" y=\"104\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"310.5\" y=\"104\" width=\"17.5\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"40\" y=\"154\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"40\" y=\"166\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><path d=\"M118,164H150\" marker-end=\"url(#m22)\"/><rect x=\"162\" y=\"154\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"162\" y=\"166\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"258\" y=\"154\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><rect x=\"258\" y=\"166\" width=\"70\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"40\" y=\"218\" width=\"30\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.8\"/><rect x=\"190\" y=\"218\" width=\"30\" height=\"7\" fill=\"currentColor\" fill-opacity=\"0.08\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"75\" y=\"14\" text-anchor=\"middle\" font-size=\"10\">prvotna molekula</text><text x=\"245\" y=\"14\" text-anchor=\"middle\" font-size=\"10\">molekuli po podvojevanju</text><text x=\"4\" y=\"45\" font-weight=\"bold\" font-size=\"14\">A</text><text x=\"4\" y=\"107\" font-weight=\"bold\" font-size=\"14\">B</text><text x=\"4\" y=\"169\" font-weight=\"bold\" font-size=\"14\">C</text><text x=\"76\" y=\"225\" font-size=\"10\">prvotna (stara) veriga</text><text x=\"226\" y=\"225\" font-size=\"10\">nova veriga</text></g></svg>",
+     "choices": [
+      "model A",
+      "model B",
+      "model C"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "model C (vsaka nova molekula ima eno staro in eno novo verigo)",
+     "ways": [
+      {
+       "title": "Kako poteka podvojevanje",
+       "text": "Pri podvojevanju se dvojna vijačnica DNA kot zadrga **razpre** na dve verigi. Vsaka **stara veriga služi kot kalup**: ob njej se po načelu dopolnjevanja baz (A s T, C z G) sestavi **nova veriga**.\n\nTako ima vsaka od dveh novih molekul **eno staro in eno novo verigo** – to prikazuje **model C** (temu načinu pravimo *semikonzervativno*, »napol ohranjajoče« podvojevanje). Obe molekuli sta zato enaki prvotni.\n\n- **Model A**: ena molekula bi bila v celoti stara, druga v celoti nova – stari verigi bi ostali skupaj, kar se ne zgodi, ker se veriga razpre.\n- **Model B**: vsaka veriga bi bila sestavljena iz koščkov stare in nove DNA – podvojevanje pa ne razreže verig na koščke."
+      }
+     ],
+     "mistake": "Izbrati model A, ker »se naredi kopija«. Kopija nastane, a ne kot cela nova molekula ob stari – nova veriga se vedno sestavi ob stari verigi."
+    }
+   ]
+  },
+  {
+   "n": 23,
+   "intro": "Pri morskih prašičkih je alel za kratko dlako (K) dominanten nad alelom za dolgo dlako (k).",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 345 145\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><ellipse cx=\"70\" cy=\"75\" rx=\"52\" ry=\"30\" fill=\"currentColor\" fill-opacity=\"0.18\"/><ellipse cx=\"122\" cy=\"70\" rx=\"22\" ry=\"19\" fill=\"currentColor\" fill-opacity=\"0.18\"/><ellipse cx=\"114\" cy=\"52\" rx=\"7\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.35\"/><circle cx=\"128\" cy=\"65\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"142\" cy=\"74\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><ellipse cx=\"44\" cy=\"104\" rx=\"9\" ry=\"4\" fill=\"currentColor\" fill-opacity=\"0.35\"/><ellipse cx=\"100\" cy=\"104\" rx=\"9\" ry=\"4\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M32,58l3,6M41.5,57l3,6M51,56l3,6M60.5,55l3,6M70,54l3,6M79.5,55l3,6M89,56l3,6M98.5,57l3,6M108,58l3,6\" stroke-width=\"1.1\"/><ellipse cx=\"240\" cy=\"75\" rx=\"52\" ry=\"30\" fill=\"currentColor\" fill-opacity=\"0.18\"/><ellipse cx=\"292\" cy=\"70\" rx=\"22\" ry=\"19\" fill=\"currentColor\" fill-opacity=\"0.18\"/><ellipse cx=\"284\" cy=\"52\" rx=\"7\" ry=\"5\" fill=\"currentColor\" fill-opacity=\"0.35\"/><circle cx=\"298\" cy=\"65\" r=\"2.5\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"312\" cy=\"74\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><ellipse cx=\"214\" cy=\"104\" rx=\"9\" ry=\"4\" fill=\"currentColor\" fill-opacity=\"0.35\"/><ellipse cx=\"270\" cy=\"104\" rx=\"9\" ry=\"4\" fill=\"currentColor\" fill-opacity=\"0.35\"/><path d=\"M190,65q7,22 -2,36q-5,10 2,22M199.5,63q7,22 -2,36q-5,10 2,22M209,61q7,22 -2,36q-5,10 2,22M218.5,59q7,22 -2,36q-5,10 2,22M228,57q7,22 -2,36q-5,10 2,22M237.5,55q7,22 -2,36q-5,10 2,22M247,57q7,22 -2,36q-5,10 2,22M256.5,59q7,22 -2,36q-5,10 2,22M266,61q7,22 -2,36q-5,10 2,22M275.5,63q7,22 -2,36q-5,10 2,22M285,65q7,22 -2,36q-5,10 2,22\" stroke-width=\"1.1\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"90\" y=\"138\" text-anchor=\"middle\">kratka dlaka</text><text x=\"260\" y=\"138\" text-anchor=\"middle\">dolga dlaka</text></g></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Vzreditelj je paril homozigotnega samca s kratko dlako in homozigotno samico z dolgo dlako. Kakšno dlako bodo imeli njuni mladiči?",
+     "answer": "Vsi mladiči bodo imeli kratko dlako (genotip Kk).",
+     "ways": [
+      {
+       "title": "Genotipi in gamete",
+       "text": "Homozigotni samec s kratko dlako: **KK** – vse njegove spolne celice imajo alel **K**.\n\nHomozigotna samica z dolgo dlako: **kk** (dolga dlaka se pokaže le pri dveh recesivnih alelih) – vse njene jajčne celice imajo alel **k**.\n\nVsak mladič dobi po en alel od vsakega starša: **Kk**. Ker je K dominanten, imajo **vsi mladiči kratko dlako** (so heterozigoti)."
+      },
+      {
+       "title": "S Punnettovo tabelo",
+       "text": "| | **K** | **K** |\n|---|---|---|\n| **k** | Kk | Kk |\n| **k** | Kk | Kk |\n\nVsa štiri polja so Kk → $100\\,\\%$ mladičev s kratko dlako."
+      }
+     ],
+     "mistake": "Pričakovati, da bodo mladiči imeli »srednje dolgo« dlako ali da bo polovica z dolgo. Pri popolni dominanci se recesivna lastnost v prvem rodu ne pokaže."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Ali lahko dva morska prašička s kratko dlako, ki sta oba heterozigota, dobita mladiča z dolgo dlako? Obkroži DA ali NE in odgovor utemelji s križanjem (Punnettovo tabelo).\n\nDA      NE",
+     "answer": "DA – pri križanju Kk × Kk ima mladič z verjetnostjo $\\frac{1}{4}$ ($25\\,\\%$) genotip kk in dolgo dlako.",
+     "ways": [
+      {
+       "title": "S Punnettovo tabelo",
+       "text": "Oba starša sta **Kk**, zato vsak tvori polovico spolnih celic z alelom **K** in polovico z alelom **k**.\n\n| | **K** | **k** |\n|---|---|---|\n| **K** | KK | Kk |\n| **k** | Kk | **kk** |\n\nV enem od štirih polj je **kk** – mladič z dvema recesivnima aleloma ima **dolgo dlako**. Odgovor je **DA**; verjetnost je $\\frac{1}{4}$, to je $25\\,\\%$. Razmerje fenotipov je $3 : 1$ (na tri mladiče s kratko dlako pride v povprečju eden z dolgo)."
+      },
+      {
+       "title": "Drugače: razmislek o alelih",
+       "text": "Heterozigot s kratko dlako v sebi »nosi« skriti alel **k**. Če mladič od očeta dobi alel k (verjetnost $\\frac{1}{2}$) in od matere prav tako k (verjetnost $\\frac{1}{2}$), ima genotip kk in dolgo dlako. Verjetnost: $\\frac{1}{2} \\cdot \\frac{1}{2} = \\frac{1}{4}$. Ker ta verjetnost ni nič, je odgovor DA."
+      }
+     ],
+     "scoring": "1 t. za DA s pravilnim križanjem (Punnettova tabela ali zapis gamet), iz katerega je razviden genotip kk. Samo DA brez križanja ne prinese točke.",
+     "mistake": "Odgovoriti NE, »ker imata oba starša kratko dlako«. Fenotip staršev skrije recesivni alel – heterozigota lahko imata recesivnega potomca."
+    }
+   ]
+  },
+  {
+   "n": 24,
+   "intro": "Rastline razširjajo plodove in semena na različne načine.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Na sliki je veja gorskega javorja s plodovi. Plodova rasteta v paru, vsak ima tanko, ploščato in zelo lahko krilce. Kako se razširjajo plodovi gorskega javorja? Obkroži črko pred pravilnim odgovorom.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 260 165\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M5,38C80,30 150,34 255,26\"/><path d=\"M62,36L70,87\"/><polygon points=\"101.9,83.4 99.7,90.8 90.9,96.8 103.4,108.5 102.8,117.9 91.9,121 79.9,113.5 77.9,132.2 70,139 62.1,132.2 60.1,113.5 48.1,121 37.2,117.9 36.6,108.5 49.1,96.8 40.3,90.8 38.1,83.4 57.4,77 70,87 82.6,77\" fill=\"currentColor\" fill-opacity=\"0.18\"/><path d=\"M195,30V56\"/><circle cx=\"189\" cy=\"60\" r=\"5\" fill=\"currentColor\" fill-opacity=\"0.5\"/><circle cx=\"201\" cy=\"60\" r=\"5\" fill=\"currentColor\" fill-opacity=\"0.5\"/><path d=\"M185,58C167,60 157,82 161,110C173,104 183,84 191,65Z\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M205,58C223,60 233,82 229,110C217,104 207,84 199,65Z\" fill=\"currentColor\" fill-opacity=\"0.15\"/><path d=\"M186,64L165,102M204,64L225,102\" stroke-width=\"0.7\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"70\" y=\"158\" text-anchor=\"middle\" font-size=\"11\">list</text><text x=\"194\" y=\"158\" text-anchor=\"middle\" font-size=\"11\">plodovi</text></g></svg>",
+     "choices": [
+      "z živalmi, ker so plodovi sočni in jih ptice rade pojedo",
+      "z vetrom, ker se plodovi s krilci med padanjem vrtijo, padajo počasi in jih veter odnese daleč od drevesa",
+      "z živalmi, ker se plodovi s kaveljčki oprimejo dlake",
+      "sami, ker plod ob zrelosti poči in izstreli semena"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "Z vetrom – krilca upočasnijo padanje, zato jih veter odnese daleč.",
+     "ways": [
+      {
+       "title": "Oblika ploda pove način razširjanja",
+       "text": "Plod javorja je **suh** in ima **krilce**. Ko odpade, se kot propeler **vrti** in pada zelo počasi. Že rahel veter ga med tem odnese daleč od matičnega drevesa. Gre za **razširjanje z vetrom**.\n\n- *Sočni plodovi*: javorjev plod ni sočen; sočne plodove (češnje, bezeg, borovnice) jedo ptice.\n- *Kaveljčki*: javorjev plod jih nima; imajo jih npr. repinec ali navadni repik.\n- *Plod poči*: tako se razširja npr. nedotika; javorjev plod se ne odpre."
+      }
+     ],
+     "mistake": "Misliti, da plod s krilci »leti« kot ptica. Krilce ne dviga ploda, ampak le upočasni padanje, da ga lahko odnese veter."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "fill",
+     "text": "S pomočjo določevalnega ključa določi, v katero skupino plodov spada vsak od plodov A–D, in ime skupine vpiši pod sliko.\n\n**Določevalni ključ**\n\n1a Zrel plod je sočen in mesnat. → 2\n\n1b Zrel plod je suh. → 3\n\n2a V sredini ploda je ena sama trda, olesenela koščica, v njej je seme. → **koščičasti plod (koščičar)**\n\n2b Plod nima koščice, v mesu je več semen. → **jagoda**\n\n3a Zrel plod se odpre in semena se iztresejo. → **pokovec**\n\n3b Zrel plod se ne odpre, seme ostane zaprto v trdi lupini. → **orešek**",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 150\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M52,28C56,16 62,10 70,6\"/><circle cx=\"52\" cy=\"62\" r=\"32\" fill=\"currentColor\" fill-opacity=\"0.3\"/><ellipse cx=\"52\" cy=\"62\" rx=\"13\" ry=\"16\" fill=\"currentColor\" fill-opacity=\"0.65\"/><ellipse cx=\"52\" cy=\"62\" rx=\"6\" ry=\"9\"/><circle cx=\"157\" cy=\"62\" r=\"34\" fill=\"currentColor\" fill-opacity=\"0.2\"/><path d=\"M157,62L157,30M157,62L130,80M157,62L184,80\" stroke-width=\"1\"/><ellipse cx=\"146\" cy=\"46\" rx=\"2.6\" ry=\"1.6\" fill=\"currentColor\" fill-opacity=\"0.8\" stroke=\"none\"/><ellipse cx=\"168\" cy=\"46\" rx=\"2.6\" ry=\"1.6\" fill=\"currentColor\" fill-opacity=\"0.8\" stroke=\"none\"/><ellipse cx=\"143\" cy=\"56\" rx=\"2.6\" ry=\"1.6\" fill=\"currentColor\" fill-opacity=\"0.8\" stroke=\"none\"/><ellipse cx=\"171\" cy=\"56\" rx=\"2.6\" ry=\"1.6\" fill=\"currentColor\" fill-opacity=\"0.8\" stroke=\"none\"/><ellipse cx=\"147\" cy=\"80\" rx=\"2.6\" ry=\"1.6\" fill=\"currentColor\" fill-opacity=\"0.8\" stroke=\"none\"/><ellipse cx=\"167\" cy=\"80\" rx=\"2.6\" ry=\"1.6\" fill=\"currentColor\" fill-opacity=\"0.8\" stroke=\"none\"/><ellipse cx=\"157\" cy=\"86\" rx=\"2.6\" ry=\"1.6\" fill=\"currentColor\" fill-opacity=\"0.8\" stroke=\"none\"/><ellipse cx=\"138\" cy=\"68\" rx=\"2.6\" ry=\"1.6\" fill=\"currentColor\" fill-opacity=\"0.8\" stroke=\"none\"/><ellipse cx=\"176\" cy=\"68\" rx=\"2.6\" ry=\"1.6\" fill=\"currentColor\" fill-opacity=\"0.8\" stroke=\"none\"/><path d=\"M222,52C240,40 280,38 302,48C282,62 242,64 222,52Z\" fill=\"currentColor\" fill-opacity=\"0.2\"/><path d=\"M222,62C242,76 282,76 302,64C282,92 242,92 222,62Z\" fill=\"currentColor\" fill-opacity=\"0.2\"/><circle cx=\"236\" cy=\"74\" r=\"5.5\" fill=\"currentColor\" fill-opacity=\"0.45\"/><circle cx=\"249\" cy=\"74\" r=\"5.5\" fill=\"currentColor\" fill-opacity=\"0.45\"/><circle cx=\"262\" cy=\"74\" r=\"5.5\" fill=\"currentColor\" fill-opacity=\"0.45\"/><circle cx=\"275\" cy=\"74\" r=\"5.5\" fill=\"currentColor\" fill-opacity=\"0.45\"/><circle cx=\"288\" cy=\"74\" r=\"5.5\" fill=\"currentColor\" fill-opacity=\"0.45\"/><path d=\"M367,28C350,40 340,62 345,80C350,94 384,94 389,80C394,62 384,40 367,28Z\" fill=\"currentColor\" fill-opacity=\"0.4\"/><path d=\"M346,78C356,86 378,86 388,78C388,90 378,96 367,96C356,96 346,90 346,78Z\" fill=\"currentColor\" fill-opacity=\"0.1\"/><path d=\"M12,142H92\" stroke-dasharray=\"3 3\" stroke-width=\"1\"/><path d=\"M117,142H197\" stroke-dasharray=\"3 3\" stroke-width=\"1\"/><path d=\"M222,142H302\" stroke-dasharray=\"3 3\" stroke-width=\"1\"/><path d=\"M327,142H407\" stroke-dasharray=\"3 3\" stroke-width=\"1\"/><g fill=\"currentColor\" stroke=\"none\"><text x=\"52\" y=\"118\" text-anchor=\"middle\" font-size=\"10\">A – češnja (prerez)</text><text x=\"157\" y=\"118\" text-anchor=\"middle\" font-size=\"10\">B – paradižnik (prerez)</text><text x=\"262\" y=\"118\" text-anchor=\"middle\" font-size=\"10\">C – grah (odprt plod)</text><text x=\"367\" y=\"118\" text-anchor=\"middle\" font-size=\"10\">D – lešnik</text></g></svg>",
+     "answer": "A – koščičasti plod (koščičar), B – jagoda, C – pokovec, D – orešek",
+     "ways": [
+      {
+       "title": "Po ključu, korak za korakom",
+       "text": "- **A – češnja**: sočna (1a → 2); v sredini je ena trda koščica s semenom (2a) → **koščičasti plod**.\n- **B – paradižnik**: sočen (1a → 2); koščice nima, v mesu je veliko semen (2b) → **jagoda**.\n- **C – grah**: zrel strok je suh (1b → 3); odpre se in semena (grah) se iztresejo (3a) → **pokovec**.\n- **D – lešnik**: suh (1b → 3); ne odpre se, seme (jedrce) ostane v trdi lupini (3b) → **orešek**."
+      },
+      {
+       "title": "Drugače: najprej suhi in sočni",
+       "text": "Plodove najprej razdelimo v dve skupini: **sočna** sta češnja in paradižnik, **suha** sta grahov strok in lešnik.\n\nSočna ločimo po koščici: češnja jo ima (koščičar), paradižnik ne (jagoda). Suha ločimo po tem, ali se odpreta: strok graha se odpre (pokovec), lešnik ne (orešek).\n\nOpomba: v vsakdanjem jeziku »jagoda« pomeni gozdni ali vrtni sadež (ta v botaniki sploh ni jagoda), v botaniki pa je jagoda vsak sočen plod brez koščice z več semeni – tudi paradižnik, grozdna jagoda in borovnica."
+      }
+     ],
+     "scoring": "1 t. za vse štiri pravilno določene in vpisane skupine.",
+     "mistake": "Uvrstiti grah med oreške, ker je zrno trdo. Ključ sprašuje o celem plodu: strok se odpre, zato je pokovec. Tudi paradižnik je plod (jagoda), čeprav ga v kuhinji štejemo med zelenjavo."
+    }
+   ]
+  }
+ ]
+}

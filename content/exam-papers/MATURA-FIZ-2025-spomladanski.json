@@ -1,0 +1,1902 @@
+{
+ "id": "MATURA-FIZ-2025-spomladanski",
+ "exam": "MATURA",
+ "subject": "FIZ",
+ "minutes": 180,
+ "points": 125,
+ "maxPoints": 80,
+ "author": "AI",
+ "tools": "pisalo, svinčnik, radirka, šilček, računalo in geometrijsko orodje; priložena sta periodni sistem in perforiran list s konstantami in enačbami; pri poli 1 tudi list za odgovore",
+ "polas": [
+  {
+   "pola": 1,
+   "minutes": 90,
+   "tools": "Dovoljeni so nalivno pero ali kemični svinčnik, svinčnik, radirka, šilček, računalo in geometrijsko orodje; priložena sta periodni sistem in list s konstantami in enačbami. Odgovore vpiši na list za odgovore."
+  },
+  {
+   "pola": 2,
+   "minutes": 90,
+   "tools": "Dovoljeni so pisalo, svinčnik, radirka, računalo in geometrijsko orodje. Izberi in reši tri naloge. Pot do rezultata mora biti jasno prikazana."
+  }
+ ],
+ "tasks": [
+  {
+   "pola": 1,
+   "n": 1,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera od naštetih hitrosti je največja?",
+     "choices": [
+      "$30\\,\\mathrm{m/s}$",
+      "$1{,}8\\,\\mathrm{km/min}$",
+      "$0{,}029\\,\\mathrm{mm/\\mu s}$",
+      "$110\\,\\mathrm{km/h}$"
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – $110\\,\\mathrm{km/h}$ (približno $30{,}6\\,\\mathrm{m/s}$)",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $30\\,\\mathrm{m/s}$, $1{,}8\\,\\mathrm{km/min}$, $0{,}029\\,\\mathrm{mm/\\mu s}$, $110\\,\\mathrm{km/h}$.\n**Iščemo:** največjo hitrost – vse pretvorimo v $\\mathrm{m/s}$.\n\n- **A:** $30\\,\\mathrm{m/s}$ je že v osnovni enoti.\n- **B:** $1{,}8\\,\\mathrm{km/min} = \\frac{1800\\,\\mathrm{m}}{60\\,\\mathrm{s}} = 30\\,\\mathrm{m/s}$ – enako kot A, ne več.\n- **C:** $1\\,\\mathrm{mm} = 10^{-3}\\,\\mathrm{m}$ in $1\\,\\mathrm{\\mu s} = 10^{-6}\\,\\mathrm{s}$, zato je $0{,}029\\,\\mathrm{mm/\\mu s} = 0{,}029 \\cdot \\frac{10^{-3}}{10^{-6}}\\,\\mathrm{m/s} = 29\\,\\mathrm{m/s}$ – manj kot A.\n- **D:** $110\\,\\mathrm{km/h} = \\frac{110}{3{,}6}\\,\\mathrm{m/s} \\approx 30{,}6\\,\\mathrm{m/s}$ – to je največ.\n\nPravilen odgovor je **D**. Majhno število pred nenavadno enoto (C) ne pomeni majhne hitrosti: mikrosekunda je zelo kratek čas."
+      }
+     ],
+     "mistake": "Pri $\\mathrm{mm/\\mu s}$ se hitro zmotiš v smeri pretvorbe ($10^{3}$ in $10^{6}$). Enoto v imenovalcu (čas) pretvarjamo tako, da se število poveča, ker je $1\\,\\mathrm{\\mu s}$ milijonkrat manj kot $1\\,\\mathrm{s}$."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 2,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Avtomobil vozi $20\\,\\mathrm{min}$ s povprečno hitrostjo $72\\,\\mathrm{km/h}$, nato pa še $30\\,\\mathrm{min}$ s povprečno hitrostjo $15\\,\\mathrm{m/s}$. Kolikšno pot prevozi v tem času?",
+     "choices": [
+      "približno $26\\,\\mathrm{km}$",
+      "$31{,}5\\,\\mathrm{km}$",
+      "$51\\,\\mathrm{km}$",
+      "$52{,}5\\,\\mathrm{km}$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – $51\\,\\mathrm{km}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $t_1 = 20\\,\\mathrm{min} = \\frac{1}{3}\\,\\mathrm{h}$, $\\bar v_1 = 72\\,\\mathrm{km/h}$, $t_2 = 30\\,\\mathrm{min} = 0{,}5\\,\\mathrm{h}$, $\\bar v_2 = 15\\,\\mathrm{m/s}$.\n**Iščemo:** skupno pot $s = s_1 + s_2$.\n\nHitrost drugega odseka pretvorimo: $15\\,\\mathrm{m/s} = 15 \\cdot 3{,}6\\,\\mathrm{km/h} = 54\\,\\mathrm{km/h}$.\n\n$s_1 = \\bar v_1 t_1 = 72\\,\\mathrm{km/h} \\cdot \\frac{1}{3}\\,\\mathrm{h} = 24\\,\\mathrm{km}$\n\n$s_2 = \\bar v_2 t_2 = 54\\,\\mathrm{km/h} \\cdot 0{,}5\\,\\mathrm{h} = 27\\,\\mathrm{km}$\n\n$s = 24\\,\\mathrm{km} + 27\\,\\mathrm{km} = 51\\,\\mathrm{km}$ – odgovor **C**.\n\nZakaj druge možnosti niso prave:\n- **A** dobimo, če $15\\,\\mathrm{m/s}$ v $\\mathrm{km/h}$ »pretvorimo« z deljenjem s $3{,}6$ ($s_2 \\approx 2{,}1\\,\\mathrm{km}$).\n- **B** dobimo, če $15$ beremo kot $\\mathrm{km/h}$ ($s_2 = 7{,}5\\,\\mathrm{km}$), torej brez pretvorbe enot.\n- **D** dobimo, če vzamemo navadno povprečje hitrosti $\\frac{72 + 54}{2}\\,\\mathrm{km/h} = 63\\,\\mathrm{km/h}$ in ga pomnožimo s skupnim časom $\\frac{5}{6}\\,\\mathrm{h}$; odseka trajata različno dolgo, zato takšno povprečje ni prava povprečna hitrost."
+      }
+     ],
+     "mistake": "Hitrosti različnih odsekov ne smemo kar povprečiti, kadar odseka ne trajata enako dolgo; varno je izračunati pot vsakega odseka posebej."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 3,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Pri katerem od naštetih gibanj je pospešek telesa enak nič?",
+     "choices": [
+      "Kolesar vozi po ravni vodoravni cesti s stalno hitrostjo $18\\,\\mathrm{km/h}$.",
+      "Avtomobil vozi po krožišču s stalno velikostjo hitrosti $25\\,\\mathrm{km/h}$.",
+      "Kamen, vržen navpično navzgor, je v najvišji točki svoje poti.",
+      "Vlak pred postajo enakomerno zavira."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – enakomerno premo gibanje kolesarja",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Pospešek je sprememba **vektorja** hitrosti na časovno enoto, $\\vec a = \\frac{\\Delta \\vec v}{\\Delta t}$. Enak je nič le, če se ne spreminjata niti velikost niti smer hitrosti.\n\n- **A:** kolesar vozi premo in s stalno hitrostjo – vektor hitrosti je stalen, zato je $a = 0$. To je pravilni odgovor.\n- **B:** velikost hitrosti je stalna, smer pa se ves čas spreminja; pri enakomernem kroženju ima avtomobil radialni pospešek $a_r = \\frac{v^2}{r}$ proti središču krožišča.\n- **C:** v najvišji točki je hitrost za trenutek nič, pospešek pa je ves čas težni pospešek $g \\approx 9{,}81\\,\\mathrm{m/s^2}$ navzdol – hitrost se že v naslednjem trenutku spremeni.\n- **D:** pri enakomernem zaviranju se velikost hitrosti enakomerno zmanjšuje, zato ima vlak stalen pojemek (pospešek v nasprotni smeri gibanja)."
+      }
+     ],
+     "mistake": "Ničelno hitrost (C) ali stalno velikost hitrosti (B) pogosto zamenjamo z ničelnim pospeškom; pospešek je odvisen od tega, kako se hitrost spreminja, in tudi sprememba smeri šteje."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 4,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Boben pralnega stroja se pri ožemanju perila enakomerno vrti s $1200$ obrati na minuto. Kolikšen je njegov obhodni čas?",
+     "choices": [
+      "približno $0{,}83\\,\\mathrm{ms}$",
+      "$0{,}05\\,\\mathrm{s}$",
+      "približno $0{,}31\\,\\mathrm{s}$",
+      "$20\\,\\mathrm{s}$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – $t_0 = 0{,}05\\,\\mathrm{s}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $N = 1200$ obratov v času $t = 1\\,\\mathrm{min} = 60\\,\\mathrm{s}$.\n**Iščemo:** obhodni čas $t_0$ (čas enega obrata).\n\nFrekvenca vrtenja: $\\nu = \\frac{N}{t} = \\frac{1200}{60\\,\\mathrm{s}} = 20\\,\\mathrm{s^{-1}}$.\n\nObhodni čas: $t_0 = \\frac{1}{\\nu} = \\frac{1}{20}\\,\\mathrm{s} = 0{,}05\\,\\mathrm{s}$ – odgovor **B**.\n\nZakaj druge možnosti niso prave:\n- **A** dobimo, če $1200$ obratov pripišemo eni sekundi namesto minuti: $\\frac{1}{1200}\\,\\mathrm{s}$.\n- **C** dobimo, če zamešamo frekvenco s krožno frekvenco in računamo $\\frac{2\\pi}{\\nu}$; obhodni čas je preprosto $\\frac{1}{\\nu}$.\n- **D** je frekvenca $20\\,\\mathrm{s^{-1}}$, prebrana kot čas – boben se v $20\\,\\mathrm{s}$ ne zavrti le enkrat, temveč $400$-krat."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 5,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Breme z maso $m$ visi na dveh enakih vrvicah, pritrjenih na strop, kot kaže slika. Vsaka vrvica oklepa z navpičnico kot $\\alpha$. Breme miruje. Kolikšna je sila v vsaki vrvici?",
+     "choices": [
+      "$\\dfrac{mg}{2\\cos\\alpha}$",
+      "$\\dfrac{mg}{2\\sin\\alpha}$",
+      "$\\dfrac{mg\\cos\\alpha}{2}$",
+      "$\\dfrac{mg}{2}$"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – $F = \\dfrac{mg}{2\\cos\\alpha}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Breme miruje, zato je vsota sil nanj enaka nič. Silo $F$ vsake vrvice razstavimo na navpično komponento $F\\cos\\alpha$ (kot $\\alpha$ je merjen od navpičnice) in vodoravno komponento $F\\sin\\alpha$.\n\n- Vodoravni komponenti obeh vrvic sta enako veliki in nasprotno usmerjeni, zato se izničita.\n- Navpični komponenti skupaj uravnovesita težo: $2F\\cos\\alpha = mg$, torej $F = \\frac{mg}{2\\cos\\alpha}$ – odgovor **A**.\n\nZakaj druge možnosti niso prave:\n- **B** bi veljal, če bi bil kot $\\alpha$ merjen od vodoravnice (od stropa); na sliki je merjen od navpičnice.\n- **C** je manjši od $\\frac{mg}{2}$; ker vrvici vlečeta tudi postrani, mora biti sila v vsaki vrvici **večja** od polovice teže, ne manjša.\n- **D** velja le za navpični vrvici ($\\alpha = 0$).\n\n**Preizkus:** za $\\alpha = 60^\\circ$ je $\\cos\\alpha = 0{,}5$ in $F = mg$ – vsaka vrvica nosi celo težo, kar se ujema z izkušnjo, da so bolj razprte vrvice bolj napete."
+      }
+     ],
+     "figure": "<svg viewBox=\"0 0 200 175\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"a5\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><rect x=\"20\" y=\"8\" width=\"160\" height=\"8\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"none\"/><line x1=\"20\" y1=\"16\" x2=\"180\" y2=\"16\"/><line x1=\"40\" y1=\"16\" x2=\"100\" y2=\"90\" stroke-width=\"1.5\"/><line x1=\"160\" y1=\"16\" x2=\"100\" y2=\"90\" stroke-width=\"1.5\"/><line x1=\"100\" y1=\"90\" x2=\"100\" y2=\"30\" stroke-dasharray=\"4 3\"/><path d=\"M100 68A22 22 0 0 1 113.9 72.9M86.1 72.9A22 22 0 0 1 100 68\"/><text x=\"104\" y=\"62\" fill=\"currentColor\" stroke=\"none\">α</text><text x=\"88\" y=\"62\" fill=\"currentColor\" stroke=\"none\">α</text><line x1=\"100\" y1=\"90\" x2=\"100\" y2=\"100\" stroke-width=\"1.5\"/><rect x=\"84\" y=\"100\" width=\"32\" height=\"26\" fill=\"currentColor\" fill-opacity=\"0.15\"/><text x=\"95\" y=\"118\" fill=\"currentColor\" stroke=\"none\">m</text><line x1=\"100\" y1=\"126\" x2=\"100\" y2=\"160\" stroke-width=\"1.5\" marker-end=\"url(#a5)\"/><text x=\"106\" y=\"156\" fill=\"currentColor\" stroke=\"none\">F<tspan font-size=\"9\" dy=\"3\">g</tspan></text></svg>"
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 6,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Ko na vzmet obesimo utež, se vzmet raztegne za $6\\,\\mathrm{cm}$. Isto utež nato obesimo na dve taki vzmeti, ki sta vezani vzporedno (drugo ob drugi), tako da se obe enako raztegneta. Za koliko se raztegneta vzmeti?",
+     "choices": [
+      "$1{,}5\\,\\mathrm{cm}$",
+      "$3\\,\\mathrm{cm}$",
+      "$6\\,\\mathrm{cm}$",
+      "$12\\,\\mathrm{cm}$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – $3\\,\\mathrm{cm}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** pri eni vzmeti je $x_1 = 6\\,\\mathrm{cm}$, sila teže uteži $F_g$ je obakrat enaka.\n**Iščemo:** raztezek $x_2$ pri vzporedni vezavi.\n\nEna vzmet: $F_g = k x_1$. Pri vzporedni vezavi vsaka vzmet nosi polovico teže, $k x_2 = \\frac{F_g}{2}$ (skupni koeficient je $2k$).\n\n$x_2 = \\frac{F_g}{2k} = \\frac{x_1}{2} = \\frac{6\\,\\mathrm{cm}}{2} = 3\\,\\mathrm{cm}$ – odgovor **B**.\n\nZakaj druge možnosti niso prave:\n- **A** dobimo, če isto stvar upoštevamo dvakrat: najprej razpolovimo silo na vsako vzmet, nato pa še podvojimo koeficient ($\\frac{F_g/2}{2k}$). Pol teže na eno vzmet in koeficient $2k$ za par sta dva opisa istega, ne dva ločena učinka.\n- **C** bi veljal, če bi mislili, da vsaka vzmet še vedno nosi celo težo.\n- **D** je raztezek pri **zaporedni** vezavi (vzmeti druga pod drugo), kjer vsaka nosi celo težo in se raztezka seštejeta."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 7,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Človek z maso $72\\,\\mathrm{kg}$ stoji na obeh nogah. Ploščina stika vsakega podplata s tlemi je $150\\,\\mathrm{cm^2}$. Kolikšen tlak povzroča na tla?",
+     "choices": [
+      "$0{,}0024\\,\\mathrm{bar}$",
+      "$0{,}24\\,\\mathrm{bar}$",
+      "$0{,}47\\,\\mathrm{bar}$",
+      "$24\\,\\mathrm{bar}$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – približno $0{,}24\\,\\mathrm{bar}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $m = 72\\,\\mathrm{kg}$, $S = 2 \\cdot 150\\,\\mathrm{cm^2} = 300\\,\\mathrm{cm^2} = 0{,}03\\,\\mathrm{m^2}$, $g = 9{,}81\\,\\mathrm{m/s^2}$, $1\\,\\mathrm{bar} = 10^{5}\\,\\mathrm{Pa}$.\n**Iščemo:** tlak $p$ v barih.\n\nSila na tla je teža: $F_g = mg = 72\\,\\mathrm{kg} \\cdot 9{,}81\\,\\mathrm{m/s^2} \\approx 706\\,\\mathrm{N}$.\n\nKer je $1\\,\\mathrm{cm^2} = 10^{-4}\\,\\mathrm{m^2}$, je $300\\,\\mathrm{cm^2} = 0{,}03\\,\\mathrm{m^2}$.\n\n$p = \\frac{F_g}{S} \\approx \\frac{706\\,\\mathrm{N}}{0{,}03\\,\\mathrm{m^2}} \\approx 23\\,500\\,\\mathrm{Pa} \\approx 0{,}24\\,\\mathrm{bar}$ – odgovor **B**.\n\nZakaj druge možnosti niso prave:\n- **A** dobimo, če $\\mathrm{cm^2}$ v $\\mathrm{m^2}$ pretvorimo z $10^{-2}$ namesto z $10^{-4}$ (ploščina je stokrat prevelika).\n- **C** je tlak, ko človek stoji na eni nogi; v nalogi stoji na obeh.\n- **D** dobimo, če vzamemo, da je $1\\,\\mathrm{bar} = 1000\\,\\mathrm{Pa}$."
+      }
+     ],
+     "mistake": "Pri pretvorbi ploščine se pretvornik dolžine kvadrira: $1\\,\\mathrm{cm} = 10^{-2}\\,\\mathrm{m}$, zato je $1\\,\\mathrm{cm^2} = 10^{-4}\\,\\mathrm{m^2}$."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 8,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "V dvigalu je na silomer obešena utež. Dvigalo se pelje navzgor in pred vrhnjim nadstropjem zavira (velikost hitrosti se mu zmanjšuje). Kaj kaže silomer med zaviranjem?",
+     "choices": [
+      "Več, kot je teža uteži, ker se dvigalo giblje navzgor.",
+      "Natanko toliko, kot je teža uteži, ker sila silomera ni odvisna od gibanja dvigala.",
+      "Nič, ker se utež giblje skupaj z dvigalom.",
+      "Manj, kot je teža uteži."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – manj od teže uteži",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Na utež delujeta teža $F_g = mg$ navzdol in sila silomera $F$ navzgor. Dvigalo se giblje navzgor, a se mu hitrost zmanjšuje, zato ima pospešek $a$ **navzdol**.\n\nPo drugem Newtonovem zakonu (pozitivna smer navzdol): $mg - F = ma$, torej $F = m(g - a) < mg$. Silomer kaže manj od teže – odgovor **D**.\n\nZakaj druge možnosti niso prave:\n- **A:** silomer ne »čuti« smeri hitrosti, temveč smer pospeška. Več od teže bi kazal, ko dvigalo navzgor pospešuje ali navzdol zavira.\n- **B:** to velja le, ko dvigalo miruje ali se giblje s stalno hitrostjo ($a = 0$).\n- **C:** nič bi kazal le pri prostem padanju dvigala ($a = g$); pri običajnem zaviranju je $a$ precej manjši od $g$."
+      }
+     ],
+     "mistake": "Smer gibanja ni smer pospeška: pri zaviranju je pospešek nasproten hitrosti."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 9,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Na telo na površju Zemlje deluje gravitacijska sila Zemlje $F$. Kolikšna je gravitacijska sila Zemlje na isto telo, ko je na višini $2R_Z$ nad površjem Zemlje? ($R_Z$ je polmer Zemlje.)",
+     "choices": [
+      "$\\dfrac{F}{9}$",
+      "$\\dfrac{F}{4}$",
+      "$\\dfrac{F}{3}$",
+      "$\\dfrac{F}{2}$"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – $\\dfrac{F}{9}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** na površju je razdalja od središča Zemlje $r_1 = R_Z$; na višini $h = 2R_Z$ je $r_2 = R_Z + 2R_Z = 3R_Z$.\n**Iščemo:** silo $F_2$ na višini $h$.\n\nPo gravitacijskem zakonu je $F = G\\frac{m M_Z}{r^2}$, sila je obratno sorazmerna s **kvadratom razdalje od središča** Zemlje:\n\n$\\frac{F_2}{F} = \\left(\\frac{r_1}{r_2}\\right)^2 = \\left(\\frac{1}{3}\\right)^2 = \\frac{1}{9}$, torej $F_2 = \\frac{F}{9}$ – odgovor **A**.\n\nZakaj druge možnosti niso prave:\n- **B** dobimo, če za razdaljo od središča vzamemo kar višino $2R_Z$ in pozabimo prišteti polmer Zemlje.\n- **C** dobimo, če sila ne bi padala s kvadratom razdalje, temveč le z razdaljo ($\\frac{1}{r}$).\n- **D** dobimo, če višino $2R_Z$ vzamemo kot razdaljo in silo zmanjšamo le linearno."
+      }
+     ],
+     "mistake": "V gravitacijskem zakonu je $r$ razdalja med središčema teles, ne višina nad površjem."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 10,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Voziček z maso $m$ se giblje s hitrostjo $v$ v desno, voziček z maso $3m$ pa proti njemu s hitrostjo $v$ v levo. Vozička trčita in se sprimeta. Trenje zanemarimo. Kakšna je hitrost sprijetih vozičkov po trku?",
+     "choices": [
+      "$0$",
+      "$\\dfrac{v}{2}$ v levo (v smeri, v kateri se je gibal težji voziček)",
+      "$\\dfrac{v}{2}$ v desno (v smeri, v kateri se je gibal lažji voziček)",
+      "$v$ v levo (v smeri, v kateri se je gibal težji voziček)"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – $\\dfrac{v}{2}$ v levo",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $m_1 = m$, $v_1 = +v$ (desno); $m_2 = 3m$, $v_2 = -v$ (levo); neprožni trk.\n**Iščemo:** skupno hitrost $v'$.\n\nGibalna količina se ohrani: $m_1 v_1 + m_2 v_2 = (m_1 + m_2)v'$\n\n$m v - 3m v = 4m\\,v' \\;\\Rightarrow\\; v' = \\frac{-2mv}{4m} = -\\frac{v}{2}$\n\nNegativni predznak pomeni gibanje v levo, torej v smeri težjega vozička – odgovor **B**.\n\nZakaj druge možnosti niso prave:\n- **A** bi veljal le pri enakih masah; nasprotni hitrosti se ne izničita, ker imata vozička različni gibalni količini.\n- **C** ima pravo velikost, a napačno smer: skupna gibalna količina $-2mv$ kaže v smer težjega vozička.\n- **D** dobimo, če lažji voziček zanemarimo ali če skupno gibalno količino delimo le z razliko mas $2m$ namesto z vsoto $4m$."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 11,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Avtomobil najprej pospeši od mirovanja do hitrosti $10\\,\\mathrm{m/s}$, nato pa od $10\\,\\mathrm{m/s}$ do $20\\,\\mathrm{m/s}$. Kolikokrat večja je sprememba kinetične energije pri drugem pospeševanju kot pri prvem?",
+     "choices": [
+      "enaka je",
+      "$2$-krat",
+      "$3$-krat",
+      "$4$-krat"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – $3$-krat",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $v_0 = 0$, $v_1 = 10\\,\\mathrm{m/s}$, $v_2 = 20\\,\\mathrm{m/s}$, masa $m$ je obakrat enaka.\n**Iščemo:** razmerje $\\frac{\\Delta W_{k2}}{\\Delta W_{k1}}$.\n\n$\\Delta W_{k1} = \\frac{m}{2}\\left(v_1^2 - v_0^2\\right) = \\frac{m}{2} \\cdot 100\\,\\mathrm{m^2/s^2}$\n\n$\\Delta W_{k2} = \\frac{m}{2}\\left(v_2^2 - v_1^2\\right) = \\frac{m}{2} \\cdot (400 - 100)\\,\\mathrm{m^2/s^2} = \\frac{m}{2} \\cdot 300\\,\\mathrm{m^2/s^2}$\n\n$\\frac{\\Delta W_{k2}}{\\Delta W_{k1}} = \\frac{300}{100} = 3$ – odgovor **C**.\n\nZakaj druge možnosti niso prave:\n- **A** bi veljal, če bi bila kinetična energija sorazmerna s hitrostjo; sprememba hitrosti je res obakrat $10\\,\\mathrm{m/s}$, kinetična energija pa raste s **kvadratom** hitrosti.\n- **B** dobimo, če primerjamo kar končni hitrosti ($20 : 10$).\n- **D** je razmerje **končnih** kinetičnih energij ($20^2 : 10^2$), ne razmerje njunih sprememb."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 12,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Električni avtomobil z maso $1500\\,\\mathrm{kg}$ zavira od hitrosti $90\\,\\mathrm{km/h}$ do ustavitve. Med zaviranjem $60\\,\\%$ kinetične energije avtomobila shrani v akumulator. Koliko energije shrani?",
+     "choices": [
+      "približno $0{,}28\\,\\mathrm{MJ}$",
+      "približno $0{,}47\\,\\mathrm{MJ}$",
+      "približno $0{,}56\\,\\mathrm{MJ}$",
+      "približno $3{,}6\\,\\mathrm{MJ}$"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – približno $0{,}28\\,\\mathrm{MJ}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $m = 1500\\,\\mathrm{kg}$, $v = 90\\,\\mathrm{km/h} = 25\\,\\mathrm{m/s}$, izkoristek $\\eta = 0{,}60$.\n**Iščemo:** shranjeno energijo $W$.\n\nKinetična energija pred zaviranjem:\n$W_k = \\frac{1}{2}mv^2 = \\frac{1}{2} \\cdot 1500\\,\\mathrm{kg} \\cdot (25\\,\\mathrm{m/s})^2 = 468\\,750\\,\\mathrm{J}$\n\nShranjena energija:\n$W = \\eta W_k = 0{,}60 \\cdot 468\\,750\\,\\mathrm{J} = 281\\,250\\,\\mathrm{J} \\approx 0{,}28\\,\\mathrm{MJ}$ – odgovor **A**.\n\nZakaj druge možnosti niso prave:\n- **B** je celotna kinetična energija ($0{,}47\\,\\mathrm{MJ}$) – izkoristka nismo upoštevali.\n- **C** dobimo, če pozabimo faktor $\\frac{1}{2}$ v enačbi za kinetično energijo.\n- **D** dobimo, če hitrosti ne pretvorimo in v enačbo vstavimo $90$ kot da bi bila v $\\mathrm{m/s}$."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 13,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera izjava o sili vzgona v tekočini je **napačna**?",
+     "choices": [
+      "Sila vzgona na telo, ki je v celoti potopljeno v vodo, je tem večja, čim globlje je telo.",
+      "Sila vzgona na potopljeno telo je enaka teži tekočine, ki jo telo izpodrine.",
+      "Sila vzgona na isto v celoti potopljeno telo je v slani vodi večja kot v sladki.",
+      "Sila vzgona nastane, ker je tlak tekočine na spodnjo ploskev telesa večji kot na zgornjo."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – vzgon na v celoti potopljeno telo ni odvisen od globine",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Sila vzgona je $F_{vz} = \\rho_t g V_{pot}$, kjer je $\\rho_t$ gostota tekočine in $V_{pot}$ prostornina potopljenega dela telesa.\n\n- **A je napačna** (to je iskani odgovor): tlak res narašča z globino, a za enako mero na spodnji in na zgornji ploskvi, zato je **razlika** tlakov, ki povzroča vzgon, na vseh globinah enaka ($\\Delta p = \\rho_t g\\,\\Delta h$). Voda je skoraj nestisljiva, zato $\\rho_t$ z globino ostane skoraj enaka.\n- **B drži:** to je Arhimedov zakon, $\\rho_t V_{pot} g$ je ravno teža izpodrinjene tekočine.\n- **C drži:** slana voda ima večjo gostoto kot sladka, $V_{pot}$ pa je pri v celoti potopljenem telesu enaka, zato je vzgon večji.\n- **D drži:** od tod sploh izvira vzgon – sila tlaka na spodnjo ploskev je večja od sile na zgornjo."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 14,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera izjava o absolutni ničli ($0\\,\\mathrm{K}$) je pravilna?",
+     "choices": [
+      "Temperatura $0\\,\\mathrm{K}$ je enaka $0\\,^\\circ\\mathrm{C}$, to je tališču ledu.",
+      "Pri $0\\,\\mathrm{K}$ je prostornina vsakega telesa enaka nič.",
+      "Snov lahko ohladimo pod $0\\,\\mathrm{K}$, a le z zelo močnimi hladilniki.",
+      "Temperatura $0\\,\\mathrm{K}$ je najnižja mogoča temperatura in ustreza $-273{,}15\\,^\\circ\\mathrm{C}$."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – najnižja mogoča temperatura, $-273{,}15\\,^\\circ\\mathrm{C}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Med temperaturama velja $T = t + 273{,}15\\,\\mathrm{K}$. Pri $T = 0\\,\\mathrm{K}$ je torej $t = -273{,}15\\,^\\circ\\mathrm{C}$. Absolutna ničla je spodnja meja temperature: notranja energija gibanja delcev je tam najmanjša mogoča, zato nižje temperature ni – odgovor **D**.\n\nZakaj druge možnosti niso prave:\n- **A:** $0\\,^\\circ\\mathrm{C}$ je $273{,}15\\,\\mathrm{K}$; lestvici imata enako velike stopinje, a različni ničli.\n- **B:** prostornina idealnega plina bi se pri stalnem tlaku res približevala nič (od tod ekstrapolacija na absolutno ničlo), a resnične snovi se že prej utekočinijo in strdijo; trdna snov ima tudi pri zelo nizki temperaturi končno prostornino.\n- **C:** pod $0\\,\\mathrm{K}$ ni mogoče priti z nobenim hladilnikom; k absolutni ničli se lahko le poljubno približamo."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 15,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Idealni plin v posodi z batom ima gostoto $\\rho_0$. Pri stalni temperaturi ga stisnemo na tretjino začetne prostornine, nato pa ga pri stalni prostornini segrejemo, da se mu absolutna temperatura podvoji. Kolikšna je gostota plina na koncu?",
+     "choices": [
+      "$\\rho_0$",
+      "$\\dfrac{3}{2}\\rho_0$",
+      "$3\\rho_0$",
+      "$6\\rho_0$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – $3\\rho_0$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** začetna gostota $\\rho_0 = \\frac{m}{V_0}$; po stiskanju $V_1 = \\frac{V_0}{3}$; pri segrevanju $V_2 = V_1$, $T_2 = 2T_1$; masa plina $m$ se ne spremeni.\n**Iščemo:** končno gostoto $\\rho_2$.\n\nGostota je $\\rho = \\frac{m}{V}$ in je odvisna le od mase in prostornine.\n\n- Po izotermnem stiskanju: $\\rho_1 = \\frac{m}{V_0/3} = 3\\rho_0$.\n- Pri izohornem segrevanju se prostornina ne spremeni (spremenita se tlak in temperatura), zato ostane $\\rho_2 = \\rho_1 = 3\\rho_0$ – odgovor **C**.\n\nZakaj druge možnosti niso prave:\n- **A:** gostota se pri stiskanju spremeni, saj je ista masa v manjši prostornini.\n- **B** dobimo, če uporabimo $\\rho = \\frac{pM}{RT}$ in pri segrevanju delimo s $2$, pozabimo pa, da se pri stalni prostornini tlak tudi podvoji.\n- **D** dobimo, če pri segrevanju upoštevamo podvojitev tlaka, ne pa tudi podvojitve temperature."
+      }
+     ],
+     "mistake": "Zveza $\\rho = \\frac{pM}{RT}$ je pravilna, a pri izohorni spremembi se $p$ in $T$ spreminjata v enakem razmerju, zato ostane $\\rho$ enaka."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 16,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "V peči v $2$ urah zgori $3\\,\\mathrm{kg}$ drv s kurilno vrednostjo $15\\,\\mathrm{MJ/kg}$. Kolikšen je povprečni toplotni tok, ki se sprošča pri gorenju?",
+     "choices": [
+      "približno $6{,}3\\,\\mathrm{W}$",
+      "približno $6{,}3\\,\\mathrm{kW}$",
+      "$375\\,\\mathrm{kW}$",
+      "$22{,}5\\,\\mathrm{MW}$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – približno $6{,}3\\,\\mathrm{kW}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $m = 3\\,\\mathrm{kg}$, $q = 15\\,\\mathrm{MJ/kg}$, $t = 2\\,\\mathrm{h} = 7200\\,\\mathrm{s}$.\n**Iščemo:** povprečni toplotni tok $P = \\frac{Q}{t}$.\n\nSproščena toplota: $Q = mq = 3\\,\\mathrm{kg} \\cdot 15\\,\\mathrm{MJ/kg} = 45\\,\\mathrm{MJ}$\n\n$P = \\frac{Q}{t} = \\frac{45 \\cdot 10^{6}\\,\\mathrm{J}}{7200\\,\\mathrm{s}} = 6250\\,\\mathrm{W} \\approx 6{,}3\\,\\mathrm{kW}$ – odgovor **B**.\n\nZakaj druge možnosti niso prave:\n- **A** dobimo, če $\\mathrm{MJ}$ zamenjamo s $\\mathrm{kJ}$ (tisočkrat premalo).\n- **C** dobimo, če čas vstavimo v minutah ($120$) namesto v sekundah.\n- **D** dobimo, če čas vstavimo v urah ($2$); vat je joule na **sekundo**.\n\n**Z oceno:** $6\\,\\mathrm{kW}$ je moč nekaj grelnih teles – to je smiselna moč domače peči."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 17,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Idealni plin opravi krožno spremembo: po več zaporednih spremembah se vrne v začetno stanje. Katera izjava o enem ciklu je **napačna**?",
+     "choices": [
+      "Ker se plin vrne v začetno stanje, je skupno delo plina v enem ciklu vedno enako nič.",
+      "Sprememba notranje energije plina v enem ciklu je enaka nič.",
+      "Velikost skupnega dela v enem ciklu je enaka ploščini, ki jo cikel obkroža v diagramu $p(V)$.",
+      "Skupna toplota, ki jo plin v enem ciklu prejme, je enaka skupnemu delu, ki ga plin opravi."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – delo v ciklu v splošnem ni nič",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Notranja energija je odvisna le od stanja plina, delo in toplota pa od poti med stanji.\n\n- **A je napačna** (iskani odgovor): delo je ploščina pod krivuljo v diagramu $p(V)$. Pri raztezanju po »zgornji« poti plin opravi več dela, kot ga pri stiskanju po »spodnji« poti prejme; razlika je ploščina zanke in ni nič. Na tem temeljijo toplotni stroji.\n- **B drži:** začetno in končno stanje sta isti, zato je $\\Delta W_n = 0$.\n- **C drži:** razlika ploščin pod zgornjo in spodnjo potjo je ravno ploščina, ki jo cikel obkroža.\n- **D drži:** iz prvega zakona termodinamike $\\Delta W_n = Q - A$ (A je delo, ki ga opravi plin) in $\\Delta W_n = 0$ sledi $Q = A$."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 18,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Nenabitemu elektroskopu približamo pozitivno nabito palico, ne da bi se ga dotaknili. Lističa elektroskopa se razmakneta. Kako se imenuje pojav, ki povzroči razmik lističev?",
+     "choices": [
+      "elektromagnetna indukcija",
+      "polarizacija dielektrika",
+      "električna influenca",
+      "interferenca"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – električna influenca",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Elektroskop je iz kovine, v kateri se elektroni prosto gibljejo. Pozitivna palica jih privlači, zato se zberejo na zgornji kroglici, na lističih pa ostane presežek pozitivnega naboja. Istoimensko nabita lističa se odbijata. Prerazporeditev prostih nabojev v prevodniku zaradi bližine nabitega telesa je **električna influenca** – odgovor **C**. Skupni naboj elektroskopa ostane nič.\n\nZakaj druge možnosti niso prave:\n- **A:** elektromagnetna indukcija je nastanek napetosti zaradi spreminjanja magnetnega pretoka; tu ni magnetnega polja.\n- **B:** polarizacija dielektrika se zgodi v **izolatorjih**, kjer se naboji v molekulah le malo premaknejo; v kovini se prosti elektroni premikajo po vsem telesu.\n- **D:** interferenca je pojav pri valovanju (seštevanje valov), ne pri elektrostatiki."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 19,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Trije točkasti naboji ležijo na premici, kot kaže slika: $q_1 = +9\\,\\mathrm{\\mu As}$, $q_2 = +1\\,\\mathrm{\\mu As}$ in $q_3 = +2\\,\\mathrm{\\mu As}$. Razdalja med $q_1$ in $q_2$ je $3\\,\\mathrm{cm}$, med $q_2$ in $q_3$ pa $2\\,\\mathrm{cm}$. Kam kaže rezultanta električnih sil na naboj $q_2$?",
+     "choices": [
+      "v desno, proti naboju $q_3$",
+      "v levo, proti naboju $q_1$",
+      "rezultanta je enaka nič",
+      "pravokotno na premico"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – v desno",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $q_1 = 9\\,\\mathrm{\\mu As}$, $q_2 = 1\\,\\mathrm{\\mu As}$, $q_3 = 2\\,\\mathrm{\\mu As}$, $r_{12} = 3\\,\\mathrm{cm}$, $r_{23} = 2\\,\\mathrm{cm}$; vsi naboji so pozitivni.\n**Iščemo:** smer rezultante sil na $q_2$.\n\nIstoimenski naboji se odbijajo:\n- $q_1$ odbija $q_2$ v **desno**,\n- $q_3$ odbija $q_2$ v **levo**.\n\nPrimerjamo velikosti po Coulombovem zakonu $F = \\frac{q_a q_b}{4\\pi\\varepsilon_0 r^2}$ (skupni faktor $\\frac{q_2}{4\\pi\\varepsilon_0}$ se pri razmerju krajša):\n\n$\\frac{F_{12}}{F_{32}} = \\frac{q_1 / r_{12}^2}{q_3 / r_{23}^2} = \\frac{9/9}{2/4} = 2$\n\nSila naboja $q_1$ je dvakrat večja, zato rezultanta kaže v desno, proti $q_3$ – odgovor **A**.\n\nZakaj druge možnosti niso prave:\n- **B:** $q_3$ je res bližje, a ima precej manjši naboj; bližina ne odloča sama, šteje količnik $\\frac{q}{r^2}$.\n- **C:** sili bi se izničili le, če bi bilo razmerje $\\frac{q_1}{r_{12}^2} = \\frac{q_3}{r_{23}^2}$; tu je prvi količnik dvakrat večji.\n- **D:** vsi naboji ležijo na isti premici, zato vse sile delujejo vzdolž te premice."
+      }
+     ],
+     "figure": "<svg viewBox=\"0 0 300 90\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"a19\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><line x1=\"10\" y1=\"40\" x2=\"290\" y2=\"40\"/><circle cx=\"40\" cy=\"40\" r=\"7\" fill=\"currentColor\" fill-opacity=\"0.3\"/><text x=\"10\" y=\"22\" fill=\"currentColor\" stroke=\"none\">q₁ = +9 μAs</text><circle cx=\"160\" cy=\"40\" r=\"7\" fill=\"currentColor\" fill-opacity=\"0.3\"/><text x=\"130\" y=\"22\" fill=\"currentColor\" stroke=\"none\">q₂ = +1 μAs</text><circle cx=\"240\" cy=\"40\" r=\"7\" fill=\"currentColor\" fill-opacity=\"0.3\"/><text x=\"210\" y=\"22\" fill=\"currentColor\" stroke=\"none\">q₃ = +2 μAs</text><path d=\"M40 52v20M160 52v20M240 52v20\" stroke-dasharray=\"3 2\"/><line x1=\"100\" y1=\"66\" x2=\"158\" y2=\"66\" stroke-width=\"1\" marker-end=\"url(#a19)\"/><line x1=\"100\" y1=\"66\" x2=\"42\" y2=\"66\" stroke-width=\"1\" marker-end=\"url(#a19)\"/><line x1=\"200\" y1=\"66\" x2=\"238\" y2=\"66\" stroke-width=\"1\" marker-end=\"url(#a19)\"/><line x1=\"200\" y1=\"66\" x2=\"162\" y2=\"66\" stroke-width=\"1\" marker-end=\"url(#a19)\"/><text x=\"86\" y=\"84\" fill=\"currentColor\" stroke=\"none\">3 cm</text><text x=\"186\" y=\"84\" fill=\"currentColor\" stroke=\"none\">2 cm</text></svg>"
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 20,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Upornik z uporom $12\\,\\Omega$ priključimo na napetost $6\\,\\mathrm{V}$. Koliko elektronov steče skozi upornik v $1$ minuti? (Osnovni naboj je $e_0 = 1{,}6 \\cdot 10^{-19}\\,\\mathrm{As}$.)",
+     "choices": [
+      "$4{,}8 \\cdot 10^{-18}$",
+      "$3{,}1 \\cdot 10^{18}$",
+      "$1{,}9 \\cdot 10^{20}$",
+      "$2{,}7 \\cdot 10^{22}$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – približno $1{,}9 \\cdot 10^{20}$ elektronov",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $R = 12\\,\\Omega$, $U = 6\\,\\mathrm{V}$, $t = 1\\,\\mathrm{min} = 60\\,\\mathrm{s}$, $e_0 = 1{,}6 \\cdot 10^{-19}\\,\\mathrm{As}$.\n**Iščemo:** število elektronov $N$.\n\nTok: $I = \\frac{U}{R} = \\frac{6\\,\\mathrm{V}}{12\\,\\Omega} = 0{,}5\\,\\mathrm{A}$\n\nPretečeni naboj: $e = It = 0{,}5\\,\\mathrm{A} \\cdot 60\\,\\mathrm{s} = 30\\,\\mathrm{As}$\n\nŠtevilo elektronov: $N = \\frac{e}{e_0} = \\frac{30\\,\\mathrm{As}}{1{,}6 \\cdot 10^{-19}\\,\\mathrm{As}} = 1{,}875 \\cdot 10^{20} \\approx 1{,}9 \\cdot 10^{20}$ – odgovor **C**.\n\nZakaj druge možnosti niso prave:\n- **A** dobimo, če naboj z osnovnim nabojem pomnožimo namesto delimo; število elektronov ne more biti manjše od ena.\n- **B** je število elektronov, ki stečejo v **eni sekundi** – minute nismo pretvorili v $60\\,\\mathrm{s}$.\n- **D** dobimo, če tok napačno izračunamo kot $I = UR = 72\\,\\mathrm{A}$; Ohmov zakon je $I = \\frac{U}{R}$."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 21,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Človek se z mokrimi rokami hkrati dotakne dveh vodnikov z napetostjo $230\\,\\mathrm{V}$. Upor njegovega telesa med rokama je $1{,}5\\,\\mathrm{k\\Omega}$. Kolikšen tok steče skozi telo?",
+     "choices": [
+      "približno $0{,}15\\,\\mathrm{mA}$",
+      "približno $6{,}5\\,\\mathrm{mA}$",
+      "približno $150\\,\\mathrm{mA}$",
+      "približno $150\\,\\mathrm{A}$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – približno $150\\,\\mathrm{mA}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $U = 230\\,\\mathrm{V}$, $R = 1{,}5\\,\\mathrm{k\\Omega} = 1500\\,\\Omega$.\n**Iščemo:** tok $I$.\n\nPo Ohmovem zakonu: $I = \\frac{U}{R} = \\frac{230\\,\\mathrm{V}}{1500\\,\\Omega} \\approx 0{,}153\\,\\mathrm{A} \\approx 150\\,\\mathrm{mA}$ – odgovor **C**.\n\nTo je življenjsko nevaren tok: že tok nekaj deset miliamperov skozi prsni koš lahko povzroči zastoj srca.\n\nZakaj druge možnosti niso prave:\n- **A** dobimo, če predpono $\\mathrm{k}$ beremo kot $10^{6}$ (mega) namesto $10^{3}$.\n- **B** dobimo, če upor delimo z napetostjo ($\\frac{1500}{230}$) – tako ne dobimo toka.\n- **D** dobimo, če predpono $\\mathrm{k}$ izpustimo in računamo z uporom $1{,}5\\,\\Omega$."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 22,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Paličast magnet je vpet tako, da se lahko prosto vrti v vodoravni ravnini. Ko se umiri, leži v smeri sever–jug, kot kaže slika (pogled od zgoraj). Druga magnetna polja razen Zemljinega nanj ne delujejo. Točka $T$ leži vzhodno od sredine magneta. V katero smer kaže gostota magnetnega polja **magneta** v točki $T$?",
+     "choices": [
+      "v smer puščice 1 (proti severu)",
+      "v smer puščice 2 (proti vzhodu, stran od magneta)",
+      "v smer puščice 3 (proti zahodu, proti magnetu)",
+      "v smer puščice 4 (proti jugu)"
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – proti jugu (puščica 4)",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "1. Magnet, ki se prosto vrti, se poravna v Zemljinem polju kot kompasna igla: njegov **severni pol** (S) kaže proti geografskemu severu. Na sliki je torej zgornji konec magneta severni pol, spodnji južni pol (J).\n2. Zunaj magneta silnice izhajajo iz severnega pola in vstopajo v južni pol. Ob sredini magneta (na simetrali) tečejo silnice vzporedno z magnetom, od severnega proti južnemu polu – torej **proti jugu**.\n\nGostota polja magneta v $T$ kaže v smer puščice 4 – odgovor **D**.\n\nZakaj druge možnosti niso prave:\n- **A:** proti severu kaže polje **v notranjosti** magneta (od J proti S) in v točkah na podaljšku osi; v točki ob sredini magneta je smer nasprotna.\n- **B** in **C:** polje ob sredini ni usmerjeno proti magnetu ali stran od njega – tako bi kazalo le polje enega samega pola; prispevka obeh polov se v smeri vzhod–zahod izničita."
+      }
+     ],
+     "figure": "<svg viewBox=\"0 0 260 200\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"a22\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><rect x=\"70\" y=\"40\" width=\"20\" height=\"120\" fill=\"currentColor\" fill-opacity=\"0.15\"/><circle cx=\"80\" cy=\"100\" r=\"3\" fill=\"currentColor\"/><circle cx=\"170\" cy=\"100\" r=\"3\" fill=\"currentColor\"/><text x=\"176\" y=\"116\" fill=\"currentColor\" stroke=\"none\">T</text><line x1=\"170\" y1=\"100\" x2=\"170\" y2=\"58\" stroke-width=\"1.5\" marker-end=\"url(#a22)\"/><line x1=\"170\" y1=\"100\" x2=\"212\" y2=\"100\" stroke-width=\"1.5\" marker-end=\"url(#a22)\"/><line x1=\"170\" y1=\"100\" x2=\"128\" y2=\"100\" stroke-width=\"1.5\" marker-end=\"url(#a22)\"/><line x1=\"170\" y1=\"100\" x2=\"170\" y2=\"142\" stroke-width=\"1.5\" marker-end=\"url(#a22)\"/><text x=\"176\" y=\"64\" fill=\"currentColor\" stroke=\"none\">1</text><text x=\"206\" y=\"92\" fill=\"currentColor\" stroke=\"none\">2</text><text x=\"130\" y=\"92\" fill=\"currentColor\" stroke=\"none\">3</text><text x=\"176\" y=\"142\" fill=\"currentColor\" stroke=\"none\">4</text><line x1=\"235\" y1=\"50\" x2=\"235\" y2=\"14\" stroke-width=\"1\" marker-end=\"url(#a22)\"/><text x=\"218\" y=\"62\" fill=\"currentColor\" stroke=\"none\">sever</text><text x=\"40\" y=\"185\" fill=\"currentColor\" stroke=\"none\">vrtljivo vpet magnet</text></svg>",
+     "mistake": "Smer magneta (od J proti S) ni smer njegovega polja v vsaki točki; zunaj ob sredini magneta je polje nasprotno usmerjeno."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 23,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Skozi dolg raven vodnik teče tok $I$. Vodnik je pravokoten na ravnino slike, tok teče iz ravnine proti nam. Točka $T$ leži v tej ravnini desno od vodnika. V katero smer kaže gostota magnetnega polja vodnika v točki $T$?",
+     "choices": [
+      "v smer puščice 1",
+      "v smer puščice 2 (stran od vodnika)",
+      "v smer puščice 3",
+      "pravokotno na ravnino, v smeri toka"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – v smer puščice 1",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Silnice magnetnega polja ravnega vodnika so koncentrične krožnice okrog vodnika v ravnini, pravokotni na vodnik. Smer določimo s **pravilom desne roke**: palec desne roke usmerimo v smer toka (iz ravnine proti nam), upognjeni prsti kažejo smer silnic – gledano od spredaj v nasprotni smeri urinega kazalca.\n\nV točki desno od vodnika je tangenta na tako krožnico usmerjena **navzgor** – puščica 1, odgovor **A**.\n\nZakaj druge možnosti niso prave:\n- **B:** gostota polja ravnega vodnika nikoli ne kaže radialno stran od vodnika (tako je usmerjeno električno polje nabite žice, ne magnetno polje toka).\n- **C** dobimo, če uporabimo levo roko ali zamenjamo smer toka; za tok v ravnino bi bila to prava smer.\n- **D:** gostota polja je vedno pravokotna na tok, zato ne more kazati v smeri vodnika."
+      }
+     ],
+     "figure": "<svg viewBox=\"0 0 230 150\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"a23\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><path d=\"M20 30L200 30L210 120L30 120Z\" stroke-dasharray=\"4 3\"/><circle cx=\"70\" cy=\"75\" r=\"10\"/><circle cx=\"70\" cy=\"75\" r=\"2.5\" fill=\"currentColor\"/><text x=\"56\" y=\"104\" fill=\"currentColor\" stroke=\"none\">I</text><circle cx=\"150\" cy=\"75\" r=\"3\" fill=\"currentColor\"/><text x=\"140\" y=\"92\" fill=\"currentColor\" stroke=\"none\">T</text><line x1=\"150\" y1=\"75\" x2=\"150\" y2=\"38\" stroke-width=\"1.5\" marker-end=\"url(#a23)\"/><line x1=\"150\" y1=\"75\" x2=\"192\" y2=\"75\" stroke-width=\"1.5\" marker-end=\"url(#a23)\"/><line x1=\"150\" y1=\"75\" x2=\"150\" y2=\"112\" stroke-width=\"1.5\" marker-end=\"url(#a23)\"/><text x=\"156\" y=\"46\" fill=\"currentColor\" stroke=\"none\">1</text><text x=\"186\" y=\"68\" fill=\"currentColor\" stroke=\"none\">2</text><text x=\"156\" y=\"112\" fill=\"currentColor\" stroke=\"none\">3</text></svg>"
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 24,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Raven vodnik leži v homogenem magnetnem polju z gostoto $\\vec B$ in je pravokoten na silnice, kot kaže slika. V kateri smeri ga moramo premikati, da se med njegovima krajiščema inducira napetost? Smer 1 je vzdolž vodnika, smer 2 vzporedna s silnicami, smer 3 pa pravokotna na ravnino slike.",
+     "choices": [
+      "le v smeri 1",
+      "le v smeri 2",
+      "le v smeri 3",
+      "v smeri 2 ali v smeri 3"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – le v smeri 3",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Med krajiščema se inducira napetost $U_i = Blv$, kadar je hitrost vodnika $\\vec v$ pravokotna na silnice in na vodnik – vodnik takrat »reže« silnice. Na prosti elektron v vodniku deluje magnetna sila $\\vec F = e\\,\\vec v \\times \\vec B$, ki mora kazati **vzdolž** vodnika, da se elektroni zberejo na enem krajišču.\n\n- **Smer 3:** $\\vec v$ je pravokotna na $\\vec B$ in na vodnik, sila na elektrone kaže vzdolž vodnika – napetost se inducira. Odgovor **C**.\n- **Smer 1:** vodnik drsi sam vzdolž sebe; sila na elektrone je pravokotna na vodnik, zato se naboji vzdolž vodnika ne ločijo – napetosti ni.\n- **Smer 2:** hitrost je vzporedna s silnicami, magnetna sila na naboje je enaka nič ($\\vec v \\times \\vec B = 0$) – napetosti ni.\n\nZato sta napačni tudi A in B, D pa ne drži, ker smer 2 ne da napetosti."
+      }
+     ],
+     "figure": "<svg viewBox=\"0 0 270 175\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"a24\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><line x1=\"10\" y1=\"30\" x2=\"165\" y2=\"30\" stroke-width=\"1\" marker-end=\"url(#a24)\"/><line x1=\"10\" y1=\"70\" x2=\"165\" y2=\"70\" stroke-width=\"1\" marker-end=\"url(#a24)\"/><line x1=\"10\" y1=\"110\" x2=\"165\" y2=\"110\" stroke-width=\"1\" marker-end=\"url(#a24)\"/><line x1=\"10\" y1=\"150\" x2=\"165\" y2=\"150\" stroke-width=\"1\" marker-end=\"url(#a24)\"/><text x=\"168\" y=\"34\" fill=\"currentColor\" stroke=\"none\">B</text><line x1=\"85\" y1=\"42\" x2=\"85\" y2=\"138\" stroke-width=\"4\"/><rect x=\"188\" y=\"88\" width=\"76\" height=\"80\" stroke-dasharray=\"3 2\"/><line x1=\"206\" y1=\"150\" x2=\"206\" y2=\"106\" stroke-width=\"1.5\" marker-end=\"url(#a24)\"/><line x1=\"206\" y1=\"150\" x2=\"250\" y2=\"150\" stroke-width=\"1.5\" marker-end=\"url(#a24)\"/><circle cx=\"206\" cy=\"150\" r=\"5\"/><circle cx=\"206\" cy=\"150\" r=\"1.5\" fill=\"currentColor\"/><text x=\"212\" y=\"112\" fill=\"currentColor\" stroke=\"none\">1</text><text x=\"244\" y=\"142\" fill=\"currentColor\" stroke=\"none\">2</text><text x=\"194\" y=\"140\" fill=\"currentColor\" stroke=\"none\">3</text><text x=\"190\" y=\"82\" fill=\"currentColor\" stroke=\"none\" font-size=\"10\">smeri</text></svg>",
+     "mistake": "Ni dovolj, da se vodnik v polju sploh giblje: inducirana napetost nastane le, če se pri tem spreminja magnetni pretok skozi ploskev, ki jo vodnik opiše (vodnik reže silnice)."
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 25,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Utež na vzmeti niha v navpični smeri. S katerim od naštetih posegov **ne** spremenimo nihajnega časa?",
+     "choices": [
+      "Utež pred spustom odmaknemo iz ravnovesne lege dvakrat dlje kot prej.",
+      "Utež zamenjamo s težjo.",
+      "Vzmet zamenjamo z bolj togo vzmetjo.",
+      "Uporabimo le polovico iste vzmeti."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – povečanje amplitude",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Nihajni čas vzmetnega nihala je $t_0 = 2\\pi\\sqrt{\\frac{m}{k}}$ in je odvisen le od mase uteži $m$ in koeficienta vzmeti $k$.\n\n- **A:** večji začetni odmik pomeni večjo amplitudo. Amplitude v enačbi ni – nihalo pri večji amplitudi prepotuje daljšo pot, a z ustrezno večjo hitrostjo. Nihajni čas se ne spremeni – odgovor **A**.\n- **B:** večja masa poveča nihajni čas.\n- **C:** večji $k$ zmanjša nihajni čas.\n- **D:** polovica vzmeti ima dvakrat večji koeficient ($2k$), ker se pri enaki sili raztegne le za polovico; nihajni čas se zmanjša za faktor $\\sqrt{2}$."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 26,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Utež na vodoravni vzmeti niha brez trenja in brez dušenja. Katera trditev je **napačna**?",
+     "choices": [
+      "Ko je utež v ravnovesni legi, je njena kinetična energija največja.",
+      "Ko je utež v skrajni legi, je prožnostna energija vzmeti največja, kinetična energija uteži pa enaka nič.",
+      "Vsota kinetične in prožnostne energije je ves čas enaka.",
+      "Ko je odmik uteži enak polovici amplitude, je hitrost uteži enaka polovici največje hitrosti."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – pri odmiku $\\frac{x_0}{2}$ je hitrost približno $0{,}87$ največje hitrosti, ne polovica",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Celotna energija nihala je $W = \\frac{1}{2}kx_0^2$ ($x_0$ je amplituda), prožnostna energija pri odmiku $x$ je $W_{pr} = \\frac{1}{2}kx^2$, kinetična pa $W_k = W - W_{pr}$.\n\n- **D je napačna** (iskani odgovor): pri $x = \\frac{x_0}{2}$ je $W_{pr} = \\frac{1}{2}k\\frac{x_0^2}{4} = \\frac{W}{4}$, zato je $W_k = \\frac{3W}{4}$. Kinetična energija je sorazmerna s kvadratom hitrosti, zato je $v = \\sqrt{\\frac{3}{4}}\\,v_0 \\approx 0{,}87\\,v_0$ ($v_0$ je največja hitrost) – precej več kot polovica. Polovico največje hitrosti ($W_k = \\frac{W}{4}$) ima utež šele pri odmiku $x = \\frac{\\sqrt{3}}{2}x_0 \\approx 0{,}87\\,x_0$.\n- **A drži:** v ravnovesni legi je $x = 0$, $W_{pr} = 0$, vsa energija je kinetična.\n- **B drži:** v skrajni legi utež za hip miruje, vsa energija je prožnostna.\n- **C drži:** nihalo je nedušeno, energija se le pretaka med obema oblikama."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 27,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Po napeti vrvi se širi transverzalno valovanje s hitrostjo $3\\,\\mathrm{m/s}$. Vodoravna razdalja med vrhom vala in sosednjo dolino je $15\\,\\mathrm{cm}$ (slika). Kolikšna je frekvenca valovanja?",
+     "choices": [
+      "$0{,}1\\,\\mathrm{Hz}$",
+      "$5\\,\\mathrm{Hz}$",
+      "$10\\,\\mathrm{Hz}$",
+      "$20\\,\\mathrm{Hz}$"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – $10\\,\\mathrm{Hz}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $c = 3\\,\\mathrm{m/s}$, razdalja vrh–sosednja dolina $= \\frac{\\lambda}{2} = 15\\,\\mathrm{cm}$.\n**Iščemo:** frekvenco $\\nu$.\n\nMed vrhom in sosednjo dolino je pol valovne dolžine, zato je $\\lambda = 2 \\cdot 15\\,\\mathrm{cm} = 30\\,\\mathrm{cm} = 0{,}3\\,\\mathrm{m}$.\n\n$\\nu = \\frac{c}{\\lambda} = \\frac{3\\,\\mathrm{m/s}}{0{,}3\\,\\mathrm{m}} = 10\\,\\mathrm{Hz}$ – odgovor **C**.\n\nZakaj druge možnosti niso prave:\n- **A** je $\\frac{\\lambda}{c}$, to je nihajni čas $0{,}1\\,\\mathrm{s}$, ne frekvenca.\n- **B** dobimo, če razdaljo vrh–dolina vzamemo za četrtino valovne dolžine ($\\lambda = 60\\,\\mathrm{cm}$).\n- **D** dobimo, če razdaljo vrh–dolina vzamemo za celo valovno dolžino ($\\lambda = 15\\,\\mathrm{cm}$); valovna dolžina je razdalja med dvema sosednjima vrhovoma."
+      }
+     ],
+     "figure": "<svg viewBox=\"0 0 300 135\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"a27\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><line x1=\"5\" y1=\"60\" x2=\"295\" y2=\"60\" stroke-dasharray=\"2 3\" stroke-opacity=\"0.6\"/><polyline points=\"10,60 15,50.9 20,42.5 25,35.3 30,29.7 35,26.2 40,25 45,26.2 50,29.7 55,35.3 60,42.5 65,50.9 70,60 75,69.1 80,77.5 85,84.7 90,90.3 95,93.8 100,95 105,93.8 110,90.3 115,84.7 120,77.5 125,69.1 130,60 135,50.9 140,42.5 145,35.3 150,29.7 155,26.2 160,25 165,26.2 170,29.7 175,35.3 180,42.5 185,50.9 190,60 195,69.1 200,77.5 205,84.7 210,90.3 215,93.8 220,95 225,93.8 230,90.3 235,84.7 240,77.5 245,69.1 250,60 255,50.9 260,42.5 265,35.3 270,29.7 275,26.2 280,25 285,26.2 290,29.7\" stroke-width=\"1.5\"/><path d=\"M40 25V116M100 95V116\" stroke-dasharray=\"3 2\"/><line x1=\"70\" y1=\"110\" x2=\"98\" y2=\"110\" stroke-width=\"1\" marker-end=\"url(#a27)\"/><line x1=\"70\" y1=\"110\" x2=\"42\" y2=\"110\" stroke-width=\"1\" marker-end=\"url(#a27)\"/><text x=\"52\" y=\"128\" fill=\"currentColor\" stroke=\"none\">15 cm</text></svg>"
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 28,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Na struni, vpeti na obeh koncih, nastane stoječe valovanje s $6$ hrbti. Napetost strune povečamo, tako da se hitrost valovanja po struni poveča za faktor $1{,}5$, frekvenca vzbujanja pa ostane enaka. Pri tem spet nastane stoječe valovanje. Koliko hrbtov ima?",
+     "choices": [
+      "$3$",
+      "$4$",
+      "$6$",
+      "$9$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – $4$ hrbte",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $N_1 = 6$ hrbtov, $c_2 = 1{,}5\\,c_1$, $\\nu_2 = \\nu_1$, dolžina strune $l$ ostane enaka.\n**Iščemo:** število hrbtov $N_2$.\n\nNa struni, vpeti na obeh koncih, je med sosednjima vozloma pol valovne dolžine, zato je $l = N\\frac{\\lambda}{2}$ oziroma $N = \\frac{2l}{\\lambda}$.\n\nKer je $\\lambda = \\frac{c}{\\nu}$ in je frekvenca enaka, se valovna dolžina poveča za enak faktor kot hitrost: $\\lambda_2 = 1{,}5\\,\\lambda_1$.\n\n$N_2 = \\frac{2l}{\\lambda_2} = \\frac{N_1}{1{,}5} = \\frac{6}{1{,}5} = 4$ – odgovor **B**.\n\nZakaj druge možnosti niso prave:\n- **A** dobimo, če vzamemo, da se valovna dolžina podvoji.\n- **C** bi veljal, če bi se spremenila tudi frekvenca v enakem razmerju kot hitrost; tu je frekvenca stalna.\n- **D** dobimo, če število hrbtov pomnožimo s faktorjem $1{,}5$; daljša valovna dolžina pomeni **manj** polovic valov na enaki dolžini strune."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 29,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Valovanje na vodni gladini prehaja iz globoke vode (zgoraj) v plitvo vodo (spodaj, osenčeno), kjer je hitrost valovanja manjša. Na slikah so žarki (puščice) in valovna čela (kratke črte). Vpadno valovanje je na vseh slikah enako. Katera slika pravilno prikazuje valovanje v plitvi vodi?",
+     "choices": [
+      "slika A",
+      "slika B",
+      "slika C",
+      "slika D"
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – žarek se lomi proti vpadni pravokotnici, valovna dolžina se zmanjša",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Pri prehodu v drugo sredstvo se frekvenca valovanja ne spremeni (določa jo izvir). Ker je $\\lambda = \\frac{c}{\\nu}$, je v plitvi vodi z manjšo hitrostjo tudi **valovna dolžina manjša** – valovna čela so bližje skupaj.\n\nPo lomnem zakonu $\\frac{\\sin\\alpha}{\\sin\\beta} = \\frac{c_1}{c_2} > 1$ je lomni kot manjši od vpadnega: žarek se **lomi proti vpadni pravokotnici**.\n\nOboje hkrati prikazuje le slika D – odgovor **D**.\n\nZakaj druge možnosti niso prave:\n- **A:** žarek se lomi stran od pravokotnice in valovna dolžina se poveča – tako bi bilo pri prehodu v sredstvo z **večjo** hitrostjo.\n- **B:** smer loma je prava, a valovna dolžina se je povečala, kar pri manjši hitrosti in enaki frekvenci ni mogoče.\n- **C:** valovna dolžina se je pravilno zmanjšala, a žarek se ni lomil; pri poševnem vpadu se smer ob spremembi hitrosti vedno spremeni."
+      }
+     ],
+     "figure": "<svg viewBox=\"0 0 560 130\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"16\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"a29\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><rect x=\"0\" y=\"70\" width=\"560\" height=\"60\" fill=\"currentColor\" fill-opacity=\"0.08\" stroke=\"none\"/><line x1=\"8\" y1=\"70\" x2=\"132\" y2=\"70\"/><line x1=\"70\" y1=\"22\" x2=\"70\" y2=\"122\" stroke-dasharray=\"3 2\" stroke-opacity=\"0.6\"/><path d=\"M29 29L70 70L120.8 93.7\" stroke-width=\"1.3\" marker-end=\"url(#a29)\"/><path d=\"M25.5 41l15.6 -15.6M36.8 52.3l15.6 -15.6M48.1 63.6l15.6 -15.6M74.4 84.2l9.3 -19.9M96.2 94.3l9.3 -19.9\" stroke-opacity=\"0.8\"/><text x=\"8\" y=\"14\" fill=\"currentColor\" stroke=\"none\" font-weight=\"bold\">A</text><line x1=\"148\" y1=\"70\" x2=\"272\" y2=\"70\"/><line x1=\"210\" y1=\"22\" x2=\"210\" y2=\"122\" stroke-dasharray=\"3 2\" stroke-opacity=\"0.6\"/><path d=\"M169 29L210 70L233.7 120.8\" stroke-width=\"1.3\" marker-end=\"url(#a29)\"/><path d=\"M165.5 41l15.6 -15.6M176.8 52.3l15.6 -15.6M188.1 63.6l15.6 -15.6M204.3 83.7l19.9 -9.3M214.4 105.5l19.9 -9.3\" stroke-opacity=\"0.8\"/><text x=\"148\" y=\"14\" fill=\"currentColor\" stroke=\"none\" font-weight=\"bold\">B</text><line x1=\"288\" y1=\"70\" x2=\"412\" y2=\"70\"/><line x1=\"350\" y1=\"22\" x2=\"350\" y2=\"122\" stroke-dasharray=\"3 2\" stroke-opacity=\"0.6\"/><path d=\"M309 29L350 70L389.6 109.6\" stroke-width=\"1.3\" marker-end=\"url(#a29)\"/><path d=\"M305.5 41l15.6 -15.6M316.8 52.3l15.6 -15.6M328.1 63.6l15.6 -15.6M349.3 84.8l15.6 -15.6M356.1 91.6l15.6 -15.6M362.9 98.4l15.6 -15.6M369.7 105.2l15.6 -15.6M376.4 112l15.6 -15.6\" stroke-opacity=\"0.8\"/><text x=\"288\" y=\"14\" fill=\"currentColor\" stroke=\"none\" font-weight=\"bold\">C</text><line x1=\"428\" y1=\"70\" x2=\"552\" y2=\"70\"/><line x1=\"490\" y1=\"22\" x2=\"490\" y2=\"122\" stroke-dasharray=\"3 2\" stroke-opacity=\"0.6\"/><path d=\"M449 29L490 70L513.7 120.8\" stroke-width=\"1.3\" marker-end=\"url(#a29)\"/><path d=\"M445.5 41l15.6 -15.6M456.8 52.3l15.6 -15.6M468.1 63.6l15.6 -15.6M484.3 83.7l19.9 -9.3M488.3 92.4l19.9 -9.3M492.4 101.1l19.9 -9.3M496.4 109.8l19.9 -9.3M500.5 118.5l19.9 -9.3\" stroke-opacity=\"0.8\"/><text x=\"428\" y=\"14\" fill=\"currentColor\" stroke=\"none\" font-weight=\"bold\">D</text></svg>"
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 30,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Svetloba z valovno dolžino $600\\,\\mathrm{nm}$ (v zraku) vpada iz zraka pod vpadnim kotom $30^\\circ$ na steklo z lomnim količnikom $1{,}5$. Katera trditev o svetlobi v steklu je pravilna? (Hitrost svetlobe v zraku je $3{,}0 \\cdot 10^{8}\\,\\mathrm{m/s}$.)",
+     "choices": [
+      "Valovna dolžina svetlobe v steklu je $900\\,\\mathrm{nm}$.",
+      "Hitrost svetlobe v steklu je $3{,}0 \\cdot 10^{8}\\,\\mathrm{m/s}$.",
+      "Lomni kot je večji od $30^\\circ$.",
+      "Frekvenca svetlobe v steklu je $5{,}0 \\cdot 10^{14}\\,\\mathrm{Hz}$."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – frekvenca je $5{,}0 \\cdot 10^{14}\\,\\mathrm{Hz}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $\\lambda_0 = 600\\,\\mathrm{nm}$, $\\alpha = 30^\\circ$, $n = 1{,}5$, $c_0 = 3{,}0 \\cdot 10^{8}\\,\\mathrm{m/s}$.\n**Iščemo:** katera trditev o svetlobi v steklu drži.\n\nFrekvenca se pri lomu ne spremeni:\n$\\nu = \\frac{c_0}{\\lambda_0} = \\frac{3{,}0 \\cdot 10^{8}\\,\\mathrm{m/s}}{600 \\cdot 10^{-9}\\,\\mathrm{m}} = 5{,}0 \\cdot 10^{14}\\,\\mathrm{Hz}$ – trditev **D** drži.\n\nPreverimo še druge:\n- **A:** v steklu sta hitrost in valovna dolžina $n$-krat manjši: $\\lambda = \\frac{600\\,\\mathrm{nm}}{1{,}5} = 400\\,\\mathrm{nm}$. Vrednost $900\\,\\mathrm{nm}$ dobimo, če z $n$ pomnožimo namesto delimo.\n- **B:** $c = \\frac{c_0}{n} = \\frac{3{,}0 \\cdot 10^{8}\\,\\mathrm{m/s}}{1{,}5} = 2{,}0 \\cdot 10^{8}\\,\\mathrm{m/s}$, ne $3{,}0 \\cdot 10^{8}\\,\\mathrm{m/s}$.\n- **C:** pri prehodu v optično gostejše sredstvo se svetloba lomi proti vpadni pravokotnici: $\\sin\\beta = \\frac{\\sin 30^\\circ}{1{,}5} = \\frac{0{,}5}{1{,}5} \\approx 0{,}33$, zato je $\\beta \\approx 19{,}5^\\circ$, kar je **manj** od $30^\\circ$."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 31,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Dijakinja najprej bere knjigo, nato pa pogleda skozi okno proti oddaljenemu hribu, ki ga takoj vidi ostro. Kaj se pri tem zgodi v njenem očesu?",
+     "choices": [
+      "Očesna leča se odebeli, njena goriščna razdalja se zmanjša.",
+      "Očesna leča se premakne bliže mrežnici, njena oblika pa ostane enaka.",
+      "Spremeni se le velikost zenice, leča ostane enaka.",
+      "Očesna leča se splošči (postane tanjša), njena goriščna razdalja se poveča."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – leča se splošči, goriščna razdalja se poveča",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Razdalja med lečo in mrežnico je v očesu stalna, zato oko ostro sliko na mrežnici doseže s spreminjanjem oblike leče – temu pravimo **akomodacija**. Po enačbi leče $\\frac{1}{f} = \\frac{1}{a} + \\frac{1}{b}$ pri stalni razdalji slike $b$ in večji razdalji predmeta $a$ potrebujemo **večjo** goriščno razdaljo $f$ (manjšo lomnost). Pri pogledu v daljavo se ciliarna mišica sprosti, leča se splošči in njena goriščna razdalja se poveča – odgovor **D**.\n\nZakaj druge možnosti niso prave:\n- **A** opisuje obratno spremembo – pogled z oddaljenega na bližnji predmet.\n- **B** opisuje ostrenje pri fotoaparatu, kjer se premika objektiv; leča v očesu se ne premika naprej ali nazaj.\n- **C:** zenica uravnava predvsem količino svetlobe, ki pride v oko; brez spremembe leče slika oddaljenega predmeta ne bi bila ostra."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 32,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Koliko nevtronov ima jedro izotopa joda $^{131}_{\\;53}\\mathrm{I}$?",
+     "choices": [
+      "$53$",
+      "$78$",
+      "$131$",
+      "$184$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – $78$ nevtronov",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** masno število $A = 131$ (število nukleonov), vrstno število $Z = 53$ (število protonov).\n**Iščemo:** število nevtronov $N$.\n\n$N = A - Z = 131 - 53 = 78$ – odgovor **B**.\n\nZakaj druge možnosti niso prave:\n- **A** je število protonov (vrstno število), ne nevtronov.\n- **C** je število vseh nukleonov v jedru (protonov in nevtronov skupaj).\n- **D** je vsota $A + Z$, ki nima fizikalnega pomena."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 33,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Slika kaže najnižja energijska stanja vodikovega atoma. Atom je v vzbujenem stanju $n = 3$ in se vrne v osnovno stanje – neposredno ali v več korakih. Fotone katerih energij lahko pri tem izseva?",
+     "choices": [
+      "$12{,}1\\,\\mathrm{eV}$, $1{,}9\\,\\mathrm{eV}$ in $10{,}2\\,\\mathrm{eV}$",
+      "samo $12{,}1\\,\\mathrm{eV}$",
+      "samo $1{,}9\\,\\mathrm{eV}$ in $10{,}2\\,\\mathrm{eV}$",
+      "$12{,}1\\,\\mathrm{eV}$, $1{,}9\\,\\mathrm{eV}$, $10{,}2\\,\\mathrm{eV}$ in $1{,}51\\,\\mathrm{eV}$"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – $12{,}1\\,\\mathrm{eV}$, $1{,}9\\,\\mathrm{eV}$ in $10{,}2\\,\\mathrm{eV}$",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "**Podatki:** $E_1 = -13{,}6\\,\\mathrm{eV}$, $E_2 = -3{,}40\\,\\mathrm{eV}$, $E_3 = -1{,}51\\,\\mathrm{eV}$; začetno stanje $n = 3$.\n**Iščemo:** energije fotonov $E_f = E_{zg} - E_{sp}$ pri prehodih navzdol.\n\nAtom se lahko vrne na dva načina:\n- **neposredno** $3 \\to 1$: $E_f = -1{,}51\\,\\mathrm{eV} - (-13{,}6\\,\\mathrm{eV}) = 12{,}09\\,\\mathrm{eV} \\approx 12{,}1\\,\\mathrm{eV}$;\n- **v dveh korakih** $3 \\to 2$: $E_f = -1{,}51\\,\\mathrm{eV} - (-3{,}40\\,\\mathrm{eV}) = 1{,}89\\,\\mathrm{eV} \\approx 1{,}9\\,\\mathrm{eV}$, nato $2 \\to 1$: $E_f = -3{,}40\\,\\mathrm{eV} - (-13{,}6\\,\\mathrm{eV}) = 10{,}2\\,\\mathrm{eV}$.\n\nMogoči so torej fotoni vseh treh energij – odgovor **A**. (Vsota $1{,}89\\,\\mathrm{eV} + 10{,}2\\,\\mathrm{eV}$ je ravno $12{,}09\\,\\mathrm{eV}$, kar se ujema z energijskim zakonom.)\n\nZakaj druge možnosti niso prave:\n- **B** in **C** upoštevata le eno od obeh poti; atom se lahko vrne po kateri koli.\n- **D:** $1{,}51\\,\\mathrm{eV}$ je energija, ki jo atom v stanju $n = 3$ potrebuje za **ionizacijo** (prehod na $E = 0$); pri vračanju v osnovno stanje takega fotona ne izseva, ker ni stanja, ki bi bilo za $1{,}51\\,\\mathrm{eV}$ pod stanjem $n = 3$."
+      }
+     ],
+     "figure": "<svg viewBox=\"0 0 250 190\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"a33\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><line x1=\"70\" y1=\"15\" x2=\"190\" y2=\"15\" stroke-dasharray=\"4 3\"/><text x=\"10\" y=\"19\" fill=\"currentColor\" stroke=\"none\">0 eV</text><line x1=\"70\" y1=\"32.8\" x2=\"190\" y2=\"32.8\" stroke-width=\"1.5\"/><text x=\"20\" y=\"36.8\" fill=\"currentColor\" stroke=\"none\">n = 3</text><text x=\"196\" y=\"36.8\" fill=\"currentColor\" stroke=\"none\" font-size=\"11\">−1,51 eV</text><line x1=\"70\" y1=\"55\" x2=\"190\" y2=\"55\" stroke-width=\"1.5\"/><text x=\"20\" y=\"59\" fill=\"currentColor\" stroke=\"none\">n = 2</text><text x=\"196\" y=\"59\" fill=\"currentColor\" stroke=\"none\" font-size=\"11\">−3,40 eV</text><line x1=\"70\" y1=\"175\" x2=\"190\" y2=\"175\" stroke-width=\"1.5\"/><text x=\"20\" y=\"179\" fill=\"currentColor\" stroke=\"none\">n = 1</text><text x=\"196\" y=\"179\" fill=\"currentColor\" stroke=\"none\" font-size=\"11\">−13,6 eV</text><line x1=\"30\" y1=\"160\" x2=\"30\" y2=\"80\" stroke-width=\"1\" marker-end=\"url(#a33)\"/><text x=\"14\" y=\"120\" fill=\"currentColor\" stroke=\"none\">E</text></svg>"
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 34,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Iz radioaktivnega izvira izletavajo delci $\\beta^-$ in vstopijo v homogeno magnetno polje, ki je pravokotno na ravnino slike in kaže **v ravnino** (križci). Po kateri tirnici se gibljejo delci $\\beta^-$?",
+     "choices": [
+      "po tirnici 1",
+      "po tirnici 2",
+      "po tirnici 3",
+      "po tirnici 1 ali 3, odvisno od hitrosti delcev"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – po tirnici 3",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Delci $\\beta^-$ so elektroni, imajo **negativen** naboj. Na naboj, ki se giblje v magnetnem polju, deluje magnetna sila $\\vec F = e\\,\\vec v \\times \\vec B$, pravokotna na hitrost in na polje.\n\nZa **pozitiven** naboj, ki se giblje v desno v polju, usmerjenem v ravnino, kaže sila po pravilu desne roke **navzgor** (prsti v smeri hitrosti, upognemo jih proti $\\vec B$, palec kaže smer sile). Za negativen naboj je sila nasprotna – **navzdol**. Delci $\\beta^-$ zato zavijejo navzdol, po tirnici 3 – odgovor **C**.\n\nZakaj druge možnosti niso prave:\n- **A:** po tirnici 1 bi se gibali pozitivni delci (npr. delci $\\alpha$).\n- **B:** naravnost skozi polje gredo le nenabiti delci, npr. žarki $\\gamma$.\n- **D:** hitrost vpliva le na polmer tirnice ($r = \\frac{mv}{e_0 B}$), smer odklona pa je odvisna od predznaka naboja."
+      }
+     ],
+     "figure": "<svg viewBox=\"0 0 270 185\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"none\" stroke=\"currentColor\"><defs><marker id=\"a34\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0 0L10 5L0 10z\" fill=\"currentColor\" stroke=\"none\"/></marker></defs><rect x=\"60\" y=\"5\" width=\"205\" height=\"175\" fill=\"currentColor\" fill-opacity=\"0.06\" stroke-dasharray=\"4 3\"/><path d=\"M81 21l8 8M89 21l-8 8M81 66l8 8M89 66l-8 8M81 111l8 8M89 111l-8 8M81 156l8 8M89 156l-8 8M119 21l8 8M127 21l-8 8M119 66l8 8M127 66l-8 8M119 111l8 8M127 111l-8 8M119 156l8 8M127 156l-8 8M157 21l8 8M165 21l-8 8M157 66l8 8M165 66l-8 8M157 111l8 8M165 111l-8 8M157 156l8 8M165 156l-8 8M195 21l8 8M203 21l-8 8M195 66l8 8M203 66l-8 8M195 111l8 8M203 111l-8 8M195 156l8 8M203 156l-8 8M233 21l8 8M241 21l-8 8M233 66l8 8M241 66l-8 8M233 111l8 8M241 111l-8 8M233 156l8 8M241 156l-8 8\" stroke-opacity=\"0.6\"/><rect x=\"8\" y=\"80\" width=\"22\" height=\"20\" fill=\"currentColor\" fill-opacity=\"0.3\"/><text x=\"4\" y=\"116\" fill=\"currentColor\" stroke=\"none\" font-size=\"10\">izvir</text><line x1=\"30\" y1=\"90\" x2=\"60\" y2=\"90\" stroke-width=\"1.5\"/><path d=\"M60 90A130 130 0 0 0 159.6 43.6\" stroke-width=\"1.5\" marker-end=\"url(#a34)\"/><path d=\"M60 90H240\" stroke-width=\"1.5\" marker-end=\"url(#a34)\"/><path d=\"M60 90A130 130 0 0 1 159.6 136.4\" stroke-width=\"1.5\" marker-end=\"url(#a34)\"/><text x=\"164\" y=\"40\" fill=\"currentColor\" stroke=\"none\">1</text><text x=\"244\" y=\"94\" fill=\"currentColor\" stroke=\"none\">2</text><text x=\"164\" y=\"148\" fill=\"currentColor\" stroke=\"none\">3</text></svg>"
+    }
+   ]
+  },
+  {
+   "pola": 1,
+   "n": 35,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katero od naštetih nebesnih teles **ni** del Osončja?",
+     "choices": [
+      "Titan",
+      "Proksima Kentavra",
+      "Cerera",
+      "Halleyjev komet"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – Proksima Kentavra",
+     "ways": [
+      {
+       "title": "Rešitev z razlago",
+       "text": "Osončje sestavljajo Sonce in telesa, ki se gibljejo v njegovem gravitacijskem polju: planeti z lunami, pritlikavi planeti, asteroidi in kometi.\n\n- **B:** Proksima Kentavra je **zvezda** – Soncu najbližja zvezda, oddaljena okoli $4{,}2$ svetlobnega leta. Je samostojno telo zunaj Osončja – odgovor **B**.\n- **A:** Titan je največja luna Saturna, torej del Osončja.\n- **C:** Cerera je pritlikavi planet v asteroidnem pasu med Marsom in Jupitrom.\n- **D:** Halleyjev komet kroži okoli Sonca po zelo sploščeni elipsi z obhodnim časom okoli $76$ let."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 1,
+   "intro": "**Merjenje.** Maja raziskuje, kako je osnovna lastna frekvenca $\\nu$ napete strune odvisna od mase $m$ uteži, ki struno napenja. Struna je napeta med kobilicama na razdalji $L = 0{,}800\\,\\mathrm{m}$, njen konec teče čez škripec, na njem visi utež. Vzbujevalnik pod struno ji vsiljuje nihanje; Maja spreminja frekvenco vzbujevalnika in poišče tisto, pri kateri struna med kobilicama niha z enim samim hrbtom (osnovno lastno nihanje).\n\nZa osnovno lastno frekvenco strune velja $\\nu = \\dfrac{1}{2L}\\sqrt{\\dfrac{F}{\\mu}}$, kjer je $F = mg$ sila, s katero je struna napeta, in $\\mu$ masa strune na enoto dolžine (dolžinska gostota). Uporabi $g = 9{,}81\\,\\mathrm{m\\,s^{-2}}$.\n\n| $m\\,[\\mathrm{kg}]$ | $\\nu\\,[\\mathrm{Hz}]$ | $\\nu^2\\,[\\mathrm{Hz^2}]$ |\n|---|---|---|\n| $0{,}200$ | $25{,}5$ | |\n| $0{,}400$ | $35{,}4$ | |\n| $0{,}600$ | $44{,}0$ | |\n| $0{,}800$ | $50{,}2$ | |\n| $1{,}000$ | $56{,}9$ | |\n| $1{,}200$ | $61{,}6$ | |",
+   "figure": "<svg viewBox=\"0 0 340 170\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"currentColor\"><title>Skica poskusa z napeto struno</title><rect x=\"10\" y=\"100\" width=\"280\" height=\"10\" fill=\"currentColor\" fill-opacity=\"0.2\" stroke=\"currentColor\"/><line x1=\"12\" y1=\"80\" x2=\"292\" y2=\"80\" stroke=\"currentColor\" stroke-width=\"1.5\"/><rect x=\"8\" y=\"70\" width=\"8\" height=\"30\" fill=\"currentColor\" fill-opacity=\"0.35\"/><polygon points=\"60,100 52,100 56,80\" fill=\"currentColor\" fill-opacity=\"0.6\"/><polygon points=\"248,100 240,100 244,80\" fill=\"currentColor\" fill-opacity=\"0.6\"/><circle cx=\"300\" cy=\"88\" r=\"9\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"/><line x1=\"309\" y1=\"88\" x2=\"309\" y2=\"135\" stroke=\"currentColor\" stroke-width=\"1.5\"/><rect x=\"298\" y=\"135\" width=\"22\" height=\"22\" fill=\"currentColor\" fill-opacity=\"0.35\" stroke=\"currentColor\"/><text x=\"324\" y=\"150\">m</text><rect x=\"128\" y=\"112\" width=\"30\" height=\"16\" fill=\"none\" stroke=\"currentColor\"/><line x1=\"143\" y1=\"112\" x2=\"143\" y2=\"81\" stroke=\"currentColor\" stroke-dasharray=\"3 2\"/><text x=\"102\" y=\"142\">vzbujevalnik</text><line x1=\"56\" y1=\"50\" x2=\"244\" y2=\"50\" stroke=\"currentColor\"/><line x1=\"56\" y1=\"44\" x2=\"56\" y2=\"56\" stroke=\"currentColor\"/><line x1=\"244\" y1=\"44\" x2=\"244\" y2=\"56\" stroke=\"currentColor\"/><text x=\"120\" y=\"44\">L = 0,800 m</text><text x=\"20\" y=\"128\">kobilica</text><text x=\"226\" y=\"128\">kobilica</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "table",
+     "text": "V tretji stolpec preglednice vpiši kvadrate izmerjenih frekvenc. Zaokroži jih na cele $\\mathrm{Hz^2}$.",
+     "answer": "$650$, $1253$, $1936$, $2520$, $3238$, $3795\\ \\mathrm{Hz^2}$",
+     "ways": [
+      {
+       "title": "Po vrsticah",
+       "text": "Vsako frekvenco kvadriramo; enota postane $\\mathrm{Hz^2}$.\n\n| $m\\,[\\mathrm{kg}]$ | $\\nu\\,[\\mathrm{Hz}]$ | $\\nu^2\\,[\\mathrm{Hz^2}]$ |\n|---|---|---|\n| $0{,}200$ | $25{,}5$ | $650$ |\n| $0{,}400$ | $35{,}4$ | $1253$ |\n| $0{,}600$ | $44{,}0$ | $1936$ |\n| $0{,}800$ | $50{,}2$ | $2520$ |\n| $1{,}000$ | $56{,}9$ | $3238$ |\n| $1{,}200$ | $61{,}6$ | $3795$ |\n\nNa primer $25{,}5^2 = 650{,}25 \\approx 650$ in $56{,}9^2 = 3237{,}61 \\approx 3238$."
+      }
+     ],
+     "mistake": "Kvadrirati je treba frekvenco, ne mase. Kdor pomnoži z $2$ namesto kvadrira ($2 \\cdot 25{,}5 = 51$), dobi napačno preglednico."
+    },
+    {
+     "id": "b",
+     "points": 3,
+     "format": "construct",
+     "text": "V mrežo nariši graf $\\nu^2$ v odvisnosti od $m$ in nariši premico, ki se točkam najbolje prilega.",
+     "figure": "<svg viewBox=\"0 0 340 260\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"10\" fill=\"currentColor\"><title>Mreža za graf</title><g stroke=\"currentColor\" stroke-opacity=\"0.25\" stroke-width=\"0.6\"><line x1=\"65\" y1=\"20\" x2=\"65\" y2=\"220\"/><line x1=\"85\" y1=\"20\" x2=\"85\" y2=\"220\"/><line x1=\"105\" y1=\"20\" x2=\"105\" y2=\"220\"/><line x1=\"125\" y1=\"20\" x2=\"125\" y2=\"220\"/><line x1=\"145\" y1=\"20\" x2=\"145\" y2=\"220\"/><line x1=\"165\" y1=\"20\" x2=\"165\" y2=\"220\"/><line x1=\"185\" y1=\"20\" x2=\"185\" y2=\"220\"/><line x1=\"205\" y1=\"20\" x2=\"205\" y2=\"220\"/><line x1=\"225\" y1=\"20\" x2=\"225\" y2=\"220\"/><line x1=\"245\" y1=\"20\" x2=\"245\" y2=\"220\"/><line x1=\"265\" y1=\"20\" x2=\"265\" y2=\"220\"/><line x1=\"285\" y1=\"20\" x2=\"285\" y2=\"220\"/><line x1=\"305\" y1=\"20\" x2=\"305\" y2=\"220\"/><line x1=\"325\" y1=\"20\" x2=\"325\" y2=\"220\"/><line x1=\"45\" y1=\"195\" x2=\"325\" y2=\"195\"/><line x1=\"45\" y1=\"170\" x2=\"325\" y2=\"170\"/><line x1=\"45\" y1=\"145\" x2=\"325\" y2=\"145\"/><line x1=\"45\" y1=\"120\" x2=\"325\" y2=\"120\"/><line x1=\"45\" y1=\"95\" x2=\"325\" y2=\"95\"/><line x1=\"45\" y1=\"70\" x2=\"325\" y2=\"70\"/><line x1=\"45\" y1=\"45\" x2=\"325\" y2=\"45\"/><line x1=\"45\" y1=\"20\" x2=\"325\" y2=\"20\"/></g><g stroke=\"currentColor\" stroke-width=\"1.2\"><line x1=\"45\" y1=\"220\" x2=\"330\" y2=\"220\"/><line x1=\"45\" y1=\"220\" x2=\"45\" y2=\"12\"/></g><text x=\"45\" y=\"234\" text-anchor=\"middle\">0</text><text x=\"85\" y=\"234\" text-anchor=\"middle\">0,2</text><text x=\"125\" y=\"234\" text-anchor=\"middle\">0,4</text><text x=\"165\" y=\"234\" text-anchor=\"middle\">0,6</text><text x=\"205\" y=\"234\" text-anchor=\"middle\">0,8</text><text x=\"245\" y=\"234\" text-anchor=\"middle\">1</text><text x=\"285\" y=\"234\" text-anchor=\"middle\">1,2</text><text x=\"325\" y=\"234\" text-anchor=\"middle\">1,4</text><text x=\"40\" y=\"224\" text-anchor=\"end\">0</text><text x=\"40\" y=\"174\" text-anchor=\"end\">1000</text><text x=\"40\" y=\"124\" text-anchor=\"end\">2000</text><text x=\"40\" y=\"74\" text-anchor=\"end\">3000</text><text x=\"40\" y=\"24\" text-anchor=\"end\">4000</text><text x=\"330\" y=\"250\" text-anchor=\"end\">m [kg]</text><text x=\"50\" y=\"12\">ν² [Hz²]</text></svg>",
+     "solutionFigure": "<svg viewBox=\"0 0 340 260\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"10\" fill=\"currentColor\"><title>Točke in premica, ki se jim najbolje prilega</title><g stroke=\"currentColor\" stroke-opacity=\"0.25\" stroke-width=\"0.6\"><line x1=\"65\" y1=\"20\" x2=\"65\" y2=\"220\"/><line x1=\"85\" y1=\"20\" x2=\"85\" y2=\"220\"/><line x1=\"105\" y1=\"20\" x2=\"105\" y2=\"220\"/><line x1=\"125\" y1=\"20\" x2=\"125\" y2=\"220\"/><line x1=\"145\" y1=\"20\" x2=\"145\" y2=\"220\"/><line x1=\"165\" y1=\"20\" x2=\"165\" y2=\"220\"/><line x1=\"185\" y1=\"20\" x2=\"185\" y2=\"220\"/><line x1=\"205\" y1=\"20\" x2=\"205\" y2=\"220\"/><line x1=\"225\" y1=\"20\" x2=\"225\" y2=\"220\"/><line x1=\"245\" y1=\"20\" x2=\"245\" y2=\"220\"/><line x1=\"265\" y1=\"20\" x2=\"265\" y2=\"220\"/><line x1=\"285\" y1=\"20\" x2=\"285\" y2=\"220\"/><line x1=\"305\" y1=\"20\" x2=\"305\" y2=\"220\"/><line x1=\"325\" y1=\"20\" x2=\"325\" y2=\"220\"/><line x1=\"45\" y1=\"195\" x2=\"325\" y2=\"195\"/><line x1=\"45\" y1=\"170\" x2=\"325\" y2=\"170\"/><line x1=\"45\" y1=\"145\" x2=\"325\" y2=\"145\"/><line x1=\"45\" y1=\"120\" x2=\"325\" y2=\"120\"/><line x1=\"45\" y1=\"95\" x2=\"325\" y2=\"95\"/><line x1=\"45\" y1=\"70\" x2=\"325\" y2=\"70\"/><line x1=\"45\" y1=\"45\" x2=\"325\" y2=\"45\"/><line x1=\"45\" y1=\"20\" x2=\"325\" y2=\"20\"/></g><g stroke=\"currentColor\" stroke-width=\"1.2\"><line x1=\"45\" y1=\"220\" x2=\"330\" y2=\"220\"/><line x1=\"45\" y1=\"220\" x2=\"45\" y2=\"12\"/></g><text x=\"45\" y=\"234\" text-anchor=\"middle\">0</text><text x=\"85\" y=\"234\" text-anchor=\"middle\">0,2</text><text x=\"125\" y=\"234\" text-anchor=\"middle\">0,4</text><text x=\"165\" y=\"234\" text-anchor=\"middle\">0,6</text><text x=\"205\" y=\"234\" text-anchor=\"middle\">0,8</text><text x=\"245\" y=\"234\" text-anchor=\"middle\">1</text><text x=\"285\" y=\"234\" text-anchor=\"middle\">1,2</text><text x=\"325\" y=\"234\" text-anchor=\"middle\">1,4</text><text x=\"40\" y=\"224\" text-anchor=\"end\">0</text><text x=\"40\" y=\"174\" text-anchor=\"end\">1000</text><text x=\"40\" y=\"124\" text-anchor=\"end\">2000</text><text x=\"40\" y=\"74\" text-anchor=\"end\">3000</text><text x=\"40\" y=\"24\" text-anchor=\"end\">4000</text><text x=\"330\" y=\"250\" text-anchor=\"end\">m [kg]</text><text x=\"50\" y=\"12\">ν² [Hz²]</text><g fill=\"currentColor\"><circle cx=\"85\" cy=\"187.5\" r=\"3\"/><circle cx=\"125\" cy=\"157.3\" r=\"3\"/><circle cx=\"165\" cy=\"123.2\" r=\"3\"/><circle cx=\"205\" cy=\"94.0\" r=\"3\"/><circle cx=\"245\" cy=\"58.1\" r=\"3\"/><circle cx=\"285\" cy=\"30.3\" r=\"3\"/></g><line x1=\"45\" y1=\"219.7\" x2=\"295\" y2=\"20.9\" stroke=\"currentColor\" stroke-width=\"1.5\"/></svg>",
+     "answer": "Šest točk leži skoraj na premici skozi izhodišče; premica gre skozi $(0, 0)$ in približno skozi $(1{,}20\\,\\mathrm{kg};\\ 3820\\,\\mathrm{Hz^2})$.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "1. Osi sta že označeni: vodoravna $m$ v $\\mathrm{kg}$, navpična $\\nu^2$ v $\\mathrm{Hz^2}$ (en kvadratek je $0{,}1\\,\\mathrm{kg}$ oziroma $500\\,\\mathrm{Hz^2}$).\n2. Vrišemo šest točk iz preglednice, npr. $(0{,}200;\\ 650)$ in $(1{,}200;\\ 3795)$.\n3. Z ravnilom narišemo **eno** premico, ki gre čim bliže vsem točkam, tako da jih je približno enako nad njo kot pod njo. Točk ne povezujemo z lomljeno črto.\n\nPremica gre (v okviru natančnosti) skozi izhodišče, kar se ujema z enačbo $\\nu^2 = \\dfrac{g}{4L^2\\mu}\\,m$: kvadrat frekvence je premo sorazmeren z maso uteži."
+      },
+      {
+       "title": "Drugače: preizkus z računom",
+       "text": "Pred risanjem lahko preverimo, ali so točke res na premici: razmerja $\\nu^2/m$ so $650 : 0{,}2 = 3250$, $1253 : 0{,}4 \\approx 3133$, $1936 : 0{,}6 \\approx 3227$, $2520 : 0{,}8 = 3150$, $3238 : 1{,}0 = 3238$ in $3795 : 1{,}2 \\approx 3163$.\n\nVsa so si blizu, zato pričakujemo premico skozi izhodišče. Če kakšna vrisana točka močno odstopa, smo se zmotili pri vrisovanju."
+      }
+     ],
+     "scoring": "1 t.: pravilno vrisane vsaj tri točke (odstopanje največ pol kvadratka). 1 t.: pravilno vrisane vse točke. 1 t.: ena premica, ki se točkam dobro prilega (ne lomljena črta).",
+     "mistake": "Lomljena črta od točke do točke ni »premica, ki se najbolje prilega«. Prav tako ni treba, da premica gre točno skozi prvo in zadnjo točko."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Iz grafa določi smerni koeficient $k$ premice. Zapiši tudi enoto.",
+     "answer": "$k \\approx 3{,}2 \\cdot 10^3\\,\\mathrm{Hz^2/kg}$ (sprejemljivo od $3{,}0 \\cdot 10^3$ do $3{,}4 \\cdot 10^3\\,\\mathrm{Hz^2/kg}$)",
+     "ways": [
+      {
+       "title": "Z dvema točkama na premici",
+       "text": "**Podatki:** narisana premica iz prejšnjega dela.\n**Iščemo:** $k = \\dfrac{\\Delta(\\nu^2)}{\\Delta m}$.\n\nIzberemo dve točki **na premici** (ne meritvi), čim bolj narazen, npr. pri $m_1 = 0{,}200\\,\\mathrm{kg}$ je $\\nu_1^2 \\approx 640\\,\\mathrm{Hz^2}$, pri $m_2 = 1{,}200\\,\\mathrm{kg}$ pa $\\nu_2^2 \\approx 3820\\,\\mathrm{Hz^2}$.\n\n$k = \\dfrac{3820\\,\\mathrm{Hz^2} - 640\\,\\mathrm{Hz^2}}{1{,}200\\,\\mathrm{kg} - 0{,}200\\,\\mathrm{kg}} = \\dfrac{3180\\,\\mathrm{Hz^2}}{1{,}000\\,\\mathrm{kg}} \\approx 3{,}18 \\cdot 10^3\\,\\mathrm{Hz^2/kg}$\n\nEnota je $\\mathrm{Hz^2/kg} = \\mathrm{s^{-2}\\,kg^{-1}}$."
+      },
+      {
+       "title": "Drugače: premica skozi izhodišče",
+       "text": "Ker premica gre skozi izhodišče, zadošča ena točka na njej: pri $m = 1{,}000\\,\\mathrm{kg}$ odčitamo $\\nu^2 \\approx 3190\\,\\mathrm{Hz^2}$, zato\n\n$k = \\dfrac{3190\\,\\mathrm{Hz^2}}{1{,}000\\,\\mathrm{kg}} \\approx 3{,}2 \\cdot 10^3\\,\\mathrm{Hz^2/kg}$.\n\nRačun po metodi najmanjših kvadratov da $k \\approx 3180\\,\\mathrm{Hz^2/kg}$; vsak razumno narisan graf da vrednost med $3000$ in $3400\\,\\mathrm{Hz^2/kg}$."
+      }
+     ],
+     "scoring": "1 t.: smerni koeficient iz dveh dovolj oddaljenih točk premice (vrednost v dovoljenem intervalu). 1 t.: pravilna enota ($\\mathrm{Hz^2/kg}$ ali $\\mathrm{s^{-2}\\,kg^{-1}}$).",
+     "mistake": "Smernega koeficienta ne računamo iz dveh sosednjih meritev, ker je tak naklon zelo občutljiv na napako posamezne meritve; uporabimo premico.",
+     "solutionFigure": "<svg viewBox=\"0 0 340 260\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"10\" fill=\"currentColor\"><title>Smerni koeficient iz dveh točk premice</title><g stroke=\"currentColor\" stroke-opacity=\"0.25\" stroke-width=\"0.6\"><line x1=\"65\" y1=\"20\" x2=\"65\" y2=\"220\"/><line x1=\"85\" y1=\"20\" x2=\"85\" y2=\"220\"/><line x1=\"105\" y1=\"20\" x2=\"105\" y2=\"220\"/><line x1=\"125\" y1=\"20\" x2=\"125\" y2=\"220\"/><line x1=\"145\" y1=\"20\" x2=\"145\" y2=\"220\"/><line x1=\"165\" y1=\"20\" x2=\"165\" y2=\"220\"/><line x1=\"185\" y1=\"20\" x2=\"185\" y2=\"220\"/><line x1=\"205\" y1=\"20\" x2=\"205\" y2=\"220\"/><line x1=\"225\" y1=\"20\" x2=\"225\" y2=\"220\"/><line x1=\"245\" y1=\"20\" x2=\"245\" y2=\"220\"/><line x1=\"265\" y1=\"20\" x2=\"265\" y2=\"220\"/><line x1=\"285\" y1=\"20\" x2=\"285\" y2=\"220\"/><line x1=\"305\" y1=\"20\" x2=\"305\" y2=\"220\"/><line x1=\"325\" y1=\"20\" x2=\"325\" y2=\"220\"/><line x1=\"45\" y1=\"195\" x2=\"325\" y2=\"195\"/><line x1=\"45\" y1=\"170\" x2=\"325\" y2=\"170\"/><line x1=\"45\" y1=\"145\" x2=\"325\" y2=\"145\"/><line x1=\"45\" y1=\"120\" x2=\"325\" y2=\"120\"/><line x1=\"45\" y1=\"95\" x2=\"325\" y2=\"95\"/><line x1=\"45\" y1=\"70\" x2=\"325\" y2=\"70\"/><line x1=\"45\" y1=\"45\" x2=\"325\" y2=\"45\"/><line x1=\"45\" y1=\"20\" x2=\"325\" y2=\"20\"/></g><g stroke=\"currentColor\" stroke-width=\"1.2\"><line x1=\"45\" y1=\"220\" x2=\"330\" y2=\"220\"/><line x1=\"45\" y1=\"220\" x2=\"45\" y2=\"12\"/></g><text x=\"45\" y=\"234\" text-anchor=\"middle\">0</text><text x=\"85\" y=\"234\" text-anchor=\"middle\">0,2</text><text x=\"125\" y=\"234\" text-anchor=\"middle\">0,4</text><text x=\"165\" y=\"234\" text-anchor=\"middle\">0,6</text><text x=\"205\" y=\"234\" text-anchor=\"middle\">0,8</text><text x=\"245\" y=\"234\" text-anchor=\"middle\">1</text><text x=\"285\" y=\"234\" text-anchor=\"middle\">1,2</text><text x=\"325\" y=\"234\" text-anchor=\"middle\">1,4</text><text x=\"40\" y=\"224\" text-anchor=\"end\">0</text><text x=\"40\" y=\"174\" text-anchor=\"end\">1000</text><text x=\"40\" y=\"124\" text-anchor=\"end\">2000</text><text x=\"40\" y=\"74\" text-anchor=\"end\">3000</text><text x=\"40\" y=\"24\" text-anchor=\"end\">4000</text><text x=\"330\" y=\"250\" text-anchor=\"end\">m [kg]</text><text x=\"50\" y=\"12\">ν² [Hz²]</text><g fill=\"currentColor\"><circle cx=\"85\" cy=\"187.5\" r=\"3\"/><circle cx=\"125\" cy=\"157.3\" r=\"3\"/><circle cx=\"165\" cy=\"123.2\" r=\"3\"/><circle cx=\"205\" cy=\"94.0\" r=\"3\"/><circle cx=\"245\" cy=\"58.1\" r=\"3\"/><circle cx=\"285\" cy=\"30.3\" r=\"3\"/></g><line x1=\"45\" y1=\"219.7\" x2=\"295\" y2=\"20.9\" stroke=\"currentColor\" stroke-width=\"1.5\"/><g stroke=\"currentColor\" stroke-dasharray=\"3 2\" stroke-width=\"0.8\"><line x1=\"85\" y1=\"188\" x2=\"285\" y2=\"188\"/><line x1=\"285\" y1=\"188\" x2=\"285\" y2=\"28.9\"/></g><text x=\"180\" y=\"200\">Δm = 1,00 kg</text><text x=\"281\" y=\"130\" text-anchor=\"end\">Δ(ν²) ≈ 3180 Hz²</text></svg>"
+    },
+    {
+     "id": "d",
+     "points": 1,
+     "format": "open",
+     "text": "Izrazi smerni koeficient $k$ z $g$, $L$ in $\\mu$.",
+     "answer": "$k = \\dfrac{g}{4L^2\\mu}$",
+     "ways": [
+      {
+       "title": "Iz dane enačbe",
+       "text": "Enačbo $\\nu = \\dfrac{1}{2L}\\sqrt{\\dfrac{mg}{\\mu}}$ kvadriramo:\n\n$\\nu^2 = \\dfrac{1}{4L^2}\\cdot\\dfrac{mg}{\\mu} = \\dfrac{g}{4L^2\\mu}\\cdot m$.\n\nTo je enačba premice $\\nu^2 = k\\,m$ skozi izhodišče, zato je $k = \\dfrac{g}{4L^2\\mu}$."
+      }
+     ],
+     "mistake": "Pri kvadriranju se kvadrira tudi $2L$: dobimo $4L^2$, ne $2L^2$."
+    },
+    {
+     "id": "e",
+     "points": 1,
+     "format": "open",
+     "text": "Izračunaj dolžinsko gostoto $\\mu$ strune.",
+     "answer": "$\\mu \\approx 1{,}21 \\cdot 10^{-3}\\,\\mathrm{kg/m} = 1{,}21\\,\\mathrm{g/m}$",
+     "ways": [
+      {
+       "title": "Iz smernega koeficienta",
+       "text": "**Podatki:** $k = 3{,}18 \\cdot 10^3\\,\\mathrm{Hz^2/kg}$, $L = 0{,}800\\,\\mathrm{m}$, $g = 9{,}81\\,\\mathrm{m\\,s^{-2}}$.\n**Iščemo:** $\\mu$.\n\nIz $k = \\dfrac{g}{4L^2\\mu}$ izrazimo $\\mu = \\dfrac{g}{4L^2 k}$:\n\n$\\mu = \\dfrac{9{,}81}{4 \\cdot 0{,}800^2 \\cdot 3180}\\,\\mathrm{kg/m} \\approx 1{,}21 \\cdot 10^{-3}\\,\\mathrm{kg/m}$.\n\nEnota: $\\dfrac{\\mathrm{m\\,s^{-2}}}{\\mathrm{m^2}\\cdot\\mathrm{s^{-2}\\,kg^{-1}}} = \\mathrm{kg/m}$. Struna ima torej maso približno $1{,}2\\,\\mathrm{g}$ na meter. Če je tvoj $k$ drugačen, ga vstavi namesto $3180$."
+      }
+     ],
+     "mistake": "Pozabljeni kvadrat dolžine da $\\mu = \\dfrac{9{,}81}{4 \\cdot 0{,}8 \\cdot 3180} \\approx 9{,}6 \\cdot 10^{-4}\\,\\mathrm{kg/m}$, kar ni pravilno."
+    },
+    {
+     "id": "f",
+     "points": 3,
+     "format": "open",
+     "text": "Relativna napaka smernega koeficienta je $3\\,\\%$, razdaljo med kobilicama pa je Maja izmerila na $\\pm 0{,}005\\,\\mathrm{m}$ natančno. Napako $g$ zanemari. Izračunaj absolutno napako dolžinske gostote $\\mu$ in zapiši rezultat z napako.",
+     "answer": "$\\delta\\mu/\\mu \\approx 4{,}3\\,\\%$, $\\Delta\\mu \\approx 0{,}05\\,\\mathrm{g/m}$, $\\mu = (1{,}21 \\pm 0{,}05)\\,\\mathrm{g/m}$",
+     "ways": [
+      {
+       "title": "Z relativnimi napakami",
+       "text": "**Podatki:** $\\delta k = 3\\,\\% = 0{,}030$, $L = 0{,}800\\,\\mathrm{m}$, $\\Delta L = 0{,}005\\,\\mathrm{m}$, $\\mu = 1{,}21\\,\\mathrm{g/m}$.\n**Iščemo:** $\\Delta\\mu$.\n\nPri produktu in kvocientu se seštevajo relativne napake, pri potenci pa se relativna napaka pomnoži z eksponentom. Iz $\\mu = \\dfrac{g}{4L^2k}$ sledi\n$\\delta\\mu = \\delta k + 2\\,\\delta L$.\n\nRelativna napaka dolžine: $\\delta L = \\dfrac{0{,}005}{0{,}800} = 0{,}00625 \\approx 0{,}63\\,\\%$.\n\n$\\delta\\mu = 0{,}030 + 2 \\cdot 0{,}00625 = 0{,}0425 \\approx 4{,}3\\,\\%$\n\nAbsolutna napaka: $\\Delta\\mu = \\delta\\mu \\cdot \\mu = 0{,}0425 \\cdot 1{,}21\\,\\mathrm{g/m} \\approx 0{,}05\\,\\mathrm{g/m}$.\n\nRezultat: $\\mu = (1{,}21 \\pm 0{,}05)\\,\\mathrm{g/m}$."
+      },
+      {
+       "title": "Drugače: z največjo in najmanjšo vrednostjo",
+       "text": "Največji $\\mu$ dobimo, ko je imenovalec $4L^2k$ najmanjši: $L = 0{,}795\\,\\mathrm{m}$ in $k = 0{,}97 \\cdot 3180 \\approx 3085\\,\\mathrm{Hz^2/kg}$:\n\n$\\mu_{\\max} = \\dfrac{9{,}81}{4 \\cdot 0{,}795^2 \\cdot 3085}\\,\\mathrm{kg/m} \\approx 1{,}258 \\cdot 10^{-3}\\,\\mathrm{kg/m}$.\n\nNajmanjši $\\mu$ pri $L = 0{,}805\\,\\mathrm{m}$ in $k = 1{,}03 \\cdot 3180 \\approx 3275\\,\\mathrm{Hz^2/kg}$:\n\n$\\mu_{\\min} = \\dfrac{9{,}81}{4 \\cdot 0{,}805^2 \\cdot 3275}\\,\\mathrm{kg/m} \\approx 1{,}156 \\cdot 10^{-3}\\,\\mathrm{kg/m}$.\n\nPolovica razlike: $\\Delta\\mu \\approx \\dfrac{1{,}258 - 1{,}156}{2}\\,\\mathrm{g/m} \\approx 0{,}05\\,\\mathrm{g/m}$ – enako kot z relativnimi napakami."
+      }
+     ],
+     "scoring": "1 t.: relativna napaka dolžine ($\\approx 0{,}6\\,\\%$). 1 t.: pravilno sestavljena relativna napaka $\\delta\\mu = \\delta k + 2\\,\\delta L \\approx 4\\,\\%$. 1 t.: absolutna napaka in zapis $\\mu = (1{,}21 \\pm 0{,}05)\\,\\mathrm{g/m}$ (napaka na eno veljavno mesto, rezultat zaokrožen na isto mesto).",
+     "mistake": "Pogosta napaka je, da se relativna napaka dolžine ne podvoji, čeprav je $L$ v enačbi na kvadrat. Napačen je tudi zapis $\\mu = (1{,}2051 \\pm 0{,}05)\\,\\mathrm{g/m}$ z več decimalkami, kot jih dopušča napaka."
+    },
+    {
+     "id": "g",
+     "points": 2,
+     "format": "open",
+     "text": "Pri masi $0{,}600\\,\\mathrm{kg}$ je Maja frekvenco izmerila trikrat: $43{,}7\\,\\mathrm{Hz}$, $44{,}0\\,\\mathrm{Hz}$ in $44{,}6\\,\\mathrm{Hz}$. Izračunaj povprečno vrednost in njeno absolutno napako ter zapiši rezultat meritve.",
+     "answer": "$\\bar\\nu = 44{,}1\\,\\mathrm{Hz}$, $\\Delta\\nu = 0{,}5\\,\\mathrm{Hz}$; $\\nu = (44{,}1 \\pm 0{,}5)\\,\\mathrm{Hz}$",
+     "ways": [
+      {
+       "title": "Z največjim odstopanjem od povprečja",
+       "text": "**Podatki:** $\\nu_1 = 43{,}7\\,\\mathrm{Hz}$, $\\nu_2 = 44{,}0\\,\\mathrm{Hz}$, $\\nu_3 = 44{,}6\\,\\mathrm{Hz}$.\n**Iščemo:** $\\bar\\nu$ in $\\Delta\\nu$.\n\nPovprečje: $\\bar\\nu = \\dfrac{43{,}7 + 44{,}0 + 44{,}6}{3}\\,\\mathrm{Hz} = \\dfrac{132{,}3}{3}\\,\\mathrm{Hz} = 44{,}1\\,\\mathrm{Hz}$.\n\nOdstopanja od povprečja: $|43{,}7 - 44{,}1| = 0{,}4$, $|44{,}0 - 44{,}1| = 0{,}1$, $|44{,}6 - 44{,}1| = 0{,}5$ (v $\\mathrm{Hz}$).\n\nZa absolutno napako vzamemo največje odstopanje: $\\Delta\\nu = 0{,}5\\,\\mathrm{Hz}$.\n\nRezultat: $\\nu = (44{,}1 \\pm 0{,}5)\\,\\mathrm{Hz}$."
+      },
+      {
+       "title": "Drugače: s polovico razpona",
+       "text": "Napako lahko ocenimo tudi s polovico razlike med največjo in najmanjšo meritvijo:\n\n$\\Delta\\nu \\approx \\dfrac{44{,}6 - 43{,}7}{2}\\,\\mathrm{Hz} = 0{,}45\\,\\mathrm{Hz} \\approx 0{,}5\\,\\mathrm{Hz}$.\n\nDobimo isti zapis $\\nu = (44{,}1 \\pm 0{,}5)\\,\\mathrm{Hz}$. Relativna napaka je približno $\\dfrac{0{,}5}{44{,}1} \\approx 1\\,\\%$."
+      }
+     ],
+     "scoring": "1 t.: povprečje $44{,}1\\,\\mathrm{Hz}$. 1 t.: absolutna napaka $0{,}5\\,\\mathrm{Hz}$ (velja tudi polovica razpona $0{,}45\\,\\mathrm{Hz}$) in zapis z napako.",
+     "mistake": "Absolutna napaka ni razlika med največjo in najmanjšo meritvijo ($0{,}9\\,\\mathrm{Hz}$) – to je razpon, ki je približno dvakrat večji od napake."
+    },
+    {
+     "id": "h",
+     "points": 2,
+     "format": "open",
+     "text": "Struna se je pretrgala. Maja ima novo struno iz enake snovi, ki pa ima za polovico manjšo ploščino preseka. Kako mora spremeniti razdaljo med kobilicama, da bodo nove meritve ležale na isti premici kot prej? Utemelji in izračunaj novo razdaljo.",
+     "answer": "Razdaljo mora povečati na $L' = \\sqrt{2}\\,L \\approx 1{,}13\\,\\mathrm{m}$, ker mora ostati $L^2\\mu$ nespremenjen.",
+     "ways": [
+      {
+       "title": "Smerni koeficient mora ostati enak",
+       "text": "**Podatki:** $\\mu' = \\dfrac{\\mu}{2}$ (enaka gostota snovi, pol manjši presek), $L = 0{,}800\\,\\mathrm{m}$.\n**Iščemo:** $L'$, pri katerem je $k' = k$.\n\nTočke ležijo na isti premici, če je smerni koeficient enak: $\\dfrac{g}{4L'^2\\mu'} = \\dfrac{g}{4L^2\\mu}$, torej $L'^2\\mu' = L^2\\mu$.\n\nKer je $\\mu' = \\mu/2$, mora biti $L'^2 = 2L^2$ in\n\n$L' = \\sqrt{2}\\cdot 0{,}800\\,\\mathrm{m} \\approx 1{,}13\\,\\mathrm{m}$.\n\nKobilici mora razmakniti, saj bi tanjša struna pri isti dolžini in sili nihala z višjo frekvenco."
+      },
+      {
+       "title": "Drugače: s frekvenco pri isti uteži",
+       "text": "Pri isti uteži je sila $F$ enaka. Tanjša struna ima $\\mu$ pol manjši, zato bi bila frekvenca pri isti dolžini $\\sqrt{2}$-krat višja ($\\nu \\propto 1/\\sqrt{\\mu}$).\n\nFrekvenca je obratno sorazmerna z dolžino ($\\nu \\propto 1/L$), zato jo vrnemo na prejšnjo vrednost, če dolžino povečamo za faktor $\\sqrt{2}$: $L' = 1{,}41 \\cdot 0{,}800\\,\\mathrm{m} \\approx 1{,}13\\,\\mathrm{m}$."
+      }
+     ],
+     "scoring": "1 t.: utemeljitev, da mora $k$ (oziroma $L^2\\mu$) ostati enak. 1 t.: razdaljo poveča na $L' = \\sqrt{2}\\,L \\approx 1{,}13\\,\\mathrm{m}$.",
+     "mistake": "Napačen je sklep $L' = 2L$: dolžina nastopa v kvadratu, zato zadošča faktor $\\sqrt{2}$. Narobe je tudi skrajšati struno – to bi frekvenco še zvišalo."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 2,
+   "intro": "**Mehanika.** Avto z maso $m_1 = 1200\\,\\mathrm{kg}$ vleče priklopnik z maso $m_2 = 600\\,\\mathrm{kg}$ po vodoravni cesti. Priklopnik nima lastnih zavor. Uporabi $g = 9{,}81\\,\\mathrm{m\\,s^{-2}}$. Avto in priklopnik obravnavaj kot točkasti telesi, povezani z neraztegljivo vlečno sklopko.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Izračunaj skupno težo avta s priklopnikom.",
+     "answer": "$F_g \\approx 1{,}77 \\cdot 10^4\\,\\mathrm{N}$",
+     "ways": [
+      {
+       "title": "Iz mase",
+       "text": "**Podatki:** $m = m_1 + m_2 = 1200\\,\\mathrm{kg} + 600\\,\\mathrm{kg} = 1800\\,\\mathrm{kg}$, $g = 9{,}81\\,\\mathrm{m\\,s^{-2}}$.\n**Iščemo:** $F_g$.\n\n$F_g = mg = 1800\\,\\mathrm{kg} \\cdot 9{,}81\\,\\mathrm{m\\,s^{-2}} = 17\\,658\\,\\mathrm{N} \\approx 1{,}77 \\cdot 10^4\\,\\mathrm{N}$"
+      }
+     ],
+     "mistake": "Teža je sila in se meri v newtonih; »teža $1800\\,\\mathrm{kg}$« zamenja težo z maso."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Na odseku dolžine $150\\,\\mathrm{m}$ deluje cesta na pogonska kolesa avta s stalno pogonsko silo $3{,}20\\,\\mathrm{kN}$ v smeri gibanja, vse sile upora (zračni upor in kotalno trenje na avtu in priklopniku) pa skupaj znašajo $0{,}50\\,\\mathrm{kN}$. Za koliko se na tem odseku poveča kinetična energija avta s priklopnikom?",
+     "answer": "$\\Delta W_k = 405\\,\\mathrm{kJ} = 4{,}05 \\cdot 10^5\\,\\mathrm{J}$",
+     "ways": [
+      {
+       "title": "Z delom rezultante",
+       "text": "**Podatki:** $F_v = 3{,}20\\,\\mathrm{kN}$, $F_u = 0{,}50\\,\\mathrm{kN}$, $s = 150\\,\\mathrm{m}$.\n**Iščemo:** $\\Delta W_k$.\n\nSprememba kinetične energije je enaka delu rezultante vseh sil (izrek o kinetični energiji). Teža in sila podlage sta pravokotni na premik in ne opravljata dela.\n\nRezultanta: $F = F_v - F_u = 3{,}20\\,\\mathrm{kN} - 0{,}50\\,\\mathrm{kN} = 2{,}70\\,\\mathrm{kN}$.\n\n$\\Delta W_k = A = F s = 2700\\,\\mathrm{N} \\cdot 150\\,\\mathrm{m} = 405\\,000\\,\\mathrm{J} = 405\\,\\mathrm{kJ}$"
+      },
+      {
+       "title": "Drugače: delo vsake sile posebej",
+       "text": "Delo sile ceste: $A_v = 3200\\,\\mathrm{N} \\cdot 150\\,\\mathrm{m} = 480\\,000\\,\\mathrm{J}$.\n\nDelo sil upora je negativno, ker kažejo nasprotno premiku: $A_u = -500\\,\\mathrm{N} \\cdot 150\\,\\mathrm{m} = -75\\,000\\,\\mathrm{J}$.\n\n$\\Delta W_k = A_v + A_u = 480\\,000\\,\\mathrm{J} - 75\\,000\\,\\mathrm{J} = 405\\,000\\,\\mathrm{J}$"
+      }
+     ],
+     "scoring": "1 t.: rezultanta $2{,}70\\,\\mathrm{kN}$ (ali upoštevano negativno delo upora). 1 t.: $\\Delta W_k = 405\\,\\mathrm{kJ}$.",
+     "mistake": "Napačno je vzeti samo silo ceste: $3200\\,\\mathrm{N} \\cdot 150\\,\\mathrm{m} = 480\\,\\mathrm{kJ}$ je delo te sile, del pa ga »porabijo« sile upora."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Na začetku odseka je bila hitrost avta $36\\,\\mathrm{km/h}$. Kolikšna je hitrost na koncu odseka?",
+     "answer": "$v \\approx 23{,}5\\,\\mathrm{m/s} \\approx 84\\,\\mathrm{km/h}$",
+     "ways": [
+      {
+       "title": "Iz kinetične energije",
+       "text": "**Podatki:** $v_0 = 36\\,\\mathrm{km/h} = 10{,}0\\,\\mathrm{m/s}$, $m = 1800\\,\\mathrm{kg}$, $\\Delta W_k = 405\\,\\mathrm{kJ}$.\n**Iščemo:** $v$.\n\nZačetna kinetična energija: $W_{k0} = \\tfrac12 m v_0^2 = \\tfrac12 \\cdot 1800 \\cdot 10{,}0^2\\,\\mathrm{J} = 90\\,000\\,\\mathrm{J}$.\n\nKončna: $W_k = W_{k0} + \\Delta W_k = 90\\,000\\,\\mathrm{J} + 405\\,000\\,\\mathrm{J} = 495\\,000\\,\\mathrm{J}$.\n\n$v = \\sqrt{\\dfrac{2W_k}{m}} = \\sqrt{\\dfrac{2 \\cdot 495\\,000}{1800}}\\,\\mathrm{m/s} = \\sqrt{550}\\,\\mathrm{m/s} \\approx 23{,}5\\,\\mathrm{m/s}$\n\nTo je približno $23{,}5 \\cdot 3{,}6\\,\\mathrm{km/h} \\approx 84\\,\\mathrm{km/h}$."
+      },
+      {
+       "title": "Drugače: s pospeškom",
+       "text": "Pospešek: $a = \\dfrac{F}{m} = \\dfrac{2700\\,\\mathrm{N}}{1800\\,\\mathrm{kg}} = 1{,}50\\,\\mathrm{m\\,s^{-2}}$.\n\nPri enakomerno pospešenem gibanju velja $v^2 = v_0^2 + 2as$:\n\n$v^2 = 10{,}0^2 + 2 \\cdot 1{,}50 \\cdot 150 = 100 + 450 = 550\\,\\mathrm{m^2/s^2}$, torej $v \\approx 23{,}5\\,\\mathrm{m/s}$."
+      }
+     ],
+     "scoring": "1 t.: upoštevana začetna kinetična energija ($90\\,\\mathrm{kJ}$) oziroma $v_0 = 10{,}0\\,\\mathrm{m/s}$. 1 t.: $v \\approx 23{,}5\\,\\mathrm{m/s}$.",
+     "mistake": "Napaka je izračunati hitrost samo iz $\\Delta W_k$: $\\sqrt{2 \\cdot 405\\,000/1800}\\,\\mathrm{m/s} \\approx 21{,}2\\,\\mathrm{m/s}$ bi veljalo le za start iz mirovanja. Tudi hitrosti v km/h ne vstavljaj neposredno v enačbo za energijo v joulih – najprej jo pretvori v m/s."
+    },
+    {
+     "id": "d",
+     "points": 2,
+     "format": "open",
+     "text": "Za koliko se na tem odseku spremeni gibalna količina avta s priklopnikom?",
+     "answer": "$\\Delta G \\approx 2{,}42 \\cdot 10^4\\,\\mathrm{kg\\,m/s}$ (v smeri gibanja)",
+     "ways": [
+      {
+       "title": "Iz hitrosti",
+       "text": "**Podatki:** $m = 1800\\,\\mathrm{kg}$, $v_0 = 10{,}0\\,\\mathrm{m/s}$, $v = 23{,}45\\,\\mathrm{m/s}$.\n**Iščemo:** $\\Delta G$.\n\n$\\Delta G = m v - m v_0 = m(v - v_0) = 1800\\,\\mathrm{kg} \\cdot (23{,}45 - 10{,}0)\\,\\mathrm{m/s} \\approx 2{,}42 \\cdot 10^4\\,\\mathrm{kg\\,m/s}$\n\nSprememba kaže v smeri gibanja, ker se avto pospešuje."
+      },
+      {
+       "title": "Drugače: s sunkom sile",
+       "text": "Sprememba gibalne količine je enaka sunku rezultante: $\\Delta G = F\\,\\Delta t$.\n\nČas pospeševanja: $\\Delta t = \\dfrac{v - v_0}{a} = \\dfrac{23{,}45 - 10{,}0}{1{,}50}\\,\\mathrm{s} \\approx 8{,}97\\,\\mathrm{s}$.\n\n$\\Delta G = 2700\\,\\mathrm{N} \\cdot 8{,}97\\,\\mathrm{s} \\approx 2{,}42 \\cdot 10^4\\,\\mathrm{N\\,s}$ – enako, ker je $\\mathrm{N\\,s} = \\mathrm{kg\\,m/s}$."
+      }
+     ],
+     "scoring": "1 t.: zapis $\\Delta G = m(v - v_0)$ ali $\\Delta G = F\\,\\Delta t$. 1 t.: $\\Delta G \\approx 2{,}42 \\cdot 10^4\\,\\mathrm{kg\\,m/s}$.",
+     "mistake": "Gibalna količina ni energija: računa se s hitrostjo na prvo potenco, zato $\\Delta G \\ne \\tfrac12 m(v^2 - v_0^2)$."
+    },
+    {
+     "id": "e",
+     "points": 2,
+     "format": "open",
+     "text": "Voznik nato zavira. Koeficient lepenja med pnevmatikami in cesto je $0{,}80$. Zavirajo samo kolesa avta; predpostavi, da je sila podlage na kolesa avta enaka teži avta. Kolikšna je največja zaviralna sila, s katero cesta lahko deluje na avto, ne da bi kolesa zdrsnila?",
+     "answer": "$F_{\\max} \\approx 9{,}42\\,\\mathrm{kN}$",
+     "ways": [
+      {
+       "title": "Iz sile lepenja",
+       "text": "**Podatki:** $k_l = 0{,}80$, $m_1 = 1200\\,\\mathrm{kg}$, $g = 9{,}81\\,\\mathrm{m\\,s^{-2}}$.\n**Iščemo:** $F_{\\max}$.\n\nZaviralna sila je sila lepenja med kolesi avta in cesto. Največja je $F_{\\max} = k_l F_n$, kjer je $F_n = m_1 g$ (le avto, ker priklopnik ne zavira).\n\n$F_{\\max} = 0{,}80 \\cdot 1200\\,\\mathrm{kg} \\cdot 9{,}81\\,\\mathrm{m\\,s^{-2}} = 9417{,}6\\,\\mathrm{N} \\approx 9{,}42\\,\\mathrm{kN}$"
+      },
+      {
+       "title": "Drugače: s pojemkom samega avta",
+       "text": "Če bi avto zaviral sam, bi bil njegov največji pojemek $a = k_l g = 0{,}80 \\cdot 9{,}81\\,\\mathrm{m\\,s^{-2}} = 7{,}848\\,\\mathrm{m\\,s^{-2}}$.\n\nSila, ki tak pojemek da avtu, je $F_{\\max} = m_1 a = 1200\\,\\mathrm{kg} \\cdot 7{,}848\\,\\mathrm{m\\,s^{-2}} \\approx 9{,}42\\,\\mathrm{kN}$. Sila lepenja ni odvisna od tega, ali je priklopnik pripet – ta vpliva le na pojemek (naslednji del)."
+      }
+     ],
+     "scoring": "1 t.: $F_{\\max} = k_l m_1 g$ (samo masa avta). 1 t.: $F_{\\max} \\approx 9{,}42\\,\\mathrm{kN}$.",
+     "mistake": "Napačno je v silo podlage šteti tudi priklopnik ($0{,}80 \\cdot 1800 \\cdot 9{,}81\\,\\mathrm{N} \\approx 14{,}1\\,\\mathrm{kN}$): priklopnik stoji na svojih kolesih, ki ne zavirajo."
+    },
+    {
+     "id": "f",
+     "points": 2,
+     "format": "open",
+     "text": "Kolikšen je največji pojemek avta s priklopnikom pri zaviranju? Zračni upor in kotalno trenje zanemari.",
+     "answer": "$a_{\\max} \\approx 5{,}23\\,\\mathrm{m\\,s^{-2}}$",
+     "ways": [
+      {
+       "title": "Z 2. Newtonovim zakonom za ves sistem",
+       "text": "**Podatki:** $F_{\\max} = 9417{,}6\\,\\mathrm{N}$, $m = 1800\\,\\mathrm{kg}$.\n**Iščemo:** $a_{\\max}$.\n\nEdina vodoravna zunanja sila na sistem avto + priklopnik je sila lepenja na kolesa avta. Sila sklopke je notranja sila sistema.\n\n$a_{\\max} = \\dfrac{F_{\\max}}{m_1 + m_2} = \\dfrac{9417{,}6\\,\\mathrm{N}}{1800\\,\\mathrm{kg}} \\approx 5{,}23\\,\\mathrm{m\\,s^{-2}}$"
+      },
+      {
+       "title": "Drugače: z razmerjem mas",
+       "text": "Sam avto bi lahko zaviral s pojemkom $k_l g = 7{,}848\\,\\mathrm{m\\,s^{-2}}$. Ista sila mora zdaj ustaviti $1{,}5$-krat večjo maso ($1800/1200 = 1{,}5$), zato je pojemek $1{,}5$-krat manjši:\n\n$a_{\\max} = \\dfrac{7{,}848}{1{,}5}\\,\\mathrm{m\\,s^{-2}} \\approx 5{,}23\\,\\mathrm{m\\,s^{-2}}$.\n\nPreizkus za priklopnik: sklopka nanj deluje s silo $m_2 a = 600 \\cdot 5{,}232\\,\\mathrm{N} \\approx 3{,}14\\,\\mathrm{kN}$ nazaj, priklopnik pa avto potiska enako močno naprej (3. Newtonov zakon)."
+      }
+     ],
+     "scoring": "1 t.: deljenje s skupno maso $m_1 + m_2$. 1 t.: $a_{\\max} \\approx 5{,}23\\,\\mathrm{m\\,s^{-2}}$.",
+     "mistake": "Napaka je deliti samo z maso avta ($7{,}85\\,\\mathrm{m\\,s^{-2}}$): zaviralna sila mora ustaviti tudi priklopnik."
+    },
+    {
+     "id": "g",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj najkrajšo zavorno pot avta s priklopnikom pri hitrosti s konca pospeševanja.",
+     "answer": "$s_{\\min} \\approx 52{,}6\\,\\mathrm{m}$",
+     "ways": [
+      {
+       "title": "S kinematiko",
+       "text": "**Podatki:** $v = \\sqrt{550}\\,\\mathrm{m/s} \\approx 23{,}45\\,\\mathrm{m/s}$, $a = 5{,}232\\,\\mathrm{m\\,s^{-2}}$, končna hitrost $0$.\n**Iščemo:** $s_{\\min}$.\n\nPri enakomerno pojemajočem gibanju do ustavitve velja $v^2 = 2as$:\n\n$s_{\\min} = \\dfrac{v^2}{2a} = \\dfrac{550}{2 \\cdot 5{,}232}\\,\\mathrm{m} \\approx 52{,}6\\,\\mathrm{m}$"
+      },
+      {
+       "title": "Drugače: z energijo",
+       "text": "Vso kinetično energijo $W_k = 495\\,\\mathrm{kJ}$ mora »porabiti« delo zaviralne sile: $W_k = F_{\\max}\\,s$.\n\n$s_{\\min} = \\dfrac{W_k}{F_{\\max}} = \\dfrac{495\\,000\\,\\mathrm{J}}{9417{,}6\\,\\mathrm{N}} \\approx 52{,}6\\,\\mathrm{m}$"
+      }
+     ],
+     "scoring": "1 t.: zveza $s = v^2/(2a)$ ali $W_k = F s$. 1 t.: $s_{\\min} \\approx 52{,}6\\,\\mathrm{m}$.",
+     "mistake": "Napaka je v enačbo vstaviti $v = 84\\,\\mathrm{km/h}$ brez pretvorbe v m/s – rezultat bi bil približno $13$-krat prevelik."
+    },
+    {
+     "id": "h",
+     "points": 2,
+     "format": "open",
+     "text": "Ali bi bila najkrajša zavorna pot pri enaki začetni hitrosti drugačna, če bi voznik zaviral v ovinku s stalnim polmerom? Utemelji.",
+     "answer": "Daljša: del največje sile lepenja mora dajati centripetalno silo, zato ostane za zaviranje manj sile in pojemek je manjši.",
+     "ways": [
+      {
+       "title": "S silami",
+       "text": "V ovinku mora cesta na avto delovati tudi s centripetalno silo $F_r = \\dfrac{m v^2}{r}$, usmerjeno proti središču ovinka. Obe sili – zaviralno (tangentno) in centripetalno (radialno) – daje ista sila lepenja, katere velikost je omejena s $k_l F_n$:\n\n$\\sqrt{F_{zav}^2 + F_r^2} \\le k_l F_n$.\n\nKer je $F_r > 0$, je največja zaviralna sila manjša od $9{,}42\\,\\mathrm{kN}$, pojemek je manjši in zavorna pot daljša od $52{,}6\\,\\mathrm{m}$."
+      },
+      {
+       "title": "Drugače: mejna primera",
+       "text": "Pri zelo velikem polmeru (skoraj ravna cesta) je centripetalna sila zanemarljiva in pot je praktično $52{,}6\\,\\mathrm{m}$.\n\nPri ostrejšem ovinku pa bi lahko že sama centripetalna sila dosegla mejo lepenja; tedaj za zaviranje ne ostane nič in avto ne bi mogel zavirati, ne da bi zdrsnil. Vmesni ovinki dajo vmesno, a vedno daljšo pot kot na ravnem."
+      }
+     ],
+     "scoring": "1 t.: odgovor »daljša«. 1 t.: utemeljitev, da del sile lepenja prevzame centripetalna sila, zato za zaviranje ostane manj.",
+     "mistake": "Napačen je odgovor »enaka, ker je hitrost enaka«: pri zaviranju v ovinku si centripetalna in zaviralna sila delita isto omejeno silo lepenja."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 3,
+   "intro": "**Termodinamika.** V električni grelnik vode z močjo $2{,}00\\,\\mathrm{kW}$ natočimo $1{,}50\\,\\mathrm{kg}$ vode s temperaturo $20{,}0\\,^\\circ\\mathrm{C}$. Voda zavre (pri $100\\,^\\circ\\mathrm{C}$) po $4\\,\\mathrm{min}\\ 30\\,\\mathrm{s}$. Zračni tlak je $1{,}013 \\cdot 10^5\\,\\mathrm{Pa}$.\n\nUporabi: specifična toplota vode $c_v = 4200\\,\\mathrm{J\\,kg^{-1}\\,K^{-1}}$, izparilna toplota vode $q_i = 2{,}26 \\cdot 10^6\\,\\mathrm{J/kg}$, molska masa vode $M = 18{,}0\\,\\mathrm{kg/kmol}$, splošna plinska konstanta $R = 8310\\,\\mathrm{J\\,kmol^{-1}\\,K^{-1}}$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Zapiši enoto specifične toplote v sistemu SI.",
+     "answer": "$\\mathrm{J\\,kg^{-1}\\,K^{-1}} = \\dfrac{\\mathrm{J}}{\\mathrm{kg\\,K}}$ (v osnovnih enotah $\\mathrm{m^2\\,s^{-2}\\,K^{-1}}$)",
+     "ways": [
+      {
+       "title": "Iz enačbe za toploto",
+       "text": "Iz $Q = mc\\,\\Delta T$ sledi $c = \\dfrac{Q}{m\\,\\Delta T}$, zato je enota $\\dfrac{\\mathrm{J}}{\\mathrm{kg} \\cdot \\mathrm{K}}$.\n\nKer je $\\mathrm{J} = \\mathrm{kg\\,m^2\\,s^{-2}}$, je to v osnovnih enotah SI $\\mathrm{m^2\\,s^{-2}\\,K^{-1}}$. Specifična toplota pove, koliko toplote potrebuje $1\\,\\mathrm{kg}$ snovi, da se segreje za $1\\,\\mathrm{K}$."
+      }
+     ],
+     "mistake": "$\\mathrm{J/kg}$ je enota izparilne (ali talilne) toplote, ne specifične toplote – manjka kelvin."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj toplotni tok, ki ga je grelnik povprečno oddajal vodi med segrevanjem.",
+     "answer": "$P \\approx 1{,}87\\,\\mathrm{kW}$",
+     "ways": [
+      {
+       "title": "Najprej toplota, nato toplotni tok",
+       "text": "**Podatki:** $m = 1{,}50\\,\\mathrm{kg}$, $\\Delta T = 100\\,^\\circ\\mathrm{C} - 20{,}0\\,^\\circ\\mathrm{C} = 80{,}0\\,\\mathrm{K}$, $t = 4\\,\\mathrm{min}\\ 30\\,\\mathrm{s} = 270\\,\\mathrm{s}$, $c_v = 4200\\,\\mathrm{J\\,kg^{-1}\\,K^{-1}}$.\n**Iščemo:** toplotni tok $P = Q/t$.\n\n$Q = m c_v \\Delta T = 1{,}50 \\cdot 4200 \\cdot 80{,}0\\,\\mathrm{J} = 504\\,000\\,\\mathrm{J}$\n\n$P = \\dfrac{Q}{t} = \\dfrac{504\\,000\\,\\mathrm{J}}{270\\,\\mathrm{s}} \\approx 1867\\,\\mathrm{W} \\approx 1{,}87\\,\\mathrm{kW}$"
+      },
+      {
+       "title": "Drugače: segrevanje v eni sekundi",
+       "text": "Voda se segreva enakomerno: v vsaki sekundi za $\\dfrac{80{,}0\\,\\mathrm{K}}{270\\,\\mathrm{s}} \\approx 0{,}296\\,\\mathrm{K/s}$.\n\nZa to potrebuje vsako sekundo $1{,}50 \\cdot 4200 \\cdot 0{,}296\\,\\mathrm{J} \\approx 1867\\,\\mathrm{J}$, kar je toplotni tok $\\approx 1{,}87\\,\\mathrm{kW}$."
+      }
+     ],
+     "scoring": "1 t.: $Q = 504\\,\\mathrm{kJ}$ (s pravilno $\\Delta T$ in maso). 1 t.: $P \\approx 1{,}87\\,\\mathrm{kW}$ (čas v sekundah).",
+     "mistake": "Napaka je vzeti $t = 4{,}30\\,\\mathrm{min}$: $4\\,\\mathrm{min}\\ 30\\,\\mathrm{s}$ je $4{,}5\\,\\mathrm{min} = 270\\,\\mathrm{s}$."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Pojasni, zakaj je toplotni tok v vodo manjši od električne moči grelnika.",
+     "answer": "Del električne energije segreva grelno ploščo in posodo ter uhaja v okolico (z ohišja, s pokrova); voda dobi le preostanek.",
+     "ways": [
+      {
+       "title": "Z energijskim zakonom",
+       "text": "Grelnik vsako sekundo prejme $2000\\,\\mathrm{J}$ električnega dela, voda pa le okoli $1867\\,\\mathrm{J}$ toplote. Razlika (okoli $133\\,\\mathrm{J}$ na sekundo, približno $7\\,\\%$) ni izginila: segreva grelno ploščo in steno posode, del pa s toplotnim prevajanjem in sevanjem uide v zrak v okolici.\n\nIzkoristek grelnika je zato približno $\\dfrac{1867}{2000} \\approx 93\\,\\%$."
+      }
+     ],
+     "mistake": "Napačen je odgovor »ker se energija porabi«: energija se ohranja, le del je ne prejme voda."
+    },
+    {
+     "id": "d",
+     "points": 2,
+     "format": "open",
+     "text": "Grelnik se ne izklopi in segreva vrelo vodo še $2{,}00\\,\\mathrm{min}$. Predpostavi, da je toplotni tok v vodo ves čas tak kot pri segrevanju. Koliko vode izpari?",
+     "answer": "$m_i \\approx 99{,}1\\,\\mathrm{g} = 9{,}91 \\cdot 10^{-2}\\,\\mathrm{kg}$",
+     "ways": [
+      {
+       "title": "Iz izparilne toplote",
+       "text": "**Podatki:** $P = 1867\\,\\mathrm{W}$ (točneje $504\\,000\\,\\mathrm{J}/270\\,\\mathrm{s}$), $t' = 2{,}00\\,\\mathrm{min} = 120\\,\\mathrm{s}$, $q_i = 2{,}26 \\cdot 10^6\\,\\mathrm{J/kg}$.\n**Iščemo:** $m_i$.\n\nPri vrenju temperatura ostane $100\\,^\\circ\\mathrm{C}$; vsa dovedena toplota gre za izparevanje.\n\n$Q' = P t' = \\dfrac{504\\,000\\,\\mathrm{J}}{270\\,\\mathrm{s}} \\cdot 120\\,\\mathrm{s} = 224\\,000\\,\\mathrm{J}$\n\n$m_i = \\dfrac{Q'}{q_i} = \\dfrac{224\\,000\\,\\mathrm{J}}{2{,}26 \\cdot 10^6\\,\\mathrm{J/kg}} \\approx 0{,}0991\\,\\mathrm{kg} = 99{,}1\\,\\mathrm{g}$"
+      },
+      {
+       "title": "Drugače: s primerjavo časov",
+       "text": "Segrevanje $1{,}50\\,\\mathrm{kg}$ vode za $80\\,\\mathrm{K}$ je trajalo $270\\,\\mathrm{s}$ in je zahtevalo $504\\,\\mathrm{kJ}$. V $120\\,\\mathrm{s}$ voda dobi $\\dfrac{120}{270}$ te toplote: $\\dfrac{4}{9} \\cdot 504\\,\\mathrm{kJ} = 224\\,\\mathrm{kJ}$.\n\nZa izparenje $1\\,\\mathrm{kg}$ vode je treba $2260\\,\\mathrm{kJ}$, zato izpari $\\dfrac{224}{2260}\\,\\mathrm{kg} \\approx 0{,}0991\\,\\mathrm{kg}$ – manj kot $7\\,\\%$ vode v posodi."
+      }
+     ],
+     "scoring": "1 t.: $Q' = 224\\,\\mathrm{kJ}$. 1 t.: $m_i \\approx 99\\,\\mathrm{g}$.",
+     "mistake": "Napačno je računati z $Q = mc\\,\\Delta T$: pri vrenju se temperatura ne spreminja, toplota gre za fazni prehod."
+    },
+    {
+     "id": "e",
+     "points": 2,
+     "format": "open",
+     "text": "Kolikšno prostornino bi imela izparela voda kot para pri $100\\,^\\circ\\mathrm{C}$ in danem zračnem tlaku? Paro obravnavaj kot idealni plin.",
+     "answer": "$V \\approx 0{,}168\\,\\mathrm{m^3} \\approx 168\\,\\mathrm{L}$",
+     "ways": [
+      {
+       "title": "S plinsko enačbo",
+       "text": "**Podatki:** $m_i = 0{,}0991\\,\\mathrm{kg}$, $M = 18{,}0\\,\\mathrm{kg/kmol}$, $T = 373\\,\\mathrm{K}$, $p = 1{,}013 \\cdot 10^5\\,\\mathrm{Pa}$, $R = 8310\\,\\mathrm{J\\,kmol^{-1}\\,K^{-1}}$.\n**Iščemo:** $V$.\n\nPlinska enačba: $pV = \\dfrac{m}{M}RT$, zato\n\n$V = \\dfrac{mRT}{Mp} = \\dfrac{0{,}0991 \\cdot 8310 \\cdot 373}{18{,}0 \\cdot 1{,}013 \\cdot 10^5}\\,\\mathrm{m^3} \\approx 0{,}168\\,\\mathrm{m^3}$"
+      },
+      {
+       "title": "Drugače: najprej število kilomolov",
+       "text": "Množina pare: $n = \\dfrac{m}{M} = \\dfrac{0{,}0991\\,\\mathrm{kg}}{18{,}0\\,\\mathrm{kg/kmol}} \\approx 5{,}51 \\cdot 10^{-3}\\,\\mathrm{kmol}$ (to je $5{,}51\\,\\mathrm{mol}$).\n\n$V = \\dfrac{nRT}{p} = \\dfrac{5{,}51 \\cdot 10^{-3} \\cdot 8310 \\cdot 373}{1{,}013 \\cdot 10^5}\\,\\mathrm{m^3} \\approx 0{,}168\\,\\mathrm{m^3}$.\n\nZa primerjavo: kot tekočina bi ta voda zavzela le okoli $0{,}1\\,\\mathrm{L}$ – para ima okoli $1700$-krat večjo prostornino."
+      }
+     ],
+     "scoring": "1 t.: plinska enačba s temperaturo v kelvinih ($373\\,\\mathrm{K}$). 1 t.: $V \\approx 0{,}17\\,\\mathrm{m^3}$.",
+     "mistake": "Napaka je vstaviti $T = 100\\,\\mathrm{K}$ namesto $373\\,\\mathrm{K}$; rezultat bi bil skoraj štirikrat premajhen."
+    },
+    {
+     "id": "f",
+     "points": 3,
+     "format": "open",
+     "text": "Z vrelo vodo skuhamo čaj. V skodelici je $0{,}250\\,\\mathrm{kg}$ čaja s temperaturo $90{,}0\\,^\\circ\\mathrm{C}$ (specifična toplota kot voda). Koliko mleka s temperaturo $6{,}0\\,^\\circ\\mathrm{C}$ in specifično toploto $3900\\,\\mathrm{J\\,kg^{-1}\\,K^{-1}}$ moramo doliti, da bo temperatura zmesi $75{,}0\\,^\\circ\\mathrm{C}$? Izmenjavo toplote s skodelico in okolico zanemari.",
+     "answer": "$m_m \\approx 58{,}5\\,\\mathrm{g}$",
+     "ways": [
+      {
+       "title": "Oddana toplota = prejeta toplota",
+       "text": "**Podatki:** $m_c = 0{,}250\\,\\mathrm{kg}$, $T_c = 90{,}0\\,^\\circ\\mathrm{C}$, $c_v = 4200\\,\\mathrm{J\\,kg^{-1}\\,K^{-1}}$, $T_m = 6{,}0\\,^\\circ\\mathrm{C}$, $c_m = 3900\\,\\mathrm{J\\,kg^{-1}\\,K^{-1}}$, $T_z = 75{,}0\\,^\\circ\\mathrm{C}$.\n**Iščemo:** $m_m$.\n\nČaj odda: $Q_{odd} = m_c c_v (T_c - T_z) = 0{,}250 \\cdot 4200 \\cdot 15{,}0\\,\\mathrm{J} = 15\\,750\\,\\mathrm{J}$.\n\nMleko prejme: $Q_{prej} = m_m c_m (T_z - T_m) = m_m \\cdot 3900 \\cdot 69{,}0\\,\\mathrm{J/kg}$.\n\nIz $Q_{odd} = Q_{prej}$:\n\n$m_m = \\dfrac{15\\,750}{3900 \\cdot 69{,}0}\\,\\mathrm{kg} \\approx 0{,}0585\\,\\mathrm{kg} = 58{,}5\\,\\mathrm{g}$"
+      },
+      {
+       "title": "Drugače: s formulo za zmesno temperaturo",
+       "text": "Zmesna temperatura je tehtano povprečje: $T_z = \\dfrac{m_c c_v T_c + m_m c_m T_m}{m_c c_v + m_m c_m}$.\n\nPreizkus z $m_m = 0{,}0585\\,\\mathrm{kg}$: $m_c c_v = 1050\\,\\mathrm{J/K}$, $m_m c_m \\approx 228{,}2\\,\\mathrm{J/K}$,\n\n$T_z = \\dfrac{1050 \\cdot 90{,}0 + 228{,}2 \\cdot 6{,}0}{1050 + 228{,}2}\\,^\\circ\\mathrm{C} \\approx 75{,}0\\,^\\circ\\mathrm{C}$ ✓.\n\nOcena za smiselnost: čaj se ohladi le za $15\\,\\mathrm{K}$, mleko pa segreje za $69\\,\\mathrm{K}$, zato mora biti toplotna kapaciteta mleka približno $69/15 \\approx 4{,}6$-krat manjša od toplotne kapacitete čaja: $1050/4{,}6 \\approx 228\\,\\mathrm{J/K}$ ✓."
+      }
+     ],
+     "scoring": "1 t.: oddana toplota čaja ($15{,}75\\,\\mathrm{kJ}$). 1 t.: izraz za prejeto toploto mleka z $\\Delta T = 69{,}0\\,\\mathrm{K}$. 1 t.: $m_m \\approx 58{,}5\\,\\mathrm{g}$.",
+     "mistake": "Napaka je vzeti isto temperaturno razliko za obe tekočini ali pozabiti, da ima mleko drugačno specifično toploto kot voda."
+    },
+    {
+     "id": "g",
+     "points": 2,
+     "format": "open",
+     "text": "Preostalih $1{,}20\\,\\mathrm{kg}$ vode v grelniku se v $15{,}0\\,\\mathrm{min}$ po izklopu ohladi s $100\\,^\\circ\\mathrm{C}$ na $78{,}0\\,^\\circ\\mathrm{C}$. Kolikšen je povprečni toplotni tok iz vode v okolico? Toplotno kapaciteto posode zanemari.",
+     "answer": "$\\bar P \\approx 123\\,\\mathrm{W}$",
+     "ways": [
+      {
+       "title": "Iz oddane toplote",
+       "text": "**Podatki:** $m = 1{,}20\\,\\mathrm{kg}$, $\\Delta T = 22{,}0\\,\\mathrm{K}$, $t = 15{,}0\\,\\mathrm{min} = 900\\,\\mathrm{s}$, $c_v = 4200\\,\\mathrm{J\\,kg^{-1}\\,K^{-1}}$.\n**Iščemo:** $\\bar P$.\n\n$Q = m c_v \\Delta T = 1{,}20 \\cdot 4200 \\cdot 22{,}0\\,\\mathrm{J} = 110\\,880\\,\\mathrm{J}$\n\n$\\bar P = \\dfrac{Q}{t} = \\dfrac{110\\,880\\,\\mathrm{J}}{900\\,\\mathrm{s}} \\approx 123\\,\\mathrm{W}$"
+      },
+      {
+       "title": "Drugače: s hitrostjo ohlajanja",
+       "text": "Voda se povprečno ohlaja s hitrostjo $\\dfrac{22{,}0\\,\\mathrm{K}}{900\\,\\mathrm{s}} \\approx 0{,}0244\\,\\mathrm{K/s}$.\n\nToplotna kapaciteta vode je $m c_v = 1{,}20 \\cdot 4200\\,\\mathrm{J/K} = 5040\\,\\mathrm{J/K}$, zato\n\n$\\bar P = 5040\\,\\mathrm{J/K} \\cdot 0{,}0244\\,\\mathrm{K/s} \\approx 123\\,\\mathrm{W}$."
+      }
+     ],
+     "scoring": "1 t.: oddana toplota $\\approx 111\\,\\mathrm{kJ}$. 1 t.: $\\bar P \\approx 123\\,\\mathrm{W}$ (čas v sekundah).",
+     "mistake": "Napačno je deliti z minutami: $110\\,880/15 \\approx 7400$ ni toplotni tok v vatih, ker je $\\mathrm{W} = \\mathrm{J/s}$."
+    },
+    {
+     "id": "h",
+     "points": 2,
+     "format": "open",
+     "text": "Ali se voda v naslednjih $15{,}0\\,\\mathrm{min}$ ohladi za več, za manj ali za enako kot v prvih $15{,}0\\,\\mathrm{min}$ (za $22{,}0\\,\\mathrm{K}$)? Temperatura zraka v kuhinji je ves čas $22\\,^\\circ\\mathrm{C}$. Utemelji.",
+     "answer": "Za manj kot $22\\,\\mathrm{K}$: toplotni tok v okolico je sorazmeren razliki temperatur med vodo in zrakom, ta pa je zdaj manjša.",
+     "ways": [
+      {
+       "title": "S toplotnim tokom",
+       "text": "Toplotni tok skozi steno posode je sorazmeren razliki temperatur: $P \\propto (T - T_0)$.\n\nV prvih $15\\,\\mathrm{min}$ se je razlika med vodo in zrakom zmanjšala s $78\\,\\mathrm{K}$ na $56\\,\\mathrm{K}$, v naslednjih $15\\,\\mathrm{min}$ pa bo manjša od $56\\,\\mathrm{K}$. Toplotni tok bo zato manjši, voda v enakem času odda manj toplote in se ohladi za manj kot $22\\,\\mathrm{K}$."
+      },
+      {
+       "title": "Drugače: ocena z razmerjem",
+       "text": "Ker je toplotni tok sorazmeren razliki temperatur, se ta razlika v enakih časovnih presledkih zmanjša za enak **faktor**. V prvih $15\\,\\mathrm{min}$ je padla s $78\\,\\mathrm{K}$ na $56\\,\\mathrm{K}$, torej na $\\dfrac{56}{78} \\approx 0{,}72$ prvotne.\n\nV naslednjih $15\\,\\mathrm{min}$ bo padla na približno $0{,}72 \\cdot 56\\,\\mathrm{K} \\approx 40\\,\\mathrm{K}$, kar je ocena ohladitve za le okoli $16\\,\\mathrm{K}$ – manj kot $22\\,\\mathrm{K}$."
+      }
+     ],
+     "scoring": "1 t.: odgovor »za manj«. 1 t.: utemeljitev z manjšo razliko temperatur med vodo in okolico (manjši toplotni tok).",
+     "mistake": "Napačen je sklep »za enako, ker je čas enak«: toplotni tok ni stalen, ampak se manjša, ko se voda približuje temperaturi okolice."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 4,
+   "intro": "**Elektrika in magnetizem.** V vakuumski posodi je nad veliko vodoravno ploščo, ki je enakomerno **negativno** nabita, drobna oljna kapljica z maso $m = 1{,}50 \\cdot 10^{-15}\\,\\mathrm{kg}$ in nabojem $q = -4{,}80 \\cdot 10^{-18}\\,\\mathrm{As}$. Polje plošče je v okolici kapljice homogeno, njegova jakost je $E = 2{,}50 \\cdot 10^4\\,\\mathrm{V/m}$ in kaže navpično navzdol, proti plošči.\n\nUporabi: osnovni naboj $e_0 = 1{,}60 \\cdot 10^{-19}\\,\\mathrm{As}$, influenčna konstanta $\\varepsilon_0 = 8{,}85 \\cdot 10^{-12}\\,\\mathrm{As\\,V^{-1}\\,m^{-1}}$, $g = 9{,}81\\,\\mathrm{m\\,s^{-2}}$.",
+   "figure": "<svg viewBox=\"0 0 300 175\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"currentColor\"><title>Kapljica nad negativno nabito ploščo</title><defs><marker id=\"ah\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" fill=\"currentColor\"/></marker><marker id=\"as\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"3.5\" markerHeight=\"3.5\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" fill=\"currentColor\"/></marker></defs><rect x=\"20\" y=\"140\" width=\"260\" height=\"10\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"currentColor\"/><g font-size=\"14\"><text x=\"40\" y=\"167\">−</text><text x=\"90\" y=\"167\">−</text><text x=\"140\" y=\"167\">−</text><text x=\"190\" y=\"167\">−</text><text x=\"240\" y=\"167\">−</text></g><g stroke=\"currentColor\" stroke-width=\"1\"><line x1=\"32\" y1=\"20\" x2=\"32\" y2=\"136\" marker-end=\"url(#ah)\"/><line x1=\"272\" y1=\"20\" x2=\"272\" y2=\"136\" marker-end=\"url(#ah)\"/></g><text x=\"38\" y=\"30\">E</text><circle cx=\"150\" cy=\"115\" r=\"4\"/><text x=\"142\" y=\"119\" text-anchor=\"end\">A (kapljica)</text><circle cx=\"150\" cy=\"65\" r=\"2.5\"/><text x=\"142\" y=\"69\" text-anchor=\"end\">B</text><g stroke=\"currentColor\" stroke-width=\"0.8\" stroke-dasharray=\"3 2\"><line x1=\"154\" y1=\"115\" x2=\"230\" y2=\"115\"/><line x1=\"153\" y1=\"65\" x2=\"205\" y2=\"65\"/></g><g stroke=\"currentColor\" stroke-width=\"0.8\"><line x1=\"200\" y1=\"65\" x2=\"200\" y2=\"140\"/><line x1=\"225\" y1=\"115\" x2=\"225\" y2=\"140\"/></g><text x=\"204\" y=\"95\">6,0 cm</text><text x=\"229\" y=\"132\" font-size=\"11\">2,0 cm</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "construct",
+     "text": "Na sliki je nabita kapljica. Nariši nekaj silnic električnega polja, ki ga povzroča sama kapljica (polja plošče ne upoštevaj).",
+     "figure": "<svg viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"14\" fill=\"currentColor\"><title>Negativno nabita kapljica</title><defs><marker id=\"ah\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" fill=\"currentColor\"/></marker><marker id=\"as\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"3.5\" markerHeight=\"3.5\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" fill=\"currentColor\"/></marker></defs><circle cx=\"80\" cy=\"80\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"currentColor\"/><text x=\"75\" y=\"85\">−</text></svg>",
+     "solutionFigure": "<svg viewBox=\"0 0 160 160\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"14\" fill=\"currentColor\"><title>Silnice polja negativnega naboja</title><defs><marker id=\"ah\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" fill=\"currentColor\"/></marker><marker id=\"as\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"3.5\" markerHeight=\"3.5\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" fill=\"currentColor\"/></marker></defs><g stroke=\"currentColor\" stroke-width=\"1.2\"><line x1=\"150.0\" y1=\"80.0\" x2=\"93.0\" y2=\"80.0\" marker-end=\"url(#ah)\"/><line x1=\"129.5\" y1=\"129.5\" x2=\"89.2\" y2=\"89.2\" marker-end=\"url(#ah)\"/><line x1=\"80.0\" y1=\"150.0\" x2=\"80.0\" y2=\"93.0\" marker-end=\"url(#ah)\"/><line x1=\"30.5\" y1=\"129.5\" x2=\"70.8\" y2=\"89.2\" marker-end=\"url(#ah)\"/><line x1=\"10.0\" y1=\"80.0\" x2=\"67.0\" y2=\"80.0\" marker-end=\"url(#ah)\"/><line x1=\"30.5\" y1=\"30.5\" x2=\"70.8\" y2=\"70.8\" marker-end=\"url(#ah)\"/><line x1=\"80.0\" y1=\"10.0\" x2=\"80.0\" y2=\"67.0\" marker-end=\"url(#ah)\"/><line x1=\"129.5\" y1=\"30.5\" x2=\"89.2\" y2=\"70.8\" marker-end=\"url(#ah)\"/></g><circle cx=\"80\" cy=\"80\" r=\"9\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"currentColor\"/><text x=\"75\" y=\"85\">−</text></svg>",
+     "answer": "Silnice so radialne premice, enakomerno razporejene okoli kapljice, s puščicami **proti** kapljici (naboj je negativen).",
+     "ways": [
+      {
+       "title": "Pravilo za silnice",
+       "text": "Silnice električnega polja kažejo v smer sile na pozitiven preskusni naboj. Pozitiven naboj negativna kapljica privlači, zato silnice kažejo **proti kapljici**.\n\nKapljica je majhna (točkast naboj), zato so silnice radialne – premice skozi njeno središče, enakomerno razporejene v vse smeri. Gostota silnic je največja tik ob kapljici, kjer je polje najmočnejše."
+      }
+     ],
+     "mistake": "Puščice stran od kapljice veljajo za pozitiven naboj. Silnice se tudi ne smejo sekati ali zaviti."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Koliko odvečnih elektronov je na kapljici?",
+     "answer": "$N = 30$",
+     "ways": [
+      {
+       "title": "Z osnovnim nabojem",
+       "text": "**Podatki:** $q = -4{,}80 \\cdot 10^{-18}\\,\\mathrm{As}$, $e_0 = 1{,}60 \\cdot 10^{-19}\\,\\mathrm{As}$.\n**Iščemo:** število odvečnih elektronov $N$.\n\nNaboj je kvantiziran: $|q| = N e_0$, zato\n\n$N = \\dfrac{|q|}{e_0} = \\dfrac{4{,}80 \\cdot 10^{-18}\\,\\mathrm{As}}{1{,}60 \\cdot 10^{-19}\\,\\mathrm{As}} = 30$"
+      },
+      {
+       "title": "Drugače: preizkus z zmnožkom",
+       "text": "Če ima kapljica $30$ odvečnih elektronov, je njen naboj $30 \\cdot (-1{,}60 \\cdot 10^{-19}\\,\\mathrm{As}) = -48{,}0 \\cdot 10^{-19}\\,\\mathrm{As} = -4{,}80 \\cdot 10^{-18}\\,\\mathrm{As}$ ✓. Število mora biti celo, saj elektrona ne moremo razdeliti."
+      }
+     ],
+     "scoring": "1 t.: zveza $|q| = N e_0$. 1 t.: $N = 30$.",
+     "mistake": "Napačno je deliti narobe ($e_0/q$) ali dobiti negativno »število elektronov«: predznak pove le, da gre za presežek elektronov."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj ploskovno gostoto naboja na plošči.",
+     "answer": "$\\sigma \\approx -4{,}43 \\cdot 10^{-7}\\,\\mathrm{As/m^2}$ (velikost $4{,}43 \\cdot 10^{-7}\\,\\mathrm{As/m^2}$)",
+     "ways": [
+      {
+       "title": "Polje ene velike plošče",
+       "text": "**Podatki:** $E = 2{,}50 \\cdot 10^4\\,\\mathrm{V/m}$, $\\varepsilon_0 = 8{,}85 \\cdot 10^{-12}\\,\\mathrm{As\\,V^{-1}\\,m^{-1}}$.\n**Iščemo:** $\\sigma$.\n\nEna velika enakomerno nabita plošča ustvari na vsaki strani homogeno polje z jakostjo $E = \\dfrac{\\sigma}{2\\varepsilon_0}$ (polovica silnic gre na vsako stran). Torej\n\n$\\sigma = 2\\varepsilon_0 E = 2 \\cdot 8{,}85 \\cdot 10^{-12} \\cdot 2{,}50 \\cdot 10^4\\,\\mathrm{As/m^2} \\approx 4{,}43 \\cdot 10^{-7}\\,\\mathrm{As/m^2}$\n\nKer je plošča negativno nabita, je $\\sigma \\approx -4{,}43 \\cdot 10^{-7}\\,\\mathrm{As/m^2}$."
+      },
+      {
+       "title": "Drugače: s pretokom skozi škatlo",
+       "text": "Okoli koščka plošče s ploščino $S$ si zamislimo plosko škatlo, ki seka ploščo. Polje prebada zgornjo in spodnjo ploskev, vsako s pretokom $ES$; skupni pretok $2ES$ je enak $\\dfrac{\\sigma S}{\\varepsilon_0}$ (Gaussov zakon).\n\nIz $2ES = \\sigma S/\\varepsilon_0$ sledi $\\sigma = 2\\varepsilon_0 E \\approx 4{,}43 \\cdot 10^{-7}\\,\\mathrm{As/m^2}$."
+      }
+     ],
+     "scoring": "1 t.: zveza $E = \\sigma/(2\\varepsilon_0)$ za eno ploščo. 1 t.: $|\\sigma| \\approx 4{,}43 \\cdot 10^{-7}\\,\\mathrm{As/m^2}$.",
+     "mistake": "Zveza $E = \\sigma/\\varepsilon_0$ velja za polje med ploščama kondenzatorja, ne za eno samo ploščo; z njo bi dobili dvakrat premajhno gostoto $2{,}21 \\cdot 10^{-7}\\,\\mathrm{As/m^2}$."
+    },
+    {
+     "id": "d",
+     "points": 2,
+     "format": "open",
+     "text": "Točka A je $2{,}0\\,\\mathrm{cm}$, točka B pa $6{,}0\\,\\mathrm{cm}$ nad ploščo, navpično nad A (slika). Kolikšna je napetost med točkama A in B? V kateri točki je električni potencial višji?",
+     "answer": "$U = 1{,}0 \\cdot 10^3\\,\\mathrm{V}$; višji potencial je v točki B.",
+     "ways": [
+      {
+       "title": "V homogenem polju",
+       "text": "**Podatki:** $E = 2{,}50 \\cdot 10^4\\,\\mathrm{V/m}$, razdalja $d = 6{,}0\\,\\mathrm{cm} - 2{,}0\\,\\mathrm{cm} = 4{,}0\\,\\mathrm{cm} = 0{,}040\\,\\mathrm{m}$ v smeri polja.\n**Iščemo:** $U_{BA}$.\n\nV homogenem polju je $U = E d = 2{,}50 \\cdot 10^4\\,\\mathrm{V/m} \\cdot 0{,}040\\,\\mathrm{m} = 1000\\,\\mathrm{V}$.\n\nPolje kaže od višjega potenciala k nižjemu, torej navzdol – zato ima višji potencial točka B (dlje od negativne plošče)."
+      },
+      {
+       "title": "Drugače: s potencialom glede na ploščo",
+       "text": "Če ploščo vzamemo za ničlo potenciala, je potencial na višini $h$ enak $\\varphi = E h$ (raste z višino, ker polje kaže navzdol).\n\n$\\varphi_A = 2{,}50 \\cdot 10^4 \\cdot 0{,}020\\,\\mathrm{V} = 500\\,\\mathrm{V}$, $\\varphi_B = 2{,}50 \\cdot 10^4 \\cdot 0{,}060\\,\\mathrm{V} = 1500\\,\\mathrm{V}$.\n\n$U = \\varphi_B - \\varphi_A = 1500\\,\\mathrm{V} - 500\\,\\mathrm{V} = 1000\\,\\mathrm{V}$."
+      }
+     ],
+     "scoring": "1 t.: $U = Ed$ z $d = 4{,}0\\,\\mathrm{cm}$. 1 t.: $U = 1{,}0\\,\\mathrm{kV}$ in višji potencial v B.",
+     "mistake": "Napačno je vzeti $d = 6{,}0\\,\\mathrm{cm}$ ali $8{,}0\\,\\mathrm{cm}$: pri napetosti med A in B šteje le njuna medsebojna razdalja v smeri polja."
+    },
+    {
+     "id": "e",
+     "points": 1,
+     "format": "open",
+     "text": "Izračunaj velikost električne sile na kapljico in zapiši njeno smer.",
+     "answer": "$F_e = 1{,}20 \\cdot 10^{-13}\\,\\mathrm{N}$, navpično navzgor",
+     "ways": [
+      {
+       "title": "Iz jakosti polja",
+       "text": "**Podatki:** $|q| = 4{,}80 \\cdot 10^{-18}\\,\\mathrm{As}$, $E = 2{,}50 \\cdot 10^4\\,\\mathrm{V/m}$.\n**Iščemo:** $F_e$.\n\n$F_e = |q| E = 4{,}80 \\cdot 10^{-18} \\cdot 2{,}50 \\cdot 10^4\\,\\mathrm{N} = 1{,}20 \\cdot 10^{-13}\\,\\mathrm{N}$\n\nNa negativen naboj deluje sila nasprotno polju, torej **navzgor** – negativna plošča kapljico odbija. Sila je približno osemkrat večja od teže kapljice ($1{,}47 \\cdot 10^{-14}\\,\\mathrm{N}$)."
+      }
+     ],
+     "mistake": "Smer »navzdol, v smeri polja« velja le za pozitiven naboj."
+    },
+    {
+     "id": "f",
+     "points": 3,
+     "format": "open",
+     "text": "Kapljica se premakne iz točke A v točko B. Izračunaj delo električne sile v joulih in v elektronvoltih.",
+     "answer": "$A_e = 4{,}80 \\cdot 10^{-15}\\,\\mathrm{J} = 3{,}00 \\cdot 10^4\\,\\mathrm{eV} = 30{,}0\\,\\mathrm{keV}$ (pozitivno)",
+     "ways": [
+      {
+       "title": "S silo in potjo",
+       "text": "**Podatki:** $F_e = 1{,}20 \\cdot 10^{-13}\\,\\mathrm{N}$ (navzgor), premik $s = 0{,}040\\,\\mathrm{m}$ navzgor, $e_0 = 1{,}60 \\cdot 10^{-19}\\,\\mathrm{As}$.\n**Iščemo:** $A_e$ v $\\mathrm{J}$ in $\\mathrm{eV}$.\n\nSila in premik kažeta v isto smer, zato je delo pozitivno:\n\n$A_e = F_e s = 1{,}20 \\cdot 10^{-13}\\,\\mathrm{N} \\cdot 0{,}040\\,\\mathrm{m} = 4{,}80 \\cdot 10^{-15}\\,\\mathrm{J}$\n\nPretvorba: $1\\,\\mathrm{eV} = 1{,}60 \\cdot 10^{-19}\\,\\mathrm{J}$, zato\n\n$A_e = \\dfrac{4{,}80 \\cdot 10^{-15}}{1{,}60 \\cdot 10^{-19}}\\,\\mathrm{eV} = 3{,}00 \\cdot 10^4\\,\\mathrm{eV} = 30{,}0\\,\\mathrm{keV}$"
+      },
+      {
+       "title": "Drugače: z napetostjo",
+       "text": "Delo električne sile je $A_e = q(\\varphi_A - \\varphi_B) = (-4{,}80 \\cdot 10^{-18}\\,\\mathrm{As}) \\cdot (-1000\\,\\mathrm{V}) = 4{,}80 \\cdot 10^{-15}\\,\\mathrm{J}$.\n\nV elektronvoltih je račun še krajši: kapljica nosi $30$ osnovnih nabojev in se premakne med točkama z napetostjo $1000\\,\\mathrm{V}$, zato je $A_e = 30 \\cdot 1000\\,\\mathrm{eV} = 30\\,000\\,\\mathrm{eV}$."
+      }
+     ],
+     "scoring": "1 t.: $A_e = F_e s$ ali $A_e = qU$. 1 t.: $4{,}80 \\cdot 10^{-15}\\,\\mathrm{J}$ s pozitivnim predznakom (sila v smeri premika). 1 t.: $3{,}00 \\cdot 10^4\\,\\mathrm{eV}$.",
+     "mistake": "Napačno je pri pretvorbi v eV množiti z $1{,}60 \\cdot 10^{-19}$ namesto deliti – dobili bi nesmiselno majhno število."
+    },
+    {
+     "id": "g",
+     "points": 2,
+     "format": "open",
+     "text": "Kapljica je v točki A mirovala. S kolikšno hitrostjo pride v točko B? Upoštevaj tudi težo.",
+     "answer": "$v \\approx 2{,}37\\,\\mathrm{m/s}$",
+     "ways": [
+      {
+       "title": "Z energijskim zakonom",
+       "text": "**Podatki:** $m = 1{,}50 \\cdot 10^{-15}\\,\\mathrm{kg}$, $v_A = 0$, $A_e = 4{,}80 \\cdot 10^{-15}\\,\\mathrm{J}$, $h = 0{,}040\\,\\mathrm{m}$, $g = 9{,}81\\,\\mathrm{m\\,s^{-2}}$.\n**Iščemo:** $v_B$.\n\nKinetična energija se poveča za delo vseh sil. Teža kaže navzdol, kapljica se dvigne, zato je delo teže negativno:\n\n$A_g = -mgh = -1{,}50 \\cdot 10^{-15} \\cdot 9{,}81 \\cdot 0{,}040\\,\\mathrm{J} \\approx -5{,}89 \\cdot 10^{-16}\\,\\mathrm{J}$\n\n$W_k = A_e + A_g = 4{,}80 \\cdot 10^{-15}\\,\\mathrm{J} - 0{,}589 \\cdot 10^{-15}\\,\\mathrm{J} \\approx 4{,}21 \\cdot 10^{-15}\\,\\mathrm{J}$\n\n$v_B = \\sqrt{\\dfrac{2W_k}{m}} = \\sqrt{\\dfrac{2 \\cdot 4{,}21 \\cdot 10^{-15}}{1{,}50 \\cdot 10^{-15}}}\\,\\mathrm{m/s} \\approx 2{,}37\\,\\mathrm{m/s}$"
+      },
+      {
+       "title": "Drugače: s pospeškom",
+       "text": "Rezultanta sil navzgor: $F = F_e - mg = 1{,}20 \\cdot 10^{-13}\\,\\mathrm{N} - 1{,}47 \\cdot 10^{-14}\\,\\mathrm{N} \\approx 1{,}053 \\cdot 10^{-13}\\,\\mathrm{N}$.\n\nPospešek: $a = \\dfrac{F}{m} = \\dfrac{1{,}053 \\cdot 10^{-13}}{1{,}50 \\cdot 10^{-15}}\\,\\mathrm{m\\,s^{-2}} \\approx 70{,}2\\,\\mathrm{m\\,s^{-2}}$.\n\n$v_B = \\sqrt{2ah} = \\sqrt{2 \\cdot 70{,}2 \\cdot 0{,}040}\\,\\mathrm{m/s} \\approx 2{,}37\\,\\mathrm{m/s}$."
+      }
+     ],
+     "scoring": "1 t.: energijski zakon z delom električne sile in (negativnim) delom teže. 1 t.: $v_B \\approx 2{,}37\\,\\mathrm{m/s}$.",
+     "mistake": "Kdor pozabi na težo, dobi $\\sqrt{2 \\cdot 4{,}80 \\cdot 10^{-15}/1{,}50 \\cdot 10^{-15}}\\,\\mathrm{m/s} \\approx 2{,}53\\,\\mathrm{m/s}$, kar ni pravilno, ker teža pri dviganju opravlja negativno delo."
+    },
+    {
+     "id": "h",
+     "points": 2,
+     "format": "construct",
+     "text": "Slika kaže močno povečano okolico kapljice. V točkah C in D sta v istem merilu narisana vektor jakosti polja plošče $\\vec E_p$ in vektor jakosti polja kapljice $\\vec E_k$. V obeh točkah grafično določi vektor jakosti skupnega električnega polja.",
+     "figure": "<svg viewBox=\"0 0 300 230\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"currentColor\"><title>Vektorja jakosti polja v točkah C in D</title><defs><marker id=\"ah\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" fill=\"currentColor\"/></marker><marker id=\"as\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"3.5\" markerHeight=\"3.5\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" fill=\"currentColor\"/></marker></defs><g stroke=\"currentColor\" stroke-width=\"1.6\"><line x1=\"210\" y1=\"80\" x2=\"210\" y2=\"120\" marker-end=\"url(#ah)\"/><line x1=\"210\" y1=\"80\" x2=\"162\" y2=\"80\" marker-end=\"url(#ah)\"/><line x1=\"150\" y1=\"165\" x2=\"150\" y2=\"205\" marker-end=\"url(#ah)\"/><line x1=\"150\" y1=\"165\" x2=\"150\" y2=\"141\" marker-end=\"url(#ah)\"/></g><circle cx=\"150\" cy=\"80\" r=\"7\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"currentColor\"/><text x=\"145\" y=\"85\">−</text><circle cx=\"210\" cy=\"80\" r=\"2.5\"/><circle cx=\"150\" cy=\"165\" r=\"2.5\"/><text x=\"216\" y=\"76\">C</text><text x=\"132\" y=\"170\">D</text><text x=\"214\" y=\"118\">Eₚ</text><text x=\"168\" y=\"74\">Eₖ</text><text x=\"156\" y=\"203\">Eₚ</text><text x=\"156\" y=\"148\">Eₖ</text></svg>",
+     "solutionFigure": "<svg viewBox=\"0 0 300 230\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"currentColor\"><title>Vsoti vektorjev v točkah C in D</title><defs><marker id=\"ah\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" fill=\"currentColor\"/></marker><marker id=\"as\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"3.5\" markerHeight=\"3.5\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" fill=\"currentColor\"/></marker></defs><g stroke=\"currentColor\" stroke-width=\"1.6\"><line x1=\"210\" y1=\"80\" x2=\"210\" y2=\"120\" marker-end=\"url(#ah)\"/><line x1=\"210\" y1=\"80\" x2=\"162\" y2=\"80\" marker-end=\"url(#ah)\"/><line x1=\"150\" y1=\"165\" x2=\"150\" y2=\"205\" marker-end=\"url(#ah)\"/><line x1=\"150\" y1=\"165\" x2=\"150\" y2=\"141\" marker-end=\"url(#ah)\"/></g><circle cx=\"150\" cy=\"80\" r=\"7\" fill=\"currentColor\" fill-opacity=\"0.25\" stroke=\"currentColor\"/><text x=\"145\" y=\"85\">−</text><circle cx=\"210\" cy=\"80\" r=\"2.5\"/><circle cx=\"150\" cy=\"165\" r=\"2.5\"/><text x=\"216\" y=\"76\">C</text><text x=\"132\" y=\"170\">D</text><text x=\"214\" y=\"118\">Eₚ</text><text x=\"168\" y=\"74\">Eₖ</text><text x=\"156\" y=\"203\">Eₚ</text><text x=\"156\" y=\"148\">Eₖ</text><g stroke=\"currentColor\" stroke-width=\"0.8\" stroke-dasharray=\"3 2\"><line x1=\"210\" y1=\"120\" x2=\"162\" y2=\"120\"/><line x1=\"162\" y1=\"80\" x2=\"162\" y2=\"120\"/></g><g stroke=\"currentColor\" stroke-width=\"3\"><line x1=\"210\" y1=\"80\" x2=\"164\" y2=\"118\" marker-end=\"url(#as)\"/><line x1=\"170\" y1=\"165\" x2=\"170\" y2=\"181\" marker-end=\"url(#as)\"/></g><line x1=\"150\" y1=\"165\" x2=\"170\" y2=\"165\" stroke=\"currentColor\" stroke-width=\"0.6\" stroke-dasharray=\"2 2\"/><text x=\"158\" y=\"130\" text-anchor=\"end\">E (v C)</text><text x=\"176\" y=\"182\">E (v D)</text></svg>",
+     "answer": "V C: diagonala paralelograma, poševno navzdol proti kapljici (levo navzdol). V D: vektorja sta nasprotna, vsota kaže navzdol in je krajša od $\\vec E_p$ (razlika dolžin).",
+     "ways": [
+      {
+       "title": "S paralelogramom",
+       "text": "Jakosti polj se seštevajo vektorsko: $\\vec E = \\vec E_p + \\vec E_k$.\n\n**Točka C:** vektorja sta pravokotna. Iz konice $\\vec E_p$ narišemo vzporednico k $\\vec E_k$, iz konice $\\vec E_k$ pa vzporednico k $\\vec E_p$. Diagonala dobljenega pravokotnika iz C je vsota; kaže levo navzdol in je daljša od obeh vektorjev (dolžina $\\sqrt{E_p^2 + E_k^2}$).\n\n**Točka D:** vektorja ležita na isti premici in kažeta nasprotno ($\\vec E_p$ navzdol, $\\vec E_k$ navzgor, krajši). Vsota kaže navzdol, njena dolžina je razlika dolžin."
+      },
+      {
+       "title": "Drugače: vektor na vektor",
+       "text": "Vektorje lahko seštejemo tudi tako, da začetek drugega postavimo v konico prvega: v C od konice $\\vec E_p$ narišemo $\\vec E_k$ (enako dolg kot v sliki, vodoravno levo); vsota je puščica od C do konice premaknjenega $\\vec E_k$.\n\nV D od konice $\\vec E_p$ narišemo $\\vec E_k$ navzgor; konica pade nazaj med D in konico $\\vec E_p$, zato vsota kaže navzdol in je krajša. Na sliki je dolžina $\\vec E_k$ v D približno $0{,}6$ dolžine $\\vec E_p$, vsota je torej okoli $0{,}4$ dolžine $\\vec E_p$."
+      }
+     ],
+     "scoring": "1 t.: pravilna vsota v C (diagonala paralelograma). 1 t.: pravilna vsota v D (navzdol, dolžina enaka razliki).",
+     "mistake": "Napačno je sešteti le dolžini (v D bi bila vsota daljša od $\\vec E_p$) – vektorja v D kažeta nasprotno, zato se delno odštejeta."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 5,
+   "intro": "**Nihanje, valovanje in optika.** Telo z maso $m = 0{,}500\\,\\mathrm{kg}$ je pripeto na vodoravno vzmet s koeficientom $k = 50{,}0\\,\\mathrm{N/m}$ in niha po vodoravni podlagi brez trenja. Največja kinetična energija telesa med nihanjem je $0{,}0900\\,\\mathrm{J}$. Na razdalji $D = 30{,}0\\,\\mathrm{cm}$ od telesa v ravnovesni legi stoji trdna stena (slika); pri tem nihanju se je telo ne dotakne.",
+   "figure": "<svg viewBox=\"0 0 340 160\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"sans-serif\" font-size=\"12\" fill=\"currentColor\"><title>Vzmetno nihalo in stena</title><defs><marker id=\"dm\" viewBox=\"0 0 10 10\" refX=\"5\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0,0 L10,5 L0,10 z\" fill=\"currentColor\"/></marker></defs><rect x=\"10\" y=\"50\" width=\"10\" height=\"70\" fill=\"currentColor\" fill-opacity=\"0.3\" stroke=\"currentColor\"/><rect x=\"310\" y=\"50\" width=\"10\" height=\"70\" fill=\"currentColor\" fill-opacity=\"0.3\" stroke=\"currentColor\"/><line x1=\"10\" y1=\"120\" x2=\"320\" y2=\"120\" stroke=\"currentColor\" stroke-width=\"1.5\"/><path d=\"M20,100 L40,100 L47.5,92 L57.5,108 L67.5,92 L77.5,108 L87.5,92 L97.5,108 L107.5,92 L117.5,108 L120,100\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"/><rect x=\"120\" y=\"82\" width=\"40\" height=\"38\" fill=\"currentColor\" fill-opacity=\"0.2\" stroke=\"currentColor\" stroke-width=\"1.5\"/><text x=\"134\" y=\"106\">m</text><text x=\"62\" y=\"84\">k</text><line x1=\"160\" y1=\"40\" x2=\"160\" y2=\"135\" stroke=\"currentColor\" stroke-dasharray=\"4 3\"/><text x=\"122\" y=\"150\">ravnovesna lega</text><line x1=\"162\" y1=\"62\" x2=\"308\" y2=\"62\" stroke=\"currentColor\" marker-start=\"url(#dm)\" marker-end=\"url(#dm)\"/><text x=\"196\" y=\"56\">D = 30,0 cm</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Zapiši enačbo za nihajni čas vzmetnega nihala in pojasni, kaj pomenijo količine v njej.",
+     "answer": "$t_0 = 2\\pi\\sqrt{\\dfrac{m}{k}}$; $t_0$ nihajni čas, $m$ masa telesa, $k$ koeficient vzmeti.",
+     "ways": [
+      {
+       "title": "Enačba in pomen",
+       "text": "$t_0 = 2\\pi\\sqrt{\\dfrac{m}{k}}$\n\n- $t_0$ – nihajni čas (čas enega celega nihaja), v sekundah;\n- $m$ – masa nihajočega telesa, v kilogramih (maso vzmeti zanemarimo);\n- $k$ – koeficient vzmeti (sila na enoto raztezka), v $\\mathrm{N/m}$.\n\nNihajni čas ni odvisen od amplitude."
+      }
+     ],
+     "mistake": "Zamenjava $\\sqrt{k/m}$ in $\\sqrt{m/k}$ je pogosta: težje telo niha počasneje, zato mora biti $m$ v števcu."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Izračunaj nihajni čas nihala.",
+     "answer": "$t_0 \\approx 0{,}628\\,\\mathrm{s}$",
+     "ways": [
+      {
+       "title": "Vstavimo v enačbo",
+       "text": "**Podatki:** $m = 0{,}500\\,\\mathrm{kg}$, $k = 50{,}0\\,\\mathrm{N/m}$.\n**Iščemo:** $t_0$.\n\n$t_0 = 2\\pi\\sqrt{\\dfrac{0{,}500}{50{,}0}}\\,\\mathrm{s} = 2\\pi\\sqrt{0{,}0100}\\,\\mathrm{s} = 2\\pi \\cdot 0{,}100\\,\\mathrm{s} \\approx 0{,}628\\,\\mathrm{s}$"
+      }
+     ],
+     "mistake": "Pozabljen koren da $2\\pi \\cdot 0{,}01\\,\\mathrm{s} \\approx 0{,}063\\,\\mathrm{s}$, kar je desetkrat premalo."
+    },
+    {
+     "id": "c",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj amplitudo nihanja.",
+     "answer": "$x_0 = 6{,}00\\,\\mathrm{cm}$",
+     "ways": [
+      {
+       "title": "Z ohranitvijo energije",
+       "text": "**Podatki:** $W_{k,\\max} = 0{,}0900\\,\\mathrm{J}$, $k = 50{,}0\\,\\mathrm{N/m}$.\n**Iščemo:** amplitudo $x_0$.\n\nBrez trenja je polna energija nihala stalna. V skrajni legi je vsa energija prožnostna: $W_{pr,\\max} = \\tfrac12 k x_0^2 = W_{k,\\max}$.\n\n$x_0 = \\sqrt{\\dfrac{2W_{k,\\max}}{k}} = \\sqrt{\\dfrac{2 \\cdot 0{,}0900}{50{,}0}}\\,\\mathrm{m} = \\sqrt{0{,}00360}\\,\\mathrm{m} = 0{,}0600\\,\\mathrm{m} = 6{,}00\\,\\mathrm{cm}$"
+      },
+      {
+       "title": "Drugače: s ploščino pod grafom sile vzmeti",
+       "text": "Sila vzmeti je premo sorazmerna z odmikom, $F = kx$, zato je graf $F(x)$ premica skozi izhodišče. Delo, ki ga je treba opraviti, da vzmet raztegnemo (ali stisnemo) do amplitude, je ploščina trikotnika pod grafom: $W_{pr} = \\tfrac12 \\cdot x_0 \\cdot kx_0$. To je vsa energija nihala, torej je enaka največji kinetični energiji.\n\n$x_0^2 = \\dfrac{2W_{k,\\max}}{k} = \\dfrac{2 \\cdot 0{,}0900\\,\\mathrm{J}}{50{,}0\\,\\mathrm{N/m}} = 0{,}00360\\,\\mathrm{m^2}$, $x_0 = 0{,}0600\\,\\mathrm{m} = 6{,}00\\,\\mathrm{cm}$.\n\nPreizkus: največja sila vzmeti je $kx_0 = 50{,}0\\,\\mathrm{N/m} \\cdot 0{,}0600\\,\\mathrm{m} = 3{,}00\\,\\mathrm{N}$, ploščina trikotnika $\\tfrac12 \\cdot 0{,}0600\\,\\mathrm{m} \\cdot 3{,}00\\,\\mathrm{N} = 0{,}0900\\,\\mathrm{J}$ ✓."
+      }
+     ],
+     "scoring": "1 t.: $\\tfrac12 k x_0^2 = W_{k,\\max}$. 1 t.: $x_0 = 6{,}00\\,\\mathrm{cm}$.",
+     "mistake": "Napaka je izpustiti faktor $\\tfrac12$ ($x_0 = \\sqrt{W/k} \\approx 4{,}24\\,\\mathrm{cm}$)."
+    },
+    {
+     "id": "d",
+     "points": 3,
+     "format": "open",
+     "text": "Kolikšna je hitrost telesa v skrajni legi in kolikšna v ravnovesni legi? Odgovora utemelji.",
+     "answer": "V skrajni legi $v = 0$; v ravnovesni legi $v_0 = 0{,}600\\,\\mathrm{m/s}$.",
+     "ways": [
+      {
+       "title": "Z energijo",
+       "text": "**Podatki:** $m = 0{,}500\\,\\mathrm{kg}$, $W_{k,\\max} = 0{,}0900\\,\\mathrm{J}$.\n**Iščemo:** hitrosti v skrajni in ravnovesni legi.\n\n**Skrajna lega:** telo se tu ustavi in obrne, vsa energija je prožnostna, kinetična je nič, zato je $v = 0$.\n\n**Ravnovesna lega:** vzmet ni raztegnjena, prožnostna energija je nič in vsa energija je kinetična – hitrost je največja:\n\n$v_0 = \\sqrt{\\dfrac{2W_{k,\\max}}{m}} = \\sqrt{\\dfrac{2 \\cdot 0{,}0900}{0{,}500}}\\,\\mathrm{m/s} = \\sqrt{0{,}360}\\,\\mathrm{m/s} = 0{,}600\\,\\mathrm{m/s}$"
+      },
+      {
+       "title": "Drugače: s harmoničnim gibanjem",
+       "text": "Pri harmoničnem nihanju je $x = x_0\\cos\\omega t$ in $v = -x_0\\omega\\sin\\omega t$. V skrajni legi ($\\cos\\omega t = \\pm1$) je $\\sin\\omega t = 0$, torej $v = 0$.\n\nV ravnovesni legi ($x = 0$) je $|\\sin\\omega t| = 1$ in $v_0 = x_0\\omega = 0{,}0600\\,\\mathrm{m} \\cdot 10{,}0\\,\\mathrm{s^{-1}} = 0{,}600\\,\\mathrm{m/s}$."
+      }
+     ],
+     "scoring": "1 t.: $v = 0$ v skrajni legi z utemeljitvijo (obrat gibanja, vsa energija prožnostna). 1 t.: v ravnovesni legi je vsa energija kinetična. 1 t.: $v_0 = 0{,}600\\,\\mathrm{m/s}$.",
+     "mistake": "Napačno je sklepati, da je v skrajni legi največja hitrost, ker je tam največja sila: tam je največji **pospešek**, hitrost pa je nič."
+    },
+    {
+     "id": "e",
+     "points": 3,
+     "format": "open",
+     "text": "Telo spustimo iz skrajne lege. Koliko časa mine, da je kinetična energija telesa prvič enaka prožnostni energiji vzmeti?",
+     "answer": "$t = \\dfrac{t_0}{8} \\approx 0{,}0785\\,\\mathrm{s}$",
+     "ways": [
+      {
+       "title": "Z lego pri enakih energijah",
+       "text": "**Podatki:** $x_0 = 0{,}0600\\,\\mathrm{m}$, $t_0 = 0{,}628\\,\\mathrm{s}$, gibanje iz skrajne lege: $x = x_0\\cos\\omega t$, $\\omega = \\dfrac{2\\pi}{t_0}$.\n**Iščemo:** prvi čas $t$, ko je $W_k = W_{pr}$.\n\nČe sta energiji enaki, je vsaka polovica polne energije: $\\tfrac12 k x^2 = \\tfrac12 \\cdot \\tfrac12 k x_0^2$, zato $x = \\dfrac{x_0}{\\sqrt2} \\approx 0{,}0424\\,\\mathrm{m}$.\n\n$\\cos\\omega t = \\dfrac{1}{\\sqrt2}$ prvič pri $\\omega t = \\dfrac{\\pi}{4}$, torej\n\n$t = \\dfrac{\\pi/4}{2\\pi/t_0} = \\dfrac{t_0}{8} = \\dfrac{0{,}628\\,\\mathrm{s}}{8} \\approx 0{,}0785\\,\\mathrm{s}$"
+      },
+      {
+       "title": "Drugače: s kroženjem",
+       "text": "Harmonično nihanje je senca enakomernega kroženja. Iz skrajne lege (kot $0$) do lege $x_0/\\sqrt2$ se točka na krogu zavrti za $45^\\circ$, kar je osmina polnega kroga.\n\nOsmina nihajnega časa: $\\dfrac{0{,}628\\,\\mathrm{s}}{8} \\approx 0{,}0785\\,\\mathrm{s}$ ($\\approx 78{,}5\\,\\mathrm{ms}$).\n\nPreizkus: pri $\\omega t = 45^\\circ$ je $v = x_0\\omega\\sin 45^\\circ \\approx 0{,}424\\,\\mathrm{m/s}$ in $W_k = \\tfrac12 \\cdot 0{,}500 \\cdot 0{,}424^2\\,\\mathrm{J} \\approx 0{,}045\\,\\mathrm{J}$ – polovica od $0{,}0900\\,\\mathrm{J}$ ✓."
+      }
+     ],
+     "scoring": "1 t.: $W_k = W_{pr}$ pomeni $x = x_0/\\sqrt2$. 1 t.: $\\cos\\omega t = 1/\\sqrt2$, $\\omega t = \\pi/4$. 1 t.: $t \\approx 0{,}0785\\,\\mathrm{s}$.",
+     "mistake": "Napačen je odgovor $t = t_0/4$ ali $x = x_0/2$: energija je sorazmerna s **kvadratom** odmika, zato je pri polovici energije odmik $x_0/\\sqrt2$, ne $x_0/2$. Pri $t_0/4$ je telo že v ravnovesni legi."
+    },
+    {
+     "id": "f",
+     "points": 3,
+     "format": "open",
+     "text": "Telo odpnemo od vzmeti, tako da se je le še dotika. Z njim stisnemo vzmet za $6{,}00\\,\\mathrm{cm}$ in ga spustimo. Telo se v ravnovesni legi loči od vzmeti, prosto drsi do stene, se od nje prožno odbije, se vrne, stisne vzmet in se spet odbije od nje. Kolikšen je nihajni čas tega gibanja?",
+     "answer": "$t = \\dfrac{t_0}{2} + \\dfrac{2D}{v_0} \\approx 0{,}314\\,\\mathrm{s} + 1{,}00\\,\\mathrm{s} \\approx 1{,}31\\,\\mathrm{s}$",
+     "ways": [
+      {
+       "title": "Dva dela gibanja",
+       "text": "**Podatki:** $t_0 = 0{,}628\\,\\mathrm{s}$, stisk $6{,}00\\,\\mathrm{cm}$ (enako kot amplituda prej, zato $v_0 = 0{,}600\\,\\mathrm{m/s}$), $D = 0{,}300\\,\\mathrm{m}$.\n**Iščemo:** čas enega celega cikla.\n\n1. **Ob vzmeti:** telo je v stiku z vzmetjo le na strani stiskanja – od ravnovesne lege do skrajne in nazaj. To je polovica nihaja: $\\dfrac{t_0}{2} = 0{,}314\\,\\mathrm{s}$.\n2. **Prosto drsenje:** brez trenja ima telo stalno hitrost $v_0 = 0{,}600\\,\\mathrm{m/s}$; pot do stene in nazaj je $2D = 0{,}600\\,\\mathrm{m}$, čas $\\dfrac{2D}{v_0} = \\dfrac{0{,}600\\,\\mathrm{m}}{0{,}600\\,\\mathrm{m/s}} = 1{,}00\\,\\mathrm{s}$. Prožni odboj ohrani velikost hitrosti.\n\n$t = 0{,}314\\,\\mathrm{s} + 1{,}00\\,\\mathrm{s} \\approx 1{,}31\\,\\mathrm{s}$"
+      },
+      {
+       "title": "Drugače: časovni potek enega cikla",
+       "text": "Začnimo v ravnovesni legi, ko telo zapusti vzmet s hitrostjo $0{,}600\\,\\mathrm{m/s}$ proti steni:\n\n| odsek | čas |\n|---|---|\n| do stene ($0{,}300\\,\\mathrm{m}$) | $0{,}500\\,\\mathrm{s}$ |\n| od stene nazaj do vzmeti | $0{,}500\\,\\mathrm{s}$ |\n| stiskanje vzmeti do $6{,}00\\,\\mathrm{cm}$ | $t_0/4 = 0{,}157\\,\\mathrm{s}$ |\n| raztezanje do ravnovesne lege | $t_0/4 = 0{,}157\\,\\mathrm{s}$ |\n\nSkupaj $0{,}500 + 0{,}500 + 0{,}157 + 0{,}157 = 1{,}314\\,\\mathrm{s} \\approx 1{,}31\\,\\mathrm{s}$. Gibanje je periodično, a ne harmonično."
+      }
+     ],
+     "scoring": "1 t.: čas ob vzmeti je $t_0/2$. 1 t.: čas prostega drsenja $2D/v_0 = 1{,}00\\,\\mathrm{s}$. 1 t.: $t \\approx 1{,}31\\,\\mathrm{s}$.",
+     "mistake": "Napaka je šteti cel nihajni čas vzmeti $t_0$: telo vzmeti nikoli ne raztegne, ker se od nje loči v ravnovesni legi. Napačno je tudi pozabiti pot nazaj od stene (le $D/v_0$)."
+    },
+    {
+     "id": "g",
+     "points": 2,
+     "format": "open",
+     "text": "Steno premaknemo bliže, na razdaljo $15{,}0\\,\\mathrm{cm}$ od ravnovesne lege. Ali se nihajni čas gibanja iz prejšnjega dela razpolovi? Utemelji.",
+     "answer": "Ne. Razpolovi se le čas prostega drsenja (na $0{,}500\\,\\mathrm{s}$); čas ob vzmeti ($0{,}314\\,\\mathrm{s}$) ostane enak, zato je novi nihajni čas $\\approx 0{,}81\\,\\mathrm{s}$, ne $0{,}66\\,\\mathrm{s}$.",
+     "ways": [
+      {
+       "title": "Po delih gibanja",
+       "text": "Hitrost, s katero telo zapusti vzmet, je odvisna le od stiska vzmeti, ne od položaja stene: še vedno $0{,}600\\,\\mathrm{m/s}$. Tudi čas stika z vzmetjo ($t_0/2 = 0{,}314\\,\\mathrm{s}$) je enak, saj je odvisen le od $m$ in $k$.\n\nSpremeni se samo pot prostega drsenja: $2D' = 0{,}300\\,\\mathrm{m}$, čas $0{,}500\\,\\mathrm{s}$.\n\n$t' = 0{,}314\\,\\mathrm{s} + 0{,}500\\,\\mathrm{s} \\approx 0{,}814\\,\\mathrm{s}$, kar je več od polovice prejšnjega ($1{,}314\\,\\mathrm{s} : 2 \\approx 0{,}657\\,\\mathrm{s}$)."
+      },
+      {
+       "title": "Drugače: mejni primer",
+       "text": "Če bi steno potisnili čisto do ravnovesne lege ($D = 0$), prostega drsenja ne bi bilo, nihajni čas pa ne bi bil nič, temveč $t_0/2 = 0{,}314\\,\\mathrm{s}$. Nihajni čas torej ni sorazmeren z $D$, ampak se z njim spreminja linearno z začetno vrednostjo $t_0/2$: $t = t_0/2 + 2D/v_0$. Razpolovitev $D$ zato ne razpolovi nihajnega časa."
+      }
+     ],
+     "scoring": "1 t.: odgovor »ne« z ugotovitvijo, da se spremeni le čas prostega drsenja. 1 t.: novi nihajni čas $\\approx 0{,}81\\,\\mathrm{s}$ ali utemeljitev, da čas ob vzmeti ostane $0{,}314\\,\\mathrm{s}$.",
+     "mistake": "Napačen je sklep »polovična razdalja, polovični čas«: del gibanja ob vzmeti od razdalje do stene ni odvisen."
+    }
+   ]
+  },
+  {
+   "pola": 2,
+   "n": 6,
+   "intro": "**Moderna fizika in astronomija.** Zemlja kroži okoli Sonca po približno krožni tirnici. Obhodni čas Zemlje je $365{,}25$ dneva.\n\nUporabi: gravitacijska konstanta $G = 6{,}67 \\cdot 10^{-11}\\,\\mathrm{N\\,m^2\\,kg^{-2}}$, hitrost svetlobe $c = 3{,}00 \\cdot 10^8\\,\\mathrm{m/s}$, masa Zemlje $m_Z = 5{,}97 \\cdot 10^{24}\\,\\mathrm{kg}$, polmer Sonca $r_S = 6{,}96 \\cdot 10^8\\,\\mathrm{m}$.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Naštej planete Osončja, ki krožijo okoli Sonca bliže kot Zemlja.",
+     "answer": "Merkur in Venera.",
+     "ways": [
+      {
+       "title": "Vrstni red planetov",
+       "text": "Planeti po oddaljenosti od Sonca: Merkur, Venera, Zemlja, Mars, Jupiter, Saturn, Uran, Neptun. Bliže kot Zemlja sta torej le **Merkur** in **Venera**. Zato ju z Zemlje vidimo vedno blizu Sonca na nebu – zvečer ali zjutraj, nikoli opolnoči."
+      }
+     ],
+     "mistake": "Mars ni bliže Soncu kot Zemlja: je četrti planet. Tudi Luna ni planet, ampak naravni satelit Zemlje."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Zapiši gravitacijski zakon in pojasni količine v njem.",
+     "answer": "$F_g = G\\dfrac{m_1 m_2}{r^2}$",
+     "ways": [
+      {
+       "title": "Zakon in pomen količin",
+       "text": "$F_g = G\\dfrac{m_1 m_2}{r^2}$\n\n- $F_g$ – velikost privlačne sile med telesoma (v $\\mathrm{N}$); na vsako telo deluje enako velika sila, usmerjena proti drugemu telesu;\n- $m_1$, $m_2$ – masi teles (v $\\mathrm{kg}$);\n- $r$ – razdalja med središčema teles (v $\\mathrm{m}$);\n- $G$ – gravitacijska konstanta, $6{,}67 \\cdot 10^{-11}\\,\\mathrm{N\\,m^2\\,kg^{-2}}$."
+      }
+     ],
+     "mistake": "Razdalja v imenovalcu je na kvadrat in se meri med središčema, ne med površjema teles."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "Svetloba potuje od Sonca do Zemlje $8\\,\\mathrm{min}\\ 20\\,\\mathrm{s}$. Izračunaj razdaljo med Soncem in Zemljo.",
+     "answer": "$r = 1{,}50 \\cdot 10^{11}\\,\\mathrm{m}$",
+     "ways": [
+      {
+       "title": "Iz hitrosti svetlobe",
+       "text": "**Podatki:** $t = 8\\,\\mathrm{min}\\ 20\\,\\mathrm{s} = 500\\,\\mathrm{s}$, $c = 3{,}00 \\cdot 10^8\\,\\mathrm{m/s}$.\n**Iščemo:** $r$.\n\nSvetloba se giblje enakomerno: $r = c\\,t = 3{,}00 \\cdot 10^8\\,\\mathrm{m/s} \\cdot 500\\,\\mathrm{s} = 1{,}50 \\cdot 10^{11}\\,\\mathrm{m}$.\n\nTo je $150$ milijonov kilometrov, ena astronomska enota."
+      }
+     ],
+     "mistake": "Napačno je vzeti $t = 8{,}20\\,\\mathrm{min}$: $20\\,\\mathrm{s}$ je tretjina minute, torej $8{,}33\\,\\mathrm{min} = 500\\,\\mathrm{s}$."
+    },
+    {
+     "id": "d",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj obodno hitrost Zemlje pri kroženju okoli Sonca.",
+     "answer": "$v \\approx 2{,}99 \\cdot 10^4\\,\\mathrm{m/s} \\approx 29{,}9\\,\\mathrm{km/s}$",
+     "ways": [
+      {
+       "title": "Obseg tira deljen z obhodnim časom",
+       "text": "**Podatki:** $r = 1{,}50 \\cdot 10^{11}\\,\\mathrm{m}$, $t_0 = 365{,}25\\,\\mathrm{dni} = 365{,}25 \\cdot 24 \\cdot 3600\\,\\mathrm{s} = 31\\,557\\,600\\,\\mathrm{s} \\approx 3{,}156 \\cdot 10^7\\,\\mathrm{s}$.\n**Iščemo:** $v$.\n\nV enem obhodu Zemlja prepotuje obseg kroga $2\\pi r$:\n\n$v = \\dfrac{2\\pi r}{t_0} = \\dfrac{2\\pi \\cdot 1{,}50 \\cdot 10^{11}\\,\\mathrm{m}}{3{,}156 \\cdot 10^7\\,\\mathrm{s}} \\approx 2{,}99 \\cdot 10^4\\,\\mathrm{m/s}$"
+      },
+      {
+       "title": "Drugače: s kotno hitrostjo",
+       "text": "Kotna hitrost: $\\omega = \\dfrac{2\\pi}{t_0} = \\dfrac{2\\pi}{3{,}156 \\cdot 10^7\\,\\mathrm{s}} \\approx 1{,}991 \\cdot 10^{-7}\\,\\mathrm{s^{-1}}$.\n\n$v = \\omega r = 1{,}991 \\cdot 10^{-7}\\,\\mathrm{s^{-1}} \\cdot 1{,}50 \\cdot 10^{11}\\,\\mathrm{m} \\approx 2{,}99 \\cdot 10^4\\,\\mathrm{m/s}$.\n\nPreizkus z oceno: okoli $30\\,\\mathrm{km}$ vsako sekundo, kar je več kot $100\\,000\\,\\mathrm{km/h}$."
+      }
+     ],
+     "scoring": "1 t.: obhodni čas v sekundah ($3{,}16 \\cdot 10^7\\,\\mathrm{s}$). 1 t.: $v \\approx 2{,}99 \\cdot 10^4\\,\\mathrm{m/s}$.",
+     "mistake": "Napaka je deliti obseg z obhodnim časom v dnevih: dobili bi $\\mathrm{m/dan}$, ne $\\mathrm{m/s}$."
+    },
+    {
+     "id": "e",
+     "points": 3,
+     "format": "open",
+     "text": "Iz podatkov o kroženju Zemlje izračunaj maso Sonca.",
+     "answer": "$m_S \\approx 2{,}01 \\cdot 10^{30}\\,\\mathrm{kg}$",
+     "ways": [
+      {
+       "title": "Gravitacija kot centripetalna sila",
+       "text": "**Podatki:** $r = 1{,}50 \\cdot 10^{11}\\,\\mathrm{m}$, $v = 2{,}99 \\cdot 10^4\\,\\mathrm{m/s}$, $G = 6{,}67 \\cdot 10^{-11}\\,\\mathrm{N\\,m^2\\,kg^{-2}}$.\n**Iščemo:** $m_S$.\n\nGravitacijska sila Sonca daje Zemlji centripetalno silo:\n\n$G\\dfrac{m_S m_Z}{r^2} = \\dfrac{m_Z v^2}{r}$\n\nMasa Zemlje se pokrajša, zato $m_S = \\dfrac{v^2 r}{G}$:\n\n$m_S = \\dfrac{(2{,}99 \\cdot 10^4)^2 \\cdot 1{,}50 \\cdot 10^{11}}{6{,}67 \\cdot 10^{-11}}\\,\\mathrm{kg} \\approx 2{,}01 \\cdot 10^{30}\\,\\mathrm{kg}$"
+      },
+      {
+       "title": "Drugače: s 3. Keplerjevim zakonom",
+       "text": "Če v $m_S = \\dfrac{v^2 r}{G}$ vstavimo $v = \\dfrac{2\\pi r}{t_0}$, dobimo $m_S = \\dfrac{4\\pi^2 r^3}{G t_0^2}$ – to je 3. Keplerjev zakon.\n\n$m_S = \\dfrac{4\\pi^2 \\cdot (1{,}50 \\cdot 10^{11})^3}{6{,}67 \\cdot 10^{-11} \\cdot (3{,}156 \\cdot 10^7)^2}\\,\\mathrm{kg} \\approx 2{,}01 \\cdot 10^{30}\\,\\mathrm{kg}$.\n\nTa pot ne potrebuje vmesnega zaokroževanja hitrosti. Tabelna vrednost je $1{,}99 \\cdot 10^{30}\\,\\mathrm{kg}$; razlika izvira iz zaokrožene razdalje."
+      }
+     ],
+     "scoring": "1 t.: enačba $G m_S m_Z/r^2 = m_Z v^2/r$ (gravitacija je centripetalna sila). 1 t.: izražena masa $m_S = v^2 r/G$ ali $4\\pi^2 r^3/(G t_0^2)$. 1 t.: $m_S \\approx 2{,}0 \\cdot 10^{30}\\,\\mathrm{kg}$.",
+     "mistake": "Iz kroženja Zemlje ni mogoče določiti mase Zemlje – ta se pokrajša. Kdor dobi približno $6 \\cdot 10^{24}\\,\\mathrm{kg}$, je zamenjal vlogi teles."
+    },
+    {
+     "id": "f",
+     "points": 2,
+     "format": "open",
+     "text": "Izračunaj težni pospešek na površju Sonca. Uporabi tabelno maso Sonca $m_S = 1{,}99 \\cdot 10^{30}\\,\\mathrm{kg}$.",
+     "answer": "$g_S \\approx 274\\,\\mathrm{m\\,s^{-2}}$",
+     "ways": [
+      {
+       "title": "Iz gravitacijskega zakona",
+       "text": "**Podatki:** $m_S = 1{,}99 \\cdot 10^{30}\\,\\mathrm{kg}$, $r_S = 6{,}96 \\cdot 10^8\\,\\mathrm{m}$, $G = 6{,}67 \\cdot 10^{-11}\\,\\mathrm{N\\,m^2\\,kg^{-2}}$.\n**Iščemo:** $g_S$.\n\nNa telo z maso $m$ na površju deluje teža $mg_S = G\\dfrac{m_S m}{r_S^2}$, zato\n\n$g_S = \\dfrac{G m_S}{r_S^2} = \\dfrac{6{,}67 \\cdot 10^{-11} \\cdot 1{,}99 \\cdot 10^{30}}{(6{,}96 \\cdot 10^8)^2}\\,\\mathrm{m\\,s^{-2}} \\approx 274\\,\\mathrm{m\\,s^{-2}}$"
+      },
+      {
+       "title": "Drugače: primerjava z Zemljo",
+       "text": "Sonce ima $\\dfrac{1{,}99 \\cdot 10^{30}}{5{,}97 \\cdot 10^{24}} \\approx 3{,}33 \\cdot 10^5$-krat večjo maso od Zemlje in $\\dfrac{6{,}96 \\cdot 10^8}{6{,}37 \\cdot 10^6} \\approx 109$-krat večji polmer (polmer Zemlje $6{,}37 \\cdot 10^6\\,\\mathrm{m}$).\n\n$g_S \\approx 9{,}81\\,\\mathrm{m\\,s^{-2}} \\cdot \\dfrac{3{,}33 \\cdot 10^5}{109^2} \\approx 275\\,\\mathrm{m\\,s^{-2}}$ – okoli $28$-krat več kot na Zemlji, kar se ujema z računom."
+      }
+     ],
+     "scoring": "1 t.: $g_S = G m_S/r_S^2$. 1 t.: $g_S \\approx 274\\,\\mathrm{m\\,s^{-2}}$.",
+     "mistake": "Napaka je vstaviti razdaljo Zemlja–Sonce namesto polmera Sonca; tako bi dobili pospešek, s katerim Sonce privlači Zemljo ($\\approx 5{,}9 \\cdot 10^{-3}\\,\\mathrm{m\\,s^{-2}}$)."
+    },
+    {
+     "id": "g",
+     "points": 3,
+     "format": "open",
+     "text": "Na zveznici med Zemljo in Soncem je točka, v kateri sta privlačni sili Zemlje in Sonca na telo enako veliki. Kako daleč od Zemlje je ta točka? Uporabi $m_S = 1{,}99 \\cdot 10^{30}\\,\\mathrm{kg}$ in $r = 1{,}50 \\cdot 10^{11}\\,\\mathrm{m}$.",
+     "answer": "$x \\approx 2{,}59 \\cdot 10^8\\,\\mathrm{m}$ od Zemlje (proti Soncu)",
+     "ways": [
+      {
+       "title": "Z razmerjem razdalj",
+       "text": "**Podatki:** $m_Z = 5{,}97 \\cdot 10^{24}\\,\\mathrm{kg}$, $m_S = 1{,}99 \\cdot 10^{30}\\,\\mathrm{kg}$, $r = 1{,}50 \\cdot 10^{11}\\,\\mathrm{m}$.\n**Iščemo:** razdaljo $x$ od Zemlje.\n\nNa telo z maso $m$ na razdalji $x$ od Zemlje in $r - x$ od Sonca:\n\n$G\\dfrac{m_Z m}{x^2} = G\\dfrac{m_S m}{(r - x)^2}$, torej $\\dfrac{x}{r - x} = \\sqrt{\\dfrac{m_Z}{m_S}}$.\n\n$\\sqrt{\\dfrac{5{,}97 \\cdot 10^{24}}{1{,}99 \\cdot 10^{30}}} = \\sqrt{3{,}00 \\cdot 10^{-6}} \\approx 1{,}732 \\cdot 10^{-3}$\n\n$x = \\dfrac{r\\sqrt{m_Z/m_S}}{1 + \\sqrt{m_Z/m_S}} = \\dfrac{1{,}50 \\cdot 10^{11} \\cdot 1{,}732 \\cdot 10^{-3}}{1{,}001732}\\,\\mathrm{m} \\approx 2{,}59 \\cdot 10^8\\,\\mathrm{m}$"
+      },
+      {
+       "title": "Drugače: približek za majhno razmerje",
+       "text": "Ker je $x$ v primerjavi z $r$ zelo majhen, je $r - x \\approx r$ in\n\n$x \\approx r\\sqrt{\\dfrac{m_Z}{m_S}} = 1{,}50 \\cdot 10^{11} \\cdot 1{,}732 \\cdot 10^{-3}\\,\\mathrm{m} \\approx 2{,}60 \\cdot 10^8\\,\\mathrm{m}$.\n\nPribližek se od točnega rezultata razlikuje le za $0{,}17\\,\\%$. Točka je bliže Zemlji kot Luna ($3{,}84 \\cdot 10^8\\,\\mathrm{m}$), približno na dveh tretjinah razdalje do Lune."
+      }
+     ],
+     "scoring": "1 t.: enačba enakih sil z razdaljama $x$ in $r - x$. 1 t.: $\\dfrac{x}{r-x} = \\sqrt{m_Z/m_S}$ (ali rešena kvadratna enačba). 1 t.: $x \\approx 2{,}6 \\cdot 10^8\\,\\mathrm{m}$.",
+     "mistake": "Napaka je vzeti razmerje mas brez korena ($x \\approx r \\cdot 3 \\cdot 10^{-6} = 450\\,\\mathrm{km}$): sila pada s kvadratom razdalje, zato je razmerje razdalj koren razmerja mas."
+    },
+    {
+     "id": "h",
+     "points": 2,
+     "format": "open",
+     "text": "Ob mlaju je Luna (masa $7{,}35 \\cdot 10^{22}\\,\\mathrm{kg}$) na zveznici med Zemljo in Soncem, $3{,}84 \\cdot 10^8\\,\\mathrm{m}$ od Zemlje. Ali se točka, v kateri je skupna gravitacijska sila na telo nič, zaradi Lune premakne bliže k Zemlji ali stran od nje? Utemelji.",
+     "answer": "Bliže k Zemlji: Luna je dlje od Zemlje kot ta točka, zato telo vleče v isto smer kot Sonce; za ravnovesje mora biti privlak Zemlje večji, telo pa zato bliže Zemlji.",
+     "ways": [
+      {
+       "title": "S smermi sil",
+       "text": "Prvotna točka je $2{,}59 \\cdot 10^8\\,\\mathrm{m}$ od Zemlje, Luna pa $3{,}84 \\cdot 10^8\\,\\mathrm{m}$ – Luna je torej **za** točko, na strani Sonca.\n\nNa telo v točki zato Luna deluje s silo proti Soncu, v isti smeri kot Sonce. Da je vsota sil nič, mora biti sila Zemlje večja kot prej, to pa je le bliže Zemlji. Točka se premakne proti Zemlji."
+      },
+      {
+       "title": "Drugače: s številsko oceno",
+       "text": "Pospeški, ki jih v prvotni točki povzročijo telesa ($a = Gm/d^2$):\n\n- Zemlja (proti Zemlji): $\\dfrac{6{,}67 \\cdot 10^{-11} \\cdot 5{,}97 \\cdot 10^{24}}{(2{,}59 \\cdot 10^8)^2}\\,\\mathrm{m\\,s^{-2}} \\approx 5{,}9 \\cdot 10^{-3}\\,\\mathrm{m\\,s^{-2}}$;\n- Sonce (proti Soncu): enako, približno $5{,}9 \\cdot 10^{-3}\\,\\mathrm{m\\,s^{-2}}$;\n- Luna (proti Soncu, razdalja $1{,}25 \\cdot 10^8\\,\\mathrm{m}$): $\\dfrac{6{,}67 \\cdot 10^{-11} \\cdot 7{,}35 \\cdot 10^{22}}{(1{,}25 \\cdot 10^8)^2}\\,\\mathrm{m\\,s^{-2}} \\approx 3{,}1 \\cdot 10^{-4}\\,\\mathrm{m\\,s^{-2}}$.\n\nVsota sil na telo zdaj kaže proti Soncu. Ravnovesje je tam, kjer je Zemljin privlak za okoli $5\\,\\%$ močnejši, torej nekoliko bliže Zemlji."
+      }
+     ],
+     "scoring": "1 t.: odgovor »bliže Zemlji«. 1 t.: utemeljitev, da Luna vleče v smeri Sonca (je onkraj točke), zato mora biti privlak Zemlje večji.",
+     "mistake": "Napačen je sklep »Luna dodatno vleče proti Zemlji, ker je Zemljin satelit«: šteje le, na kateri strani točke je Luna, in ta je na strani Sonca."
+    }
+   ]
+  }
+ ]
+}

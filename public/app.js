@@ -60,7 +60,8 @@ const showGames = () => {
 };
 const gamesBack = () => gamesMod?.gamesBack() ?? false;
 const leaveGames = () => gamesMod?.leaveGames();
-import { gamesOn } from "./games/stage.js";
+import { gamesOn, stageOf, STAGES } from "./games/stage.js";
+import { rewardOffer } from "./games/reward.js";
 import { initCorner, showCorner, cornerBack, closeBoard, askInterests, maybeAskInterests, interestsSummary } from "./corner.js";
 import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
 import { initFullscreen } from "./fullscreen.js";
@@ -77,6 +78,7 @@ import { validDate, goalShortcuts, goalTabbarView } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
 import { openOurPaper, closeOurPaper } from "./our-paper.js";
+import { partKey, partLabel } from "./our-paper-key.js";
 import { initDrsniki } from "./drsniki.js";
 import { jeFaks, jeSs, jeOs, stageCode, stopnja, TRACK } from "./stopnja.js";
 import { expectedMs, progressAt, addDuration } from "./check-progress.js";
@@ -2255,6 +2257,11 @@ document.addEventListener("click", (e) => {
   const un = e.target.closest("[data-unit]");
   if (un) startSession("unit-practice", { path: state.pathKey, unit: Number(un.dataset.unit) });
   if (e.target.closest("[data-daily]")) startSession("daily", { path: state.pathKey });
+  const rw = e.target.closest("[data-reward]");
+  if (rw) {
+    showView("games");
+    loadGames().then((m) => m.openReward(rw.dataset.reward.split(","))).catch(() => null);
+  }
 });
 $("#back-to-path").addEventListener("click", () => showView(state.backTo || "path"));
 // Tekmovanja so za osnovno in srednjo šolo; fakulteta zavihka nima.
@@ -2486,10 +2493,19 @@ async function startSession(kind, body = {}) {
   renderTask(out.task, { mode: cfg.mode, index: out.index, total: out.total });
 }
 
-function sessionDoneCard(mode, n) {
+function sessionDoneCard(mode, n, xp = null) {
   return `<div class="card result celebrate"><div class="result-icon">${icon("trophy")}</div><h2>${SESSION_DONE[mode] || t("common.done")}!</h2>
     <p>${t("result.firstTry", { correct: n.correct, total: n.total })}${n.xp ? ` · +${n.xp.gained} XP` : ""}</p>
-    <button class="primary big" id="fb-back">${state.backTo === "competition" || state.backTo === "exams" ? prepBack() : t("result.toPath")}</button></div>`;
+    <button class="primary big" id="fb-back">${state.backTo === "competition" || state.backTo === "exams" ? prepBack() : t("result.toPath")}</button>${rewardHtml(mode, n, xp)}</div>`;
+}
+// Igra kot nagrada (public/games/reward.js): po dnevnem treningu ali doseženem dnevnem cilju ponudba ene igre
+// iz pravkar vadene snovi; nikoli med učenjem, »Skrij igre« jo skrije, videz po stopnji (SŠ, fakulteta umirjeno).
+function rewardHtml(mode, n, xp) {
+  const list = state.student && rewardOffer(state.student.settings, mode, n, xp || state.xp);
+  if (!list) return "";
+  const calm = STAGES[stageOf(state.student.settings)].calm;
+  return `<div class="reward-offer${calm ? " calm" : ""}"><span class="reward-ic" aria-hidden="true">${icon("gamepad-2")}</span><span class="reward-t"><b>${t("reward.title")}</b><small>${t("reward.sub")}</small></span>
+    <button type="button" class="secondary" data-reward="${escapeHtml(list.join(","))}">${icon("gamepad-2")}${t("reward.play")}</button></div>`;
 }
 
 // Slike pri nalogah: graf premice in številska premica. Barve so enake v svetlem
@@ -2930,7 +2946,7 @@ async function checkTask(task, ctx, value) {
   } else if (r.closed) {
     html = `<div class="fb ${r.correct ? "ok" : "bad"}">${icon(r.correct ? "circle-check" : "circle-x")}<span>${r.correct ? t("task.correct") : t("task.wrong")}</span></div>${closedNote}
       ${r.solution ? workedBlock(task, r.solution, r.correct ? t("task.solution") : t("task.example")) : ""}`;
-    html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next) : next(ctx.mode === "practice" && !r.correct ? t("task.similar") : t("task.next"));
+    html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next, r.xp) : next(ctx.mode === "practice" && !r.correct ? t("task.similar") : t("task.next"));
   } else if (r.correct) {
     html = `<div class="fb ok pop">${icon("circle-check")}<span><b>${t("task.correctBang")}</b>${r.levelUp ? t("task.harder") : ""}</span><span class="xp-gain">${r.offline ? t("off.xpLater") : `<bdi dir="ltr">+${r.xp.gained} XP</bdi>`}</span></div>
       ${r.offline ? "" : xpItemsHtml(r.xp)}
@@ -2939,7 +2955,7 @@ async function checkTask(task, ctx, value) {
       ${workedBlock(task, r.solution)}
       ${r.selfExplain ? `<div class="fb info">${icon("circle-help")}<span>${escapeHtml(r.selfExplain)}</span></div>` : ""}
       ${r.offline ? "" : tutorRow(task.id)}`;
-    html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next) : next();
+    html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next, r.xp) : next();
   } else {
     html = `<div class="fb bad shake">${icon("circle-x")}<span>${escapeHtml(fbText(r) || t("task.wrong"))}</span></div>
       ${mistakeHtml(r.mistake)}
@@ -2948,7 +2964,7 @@ async function checkTask(task, ctx, value) {
     if (r.solution) {
       html += workedBlock(task, r.solution, t("task.example"));
       if (!r.offline) html += tutorRow(task.id);
-      html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next) : next(ctx.mode === "practice" ? t("task.similar") : t("task.next"));
+      html += ctx.mode !== "practice" && r.next?.finished ? sessionDoneCard(ctx.mode, r.next, r.xp) : next(ctx.mode === "practice" ? t("task.similar") : t("task.next"));
     } else {
       html += `<div class="actions"><button id="fb-retry" class="primary big">${t("task.retry")}</button>
         ${r.offline ? "" : `<button id="fb-help" class="secondary">${icon("message-circle")}${t("task.askTutor")}</button>`}</div>
@@ -3319,12 +3335,13 @@ async function oursTutor(entry, title, task, part) {
   paperBusy = true;
   try {
     await newTutorChat();
-    const n = `${task.n}${part.id || ""}`;
+    const n = partLabel(task, part);
+    const pola = task.pola ? `${t("pp.oursPola", { n: task.pola })} · ` : "";
     const strip = (md) => String(md || "").replace(/<svg[\s\S]*?<\/svg>/g, "").trim();
     const choices = part.format === "choice" && part.choices ? part.choices.map((c, i) => `${String.fromCharCode(65 + i)}) ${strip(c)}`).join("\n") : "";
     const body = [strip(task.intro), strip(part.text), choices].filter(Boolean).join("\n\n").slice(0, 1500);
-    state.paperCtx = { conv: state.conversationId, paper: title, task: n, ours: entry.id };
-    await send(`${title} · ${t("pp.oursTask", { n })}\n\n${body}`);
+    state.paperCtx = { conv: state.conversationId, paper: title, task: partKey(task, part), ours: entry.id };
+    await send(`${title} · ${pola}${t("pp.oursTask", { n })}\n\n${body}`);
   } catch (err) {
     toast(err.message);
   } finally {
