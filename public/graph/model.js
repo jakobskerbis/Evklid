@@ -87,6 +87,18 @@ export function buildModel(state, { comma = true } = {}) {
     }
   }
 
+  // zaporedja (kot način SEQ na TI-84): u(n) = … s parametrom n ali rekurzivna u(n) = u(n − 1) + …;
+  // začetni členi so vrstice u(1) = 2
+  const seqNames = new Set();
+  for (const o of out) {
+    if (o.kind || !o.ast) continue;
+    const d = definitionOf(o.src.text);
+    if (!d || d.params.length !== 1 || o.ast.k !== "cmp" || o.ast.ops.length !== 1 || o.ast.ops[0] !== "=") continue;
+    let self = false;
+    walk(o.ast.terms[1], (n) => n.k === "ufn" && n.f === d.name && (self = true));
+    if (self || d.params[0] === "n") seqNames.add(d.name);
+  }
+
   // 2. definicije: drsniki, spremenljivke, funkcije, tabele
   const defined = new Map(); // ime → vrstica
   const defineName = (name, o) => {
@@ -102,11 +114,24 @@ export function buildModel(state, { comma = true } = {}) {
     if (o.kind === "table") {
       const cols = o.src.cols || [];
       o.cols = cols.map((c) => ({ name: c.name, values: (c.values || []).map((v) => (v === "" || v == null ? NaN : Number(String(v).replace(",", ".").replace("−", "-")))) }));
-      for (const c of o.cols) if (c.name && /^[A-Za-zα-ω](_\w+)?$/.test(c.name) && !RESERVED.has(c.name)) defineName(c.name, o) && (scope[c.name] = c.values);
+      // tabela vrednosti funkcije (ref) stolpcev ne poimenuje: »n« zaporedja ni spremenljivka
+      if (!o.src.ref) for (const c of o.cols) if (c.name && /^[A-Za-zα-ω](_\w+)?$/.test(c.name) && !RESERVED.has(c.name)) defineName(c.name, o) && (scope[c.name] = c.values);
       continue;
     }
     if (!o.ast) continue;
     const a = o.ast;
+    // začetni člen zaporedja: u(1) = 2
+    if (a.k === "cmp" && a.ops.length === 1 && a.ops[0] === "=" && a.terms[0].k === "ufn" && !a.terms[0].d && seqNames.has(a.terms[0].f) && a.terms[0].args.length === 1) {
+      const arg = a.terms[0].args[0];
+      const k = arg.k === "num" ? arg.v : arg.k === "neg" && arg.a.k === "num" ? -arg.a.v : NaN;
+      if (Number.isInteger(k)) {
+        o.kind = "seqinit";
+        o.fname = a.terms[0].f;
+        o.n = k;
+        o.rhs = a.terms[1];
+        continue;
+      }
+    }
     // f(x) = …
     const def = definitionOf(o.src.text);
     if (def && a.k === "cmp" && a.ops.length === 1 && a.ops[0] === "=") {
@@ -150,6 +175,73 @@ export function buildModel(state, { comma = true } = {}) {
       o.error = err(e.code || "parse", e.info);
       delete funcs[name];
     }
+  }
+
+  // zaporedja: vrednost samo pri celih n od prvega člena naprej; rekurzivna računamo po vrsti od začetka
+  const SEQ_MAX = 10000;
+  for (const name of seqNames) {
+    const F = funcs[name];
+    if (!F?.body) continue;
+    const raw = F.body;
+    const p = F.params[0];
+    const inits = new Map();
+    for (const o of out) {
+      if (o.kind !== "seqinit" || o.fname !== name) continue;
+      if (inits.has(o.n)) {
+        o.kind = "error";
+        o.error = err("twice", { name: `${name}(${o.n})` });
+        continue;
+      }
+      try {
+        inits.set(o.n, compile(o.rhs, ctx));
+      } catch (e) {
+        o.kind = "error";
+        o.error = err(e.code || "parse", e.info);
+      }
+    }
+    let recursive = false;
+    walk(F.ast, (n) => n.k === "ufn" && n.f === name && (recursive = true));
+    const n0 = inits.size ? Math.min(...inits.keys()) : 1;
+    const at = (k) => {
+      if (inits.has(k)) return toNum(inits.get(k)(scope));
+      const S = Object.create(scope);
+      S[p] = k;
+      return toNum(raw(S));
+    };
+    let memo = null; // med enim računom: memo[k − n0] = člen
+    const value = (k) => {
+      if (typeof k !== "number" || Math.abs(k - Math.round(k)) > 1e-9) return NaN;
+      k = Math.round(k);
+      if (k < n0 || k > n0 + SEQ_MAX) return NaN;
+      if (!recursive) return at(k);
+      if (memo && k - n0 < memo.length) return memo[k - n0];
+      const outer = !memo;
+      if (outer) memo = [];
+      try {
+        while (memo.length <= k - n0) memo.push(at(n0 + memo.length));
+        return memo[k - n0];
+      } finally {
+        if (outer) memo = null;
+      }
+    };
+    F.body = (S) => value(S[p]);
+    F.seq = {
+      n0,
+      recursive,
+      noStart: recursive && !inits.size,
+      // členi od a do b (vsak step-ti), v enem računu
+      range(a, b, step = 1) {
+        const res = [];
+        const outer = !memo;
+        if (outer) memo = [];
+        try {
+          for (let k = Math.max(a, n0); k <= Math.min(b, n0 + SEQ_MAX); k += step) res.push([k, value(k)]);
+        } finally {
+          if (outer) memo = null;
+        }
+        return res;
+      },
+    };
   }
 
   // 3. izračunane spremenljivke (v vrstnem redu odvisnosti)
@@ -203,6 +295,10 @@ export function buildModel(state, { comma = true } = {}) {
   for (const o of out) {
     if (!o.ast || o.kind) {
       if (o.kind === "func") classifyFunc(o);
+      if (o.kind === "seqinit") {
+        const miss = bodyMissing(o.rhs, []);
+        if (miss.length) fail(o, miss);
+      }
       continue;
     }
     try {
@@ -227,6 +323,21 @@ export function buildModel(state, { comma = true } = {}) {
   function classifyFunc(o) {
     const miss = bodyMissing(o.body, o.params);
     if (miss.length) return fail(o, miss);
+    const seq = funcs[o.fname]?.seq;
+    if (seq) {
+      if (seq.noStart) {
+        o.kind = "error";
+        o.error = err("seqStart", { name: o.fname });
+        return;
+      }
+      const f = funcs[o.fname].body;
+      const p = o.params[0];
+      o.plot = "seq";
+      o.seq = seq;
+      o.varName = p;
+      o.fn = (x) => f({ [p]: x });
+      return;
+    }
     if (o.params.length === 1) {
       const p = o.params[0];
       const f = funcs[o.fname].body;
@@ -421,7 +532,7 @@ export function buildModel(state, { comma = true } = {}) {
     if (it.ref) {
       // tabela vrednosti funkcije iz druge vrstice
       const src = out.find((x) => x.id === it.ref);
-      if (src?.fn && (src.kind === "y" || src.plot === "y")) {
+      if (src?.fn && (src.kind === "y" || src.plot === "y" || src.plot === "seq")) {
         o.refFn = src.fn;
         const ys = cx.values.map((x) => (Number.isFinite(x) ? toNum(src.fn(x)) : NaN));
         if (cys[0]) cys[0].values = ys;

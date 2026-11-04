@@ -13,13 +13,15 @@ import { probTool } from "./tools-prob.js";
 import { anaTools } from "./tools-ana.js";
 import { testsTool, tvmTool, tableTool } from "./tools-test.js";
 import { statsTool } from "./tools-stats.js";
+import { sheetTool } from "./tools-sheet.js";
+import { trialsTool } from "./tools-trials.js";
 
-const TOOLS = ["units", "eq", "calc", "stats", "tests", "prob", "vec", "matrix", "plot3", "ode", "err", "complex", "base", "tvm", "table", "rxn", "conc", "solub"];
+const TOOLS = ["units", "eq", "calc", "stats", "sheet", "tests", "prob", "trials", "vec", "matrix", "plot3", "ode", "err", "complex", "base", "tvm", "table", "rxn", "conc", "solub"];
 // vrstni red čipov po predmetu: najprej orodja, ki jih predmet največ rabi
 const ORDER = {
   KEM: ["rxn", "conc", "solub", "units", "err", "stats", "eq"],
   FIZ: ["units", "err", "eq", "vec", "calc", "ode", "stats"],
-  MAT: ["eq", "calc", "table", "stats", "tests", "prob", "vec", "matrix", "plot3", "ode", "complex", "base", "tvm"],
+  MAT: ["eq", "calc", "table", "stats", "sheet", "tests", "prob", "trials", "vec", "matrix", "plot3", "ode", "complex", "base", "tvm"],
 };
 const toolOrder = (subj) => {
   const first = ORDER[subj] || ORDER.MAT;
@@ -324,6 +326,8 @@ export function createTools(root, opts) {
     plot3: ana.plot3,
     units: (el) => createUnits(el, { t, icon, locale: opts.locale, onInsert: opts.onInsert }),
     stats: (el) => statsTool(el, ctx),
+    sheet: (el) => sheetTool(el, ctx),
+    trials: (el) => trialsTool(el, ctx),
     eq: eq_,
     complex: complex_,
     matrix: matrix_,

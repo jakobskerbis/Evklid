@@ -559,6 +559,24 @@ export class GraphView {
         ctx.globalAlpha = 1;
         this.polylines.set(`${o.id}'`, dp);
       }
+    } else if (o.kind === "func" && o.plot === "seq") {
+      // zaporedje: pika za vsak člen na vidnem delu osi x (največ ~1500 pik)
+      const a = Math.ceil(v.xmin);
+      const b = Math.floor(v.xmax);
+      const step = Math.max(1, Math.ceil((b - a + 1) / 1500));
+      const pts = b >= a ? o.seq.range(a, b, step).filter(([, y]) => Number.isFinite(y)) : [];
+      ctx.setLineDash([]);
+      ctx.fillStyle = color;
+      const r = step > 1 ? 2.5 : sel ? 5.5 : 4.5;
+      ctx.beginPath();
+      for (const [n, y] of pts) {
+        const px = this.X(n);
+        const py = this.Y(y);
+        ctx.moveTo(px + r, py);
+        ctx.arc(px, py, r, 0, 2 * Math.PI);
+      }
+      ctx.fill();
+      this.polylines.set(o.id, [pts.map(([n, y]) => [this.X(n), this.Y(y)])]);
     } else if (o.kind === "polar") {
       const [t0, t1] = o.domain;
       const paths = this.sampleParam(
