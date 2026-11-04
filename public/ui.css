@@ -385,10 +385,9 @@ html.lite[data-era] .view::before { display: none; }
 :root[data-era] .offline-banner { border: 1px solid var(--border); }
 /* Glava klepeta in vrstica za pisanje. */
 :root[data-era] .chat-head { background: var(--bar, var(--surface)); }
-:root[data-era] .composer { position: relative; border-top: 0; padding-top: calc(12px + var(--edge-h, var(--band-h))); background: var(--bar, var(--surface)); }
-:root[data-era] .composer::after { top: 2px; }
-:root[data-era] .composer-row { background: var(--surface); }
-@media (max-width: 760px) { :root[data-era] .composer { padding-top: calc(8px + var(--edge-h, var(--band-h))); } }
+/* Vrstica za pisanje je brez okna tudi v slogih obdobij (j, 2026-11-04): brez pasu in podlage, le tanka črta. */
+:root[data-era] .composer { position: relative; border-top: 0; background: transparent; }
+:root[data-era] .composer::after, :root[data-frieze] .composer::after { display: none; }
 /* Seznam pogovorov: tapeta (gostejša, v barvi besedila menija) in navpičen pas ob robu. Drsi samo seznam, zato
    tapeta in pas ostaneta na mestu. Na telefonu je odprt seznam absoluten (style.css: .sidebar.open). */
 :root[data-era] .chat-view .sidebar {
@@ -411,7 +410,7 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 @media (forced-colors: active), print {
   :root[data-era] :is(.topbar, .tabbar, .composer)::after, :root[data-era] .chat-view .sidebar::before, :root[data-era] .chat-view .sidebar::after { display: none; }
   :root[data-era] .topbar { border-bottom: 1px solid; }
-  :root[data-era] :is(.tabbar, .composer) { border-top: 1px solid; }
+  :root[data-era] .tabbar { border-top: 1px solid; }
   :root[data-era] .chat-view .sidebar { border-inline-end: 1px solid; }
 }
 
@@ -624,15 +623,9 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
     :root[data-chat-frame="pilon"]:not(.lite) .empty-hall:has(.t-front) .idea { flex: 1 1 auto; padding-block: 9px; text-align: center; }
   }
 
-  /* Voščena tablica: polje ostane čisto (--surface), okvir iz lesa (--wood, 3:1) z notranjo svetlejšo letvico. */
-  :root[data-composer="vosek"] .composer-row {
-    border: 3px solid var(--wood); border-radius: 9px;
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wood) 30%, var(--surface));
-  }
-  :root[data-composer="vosek"] .composer-row:focus-within {
-    border-color: var(--accent);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 30%, var(--surface)), 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
-  }
+  /* Voščena tablica: brez okvirja (j, 2026-11-04: vrstica brez okna), le lesena črta (--wood, 3:1) nad poljem. */
+  :root[data-composer="vosek"] .composer-row { border-top: 2px solid var(--wood); }
+  :root[data-composer="vosek"] .composer-row:focus-within { border-top-color: var(--accent); }
 }
 
 /* ---------- Arhitektura (ERAS[…].arch; theme.js nastavi data-arch in --arch-*) ----------

@@ -112,8 +112,8 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
   .chat-head #chat-state:empty, .chat-view:has(.sidebar.open) #chat-state { display: none; }
   .msg.assistant { margin-inline-start: 0; max-width: 100%; }
   .msg.assistant::before, .msg.assistant::after { display: none; }
-  .composer { padding: 8px 10px 10px; }
-  .ai-note { margin-top: 4px; font-size: 0.7rem; }
+  .composer { padding: 2px 10px 4px; }
+  .ai-note { margin-top: 0; font-size: 0.7rem; }
   .composer-row.multi { flex-wrap: wrap; row-gap: 2px; }
   .composer-row.multi #input { order: -1; flex: 1 1 100%; padding-inline: 10px; }
   .composer-row.multi .mic-btn { margin-inline-start: auto; }

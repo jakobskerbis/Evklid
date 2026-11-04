@@ -28,6 +28,7 @@ import { attachMic } from "./speech.js";
 import { initKeyboard, configureKeyboard, toggleKeyboard, hideKeyboard, keyboardOpenFor, keyboardLayer, setKeyboardContext, mountKeyboardSettings } from "./tipkovnica.js";
 import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { splitFormulas, hasFormula } from "./vnos-formul.js";
+import { attachPrettify } from "./lepi-zapis.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
 import { offlineApi, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback } from "./feedback.js";
@@ -1233,6 +1234,7 @@ function autoGrow(stick, again) {
   if (h > max + 2 && input.value.trim() && input.offsetParent) showFull({ kind: "composer", title: t("full.message"), field: input });
   else if (fullOpen("composer") && (h <= max || !input.value.trim())) closeFull();
 }
+attachPrettify(input); // x^2 → x², 3/4 → ³⁄₄, sqrt → √ že med pisanjem (pred autoGrow, ki izmeri novo besedilo)
 input.addEventListener("input", autoGrow);
 // Ozko polje (telefon): namig se ne odreže sredi besede (»Napiši nalogo a«), ampak za zadnjo celo besedo
 // (»Napiši nalogo …«). Celoten namig ostane v polju, ko je prostora dovolj; nov namig (jezik, način) se izmeri znova.
