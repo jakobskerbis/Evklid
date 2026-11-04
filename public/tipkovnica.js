@@ -1030,6 +1030,11 @@ function wireBoard() {
       try {
         b.setPointerCapture(e.pointerId);
       } catch {}
+      // ⌫ izbriše znak že ob pritisku, ne šele ob dvigu prsta (j, 4. 11.: »takoj, brez zamika«)
+      if (a.a === "bs") {
+        down.done = true;
+        act(a);
+      }
       down.rep = setTimeout(() => {
         down.moved = true;
         const rep = { ...a, rep: true }; // ponavljanje ni dvoklik
@@ -1140,7 +1145,7 @@ function wireBoard() {
       if (v) run(() => popInsert(v.dataset.v));
       return;
     }
-    if (d.moved || at?.closest("button") !== d.b) return;
+    if (d.done || d.moved || at?.closest("button") !== d.b) return;
     closePop();
     run(() => act(d.a));
   };

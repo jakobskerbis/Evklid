@@ -148,6 +148,18 @@ for (const [name, opts] of [
     await tapBs(1);
     assert.equal(await page.inputValue("#t"), "abc de", "⌫ x ⌫ ni dvoklik");
     await page.waitForTimeout(500);
+    // ⌫ briše že ob pritisku (pred dvigom prsta), ob dvigu ne še enkrat
+    await setText("abc");
+    {
+      const b = await page.locator(bsSel).boundingBox();
+      await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
+      await page.mouse.down();
+      assert.equal(await page.inputValue("#t"), "ab", "⌫ ob pritisku");
+      await page.mouse.up();
+      await page.waitForTimeout(40);
+      assert.equal(await page.inputValue("#t"), "ab", "ob dvigu ne briše znova");
+    }
+    await page.waitForTimeout(500);
     // držanje: po en znak
     await setText("ena dva tri");
     const box = await page.locator(bsSel).boundingBox();
