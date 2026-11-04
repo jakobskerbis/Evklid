@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Mendelejev 1869
+  - podobne lastnosti se ponavljajo
+  - prazna mesta za neodkrite elemente, npr. galij
+- Periode in skupine
+  - $7$ period (vrstice), $18$ skupin (stolpci)
+  - razvrstitev po naraščajočem vrstnem številu $Z$
+- Perioda
+  - številka periode = število lupin
+  - natrij 2, 8, 1 je v 3. periodi
+- Skupina
+  - skupini 1 in 2: valenčni = številka skupine
+  - skupine 13 do 18: številka skupine minus 10
+  - napaka: 10 prišteti tudi pri skupinah 1 in 2
+- Podobne lastnosti
+  - isti stolpec, enako valenčnih elektronov
+  - natrij in kalij, ne natrij in magnezij
+- Imena skupin
+  - alkalijske kovine, zemeljskoalkalijske kovine
+  - halogeni (17.), žlahtni plini (18.)
+- Kovine in nekovine
+  - kovine levo in v sredini, nekovine desno zgoraj
+  - polkovine ob stopničasti črti, npr. silicij
+  - vodik je nekovina v 1. skupini

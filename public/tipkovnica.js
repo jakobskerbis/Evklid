@@ -431,8 +431,10 @@ function render() {
   S.layer = layerId(L);
   const body = typeof L === "object" ? customHtml(L) : { abc: abcHtml, num: numHtml, fx: fxHtml, sym: symHtml, kem: kemHtml }[S.layer]?.() || abcHtml();
   const c = ctxChips();
-  const ctx = c.html || (prefs.words && S.layer === "abc" && words) ? `<div class="tk-ctx${c.words ? " words" : ""}"${c.glide ? ' data-g="1"' : ""}>${c.html}</div>` : "";
-  board.innerHTML = `<div class="tk-in">${ctx}${tabsHtml()}<div class="tk-rows" data-layer="${esc(S.layer)}">${body}</div></div>`;
+  const ctx = c.html || (prefs.words && S.layer === "abc" && words) || reserveCtx() ? `<div class="tk-ctx${c.words ? " words" : ""}"${c.glide ? ' data-g="1"' : ""}>${c.html}</div>` : "";
+  board.innerHTML = `<div class="tk-in${S.layers.length > 1 ? " tk-multi" : ""}">${ctx}${tabsHtml()}<div class="tk-rows" data-layer="${esc(S.layer)}">${body}</div></div>`;
+  // razred namesto ».tk:has(…)«: :has na plošči je ob vsakem pritisku na novo preračunal slog vseh tipk
+  board.classList.toggle("tk-abc", S.layer === "abc");
   for (const cv of [trail?.cv, fading]) {
     // sled drsenja ostane, dokler ne zbledi (prehod steče znova od polne barve)
     if (!cv || cv.isConnected) continue;
@@ -443,17 +445,52 @@ function render() {
   }
   if (S.layer === "abc" && prefs.glide) loadGlide();
 }
+// Na dotik je vrstica nad zavihki v poljih z drsenjem ali predlogi vedno na mestu (tudi prazna, kot pas
+// predlogov pri Gboard): besede po drsenju se pokažejo, ne da bi tipkovnica zrasla in stran poskočila.
+function reserveCtx() {
+  // ne v matematičnih poljih (kalkulator): tam se drsi redko in prostor šteje
+  return touch() && !S.cfg.math && S.layers.some((l) => layerId(l) === "abc") && (prefs.words || glideAllowed(S.field));
+}
 function renderCtx() {
   const box = board?.querySelector(".tk-ctx");
   const c = ctxChips();
   const was = box?.dataset.g === "1";
   if (c.glide || was) {
-    if (box && c.glide && was) box.innerHTML = c.html;
-    else render(); // vrstica se pojavi ali izgine
+    if (box && (was || reserveCtx())) {
+      box.innerHTML = c.html;
+      box.classList.toggle("words", !!c.words);
+      if (c.glide) box.dataset.g = "1";
+      else delete box.dataset.g;
+      if (c.html || reserveCtx()) return;
+    }
+    render(); // vrstica se pojavi ali izgine
     return;
   }
   if (!box || !(prefs.words && S.layer === "abc")) return;
   box.innerHTML = c.html;
+}
+
+/** Sprememba ⇧ na črkah: napise zamenjamo na mestu (kot Gboard brez utripa), ne rišemo vse plošče znova. */
+function paintShift() {
+  const rows = board?.querySelector('.tk-rows[data-layer="abc"]');
+  if (!rows || S.layer !== "abc") return render();
+  const up = (c) => {
+    const u = c.toLocaleUpperCase(currentLang());
+    return S.shift && u.length === 1 ? u : c;
+  };
+  const set = (node, v) => node?.nodeType === 3 && node.data !== v && (node.data = v);
+  for (const b of rows.querySelectorAll("button[data-k]")) {
+    const a = keys[Number(b.dataset.k)];
+    if (a?.a === "sh") {
+      b.classList.toggle("on", !!S.shift);
+      b.classList.toggle("lock", S.shift === 2);
+    } else if (a?.a === "char" && /^\p{L}$/u.test(a.v)) {
+      set(b.firstChild, up(a.v));
+      const h = b.querySelector(".tk-v");
+      if (h) set(h.firstChild, up(varsFor(a.v)[0] || ""));
+    }
+  }
+  renderCtx();
 }
 
 // ---------- pisanje v polje ----------
@@ -570,8 +607,11 @@ function loadGlide() {
 }
 /** Ali se tu sme drsati: ABC, vklopljeno, ne v e-pošti in povezavah, ne v poljih brez kazalca. */
 function glideOn() {
-  const f = S.field;
-  if (!prefs.glide || S.layer !== "abc" || !f || f.isContentEditable || sel(f) === null || S.kind !== "text") return false;
+  return S.layer === "abc" && glideAllowed(S.field);
+}
+/** Polje dovoli drsenje po črkah (ne glede na trenutno plast). */
+function glideAllowed(f) {
+  if (!prefs.glide || !f || f.isContentEditable || sel(f) === null || S.kind !== "text") return false;
   const lay = layoutFor(currentLang());
   if (lay.globe || lay.id === "ime") return false;
   const auto = String(f.getAttribute("autocomplete") || "") + " " + String(orig(f) || "") + " " + String(f.type || "");
@@ -635,7 +675,7 @@ function enter(f) {
       if (!S.open || S.layer !== "abc") return;
       const was = S.shift;
       autoShift();
-      if (was !== S.shift) render();
+      if (was !== S.shift) paintShift();
     }, 0);
     return;
   }
@@ -689,7 +729,7 @@ function act(a) {
     S.shift = S.shift ? (S.shift === 1 && now - S.shiftAt < 350 ? 2 : 0) : 1;
     S.shiftAt = now;
     S.autoShift = false;
-    return render();
+    return paintShift();
   }
   const f = target();
   if (!f) return;
@@ -743,7 +783,7 @@ function act(a) {
     }
   }
   if (S.layer === "abc") autoShift();
-  if (shiftWas !== S.shift) render();
+  if (shiftWas !== S.shift) paintShift();
   else renderCtx();
 }
 
@@ -787,27 +827,39 @@ function undoCorrection(f, c) {
 let down = null;
 // Povečana tipka nad prstom (kot Gboard), samo črke na dotik.
 let prevTimer = 0;
+// Ena sama povečana tipka, ki jo le premikamo in skrivamo: dodajanje in odstranjevanje elementa ob vsakem
+// pritisku je pri dolgih straneh zaviralo tipkanje (ponoven izračun sloga).
+let prevEl = null;
 function preview(btn) {
-  closePreview();
+  clearTimeout(prevTimer);
   const host = board.firstElementChild;
   const r = btn.getBoundingClientRect();
   const br = host.getBoundingClientRect();
-  const p = document.createElement("div");
-  p.className = "tk-prev";
-  p.setAttribute("aria-hidden", "true");
-  p.textContent = btn.firstChild?.nodeType === 3 ? btn.firstChild.textContent : btn.textContent;
+  if (!prevEl) {
+    prevEl = document.createElement("div");
+    prevEl.className = "tk-prev";
+    prevEl.setAttribute("aria-hidden", "true");
+    prevEl.appendChild(document.createTextNode(""));
+  }
+  const p = prevEl;
+  if (p.parentNode !== host) host.appendChild(p);
+  // le besedilo v obstoječem vozlišču (nov otrok bi sprožil preračun pravil »:has« vse strani)
+  p.firstChild.data = btn.firstChild?.nodeType === 3 ? btn.firstChild.textContent : btn.textContent;
   const w = r.width + 16;
   const h = Math.round(r.height * 1.15);
   p.style.cssText = `width:${w}px;height:${h}px;left:${Math.round(r.left - br.left - 8)}px;top:${Math.round(r.top - br.top - h - 6)}px`;
-  host.appendChild(p);
+  // animacija vzpona steče znova tudi pri isti tipki
+  p.classList.remove("on", "out");
+  void p.offsetWidth;
+  p.classList.add("on");
 }
 function closePreview(ms = 0) {
   clearTimeout(prevTimer);
-  const p = board?.querySelector(".tk-prev");
-  if (!p) return;
-  if (!ms) return p.remove();
+  const p = prevEl;
+  if (!p?.classList.contains("on")) return;
+  if (!ms) return p.classList.remove("on", "out");
   p.classList.add("out");
-  prevTimer = setTimeout(() => p.remove(), ms);
+  prevTimer = setTimeout(() => p.classList.remove("on", "out"), ms);
 }
 function closePop() {
   board?.querySelector(".tk-pop")?.remove();
@@ -839,7 +891,7 @@ function popInsert(v) {
   closePop();
   if (S.shift === 1) {
     S.shift = 0;
-    render();
+    paintShift();
   } else renderCtx();
 }
 

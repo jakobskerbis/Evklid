@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Toplota
+  - energija s toplejšega na hladnejše telo
+  - enota joule, $1\,\text{kJ} = 1000\,\text{J}$
+- Masa in dvig temperature
+  - dvakrat več vode, dvakrat več toplote
+  - $\Delta T = t_{\text{konč}} - t_{\text{zač}}$
+- Specifična toplota
+  - toplota za $1\,\text{kg}$ in $1\,^\circ\text{C}$
+  - voda $4200\,\mathrm{J/(kg\cdot{}^\circ C)}$, medenina $380$
+  - večji $c$ pomeni manjši dvig temperature
+- Enačba
+  - $Q = m \cdot c \cdot \Delta T$
+  - masa v kilogramih
+  - napaka: končna temperatura namesto razlike
+- Druge oblike
+  - $c = \dfrac{Q}{m \cdot \Delta T}$: prepoznaš snov
+  - $\Delta T = \dfrac{Q}{m \cdot c}$, nato prištej $t_{\text{zač}}$
+- Ohlajanje
+  - $\Delta T < 0$, zato $Q < 0$
+  - trobenta odda $8360\,\text{J}$
