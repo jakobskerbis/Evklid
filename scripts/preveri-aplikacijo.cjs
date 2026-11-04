@@ -168,7 +168,7 @@ async function newPage(browser, phone, label, base) {
 }
 
 // V strani: id zadnje prikazane naloge (za pravilen/napačen odgovor iz baze) in pospešena ura iger
-// (window.__fastGames: vsak okvir izriše 10 korakov po 50 ms, da se igra konča v nekaj sekundah).
+// (window.__fastGames: vsak okvir izriše 10 korakov po 50 ms, core.js pa čas igre še pospeši 8×, da se igra konča tudi na počasnem stroju).
 function PAGE_HOOKS() {
   // Neobravnavane zavrnitve aplikacija pokaže le kot obvestilo; tukaj jih zabeležimo kot napako.
   addEventListener("unhandledrejection", (e) => console.error(`neobravnavana zavrnitev: ${e.reason?.message || e.reason}`));
@@ -960,7 +960,7 @@ async function games(p, label) {
   await click(p, ".gm-play [data-act=play]", { wait: 200 });
   // Do konca igre: brez odgovorov se čas za nalogo izteče in igra porabi vsa življenja.
   const over = () => p.locator(".gm-end").isVisible();
-  for (let i = 0; i < 60 && !(await over()); i++) await p.waitForTimeout(250);
+  for (let i = 0; i < 240 && !(await over()); i++) await p.waitForTimeout(250); // do 60 s (počasen stroj, igra brez časovne meje)
   await p.evaluate(() => (window.__fastGames = false));
   if (!(await over())) throw new Error("igra se ni končala (brez odgovorov bi morala izgubiti vsa življenja)");
   await settle(p, 400);

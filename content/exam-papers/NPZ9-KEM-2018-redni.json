@@ -1,0 +1,729 @@
+{
+ "id": "NPZ9-KEM-2018-redni",
+ "exam": "NPZ9",
+ "subject": "KEM",
+ "minutes": 60,
+ "points": 33,
+ "author": "AI",
+ "tools": "nalivno pero ali kemični svinčnik, svinčnik, radirka, šilček in žepno računalo; periodni sistem je sestavni del preizkusa (perforirana priloga)",
+ "tasks": [
+  {
+   "n": 1,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Maslena kislina daje žarkemu maslu neprijeten vonj. Njena racionalna formula je $\\mathrm{CH_3CH_2CH_2COOH}$. Koliko atomov je skupaj v eni molekuli maslene kisline?",
+     "choices": [
+      "$8$",
+      "$12$",
+      "$13$",
+      "$14$"
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – $14$ atomov ($4$ atomi C, $8$ atomov H in $2$ atoma O; molekulska formula $\\mathrm{C_4H_8O_2}$).",
+     "ways": [
+      {
+       "title": "Po skupinah",
+       "text": "Racionalno formulo razdeli na skupine in v vsaki preštej atome. Mali indeks velja samo za simbol tik pred njim.\n\n- $\\mathrm{CH_3}$: $1$ atom C in $3$ atomi H, skupaj $1 + 3 = 4$ atomi.\n- $\\mathrm{CH_2}$: $1 + 2 = 3$ atomi.\n- $\\mathrm{CH_2}$: še enkrat $3$ atomi.\n- $\\mathrm{COOH}$: $1$ atom C, $2$ atoma O in $1$ atom H, skupaj $1 + 2 + 1 = 4$ atomi.\n\nVse skupaj: $4 + 3 + 3 + 4 = 14$ atomov – pravilen je odgovor **D**."
+      },
+      {
+       "title": "Drugače: po elementih",
+       "text": "Preštej vsak element posebej po vsej formuli $\\mathrm{CH_3CH_2CH_2COOH}$:\n\n- ogljik: v vsaki od štirih skupin po en atom, torej $4$;\n- vodik: $3 + 2 + 2 + 1 = 8$;\n- kisik: $2$ (oba v skupini $\\mathrm{COOH}$).\n\nMolekulska formula je $\\mathrm{C_4H_8O_2}$, skupaj $4 + 8 + 2 = 14$ atomov.\n\n- **A** ($8$) je le število atomov vodika.\n- **B** ($12$) je število atomov C in H – pozabljena sta atoma kisika.\n- **C** ($13$) dobiš, če spregledaš atom vodika na koncu skupine $\\mathrm{COOH}$."
+      }
+     ],
+     "mistake": "Atom vodika v skupini $\\mathrm{{-}COOH}$ se pogosto spregleda, ker stoji za atomoma kisika. Pri štetju zato pojdi po formuli znak za znakom od leve proti desni."
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Magnezij in žveplo sta v periodnem sistemu v isti periodi. Kaj imata atoma teh dveh elementov zagotovo skupnega? Pomagaj si s periodnim sistemom.",
+     "choices": [
+      "enako število protonov v jedru",
+      "enako število elektronskih lupin",
+      "enako število valenčnih (zunanjih) elektronov",
+      "enako število nevtronov v jedru"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – enako število elektronskih lupin (oba imata tri lupine).",
+     "ways": [
+      {
+       "title": "Iz periodnega sistema",
+       "text": "Številka **periode** pove, koliko elektronskih lupin ima atom. Magnezij in žveplo sta v $3.$ periodi, zato imata oba atoma elektrone v **treh lupinah**:\n\n- magnezij (vrstno število $12$): $2, 8, 2$;\n- žveplo (vrstno število $16$): $2, 8, 6$.\n\nPravilen je odgovor **B**.\n\n- **A**: število protonov je vrstno število – $12$ pri magneziju in $16$ pri žveplu. Vsak element ima svoje število protonov.\n- **C**: valenčnih elektronov je pri magneziju $2$, pri žveplu $6$. Enako število valenčnih elektronov imajo elementi iste **skupine**, ne periode.\n- **D**: najpogostejši atom magnezija ima $24 - 12 = 12$ nevtronov, najpogostejši atom žvepla pa $32 - 16 = 16$ nevtronov."
+      }
+     ],
+     "mistake": "Periodo (vrstico) in skupino (stolpec) hitro zamenjaš. Zapomni si: perioda pove število lupin, skupina pa število valenčnih elektronov."
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera trditev o reaktantih kemijske reakcije je pravilna?",
+     "choices": [
+      "Skupna masa reaktantov, ki zreagirajo, je enaka skupni masi produktov.",
+      "Reaktanti so pred reakcijo vedno v enakem agregatnem stanju kot produkti.",
+      "V enačbi kemijske reakcije reaktante zapišemo desno od puščice.",
+      "Reaktanti so snovi, ki pri kemijski reakciji šele nastanejo."
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – skupna masa reaktantov, ki zreagirajo, je enaka skupni masi produktov (zakon o ohranitvi mase).",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Pri kemijski reakciji se atomi le prerazporedijo: vezi med njimi se pretrgajo in nastanejo nove. Noben atom ne izgine in noben ne nastane iz nič, zato je **skupna masa reaktantov, ki zreagirajo, enaka skupni masi produktov**. To je zakon o ohranitvi mase – pravilen je odgovor **A**.\n\n- **B**: agregatno stanje se pri reakciji lahko spremeni. Primer: pri gorenju trdnega oglja ($\\mathrm{C}$) v plinastem kisiku nastane plin ogljikov dioksid.\n- **C**: reaktante zapišemo **levo** od puščice, produkte desno: reaktanti $\\rightarrow$ produkti.\n- **D**: snovi, ki pri reakciji nastanejo, so **produkti**. Reaktanti so snovi, ki v reakcijo vstopajo in se porabljajo."
+      }
+     ],
+     "mistake": "Če pri gorenju lesa ostane le malo pepela, se zdi, da je masa izginila. V resnici so pri gorenju nastali tudi plini, ki so odšli v zrak; če bi jih ujel in stehtal skupaj s pepelom, bi bila skupna masa enaka masi lesa in porabljenega kisika."
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Lana je s toplo raztopino pralne sode (natrijevega karbonata) čistila mastne kuhinjske ploščice. Raztopina je bazična in draži kožo, zato je delala z zaščitnimi rokavicami. Nekaj kapljic je kapnilo na pult. S katero snovjo iz gospodinjstva lahko doseže, da kapljice ne bodo več bazične?",
+     "choices": [
+      "z raztopino sode bikarbone",
+      "z milnico",
+      "s kisom",
+      "s slano vodo"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – s kisom.",
+     "ways": [
+      {
+       "title": "Nasprotne lastnosti",
+       "text": "Bazično raztopino lahko izničiš le s snovjo, ki ima **nasprotne** lastnosti – s **kislino**. Kis je razredčena raztopina ocetne (etanojske) kisline. Ko kis kapneš na bazične kapljice, kislina in baza zreagirata; pri natrijevem karbonatu se ob tem pojavijo mehurčki, ker nastaja plin ogljikov dioksid. Ko dodaš ravno dovolj kisa, kapljice niso več bazične. Pravilen je odgovor **C**.\n\n- **A**: raztopina sode bikarbone (natrijevega hidrogenkarbonata) je šibko **bazična** – bazičnosti ne odpravi.\n- **B**: milnica je bazična, zato bi kapljice ostale bazične.\n- **D**: slana voda (raztopina natrijevega klorida) je nevtralna. Z njo kapljice le razredčiš, baza pa v njih ostane."
+      },
+      {
+       "title": "Preizkus z indikatorjem",
+       "text": "Pomagaš si lahko z lakmusovim papirjem. Bazična kapljica obarva rdeč lakmusov papir **modro**. Če kapljici dodajaš milnico, raztopino sode bikarbone ali slano vodo, ostane papir moder. Če dodajaš kis, kapljica ob pravi količini rdečega lakmusovega papirja ne obarva več modro – ni več bazična. Ob preveliki količini kisa postane kisla in obarva moder lakmusov papir rdeče."
+      }
+     ],
+     "mistake": "»Soda bikarbona« in »pralna soda« zvenita podobno in obe sta bazični snovi – zato soda bikarbona tu ne pomaga. Z njo odpravljamo **kislost**, ne bazičnost."
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Shema prikazuje delce v zaprti posodi. Polni (●) in prazni (○) krogci predstavljajo atome dveh različnih elementov; krogca, ki se dotikata, sta povezana v molekulo. Kaj je v posodi?",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 230 190\" font-family=\"sans-serif\" fill=\"currentColor\" stroke-linecap=\"round\"><title>Zaprta posoda z dvoatomnimi delci iz polnih ali praznih krogcev</title><path d=\"M20 15V178H210V15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\"/><path d=\"M14 15H216\" stroke=\"currentColor\" stroke-width=\"2.4\"/><circle cx=\"38.9\" cy=\"42.8\" r=\"6.5\"/><circle cx=\"51.1\" cy=\"47.2\" r=\"6.5\"/><circle cx=\"104.4\" cy=\"41.3\" r=\"6.5\" fill-opacity=\".08\" stroke=\"currentColor\" stroke-width=\"1.4\"/><circle cx=\"115.6\" cy=\"34.8\" r=\"6.5\" fill-opacity=\".08\" stroke=\"currentColor\" stroke-width=\"1.4\"/><circle cx=\"167.8\" cy=\"48.9\" r=\"6.5\"/><circle cx=\"172.2\" cy=\"61.1\" r=\"6.5\"/><circle cx=\"60\" cy=\"93.5\" r=\"6.5\" fill-opacity=\".08\" stroke=\"currentColor\" stroke-width=\"1.4\"/><circle cx=\"60\" cy=\"106.5\" r=\"6.5\" fill-opacity=\".08\" stroke=\"currentColor\" stroke-width=\"1.4\"/><circle cx=\"118.6\" cy=\"83.9\" r=\"6.5\"/><circle cx=\"131.4\" cy=\"86.1\" r=\"6.5\"/><circle cx=\"180\" cy=\"124.2\" r=\"6.5\" fill-opacity=\".08\" stroke=\"currentColor\" stroke-width=\"1.4\"/><circle cx=\"190\" cy=\"115.8\" r=\"6.5\" fill-opacity=\".08\" stroke=\"currentColor\" stroke-width=\"1.4\"/><circle cx=\"38.9\" cy=\"147.2\" r=\"6.5\"/><circle cx=\"51.1\" cy=\"142.8\" r=\"6.5\"/><circle cx=\"105.4\" cy=\"135.4\" r=\"6.5\" fill-opacity=\".08\" stroke=\"currentColor\" stroke-width=\"1.4\"/><circle cx=\"114.6\" cy=\"144.6\" r=\"6.5\" fill-opacity=\".08\" stroke=\"currentColor\" stroke-width=\"1.4\"/><circle cx=\"143.5\" cy=\"160\" r=\"6.5\"/><circle cx=\"156.5\" cy=\"160\" r=\"6.5\"/></svg>",
+     "choices": [
+      "zmes dveh elementov",
+      "zmes dveh spojin",
+      "čista snov – element",
+      "čista snov – spojina"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – zmes dveh elementov.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "1. **Koliko vrst molekul je v posodi?** Dve: molekule iz dveh polnih krogcev (●●) in molekule iz dveh praznih krogcev (○○). Snov iz dveh vrst delcev je **zmes**.\n2. **Iz česa je vsaka vrsta molekul?** Vsaka molekula je zgrajena iz atomov **enega samega** elementa (dva polna ali dva prazna krogca). Taka snov je **element** (npr. kisik $\\mathrm{O_2}$ ali dušik $\\mathrm{N_2}$).\n\nV posodi je torej **zmes dveh elementov** – odgovor **A**.\n\n- **B**: spojina bi imela v vsaki molekuli atome **različnih** elementov (● in ○ skupaj, npr. ●○). Takih molekul v posodi ni.\n- **C** in **D**: čista snov bi imela samo eno vrsto delcev, v posodi pa sta dve."
+      },
+      {
+       "title": "Drugače: primer iz življenja",
+       "text": "Zrak je zmes, v kateri prevladujeta dušik $\\mathrm{N_2}$ in kisik $\\mathrm{O_2}$ – oba sta elementa iz dvoatomnih molekul. Če bi narisal model zraka (samo ti dve snovi), bi bil videti tako kot shema: dve vrsti dvoatomnih molekul, vsaka iz enakih atomov."
+      }
+     ],
+     "mistake": "Dvoatomna molekula (npr. ●●) še ni spojina. Spojina nastane šele, ko so v molekuli povezani atomi **različnih** elementov."
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Kalij v šolskem laboratoriju hranijo v steklenici pod petrolejem. Zakaj?",
+     "choices": [
+      "Ker bi se kalij na zraku stalil, saj je njegovo tališče nižje od sobne temperature.",
+      "Ker petrolej s kalijem reagira in na njem nastane trdna zaščitna plast.",
+      "Ker petrolej kalij raztaplja in ga tako ohranja mehkega in svetlečega.",
+      "Ker tako kalij ne pride v stik s kisikom in vlago (vodo) iz zraka."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – ker tako kalij ne pride v stik s kisikom in vlago iz zraka.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Kalij je alkalijska kovina ($1.$ skupina) in je zelo reaktiven:\n\n- s **kisikom** iz zraka hitro reagira – sveže odrezana svetleča površina v nekaj sekundah potemni;\n- z **vodo** (tudi z vlago iz zraka) burno reagira; nastaneta kalijev hidroksid in vodik, ki se ob tem lahko vžge: $\\mathrm{2K + 2H_2O \\rightarrow 2KOH + H_2}$.\n\nPetrolej s kalijem ne reagira in ga loči od zraka. Pravilen je odgovor **D**.\n\n- **A**: tališče kalija je približno $63\\,^\\circ\\mathrm{C}$, kar je več od sobne temperature. Pri sobni temperaturi je kalij trden.\n- **B**: petrolej s kalijem ne reagira; prav zato je primeren za hranjenje.\n- **C**: kovine se v petroleju ne raztapljajo; kalij v njem ostane kos kovine."
+      }
+     ],
+     "mistake": "Kalija nikoli ne prijemaj z golimi rokami: vlaga na koži z njim reagira in nastane jedek kalijev hidroksid. Kos kalija primeš s pinceto."
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Korund je zelo trd mineral; uporabljajo ga na primer za brusne plošče. Je aluminijev oksid, ionska spojina iz aluminijevih in oksidnih ionov. Katera formula pravilno prikazuje aluminijev oksid? Pomagaj si s periodnim sistemom.",
+     "choices": [
+      "$\\mathrm{AlO}$",
+      "$\\mathrm{Al_2O_3}$",
+      "$\\mathrm{Al_3O_2}$",
+      "$\\mathrm{AlO_3}$"
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – $\\mathrm{Al_2O_3}$.",
+     "ways": [
+      {
+       "title": "Z naboji ionov",
+       "text": "1. Aluminij je v $13.$ skupini in ima $3$ valenčne elektrone. Odda jih in nastane ion $\\mathrm{Al^{3+}}$.\n2. Kisik je v $16.$ skupini in ima $6$ valenčnih elektronov. Sprejme $2$ elektrona in nastane ion $\\mathrm{O^{2-}}$.\n3. Spojina je kot celota nevtralna: skupni pozitivni naboj mora biti enak skupnemu negativnemu. Najmanjši skupni večkratnik števil $3$ in $2$ je $6$:\n   - $2$ iona $\\mathrm{Al^{3+}}$: $2 \\cdot 3 = 6$ pozitivnih nabojev;\n   - $3$ ioni $\\mathrm{O^{2-}}$: $3 \\cdot 2 = 6$ negativnih nabojev.\n\nFormula je $\\mathrm{Al_2O_3}$ – odgovor **B**."
+      },
+      {
+       "title": "Drugače: preizkus vseh možnosti",
+       "text": "Za vsako formulo seštej naboje ($\\mathrm{Al^{3+}}$ in $\\mathrm{O^{2-}}$):\n\n- **A** $\\mathrm{AlO}$: $+3 - 2 = +1$ – ni nevtralno.\n- **B** $\\mathrm{Al_2O_3}$: $+6 - 6 = 0$ – nevtralno.\n- **C** $\\mathrm{Al_3O_2}$: $+9 - 4 = +5$ – ni nevtralno (indeksa sta zamenjana).\n- **D** $\\mathrm{AlO_3}$: $+3 - 6 = -3$ – ni nevtralno.\n\nSamo pri **B** je vsota nabojev nič."
+      }
+     ],
+     "mistake": "Pri »križnem« pravilu naboj enega iona postane indeks **drugega** iona: naboj $3$ aluminija gre h kisiku, naboj $2$ kisika k aluminiju. Če ju ne prekrižaš, dobiš napačno $\\mathrm{Al_3O_2}$."
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Aceton (propanon) je topilo v odstranjevalcu laka za nohte. Spada med ketone. Slika prikazuje kroglične modele štirih molekul. Kateri model prikazuje molekulo propanona?",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 340 278\" font-family=\"sans-serif\" fill=\"currentColor\" stroke-linecap=\"round\"><title>Kroglični modeli štirih molekul A–D z atomi C, H in O</title><defs><circle id=\"k8C\" r=\"9\"/><circle id=\"k8O\" r=\"8\" fill-opacity=\".4\" stroke=\"currentColor\" stroke-width=\"1.2\"/><circle id=\"k8H\" r=\"5.5\" fill-opacity=\".1\" stroke=\"currentColor\" stroke-width=\"1.2\"/></defs><path d=\"M64.5 62L75.5 62M94.5 62L105.5 62M45.5 62L39 62M55 52.5L55 46M55 71.5L55 78M85 52.5L85 46M85 71.5L85 78M116.2 54.7L122.8 43.3M120.7 57.3L127.3 45.9M119.8 70.2L123 75.9\" stroke=\"currentColor\" stroke-width=\"1.8\" fill=\"none\"/><use href=\"#k8C\" x=\"55\" y=\"62\"/><use href=\"#k8C\" x=\"85\" y=\"62\"/><use href=\"#k8C\" x=\"115\" y=\"62\"/><use href=\"#k8H\" x=\"33\" y=\"62\"/><use href=\"#k8H\" x=\"55\" y=\"40\"/><use href=\"#k8H\" x=\"55\" y=\"84\"/><use href=\"#k8H\" x=\"85\" y=\"40\"/><use href=\"#k8H\" x=\"85\" y=\"84\"/><use href=\"#k8O\" x=\"128\" y=\"39.5\"/><use href=\"#k8H\" x=\"126\" y=\"81.1\"/><text x=\"85\" y=\"112\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">A</text><path d=\"M234.5 62L245.5 62M264.5 62L275.5 62M215.5 62L209 62M225 52.5L225 46M225 71.5L225 78M294.5 62L301 62M285 52.5L285 46M285 71.5L285 78M255 71.5L255 78M255 52.5L255 44.5M260.8 29.8L264.9 25.4\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/><use href=\"#k8C\" x=\"225\" y=\"62\"/><use href=\"#k8C\" x=\"255\" y=\"62\"/><use href=\"#k8C\" x=\"285\" y=\"62\"/><use href=\"#k8H\" x=\"203\" y=\"62\"/><use href=\"#k8H\" x=\"225\" y=\"40\"/><use href=\"#k8H\" x=\"225\" y=\"84\"/><use href=\"#k8H\" x=\"307\" y=\"62\"/><use href=\"#k8H\" x=\"285\" y=\"40\"/><use href=\"#k8H\" x=\"285\" y=\"84\"/><use href=\"#k8H\" x=\"255\" y=\"84\"/><use href=\"#k8O\" x=\"255\" y=\"36\"/><use href=\"#k8H\" x=\"269\" y=\"21\"/><text x=\"255\" y=\"112\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">B</text><path d=\"M64.5 182L75.5 182M94.5 182L105.5 182M45.5 182L39 182M55 172.5L55 166M55 191.5L55 198M124.5 182L131 182M115 172.5L115 166M115 191.5L115 198M82.4 175.1L82.4 160.9M87.6 175.1L87.6 160.9\" stroke=\"currentColor\" stroke-width=\"1.8\" fill=\"none\"/><use href=\"#k8C\" x=\"55\" y=\"182\"/><use href=\"#k8C\" x=\"85\" y=\"182\"/><use href=\"#k8C\" x=\"115\" y=\"182\"/><use href=\"#k8H\" x=\"33\" y=\"182\"/><use href=\"#k8H\" x=\"55\" y=\"160\"/><use href=\"#k8H\" x=\"55\" y=\"204\"/><use href=\"#k8H\" x=\"137\" y=\"182\"/><use href=\"#k8H\" x=\"115\" y=\"160\"/><use href=\"#k8H\" x=\"115\" y=\"204\"/><use href=\"#k8O\" x=\"85\" y=\"155\"/><text x=\"85\" y=\"232\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">C</text><path d=\"M249.5 182L260.5 182M230.5 182L224 182M240 172.5L240 166M240 191.5L240 198M271.2 174.7L277.8 163.3M275.7 177.3L282.3 165.9M274.8 190.2L278.8 197.2M291.5 204.5L297 204.5\" stroke=\"currentColor\" stroke-width=\"1.8\" fill=\"none\"/><use href=\"#k8C\" x=\"240\" y=\"182\"/><use href=\"#k8C\" x=\"270\" y=\"182\"/><use href=\"#k8H\" x=\"218\" y=\"182\"/><use href=\"#k8H\" x=\"240\" y=\"160\"/><use href=\"#k8H\" x=\"240\" y=\"204\"/><use href=\"#k8O\" x=\"283\" y=\"159.5\"/><use href=\"#k8O\" x=\"283\" y=\"204.5\"/><use href=\"#k8H\" x=\"303\" y=\"204.5\"/><text x=\"255\" y=\"232\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">D</text><use href=\"#k8C\" x=\"70\" y=\"262\"/><text x=\"84\" y=\"266\" font-size=\"11\">atom C</text><use href=\"#k8H\" x=\"145\" y=\"262\"/><text x=\"156\" y=\"266\" font-size=\"11\">atom H</text><use href=\"#k8O\" x=\"220\" y=\"262\"/><text x=\"233\" y=\"266\" font-size=\"11\">atom O</text></svg>",
+     "choices": [
+      "model A",
+      "model B",
+      "model C",
+      "model D"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – v verigi treh atomov C je na srednji atom C z dvojno vezjo vezan atom O ($\\mathrm{CH_3COCH_3}$).",
+     "ways": [
+      {
+       "title": "Po značilnostih ketona",
+       "text": "Ime **propan**on pove, da ima molekula verigo **treh** atomov ogljika. Končnica **-on** pomeni keton: atom kisika je z **dvojno vezjo** vezan na atom ogljika **v notranjosti verige**, ne na krajni atom C. Racionalna formula propanona je $\\mathrm{CH_3COCH_3}$.\n\n- **A**: trije atomi C, dvojna vez $\\mathrm{C{=}O}$ pa je na **krajnem** atomu C, ki ima še atom H. To je skupina $\\mathrm{{-}CHO}$ – molekula je aldehid propanal.\n- **B**: trije atomi C, atom O je na srednjem atomu C, vendar z **enojno** vezjo, na atom O pa je vezan še atom H. To ni dvojna vez $\\mathrm{C{=}O}$, zato molekula ni keton.\n- **C**: trije atomi C, atom O je z **dvojno** vezjo vezan na srednji atom C – to je propanon.\n- **D**: le **dva** atoma C, na drugem sta dva atoma O (enega z dvojno vezjo, drugega s skupino $\\mathrm{O{-}H}$). To je etanojska (ocetna) kislina."
+      },
+      {
+       "title": "Drugače: preštej atome",
+       "text": "Iz formule $\\mathrm{CH_3COCH_3}$ dobiš $3$ atome C, $6$ atomov H in $1$ atom O, skupaj $10$ atomov.\n\n- model A: $3$ C, $6$ H, $1$ O – ujema se po številu, a atom O je na koncu verige;\n- model B: $3$ C, $8$ H, $1$ O – preveč atomov H;\n- model C: $3$ C, $6$ H, $1$ O, atom O na sredini;\n- model D: $2$ C, $4$ H, $2$ O.\n\nOstaneta A in C; keton ima skupino $\\mathrm{C{=}O}$ v notranjosti verige, zato je pravilen **C**."
+      }
+     ],
+     "mistake": "Samo štetje atomov ni dovolj: propanal (A) in propanon (C) imata enako molekulsko formulo $\\mathrm{C_3H_6O}$. Razlikujeta se po tem, **kje** v verigi je atom kisika."
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Metan je glavna sestavina zemeljskega plina. Kateri zapis pravilno prikazuje prostorsko zgradbo molekule metana?",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 330 290\" font-family=\"sans-serif\" fill=\"currentColor\" stroke-linecap=\"round\"><title>Štirje zapisi molekule metana A–D</title><path d=\"M80 24L36 96M80 24L106 110M80 24L124 76M36 96L106 110M106 110L124 76M36 96L124 76\" stroke=\"currentColor\" stroke-opacity=\".45\" stroke-dasharray=\"2 3\" fill=\"none\"/><path d=\"M80 66L80 32\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M72.8 77.6L43.2 92.4\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M84.7 80.5L101.3 103.5\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M88 74.4L116 75.6\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-dasharray=\"4 3\"/><text x=\"80\" y=\"79\" font-size=\"15\" text-anchor=\"middle\">C</text><text x=\"80\" y=\"29\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"36\" y=\"101\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"106\" y=\"115\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"124\" y=\"81\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"40\" y=\"56\" font-size=\"11\">109,5°</text><path d=\"M250 62L250 38\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M250 78L250 102\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M242 70L216 70\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M258 70L284 70\" stroke=\"currentColor\" stroke-width=\"1.8\"/><text x=\"250\" y=\"75\" font-size=\"15\" text-anchor=\"middle\">C</text><text x=\"250\" y=\"35\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"250\" y=\"115\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"208\" y=\"75\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"292\" y=\"75\" font-size=\"14\" text-anchor=\"middle\">H</text><path d=\"M259 52H268V61\" fill=\"none\" stroke=\"currentColor\"/><text x=\"270\" y=\"50\" font-size=\"11\">90°</text><path d=\"M36 219L90 239M90 239L126 219M126 219L72 203M72 203L36 219\" stroke=\"currentColor\" stroke-opacity=\".45\" stroke-dasharray=\"2 3\" fill=\"none\"/><path d=\"M74.6 176.9L41.4 213.1\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M81.2 178.9L88.8 231.1\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M85.5 176.8L120.5 213.2\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M78.1 178.8L73.9 195.2\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-dasharray=\"4 3\"/><text x=\"80\" y=\"176\" font-size=\"15\" text-anchor=\"middle\">C</text><text x=\"36\" y=\"224\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"90\" y=\"244\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"126\" y=\"224\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"72\" y=\"208\" font-size=\"14\" text-anchor=\"middle\">H</text><path d=\"M208 214L258 249M258 249L286 207M286 207L208 214\" stroke=\"currentColor\" stroke-opacity=\".45\" stroke-dasharray=\"2 3\" fill=\"none\"/><path d=\"M250 213L250 173\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M242.1 219.7L215.9 215.3\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M252.2 228.7L255.8 241.3\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M257.5 218.1L278.5 209.9\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-dasharray=\"4 3\"/><text x=\"250\" y=\"226\" font-size=\"15\" text-anchor=\"middle\">C</text><text x=\"250\" y=\"170\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"208\" y=\"219\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"258\" y=\"254\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"286\" y=\"212\" font-size=\"14\" text-anchor=\"middle\">H</text><text x=\"216\" y=\"247\" font-size=\"11\">120°</text><text x=\"22\" y=\"24\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">A</text><text x=\"192\" y=\"24\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">B</text><text x=\"22\" y=\"160\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">C</text><text x=\"192\" y=\"160\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">D</text><text x=\"165\" y=\"282\" font-size=\"10\" text-anchor=\"middle\">črtkana vez kaže od tebe, za ravnino papirja</text></svg>",
+     "choices": [
+      "zapis A",
+      "zapis B",
+      "zapis C",
+      "zapis D"
+     ],
+     "correct": [
+      0
+     ],
+     "answer": "A – atom C je v središču tetraedra, štirje atomi H so v njegovih ogliščih; koti med vezmi so $109{,}5^\\circ$.",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Atom ogljika v metanu $\\mathrm{CH_4}$ tvori **štiri** enojne vezi z atomi vodika. Elektronski pari vezi se med seboj odbijajo, zato se razporedijo **čim dlje** drug od drugega – v **prostoru**, ne v ravnini. Atomi H so v ogliščih **tetraedra** (piramide s štirimi enakimi trikotnimi ploskvami), atom C je v njegovem središču, vsi koti H–C–H pa so enaki, $109{,}5^\\circ$. Tak je zapis **A**.\n\n- **B**: to je strukturna formula, narisana v ravnini papirja. Koti $90^\\circ$ bi pomenili, da je molekula ploska – v resnici ni, saj so v prostoru vezi lahko bolj narazen kot v ravnini.\n- **C**: vsi štirje atomi H so na isti strani atoma C (kot noge piramide). Vezi bi bile stisnjene skupaj, čeprav se odbijajo.\n- **D**: trije atomi H so z atomom C v isti ravnini, četrti pa pravokotno nanjo. Koti niso vsi enaki, kar se ne ujema z molekulo s štirimi enakimi vezmi."
+      },
+      {
+       "title": "Drugače: model z baloni",
+       "text": "Štiri enako napihnjene balone poveži na sredini. Sami se razporedijo tako, da kažejo v štiri smeri čim bolj narazen – v oglišča tetraedra, kot vezi v zapisu **A**. Ne uredijo se v ravnino kot v zapisu B, ne stisnejo se na eno stran kot v zapisu C in ne razporedijo se tako, da bi bili trije v ravnini, četrti pa pravokotno nanjo, kot v zapisu D."
+      }
+     ],
+     "mistake": "Strukturna formula v ravnini (B) je pravilen zapis **povezav** v molekuli, ne pa njene **oblike**. Ko vprašanje sprašuje po prostorski zgradbi, iščeš tetraeder."
+    }
+   ]
+  },
+  {
+   "n": 10,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Katera trditev o molekuli vode je pravilna?",
+     "choices": [
+      "Molekula je linearna, zato je nepolarna.",
+      "Atom kisika in atoma vodika so povezani z ionskimi vezmi.",
+      "Molekula je zgrajena iz enega atoma vodika in dveh atomov kisika.",
+      "Vezi v molekuli so polarne kovalentne, molekula je polarna."
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – vezi v molekuli vode so polarne kovalentne, molekula je polarna.",
+     "ways": [
+      {
+       "title": "Po lastnostih molekule",
+       "text": "Formula vode je $\\mathrm{H_2O}$: en atom kisika je s **skupnima elektronskima paroma** (kovalentno) vezan na dva atoma vodika.\n\n- Kisik bolj privlači skupne elektrone kot vodik, zato so elektroni bliže kisiku: vezi O–H so **polarne kovalentne**.\n- Molekula je **kotna** (kot med vezema je približno $104{,}5^\\circ$), zato se polarnosti obeh vezi ne izničita: na strani kisika je delni negativni naboj, na strani vodikov delni pozitivni. Molekula je **polarna**.\n\nPravilen je odgovor **D**.\n\n- **A**: molekula vode ni linearna, ampak kotna; zato je polarna.\n- **B**: ionska vez nastane med kovino in nekovino s prenosom elektronov; kisik in vodik sta nekovini, ki si elektrone delita.\n- **C**: indeks $2$ v $\\mathrm{H_2O}$ stoji pri vodiku – v molekuli sta **dva atoma vodika** in **en atom kisika**."
+      },
+      {
+       "title": "Drugače: poskus z naelektreno palico",
+       "text": "Če tankemu curku vode iz pipe približaš naelektreno plastično palico (npr. podrgnjen balon), se curek ukloni proti palici. To se zgodi zato, ker so molekule vode **polarne**: obrnejo se z nasprotno nabitim koncem proti palici. Curek nepolarne tekočine se ne bi uklonil. Poskus potrjuje trditev D in ovrže trditev A."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Plinski žar deluje na propan. Diagram prikazuje, kako se med gorenjem propana spreminja energija snovi. Katera trditev je pravilna?",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 198\" font-family=\"sans-serif\" fill=\"currentColor\" stroke-linecap=\"round\"><title>Energijski diagram gorenja propana</title><path d=\"M40 172V14M40 172H292\" stroke=\"currentColor\" stroke-width=\"1.8\" fill=\"none\"/><path d=\"M35 22L40 10L45 22ZM284 167L296 172L284 177Z\"/><path d=\"M55 72H105C125 72 130 34 145 34C162 34 172 136 205 136H275\" stroke=\"currentColor\" stroke-width=\"2.4\" fill=\"none\"/><text x=\"52\" y=\"90\" font-size=\"12\">propan + kisik</text><text x=\"212\" y=\"128\" font-size=\"12\">produkti</text><text x=\"24\" y=\"95\" font-size=\"12\" text-anchor=\"middle\" transform=\"rotate(-90 24 95)\">energija</text><text x=\"166\" y=\"190\" font-size=\"12\" text-anchor=\"middle\">potek reakcije</text></svg>",
+     "choices": [
+      "Reakcija je endotermna, produkti imajo več energije kot reaktanti.",
+      "Reakcija je eksotermna, produkti imajo manj energije kot reaktanti.",
+      "Reakcija je eksotermna, produkti imajo več energije kot reaktanti.",
+      "Reakcija je endotermna, saj imajo reaktanti in produkti enako energijo."
+     ],
+     "correct": [
+      1
+     ],
+     "answer": "B – reakcija je eksotermna, produkti imajo manj energije kot reaktanti.",
+     "ways": [
+      {
+       "title": "Branje diagrama",
+       "text": "Na diagramu je črta za reaktante (propan + kisik) **višje** od črte za produkte. Produkti imajo torej **manj** energije kot reaktanti. Razlika v energiji se pri reakciji **sprosti** v okolico kot toplota in svetloba – reakcija je **eksotermna**. Pravilen je odgovor **B**.\n\n- **A**: endotermna reakcija bi imela produkte **višje** od reaktantov – energijo bi morali dovajati.\n- **C**: v eksotermni reakciji imajo produkti manj energije; »eksotermna« in »več energije« si nasprotujeta.\n- **D**: črti nista na isti višini, zato energija reaktantov in produktov ni enaka."
+      },
+      {
+       "title": "Drugače: iz izkušnje",
+       "text": "Na žaru meso pečemo prav zato, ker se pri gorenju propana sprošča veliko toplote. Kar se sprosti, »odteče« iz snovi v okolico – snovem po reakciji (produktom) ostane manj energije. Diagram to kaže s padcem črte od reaktantov proti produktom. Grbina na začetku pomeni, da je treba reakcijo sprožiti (npr. z iskro), potem pa poteka sama."
+      }
+     ],
+     "mistake": "Grbina na diagramu ne pomeni, da je reakcija endotermna. Pri tem, ali je reakcija eksotermna ali endotermna, primerjaš le **začetno in končno** raven energije."
+    }
+   ]
+  },
+  {
+   "n": 12,
+   "parts": [
+    {
+     "id": "",
+     "points": 1,
+     "format": "choice",
+     "text": "Shema prikazuje razporeditev elektronov po lupinah v atomu elementa X. Atom odda vse elektrone iz zunanje lupine in nastane ion. Kateremu žlahtnemu plinu je nastali ion enak po številu elektronov? Pomagaj si s periodnim sistemom.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 140 140\" font-family=\"sans-serif\" fill=\"currentColor\" stroke-linecap=\"round\"><title>Razporeditev elektronov po lupinah v atomu elementa X</title><defs><circle id=\"e12\" r=\"3.2\"/></defs><circle cx=\"70\" cy=\"70\" r=\"7\" fill-opacity=\".85\"/><circle cx=\"70\" cy=\"70\" r=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-opacity=\".55\"/><use href=\"#e12\" x=\"70\" y=\"84\"/><use href=\"#e12\" x=\"70\" y=\"56\"/><circle cx=\"70\" cy=\"70\" r=\"26\" fill=\"none\" stroke=\"currentColor\" stroke-opacity=\".55\"/><use href=\"#e12\" x=\"94\" y=\"79.9\"/><use href=\"#e12\" x=\"79.9\" y=\"94\"/><use href=\"#e12\" x=\"60.1\" y=\"94\"/><use href=\"#e12\" x=\"46\" y=\"79.9\"/><use href=\"#e12\" x=\"46\" y=\"60.1\"/><use href=\"#e12\" x=\"60.1\" y=\"46\"/><use href=\"#e12\" x=\"79.9\" y=\"46\"/><use href=\"#e12\" x=\"94\" y=\"60.1\"/><circle cx=\"70\" cy=\"70\" r=\"42\" fill=\"none\" stroke=\"currentColor\" stroke-opacity=\".55\"/><use href=\"#e12\" x=\"112\" y=\"70\"/><use href=\"#e12\" x=\"99.7\" y=\"99.7\"/><use href=\"#e12\" x=\"70\" y=\"112\"/><use href=\"#e12\" x=\"40.3\" y=\"99.7\"/><use href=\"#e12\" x=\"28\" y=\"70\"/><use href=\"#e12\" x=\"40.3\" y=\"40.3\"/><use href=\"#e12\" x=\"70\" y=\"28\"/><use href=\"#e12\" x=\"99.7\" y=\"40.3\"/><circle cx=\"70\" cy=\"70\" r=\"58\" fill=\"none\" stroke=\"currentColor\" stroke-opacity=\".55\"/><use href=\"#e12\" x=\"111\" y=\"111\"/><use href=\"#e12\" x=\"29\" y=\"29\"/><text x=\"122\" y=\"18\" font-size=\"13\" font-weight=\"bold\">X</text></svg>",
+     "choices": [
+      "heliju (He)",
+      "neonu (Ne)",
+      "argonu (Ar)",
+      "kriptonu (Kr)"
+     ],
+     "correct": [
+      2
+     ],
+     "answer": "C – argonu; ion $\\mathrm{X^{2+}}$ ima $18$ elektronov ($2, 8, 8$), kot atom argona.",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "1. Preštej elektrone na shemi po lupinah: $2, 8, 8, 2$. Skupaj $2 + 8 + 8 + 2 = 20$ elektronov – element X je **kalcij** (vrstno število $20$).\n2. Atom odda $2$ elektrona iz zunanje lupine. Ostane $20 - 2 = 18$ elektronov v razporeditvi $2, 8, 8$. Nastane ion $\\mathrm{Ca^{2+}}$.\n3. Žlahtni plin z $18$ elektroni je **argon** (vrstno število $18$, razporeditev $2, 8, 8$).\n\nPravilen je odgovor **C**.\n\n- **A**: helij ima $2$ elektrona – to je število **oddanih** elektronov, ne preostalih.\n- **B**: neon ima $10$ elektronov ($2, 8$); ion kalcija ima eno polno lupino več.\n- **D**: kripton je žlahtni plin na koncu $4.$ periode, v kateri je kalcij. Toda ion kalcija elektrone **odda**, zato je enak žlahtnemu plinu **prejšnje** periode, ne iste."
+      },
+      {
+       "title": "Drugače: s periodnim sistemom",
+       "text": "Kalcij je v $4.$ periodi in $2.$ skupini. Ko odda oba valenčna elektrona, izgubi celotno zunanjo ($4.$) lupino. Ostanejo tri polne lupine, kot pri žlahtnem plinu na koncu $3.$ periode. V periodnem sistemu je to element **tik pred** kalijem in kalcijem – **argon**."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "n": 13,
+   "intro": "Po vročem tuširanju se je ogledalo v kopalnici zarosilo. Shema prikazuje delce vode v zraku tik ob ogledalu (pred spremembo) in na površini ogledala (po spremembi).",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 150\" font-family=\"sans-serif\" fill=\"currentColor\" stroke-linecap=\"round\"><title>Razporeditev delcev pred spremembo in po njej</title><rect x=\"10\" y=\"14\" width=\"120\" height=\"110\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><rect x=\"190\" y=\"14\" width=\"120\" height=\"110\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><circle cx=\"32\" cy=\"44\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"90\" cy=\"40\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"114\" cy=\"66\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"56\" cy=\"74\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"26\" cy=\"106\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"80\" cy=\"102\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"114\" cy=\"114\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"48\" cy=\"115\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"102\" cy=\"84\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"70\" cy=\"54\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"201\" cy=\"117\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"214\" cy=\"117\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"227\" cy=\"115\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"240\" cy=\"117\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"253\" cy=\"116\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"266\" cy=\"117\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"279\" cy=\"115\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"220\" cy=\"105\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"233\" cy=\"103\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"259\" cy=\"104\" r=\"6.5\" fill-opacity=\".75\"/><path d=\"M140 69H178\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M174 63L184 69L174 75Z\"/><text x=\"70\" y=\"142\" font-size=\"12\" text-anchor=\"middle\">pred spremembo</text><text x=\"250\" y=\"142\" font-size=\"12\" text-anchor=\"middle\">po spremembi</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Kako imenujemo spremembo agregatnega stanja, ki jo prikazuje shema?",
+     "answer": "kondenzacija (utekočinjanje) – prehod iz plinastega v tekoče stanje",
+     "ways": [
+      {
+       "title": "Iz razporeditve delcev",
+       "text": "- **Pred spremembo** so delci daleč narazen in razpršeni po vsem prostoru – tako so razporejeni v **plinu** (vodna para).\n- **Po spremembi** so delci tesno skupaj in se dotikajo, a niso urejeni v vrste; zbrani so na dnu – tako so razporejeni v **tekočini** (kapljice vode).\n\nPrehod iz plinastega v tekoče stanje imenujemo **kondenzacija** ali **utekočinjanje**. Vodna para iz toplega zraka se ob hladnem ogledalu ohladi in se utekočini v drobne kapljice."
+      }
+     ],
+     "mistake": "»Izparevanje« je obraten prehod (iz tekočega v plinasto). Pri branju sheme vedno najprej ugotovi, kakšno je stanje **pred** spremembo in kakšno **po** njej."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "construct",
+     "text": "Kapljice z ogledala zbereš in jih ohladiš pod tališče vode. V zvezek nariši posodo in v njej delce vode po ohladitvi. Nariši približno toliko delcev kot na shemi.",
+     "answer": "Delci so tesno skupaj (se dotikajo) in urejeni v pravilnih vrstah – trdno stanje (led).",
+     "solutionFigure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 150\" font-family=\"sans-serif\" fill=\"currentColor\" stroke-linecap=\"round\"><title>Delci v trdnem stanju: urejeni v pravilnih vrstah, tesno skupaj</title><rect x=\"100\" y=\"14\" width=\"120\" height=\"110\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><circle cx=\"130\" cy=\"117\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"143\" cy=\"117\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"156\" cy=\"117\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"169\" cy=\"117\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"182\" cy=\"117\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"130\" cy=\"104\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"143\" cy=\"104\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"156\" cy=\"104\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"169\" cy=\"104\" r=\"6.5\" fill-opacity=\".75\"/><circle cx=\"182\" cy=\"104\" r=\"6.5\" fill-opacity=\".75\"/><text x=\"160\" y=\"142\" font-size=\"12\" text-anchor=\"middle\">po ohladitvi pod tališče</text></svg>",
+     "ways": [
+      {
+       "title": "Delčni model trdne snovi",
+       "text": "Pod tališčem je snov v **trdnem** stanju. V delčnem modelu trdne snovi so delci:\n\n- **tesno skupaj** (se dotikajo),\n- **urejeni v pravilnih vrstah** (kot opeke v zidu – to je kristalna mreža),\n- na svojih mestih le **nihajo**, ne premikajo se drug mimo drugega.\n\nNariši torej približno $10$ enako velikih krogcev v pravilnih vrstah, ki se dotikajo (primer je na sliki rešitve)."
+      },
+      {
+       "title": "Drugače: primerjava treh stanj",
+       "text": "| stanje | razdalja med delci | urejenost |\n|---|---|---|\n| plinasto | velika | neurejeni |\n| tekoče | majhna (se dotikajo) | neurejeni |\n| trdno | majhna (se dotikajo) | **urejeni v vrste** |\n\nOd tekočine (slika »po spremembi«) se trdna snov razlikuje predvsem po **urejenosti** delcev, ne po razdalji med njimi.\n\nZanimivost: led ima nekoliko večjo prostornino od enake mase vode, ker so molekule v kristalu ledu urejene tako, da je med njimi nekaj praznega prostora – zato led plava na vodi. V preprostem delčnem modelu trdno snov kljub temu rišeš z urejenimi delci, ki se dotikajo."
+      }
+     ],
+     "scoring": "1 točka: enako veliki delci se dotikajo **in** so urejeni v pravilne vrste (vsaj dve vrsti, kot na sliki rešitve). Število delcev ($8$–$12$ ali podobno) in oblika posode se ne ocenjujeta. Točke ni, če so delci urejeni, a med njimi so vidni razmiki, ali če so tesno skupaj, a neurejeni (slika tekočine).",
+     "mistake": "Pogosta napaka je, da delce narišeš tesno skupaj, a neurejeno – to je slika tekočine, ne trdne snovi."
+    }
+   ]
+  },
+  {
+   "n": 14,
+   "intro": "Učenci so iz morske vode pridobili čisto vodo z aparaturo, ki jo prikazuje slika.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 244\" font-family=\"sans-serif\" fill=\"currentColor\" stroke-linecap=\"round\"><title>Aparatura za pridobivanje čiste vode iz morske vode</title><path d=\"M20 218H120M30 218V40M30 120H58\" stroke=\"currentColor\" stroke-width=\"2.4\" fill=\"none\"/><path d=\"M70 70V96A26 26 0 1 0 86 96V70\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M55 126A24 24 0 0 0 101 126Z\" fill-opacity=\".25\"/><rect x=\"67\" y=\"62\" width=\"22\" height=\"9\" rx=\"2\" fill-opacity=\".6\"/><path d=\"M78 30V92\" stroke=\"currentColor\" stroke-width=\"2.2\"/><circle cx=\"78\" cy=\"94\" r=\"3\"/><path d=\"M86 80L120 92\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M114 80L214 116L206 138L106 102Z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M114 92L222 131\" stroke=\"currentColor\" stroke-width=\"1.6\"/><path d=\"M131 89V70M191 133V150\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M222 131L230 148\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M224 150H238V160L254 214H208L224 160Z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"M213 196H249L254 214H208Z\" fill-opacity=\".12\"/><path d=\"M70 192H86V214H70ZM62 214H94V218H62Z\" fill-opacity=\".5\"/><path d=\"M78 190C70 178 76 170 78 160C80 170 86 178 78 190Z\" fill-opacity=\".4\"/><text x=\"84\" y=\"24\" font-size=\"11\">termometer</text><path d=\"M110 170L92 140\" stroke=\"currentColor\"/><text x=\"96\" y=\"182\" font-size=\"11\">bučka z morsko vodo</text><text x=\"10\" y=\"236\" font-size=\"11\">gorilnik</text><path d=\"M46 228L64 210\" stroke=\"currentColor\"/><text x=\"186\" y=\"94\" font-size=\"11\">hladilnik</text><text x=\"136\" y=\"68\" font-size=\"10\">voda ven</text><text x=\"186\" y=\"160\" font-size=\"10\" text-anchor=\"end\">voda noter</text><text x=\"196\" y=\"234\" font-size=\"11\">zbrana čista voda</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Kateri dve spremembi agregatnega stanja potekata pri tem postopku? Za vsako zapiši, v katerem delu aparature poteka.",
+     "answer": "V bučki voda vre (izpareva) – iz tekočega v plinasto stanje; v hladilniku se vodna para kondenzira (utekočini) – iz plinastega v tekoče stanje.",
+     "ways": [
+      {
+       "title": "Pot vode skozi aparaturo",
+       "text": "1. **Bučka**: gorilnik segreva morsko vodo, voda **vre** – preide iz tekočega v plinasto stanje (**izparevanje**). Sol ne izpareva, zato ostane v bučki.\n2. **Hladilnik**: vodna para potuje skozi notranjo cev, okrog katere teče hladna voda. Para se ohladi in **kondenzira** (utekočini) – preide iz plinastega v tekoče stanje.\n3. Kapljice čiste vode stečejo v erlenmajerico."
+      }
+     ],
+     "scoring": "1 točka: obe spremembi (izparevanje oz. vrenje **in** kondenzacija oz. utekočinjanje) s pravilnim mestom.",
+     "mistake": "»Taljenje« in »strjevanje« sta prehoda med trdnim in tekočim stanjem – pri destilaciji ne potekata."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Ali je pridobivanje čiste vode s tem postopkom fizikalna ali kemijska sprememba? Odgovor utemelji.",
+     "answer": "Fizikalna sprememba – voda spreminja le agregatno stanje, nova snov ne nastane (iz bučke pride spet voda).",
+     "ways": [
+      {
+       "title": "Ali nastane nova snov?",
+       "text": "Pri kemijski spremembi nastanejo **nove snovi** z drugačnimi lastnostmi. Tu voda v bučki preide v vodno paro, para pa se v hladilniku spet spremeni v vodo – na koncu dobiš **isto snov**, vodo. Spremenilo se je le agregatno stanje, sestava vode pa ne. Sol, ki je ostala v bučki, je še vedno kuhinjska sol. Zato je destilacija **fizikalna sprememba**."
+      },
+      {
+       "title": "Drugače: ali je postopek mogoče obrniti?",
+       "text": "Če bi zbrano čisto vodo vlil nazaj k soli, ki je ostala v bučki, bi spet dobil slano vodo. Snovi se pri postopku le ločijo, ne spremenijo. Pri kemijski spremembi (npr. gorenju) izhodnih snovi tako preprosto ne bi dobil nazaj."
+      }
+     ],
+     "mistake": "Segrevanje z gorilnikom samo po sebi še ne pomeni kemijske spremembe. Odloča, ali nastane nova snov."
+    }
+   ]
+  },
+  {
+   "n": 15,
+   "intro": "Učiteljica je imela štiri plastenke vode, s katerih so odpadle nalepke. Ve, da so v njih voda iz pipe, mineralna voda, voda iz vodnjaka in destilirana voda, ne ve pa, katera je katera. Maja je v štiri epruvete A–D nalila po $10\\,\\mathrm{mL}$ vode iz vsake plastenke in v vsako dodala $5$ kapljic milnice. Epruvete je zamašila, vsako enako dolgo stresala in nato izmerila višino pene.\n\n| epruveta | A | B | C | D |\n|---|---|---|---|---|\n| višina pene | $1{,}0\\,\\mathrm{cm}$ | $0{,}5\\,\\mathrm{cm}$ | $4{,}5\\,\\mathrm{cm}$ | $2{,}0\\,\\mathrm{cm}$ |",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 200\" font-family=\"sans-serif\" fill=\"currentColor\" stroke-linecap=\"round\"><title>Višina pene v epruvetah A–D</title><path d=\"M40 30V160A12 12 0 0 0 64 160V30\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M41 140H63V160A11 11 0 0 1 41 160Z\" fill-opacity=\".12\"/><rect x=\"41\" y=\"124\" width=\"22\" height=\"16\" fill-opacity=\".45\"/><text x=\"52\" y=\"190\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">A</text><path d=\"M100 30V160A12 12 0 0 0 124 160V30\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M101 140H123V160A11 11 0 0 1 101 160Z\" fill-opacity=\".12\"/><rect x=\"101\" y=\"132\" width=\"22\" height=\"8\" fill-opacity=\".45\"/><text x=\"112\" y=\"190\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">B</text><path d=\"M160 30V160A12 12 0 0 0 184 160V30\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M161 140H183V160A11 11 0 0 1 161 160Z\" fill-opacity=\".12\"/><rect x=\"161\" y=\"68\" width=\"22\" height=\"72\" fill-opacity=\".45\"/><text x=\"172\" y=\"190\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">C</text><path d=\"M220 30V160A12 12 0 0 0 244 160V30\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><path d=\"M221 140H243V160A11 11 0 0 1 221 160Z\" fill-opacity=\".12\"/><rect x=\"221\" y=\"108\" width=\"22\" height=\"32\" fill-opacity=\".45\"/><text x=\"232\" y=\"190\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">D</text><path d=\"M268 140V60M264 140H272M264 124H272M264 108H272M264 92H272M264 76H272M264 60H272\" stroke=\"currentColor\" fill=\"none\"/><text x=\"276\" y=\"144\" font-size=\"10\">0</text><text x=\"276\" y=\"64\" font-size=\"10\">5 cm</text><text x=\"30\" y=\"18\" font-size=\"11\">pena (osenčeno) nad vodo</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "V kateri epruveti je bila destilirana voda?",
+     "answer": "V epruveti C (največ pene, $4{,}5\\,\\mathrm{cm}$).",
+     "ways": [
+      {
+       "title": "Iz preglednice",
+       "text": "Z milnico se najbolj peni destilirana voda – podobno kot deževnica, v kateri se milo bogato peni. Iz preglednice zato izbereš epruveto z **največ** pene: to je **C** ($4{,}5\\,\\mathrm{cm}$, kar je več kot $2{,}0\\,\\mathrm{cm}$, $1{,}0\\,\\mathrm{cm}$ in $0{,}5\\,\\mathrm{cm}$). Zakaj je tako, utemeljiš pri b)."
+      }
+     ],
+     "mistake": "Epruveta B z najmanj pene ni pravi odgovor: destilirana voda se z milnico peni **najbolj**, ne najmanj."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Utemelji svoj odgovor pri a).",
+     "answer": "Destilirana voda ne vsebuje raztopljenih kalcijevih in magnezijevih ionov (je mehka), zato se milo z njimi ne porablja in nastane največ pene.",
+     "ways": [
+      {
+       "title": "Trda in mehka voda",
+       "text": "**Trdota vode** je posledica raztopljenih kalcijevih in magnezijevih spojin (ionov $\\mathrm{Ca^{2+}}$ in $\\mathrm{Mg^{2+}}$). Ti ioni z milom tvorijo **netopne** snovi – kosmiče ali sivo usedlino. Milo, ki se tako porabi, ne more tvoriti pene. V trdi vodi je zato pene malo.\n\nPri destilaciji ostanejo vse raztopljene snovi v bučki, zato destilirana voda kalcijevih in magnezijevih ionov ne vsebuje – je **mehka**. Vse milo lahko tvori peno, zato je je največ."
+      },
+      {
+       "title": "Drugače: preizkus v vsakdanjem življenju",
+       "text": "Če si umivaš roke v kraju z zelo trdo vodo, se milo slabo peni, na umivalniku pa ostaja siva obloga. Z deževnico, ki je skoraj tako mehka kot destilirana voda, se milo bogato peni. Poskus v epruvetah je enak primer: več pene pomeni mehkejšo vodo."
+      }
+     ],
+     "mistake": "Odgovor »ker je destilirana voda čista« ne zadošča. Utemeljitev mora povedati, da v njej ni snovi (kalcijevih in magnezijevih ionov), ki porabljajo milo."
+    }
+   ]
+  },
+  {
+   "n": 16,
+   "intro": "Tim je v epruveto nalil vodo in otroško olje (parafinsko olje). Tekočini se ne mešata. Nato je dodal nekaj zrnc oranžnega živilskega barvila beta-karotena, ki je nepolarna snov. Epruveto je zamašil, jo pretresel in počakal, da sta se tekočini spet ločili.\n\n| tekočina | gostota |\n|---|---|\n| voda | $1{,}00\\,\\mathrm{g/cm^3}$ |\n| parafinsko olje | približno $0{,}85\\,\\mathrm{g/cm^3}$ |",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "choice",
+     "text": "Na kateri sliki je pravilno prikazana epruveta po nekaj minutah? Osenčena plast je obarvana oranžno, neosenčena je brezbarvna.",
+     "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 336\" font-family=\"sans-serif\" fill=\"currentColor\" stroke-linecap=\"round\"><title>Štiri epruvete A–D z dvema plastema</title><path d=\"M31 50H63V90H31Z\" fill-opacity=\"0.06\"/><path d=\"M31 90H63V120A16 16 0 0 1 31 120Z\" fill-opacity=\"0.45\"/><path d=\"M30 20V120A17 17 0 0 0 64 120V20M30 90H64\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><text x=\"72\" y=\"74\" font-size=\"12\">voda</text><text x=\"72\" y=\"116\" font-size=\"12\">olje</text><text x=\"6\" y=\"36\" font-size=\"14\" font-weight=\"bold\">A</text><path d=\"M181 50H213V90H181Z\" fill-opacity=\"0.06\"/><path d=\"M181 90H213V120A16 16 0 0 1 181 120Z\" fill-opacity=\"0.45\"/><path d=\"M180 20V120A17 17 0 0 0 214 120V20M180 90H214\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><text x=\"222\" y=\"74\" font-size=\"12\">olje</text><text x=\"222\" y=\"116\" font-size=\"12\">voda</text><text x=\"156\" y=\"36\" font-size=\"14\" font-weight=\"bold\">B</text><path d=\"M31 200H63V240H31Z\" fill-opacity=\"0.45\"/><path d=\"M31 240H63V270A16 16 0 0 1 31 270Z\" fill-opacity=\"0.06\"/><path d=\"M30 170V270A17 17 0 0 0 64 270V170M30 240H64\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><text x=\"72\" y=\"224\" font-size=\"12\">voda</text><text x=\"72\" y=\"266\" font-size=\"12\">olje</text><text x=\"6\" y=\"186\" font-size=\"14\" font-weight=\"bold\">C</text><path d=\"M181 200H213V240H181Z\" fill-opacity=\"0.45\"/><path d=\"M181 240H213V270A16 16 0 0 1 181 270Z\" fill-opacity=\"0.06\"/><path d=\"M180 170V270A17 17 0 0 0 214 270V170M180 240H214\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"/><text x=\"222\" y=\"224\" font-size=\"12\">olje</text><text x=\"222\" y=\"266\" font-size=\"12\">voda</text><text x=\"156\" y=\"186\" font-size=\"14\" font-weight=\"bold\">D</text><rect x=\"40\" y=\"318\" width=\"14\" height=\"10\" fill-opacity=\".45\"/><text x=\"60\" y=\"327\" font-size=\"11\">obarvano</text><rect x=\"150\" y=\"318\" width=\"14\" height=\"10\" fill-opacity=\".06\" stroke=\"currentColor\"/><text x=\"170\" y=\"327\" font-size=\"11\">brezbarvno</text></svg>",
+     "choices": [
+      "epruveta A",
+      "epruveta B",
+      "epruveta C",
+      "epruveta D"
+     ],
+     "correct": [
+      3
+     ],
+     "answer": "D – zgoraj je olje, obarvano oranžno, spodaj brezbarvna voda.",
+     "ways": [
+      {
+       "title": "Dve vprašanji",
+       "text": "Za vsako sliko preveri dvoje:\n\n1. **Katera tekočina je zgoraj?** Pomisli na juho, na kateri plavajo kapljice olja – olje se zbere **nad vodo**. Pomagaš si lahko s preglednico. To velja za sliki B in D.\n2. **Katera plast je obarvana?** Pomisli na korenje, popraženo na olju: oranžno barvilo iz korenja (prav beta-karoten) obarva olje, ne vode. Obarvana je **oljna plast**. Od slik B in D to velja le za **D**.\n\nNatančni razlogi za oboje so vprašanje dela b).\n\n- **A**: olje bi moralo biti zgoraj.\n- **B**: plasti sta pravilno razporejeni, obarvana pa je voda namesto olja.\n- **C**: olje je spodaj, obarvana je voda – obe napaki hkrati."
+      }
+     ],
+     "mistake": "Pozoren bodi na obe lastnosti hkrati: slika B ima pravilno lego plasti, a napačno obarvano plast."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "open",
+     "text": "Zapiši dva razloga, ki pojasnita pravilno sliko: enega za lego plasti in enega za to, katera plast je obarvana.",
+     "answer": "1. Olje ima manjšo gostoto ($0{,}85\\,\\mathrm{g/cm^3}$) kot voda ($1{,}00\\,\\mathrm{g/cm^3}$), zato plava na vodi. 2. Beta-karoten je nepolaren in se raztaplja v nepolarnem olju, ne pa v polarni vodi, zato je obarvano olje.",
+     "ways": [
+      {
+       "title": "Gostota in topnost",
+       "text": "**1. Lega plasti – gostota.** Tekočini se ne mešata, zato se ločita v dve plasti. Spodaj je tekočina z **večjo gostoto**: voda ima $1{,}00\\,\\mathrm{g/cm^3}$, olje približno $0{,}85\\,\\mathrm{g/cm^3}$. Voda je spodaj, olje plava na njej.\n\n**2. Obarvanost – topnost.** Velja pravilo »podobno se raztaplja v podobnem«: nepolarne snovi se raztapljajo v nepolarnih topilih, polarne v polarnih. Parafinsko olje je zmes ogljikovodikov – nepolarno topilo. Voda je polarno topilo. Nepolarni beta-karoten se zato raztopi v olju in ga obarva oranžno, voda pa ostane brezbarvna."
+      },
+      {
+       "title": "Drugače: iz kuhinje",
+       "text": "- Kapljice olja v juhi plavajo na vrhu – olje ima manjšo gostoto kot voda.\n- Ko na olju popražiš naribano korenje, se olje obarva oranžno, voda za kuhanje korenja pa ostane skoraj brezbarvna. Beta-karoten iz korenja je nepolaren in se raztaplja v maščobah, ne v vodi.\n\nIsti razlogi veljajo za epruveto: olje je zgoraj, ker ima manjšo gostoto, in je obarvano, ker se v njem raztaplja nepolarno barvilo."
+      }
+     ],
+     "scoring": "1 točka: lega plasti, utemeljena z **gostoto** (olje ima manjšo gostoto kot voda).\n1 točka: obarvanost, utemeljena s **polarnostjo** (nepolarno barvilo se raztaplja v nepolarnem olju, ne v polarni vodi).",
+     "mistake": "»Olje je lažje od vode« je nenatančno: kozarec olja je lahko težji od žlice vode. Primerjati moraš **gostoti**, tj. maso enake prostornine."
+    }
+   ]
+  },
+  {
+   "n": 17,
+   "intro": "Učitelj je s kleščami prijel kos magnezijevega traku in ga držal v plamenu gorilnika. Magnezij je zagorel z bleščečo belo svetlobo in nastal je bel prah – magnezijev oksid. (V plamen gorečega magnezija ne glej neposredno, ker močna svetloba škoduje očem.)",
+   "parts": [
+    {
+     "id": "a",
+     "points": 2,
+     "format": "open",
+     "text": "Zapiši urejeno enačbo gorenja magnezija.",
+     "answer": "$\\mathrm{2Mg + O_2 \\rightarrow 2MgO}$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "1. **Reaktanta in produkt:** magnezij $\\mathrm{Mg}$ gori v kisiku iz zraka. Kisik je iz dvoatomnih molekul $\\mathrm{O_2}$.\n2. **Formula produkta:** magnezij ($2.$ skupina) tvori ion $\\mathrm{Mg^{2+}}$, kisik ion $\\mathrm{O^{2-}}$. Naboja se izničita v razmerju $1 : 1$, zato je formula $\\mathrm{MgO}$.\n3. **Neurejena enačba:** $\\mathrm{Mg + O_2 \\rightarrow MgO}$. Na levi sta $2$ atoma O, na desni $1$.\n4. **Urejanje:** pred $\\mathrm{MgO}$ zapišeš $2$ – na desni sta zdaj $2$ atoma O in $2$ atoma Mg. Zato tudi pred $\\mathrm{Mg}$ zapišeš $2$:\n\n$$\\mathrm{2Mg + O_2 \\rightarrow 2MgO}$$"
+      },
+      {
+       "title": "Preizkus: štetje atomov",
+       "text": "| atom | levo | desno |\n|---|---|---|\n| Mg | $2$ | $2 \\cdot 1 = 2$ |\n| O | $2$ | $2 \\cdot 1 = 2$ |\n\nŠtevilo atomov vsakega elementa je na obeh straneh enako, zato je enačba urejena. Koeficienti $2$, $1$, $2$ so najmanjša cela števila, ki to omogočijo."
+      }
+     ],
+     "scoring": "1 točka: pravilne formule reaktantov in produkta ($\\mathrm{Mg}$, $\\mathrm{O_2}$, $\\mathrm{MgO}$).\n1 točka: pravilni koeficienti ($2$, $1$, $2$). Točke za koeficiente ni, če je napačna katera formula.",
+     "mistake": "Zapis $\\mathrm{Mg + O \\rightarrow MgO}$ je napačen: kisik v zraku ni v obliki posameznih atomov, ampak dvoatomnih molekul $\\mathrm{O_2}$. Prav tako ne smeš spremeniti formule produkta v $\\mathrm{MgO_2}$, da bi se kisik izšel – urejaš le s koeficienti."
+    },
+    {
+     "id": "b",
+     "points": 2,
+     "format": "fill",
+     "text": "Učitelj je bel prah stresel v vodo in premešal; del prahu se je raztopil. Dopolni trditvi.\n\n1. pH nastale raztopine je … (večji / manjši) od $7$.\n2. Ko tej raztopini po kapljicah dodajaš klorovodikovo kislino, se pH raztopine približuje $7$. Taki reakciji rečemo ….",
+     "answer": "1. večji; 2. nevtralizacija",
+     "ways": [
+      {
+       "title": "Kovinski oksid v vodi",
+       "text": "1. Magnezijev oksid je oksid **kovine**. Z vodo nastane magnezijev hidroksid, ki je baza: $\\mathrm{MgO + H_2O \\rightarrow Mg(OH)_2}$. Raztopina baze je **bazična**, njen pH je **večji od $7$**.\n2. Ko bazični raztopini dodajaš kislino, kislina in baza zreagirata in raztopina postaja vse manj bazična. Taka reakcija med kislino in bazo je **nevtralizacija**. Pri tej nastane sol magnezijev klorid."
+      },
+      {
+       "title": "Drugače: s pravilom za okside",
+       "text": "Zapomniš si lahko: **oksidi kovin** z vodo dajo **bazične** raztopine (pH $> 7$), **oksidi nekovin** (npr. $\\mathrm{CO_2}$, $\\mathrm{SO_2}$) pa **kisle** (pH $< 7$). Magnezij je kovina, zato je raztopina bazična.\n\nČe bi v raztopino dodal nekaj kapljic univerzalnega indikatorja, bi se obarval modro (bazično). Med dodajanjem klorovodikove kisline bi barva prešla v zeleno, ko bi bila raztopina nevtralna – nevtralizacija je potekla do konca."
+      }
+     ],
+     "scoring": "1 točka: »večji«.\n1 točka: »nevtralizacija«.",
+     "mistake": "Če misliš, da so vsi oksidi kisli (zaradi »kislega« dežja iz oksidov nekovin), napačno zapišeš »manjši«. Odloča, ali je oksid kovinski ali nekovinski."
+    }
+   ]
+  },
+  {
+   "n": 18,
+   "parts": [
+    {
+     "id": "",
+     "points": 2,
+     "format": "open",
+     "text": "Čebelarka jeseni čebelam pripravi sladkorno raztopino za dokrmljevanje. V $2{,}0\\,\\mathrm{kg}$ tople vode raztopi $3{,}0\\,\\mathrm{kg}$ sladkorja. Izračunaj masni delež sladkorja v tej raztopini. Rezultat zapiši v odstotkih.",
+     "answer": "$w(\\text{sladkor}) = 0{,}60 = 60\\,\\%$",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "**Podatki:** $m(\\text{sladkor}) = 3{,}0\\,\\mathrm{kg}$, $m(\\text{voda}) = 2{,}0\\,\\mathrm{kg}$\n\n**Iščemo:** masni delež sladkorja $w(\\text{sladkor})$\n\n1. Masa raztopine je vsota mas topljenca in topila:\n$m(\\text{raztopina}) = 3{,}0\\,\\mathrm{kg} + 2{,}0\\,\\mathrm{kg} = 5{,}0\\,\\mathrm{kg}$\n2. Masni delež je masa topljenca, deljena z maso **raztopine**:\n$$w(\\text{sladkor}) = \\frac{m(\\text{sladkor})}{m(\\text{raztopina})} = \\frac{3{,}0\\,\\mathrm{kg}}{5{,}0\\,\\mathrm{kg}} = 0{,}60$$\n3. V odstotkih: $0{,}60 \\cdot 100\\,\\% = 60\\,\\%$.\n\nMasni delež sladkorja je $60\\,\\%$."
+      },
+      {
+       "title": "Drugače: z deli",
+       "text": "Sladkor in voda sta v razmerju $3{,}0 : 2{,}0 = 3 : 2$. Raztopina ima torej $3 + 2 = 5$ enakih delov, od tega so $3$ deli sladkor. Delež sladkorja je $\\frac{3}{5} = 0{,}6 = 60\\,\\%$.\n\n**Preizkus:** $60\\,\\%$ od $5{,}0\\,\\mathrm{kg}$ je $0{,}60 \\cdot 5{,}0 = 3{,}0\\,\\mathrm{kg}$ sladkorja – toliko ga je čebelarka res raztopila."
+      }
+     ],
+     "scoring": "1 točka: pravilna masa raztopine ($5{,}0\\,\\mathrm{kg}$) oziroma pravilen nastavek $\\frac{3{,}0\\,\\mathrm{kg}}{5{,}0\\,\\mathrm{kg}}$.\n1 točka: pravilen rezultat $60\\,\\%$ (ali $0{,}60$).",
+     "mistake": "Deljenje z maso vode, $\\frac{3{,}0\\,\\mathrm{kg}}{2{,}0\\,\\mathrm{kg}} = 1{,}5 = 150\\,\\%$, je napačno: masni delež nikoli ne more biti več kot $100\\,\\%$, saj topljenca ne more biti več kot vse raztopine. Deliti moraš z maso **raztopine** (topljenec + topilo)."
+    }
+   ]
+  },
+  {
+   "n": 19,
+   "intro": "Slika prikazuje kroglični model molekule ogljikovodika, ki ga uporabljajo kot gorivo pri varjenju in rezanju kovin.",
+   "figure": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 100\" font-family=\"sans-serif\" fill=\"currentColor\" stroke-linecap=\"round\"><title>Kroglični model molekule ogljikovodika</title><defs><circle id=\"k19C\" r=\"9\"/><circle id=\"k19H\" r=\"5.5\" fill-opacity=\".1\" stroke=\"currentColor\" stroke-width=\"1.2\"/></defs><path d=\"M90 36L111 36M128 30.5L172 30.5M128 36L172 36M128 41.5L172 41.5M189 36L210 36\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/><use href=\"#k19H\" x=\"84\" y=\"36\"/><use href=\"#k19C\" x=\"120\" y=\"36\"/><use href=\"#k19C\" x=\"180\" y=\"36\"/><use href=\"#k19H\" x=\"216\" y=\"36\"/><use href=\"#k19C\" x=\"102\" y=\"86\"/><text x=\"116\" y=\"90\" font-size=\"11\">atom C</text><use href=\"#k19H\" x=\"178\" y=\"86\"/><text x=\"189\" y=\"90\" font-size=\"11\">atom H</text></svg>",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "Zapiši strukturno ali racionalno formulo tega ogljikovodika.",
+     "answer": "Strukturna formula $\\mathrm{H{-}C{\\equiv}C{-}H}$ ali racionalna formula $\\mathrm{HC{\\equiv}CH}$.",
+     "ways": [
+      {
+       "title": "Iz modela",
+       "text": "Na modelu sta v sredini **dva atoma C** (polna krogca), ki ju povezujejo **tri** palčke – med njima je **trojna vez**. Na vsak atom C je vezan še po en atom H (prazen krogec).\n\nStrukturna formula: $\\mathrm{H{-}C{\\equiv}C{-}H}$\nRacionalna formula: $\\mathrm{HC{\\equiv}CH}$\n\nPreizkus: vsak atom C ima štiri vezi ($3$ v trojni vezi $+ 1$ z vodikom $= 4$), vsak atom H eno."
+      }
+     ],
+     "mistake": "Molekulska formula $\\mathrm{C_2H_2}$ ne kaže, kako so atomi povezani, zato ni odgovor na vprašanje. Pozorno preštej tudi palčke med atomoma C: tri palčke pomenijo trojno vez, ne dvojne."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Poimenuj ta ogljikovodik.",
+     "answer": "etin (acetilen)",
+     "ways": [
+      {
+       "title": "Iz imena",
+       "text": "- Dva atoma C v verigi: osnova imena je **et-** (kot pri etanu).\n- Trojna vez med atomi C: končnica **-in** (alkini).\n\nIme je **etin**; v tehniki ga imenujejo tudi **acetilen**."
+      }
+     ],
+     "mistake": "»Eten« ima dvojno vez ($\\mathrm{CH_2{=}CH_2}$), »etan« samo enojne. Končnice -an, -en, -in povedo, katera vez je v molekuli."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "open",
+     "text": "S katero od naštetih snovi ta ogljikovodik reagira že pri sobnih pogojih?\n\nmetan, bromovica (raztopina broma v vodi), raztopina natrijevega klorida, dušik",
+     "answer": "Z bromovico – brom se adira na trojno vez, bromovica se razbarva.",
+     "ways": [
+      {
+       "title": "Nenasičeni ogljikovodik",
+       "text": "Etin je **nenasičen** ogljikovodik: ima trojno vez. Na atoma C ob večkratni vezi se lahko vežejo drugi atomi – to je **adicija**. Brom se na etin adira že pri sobni temperaturi; rjavkasta bromovica se ob tem **razbarva**. Nastane najprej $\\mathrm{CHBr{=}CHBr}$, ob dovolj broma pa $\\mathrm{CHBr_2{-}CHBr_2}$.\n\n- Metan je nasičen ogljikovodik, z etinom ne reagira.\n- Raztopina natrijevega klorida (ionske spojine) z etinom ne reagira.\n- Dušik je zelo nereaktiven plin.\n\nZ bromovico poskus izvaja učitelj v digestoriju, ker so bromove pare strupene."
+      },
+      {
+       "title": "Drugače: preizkus nenasičenosti",
+       "text": "Bromovica je v šoli običajen **preizkus**, ali je ogljikovodik nenasičen: če se po pretresanju razbarva, ima ogljikovodik dvojno ali trojno vez. Ker ima molekula na modelu trojno vez, pričakuješ, da se bromovica razbarva – ogljikovodik reagira z njo."
+      }
+     ],
+     "mistake": "Odgovor »s kisikom« tu ne pride v poštev: kisika ni med naštetimi snovmi, poleg tega pa etin s kisikom ne reagira sam od sebe, ampak šele, ko ga prižgeš."
+    }
+   ]
+  },
+  {
+   "n": 20,
+   "intro": "V namiznem biokaminu gori tekoče gorivo, ki ga pridobivajo iz koruze in sladkornega trsta. Gre za spojino z racionalno formulo $\\mathrm{CH_3CH_2OH}$. Gorivo dolivaj le v ugasnjen in ohlajen gorilnik, ker so njegove pare vnetljive.",
+   "parts": [
+    {
+     "id": "a",
+     "points": 1,
+     "format": "open",
+     "text": "V katero skupino kisikovih organskih spojin spada to gorivo?",
+     "answer": "med alkohole (spojina je etanol)",
+     "ways": [
+      {
+       "title": "Iz formule",
+       "text": "V formuli $\\mathrm{CH_3CH_2OH}$ je na atom ogljika vezana skupina $\\mathrm{{-}OH}$ (atom kisika z vezanim atomom vodika). Kisikove organske spojine s to skupino na nasičenem atomu C so **alkoholi**. Ta spojina je **etanol**.\n\nZa primerjavo: aldehidi imajo skupino $\\mathrm{{-}CHO}$, ketoni skupino $\\mathrm{C{=}O}$ v notranjosti verige, karboksilne kisline skupino $\\mathrm{{-}COOH}$."
+      }
+     ],
+     "mistake": "Skupina $\\mathrm{{-}OH}$ v alkoholu ni hidroksidni ion kot v bazah ($\\mathrm{OH^-}$). Je kovalentno vezana na atom C, zato raztopina etanola ni bazična."
+    },
+    {
+     "id": "b",
+     "points": 1,
+     "format": "open",
+     "text": "Kako se imenuje funkcionalna skupina te spojine?",
+     "answer": "hidroksilna skupina ($\\mathrm{{-}OH}$)",
+     "ways": [
+      {
+       "title": "Razlaga",
+       "text": "Funkcionalna skupina je skupina atomov, ki določa značilne lastnosti spojine. Pri alkoholih je to skupina $\\mathrm{{-}OH}$, ki jo imenujemo **hidroksilna skupina**."
+      }
+     ],
+     "mistake": "»Hidroksidna skupina« ni pravilno ime: hidroksid je ion $\\mathrm{OH^-}$ v bazah (npr. $\\mathrm{NaOH}$). V alkoholih je skupina **hidroksilna**."
+    },
+    {
+     "id": "c",
+     "points": 1,
+     "format": "fill",
+     "text": "Pri popolnem gorenju tega goriva nastaneta ogljikov dioksid in še en produkt. V zvezek prepiši enačbo, namesto vprašaja zapiši formulo manjkajočega produkta in v prazna polja vpiši koeficiente, da bo enačba urejena.\n\n$$\\square\\,\\mathrm{CH_3CH_2OH} + \\square\\,\\mathrm{O_2} \\rightarrow \\square\\,\\mathrm{CO_2} + \\square\\ ?$$",
+     "answer": "$\\mathrm{CH_3CH_2OH + 3O_2 \\rightarrow 2CO_2 + 3H_2O}$ (koeficienti $1$, $3$, $2$, $3$; manjkajoči produkt je voda)",
+     "ways": [
+      {
+       "title": "Po korakih",
+       "text": "1. **Manjkajoči produkt:** gorivo vsebuje vodik. Pri popolnem gorenju se ogljik spremeni v $\\mathrm{CO_2}$, vodik pa v **vodo** $\\mathrm{H_2O}$.\n2. **Ogljik:** v molekuli goriva sta $2$ atoma C, zato pred $\\mathrm{CO_2}$ zapišeš $2$.\n3. **Vodik:** v molekuli je $3 + 2 + 1 = 6$ atomov H. Vsaka molekula vode ima $2$ atoma H, zato je molekul vode $6 : 2 = 3$.\n4. **Kisik na desni:** $2 \\cdot 2 + 3 \\cdot 1 = 7$ atomov O. Na levi je $1$ atom O že v gorivu, zato mora kisik $\\mathrm{O_2}$ prispevati še $7 - 1 = 6$ atomov, to je $3$ molekule $\\mathrm{O_2}$.\n\n$$\\mathrm{CH_3CH_2OH + 3O_2 \\rightarrow 2CO_2 + 3H_2O}$$"
+      },
+      {
+       "title": "Preizkus: štetje atomov",
+       "text": "| atom | levo | desno |\n|---|---|---|\n| C | $2$ | $2$ |\n| H | $6$ | $3 \\cdot 2 = 6$ |\n| O | $1 + 3 \\cdot 2 = 7$ | $2 \\cdot 2 + 3 = 7$ |\n\nVsi atomi se izidejo. Koeficienta $1$ pred gorivom običajno ne pišemo."
+      }
+     ],
+     "scoring": "1 točka: pravilna formula $\\mathrm{H_2O}$ **in** vsi pravilni koeficienti ($1$, $3$, $2$, $3$).",
+     "mistake": "Pogosto pozabiš atom kisika, ki je že v molekuli goriva, in zapišeš $\\frac{7}{2}$ molekule $\\mathrm{O_2}$. Kisik na levi pride od goriva **in** od molekul $\\mathrm{O_2}$."
+    }
+   ]
+  }
+ ]
+}

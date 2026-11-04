@@ -9,6 +9,8 @@ import { ELEMENTS, CATEGORIES, MASSES, shells, EXTRA } from "./pse-data.js";
 
 import { esc, texHtml, usesComma, remember } from "./tools-kit.js";
 import { chemTools } from "./tools-chem.js";
+import { formulaToCalc, vRadianih } from "./formula-calc.js";
+import { chemText } from "./molska.js";
 import { probTool } from "./tools-prob.js";
 import { anaTools } from "./tools-ana.js";
 import { testsTool, tvmTool, tableTool } from "./tools-test.js";
@@ -518,7 +520,7 @@ export function createPse(root, opts) {
         <button type="button" class="secondary small pse-ins">${icon("calculator")}<span>${esc(t("sc.toCalc"))}</span></button>
         <button type="button" class="ghost small pse-add">${icon("plus")}<span>${esc(t("sc.pse.addFormula"))}</span></button>
       </div>`;
-    $(".pse-ins").addEventListener("click", () => opts.onInsert?.(String(M).replace(".", comma() ? "," : ".")));
+    $(".pse-ins").addEventListener("click", () => opts.onInsert?.(chemText(e.sym) || String(M).replace(".", comma() ? "," : ".")));
     $(".pse-add").addEventListener("click", () => {
       const f = $(".pse-f");
       f.value += e.sym;
@@ -539,9 +541,11 @@ export function createPse(root, opts) {
       const ar = MASSES[sym];
       return `<tr><td>${esc(sym)}</td><td>${n}</td><td>${dec(ar, 3)}</td><td>${dec(n * ar, 3)}</td><td>${dec((100 * n * ar) / r.M, 2)} %</td></tr>`;
     });
-    out.innerHTML = `<div class="pse-mm-res">${texHtml(`M(\\mathrm{${texF}}) = ${dec(r.M, 2).replace(",", "{,}")}\\ \\mathrm{g/mol}`)}<button type="button" class="ghost icon-only pse-mm-ins" title="${esc(t("sc.toCalc"))}" aria-label="${esc(t("sc.toCalc"))}">${icon("calculator")}</button></div>
-      <table class="pse-tab"><thead><tr><th></th><th>N</th><th>${texHtml("A_r")}</th><th>${texHtml("N \\cdot A_r")}</th><th>${texHtml("w")}</th></tr></thead><tbody>${rows.join("")}</tbody></table>`;
-    out.querySelector(".pse-mm-ins").addEventListener("click", () => opts.onInsert?.(dec(r.M, 3).replace(/0+$/, "").replace(/[.,]$/, "")));
+    out.innerHTML = `<div class="pse-mm-res">${texHtml(`M(\\mathrm{${texF}}) = ${dec(r.M, 2).replace(",", "{,}")}\\ \\mathrm{g/mol}`)}</div>
+      <table class="pse-tab"><thead><tr><th></th><th>N</th><th>${texHtml("A_r")}</th><th>${texHtml("N \\cdot A_r")}</th><th>${texHtml("w")}</th></tr></thead><tbody>${rows.join("")}</tbody></table>
+      ${opts.onInsert ? `<div class="actions pse-act"><button type="button" class="secondary small pse-mm-ins">${icon("calculator")}<span>${esc(t("sc.toCalc"))}</span></button></div>` : ""}`;
+    // cela formula v kalkulator: M(H₂SO₄) se tam izračuna kot molska masa in jo lahko uporabiš v računu
+    out.querySelector(".pse-mm-ins")?.addEventListener("click", () => opts.onInsert(chemText(f) || dec(r.M, 3).replace(/0+$/, "").replace(/[.,]$/, "")));
   }
 
   $(".pse-grid").addEventListener("click", (e) => {
@@ -664,11 +668,12 @@ export function createFormulas(root, opts) {
           // Prazno ime: še ena formula pod istim imenom (rich.js da vsaki formuli svojo vrstico).
           item.className = r.parentElement.tagName === "THEAD" ? "fm-item fm-head" : a.textContent.trim() ? "fm-item" : "fm-item fm-cont";
           item.innerHTML = `<div class="fm-name">${a.innerHTML}</div><div class="fm-f">${b.innerHTML}</div>`;
+          calcButton(item);
           // Interaktivna skica nad formulami kartice (public/skice/), naloži se, ko je kartica vidna.
           const host = skicaHost(imeKartice(a));
           if (host) {
             item.classList.add("has-skica");
-            item.insertBefore(host, item.querySelector(".fm-f"));
+            item.insertBefore(host, item.querySelector(":scope > .fm-fx, :scope > .fm-f"));
           }
           list.append(item);
         }
@@ -691,6 +696,35 @@ export function createFormulas(root, opts) {
       }
     }
     return out;
+  }
+
+  // Gumb »V kalkulator« ob formuli, ki jo kalkulator zna (public/graph/formula-calc.js): formula se vpiše
+  // v znanstveni kalkulator, učenec zamenja znane črke s števili in kalkulator izračuna neznanko.
+  function calcButton(item) {
+    if (!opts.onInsert || item.classList.contains("fm-head")) return;
+    const f = item.querySelector(".fm-f");
+    const subject = book.split("-")[0];
+    let text = null;
+    for (const a of f.querySelectorAll('.katex-mathml annotation[encoding="application/x-tex"]')) if ((text = formulaToCalc(a.textContent, subject))) break;
+    if (!text) return;
+    const box = document.createElement("div");
+    box.className = "fm-fx";
+    f.replaceWith(box);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "ghost icon-only fm-calc";
+    btn.dataset.calc = text;
+    btn.title = t("sc.toCalc");
+    btn.setAttribute("aria-label", `${t("sc.toCalc")}: ${text}`);
+    btn.innerHTML = opts.icon("calculator");
+    box.append(f, btn);
+  }
+
+  // decimalna vejica, kjer jo jezik uporablja (1,22 λ/D); v oklepaju je vejica ločilo, tam ostane pika
+  function vejica(text) {
+    if (!usesComma(opts.locale?.())) return text;
+    let d = 0;
+    return text.replace(/[()]|(\d)\.(?=\d)/g, (m, dig) => (m === "(" ? (d++, m) : m === ")" ? (d--, m) : d ? m : `${dig},`));
   }
 
   // Vidno ime kartice brez skritega MathML (»Diagonale n-kotnika«); skicaZa ga primerja z imenom brez $.
@@ -780,6 +814,12 @@ export function createFormulas(root, opts) {
     if (!b) return;
     const [s, l] = book.split("-");
     show(b.closest(".fm-subj") ? `${b.dataset.k}-${l}` : `${s}-${b.dataset.k}`);
+  });
+  body.addEventListener("click", (e) => {
+    const b = e.target.closest(".fm-calc");
+    if (!b) return;
+    const rad = vRadianih(b.dataset.calc);
+    opts.onInsert(vejica(b.dataset.calc), { replace: true, hint: rad ? `${t("sc.fmHint")} ${t("sc.fmRad")}` : t("sc.fmHint"), angle: rad ? "rad" : undefined });
   });
   toc.addEventListener("click", (e) => {
     const c = e.target.closest("[data-sec]");

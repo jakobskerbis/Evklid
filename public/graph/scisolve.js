@@ -253,7 +253,7 @@ export function solutionTex(r, comma = true, mode = "auto") {
   if (r.exact)
     r.roots.forEach((x, i) => parts.push(`${name(i)} \\approx ${decTex(x, comma, mode)}`));
   else if (r.deg || r.grad) r.roots.forEach((x, i) => parts.push(`${name(i)} = ${decTex(x, comma, mode)}${ANGLE_SUP[r.grad ? "grad" : "deg"]}`));
-  else r.roots.forEach((x, i) => parts.push(`${name(i)} = ${numberTex(x, comma, mode)}`));
+  else r.roots.forEach((x, i) => parts.push(`${name(i)} = ${r.approx ? decTex(x, comma, mode) : numberTex(x, comma, mode)}`)); // approx: izmerjena vrednost (molska masa), brez ulomka
   if (!r.exact)
     (r.complex || []).forEach(([re, im], i) => {
       const a = re === 0 ? "" : plainTex(re, comma, mode);

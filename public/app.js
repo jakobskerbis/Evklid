@@ -3890,9 +3890,9 @@ function formulaBook() {
   const subj = ["MAT", "FIZ", "KEM"].includes(s) ? s : "MAT";
   return `${subj}-${stageCode(state.student?.settings)}`;
 }
-async function insertIntoCalc(text) {
+async function insertIntoCalc(text, o) {
   const tool = await setCalcMode("sci");
-  tool.insert(text);
+  tool.insert(text, o);
 }
 function calcTool(mode) {
   if (mode === "graph") return graphCalc();
@@ -4308,6 +4308,7 @@ async function bootFailed(err) {
   box.querySelector("button").onclick = () => location.reload();
   for (const el of document.body.children) el.inert = true; // prazna lupina pod sporočilom ni dosegljiva s tipkovnico
   document.body.append(box);
+  document.body.classList.add("boot-down-on");
   box.querySelector("button").focus();
   const timer = setInterval(async () => {
     if ((await serverReach()) !== "down") {

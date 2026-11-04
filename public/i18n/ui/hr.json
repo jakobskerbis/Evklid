@@ -902,6 +902,8 @@
   "sc.memory": "Spremljeno",
   "sc.insert": "Umetni u račun",
   "sc.pressSolve": "Pritisni = za rješenje",
+  "sc.fmHint": "Umjesto poznatih slova upiši brojeve, nepoznanicu ostavi i pritisni =.",
+  "sc.fmRad": "Kalkulator je sada u načinu RAD (kutovi u radijanima).",
   "sc.errUndefined": "Rezultat nije definiran (npr. dijeljenje s 0).",
   "sc.constants": "Konstante",
   "sc.toCalc": "U kalkulator",
