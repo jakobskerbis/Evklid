@@ -813,6 +813,45 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo-svg .lab-sil-tube.leak { stroke-dasharray: 6 3; }
 .demo-svg .lab-sil-utube { fill: none; stroke: var(--muted); stroke-width: 2; }
 .demo-svg .lab-sil-utube-water { fill: none; stroke: #8fc3e6; stroke-width: 9; }
+/* indikatorji (lab-ph, lab-dokaz, lab-slina; public/sim/lab-indikatorji.js): isti okvir kot toplota */
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) { min-width: 0; max-width: 100%; container: labtit / inline-size; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) :is(button, select, .seg-btn, .demo-check, .layer-chip) { min-height: 44px !important; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .seg-btn { min-width: 44px; }
+.lab-bench:has(> :is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina)) { overflow-x: clip; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz) .demo-slider select { grid-column: 1 / -1; width: 100%; max-width: 100%; } /* dolga imena vzorcev in preskusov */
+.demo:is(.demo-lab-ph, .demo-lab-dokaz) select { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); border-radius: 10px; padding: 0 8px; } /* berljivo tudi v temnem načinu */
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table-wrap { max-width: 100%; contain: inline-size; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table :is(th, td) { white-space: normal; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz) .lab-table td:nth-child(2) { min-width: 6.5em; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz) .lab-table td { text-align: left; }
+.demo-lab-slina .lab-table td { text-align: center; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table { overflow: visible; }
+.demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table thead th { position: sticky; top: 0; z-index: 1; background: var(--surface-2); } /* glava ostane vidna, ko se okvir pomakne na zadnjo vrstico */
+.lab-ind-key { margin: 0 0 8px; color: var(--text); }
+.lab-ind-key > span { white-space: nowrap; }
+@media (max-width: 480px) {
+  .demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table { font-size: 0.8rem; }
+  .demo:is(.demo-lab-ph, .demo-lab-dokaz, .demo-lab-slina) .lab-table :is(th, td) { padding: 5px 4px; }
+}
+.lab-ind-sw { display: inline-block; width: 1.1em; height: 1.1em; border-radius: 50%; border: 1px solid var(--muted); vertical-align: -0.2em; }
+.lab-ind-line, .lab-ind-grid { max-width: 420px; display: block; margin: 0 auto; }
+.demo-svg:is(.lab-ind-line, .lab-ind-grid) .tick.small { font-size: 12px; }
+.demo-svg:is(.lab-ind-line, .lab-ind-grid) .lbl.small { font-size: 12px; }
+.demo-svg .lab-warn { fill: var(--danger); font-size: 13px; font-weight: 700; }
+.demo-svg .lab-warn.small { font-size: 12px; }
+.demo-svg .lab-ind-liq { stroke: none; }
+.demo-svg .lab-ind-paper { fill: #f3efe2; stroke: #b9b3a3; stroke-width: 1; }
+.demo-svg .lab-ind-meter { fill: #3f4752; stroke: #2f343b; stroke-width: 1.5; }
+.demo-svg .lab-ind-rack { fill: #b08a5a; }
+.demo-svg .lab-ind-bath { stroke: var(--muted); stroke-width: 1; }
+.demo-svg .lab-ind-well { fill: #f7f7f5; stroke: #b9c2cf; stroke-width: 1.2; }
+.demo-svg .lab-ind-cell { stroke: var(--muted); stroke-width: 1; }
+.demo-svg .lab-ind-dot { stroke: var(--surface); stroke-width: 1.5; }
+.demo-svg .lab-ind-dot.kislo { fill: #c2334d; }
+.demo-svg .lab-ind-dot.nevtralno { fill: #3d8a4a; }
+.demo-svg .lab-ind-dot.bazicno { fill: #3566b5; }
+.demo-svg .lab-ind-dot.bad { stroke: var(--danger); stroke-width: 2.5; stroke-dasharray: 3 2; }
+.demo-svg .lab-ind-dotn { fill: #fff; font-size: 9px; font-weight: 700; }
 
 /* kratek video iz simulacije (public/gradiva.js) */
 .gr-video { width: min(760px, calc(100vw - 16px)); max-height: calc(100dvh - 16px); padding: 12px 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text); overflow-y: auto; }
