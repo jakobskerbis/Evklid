@@ -2740,5 +2740,7 @@
   "pp.taskN": "Ejercicio {n}",
   "pp.taskMsg": "Estoy resolviendo el examen anterior {paper}, ejercicio {n}. Envío una imagen del ejercicio. Guíame con pistas al estilo de este examen y no me des la solución hasta que lo intente por mi cuenta.",
   "pp.boxMsg": "Estoy resolviendo el examen anterior {paper}, página {page}. Envío una imagen del ejercicio. Guíame con pistas al estilo de este examen y no me des la solución hasta que lo intente por mi cuenta.",
-  "pp.taskText": "Texto del ejercicio extraído del examen (las fórmulas pueden estar dañadas; vale la imagen):"
+  "pp.taskText": "Texto del ejercicio extraído del examen (las fórmulas pueden estar dañadas; vale la imagen):",
+  "task.checkLeft": "quedan unos {n} s",
+  "task.checkAlmost": "casi listo"
 }

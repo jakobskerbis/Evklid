@@ -12,6 +12,9 @@ import { celebrate, failure, success, tap } from "@/lib/haptics";
 import { offlineAnswer, offlineHint, offlineNext } from "@/lib/offline";
 import { figureHtml, type Figure } from "@/lib/figures";
 import { RichText } from "@/components/RichText";
+import Storage from "expo-sqlite/kv-store";
+import { key } from "@/lib/keys";
+import { expectedMs, progressAt, addDuration } from "../../../public/check-progress.js";
 import { Banner, Body, Button, Card, ErrorView, Icon, Loading, ProgressBar, Screen, Title } from "@/components/ui";
 
 type Task = {
@@ -135,6 +138,7 @@ export default function Practice() {
       return;
     }
     setChecking(true);
+    const started = Date.now();
     try {
       let r: Result | null = null;
       if (offline) r = offlineAnswer(sid, String(task.id), answer) as Result | null;
@@ -154,6 +158,7 @@ export default function Practice() {
       else failure();
     } finally {
       setChecking(false);
+      if (!offline) saveCheckTime(Date.now() - started);
     }
   };
 
@@ -276,6 +281,7 @@ export default function Practice() {
       {!closed ? (
         <View style={{ gap: 10 }}>
           <Button title={checking ? t("task.checking") : t("task.check")} onPress={check} loading={checking} />
+          {checking && !offline ? <CheckWait /> : null}
           <View style={{ flexDirection: "row", gap: 10 }}>
             {steps.length < (hintTotal || 1) && hintTotal > 0 ? (
               <Button title={steps.length ? t("task.hintMore") : t("task.hintBtn")} kind="secondary" icon={{ ios: "lightbulb", android: "lightbulb" }} onPress={hint} style={{ flex: 1 }} />
@@ -444,4 +450,32 @@ function stepMd(s: Step) {
   }
   if (s.kind === "formula") return `${t("task.hintFormula")}\n\n${(s.formula || []).map((x) => `$$${x}$$`).join("\n\n")}`;
   return s.text || "";
+}
+
+// Preverjanje nad 2 s: vrstica napredka z oceno preostalega časa, kot na spletu (public/check-progress.js).
+const CHECK_TIMES = key("checkTimes");
+const checkTimes = (): number[] => {
+  try {
+    return JSON.parse(Storage.getItemSync(CHECK_TIMES) || "[]");
+  } catch {
+    return [];
+  }
+};
+const saveCheckTime = (ms: number) => Storage.setItemSync(CHECK_TIMES, JSON.stringify(addDuration(checkTimes(), ms)));
+
+function CheckWait() {
+  const th = useTheme();
+  const [state] = useState(() => ({ start: Date.now(), expected: expectedMs(checkTimes()) }));
+  const [p, setP] = useState<{ pct: number; left: number } | null>(null);
+  useEffect(() => {
+    const id = setInterval(() => setP(progressAt(Date.now() - state.start, state.expected)), 250);
+    return () => clearInterval(id);
+  }, [state]);
+  if (!p) return null;
+  return (
+    <View style={{ gap: 8 }} accessibilityLiveRegion="polite">
+      <Text style={{ color: th.muted, fontWeight: "600" }}>{`${t("task.checking")} ${p.left ? t("task.checkLeft", { n: p.left }) : t("task.checkAlmost")}`}</Text>
+      <ProgressBar value={p.pct} />
+    </View>
+  );
 }

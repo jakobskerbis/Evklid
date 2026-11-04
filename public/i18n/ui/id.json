@@ -2716,5 +2716,7 @@
   "pp.taskN": "Soal {n}",
   "pp.taskMsg": "Saya sedang mengerjakan soal ujian lalu {paper}, soal {n}. Saya kirim gambar soalnya. Bimbing saya dengan petunjuk sesuai gaya ujian ini dan jangan beri tahu jawabannya sebelum saya mencoba sendiri.",
   "pp.boxMsg": "Saya sedang mengerjakan soal ujian lalu {paper}, halaman {page}. Saya kirim gambar soalnya. Bimbing saya dengan petunjuk sesuai gaya ujian ini dan jangan beri tahu jawabannya sebelum saya mencoba sendiri.",
-  "pp.taskText": "Teks soal dari lembar ujian (rumus bisa rusak; yang berlaku gambarnya):"
+  "pp.taskText": "Teks soal dari lembar ujian (rumus bisa rusak; yang berlaku gambarnya):",
+  "task.checkLeft": "sekitar {n} dtk lagi",
+  "task.checkAlmost": "hampir selesai"
 }

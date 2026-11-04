@@ -59,8 +59,10 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
 // Oštevilčen podnaslov na začetku odstavka (»**1. Imaginarna enota.** Vpeljemo …«) postane svoj
 // naslov nad odstavkom, da se loči od besedila (lekcije, razlage; enako na spletu in v aplikaciji).
 export function subHeadings(html) {
-  return html.replace(/<p><strong>(\d{1,2}\.\s[^<]{1,80}?)\.?<\/strong>\s*(?:<br>\s*)?([\s\S]*?)<\/p>/g, (_, title, rest) =>
-    `<h3 class="sub-head">${title}</h3>${rest.trim() ? `<p>${rest}</p>` : ""}`,
+  // Krepki začetek postane naslov, če je sam v odstavku ali se konča s piko/dvopičjem (»**3. Seštevanje.** …«).
+  // »**3. Seštevanje** dveh števil …« je del stavka in ostane v odstavku, sicer bi se stavek pretrgal.
+  return html.replace(/<p><strong>(\d{1,2}\.\s[^<]{1,80}?)([.:]?)<\/strong>\s*(?:<br>\s*)?([\s\S]*?)<\/p>/g, (all, title, end, rest) =>
+    !end && rest.trim() ? all : `<h3 class="sub-head">${title}</h3>${rest.trim() ? `<p>${rest}</p>` : ""}`,
   );
 }
 

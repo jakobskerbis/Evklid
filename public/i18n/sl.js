@@ -349,6 +349,8 @@ export default {
   "pad.okCheck": "Da, preveri",
   "pad.fix": "Popravi s tipkami",
   "task.checking": "Preverjam …",
+  "task.checkLeft": "še približno {n} s",
+  "task.checkAlmost": "še malo",
   "task.checkError": "Odgovora nisem mogel preveriti ({msg}). Preveri povezavo in poskusi znova.",
   "task.checkFailed": "Odgovora nisem mogel preveriti: {msg}",
   "task.alreadyChecked": "Odgovor na to nalogo je že shranjen. Velja prvi odgovor.",

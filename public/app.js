@@ -48,6 +48,7 @@ import { validDate } from "./goal-data.js";
 import { loadPapers, mountPapers, paperLabel, examName as siExamName, SI_EXAMS } from "./exam-papers.js";
 import { openPaperViewer, closePaperViewer } from "./paper-viewer.js";
 import { initDrsniki } from "./drsniki.js";
+import { expectedMs, progressAt, addDuration } from "./check-progress.js";
 
 const $ = (sel) => document.querySelector(sel);
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
@@ -2550,12 +2551,43 @@ function workedBlock(task, solution, label = t("task.solution")) {
   return `<div class="solution">${dataHtml}${formulaHtml}<span class="sol-label">${label}</span>${renderRich(solution)}</div>`;
 }
 
+// Preverjanje, ki traja več kot 2 s, dobi vrstico napredka z oceno preostalega časa (public/check-progress.js).
+const CHECK_TIMES_KEY = "evklid.checkTimes";
+function checkBar(fb) {
+  const start = Date.now();
+  let hist = [];
+  try { hist = JSON.parse(lsGet(CHECK_TIMES_KEY) || "[]"); } catch {}
+  const expected = expectedMs(hist);
+  const tick = () => {
+    const p = progressAt(Date.now() - start, expected);
+    if (!p) return;
+    let bar = fb.querySelector(".check-bar");
+    if (!bar) {
+      fb.innerHTML = `<div class="fb info check-wait"><div><span class="check-label"></span><div class="check-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="${escapeHtml(t("task.checking"))}"><div></div></div></div></div>`;
+      bar = fb.querySelector(".check-bar");
+    }
+    bar.firstElementChild.style.width = `${Math.round(p.pct * 100)}%`;
+    bar.setAttribute("aria-valuenow", String(Math.round(p.pct * 100)));
+    fb.querySelector(".check-label").textContent = `${t("task.checking")} ${p.left ? t("task.checkLeft", { n: p.left }) : t("task.checkAlmost")}`;
+  };
+  const timer = setInterval(tick, 250);
+  return () => {
+    clearInterval(timer);
+    lsSet(CHECK_TIMES_KEY, JSON.stringify(addDuration(hist, Date.now() - start)));
+  };
+}
+
 async function checkTask(task, ctx, value) {
   const fb = $("#feedback");
   let r;
   try {
     fb.innerHTML = `<div class="fb info">${t("task.checking")}</div>`;
-    r = await api(`/api/students/${state.student.id}/tasks/${task.id}/answer`, { method: "POST", body: { answer: value } });
+    const stop = checkBar(fb);
+    try {
+      r = await api(`/api/students/${state.student.id}/tasks/${task.id}/answer`, { method: "POST", body: { answer: value } });
+    } finally {
+      stop();
+    }
   } catch (err) {
     // Učenec napako vidi, namesto da se ne zgodi nič. Z »Preveri povezavo« samo, ko strežnik ni odgovoril.
     const msg = escapeHtml(err.message);

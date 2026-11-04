@@ -2740,5 +2740,7 @@
   "pp.taskN": "Task {n}",
   "pp.taskMsg": "I'm working on the past paper {paper}, task {n}. I'm sending a picture of the task. Guide me with hints in the style of this exam and don't give away the solution until I've tried it myself.",
   "pp.boxMsg": "I'm working on the past paper {paper}, page {page}. I'm sending a picture of the task. Guide me with hints in the style of this exam and don't give away the solution until I've tried it myself.",
-  "pp.taskText": "Task text from the paper (formulas may be garbled; the picture is what counts):"
+  "pp.taskText": "Task text from the paper (formulas may be garbled; the picture is what counts):",
+  "task.checkLeft": "about {n} s left",
+  "task.checkAlmost": "almost done"
 }

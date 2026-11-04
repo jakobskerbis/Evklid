@@ -2744,5 +2744,7 @@
   "pp.taskN": "Questão {n}",
   "pp.taskMsg": "Estou resolvendo a prova anterior {paper}, questão {n}. Envio uma imagem da questão. Guie-me com dicas no estilo deste exame e não revele a solução antes que eu tente sozinho ou sozinha.",
   "pp.boxMsg": "Estou resolvendo a prova anterior {paper}, página {page}. Envio uma imagem da questão. Guie-me com dicas no estilo deste exame e não revele a solução antes que eu tente sozinho ou sozinha.",
-  "pp.taskText": "Texto da questão extraído da prova (as fórmulas podem estar corrompidas; vale a imagem):"
+  "pp.taskText": "Texto da questão extraído da prova (as fórmulas podem estar corrompidas; vale a imagem):",
+  "task.checkLeft": "faltam cerca de {n} s",
+  "task.checkAlmost": "quase pronto"
 }

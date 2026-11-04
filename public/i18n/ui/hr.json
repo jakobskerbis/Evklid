@@ -2765,5 +2765,7 @@
   "pp.taskN": "Zadatak {n}",
   "pp.taskMsg": "Rješavam prošli ispit {paper}, zadatak {n}. Šaljem sliku zadatka. Vodi me naputcima u stilu ovog ispita i ne otkrivaj rješenje dok ga ne pokušam riješiti.",
   "pp.boxMsg": "Rješavam prošli ispit {paper}, stranica {page}. Šaljem sliku zadatka. Vodi me naputcima u stilu ovog ispita i ne otkrivaj rješenje dok ga ne pokušam riješiti.",
-  "pp.taskText": "Tekst zadatka iz ispita (formule mogu biti oštećene, vrijedi slika):"
+  "pp.taskText": "Tekst zadatka iz ispita (formule mogu biti oštećene, vrijedi slika):",
+  "task.checkLeft": "još oko {n} s",
+  "task.checkAlmost": "još malo"
 }

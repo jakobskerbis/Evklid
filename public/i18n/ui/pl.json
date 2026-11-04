@@ -2794,5 +2794,7 @@
   "pp.taskN": "Zadanie {n}",
   "pp.taskMsg": "Rozwiązuję arkusz z poprzednich lat: {paper}, zadanie {n}. Przesyłam zdjęcie zadania. Prowadź mnie wskazówkami w stylu tego egzaminu i nie zdradzaj rozwiązania, zanim nie spróbuję.",
   "pp.boxMsg": "Rozwiązuję arkusz z poprzednich lat: {paper}, strona {page}. Przesyłam zdjęcie zadania. Prowadź mnie wskazówkami w stylu tego egzaminu i nie zdradzaj rozwiązania, zanim nie spróbuję.",
-  "pp.taskText": "Treść zadania z arkusza (wzory mogą być zniekształcone, liczy się obraz):"
+  "pp.taskText": "Treść zadania z arkusza (wzory mogą być zniekształcone, liczy się obraz):",
+  "task.checkLeft": "jeszcze około {n} s",
+  "task.checkAlmost": "prawie gotowe"
 }
