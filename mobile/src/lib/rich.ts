@@ -1,42 +1,13 @@
-// Besedilo z Markdownom in formulami → HTML za RichText. Isti izris kot na spletu (public/rich.js),
-// formule pa KaTeX izriše v MathML, ki ga WebView na iPhonu in Androidu izriše sam (brez pisav in
-// brez povezave). Ves izris teče v aplikaciji; WebView samo prikaže gotov HTML.
+// Besedilo z Markdownom in formulami → HTML za RichText. Isti izris kot na spletu (public/rich.js): KaTeX
+// HTML s pisavami KaTeX in public/sirina.js (široke formule se zložijo pri »=«, pomanjšajo ali pomikajo),
+// naloženo s strežnika kot na spletu. Brez povezave ostane MathML, ki ga WebView izriše sam.
 import { Marked } from "marked";
 import katex from "katex";
 import { createRenderer, streamSafe } from "../../../public/rich.js";
 import type { Theme } from "./theme";
+import { API_URL } from "./api";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-// MathML v WebView vrstične formule ne prelomi (na spletu KaTeX prelomi pri »=«), zato dolgo vrstično
-// formulo razdelimo pri »=« na najvišji ravni v več kosov, med katerimi se vrstica sme prelomiti.
-export function splitAtEquals(tex: string): string[] {
-  const out: string[] = [];
-  let depth = 0;
-  let start = 0;
-  for (let i = 0; i < tex.length; i++) {
-    const c = tex[i];
-    if (c === "\\") {
-      const m = /^\\(left|right|begin|end)\b/.exec(tex.slice(i));
-      if (m) depth += m[1] === "left" || m[1] === "begin" ? 1 : -1;
-      i += m ? m[0].length - 1 : 1;
-    } else if (c === "{") depth++;
-    else if (c === "}") depth--;
-    else if (c === "=" && depth === 0 && i > start) {
-      out.push(tex.slice(start, i));
-      start = i;
-    }
-  }
-  out.push(tex.slice(start));
-  return out.filter((x) => x.trim());
-}
-const mml = (tex: string, o: object) => katex.renderToString(tex, { ...o, output: "mathml" });
-const mathml = {
-  renderToString: (tex: string, o: { displayMode?: boolean }) => {
-    const parts = o.displayMode || tex.length < 24 ? [tex] : splitAtEquals(tex);
-    return parts.length > 1 ? `<span class="m-wrap">${parts.map((x) => mml(x, o)).join("<wbr>")}</span>` : mml(tex, o);
-  },
-};
-
 // Vsebina strežnika (lekcije, naloge, rešitve) sme imeti HTML (npr. <details> »Pokaži formulo«).
 const trustedMarked = new Marked();
 // Odgovori inštruktorja (AI): surov HTML se izpiše kot besedilo.
@@ -44,8 +15,8 @@ const safeMarked = new Marked({ renderer: { html: ({ text }: { text: string }) =
 
 // sanitize: vsebina je že varna (zaupanja vredna ali z izpisanim HTML), DOMPurify v aplikaciji ni potreben.
 const make = createRenderer as (o: object) => { renderRich: (s: string) => string };
-const trusted = make({ marked: trustedMarked, katex: mathml, sanitize: (h: string) => h });
-const untrusted = make({ marked: safeMarked, katex: mathml, sanitize: (h: string) => h });
+const trusted = make({ marked: trustedMarked, katex, sanitize: (h: string) => h });
+const untrusted = make({ marked: safeMarked, katex, sanitize: (h: string) => h });
 
 export function toHtml(md: string, { ai = false, streaming = false } = {}) {
   const src = streaming ? streamSafe(md) : md;
@@ -55,14 +26,19 @@ export function toHtml(md: string, { ai = false, streaming = false } = {}) {
 // Kratko besedilo brez formul in Markdowna se izriše kar z naravnim besedilom (brez WebView).
 export const isPlain = (s: string) => !/[$*_`|#<>\\[\]]|^\s*[-+]\s|^\s*\d+\.\s/m.test(s);
 
-// Celoten dokument za WebView: barve teme, sistemska pisava, MathML, tabele, »Pokaži formulo«.
+// Celoten dokument za WebView: barve teme, pisava Instrument Sans, formule kot na spletu (KaTeX + sirina.js
+// s strežnika; RichText naloži dokument z baseUrl API_URL), tabele, »Pokaži formulo«.
 export function docHtml(body: string, th: Theme, { size = 17, center = false } = {}) {
   return `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' ${API_URL}; font-src ${API_URL}; script-src 'unsafe-inline' ${API_URL}; img-src data:">
+<link rel="stylesheet" href="/vendor/instrument-sans/index.css">
+<link rel="stylesheet" href="/vendor/katex/katex.min.css" onload="document.documentElement.classList.add('kx')">
+<script defer src="/vendor/katex/katex.min.js"></script>
+<script type="module">import{prilagodiSirino as f}from"/sirina.js";document.documentElement.classList.add('sw');window.__fit=function(){f(document.getElementById('c'))};window.__fit();</script>
 <style>
 :root{color-scheme:${th.dark ? "dark" : "light"}}
-html,body{margin:0;padding:0;background:transparent;color:${th.text};font:${size}px/1.5 -apple-system,system-ui,Roboto,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%;word-wrap:break-word}
+html,body{margin:0;padding:0;background:transparent;color:${th.text};font:${size}px/1.5 "Instrument Sans Variable","Instrument Sans",system-ui,-apple-system,Roboto,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%;word-wrap:break-word}
 body{${center ? "text-align:center;" : ""}}
 p{margin:0 0 .7em}p:last-child{margin-bottom:0}
 h1,h2,h3,h4{line-height:1.25;margin:1em 0 .4em}
@@ -75,10 +51,17 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.9em;background:${th.sur
 pre{background:${th.surface2};padding:10px;border-radius:10px;overflow-x:auto;font-size:13px}
 pre code{background:none;padding:0}
 blockquote{margin:.6em 0;padding:.4em .9em;border-inline-start:3px solid ${th.accent};background:${th.accentSoft};border-radius:8px}
+html:not(.kx) .katex-html{display:none}
 math{font-size:1.08em;font-family:"STIX Two Math","Cambria Math","Noto Sans Math",math}
 math[display=block]{display:block;margin:.6em 0;overflow-x:auto;overflow-y:hidden}
-.katex{display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle}
-.m-wrap .katex{max-width:none}
+html:not(.kx) .katex{display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle}
+.kx .katex-display{overflow-x:auto;overflow-y:hidden;padding:4px 0 6px}
+.kx .katex{white-space:nowrap}
+.kx :is(p,li,dd,blockquote,h2,h3,td,th) .katex:not(.katex-display>.katex){display:inline-block;text-indent:0;margin-block:-.15em}
+.kx :is(p,li,dd,blockquote,h2,h3) .katex.tb-zlozena:not(.katex-display>.katex){display:block;width:fit-content;max-width:100%;margin:6px 0}
+/* KaTeX CSS iz predpomnilnika, sirina.js pa ne (brez povezave): dolga vrstična formula se pomika, ne štrli. */
+.kx:not(.sw) :is(p,li,dd,blockquote,h2,h3,td,th) .katex:not(.katex-display>.katex){max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:2px 0 4px}
+.kx .katex.tb-dolga{display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle;padding:2px 0 4px}
 .md-table-wrap{overflow-x:auto;margin:.6em 0;border:1px solid ${th.border};border-radius:12px}
 table{border-collapse:collapse;width:100%;font-size:.95em}
 th,td{padding:7px 10px;border-bottom:1px solid ${th.border};text-align:start;vertical-align:top}

@@ -201,7 +201,7 @@ function startLayer(task, subject) {
 /**
  * Poveži ploščo in tipkovnico z nalogo. Na napravah na dotik se tipkovnica (ali plošča Piši, če jo je
  * učenec izbral nazadnje) odpre sama, razen če jo je učenec zaprl.
- * @param {{task, input: HTMLInputElement, form: HTMLFormElement, readFn: (dataUrl) => Promise<{text, message}>, opener: HTMLElement, subject?: string}} opts
+ * @param {{task, input: HTMLInputElement, form: HTMLFormElement, readFn: (dataUrl) => Promise<{text, message}>, opener: HTMLElement, subject?: string, stay?: boolean}} opts
  */
 export function attachPad(opts) {
   if (!pad) build();
@@ -227,7 +227,8 @@ export function attachPad(opts) {
   });
   syncValue();
   // Tipkovnico odpre sama samo na dotik (na računalniku je prava tipkovnica); Piši tudi na računalniku.
-  const auto = prefs.auto ?? isTouch();
+  // stay: naloga se je odprla skupaj s temo (»Nova snov«); stran ostane na vrhu, tipkovnica ob dotiku polja.
+  const auto = !opts.stay && (prefs.auto ?? isTouch());
   if (auto && prefs.tab === "draw") openPad("draw");
   else {
     hideDraw();

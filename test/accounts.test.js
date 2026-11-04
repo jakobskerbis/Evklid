@@ -1201,3 +1201,36 @@ test("account lock: off by default (password only once, j 2026-10-30)", async ()
     assert.equal((await a("/api/account/export", { method: "POST", body: { password: "narobe12" } })).status, 401);
   });
 });
+
+test("pošta: /healthz/stanje pove, ali Resend sprejema sporočila, brez e-naslovov", async () => {
+  const { Mailer } = await import("../server/accounts/email.js");
+  let ok = false;
+  const fetchFn = async () =>
+    ok
+      ? new Response(JSON.stringify({ id: "m1" }), { status: 200 })
+      : new Response(JSON.stringify({ message: "You can only send testing emails to your own email address (luka@example.com)." }), { status: 403 });
+  const m = new Mailer({ apiKey: "re_x", fetchFn });
+  await assert.rejects(m.send({ to: "luka@example.com", subject: "s", html: "h", text: "t" }));
+  let s = m.status();
+  assert.equal(s.nastavljena, true);
+  assert.equal(s.napak, 1);
+  assert.equal(s.poslanih, 0);
+  assert.match(s.razlog, /^403 /);
+  assert.doesNotMatch(s.razlog, /@/);
+  ok = true;
+  await m.send({ to: "luka@example.com", subject: "s", html: "h", text: "t" });
+  s = m.status();
+  assert.equal(s.poslanih, 1);
+  assert.ok(s.zadnjiUspeh);
+  assert.equal(new Mailer({ apiKey: "" }).status().nastavljena, false);
+
+  const app = createApp(openDb(":memory:"), { accounts: true, scheduler: false, resendKey: "" });
+  const server = app.listen(0);
+  try {
+    const st = await (await fetch(`http://127.0.0.1:${server.address().port}/healthz/stanje`)).json();
+    assert.equal(st.posta.nastavljena, false);
+    assert.equal(st.posta.napak, 0);
+  } finally {
+    server.close();
+  }
+});

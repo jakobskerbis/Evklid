@@ -9,12 +9,13 @@ import { Clipboard, Platform, Text, useWindowDimensions, View } from "react-nati
 import { WebView } from "react-native-webview";
 import * as WebBrowser from "expo-web-browser";
 import { docHtml, isPlain, MEASURE_JS, toHtml } from "@/lib/rich";
+import { API_URL } from "@/lib/api";
 import { font, useTheme } from "@/lib/theme";
 import { t } from "@/lib/i18n";
 
 type Props = { text: string; html?: string; ai?: boolean; streaming?: boolean; size?: number; center?: boolean; minHeight?: number; onExplain?: (selected: string) => void };
 
-const replaceJs = (body: string) => `(function(){var c=document.getElementById('c');if(c)c.innerHTML=${JSON.stringify(body)};})();true;`;
+const replaceJs = (body: string) => `(function(){var c=document.getElementById('c');if(c)c.innerHTML=${JSON.stringify(body)};if(window.__fit)window.__fit();})();true;`;
 
 function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size = 17, center = false, minHeight = 0, onExplain }: Props) {
   const th = useTheme();
@@ -45,8 +46,10 @@ function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size
     <View style={{ height, minHeight }}>
       <WebView
         ref={ref}
-        source={{ html: doc }}
-        originWhitelist={["about:blank", "data:*"]}
+        // baseUrl: pisave, KaTeX in sirina.js s strežnika (kot na spletu), brez povezave ostane MathML.
+        source={{ html: doc, baseUrl: `${API_URL}/` }}
+        // Seznam primerja le izvor (brez poti): `${API_URL}/*` ne bi ujel baseUrl in iOS bi ga odprl v Safariju.
+        originWhitelist={["about:blank", "data:*", API_URL]}
         style={{ backgroundColor: "transparent", flex: 1 }}
         scrollEnabled={false}
         showsVerticalScrollIndicator={false}
@@ -60,6 +63,8 @@ function RichTextImpl({ text, html: rawHtml, ai = false, streaming = false, size
           if (h > 0) setHeight(Math.max(minHeight, h));
         }}
         onShouldStartLoadWithRequest={(req: { url: string }) => {
+          // Sam dokument (baseUrl) se naloži v WebView, povezave v besedilu odpre brskalnik.
+          if (req.url === `${API_URL}/`) return true;
           if (/^https?:/.test(req.url)) {
             WebBrowser.openBrowserAsync(req.url).catch(() => {});
             return false;
