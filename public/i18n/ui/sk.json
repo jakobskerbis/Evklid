@@ -1513,6 +1513,8 @@
   "share.downloaded": "Sťahovanie obrázka sa začalo.",
   "share.shared": "Obrázok je zdieľaný.",
   "share.failed": "Obrázok sa nepodarilo vytvoriť. Skús to znova.",
+  "share.appOpened": "Otvorila sa ponuka zdieľania. Odtiaľ obrázok uložíš alebo zdieľaš.",
+  "share.appFailed": "Ponuku zdieľania sa nepodarilo otvoriť. Skús to znova.",
   "zb.removeShow": "Z vitríny",
   "zb.showFull": "Vitrína je plná. Najprv z nej odober jeden predmet.",
   "zb.new": "Nový predmet v zbierke: {name}",

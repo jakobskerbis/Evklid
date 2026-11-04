@@ -1489,6 +1489,8 @@
   "share.downloaded": "Unduhan gambar sudah dimulai.",
   "share.shared": "Gambar dibagikan.",
   "share.failed": "Gambar tidak bisa dibuat. Coba lagi.",
+  "share.appOpened": "Menu berbagi terbuka. Dari sana kamu bisa menyimpan atau membagikan gambar.",
+  "share.appFailed": "Menu berbagi tidak bisa dibuka. Coba lagi.",
   "zb.removeShow": "Keluarkan dari etalase",
   "zb.showFull": "Etalasemu sudah penuh. Keluarkan satu item dulu.",
   "zb.new": "Item baru di koleksimu: {name}",

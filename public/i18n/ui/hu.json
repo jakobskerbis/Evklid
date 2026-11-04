@@ -1495,6 +1495,8 @@
   "share.downloaded": "Elindult a kép letöltése.",
   "share.shared": "A kép megosztva.",
   "share.failed": "Nem sikerült elkészíteni a képet. Próbáld újra.",
+  "share.appOpened": "Megnyílt a megosztás menü. Innen mentheted vagy megoszthatod a képet.",
+  "share.appFailed": "Nem sikerült megnyitni a megosztás menüt. Próbáld újra.",
   "zb.removeShow": "Ki a vitrinből",
   "zb.showFull": "A vitrined megtelt. Előbb vegyél ki egy tárgyat.",
   "zb.new": "Új tárgy a gyűjteményedben: {name}",

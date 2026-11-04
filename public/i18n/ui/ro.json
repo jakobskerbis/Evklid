@@ -1504,6 +1504,8 @@
   "share.downloaded": "Descărcarea imaginii a început.",
   "share.shared": "Imaginea a fost distribuită.",
   "share.failed": "Imaginea nu a putut fi creată. Încearcă din nou.",
+  "share.appOpened": "S-a deschis meniul de partajare. De acolo poți salva sau partaja imaginea.",
+  "share.appFailed": "Meniul de partajare nu a putut fi deschis. Încearcă din nou.",
   "zb.removeShow": "Scoate din vitrină",
   "zb.showFull": "Vitrina ta e plină. Scoate mai întâi un obiect.",
   "zb.new": "Obiect nou în colecția ta: {name}",

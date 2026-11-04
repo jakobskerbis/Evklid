@@ -1495,6 +1495,8 @@
   "share.downloaded": "Resmin indirilmesi başladı.",
   "share.shared": "Resim paylaşıldı.",
   "share.failed": "Resim oluşturulamadı. Tekrar dene.",
+  "share.appOpened": "Paylaşım menüsü açıldı. Oradan resmi kaydedebilir veya paylaşabilirsin.",
+  "share.appFailed": "Paylaşım menüsü açılamadı. Tekrar dene.",
   "zb.removeShow": "Vitrinden çıkar",
   "zb.showFull": "Vitrinin dolu. Önce bir eşyayı çıkar.",
   "zb.new": "Koleksiyonunda yeni eşya: {name}",

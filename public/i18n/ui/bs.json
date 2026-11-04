@@ -1504,6 +1504,8 @@
   "share.downloaded": "Preuzimanje slike je počelo.",
   "share.shared": "Slika je podijeljena.",
   "share.failed": "Sliku nije bilo moguće napraviti. Pokušaj ponovo.",
+  "share.appOpened": "Otvorio se meni za dijeljenje. Odatle sliku možeš sačuvati ili podijeliti.",
+  "share.appFailed": "Meni za dijeljenje nije bilo moguće otvoriti. Pokušaj ponovo.",
   "zb.removeShow": "Iz vitrine",
   "zb.showFull": "Vitrina je puna. Prvo skloni jedan predmet.",
   "zb.new": "Novi predmet u zbirci: {name}",

@@ -1513,6 +1513,8 @@
   "share.downloaded": "Pobieranie obrazka się rozpoczęło.",
   "share.shared": "Obrazek udostępniony.",
   "share.failed": "Nie udało się utworzyć obrazka. Spróbuj ponownie.",
+  "share.appOpened": "Otworzyło się menu udostępniania. Stamtąd zapiszesz lub udostępnisz obrazek.",
+  "share.appFailed": "Nie udało się otworzyć menu udostępniania. Spróbuj ponownie.",
   "zb.removeShow": "Z gabloty",
   "zb.showFull": "Gablota jest pełna. Najpierw usuń z niej jeden przedmiot.",
   "zb.new": "Nowy przedmiot w kolekcji: {name}",

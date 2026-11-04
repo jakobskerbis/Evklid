@@ -1495,6 +1495,8 @@
   "share.downloaded": "Upakuaji wa picha umeanza.",
   "share.shared": "Picha imeshirikiwa.",
   "share.failed": "Imeshindikana kutengeneza picha. Jaribu tena.",
+  "share.appOpened": "Menyu ya kushiriki imefunguka. Kutoka hapo unaweza kuhifadhi au kushiriki picha.",
+  "share.appFailed": "Imeshindikana kufungua menyu ya kushiriki. Jaribu tena.",
   "zb.removeShow": "Ondoa kwenye maonyesho",
   "zb.showFull": "Kabati lako la maonyesho limejaa. Kwanza ondoa kitu kimoja.",
   "zb.new": "Kitu kipya kwenye mkusanyiko wako: {name}",

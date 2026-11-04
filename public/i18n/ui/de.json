@@ -1495,6 +1495,8 @@
   "share.downloaded": "Der Download des Bildes hat begonnen.",
   "share.shared": "Bild geteilt.",
   "share.failed": "Das Bild konnte nicht erstellt werden. Versuch es noch einmal.",
+  "share.appOpened": "Das Teilen-Menü hat sich geöffnet. Dort kannst du das Bild speichern oder teilen.",
+  "share.appFailed": "Das Teilen-Menü konnte nicht geöffnet werden. Versuch es noch einmal.",
   "zb.removeShow": "Aus der Vitrine",
   "zb.showFull": "Deine Vitrine ist voll. Nimm zuerst einen Gegenstand heraus.",
   "zb.new": "Neuer Gegenstand in deiner Sammlung: {name}",

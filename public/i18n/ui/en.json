@@ -1495,6 +1495,8 @@
   "share.downloaded": "The picture download has started.",
   "share.shared": "Picture shared.",
   "share.failed": "Couldn't make the picture. Try again.",
+  "share.appOpened": "The share menu opened. From there you can save or share the picture.",
+  "share.appFailed": "Couldn't open the share menu. Try again.",
   "zb.removeShow": "Remove from showcase",
   "zb.showFull": "Your showcase is full. Remove an item first.",
   "zb.new": "New item in your collection: {name}",

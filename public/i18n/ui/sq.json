@@ -1495,6 +1495,8 @@
   "share.downloaded": "Shkarkimi i fotos filloi.",
   "share.shared": "Fotoja u nda.",
   "share.failed": "Fotoja nuk u krijua dot. Provo përsëri.",
+  "share.appOpened": "U hap menyja e ndarjes. Prej aty mund ta ruash ose ta ndash foton.",
+  "share.appFailed": "Menyja e ndarjes nuk u hap dot. Provo përsëri.",
   "zb.removeShow": "Hiqe nga vitrina",
   "zb.showFull": "Vitrina jote është plot. Fillimisht hiq një send.",
   "zb.new": "Send i ri në koleksionin tënd: {name}",
