@@ -67,7 +67,7 @@ import { initUsageMeter, refreshUsageMeter } from "./usage-meter.js";
 import { initFullscreen } from "./fullscreen.js";
 import { deviceSnapshot, applyDeviceSettings, addProposal } from "./chat-settings.js";
 import { initSchedule, showSchedule, renderScheduleCard, lastSchedule } from "./schedule.js";
-import { stageCardHtml, vrstniRed, uvrstiKartice } from "./zacetna.js";
+import { stageCardHtml, vrstniRed, uvrstiKartice, stageRows } from "./zacetna.js";
 import { initScan, showScan, leaveScan, scanBack } from "./scan/scan.js";
 import { initLab, showLab, labBack } from "./laboratorij.js";
 import { initZbirke, showZbirke, meCard, unlockedText, itemThumb } from "./zbirke-view.js";
@@ -1659,10 +1659,14 @@ function renderGoalModes() {
   if (!st || !box || !bar) return;
   const s = st.settings;
   const { first, items } = goalShortcuts(s);
+  // Kar že odpre kartica stopnje (public/zacetna.js: OŠ igre, SŠ matura, faks Moj študij), tu nadomesti druga bližnjica.
+  const shown = stageRows(stopnja(s), { games: gamesOn(s), exams: siExams() });
   const list = items
     .map((k) => (k === "games" && !gamesOn(s) ? "chat" : k))
     .filter((k) => !(k === "exams" && !siExams()) && !(k === "izpiti" && !regionalExams()))
+    .filter((k) => !shown.includes(k))
     .filter((k, i, a) => a.indexOf(k) === i);
+  for (const alt of ["scan", "chat"]) if (list.length < 2 && !list.includes(alt)) list.push(alt);
   box.innerHTML = list
     .map((k) => {
       const [ic, name, sub] = GOAL_MODES[k];

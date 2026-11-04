@@ -94,7 +94,9 @@ test("cene po stopnjah (75 %): OŠ 9,99/99, SŠ 13,99/139, faks 19,99/199, Druž
   assert.equal(planFor(2, "month", "EUR", "SS").key, "evklid_druzina_month");
   assert.equal(planFor(3, "year", "EUR", "FAKS").key, "evklid_druzina_student_year");
   // Nespremenjeno: regijske cene (ena cena za vse stopnje), Osebno ob šolski licenci, brezplačno 0,2 $.
-  assert.deepEqual(REGIONAL_PRICES.INR.prices, [399, 3499, 649, 5599]);
+  // Izjema (j 2026-11-04): letni paket za 2 otroka v INR, BDT, IDR malo dražji, da ima zajamčeni AI nad 0.
+  assert.deepEqual(REGIONAL_PRICES.INR.prices, [399, 3499, 649, 5699]);
+  for (const c of ["INR", "BDT", "IDR"]) assert.ok(planGuarantee(planFor(2, "year", c)).usd > 0, c);
   assert.equal(planFor(1, "month", "INR").level, null);
   assert.equal(planFor(2, "year", "INR").seats, 2);
   assert.deepEqual(SCHOOL_PLANS.map((p) => p.amount), [599, 4900]);
@@ -387,8 +389,6 @@ test("nadgradnja med mesecem: zajamčeni AI ta mesec po dnevih (stari paket do n
   });
 });
 
-test("nadgradnja: višja stopnja takoj z doplačilom razlike (proracija Stripa), samo v testnem načinu", async () => {
-  await withAccounts(async ({ call, stripe, kid, subscribe, api, db, pid }) => {
 test("nadgradnja dvakrat v mesecu: dnevi pred prvo ostanejo pri prvotnem deležu; zapis velja samo za isto naročnino", async () => {
   // Pure: 1 $ do 11., 4 $ do 21., 7 $ do konca (30 dni) = (10 + 40 + 70) / 30 = 4 $, ne (4 · 20 + 7 · 10) / 30.
   const at1 = Date.UTC(2026, 10, 11, 9);
@@ -425,6 +425,8 @@ test("nadgradnja dvakrat v mesecu: dnevi pred prvo ostanejo pri prvotnem deležu
   });
 });
 
+test("nadgradnja: višja stopnja takoj z doplačilom razlike (proracija Stripa), samo v testnem načinu", async () => {
+  await withAccounts(async ({ call, stripe, kid, subscribe, api, db, pid }) => {
     const ana = kid("Ana", "OS");
     kid("Bor", "SS");
     subscribe("evklid_1_month");

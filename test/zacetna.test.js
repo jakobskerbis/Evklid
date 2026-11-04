@@ -1,7 +1,7 @@
 // Začetna stran po stopnji (public/zacetna.js): vrstni red kartic in kartica stopnje.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { vrstniRed, VRSTNI_RED, uvrstiKartice, izpitnoObdobje, izpitniRoki, stageCardHtml } from "../public/zacetna.js";
+import { vrstniRed, VRSTNI_RED, uvrstiKartice, izpitnoObdobje, izpitniRoki, stageCardHtml, stageRows } from "../public/zacetna.js";
 
 import SL from "../public/i18n/sl.js";
 
@@ -35,12 +35,28 @@ test("uvrstiKartice premakne kartice pred izbiro načina, ostale pusti nad njimi
       kids.splice(kids.indexOf(anchor), 0, el);
     },
   };
-  for (const k of kids) k.parentElement = side;
+  for (const k of kids) {
+    k.parentElement = side;
+    Object.defineProperty(k, "nextElementSibling", { get: () => kids[kids.indexOf(k) + 1] || null });
+  }
   uvrstiKartice(side, VRSTNI_RED.FAKS);
   assert.deepEqual(kids.map((k) => k.id), ["goal-line", "level-card", "stage-card", "schedule-card", "xp-card", "modebar"]);
   uvrstiKartice(side, VRSTNI_RED.OS);
   assert.deepEqual(kids.map((k) => k.id), ["goal-line", "level-card", "xp-card", "stage-card", "schedule-card", "modebar"]);
   uvrstiKartice(null, VRSTNI_RED.OS); // brez pogleda ne pade
+  // Bližnjice cilja tik nad izbiro načina ostanejo tam (kartice gredo nadnje).
+  kids.splice(kids.findIndex((k) => k.id === "modebar"), 0, { id: "goal-modes", parentElement: side });
+  Object.defineProperty(kids.find((k) => k.id === "goal-modes"), "nextElementSibling", { get: () => kids[kids.findIndex((k) => k.id === "goal-modes") + 1] || null });
+  uvrstiKartice(side, VRSTNI_RED.FAKS);
+  assert.deepEqual(kids.map((k) => k.id).slice(-5), ["stage-card", "schedule-card", "xp-card", "goal-modes", "modebar"]);
+});
+
+test("stageRows: kar odpre kartica stopnje, bližnjice cilja ne ponovijo", () => {
+  assert.deepEqual(stageRows("OS", { games: true }), ["games"]);
+  assert.deepEqual(stageRows("OS", { games: false }), []);
+  assert.deepEqual(stageRows("SS", { exams: true }), ["exams"]);
+  assert.deepEqual(stageRows("SS", { exams: false }), []);
+  assert.deepEqual(stageRows("FAKS"), ["textbook"]);
 });
 
 test("izpitno obdobje in izpitni roki iz Urnika", () => {

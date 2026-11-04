@@ -31,14 +31,26 @@ export function vrstniRed(level, schedule = null) {
   return VRSTNI_RED[level] || VRSTNI_RED.OS;
 }
 
-/** Premakne kartice v .path-side v dani vrstni red (tik pred #modebar). */
+/** Premakne kartice v .path-side v dani vrstni red (tik pred #modebar ali pred bližnjicami cilja tik nad njim). */
 export function uvrstiKartice(side, order) {
-  const anchor = side?.querySelector("#modebar");
-  if (!anchor) return;
+  const bar = side?.querySelector("#modebar");
+  if (!bar) return;
+  // Bližnjice za cilj (#goal-modes, app.js renderGoalModes) ostanejo tik nad izbiro načina.
+  const goal = side.querySelector("#goal-modes");
+  const anchor = goal && goal.nextElementSibling === bar ? goal : bar;
   for (const id of order) {
     const el = side.querySelector(`#${id}`);
     if (el && el.parentElement === side) side.insertBefore(el, anchor);
   }
+}
+
+// Pogledi, ki jih kartica stopnje že odpre (ključi kot v goalShortcuts, public/goal-data.js): bližnjice za cilj
+// jih ne ponovijo.
+export function stageRows(level, { games = true, exams = true } = {}) {
+  if (level === "OS") return games ? ["games"] : [];
+  if (level === "SS") return exams ? ["exams"] : [];
+  if (level === "FAKS") return ["textbook"];
+  return [];
 }
 
 // Izpitno obdobje, ki je pred študentom (slovenske fakultete): zimsko januar–februar, poletno junij–julij,
