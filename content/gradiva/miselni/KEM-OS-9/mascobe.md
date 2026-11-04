@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Glicerol
+  - alkohol s tremi skupinami $\mathrm{{-}OH}$
+  - $M = 92\,\text{g/mol}$
+- Maščobne kisline
+  - dolg rep in skupina $\mathrm{{-}COOH}$
+  - palmitinska, stearinska, oleinska
+- Estrska vez
+  - glicerol + 3 kisline
+  - odidejo tri molekule vode
+  - napaka: odšteti le eno vodo
+- Nasičene in nenasičene
+  - enojne vezi: trdne (maslo)
+  - dvojne vezi: tekoča olja
+  - nenasičene razbarvajo bromovico
+- Lastnosti
+  - nevtralne, ker so estri
+  - netopne v vodi, plavajo
+  - trajen madež na papirju
+- Pomen
+  - energija $\approx 38\,\text{kJ/g}$
+  - izolacija, vitamini A, D, E, K
+  - $E = m \cdot e$

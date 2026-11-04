@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Sila trenja
+  - ob stični ploskvi, nasproti drsenju
+  - grbinice ploskev se zatikajo
+- Lepenje
+  - drži mirujoče telo
+  - največje lepenje je večje od drsnega trenja
+- Od česa je odvisno trenje
+  - pritisna sila: težji zaboj, večje trenje
+  - vrsta in hrapavost ploskev
+  - napaka: širša ploskev, večje trenje
+- Koeficient trenja
+  - $F_{tr} = k_{tr} \cdot F_N$
+  - brez enote; les na lesu okoli $0{,}3$
+  - napaka: masa v kg namesto teže
+- Kotalno trenje
+  - mnogo manjše od drsnega
+  - nakupovalni voziček s kolesi
+- Upor
+  - zrak ali voda zavira gibanje
+  - dvakratna hitrost, približno štirikratni upor
+  - čelna ploskev in oblika, ne teža
+- Koristno in škodljivo
+  - trenje omogoča hojo in zaviranje
+  - strešni kovček poveča porabo goriva
