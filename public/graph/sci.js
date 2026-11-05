@@ -2,10 +2,10 @@
 // neenačbe, sisteme, funkcije, odvode in kompleksna števila), brez API in brez knjižnic.
 // Tipkovnica je vedno vidna (kot pri pravem kalkulatorju); na računalniku lahko tipkaš tudi s tipkovnico.
 import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, factorsTex, dmsOf, CONSTANTS, constantText, QUANTITIES, convert } from "./scicore.js";
-import { analyze, previewTex, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
+import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName, parseCommand } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
-import { entryTex } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj } from "../sirina.js";
 
@@ -269,15 +269,8 @@ export function createScientific(root, opts) {
   const vars = () => (fromFormula ? Object.fromEntries(Object.entries(st.vars).filter(([n]) => !fromFormula.has(n))) : st.vars);
   const env = () => ({ vars: vars(), funcs: st.funcs, ans: st.ans, deg: st.angle === "deg", grad: st.angle === "grad", comma: comma() });
   // M(H2SO4) v vnosu je molska masa (public/graph/molska.js): fn dobi vnos s spremenljivkami namesto M(…)
-  const withChem = (text, fn, extra) => {
-    const k = chemSub(text);
-    if (!k) return fn(text, { ...env(), ...extra });
-    const r = k.fix(fn(k.text, { ...env(), ...extra, vars: { ...vars(), ...k.vars } }));
-    // »M(NaCl) = 58,44« je preverjanje, ne shranjevanje v spremenljivko
-    if (r?.assign?.startsWith("M_kem")) return { kind: "bool", value: Math.abs(r.value - k.vars[r.assign]) < 1e-9 * Math.max(1, Math.abs(r.value)), tex: r.tex };
-    // molska masa je merjena vrednost: rezultat samo decimalno (ne 249677/1000)
-    return r && typeof r === "object" ? { ...r, approx: true, exact: undefined } : r;
-  };
+  // (pot je v sci-vnos.js, da lep zapis vnosa in predogled uporabljata isto)
+  const withChem = (text, fn, extra) => withChemEnv(text, fn, env(), extra);
   // črke v vrstici (neznanke formule), brez M(…)
   const namesIn = (text) => {
     const src = chemSub(text)?.text ?? text;
@@ -500,16 +493,52 @@ export function createScientific(root, opts) {
 
   // sproti: lep zapis izraza in predogled rezultata
   // Vnos je viden samo kot lep zapis s kazalcem (sci-vnos.js); surovo polje je neviden (graph.css).
-  function showEntry() {
+  // Zapis brez kazalca se izračuna enkrat na besedilo (update); premik kazalca le vstavi kazalec v isti TeX.
+  let entry = { text: null, base: null };
+  const entryHtml = (tex) => window.katex.renderToString(tex, { throwOnError: false, strict: "ignore", trust: TRUST });
+  function showEntry(r) {
     const prev = $(".sc-preview");
-    let e = null;
+    const text = input.value;
+    if (entry.text !== text || r !== undefined) {
+      let base = null;
+      try {
+        // isti TeX kot predogled: že izračunan r za celo besedilo, sicer dokončano besedilo po isti poti (env)
+        base = entryBase(text, env(), (s) => (s === text && r && !r.error && r.tex ? r.tex : liveTex(s, env())));
+      } catch {}
+      entry = { text, base };
+    }
+    let tex = null;
     try {
-      e = entryTex(input.value, input.selectionStart ?? input.value.length);
+      tex = caretTex(entry.base, input.selectionStart ?? text.length);
     } catch {}
-    prev.innerHTML = e ? texHtml(e.tex) : "";
+    prev.innerHTML = tex ? entryHtml(tex) : "";
   }
-  input.addEventListener("click", () => setTimeout(showEntry));
-  input.addEventListener("keyup", showEntry);
+  // Dotik na lep zapis: položaj v besedilu iz izrisa (merilne točke na vseh mestih kazalca), ne iz prosojnega polja.
+  function caretFromPoint(x, y) {
+    const prev = $(".sc-preview");
+    if (!entry.base?.ok || entry.text !== input.value) return input.value.length;
+    const shown = prev.innerHTML;
+    let best = null;
+    try {
+      prev.innerHTML = entryHtml(stopsTex(entry.base));
+      for (const el of prev.querySelectorAll("[data-evk-p]")) {
+        const b = el.getBoundingClientRect();
+        const dy = y < b.top ? b.top - y : y > b.bottom ? y - b.bottom : 0;
+        const d = Math.abs(x - b.left) + 2 * dy;
+        if (!best || d < best.d) best = { d, p: Number(el.dataset.evkP) };
+      }
+    } catch {}
+    prev.innerHTML = shown;
+    return best && Number.isFinite(best.p) ? best.p : input.value.length;
+  }
+  input.addEventListener("click", (ev) => {
+    const p = ev.detail > 0 && input.value ? caretFromPoint(ev.clientX, ev.clientY) : null;
+    setTimeout(() => {
+      if (p != null && input.selectionStart === input.selectionEnd) input.setSelectionRange(p, p);
+      showEntry();
+    });
+  });
+  input.addEventListener("keyup", () => showEntry());
   document.addEventListener("selectionchange", () => document.activeElement === input && showEntry());
   function update() {
     const text = input.value;
@@ -530,12 +559,12 @@ export function createScientific(root, opts) {
       r = null;
     }
     if (!r || r.error) {
-      showEntry();
+      showEntry(null);
       live.textContent = "";
       live.className = "sc-live";
       return;
     }
-    showEntry();
+    showEntry(r);
     live.className = "sc-live muted";
     if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`= ${fmt(r.value).tex}`) : "";
     else if (r.kind === "complex") live.innerHTML = texHtml(`= ${complexTex(r.re, r.im)}`);
@@ -544,18 +573,7 @@ export function createScientific(root, opts) {
     else live.innerHTML = r.kind === "solve" || r.kind === "ineq" || r.kind === "system" ? `<span class="sc-live-hint">${esc(t("sc.pressSolve"))}</span>` : "";
   }
   // Sproten predogled ne rešuje enačb in neenačb (rešitev pride ob =): samo račun, odvod, kompleksno število.
-  function analyzeLive(text) {
-    // limita(f; x; a), taylor(f; x; a; n), det([[a; b]; [c; d]]): podpičje loči argumente oziroma elemente, predogled kot pri vsakem ukazu
-    const cmd = parseCommand(text);
-    if (cmd && ["integrate", "limit", "taylor", "det", "inverse"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env(), live: true });
-    if (/[=<>≤≥;]/.test(text) && !functionDef(text)) {
-      const r = withChem(text, evaluate);
-      if (r && !r.error) return { kind: "value", ...r };
-      const tex = withChem(text, previewTex);
-      return tex ? { kind: "solve", tex } : null;
-    }
-    return withChem(text, analyze, { live: true });
-  }
+  const analyzeLive = (text) => analyzeLiveEnv(text, env());
 
   function compute() {
     const text = input.value.trim();

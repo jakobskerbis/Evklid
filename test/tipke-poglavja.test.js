@@ -1,7 +1,7 @@
 // Tipke kalkulatorja po poglavju (public/graph/tipke-poglavja.js).
 import test from "node:test";
 import assert from "node:assert/strict";
-import { chapterProfile, adaptKeys, fxGroupFor } from "../public/graph/tipke-poglavja.js";
+import { chapterProfile, adaptKeys, fxGroupFor, brezPodvojitev } from "../public/graph/tipke-poglavja.js";
 import { FN_KEYS } from "../public/graph/sci.js";
 import { evaluate } from "../public/graph/scicore.js";
 import { FX_GROUPS } from "../public/tipkovnica-data.js";
@@ -52,6 +52,15 @@ test("prilagojene tipke: stalne ostanejo na mestu, 24 tipk, brez podvojenih, vsa
     if (prof) assert.ok(FX_GROUPS.some(([id]) => id === fxGroupFor(prof)), `${prof}: skupina f(x)`);
   }
   assert.deepEqual(adaptKeys(FN_KEYS, null), FN_KEYS);
+  // brezPodvojitev ne zamenja glavne funkcije tipke (pregled #457): geo obdrži x³, fiz eˣ; spremeni se samo 2nd
+  assert.ok(adaptKeys(FN_KEYS, "geo").some((k) => k[1] === "³"), "geo: x³");
+  assert.ok(adaptKeys(FN_KEYS, "fiz").some((k) => k[1] === "e^("), "fiz: eˣ");
+  const dvojne = [["a", "a(", "b", "b("], ["c", "c(", "b", "b("], ["d", "b(", "c", "c("]];
+  const ena = brezPodvojitev(dvojne);
+  assert.deepEqual(ena.map((k) => k[1]), dvojne.map((k) => k[1]), "glavne funkcije ostanejo");
+  assert.deepEqual(ena[1], ["c", "c("], "2nd že drugje, glavna ne: brez 2nd");
+  assert.equal(ena[2].length, 4, "obe že drugje: 2nd iz rezerve");
+  assert.ok(!["a(", "b(", "c("].includes(ena[2][3]), ena[2].join(" "));
   const stat = adaptKeys(FN_KEYS, "stat").map((k) => k[1]);
   assert.equal(stat[1], "mean(");
   // nove tipke dajo veljaven račun v znanstvenem kalkulatorju
