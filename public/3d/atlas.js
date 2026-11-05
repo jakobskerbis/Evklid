@@ -296,8 +296,10 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   // je list pod odrom (oder se skrajša); računalnik: stolpec levo ob odru pod glavo (oder se zoži). Mere v CSS
   // spremenljivkah, oder dobi novo velikost takoj (pred preletom k delu).
   const vidnaKartica = () => !kartica.hidden && kartica.getClientRects().length > 0;
+  let zacetniKader = null; // { c, d } zadnjega začetnega kadra (ponastaviPogled)
   function uskladiKartico() {
     const odprta = vidnaKartica();
+    const prej = el.classList.contains("a3-info-odprta");
     el.classList.toggle("a3-info-odprta", odprta);
     if (odprta) {
       const r = el.getBoundingClientRect();
@@ -306,6 +308,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       el.style.setProperty("--a3-dno-w", `${Math.round(dno.offsetWidth)}px`);
     }
     kit.posodobiVelikost();
+    // Oder se je skrajšal ali zožil (ali spet razširil), kamera pa je še v začetnem kadru: celo telo znova pod glavo
+    // (sicer lobanja zdrsne pod vrstico orodij). Prelet k delu (izberi) ta kader takoj nadomesti.
+    if (prej !== odprta && vZacetnemKadru()) ponastaviPogled(kit.gibanje ? 0.35 : 0);
   }
   const roKartica = new ResizeObserver(() => uskladiKartico());
   for (const x of [dno, vrh]) roKartica.observe(x);
@@ -396,7 +401,12 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
 
   // Začetni kader: celo telo v prostem delu odra pod glavo (telefon: lobanja ni pod vrstico orodij), kot poletiK.
   function ponastaviPogled(trajanje = 0.7) {
-    poletiK(new THREE.Vector3(0, 0.95, 0), 0.88, { smer: new THREE.Vector3(...POGLEDI.spredaj).normalize(), trajanje, pokonci: true, rob: 1.04 });
+    zacetniKader = poletiK(new THREE.Vector3(0, 0.95, 0), 0.88, { smer: new THREE.Vector3(...POGLEDI.spredaj).normalize(), trajanje, pokonci: true, rob: 1.04 });
+  }
+  function vZacetnemKadru() {
+    if (!zacetniKader || kit.leti) return false;
+    const d = kit.camera.position.distanceTo(kit.controls.target);
+    return Math.abs(d - zacetniKader.d) < 0.03 * zacetniKader.d && kit.controls.target.distanceTo(zacetniKader.c) < 0.03 * zacetniKader.d;
   }
   function pogled(smer, { trajanje = 0.7, cilj = null, polmer = null } = {}) {
     const c = cilj || kit.controls.target.clone();
@@ -853,7 +863,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     const dy = (zgoraj + prostor / 2 - h / 2) * naPx; // del mora biti dy nižje od sredine zaslona
     const s = smer ? smer.clone() : kit.camera.position.clone().sub(kit.controls.target).normalize();
     const gor = new THREE.Vector3(0, 1, 0).addScaledVector(s, -s.y).normalize();
-    kit.poleti(c.clone().addScaledVector(gor, dy), polmer, { smer: s, razdalja: d, pokonci, ...(trajanje != null ? { trajanje } : {}) });
+    const cilj = c.clone().addScaledVector(gor, dy);
+    kit.poleti(cilj, polmer, { smer: s, razdalja: d, pokonci, ...(trajanje != null ? { trajanje } : {}) });
+    return { c: cilj, d };
   }
 
   // × in Esc: kartica se zapre; fokus, ki je bil v njej, gre na oder (ne izgubi se na koncu strani).

@@ -135,10 +135,63 @@ export function odpriModel(el, mod, opts = {}) {
   }
 
   // Izbrani del zasije v svoji barvi na vseh svojih mrežah, torej na vseh primerkih iste vrste (vsi mitohondriji so ena
-  // InstancedMesh). Kopije materialov (ob preklicu ali drugi izbiri sproščene), izvirniki ostanejo. Svetli in ozki deli
-  // (aksonema, bički) imajo malo prostora za sij v svoji barvi, zato dobijo poleg emisije še rahlo obarvanje.
+  // InstancedMesh). Kopije materialov (ob preklicu ali drugi izbiri sproščene), izvirniki ostanejo. Manjši deli dobijo
+  // še tanek obris v barvi poudarka (kot v atlasu): sij v lastni barvi je na svetlih ozkih delih (aksonema) komaj viden.
   const sij = new Map(); // mesh → { izv: izvirni material, kopija: material ali seznam kopij }
+  const obrisi = []; // prekrivne mreže obrisa (userData.k3Sij: ne štejejo v kader, tap jih ne zadene)
+  const uPx = { value: 0.002 };
+  let matObrisa = null;
+  function materialObrisa() {
+    if (matObrisa) return matObrisa;
+    const m = new THREE.MeshBasicMaterial({ color: new THREE.Color("#6E9BFF"), transparent: true, opacity: 0.9, side: THREE.BackSide, depthWrite: false, toneMapped: false });
+    m.onBeforeCompile = (sh) => {
+      sh.uniforms.uPx = uPx;
+      sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nuniform float uPx;").replace(
+        "#include <project_vertex>",
+        `#include <project_vertex>
+        vec3 nObr = normal;
+        #ifdef USE_INSTANCING
+          nObr = mat3( instanceMatrix ) * nObr;
+        #endif
+        mvPosition.xyz += normalize( normalMatrix * nObr ) * ( -mvPosition.z ) * uPx * 1.8;
+        gl_Position = projectionMatrix * mvPosition;`,
+      );
+    };
+    m.customProgramCacheKey = () => "k3-obris";
+    return (matObrisa = m);
+  }
+  function narisiObris(d) {
+    for (const o of obrisi.splice(0)) o.removeFromParent();
+    if (!d || !model?.group) return;
+    const vel = obsegVidnega(THREE, model.group).getSize(new THREE.Vector3()).length();
+    const b = okvirDela(d, new THREE.Box3());
+    // veliki deli (membrana, stena) so pogosto odprte lupine: obris bi obarval njihovo notranjost
+    if (b.isEmpty() || b.getSize(new THREE.Vector3()).length() > vel * 0.6) return;
+    uPx.value = (2 * Math.tan(THREE.MathUtils.degToRad(kit.camera.fov / 2))) / Math.max(1, kit.velikost.h);
+    for (const m of d.meshes || []) {
+      if (!m?.isMesh || !m.geometry?.attributes?.normal) continue;
+      const izv = Array.isArray(m.material) ? m.material[0] : m.material;
+      if (!izv || izv.transparent || izv.side !== THREE.FrontSide) continue;
+      const mat = izv.clippingPlanes?.length ? Object.assign(materialObrisa().clone(), { clippingPlanes: izv.clippingPlanes }) : materialObrisa();
+      if (mat !== matObrisa) Object.assign(mat, { onBeforeCompile: matObrisa.onBeforeCompile, customProgramCacheKey: () => "k3-obris-rez" });
+      const o = m.isInstancedMesh ? new THREE.InstancedMesh(m.geometry, mat, m.count) : new THREE.Mesh(m.geometry, mat);
+      if (m.isInstancedMesh) o.instanceMatrix = m.instanceMatrix;
+      o.userData.k3Sij = true;
+      o.userData.k3Obris = mat !== matObrisa;
+      o.raycast = () => {};
+      o.renderOrder = 9;
+      o.frustumCulled = false;
+      o.onBeforeRender = () => {
+        if (m.isInstancedMesh) o.count = m.count;
+        uPx.value = (2 * Math.tan(THREE.MathUtils.degToRad(kit.camera.fov / 2))) / Math.max(1, kit.velikost.h);
+      };
+      m.add(o);
+      obrisi.push(o);
+    }
+  }
   function obarvaj(d) {
+    for (const o of obrisi) if (o.userData.k3Obris) o.material.dispose();
+    narisiObris(null);
     for (const [m, { izv, kopija }] of sij) {
       if (m.material === kopija) m.material = izv; // model je material medtem morda zamenjal sam
       for (const x of Array.isArray(kopija) ? kopija : [kopija]) x.dispose();
@@ -152,8 +205,7 @@ export function odpriModel(el, mod, opts = {}) {
         const c = x.clone();
         if (c.emissive) {
           c.emissive = barva.clone();
-          c.emissiveIntensity = 0.95;
-          if (c.color) c.color.lerp(barva, 0.3);
+          c.emissiveIntensity = 0.85;
         }
         return c;
       });
@@ -161,6 +213,7 @@ export function odpriModel(el, mod, opts = {}) {
       sij.set(m, { izv: m.material, kopija });
       m.material = kopija;
     }
+    narisiObris(d);
   }
 
   // Namig, kaj je klikljivo (namesto barvnih krogcev čez model): ob prvem ogledu nabora delov po en primerek vsakega dela
@@ -989,6 +1042,7 @@ export function odpriModel(el, mod, opts = {}) {
       unicen = true;
       ustaviNamigSij();
       obarvaj(null);
+      matObrisa?.dispose();
       try {
         model?.dispose?.();
       } catch {}
