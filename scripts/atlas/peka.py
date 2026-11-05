@@ -239,7 +239,7 @@ def uv_atlas(objekti, tc, px):
     razrezi = _razrezi_dolge(objekti, tc.get("uvPolnost", 0.6), tc.get("uvDolzina", 0.2))
     bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
     bpy.context.scene.tool_settings.use_uv_select_sync = True
-    bpy.ops.uv.pack_islands(margin=tc.get("uvRob", 2.0) / px, rotate=True, rotate_method="ANY", scale=True, margin_method="FRACTION", shape_method="CONCAVE")
+    bpy.ops.uv.pack_islands(udim_source="ACTIVE_UDIM", margin=tc.get("uvRob", 2.0) / px, rotate=True, rotate_method="ANY", scale=True, margin_method="FRACTION", shape_method="CONCAVE")
     bpy.ops.object.mode_set(mode="OBJECT")
     print(f"[peka] UV: razrezanih dolgih otokov {razrezi}, pokritost {_uv_ploscina(objekti):.0%}", flush=True)
     print(f"[peka] UV atlas {len(objekti)} vozlišč, {px} px ({time.time() - t0:.0f} s)", flush=True)
@@ -276,8 +276,8 @@ def _razrezi_dolge(objekti, polnost, dolzina):
             for f in otok:
                 tf = np.mean([(np.array(tuple(l[lay].uv)) - c) @ os_ for l in f.loops])
                 k = min(kosov - 1, int((tf - t.min()) / dl * kosov))
-                for l in f.loops:
-                    l[lay].uv.x += 4.0 * k
+                for l in f.loops:  # majhen zamik loči kos (ostane v ploščici 0–1: pakiranje ne sme v druge UDIM)
+                    l[lay].uv.x += 0.003 * k
         bm.to_mesh(o.data); bm.free()
     return n
 
