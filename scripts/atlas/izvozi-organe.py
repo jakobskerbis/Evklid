@@ -92,7 +92,7 @@ ORGANI = {
                 r"Inferior vena cava \(thoracic part\)|(Left|Right) (superior|inferior) pulmonary vein|Brachiocephalic trunk|Left common carotid artery|Left subclavian artery|"
                 r"(Left|Right) pulmonary artery|Thoracic aorta)( |$)",
         izkljuci=r"Septal branches of anterior interventricular|\?\?\?|Posterior intercostal|Subcostal|Superior phrenic|Bronchial|Oesophageal|Mediastinal|Pericardial",
-        cilj=(260_000, 80_000),
+        cilj=(170_000, 60_000),  # PBR: drobni relief nosi normalna mapa; meja 6 / 2 MB z WebP
         # Prekata: odprti debeli lupini, predznak prostornine izbere notranjo stran (zunanja stena izgine, vidna notranjost);
         # preverjeno s posnetkom 2026-11-04 (stari izvoz iz 08:50 je imel prav to obrnjeno smer).
         obrni=r"^(Left|Right) ventricle$",
@@ -107,9 +107,9 @@ ORGANI = {
             pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
             maska=dict(zile=r"artery|Arteries of heart|vein|sinus|\?\?\?", tkiva=["miokard"]),
             recepti={
-                "miokard": dict(barva=(0.43, 0.085, 0.07), barva2=(0.30, 0.05, 0.05), lise=0.45, hrap=0.30, gube=0.00016, gubeMera=0.004,
-                                vlakna=0.00022, vlaknaMera=0.0016, masca=0.95, mascaBarva=(0.88, 0.70, 0.36), mascaPremik=0.0015,
-                                mascaMera=0.006, zilice=0.55, ziliceBarva=(0.33, 0.05, 0.08), notranja=(0.55, 0.20, 0.17), notranjaHrap=0.2),
+                "miokard": dict(barva=(0.30, 0.045, 0.035), barva2=(0.20, 0.03, 0.028), lise=0.45, hrap=0.30, gube=0.00016, gubeMera=0.004,
+                                vlakna=0.00022, vlaknaMera=0.0016, masca=0.95, mascaBarva=(0.76, 0.52, 0.20), mascaPremik=0.0015,
+                                mascaMera=0.006, zilice=0.55, ziliceBarva=(0.22, 0.025, 0.04), notranja=(0.46, 0.14, 0.12), notranjaHrap=0.2),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.33, gube=0.00006, gubeMera=0.002, razdeli=1),
                 "arterija": dict(barva=(0.62, 0.07, 0.06), barva2=(0.48, 0.05, 0.05), lise=0.3, hrap=0.27, gube=0.00005, gubeMera=0.002, razdeli=1),
                 "vena": dict(barva=(0.10, 0.18, 0.48), barva2=(0.08, 0.12, 0.36), lise=0.3, hrap=0.27, gube=0.00005, gubeMera=0.002, razdeli=1),

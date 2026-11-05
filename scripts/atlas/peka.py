@@ -214,11 +214,53 @@ def uv_atlas(objekti, tc, px):
     _izberi(objekti, objekti[0])
     bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
     bpy.ops.uv.smart_project(angle_limit=math.radians(tc.get("uvKot", 66)), island_margin=0.0, area_weight=0.0, scale_to_bounds=False)
-    bpy.ops.uv.pack_islands(margin=3.0 / px, rotate=True, margin_method="FRACTION", shape_method="CONCAVE")
     bpy.ops.object.mode_set(mode="OBJECT")
     for o in objekti:
         bm = bmesh.new(); bm.from_mesh(o.data); bmesh.ops.triangulate(bm, faces=bm.faces); bm.to_mesh(o.data); bm.free()
+    razrezi = _razrezi_dolge(objekti, tc.get("uvPolnost", 0.6), tc.get("uvDolzina", 0.2))
+    bpy.ops.object.mode_set(mode="EDIT"); bpy.ops.mesh.select_all(action="SELECT")
+    bpy.context.scene.tool_settings.use_uv_select_sync = True
+    bpy.ops.uv.pack_islands(margin=tc.get("uvRob", 2.0) / px, rotate=True, rotate_method="ANY", scale=True, margin_method="FRACTION", shape_method="CONCAVE")
+    bpy.ops.object.mode_set(mode="OBJECT")
+    print(f"[peka] UV: razrezanih dolgih otokov {razrezi}, pokritost {_uv_ploscina(objekti):.0%}", flush=True)
     print(f"[peka] UV atlas {len(objekti)} vozlišč, {px} px ({time.time() - t0:.0f} s)", flush=True)
+
+
+def _uv_ploscina(objekti):
+    t = 0.0
+    for o in objekti:
+        me = o.data; uv = np.empty(len(me.loops) * 2); me.uv_layers.active.data.foreach_get("uv", uv); uv = uv.reshape(-1, 2)
+        li = np.array([p.loop_indices for p in me.polygons if p.loop_total == 3]).reshape(-1, 3)
+        a, b, c = uv[li[:, 0]], uv[li[:, 1]], uv[li[:, 2]]
+        t += float(np.abs((b - a)[:, 0] * (c - a)[:, 1] - (b - a)[:, 1] * (c - a)[:, 0]).sum() / 2)
+    return t
+
+
+def _razrezi_dolge(objekti, polnost, dolzina):
+    """Dolgi ozki otoki (cevi: tetive, trabekule, žile) bi pri pakiranju določili merilo celotnega atlasa (en trak čez
+    cel kvadrat → vse ostalo drobno). Razrežemo jih na kose, krajše od `dolzina` stranice atlasa pri pričakovani
+    polnosti; kos dobi zamik UV, da postane svoj otok (pack_islands jih nato razporedi)."""
+    from bpy_extras import bmesh_utils
+    s = math.sqrt(polnost / max(_uv_ploscina(objekti), 1e-12))  # merilo UV → atlas po pakiranju (ocena)
+    meja = dolzina / s
+    n = 0
+    for o in objekti:
+        bm = bmesh.new(); bm.from_mesh(o.data); lay = bm.loops.layers.uv.active
+        for otok in bmesh_utils.bmesh_linked_uv_islands(bm, lay):
+            P = np.array([tuple(l[lay].uv) for f in otok for l in f.loops])
+            c = P.mean(0); os_ = np.linalg.svd(P - c, full_matrices=False)[2][0]
+            t = (P - c) @ os_
+            dl = t.max() - t.min()
+            if dl <= meja:
+                continue
+            kosov = int(math.ceil(dl / meja)); n += 1
+            for f in otok:
+                tf = np.mean([(np.array(tuple(l[lay].uv)) - c) @ os_ for l in f.loops])
+                k = min(kosov - 1, int((tf - t.min()) / dl * kosov))
+                for l in f.loops:
+                    l[lay].uv.x += 4.0 * k
+        bm.to_mesh(o.data); bm.free()
+    return n
 
 
 def _json(x):
@@ -237,6 +279,9 @@ def shrani_delo(pot, objekti, vrstice, velikost, tc, px):
         r = po_imenu.get(o["ime"])
         if r is None: continue
         v = bpy.data.objects.new("_vir", r[1]); v["ime"] = o["ime"]; v["tkivo"] = r[2]; vir.append(v)
+    for o in objekti:  # maske PEKA potrebujejo samo izvirne mreže (sicer gredo v GLB kot COLOR_1)
+        pk = o.data.color_attributes.get("PEKA")
+        if pk is not None: o.data.color_attributes.remove(pk)
     bpy.data.libraries.write(pot, set(objekti) | set(vir), fake_user=True, compress=True)
     for v in vir: bpy.data.objects.remove(v)
     ocena = {}
@@ -430,8 +475,8 @@ def zakljuci(pot, glb, niti=2):
     # materiali izvoza po tkivu (vsi delijo iste tri slike)
     for o in nizko:
         mat = bpy.data.materials.get("O:" + o["tkivo"])
-        if mat is None:
-            mat = bpy.data.materials.new("O:" + o["tkivo"]); nt, N, L = _nodes(mat)
+        if mat is None or not mat.get("pbr"):  # material iz delovne datoteke je prazen: zgradimo ga znova
+            mat = mat or bpy.data.materials.new("O:" + o["tkivo"]); mat["pbr"] = 1; nt, N, L = _nodes(mat)
             izh = N("ShaderNodeOutputMaterial"); b = N("ShaderNodeBsdfPrincipled"); L(b.outputs[0], izh.inputs[0])
             tb = N("ShaderNodeTexImage"); tb.image = izhodne["baza"]; L(tb.outputs["Color"], b.inputs["Base Color"])
             tn = N("ShaderNodeTexImage"); tn.image = izhodne["normala"]
@@ -452,7 +497,7 @@ def zakljuci(pot, glb, niti=2):
         o.name = o["ime"]
     bpy.ops.export_scene.gltf(
         filepath=glb, export_format="GLB", use_active_collection=False, use_visible=True, export_apply=True,
-        export_materials="EXPORT", export_normals=True, export_vertex_color="ACTIVE", export_texcoords=True, export_tangents=True,
+        export_materials="EXPORT", export_normals=True, export_vertex_color="ACTIVE", export_all_vertex_colors=False, export_texcoords=True, export_tangents=False,
         export_image_format="AUTO", export_yup=True, export_extras=True, export_animations=False, export_skins=False,
         export_morph=False, export_lights=False, export_cameras=False)
     print(f"[peka] izvoz {glb} ({time.time() - t0:.0f} s)", flush=True)
