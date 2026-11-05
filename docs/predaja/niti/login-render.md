@@ -8,14 +8,14 @@ Stanje 4. 11. 2026 ~02:30 UTC. Vse PR te niti so združeni, nobena veja ni odprt
 2. Odprto vprašanje e-pošte (spodaj).
 
 ## Odprto: potrditveni e-mail ne pride (j, 3. 11. 18:28 UTC)
-- Naslov: <Lukov e-naslov> (Lukov račun). j: »Zakaj evklid ne pošilja confirmation mailov«.
+- Naslov: <e-naslov prijatelja> (račun prijatelja). j: »Zakaj evklid ne pošilja confirmation mailov«.
 - Preverjeno: DNS za Resend na evklid.app je v redu (resend._domainkey TXT, send.evklid.app MX/SPF
   → forge.rmta.net, MX root Cloudflare Email Routing). Koda pošiljanja (server/accounts/email.js,
   register v server/accounts/index.js ~l. 458 `sendMail`) se od 30. 10. ni spremenila. Napaka pošiljanja
   se samo zapiše v dnevnik Renderja (`[evklid] pošiljanje e-pošte ni uspelo:`), registracija uspe vseeno.
-- j sem prosil (sporočilo v niti): Resend → Emails poišči naslov (Delivered/Bounced/ga ni), Luka naj
+- j sem prosil (sporočilo v niti): Resend → Emails poišči naslov (Delivered/Bounced/ga ni), prijatelj naj
   pogleda Spam/Promocije. Hitra rešitev: Render → evklid → Shell →
-  `node scripts/potrdi-racun.js <Lukov e-naslov>`. **j še ni odgovoril.**
+  `node scripts/potrdi-racun.js <e-naslov>`. **j še ni odgovoril.**
 - Če ga v Resend ni: preveri Render dnevnik (j pošlje posnetek) – morda RESEND_API_KEY potekel/preklican
   ali omejitev brezplačnega Resend (100/dan, 3000/mesec).
 - Možna izboljšava (ni narejena): v aplikaciji pokazati, da pošiljanje ni uspelo, in gumb »Pošlji znova«

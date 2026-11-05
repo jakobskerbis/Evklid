@@ -56,6 +56,6 @@ Najprej preberi: `optimizator/vrsta-po-11-11.md` (kaj pride na vrsto po resetu 1
 
 ## spomin/ – posnetek spomina projekta (5. 11. 2026)
 
-Vseh 87 datotek spomina prvega projekta. `MEMORY.md` je kazalo in povzetek, ostale datoteke so po ena tema (npr. `evklid-pricing-levels.md` za cene, `evklid-render.md` za strežnik, `j-gemini-replies.md` za odgovore Geminiju). Skrivnosti ni: so le imena nastavitev (npr. `EVKLID_DATA_KEY`), ne vrednosti. E-naslov tretje osebe v `niti/login-render.md` je zamenjan z `<Lukov e-naslov>`.
+Vseh 87 datotek spomina prvega projekta. `MEMORY.md` je kazalo in povzetek, ostale datoteke so po ena tema (npr. `evklid-pricing-levels.md` za cene, `evklid-render.md` za strežnik, `j-gemini-replies.md` za odgovore Geminiju). Skrivnosti ni: so le imena nastavitev (npr. `EVKLID_DATA_KEY`), ne vrednosti. E-naslov in ime tretje osebe sta odstranjena (`<e-naslov prijatelja>`), prav tako ime j-jevega računalnika, zasebni e-naslov in naslov ngrok.
 
 Spomin ni samodejno sinhroniziran: novi projekt naj vanj vpisuje svoje, ta mapa pa ostane kot zgodovina.

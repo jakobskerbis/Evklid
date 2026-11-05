@@ -1,5 +1,5 @@
 # Evklid (formerly Kompreno/STEMMind; repo github.com/jakobskerbis/Evklid) <!-- brand:legacy -->
-Slovenian AI STEM tutor, Node 22, single-file DB. User j (Jakob Skerbiš) writes Slovenian, non-technical. Runs on Render Frankfurt (https://evklid-a6az.onrender.com, evklid.app via Cloudflare DNS-only); smart auto-deploy; EVKLID_EXPORT_TOKEN, EVKLID_DATA_KEY, Resend set. Android APK at evklid.app/prenesi, OTA built. j's PC device "urskatorkar" (C:\Users\jakob\Desktop\stemmind-main; new checkout Desktop\Evklid). Shared folder /mnt/project-files/evklid/. Threads merge own PRs; dev only. <!-- brand:legacy -->
+Slovenian AI STEM tutor, Node 22, single-file DB. User j (Jakob Skerbiš) writes Slovenian, non-technical. Runs on Render Frankfurt (https://evklid-a6az.onrender.com, evklid.app via Cloudflare DNS-only); smart auto-deploy; EVKLID_EXPORT_TOKEN, EVKLID_DATA_KEY, Resend set. Android APK at evklid.app/prenesi, OTA built. j's PC (C:\Users\jakob\Desktop\stemmind-main; new checkout Desktop\Evklid). Shared folder /mnt/project-files/evklid/. Threads merge own PRs; dev only. <!-- brand:legacy -->
 RENDER SHELL TESTS: any merge to main redeploys and kills shell jobs and wipes data/ files; hold merges (via optimizer) while j runs a shell test. Pasting in Render shell can add `^[[200~` — tell j to delete it.
 OTA vs deploy order: OTA can reach app before Render deploys → app shows »Ni povezave« (4 Nov). Fixed #322; app now always mirrors web.
 
@@ -17,7 +17,7 @@ Optimizer plan /mnt/project-files/optimizator/tedenski-nacrt-2026-11-04.md. Hand
 4 Nov morning done: PRs #279–#369 incl. #328 logo, #348 NPZ sheets, #350 home page, #357 analytics, #361 CAS phase 1, #363 landing page, #365, #369 payment fixes.
 TUTOR: OŠ normal Haiku; SŠ paid Haiku more thinking; anti-invented-exercise rule live. Prompt caching on.
 PRICING merged #290: OŠ 9,99/99 €, SŠ 13,99/139 €, faks 19,99/199 €, Družina (OŠ+SŠ) 18,99/189 €, Družina s študentom 27,99/269 €; top-up 5/10/20 €. Schools: AI cap 25 % of licence price, annual focus, pilot 12 € first 10 schools.
-Luka confirmed. APK build 7 done.
+Pilot friend's account confirmed. APK build 7 done.
 Games: 1 new game type every Thursday 8:17.
 University: UL FKKT first; new faks structure for ALL faks lessons, ~200 $ over coming weeks.
 NPZ cmsg_011HYzNBAS5HRU1H7PcSE7Jt9uNKFNTcvAUCjC3sfE7EH6. OPTIMIZER cmsg_011HYzNBAS5HRU1H7PcSE7Jt8EQahEA2WPJwMnPr2UBLVB.

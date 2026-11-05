@@ -20,7 +20,7 @@ Dnevnik vseh poročil niti: konec /mnt/project-files/optimizator/tedenski-nacrt-
 ## Druge odprte niti
 Formule cmsg_011HYzNBAS5HRU1H7PcSE7JtF3c3ZUET66xkG8JwzAtoSy (Telesa + 3D stožnice, ~15–20 $) · tipkovnica: 2 naslednici (A: GRA, °′″, M+/M−, enotska matrika, razmerja; B: preglednica, zaporedja, Poskusi) + CAS 1. faza (j 11.17) – id-je od koordinatorja · plačila PR 3 cmsg_011HYzNBAS5HRU1H7PcSE7JtFYZvfHowHiR5JxFL8zayzd · prazen prostor cmsg_011HYzNBAS5HRU1H7PcSE7JtFhtapB5kNmRUBRjAsnimML · IGRE cmsg_011HYzNBAS5HRU1H7PcSE7Jt4sHE4mDDPEPxq8w5Ehx2bq (3 popravki; četrtek 7.17 nova igra ≤ 15 $) · učni načrt cmsg_011HYzNBAS5HRU1H7PcSE7JtHyxqJLZ9pjxUisrjx246WY · UI, grške teme, Učni pass (brez poročila).
 KONČANO danes: AI natančnost, okno inštruktorja, prijava/Render, hitrost, 3D celice, 3D kem/fiz, 3D mat/vesolje, cilj učenca (#343, #356), kozmetika (#344), načrt izida, plačila #331/#339.
-Čaka j (v niti odločitev): Lukov e-mail + preizkus obnove (prijava), kopije zunaj diska / ocena učinka / analitika (načrt izida), 3 odločitve kozmetike, APK/OTA (Expo prijava) za #334/#344.
+Čaka j (v niti odločitev): potrditveni e-mail prijatelja + preizkus obnove (prijava), kopije zunaj diska / ocena učinka / analitika (načrt izida), 3 odločitve kozmetike, APK/OTA (Expo prijava) za #334/#344.
 
 ## Opomniki (nova nit jih ustvari znova; moji so izklopljeni)
 - 4-urni trig_019YbCNv8y1UiGtGcXmCwsJU `CRON_TZ=Europe/Ljubljana 28 0,4,8,12,16,20 * * *` (kopiraj poziv z get_trigger).
