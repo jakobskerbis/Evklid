@@ -7,7 +7,7 @@
    "hrap": 0.34,
    "lak": 0.85,
    "lakHrap": 0.1,
-   "sijaj": 0.6,
+   "sijaj": 0.25,
    "sijajBarva": "#ff9a8a",
    "rob": 0.2,
    "robBarva": "#ff6a5a",
@@ -24,7 +24,8 @@
    "sencaBarva": "#4a1512",
    "mascaZunaj": true,
    "mascaF": 90,
-   "rezVlakna": 520
+   "rezVlakna": 520,
+   "odtenek": "#d9c3be"
   },
   "zaklopka": {
    "barva": "#eadfcc",
@@ -45,7 +46,7 @@
    "hrap": 0.3,
    "lak": 0.75,
    "lakHrap": 0.14,
-   "sijaj": 0.4,
+   "sijaj": 0.2,
    "sijajBarva": "#ff9a90",
    "rob": 0.2,
    "robBarva": "#ff6458",
@@ -60,7 +61,7 @@
    "hrap": 0.32,
    "lak": 0.75,
    "lakHrap": 0.14,
-   "sijaj": 0.4,
+   "sijaj": 0.2,
    "sijajBarva": "#9db8ff",
    "rob": 0.18,
    "robBarva": "#6f93ff",
@@ -68,14 +69,15 @@
    "zrno": 0.05,
    "f": 80,
    "relief": 0.3,
-   "rez": "#2f4b8c"
+   "rez": "#2f4b8c",
+   "odtenek": "#d0d6ea"
   },
   "pljucna": {
    "barva": "#4566b8",
    "hrap": 0.3,
    "lak": 0.75,
    "lakHrap": 0.14,
-   "sijaj": 0.4,
+   "sijaj": 0.2,
    "sijajBarva": "#a6bdff",
    "rob": 0.18,
    "robBarva": "#7898ff",
@@ -83,14 +85,15 @@
    "zrno": 0.05,
    "f": 80,
    "relief": 0.3,
-   "rez": "#36549c"
+   "rez": "#36549c",
+   "odtenek": "#d0d6ea"
   },
   "pljucna-vena": {
    "barva": "#b9343a",
    "hrap": 0.3,
    "lak": 0.75,
    "lakHrap": 0.14,
-   "sijaj": 0.4,
+   "sijaj": 0.2,
    "sijajBarva": "#ff9a96",
    "rob": 0.2,
    "robBarva": "#ff6466",
