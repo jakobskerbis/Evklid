@@ -64,10 +64,19 @@ export function ensureReportsTable(db) {
   if (!cols.has("shown")) db.exec("ALTER TABLE message_reports ADD COLUMN shown TEXT");
 }
 
+// Odgovor za druge učence: ime učenca → {{IME}}, samo kot cela beseda (»Nik« v »Nikoli« ostane,
+// sicer bi naslednji učenec »Ana« prebral »Anaoli«). Enoznakovno ime ostane, kot je.
+export function genericAnswer(text, name = "") {
+  const n = String(name || "").trim();
+  if (n.length < 2) return text;
+  const esc = n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return String(text).replace(new RegExp(`(?<![\\p{L}\\p{N}_])${esc}(?![\\p{L}\\p{N}_])`, "gu"), "{{IME}}");
+}
+
 // Odstrani odgovor iz predpomnilnika. Tam je shranjen z {{IME}} namesto imena učenca.
 export function purgeCachedAnswer(db, text, name = "") {
   if (!text) return 0;
-  const generic = name.length > 1 ? text.replaceAll(name, "{{IME}}") : text;
+  const generic = genericAnswer(text, name);
   return Number(db.prepare("DELETE FROM answer_cache WHERE text IN (?, ?)").run(text, generic).changes || 0);
 }
 

@@ -159,6 +159,15 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       PRIMARY KEY (student_id, topic_id, seed)
     );
+    -- Naloge, ki jih je strežnik izdal v paketu brez povezave (offline-pack): sinhronizacija sprejme samo te
+    CREATE TABLE IF NOT EXISTS offline_issued (
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      topic_id TEXT NOT NULL,
+      seed INTEGER NOT NULL,
+      level INTEGER NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      PRIMARY KEY (student_id, topic_id, seed)
+    );
     -- Kartice za ponavljanje (od inštruktorja ali lastne), ponavljanje z razmiki
     CREATE TABLE IF NOT EXISTS flashcards (
       id INTEGER PRIMARY KEY,

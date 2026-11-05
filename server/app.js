@@ -45,7 +45,7 @@ import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, loc
 import { compressedStatic, compressedJson } from "./compress.js";
 import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
-import { mountReports, chatOff, messageCode } from "./reports.js";
+import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
 import { verifyAnswer, codeCheck } from "./verify.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
@@ -842,7 +842,7 @@ export function createApp(store, opts = {}) {
       if (settingsTools.state.proposal) send("proposal", settingsTools.state.proposal);
       if (key && !cached && !fix && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
-        const generic = student.name.length > 1 ? result.text.replaceAll(student.name, "{{IME}}") : result.text;
+        const generic = genericAnswer(result.text, student.name);
         const plain = stripMeta(result.text);
         if (!codeCheck(plain)) {
           const live = verifyLive();

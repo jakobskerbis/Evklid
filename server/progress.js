@@ -40,6 +40,8 @@ export const RULES = {
   dailyNewShare: 0.7, // 70 % nove snovi, 30 % ponavljanja (obrne se, ko se ponavljanje nabere)
   unitTasks: 8,
   testTasks: 10,
+  offlinePerDay: 60, // nalog brez povezave, ki štejejo na dan (XP, napredek)
+  offlineIssuedDays: 14, // kako dolgo velja naloga iz paketa brez povezave
 };
 
 const XP = {
@@ -739,12 +741,16 @@ export class Progress {
     const path = getPath(pathKey);
     const tasks = {};
     const info = {};
+    // Izdane naloge (seme, raven): sinhronizacija sprejme samo te, ne poljubnih semen (P2: neomejen XP).
+    const issue = this.db.prepare("INSERT OR IGNORE INTO offline_issued (student_id, topic_id, seed, level) VALUES (?, ?, ?, ?)");
+    this.db.prepare(`DELETE FROM offline_issued WHERE created_at < datetime('now','-${RULES.offlineIssuedDays} days')`).run();
     for (const t of topics) {
       const topic = getTopic(t.id);
       info[t.id] = { id: t.id, name: topic.name, goals: topic.goals, unit: topic.unit, path: pathKey, subject: topic.subject, pathLabel: path.label };
       tasks[t.id] = Array.from({ length: perTopic }, (_, i) => {
         const level = Math.max(1, Math.min(3, t.level + (i % 3 === 2 ? 1 : 0)));
         const task = generateTask(t.id, level, undefined, this.taskLang(studentId));
+        issue.run(studentId, t.id, task.seed, level);
         return { level, seed: task.seed, task: publicTask(task), answer: task.answer, solution: task.solution, hint: task.hint };
       });
     }
@@ -752,22 +758,38 @@ export class Progress {
   }
 
   // Odgovori brez povezave: [{ topic_id, level, seed, answer }]. Vsako nalogo štejemo enkrat.
+  // Šteje samo naloga, ki jo je strežnik izdal v paketu (offline_issued, z isto ravnjo), in največ
+  // RULES.offlinePerDay na dan: brez tega bi si kdo s kodo iz brskalnika nabral poljubno XP.
   offlineSync(studentId, results = []) {
     let synced = 0;
     let correct = 0;
+    let skipped = 0;
     const seen = this.db.prepare("INSERT OR IGNORE INTO offline_results (student_id, topic_id, seed) VALUES (?, ?, ?)");
+    const issued = this.db.prepare(
+      `SELECT 1 FROM offline_issued WHERE student_id = ? AND topic_id = ? AND seed = ? AND level = ? AND created_at >= datetime('now','-${RULES.offlineIssuedDays} days')`,
+    );
+    let left = RULES.offlinePerDay - this.db.prepare("SELECT COUNT(*) AS n FROM offline_results WHERE student_id = ? AND date(created_at) = date('now')").get(studentId).n;
     for (const r of results.slice(0, 300)) {
       const level = Number(r?.level);
       const seed = Number(r?.seed);
       if (!getTopic(r?.topic_id) || !hasGenerator(r.topic_id) || ![1, 2, 3].includes(level) || !Number.isInteger(seed) || seed < 0 || seed >= 2 ** 31) continue;
+      if (!issued.get(studentId, r.topic_id, seed, level)) {
+        skipped += 1;
+        continue;
+      }
+      if (left <= 0) {
+        skipped += 1;
+        continue;
+      }
       if (!seen.run(studentId, r.topic_id, seed).changes) continue;
+      left -= 1;
       const task = generateTask(r.topic_id, level, seed, this.taskLang(studentId));
       const id = this.saveTask(studentId, task, "practice");
       const out = this.answer(studentId, id, String(r.answer ?? "").slice(0, 200));
       synced += 1;
       if (out.correct) correct += 1;
     }
-    return { synced, correct };
+    return { synced, correct, ...(skipped ? { skipped } : {}) };
   }
 
   // ---------- odgovor ----------
