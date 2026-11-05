@@ -190,6 +190,11 @@ test("kemija je samo enkrat: zavihek Kem ima vse iz čipa Σ, čipa Σ ni, kjer 
   assert.deepEqual(KEM_GROUPS.map(([, l]) => l), ["tk.kem.el", "tk.kem.re"]);
   assert.match(tk, /subtabs\(KEM_GROUPS\.map\(\(\[id, label\]\) => \[id, t\(label\)\]\)/);
   assert.match(tk, /key\("H₂O", \{ a: "chem" \}/);
+  assert.match(tk, /role="tab"[^`]*aria-label="\$\{esc\(label\)\}"/, "podzavihki imajo aria-label");
+  for (const f of fs.readdirSync(path.join(ROOT, "public/i18n/ui"))) {
+    const j = JSON.parse(read(`public/i18n/ui/${f}`));
+    assert.ok(j["tk.kem.el"] && j["tk.kem.re"] && j["tk.kem.el"] !== j["tk.kem.re"], `${f}: podzavihka Kem`);
+  }
   // opisi kemijskih tipk iz GROUPS.kemija (oborina, plin, kristalna voda)
   const opis = Object.fromEntries(GROUPS.kemija.keys.map((k) => [k.ins, k.title]));
   assert.equal(opis["↓"], "oborina");

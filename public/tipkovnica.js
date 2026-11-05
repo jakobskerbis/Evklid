@@ -375,7 +375,7 @@ function subtabs(list, cur, act) {
   return `<div class="tk-sub" role="tablist">${list
     .map(([id, label]) => {
       const i = keys.push({ a: act, v: id }) - 1;
-      return `<button type="button" role="tab" class="tk-subtab${id === cur ? " on" : ""}" aria-selected="${id === cur}" data-k="${i}">${esc(label)}</button>`;
+      return `<button type="button" role="tab" class="tk-subtab${id === cur ? " on" : ""}" aria-selected="${id === cur}" aria-label="${esc(label)}" data-k="${i}">${esc(label)}</button>`;
     })
     .join("")}</div>`;
 }
