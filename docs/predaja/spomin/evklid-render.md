@@ -11,7 +11,6 @@ Evklid runs on Render since 2026-10-30 (thread cmsg_011HYzNBAS5HRU1H7PcSE7JtPiY8
 - NODE_VERSION must be ≥ 22.13 (node:sqlite unflagged); 22.12.0 crashed the first deploy. render.yaml now "22" (PR #179).
 - j chose a fresh start: old data stays on the PC DB, nothing migrated.
 - No Resend yet → verify links hidden for remote requests; confirm an account with `node scripts/potrdi-racun.js email` in Render → Shell (PR #179).
-- j's card was first declined (balance/limit), then worked.
 - autoDeploy false; auto deploy via .github/workflows/render-posodobitev.yml (PR #183, #205; j asked to optimise the 2 h interval): runs on every push to main (GitHub cron was delayed for hours, hourly cron only a fallback), scripts/render-objava.js waits for a quiet server (/healthz/stanje), max 3 h, min 1 h between deploys. Secret RENDER_DEPLOY_HOOK added by j 30 Oct; first automatic deploy 11:03 UTC worked.
 - evklid.app → Render done 30 Oct (Cloudflare tunnel record deleted, CNAME @ and www → evklid-a6az.onrender.com, DNS only); EVKLID_BASE_URL=https://evklid.app. PC/telefon-windows.bat no longer needed.
 - Resend LIVE 30 Oct 13:26 UTC: domain evklid.app verified (EU eu-west-1, records send/rsend/resend._domainkey via Cloudflare auto-configure, no root MX change), RESEND_FROM="Evklid <info@evklid.app>", reset mail test OK. j also fixed misspelt env EVLID_BASE_URL → EVKLID_BASE_URL. Still to do: Stripe webhook.
