@@ -9,7 +9,7 @@
 // izraze primerjamo s prvotnim v naključnih točkah, odvode z numeričnim odvodom. Kar ne prestane preverjanja,
 // se ne pokaže kot rešitev (vrne ok:false in vmesnik ponudi AI rešitev, ki se preveri enako).
 
-import { parse, compile, diff, simplify, toTex as mathTex, normalize } from "../graph/math.js";
+import { parse, compile, diff, simplify, toTex as mathTex, normalize, joinThousands } from "../graph/math.js";
 import { Q, P, AlgebraError, polyOf, tryPoly, constQ, termsTex, termTex, isqrt, lcmInt, gcdInt, approxTex, monoKey } from "./algebra.js";
 
 export { Q, P };
@@ -22,7 +22,8 @@ const step = (title, tex, o = {}) => ({ title, tex, ...o });
 
 // Prepis s fotografije ali tipkovnice → oblika, ki jo razume razčlenjevalnik.
 export function prep(text) {
-  let s = String(text ?? "")
+  // »1 000«, »1\,000«, »1~000« je tisoč, ne 1 · 0 (texToText da namesto \, presledek)
+  let s = joinThousands(String(text ?? "").replace(/(\d)(?:\\[,;: ]|~|\{\\,\})(?=\d{3}(?!\d))/g, "$1 "))
     .replace(/\\left|\\right/g, "")
     .replace(/\\dfrac|\\tfrac/g, "\\frac")
     .replace(/\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, "(($1)/($2))")
@@ -1840,7 +1841,7 @@ export function texToText(s) {
     .replace(/\\cdot/g, "*")
     .replace(/\\pi/g, "π")
     .replace(/\{,\}/g, ".")
-    .replace(/\\[,;!]|\\quad/g, " ")
+    .replace(/\\[,;:! ]|\\quad|~/g, " ")
     .replace(/\\tfrac|\\dfrac/g, "\\frac");
   // od znotraj navzven: ^{…}, \sqrt{…}, \frac{…}{…}
   for (let i = 0; i < 12; i++) {

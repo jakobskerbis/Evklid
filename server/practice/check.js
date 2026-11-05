@@ -24,23 +24,44 @@ export function fmt(x, d = null) {
 }
 
 const SUP = { "²": "2", "³": "3" };
-export function normUnit(u) {
+// Enota brez presledkov in potenc, velike in male črke ostanejo (m = mili, M = mega).
+function unitForm(u) {
   return String(u || "")
-    .toLowerCase()
     .replace(/[²³]/g, (c) => SUP[c])
     .replace(/\^/g, "")
     .replace(/\s+/g, "")
     .replace(/\*|·/g, "")
-    .replace(/°c/g, "°c")
-    .replace(/^stopinj[ae]?$|^°$/, "°")
-    .replace(/kmh$/, "km/h");
+    .replace(/^stopinj[ae]?$|^°$/i, "°")
+    .replace(/kmh$/i, "km/h");
+}
+export function normUnit(u) {
+  return unitForm(u).toLowerCase();
+}
+
+// Ista enota? Velikost črke večinoma ne spremeni pomena (l/L, °C/°c, km/h/Km/h, Hz/hz), pri m/M pa
+// spremeni predpono: ms ≠ Ms, mA ≠ MA, mJ ≠ MJ, mm ≠ Mm (razlika je milijardo-krat).
+export function sameUnit(a, b) {
+  const x = unitForm(a);
+  const y = unitForm(b);
+  if (x === y) return true;
+  if (x.toLowerCase() !== y.toLowerCase() || x.length !== y.length) return false;
+  for (let i = 0; i < x.length; i++) if (x[i] !== y[i] && /m/i.test(x[i])) return false;
+  return true;
+}
+
+// Arabske in perzijske števke (٢٫٥, ۲٫۵) → 0–9, arabsko decimalno ločilo ٫ in vejica ، → vejica.
+export function westernDigits(s) {
+  return String(s)
+    .replace(/[\u0660-\u0669]/g, (c) => String(c.charCodeAt(0) - 0x0660))
+    .replace(/[\u06f0-\u06f9]/g, (c) => String(c.charCodeAt(0) - 0x06f0))
+    .replace(/[\u066b\u060c]/g, ",");
 }
 
 // Razčleni vnos, npr. "12,5 cm²", "−3", "1 200", "2.5m".
 // dot: decimalna pika (angleške izpitne naloge); takrat "0.120" ni 120 s piko za tisočice.
 // Skupina tisočic ima natanko 3 števke: "1.1484" je decimalno število, ne 1.148 z enoto "4".
 export function parseNumberWithUnit(input, { dot = false } = {}) {
-  const s = String(input).trim().replace(/−/g, "-");
+  const s = westernDigits(String(input).trim()).replace(/−/g, "-");
   const m = s.match(/^([+-]?\s*(?:\d{1,3}(?:[ .]\d{3}(?!\d))+|\d+)?(?:[.,]\d+)?)\s*(.*)$/);
   if (!m || !/\d/.test(m[1])) return null;
   let num = m[1].replace(/\s/g, "");
@@ -69,14 +90,24 @@ function decimalsWord(d) {
 function checkNumber(ans, input) {
   const p = parseNumberWithUnit(input, { dot: !!ans.dot });
   if (!p) return { kind: "format", code: "chk.number", message: "Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
+  const res = checkParsed(ans, p);
+  // »2.500« je lahko 2500 (pika za tisočice) ali 2,5 s piko kot decimalnim ločilom (tipkovnica v
+  // angleščini, arabščini, urdujščini). Če je pravilno samo decimalno branje, štejemo pravilno.
+  if (res.kind !== "correct" && !ans.dot && /^[+-]?\d{1,3}\.\d{3}(?!\d)/.test(westernDigits(String(input).trim()).replace(/−/g, "-"))) {
+    const q = parseNumberWithUnit(input, { dot: true });
+    const alt = q && checkParsed(ans, q);
+    if (alt?.kind === "correct") return alt;
+  }
+  return res;
+}
+
+function checkParsed(ans, p) {
 
   // Enota
   if (ans.unit) {
-    const want = normUnit(ans.unit);
     const got = normUnit(p.unit);
     if (!got) return { kind: "unit", code: "chk.addUnit", message: `Število je zapisano, dodaj še enoto. V kateri enoti je rezultat?` };
-    const alts = (ans.unitAlternatives || []).map(normUnit);
-    if (got !== want && !alts.includes(got)) {
+    if (![ans.unit, ...(ans.unitAlternatives || [])].some((u) => sameUnit(u, p.unit))) {
       return { kind: "unit", code: "chk.unit", params: { unit: ans.unit }, message: `Preveri enoto: rezultat zapiši v ${ans.unit}.` };
     }
   }
@@ -174,9 +205,14 @@ export function diagnose(ans, p) {
 }
 
 function parseFraction(input) {
-  const s = String(input).trim().replace(/−/g, "-").replace(/\s+/g, " ");
-  let m = s.match(/^([+-]?\d+)\s*\/\s*(\d+)$/);
-  if (m) return { num: Number(m[1]), den: Number(m[2]) };
+  const s = westernDigits(String(input).trim()).replace(/−/g, "-").replace(/\s+/g, " ");
+  // predznak lahko stoji tudi v imenovalcu: 3/-4 = -3/4
+  let m = s.match(/^([+-]?\d+)\s*\/\s*([+-]?\d+)$/);
+  if (m) {
+    const num = Number(m[1]);
+    const den = Number(m[2]);
+    return den < 0 ? { num: -num, den: -den } : { num, den };
+  }
   m = s.match(/^([+-]?)(\d+) (\d+)\s*\/\s*(\d+)$/); // mešano število "1 1/2"
   if (m) {
     const sign = m[1] === "-" ? -1 : 1;
@@ -204,7 +240,8 @@ function checkFraction(ans, input) {
     }
     return { kind: "wrong" };
   }
-  if (gcd(f.num, f.den) !== 1) return { kind: "simplify", code: "chk.simplify", message: "Vrednost je pravilna, a ulomek še okrajšaj do konca." };
+  // 0/5 je že 0: okrajšati ni česa
+  if (f.num !== 0 && gcd(f.num, f.den) !== 1) return { kind: "simplify", code: "chk.simplify", message: "Vrednost je pravilna, a ulomek še okrajšaj do konca." };
   return { kind: "correct" };
 }
 

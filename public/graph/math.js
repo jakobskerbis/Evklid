@@ -177,6 +177,14 @@ export class MathError extends Error {
   }
 }
 
+// »1 000«, »12 345«, »2 000 000« (presledek, tudi nedeljiv, med skupinami po 3 števke) je eno število.
+// Brez tega razčlenjevalnik presledek med števkami bere kot množenje (»1 000« = 1 · 0).
+// Skupine z drugačnim številom števk (»12 34«) ostanejo, kot so: to ni zapis tisočic.
+export const joinThousands = (s) =>
+  String(s ?? "").replace(/(?<![\d.,])\d{1,3}(?:[   ]\d{3})+(?!\d)/g, (m) => m.replace(/[   ]/g, ""));
+// Ostane presledek med dvema števkama (»12 34«, »1 0005«)? Zapis ni jasen.
+export const digitGap = (s) => /\d[ \t  ]+\d/.test(String(s ?? ""));
+
 export function normalize(src) {
   return String(src ?? "")
     .replace(/[−–—]/g, "-")

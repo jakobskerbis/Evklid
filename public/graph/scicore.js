@@ -1,6 +1,6 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
-import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError } from "./math.js";
+import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
 const ANS_VAR = "A_ans"; // ime spremenljivke po razčlenitvi
@@ -57,7 +57,8 @@ function rewriteIntegrals(s) {
  * - 1,2E5 → 1,2·10^(5), manjkajoče zaklepaje dodamo na konec, ∫(f; a; b) je določeni integral.
  */
 export function prepare(text, { comma = true } = {}) {
-  let s = String(text ?? "").trim();
+  // »1 000 000/4«: presledek med skupinami po 3 števke je ločilo tisočic, ne množenje
+  let s = joinThousands(String(text ?? "").trim());
   s = s.replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
   if (comma) s = s.replace(/(\d),(?=\d)/g, "$1.");
   s = s.replace(/;/g, ",");

@@ -13,6 +13,7 @@
 // Vse izklopi EVKLID_LIVE_CHECK=0. Stroški: docs/stroski-ai.md, kakovost: docs/kakovost.md.
 import "./env.js";
 import { solve, texToText, prep } from "../public/scan/solvecore.js";
+import { joinThousands, digitGap } from "../public/graph/math.js";
 import { parse, compile } from "../public/graph/math.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
@@ -86,7 +87,9 @@ function answerText(r, type) {
 }
 
 function trySolve(cand, deriv) {
-  let c = cand.replace(/\s+in\s+(?=[^=]*=)/g, "; ").trim();
+  // »1 000« je tisoč; presledek med števkami, ki ni zapis tisočic (»12 34«), ni jasen: raje nič kot napačen »preverjen« rezultat
+  let c = joinThousands(cand.replace(/\s+in\s+(?=[^=]*=)/g, "; ").trim());
+  if (digitGap(c)) return null;
   if (!mathOnly(c)) return null;
   if (/^\s*d\/d[a-z]/i.test(c)) deriv = true;
   const hasEq = c.includes("=");
@@ -312,7 +315,8 @@ export const givesVerdict = (answer) => VERDICT_RE.test(String(answer || "").sli
 
 // Učenčeva vrednost neznanke ali rezultata (»x = 3«, »x1 = 2, x2 = -2«, golo število »11/12«).
 function claimValues(text, vars) {
-  const t = String(text).replace(/\$/g, "").replace(/\s*=\s*/g, "=");
+  // »1 247«, »1\,247« je eno število (tisočice), ne 1 in 247
+  const t = joinThousands(String(text).replace(/\$/g, "").replace(/(\d)(?:\\[,;: ]|~|\{\\,\})(?=\d{3}(?!\d))/g, "$1 ")).replace(/\s*=\s*/g, "=");
   // Vrednost, ki ji sledi operator ali črka (»x = 6 - 3«, »x = 2x - 1«, »x = 12 : 4«), je vmesni korak, ne rezultat:
   // o njem sodi model. Pri večkratni navedbi iste neznanke šteje zadnja (»x = 6 … torej x = 3«).
   const byKey = new Map();
