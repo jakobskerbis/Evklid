@@ -931,6 +931,7 @@ export function ustvariSceno(el, opts = {}) {
     get velikost() {
       return { w, h };
     },
+    posodobiVelikost: velikost, // takoj po spremembi postavitve (okno dela ob odru), pred kadriranjem
     unici,
   };
 }

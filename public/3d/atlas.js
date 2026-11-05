@@ -289,6 +289,25 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   const kit = ustvariSceno(oder, { kakovost, oznaka: t("a3.title"), fov: 32, ponastavi: () => ponastaviPogled(), preveriZakritje: false });
   kit.controls.minDistance = 0.08;
   kit.controls.maxDistance = 6;
+
+  // Kartica izbranega dela nikoli čez telo (j, 5. 11.): ko je odprta, se oder umakne. Telefon: kartica s spodnjo vrstico
+  // je list pod odrom (oder se skrajša); računalnik: stolpec levo ob odru pod glavo (oder se zoži). Mere v CSS
+  // spremenljivkah, oder dobi novo velikost takoj (pred preletom k delu).
+  const vidnaKartica = () => !kartica.hidden && kartica.getClientRects().length > 0;
+  function uskladiKartico() {
+    const odprta = vidnaKartica();
+    el.classList.toggle("a3-info-odprta", odprta);
+    if (odprta) {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--a3-vrh-h", `${Math.round(vrh.getBoundingClientRect().bottom - r.top)}px`);
+      el.style.setProperty("--a3-dno-h", `${Math.round(dno.offsetHeight)}px`);
+      el.style.setProperty("--a3-dno-w", `${Math.round(dno.offsetWidth)}px`);
+    }
+    kit.posodobiVelikost();
+  }
+  const roKartica = new ResizeObserver(() => uskladiKartico());
+  for (const x of [dno, vrh]) roKartica.observe(x);
+  new MutationObserver(() => uskladiKartico()).observe(kartica, { attributes: true, attributeFilter: ["hidden"] });
   const telo = new THREE.Group();
   kit.scene.add(telo);
   // Modeli imajo zapečeno okluzijo v pregibih (barva oglišč), zato je zaslonska (GTAO) šibkejša, le za stike med deli.
@@ -786,6 +805,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (!izbran) {
       sij.visible = false;
       kartica.hidden = true;
+      uskladiKartico();
       uporabiMateriale();
       return;
     }
@@ -802,18 +822,23 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     sij.visible = true;
     uporabiMateriale();
     if (!tiho) pokaziKartico(d.row);
+    uskladiKartico();
     if (leti) poletiK(sredisceDela(d), Math.max(0.03, d.row.r * 0.55));
   }
 
-  // Prelet do dela tako, da je del na sredini prostega dela zaslona (med glavo in kartico ali namigom).
+  // Prelet do dela tako, da je del na sredini prostega dela odra (med glavo in kvizom ali namigom, ki ležita na odru;
+  // kartica dela je ob odru, ne na njem).
   function poletiK(c, polmer) {
     const { h } = kit.velikost;
-    const r = el.getBoundingClientRect();
-    const zgoraj = vrh.getBoundingClientRect().bottom - r.top;
-    // Na širokem zaslonu je kartica levo spodaj (ne pokrije sredine), na telefonu čez vso širino.
-    const ozek = dno.getBoundingClientRect().width > r.width * 0.7;
-    const spodnji = ozek && !kartica.hidden ? kartica : ozek && !kviz.hidden ? kviz : namigVrsta;
-    const spodaj = spodnji.getBoundingClientRect().top - r.top;
+    const r = kit.canvas.getBoundingClientRect();
+    const zgoraj = Math.max(0, vrh.getBoundingClientRect().bottom - r.top);
+    const naOdru = (x) => {
+      if (x.hidden || !x.getClientRects().length) return false;
+      const b = x.getBoundingClientRect();
+      return b.left < r.right - 1 && b.right > r.left + 1 && b.top < r.bottom - 1;
+    };
+    const spodnji = [kviz, namigVrsta].filter(naOdru).map((x) => x.getBoundingClientRect().top - r.top);
+    const spodaj = Math.min(r.height, ...spodnji);
     const prostor = Math.max(120, spodaj - zgoraj);
     const tan = Math.tan(THREE.MathUtils.degToRad(kit.camera.fov / 2));
     const d = Math.max((polmer / tan) * (h / prostor), polmer / (tan * kit.camera.aspect)) * 1.12;

@@ -1,8 +1,9 @@
-// Splošni pregledovalnik 3D modelov, zgrajenih v kodi (pogodba v docs/3d.md): prizor iz scena.js, deli z barvnimi
-// točkami in seznamom gumbov (tipkovnica: Tab do seznama, Enter izbere), nadzor iz `nadzor` (drsnik, izbira, gumb,
+// Splošni pregledovalnik 3D modelov, zgrajenih v kodi (pogodba v docs/3d.md): prizor iz scena.js, deli s seznamom
+// gumbov (tipkovnica: Tab do seznama, Enter izbere) in oknom izbranega dela ob odru (nikoli čez model), nadzor iz `nadzor` (drsnik, izbira, gumb,
 // stikalo, izpis), merilo iz `merilo`, »Ponastavi«, predvajaj/ustavi, ko ima model `korak`. Uporabljata ga stran /3d
 // in pogon simulacij »3d-<id>« v lekcijah (public/3d/sim.js).
 import { THREE, ustvariSceno, kakovostNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
+import { obsegVidnega, vKadru } from "./kader.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
 
@@ -56,7 +57,12 @@ export function odpriModel(el, mod, opts = {}) {
   const deliEl = mk("div", "k3-deli");
   deliEl.setAttribute("role", "group");
   deliEl.setAttribute("aria-label", t("a3.parts"));
-  spodaj.append(nadzorEl, deliEl);
+  // Okno izbranega dela (j, 5. 11.): nikoli čez model. Je prvi del plošče ob odru: na računalniku desno ob modelu, na
+  // telefonu pod odrom (spodnji list), v lekcijah pod odrom. Zapre ga ×, Esc ali tap na prazen del odra.
+  const infoEl = mk("section", "k3-info");
+  infoEl.hidden = true;
+  infoEl.setAttribute("aria-live", "polite");
+  spodaj.append(infoEl, nadzorEl, deliEl);
   el.append(oder, spodaj);
   // Stran /3d (opts.stran): plošča ob odru (desno na širokih zaslonih, spodaj na telefonu) z opisom modela, nadzorom in
   // seznamom delov; plošča se drsi sama, oder ostane ves čas viden. V lekcijah ostane postavitev kot prej.
@@ -75,7 +81,7 @@ export function odpriModel(el, mod, opts = {}) {
     }
     oModelu.hidden = !oModelu.children.length;
     deliGlava = mk("h2", "k3-deli-glava");
-    spodaj.prepend(oModelu);
+    spodaj.insertBefore(oModelu, nadzorEl);
     spodaj.insertBefore(deliGlava, deliEl);
   }
   // Esc prekliče izbiro dela (šele naslednji Esc gre na strani /3d nazaj na zbirko).
@@ -118,12 +124,8 @@ export function odpriModel(el, mod, opts = {}) {
     kit?.narisi();
   }
 
-  const svetovnaTocka = (d) => (v) => {
-    v.set(...(d.tocka || [0, 0, 0]));
-    return model?.group ? model.group.localToWorld(v) : v;
-  };
-
-  // Izbrani del: rahel modri sij na njegovih mrežah (kopije materialov, izvirniki ostanejo).
+  // Izbrani del zasije v svoji barvi na vseh svojih mrežah, torej na vseh primerkih iste vrste (vsi mitohondriji so ena
+  // InstancedMesh). Kopije materialov, izvirniki ostanejo.
   const sij = new Map(); // mesh → izvirni material
   function obarvaj(d) {
     for (const [m, mat] of sij) m.material = mat;
@@ -136,12 +138,100 @@ export function odpriModel(el, mod, opts = {}) {
         const c = x.clone();
         if (c.emissive) {
           c.emissive = new THREE.Color(d.barva || "#6E9BFF");
-          c.emissiveIntensity = 0.28;
+          c.emissiveIntensity = 0.5;
         }
         return c;
       });
       m.material = Array.isArray(m.material) ? kopija : kopija[0];
     }
+  }
+
+  // Namig, kaj je klikljivo (namesto barvnih krogcev čez model): ob prvem ogledu nabora delov po en primerek vsakega dela
+  // dvakrat mehko zasije v svoji barvi. Deli, ki ovijejo skoraj ves model (membrana, stena), ne zasijejo, da ne zalijejo
+  // vsega. Prekrivna mreža si deli geometrijo z izvirnikom, je prosojna in je tap ne zadene.
+  let namigSij = null; // { mreze, mat[], t }
+  const videniNabori = new Set();
+  const TRAJANJE_SIJA = 3.2;
+  function ustaviNamigSij() {
+    if (!namigSij) return;
+    for (const o of namigSij.mreze) o.removeFromParent();
+    for (const m of namigSij.mat) m.dispose();
+    namigSij = null;
+    kit?.narisi();
+  }
+  function sijPrimerka(m, barva) {
+    const izv = Array.isArray(m.material) ? m.material[0] : m.material;
+    if (!m.geometry?.attributes?.position || !izv || izv.visible === false) return null;
+    const mat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(barva || "#6E9BFF"), transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending,
+      side: izv.side === THREE.BackSide ? THREE.BackSide : THREE.FrontSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1,
+      toneMapped: false,
+    });
+    if (izv.clippingPlanes?.length) mat.clippingPlanes = izv.clippingPlanes;
+    const o = new THREE.Mesh(m.geometry, mat);
+    o.userData.k3Sij = true;
+    o.raycast = () => {};
+    o.renderOrder = 10;
+    if (m.isInstancedMesh) {
+      // primerek, ki je najbližje kameri (v prerezu celice je ta navadno viden)
+      const mm = new THREE.Matrix4(), p = new THREE.Vector3(), cam = kit.camera.position;
+      let naj = -1, d = Infinity;
+      for (let i = 0; i < m.count; i++) {
+        m.getMatrixAt(i, mm);
+        p.setFromMatrixPosition(mm).applyMatrix4(m.matrixWorld);
+        const x = p.distanceToSquared(cam);
+        if (x < d) (d = x), (naj = i);
+      }
+      if (naj < 0) return null;
+      m.getMatrixAt(naj, o.matrix);
+      o.matrixAutoUpdate = false;
+    }
+    m.add(o);
+    return o;
+  }
+  function namigniDele() {
+    ustaviNamigSij();
+    const seznam = Array.isArray(model?.deli) ? model.deli : [];
+    if (!seznam.length || !model?.group || izbran) return;
+    const kljuc = seznam.map((d) => d.id).join("|");
+    if (videniNabori.has(kljuc)) return;
+    videniNabori.add(kljuc);
+    const vel = obsegVidnega(THREE, model.group).getSize(new THREE.Vector3()).length();
+    const mreze = [], mat = [];
+    for (const d of seznam) {
+      const b = okvirDela(d, new THREE.Box3());
+      if (b.isEmpty() || b.getSize(new THREE.Vector3()).length() > vel * 0.75) continue;
+      // po en primerek: prva vidna mreža dela (pri InstancedMesh en primerek)
+      for (const m of d.meshes || []) {
+        if (!m?.isMesh || !vidnaVeja(m)) continue;
+        const o = sijPrimerka(m, d.barva);
+        if (o) {
+          mreze.push(o);
+          mat.push(o.material);
+          break;
+        }
+      }
+    }
+    if (!mreze.length) return;
+    namigSij = { mreze, mat, t: 0 };
+    kit.narisi();
+  }
+  const vidnaVeja = (o) => {
+    for (let x = o; x; x = x.parent) if (!x.visible) return false;
+    return true;
+  };
+  function korakNamigSija(dt) {
+    if (!namigSij) return false;
+    namigSij.t += dt;
+    const t = namigSij.t;
+    if (t >= TRAJANJE_SIJA) {
+      ustaviNamigSij();
+      return true;
+    }
+    // dva mehka utripa; pri manj gibanja enakomeren sij, ki na koncu ugasne
+    const a = kit.gibanje ? Math.sin((Math.PI * 2 * t) / TRAJANJE_SIJA) ** 2 : t < TRAJANJE_SIJA - 0.3 ? 1 : 0;
+    for (const m of namigSij.mat) m.opacity = 0.55 * a;
+    return true;
   }
 
   // Izbrani del: deli, ki ga res obdajajo (celična stena, membrana, ovojnica ...), postanejo nevidni, da se izbrani
@@ -220,36 +310,82 @@ export function odpriModel(el, mod, opts = {}) {
     if (preklopi && cilj && cilj === izbran) cilj = null;
     const d = (model?.deli || []).find((x) => x.id === cilj) || null;
     izbran = d ? d.id : null;
+    ustaviNamigSij();
     obarvaj(d);
     skrijObdajajoce(d);
     kit.narisi();
-    kit.izbranaTocka(izbran);
     deliEl.querySelectorAll("[data-del]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.del === izbran)));
-    if (!d) {
-      kit.pokaziOznako(null);
-      return;
-    }
-    const v = svetovnaTocka(d)(new THREE.Vector3());
-    const kartica = kit.pokaziOznako(d.id, d.ime, d.opis, v);
-    if (d.la && kartica) kartica.querySelector("b")?.after(mk("i", "k3-la", d.la)); // latinsko ime (organi, prerezi tkiv)
-    // Del s `povecava: "<id modela>"` (docs/3d.md): gumb na kartici odpre povečan prikaz (stran /3d da opts.povecava).
-    if (d.povecava && typeof opts.povecava === "function" && kartica) {
+    pokaziInfo(d);
+    if (d && leti) kadrirajIzbiro(d);
+  }
+
+  // Okno izbranega dela v plošči: barvna pika, ime, latinsko ime, opis, »Poglej pod povečavo«, ×.
+  function pokaziInfo(d) {
+    infoEl.replaceChildren();
+    infoEl.hidden = !d;
+    el.classList.toggle("k3-ima-info", !!d);
+    if (!d) return;
+    infoEl.style.setProperty("--barva", d.barva || "#6E9BFF");
+    infoEl.setAttribute("aria-label", d.ime);
+    const glava = mk("div", "k3-info-glava");
+    const naslov = mk("div", "k3-info-naslov");
+    naslov.append(mk("h3", "", d.ime));
+    if (d.la) naslov.append(mk("i", "k3-la", d.la)); // latinsko ime (organi, prerezi tkiv)
+    const x = mk("button", "k3-krog k3-info-zapri");
+    x.type = "button";
+    x.innerHTML = icon("x");
+    x.setAttribute("aria-label", t("a3.close"));
+    x.title = t("a3.close");
+    x.addEventListener("click", () => {
+      izberi(null);
+      deliEl.querySelector(`[data-del="${CSS.escape(d.id)}"]`)?.focus({ preventScroll: true });
+    });
+    glava.append(mk("i", "k3-pika"), naslov, x);
+    infoEl.append(glava);
+    if (d.opis) infoEl.append(mk("p", "k3-info-opis", d.opis));
+    // Del s `povecava: "<id modela>"` (docs/3d.md): gumb odpre povečan prikaz (stran /3d da opts.povecava).
+    if (d.povecava && typeof opts.povecava === "function") {
       const b = mk("button", "k3-pill k3-povecava-gumb");
       b.type = "button";
       b.innerHTML = `${icon("zoom-in")}<span></span>`;
       b.lastChild.textContent = t("a3.magnify");
       b.addEventListener("click", () => opts.povecava(d.povecava));
-      kartica.append(b);
+      infoEl.append(b);
     }
-    if (leti && model.postavitev === "organ") {
-      // Organ: ista smer pogleda, le rahlo bližje k točki (organ ostane v kadru, točka ostane vidna).
-      const [c, r] = zacetniOkvir();
-      kit.poleti(c.lerp(v, 0.35), r * 0.8);
-    } else if (leti) {
-      // Prelet: proti točki, a celica ostane v kadru (polmer 0,6 namesto celega modela).
-      const smer = v.clone().sub(model.group.getWorldPosition(new THREE.Vector3()));
-      kit.poleti(v.clone().multiplyScalar(0.5), 0.75, smer.lengthSq() > 1e-6 ? { smer: smer.add(kit.camera.position.clone().normalize().multiplyScalar(1.5)) } : {});
-    }
+    // Plošča se drsi sama: okno je na vrhu, zato jo vrnemo na začetek (stran /3d); v lekciji se stran ne premika.
+    if (opts.stran) spodaj.scrollTo?.({ top: 0, behavior: kit.gibanje ? "smooth" : "auto" });
+  }
+
+  // Kader modela: organ in model z `okvir` imata ročno nastavljen okvir; model iz kode vidni obseg (pogled lahko pokaže le del), a nikoli
+  // večji od začetne krogle (tla, silnice) in ne premajhen.
+  function kadrModela() {
+    const [c0, r0] = zacetniOkvir();
+    if (model?.postavitev === "organ" || model?.okvir || !model?.group) return [c0, r0];
+    const b = obsegVidnega(THREE, model.group, { kamera: kit.camera });
+    if (b.isEmpty()) return [c0, r0];
+    const s = b.getBoundingSphere(new THREE.Sphere());
+    if (s.radius > r0 * 1.05) return [c0, r0];
+    return [s.center, Math.max(s.radius, r0 * 0.6)];
+  }
+  // Izbira dela (j, 5. 11.): kamera se ne premakne, če sta izbrani del in model že cela v kadru; sicer kadrira cel model
+  // na sredino (ista smer pogleda), da sta vidna del in model. Telefon: okno pod odrom ga je morda pomanjšalo, zato
+  // najprej preberemo novo velikost odra.
+  // Nov pogled (izbira, npr. »Glava in vrat (povečano)«): ko se vidni model opazno spremeni ali ni več cel v kadru,
+  // ga kamera kadrira celega na sredini (ista smer pogleda).
+  function kadrirajPogled([pc, pr]) {
+    const [mc, mr] = kadrModela();
+    const drug = mc.distanceTo(pc) > 0.2 * Math.max(mr, pr) || mr / pr > 1.25 || pr / mr > 1.25;
+    if (!drug && vKadru(THREE, kit.camera, mc, mr, 1.02)) return;
+    kit.poleti(mc, mr, { trajanje: 0.6 });
+  }
+  function kadrirajIzbiro(d) {
+    kit.posodobiVelikost?.();
+    const [mc, mr] = kadrModela();
+    const b = okvirDela(d, new THREE.Box3());
+    const s = b.isEmpty() ? null : b.getBoundingSphere(new THREE.Sphere());
+    const delOk = !s || vKadru(THREE, kit.camera, s.center, s.radius, 0.96);
+    if (delOk && vKadru(THREE, kit.camera, mc, mr, 1.02)) return;
+    kit.poleti(mc, mr);
   }
 
   function deli() {
@@ -273,12 +409,11 @@ export function odpriModel(el, mod, opts = {}) {
       deliGlava.hidden = !seznam.length;
       deliGlava.replaceChildren(t("a3.parts"), mk("span", "k3-stevec", String(seznam.length)));
     }
-    kit.nastaviTocke(
-      seznam.filter((d) => Array.isArray(d.tocka) && !d.skrijTocko).map((d) => ({ id: d.id, ime: d.ime, barva: d.barva, pos: svetovnaTocka(d) })),
-      { ob: (id) => izberi(id === izbran ? null : id), zakriva: () => (model?.group ? [model.group] : []) },
-    );
+    // Brez barvnih krogcev čez model (j, 5. 11.): kaj je klikljivo, pokaže sij delov ob prvem ogledu (namigniDele).
     if (izbran && !seznam.some((d) => d.id === izbran)) izberi(null, { leti: false });
     else if (izbran) skrijObdajajoce(seznam.find((d) => d.id === izbran)); // nova faza: drugi ovoji
+    // nov nabor delov (odprtje, drug pogled, faza): po kadriranju (naslednja sličica) en primerek vsakega dela zasije
+    if (!izbran) requestAnimationFrame(() => !unicen && namigniDele());
   }
 
   const merilo = () => {
@@ -347,6 +482,7 @@ export function odpriModel(el, mod, opts = {}) {
       const klic = (v) => {
         // ponastaviPogled: preklop pogleda (npr. prerez organa) prekliče izbiro in kamero obrne v novo začetno smer.
         if (c.ponastaviPogled && izbran) izberi(null, { leti: false });
+        const prej = c.tip === "izbira" && !c.ponastaviPogled ? kadrModela() : null;
         try {
           c.ob?.(v);
         } catch (err) {
@@ -354,6 +490,7 @@ export function odpriModel(el, mod, opts = {}) {
         }
         poSpremembi();
         if (c.ponastaviPogled) kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7, pokonci: true });
+        else if (prej) kadrirajPogled(prej);
       };
       if (c.tip === "drsnik") {
         const lab = mk("label", "k3-drsnik");
@@ -541,6 +678,8 @@ export function odpriModel(el, mod, opts = {}) {
   let unicen = false;
   function zgradiVse(ponastavi) {
     izbran = null;
+    ustaviNamigSij();
+    if (kit) pokaziInfo(null);
     sij.clear();
     skrijObdajajoce(null);
     try {
@@ -551,19 +690,6 @@ export function odpriModel(el, mod, opts = {}) {
       kit = ustvariSceno(oder, { kakovost: opts.kakovost, oznaka: info.naslov, ponastavi: () => zgradiVse(true), prostoVrtenje: true });
       poveziGumbVrtenja(btnVrtenje, kit, icon, t);
       oder.append(orodja, povzetekEl);
-      // Barvne točke po 4 s mirovanja zbledijo (j, 4. 11.) in se vrnejo ob dotiku, premiku kamere, koleščku ali tipki;
-      // izbrana točka ostane vidna. Velja na strani /3d in v lekcijah.
-      let mir = 0;
-      const zbudi = () => {
-        oder.classList.remove("k3-tocke-mirne");
-        clearTimeout(mir);
-        mir = setTimeout(() => oder.classList.add("k3-tocke-mirne"), 4000);
-      };
-      for (const ev of ["pointerdown", "pointermove", "wheel", "keydown", "focusin"]) oder.addEventListener(ev, zbudi, { passive: true });
-      kit.controls.addEventListener("start", zbudi);
-      kit.controls.addEventListener("end", zbudi);
-      pocisti.push(() => clearTimeout(mir));
-      zbudi();
       kit.naTap((ndc) => {
         if (!model?.group) return;
         const hit = kit.zadetki(ndc, [model.group])[0];
@@ -574,6 +700,7 @@ export function odpriModel(el, mod, opts = {}) {
       pocisti.push(
         kit.naKorak((dt) => {
           cas += dt;
+          const sije = korakNamigSija(dt);
           if (casIzpisa += dt, casIzpisa > 0.25) {
             casIzpisa = 0;
             // deli je lahko getter, ki se spreminja s fazo: ob spremembi znova zgradimo seznam in točke.
@@ -591,10 +718,10 @@ export function odpriModel(el, mod, opts = {}) {
             osveziIzpise();
             if (typeof model?.merilo === "function" || typeof model?.povzetek === "function") merilo();
           }
-          if (!model?.korak || !tece) return false;
+          if (!model?.korak || !tece) return sije;
           try {
             // korak lahko vrne false, ko ni več česa premikati (prizor se tedaj ne riše vsako sličico)
-            if (model.korak(cas, dt) === false) return false;
+            if (model.korak(cas, dt) === false) return sije;
           } catch (err) {
             console.error("3D korak", err);
             tece = false;
@@ -747,7 +874,7 @@ export function odpriModel(el, mod, opts = {}) {
     el.classList.toggle("k3-organ", model.postavitev === "organ");
     // Organ: nadzor (npr. stikalo »Prerez«) lebdi na odru levo zgoraj, spodaj ostanejo deli in »Podrobnosti organa«.
     if (model.postavitev === "organ") oder.append(nadzorEl);
-    else if (nadzorEl.parentNode !== spodaj) spodaj.prepend(nadzorEl);
+    else if (nadzorEl.parentNode !== spodaj) spodaj.insertBefore(nadzorEl, deliGlava || deliEl);
     if (model.group) kit.scene.add(model.group);
     kit.nastaviLuci(model.luci !== false);
     // Začetne vrednosti kontrol (katalog ali naslov): nastavimo in pokličemo ob().
@@ -769,13 +896,14 @@ export function odpriModel(el, mod, opts = {}) {
     nadzor();
     deli();
     merilo();
-    kit.pokaziOznako(null);
+    pokaziInfo(null);
     podrobnostiGumb();
     if (typeof model.ao === "function") kit.nastaviAO(model.ao() !== false);
     if (ponastavi || !opts.ohraniPogled) {
       kit.controls.minDistance = 0.4;
       kit.controls.maxDistance = 12;
-      const leti = () => kit.poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: ponastavi ? 0.6 : 0, pokonci: true });
+      // Model cel in na sredini (kadrModela: vidni obseg, organ svoj okvir).
+      const leti = () => kit.poleti(...kadrModela(), { smer: zacetnaSmer(), trajanje: ponastavi ? 0.6 : 0, pokonci: true });
       leti();
       // Postavitev »organ« spremeni višino odra šele ob naslednji postavitvi strani (ResizeObserver): kader ponovimo,
       // da organ pade v ožji zorni kot (pokončen telefon).
@@ -793,7 +921,7 @@ export function odpriModel(el, mod, opts = {}) {
   const fold = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
 
   zgradiVse(false);
-  return {
+  const api = {
     get kit() {
       return kit;
     },
@@ -811,6 +939,8 @@ export function odpriModel(el, mod, opts = {}) {
       el.replaceChildren();
     },
   };
+  el.k3Pregled = api; // scripts/preveri-3d-okna.cjs bere kamero in model (kader, prekrivanje)
+  return api;
 }
 
 export { kakovostNaprave, gibanje };
