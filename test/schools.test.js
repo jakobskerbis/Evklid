@@ -169,6 +169,19 @@ test("private space: teacher sees only assignment results and XP; licence seats;
     assert.equal((await t(`/api/admin/schools/${sch.id}/licences`, { method: "POST", body: { ...base, orderId: pilotOrder } })).status, 201);
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM school_licences WHERE order_id = ?").get(pilotOrder).n, 1);
     db.prepare("DELETE FROM school_licences WHERE order_id IS NOT NULL").run();
+    // Zadnje pilotno mesto drži odprto naročilo druge šole: nova pilotna šola brez naročila ga ne dobi.
+    const other = db.prepare("INSERT INTO schools (name, invite_code) VALUES ('OŠ Druga', 'DRUGA1')").run().lastInsertRowid;
+    const fillers = [];
+    for (let i = 0; i < 8; i++) {
+      const sid = db.prepare("INSERT INTO schools (name, invite_code) VALUES (?, ?)").run(`Šola ${i}`, `POLNI${i}`).lastInsertRowid;
+      fillers.push(db.prepare("INSERT INTO school_licences (school_id, plan, seats, valid_from, valid_until) VALUES (?, 'pilot', 5, '2026-01-01', '2099-01-01')").run(sid).lastInsertRowid);
+    }
+    // 9 pilotnih šol (OŠ Prule + 8) + odprto naročilo tuje šole = polno.
+    db.prepare("UPDATE school_orders SET tax_id = '99999999', status = 'contacted' WHERE id = ?").run(pilotOrder);
+    assert.equal((await t(`/api/admin/schools/${other}/licences`, { method: "POST", body: base })).status, 409);
+    assert.equal((await t(`/api/admin/schools/${other}/licences`, { method: "POST", body: { ...base, orderId: pilotOrder } })).status, 201, "licenca iz naročila prevzame njegovo mesto");
+    db.prepare("DELETE FROM school_licences WHERE school_id = ? OR id IN (" + fillers.join(",") + ")").run(other);
+    db.prepare("DELETE FROM schools WHERE id = ? OR invite_code LIKE 'POLNI%'").run(other);
     const acc = schoolAccess(db, kids[0].id);
     assert.equal(acc.schoolName, "OŠ Prule");
     assert.deepEqual(acc.grades, [7]);
