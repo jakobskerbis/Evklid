@@ -7,7 +7,7 @@ import { openProfileMenu } from "./profile-menu.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
-import { guaranteeBox, guaranteeLine, podariAddon, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
+import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 import { landingHtml } from "./pristajalna.js";
 import { currentSource } from "./vir.js";
 // Starševski račun: prijava, potrditev e-naslova, otroci s soglasjem, naročnina, priporočila.
@@ -891,8 +891,7 @@ function plansPicker(acc) {
       ${acc.parent.minor
         ? `<p class="muted">${esc(t("pay.minorNote"))}</p>
            <button class="secondary" type="button" id="plan-link">${esc(t("pay.askParent"))}</button><div id="plan-link-out"></div>`
-        : `${podariAddon(acc)}
-           ${consentFields()}
+        : `${consentFields()}
            <button class="primary" type="submit">${esc(t("pay.continue"))}</button>`}
       ${acc.parent.minor ? "" : `<p class="muted">${esc(t("pay.secureCancel"))}${acc.access.tier === "trial" ? ` ${esc(t("pay.trialKept"))}` : ""}</p>`}
       </div>
@@ -1424,12 +1423,6 @@ export async function renderAccount() {
     const first = f.querySelector(`.plan-row[data-who="${e.target.value}"] input[name=plan]`);
     if (first) first.checked = true;
     $("#plan-rest", f).hidden = false;
-    // Dodatek »Podari Evklid« ni na voljo pri šolski ceni (strežnik ga tam ne doda).
-    const addon = f.querySelector(".podari-addon");
-    if (addon) {
-      addon.hidden = e.target.value === "s";
-      if (addon.hidden) f.querySelector('input[name=podari][value="0"]').checked = true;
-    }
   });
   $("#plan-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -1437,8 +1430,7 @@ export async function renderAccount() {
     btn.disabled = true;
     try {
       if (!consentsOk(e.target)) throw new Error(t("payp.consentMissing"));
-      const podari = Number(e.target.podari?.value || 0);
-      const r = await api("/api/billing/checkout", { method: "POST", body: { ...planBody(e.target.plan.value), ...consentBody(), ...(podari ? { podari } : {}) } });
+      const r = await api("/api/billing/checkout", { method: "POST", body: { ...planBody(e.target.plan.value), ...consentBody() } });
       location.href = r.url;
     } catch (err) {
       btn.disabled = false;

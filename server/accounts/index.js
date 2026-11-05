@@ -1288,6 +1288,11 @@ export function mountAccounts(app, store, opts = {}) {
     // Naročnino sklene polnoletna oseba; mladoletni imetnik pošlje staršu povezavo za plačilo.
     if (isMinor(p)) return res.status(403).json({ error: "Naročnino plača starš. Pošlji mu povezavo za plačilo.", pay_link: true });
     if (req.body?.adult !== true || req.body?.withdrawal !== true) return res.status(400).json({ error: "Pred plačilom sta potrebni obe potrditvi.", consent: true });
+    // Dodatek »Podari Evklid« pri naročnini je odstranjen (j 2026-11-04): zahtevo z njim zavrnemo, da kupec ne plača
+    // drugače, kot misli (stara stran v brskalniku). »Podari mesec« ostane (/api/billing/podari).
+    if (req.body?.podari !== undefined && req.body?.podari !== null && Number(req.body.podari) !== 0) {
+      return res.status(400).json({ error: "Dodatek »Podari Evklid« pri naročnini ni več na voljo. Osveži stran.", podari: true });
+    }
     try {
       const customer = await ensureCustomer(p);
       const { prices } = school ? await stripe.ensureSchoolPrices() : await stripe.ensurePrices(currency);
@@ -1300,15 +1305,12 @@ export function mountAccounts(app, store, opts = {}) {
         Math.max(Date.parse(p.trial_ends_at || 0) || 0, Date.parse(p.promo_until || 0) || 0, giftCarries ? Date.parse(p.gift_until || 0) || 0 : 0),
       );
       const subscription_data = { metadata: { parent_id: p.id } };
-      // »Podari Evklid«: neobvezen dodatek 2/5/10 € k prvemu plačilu (enkratna vrstica), potrdi ga invoice.paid.
-      const addon = !school && currency === "EUR" && req.body?.podari ? podari.addonFor(p.id, req.body.podari) : null;
-      if (addon) subscription_data.metadata.podari_id = addon.id;
       if (trialEnd - Date.now() > 49 * 3600000) subscription_data.trial_end = Math.floor(trialEnd / 1000);
       const session = await stripe.request("POST", "/checkout/sessions", {
         mode: "subscription",
         customer,
         client_reference_id: String(p.id),
-        line_items: [{ price: prices[plan.key], quantity: 1 }, ...(addon ? [addon.line_item] : [])],
+        line_items: [{ price: prices[plan.key], quantity: 1 }],
         success_url: `${base}/?billing=success&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: currency === "EUR" ? "sl" : "auto",

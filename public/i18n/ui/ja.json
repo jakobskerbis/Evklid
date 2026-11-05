@@ -1334,13 +1334,10 @@
   "credit.note": "会話の数は目安で、もっと多くなることもあります。購入した会話に有効期限はなく、このアカウントの全プロフィールで使えます。",
   "credit.minor": "追加の会話は成人のアカウント所有者(保護者)が支払います。",
   "credit.off": "現在、支払いはご利用いただけません。",
-  "credit.custom": "その他の金額:",
-  "credit.customLabel": "金額(ユーロ)",
   "credit.customEst": {
     "one": "チューターとの会話 約 {n} 回",
     "other": "チューターとの会話 約 {n} 回"
   },
-  "credit.customMin": "最低金額は {min} です。",
   "credit.paid": "支払いが完了しました。追加の会話が加算されました。",
   "credit.pending": "支払いを確認中です。銀行の確認後に会話が加算されます。",
   "nav.games": "ゲーム",
@@ -3017,9 +3014,6 @@
   "pod.adult": "私は18歳以上です。",
   "pod.notDonation": "これは慈善団体への寄付ではなく、税金の控除もないことを理解しています。",
   "pod.paid": "ありがとうございます！1か月分が「Evklid を贈る」基金に入りました。",
-  "pod.addonLegend": "Evklid を贈る（任意）",
-  "pod.addonText": "Evklid を使う余裕のない子どものために、1回だけ数ユーロを追加しませんか。どの子に贈るかは学校が決めます。これは慈善団体への寄付ではなく、税金の控除もありません。",
-  "pod.none": "いいえ、結構です",
   "school.planHead": "学校ライセンスのある子ども1人",
   "school.perMonth": "月",
   "school.perYear": "学年",

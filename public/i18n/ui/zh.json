@@ -1334,13 +1334,10 @@
   "credit.note": "对话次数只是估计，也可能更多。购买的对话不会过期，适用于本账户的所有档案。",
   "credit.minor": "额外对话由成年账户持有人（家长或监护人）支付。",
   "credit.off": "目前无法付款。",
-  "credit.custom": "其他金额：",
-  "credit.customLabel": "金额（欧元）",
   "credit.customEst": {
     "one": "与导师对话约 {n} 次",
     "other": "与导师对话约 {n} 次"
   },
-  "credit.customMin": "最低金额为 {min}。",
   "credit.paid": "付款成功。额外对话已到账。",
   "credit.pending": "我们仍在核实付款。银行确认后对话即到账。",
   "nav.games": "游戏",
@@ -3017,9 +3014,6 @@
   "pod.adult": "我已年满 18 周岁。",
   "pod.notDonation": "我明白这不是向慈善机构的捐款，也不能享受税收减免。",
   "pod.paid": "谢谢！一个月已存入“赠送 Evklid”基金。",
-  "pod.addonLegend": "赠送 Evklid（可选）",
-  "pod.addonText": "为负担不起 Evklid 的孩子一次性加几欧元。孩子由学校挑选。这不是捐给慈善机构的捐款，也不能抵税。",
-  "pod.none": "不用了，谢谢",
   "school.planHead": "1 个有学校许可的孩子",
   "school.perMonth": "月",
   "school.perYear": "学年",

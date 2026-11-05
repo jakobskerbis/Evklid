@@ -1334,13 +1334,10 @@
   "credit.note": "Jumlah percakapan adalah perkiraan, bisa juga lebih banyak. Percakapan yang dibeli tidak kedaluwarsa dan berlaku untuk semua profil di akun ini.",
   "credit.minor": "Percakapan tambahan dibayar oleh pemegang akun dewasa (orang tua atau wali).",
   "credit.off": "Pembayaran saat ini tidak tersedia.",
-  "credit.custom": "Jumlah lain:",
-  "credit.customLabel": "Jumlah dalam euro",
   "credit.customEst": {
     "one": "sekitar {n} percakapan dengan tutor",
     "other": "sekitar {n} percakapan dengan tutor"
   },
-  "credit.customMin": "Jumlah minimum adalah {min}.",
   "credit.paid": "Pembayaran berhasil. Percakapan tambahan sudah ditambahkan.",
   "credit.pending": "Kami masih memeriksa pembayaran. Percakapan ditambahkan setelah bank mengonfirmasi.",
   "nav.games": "Permainan",
@@ -3017,9 +3014,6 @@
   "pod.adult": "Saya sudah berusia 18 tahun atau lebih.",
   "pod.notDonation": "Saya paham bahwa ini bukan donasi ke lembaga amal dan tidak ada keringanan pajak.",
   "pod.paid": "Terima kasih! Satu bulan sudah masuk ke dana «Hadiahkan Evklid».",
-  "pod.addonLegend": "Hadiahkan Evklid (opsional)",
-  "pod.addonText": "Tambahkan beberapa euro sekali saja untuk anak yang tidak mampu membayar Evklid. Sekolah yang memilih anaknya. Ini bukan donasi ke lembaga amal dan tidak ada keringanan pajak.",
-  "pod.none": "Tidak, terima kasih",
   "school.planHead": "1 anak dengan lisensi sekolah",
   "school.perMonth": "bulan",
   "school.perYear": "tahun ajaran",

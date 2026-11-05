@@ -13,17 +13,6 @@ const SUBJ = (s) => t(`subj.${s}`);
 export const guaranteeLine = () =>
   `<p class="guarantee-line">${icon("check")} <span><b>${esc(t("gar.title"))}</b> · ${esc(t("gar.short"))} <a href="/garancija.html" target="_blank" rel="noopener">${esc(t("gar.terms"))}</a></span></p>`;
 
-// Neobvezen dodatek »Podari Evklid« pri naročnini (privzeto ni izbran).
-export const podariAddon = (acc) =>
-  acc.podari && acc.currency === "EUR"
-    ? `<fieldset class="podari-addon"><legend>${esc(t("pod.addonLegend"))}</legend>
-        <p class="muted">${esc(t("pod.addonText"))}</p>
-        <div class="podari-opts">
-          <label class="check"><input type="radio" name="podari" value="0" checked><span>${esc(t("pod.none"))}</span></label>
-          ${acc.podari.addons.map((c) => `<label class="check"><input type="radio" name="podari" value="${c}"><span>+${esc(fmtEur(c))}</span></label>`).join("")}
-        </div></fieldset>`
-    : "";
-
 function weekList(g) {
   return `<ol class="gar-weeks" aria-label="${esc(t("gar.weeksLabel"))}">${g.weeks
     .map((w) => {

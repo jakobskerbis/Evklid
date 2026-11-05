@@ -106,12 +106,12 @@ const addTest = (call, kidId, date, name = "Test iz ulomkov") =>
   call(`/api/students/${kidId}/schedule`, { method: "PUT", body: { events: [{ date, kind: "test", name }] } });
 
 test("helpers: pass prices (j 2026-11-04, 75 % rule), pass length, grace period, code form", () => {
-  assert.deepEqual(PASSES.map((p) => [p.days, p.amount]), [[7, 549], [14, 849], [30, 1399]]);
+  assert.deepEqual(PASSES.map((p) => [p.days, p.amount]), [[7, 549], [14, 849]]);
   assert.equal(passForDaysLeft(0).days, 7);
   assert.equal(passForDaysLeft(6).days, 7);
   assert.equal(passForDaysLeft(7).days, 14);
-  assert.equal(passForDaysLeft(29).days, 30);
-  assert.equal(passForDaysLeft(30), null);
+  assert.equal(passForDaysLeft(13).days, 14);
+  assert.equal(passForDaysLeft(14), null, "30-dnevnega paketa ni več (j 2026-11-04)");
   const now = Date.now();
   assert.equal(paidActive({ sub_status: "active" }, now), true);
   assert.equal(paidActive({ sub_status: "past_due", past_due_since: new Date(now - 2 * 86400000).toISOString() }, now), true);
@@ -193,7 +193,7 @@ test("paket pred testom: ponudba samo brez naročnine, potrditve, plačilo, poln
       // Brez testa v urniku ni ponudbe.
       let offer = (await a(`/api/students/${kid.id}/pass-offer`)).body;
       assert.equal(offer.offer, null);
-      assert.deepEqual(offer.passes.map((p) => p.amount), [549, 849, 1399]);
+      assert.deepEqual(offer.passes.map((p) => p.amount), [549, 849]);
       // Test čez 9 dni: predlog je paket za 14 dni.
       await addTest(a, kid.id, day(9));
       offer = (await a(`/api/students/${kid.id}/pass-offer`)).body;
@@ -201,7 +201,7 @@ test("paket pred testom: ponudba samo brez naročnine, potrditve, plačilo, poln
       assert.equal(offer.offer.suggested, 14);
       assert.equal(offer.offer.pay_link, false);
 
-      // Brez obeh potrditev ni plačila; test čez več kot 30 dni ni dovoljen.
+      // Brez obeh potrditev ni plačila; test čez več kot 14 dni ni dovoljen.
       const body = { student_id: kid.id, days: 14, test_date: day(9), test_name: "Test iz ulomkov" };
       const noConsent = await a("/api/billing/pass", { method: "POST", body });
       assert.equal(noConsent.status, 400);
@@ -452,4 +452,64 @@ test("dnevna opravila: usklajevanje, opomnik pred koncem kode in pred letno obno
   assert.deepEqual([again.promo_end, again.renewal], [0, 0]);
   // Brez force pred 3.00 ali drugič isti dan ne teče.
   assert.equal(await api.billing.billingDaily(new Date()), null);
+});
+
+test("odstranjene možnosti (j 2026-11-04): strežnik zavrne poljuben znesek dokupa in 30-dnevni paket; dokup le polnoletni", async () => {
+  await withServer(async ({ client, stripe, store }) => {
+    const sessions = () => stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").length;
+    const a = client();
+    await registerVerified(a, stripe, "odrasel@mikro.si");
+    const kid = (await a("/api/students", { method: "POST", body: { name: "Ela", birth_year: YEAR - 16, consent: true } })).body;
+    store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z'").run();
+    const ok = { adult: true, withdrawal: true };
+
+    // Dokup: kartica ne ponuja poljubnega zneska; strežnik ga zavrne v vseh oblikah.
+    const info = (await a("/api/billing/credit")).body;
+    assert.deepEqual(info.packs.map((p) => p.amount), [500, 1000, 2000]);
+    assert.equal(info.custom, undefined);
+    const n0 = sessions();
+    for (const body of [{ pack: "custom", amount_eur: 37.5 }, { pack: "custom", amount_eur: 5 }, { pack: "k7" }, { amount_eur: 10 }]) {
+      const r = await a("/api/billing/credit", { method: "POST", body: { ...body, ...ok } });
+      assert.equal(r.status, 400, JSON.stringify(body));
+    }
+    assert.equal(sessions(), n0, "brez plačilne strani");
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM ai_credit_buys").get().n, 0);
+    // Paket 10 € gre naprej (znesek v plačilu je 10 €, ne kar pošlje brskalnik).
+    const k10 = await a("/api/billing/credit", { method: "POST", body: { pack: "k10", amount_eur: 999, ...ok } });
+    assert.equal(k10.status, 200, JSON.stringify(k10.body));
+    const cs = stripe.calls.filter((c) => c.path === "/v1/checkout/sessions" && c.method === "POST").at(-1).body;
+    assert.equal(cs["line_items[0][price_data][unit_amount]"], "1000");
+
+    // Paket pred testom: 30 dni ni več mogoče kupiti; test čez 20 dni ni več ponujen.
+    await addTest(a, kid.id, day(20));
+    assert.equal((await a(`/api/students/${kid.id}/pass-offer`)).body.offer, null, "test čez 20 dni: 14-dnevni paket ga ne pokrije");
+    assert.equal((await a("/api/billing/pass", { method: "POST", body: { student_id: kid.id, days: 30, test_date: day(20), ...ok } })).status, 400);
+    await addTest(a, kid.id, day(10));
+    const offer = (await a(`/api/students/${kid.id}/pass-offer`)).body;
+    assert.deepEqual(offer.passes.map((p) => [p.days, p.amount]), [[7, 549], [14, 849]]);
+    const n1 = sessions();
+    assert.equal((await a("/api/billing/pass", { method: "POST", body: { student_id: kid.id, days: 30, test_date: day(10), ...ok } })).status, 400);
+    assert.equal((await a("/api/billing/pay-link", { method: "POST", body: { kind: "pass", student_id: kid.id, days: 30, test_date: day(10) } })).status, 400);
+    assert.equal(sessions(), n1);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM passes").get().n, 0);
+
+    // Stara povezava za 30-dnevni paket (ustvarjena pred odstranitvijo): ne odpre plačila.
+    const token = "x".repeat(32);
+    const { createHash } = await import("node:crypto");
+    store.db
+      .prepare("INSERT INTO pay_links (token_hash, parent_id, kind, plan_key, student_id, days, test_date, test_name, expires_at) VALUES (?, ?, 'pass', 'evklid_pass_30', ?, 30, ?, 'Test', ?)")
+      .run(createHash("sha256").update(token).digest("hex"), kid.parent_id ?? store.db.prepare("SELECT parent_id FROM students WHERE id = ?").get(kid.id).parent_id, kid.id, day(10), new Date(Date.now() + 86400000).toISOString());
+    const pub = client();
+    assert.equal((await pub(`/api/pay/${token}`)).status, 404);
+    assert.equal((await pub(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "mama@mikro.si", ...ok } })).status, 410);
+    assert.equal(sessions(), n1);
+
+    // Mladoletni imetnik (16 let): dokupa ne vidi in ga strežnik zavrne tudi za pravi paket.
+    const teen = client();
+    await registerVerified(teen, stripe, "dijak@mikro.si", { birth_date: TEEN });
+    assert.equal((await teen("/api/billing/credit")).body.minor, true);
+    const r = await teen("/api/billing/credit", { method: "POST", body: { pack: "k5", ...ok } });
+    assert.equal(r.status, 403);
+    assert.equal(sessions(), n1);
+  });
 });

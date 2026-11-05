@@ -210,12 +210,10 @@ test("free plan over its own cap with bought credit: the whole cost comes from c
   assert.ok(Math.abs(credits.balance(3) - 2.18) < 1e-6, "nad mejo gre ves strošek iz kredita");
 });
 
-test("any amount from 5 € can be bought, without an upper limit beyond Stripe's per-payment maximum", async () => {
-  const { customPack, conversationsFor, creditUsdFor } = await import("../server/placila/krediti.js");
-  assert.equal(customPack(4.99), null);
-  assert.equal(customPack("abc"), null);
-  assert.deepEqual(customPack(37.5), { id: "custom", amount: 3750, currency: "EUR" });
-  assert.equal(customPack(250000).amount, 25_000_000);
-  assert.equal(customPack(2_000_000), null, "Stripe ne sprejme več kot 999.999,99 € na plačilo");
-  assert.ok(conversationsFor(creditUsdFor(100_000)) > conversationsFor(creditUsdFor(1000)) * 90);
+test("only the 5 / 10 / 20 € packs can be bought (no custom amount, j 2026-11-04)", async () => {
+  const mod = await import("../server/placila/krediti.js");
+  assert.deepEqual(mod.CREDIT_PACKS.map((p) => p.amount), [500, 1000, 2000]);
+  assert.equal(mod.customPack, undefined, "poljubnega zneska ni več");
+  assert.equal(mod.packById("custom"), null);
+  assert.equal(mod.packById("k5").amount, 500);
 });
