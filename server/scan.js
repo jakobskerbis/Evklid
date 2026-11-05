@@ -36,8 +36,10 @@ export const READ_PROMPT =
   "a limit as lim_(x->a) f; a binomial coefficient (n choose k) or C_n^k as nCr(n,k); variations V_n^k as nPr(n,k); a factorial as n!; " +
   "a double inequality as a<x<b; a logarithm with its base as log_10(x), log_2(x), log_a(x). Keep the student's letters for variables. " +
   "Copy every base, index and exponent exactly as written: never replace a written digit by a letter (log_10 stays log_10, not log_a).\n" +
-  '- "given": only if the task states conditions needed to solve it (a point on the graph, an asymptote, a pole, a zero, a domain, a value such as f(0)=5): ' +
-  'a list of them in LaTeX, one condition each, in the words of the page (e.g. ["T(7,2)", "\\\\text{pol: } x=3", "f(0)=5"]). Otherwise leave it out.\n' +
+  '- "given": only if the task states data or conditions needed to solve it (a measured quantity with its unit such as a = 3 cm, m = 2 kg or α = 30°, ' +
+  "a point on the graph, an asymptote, a pole, a zero, a domain, a value such as f(0)=5, also when written in a »dano:« / »podatki:« line or only in the sentence): " +
+  'a list of them in LaTeX, one each, in the words of the page, keeping every unit and writing a decimal comma as {,} (e.g. ["a = 3\\\\ \\\\mathrm{cm}", "b = 2{,}5\\\\ \\\\mathrm{cm}", "T(7,2)", "\\\\text{pol: } x=3", "f(0)=5"]). Never drop a value stated in the task; never add a value from the student\'s working or a result, never invent one, and leave out a bare domain such as x ∈ ℝ. Otherwise leave it out.\n' +
+  "For a word or geometry problem without one equation or expression, give as \"text\" only the unknown asked for in calculator syntax as <letter>=? (e.g. P=?, v=?), never a sentence, and every stated value in \"given\".\n" +
   '- "tex": the same problem in LaTeX.\n' +
   "Ignore task numbers (1., a)), the wording of instructions (but keep their conditions in \"given\") and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve.\n" +
   'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."]}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
@@ -82,7 +84,7 @@ export function cleanProblems(list) {
 }
 
 // Pogoji naloge »določi parametre« (točka, asimptota, pol, ničla …): brez njih naloga ni rešljiva.
-const MAX_GIVEN = 6;
+const MAX_GIVEN = 10; // fizikalne naloge imajo lahko več danih količin
 const MAX_GIVEN_LEN = 160;
 export function cleanGiven(list) {
   return (Array.isArray(list) ? list : [])
@@ -103,7 +105,7 @@ const GOAL_TEXT = {
 export function solvePrompt(text, lang, feedback = null, goal = null, given = []) {
   return (
     `A student wants a step-by-step solution of this maths problem (calculator syntax): ${text}\n` +
-    (given.length ? `Conditions stated in the task (LaTeX; use them, e.g. to find the parameters): ${given.join("; ")}\n` : "") +
+    (given.length ? `Data and conditions stated in the task (LaTeX; use them with their units, e.g. to find the parameters or the asked quantity, and give the answer with its unit): ${given.join("; ")}\n` : "") +
     (GOAL_TEXT[goal] ? `${GOAL_TEXT[goal]}\n` : "") +
     `Write every title and explanation in ${lang}, simply, for a student at school level; use the notation of Slovenian schools (decimal comma in LaTeX as {,}, intervals with ( ) and [ ], »D« for the discriminant).\n` +
     "Solve it correctly; check your result yourself before answering. Steps must be small (one idea each), as a good teacher writes them on the board. Give a second method only if it is commonly taught.\n" +

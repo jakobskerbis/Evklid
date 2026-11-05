@@ -60,6 +60,8 @@ const dollars = (tx) => {
   const s = texSides(tx).replace(/\\?\$/g, "").replace(/\s+/g, " ").trim(); // klepet loči $…$ brez \n; \$ bi ubežal zaključnemu $
   return s ? `$${s}$` : "";
 };
+// naloga za klepet: pri besedilni nalogi je S.text le »P=?«, zato inštruktor dobi še dane podatke
+const problemForChat = () => (S.given.length ? `${S.text} (${S.given.map(dollars).join(", ")})` : S.text);
 // odgovor: ena formula prikazno; seznam dejstev po eno v vrstico, v besedilni velikosti, da se dolgo dejstvo prelomi
 function answerTex(tex) {
   const parts = answerParts(tex);
@@ -208,7 +210,7 @@ function renderCapture(box) {
       S.text = h.text;
       S.goal = h.goal || null;
       S.problems = [];
-      S.given = Array.isArray(h.given) ? h.given.filter((g) => typeof g === "string").slice(0, 6) : [];
+      S.given = Array.isArray(h.given) ? h.given.filter((g) => typeof g === "string").slice(0, 10) : [];
       solveNow();
     }),
   );
@@ -781,10 +783,11 @@ function bindSolution(box) {
   on("[data-ask]", (e) => {
     const i = Number(e.currentTarget.dataset.ask);
     const s = S.result.methods[S.method].steps[i];
-    const title = typeof s.title === "string" ? s.title : t(s.title.k, s.title.v);
-    D.askTutor(t("scan.askStepText", { problem: S.text, n: i + 1, title, tex: dollars(s.tex) }));
+    // TeX spremenljivke naslova v $…$ kot na zaslonu (tr), sicer v klepet pride surov \log_{10}, \iff
+    const title = typeof s.title === "string" ? s.title : t(s.title.k, Object.fromEntries(Object.entries(s.title.v || {}).map(([k, v]) => [k, dollars(v)])));
+    D.askTutor(t("scan.askStepText", { problem: problemForChat(), n: i + 1, title, tex: dollars(s.tex) }));
   });
-  on('[data-act="ask"]', () => D.askTutor(t("scan.askAllText", { problem: S.text, answer: dollars(S.result?.answer?.tex) || "?" })));
+  on('[data-act="ask"]', () => D.askTutor(t("scan.askAllText", { problem: problemForChat(), answer: dollars(S.result?.answer?.tex) || "?" })));
   on('[data-act="new"]', () => {
     S.mode = "capture";
     S.result = null;
