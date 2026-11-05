@@ -36,7 +36,7 @@ Naslednji korak: točke 1, 4, 5 in načrt za 3 so narejeni; ostane seznam »Še 
 - Nobene odprte kartice.
 
 ## PR-ji in veje
-Vse združeno; veja claude/project-thread-r1nopi (vsakič znova iz origin/main). Repo je zdaj jakobskerbis/Evklid, seja ga vidi kot jakobskerbis/Evklid (MCP klici z repo »stemmind«). <!-- brand:legacy -->
+Vse združeno; veja claude/project-thread-r1nopi (vsakič znova iz origin/main). Repo je zdaj jakobskerbis/Evklid, seja ga vidi kot jakobskerbis/stemmind (MCP klici z repo »stemmind«). <!-- brand:legacy -->
 
 ## Artefakti
 Osnutek in tabela Casio/TI: https://claude.ai/artifact/JtXyBj7bUsCy7Fn5J4Eosh · Design tipkovnice: https://claude.ai/artifact/XDzoSvbSQdkfiz84Lwt4TD

@@ -39,6 +39,10 @@ Najprej preberi: `optimizator/vrsta-po-11-11.md` (kaj pride na vrsto po resetu 1
 | `optimizator/tedenski-nacrt-2026-11-04.md` | Tedenski načrt 4.–11. 11. z vsemi nitmi | `optimizator/` |
 | `optimizator/effort-po-nitih.md` | Kateri model in koliko truda za katero nit | `optimizator/` |
 | `placila/mikrotransakcije-nacrt.md` | Čiščenje mikrotransakcij (j potrdil 4. 11.) | `evklid/placljivi-paket/` |
+| `placila/podari-evklid.md` | Predlog »Podari Evklid« (darilo ob nakupu) | `evklid/placljivi-paket/` |
+| `placila/cene-75-odstotkov.md` | Cene z najmanj 75 % dobička | `evklid/placljivi-paket/` |
+| `placila/cenik-s-stroski.md` | Osnutek cenika z vsemi stroški | `evklid/placljivi-paket/` |
+| `placila/zakaj-evklid.md` | Zakaj Evklid namesto Astre (osnutek) | `evklid/placljivi-paket/` |
 | `instruktor-ideje/30-idej.md` | 30 idej za posebnega inštruktorja | `evklid/instruktor-ideje/` |
 | `instruktor-ideje/nacrt-gradnje.md` | Katere ideje je j izbral in vrstni red gradnje | `evklid/instruktor-ideje/` |
 | `instruktor-ideje/izbira-idej.html` | Stran, na kateri je j izbiral ideje | `evklid/instruktor-ideje/` |
@@ -46,11 +50,12 @@ Najprej preberi: `optimizator/vrsta-po-11-11.md` (kaj pride na vrsto po resetu 1
 | `3d-atlas/3d.md` | Pregled 3D modelov (kopija iz skupne mape; različica v `docs/3d.md` je lahko novejša) | `evklid/3d-atlas/` |
 | `3d-atlas/nacrt-3d-atlas.html` | Celoten načrt 3D atlasa | `evklid/3d-atlas/` |
 | `npz-matura/prosnja-ric.md` | Osnutek prošnje RIC za pretekle pole (pošlje j) | `evklid/npz-matura/` |
+| `npz-matura/briefs/` | Navodila za pisce, pregledovalce in bralce vadbenih pol NPZ/mature, seznami virov, skript za združevanje | `evklid/npz-matura/briefs/` |
 | `cilj-prilagoditev/nacrt.md` | Evklid se prilagodi cilju učenca | `evklid/cilj-prilagoditev/` |
 | `redundanca/nacrt.md` | Odprava podvojenih elementov v aplikaciji | `evklid/redundanca/` |
 
 ## spomin/ – posnetek spomina projekta (5. 11. 2026)
 
-Vseh 87 datotek spomina prvega projekta. `MEMORY.md` je kazalo in povzetek, ostale datoteke so po ena tema (npr. `evklid-pricing-levels.md` za cene, `evklid-render.md` za strežnik, `j-gemini-replies.md` za odgovore Geminiju). Skrivnosti ni: so le imena nastavitev (npr. `EVKLID_DATA_KEY`), ne vrednosti. E-naslov tretje osebe je zamenjan z `<Lukov e-naslov>`.
+Vseh 87 datotek spomina prvega projekta. `MEMORY.md` je kazalo in povzetek, ostale datoteke so po ena tema (npr. `evklid-pricing-levels.md` za cene, `evklid-render.md` za strežnik, `j-gemini-replies.md` za odgovore Geminiju). Skrivnosti ni: so le imena nastavitev (npr. `EVKLID_DATA_KEY`), ne vrednosti. E-naslov tretje osebe v `niti/login-render.md` je zamenjan z `<Lukov e-naslov>`.
 
 Spomin ni samodejno sinhroniziran: novi projekt naj vanj vpisuje svoje, ta mapa pa ostane kot zgodovina.
