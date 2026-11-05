@@ -138,7 +138,7 @@ export function odpriModel(el, mod, opts = {}) {
         const c = x.clone();
         if (c.emissive) {
           c.emissive = new THREE.Color(d.barva || "#6E9BFF");
-          c.emissiveIntensity = 0.5;
+          c.emissiveIntensity = 0.85;
         }
         return c;
       });
