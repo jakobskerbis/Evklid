@@ -781,7 +781,8 @@ function bindSolution(box) {
   on("[data-ask]", (e) => {
     const i = Number(e.currentTarget.dataset.ask);
     const s = S.result.methods[S.method].steps[i];
-    const title = typeof s.title === "string" ? s.title : t(s.title.k, s.title.v);
+    // TeX spremenljivke naslova v $…$ kot na zaslonu (tr), sicer v klepet pride surov \log_{10}, \iff
+    const title = typeof s.title === "string" ? s.title : t(s.title.k, Object.fromEntries(Object.entries(s.title.v || {}).map(([k, v]) => [k, dollars(v)])));
     D.askTutor(t("scan.askStepText", { problem: S.text, n: i + 1, title, tex: dollars(s.tex) }));
   });
   on('[data-act="ask"]', () => D.askTutor(t("scan.askAllText", { problem: S.text, answer: dollars(S.result?.answer?.tex) || "?" })));
