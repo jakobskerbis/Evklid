@@ -45,7 +45,7 @@ const NAPRAVE = {
       const datoteke = {};
       p.on("response", async (r) => {
         const u = new URL(r.url());
-        if (!u.pathname.includes("/organi-3d/")) return;
+        if (!/\/organi-3d\/|\/3d\/okolje\//.test(u.pathname)) return; // model in skupni HDR (prenos šteje oboje)
         try {
           datoteke[path.basename(u.pathname)] = (await r.body()).length;
         } catch {}
