@@ -1106,16 +1106,19 @@ def izvozi(organ, cfg):
             no.data.materials.clear(); no.data.materials.append(material(tkivo, slike))
             no["tkivo"] = tkivo; no["del"] = d or ""
             objekti.append(no)
-        if tk and tk.get("pbr"):  # skupna pot (peka.py): baza, normala, ORM; vsaka mreža svoj atlas in svojo peko
-            slike = peka.zapeci(objekti, osnovni, velikost, tc, tmp, organ + pripona, tc.get("px", (2048, 1024))[i], out)
+        if tk and tk.get("pbr"):  # skupna pot (peka.py): vsaka mreža svoj UV atlas; peka po delih v ločenih procesih
+            for o in objekti: o["ime"] = o.name
+            peka.uv_atlas(objekti, tc, tc.get("px", (2048, 1024))[i])
         elif tk:  # vsaka mreža (računalnik, telefon) dobi svoj UV atlas in svojo peko
             slike = zapeci_teksture(objekti, [r[1] for r in osnovni], velikost, tc, tmp, organ + pripona, tc.get("px", (2048, 1024))[i])
         odp = zapeci_odprtost(objekti, velikost) if cfg.get("odprtost") else None
         zapeci_ao(objekti, velikost, po_straneh=cfg.get("ao_po_straneh", False), odprtost=odp)
+        if tk and tk.get("pbr"):  # GLB izvozi peka.py zakljuci (scripts/atlas/peci.py vodi korake in pazi na pomnilnik)
+            peka.shrani_delo(os.path.join(out, f"{organ}{pripona}.delo.blend"), objekti, osnovni, velikost, tc, tc.get("px", (2048, 1024))[i])
         for c in scene.collection.children:
             lc = bpy.context.view_layer.layer_collection.children.get(c.name)
             if lc: lc.exclude = (c != tmp)
-        bpy.ops.export_scene.gltf(
+        if not (tk and tk.get("pbr")): bpy.ops.export_scene.gltf(
             filepath=os.path.join(out, organ + pripona + ".glb"), export_format="GLB",
             use_active_collection=False, use_visible=True, export_apply=True,
             export_materials="EXPORT", export_normals=True, export_vertex_color="ACTIVE", export_texcoords=bool(tk), export_tangents=bool(tk),
