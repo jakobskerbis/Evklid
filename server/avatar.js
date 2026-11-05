@@ -2,9 +2,9 @@
 // (public/avatar.js). Brez pravega denarja. Avatar je edino, kar učenec izbere in vidijo drugi (lige, razred).
 import { ITEM, SLOTS, DEFAULT_AVATAR, COINS_PER_CORRECT, COINS_PER_DAY, cleanAvatar } from "../public/avatar.js";
 import fs from "node:fs";
-import crypto from "node:crypto";
 import { ensureKnowledgeTables } from "./zbirke.js";
-import { isLocalRequest, purgeOldWishes } from "./feedback.js";
+import { purgeOldWishes } from "./feedback.js";
+import { exportTokenOk, exportAllowed } from "./izvozni-kljuc.js";
 import { unseal } from "./crypto-polje.js";
 import { audit } from "./dnevnik-dostopov.js";
 
@@ -138,16 +138,8 @@ export class Avatars {
 
 export const TRENDS_MIN = 3;
 
-// Ključ za izvoz brez prijave: dolg vsaj 24 znakov, primerjava v stalnem času.
-export function exportTokenOk(req, env = process.env) {
-  const want = String(env.EVKLID_EXPORT_TOKEN || "");
-  const got = /^Bearer\s+(\S+)$/i.exec(req.headers?.authorization || "")?.[1] || "";
-  if (want.length < 24 || !got) return false;
-  const a = crypto.createHash("sha256").update(got).digest();
-  const b = crypto.createHash("sha256").update(want).digest();
-  return crypto.timingSafeEqual(a, b);
-}
-const exportAllowed = (req) => exportTokenOk(req) || !!req.parent?.is_admin || isLocalRequest(req);
+// Ključ za izvoz brez prijave (skupen s pregledom prijav napak): server/izvozni-kljuc.js.
+export { exportTokenOk };
 
 export function mountAvatar(app, avatars, { loadStudent, trendsFile = null }) {
   // Samo skrbnik, računalnik s strežnikom ali tedenska posodobitev s ključem EVKLID_EXPORT_TOKEN.

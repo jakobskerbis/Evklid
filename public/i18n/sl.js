@@ -531,6 +531,15 @@ export default {
   "adm.rep.shown": "Tako je učenec videl odgovor:",
   "adm.rep.rerendered": "Odgovor, znova izrisan (starejša prijava brez posnetka):",
   "adm.rep.raw": "Surovo besedilo inštruktorja:",
+  // prijave učenca v Računu in stanje popravka (public/prijave.js renderMyReports)
+  "myrep.title": "Moje prijave napak",
+  "myrep.app": "Napaka v aplikaciji",
+  "myrep.st.open": "Čaka na pregled",
+  "myrep.st.review": "V pregledu · PR #{pr}",
+  "myrep.st.reviewNoPr": "V pregledu",
+  "myrep.st.fixed": "Popravljeno",
+  "myrep.st.fixedPr": "Popravljeno · PR #{pr}",
+  "myrep.hint": "Vsako prijavo preverimo. Ko je napaka popravljena, to vidiš tukaj.",
   "chatMode.A": "Vodenje",
   "chatMode.B": "Celotna rešitev",
 

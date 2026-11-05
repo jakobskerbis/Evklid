@@ -263,12 +263,37 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Tema učne poti pri dogodku (šibke točke iz vseh virov pod istim ključem, server/weaknesses.js).
   const eventCols = db.prepare("PRAGMA table_info(events)").all().map((c) => c.name);
   if (!eventCols.includes("topic_id")) db.exec("ALTER TABLE events ADD COLUMN topic_id TEXT");
+  migrateReports(db);
   // Rok hrambe dnevnih vsot za šibke točke.
   db.prepare("DELETE FROM skill_results WHERE day < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   db.prepare("DELETE FROM skill_seen WHERE created_at < date('now', ?)").run(`-${SKILL_KEEP_DAYS} days`);
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
+}
+
+
+// Prijave napak (server/reports.js): migracije za starejše baze. Kliče jih openDb in ensureReportsTable;
+// tabeli, ki je še ni, ne spremeni (ustvari jo ensureReportsTable z vsemi stolpci).
+export function migrateReports(db) {
+  const colsOf = (t) => new Set(db.prepare(`PRAGMA table_info(${t})`).all().map((c) => c.name));
+  const cols = colsOf("message_reports");
+  if (cols.size) {
+    if (!cols.has("status")) db.exec("ALTER TABLE message_reports ADD COLUMN status TEXT NOT NULL DEFAULT 'open'");
+    if (!cols.has("fixed_at")) db.exec("ALTER TABLE message_reports ADD COLUMN fixed_at TEXT");
+    // Kaj je učenec res videl (j, 4. 11.: napaka v izpisu formule se v prijavi ni videla): naprava,
+    // surovo besedilo modela (šifrirano) in izrisan HTML sporočila s spleta (šifrirano).
+    if (!cols.has("device")) db.exec("ALTER TABLE message_reports ADD COLUMN device TEXT");
+    if (!cols.has("raw")) db.exec("ALTER TABLE message_reports ADD COLUMN raw TEXT");
+    if (!cols.has("shown")) db.exec("ALTER TABLE message_reports ADD COLUMN shown TEXT");
+  }
+  // Samodejni pregled prijav: številka PR s popravkom in različica aplikacije ob prijavi.
+  for (const t of ["message_reports", "bug_reports"]) {
+    const c = colsOf(t);
+    if (!c.size) continue;
+    if (!c.has("pr")) db.exec(`ALTER TABLE ${t} ADD COLUMN pr INTEGER`);
+    if (!c.has("version")) db.exec(`ALTER TABLE ${t} ADD COLUMN version TEXT`);
+  }
 }
 
 const parseStudent = (row) =>

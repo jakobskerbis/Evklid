@@ -6,7 +6,7 @@ import { currentLang, currentRegion, deviceRegion, locale, t } from "./i18n.js";
 import { openProfileMenu } from "./profile-menu.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
-import { renderAdminReports } from "./prijave.js";
+import { renderAdminReports, renderMyReports } from "./prijave.js";
 import { guaranteeBox, guaranteeLine, podariAddon, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 import { landingHtml } from "./pristajalna.js";
 import { currentSource } from "./vir.js";
@@ -1386,6 +1386,7 @@ export async function renderAccount() {
       <p class="muted">Vsak profil je lahko hkrati odprt samo na eni napravi. Profil zamenjaš (izbrišeš v zavihku Nastavitve in dodaš novega) največ enkrat na 30 dni.</p>
     </div>
     <div id="credit-card"></div>
+    <div class="card" id="my-reports" hidden><h2>${esc(t("myrep.title"))}</h2><div class="my-rep-out"></div></div>
 
     <div class="card">
       <h2>${icon("award")} Povabi prijatelje</h2>
@@ -1463,6 +1464,8 @@ export async function renderAccount() {
   bindAdminCodes(acc);
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
   renderCreditCard($("#credit-card"), { api });
+  // Prijave napak tega profila in stanje popravka (»V pregledu · PR #N«), public/prijave.js.
+  renderMyReports($("#my-reports"), { api, studentId: Number(store.get("studentId")) || null, locale });
   $("#gift-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = $("button[type=submit]", e.target);

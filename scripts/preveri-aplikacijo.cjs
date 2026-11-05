@@ -1558,6 +1558,25 @@ async function accounts(browser, app) {
     await expectVisible(p, "#view-account #logout-btn", "Račun");
     await screen(p, "racun");
   });
+  // Moje prijave napak (public/prijave.js renderMyReports): stanje »V pregledu · PR #N« iz samodejnega pregleda.
+  await step(p, "racun-prijave", async () => {
+    const db = new sqlite.DatabaseSync(app.db);
+    try {
+      const sid = db.prepare("SELECT id FROM students ORDER BY id DESC LIMIT 1").get().id;
+      const ins = db.prepare("INSERT INTO bug_reports (student_id, kind, topic_id, step, reason, status, pr) VALUES (?, 'lesson', ?, ?, 'wrong', ?, ?)");
+      ins.run(sid, "MAT-OS-8/pitagorov-izrek", 2, "in_review", 451);
+      ins.run(sid, "MAT-OS-8/pitagorov-izrek", null, "fixed", 450);
+      ins.run(sid, "MAT-OS-8/pitagorov-izrek", null, "open", null);
+    } finally {
+      db.close();
+    }
+    await click(p, "#account-tab", { wait: 600 });
+    await expectVisible(p, "#view-account #my-reports .my-rep", "moje prijave napak");
+    const txt = await p.locator("#my-reports").innerText();
+    if (!/PR #451/.test(txt)) throw new Error(`v Računu ni »PR #451«: ${txt.slice(0, 200)}`);
+    await p.locator("#my-reports").scrollIntoViewIfNeeded();
+    await screen(p, "racun-prijave");
+  });
   await step(p, "dodaj-profil", async () => {
     await click(p, "#profile-btn");
     await click(p, '#profile-pop [data-act="add"]', { wait: 400 });

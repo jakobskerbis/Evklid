@@ -209,7 +209,7 @@ export async function renderAdminReports(box, { api, toast, showAll = false }) {
   const items = data.reports
     .map(
       (r) => `<li class="adm-rep${r.status === "fixed" ? " fixed" : ""}" data-kind="${esc(r.kind)}" data-id="${esc(r.id)}">
-        <div class="adm-rep-head">${icon(KIND_ICON[r.kind] || "flag")}<b>${esc(reportTitle(r))}</b>${reasonText(r) ? `<span class="pill">${esc(reasonText(r))}</span>` : ""}</div>
+        <div class="adm-rep-head">${icon(KIND_ICON[r.kind] || "flag")}<b>${esc(reportTitle(r))}</b>${reasonText(r) ? `<span class="pill">${esc(reasonText(r))}</span>` : ""}${r.status === "in_review" ? `<span class="pill">${esc(reportState(r))}</span>` : ""}</div>
         <small class="muted" dir="auto">${esc(r.created_at)} UTC${r.device ? ` · ${esc(r.device)}` : ""}</small>
         ${r.note ? `<p class="adm-rep-note" dir="auto">${esc(r.note)}</p>` : ""}
         ${shownBlock(r)}
@@ -239,4 +239,42 @@ export async function renderAdminReports(box, { api, toast, showAll = false }) {
       }
     }),
   );
+}
+
+// ---------- prijave učenca (Račun) ----------
+
+/** Stanje popravka v besedilu: »Odprto«, »V pregledu · PR #N«, »Popravljeno · PR #N«. */
+export function reportState(r) {
+  if (r.status === "in_review") return r.pr ? t("myrep.st.review", { pr: r.pr }) : t("myrep.st.reviewNoPr");
+  if (r.status === "fixed") return r.pr ? t("myrep.st.fixedPr", { pr: r.pr }) : t("myrep.st.fixed");
+  return t("myrep.st.open");
+}
+const STATE_ICON = { open: "clock", in_review: "search", fixed: "check" };
+
+/** Prijave tega profila in stanje popravka v okvirju card (.my-rep-out). Brez prijav ostane okvir skrit. */
+export async function renderMyReports(card, { api, studentId, locale }) {
+  if (!card || !studentId) return;
+  let data;
+  try {
+    data = await api(`/api/students/${studentId}/prijave`);
+  } catch {
+    return;
+  }
+  if (!data.reports?.length) return;
+  const day = (s) => {
+    const d = new Date(`${String(s).replace(" ", "T")}Z`);
+    return Number.isNaN(d.getTime()) ? "" : d.toLocaleDateString(locale?.() || undefined, { day: "numeric", month: "short", year: "numeric" });
+  };
+  const title = (r) =>
+    r.kind === "lesson" ? `${t("adm.rep.lesson")}: ${r.topic_name || ""}${r.step ? ` · ${t("adm.rep.step", { n: r.step })}` : ""}` : t(r.kind === "message" ? "adm.rep.message" : "myrep.app");
+  card.querySelector(".my-rep-out").innerHTML = `<ul class="adm-rep-list">${data.reports
+    .map(
+      (r) => `<li class="adm-rep my-rep${r.status === "fixed" ? " fixed" : ""}">
+        <div class="adm-rep-head">${icon(KIND_ICON[r.kind] || "flag")}<b dir="auto">${esc(title(r))}</b></div>
+        <div class="my-rep-foot"><span class="pill">${icon(STATE_ICON[r.status] || "clock")}<span>${esc(reportState(r))}</span></span><small class="muted">${esc(day(r.created_at))}</small></div>
+      </li>`,
+    )
+    .join("")}</ul><p class="muted">${esc(t("myrep.hint"))}</p>`;
+  hydrateIcons(card);
+  card.hidden = false;
 }
