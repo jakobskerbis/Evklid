@@ -19,8 +19,9 @@ export const DRSNE = [
   // vrstice gumbov in čipov
   ".gm-fresh-row", ".seg", ".chip-row", ".zb-track", ".tk-ctx", ".tk-tablist", ".tk-sub", ".tabs", "#chat-state",
 ];
-// Zgornja vrstica zavihkov ima svoje bledenje (app.js, style.css), zato je tu ne označujemo.
-export const IZVZETO = [".topbar .tabs"];
+// Zgornja vrstica zavihkov ima svoje bledenje (app.js, style.css), zato je tu ne označujemo. Kazalo formul je
+// prilepljeno na vrh in mora biti neprosojno (maska bi pustila vsebino zaslišati skozi); izbrani čip ima svojo črto.
+export const IZVZETO = [".topbar .tabs", ".fm-toc"];
 // Brez malih navpičnih drsnikov s puščicama ▲▼ (j 2026-11-04: »never use scrollbars like that again«).
 // »overflow-x: auto« sam naredi drsno tudi navpično smer, zato ob formuli, ki za nekaj pik štrli čez vrstico
 // (meje integrala, potence), Windows pokaže drsnik s puščicama. Vse drsne vrstice zato navpično obrežemo
