@@ -3140,7 +3140,7 @@
   "adm.rep.more": "Detalhes",
   "adm.rep.question": "Pergunta:",
   "adm.rep.fixed": "Corrigido",
-  "adm.rep.inReview": "Em revisão · PR #{n}",
+  "adm.rep.inReview": "Em revisão",
   "adm.rep.reopen": "Reabrir",
   "adm.rep.none": "Sem relatórios.",
   "adm.rep.download": "Transferir para corrigir (.md)",

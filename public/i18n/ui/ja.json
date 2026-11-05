@@ -3109,7 +3109,7 @@
   "adm.rep.more": "詳細",
   "adm.rep.question": "質問：",
   "adm.rep.fixed": "修正済み",
-  "adm.rep.inReview": "確認中 · PR #{n}",
+  "adm.rep.inReview": "確認中",
   "adm.rep.reopen": "再び開く",
   "adm.rep.none": "報告はありません。",
   "adm.rep.download": "修正用にダウンロード（.md）",

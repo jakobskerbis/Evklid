@@ -174,11 +174,13 @@ function reasonText(r) {
   return r.kind === "lesson" ? lessonReason(r.reason) : t(`rep.${r.reason}`);
 }
 
-// Stanje prijave: dnevni pregled (docs/prijave-pregled.md) odpre PR in prijavo označi »V pregledu · PR #N«.
+// Stanje prijave: dnevni pregled (docs/prijave-pregled.md) odpre PR in prijavo označi »V pregledu · PR #N«;
+// »PR #N« je enak v vseh jezikih, brez številke PR samo stanje.
 function statusLine(r) {
-  if (r.status === "in_review") return `<span class="adm-rep-state" dir="auto">${icon("wrench")}<span>${esc(t("adm.rep.inReview", { n: r.pr ?? "?" }))}</span></span>`;
-  if (r.status === "fixed") return `<span class="adm-rep-state" dir="auto">${icon("check")}<span>${esc(t("adm.rep.fixed"))}${r.pr ? ` · PR #${esc(r.pr)}` : ""}</span></span>`;
-  return "";
+  const state = r.status === "in_review" ? ["wrench", "adm.rep.inReview"] : r.status === "fixed" ? ["check", "adm.rep.fixed"] : null;
+  if (!state) return "";
+  const pr = Number.isInteger(r.pr) && r.pr > 0 ? ` · PR #${r.pr}` : "";
+  return `<span class="adm-rep-state" dir="auto">${icon(state[0])}<span>${esc(t(state[1]))}${pr}</span></span>`;
 }
 
 // Odgovor, kot ga je videl učenec: izrisan HTML s spleta (očiščen) ali, pri prijavah iz aplikacije in starejših

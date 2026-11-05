@@ -3164,7 +3164,7 @@
   "adm.rep.more": "Detalii",
   "adm.rep.question": "Întrebare:",
   "adm.rep.fixed": "Reparat",
-  "adm.rep.inReview": "În verificare · PR #{n}",
+  "adm.rep.inReview": "În verificare",
   "adm.rep.reopen": "Redeschide",
   "adm.rep.none": "Niciun raport.",
   "adm.rep.download": "Descarcă pentru reparare (.md)",

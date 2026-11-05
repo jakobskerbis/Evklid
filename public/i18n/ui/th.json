@@ -3109,7 +3109,7 @@
   "adm.rep.more": "รายละเอียด",
   "adm.rep.question": "คำถาม:",
   "adm.rep.fixed": "แก้ไขแล้ว",
-  "adm.rep.inReview": "กำลังตรวจสอบ · PR #{n}",
+  "adm.rep.inReview": "กำลังตรวจสอบ",
   "adm.rep.reopen": "เปิดอีกครั้ง",
   "adm.rep.none": "ไม่มีรายงาน",
   "adm.rep.download": "ดาวน์โหลดเพื่อแก้ไข (.md)",
