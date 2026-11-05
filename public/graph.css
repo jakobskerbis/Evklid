@@ -274,9 +274,14 @@ body.graph-open { overflow: hidden; }
 .sc-empty { margin: auto; text-align: center; max-width: 32ch; padding: 12px; }
 .sc-entry { border-top: 1px solid var(--border); padding: 6px 12px 10px; flex-shrink: 0; }
 .sc-entry:focus-within { box-shadow: inset 0 -3px 0 var(--accent); }
-.sc-preview { min-height: 1.7em; text-align: right; overflow-x: auto; color: var(--text); font-size: 1.25rem; }
-/* Lep prikaz izraza je glavni; surovo besedilo pod njim (kjer ga urejaš) je manj izrazito, da ni videti kot napaka (j, 5. 11.). */
-.sc-entry:has(.sc-preview:not(:empty)) .sc-input { font-size: 0.95rem; font-weight: 500; color: var(--muted); padding: 0 0 2px; }
+.sc-preview { min-height: 1.7em; text-align: right; overflow-x: auto; color: var(--text); font-size: 1.5rem; }
+/* Vnos je viden samo kot lep zapis s kazalcem (j, 5. 11.: »nikjer naj ni viden surov vnos«): surovo polje je prosojno čez vso vnosno vrstico (tipkovnica, dotik in kazalec delujejo kot prej), prazno pa kaže namig. */
+.sc-entry { position: relative; }
+.sc-entry:has(.sc-preview:not(:empty)) .sc-input { position: absolute; inset: 0 12px; width: auto; height: 100%; opacity: 0; }
+.sc-entry:has(.sc-preview:not(:empty)) .sc-preview { min-height: 2.2em; display: flex; align-items: center; justify-content: flex-end; cursor: text; }
+.sc-preview .rule { animation: sc-blink 1.1s steps(1) infinite; }
+@keyframes sc-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .sc-preview .rule { animation: none; } }
 .sc-input { width: 100%; font-size: 1.6rem; font-weight: 700; text-align: right; border: 0; background: transparent; color: var(--text); padding: 2px 0; outline: none; font-variant-numeric: tabular-nums; }
 .sc-input::placeholder { color: var(--muted); font-size: 1rem; font-weight: 600; }
 .sc-live { min-height: 1.6em; text-align: right; font-size: 1.1rem; overflow-x: auto; }

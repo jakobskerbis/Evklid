@@ -5,6 +5,7 @@ import { evaluate, functionDef, exactTex, formatNumber, mixedTex, primeFactors, 
 import { analyze, previewTex, solutionTex, intervalsTex, systemTex, ANGLE_SUP } from "./scisolve.js";
 import { commandName, parseCommand } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
+import { entryTex } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { pomanjsaj } from "../sirina.js";
 
@@ -259,6 +260,7 @@ export function createScientific(root, opts) {
   function move(d) {
     const p = Math.max(0, Math.min(input.value.length, (input.selectionStart ?? input.value.length) + d));
     input.setSelectionRange(p, p);
+    showEntry();
   }
 
   // Vrstica je formula iz zbirke (insert z replace): njene črke so neznanke, zato shranjene spremenljivke z istim
@@ -497,6 +499,18 @@ export function createScientific(root, opts) {
   }
 
   // sproti: lep zapis izraza in predogled rezultata
+  // Vnos je viden samo kot lep zapis s kazalcem (sci-vnos.js); surovo polje je neviden (graph.css).
+  function showEntry() {
+    const prev = $(".sc-preview");
+    let e = null;
+    try {
+      e = entryTex(input.value, input.selectionStart ?? input.value.length);
+    } catch {}
+    prev.innerHTML = e ? texHtml(e.tex) : "";
+  }
+  input.addEventListener("click", () => setTimeout(showEntry));
+  input.addEventListener("keyup", showEntry);
+  document.addEventListener("selectionchange", () => document.activeElement === input && showEntry());
   function update() {
     const text = input.value;
     const prev = $(".sc-preview");
@@ -516,12 +530,12 @@ export function createScientific(root, opts) {
       r = null;
     }
     if (!r || r.error) {
-      prev.innerHTML = "";
+      showEntry();
       live.textContent = "";
       live.className = "sc-live";
       return;
     }
-    prev.innerHTML = texHtml(r.tex);
+    showEntry();
     live.className = "sc-live muted";
     if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`= ${fmt(r.value).tex}`) : "";
     else if (r.kind === "complex") live.innerHTML = texHtml(`= ${complexTex(r.re, r.im)}`);
