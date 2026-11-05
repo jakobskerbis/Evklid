@@ -118,7 +118,7 @@ async function preveriModel(p, nm, id, vw) {
   const kje = `${nm} ${id}`;
   await p.goto(`about:blank`);
   await p.goto(`${base}/3d#${id}`, { waitUntil: "load" });
-  let s = await pocakaj(p, false, (x) => x.model <= MEJA, id.startsWith("organ-") && !/mreznica|mesicki|nefron|reznjic/.test(id) ? 180000 : 60000);
+  let s = await pocakaj(p, false, (x) => x.model <= MEJA && !x.povsem.length, id.startsWith("organ-") && !/mreznica|mesicki|nefron|reznjic/.test(id) ? 180000 : 60000);
   if (!s || s.nalaga) return napake.push(`${kje}: model se ni naložil`);
   if (s.model > MEJA) napake.push(`${kje}: ob odprtju ${pct(s.model)} modela izven kadra`);
   if (s.povsem?.length) napake.push(`${kje}: ob odprtju povsem izven kadra: ${s.povsem.slice(0, 5).join(", ")}`);
@@ -143,11 +143,12 @@ async function preveriModel(p, nm, id, vw) {
   const nd = await deli.count();
   for (const k of [...new Set([0, nd - 1])].filter((k) => k >= 0)) {
     const b = deli.nth(k);
-        await b.evaluate((x) => { x.scrollIntoView({ block: "nearest" }); x.click(); });
+    await b.evaluate((x) => { x.scrollIntoView({ block: "nearest" }); x.click(); });
     s = await pocakaj(p, true, (x) => x.info && x.infoVidno[3] - x.infoVidno[1] > 40 && x.model <= MEJA && !(x.del > MEJA) && !x.povsem.length);
     const del = s?.izbran || `#${k}`;
     if (!s?.info) { napake.push(`${kje}/${del}: okno dela se ni odprlo`); continue; }
-    if (prekriva(s.infoVidno, s.canvas)) napake.push(`${kje}/${del}: okno dela ${s.info} prekriva platno ${s.canvas}`);
+    if (prekriva(s.info, s.canvas)) napake.push(`${kje}/${del}: okno dela ${s.info} prekriva platno ${s.canvas}`);
+    if (s.tocke) napake.push(`${kje}/${del}: ${s.tocke} barvnih krogcev na odru`);
     if (s.infoVidno[3] - s.infoVidno[1] < 40 || s.infoVidno[0] >= vw.width - 40) napake.push(`${kje}/${del}: okno dela ni vidno ${s.infoVidno}`);
     if (s.model > MEJA) napake.push(`${kje}/${del}: po izbiri dela ${pct(s.model)} modela izven kadra`);
     if (s.del > MEJA) napake.push(`${kje}/${del}: ${pct(s.del)} izbranega dela izven kadra`);
