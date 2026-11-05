@@ -5,7 +5,7 @@ export const info = {
   naslov: "Geometrijska telesa",
   podrocje: "matematika",
   predmet: "MAT",
-  opis: "Prizme, piramide, valj, stožec, krogla in prisekani telesi: spreminjaj mere, razpri mrežo in prereži telo z ravnino. Prostornina in površina se sproti izračunata.",
+  opis: "Prizme, piramide, valj, stožec, krogla, prisekani telesi, poševni paralelepiped in vseh 5 pravilnih (Platonovih) teles iz Evklidovih Elementov: spreminjaj mere, razpri mrežo in prereži telo z ravnino. Prostornina in površina se sproti izračunata.",
   merilo: { m: 0.1, oznaka: "10 cm" },
   poskusi: "izberi valj in povleci »Razpri mrežo« do konca: kakšen lik je plašč? Nato mrežo spet zloži, vklopi »Prerez z ravnino« in spreminjaj »Nagib ravnine«: kdaj je prerez elipsa?",
 };
@@ -13,8 +13,13 @@ export const info = {
 const MOZNOSTI = [
   ["kocka", "Kocka"], ["kvader", "Kvader"], ["prizma3", "Tristrana prizma"], ["prizma6", "Šeststrana prizma"],
   ["piramida3", "Tristrana piramida"], ["piramida4", "Štiristrana piramida"], ["valj", "Valj"], ["stozec", "Stožec"],
-  ["krogla", "Krogla"], ["prisekana", "Prisekana piramida"], ["prisekan", "Prisekan stožec"],
+  ["krogla", "Krogla"], ["prisekana", "Prisekana piramida"], ["prisekan", "Prisekan stožec"], ["paralelepiped", "Poševni paralelepiped"],
 ];
+// skupina »Pravilna telesa (Platonova)« (j, 5. 11.): kocka je v obeh skupinah
+const PLATON_MOZ = [["tetraeder", "Tetraeder"], ["kocka", "Kocka"], ["oktaeder", "Oktaeder"], ["dodekaeder", "Dodekaeder"], ["ikozaeder", "Ikozaeder"]];
+const SKUPINE = [["osnovna", "Osnovna telesa"], ["platonova", "Pravilna telesa (Platonova)"]];
+const NOVA = new Set(["tetraeder", "oktaeder", "dodekaeder", "ikozaeder"]); // pravilna telesa razen kocke (kocka ostane kot prej)
+const POLIEDRI = new Set([...NOVA, "paralelepiped"]); // gradijo se iz oglišč in ploskev
 const LEPA = [2, 2.5, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 80, 100, 120, 150, 200, 250];
 const NB = " ";
 
@@ -30,6 +35,226 @@ const cm2 = (x) => st(x) + NB + "cm²";
 const cm3 = (x) => st(x) + NB + "cm³";
 const kratko = (x) => st(x, 1).replace(/,0$/, "");
 
+// ---------- Evklidovi Elementi (preverjeno na D. E. Joyce, Clark University, Euclid's Elements) ----------
+// Vrstica »v kateri knjigi Elementov« za vsako telo. Knjiga XI: definicije teles in paralelepipedi (24–34),
+// knjiga XII: prostornine (piramida, stožec, krogla), knjiga XIII: pet pravilnih teles, včrtanih v kroglo (13–17).
+export const ELEMENTI = {
+  kocka: "XI. knjiga, definicija 25; XIII. knjiga, trditev 15 (kocka, včrtana v kroglo)",
+  kvader: "XI. knjiga, trditve 24–34 (paralelepipedi; kvader je pravokotni paralelepiped)",
+  paralelepiped: "XI. knjiga, trditve 24–34; po trditvi 31 imata paralelepipeda z enako ploščino osnovne ploskve in enako višino enako prostornino",
+  prizma3: "XI. knjiga, definicija 13; XII. knjiga, trditev 7 (prizmo razrežemo na 3 enake piramide)",
+  prizma6: "XI. knjiga, definicija 13; XII. knjiga, trditev 7 (prizmo razrežemo na 3 enake piramide)",
+  piramida3: "XI. knjiga, definicija 12; XII. knjiga, trditev 7 s posledico (piramida je tretjina prizme z enako osnovno ploskvijo in višino)",
+  piramida4: "XI. knjiga, definicija 12; XII. knjiga, trditev 7 s posledico (piramida je tretjina prizme z enako osnovno ploskvijo in višino)",
+  valj: "XI. knjiga, definicija 21 (pravokotnik se zavrti okoli stranice); XII. knjiga, trditve 10–15",
+  stozec: "XI. knjiga, definicija 18 (pravokotni trikotnik se zavrti okoli katete); XII. knjiga, trditev 10 (stožec je tretjina valja)",
+  krogla: "XI. knjiga, definicija 14 (polkrog se zavrti okoli premera); XII. knjiga, trditev 18 (prostornini krogel sta v razmerju kubov premerov)",
+  prisekana: "v Elementih ni posebej obravnavana; je razlika dveh podobnih piramid (XII. knjiga, trditev 8)",
+  prisekan: "v Elementih ni posebej obravnavan; je razlika dveh podobnih stožcev (XII. knjiga, trditev 12)",
+  tetraeder: "XIII. knjiga, trditev 13 (tetraeder, včrtan v kroglo; Evklid ga imenuje piramida)",
+  oktaeder: "XI. knjiga, definicija 26; XIII. knjiga, trditev 14 (oktaeder, včrtan v kroglo)",
+  dodekaeder: "XI. knjiga, definicija 28; XIII. knjiga, trditev 17 (dodekaeder, včrtan v kroglo)",
+  ikozaeder: "XI. knjiga, definicija 27; XIII. knjiga, trditev 16 (ikozaeder, včrtan v kroglo)",
+};
+
+// ---------- pravilna (Platonova) telesa in paralelepiped: čista geometrija brez THREE (izvoženo za teste) ----------
+const FI = (1 + Math.sqrt(5)) / 2;
+const SUROVA = {
+  tetraeder: () => [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1]],
+  kocka: () => { const t = []; for (const x of [-1, 1]) for (const y of [-1, 1]) for (const z of [-1, 1]) t.push([x, y, z]); return t; },
+  oktaeder: () => [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]],
+  ikozaeder: () => { const t = []; for (const p of [-1, 1]) for (const q of [-1, 1]) t.push([0, p, q * FI], [p, q * FI, 0], [q * FI, 0, p]); return t; },
+  dodekaeder: () => {
+    const t = SUROVA.kocka();
+    for (const p of [-1, 1]) for (const q of [-1, 1]) t.push([0, p / FI, q * FI], [p / FI, q * FI, 0], [q * FI, 0, p / FI]);
+    return t;
+  },
+};
+const vRaz = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+const vSkal = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const vVek = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const vDol = (a) => Math.hypot(a[0], a[1], a[2]);
+const vSred = (t) => { const c = [0, 0, 0]; for (const p of t) { c[0] += p[0]; c[1] += p[1]; c[2] += p[2]; } return c.map((x) => x / t.length); };
+// zasuk okoli enotske osi k za kot f (Rodriguesova formula)
+const vZasuk = (p, k, f) => {
+  const c = Math.cos(f), s = Math.sin(f), kp = vVek(k, p), kd = vSkal(k, p);
+  return [0, 1, 2].map((i) => p[i] * c + kp[i] * s + k[i] * kd * (1 - c));
+};
+
+// Ploskve konveksne lupine: vsaka ploskev je seznam indeksov oglišč, urejenih v krogu.
+function lupina(t) {
+  const n = t.length, eps = 1e-9 * Math.max(...t.map(vDol)), ploskve = [], videne = new Set();
+  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) for (let k = j + 1; k < n; k++) {
+    let nr = vVek(vRaz(t[j], t[i]), vRaz(t[k], t[i])); const L = vDol(nr); if (L < eps) continue;
+    nr = nr.map((x) => x / L); const d = vSkal(nr, t[i]);
+    let pod = 0, nad = 0; for (const p of t) { const o = vSkal(nr, p) - d; if (o > eps) nad++; else if (o < -eps) pod++; }
+    if (pod && nad) continue;
+    const idx = []; for (let m = 0; m < n; m++) if (Math.abs(vSkal(nr, t[m]) - d) <= eps) idx.push(m);
+    const kljuc = idx.join(); if (videne.has(kljuc)) continue; videne.add(kljuc);
+    const c = vSred(idx.map((m) => t[m])), e1 = vRaz(t[idx[0]], c), e2 = vVek(nr, e1);
+    idx.sort((p, q) => Math.atan2(vSkal(vRaz(t[p], c), e2), vSkal(vRaz(t[p], c), e1)) - Math.atan2(vSkal(vRaz(t[q], c), e2), vSkal(vRaz(t[q], c), e1)));
+    ploskve.push(idx);
+  }
+  return ploskve;
+}
+
+// Pravilno telo z robom a, ki leži na ploskvi: ploskve[0] je spodnja (y = 0, središče v izhodišču), en njen rob
+// gleda proti gledalcu (+z), y kaže navzgor. Vrne { tocke: [[x, y, z]], ploskve: [[indeksi]] }.
+export function pravilnoTelo(ime, a = 1) {
+  let t = SUROVA[ime]();
+  const ploskve = lupina(t);
+  // spodnja ploskev: zasukamo jo tako, da njena zunanja normala kaže navzdol (−y)
+  const F0 = ploskve[0], c0 = vSred(F0.map((i) => t[i]));
+  let nr = vVek(vRaz(t[F0[1]], t[F0[0]]), vRaz(t[F0[2]], t[F0[0]])); nr = nr.map((x) => x / vDol(nr));
+  if (vSkal(nr, c0) < 0) nr = nr.map((x) => -x);
+  const dol = [0, -1, 0], os = vVek(nr, dol), so = vDol(os);
+  if (so > 1e-12) { const k = os.map((x) => x / so), f = Math.acos(Math.max(-1, Math.min(1, vSkal(nr, dol)))); t = t.map((p) => vZasuk(p, k, f)); }
+  else if (vSkal(nr, dol) < 0) t = t.map(([x, y, z]) => [x, -y, -z]);
+  // en rob spodnje ploskve naj gleda proti +z
+  const c1 = vSred(F0.map((i) => t[i])), m = vSred([t[F0[0]], t[F0[1]]]);
+  const f = Math.atan2(m[0] - c1[0], m[2] - c1[2]);
+  t = t.map((p) => vZasuk(p, [0, 1, 0], -f));
+  // merilo (rob a) in lega (spodnja ploskev na y = 0, njeno središče v izhodišču)
+  const rob = vDol(vRaz(t[F0[0]], t[F0[1]])), k = a / rob, c2 = vSred(F0.map((i) => t[i]));
+  const cist = (x) => (Math.abs(x) < 1e-12 * a ? 0 : x);
+  t = t.map((p) => [cist((p[0] - c2[0]) * k), cist((p[1] - c2[1]) * k), cist((p[2] - c2[2]) * k)]);
+  return { tocke: t, ploskve };
+}
+
+// Poševni paralelepiped: osnovna ploskev je paralelogram z robovoma a (v desno) in b (nazaj) ter kotom α med njima,
+// stranski rob c je nagnjen v desno in z osnovno ploskvijo oklepa kot φ. Središče osnovne ploskve je v izhodišču.
+export function paralelepipedTelo(a, b, c, alfa, fi) {
+  const al = (alfa * Math.PI) / 180, f = (fi * Math.PI) / 180;
+  const u = [a, 0, 0], w = [b * Math.cos(al), 0, -b * Math.sin(al)], k = [c * Math.cos(f), c * Math.sin(f), 0];
+  const O = [-(u[0] + w[0]) / 2, 0, -(u[2] + w[2]) / 2], t = [];
+  for (let l = 0; l < 2; l++) for (let j = 0; j < 2; j++) for (let i = 0; i < 2; i++) t.push([0, 1, 2].map((d) => O[d] + i * u[d] + j * w[d] + l * k[d]));
+  // indeks = i + 2j + 4l; spodnja, zgornja, sprednja, zadnja, leva, desna
+  const ploskve = [[0, 1, 3, 2], [4, 5, 7, 6], [0, 1, 5, 4], [2, 3, 7, 6], [0, 2, 6, 4], [1, 3, 7, 5]];
+  return { tocke: t, ploskve, vrste: ["osn", "osn", "pl", "pl", "pl", "pl"] };
+}
+
+// Natančne formule za pravilna telesa z robom a (vse preverjene v test/3d-telesa-elementi.test.js z geometrijo).
+const K2 = Math.SQRT2, K3 = Math.sqrt(3), K5 = Math.sqrt(5), K6 = Math.sqrt(6);
+export const PRAVILNA = {
+  tetraeder: {
+    naslov: "Pravilni tetraeder", lik: "enakostranični trikotnik", n: 3, k: 3, o: 4, r: 6, p: 4,
+    V: ["a³√2/12", (a) => (a ** 3 * K2) / 12], P: ["a²√3", (a) => a * a * K3],
+    Rv: ["a√6/12", (a) => (a * K6) / 12], Ro: ["a√6/4", (a) => (a * K6) / 4],
+    ploskve: "4 skladni enakostranični trikotniki", vozel: "3 trikotniki: 3 · 60° = 180°",
+    mreza: "4 enakostranični trikotniki: spodnji in trije okoli njega (velik enakostranični trikotnik)",
+  },
+  kocka: {
+    naslov: "Kocka", lik: "kvadrat", n: 4, k: 3, o: 8, r: 12, p: 6,
+    V: ["a³", (a) => a ** 3], P: ["6a²", (a) => 6 * a * a],
+    Rv: ["a/2", (a) => a / 2], Ro: ["a√3/2", (a) => (a * K3) / 2],
+    ploskve: "6 skladnih kvadratov", vozel: "3 kvadrati: 3 · 90° = 270°", mreza: "6 skladnih kvadratov",
+  },
+  oktaeder: {
+    naslov: "Pravilni oktaeder", lik: "enakostranični trikotnik", n: 3, k: 4, o: 6, r: 12, p: 8,
+    V: ["a³√2/3", (a) => (a ** 3 * K2) / 3], P: ["2a²√3", (a) => 2 * a * a * K3],
+    Rv: ["a√6/6", (a) => (a * K6) / 6], Ro: ["a√2/2", (a) => (a * K2) / 2],
+    ploskve: "8 skladnih enakostraničnih trikotnikov", vozel: "4 trikotniki: 4 · 60° = 240°",
+    mreza: "8 enakostraničnih trikotnikov: trak iz 6 trikotnikov in po en trikotnik na vsaki strani traku",
+  },
+  dodekaeder: {
+    naslov: "Pravilni dodekaeder", lik: "pravilni petkotnik", n: 5, k: 3, o: 20, r: 30, p: 12,
+    V: ["(15 + 7√5)a³/4", (a) => ((15 + 7 * K5) * a ** 3) / 4], P: ["3a²√(25 + 10√5)", (a) => 3 * a * a * Math.sqrt(25 + 10 * K5)],
+    Rv: ["(a/2)√((25 + 11√5)/10)", (a) => (a / 2) * Math.sqrt((25 + 11 * K5) / 10)], Ro: ["a√3(1 + √5)/4", (a) => (a * K3 * (1 + K5)) / 4],
+    ploskve: "12 skladnih pravilnih petkotnikov", vozel: "3 petkotniki: 3 · 108° = 324°",
+    mreza: "12 pravilnih petkotnikov: dva »cveta« (petkotnik in 5 petkotnikov okoli njega), povezana z enim robom",
+  },
+  ikozaeder: {
+    naslov: "Pravilni ikozaeder", lik: "enakostranični trikotnik", n: 3, k: 5, o: 12, r: 30, p: 20,
+    V: ["5(3 + √5)a³/12", (a) => (5 * (3 + K5) * a ** 3) / 12], P: ["5a²√3", (a) => 5 * a * a * K3],
+    Rv: ["a√3(3 + √5)/12", (a) => (a * K3 * (3 + K5)) / 12], Ro: ["(a/4)√(10 + 2√5)", (a) => (a / 4) * Math.sqrt(10 + 2 * K5)],
+    ploskve: "20 skladnih enakostraničnih trikotnikov", vozel: "5 trikotnikov: 5 · 60° = 300°",
+    mreza: "20 enakostraničnih trikotnikov: trak iz 10 trikotnikov ter po 5 trikotnikov nad njim in pod njim",
+  },
+};
+// število oglišč, robov in ploskev mnogoterih teles (za Eulerjevo formulo o − r + p = 2)
+const ORP = {
+  kocka: [8, 12, 6], kvader: [8, 12, 6], paralelepiped: [8, 12, 6], prizma3: [6, 9, 5], prizma6: [12, 18, 8],
+  piramida3: [4, 6, 4], piramida4: [5, 8, 5], prisekana: [8, 12, 6],
+  tetraeder: [4, 6, 4], oktaeder: [6, 12, 8], dodekaeder: [20, 30, 12], ikozaeder: [12, 30, 20],
+};
+const sklon = (n, oblike) => `${n} ${oblike[n % 100 === 1 ? 0 : n % 100 === 2 ? 1 : n % 100 === 3 || n % 100 === 4 ? 2 : 3]}`;
+export function euler(vr) {
+  const x = ORP[vr]; if (!x) return "";
+  const [o, r, p] = x;
+  return `${sklon(o, ["oglišče", "oglišči", "oglišča", "oglišč"])}, ${sklon(r, ["rob", "robova", "robovi", "robov"])}, ${sklon(p, ["ploskev", "ploskvi", "ploskve", "ploskev"])}: ${o} − ${r} + ${p} = ${o - r + p}`;
+}
+// Paralelepiped: β je kot med robovoma b in c (cos β = cos α · cos φ).
+export function paralelepipedKolicine(a, b, c, alfa, fi) {
+  const al = (alfa * Math.PI) / 180, f = (fi * Math.PI) / 180, cb = Math.cos(al) * Math.cos(f), sb = Math.sqrt(Math.max(0, 1 - cb * cb));
+  const O = a * b * Math.sin(al), v = c * Math.sin(f), Sac = a * c * Math.sin(f), Sbc = b * c * sb;
+  return { O, v, V: O * v, Sac, Sbc, P: 2 * (O + Sac + Sbc), beta: (Math.acos(cb) * 180) / Math.PI };
+}
+const ZAKAJ_PET = "V vsakem oglišču se stikajo vsaj 3 ploskve, vsota njihovih kotov pa mora biti manjša od 360°. Pri 360° bi ploskve ležale ravno, pri več se ne bi prilegale. Trikotniki (60°): ob oglišču so lahko 3, 4 ali 5. Kvadrati (90°): samo 3. Pravilni petkotniki (108°): samo 3. Šestkotniki imajo kote po 120° in že 3 dajo 360°. Zato je pravilnih teles samo 5 (Evklid to pove na koncu XIII. knjige Elementov).";
+
+// Drevesa mreže (kateri ploskvi sta zlepljeni): starsi[i] je ploskev, na katero je pripeta ploskev i (−1 = spodnja).
+// Za vsako telo vrnemo nekaj kandidatov klasične oblike; gradnik izbere tistega, pri katerem se mreža ne prekriva
+// in je najmanjša.
+function sosedi(ploskve) {
+  const rob = new Map(), S = ploskve.map(() => []);
+  ploskve.forEach((F, i) => F.forEach((a, k) => { const b = F[(k + 1) % F.length], kl = Math.min(a, b) + "-" + Math.max(a, b); if (rob.has(kl)) { const j = rob.get(kl); S[i].push(j); S[j].push(i); } else rob.set(kl, i); }));
+  return S;
+}
+export function drevesaMreze(ime, g) {
+  const { tocke: t, ploskve } = g, n = ploskve.length, S = sosedi(ploskve), sred = ploskve.map((F) => vSred(F.map((i) => t[i])));
+  const nov = () => new Array(n).fill(-1);
+  const vrh = sred.reduce((b, c, i) => (c[1] > sred[b][1] ? i : b), 0);
+  const kot = (i) => Math.atan2(sred[i][0], sred[i][2]);
+  const out = [];
+  if (ime === "tetraeder") { const p = nov(); for (let i = 1; i < n; i++) p[i] = 0; out.push(p); }
+  else if (ime === "oktaeder") {
+    const pas = [...Array(n).keys()].filter((i) => i !== 0 && i !== vrh).sort((x, y) => kot(x) - kot(y));
+    for (let z = 0; z < 6; z++) {
+      if (!S[0].includes(pas[z])) continue;
+      const c = [0, 1, 2, 3, 4, 5].map((k) => pas[(z + k) % 6]);
+      for (const tz of c) {
+        if (!S[vrh].includes(tz)) continue;
+        const p = nov(); p[c[0]] = 0; p[c[1]] = c[0]; p[c[2]] = c[1]; p[c[3]] = c[2]; p[c[5]] = c[0]; p[c[4]] = c[5]; p[vrh] = tz;
+        out.push(p);
+      }
+    }
+  } else if (ime === "ikozaeder") {
+    const vSp = new Set([...ploskve[0], ...ploskve[vrh]]);
+    for (let N = 0; N < t.length; N++) {
+      if (vSp.has(N)) continue;
+      const J = t.reduce((b, q, i) => (vDol(vRaz(q, t[N])) > vDol(vRaz(t[b], t[N])) ? i : b), 0); // nasprotno oglišče
+      const pas = new Set([...Array(n).keys()].filter((i) => !ploskve[i].includes(N) && !ploskve[i].includes(J)));
+      for (const smer of [0, 1]) {
+        const cikel = [0]; let prej = -1;
+        while (cikel.length < 10) { const zdaj = cikel[cikel.length - 1], nasl = S[zdaj].filter((j) => pas.has(j) && j !== prej); prej = zdaj; cikel.push(nasl[cikel.length === 1 ? smer : 0]); }
+        const p = nov();
+        for (let k = 1; k <= 5; k++) p[cikel[k]] = cikel[k - 1];
+        p[cikel[9]] = 0; for (let k = 8; k >= 6; k--) p[cikel[k]] = cikel[k + 1];
+        for (let i = 0; i < n; i++) if (!pas.has(i)) p[i] = S[i].find((j) => pas.has(j));
+        out.push(p);
+      }
+    }
+  } else if (ime === "dodekaeder") {
+    for (const L0 of S[0]) for (const U0 of S[L0]) {
+      if (U0 === 0 || !S[vrh].includes(U0)) continue;
+      const p = nov(); for (const L of S[0]) p[L] = 0; p[U0] = L0; p[vrh] = U0; for (const U of S[vrh]) if (U !== U0) p[U] = vrh;
+      out.push(p);
+    }
+  } else if (ime === "paralelepiped") {
+    // ploskve: 0 spodnja, 1 zgornja, 2 sprednja, 3 zadnja, 4 leva, 5 desna; stranske v krogu 2, 5, 3, 4
+    const kr = [2, 5, 3, 4];
+    for (const zg of kr) { const p = nov(); for (const s of kr) p[s] = 0; p[1] = zg; out.push(p); } // križ
+    for (let z = 0; z < 4; z++) for (let rez = 0; rez < 4; rez++) for (const zg of kr) { // trak stranskih ploskev
+      const p = nov(), s0 = kr[z]; p[s0] = 0;
+      // trak: ploskve od s0 naprej v obe smeri, prerezan med kr[rez] in kr[rez + 1]
+      for (let k = 1; k < 4; k++) { const i = (z + k) % 4; if ((z + k - 1) % 4 === rez) break; p[kr[i]] = kr[(i + 3) % 4]; }
+      for (let k = 1; k < 4; k++) { const i = (z - k + 8) % 4; if (i === rez) break; if (p[kr[i]] !== -1) break; p[kr[i]] = kr[(i + 1) % 4]; }
+      if (kr.some((s) => p[s] === -1)) continue;
+      p[1] = zg; out.push(p);
+    }
+  }
+  return out;
+}
+
 export function zgradi(THREE, ctx) {
   const { Vector3, Matrix4, Quaternion } = THREE;
   const visoka = ctx.kakovost !== "nizka";
@@ -39,24 +264,31 @@ export function zgradi(THREE, ctx) {
   const zac = ctx.zacetek || {};
   const stevilo = (k, lo, hi, def) => { const x = Number(zac[k]); return zac[k] != null && Number.isFinite(x) ? Math.min(hi, Math.max(lo, x)) : def; };
   const S = {
-    telo: MOZNOSTI.some(([v]) => v === zac.telo) ? zac.telo : "kocka",
+    telo: [...MOZNOSTI, ...PLATON_MOZ].some(([v]) => v === zac.telo) ? zac.telo : "kocka",
     a: stevilo("a", 1, 10, 4), b: stevilo("b", 1, 10, 3), c: stevilo("c", 1, 10, 6), v: stevilo("v", 1, 10, 6), r: stevilo("r", 1, 10, 4),
     a1: stevilo("a1", 1, 10, 4), a2: stevilo("a2", 1, 10, 2), r1: stevilo("r1", 1, 10, 4), r2: stevilo("r2", 1, 10, 2),
     razpri: stevilo("razpri", 0, 1, 0),
     prerez: zac.prerez === true || zac.prerez === "1" || zac.prerez === "true",
     lega: stevilo("lega", 0, 1, 0.5), nagib: stevilo("nagib", 0, 90, 30), zasuk: stevilo("zasuk", 0, 90, 0),
     prosojno: zac.prosojno === true || zac.prosojno === "1" || zac.prosojno === "true",
+    alfa: stevilo("alfa", 30, 90, 60), fi: stevilo("fi", 30, 90, 70),
+    krogli: zac.krogli === true || zac.krogli === "1" || zac.krogli === "true",
   };
+  S.skupina = NOVA.has(S.telo) || (S.telo === "kocka" && zac.skupina === "platonova") ? "platonova" : "osnovna";
+  // zadnja izbira v vsaki skupini (gradnika izbire ostaneta vsak pri svojem seznamu)
+  let osnovno = MOZNOSTI.some(([v]) => v === S.telo) ? S.telo : "kocka", platonsko = PLATON_MOZ.some(([v]) => v === S.telo) ? S.telo : "tetraeder";
+  const pravilno = () => !!PRAVILNA[S.telo] && (S.telo !== "kocka" || S.skupina === "platonova");
 
   // m1 = osnovna mera (a, r, a₁, r₁), m2 = višina (pri kvadru c), m3 = tretja mera (b pri kvadru, a₂ / r₂ pri prisekanih)
-  const OSN = { kocka: "a", kvader: "a", prizma3: "a", prizma6: "a", piramida3: "a", piramida4: "a", valj: "r", stozec: "r", krogla: "r", prisekana: "a1", prisekan: "r1" };
+  const OSN = { kocka: "a", kvader: "a", prizma3: "a", prizma6: "a", piramida3: "a", piramida4: "a", valj: "r", stozec: "r", krogla: "r", prisekana: "a1", prisekan: "r1", paralelepiped: "a", tetraeder: "a", oktaeder: "a", dodekaeder: "a", ikozaeder: "a" };
   Object.defineProperties(S, {
     m1: { get: () => S[OSN[S.telo]] },
     m2: { get: () => (S.telo === "kvader" ? S.c : S.telo === "kocka" ? S.a : S.telo === "krogla" ? S.r : S.v) },
     m3: { get: () => (S.telo === "kvader" ? S.b : S.telo === "prisekana" ? S.a2 : S.telo === "prisekan" ? S.r2 : 1) },
   });
   const rabi = (k) => () => ({
-    a: ["kocka", "kvader", "prizma3", "prizma6", "piramida3", "piramida4"], b: ["kvader"], c: ["kvader"],
+    a: ["kocka", "kvader", "prizma3", "prizma6", "piramida3", "piramida4", "paralelepiped", ...NOVA], b: ["kvader", "paralelepiped"], c: ["kvader", "paralelepiped"],
+    alfa: ["paralelepiped"], fi: ["paralelepiped"],
     v: ["prizma3", "prizma6", "piramida3", "piramida4", "valj", "stozec", "prisekana", "prisekan"], r: ["valj", "stozec", "krogla"],
     a1: ["prisekana"], a2: ["prisekana"], r1: ["prisekan"], r2: ["prisekan"],
   }[k].includes(S.telo));
@@ -162,6 +394,17 @@ export function zgradi(THREE, ctx) {
   const rgeo = new THREE.BufferGeometry().setFromPoints([new Vector3(-1, -1, 0), new Vector3(1, -1, 0), new Vector3(1, 1, 0), new Vector3(-1, 1, 0)]);
   const ravninaRob = new THREE.LineLoop(rgeo, mRavninaRob); ravninaRob.renderOrder = 6; ravnina.add(ravninaRob);
   telo.add(prerezM, prerezRob, ravnina);
+
+  // včrtana in očrtana krogla pravilnih teles (Elementi, XIII. knjiga: telo, včrtano v kroglo)
+  const kroglaGeo = new THREE.SphereGeometry(1, visoka ? 64 : 40, visoka ? 40 : 24);
+  const mVcrt = new THREE.MeshPhysicalMaterial({ color: "#7CE0B5", roughness: 0.35, clearcoat: 0.4, transparent: true, opacity: 0.55, depthWrite: false });
+  const mOcrt = new THREE.MeshPhysicalMaterial({ color: "#9FB6FF", roughness: 0.2, transparent: true, opacity: 0.13, depthWrite: false });
+  const vcrtana = mesh(kroglaGeo, mVcrt, -1), ocrtana = mesh(kroglaGeo, mOcrt, 8);
+  vcrtana.name = "vcrtana-krogla"; ocrtana.name = "ocrtana-krogla"; vcrtana.visible = ocrtana.visible = false;
+  telo.add(vcrtana, ocrtana);
+  for (const m of [vcrtana, ocrtana]) m.onBeforeRender = posodobiKlip;
+  const kroglePrikazane = (T, e) => S.krogli && pravilno() && e < 1e-4;
+  const kroglaSredisce = (T) => (T.jedro ? T.jedro.clone() : V(0, T.H / 2, 0));
 
   // podlaga: kvadratki po 1 cm (pri velikih mrežah po 5 cm) in mehka senca pod telesom, da lažje oceniš velikost
   const TS = 256;
@@ -343,13 +586,70 @@ export function zgradi(THREE, ctx) {
     F.push(ploskev(T.map((p) => p.clone()), "osn", jedro)); pripni(F[F.length - 1], F[1], 1);
     return { F, B, T, k0, iSpr: 1, iZg: F.length - 1 };
   }
+  // Ali se ploskvi razprte mreže prekrivata (vse ležijo na podlagi; ploskve so konveksne, zato zadošča ločilna os).
+  function prekriva(L, tol) {
+    const meja = L.map((P) => { let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity; for (const [x, z] of P) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); z0 = Math.min(z0, z); z1 = Math.max(z1, z); } return [x0, x1, z0, z1]; });
+    const loci = (A, B) => {
+      for (const P of [A, B]) for (let i = 0; i < P.length; i++) {
+        const [x1, z1] = P[i], [x2, z2] = P[(i + 1) % P.length], L0 = Math.hypot(x2 - x1, z2 - z1); if (L0 < 1e-12) continue;
+        const nx = (z1 - z2) / L0, nz = (x2 - x1) / L0;
+        let a0 = Infinity, a1 = -Infinity, b0 = Infinity, b1 = -Infinity;
+        for (const [x, z] of A) { const d = x * nx + z * nz; a0 = Math.min(a0, d); a1 = Math.max(a1, d); }
+        for (const [x, z] of B) { const d = x * nx + z * nz; b0 = Math.min(b0, d); b1 = Math.max(b1, d); }
+        if (a1 <= b0 + tol || b1 <= a0 + tol) return true;
+      }
+      return false;
+    };
+    for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) {
+      const a = meja[i], b = meja[j];
+      if (a[1] <= b[0] + tol || b[1] <= a[0] + tol || a[3] <= b[2] + tol || b[3] <= a[2] + tol) continue;
+      if (!loci(L[i], L[j])) return true;
+    }
+    return false;
+  }
+  // Mnogoterno telo iz oglišč in ploskev (pravilna telesa, paralelepiped). Med kandidati za mrežo izbere najmanjšo,
+  // ki se ne prekriva (pri paralelepipedu je to odvisno od kotov, zato izbiro shranimo za vsake mere posebej).
+  const izbranoDrevo = new Map();
+  function poliederPl(vr) {
+    const g = vr === "paralelepiped" ? paralelepipedTelo(S.a, S.b, S.c, S.alfa, S.fi) : pravilnoTelo(vr, S.a);
+    const tockeV = g.tocke.map(([x, y, z]) => V(x, y, z)), jedro = sredisce(tockeV, new Vector3());
+    const kand = drevesaMreze(vr, g);
+    const sestaviDrevo = (starsi) => { // starš je pred otrokom (iskanje v širino od spodnje ploskve)
+      const red = [0], kje = new Map([[0, 0]]);
+      for (let k = 0; k < red.length; k++) for (let i = 0; i < starsi.length; i++) if (starsi[i] === red[k] && !kje.has(i)) { kje.set(i, red.length); red.push(i); }
+      const F = red.map((i) => ploskev(g.ploskve[i].map((j) => tockeV[j].clone()), g.vrste ? g.vrste[i] : "pl", jedro));
+      red.forEach((i, k) => { if (k) pripni(F[k], F[kje.get(starsi[i])], kje.get(starsi[i])); });
+      return { F, red };
+    };
+    const kljuc = vr === "paralelepiped" ? [vr, S.a, S.b, S.c, S.alfa, S.fi].join() : vr;
+    let izb = izbranoDrevo.get(kljuc);
+    if (izb === undefined) {
+      let best = Infinity; izb = 0;
+      kand.forEach((starsi, ix) => {
+        const P = sestaviDrevo(starsi);
+        izracunajMatrike(P, 1);
+        const L = P.F.map((F) => F.p.map((p) => { _a.copy(p).applyMatrix4(F.M); return [_a.x, _a.z]; }));
+        if (prekriva(L, 1e-6 * S.a)) return;
+        let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+        for (const P2 of L) for (const [x, z] of P2) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); z0 = Math.min(z0, z); z1 = Math.max(z1, z); }
+        const cx = (x0 + x1) / 2, cz = (z0 + z1) / 2; let R = 0;
+        for (const P2 of L) for (const [x, z] of P2) R = Math.max(R, Math.hypot(x - cx, z - cz));
+        if (R < best - 1e-9) { best = R; izb = ix; }
+      });
+      if (izbranoDrevo.size > 300) izbranoDrevo.clear();
+      izbranoDrevo.set(kljuc, izb);
+    }
+    const { F, red } = sestaviDrevo(kand[izb]);
+    return { F, red, obseg: tockeV, jedro, H: Math.max(...tockeV.map((p) => p.y)), poli: g };
+  }
   const krog = (r, y) => { const t = []; for (let i = 0; i < NK; i++) { const f = (2 * Math.PI * i) / NK; t.push(V(r * Math.sin(f), y, r * Math.cos(f))); } return t; };
 
   function sestavi() {
     const vr = S.telo, m1 = S.m1, m2 = S.m2;
     const T = { vrsta: vr, F: [], plasc: null, krogla: 0, H: 0, napisi: [], crte: [], proxy: {}, oglisca: true, zgOmejen: false };
     const top = Math.min(S.m3, m1 - 0.5); T.zgOmejen = S.m3 > m1 - 0.5;
-    if (vr === "kocka" || vr === "kvader" || vr === "prizma3" || vr === "prizma6") {
+    if (POLIEDRI.has(vr)) Object.assign(T, poliederPl(vr));
+    else if (vr === "kocka" || vr === "kvader" || vr === "prizma3" || vr === "prizma6") {
       let baza, v;
       if (vr === "kocka") { baza = [[m1 / 2, m1 / 2], [m1 / 2, -m1 / 2], [-m1 / 2, -m1 / 2], [-m1 / 2, m1 / 2]]; v = m1; }
       else if (vr === "kvader") { const a = m1, b = S.m3; baza = [[a / 2, b / 2], [a / 2, -b / 2], [-a / 2, -b / 2], [-a / 2, b / 2]]; v = m2; }
@@ -474,9 +774,9 @@ export function zgradi(THREE, ctx) {
   let T = null, s = 1, D = 10, sred = new Vector3(), prerezInfo = null, deliSeznam = [];
   // Merilo pri spreminjanju mer ostane, dokler telo ne preraste prizora ali se ne skrči pod 45 %: tako telo vidno
   // zraste ali se skrči (prej se je vsakič samo prilagodilo zaslonu in se je spremenilo le merilo).
-  const MERE = ["a", "b", "c", "r", "a1", "a2", "r1", "r2", "v"];
+  const MERE = ["a", "b", "c", "r", "a1", "a2", "r1", "r2", "v", "alfa", "fi"];
   let Dfiks = 0, zadnja = "";
-  const OHRANI = ["prosojno", "prerez", "lega", "nagib", "zasuk", "razpri"];
+  const OHRANI = ["prosojno", "prerez", "lega", "nagib", "zasuk", "razpri", "krogli"];
   const kljucMer = () => MERE.filter((k) => rabi(k)()).map((k) => S[k]).join(); // le mere izbranega telesa
   const robSeg = []; // [x1,y1,z1,x2,y2,z2] ...
   const tocke = []; // oglišča (v cm, trenutno)
@@ -553,6 +853,15 @@ export function zgradi(THREE, ctx) {
       napolniMnogokotnike(plB.geometry, stranske);
     }
 
+    { // včrtana in očrtana krogla (očrtana določa tudi merilo prizora)
+      const kv = kroglePrikazane(T, e);
+      vcrtana.visible = ocrtana.visible = kv;
+      if (kv) {
+        const C = kroglaSredisce(T), P = PRAVILNA[T.vrsta], Ro = P.Ro[1](S.a);
+        vcrtana.position.copy(C); vcrtana.scale.setScalar(P.Rv[1](S.a)); ocrtana.position.copy(C); ocrtana.scale.setScalar(Ro);
+        for (const d of [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]]) lokTocke.push(C.clone().add(V(d[0] * Ro, d[1] * Ro, d[2] * Ro)));
+      }
+    }
     // ----- merilo in središčenje -----
     if (zacetek?.telo !== S.telo) zacetek = null;
     // obris začetne velikosti (»hologram«) ostane v prizoru, tudi ko je večji od telesa (j, 4. 11.)
@@ -710,7 +1019,19 @@ export function zgradi(THREE, ctx) {
     const smerF = (i, d) => d.clone().transformDirection(T.F[i].M);
     const prx = T.proxy = {};
     const vr = T.vrsta;
-    if (!T.plasc && !T.krogla) {
+    if (POLIEDRI.has(vr)) {
+      const bot = T.F[0].p, nb = bot.length; // spodnja ploskev je koren mreže in se ne premika
+      let ib = 0; for (let i = 1; i < nb; i++) if (bot[i].z + bot[(i + 1) % nb].z > bot[ib].z + bot[(ib + 1) % nb].z + 1e-9) ib = i;
+      const sr = bot[ib].clone().add(bot[(ib + 1) % nb]).multiplyScalar(0.5);
+      nap("a", "", sr, V(sr.x, 0, sr.z).normalize().add(V(0, -0.35, 0)));
+      const t = T.obseg, kjePl = (orig) => T.red.indexOf(orig);
+      if (vr === "paralelepiped") {
+        nap("b", "", t[1].clone().add(t[3]).multiplyScalar(0.5), V(1, -0.35, 0));
+        const kc = kjePl(5); // desna stranska ploskev
+        nap("c", "", naF(kc, t[1].clone().add(t[5]).multiplyScalar(0.5)), smerF(kc, V(1, 0, 0.4)));
+        if (e < 0.04) { const c1 = t[4].clone(), c0 = V(c1.x, 0, c1.z); kon.push([c0, c1]); prx.visina = [c0, c1]; nap("v", "", c0.clone().lerp(c1, 0.55), V(-1, 0, 0.3), 1 - e * 25); }
+      }
+    } else if (!T.plasc && !T.krogla) {
       const n = T.B.length, B0 = T.B[T.k0], B1 = T.B[(T.k0 + 1) % n];
       const sr = B0.clone().add(B1).multiplyScalar(0.5);
       const ven = V(sr.x, 0, sr.z).normalize().add(V(0, -0.35, 0));
@@ -769,6 +1090,16 @@ export function zgradi(THREE, ctx) {
       const r = T.krogla, C = V(0, r, 0), f = Math.PI / 4, rp = V(r * Math.sin(f), r, r * Math.cos(f));
       kon.push([C.clone(), rp.clone()]); prx.polmer = [C.clone(), rp.clone()]; prx.sredisce = C.clone();
       nap("r", "", C.clone().lerp(rp, 0.5), V(Math.sin(f + Math.PI / 2), 0.6, Math.cos(f + Math.PI / 2)));
+      nap("S", "", C.clone(), V(-1, 0.4, 0), 1, "#7CE0B5");
+      vSvet(C, pika.position); pika.visible = true;
+    }
+    if (kroglePrikazane(T, e)) { // včrtana in očrtana krogla pravilnega telesa: polmera r in R
+      const C = kroglaSredisce(T), t = T.F.flatMap((F) => F.p);
+      let iv = 0; for (let i = 1; i < t.length; i++) if (t[i].z - t[i].y * 0.2 > t[iv].z - t[iv].y * 0.2) iv = i;
+      const ogl = t[iv].clone(), dotik = V(0, 0, 0);
+      kon.push([C.clone(), ogl.clone()], [C.clone(), dotik.clone()]); prx.polmer = [C.clone(), ogl]; prx.polmer2 = [C.clone(), dotik]; prx.sredisce = C.clone();
+      nap("R", "", C.clone().lerp(ogl, 0.55), V(0.3, 0.5, 1));
+      nap("r", "", C.clone().lerp(dotik, 0.5), V(-1, 0, 0.6), 1, "#7CE0B5");
       nap("S", "", C.clone(), V(-1, 0.4, 0), 1, "#7CE0B5");
       vSvet(C, pika.position); pika.visible = true;
     }
@@ -837,8 +1168,8 @@ export function zgradi(THREE, ctx) {
   function osi(T) {
     // tloris zloženega telesa (mreža se razpira po podlagi, sistem ostane, kjer je)
     let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
-    if (T.krogla || T.plasc || !T.B) { const r = T.krogla || T.r1; x0 = z0 = -r; x1 = z1 = r; }
-    else for (const p of T.B) { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); z0 = Math.min(z0, p.z); z1 = Math.max(z1, p.z); }
+    if (T.krogla || T.plasc || !(T.obseg || T.B)) { const r = T.krogla || T.r1; x0 = z0 = -r; x1 = z1 = r; }
+    else for (const p of T.obseg || T.B) { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); z0 = Math.min(z0, p.z); z1 = Math.max(z1, p.z); }
     // pravokotna osnovna ploskev: izhodišče v kotu (oglišče telesa); sicer v središču osnovne ploskve
     const kot = ["kocka", "kvader", "piramida4", "prisekana"].includes(T.vrsta);
     const O = kot ? V(x0, 0, z0) : V(0, 0, 0), smeri = [V(0, 0, 1), V(1, 0, 0), Y];
@@ -948,8 +1279,8 @@ export function zgradi(THREE, ctx) {
       if (p2) return enako(Lst[0], Lst[2]) ? "enakokraki trapez" : "trapez";
       return "štirikotnik";
     }
-    const imena = { 5: "petkotnik", 6: "šestkotnik", 7: "sedemkotnik", 8: "osemkotnik" };
-    if (n === 6 && Lst.every((x) => enako(x, Lst[0])) && kot.every((c) => Math.abs(c - kot[0]) < 1e-7)) return "pravilni šestkotnik";
+    const imena = { 5: "petkotnik", 6: "šestkotnik", 7: "sedemkotnik", 8: "osemkotnik", 9: "devetkotnik", 10: "desetkotnik" };
+    if (imena[n] && Lst.every((x) => enako(x, Lst[0])) && kot.every((c) => Math.abs(c - kot[0]) < 1e-7)) return "pravilni " + imena[n];
     return imena[n] || "mnogokotnik";
   }
   const nP = new Vector3(), pP = new Vector3();
@@ -958,12 +1289,13 @@ export function zgradi(THREE, ctx) {
     prerezInfo = null;
     for (const m of klipani) m.material.clippingPlanes = null;
     for (const m of [robovi, oglisca, skrite, konV, konS]) m.material.clippingPlanes = null;
+    mVcrt.clippingPlanes = mOcrt.clippingPlanes = null;
     prerezM.visible = ravnina.visible = osnD.visible = plD.visible = false; prerezRob.count = 0;
     if (!vkl) return;
     ravninaZdaj(T, nP, pP);
     const d = nP.dot(pP);
     lokKlip.set(_a.copy(nP).negate(), d); lokDuh.set(nP, -d);
-    for (const mat of [mOsnF, mOsnB, mPlF, mPlB, mRob, mSkrit, mKonV, mKonS]) mat.clippingPlanes = klipi;
+    for (const mat of [mOsnF, mOsnB, mPlF, mPlB, mRob, mSkrit, mKonV, mKonS, mVcrt, mOcrt]) mat.clippingPlanes = klipi;
     osnD.visible = osnB.visible; plD.visible = true;
     // baza ravnine
     const e1 = new Vector3(), e2 = new Vector3();
@@ -1068,7 +1400,9 @@ export function zgradi(THREE, ctx) {
       case "krogla": return `r = ${cm(a)}, premer d = ${cm(2 * a)}`;
       case "prisekana": return `a₁ = ${cm(a)}, a₂ = ${cm(top)}, v = ${cm(v)}, vₛ = ${cm(Math.hypot(v, (a - top) / 2))}${zg}`;
       case "prisekan": return `r₁ = ${cm(a)}, r₂ = ${cm(top)}, v = ${cm(v)}, s = ${cm(Math.hypot(v, a - top))}${zg}`;
+      case "paralelepiped": { const k = paralelepipedKolicine(S.a, S.b, S.c, S.alfa, S.fi); return `a = ${cm(S.a)}, b = ${cm(S.b)}, c = ${cm(S.c)}, α = ${S.alfa}°, φ = ${S.fi}°; višina v = c · sin φ = ${cm(k.v)}`; }
     }
+    if (PRAVILNA[vr]) return `a = ${cm(a)}; vsi robovi so enako dolgi`;
     return "";
   }
   function kolicine() {
@@ -1085,7 +1419,9 @@ export function zgradi(THREE, ctx) {
       case "krogla": return { V: ["4πr³/3", (4 * PI * a ** 3) / 3], P: ["4πr²", 4 * PI * a * a] };
       case "prisekana": { const O1 = a * a, O2 = top * top, vs = Math.hypot(v, (a - top) / 2), pl = 2 * (a + top) * vs; return { V: ["v(O₁ + √(O₁O₂) + O₂)/3", (v * (O1 + Math.sqrt(O1 * O2) + O2)) / 3], P: ["O₁ + O₂ + pl", O1 + O2 + pl], O: ["a₁²", O1], O2: ["a₂²", O2], pl: ["2(a₁ + a₂) · vₛ", pl] }; }
       case "prisekan": { const s = Math.hypot(v, a - top), O1 = PI * a * a, O2 = PI * top * top, pl = PI * s * (a + top); return { V: ["πv(r₁² + r₁r₂ + r₂²)/3", (PI * v * (a * a + a * top + top * top)) / 3], P: ["O₁ + O₂ + pl", O1 + O2 + pl], O: ["πr₁²", O1], O2: ["πr₂²", O2], pl: ["πs(r₁ + r₂)", pl] }; }
+      case "paralelepiped": { const k = paralelepipedKolicine(S.a, S.b, S.c, S.alfa, S.fi); return { V: ["O · v", k.V], P: ["2(ab · sin α + ac · sin φ + bc · sin β)", k.P], O: ["ab · sin α", k.O], pl: ["2(ac · sin φ + bc · sin β)", 2 * (k.Sac + k.Sbc)], beta: k.beta }; }
     }
+    if (PRAVILNA[vr]) { const P = PRAVILNA[vr]; return { V: [P.V[0], P.V[1](a)], P: [P.P[0], P.P[1](a)] }; }
     return {};
   }
   function mrezaBesedilo() {
@@ -1102,7 +1438,9 @@ export function zgradi(THREE, ctx) {
       case "krogla": return "krogla nima mreže: krogelne ploskve ne moremo razgrniti v ravnino, ne da bi jo raztegnili ali raztrgali";
       case "prisekana": return "2 kvadrata in 4 skladni enakokraki trapezi";
       case "prisekan": { const s = Math.hypot(v, a - top), Sc = (s * a) / (a - top); return `2 kroga in izsek krožnega kolobarja (polmera ${cm(Sc)} in ${cm(Sc - s)}, kot ${st((360 * a) / Sc)}°)`; }
+      case "paralelepiped": return "6 paralelogramov, po dva in dva skladna (nasprotni ploskvi sta skladni)";
     }
+    if (PRAVILNA[vr]) return PRAVILNA[vr].mreza;
     return "";
   }
 
@@ -1118,6 +1456,19 @@ export function zgradi(THREE, ctx) {
       d.push({ id: "sredisce", ime: "Središče S", opis: "Točka v notranjosti krogle, ki je enako oddaljena od vseh točk krogelne ploskve.", barva: "#7CE0B5", meshes: [proxyKr.sredisce], tocka: tk(V(0, r, 0)) });
       d.push({ id: "polmer", ime: "Polmer r", opis: "Daljica od središča do krogelne ploskve; vsi polmeri krogle so enako dolgi.", barva: "#7CE0B5", meshes: [proxyCev.polmer], tocka: tk(V(r * 0.35, r, r * 0.35)) });
       d.push({ id: "glavni-krog", ime: "Glavna krožnica", opis: "Največja krožnica na krogli; njeno središče je kar središče krogle (kot ekvator na Zemlji).", barva: "#F1F4FF", meshes: [robovi], tocka: tk(V(-r, r, 0)) });
+    } else if (POLIEDRI.has(vr)) {
+      const P = PRAVILNA[vr], [nO, nR] = ORP[vr];
+      let ip = 1; for (let k = 2; k < T.F.length; k++) if (sredF(T.F[k]).z > sredF(T.F[ip]).z) ip = k; // ploskev spredaj
+      if (vr === "paralelepiped") {
+        d.push({ id: "osnovna", ime: "Osnovni ploskvi", opis: "Spodnji in zgornji paralelogram s stranicama a in b ter kotom α med njima. Ležita v vzporednih ravninah; ploščina ene je O = ab · sin α.", barva: "#7FA6FF", meshes: [osnF, osnB], tocka: tk(sredF(T.F[0])) });
+        d.push({ id: "plasc", ime: "Plašč", opis: "Štirje paralelogrami ob straneh; nasprotna sta skladna. Ker je rob c nagnjen, stranske ploskve niso pravokotniki.", barva: "#F2B35E", meshes: [plF, plB], tocka: tk(sredF(T.F[T.red.indexOf(2)])) });
+      } else {
+        d.push({ id: "ploskve", ime: "Ploskve", opis: `${P.ploskve}. Vse ploskve so enake, zato telo nima posebne osnovne ploskve: lahko ga postaviš na katerokoli.`, barva: "#F2B35E", meshes: [plF, plB], tocka: tk(sredF(T.F[ip])) });
+      }
+      const bot = T.F[0].p;
+      d.push({ id: "robovi", ime: "Robovi", opis: `Daljice, v katerih se stikata po dve ploskvi; to telo ima ${nR} robov${P ? ", vsi so dolgi a" : ""}. Skrite robove rišemo črtkano.`, barva: "#F1F4FF", meshes: [robovi], tocka: tk(bot[0].clone().lerp(bot[1], 0.5)) });
+      d.push({ id: "oglisca", ime: "Oglišča", opis: `Točke, v katerih se stikajo robovi; to telo ima ${sklon(nO, ["oglišče", "oglišči", "oglišča", "oglišč"])}.${P ? ` Ob vsakem oglišču so ${P.vozel}, kar je manj od 360°.` : ""}`, barva: "#F1F4FF", meshes: [oglisca], tocka: tk(bot[1].clone()) });
+      if (T.proxy.visina) d.push({ id: "visina", ime: "Višina v", opis: "Razdalja med osnovnima ploskvama, merjena pravokotno nanju. Ker je rob c nagnjen, je višina v = c · sin φ krajša od c.", barva: "#7CE0B5", meshes: [proxyCev.visina], tocka: tk(T.proxy.visina[0].clone().lerp(T.proxy.visina[1], 0.5)) });
     } else {
       const osn = T.F.filter((F) => F.vrsta === "osn"), stevilo = osn.length;
       const osnIme = stevilo > 1 ? "Osnovni ploskvi" : "Osnovna ploskev";
@@ -1164,12 +1515,17 @@ export function zgradi(THREE, ctx) {
       if (pr.polmer2) d.push({ id: "polmer2", ime: "Polmer r₂", opis: "Polmer zgornje (manjše) osnovne ploskve.", barva: "#7CE0B5", meshes: [proxyCev.polmer2], tocka: tk(pr.polmer2[0].clone().lerp(pr.polmer2[1], 0.5)) });
       if (pr.vrh) d.push({ id: "vrh", ime: "Vrh", opis: vr === "stozec" ? "Točka, v kateri se stečejo vse stranice stožca." : "Skupno oglišče vseh stranskih ploskev piramide.", barva: "#F1F4FF", meshes: [proxyKr.vrh], tocka: tk(pr.vrh) });
     }
+    if (kroglePrikazane(T, e)) {
+      const C = kroglaSredisce(T), P = PRAVILNA[vr], Rv = P.Rv[1](S.a), Ro = P.Ro[1](S.a), sm = V(-1, 0.45, 0.6).normalize();
+      d.push({ id: "vcrtana", ime: "Včrtana krogla", opis: `Krogla, ki se dotika vseh ploskev telesa, vsake v njenem središču. Njen polmer je r = ${P.Rv[0]}.`, barva: "#7CE0B5", meshes: [vcrtana, proxyCev.polmer2], tocka: tk(C.clone().addScaledVector(V(0, -1, 0), Rv * 0.5)) });
+      d.push({ id: "ocrtana", ime: "Očrtana krogla", opis: `Krogla, na kateri ležijo vsa oglišča telesa. Njen polmer je R = ${P.Ro[0]}. Evklid v XIII. knjigi vsako pravilno telo včrta v tako kroglo.`, barva: "#9FB6FF", meshes: [ocrtana, proxyCev.polmer], tocka: tk(C.clone().addScaledVector(sm, Ro)) });
+    }
     {
       const R = tla.scale.x, k = korakTal, K = k === 1 ? 5 : 10;
       d.push({ id: "podlaga", ime: "Karirasta podlaga", opis: `Podlaga je razdeljena na kvadratke s stranico ${k} cm (debelejše črte so na vsakih ${K} cm) kot v karirastem zvezku; z njimi oceniš velikost telesa in njegove mreže.`, barva: "#A9BCE8", meshes: [tla], tocka: tk(V(sred.x - 0.6 * R, 0, sred.z + 0.6 * R)) });
       if (osInfo) {
         const [mx, my, mz] = osInfo.mere.map((m) => cm(m));
-        d.push({ id: "osi", ime: "Koordinatni sistem", opis: `Osi x (proti tebi), y (v desno) in z (navzgor) imajo izhodišče 0 ${osInfo.kot ? "v zadnjem levem spodnjem kotu telesa" : "v središču osnovne ploskve"}; številke so v cm na vsakih ${osInfo.korak} cm. Telo sega do x = ${mx}, y = ${my} in z = ${mz} (poudarjene črtice). Ko spreminjaš mere, se podlaga in osi prilagodijo, številke pa vedno kažejo prave mere; tanek obris kaže začetno velikost.`, barva: "#7FA8FF", meshes: [osiCev, osiKon], tocka: tk(osiTocka) });
+        d.push({ id: "osi", ime: "Koordinatni sistem", opis: `Osi x (proti tebi), y (v desno) in z (navzgor) imajo izhodišče 0 ${osInfo.kot ? "v zadnjem levem spodnjem kotu telesa" : NOVA.has(vr) ? "v središču ploskve, na kateri telo leži" : "v središču osnovne ploskve"}; številke so v cm na vsakih ${osInfo.korak} cm. Telo sega do x = ${mx}, y = ${my} in z = ${mz} (poudarjene črtice). Ko spreminjaš mere, se podlaga in osi prilagodijo, številke pa vedno kažejo prave mere; tanek obris kaže začetno velikost.`, barva: "#7FA8FF", meshes: [osiCev, osiKon], tocka: tk(osiTocka) });
       }
     }
     if (prerezInfo) {
@@ -1183,14 +1539,26 @@ export function zgradi(THREE, ctx) {
   const ob = (k) => (v) => { S[k] = v; zadnja = k; if (k === "telo") Dfiks = 0; obnovi(); zadnja = ""; };
   // drsniki ravnine delujejo le, ko je mreža zložena (krogla nima mreže)
   const ravninaDela = () => S.prerez && (S.razpri <= 1e-4 || S.telo === "krogla");
+  // skupini teles (j, 5. 11.): vsaka ima svoj seznam, kocka je v obeh
+  const izbiraSk = { tip: "izbira", id: "skupina", oznaka: "Skupina teles", moznosti: SKUPINE, vrednost: S.skupina, ob: (v) => { S.skupina = izbiraSk.vrednost = v; ob("telo")(v === "platonova" ? platonsko : osnovno); } };
+  const izbiraTelo = { tip: "izbira", id: "telo", oznaka: "Telo", moznosti: MOZNOSTI, vrednost: osnovno, vidno: () => S.skupina === "osnovna",
+    ob: (v) => { osnovno = izbiraTelo.vrednost = v; S.skupina = izbiraSk.vrednost = "osnovna"; ob("telo")(v); } };
+  const izbiraPl = { tip: "izbira", id: "platon", oznaka: "Pravilno telo", moznosti: PLATON_MOZ, vrednost: platonsko, vidno: () => S.skupina === "platonova",
+    ob: (v) => { platonsko = izbiraPl.vrednost = v; S.skupina = izbiraSk.vrednost = "platonova"; ob("telo")(v); } };
+  const stikaloPro = { tip: "stikalo", id: "prosojno", oznaka: "Prosojne ploskve", vrednost: S.prosojno, ob: ob("prosojno") };
+  // včrtana krogla je znotraj telesa, zato ob vklopu ploskve postanejo prosojne
+  const stikaloKr = { tip: "stikalo", id: "krogli", oznaka: "Včrtana in očrtana krogla", vrednost: S.krogli, vidno: () => pravilno(),
+    ob: (v) => { if (v && !S.prosojno) S.prosojno = stikaloPro.vrednost = true; stikaloKr.vrednost = v; ob("krogli")(v); } };
   const api = {
     group,
     deli: [],
     nadzor: [
-      { tip: "izbira", id: "telo", oznaka: "Telo", moznosti: MOZNOSTI, vrednost: S.telo, ob: ob("telo") },
+      izbiraSk, izbiraTelo, izbiraPl,
       { tip: "drsnik", id: "a", oznaka: "Rob a (cm)", min: 1, max: 10, korak: 0.5, vrednost: S.a, ob: ob("a"), vidno: rabi("a") },
       { tip: "drsnik", id: "b", oznaka: "Rob b (cm)", min: 1, max: 10, korak: 0.5, vrednost: S.b, ob: ob("b"), vidno: rabi("b") },
       { tip: "drsnik", id: "c", oznaka: "Rob c (cm)", min: 1, max: 10, korak: 0.5, vrednost: S.c, ob: ob("c"), vidno: rabi("c") },
+      { tip: "drsnik", id: "alfa", oznaka: "Kot α med a in b (°)", min: 30, max: 90, korak: 1, vrednost: S.alfa, ob: ob("alfa"), vidno: rabi("alfa") },
+      { tip: "drsnik", id: "fi", oznaka: "Nagib φ roba c (°)", min: 30, max: 90, korak: 1, vrednost: S.fi, ob: ob("fi"), vidno: rabi("fi") },
       { tip: "drsnik", id: "r", oznaka: "Polmer r (cm)", min: 1, max: 10, korak: 0.5, vrednost: S.r, ob: ob("r"), vidno: rabi("r") },
       { tip: "drsnik", id: "a1", oznaka: "Spodnji rob a₁ (cm)", min: 1, max: 10, korak: 0.5, vrednost: S.a1, ob: ob("a1"), vidno: rabi("a1") },
       { tip: "drsnik", id: "a2", oznaka: "Zgornji rob a₂ (cm)", min: 1, max: 10, korak: 0.5, vrednost: S.a2, ob: ob("a2"), vidno: rabi("a2") },
@@ -1202,13 +1570,23 @@ export function zgradi(THREE, ctx) {
       { tip: "izpis", id: "P", oznaka: "Površina", vrednost: () => { const k = kolicine(); return `P = ${k.P[0]} = ${cm2(k.P[1])}`; } },
       { tip: "izpis", id: "Opl", oznaka: "Osnovna ploskev in plašč", vrednost: () => {
         const k = kolicine();
+        if (!k.O && PRAVILNA[S.telo]) return `vseh ${PRAVILNA[S.telo].p} ploskev je enakih: P = ${PRAVILNA[S.telo].p} · ploščina ene ploskve`;
         if (!k.O) return "krogla nima ne osnovne ploskve ne plašča";
+        if (k.beta != null) return `O = ${k.O[0]} = ${cm2(k.O[1])}; pl = ${k.pl[0]} = ${cm2(k.pl[1])} (β = ${st(k.beta)}° je kot med b in c)`;
         if (k.O2) return `O₁ = ${k.O[0]} = ${cm2(k.O[1])}; O₂ = ${k.O2[0]} = ${cm2(k.O2[1])}; pl = ${k.pl[0]} = ${cm2(k.pl[1])}`;
         return `O = ${k.O[0]} = ${cm2(k.O[1])}; pl = ${k.pl[0]} = ${cm2(k.pl[1])}`;
       } },
+      { tip: "izpis", id: "polmera", oznaka: "Včrtana in očrtana krogla", vidno: () => pravilno(), vrednost: () => {
+        const P = PRAVILNA[S.telo];
+        if (!P) return "samo pri pravilnih telesih";
+        return `r = ${P.Rv[0]} = ${cm(P.Rv[1](S.a))}; R = ${P.Ro[0]} = ${cm(P.Ro[1](S.a))}`;
+      } },
+      { tip: "izpis", id: "euler", oznaka: "Oglišča, robovi, ploskve", vidno: () => !!ORP[S.telo], vrednost: () => euler(S.telo) || "Eulerjeva formula velja za telesa z ravnimi ploskvami" },
+      { tip: "izpis", id: "elementi", oznaka: "Evklidovi Elementi", vrednost: () => { const t = ELEMENTI[S.telo]; return t.startsWith("v ") ? "V" + t.slice(1) : "Evklid, Elementi, " + t; } },
+      { tip: "izpis", id: "zakaj5", oznaka: "Zakaj je pravilnih teles samo 5?", vidno: () => S.skupina === "platonova", vrednost: () => ZAKAJ_PET },
       { tip: "drsnik", id: "razpri", oznaka: "Razpri mrežo", min: 0, max: 1, korak: 0.01, vrednost: S.razpri, ob: ob("razpri"), vidno: () => S.telo !== "krogla" },
       { tip: "izpis", id: "mreza", oznaka: "Mreža", vrednost: () => mrezaBesedilo() },
-      { tip: "stikalo", id: "prosojno", oznaka: "Prosojne ploskve", vrednost: S.prosojno, ob: ob("prosojno") },
+      stikaloPro, stikaloKr,
       { tip: "stikalo", id: "prerez", oznaka: "Prerez z ravnino", vrednost: S.prerez, ob: ob("prerez") },
       { tip: "drsnik", id: "lega", oznaka: "Lega ravnine", min: 0, max: 1, korak: 0.01, vrednost: S.lega, ob: ob("lega"), vidno: () => ravninaDela() },
       { tip: "drsnik", id: "nagib", oznaka: "Nagib ravnine (°)", min: 0, max: 90, korak: 1, vrednost: S.nagib, ob: ob("nagib"), vidno: () => ravninaDela() },
@@ -1231,6 +1609,8 @@ export function zgradi(THREE, ctx) {
     },
     // prostornina in površina na odru, vidni tudi med vlečenjem drsnika (j, 4. 11.)
     povzetek: () => { const k = kolicine(); return `V = ${cm3(k.V[1])}\nP = ${cm2(k.P[1])}`; },
+    // za teste: ploskve, kot so trenutno postavljene (zloženo telo ali razprta mreža), v cm
+    ploskveMreze: () => T.F.map((F) => F.p.map((p) => { const q = p.clone().applyMatrix4(F.M); return [q.x, q.y, q.z]; })),
     dispose() {
       const geos = new Set(), mats = new Set();
       group.traverse((o) => { if (o.geometry) geos.add(o.geometry); const m = o.material; if (m) (Array.isArray(m) ? m : [m]).forEach((x) => mats.add(x)); });
