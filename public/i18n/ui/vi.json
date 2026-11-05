@@ -3109,6 +3109,7 @@
   "adm.rep.more": "Chi tiết",
   "adm.rep.question": "Câu hỏi:",
   "adm.rep.fixed": "Đã sửa",
+  "adm.rep.inReview": "Đang xem xét · PR #{n}",
   "adm.rep.reopen": "Mở lại",
   "adm.rep.none": "Không có báo cáo.",
   "adm.rep.download": "Tải về để sửa (.md)",

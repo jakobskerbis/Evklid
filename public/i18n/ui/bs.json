@@ -3162,6 +3162,7 @@
   "adm.rep.more": "Detalji",
   "adm.rep.question": "Pitanje:",
   "adm.rep.fixed": "Ispravljeno",
+  "adm.rep.inReview": "Na pregledu · PR #{n}",
   "adm.rep.reopen": "Ponovo otvori",
   "adm.rep.none": "Nema prijava.",
   "adm.rep.download": "Preuzmi za ispravke (.md)",

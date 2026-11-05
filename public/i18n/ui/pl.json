@@ -3193,6 +3193,7 @@
   "adm.rep.more": "Szczegóły",
   "adm.rep.question": "Pytanie:",
   "adm.rep.fixed": "Poprawione",
+  "adm.rep.inReview": "W sprawdzaniu · PR #{n}",
   "adm.rep.reopen": "Otwórz ponownie",
   "adm.rep.none": "Brak zgłoszeń.",
   "adm.rep.download": "Pobierz do poprawek (.md)",

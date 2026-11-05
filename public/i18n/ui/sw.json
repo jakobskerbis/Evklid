@@ -3133,6 +3133,7 @@
   "adm.rep.more": "Maelezo zaidi",
   "adm.rep.question": "Swali:",
   "adm.rep.fixed": "Imerekebishwa",
+  "adm.rep.inReview": "Inakaguliwa · PR #{n}",
   "adm.rep.reopen": "Fungua tena",
   "adm.rep.none": "Hakuna ripoti.",
   "adm.rep.download": "Pakua kwa kurekebisha (.md)",

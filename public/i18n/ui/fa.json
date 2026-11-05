@@ -3133,6 +3133,7 @@
   "adm.rep.more": "جزئیات",
   "adm.rep.question": "پرسش:",
   "adm.rep.fixed": "رفع شد",
+  "adm.rep.inReview": "در حال بررسی · PR #{n}",
   "adm.rep.reopen": "بازکردن دوباره",
   "adm.rep.none": "گزارشی نیست.",
   "adm.rep.download": "دانلود برای رفع (.md)",

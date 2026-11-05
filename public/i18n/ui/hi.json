@@ -3133,6 +3133,7 @@
   "adm.rep.more": "विवरण",
   "adm.rep.question": "प्रश्न:",
   "adm.rep.fixed": "ठीक हो गया",
+  "adm.rep.inReview": "समीक्षा में · PR #{n}",
   "adm.rep.reopen": "फिर से खोलें",
   "adm.rep.none": "कोई रिपोर्ट नहीं।",
   "adm.rep.download": "ठीक करने के लिए डाउनलोड करें (.md)",

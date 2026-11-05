@@ -3133,6 +3133,7 @@
   "adm.rep.more": "Részletek",
   "adm.rep.question": "Kérdés:",
   "adm.rep.fixed": "Javítva",
+  "adm.rep.inReview": "Ellenőrzés alatt · PR #{n}",
   "adm.rep.reopen": "Újranyitás",
   "adm.rep.none": "Nincs jelentés.",
   "adm.rep.download": "Letöltés javításhoz (.md)",

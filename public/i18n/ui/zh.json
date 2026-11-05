@@ -3109,6 +3109,7 @@
   "adm.rep.more": "详情",
   "adm.rep.question": "问题：",
   "adm.rep.fixed": "已修正",
+  "adm.rep.inReview": "审查中 · PR #{n}",
   "adm.rep.reopen": "重新打开",
   "adm.rep.none": "没有报告。",
   "adm.rep.download": "下载以便修正（.md）",

@@ -3247,6 +3247,7 @@
   "adm.rep.more": "التفاصيل",
   "adm.rep.question": "السؤال:",
   "adm.rep.fixed": "تم الإصلاح",
+  "adm.rep.inReview": "قيد المراجعة · PR #{n}",
   "adm.rep.reopen": "إعادة الفتح",
   "adm.rep.none": "لا توجد بلاغات.",
   "adm.rep.download": "تنزيل للإصلاح (.md)",

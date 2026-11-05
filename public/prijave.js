@@ -174,6 +174,13 @@ function reasonText(r) {
   return r.kind === "lesson" ? lessonReason(r.reason) : t(`rep.${r.reason}`);
 }
 
+// Stanje prijave: dnevni pregled (docs/prijave-pregled.md) odpre PR in prijavo označi »V pregledu · PR #N«.
+function statusLine(r) {
+  if (r.status === "in_review") return `<span class="adm-rep-state" dir="auto">${icon("wrench")}<span>${esc(t("adm.rep.inReview", { n: r.pr ?? "?" }))}</span></span>`;
+  if (r.status === "fixed") return `<span class="adm-rep-state" dir="auto">${icon("check")}<span>${esc(t("adm.rep.fixed"))}${r.pr ? ` · PR #${esc(r.pr)}` : ""}</span></span>`;
+  return "";
+}
+
 // Odgovor, kot ga je videl učenec: izrisan HTML s spleta (očiščen) ali, pri prijavah iz aplikacije in starejših
 // prijavah, besedilo znova izrisano z istim izrisovalnikom kot v klepetu.
 let rich = null;
@@ -210,6 +217,7 @@ export async function renderAdminReports(box, { api, toast, showAll = false }) {
     .map(
       (r) => `<li class="adm-rep${r.status === "fixed" ? " fixed" : ""}" data-kind="${esc(r.kind)}" data-id="${esc(r.id)}">
         <div class="adm-rep-head">${icon(KIND_ICON[r.kind] || "flag")}<b>${esc(reportTitle(r))}</b>${reasonText(r) ? `<span class="pill">${esc(reasonText(r))}</span>` : ""}</div>
+        ${statusLine(r)}
         <small class="muted" dir="auto">${esc(r.created_at)} UTC${r.device ? ` · ${esc(r.device)}` : ""}</small>
         ${r.note ? `<p class="adm-rep-note" dir="auto">${esc(r.note)}</p>` : ""}
         ${shownBlock(r)}

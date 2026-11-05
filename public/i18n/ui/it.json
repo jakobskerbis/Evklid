@@ -3136,6 +3136,7 @@
   "adm.rep.more": "Dettagli",
   "adm.rep.question": "Domanda:",
   "adm.rep.fixed": "Corretto",
+  "adm.rep.inReview": "In revisione · PR #{n}",
   "adm.rep.reopen": "Riapri",
   "adm.rep.none": "Nessuna segnalazione.",
   "adm.rep.download": "Scarica per la correzione (.md)",

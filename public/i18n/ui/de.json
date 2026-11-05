@@ -3135,6 +3135,7 @@
   "adm.rep.more": "Details",
   "adm.rep.question": "Frage:",
   "adm.rep.fixed": "Behoben",
+  "adm.rep.inReview": "In Prüfung · PR #{n}",
   "adm.rep.reopen": "Wieder öffnen",
   "adm.rep.none": "Keine Meldungen.",
   "adm.rep.download": "Zum Beheben herunterladen (.md)",
