@@ -2242,10 +2242,10 @@
   "acct.trial": "<b>Bezpłatny okres próbny</b> do {date}: wszystkie funkcje dla maksymalnie 2 dzieci.",
   "acct.promo": "<b>Pełny dostęp z kodem aktywacyjnym</b> do {date}.",
   "acct.promoTrial": {
-    "one": "Do {trial} (okres próbny) mogą korzystać 2 dzieci, potem kod obejmuje {n} dziecko.",
-    "few": "Do {trial} (okres próbny) mogą korzystać 2 dzieci, potem kod obejmuje {n} dzieci.",
-    "many": "Do {trial} (okres próbny) mogą korzystać 2 dzieci, potem kod obejmuje {n} dzieci.",
-    "other": "Do {trial} (okres próbny) mogą korzystać 2 dzieci, potem kod obejmuje {n} dziecka."
+    "one": "Do {trial} (okres próbny) może z niego korzystać 2 dzieci, potem kod obejmuje {n} dziecko.",
+    "few": "Do {trial} (okres próbny) może z niego korzystać 2 dzieci, potem kod obejmuje {n} dzieci.",
+    "many": "Do {trial} (okres próbny) może z niego korzystać 2 dzieci, potem kod obejmuje {n} dzieci.",
+    "other": "Do {trial} (okres próbny) może z niego korzystać 2 dzieci, potem kod obejmuje {n} dziecka."
   },
   "acct.bonus": "<b>Darmowy miesiąc</b> z polecenia do {date}.",
   "acct.free": {

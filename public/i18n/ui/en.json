@@ -2214,8 +2214,8 @@
   "acct.trial": "<b>Free trial</b> until {date}: all features for up to 2 children.",
   "acct.promo": "<b>Full access with an activation code</b> until {date}.",
   "acct.promoTrial": {
-    "one": "Until {trial} (trial), 2 children can use it; after that, the code covers {n} child.",
-    "other": "Until {trial} (trial), 2 children can use it; after that, the code covers {n} children."
+    "one": "Until {trial} (trial), 2 children can use Evklid; after that, the code covers {n} child.",
+    "other": "Until {trial} (trial), 2 children can use Evklid; after that, the code covers {n} children."
   },
   "acct.bonus": "<b>Free month</b> from a referral until {date}.",
   "acct.free": {

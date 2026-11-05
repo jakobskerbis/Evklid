@@ -673,16 +673,23 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
     if (!PLANS.includes(b.plan)) return res.status(400).json({ error: `Paket: ${PLANS.join(", ")}.` });
     // Naročilo, iz katerega je licenca (neobvezno): pilotna licenca prevzame mesto svojega pilotnega naročila.
     const orderId = b.orderId == null || b.orderId === "" ? null : num(b.orderId);
+    if (orderId !== null && !(Number.isInteger(orderId) && orderId > 0)) return res.status(400).json({ error: "Številka naročila mora biti celo število." });
     const hasOrders = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_orders'").get();
-    const order = orderId === null ? null : Number.isInteger(orderId) && hasOrders ? db.prepare("SELECT id, plan, status, tax_id FROM school_orders WHERE id = ?").get(orderId) : undefined;
+    const order = orderId === null ? null : hasOrders ? db.prepare("SELECT id, plan, status, tax_id FROM school_orders WHERE id = ?").get(orderId) : undefined;
     if (order === undefined) return res.status(404).json({ error: "Naročilo ne obstaja." });
+    if (order && order.plan !== b.plan) return res.status(400).json({ error: "Paket licence mora biti enak paketu naročila." });
+    // Eno naročilo = ena šola: naročila, povezanega z licenco druge šole, ni mogoče uporabiti znova.
+    if (order && db.prepare("SELECT 1 FROM school_licences WHERE order_id = ? AND school_id != ?").get(order.id, id)) {
+      return res.status(409).json({ error: "To naročilo je že povezano z licenco druge šole." });
+    }
     if (b.plan === "pilot") {
-      if (order && order.plan !== "pilot") return res.status(400).json({ error: "Pilotna licenca je lahko samo iz pilotnega naročila." });
-      // Prvih 10 šol: nova pilotna šola brez naročila ne sme vzeti mesta, ki ga drži odprto pilotno naročilo druge šole.
-      // (Licenca iz naročila prevzame mesto tega naročila; šola, ki že ima pilotno licenco, mesta ne zasede znova.)
+      // Prvih 10 šol: šola, ki še nima pilotne licence, ne sme vzeti mesta, ki ga drži odprto pilotno naročilo druge
+      // šole. Licenca iz naročila prevzame mesto tega naročila le, če ga naročilo zdaj drži (odprto stanje, davčna
+      // še brez pilotne licence); »lost« ali »won« naročilo mesta ne drži, zato šteje kot brez naročila.
       const ids = pilotSchoolIds(db);
-      const newSchoolNoOrder = !order && !ids.includes(id);
-      if (!pilotOpen(db, id) || (newSchoolNoOrder && ids.length + pilotHeldOrders(db) >= PILOT_SCHOOLS_MAX)) return res.status(409).json({ error: `Pilotna cena velja samo za prvih ${PILOT_SCHOOLS_MAX} šol.` });
+      const holds = !!order && PILOT_HOLD_STATUSES.includes(order.status) && !pilotLicencedTaxIds(db).includes(order.tax_id);
+      const newSchool = !ids.includes(id);
+      if (!pilotOpen(db, id) || (newSchool && ids.length + pilotHeldOrders(db) - (holds ? 1 : 0) >= PILOT_SCHOOLS_MAX)) return res.status(409).json({ error: `Pilotna cena velja samo za prvih ${PILOT_SCHOOLS_MAX} šol.` });
     }
     if (!Number.isInteger(seats) || seats < 1 || seats > 5000) return res.status(400).json({ error: "Število mest 1–5000." });
     const from = b.validFrom || day();

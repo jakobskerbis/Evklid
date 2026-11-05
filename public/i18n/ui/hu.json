@@ -2211,7 +2211,7 @@
   "acct.subPaid": "<b>Előfizetés:</b> {plan} ({status})",
   "acct.subEnds": "Az előfizetésed vége: {date}.",
   "acct.subNext": "A következő időszak kezdete: {date}.",
-  "acct.trial": "<b>Ingyenes próbaidőszak</b> eddig: {date}. Minden funkció legfeljebb 2 gyereknek.",
+  "acct.trial": "<b>Ingyenes próbaidőszak</b> eddig: {date} – minden funkció legfeljebb 2 gyereknek.",
   "acct.promo": "<b>Teljes hozzáférés aktiválókóddal</b> eddig: {date}.",
   "acct.promoTrial": {
     "one": "A próbaidőszak végéig ({trial}) 2 gyerek használhatja, utána a kód {n} gyerekre érvényes.",

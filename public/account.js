@@ -25,6 +25,8 @@ const money = (minor, currency = "EUR") => {
   const digits = currency !== "EUR" && Number.isInteger(major) ? 0 : 2;
   return major.toLocaleString(locale(), { style: "currency", currency, minimumFractionDigits: digits, maximumFractionDigits: digits });
 };
+// Datum, ki se konča s piko (hr »2026.«, hu, ru »г.«), na koncu stavka ne sme dati dveh pik.
+const dot = (s) => String(s).replace(/\.\.(?=\s|<|$)/g, ".");
 // Datum v jeziku vmesnika (kot money), da prevedeni stavki nimajo slovenskega meseca.
 const date = (iso) => (iso ? new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" }) : "");
 const store = {
@@ -824,18 +826,18 @@ function planText(acc) {
     const pend = acc.pending_change;
     // Besedila z <b> so iz kataloga (zaupanja vredna); spremenljivke so ubežane.
     return `<p>${t("acct.subPaid", { plan: esc(plan?.label || sub.plan), status: esc(statusText(sub.status)) })}</p>
-      <p class="muted">${esc(t(sub.cancel_at_period_end ? "acct.subEnds" : "acct.subNext", { date: date(sub.period_end) }))}</p>
-      ${pend ? `<p class="muted">${esc(t("up.pending", { date: date(pend.effective_at), price: money(pend.amount, pend.currency), name: shortName(planName(acc.plans.find((p) => p.key === pend.plan) || { level: "OS" })) }))}</p>` : ""}
+      <p class="muted">${esc(dot(t(sub.cancel_at_period_end ? "acct.subEnds" : "acct.subNext", { date: date(sub.period_end) })))}</p>
+      ${pend ? `<p class="muted">${esc(dot(t("up.pending", { date: date(pend.effective_at), price: money(pend.amount, pend.currency), name: shortName(planName(acc.plans.find((p) => p.key === pend.plan) || { level: "OS" })) })))}</p>` : ""}
       ${upgradeBox(acc)}`;
   }
-  if (access.tier === "trial") return `<p>${t("acct.trial", { date: esc(date(access.until)) })}</p>`;
+  if (access.tier === "trial") return `<p>${dot(t("acct.trial", { date: esc(date(access.until)) }))}</p>`;
   if (access.tier === "promo") {
     const trial = Date.parse(parent.trial_ends_at || 0) > Date.now();
-    return `<p>${t("acct.promo", { date: esc(date(access.until)) })}</p>${
-      trial ? `<p class="muted">${esc(t("acct.promoTrial", { trial: date(parent.trial_ends_at), n: acc.promo?.seats > 1 ? acc.promo.seats : 1 }))}</p>` : ""}`;
+    return `<p>${dot(t("acct.promo", { date: esc(date(access.until)) }))}</p>${
+      trial ? `<p class="muted">${esc(dot(t("acct.promoTrial", { trial: date(parent.trial_ends_at), n: acc.promo?.seats > 1 ? acc.promo.seats : 1 })))}</p>` : ""}`;
   }
-  if (access.tier === "bonus") return `<p>${t("acct.bonus", { date: esc(date(access.until)) })}</p>`;
-  if (access.tier === "gift") return `<p>${esc(t("gift.tier", { date: date(access.until) }))}</p>`;
+  if (access.tier === "bonus") return `<p>${dot(t("acct.bonus", { date: esc(date(access.until)) }))}</p>`;
+  if (access.tier === "gift") return `<p>${esc(dot(t("gift.tier", { date: date(access.until) })))}</p>`;
   return `<p>${t("acct.free", { n: Number(acc.free_daily_questions) || 0 })}</p>`;
 }
 

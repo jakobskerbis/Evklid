@@ -2214,8 +2214,8 @@
   "acct.trial": "<b>Kostenlose Testphase</b> bis {date}: alle Funktionen für bis zu 2 Kinder.",
   "acct.promo": "<b>Voller Zugang mit Aktivierungscode</b> bis {date}.",
   "acct.promoTrial": {
-    "one": "Bis {trial} (Testphase) können 2 Kinder es nutzen, danach gilt der Code für {n} Kind.",
-    "other": "Bis {trial} (Testphase) können 2 Kinder es nutzen, danach gilt der Code für {n} Kinder."
+    "one": "Bis {trial} (Testphase) können es 2 Kinder nutzen, danach gilt der Code für {n} Kind.",
+    "other": "Bis {trial} (Testphase) können es 2 Kinder nutzen, danach gilt der Code für {n} Kinder."
   },
   "acct.bonus": "<b>Kostenloser Monat</b> durch eine Empfehlung bis {date}.",
   "acct.free": {

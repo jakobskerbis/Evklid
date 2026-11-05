@@ -164,7 +164,7 @@ test("private space: teacher sees only assignment results and XP; licence seats;
       );
     const base = { plan: "pilot", seats: 1, validFrom: today, validUntil: "2099-08-31" };
     assert.equal((await t(`/api/admin/schools/${sch.id}/licences`, { method: "POST", body: { ...base, orderId: 9999 } })).status, 404);
-    assert.equal((await t(`/api/admin/schools/${sch.id}/licences`, { method: "POST", body: { ...base, orderId: ord("class") } })).status, 400);
+    assert.equal((await t(`/api/admin/schools/${sch.id}/licences`, { method: "POST", body: { ...base, orderId: ord("class") } })).status, 400, "paket licence ≠ paket naročila");
     const pilotOrder = ord("pilot");
     assert.equal((await t(`/api/admin/schools/${sch.id}/licences`, { method: "POST", body: { ...base, orderId: pilotOrder } })).status, 201);
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM school_licences WHERE order_id = ?").get(pilotOrder).n, 1);
@@ -179,7 +179,19 @@ test("private space: teacher sees only assignment results and XP; licence seats;
     // 9 pilotnih šol (OŠ Prule + 8) + odprto naročilo tuje šole = polno.
     db.prepare("UPDATE school_orders SET tax_id = '99999999', status = 'contacted' WHERE id = ?").run(pilotOrder);
     assert.equal((await t(`/api/admin/schools/${other}/licences`, { method: "POST", body: base })).status, 409);
+    // »lost« naročilo mesta ne drži: z njim druga šola ne obide meje.
+    db.prepare("UPDATE school_orders SET status = 'lost' WHERE id = ?").run(pilotOrder);
+    const held2 = ord("pilot");
+    db.prepare("UPDATE school_orders SET tax_id = '88888888' WHERE id = ?").run(held2);
+    assert.equal((await t(`/api/admin/schools/${other}/licences`, { method: "POST", body: { ...base, orderId: pilotOrder } })).status, 409, "lost naročilo ne odpre mesta");
+    db.prepare("DELETE FROM school_orders WHERE id = ?").run(held2);
+    db.prepare("UPDATE school_orders SET status = 'contacted' WHERE id = ?").run(pilotOrder);
+    for (const bad of ["abc", 1.5, true, { x: 1 }, -3]) {
+      assert.equal((await t(`/api/admin/schools/${other}/licences`, { method: "POST", body: { ...base, orderId: bad } })).status, 400, JSON.stringify(bad));
+    }
     assert.equal((await t(`/api/admin/schools/${other}/licences`, { method: "POST", body: { ...base, orderId: pilotOrder } })).status, 201, "licenca iz naročila prevzame njegovo mesto");
+    // Isto naročilo za drugo šolo: zavrnjeno.
+    assert.equal((await t(`/api/admin/schools/${sch.id}/licences`, { method: "POST", body: { ...base, orderId: pilotOrder } })).status, 409);
     db.prepare("DELETE FROM school_licences WHERE school_id = ? OR id IN (" + fillers.join(",") + ")").run(other);
     db.prepare("DELETE FROM schools WHERE id = ? OR invite_code LIKE 'POLNI%'").run(other);
     const acc = schoolAccess(db, kids[0].id);
