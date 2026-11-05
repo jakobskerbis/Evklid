@@ -929,6 +929,8 @@ export function odpriModel(el, mod, opts = {}) {
       return model;
     },
     izberi,
+    // kader modela [središče, polmer] (scripts/preveri-3d-okna.cjs preveri, da je cel v kadru)
+    kader: () => kadrModela(),
     unici() {
       for (const f of pocisti) f();
       unicen = true;
