@@ -10,7 +10,7 @@ import {
   NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest, glideDecode,
 } from "../public/tipkovnica-data.js";
 import { WORDS } from "../public/tipkovnica-besede.js";
-import { GROUPS } from "../public/symbols.js";
+import { GROUPS, symGroups } from "../public/symbols.js";
 import { DEVICE_SETTINGS, deviceValue } from "../public/settings-registry.js";
 import { BUILTINS } from "../public/graph/math.js";
 import { evaluate } from "../public/graph/scicore.js";
@@ -169,6 +169,18 @@ test("f(x) keys only insert what the calculator understands; ℂ is among the se
   assert.ok(alg.includes("det") && alg.includes("inverse"));
   assert.equal(CAS_SL.inverse, "inverz");
   assert.ok(KEM_ROWS.flat().includes("(aq)") && KEM_ROWS.flat().includes("₂") && KEM_ROWS.flat().includes("⇌"));
+});
+
+test("kemija je samo enkrat: zavihek Kem ima vse iz čipa Σ, čipa Σ ni, kjer je zavihek (j, 5. 11.)", () => {
+  const kem = KEM_ROWS.flat();
+  assert.equal(new Set(kem).size, kem.length, "tipka v Kem je dvakrat");
+  for (const k of GROUPS.kemija.keys) assert.ok(kem.includes(k.ins), `»${k.label}« je bila samo v čipu Σ, v Kem je ni`);
+  for (const [lvl, subj] of [["OS", "MAT"], ["SS", "KEM"], ["FAKS", "KEM"], ["FAKS", "MAT"], ["OS", "FIZ"]]) {
+    assert.ok(!symGroups(lvl, subj, true).includes("kemija"), `${lvl} ${subj}: čip Kemija ob zavihku Kem`);
+    assert.ok(symGroups(lvl, subj, false).includes("kemija"), `${lvl} ${subj}: brez zavihka Kem čip ostane`);
+  }
+  // naboj ⁺ je v Kem enkrat in brez še ene »+« v spodnji vrstici
+  assert.equal(read("public/tipkovnica.js").includes('key("+", { a: "ins", v: " + " })'), false);
 });
 
 test("settings: registry keys for the tutor, defaults, stored per device", () => {

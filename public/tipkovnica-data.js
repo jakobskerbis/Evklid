@@ -99,11 +99,14 @@ export const FX_GROUPS = [
 // Imena ukazov CAS v slovenščini (enako kot commandName v public/graph/cas.js; kalkulator razume oboje).
 export const CAS_SL = { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši", integrate: "integriraj", limit: "limita", taylor: "taylor", det: "det", inverse: "inverz" };
 
-// Kemija: elementi, indeksi, naboji, puščice, agregatna stanja.
+// Kemija: elementi, indeksi, naboji, puščice, agregatna stanja. Tu je vse, kar je imel prej tudi čip »Kemija« v Σ
+// (j, 5. 11.: kemija je bila dvakrat); čip se v Σ ne pokaže več, kjer je zavihek »Kem« (symbols.js symGroups).
+// »+« med snovmi v enačbi je na tipkovnici 123; tukaj je samo naboj ⁺.
 export const KEM_ROWS = [
   ["H", "C", "N", "O", "S", "Cl", "Na", "K", "Ca", "Fe"],
-  ["₂", "₃", "₄", "₅", "₆", "⁺", "⁻", "²⁺", "³⁺", "²⁻"],
-  ["→", "⇌", "↑", "↓", "(aq)", "(s)", "(l)", "(g)", "Δ", "e⁻"],
+  ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"],
+  ["⁺", "⁻", "²⁺", "³⁺", "²⁻", "→", "⇌", "↑", "↓", "e⁻"],
+  ["(aq)", "(s)", "(l)", "(g)", "Δ", "ΔH", "·", "°C"],
 ];
 
 // Vrstica 123 nad številkami: v matematiki zapisi, drugje pogosti znaki.

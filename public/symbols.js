@@ -61,6 +61,12 @@ export function groupOrder(level, subject) {
   return chem ? ["kemija", "osnovno", "grske"] : ["osnovno", "grske", "kemija"];
 }
 
+/** Skupine v Σ po vrsti. Kjer je zavihek »Kem« (hasKem), čipa »Kemija« ni: kemija je že v zavihku, ne dvakrat. */
+export function symGroups(level, subject, hasKem = false) {
+  const order = groupOrder(level, subject);
+  return [...order, ...Object.keys(GROUPS).filter((g) => !order.includes(g))].filter((g) => !(hasKem && g === "kemija"));
+}
+
 // Kemijske formule: števke za simbolom elementa ali zaklepajem → indeksi (2H2O → 2H₂O, Ca(OH)2 → Ca(OH)₂).
 // Naboj na koncu (Fe3+, Na+, SO4 2-) → nadpisano (Fe³⁺, Na⁺, SO₄²⁻). Ostalo besedilo ostane.
 const ELEMENTS = new Set(

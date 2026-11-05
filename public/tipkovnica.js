@@ -11,7 +11,7 @@
 //   math    polje za matematiko (velja tudi pri nastavitvi »Samo za matematiko«); own: polje ima svoje tipke
 import { t, currentLang } from "./i18n.js";
 import { icon } from "./icons.js";
-import { GROUPS, groupOrder, chemFormat } from "./symbols.js";
+import { GROUPS, symGroups, chemFormat } from "./symbols.js";
 import { stopnja } from "./stopnja.js";
 import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
 import {
@@ -403,8 +403,7 @@ function symName(g) {
 }
 function symHtml() {
   const s = studentSettings() || {};
-  const order = groupOrder(stopnja(s), s.subject);
-  const all = [...order, ...Object.keys(GROUPS).filter((g) => !order.includes(g))];
+  const all = symGroups(stopnja(s), s.subject, S.layers.some((l) => layerId(l) === "kem"));
   if (!all.includes(S.symg)) S.symg = all[0];
   const sl = currentLang() === "sl";
   return `${subtabs(all.map((g) => [g, symName(g)]), S.symg, "symg")}
@@ -414,8 +413,8 @@ function symHtml() {
 
 function kemHtml() {
   const row = (r, cls = "") => `<div class="tk-row">${r.map((c) => key(c, { a: "ins", v: c }, { cls: (c.length > 2 ? "sm " : "") + cls })).join("")}</div>`;
-  return `${row(KEM_ROWS[0], "el")}${row(KEM_ROWS[1])}${row(KEM_ROWS[2])}
-    <div class="tk-row">${leftKey()}${rightKey()}${key("+", { a: "ins", v: " + " })}${spaceKey("w3")}${key("H₂O", { a: "chem" }, { cls: "fn sm", aria: t("tk.chemFormat") })}${bsKey("fn")}${goKey()}</div>`;
+  return `${row(KEM_ROWS[0], "el")}${row(KEM_ROWS[1])}${row(KEM_ROWS[2])}${row(KEM_ROWS[3])}
+    <div class="tk-row">${leftKey()}${rightKey()}${key("( )", { a: "ins", v: "(@)" }, { cls: "fn sm" })}${spaceKey("w3")}${key("H₂O", { a: "chem" }, { cls: "fn sm", aria: t("tk.chemFormat") })}${bsKey("fn")}${goKey()}</div>`;
 }
 
 function customHtml(L) {
