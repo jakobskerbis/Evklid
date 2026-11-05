@@ -114,6 +114,10 @@ export function isMockMode() {
 }
 
 let client = null;
+// Samo za teste: lažen odjemalec API (null vrne pravega).
+export function setClient(c) {
+  client = c;
+}
 export function getClient() {
   if (!client) client = new Anthropic();
   return client;
@@ -177,15 +181,34 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     if (tools?.length && round === MAX_TOOL_ROUNDS) p.tool_choice = { type: "none" };
     let gap = text && !text.endsWith("\n") ? "\n\n" : "";
     const stream = getClient().beta.messages.stream(p, { signal });
-    for await (const event of stream) {
-      if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-        const chunk = gap + event.delta.text;
-        gap = "";
-        text += chunk;
-        onText(chunk);
+    // Poraba sproti (message_start: vhod, message_delta: izhod doslej): ob prekinitvi (učenec zapre
+    // aplikacijo) je klic že plačan, zato napaka nese delno porabo in strežnik jo zapiše (server/app.js).
+    let live = null;
+    let liveModel = model;
+    let final;
+    try {
+      for await (const event of stream) {
+        if (event.type === "message_start") {
+          live = { ...(event.message?.usage || {}) };
+          liveModel = event.message?.model || model;
+        } else if (event.type === "message_delta" && event.usage && live) {
+          for (const [k, v] of Object.entries(event.usage)) if (typeof v === "number") live[k] = v;
+        } else if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+          const chunk = gap + event.delta.text;
+          gap = "";
+          text += chunk;
+          onText(chunk);
+        }
       }
+      final = await stream.finalMessage();
+    } catch (err) {
+      const spent = addUsage(usage, live);
+      if (spent && err && typeof err === "object") {
+        err.usage = spent;
+        err.model = liveModel;
+      }
+      throw err;
     }
-    const final = await stream.finalMessage();
     usage = addUsage(usage, final.usage);
     stopReason = final.stop_reason;
     finalModel = final.model || model;

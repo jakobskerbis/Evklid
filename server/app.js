@@ -592,6 +592,8 @@ export function createApp(store, opts = {}) {
     if (lesson) userContent.push({ type: "text", text: lessonNote(lesson) });
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     const userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
+    // Dnevna meja vprašanj šteje tu (server/db.js question_log), ne po sporočilih: izbris pogovora je ne obide.
+    store.logQuestion(student.id);
     const help = isFirst && !image ? helpTasks.get(conv.id) : null;
     if (help) helpTasks.delete(conv.id);
     const weak = weaknessesForPrompt(store, student);
@@ -612,6 +614,7 @@ export function createApp(store, opts = {}) {
 
     const controller = new AbortController();
     let finished = false;
+    let unlogged = null; // plačan, še nezapisan odgovor modela (zapiše se tudi ob prekinitvi)
     res.on("close", () => {
       if (!finished) controller.abort();
     });
@@ -732,6 +735,8 @@ export function createApp(store, opts = {}) {
           if (out) claim ? held.push(out) : send("delta", { text: out });
         },
       });
+      // Odgovor je že plačan; zapiše se spodaj (»chat«) ali ob prekinitvi v catch (»prekinjeno«).
+      if (!cached) unlogged = { model: first.model || answerModelOf(mode, deep), usage: first.usage };
       if (controller.signal.aborted) throw new Error("aborted");
 
       let result = first;
@@ -760,13 +765,14 @@ export function createApp(store, opts = {}) {
                 if (out) held.push(out);
               },
             });
-            if (controller.signal.aborted) throw new Error("aborted");
+            if (controller.signal.aborted) throw Object.assign(new Error("aborted"), { usage: r2.usage, model: r2.model });
             extraCost += usage.log(student.id, r2.model || answerModelOf(mode, deep), r2.usage, "popravek");
             result = r2;
             rest = again2.end().rest;
           }
         } catch (e) {
-          if (controller.signal.aborted) throw e;
+          if (controller.signal.aborted) throw e; // delna poraba (e.usage) se zapiše v zunanjem catch
+          if (e?.usage) extraCost += usage.log(student.id, e.model || answerModelOf(mode, deep), e.usage, "prekinjeno");
           console.warn(`[evklid] pregled sodbe ni uspel: ${e?.message || e}`);
         }
       }
@@ -806,6 +812,7 @@ export function createApp(store, opts = {}) {
               send("delta", { text: fix });
             }
           } catch (e) {
+            if (e?.usage) extraCost += usage.log(student.id, e.model || answerModelOf(mode, deep), e.usage, "prekinjeno");
             if (!controller.signal.aborted) console.warn(`[evklid] popravek ni uspel: ${e?.message || e}`);
           }
         }
@@ -822,6 +829,7 @@ export function createApp(store, opts = {}) {
       let content = [{ type: "text", text: (fix ? insertFix(stripChoices(result.text), fix) : result.text) || "…" }];
       // Prvi odgovor gre v porabo kot »chat«; ponovni odgovor po napačni sodbi je že zabeležen kot »popravek« (extraCost).
       const cost = (cached ? 0 : usage.log(student.id, first.model || answerModelOf(mode, deep), first.usage, routed.boosted ? "boost" : "chat")) + extraCost;
+      unlogged = null;
       // Obvestilo pri 80 % in opomba pri 100 % (inštruktor nadaljuje v hitrem načinu): kot preostale podrobne razlage,
       // nikoli € ali $. Gumb za dokup samo, če ga sme videti (polnoleten imetnik, profil 15+, ena ponudba naenkrat);
       // pri profilu pod 15 let dobi starš e-pošto (billing.allowanceMail).
@@ -922,6 +930,19 @@ export function createApp(store, opts = {}) {
       res.end();
     } catch (err) {
       finished = true;
+      // Klic, ki ga je učenec prekinil (zaprl aplikacijo, zaklenil telefon), je že plačan: delno porabo zapišemo
+      // (server/claude.js jo priloži napaki), vprašanje ostane šteto za dnevno mejo.
+      const aborted = controller.signal.aborted;
+      for (const u of [unlogged, err?.usage ? { model: err.model, usage: err.usage } : null]) {
+        if (!u?.usage) continue;
+        try {
+          usage.log(student.id, u.model || answerModelOf(mode, deep), u.usage, "prekinjeno");
+        } catch (e) {
+          console.warn(`[evklid] zapis porabe ni uspel: ${e?.message || e}`);
+        }
+      }
+      // Napaka strežnika ali API (ne prekinitev): vprašanje ne šteje, učenec lahko poskusi znova.
+      if (!aborted) store.logQuestion(student.id, -1);
       // Neuspelo potezo odstranimo, da zgodovina ostane čista za ponovni poskus.
       store.db.prepare("DELETE FROM messages WHERE id = ?").run(userMsgId);
       if (again) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);

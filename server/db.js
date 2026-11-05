@@ -214,6 +214,20 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
   `);
+  // Vprašanja inštruktorju na dan (dnevne meje): ostanejo šteta tudi po izbrisu pogovora ali prekinjenem odgovoru.
+  // Migracija: nova tabela dobi današnja vprašanja iz obstoječih pogovorov, da se števec ob posodobitvi ne ponastavi.
+  const hadQuestionLog = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'question_log'").get();
+  db.exec(`CREATE TABLE IF NOT EXISTS question_log (
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      day TEXT NOT NULL,
+      n INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (student_id, day)
+    );`);
+  if (!hadQuestionLog) {
+    db.exec(`INSERT OR IGNORE INTO question_log (student_id, day, n)
+      SELECT c.student_id, date('now'), COUNT(*) FROM messages m JOIN conversations c ON c.id = m.conversation_id
+      WHERE m.role = 'user' AND date(m.created_at) = date('now') GROUP BY c.student_id`);
+  }
   // Migracije za starejše baze
   const studentCols = db.prepare("PRAGMA table_info(students)").all().map((c) => c.name);
   // Kdaj je učenec nazadnje spremenil šolo ali letnik (za predlog prehoda na začetku šolskega leta).
@@ -357,6 +371,12 @@ export class Store {
   }
   touchConversation(id) {
     this.db.prepare("UPDATE conversations SET updated_at = datetime('now') WHERE id = ?").run(id);
+  }
+  // Vprašanje inštruktorju za dnevno mejo (delta -1: odgovora ni bilo zaradi napake strežnika ali API).
+  logQuestion(studentId, delta = 1) {
+    this.db
+      .prepare("INSERT INTO question_log (student_id, day, n) VALUES (?, date('now'), MAX(0, ?)) ON CONFLICT(student_id, day) DO UPDATE SET n = MAX(0, n + ?)")
+      .run(studentId, delta, delta);
   }
   deleteConversation(id) {
     return this.db.prepare("DELETE FROM conversations WHERE id = ?").run(id).changes > 0;

@@ -425,13 +425,9 @@ export class Usage {
     const max = LIMITS.dailyQuestionsMax();
     return max ? Math.min(max, n) : n;
   }
+  // Vprašanja danes (server/db.js question_log): izbris pogovora jih ne zmanjša.
   questionsToday(studentId) {
-    return this.db
-      .prepare(
-        `SELECT COUNT(*) AS n FROM messages m JOIN conversations c ON c.id = m.conversation_id
-         WHERE c.student_id = ? AND m.role = 'user' AND date(m.created_at) = date('now')`,
-      )
-      .get(studentId).n;
+    return this.db.prepare("SELECT COALESCE(SUM(n),0) AS n FROM question_log WHERE student_id = ? AND day = date('now')").get(studentId).n;
   }
   // Vrne besedilo razloga, če je klepet trenutno onemogočen, sicer null.
   blockReason(studentId) {
