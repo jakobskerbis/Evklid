@@ -43,7 +43,7 @@ export const ELEMENTI = {
   kvader: "XI. knjiga, trditve 24–34 (paralelepipedi; kvader je pravokotni paralelepiped)",
   paralelepiped: "XI. knjiga, trditve 24–34; po trditvi 31 imata paralelepipeda z enako ploščino osnovne ploskve in enako višino enako prostornino",
   prizma3: "XI. knjiga, definicija 13; XII. knjiga, trditev 7 (prizmo razrežemo na 3 enake piramide)",
-  prizma6: "XI. knjiga, definicija 13; XII. knjiga, trditev 7 (prizmo razrežemo na 3 enake piramide)",
+  prizma6: "XI. knjiga, definicija 13; XII. knjiga, trditev 7 s posledico (piramida je tretjina prizme z enako osnovno ploskvijo in višino)",
   piramida3: "XI. knjiga, definicija 12; XII. knjiga, trditev 7 s posledico (piramida je tretjina prizme z enako osnovno ploskvijo in višino)",
   piramida4: "XI. knjiga, definicija 12; XII. knjiga, trditev 7 s posledico (piramida je tretjina prizme z enako osnovno ploskvijo in višino)",
   valj: "XI. knjiga, definicija 21 (pravokotnik se zavrti okoli stranice); XII. knjiga, trditve 10–15",
@@ -190,7 +190,7 @@ export function paralelepipedKolicine(a, b, c, alfa, fi) {
   const O = a * b * Math.sin(al), v = c * Math.sin(f), Sac = a * c * Math.sin(f), Sbc = b * c * sb;
   return { O, v, V: O * v, Sac, Sbc, P: 2 * (O + Sac + Sbc), beta: (Math.acos(cb) * 180) / Math.PI };
 }
-const ZAKAJ_PET = "V vsakem oglišču se stikajo vsaj 3 ploskve, vsota njihovih kotov pa mora biti manjša od 360°. Pri 360° bi ploskve ležale ravno, pri več se ne bi prilegale. Trikotniki (60°): ob oglišču so lahko 3, 4 ali 5. Kvadrati (90°): samo 3. Pravilni petkotniki (108°): samo 3. Šestkotniki imajo kote po 120° in že 3 dajo 360°. Zato je pravilnih teles samo 5 (Evklid to pove na koncu XIII. knjige Elementov).";
+const ZAKAJ_PET = "Ob vsakem oglišču se morajo stikati vsaj 3 ploskve, vsota njihovih kotov pa mora biti manjša od 360°. Pri 360° bi ploskve ležale ravno, pri več jih ne bi mogli zložiti v oglišče. Trikotniki (60°): 3, 4 ali 5 ob oglišču (6 · 60° = 360° je že preveč). Kvadrati (90°): samo 3 (4 · 90° = 360°). Pravilni petkotniki (108°): samo 3. Pravilni šestkotniki imajo kote po 120°, zato že 3 dajo 360°, mnogokotniki z več stranicami pa imajo še večje kote. Zato je pravilnih teles samo 5 (Evklid to pove na koncu XIII. knjige Elementov).";
 
 // Drevesa mreže (kateri ploskvi sta zlepljeni): starsi[i] je ploskev, na katero je pripeta ploskev i (−1 = spodnja).
 // Za vsako telo vrnemo nekaj kandidatov klasične oblike; gradnik izbere tistega, pri katerem se mreža ne prekriva
@@ -399,11 +399,13 @@ export function zgradi(THREE, ctx) {
   // včrtana in očrtana krogla pravilnih teles (Elementi, XIII. knjiga: telo, včrtano v kroglo)
   const kroglaGeo = new THREE.SphereGeometry(1, visoka ? 64 : 40, visoka ? 40 : 24);
   const mVcrt = new THREE.MeshPhysicalMaterial({ color: "#7CE0B5", roughness: 0.35, clearcoat: 0.4, transparent: true, opacity: 0.55, depthWrite: false });
-  const mOcrt = new THREE.MeshPhysicalMaterial({ color: "#9FB6FF", roughness: 0.2, transparent: true, opacity: 0.13, depthWrite: false });
+  const mOcrt = new THREE.MeshPhongMaterial({ color: "#9FB6FF", shininess: 60, transparent: true, opacity: 0.13, depthWrite: false });
   const vcrtana = mesh(kroglaGeo, mVcrt, -1), ocrtana = mesh(kroglaGeo, mOcrt, 8);
   vcrtana.name = "vcrtana-krogla"; ocrtana.name = "ocrtana-krogla"; vcrtana.visible = ocrtana.visible = false;
   telo.add(vcrtana, ocrtana);
   for (const m of [vcrtana, ocrtana]) m.onBeforeRender = posodobiKlip;
+  // krogli ne prestrezata dotika (izbereš ploskev ali rob telesa); izbirljivi ostaneta prek točk in seznama delov
+  vcrtana.raycast = ocrtana.raycast = () => {};
   const kroglePrikazane = (T, e) => S.krogli && pravilno() && e < 1e-4;
   const kroglaSredisce = (T) => (T.jedro ? T.jedro.clone() : V(0, T.H / 2, 0));
 
@@ -1552,7 +1554,7 @@ export function zgradi(THREE, ctx) {
     } };
   const izbiraPl = { tip: "izbira", id: "platon", oznaka: "Pravilno telo", moznosti: PLATON_MOZ, vrednost: platonsko, vidno: () => S.skupina === "platonova",
     ob: (v) => { platonsko = izbiraPl.vrednost = v; S.skupina = izbiraSk.vrednost = "platonova"; ob("telo")(v); } };
-  const stikaloPro = { tip: "stikalo", id: "prosojno", oznaka: "Prosojne ploskve", vrednost: S.prosojno, ob: ob("prosojno") };
+  const stikaloPro = { tip: "stikalo", id: "prosojno", oznaka: "Prosojne ploskve", vrednost: S.prosojno, ob: (v) => { if (!v && S.krogli) { S.krogli = false; stikaloKr.vrednost = false; } ob("prosojno")(v); } };
   // včrtana krogla je znotraj telesa, zato ob vklopu ploskve postanejo prosojne
   const stikaloKr = { tip: "stikalo", id: "krogli", oznaka: "Včrtana in očrtana krogla", vrednost: S.krogli, vidno: () => pravilno(),
     ob: (v) => { if (v && !S.prosojno) S.prosojno = stikaloPro.vrednost = true; stikaloKr.vrednost = v; ob("krogli")(v); } };

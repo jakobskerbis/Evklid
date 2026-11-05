@@ -89,7 +89,7 @@ test("vsako telo ima vrstico iz Evklidovih Elementov", { skip: IMA_THREE ? false
   const ids = ["telo", "platon"].flatMap((id) => r.nadzor.find((c) => c.id === id).moznosti.map(([v]) => v));
   assert.ok(ids.length >= 16);
   for (const id of ids) assert.ok(ELEMENTI[id], `ni vrstice za ${id}`);
-  for (const id of ["tetraeder", "oktaeder", "kocka", "ikozaeder", "dodekaeder"]) assert.match(ELEMENTI[id], /XIII\. knjiga, trditev 1[3-7]/, id);
+  for (const [id, n] of [["tetraeder", 13], ["oktaeder", 14], ["kocka", 15], ["ikozaeder", 16], ["dodekaeder", 17]]) assert.match(ELEMENTI[id], new RegExp(`XIII\\. knjiga, trditev ${n}\\b`), id);
 });
 
 test("mreže novih teles: zložene brez lukenj, razprte na podlagi brez prekrivanja, ploščina = P", { skip: IMA_THREE ? false : "three ni nameščen" }, async () => {
