@@ -42,6 +42,17 @@ export function pilotSchoolIds(db) {
   if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_licences'").get()) return [];
   return db.prepare("SELECT DISTINCT school_id AS id FROM school_licences WHERE plan = 'pilot' ORDER BY school_id").all().map((r) => r.id);
 }
+// Davčne številke šol, katerih pilotno naročilo je že postalo licenca (school_licences.order_id).
+export function pilotLicencedTaxIds(db) {
+  if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_orders'").get()) return [];
+  if (!db.prepare("PRAGMA table_info(school_licences)").all().some((c) => c.name === "order_id")) return [];
+  return db
+    .prepare("SELECT DISTINCT o.tax_id FROM school_licences l JOIN school_orders o ON o.id = l.order_id WHERE l.plan = 'pilot'")
+    .all()
+    .map((r) => r.tax_id);
+}
+// Stanja pilotnega naročila, v katerih drži pilotno mesto (server/sole.js pilotPlaces).
+export const PILOT_HOLD_STATUSES = ["new", "contacted", "offer_sent"];
 export const pilotOpen = (db, schoolId = null) => {
   const ids = pilotSchoolIds(db);
   return ids.length < PILOT_SCHOOLS_MAX || (schoolId != null && ids.includes(schoolId));
@@ -124,6 +135,10 @@ export function migrateSchools(db) {
   const mcols = db.prepare("PRAGMA table_info(class_members)").all().map((c) => c.name);
   // Oznaka, ki jo učitelj sam pripiše vzdevku (npr. »Ana K.«); učenec imena ne vpisuje.
   if (!mcols.includes("teacher_label")) db.exec("ALTER TABLE class_members ADD COLUMN teacher_label TEXT");
+  // Naročilo s strani /sole, iz katerega je licenca (server/sole.js): pilotno naročilo z licenco ne zasede še
+  // drugega pilotnega mesta, tudi če ga skrbnik ni označil kot »won«.
+  const lcols = db.prepare("PRAGMA table_info(school_licences)").all().map((c) => c.name);
+  if (!lcols.includes("order_id")) db.exec("ALTER TABLE school_licences ADD COLUMN order_id INTEGER");
   db.exec("CREATE INDEX IF NOT EXISTS idx_classes_school ON classes(school_id)");
 }
 
@@ -647,7 +662,15 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
     const seats = num(b.seats);
     const list = (v, ok) => (Array.isArray(v) && v.length && v.every(ok) ? v : null);
     if (!PLANS.includes(b.plan)) return res.status(400).json({ error: `Paket: ${PLANS.join(", ")}.` });
-    if (b.plan === "pilot" && !pilotOpen(db, id)) return res.status(409).json({ error: `Pilotna cena velja samo za prvih ${PILOT_SCHOOLS_MAX} šol.` });
+    // Naročilo, iz katerega je licenca (neobvezno): pilotna licenca prevzame mesto svojega pilotnega naročila.
+    const orderId = b.orderId == null || b.orderId === "" ? null : num(b.orderId);
+    const hasOrders = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_orders'").get();
+    const order = orderId === null ? null : Number.isInteger(orderId) && hasOrders ? db.prepare("SELECT id, plan, status, tax_id FROM school_orders WHERE id = ?").get(orderId) : undefined;
+    if (order === undefined) return res.status(404).json({ error: "Naročilo ne obstaja." });
+    if (b.plan === "pilot") {
+      if (order && order.plan !== "pilot") return res.status(400).json({ error: "Pilotna licenca je lahko samo iz pilotnega naročila." });
+      if (!pilotOpen(db, id)) return res.status(409).json({ error: `Pilotna cena velja samo za prvih ${PILOT_SCHOOLS_MAX} šol.` });
+    }
     if (!Number.isInteger(seats) || seats < 1 || seats > 5000) return res.status(400).json({ error: "Število mest 1–5000." });
     const from = b.validFrom || day();
     if (!isDay(from) || !isDay(b.validUntil) || b.validUntil < from) return res.status(400).json({ error: "Veljavnost: validFrom ≤ validUntil (YYYY-MM-DD)." });
@@ -657,8 +680,8 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
     if (!(price >= 0 && price <= 1000)) return res.status(400).json({ error: "Cena 0–1000 € na učenca." });
     const r = db
       .prepare(
-        `INSERT INTO school_licences (school_id, plan, seats, price_eur, subjects, grades, valid_from, valid_until, ai_cap_usd_month, invoice_ref, note)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO school_licences (school_id, plan, seats, price_eur, subjects, grades, valid_from, valid_until, ai_cap_usd_month, invoice_ref, note, order_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         id,
@@ -672,6 +695,7 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
         cap,
         clean(b.invoiceRef, 60),
         clean(b.note, 200),
+        order ? order.id : null,
       );
     audit(db, { req, parentId: req.parent.id, actor: "admin", action: "licence_add", target: `school:${id}` });
     res.status(201).json({ id: Number(r.lastInsertRowid), ...schools.licenceView(id) });

@@ -107,3 +107,92 @@ test("pilotno naročilo zasede mesto: 9 licenc + 1 naročilo = polno; ista šola
     server.close();
   }
 });
+
+// Neposreden vpis naročila (brez obrazca), za stanje pilotnih mest.
+const addOrder = (db, taxId, status = "new", plan = "pilot") =>
+  Number(
+    db
+      .prepare(
+        `INSERT INTO school_orders (school_name, address, registration_no, tax_id, contact_name, email, plan, students, price_eur, start_date, consent_text, consent_at, status)
+         VALUES ('OŠ Test', 'Ulica 1, 1000 Ljubljana', '5085411', ?, 'Ana', 'ana@sola.si', ?, 50, 12, '2027-09-01', 'x', '2026-11-05', ?)`,
+      )
+      .run(taxId, plan, status).lastInsertRowid,
+  );
+
+test("pilotno naročilo z licenco ne šteje dvakrat, tudi če ni označeno »won«", async () => {
+  const store = openDb(":memory:");
+  const app = createApp(store, { accounts: false, scheduler: false, log: { error() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  try {
+    const { db } = store;
+    for (let i = 1; i <= 8; i++) addSchool(db, i);
+    const a = addOrder(db, "11111111", "offer_sent");
+    assert.equal(pilotPlaces(db).free, 1);
+    // Skrbnik vpiše licenco iz naročila A, stanja naročila pa (še) ne spremeni.
+    const sid = addSchool(db, 9, "school");
+    db.prepare("INSERT INTO school_licences (school_id, plan, seats, valid_from, valid_until, order_id) VALUES (?, 'pilot', 30, '2026-01-01', '2099-01-01', ?)").run(sid, a);
+    const p = pilotPlaces(db);
+    assert.equal(p.licences, 9);
+    assert.deepEqual(p.orders, [], "naročilo z licenco ne drži še enega mesta");
+    assert.equal(p.free, 1);
+    assert.equal(pilotOpenForOrder(db), true);
+    assert.equal(pilotOpenForOrder(db, "11111111"), true, "ista šola sme naročiti znova");
+    // Druga šola dobi zadnje mesto; potem je polno.
+    const post = (taxId) =>
+      fetch(`${base}/api/school-orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          school: "OŠ Druga", address: "Cesta 2, 2000 Maribor", registrationNo: "5085411", taxId, budgetUser: false,
+          contact: "Bor Kos", email: "bor@druga.si", phone: "", plan: "pilot", students: 40, startDate: `${new Date().getUTCFullYear() + 1}-09-01`, note: "", consent: true,
+        }),
+      });
+    assert.equal((await post("22222222")).status, 201);
+    assert.equal(pilotPlaces(db).free, 0);
+    assert.equal((await post("33333333")).status, 409);
+    // »won« pri naročilu z licenco ne spremeni štetja.
+    db.prepare("UPDATE school_orders SET status = 'won' WHERE id = ?").run(a);
+    assert.equal(pilotPlaces(db).free, 0);
+    assert.equal(pilotPlaces(db).licences, 9);
+  } finally {
+    server.close();
+  }
+});
+
+test("»lost« pilotno naročilo se znova odpre samo, če je mesto še prosto", async () => {
+  const store = openDb(":memory:");
+  const app = createApp(store, { accounts: false, scheduler: false, log: { error() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const put = (id, body) => fetch(`${base}/api/admin/school-orders/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  try {
+    const { db } = store;
+    for (let i = 1; i <= 9; i++) addSchool(db, i);
+    const lost = addOrder(db, "44444444", "lost");
+    const open = addOrder(db, "55555555", "new"); // zasede 10. mesto
+    assert.equal(pilotPlaces(db).free, 0);
+    for (const status of ["new", "contacted", "offer_sent"]) {
+      const r = await put(lost, { status });
+      assert.equal(r.status, 409, status);
+      assert.equal((await r.json()).pilot_full, true);
+    }
+    assert.equal(db.prepare("SELECT status FROM school_orders WHERE id = ?").get(lost).status, "lost");
+    // Opombo in zaprta stanja lahko skrbnik vedno spremeni.
+    assert.equal((await put(lost, { note: "poklicati junija" })).status, 200);
+    assert.equal((await put(lost, { status: "won" })).status, 200);
+    assert.equal((await put(lost, { status: "lost" })).status, 200);
+    // Odprto naročilo med odprtimi stanji: ne zasede novega mesta, zato gre.
+    assert.equal((await put(open, { status: "contacted" })).status, 200);
+    // Mesto se sprosti → izgubljeno naročilo se lahko znova odpre (in zasede mesto).
+    assert.equal((await put(open, { status: "lost" })).status, 200);
+    assert.equal((await put(lost, { status: "contacted" })).status, 200);
+    assert.equal(pilotPlaces(db).free, 0);
+    assert.equal((await put(open, { status: "new" })).status, 409, "zdaj je polno za drugo šolo");
+    // Neposredno naročilo (ne pilotno) se odpre brez preverjanja mest.
+    const cls = addOrder(db, "66666666", "lost", "class");
+    assert.equal((await put(cls, { status: "new" })).status, 200);
+  } finally {
+    server.close();
+  }
+});

@@ -25,7 +25,8 @@ const money = (minor, currency = "EUR") => {
   const digits = currency !== "EUR" && Number.isInteger(major) ? 0 : 2;
   return major.toLocaleString(locale(), { style: "currency", currency, minimumFractionDigits: digits, maximumFractionDigits: digits });
 };
-const date = (iso) => (iso ? new Date(iso).toLocaleDateString("sl-SI", { day: "numeric", month: "long", year: "numeric" }) : "");
+// Datum v jeziku vmesnika (kot money), da prevedeni stavki nimajo slovenskega meseca.
+const date = (iso) => (iso ? new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" }) : "");
 const store = {
   get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
@@ -351,7 +352,7 @@ export async function initAccount({ onReady }) {
       const r = await api("/api/billing/podari/confirm", { method: "POST", body: { session_id: sessionId } }).catch(() => null);
       toast(r?.paid ? t("pod.paid") : t("pass.pending"));
     } else if (billing !== "cancel") await api("/api/billing/sync", { method: "POST" }).catch(() => {});
-    if (billing === "success") toast("Hvala! Naročnina je aktivna.");
+    if (billing === "success") toast(t("acct.subThanks"));
     status = await api("/api/account/status");
   }
   if (parentInvite) route.firstMode = "register";
@@ -792,16 +793,9 @@ async function renderAddChild() {
 
 // ---------- zavihek Račun ----------
 
-const STATUS_TEXT = {
-  active: "aktivna",
-  trialing: "brezplačni preizkus",
-  past_due: "plačilo ni uspelo – posodobi kartico",
-  canceled: "preklicana",
-  unpaid: "neplačana",
-  incomplete: "nedokončana",
-  incomplete_expired: "potekla",
-  paused: "zaustavljena",
-};
+// Stanje naročnine v Stripu → besedilo v jeziku vmesnika (acct.st.*); neznano stanje ostane surovo.
+const STATUS_KEYS = ["active", "trialing", "past_due", "canceled", "unpaid", "incomplete", "incomplete_expired", "paused"];
+const statusText = (s) => (STATUS_KEYS.includes(s) ? t(`acct.st.${s}`) : s);
 
 
 // Poraba inštruktorja ta mesec kot delež mesečne omejitve (brez zneskov). Naročnik (zajamčeni delež,
@@ -828,20 +822,21 @@ function planText(acc) {
   const plan = sub && acc.plans.find((p) => p.key === sub.plan);
   if (access.tier === "paid") {
     const pend = acc.pending_change;
-    return `<p><b>Naročnina:</b> ${esc(plan?.label || sub.plan)} (${STATUS_TEXT[sub.status] || sub.status})</p>
-      <p class="muted">${sub.cancel_at_period_end ? `Naročnina se konča ${date(sub.period_end)}.` : `Naslednje obdobje se začne ${date(sub.period_end)}.`}</p>
+    // Besedila z <b> so iz kataloga (zaupanja vredna); spremenljivke so ubežane.
+    return `<p>${t("acct.subPaid", { plan: esc(plan?.label || sub.plan), status: esc(statusText(sub.status)) })}</p>
+      <p class="muted">${esc(t(sub.cancel_at_period_end ? "acct.subEnds" : "acct.subNext", { date: date(sub.period_end) }))}</p>
       ${pend ? `<p class="muted">${esc(t("up.pending", { date: date(pend.effective_at), price: money(pend.amount, pend.currency), name: shortName(planName(acc.plans.find((p) => p.key === pend.plan) || { level: "OS" })) }))}</p>` : ""}
       ${upgradeBox(acc)}`;
   }
-  if (access.tier === "trial") return `<p><b>Brezplačni preizkus</b> do ${date(access.until)}: vse funkcije za do 2 otroka.</p>`;
+  if (access.tier === "trial") return `<p>${t("acct.trial", { date: esc(date(access.until)) })}</p>`;
   if (access.tier === "promo") {
     const trial = Date.parse(parent.trial_ends_at || 0) > Date.now();
-    return `<p><b>Poln dostop z aktivacijsko kodo</b> do ${date(access.until)}.</p>${
-      trial ? `<p class="muted">Do ${date(parent.trial_ends_at)} (preizkus) lahko uporabljata 2 otroka, nato velja koda za ${acc.promo?.seats > 1 ? `${acc.promo.seats} otroke` : "1 otroka"}.</p>` : ""}`;
+    return `<p>${t("acct.promo", { date: esc(date(access.until)) })}</p>${
+      trial ? `<p class="muted">${esc(t("acct.promoTrial", { trial: date(parent.trial_ends_at), n: acc.promo?.seats > 1 ? acc.promo.seats : 1 }))}</p>` : ""}`;
   }
-  if (access.tier === "bonus") return `<p><b>Brezplačni mesec</b> iz priporočila do ${date(access.until)}.</p>`;
+  if (access.tier === "bonus") return `<p>${t("acct.bonus", { date: esc(date(access.until)) })}</p>`;
   if (access.tier === "gift") return `<p>${esc(t("gift.tier", { date: date(access.until) }))}</p>`;
-  return `<p><b>Brezplačni paket:</b> vadnica brez omejitev in ${acc.free_daily_questions} vprašanj inštruktorju na dan.</p>`;
+  return `<p>${t("acct.free", { n: Number(acc.free_daily_questions) || 0 })}</p>`;
 }
 
 // Nadgradnja na višjo stopnjo med obdobjem (doplačilo razlike, Stripe izračuna sam).
@@ -1344,10 +1339,10 @@ export async function renderAccount() {
     <h1>Račun</h1>
     <div class="kolone">
     <div class="card">
-      <h2>Naročnina</h2>
+      <h2>${esc(t("acct.subHead"))}</h2>
       ${planText(acc)}
-      ${!acc.billing ? `<p class="muted">Plačila trenutno niso na voljo.</p>` : paid ? "" : plansPicker(acc)}
-      ${acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">Upravljaj naročnino in račune</button>` : ""}
+      ${!acc.billing ? `<p class="muted">${esc(t("credit.off"))}</p>` : paid ? "" : plansPicker(acc)}
+      ${acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">${esc(t("acct.portal"))}</button>` : ""}
       ${promoBox(acc, paid)}
     </div>
     ${acc.promo?.codes ? adminCodes(acc) : ""}

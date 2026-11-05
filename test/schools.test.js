@@ -152,6 +152,23 @@ test("private space: teacher sees only assignment results and XP; licence seats;
     });
     assert.equal(lic.status, 201, JSON.stringify(lic.body));
     assert.equal(lic.body.licence.subjects, null, "neznan predmet = seznam zavrnjen");
+    // Licenca iz naročila s strani /sole: povezava z naročilom (pilotno mesto se ne šteje dvakrat, server/sole.js).
+    const ord = (plan) =>
+      Number(
+        db
+          .prepare(
+            `INSERT INTO school_orders (school_name, address, registration_no, tax_id, contact_name, email, plan, students, price_eur, start_date, consent_text, consent_at)
+             VALUES ('OŠ Prule', 'Prule 13', '5085411', '12345678', 'Ana', 'ana@prule.si', ?, 30, 12, '2027-09-01', 'x', '2026-11-05')`,
+          )
+          .run(plan).lastInsertRowid,
+      );
+    const base = { plan: "pilot", seats: 1, validFrom: today, validUntil: "2099-08-31" };
+    assert.equal((await t(`/api/admin/schools/${sch.id}/licences`, { method: "POST", body: { ...base, orderId: 9999 } })).status, 404);
+    assert.equal((await t(`/api/admin/schools/${sch.id}/licences`, { method: "POST", body: { ...base, orderId: ord("class") } })).status, 400);
+    const pilotOrder = ord("pilot");
+    assert.equal((await t(`/api/admin/schools/${sch.id}/licences`, { method: "POST", body: { ...base, orderId: pilotOrder } })).status, 201);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM school_licences WHERE order_id = ?").get(pilotOrder).n, 1);
+    db.prepare("DELETE FROM school_licences WHERE order_id IS NOT NULL").run();
     const acc = schoolAccess(db, kids[0].id);
     assert.equal(acc.schoolName, "OŠ Prule");
     assert.deepEqual(acc.grades, [7]);
