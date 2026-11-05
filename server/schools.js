@@ -53,6 +53,15 @@ export function pilotLicencedTaxIds(db) {
 }
 // Stanja pilotnega naročila, v katerih drži pilotno mesto (server/sole.js pilotPlaces).
 export const PILOT_HOLD_STATUSES = ["new", "contacted", "offer_sent"];
+// Koliko pilotnih mest držijo odprta pilotna naročila brez licence (ena davčna številka = eno mesto).
+export function pilotHeldOrders(db) {
+  if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_orders'").get()) return 0;
+  const done = new Set(pilotLicencedTaxIds(db));
+  return db
+    .prepare(`SELECT DISTINCT tax_id FROM school_orders WHERE plan = 'pilot' AND status IN (${PILOT_HOLD_STATUSES.map(() => "?").join(", ")})`)
+    .all(...PILOT_HOLD_STATUSES)
+    .filter((r) => !done.has(r.tax_id)).length;
+}
 export const pilotOpen = (db, schoolId = null) => {
   const ids = pilotSchoolIds(db);
   return ids.length < PILOT_SCHOOLS_MAX || (schoolId != null && ids.includes(schoolId));
@@ -669,7 +678,11 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
     if (order === undefined) return res.status(404).json({ error: "Naročilo ne obstaja." });
     if (b.plan === "pilot") {
       if (order && order.plan !== "pilot") return res.status(400).json({ error: "Pilotna licenca je lahko samo iz pilotnega naročila." });
-      if (!pilotOpen(db, id)) return res.status(409).json({ error: `Pilotna cena velja samo za prvih ${PILOT_SCHOOLS_MAX} šol.` });
+      // Prvih 10 šol: nova pilotna šola brez naročila ne sme vzeti mesta, ki ga drži odprto pilotno naročilo druge šole.
+      // (Licenca iz naročila prevzame mesto tega naročila; šola, ki že ima pilotno licenco, mesta ne zasede znova.)
+      const ids = pilotSchoolIds(db);
+      const newSchoolNoOrder = !order && !ids.includes(id);
+      if (!pilotOpen(db, id) || (newSchoolNoOrder && ids.length + pilotHeldOrders(db) >= PILOT_SCHOOLS_MAX)) return res.status(409).json({ error: `Pilotna cena velja samo za prvih ${PILOT_SCHOOLS_MAX} šol.` });
     }
     if (!Number.isInteger(seats) || seats < 1 || seats > 5000) return res.status(400).json({ error: "Število mest 1–5000." });
     const from = b.validFrom || day();

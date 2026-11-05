@@ -196,3 +196,24 @@ test("»lost« pilotno naročilo se znova odpre samo, če je mesto še prosto", 
     server.close();
   }
 });
+
+test("skrbnik ne vpiše pilotne licence novi šoli, če zadnje mesto drži odprto pilotno naročilo druge šole", async () => {
+  const store = openDb(":memory:");
+  const app = createApp(store, { accounts: false, scheduler: false, log: { error() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const lic = (schoolId, body = {}) =>
+    fetch(`${base}/api/admin/schools/${schoolId}/licences`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan: "pilot", seats: 10, validUntil: "2099-01-01", ...body }) });
+  try {
+    const { db } = store;
+    for (let i = 1; i <= 9; i++) addSchool(db, i);
+    const held = addOrder(db, "77777777", "contacted");
+    const fresh = addSchool(db, 10, "school");
+    assert.equal((await lic(fresh)).status, 409, "mesto drži naročilo druge šole");
+    assert.equal((await lic(fresh, { orderId: held })).status, 201, "licenca iz tega naročila prevzame njegovo mesto");
+    assert.equal(pilotPlaces(db).free, 0);
+    assert.deepEqual(pilotPlaces(db).orders, []);
+  } finally {
+    server.close();
+  }
+});
