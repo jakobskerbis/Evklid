@@ -662,6 +662,14 @@ export function createScientific(root, opts) {
     if (scroll) hist.scrollTop = hist.scrollHeight;
   }
 
+  // Zgodovina ostane pri dnu, ko se prostor spremeni (tipkovnica, vnosna vrstica): sicer plošča prekrije zadnji gumb (Kopiraj).
+  let priDnu = true;
+  hist.addEventListener("scroll", () => (priDnu = hist.scrollHeight - hist.scrollTop - hist.clientHeight < 24), { passive: true });
+  if (typeof ResizeObserver !== "undefined")
+    new ResizeObserver(() => {
+      if (priDnu) hist.scrollTop = hist.scrollHeight;
+    }).observe(hist);
+
   function renderVars() {
     const vs = Object.entries(st.vars);
     const fs = Object.entries(st.funcs);

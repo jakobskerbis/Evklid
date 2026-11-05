@@ -111,5 +111,33 @@ export function adaptKeys(keys, profile) {
   for (const ins of want) take(pool.get(ins));
   for (const k of keys) if (!FIXED.has(k[1])) take(k);
   let i = 0;
-  return keys.map((k) => (FIXED.has(k[1]) ? k : chosen[i++]));
+  return brezPodvojitev(keys.map((k) => (FIXED.has(k[1]) ? k : chosen[i++])));
 }
+
+/**
+ * V načinu 2nd nobena funkcija ni dvakrat (j 2026-11-05: »i« in »e« sta bila dvakrat): tipka, katere 2nd funkcija
+ * je že na tipki pred njo, ostane brez 2nd (v načinu 2nd kaže svojo glavno funkcijo).
+ */
+export function brezPodvojitev(keys) {
+  const videne = new Set();
+  const vse = new Set(keys.flatMap((k) => [k[1], k[3]].filter(Boolean)));
+  const out = keys.map((k) => {
+    if (FIXED.has(k[1])) return k;
+    const druga = k[3] ?? k[1];
+    if (!videne.has(druga)) return videne.add(druga), k;
+    if (k[3] && !videne.has(k[1])) return videne.add(k[1]), [k[0], k[1]];
+    // Obe funkciji tipke sta že drugje: tipko nadomesti koristna, ki je še ni.
+    const r = REZERVA.find((x) => ![x[1], x[3]].some((a) => vse.has(a)) && !videne.has(x[3]));
+    if (!r) return k;
+    vse.add(r[1]), vse.add(r[3]), videne.add(r[3]);
+    return r;
+  });
+  return out;
+}
+// Tipke za nadomestilo (niso med privzetimi), po koristnosti.
+const REZERVA = [
+  ["cot", "cot(", "cot⁻¹", "arccot("],
+  ["gcd", "gcd(@;)", "lcm", "lcm(@;)"],
+  ["min", "min(", "max", "max("],
+  ["mod", "mod(@;)", "|x|", "abs("],
+];

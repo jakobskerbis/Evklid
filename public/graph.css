@@ -274,7 +274,9 @@ body.graph-open { overflow: hidden; }
 .sc-empty { margin: auto; text-align: center; max-width: 32ch; padding: 12px; }
 .sc-entry { border-top: 1px solid var(--border); padding: 6px 12px 10px; flex-shrink: 0; }
 .sc-entry:focus-within { box-shadow: inset 0 -3px 0 var(--accent); }
-.sc-preview { min-height: 1.7em; text-align: right; overflow-x: auto; color: var(--muted); }
+.sc-preview { min-height: 1.7em; text-align: right; overflow-x: auto; color: var(--text); font-size: 1.25rem; }
+/* Lep prikaz izraza je glavni; surovo besedilo pod njim (kjer ga urejaš) je manj izrazito, da ni videti kot napaka (j, 5. 11.). */
+.sc-entry:has(.sc-preview:not(:empty)) .sc-input { font-size: 0.95rem; font-weight: 500; color: var(--muted); padding: 0 0 2px; }
 .sc-input { width: 100%; font-size: 1.6rem; font-weight: 700; text-align: right; border: 0; background: transparent; color: var(--text); padding: 2px 0; outline: none; font-variant-numeric: tabular-nums; }
 .sc-input::placeholder { color: var(--muted); font-size: 1rem; font-weight: 600; }
 .sc-live { min-height: 1.6em; text-align: right; font-size: 1.1rem; overflow-x: auto; }
@@ -615,7 +617,10 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
   .sc-vars:not([hidden]) + .sc-sp { display: block; }
   /* DEG RAD GRA, oblika izpisa, konstante in koš ostanejo v eni vrstici do 360 px: oblika se skrči, namesto da bi se vrstica prelomila */
   .sc-angle > button { padding-inline: 6px !important; min-width: 40px; }
-  .sc-format-l { flex: 100 1 0; max-width: min(124px, 34vw); }
+  .sc-format-l { flex: 100 1 0; max-width: 170px; } /* »Samodejno« se mora prebrati do konca (j, 5. 11.) */
+  .sc-format-l .dd-chev { width: 16px !important; height: 16px !important; }
+  .sc-format-l .dd-btn { gap: 4px; padding: 6px 6px 6px 10px !important; font-size: 0.9rem; }
+  .sc-bar > .sc-sp { display: none; } /* prostor je za obliko izpisa */
   .sc-format-l .dd, .sc-format-l > select { max-width: 100%; }
   /* prazna zgodovina: primeri v eni vrstici, ki se pomika, da so vidni nad tipkovnico */
   .sc-empty { max-width: none; width: 100%; padding: 4px 0; }

@@ -36,14 +36,20 @@ test("poglavje → profil tipk", () => {
 
 test("prilagojene tipke: stalne ostanejo na mestu, 24 tipk, brez podvojenih, vsaka se izračuna", () => {
   const FIXED = ["#2nd", "#left", "#right", "#more", "(", ")"];
-  for (const prof of ["trig", "log", "ana", "comb", "stat", "fin", "geo", "num", "eq", "cplx", "fiz", "kem"]) {
+  for (const prof of [null, "trig", "log", "ana", "comb", "stat", "fin", "geo", "num", "eq", "cplx", "fiz", "kem"]) {
     const keys = adaptKeys(FN_KEYS, prof);
     assert.equal(keys.length, FN_KEYS.length, prof);
     FN_KEYS.forEach((k, i) => FIXED.includes(k[1]) && assert.equal(keys[i][1], k[1], `${prof}: ${k[1]} na mestu`));
     const ins = keys.map((k) => k[1]);
     assert.equal(new Set(ins).size, ins.length, `${prof}: podvojena tipka`);
     assert.ok(keys.every((k) => k[0] && k[1]), prof);
-    assert.ok(FX_GROUPS.some(([id]) => id === fxGroupFor(prof)), `${prof}: skupina f(x)`);
+    // Način 2nd: nobena funkcija in nobena oznaka ni dvakrat (j 2026-11-05: »i« in »e« dvakrat).
+    const dve = keys.filter((k) => !FIXED.includes(k[1]));
+    for (const [ime, f] of [["funkcija", (k) => k[3] ?? k[1]], ["oznaka", (k) => (k[3] ? k[2] : k[0])]]) {
+      const v = dve.map(f);
+      assert.equal(new Set(v).size, v.length, `${prof}: 2nd ${ime} dvakrat (${v.join(" ")})`);
+    }
+    if (prof) assert.ok(FX_GROUPS.some(([id]) => id === fxGroupFor(prof)), `${prof}: skupina f(x)`);
   }
   assert.deepEqual(adaptKeys(FN_KEYS, null), FN_KEYS);
   const stat = adaptKeys(FN_KEYS, "stat").map((k) => k[1]);
