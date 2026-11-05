@@ -1341,13 +1341,10 @@
   "credit.note": "Idadi ya mazungumzo ni makadirio, yanaweza kuwa mengi zaidi. Mazungumzo yaliyonunuliwa hayaishi muda na yanafaa kwa wasifu wote wa akaunti hii.",
   "credit.minor": "Mazungumzo ya ziada hulipwa na mmiliki mtu mzima wa akaunti (mzazi au mlezi).",
   "credit.off": "Malipo hayapatikani kwa sasa.",
-  "credit.custom": "Kiasi kingine:",
-  "credit.customLabel": "Kiasi kwa euro",
   "credit.customEst": {
     "one": "takriban mazungumzo {n} na mwalimu",
     "other": "takriban mazungumzo {n} na mwalimu"
   },
-  "credit.customMin": "Kiasi cha chini ni {min}.",
   "credit.paid": "Malipo yamefaulu. Mazungumzo ya ziada yameongezwa.",
   "credit.pending": "Bado tunathibitisha malipo. Mazungumzo yataongezwa benki ikithibitisha.",
   "nav.games": "Michezo",
@@ -3041,9 +3038,6 @@
   "pod.adult": "Nina umri wa miaka 18 au zaidi.",
   "pod.notDonation": "Ninaelewa kuwa huu si mchango kwa shirika la hisani na hakuna punguzo la kodi.",
   "pod.paid": "Asante! Mwezi umeongezwa kwenye mfuko wa «Toa Evklid kama zawadi».",
-  "pod.addonLegend": "Toa Evklid kama zawadi (si lazima)",
-  "pod.addonText": "Ongeza mara moja euro chache kwa mtoto asiyeweza kumudu Evklid. Shule ndiyo inayomchagua mtoto. Huu si mchango kwa shirika la hisani, na hakuna punguzo la kodi.",
-  "pod.none": "Hapana, asante",
   "school.planHead": "Mtoto 1 mwenye leseni ya shule",
   "school.perMonth": "mwezi",
   "school.perYear": "mwaka wa shule",

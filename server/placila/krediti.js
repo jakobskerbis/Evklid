@@ -16,23 +16,14 @@ const num = (k, d) => {
 const MAX_SHARE = 1 - COST.stripePct - COST.minProfit;
 export const creditShare = () => Math.min(MAX_SHARE, Math.max(0.05, num("EVKLID_CREDIT_SHARE", MAX_SHARE)));
 
-// Paketi za dokup v centih z DDV (osnutek, potrdi j pred objavo).
+// Paketi za dokup v centih z DDV (osnutek, potrdi j pred objavo). Samo ti trije zneski: poljuben znesek je
+// odstranjen (j 2026-11-04, brez mikrotransakcij), strežnik vsak drug »pack« zavrne.
 export const CREDIT_PACKS = [
   { id: "k5", amount: 500, currency: "EUR" },
   { id: "k10", amount: 1000, currency: "EUR" },
   { id: "k20", amount: 2000, currency: "EUR" },
 ];
 export const packById = (id) => CREDIT_PACKS.find((p) => p.id === id) || null;
-// Poljuben znesek brez zgornje meje (j 2026-10-30); spodnja meja zaradi plačilnih stroškov,
-// zgornja je le tehnična meja enega plačila pri Stripu (999.999,99 €).
-export const CUSTOM_MIN_CENTS = 500;
-export const CUSTOM_MAX_CENTS = 99_999_999;
-export function customPack(amountEur) {
-  const cents = Math.round(Number(amountEur) * 100);
-  if (!Number.isFinite(cents) || cents < CUSTOM_MIN_CENTS || cents > CUSTOM_MAX_CENTS) return null;
-  return { id: "custom", amount: cents, currency: "EUR" };
-}
-
 // Učencu in staršu pokažemo samo, za koliko pogovorov z inštruktorjem zadošča kredit (j 2026-10-30:
 // ne deleža plačila ali zneska kredita). Ocena za običajen pogovor (~10 sporočil, hitri model, včasih
 // podrobna razlaga); zaokroženo navzdol, da je obljuba vedno izpolnjena.

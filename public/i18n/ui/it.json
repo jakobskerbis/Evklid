@@ -1341,13 +1341,10 @@
   "credit.note": "Il numero di conversazioni è una stima, possono essere anche di più. Le conversazioni acquistate non scadono e valgono per tutti i profili di questo account.",
   "credit.minor": "Le conversazioni extra sono pagate da un titolare maggiorenne dell’account (genitore o tutore).",
   "credit.off": "I pagamenti al momento non sono disponibili.",
-  "credit.custom": "Altro importo:",
-  "credit.customLabel": "Importo in euro",
   "credit.customEst": {
     "one": "circa {n} conversazione con il tutor",
     "other": "circa {n} conversazioni con il tutor"
   },
-  "credit.customMin": "L’importo minimo è {min}.",
   "credit.paid": "Pagamento riuscito. Le conversazioni extra sono state accreditate.",
   "credit.pending": "Stiamo ancora verificando il pagamento. Le conversazioni vengono accreditate quando la banca lo conferma.",
   "nav.games": "Giochi",
@@ -3044,9 +3041,6 @@
   "pod.adult": "Sono maggiorenne.",
   "pod.notDonation": "Capisco che non è una donazione a un ente di beneficenza e che non ci sono detrazioni fiscali.",
   "pod.paid": "Grazie! Il mese è nel fondo «Regala Evklid».",
-  "pod.addonLegend": "Regala Evklid (facoltativo)",
-  "pod.addonText": "Aggiungi una tantum qualche euro per un bambino che non può permettersi Evklid. Il bambino lo sceglie la scuola. Non è una donazione a un ente benefico e non dà diritto a detrazioni fiscali.",
-  "pod.none": "No, grazie",
   "school.planHead": "1 figlio con licenza scolastica",
   "school.perMonth": "mese",
   "school.perYear": "anno scolastico",

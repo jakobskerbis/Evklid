@@ -1334,13 +1334,10 @@
   "credit.note": "Số cuộc trò chuyện là ước tính, có thể nhiều hơn. Các cuộc trò chuyện đã mua không hết hạn và dùng được cho mọi hồ sơ của tài khoản này.",
   "credit.minor": "Cuộc trò chuyện thêm do chủ tài khoản đã thành niên (cha mẹ hoặc người giám hộ) thanh toán.",
   "credit.off": "Hiện chưa thể thanh toán.",
-  "credit.custom": "Số tiền khác:",
-  "credit.customLabel": "Số tiền bằng euro",
   "credit.customEst": {
     "one": "khoảng {n} cuộc trò chuyện với gia sư",
     "other": "khoảng {n} cuộc trò chuyện với gia sư"
   },
-  "credit.customMin": "Số tiền tối thiểu là {min}.",
   "credit.paid": "Thanh toán thành công. Đã cộng thêm cuộc trò chuyện.",
   "credit.pending": "Chúng tôi vẫn đang kiểm tra thanh toán. Cuộc trò chuyện sẽ được cộng khi ngân hàng xác nhận.",
   "nav.games": "Trò chơi",
@@ -3017,9 +3014,6 @@
   "pod.adult": "Tôi đã đủ 18 tuổi.",
   "pod.notDonation": "Tôi hiểu rằng đây không phải quyên góp cho tổ chức từ thiện và không được giảm thuế.",
   "pod.paid": "Cảm ơn bạn! Một tháng đã được thêm vào quỹ «Tặng Evklid».",
-  "pod.addonLegend": "Tặng Evklid (không bắt buộc)",
-  "pod.addonText": "Thêm một lần vài euro cho một em không đủ điều kiện dùng Evklid. Nhà trường chọn em nhận quà. Đây không phải quyên góp cho tổ chức từ thiện và không được giảm thuế.",
-  "pod.none": "Không, cảm ơn",
   "school.planHead": "1 con có giấy phép của trường",
   "school.perMonth": "tháng",
   "school.perYear": "năm học",

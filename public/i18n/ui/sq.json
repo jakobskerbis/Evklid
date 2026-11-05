@@ -1341,13 +1341,10 @@
   "credit.note": "Numri i bisedave është një vlerësim, mund të jenë edhe më shumë. Bisedat e blera nuk skadojnë dhe vlejnë për të gjitha profilet e kësaj llogarie.",
   "credit.minor": "Bisedat shtesë i paguan një mbajtës i rritur i llogarisë (prind ose kujdestar).",
   "credit.off": "Pagesat aktualisht nuk janë të disponueshme.",
-  "credit.custom": "Shumë tjetër:",
-  "credit.customLabel": "Shuma në euro",
   "credit.customEst": {
     "one": "rreth {n} bisedë me tutorin",
     "other": "rreth {n} biseda me tutorin"
   },
-  "credit.customMin": "Shuma minimale është {min}.",
   "credit.paid": "Pagesa u krye. Bisedat shtesë u shtuan.",
   "credit.pending": "Po e kontrollojmë ende pagesën. Bisedat shtohen kur banka ta konfirmojë.",
   "nav.games": "Lojëra",
@@ -3043,9 +3040,6 @@
   "pod.adult": "Jam 18 vjeç ose më shumë.",
   "pod.notDonation": "E kuptoj që kjo nuk është dhurim për një organizatë bamirësie dhe që nuk ka lehtësim tatimor.",
   "pod.paid": "Faleminderit! Muaji është në fondin «Dhuro Evklid».",
-  "pod.addonLegend": "Dhuro Evklid (opsionale)",
-  "pod.addonText": "Shto një herë disa euro për një fëmijë që nuk e përballon dot Evklid. Fëmijën e zgjedh shkolla. Kjo nuk është dhurim për një organizatë bamirësie dhe nuk ka lehtësim tatimor.",
-  "pod.none": "Jo, faleminderit",
   "school.planHead": "1 fëmijë me licencë shkollore",
   "school.perMonth": "muaj",
   "school.perYear": "vit shkollor",
