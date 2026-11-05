@@ -600,7 +600,7 @@ function notify(reminders) {
     if (done[k]) continue;
     done[k] = 1;
     const title = t(e.daysLeft === 0 ? "sch.remindToday" : "sch.remindTomorrow", { name: e.name });
-    const opts = { body: t("sch.notifyBody"), icon: "/icons/icon-192.png", tag: `sch-${e.id}` };
+    const opts = { body: t("sch.notifyBody"), icon: "/icons/icon-192.png?v=kristal", tag: `sch-${e.id}` };
     navigator.serviceWorker?.ready
       .then((r) => r.showNotification(title, opts))
       .catch(() => {

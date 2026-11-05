@@ -151,7 +151,7 @@ function openSheet(app = null) {
     : `${list.length ? `<ol class="is-steps">${list.map(([ic, txt]) => `<li><span class="is-ic">${icon(ic)}</span><span>${esc(txt)}</span></li>`).join("")}</ol>` : ""}
     ${note ? `<p class="muted is-note">${esc(note)}</p>` : ""}${phone}`;
   dlg.innerHTML = `<div class="is-box" role="document">
-    <div class="is-head"><img src="/icons/icon-192.png" alt="" width="48" height="48"><h2>${esc(t(app || !p.mobile ? "inst.title" : "inst.sheetTitle"))}</h2>
+    <div class="is-head"><img src="/icons/icon-192.png?v=kristal" alt="" width="48" height="48"><h2>${esc(t(app || !p.mobile ? "inst.title" : "inst.sheetTitle"))}</h2>
       <button type="button" class="ghost icon-only is-close" aria-label="${esc(t("nav.back"))}" title="${esc(t("nav.back"))}">${icon("x")}</button></div>
     ${body}
     <button type="button" class="${app ? "secondary " : "primary "}is-close is-ok">${esc(t("common.done"))}</button>

@@ -757,9 +757,18 @@ async function okna(p, label) {
   await click(p, '.okno[data-view="graph"] .okno-x');
   if (await p.locator(".okno").count()) throw new Error("okno se ni zaprlo");
   // Prijava odgovora: skrbnik vidi odgovor tako, kot ga je videl učenec (izrisan HTML in naprava).
-  const ans = "#view-chat .msg.assistant:has(.msg-report) >> nth=-1";
+  // Odgovor na ukaz odpre okno, še preden se pretok konča; noga (koda, »Prijavi napako«) pride šele na koncu
+  // (app.js addMsgFoot). Počakamo nanjo in odgovor pripnemo, sicer bi »nth=-1« med kliki skočil s prejšnjega
+  // odgovora na novega (prijava odprta pod enim, »Pošlji« iskan pod drugim: nestabilen »tel-okna«).
+  await p.waitForFunction(() => [...document.querySelectorAll("#view-chat .msg.assistant")].pop()?.querySelector(".msg-report"), null, { timeout: 8000 }).catch(() => {
+    throw new Error("zadnji odgovor nima »Prijavi napako« (pretok se ni končal)");
+  });
+  await p.evaluate(() => {
+    document.querySelectorAll("[data-preveri-odgovor]").forEach((m) => m.removeAttribute("data-preveri-odgovor"));
+    [...document.querySelectorAll("#view-chat .msg.assistant")].pop().setAttribute("data-preveri-odgovor", "");
+  });
+  const ans = "#view-chat .msg.assistant[data-preveri-odgovor]";
   {
-    if (!(await p.locator(ans).count())) throw new Error("v klepetu ni odgovora s »Prijavi napako«");
     await click(p, `${ans} >> .msg-report`, { wait: 150 });
     await click(p, `${ans} >> .report-box .rep-reasons button >> nth=0`, { wait: 50 });
     await click(p, `${ans} >> .report-box .rep-send`, { wait: 400 });
