@@ -272,6 +272,19 @@ test("server cleans AI output (limits, types)", () => {
   assert.match(READ_PROMPT, /Never drop a value stated in the task; never add a value from the student's working/);
   assert.match(READ_PROMPT, /decimal comma as \{,\}/);
   assert.doesNotMatch(READ_PROMPT, /or the question/);
+  // 2. krog fotografij (5. 11.): podnaloga s predpisom funkcije, zasukana stran, znaki, podatki v okvirju
+  assert.match(READ_PROMPT, /turned sideways or upside down/);
+  assert.match(READ_PROMPT, /log_a\(x-1\)=3, not f\(x\)=3/);
+  assert.match(READ_PROMPT, /x\+b and x-b/);
+  assert.match(READ_PROMPT, /the task line always wins/);
+  assert.match(READ_PROMPT, /a handwritten 9 is not p/);
+  assert.match(READ_PROMPT, /never chain several =/);
+  assert.match(READ_PROMPT, /in a box or short notes beside the task/);
+  assert.match(READ_PROMPT, /f\(0\)=5 or k=0/);
+  assert.match(READ_PROMPT, /if the subtask still has letters/);
+  assert.match(READ_PROMPT, /not a step of the student's working/);
+  assert.match(READ_PROMPT, /give only the part that is the task/);
+  assert.match(READ_PROMPT, /not a theory, hint or example box/);
   assert.match(solvePrompt("P=?", "slovenščina", null, null, ["a = 3\\ \\mathrm{cm}"]), /with its unit.*a = 3\\ \\mathrm\{cm\}/);
   assert.equal(cleanSolution({ methods: [] }), null);
   const s = cleanSolution({ kind: "equation", methods: [{ name: "A", steps: [{ title: "t", tex: "x=1", why: 3 }] }], solutions: ["1", 2] });
