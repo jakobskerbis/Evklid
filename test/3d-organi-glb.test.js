@@ -93,7 +93,8 @@ for (const { e, mod } of organi) {
     for (const n of jp.nodes) if (n.mesh != null) assert.ok(n.extras?.tkivo && "del" in n.extras, `${ime}: vozlišče ${n.name} brez tkiva/dela`);
 
     const p = JSON.parse(fs.readFileSync(path.join(MAPA, `${ime}.json`), "utf8"));
-    // PBR (peka.py): oba GLB imata vse tri mape v WebP, normalna mapa ima tangente, ORM je ista slika za AO in hrapavost.
+    // PBR (peka.py): oba GLB imata vse tri mape v WebP in UV, ORM je ista slika za AO in hrapavost. Brez tangent (manjši
+    // prenos): three tangente normalne mape izračuna iz odvodov UV.
     if (p.pbr) {
       for (const [j, f] of [[jp, "računalnik"], [jt, "telefon"]]) {
         assert.equal((j.images || []).length, 3, `${ime} (${f}): PBR potrebuje 3 slike`);
@@ -101,7 +102,7 @@ for (const { e, mod } of organi) {
         const m = j.materials.find((x) => x.normalTexture);
         assert.ok(m?.pbrMetallicRoughness?.baseColorTexture && m.occlusionTexture && m.pbrMetallicRoughness.metallicRoughnessTexture, `${ime} (${f}): manjka mapa`);
         assert.equal(j.textures[m.occlusionTexture.index].source, j.textures[m.pbrMetallicRoughness.metallicRoughnessTexture.index].source, `${ime} (${f}): ORM ni ena slika`);
-        assert.ok(j.meshes.every((me) => me.primitives.every((pr) => pr.attributes.TANGENT != null && pr.attributes.TEXCOORD_0 != null)), `${ime} (${f}): tangente/UV`);
+        assert.ok(j.meshes.every((me) => me.primitives.every((pr) => pr.attributes.TEXCOORD_0 != null && pr.attributes.COLOR_1 == null)), `${ime} (${f}): UV / odvečne barve oglišč`);
       }
     }
     assert.ok(Array.isArray(p.deli) && p.deli.length >= 3, `${ime}.json: deli`);

@@ -30,16 +30,18 @@ for (const organ of organi) {
       const b = fs.readFileSync(tmp);
       return JSON.parse(b.subarray(20, 20 + b.readUInt32LE(12)).toString("utf8")).images?.length > 0;
     })();
-    // Pečene teksture (peka.py, PNG brez izgub) → WebP: osnovna barva in ORM q90, normalna mapa q97 (brez blokov v
+    // Pečene teksture (peka.py, PNG brez izgub) → WebP: osnovna barva q90, ORM q82, normalna mapa q95 (brez blokov v
     // odsevih; brez izgub je ~3× večja in na zaslonu ni razlike). Tangente ostanejo 8-bitne kot normale.
     const q = imaSlike ? path.join(src, `${organ}${pripona}.q.glb`) : izhod;
     gt("quantize", tmp, q, "--quantize-position", "14", "--quantize-normal", "8", "--quantize-color", "8", "--quantize-texcoord", "14");
     if (imaSlike) {
       const w = path.join(src, `${organ}${pripona}.w.glb`);
-      gt("webp", q, w, "--slots", "{baseColorTexture,occlusionTexture,metallicRoughnessTexture}", "--quality", "90", "--effort", "100");
-      gt("webp", w, izhod, "--slots", "normalTexture", "--quality", "97", "--effort", "100");
-      fs.rmSync(q, { force: true });
-      fs.rmSync(w, { force: true });
+      const w2 = path.join(src, `${organ}${pripona}.w2.glb`);
+      gt("webp", q, w, "--slots", "baseColorTexture", "--quality", "90", "--effort", "100");
+      // ORM (senca okolice, hrapavost) je gladek podatek: q82 je na zaslonu enak q90 in ~30 % manjši (telefon ≤ 2 MB)
+      gt("webp", w, w2, "--slots", "{occlusionTexture,metallicRoughnessTexture}", "--quality", "82", "--effort", "100");
+      gt("webp", w2, izhod, "--slots", "normalTexture", "--quality", "95", "--effort", "100");
+      for (const f of [q, w, w2]) fs.rmSync(f, { force: true });
     }
     fs.rmSync(tmp, { force: true });
     console.log(`${path.relative(ROOT, izhod)}: ${(fs.statSync(izhod).size / 1024 / 1024).toFixed(2)} MB`);

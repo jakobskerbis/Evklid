@@ -462,6 +462,14 @@ def zakljuci(pot, glb, niti=2):
         manjka = pokrito & (a[..., 3] < 0.5)
         if manjka.mean() > 0.002:
             print(f"[peka] OPOZORILO {k}: nespečenih {manjka.mean():.1%} pokritih pik", flush=True)
+        if k == "ao":  # šum vzorčenja (Cycles AO) zgladimo znotraj otokov: lepše in manjša WebP
+            for _ in range(tc.get("aoGlajenje", 2)):
+                s_ = np.zeros(a.shape[:2], np.float32); n_ = np.zeros(a.shape[:2], np.float32)
+                for dy in (-1, 0, 1):
+                    for dx in (-1, 0, 1):
+                        mm = np.roll(np.roll(pokrito, dy, 0), dx, 1)
+                        s_ += np.roll(np.roll(a[..., 0], dy, 0), dx, 1) * mm; n_ += mm
+                a[..., 0] = np.where(pokrito, s_ / np.maximum(n_, 1), a[..., 0])
         koncne[k] = _razsiri(a[..., :3], pokrito & (a[..., 3] >= 0.5) if k != "ao" else pokrito, korakov)
     orm = np.zeros((px, px, 3), np.float32)
     orm[..., 0] = np.clip(koncne["ao"][..., 0], 0, 1) ** tc.get("aoKontrast", 1.0)
@@ -493,7 +501,9 @@ def zakljuci(pot, glb, niti=2):
         pk = o.data.color_attributes.get("PEKA")
         if pk is not None: o.data.color_attributes.remove(pk)
         ao = o.data.color_attributes.get("AO")
-        if ao is not None: o.data.color_attributes.active_color = ao
+        if ao is not None:  # samo AO kot COLOR_0 (izvoznik »ACTIVE« bere barvo za upodabljanje)
+            o.data.color_attributes.active_color = ao
+            o.data.color_attributes.render_color_index = o.data.color_attributes.active_color_index
         o.name = o["ime"]
     bpy.ops.export_scene.gltf(
         filepath=glb, export_format="GLB", use_active_collection=False, use_visible=True, export_apply=True,
