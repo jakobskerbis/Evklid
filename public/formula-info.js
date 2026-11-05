@@ -95,6 +95,7 @@ function enhance(root) {
 const PAGE = ".msg, .fm-sec, .fx-page, [role=dialog], dialog, .view";
 const pages = new WeakMap();
 let marksQueued = false;
+let scrollTimer = 0;
 function queueMarks() {
   if (marksQueued) return;
   marksQueued = true;
@@ -105,6 +106,21 @@ function queueMarks() {
 }
 // Zaprt <details> (content-visibility) in hidden="until-found" imata okvirje, a nista vidna.
 const visible = (el) => (el.checkVisibility ? el.checkVisibility() : el.getClientRects().length > 0);
+// Na zaslonu mora biti vedno vsaj ena klikljiva črka (j, 5. 11.): oznako pomena dobi pojavitev, ki je trenutno
+// na zaslonu (prva taka), ne prva na strani, ki je morda že odpeljana gor. Odprta in izbrana oznaka ostaneta.
+const scrollerOf = (el) => {
+  for (let a = el; a && a !== document.body; a = a.parentElement) if (/auto|scroll/.test(getComputedStyle(a).overflowY) && a.scrollHeight > a.clientHeight) return a;
+  return null;
+};
+function onScreen(root) {
+  const sc = scrollerOf(root);
+  const r = sc ? sc.getBoundingClientRect() : { top: 0, bottom: innerHeight };
+  const top = Math.max(0, r.top), bottom = Math.min(innerHeight, r.bottom);
+  return (el) => {
+    const b = el.getBoundingClientRect();
+    return b.bottom > top && b.top < bottom;
+  };
+}
 function refreshMarks() {
   const groups = new Map();
   for (const el of document.querySelectorAll("[data-fx][tabindex]")) {
@@ -116,7 +132,11 @@ function refreshMarks() {
   // Najprej vsa branja (vidnost), nato pisanje, da brskalnik ne preračunava postavitve za vsak razdelek.
   const plans = [];
   for (const [root, els] of groups) {
-    const shown = els.filter(visible);
+    const inView = onScreen(root);
+    const vis = els.filter(visible);
+    const first = (el) => el === openEl || el === document.activeElement;
+    // Vrstni red za claimMarks: odprta/izbrana, nato na zaslonu, nato ostale (vsak del v vrstnem redu strani).
+    const shown = [...vis.filter(first), ...vis.filter((el) => !first(el) && inView(el)), ...vis.filter((el) => !first(el) && !inView(el))];
     let page = pages.get(root);
     if (!page) pages.set(root, (page = createMarkPage()));
     page.owners.clear();
@@ -167,7 +187,13 @@ export function initFormulaInfo() {
     if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); el.click(); }
   });
   window.addEventListener("resize", close);
-  document.addEventListener("scroll", (e) => { if (openEl && !pop.contains(e.target)) close(); }, true);
+  document.addEventListener("scroll", (e) => {
+    if (pop?.contains(e.target)) return;
+    if (openEl) close();
+    // Oznaka gre na pojavitev, ki je zdaj na zaslonu: enkrat, ko se drsenje umiri (ne ob vsaki sličici).
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(queueMarks, 120);
+  }, true);
   enhance(document);
   queueMarks();
   document.addEventListener("toggle", queueMarks, true);
