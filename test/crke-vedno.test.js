@@ -83,9 +83,9 @@ test("na zaslonu je ob drsenju vedno vsaj ena klikljiva črka", { skip }, async 
     assert.ok(H > vp.height * 2, "lekcija je dovolj dolga za drsenje");
     for (const y of [0.25, 0.5, 0.75, 1].map((f) => Math.round(H * f))) {
       await p.$eval("#lekcija", (el, y) => (el.scrollTop = y), y);
-      await p.waitForTimeout(250); // drsenje se umiri (120 ms) + sličica
-      const n = await p.evaluate(onScreen);
-      assert.ok(n >= 1, `${vp.width} px, drsenje ${y}: na zaslonu ni nobene klikljive črke`);
+      // Oznake se preračunajo, ko se drsenje umiri (120 ms); pod obremenitvijo počakamo na pogoj, ne na uro.
+      const ok = await p.waitForFunction(onScreen, null, { timeout: 3000 }).then(() => true, () => false);
+      assert.ok(ok, `${vp.width} px, drsenje ${y}: na zaslonu ni nobene klikljive črke`);
     }
     // Klik na oznako na zaslonu odpre kartico.
     await p.locator('[data-fx][role="button"]:not(.fx-dup)').filter({ visible: true }).last().click();
