@@ -39,14 +39,32 @@ def _bvh_obj(objekti):
     return BVHTree.FromPolygons(verts, polys, all_triangles=False, epsilon=0.0)
 
 
-def maske(vrstice, velikost, zile_rx, tkiva_z_masco, mascaDo=0.008, mascaPolno=0.0025, zarkov=12):
-    """Barvni atribut PEKA na izvirnih mrežah (vrstice = [ime, mesh, tkivo, …]): R maščoba (bližina površinskih žil na
-    zunanji ploskvi, anatomsko: epikardialna maščoba spremlja venčne žile v žlebovih), G odprtost (delež dolgih žarkov,
-    ki pobegnejo: zunanja ploskev 1, notranjost votlin 0)."""
+def _polmeri_zil(zile):
+    """Polmer žile na vsaki ploskvi (žarek z oglišča navznoter do nasprotne stene / 2), po ploskvah v vrstnem redu
+    _bvh_obj(zile): debla (LAD, RCA, LCx, velika srčna vena) so debelejša od vej."""
+    out = []
+    for me in zile:
+        b = _bvh_obj([me])
+        rv = np.zeros(len(me.vertices))
+        for i, v in enumerate(me.vertices):
+            h = b.ray_cast(v.co - v.normal * 1e-5, -v.normal, 0.03)
+            if h[0] is None:
+                h = b.ray_cast(v.co + v.normal * 1e-5, v.normal, 0.03)  # obrnjene normale
+            rv[i] = h[3] / 2 if h[0] is not None else 0.0005
+        out.extend(float(np.mean([rv[k] for k in p.vertices])) for p in me.polygons)
+    return np.array(out)
+
+
+def maske(vrstice, velikost, zile_rx, tkiva_z_masco, mascaFaktor=2.6, mascaNajmanj=0.0008, mascaNajvec=0.0065, zarkov=12):
+    """Barvni atribut PEKA na izvirnih mrežah (vrstice = [ime, mesh, tkivo, …]): R maščoba, G odprtost (delež dolgih
+    žarkov, ki pobegnejo: zunanja ploskev 1, notranjost votlin 0). Anatomsko: epikardialna maščoba leži v žlebovih ob
+    venčnih žilah; širina pasu je sorazmerna debelini žile (mascaFaktor × polmer, med mascaNajmanj in mascaNajvec):
+    širok pas ob deblih v atrioventrikularnem in medprekatnih žlebovih, ozek ob tankih vejah, prosta stena brez nje."""
     import re, random
     vse = _bvh_obj([r[1] for r in vrstice])
     zile = [r[1] for r in vrstice if re.search(zile_rx, r[0])]
     bz = _bvh_obj(zile) if zile else None
+    polmeri = _polmeri_zil(zile) if zile else None
     rnd = random.Random(5)
     smeri = []
     for i in range(zarkov):
@@ -65,9 +83,10 @@ def maske(vrstice, velikost, zile_rx, tkiva_z_masco, mascaDo=0.008, mascaPolno=0
             t = nn.orthogonal().normalized(); b = nn.cross(t)
             G[i] = sum(1 for d in smeri if vse.ray_cast(p, t * d.x + b * d.y + nn * d.z, velikost * 2)[0] is None) / zarkov
             if bz is not None:
-                d = bz.find_nearest(v.co, mascaDo)[3]
+                _, _, fi, d = bz.find_nearest(v.co, mascaNajvec * 1.5)
                 if d is not None:
-                    R[i] = min(1.0, max(0.0, (mascaDo - d) / (mascaDo - mascaPolno)))
+                    do = min(mascaNajvec, max(mascaNajmanj, mascaFaktor * polmeri[fi]))
+                    R[i] = min(1.0, max(0.0, (do - d) / (do * 0.65)))
         if racunaj:  # glajenje po robovih (2 koraka), maščoba samo zunaj
             e = np.array([tuple(ed.vertices) for ed in me.edges], dtype=np.int64).reshape(-1, 2)
             if len(e):

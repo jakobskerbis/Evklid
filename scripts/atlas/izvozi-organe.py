@@ -105,7 +105,8 @@ ORGANI = {
         # bolj gladka in svetlejša, zaklopke so smetanaste. Peka 2048 px računalnik, 1024 px telefon (svoj atlas).
         tekstura=dict(
             pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
-            maska=dict(zile=r"artery|Arteries of heart|vein|sinus|\?\?\?", tkiva=["miokard"]),
+            # maščoba samo ob venčnih žilah (ne ob aorti, pljučnem deblu in pljučnih venah), širina po debelini žile
+            maska=dict(zile=r"coronary|interventricular|Circumflex|cardiac vein|vein of left ventricle|Coronary sinus|branch of right coronary", tkiva=["miokard"]),
             recepti={
                 "miokard": dict(barva=(0.30, 0.045, 0.035), barva2=(0.20, 0.03, 0.028), lise=0.45, hrap=0.30, gube=0.00016, gubeMera=0.004,
                                 vlakna=0.00022, vlaknaMera=0.0016, masca=0.95, mascaBarva=(0.76, 0.52, 0.20), mascaPremik=0.0015,
