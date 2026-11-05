@@ -35,44 +35,69 @@ const napake = [];
 const T = Date.now();
 const log = (...a) => console.log(((Date.now() - T) / 1000).toFixed(0).padStart(4), ...a);
 
-// V strani: je model (kader pregledovalnika) cel v kadru, in je izbrani del (okvir njegovih vidnih mrež) v kadru?
+// V strani: delež oglišč vidnih mrež modela (in izbranega dela), ki padejo izven kadra (vzorec do ~3000 oglišč na mrežo,
+// pri InstancedMesh vsi primerki), pravokotnik platna in vidni del okna dela (obrezan na drsno ploščo).
 const STANJE = `async (zDelom) => {
   const host = [...document.querySelectorAll(".k3-pregled")].find((x) => x.k3Pregled);
   const api = host?.k3Pregled;
-  if (!api?.model || !api.kit) return { nalaga: true };
-  const K = await import("/3d/kader.js");
+  if (!api?.model?.group || !api.kit) return { nalaga: true };
   const THREE = await import("/vendor/three/build/three.module.js");
   const kam = api.kit.camera;
-  const [c, r] = api.kader();
-  const out = { model: K.vKadru(THREE, kam, c, r, 1.03) };
-  const canvas = host.querySelector("canvas").getBoundingClientRect();
-  out.canvas = [canvas.left, canvas.top, canvas.right, canvas.bottom].map(Math.round);
-  out.tocke = host.querySelectorAll(".k3-tocka").length;
+  kam.updateMatrixWorld();
+  const v = new THREE.Vector3(), mi = new THREE.Matrix4(), mw = new THREE.Matrix4();
+  const vidna = (o) => { for (let x = o; x; x = x.parent) if (!x.visible) return false; return true; };
+  function izven(koren) {
+    let n = 0, zunaj = 0;
+    koren.updateWorldMatrix(true, true);
+    koren.traverse((o) => {
+      if (!o.isMesh || o.userData?.k3Sij || !vidna(o) || !o.layers.test(kam.layers)) return;
+      const mats = Array.isArray(o.material) ? o.material : [o.material];
+      if (mats.every((m) => !m || m.visible === false || m.opacity === 0)) return;
+      const pos = o.geometry?.attributes?.position;
+      if (!pos) return;
+      const st = o.isInstancedMesh ? o.count : 1;
+      const korak = Math.max(1, Math.floor((pos.count * st) / 3000));
+      for (let k = 0; k < st; k++) {
+        mw.copy(o.matrixWorld);
+        if (o.isInstancedMesh) { o.getMatrixAt(k, mi); mw.multiply(mi); }
+        for (let i = (k * 7) % korak; i < pos.count; i += korak) {
+          v.fromBufferAttribute(pos, i).applyMatrix4(mw).project(kam);
+          n++;
+          if (Math.abs(v.x) > 1.0 || Math.abs(v.y) > 1.0 || v.z > 1) zunaj++;
+        }
+      }
+    });
+    return n ? zunaj / n : 0;
+  }
+  const r = (b) => [b.left, b.top, b.right, b.bottom].map(Math.round);
+  const out = { model: izven(api.model.group) };
+  out.canvas = r(host.querySelector("canvas").getBoundingClientRect());
+  out.tocke = host.querySelectorAll(".k3-tocka, .k3-oznaka").length;
   const info = host.querySelector(".k3-info");
   if (info && !info.hidden) {
-    const b = info.getBoundingClientRect();
-    out.info = [b.left, b.top, b.right, b.bottom].map(Math.round);
+    const b = info.getBoundingClientRect(), pl = info.parentElement.getBoundingClientRect();
+    out.info = r(b);
+    out.infoVidno = [Math.max(b.left, pl.left), Math.max(b.top, pl.top), Math.min(b.right, pl.right), Math.min(b.bottom, pl.bottom, innerHeight)].map(Math.round);
   }
   if (zDelom) {
-    const ids = (api.model.deli || []).map((d) => d.id);
-    const d = (api.model.deli || []).find((x) => host.querySelector('[data-del][aria-pressed="true"]')?.dataset.del === x.id);
+    const id = host.querySelector('[data-del][aria-pressed="true"]')?.dataset.del;
+    const d = (api.model.deli || []).find((x) => x.id === id);
     if (d) {
-      const box = new THREE.Box3();
-      for (const m of d.meshes || []) {
-        let vid = true;
-        for (let x = m; x; x = x.parent) if (!x.visible) vid = false;
-        if (vid && m.geometry) box.union(K.obsegVidnega(THREE, m));
-      }
-      out.del = box.isEmpty() ? true : K.vKadru(THREE, kam, box.getCenter(new THREE.Vector3()), box.getBoundingSphere(new THREE.Sphere()).radius, 1.03);
+      let z = 0, n = 0;
+      for (const m of d.meshes || []) { if (m && vidna(m)) { const f = izven(m); z += f; n++; } }
+      out.del = n ? z / n : 0;
       out.izbran = d.id;
-    } else out.ids = ids.length;
+    }
   }
   return out;
 }`;
 
+// delež oglišč izven kadra, ki ga še dovolimo (posamezne niti, bički, ki segajo čez rob)
+const MEJA = 0.01;
+const pct = (x) => (x == null ? "?" : `${(x * 100).toFixed(1)} %`);
 const prekriva = (a, b) => a && b && a[0] < b[2] - 1 && a[2] > b[0] + 1 && a[1] < b[3] - 1 && a[3] > b[1] + 1;
 
-async function pocakaj(p, zDelom, pogoj, ms = 9000) {
+async function pocakaj(p, zDelom, pogoj, ms = 20000) {
   const konec = Date.now() + ms;
   let s = null;
   while (Date.now() < konec) {
@@ -87,9 +112,9 @@ async function preveriModel(p, nm, id, vw) {
   const kje = `${nm} ${id}`;
   await p.goto(`about:blank`);
   await p.goto(`${base}/3d#${id}`, { waitUntil: "load" });
-  let s = await pocakaj(p, false, (x) => x.model, id.startsWith("organ-") && !/mreznica|mesicki|nefron|reznjic/.test(id) ? 40000 : 20000);
+  let s = await pocakaj(p, false, (x) => x.model <= MEJA, id.startsWith("organ-") && !/mreznica|mesicki|nefron|reznjic/.test(id) ? 90000 : 30000);
   if (!s || s.nalaga) return napake.push(`${kje}: model se ni naložil`);
-  if (!s.model) napake.push(`${kje}: ob odprtju model ni cel v kadru`);
+  if (s.model > MEJA) napake.push(`${kje}: ob odprtju ${pct(s.model)} modela izven kadra`);
   if (s.tocke) napake.push(`${kje}: ${s.tocke} barvnih krogcev na odru`);
   // vse izbire (pogledi, faze), razen »ponastaviPogled« (te se vrnejo na začetni okvir)
   const izbire = await p.locator(".k3-pregled .k3-nadzor .k3-seg").count();
@@ -100,9 +125,9 @@ async function preveriModel(p, nm, id, vw) {
       const g = gumbi.nth(j);
       if (!(await g.isVisible().catch(() => false))) continue;
       const ime = (await g.textContent()).trim();
-      await g.click({ timeout: 5000 }).catch(() => {});
-      s = await pocakaj(p, false, (x) => x.model);
-      if (!s?.model) napake.push(`${kje}: po izbiri »${ime}« model ni cel v kadru`);
+      await g.evaluate((x) => x.click()); // brez Playwrightove čakalne preverbe (swiftshader riše počasi)
+      s = await pocakaj(p, false, (x) => x.model <= MEJA);
+      if (!(s?.model <= MEJA)) napake.push(`${kje}: po izbiri »${ime}« ${pct(s?.model)} modela izven kadra`);
     }
   }
   // prvi in zadnji del iz seznama
@@ -110,15 +135,14 @@ async function preveriModel(p, nm, id, vw) {
   const nd = await deli.count();
   for (const k of [...new Set([0, nd - 1])].filter((k) => k >= 0)) {
     const b = deli.nth(k);
-    await b.scrollIntoViewIfNeeded().catch(() => {});
-    await b.click({ timeout: 5000 }).catch(() => {});
-    s = await pocakaj(p, true, (x) => x.info && x.model && x.del !== false);
+        await b.evaluate((x) => { x.scrollIntoView({ block: "nearest" }); x.click(); });
+    s = await pocakaj(p, true, (x) => x.info && x.infoVidno[3] - x.infoVidno[1] > 40 && x.model <= MEJA && !(x.del > MEJA));
     const del = s?.izbran || `#${k}`;
     if (!s?.info) { napake.push(`${kje}/${del}: okno dela se ni odprlo`); continue; }
-    if (prekriva(s.info, s.canvas)) napake.push(`${kje}/${del}: okno dela ${s.info} prekriva platno ${s.canvas}`);
-    if (s.info[1] >= vw.height - 40 || s.info[0] >= vw.width - 40) napake.push(`${kje}/${del}: okno dela ni na zaslonu ${s.info}`);
-    if (!s.model) napake.push(`${kje}/${del}: model po izbiri dela ni cel v kadru`);
-    if (s.del === false) napake.push(`${kje}/${del}: izbrani del ni v kadru`);
+    if (prekriva(s.infoVidno, s.canvas)) napake.push(`${kje}/${del}: okno dela ${s.info} prekriva platno ${s.canvas}`);
+    if (s.infoVidno[3] - s.infoVidno[1] < 40 || s.infoVidno[0] >= vw.width - 40) napake.push(`${kje}/${del}: okno dela ni vidno ${s.infoVidno}`);
+    if (s.model > MEJA) napake.push(`${kje}/${del}: po izbiri dela ${pct(s.model)} modela izven kadra`);
+    if (s.del > MEJA) napake.push(`${kje}/${del}: ${pct(s.del)} izbranega dela izven kadra`);
   }
 }
 
@@ -143,7 +167,7 @@ async function preveriAtlas(p, nm, vw) {
     const r = (x) => { const b = x.getBoundingClientRect(); return [b.left, b.top, b.right, b.bottom].map(Math.round); };
     return { info: r(document.querySelector(".a3-kartica")), canvas: r(document.querySelector(".a3-oder canvas") || document.querySelector(".a3 canvas")) };
   });
-  if (prekriva(s.info, s.canvas)) napake.push(`${nm} atlas: kartica ${s.info} prekriva platno ${s.canvas}`);
+  if (prekriva(s.infoVidno, s.canvas)) napake.push(`${nm} atlas: kartica ${s.info} prekriva platno ${s.canvas}`);
   if (s.info[1] >= vw.height - 40) napake.push(`${nm} atlas: kartica ni na zaslonu ${s.info}`);
 }
 
