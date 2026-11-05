@@ -71,8 +71,9 @@
 .tk-rows[data-layer="kem"] .tk-k.sub { font-size: 1.6rem; }
 /* naboj: ◌ s pravim nadpisom (⁺ v pisavi je videti kot +) */
 .tk-k.chg { font-weight: 700; }
-.tk-k.chg .tk-chg-b { color: var(--muted); font-weight: 400; font-size: 1.05rem; }
-.tk-k.chg sup { font-size: 0.8rem; vertical-align: 0.7em; line-height: 0; margin-left: 1px; }
+.tk-k.chg .tk-chg-i { display: inline-flex; align-items: flex-start; white-space: nowrap; line-height: 1; }
+.tk-k.chg .tk-chg-b { color: var(--muted); font-weight: 400; font-size: 1.35rem; }
+.tk-k.chg sup { font-size: 0.85rem; line-height: 1; margin: -0.35em 0 0 1px; vertical-align: baseline; }
 .tk-k.go { background: var(--accent); color: var(--accent-text); font-size: 0.95rem; font-weight: 800; box-shadow: 0 var(--press) 0 color-mix(in srgb, var(--accent) 60%, var(--text)); }
 .tk-k.go.txt { padding: 0 6px; }
 .tk-k.shift.on { background: var(--surface); color: var(--accent); }

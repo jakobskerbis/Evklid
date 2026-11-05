@@ -423,10 +423,10 @@ function kemHtml() {
     if (KEM_CHARGE.test(c)) {
       // naboj: nadpisan ob ◌, da ni videti kot » + « med snovmi
       const n = [...c].map((x) => PLAIN[x]).join("");
-      return key(c, { a: "ins", v: c }, { cls: "chg", aria: d ? `${d} ${n}` : n, tip: d, html: `<span class="tk-chg-b" aria-hidden="true">◌</span><sup>${esc(n)}</sup>` });
+      return key(c, { a: "ins", v: c }, { cls: "chg", aria: d ? `${d} ${n}` : n, tip: d, html: `<span class="tk-chg-i"><span class="tk-chg-b" aria-hidden="true">◌</span><sup>${esc(n)}</sup></span>` });
     }
     const label = c.trim();
-    return key(label, { a: "ins", v: c }, { cls: `${label.length > 2 ? "sm " : ""}${/^[₀-₉]/.test(c) ? "sub" : ""}${c === " + " ? "sym" : ""}`, aria: d, tip: d });
+    return key(label, { a: "ins", v: c }, { cls: `${label.length > 2 ? "sm " : ""}${/^[₀-₉]/.test(c) ? "sub" : ""}${c === " + " ? "sym" : ""}`, aria: d && `${label} ${d}`, tip: d });
   };
   const row = (r) => `<div class="tk-row">${r.map(one).join("")}</div>`;
   return `${subtabs(KEM_GROUPS.map(([id, label]) => [id, t(label)]), S.kemg, "kemg")}
