@@ -139,6 +139,9 @@ test("skupina »Pravilna telesa (Platonova)«: izbira, razlaga, krogli in prerez
   assert.equal(c("skupina").vrednost, "platonova", "zacetek s pravilnim telesom odpre njegovo skupino");
   assert.equal(c("platon").vrednost, "ikozaeder");
   assert.equal(c("telo").vidno(), false); assert.equal(c("platon").vidno(), true);
+  // pregledovalnik začetne vrednosti pošlje tudi seznamu osnovnih teles (njegovo trenutno vrednost): ikozaeder ostane
+  c("telo").ob(c("telo").vrednost);
+  assert.equal(c("platon").vrednost, "ikozaeder"); assert.match(r.povzetek(), /V = 139,6/);
   assert.match(iz("zakaj5"), /samo 5/);
   assert.match(iz("elementi"), /^Evklid, Elementi, .*XIII\. knjiga, trditev 16/);
   assert.match(iz("euler"), /12 oglišč, 30 robov, 20 ploskev: 12 − 30 \+ 20 = 2/);

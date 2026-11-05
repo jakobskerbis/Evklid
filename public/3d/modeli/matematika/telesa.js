@@ -99,7 +99,7 @@ function lupina(t) {
 }
 
 // Pravilno telo z robom a, ki leži na ploskvi: ploskve[0] je spodnja (y = 0, središče v izhodišču), en njen rob
-// gleda proti gledalcu (+z), y kaže navzgor. Vrne { tocke: [[x, y, z]], ploskve: [[indeksi]] }.
+// (pri tetraedru oglišče) gleda proti gledalcu (+z), y kaže navzgor. Vrne { tocke: [[x, y, z]], ploskve: [[indeksi]] }.
 export function pravilnoTelo(ime, a = 1) {
   let t = SUROVA[ime]();
   const ploskve = lupina(t);
@@ -112,7 +112,8 @@ export function pravilnoTelo(ime, a = 1) {
   else if (vSkal(nr, dol) < 0) t = t.map(([x, y, z]) => [x, -y, -z]);
   // en rob spodnje ploskve naj gleda proti +z
   const c1 = vSred(F0.map((i) => t[i])), m = vSred([t[F0[0]], t[F0[1]]]);
-  const f = Math.atan2(m[0] - c1[0], m[2] - c1[2]);
+  // tetraeder: proti gledalcu raje oglišče, sicer sprednja ploskev gleda naravnost vanj in je videti kot ploščat trikotnik
+  const f = Math.atan2(m[0] - c1[0], m[2] - c1[2]) + (ime === "tetraeder" ? Math.PI : 0);
   t = t.map((p) => vZasuk(p, [0, 1, 0], -f));
   // merilo (rob a) in lega (spodnja ploskev na y = 0, njeno središče v izhodišču)
   const rob = vDol(vRaz(t[F0[0]], t[F0[1]])), k = a / rob, c2 = vSred(F0.map((i) => t[i]));
@@ -437,7 +438,8 @@ export function zgradi(THREE, ctx) {
   // Obris začetne velikosti: robovi telesa, kot je bilo izbrano. Ko spreminjaš mere, ostane na mestu (v cm, na isti
   // podlagi), zato vidiš, koliko je telo zraslo ali se skrčilo, tudi ko se merilo prilagodi.
   const mObris = new THREE.LineBasicMaterial({ color: 0xdfe8ff, transparent: true, opacity: 0.65, depthTest: false, depthWrite: false });
-  const obrisZac = new THREE.LineSegments(new THREE.BufferGeometry(), mObris); obrisZac.name = "obris-zacetka"; obrisZac.renderOrder = 7; obrisZac.visible = false; obrisZac.frustumCulled = false;
+  // prazna lega že na začetku: ob začetku z razprto mrežo (?razpri=1) obrisa še ni, žarek za točke pa ga vseeno preveri
+  const obrisZac = new THREE.LineSegments(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute([], 3)), mObris); obrisZac.name = "obris-zacetka"; obrisZac.renderOrder = 7; obrisZac.visible = false; obrisZac.frustumCulled = false;
   telo.add(obrisZac);
   let zacetek = null; // { telo, mere, tocke }
 
@@ -1542,7 +1544,12 @@ export function zgradi(THREE, ctx) {
   // skupini teles (j, 5. 11.): vsaka ima svoj seznam, kocka je v obeh
   const izbiraSk = { tip: "izbira", id: "skupina", oznaka: "Skupina teles", moznosti: SKUPINE, vrednost: S.skupina, ob: (v) => { S.skupina = izbiraSk.vrednost = v; ob("telo")(v === "platonova" ? platonsko : osnovno); } };
   const izbiraTelo = { tip: "izbira", id: "telo", oznaka: "Telo", moznosti: MOZNOSTI, vrednost: osnovno, vidno: () => S.skupina === "osnovna",
-    ob: (v) => { osnovno = izbiraTelo.vrednost = v; S.skupina = izbiraSk.vrednost = "osnovna"; ob("telo")(v); } };
+    ob: (v) => {
+      // Pregledovalnik ob začetnih vrednostih (/3d#telesa?telo=ikozaeder) temu seznamu, ki ikozaedra nima, pošlje
+      // njegovo trenutno vrednost: to ni izbira, zato pravilno telo ostane.
+      if (S.skupina === "platonova" && v === izbiraTelo.vrednost && PLATON_MOZ.some(([k]) => k === S.telo)) return;
+      osnovno = izbiraTelo.vrednost = v; S.skupina = izbiraSk.vrednost = "osnovna"; ob("telo")(v);
+    } };
   const izbiraPl = { tip: "izbira", id: "platon", oznaka: "Pravilno telo", moznosti: PLATON_MOZ, vrednost: platonsko, vidno: () => S.skupina === "platonova",
     ob: (v) => { platonsko = izbiraPl.vrednost = v; S.skupina = izbiraSk.vrednost = "platonova"; ob("telo")(v); } };
   const stikaloPro = { tip: "stikalo", id: "prosojno", oznaka: "Prosojne ploskve", vrednost: S.prosojno, ob: ob("prosojno") };
