@@ -15,7 +15,7 @@ import { GROUPS, symGroups, chemFormat } from "./symbols.js";
 import { stopnja } from "./stopnja.js";
 import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
 import {
-  layoutFor, FX_GROUPS, CAS_SL, KEM_ROWS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
+  layoutFor, FX_GROUPS, CAS_SL, KEM_GROUPS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
   fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
 } from "./tipkovnica-data.js";
 
@@ -44,7 +44,7 @@ let lastProfile; // f(x) odpre skupino poglavja samo ob novem poglavju; učenče
 let words = null; // seznam za predloge (naloži se, ko so predlogi vklopljeni)
 let starts = null; // predlogi, ko se beseda še ne piše
 
-const S = { open: false, field: null, cfg: {}, kind: null, layers: [], layer: null, shift: 0, shiftAt: 0, fxg: "trig", symg: null, sys: null, explicit: false };
+const S = { open: false, field: null, cfg: {}, kind: null, layers: [], layer: null, shift: 0, shiftAt: 0, fxg: "trig", symg: null, kemg: "el", sys: null, explicit: false };
 let board = null;
 let keys = []; // data-k → dejanje
 
@@ -412,8 +412,11 @@ function symHtml() {
 }
 
 function kemHtml() {
-  const row = (r, cls = "") => `<div class="tk-row">${r.map((c) => key(c, { a: "ins", v: c }, { cls: (c.length > 2 ? "sm " : "") + cls })).join("")}</div>`;
-  return `${row(KEM_ROWS[0], "el")}${row(KEM_ROWS[1])}${row(KEM_ROWS[2])}${row(KEM_ROWS[3])}
+  if (!KEM_GROUPS.some(([id]) => id === S.kemg)) S.kemg = KEM_GROUPS[0][0];
+  const g = KEM_GROUPS.find(([id]) => id === S.kemg);
+  const row = (r) => `<div class="tk-row">${r.map((c) => key(c, { a: "ins", v: c }, { cls: `${c.length > 2 ? "sm " : ""}${/^[₀-₉⁺⁻²³]/.test(c) ? "sub" : ""}` })).join("")}</div>`;
+  return `${subtabs(KEM_GROUPS.map(([id, label]) => [id, label]), S.kemg, "kemg")}
+    ${g[2].map(row).join("")}
     <div class="tk-row">${leftKey()}${rightKey()}${key("( )", { a: "ins", v: "(@)" }, { cls: "fn sm" })}${spaceKey("w3")}${key("H₂O", { a: "chem" }, { cls: "fn sm", aria: t("tk.chemFormat") })}${bsKey("fn")}${goKey()}</div>`;
 }
 
@@ -741,6 +744,7 @@ function act(a) {
   }
   if (a.a === "fxg") return (S.fxg = a.v), render();
   if (a.a === "symg") return (S.symg = a.v), render();
+  if (a.a === "kemg") return (S.kemg = a.v), render();
   if (a.a === "hide") return hideKeyboard({ blur: true });
   if (a.a === "globe") return toSystem();
   if (a.a === "sh") {

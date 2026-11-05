@@ -6,7 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, digitFor,
-  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS,
+  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS, KEM_GROUPS,
   NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest, glideDecode,
 } from "../public/tipkovnica-data.js";
 import { WORDS } from "../public/tipkovnica-besede.js";
@@ -181,6 +181,8 @@ test("kemija je samo enkrat: zavihek Kem ima vse iz čipa Σ, čipa Σ ni, kjer 
   }
   // naboj ⁺ je v Kem enkrat in brez še ene »+« v spodnji vrstici
   assert.equal(read("public/tipkovnica.js").includes('key("+", { a: "ins", v: " + " })'), false);
+  // dva podzavihka po največ dve vrstici po 10 tipk: zavihek je enako visok kot drugi
+  for (const [, , rows] of KEM_GROUPS) assert.ok(rows.length <= 2 && rows.every((r) => r.length <= 10));
 });
 
 test("settings: registry keys for the tutor, defaults, stored per device", () => {

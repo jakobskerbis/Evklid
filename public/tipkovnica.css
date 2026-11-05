@@ -68,7 +68,7 @@
 .tk-k.dig { font-size: 1.25rem; font-weight: 600; }
 .tk-k.sym { font-size: 1.05rem; font-weight: 700; }
 /* Kem: indeksi ₂ ₃ ⁺ ²⁻ so v pisavi drobni, zato večji napis */
-.tk-rows[data-layer="kem"] > .tk-row:nth-child(2) .tk-k { font-size: 1.6rem; }
+.tk-rows[data-layer="kem"] .tk-k.sub { font-size: 1.6rem; }
 .tk-k.go { background: var(--accent); color: var(--accent-text); font-size: 0.95rem; font-weight: 800; box-shadow: 0 var(--press) 0 color-mix(in srgb, var(--accent) 60%, var(--text)); }
 .tk-k.go.txt { padding: 0 6px; }
 .tk-k.shift.on { background: var(--surface); color: var(--accent); }
