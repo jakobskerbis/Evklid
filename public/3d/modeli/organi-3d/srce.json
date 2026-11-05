@@ -120,10 +120,7 @@
    "barva": "#38bdf8",
    "opis": "Potiska kri brez kisika po pljučnem deblu v pljuča.",
    "vozlisca": [
-    "Anterior papillary muscle of right ventricle",
-    "Inferior papillary muscle of right ventricle",
-    "Right ventricle",
-    "Septal papillary muscle of right ventricle"
+    "Right ventricle"
    ]
   },
   {
@@ -144,7 +141,6 @@
    "barva": "#ff7a6b",
    "opis": "Ima najdebelejšo steno in stisne kri v aorto, od tam pa po vsem telesu.",
    "vozlisca": [
-    "Inferior papillary muscle of left ventricle",
     "Left ventricle"
    ]
   },
@@ -231,7 +227,13 @@
    "la": "Musculi papillares",
    "barva": "#f472b6",
    "opis": "Mišični stebrički v prekatih; prek tetiv držijo lističe jadrastih zaklopk, da se ne obrnejo v preddvor.",
-   "vozlisca": []
+   "vozlisca": [
+    "Anterior papillary muscle of right ventricle",
+    "Anterolateral papillary muscle of left ventricle (lastno)",
+    "Inferior papillary muscle of left ventricle",
+    "Inferior papillary muscle of right ventricle",
+    "Septal papillary muscle of right ventricle"
+   ]
   },
   {
    "id": "trabekule",
@@ -239,7 +241,11 @@
    "la": "Trabeculae carneae",
    "barva": "#c084fc",
    "opis": "Mišični grebeni na notranji steni prekatov; v desnem prekatu je med njimi tudi septomarginalna trabekula.",
-   "vozlisca": []
+   "vozlisca": [
+    "Septomarginal trabecula (lastno)",
+    "Trabeculae carneae of left ventricle (lastno)",
+    "Trabeculae carneae of right ventricle (lastno)"
+   ]
   },
   {
    "id": "av-zaklopki",
@@ -248,6 +254,9 @@
    "barva": "#e8ecf3",
    "opis": "Trolistna na desni in dvolistna (mitralna) na levi; tetive jih držijo, ko se prekata stisneta.",
    "vozlisca": [
+    "Anterior leaflet of left atrioventricular valve (lastno)",
+    "Anterior leaflet of right atrioventricular valve (lastno)",
+    "Chordae tendineae of posterior mitral leaflet (lastno)",
     "Inferior leaflet of right atrioventricular valve",
     "Posterior leaflet of left atrioventricular valve",
     "Septal leaflet of right atrioventricular valve"
@@ -349,8 +358,8 @@
  },
  "velikost": 0.2259,
  "trikotniki": {
-  "racunalnik": 259998,
-  "telefon": 80459
+  "racunalnik": 170192,
+  "telefon": 60948
  },
  "luci": [
   {
