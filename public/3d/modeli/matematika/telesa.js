@@ -1575,7 +1575,7 @@ export function zgradi(THREE, ctx) {
       { tip: "izpis", id: "mere", oznaka: "Mere", vrednost: () => mere() },
       { tip: "izpis", id: "V", oznaka: "Prostornina", vrednost: () => { const k = kolicine(); return `V = ${k.V[0]} = ${cm3(k.V[1])}`; } },
       { tip: "izpis", id: "P", oznaka: "Površina", vrednost: () => { const k = kolicine(); return `P = ${k.P[0]} = ${cm2(k.P[1])}`; } },
-      { tip: "izpis", id: "Opl", oznaka: "Osnovna ploskev in plašč", vrednost: () => {
+      { tip: "izpis", id: "Opl", oznaka: "Osnovna ploskev in plašč", vidno: () => !NOVA.has(S.telo), vrednost: () => {
         const k = kolicine();
         if (!k.O && PRAVILNA[S.telo]) return `vseh ${PRAVILNA[S.telo].p} ploskev je enakih: P = ${PRAVILNA[S.telo].p} · ploščina ene ploskve`;
         if (!k.O) return "krogla nima ne osnovne ploskve ne plašča";
