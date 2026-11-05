@@ -7,7 +7,7 @@ import { spawn } from "node:child_process";
 import { DatabaseSync } from "node:sqlite";
 import { openDb, migrateReportPr } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { ensureReportsTable, scrubText } from "../server/reports.js";
+import { ensureReportsTable, scrubText, identityWords } from "../server/reports.js";
 
 // Izvoz prijav za dnevni samodejni pregled (server/reports.js, docs/prijave-pregled.md): samo s ključem
 // EVKLID_EXPORT_TOKEN, brez podatkov, ki bi razkrili učenca, in sprememba stanja (in_review + PR, fixed, open).
@@ -184,10 +184,28 @@ test("migracija: stara baza brez stolpca pr ga dobi, podatki ostanejo", () => {
   }
 });
 
-test("scrubText: ime in e-naslov samo kot cela beseda", () => {
-  assert.equal(scrubText("Ana in Anabela, ana@x.si", ["Ana"]), "[ime] in Anabela, [e-naslov]");
-  assert.equal(scrubText("", ["Ana"]), null);
-  assert.equal(scrubText("Ime: J.K. in JxK", ["J.K"]), "Ime: [ime]. in JxK", "posebni znaki v imenu niso regex");
+test("scrubText: ime s sklanjatvami, brat ali sestra, razred in šola, e-naslov, telefon; decimalke ostanejo", () => {
+  const store = openDb(":memory:");
+  const db = store.db;
+  db.exec("CREATE TABLE parents (id INTEGER PRIMARY KEY, name TEXT, email TEXT)");
+  db.exec("ALTER TABLE students ADD COLUMN parent_id INTEGER");
+  db.prepare("INSERT INTO parents (id, name, email) VALUES (1, 'Mojca Kos', 'mojca.kos@primer.si')").run();
+  const add = (name) => Number(db.prepare("INSERT INTO students (name, settings, parent_id) VALUES (?, '{}', 1)").run(name).lastInsertRowid);
+  const ana = add("Ana Kos");
+  add("Luka");
+  const al = Number(db.prepare("INSERT INTO students (name, settings) VALUES ('Al Bo', '{}')").run().lastInsertRowid);
+  db.exec("CREATE TABLE classes (id INTEGER PRIMARY KEY, name TEXT, school_id INTEGER); CREATE TABLE class_members (class_id INTEGER, student_id INTEGER); CREATE TABLE schools (id INTEGER PRIMARY KEY, name TEXT, place TEXT)");
+  db.exec("INSERT INTO schools VALUES (1, 'OŠ Rakitna', 'Rakitna'); INSERT INTO classes VALUES (1, '8.b Matematika', 1); ");
+  db.prepare("INSERT INTO class_members VALUES (1, ?)").run(ana);
+  const w = identityWords(db, ana);
+  const txt = "Ani in Anin brat Luka (Luki) ter gospa Kosova, Mojci; OŠ Rakitna, 8.b Matematika. Matematika je super. Ana Kos. Anabela ostane.";
+  assert.equal(scrubText(txt, w), "[ime] in [ime] brat [ime] ([ime]) ter gospa [ime], [ime]; [ime], [ime]. Matematika je super. [ime] [ime]. Anabela ostane.");
+  assert.equal(scrubText("Žiga", identityWords(db, add("Z\u030Ciga".normalize("NFD")))), "[ime]", "NFD ime najde NFC besedilo");
+  assert.equal(scrubText("Al je rekel", identityWords(db, al)), "[ime] je rekel", "dvočrkovno ime");
+  assert.equal(scrubText("piši na ana (at) gmail.com ali mi @ x . si", []), "piši na [e-naslov] ali [e-naslov]");
+  assert.equal(scrubText("kliči 041 123 456, +386 41 123 456 ali 01/234-56-78", []), "kliči [telefon], [telefon] ali [telefon]");
+  assert.equal(scrubText("x = 0.3333333 in 1/3 = 0,3333333; 12345678", []), "x = 0.3333333 in 1/3 = 0,3333333; 12345678");
+  assert.equal(scrubText("", w), null);
 });
 
 // Na Renderju je vsak klic oddaljen: pot gre mimo računov in gesla samo s ključem.
@@ -201,7 +219,8 @@ for (const extra of [{ EVKLID_ACCOUNTS: "1" }, { EVKLID_PASSWORD: "geslo-za-test
     });
     try {
       const base = `http://127.0.0.1:${port}`;
-      for (let i = 0; i < 50; i++) {
+      // Do 30 s: na obremenjenem računalniku se strežnik zažene počasi.
+      for (let i = 0; i < 300; i++) {
         try {
           await fetch(`${base}/healthz`);
           break;

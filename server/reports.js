@@ -270,37 +270,63 @@ export function mountReports(app, store, { loadConversation, loadStudent, localO
 export const REPORT_STATES = ["open", "in_review", "fixed"];
 const tableOf = (kind) => (kind === "message" ? "message_reports" : kind === "lesson" || kind === "app" ? "bug_reports" : null);
 const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const EMAIL = /[\p{L}\p{N}._%+-]+@[\p{L}\p{N}.-]+\.[\p{L}]{2,}/gu;
+// E-naslov, tudi »ana (at) gmail.com« in »ana @ gmail . com«; telefonska številka (041 123 456, 01 234 56 78,
+// +386 41 123 456). Decimalna števila (0.3333333) niso telefon.
+const EMAIL = /[\p{L}\p{N}._%+-]+\s*(?:@|\(at\)|\[at\])\s*[\p{L}\p{N}-]+(?:\s*\.\s*[\p{L}\p{N}-]+)*\s*\.\s*\p{L}{2,}/giu;
+const PHONE = /(?<![\p{L}\p{N},.])(?:(?:\+|00)\d{1,3}[\s/-]?\(?\d{1,3}\)?|0[1-9]\d?)(?:[\s/-]?\d){6,8}(?!\p{N}|[.,]\d)/gu;
+// Sklanjatve imen (Ana → Ani, Ano, Anin; Kos → Kosu, Kosom, Kosova): osnova brez končnega samoglasnika + končnica.
+const ENDINGS = "a|e|i|o|u|in|ina|ine|ini|ino|inem|inim|ega|emu|em|om|ov|ova|ove|ovi|ovo|ju|ja|je|ji|jo|jem|evi|eva";
 
-// Kaj bi v prostem besedilu lahko razkrilo učenca: ime (tudi posamezne besede), vzdevek v ligah, starš.
+// Kaj bi v prostem besedilu lahko razkrilo učenca: ime (tudi posamezne besede), imena bratov in sester
+// (isti starš), vzdevek v ligah, starš (ime, e-naslov), razredi in šola.
 export function identityWords(db, studentId) {
   const words = new Set();
+  const whole = new Set();
   const add = (v) => {
-    const s = String(v || "").trim();
+    const s = String(v || "").normalize("NFC").trim();
     if (s.length < 2) return;
     words.add(s);
     // Pri e-naslovu samo del pred @ (domena, npr. »gmail«, ni osebna).
-    for (const w of s.split("@")[0].split(/[\s._-]+/)) if (w.length >= 3) words.add(w);
+    for (const w of s.split("@")[0].split(/[\s._-]+/)) if (w.length >= 2) words.add(w);
   };
-  const one = (sql) => {
+  // Razred in šola samo kot celota (»Matematika 8b« ne sme pobrisati besede »matematika«).
+  const addWhole = (v) => {
+    const s = String(v || "").normalize("NFC").trim();
+    if (s.length >= 3) whole.add(s);
+  };
+  const all = (sql) => {
     try {
-      return db.prepare(sql).get(studentId) || {};
+      return db.prepare(sql).all(studentId);
     } catch {
-      return {}; // tabele ali stolpca ni (brez računov ali lig)
+      return []; // tabele ali stolpca ni (brez računov, lig ali šol)
     }
   };
-  add(one("SELECT name FROM students WHERE id = ?").name);
-  add(one("SELECT nickname FROM league_profiles WHERE student_id = ?").nickname);
-  const p = one("SELECT p.name, p.email FROM students s JOIN parents p ON p.id = s.parent_id WHERE s.id = ?");
-  add(p.name);
-  add(p.email);
-  return [...words].sort((a, b) => b.length - a.length);
+  for (const r of all("SELECT name FROM students WHERE id = ?")) add(r.name);
+  // Brat ali sestra pod istim staršem (stolpec parent_id je samo z računi).
+  for (const r of all("SELECT name FROM students WHERE parent_id IS NOT NULL AND parent_id = (SELECT parent_id FROM students WHERE id = ?)")) add(r.name);
+  for (const r of all("SELECT nickname FROM league_profiles WHERE student_id = ?")) add(r.nickname);
+  for (const r of all("SELECT p.name, p.email FROM students s JOIN parents p ON p.id = s.parent_id WHERE s.id = ?")) {
+    add(r.name);
+    add(r.email);
+  }
+  for (const r of all("SELECT c.name FROM class_members m JOIN classes c ON c.id = m.class_id WHERE m.student_id = ?")) addWhole(r.name);
+  for (const r of all("SELECT DISTINCT sc.name, sc.place FROM class_members m JOIN classes c ON c.id = m.class_id JOIN schools sc ON sc.id = c.school_id WHERE m.student_id = ?")) {
+    addWhole(r.name);
+    addWhole(r.place);
+  }
+  const pattern = (w) => {
+    if (w.length < 3 || /[^\p{L}]/u.test(w)) return escRe(w);
+    const stem = /[aeiou]$/i.test(w) && w.length >= 3 ? w.slice(0, -1) : w;
+    return `${escRe(w)}|${escRe(stem)}(?:${ENDINGS})`;
+  };
+  return [...[...words].map(pattern), ...[...whole].map(escRe)].sort((a, b) => b.length - a.length);
 }
 
+// words: vzorci iz identityWords (ali navadne besede, ki jih tu ubežimo, če niso vzorec).
 export function scrubText(text, words = []) {
   if (text === null || text === undefined || text === "") return null;
-  let out = String(text).replace(EMAIL, "[e-naslov]");
-  for (const w of words) out = out.replace(new RegExp(`(?<![\\p{L}\\p{N}])${escRe(w)}(?![\\p{L}\\p{N}])`, "giu"), "[ime]");
+  let out = String(text).normalize("NFC").replace(EMAIL, "[e-naslov]").replace(PHONE, "[telefon]");
+  if (words.length) out = out.replace(new RegExp(`(?<![\\p{L}\\p{N}])(?:${words.join("|")})(?![\\p{L}\\p{N}])`, "giu"), "[ime]");
   return out;
 }
 
@@ -347,16 +373,21 @@ export function reportsForExport(db, { all = false, topicName = () => null, limi
 
 export function mountReportsExport(app, store, { topicName = () => null } = {}) {
   const gone = (res) => res.status(404).json({ error: "Ne obstaja." });
+  // Napačen ključ (glava je, ključ ni pravi) pusti sled v dnevniku dostopov.
+  const denied = (req, res, action) => {
+    if (req.headers.authorization) audit(store.db, { req, actor: "system", action, ok: false });
+    return gone(res);
+  };
   app.get("/api/prijave/izvoz", (req, res) => {
     res.set("Cache-Control", "no-store");
-    if (!exportTokenOk(req)) return gone(res);
+    if (!exportTokenOk(req)) return denied(req, res, "reports_export");
     const reports = reportsForExport(store.db, { all: req.query.stanje === "all", topicName });
     audit(store.db, { req, actor: "system", action: "reports_export", target: `reports:${reports.length}` });
     res.json({ at: new Date().toISOString(), prijave: reports });
   });
   app.post("/api/prijave/:kind/:id/stanje", (req, res) => {
     res.set("Cache-Control", "no-store");
-    if (!exportTokenOk(req)) return gone(res);
+    if (!exportTokenOk(req)) return denied(req, res, "report_status");
     const table = tableOf(req.params.kind);
     const id = /^\d{1,12}$/.test(req.params.id) ? Number(req.params.id) : NaN;
     if (!table || !Number.isSafeInteger(id)) return gone(res);
