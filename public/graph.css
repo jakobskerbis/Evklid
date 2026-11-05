@@ -624,10 +624,11 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
   .sc-vars { order: 9; flex: 1 0 100%; }
   .sc-vars:not([hidden]) + .sc-sp { display: block; }
   /* DEG RAD GRA, oblika izpisa, konstante in koš ostanejo v eni vrstici do 360 px: oblika se skrči, namesto da bi se vrstica prelomila */
-  .sc-angle > button { padding-inline: 6px !important; min-width: 40px; }
+  .sc-angle > button { padding-inline: 4px !important; min-width: 40px; }
+  .sc-bar { column-gap: 4px; padding-inline: 6px; } /* pri 360 px je »Samodejno« cel (pregled #457) */
   .sc-format-l { flex: 100 1 0; max-width: 170px; } /* »Samodejno« se mora prebrati do konca (j, 5. 11.) */
   .sc-format-l .dd-chev { width: 16px !important; height: 16px !important; }
-  .sc-format-l .dd-btn { gap: 4px; padding: 6px 6px 6px 10px !important; font-size: 0.9rem; }
+  .sc-format-l .dd-btn { gap: 2px; padding: 6px 4px 6px 8px !important; font-size: 0.9rem; }
   .sc-bar > .sc-sp { display: none; } /* prostor je za obliko izpisa */
   .sc-format-l .dd, .sc-format-l > select { max-width: 100%; }
   /* prazna zgodovina: primeri v eni vrstici, ki se pomika, da so vidni nad tipkovnico */
