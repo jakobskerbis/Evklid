@@ -2,13 +2,15 @@
 // Kamera izmeri okvir vsakih 700 ms; posnetek in slika iz galerije se preverita pred branjem.
 // Pragovi so umerjeni na j-jevih 32 slabih fotografijah (4. 11. 2026, skeniranje-test/slabe-fotke-1): prag ostrine
 // ujame samo slike, ki jih branje ni prebralo (01, 03, 28: ostrina 0,024–0,026); rahlo mehke (0,037 in več) branje
-// še prebere, zato jih spusti naprej.
+// še prebere, zato jih spusti naprej. 2. krog (5. 11. 2026, 32 novih fotografij): branje obeh slik z ostrino 0,032
+// ni uspelo (ene ni prebralo, drugo je prebralo napačno), vse od 0,037 naprej pa je prebralo (napačno je ostala
+// prebrana le ena temna slika z ostrino 0,051), zato je prag 0,034.
 
 export const LIMITS = {
   dark: 70, // povprečna svetlost 0–255 pod tem in hkrati majhen kontrast (darkContrast): premalo svetlobe
   darkContrast: 120, // temen posnetek zaslona v temnem načinu (svetlo na črnem) ima velik kontrast in ni pretemen
   glare: 0.04, // delež skoraj belih pik (≥ 250) nad tem: odsev
-  blur: 0.03, // ostrina pod tem: močno zamegljeno (glej sharpness; meri se pri 1600 px, kot jo dobi branje)
+  blur: 0.034, // ostrina pod tem: močno zamegljeno (glej sharpness; meri se pri 1600 px, kot jo dobi branje)
   tilt: 22, // telefon nagnjen glede na list za več kot toliko stopinj
 };
 

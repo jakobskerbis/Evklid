@@ -27,7 +27,10 @@ const textOf = (msg) => msg.content.filter((b) => b.type === "text").map((b) => 
 export const READ_PROMPT =
   "The image shows a maths task (printed or handwritten) that a student photographed to get a step-by-step solution. " +
   "Transcribe every separate maths problem you can see, exactly as written (do not solve, do not fix mistakes, do not invent missing parts). " +
-  "A page often holds several tasks (numbered, side by side or one below another): list each of them, not only the first. Subtasks a), b), c) count as separate tasks when each has its own equation or expression (e.g. a later f(x)=4).\n" +
+  "Look at the whole image first: the page may be turned sideways or upside down, and tasks may stand to the right of others. " +
+  "A page often holds several tasks (numbered, side by side or one below another): list each of them, not only the first. Subtasks a), b), c) count as separate tasks when each has its own equation, inequality or expression (e.g. a later f(x)=3, f(x)=g(x) or f(x)<g(x)). " +
+  'Make such a subtask self-contained: put in the formula of each named function as first written in the task, with its letters for unknown parameters, never a later line where the student has put in values found (log_a(x-1)=3, not f(x)=3 and not log_2(x-1)=3 with a value the student found; sqrt(x)<2-x, not f(x)<g(x)); keep the order and direction of every inequality sign, and if the subtask still has letters for unknown parameters, repeat the "given" of the task it belongs to. ' +
+  "Exception: a line under a function where a number stands in place of f(x) or y (5=3*sqrt(x+2)-1) and that is not a step of the student's working is the subtask f(x)=5: list it as 3*sqrt(x+2)-1=5. When you list the function's own line, give it as written, f(x)=…, not only its right-hand side.\n" +
   "Give each task as originally stated, never a line of the student's working or a result: if a task is followed by its solution, give only the task; if only working is visible, give its first line. " +
   "If any maths is legible, never return an empty list: when unsure whether a line is a task, include it.\n" +
   "For each problem give:\n" +
@@ -35,13 +38,16 @@ export const READ_PROMPT =
   "decimal point as a dot; an equation with =, inequalities with <, >, <=, >=; a system as equations separated by ; ; a derivative as d/dx(...); an integral as ∫ f dx or ∫_a^b f dx; " +
   "a limit as lim_(x->a) f; a binomial coefficient (n choose k) or C_n^k as nCr(n,k); variations V_n^k as nPr(n,k); a factorial as n!; " +
   "a double inequality as a<x<b; a logarithm with its base as log_10(x), log_2(x), log_a(x). Keep the student's letters for variables. " +
-  "Copy every base, index and exponent exactly as written: never replace a written digit by a letter (log_10 stays log_10, not log_a).\n" +
+  "Copy every base, index and exponent exactly as written: never replace a written digit by a letter (log_10 stays log_10, not log_a). " +
+  "Read every sign and digit with care (x+b and x-b; 1, 4 and 7, which look alike in handwriting). If one is unclear, the student's next lines may help with a sign or a letter, but the task line always wins: never change a written value to match the working. " +
+  "Coordinates of a point and the values in conditions are numbers unless a letter is clearly written.\n" +
+  'Each "text" is one expression, one equation or one inequality (or a system): never chain several = or a definition and an inequality: give only the part that is the task (x^2>4 for h(x)=x^2>4, nCr(5,2) for nCr(5,2)=5!/(2!*3!)); a right-hand side that is working or a result is left out.\n' +
   '- "given": only if the task states data or conditions needed to solve it (a measured quantity with its unit such as a = 3 cm, m = 2 kg or α = 30°, ' +
-  "a point on the graph, an asymptote, a pole, a zero, a domain, a value such as f(0)=5, also when written in a »dano:« / »podatki:« line or only in the sentence): " +
+  "a point on the graph, an asymptote, a pole, a zero, a domain, a value such as f(0)=5 or k=0, a set of allowed digits or elements such as {1,2,4,8}, also when written in a »dano:« / »podatki:« line, in a box or short notes beside the task that belong to it (not a theory, hint or example box), or only in the sentence): " +
   'a list of them in LaTeX, one each, in the words of the page, keeping every unit and writing a decimal comma as {,} (e.g. ["a = 3\\\\ \\\\mathrm{cm}", "b = 2{,}5\\\\ \\\\mathrm{cm}", "T(7,2)", "\\\\text{pol: } x=3", "f(0)=5"]). Never drop a value stated in the task; never add a value from the student\'s working or a result, never invent one, and leave out a bare domain such as x ∈ ℝ. Otherwise leave it out.\n' +
   "For a word or geometry problem without one equation or expression, give as \"text\" only the unknown asked for in calculator syntax as <letter>=? (e.g. P=?, v=?), never a sentence, and every stated value in \"given\".\n" +
   '- "tex": the same problem in LaTeX.\n' +
-  "Ignore task numbers (1., a)), the wording of instructions (but keep their conditions in \"given\") and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve.\n" +
+  "Ignore task numbers (1., a)), the wording of instructions (but keep their conditions in \"given\") and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve; if there is neither such an instruction nor an equation or inequality to solve, leave \"goal\" out.\n" +
   'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."]}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
   // Fotografije, ki niso učno gradivo, zavrnemo (j, 2026-10-30); slike strežnik nikoli ne shrani.
   'Accept schoolwork even if people appear in the frame (book illustrations, a teacher at a whiteboard, hands). Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message) or it is a random scene, do not describe it and return only {"problems":[],"unrelated":true}. If unsure, read it.';
