@@ -166,6 +166,7 @@ export function ustvariSceno(el, opts = {}) {
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
   const okolje = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  let okoljeModela = null; // skupni studijski HDR (nastaviOkolje), za modele s pečenimi teksturami
   scene.environment = okolje;
   scene.environmentIntensity = opts.okolje ?? 0.72;
   // Rahla usmerjena luč od zgoraj spredaj: oblika dobi globino tudi brez senc.
@@ -175,9 +176,39 @@ export function ustvariSceno(el, opts = {}) {
   luc2.position.set(-1, 0.4, -1);
   scene.add(luc, luc2);
   // Model s svojo osvetlitvijo (zgradi vrne luci: false, npr. Sonce v vesolju): brez okolja in lastnih luči kompleta.
+  let luciVklop = true;
   function nastaviLuci(vklop) {
-    scene.environment = vklop ? okolje : null;
+    luciVklop = !!vklop;
+    scene.environment = vklop ? okoljeModela?.tex || okolje : null;
     luc.visible = luc2.visible = !!vklop;
+    narisi();
+  }
+  // Skupni studijski HDR za realistične modele (docs/3d.md »Pečene teksture«): public/3d/okolje/studio-<px>.hdr
+  // (Poly Haven, CC0), telefon 256 px, računalnik 512 px; PMREM enkrat na kit. ime null = nazaj na RoomEnvironment.
+  let okoljeZahteva = 0; // zadnja zahteva zmaga (hitro preklapljanje modelov med nalaganjem HDR)
+  async function nastaviOkolje(ime, { jakost = null, zasuk = 0 } = {}) {
+    const moja = ++okoljeZahteva;
+    if (!ime) {
+      okoljeModela = null;
+      scene.environment = luciVklop ? okolje : null;
+      scene.environmentIntensity = opts.okolje ?? 0.72;
+      scene.environmentRotation.set(0, 0, 0);
+      return narisi();
+    }
+    if (okoljeModela?.ime !== ime) {
+      const { HDRLoader } = await import("/vendor/three/examples/jsm/loaders/HDRLoader.js");
+      const url = new URL(`./okolje/${ime}-${visoka ? 512 : 256}.hdr`, import.meta.url).href;
+      const hdr = await new HDRLoader().loadAsync(url);
+      if (moja !== okoljeZahteva || unicen) return hdr.dispose();
+      hdr.mapping = THREE.EquirectangularReflectionMapping;
+      const tex = pmrem.fromEquirectangular(hdr).texture;
+      hdr.dispose();
+      okoljeModela?.tex.dispose();
+      okoljeModela = { ime, tex };
+    }
+    if (luciVklop) scene.environment = okoljeModela.tex;
+    scene.environmentIntensity = jakost ?? opts.okolje ?? 0.72;
+    scene.environmentRotation.set(0, zasuk, 0);
     narisi();
   }
 
@@ -883,6 +914,7 @@ export function ustvariSceno(el, opts = {}) {
     ro.disconnect();
     controls.dispose();
     okolje.dispose();
+    okoljeModela?.tex.dispose();
     pmrem.dispose();
     composer?.dispose?.();
     renderer.dispose();
@@ -895,6 +927,7 @@ export function ustvariSceno(el, opts = {}) {
   return {
     THREE,
     nastaviLuci,
+    nastaviOkolje,
     luci: [luc, luc2], // ključna in zadnja luč kompleta (atlas jima prilagodi smer in moč)
     kakovost,
     gibanje: gib,

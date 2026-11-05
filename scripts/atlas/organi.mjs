@@ -26,7 +26,21 @@ for (const organ of organi) {
     const tmp = path.join(src, `${organ}${pripona}.dedup.glb`);
     const izhod = path.join(CILJ, `${organ}${pripona}.glb`);
     gt("dedup", vhod, tmp);
-    gt("quantize", tmp, izhod, "--quantize-position", "14", "--quantize-normal", "8", "--quantize-color", "8");
+    const imaSlike = (() => {
+      const b = fs.readFileSync(tmp);
+      return JSON.parse(b.subarray(20, 20 + b.readUInt32LE(12)).toString("utf8")).images?.length > 0;
+    })();
+    // Pečene teksture (peka.py, PNG brez izgub) → WebP: osnovna barva in ORM q90, normalna mapa q97 (brez blokov v
+    // odsevih; brez izgub je ~3× večja in na zaslonu ni razlike). Tangente ostanejo 8-bitne kot normale.
+    const q = imaSlike ? path.join(src, `${organ}${pripona}.q.glb`) : izhod;
+    gt("quantize", tmp, q, "--quantize-position", "14", "--quantize-normal", "8", "--quantize-color", "8", "--quantize-texcoord", "14");
+    if (imaSlike) {
+      const w = path.join(src, `${organ}${pripona}.w.glb`);
+      gt("webp", q, w, "--slots", "{baseColorTexture,occlusionTexture,metallicRoughnessTexture}", "--quality", "90", "--effort", "100");
+      gt("webp", w, izhod, "--slots", "normalTexture", "--quality", "97", "--effort", "100");
+      fs.rmSync(q, { force: true });
+      fs.rmSync(w, { force: true });
+    }
     fs.rmSync(tmp, { force: true });
     console.log(`${path.relative(ROOT, izhod)}: ${(fs.statSync(izhod).size / 1024 / 1024).toFixed(2)} MB`);
   }

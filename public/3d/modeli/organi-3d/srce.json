@@ -1,6 +1,6 @@
 {
  "organ": "srce",
- "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; izvoz scripts/atlas/izvozi-organe.py",
+ "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; dodani sprednja lističa mitralne in trikuspidalne zaklopke s tetivami, sprednja-stranska papilarna mišica, septomarginalna in mesnate trabekule (lastno delo, scripts/atlas/srce_geometrija.py); pečene teksture scripts/atlas/peka.py",
  "tkiva": {
   "miokard": {
    "barva": "#93362f",
@@ -226,11 +226,27 @@
    ]
   },
   {
+   "id": "papilarne-misice",
+   "ime": "Papilarne mišice",
+   "la": "Musculi papillares",
+   "barva": "#f472b6",
+   "opis": "Mišični stebrički v prekatih; prek tetiv držijo lističe jadrastih zaklopk, da se ne obrnejo v preddvor.",
+   "vozlisca": []
+  },
+  {
+   "id": "trabekule",
+   "ime": "Mesnate trabekule",
+   "la": "Trabeculae carneae",
+   "barva": "#c084fc",
+   "opis": "Mišični grebeni na notranji steni prekatov; v desnem prekatu je med njimi tudi septomarginalna trabekula.",
+   "vozlisca": []
+  },
+  {
    "id": "av-zaklopki",
    "ime": "Jadrasti zaklopki",
    "la": "Valvae atrioventriculares",
    "barva": "#e8ecf3",
-   "opis": "Ležita med preddvoroma in prekatoma in se zapreta, ko se prekata stisneta.",
+   "opis": "Trolistna na desni in dvolistna (mitralna) na levi; tetive jih držijo, ko se prekata stisneta.",
    "vozlisca": [
     "Inferior leaflet of right atrioventricular valve",
     "Posterior leaflet of left atrioventricular valve",
@@ -355,5 +371,6 @@
    "moc": 0.6,
    "barva": "#ffd6cc"
   }
- ]
+ ],
+ "pbr": true
 }

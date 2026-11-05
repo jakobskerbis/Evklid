@@ -77,8 +77,8 @@ for (const { e, mod } of organi) {
     const jt = glb(tel);
     // Brez meshopt/draco: organ se odpre tudi v lekciji (CSP glavne aplikacije ne dovoli WebAssembly).
     for (const j of [jp, jt]) assert.ok(!(j.extensionsRequired || []).some((x) => /meshopt|draco|basisu|ktx/i.test(x)), `${ime}: stiskanje, ki potrebuje WebAssembly`);
-    // Teksture (zapečene, WebP): največ dve sliki (osnovna barva, normalna mapa); telefon jih sme imeti ali ne.
-    for (const j of [jp, jt]) assert.ok((j.images || []).length <= 2 && (j.images || []).every((i) => /webp|jpeg|png/.test(i.mimeType)), `${ime}: slike`);
+    // Teksture (zapečene, WebP): največ tri slike (osnovna barva, normalna mapa, ORM); telefon jih sme imeti ali ne.
+    for (const j of [jp, jt]) assert.ok((j.images || []).length <= 3 && (j.images || []).every((i) => /webp|jpeg|png/.test(i.mimeType)), `${ime}: slike`);
     const tp = trikotniki(jp);
     const tt = trikotniki(jt);
     assert.ok(tp <= 320000 && tp >= 60000, `${ime}.glb: ${tp} trikotnikov`);
@@ -93,6 +93,17 @@ for (const { e, mod } of organi) {
     for (const n of jp.nodes) if (n.mesh != null) assert.ok(n.extras?.tkivo && "del" in n.extras, `${ime}: vozlišče ${n.name} brez tkiva/dela`);
 
     const p = JSON.parse(fs.readFileSync(path.join(MAPA, `${ime}.json`), "utf8"));
+    // PBR (peka.py): oba GLB imata vse tri mape v WebP, normalna mapa ima tangente, ORM je ista slika za AO in hrapavost.
+    if (p.pbr) {
+      for (const [j, f] of [[jp, "računalnik"], [jt, "telefon"]]) {
+        assert.equal((j.images || []).length, 3, `${ime} (${f}): PBR potrebuje 3 slike`);
+        assert.ok(j.images.every((i) => i.mimeType === "image/webp"), `${ime} (${f}): slike niso WebP`);
+        const m = j.materials.find((x) => x.normalTexture);
+        assert.ok(m?.pbrMetallicRoughness?.baseColorTexture && m.occlusionTexture && m.pbrMetallicRoughness.metallicRoughnessTexture, `${ime} (${f}): manjka mapa`);
+        assert.equal(j.textures[m.occlusionTexture.index].source, j.textures[m.pbrMetallicRoughness.metallicRoughnessTexture.index].source, `${ime} (${f}): ORM ni ena slika`);
+        assert.ok(j.meshes.every((me) => me.primitives.every((pr) => pr.attributes.TANGENT != null && pr.attributes.TEXCOORD_0 != null)), `${ime} (${f}): tangente/UV`);
+      }
+    }
     assert.ok(Array.isArray(p.deli) && p.deli.length >= 3, `${ime}.json: deli`);
     const ids = new Set();
     let pokrito = 0;

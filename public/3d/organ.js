@@ -106,7 +106,14 @@ function pripravi(url, napredek) {
       koren.traverse((o) => {
         if (!o.isMesh) return;
         if (!teksture && (o.material?.map || o.material?.normalMap)) {
-          teksture = { map: o.material.map || null, normalMap: o.material.normalMap || null, normalScale: o.material.normalScale.clone() };
+          // PBR (peka.py): aoMap in roughnessMap sta ista slika ORM (R senca okolice, G hrapavost); map je prava
+          // osnovna barva (podatki.pbr), pri starejši peki pa množilnik barve tkiva.
+          teksture = {
+            map: o.material.map || null,
+            normalMap: o.material.normalMap || null,
+            normalScale: o.material.normalScale.clone(),
+            orm: o.material.aoMap || o.material.roughnessMap || null,
+          };
         }
         // Ime in dodatki so na vozlišču; GLTFLoader ga pri več primitivih ovije v skupino.
         const v = o.userData?.tkivo ? o : o.parent;
@@ -190,6 +197,7 @@ function ohraniSencilnik(m) {
 // sledijo brazdam (izočrta globine) in redke veje čez vijuge (izočrta zvitega šuma), ostre pri vsaki povečavi, brez tekstur.
 // vrstni (renderOrder), brezGlobine (ne piše globine), brezIzbire (dotik gre skozi): ozadje v prerezu.
 function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
+  t = { ...t };
   const prosojno = (t.prosojnost ?? 1) < 1;
   const m = new THREE.MeshPhysicalMaterial({
     color: new THREE.Color(t.barva || "#cccccc"),
@@ -218,7 +226,19 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
   m.clipIntersection = !!ravnine?.presek;
   // Zapečene teksture: osnovna barva je množilnik barve tkiva (gube temnejše, žilice), normalna mapa nosi drobni relief;
   // isto mapo dobi lak (mokri odsevi sledijo gubam).
+  const pbr = !!(tex?.pbr && t.tekstura !== false);
   if (tex?.map && t.tekstura !== false) m.map = tex.map;
+  if (pbr) {
+    // Pečena osnovna barva je prava barva tkiva: barva iz JSON je samo odtenek (privzeto bela, `odtenek`).
+    m.color.set(t.odtenek || "#ffffff");
+    m.userData.pbrBarva = t.odtenek || "#ffffff"; // pogledi (uporabi) ohranijo odtenek namesto barve tkiva
+    if (tex.orm) {
+      m.aoMap = tex.orm; // R: senca okolice (Cycles, z žarki po vsem organu)
+      m.aoMapIntensity = t.aoTekstura ?? 1;
+      m.roughnessMap = tex.orm; // G: hrapavost (maščoba bolj mat, endokard in zaklopke bolj sijoči)
+      m.roughness = t.hrapMnozilnik ?? 1;
+    }
+  }
   if (tex?.normalMap && t.tekstura !== false) {
     m.normalMap = tex.normalMap;
     m.normalScale.copy(tex.normalScale).multiplyScalar(t.normala ?? 1);
@@ -228,8 +248,10 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
     }
   }
   const f = t.f ?? 14;
-  const zrno = t.zrno ?? 0.08;
-  const relief = visoka ? t.relief ?? 0.5 : 0;
+  // S pečenimi teksturami so zrno, relief, lise, maščoba in senca že v slikah: senčilnik jih ne dodaja še enkrat.
+  const zrno = pbr ? 0 : t.zrno ?? 0.08;
+  const relief = pbr ? 0 : visoka ? t.relief ?? 0.5 : 0;
+  if (pbr) t = { ...t, lise: 0, lise2: 0, masca: 0, senca: 0, aoExp: t.aoExp ?? 1.6, ao: t.ao ?? 0.35 };
   const rob = t.rob ?? 0.12;
   const ao = t.ao ?? 0.85;
   m.onBeforeCompile = (sh) => {
@@ -278,7 +300,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
       .replace(
         "#include <roughnessmap_fragment>",
         `#include <roughnessmap_fragment>
-        roughnessFactor = clamp( roughnessFactor + ( orgZ - 0.5 ) * 0.18 + ( 1.0 - vOrgAO ) * 0.25, 0.04, 1.0 );`,
+        roughnessFactor = clamp( roughnessFactor + ( orgZ - 0.5 ) * 0.18 + ( 1.0 - vOrgAO ) * ${pbr ? "0.08" : "0.25"}, 0.04, 1.0 );`,
       )
       .replace(
         "#include <normal_fragment_maps>",
@@ -315,7 +337,7 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
         #include <opaque_fragment>`,
       );
   };
-  m.customProgramCacheKey = () => `org-${m.map ? "t" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}`;
+  m.customProgramCacheKey = () => `org-${m.map ? "t" : ""}${pbr ? "p" : ""}${t.barva}-${f}-${zrno}-${relief}-${rob}-${ao}-${t.lise || 0}-${t.fresnel || 0}-${t.masca || 0}-${t.senca || 0}-${t.aoExp ?? 1.6}-${t.lise2 || 0}-${t.vrh || 0}-${t.brazde || 0}-${t.zile || 0}-${t.listi || 0}-${t.aoOkolje ?? 1}-${t.mreznicaZile ? 1 : 0}-${t.sarenica ? 1 : 0}-${t.mascaZunaj ? 1 : 0}-${t.mascaMeja ?? 0.8}`;
   return ohraniSencilnik(m);
 }
 
@@ -505,7 +527,9 @@ export async function zgradiOrgan(ime, ctx = {}) {
     vir = await naslov(`${ime}-telefon.glb`); // podrobnega ni: telefonski model
     pripravljeno = await pripravi(vir.url, napredek);
   }
-  const { kosi, polmer, teksture } = pripravljeno;
+  const { kosi, polmer } = pripravljeno;
+  const teksture = pripravljeno.teksture ? { ...pripravljeno.teksture, pbr: !!podatki.pbr } : null;
+  if (teksture?.orm) teksture.orm.channel = 0; // aoMap bere isti UV kot ostale mape (three privzeto: uv1 za aoMap v starejših)
   const s = 1 / polmer; // metri organa → enote modela
   const group = new THREE.Group();
   group.name = ime;
@@ -590,7 +614,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
     for (const [tk, mm] of materiali) {
       const t = podatki.tkiva?.[tk] || {};
       const o = nast[tk] || {};
-      mm.color.set(o.barva || t.barva || "#cccccc");
+      mm.color.set(o.barva || mm.userData.pbrBarva || t.barva || "#cccccc");
       mm.userData.osnova ||= { sheen: mm.sheen, clearcoat: mm.clearcoat };
       mm.sheen = o.sijaj ?? mm.userData.osnova.sheen;
       mm.clearcoat = o.lak ?? mm.userData.osnova.clearcoat;
@@ -678,6 +702,8 @@ export async function zgradiOrgan(ime, ctx = {}) {
     },
     nadzor,
     postavitev: "organ",
+    // Skupni studijski HDR (scena.js nastaviOkolje), ko ima organ pečene PBR teksture.
+    okolje: podatki.okolje || (teksture?.pbr ? { ime: "studio" } : null),
     podrobnosti: podatki.podrobnosti || null,
     merilo: { m: 2 * polmer, oznaka: "" },
     pogled: () => smer(pogled),

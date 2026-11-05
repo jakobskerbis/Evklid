@@ -26,6 +26,9 @@
 import bpy, bmesh, json, os, re, sys, math, random
 from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import peka  # skupna peka PBR tekstur (Cycles): baza, normala, ORM; recepti tkiv v cfg »tekstura«
+from srce_geometrija import srce_dodatki  # lastna geometrija srca (lističa, papilarna mišica, tetive, trabekule)
 
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 out = args[0] if args else "/tmp/organi-raw"
@@ -94,10 +97,26 @@ ORGANI = {
         # preverjeno s posnetkom 2026-11-04 (stari izvoz iz 08:50 je imel prav to obrnjeno smer).
         obrni=r"^(Left|Right) ventricle$",
         odprtost=True,  # G = odprtost: maščoba v žlebovih samo na zunanji ploskvi (mascaZunaj), ne v prekatih v prerezu
-        # Preizkušeno 2026-11-04 (ni v rabi, srce ostane brez tekstur):
-        # tekstura=dict(px=(2048, 1024), telefon=False, po_vozliscih=True, relief=0.0009, reliefMera=0.004, relief2=0.0005,
-        # reliefMera2=0.0015, …): peka po vozliščih deluje (~8 min), a združena oglišča in decimacija sta spremenili obliko
-        # (vdrt iztočni del desnega prekata, vidne zaklopke), miokard je bil pretemen; senčilnik (relief, zrno) je lepši.
+        # Lastna geometrija (srce_geometrija.py): sprednja lističa mitralne in trikuspidalne zaklopke s tetivami,
+        # sprednja-stranska papilarna mišica levega prekata, septomarginalna trabekula, mesnate trabekule obeh prekatov.
+        dodaj=["srce_dodatki"],
+        # Pečene PBR teksture (peka.py, Cycles): recept po tkivu. Maščoba sledi venčnim žilam v žlebovih (maska iz
+        # razdalje do žil na zunanji ploskvi), miokard ima snope vlaken in drobne gube, notranjost votlin (endokard) je
+        # bolj gladka in svetlejša, zaklopke so smetanaste. Peka 2048 px računalnik, 1024 px telefon (svoj atlas).
+        tekstura=dict(
+            pbr=True, px=(2048, 1024), vzorciNormala=16, vzorciBarva=16, vzorciAO=192, aoRazdalja=0.03, kletka=0.004, uvKot=66,
+            maska=dict(zile=r"artery|Arteries of heart|vein|sinus|\?\?\?", tkiva=["miokard"]),
+            recepti={
+                "miokard": dict(barva=(0.43, 0.085, 0.07), barva2=(0.30, 0.05, 0.05), lise=0.45, hrap=0.30, gube=0.00016, gubeMera=0.004,
+                                vlakna=0.00022, vlaknaMera=0.0016, masca=0.95, mascaBarva=(0.88, 0.70, 0.36), mascaPremik=0.0015,
+                                mascaMera=0.006, zilice=0.55, ziliceBarva=(0.33, 0.05, 0.08), notranja=(0.55, 0.20, 0.17), notranjaHrap=0.2),
+                "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.33, gube=0.00006, gubeMera=0.002, razdeli=1),
+                "arterija": dict(barva=(0.62, 0.07, 0.06), barva2=(0.48, 0.05, 0.05), lise=0.3, hrap=0.27, gube=0.00005, gubeMera=0.002, razdeli=1),
+                "vena": dict(barva=(0.10, 0.18, 0.48), barva2=(0.08, 0.12, 0.36), lise=0.3, hrap=0.27, gube=0.00005, gubeMera=0.002, razdeli=1),
+                "pljucna": dict(barva=(0.16, 0.26, 0.58), barva2=(0.12, 0.20, 0.48), lise=0.3, hrap=0.27, gube=0.00006, gubeMera=0.003, razdeli=1),
+                "pljucna-vena": dict(barva=(0.58, 0.09, 0.09), barva2=(0.45, 0.06, 0.07), lise=0.3, hrap=0.27, gube=0.00006, gubeMera=0.003, razdeli=1),
+            },
+        ),
         jedro=r"^(Right atrium|Right ventricle|Left atrium|Left ventricle)$",
         skatla=[0.004, 0.004, 0.02, 0.006, 0.006, 0.030],
         krivulja=(4, 3),
@@ -111,6 +130,8 @@ ORGANI = {
             (r"", "miokard"),
         ],
         deli=[
+            (r"papillary muscle", "papilarne-misice"),
+            (r"Trabecula|trabecula", "trabekule"),
             (r"atrioventricular valve|Right atrioventricular", "av-zaklopki"),
             (r"Aortic valve|Root of aorta|coronary leaflet|Non-coronary", "aortna-zaklopka"),
             (r"Pulmonary valve|pulmonary valve", "pljucna-zaklopka"),
@@ -955,7 +976,7 @@ def izvozi(organ, cfg):
     if hra and HRA:
         osnovni = [r for r in osnovni if not re.search(hra["zamenjaj"], r[0])] + zrklo_hra(os.path.join(HRA, hra["datoteka"]), hra, osnovni, tmp)
     # Z-Anatomy ima pogosto ločena oglišča po ploskvah; za UV otoke in razdelitev visoke mreže jih združimo.
-    if cfg.get("tekstura"):
+    if cfg.get("tekstura") and not cfg["tekstura"].get("pbr"):
         for row in osnovni:
             bm = bmesh.new(); bm.from_mesh(row[1])
             bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
@@ -1055,7 +1076,10 @@ def izvozi(organ, cfg):
     skupaj = sum(tris(me) for _, me, *_ in osnovni)
     print(f"[organi] {organ}: surovo {skupaj} trikotnikov, velikost {velikost:.3f} m")
     porocilo = {}
-    tc = cfg.get("tekstura")
+    tc = None if os.environ.get("ORGANI_TEKSTURE") == "0" else cfg.get("tekstura")  # ORGANI_TEKSTURE=0: hiter preizkus oblike
+    if tc and tc.get("pbr"):
+        ms = tc.get("maska", {})
+        peka.maske(osnovni, velikost, ms.get("zile", "^$"), set(ms.get("tkiva", [])))
     slike = None
     for i, (cilj, pripona) in enumerate(zip(cfg["cilj"], ("", "-telefon"))):
         ratio = min(1.0, cilj / max(skupaj, 1))
@@ -1082,7 +1106,9 @@ def izvozi(organ, cfg):
             no.data.materials.clear(); no.data.materials.append(material(tkivo, slike))
             no["tkivo"] = tkivo; no["del"] = d or ""
             objekti.append(no)
-        if tk:  # vsaka mreža (računalnik, telefon) dobi svoj UV atlas in svojo peko
+        if tk and tk.get("pbr"):  # skupna pot (peka.py): baza, normala, ORM; vsaka mreža svoj atlas in svojo peko
+            slike = peka.zapeci(objekti, osnovni, velikost, tc, tmp, organ + pripona, tc.get("px", (2048, 1024))[i], out)
+        elif tk:  # vsaka mreža (računalnik, telefon) dobi svoj UV atlas in svojo peko
             slike = zapeci_teksture(objekti, [r[1] for r in osnovni], velikost, tc, tmp, organ + pripona, tc.get("px", (2048, 1024))[i])
         odp = zapeci_odprtost(objekti, velikost) if cfg.get("odprtost") else None
         zapeci_ao(objekti, velikost, po_straneh=cfg.get("ao_po_straneh", False), odprtost=odp)
@@ -1093,7 +1119,7 @@ def izvozi(organ, cfg):
             filepath=os.path.join(out, organ + pripona + ".glb"), export_format="GLB",
             use_active_collection=False, use_visible=True, export_apply=True,
             export_materials="EXPORT", export_normals=True, export_vertex_color="ACTIVE", export_texcoords=bool(tk), export_tangents=bool(tk),
-            export_image_format="WEBP" if tk else "AUTO", export_image_quality=tk.get("kakovost", 82) if tk else 75,
+            export_image_format="WEBP" if tk and not tk.get("pbr") else "AUTO", export_image_quality=tk.get("kakovost", 82) if tk else 75,
             export_yup=True, export_extras=True, export_animations=False, export_skins=False,
             export_morph=False, export_lights=False, export_cameras=False)
         for c in scene.collection.children:

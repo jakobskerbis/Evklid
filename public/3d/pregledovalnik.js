@@ -750,6 +750,8 @@ export function odpriModel(el, mod, opts = {}) {
     else if (nadzorEl.parentNode !== spodaj) spodaj.prepend(nadzorEl);
     if (model.group) kit.scene.add(model.group);
     kit.nastaviLuci(model.luci !== false);
+    // Skupni studijski HDR (model.okolje = { ime, jakost, zasuk }), sicer privzeto okolje kompleta.
+    kit.nastaviOkolje(model.luci !== false ? model.okolje?.ime || null : null, model.okolje || {}).catch(() => kit.nastaviOkolje(null));
     // Začetne vrednosti kontrol (katalog ali naslov): nastavimo in pokličemo ob().
     for (const c of Array.isArray(model.nadzor) ? model.nadzor : []) {
       if (c.id in zacetek && c.tip !== "gumb" && c.tip !== "izpis") {
