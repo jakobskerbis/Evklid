@@ -18,7 +18,7 @@ export function okvirInt(navodilo, oznaka) {
 export default function narisi(host) {
   const { S, A } = okvirInt("Spreminjaj število pravokotnikov n.", "Definicija integrala: Riemannova vsota");
   let n = 6;
-  S.drsnik({ label: "n", min: N_MIN, max: N_MAX, step: 1, value: n, digits: 0, barva: "ploskev", onInput: (v) => ((n = v), izris()) });
+  S.drsnik({ zvezno: false, label: "n", min: N_MIN, max: N_MAX, step: 1, value: n, digits: 0, barva: "ploskev", onInput: (v) => ((n = v), izris()) });
 
   function izris() {
     const q = riemann(n);

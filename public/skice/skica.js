@@ -50,8 +50,13 @@ export function skica({ w = 320, h: hgt = 220, navodilo = "", oznaka = "Interakt
         ),
       );
     },
-    drsnik({ barva = "ploskev", ...opts }) {
-      const sl = slider(opts);
+    // Drsnik je 10000-krat drobnejši od step (skoraj zvezen, j 2026-11-04); zvezno: false za cela števila (n).
+    // pripni: posebne vrednosti (npr. q = 0), na katere se vrednost pripne, ko bi se v izpisu že brala kot ta.
+    drsnik({ barva = "ploskev", zvezno = true, pripni = [], ...opts }) {
+      const pol = 0.5 * 10 ** -(opts.digits ?? 0) + 1e-12, onInput = opts.onInput;
+      const k = (v) => pripni.find((c) => Math.abs(v - c) < pol) ?? v;
+      if (pripni.length) opts.onInput = (v) => (k(v) !== v && sl.set(k(v), true), onInput?.(k(v)));
+      const sl = slider({ ...opts, fino: zvezno ? 10000 : 0 });
       sl.classList.add("sk-slider", `sk-${barva}`);
       const fill = () => {
         const i = sl.input;

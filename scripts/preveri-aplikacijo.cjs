@@ -231,13 +231,18 @@ async function screen(p, name) {
       // V aplikaciji drsi samo odprt pogled, nikoli cela stran: sicer jo scrollIntoView premakne in spodnja vrstica
       // obvisi sredi zaslona (j 2026-11-04, skrit napis na dnu Nastavitev).
       const down = document.querySelector("#tabbar") ? document.documentElement.scrollHeight - innerHeight : 0;
-      return { raw: [...raw], over, down };
+      // Mali navpični drsnik s puščicama ▲▼ ob vrstici (j 2026-11-04: »never use scrollbars like that again«).
+      const mini = [...document.querySelectorAll("body *")]
+        .filter((el) => !/^(TEXTAREA|INPUT|SELECT)$/.test(el.nodeName) && el.clientHeight > 0 && el.clientHeight < 80 && el.scrollHeight > el.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(el).overflowY) && getComputedStyle(el).scrollbarWidth !== "none" && vis(el))
+        .map((el) => `${el.nodeName.toLowerCase()}.${[...el.classList].join(".")}`);
+      return { raw: [...raw], over, down, mini: [...new Set(mini)] };
     }, KEYS)
     .catch((e) => ({ raw: [], over: 0, err: e.message }));
   if (r.err) problem(`${p.label} ${name}`, `ni mogoče pregledati: ${r.err.slice(0, 120)}`);
   if (r.over > 1) problem(`${p.label} ${name}`, `vodoravno drsenje za ${r.over} px`);
   if (r.down > 1) problem(`${p.label} ${name}`, `cela stran je za ${r.down} px višja od zaslona (drsi stran namesto pogleda)`);
   if (r.raw.length) problem(`${p.label} ${name}`, `neprevedeni ključi: ${r.raw.join(", ")}`);
+  if (r.mini?.length) problem(`${p.label} ${name}`, `mali navpični drsnik (▲▼) v: ${r.mini.slice(0, 5).join(", ")} (docs/oblikovanje.md)`);
   if (SHOTS) {
     const file = path.join(SHOTS, `${String(++shotN).padStart(3, "0")}-${p.label}-${name}.png`.replace(/[^\w.\-]+/g, "_"));
     await p.screenshot({ path: file }).catch(() => {});

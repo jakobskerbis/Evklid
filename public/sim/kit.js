@@ -86,10 +86,12 @@ export const GUMBI_DO = 6;
 // Drsnik z oznako in prikazano vrednostjo. Pri največ GUMBI_DO vrednostih so namesto njega gumbi
 // (npr. n: 2 · 3 · 4 · 5); skriti drsnik ostane vir vrednosti, zato set/get/input delujejo enako.
 // cls (a, b, c, accent …): barvni krog ob oznaki, ko ima drsnik oznako na grafu iste barve (axisMark, spanMark).
-export function slider({ label: lab, min, max, step = 1, value, unit = "", digits, onInput, format, cls }) {
+// fino (npr. 10000): drsnik se premika fino-krat drobneje kot step (skoraj zvezno, j 2026-11-04); step ostane
+// korak puščic in zaokroževanje izpisa, izris ob vlečenju pa se zbere v enega na sličico (gladko na telefonu).
+export function slider({ label: lab, min, max, step = 1, value, unit = "", digits, onInput, format, cls, fino = 0 }) {
   const d = digits ?? (String(step).split(".")[1]?.length || 0);
   const out = h("output");
-  const input = h("input", { type: "range", min, max, step, value, "aria-label": lab });
+  const input = h("input", { type: "range", min, max, step: fino ? Number((step / fino).toPrecision(12)) : step, value, "aria-label": lab });
   const txt = (v) => (format ? format(v) : `${fmt(v, d)}${unit ? (unit === "°" || unit === "%" ? "" : " ") + unit : ""}`);
   const choice = h("div", { class: "demo-seg demo-choice", role: "radiogroup", "aria-label": lab, hidden: true });
   let key = "";
@@ -123,10 +125,25 @@ export function slider({ label: lab, min, max, step = 1, value, unit = "", digit
     out.textContent = txt(Number(input.value));
     sync();
   };
+  let cakaSlicico = false;
   input.addEventListener("input", () => {
     show();
-    onInput?.(Number(input.value));
+    if (!fino || typeof requestAnimationFrame === "undefined") return onInput?.(Number(input.value));
+    if (cakaSlicico) return;
+    cakaSlicico = true;
+    requestAnimationFrame(() => ((cakaSlicico = false), onInput?.(Number(input.value))));
   });
+  // Puščice premaknejo fini drsnik za cel step (Shift: 10) na mrežo stepa, ne za drobni korak.
+  if (fino)
+    input.addEventListener("keydown", (ev) => {
+      const k = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1 }[ev.key];
+      if (!k) return;
+      ev.preventDefault();
+      const lo = Number(input.min), hi = Number(input.max), n = (Number(input.value) - lo) / step;
+      const i = k > 0 ? Math.floor(n + 1e-9) + k * (ev.shiftKey ? 10 : 1) : Math.ceil(n - 1e-9) + k * (ev.shiftKey ? 10 : 1);
+      const v = Number(clamp(lo + i * step, lo, hi).toFixed(10));
+      if (v !== Number(input.value)) wrap.set(v);
+    });
   const name = h("span", { class: "demo-slider-label" }, cls ? h("i", { class: `dot dot-${cls}`, "aria-hidden": "true" }) : null, lab);
   const wrap = h("label", { class: "demo-slider" }, name, input, out, choice);
   show();

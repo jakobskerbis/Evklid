@@ -195,6 +195,8 @@ Prostor ob strani izkoristimo za informacije, ki jih učenec potrebuje hkrati:
 - Kazalo učbenika in Napredek: kartice v stolpcih (vsaj 440 px), kolikor jih gre.
 - Ko je odprta plošča za vnos (400 px desno), sta stolpca šele od 1700 px.
 
+- **Brez malih drsnikov s puščicama ▲▼** (j, 2026-11-04: »never use scrollbars like that again«): vrstica s formulo, rezultatom ali besedilom nikoli ne dobi navpičnega drsnika. Formula se prilagodi širini (»Predolge enačbe« zgoraj), kar še štrli za nekaj pik (meje integrala, potence), se obreže, ne pomika. Vsaka vrstica z `overflow-x: auto` je v seznamu `DRSNE` (`public/drsniki.js`), ki ji navpično smer nastavi na `clip`; izjemi sta le okvirja, ki se namenoma pomikata navzdol (`NAVPICNE`, z lastno `max-height`), in vrstice gumbov s skritim drsnikom (`SKRITE`). Preverja `test/drsniki.test.js`.
+
 ### Brez praznih robov (j, 2026-11-04, vse platforme)
 
 »Če je ob straneh zaslona na katerem koli delu Evklida prazen prostor, naj se prikaz spremeni tako, da ga izkoristi.«

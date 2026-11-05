@@ -10,7 +10,7 @@ export const N_MIN = 1, N_MAX = 12;
 export default function narisi(host) {
   const { S, A } = okvirInt("Spreminjaj število trapezov n.", "Trapezna metoda: približek integrala");
   let n = 3;
-  S.drsnik({ label: "n", min: N_MIN, max: N_MAX, step: 1, value: n, digits: 0, barva: "ploskev", onInput: (v) => ((n = v), izris()) });
+  S.drsnik({ zvezno: false, label: "n", min: N_MIN, max: N_MAX, step: 1, value: n, digits: 0, barva: "ploskev", onInput: (v) => ((n = v), izris()) });
 
   function izris() {
     const q = trapez(n);
