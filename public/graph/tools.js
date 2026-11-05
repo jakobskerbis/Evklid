@@ -678,8 +678,29 @@ export function createFormulas(root, opts) {
           list.append(item);
         }
         sec.append(list);
+      } else if (rows.length > 1 && rows.every((r) => r.children.length === rows[0].children.length) && rows[0].children.length <= 4) {
+        // Tabela s 3 ali 4 stolpci (npr. Lik | Obseg | Ploščina) se ne pomika vstran (j, 5. 11.): vsaka vrstica je
+        // kartica z imenom, pod njim pa formule z napisom stolpca; skica stoji nad formulami.
+        const glava = rows[0].parentElement.tagName === "THEAD" ? [...rows[0].children].map((c) => c.innerHTML) : [];
+        const list = document.createElement("div");
+        list.className = "fm-list";
+        for (const r of rows) {
+          if (r.parentElement.tagName === "THEAD") continue;
+          const [a, ...rest] = r.children;
+          const item = document.createElement("div");
+          item.className = "fm-item";
+          const cols = rest.map((c, i) => (c.textContent.trim() ? `<div class="fm-col">${glava[i + 1]?.trim() ? `<span class="fm-col-h">${glava[i + 1]}</span>` : ""}<div class="fm-f">${c.innerHTML}</div></div>` : "")).join("");
+          item.innerHTML = `<div class="fm-name">${a.innerHTML}</div><div class="fm-fs">${cols}</div>`;
+          const host = skicaHost(imeKartice(a));
+          if (host) {
+            item.classList.add("has-skica");
+            item.insertBefore(host, item.querySelector(":scope > .fm-fs"));
+          }
+          list.append(item);
+        }
+        sec.append(list);
       } else {
-        // Tabela z več stolpci (npr. Lik | Obseg | Ploščina): skica v svoji vrstici pod vrstico lika.
+        // Širša tabela (5 stolpcev ali več, npr. predpone, razpredelnice): skica v svoji vrstici pod vrstico lika.
         for (const r of rows) {
           if (r.parentElement.tagName === "THEAD" || !r.children.length) continue;
           const host = skicaHost(imeKartice(r.children[0]));

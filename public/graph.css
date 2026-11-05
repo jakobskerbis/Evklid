@@ -430,11 +430,13 @@ body.graph-open { overflow: hidden; }
 .pse-lg i { background: color-mix(in srgb, var(--c) 45%, var(--surface)); }
 
 /* formule */
-.fm-wrap { margin: 0 auto; padding: 0 var(--rob-strani) 24px; display: flex; flex-direction: column; gap: 12px; }
+.fm-wrap { margin: 0 auto; padding: 0 var(--rob-strani) 88px; display: flex; flex-direction: column; gap: 12px; }
 .fm-bar { padding-top: 12px; }
 /* kazalo poglavij ostane na vrhu, ko se pomikaš po zbirki */
 .fm-sel { display: flex; flex-wrap: wrap; gap: 8px 12px; justify-content: center; }
-.fm-toc { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 6px 0; margin: -6px 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.fm-toc { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 6px 0 11px; margin: -6px 0 -5px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } /* neprosojno ozadje: brez maske »drs« (public/drsniki.js, IZVZETO) */
+.fm-toc > button { position: relative; }
+.fm-toc > button.active::after { content: ""; position: absolute; inset-inline: 14px; bottom: -8px; height: 3px; border-radius: 2px; background: var(--accent); } /* črta pod izbranim čipom */
 .fm-toc::-webkit-scrollbar { display: none; }
 .fm-toc > button { flex: none; }
 .fm-body { display: flex; flex-direction: column; gap: 12px; }
@@ -444,6 +446,12 @@ body.graph-open { overflow: hidden; }
 .fm-item { display: grid; grid-template-columns: minmax(120px, 32%) minmax(0, 1fr); gap: 4px 16px; padding: 10px 0; border-top: 1px solid var(--border); align-items: baseline; }
 .fm-list .fm-item:first-child { border-top: 0; }
 .fm-head { font-weight: 800; color: var(--muted); }
+/* tabela z več stolpci kot kartica: ime, pod njim formule z napisom stolpca */
+.fm-fs { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.fm-col { display: grid; grid-template-columns: 5.5em minmax(0, 1fr); gap: 2px 10px; align-items: baseline; }
+.fm-col-h { font-size: 0.85rem; color: var(--muted); }
+.fm-item.has-skica .fm-fs { margin-top: 2px; }
+@media (max-width: 600px) { .fm-col { grid-template-columns: 5em minmax(0, 1fr); } }
 .fm-item.fm-cont { border-top-style: dashed; }
 .fm-name { font-weight: 700; color: var(--muted); }
 /* formula se ne prelomi sredi izraza: lomi se le med formulami; predolga se pomakne vodoravno */
@@ -451,7 +459,7 @@ body.graph-open { overflow: hidden; }
 .fm-f .katex { white-space: nowrap; }
 .fm-f p { margin: 0; }
 @media (max-width: 600px) {
-  .fm-wrap { padding: 0 12px 20px; }
+  .fm-wrap { padding: 0 12px 88px; }
   .fm-sel .seg { width: 100%; }
   .fm-sel .seg > button { min-height: 36px; padding: 6px 10px !important; }
   .fm-body .fm-sec { padding: 14px 16px; }

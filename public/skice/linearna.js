@@ -1,13 +1,19 @@
 // Linearna funkcija y = kx + n: drsnika k in n; trikotnik naklona z oznakama 1 in k, točka N(0, n) in ničla x₀.
 // Na listu za SŠ še naklonski kot φ s k = tan φ, kot na kartici Premica (OŠ: brez kota, linearna-os.js).
 import { skica, st, crta, napis, osi, par, vr } from "./skica.js";
-import { s, fnPath } from "../sim/kit.js";
+import { s } from "../sim/kit.js";
 
 export function linearna(k, n) {
   const x0 = k === 0 ? null : -n / k;
   // φ: kot med premico in pozitivno smerjo osi x, 0° ≤ φ < 180° (pri k < 0 top kot).
   const at = (Math.atan(k) * 180) / Math.PI;
   return { f: (x) => k * x + n, x0, alfa: k < 0 ? 180 + at : at, vsakX: k === 0 && n === 0 };
+}
+
+// Premica od levega do desnega roba okna (obrez opravi clip-path). fnPath tu ne gre: pri strmi premici
+// iz dveh točk preskok presega mejo za nezveznost in črta izgine (j, 5. 11.: k = 3).
+export function potPremice(f, A) {
+  return `M${A.X(A.x0).toFixed(1)},${A.Y(f(A.x0)).toFixed(1)}L${A.X(A.x1).toFixed(1)},${A.Y(f(A.x1)).toFixed(1)}`;
 }
 
 export default function narisi(host, { kot = true } = {}) {
@@ -24,7 +30,7 @@ export default function narisi(host, { kot = true } = {}) {
     const q = linearna(k, n);
     const g = S.plast("graf");
     const zg = s("g", { "clip-path": A.izrez }, g);
-    s("path", { d: fnPath(q.f, A, { n: 2 }), class: "sk-s-glavna", "stroke-width": 2.5 }, zg);
+    s("path", { d: potPremice(q.f, A), class: "sk-s-glavna", "stroke-width": 2.5 }, zg);
     // Trikotnik naklona: od N za 1 v desno, nato za k gor ali dol.
     const N = [A.X(0), A.Y(n)], D = [A.X(1), A.Y(n)], K = [A.X(1), A.Y(n + k)];
     crta(zg, ...N, ...D, "ploskev", { "stroke-width": 2.5 });
@@ -51,7 +57,7 @@ export default function narisi(host, { kot = true } = {}) {
     if (kot) cipi.push({ barva: "ploskev", oznaka: "\\varphi", vrednost: `${vr(q.alfa, 1)}°` });
     cipi.push(
       { barva: "druga", oznaka: "n", vrednost: st(n, 1) },
-      { barva: "druga", oznaka: "N(0, n)", vrednost: `N${par(0, n, 1)}` },
+      { barva: "druga", oznaka: "N", vrednost: par(0, n, 1) },
       { barva: "glavna", oznaka: "x_0 = -\\frac{n}{k}", vrednost: q.x0 === null ? (q.vsakX ? "vsak x" : "ni ničle") : `${Math.abs(q.x0 - Number(q.x0.toFixed(2))) < 1e-9 ? "" : "≈\u00a0"}${st(q.x0, 2)}` },
     );
     S.cipi(cipi);
