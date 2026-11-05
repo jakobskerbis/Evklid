@@ -1,0 +1,439 @@
+<title>Evklid 3D atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: ena bralna kolona (~70 znakov), na vrhu živ 3D predogled, nato poglavja načrta; tabele v lastnem drsnem okvirju. */
+:root{
+  --bg:#F6F7F9; --surface:#FFFFFF; --line:#DCE1EA; --fg:#141A24; --muted:#566074;
+  --accent:#2353D1; --accent-soft:#E6ECFB; --ok:#1F7A4D; --warn:#9A5B00;
+  --stage:#0B0F16; --stage-fg:#E8ECF3; --stage-muted:#9AA6BA; --chip:#161C27; --chip-line:#262F3E;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1117; --surface:#151B24; --line:#263041; --fg:#E6EAF1; --muted:#9AA6BA;
+  --accent:#6E9BFF; --accent-soft:#18233A; --ok:#5CCB91; --warn:#E7A94A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1117; --surface:#151B24; --line:#263041; --fg:#E6EAF1; --muted:#9AA6BA;
+  --accent:#6E9BFF; --accent-soft:#18233A; --ok:#5CCB91; --warn:#E7A94A; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:2.1rem;font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.45rem;font-weight:700}
+h3{font-size:1.05rem;font-weight:600}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:14px}
+.lead{font-size:1.1rem;color:var(--muted)}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:6px}
+.summary{background:var(--accent-soft);border-radius:14px;padding:18px 20px;display:grid;gap:12px}
+.summary dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px}
+.summary dt{font-weight:600}
+.summary dd{margin:0;min-width:0}
+@media (max-width:520px){.summary dl{grid-template-columns:1fr}.summary dd{margin-bottom:6px}}
+/* 3D predogled */
+.stage{background:var(--stage);color:var(--stage-fg);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.stage-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px 0}
+.stage-top .eyebrow{color:var(--stage-muted)}
+.stage-title{font-weight:600;font-size:1.05rem}
+.stage-btns{display:flex;gap:8px}
+.stage button{font:inherit;color:var(--stage-fg);background:var(--chip);border:1px solid var(--chip-line);border-radius:999px;padding:7px 14px;cursor:pointer}
+.stage button:focus-visible{outline:2px solid #6E9BFF;outline-offset:2px}
+.canvas-box{position:relative;height:460px;max-width:100%}
+@media (max-width:520px){.canvas-box{height:420px}}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.card{position:absolute;left:16px;right:16px;bottom:14px;background:rgba(18,23,33,.92);border:1px solid var(--chip-line);border-radius:14px;padding:12px 14px;backdrop-filter:blur(6px)}
+.card b{display:block;font-size:1rem}
+.card span{color:var(--stage-muted);font-size:.92rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 16px}
+.chips button{padding:5px 11px;font-size:.85rem;display:flex;align-items:center;gap:7px}
+.chips i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.chips button[aria-pressed="true"]{border-color:#6E9BFF;background:#1A2540}
+.note{font-size:.88rem;color:var(--muted)}
+.fallback{padding:40px 20px;text-align:center;color:var(--stage-muted)}
+/* tabele */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.93rem}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{font-weight:600;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{display:inline-block;font-size:.78rem;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid currentColor}
+.tag.ok{color:var(--ok)} .tag.warn{color:var(--warn)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.box{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--surface);display:flex;flex-direction:column;gap:8px;min-width:0}
+.box ul{font-size:.94rem}
+.decide{border:2px solid var(--accent);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.decide ol{gap:10px}
+footer{font-size:.85rem;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+</style>
+
+<div class="wrap">
+
+<header style="display:flex;flex-direction:column;gap:10px">
+  <span class="eyebrow">Načrt · 4. november 2026 · v pregled za j</span>
+  <h1>3D atlas človeškega telesa in 3D modeli znanosti</h1>
+  <p class="lead">Evklid dobi lasten 3D atlas telesa v slogu Astre, a z bolj dodelanimi modeli, vsak organ in organski sistem kot samostojno simulacijo, 3D celice vseh vrst ter atom, orbitale, molekule, DNK, polja in vseh osem dodatnih idej.</p>
+</header>
+
+<div class="summary" aria-label="Povzetek">
+  <dl>
+    <dt>Kaj</dt><dd>Okoli 120 3D simulacij v šestih fazah: atlas telesa (cilj več kot 1000 struktur, Astra jih ima 743), 24 organov, 11 organskih sistemov, 27 celic, kemija, fizika, matematika in vesolje.</dd>
+    <dt>Iz česa</dt><dd>Odprti anatomski modeli Z-Anatomy in BodyParts3D (dovoljena uporaba v plačljivi aplikaciji, z navedbo vira). Celice, atomi in molekule nastanejo v kodi. Brez plačljivih modelov in brez zunanjih izvajalcev.</dd>
+    <dt>Kje</dt><dd>Splet in aplikacija enako (aplikacija odpre isto stran), slovenska imena, deluje tudi brez povezave, ko je enkrat prenesen.</dd>
+    <dt>Koliko</dt><dd>Približno 450 do 650 $ porabe Claude skupaj, razporejeno čez 7 do 9 tednov. To je okoli 20 do 30 % ene tedenske omejitve. Gostovanje ostane brez dodatnih stroškov.</dd>
+    <dt>Prvi korak</dt><dd>Faza 0 (okoli 40 $): okostje v 3D s pogledi, iskanjem in razmikanjem, ki ga preizkusiš na svojem telefonu, preden gremo naprej.</dd>
+  </dl>
+</div>
+
+<section aria-labelledby="pred">
+  <span class="eyebrow">Predogled</span>
+  <h2 id="pred">Tako približno bo videti prerez celice</h2>
+  <div class="stage">
+    <div class="stage-top">
+      <div><span class="eyebrow">Celice v 3D</span><div class="stage-title">Živalska celica</div></div>
+      <div class="stage-btns"><button id="b-spin" type="button" aria-pressed="true">Vrti</button><button id="b-reset" type="button">Ponastavi</button></div>
+    </div>
+    <div class="canvas-box" id="box">
+      <canvas id="cel" aria-label="3D model živalske celice. Povleci za vrtenje, tapni del celice za opis." role="img"></canvas>
+      <div class="card" id="card" aria-live="polite"><b>Tapni del celice</b><span>Povleci za vrtenje, s kolescem ali dvema prstoma povečaš.</span></div>
+    </div>
+    <div class="chips" id="chips" aria-label="Deli celice"></div>
+  </div>
+  <p class="note">Ta predogled je hiter osnutek, narejen samo v kodi v nekaj minutah. Pokaže smer: temno ozadje, mehka studijska svetloba, vlažen sijaj na organelih, prerez, tap za opis. Končni modeli bodo imeli več podrobnosti (notranje membrane mitohondrija, jedrne pore, citoskelet) in teksture.</p>
+</section>
+
+<section aria-labelledby="astra">
+  <span class="eyebrow">Primerjava</span>
+  <h2 id="astra">Kaj vzamemo od Astre in kaj naredimo bolje</h2>
+  <p>Iz tvojih posnetkov vzamemo zgradbo zaslona, ki dobro deluje: iskanje, »Brskaj« po plasteh, gumb za učenje, povečava in ponastavitev, kompas smeri, pogledi Spredaj, Zadaj, S strani in Perspektiva, Moško in Žensko, drsnik »Razmakni strukture«, vrstica nalaganja ter »Organi v 3D« z barvnimi točkami in kartico. Besedil, slik in modelov Astre ne kopiramo. Videz je Evklidov (barve, pisava, ikone), besedila napišemo sami.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Področje</th><th>Astra danes</th><th>Evklid</th></tr></thead>
+    <tbody>
+      <tr><td>Videz modelov</td><td>Enobarven, plastičen videz, ploska svetloba</td><td>Material po tkivu: kost porozna in mat, mišica z vlakni, organi z vlažnim sijajem, žile prosojne. Studijska svetloba in mehke sence v pregibih.</td></tr>
+      <tr><td>Razmikanje</td><td>Pri 100 % se strukture zložijo v mrežo, telo se izgubi</td><td>Strukture se razmaknejo od središča svojega sistema, telo ostane prepoznavno. Mreža samo kot ločen pogled »Vse strukture«.</td></tr>
+      <tr><td>Izbira strukture</td><td>Kartica z imenom</td><td>Kamera mehko prileti do strukture, ostalo postane prosojno (rentgen). Ime, latinsko ime, naloga, povezava na lekcijo in »Vprašaj inštruktorja«.</td></tr>
+      <tr><td>Nalaganje</td><td>Okoli 35 MB naenkrat</td><td>Okostje okoli 5 MB v nekaj sekundah, ostali sistemi se naložijo, ko jih odpreš. Po prvem prenosu shranjeno na napravi.</td></tr>
+      <tr><td>Dodatno</td><td></td><td>Prerez z drsnikom (rez skozi telo), srce bije, pljuča dihajo, kviz »Najdi strukturo« z XP, seznam struktur za bralnike zaslona.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section aria-labelledby="vse">
+  <span class="eyebrow">Obseg</span>
+  <h2 id="vse">Kaj vse bo</h2>
+  <div class="grid2">
+    <div class="box"><h3>Atlas telesa</h3><ul>
+      <li>Plasti: koža, mišice, okostje, organi, žile, živci, bezgavke</li>
+      <li>Cilj več kot 1000 struktur, v treh stopnjah podrobnosti (OŠ, SŠ, matura)</li>
+      <li>Moško in žensko telo</li>
+      <li>Pogledi, razmikanje, prerez, rentgen, iskanje</li></ul></div>
+    <div class="box"><h3>Organi v 3D (24)</h3><ul>
+      <li>Možgani, oko, uho, nos in jezik, srce, pljuča, sapnik in grlo</li>
+      <li>Želodec, jetra, trebušna slinavka, žolčnik, tanko in debelo črevo</li>
+      <li>Ledvica, sečni mehur, kost v prerezu, sklep (koleno), skeletna mišica</li>
+      <li>Koža, ščitnica, nadledvična žleza, vranica, maternica z jajčnikom, moda</li></ul></div>
+    <div class="box"><h3>Organski sistemi (11)</h3><ul>
+      <li>Gibala: okostje in mišice</li>
+      <li>Krvožilje, dihala, prebavila, izločala</li>
+      <li>Živčevje in čutila, žleze z notranjim izločanjem</li>
+      <li>Limfni in imunski sistem, koža, razmnoževala</li></ul></div>
+    <div class="box"><h3>Celice (27)</h3><ul>
+      <li>Živalska, rastlinska, bakterijska, glivna (kvasovka), virus (bakteriofag, koronavirus, HIV)</li>
+      <li>Nevron, gladka, skeletna in srčna mišica, eritrocit, levkociti, trombocit</li>
+      <li>Epitelna, čašasta, kostna, maščobna, spermij, jajčece, paličica in čepek</li>
+      <li>Palisadna, celica zapiralka, koreninski lasek, ksilem in floem, ameba, paramecij, evglena</li></ul></div>
+    <div class="box"><h3>Kemija in fizika</h3><ul>
+      <li>Atom (Bohrov model in oblak), orbitale s, p, d, f, izračunane iz enačb</li>
+      <li>Periodni sistem v 3D: tapneš element, vidiš atom</li>
+      <li>Molekule: sestavljanje, kroglice in palčke ali kalota, vezni koti, VSEPR</li>
+      <li>DNK, RNK in beljakovine, kristalne mreže (NaCl, diamant, kovine)</li>
+      <li>Električna in magnetna polja s silnicami</li></ul></div>
+    <div class="box"><h3>Matematika, vesolje, procesi</h3><ul>
+      <li>Geometrijska telesa: mreža, prerez, prostornina</li>
+      <li>Grafi funkcij dveh spremenljivk z drsniki</li>
+      <li>Sončni sistem: letni časi, Lunine mene, mrki</li>
+      <li>Procesi v celici: mitoza, mejoza, fotosinteza, sinteza beljakovin</li></ul></div>
+  </div>
+</section>
+
+<section aria-labelledby="zaslon">
+  <span class="eyebrow">Delovanje</span>
+  <h2 id="zaslon">Kako bo atlas deloval za učenca</h2>
+  <ol>
+    <li><b>Odpre atlas</b> v Laboratoriju (zavihek »3D«), iz lekcije biologije ali ko inštruktorju napiše na primer »pokaži mi ledvico«.</li>
+    <li><b>Vidi celo telo</b> spredaj. Zgoraj iskanje, »Brskaj« in učni gumb, desno povečava, ponastavitev in kompas smeri (zgoraj, spodaj, levo, desno, spredaj, zadaj).</li>
+    <li><b>Brskaj</b> odpre plasti in sisteme s stikali. Število vidnih struktur je vedno prikazano.</li>
+    <li><b>Tapne strukturo</b>: kamera prileti bliže, kartica pokaže slovensko ime, latinsko ime in nalogo v enem stavku. »Podrobnosti« odpre več besedila, povezavo na lekcijo in »Vprašaj inštruktorja«.</li>
+    <li><b>Nastavitve pogleda</b>: Spredaj, Zadaj, S strani, Perspektiva, Moško ali Žensko, Razmakni strukture, Prerez, Rentgen.</li>
+    <li><b>Uči se</b>: kviz »Najdi strukturo« in »Kaj je to?« za izbrani sistem, z XP in ponavljanjem tega, kar je zgrešil.</li>
+  </ol>
+  <p>Organi in celice imajo isti okvir kot Astrini »Organi v 3D«: model na sredini, barvne točke na delih, kartica z imenom in nalogo, spodaj »Podrobnosti organa«. Vsak organ ima vsaj en prerez, nekateri tudi gibanje (srce, pljuča, oko, ki se fokusira, mišica, ki se krči).</p>
+</section>
+
+<section aria-labelledby="lic">
+  <span class="eyebrow">Viri in licence</span>
+  <h2 id="lic">Od kod modeli in ali jih smemo uporabiti</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Vir</th><th>Za kaj</th><th>Licenca</th><th>Ocena</th></tr></thead>
+    <tbody>
+      <tr><td>Z-Anatomy</td><td>Celo telo, vse plasti</td><td>CC BY-SA 4.0</td><td><span class="tag ok">Smemo</span> Z navedbo vira. Naše predelane modele moramo deliti pod isto licenco (samo modele, ne kode Evklida). Dva dela (notranje uho, ledvica) imata prepoved komercialne rabe, zato ju vzamemo iz BodyParts3D ali naredimo sami.</td></tr>
+      <tr><td>BodyParts3D</td><td>Osnova za Z-Anatomy, nadomestni deli</td><td>CC BY-SA 2.1 Japonska</td><td><span class="tag ok">Smemo</span> Z navedbo vira.</td></tr>
+      <tr><td>Lastni modeli v kodi</td><td>Celice, virusi, atom, orbitale, molekule, mreže, polja, telesa, grafi</td><td>Naši</td><td><span class="tag ok">Smemo</span></td></tr>
+      <tr><td>PubChem in PDB</td><td>Lege atomov v molekulah, DNK in beljakovinah</td><td>Javno dobro, CC0</td><td><span class="tag ok">Smemo</span></td></tr>
+      <tr><td>NASA</td><td>Površine planetov in Lune</td><td>Javno dobro</td><td><span class="tag ok">Smemo</span></td></tr>
+      <tr><td>Poly Haven</td><td>Studijska svetloba, osnovne teksture</td><td>CC0</td><td><span class="tag ok">Smemo</span></td></tr>
+      <tr><td>three.js, meshoptimizer, Blender</td><td>Prikaz, stiskanje, priprava modelov</td><td>MIT, MIT, GPL (samo orodje)</td><td><span class="tag ok">Smemo</span> Vse odprto, nič plačljivega.</td></tr>
+      <tr><td>Modeli s Sketchfab ali CGTrader</td><td></td><td>Različne</td><td><span class="tag warn">Ne</span> Samo, če je licenca CC0 ali CC BY in jo zapišemo; plačljivih ne.</td></tr>
+    </tbody>
+  </table></div>
+  <p>V atlasu bo zaslon »Viri in licence« z vsemi viri. Test v kodi bo preveril, da ima vsak model zapisan vir in licenco ter da noben ne prepoveduje komercialne rabe. Latinska imena so po mednarodni anatomski terminologiji, slovenska imena in opise napišemo sami.</p>
+</section>
+
+<section aria-labelledby="tel">
+  <span class="eyebrow">Telefoni</span>
+  <h2 id="tel">Hitrost na telefonu</h2>
+  <ul>
+    <li><b>Cilj</b>: tekoče vrtenje (60 sličic na sekundo) na srednjih telefonih iz leta 2021, na primer Samsung Galaxy A52 in iPhone 11. Na starejših vsaj 30.</li>
+    <li><b>Manjši prenos</b>: modele stisnemo (okoli 5 do 10-krat manjši), vsak sistem je svoja datoteka. Okostje okoli 5 MB, celo telo okoli 25 MB po delih.</li>
+    <li><b>Samodejna kakovost</b>: na šibkem telefonu manj podrobnosti in brez mehkih senc, na računalniku vse.</li>
+    <li><b>Brez povezave</b>: po prvem odprtju se model shrani na napravo.</li>
+    <li><b>Aplikacija</b> odpre isto stran kot splet (kot kalkulator), zato sta videz in delovanje vedno enaka.</li>
+    <li><b>Če naprava 3D ne zmore</b>, pokažemo slike iz istih modelov in seznam struktur.</li>
+  </ul>
+</section>
+
+<section aria-labelledby="faze">
+  <span class="eyebrow">Faze in stroški</span>
+  <h2 id="faze">Vrstni red dela</h2>
+  <p>Vsaka faza je en ali več PR-jev s trikratnim pregledom. Po vsaki fazi ti pošljem posnetke in povezavo za preizkus. Ocene stroškov so porabe Claude; gostovanje modelov na Renderju ostane v obstoječem paketu.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Faza</th><th>Kaj dobiš</th><th class="num">Čas</th><th class="num">Ocena</th></tr></thead>
+    <tbody>
+      <tr><td>0 Osnova</td><td>3D pregledovalnik v Evklidovem slogu, okostje, pogledi, iskanje, razmikanje, nalaganje. Preizkus na tvojem telefonu.</td><td class="num">1 teden</td><td class="num">30–45 $</td></tr>
+      <tr><td>1 Atlas telesa</td><td>Vse plasti, več kot 1000 struktur, Moško in Žensko, prerez, rentgen, slovenska imena in opisi, kviz.</td><td class="num">2 tedna</td><td class="num">110–160 $</td></tr>
+      <tr><td>2 Organi in sistemi</td><td>24 organov in 11 sistemov kot samostojne simulacije, točke, podrobnosti, gibanje.</td><td class="num">2 tedna</td><td class="num">90–130 $</td></tr>
+      <tr><td>3 Celice</td><td>27 celic in virusov, prerezi, primerjava živalske in rastlinske celice.</td><td class="num">1–2 tedna</td><td class="num">80–110 $</td></tr>
+      <tr><td>4 Kemija in fizika</td><td>Atom, orbitale, periodni sistem v 3D, molekule, DNK, beljakovine, kristali, polja.</td><td class="num">1–2 tedna</td><td class="num">70–100 $</td></tr>
+      <tr><td>5 Ostalo</td><td>Geometrijska telesa, 3D grafi, sončni sistem, procesi v celici.</td><td class="num">1 teden</td><td class="num">70–100 $</td></tr>
+      <tr><th>Skupaj</th><th>Okoli 120 simulacij</th><th class="num">7–9 tednov</th><th class="num">450–650 $</th></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Po 28. novembru, ko preideš na manjši paket, bo tempo počasnejši (približno pol faze na teden). Če kakšna faza preseže oceno za več kot 20 %, se ustavim in te vprašam.</p>
+</section>
+
+<section aria-labelledby="kak">
+  <span class="eyebrow">Kakovost</span>
+  <h2 id="kak">Kako preverimo, da je pravilno in lepo</h2>
+  <ul>
+    <li>Imena, latinska imena in opise napiše Opus, preverita jih še dva pregleda (vsako ime in naloga posebej).</li>
+    <li>Pred objavo za šole jih pregleda učitelj biologije ali študent medicine (glej odločitev 3).</li>
+    <li>Samodejni testi: vsaka struktura ima slovensko ime in opis, vsak model vir in licenco, velikost datotek pod mejo, posnetek vsakega modela na telefonu in računalniku, svetlo in temno.</li>
+    <li>Veljajo ista pravila kot za druge simulacije: »Ponastavi«, »Poskusi«, tipkovnica, širina 360 px, merilo (na primer človek 1,7 m ob telesu, merilo v mikrometrih ob celici).</li>
+    <li>Orbitale in molekule se izračunajo iz pravih enačb in podatkov, ne narišejo na oko.</li>
+  </ul>
+</section>
+
+<section aria-labelledby="odl">
+  <div class="decide">
+    <span class="eyebrow">Zate</span>
+    <h2 id="odl">Tri odločitve</h2>
+    <ol>
+      <li><b>Ali začnem s fazo 0 ta teden (okoli 40 $)?</b> Predlagam da: najprej okostje na tvojem telefonu, šele nato ostale faze.</li>
+      <li><b>Kje naj bo v aplikaciji?</b> Predlagam zavihek »3D« v Laboratoriju in povezave iz lekcij biologije, kemije in fizike.</li>
+      <li><b>Kdo strokovno pregleda imena pred januarjem?</b> Predlagam učitelja biologije iz pilotne skupine ali študenta medicine, ki ga poznaš.</li>
+    </ol>
+    <p>Odgovoriš lahko kar v tej niti, na primer »1 da, 2 ok, 3 pozneje«.</p>
+  </div>
+</section>
+
+<footer>Viri licenc: <a href="https://github.com/Z-Anatomy/Models-of-human-anatomy">Z-Anatomy</a> · <a href="https://dbarchive.biosciencedbc.jp/data/bodyparts3d/20090209/README_e.html">BodyParts3D</a> · <a href="https://en.wikipedia.org/wiki/Anatomography">Anatomography</a></footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script>
+(function(){
+  var box=document.getElementById('box'), canvas=document.getElementById('cel'), card=document.getElementById('card'), chipsEl=document.getElementById('chips');
+  if(!window.THREE){box.innerHTML='<p class="fallback">3D predogled se ni naložil.</p>';return;}
+  var renderer;
+  try{renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true});}catch(e){box.innerHTML='<p class="fallback">Ta naprava ne podpira 3D prikaza.</p>';return;}
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.0;
+  var scene=new THREE.Scene(); scene.background=new THREE.Color(0x0b0f16);
+  var camera=new THREE.PerspectiveCamera(34,1,0.1,100);
+
+  // studijska svetloba: okolje iz nekaj svetlih plošč
+  var env=new THREE.Scene();
+  env.add(new THREE.Mesh(new THREE.SphereGeometry(20,32,16),new THREE.MeshBasicMaterial({color:0x10141c,side:THREE.BackSide})));
+  function panel(x,y,z,w,h,c){var m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:c,side:THREE.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);env.add(m);}
+  panel(-8,9,6,10,6,new THREE.Color(3.2,3.0,2.8));
+  panel(9,3,-6,6,10,new THREE.Color(0.9,1.2,2.2));
+  panel(0,-9,4,12,4,new THREE.Color(0.5,0.45,0.5));
+  var pm=new THREE.PMREMGenerator(renderer);
+  scene.environment=pm.fromScene(env,0.03).texture;
+  var key=new THREE.DirectionalLight(0xfff1e6,1.6); key.position.set(-4,6,5); scene.add(key);
+  var rim=new THREE.DirectionalLight(0x8fb2ff,1.2); rim.position.set(5,2,-6); scene.add(rim);
+
+  var cell=new THREE.Group(); scene.add(cell);
+  var parts={}, pickables=[];
+  function mat(c,o){return new THREE.MeshPhysicalMaterial(Object.assign({color:c,roughness:.38,clearcoat:.9,clearcoatRoughness:.25,sheen:.6,sheenColor:new THREE.Color(0xffffff),sheenRoughness:.5},o||{}));}
+  function reg(k,name,desc,color,mesh){if(!parts[k]){parts[k]={name:name,desc:desc,color:color,meshes:[]};}parts[k].meshes.push(mesh);mesh.userData.k=k;pickables.push(mesh);return mesh;}
+  // prerez: zgornja polovica z izrezom proti gledalcu, spodnja cela
+  function shell(r,outer,inner){
+    var g=new THREE.Group();
+    var a=new THREE.SphereGeometry(r,96,48,Math.PI*0.75,Math.PI*1.5,0,Math.PI/2);
+    var b=new THREE.SphereGeometry(r,96,48,0,Math.PI*2,Math.PI/2,Math.PI/2);
+    [a,b].forEach(function(geo){g.add(new THREE.Mesh(geo,outer));var m=new THREE.Mesh(geo,inner);m.scale.setScalar(.975);g.add(m);});
+    return g;
+  }
+  var R=2.3;
+  var mem=shell(R,mat(0xd98aa0,{roughness:.3,side:THREE.FrontSide}),mat(0xf0c2ae,{roughness:.6,clearcoat:.2,side:THREE.BackSide,sheen:.2}));
+  mem.children.forEach(function(m,i){reg(i%2?'cito':'mem',i%2?'Citoplazma':'Celična membrana',i%2?'Želatinasta tekočina, v kateri plavajo organeli.':'Meja celice. Odloča, katere snovi vstopijo in izstopijo.',i%2?'#f0c2ae':'#d98aa0',m);});
+  cell.add(mem);
+
+  var nuc=shell(.9,mat(0x7a68d8,{roughness:.32}),mat(0xb7a6ff,{roughness:.55,side:THREE.BackSide,clearcoat:.3}));
+  nuc.position.set(-.35,-.05,-.25);
+  nuc.children.forEach(function(m){reg('jedro','Jedro','Hrani DNK in upravlja delovanje celice.','#7a68d8',m);});
+  cell.add(nuc);
+  var ncl=reg('jedrce','Jedrce','V njem nastajajo deli ribosomov.','#3d2f8f',new THREE.Mesh(new THREE.SphereGeometry(.34,48,32),mat(0x3d2f8f,{roughness:.5})));
+  ncl.position.set(.12,.05,.25); nuc.add(ncl);
+
+  // zrnati ER: loki okoli jedra z ribosomi
+  var erM=mat(0x45aec4,{roughness:.35});
+  var ribM=mat(0x2b3c6b,{roughness:.6,clearcoat:.2});
+  var ribGeo=new THREE.SphereGeometry(.028,8,6);
+  var ribTotal=0, ribs=new THREE.InstancedMesh(ribGeo,ribM,900); ribs.count=0;
+  var tmp=new THREE.Object3D(), v=new THREE.Vector3();
+  for(var i=0;i<6;i++){
+    var rad=1.12+i*.13, arc=Math.PI*(1.1-i*.06);
+    var t=new THREE.Mesh(new THREE.TorusGeometry(rad,.045,10,90,arc),erM);
+    t.scale.set(1,1,.55);
+    t.rotation.set(Math.PI/2+.25*(i%2?1:-1),0,Math.PI*0.9+i*.12);
+    t.position.copy(nuc.position);
+    reg('er','Zrnati endoplazemski retikulum','Mreža membran z ribosomi, kjer nastajajo beljakovine.','#45aec4',t);
+    cell.add(t);
+    t.updateMatrixWorld(true);
+    for(var j=0;j<70;j++){
+      var ang=Math.random()*arc;
+      v.set(Math.cos(ang)*rad,Math.sin(ang)*rad,(Math.random()-.5)*.09).applyMatrix4(t.matrix);
+      tmp.position.copy(v);tmp.updateMatrix();ribs.setMatrixAt(ribs.count++,tmp.matrix);
+    }
+  }
+  // prosti ribosomi
+  for(i=0;i<260;i++){
+    v.set(Math.random()*2-1,Math.random()*2-1,Math.random()*2-1);
+    if(v.length()>1)continue; v.multiplyScalar(R*.93);
+    if(v.distanceTo(nuc.position)<1.05)continue;
+    tmp.position.copy(v);tmp.updateMatrix();ribs.setMatrixAt(ribs.count++,tmp.matrix);
+  }
+  ribs.instanceMatrix.needsUpdate=true;
+  reg('rib','Ribosomi','Drobne tovarne beljakovin, prosti v citoplazmi ali na retikulumu.','#2b3c6b',ribs);
+  cell.add(ribs);
+
+  // mitohondriji z notranjimi grebeni
+  var mitoM=mat(0xef8a4a,{roughness:.33}), crM=mat(0xffc58f,{roughness:.5,clearcoat:.3});
+  var spots=[[1.1,.55,.7],[.6,-1.1,.9],[-1.3,-1.1,.6],[1.5,-.3,-.6],[-.4,1.35,.5],[.9,1.0,-.8],[-1.5,.7,-.5],[.2,-.6,1.5]];
+  var mitos=[];
+  spots.forEach(function(p,n){
+    var g=new THREE.Group();
+    var body=new THREE.Mesh(new THREE.CapsuleGeometry(.17,.42,10,24),mitoM);
+    g.add(reg('mito','Mitohondrij','Elektrarna celice: iz hrane naredi energijo (ATP).','#ef8a4a',body));
+    for(var c=-2;c<=2;c++){var cr=new THREE.Mesh(new THREE.TorusGeometry(.1,.018,6,20),crM);cr.position.y=c*.1;cr.rotation.x=Math.PI/2;cr.scale.set(1.3,1,1);g.add(cr);}
+    g.position.set(p[0],p[1],p[2]); g.rotation.set(n*.9,n*1.7,n*.5);
+    cell.add(g); mitos.push(g);
+  });
+
+  // Golgijev aparat
+  var golM=mat(0xf2c94c,{roughness:.32});
+  var gol=new THREE.Group();
+  for(i=0;i<5;i++){
+    var s=new THREE.Mesh(new THREE.TorusGeometry(.55-i*.04,.06,12,60,Math.PI*.8),golM);
+    s.scale.set(1,1,.45); s.position.set(0,i*.15,0); s.rotation.z=Math.PI*.1;
+    gol.add(reg('golgi','Golgijev aparat','Beljakovine dodela, zapakira in pošlje naprej.','#f2c94c',s));
+  }
+  for(i=0;i<4;i++){var ves=new THREE.Mesh(new THREE.SphereGeometry(.07,16,12),golM);ves.position.set(.55+i*.05,i*.18-.05,.1);gol.add(reg('golgi','Golgijev aparat','Beljakovine dodela, zapakira in pošlje naprej.','#f2c94c',ves));}
+  gol.position.set(1.15,-.55,.35); gol.rotation.set(.6,-.4,.2);
+  cell.add(gol);
+
+  // lizosomi
+  var lyM=mat(0x86cf78,{roughness:.4});
+  [[-.9,.9,1.2],[.3,1.5,-.2],[-1.6,-.2,.9],[1.6,.6,.1],[-.2,-1.7,-.4]].forEach(function(p){
+    var m=reg('liz','Lizosom','Mešiček z encimi, ki razgradi odpadke.','#86cf78',new THREE.Mesh(new THREE.SphereGeometry(.15,24,16),lyM));
+    m.position.set(p[0],p[1],p[2]); cell.add(m);
+  });
+  // centriola
+  var ceM=mat(0xd9dee8,{roughness:.45});
+  var ce=new THREE.Group();
+  var c1=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,.32,18),ceM), c2=c1.clone();
+  c2.rotation.z=Math.PI/2; c2.position.set(.16,0,0);
+  ce.add(reg('cent','Centriola','Par valjev, ki pomaga pri delitvi celice.','#d9dee8',c1)); ce.add(reg('cent','Centriola','Par valjev, ki pomaga pri delitvi celice.','#d9dee8',c2));
+  ce.position.set(.55,.55,.9); cell.add(ce);
+
+  // izbira
+  var order=['mem','cito','jedro','jedrce','er','rib','mito','golgi','liz','cent'], current=null;
+  order.forEach(function(k){
+    var p=parts[k], b=document.createElement('button');
+    b.type='button'; b.innerHTML='<i style="background:'+p.color+'"></i>'+p.name; b.setAttribute('aria-pressed','false');
+    b.addEventListener('click',function(){select(current===k?null:k);});
+    p.btn=b; chipsEl.appendChild(b);
+  });
+  function select(k){
+    current=k;
+    order.forEach(function(q){
+      var on=q===k; parts[q].btn.setAttribute('aria-pressed',on?'true':'false');
+      parts[q].meshes.forEach(function(m){var mt=m.material; if(mt.emissive){mt.emissive.set(on?0x3a4a7a:0x000000);}});
+    });
+    if(k){card.innerHTML='<b>'+parts[k].name+'</b><span>'+parts[k].desc+'</span>';}
+    else{card.innerHTML='<b>Tapni del celice</b><span>Povleci za vrtenje, s kolescem ali dvema prstoma povečaš.</span>';}
+  }
+  // skupni materiali bi se osvetlili skupaj; vsak del dobi svoj klon
+  Object.keys(parts).forEach(function(k){var cache={};parts[k].meshes.forEach(function(m){var id=m.material.uuid;if(!cache[id])cache[id]=m.material.clone();m.material=cache[id];});});
+
+  // vrtenje in povečava
+  var rotX=.35, rotY=-.5, dist=9, spin=!reduce, dragging=false, moved=0, lx=0, ly=0, pts={}, pinch0=0, dist0=dist;
+  var spinBtn=document.getElementById('b-spin');
+  function setSpin(on){spin=on;spinBtn.setAttribute('aria-pressed',on?'true':'false');}
+  setSpin(spin);
+  spinBtn.addEventListener('click',function(){setSpin(!spin);});
+  document.getElementById('b-reset').addEventListener('click',function(){rotX=.35;rotY=-.5;dist=baseDist();select(null);});
+  canvas.addEventListener('pointerdown',function(e){canvas.setPointerCapture(e.pointerId);pts[e.pointerId]={x:e.clientX,y:e.clientY};dragging=true;moved=0;lx=e.clientX;ly=e.clientY;var ids=Object.keys(pts);if(ids.length===2){var a=pts[ids[0]],b=pts[ids[1]];pinch0=Math.hypot(a.x-b.x,a.y-b.y);dist0=dist;}});
+  canvas.addEventListener('pointermove',function(e){
+    if(!pts[e.pointerId])return; pts[e.pointerId]={x:e.clientX,y:e.clientY};
+    var ids=Object.keys(pts);
+    if(ids.length===2){var a=pts[ids[0]],b=pts[ids[1]];var d=Math.hypot(a.x-b.x,a.y-b.y);if(pinch0)dist=Math.min(14,Math.max(4.2,dist0*pinch0/d));moved+=10;return;}
+    var dx=e.clientX-lx, dy=e.clientY-ly; lx=e.clientX; ly=e.clientY; moved+=Math.abs(dx)+Math.abs(dy);
+    rotY+=dx*.008; rotX=Math.max(-1.3,Math.min(1.3,rotX+dy*.008)); if(moved>6&&spin)setSpin(false);
+  });
+  function up(e){
+    var wasTap=Object.keys(pts).length===1&&moved<6;
+    delete pts[e.pointerId]; if(Object.keys(pts).length<2)pinch0=0; dragging=Object.keys(pts).length>0;
+    if(wasTap)pick(e);
+  }
+  canvas.addEventListener('pointerup',up); canvas.addEventListener('pointercancel',function(e){delete pts[e.pointerId];pinch0=0;});
+  canvas.addEventListener('wheel',function(e){e.preventDefault();dist=Math.min(14,Math.max(4.2,dist*(1+e.deltaY*.001)));},{passive:false});
+  var ray=new THREE.Raycaster(), ndc=new THREE.Vector2();
+  function pick(e){
+    var r=canvas.getBoundingClientRect(); ndc.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+    ray.setFromCamera(ndc,camera); var hit=ray.intersectObjects(pickables,false)[0];
+    select(hit?hit.object.userData.k:null);
+  }
+  function baseDist(){return camera.aspect<1.25?11:9;}
+  function size(){var w=box.clientWidth,h=box.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();dist=baseDist();cell.position.y=.55;}
+  window.addEventListener('resize',size); size();
+  var clock=new THREE.Clock();
+  (function loop(){
+    var t=clock.getElapsedTime(), dt=Math.min(clock.getDelta(),.05);
+    if(spin)rotY+=0.0035;
+    cell.rotation.set(rotX,rotY,0);
+    if(!reduce)mitos.forEach(function(m,n){m.position.y+=Math.sin(t*.8+n)*.0008;});
+    camera.position.set(0,0,dist); camera.lookAt(0,0,0);
+    renderer.render(scene,camera); requestAnimationFrame(loop);
+  })();
+})();
+</script>

@@ -1,0 +1,16 @@
+---
+name: evklid-school-paid-tier
+description: Evklid school licence vs personal paid tier "Evklid Osebno" (2026-10-30): design doc, rights/offers BUILT (#180, #182), prices PR #188 awaiting j
+metadata:
+  type: project
+  modified: 2026-10-30T05:45:48.540Z
+---
+
+Design doc (Slovenian Claude Doc), thread "Design a paid tier students want" (cmsg_011HYzNBAS5HRU1H7PcSE7JtMoYuLj264aQG8aEwTjFBuP), 2026-10-30: https://claude.ai/artifact/2bN2DRkjVyD3JgsUwddmyJ. BUILT 30 Oct (j's brief placljivi-paket/prompt-za-koordinatorja.md): rights server/placila/pravice.js (#180), offer rules server/placila/ponudbe.js (#182), prices + 49 € gift code PR #188 (needs j's card before merge; owned by schools thread cmsg_011HYzNBAS5HRU1H7PcSE7JtDjri6iP8TcwTf5J3DbtE91). Osebno paid subs now 60 q/day (was unlimited), Opus at 3rd »Razloži podrobneje«. School licences from Sept 2027; pilot free. Extends [[evklid-payments-design]], [[evklid-release]].
+
+- School version always free for the student; school pays licence (or Evklid gifts it to poor schools). Covers everything for school subjects incl. interactive lessons; tutor 15 q/day Haiku+Sonnet; per-school AI cap.
+- Evklid Osebno adds: all subjects/levels, up to 60 q/day + Opus ladder, homework scanning, private space teacher can't see, progress kept after licence ends, test plan from Urnik, parent weekly report, cosmetic extras (no pay-to-win, no loot boxes).
+- Rules: no offers in class/lesson time/leagues, teacher can switch offers off; under 15 sees no price, only parent info link (UCPD Annex I pt 28 bans exhorting children to buy/pester parents — also flagged for existing »Prosi starše za plačilo« link: let the teen open it, app should not push it); export/transfer free (GDPR art. 20).
+- Prices proposed: school 12 €/student/yr (whole school 8 €) → ~7 € left; j asked for higher: 20 €/yr (whole school 14 €) → ~15 € left, pilot schools 12 € for 2 years; Osebno 39 or 49 €/yr, 4.99 or 5.99 €/mo. School pays by e-račun to TRR (no card fees, no MoR). AI estimate 0.3–0.8 €/student/mo school, +0.5–1 € personal. Cram passes allowed for school users (licence is not a subscription). j has not picked prices yet.
+- Competitors checked 2026-10-30 (in doc section »Kaj zaračunava konkurenca«): Astra AI (SI, 70k+ students) Plus ~20 €/mo, Sigma from 80 €/mo, teachers get Plus 12 months free; Rokus Klett e-gradiva 10 €/subject/student/yr, teacher 60 €; Khanmigo 4 $/mo or 44 $/yr, district 15 $/student (US, min 250); Photomath 9.99 $/mo, ~70 $/yr; IXL districts ~5–10 $/student; Quizlet 35.99 $/yr; SI tutoring 17.50–30 €/45 min. State pays workbooks only grades 1–4, parents pay from grade 5 (school licence could go on materials list). Doc lead now recommends school 20 €/yr (pilot schools 12 €), Osebno 49 €/yr or 5.99 €/mo.
+- j also wants (05:52–05:53): more content types (videos, audio summaries, one-page summary/mind map, printable worksheets, live class quiz, past NPZ/matura (RIC copyright), home experiments, projects) and a virtual lab (simulated/recorded experiments, e.g. soda + lemon → CO2 in limewater). Full build prompt for the coordinator (8 points + rules): /mnt/project-files/evklid/placljivi-paket/prompt-za-koordinatorja.md (given to j 05:55; j sends it himself).

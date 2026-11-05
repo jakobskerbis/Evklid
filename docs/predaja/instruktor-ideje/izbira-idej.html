@@ -1,0 +1,130 @@
+<title>Ideje za inštruktorja</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: one calm column, ideas grouped by Evklid feature, a sticky tally bar at the top. */
+:root{
+  --bg:#f6f7f4; --panel:#ffffff; --fg:#1d2420; --muted:#5d6a63; --line:#dde3de;
+  --accent:#2f6f5a; --accent-soft:#e3efe9; --star:#b7791f;
+  --display:"Fraunces",Georgia,serif; --body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141a17; --panel:#1c2420; --fg:#e6ece8; --muted:#9aa8a0; --line:#2c3732;
+  --accent:#6fc2a2; --accent-soft:#213a30; --star:#e0a84a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a17; --panel:#1c2420; --fg:#e6ece8; --muted:#9aa8a0; --line:#2c3732;
+  --accent:#6fc2a2; --accent-soft:#213a30; --star:#e0a84a; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+h1{font-family:var(--display);font-weight:600;font-size:1.7rem;margin:0 0 6px;text-wrap:balance}
+.lead{color:var(--muted);margin:0 0 16px;max-width:62ch}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.count{font-weight:600}
+.status{color:var(--muted);font-size:.9rem}
+.bar button{font:inherit;font-size:.9rem;background:none;border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:4px 10px;cursor:pointer}
+.bar button:focus-visible,label:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+h2{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:24px 0 8px}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+label{display:grid;grid-template-columns:22px 2.2em 1fr;gap:10px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer}
+label.on{background:var(--accent-soft);border-color:var(--accent)}
+input[type=checkbox]{width:20px;height:20px;margin:1px 0 0;accent-color:var(--accent)}
+.n{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600}
+.t{min-width:0}
+.fav{color:var(--star);font-weight:600;font-size:.85rem;white-space:nowrap}
+</style>
+
+<div class="wrap">
+  <h1>Ideje za inštruktorja</h1>
+  <p class="lead">Označi ideje, ki jih želiš v Evklidu. Izbira se shrani sama in jo lahko preberem. ★ so moji favoriti.</p>
+  <div class="bar">
+    <span class="count" id="count">Izbranih: 0</span>
+    <span class="status" id="status">Nalagam …</span>
+    <button type="button" id="fav">Označi moje favorite</button>
+    <button type="button" id="none">Počisti</button>
+  </div>
+  <div id="list"></div>
+</div>
+
+<script>
+const GROUPS=[
+ ["Laboratorij in 3D svet",[
+  [1,"Sredi razlage odpre poskus v Laboratoriju z že nastavljenimi vrednostmi (»poglej, kaj se zgodi, ko podvojiš maso«).",1],
+  [2,"Vidi, kaj učenec počne v Laboratoriju, in ga vodi (»premakni drsnik na 30°, kaj opaziš?«)."],
+  [3,"Napovej, opazuj, razloži: učenec pred poskusom napove izid z gumbi, poskus ga pokaže, inštruktor razloži razliko.",1],
+  [4,"Odpre srce, oko ali celico v 3D svetu točno na delu, o katerem govori, in ga osvetli.",1],
+  [5,"Kviz »pokaži v 3D«: učenec tapne pravi del modela, inštruktor preveri in pojasni."],
+  [6,"Povezave med predmeti: ista ideja v fiziki, kemiji in biologiji (npr. difuzija) z istim modelom v 3D."]]],
+ ["Graf, kalkulator, pravilnost",[
+  [7,"Nariše premičen graf funkcije kar v klepetu; učenec spreminja parametre in vidi, kaj se zgodi.",1],
+  [8,"Vsak račun inštruktorja pred prikazom preveri Evklidov lastni rešilnik (oznaka »preverjeno«), zato ni izmišljenih številk.",1],
+  [9,"Učenec napiše korak na ploščo za pisanje, rešilnik ga takoj preveri, inštruktor komentira samo napačen korak."],
+  [10,"Vedno vpraša »je rezultat smiseln?« in nauči hitre ocene velikosti (enote, red velikosti)."],
+  [11,"Skica na tabli: korak za korakom nariše sliko (trikotnik, sile, vezje), ne le besedila."]]],
+ ["Pozna učenca",[
+  [12,"Spomin čez pogovore: »prejšnji teden so ti ulomki delali težave, poglejva, ali zdaj gre«.",1],
+  [13,"Iz urnika pred testom sam pripravi kratek dnevni načrt in opomnik; po testu vpraša, kako je šlo, in prilagodi.",1],
+  [14,"Prepozna vzorec napačnega razumevanja (npr. »množi samo prvi člen«) in pripravi tri ciljane naloge."],
+  [15,"Lestvica gotovosti: po nalogi učenec oceni, kako je prepričan; inštruktor posebej lovi »prepričan, a narobe«."],
+  [16,"Naloge iz področja učenčevih interesov (nogomet, glasba, igre) z resničnimi podatki."],
+  [17,"Na začetku pogovora vpraša dve kartici, ki sta na vrsti za ponavljanje."]]],
+ ["Novi načini učenja",[
+  [18,"»Razloži meni«: inštruktor igra zmedenega sošolca, učenec mu razloži snov, inštruktor sprašuje."],
+  [19,"Namerna napaka: pokaže rešitev z napako, učenec jo najde."],
+  [20,"Izpitna simulacija: med pisanjem molči in meri čas, nato oceni kot ocenjevalec in pove točke."],
+  [21,"Prave naloge NPZ in mature (Naše pole) prav na temo pogovora, s točkovnikom."],
+  [22,"Naloga iz resničnega sveta: učenec fotografira most, rastlino ali vezje, inštruktor iz tega naredi nalogo."],
+  [23,"Zgodovinski gost: razlaga »kot Arhimed ali Evklid« z resnično zgodbo odkritja."],
+  [24,"Glasovni pogovor: inštruktor govori in posluša kot pravi inštruktor za mizo."],
+  [25,"Vsak odgovor ima povezavo na točen del Evklidovega učbenika in formulo v zbirki formul."]]],
+ ["Igre, lige, ljudje okoli učenca",[
+  [26,"Ko je tema končana, ponudi Evklidovo igro prav za to temo (XP, liga).",1],
+  [27,"Tedenski izziv inštruktorja za ligo: ista naloga za vse, razlaga po roku."],
+  [28,"Dnevna uganka, ki jo rešujeta skupaj, s serijami dni."],
+  [29,"Tedensko poročilo staršem ali učitelju v preprostem jeziku (samo če učenec in starš to vklopita)."],
+  [30,"Učitelj nastavi temo in pravila (npr. brez rešitev pred rokom), inštruktor se jih drži pri vseh njegovih učencih."]]]
+];
+const FAVS=GROUPS.flatMap(g=>g[1]).filter(i=>i[2]).map(i=>i[0]);
+let chosen=new Set(), db=null, ref=null, timer=null, loaded=false;
+const $=id=>document.getElementById(id);
+function setStatus(t){$("status").textContent=t}
+function render(){
+  const list=$("list"); list.textContent="";
+  for(const [title,items] of GROUPS){
+    const h=document.createElement("h2"); h.textContent=title; list.appendChild(h);
+    const ul=document.createElement("ul");
+    for(const [n,text,fav] of items){
+      const li=document.createElement("li"), lab=document.createElement("label");
+      const cb=document.createElement("input"); cb.type="checkbox"; cb.id="ideja-"+n; cb.checked=chosen.has(n);
+      lab.className=cb.checked?"on":"";
+      cb.addEventListener("change",()=>{cb.checked?chosen.add(n):chosen.delete(n);lab.className=cb.checked?"on":"";changed()});
+      const num=document.createElement("span"); num.className="n"; num.textContent=n+".";
+      const t=document.createElement("span"); t.className="t"; t.textContent=text+" ";
+      if(fav){const s=document.createElement("span");s.className="fav";s.textContent="★ favorit";t.appendChild(s)}
+      lab.append(cb,num,t); li.appendChild(lab); ul.appendChild(li);
+    }
+    list.appendChild(ul);
+  }
+  count();
+}
+function count(){$("count").textContent="Izbranih: "+chosen.size}
+function changed(){count(); if(!ref){setStatus(loaded?"Shranjevanje ni na voljo: pošlji mi številke v klepetu.":"Nalagam …");return}
+  setStatus("Shranjujem …"); clearTimeout(timer);
+  timer=setTimeout(async()=>{try{await ref.set({ids:[...chosen].sort((a,b)=>a-b),at:new Date().toISOString()});setStatus("Shranjeno")}
+  catch(e){setStatus("Ni shranjeno. Poskusi znova ali mi pošlji številke v klepetu.")}},600);
+}
+$("fav").addEventListener("click",()=>{FAVS.forEach(n=>chosen.add(n));render();changed()});
+$("none").addEventListener("click",()=>{chosen.clear();render();changed()});
+render();
+(async()=>{
+  const giveUp=setTimeout(()=>{if(!loaded){loaded=true;setStatus("Shranjevanje ni na voljo: pošlji mi številke v klepetu.")}},10000);
+  try{
+    db=await window.claude?.use?.("db");
+    if(!db){clearTimeout(giveUp);loaded=true;setStatus("Shranjevanje ni na voljo: pošlji mi številke v klepetu.");return}
+    ref=db.doc("izbira/ideje");
+    const snap=await ref.get(); clearTimeout(giveUp); loaded=true;
+    const ids=snap.exists?(snap.data().ids||[]):[];
+    ids.forEach(n=>chosen.add(Number(n))); render(); setStatus(ids.length?"Shranjeno":"Nič še ni izbrano");
+  }catch(e){clearTimeout(giveUp);loaded=true;ref=null;setStatus("Shranjevanje ni na voljo: pošlji mi številke v klepetu.")}
+})();
+</script>

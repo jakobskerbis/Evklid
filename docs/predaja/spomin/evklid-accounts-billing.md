@@ -1,0 +1,25 @@
+---
+name: evklid-accounts-billing
+description: STEMMind phase 2 (parent accounts, consent, Stripe, referral, weekly email) — PR #2, design and env vars, 2026-10-27 <!-- brand:legacy -->
+metadata:
+  type: project
+  modified: 2026-10-29T19:58:23.629Z
+---
+
+Phase 2 is in PR jakobskerbis/Evklid#2 (branch claude/project-thread-bwt3s6), opened 2026-10-27. Code lives in server/accounts/* and public/account.js, account.css, zasebnost.html. Everything sits behind EVKLID_ACCOUNTS=1.
+
+- Stripe uses plain REST calls (no npm package). Prices are found by lookup_key (stemmind_1_month/1_year/2_month/2_year) and the app creates them, plus the portal config, itself. j does not need to create products by hand. <!-- brand:legacy -->
+- The 7-day trial is app-side and needs no card. If j subscribes during the trial, the remaining days carry into Stripe via trial_end. Free tier: EVKLID_FREE_DAILY_QUESTIONS (default 10).
+- Referral reward is triggered by the first payment (subscription status becomes active): a Stripe balance credit, or 30 bonus days if the person has no subscription.
+- A webhook is only needed once the app is online. Locally, the app syncs on return from checkout or the portal.
+- The weekly email goes out Sunday after 17:00 Europe/Ljubljana. Without RESEND_API_KEY, emails are written to the log and the verify link appears on screen.
+- j has Stripe in test mode and was told to put STRIPE_SECRET_KEY in .env (never in chat). zasebnost.html still needs the controller's company details.
+- The table name `sessions` belongs to the build thread, so parent sessions use `parent_sessions`.
+- Anti-sharing (PR #3, 2026-10-27, j asked for it): profiles = plan seats (trial 2, free 1), one profile swap per 30 days, one device per profile at a time (409 taken → "Nadaljuj tukaj" takeover, 30 min idle auto-release), warning when a profile is on more than 3 devices in 30 days.
+- j runs the app locally on Windows (zagon-windows.bat, http://localhost:3000) and needs step-by-step help; screenshots work well.
+- Terms of service draft (Slovenian, needs lawyer review, placeholders for company data) written 2026-10-28 as Claude Doc: https://claude.ai/artifact/ECuyXGbi1B9rwA7F4zgwwg. Not yet in the repo/app. Gaps it flags: annual-renewal reminder email and withdrawal-consent checkbox at checkout are not built.
+- Activation code (PR #67; changed 2026-10-30 by j to EVKLID3X, 90 days, max Sonnet, see [[evklid-release]]): was code STEMMIND100, env EVKLID_PROMO_CODE/LIMIT/DAYS/SEATS (seats default 1), tier "promo" in accessFor, table promo_redemptions + parents.promo_until; entered at registration, in Račun tab, or via /?koda=KODA; remaining days carry into Stripe trial_end. Admin (EVKLID_ADMIN_EMAILS) sees uses in Račun tab. <!-- brand:legacy -->
+- Age check (PR #81, merged 2026-10-29, j asked): registration asks birth date (parents.birth_date). Under the digital-consent age (server/accounts/age.js: SI 15, never below 15, unknown 16, IN/NG/KE/ZA/GH 18) → "Vprašaj starše" screen with link /starsi.html?ime=X (all info for parents: what it is, safety, data, price, consent steps). Nothing stored; 24 h cookie stemmind_age then allows only adult signup on that device. Teen holders (15–17) get only their own profile. No ID documents (data minimisation). PR #83: profile form asks "Za koga je profil?" (my child = parent consent, or "Zame" = student 15+ consents self; server checks age, stores SELF_CONSENT_TEXT). <!-- brand:legacy -->
+- Profile password (PR #147, merged 2026-10-29, j: »vsak profil naj ima svoje geslo«): each profile has its own password (min 4, scrypt, server/accounts/profile-lock.js) on top of account login; shared gate EVKLID_PASSWORD kept (decision card offered dropping it; j had not answered at merge). Locked profile → 423 + lock screen; unlocking one profile locks its siblings on that device; old profiles get the password at first open; owner resets with account password; guests never locked. Data export now POST + account password. Middleware path ids must be digits only (case/encoding bypass fixed).
+- Account lock (PR #209, merged 2026-10-30, j asked for it): the Račun tab and owner actions (account GET/PUT/DELETE, export, promo, logout-others, weekly report, billing checkout and portal, admin, new or deleted profile) need the account password per device (server/accounts/account-lock.js, 403 account_locked). Login unlocks the device. It locks after EVKLID_ACCOUNT_UNLOCK_MIN (10) minutes idle or when leaving the Račun tab. No lock for Apple accounts or guests. EVKLID_ACCOUNT_LOCK=0 turns it off.
+- Password only once (j 2026-10-30 14:01: »naj se mora vsak uporabnik prijavit samo enkrat, naj aplikacija ne zahteva gesla več kot enkrat«): branch claude/project-thread-ixotui commits 40ba3b0+dd003c3, not merged yet (j reviews; GitHub PR creation gave 500). Session 365 days; profile password once per device (no sibling relock, logout keeps unlocks; new device / logout-others / new password still lock); account lock of #209 off by default (EVKLID_ACCOUNT_LOCK=1); export and account delete always need account password. Decision card pending: may a child open Račun on a logged-in device.

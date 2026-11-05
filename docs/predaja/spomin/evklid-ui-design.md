@@ -1,0 +1,29 @@
+---
+name: evklid-ui-design
+description: STEMMind UI design system and theming rules (owned by the "Own STEMMind UI design" thread), state 2026-10-28 <!-- brand:legacy -->
+metadata:
+  type: project
+  modified: 2026-10-29T15:10:00.000Z
+---
+
+Since 2026-10-28 (j's request) UI ownership is split: thread "Own desktop UI design" owns the computer layout (≥1200px wide layouts, topbar); a separate thread "Own phone and tablet UI design" owns phones and tablets (≤760px tabbar, Jaz page, touch rules). The shared style (tokens, theme.js/Videz, dropdowns, ui.css components, docs/oblikovanje.md) stays common: changes there must be coordinated between both threads.
+
+- 2026-10-28 PR #32 (phone/tablet thread, merged): "tablet" = touch screen `(hover: none) and (pointer: coarse)` up to 1240px; tablets use the phone bottom tabbar + Jaz (mouse users at that width keep top tabs). Touch tablets ≥1000px get the desktop two-column layouts (same media condition in ui.css + textbook.js WIDE). Phone/tablet-only rules live in `public/touch.css`. Sub-pages under Jaz have `.me-back`. Pad on phone scrolls the task above the sheet. Screenshots: Playwright isMobile+hasTouch; views scroll inside `main.view`.
+
+A standing thread owns STEMMind UI design. Rules live in repo `docs/oblikovanje.md`; shared components in `public/ui.css`. <!-- brand:legacy -->
+
+- 2026-10-28 PR #27 (merged): every `<select>` is auto-replaced by a rounded custom dropdown (`public/dropdown.js`); j wanted all menus consistent across the app and no square native popups. Shared `.seg` (segmented), `.chip-row`, `a.btn-primary/secondary`.
+- 2026-10-28 PR #28 (merged): Nastavitve → Videz. Light/Dark/Samodejno via `.dark` class on `<html>` set by `public/theme.js` (classic script in `<head>`), NOT `@media (prefers-color-scheme)`. Custom/random colors; theme.js derives tokens and enforces contrast. Stored per device in localStorage `stemmind.theme`. Menus use `--menu-*` tokens. <!-- brand:legacy -->
+
+- 2026-10-28 PR #29 (merged, j chose it on a decision card): phone (≤760px) has one bottom tab bar `#tabbar` (Učna pot, Učbenik, Inštruktor, Tekmovanja, Jaz); Napredek/Lige/Nastavitve/Račun live under Jaz (`#view-me`). Learning modes are cards `#modebar.modes` on Učna pot. Sim readouts use `values()` cards (j found the free-fall table cramped).
+- 2026-10-28 PR #30 (merged): ≥1200px multi-column: path side+units, task+explanation, lesson sims in sticky right column.
+- 2026-10-28 PR #31 (merged): Učbenik opens on subject/level/grade from Nastavitve (j's request); TOC shows only the student's grade/year, others via chips.
+- 2026-10-28 PR #34 (merged): desktop .path-side sticky with max-height + own scroll; top tabs auto-shrink via app.js (.tabs-tight → .tabs-compact). Wide-block condition also covers touch tablets ≥1000px (phone thread #32, public/touch.css) — keep.
+- 2026-10-29 PR #110 (replaces #69 rule, j: "tables fixed across the whole app"): one table style in style.css (`:where(.md-table, .table, .demo-table, .pse-tab, .doc table)`); Markdown rendered in public/rich.js (renderRich → `.md-table` in `.md-table-wrap`, number columns centred, streamSafe + pace.js show tables row by row). New tables: use `.table`/`.demo-table`, no own borders/colours.
+- 2026-10-29 PR #73 (phone thread, merged, j asked): every task has »Vmesni koraki« notebook (.work, saved per task in localStorage) and »Razloži mi«/»Preglej s tutorjem« (.tutor-row, /help kind explain|review sends answer + steps); revealed formula boxed; contest result animated. All on desktop too.
+
+- 2026-10-29 PR #97 (merged, j asked what the name button does): name top-right is now a profile menu (public/profile-menu.js, #profile-btn/#profile-pop): profile switch, Dodaj profil, Nastavitve, with accounts Račun + Odjava. Hidden #student-select (data-native) still holds the chosen student.
+
+**How to apply:** new UI must use CSS variables only (no hard-coded text/bg colors), white text only on `--hero-a/--hero-b` gradient, `--accent-text` on accent. Write dark-mode rules as `.dark .x {}`. Reply to j in simple Slovenian. See [[evklid-project]].
+
+- 2026-10-30 thread "Dodaj starogrški videz v aplikacijo" (cmsg_011HYzNBAS5HRU1H7PcSE7JtTWtAipVZqiDM19t8R91zX5): Greek touches in all styles (Euclid I.1 logo, meander band, Greek-mathematician facts) + optional 4th style »Antični«. j (12:07): show him screenshots for review BEFORE merging; do not merge without his OK. 13:03 j asked for more such themes (doing Renesansa, Bagdad/Hiša modrosti, Indija) and (13:04) one new historical theme added WEEKLY via the cosmetics thread's Wed 03:13 update; (13:05) EVERYTHING goes to j for review before publishing. 13:11 j: each style must carry recognisable period motifs (columns, compass, stars, astrolabe…) INTEGRATED INTO BACKGROUNDS, never disturbing reading; themes stay non-intrusive. Result: PR #220 (4 optional era styles antik/renesansa/bagdad/indija, ERAS table in theme.js, recipe in docs/oblikovanje.md); weekly new theme handed to cosmetics thread; merge ONLY after j's OK. Later asks (30 Oct evening): motifs as wallpaper tile (scripts/tapeta.js), chrome (topbar/banners/sidebar/composer) themed, 60 period icons/style (scripts/ikone-obdobij.js, avoid religious/political look: no lotus/wheel/۞), j dislikes the owl tutor icon (alternatives pending), Antični chat to get papyrus/ostrakon bubbles and columns that visibly hold up menus. 31 Oct: j picked Ionic capital (D) as Antični tutor icon; temple facade redrawn (d930eed). All pushed to PR #220; usage 82 % → no new design work until Wed 4 Nov 02:00 UTC; merge only on j's "ja". 31 Oct 17:48 PR #220 MERGED with j's "ja" (history styles, phone chat header at top + topbar/banners hidden in chat, tabbar hidden on reading screens). Follow-up (same thread): round lesson pager + phone temple overlap fix, new PR from main.

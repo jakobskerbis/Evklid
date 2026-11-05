@@ -1,0 +1,441 @@
+Laboratorij: načrt 80 poskusov
+ · 
+Povzetek
+Laboratorij dobi 80 poskusov, 20 za vsak predmet: fizika, kemija, naravoslovje (OŠ 6.–7.) in biologija. Dva sta že narejena (Ohmov zakon, soda in kislina). Vsak poskus je pripet na teme iz učnega načrta in se pokaže tudi pri lekciji.
+Poskuse gradimo v družinah: ena »delovna miza« (na primer optična klop ali termometer z grelnikom) nosi več poskusov. Prva miza v družini stane največ, vsak naslednji poskus na njej veliko manj. Pravila ostanejo enaka kot pri prvih dveh: pravi zakoni in podatki iz literature, napake s posledicami, merilni šum po specifikaciji, tabela, graf, vprašanje o sklepu, preizkus proti literaturi in trojni pregled.
+Počasni procesi (kalitev, rjavenje, rast bakterij) tečejo pospešeno, ura pa to vedno jasno pokaže (na primer »1 s = 1 h«).
+Fizika
+#
+Poskus
+Kaj učenec naredi (in kaj lahko zgreši)
+Družina
+Teme
+1
+Ohmov zakon (narejen)
+veže merilnike, meri U in I, nariše graf; pregori varovalka ali upor
+Električni krog
+FIZ-OS-9, FIZ-SS-2
+2
+Zaporedna in vzporedna vezava
+sestavi vezje iz uporov in žarnic, meri tok v vejah
+Električni krog
+FIZ-OS-9 električni krog, FIZ-SS-2 vezja
+3
+Električna moč in izkoristek grelnika
+grelec v vodi, meri U, I, čas in temperaturo; suh grelec pregori
+Električni krog + toplota
+FIZ-OS-9 delo in moč, izkoristek
+4
+Elektromagnet
+spreminja število ovojev in tok, šteje pobrane sponke
+Električni krog
+FIZ-OS-9 elektromagnet
+5
+Indukcija
+magnet skozi tuljavo, galvanometer; hitrost, pol, število ovojev
+Električni krog
+FIZ-SS-3 indukcija
+6
+Hookov zakon
+obeša uteži na vzmet, meri podaljšek; vzmet se trajno raztegne
+Silomer in uteži
+FIZ-OS-8 sila, FIZ-SS-1 prožnost
+7
+Gostota trdnin in tekočin
+tehtnica in merilni valj, izpodrinjena voda; zračni mehurčki, napačno odčitavanje
+Silomer in uteži
+FIZ-OS-8 gostota
+8
+Vzgon
+silomer v zraku, vodi in slani vodi
+Silomer in uteži
+FIZ-OS-8 vzgon, FIZ-SS-1 tlak in vzgon
+9
+Hidrostatični tlak
+sonda z U-manometrom v različnih globinah in tekočinah
+Silomer in uteži
+FIZ-OS-8 tlak
+10
+Trenje
+vleče kvader po različnih podlagah, s silomerom
+Silomer in uteži
+FIZ-OS-8 trenje, FIZ-SS-1 trenje
+11
+Navor in ravnovesje
+uteži na vzvodu, išče ravnovesje
+Silomer in uteži
+FIZ-SS-1 navor
+12
+Pospešeno gibanje po klancu
+svetlobna vrata, naklon, merjenje časa
+Gibanje
+FIZ-OS-8 pospešeno gibanje, FIZ-SS-1
+13
+Prosti pad
+svetlobna vrata, težka in lahka telesa, zračni upor
+Gibanje
+FIZ-OS-9 prosti pad, FIZ-SS-1
+14
+Drugi Newtonov zakon
+voziček, škripec, uteži; trenje pokvari meritev
+Gibanje
+FIZ-OS-9, FIZ-SS-1 Newtonovi zakoni
+15
+Trk vozičkov
+prožni in neelastični trk, gibalna količina
+Gibanje
+FIZ-SS-1 gibalna količina
+16
+Nihalo
+dolžina, masa, amplituda; štoparica z reakcijskim časom
+Gibanje
+FIZ-SS-3 nihanje
+17
+Odboj in lom svetlobe
+laser, zrcalo in polvaljasto steklo, kotomer, popolni odboj
+Optična klop
+FIZ-OS-8 odboj, lom, FIZ-SS-3 optika
+18
+Zbiralna leča
+sveča, leča, zaslon; išče ostro sliko, izračuna gorišče
+Optična klop
+FIZ-SS-3 geometrijska optika
+19
+Mešanje tople in hladne vode
+kalorimeter, termometer, izgube toplote v okolico
+Toplota
+FIZ-OS-9 toplota, FIZ-SS-2 notranja energija
+20
+Boyle-Mariottov zakon
+brizga z manometrom, stiskanje plina
+Plini
+FIZ-SS-2 plinska enačba
+V rezervi: hitrost zvoka z resonančno cevjo (FIZ-SS-3 zvok), razpolovni čas z Geigerjevim števcem (FIZ-SS-4).
+Kemija
+#
+Poskus
+Kaj učenec naredi (in kaj lahko zgreši)
+Družina
+Teme
+1
+Soda in kislina, dokaz CO₂ (narejen)
+tehta, zamaši bučko, apnica, trska; pena prekipi, zamašek odleti
+Tehtnica in plin
+KEM-OS-8, KEM-OS-9, KEM-SS-1
+2
+Titracija z indikatorjem
+bireta, NaOH v HCl, fenolftalein; preteče preko točke
+Indikatorji
+KEM-SS-2 titracija, KEM-OS-8 nevtralizacija
+3
+pH domačih snovi
+rdeče zelje, univerzalni indikator, pH-meter
+Indikatorji
+KEM-OS-8 pH-lestvica, KEM-SS-2 pH
+4
+Ravnotežje in barva
+Fe³⁺ s SCN⁻ ali CoCl₂; dodaja snovi, segreva, ohlaja
+Indikatorji
+KEM-SS-2 kemijsko ravnotežje
+5
+Plamenska reakcija
+žička v soli, gorilnik, barve Li, Na, K, Ca, Sr, Cu; nečista žička
+Plamen
+KEM-OS-8 periodni sistem, KEM-SS-2 alkalijske kovine
+6
+Toplota gorenja alkohola
+špiritni gorilnik segreva vodo, tehtanje gorilnika; izgube toplote
+Toplota
+KEM-OS-9 alkoholi, KEM-SS-1 energija
+7
+Toplota nevtralizacije
+kalorimeter, termometer, različne koncentracije
+Toplota
+KEM-OS-8 energija pri reakcijah, KEM-SS-1
+8
+Elektroliza vode
+Hoffmanov aparat, razmerje plinov 2 : 1, Faradayev zakon; brez elektrolita ne teče
+Elektrokemija
+KEM-SS-2 galvanski členi in elektroliza
+9
+Galvanski člen
+Zn in Cu v raztopinah soli, solni most, voltmeter; brez mostu ni napetosti
+Elektrokemija
+KEM-SS-2 galvanski členi, redoks
+10
+Prevodnost raztopin
+sol, sladkor, kis, destilirana voda; ionske in kovalentne snovi
+Elektrokemija
+KEM-OS-8 ionska in kovalentna vez
+11
+Kovine v kislinah in raztopinah soli
+Mg, Zn, Fe, Cu; vrsta reaktivnosti
+Elektrokemija
+KEM-OS-8 kovine, KEM-SS-2 redoks
+12
+Hitrost reakcije
+Mg ali CaCO₃ v HCl, plinska brizga; koncentracija, temperatura, velikost zrn
+Tehtnica in plin
+KEM-SS-2 hitrost reakcij
+13
+Molska prostornina vodika
+Mg v HCl, zbiranje plina nad vodo, tlak vodne pare
+Tehtnica in plin
+KEM-SS-1 plini, množina snovi
+14
+Kristalna voda modre galice
+segrevanje, tehtanje pred in po, formula hidrata; premalo segreto
+Tehtnica in plin
+KEM-OS-8 formule, KEM-SS-1 stehiometrija
+15
+Priprava raztopine in redčenje
+tehtanje, merilna bučka, pipeta; napačen menisk
+Raztopine
+KEM-OS-9 raztopine, KEM-SS-1 raztopine
+16
+Topnost in temperatura
+KNO₃ v vodi, krivulja topnosti, kristalizacija ob ohlajanju
+Raztopine
+KEM-OS-9 raztopine, KEM-SS-1
+17
+Obarjanje in dokaz ionov
+AgNO₃ s Cl⁻, Br⁻, I⁻; barva oborine, svetloba
+Raztopine
+KEM-SS-2 halogeni
+18
+Dokaz škroba, glukoze, beljakovin
+jodovica, Fehlingov reagent, biuret; hrana iz kuhinje
+Indikatorji
+KEM-OS-9 ogljikovi hidrati, beljakovine, KEM-SS-3
+19
+Nasičeni in nenasičeni ogljikovodiki
+bromovica ali KMnO₄ z alkani in alkeni
+Organska
+KEM-OS-9 alkani in alkeni, KEM-SS-3 ogljikovodiki
+20
+Esterifikacija
+kislina, alkohol, katalizator, segrevanje; vonj in izkoristek
+Organska
+KEM-OS-9 estri, KEM-SS-3 karboksilne kisline
+Varno delo (očala, digestorij, odpadki) je vgrajeno v vse poskuse. V rezervi: papirna kromatografija barvil, destilacija.
+Naravoslovje (OŠ 6. in 7. razred)
+#
+Poskus
+Kaj učenec naredi (in kaj lahko zgreši)
+Družina
+Teme
+1
+Merjenje in merske napake
+dolžina, masa, prostornina z različnimi merili; paralaksa, napačna enota
+Silomer in uteži
+NAR-OS-6 naravoslovni postopki
+2
+Mikroskop in preparat
+čebulna povrhnjica, barvanje, ostrenje, povečava; zračni mehurčki
+Mikroskop
+NAR-OS-6 mikroskop in celica
+3
+Ločevanje zmesi
+pesek, sol in železo: magnet, filtracija, izparevanje
+Raztopine
+NAR-OS-6 ločevanje zmesi
+4
+Raztapljanje
+sol in sladkor; temperatura, mešanje, nasičena raztopina
+Raztopine
+NAR-OS-6 zmesi in čiste snovi
+5
+Taljenje ledu in vrenje vode
+graf temperature s ploskvama pri 0 °C in 100 °C
+Toplota
+NAR-OS-6 agregatna stanja
+6
+Prevajanje toplote
+kovina, les, plastika, kapljice voska
+Toplota
+NAR-OS-6 toplota in temperatura
+7
+Ohlajanje čaja
+različni lončki in pokrovi, izolacija
+Toplota
+NAR-OS-6 toplota, oblike energije
+8
+Fotosinteza vodne kuge
+štetje mehurčkov glede na oddaljenost svetilke
+Plin in mehurčki
+NAR-OS-6 fotosinteza in celično dihanje
+9
+Kalitev semen
+voda, svetloba, temperatura; pospešena ura
+Rastline
+NAR-OS-6 razmnoževanje rastlin, rastline in okolje
+10
+Pot vode po rastlini
+zelena v obarvani vodi, prerez stebla
+Rastline
+NAR-OS-6 prevajanje vode in snovi
+11
+Fizikalne in kemijske spremembe
+sveča, led, kis s sodo, opekač; kaj se da povrniti
+Tehtnica in plin
+NAR-OS-7 fizikalne in kemijske spremembe
+12
+Rjavenje žeblja
+žeblji v vodi, slani vodi, olju, suhem zraku; pospešena ura
+Raztopine
+NAR-OS-7 fizikalne in kemijske spremembe
+13
+Kovine in nekovine
+preizkuševalnik prevodnosti, magnet, sijaj
+Električni krog
+NAR-OS-7 elementi in spojine
+14
+Difuzija
+kapljica barvila v topli in hladni vodi
+Raztopine
+NAR-OS-7 zgradba snovi
+15
+Vdihani in izdihani zrak
+apnica, spirometer, pljučna kapaciteta
+Telo
+NAR-OS-7 dihanje in krvni obtok
+16
+Srčni utrip in napor
+pulz pred in po teku, čas do umiritve
+Telo
+NAR-OS-7 dihanje in krvni obtok
+17
+Prebava škroba s slino
+jodovica, temperatura, kuhana slina
+Indikatorji
+NAR-OS-7 prehranjevanje in prebava
+18
+Reakcijski čas in čutila
+lovljenje ravnila, slepa pega
+Telo
+NAR-OS-7 čutila in živčevje
+19
+Kakovost potoka
+vzorčenje nevretenčarjev kot kazalcev čistosti vode
+Terensko delo
+NAR-OS-7 kopenski in vodni ekosistemi
+20
+Razgradnja listja
+kompost, vlaga, temperatura; pospešena ura
+Terensko delo
+NAR-OS-7 kroženje snovi
+V rezervi: kost v kisu (NAR-OS-7 gibanje in opora).
+Biologija
+#
+Poskus
+Kaj učenec naredi (in kaj lahko zgreši)
+Družina
+Teme
+1
+Osmoza v krompirju
+trakovi v raztopinah soli, masa pred in po, izotonična točka
+Raztopine
+BIO-SS-1 biotska membrana
+2
+Plazmoliza
+rdeča čebula pod mikroskopom v slani in destilirani vodi
+Mikroskop
+BIO-SS-1 biotska membrana, BIO-OS-8 celica
+3
+Mitoza v koreninskem vršičku
+štetje celic v fazah, mitotski indeks
+Mikroskop
+BIO-SS-1 celični cikel, BIO-OS-8 celična delitev
+4
+Krvni razmaz
+prepoznavanje krvnih celic, štetje
+Mikroskop
+BIO-OS-8 kri, BIO-SS-2 kri in obtok
+5
+Encim katalaza
+krompir ali jetra v H₂O₂; temperatura in pH, merjenje plina
+Plin in mehurčki
+BIO-SS-1 encimi
+6
+Fotosinteza listnih diskov
+diski, ki splavajo; jakost in barva svetlobe, CO₂
+Plin in mehurčki
+BIO-SS-1 fotosinteza
+7
+Vrenje kvasovk
+CO₂ glede na sladkor in temperaturo
+Plin in mehurčki
+BIO-SS-1 celično dihanje in vrenje
+8
+Dihanje kalečih semen
+respirometer, kaleča in kuhana semena
+Plin in mehurčki
+BIO-SS-2 dihanje
+9
+Barvila v listu
+papirna kromatografija, Rf vrednosti
+Raztopine
+BIO-SS-1 fotosinteza
+10
+DNA iz banane
+detergent, sol, mrzel alkohol
+Raztopine
+BIO-OS-8 DNA, BIO-SS-1 snovi v celici
+11
+Dokaz snovi v hrani
+jodovica, Fehling, biuret, maščobni madež
+Indikatorji
+BIO-OS-9 snovi v živih bitjih
+12
+Transpiracija s potometrom
+veter, svetloba, vlaga, listi z vazelino
+Rastline
+BIO-SS-2 transport pri rastlinah
+13
+Tropizmi
+kalice na svetlobi s strani in položene na bok
+Rastline
+BIO-SS-2 odzivi rastlin na okolje
+14
+Bakterije in antibiotiki
+gojišče, ploščice z antibiotikom, inhibicijske cone; nečist postopek
+Mikrobiologija
+BIO-SS-2 bakterije, BIO-SS-4 mikrobiologija
+15
+Krvne skupine
+aglutinacija z anti-A, anti-B, anti-D
+Telo
+BIO-SS-4 imunost in krvne skupine
+16
+Mišice med naporom
+stiskanje ščipalke do utrujenosti, počitek
+Telo
+BIO-SS-4 mišice med naporom, BIO-OS-8 okostje in mišice
+17
+Gostota receptorjev v koži
+dvotočkovni prag na različnih delih telesa
+Telo
+BIO-OS-8 čutila, BIO-SS-3 čutila
+18
+Mendlovo dedovanje
+križanje vinskih mušic, štetje potomcev, test χ²
+Dedovanje
+BIO-SS-1 Mendlovo dedovanje, BIO-OS-9 dedovanje
+19
+Naravni izbor
+plenilci in obarvanost plena, pogostost alelov
+Dedovanje
+BIO-OS-9 naravni izbor, BIO-SS-4 populacijska genetika
+20
+Velikost populacije in pestrost
+ulov-markiranje-ponovni ulov, vzorčenje s kvadratom, Simpsonov indeks
+Terensko delo
+BIO-SS-3 populacije, biotska pestrost
+Načrtovanje poskusa (BIO-OS-9) je vgrajeno v vse: učenec sam izbere, kaj spreminja in kaj drži enako.
+Tempo in strošek
+Vseh 78 novih poskusov bo stalo približno 430 do 480 $ porabe (okoli 16 % tedenske omejitve), razporejeno na približno tri tedne. Titracija (prva nova miza) je stala 15 $, vsak nadaljnji poskus na isti mizi okoli 3 do 4 $, vključno s pregledi.
+Do srede, 4. 11.: največ en poskus na dan, kot je določil optimizator. Najprej titracija, nato zaporedna in vzporedna vezava (stara miza, poceni).
+Po ponastavitvi, od 4. 11.: en PR na dan z eno družino (nova miza in 3 do 5 poskusov), skupaj s trojnim pregledom. To je okoli 25 poskusov na teden.
+Vrstni red: najprej OŠ fizika in kemija (prazne teme iz učnega načrta), nato naravoslovje, biologija in srednja šola.
+Konec: okoli 25. 11., če ostane tempo enak. Optimizator lahko tempo upočasni, če bo poraba previsoka.
+Po koncu (j, 1. 11.): ko je vseh 80 poskusov narejenih, laboratorij vsak teden doda nove. Privzeto 3 poskuse na teden (ena nova miza), vsako sredo po ponastavitvi omejitve, s trojnim pregledom. Izbor iz praznih tem učnega načrta in iz rezerve zgoraj. Strošek okoli 15 do 20 $ na teden.
