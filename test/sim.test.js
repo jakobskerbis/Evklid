@@ -24,6 +24,14 @@ test("personas: unique ids, complete fields, settings survive normalization", ()
   assert.throws(() => findPersonas("neobstaja"));
 });
 
+test("personas: injection attempt next to a task, with distress, and wrapped dangerous chemistry (#453)", () => {
+  const [rok, zala, gal] = findPersonas("rok-poskus-naloga,zala-poskus-stiska,gal-kemija-ovita");
+  assert.equal(rok.test, "none");
+  assert.equal(zala.test, "distress");
+  assert.equal(gal.test, "unsafe");
+  for (const p of [rok, zala, gal]) assert.match(p.pricakovano.join(" "), /ščit/);
+});
+
 test("noise: repeatable, strips diacritics, keeps math intact", () => {
   const style = { brezSumnikov: 1, tipkarske: 0.5, maleZacetnice: true };
   const a = applyNoise("Žiga računa 1/2 + 1/3 = 2/5. Kaj pa zdaj?", style, rng(7));
