@@ -733,6 +733,8 @@
   "gc.hideKeypad": "Sembunyikan keyboard",
   "tk.label": "Keyboard Evklid",
   "tk.l.kem": "Kim",
+  "tk.kem.el": "Zat",
+  "tk.kem.re": "Reaksi",
   "tk.shift": "Huruf besar",
   "tk.space": "Spasi (geser untuk memindahkan kursor)",
   "tk.paste": "Tempel",

@@ -15,7 +15,7 @@ import { GROUPS, symGroups, chemFormat } from "./symbols.js";
 import { stopnja } from "./stopnja.js";
 import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
 import {
-  layoutFor, FX_GROUPS, CAS_SL, KEM_GROUPS, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
+  layoutFor, FX_GROUPS, CAS_SL, KEM_GROUPS, KEM_CHARGE, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
   fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
 } from "./tipkovnica-data.js";
 
@@ -205,9 +205,9 @@ const scopeOf = (f) => f.closest("[data-kb-scope]") || f.closest("form") || f;
 
 // ---------- risanje ----------
 
-function key(label, act, { cls = "", aria = "", hint = "", html = "", role = "" } = {}) {
+function key(label, act, { cls = "", aria = "", hint = "", html = "", role = "", tip = "" } = {}) {
   const i = keys.push(act) - 1;
-  return `<button type="button" class="tk-k ${cls}" data-k="${i}"${role ? ` role="${role}"` : ""}${aria ? ` aria-label="${esc(aria)}"` : ""}>${html || esc(label)}${hint ? `<span class="tk-v" aria-hidden="true">${esc(hint)}</span>` : ""}</button>`;
+  return `<button type="button" class="tk-k ${cls}" data-k="${i}"${role ? ` role="${role}"` : ""}${aria ? ` aria-label="${esc(aria)}"` : ""}${tip ? ` title="${esc(tip)}"` : ""}>${html || esc(label)}${hint ? `<span class="tk-v" aria-hidden="true">${esc(hint)}</span>` : ""}</button>`;
 }
 const chip = (label, act, cls = "") => {
   const i = keys.push(act) - 1;
@@ -414,8 +414,22 @@ function symHtml() {
 function kemHtml() {
   if (!KEM_GROUPS.some(([id]) => id === S.kemg)) S.kemg = KEM_GROUPS[0][0];
   const g = KEM_GROUPS.find(([id]) => id === S.kemg);
-  const row = (r) => `<div class="tk-row">${r.map((c) => key(c, { a: "ins", v: c }, { cls: `${c.length > 2 ? "sm " : ""}${/^[₀-₉⁺⁻²³]/.test(c) ? "sub" : ""}` })).join("")}</div>`;
-  return `${subtabs(KEM_GROUPS.map(([id, label]) => [id, label]), S.kemg, "kemg")}
+  // opisi tipk (oborina, plin, kristalna voda …) iz GROUPS.kemija; v slovenščini, kot v Σ
+  const sl = currentLang() === "sl";
+  const opis = new Map(GROUPS.kemija.keys.filter((k) => k.title).map((k) => [k.ins, k.title]));
+  const PLAIN = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁺": "+", "⁻": "−" };
+  const one = (c) => {
+    const d = sl ? opis.get(c) || "" : "";
+    if (KEM_CHARGE.test(c)) {
+      // naboj: nadpisan ob ◌, da ni videti kot » + « med snovmi
+      const n = [...c].map((x) => PLAIN[x]).join("");
+      return key(c, { a: "ins", v: c }, { cls: "chg", aria: d ? `${d} ${n}` : n, tip: d, html: `<span class="tk-chg-b" aria-hidden="true">◌</span><sup>${esc(n)}</sup>` });
+    }
+    const label = c.trim();
+    return key(label, { a: "ins", v: c }, { cls: `${label.length > 2 ? "sm " : ""}${/^[₀-₉]/.test(c) ? "sub" : ""}${c === " + " ? "sym" : ""}`, aria: d, tip: d });
+  };
+  const row = (r) => `<div class="tk-row">${r.map(one).join("")}</div>`;
+  return `${subtabs(KEM_GROUPS.map(([id, label]) => [id, t(label)]), S.kemg, "kemg")}
     ${g[2].map(row).join("")}
     <div class="tk-row">${leftKey()}${rightKey()}${key("( )", { a: "ins", v: "(@)" }, { cls: "fn sm" })}${spaceKey("w3")}${key("H₂O", { a: "chem" }, { cls: "fn sm", aria: t("tk.chemFormat") })}${bsKey("fn")}${goKey()}</div>`;
 }

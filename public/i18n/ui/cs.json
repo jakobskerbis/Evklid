@@ -751,6 +751,8 @@
   "gc.hideKeypad": "Skrýt klávesnici",
   "tk.label": "Klávesnice Evklid",
   "tk.l.kem": "Chem",
+  "tk.kem.el": "Látky",
+  "tk.kem.re": "Reakce",
   "tk.shift": "Velké písmeno",
   "tk.space": "Mezerník (táhni pro posun kurzoru)",
   "tk.paste": "Vložit",

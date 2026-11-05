@@ -99,20 +99,23 @@ export const FX_GROUPS = [
 // Imena ukazov CAS v slovenščini (enako kot commandName v public/graph/cas.js; kalkulator razume oboje).
 export const CAS_SL = { simplify: "poenostavi", expand: "razvij", factor: "razstavi", solve: "reši", integrate: "integriraj", limit: "limita", taylor: "taylor", det: "det", inverse: "inverz" };
 
-// Kemija: dva podzavihka (kot Σ), da zavihek ostane enako visok kot drugi: »H₂O« (elementi in indeksi) in »⇌« (naboji,
-// puščice, agregatna stanja). Tu je vse, kar je imel prej tudi čip »Kemija« v Σ (j, 5. 11.: kemija je bila dvakrat);
-// čip se v Σ ne pokaže več, kjer je zavihek »Kem« (symbols.js symGroups). ΔH = tipki Δ in H. »+« med snovmi v enačbi je
-// na tipkovnici 123; tukaj je samo naboj ⁺. Napisa podzavihkov sta kemijska zapisa, zato ju ni treba prevajati.
+// Kemija: dva podzavihka (kot Σ), da zavihek ostane enako visok kot drugi: »Snovi« (elementi in indeksi) in »Reakcije«
+// (» + « med snovmi, puščice, naboji, agregatna stanja). Tu je vse, kar je imel prej tudi čip »Kemija« v Σ (j, 5. 11.:
+// kemija je bila dvakrat); čip se v Σ ne pokaže več, kjer je zavihek »Kem« (symbols.js symGroups). Napisa podzavihkov
+// sta ključa i18n (tk.kem.el, tk.kem.re); tipka »H₂O« v spodnji vrstici je oblikovanje formule v polju (tk.chemFormat).
+// Naboji so na tipkah izrisani nadpisano ob ◌ (tipkovnica.js), da se ločijo od » + « med snovmi.
 export const KEM_GROUPS = [
-  ["el", "H₂O", [
+  ["el", "tk.kem.el", [
     ["H", "C", "N", "O", "S", "Cl", "Na", "K", "Ca", "Fe"],
     ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"],
   ]],
-  ["re", "⇌", [
-    ["⁺", "⁻", "²⁺", "³⁺", "²⁻", "→", "⇌", "↑", "↓", "e⁻"],
-    ["(aq)", "(s)", "(l)", "(g)", "Δ", "ΔH", "·", "°C"],
+  ["re", "tk.kem.re", [
+    [" + ", "→", "⇌", "↑", "↓", "Δ", "ΔH", "·", "°C", "e⁻"],
+    ["⁺", "⁻", "²⁺", "³⁺", "²⁻", "³⁻", "(aq)", "(s)", "(l)", "(g)"],
   ]],
 ];
+/** Naboj (⁺, ²⁻, …): na tipki nadpisan ob ◌, da ni videti kot » + « ali »−«. */
+export const KEM_CHARGE = /^[⁰¹²³⁴⁵⁶⁷⁸⁹]*[⁺⁻]$/;
 export const KEM_ROWS = KEM_GROUPS.flatMap(([, , rows]) => rows);
 
 // Vrstica 123 nad številkami: v matematiki zapisi, drugje pogosti znaki.

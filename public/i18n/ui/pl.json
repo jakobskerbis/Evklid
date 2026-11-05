@@ -751,6 +751,8 @@
   "gc.hideKeypad": "Ukryj klawiaturę",
   "tk.label": "Klawiatura Evklid",
   "tk.l.kem": "Chem",
+  "tk.kem.el": "Substancje",
+  "tk.kem.re": "Reakcje",
   "tk.shift": "Wielka litera",
   "tk.space": "Spacja (przeciągnij, aby przesunąć kursor)",
   "tk.paste": "Wklej",

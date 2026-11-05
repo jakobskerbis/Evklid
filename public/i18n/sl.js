@@ -894,6 +894,8 @@ export default {
   "gc.hideKeypad": "Skrij tipkovnico",
   "tk.label": "Evklidova tipkovnica",
   "tk.l.kem": "Kem",
+  "tk.kem.el": "Snovi",
+  "tk.kem.re": "Reakcije",
   "tk.shift": "Velika črka",
   "tk.space": "Preslednica (povleci za premik kazalca)",
   "tk.paste": "Prilepi",

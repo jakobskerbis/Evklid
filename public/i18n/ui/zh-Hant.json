@@ -733,6 +733,8 @@
   "gc.hideKeypad": "隱藏鍵盤",
   "tk.label": "Evklid 鍵盤",
   "tk.l.kem": "化學",
+  "tk.kem.el": "物質",
+  "tk.kem.re": "反應",
   "tk.shift": "大寫字母",
   "tk.space": "空白鍵（拖曳可移動游標）",
   "tk.paste": "貼上",

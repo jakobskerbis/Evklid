@@ -47,8 +47,8 @@ export const GROUPS = {
     keys: [
       k("→", "→", "reakcija"), k("⇌", "⇌", "ravnotežje"), k("↑", "↑", "plin"), k("↓", "↓", "oborina"),
       ..."₀₁₂₃₄₅₆₇₈₉".split("").map((c) => k(c, c, "indeks")),
-      k("⁺"), k("⁻"), k("²⁺"), k("³⁺"), k("²⁻"), k("·", "·", "kristalna voda"),
-      k("(s)"), k("(l)"), k("(g)"), k("(aq)"), k("ΔH"), k("°C"),
+      k("⁺", "⁺", "naboj"), k("⁻", "⁻", "naboj"), k("²⁺", "²⁺", "naboj"), k("³⁺", "³⁺", "naboj"), k("²⁻", "²⁻", "naboj"), k("³⁻", "³⁻", "naboj"), k("·", "·", "kristalna voda"),
+      k("(s)", "(s)", "trdno"), k("(l)", "(l)", "tekoče"), k("(g)", "(g)", "plinasto"), k("(aq)", "(aq)", "raztopljeno v vodi"), k("ΔH", "ΔH", "reakcijska entalpija"), k("°C"),
     ],
   },
 };

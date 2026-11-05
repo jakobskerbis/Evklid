@@ -59,4 +59,7 @@ test("vrstica oznak pogovora se ob odprtju ne premakne, a ostane drsna", () => {
   const src = readFileSync(new URL("drsniki.js", pub), "utf8");
   assert.match(src, /el\.matches\(BREZ_POKUKA\)/, "pokukaj preskoči to vrstico");
   assert.doesNotMatch(src, /Math\.abs\(premik\(el\) - cilj\) <= 2\) el\.scrollTo/, "vrnitev ne sme biti odvisna od natančnega položaja");
+  // pregled #460: nazaj samo naš pokuk (0 < premik ≤ cilj + 2), ne učenčevega pomika; poteg prsta tudi ustavi vrnitev
+  assert.match(src, /x > 0 && x <= cilj \+ 2\) el\.scrollTo/);
+  for (const d of ["touchmove", "pointermove", "pointerdown", "touchstart", "wheel"]) assert.ok(src.includes(`"${d}"`), d);
 });

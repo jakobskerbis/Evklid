@@ -739,6 +739,8 @@
   "gc.hideKeypad": "Klavyeyi gizle",
   "tk.label": "Evklid klavyesi",
   "tk.l.kem": "Kim",
+  "tk.kem.el": "Maddeler",
+  "tk.kem.re": "Tepkimeler",
   "tk.shift": "Büyük harf",
   "tk.space": "Boşluk (imleci taşımak için sürükle)",
   "tk.paste": "Yapıştır",

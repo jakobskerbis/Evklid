@@ -6,7 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import {
   prettyIns, autocorrect, autoCapNeeded, doubleSpaceAt, wordsBack, sentenceBack, digitFor,
-  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS, KEM_GROUPS,
+  fieldKind, usesOwnKeyboard, applyTemplate, deleteBack, stepCaret, withUnit, layoutFor, LAYOUTS, VARIANTS, FX_GROUPS, CAS_SL, KEM_ROWS, KEM_GROUPS, KEM_CHARGE,
   NUM_TOP_MATH, TUTOR_CHIPS, parsePrefs, DEFAULT_PREFS, PREF_KEY, suggest, glideDecode,
 } from "../public/tipkovnica-data.js";
 import { WORDS } from "../public/tipkovnica-besede.js";
@@ -179,8 +179,23 @@ test("kemija je samo enkrat: zavihek Kem ima vse iz čipa Σ, čipa Σ ni, kjer 
     assert.ok(!symGroups(lvl, subj, true).includes("kemija"), `${lvl} ${subj}: čip Kemija ob zavihku Kem`);
     assert.ok(symGroups(lvl, subj, false).includes("kemija"), `${lvl} ${subj}: brez zavihka Kem čip ostane`);
   }
-  // naboj ⁺ je v Kem enkrat in brez še ene »+« v spodnji vrstici
-  assert.equal(read("public/tipkovnica.js").includes('key("+", { a: "ins", v: " + " })'), false);
+  // pregled #460: pravi » + « med snovmi v Reakcijah, naboji (tudi ³⁻) posebej in nadpisani
+  const re = KEM_GROUPS.find(([id]) => id === "re")[2].flat();
+  assert.ok(re.includes(" + "), "» + « med snovmi");
+  for (const c of ["⁺", "⁻", "²⁺", "³⁺", "²⁻", "³⁻"]) assert.ok(re.includes(c) && KEM_CHARGE.test(c), c);
+  assert.ok(!KEM_CHARGE.test(" + ") && !KEM_CHARGE.test("e⁻") && !KEM_CHARGE.test("₂"));
+  const tk = read("public/tipkovnica.js");
+  assert.match(tk, /tk-chg-b[^`]*◌<\/span><sup>/, "naboj je nadpisan ob ◌");
+  // podzavihka imata svoja napisa (i18n), ne enakih kot tipki; tipka »H₂O« ostane oblikovanje formule
+  assert.deepEqual(KEM_GROUPS.map(([, l]) => l), ["tk.kem.el", "tk.kem.re"]);
+  assert.match(tk, /subtabs\(KEM_GROUPS\.map\(\(\[id, label\]\) => \[id, t\(label\)\]\)/);
+  assert.match(tk, /key\("H₂O", \{ a: "chem" \}/);
+  // opisi kemijskih tipk iz GROUPS.kemija (oborina, plin, kristalna voda)
+  const opis = Object.fromEntries(GROUPS.kemija.keys.map((k) => [k.ins, k.title]));
+  assert.equal(opis["↓"], "oborina");
+  assert.equal(opis["↑"], "plin");
+  assert.equal(opis["·"], "kristalna voda");
+  assert.match(tk, /GROUPS\.kemija\.keys\.filter\(\(k\) => k\.title\)/);
   // dva podzavihka po največ dve vrstici po 10 tipk: zavihek je enako visok kot drugi
   for (const [, , rows] of KEM_GROUPS) assert.ok(rows.length <= 2 && rows.every((r) => r.length <= 10));
 });
