@@ -377,7 +377,7 @@ span.ovl { text-decoration: none; background: linear-gradient(currentColor, curr
 .pv-col.on { background: color-mix(in srgb, var(--demo-a) 25%, var(--surface)); }
 .pv-head { font-size: 0.78rem; font-weight: 800; color: var(--muted); }
 .pv-digit { font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
-.demo .pv-btn { min-height: 30px; width: 100%; padding: 0; border: 0; background: none; color: var(--accent); font-size: 0.8rem; }
+.demo .pv-btn { min-height: 40px; width: 100%; padding: 0; border: 0; background: none; color: var(--accent); font-size: 0.8rem; }
 .pv-number { font-size: 1.6rem; font-weight: 800; text-align: center; letter-spacing: 0.02em; margin: 6px 0; font-variant-numeric: tabular-nums; }
 
 /* stotični kvadrat */

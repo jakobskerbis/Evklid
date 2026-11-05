@@ -29,7 +29,8 @@ test("manifest: namestljiv (ime, ikone, začetek, samostojno okno) in vse datote
   assert.equal(m.description, "Inštruktor za matematiko, fiziko in kemijo");
   assert.ok(m.icons.some((i) => i.sizes === "192x192") && m.icons.some((i) => i.sizes === "512x512" && i.purpose === "maskable"));
   assert.ok(m.screenshots.some((s) => s.form_factor === "wide") && m.screenshots.some((s) => s.form_factor === "narrow"));
-  for (const src of [...m.icons, ...m.screenshots, ...m.shortcuts.flatMap((s) => s.icons)].map((i) => i.src)) {
+  // ?v= (nova ikona namesto stare v nameščeni aplikaciji) ni del poti; geslo (gate.js) gleda le pot.
+  for (const src of [...m.icons, ...m.screenshots, ...m.shortcuts.flatMap((s) => s.icons)].map((i) => i.src.split("?")[0])) {
     assert.ok(fs.existsSync(path.join(PUB, src)), `manjka ${src}`);
     assert.match(src, /^\/icons\/[\w.-]+\.png$/, `${src} mora biti dostopen brez gesla`);
   }

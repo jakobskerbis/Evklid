@@ -53,3 +53,14 @@ test("logo: every HTML page links the icon with a cache-busting ?v=", () => {
   const gate = read("server/gate.js").toString();
   assert.ok(gate.includes('rel="icon"') && gate.includes("apple-touch-icon.png?v="), "prijavna stran ima ikono z ?v=");
 });
+
+// Nameščena spletna aplikacija (manifest) in strani strežnika: tudi vse ostale povezave do ikone imajo ?v=,
+// sicer ostane stara ikona na začetnem zaslonu in v obvestilih (j 2026-11-05).
+test("logo: manifest and server pages link icons with ?v=", async () => {
+  const { manifest } = await import("../server/webapp.js");
+  for (const i of manifest("sl").icons) assert.match(i.src, /\?v=/, `manifest: ${i.src}`);
+  for (const f of ["server/gate.js", "server/mobile/download.js", "server/webapp.js", "public/install.js", "public/schedule.js", "public/index.html"]) {
+    const s = read(f).toString();
+    assert.ok(!/\/icons\/(icon-192|icon-512|maskable-512|apple-touch-icon)\.png(?!\?v=)/.test(s), `${f}: ikona brez ?v=`);
+  }
+});

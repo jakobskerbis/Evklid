@@ -52,7 +52,7 @@ function loginPage({ next = "/", error = "" } = {}) {
 </style>
 </head><body>
 <form class="card" method="post" action="/prijava">
-  <img src="/icons/icon-192.png" alt="">
+  <img src="/icons/icon-192.png?v=kristal" alt="">
   <h1>Evklid</h1>
   <p>Testna različica. Vpiši geslo za preizkus.</p>
   ${error ? `<p class="err" role="alert">${esc(error)}</p>` : ""}

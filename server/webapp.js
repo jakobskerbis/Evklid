@@ -73,9 +73,9 @@ export function manifest(lang = "sl", { barva, ozadje } = {}) {
     // Klik na ikono, ko je Evklid že odprt, ga prikaže (brez drugega okna).
     launch_handler: { client_mode: ["navigate-existing", "auto"] },
     icons: [
-      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/icons/icon-192.png?v=kristal", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icons/icon-512.png?v=kristal", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icons/maskable-512.png?v=kristal", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
     shortcuts: [shortcut("nav.path", "path", "pot"), shortcut("nav.chat", "chat", "instruktor"), shortcut("nav.textbook", "textbook", "ucbenik"), shortcut("nav.graph", "graph", "kalkulator")],
     screenshots: [
