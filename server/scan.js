@@ -40,7 +40,7 @@ export const READ_PROMPT =
   "a double inequality as a<x<b; a logarithm with its base as log_10(x), log_2(x), log_a(x). Keep the student's letters for variables. " +
   "Copy every base, index and exponent exactly as written: never replace a written digit by a letter (log_10 stays log_10, not log_a). " +
   "Read every sign and digit with care (x+b and x-b; 1, 4 and 7, which look alike in handwriting). If one is unclear, the student's next lines may help with a sign or a letter, but the task line always wins: never change a written value to match the working. " +
-  "Coordinates of a point and the values in conditions are numbers unless a letter is clearly written (a handwritten 9 is not p or g, a 1 is not l).\n" +
+  "Coordinates of a point and the values in conditions are numbers unless a letter is clearly written.\n" +
   'Each "text" is one expression, one equation or one inequality (or a system): never chain several = or a definition and an inequality: give only the part that is the task (x^2>4 for h(x)=x^2>4, nCr(5,2) for nCr(5,2)=5!/(2!*3!)); a right-hand side that is working or a result is left out.\n' +
   '- "given": only if the task states data or conditions needed to solve it (a measured quantity with its unit such as a = 3 cm, m = 2 kg or α = 30°, ' +
   "a point on the graph, an asymptote, a pole, a zero, a domain, a value such as f(0)=5 or k=0, a set of allowed digits or elements such as {1,2,4,8}, also when written in a »dano:« / »podatki:« line, in a box or short notes beside the task that belong to it (not a theory, hint or example box), or only in the sentence): " +

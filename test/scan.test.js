@@ -277,7 +277,7 @@ test("server cleans AI output (limits, types)", () => {
   assert.match(READ_PROMPT, /log_a\(x-1\)=3, not f\(x\)=3/);
   assert.match(READ_PROMPT, /x\+b and x-b/);
   assert.match(READ_PROMPT, /the task line always wins/);
-  assert.match(READ_PROMPT, /a handwritten 9 is not p/);
+  assert.match(READ_PROMPT, /numbers unless a letter is clearly written/);
   assert.match(READ_PROMPT, /never chain several =/);
   assert.match(READ_PROMPT, /in a box or short notes beside the task/);
   assert.match(READ_PROMPT, /f\(0\)=5 or k=0/);
