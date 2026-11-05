@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import net from "node:net";
 import { DatabaseSync } from "node:sqlite";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
@@ -221,13 +222,19 @@ for (const extra of [{ EVKLID_ACCOUNTS: "1" }, { EVKLID_PASSWORD: "geslo-za-test
   test(`izvoz in stanje od zunaj: samo s ključem (${Object.keys(extra)[0]})`, async () => {
     const token = "p".repeat(40);
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-prijave-"));
-    const port = 39000 + Math.floor(Math.random() * 900);
+    // Prost port od sistema (naključna številka bi lahko trčila z drugim testom, ki teče hkrati).
+    const port = await new Promise((ok) => {
+      const s = net.createServer().listen(0, "127.0.0.1", () => {
+        const { port: p } = s.address();
+        s.close(() => ok(p));
+      });
+    });
     const srv = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], {
       env: { ...process.env, PORT: String(port), EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", EVKLID_ACCOUNTS: "0", ANTHROPIC_API_KEY: "", EVKLID_EXPORT_TOKEN: token, ...extra },
       stdio: "ignore",
     });
     try {
-      for (let i = 0; i < 80; i++) {
+      for (let i = 0; i < 150; i++) {
         try {
           await fetch(`http://127.0.0.1:${port}/healthz`);
           break;
