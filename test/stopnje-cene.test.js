@@ -103,7 +103,7 @@ test("cene po stopnjah (75 %): OŠ 9,99/99, SŠ 13,99/139, faks 19,99/199, Druž
   assert.deepEqual(PASSES.map((p) => [p.days, p.amount, p.aiUsd]), [[7, 549, 0.8], [14, 849, 1.5]]);
   assert.equal(freeStudentMonthlyUsd(), 0.2);
   assert.equal(freeMonthlyPoolUsd(), 10);
-  // Faks paketi pred testom: 6,99 / 11,49 / 19,99 € z mejo AI 1,1 / 2,3 / 4,5 $.
+  // Faks paketi pred testom: 6,99 / 11,49 € z mejo AI 1,1 / 2,3 $.
   assert.deepEqual(FAKS_PASSES.map((p) => [p.days, p.amount, p.aiUsd]), [[7, 699, 1.1], [14, 1149, 2.3]]);
   assert.equal(passByDays(14, "FAKS").amount, 1149);
   assert.equal(passByDays(14, "SS").amount, 849);
