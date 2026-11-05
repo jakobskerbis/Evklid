@@ -352,8 +352,9 @@ export function odpriModel(el, mod, opts = {}) {
       b.addEventListener("click", () => opts.povecava(d.povecava));
       infoEl.append(b);
     }
-    // Plošča se drsi sama: okno je na vrhu, zato jo vrnemo na začetek (stran /3d); v lekciji se stran ne premika.
-    if (opts.stran) spodaj.scrollTo?.({ top: 0, behavior: kit.gibanje ? "smooth" : "auto" });
+    // Plošča se drsi sama: okno je na vrhu, zato jo takoj vrnemo na začetek (stran /3d; gladko drsenje se je na
+    // počasnih napravah ustavilo pred vrhom in okno je ostalo skrito); v lekciji se stran ne premika.
+    if (opts.stran) spodaj.scrollTop = 0;
   }
 
   // Kader modela: organ in model z `okvir` imata ročno nastavljen okvir; model iz kode vidni obseg (pogled lahko pokaže le del), a nikoli
@@ -385,7 +386,14 @@ export function odpriModel(el, mod, opts = {}) {
     const s = b.isEmpty() ? null : b.getBoundingSphere(new THREE.Sphere());
     const delOk = !s || vKadru(THREE, kit.camera, s.center, s.radius, 0.96);
     if (delOk && vKadru(THREE, kit.camera, mc, mr, 1.02)) return;
-    kit.poleti(mc, mr);
+    // del, ki sega čez kader modela (npr. bronhiol ob pljučnih mešičkih): krogla, ki objame model in del
+    let c = mc, r = mr;
+    const dd = s ? s.center.distanceTo(mc) : 0;
+    if (s && dd + s.radius > mr) {
+      r = (mr + dd + s.radius) / 2;
+      c = mc.clone().lerp(s.center, dd > 1e-9 ? (r - mr) / dd : 0);
+    }
+    kit.poleti(c, r);
   }
 
   function deli() {

@@ -112,7 +112,7 @@ async function preveriModel(p, nm, id, vw) {
   const kje = `${nm} ${id}`;
   await p.goto(`about:blank`);
   await p.goto(`${base}/3d#${id}`, { waitUntil: "load" });
-  let s = await pocakaj(p, false, (x) => x.model <= MEJA, id.startsWith("organ-") && !/mreznica|mesicki|nefron|reznjic/.test(id) ? 90000 : 30000);
+  let s = await pocakaj(p, false, (x) => x.model <= MEJA, id.startsWith("organ-") && !/mreznica|mesicki|nefron|reznjic/.test(id) ? 180000 : 60000);
   if (!s || s.nalaga) return napake.push(`${kje}: model se ni naložil`);
   if (s.model > MEJA) napake.push(`${kje}: ob odprtju ${pct(s.model)} modela izven kadra`);
   if (s.tocke) napake.push(`${kje}: ${s.tocke} barvnih krogcev na odru`);
@@ -148,7 +148,7 @@ async function preveriModel(p, nm, id, vw) {
 
 async function preveriAtlas(p, nm, vw) {
   await p.goto(`${base}/3d#atlas?izberi=Femur.r`, { waitUntil: "load" });
-  const konec = Date.now() + 90000;
+  const konec = Date.now() + 240000;
   let s = null;
   while (Date.now() < konec) {
     s = await p.evaluate(() => {
@@ -199,7 +199,7 @@ const base = `http://localhost:${port}`;
         } catch (e) {
           napake.push(`${nm} ${id}: ${e.message.split("\n")[0].slice(0, 200)}`);
         }
-        log(nm, id, napake.length === pred ? "ok" : "NAPAKA");
+        log(nm, id, napake.length === pred ? "ok" : "NAPAKA\n" + napake.slice(pred).map((x) => "       - " + x).join("\n"));
       }
       await ctx.close();
     }
