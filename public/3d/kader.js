@@ -53,3 +53,11 @@ export function vKadru(THREE, kamera, sredisce, polmer, rob = 0.94) {
   if (!k) return false;
   return Math.abs(k.x) + k.rx <= rob && Math.abs(k.y) + k.ry <= rob;
 }
+
+// Je krogla vsaj delno v vidnem polju kamere (seka piramido pogleda)? false = povsem izven kadra (za kamero, ob strani).
+// Kamera v krogli (uporabnik je model močno povečal) šteje kot vidna.
+export function vidnaKrogla(THREE, kamera, sredisce, polmer) {
+  kamera.updateMatrixWorld();
+  const m = new THREE.Matrix4().multiplyMatrices(kamera.projectionMatrix, kamera.matrixWorldInverse);
+  return new THREE.Frustum().setFromProjectionMatrix(m).intersectsSphere(new THREE.Sphere(new THREE.Vector3().copy(sredisce), polmer));
+}

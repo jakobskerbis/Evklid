@@ -6,7 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { naloziThree } from "./fixtures/3d-modeli.js";
-import { obsegVidnega, vKadru, kroglaNaZaslonu } from "../public/3d/kader.js";
+import { obsegVidnega, vKadru, kroglaNaZaslonu, vidnaKrogla } from "../public/3d/kader.js";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const THREE = await naloziThree();
@@ -50,6 +50,26 @@ test("vKadru: krogla na sredini da, ob robu ali za kamero ne", { skip: !THREE },
   assert.ok(!vKadru(THREE, kam, new THREE.Vector3(0, 0, 10), 1), "za kamero");
   const k = kroglaNaZaslonu(THREE, kam, o, 1);
   assert.ok(Math.abs(k.x) < 1e-9 && k.rx > k.ry, "pokončen zaslon: vodoravno je krogla relativno širša");
+});
+
+test("vidnaKrogla: povsem izven kadra le, ko krogla ne seka vidnega polja", { skip: !THREE }, () => {
+  const kam = new THREE.PerspectiveCamera(40, 390 / 500, 0.01, 100);
+  kam.position.set(0, 0, 5);
+  kam.lookAt(0, 0, 0);
+  kam.updateProjectionMatrix();
+  assert.ok(vidnaKrogla(THREE, kam, new THREE.Vector3(), 1));
+  assert.ok(vidnaKrogla(THREE, kam, new THREE.Vector3(), 30), "kamera v krogli (močno povečan model) je vidna");
+  assert.ok(vidnaKrogla(THREE, kam, new THREE.Vector3(2.2, 0, 0), 1), "delno čez rob je še vidna");
+  assert.ok(!vidnaKrogla(THREE, kam, new THREE.Vector3(8, 0, 0), 1), "povsem ob strani");
+  assert.ok(!vidnaKrogla(THREE, kam, new THREE.Vector3(0, 0, 10), 1), "za kamero");
+});
+
+test("pregledovalnik: kamera ne oddalji kadra, ki ga je povečal uporabnik; kopije materialov se sprostijo", () => {
+  const src = fs.readFileSync(path.join(ROOT, "public/3d/pregledovalnik.js"), "utf8");
+  assert.match(src, /uporabnikovKader\(\)/, "izbira upošteva uporabnikov kader");
+  assert.match(src, /x\.dispose\(\)/, "obarvaj sprosti kopije materialov");
+  const unici = src.slice(src.indexOf("unici() {"));
+  assert.match(unici, /ustaviNamigSij\(\);\s*obarvaj\(null\)/, "unici pospravi sij in kopije");
 });
 
 test("pregledovalnik: brez barvnih točk in oznak čez model, okno dela v plošči", () => {

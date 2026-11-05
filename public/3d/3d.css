@@ -45,7 +45,7 @@
 /* Okno izbranega dela (pregledovalnik.js) je v plošči ob odru, nikoli čez model (j, 5. 11.): na računalniku desno ob
    modelu, na telefonu pod odrom, v lekcijah pod odrom. Prvo v plošči (order), z barvo dela ob robu. */
 .k3-info {
-  order: -1; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; padding: 12px 12px 14px 16px; border-radius: 18px;
+  order: -1; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; padding-block: 12px 14px; padding-inline: 16px 12px; border-radius: 18px;
   background: var(--k3-povrsina); border: 1px solid var(--k3-rob); border-inline-start: 4px solid var(--barva, var(--k3-accent));
   animation: k3-pojav 0.18s both;
 }
@@ -53,9 +53,11 @@
 .k3-info-glava { display: flex; align-items: flex-start; gap: 10px; }
 .k3-info-glava > .k3-pika { margin-top: 0.42em; }
 .k3-info-naslov { flex: 1; min-width: 0; }
-.k3-info h3 { margin: 0; font-size: 1.06rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
+.k3-info .k3-info-ime { margin: 0; font-size: 1.06rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
 .k3-info .k3-la { display: block; color: var(--k3-muted); font-size: 0.86rem; margin-top: 1px; }
-.k3 .k3-info-zapri { flex: none; width: 40px; height: 40px; min-height: 40px; margin: -4px -2px 0 0; }
+.k3 .k3-info-zapri { flex: none; width: 40px; height: 40px; min-height: 40px; margin-block: -4px 0; margin-inline: 0 -2px; }
+/* samo za bralnike zaslona (status z imenom izbranega dela) */
+.k3-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .k3-info-zapri svg.i { width: 18px; height: 18px; }
 .k3-info-opis { margin: 0; color: var(--k3-besedilo); line-height: 1.5; font-size: 0.95rem; unicode-bidi: plaintext; }
 .k3 .k3-info .k3-povecava-gumb { align-self: flex-start; min-height: 40px; padding: 0 14px; font-size: 0.9rem; }
@@ -451,13 +453,41 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   .a3-vrsta:not(.a3-vrsta3) { max-width: 640px; }
   .a3-list { left: auto; top: max(14px, var(--varno-zg, env(safe-area-inset-top, 0px))); bottom: 14px; right: 14px; width: 400px; max-height: none; border-radius: 22px; border-bottom: 1px solid var(--k3-rob); }
   .a3-dno { right: auto; width: min(460px, 42vw); }
-  /* Računalnik: kartica v stolpcu levo ob odru (pod glavo), oder se zoži; namig ostane spodaj v stolpcu. */
-  .a3.a3-info-odprta .a3-oder { bottom: 0; left: var(--a3-dno-w, 0px); }
-  .a3.a3-info-odprta .a3-dno { top: var(--a3-vrh-h, 0px); padding-top: 14px; border-top: 0; border-inline-end: 1px solid var(--k3-rob); overflow-y: auto; }
-  .a3.a3-info-odprta .a3-kartica { max-height: none; overflow: visible; }
-  .a3.a3-info-odprta .a3-namig-vrsta { margin-top: auto; }
   .k3-zvezda { grid-template-columns: auto 1fr; align-items: center; padding: 28px; }
   .k3-zvezda > :not(.k3-zvezda-ic):not(.k3-zvezda-slika) { grid-column: 2; }
+}
+/* Računalnik in telefon ležeče: kartica levo ob odru pod glavo, oder se zoži. Stolpec je visok kot vsebina (kartica in
+   gumb za nastavitve), pod njim je ozadje odra, ne prazen stolpec (pregled PR #459). Mere so fizične (levo), kot oder,
+   zato enako tudi v RTL. */
+@media (min-width: 900px), (orientation: landscape) and (max-height: 560px) {
+  .a3.a3-info-odprta { background: var(--k3-oder); }
+  .a3.a3-info-odprta .a3-oder { bottom: 0; left: var(--a3-dno-w, 0px); }
+  .a3.a3-info-odprta .a3-dno {
+    top: var(--a3-vrh-h, 0px); bottom: auto; right: auto; width: min(460px, 42vw); max-height: calc(100% - var(--a3-vrh-h, 0px));
+    padding-top: 14px; border-top: 0; background: none; overflow-y: auto;
+  }
+  .a3.a3-info-odprta .a3-kartica { max-height: none; overflow: visible; }
+}
+/* Telefon ležeče in nizek okvir 3D sveta: glava v dveh nizkih vrsticah (naslov, iskanje in gumba; nato števec in
+   povečava), da ostane čim več odra za telo. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .a3-vrh { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding-top: max(8px, var(--varno-zg, env(safe-area-inset-top, 0px))); }
+  .a3-vrh::before { height: calc(var(--varno-zg, env(safe-area-inset-top, 0px)) + 104px); }
+  .a3-glava { display: contents; }
+  .a3-znak, .a3-nadnaslov { display: none; }
+  .a3-naslovi { flex: 0 1 auto; max-width: 30%; }
+  .a3-naslov { font-size: 1rem; -webkit-line-clamp: 1; }
+  .a3-vrh > .a3-vrsta:not(.a3-vrsta3) { order: 1; flex: 1 1 240px; gap: 8px; }
+  .a3-glava > .a3-krog { order: 2; width: 40px; height: 40px; min-height: 40px; }
+  .a3-vrh > .a3-vrsta3 { order: 3; flex: 1 1 100%; }
+  .a3-iskanje { min-height: 40px; }
+  .a3-iskanje input { height: 38px; }
+  .k3 .a3-brskaj { width: 44px; min-height: 40px; padding: 0; }
+  .a3-brskaj span { display: none; }
+  .a3-vrsta .a3-krog { width: 40px; height: 40px; min-height: 40px; }
+  .a3-stevec { min-height: 32px; font-size: 0.88rem; }
+  .a3-dno { padding-bottom: max(8px, var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+  .a3-rezultati { max-height: min(60vh, 240px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .a3-kartica, .a3-kviz, .a3-list { animation: none; }
@@ -514,6 +544,8 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   padding: 14px max(16px, env(safe-area-inset-right)) max(16px, var(--varno-sp, env(safe-area-inset-bottom, 0px))) max(16px, env(safe-area-inset-left));
   border-top: 1px solid var(--k3-rob); background: var(--k3-bg);
 }
+/* Plošča se drsi, njeni deli se ne krčijo (sicer se na telefonu ob odprtem oknu seznam delov organa stisne na 0). */
+.k3-stran-pregled > .k3-plosca > * { flex-shrink: 0; }
 .k3-o-modelu { order: 9; display: flex; flex-direction: column; gap: 8px; }
 .k3-o-modelu p { margin: 0; line-height: 1.5; color: var(--k3-muted); font-size: 0.94rem; }
 .k3-o-opis { unicode-bidi: plaintext; } /* opis je slovenski tudi v RTL: pika na koncu, ne na začetku vrstice */
@@ -544,8 +576,7 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
   }
   .k3-o-modelu { order: 0; }
   /* Stolpec brez prelamljanja: .k3-izpis ima flex-basis 100 %, ki bi v stolpcu pomenil višino plošče in razlil nadzor v
-     stolpce desno od plošče (telefon ležeče, Sončni sistem). Plošča se drsi, njeni deli se ne krčijo. */
-  .k3-stran-pregled > .k3-plosca > * { flex-shrink: 0; }
+     stolpce desno od plošče (telefon ležeče, Sončni sistem). */
   .k3-stran-pregled .k3-nadzor { flex-direction: column; flex-wrap: nowrap; align-items: stretch; }
   .k3-stran-pregled .k3-drsnik, .k3-stran-pregled .k3-izbira, .k3-stran-pregled .k3-izpis { flex: none; }
   .k3-stran-pregled .k3-nadzor > .k3-pill { align-self: flex-start; }

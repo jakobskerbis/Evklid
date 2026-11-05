@@ -180,7 +180,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   namigVrsta.append(namig, btnNastavitve);
   const kartica = mk("section", "a3-kartica");
   kartica.hidden = true;
-  kartica.setAttribute("aria-live", "polite");
+  // Bralnik zaslona: ime izbrane strukture v ločenem, vedno prisotnem statusu (ne živo območje v skriti kartici).
+  const statusEl = mk("p", "k3-sr");
+  statusEl.setAttribute("role", "status");
   const kviz = mk("section", "a3-kviz");
   kviz.hidden = true;
   dno.append(kartica, kviz, namigVrsta);
@@ -205,7 +207,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   meni.setAttribute("role", "menu");
   meni.hidden = true;
 
-  el.append(oder, vrh, dno, nalaganje, list, meni);
+  el.append(oder, vrh, dno, nalaganje, list, meni, statusEl);
 
   // ---------- podatki ----------
   const [strukture, imena, seznam] = await Promise.all([
@@ -307,7 +309,8 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   }
   const roKartica = new ResizeObserver(() => uskladiKartico());
   for (const x of [dno, vrh]) roKartica.observe(x);
-  new MutationObserver(() => uskladiKartico()).observe(kartica, { attributes: true, attributeFilter: ["hidden"] });
+  const moKartica = new MutationObserver(() => uskladiKartico());
+  moKartica.observe(kartica, { attributes: true, attributeFilter: ["hidden"] });
   const telo = new THREE.Group();
   kit.scene.add(telo);
   // Modeli imajo zapečeno okluzijo v pregibih (barva oglišč), zato je zaslonska (GTAO) šibkejša, le za stike med deli.
@@ -391,8 +394,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   });
   const vidiAO = () => kit.nastaviAO(kakovost === "visoka" && !rentgen && !prerez.on && !izbran && !sloji.get("koza").viden);
 
+  // Začetni kader: celo telo v prostem delu odra pod glavo (telefon: lobanja ni pod vrstico orodij), kot poletiK.
   function ponastaviPogled(trajanje = 0.7) {
-    pogled(new THREE.Vector3(...POGLEDI.spredaj), { trajanje, cilj: new THREE.Vector3(0, 0.95, 0), polmer: 0.88 });
+    poletiK(new THREE.Vector3(0, 0.95, 0), 0.88, { smer: new THREE.Vector3(...POGLEDI.spredaj).normalize(), trajanje, pokonci: true, rob: 1.04 });
   }
   function pogled(smer, { trajanje = 0.7, cilj = null, polmer = null } = {}) {
     const c = cilj || kit.controls.target.clone();
@@ -805,6 +809,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (!izbran) {
       sij.visible = false;
       kartica.hidden = true;
+      statusEl.textContent = "";
       uskladiKartico();
       uporabiMateriale();
       return;
@@ -822,13 +827,15 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     sij.visible = true;
     uporabiMateriale();
     if (!tiho) pokaziKartico(d.row);
+    statusEl.textContent = tiho ? "" : d.row.prikaz;
     uskladiKartico();
     if (leti) poletiK(sredisceDela(d), Math.max(0.03, d.row.r * 0.55));
   }
 
   // Prelet do dela tako, da je del na sredini prostega dela odra (med glavo in kvizom ali namigom, ki ležita na odru;
   // kartica dela je ob odru, ne na njem).
-  function poletiK(c, polmer) {
+  // smer, trajanje, pokonci: kot kit.poleti (privzeto ista smer pogleda); rob: rezerva okoli krogle (1,12 pri delu).
+  function poletiK(c, polmer, { smer = null, trajanje, pokonci = false, rob = 1.12 } = {}) {
     const { h } = kit.velikost;
     const r = kit.canvas.getBoundingClientRect();
     const zgoraj = Math.max(0, vrh.getBoundingClientRect().bottom - r.top);
@@ -841,12 +848,19 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     const spodaj = Math.min(r.height, ...spodnji);
     const prostor = Math.max(120, spodaj - zgoraj);
     const tan = Math.tan(THREE.MathUtils.degToRad(kit.camera.fov / 2));
-    const d = Math.max((polmer / tan) * (h / prostor), polmer / (tan * kit.camera.aspect)) * 1.12;
+    const d = Math.max((polmer / tan) * (h / prostor), polmer / (tan * kit.camera.aspect)) * rob;
     const naPx = (2 * Math.tan(THREE.MathUtils.degToRad(kit.camera.fov / 2)) * d) / h;
     const dy = (zgoraj + prostor / 2 - h / 2) * naPx; // del mora biti dy nižje od sredine zaslona
-    const smer = kit.camera.position.clone().sub(kit.controls.target).normalize();
-    const gor = new THREE.Vector3(0, 1, 0).addScaledVector(smer, -smer.y).normalize();
-    kit.poleti(c.clone().addScaledVector(gor, dy), polmer, { smer, razdalja: d });
+    const s = smer ? smer.clone() : kit.camera.position.clone().sub(kit.controls.target).normalize();
+    const gor = new THREE.Vector3(0, 1, 0).addScaledVector(s, -s.y).normalize();
+    kit.poleti(c.clone().addScaledVector(gor, dy), polmer, { smer: s, razdalja: d, pokonci, ...(trajanje != null ? { trajanje } : {}) });
+  }
+
+  // × in Esc: kartica se zapre; fokus, ki je bil v njej, gre na oder (ne izgubi se na koncu strani).
+  function zapriKartico() {
+    const vKartici = kartica.contains(document.activeElement);
+    izberi(null);
+    if (vKartici) kit.canvas.focus({ preventScroll: true });
   }
 
   function pokaziKartico(r) {
@@ -860,7 +874,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     const vrhK = mk("div", "a3-k-vrh");
     const naslov = mk("h2", "", r.prikaz);
     const x = gumb("a3-krog a3-mali-krog", icon("x"), t("a3.close"));
-    x.addEventListener("click", () => izberi(null));
+    x.addEventListener("click", zapriKartico);
     vrhK.append(naslov, x);
     kartica.append(pot, vrhK);
     if (r.la) kartica.append(mk("p", "a3-latinsko", r.la));
@@ -1635,7 +1649,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (!meni.hidden) zapriPlavajoce();
     else if (!list.hidden) zapriList();
     else if (kvizStanje) koncajKviz();
-    else if (izbran) izberi(null);
+    else if (izbran) zapriKartico();
     else return;
     e.preventDefault();
   };
@@ -1699,6 +1713,8 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       }
     },
     unici() {
+      roKartica.disconnect();
+      moKartica.disconnect();
       document.removeEventListener("keydown", naTipko);
       document.removeEventListener("click", naKlik);
       kit.unici();
