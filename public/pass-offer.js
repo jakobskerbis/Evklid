@@ -1,6 +1,6 @@
-// Kartica »Pripravi se na test« v Urniku: paket pred testom (enkratno plačilo, 7/14/30 dni polnega dostopa).
+// Kartica »Pripravi se na test« v Urniku: paket pred testom (enkratno plačilo, 7 ali 14 dni polnega dostopa).
 // Strežnik (server/accounts/billing.js) ponudi paket samo učencu brez aktivne naročnine in samo,
-// ko je v urniku test v naslednjih 30 dneh. Pravila ponudb (server/placila/ponudbe.js): ne med poukom,
+// ko je v urniku test v naslednjih 14 dneh. Pravila ponudb (server/placila/ponudbe.js): ne med poukom,
 // ne, če jih je učitelj izklopil; pod 15 let brez cene, le povezava s podatki za starše (parent_info).
 // Gumba »Prosi starše za plačilo« kartica ne ponuja sama: učenec ga odpre v »Kako lahko plača starš?«.
 import { t, locale } from "./i18n.js";

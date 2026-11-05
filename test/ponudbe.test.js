@@ -181,7 +181,7 @@ test("paket pred testom: pod 15 brez cene, med poukom in z izklopom učitelja br
     // 15 let in več: ponudba s cenami.
     const t = await offer(teen);
     assert.equal(t.offer.parent_info, undefined);
-    assert.equal(t.passes.length, 3);
+    assert.equal(t.passes.length, 2);
     // Učitelj je izklopil ponudbe.
     members.set(teen.id, { inClass: true, offersOff: true });
     assert.equal((await offer(teen)).offer, null);
@@ -257,6 +257,6 @@ test("lasten profil 15-letnega imetnika: točna starost iz datuma rojstva, cena 
     const r = (await call(`/api/students/${teen.id}/pass-offer`)).body;
     assert.equal(r.offer.parent_info, undefined);
     assert.equal(r.offer.pay_link, true);
-    assert.equal(r.passes.length, 3);
+    assert.equal(r.passes.length, 2);
   });
 });

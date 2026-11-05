@@ -7,7 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { BRAND } from "./brand.js";
-import { PLANS, SCHOOL_LICENCE_PRICES, PILOT_SCHOOLS_MAX, pilotSchoolIds } from "./schools.js";
+import { PLANS, SCHOOL_LICENCE_PRICES, PILOT_SCHOOLS_MAX, PILOT_HOLD_STATUSES, pilotPlaces, pilotOpenForOrder } from "./schools.js";
 import { schoolDailyQuestions } from "./placila/pravice.js";
 import { PODARI_MONTHS } from "./placila/podari.js";
 
@@ -51,27 +51,14 @@ export function migrateSchoolOrders(db) {
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
   )`);
+  // Šola, ki je iz naročila dobila licenco (skrbnik ob vpisu licence poda orderId, server/schools.js): pilotno
+  // naročilo te šole potem ne zaseda še enega pilotnega mesta, tudi preden ga skrbnik označi kot »won«.
+  const cols = db.prepare("PRAGMA table_info(school_orders)").all().map((c) => c.name);
+  if (!cols.includes("school_id")) db.exec("ALTER TABLE school_orders ADD COLUMN school_id INTEGER");
 }
 
-// Pilotna mesta (prvih 10 šol): zasedejo jih šole s pilotno licenco in odprta pilotna naročila (ena šola = ena
-// davčna številka). Mesto naročila se sprosti, ko ga skrbnik označi kot »won« (takrat šola dobi licenco) ali »lost«.
-export const PILOT_HOLD_STATUSES = ["new", "contacted", "offer_sent"];
-export function pilotPlaces(db) {
-  const licences = pilotSchoolIds(db).length;
-  const hasOrders = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_orders'").get();
-  const orders = hasOrders
-    ? db
-        .prepare(`SELECT DISTINCT tax_id FROM school_orders WHERE plan = 'pilot' AND status IN (${PILOT_HOLD_STATUSES.map(() => "?").join(", ")})`)
-        .all(...PILOT_HOLD_STATUSES)
-        .map((r) => r.tax_id)
-    : [];
-  return { max: PILOT_SCHOOLS_MAX, licences, orders, free: Math.max(0, PILOT_SCHOOLS_MAX - licences - orders.length) };
-}
-// Ali je pilotna cena na voljo za novo naročilo; šola z že odprtim pilotnim naročilom (ista davčna) lahko naroči znova.
-export function pilotOpenForOrder(db, taxId = null) {
-  const p = pilotPlaces(db);
-  return p.free > 0 || (taxId != null && p.orders.includes(taxId));
-}
+// Pilotna mesta (pilotPlaces, pilotOpenForOrder) štejeta licence in odprta naročila skupaj: server/schools.js.
+export { PILOT_HOLD_STATUSES, pilotPlaces, pilotOpenForOrder } from "./schools.js";
 
 export const orderNumber = (o) => `${String(o.created_at || "").slice(0, 4) || new Date().getUTCFullYear()}-${String(o.id).padStart(4, "0")}`;
 
@@ -289,6 +276,10 @@ export function mountSchoolOrders(app, store, { accounts, isLocalRequest }) {
     const b = req.body || {};
     if (b.status !== undefined && !ORDER_STATUSES.includes(b.status)) return res.status(400).json({ error: `Stanje: ${ORDER_STATUSES.join(", ")}.` });
     if (b.note !== undefined && (typeof b.note !== "string" || b.note.length > ORDER_LIMITS.maxNote)) return res.status(400).json({ error: `Opomba: besedilo do ${ORDER_LIMITS.maxNote} znakov.` });
+    // Pilotno naročilo, ki spet postane odprto (npr. iz »lost« v »contacted«), zasede mesto: samo, če je prosto
+    // (ali ga šola že ima z drugim odprtim naročilom ali s pilotno licenco).
+    const reopens = o.plan === "pilot" && b.status !== undefined && PILOT_HOLD_STATUSES.includes(b.status) && !PILOT_HOLD_STATUSES.includes(o.status);
+    if (reopens && !pilotOpenForOrder(db, o.tax_id, o.school_id)) return res.status(409).json({ error: `Pilotna mesta za prvih ${PILOT_SCHOOLS_MAX} šol so zasedena. Naročila ni mogoče znova odpreti.` });
     db.prepare("UPDATE school_orders SET status = ?, admin_note = ?, updated_at = datetime('now') WHERE id = ?").run(
       b.status ?? o.status,
       b.note !== undefined ? b.note.replace(/[\u0000-\u0009\u000b-\u001f\u007f]+/g, " ").trim() : o.admin_note,

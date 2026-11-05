@@ -1300,15 +1300,12 @@ export function mountAccounts(app, store, opts = {}) {
         Math.max(Date.parse(p.trial_ends_at || 0) || 0, Date.parse(p.promo_until || 0) || 0, giftCarries ? Date.parse(p.gift_until || 0) || 0 : 0),
       );
       const subscription_data = { metadata: { parent_id: p.id } };
-      // »Podari Evklid«: neobvezen dodatek 2/5/10 € k prvemu plačilu (enkratna vrstica), potrdi ga invoice.paid.
-      const addon = !school && currency === "EUR" && req.body?.podari ? podari.addonFor(p.id, req.body.podari) : null;
-      if (addon) subscription_data.metadata.podari_id = addon.id;
       if (trialEnd - Date.now() > 49 * 3600000) subscription_data.trial_end = Math.floor(trialEnd / 1000);
       const session = await stripe.request("POST", "/checkout/sessions", {
         mode: "subscription",
         customer,
         client_reference_id: String(p.id),
-        line_items: [{ price: prices[plan.key], quantity: 1 }, ...(addon ? [addon.line_item] : [])],
+        line_items: [{ price: prices[plan.key], quantity: 1 }],
         success_url: `${base}/?billing=success&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${base}/?billing=cancel`,
         locale: currency === "EUR" ? "sl" : "auto",
@@ -1560,7 +1557,7 @@ export function mountAccounts(app, store, opts = {}) {
       }
       case "invoice.paid": {
         const p = parentFor();
-        podari.invoicePaid(obj); // dodatek »Podari Evklid« pri prvem plačilu naročnine
+        podari.invoicePaid(obj); // stari dodatek »Podari Evklid« pri prvem plačilu naročnine (novih ni)
         // Nagrada za priporočilo šele ob plačilu naročnine (sam dodatek ob začetku preizkusa ne šteje).
         if (p && obj.amount_paid - podari.addonOf(obj).amount > 0) await maybeRewardReferral(p.id);
         break;

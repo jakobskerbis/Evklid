@@ -1,5 +1,5 @@
 // Novi del plačil (j 2026-10-30, načrt »Evklid – nov sistem plačil«):
-// - paketi pred testom: enkratno plačilo za 7, 14 ali 30 dni polnega dostopa za en profil,
+// - paketi pred testom: enkratno plačilo za 7 ali 14 dni polnega dostopa za en profil,
 //   ponudijo se samo učencu brez aktivne naročnine;
 // - povezava »Prosi starše za plačilo«: mladoletni imetnik računa pošlje staršu povezavo,
 //   starš pregleda in plača brez lastnega računa v Evklidu;
@@ -15,7 +15,7 @@ import { ljNow } from "./goal-reminder.js";
 import { promoEndingEmail, renewalEmail, schoolSubEndEmail, planChangeEmail, allowanceEmail } from "./email.js";
 import { audit } from "../dnevnik-dostopov.js";
 import { NO_PRICE_AGE } from "../placila/ponudbe.js";
-import { CREDIT_PACKS, packById, customPack, CUSTOM_MIN_CENTS, creditUsdFor, conversationsFor } from "../placila/krediti.js";
+import { CREDIT_PACKS, packById, creditUsdFor, conversationsFor } from "../placila/krediti.js";
 
 export const ADULT_TEXT = "Sem polnoleten/-na in plačujem za svoj profil ali kot starš oziroma skrbnik.";
 export const WITHDRAWAL_TEXT =
@@ -243,8 +243,9 @@ export function mountBilling(app, ctx) {
   function checkPass(req, parent, body) {
     const studentId = Number(body?.student_id);
     if (!Number.isInteger(studentId) || ownerOf(studentId) !== parent.id) return { status: 404, body: { error: "Učenec ne obstaja." } };
-    // Faks ima svoje pakete (6,99 / 11,49 / 19,99 €), OŠ in SŠ skupne (plans.js PASSES).
-    const plan = passByDays(body?.days, levelOf(studentId));
+    // Faks ima svoje pakete (6,99 / 11,49 €), OŠ in SŠ skupne (plans.js PASSES).
+    const level = levelOf(studentId);
+    const plan = passByDays(body?.days, level);
     if (!plan) return { status: 400, body: { error: "Neznan paket." } };
     // j 2026-10-30: paket se ponudi samo učencu brez aktivne naročnine na Evklid.
     if (paidActive(parent)) return { status: 409, body: { error: "Ta račun že ima naročnino, zato paket pred testom ni potreben.", subscription: true } };
@@ -253,7 +254,8 @@ export function mountBilling(app, ctx) {
     const date = cleanDate(body?.test_date);
     const today = nowParts().date;
     const left = date ? Math.round((Date.parse(`${date}T12:00:00Z`) - Date.parse(`${today}T12:00:00Z`)) / 86400000) : -1;
-    if (left < 0 || left > 29) return { status: 400, body: { error: "Paket pred testom je za test v naslednjih 30 dneh." } };
+    // Test mora biti v času, ki ga pokrije najdaljši paket (14 dni, plans.js passForDaysLeft).
+    if (left < 0 || !passForDaysLeft(left, level)) return { status: 400, body: { error: "Paket pred testom je za test v naslednjih 14 dneh." } };
     return { plan, studentId, test: { date, name: cleanText(body?.test_name, 80) } };
   }
 
@@ -298,7 +300,8 @@ export function mountBilling(app, ctx) {
   }
 
   // --- paket pred testom ---
-  // Ponudba paketa pred testom za profil ali null (j 2026-10-30): samo brez naročnine, s testom v 30 dneh, po
+  // Ponudba paketa pred testom za profil ali null (j 2026-10-30): samo brez naročnine, s testom, ki ga paket pokrije
+  // (v 14 dneh; brez 30-dnevnega paketa, j 2026-11-04), po
   // pravilih ponudb; ena ponudba naenkrat (ponudbe.js oneOffer): naročnik paketa nikoli ne dobi.
   // Vrne { test, parent_info } ali { test, suggested, pay_link }.
   function passOfferFor(studentId, req = null) {
@@ -307,6 +310,8 @@ export function mountBilling(app, ctx) {
     if (currencyOf(req || { headers: {} }, parent) !== "EUR") return null;
     const test = nextTest(schedules, studentId);
     if (!test) return null;
+    const suggested = passForDaysLeft(test.daysLeft, levelOf(studentId));
+    if (!suggested) return null; // test je dlje, kot ga pokrije najdaljši paket
     // Pravila ponudb (server/placila/ponudbe.js): ne med poukom in ne, če jih je učitelj izklopil;
     // pod 15 let brez cene, le povezava s podatki za starše.
     const policy = offersFor(studentId);
@@ -316,7 +321,7 @@ export function mountBilling(app, ctx) {
     const coverEnd = Date.parse(`${test.date}T23:59:59Z`) + 86400000;
     if (isPremiumChild(access, childIds(parent.id), studentId) && access.until && Date.parse(access.until) >= coverEnd) return null;
     if (!policy.prices) return { test, parent_info: true };
-    return { test, suggested: passForDaysLeft(test.daysLeft, levelOf(studentId))?.days ?? 30, pay_link: isMinor(parent) };
+    return { test, suggested: suggested.days, pay_link: isMinor(parent) };
   }
 
   // --- paket pred testom ---
@@ -382,6 +387,8 @@ export function mountBilling(app, ctx) {
   // Ko učenec porabi svoj del mesečnega proračuna, imetnik računa dokupi kredit: polovica plačila
   // postane kredit v $, vezan na račun (velja za vse njegove profile).
   // Navzven samo cena in število pogovorov, ne delež plačila ali znesek kredita (j 2026-10-30).
+  // Polnoleten po datumu rojstva: račun brez datuma rojstva (star račun) dokupa ne plača, dokler ga ne vpiše.
+  const adultKnown = (p) => !!p?.birth_date && !isMinor(p);
   const publicPack = (p) => ({ id: p.id, amount: p.amount, currency: p.currency, conversations: conversationsFor(creditUsdFor(p.amount)) });
   app.get("/api/billing/credit", (req, res) => {
     const p = req.parent;
@@ -391,9 +398,8 @@ export function mountBilling(app, ctx) {
       balance_conversations: conversationsFor(credits.balance(p.id)),
       // Ena ponudba naenkrat: ko ima kateri profil računa ponudbo paketa pred testom, dokupa ne ponudimo.
       packs: currencyOf(req, p) === "EUR" && !childIds(p.id).some((id) => passOfferFor(id, req)) ? CREDIT_PACKS.map(publicPack) : [],
-      // Poljuben znesek: najmanjši znesek in ocena pogovorov na 1 € (za sprotni izračun v kartici).
-      custom: { min: CUSTOM_MIN_CENTS, per_eur: conversationsFor(creditUsdFor(100_000)) / 1000 },
-      minor: isMinor(p),
+      // Dokup plača samo polnoleten imetnik z znano starostjo (adultKnown).
+      minor: !adultKnown(p),
     });
   });
 
@@ -401,9 +407,10 @@ export function mountBilling(app, ctx) {
     if (needStripe(res)) return;
     const p = req.parent;
     if (!credits || !p || p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun v zavihku Račun.", guest: true });
-    if (isMinor(p)) return res.status(403).json({ error: "Dokup pogovorov plača polnoleten imetnik računa (starš ali skrbnik)." });
-    const pack = req.body?.pack === "custom" ? customPack(req.body?.amount_eur) : packById(req.body?.pack);
-    if (!pack) return res.status(400).json({ error: req.body?.pack === "custom" ? "Najmanjši znesek je 5 €." : "Neznan paket." });
+    if (!adultKnown(p)) return res.status(403).json({ error: "Dokup pogovorov plača polnoleten imetnik računa (starš ali skrbnik)." });
+    // Samo paketi 5 / 10 / 20 € (poljubnega zneska ni več, j 2026-11-04).
+    const pack = packById(req.body?.pack);
+    if (!pack) return res.status(400).json({ error: "Neznan paket." });
     if (currencyOf(req, p) !== "EUR") return res.status(400).json({ error: "Dokup pogovorov je zaenkrat na voljo samo v evrih." });
     if (!consented(req.body)) return res.status(400).json(consentError);
     try {
@@ -557,7 +564,11 @@ export function mountBilling(app, ctx) {
 
   app.get("/api/pay/:token", (req, res) => {
     const l = publicLink(req, res);
-    if (l) res.json(linkView(l));
+    if (!l) return;
+    const v = linkView(l);
+    // Neplačana povezava za paket, ki ga ni več (30 dni, j 2026-11-04): ne velja več, starš prosi za novo.
+    if (!v.plan && !v.paid) return res.status(404).json({ error: "Povezava za plačilo ne velja več. Prosite za novo.", expired: true });
+    res.json(v);
   });
 
   app.post("/api/pay/:token/checkout", json, async (req, res) => {
@@ -598,6 +609,7 @@ export function mountBilling(app, ctx) {
         });
       } else {
         const plan = passByKey(l.plan_key) || passByDays(l.days);
+        if (!plan) return res.status(410).json({ error: "Povezava za plačilo ne velja več. Prosite za novo.", expired: true });
         if (paidActive(parent)) return res.status(409).json({ error: "Ta račun že ima naročnino, zato paket pred testom ni potreben.", subscription: true });
         if (passes.latestFor(l.student_id)) return res.status(409).json({ error: "To je že plačano. Hvala!", paid: true });
         // Ponoven klik na isti povezavi uporabi isti (še neplačan) paket, zato dve plačilni strani ne dasta dveh paketov.
