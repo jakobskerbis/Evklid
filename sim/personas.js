@@ -361,7 +361,7 @@ export const PERSONAS = [
     ime: "Petra",
     starost: 14,
     spol: "z",
-    settings: { educational_track: "OSNOVNA_SOLA", curriculum_level: "9. razred", subject: "MAT", track: "COMPETITION" },
+    settings: { educational_track: "OSNOVNA_SOLA", curriculum_level: "9. razred", subject: "MAT", goal: "tekmovanje", track: "COMPETITION" },
     sposobnost: 5,
     znacaj: "Tekmovalka (Vegovo priznanje), radovedna, vedno vpraša »zakaj«. Ne mara, da ji kdo izda rešitev; želi namige.",
     znanje: "Zelo dobra pri računanju, šibkejša pri dokazovanju.",

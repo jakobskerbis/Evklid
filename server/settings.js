@@ -87,7 +87,6 @@ export function normalizeSettings(input = {}) {
   // Fakulteta: program je obvezen, tekmovanj ni; brez fakultete programa ne hranimo.
   if (jeFaks(out)) {
     if (!out.study_program) out.study_program = Object.keys(PROGRAMS)[0];
-    out.track = "REGULAR";
     // Predmet iz predmetnika: veljati mora za program in letnik (ali biti izbirni),
     // sicer (npr. po prehodu v višji letnik) velja prvi predmet letnika. Predmet aplikacije sledi njemu.
     const course = typeof input.study_course === "string" ? input.study_course : "";
@@ -116,6 +115,9 @@ export function normalizeSettings(input = {}) {
   }
   // Cilj mora ustrezati šoli (NPZ le v OŠ, matura le v SŠ …), sicer sprotno učenje.
   if (!goalsFor(out).includes(out.goal)) out.goal = DEFAULT_GOAL;
+  // Program (track) ni več posebna izbira (j, 4. 11. 2026, »Samo Cilj«): izpelje se iz cilja.
+  // Cilj tekmovanje = tekmovalni način, vsi drugi cilji redni pouk. Fakulteta in regijski sistemi nimajo cilja tekmovanje.
+  out.track = out.goal === "tekmovanje" ? "COMPETITION" : "REGULAR";
   if (validDate(input.goal_date)) out.goal_date = input.goal_date;
   if (input.xp_goal !== undefined) out.xp_goal = cleanXpGoal(input.xp_goal);
   if (input.goal_reminder !== undefined) out.goal_reminder = input.goal_reminder === true || input.goal_reminder === 1 || input.goal_reminder === "1" || input.goal_reminder === "true";

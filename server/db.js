@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { DEFAULT_SETTINGS, normalizeSettings, normalizeWeaknessList } from "./settings.js";
+import { DEFAULT_GOAL } from "../public/goal-data.js";
 import { Flashcards } from "./flashcards.js";
 import { seal, unseal, sealJson, unsealJson, UNREADABLE } from "./crypto-polje.js";
 
@@ -220,6 +221,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   if (!studentCols.includes("level_changed_at")) db.exec("ALTER TABLE students ADD COLUMN level_changed_at TEXT");
   // Od kod je profil prišel (server/rast.js): kratka oznaka iz povezave, »priporocilo« ali »razred«; brez piškotkov in IP.
   if (!studentCols.includes("vir")) db.exec("ALTER TABLE students ADD COLUMN vir TEXT");
+  migrateTrackToGoal(db);
   // Začetni test predznanja teme: koliko stopenj (0–3) je učenec rešil zapored od lažje proti težji.
   const stateCols = db.prepare("PRAGMA table_info(topic_state)").all().map((c) => c.name);
   if (!stateCols.includes("pretest")) db.exec("ALTER TABLE topic_state ADD COLUMN pretest INTEGER");
@@ -269,6 +271,32 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
+}
+
+// Izbirnik »Program« je odstranjen (j, 4. 11. 2026, »Samo Cilj«); track se zdaj izpelje iz cilja (server/settings.js).
+// Profil, ki je imel Program = Tekmovanja in privzeti cilj (sprotno učenje), dobi cilj tekmovanje, da ostane v
+// tekmovalnem načinu. Izrecno izbran drug cilj (test, NPZ, matura) ohranimo: cilj ima prednost. Enkratno: po
+// zapisu ima vrstica track izpeljan iz cilja; vrne število prepisanih vrstic (drugi zagon: 0).
+export function migrateTrackToGoal(db) {
+  const rows = db.prepare(`SELECT id, settings FROM students WHERE settings LIKE '%"track":"COMPETITION"%'`).all();
+  const save = db.prepare("UPDATE students SET settings = ? WHERE id = ?");
+  let changed = 0;
+  for (const row of rows) {
+    let raw;
+    try {
+      raw = JSON.parse(row.settings);
+    } catch {
+      continue;
+    }
+    if (raw.track !== "COMPETITION") continue;
+    const keepGoal = raw.goal && raw.goal !== DEFAULT_GOAL;
+    const next = normalizeSettings(keepGoal ? raw : { ...raw, goal: "tekmovanje" });
+    const json = JSON.stringify(next);
+    if (json === row.settings) continue;
+    save.run(json, row.id);
+    changed++;
+  }
+  return changed;
 }
 
 const parseStudent = (row) =>

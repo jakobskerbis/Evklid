@@ -349,12 +349,11 @@ function validateProfile(changes, student) {
   }
   if (changes.game_titles !== undefined) patch.game_titles = cleanTitles(Array.isArray(changes.game_titles) ? changes.game_titles : String(changes.game_titles ?? "").split(","));
   if (changes.interest_custom !== undefined) patch.interest_custom = cleanText(String(changes.interest_custom ?? ""), 40);
-  for (const key of ["track", "solving_mode", "data_mode", "news_level", "news_lang", "games"]) {
+  for (const key of ["solving_mode", "data_mode", "news_level", "news_lang", "games"]) {
     if (changes[key] === undefined) continue;
     if (PROFILE_SETTINGS[key].values.includes(changes[key])) patch[key] = changes[key];
     else errors.push(`${key}: allowed ${PROFILE_SETTINGS[key].values.join(", ")}`);
   }
-  if (patch.track === "COMPETITION" && (track === "UNIVERZA" || isRegional(system))) errors.push("track: competitions exist only for Slovenian OŠ/SŠ");
   if (changes.goal !== undefined) {
     if (goalsFor({ ...cur, educational_track: track, school_system: system }).includes(changes.goal)) patch.goal = changes.goal;
     else errors.push(`goal: allowed for this school ${goalsFor({ ...cur, educational_track: track, school_system: system }).join(", ")}`);

@@ -1561,9 +1561,8 @@ function fillDialectOptions(f, s) {
   f.dialect.value = list.some((d) => d.id === s.dialect) ? s.dialect : "";
 }
 
-function fillLevelOptions(track) {
-  // Fakulteta in regijski šolski sistemi: brez slovenskih tekmovanj (NPZ, matura, olimpijade).
-  $("#track-row").hidden = track === "UNIVERZA" || isRegional($("#settings-form").school_system.value);
+// Ob menjavi šole ali letnika: predmeti in cilji (Program je od 4. 11. 2026 izpeljan iz cilja).
+function fillLevelOptions() {
   fillSubjectOptions();
   fillGoalFields();
 }
@@ -1594,7 +1593,7 @@ async function fillSettingsForm() {
   f.name.value = state.student.name;
   fillDeleteCard();
   const programs = await loadPrograms(api);
-  for (const key of ["track", "personality_setting"]) f[key].value = s[key];
+  f.personality_setting.value = s.personality_setting;
   f.data_mode.value = s.data_mode || "auto";
   f.games.checked = !gamesOn(s);
   f.xp_goal.value = String(s.xp_goal || 50);
@@ -1603,13 +1602,13 @@ async function fillSettingsForm() {
   f.study_course.innerHTML = "";
   f.school_system.innerHTML = schoolSystemOptions(s.school_system || "SI");
   if (!levelPicker) {
-    levelPicker = mountLevelPicker($("#settings-level"), f, { programs, settings: s, onChange: (_, track) => fillLevelOptions(track) });
+    levelPicker = mountLevelPicker($("#settings-level"), f, { programs, settings: s, onChange: () => fillLevelOptions() });
     f.school_system.addEventListener("change", () => levelPicker.setSystem(f.school_system.value));
   } else levelPicker.set(s);
   f.querySelector(`input[name=solving_mode][value=${s.solving_mode}]`).checked = true;
   f.manual_weaknesses.value = state.student.manual_weaknesses.join(", ");
   fillGoalFields(true);
-  fillLevelOptions(s.educational_track);
+  fillLevelOptions();
   if (state.pickUniversity) {
     state.pickUniversity = false;
     levelPicker.set({ ...s, educational_track: "UNIVERZA", study_program: "", curriculum_level: "" });
@@ -1653,7 +1652,6 @@ $("#settings-form").addEventListener("submit", async (e) => {
         ...(f.educational_track.value === "UNIVERZA"
           ? { study_course: f.study_course.value, subject: f.study_course.selectedOptions[0]?.dataset.subject || state.student.settings.subject }
           : { subject: f.subject.value, study_course: "" }),
-        track: isRegional(f.school_system.value) ? "REGULAR" : f.track.value,
         educational_track: f.educational_track.value,
         study_program: f.educational_track.value === "UNIVERZA" ? f.study_program.value : "",
         curriculum_level: f.curriculum_level.value,

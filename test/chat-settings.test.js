@@ -29,9 +29,11 @@ test("registry covers every Settings form field and device setting; no financial
     assert.ok(PROFILE_SETTINGS[key] || DEVICE_SETTINGS[key], `nastavitev ${f} manjka v public/settings-registry.js`);
   }
   // Vse nastavitve profila na strežniku (razen regije, ki sledi jeziku) so v seznamu.
-  for (const k of Object.keys(DEFAULT_SETTINGS)) if (k !== "region") assert.ok(PROFILE_SETTINGS[k], k);
+  // track se izpelje iz cilja (j, 4. 11. 2026), zato ga inštruktor ne spreminja posebej.
+  for (const k of Object.keys(DEFAULT_SETTINGS)) if (k !== "region" && k !== "track") assert.ok(PROFILE_SETTINGS[k], k);
+  assert.equal(PROFILE_SETTINGS.track, undefined, "track ni več samostojna nastavitev");
   assert.deepEqual(PROFILE_SETTINGS.subject.values, ALL_SUBJECTS);
-  for (const k of ["track", "solving_mode", "data_mode", "educational_track"]) assert.deepEqual(PROFILE_SETTINGS[k].values, ENUMS[k], k);
+  for (const k of ["solving_mode", "data_mode", "educational_track"]) assert.deepEqual(PROFILE_SETTINGS[k].values, ENUMS[k], k);
   const all = JSON.stringify(SETTINGS_TOOLS.find((x) => x.name === "change_settings").input_schema.properties.changes.properties);
   for (const bad of ["plan", "payment", "price", "stripe", "code", "email", "password", "birth", "parent", "nickname", '"name"']) {
     assert.ok(!Object.keys(JSON.parse(all)).some((k) => k.includes(bad.replaceAll('"', ""))), bad);

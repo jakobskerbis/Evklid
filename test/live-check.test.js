@@ -139,7 +139,7 @@ test("live check: in mock mode the hidden note does not change the prepared answ
 test("live check: competition and university Haiku answers without calculations go to the reviewer; lite does not", async () => {
   const h = harness({ answers: [LONG, LONG, LONG, LONG], reviews: ["NAPAKA: Pitagorov izrek velja samo v pravokotnem trikotniku.", "OK"], fixes: ["Popravek: Pitagorov izrek velja samo v pravokotnem trikotniku."] });
   try {
-    const tek = await h.student({ track: "COMPETITION" });
+    const tek = await h.student({ goal: "tekmovanje" });
     const r = await h.ask(tek, "Kako začnem geometrijsko nalogo?");
     assert.equal(h.reviewCalls.length, 1);
     assert.equal(h.reviewCalls[0].model, modeParams("mid").model, "pregleda Sonnet");
@@ -153,7 +153,7 @@ test("live check: competition and university Haiku answers without calculations 
     assert.equal(h.reviewCalls.length, 2);
     assert.doesNotMatch(r2.messages.at(-1).display_text, /Popravek/, "OK: brez popravka");
 
-    const lite = await h.student({ track: "COMPETITION", data_mode: "lite" });
+    const lite = await h.student({ goal: "tekmovanje", data_mode: "lite" });
     await h.ask(lite, "Kako začnem geometrijsko nalogo?");
     const regular = await h.student();
     await h.ask(regular, "Kako začnem geometrijsko nalogo?");
@@ -181,7 +181,7 @@ test("live check: the daily cap stops reviews", async () => {
   process.env.EVKLID_LIVE_CHECK_DAILY_USD = "0.005";
   const h = harness({ answers: [LONG, LONG] });
   try {
-    const s = await h.student({ track: "COMPETITION" });
+    const s = await h.student({ goal: "tekmovanje" });
     await h.ask(s, "Kako začnem geometrijsko nalogo?");
     assert.equal(h.reviewCalls.length, 1);
     h.store.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-sonnet-5-5', 'preverjanje', 0.01)").run(s.id);
@@ -197,7 +197,7 @@ test("live check: EVKLID_LIVE_CHECK=0 turns everything off", async () => {
   process.env.EVKLID_LIVE_CHECK = "0";
   const h = harness({ answers: ["Velja $7 \\cdot 8 = 54$.", "Odgovor.", LONG], fixes: ["Popravek: 56."] });
   try {
-    const s = await h.student({ track: "COMPETITION" });
+    const s = await h.student({ goal: "tekmovanje" });
     const r = await h.ask(s, "Koliko je 7 krat 8?");
     await h.ask(s, "Reši enačbo 2x + 3 = 11");
     await h.ask(s, "Kako začnem geometrijsko nalogo?");
