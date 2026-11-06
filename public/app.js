@@ -96,6 +96,8 @@ import { initOpen, addOpen, simOverlayOpen, closeSimOverlay } from "./odpri.js";
 const $ = (sel) => document.querySelector(sel);
 // Delo ob nedejavnosti glavne niti (priprava naslednjih zaslonov), da ne zakasni dotikov.
 const whenIdle = (fn, timeout = 2000) => (window.requestIdleCallback ? requestIdleCallback(() => fn(), { timeout }) : setTimeout(fn, 200));
+// Gradnja vnaprej (kalkulator, orodja) samo, ko se učenec ni dotaknil zaslona vsaj 0,8 s: dolga naloga ne zakasni tapa.
+const whenQuiet = (fn) => whenIdle(() => (Date.now() - lastInput < 800 ? setTimeout(() => whenQuiet(fn), 400) : fn()));
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
 const fromPack = (url, opts) => (state.student ? offlineApi(state.student.id, url, opts) : undefined);
 // Računalnik z Evklidom je ugasnjen ali okno ni odprto: ngrok ali Cloudflare vrneta
@@ -4105,7 +4107,7 @@ function prefetchNext() {
   ];
   const next = () => {
     const f = steps.shift();
-    if (f) Promise.resolve().then(f).catch(() => null).then(() => whenIdle(next));
+    if (f) Promise.resolve().then(f).catch(() => null).then(() => whenQuiet(next));
   };
   next();
 }
@@ -4126,9 +4128,9 @@ function prebuildCalc() {
     if (!m) return;
     // Formule potrebujejo strežnik: v lahkem načinu jih naložimo šele ob tapu.
     if (m === "formulas" && document.documentElement.classList.contains("lite")) return next();
-    whenIdle(() => Promise.resolve(calcTool(m)).catch(() => null).then(() => whenIdle(next)));
+    whenQuiet(() => Promise.resolve(calcTool(m)).catch(() => null).then(() => whenQuiet(next)));
   };
-  whenIdle(next);
+  whenQuiet(next);
 }
 document.querySelectorAll(".calc-modes").forEach((seg) =>
   seg.addEventListener("click", (e) => {
@@ -4448,7 +4450,7 @@ initFormulaInfo();
   }), 3000);
   // Takojšnje odpiranje (j 6. 11. 2026): ob nedejavnosti po odprtju se pripravijo verjetni naslednji zasloni.
   // Kalkulator (zadnje uporabljeno orodje) se zgradi v pomnilniku, moduli ostalih orodij in 3D sveta se le prenesejo.
-  setTimeout(() => whenIdle(prefetchNext), 2500);
+  setTimeout(() => whenQuiet(prefetchNext), 2500);
   // Dotik zavihka Igre (ali vrstice v »Jaz«) začne nalaganje že pred klikom.
   document.addEventListener("pointerdown", (e) => {
     if (!gamesMod && e.target.closest?.('[data-view="games"], [data-go="games"]')) loadGames().catch(() => {});
