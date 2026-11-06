@@ -13,7 +13,9 @@ const word = (src) => new RegExp(`(?<![\\p{L}])(?:${src})(?![\\p{L}])`, "iu");
 
 test("učencem ne govorimo o modelih, API-ju in žetonih", () => {
   const jargon = word("API|Sonnet|Opus|Haiku|Anthropic|žeton\\p{L}*|model(?:a|u|om|i|ov|e|ih)?|strežnik\\p{L}*");
-  const bad = strings.filter(([k, s]) => !ADMIN.test(k) && jargon.test(s)).map(([k]) => k);
+  // a3.partMissing: »model« je 3D model na zaslonu, ne jezikovni model (j, 6. 11.: »Ta model nima dela ‘X’.«)
+  const MODEL_3D = new Set(["a3.partMissing"]);
+  const bad = strings.filter(([k, s]) => !ADMIN.test(k) && !MODEL_3D.has(k) && jargon.test(s)).map(([k]) => k);
   assert.deepEqual(bad, []);
 });
 
