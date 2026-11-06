@@ -3653,5 +3653,13 @@
   "nujno.nevarnost.naslov": "Primeiro, põe-te em segurança.",
   "nujno.nevarnost.1": "Sai já para fora e leva os outros contigo, se puderes. Não voltes atrás para buscar coisas.",
   "nujno.nevarnost.2": "Quando estiveres lá fora, liga para o {sos} ou pede a um adulto que ligue.",
-  "nujno.nevarnost.3": "Se cheirar a gás: não acendas luzes nem fogo e não carregues em interruptores. Liga só quando estiveres lá fora."
+  "nujno.nevarnost.3": "Se cheirar a gás: não acendas luzes nem fogo e não carregues em interruptores. Liga só quando estiveres lá fora.",
+  "nujno.linija": "Liga para {ime} {stevilka} (grátis, {ure}).",
+  "nujno.linijaBrezUr": "Liga para {ime} {stevilka} (grátis).",
+  "nujno.linijaDrugic": "Em outros horários: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Grátis: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Grátis: {ime} {stevilka}.",
+  "nujno.ure.vedno": "sempre aberto",
+  "nujno.ure.delavniki": "dias úteis das {od} às {do} h",
+  "nujno.ure.ponSob": "de segunda a sábado das {od} às {do} h"
 }

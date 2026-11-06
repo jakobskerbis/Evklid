@@ -429,7 +429,7 @@ html[data-tutor-ic] .msg.assistant::after {
 .msg .photo-note { display: flex; align-items: center; gap: 6px; font-size: 0.85em; opacity: 0.9; margin-bottom: 4px; }
 .msg.error { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
 /* Varnostni odgovor (public/nujno.js): miren, ne kot napaka; velike številke za klic, zapre se z ×. */
-.msg.nujno-card { align-self: stretch; max-width: 100%; width: auto; position: relative; background: var(--surface); color: var(--text); border: 2px solid var(--warm); border-radius: var(--radius); padding: 14px 52px 12px 16px; box-shadow: var(--shadow); }
+.msg.nujno-card { align-self: stretch; max-width: 100%; width: auto; position: relative; background: var(--surface); color: var(--text); border: 2px solid var(--warm); border-radius: var(--radius); padding-block: 14px 12px; padding-inline: 16px 52px; box-shadow: var(--shadow); }
 .nujno-card h3 { margin: 0 0 6px; font-size: 1.1rem; line-height: 1.4; }
 .nujno-card p { margin: 4px 0; }
 .nujno-card .nujno-zapri { position: absolute; inset-inline-end: 6px; top: 6px; width: 40px; height: 40px; display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); border-radius: var(--radius-sm); cursor: pointer; }

@@ -3648,5 +3648,13 @@
   "nujno.nevarnost.naslov": "Së pari shko në vend të sigurt.",
   "nujno.nevarnost.1": "Dil menjëherë jashtë dhe merr të tjerët me vete, nëse mundesh. Mos u kthe për sendet.",
   "nujno.nevarnost.2": "Kur të jesh jashtë, telefono {sos} ose thuaji një të rrituri të telefonojë.",
-  "nujno.nevarnost.3": "Nëse vjen erë gazi: mos ndez dritë apo zjarr dhe mos shtyp çelësa. Telefono vetëm kur të jesh jashtë."
+  "nujno.nevarnost.3": "Nëse vjen erë gazi: mos ndez dritë apo zjarr dhe mos shtyp çelësa. Telefono vetëm kur të jesh jashtë.",
+  "nujno.linija": "Telefono {ime} {stevilka} (falas, {ure}).",
+  "nujno.linijaBrezUr": "Telefono {ime} {stevilka} (falas).",
+  "nujno.linijaDrugic": "Në kohë të tjera: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Falas: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Falas: {ime} {stevilka}.",
+  "nujno.ure.vedno": "gjithmonë e hapur",
+  "nujno.ure.delavniki": "ditëve të punës {od}–{do}",
+  "nujno.ure.ponSob": "nga e hëna deri të shtunën {od}–{do}"
 }

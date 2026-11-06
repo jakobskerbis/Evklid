@@ -3716,5 +3716,13 @@
   "nujno.nevarnost.naslov": "Сначала уйди в безопасное место.",
   "nujno.nevarnost.1": "Сразу выйди на улицу и возьми с собой других, если можешь. Не возвращайся за вещами.",
   "nujno.nevarnost.2": "Когда будешь на улице, позвони {sos} или скажи взрослому, чтобы он позвонил.",
-  "nujno.nevarnost.3": "Если пахнет газом: не включай свет, не зажигай огонь и не нажимай выключатели. Звони только на улице."
+  "nujno.nevarnost.3": "Если пахнет газом: не включай свет, не зажигай огонь и не нажимай выключатели. Звони только на улице.",
+  "nujno.linija": "Позвони в {ime}: {stevilka} (бесплатно, {ure}).",
+  "nujno.linijaBrezUr": "Позвони в {ime}: {stevilka} (бесплатно).",
+  "nujno.linijaDrugic": "В другое время: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Бесплатно: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Бесплатно: {ime} {stevilka}.",
+  "nujno.ure.vedno": "работает всегда",
+  "nujno.ure.delavniki": "по будням {od}–{do}",
+  "nujno.ure.ponSob": "с понедельника по субботу {od}–{do}"
 }

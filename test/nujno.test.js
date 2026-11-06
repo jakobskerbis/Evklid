@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import { zaznajNujno, stevilke, vrstice, klici, telHref, normalize } from "../public/nujno.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, normalize, drzavaNaprave, DRZAVE } from "../public/nujno.js";
 import { preberiVrsto, varnostniPregled, VAROVALKA, NAVODILO } from "../server/nujno.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
@@ -120,8 +120,13 @@ test("vrstice: vse vrste imajo ključe v sl.js in v vseh 32 jezikih", () => {
   assert.equal(dirs.length, 32);
   const tables = dirs.map((f) => [f, JSON.parse(readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8"))]);
   const keys = new Set(["nujno.oznaka", "nujno.zapri", "nujno.klic", "nujno.opomba", "nujno.opombaKratka", "nujno.stiska.drugje", "nujno.nasilje.1b"]);
-  for (const st of [stevilke({}), stevilke({ educational_track: "UNIVERZA" }), { si: false, sos: "911", pomoc: "988" }])
-    for (const v of ["zdravje", "stiska", "nasilje", "nevarnost"]) for (const [k] of vrstice(v, st)) keys.add(k);
+  const drzave = Object.keys(DRZAVE).flatMap((d) => [stevilke({}, d), stevilke({ educational_track: "UNIVERZA" }, d)]);
+  for (const st of [stevilke({}), stevilke({ educational_track: "UNIVERZA" }), { si: false, sos: "911", pomoc: "988" }, ...drzave])
+    for (const v of ["zdravje", "stiska", "nasilje", "nevarnost"])
+      for (const [k, p] of vrstice(v, st)) {
+        keys.add(k);
+        if (p.ure) keys.add(p.ure[0]);
+      }
   for (const k of keys) {
     assert.ok(SL[k], `sl: ${k}`);
     for (const [f, tb] of tables) assert.ok(tb[k], `${f}: ${k}`);
@@ -465,4 +470,34 @@ test("varnostni pregled: privzeto Haiku, kratek rok brez ponovitev", () => {
   assert.match(src, /env\("EVKLID_VARNOST_MODEL", "claude-haiku-5-5"\)/);
   assert.match(src, /timeout: ROK_MS, maxRetries: 0/);
   assert.match(readFileSync(new URL("../public/app.js", import.meta.url), "utf8"), /if \(!\$\("#chat-off"\)\.hidden\) \{\n\s+const n = lokalnoNujno\(text\);/);
+});
+
+test("številke po državi: preverjene linije, imena samo v svoji državi, država naprave (j, 6. 11.)", () => {
+  // Hrvaški učenec brez izbrane države (privzeto SI), telefon v Zagrebu: hrvaške številke, ne TOM.
+  const hr = stevilke({ school_system: "SI" }, drzavaNaprave("Europe/Zagreb"));
+  assert.equal(hr.drzava, "HR");
+  assert.deepEqual(klici("stiska", hr), ["116 111", "112"]);
+  assert.deepEqual(klici("nasilje", hr), ["112", "192", "116 111"]);
+  const fill = (str, p) => str.replace(/\{(\w+)\}/g, (_, n) => p[n]);
+  const tekst = (st, v) => vrstice(v, st).map(([k, p]) => fill(SL[k], { ...p, ure: p.ure ? fill(SL[p.ure[0]], p.ure[1]) : "" }));
+  assert.ok(tekst(hr, "stiska").includes("Pokliči Hrabri telefon 116 111 (brezplačno, ob delavnikih 9–20)."));
+  for (const v of ["stiska", "nasilje"]) assert.ok(!tekst(hr, v).some((x) => /TOM|Samarijan/.test(x)), v);
+  // Srbija: 112 še ne deluje, po vrsti reševalci 194, gasilci 193, policija 192.
+  const rs = stevilke({}, "RS");
+  assert.deepEqual([klici("zdravje", rs), klici("nevarnost", rs), klici("nasilje", rs)], [["194"], ["193"], ["192", "116 111"]]);
+  assert.ok(tekst(rs, "zdravje")[1].includes("194"));
+  // Šolski sistem druge države ima prednost pred napravo; študent dobi linijo za odrasle.
+  assert.equal(stevilke({ school_system: "DE" }, "SI").drzava, "DE");
+  assert.deepEqual(klici("stiska", stevilke({ educational_track: "UNIVERZA" }, "AT")), ["142", "112"]);
+  assert.deepEqual(klici("stiska", stevilke({}, "DE")), ["116 111", "0800 111 0 111", "112"]);
+  // Brez znane države ostane Slovenija; drugi sistemi: reševalci pred policijo (pregled C).
+  assert.equal(stevilke({}, "").si, true);
+  assert.equal(stevilke({ school_system: "BR" }).sos, "192");
+  assert.equal(stevilke({ school_system: "PK" }).sos, "1122");
+  // Država naprave: časovni pas pred jezikom, brez poizvedb na splet.
+  assert.equal(drzavaNaprave("Europe/Belgrade", ["en-US"]), "RS");
+  assert.equal(drzavaNaprave("", ["bs-BA"]), "BA");
+  assert.equal(drzavaNaprave("America/Chicago", ["sl-SI"]), "SI");
+  // Linije v tabeli so brezplačne (opomba »klic je brezplačen«).
+  for (const [d, x] of Object.entries(DRZAVE)) for (const l of [x.otroci, x.odrasli].filter(Boolean)) assert.match(l.st, /^(116 ?1(11|23)|080|0800|14[27])/, d);
 });

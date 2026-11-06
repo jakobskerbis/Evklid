@@ -3716,5 +3716,13 @@
   "nujno.nevarnost.naslov": "Спершу піди в безпечне місце.",
   "nujno.nevarnost.1": "Негайно вийди надвір і візьми інших із собою, якщо можеш. Не повертайся по речі.",
   "nujno.nevarnost.2": "Коли будеш надворі, зателефонуй {sos} або скажи дорослому, щоб він зателефонував.",
-  "nujno.nevarnost.3": "Якщо пахне газом: не вмикай світло, не запалюй вогонь і не натискай вимикачі. Телефонуй тільки надворі."
+  "nujno.nevarnost.3": "Якщо пахне газом: не вмикай світло, не запалюй вогонь і не натискай вимикачі. Телефонуй тільки надворі.",
+  "nujno.linija": "Зателефонуй до {ime}: {stevilka} (безкоштовно, {ure}).",
+  "nujno.linijaBrezUr": "Зателефонуй до {ime}: {stevilka} (безкоштовно).",
+  "nujno.linijaDrugic": "В інший час: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Безкоштовно: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Безкоштовно: {ime} {stevilka}.",
+  "nujno.ure.vedno": "працює завжди",
+  "nujno.ure.delavniki": "у робочі дні {od}–{do}",
+  "nujno.ure.ponSob": "з понеділка по суботу {od}–{do}"
 }

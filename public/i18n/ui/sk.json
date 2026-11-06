@@ -3714,5 +3714,13 @@
   "nujno.nevarnost.naslov": "Najprv sa dostaň do bezpečia.",
   "nujno.nevarnost.1": "Hneď choď von a vezmi so sebou ostatných, ak môžeš. Nevracaj sa po veci.",
   "nujno.nevarnost.2": "Keď budeš vonku, zavolaj {sos} alebo povedz dospelému, nech zavolá.",
-  "nujno.nevarnost.3": "Ak cítiť plyn: nerozsvecuj, nezapaľuj oheň a nestláčaj vypínače. Volaj až vonku."
+  "nujno.nevarnost.3": "Ak cítiť plyn: nerozsvecuj, nezapaľuj oheň a nestláčaj vypínače. Volaj až vonku.",
+  "nujno.linija": "Zavolaj na {ime} {stevilka} (zadarmo, {ure}).",
+  "nujno.linijaBrezUr": "Zavolaj na {ime} {stevilka} (zadarmo).",
+  "nujno.linijaDrugic": "V inom čase: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Zadarmo: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Zadarmo: {ime} {stevilka}.",
+  "nujno.ure.vedno": "vždy otvorené",
+  "nujno.ure.delavniki": "v pracovné dni {od}–{do}",
+  "nujno.ure.ponSob": "od pondelka do soboty {od}–{do}"
 }

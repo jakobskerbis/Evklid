@@ -3646,5 +3646,13 @@
   "nujno.nevarnost.naslov": "Önce güvenli bir yere geç.",
   "nujno.nevarnost.1": "Hemen dışarı çık ve yapabiliyorsan başkalarını da yanına al. Eşyaların için geri dönme.",
   "nujno.nevarnost.2": "Dışarı çıkınca {sos} numarasını ara ya da bir yetişkine aramasını söyle.",
-  "nujno.nevarnost.3": "Gaz kokusu varsa: ışık ya da ateş yakma, hiçbir düğmeye basma. Ancak dışarıda ara."
+  "nujno.nevarnost.3": "Gaz kokusu varsa: ışık ya da ateş yakma, hiçbir düğmeye basma. Ancak dışarıda ara.",
+  "nujno.linija": "{ime} hattını ara: {stevilka} (ücretsiz, {ure}).",
+  "nujno.linijaBrezUr": "{ime} hattını ara: {stevilka} (ücretsiz).",
+  "nujno.linijaDrugic": "Diğer saatlerde: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Ücretsiz: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Ücretsiz: {ime} {stevilka}.",
+  "nujno.ure.vedno": "her zaman açık",
+  "nujno.ure.delavniki": "hafta içi {od}.00–{do}.00",
+  "nujno.ure.ponSob": "pazartesiden cumartesiye {od}.00–{do}.00"
 }

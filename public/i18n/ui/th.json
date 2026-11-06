@@ -3620,5 +3620,13 @@
   "nujno.nevarnost.naslov": "ไปที่ที่ปลอดภัยก่อน",
   "nujno.nevarnost.1": "ออกไปข้างนอกทันที และพาคนอื่นไปด้วยถ้าทำได้ อย่ากลับไปเอาของ",
   "nujno.nevarnost.2": "เมื่ออยู่ข้างนอกแล้ว ให้โทร {sos} หรือบอกผู้ใหญ่ให้โทร",
-  "nujno.nevarnost.3": "ถ้าได้กลิ่นแก๊ส: อย่าเปิดไฟหรือจุดไฟ และอย่ากดสวิตช์ใด ๆ โทรเมื่ออยู่ข้างนอกแล้วเท่านั้น"
+  "nujno.nevarnost.3": "ถ้าได้กลิ่นแก๊ส: อย่าเปิดไฟหรือจุดไฟ และอย่ากดสวิตช์ใด ๆ โทรเมื่ออยู่ข้างนอกแล้วเท่านั้น",
+  "nujno.linija": "โทรหา {ime} {stevilka} (ฟรี, {ure})",
+  "nujno.linijaBrezUr": "โทรหา {ime} {stevilka} (ฟรี)",
+  "nujno.linijaDrugic": "เวลาอื่น: {stevilka} ({ime}, {ure})",
+  "nujno.nasilje.linija": "ฟรี: {ime} {stevilka} ({ure})",
+  "nujno.nasilje.linijaBrezUr": "ฟรี: {ime} {stevilka}",
+  "nujno.ure.vedno": "เปิดตลอดเวลา",
+  "nujno.ure.delavniki": "วันทำการ {od}:00–{do}:00 น.",
+  "nujno.ure.ponSob": "วันจันทร์ถึงวันเสาร์ {od}:00–{do}:00 น."
 }

@@ -3646,5 +3646,13 @@
   "nujno.nevarnost.naslov": "اول به جای امن برو.",
   "nujno.nevarnost.1": "همین الان بیرون برو و اگر می‌توانی دیگران را هم با خودت ببر. برای وسایل برنگرد.",
   "nujno.nevarnost.2": "وقتی بیرون رسیدی، با {sos} تماس بگیر یا به یک بزرگسال بگو تماس بگیرد.",
-  "nujno.nevarnost.3": "اگر بوی گاز می‌آید: چراغ یا آتش روشن نکن و هیچ کلیدی را نزن. فقط وقتی بیرون رسیدی تماس بگیر."
+  "nujno.nevarnost.3": "اگر بوی گاز می‌آید: چراغ یا آتش روشن نکن و هیچ کلیدی را نزن. فقط وقتی بیرون رسیدی تماس بگیر.",
+  "nujno.linija": "با {ime} تماس بگیر: {stevilka} (رایگان، {ure}).",
+  "nujno.linijaBrezUr": "با {ime} تماس بگیر: {stevilka} (رایگان).",
+  "nujno.linijaDrugic": "در ساعت‌های دیگر: {stevilka} ({ime}، {ure}).",
+  "nujno.nasilje.linija": "رایگان: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "رایگان: {ime} {stevilka}.",
+  "nujno.ure.vedno": "همیشه باز",
+  "nujno.ure.delavniki": "روزهای کاری {od}:00 تا {do}:00",
+  "nujno.ure.ponSob": "دوشنبه تا شنبه {od}:00 تا {do}:00"
 }

@@ -3646,5 +3646,13 @@
   "nujno.nevarnost.naslov": "Először menj biztonságos helyre.",
   "nujno.nevarnost.1": "Azonnal menj ki, és ha tudod, vidd magaddal a többieket. Ne menj vissza a holmidért.",
   "nujno.nevarnost.2": "Ha kint vagy, hívd a {sos} számot, vagy szólj egy felnőttnek, hogy hívja.",
-  "nujno.nevarnost.3": "Ha gázszag van: ne kapcsolj villanyt, ne gyújts tüzet és ne nyomj meg kapcsolót. Csak kint telefonálj."
+  "nujno.nevarnost.3": "Ha gázszag van: ne kapcsolj villanyt, ne gyújts tüzet és ne nyomj meg kapcsolót. Csak kint telefonálj.",
+  "nujno.linija": "Hívd: {ime} {stevilka} (ingyenes, {ure}).",
+  "nujno.linijaBrezUr": "Hívd: {ime} {stevilka} (ingyenes).",
+  "nujno.linijaDrugic": "Más időpontban: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Ingyenes: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Ingyenes: {ime} {stevilka}.",
+  "nujno.ure.vedno": "mindig elérhető",
+  "nujno.ure.delavniki": "hétköznap {od}–{do} óra",
+  "nujno.ure.ponSob": "hétfőtől szombatig {od}–{do} óra"
 }

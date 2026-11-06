@@ -3680,5 +3680,13 @@
   "nujno.nevarnost.naslov": "Najprije se skloni na sigurno.",
   "nujno.nevarnost.1": "Odmah izađi van i povedi druge sa sobom ako možeš. Ne vraćaj se po stvari.",
   "nujno.nevarnost.2": "Kad si vani, nazovi {sos} ili reci odrasloj osobi da nazove.",
-  "nujno.nevarnost.3": "Ako miriše na plin: ne pali svjetla ni vatru i ne pritišći prekidače. Nazovi tek kad si vani."
+  "nujno.nevarnost.3": "Ako miriše na plin: ne pali svjetla ni vatru i ne pritišći prekidače. Nazovi tek kad si vani.",
+  "nujno.linija": "Nazovi {ime} {stevilka} (besplatno, {ure}).",
+  "nujno.linijaBrezUr": "Nazovi {ime} {stevilka} (besplatno).",
+  "nujno.linijaDrugic": "U drugo vrijeme: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Besplatno: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Besplatno: {ime} {stevilka}.",
+  "nujno.ure.vedno": "uvijek otvoren",
+  "nujno.ure.delavniki": "radnim danima {od}–{do}",
+  "nujno.ure.ponSob": "od ponedjeljka do subote {od}–{do}"
 }

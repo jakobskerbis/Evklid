@@ -3649,5 +3649,13 @@
   "nujno.nevarnost.naslov": "Per prima cosa mettiti al sicuro.",
   "nujno.nevarnost.1": "Esci subito e porta con te gli altri, se puoi. Non tornare indietro a prendere le tue cose.",
   "nujno.nevarnost.2": "Quando sei fuori, chiama il {sos} o di’ a un adulto di chiamare.",
-  "nujno.nevarnost.3": "Se c’è odore di gas: non accendere luci né fiamme e non toccare gli interruttori. Chiama solo quando sei fuori."
+  "nujno.nevarnost.3": "Se c’è odore di gas: non accendere luci né fiamme e non toccare gli interruttori. Chiama solo quando sei fuori.",
+  "nujno.linija": "Chiama {ime} {stevilka} (gratis, {ure}).",
+  "nujno.linijaBrezUr": "Chiama {ime} {stevilka} (gratis).",
+  "nujno.linijaDrugic": "In altri orari: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Gratis: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Gratis: {ime} {stevilka}.",
+  "nujno.ure.vedno": "sempre aperto",
+  "nujno.ure.delavniki": "nei giorni feriali {od}–{do}",
+  "nujno.ure.ponSob": "dal lunedì al sabato {od}–{do}"
 }

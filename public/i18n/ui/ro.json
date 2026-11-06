@@ -3682,5 +3682,13 @@
   "nujno.nevarnost.naslov": "Mai întâi pune-te la adăpost.",
   "nujno.nevarnost.1": "Ieși imediat afară și ia-i pe ceilalți cu tine, dacă poți. Nu te întoarce după lucruri.",
   "nujno.nevarnost.2": "Când ești afară, sună la {sos} sau spune-i unui adult să sune.",
-  "nujno.nevarnost.3": "Dacă miroase a gaz: nu aprinde lumina sau focul și nu apăsa pe întrerupătoare. Sună abia când ești afară."
+  "nujno.nevarnost.3": "Dacă miroase a gaz: nu aprinde lumina sau focul și nu apăsa pe întrerupătoare. Sună abia când ești afară.",
+  "nujno.linija": "Sună la {ime} {stevilka} (gratuit, {ure}).",
+  "nujno.linijaBrezUr": "Sună la {ime} {stevilka} (gratuit).",
+  "nujno.linijaDrugic": "În alte ore: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Gratuit: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Gratuit: {ime} {stevilka}.",
+  "nujno.ure.vedno": "mereu deschis",
+  "nujno.ure.delavniki": "în zilele lucrătoare {od}–{do}",
+  "nujno.ure.ponSob": "de luni până sâmbătă {od}–{do}"
 }

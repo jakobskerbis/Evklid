@@ -3620,5 +3620,13 @@
   "nujno.nevarnost.naslov": "まず安全な場所に移ってください。",
   "nujno.nevarnost.1": "すぐに外に出て、できればほかの人も連れていってください。物を取りに戻らないでください。",
   "nujno.nevarnost.2": "外に出たら {sos} に電話するか、大人に電話してもらってください。",
-  "nujno.nevarnost.3": "ガスのにおいがしたら：電気や火をつけず、スイッチも押さないでください。電話は外に出てからにしてください。"
+  "nujno.nevarnost.3": "ガスのにおいがしたら：電気や火をつけず、スイッチも押さないでください。電話は外に出てからにしてください。",
+  "nujno.linija": "{ime}に電話して：{stevilka}（無料、{ure}）。",
+  "nujno.linijaBrezUr": "{ime}に電話して：{stevilka}（無料）。",
+  "nujno.linijaDrugic": "ほかの時間：{stevilka}（{ime}、{ure}）。",
+  "nujno.nasilje.linija": "無料：{ime} {stevilka}（{ure}）。",
+  "nujno.nasilje.linijaBrezUr": "無料：{ime} {stevilka}。",
+  "nujno.ure.vedno": "24時間対応",
+  "nujno.ure.delavniki": "平日 {od}時〜{do}時",
+  "nujno.ure.ponSob": "月曜〜土曜 {od}時〜{do}時"
 }

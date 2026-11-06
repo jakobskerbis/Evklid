@@ -3716,5 +3716,13 @@
   "nujno.nevarnost.naslov": "Najpierw przejdź w bezpieczne miejsce.",
   "nujno.nevarnost.1": "Natychmiast wyjdź na zewnątrz i zabierz innych, jeśli możesz. Nie wracaj po rzeczy.",
   "nujno.nevarnost.2": "Gdy będziesz na zewnątrz, zadzwoń pod {sos} albo powiedz dorosłemu, żeby zadzwonił.",
-  "nujno.nevarnost.3": "Jeśli czuć gaz: nie zapalaj światła ani ognia i nie naciskaj włączników. Zadzwoń dopiero na zewnątrz."
+  "nujno.nevarnost.3": "Jeśli czuć gaz: nie zapalaj światła ani ognia i nie naciskaj włączników. Zadzwoń dopiero na zewnątrz.",
+  "nujno.linija": "Zadzwoń do {ime} {stevilka} (bezpłatnie, {ure}).",
+  "nujno.linijaBrezUr": "Zadzwoń do {ime} {stevilka} (bezpłatnie).",
+  "nujno.linijaDrugic": "W innych godzinach: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Bezpłatnie: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Bezpłatnie: {ime} {stevilka}.",
+  "nujno.ure.vedno": "zawsze czynne",
+  "nujno.ure.delavniki": "w dni robocze {od}–{do}",
+  "nujno.ure.ponSob": "od poniedziałku do soboty {od}–{do}"
 }

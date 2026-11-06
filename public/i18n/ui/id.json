@@ -3620,5 +3620,13 @@
   "nujno.nevarnost.naslov": "Pertama, pergilah ke tempat aman.",
   "nujno.nevarnost.1": "Segera keluar dan ajak orang lain jika bisa. Jangan kembali untuk mengambil barang.",
   "nujno.nevarnost.2": "Setelah di luar, telepon {sos} atau minta orang dewasa menelepon.",
-  "nujno.nevarnost.3": "Jika tercium bau gas: jangan menyalakan lampu atau api dan jangan menekan sakelar. Telepon setelah di luar."
+  "nujno.nevarnost.3": "Jika tercium bau gas: jangan menyalakan lampu atau api dan jangan menekan sakelar. Telepon setelah di luar.",
+  "nujno.linija": "Telepon {ime} {stevilka} (gratis, {ure}).",
+  "nujno.linijaBrezUr": "Telepon {ime} {stevilka} (gratis).",
+  "nujno.linijaDrugic": "Di waktu lain: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Gratis: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Gratis: {ime} {stevilka}.",
+  "nujno.ure.vedno": "selalu buka",
+  "nujno.ure.delavniki": "hari kerja pukul {od}.00–{do}.00",
+  "nujno.ure.ponSob": "Senin sampai Sabtu pukul {od}.00–{do}.00"
 }

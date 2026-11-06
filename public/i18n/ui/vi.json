@@ -3603,7 +3603,7 @@
   "nujno.zdravje.2": "Ở bên cạnh người đó. Nói bạn đang ở đâu và chuyện gì đang xảy ra, rồi làm theo hướng dẫn của {sos}.",
   "nujno.zdravje.3": "Đừng cho uống thuốc, trừ khi {sos} bảo bạn làm vậy.",
   "nujno.zdravje.4": "Khi người cứu giúp đang trên đường đến, bạn có thể quay lại đây.",
-  "nujno.stiska.naslov": "Mình nghe bạn. Bạn viết ra điều này là đúng. Bạn không một mình.",
+  "nujno.stiska.naslov": "Mình đang lắng nghe bạn. Bạn viết ra điều này là đúng. Bạn không hề một mình.",
   "nujno.stiska.1": "Hãy nói ngay với người lớn bên cạnh hoặc người bạn tin tưởng.",
   "nujno.stiska.tom": "Gọi đường dây TOM {otroci} (miễn phí, hằng ngày 12–20 giờ).",
   "nujno.stiska.sam": "Ngoài giờ đó: {odrasli} (Samarijan, luôn mở).",
@@ -3620,5 +3620,13 @@
   "nujno.nevarnost.naslov": "Trước hết hãy đến nơi an toàn.",
   "nujno.nevarnost.1": "Ra ngoài ngay và đưa người khác đi cùng nếu có thể. Đừng quay lại lấy đồ.",
   "nujno.nevarnost.2": "Khi đã ra ngoài, hãy gọi {sos} hoặc nhờ người lớn gọi.",
-  "nujno.nevarnost.3": "Nếu ngửi thấy mùi gas: đừng bật đèn, đừng đốt lửa và đừng bấm công tắc. Chỉ gọi khi đã ra ngoài."
+  "nujno.nevarnost.3": "Nếu ngửi thấy mùi gas: đừng bật đèn, đừng đốt lửa và đừng bấm công tắc. Chỉ gọi khi đã ra ngoài.",
+  "nujno.linija": "Gọi {ime} {stevilka} (miễn phí, {ure}).",
+  "nujno.linijaBrezUr": "Gọi {ime} {stevilka} (miễn phí).",
+  "nujno.linijaDrugic": "Vào giờ khác: {stevilka} ({ime}, {ure}).",
+  "nujno.nasilje.linija": "Miễn phí: {ime} {stevilka} ({ure}).",
+  "nujno.nasilje.linijaBrezUr": "Miễn phí: {ime} {stevilka}.",
+  "nujno.ure.vedno": "luôn mở cửa",
+  "nujno.ure.delavniki": "ngày thường {od}:00–{do}:00",
+  "nujno.ure.ponSob": "thứ Hai đến thứ Bảy {od}:00–{do}:00"
 }

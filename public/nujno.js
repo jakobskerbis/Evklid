@@ -11,7 +11,7 @@
 // ujema na začetku besede (»zastrupil« ujame »zastrupila«), pisave brez presledkov (kitajščina,
 // japonščina, tajščina) kot podniz. Znak z »=« na začetku se primerja z besedilom S šumniki (vietnamščina:
 // »tự tử« ni »từ từ«).
-import { SCHOOL_SYSTEMS, isRegional } from "./regions.js";
+import { SCHOOL_SYSTEMS, COUNTRY_SYSTEM, isRegional } from "./regions.js";
 import { jeFaks } from "./stopnja.js";
 
 const CYR = {
@@ -507,40 +507,112 @@ export const VRSTE = ["zdravje", "stiska", "nasilje", "nevarnost"];
 
 // --- številke za pomoč -------------------------------------------------------------------------
 // Slovenija: 112 (reševalci, gasilci), 113 (policija), TOM 116 111 (vsak dan 12–20), Samarijan 116 123
-// (vedno). Drugi šolski sistemi (public/regions.js »help«): številka za nujno pomoč iz besedila, sicer 112.
-export function stevilke(settings = {}) {
+// (vedno). Imena služb (TOM, Samarijan, Hrabri telefon …) se pokažejo samo v njihovi državi (j, 6. 11.).
+//
+// DRZAVE: preverjene številke po državi (viri v PR #479, 6. 11. 2026). sos = splošna številka za nujno
+// pomoč; kjer 112 še ne deluje (RS, BA, MK), po vrsti: reševalci (zdravje, stiska), gasilci (nevarnost),
+// policija (nasilje). Linije samo z brezplačno številko; ure: [vrsta, od, do] (vedno | delavniki | ponSob).
+export const DRZAVE = {
+  HR: { sos: "112", policija: "192", otroci: { ime: "Hrabri telefon", st: "116 111", ure: ["delavniki", 9, 20] } },
+  RS: { sos: "194", gasilci: "193", policija: "192", otroci: { ime: "NADEL", st: "116 111", ure: ["vedno"] } },
+  BA: { sos: "124", gasilci: "123", policija: "122", otroci: { ime: "Plavi telefon", st: "080 05 03 05" } },
+  MK: { sos: "194", gasilci: "193", policija: "192" },
+  AL: { sos: "112", policija: "129", otroci: { ime: "ALO 116 111", st: "116 111", ure: ["vedno"] } },
+  AT: {
+    sos: "112",
+    policija: "133",
+    otroci: { ime: "Rat auf Draht", st: "147", ure: ["vedno"] },
+    odrasli: { ime: "Telefonseelsorge", st: "142", ure: ["vedno"] },
+  },
+  DE: {
+    sos: "112",
+    policija: "110",
+    otroci: { ime: "Nummer gegen Kummer", st: "116 111", ure: ["ponSob", 14, 20] },
+    odrasli: { ime: "TelefonSeelsorge", st: "0800 111 0 111", ure: ["vedno"] },
+  },
+};
+
+// Država naprave brez poizvedb pri tretjih: najprej časovni pas (Europe/Zagreb …), nato regija jezika (hr-HR).
+const PAS = {
+  "Europe/Ljubljana": "SI", "Europe/Zagreb": "HR", "Europe/Belgrade": "RS", "Europe/Sarajevo": "BA", "Europe/Skopje": "MK",
+  "Europe/Tirane": "AL", "Europe/Vienna": "AT", "Europe/Berlin": "DE", "Europe/Busingen": "DE",
+};
+export function drzavaNaprave(tz, jeziki) {
+  try {
+    tz ??= Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {}
+  if (PAS[tz]) return PAS[tz];
+  const list = jeziki ?? (typeof navigator === "undefined" ? [] : navigator.languages?.length ? navigator.languages : [navigator.language]);
+  for (const l of list || []) {
+    const r = String(l || "").split(/[-_]/)[1]?.toUpperCase();
+    if (r && /^[A-Z]{2}$/.test(r)) return r;
+  }
+  return "";
+}
+
+// Številka za nujno pomoč iz besedila »help« (public/regions.js): reševalci pred policijo (pregled C).
+function izPomoci(help) {
+  const num = (word) =>
+    help.match(new RegExp(`${word}\\s+([0-9][0-9 -]*[0-9]|[0-9]+)`, "i"))?.[1]?.trim() ||
+    help.match(new RegExp(`([0-9]+)\\s*\\(${word}\\)`, "i"))?.[1];
+  return num("ambulance") || num("emergency") || num("rescue") || num("police") || "112";
+}
+
+/**
+ * Številke za varnostni odgovor.
+ * @param {object} settings  nastavitve profila (school_system, educational_track)
+ * @param {string} naprava   država naprave (drzavaNaprave()); šteje, ko šolski sistem ni druga država
+ */
+export function stevilke(settings = {}, naprava = "") {
   const sys = settings?.school_system;
   const faks = jeFaks(settings);
-  if (!isRegional(sys))
-    return {
-      si: true,
-      faks,
-      sos: "112", policija: "113", otroci: "116 111", odrasli: "116 123",
-    };
-  const help = SCHOOL_SYSTEMS[sys]?.help || "";
-  const num = (word) => help.match(new RegExp(`${word}\\s+([0-9][0-9 -]*[0-9]|[0-9]+)`, "i"))?.[1]?.trim();
-  const sos = num("emergency") || num("ambulance") || num("police") || "112";
-  return { si: false, faks, sos, pomoc: help || null };
+  const regional = isRegional(sys) && sys !== "INTL";
+  const drzava = regional ? SCHOOL_SYSTEMS[sys].country : String(naprava || "").toUpperCase();
+  const d = DRZAVE[drzava];
+  if (d) {
+    const sosZa = { zdravje: d.sos, stiska: d.sos, nevarnost: d.gasilci || d.sos, nasilje: d.gasilci ? d.policija : d.sos };
+    return { si: false, drzava, faks, sos: d.sos, sosZa, policija: d.policija, linije: { otroci: d.otroci || null, odrasli: d.odrasli || null } };
+  }
+  // Drug šolski sistem ali naprava v državi z vpisanim sistemom: besedilo »help«; sicer Slovenija.
+  const id = regional ? sys : drzava && drzava !== "SI" && COUNTRY_SYSTEM[drzava];
+  if (!id || !SCHOOL_SYSTEMS[id]) return { si: true, drzava: "SI", faks, sos: "112", policija: "113", otroci: "116 111", odrasli: "116 123" };
+  const help = SCHOOL_SYSTEMS[id].help || "";
+  return { si: false, drzava, faks, sos: izPomoci(help), pomoc: help || null };
 }
 
 // Telefonska povezava za gumb »Pokliči« (samo številke).
 export const telHref = (n) => `tel:${String(n).replace(/[^0-9+]/g, "")}`;
 
+// Ure linije kot [ključ i18n, parametri]; vmesnik ga prevede in vstavi v {ure}.
+const ure = (u) => (!u ? null : u[0] === "vedno" ? ["nujno.ure.vedno", {}] : [`nujno.ure.${u[0]}`, { od: u[1], do: u[2] }]);
+
 /**
- * Vrstice varnostnega odgovora kot [ključ i18n, parametri]. t(ključ, parametri) jih prevede.
+ * Vrstice varnostnega odgovora kot [ključ i18n, parametri]. t(ključ, parametri) jih prevede; parameter
+ * »ure« je sam [ključ, parametri] (najprej ga prevedi).
  * @param {string} vrsta  zdravje | stiska | nasilje | nevarnost
- * @param {object} st     stevilke(settings)
+ * @param {object} st     stevilke(settings, naprava)
  */
 export function vrstice(vrsta, st) {
-  const p = {
-    sos: st.sos,
-    policija: st.policija,
-    otroci: st.otroci,
-    odrasli: st.odrasli,
-    pomoc: st.pomoc,
-  };
-  const L = (k) => [`nujno.${k}`, p];
+  const sos = st.sosZa?.[vrsta] || st.sos;
+  const p = { sos, policija: st.policija, otroci: st.otroci, odrasli: st.odrasli, pomoc: st.pomoc };
+  const L = (k, extra = {}) => [`nujno.${k}`, { ...p, ...extra }];
+  const lin = (k, l) => L(l.ure ? k : `${k}BrezUr`, { ime: l.ime, stevilka: l.st, ure: ure(l.ure) });
   if (vrsta === "zdravje") return [L("zdravje.naslov"), L("zdravje.1"), L("zdravje.2"), L("zdravje.3"), L("zdravje.4")];
+  if (st.linije) {
+    // Država iz tabele DRZAVE: študent najprej linija za odrasle (če obstaja), sicer otroška linija.
+    const { otroci, odrasli } = st.linije;
+    const prva = st.faks ? odrasli || null : otroci || odrasli;
+    const druga = !st.faks && otroci && odrasli && otroci.ure?.[0] !== "vedno" ? odrasli : null;
+    if (vrsta === "stiska") {
+      const pomoc = [...(prva ? [lin("linija", prva)] : []), ...(druga ? [L("linijaDrugic", { ime: druga.ime, stevilka: druga.st, ure: ure(druga.ure) })] : [])];
+      return [L("stiska.naslov"), L("stiska.1"), ...pomoc, L("stiska.112"), L("stiska.vprasanje")];
+    }
+    if (vrsta === "nasilje") {
+      const zadnja = prva ? [lin("nasilje.linija", prva)] : [];
+      return [L("nasilje.naslov"), L(st.policija && st.policija !== sos ? "nasilje.1" : "nasilje.1b"), L("nasilje.2"), ...zadnja];
+    }
+    return [L("nevarnost.naslov"), L("nevarnost.1"), L("nevarnost.2"), L("nevarnost.3")];
+  }
   if (vrsta === "stiska") {
     const pomoc = !st.si ? (st.pomoc ? [L("stiska.drugje")] : []) : st.faks ? [L("stiska.faks")] : [L("stiska.tom"), L("stiska.sam")];
     return [L("stiska.naslov"), L("stiska.1"), ...pomoc, L("stiska.112"), L("stiska.vprasanje")];
@@ -554,6 +626,16 @@ export function vrstice(vrsta, st) {
 
 // Gumbi za klic po vrsti (vrstni red kot v kartici).
 export function klici(vrsta, st) {
+  const sos = st.sosZa?.[vrsta] || st.sos;
+  if (st.linije) {
+    const { otroci, odrasli } = st.linije;
+    const prva = st.faks ? odrasli : otroci || odrasli;
+    const druga = !st.faks && otroci && odrasli && otroci.ure?.[0] !== "vedno" ? odrasli : null;
+    const pol = st.policija && st.policija !== sos ? st.policija : null;
+    if (vrsta === "stiska") return [prva?.st, druga?.st, sos].filter(Boolean);
+    if (vrsta === "nasilje") return [sos, pol, prva?.st].filter(Boolean);
+    return [sos];
+  }
   if (!st.si) return [st.sos];
   if (vrsta === "stiska") return st.faks ? [st.odrasli, st.sos] : [st.otroci, st.odrasli, st.sos];
   if (vrsta === "nasilje") return st.faks ? [st.sos, st.policija, st.odrasli] : [st.sos, st.policija, st.otroci];
