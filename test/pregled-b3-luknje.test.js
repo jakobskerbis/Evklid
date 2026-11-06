@@ -1,4 +1,4 @@
-// Pregled krog 3 (B) PR #462 (head 57f6dcc6): poskusi zlorabe trde meje AI. Vsak test PADE na 57f6dcc6 = luknja potrjena.
+// Pregled krog 3 (B) PR #462: poskusi zlorabe trde meje AI. Na 57f6dcc6 so padli (luknja), zdaj morajo uspeti.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { withAccounts, META } from "./racuni-pomoc.js";
@@ -170,15 +170,18 @@ test("H5: zastarel odgovor vira tečajev (date pred 2 letoma) velja kot svež", 
 // prvem zapisu porabe), strošek AI šole preseže 25 % plačila licence. Ponovljivo z menjavo učencev.
 for (const leaves of [false, true]) {
   test(`H7${leaves ? "" : " (kontrola)"}: ${leaves ? "sošolec zapusti razred → njegova poraba ne šteje več v mejo šole" : "sošolec ostane → meja šole porabljena"}`, async () => {
-    await withAccounts({}, async ({ call, store, kid, members }) => {
+    await withAccounts({}, async ({ call, store, kid, members, app }) => {
       // Sošolec z drugim (brezplačnim) računom staršev.
       const other = store.createStudent("Odhod");
       const op = store.db.prepare("INSERT INTO parents (email, password_hash, privacy_version, unsubscribe_token, referral_code) VALUES ('o@x.si', 'x', 1, 'tok_o', 'ref_o')").run().lastInsertRowid;
       store.db.prepare("UPDATE students SET parent_id = ? WHERE id = ?").run(op, other.id);
       members.push(kid.id, other.id);
       // Licenca pomočnika: 5 $ na mesec za šolo. Sošolec porabi 4,99 $, ta učenec 0,3 $ (nad brezplačno mejo 0,2 $).
-      spend(store, other, 4.99, Date.now() - 7200_000);
-      spend(store, kid, 0.3, Date.now() - 3600_000);
+      // Poraba skozi usage.log (kot v aplikaciji), da gre v knjigo šole ob zapisu (popravek H7); neposreden vpis v
+      // tabelo usage bi knjigo obšel.
+      const log = (s, usd) => app.locals.usage.log(s.id, "claude-haiku-5-5", { output_tokens: Math.round(usd / 0.5e-6) }, "chat");
+      log(other, 4.99);
+      log(kid, 0.3);
       if (leaves) members.splice(members.indexOf(other.id), 1); // zapusti razred (ali ga učitelj odstrani)
       const r = await ask(call, kid);
       assert.equal(r.status, 429, leaves ? "po odhodu sošolca je meja šole spet prosta (4,99 $ porabe izgine)" : "kontrola");

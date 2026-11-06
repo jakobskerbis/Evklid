@@ -481,7 +481,23 @@ export function mountAccounts(app, store, opts = {}) {
     return p ? billing.passes.spentUsd(p) - passCapUsd(p) : null;
   }
   aiUsage.configure({ blockFor: aiBlockFor, creditOverOf: passCreditOver });
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, onLog: () => (schools.clearCache(), poolMemo.clear()) });
+  // Zapis porabe: predpomnilnika (šola, bazena) in knjiga šole – poraba, ki je šla pod mejo šole, ostane v šoli tudi,
+  // ko učenec razred zapusti (pregled #462 H7). Šola, katere meja velja (capsOf), je prva z mejo.
+  function schoolOnLog(studentId, cost) {
+    poolMemo.clear();
+    try {
+      if (studentId != null && cost > 0) {
+        schools.clearCache();
+        const r = rightsFor(studentId);
+        // Ali je šola imela prostor PRED tem zapisom (poraba sedanjih učencev že vsebuje ta strošek).
+        const s = !r.personal && r.school ? r.schools.find((x) => x.ai_month_usd > 0 && (x.ai_spent_usd || 0) - cost < x.ai_month_usd) : null;
+        if (s) schools.recordUse(s.school_id, studentId, cost);
+      }
+    } finally {
+      schools.clearCache();
+    }
+  }
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, onLog: schoolOnLog });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
