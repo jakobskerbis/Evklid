@@ -178,6 +178,7 @@ test("plačilo: enkrat, 14 dni po začetku, samo polnoleten imetnik v pilotu, »
   await withServer({ accounts: true, resendKey: "re_x", fetchFn: async () => ({ ok: true, status: 200, json: async () => ({ id: "e" }) }) }, async ({ client, store }) => {
     const db = store.db;
     const a = await account(client, store, "starš@pilot.si", 40);
+    await a.call(`/api/students/${a.sid}/pilot`); // profil odpre naloge danes (pilot_state.joined_at); šteje prejšnji začetek
     let acc = (await a.call("/api/account")).body;
     assert.deepEqual(acc.pilot_wtp, { open: false, done: false, opensAt: acc.pilot_wtp.opensAt });
     assert.equal((await a.call("/api/account/pilot-wtp", { method: "POST", body: { pay: "no" } })).status, 409, "še ni odprto");

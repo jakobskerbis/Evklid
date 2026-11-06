@@ -124,12 +124,13 @@ export function wtpState(db, parent, { isMember, now = new Date() }) {
   if (!members.length) return null;
   const done = db.prepare("SELECT pay, amount FROM pilot_wtp WHERE parent_id = ?").get(parent.id);
   if (done) return { open: false, done: true };
-  // Začetek pilota za račun: ko je kateri od profilov prvič odprl naloge (pilot_state), sicer ko je skrbnik dodal račun.
+  // Začetek pilota za račun: prej od »skrbnik je dodal račun« in »profil je prvič odprl naloge«.
   let start = null;
   try {
     start = db.prepare(`SELECT MIN(joined_at) AS t FROM pilot_state WHERE student_id IN (${members.map(() => "?").join(",")})`).get(...members)?.t;
   } catch {}
-  if (!start && parent.pilot_at) start = parent.pilot_at;
+  // Prej od obeh: skrbnik je dodal račun (pilot_at) ali profil je prvič odprl naloge (pilotna šola nima pilot_at).
+  if (parent.pilot_at && (!start || parent.pilot_at < start)) start = parent.pilot_at;
   if (!start) return { open: false, done: false, opensAt: null };
   const opens = addDays(start, WTP_AFTER_DAYS);
   return { open: now >= opens, done: false, opensAt: opens.toISOString() };
