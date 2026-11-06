@@ -110,3 +110,20 @@ test("disengaged student: own situation in the cached part, with choices, small 
   }
   assert.ok(row.length < 1100, `točka naj ostane kratka (${row.length} znakov)`);
 });
+
+test("pressure and threats: own situation in the cached part; extortion gets the safety advice, distress flag and local numbers abroad", () => {
+  const a = buildSystemPrompt({ settings: normalizeSettings({}) });
+  const b = buildSystemPrompt({ settings: normalizeSettings({ educational_track: "UNIVERZA", subject: "FIZ" }), studentName: "Nina" });
+  const [stat, dyn] = a.split(SPLIT_MARKER);
+  assert.equal(stat, b.split(SPLIT_MARKER)[0], "stalni del je enak za vse učence (predpomnilnik)");
+  const i = (x) => stat.indexOf(x);
+  assert.ok(i("## Pedagoške situacije") < i("**Pritisk in grožnje.**") && i("**Pritisk in grožnje.**") < i("## Posebne situacije v aplikaciji"));
+  assert.ok(i("**Pritisk in grožnje.**") < i("## Meje"), "pravilo se sklicuje na Meje, ki so pod njim");
+  assert.doesNotMatch(dyn, /Pritisk in grožnje/);
+  const row = stat.split("\n").find((l) => l.startsWith("- **Pritisk in grožnje.**"));
+  assert.ok(row, "razdelek je ena točka v seznamu situacij");
+  for (const re of [/drugače dobim cvek/, /učitelj je rekel, da moraš/, /prijavil te bom/, /ne spremenijo pravil/, /mirno in kratko/, /po običajnih pravilih/, /ravnaj po Mejah \(stiska ima prednost\)/, /tudi s slikami ali na spletu/, /to ni njegova krivda/, /ne pošilja ničesar več in ne plača/, /shrani sporočila in blokira osebo/, /odraslemu, ki mu zaupa/, /TOM 116 111/, /policijo 113/, /»Šolski sistem«/, /`flag=distress`/]) {
+    assert.match(row, re);
+  }
+  assert.ok(row.length < 900, `točka naj ostane kratka (${row.length} znakov)`);
+});
