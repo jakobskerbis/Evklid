@@ -739,6 +739,8 @@
   "gc.hideKeypad": "Hide keyboard",
   "tk.label": "Evklid keyboard",
   "tk.l.kem": "Chem",
+  "tk.kem.el": "Substances",
+  "tk.kem.re": "Reactions",
   "tk.shift": "Capital letter",
   "tk.space": "Space (drag to move the cursor)",
   "tk.paste": "Paste",

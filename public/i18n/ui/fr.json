@@ -739,6 +739,8 @@
   "gc.hideKeypad": "Masquer le clavier",
   "tk.label": "Clavier Evklid",
   "tk.l.kem": "Chim",
+  "tk.kem.el": "Substances",
+  "tk.kem.re": "Réactions",
   "tk.shift": "Majuscule",
   "tk.space": "Espace (glisse pour déplacer le curseur)",
   "tk.paste": "Coller",

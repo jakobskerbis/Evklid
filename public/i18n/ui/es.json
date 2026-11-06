@@ -739,6 +739,8 @@
   "gc.hideKeypad": "Ocultar teclado",
   "tk.label": "Teclado Evklid",
   "tk.l.kem": "Quím",
+  "tk.kem.el": "Sustancias",
+  "tk.kem.re": "Reacciones",
   "tk.shift": "Mayúscula",
   "tk.space": "Espacio (arrastra para mover el cursor)",
   "tk.paste": "Pegar",

@@ -739,6 +739,8 @@
   "gc.hideKeypad": "Nascondi la tastiera",
   "tk.label": "Tastiera Evklid",
   "tk.l.kem": "Chim",
+  "tk.kem.el": "Sostanze",
+  "tk.kem.re": "Reazioni",
   "tk.shift": "Maiuscola",
   "tk.space": "Spazio (trascina per spostare il cursore)",
   "tk.paste": "Incolla",

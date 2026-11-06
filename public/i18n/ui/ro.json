@@ -745,6 +745,8 @@
   "gc.hideKeypad": "Ascunde tastatura",
   "tk.label": "Tastatura Evklid",
   "tk.l.kem": "Chim",
+  "tk.kem.el": "Substanțe",
+  "tk.kem.re": "Reacții",
   "tk.shift": "Literă mare",
   "tk.space": "Spațiu (trage pentru a muta cursorul)",
   "tk.paste": "Lipește",

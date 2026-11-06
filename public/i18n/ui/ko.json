@@ -733,6 +733,8 @@
   "gc.hideKeypad": "키보드 숨기기",
   "tk.label": "Evklid 키보드",
   "tk.l.kem": "화학",
+  "tk.kem.el": "물질",
+  "tk.kem.re": "반응",
   "tk.shift": "대문자",
   "tk.space": "스페이스 (끌어서 커서 이동)",
   "tk.paste": "붙여넣기",

@@ -65,20 +65,26 @@ export function oznaci(el) {
 }
 
 // Na zaslonu na dotik vrstico enkrat rahlo premaknemo in vrnemo, ko je prvič vidna.
+// Vrstice, ki se ob odprtju ne smejo premakniti: »Preberi lekcijo« je prvi čip glave pogovora in mora biti viden cel
+// (j, 5. 11.: ob odprtju je bil zamaknjen, »Pre« odrezan); rob, ki zbledi, že pove, da se vrstica pomika.
+export const BREZ_POKUKA = "#chat-state";
 function pokukaj(el) {
   pokukano.add(el);
   io.unobserve(el);
-  if (!el.classList.contains("drs") || premik(el) > 1) return;
+  if (!el.classList.contains("drs") || premik(el) > 1 || el.matches(BREZ_POKUKA)) return;
   const smer = getComputedStyle(el).direction === "rtl" ? -1 : 1;
   const cilj = Math.min(28, el.scrollWidth - el.clientWidth);
   // Če se je učenec medtem sam dotaknil vrstice, je ne vračamo (sicer bi mu jo izpulili izpod prsta).
   let dotik = false;
   const ustavi = () => (dotik = true);
-  for (const t of ["pointerdown", "touchstart", "wheel"]) el.addEventListener(t, ustavi, { once: true, passive: true });
+  const DOGODKI = ["pointerdown", "touchstart", "touchmove", "pointermove", "wheel"];
+  for (const t of DOGODKI) el.addEventListener(t, ustavi, { once: true, passive: true });
   el.scrollBy({ left: smer * cilj, behavior: "smooth" });
   setTimeout(() => {
-    for (const t of ["pointerdown", "touchstart", "wheel"]) el.removeEventListener(t, ustavi);
-    if (el.isConnected && !dotik && Math.abs(premik(el) - cilj) <= 2) el.scrollTo({ left: 0, behavior: "smooth" });
+    for (const t of DOGODKI) el.removeEventListener(t, ustavi);
+    // nazaj le naš pokuk (tudi nedokončan na počasni napravi), ne pomika, ki ga je učenec naredil sam dlje od cilja
+    const x = premik(el);
+    if (el.isConnected && !dotik && x > 0 && x <= cilj + 2) el.scrollTo({ left: 0, behavior: "smooth" });
   }, 450);
 }
 
