@@ -129,9 +129,9 @@ Pošten poskus: spreminja se samo en dejavnik, vse drugo ostane enako. Kontrolna
 
 ### Primer 4: zdaj ti
 
-Plavalni trener preveri, ali ogrevanje izboljša čas na $50\,\mathrm{m}$. Trije plavalci z ogrevanjem plavajo $34{,}2$, $33{,}8$ in $34{,}0\,\mathrm{s}$. Trije brez ogrevanja (kontrolna skupina) plavajo $35{,}1$, $34{,}9$ in $35{,}3\,\mathrm{s}$.
+Plavalni trener preveri, ali ogrevanje izboljša čas na $50\,\mathrm{m}$. Trije plavalci z ogrevanjem plavajo $34{,}2$; $33{,}8$ in $34{,}0\,\mathrm{s}$. Trije brez ogrevanja (kontrolna skupina) plavajo $35{,}1$; $34{,}9$ in $35{,}3\,\mathrm{s}$.
 
-**Podatki:** z ogrevanjem $34{,}2$, $33{,}8$, $34{,}0\,\mathrm{s}$; kontrolna skupina $35{,}1$, $34{,}9$, $35{,}3\,\mathrm{s}$
+**Podatki:** z ogrevanjem ($34{,}2$; $33{,}8$; $34{,}0\,\mathrm{s}$), kontrolna skupina ($35{,}1$; $34{,}9$; $35{,}3\,\mathrm{s}$)
 **Iščemo:** povprečna časa in razliko med njima
 
 :::formula

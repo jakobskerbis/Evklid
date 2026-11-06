@@ -63,7 +63,7 @@
      "ways": [
       {
        "title": "Po korakih: odštejemo zamaknjeni števili",
-       "text": "Označimo $x = 0{,}3181818\\ldots$ Perioda $18$ ima dve števki, pred njo je ena neperiodična števka.\n\nŠtevilo pomnožimo tako, da je decimalna vejica tik pred periodo in tik za prvo periodo:\n$$10x = 3{,}181818\\ldots, \\qquad 1000x = 318{,}181818\\ldots$$\nRepa za vejico sta enaka, zato se pri odštevanju odštejeta:\n$$1000x - 10x = 318 - 3 \\quad\\Rightarrow\\quad 990x = 315 \\quad\\Rightarrow\\quad x = \\frac{315}{990}.$$\nKrajšamo z $45$ (ker je $315 = 45\\cdot 7$ in $990 = 45\\cdot 22$):\n$$x = \\frac{7}{22}.$$"
+       "text": "Označimo $x = 0{,}3181818\\ldots$ Perioda $18$ ima dve števki, pred njo je ena neperiodična števka.\n\nŠtevilo pomnožimo tako, da je decimalna vejica tik pred periodo in tik za prvo periodo:\n$$10x = 3{,}181818\\ldots; \\qquad 1000x = 318{,}181818\\ldots$$\nRepa za vejico sta enaka, zato se pri odštevanju odštejeta:\n$$1000x - 10x = 318 - 3 \\quad\\Rightarrow\\quad 990x = 315 \\quad\\Rightarrow\\quad x = \\frac{315}{990}.$$\nKrajšamo z $45$ (ker je $315 = 45\\cdot 7$ in $990 = 45\\cdot 22$):\n$$x = \\frac{7}{22}.$$"
       },
       {
        "title": "Drugače: razstavimo na neperiodični in periodični del",

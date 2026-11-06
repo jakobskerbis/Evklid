@@ -7,7 +7,8 @@ import { openProfileMenu } from "./profile-menu.js";
 import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./pay-ui.js";
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
-import { guaranteeBox, guaranteeLine, podariAddon, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
+import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
+import { clearPrivate, checkOwner, deviceData, endedSession, syncOffline } from "./offline.js";
 import { landingHtml } from "./pristajalna.js";
 import { currentSource } from "./vir.js";
 // Starševski račun: prijava, potrditev e-naslova, otroci s soglasjem, naročnina, priporočila.
@@ -25,7 +26,7 @@ const money = (minor, currency = "EUR") => {
   const digits = currency !== "EUR" && Number.isInteger(major) ? 0 : 2;
   return major.toLocaleString(locale(), { style: "currency", currency, minimumFractionDigits: digits, maximumFractionDigits: digits });
 };
-const date = (iso) => (iso ? new Date(iso).toLocaleDateString("sl-SI", { day: "numeric", month: "long", year: "numeric" }) : "");
+const date = (iso) => (iso ? new Date(iso).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" }) : "");
 const store = {
   get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} },
@@ -38,7 +39,9 @@ async function api(url, opts = {}) {
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw Object.assign(new Error(data.error || `Napaka ${res.status}`), { data, status: res.status });
+  // Plačilo brez datuma rojstva (star račun, »Pozneje«): prevedeno sporočilo namesto slovenskega s strežnika.
+  const msg = data.birth_missing ? t("birth.payMissing") : data.error;
+  if (!res.ok) throw Object.assign(new Error(msg || `Napaka ${res.status}`), { data, status: res.status });
   return data;
 }
 
@@ -262,9 +265,9 @@ export function openProfileLock(student, students = []) {
     // (sicer bi aplikacija iz shranjene kopije spet pokazala isto okno in gumb bi bil videti mrtev).
     const out = $(".lock-logout", box);
     submit(out, async () => {
+      await sendQueued();
       await logoutRequest();
-      store.set("studentId", null);
-      location.replace("/?odjava=1");
+      await finishLogout();
     });
   });
 }
@@ -299,6 +302,9 @@ export async function initAccount({ onReady }) {
   status = await api("/api/account/status").catch(() => ({ enabled: false }));
   enabled = !!status.enabled;
   if (!enabled) return true;
+  // Seja je končana (odjava drugje, iztek, »odjavi druge naprave«): osebni podatki prejšnjega lastnika naprave
+  // se pobrišejo, preden si zapomnimo ključe iz te povezave (povabilo, koda). Brez povezave sem ne pridemo.
+  if (!status.logged_in) await endedSession();
   $("#account-tab").hidden = false;
   watchTakenProfiles();
   lockAccountOnLeave();
@@ -351,7 +357,7 @@ export async function initAccount({ onReady }) {
       const r = await api("/api/billing/podari/confirm", { method: "POST", body: { session_id: sessionId } }).catch(() => null);
       toast(r?.paid ? t("pod.paid") : t("pass.pending"));
     } else if (billing !== "cancel") await api("/api/billing/sync", { method: "POST" }).catch(() => {});
-    if (billing === "success") toast("Hvala! Naročnina je aktivna.");
+    if (billing === "success") toast(t("acct.subThanks"));
     status = await api("/api/account/status");
   }
   if (parentInvite) route.firstMode = "register";
@@ -431,6 +437,9 @@ async function renderLanding() {
 }
 
 async function route() {
+  // Prijava v drug račun na tej napravi: osebni podatki prejšnjega se pobrišejo (public/offline.js, P7).
+  if (status.logged_in) await checkOwner(status.parent?.id ?? null);
+  else await endedSession(); // vsi načini konca seje (tudi med uporabo)
   if (!status.logged_in) {
     const mode = route.firstMode || hashMode() || (store.get(SEEN) ? "login" : null);
     // Prijava dobi svoj zapis (#prijava), da »Kaj je Evklid?« in nato Nazaj vrneta na prijavo.
@@ -442,6 +451,9 @@ async function route() {
   // Uporaba brez računa je izklopljena: gost lahko samo ustvari račun in obdrži napredek.
   if (status.parent.guest && !status.guest_mode) return renderGuestOff(), false;
   if (!status.parent.verified && !status.parent.guest) return renderVerify(), false;
+  // Star račun brez datuma rojstva: ob prijavi ga enkrat vprašamo (z razlago in »Pozneje«), nikoli ne zaklenemo.
+  // Samo na odklenjeni napravi: na zaklenjeni (otrok na starševi napravi) zaslon preskočimo, vprašanje ostane za pozneje.
+  if (status.parent.need_birth && status.account_unlocked) return renderBirth(), false;
   if (!status.children) return renderAddChild(), false;
   authMode(false);
   adjustAppForAccounts();
@@ -493,7 +505,7 @@ function renderLogin(mode = "login") {
       <label>E-naslov <input name="email" type="email" required autocomplete="email"></label>
       <label>Geslo <input name="password" type="password" required minlength="8" autocomplete="${mode === "login" ? "current-password" : "new-password"}"></label>
       ${mode === "register" ? `
-        <label>Tvoj datum rojstva <input name="birth_date" type="date" required min="1900-01-01" max="${new Date().toISOString().slice(0, 10)}" autocomplete="bday"></label>
+        <label>Tvoj datum rojstva <input name="birth_date" type="date" required min="1900-01-01" max="${localToday()}" autocomplete="bday"></label>
         <label>Aktivacijska koda (neobvezno) <input name="promo_code" maxlength="40" autocapitalize="characters" value="${esc(koda)}"></label>
         <label>Koda priporočila (neobvezno) <input name="referral_code" maxlength="12" value="${esc(ref)}"></label>
         <label class="check"><input type="checkbox" name="accept_privacy" required>
@@ -531,6 +543,7 @@ function renderLogin(mode = "login") {
         store.set(AGE_BLOCK, String(Date.now()));
         return renderAskParent(err.data.min_age);
       }
+      if (err.data?.birth_date) err = { message: t("birth.missing") };
       showError(f, err);
     }
   });
@@ -651,6 +664,104 @@ function renderReset(token) {
     } catch (err) {
       showError(e.target, err);
     }
+  });
+}
+
+// ---------- datum rojstva (stari računi) ----------
+
+// Današnji datum v lokalnem času naprave (LLLL-MM-DD); toISOString bi okoli polnoči dal včerajšnji dan (UTC).
+function localToday(d = new Date()) {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+// Dopolnjena leta za datum LLLL-MM-DD (za potrditev pred shranjevanjem; strežnik računa sam).
+function yearsSince(ymd, d = new Date()) {
+  const [y, m, day] = String(ymd).split("-").map(Number);
+  return d.getFullYear() - y - (d.getMonth() + 1 < m || (d.getMonth() + 1 === m && d.getDate() < day) ? 1 : 0);
+}
+
+// Obrazec za datum rojstva imetnika računa: zaslon ob prijavi (later = gumb »Pozneje«) in kartica v zavihku Račun.
+function birthFormHtml(later) {
+  const max = localToday();
+  return `<form class="birth-form form" novalidate>
+      <label>${esc(t("birth.label"))} <input name="birth_date" type="date" required min="1900-01-01" max="${max}" autocomplete="bday"></label>
+      <p class="muted">${esc(t("birth.whose"))}</p>
+      <p class="form-error" role="alert" hidden></p>
+      <div class="form-actions" data-step="enter">
+        <button class="primary" type="submit">${esc(t("birth.save"))}</button>
+        ${later ? `<button type="button" data-later>${esc(t("birth.later"))}</button>` : ""}
+      </div>
+      <div class="birth-confirm" data-step="confirm" hidden>
+        <p role="status" data-confirm-text></p>
+        <div class="form-actions">
+          <button class="primary" type="button" data-confirm>${esc(t("birth.confirmYes"))}</button>
+          <button type="button" data-back>${esc(t("birth.confirmNo"))}</button>
+        </div>
+      </div>
+    </form>`;
+}
+
+// onDone(r): r je odgovor strežnika ({ parent, under_age?, min_age? }). Pred shranjevanjem potrditev z izračunano
+// starostjo (napačnega datuma uporabnik ne more popraviti sam). 409 (datum je medtem vpisan v drugi seji): tok gre naprej.
+function bindBirthForm(form, onDone) {
+  const enter = form.querySelector('[data-step="enter"]');
+  const confirm = form.querySelector('[data-step="confirm"]');
+  const step = (c) => {
+    enter.hidden = c;
+    confirm.hidden = !c;
+    form.birth_date.disabled = c;
+  };
+  const send = async (body, btn) => {
+    btn.disabled = true;
+    try {
+      onDone(await api("/api/account/birth-date", { method: "POST", body }));
+    } catch (err) {
+      if (err.status === 409 && err.data?.parent) return onDone({ parent: err.data.parent, taken: true });
+      step(false);
+      showError(form, err.data?.birth_date ? { message: t("birth.enter") } : err);
+    } finally {
+      btn.disabled = false;
+    }
+  };
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const v = form.birth_date.value;
+    const age = v ? yearsSince(v) : NaN;
+    if (!v || !(age >= 5 && age <= 120)) return showError(form, { message: t("birth.enter") });
+    errorBox(form).hidden = true;
+    form.querySelector("[data-confirm-text]").textContent = t("birth.confirm", { age });
+    step(true);
+    form.querySelector("[data-confirm]").focus();
+  });
+  form.querySelector("[data-confirm]").addEventListener("click", (e) => send({ birth_date: form.birth_date.value }, e.currentTarget));
+  form.querySelector("[data-back]").addEventListener("click", () => {
+    step(false);
+    form.birth_date.focus();
+  });
+  form.querySelector("[data-later]")?.addEventListener("click", (e) => send({ later: true }, e.currentTarget));
+}
+
+// Mlajši od starosti digitalne privolitve: datum je shranjen, za soglasje pa velja pot prek staršev kot pri registraciji.
+const underAgeHtml = (minAge) => `<div class="birth-under" role="status">
+      <p>${esc(t("birth.underAge", { age: minAge }))}</p>
+      <p><a href="/starsi.html" target="_blank">${esc(t("birth.parents"))}</a></p>
+    </div>`;
+
+function renderBirth() {
+  shell(`
+    <h1>${esc(t("birth.title"))}</h1>
+    <p class="muted">${esc(t("birth.why"))}</p>
+    <div class="card">${birthFormHtml(true)}</div>
+    <p class="muted">${esc(t("birth.laterNote"))}</p>`);
+  bindBirthForm($("#view-auth .birth-form"), (r) => {
+    status.parent = r.parent;
+    if (!r.under_age) return continueFlow();
+    shell(`
+      <h1>${esc(t("birth.title"))}</h1>
+      <div class="card">${underAgeHtml(r.min_age)}</div>
+      <div class="form-actions"><button class="primary" type="button" id="birth-next">${esc(t("birth.next"))}</button></div>`);
+    $("#birth-next").addEventListener("click", continueFlow);
   });
 }
 
@@ -792,16 +903,9 @@ async function renderAddChild() {
 
 // ---------- zavihek Račun ----------
 
-const STATUS_TEXT = {
-  active: "aktivna",
-  trialing: "brezplačni preizkus",
-  past_due: "plačilo ni uspelo – posodobi kartico",
-  canceled: "preklicana",
-  unpaid: "neplačana",
-  incomplete: "nedokončana",
-  incomplete_expired: "potekla",
-  paused: "zaustavljena",
-};
+// Stanje naročnine v Stripu → ključ besedila (acct.st.*); neznano stanje se pokaže, kot je.
+const STATUS_KEYS = ["active", "trialing", "past_due", "canceled", "unpaid", "incomplete", "incomplete_expired", "paused"];
+const statusText = (st) => (STATUS_KEYS.includes(st) ? t(`acct.st.${st}`) : st);
 
 
 // Poraba inštruktorja ta mesec kot delež mesečne omejitve (brez zneskov). Naročnik (zajamčeni delež,
@@ -810,9 +914,9 @@ function aiPill(a) {
   if (!a || a.percent == null) return "";
   // Družina: skupen delež za vse profile (enak preostanek pri vsakem otroku, ai.pool v opisu).
   if (a.guaranteed) return `<span class="pill${a.stage === "out" ? " warn" : ""}" title="${esc((a.stage === "out" ? t("ai.out") : t("ai.left", { n: a.explanations_left })) + (a.pool ? " " + t("ai.pool") : ""))}">${esc(t("ai.left", { n: a.explanations_left }))}</span>`;
-  if (a.hard_reached) return `<span class="pill warn" title="Inštruktor bo spet na voljo 1. v mesecu. Vadnica deluje naprej.">inštruktor ta mesec porabljen</span>`;
-  const extra = a.soft_reached ? " · razlage so do konca meseca manj podrobne" : "";
-  return `<span class="pill" title="Delež mesečne omejitve za inštruktorja AI">inštruktor ta mesec ${a.percent} %${extra}</span>`;
+  if (a.hard_reached) return `<span class="pill warn" title="${esc(t("acct.aiOutTitle"))}">${esc(t("acct.aiOut"))}</span>`;
+  const extra = a.soft_reached ? ` · ${esc(t("acct.aiSoft"))}` : "";
+  return `<span class="pill" title="${esc(t("acct.aiPctTitle"))}">${esc(t("acct.aiPct", { pct: a.percent }))}${extra}</span>`;
 }
 
 // Ime stopnje (OŠ, SŠ, faks) iz public/stopnja.js za izbiro paketa.
@@ -828,26 +932,29 @@ function planText(acc) {
   const plan = sub && acc.plans.find((p) => p.key === sub.plan);
   if (access.tier === "paid") {
     const pend = acc.pending_change;
-    return `<p><b>Naročnina:</b> ${esc(plan?.label || sub.plan)} (${STATUS_TEXT[sub.status] || sub.status})</p>
-      <p class="muted">${sub.cancel_at_period_end ? `Naročnina se konča ${date(sub.period_end)}.` : `Naslednje obdobje se začne ${date(sub.period_end)}.`}</p>
+    // Ime paketa iz jezika vmesnika (stopnja ali Družina); regijski paketi in stari paketi brez stopnje z imenom s strežnika.
+    const name = plan?.level && !plan.legacy ? shortName(planName(plan)) : plan?.label || sub.plan;
+    return `<p><b>${esc(t("mob.subscription"))}</b> · ${esc(name)} (${esc(statusText(sub.status))})</p>
+      <p class="muted">${esc(t(sub.cancel_at_period_end ? "acct.endsOn" : "acct.renewsOn", { date: date(sub.period_end) }))}</p>
       ${pend ? `<p class="muted">${esc(t("up.pending", { date: date(pend.effective_at), price: money(pend.amount, pend.currency), name: shortName(planName(acc.plans.find((p) => p.key === pend.plan) || { level: "OS" })) }))}</p>` : ""}
       ${upgradeBox(acc)}`;
   }
-  if (access.tier === "trial") return `<p><b>Brezplačni preizkus</b> do ${date(access.until)}: vse funkcije za do 2 otroka.</p>`;
+  if (access.tier === "trial") return `<p>${esc(t("acct.trial", { date: date(access.until) }))}</p>`;
   if (access.tier === "promo") {
     const trial = Date.parse(parent.trial_ends_at || 0) > Date.now();
-    return `<p><b>Poln dostop z aktivacijsko kodo</b> do ${date(access.until)}.</p>${
-      trial ? `<p class="muted">Do ${date(parent.trial_ends_at)} (preizkus) lahko uporabljata 2 otroka, nato velja koda za ${acc.promo?.seats > 1 ? `${acc.promo.seats} otroke` : "1 otroka"}.</p>` : ""}`;
+    return `<p>${esc(t("acct.promo", { date: date(access.until) }))}</p>${
+      trial ? `<p class="muted">${esc(t("acct.promoTrial", { date: date(parent.trial_ends_at), n: Math.max(1, acc.promo?.seats || 1) }))}</p>` : ""}`;
   }
-  if (access.tier === "bonus") return `<p><b>Brezplačni mesec</b> iz priporočila do ${date(access.until)}.</p>`;
+  if (access.tier === "bonus") return `<p>${esc(t("acct.bonus", { date: date(access.until) }))}</p>`;
   if (access.tier === "gift") return `<p>${esc(t("gift.tier", { date: date(access.until) }))}</p>`;
-  return `<p><b>Brezplačni paket:</b> vadnica brez omejitev in ${acc.free_daily_questions} vprašanj inštruktorju na dan.</p>`;
+  return `<p>${esc(t("acct.free", { n: acc.free_daily_questions }))}</p>`;
 }
 
 // Nadgradnja na višjo stopnjo med obdobjem (doplačilo razlike, Stripe izračuna sam).
 function upgradeBox(acc) {
   const up = acc.upgrade;
   if (!up?.options?.length || acc.parent.minor) return "";
+  if (acc.parent.birth_missing) return `<div class="plan-upgrade"><p class="muted">${esc(t("birth.payMissing"))}</p></div>`;
   return `<div class="plan-upgrade"><p><b>${esc(t("up.title"))}</b><br><span class="muted">${esc(t("up.text"))}</span></p>
     <div class="form-actions">${up.options.map((o) => `<button type="button" class="secondary" data-upgrade="${esc(o.key)}">${esc(t("up.btn", { name: planName(o) }))} · ${money(o.amount, o.currency)} ${esc(t(o.interval === "year" ? "mob.perYear" : "mob.perMonth"))}</button>`).join("")}</div></div>`;
 }
@@ -891,10 +998,11 @@ function plansPicker(acc) {
       ${acc.parent.minor
         ? `<p class="muted">${esc(t("pay.minorNote"))}</p>
            <button class="secondary" type="button" id="plan-link">${esc(t("pay.askParent"))}</button><div id="plan-link-out"></div>`
-        : `${podariAddon(acc)}
-           ${consentFields()}
+        : acc.parent.birth_missing
+          ? `<p class="muted">${esc(t("birth.payMissing"))}</p>`
+          : `${consentFields()}
            <button class="primary" type="submit">${esc(t("pay.continue"))}</button>`}
-      ${acc.parent.minor ? "" : `<p class="muted">${esc(t("pay.secureCancel"))}${acc.access.tier === "trial" ? ` ${esc(t("pay.trialKept"))}` : ""}</p>`}
+      ${acc.parent.minor || acc.parent.birth_missing ? "" : `<p class="muted">${esc(t("pay.secureCancel"))}${acc.access.tier === "trial" ? ` ${esc(t("pay.trialKept"))}` : ""}</p>`}
       </div>
     </form>`;
 }
@@ -921,7 +1029,7 @@ const planBody = (v) => {
 
 // Darilna koda: polnoletna oseba kupi eno leto za en profil izbrane stopnje (letna cena stopnje: 99 / 139 / 199 €).
 function giftBox(acc) {
-  if (!acc.billing || acc.parent.minor || acc.parent.guest) return "";
+  if (!acc.billing || acc.parent.minor || acc.parent.guest || acc.parent.birth_missing) return "";
   const list = (acc.gifts || [])
     .map((g) => `<li>${g.code ? `<b dir="ltr">${esc(g.code)}</b> <button type="button" data-gift-copy="${esc(g.code)}" aria-label="${esc(t("gift.copy"))} ${esc(g.code)}">${esc(t("gift.copy"))}</button>` : ""} <span class="pill${g.redeemed ? " ok" : ""}">${esc(t(g.status !== "paid" ? "gift.refunded" : g.redeemed ? "gift.used" : "gift.unused"))}</span></li>`)
     .join("");
@@ -959,8 +1067,8 @@ function promoBox(acc, paid) {
   if (paid) return admin;
   return `<details class="promo-code"${store.get("evklid_koda") ? " open" : ""}><summary>${esc(t("gift.codeSummary"))}</summary>
       <form id="promo-form" class="inline form">
-        <input name="code" maxlength="40" required autocapitalize="characters" placeholder="npr. EVKLID3X" value="${esc(store.get("evklid_koda") || "")}">
-        <button class="primary" type="submit">Aktiviraj</button>
+        <input name="code" maxlength="40" required autocapitalize="characters" aria-label="${esc(t("gift.codeSummary"))}" placeholder="${esc(t("acct.codeExample", { code: "EVKLID3X" }))}" value="${esc(store.get("evklid_koda") || "")}">
+        <button class="primary" type="submit">${esc(t("acct.activate"))}</button>
         <p class="form-error" hidden></p>
       </form></details>${admin}`;
 }
@@ -1154,6 +1262,7 @@ async function loadSchoolOrders() {
       toast(t("common.saved"));
     } catch (err) {
       toast(err.message);
+      loadSchoolOrders(); // npr. pilotno mesto je zasedeno: izbira stanja se vrne na shranjeno
     }
   };
   out.querySelectorAll("[data-order]").forEach((li) => {
@@ -1214,7 +1323,7 @@ function upgradeForm() {
       <label>${esc(t("guest.name"))} <input name="name" maxlength="60" autocomplete="name"></label>
       <label>${esc(t("guest.email"))} <input name="email" type="email" required autocomplete="email"></label>
       <label>${esc(t("guest.password"))} <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
-      <label>${esc(t("guest.birth"))} <input name="birth_date" type="date" required min="1900-01-01" max="${new Date().toISOString().slice(0, 10)}" autocomplete="bday"></label>
+      <label>${esc(t("guest.birth"))} <input name="birth_date" type="date" required min="1900-01-01" max="${localToday()}" autocomplete="bday"></label>
       <label class="check"><input type="checkbox" name="accept_privacy" required>
         <span>${esc(t("guest.accept"))} <a href="/zasebnost.html" target="_blank">${esc(t("guest.privacy"))}</a></span></label>
       <p class="form-error" hidden></p>
@@ -1306,6 +1415,7 @@ function renderGuestAccount(view, acc) {
     if (!confirm(t("guest.deleteConfirm"))) return;
     try {
       await api("/api/account", { method: "DELETE", body: {} });
+      await clearPrivate();
       store.set("studentId", null);
       location.replace("/");
     } catch (err) {
@@ -1340,14 +1450,14 @@ export async function renderAccount() {
   if (acc.parent.guest) return renderGuestAccount(view, acc);
   const paid = acc.access.tier === "paid";
   view.innerHTML = `
-    <button type="button" class="ghost back me-back">${icon("arrow-left")}Jaz</button>
-    <h1>Račun</h1>
+    <button type="button" class="ghost back me-back">${icon("arrow-left")}${esc(t("nav.me"))}</button>
+    <h1>${esc(t("nav.account"))}</h1>
     <div class="kolone">
     <div class="card">
-      <h2>Naročnina</h2>
+      <h2>${esc(t("mob.subscription"))}</h2>
       ${planText(acc)}
-      ${!acc.billing ? `<p class="muted">Plačila trenutno niso na voljo.</p>` : paid ? "" : plansPicker(acc)}
-      ${acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">Upravljaj naročnino in račune</button>` : ""}
+      ${!acc.billing ? `<p class="muted">${esc(t("credit.off"))}</p>` : paid ? "" : plansPicker(acc)}
+      ${acc.billing && acc.parent.has_customer ? `<button id="portal-btn" type="button">${esc(t("acct.portal"))}</button>` : ""}
       ${promoBox(acc, paid)}
     </div>
     ${acc.promo?.codes ? adminCodes(acc) : ""}
@@ -1363,7 +1473,7 @@ export async function renderAccount() {
       <h2>Otroci</h2>
       <ul class="child-list">${acc.children
         .map((c) => `<li><b>${esc(c.name)}</b> <span class="muted">(${c.birth_year || "–"})</span> ${
-          c.premium ? `<span class="pill ok">poln dostop</span>` : `<span class="pill">brezplačni paket · danes ${c.questions_today}/${acc.free_daily_questions}</span>`
+          c.premium ? `<span class="pill ok">${esc(t("acct.fullAccess"))}</span>` : `<span class="pill">${esc(t("acct.freeToday", { used: c.questions_today, max: acc.free_daily_questions }))}</span>`
         }${c.pass ? ` <span class="pill">${esc(t("acct.passPill", { date: date(c.pass.ends_at) }))}</span>` : ""}${c.level_locked ? ` <span class="pill warn">${esc(levelName(c.level))}: ${esc(t("up.locked"))}</span>` : ""} ${aiPill(c.ai_month)}${c.has_password || acc.children.length < 2 ? "" : ` <span class="pill">${esc(t("lock.none"))}</span>`}</li>`)
         .join("")}</ul>
       ${acc.children.length ? `<details class="profile-pw"><summary>${esc(t("lock.change"))}</summary>
@@ -1382,9 +1492,14 @@ export async function renderAccount() {
         ? `<p class="muted">Profil lahko zamenjaš enkrat na 30 dni. Nov profil lahko dodaš ${date(acc.swap_blocked_until)}.</p>`
         : acc.children.length < acc.max_children
           ? `<details><summary>Dodaj profil</summary>${childForm(acc.consent_text, await loadPrograms(api), acc.children.length > 0, acc.children.filter((c) => !c.has_password))}</details>`
-          : `<p class="muted">Tvoj paket ima ${acc.max_children === 1 ? "1 profil" : `${acc.max_children} profila`}.${acc.max_children === 1 ? " Za drugega otroka izberi paket za 2 otroka." : ""}</p>`}
+          : `<p class="muted">${esc(t("acct.profiles", { n: acc.max_children }))}${acc.max_children === 1 ? ` ${esc(t("acct.secondChild"))}` : ""}</p>`}
       <p class="muted">Vsak profil je lahko hkrati odprt samo na eni napravi. Profil zamenjaš (izbrišeš v zavihku Nastavitve in dodaš novega) največ enkrat na 30 dni.</p>
     </div>
+    ${acc.parent.birth_missing ? `<div class="card" id="birth-card">
+      <h2>${esc(t("birth.label"))}</h2>
+      <p>${esc(t("birth.accountRow"))}</p>
+      ${birthFormHtml(false)}
+    </div>` : ""}
     <div id="credit-card"></div>
 
     <div class="card">
@@ -1424,12 +1539,6 @@ export async function renderAccount() {
     const first = f.querySelector(`.plan-row[data-who="${e.target.value}"] input[name=plan]`);
     if (first) first.checked = true;
     $("#plan-rest", f).hidden = false;
-    // Dodatek »Podari Evklid« ni na voljo pri šolski ceni (strežnik ga tam ne doda).
-    const addon = f.querySelector(".podari-addon");
-    if (addon) {
-      addon.hidden = e.target.value === "s";
-      if (addon.hidden) f.querySelector('input[name=podari][value="0"]').checked = true;
-    }
   });
   $("#plan-form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -1437,8 +1546,7 @@ export async function renderAccount() {
     btn.disabled = true;
     try {
       if (!consentsOk(e.target)) throw new Error(t("payp.consentMissing"));
-      const podari = Number(e.target.podari?.value || 0);
-      const r = await api("/api/billing/checkout", { method: "POST", body: { ...planBody(e.target.plan.value), ...consentBody(), ...(podari ? { podari } : {}) } });
+      const r = await api("/api/billing/checkout", { method: "POST", body: { ...planBody(e.target.plan.value), ...consentBody() } });
       location.href = r.url;
     } catch (err) {
       btn.disabled = false;
@@ -1560,6 +1668,16 @@ export async function renderAccount() {
     }
   });
   $("#weekly-toggle").addEventListener("change", (e) => api("/api/account", { method: "PUT", body: { weekly_email: e.target.checked } }));
+  const birthCard = $("#birth-card");
+  if (birthCard)
+    bindBirthForm(birthCard.querySelector(".birth-form"), (r) => {
+      status.parent = r.parent;
+      if (r.under_age) birthCard.innerHTML = `<h2>${esc(t("birth.label"))}</h2>${underAgeHtml(r.min_age)}`;
+      else {
+        if (!r.taken) toast(t("birth.saved"));
+        renderAccount();
+      }
+    });
   $("#weekly-send").addEventListener("click", async () => {
     try {
       const r = await api("/api/account/weekly-report/send", { method: "POST" });
@@ -1578,6 +1696,8 @@ export async function renderAccount() {
     if (!password) return;
     try {
       const data = await api("/api/account/export", { method: "POST", body: { password } });
+      // Podatki, ki so samo na tej napravi (zgodovina skenerja, neposlani odgovori vaj brez povezave).
+      data.device = deviceData((data.children || []).map((c) => c.id));
       const a = document.createElement("a");
       a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
       a.download = "evklid-podatki.json";
@@ -1594,6 +1714,7 @@ export async function renderAccount() {
     if (!password) return;
     try {
       await api("/api/account", { method: "DELETE", body: { password } });
+      await clearPrivate();
       store.set("studentId", null);
       location.reload();
     } catch (err) {
@@ -1608,13 +1729,38 @@ async function logoutRequest() {
   await Promise.race([api("/api/auth/logout", { method: "POST" }), timeout]);
 }
 
+// Pošlje neposlane odgovore vaj brez povezave vseh profilov na tej napravi (napaka ne ustavi odjave).
+// Največ 6 s (kot logoutRequest), da odjava ob počasni povezavi ne obvisi.
+async function sendQueued() {
+  const ids = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const m = /^evklid\.offline\.queue\.(\d+)$/.exec(localStorage.key(i));
+      if (m) ids.push(Number(m[1]));
+    }
+  } catch {}
+  if (!ids.length) return;
+  const send = (async () => {
+    for (const id of ids) await syncOffline(api, id).catch(() => null);
+  })();
+  await Promise.race([send, new Promise((r) => setTimeout(r, 6000))]);
+}
+
+// Po odjavi na strežniku: naprava se pobriše (P7) in stran se odpre na začetku.
+async function finishLogout() {
+  await clearPrivate(); // predpomnilnik API, paketi vaj, seznam profilov, zgodovina skenerja …
+  store.set("studentId", null);
+  location.replace("/?odjava=1");
+}
+
 export async function logout() {
   if (status?.parent?.guest && !confirm(t("guest.logoutConfirm"))) return;
+  // Neposlani odgovori vaj brez povezave gredo pred odjavo na strežnik (nato se pobrišejo z napravo).
+  await sendQueued();
   try {
     await logoutRequest();
   } catch (err) {
     if (unreachable(err)) return toast(t("lock.offline")); // brez strežnika odjava ni mogoča
   }
-  store.set("studentId", null);
-  location.replace("/?odjava=1");
+  await finishLogout();
 }

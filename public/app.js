@@ -30,7 +30,7 @@ import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { splitFormulas, hasFormula } from "./vnos-formul.js";
 import { attachPrettify } from "./lepi-zapis.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
-import { offlineApi, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
+import { offlineApi, offlineBootApi, saveStudents, saveConfig, clearProfile, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback } from "./feedback.js";
 import { openAdminBug, deviceInfo, shownHtml } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
@@ -95,7 +95,8 @@ import { initOpen, addOpen, simOverlayOpen, closeSimOverlay } from "./odpri.js";
 
 const $ = (sel) => document.querySelector(sel);
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
-const fromPack = (url, opts) => (state.student ? offlineApi(state.student.id, url, opts) : undefined);
+// Za zagon brez povezave še seznam profilov (osebni odgovori API niso v predpomnilniku, P7).
+const fromPack = (url, opts) => (state.student ? offlineApi(state.student.id, url, opts) : undefined) ?? offlineBootApi(url, opts);
 // Računalnik z Evklidom je ugasnjen ali okno ni odprto: ngrok ali Cloudflare vrneta
 // svojo napako. Takrat delamo kot brez povezave (vaje iz shranjenega paketa).
 // Napaka v JSON pride od našega strežnika (npr. 502, ko branje rokopisa ne uspe):
@@ -571,6 +572,7 @@ $("#me-head")?.addEventListener("click", () => {
 
 async function loadStudents(selectId) {
   state.students = await api("/api/students");
+  saveStudents(state.students);
   if (!state.students.length) {
     if (accountsOn()) return openAddChild(); // otroka doda starš s soglasjem
     state.students = [await onboard()];
@@ -1801,7 +1803,9 @@ $("#new-student-form").addEventListener("submit", async (e) => {
 
 $("#delete-student").addEventListener("click", async () => {
   if (!confirm(t("set.confirmDelete", { name: state.student.name }))) return;
-  await api(`/api/students/${state.student.id}`, { method: "DELETE" });
+  const gone = state.student.id;
+  await api(`/api/students/${gone}`, { method: "DELETE" });
+  clearProfile(gone); // podatki profila na tej napravi (paket vaj, skener, kalkulator …)
   localStorageSet("studentId", "");
   await loadStudents();
   fillSettingsForm();
@@ -2869,7 +2873,7 @@ function renderTask(task, ctx) {
     const ph =
       task.inputHint ||
       (task.answerType === "coefficients" ? t("task.phCoef") : task.unit ? t("task.phUnit", { unit: task.unit }) : t("task.phResult"));
-    input = `<form class="answer-row"><input id="answer" autocomplete="off" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
+    input = `<form class="answer-row"><input id="answer" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${task.answerType === "number" && !task.unit ? "decimal" : "text"}" placeholder="${escapeHtml(ph)}"><button type="button" class="pad-open-btn secondary" title="${t("task.writeTitle")}">${icon("pencil")}<span>${t("task.write")}</span></button><button class="primary">${t("task.check")}</button></form>`;
   }
   const calcBtn = ["contest", "placement", "pretest"].includes(ctx.mode) ? "" : `<button type="button" class="ghost task-calc icon-only" title="${escapeHtml(t("nav.graph"))}" aria-label="${escapeHtml(t("nav.graph"))}">${icon("calculator")}</button>`;
   const bar = ctx.mode === "contest" ? `<div class="contest-bar"><span id="contest-timer" class="contest-timer" role="timer">${icon("timer")}<b>${leftText(state.contestDeadline)}</b></span><span class="muted">${t("comp.timerNote")}</span></div>` : "";
@@ -4367,6 +4371,7 @@ initFormulaInfo();
 
 (async () => {
   const cfg = await api("/api/config");
+  saveConfig(cfg); // za zagon brez povezave (brez skrbniških zastavic, public/offline.js)
   $("#mock-banner").hidden = !cfg.mock;
   initTestNotice(cfg.test_notice, { showView });
   $("#chat-off").hidden = !cfg.chat_off;

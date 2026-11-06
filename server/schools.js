@@ -46,6 +46,34 @@ export const pilotOpen = (db, schoolId = null) => {
   const ids = pilotSchoolIds(db);
   return ids.length < PILOT_SCHOOLS_MAX || (schoolId != null && ids.includes(schoolId));
 };
+
+// Pilotna mesta (prvih 10 šol): zasedejo jih šole s pilotno licenco in odprta pilotna naročila (ena šola = ena
+// davčna številka, naročila server/sole.js). Naročilo, iz katerega je šola že dobila pilotno licenco (school_id,
+// skrbnik poda orderId ob vpisu licence), ne šteje še enkrat. Mesto naročila se sprosti tudi, ko ga skrbnik
+// označi kot »won« ali »lost«.
+export const PILOT_HOLD_STATUSES = ["new", "contacted", "offer_sent"];
+const hasTable = (db, name) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(name);
+export function pilotPlaces(db) {
+  const ids = pilotSchoolIds(db);
+  const orders = hasTable(db, "school_orders")
+    ? [
+        ...new Set(
+          db
+            .prepare(`SELECT tax_id, school_id FROM school_orders WHERE plan = 'pilot' AND status IN (${PILOT_HOLD_STATUSES.map(() => "?").join(", ")})`)
+            .all(...PILOT_HOLD_STATUSES)
+            .filter((r) => r.school_id == null || !ids.includes(r.school_id))
+            .map((r) => r.tax_id),
+        ),
+      ]
+    : [];
+  return { max: PILOT_SCHOOLS_MAX, licences: ids.length, orders, free: Math.max(0, PILOT_SCHOOLS_MAX - ids.length - orders.length) };
+}
+// Ali je pilotna cena na voljo za novo (ali znova odprto) naročilo: prosto mesto, ali šola že ima odprto pilotno
+// naročilo (ista davčna) ali pilotno licenco (schoolId naročila).
+export function pilotOpenForOrder(db, taxId = null, schoolId = null) {
+  const p = pilotPlaces(db);
+  return p.free > 0 || (taxId != null && p.orders.includes(taxId)) || (schoolId != null && pilotSchoolIds(db).includes(schoolId));
+}
 export const STAGES = ["OS", "SS"];
 export const SUBJECTS = ["MAT", "FIZ", "KEM", "BIO", "NAR"];
 
@@ -125,6 +153,19 @@ export function migrateSchools(db) {
   // Oznaka, ki jo učitelj sam pripiše vzdevku (npr. »Ana K.«); učenec imena ne vpisuje.
   if (!mcols.includes("teacher_label")) db.exec("ALTER TABLE class_members ADD COLUMN teacher_label TEXT");
   db.exec("CREATE INDEX IF NOT EXISTS idx_classes_school ON classes(school_id)");
+  // Izbris računa učitelja: članstvo v šoli (brez tuje povezave na parents) gre z njim.
+  if (db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parents'").get()) {
+    db.exec(`CREATE TRIGGER IF NOT EXISTS school_teachers_parent_delete AFTER DELETE ON parents BEGIN
+      DELETE FROM school_teachers WHERE parent_id = OLD.id;
+    END;`);
+    // Tudi učiteljevi razredi (ime, koda, oznake učencev »Ana K.«, naloge) gredo z njim; učenci ostanejo.
+    // Pri šoli in nalogi drugih razredov ostane zapis brez povezave na račun.
+    db.exec(`CREATE TRIGGER IF NOT EXISTS classes_parent_delete AFTER DELETE ON parents BEGIN
+      DELETE FROM classes WHERE owner_parent_id = OLD.id;
+      UPDATE schools SET created_by = NULL WHERE created_by = OLD.id;
+      UPDATE class_assignments SET created_by = NULL WHERE created_by = OLD.id;
+    END;`);
+  }
 }
 
 // Veljavna licenca šole na dan `today` (najkasneje veljavna, ob enakem roku tista z več mesti).
@@ -647,7 +688,17 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
     const seats = num(b.seats);
     const list = (v, ok) => (Array.isArray(v) && v.length && v.every(ok) ? v : null);
     if (!PLANS.includes(b.plan)) return res.status(400).json({ error: `Paket: ${PLANS.join(", ")}.` });
-    if (b.plan === "pilot" && !pilotOpen(db, id)) return res.status(409).json({ error: `Pilotna cena velja samo za prvih ${PILOT_SCHOOLS_MAX} šol.` });
+    // Neobvezno: naročilo s strani /sole, iz katerega je ta licenca (orderId). Pilotno naročilo potem ne šteje kot
+    // drugo zasedeno mesto (pilotPlaces), mesto naročila preide na licenco.
+    const orderId = b.orderId == null || b.orderId === "" ? null : num(b.orderId);
+    const order = orderId == null ? null : Number.isInteger(orderId) && hasTable(db, "school_orders") ? db.prepare("SELECT * FROM school_orders WHERE id = ?").get(orderId) : undefined;
+    if (order === undefined) return res.status(404).json({ error: "Naročilo ne obstaja." });
+    if (b.plan === "pilot") {
+      // Mesto ima šola, ki je že pilotna, ali odprto pilotno naročilo, iz katerega je licenca; sicer mora biti prosto.
+      const p = pilotPlaces(db);
+      const fromOrder = order?.plan === "pilot" && PILOT_HOLD_STATUSES.includes(order.status) && p.orders.includes(order.tax_id);
+      if (!pilotSchoolIds(db).includes(id) && !fromOrder && p.free < 1) return res.status(409).json({ error: `Pilotna cena velja samo za prvih ${PILOT_SCHOOLS_MAX} šol.` });
+    }
     if (!Number.isInteger(seats) || seats < 1 || seats > 5000) return res.status(400).json({ error: "Število mest 1–5000." });
     const from = b.validFrom || day();
     if (!isDay(from) || !isDay(b.validUntil) || b.validUntil < from) return res.status(400).json({ error: "Veljavnost: validFrom ≤ validUntil (YYYY-MM-DD)." });
@@ -673,6 +724,8 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
         clean(b.invoiceRef, 60),
         clean(b.note, 200),
       );
+    // Vsa naročila iste šole (ista davčna) dobijo šolo, da pilotnega mesta ne štejejo še enkrat.
+    if (order) db.prepare("UPDATE school_orders SET school_id = ?, updated_at = datetime('now') WHERE tax_id = ?").run(id, order.tax_id);
     audit(db, { req, parentId: req.parent.id, actor: "admin", action: "licence_add", target: `school:${id}` });
     res.status(201).json({ id: Number(r.lastInsertRowid), ...schools.licenceView(id) });
   });

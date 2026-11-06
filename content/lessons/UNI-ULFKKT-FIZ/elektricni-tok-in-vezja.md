@@ -219,7 +219,7 @@ Vir z gonilno napetostjo $12\,\mathrm{V}$ in zanemarljivim notranjim uporom je p
 3. To je enačba RC vezja z gonilno napetostjo $U_\infty = 12 \cdot 20/30\,\mathrm{V} = 8{,}0\,\mathrm{V}$ in uporom $R_p = 10 \cdot 20/30\,\mathrm{k}\Omega \approx 6{,}67\,\mathrm{k}\Omega$, zato $U_C(t) = U_\infty(1 - e^{-t/\tau})$ s $\tau = R_pC = 6{,}67 \cdot 10^3\,\Omega \cdot 1{,}0 \cdot 10^{-4}\,\mathrm{F} \approx 0{,}667\,\mathrm{s}$.
 4. Ob $t = 0$ je $U_C = 0$, zato $I_2 = 0$ in $I_1 = U_g/R_1 = 12\,\mathrm{V}/10^4\,\Omega = 1{,}2\,\mathrm{mA}$. Po dolgem času je $I_C = 0$ in $I_1 = I_2 = U_g/(R_1 + R_2) = 12\,\mathrm{V}/(3{,}0 \cdot 10^4\,\Omega) = 0{,}40\,\mathrm{mA}$.
 5. $90\,\%$: $e^{-t/\tau} = 0{,}10$, torej $t = \tau\ln 10 = 0{,}667\,\mathrm{s} \cdot 2{,}303 \approx 1{,}54\,\mathrm{s}$.
-6. Odgovor: $U_C(t) = 8{,}0\,\mathrm{V}\,(1 - e^{-t/0{,}667\,\mathrm{s}})$; končna napetost je $8{,}0\,\mathrm{V}$, $\tau \approx 0{,}67\,\mathrm{s}$; tok skozi $R_1$ pade z $1{,}2\,\mathrm{mA}$ na $0{,}40\,\mathrm{mA}$, $90\,\%$ končne napetosti je doseženih po približno $1{,}5\,\mathrm{s}$.
+6. Odgovor: $U_C(t) = 8{,}0\,\mathrm{V}\,(1 - e^{-t/0{,}667\,\mathrm{s}})$; končna napetost je $8{,}0\,\mathrm{V}$, $\tau \approx 0{,}67\,\mathrm{s}$; tok skozi $R_1$ pade z $1{,}2\,\mathrm{mA}$ na $0{,}40\,\mathrm{mA}$; $90\,\%$ končne napetosti je doseženih po približno $1{,}5\,\mathrm{s}$.
 
 ### Naloga 2
 

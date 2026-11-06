@@ -107,3 +107,110 @@ test("pilotno naročilo zasede mesto: 9 licenc + 1 naročilo = polno; ista šola
     server.close();
   }
 });
+
+test("pilotno naročilo s licenco ne šteje dvakrat; »lost« naročilo se znova odpre samo, ko je mesto prosto", async () => {
+  const store = openDb(":memory:");
+  const app = createApp(store, { accounts: false, scheduler: false, log: { error() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const { db } = store;
+  const order = (taxId) =>
+    fetch(`${base}/api/school-orders`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        school: "OŠ Prule", address: "Prule 13, 1000 Ljubljana", registrationNo: "5085411", taxId, budgetUser: true, budgetCode: "61204",
+        contact: "Ana Novak", email: "ana.novak@os-prule.si", phone: "", plan: "pilot", students: 120, startDate: `${new Date().getUTCFullYear() + 1}-09-01`, note: "", consent: true,
+      }),
+    });
+  const setStatus = (id, status) => fetch(`${base}/api/admin/school-orders/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }) });
+  try {
+    for (let i = 1; i <= 8; i++) addSchool(db, i);
+    assert.equal((await order("11111111")).status, 201);
+    const oid = db.prepare("SELECT id FROM school_orders WHERE tax_id = '11111111'").get().id;
+    assert.equal(pilotPlaces(db).free, 1);
+    // Skrbnik vpiše pilotno licenco iz naročila (orderId → school_id), naročilo je še »new«: eno mesto, ne dve.
+    const sid = addSchool(db, 9);
+    db.prepare("UPDATE school_orders SET school_id = ? WHERE id = ?").run(sid, oid);
+    assert.deepEqual(pilotPlaces(db), { max: 10, licences: 9, orders: [], free: 1 });
+    // Naročilo brez licence (stari zapis brez school_id) šteje kot doslej.
+    assert.equal((await order("22222222")).status, 201);
+    assert.equal(pilotPlaces(db).free, 0);
+    const lost = db.prepare("SELECT id FROM school_orders WHERE tax_id = '22222222'").get().id;
+    assert.equal((await setStatus(lost, "lost")).status, 200);
+    assert.equal(pilotPlaces(db).free, 1);
+    // Mesto zasede druga šola; »lost« naročila ni mogoče znova odpreti.
+    assert.equal((await order("33333333")).status, 201);
+    const re = await setStatus(lost, "contacted");
+    assert.equal(re.status, 409);
+    assert.match((await re.json()).error, /zasedena/);
+    assert.equal(db.prepare("SELECT status FROM school_orders WHERE id = ?").get(lost).status, "lost");
+    // Zaprto stanje (»won«) ali opomba gre vedno; naročilo šole s pilotno licenco se lahko znova odpre.
+    assert.equal((await setStatus(lost, "won")).status, 200);
+    assert.equal((await setStatus(oid, "lost")).status, 200);
+    assert.equal((await setStatus(oid, "offer_sent")).status, 200, "šola že ima pilotno mesto (licenco)");
+    // Ko se mesto sprosti, se »lost« naročilo lahko znova odpre.
+    const third = db.prepare("SELECT id FROM school_orders WHERE tax_id = '33333333'").get().id;
+    assert.equal((await setStatus(third, "lost")).status, 200);
+    assert.equal((await setStatus(lost, "lost")).status, 200);
+    assert.equal((await setStatus(lost, "contacted")).status, 200);
+  } finally {
+    server.close();
+  }
+});
+
+test("licenca iz pilotnega naročila: zadnje mesto preide z naročila na licenco (orderId), brez 409", async () => {
+  process.env.EVKLID_ADMIN_EMAILS = "skrbnik@pilot.si";
+  const store = openDb(":memory:");
+  const calls = [];
+  const fetchFn = async (url, init = {}) => {
+    calls.push({ host: new URL(url).host, body: init.body ? JSON.parse(init.body) : null });
+    return { ok: true, status: 200, json: async () => ({ id: "x" }) };
+  };
+  const app = createApp(store, { accounts: true, scheduler: false, stripeKey: "", resendKey: "re_x", fetchFn, log: { error() {} } });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const jar = {};
+  const call = async (path, opts = {}) => {
+    const res = await fetch(base + path, {
+      method: opts.method || "GET",
+      redirect: "manual",
+      headers: { "Content-Type": "application/json", cookie: Object.entries(jar).map(([k, v]) => `${k}=${v}`).join("; ") },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    for (const c of res.headers.getSetCookie()) {
+      const [kv] = c.split(";");
+      jar[kv.slice(0, kv.indexOf("="))] = kv.slice(kv.indexOf("=") + 1);
+    }
+    const type = res.headers.get("content-type") || "";
+    return { status: res.status, body: type.includes("json") ? await res.json() : await res.text() };
+  };
+  const { db } = store;
+  try {
+    assert.equal((await call("/api/auth/register", { method: "POST", body: { email: "skrbnik@pilot.si", password: "geslo1234", accept_privacy: true, birth_date: "1985-04-12" } })).status, 201);
+    const mail = calls.filter((c) => c.host === "api.resend.com").at(-1);
+    await call(/\/api\/auth\/verify\?token=[\w-]+/.exec(mail.body.text)[0]);
+    for (let i = 1; i <= 9; i++) addSchool(db, i);
+    const r = await call("/api/school-orders", {
+      method: "POST",
+      body: {
+        school: "OŠ Prule", address: "Prule 13, 1000 Ljubljana", registrationNo: "5085411", taxId: "44444444", budgetUser: true, budgetCode: "61204",
+        contact: "Ana Novak", email: "ana.novak@os-prule.si", phone: "", plan: "pilot", students: 30, startDate: `${new Date().getUTCFullYear() + 1}-09-01`, note: "", consent: true,
+      },
+    });
+    assert.equal(r.status, 201, JSON.stringify(r.body));
+    const oid = db.prepare("SELECT id FROM school_orders").get().id;
+    const sid = Number(db.prepare("INSERT INTO schools (name, invite_code) VALUES ('OŠ Prule', 'PRULE1')").run().lastInsertRowid);
+    const lic = (body) => call(`/api/admin/schools/${sid}/licences`, { method: "POST", body: { plan: "pilot", seats: 30, validUntil: "2099-08-31", ...body } });
+    // Brez naročila je mest zmanjkalo (9 licenc + 1 odprto naročilo).
+    assert.equal((await lic({})).status, 409);
+    assert.equal((await lic({ orderId: 99999 })).status, 404);
+    const ok = await lic({ orderId: oid });
+    assert.equal(ok.status, 201, JSON.stringify(ok.body));
+    assert.equal(db.prepare("SELECT school_id FROM school_orders WHERE id = ?").get(oid).school_id, sid);
+    assert.deepEqual(pilotPlaces(db), { max: 10, licences: 10, orders: [], free: 0 });
+  } finally {
+    server.close();
+    delete process.env.EVKLID_ADMIN_EMAILS;
+  }
+});

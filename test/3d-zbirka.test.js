@@ -172,6 +172,6 @@ test("selecting a part hides the parts around it (wall, membrane, envelope) and 
   assert.match(src, /SMERI\.every\(/, "all six rays from outside must hit the shell");
   assert.match(src, /prostornina\(okvirDela\(p, bP\)\) < vS \* 1\.25/, "the shell is bigger than the selected part");
   assert.match(src, /\(info\.predmet \|\| "BIO"\) !== "BIO"\) return;/, "biology only");
-  assert.match(src, /sij\.clear\(\);\s*skrijObdajajoce\(null\);/, "restored before a rebuild");
+  assert.match(src, /obarvaj\(null\);[^\n]*\n\s*skrijObdajajoce\(null\);/, "restored before a rebuild");
   assert.match(src, /o\.layers\.set\(SKRITA_PLAST\)/);
 });

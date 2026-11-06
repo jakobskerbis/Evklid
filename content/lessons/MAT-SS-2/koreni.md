@@ -238,7 +238,7 @@ Za drugo gredico imata le letev, dolgo $1{,}2\,\text{m}$, ki naj bo ravno diagon
 ? Katera vrstica pravilno kaže vrednosti $\sqrt{x}$ za $x = 4$, $9$ in $16$ (v tem vrstnem redu)?
 - $16$, $81$, $256$
 ~ To so kvadrati $x^2$. Koren je obratno: iščeš število, katerega kvadrat je $x$.
-- $2$, $4{,}5$, $8$
+- $2$; $4{,}5$; $8$
 ~ To so polovice $\dfrac{x}{2}$. Koren števila $9$ je $3$, ker je $3^2 = 9$.
 + $2$, $3$, $4$
 > $2^2 = 4$, $3^2 = 9$ in $4^2 = 16$, zato je $\sqrt{4} = 2$, $\sqrt{9} = 3$ in $\sqrt{16} = 4$.

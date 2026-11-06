@@ -83,7 +83,7 @@ $x_T = \dfrac{m_1 x_1 + m_2 x_2 + m_3 x_3}{m_1 + m_2 + m_3}$
 **Rešitev:**
 
 1. Skupna masa: $7{,}0 + 3{,}2 + 1{,}0 = 11{,}2\,\text{kg}$.
-2. Statični momenti: $7{,}0 \cdot 0{,}19 = 1{,}33$, $3{,}2 \cdot 0{,}62 = 1{,}984$ in $1{,}0 \cdot 0{,}90 = 0{,}9$ (v kg·m).
+2. Statični momenti: $7{,}0 \cdot 0{,}19 = 1{,}33$; $3{,}2 \cdot 0{,}62 = 1{,}984$ in $1{,}0 \cdot 0{,}90 = 0{,}9$ (v kg·m).
 3. Vsota: $1{,}33 + 1{,}984 + 0{,}9 = 4{,}214\,\text{kg·m}$.
 4. $x_T = 4{,}214 / 11{,}2 \approx 0{,}376\,\text{m}$.
 5. Odgovor: težišče noge je približno $0{,}38\,\text{m}$ pod kolkom, v spodnjem delu stegna. Ni na polovici dolžine noge, ker je stegno precej težje od stopala.

@@ -30,7 +30,7 @@ Skupna pot raste, a vsakič za manj.
 :::premisli
 Ali skupna pot kdaj preseže $112\,\mathrm{m}$, če seštejemo dovolj veliko odsekov? Napovej, nato utemelji.
 ---
-Ne. Vsak nov odsek doda le enico na naslednjem decimalnem mestu: $111{,}1$, $111{,}11$, $111{,}111$ … Vse te vsote so manjše od $111{,}\overline{1}$, to pa je manj kot $112$.
+Ne. Vsak nov odsek doda le enico na naslednjem decimalnem mestu: $111{,}1$; $111{,}11$; $111{,}111$ … Vse te vsote so manjše od $111{,}\overline{1}$, to pa je manj kot $112$.
 :::
 
 Preverimo še z gibanjem. Po času $t$ (v sekundah) je Ahil pretekel $10t$ metrov, želva pa je od Ahilovega starta oddaljena $100 + t$ metrov. Ahil jo ujame, ko je $10t = 100 + t$, torej pri $t = \frac{100}{9}\,\mathrm{s} \approx 11{,}1\,\mathrm{s}$. Takrat je pretekel $\frac{1000}{9}\,\mathrm{m} = 111{,}\overline{1}\,\mathrm{m}$. Neskončno mnogo odsekov, a končna pot in končen čas. Zenon je zmotno mislil, da neskončno mnogo sumandov nujno da neskončno vsoto.
@@ -105,7 +105,7 @@ vrsta konvergira natanko tedaj, ko je $|q| < 1$; takrat je $S = \dfrac{a_1}{1 - 
 
 1. Prva vrsta: $q = \dfrac{-6}{12} = -\dfrac{1}{2}$. Ker je $|q| = \frac{1}{2} < 1$, vrsta konvergira.
 2. $S = \dfrac{12}{1 - \left(-\frac{1}{2}\right)} = \dfrac{12}{\frac{3}{2}} = 8$. Pazi na predznak: $1 - \left(-\frac{1}{2}\right) = \frac{3}{2}$.
-3. Smiselnost: delne vsote so $12, 6, 9, 7{,}5, \dots$ Skačejo okoli $8$ in se mu bližajo.
+3. Smiselnost: delne vsote so $12; 6; 9; 7{,}5; \dots$ Skačejo okoli $8$ in se mu bližajo.
 4. Druga vrsta: $q = \dfrac{-18}{12} = -\dfrac{3}{2}$. Ker je $|q| = \frac{3}{2} > 1$, vrsta divergira. Formula bi dala $\frac{12}{5/2} = 4{,}8$, a te številke ne smemo zapisati kot vsote: delne vsote $12, -6, 21, \dots$ skačejo vse dlje.
 5. Odgovor: prva vrsta konvergira in ima vsoto $8$; druga divergira in vsote nima.
 

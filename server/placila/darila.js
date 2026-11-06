@@ -10,6 +10,7 @@ export const GIFT_ADULT_TEXT = "Sem polnoletna oseba in kupujem darilno kodo za 
 export const GIFT_WITHDRAWAL_TEXT =
   "Vem, da lahko v 14 dneh od nakupa odstopim in dobim vrnjeno celotno plačilo, če koda še ni vpisana. Ko je koda vpisana, se uporaba začne in pravica do odstopa preneha.";
 import { giftFor, isoIn } from "../accounts/plans.js";
+import { BIRTH_MISSING_PAY } from "../accounts/age.js";
 import { STOPNJE, visja } from "../../public/stopnja.js";
 
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // brez I, O, 0, 1
@@ -57,6 +58,7 @@ export function mountGifts(app, ctx) {
     ensureCustomer,
     baseUrl,
     isMinor,
+    birthMissing = () => false,
     recordConsent,
     paidActive,
   } = ctx;
@@ -177,6 +179,7 @@ export function mountGifts(app, ctx) {
         });
     if (p.is_guest)
       return res.status(403).json({ error: "Najprej ustvari račun." });
+    if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p))
       return res
         .status(403)

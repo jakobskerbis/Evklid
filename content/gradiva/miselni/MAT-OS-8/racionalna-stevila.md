@@ -21,4 +21,4 @@ stanje: osnutek
   - $2 - 3 \cdot (-4) = 14$
 - Vreme v številih
   - sprememba: končna minus začetna temperatura
-  - povprečje $-3{,}5$, $1{,}2$, $-2{,}8$ je $-1{,}7$
+  - povprečje $-3{,}5$; $1{,}2$; $-2{,}8$ je $-1{,}7$

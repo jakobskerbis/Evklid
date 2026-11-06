@@ -111,5 +111,34 @@ export function adaptKeys(keys, profile) {
   for (const ins of want) take(pool.get(ins));
   for (const k of keys) if (!FIXED.has(k[1])) take(k);
   let i = 0;
-  return keys.map((k) => (FIXED.has(k[1]) ? k : chosen[i++]));
+  return brezPodvojitev(keys.map((k) => (FIXED.has(k[1]) ? k : chosen[i++])));
 }
+
+/**
+ * V načinu 2nd nobena funkcija ni dvakrat (j 2026-11-05: »i« in »e« sta bila dvakrat). Glavna funkcija tipke ostane
+ * vedno ista (geo x³, fiz eˣ); spremeni se le 2nd: če je že na tipki pred njo, tipka dobi 2nd iz REZERVA
+ * (ali je brez 2nd, če je njena glavna funkcija v načinu 2nd še nikjer).
+ */
+export function brezPodvojitev(keys) {
+  const videne = new Set();
+  const vse = new Set(keys.flatMap((k) => [k[1], k[3]].filter(Boolean)));
+  const rezerva = REZERVA.flatMap((x) => [[x[0], x[1]], [x[2], x[3]]]);
+  return keys.map((k) => {
+    if (FIXED.has(k[1])) return k;
+    const druga = k[3] ?? k[1];
+    if (!videne.has(druga)) return videne.add(druga), k;
+    if (k[3] && !videne.has(k[1])) return videne.add(k[1]), [k[0], k[1]];
+    // 2nd je že drugje in tudi glavna funkcija: 2nd postane koristna funkcija, ki je še ni
+    const r = rezerva.find(([, f]) => !vse.has(f) && !videne.has(f));
+    if (!r) return [k[0], k[1]];
+    vse.add(r[1]), videne.add(r[1]);
+    return [k[0], k[1], r[0], r[1]];
+  });
+}
+// 2nd funkcije za nadomestilo (niso med privzetimi), po koristnosti.
+const REZERVA = [
+  ["cot", "cot(", "cot⁻¹", "arccot("],
+  ["gcd", "gcd(@;)", "lcm", "lcm(@;)"],
+  ["min", "min(", "max", "max("],
+  ["mod", "mod(@;)", "|x|", "abs("],
+];

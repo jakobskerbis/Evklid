@@ -139,7 +139,7 @@ V stroku graha je $6$ semen. Vsako seme je nastalo iz ene semenske zasnove. V vs
 
 Koruza je vetrocvetka. Moški cveti so v metlici na vrhu rastline, ženski pa na storžu. Iz vsakega ženskega cveta visi dolg svilnat lasek, ki je vrat njegovega pestiča. Pelodno zrno pristane na koncu laska, $20\,\mathrm{cm}$ od plodnice. Vzkali v $0{,}5\,\mathrm{h}$, nato pelodna cev raste s hitrostjo $1{,}25\,\mathrm{cm/h}$. Koliko časa mine od opraševanja do vstopa v semensko zasnovo? Koliko kromosomov ima endosperm zrna, če ima koruza $2n = 20$?
 
-**Podatki:** $s = 20\,\mathrm{cm}$, $t_\mathrm{k} = 0{,}5\,\mathrm{h}$, $v = 1{,}25\,\mathrm{cm/h}$, $2n = 20$
+**Podatki:** $s = 20\,\mathrm{cm}$; $t_\mathrm{k} = 0{,}5\,\mathrm{h}$; $v = 1{,}25\,\mathrm{cm/h}$; $2n = 20$
 **Iščemo:** čas $t$ do vstopa v zasnovo in število kromosomov v endospermu
 
 :::formula
