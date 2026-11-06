@@ -167,17 +167,27 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [] }
   // preverjanje vidi le predlogo f(x) = …, zato ponovitve ne sproži (rešitev ostane označena kot nepreverjena).
   if (out.sol && !given.length && !check.verified && (check.reason === "wrong" || check.reason === "missing")) {
     const fb = check.reason === "missing" ? `x ≈ ${check.missing.slice(0, 6).map((m) => m.toFixed(4)).join(", ")} also satisfies the equation` : "substituting your result back does not give the original";
-    const again = await ask(fb);
-    usage.push(again.usage);
-    const c2 = again.sol ? verifyAi(text, again.sol) : { verified: false };
-    if (again.sol && (c2.verified || !out.sol)) {
-      out = again;
-      check = c2;
+    // Napaka ponovitve (529, povezava) ne sme odnesti plačanega prvega klica (pregled #462 L3): ostane prva rešitev.
+    let again = null;
+    try {
+      again = await ask(fb);
+    } catch (err) {
+      console.warn(`[evklid] reševanje: ponovitev ni uspela (${err?.message || err}), ostane prva rešitev`);
+    }
+    if (again) {
+      usage.push(again.usage);
+      const c2 = again.sol ? verifyAi(text, again.sol) : { verified: false };
+      if (again.sol && (c2.verified || !out.sol)) {
+        out = again;
+        check = c2;
+      }
     }
   }
   return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null } : null, usage, model: out.model };
 }
 
+// Navodila branja v žetonih za rezervo (žeton ≤ bajt, pregled #462 S7) + sporočilo in ovoj.
+const READ_PROMPT_TOKENS = Buffer.byteLength(READ_PROMPT, "utf8") + 500;
 export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, solveFn = solveWithAi }) {
   app.post("/api/students/:id/scan/read", async (req, res) => {
     const s = loadStudent(req, res);
@@ -187,7 +197,7 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
     // Trda meja AI (server/meje-ai.js): najvišji strošek branja mora iti pod mejo profila.
-    const hold = usage?.guard ? usage.guard(s.id, imageCallReserveUsd(READ_MODEL(), 2000)) : null;
+    const hold = usage?.guard ? usage.guard(s.id, imageCallReserveUsd(READ_MODEL(), 2000, 1, READ_PROMPT_TOKENS)) : null;
     if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
       const out = await readFn({ imageBase64: m[2], mediaType: m[1] });

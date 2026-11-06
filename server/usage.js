@@ -767,6 +767,9 @@ export function recentHistory(messages, turns = LIMITS.deepHistoryTurns()) {
 // od konca, zato se sporočilo spremeni enkrat in ostane enako – predpomnilnik se ne podira vsak krog.
 // Baza se ne spremeni (rok hrambe fotografij ureja server/zasebnost.js).
 export const OLD_IMAGE_TEXT = "[Fotografija iz tega sporočila ni več priložena. Nalogo s nje si prepisal v odgovoru na to sporočilo; če potrebuješ sliko (npr. skico), prosi učenca, naj jo pošlje znova.]";
+// Nadomestila slik (stara slika, izbrisana po roku hrambe, zavrnjena): niso učenčevo besedilo (pregled #462 A7:
+// sodba kode o nalogi s slike in vtipkanim besedilom je sicer izpadla, ko je slika postala stara).
+export const isImagePlaceholder = (text) => typeof text === "string" && (text === OLD_IMAGE_TEXT || /^\[Fotografija /.test(text));
 export function staleImages(messages, keep = LIMITS.historyImageTurns()) {
   let users = 0;
   const out = messages.slice();

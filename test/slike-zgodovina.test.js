@@ -77,3 +77,29 @@ test("klepet: fotografija gre modelu v svojem in naslednjem sporočilu, nato le 
     },
   );
 });
+
+test("A7: sodba kode o nalogi s fotografije ostane, ko je slika v zgodovini že nadomeščena", async () => {
+  const seen = [];
+  const reply = "Prebral sem: 2x = 6. Kaj dobiš?" + META;
+  await withAccounts(
+    {},
+    async ({ call, kid }) => {
+      const conv = (await call(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
+      const send = (body) => call(`/api/conversations/${conv.id}/messages`, { method: "POST", body });
+      await send({ text: "Reši 2x = 6", image: { media_type: "image/jpeg", data: "AAAA" } });
+      await send({ text: "Zakaj deliš?" });
+      await send({ text: "Aha, razumem." });
+      await send({ text: "x = 3" });
+      const last = JSON.stringify(seen.at(-1));
+      assert.match(last, /ni več priložena/, "slika je v tem krogu že nadomeščena");
+      assert.match(last, /preverjen_racun[\s\S]*exact check/, "koda je sodila trditev o nalogi s fotografije");
+    },
+    {
+      streamFn: async ({ messages, onText }) => {
+        seen.push(messages);
+        onText(reply);
+        return { text: reply, stopReason: "end_turn", model: "claude-haiku-5-5", usage: { input_tokens: 100, output_tokens: 20 } };
+      },
+    },
+  );
+});

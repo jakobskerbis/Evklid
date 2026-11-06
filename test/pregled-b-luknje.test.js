@@ -1,4 +1,4 @@
-// Pregled 3 (B) PR #462: poskusi zlorabe trde meje AI. Testi, ki PADEJO, dokazujejo luknjo.
+// Pregled 3 (B) PR #462: poskusi zlorabe trde meje AI (luknje L1–L4). Pred popravki so padli, zdaj morajo uspeti.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { withAccounts, META } from "./racuni-pomoc.js";
@@ -94,7 +94,9 @@ test("L3: skener – napaka pri ponovitvi izgubi strošek prvega klica", async (
     const s = await (await fetch(`${base}/api/students`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: "Ana" }) })).json();
     const r = await fetch(`${base}/api/students/${s.id}/scan/solve`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: "x+1=3" }) });
     assert.equal(n, 2, "dva klica");
-    assert.ok(r.status >= 500);
+    // Popravek: ostane prva (nepreverjena) rešitev, strošek prvega klica je zapisan.
+    assert.equal(r.status, 200);
+    assert.equal((await r.json()).solution.verified, false);
     const logged = store.db.prepare("SELECT COALESCE(SUM(cost_usd),0) s FROM usage").get().s;
     assert.ok(logged > 0, `plačan prvi klic (~0,08 $) ni zapisan: ${logged}`);
   } finally {

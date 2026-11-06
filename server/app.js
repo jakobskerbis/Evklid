@@ -11,7 +11,7 @@ import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, 
 import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
 import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams, costUsd, OCR_MODEL } from "./claude.js";
-import { Usage, LIMITS, NOTES, windowHistory, recentHistory, staleImages } from "./usage.js";
+import { Usage, LIMITS, NOTES, windowHistory, recentHistory, staleImages, isImagePlaceholder } from "./usage.js";
 import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
 import { Progress } from "./progress.js";
@@ -779,7 +779,7 @@ export function createApp(store, opts = {}) {
       let firstPre = null;
       if (claim) {
         // Brez skrite opombe pole (server/paper-context.js), sicer reševalnik prve naloge ne prepozna.
-        const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !isHiddenNote(x.text)) } : m);
+        const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !isHiddenNote(x.text) && !isImagePlaceholder(x.text)) } : m);
         const earlier = fullHistory.filter((m) => m.role === "user").slice(0, -1).map(ownText);
         let at = -1;
         for (let i = earlier.length - 1; i >= 0 && !firstPre; i--) {
