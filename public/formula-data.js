@@ -17,7 +17,8 @@ const MUL = "\\s*(?:\\\\cdot|\\\\times|\\\\[,;: ])?\\s*";
 // Številka z enoto: S = 1,5 m², V = 2,00 L, a = 2 m/s² (pomen je jasen tudi brez teme).
 const NUM_UNIT = "\\s*=\\s*[\\d\\s{},.]+(?:\\\\[,;!: ])?\\s*(?:\\\\(?:mathrm|text|rm)\\s*\\{\\s*)?";
 // Temperatura v °C: T = t + 273, t₁ = 37 °C (t tu ni čas; pregled 463 §4).
-const CELZIJ = "t\\s*\\+\\s*273|\\\\circ\\s*\\\\?,?\\s*(?:\\\\(?:mathrm|text|rm)\\s*\\{\\s*)?C|°\\s*C";
+// Število z °C neposredno za = ali ≈ (ne Δt = 300 °C / hitrost, kar je čas).
+const CELZIJ = "t\\s*\\+\\s*273|t\\s*/\\s*\\{?\\}?\\s*\\^?\\s*\\\\circ|(?:=|\\\\approx)\\s*-?\\s*[\\d{},.\\s]+\\\\?,?\\s*\\^?\\s*\\{?\\s*\\\\circ|(?:=|\\\\approx)\\s*-?\\s*[\\d{},.\\s]+°";
 const T_CELZIJ = { ctx: CELZIJ, n: "temperatura (v °C)", en: "temperature (in °C)", r: "T = t + 273{,}15" };
 // p⁺ (proton) in n⁰ (nevtron) nista tlak in množina snovi.
 const DELEC = "p\\s*\\^\\s*\\{?\\s*\\+|n\\s*\\^\\s*\\{?\\s*0";
@@ -34,7 +35,7 @@ const FIZ = {
   m: { n: "masa", en: "mass", r: "m = \\rho\\,V", u: "kg" },
   // a je tudi razdalja predmeta (leče), rob kvadra, dolžina ročice ali stranica preseka: pospešek le po formuli,
   // enoti ali temi gibanja in sil.
-  a: { zan: `a${NUM_UNIT}m\\s*/\\s*s\\^|a${NUM_UNIT}\\\\frac\\{\\s*m\\s*\\}\\{\\s*s\\^`, ctx: `a\\s*=\\s*\\\\frac\\{\\s*\\\\Delta\\s*v|F\\s*=\\s*m${MUL}a\\b|a${MUL}t\\^|v_?0?\\s*[+-]\\s*a${MUL}t\\b`, teme: "pospeš|gibanj|\\bsil[aei]?\\b|newton|prost\\w*\\s+pad|\\bmet\\b|kroženj|klanc", ne: "\\bleč|zrcal|gorišč|nosil|torzij|upogib|presek|prerez|kvader|gostot", n: "pospešek", en: "acceleration", r: "a = \\frac{\\Delta v}{\\Delta t}", u: "m/s^2" },
+  a: { zan: `a${NUM_UNIT}m\\s*/\\s*s\\^|a${NUM_UNIT}\\\\frac\\{\\s*m\\s*\\}\\{\\s*s\\^`, ctx: `a\\s*=\\s*\\\\frac\\{\\s*\\\\Delta\\s*v|F\\s*=\\s*m${MUL}a\\b|a${MUL}t\\^|v_?0?\\s*[+-]\\s*a${MUL}t\\b|=\\s*\\\\d?frac\\{\\s*v\\^\\{?2\\}?\\s*\\}\\{\\s*r|=\\s*F\\s*/\\s*m|=\\s*\\\\d?frac\\{\\s*F`, teme: "pospeš|gibanj|\\bsil[aei]?\\b|newton|prost\\w*\\s+pad|\\bmet\\b|kroženj|klanc", ne: "\\bleč|zrcal|gorišč|nosil|torzij|upogib|presek|prerez|kvader|gostot", n: "pospešek", en: "acceleration", r: "a = \\frac{\\Delta v}{\\Delta t}", u: "m/s^2" },
   a_c: { n: "centripetalni pospešek", en: "centripetal acceleration", r: "a_c = \\frac{v^2}{r}", u: "m/s^2" },
   v: { n: "hitrost", en: "velocity (speed)", r: "v = \\frac{s}{t}", u: "m/s" },
   v_0: { n: "začetna hitrost", en: "initial velocity", u: "m/s" },
@@ -108,7 +109,8 @@ const FIZ = {
 
 const KEM = {
   // n je tudi nevtron (n⁰), lupina (n = 4), število meritev ali kromosomska garnitura (4n).
-  n: { brez: `${DELEC}|^\\s*\\d+\\s*n\\s*$`, ne: "lupin|kvantn|orbital|kromosom|garnitur|ploid|meritev|ponovit|vzor[ce]", n: "množina snovi", en: "amount of substance", r: "n = \\frac{m}{M}", u: "mol" },
+  // n = 10 (število meritev), n = 0, 1, 2 (Hücklovo pravilo), ns² np² (elektronska konfiguracija) niso množina.
+  n: { zan: `n${NUM_UNIT}(?:[mμk]?mol)\\b|n\\s*=\\s*\\\\d?frac\\{\\s*m\\b|m\\s*=\\s*n${MUL}M|n\\s*\\(\\s*\\\\mathrm`, brez: `${DELEC}|^\\s*\\d+\\s*n\\s*$|^\\s*n\\s*=\\s*\\d+\\s*$|n\\s*=\\s*0\\s*,|n\\s*[spdf]\\s*\\^`, ne: "lupin|kvantn|orbital|kromosom|garnitur|ploid", n: "množina snovi", en: "amount of substance", r: "n = \\frac{m}{M}", u: "mol" },
   m: { n: "masa", en: "mass", r: "m = n\\,M", u: "g" },
   M: { n: "molska masa", en: "molar mass", r: "M = \\frac{m}{n}", u: "g/mol", note: "Vsota atomskih mas iz periodnega sistema.", noteEn: "Sum of the atomic masses from the periodic table." },
   M_r: { n: "relativna molekulska masa", en: "relative molecular mass", r: "M_r = \\sum A_r", note: "Nima enote; številsko je enaka molski masi v g/mol.", noteEn: "It has no unit; numerically equal to the molar mass in g/mol." },
@@ -122,7 +124,8 @@ const KEM = {
   w: { ctx: "w\\s*=\\s*\\\\frac\\{\\s*m|w\\s*\\(", teme: "delež|raztopin|zmes|sestav|koncentracij", n: "masni delež", en: "mass fraction", r: "w = \\frac{m_{\\text{topljenca}}}{m_{\\text{raztopine}}}", note: "Nima enote; pogosto ga zapišemo v odstotkih.", noteEn: "It has no unit; often written as a percentage." },
   φ: { n: "prostorninski delež", en: "volume fraction", r: "\\varphi = \\frac{V_i}{V}" },
   ρ: { n: "gostota", en: "density", r: "\\rho = \\frac{m}{V}", u: "g/mL" },
-  p: { brez: DELEC, n: "tlak", en: "pressure", r: "p\\,V = n\\,R\\,T", u: "kPa" },
+  // np² v elektronski konfiguraciji je orbitala p.
+  p: { brez: `${DELEC}|[n\\d]\\s*p\\s*\\^`, n: "tlak", en: "pressure", r: "p\\,V = n\\,R\\,T", u: "kPa" },
   T: { n: "temperatura (absolutna)", en: "(absolute) temperature", r: "T = t + 273{,}15", u: "K" },
   R: { ctx: `R${MUL}T|R\\s*(?:=|\\\\approx)\\s*8`, teme: "plin|termodinam|ravnotežj|entalpij|entropij|gibbs|nernst|arrhenius|elektrokem", n: "splošna plinska konstanta", en: "gas constant", r: "R \\approx 8{,}314\\,\\mathrm{J/(mol\\,K)}", u: "J/(mol K)" },
   K_c: { n: "konstanta ravnotežja (s koncentracijami)", en: "equilibrium constant (concentrations)" },
@@ -151,6 +154,7 @@ Object.assign(BIO, {
   c: { ...KEM.c, ctx: `c${NUM_UNIT}(?:m|μ)?mol|c\\s*=\\s*\\\\frac\\{\\s*n` },
   V: { ...KEM.V, ctx: `V${NUM_UNIT}(?:[mμd]?L|[cdm]?m\\^)` },
   T: { ...KEM.T, ctx: `T${NUM_UNIT}K\\b|T\\s*=\\s*t\\s*\\+` },
+  t: [T_CELZIJ, { ...FIZ.t[1], ctx: `t${NUM_UNIT}(?:s|min|h|dan|dni|let|ur[aei]?)\\b` }],
 });
 
 // Pomen črke je odvisen od konteksta (j, 6. 11.: x₁ v Lagrangevem izreku je točka, ne ničla). Polja vnosa:

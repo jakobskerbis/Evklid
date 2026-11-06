@@ -65,7 +65,8 @@ test("goal reminder e-mail goes once per child per day", async () => {
 test("formula symbols: subject meanings, units after numbers, no chemistry formulas or subscripts", () => {
   assert.equal(lookupSymbol("M", "KEM").n, "molska masa");
   assert.equal(lookupSymbol("M", "KEM").r, "M = \\frac{m}{n}");
-  assert.equal(lookupSymbol("a", "FIZ").n, "pospešek");
+  assert.equal(lookupSymbol("a", "FIZ", "F = m\\,a").n, "pospešek");
+  assert.equal(lookupSymbol("a", "FIZ", "V = a \\cdot b \\cdot c"), null); // rob kvadra (pregled 463 §4)
   assert.equal(lookupSymbol("a", "MAT", "x^2"), null); // brez kvadratne enačbe a ni koeficient
   assert.equal(lookupSymbol("a", "MAT", "a x^2 + b x + c = 0").n, "vodilni koeficient (pri x²)");
   assert.equal(lookupSymbol("p", "FIZ", "p = m\\,v").n, "gibalna količina");

@@ -79,3 +79,13 @@ test("biologija: črke iz kemije le s formulo ali enoto", () => {
   has("BIO", "Celica", "Masa je $m = 5\\,\\mathrm{g}$.", "m", /masa/);
   has("BIO", "Fotosinteza", "Konstanta $K_a$ kisline.", "K_a", /kisline/);
 });
+
+test("pravilni pomeni ostanejo: n v kemiji, a z indeksom, čas v biologiji", () => {
+  has("KEM", "Statistična obdelava rezultatov", "Iz vzorca dobimo $n = 0{,}01\\,\\mathrm{mol}$ in $m = n \\cdot M$.", "n", /množina/);
+  none("KEM", "Statistična obdelava rezultatov", "Opravili smo $n=10$ meritev.", "n");
+  none("KEM", "Elementi p-bloka", "Konfiguracija $ns^2\\,np^2$.", "n");
+  none("KEM", "Elementi p-bloka", "Konfiguracija $ns^2\\,np^2$.", "p");
+  has("FIZ", "Enakomerno kroženje", "Velja $a_r = \\dfrac{v^2}{r}$.", "a", /pospešek/);
+  has("FIZ", "Newtonovi zakoni", "Velja $a_2 = F/m_2$.", "a", /pospešek/);
+  has("BIO", "Organski sistemi živali", "Čas je $t = 1\\,\\mathrm{dan}$.", "t", /čas/);
+});
