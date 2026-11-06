@@ -216,6 +216,16 @@ export function createApp(store, opts = {}) {
     res.set("Cache-Control", "no-store");
     res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null });
   });
+  // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
+  const afterDelete = [];
+  app.use((req, res, next) => {
+    if (req.method === "DELETE" && /^\/api\/(students\/\d+|account)$/.test(req.path)) {
+      res.on("finish", () => {
+        if (res.statusCode < 300) for (const fn of afterDelete) fn();
+      });
+    }
+    next();
+  });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
   mountMobile(app, accounts, { scheduler: opts.scheduler, fetchFn: opts.fetchFn, ...opts.mobile }); // prijava z Apple, nakupi v trgovinah, obvestila, /prenesi
@@ -334,7 +344,8 @@ export function createApp(store, opts = {}) {
     return c;
   };
 
-  mountFeedback(app, store, { usage, file: opts.feedbackFile ?? null, createFn: opts.feedbackCreateFn });
+  const feedbackStore = mountFeedback(app, store, { usage, file: opts.feedbackFile ?? null, createFn: opts.feedbackCreateFn });
+  afterDelete.push(() => feedbackStore.writeFile());
   mountReports(app, store, {
     loadConversation,
     loadStudent,

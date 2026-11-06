@@ -158,6 +158,13 @@ export function migrateSchools(db) {
     db.exec(`CREATE TRIGGER IF NOT EXISTS school_teachers_parent_delete AFTER DELETE ON parents BEGIN
       DELETE FROM school_teachers WHERE parent_id = OLD.id;
     END;`);
+    // Tudi učiteljevi razredi (ime, koda, oznake učencev »Ana K.«, naloge) gredo z njim; učenci ostanejo.
+    // Pri šoli in nalogi drugih razredov ostane zapis brez povezave na račun.
+    db.exec(`CREATE TRIGGER IF NOT EXISTS classes_parent_delete AFTER DELETE ON parents BEGIN
+      DELETE FROM classes WHERE owner_parent_id = OLD.id;
+      UPDATE schools SET created_by = NULL WHERE created_by = OLD.id;
+      UPDATE class_assignments SET created_by = NULL WHERE created_by = OLD.id;
+    END;`);
   }
 }
 

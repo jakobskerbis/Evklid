@@ -1012,7 +1012,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
     audit(db, { req, parentId: p.id, action: "export" });
     const parent = { ...p };
-    for (const k of ["password_hash", "verify_token_hash", "reset_token_hash", "reset_expires_at", "unsubscribe_token"]) delete parent[k];
+    for (const k of ["password_hash", "verify_token_hash", "reset_token_hash", "reset_expires_at", "unsubscribe_token", "store_account_token"]) delete parent[k];
     const q = (sql, ...a) => db.prepare(sql).all(...a);
     const data = {
       exported_at: new Date().toISOString(),
@@ -1049,7 +1049,7 @@ export function mountAccounts(app, store, opts = {}) {
         })(),
         flashcards: (() => {
           try {
-            return q("SELECT front, back, subject, topic, source, box, due, reviews, created_at FROM flashcards WHERE student_id = ? AND verified = 1", c.id).map((f) => ({ ...f, front: unseal(f.front), back: unseal(f.back) }));
+            return q("SELECT front, back, subject, topic, source, box, due, reviews, verified, created_at FROM flashcards WHERE student_id = ?", c.id).map((f) => ({ ...f, front: unseal(f.front), back: unseal(f.back) }));
           } catch {
             return [];
           }

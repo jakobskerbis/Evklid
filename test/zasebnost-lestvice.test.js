@@ -127,3 +127,27 @@ test("P3: odgovor iz predpomnilnika nima imena prejšnjega učenca, sklonjeno im
     server.close();
   }
 });
+
+test("GDPR: izbris profila prepiše kopijo mnenj v datoteki (brez ključa za šifriranje)", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const path = await import("node:path");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-fb-"));
+  const file = path.join(dir, "mnenja.json");
+  const store = openDb(":memory:");
+  const app = createApp(store, { scheduler: false, feedbackFile: file });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const j = (p, o = {}) => fetch(base + p, { method: o.method || "GET", headers: { "Content-Type": "application/json" }, body: o.body ? JSON.stringify(o.body) : undefined });
+  try {
+    const s = await (await j("/api/students", { method: "POST", body: { name: "Lan", settings: { level: "OS", grade: 8 } } })).json();
+    assert.equal((await j(`/api/students/${s.id}/feedback`, { method: "POST", body: { name: "Lan", ratings: { tutor: 4 }, ideas: "več iger z ulomki" } })).status < 300, true);
+    assert.match(fs.readFileSync(file, "utf8"), /več iger z ulomki/);
+    assert.equal((await j(`/api/students/${s.id}`, { method: "DELETE" })).status, 200);
+    await new Promise((r) => setTimeout(r, 20));
+    assert.doesNotMatch(fs.readFileSync(file, "utf8"), /več iger z ulomki/, "besedilo ne ostane v datoteki");
+  } finally {
+    server.close();
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});

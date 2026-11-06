@@ -1351,19 +1351,44 @@ test("GDPR: izvoz vseh podatkov in izbris računa brez ostankov", async () => {
     db.prepare("INSERT INTO offline_results (student_id, topic_id, seed) VALUES (?, 'MAT-OS-7-ulomki', 42)").run(kid.id);
     db.prepare("CREATE TABLE IF NOT EXISTS push_log (parent_id INTEGER NOT NULL, kind TEXT NOT NULL, period TEXT NOT NULL, PRIMARY KEY (parent_id, kind, period))").run();
     db.prepare("INSERT INTO push_log (parent_id, kind, period) VALUES (?, 'streak', '2026-11-05:1')").run(p.id);
+    // Nepreverjena kartica, darilo, priporočilo, učiteljev razred in šola, UUID trgovine.
+    db.prepare("INSERT INTO flashcards (student_id, front, back, norm, verified) VALUES (?, 'Kaj je 2+2?', '4', 'kaj je 2+2', 0)").run(kid.id);
+    db.prepare("INSERT INTO gifts (buyer_id, amount, days, code) VALUES (?, 999, 30, 'DAR-TEST-0001')").run(p.id);
+    db.prepare("INSERT INTO referral_rewards (referrer_id, referrer_reward) VALUES (?, 'mesec')").run(p.id);
+    db.prepare("UPDATE parents SET store_account_token = 'uuid-trgovine-123' WHERE id = ?").run(p.id);
+    const school = db.prepare("INSERT INTO schools (name, invite_code, created_by) VALUES ('OŠ Test', 'SOLA-T1', ?)").run(p.id).lastInsertRowid;
+    const cls = db.prepare("INSERT INTO classes (code, name, kind, owner_parent_id, school_id) VALUES ('RAZ-T1', '7.a', 'class', ?, ?)").run(p.id, school).lastInsertRowid;
+    // Učenec drugega računa v učiteljevem razredu z učiteljevo oznako.
+    const other = client();
+    await registerVerified(other, calls, "drugi@primer.si");
+    const tuj = (await other("/api/students", { method: "POST", body: { name: "Tine", birth_year: YEAR - 12, consent: true } })).body;
+    db.prepare("INSERT INTO class_members (class_id, student_id, teacher_label) VALUES (?, ?, 'Tine K.')").run(cls, tuj.id);
+    db.prepare("INSERT INTO class_assignments (class_id, topic_id, title, created_by) VALUES (?, 'MAT-OS-7-ulomki', 'Ulomki', ?)").run(cls, p.id);
     const exp = (await a("/api/account/export", { method: "POST", body: { password: "geslo1234" } })).body;
     const lan = exp.children.find((c) => c.id === kid.id);
     assert.equal(lan.bug_reports[0].note, "gumb ne dela", "prijava napake aplikacije je v izvozu");
     assert.equal(lan.feedback[0].ideas, "več iger", "mnenje je v izvozu");
     assert.equal(exp.other.offline_results[0].seed, 42, "tabela brez posebnega izvoza je v izvozu (other)");
     const text = JSON.stringify(exp);
-    assert.ok(!/password_hash|token_hash|"token"/.test(text), "brez gesel in žetonov");
+    assert.ok(!/password_hash|token_hash|"token"|store_account_token|uuid-trgovine/.test(text), "brez gesel in žetonov");
+    assert.deepEqual(lan.flashcards.map((f) => [f.front, f.verified]), [["Kaj je 2+2?", 0]], "tudi nepreverjena kartica");
+    assert.equal(exp.other.gifts?.[0]?.code, "DAR-TEST-0001", "kupljeno darilo");
+    assert.equal(exp.other.referral_rewards?.[0]?.referrer_reward, "mesec", "priporočilo");
+    assert.equal(exp.other.schools?.[0]?.name, "OŠ Test", "ustanovljena šola");
+    assert.equal(exp.other.classes?.[0]?.name, "7.a", "učiteljev razred");
+    assert.ok(!text.includes("Tine"), "brez podatkov drugih računov (učenec v razredu)");
     // Izbris profila izbriše njegova mnenja (prej so ostala brez lastnika).
     assert.equal((await a(`/api/students/${kid2.id}`, { method: "DELETE" })).status, 200);
     assert.equal(db.prepare("SELECT COUNT(*) n FROM feedback WHERE ideas = 'temni način' OR student_id IS NULL").get().n, 0);
     // Izbris računa: nič osebnega ne ostane.
     assert.equal((await a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
-    for (const [t, where] of [["students", "1"], ["feedback", "1"], ["bug_reports", "1"], ["offline_results", "1"], ["push_log", "1"], ["consents", "1"], ["conversations", "1"]]) {
+    // Učiteljev razred (ime, koda, oznake »Tine K.«, naloge) gre z računom; učenec drugega računa ostane.
+    assert.equal(db.prepare("SELECT COUNT(*) n FROM classes").get().n, 0, "razred izbrisan");
+    assert.equal(db.prepare("SELECT COUNT(*) n FROM class_members").get().n, 0, "oznake učitelja izbrisane");
+    assert.equal(db.prepare("SELECT COUNT(*) n FROM class_assignments").get().n, 0);
+    assert.equal(db.prepare("SELECT created_by FROM schools").get().created_by, null, "šola brez povezave na račun");
+    assert.ok(db.prepare("SELECT 1 FROM students WHERE id = ?").get(tuj.id), "učenec drugega računa ostane");
+    for (const [t, where] of [["students", `id <> ${Number(tuj.id)}`], ["feedback", "1"], ["bug_reports", "1"], ["offline_results", "1"], ["push_log", "1"], ["consents", `parent_id = ${Number(p.id)}`], ["conversations", `student_id <> ${Number(tuj.id)}`]]) {
       assert.equal(db.prepare(`SELECT COUNT(*) n FROM ${t} WHERE ${where}`).get().n, 0, `${t} je prazna`);
     }
   });

@@ -249,7 +249,12 @@ export function startPrivacyJobs(db, { scheduler = true, log = console } = {}) {
 // zgoščene vrednosti ostanejo zunaj; šifrirana polja gredo v izvoz odšifrirana.
 const SECRET_COL = /hash|token|secret|password|salt|cipher/i;
 const SECRET_TABLE = new Set(["parent_sessions", "profile_passwords", "profile_unlocks", "account_unlocks", "pay_links", "kv"]);
-const OWNER_COLS = { student: ["student_id", "owner_student_id"], parent: ["parent_id", "owner_parent_id"] };
+// Stolpci z računom: tudi kupec in prejemnik darila (gifts), priporočila (referral_rewards), ustanovitelj šole
+// in avtor naloge razreda (created_by).
+const OWNER_COLS = {
+  student: ["student_id", "owner_student_id"],
+  parent: ["parent_id", "owner_parent_id", "buyer_id", "redeemed_by", "referrer_id", "referred_id", "created_by"],
+};
 export function exportOtherTables(db, { parentId, studentIds = [], skip = [] }) {
   const out = {};
   const skipSet = new Set([...skip, "parents", "students"]);
