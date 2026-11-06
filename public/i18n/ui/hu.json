@@ -1855,6 +1855,7 @@
   "lg.already": "Már tagja vagy a(z) „{name}” csoportnak.",
   "lg.joined": "Csatlakoztál a(z) „{name}” csoporthoz.",
   "lg.created": "A csoport elkészült. Kód a barátoknak: {code}",
+  "lg.nameContact": "A név nem tartalmazhat e-mail-címet, telefonszámot, linket vagy közösségimédia-profilt.",
   "lg.leaveConfirm": "Biztosan kilépsz ebből a csoportból?",
   "lg.pickNick": "Válassz becenevet",
   "lg.nickWhy": "Biztonsági okokból nem írhatsz be saját becenevet, így mások sosem látják a neved.",

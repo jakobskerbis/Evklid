@@ -5,6 +5,7 @@ import { icon, hydrateIcons } from "./icons.js";
 import { t, locale, applyI18n } from "./i18n.js";
 import { openPrintable } from "./gradiva.js";
 import { hostQuiz } from "./kviz.js";
+import { nameHasContact } from "./ime-skupine.js";
 
 applyI18n();
 hydrateIcons();
@@ -409,6 +410,7 @@ async function render() {
   $("#class-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = e.target.elements;
+    if (nameHasContact(f.name.value)) return toast(t("lg.nameContact"));
     try {
       let c;
       if (home.accounts === false) {

@@ -1847,6 +1847,7 @@
   "lg.already": "你已經在「{name}」群組中。",
   "lg.joined": "你已加入「{name}」群組。",
   "lg.created": "群組已建立。給朋友的代碼:{code}",
+  "lg.nameContact": "名稱中不能包含電子郵件、電話號碼、連結或社群媒體帳號。",
   "lg.leaveConfirm": "確定要退出這個群組嗎?",
   "lg.pickNick": "選擇暱稱",
   "lg.nickWhy": "為了安全,你不能自己輸入暱稱,所以別人永遠看不到你的名字。",

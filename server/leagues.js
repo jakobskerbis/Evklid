@@ -18,6 +18,7 @@ import crypto from "node:crypto";
 import { stageCode, stageCodeSql } from "../public/stopnja.js";
 import { ensureAvatarTables, publicAvatar } from "./avatar.js";
 import { AWARD_MIN } from "../public/zbirke.js";
+import { nameHasContact, NAME_CONTACT_ERROR } from "../public/ime-skupine.js";
 
 export const TIERS = ["Bronasta", "Srebrna", "Zlata", "Safirna", "Rubinasta", "Smaragdna", "Diamantna"];
 export const LEAGUE = {
@@ -543,7 +544,9 @@ export function mountLeagues(app, store, { loadStudent }) {
   app.post("/api/students/:id/friend-groups", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = leagues.createFriendsGroup(s.id, cleanName(req.body?.name) || "Prijatelji");
+    const name = cleanName(req.body?.name);
+    if (nameHasContact(name)) return res.status(400).json({ error: NAME_CONTACT_ERROR, code: "lg.nameContact" });
+    const out = leagues.createFriendsGroup(s.id, name || "Prijatelji");
     if (out.error) return res.status(400).json(out);
     res.status(201).json(out);
   });
@@ -556,6 +559,7 @@ export function mountLeagues(app, store, { loadStudent }) {
   app.post("/api/classes", (req, res) => {
     const name = cleanName(req.body?.name);
     if (!name) return res.status(400).json({ error: "Vpiši ime razreda, npr. 8.b." });
+    if (nameHasContact(name)) return res.status(400).json({ error: NAME_CONTACT_ERROR, code: "lg.nameContact" });
     res.status(201).json(leagues.createClass(name, req.parent?.id ?? null));
   });
   // Ko so računi vklopljeni, vidi učitelj svoje razrede z vsake naprave.

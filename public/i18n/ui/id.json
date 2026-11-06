@@ -1847,6 +1847,7 @@
   "lg.already": "Kamu sudah ada di grup “{name}”.",
   "lg.joined": "Kamu bergabung ke grup “{name}”.",
   "lg.created": "Grup dibuat. Kode untuk teman: {code}",
+  "lg.nameContact": "Nama tidak boleh berisi email, nomor telepon, tautan, atau profil media sosial.",
   "lg.leaveConfirm": "Yakin ingin keluar dari grup ini?",
   "lg.pickNick": "Pilih nama panggilan",
   "lg.nickWhy": "Demi keamanan kamu tidak bisa mengetik nama panggilan sendiri, jadi orang lain tidak pernah melihat namamu.",

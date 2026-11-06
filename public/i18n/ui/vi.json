@@ -1847,6 +1847,7 @@
   "lg.already": "Bạn đã ở trong nhóm “{name}”.",
   "lg.joined": "Bạn đã tham gia nhóm “{name}”.",
   "lg.created": "Đã tạo nhóm. Mã cho bạn bè: {code}",
+  "lg.nameContact": "Tên không được chứa email, số điện thoại, liên kết hoặc tài khoản mạng xã hội.",
   "lg.leaveConfirm": "Bạn thật sự muốn rời nhóm này?",
   "lg.pickNick": "Chọn biệt danh",
   "lg.nickWhy": "Vì an toàn, bạn không thể tự gõ biệt danh, nên người khác không bao giờ thấy tên bạn.",

@@ -1847,6 +1847,7 @@
   "lg.already": "你已经在“{name}”小组中。",
   "lg.joined": "你已加入“{name}”小组。",
   "lg.created": "小组已创建。给朋友的代码:{code}",
+  "lg.nameContact": "名称中不能包含电子邮箱、电话号码、链接或社交媒体账号。",
   "lg.leaveConfirm": "确定要退出这个小组吗?",
   "lg.pickNick": "选择昵称",
   "lg.nickWhy": "为了安全,你不能自己输入昵称,所以别人永远看不到你的名字。",

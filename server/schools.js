@@ -11,6 +11,7 @@ import crypto from "node:crypto";
 import { getPath, getTopic, baseTopicIds } from "./curriculum.js";
 import { audit } from "./dnevnik-dostopov.js";
 import { VAT_RATE, freeStudentMonthlyUsd } from "./accounts/plans.js";
+import { nameHasContact, NAME_CONTACT_ERROR } from "../public/ime-skupine.js";
 
 export const SCHOOL = {
   maxSchoolsPerTeacher: 3,
@@ -571,6 +572,7 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
     if (!p) return;
     const name = clean(req.body?.name, 40);
     if (!name) return res.status(400).json({ error: "Vpišite ime razreda, npr. 8.b." });
+    if (nameHasContact(name)) return res.status(400).json({ error: NAME_CONTACT_ERROR, code: "lg.nameContact" });
     const schoolId = optId(req.body?.schoolId);
     if (schoolId !== null && !(Number.isInteger(schoolId) && schools.role(schoolId, p.id))) return res.status(404).json({ error: "Šola ne obstaja." });
     const count = db.prepare("SELECT COUNT(*) AS n FROM classes WHERE kind = 'class' AND owner_parent_id = ?").get(p.id).n;

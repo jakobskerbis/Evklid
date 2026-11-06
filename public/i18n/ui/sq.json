@@ -1855,6 +1855,7 @@
   "lg.already": "Je tashmë në grupin «{name}».",
   "lg.joined": "U bashkove me grupin «{name}».",
   "lg.created": "Grupi u krijua. Kodi për shokët: {code}",
+  "lg.nameContact": "Emri nuk duhet të përmbajë email, telefon, lidhje ose profil në rrjete sociale.",
   "lg.leaveConfirm": "Vërtet do të dalësh nga ky grup?",
   "lg.pickNick": "Zgjidh një nofkë",
   "lg.nickWhy": "Për siguri nuk mund ta shkruash vetë nofkën, ndaj të tjerët nuk e shohin kurrë emrin tënd.",

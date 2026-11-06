@@ -3,6 +3,7 @@ import { icon } from "./icons.js";
 import { avatarSvg, itemOf, itemName, itemRarity, wear } from "./avatar.js";
 import { DRAW } from "./zbirke.js";
 import { t, currentLang, locale } from "./i18n.js";
+import { nameHasContact } from "./ime-skupine.js";
 import { quizCardHtml, playQuiz } from "./kviz.js";
 import { itemThumb, earnedWhere } from "./zbirke-view.js";
 const $ = (sel) => document.querySelector(sel);
@@ -236,6 +237,7 @@ export async function loadLeague(studentId) {
   });
   $("#friends-form").addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (nameHasContact($("#friends-name").value)) return toast(t("lg.nameContact"));
     try {
       const r = await api(`/api/students/${studentId}/friend-groups`, { method: "POST", body: { name: $("#friends-name").value } });
       toast(t("lg.created", { code: r.code }));

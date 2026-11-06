@@ -1855,6 +1855,7 @@
   "lg.already": "Ya estás en el grupo «{name}».",
   "lg.joined": "Te uniste al grupo «{name}».",
   "lg.created": "Grupo creado. Código para amigos: {code}",
+  "lg.nameContact": "El nombre no puede contener un correo, un teléfono, un enlace ni un perfil de redes sociales.",
   "lg.leaveConfirm": "¿Seguro que quieres salir de este grupo?",
   "lg.pickNick": "Elige un apodo",
   "lg.nickWhy": "Por seguridad no puedes escribir tu propio apodo, así nadie ve nunca tu nombre.",

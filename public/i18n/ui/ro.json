@@ -1866,6 +1866,7 @@
   "lg.already": "Ești deja în grupul „{name}”.",
   "lg.joined": "Te-ai alăturat grupului „{name}”.",
   "lg.created": "Grupul a fost creat. Cod pentru prieteni: {code}",
+  "lg.nameContact": "Numele nu poate conține e-mail, telefon, link sau profil de rețele sociale.",
   "lg.leaveConfirm": "Sigur vrei să părăsești acest grup?",
   "lg.pickNick": "Alege o poreclă",
   "lg.nickWhy": "Din motive de siguranță nu îți poți scrie singur porecla, așa că ceilalți nu îți văd niciodată numele.",

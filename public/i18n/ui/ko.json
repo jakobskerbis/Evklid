@@ -1847,6 +1847,7 @@
   "lg.already": "이미 「{name}」 그룹에 있어요.",
   "lg.joined": "「{name}」 그룹에 참여했어요.",
   "lg.created": "그룹을 만들었어요. 친구용 코드: {code}",
+  "lg.nameContact": "이름에 이메일, 전화번호, 링크, SNS 계정을 넣을 수 없습니다.",
   "lg.leaveConfirm": "정말 이 그룹에서 나갈까요?",
   "lg.pickNick": "별명 고르기",
   "lg.nickWhy": "안전을 위해 별명을 직접 입력할 수 없어요. 그래서 다른 사람은 절대 이름을 볼 수 없어요.",
