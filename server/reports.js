@@ -83,6 +83,13 @@ export function genericAnswer(text, name = "") {
     const flat = plainLetters(out);
     const again = genericExact(flat, plainLetters(n));
     if (again === null || again !== flat) return null;
+    // Pomanjševalnice in vzdevki (Jakob → Jaka, Jakec; Matevž → Mato): beseda z veliko začetnico, ki se začne s
+    // prvimi tremi črkami imena in je kratka, pomeni, da odgovor ni skupen (pregled #484 A P3-3). Ob dvomu se ne shrani.
+    for (const w of plainLetters(n).split(/\s+/)) {
+      if (w.length < 4) continue;
+      const pre = w[0].toUpperCase() + w.slice(1, 3).toLowerCase();
+      if (new RegExp(`${NAME_EDGE_L}${escRe(pre)}\\p{Ll}{0,4}${NAME_EDGE_R}`, "u").test(flat)) return null;
+    }
   }
   return out;
 }

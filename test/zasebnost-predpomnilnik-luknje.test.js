@@ -74,3 +74,11 @@ test("genericAnswer: ime brez strešic ali naglasov ni skupno, točno ime še ve
   assert.equal(genericAnswer("Žiga, poglejva.", "Žiga"), "{{IME}}, poglejva.");
   assert.equal(genericAnswer("Poglejva skupaj.", "Žiga"), "Poglejva skupaj.");
 });
+
+test("genericAnswer: pomanjševalnica (Jakob → Jaka, Jakec) ni skupna, običajne besede so", async () => {
+  const { genericAnswer } = await import("../server/reports.js");
+  assert.equal(genericAnswer("Jaka, poglejva.", "Jakob"), null);
+  assert.equal(genericAnswer("Bravo, Jakec!", "Jakob"), null);
+  assert.equal(genericAnswer("Ta naloga je jako lepa, poglejva.", "Jakob"), "Ta naloga je jako lepa, poglejva.");
+  assert.equal(genericAnswer("Jakob, poglejva.", "Jakob"), "{{IME}}, poglejva.");
+});
