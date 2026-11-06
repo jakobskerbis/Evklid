@@ -65,6 +65,12 @@ for (const organ of organi) {
   for (const d of j.deli) if (!poDelih.has(d.id)) d.vozlisca = [];
   for (const v of izvoz.vozlisca) j.tkiva[v.tkivo] ||= {};
   j.velikost = izvoz.velikost;
+  // srce (srce_ct.py): štiriprostorska ravnina iz CT in prostorska tekstura reza (smer vlaken, maščoba) ob GLB
+  if (izvoz.ravnina4 && j.prerez?.ravnine?.length) j.prerez.ravnine[0] = izvoz.ravnina4;
+  if (izvoz.volumen) {
+    fs.copyFileSync(path.join(src, izvoz.volumen.slika), path.join(CILJ, `${organ}-volumen.png`));
+    j.prerez = { ...(j.prerez || {}), volumen: { ...(j.prerez?.volumen || {}), ...izvoz.volumen, slika: `${organ}-volumen.png` } };
+  }
   j.trikotniki = { racunalnik: izvoz.trikotniki, telefon: izvoz.trikotnikiTelefon };
   fs.writeFileSync(pot, JSON.stringify(j, null, 1) + "\n");
   console.log(`${path.relative(ROOT, pot)}: ${j.deli.length} delov, ${izvoz.vozlisca.length} vozlišč`);

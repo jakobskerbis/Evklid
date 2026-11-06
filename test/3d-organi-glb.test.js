@@ -151,3 +151,23 @@ for (const { e, mod } of organi) {
     for (const b of besedila) assert.ok(!/\bmodel/i.test(b || ""), `${ime}: »model« v besedilu: ${b}`);
   });
 }
+
+test("srce: stene iz CT (Rodero 2021) in prostorska tekstura reza z virom (Visible Woman, NLM)", () => {
+  const j = JSON.parse(fs.readFileSync(path.join(MAPA, "srce.json"), "utf8"));
+  assert.ok(fs.existsSync(path.join(MAPA, "srce-tkivo.png")), "manjka srce-tkivo.png");
+  const viri = JSON.parse(fs.readFileSync(path.join(ROOT, "public", "3d", "viri.json"), "utf8")).viri;
+  const nlm = viri.find((x) => x.id === "nlm-visible-human");
+  assert.ok(nlm && /Courtesy of the U\.S\. National Library of Medicine/.test(nlm.avtor) && nlm.datoteke.includes("organi-3d/srce-tkivo.png"));
+  assert.ok(/ne podpira|not endorse/i.test(nlm.opis), "NLM: brez namiga o podpori");
+  const ct = viri.find((x) => x.id === "rodero-2021-povprecno-srce");
+  assert.ok(ct && ct.licenca === "CC BY 4.0" && ct.datoteke.includes("organi-3d/srce*.glb"));
+  assert.match(fs.readFileSync(path.join(MAPA, "CREDITS.txt"), "utf8"), /Courtesy of the U\.S\. National Library of Medicine/);
+  // po peki s srce_ct (prerez.volumen v srce.json): tekstura reza ob GLB, stene CT kot svoji deli (en zaprt volumen)
+  const v = j.prerez?.volumen;
+  if (!v) return;
+  assert.ok(v.n.length === 3 && v.ploscice.length === 2 && v.korak > 0 && v.korak <= 0.002, "srce.json: prerez.volumen");
+  assert.ok(fs.existsSync(path.join(MAPA, v.slika)), `manjka ${v.slika}`);
+  assert.ok(j.tkiva.miokard.rezVolumen, "miokard: rezVolumen");
+  const imena = glb(path.join(MAPA, "srce.glb")).nodes.map((n) => n.name);
+  for (const ime of ["Left ventricle", "Interventricular septum", "Right ventricle", "Left atrium", "Right atrium", "Left auricle"]) assert.ok(imena.includes(ime), `srce.glb: ${ime}`);
+});

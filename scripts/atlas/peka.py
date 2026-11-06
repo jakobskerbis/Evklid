@@ -84,6 +84,8 @@ def maske(vrstice, velikost, zile_rx, tkiva_z_masco, mascaFaktor=3.4, mascaNajma
         r_, f = math.sqrt(u), 2 * math.pi * (v + i * 0.618)
         smeri.append(Vector((r_ * math.cos(f), r_ * math.sin(f), math.sqrt(max(0.0, 1 - u)))))
     for ime, me, tkivo, *_ in vrstice:
+        if me.get("pekaGotovo"):  # maske že izračunane (stene CT, srce_ct.py: maščoba iz debeline, G = epikard)
+            continue
         me.calc_loop_triangles()
         n = len(me.vertices)
         G = np.ones(n); R = np.zeros(n)

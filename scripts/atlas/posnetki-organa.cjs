@@ -45,7 +45,7 @@ const NAPRAVE = {
       const p = await ctx.newPage();
       const napake = [];
       p.on("pageerror", (e) => napake.push(String(e.message).slice(0, 200)));
-      p.on("console", (m) => m.type() === "error" && napake.push(m.text().slice(0, 200)));
+      p.on("console", (m) => (m.type() === "error" || (m.type() === "warning" && m.text().startsWith("organ:"))) && napake.push(m.text().slice(0, 200)));
       const datoteke = {};
       p.on("response", async (r) => {
         const u = new URL(r.url());

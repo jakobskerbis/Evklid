@@ -503,6 +503,7 @@ export function ustvariSceno(el, opts = {}) {
 
   let w = 0;
   let h = 1;
+  let zamikZg = 0;
   // prisilno: nov composer ali ločljivost; sicer brez dela, če se velikost odra ni spremenila (posodobiVelikost ob izbiri)
   function velikost(prisilno = false) {
     const r = el.getBoundingClientRect();
@@ -513,6 +514,10 @@ export function ustvariSceno(el, opts = {}) {
     h = nh;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
+    // zamik slike navzdol (px): na telefonu lebdijo gumbi in stikala organa levo zgoraj čez oder; model narišemo nižje in
+    // malo manjšega (zgornji del navidezno višje slike), da jih ne prekrije (ocena srca n7). Žarki izbire to upoštevajo.
+    if (zamikZg > 0 && h > 200) camera.setViewOffset(w, h + 2 * zamikZg, 0, 0, w, h);
+    else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     composer?.setPixelRatio(locljivost);
     composer?.setSize(w, h);
@@ -947,6 +952,10 @@ export function ustvariSceno(el, opts = {}) {
     nacinVrtenja,
     hodi: (n) => (gumbHoje = Math.sign(n) || 0),
     fitRazdalja,
+    zamikZgoraj(px) {
+      zamikZg = Math.max(0, px | 0);
+      velikost(true);
+    },
     obrni,
     priblizaj,
     naTap,
