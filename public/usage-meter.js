@@ -80,6 +80,7 @@ function adviceHtml(a) {
     <p class="muted um-econ">${t("meter.economy", { price: eur(e.price_eur), net: eur(e.net_eur), ai: eur(e.ai_avg_eur), profit: eur(e.profit_eur), margin: e.margin_pct })}</p>
     <div class="um-tip ${badge(a.limit.status)}"><b>${t("meter.limitTitle")}</b><p>${esc(a.limit.text)}</p></div>
     <div class="um-tip ${badge(a.price.status)}"><b>${t("meter.priceTitle")}</b><p>${esc(a.price.text)}</p></div>
+    ${a.separate?.text ? `<div class="um-tip"><p>${esc(a.separate.text)}</p></div>` : ""}
     ${a.levels?.length ? `<div class="um-tip"><b>${t("meter.levelsTitle")}</b>${a.levels.map((l) => `<p class="${badge(l.status)}">${esc(l.text)}</p>`).join("")}</div>` : ""}
   </section>`;
 }

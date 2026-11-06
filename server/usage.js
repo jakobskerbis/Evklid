@@ -121,6 +121,9 @@ export class Usage {
     this.blockFor = (studentId, code) => ({ error: BLOCK_TEXT[code], code });
     // Začetek obdobja meje zajamčenega paketa (ISO) ali null = koledarski mesec (j 2026-11-06, pregled #462).
     this.periodOf = () => null;
+    // Lastnik (server/accounts/pilot-meja.js): brez meje inštruktorja (brez trde meje, dnevnih meja in zaustavitve
+    // proračuna); poraba se še vedno zapiše (log).
+    this.unlimitedOf = () => false;
     this.onLog = null;
     this.inflight = new Map();
   }
@@ -129,7 +132,8 @@ export class Usage {
   // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
   // poolOf: profili s skupnim deležem (Družina); poraba se tedaj šteje za vse skupaj.
   // totalOf: vrednost paketa (meja + brezplačni rep) v $ ali null; trda meja ni nikoli višja (capsFor).
-  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf } = {}) {
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf, unlimitedOf } = {}) {
+    if (unlimitedOf) this.unlimitedOf = unlimitedOf;
     if (minCall) this.minCall = minCall;
     if (blockFor) this.blockFor = blockFor;
     if (creditOverOf) this.creditOverOf = creditOverOf;
@@ -306,10 +310,12 @@ export class Usage {
     }
     if (!state.cap) return { mode, boosted: false, saved: false, level: state.level };
     const sb = sb0;
+    // Lastnik (brez meje) ima prednost kot naročnik pod deležem, a nikoli ni »blizu svojega dela«.
+    const unlimited = this.unlimitedOf(studentId);
     // Naročnik pod zajamčenim deležem ima prednost: skupni proračun ga ne spusti pod običajno raven.
-    if (sb.guaranteed && state.level < 1) return { mode, boosted: false, saved: false, level: state.level };
+    if ((sb.guaranteed || unlimited) && state.level < 1) return { mode, boosted: false, saved: false, level: state.level };
     // Tudi pri porabi iz dokupljenega kredita brez nadgradnje: kupljeni pogovori so ocenjeni za običajne modele.
-    const near = sb.spent >= sb.allowance * SHARE_SOFT;
+    const near = !unlimited && sb.spent >= sb.allowance * SHARE_SOFT;
     return { ...budgetMode(mode, { level: state.level, maxTier, lite, overShare: near }), level: state.level };
   }
   // API račun nima dobroimetja (napaka 400): nekaj minut ne kličemo, učenec dobi jasno sporočilo.
@@ -423,6 +429,7 @@ export class Usage {
       const daily = LIMITS.dailyDeep();
       // Prva podrobna razlaga na faksu je Sonnet: dnevna meja šteje odgovore Sonneta, tudi brez računov (deepModel Opus).
       const counted = uniMid ? MODEL_MID : deepModel;
+      if (this.unlimitedOf(studentId)) return { mode: capped || uniMid ? "mid" : "deep", note: null };
       if (daily && this.deepToday(studentId, counted) >= daily) return { mode: "think", note: NOTES.dailyDeep(daily) };
       // S proračunom: blizu svojega dela proračuna (brez dokupljenega kredita); brez njega mehka meja v $.
       const state = this.budgetState();
@@ -485,6 +492,8 @@ export class Usage {
   // Razlog za odgovor 429: { error, code, params? }. code je ključ i18n (public/i18n/sl.js »block.*«), da ga
   // odjemalec pokaže v jeziku vmesnika; error ostane slovensko besedilo (rezerva, če ključa ni).
   blockInfo(studentId) {
+    // Lastnik: ustavi ga le prazno dobroimetje API (takrat ne odgovori nihče).
+    if (this.unlimitedOf(studentId)) return this.creditOut() ? this.blockFor(studentId, "block.creditOut") : null;
     const daily = LIMITS.dailyQuestions();
     if (daily && this.questionsToday(studentId) >= daily) {
       return { error: BLOCK_TEXT["block.daily"].replace("{n}", daily), code: "block.daily", params: { n: daily } };
@@ -539,6 +548,7 @@ export class Usage {
   // Meje, ki veljajo za naslednji klic profila: { key, usd, spent, code }. Naročnina, darilo, preizkus, koda in bonus:
   // vsa vrednost paketa (meja + brezplačni rep) + dokupljeni kredit; ostalo iz računov (capsOf).
   capsFor(studentId, state = this.budgetState()) {
+    if (studentId != null && this.unlimitedOf(studentId)) return [];
     const caps = [];
     const sb = this.studentBudget(studentId, state);
     if (sb.guaranteed) {
@@ -755,6 +765,8 @@ export class Usage {
   // Za starše: poraba otroka ta mesec kot delež mesečne omejitve (brez zneskov).
   // Naročnik (zajamčeni delež): odstotek in preostale podrobne razlage; inštruktor se ne ustavi (hitri način).
   studentMonth(studentId) {
+    // Lastnik: brez meje, zato brez odstotka in opozoril.
+    if (this.unlimitedOf(studentId)) return { percent: null, soft_reached: false, hard_reached: false, unlimited: true };
     const state = this.budgetState();
     const a = this.allowance(studentId, state);
     if (a.guaranteed) {

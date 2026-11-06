@@ -12,6 +12,7 @@ import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
 import { exportOtherTables } from "../zasebnost.js";
 import { aiCapFromNetEur, vatRateFor } from "./plans.js";
+import { isPilotParent, isOwnerParent, pilotEndMs } from "./pilot-meja.js";
 import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
@@ -202,6 +203,13 @@ export function mountAccounts(app, store, opts = {}) {
     if (!parentId) return { tier: "legacy", until: null }; // stari podatki brez starša
     const parent = getParent(parentId);
     const access = accessOf(parent);
+    // Lastnik (j 2026-11-06, server/accounts/pilot-meja.js): vsi profili imajo poln paket, inštruktor brez meje
+    // (aiUnlimited spodaj). Član pilota: do konca pilota prvi profil računa kot plačan paket svoje stopnje, brezplačno;
+    // prava plačana naročnina ostane naročnina (Stripe v preizkusni dobi še ni plačilo, zato tam velja pilot).
+    if (isOwnerParent(parent)) return { tier: "owner", until: null, level: null };
+    if (isPilotParent(parent) && (access.tier !== "paid" || unpaidTier(parent)) && childIds(parentId)[0] === studentId) {
+      return { tier: "pilot", until: new Date(pilotEndMs()).toISOString(), level: null };
+    }
     // level: najvišja stopnja paketa (null = vse); grace: profil za en sedež, ki je prešel na višjo stopnjo,
     // jo ima odprto do naslednjega podaljšanja (tedaj velja nova cena, billing.js levelChanges).
     const own = { tier: access.tier, until: access.until, level: access.level ?? null };
@@ -267,6 +275,8 @@ export function mountAccounts(app, store, opts = {}) {
     if (!r.personal) return null;
     const owner = ownerOf(studentId);
     if (r.personalTier === "gift") return giftGuarantee(getParent(owner)?.gift_level, r.useLevel);
+    // Pilot: ista meja kot plačan paket stopnje brez znanega paketa (levelGuarantee); lastnik je brez meje (aiUnlimited).
+    if (r.personalTier === "pilot") return levelGuarantee(r.useLevel);
     if (NOPAY_USD[r.personalTier]) return nopayGuarantee(r.personalTier, owner);
     if (r.personalTier !== "paid") return null;
     // Naročnina v preizkusni dobi pri Stripu (trialing): plačila še ni bilo, zato do prvega plačanega računa velja meja
@@ -277,7 +287,7 @@ export function mountAccounts(app, store, opts = {}) {
     // DDV po državi kupca (j 2026-11-06 12:53); neznana: najvišja na trgu paketa.
     const country = getParent(owner)?.country;
     const subPlan = planByKey(getParent(owner)?.sub_plan);
-    const g = (subPlan && planGuarantee(subPlan, country ? vatRateFor(country) : undefined)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
+    const g = (subPlan && planGuarantee(subPlan, country ? vatRateFor(country) : undefined)) || levelGuarantee(r.useLevel);
     // Nadgradnja ta mesec (applySubscription): stari paket za pretekle dni, novi za preostale (plans.js upgradeMonthUsd).
     // Zapis velja samo za isto naročnino (id računa se po izbrisu lahko ponovno uporabi, nova naročnina začne znova).
     const up = JSON.parse(kv.get(`ai_upgrade_${owner}`) || "null");
@@ -288,6 +298,20 @@ export function mountAccounts(app, store, opts = {}) {
     const out = usd !== g.usd ? { ...g, usd, total: Math.min(g.total ?? Infinity, usd + freeStudentMonthlyUsd() * (g.profiles || 1)) } : g;
     return paidCap(out, owner, win);
   }
+  // Meja plačanega paketa stopnje (naročnina z neznanim paketom in pilot): zajamčeni AI stopnje brez brezplačnega repa.
+  function levelGuarantee(level) {
+    return { usd: subscriptionCeiling(guaranteeUsd(level)), pool: false };
+  }
+  // Lastnik (server/accounts/pilot-meja.js): inštruktor brez meje, poraba se še vedno zapiše.
+  const aiUnlimited = (studentId) => {
+    const owner = ownerOf(studentId);
+    return !!owner && isOwnerParent(getParent(owner));
+  };
+  // Skupina za poročilo marže (server/advice.js): "owner", "pilot" ali null (plačniki in brezplačni).
+  const marginGroupOf = (studentId) => {
+    if (aiUnlimited(studentId)) return "owner";
+    return rightsFor(studentId).personalTier === "pilot" ? "pilot" : null;
+  };
   // Okno meje plačane naročnine { start, end } (ms) ali null. Sidrano na konec obdobja; neuspelo plačilo (past_due)
   // ne odpre novega okna. Preklop mesečno ↔ letno (portal Stripe) premakne konec obdobja in bi odprl novo okno brez
   // novega denarja (pregled #462 L2): okno iste naročnine se zato ne zamenja, dokler od začetka prejšnjega ni minil
@@ -472,13 +496,13 @@ export function mountAccounts(app, store, opts = {}) {
     return p ? billing.passes.spentUsd(p) - passCapUsd(p) : null;
   }
   aiUsage.configure({ blockFor: aiBlockFor, creditOverOf: passCreditOver });
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, onLog: () => (schools.clearCache(), poolMemo.clear()) });
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, unlimitedOf: aiUnlimited, onLog: () => (schools.clearCache(), poolMemo.clear()) });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
   // null = brez meje (stari profili, meja 0 v nastavitvah). Mesečni delež še vedno omeji usage.blockReason.
   const dailyLimitFor = (studentId, r = rightsFor(studentId)) => {
-    if (r.dailyQuestions === null) return null;
+    if (r.dailyQuestions === null || aiUnlimited(studentId)) return null;
     // Nad trdo mesečno mejo naročnine (zajamčeni AI paketa: podrobni del in hitri način, plans.js FAST_TAIL): kot brezplačni paket.
     if (aiUsage.overCeiling(studentId)) return freeDailyQuestions();
     const owner = ownerOf(studentId);
@@ -2016,6 +2040,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { credits, paidPeriods, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { credits, paidPeriods, marginGroupOf, aiUnlimited, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

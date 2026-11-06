@@ -50,8 +50,10 @@ function interestOf(db, now = Date.now()) {
   };
 }
 
-// sum = Usage.summary(). Vrne { economy, limit, price, interest } z besedili v slovenščini.
-export function pricingAdvice(db, sum, { now = new Date() } = {}) {
+// sum = Usage.summary(). Vrne { economy, limit, price, interest, separate } z besedili v slovenščini.
+// groupOf(id): "pilot" (brezplačna meja plačanega paketa, plača j), "owner" (lastnik brez meje) ali null. Ta profila
+// sta ločeno (separate), da ne popačita povprečja in marže plačnikov (j 2026-11-06: marža ≥ 75 %).
+export function pricingAdvice(db, sum, { now = new Date(), groupOf = () => null } = {}) {
   const eur = sum.eur_per_usd || EUR_PER_USD();
   const price = (PLANS.find((p) => p.seats === 1 && p.interval === "month")?.amount || 999) / 100;
   const net = netOf(price);
@@ -61,7 +63,16 @@ export function pricingAdvice(db, sum, { now = new Date() } = {}) {
   const daysInMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0)).getUTCDate();
   const scale = daysInMonth / Math.max(1, day);
 
-  const active = sum.students.filter((s) => s.calls > 0);
+  const group = (s) => {
+    try {
+      return groupOf(s.id) || null;
+    } catch {
+      return null;
+    }
+  };
+  const tagged = sum.students.filter((s) => s.calls > 0).map((s) => ({ s, g: group(s) }));
+  const active = tagged.filter((x) => !x.g).map((x) => x.s);
+  const separate = separateOf(tagged, eur, scale);
   // Ocena za cel mesec po učencu (pri dnevu 1–2 je ocena groba).
   const proj = active.map((s) => s.cost_usd * scale).sort((a, b) => a - b);
   const avgEur = proj.length ? (proj.reduce((a, x) => a + x, 0) / proj.length) * eur : 0;
@@ -151,7 +162,22 @@ export function pricingAdvice(db, sum, { now = new Date() } = {}) {
       text: `Cena ${fmt(price)} € je dobra: ${interest.conversion_pct} % preizkusov postane naročnina, na učenca ostane ${fmt(profit)} € (${economy.margin_pct} %).`,
     };
 
-  return { economy, limit, price: priceAdv, interest, levels: levelAdvice(db, active, { eur, scale }) };
+  return { economy, limit, price: priceAdv, interest, levels: levelAdvice(db, active, { eur, scale }), separate };
+}
+
+// Pilot in lastnik ločeno od plačnikov: število profilov, strošek AI ta mesec in ocena za cel mesec (€).
+const SEPARATE_LABEL = { pilot: "Pilot (brezplačno, plačaš ti)", owner: "Tvoj račun (brez meje)" };
+function separateOf(tagged, eur, scale) {
+  const out = {};
+  for (const g of Object.keys(SEPARATE_LABEL)) {
+    const mine = tagged.filter((x) => x.g === g).map((x) => x.s);
+    const usd = mine.reduce((a, s) => a + s.cost_usd, 0);
+    out[g] = { n: mine.length, month_eur: r2(usd * eur), projected_eur: r2(usd * scale * eur) };
+  }
+  const parts = Object.entries(out)
+    .filter(([, v]) => v.n)
+    .map(([g, v]) => `${SEPARATE_LABEL[g]}: ${v.n} ${v.n === 1 ? "profil" : v.n === 2 ? "profila" : v.n < 5 ? "profili" : "profilov"}, ta mesec ${fmt(v.month_eur)} € (ocena za mesec ${fmt(v.projected_eur)} €).`);
+  return { ...out, text: parts.length ? `Ni v izračunu marže zgoraj. ${parts.join(" ")}` : null };
 }
 
 // Stopnja učencev (OS/SS/FAKS) iz baze; brez tabele students (testi) vsi OŠ.

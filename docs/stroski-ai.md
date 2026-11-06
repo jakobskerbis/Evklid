@@ -47,6 +47,12 @@ j (2026-11-01, digitalni razred): »Naj se nikoli ne zgodi«, da inštruktor pot
 - Klik odpre pregled: danes, ta mesec, ocena za mesec, po profilih z vrstico do mesečne meje, ter predlog meje in cene (`server/advice.js`). Predlog ničesar ne spremeni sam: meja je `EVKLID_STUDENT_MONTHLY_USD`, cena `server/accounts/plans.js`.
 - Pravila predloga: najprej kakovost (če je ≥ 5 % učencev pri meji ali blizu nje, dvigni mejo do višine, pri kateri učenec še prinese 4 €), nato dobiček (cilj 6 € na naročnino). Cena po zanimanju iz končanih 7-dnevnih preizkusov (vsaj 10): ≥ 35 % naročnin → preizkusi +20 % za nove, ≤ 8 % → najprej izboljšaj prvi teden.
 
+## Pilot in lastnik (j, 2026-11-06 12:14)
+
+- **Član pilota**: potrjen e-naslov v `EVKLID_PILOT_EMAILS` (z vejicami), do vključno `EVKLID_PILOT_DO` (privzeto 2026-12-15, konec dneva po slovenskem času). Prvi profil računa ima brezplačno mejo plačanega paketa svoje stopnje (ista vrednost kot naročnina, `guaranteeUsd`, server/accounts/pilot-meja.js); strošek AI krije j. Meja velja za koledarski mesec. Po datumu konca račun samodejno spet dobi svoj običajni paket. Prava plačana naročnina ostane naročnina.
+- **Lastnik**: potrjen e-naslov v `EVKLID_ADMIN_EMAILS`. Inštruktor brez meje (brez trde meje, dnevne meje vprašanj in zaustavitve zaradi proračuna); ustavi ga le prazno dobroimetje API. Poraba se še vedno zapiše. Zastavica `is_admin` v bazi in nepotrjen e-naslov izjeme ne dajo.
+- **Poročilo marže** (števec porabe → predlog): pilot in lastnik nista v povprečju in marži plačnikov; prikazana sta posebej (število profilov, strošek ta mesec, ocena za mesec).
+
 ## Mesečni proračun API in dokup porabe (j, 2026-10-30)
 
 j: izbira modela naj porabi čim bližje 200 $ kredita na mesec (Claude Max), a ga ne preseže; 200 $ si delijo učenci po paketu, nad svojim delom lahko dokupijo porabo, od nakupa ostane vsaj polovica.

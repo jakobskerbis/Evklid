@@ -1507,7 +1507,7 @@ export function createApp(store, opts = {}) {
     if (!accounts && !isLocalRequest(req)) return res.status(403).json({ error: "Samo za skrbnika." });
     const claim = !!accounts && isLocalRequest(req) && !req.parent?.is_admin;
     const sum = usage.summary();
-    res.json({ ...sum, can_claim: claim, advice: pricingAdvice(store.db, sum) });
+    res.json({ ...sum, can_claim: claim, advice: pricingAdvice(store.db, sum, { groupOf: (id) => accounts?.marginGroupOf?.(id) ?? null }) });
   });
   // Mesečni proračun API: skrbnik nastavi znesek ali doda kupljeni kredit za ta mesec (server/proracun.js).
   // Ni v nastavitvah iz klepeta (finančni podatek, public/settings-registry.js).
