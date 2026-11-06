@@ -73,6 +73,9 @@ def maske(vrstice, velikost, zile_rx, tkiva_z_masco, mascaFaktor=3.4, mascaNajma
     bz = _bvh_obj(zile) if zile else None
     polmeri = _polmeri_zil(zile) if zile else None
     votline = [r for r in vrstice if votline_rx and re.search(votline_rx, r[0])]
+    # Odprtost (zunaj / v votlini) samo glede na stene votlin: žile pred steno (aorta in pljučne vene za levim
+    # preddvorom) ne smejo epikarda spremeniti v »notranjost« (svetel endokard na zunanji steni, pregled #461).
+    ovire = _bvh_obj([r[1] for r in votline]) if votline else vse
     druge = {r[0]: _bvh_obj([q[1] for q in votline if q is not r]) for r in votline} if len(votline) > 1 else {}
     rnd = random.Random(5)
     smeri = []
@@ -91,7 +94,7 @@ def maske(vrstice, velikost, zile_rx, tkiva_z_masco, mascaFaktor=3.4, mascaNajma
                 break
             nn = v.normal; p = v.co + nn * velikost * 2e-4
             t = nn.orthogonal().normalized(); b = nn.cross(t)
-            G[i] = sum(1 for d in smeri if vse.ray_cast(p, t * d.x + b * d.y + nn * d.z, velikost * 2)[0] is None) / zarkov
+            G[i] = sum(1 for d in smeri if ovire.ray_cast(p, t * d.x + b * d.y + nn * d.z, velikost * 2)[0] is None) / zarkov
             pas = 0.0
             if bz is not None:
                 _, _, fi, d = bz.find_nearest(v.co, mascaNajvec * 1.5)
