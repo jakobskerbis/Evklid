@@ -2,10 +2,15 @@
 # po koncu zapre, zato poraba ne raste; pred zagonom počaka na dovolj prostega pomnilnika, med korakom meri porabo
 # (najvišji RSS v dnevnik) in korak ustavi, če preseže mejo. Napredek se shranjuje: po prekinitvi (ponovni zagon
 # strežnika) ponovni zagon nadaljuje pri prvem nedokončanem koraku. Skupno za vse modele s »tekstura.pbr«.
-# Zagon: python3 scripts/atlas/peci.py <surova mapa> <organ> [--priprava <Startup.blend>] [--samo -telefon|""]
-#   --priprava: najprej izvozi-organe.py (izbira mrež, lastna geometrija, maske, UV, <organ>[-telefon].delo.blend)
-# Okolje: PEKA_NITI (privzeto 2), PEKA_KOS (ploskev visoke mreže na proces, privzeto 400000), PEKA_MEJA_MB (2600),
-# PEKA_PROSTO_MB (koliko mora biti prostega pred korakom, privzeto 3000).
+# Zagon: python3 scripts/atlas/peci.py <surova mapa> <organ> [--priprava <Startup.blend>] [--mri <mapa>] [--hra <mapa>]
+#        [--samo -telefon|""]
+#   --priprava: najprej izvozi-organe.py (izbira mrež, lastna geometrija, maske, UV, <organ>[-telefon].delo.blend);
+#   --mri, --hra: vhodi za izvozi-organe.py (možgani: FreeSurfer MRI, oko/ledvica: HuBMAP HRA).
+# Okolje: PEKA_NITI (privzeto 2), PEKA_KOS (ploskev visoke mreže na proces, privzeto 400000 na CPU, 1500000 na GPU),
+# PEKA_MEJA_MB (2600), PEKA_PROSTO_MB (koliko mora biti prostega pred korakom, privzeto 3000),
+# PEKA_NAPRAVA (CPU privzeto | OPTIX | CUDA, peka.naprava), PEKA_BLENDER (pot do blender[.exe]: korake zažene
+# »blender -b --python …« namesto sys.executable z modulom bpy; tako na Windows, scripts/atlas/rtx/).
+# Nadzor pomnilnika bere /proc (Linux); kjer ga ni (Windows), ga preskoči in to zapiše v dnevnik.
 # Nato: node scripts/atlas/organi.mjs <surova mapa> <organ> (WebP, kvantizacija, vpis v public/3d/modeli/organi-3d/).
 import hashlib, json, os, re, subprocess, sys, time
 
@@ -15,11 +20,20 @@ surova, organ = a[0], a[1]
 if not re.fullmatch(r"[a-z0-9-]+", organ):  # ime organa gre v poti datotek (brez »../« izven surove mape)
     raise SystemExit(f"neveljavno ime organa: {organ!r}")
 surova = os.path.abspath(surova)
-PRIPRAVA = a[a.index("--priprava") + 1] if "--priprava" in a else None
-SAMO = a[a.index("--samo") + 1] if "--samo" in a else None
-KOS = int(os.environ.get("PEKA_KOS", "400000"))
+
+
+def _zastava(ime):
+    return a[a.index(ime) + 1] if ime in a else None
+
+
+PRIPRAVA, MRI, HRA, SAMO = _zastava("--priprava"), _zastava("--mri"), _zastava("--hra"), _zastava("--samo")
+GPU = os.environ.get("PEKA_NAPRAVA", "CPU").strip().upper() not in ("", "CPU")
+KOS = int(os.environ.get("PEKA_KOS", "1500000" if GPU else "400000"))
 MEJA = int(os.environ.get("PEKA_MEJA_MB", "2600"))
 PROSTO = int(os.environ.get("PEKA_PROSTO_MB", "3000"))
+BLENDER = os.environ.get("PEKA_BLENDER")
+NADZOR = os.path.exists("/proc/meminfo")
+UTF8 = "import sys\nfor s in (sys.stdout, sys.stderr): s.reconfigure(encoding='utf-8', errors='replace')"
 DNEVNIK = os.path.join(surova, f"{organ}.peka.log")
 
 
@@ -48,21 +62,29 @@ def rss_mb(pid):
     return 0
 
 
+def ukaz(skripta, argumenti):
+    """Ukaz za en korak: Blender (PEKA_BLENDER, brez okna, izhodna koda 1 ob napaki v skripti) ali Python z bpy."""
+    if BLENDER:  # izpis v UTF-8 (Windows sicer cp1252: »č« v print bi ustavil korak)
+        return [BLENDER, "-b", "--factory-startup", "--python-exit-code", "1", "--python-expr", UTF8, "--python", skripta, "--"] + argumenti
+    return [sys.executable, skripta, "--"] + argumenti
+
+
 def zazeni(ime, ukaz):
-    while prosto_mb() < PROSTO:
+    while NADZOR and prosto_mb() < PROSTO:
         pisi(f"čakam na pomnilnik ({prosto_mb()} MB prosto, potrebno {PROSTO} MB)")
         time.sleep(30)
     t0 = time.time()
-    with open(os.path.join(surova, f"{organ}.blender.log"), "a") as izh:
+    with open(os.path.join(surova, f"{organ}.blender.log"), "ab") as izh:
         p = subprocess.Popen(ukaz, stdout=izh, stderr=subprocess.STDOUT)
         vrh = 0
         while p.poll() is None:
-            vrh = max(vrh, rss_mb(p.pid))
-            if vrh > MEJA:
-                p.kill(); p.wait()
-                raise SystemExit(f"{ime}: pomnilnik {vrh} MB > {MEJA} MB, ustavljeno (manjši PEKA_KOS)")
+            if NADZOR:
+                vrh = max(vrh, rss_mb(p.pid))
+                if vrh > MEJA:
+                    p.kill(); p.wait()
+                    raise SystemExit(f"{ime}: pomnilnik {vrh} MB > {MEJA} MB, ustavljeno (manjši PEKA_KOS)")
             time.sleep(1)
-    pisi(f"{ime}: {time.time() - t0:.0f} s, največ {vrh} MB, izhod {p.returncode}")
+    pisi(f"{ime}: {time.time() - t0:.0f} s, " + (f"največ {vrh} MB, " if NADZOR else "") + f"izhod {p.returncode}")
     if p.returncode:
         raise SystemExit(f"{ime}: napaka (glej {organ}.blender.log)")
 
@@ -86,15 +108,24 @@ def zapisi_atomicno(pot, podatki):
     os.replace(tmp, pot)  # prekinitev med pisanjem pusti star ali nov napredek, nikoli pokvarjenega
 
 
+if not NADZOR:
+    pisi("nadzor pomnilnika izklopljen (ni /proc, npr. Windows)")
+if GPU:
+    pisi(f"naprava {os.environ['PEKA_NAPRAVA'].strip().upper()}, kos {KOS} ploskev")
+
 if PRIPRAVA:
     for pripona in ("", "-telefon"):
         pocisti(os.path.join(surova, f"{organ}{pripona}.delo.blend"))
-    zazeni("priprava", [sys.executable, os.path.join(TU, "izvozi-organe.py"), "--", surova, "--blend", PRIPRAVA, organ])
+    dodatno = ["--blend", PRIPRAVA] + (["--mri", MRI] if MRI else []) + (["--hra", HRA] if HRA else [])
+    zazeni("priprava", ukaz(os.path.join(TU, "izvozi-organe.py"), [surova] + dodatno + [organ]))
 
 for pripona in ("", "-telefon"):
     if SAMO is not None and pripona != SAMO:
         continue
     delo = os.path.join(surova, f"{organ}{pripona}.delo.blend")
+    if not os.path.exists(delo + ".json"):
+        raise SystemExit(f"ni {delo}.json: organ »{organ}« nima nastavitve tekstura.pbr v izvozi-organe.py "
+                         "ali priprava ni stekla (--priprava <Startup.blend>)")
     with open(delo + ".json", encoding="utf-8") as f:
         meta = json.load(f)
     nap_pot = delo + ".napredek.json"
@@ -111,10 +142,10 @@ for pripona in ("", "-telefon"):
         pisi(f"{organ}{pripona}: pokvarjen napredek, peka od začetka")
         pocisti(delo); narejeno = set()
 
-    def opravi(kljuc, ukaz):
+    def opravi(kljuc, argumenti):
         if kljuc in narejeno:
             return
-        zazeni(f"{organ}{pripona} {kljuc}", [sys.executable, os.path.join(TU, "peka.py"), "--", delo] + ukaz)
+        zazeni(f"{organ}{pripona} {kljuc}", ukaz(os.path.join(TU, "peka.py"), [delo] + argumenti))
         narejeno.add(kljuc)
         zapisi_atomicno(nap_pot, sorted(narejeno))
 
