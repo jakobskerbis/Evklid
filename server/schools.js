@@ -11,7 +11,7 @@ import crypto from "node:crypto";
 import { getPath, getTopic, baseTopicIds } from "./curriculum.js";
 import { audit } from "./dnevnik-dostopov.js";
 import { VAT_RATE, freeStudentMonthlyUsd } from "./accounts/plans.js";
-import { nameHasContact, NAME_CONTACT_ERROR } from "../public/ime-skupine.js";
+import { nameHasContact, NAME_CONTACT_ERROR, stripInvisible } from "../public/ime-skupine.js";
 
 export const SCHOOL = {
   maxSchoolsPerTeacher: 3,
@@ -570,7 +570,7 @@ export function mountSchools(app, store, { loadStudent, leagues, accounts = true
   app.post("/api/teacher/classes", (req, res) => {
     const p = needParent(req, res);
     if (!p) return;
-    const name = clean(req.body?.name, 40);
+    const name = clean(stripInvisible(req.body?.name ?? ""), 40); // brez nevidnih znakov (public/ime-skupine.js)
     if (!name) return res.status(400).json({ error: "Vpišite ime razreda, npr. 8.b." });
     if (nameHasContact(name)) return res.status(400).json({ error: NAME_CONTACT_ERROR, code: "lg.nameContact" });
     const schoolId = optId(req.body?.schoolId);

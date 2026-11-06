@@ -41,7 +41,8 @@ async function api(url, { method = "GET", body, code } = {}) {
   const key = code ? keyOf(code) : null;
   const r = await fetch(url, { method, headers: { "Content-Type": "application/json", ...(key ? { "X-Teacher-Key": key } : {}) }, body: body && JSON.stringify(body) });
   const d = await r.json().catch(() => ({}));
-  if (!r.ok) throw Object.assign(new Error(d.error || t("common.error", { status: r.status })), { status: r.status, data: d });
+  // Napaka s ključem prevoda (npr. lg.nameContact): v jeziku uporabnika, ne v slovenščini strežnika.
+  if (!r.ok) throw Object.assign(new Error((d.code === "lg.nameContact" && t(d.code)) || d.error || t("common.error", { status: r.status })), { status: r.status, data: d });
   return d;
 }
 

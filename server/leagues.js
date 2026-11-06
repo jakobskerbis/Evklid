@@ -18,7 +18,7 @@ import crypto from "node:crypto";
 import { stageCode, stageCodeSql } from "../public/stopnja.js";
 import { ensureAvatarTables, publicAvatar } from "./avatar.js";
 import { AWARD_MIN } from "../public/zbirke.js";
-import { nameHasContact, NAME_CONTACT_ERROR } from "../public/ime-skupine.js";
+import { nameHasContact, NAME_CONTACT_ERROR, stripInvisible } from "../public/ime-skupine.js";
 
 export const TIERS = ["Bronasta", "Srebrna", "Zlata", "Safirna", "Rubinasta", "Smaragdna", "Diamantna"];
 export const LEAGUE = {
@@ -512,7 +512,8 @@ export class Leagues {
 // preverjanjem lastništva učenca; `req.parent` je prijavljeni račun.
 export function mountLeagues(app, store, { loadStudent }) {
   const leagues = new Leagues(store);
-  const cleanName = (v) => (typeof v === "string" ? v.replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim().slice(0, 40) : "");
+  // Brez nevidnih znakov (ime vidijo drugi otroci, public/ime-skupine.js).
+  const cleanName = (v) => (typeof v === "string" ? stripInvisible(v).replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim().slice(0, 40) : "");
   const teacher = (req, res) => {
     const cls = leagues.authTeacher(req.params.code, req.get("x-teacher-key"), req.parent?.id ?? null);
     if (!cls) res.status(403).json({ error: "Napačna koda ali ključ razreda." });

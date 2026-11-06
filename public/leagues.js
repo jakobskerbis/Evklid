@@ -15,7 +15,8 @@ const api = async (url, opts = {}) => {
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || t("lg.error", { status: res.status }));
+  // Napaka s ključem prevoda (npr. lg.nameContact): v jeziku učenca, ne v slovenščini strežnika.
+  if (!res.ok) throw new Error((data.code === "lg.nameContact" && t(data.code)) || data.error || t("lg.error", { status: res.status }));
   return data;
 };
 
