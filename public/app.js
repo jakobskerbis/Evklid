@@ -5,7 +5,7 @@ import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
 import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion } from "./i18n.js";
 import { systemForCountry, isRegional, SCHOOL_SYSTEMS } from "./regions.js";
-import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave } from "./nujno.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj } from "./nujno.js";
 import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
@@ -1247,14 +1247,14 @@ function addNujno(n, { before = null, meja = false } = {}) {
   el.setAttribute("aria-label", t("nujno.oznaka"));
   // Številke vedno tu: strežnik ne pozna države naprave (učenec brez izbrane države, telefon v HR …).
   const st = stevilke(state.student?.settings, drzavaNaprave());
-  const tr = ([k, p]) => t(k, { ...p, ure: p.ure ? t(p.ure[0], p.ure[1]) : "" });
+  const tr = ([k, p]) => t(k, { ...izoliraj(p), ure: p.ure ? t(p.ure[0], p.ure[1]) : "" });
   const [head, ...rest] = vrstice(n.vrsta, st);
   const calls = klici(n.vrsta, st).filter(Boolean);
   el.innerHTML =
     `<button type="button" class="nujno-zapri" aria-label="${escapeHtml(t("nujno.zapri"))}">${icon("x")}</button>` +
     `<h3>${escapeHtml(tr(head))}</h3>` +
     rest.map((v) => `<p>${krepke(escapeHtml(tr(v)), v[1])}</p>`).join("") +
-    `<div class="nujno-klici">${calls.map((c) => `<a class="nujno-klic" href="${telHref(c)}">${icon("phone")} ${escapeHtml(t("nujno.klic", { n: c }))}</a>`).join("")}</div>` +
+    `<div class="nujno-klici">${calls.map((c) => `<a class="nujno-klic" href="${telHref(c)}">${icon("phone")} ${escapeHtml(t("nujno.klic", izoliraj({ n: c })))}</a>`).join("")}</div>` +
     `<p class="nujno-opomba">${escapeHtml(t(meja ? "nujno.opomba" : "nujno.opombaKratka"))}</p>`;
   el.querySelector(".nujno-zapri").addEventListener("click", () => el.remove());
   // Esc zapre okno, ko je fokus v njem (pregled B); fokusa ne premaknemo, da tipkovnica telefona ostane odprta.

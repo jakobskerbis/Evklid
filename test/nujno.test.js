@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import { zaznajNujno, stevilke, vrstice, klici, telHref, normalize, drzavaNaprave, DRZAVE } from "../public/nujno.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, normalize, drzavaNaprave, DRZAVE, izoliraj } from "../public/nujno.js";
 import { preberiVrsto, varnostniPregled, VAROVALKA, NAVODILO } from "../server/nujno.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
@@ -512,4 +512,13 @@ test("mobilna aplikacija: varnostni odgovor iz dogodka, pri zavrnitvi, ob napaki
   assert.match(card, /from "\.\.\/\.\.\/\.\.\/public\/nujno\.js"/); // isti zaznavalnik in iste številke kot splet
   assert.match(card, /Linking\.openURL\(telHref\(c\)\)/);
   assert.match(card, /drzavaNaprave\(getCalendars\(\)\[0\]\?\.timeZone/);
+});
+
+test("številke se v pisavah od desne proti levi ne obrnejo (»116 111« ostane »116 111«)", () => {
+  assert.deepEqual(izoliraj({ otroci: "116 111", ime: "TOM", ure: null }), { otroci: "⁦116 111⁩", ime: "TOM", ure: null });
+  for (const f of ["../public/app.js", "../mobile/src/components/NujnoCard.tsx"]) {
+    const src = readFileSync(new URL(f, import.meta.url), "utf8");
+    assert.match(src, /\.\.\.izoliraj\(p\)/, f);
+    assert.match(src, /t\("nujno\.klic", izoliraj\(\{ n: c \}\)\)/, f);
+  }
 });

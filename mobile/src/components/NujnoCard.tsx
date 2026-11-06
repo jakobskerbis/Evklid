@@ -4,7 +4,7 @@
 import React from "react";
 import { Linking, Pressable, Text, View } from "react-native";
 import { getCalendars, getLocales } from "expo-localization";
-import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave } from "../../../public/nujno.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj } from "../../../public/nujno.js";
 import { t } from "@/lib/i18n";
 import { radius, useTheme } from "@/lib/theme";
 import { Icon } from "@/components/ui";
@@ -26,7 +26,7 @@ function napravaDrzava(): string {
 }
 
 type Line = [string, Record<string, any>];
-const tr = ([k, p]: Line) => t(k, { ...p, ure: p.ure ? t(p.ure[0], p.ure[1]) : "" });
+const tr = ([k, p]: Line) => t(k, { ...izoliraj(p), ure: p.ure ? t(p.ure[0], p.ure[1]) : "" });
 
 export function NujnoCard({ n, settings, meja, onClose }: { n: Nujno; settings?: Record<string, any>; meja?: boolean; onClose: () => void }) {
   const th = useTheme();
@@ -63,7 +63,7 @@ export function NujnoCard({ n, settings, meja, onClose }: { n: Nujno; settings?:
             style={{ minHeight: 44, flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 14, borderRadius: radius.button, backgroundColor: th.accent }}
           >
             <Icon name={{ ios: "phone.fill", android: "call" }} size={18} color={th.accentText} />
-            <Text style={{ color: th.accentText, fontSize: 16, fontWeight: "700" }}>{t("nujno.klic", { n: c })}</Text>
+            <Text style={{ color: th.accentText, fontSize: 16, fontWeight: "700" }}>{t("nujno.klic", izoliraj({ n: c }))}</Text>
           </Pressable>
         ))}
       </View>

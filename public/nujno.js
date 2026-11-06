@@ -580,6 +580,11 @@ export function stevilke(settings = {}, naprava = "") {
   return { si: false, drzava, faks, sos: izPomoci(help), pomoc: help || null };
 }
 
+// Številke v besedilu kot samostojen del od leve proti desni (LRI … PDI): v arabščini, perzijščini in urdujščini
+// bi se »116 111« sicer prikazala kot »111 116« (posnetek ar, 6. 11.).
+const LTR = ["sos", "policija", "otroci", "odrasli", "stevilka", "n"];
+export const izoliraj = (p = {}) => Object.fromEntries(Object.entries(p).map(([k, v]) => [k, LTR.includes(k) && v ? `\u2066${v}\u2069` : v]));
+
 // Telefonska povezava za gumb »Pokliči« (samo številke).
 export const telHref = (n) => `tel:${String(n).replace(/[^0-9+]/g, "")}`;
 
