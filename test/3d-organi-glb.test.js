@@ -115,7 +115,11 @@ for (const { e, mod } of organi) {
       assert.ok(typeof d.la === "string" && d.la.length > 1, `${ime}/${d.id}: latinsko ime`);
       assert.ok(typeof d.opis === "string" && d.opis.length > 20 && d.opis.length < 140, `${ime}/${d.id}: opis (en kratek stavek)`);
       assert.match(d.barva || "", /^#[0-9a-f]{6}$/i, `${ime}/${d.id}: barva`);
-      assert.ok(Array.isArray(d.vozlisca) && d.vozlisca.length > 0, `${ime}/${d.id}: vozlisca`);
+      // skupinski del (npr. venčne arterije) je lahko brez lastnih vozlišč, če ima posamezne dele (»skupina«)
+      const imaOtroke = p.deli.some((x) => x.skupina === d.id && x.vozlisca?.length);
+      assert.ok(Array.isArray(d.vozlisca) && (d.vozlisca.length > 0 || imaOtroke), `${ime}/${d.id}: vozlisca`);
+      if (d.raven != null) assert.ok([1, 2, 3].includes(d.raven), `${ime}/${d.id}: raven 1, 2 ali 3`);
+      if (d.skupina != null) assert.ok(p.deli.some((x) => x.id === d.skupina && !x.skupina), `${ime}/${d.id}: skupina ${d.skupina} ni del`);
       for (const v of d.vozlisca) {
         assert.ok(vozlisca.has(v), `${ime}/${d.id}: vozlišče ${v} ni v ${ime}.glb`);
         assert.ok(vozliscaT.has(v), `${ime}/${d.id}: vozlišče ${v} ni v ${ime}-telefon.glb`);

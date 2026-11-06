@@ -252,7 +252,7 @@
    "skupina": "aorta",
    "raven": 2,
    "barva": "#fb7185",
-   "opis": "Prva veja aortnega loka; razcepi se v desno podključnično arterijo (za desno roko) in desno skupno karotido (za glavo in vrat).",
+   "opis": "Prva veja aortnega loka; razcepi se v desno podključnično arterijo in desno skupno karotido.",
    "vozlisca": []
   },
   {
@@ -280,7 +280,7 @@
    "ime": "Pljučno deblo",
    "la": "Truncus pulmonalis",
    "barva": "#818cf8",
-   "opis": "Iz desnega prekata nese kri brez kisika proti pljučem; pod aortnim lokom se razcepi v levo in desno pljučno arterijo.",
+   "opis": "Nese kri brez kisika iz desnega prekata; pod aortnim lokom se razcepi v levo in desno pljučno arterijo.",
    "vozlisca": [
     "Pulmonary trunk",
     "Right pulmonary artery"
@@ -294,7 +294,7 @@
    "skupina": "pljucno-deblo",
    "raven": 2,
    "barva": "#6366f1",
-   "opis": "Leva in desna pljučna arterija nadaljujeta pljučno deblo od razcepa; desna gre za aorto in zgornjo votlo veno v desno pljučno krilo.",
+   "opis": "Leva in desna pljučna arterija od razcepa nadaljujeta pljučno deblo do pljuč.",
    "vozlisca": []
   },
   {
@@ -345,7 +345,7 @@
    "skupina": "vencne-arterije",
    "raven": 3,
    "barva": "#fde047",
-   "opis": "Izhaja iz levega aortnega sinusa; kratko deblo (približno 1 cm) se razcepi v sprednjo medprekatno in cirkumfleksno arterijo.",
+   "opis": "Kratko deblo iz levega aortnega sinusa; razcepi se v sprednjo medprekatno in cirkumfleksno arterijo.",
    "vozlisca": []
   },
   {
@@ -355,7 +355,7 @@
    "skupina": "vencne-arterije",
    "raven": 3,
    "barva": "#facc15",
-   "opis": "Teče v sprednjem medprekatnem žlebu do konice srca; z diagonalnimi vejami oskrbuje sprednjo steno levega prekata in sprednji del pretina.",
+   "opis": "V sprednjem medprekatnem žlebu do konice; z diagonalnimi vejami oskrbuje sprednjo steno levega prekata.",
    "vozlisca": []
   },
   {
@@ -365,7 +365,7 @@
    "skupina": "vencne-arterije",
    "raven": 3,
    "barva": "#eab308",
-   "opis": "Teče v levem venčnem žlebu okoli levega roba srca; z obrobnimi vejami oskrbuje stransko steno levega prekata in levi preddvor.",
+   "opis": "V levem venčnem žlebu okoli levega roba srca; oskrbuje stransko steno levega prekata.",
    "vozlisca": []
   },
   {
@@ -375,7 +375,7 @@
    "skupina": "vencne-arterije",
    "raven": 3,
    "barva": "#ca8a04",
-   "opis": "Izhaja iz desnega aortnega sinusa in teče v desnem venčnem žlebu; oskrbuje desni preddvor, desni prekat in pri večini ljudi sinusni in AV-vozel.",
+   "opis": "Iz desnega aortnega sinusa po desnem venčnem žlebu; oskrbuje desni preddvor in desni prekat.",
    "vozlisca": []
   },
   {
@@ -385,7 +385,7 @@
    "skupina": "vencne-arterije",
    "raven": 3,
    "barva": "#a16207",
-   "opis": "Pri večini ljudi veja desne venčne arterije; teče v zadnjem medprekatnem žlebu ob srednji srčni veni in oskrbuje spodnjo steno in zadnji del pretina.",
+   "opis": "Navadno veja desne venčne arterije; v zadnjem medprekatnem žlebu oskrbuje spodnjo steno srca.",
    "vozlisca": []
   },
   {
@@ -410,7 +410,7 @@
    "skupina": "vencne-vene",
    "raven": 2,
    "barva": "#8b5cf6",
-   "opis": "Široka vena v zadnjem venčnem žlebu, ki zbere kri iz srčnih ven in jo izlije v desni preddvor.",
+   "opis": "Široka vena v zadnjem venčnem žlebu; zbere kri srčnih ven in jo izlije v desni preddvor.",
    "vozlisca": []
   },
   {
@@ -420,7 +420,7 @@
    "skupina": "vencne-vene",
    "raven": 3,
    "barva": "#7c3aed",
-   "opis": "Spremlja sprednjo medprekatno arterijo v sprednjem žlebu, nato zavije v levi venčni žleb in se nadaljuje v venčni sinus.",
+   "opis": "Spremlja sprednjo medprekatno arterijo in se po levem venčnem žlebu nadaljuje v venčni sinus.",
    "vozlisca": []
   },
   {
@@ -430,7 +430,7 @@
    "skupina": "vencne-vene",
    "raven": 3,
    "barva": "#6d28d9",
-   "opis": "Teče v zadnjem medprekatnem žlebu ob zadnji medprekatni arteriji in se izlije v venčni sinus.",
+   "opis": "V zadnjem medprekatnem žlebu ob zadnji medprekatni arteriji; izlije se v venčni sinus.",
    "vozlisca": []
   },
   {
@@ -505,7 +505,7 @@
    "la": "Ligamentum arteriosum",
    "raven": 3,
    "barva": "#e5e7eb",
-   "opis": "Vezivni trak med razcepom pljučnega debla in aortnim lokom: ostanek arterijskega voda (ductus arteriosus), ki je pred rojstvom vodil kri mimo pljuč.",
+   "opis": "Vezivni trak med pljučnim deblom in aortnim lokom; ostanek voda, ki je pred rojstvom vodil kri mimo pljuč.",
    "vozlisca": []
   },
   {
@@ -514,7 +514,7 @@
    "la": "Systema conducens cordis",
    "raven": 2,
    "barva": "#fbbf24",
-   "opis": "Shematsko: sinusni vozel (spodbujevalnik) ob ustju zgornje votle vene, AV-vozel v pretinu nad trikuspidalno zaklopko, Hisov snop in levi ter desni krak po pretinu proti konici. Iz posebnih mišičnih celic, ki vodijo električni signal za utrip.",
+   "opis": "Shema: sinusni vozel, AV-vozel, Hisov snop in kraka po pretinu vodijo električni signal za utrip.",
    "vozlisca": []
   }
  ],

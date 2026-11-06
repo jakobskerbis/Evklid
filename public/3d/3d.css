@@ -155,6 +155,8 @@
   border: 1px solid var(--k3-rob); background: var(--k3-povrsina); cursor: pointer; font-size: 0.92rem; text-align: start;
 }
 .k3-del[aria-pressed="true"] { border-color: var(--k3-accent); background: var(--k3-accent-soft); }
+/* »Več delov«: zahtevnejši deli za raven profila (public/3d/raven.js) */
+.k3-del-vec { border-style: dashed; color: var(--k3-accent); font-weight: 600; }
 .k3-pika { width: 10px; height: 10px; border-radius: 50%; background: var(--barva); flex: none; }
 
 /* ---------- stran /3d ---------- */
