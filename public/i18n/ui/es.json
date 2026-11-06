@@ -3647,7 +3647,6 @@
   "nujno.stiska.tom": "Llama al teléfono TOM {otroci} (gratis, todos los días de 12 a 20 h).",
   "nujno.stiska.sam": "En otro horario: {odrasli} (Samarijan, siempre abierto).",
   "nujno.stiska.faks": "Llama al {odrasli} (Samarijan, siempre abierto) o al servicio de orientación de tu universidad.",
-  "nujno.stiska.drugje": "Números de ayuda: {pomoc}.",
   "nujno.stiska.112": "Si estás herido o en peligro ahora, llama al {sos}.",
   "nujno.stiska.vprasanje": "¿Hay alguien contigo ahora?",
   "nujno.nasilje.naslov": "Gracias por contármelo. No es culpa tuya.",
@@ -3674,5 +3673,6 @@
   "nujno.ime.mladi": "la línea para jóvenes",
   "nujno.ime.samomor": "la línea de prevención del suicidio",
   "nujno.opombaSos": "Las llamadas a los números de emergencia son gratuitas.",
-  "nujno.opombaSosMeja": "Las llamadas a los números de emergencia son gratuitas. Este mensaje no cuenta entre tus preguntas."
+  "nujno.opombaSosMeja": "Las llamadas a los números de emergencia son gratuitas. Este mensaje no cuenta entre tus preguntas.",
+  "nujno.ure.vsakDan": "todos los días de {od} a {do} h"
 }

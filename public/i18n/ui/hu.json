@@ -3644,7 +3644,6 @@
   "nujno.stiska.tom": "Hívd a TOM telefont: {otroci} (ingyenes, minden nap 12–20).",
   "nujno.stiska.sam": "Máskor: {odrasli} (Samarijan, mindig elérhető).",
   "nujno.stiska.faks": "Hívd a {odrasli} számot (Samarijan, mindig elérhető) vagy az egyetemed lelki tanácsadását.",
-  "nujno.stiska.drugje": "Segélyhívó számok: {pomoc}.",
   "nujno.stiska.112": "Ha megsérültél, vagy most veszélyben vagy, hívd a {sos} számot.",
   "nujno.stiska.vprasanje": "Van most valaki melletted?",
   "nujno.nasilje.naslov": "Köszönöm, hogy elmondtad. Nem te vagy a hibás.",
@@ -3671,5 +3670,6 @@
   "nujno.ime.mladi": "ifjúsági vonal",
   "nujno.ime.samomor": "öngyilkosság-megelőzési vonal",
   "nujno.opombaSos": "A segélyhívó számok hívása ingyenes.",
-  "nujno.opombaSosMeja": "A segélyhívó számok hívása ingyenes. Ez az üzenet nem számít bele a kérdéseidbe."
+  "nujno.opombaSosMeja": "A segélyhívó számok hívása ingyenes. Ez az üzenet nem számít bele a kérdéseidbe.",
+  "nujno.ure.vsakDan": "minden nap {od}–{do} óra"
 }

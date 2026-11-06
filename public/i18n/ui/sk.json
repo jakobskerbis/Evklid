@@ -3712,7 +3712,6 @@
   "nujno.stiska.tom": "Zavolaj na TOM telefon {otroci} (zadarmo, každý deň 12–20).",
   "nujno.stiska.sam": "Inokedy: {odrasli} (Samarijan, vždy otvorené).",
   "nujno.stiska.faks": "Zavolaj na {odrasli} (Samarijan, vždy otvorené) alebo do poradne svojej vysokej školy.",
-  "nujno.stiska.drugje": "Čísla pre pomoc: {pomoc}.",
   "nujno.stiska.112": "Ak si zranený alebo si teraz v nebezpečenstve, zavolaj {sos}.",
   "nujno.stiska.vprasanje": "Je teraz niekto s tebou?",
   "nujno.nasilje.naslov": "Ďakujem, že si mi to povedal. Nie je to tvoja vina.",
@@ -3724,7 +3723,7 @@
   "nujno.nevarnost.naslov": "Najprv sa dostaň do bezpečia.",
   "nujno.nevarnost.1": "Hneď choď von a vezmi so sebou ostatných, ak môžeš. Nevracaj sa po veci.",
   "nujno.nevarnost.2": "Keď budeš vonku, zavolaj {sos} alebo povedz dospelému, nech zavolá.",
-  "nujno.nevarnost.3": "Ak cítiť plyn: nerozsvecuj, nezapaľuj oheň a nestláčaj vypínače. Volaj až vonku.",
+  "nujno.nevarnost.3": "Ak je cítiť plyn: nerozsvecuj, nezapaľuj oheň a nestláčaj vypínače. Volaj až vonku.",
   "nujno.linija": "Zavolaj na {ime} {stevilka} (zadarmo, {ure}).",
   "nujno.linijaBrezUr": "Zavolaj na {ime} {stevilka} (zadarmo).",
   "nujno.linijaDrugic": "V inom čase: {stevilka} ({ime}, {ure}).",
@@ -3738,6 +3737,7 @@
   "nujno.ime.otroci": "linku pre deti",
   "nujno.ime.mladi": "linku pre mladých",
   "nujno.ime.samomor": "linku prevencie samovrážd",
-  "nujno.opombaSos": "Volanie na čísla tiesňového volania je zadarmo.",
-  "nujno.opombaSosMeja": "Volanie na čísla tiesňového volania je zadarmo. Táto správa sa ti nepočíta do otázok."
+  "nujno.opombaSos": "Volanie na tiesňové linky je bezplatné.",
+  "nujno.opombaSosMeja": "Volanie na tiesňové linky je bezplatné. Táto správa sa ti nepočíta do otázok.",
+  "nujno.ure.vsakDan": "každý deň {od}–{do}"
 }

@@ -3634,7 +3634,7 @@
   "birth.confirmNo": "Correggi",
   "nujno.oznaka": "Risposta di sicurezza",
   "nujno.zapri": "Chiudi",
-  "nujno.klic": "Chiama il {n}",
+  "nujno.klic": "Chiama {n}",
   "nujno.opomba": "Le chiamate a questi numeri sono gratuite. Questo messaggio non conta tra le tue domande.",
   "nujno.opombaKratka": "Le chiamate a questi numeri sono gratuite.",
   "nujno.zdravje.naslov": "Potrebbe essere un’emergenza.",
@@ -3647,7 +3647,6 @@
   "nujno.stiska.tom": "Chiama il telefono TOM {otroci} (gratis, ogni giorno 12–20).",
   "nujno.stiska.sam": "In altri orari: {odrasli} (Samarijan, sempre aperto).",
   "nujno.stiska.faks": "Chiama il {odrasli} (Samarijan, sempre aperto) o il servizio di ascolto della tua università.",
-  "nujno.stiska.drugje": "Numeri di aiuto: {pomoc}.",
   "nujno.stiska.112": "Se ti sei fatto male o sei in pericolo adesso, chiama il {sos}.",
   "nujno.stiska.vprasanje": "C’è qualcuno con te adesso?",
   "nujno.nasilje.naslov": "Grazie per avermelo detto. Non è colpa tua.",
@@ -3674,5 +3673,6 @@
   "nujno.ime.mladi": "il telefono per i giovani",
   "nujno.ime.samomor": "la linea di prevenzione del suicidio",
   "nujno.opombaSos": "Le chiamate ai numeri di emergenza sono gratuite.",
-  "nujno.opombaSosMeja": "Le chiamate ai numeri di emergenza sono gratuite. Questo messaggio non conta tra le tue domande."
+  "nujno.opombaSosMeja": "Le chiamate ai numeri di emergenza sono gratuite. Questo messaggio non conta tra le tue domande.",
+  "nujno.ure.vsakDan": "tutti i giorni {od}–{do}"
 }

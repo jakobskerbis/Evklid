@@ -3644,9 +3644,8 @@
   "nujno.stiska.naslov": "Të dëgjoj. Bëre mirë që e shkrove. Nuk je vetëm.",
   "nujno.stiska.1": "Të lutem, tregoji tani një të rrituri pranë teje ose dikujt që i beson.",
   "nujno.stiska.tom": "Telefono TOM {otroci} (falas, çdo ditë 12–20).",
-  "nujno.stiska.sam": "Në orë të tjera: {odrasli} (Samarijan, gjithmonë hapur).",
-  "nujno.stiska.faks": "Telefono {odrasli} (Samarijan, gjithmonë hapur) ose shërbimin e këshillimit të universitetit.",
-  "nujno.stiska.drugje": "Numra për ndihmë: {pomoc}.",
+  "nujno.stiska.sam": "Në orë të tjera: {odrasli} (Samarijan, gjithmonë e hapur).",
+  "nujno.stiska.faks": "Telefono {odrasli} (Samarijan, gjithmonë e hapur) ose shërbimin e këshillimit të universitetit.",
   "nujno.stiska.112": "Nëse je lënduar ose je në rrezik tani, telefono {sos}.",
   "nujno.stiska.vprasanje": "A është dikush me ty tani?",
   "nujno.nasilje.naslov": "Faleminderit që më tregove. Nuk është faji yt.",
@@ -3654,7 +3653,7 @@
   "nujno.nasilje.1b": "Nëse je në rrezik tani, telefono {sos}.",
   "nujno.nasilje.2": "Tregoji një të rrituri që i beson: një mësuesi, psikologut të shkollës ose një prindi që nuk është i përfshirë.",
   "nujno.nasilje.tom": "Falas dhe pa emër: TOM {otroci} (çdo ditë 12–20).",
-  "nujno.nasilje.faks": "Falas: {odrasli} (Samarijan, gjithmonë hapur).",
+  "nujno.nasilje.faks": "Falas: {odrasli} (Samarijan, gjithmonë e hapur).",
   "nujno.nevarnost.naslov": "Së pari shko në vend të sigurt.",
   "nujno.nevarnost.1": "Dil menjëherë jashtë dhe merr të tjerët me vete, nëse mundesh. Mos u kthe për sendet.",
   "nujno.nevarnost.2": "Kur të jesh jashtë, telefono {sos} ose thuaji një të rrituri të telefonojë.",
@@ -3673,5 +3672,6 @@
   "nujno.ime.mladi": "linjën për të rinjtë",
   "nujno.ime.samomor": "linjën për parandalimin e vetëvrasjes",
   "nujno.opombaSos": "Thirrja në numrat e urgjencës është falas.",
-  "nujno.opombaSosMeja": "Thirrja në numrat e urgjencës është falas. Ky mesazh nuk të llogaritet te pyetjet."
+  "nujno.opombaSosMeja": "Thirrja në numrat e urgjencës është falas. Ky mesazh nuk të llogaritet te pyetjet.",
+  "nujno.ure.vsakDan": "çdo ditë {od}–{do}"
 }

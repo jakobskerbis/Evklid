@@ -606,14 +606,14 @@ export const VRSTE = ["zdravje", "stiska", "nasilje", "nevarnost"];
 // (vedno). Imena služb (TOM, Samarijan, Hrabri telefon …) se pokažejo samo v njihovi državi (j, 6. 11.).
 //
 // DRZAVE: preverjene številke po državi (viri v PR #479, 6. 11. 2026). sos = splošna številka za nujno
-// pomoč; kjer 112 še ne deluje (RS, BA, MK), po vrsti: reševalci (zdravje, stiska), gasilci (nevarnost),
-// policija (nasilje). Linije samo z brezplačno številko; ure: [vrsta, od, do] (vedno | delavniki | ponSob).
+// pomoč; kjer 112 še ne deluje povsod (RS, BA, MK, AL), po vrsti: reševalci (zdravje, stiska), gasilci (nevarnost),
+// policija (nasilje). Linije samo z brezplačno številko; ure: [vrsta, od, do] (vedno | vsakDan | delavniki | ponSob).
 export const DRZAVE = {
   HR: { sos: "112", policija: "192", otroci: { ime: "Hrabri telefon", st: "116 111", ure: ["delavniki", 9, 20] } },
   RS: { sos: "194", gasilci: "193", policija: "192", otroci: { ime: "NADEL", st: "116 111", ure: ["vedno"] } },
-  BA: { sos: "124", gasilci: "123", policija: "122", otroci: { ime: "Plavi telefon", st: "080 05 03 05" } },
+  BA: { sos: "124", gasilci: "123", policija: "122", otroci: { ime: "Plavi telefon", st: "080 05 03 05", ure: ["vsakDan", 9, 17] } },
   MK: { sos: "194", gasilci: "193", policija: "192" },
-  AL: { sos: "112", policija: "129", otroci: { ime: "ALO", st: "116 111", ure: ["vedno"] } },
+  AL: { sos: "127", gasilci: "128", policija: "129", otroci: { ime: "ALO", st: "116 111", ure: ["vedno"] } },
   AT: {
     sos: "112",
     policija: "133",
@@ -659,7 +659,7 @@ export function drzavaNaprave(tz, jeziki) {
 
 // Linije iz besedila »help« (public/regions.js): pari ime–številka; številke za nujno pomoč (emergency,
 // police …) so že v vrstici s {sos}. Splošna angleška imena (»Child helpline«) prevede vmesnik.
-const SPLOSNO = [[/^(child|children'?s?) ?(help ?line|line)\b/i, "otroci"], [/^youth (help ?line|counsell?ing)/i, "mladi"], [/^suicide prevention/i, "samomor"]];
+const SPLOSNO = [[/^(child|children'?s?) ?(help ?line|line)\b|child help ?line|children'?s? sos/i, "otroci"], [/^youth (help ?line|counsell?ing)/i, "mladi"], [/^suicide prevention/i, "samomor"]];
 export function linijeIzPomoci(help) {
   const out = [];
   for (const part0 of String(help || "").split(",")) {
@@ -737,7 +737,7 @@ export const opomba = (st, meja) => (st.brezplacno === false ? (meja ? "nujno.op
 
 function vrsticeOsnova(vrsta, st) {
   const sos = st.sosZa?.[vrsta] || st.sos;
-  const p = { sos, policija: st.policija, otroci: st.otroci, odrasli: st.odrasli, pomoc: st.pomoc };
+  const p = { sos, policija: st.policija, otroci: st.otroci, odrasli: st.odrasli };
   const L = (k, extra = {}) => [`nujno.${k}`, { ...p, ...extra }];
   const lin = (k, l) => L(l.ure ? k : `${k}BrezUr`, { ime: l.ime, stevilka: l.st, ure: ure(l.ure) });
   if (vrsta === "zdravje") return [L("zdravje.naslov"), L("zdravje.1"), L("zdravje.2"), L("zdravje.3"), L("zdravje.4")];

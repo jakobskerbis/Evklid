@@ -119,7 +119,7 @@ test("vrstice: vse vrste imajo ključe v sl.js in v vseh 32 jezikih", () => {
   const dirs = readdirSync(new URL("../public/i18n/ui/", import.meta.url)).filter((f) => f.endsWith(".json"));
   assert.equal(dirs.length, 32);
   const tables = dirs.map((f) => [f, JSON.parse(readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8"))]);
-  const keys = new Set(["nujno.oznaka", "nujno.zapri", "nujno.klic", "nujno.opomba", "nujno.opombaKratka", "nujno.stiska.drugje", "nujno.nasilje.1b"]);
+  const keys = new Set(["nujno.oznaka", "nujno.zapri", "nujno.klic", "nujno.opomba", "nujno.opombaKratka", "nujno.opombaSos", "nujno.opombaSosMeja", "nujno.nasilje.1b"]);
   const drzave = Object.keys(DRZAVE).flatMap((d) => [stevilke({}, d), stevilke({ educational_track: "UNIVERZA" }, d)]);
   for (const st of [stevilke({}), stevilke({ educational_track: "UNIVERZA" }), { si: false, sos: "911", pomoc: "988" }, ...drzave])
     for (const v of ["zdravje", "stiska", "nasilje", "nevarnost"])
@@ -557,7 +557,8 @@ test("izsiljevanje: vrstica pod NASILJE (j potrdil 6. 11.), navodilo za Haiku, t
     assert.ok(SL[k], k);
     for (const f of readdirSync(new URL("../public/i18n/ui/", import.meta.url))) assert.ok(JSON.parse(readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8"))[k], `${f}: ${k}`);
   }
-  for (const f of ["ar.json", "fa.json"]) assert.ok(!readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8").includes("Samarijan"), f);
+  // Samarijan v ar/fa latinično, kot TOM in v ostalih jezikih (pregled prevodov).
+  for (const f of ["ar.json", "fa.json"]) assert.ok(!/ساماريان|ساماریان/.test(readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8")), f);
 });
 
 test("zaznavalnik: primeri iz ponovnega pregleda B2 in številke v drugih pisavah", () => {
@@ -596,4 +597,12 @@ test("zaznavalnik: nabor pregleda E (vrsta in lažni alarmi)", () => {
   // Nesreča ni samopoškodba (U036); namerna je.
   assert.equal(zaznajNujno("porezal sem se z nozem in kri ful tece"), "zdravje");
   assert.equal(zaznajNujno("namenoma sem se porezal z nožem"), "stiska");
+});
+
+test("pregled prevodov: Albanija brez 112 povsod, ure Plavega telefona, imena linij iz Šolskega sistema prevedena", () => {
+  assert.deepEqual([klici("zdravje", stevilke({}, "AL")), klici("nevarnost", stevilke({}, "AL")), klici("nasilje", stevilke({}, "AL"))], [["127"], ["128"], ["129", "116 111"]]);
+  assert.deepEqual(DRZAVE.BA.otroci.ure, ["vsakDan", 9, 17]);
+  assert.equal(DRZAVE.MK.otroci, undefined); // 116 111 še ne deluje
+  assert.equal(SL["nujno.stiska.drugje"], undefined);
+  assert.deepEqual(stevilke({ school_system: "JP" }).tuje.map((l) => l.ime), [["nujno.ime.otroci", {}], ["nujno.ime.otroci", {}]]);
 });

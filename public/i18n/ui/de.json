@@ -3641,12 +3641,11 @@
   "nujno.zdravje.2": "Bleib bei der Person. Sag, wo ihr seid und was passiert, und tu, was man dir bei {sos} sagt.",
   "nujno.zdravje.3": "Gib keine Medikamente, außer man sagt es dir bei {sos}.",
   "nujno.zdravje.4": "Wenn Hilfe unterwegs ist, kannst du wieder hierher zurückkommen.",
-  "nujno.stiska.naslov": "Ich höre dich. Es war richtig, das zu schreiben. Du bist nicht allein.",
+  "nujno.stiska.naslov": "Ich höre dir zu. Es war richtig, das zu schreiben. Du bist nicht allein.",
   "nujno.stiska.1": "Bitte sag es jetzt einem Erwachsenen in deiner Nähe oder jemandem, dem du vertraust.",
   "nujno.stiska.tom": "Ruf das TOM-Telefon {otroci} an (kostenlos, täglich 12–20 Uhr).",
   "nujno.stiska.sam": "Zu anderen Zeiten: {odrasli} (Samarijan, immer erreichbar).",
   "nujno.stiska.faks": "Ruf {odrasli} an (Samarijan, immer erreichbar) oder die psychologische Beratung deiner Hochschule.",
-  "nujno.stiska.drugje": "Nummern für Hilfe: {pomoc}.",
   "nujno.stiska.112": "Wenn du verletzt bist oder jetzt in Gefahr bist, ruf {sos} an.",
   "nujno.stiska.vprasanje": "Ist gerade jemand bei dir?",
   "nujno.nasilje.naslov": "Danke, dass du es mir gesagt hast. Du bist nicht schuld daran.",
@@ -3673,5 +3672,6 @@
   "nujno.ime.mladi": "das Jugendtelefon",
   "nujno.ime.samomor": "die Suizidpräventions-Hotline",
   "nujno.opombaSos": "Anrufe bei Notrufnummern sind kostenlos.",
-  "nujno.opombaSosMeja": "Anrufe bei Notrufnummern sind kostenlos. Diese Nachricht zählt nicht zu deinen Fragen."
+  "nujno.opombaSosMeja": "Anrufe bei Notrufnummern sind kostenlos. Diese Nachricht zählt nicht zu deinen Fragen.",
+  "nujno.ure.vsakDan": "täglich {od}–{do} Uhr"
 }

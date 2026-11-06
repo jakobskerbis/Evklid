@@ -3618,7 +3618,6 @@
   "nujno.stiska.tom": "Telepon TOM {otroci} (gratis, setiap hari 12.00–20.00).",
   "nujno.stiska.sam": "Di luar jam itu: {odrasli} (Samarijan, selalu buka).",
   "nujno.stiska.faks": "Telepon {odrasli} (Samarijan, selalu buka) atau layanan konseling kampusmu.",
-  "nujno.stiska.drugje": "Nomor bantuan: {pomoc}.",
   "nujno.stiska.112": "Jika kamu terluka atau dalam bahaya sekarang, telepon {sos}.",
   "nujno.stiska.vprasanje": "Apakah ada orang yang bersamamu sekarang?",
   "nujno.nasilje.naslov": "Terima kasih sudah memberitahuku. Ini bukan salahmu.",
@@ -3645,5 +3644,6 @@
   "nujno.ime.mladi": "layanan telepon remaja",
   "nujno.ime.samomor": "layanan pencegahan bunuh diri",
   "nujno.opombaSos": "Panggilan ke nomor darurat gratis.",
-  "nujno.opombaSosMeja": "Panggilan ke nomor darurat gratis. Pesan ini tidak dihitung sebagai pertanyaanmu."
+  "nujno.opombaSosMeja": "Panggilan ke nomor darurat gratis. Pesan ini tidak dihitung sebagai pertanyaanmu.",
+  "nujno.ure.vsakDan": "setiap hari pukul {od}.00–{do}.00"
 }

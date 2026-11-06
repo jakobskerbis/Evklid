@@ -3618,7 +3618,6 @@
   "nujno.stiska.tom": "拨打 TOM 电话 {otroci}（免费，每天 12–20 点）。",
   "nujno.stiska.sam": "其他时间：{odrasli}（Samarijan，24 小时开放）。",
   "nujno.stiska.faks": "拨打 {odrasli}（Samarijan，24 小时开放），或联系你们大学的心理咨询中心。",
-  "nujno.stiska.drugje": "求助电话：{pomoc}。",
   "nujno.stiska.112": "如果你受伤了或现在有危险，请拨打 {sos}。",
   "nujno.stiska.vprasanje": "现在有人在你身边吗？",
   "nujno.nasilje.naslov": "谢谢你告诉我。这不是你的错。",
@@ -3645,5 +3644,6 @@
   "nujno.ime.mladi": "青少年热线",
   "nujno.ime.samomor": "自杀预防热线",
   "nujno.opombaSos": "拨打紧急电话免费。",
-  "nujno.opombaSosMeja": "拨打紧急电话免费。这条消息不计入你的提问次数。"
+  "nujno.opombaSosMeja": "拨打紧急电话免费。这条消息不计入你的提问次数。",
+  "nujno.ure.vsakDan": "每天 {od}:00–{do}:00"
 }

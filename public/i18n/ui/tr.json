@@ -3644,7 +3644,6 @@
   "nujno.stiska.tom": "TOM telefonunu ara: {otroci} (ücretsiz, her gün 12–20).",
   "nujno.stiska.sam": "Diğer saatlerde: {odrasli} (Samarijan, her zaman açık).",
   "nujno.stiska.faks": "{odrasli} numarasını (Samarijan, her zaman açık) ya da üniversitenin danışmanlık merkezini ara.",
-  "nujno.stiska.drugje": "Yardım numaraları: {pomoc}.",
   "nujno.stiska.112": "Yaralandıysan ya da şu an tehlikedeysen {sos} numarasını ara.",
   "nujno.stiska.vprasanje": "Şu an yanında biri var mı?",
   "nujno.nasilje.naslov": "Bana anlattığın için teşekkürler. Bu senin suçun değil.",
@@ -3671,5 +3670,6 @@
   "nujno.ime.mladi": "gençlik hattı",
   "nujno.ime.samomor": "intiharı önleme hattı",
   "nujno.opombaSos": "Acil durum numaralarını aramak ücretsizdir.",
-  "nujno.opombaSosMeja": "Acil durum numaralarını aramak ücretsizdir. Bu mesaj sorularından sayılmaz."
+  "nujno.opombaSosMeja": "Acil durum numaralarını aramak ücretsizdir. Bu mesaj sorularından sayılmaz.",
+  "nujno.ure.vsakDan": "her gün {od}.00–{do}.00"
 }

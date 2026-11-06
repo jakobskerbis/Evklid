@@ -3668,7 +3668,7 @@
   "nujno.oznaka": "Răspuns de siguranță",
   "nujno.zapri": "Închide",
   "nujno.klic": "Sună la {n}",
-  "nujno.opomba": "Apelurile la aceste numere sunt gratuite. Acest mesaj nu se socotește la întrebările tale.",
+  "nujno.opomba": "Apelurile la aceste numere sunt gratuite. Acest mesaj nu se numără la întrebările tale.",
   "nujno.opombaKratka": "Apelurile la aceste numere sunt gratuite.",
   "nujno.zdravje.naslov": "Asta poate fi o urgență.",
   "nujno.zdravje.1": "Sună imediat la {sos} sau spune-i unui adult de lângă tine să sune acum.",
@@ -3680,7 +3680,6 @@
   "nujno.stiska.tom": "Sună la telefonul TOM {otroci} (gratuit, zilnic 12–20).",
   "nujno.stiska.sam": "În alte ore: {odrasli} (Samarijan, mereu deschis).",
   "nujno.stiska.faks": "Sună la {odrasli} (Samarijan, mereu deschis) sau la cabinetul de consiliere al universității.",
-  "nujno.stiska.drugje": "Numere de ajutor: {pomoc}.",
   "nujno.stiska.112": "Dacă ești rănit sau în pericol acum, sună la {sos}.",
   "nujno.stiska.vprasanje": "Este cineva cu tine acum?",
   "nujno.nasilje.naslov": "Mulțumesc că mi-ai spus. Nu e vina ta.",
@@ -3707,5 +3706,6 @@
   "nujno.ime.mladi": "linia pentru tineri",
   "nujno.ime.samomor": "linia de prevenire a sinuciderii",
   "nujno.opombaSos": "Apelurile la numerele de urgență sunt gratuite.",
-  "nujno.opombaSosMeja": "Apelurile la numerele de urgență sunt gratuite. Acest mesaj nu se numără la întrebările tale."
+  "nujno.opombaSosMeja": "Apelurile la numerele de urgență sunt gratuite. Acest mesaj nu se numără la întrebările tale.",
+  "nujno.ure.vsakDan": "zilnic {od}–{do}"
 }

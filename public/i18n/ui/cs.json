@@ -3708,7 +3708,6 @@
   "nujno.stiska.tom": "Zavolej na TOM telefon {otroci} (zdarma, každý den 12–20).",
   "nujno.stiska.sam": "Jindy: {odrasli} (Samarijan, vždy otevřeno).",
   "nujno.stiska.faks": "Zavolej na {odrasli} (Samarijan, vždy otevřeno) nebo do poradny své vysoké školy.",
-  "nujno.stiska.drugje": "Čísla pro pomoc: {pomoc}.",
   "nujno.stiska.112": "Pokud jsi zraněný nebo jsi teď v nebezpečí, zavolej {sos}.",
   "nujno.stiska.vprasanje": "Je teď někdo s tebou?",
   "nujno.nasilje.naslov": "Děkuji, že jsi mi to řekl. Není to tvoje vina.",
@@ -3734,6 +3733,7 @@
   "nujno.ime.otroci": "linku pro děti",
   "nujno.ime.mladi": "linku pro mladé",
   "nujno.ime.samomor": "linku prevence sebevražd",
-  "nujno.opombaSos": "Volání na čísla tísňového volání je zdarma.",
-  "nujno.opombaSosMeja": "Volání na čísla tísňového volání je zdarma. Tato zpráva se ti nepočítá do otázek."
+  "nujno.opombaSos": "Volání na tísňové linky je zdarma.",
+  "nujno.opombaSosMeja": "Volání na tísňové linky je zdarma. Tato zpráva se ti nepočítá do otázek.",
+  "nujno.ure.vsakDan": "každý den {od}–{do}"
 }

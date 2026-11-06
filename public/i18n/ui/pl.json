@@ -3714,7 +3714,6 @@
   "nujno.stiska.tom": "Zadzwoń na telefon TOM {otroci} (bezpłatnie, codziennie 12–20).",
   "nujno.stiska.sam": "W innych godzinach: {odrasli} (Samarijan, zawsze czynny).",
   "nujno.stiska.faks": "Zadzwoń pod {odrasli} (Samarijan, zawsze czynny) albo do poradni psychologicznej na uczelni.",
-  "nujno.stiska.drugje": "Numery pomocy: {pomoc}.",
   "nujno.stiska.112": "Jeśli jesteś ranny albo jesteś teraz w niebezpieczeństwie, zadzwoń pod {sos}.",
   "nujno.stiska.vprasanje": "Czy ktoś jest teraz z tobą?",
   "nujno.nasilje.naslov": "Dziękuję, że mi powiedziałeś. To nie twoja wina.",
@@ -3732,7 +3731,7 @@
   "nujno.linijaDrugic": "W innych godzinach: {stevilka} ({ime}, {ure}).",
   "nujno.nasilje.linija": "Bezpłatnie: {ime} {stevilka} ({ure}).",
   "nujno.nasilje.linijaBrezUr": "Bezpłatnie: {ime} {stevilka}.",
-  "nujno.ure.vedno": "zawsze czynne",
+  "nujno.ure.vedno": "czynny całą dobę",
   "nujno.ure.delavniki": "w dni robocze {od}–{do}",
   "nujno.ure.ponSob": "od poniedziałku do soboty {od}–{do}",
   "nujno.nasilje.izsiljevanje": "Nie wysyłaj już nic i nie płać. Zapisz wiadomości i zablokuj tę osobę.",
@@ -3741,5 +3740,6 @@
   "nujno.ime.mladi": "telefon dla młodzieży",
   "nujno.ime.samomor": "telefon zapobiegania samobójstwom",
   "nujno.opombaSos": "Połączenia z numerami alarmowymi są bezpłatne.",
-  "nujno.opombaSosMeja": "Połączenia z numerami alarmowymi są bezpłatne. Ta wiadomość nie liczy się do twoich pytań."
+  "nujno.opombaSosMeja": "Połączenia z numerami alarmowymi są bezpłatne. Ta wiadomość nie liczy się do twoich pytań.",
+  "nujno.ure.vsakDan": "codziennie {od}–{do}"
 }

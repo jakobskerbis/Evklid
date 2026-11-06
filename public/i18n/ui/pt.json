@@ -3651,7 +3651,6 @@
   "nujno.stiska.tom": "Liga para o telefone TOM {otroci} (grátis, todos os dias das 12h às 20h).",
   "nujno.stiska.sam": "Noutras horas: {odrasli} (Samarijan, sempre aberto).",
   "nujno.stiska.faks": "Liga para o {odrasli} (Samarijan, sempre aberto) ou para o serviço de apoio psicológico da tua universidade.",
-  "nujno.stiska.drugje": "Números de ajuda: {pomoc}.",
   "nujno.stiska.112": "Se estás ferido ou em perigo agora, liga para o {sos}.",
   "nujno.stiska.vprasanje": "Está alguém contigo agora?",
   "nujno.nasilje.naslov": "Obrigado por me contares. A culpa não é tua.",
@@ -3666,7 +3665,7 @@
   "nujno.nevarnost.3": "Se cheirar a gás: não acendas luzes nem fogo e não carregues em interruptores. Liga só quando estiveres lá fora.",
   "nujno.linija": "Liga para {ime} {stevilka} (grátis, {ure}).",
   "nujno.linijaBrezUr": "Liga para {ime} {stevilka} (grátis).",
-  "nujno.linijaDrugic": "Em outros horários: {stevilka} ({ime}, {ure}).",
+  "nujno.linijaDrugic": "Noutras horas: {stevilka} ({ime}, {ure}).",
   "nujno.nasilje.linija": "Grátis: {ime} {stevilka} ({ure}).",
   "nujno.nasilje.linijaBrezUr": "Grátis: {ime} {stevilka}.",
   "nujno.ure.vedno": "sempre aberto",
@@ -3678,5 +3677,6 @@
   "nujno.ime.mladi": "a linha para jovens",
   "nujno.ime.samomor": "a linha de prevenção do suicídio",
   "nujno.opombaSos": "As chamadas para números de emergência são gratuitas.",
-  "nujno.opombaSosMeja": "As chamadas para números de emergência são gratuitas. Esta mensagem não conta para as tuas perguntas."
+  "nujno.opombaSosMeja": "As chamadas para números de emergência são gratuitas. Esta mensagem não conta para as tuas perguntas.",
+  "nujno.ure.vsakDan": "todos os dias das {od} às {do} h"
 }

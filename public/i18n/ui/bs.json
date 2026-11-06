@@ -3678,7 +3678,6 @@
   "nujno.stiska.tom": "Pozovi TOM telefon {otroci} (besplatno, svaki dan 12–20).",
   "nujno.stiska.sam": "U drugo vrijeme: {odrasli} (Samarijan, uvijek otvoren).",
   "nujno.stiska.faks": "Pozovi {odrasli} (Samarijan, uvijek otvoren) ili studentsko savjetovalište.",
-  "nujno.stiska.drugje": "Brojevi za pomoć: {pomoc}.",
   "nujno.stiska.112": "Ako si povrijeđen ili si sada u opasnosti, pozovi {sos}.",
   "nujno.stiska.vprasanje": "Je li sada neko s tobom?",
   "nujno.nasilje.naslov": "Hvala što si mi rekao. Nisi ti kriv za to.",
@@ -3705,5 +3704,6 @@
   "nujno.ime.mladi": "telefon za mlade",
   "nujno.ime.samomor": "telefon za prevenciju samoubistva",
   "nujno.opombaSos": "Poziv na brojeve za hitne slučajeve je besplatan.",
-  "nujno.opombaSosMeja": "Poziv na brojeve za hitne slučajeve je besplatan. Ova poruka ti se ne broji u pitanja."
+  "nujno.opombaSosMeja": "Poziv na brojeve za hitne slučajeve je besplatan. Ova poruka ti se ne računa u pitanja.",
+  "nujno.ure.vsakDan": "svaki dan {od}–{do}"
 }

@@ -3644,7 +3644,6 @@
   "nujno.stiska.tom": "Piga simu ya TOM {otroci} (bure, kila siku kuanzia saa 6 mchana hadi saa 2 usiku).",
   "nujno.stiska.sam": "Nyakati nyingine: {odrasli} (Samarijan, wazi kila wakati).",
   "nujno.stiska.faks": "Piga {odrasli} (Samarijan, wazi kila wakati) au huduma ya ushauri ya chuo chako.",
-  "nujno.stiska.drugje": "Namba za msaada: {pomoc}.",
   "nujno.stiska.112": "Ukiwa umeumia au uko hatarini sasa, piga {sos}.",
   "nujno.stiska.vprasanje": "Kuna mtu yeyote nawe sasa?",
   "nujno.nasilje.naslov": "Asante kwa kuniambia. Si kosa lako.",
@@ -3671,5 +3670,6 @@
   "nujno.ime.mladi": "simu ya msaada kwa vijana",
   "nujno.ime.samomor": "simu ya kuzuia kujiua",
   "nujno.opombaSos": "Kupiga simu kwa namba za dharura ni bure.",
-  "nujno.opombaSosMeja": "Kupiga simu kwa namba za dharura ni bure. Ujumbe huu hauhesabiwi kwenye maswali yako."
+  "nujno.opombaSosMeja": "Kupiga simu kwa namba za dharura ni bure. Ujumbe huu hauhesabiwi kwenye maswali yako.",
+  "nujno.ure.vsakDan": "kila siku kuanzia {od}:00 hadi {do}:00"
 }
