@@ -95,3 +95,36 @@ test("ΔG v biologiji, R v naklonu, hitrost zvoka", () => {
   has("KEM", "Kemijsko ravnotežje", "Naklon premice je $-\\Delta_\\mathrm{r}H^\\circ/R$.", "R", /plinska konstanta/);
   has("FIZ", "Valovanje", "Pri specifični toploti … je hitrost zvoka $c = \\sqrt{\\kappa p/\\rho}$.", "c", /hitrost/);
 });
+
+// Drugi pregled PR 463 (§5): krožnica, a pri x³ in log_a, S v stopinjah, e pri stožnicah, α/β kot skalarja.
+test("pregled 463-2 §5: p, q, a, S, e, α, β po kontekstu", () => {
+  const kr = "Krožnica s središčem $S(0, 5)$ ima enačbo $(x - p)^2 + (y - q)^2 = r^2$.";
+  has("MAT", "Krožnica", kr, "p", /središča/);
+  has("MAT", "Krožnica", kr, "q", /središča/);
+  has("MAT", "Kvadratna funkcija", "Temenska oblika $f(x) = a(x - p)^2 + q$.", "p", /temena/);
+  none("MAT", "Transformacije grafov", "Premik grafa: $g(x) = f(x - p) + q$.", "q");
+  none("MAT", "Odvod", "Za funkcijo $f(x) = ax^3 + 3x^2$ velja $f'(2) = -36$.", "a");
+  none("MAT", "Logaritemska funkcija in enačbe", "Velja $\\log_a x^2 = 2\\log_a x$.", "a");
+  has("MAT", "Kvadratna enačba", "Reši $2ax^2 + bx + c = 0$.", "a", /vodilni/);
+  none("MAT", "Večkotniki", "Vsota kotov: $S = 5 \\cdot 180^\\circ = 900^\\circ$.", "S");
+  has("MAT", "Večkotniki", "Ploščina je $S = 12\\,\\mathrm{cm^2}$.", "S", /ploščina/);
+  none("MAT", "Elipsa, hiperbola in parabola", "Pri elipsi velja $e^2 = a^2 - b^2$.", "e");
+  none("MAT", "Elipsa, hiperbola in parabola", "Ekscentričnost je $\\varepsilon = \\frac{e}{a}$.", "e");
+  has("MAT", "Eksponentna funkcija", "Graf $y = e^x$.", "e", /Euler/);
+  for (const k of ["α", "β"]) {
+    none("MAT", "Vektorski prostori", "Za $\\alpha, \\beta \\in \\mathbb{R}$ velja $\\alpha u + \\beta v \\in U$.", k);
+    none("MAT", "Linearne diferencialne enačbe drugega reda", "Pri $\\lambda = \\alpha \\pm i\\beta$ je $x = e^{\\alpha t}(C_1\\cos\\beta t + C_2\\sin\\beta t)$.", k);
+    has("MAT", "Kotne funkcije", "Velja $\\sin\\alpha = \\frac{a}{c}$ in $\\cos\\beta = \\frac{b}{c}$.", k, /kot/);
+  }
+  has("MAT", "Vektorji", "Kot med vektorjema je $\\alpha = 30^\\circ$.", "α", /kot/);
+  // Mešana serija: P pri verjetnosti je »površina« le brez teme; z temo naloge (task.topicId) ni.
+  none("MAT", "Verjetnost · Kombinatorika in verjetnost", "Verjetnost je $P = P_1 \\cdot P_2$.", "P");
+});
+
+test("serija nalog iz več tem: vsaka naloga da svojo temo in predmet (app.js, §5.6)", async () => {
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(new URL("../public/app.js", import.meta.url), "utf8");
+  assert.match(src, /function renderTask\(task, ctx\) \{\n\s*setTaskFx\(task\);/);
+  assert.match(src, /taskFxNow\(\)\?\.scope/);
+  assert.match(src, /taskFxNow\(\)\?\.subject/);
+});

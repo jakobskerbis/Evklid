@@ -170,7 +170,8 @@ Object.assign(BIO, {
 //   samo – po temi (brez ctx) velja le, če se formula ujema s tem vzorcem (a = 1, b = −5; ne x = 2a).
 // Vnos s ctx ali teme velja samo, ko se kontekst ujema; sicer črka ni klikljiva (raje nič kot napačno).
 // Pravila in seznam dvoumnih črk: docs/pomen-crk.md.
-const QUAD = "a\\s*x\\^|ax\\^|b\\^2\\s*-\\s*4\\s*a\\s*c";
+// a x² (ne a x³, ne log_a xⁿ; pregled 463-2, §5.2).
+const QUAD = "(?<![_A-Za-z\\\\])a\\s*x\\^\\{?2(?!\\d)|b\\^2\\s*-\\s*4\\s*a\\s*c";
 // Formula rešitev ali Vietovi formuli: v njej so x₁, x₂, a, b, c in D zanesljivo iz kvadratne enačbe.
 // −b ± √… in ± √D sta formula rešitev; (√a ± √b)² ni (pregled 463, N4). Vietovi formuli (c/a, −b/a) le skupaj z
 // x₁ ali x₂: c/a = a/c_a v Evklidovem izreku ni kvadratna enačba (N3).
@@ -182,6 +183,10 @@ const KVAD = "kvadratn\\w*\\s+(?:enačb|funkcij|neenačb|polinom|trinom)|diskrim
 // a, b, c: »Vietovo pravilo« pri razstavljanju (x² + (a+b)x + ab) ni kvadratna enačba (pregled 463, N5).
 const KVAD_K = "kvadratn\\w*\\s+(?:enačb|funkcij|neenačb|polinom|trinom)|diskriminant";
 // p, q pri paraboli kot stožnici (y² = 2px) nista teme T(p, q) (pregled 463, N6).
+// Krožnica (x − p)² + (y − q)² = r²: p, q sta koordinati središča S(p, q); f(x − p) + q je premik grafa (§5.1).
+const KROZNICA = "\\(\\s*x\\s*-\\s*p\\s*\\)\\^\\{?2\\}?\\s*\\+\\s*\\(\\s*y\\s*-\\s*q";
+const TEME_BREZ = `${KROZNICA}|f\\s*\\(\\s*x\\s*-\\s*p`;
+const TEME_NE = "krožnic|središč|premik|transformacij";
 const STOZNICE = "gorišč|vodnic|stožnic|elips|hiperbol|parabol\\w*\\s+y\\^";
 const KVAD_NE = "elips|hiperbol|zaporedj|\\bvrst[aeio]?\\b";
 // Po temi sami so a, b, c koeficienti le v formuli brez drugih črk (»a = 1«, »a \\neq 0«), ne v »x = 2a«.
@@ -196,11 +201,14 @@ const LIN_ENACBE = "linearn\\w*\\s+enačb|sistem\\w*\\s+linearn";
 const PREMICA = "premic|linearn\\w*\\s+funkcij|smern|naklon";
 const ZAPOREDJE = "zaporedj|aritmetičn|geometrijsk|\\bvrst[aeio]?\\b";
 // α, β, γ niso koti pri »ravnina α«, stopnji tveganja, stopnji značilnosti ali parametru (»v ravnini« pa ni izjema).
-const ANGLE_NE = "ravnin\\w*\\s+\\$?\\s*\\\\?(?:alpha|beta|gamma|α|β|γ)|tveganj|značilnost|parameter";
+// α, β kot skalarja (α, β ∈ ℝ), v eksponentu e^{αt}, pri cos βt in λ = α ± iβ niso koti (§5.5).
+const ANGLE_BREZ = "\\\\in\\s*\\\\mathbb|e\\^\\{[^}]*\\\\(?:alpha|beta)|\\\\(?:cos|sin)\\s*\\\\(?:alpha|beta)\\s*[a-z]|\\\\(?:alpha|beta)\\s*\\\\pm\\s*i|\\\\pm\\s*i\\s*\\\\(?:alpha|beta)";
+const ANGLE_NE = "ravnin\\w*\\s+\\$?\\s*\\\\?(?:alpha|beta|gamma|α|β|γ)|tveganj|značilnost|parameter|vektorsk\\w*\\s+prostor|podprostor|skalar|linearn\\w*\\s+(?:kombinacij|preslikav|neodvisn)";
 const KOTI = "\\\\angle|\\\\sin|\\\\cos|\\\\tan|\\\\cot|\\^\\s*\\{?\\s*\\\\circ|°";
 const MAT = {
   π: { n: "število pi", en: "pi", r: "\\pi \\approx 3{,}14159", note: "Razmerje med obsegom in premerom kroga.", noteEn: "Ratio of a circle's circumference to its diameter." },
-  e: { ctx: "e\\^|\\\\ln|\\\\exp|\\\\lim", n: "Eulerjevo število", en: "Euler's number", r: "e \\approx 2{,}71828", note: "Osnova naravnega logaritma.", noteEn: "Base of the natural logarithm." },
+  // e² = a² − b², e = √(a² − b²), ε = e/a: linearna ekscentričnost elipse in hiperbole (§5.4).
+  e: { brez: "e\\^\\{?2\\}?\\s*=\\s*a\\^|e\\s*=\\s*\\\\sqrt\\s*\\{?\\s*a\\^|\\\\frac\\{\\s*e\\s*\\}\\{\\s*a\\s*\\}|(?<![\\w\\\\])e\\s*/\\s*a\\b|a\\^\\{?2\\}?\\s*[+-]\\s*b\\^\\{?2\\}?\\s*=\\s*e\\^", ctx: "e\\^|\\\\ln|\\\\exp|\\\\lim", n: "Eulerjevo število", en: "Euler's number", r: "e \\approx 2{,}71828", note: "Osnova naravnega logaritma.", noteEn: "Base of the natural logarithm." },
   // Eulerjeva oblika (e^{iφ}, cos φ ± i sin φ) sama pove, da je i imaginarna enota; sicer formula in tema.
   i: [
     { ctx: "e\\^\\{\\s*-?\\s*i|(?:\\\\pm|[+-])\\s*i\\s*\\\\sin|\\\\pm\\s*i(?![\\w\\\\])|\\(\\s*x\\s*[-+]\\s*i\\s*\\)|i\\^\\{?2\\}?\\s*=\\s*-\\s*1", n: "imaginarna enota", en: "imaginary unit", r: "i^2 = -1" },
@@ -220,12 +228,19 @@ const MAT = {
   // n je začetna vrednost le, če je y = k x + n v isti formuli ali povedi (pov), ne vsak n v temi o premici
   // (»za vsak naravni n«, razmerje m : n pri Talesovem izreku).
   n: { ctx: "y\\s*=\\s*k\\s*x\\s*[+-]\\s*n", pov: "y\\s*=\\s*k\\s*x\\s*[+-]\\s*n\\b", ne: "zaporedj|kombinator|binom|vsot|indukcij|mnogokotnik|potenc|koren", n: "začetna vrednost (presečišče z osjo y)", en: "y-intercept", r: "y = k x + n" },
-  p: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: STOZNICE, n: "abscisa temena T(p, q)", en: "x-coordinate of the vertex T(p, q)", r: "p = -\\frac{b}{2a}" },
-  q: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: STOZNICE, n: "ordinata temena T(p, q)", en: "y-coordinate of the vertex T(p, q)", r: "q = -\\frac{D}{4a}" },
+  p: [
+    { ctx: KROZNICA, n: "abscisa središča S(p, q)", en: "x-coordinate of the centre S(p, q)", r: "(x - p)^2 + (y - q)^2 = r^2" },
+    { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", brez: TEME_BREZ, teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: `${STOZNICE}|${TEME_NE}`, n: "abscisa temena T(p, q)", en: "x-coordinate of the vertex T(p, q)", r: "p = -\\frac{b}{2a}" },
+  ],
+  q: [
+    { ctx: KROZNICA, n: "ordinata središča S(p, q)", en: "y-coordinate of the centre S(p, q)", r: "(x - p)^2 + (y - q)^2 = r^2" },
+    { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", brez: TEME_BREZ, teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: `${STOZNICE}|${TEME_NE}`, n: "ordinata temena T(p, q)", en: "y-coordinate of the vertex T(p, q)", r: "q = -\\frac{D}{4a}" },
+  ],
   r: { ctx: CIRCLE, teme: KROG, brez: "\\\\int|\\\\sum|\\\\lim|\\\\sin|\\\\cos|\\\\tan", n: "polmer", en: "radius", r: "d = 2r" },
   d: { ctx: `${CIRCLE}|d\\s*=\\s*2\\s*r`, teme: KROG, ne: "razdalj|oddaljen|sekant|tangent|mimobežn|diagonal|štirikotnik|trapez|romb|deltoid|paralelogram", brez: "\\\\(?:o|i{0,2})int|\\\\frac\\{\\s*d|(?<![A-Za-z\\\\])d\\s*(?:[A-Za-z]|\\\\(?:varphi|vartheta|theta|phi|rho|tau|omega|lambda))(?![a-z])|\\\\mathrm\\s*\\{?\\s*d(?![a-zA-Z])", n: "premer", en: "diameter", r: "d = 2r" },
   o: { ctx: "o\\s*=", teme: GEOM, oba: true, n: "obseg", en: "perimeter (circumference)", r: "o = 2\\pi r" },
-  S: { zan: `(?<![\\w\\\\])S${NUM_UNIT}(?:[kdcm]?m\\^\\{?2)`, ctx: "S\\s*=", teme: `${GEOM}|integral`, oba: true, ne: "zaporedj|vsot|statist|verjetn|množic", n: "ploščina", en: "area" },
+  // S = 5 · 180° je vsota kotov, ne ploščina (§5.3).
+  S: { brez: "\\^\\s*\\{?\\s*\\\\circ|°", zan: `(?<![\\w\\\\])S${NUM_UNIT}(?:[kdcm]?m\\^\\{?2)`, ctx: "S\\s*=", teme: `${GEOM}|integral`, oba: true, ne: "zaporedj|vsot|statist|verjetn|množic", n: "ploščina", en: "area" },
   // »Mečemo kocko«: P je verjetnost, ne površina (docs/pomen-crk.md).
   P: { ctx: "P\\s*=", teme: "površin|prizm|piramid|kock|kvader|valj|stož|krogl|\\bteles|\\btelo\\b", oba: true, ne: "verjetn|dogod|meč", n: "površina telesa", en: "surface area" },
   V: { zan: `(?<![\\w\\\\])V${NUM_UNIT}(?:[kdcm]?m\\^\\{?3|[mdc]?L\\b)`, ctx: "V\\s*=", teme: "prostornin|prizm|piramid|kock|kvader|valj|stož|krogl|\\bteles|\\btelo\\b|vrteni", oba: true, ne: "verjetn|dogod|meč", n: "prostornina", en: "volume" },
@@ -234,9 +249,9 @@ const MAT = {
   a_1: { ctx: "a_n|a_\\{n", teme: ZAPOREDJE, oba: true, ne: "polinom", n: "prvi člen zaporedja", en: "first term of the sequence" },
   s_n: { teme: ZAPOREDJE, n: "vsota prvih n členov", en: "sum of the first n terms" },
   // α, β, γ so tudi ravnine, parametri, stopnje tveganja: kot samo ob kotih ali v geometriji.
-  α: { ctx: KOTI, teme: `^kot|${GEOM}|\\bkot[ai]\\b|kotn|kotov|konstrukc|simetral|podobn|skladn|trigonometr|vektor`, ne: ANGLE_NE, n: "kot", en: "angle" },
-  β: { ctx: KOTI, teme: `^kot|${GEOM}|\\bkot[ai]\\b|kotn|kotov|konstrukc|simetral|podobn|skladn|trigonometr|vektor`, ne: ANGLE_NE, n: "kot", en: "angle" },
-  γ: { ctx: KOTI, teme: `^kot|${GEOM}|\\bkot[ai]\\b|kotn|kotov|konstrukc|simetral|podobn|skladn|trigonometr|vektor`, ne: ANGLE_NE, n: "kot", en: "angle" },
+  α: { brez: ANGLE_BREZ, ctx: KOTI, teme: `^kot|${GEOM}|\\bkot[ai]\\b|kotn|kotov|konstrukc|simetral|podobn|skladn|trigonometr|vektor`, ne: ANGLE_NE, n: "kot", en: "angle" },
+  β: { brez: ANGLE_BREZ, ctx: KOTI, teme: `^kot|${GEOM}|\\bkot[ai]\\b|kotn|kotov|konstrukc|simetral|podobn|skladn|trigonometr|vektor`, ne: ANGLE_NE, n: "kot", en: "angle" },
+  γ: { brez: ANGLE_BREZ, ctx: KOTI, teme: `^kot|${GEOM}|\\bkot[ai]\\b|kotn|kotov|konstrukc|simetral|podobn|skladn|trigonometr|vektor`, ne: ANGLE_NE, n: "kot", en: "angle" },
 };
 
 const SYMBOLS = { FIZ, KEM, BIO, MAT };

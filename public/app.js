@@ -194,9 +194,22 @@ const topicSubject = (tp) => tp?.subject || (/^UNI-/.test(tp?.id || "") ? null :
 const topicGlossary = () => (currentView === "topic" && state.topicFx ? state.topic?.symbols : null);
 // Ime teme in sklopa: dvoumna črka dobi pomen iz slovarja le, če se tema ujema (x₁ je ničla le pri kvadratni enačbi).
 const topicScope = (tp) => (tp ? [tp.name, tp.unit].filter(Boolean).join(" · ") : "");
+// Naloga v seriji iz več tem (ponavljanje, dnevni izziv, tekmovanje): tema in predmet naloge sama (task.topicId),
+// ne zadnje odprte teme; sicer bi bil P pri verjetnosti spet »površina« (pregled 463-2, §5.6).
+let taskFx = null; // { view, scope, subject }
+const taskFxNow = () => (taskFx && currentView !== "topic" && currentView === taskFx.view ? taskFx : null);
+function setTaskFx(task) {
+  if (!task?.topicId) return (taskFx = null);
+  const tp = topicCache.get(task.topicId);
+  taskFx = {
+    view: currentView,
+    scope: tp ? topicScope(tp) : task.topicName || "",
+    subject: topicSubject(tp || { id: task.topicId }) || null,
+  };
+}
 setFormulaSubject(
-  () => subjectWithGlossary(topicSubject(state.topic) || state.student?.settings?.subject || "MAT", topicGlossary()),
-  () => (currentView === "topic" ? topicScope(state.topic) : ""),
+  () => subjectWithGlossary(taskFxNow()?.subject || topicSubject(state.topic) || state.student?.settings?.subject || "MAT", topicGlossary()),
+  () => (currentView === "topic" ? topicScope(state.topic) : taskFxNow()?.scope || ""),
 );
 // Razlaga teme in »Bistvo«: črke imajo pomen iz lekcije te teme (:::simboli), sicer iz slovarja predmeta.
 const topicRich = (tp, text) => withFormulaSubject(topicSubject(tp) || state.student?.settings?.subject || "MAT", () => renderRich(text), tp?.symbols, topicScope(tp));
@@ -2861,6 +2874,7 @@ function choiceHtml(task, o, fx = true) {
 }
 
 function renderTask(task, ctx) {
+  setTaskFx(task);
   showSideExplanation(task, ctx);
   const box = $("#practice");
   // Tekmovalna imena težavnosti (težja, zahtevna, izziv) samo pri slovenskih tekmovanjih, ne pri izpitih.
