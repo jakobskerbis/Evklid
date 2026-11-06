@@ -102,8 +102,8 @@ function selectionInLesson(sel) {
   // Izbor mora biti znotraj besedila lekcije (ne v gumbih ali menijih).
   const start = sel.anchorNode?.nodeType === 1 ? sel.anchorNode : sel.anchorNode?.parentElement;
   if (!el.closest(SELECT_AREA) && !start?.closest(SELECT_AREA)) return null;
-  // Obvestilo »Lekcija še nastaja« ni snov: tam »Razloži« ne ponudimo.
-  if (el.closest(".tb-pending") || start?.closest(".tb-pending")) return null;
+  // Stran »Lekcija še nastaja« nima snovi (ne obvestilo ne naslov ali cilji): tam »Razloži« ne ponudimo.
+  if (view.querySelector(".tb-pending")) return null;
   const text = selectionText(sel);
   return text.length >= 2 ? text : null;
 }
@@ -482,7 +482,7 @@ async function renderLesson(topicId) {
   const pendingNext = L.demo && L.practice ? "tbk.pendingDemoPractice" : L.demo ? "tbk.pendingDemo" : L.practice ? "tbk.pendingPractice" : "tbk.pendingAsk";
   const fallback = !lesson
     ? pending
-      ? `<section class="card tb-section tb-pending"><div class="explanation"><p>${esc(t("tbk.pending"))} ${esc(t(pendingNext))}</p></div>
+      ? `<section class="card tb-section tb-pending"><div class="explanation"><p>${esc(t("tbk.pending"))}${/^(zh|ja)/.test(locale()) ? "" : " "}${esc(t(pendingNext))}</p></div>
         <div class="actions"><button type="button" class="primary" id="tb-ask-topic">${ic("message-circle")}${esc(t("tbk.askTopic"))}</button></div></section>${SLOT}`
       : `<section class="card tb-section"><div class="explanation">${R(L.explanation)}</div></section>${SLOT}`
     : "";
@@ -551,10 +551,10 @@ async function renderLesson(topicId) {
   // ne v levem stolpcu: na računalniku s poskusi desno je ← levo spodaj, številka na sredini in → desno spodaj.
   const nextHtml = `<section class="card tb-next"${stepMode ? " hidden" : ""}>
     <h2>Kaj zdaj?</h2>
-    <div class="actions">
+    ${L.practice || !pending ? `<div class="actions">
       ${L.practice ? `<button type="button" class="primary" id="tb-practice">${ic("pencil")}Vadi naloge</button>` : ""}
       ${pending ? "" : `<button type="button" class="secondary" id="tb-ask">${ic("message-circle")}Še ni jasno? Vprašaj inštruktorja</button>`}
-    </div>
+    </div>` : ""}
     <div class="tb-nav">
       ${L.prev ? `<button type="button" class="ghost" data-lesson="${esc(L.prev.id)}">← ${esc(L.prev.name)}</button>` : "<span></span>"}
       ${L.next ? `<button type="button" class="ghost" data-lesson="${esc(L.next.id)}">${esc(L.next.name)} →</button>` : ""}

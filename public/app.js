@@ -824,8 +824,7 @@ function renderEmptyChat() {
   $("#messages").querySelectorAll("[data-idea]").forEach((b) =>
     b.addEventListener("click", () => {
       if (!$("#input").value.trim() && !state.image) return send(b.dataset.idea);
-      $("#input").value = b.dataset.idea;
-      $("#input").focus();
+      fillInput(b.dataset.idea);
     }),
   );
   renderState(null);
@@ -1021,9 +1020,13 @@ function addMessage(role, text, hasImage = false, info = null) {
   return el;
 }
 
-async function send(text, { deep = false } = {}) {
+async function send(text, { deep = false, image: attached = null } = {}) {
   if (state.sending) return;
-  const image = state.image;
+  // Samodejno sestavljeno sporočilo (Razloži, Vprašaj o temi, izbire …) ni iz polja: učenčev osnutek in
+  // fotografija v polju ostaneta (ne pošljemo ju zraven in ju ne pobrišemo). Slika samodejnega sporočila
+  // (izrez naloge iz pole) pride kot attached.
+  const fromInput = !attached && ($("#input").value.trim() || "") === (text || "").trim();
+  const image = attached || (fromInput ? state.image : null);
   if (!text && !image) return;
   // Izklopljen klepet (EVKLID_CHAT_OFF): nič ne pošljemo, vprašanje in fotografija ostaneta.
   if (!$("#chat-off").hidden) return;
@@ -1044,9 +1047,11 @@ async function send(text, { deep = false } = {}) {
     const paperCtx = state.paperCtx?.conv === sentTo ? state.paperCtx : null;
     document.querySelectorAll(".full-btn, .choice-row").forEach((x) => x.remove());
     userEl = addMessage("user", text, !!image);
-    $("#input").value = "";
-    autoGrow();
-    clearImage();
+    if (fromInput) {
+      $("#input").value = "";
+      autoGrow();
+      clearImage();
+    }
 
     bubble = addMessage("assistant", "");
     bubble.classList.add("typing");
@@ -1126,7 +1131,7 @@ async function send(text, { deep = false } = {}) {
         bubble.classList.add("error");
         pacer.finish(d.error);
         pacer.skip();
-        if (state.conversationId === sentTo) $("#input").value = text; // vrni besedilo za ponovni poskus
+        if (state.conversationId === sentTo) restoreDraft(text, image); // vrni besedilo za ponovni poskus
       },
     });
     pacer.finish();
@@ -1176,8 +1181,7 @@ async function send(text, { deep = false } = {}) {
       userEl?.remove();
       if (!$("#messages .msg")) renderEmptyChat(); // prazen pogovor spet pokaže pozdrav in predloge
       $("#chat-off").hidden = false;
-      $("#input").value = text;
-      autoGrow();
+      restoreDraft(text, image);
       return;
     }
     // Prekinjena povezava (npr. med objavo nove različice) je TypeError z »network error« v angleščini: učenec
@@ -1185,14 +1189,38 @@ async function send(text, { deep = false } = {}) {
     const dropped = err instanceof TypeError && /^(network ?error|failed to fetch|load failed|networkerror)/i.test(err.message);
     if (!dropped) console.error(err);
     addMessage("assistant", dropped ? t("off.serverBusy") : err.message, false, { error: true });
-    // Neuspelo pošiljanje (omrežje, strežnik): besedilo se vrne v polje, da se ne izgubi. Meja porabe: ne.
-    if (!err.limit) {
-      $("#input").value = text;
-      autoGrow();
-    }
+    // Neuspelo pošiljanje (omrežje, strežnik): besedilo in fotografija se vrneta v polje, da se ne izgubita.
+    // Meja porabe: ne (sporočilo ostane v oblačku, polje prazno).
+    if (!err.limit) restoreDraft(text, image);
   } finally {
     state.sending = false;
     $("#send").disabled = false;
+  }
+}
+
+// Pripravljeno vprašanje (kalkulator, skener, 3D, kotiček, predlog) v polje: učenčevega osnutka ne prepiše,
+// ampak ga doda na konec v novi vrstici (j, 6. 11.: nikoli izgube vnosa).
+function fillInput(text) {
+  const box = $("#input");
+  const typed = box.value.replace(/\s+$/, "");
+  box.value = typed ? `${typed}\n\n${text}` : text;
+  autoGrow();
+  box.focus();
+  box.setSelectionRange?.(box.value.length, box.value.length);
+}
+
+// Besedilo neuspelega sporočila nazaj v polje; osnutka, ki ga je učenec medtem (ali že prej) napisal, ne prepiše.
+// (Pri sporočilu iz polja je polje ob pošiljanju izpraznjeno; kar je v njem zdaj, je nov osnutek.)
+function restoreDraft(text, image) {
+  const box = $("#input");
+  if (text && !box.value.trim()) {
+    box.value = text;
+    autoGrow();
+  }
+  if (image && !state.image) {
+    state.image = image;
+    $("#image-preview img").src = image.url;
+    $("#image-preview").hidden = false;
   }
 }
 
@@ -3619,14 +3647,11 @@ async function paperTask(entry, subjectName, task) {
   paperBusy = true;
   try {
     await newTutorChat();
-    state.image = task.image;
-    $("#image-preview img").src = task.image.url;
-    $("#image-preview").hidden = false;
     const paper = paperLabel(entry, subjectName);
     const head = task.label ? t("pp.taskMsg", { paper, n: task.label }) : t("pp.boxMsg", { paper, page: task.page });
     const text = String(task.text || "").slice(0, 1500).trim();
     state.paperCtx = { conv: state.conversationId, paper, task: task.label || "", page: task.label ? 0 : task.page, fromPdf: !!text };
-    await send(text ? `${head}\n\n${text}` : head);
+    await send(text ? `${head}\n\n${text}` : head, { image: task.image });
   } catch (err) {
     toast(err.message);
   } finally {
@@ -3988,10 +4013,7 @@ function graphCalc() {
       askTutor: (text) => {
         closeCalcOverlay();
         showView("chat");
-        const box = $("#input");
-        box.value = text;
-        autoGrow();
-        box.focus();
+        fillInput(text);
       },
     });
   });
@@ -4298,10 +4320,7 @@ initScan({
   getStudent: () => state.student,
   askTutor: (text) => {
     showView("chat");
-    const box = $("#input");
-    box.value = text;
-    autoGrow();
-    box.focus();
+    fillInput(text);
   },
   openGraph: (exprs) => openGraphOverlay(exprs, t("scan.nav")),
 });
@@ -4316,10 +4335,7 @@ initUci({
   stopReading,
   askTutor: (text) => {
     showView("chat");
-    const box = $("#input");
-    box.value = text;
-    autoGrow();
-    box.focus();
+    fillInput(text);
   },
   onOverlay: (open) => (open ? overlayOpened() : overlayClosed()),
 });
@@ -4401,10 +4417,7 @@ initFormulaInfo();
     toast: (m) => toast(m, "check"),
     askTutor: (text) => {
       showView("chat");
-      const box = $("#input");
-      box.value = text;
-      autoGrow();
-      box.focus();
+      fillInput(text);
     },
   });
   // Starševski računi (account.js): prijava, potrditev, prvi otrok.

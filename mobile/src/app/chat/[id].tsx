@@ -30,6 +30,17 @@ const levelText = (d: Desc) => {
   return [d.system, track, level, d.program].filter(Boolean).join(" · ");
 };
 
+// Razlog meje v jeziku vmesnika (kot public/app.js serverError): code in hint sta ključa i18n (block.*),
+// error je slovenska rezerva strežnika.
+const BLOCK_CODE = /^block\.[A-Za-z]+$/;
+function blockText(body: any): string | null {
+  if (typeof body?.code !== "string" || !BLOCK_CODE.test(body.code)) return null;
+  const own = t(body.code, body.params || {});
+  if (own === body.code) return null;
+  const hint = typeof body.hint === "string" && BLOCK_CODE.test(body.hint) ? t(body.hint) : "";
+  return hint && hint !== body.hint ? `${own} ${hint}` : own;
+}
+
 export default function Chat() {
   // Formule v odgovorih: predmet pogovora in, pri pogovoru o temi, oznake lekcije te teme (kot na spletu).
   const [convFx, setConvFx] = useState<{ topic: string | null; subject: string | null }>({ topic: null, subject: null });
@@ -119,18 +130,18 @@ export default function Chat() {
         if ((err as Error).name === "AbortError") {
           setMessages((all) => all.filter((m) => m.id !== reply.id && m.id !== userId));
           if (!body.deep) {
-            setText(msgText);
-            if (body.image) setPhoto(body.image);
+            setText((cur) => (cur.trim() ? cur : msgText));
+            if (body.image) setPhoto((cur) => cur || body.image || null);
           }
           return;
         }
-        const msg = err instanceof ApiError ? (err.offline ? t("mob.offlineChat") : err.message) : (err as Error).message;
+        const msg = err instanceof ApiError ? (err.offline ? t("mob.offlineChat") : blockText(err.body) || err.message) : (err as Error).message;
         patch((m) => ({ ...m, text: msg, error: true, streaming: false }));
         failure();
-        // Kot na spletu: brez povezave (ali strežnik zaseden) se besedilo vrne v polje, da se ne izgubi;
-        // ob meji porabe (429) ostane polje prazno, sporočilo je v oblačku.
-        const lost = !(err instanceof ApiError) || err.offline || err.status >= 500 || err.status === 409;
-        if (lost && !body.deep) {
+        // Kot na spletu: ob meji porabe (429, limit) ostane polje prazno, sporočilo je v oblačku; ob vsaki drugi
+        // napaki (omrežje, strežnik, 4xx) se besedilo in fotografija vrneta, osnutka v polju pa ne prepišeta.
+        const limit = err instanceof ApiError && err.status === 429 && err.body?.limit === true;
+        if (!limit && !body.deep) {
           setText((cur) => (cur.trim() ? cur : msgText));
           if (body.image) setPhoto((cur) => cur || body.image || null);
         }
