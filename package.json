@@ -30,6 +30,6 @@
     "three": "0.186.1"
   },
   "devDependencies": {
-    "lucide-static": "^1.62.0"
+    "lucide-static": "^1.67.0"
   }
 }
