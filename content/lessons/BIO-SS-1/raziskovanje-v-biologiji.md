@@ -103,7 +103,7 @@ $\bar{h} = \dfrac{h_1 + h_2 + h_3}{3}$
 2. Pri $30\,^\circ\text{C}$: $2{,}8 + 3{,}1 + 3{,}1 = 9{,}0$, $\bar{h} = 9{,}0 : 3 = 3{,}0\,\text{cm}$.
 3. Pri $40\,^\circ\text{C}$: $4{,}4 + 4{,}6 + 4{,}5 = 13{,}5$, $\bar{h} = 13{,}5 : 3 = 4{,}5\,\text{cm}$.
 4. Temperatura je število in ima vmesne vrednosti, zato točke povežemo v črtni graf: temperatura na vodoravni osi, višina na navpični.
-5. Odgovor: povprečja so $1{,}5\,\text{cm}$, $3{,}0\,\text{cm}$ in $4{,}5\,\text{cm}$; primeren je črtni graf, ki kaže, da testo pri toplejši vodi vzhaja bolj.
+5. Odgovor: povprečja so $1{,}5\,\text{cm}$; $3{,}0\,\text{cm}$ in $4{,}5\,\text{cm}$; primeren je črtni graf, ki kaže, da testo pri toplejši vodi vzhaja bolj.
 
 ### Primer 3 (težji): kaj je narobe z načrtom?
 

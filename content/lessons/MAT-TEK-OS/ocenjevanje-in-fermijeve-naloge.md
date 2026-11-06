@@ -114,7 +114,7 @@ vsako število zaokroži na eno veljavno števko; deliti z $0{,}1$ pomeni množi
 
 **Rešitev:**
 
-1. Zaokrožimo: $19{,}8$ na $20$, $0{,}51$ na $0{,}5$ in $0{,}099$ na $0{,}1$.
+1. Zaokrožimo: $19{,}8$ na $20$; $0{,}51$ na $0{,}5$ in $0{,}099$ na $0{,}1$.
 2. Števec: $20 \cdot 0{,}5 = 10$.
 3. Deljenje z $0{,}1$ je množenje z $10$: $10 \cdot 10 = 100$.
 4. Vsako število smo spremenili le za nekaj odstotkov, ponujeni odgovori pa so narazen za faktor $10$. Izbira je zato varna.

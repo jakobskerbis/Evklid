@@ -125,7 +125,7 @@ Quality bar (docs/kakovost.md §1, all required):
 - Phone: no information only in colour; formulas fit 360 px or are split. ${onlyUni ? "1800–3000" : "1300–2300"} words, short sentences.
 - Tappable formulas: end the file with one \`:::simboli\` block, one line per symbol of every \`$$…$$\` and \`:::formula\` formula: \`<TeX symbol> | <Slovenian name as in the lesson> | <defining relation in TeX or empty> | <unit in TeX, e.g. kg/m^3, mol/L, L\\,mol^{-1}\\,cm^{-1}; – if dimensionless; empty for pure maths> | <optional note ≤ 12 words>\`; maths inside a name or note goes in \`$…$\`. Meaning as used in THIS lesson (T in $T = I/I_0$ is »prepustnost«, not temperature). The checker lists symbols still missing.
 
-House rules: Slovenian with the terminology of the level; decimal comma \`$3{,}5$\`; all math in LaTeX; the formula of an example only inside \`:::formula\`; header \`stanje: osnutek\` and \`avtor: AI\`; never mention PhET or a model name.${
+House rules: Slovenian with the terminology of the level; decimal comma \`$3{,}5$\`, and a semicolon between listed numbers when one has a decimal comma (\`$1{,}5$; $2$\`, \`$(1{,}5;\\ 2)$\`); all math in LaTeX; the formula of an example only inside \`:::formula\`; header \`stanje: osnutek\` and \`avtor: AI\`; never mention PhET or a model name.${
   uni
     ? `\nUniversity (UNI-*) structure (j 2026-11-04, after comparing lessons with real past exams: exams are harder than our examples and about 40 % of an exam is theory). These rules replace the school ones where they differ:
 - Generic: shared by every course with this topic; no faculty or course name; save to the listed \`file\`.

@@ -134,9 +134,9 @@ $F = \dfrac{1}{4\pi\varepsilon\varepsilon_0}\dfrac{|q_1q_2|}{r^2}$, $W_p = \dfra
 
 ### Primer 2
 
-Naboj $+4{,}0\,\mathrm{nC}$ je v točki $(-3{,}0\,\mathrm{cm}, 0)$, naboj $-4{,}0\,\mathrm{nC}$ pa v točki $(3{,}0\,\mathrm{cm}, 0)$. Kolikšna sta električna poljska jakost (velikost in smer) in potencial v točki $P = (0, 4{,}0\,\mathrm{cm})$?
+Naboj $+4{,}0\,\mathrm{nC}$ je v točki $(-3{,}0\,\mathrm{cm}; 0)$, naboj $-4{,}0\,\mathrm{nC}$ pa v točki $(3{,}0\,\mathrm{cm}; 0)$. Kolikšna sta električna poljska jakost (velikost in smer) in potencial v točki $P = (0; 4{,}0\,\mathrm{cm})$?
 
-**Podatki:** $Q_1 = +4{,}0\,\mathrm{nC}$ v $(-0{,}030\,\mathrm{m}, 0)$, $Q_2 = -4{,}0\,\mathrm{nC}$ v $(0{,}030\,\mathrm{m}, 0)$, točka $P = (0, 0{,}040\,\mathrm{m})$, $1/(4\pi\varepsilon_0) = 8{,}99 \cdot 10^9\,\mathrm{V\,m/(A\,s)}$
+**Podatki:** $Q_1 = +4{,}0\,\mathrm{nC}$ v $(-0{,}030\,\mathrm{m}; 0)$, $Q_2 = -4{,}0\,\mathrm{nC}$ v $(0{,}030\,\mathrm{m}; 0)$, točka $P = (0; 0{,}040\,\mathrm{m})$; $1/(4\pi\varepsilon_0) = 8{,}99 \cdot 10^9\,\mathrm{V\,m/(A\,s)}$
 **Iščemo:** vektor $\vec{E}$ v točki $P$ in potencial $\varphi_P$
 
 :::formula

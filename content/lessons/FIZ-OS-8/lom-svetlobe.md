@@ -97,7 +97,7 @@ $\alpha = 90^\circ - \gamma$; v optično gostejši snovi je $\beta < \alpha$
 
 ### Primer 2: goriščna razdalja lupe
 
-Ana drži lupo v sončni svetlobi nad listom papirja na kuhinjski mizi. Premika jo, dokler svetla lisa ni najmanjša, in izmeri razdaljo med lupo in papirjem. Meri hitro, saj se papir na lisi segreje. Meritev ponovi trikrat: $11{,}6\,\text{cm}$, $12{,}3\,\text{cm}$ in $12{,}1\,\text{cm}$. Kolikšna je goriščna razdalja lupe z absolutno napako?
+Ana drži lupo v sončni svetlobi nad listom papirja na kuhinjski mizi. Premika jo, dokler svetla lisa ni najmanjša, in izmeri razdaljo med lupo in papirjem. Meri hitro, saj se papir na lisi segreje. Meritev ponovi trikrat: $11{,}6\,\text{cm}$; $12{,}3\,\text{cm}$ in $12{,}1\,\text{cm}$. Kolikšna je goriščna razdalja lupe z absolutno napako?
 
 **Podatki:** $f_1 = 11{,}6\,\text{cm}$, $f_2 = 12{,}3\,\text{cm}$, $f_3 = 12{,}1\,\text{cm}$; sončni žarki so skoraj vzporedni
 **Iščemo:** goriščno razdaljo $f$ in absolutno napako $\Delta f$
@@ -110,7 +110,7 @@ Vzporedni žarki se zberejo v gorišču. $\bar{f} = \dfrac{f_1 + f_2 + f_3}{3}$,
 
 1. Sončni žarki so skoraj vzporedni, zato je lisa najmanjša v gorišču. Izmerjena razdalja je goriščna razdalja.
 2. Povprečje: $\bar{f} = \dfrac{11{,}6 + 12{,}3 + 12{,}1}{3}\,\text{cm} = \dfrac{36}{3}\,\text{cm} = 12{,}0\,\text{cm}$.
-3. Odmiki od povprečja so $0{,}4\,\text{cm}$, $0{,}3\,\text{cm}$ in $0{,}1\,\text{cm}$. Največji je $0{,}4\,\text{cm}$.
+3. Odmiki od povprečja so $0{,}4\,\text{cm}$; $0{,}3\,\text{cm}$ in $0{,}1\,\text{cm}$. Največji je $0{,}4\,\text{cm}$.
 4. Odgovor: goriščna razdalja lupe je $f = (12{,}0 \pm 0{,}4)\,\text{cm}$.
 
 ### Primer 3: lupa nad receptom

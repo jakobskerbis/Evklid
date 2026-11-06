@@ -28,7 +28,7 @@ Interval razdelimo na $n$ enako širokih delov, vsak je širok $\Delta x = \frac
 Obe vsoti se stiskata k istemu številu, $\frac{1}{3}$. Lik pod parabolo zavzema natanko tretjino kvadrata. To je odkril že Arhimed, več kot dva tisoč let pred iznajdbo odvoda.
 
 :::premisli
-Razlika med zgornjo in spodnjo vsoto je bila $0{,}25$, $0{,}1$ in $0{,}01$. Kolikšna bo pri $n = 1000$? Zakaj se tako lepo zmanjšuje?
+Razlika med zgornjo in spodnjo vsoto je bila $0{,}25$; $0{,}1$ in $0{,}01$. Kolikšna bo pri $n = 1000$? Zakaj se tako lepo zmanjšuje?
 ---
 $0{,}001$. Zgornja vsota ima iste pravokotnike kot spodnja, le premaknjene za en del v desno: izgubi prvega (višina $f(0) = 0$) in dobi novega na koncu (višina $f(1) = 1$, širina $\frac{1}{n}$). Razlika je torej $\frac{1}{n}$.
 :::

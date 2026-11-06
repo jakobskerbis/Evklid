@@ -1,6 +1,7 @@
 // Register generatorjev in ustvarjanje nalog.
 import crypto from "node:crypto";
 import { makeRng } from "./rng.js";
+import { popraviNastevanja } from "../nastevanje.js";
 import { MAT_GENERATORS } from "./generators/mat.js";
 import { FIZ_GENERATORS } from "./generators/fiz.js";
 import { KEM_GENERATORS } from "./generators/kem.js";
@@ -93,8 +94,11 @@ export function topicsWithGenerators() {
 // TeX-ova vejica {,} zunaj formul ($…$, $$…$$) bi se izpisala dobesedno (»1{,}86 a.e.«):
 // tam jo zamenjamo z navadno vejico (tx() se uporablja tudi v navadnem besedilu).
 const MATH_SPLIT = /(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/;
-const plain = (s) => (typeof s === "string" && s.includes("{,}") ? s.split(MATH_SPLIT).map((p, i) => (i % 2 ? p : p.replaceAll("{,}", ","))).join("") : s);
-function plainCommas(t) {
+// Pred tem naštevanja z decimalno vejico dobijo podpičje (»$1{,}5$; $2$«, »$(3; 7{,}5)$«; server/nastevanje.js),
+// razen pri dvojezičnih (indijskih) generatorjih z decimalno piko.
+const plainOnly = (s) => (typeof s === "string" && s.includes("{,}") ? s.split(MATH_SPLIT).map((p, i) => (i % 2 ? p : p.replaceAll("{,}", ","))).join("") : s);
+function plainCommas(t, slovensko = true) {
+  const plain = slovensko ? (s) => plainOnly(popraviNastevanja(s)) : plainOnly;
   const a = t.answer;
   return {
     ...t,
@@ -120,7 +124,7 @@ export function generateTask(topicId, level = 1, seed = crypto.randomInt(2 ** 31
   // Nekaj poskusov, če bi generator vrnil neveljavno nalogo.
   for (let i = 0; i < 5; i++) {
     const t = g.gen(level, r, genTopic, lang);
-    if (t && t.text && t.answer) return plainCommas({ ...t, generator: g.id, topicId, level, seed, ...(lang === "hi" && g.langs?.includes("hi") ? { textLang: "hi" } : {}) });
+    if (t && t.text && t.answer) return plainCommas({ ...t, generator: g.id, topicId, level, seed, ...(lang === "hi" && g.langs?.includes("hi") ? { textLang: "hi" } : {}) }, !g.langs);
   }
   throw new Error(`Generator ${g.id} ni ustvaril naloge.`);
 }

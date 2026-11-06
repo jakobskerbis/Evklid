@@ -805,7 +805,7 @@
       }
      ],
      "scoring": "1 t. za pravilno nastavljen $\\cos\\alpha$ (ali drug pravilen nastavek), 1 t. za kot $76^\\circ 20'$.",
-     "mistake": "Decimalni zapis $76{,}33^\\circ$ ne pomeni $76^\\circ 33'$: stotinke stopinje je treba pomnožiti s $60$, $0{,}33^\\circ \\approx 20'$."
+     "mistake": "Decimalni zapis $76{,}33^\\circ$ ne pomeni $76^\\circ 33'$: stotinke stopinje je treba pomnožiti s $60$; $0{,}33^\\circ \\approx 20'$."
     },
     {
      "id": "e",
@@ -897,7 +897,7 @@
        "text": "Vektorja $\\vec{a}$ in $\\vec{b}$ narišemo iz iste točke; tretja stranica trikotnika je $\\vec{a} - \\vec{b} = (2, -6, 3)$, z dolžino $|\\vec{a} - \\vec{b}| = \\sqrt{4 + 36 + 9} = 7$.\n\nKosinusni izrek: $|\\vec{a} - \\vec{b}|^{2} = |\\vec{a}|^{2} + |\\vec{b}|^{2} - 2|\\vec{a}|\\,|\\vec{b}|\\cos\\varphi$, torej\n$$49 = 14 + 21 - 2\\sqrt{294}\\cos\\varphi \\quad\\Rightarrow\\quad \\cos\\varphi = \\frac{-14}{2\\sqrt{294}} = \\frac{-7}{\\sqrt{294}}.$$\nDobimo isto: $\\varphi \\approx 114{,}09^\\circ$.\n\nPoenostavitev za preizkus: $\\sqrt{294} = 7\\sqrt{6}$, zato $\\cos\\varphi = -\\frac{1}{\\sqrt{6}} \\approx -0{,}40825$."
       }
      ],
-     "scoring": "1 t. za skalarni produkt $-7$, 1 t. za dolžini $\\sqrt{14}$ in $\\sqrt{21}$, 1 t. za $\\cos\\varphi \\approx -0{,}408$, 1 t. za kot $114{,}09^\\circ$.",
+     "scoring": "1 t. za skalarni produkt $-7$, 1 t. za dolžini $\\sqrt{14}$ in $\\sqrt{21}$, 1 t. za $\\cos\\varphi \\approx -0{,}408$; 1 t. za kot $114{,}09^\\circ$.",
      "mistake": "Če pri skalarnem produktu izgubimo predznak ($+7$), dobimo ostri kot $65{,}91^\\circ$, ki je napačen. Tudi zapis s kotnimi minutami ($114^\\circ 6'$) ni v zahtevani obliki – zahtevane so stotinke stopinje."
     },
     {
@@ -970,7 +970,7 @@
       },
       {
        "title": "Drugače: pribitek v ceni cveta, nasprotni koeficienti",
-       "text": "Ker pribitek plačamo za vsak cvet, je cvet v šopku dražji za $0{,}30$ €: tulipan stane $1{,}50$ €, vrtnica $2{,}80$ €. Sistem:\n$$x + y = 21, \\qquad 1{,}5x + 2{,}8y = 43{,}2.$$\nPrvo enačbo pomnožimo z $-1{,}5$: $-1{,}5x - 1{,}5y = -31{,}5$ in jo prištejemo drugi: $1{,}3y = 11{,}7$, torej $y = 9$ in $x = 12$."
+       "text": "Ker pribitek plačamo za vsak cvet, je cvet v šopku dražji za $0{,}30$ €: tulipan stane $1{,}50$ €, vrtnica $2{,}80$ €. Sistem:\n$$x + y = 21; \\qquad 1{,}5x + 2{,}8y = 43{,}2.$$\nPrvo enačbo pomnožimo z $-1{,}5$: $-1{,}5x - 1{,}5y = -31{,}5$ in jo prištejemo drugi: $1{,}3y = 11{,}7$, torej $y = 9$ in $x = 12$."
       },
       {
        "title": "Z razmislekom (preizkus)",

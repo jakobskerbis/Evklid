@@ -51,6 +51,7 @@ Ko si pravila nasprotujejo, velja ta vrstni red:
 ### Zapis
 - Formule piši v LaTeX: $...$ v vrstici, $$...$$ za samostojne izraze.
 - Slovenske konvencije: decimalna vejica ($3{,}5$), množenje s piko ($\cdot$), presledek med številom in enoto ($9{,}81\ \mathrm{m/s^2}$), enote pokončno.
+- Če je med naštetimi števili vsaj eno decimalno, jih loči s podpičjem: $1{,}5$; $2$ ali $2{,}99$; točka $(1{,}5;\ 2)$, interval $(0{,}5;\ 3)$.
 - Koda (RAC) v blokih ``` z imenom jezika.
 
 ### Jezik pogovora

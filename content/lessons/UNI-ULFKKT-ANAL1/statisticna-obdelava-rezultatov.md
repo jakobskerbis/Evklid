@@ -87,7 +87,7 @@ Vmesnih rezultatov ne zaokrožujemo; zaokrožimo šele končni rezultat. Za tram
 
 ### Primer 1: vlaga v mivki
 
-Laboratorij betonarne štirikrat določi masni delež vode v mivki za beton: $5{,}2\,\%$, $5{,}5\,\%$, $5{,}3\,\%$ in $5{,}4\,\%$. Izračunaj povprečje in standardni odklon.
+Laboratorij betonarne štirikrat določi masni delež vode v mivki za beton: $5{,}2\,\%$; $5{,}5\,\%$; $5{,}3\,\%$ in $5{,}4\,\%$. Izračunaj povprečje in standardni odklon.
 
 **Podatki:** $x_1 = 5{,}2\,\%$, $x_2 = 5{,}5\,\%$, $x_3 = 5{,}3\,\%$, $x_4 = 5{,}4\,\%$, $n = 4$
 **Iščemo:** povprečje $\bar x$ in standardni odklon $s$
@@ -99,14 +99,14 @@ $\bar x = \dfrac{\sum x_i}{n}$, $\quad s = \sqrt{\dfrac{\sum (x_i - \bar x)^2}{n
 **Rešitev:**
 
 1. Vsota meritev: $5{,}2 + 5{,}5 + 5{,}3 + 5{,}4 = 21{,}4$, zato $\bar x = 21{,}4 / 4 = 5{,}35\,\%$.
-2. Odmiki od povprečja so $-0{,}15$, $+0{,}15$, $-0{,}05$ in $+0{,}05$ (vsota je $0$, kar je dobra kontrola).
+2. Odmiki od povprečja so $-0{,}15$; $+0{,}15$; $-0{,}05$ in $+0{,}05$ (vsota je $0$, kar je dobra kontrola).
 3. Kvadrati odmikov: $0{,}0225 + 0{,}0225 + 0{,}0025 + 0{,}0025 = 0{,}05$.
 4. Delimo s prostostnimi stopnjami $n - 1 = 3$ in korenimo: $s = \sqrt{0{,}05/3} \approx 0{,}129\,\%$.
 5. Odgovor: povprečni delež vode je $5{,}35\,\%$, standardni odklon pa približno $0{,}13\,\%$.
 
 ### Primer 2: CaO v cementu z intervalom zaupanja
 
-Petkrat določimo masni delež CaO v cementu: $63{,}2\,\%$, $63{,}5\,\%$, $63{,}1\,\%$, $63{,}4\,\%$ in $63{,}3\,\%$. Podaj rezultat s 95-% intervalom zaupanja in pravilnim številom značilnih števk.
+Petkrat določimo masni delež CaO v cementu: $63{,}2\,\%$; $63{,}5\,\%$; $63{,}1\,\%$; $63{,}4\,\%$ in $63{,}3\,\%$. Podaj rezultat s 95-% intervalom zaupanja in pravilnim številom značilnih števk.
 
 **Podatki:** pet meritev ($n = 5$) zgoraj, verjetnost $95\,\%$, $t = 2{,}776$ za $4$ prostostne stopnje
 **Iščemo:** interval zaupanja za pravo vrednost $\mu$
@@ -118,7 +118,7 @@ $\mu = \bar x \pm \dfrac{t \cdot s}{\sqrt{n}}$
 **Rešitev:**
 
 1. Povprečje: $\bar x = 316{,}5\,\% / 5 = 63{,}3\,\%$.
-2. Odmiki so $-0{,}1$, $+0{,}2$, $-0{,}2$, $+0{,}1$ in $0$; vsota kvadratov je $0{,}10$.
+2. Odmiki so $-0{,}1$; $+0{,}2$; $-0{,}2$; $+0{,}1$ in $0$; vsota kvadratov je $0{,}10$.
 3. $s = \sqrt{0{,}10/4} \approx 0{,}158\,\%$ (ne zaokrožujemo še, ker računamo naprej).
 4. Polovična širina: $\dfrac{2{,}776 \cdot 0{,}158}{\sqrt 5} \approx 0{,}196\,\%$.
 5. Negotovost zaokrožimo na eno značilno števko, $0{,}2\,\%$; povprečje ima že eno decimalko, kar se ujema.
@@ -138,7 +138,7 @@ $\mu = \bar x \pm \dfrac{t \cdot s}{\sqrt{n}}$, $\quad t_\mathrm{izr} = \dfrac{|
 **Rešitev:**
 
 1. Povprečje: $\bar x = 256{,}5\,\mathrm{mg/kg} / 5 = 51{,}3\,\mathrm{mg/kg}$.
-2. Odmiki so $+0{,}5$, $-1{,}4$, $+1{,}3$, $-0{,}6$ in $+0{,}2$ (vsota $0$); vsota kvadratov je $0{,}25 + 1{,}96 + 1{,}69 + 0{,}36 + 0{,}04 = 4{,}30$.
+2. Odmiki so $+0{,}5$; $-1{,}4$; $+1{,}3$; $-0{,}6$ in $+0{,}2$ (vsota $0$); vsota kvadratov je $0{,}25 + 1{,}96 + 1{,}69 + 0{,}36 + 0{,}04 = 4{,}30$.
 3. $s = \sqrt{4{,}30/4} \approx 1{,}037\,\mathrm{mg/kg}$, $\mathrm{RSD} \approx 2{,}0\,\%$.
 4. Polovična širina: $\dfrac{2{,}776 \cdot 1{,}037}{\sqrt 5} \approx 1{,}29\,\mathrm{mg/kg}$, zaokroženo $1{,}3$. Rezultat je $(51{,}3 \pm 1{,}3)\,\mathrm{mg/kg}$, interval sega od $50{,}0$ do $52{,}6\,\mathrm{mg/kg}$.
 5. Certificirana vrednost $49{,}5$ leži zunaj intervala. Enako pove t-test: $t_\mathrm{izr} = \dfrac{1{,}8 \cdot \sqrt 5}{1{,}037} \approx 3{,}88 > 2{,}776$. Razlika je značilna: metoda daje sistematsko previsoke rezultate, za okoli $1{,}8\,\mathrm{mg/kg}$ ($3{,}6\,\%$).
@@ -203,7 +203,7 @@ Ocetno kislino v kisu preverjaš s titracijo; po specifikaciji proizvajalca je n
 
 1. Reakcija $\mathrm{CH_3COOH + NaOH \to CH_3COONa + H_2O}$ poteče v razmerju $1 : 1$, zato je v alikvotu $n = c\,V$.
 2. Alikvot $25{,}00\,\mathrm{mL}$ desetkrat razredčenega kisa vsebuje kislino iz $2{,}500\,\mathrm{mL}$ kisa. Zato je $\gamma = \dfrac{0{,}1000 \cdot V \cdot 10^{-3} \cdot 60{,}05}{2{,}500 \cdot 10^{-3}}\,\mathrm{g/L} = 2{,}402\,\mathrm{g\,L^{-1}\,mL^{-1}} \cdot V$.
-3. Povprečna poraba: $\bar V = 149{,}84\,\mathrm{mL}/4 = 37{,}46\,\mathrm{mL}$; odmiki $-0{,}04$, $+0{,}09$, $+0{,}02$, $-0{,}07$; vsota kvadratov $0{,}0150\,\mathrm{mL^2}$; $s_V = \sqrt{0{,}0150/3} \approx 0{,}0707\,\mathrm{mL}$.
+3. Povprečna poraba: $\bar V = 149{,}84\,\mathrm{mL}/4 = 37{,}46\,\mathrm{mL}$; odmiki $-0{,}04$; $+0{,}09$; $+0{,}02$; $-0{,}07$; vsota kvadratov $0{,}0150\,\mathrm{mL^2}$; $s_V = \sqrt{0{,}0150/3} \approx 0{,}0707\,\mathrm{mL}$.
 4. Ker je $\gamma$ sorazmerna z $V$, se s istim faktorjem pomnožita povprečje in standardni odklon: $\bar\gamma = 2{,}402 \cdot 37{,}46 \approx 89{,}98\,\mathrm{g/L}$, $s_\gamma = 2{,}402 \cdot 0{,}0707 \approx 0{,}170\,\mathrm{g/L}$.
 5. Polovična širina: $\dfrac{3{,}182 \cdot 0{,}170}{\sqrt 4} \approx 0{,}27\,\mathrm{g/L}$, zaokroženo $0{,}3$; rezultat (a) je $\gamma = (90{,}0 \pm 0{,}3)\,\mathrm{g/L}$.
 6. (b) $t_\mathrm{izr} = \dfrac{|89{,}98 - 90{,}5| \cdot \sqrt 4}{0{,}170} \approx 6{,}1 > 3{,}182$, zato je razlika značilna; kis vsebuje manj kisline, kot navaja specifikacija.
@@ -225,10 +225,10 @@ Naj bodo $x_1, \dots, x_n$ neodvisne meritve iste količine, vsaka s standardnim
 
 ## Drugače: Korak za korakom s številkami
 
-Postopek za vsak niz ponovljenih meritev, na primeru treh debelin keramične ploščice $8{,}1$, $8{,}3$ in $8{,}2\,\mathrm{mm}$:
+Postopek za vsak niz ponovljenih meritev, na primeru treh debelin keramične ploščice $8{,}1$; $8{,}3$ in $8{,}2\,\mathrm{mm}$:
 
 1. Seštej in deli: $\bar x = 24{,}6 / 3 = 8{,}2\,\mathrm{mm}$.
-2. Odmiki: $-0{,}1$, $+0{,}1$, $0$. Kontrola: vsota je $0$.
+2. Odmiki: $-0{,}1$; $+0{,}1$; $0$. Kontrola: vsota je $0$.
 3. Kvadrati: $0{,}01 + 0{,}01 + 0 = 0{,}02$.
 4. Deli z $n - 1 = 2$ in koreni: $s = \sqrt{0{,}01} = 0{,}1\,\mathrm{mm}$.
 5. Iz tabele: $t = 4{,}303$ za $2$ prostostni stopnji.
@@ -266,7 +266,7 @@ Pri poročilu vsi trije zapišejo le toliko števk, kolikor jih znajo upravičit
 ~ Povprečje odmikov je vedno $0$, ker se pozitivni in negativni izničijo; zato odmike kvadriramo.
 > Standardni odklon meri, kako daleč so posamezne meritve od povprečja. Z več meritvami ga ocenimo natančneje, ne pa zmanjšamo.
 
-? Trikrat izmeriš maso vzorca: $10{,}1\,\mathrm{g}$, $10{,}3\,\mathrm{g}$, $10{,}2\,\mathrm{g}$. Kolikšen je standardni odklon $s$?
+? Trikrat izmeriš maso vzorca: $10{,}1\,\mathrm{g}$; $10{,}3\,\mathrm{g}$; $10{,}2\,\mathrm{g}$. Kolikšen je standardni odklon $s$?
 - $0{,}08\,\mathrm{g}$
 ~ Tako dobiš, če vsoto kvadratov deliš z $n = 3$ namesto z $n - 1 = 2$.
 + $0{,}1\,\mathrm{g}$

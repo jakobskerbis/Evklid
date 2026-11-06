@@ -260,7 +260,7 @@ Enako velja za vsak par funkcija in njen inverz. Točka $(a, b)$ na grafu $f$ us
 | $1$ | $2{,}718$ |
 | $2$ | $7{,}389$ |
 
-Iz preglednice preberemo točke za $\ln x$: $(0{,}368;\ -1)$, $(1;\ 0)$, $(2{,}718;\ 1)$, $(7{,}389;\ 2)$.
+Iz preglednice preberemo točke za $\ln x$: $(0{,}368;\ -1)$; $(1;\ 0)$; $(2{,}718;\ 1)$; $(7{,}389;\ 2)$.
 
 Pri sinusu si predstavljaj valovito črto med $-1$ in $1$. Za $\arcsin$ izreži samo kos od $-\frac{\pi}{2}$ do $\frac{\pi}{2}$, kjer sinus strogo narašča, in ga prezrcali čez $y = x$. Dobiš kratko krivuljo od točke $(-1, -\frac{\pi}{2})$ do točke $(1, \frac{\pi}{2})$.
 

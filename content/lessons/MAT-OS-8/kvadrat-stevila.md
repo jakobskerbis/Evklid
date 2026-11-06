@@ -57,7 +57,7 @@ $(-3)^2 = 9$, ker kvadriramo celo število $-3$. Pri $-3^2$ velja eksponent le z
 :::premisli
 Ali je kvadrat števila vedno večji od števila? Preden odgovoriš, preizkusi $3$, $1$ in $0{,}5$.
 ---
-Ne. $3^2 = 9$ je več kot $3$, $1^2 = 1$ je enako $1$, $(0{,}5)^2 = 0{,}25$ pa je manj kot $0{,}5$. Množenje z $0{,}5$ pomeni vzeti polovico, zato se število zmanjša. Kvadrat je večji od števila le, če je število večje od $1$ ali negativno.
+Ne. $3^2 = 9$ je več kot $3$, $1^2 = 1$ je enako $1$; $(0{,}5)^2 = 0{,}25$ pa je manj kot $0{,}5$. Množenje z $0{,}5$ pomeni vzeti polovico, zato se število zmanjša. Kvadrat je večji od števila le, če je število večje od $1$ ali negativno.
 :::
 
 **Korak 6: ocenjevanje.** Števila, ki ga ni v tabeli, ujameš med dva znana kvadrata. Za $27^2$: ker je $20 < 27 < 30$, je $400 < 27^2 < 900$. Ker je $27$ bliže $30$, bo kvadrat bliže $900$; natančno je $729$. Lahko pa osnovo zaokrožiš: $48^2 \approx 50^2 = 2500$. Pravi rezultat, $2304$, je malo manjši, ker je $48 < 50$. Enako gre z decimalnimi števili: $(6{,}8)^2$ je malo manj kot $7^2 = 49$, natančno $46{,}24$.

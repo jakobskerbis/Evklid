@@ -106,7 +106,7 @@ $\vec s = \vec a + 2\vec b$, $|\vec s| = \sqrt{s_x^2 + s_y^2 + s_z^2}$
 1. $2\vec b = (-4, 8, -2)$, vsako komponento pomnožimo z $2$.
 2. $\vec s = (6 - 4,\ 2 + 8,\ 3 - 2) = (2, 10, 1)$.
 3. Dolžina: $|\vec s| = \sqrt{2^2 + 10^2 + 1^2} = \sqrt{105} \approx 10{,}25$.
-4. Odgovor: dron se je premaknil za $(2, 10, 1)\,\mathrm{m}$; od začetne lege je približno $10{,}2\,\mathrm{m}$, $1\,\mathrm{m}$ višje kot na začetku.
+4. Odgovor: dron se je premaknil za $(2, 10, 1)\,\mathrm{m}$; od začetne lege je približno $10{,}2\,\mathrm{m}$. Na koncu je $1\,\mathrm{m}$ višje kot na začetku.
 
 ### Primer 3: Kajak čez reko (dva koraka)
 
@@ -212,7 +212,7 @@ Vsa sledijo iz pravil za realna števila, ker računamo po komponentah.
 ~ Pravokotni sili se ne podpirata najbolj. Najbolj se podpirata, ko kažeta v isto smer.
 - Vsi primeri dajo $10\,\mathrm{N}$.
 ~ Tako bi veljalo, če bi se velikosti kar seštele. Seštevamo vektorje, ne dolžin.
-> Skupne sile so $10\,\mathrm{N}$, približno $7{,}07\,\mathrm{N}$, $5\,\mathrm{N}$ in $0\,\mathrm{N}$. Večji kot pomeni manjšo vsoto.
+> Skupne sile so $10\,\mathrm{N}$, približno $7{,}07\,\mathrm{N}$; $5\,\mathrm{N}$ in $0\,\mathrm{N}$. Večji kot pomeni manjšo vsoto.
 
 ? Kaj se zgodi z vektorjem $\vec a$, če ga pomnožimo z $-2$?
 - Postane dvakrat krajši.

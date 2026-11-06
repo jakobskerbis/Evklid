@@ -178,7 +178,7 @@ $1200 : 1000 = 1{,}2$, torej porabiš $1{,}2\,\text{l}$ vode. Vejica se premakne
 - **Množenje namesto deljenja.** Učenec $65\,\text{cm}$ zapiše kot $6500\,\text{m}$, ker »pri metrih in centimetrih je faktor $100$«. Struna bi bila dolga več kilometrov. Faktor je pravi, smer pa ne. Popravek: najprej se vprašaj, ali greš v večjo enoto (število bo manjše, deliš) ali v manjšo (število bo večje, množiš).
 - **Napačen faktor čez več stopnic.** Med $\text{m}$ in $\text{mm}$ vzame $100$, ker si je zapomnil $1\,\text{m} = 100\,\text{cm}$. Do milimetrov so tri stopnice po $10$, kar da $1000$.
 - **Dekagram s faktorjem $10$.** Ker je $1\,\text{dag} = 10\,\text{g}$, učenec misli, da je $2{,}4\,\text{kg} = 24\,\text{dag}$. Iz tabele pa razbereš, da je korak $\text{kg} \to \text{dag}$ s faktorjem $100$ ($1\,\text{kg} = 1000\,\text{g}$, en dekagram pa je $10\,\text{g}$), zato je $2{,}4\,\text{kg} = 240\,\text{dag}$.
-- **Čas kot decimalno število.** $1\,\text{h}\,30\,\text{min}$ zapiše kot $1{,}30\,\text{h}$, $3\,\text{min}\,45\,\text{s}$ pa kot $345\,\text{s}$. Ura ima $60$ minut in minuta $60$ sekund, ne $100$. Pravilno: $1\,\text{h}\,30\,\text{min} = 1{,}5\,\text{h}$ in $3 \cdot 60 + 45 = 225$ sekund.
+- **Čas kot decimalno število.** $1\,\text{h}\,30\,\text{min}$ zapiše kot $1{,}30\,\text{h}$; $3\,\text{min}\,45\,\text{s}$ pa kot $345\,\text{s}$. Ura ima $60$ minut in minuta $60$ sekund, ne $100$. Pravilno: $1\,\text{h}\,30\,\text{min} = 1{,}5\,\text{h}$ in $3 \cdot 60 + 45 = 225$ sekund.
 - **Seštevanje različnih enot.** $2\,\text{m} + 50\,\text{cm}$ zapiše kot $52$. Metrov in centimetrov ne moreš kar sešteti. Najprej obe količini v isto enoto: $200\,\text{cm} + 50\,\text{cm} = 250\,\text{cm}$.
 
 ## Povzetek

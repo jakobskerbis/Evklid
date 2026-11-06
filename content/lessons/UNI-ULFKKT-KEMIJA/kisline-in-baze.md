@@ -223,7 +223,7 @@ Znati moraš povedati:
 
 ### Naloga 1
 
-$25{,}0\,\mathrm{mL}$ raztopine ocetne kisline s koncentracijo $0{,}100\,\mathrm{mol/L}$ titriramo z raztopino $\mathrm{NaOH}$ s koncentracijo $0{,}100\,\mathrm{mol/L}$ pri $25\,^\circ\mathrm{C}$. Izračunaj pH po dodatku $10{,}0\,\mathrm{mL}$, $12{,}5\,\mathrm{mL}$ in $25{,}0\,\mathrm{mL}$ raztopine $\mathrm{NaOH}$ ($K_a = 1{,}8 \cdot 10^{-5}$, $K_w = 1{,}0 \cdot 10^{-14}$). Kateri indikator (barvilo, ki spremeni barvo v navedenem območju pH) je primeren za določitev ekvivalenčne točke (dodana množina $\mathrm{OH^-}$ je enaka začetni množini kisline): metiloranž (preskok pri $\mathrm{pH}$ $3{,}1$ do $4{,}4$) ali fenolftalein ($8{,}2$ do $10{,}0$)?
+$25{,}0\,\mathrm{mL}$ raztopine ocetne kisline s koncentracijo $0{,}100\,\mathrm{mol/L}$ titriramo z raztopino $\mathrm{NaOH}$ s koncentracijo $0{,}100\,\mathrm{mol/L}$ pri $25\,^\circ\mathrm{C}$. Izračunaj pH po dodatku $10{,}0\,\mathrm{mL}$; $12{,}5\,\mathrm{mL}$ in $25{,}0\,\mathrm{mL}$ raztopine $\mathrm{NaOH}$ ($K_a = 1{,}8 \cdot 10^{-5}$, $K_w = 1{,}0 \cdot 10^{-14}$). Kateri indikator (barvilo, ki spremeni barvo v navedenem območju pH) je primeren za določitev ekvivalenčne točke (dodana množina $\mathrm{OH^-}$ je enaka začetni množini kisline): metiloranž (preskok pri $\mathrm{pH}$ $3{,}1$ do $4{,}4$) ali fenolftalein ($8{,}2$ do $10{,}0$)?
 
 **Rešitev:**
 
@@ -235,7 +235,7 @@ $25{,}0\,\mathrm{mL}$ raztopine ocetne kisline s koncentracijo $0{,}100\,\mathrm
 6. $[\mathrm{OH^-}] \approx \sqrt{K_b c} = \sqrt{5{,}6 \cdot 10^{-10} \cdot 0{,}0500} = \sqrt{2{,}8 \cdot 10^{-11}} \approx 5{,}3 \cdot 10^{-6}\,\mathrm{mol/L}$; to je le $0{,}01\,\%$ od $c$ in mnogo več od $10^{-7}$, zato približek velja.
 7. $\mathrm{pOH} = -\log(5{,}3 \cdot 10^{-6}) \approx 5{,}28$ in $\mathrm{pH} = 14{,}00 - 5{,}28 = 8{,}72$.
 8. Ekvivalenčna točka je v bazičnem območju, ker je konjugirana baza šibke kisline bazična. Metiloranž bi spremenil barvo že v območju pufra (okoli $\mathrm{pH} \approx 4$), fenolftalein pa pri $8{,}2$ do $10{,}0$, kjer pH ob ekvivalenčni točki strmo naraste.
-9. Odgovor: pH je $4{,}57$, $4{,}74$ in $8{,}72$; primeren indikator je fenolftalein.
+9. Odgovor: pH je $4{,}57$; $4{,}74$ in $8{,}72$; primeren indikator je fenolftalein.
 
 ### Naloga 2
 
