@@ -13,9 +13,10 @@ on:
     branches: [main]
 permissions:
   contents: read
+# PR: nov push prekliče star zagon istega PR. main: vsak commit dobi svoj izid (brez preklica).
 concurrency:
-  group: testi-${{ github.workflow }}-${{ github.head_ref || github.ref }}
-  cancel-in-progress: true
+  group: testi-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 # Izrecno bash: GitHub ga potem zažene z »-eo pipefail«, zato napaka pred »| tee« podre korak.
 defaults:
   run:
@@ -47,9 +48,11 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit
       - run: npx playwright install --with-deps chromium webkit
-      # Nestabilni testi: največ 1 ponovitev, samo za datoteke, ki so padle (največ 3), z opozorilom v
-      # povzetku zagona, da se vidi, kateri so nestabilni. Več padlih datotek = prava napaka, brez ponovitve.
+      # Nestabilni testi: največ 1 ponovitev, samo za datoteke, ki so padle (največ 3). Ponovitev je vidna:
+      # opozorilo (annotations_count > 0 v check-runs), vrstica v povzetku zagona, izhod ponovljeno=true in
+      # naložen dnevnik. Več padlih datotek = prava napaka, brez ponovitve.
       - name: npm test
+        id: npmtest
         run: |
           set +e
           npm test 2>&1 | tee test.log
@@ -59,12 +62,14 @@ jobs:
             n=$(printf '%s' "$files" | grep -c . || true)
             if [ "$n" -ge 1 ] && [ "$n" -le 3 ]; then
               echo "::warning::Ponovitev (1x) padlih testov: $(echo $files)"
+              echo "ponovljeno=true" >> "$GITHUB_OUTPUT"
+              echo "**Nestabilno – ponovljeno 1x:** $(echo $files). Dnevnik: artefakt testi-dnevnik." >> "$GITHUB_STEP_SUMMARY"
               node --disable-warning=ExperimentalWarning --test $files 2>&1 | tee -a test.log
               status=${PIPESTATUS[0]}
             fi
           fi
           exit "$status"
-      - if: failure()
+      - if: failure() || steps.npmtest.outputs.ponovljeno == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: testi-dnevnik

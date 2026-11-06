@@ -88,8 +88,12 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     p.on("pageerror", (e) => errors.push(e.message));
     await p.goto(`${base}/t.html`);
     await p.waitForFunction(() => window.ready && document.querySelector("#kartica [data-fx][role=button]"));
+    // Po programskem drsenju počakaj dve sličici: dogodek »scroll« sicer na počasnem strežniku (CI) pride šele
+    // po tapu in zapre pravkar odprto okno (okno se zapre ob vsakem drsenju, ki ni njegovo lastno).
+    const settle = () => p.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
     // Kartica pri dnu zaslona (kot na posnetku: odgovor pod vprašanjem).
     await p.$eval("#kartica", (el) => window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight + el.offsetHeight + 20));
+    await settle();
     const sym = p.locator("#kartica [data-fx][role=button]").first();
     const tap = (loc) => (phone ? loc.tap() : loc.click());
 
@@ -119,7 +123,19 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     assert.equal(await open(p), 0, `${vp.width}: ✕ zapre okno`);
     assert.equal(await p.evaluate(() => window.obrati), 0, `${vp.width}: ✕ ne obrne kartice`);
     // 4) Tap v prazno (na kartici) okno zapre, kartice ne obrne; naslednji tap jo obrne.
+    // Kartica na sredino zaslona, da list na telefonu ne prekrije »#prazno«: sicer ga Playwright pred tapom
+    // pomakne v vidno polje, na počasnem strežniku (CI) to pride po izteku »quietUntil« in drsenje okno
+    // zapre, preden tap pristane (tap potem obrne kartico).
+    await p.$eval("#kartica", (el) => el.scrollIntoView({ block: "center" }));
+    await settle();
     await tap(sym);
+    await p.waitForFunction(() => !document.getElementById("fx-pop").hidden);
+    await p.waitForTimeout(600); // mimo »quietUntil« (500 ms, public/formula-info.js): lastno drsenje okna se je umirilo
+    assert.equal(await open(p), 1, `${vp.width}: okno odprto pred tapom v prazno`);
+    assert.ok(
+      await p.$eval("#prazno", (el) => { const b = el.getBoundingClientRect(); return document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2) === el; }),
+      `${vp.width}: »#prazno« je viden, ne pod oknom`,
+    );
     await tap(p.locator("#prazno"));
     assert.equal(await open(p), 0, `${vp.width}: tap v prazno zapre okno`);
     assert.equal(await p.evaluate(() => window.obrati), 0, `${vp.width}: tap, ki zapre okno, ne obrne kartice`);
@@ -133,6 +149,7 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     assert.equal(await open(p), 0);
     // 6) Nazaj zapre okno, Esc tudi; tipka Enter na črki ne obrne kartice.
     await p.$eval("#kartica", (el) => el.scrollIntoView({ block: "center" }));
+    await settle();
     await tap(sym);
     await p.goBack();
     await p.waitForFunction(() => document.getElementById("fx-pop").hidden);
@@ -148,6 +165,7 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     assert.equal(flips, 1, `${vp.width}: kartica se je obrnila samo ob tapu v prazno brez okna`);
     // 7) Razdelek (<details>) in vrstica: tap na črko ne odpre razdelka in ne sproži vrstice.
     await p.$eval("#razdelek", (el) => el.scrollIntoView({ block: "center" }));
+    await settle();
     await tap(p.locator("#povzetek [data-fx][role=button]").first());
     assert.equal(await p.$eval("#razdelek", (el) => el.open), false, `${vp.width}: tap na črko ne odpre razdelka`);
     await tap(p.locator("#fx-pop .fx-close"));
@@ -165,6 +183,7 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     await p.waitForFunction(() => document.getElementById("fx-pop").hidden);
     // 9) Drsenje zapre okno; sprememba širine (obrat) ga zapre, sprememba samo višine (vrstica brskalnika) ne (pregled 463 d).
     await p.$eval("#vrstica", (el) => el.scrollIntoView({ block: "center" }));
+    await settle();
     await tap(row.nth(0));
     await p.waitForTimeout(600); // lastno drsenje okna (telefon) je mimo
     const y0 = await p.evaluate(() => scrollY);
@@ -194,6 +213,7 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     // 11) Od desne proti levi (arabščina): okno ne prekrije formule in ostane na zaslonu.
     await p.evaluate(() => { document.documentElement.dir = "rtl"; });
     await p.$eval("#vrstica", (el) => el.scrollIntoView({ block: "center" }));
+    await settle();
     await tap(row.nth(0));
     await p.waitForTimeout(150);
     const q = await p.evaluate(() => {
