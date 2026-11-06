@@ -182,3 +182,26 @@ test("B4: XP iz pilota ne začne niza dni, ne prinese bonusa za niz in ne šteje
   const r = fs.readFileSync(new URL("../server/rast.js", import.meta.url), "utf8");
   assert.match(r, /FROM xp_events WHERE created_at >= \? AND COALESCE\(reason, ''\) NOT LIKE 'pilot:%'/);
 });
+
+test("j 6. 11. 20:01: potrjeno besedilo e-pošte o politiki in §8 z e-pošto (dobesedno)", async () => {
+  const { privacyChangeEmail } = await import("../server/accounts/email.js");
+  const m = privacyChangeEmail("https://evklid.si/zasebnost.html");
+  assert.equal(m.subject, "Evklid: posodobili smo pravila zasebnosti");
+  assert.equal(
+    m.text,
+    `Pozdravljeni,
+
+6. novembra 2026 smo posodobili pravila zasebnosti za Evklid. Glavne spremembe:
+
+- Natančneje piše, katere podatke lahko izvozite in izbrišete ter koliko časa jih hranimo.
+- Za člane pilota smo dodali neobvezne naloge: oceno branja fotografij nalog, oceno delov aplikacije, kratko anketo, kratek preizkus znanja na začetku in čez 14 dni ter vprašanje staršem, ali bi za Evklid plačali. Fotografijo naloge in prebrano besedilo shranimo samo, če ju otrok, star vsaj 15 let, posebej označi, in ju hranimo največ 30 dni.
+- Skrbnik Evklida vidi skupna števila brez imen, šele ko so odgovori vsaj trije (pri vprašanju o plačilu pet). Vidi tudi kratke opombe brez imena, e-naslove računov v pilotu in fotografije, ki jih je otrok sam označil za shranjevanje.
+- Član pilota lahko prijavi napako z zastavico; prijavi se priložita opis in zadnjih 10 sporočil pogovora.
+
+Nič vam ni treba narediti. Celotna pravila: https://evklid.si/zasebnost.html
+
+Ekipa Evklid`,
+  );
+  const html = fs.readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
+  assert.ok(html.includes("Ko se ta pravila bistveno spremenijo, vas enkrat obvestimo po e-pošti na potrjeni e-naslov računa. V zavihku Račun je obvestilo s povezavo nanje, dokler ga ne skrijete z geslom računa (pri računu brez gesla s kodo, ki vam jo pošljemo na e-naslov računa)."));
+});
