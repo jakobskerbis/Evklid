@@ -34,6 +34,9 @@ Koda: `public/formula-data.js` (slovar, `validIn`, `definitionsIn`), `public/ric
    - `ne`: v tej temi, povedi ali kjerkoli v besedilu bloka ima črka drug pomen, zato `teme` ne velja (formula `ctx` še vedno);
    - `brez`: formula, kjer črka nima tega pomena (`dx` v integralu ni premer, `e^{…}` ni naboj);
    - `oba`: potrebna sta formula in tema (ploščina S, površina P, prostornina V, višina v, imaginarna enota i).
+   - `zan`: formula sama zanesljivo pove pomen, tudi brez teme in pri `oba` (številka z enoto: S = 1,5 m², V = 2,00 L);
+   - `samo`: po temi (brez `ctx`) velja le, če se formula ujema z vzorcem (a, b, c so koeficienti v »a = 1«, »a ≠ 0«,
+     ne v »x = 2a« ali »f(x) = 4a²«).
 4. **Črka z indeksom** (a₂₀, D_f, k_tr) podeduje pomen osnovne črke le, če ga potrdi formula ali je pomen edini
    (v₁ je hitrost); samo po temi ne (a₂₀ v zaporedju ni »vodilni koeficient«). x₁, a_n, s_n imajo v slovarju svoj
    pomen: kjer ta ne velja, ne podedujejo oznake lekcije za x ali a (a_n v polinomu ni »osnova logaritma«).
