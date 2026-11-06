@@ -1088,9 +1088,9 @@ async function send(text, { deep = false, image: attached = null } = {}) {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
       bubble.innerHTML = chatRich(streamSafe(shown)) || "<p></p>"; // prazen odstavek nosi piko »piše« (style.css)
       prilagodiZdaj(); // dolgo enačbo zloži že zdaj, da pomik na dno šteje njeno pravo višino
+      if (atBottom) box.scrollTop = box.scrollHeight;
       // Varnostno okno ostane v celoti vidno: izpis odgovora ga ne potisne nad zgornji rob (pregled B2).
-      const vrh = nujnoEl?.isConnected ? box.scrollTop + nujnoEl.getBoundingClientRect().top - box.getBoundingClientRect().top - 8 : Infinity;
-      if (atBottom) box.scrollTop = Math.min(box.scrollHeight, vrh);
+      if (atBottom && nujnoEl?.isConnected) box.scrollTop = Math.min(box.scrollTop, box.scrollTop + nujnoEl.getBoundingClientRect().top - box.getBoundingClientRect().top - 8);
     };
     paint("");
     // Odgovor se izpisuje z berljivim tempom; dotik sporočila pokaže vse naenkrat.
