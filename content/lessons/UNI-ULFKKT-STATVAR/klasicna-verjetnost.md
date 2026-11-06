@@ -40,10 +40,10 @@ Pri klasični verjetnosti je vse delo v štetju $|A|$ in $|\Omega|$. Za to je ko
 
 Iz njega sledijo štiri osnovne formule. Iz množice $n$ elementov izbiramo $k$ elementov:
 
-| | vrstni red šteje | vrstni red ne šteje |
+| | red šteje | red ne šteje |
 |---|---|---|
-| brez ponavljanja | $\dfrac{n!}{(n-k)!}$ | $\dbinom{n}{k}$ |
-| s ponavljanjem | $n^k$ | $\dbinom{n+k-1}{k}$ |
+| brez ponav. | $\dfrac{n!}{(n-k)!}$ | $\dbinom{n}{k}$ |
+| s ponav. | $n^k$ | $\dbinom{n+k-1}{k}$ |
 
 Pri $k = n$ brez ponavljanja dobimo **permutacije**, $n!$. Če je med $n$ elementi $k_1$ enakih ene vrste, $k_2$ druge itd., je razporeditev $n!/(k_1!\,k_2!\cdots)$.
 
@@ -101,11 +101,8 @@ Pri $P(B) > 0$ je to enakovredno $P(A \mid B) = P(A)$: podatek, da se je zgodil 
 
 Neodvisnosti ne zamenjuj z nezdružljivostjo:
 
-| | nezdružljiva | neodvisna |
-|---|---|---|
-| definicija | $A \cap B = \emptyset$ | $P(A \cap B) = P(A)\,P(B)$ |
-| ko vemo za $B$ | $A$ se gotovo ni zgodil | verjetnost $A$ se ne spremeni |
-| vsota | $P(A) + P(B)$ | $P(A) + P(B) - P(A)P(B)$ |
+- **Nezdružljiva:** $A \cap B = \emptyset$. Ko vemo, da se je zgodil $B$, se $A$ gotovo ni zgodil. Verjetnost unije je $P(A) + P(B)$.
+- **Neodvisna:** $P(A \cap B) = P(A)\,P(B)$. Ko vemo za $B$, se verjetnost $A$ ne spremeni. Verjetnost unije je $P(A) + P(B) - P(A)P(B)$.
 
 Nezdružljiva dogodka s pozitivnima verjetnostma nista nikoli neodvisna: $P(A \cap B) = 0$, a $P(A)P(B) > 0$.
 
@@ -275,11 +272,13 @@ Dvakrat vržemo pošten kovanec. Naj bo $A$ »prvi met je cifra«, $B$ »drugi m
 Presejalni test iz uvoda kot drevo verjetnosti za $100\,000$ ljudi:
 
 ```
-                      100 000
-                 /               \
-          bolni 100           zdravi 99 900
-          /      \             /         \
-   test + 99   test − 1   test + 4995   test − 94 905
+100 000 testiranih
+├─ bolni 100
+│  ├─ test + : 99
+│  └─ test − : 1
+└─ zdravi 99 900
+   ├─ test + : 4995
+   └─ test − : 94 905
 ```
 
 Bayesova formula je na drevesu le delež: med vsemi vejami »test +« ($99 + 4995 = 5094$) je bolnih $99$, torej $99/5094 \approx 1{,}9\,\%$. Formula o popolni verjetnosti sešteje vse veje, ki se končajo s »test +«.

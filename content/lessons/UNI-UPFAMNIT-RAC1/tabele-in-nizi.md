@@ -77,12 +77,10 @@ Metoda `void ponastavi(int[] x) { x[0] = 0; x = new int[]{7, 7}; x[1] = 5; }` do
 
 Večino nalog rešimo s štirimi vzorci, ki si jih velja zapomniti skupaj z njihovo **invarianto** (trditvijo, ki velja po vsakem obhodu):
 
-| vzorec | začetek | v obhodu | invarianta po obhodu $i$ |
-|---|---|---|---|
-| vsota | `s = 0` | `s += a[i]` | `s` je vsota `a[0..i]` |
-| največji | `mi = 0` | `if (a[i] > a[mi]) mi = i` | `a[mi]` je največji v `a[0..i]` |
-| štetje | `c = 0` | `if (pogoj) c++` | `c` šteje ustrezne v `a[0..i]` |
-| iskanje | `k = -1` | `if (a[i] == x) { k = i; break; }` | `x` ni v `a[0..i-1]` |
+- **Vsota.** Začetek `s = 0`; v obhodu `s += a[i]`. Invarianta: `s` je vsota `a[0..i]`.
+- **Največji.** Začetek `mi = 0`; v obhodu `if (a[i] > a[mi]) mi = i`. Invarianta: `a[mi]` je največji v `a[0..i]`.
+- **Štetje.** Začetek `c = 0`; v obhodu `if (pogoj) c++`. Invarianta: `c` šteje ustrezne v `a[0..i]`.
+- **Iskanje.** Začetek `k = -1`; v obhodu `if (a[i] == x) { k = i; break; }`. Invarianta: `x` ni v `a[0..i-1]`.
 
 Pri iskanju največjega hranimo **indeks** (`mi`), ne le vrednosti: tako vemo tudi, kje je. Začetna vrednost `mi = 0` predpostavlja, da tabela ni prazna.
 
@@ -136,14 +134,18 @@ $3 \cdot 4 = 12$-krat. Pri zgornjem trikotniku ima vrstica $i$ še $n - i$ eleme
 
 Niz (`String`) je zaporedje znakov (`char`) z indeksi od $0$ do `length() - 1`, podobno kot tabela, a z dvema pomembnima razlikama: dolžino dobiš z **metodo** `length()` (z oklepaji), znakov pa ne moreš spreminjati – niz je **nespremenljiv** (angl. *immutable*). Vsaka »sprememba« ustvari nov niz.
 
-| metoda | primer na `v = "LJ;31.4;0.0"` | rezultat |
-|---|---|---|
-| `length()` | `v.length()` | `11` |
-| `charAt(i)` | `v.charAt(0)` | `'L'` |
-| `indexOf(s)` | `v.indexOf(";")` | `2` |
-| `substring(a, b)` | `v.substring(3, 7)` | `"31.4"` (od $a$ do brez $b$) |
-| `split(r)` | `v.split(";")` | `{"LJ", "31.4", "0.0"}` |
-| `equals(s)` | `v.equals("LJ")` | `false` |
+Osnovne metode na primeru `v = "LJ;31.4;0.0"`:
+
+| klic | rezultat |
+|---|---|
+| `v.length()` | `11` |
+| `v.charAt(0)` | `'L'` |
+| `v.indexOf(";")` | `2` |
+| `v.substring(3, 7)` | `"31.4"` |
+| `v.split(";")` | `{"LJ", "31.4", "0.0"}` |
+| `v.equals("LJ")` | `false` |
+
+`substring(a, b)` vrne znake od indeksa $a$ do indeksa $b$, brez $b$.
 
 **Primerjava nizov.** `a == b` primerja sklica (ali je to isti objekt), `a.equals(b)` pa vsebino. Dva niza z enakimi znaki sta lahko različna objekta, zato vsebino **vedno** primerjaj z `equals`; abecedni vrstni red da `compareTo`.
 

@@ -20,12 +20,15 @@ $$\sigma_{\bar X} = \frac{\sigma}{\sqrt n},$$
 čemur pravimo **standardna napaka**. Na številski premici:
 
 ```
-           2,5 %        95 % povprečij         2,5 %
-      ------|--------------|--------------|------
-       μ − 1,96·σ/√n       μ        μ + 1,96·σ/√n
+2,5 %   95 % povprečij   2,5 %
+----|---------|---------|----
+    L         μ         U
+
+L = μ − 1,96·σ/√n
+U = μ + 1,96·σ/√n
 ```
 
-Če so meritve normalno porazdeljene, je $\bar X$ normalen; po centralnem limitnem izreku je približno normalen tudi pri drugih porazdelitvah, če je $n$ dovolj velik (praktično $n \gtrsim 30$). Med $\mu - 1{,}96\,\sigma/\sqrt n$ in $\mu + 1{,}96\,\sigma/\sqrt n$ pade $95\,\%$ povprečij.
+Če so meritve normalno porazdeljene, je $\bar X$ normalen; po centralnem limitnem izreku je približno normalen tudi pri drugih porazdelitvah, če je $n$ dovolj velik (praktično $n \gtrsim 30$). Med mejama $L$ in $U$ na skici, $\mu - 1{,}96\,\sigma/\sqrt n$ in $\mu + 1{,}96\,\sigma/\sqrt n$ pade $95\,\%$ povprečij.
 
 Zdaj obrnemo pogled. Če je $\bar x$ manj kot $1{,}96\,\sigma/\sqrt n$ od $\mu$, je tudi $\mu$ manj kot $1{,}96\,\sigma/\sqrt n$ od $\bar x$. Interval okoli **izmerjenega** povprečja zato v $95\,\%$ ponovitev zajame pravo vrednost. To je interval zaupanja.
 
@@ -93,10 +96,12 @@ Pri preizkusu domneve ne ocenjujemo, ampak odločamo. Postopek je kot sodni proc
 
 Izid je lahko napačen na dva načina:
 
-| | $H_0$ velja | $H_0$ ne velja |
+| odločitev | $H_0$ velja | $H_0$ ne velja |
 |---|---|---|
-| zavrnemo $H_0$ | napaka 1. vrste ($\alpha$) | pravilno (moč $1 - \beta$) |
-| ne zavrnemo | pravilno | napaka 2. vrste ($\beta$) |
+| zavrnemo | napaka 1 | prav |
+| ne zavrnemo | prav | napaka 2 |
+
+Napaka 1. vrste (zavrnemo resnično $H_0$) ima verjetnost $\alpha$, napaka 2. vrste (ne zavrnemo napačne $H_0$) verjetnost $\beta$; verjetnost pravilne zavrnitve, $1 - \beta$, je **moč** testa.
 
 $\alpha$ izberemo vnaprej (navadno $0{,}05$). $\beta$ je odvisna od tega, kako daleč je resnica od $H_0$, od $\sigma$ in od $n$. Manjši $\alpha$ pri istem $n$ poveča $\beta$; zmanjšati obe hkrati je mogoče le z večjim vzorcem.
 
@@ -257,7 +262,7 @@ Natančno definiraj interval zaupanja s stopnjo $1 - \alpha$ in z uporabo pivota
 2. Predpostavke: $X_1, \dots, X_n$ neodvisne, $N(\mu, \sigma)$; $\mu$ in $\sigma$ neznana; $n \geq 2$.
 3. Pivot: $T = (\bar X - \mu)/(S/\sqrt n)$ ima po Gossetovem izreku porazdelitev $t_{n-1}$, ki ne vsebuje $\mu$ ali $\sigma$.
 4. Zaradi simetrije $P(-t_{n-1,\,1-\alpha/2} \leq T \leq t_{n-1,\,1-\alpha/2}) = 1 - \alpha$.
-5. Razrešimo na $\mu$: $P\!\left(\bar X - t_{n-1,\,1-\alpha/2}\,S/\sqrt n \leq \mu \leq \bar X + t_{n-1,\,1-\alpha/2}\,S/\sqrt n\right) = 1 - \alpha$.
+5. Razrešimo na $\mu$: z verjetnostjo $1 - \alpha$ veljata hkrati $\bar X - t_{n-1,\,1-\alpha/2}\,S/\sqrt n \leq \mu$ in $\mu \leq \bar X + t_{n-1,\,1-\alpha/2}\,S/\sqrt n$.
 6. Dualnost: $H_0$ ne zavrnemo, ko $|\bar x - \mu_0|/(s/\sqrt n) \leq t_{n-1,\,1-\alpha/2}$; to je enakovredno $\mu_0 \in [\bar x - t\,s/\sqrt n,\ \bar x + t\,s/\sqrt n]$.
 7. $99\,\%$ interval uporablja $t_{n-1;\,0{,}995} > t_{n-1;\,0{,}975}$, zato je širši: za večjo gotovost plačamo z manj natančno izjavo.
 

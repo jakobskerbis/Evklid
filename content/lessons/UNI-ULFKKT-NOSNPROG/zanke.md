@@ -69,14 +69,14 @@ for i in range(5):
 
 izpiše vrstice `0 0`, `1 1`, `2 4`, `3 9`, `4 16`. Zanka `for` spremenljivki `i` po vrsti priredi vsak element zaporedja in za vsakega izvede telo. Zaporedje števil da `range`:
 
-| klic | vrednosti | število obhodov |
-|---|---|---|
-| `range(5)` | $0, 1, 2, 3, 4$ | $5$ |
-| `range(2, 6)` | $2, 3, 4, 5$ | $4$ |
-| `range(3, 20, 4)` | $3, 7, 11, 15, 19$ | $5$ |
-| `range(10, 0, -3)` | $10, 7, 4, 1$ | $4$ |
+| klic | vrednosti |
+|---|---|
+| `range(5)` | $0, 1, 2, 3, 4$ |
+| `range(2, 6)` | $2, 3, 4, 5$ |
+| `range(3, 20, 4)` | $3, 7, 11, 15, 19$ |
+| `range(10, 0, -3)` | $10, 7, 4, 1$ |
 
-`range(a, b, k)` začne pri `a`, prišteva `k` in se ustavi **pred** `b` (`b` ni vključen). Pri $k > 0$ in $a < b$ je obhodov $\lceil (b - a)/k\rceil$ (zaokroženo navzgor). Zgornja meja, ki ni vključena, je najpogostejši vir napak »za ena« (angl. *off-by-one*).
+`range(a, b, k)` začne pri `a`, prišteva `k` in se ustavi **pred** `b` (`b` ni vključen). Pri $k > 0$ in $a < b$ je obhodov $\lceil (b - a)/k\rceil$ (zaokroženo navzgor); v tabeli zgoraj po vrsti $5$, $4$, $5$ in $4$ obhodov. Zgornja meja, ki ni vključena, je najpogostejši vir napak »za ena« (angl. *off-by-one*).
 
 Zanka `for` lahko teče tudi po znakih niza: `for c in "DNA":` priredi `c` po vrsti `"D"`, `"N"`, `"A"`. Druge zbirke (sezname) spoznaš v naslednji lekciji.
 

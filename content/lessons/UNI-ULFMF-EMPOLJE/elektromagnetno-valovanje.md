@@ -16,13 +16,13 @@ To je posledica Maxwellovih enačb, ki jih že poznaš: iz njih sledi, da se ele
 Predstavljaj si val, ki potuje v smeri osi $z$. V vsaki točki na osi narišemo dve puščici:
 
 ```
-     x (E)                     E največji, B največji
-     ^       _               _
-     |      / \             / \
-  ---+-----/---\-----------/---\--------> z   (smer širjenja)
-     |          \_       _/     \_
-     |            \_____/
-     y (B) kaže iz ravnine v isti fazi kot E
+  x (E)
+  ^     _           _
+  |    / \         / \
+--+---/---\-------/---\---> z
+  |        \_   _/     \_
+  |          \_/
+  y (B): iz ravnine, v fazi z E
 ```
 
 - Električno polje $\vec{E}$ niha v smeri $x$, magnetno $\vec{B}$ v smeri $y$, val potuje v smeri $z$: vsi trije so med seboj pravokotni. Valovanje je **transverzalno**.
@@ -30,7 +30,7 @@ Predstavljaj si val, ki potuje v smeri osi $z$. V vsaki točki na osi narišemo 
 - Smer širjenja kaže $\vec{E}\times\vec{B}$.
 - Razmerje velikosti je v vsaki točki enako, $B = E/c$.
 
-Ta slika je vse, kar si moraš zapomniti; zdaj jo izpeljemo iz Maxwellovih enačb.
+Vrhova vala sta mesti, kjer sta $E$ in $B$ največja. Ta slika je vse, kar si moraš zapomniti; zdaj jo izpeljemo iz Maxwellovih enačb.
 
 ### Valovna enačba
 
@@ -151,7 +151,7 @@ $I = \dfrac{P}{\pi d^2/4}$; $I = \tfrac{1}{2}\varepsilon_0cE_0^2$; $B_0 = \dfrac
 
 1. Prerez žarka: $\pi(1{,}0 \cdot 10^{-3}\,\mathrm{m})^2 \approx 3{,}14 \cdot 10^{-6}\,\mathrm{m^2}$.
 2. Intenziteta: $I = 5{,}0 \cdot 10^{-3}/3{,}14 \cdot 10^{-6}\,\mathrm{W/m^2} \approx 1590\,\mathrm{W/m^2}$, malo več od sončne.
-3. Amplituda: $E_0 = \sqrt{2I/(\varepsilon_0c)} = \sqrt{2 \cdot 1590/(8{,}854 \cdot 10^{-12} \cdot 2{,}998 \cdot 10^8)}\,\mathrm{V/m} \approx 1100\,\mathrm{V/m}$.
+3. Amplituda iz $E_0 = \sqrt{2I/(\varepsilon_0c)}$: najprej $\varepsilon_0c \approx 8{,}854 \cdot 10^{-12} \cdot 2{,}998 \cdot 10^8 \approx 2{,}654 \cdot 10^{-3}\,\mathrm{A/V}$, nato $E_0 \approx \sqrt{3180/2{,}654 \cdot 10^{-3}}\,\mathrm{V/m} \approx 1100\,\mathrm{V/m}$.
 4. Magnetno polje: $B_0 = 1100/2{,}998 \cdot 10^8\,\mathrm{T} \approx 3{,}7 \cdot 10^{-6}\,\mathrm{T}$, okoli desetina Zemljinega polja.
 5. Tlak na črno ploskev: $p = 1590/2{,}998 \cdot 10^8\,\mathrm{Pa} \approx 5{,}3 \cdot 10^{-6}\,\mathrm{Pa}$.
 6. Odgovor: $I \approx 1{,}6\,\mathrm{kW/m^2}$, $E_0 \approx 1{,}1\,\mathrm{kV/m}$, $B_0 \approx 3{,}7\,\mathrm{\mu T}$, $p \approx 5{,}3\,\mathrm{\mu Pa}$. Kazalnik je nevaren za oko zaradi intenzitete, ne zaradi moči: leča ga zbere v še mnogo manjšo piko.
@@ -169,7 +169,7 @@ $E_0 = \sqrt{\dfrac{2I}{\varepsilon_0c}}$; $p = \dfrac{2I}{c}$; $F = pA$; $t = \
 
 **Rešitev:**
 
-1. $E_0 = \sqrt{2 \cdot 1361/(8{,}854 \cdot 10^{-12} \cdot 2{,}998 \cdot 10^8)}\,\mathrm{V/m} \approx 1010\,\mathrm{V/m}$.
+1. Z $\varepsilon_0c \approx 2{,}654 \cdot 10^{-3}\,\mathrm{A/V}$: $E_0 = \sqrt{2 \cdot 1361/2{,}654 \cdot 10^{-3}}\,\mathrm{V/m} \approx 1010\,\mathrm{V/m}$.
 2. Odboj nazaj obrne gibalno količino, zato je tlak dvakrat večji kot pri vpijanju: $p = 2 \cdot 1361/2{,}998 \cdot 10^8\,\mathrm{Pa} \approx 9{,}08 \cdot 10^{-6}\,\mathrm{Pa}$.
 3. Sila: $F = 9{,}08 \cdot 10^{-6} \cdot 200\,\mathrm{N} \approx 1{,}82 \cdot 10^{-3}\,\mathrm{N}$.
 4. Čas: $t = 300 \cdot 1/1{,}82 \cdot 10^{-3}\,\mathrm{s} \approx 1{,}65 \cdot 10^5\,\mathrm{s}$, okoli dva dni.
