@@ -1527,16 +1527,30 @@ async function subjectChoices() {
 async function pickSubject(item) {
   const uni = isUni(state.student.settings);
   const settings = uni ? { study_course: item.id, subject: item.subject || state.student.settings.subject } : { subject: item.id, study_course: "" };
-  const updated = await api(`/api/students/${state.student.id}`, { method: "PUT", body: { settings } });
-  studentUpdated(updated);
+  // Optimistično (j 6. 11. 2026: odziven Evklid): izbira, glava in obvestilo takoj, shranjevanje na strežnik
+  // v ozadju (meni se zapre brez čakanja). Podatke zaslona naložimo po shranjevanju (strežnik jih bere po
+  // shranjenem predmetu); ob napaki se vrne prejšnji predmet in pokaže napaka.
+  const prev = state.student;
+  const save = api(`/api/students/${prev.id}`, { method: "PUT", body: { settings } });
+  studentUpdated({ ...prev, settings: { ...prev.settings, ...settings } });
   toast(`${t("set.subject")}: ${item.label}`, "check");
-  // Odprt zaslon pokaže novi predmet takoj.
-  if (currentView === "path") loadPath();
-  else if (currentView === "uci") showUci(); // učbenik, poskusi in 3D svet po novem predmetu
-  else if (currentView === "me") renderMe();
-  else if (currentView === "exams") loadExams();
-  else if (currentView === "competition") regionalExams() ? loadExams() : loadCompetition();
-  else if (currentView === "cards") showFlashcards();
+  save.then(
+    (updated) => {
+      studentUpdated(updated);
+      if (state.student?.id !== prev.id) return;
+      // Odprt zaslon pokaže novi predmet.
+      if (currentView === "path") loadPath();
+      else if (currentView === "uci") showUci(); // učbenik, poskusi in 3D svet po novem predmetu
+      else if (currentView === "me") renderMe();
+      else if (currentView === "exams") loadExams();
+      else if (currentView === "competition") regionalExams() ? loadExams() : loadCompetition();
+      else if (currentView === "cards") showFlashcards();
+    },
+    (err) => {
+      if (state.student?.id === prev.id) studentUpdated({ ...state.student, settings: prev.settings });
+      toast(err?.message || String(err));
+    },
+  );
 }
 
 async function fillCourseOptions() {
