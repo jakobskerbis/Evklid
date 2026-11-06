@@ -3620,5 +3620,7 @@
   "birth.payMissing": "Escribe tu fecha de nacimiento en la pestaña Cuenta.",
   "birth.confirm": "Edad según esta fecha: {age}. ¿Es la fecha de nacimiento de la persona que creó la cuenta? Más tarde no podrás cambiarla tú.",
   "birth.confirmYes": "Sí, guardar",
-  "birth.confirmNo": "Corregir"
+  "birth.confirmNo": "Corregir",
+  "a3.moreParts": "Más partes ({n})",
+  "a3.fewerParts": "Menos partes"
 }

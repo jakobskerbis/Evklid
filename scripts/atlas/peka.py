@@ -6,7 +6,7 @@
 #      osnovna barva (EMIT iz materiala recepta) in hrapavost; nato senca okolice (AO z žarki, Cycles) na nizki mreži
 #      z vsemi vozlišči kot ovirami (»videz ray-tracinga«: kontaktne sence ob žilah, tetivah, v brazdah);
 #   4. slike: baza (sRGB), normala, ORM (R = senca okolice, G = hrapavost, B = kovinskost 0), PNG brez izgub;
-#      organi.mjs jih stisne v WebP (baza q90, ORM q82 / telefon q74, normala q95 / telefon q88) in izvoz glTF jih zapiše kot baseColorTexture,
+#      organi.mjs jih stisne v WebP (baza q90 / telefon q86, ORM q82 / telefon q70, normala q95 / telefon q84) in izvoz glTF jih zapiše kot baseColorTexture,
 #      normalTexture, occlusionTexture in metallicRoughnessTexture (ena slika ORM).
 # Recept tkiva (cfg tekstura.recepti[<tkivo>]): barva, barva2 (lise), lise (moč), maščoba po maski (masca moč,
 # mascaBarva/mascaBarva2, mascaNasip = blazinica, mascaPremik = višina režnja, mascaMera = velikost režnja, mascaZleb =

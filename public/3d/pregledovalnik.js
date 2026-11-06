@@ -6,6 +6,7 @@ import { THREE, ustvariSceno, kakovostNaprave, gibanje, poveziGumbVrtenja } from
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
+import { ravenProfila, naRavni } from "./raven.js";
 
 const mk = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -383,6 +384,10 @@ export function odpriModel(el, mod, opts = {}) {
     // kader vidnega modela pred skrivanjem ovojev: primerjava pokaže, ali se je vidni model opazno spremenil
     const prej = leti && model?.group ? kadrModela() : null;
     izbran = d ? d.id : null;
+    if (d && !vSeznamu(d)) {
+      vsiDeli = true; // del iz naslova ali modela, ki je pod »Več delov«: razdelek se odpre
+      deli();
+    }
     ustaviNamigSij();
     obarvaj(d);
     skrijObdajajoce(d);
@@ -494,11 +499,17 @@ export function odpriModel(el, mod, opts = {}) {
     poleti(c, r);
   }
 
+  // Raven delov (raven.js): zahtevnejši deli (npr. posamezne venčne žile za OŠ) so pod gumbom »Več delov«.
+  const raven = Number(opts.raven) || ravenProfila();
+  let vsiDeli = false;
+  const vSeznamu = (d) => vsiDeli || naRavni(d, raven);
   function deli() {
     const seznam = Array.isArray(model?.deli) ? model.deli : [];
     zadnjiDeli = [...seznam];
     deliEl.replaceChildren();
+    const skritih = seznam.filter((d) => !naRavni(d, raven)).length;
     for (const d of seznam) {
+      if (!vSeznamu(d)) continue;
       const b = mk("button", "k3-del");
       b.type = "button";
       b.dataset.del = d.id;
@@ -510,10 +521,24 @@ export function odpriModel(el, mod, opts = {}) {
       b.addEventListener("click", () => izberi(d.id === izbran ? null : d.id));
       deliEl.append(b);
     }
+    if (skritih) {
+      const vec = mk("button", "k3-del k3-del-vec");
+      vec.type = "button";
+      vec.setAttribute("aria-expanded", String(vsiDeli));
+      vec.append(mk("span", "", vsiDeli ? t("a3.fewerParts") : t("a3.moreParts", { n: skritih })));
+      vec.addEventListener("click", () => {
+        vsiDeli = !vsiDeli;
+        if (!vsiDeli && izbran && !vSeznamu(seznam.find((d) => d.id === izbran))) izberi(null, { leti: false });
+        deli();
+        deliEl.querySelector(".k3-del-vec")?.focus({ preventScroll: true });
+      });
+      deliEl.append(vec);
+    }
+    const stevilo = seznam.filter(vSeznamu).length;
     deliEl.hidden = !seznam.length;
     if (deliGlava) {
       deliGlava.hidden = !seznam.length;
-      deliGlava.replaceChildren(t("a3.parts"), mk("span", "k3-stevec", String(seznam.length)));
+      deliGlava.replaceChildren(t("a3.parts"), mk("span", "k3-stevec", String(stevilo)));
     }
     // Brez barvnih krogcev čez model (j, 5. 11.): kaj je klikljivo, pokaže sij delov ob prvem ogledu (namigniDele).
     if (izbran && !seznam.some((d) => d.id === izbran)) izberi(null, { leti: false });
@@ -800,7 +825,9 @@ export function odpriModel(el, mod, opts = {}) {
         if (!model?.group) return;
         const hit = kit.zadetki(ndc, [model.group])[0];
         if (!hit) return izberi(null);
-        const d = (model.deli || []).find((x) => (x.meshes || []).some((m) => m === hit.object || m === hit.object.parent));
+        // tap: najožji del, ki je v seznamu (posamezna žila pred skupino »Venčne arterije«, če je prikazana)
+        const zadeti = (model.deli || []).filter((x) => (x.meshes || []).some((m) => m === hit.object || m === hit.object.parent));
+        const d = zadeti.find((x) => x.skupina && vSeznamu(x)) || zadeti.find((x) => vSeznamu(x) && !x.skupina) || zadeti.find(vSeznamu) || zadeti[0];
         izberi(d?.id ?? null, { hit: { object: hit.object, instanceId: hit.instanceId ?? null, point: hit.point.clone() }, preklopi: true });
       });
       pocisti.push(

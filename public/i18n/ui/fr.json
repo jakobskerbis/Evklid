@@ -3620,5 +3620,7 @@
   "birth.payMissing": "Saisis ta date de naissance dans l'onglet Compte.",
   "birth.confirm": "Âge selon cette date : {age}. Est-ce la date de naissance de la personne qui a créé le compte ? Tu ne pourras pas la modifier toi-même plus tard.",
   "birth.confirmYes": "Oui, enregistrer",
-  "birth.confirmNo": "Corriger"
+  "birth.confirmNo": "Corriger",
+  "a3.moreParts": "Plus de parties ({n})",
+  "a3.fewerParts": "Moins de parties"
 }

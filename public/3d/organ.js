@@ -650,11 +650,16 @@ export async function zgradiOrgan(ime, ctx = {}) {
   }
 
   // Deli: vsak del iz JSON z mrežami, ki jih ima ta model; točka iz JSON ali privzeta.
+  // Skupina (»skupina« v delu): skupni del (npr. venčne arterije) obsega tudi mreže svojih posameznih delov (LAD, …),
+  // zato ga OŠ izbere kot celoto, študij pa še vsako žilo posebej (raven.js, »Več delov«).
+  const otroci = new Map();
+  for (const d of podatki.deli || []) if (d.skupina) otroci.set(d.skupina, [...(otroci.get(d.skupina) || []), d.id]);
   const vsiDeli = (podatki.deli || [])
     .map((d) => {
-      const moje = meshi.filter((m) => m.userData.del === d.id);
+      const ids = new Set([d.id, ...(otroci.get(d.id) || [])]);
+      const moje = meshi.filter((m) => ids.has(m.userData.del));
       if (!moje.length) return null;
-      const privzeta = d.tocka ? d.tocka.map((x) => x * s) : privzetaTocka(kosi.filter((k) => k.del === d.id));
+      const privzeta = d.tocka ? d.tocka.map((x) => x * s) : privzetaTocka(kosi.filter((k) => ids.has(k.del)));
       return { d, moje, privzeta };
     })
     .filter(Boolean);
@@ -678,6 +683,8 @@ export async function zgradiOrgan(ime, ctx = {}) {
         tocka: tockaZa(x),
         skrijTocko: !tocke.has(x.d.id),
         povecava: x.d.povecava, // id modela za »Poglej pod povečavo« (npr. mrežnica → organ-mreznica)
+        raven: x.d.raven, // 1 OŠ, 2 SŠ, 3 študij (raven.js)
+        skupina: x.d.skupina,
       }));
   };
   uporabi();

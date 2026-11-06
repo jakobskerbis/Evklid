@@ -3322,6 +3322,8 @@ export default {
   "a3.excluded": "Izpuščeno zaradi licence",
   "a3.noResults": "Ni zadetkov.",
   "a3.parts": "Deli",
+  "a3.moreParts": "Več delov ({n})",
+  "a3.fewerParts": "Manj delov",
   "a3.organDetails": "Podrobnosti organa",
   "a3.magnify": "Poglej pod povečavo",
   "a3.organLoading": "Nalagam 3D prikaz",

@@ -3619,5 +3619,7 @@
   "birth.payMissing": "Gib dein Geburtsdatum im Tab Konto ein.",
   "birth.confirm": "Alter laut diesem Datum: {age}. Ist das das Geburtsdatum der Person, die das Konto erstellt hat? Du kannst es später nicht selbst ändern.",
   "birth.confirmYes": "Ja, speichern",
-  "birth.confirmNo": "Korrigieren"
+  "birth.confirmNo": "Korrigieren",
+  "a3.moreParts": "Mehr Teile ({n})",
+  "a3.fewerParts": "Weniger Teile"
 }

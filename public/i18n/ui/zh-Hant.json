@@ -3591,5 +3591,7 @@
   "birth.payMissing": "請在「帳戶」分頁中填寫出生日期。",
   "birth.confirm": "依此日期計算的年齡：{age}。這是建立帳戶者的出生日期嗎？之後你無法自行修改。",
   "birth.confirmYes": "是，儲存",
-  "birth.confirmNo": "修改"
+  "birth.confirmNo": "修改",
+  "a3.moreParts": "更多部分（{n}）",
+  "a3.fewerParts": "較少部分"
 }

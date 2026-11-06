@@ -30,18 +30,19 @@ for (const organ of organi) {
       const b = fs.readFileSync(tmp);
       return JSON.parse(b.subarray(20, 20 + b.readUInt32LE(12)).toString("utf8")).images?.length > 0;
     })();
-    // Pečene teksture (peka.py, PNG brez izgub) → WebP: osnovna barva q90, ORM q82, normalna mapa q95 (brez blokov v
-    // odsevih; brez izgub je ~3× večja in na zaslonu ni razlike). Tangente ostanejo 8-bitne kot normale.
+    // Pečene teksture (peka.py, PNG brez izgub) → WebP: osnovna barva q90 (telefon q86), ORM q82 (telefon q70), normalna
+    // mapa q95 (telefon q84; brez blokov v odsevih; brez izgub je ~3× večja in na zaslonu ni razlike). Telefon ima ≥ 5 %
+    // rezerve pod mejo 2 MiB (test/3d-organi-glb.test.js). Tangente ostanejo 8-bitne kot normale.
     const q = imaSlike ? path.join(src, `${organ}${pripona}.q.glb`) : izhod;
     gt("quantize", tmp, q, "--quantize-position", "14", "--quantize-normal", "8", "--quantize-color", "8", "--quantize-texcoord", "14");
     if (imaSlike) {
       const w = path.join(src, `${organ}${pripona}.w.glb`);
       const w2 = path.join(src, `${organ}${pripona}.w2.glb`);
-      gt("webp", q, w, "--slots", "baseColorTexture", "--quality", "90", "--effort", "100");
-      // ORM (senca okolice, hrapavost) je gladek podatek: q82 je na zaslonu enak q90 in ~30 % manjši, telefon q74 (≤ 2 MB)
-      gt("webp", w, w2, "--slots", "{occlusionTexture,metallicRoughnessTexture}", "--quality", pripona ? "74" : "82", "--effort", "100");
-      // normalna mapa q95, telefon q88 (žile kot geometrija: več UV otokov; telefon ostane ≤ 2 MB)
-      gt("webp", w2, izhod, "--slots", "normalTexture", "--quality", pripona ? "88" : "95", "--effort", "100");
+      gt("webp", q, w, "--slots", "baseColorTexture", "--quality", pripona ? "86" : "90", "--effort", "100");
+      // ORM (senca okolice, hrapavost) je gladek podatek: q82 je na zaslonu enak q90 in ~30 % manjši, telefon q70
+      gt("webp", w, w2, "--slots", "{occlusionTexture,metallicRoughnessTexture}", "--quality", pripona ? "70" : "82", "--effort", "100");
+      // normalna mapa q95, telefon q84 (žile kot geometrija: več UV otokov)
+      gt("webp", w2, izhod, "--slots", "normalTexture", "--quality", pripona ? "84" : "95", "--effort", "100");
       for (const f of [q, w, w2]) fs.rmSync(f, { force: true });
     }
     fs.rmSync(tmp, { force: true });

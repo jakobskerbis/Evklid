@@ -1,6 +1,6 @@
 {
  "organ": "srce",
- "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; dodani lističi mitralne, trikuspidalne, aortne in pljučne zaklopke s tetivami, papilarne mišice, septomarginalna in mesnate trabekule (lastno delo, scripts/atlas/srce_geometrija.py), velike in venčne žile kot cevi s steno po središčnicah Z-Anatomy (lastno delo, scripts/atlas/srce_zile.py); pečene teksture scripts/atlas/peka.py",
+ "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; dodani lističi mitralne, trikuspidalne, aortne in pljučne zaklopke s tetivami, papilarne mišice, septomarginalna in mesnate trabekule, tetive vseh lističev jadrastih zaklopk, prevodni sistem (shema) (lastno delo, scripts/atlas/srce_geometrija.py), velike in venčne žile (z arterijsko vezjo, razcepom brahiocefaličnega debla, diagonalnimi in zadnjo medprekatno arterijo) kot cevi s steno po središčnicah Z-Anatomy (lastno delo, scripts/atlas/srce_zile.py); pečene teksture scripts/atlas/peka.py",
  "tkiva": {
   "miokard": {
    "barva": "#93362f",
@@ -99,7 +99,7 @@
    "spekular": 0.55
   },
   "pljucna-vena": {
-   "barva": "#8e2a4a",
+   "barva": "#a3304a",
    "hrap": 0.5,
    "lak": 0.18,
    "lakHrap": 0.78,
@@ -111,15 +111,15 @@
    "zrno": 0.05,
    "f": 80,
    "relief": 0.3,
-   "rez": "#7a2240",
+   "rez": "#8a2840",
    "sijajHrap": 0.75,
    "spekular": 0.55
   },
   "aorta": {
-   "barva": "#d6a096",
-   "rez": "#c48a80",
-   "robBarva": "#ffd2c6",
-   "sijajBarva": "#f2cdc4",
+   "barva": "#b8453c",
+   "rez": "#a33a32",
+   "robBarva": "#ff9a8a",
+   "sijajBarva": "#f2b0a6",
    "lak": 0.18,
    "lakHrap": 0.78,
    "sijaj": 0.14,
@@ -165,6 +165,23 @@
    "zrno": 0.05,
    "relief": 0.3,
    "hrap": 0.45
+  },
+  "prevodni": {
+   "barva": "#d9b42a",
+   "rez": "#c9a020",
+   "robBarva": "#ffe27a",
+   "sijajBarva": "#fff0b0",
+   "lak": 0.3,
+   "lakHrap": 0.62,
+   "sijaj": 0.14,
+   "sijajHrap": 0.75,
+   "spekular": 0.65,
+   "rob": 0.08,
+   "ao": 0.85,
+   "f": 80,
+   "zrno": 0.05,
+   "relief": 0.3,
+   "hrap": 0.42
   }
  },
  "deli": [
@@ -176,7 +193,8 @@
    "opis": "Sprejme kri brez kisika, ki se iz telesa vrača po votlih venah.",
    "vozlisca": [
     "Right atrium"
-   ]
+   ],
+   "raven": 1
   },
   {
    "id": "desni-prekat",
@@ -187,7 +205,8 @@
    "opis": "Potiska kri brez kisika po pljučnem deblu v pljuča.",
    "vozlisca": [
     "Right ventricle"
-   ]
+   ],
+   "raven": 1
   },
   {
    "id": "levi-preddvor",
@@ -197,7 +216,8 @@
    "opis": "Sprejme s kisikom bogato kri, ki priteče iz pljuč po pljučnih venah.",
    "vozlisca": [
     "Left atrium"
-   ]
+   ],
+   "raven": 1
   },
   {
    "id": "levi-prekat",
@@ -208,7 +228,8 @@
    "opis": "Ima najdebelejšo steno in stisne kri v aorto, od tam pa po vsem telesu.",
    "vozlisca": [
     "Left ventricle"
-   ]
+   ],
+   "raven": 1
   },
   {
    "id": "aorta",
@@ -221,18 +242,60 @@
     "Brachiocephalic trunk",
     "Left common carotid artery",
     "Left subclavian artery"
-   ]
+   ],
+   "raven": 1
+  },
+  {
+   "id": "brahiocefalicno-deblo",
+   "ime": "Brahiocefalično deblo",
+   "la": "Truncus brachiocephalicus",
+   "skupina": "aorta",
+   "raven": 2,
+   "barva": "#fb7185",
+   "opis": "Prva veja aortnega loka; razcepi se v desno podključnično arterijo (za desno roko) in desno skupno karotido (za glavo in vrat).",
+   "vozlisca": []
+  },
+  {
+   "id": "leva-skupna-karotida",
+   "ime": "Leva skupna karotida",
+   "la": "Arteria carotis communis sinistra",
+   "skupina": "aorta",
+   "raven": 2,
+   "barva": "#f472b6",
+   "opis": "Druga veja aortnega loka; oskrbuje levo stran glave in vratu.",
+   "vozlisca": []
+  },
+  {
+   "id": "leva-podkljucnicna-arterija",
+   "ime": "Leva podključnična arterija",
+   "la": "Arteria subclavia sinistra",
+   "skupina": "aorta",
+   "raven": 2,
+   "barva": "#e879f9",
+   "opis": "Tretja veja aortnega loka; oskrbuje levo roko, del vratu in prsni koš.",
+   "vozlisca": []
   },
   {
    "id": "pljucno-deblo",
    "ime": "Pljučno deblo",
    "la": "Truncus pulmonalis",
    "barva": "#818cf8",
-   "opis": "Razcepi se v pljučni arteriji, ki neseta kri brez kisika v pljuča.",
+   "opis": "Iz desnega prekata nese kri brez kisika proti pljučem; pod aortnim lokom se razcepi v levo in desno pljučno arterijo.",
    "vozlisca": [
     "Pulmonary trunk",
     "Right pulmonary artery"
-   ]
+   ],
+   "raven": 1
+  },
+  {
+   "id": "pljucne-arterije",
+   "ime": "Pljučni arteriji",
+   "la": "Arteriae pulmonales",
+   "skupina": "pljucno-deblo",
+   "raven": 2,
+   "barva": "#6366f1",
+   "opis": "Leva in desna pljučna arterija nadaljujeta pljučno deblo od razcepa; desna gre za aorto in zgornjo votlo veno v desno pljučno krilo.",
+   "vozlisca": []
   },
   {
    "id": "votli-veni",
@@ -243,7 +306,8 @@
    "vozlisca": [
     "Inferior vena cava (thoracic part)",
     "Superior vena cava"
-   ]
+   ],
+   "raven": 1
   },
   {
    "id": "pljucne-vene",
@@ -256,7 +320,8 @@
     "Left superior pulmonary vein",
     "Right inferior pulmonary vein",
     "Right superior pulmonary vein"
-   ]
+   ],
+   "raven": 1
   },
   {
    "id": "vencne-arterije",
@@ -270,7 +335,58 @@
     "Left coronary artery",
     "Right coronary artery",
     "Right inferolateral branch of right coronary artery"
-   ]
+   ],
+   "raven": 1
+  },
+  {
+   "id": "leva-vencna-arterija",
+   "ime": "Leva venčna arterija (deblo)",
+   "la": "Arteria coronaria sinistra",
+   "skupina": "vencne-arterije",
+   "raven": 3,
+   "barva": "#fde047",
+   "opis": "Izhaja iz levega aortnega sinusa; kratko deblo (približno 1 cm) se razcepi v sprednjo medprekatno in cirkumfleksno arterijo.",
+   "vozlisca": []
+  },
+  {
+   "id": "sprednja-medprekatna-arterija",
+   "ime": "Sprednja medprekatna arterija",
+   "la": "Ramus interventricularis anterior",
+   "skupina": "vencne-arterije",
+   "raven": 3,
+   "barva": "#facc15",
+   "opis": "Teče v sprednjem medprekatnem žlebu do konice srca; z diagonalnimi vejami oskrbuje sprednjo steno levega prekata in sprednji del pretina.",
+   "vozlisca": []
+  },
+  {
+   "id": "cirkumfleksna-arterija",
+   "ime": "Cirkumfleksna arterija",
+   "la": "Ramus circumflexus",
+   "skupina": "vencne-arterije",
+   "raven": 3,
+   "barva": "#eab308",
+   "opis": "Teče v levem venčnem žlebu okoli levega roba srca; z obrobnimi vejami oskrbuje stransko steno levega prekata in levi preddvor.",
+   "vozlisca": []
+  },
+  {
+   "id": "desna-vencna-arterija",
+   "ime": "Desna venčna arterija",
+   "la": "Arteria coronaria dextra",
+   "skupina": "vencne-arterije",
+   "raven": 3,
+   "barva": "#ca8a04",
+   "opis": "Izhaja iz desnega aortnega sinusa in teče v desnem venčnem žlebu; oskrbuje desni preddvor, desni prekat in pri večini ljudi sinusni in AV-vozel.",
+   "vozlisca": []
+  },
+  {
+   "id": "zadnja-medprekatna-arterija",
+   "ime": "Zadnja medprekatna arterija",
+   "la": "Ramus interventricularis posterior",
+   "skupina": "vencne-arterije",
+   "raven": 3,
+   "barva": "#a16207",
+   "opis": "Pri večini ljudi veja desne venčne arterije; teče v zadnjem medprekatnem žlebu ob srednji srčni veni in oskrbuje spodnjo steno in zadnji del pretina.",
+   "vozlisca": []
   },
   {
    "id": "vencne-vene",
@@ -284,7 +400,38 @@
     "Inferior vein of left ventricle",
     "Inferior vein of left ventricle (//Posterior '')",
     "Middle cardiac vein"
-   ]
+   ],
+   "raven": 2
+  },
+  {
+   "id": "vencni-sinus",
+   "ime": "Venčni sinus",
+   "la": "Sinus coronarius",
+   "skupina": "vencne-vene",
+   "raven": 2,
+   "barva": "#8b5cf6",
+   "opis": "Široka vena v zadnjem venčnem žlebu, ki zbere kri iz srčnih ven in jo izlije v desni preddvor.",
+   "vozlisca": []
+  },
+  {
+   "id": "velika-srcna-vena",
+   "ime": "Velika srčna vena",
+   "la": "Vena cardiaca magna",
+   "skupina": "vencne-vene",
+   "raven": 3,
+   "barva": "#7c3aed",
+   "opis": "Spremlja sprednjo medprekatno arterijo v sprednjem žlebu, nato zavije v levi venčni žleb in se nadaljuje v venčni sinus.",
+   "vozlisca": []
+  },
+  {
+   "id": "srednja-srcna-vena",
+   "ime": "Srednja srčna vena",
+   "la": "Vena cardiaca media",
+   "skupina": "vencne-vene",
+   "raven": 3,
+   "barva": "#6d28d9",
+   "opis": "Teče v zadnjem medprekatnem žlebu ob zadnji medprekatni arteriji in se izlije v venčni sinus.",
+   "vozlisca": []
   },
   {
    "id": "papilarne-misice",
@@ -298,7 +445,8 @@
     "Inferior papillary muscle of left ventricle (lastno)",
     "Inferior papillary muscle of right ventricle (lastno)",
     "Septal papillary muscle of right ventricle (lastno)"
-   ]
+   ],
+   "raven": 2
   },
   {
    "id": "trabekule",
@@ -310,7 +458,8 @@
     "Septomarginal trabecula (lastno)",
     "Trabeculae carneae of left ventricle (lastno)",
     "Trabeculae carneae of right ventricle (lastno)"
-   ]
+   ],
+   "raven": 3
   },
   {
    "id": "av-zaklopki",
@@ -325,7 +474,8 @@
     "Inferior leaflet of right atrioventricular valve",
     "Posterior leaflet of left atrioventricular valve",
     "Septal leaflet of right atrioventricular valve"
-   ]
+   ],
+   "raven": 1
   },
   {
    "id": "aortna-zaklopka",
@@ -335,7 +485,8 @@
    "opis": "Žepasta zaklopka na izhodu levega prekata; kri ne more nazaj iz aorte.",
    "vozlisca": [
     "Semilunar cusps of aortic valve (lastno)"
-   ]
+   ],
+   "raven": 2
   },
   {
    "id": "pljucna-zaklopka",
@@ -345,18 +496,37 @@
    "opis": "Žepasta zaklopka na izhodu desnega prekata; kri ne more nazaj iz pljučnega debla.",
    "vozlisca": [
     "Semilunar cusps of pulmonary valve (lastno)"
-   ]
+   ],
+   "raven": 2
+  },
+  {
+   "id": "arterijska-vez",
+   "ime": "Arterijska vez",
+   "la": "Ligamentum arteriosum",
+   "raven": 3,
+   "barva": "#e5e7eb",
+   "opis": "Vezivni trak med razcepom pljučnega debla in aortnim lokom: ostanek arterijskega voda (ductus arteriosus), ki je pred rojstvom vodil kri mimo pljuč.",
+   "vozlisca": []
+  },
+  {
+   "id": "prevodni-sistem",
+   "ime": "Prevodni sistem (shema)",
+   "la": "Systema conducens cordis",
+   "raven": 2,
+   "barva": "#fbbf24",
+   "opis": "Shematsko: sinusni vozel (spodbujevalnik) ob ustju zgornje votle vene, AV-vozel v pretinu nad trikuspidalno zaklopko, Hisov snop in levi ter desni krak po pretinu proti konici. Iz posebnih mišičnih celic, ki vodijo električni signal za utrip.",
+   "vozlisca": []
   }
  ],
  "prerez": {
   "ravnine": [
    {
     "n": [
-     0,
-     0,
-     -1
+     -0.2236,
+     -0.9387,
+     -0.2625
     ],
-    "d": 0.004
+    "d": -0.0489
    }
   ]
  },
@@ -378,17 +548,16 @@
   },
   "prerez": {
    "pogled": [
-    0.05,
-    0.1,
-    1
+    0.22,
+    0.94,
+    0.26
    ],
    "tocke": [
     "levi-prekat",
     "desni-prekat",
     "levi-preddvor",
     "desni-preddvor",
-    "av-zaklopki",
-    "aortna-zaklopka"
+    "av-zaklopki"
    ]
   }
  },

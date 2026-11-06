@@ -3653,5 +3653,7 @@
   "birth.payMissing": "Scrie data nașterii în fila Cont.",
   "birth.confirm": "Vârsta după această dată: {age}. Este data nașterii persoanei care a creat contul? Mai târziu nu o poți schimba singur.",
   "birth.confirmYes": "Da, salvează",
-  "birth.confirmNo": "Corectează"
+  "birth.confirmNo": "Corectează",
+  "a3.moreParts": "Mai multe părți ({n})",
+  "a3.fewerParts": "Mai puține părți"
 }
