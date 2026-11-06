@@ -391,7 +391,9 @@ export function createApp(store, opts = {}) {
       !!st.goal_date ||
       (!pathTopic && weak.length > 0) ||
       !!results.personal ||
-      nonLatinScript(st.language)
+      nonLatinScript(st.language) ||
+      // Ime v nelatinični pisavi (»Иван«): model ga v latinici prečrka (»Ivan«), genericAnswer ga ne najde (pregled #484 B P2-4).
+      /\p{L}/u.test(String(s.name || "").replace(/\p{Script=Latin}/gu, ""))
     );
   };
 
