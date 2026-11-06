@@ -11,6 +11,7 @@
 import { levelPlanFor } from "../accounts/plans.js";
 import { newCode } from "./darila.js";
 import { audit } from "../dnevnik-dostopov.js";
+import { BIRTH_MISSING_PAY } from "../accounts/age.js";
 
 export const PODARI_DAYS = 90; // 3 mesece
 export const PODARI_MONTHS = 3;
@@ -48,7 +49,7 @@ export function migratePodari(db) {
 
 // ctx: { db, stripe, json, log, ensureCustomer, baseUrl, isMinor }
 export function mountPodari(app, ctx) {
-  const { db, stripe, json, log, ensureCustomer, baseUrl, isMinor } = ctx;
+  const { db, stripe, json, log, ensureCustomer, baseUrl, isMinor, birthMissing = () => false } = ctx;
   migratePodari(db);
 
   const paidSum = () => db.prepare("SELECT COALESCE(SUM(amount), 0) AS c FROM podari_fund WHERE status = 'paid'").get().c;
@@ -123,6 +124,7 @@ export function mountPodari(app, ctx) {
     const p = req.parent;
     if (!stripe.enabled) return res.status(503).json({ error: "Plačila še niso nastavljena (manjka STRIPE_SECRET_KEY)." });
     if (p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun." });
+    if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Podari lahko samo polnoletna oseba." });
     if (req.body?.adult !== true || req.body?.understand !== true) return res.status(400).json({ error: "Pred plačilom sta potrebni obe potrditvi.", consent: true });
     const open = db.prepare("SELECT COUNT(*) AS n FROM podari_fund WHERE parent_id = ? AND status = 'pending' AND kind = 'month' AND created_at > datetime('now', '-1 day')").get(p.id).n;

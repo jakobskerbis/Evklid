@@ -58,6 +58,9 @@ export const NOTES = {
 export const BLOCK_TEXT = {
   "block.daily": "Današnja vprašanja za inštruktorja so porabljena ({n} na dan). Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
   "block.creditOut": "Inštruktor je za nekaj minut nedosegljiv (dobroimetje za AI je porabljeno). Vadnica in razlage tem delujejo naprej.",
+  "block.freeTailBirth": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Za dokup porabe najprej vpiši datum rojstva v zavihku Račun, sicer jih spet dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
+  "block.capOutBirth": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Za dokup porabe najprej vpiši datum rojstva v zavihku Račun. Vadnica in razlage tem delujejo naprej.",
+  "block.shareOutBirth": "Ta mesec si porabil svoj del inštruktorja. Za dokup porabe najprej vpiši datum rojstva v zavihku Račun, sicer ga spet dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
   "block.freeTailTopup": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
   "block.freeTail": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
   "block.capOut": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej.",
@@ -448,13 +451,14 @@ export class Usage {
     if (this.creditOut()) return out("block.creditOut");
     // Skupni proračun se deli po profilih (server/proracun.js); nad svojim delom učenec nadaljuje z dokupljenim kreditom.
     const state = this.budgetState();
-    if (this.overFreeTail(studentId, state)) return out(this.topupPrompt(studentId) ? "block.freeTailTopup" : "block.freeTail");
+    // topupPrompt: true (poziv k dokupu), "birth" (dokup šele po vpisu datuma rojstva) ali false.
+    const tail = (tp) => (tp === "birth" ? "Birth" : tp ? "Topup" : "");
+    if (this.overFreeTail(studentId, state)) return out(`block.freeTail${tail(this.topupPrompt(studentId))}`);
     if (state.cap) {
       if (!this.overShare(studentId, state)) return null;
       // Pod 15 let ali ob ponudbi paketa pred testom brez poziva k dokupu (ponudbe.js, ena ponudba naenkrat).
       const capped = state.spent >= state.cap;
-      if (!this.topupPrompt(studentId)) return out(capped ? "block.capOut" : "block.shareOut");
-      return out(capped ? "block.capOutTopup" : "block.shareOutTopup");
+      return out(`${capped ? "block.capOut" : "block.shareOut"}${tail(this.topupPrompt(studentId))}`);
     }
     const per = LIMITS.studentMonthlyUsd();
     // Naročnika mesečna meja ne ustavi: nad zajamčenim deležem odgovarja hitri model (dnevna meja vprašanj velja).

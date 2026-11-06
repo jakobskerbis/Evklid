@@ -9,6 +9,7 @@
 import express from "express";
 import { randomToken, sha256, Throttle } from "./auth.js";
 import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd } from "./plans.js";
+import { BIRTH_MISSING_PAY } from "./age.js";
 import { Schedules, nowParts, cleanDate, TEST_KINDS } from "../schedule.js";
 import { cleanText } from "../settings.js";
 import { ljNow } from "./goal-reminder.js";
@@ -210,7 +211,7 @@ export function nextTest(schedules, studentId, now = new Date()) {
 }
 
 export function mountBilling(app, ctx) {
-  const { credits = null, db, store, stripe, log, json, getParent, update, childIds, ownerOf, ensureCustomer, accessOf, baseUrl, sendMail, currencyOf, isMinor, applySubscription, syncCustomer, promo, kv, offersFor = () => ({ show: true, prices: true }), hasSchoolChild = () => false, levelOf = () => "OS", planForParent = null, aiUsage = null, ageOf = () => null } = ctx;
+  const { credits = null, db, store, stripe, log, json, getParent, update, childIds, ownerOf, ensureCustomer, accessOf, baseUrl, sendMail, currencyOf, isMinor, birthMissing = () => false, applySubscription, syncCustomer, promo, kv, offersFor = () => ({ show: true, prices: true }), hasSchoolChild = () => false, levelOf = () => "OS", planForParent = null, aiUsage = null, ageOf = () => null } = ctx;
   // Paket naročnine za račun: stopnja profila (en profil) ali Družina (glej index.js planForAccount).
   const subPlan = (p, seats, interval, currency) => (planForParent ? planForParent(p.id, seats, interval, currency) : planFor(seats, interval, currency));
   migrateBilling(db);
@@ -321,7 +322,7 @@ export function mountBilling(app, ctx) {
     const coverEnd = Date.parse(`${test.date}T23:59:59Z`) + 86400000;
     if (isPremiumChild(access, childIds(parent.id), studentId) && access.until && Date.parse(access.until) >= coverEnd) return null;
     if (!policy.prices) return { test, parent_info: true };
-    return { test, suggested: suggested.days, pay_link: isMinor(parent) };
+    return { test, suggested: suggested.days, pay_link: isMinor(parent), ...(birthMissing(parent) ? { birth_missing: true } : {}) };
   }
 
   // --- paket pred testom ---
@@ -337,6 +338,7 @@ export function mountBilling(app, ctx) {
   app.post("/api/billing/pass", json, async (req, res) => {
     if (needStripe(res)) return;
     const p = req.parent;
+    if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Paket plača starš. Pošlji mu povezavo za plačilo.", pay_link: true });
     const c = checkPass(req, p, req.body);
     if (c.status) return res.status(c.status).json(c.body);
@@ -400,6 +402,7 @@ export function mountBilling(app, ctx) {
       packs: currencyOf(req, p) === "EUR" && !childIds(p.id).some((id) => passOfferFor(id, req)) ? CREDIT_PACKS.map(publicPack) : [],
       // Dokup plača samo polnoleten imetnik z znano starostjo (adultKnown).
       minor: !adultKnown(p),
+      birth_missing: birthMissing(p),
     });
   });
 
@@ -407,6 +410,7 @@ export function mountBilling(app, ctx) {
     if (needStripe(res)) return;
     const p = req.parent;
     if (!credits || !p || p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun v zavihku Račun.", guest: true });
+    if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (!adultKnown(p)) return res.status(403).json({ error: "Dokup pogovorov plača polnoleten imetnik računa (starš ali skrbnik)." });
     // Samo paketi 5 / 10 / 20 € (poljubnega zneska ni več, j 2026-11-04).
     const pack = packById(req.body?.pack);

@@ -20,7 +20,7 @@ import { Devices, deviceLabel, deviceWarnLimit } from "./devices.js";
 import { cleanText } from "../settings.js";
 import { Usage, BLOCK_TEXT } from "../usage.js";
 import { promoConfig, createPromo } from "./promo.js";
-import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE } from "./age.js";
+import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSING_PAY } from "./age.js";
 import { guestModeOn, guestNet, guestPerDay, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
 import { AccountLocks, ownerOnly } from "./account-lock.js";
 import { ProfileLocks, checkProfilePassword } from "./profile-lock.js";
@@ -154,6 +154,8 @@ export function mountAccounts(app, store, opts = {}) {
     const age = p?.birth_date ? ageOn(p.birth_date) : null;
     return age !== null && age < ADULT_AGE;
   };
+  // Račun brez datuma rojstva (star račun, »Pozneje«): ne plača ničesar, dokler datuma ne vpiše (j 2026-11-06).
+  const birthMissing = (p) => !!p && !p.is_guest && !p.birth_date;
 
   const publicParent = (p) => ({
     id: p.id,
@@ -346,11 +348,13 @@ export function mountAccounts(app, store, opts = {}) {
     const p = getParent(ownerOf(studentId));
     if (!p || p.is_guest || isMinor(p)) return false;
     const o = offersFor(studentId);
-    return o.show && o.prices && offerKindFor(studentId) !== "pass";
+    if (!(o.show && o.prices && offerKindFor(studentId) !== "pass")) return false;
+    // Brez datuma rojstva dokup ni mogoč: sporočilo pove, naj ga vpiše v zavihku Račun (usage.js »block.*Birth«).
+    return birthMissing(p) ? "birth" : true;
   }
   // Gumb »Dokupi« ob obvestilu o porabi (80 %, 100 %): samo naročniku po pravilu ene ponudbe in samo polnoletnemu
   // profilu (j 2026-11-01: gumb za dokup le polnoletni in starši); dijak 15–17 na računu staršev ga ne vidi.
-  const topupButton = (studentId) => (ageOfStudent(studentId) ?? 0) >= 18 && topupPrompt(studentId) && offerKindFor(studentId) === "topup";
+  const topupButton = (studentId) => (ageOfStudent(studentId) ?? 0) >= 18 && topupPrompt(studentId) === true && offerKindFor(studentId) === "topup";
   aiUsage.configure({ topupPrompt });
 
   // Ali sme sporočilo o porabljenih vprašanjih predlagati nakup: le ponudba s ceno in ne učencu iz šole
@@ -806,29 +810,37 @@ export function mountAccounts(app, store, opts = {}) {
     });
   });
 
-  // Odklep računa na tej napravi z geslom računa (zavihek Račun, nov ali izbrisan profil).
-  // Star račun brez datuma rojstva ga vpiše enkrat (ob prijavi ali v zavihku Račun) ali izbere »Pozneje«.
-  // Vpisanega datuma ni mogoče spremeniti (sicer bi se mladoletni naredil polnoletnega). Datuma ne beležimo v dnevnik.
-  // Mlajši od starosti digitalne privolitve (SI: 15, age.js): datum se shrani (plačila gredo prek staršev, isMinor),
-  // odgovor pa ima under_age, da aplikacija pokaže pot do soglasja staršev kot pri registraciji.
+  // Star račun brez datuma rojstva ga vpiše enkrat (ob prijavi na odklenjeni napravi ali v zavihku Račun) ali izbere »Pozneje«.
+  // Samo lastnik računa (OWNER_ONLY v account-lock.js): otrok na starševi napravi ga ne vpiše namesto starša.
+  // Vpisanega datuma ni mogoče spremeniti sam (sicer bi se mladoletni naredil polnoletnega); napako popravi skrbnik
+  // s scripts/popravi-datum-rojstva.js (zapis v dnevnik dostopov). Datuma ne beležimo v dnevnik.
+  // Mlajši od 18 let: plačila prek staršev (isMinor, pay_link). Mlajši od starosti digitalne privolitve (SI: 15, age.js):
+  // datum se shrani, račun deluje naprej, odgovor ima under_age (aplikacija pove, da plačila potekajo prek starša).
+  // Zapis je atomski (WHERE birth_date IS NULL): ob dveh hkratnih zahtevkih uspe samo prvi, drugi dobi 409.
   app.post("/api/account/birth-date", json, (req, res) => {
     const p = req.parent;
     if (!p) return res.status(401).json({ error: "Prijavi se.", login: true });
     if (p.is_guest) return res.status(400).json({ error: "Najprej ustvari račun.", guest: true });
-    if (p.birth_date) return res.status(409).json({ error: "Datum rojstva je že vpisan." });
+    const taken = () => res.status(409).json({ error: "Datum rojstva je že vpisan.", parent: publicParent(getParent(p.id)) });
+    if (p.birth_date) return taken();
+    const now = new Date().toISOString();
     if (req.body?.later === true) {
-      update(p.id, { birth_asked_at: new Date().toISOString() });
+      const r = db.prepare("UPDATE parents SET birth_asked_at = ? WHERE id = ? AND birth_date IS NULL").run(now, p.id);
+      if (!r.changes) return taken();
       return res.json({ parent: publicParent(getParent(p.id)) });
     }
     const birth = parseBirthDate(req.body?.birth_date);
     const age = birth ? ageOn(birth) : null;
-    if (age === null || age < 0 || age > 120) return res.status(400).json({ error: "Vpiši pravi datum rojstva.", birth_date: true });
+    // Mlajši od 5 let ne more biti imetnik računa (kot birth_year pri profilih): zatipkana letnica, ne pravi datum.
+    if (age === null || age < MIN_HOLDER_AGE || age > 120) return res.status(400).json({ error: "Vpiši pravi datum rojstva.", birth_date: true });
     const iso = `${birth.y}-${String(birth.m).padStart(2, "0")}-${String(birth.d).padStart(2, "0")}`;
-    update(p.id, { birth_date: iso, birth_asked_at: new Date().toISOString() });
+    const r = db.prepare("UPDATE parents SET birth_date = ?, birth_asked_at = ? WHERE id = ? AND birth_date IS NULL").run(iso, now, p.id);
+    if (!r.changes) return taken();
     const minAge = minAgeOf(p.country, String(req.headers["cf-ipcountry"] || ""));
     res.json({ parent: publicParent(getParent(p.id)), ...(age < minAge ? { under_age: true, min_age: minAge } : {}) });
   });
 
+  // Odklep računa na tej napravi z geslom računa (zavihek Račun, nov ali izbrisan profil).
   app.post("/api/account/unlock", json, async (req, res) => {
     const p = req.parent;
     if (!lockable(p)) return res.json({ ok: true });
@@ -1312,7 +1324,8 @@ export function mountAccounts(app, store, opts = {}) {
       return res.status(403).json({ error: "Ta cena velja samo za učence s šolsko licenco." });
     }
     if (PAID.has(p.sub_status)) return res.status(409).json({ error: "Naročnino že imaš. Paket spremeniš z gumbom »Upravljaj naročnino in račune«.", portal: true });
-    // Naročnino sklene polnoletna oseba; mladoletni imetnik pošlje staršu povezavo za plačilo.
+    // Naročnino sklene polnoletna oseba; mladoletni imetnik pošlje staršu povezavo za plačilo. Brez datuma rojstva: najprej ga vpiše.
+    if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Naročnino plača starš. Pošlji mu povezavo za plačilo.", pay_link: true });
     if (req.body?.adult !== true || req.body?.withdrawal !== true) return res.status(400).json({ error: "Pred plačilom sta potrebni obe potrditvi.", consent: true });
     try {
@@ -1356,6 +1369,7 @@ export function mountAccounts(app, store, opts = {}) {
     // j še nima s.p.: nadgradnja s proracijo samo v testnem načinu Stripa (EVKLID_STRIPE_LIVE_UPGRADE=1 jo vklopi).
     if (!stripe.testMode && env.EVKLID_STRIPE_LIVE_UPGRADE !== "1") return res.status(503).json({ error: "Nadgradnja trenutno ni na voljo." });
     const p = req.parent;
+    if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Nadgradnjo plača starš. Pošlji mu povezavo za plačilo.", pay_link: true });
     const up = upgradeFor(p);
     const to = up?.options.find((o) => o.key === req.body?.plan);
@@ -1513,6 +1527,7 @@ export function mountAccounts(app, store, opts = {}) {
     sendMail,
     currencyOf,
     isMinor,
+    birthMissing,
     applySubscription,
     syncCustomer,
     hasSchoolChild: (parentId) => childIds(parentId).some((id) => schools.hasLicence(id)),
@@ -1521,14 +1536,14 @@ export function mountAccounts(app, store, opts = {}) {
     aiUsage,
     ageOf: ageOfStudent,
   });
-  gifts = mountGifts(app, { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, recordConsent: billing.recordConsent, paidActive });
-  podari = mountPodari(app, { db, stripe, json, log, ensureCustomer, baseUrl, isMinor });
+  gifts = mountGifts(app, { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, birthMissing, recordConsent: billing.recordConsent, paidActive });
+  podari = mountPodari(app, { db, stripe, json, log, ensureCustomer, baseUrl, isMinor, birthMissing });
   // Garancija: ob vračilu se naročnina takoj prekliče (profili preidejo na brezplačni paket).
   async function cancelSubscription(p) {
     const sub = await stripe.request("DELETE", `/subscriptions/${p.sub_id}`);
     await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } });
   }
-  guarantee = mountGuarantee(app, { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, cancelSubscription, addonOf: podari.addonOf });
+  guarantee = mountGuarantee(app, { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, birthMissing, cancelSubscription, addonOf: podari.addonOf });
 
   // Naročnina iz dogodka: sveže stanje iz Stripa (dogodki lahko pridejo v napačnem vrstnem redu).
   async function freshSubscription(obj) {

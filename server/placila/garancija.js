@@ -6,6 +6,7 @@
 // Do s.p. vse deluje samo v testnem načinu Stripa, kot ostala plačila.
 import { createHash } from "node:crypto";
 import { audit } from "../dnevnik-dostopov.js";
+import { BIRTH_MISSING_PAY } from "../accounts/age.js";
 
 export const GUARANTEE = { enrollDays: 14, weeks: 8, minDays: 3, claimDays: 60 };
 export const GUARANTEE_SUBJECTS = ["MAT", "FIZ", "KEM", "BIO", "NAR"];
@@ -83,7 +84,7 @@ export function weeksFor(start, practiceDays, now = Date.now()) {
 // ctx: { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, cancelSubscription, addonOf }
 // addonOf(invoice) → { amount, held }: dodatek »Podari Evklid« na računu (ni plačilo naročnine, server/placila/podari.js).
 export function mountGuarantee(app, ctx) {
-  const { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, cancelSubscription } = ctx;
+  const { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, birthMissing = () => false, cancelSubscription } = ctx;
   const addonOf = ctx.addonOf || (() => ({ amount: 0, held: 0 }));
   const refunding = new Set(); // vračilo, ki že teče (dvojni klik ali dva skrbnika hkrati)
   migrateGuarantee(db);
@@ -166,6 +167,7 @@ export function mountGuarantee(app, ctx) {
   app.post("/api/guarantee/enroll", json, async (req, res) => {
     const p = req.parent;
     if (p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun." });
+    if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (isMinor(p)) return res.status(403).json({ error: "Za garancijo se prijavi starš." });
     if (rowFor(p)) return res.status(409).json({ error: "Garancijo je tvoja družina že uporabila." });
     if (!paidActive(p) || (p.sub_provider || "stripe") !== "stripe" || !p.stripe_customer_id || !String(p.sub_id || "").startsWith("sub_"))
