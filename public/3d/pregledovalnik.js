@@ -4,6 +4,7 @@
 // in pogon simulacij »3d-<id>« v lekcijah (public/3d/sim.js).
 import { THREE, ustvariSceno, kakovostNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
+import { najdiIstiDel, obvestiloManjka } from "./isti-del.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
 
@@ -37,6 +38,8 @@ export function odpriModel(el, mod, opts = {}) {
   let kit = null;
   let model = null;
   let izbran = null;
+  let menjavaUporabnika = false; // obMenjavi: menjavo je sprožil uporabnik (nadzor), ne faza modela
+  let izbraniDel = null; // predmet izbranega dela (ključi za isti del v novem stanju, isti-del.js)
   let tece = true;
   let izpisi = [];
   let sinh = []; // drsnik/stikalo/izbira: { c, zadnja, nastavi } – gradnik sledi c.vrednost, ko jo spremeni model
@@ -65,7 +68,12 @@ export function odpriModel(el, mod, opts = {}) {
   // bilo prebrano ob prvem prikazu).
   const statusEl = mk("p", "k3-sr");
   statusEl.setAttribute("role", "status");
-  spodaj.append(infoEl, nadzorEl, deliEl);
+  // Obvestilo ob modelu (nikoli čez), ko novo stanje izbranega dela nima (»Ta celica nima jedra.«); izgine po 4 s.
+  const obvestiloEl = mk("p", "k3-obvestilo");
+  obvestiloEl.hidden = true;
+  obvestiloEl.setAttribute("role", "status");
+  let obvestiloCas = 0;
+  spodaj.append(infoEl, obvestiloEl, nadzorEl, deliEl);
   el.append(oder, spodaj, statusEl);
   // Stran /3d (opts.stran): plošča ob odru (desno na širokih zaslonih, spodaj na telefonu) z opisom modela, nadzorom in
   // seznamom delov; plošča se drsi sama, oder ostane ves čas viden. V lekcijah ostane postavitev kot prej.
@@ -383,6 +391,8 @@ export function odpriModel(el, mod, opts = {}) {
     // kader vidnega modela pred skrivanjem ovojev: primerjava pokaže, ali se je vidni model opazno spremenil
     const prej = leti && model?.group ? kadrModela() : null;
     izbran = d ? d.id : null;
+    izbraniDel = d;
+    if (d) obvestiloEl.hidden = true;
     ustaviNamigSij();
     obarvaj(d);
     skrijObdajajoce(d);
@@ -516,12 +526,41 @@ export function odpriModel(el, mod, opts = {}) {
       deliGlava.replaceChildren(t("a3.parts"), mk("span", "k3-stevec", String(seznam.length)));
     }
     // Brez barvnih krogcev čez model (j, 5. 11.): kaj je klikljivo, pokaže sij delov ob prvem ogledu (namigniDele).
-    if (izbran && !seznam.some((d) => d.id === izbran)) izberi(null, { leti: false });
-    else if (izbran) skrijObdajajoce(seznam.find((d) => d.id === izbran)); // nova faza: drugi ovoji
+    obMenjavi(seznam);
     // nov nabor delov (odprtje, drug pogled, faza): po kadriranju (naslednja sličica) en primerek vsakega dela zasije
     if (!izbran) requestAnimationFrame(() => !unicen && namigniDele());
   }
 
+  // Menjava stanja z odprtim delom (j, 6. 11.: kristal, različica, pogled, faza, drug model s puščicama ‹ ›): isti del
+  // (isti-del.js: id, latinsko ime, sinonimi) ostane izbran, poudarjen na novih mrežah in okno pokaže njegov novi opis;
+  // če ga novo stanje nima, se okno zapre (ob uporabnikovi menjavi s kratkim obvestilom ob modelu).
+  function obMenjavi(seznam, obvesti = menjavaUporabnika) {
+    if (!izbran || !izbraniDel) return;
+    const prej = izbraniDel;
+    const d = najdiIstiDel(seznam, prej);
+    if (!d) {
+      izberi(null, { leti: false });
+      if (obvesti) pokaziObvestilo(prej);
+      return;
+    }
+    const besedilo = (x) => [x.ime, x.la, x.opis, x.barva, x.povecava].join("\u0001");
+    const fokus = infoEl.contains(document.activeElement);
+    izbran = d.id;
+    izbraniDel = d;
+    obarvaj(d); // nove mreže dobijo poudarek, kopije starih se sprostijo
+    skrijObdajajoce(d);
+    deliEl.querySelectorAll("[data-del]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.del === izbran)));
+    if (d === prej || besedilo(d) === besedilo(prej)) return;
+    pokaziInfo(d, { pomakni: false });
+    if (fokus) infoEl.querySelector(".k3-info-zapri")?.focus({ preventScroll: true });
+  }
+  function pokaziObvestilo(prej) {
+    const [k, p] = obvestiloManjka(prej, info);
+    obvestiloEl.textContent = t(k, p);
+    obvestiloEl.hidden = false;
+    clearTimeout(obvestiloCas);
+    obvestiloCas = setTimeout(() => (obvestiloEl.hidden = true), 4000);
+  }
   const merilo = () => {
     const m = model && "merilo" in model && model.merilo !== undefined ? (typeof model.merilo === "function" ? model.merilo() : model.merilo) : info.merilo;
     kit.nastaviMerilo(m || null, 2);
@@ -586,17 +625,25 @@ export function odpriModel(el, mod, opts = {}) {
     for (const c of Array.isArray(model?.nadzor) ? model.nadzor : []) {
       const prej = nadzorEl.lastElementChild;
       const klic = (v) => {
-        // ponastaviPogled: preklop pogleda (npr. prerez organa) prekliče izbiro in kamero obrne v novo začetno smer.
-        if (c.ponastaviPogled && izbran) izberi(null, { leti: false });
-        const prej = c.tip === "izbira" && !c.ponastaviPogled ? kadrModela() : null;
+        // ponastaviPogled: preklop pogleda (npr. prerez organa) kamero obrne v novo začetno smer. Izbira, stikalo in
+        // gumb (kristal, različica, kapilare …) model znova kadrirajo (j, 6. 11.: cel model v kadru, tudi povečan);
+        // izbrani del ostane ali se okno zapre (obMenjavi).
         try {
           c.ob?.(v);
         } catch (err) {
           console.error("3D nadzor", c.id, err);
         }
-        poSpremembi();
+        menjavaUporabnika = true;
+        try {
+          poSpremembi();
+        } finally {
+          menjavaUporabnika = false;
+        }
         if (c.ponastaviPogled) poleti(...zacetniOkvir(), { smer: zacetnaSmer(), trajanje: 0.7, pokonci: true });
-        else if (prej) kadrirajPogled(prej);
+        else if (c.tip !== "drsnik") {
+          kit.posodobiVelikost?.();
+          poleti(...kadrModela(), { trajanje: 0.6 });
+        }
       };
       if (c.tip === "drsnik") {
         const lab = mk("label", "k3-drsnik");
@@ -784,6 +831,7 @@ export function odpriModel(el, mod, opts = {}) {
   let unicen = false;
   function zgradiVse(ponastavi) {
     izbran = null;
+    izbraniDel = null;
     ustaviNamigSij();
     if (kit) pokaziInfo(null);
     obarvaj(null); // izvirni materiali nazaj, kopije sproščene
@@ -1022,6 +1070,13 @@ export function odpriModel(el, mod, opts = {}) {
       const vsi = Array.isArray(model.deli) ? model.deli : [];
       const d = vsi.find((x) => x.id === zacetek.del || fold(x.ime) === want) || vsi.find((x) => fold(x.ime).startsWith(want) || want.startsWith(fold(x.ime)));
       if (d) requestAnimationFrame(() => !unicen && model === m && izberi(d.id, { pomakni: false }));
+    } else if (opts.prenos && !ponastavi) {
+      // Del, izbran v prejšnjem modelu (puščici ‹ › na strani /3d): isti del ostane izbran, sicer obvestilo ob modelu.
+      const prej = opts.prenos;
+      opts.prenos = null;
+      const d = najdiIstiDel(Array.isArray(model.deli) ? model.deli : [], prej);
+      if (d) requestAnimationFrame(() => !unicen && model === m && izberi(d.id, { pomakni: false }));
+      else pokaziObvestilo(prej);
     }
   }
   const fold = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
@@ -1035,11 +1090,14 @@ export function odpriModel(el, mod, opts = {}) {
       return model;
     },
     izberi,
+    // izbrani del (ključi za isti del v naslednjem modelu, stran.js ‹ ›)
+    izbraniDel: () => (izbraniDel ? { id: izbraniDel.id, ime: izbraniDel.ime, la: izbraniDel.la, kljuci: izbraniDel.kljuci } : null),
     // kader modela [središče, polmer] (scripts/preveri-3d-okna.cjs preveri, da je cel v kadru)
     kader: () => kadrModela(),
     unici() {
       for (const f of pocisti) f();
       unicen = true;
+      clearTimeout(obvestiloCas);
       ustaviNamigSij();
       obarvaj(null);
       matObrisa?.dispose();

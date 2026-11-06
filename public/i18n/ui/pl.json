@@ -3349,6 +3349,8 @@
   "a3.prevModel": "Poprzedni",
   "a3.nextModel": "Następny",
   "a3.position": "{i} z {n}",
+  "a3.noNucleus": "Ta komórka nie ma jądra.",
+  "a3.partMissing": "Ten model nie ma części „{ime}”.",
   "a3.fullscreen": "Pełny ekran",
   "a3.exitFullscreen": "Zamknij pełny ekran",
   "a3.about": "Opis",

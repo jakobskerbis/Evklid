@@ -3287,6 +3287,8 @@
   "a3.prevModel": "قبلی",
   "a3.nextModel": "بعدی",
   "a3.position": "{i} از {n}",
+  "a3.noNucleus": "این یاخته هسته ندارد.",
+  "a3.partMissing": "این مدل بخش «{ime}» را ندارد.",
   "a3.fullscreen": "تمام‌صفحه",
   "a3.exitFullscreen": "خروج از تمام‌صفحه",
   "a3.about": "توضیح",

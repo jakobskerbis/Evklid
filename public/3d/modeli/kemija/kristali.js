@@ -31,6 +31,7 @@ export const MREZE = [
     },
     baza: [...FCC.map((p) => ["na", ...p]), ...premakni(FCC, [0.5, 0, 0]).map((p) => ["cl", ...p])],
     vezi: [["na", "cl"]], koord: { sredina: "na", sosedi: "cl", polieder: "oktaeder" }, enote: (n) => `${n} formulske enote NaCl`,
+    vCelici: "so 4 ioni Na⁺ in 4 ioni Cl⁻ (4 formulske enote NaCl)",
     vezOpis: "Palčke kažejo najbližje sosede; ionska vez ni usmerjena, vsak ion privlači vse nasprotno nabite ione okoli sebe.",
   },
   {
@@ -42,6 +43,7 @@ export const MREZE = [
     },
     baza: [["cl", 0, 0, 0], ["cs", 0.5, 0.5, 0.5]],
     vezi: [["cs", "cl"]], koord: { sredina: "cs", sosedi: "cl", polieder: "kocka" }, enote: (n) => `${n} formulska enota CsCl`,
+    vCelici: "sta en ion Cs⁺ in en ion Cl⁻ (1 formulska enota CsCl)",
     vezOpis: "Palčke kažejo najbližje sosede; vsak ion ima osem nasprotno nabitih sosedov v ogliščih kocke.",
   },
   {
@@ -50,6 +52,7 @@ export const MREZE = [
     vrste: { c: vrsta("Ogljikovi atomi", "C", "#a0a7b4", 77, 34, "Vsak atom ogljika je s kovalentnimi vezmi povezan s štirimi sosedi, zato je diamant najtrša naravna snov.") },
     baza: [...FCC, ...premakni(FCC, [0.25, 0.25, 0.25])].map((p) => ["c", ...p]),
     vezi: [["c", "c"]], koord: { sredina: "c", sosedi: "c", polieder: "tetraeder" }, enote: (n) => `${n} atomov C`,
+    vCelici: "je 8 atomov C",
     vezOpis: "Kovalentne vezi C–C dolžine 154 pm kažejo v oglišča tetraedra (kot 109,5°) in povezujejo cel kristal v eno samo molekulo.",
   },
   {
@@ -58,6 +61,7 @@ export const MREZE = [
     vrste: { c: vrsta("Ogljikovi atomi", "C", "#a0a7b4", 71, 30, "Vsak atom ogljika je povezan s tremi sosedi v isti plasti; četrti elektron je prost, zato grafit prevaja elektriko.") },
     baza: [[0, 0, 0.25], [0, 0, 0.75], [1 / 3, 2 / 3, 0.25], [2 / 3, 1 / 3, 0.75]].map((p) => ["c", ...p]),
     vezi: [["c", "c"]], koord: { sredina: "c", sosedi: "c", polieder: "trikotnik" }, enote: (n) => `${n} atomi C`,
+    vCelici: "so 4 atomi C",
     vezOpis: "Kovalentne vezi C–C (142 pm) povezujejo atome le znotraj plasti; plasti so 335 pm narazen in drsijo ena po drugi.",
   },
   {
@@ -66,6 +70,7 @@ export const MREZE = [
     vrste: { fe: vrsta("Železovi atomi", "Fe", "#e06633", 124, 50, "Atomi železa v ogliščih in v središču kocke; zunanje elektrone si delijo vsi atomi kristala.") },
     baza: [["fe", 0, 0, 0], ["fe", 0.5, 0.5, 0.5]],
     vezi: [["fe", "fe"]], koord: { sredina: "fe", sosedi: "fe", polieder: "kocka" }, enote: (n) => `${n} atoma Fe`,
+    vCelici: "sta 2 atoma Fe",
     vezOpis: "Palčke kažejo najbližje sosede; kovinska vez ni med parom atomov, ampak jo tvorijo prosti elektroni med vsemi ioni.",
   },
   {
@@ -74,6 +79,7 @@ export const MREZE = [
     vrste: { cu: vrsta("Bakrovi atomi", "Cu", "#c88033", 128, 52, "Atomi bakra v ogliščih in na sredini ploskev kocke; zloženi so tako gosto, kot je le mogoče.") },
     baza: FCC.map((p) => ["cu", ...p]),
     vezi: [["cu", "cu"]], koord: { sredina: "cu", sosedi: "cu", polieder: "kubooktaeder" }, enote: (n) => `${n} atomi Cu`,
+    vCelici: "so 4 atomi Cu",
     vezOpis: "Palčke kažejo najbližje sosede; kovinska vez ni med parom atomov, ampak jo tvorijo prosti elektroni med vsemi ioni.",
   },
   {
@@ -82,6 +88,7 @@ export const MREZE = [
     vrste: { mg: vrsta("Magnezijevi atomi", "Mg", "#8ad44a", 160, 62, "Atomi magnezija v plasteh, kjer vsak leži v vdolbini med tremi atomi plasti pod njim.") },
     baza: [[1 / 3, 2 / 3, 0.25], [2 / 3, 1 / 3, 0.75]].map((p) => ["mg", ...p]),
     vezi: [["mg", "mg"]], koord: { sredina: "mg", sosedi: "mg", polieder: "antikubooktaeder" }, enote: (n) => `${n} atoma Mg`,
+    vCelici: "sta 2 atoma Mg; to je primitivna celica, v šeststrani prizmi, ki jo sestavljajo tri take celice, pa je 6 atomov Mg",
     vezOpis: "Palčke kažejo najbližje sosede; kovinska vez ni med parom atomov, ampak jo tvorijo prosti elektroni med vsemi ioni.",
   },
   {
@@ -93,6 +100,7 @@ export const MREZE = [
     },
     baza: [[1 / 3, 2 / 3, 1 / 16], [2 / 3, 1 / 3, 9 / 16], [2 / 3, 1 / 3, 15 / 16], [1 / 3, 2 / 3, 7 / 16]].map((p) => ["o", ...p]),
     vezi: [], koord: { sredina: "o", sosedi: "o", polieder: "tetraeder" }, enote: (n) => `${n} molekule H₂O`,
+    vCelici: "so 4 molekule H₂O",
     vezOpis: "Kovalentne vezi O–H (100 pm) držijo skupaj atome v molekuli vode.",
   },
 ];
@@ -233,8 +241,6 @@ function ovojnica(T) {
 
 const POLIEDRI = { oktaeder: "oktaeder", kocka: "kocka", tetraeder: "tetraeder", trikotnik: "trikotnik", kubooktaeder: "kubooktaeder", antikubooktaeder: "trikotna ortobikupola" };
 const POLIEDRI_TOZ = { kocka: "kocko", antikubooktaeder: "trikotno ortobikupolo" }; // tožilnik (»tvorijo kocko«)
-/** Glagol za število v slovenščini: 1 je, 2 sta, 3–4 so, 5+ je. */
-const glagol = (n) => (n === 2 ? "sta" : n === 3 || n === 4 ? "so" : "je");
 const vej = (x, d = 0) => x.toFixed(d).replace(".", ",");
 
 export function zgradi(THREE, ctx = {}) {
@@ -438,8 +444,9 @@ export function zgradi(THREE, ctx = {}) {
       const robovi = [];
       for (let i = 0; i < 8; i++) for (const b of [1, 2, 4]) if (!(i & b)) robovi.push([ogl[i], ogl[i | b]]);
       const cel = valji(gValjTanek, matCelica, robovi, Math.min(0.011, Math.max(0.005, 13 * s)));
+      // opis velja za izbrani kristal (pregledovalnik ob menjavi kristala pokaže ta, novi opis)
       deli.push({ id: "celica", ime: "Osnovna celica", barva: "#6e9bff", meshes: [cel], tocka: spredaj(ogl),
-        opis: `Najmanjši del kristala, ki z vzporednim premikanjem v vse smeri sestavi cel kristal; v njej ${glagol(enoteVCelici(M))} ${M.enote(enoteVCelici(M))}.` });
+        opis: `Osnovna celica se ponavlja v vse smeri: z vzporednim premikanjem sestavi cel kristal. V njej ${M.vCelici}.` });
     }
 
     // koordinacijski polieder
@@ -475,7 +482,7 @@ export function zgradi(THREE, ctx = {}) {
     const { M } = stanjeIzpis;
     const st2 = stetjeVCelici(M);
     const fe = enoteVCelici(M);
-    return st2.map((x) => `${M.vrste[x.v].kratko}: ${x.zapis.replace(/\./g, ",")}`).join(" · ") + ` → ${M.enote(fe)}` + (M.led ? " (vodiki niso šteti)" : "");
+    return st2.map((x) => `${M.vrste[x.v].kratko}: ${x.zapis.replace(/\./g, ",")}`).join(" · ") + ` → ${M.enote(fe)}` + (M.led ? " (vodiki niso šteti)" : "") + (M.id === "hcp" ? " (primitivna celica; v šeststrani prizmi 6 atomov)" : "");
   };
   m.nadzor = [
     { tip: "izbira", id: "mreza", oznaka: "Kristal", vrednost: st.mreza,

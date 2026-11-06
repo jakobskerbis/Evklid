@@ -3290,6 +3290,8 @@
   "a3.prevModel": "Précédent",
   "a3.nextModel": "Suivant",
   "a3.position": "{i} sur {n}",
+  "a3.noNucleus": "Cette cellule n’a pas de noyau.",
+  "a3.partMissing": "Ce modèle n’a pas de partie « {ime} ».",
   "a3.fullscreen": "Plein écran",
   "a3.exitFullscreen": "Quitter le plein écran",
   "a3.about": "Description",

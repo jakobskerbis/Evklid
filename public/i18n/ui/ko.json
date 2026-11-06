@@ -3262,6 +3262,8 @@
   "a3.prevModel": "이전",
   "a3.nextModel": "다음",
   "a3.position": "{i} / {n}",
+  "a3.noNucleus": "이 세포에는 핵이 없습니다.",
+  "a3.partMissing": "이 모델에는 ‘{ime}’ 부분이 없습니다.",
   "a3.fullscreen": "전체 화면",
   "a3.exitFullscreen": "전체 화면 종료",
   "a3.about": "설명",

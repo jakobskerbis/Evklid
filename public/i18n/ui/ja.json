@@ -3262,6 +3262,8 @@
   "a3.prevModel": "前へ",
   "a3.nextModel": "次へ",
   "a3.position": "{i} / {n}",
+  "a3.noNucleus": "この細胞には核がありません。",
+  "a3.partMissing": "このモデルには「{ime}」という部分はありません。",
   "a3.fullscreen": "全画面表示",
   "a3.exitFullscreen": "全画面表示を終了",
   "a3.about": "説明",

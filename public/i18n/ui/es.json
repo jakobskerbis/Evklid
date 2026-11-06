@@ -3290,6 +3290,8 @@
   "a3.prevModel": "Anterior",
   "a3.nextModel": "Siguiente",
   "a3.position": "{i} de {n}",
+  "a3.noNucleus": "Esta célula no tiene núcleo.",
+  "a3.partMissing": "Este modelo no tiene la parte «{ime}».",
   "a3.fullscreen": "Pantalla completa",
   "a3.exitFullscreen": "Salir de pantalla completa",
   "a3.about": "Descripción",

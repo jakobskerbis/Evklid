@@ -3262,6 +3262,8 @@
   "a3.prevModel": "Trước",
   "a3.nextModel": "Tiếp",
   "a3.position": "{i}/{n}",
+  "a3.noNucleus": "Tế bào này không có nhân.",
+  "a3.partMissing": "Mô hình này không có phần “{ime}”.",
   "a3.fullscreen": "Toàn màn hình",
   "a3.exitFullscreen": "Thoát toàn màn hình",
   "a3.about": "Mô tả",

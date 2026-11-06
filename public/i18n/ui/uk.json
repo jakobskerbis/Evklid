@@ -3349,6 +3349,8 @@
   "a3.prevModel": "Назад",
   "a3.nextModel": "Далі",
   "a3.position": "{i} з {n}",
+  "a3.noNucleus": "У цієї клітини немає ядра.",
+  "a3.partMissing": "У цій моделі немає частини «{ime}».",
   "a3.fullscreen": "На весь екран",
   "a3.exitFullscreen": "Вийти з повноекранного режиму",
   "a3.about": "Опис",

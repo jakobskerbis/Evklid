@@ -3287,6 +3287,8 @@
   "a3.prevModel": "Önceki",
   "a3.nextModel": "Sonraki",
   "a3.position": "{i} / {n}",
+  "a3.noNucleus": "Bu hücrenin çekirdeği yok.",
+  "a3.partMissing": "Bu modelde “{ime}” bölümü yok.",
   "a3.fullscreen": "Tam ekran",
   "a3.exitFullscreen": "Tam ekrandan çık",
   "a3.about": "Açıklama",

@@ -3289,6 +3289,8 @@
   "a3.prevModel": "Претходен",
   "a3.nextModel": "Следен",
   "a3.position": "{i} од {n}",
+  "a3.noNucleus": "Оваа клетка нема јадро.",
+  "a3.partMissing": "Овој модел нема дел „{ime}“.",
   "a3.fullscreen": "Цел екран",
   "a3.exitFullscreen": "Затвори цел екран",
   "a3.about": "Опис",

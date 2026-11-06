@@ -3262,6 +3262,8 @@
   "a3.prevModel": "上一個",
   "a3.nextModel": "下一個",
   "a3.position": "{i} / {n}",
+  "a3.noNucleus": "這個細胞沒有細胞核。",
+  "a3.partMissing": "此模型沒有「{ime}」部分。",
   "a3.fullscreen": "全螢幕",
   "a3.exitFullscreen": "結束全螢幕",
   "a3.about": "說明",

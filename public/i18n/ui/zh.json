@@ -3262,6 +3262,8 @@
   "a3.prevModel": "上一个",
   "a3.nextModel": "下一个",
   "a3.position": "{i} / {n}",
+  "a3.noNucleus": "这个细胞没有细胞核。",
+  "a3.partMissing": "此模型没有“{ime}”部分。",
   "a3.fullscreen": "全屏",
   "a3.exitFullscreen": "退出全屏",
   "a3.about": "说明",

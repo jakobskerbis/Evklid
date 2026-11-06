@@ -3294,6 +3294,8 @@
   "a3.prevModel": "Anterior",
   "a3.nextModel": "Seguinte",
   "a3.position": "{i} de {n}",
+  "a3.noNucleus": "Esta célula não tem núcleo.",
+  "a3.partMissing": "Este modelo não tem a parte “{ime}”.",
   "a3.fullscreen": "Ecrã inteiro",
   "a3.exitFullscreen": "Sair do ecrã inteiro",
   "a3.about": "Descrição",

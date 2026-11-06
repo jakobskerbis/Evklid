@@ -3349,6 +3349,8 @@
   "a3.prevModel": "Назад",
   "a3.nextModel": "Далее",
   "a3.position": "{i} из {n}",
+  "a3.noNucleus": "У этой клетки нет ядра.",
+  "a3.partMissing": "В этой модели нет части «{ime}».",
   "a3.fullscreen": "Во весь экран",
   "a3.exitFullscreen": "Выйти из полноэкранного режима",
   "a3.about": "Описание",

@@ -3343,6 +3343,8 @@
   "a3.prevModel": "Předchozí",
   "a3.nextModel": "Další",
   "a3.position": "{i} z {n}",
+  "a3.noNucleus": "Tato buňka nemá jádro.",
+  "a3.partMissing": "Tento model nemá část „{ime}“.",
   "a3.fullscreen": "Celá obrazovka",
   "a3.exitFullscreen": "Ukončit celou obrazovku",
   "a3.about": "Popis",

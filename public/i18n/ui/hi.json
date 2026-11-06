@@ -3287,6 +3287,8 @@
   "a3.prevModel": "पिछला",
   "a3.nextModel": "अगला",
   "a3.position": "{n} में से {i}",
+  "a3.noNucleus": "इस कोशिका में केंद्रक नहीं है।",
+  "a3.partMissing": "इस मॉडल में “{ime}” भाग नहीं है।",
   "a3.fullscreen": "पूर्ण स्क्रीन",
   "a3.exitFullscreen": "पूर्ण स्क्रीन से बाहर",
   "a3.about": "विवरण",

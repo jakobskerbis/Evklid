@@ -3405,6 +3405,8 @@
   "a3.prevModel": "السابق",
   "a3.nextModel": "التالي",
   "a3.position": "{i} من {n}",
+  "a3.noNucleus": "هذه الخلية ليس لها نواة.",
+  "a3.partMissing": "هذا النموذج لا يحتوي على الجزء «{ime}».",
   "a3.fullscreen": "ملء الشاشة",
   "a3.exitFullscreen": "الخروج من ملء الشاشة",
   "a3.about": "الوصف",

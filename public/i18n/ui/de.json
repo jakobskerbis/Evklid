@@ -3289,6 +3289,8 @@
   "a3.prevModel": "Zurück",
   "a3.nextModel": "Weiter",
   "a3.position": "{i} von {n}",
+  "a3.noNucleus": "Diese Zelle hat keinen Zellkern.",
+  "a3.partMissing": "Dieses Modell hat keinen Teil „{ime}“.",
   "a3.fullscreen": "Vollbild",
   "a3.exitFullscreen": "Vollbild beenden",
   "a3.about": "Beschreibung",

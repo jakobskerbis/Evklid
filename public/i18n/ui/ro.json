@@ -3319,6 +3319,8 @@
   "a3.prevModel": "Anterior",
   "a3.nextModel": "Următor",
   "a3.position": "{i} din {n}",
+  "a3.noNucleus": "Această celulă nu are nucleu.",
+  "a3.partMissing": "Acest model nu are partea „{ime}”.",
   "a3.fullscreen": "Ecran complet",
   "a3.exitFullscreen": "Ieși din ecran complet",
   "a3.about": "Descriere",

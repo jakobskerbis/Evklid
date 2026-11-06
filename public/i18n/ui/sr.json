@@ -3317,6 +3317,8 @@
   "a3.prevModel": "Претходни",
   "a3.nextModel": "Следећи",
   "a3.position": "{i} од {n}",
+  "a3.noNucleus": "Ова ћелија нема једро.",
+  "a3.partMissing": "Овај модел нема део „{ime}“.",
   "a3.fullscreen": "Цео екран",
   "a3.exitFullscreen": "Затвори цео екран",
   "a3.about": "Опис",
