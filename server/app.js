@@ -46,7 +46,7 @@ import { compressedStatic, compressedJson } from "./compress.js";
 import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode } from "./reports.js";
-import { verifyAnswer, codeCheck, VERIFY_MODELS } from "./verify.js";
+import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, FALLBACK_MODES } from "./meje-ai.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
@@ -315,11 +315,10 @@ export function createApp(store, opts = {}) {
   const liveFixOn = () => !!opts.streamFn || !isMockMode();
   const liveReviewOn = () => !!opts.reviewCreateFn || !isMockMode();
   const answerModelOf = (mode, deep) => (mode === "mid" ? MODEL_MID : deep ? MODEL_DEEP : MODEL);
-  // Rezervacija za preverjanje dveh modelov (server/verify.js) pod mejo učenca; null, če ni prostora.
-  const verifyHold = (studentId, txt) => {
-    const h = usage.hold(studentId);
-    return h.take(VERIFY_MODELS().reduce((t, m) => t + checkReserveUsd(m, txt), 0)) ? h : null;
-  };
+  // Preverjanje odgovorov in kartic iz pogovora (server/verify.js, dva modela) plača APLIKACIJA iz skupnega dnevnega
+  // zneska VERIFY_DAILY_USD, ne meja učenca (j 2026-11-06): koristi vsem, tudi brezplačni dobijo kartice.
+  // Rezervacija (dva klica, najvišji strošek) gre pod dnevni znesek skupaj s preverjanji v teku; null, če ni prostora.
+  const verifyHold = (txt) => usage.appHold("verify", VERIFY_DAILY_USD(), [...new Set(VERIFY_MODELS())].reduce((t, m) => t + checkReserveUsd(m, txt), 0));
   const settleLater = (promise, done) =>
     Promise.resolve(promise)
       .then((v) => done(!!v?.ok, v?.reason || ""), (e) => done(false, e?.message || "napaka"))
@@ -902,12 +901,12 @@ export function createApp(store, opts = {}) {
         const generic = student.name.length > 1 ? result.text.replaceAll(student.name, "{{IME}}") : result.text;
         const plain = stripMeta(result.text);
         const live = verifyLive();
-        // Preverjanje dveh modelov gre v porabo učenca (trda meja AI); brez prostora se odgovor ne shrani za druge.
-        const vHold = live && !codeCheck(plain) ? verifyHold(student.id, text + plain) : null;
+        // Preverjanje dveh modelov plača aplikacija (dnevni znesek); brez prostora se odgovor ne shrani za druge.
+        const vHold = live && !codeCheck(plain) ? verifyHold(text + plain) : null;
         if (!codeCheck(plain) && (!live || vHold)) {
           store.db.prepare("INSERT OR REPLACE INTO answer_cache (key, text, verified) VALUES (?, ?, ?)").run(key, generic, live ? 0 : 1);
           if (live) {
-            settleLater(runVerify({ question: text, answer: plain, studentId: student.id }), (ok, reason) => {
+            settleLater(runVerify({ question: text, answer: plain }), (ok, reason) => {
               vHold.release();
               if (ok) store.db.prepare("UPDATE answer_cache SET verified = 1 WHERE key = ? AND text = ?").run(key, generic);
               else {
@@ -931,8 +930,8 @@ export function createApp(store, opts = {}) {
       const parsedCards = result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? parseCards(result.text) : [];
       const cardsText = parsedCards.map((c) => `${c.front} → ${c.back}`).join("\n");
       const liveCards = verifyLive();
-      // Kartice so vidne šele po preverjanju; brez prostora pod mejo za preverjanje se ne shranijo.
-      const cHold = liveCards && parsedCards.length && !codeCheck(cardsText) ? verifyHold(student.id, text + cardsText) : null;
+      // Kartice so vidne šele po preverjanju (plača aplikacija); brez prostora v dnevnem znesku se ne shranijo.
+      const cHold = liveCards && parsedCards.length && !codeCheck(cardsText) ? verifyHold(text + cardsText) : null;
       const cards =
         parsedCards.length && !codeCheck(cardsText) && (!liveCards || cHold)
           ? store.cards.add(student.id, parsedCards, {
@@ -946,7 +945,7 @@ export function createApp(store, opts = {}) {
       if (cHold && !cards.length) cHold.release();
       if (cards.length && liveCards) {
         const ids = cards.map((c) => c.id);
-        settleLater(runVerify({ question: text, answer: cardsText, kind: "cards", studentId: student.id }), (ok, reason) => {
+        settleLater(runVerify({ question: text, answer: cardsText, kind: "cards" }), (ok, reason) => {
           cHold.release();
           store.cards.settle(ids, ok);
           if (!ok) console.warn(`[evklid] kartice niso shranjene (${String(reason).slice(0, 120)})`);

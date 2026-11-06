@@ -524,6 +524,14 @@ export class Usage {
     const h = this.hold(studentId);
     return h.take(usd) ? h : null;
   }
+  // Strošek aplikacije (ne učenca) z dnevnim zneskom: npr. preverjanje odgovorov in kartic (server/verify.js
+  // VERIFY_DAILY_USD, j 2026-11-06). Rezervacija pod »danes porabljeno vrste kind + klici v teku ≤ dailyUsd«;
+  // dailyUsd < 0 = brez meje. Vrne hold ali null.
+  appHold(kind, dailyUsd, usd) {
+    const caps = () => (dailyUsd >= 0 ? [{ key: `app:${kind}`, usd: dailyUsd, spent: this.kindToday(kind) }] : []);
+    const h = this.hold(null, caps);
+    return h.take(usd) ? h : null;
+  }
   // Odgovor 429, ko klic ne gre pod trdo mejo.
   guardBlock(studentId) {
     const code = this.hardBlock(studentId) || "block.monthLimit";
@@ -531,8 +539,9 @@ export class Usage {
   }
   // Rezervacija za klice ene zahteve: take(usd) rezervira, če gre pod vse meje profila (sicer false);
   // settle(rezervirano) jo sprosti, ko je strošek zapisan; release() sprosti vse ob koncu zahteve.
-  hold(studentId) {
-    const keys = this.capsFor(studentId).map((c) => c.key);
+  // capsFn: meje, ki veljajo (privzeto meje profila); za strošek aplikacije npr. dnevni znesek preverjanja (appHold).
+  hold(studentId, capsFn = () => this.capsFor(studentId)) {
+    const keys = capsFn().map((c) => c.key);
     const self = this;
     let held = 0;
     const add = (usd) => {
@@ -546,7 +555,7 @@ export class Usage {
     return {
       take(usd) {
         if (!(usd >= 0)) return false;
-        if (self.headroom(studentId) < usd) return false;
+        if (self.headroom(studentId, capsFn()) < usd) return false;
         add(usd);
         return true;
       },
