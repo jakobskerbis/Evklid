@@ -1332,3 +1332,36 @@ test("skrbnik ima profil lahko odprt na več napravah hkrati", async () => {
     delete process.env.EVKLID_ADMIN_EMAILS;
   }
 });
+
+// GDPR (čl. 15, 17, 20): izvoz zajame vse tabele računa in profilov (tudi prijave napak vseh vrst in mnenja),
+// brez gesel in žetonov; izbris računa ali profila izbriše tudi mnenja, dnevnik obvestil in članstvo učitelja.
+test("GDPR: izvoz vseh podatkov in izbris računa brez ostankov", async () => {
+  await withServer(async ({ client, calls, store }) => {
+    const a = client();
+    const p = await registerVerified(a, calls, "gdpr@primer.si");
+    const kid = (await a("/api/students", { method: "POST", body: { name: "Lan", birth_year: YEAR - 10, consent: true } })).body;
+    const kid2 = (await a("/api/students", { method: "POST", body: { name: "Eva", birth_year: YEAR - 9, consent: true } })).body;
+    const db = store.db;
+    db.prepare("INSERT INTO bug_reports (student_id, kind, reason, note) VALUES (?, 'app', 'gumb', 'gumb ne dela')").run(kid.id);
+    db.prepare("INSERT INTO feedback (student_id, kind, name, ideas) VALUES (?, 'form', 'Lan', 'več iger')").run(kid.id);
+    db.prepare("INSERT INTO feedback (student_id, kind, ideas) VALUES (?, 'form', 'temni način')").run(kid2.id);
+    db.prepare("INSERT INTO offline_results (student_id, topic_id, seed) VALUES (?, 'MAT-OS-7-ulomki', 42)").run(kid.id);
+    db.prepare("CREATE TABLE IF NOT EXISTS push_log (parent_id INTEGER NOT NULL, kind TEXT NOT NULL, period TEXT NOT NULL, PRIMARY KEY (parent_id, kind, period))").run();
+    db.prepare("INSERT INTO push_log (parent_id, kind, period) VALUES (?, 'streak', '2026-11-05:1')").run(p.id);
+    const exp = (await a("/api/account/export", { method: "POST", body: { password: "geslo1234" } })).body;
+    const lan = exp.children.find((c) => c.id === kid.id);
+    assert.equal(lan.bug_reports[0].note, "gumb ne dela", "prijava napake aplikacije je v izvozu");
+    assert.equal(lan.feedback[0].ideas, "več iger", "mnenje je v izvozu");
+    assert.equal(exp.other.offline_results[0].seed, 42, "tabela brez posebnega izvoza je v izvozu (other)");
+    const text = JSON.stringify(exp);
+    assert.ok(!/password_hash|token_hash|"token"/.test(text), "brez gesel in žetonov");
+    // Izbris profila izbriše njegova mnenja (prej so ostala brez lastnika).
+    assert.equal((await a(`/api/students/${kid2.id}`, { method: "DELETE" })).status, 200);
+    assert.equal(db.prepare("SELECT COUNT(*) n FROM feedback WHERE ideas = 'temni način' OR student_id IS NULL").get().n, 0);
+    // Izbris računa: nič osebnega ne ostane.
+    assert.equal((await a("/api/account", { method: "DELETE", body: { password: "geslo1234" } })).status, 200);
+    for (const [t, where] of [["students", "1"], ["feedback", "1"], ["bug_reports", "1"], ["offline_results", "1"], ["push_log", "1"], ["consents", "1"], ["conversations", "1"]]) {
+      assert.equal(db.prepare(`SELECT COUNT(*) n FROM ${t} WHERE ${where}`).get().n, 0, `${t} je prazna`);
+    }
+  });
+});

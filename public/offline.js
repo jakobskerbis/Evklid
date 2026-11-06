@@ -123,3 +123,72 @@ export function offlineApi(sid, url, opts = {}) {
   }
   return undefined;
 }
+
+// ---------- zasebnost (P7) ----------
+// Service worker osebnih odgovorov API ne shranjuje več. Da se aplikacija odpre tudi brez povezave, si stran
+// zapomni samo seznam profilov (id, ime, nastavitve, zaklep) tega računa; ob odjavi, izbrisu ali menjavi
+// računa se pobriše skupaj s paketi vaj, vrsto odgovorov, zgodovino skenerja in predpomnilnikom API.
+const STUDENTS = "evklid.offline.students";
+const OWNER = "evklid.offline.owner";
+const PRIVATE_KEYS = /^evklid\.(offline\.|scan\.)/;
+
+export function saveStudents(list) {
+  if (!Array.isArray(list)) return;
+  write(STUDENTS, list.map((s) => (s.locked ? { id: s.id, name: s.name, locked: true } : { id: s.id, name: s.name, settings: s.settings })));
+}
+
+// Odgovor brez povezave za zagon: seznam profilov in prazen seznam pogovorov (pogovori niso shranjeni).
+export function offlineBootApi(url, opts = {}) {
+  if ((opts.method || "GET").toUpperCase() !== "GET") return undefined;
+  const p = new URL(url, location.origin).pathname;
+  if (p === "/api/students") return read(STUDENTS, undefined);
+  if (/^\/api\/students\/\d+\/conversations$/.test(p)) return [];
+  return undefined;
+}
+
+// Podatki, ki so samo na tej napravi (za izvoz vseh podatkov): zgodovina skenerja in neposlani odgovori.
+export function deviceData() {
+  const out = { scanner_history: {}, offline_answers: {} };
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      const scan = /^evklid\.scan\.(.+)$/.exec(k);
+      const queue = /^evklid\.offline\.queue\.(.+)$/.exec(k);
+      if (scan) out.scanner_history[scan[1]] = read(k, []);
+      if (queue) out.offline_answers[queue[1]] = read(k, []);
+    }
+  } catch {}
+  return out;
+}
+
+// Pobriše osebne podatke na napravi: predpomnilnik API (service worker), pakete vaj, vrsto, seznam profilov in
+// zgodovino skenerja. Ob odjavi, izbrisu računa in prijavi v drug račun.
+export async function clearPrivate() {
+  try {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+    for (const k of keys) if (PRIVATE_KEYS.test(k)) localStorage.removeItem(k);
+  } catch {}
+  try {
+    navigator.serviceWorker?.controller?.postMessage({ type: "clear-private" });
+  } catch {}
+  try {
+    if (typeof caches !== "undefined") {
+      const names = await caches.keys();
+      await Promise.all(names.filter((n) => /-api(-|$)/.test(n)).map((n) => caches.delete(n)));
+    }
+  } catch {}
+}
+
+// Prijava v drug račun na isti napravi: podatki prejšnjega računa se pobrišejo. Vrne true, če je bilo kaj pobrisano.
+export async function checkOwner(parentId) {
+  if (parentId == null) return false;
+  const prev = read(OWNER, null);
+  if (prev !== null && prev !== parentId) {
+    await clearPrivate();
+    write(OWNER, parentId);
+    return true;
+  }
+  write(OWNER, parentId);
+  return false;
+}

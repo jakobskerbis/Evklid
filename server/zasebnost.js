@@ -242,3 +242,38 @@ export function startPrivacyJobs(db, { scheduler = true, log = console } = {}) {
   }
   setInterval(run, 24 * 3600000).unref();
 }
+
+// --- izvoz vseh podatkov (GDPR čl. 15 in 20) ---
+// Vse ostale tabele z vrsticami računa ali njegovih profilov (student_id, parent_id, lastnik razreda), ki jih
+// izvoz v server/accounts/index.js ne zajame posebej: tako izvoz ne izpusti nove tabele. Gesla, žetoni in
+// zgoščene vrednosti ostanejo zunaj; šifrirana polja gredo v izvoz odšifrirana.
+const SECRET_COL = /hash|token|secret|password|salt|cipher/i;
+const SECRET_TABLE = new Set(["parent_sessions", "profile_passwords", "profile_unlocks", "account_unlocks", "pay_links", "kv"]);
+const OWNER_COLS = { student: ["student_id", "owner_student_id"], parent: ["parent_id", "owner_parent_id"] };
+export function exportOtherTables(db, { parentId, studentIds = [], skip = [] }) {
+  const out = {};
+  const skipSet = new Set([...skip, "parents", "students"]);
+  const tables = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name").all().map((r) => r.name);
+  for (const t of tables) {
+    if (skipSet.has(t) || SECRET_TABLE.has(t)) continue;
+    const cols = db.prepare(`PRAGMA table_info(${t})`).all().map((c) => c.name);
+    const where = [];
+    const args = [];
+    for (const c of cols) {
+      if (OWNER_COLS.student.includes(c) && studentIds.length) {
+        where.push(`${c} IN (${studentIds.map(() => "?").join(",")})`);
+        args.push(...studentIds);
+      }
+      if (OWNER_COLS.parent.includes(c) && parentId != null) {
+        where.push(`${c} = ?`);
+        args.push(parentId);
+      }
+    }
+    if (!where.length) continue;
+    const keep = cols.filter((c) => !SECRET_COL.test(c));
+    const rows = db.prepare(`SELECT ${keep.map((c) => `"${c}"`).join(", ")} FROM ${t} WHERE ${where.join(" OR ")}`).all(...args);
+    if (!rows.length) continue;
+    out[t] = rows.map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, typeof v === "string" && isEncrypted(v) ? unseal(v, null) : v])));
+  }
+  return out;
+}

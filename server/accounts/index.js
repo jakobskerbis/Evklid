@@ -10,6 +10,7 @@ import { audit, detachAudit } from "../dnevnik-dostopov.js";
 import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
+import { exportOtherTables } from "../zasebnost.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
@@ -1046,11 +1047,44 @@ export function mountAccounts(app, store, opts = {}) {
             return null; // tabela urnikov še ne obstaja
           }
         })(),
+        // Vse prijave napak (lekcija, aplikacija, naloga …), ne samo lekcije.
+        bug_reports: (() => {
+          try {
+            return q("SELECT kind, topic_id, step, reason, note, context, created_at FROM bug_reports WHERE student_id = ?", c.id).map((r) => ({ ...r, note: unseal(r.note), context: unseal(r.context) }));
+          } catch {
+            return [];
+          }
+        })(),
+        // Mnenja in pogovor za povratne informacije (server/feedback.js).
+        feedback: (() => {
+          try {
+            return q("SELECT kind, name, ratings, recommend, good, bad, ideas, interview, lang, device, screen, created_at FROM feedback WHERE student_id = ?", c.id).map((f) => ({
+              ...f,
+              name: unseal(f.name),
+              good: unseal(f.good),
+              bad: unseal(f.bad),
+              ideas: unseal(f.ideas),
+              interview: unseal(f.interview),
+            }));
+          } catch {
+            return [];
+          }
+        })(),
       })),
     };
+    // Vse ostale tabele z vrsticami računa ali profilov (server/zasebnost.js exportOtherTables): nove tabele niso izpuščene.
+    // Zgodovina skenerja in neposlani odgovori so samo na napravi: doda jih aplikacija ob prenosu (public/offline.js deviceData).
+    data.other = exportOtherTables(db, { parentId: p.id, studentIds: data.children.map((c) => c.id), skip: EXPORTED_TABLES });
     res.set("Content-Disposition", 'attachment; filename="evklid-podatki.json"');
     res.json(data);
   });
+
+  // Tabele, ki jih izvoz zgoraj zajame posebej (ostale doda exportOtherTables).
+  const EXPORTED_TABLES = [
+    "consents", "conversations", "messages", "conversation_summaries", "events", "skill_results", "skill_seen", "topic_state", "tasks", "xp_events",
+    "message_reports", "bug_reports", "flashcards", "game_scores", "game_ratings", "game_wishes", "game_unlocks", "game_days", "game_concept_days",
+    "league_profiles", "league_members", "avatar_state", "avatar_items", "coin_events", "daily_puzzle", "schedules", "feedback",
+  ];
 
   // Izbris računa z vsemi otroki in pogovori (GDPR čl. 17).
   app.delete("/api/account", json, async (req, res) => {

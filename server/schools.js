@@ -125,6 +125,12 @@ export function migrateSchools(db) {
   // Oznaka, ki jo učitelj sam pripiše vzdevku (npr. »Ana K.«); učenec imena ne vpisuje.
   if (!mcols.includes("teacher_label")) db.exec("ALTER TABLE class_members ADD COLUMN teacher_label TEXT");
   db.exec("CREATE INDEX IF NOT EXISTS idx_classes_school ON classes(school_id)");
+  // Izbris računa učitelja: članstvo v šoli (brez tuje povezave na parents) gre z njim.
+  if (db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parents'").get()) {
+    db.exec(`CREATE TRIGGER IF NOT EXISTS school_teachers_parent_delete AFTER DELETE ON parents BEGIN
+      DELETE FROM school_teachers WHERE parent_id = OLD.id;
+    END;`);
+  }
 }
 
 // Veljavna licenca šole na dan `today` (najkasneje veljavna, ob enakem roku tista z več mesti).

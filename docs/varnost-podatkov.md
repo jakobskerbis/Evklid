@@ -68,6 +68,14 @@ nastavitev gesla profila in napačne odklepe, dejanja skrbnika (šole, licence, 
 in izvoz za šolo. Naslov IP ni shranjen, le zgoščena vrednost (HMAC s skrivnostjo strežnika): enaki vrednosti pomenita isti
 naslov. Ob izbrisu računa vrstice ostanejo brez povezave na račun. Branje: `node scripts/dnevnik-dostopov.js [e-naslov]`.
 
+## Naprava, izvoz in izbris (2026-11-06)
+
+- **Service worker** (`public/sw.js`) shrani samo javne odgovore API (teme, poti, programi, viri, formule, učbenik, pole) in nikoli odgovora z `Cache-Control: private` ali `no-store`. Profili, pogovori, napredek, račun in šola gredo samo prek omrežja. Stari predpomnilnik z vsemi odgovori (`…-api`) se ob novi različici pobriše.
+- **Brez povezave** se aplikacija odpre s seznamom profilov (id, ime, nastavitve) in paketom vaj v `localStorage` (`public/offline.js`); pogovorov brez povezave ni.
+- **Odjava, izbris računa in prijava v drug račun** na isti napravi pobrišejo predpomnilnik API, pakete vaj, seznam profilov in zgodovino skenerja (`clearPrivate`). Neposlani odgovori vaj gredo pred odjavo na strežnik.
+- **Izvoz vseh podatkov** (zavihek Račun): poleg profilov, pogovorov, prijav napak (vseh vrst), mnenj, iger in urnika še vse ostale tabele z vrsticami računa ali profilov (`other`, `server/zasebnost.js` `exportOtherTables`, brez gesel, žetonov in zgoščenih vrednosti; šifrirano odšifrirano) in podatki, ki so samo na napravi (`device`: zgodovina skenerja, neposlani odgovori).
+- **Izbris profila ali računa**: vse tabele profila se izbrišejo prek tujih ključev; mnenja (`feedback`, prej ostala brez lastnika), dnevnik obvestil (`push_log`) in članstvo učitelja v šoli (`school_teachers`) prek sprožilcev. Ostanejo samo zapisi, ki jih zahteva zakon ali obračun, brez povezave na račun: plačila in soglasja plačnika (`billing_consents`, `store_subscriptions`, `guarantees`, `podari_fund`), poraba AI brez profila (`usage`) in dnevnik dostopov.
+
 ## Spremenljivke okolja
 
 - `EVKLID_DATA_KEY` – ključ za šifriranje (obvezno na javnem strežniku).

@@ -8,6 +8,7 @@ import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
 import { guaranteeBox, guaranteeLine, podariAddon, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
+import { clearPrivate, checkOwner, deviceData, syncOffline } from "./offline.js";
 import { landingHtml } from "./pristajalna.js";
 import { currentSource } from "./vir.js";
 // Starševski račun: prijava, potrditev e-naslova, otroci s soglasjem, naročnina, priporočila.
@@ -431,6 +432,8 @@ async function renderLanding() {
 }
 
 async function route() {
+  // Prijava v drug račun na tej napravi: osebni podatki prejšnjega se pobrišejo (public/offline.js, P7).
+  if (status.logged_in) await checkOwner(status.parent?.id ?? null);
   if (!status.logged_in) {
     const mode = route.firstMode || hashMode() || (store.get(SEEN) ? "login" : null);
     // Prijava dobi svoj zapis (#prijava), da »Kaj je Evklid?« in nato Nazaj vrneta na prijavo.
@@ -1306,6 +1309,7 @@ function renderGuestAccount(view, acc) {
     if (!confirm(t("guest.deleteConfirm"))) return;
     try {
       await api("/api/account", { method: "DELETE", body: {} });
+      await clearPrivate();
       store.set("studentId", null);
       location.replace("/");
     } catch (err) {
@@ -1578,6 +1582,8 @@ export async function renderAccount() {
     if (!password) return;
     try {
       const data = await api("/api/account/export", { method: "POST", body: { password } });
+      // Podatki, ki so samo na tej napravi (zgodovina skenerja, neposlani odgovori vaj brez povezave).
+      data.device = deviceData();
       const a = document.createElement("a");
       a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
       a.download = "evklid-podatki.json";
@@ -1594,6 +1600,7 @@ export async function renderAccount() {
     if (!password) return;
     try {
       await api("/api/account", { method: "DELETE", body: { password } });
+      await clearPrivate();
       store.set("studentId", null);
       location.reload();
     } catch (err) {
@@ -1608,13 +1615,28 @@ async function logoutRequest() {
   await Promise.race([api("/api/auth/logout", { method: "POST" }), timeout]);
 }
 
+// Pošlje neposlane odgovore vaj brez povezave vseh profilov na tej napravi (napaka ne ustavi odjave).
+async function sendQueued() {
+  const ids = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const m = /^evklid\.offline\.queue\.(\d+)$/.exec(localStorage.key(i));
+      if (m) ids.push(Number(m[1]));
+    }
+  } catch {}
+  for (const id of ids) await syncOffline(api, id).catch(() => null);
+}
+
 export async function logout() {
   if (status?.parent?.guest && !confirm(t("guest.logoutConfirm"))) return;
+  // Neposlani odgovori vaj brez povezave gredo pred odjavo na strežnik (nato se pobrišejo z napravo).
+  await sendQueued();
   try {
     await logoutRequest();
   } catch (err) {
     if (unreachable(err)) return toast(t("lock.offline")); // brez strežnika odjava ni mogoča
   }
+  await clearPrivate(); // P7: predpomnilnik API, paketi vaj, seznam profilov, zgodovina skenerja
   store.set("studentId", null);
   location.replace("/?odjava=1");
 }
