@@ -1131,7 +1131,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
         bubble.classList.add("error");
         pacer.finish(d.error);
         pacer.skip();
-        if (state.conversationId === sentTo) restoreDraft(text, image); // vrni besedilo za ponovni poskus
+        if (state.conversationId === sentTo && !deep) restoreDraft(text, image); // vrni besedilo za ponovni poskus
       },
     });
     pacer.finish();
@@ -1181,7 +1181,7 @@ async function send(text, { deep = false, image: attached = null } = {}) {
       userEl?.remove();
       if (!$("#messages .msg")) renderEmptyChat(); // prazen pogovor spet pokaže pozdrav in predloge
       $("#chat-off").hidden = false;
-      restoreDraft(text, image);
+      if (!deep) restoreDraft(text, image);
       return;
     }
     // Prekinjena povezava (npr. med objavo nove različice) je TypeError z »network error« v angleščini: učenec
@@ -1191,7 +1191,8 @@ async function send(text, { deep = false, image: attached = null } = {}) {
     addMessage("assistant", dropped ? t("off.serverBusy") : err.message, false, { error: true });
     // Neuspelo pošiljanje (omrežje, strežnik): besedilo in fotografija se vrneta v polje, da se ne izgubita.
     // Meja porabe: ne (sporočilo ostane v oblačku, polje prazno).
-    if (!err.limit) restoreDraft(text, image);
+    // »Razloži podrobneje« (deep) se ne vrne v polje (kot mobilna): ponovno pošiljanje bi šlo kot navadno vprašanje.
+    if (!err.limit && !deep) restoreDraft(text, image);
   } finally {
     state.sending = false;
     $("#send").disabled = false;
@@ -3556,10 +3557,7 @@ async function paperTutor(entry, subjectName) {
     await newTutorChat();
     const paper = paperLabel(entry, subjectName);
     state.paperCtx = { conv: state.conversationId, paper };
-    const box = $("#input");
-    box.value = `${t("pp.tutorMsg", { paper })} `;
-    autoGrow();
-    box.focus();
+    fillInput(`${t("pp.tutorMsg", { paper })} `);
   } catch (err) {
     toast(err.message);
   } finally {

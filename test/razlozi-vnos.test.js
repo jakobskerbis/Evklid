@@ -20,7 +20,10 @@ test("send: on a usage limit the input stays empty, on any other failure text an
   assert.match(send, /userEl = addMessage\("user", text, !!image\);\s*if \(fromInput\) \{\s*\$\("#input"\)\.value = "";\s*autoGrow\(\);\s*clearImage\(\);/);
   // V catch se besedilo in fotografija vrneta samo, kadar napaka ni meja porabe; nobena pot ne piše v polje mimo restoreDraft.
   const tail = send.slice(send.indexOf("const dropped"));
-  assert.match(tail, /if \(!err\.limit\) restoreDraft\(text, image\);/);
+  assert.match(tail, /if \(!err\.limit && !deep\) restoreDraft\(text, image\);/);
+  // »Razloži podrobneje« se na nobeni poti napake ne vrne v polje (kot mobilna).
+  assert.equal((send.match(/restoreDraft\(text, image\);/g) || []).length, 3);
+  assert.equal((send.match(/!deep\) restoreDraft\(text, image\)/g) || []).length, 3);
   assert.doesNotMatch(send, /\$\("#input"\)\.value = text/, "nobena pot ne prepiše polja z besedilom");
   // restoreDraft ne prepiše osnutka in vrne fotografijo v predogled.
   const restore = app.slice(app.indexOf("function restoreDraft("), app.indexOf("function checkReplyFits"));
@@ -34,6 +37,8 @@ test("send: on a usage limit the input stays empty, on any other failure text an
   const mob = read("mobile/src/app/chat/[id].tsx");
   assert.match(mob, /const limit = err instanceof ApiError && err\.status === 429 && err\.body\?\.limit === true;\s*if \(!limit && !body\.deep\) \{\s*setText\(\(cur\) => \(cur\.trim\(\) \? cur : msgText\)\);\s*if \(body\.image\) setPhoto/);
   assert.doesNotMatch(mob, /setText\(msgText\)/, "mobilna ne prepiše osnutka");
+  // Napaka modela med odgovorom (SSE error): mobilna vrne besedilo in fotografijo kot splet.
+  assert.match(mob, /e\.event === "error"[\s\S]{0,400}if \(!body\.deep\) \{\s*setText\(\(cur\) => \(cur\.trim\(\) \? cur : msgText\)\);\s*if \(body\.image\) setPhoto/);
   // Mobilna ob meji pokaže razlog v jeziku vmesnika (code/hint), ne slovenske rezerve strežnika.
   assert.match(mob, /blockText\(err\.body\) \|\| err\.message/);
 });
@@ -45,6 +50,9 @@ test("prepared questions (calculator, scanner, 3D, corner, suggestion) never ove
   // Vse poti askTutor in predlogi uporabijo fillInput.
   const asks = app.match(/askTutor: \(text\) => \{[\s\S]*?\n\s*\},/g) || [];
   assert.ok(asks.length >= 4, "kalkulator, skener, uči-se, kotiček");
+  // »Rešuj z inštruktorjem« (cela pola) tudi doda, ne prepiše.
+  assert.match(app, /fillInput\(`\$\{t\("pp\.tutorMsg", \{ paper \}\)\} `\);/);
+  assert.doesNotMatch(app, /box\.value = `\$\{t\("pp\.tutorMsg"/);
   for (const a of asks) {
     assert.match(a, /fillInput\(text\)/);
     assert.doesNotMatch(a, /\.value = text/);

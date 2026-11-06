@@ -109,6 +109,12 @@ export default function Chat() {
             } else if (e.event === "error") {
               patch((m) => ({ ...m, text: e.data.error, error: true, streaming: false }));
               failure();
+              // Napaka modela med odgovorom: strežnik učenčevo sporočilo izbriše, zato se besedilo in fotografija
+              // vrneta v polje (kot na spletu), osnutka pa ne prepišeta.
+              if (!body.deep) {
+                setText((cur) => (cur.trim() ? cur : msgText));
+                if (body.image) setPhoto((cur) => cur || body.image || null);
+              }
             } else if (e.event === "mastered") {
               setNotes((n) => [...n, { key: `m${Date.now()}`, text: t("chat.mastered", { topic: e.data.topic || "" }), tone: "gold" }]);
               celebrate();
