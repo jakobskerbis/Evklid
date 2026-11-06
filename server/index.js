@@ -16,7 +16,7 @@ const trendsFile = path.resolve(path.dirname(feedbackFile), "kozmetika-trendi.js
 const app = createApp(store, { feedbackFile, trendsFile });
 const port = Number(process.env.PORT || 3000);
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Evklid teče na http://localhost:${port}`);
   console.log(isMockMode() ? "Preizkusni način (brez API ključa)." : `Model: ${MODEL}`);
   // Datoteke prvega odprtja strani stisnemo v ozadju takoj po zagonu (server/compress.js).
@@ -25,3 +25,22 @@ app.listen(port, () => {
     .then((n) => console.log(`[evklid] pripravljenih ${n} stisnjenih datotek v ${Date.now() - t0} ms`))
     .catch(() => {});
 });
+
+// Zaustavitev (objava na Render pošlje SIGTERM): novih zahtev ne sprejmemo, klici AI v teku se lahko končajo
+// (največ 20 s), da se zapiše njihov pravi strošek, ne cela rezerva ob naslednjem zagonu (pregled #462 K3-5).
+let stopping = false;
+function shutdown(signal) {
+  if (stopping) return;
+  stopping = true;
+  console.log(`[evklid] ${signal}: zaustavljam, čakam na klice AI v teku …`);
+  server.close();
+  const t0 = Date.now();
+  const tick = () => {
+    const busy = app.locals.usage?.inflight?.size || 0;
+    if (!busy || Date.now() - t0 > 20000) process.exit(0);
+    else setTimeout(tick, 250).unref?.();
+  };
+  tick();
+}
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));

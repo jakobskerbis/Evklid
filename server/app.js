@@ -313,6 +313,7 @@ export function createApp(store, opts = {}) {
   const usage = opts.usage || accounts?.aiUsage || new Usage(store.db);
   // Rezervacije klicev, ki so tekli ob prejšnjem zaustavitvi strežnika, se zapišejo kot poraba (pregled #462 S4).
   usage.recoverHolds?.();
+  app.locals.usage = usage; // server/index.js: ob zaustavitvi počaka na klice v teku
   // Delitev mesečnega proračuna po profilih in dokupljeni kredit (z računi; server/proracun.js).
   // Zajamčeni delež naročnikov in poziv k dokupu (j 2026-11-01) morata veljati tudi tu, ne samo v Računu.
   if (accounts?.credits) usage.configure({ weightOf: accounts.shareWeightFor, ownerOf: accounts.ownerOf, credits: accounts.credits, freeOver: accounts.freeOver, guaranteeOf: accounts.guaranteeFor, topupPrompt: accounts.topupPrompt });
