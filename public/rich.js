@@ -44,7 +44,16 @@ export function createRenderer({ marked = lib("marked"), katex = lib("katex"), s
       .replace(/\\\((.+?)\\\)/g, (_, t) => stash(t, false))
       .replace(/(^|[^\\$])\$([^$\n]+?)\$/g, (_, pre, t) => pre + stash(t, false));
     const block = String(text ?? "");
-    if (annotate) for (const m of src.matchAll(/@@MATH(\d+)@@/g)) if (math[m[1]]) math[m[1]].ctx = { sentence: sentenceAt(src, m[0], m.index), block };
+    if (annotate) {
+      // Formula nazaj v $…$ (odstavek za oznake iz besedila) ali kot TeX (formule v isti povedi).
+      const back = (s, asTex) => s.replace(/@@MATH(\d+)@@/g, (mk, i) => (!math[i] ? mk : asTex ? ` ${math[i].tex} ;` : math[i].display ? `$$${math[i].tex}$$` : `$${math[i].tex}$`));
+      for (const m of src.matchAll(/@@MATH(\d+)@@/g)) {
+        if (!math[m[1]]) continue;
+        const para = paragraphAt(src, m.index, m[0].length);
+        const raw = rawSentenceAt(src, m[0], m.index);
+        math[m[1]].ctx = { sentence: sentenceAt(src, m[0], m.index), sentenceTex: back(raw, true), sentenceMd: back(raw, false), para: back(para, false), block };
+      }
+    }
     let html = clean(marked.parse(splitFormulaCells(fixTables(src), math), { breaks: true, gfm: true }));
     // Tabela dobi svoj razred (oblika v style.css velja povsod, ne glede na okvir okoli nje);
     // ulomki in potence v njej so v polni velikosti (\displaystyle), sicer so premajhni za branje.
@@ -82,6 +91,19 @@ function splitSentences(text) {
   return out;
 }
 const cleanSentence = (s) => s.replace(/@@MATH\d+@@/g, " ").replace(/[*_#>`|]/g, " ").replace(/\s+/g, " ").trim();
+// Poved s formulo v izvirnem besedilu (z oznakami @@MATHn@@), za formule v isti povedi.
+function rawSentenceAt(src, mark, at) {
+  const before = splitSentences(src.slice(Math.max(0, at - 300), at));
+  const after = splitSentences(src.slice(at + mark.length, at + mark.length + 300));
+  return `${before[before.length - 1]} ${mark} ${after[0]}`;
+}
+// Odstavek s formulo (do prazne vrstice): oznaka iz besedila (»Za $y = 2x$ …«) velja le v njem, ne v celem razdelku.
+function paragraphAt(src, at, len) {
+  const a = src.lastIndexOf("\n\n", at);
+  const b = src.indexOf("\n\n", at + len);
+  return src.slice(a < 0 ? 0 : a + 2, b < 0 ? src.length : b);
+}
+
 export function sentenceAt(src, mark, at = src.indexOf(mark)) {
   if (at < 0) return "";
   const before = splitSentences(src.slice(Math.max(0, at - 300), at));

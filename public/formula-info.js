@@ -19,6 +19,7 @@ function close(fromBack = false) {
   if (!pop || pop.hidden) return false;
   pop.hidden = true;
   openEl?.setAttribute("aria-expanded", "false");
+  openEl?.removeAttribute("aria-controls");
   openEl?.classList.remove("fx-open");
   openEl = null;
   if (!fromBack) hooks.closed?.();
@@ -26,13 +27,16 @@ function close(fromBack = false) {
 }
 // Tipka Nazaj (telefon, brskalnik): zapre okno pomena, pogled ostane (app.js popstate).
 export const closeFormulaPop = () => close(true);
-function open(el) {
+// again: okno je bilo že odprto (druga črka), zapis v zgodovini že obstaja – sicer bi bilo treba Nazaj pritisniti
+// dvakrat. focus: odprto s tipko (Enter), fokus gre v okno, da se s Tab pride do ✕.
+function open(el, { again = false, focus = false } = {}) {
   const card = cardFor(decode(el.dataset.fx));
   if (!card) return;
   if (!pop) {
     pop = document.createElement("div");
     pop.id = "fx-pop";
     pop.className = "fx-pop";
+    pop.tabIndex = -1;
     pop.setAttribute("role", "dialog");
     pop.hidden = true;
     document.body.appendChild(pop);
@@ -44,10 +48,12 @@ function open(el) {
   pop.hidden = false;
   openEl = el;
   el.setAttribute("aria-expanded", "true");
+  el.setAttribute("aria-controls", pop.id);
   el.classList.add("fx-open");
   openW = window.innerWidth;
   place(el);
-  hooks.opened?.();
+  if (focus) pop.focus({ preventScroll: true });
+  if (!again) hooks.opened?.();
 }
 
 // Okno nikoli ne prekrije formule, na katero se nanaša (j, 6. 11.). Računalnik: ob simbolu, pod ali nad celo
@@ -227,11 +233,12 @@ function refreshMarks() {
 // zajemanja (capture) na dokumentu in dotik ustavimo, preden pride do elementa okoli.
 const active = (el) => el && !blocked(el) && !el.classList.contains("fx-off") && !el.classList.contains("fx-dup");
 // Pravi gumbi in polja zunaj okna delujejo že ob prvem dotiku (okno se le zapre); prazen prostor dotik porabi.
-const CONTROL = "button, a[href], input, select, textarea, summary, label, [contenteditable], #tabbar, nav";
+const CONTROL = "button, a[href], input, select, textarea, summary, label, [contenteditable], [role=tab], [role=link], #tabbar, nav";
 function stop(e) {
   e.stopPropagation();
   e.stopImmediatePropagation();
 }
+let byKey = false; // zadnji »klik« na črko je sprožila tipka Enter ali preslednica
 export function initFormulaInfo(h = {}) {
   hooks = h || {};
   document.addEventListener("click", (e) => {
@@ -245,9 +252,11 @@ export function initFormulaInfo(h = {}) {
     if (active(el)) {
       e.preventDefault();
       stop(e);
+      const focus = byKey;
+      byKey = false;
       if (openEl === el) return close();
-      close(true); // druga črka: okno ostane odprto (zapis v zgodovini tudi)
-      open(el);
+      const again = close(true); // druga črka: okno ostane odprto (zapis v zgodovini tudi, ne dodamo novega)
+      open(el, { again, focus });
       return;
     }
     queueMarks(); // zavihek ali razdelek se je morda odprl
@@ -261,7 +270,7 @@ export function initFormulaInfo(h = {}) {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && openEl) { const el = openEl; stop(e); close(); el.focus(); return; }
     const el = e.target.closest?.("[data-fx][role=button]");
-    if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); stop(e); el.click(); }
+    if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); stop(e); byKey = true; el.click(); byKey = false; }
   }, true);
   // Telefon: vrstica brskalnika se ob drsenju skrije in spremeni le višino okna; okno pomena zapre le nova širina (obrat).
   window.addEventListener("resize", () => { if (window.innerWidth !== openW) close(); });

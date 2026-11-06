@@ -430,7 +430,8 @@ async function renderLesson(topicId) {
   current = { id: L.id, name: L.name };
   // Simboli v formulah po predmetu lekcije (FIZ-OS-9 → fizika, fakultetna tema → njen predmet), ne po
   // predmetu v nastavitvah. Oznake lekcije (:::simboli) imajo prednost: T v T = I/I₀ je prepustnost.
-  const lessonSubject = L.subject || (/^([A-Z]{3})-/.exec(L.id || "") || [])[1];
+  // Fakultetna tema (UNI-…) ima predmet v podatkih (KEM, FIZ …); »UNI« sam ni predmet (bila bi tabela MAT).
+  const lessonSubject = L.subject || (/^UNI-/.test(L.id || "") ? null : (/^([A-Z]{3})-/.exec(L.id || "") || [])[1]);
   // Tema za pomen dvoumnih črk: ime lekcije in sklopa (x₁ je ničla le v lekciji o kvadratni enačbi).
   const R = (text) => withFormulaSubject(lessonSubject, () => ctx.renderRich(text), L.lesson?.symbols, [L.name, L.unit].filter(Boolean).join(" · "));
   const lesson = L.lesson;

@@ -796,6 +796,8 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
   border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
   padding: 12px 14px; padding-inline-end: 48px; font-size: 0.93rem; line-height: 1.45; display: grid; gap: 6px;
 }
+/* Fokus gre v okno ob odprtju s tipko (Enter); obroba je na ✕, ne na celem oknu. */
+.fx-pop:focus { outline: none; }
 .fx-pop .fx-title { display: flex; align-items: baseline; gap: 8px; color: var(--accent); }
 .fx-pop .fx-title b { color: var(--text); font-size: 1rem; min-width: 0; }
 .fx-pop .fx-title .katex { font-size: 1.25em; color: var(--accent); flex: none; }

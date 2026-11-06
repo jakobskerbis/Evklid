@@ -151,6 +151,55 @@ test("okno pomena: dotik ne obrne kartice, okno ne prekrije formule, zapre se na
     await tap(p.locator("#fx-pop .fx-close"));
     await tap(p.locator("#vrstica [data-fx][role=button]").first());
     assert.equal(await p.evaluate(() => window.vrstica), 0, `${vp.width}: tap na črko ne sproži vrstice`);
+    // 8) Druga črka ob odprtem oknu: en sam zapis v zgodovini, Nazaj enkrat zapre (pregled 463 b).
+    await tap(p.locator("#fx-pop .fx-close"));
+    const row = p.locator("#vrstica [data-fx][role=button]");
+    const hist0 = await p.evaluate(() => history.length);
+    await tap(row.nth(0));
+    await tap(row.nth(1));
+    assert.equal(await open(p), 1);
+    assert.equal(await p.evaluate(() => history.length), hist0 + 1, `${vp.width}: menjava črke ne doda zapisa v zgodovini`);
+    await p.goBack();
+    await p.waitForFunction(() => document.getElementById("fx-pop").hidden);
+    // 9) Drsenje zapre okno; sprememba širine (obrat) ga zapre, sprememba samo višine (vrstica brskalnika) ne (pregled 463 d).
+    await tap(row.nth(0));
+    await p.waitForTimeout(600); // lastno drsenje okna (telefon) je mimo
+    await p.evaluate(() => window.scrollBy(0, 40));
+    await p.waitForFunction(() => document.getElementById("fx-pop").hidden);
+    await tap(row.nth(0));
+    await p.setViewportSize({ width: vp.width, height: vp.height - 60 });
+    await p.waitForTimeout(100);
+    assert.equal(await open(p), 1, `${vp.width}: nova višina okna ne zapre`);
+    await p.setViewportSize({ width: vp.width - 40, height: vp.height - 60 });
+    await p.waitForFunction(() => document.getElementById("fx-pop").hidden);
+    await p.setViewportSize(vp);
+    // 10) Tipkovnica: Enter premakne fokus v okno, Tab pride do ✕, Esc vrne fokus na črko (pregled 463 c).
+    if (!phone) {
+      await row.nth(0).focus();
+      await p.keyboard.press("Enter");
+      assert.equal(await p.evaluate(() => document.activeElement?.id), "fx-pop", "fokus je v oknu");
+      assert.equal(await row.nth(0).getAttribute("aria-controls"), "fx-pop");
+      await p.keyboard.press("Tab");
+      assert.equal(await p.evaluate(() => document.activeElement?.classList.contains("fx-close")), true, "Tab pride do ✕");
+      await p.keyboard.press("Escape");
+      assert.equal(await open(p), 0);
+      assert.equal(await p.evaluate(() => !!document.activeElement?.closest("#vrstica [data-fx]")), true, "fokus nazaj na črki");
+      assert.equal(await row.nth(0).getAttribute("aria-controls"), null);
+    }
+    // 11) Od desne proti levi (arabščina): okno ne prekrije formule in ostane na zaslonu.
+    await p.evaluate(() => { document.documentElement.dir = "rtl"; });
+    await p.$eval("#vrstica", (el) => el.scrollIntoView({ block: "center" }));
+    await tap(row.nth(0));
+    await p.waitForTimeout(150);
+    const q = await p.evaluate(() => {
+      const box = (el) => { const b = el.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom }; };
+      return { pop: box(document.getElementById("fx-pop")), line: box(document.querySelector("#vrstica .fx-open").closest(".katex")), w: innerWidth };
+    });
+    assert.ok(!overlap(q.pop, q.line), `${vp.width} RTL: okno prekrije formulo ${JSON.stringify(q)}`);
+    assert.ok(q.pop.left >= -1 && q.pop.right <= q.w + 1, `${vp.width} RTL: okno je na zaslonu ${JSON.stringify(q)}`);
+    if (SHOTS) await p.screenshot({ path: path.join(SHOTS, `okno-rtl-${vp.width}.png`) });
+    await tap(p.locator("#fx-pop .fx-close"));
+    await p.evaluate(() => { document.documentElement.dir = "ltr"; });
     assert.deepEqual(errors, []);
     await ctx.close();
   }

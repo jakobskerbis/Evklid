@@ -103,3 +103,91 @@ test("Za $x_1 = …$: definicija v besedilu ima prednost pred slovarjem", () => 
   assert.doesNotMatch(c.label, /ničla/);
   assert.match(c.html, /Oznaka iz besedila/);
 });
+
+// ---------- popravki po pregledu PR 463 ----------
+const label = (html, key) => card(html, key)?.label || null;
+
+test("pregled 463/1: samo številska vrednost ni definicija (°, \\dfrac, gnezdena enota)", () => {
+  const d = definitionsIn("Za $\\alpha = 60^\\circ$ je … Za $x = \\dfrac{1}{3}$ je … za $g = 10\\,\\mathrm{\\frac{m}{s^2}}$ dobimo … Za $y = 2x$ …");
+  assert.deepEqual(d.map((e) => e.keys[0]), ["y"]);
+  assert.match(label(render("MAT", "Adicijski izreki", "Za $\\alpha = 60^\\circ$ je $\\sin \\alpha = \\frac{\\sqrt 3}{2}$."), "α"), /kot/);
+  assert.match(label(render("FIZ", "Prosti pad", "Računamo za $g = 10\\,\\mathrm{\\frac{m}{s^2}}$: $v = g t$."), "g"), /težni pospešek/);
+});
+
+test("pregled 463/2: »Za $X = …$« velja le v povedi; zanesljiv pomen slovarja ostane", () => {
+  const sys = render("MAT", "Sistemi linearnih enačb", "Za $y = 2x$ je $x + y = 3x$. Druga enačba je $y = 5 - x$.");
+  const ys = codes(sys).filter((c) => c.split(":")[2] === "y").map((c) => cardFor(c).html);
+  assert.equal(ys.length, 2, "y je določen le v prvi povedi");
+  assert.ok(ys.every((h) => /Oznaka iz besedila/.test(h)));
+  assert.equal(definitionsIn("Za $A = \\{2, 4\\}$ velja …").length, 0, "množica števil ni zveza");
+  assert.match(label(render("MAT", "Krožni lok", "Lok je del obsega $2\\pi r$, kjer je $r$ en sam faktor."), "r"), /polmer/);
+  const disk = render("MAT", "Kvadratna enačba", "Rešitvi sta $x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}$, kjer je $D = b^2 - 4ac$. Če je $D > 0$, sta dve.");
+  assert.ok(codes(disk).filter((c) => c.split(":")[2] === "D").every((c) => /diskriminanta/.test(cardFor(c).label)));
+  assert.match(card(render("FIZ", "Enakomerno gibanje", "Naj bo $v = \\frac{s}{t}$ hitrost. Potem $s = v t$."), "v").html, /m\/s/);
+  const k = card(render("FIZ", "Prožnost", "Velja $F = k x$, kjer je $k$ konstanta vzmeti."), "k");
+  assert.match(k.label, /prožnostni koeficient/);
+  assert.match(k.html, /N\/m/);
+  // »kjer je $C$ … se izniči«, »$y_p$ ena«: ni ime (samostalnik).
+  assert.deepEqual(definitionsIn("kjer je $F$ primitivna funkcija; $C$ se izniči. Pri čemer je $f$ zvezna, kjer je $y_p$ ena rešitev.").map((e) => [e.keys[0], e.n]), [["F", "primitivna funkcija"]]);
+});
+
+test("pregled 463/2: oznake lekcije imajo prednost pred oznako iz besedila", () => {
+  const gl = [{ keys: ["x"], tex: ["x"], n: "neodvisna spremenljivka", r: "", u: "", note: "" }];
+  const html = withFormulaSubject("MAT", () => fx.renderRich("Naj bo $x = t^2$. Potem $f(x) = t^4$."), gl, "Funkcije");
+  assert.match(card(html, "x").label, /neodvisna spremenljivka/);
+});
+
+test("pregled 463/3: »vleče«, »daleč«, »okrog«, »atmosfera« in met kocke niso tema", () => {
+  assert.equal(card(render("FIZ", "Merske napake", "Vrv vleče voziček daleč. Naredimo $n = 5$ meritev."), "n"), null);
+  assert.equal(card(render("MAT", "Statistika", "Koeficient korelacije $r = 0{,}8$. Točke so razporejene okrog premice."), "r"), null);
+  assert.equal(card(render("MAT", "Zemlja", "V atmosferi je tlak $p$ na razdalji $r$ od središča."), "r"), null);
+  assert.equal(card(render("MAT", "Verjetnost", "Mečemo kocko. $P = \\frac{1}{6}$."), "P"), null);
+  assert.match(label(render("MAT", "Kocka", "Površina kocke je $P = 6a^2$."), "P"), /površina/);
+  assert.match(label(render("FIZ", "Leče", "Za lečo velja $n = \\frac{c_0}{c}$."), "n"), /lomni/);
+});
+
+test("pregled 463/4: beseda drugje v razdelku ne da pomena (le tema in poved, besedilo bloka le izključi)", () => {
+  assert.equal(card(render("MAT", "Talesov izrek", "Nariši vzporedni premici.\n\nDaljico razdeli v razmerju $m : n$."), "n"), null);
+  assert.equal(card(render("MAT", "Aritmetično in geometrijsko zaporedje", "Diskriminanta je pozitivna.\n\nTorej $a_{20} = 62$."), "a"), null);
+  assert.equal(card(render("MAT", "Moč množic", "Premica ima neskončno točk.\n\nŠtevila $3k$, $k \\in \\mathbb{N}$."), "k"), null);
+  assert.equal(card(render("MAT", "Sistemi linearnih enačb · Linearna funkcija, enačbe in neenačbe", "Pomnoži z $+k$ in $-k$."), "k"), null);
+  // Ista beseda v isti povedi pa velja.
+  assert.match(label(render("MAT", "Funkcije", "Kvadratna funkcija ima diskriminanto $D = b^2 - 4ac$."), "D"), /diskriminanta/);
+});
+
+test("pregled 463/5: črka z indeksom ne podeduje pomena le po temi", () => {
+  assert.equal(card(render("MAT", "Kvadratna funkcija", "Definicijsko območje $D_f = \\mathbb{R}$."), "D"), null);
+  assert.equal(card(render("MAT", "Kvadratna enačba", "$a_{20} = 62$"), "a"), null);
+  // a_n v polinomu ne podeduje oznake lekcije za a (osnova logaritma).
+  const gl = [{ keys: ["a"], tex: ["a"], n: "osnova logaritma", r: "", u: "", note: "" }];
+  const html = withFormulaSubject("MAT", () => fx.renderRich("Polinom stopnje $n$ ima $a_n \\neq 0$."), gl, "Elementarne funkcije");
+  assert.ok(!codes(html).some((c) => c.split(":")[2] === "a"));
+  // Formula pa potrdi: v_1 je hitrost (edini pomen v fiziki).
+  assert.match(label(render("FIZ", "Trki", "$v_1 = 3\\,\\mathrm{m/s}$"), "v"), /hitrost/);
+});
+
+test("pregled 463/6: F = k · x, M = r · F (\\cdot, \\times)", () => {
+  assert.match(label(render("FIZ", "Sila in merjenje sile", "Hookov zakon: $F = k \\cdot x$."), "k"), /prožnostni/);
+  assert.match(label(render("FIZ", "Sila", "$F = k \\times x$"), "x"), /raztezek/);
+  assert.match(label(render("FIZ", "Ravnovesje", "$M = r \\cdot F$"), "M"), /navor/);
+  assert.match(label(render("FIZ", "Gibalna količina", "$p = m \\cdot v$"), "p"), /gibalna/);
+});
+
+test("pregled 463/7: n le ob y = kx + n v isti povedi; b v a x² + b je prosti člen", () => {
+  assert.equal(card(render("MAT", "Linearna funkcija", "Za vsak naravni $n$ velja $n^2 \\ge 0$."), "n"), null);
+  assert.match(label(render("MAT", "Premica", "Premica $y = kx + n$ ima začetno vrednost $n$."), "n"), /začetna vrednost/);
+  assert.equal(card(render("MAT", "Linearna funkcija", "Graf seka os $y$ pri $n = 3$."), "n"), null);
+  assert.equal(card(render("MAT", "Kvadratna funkcija", "$f(x) = ax^2 + b$"), "b"), null);
+  assert.match(label(render("MAT", "Kvadratna funkcija", "$f(x) = ax^2 + bx + c$"), "b"), /linearni/);
+  // Eulerjeva oblika: i je imaginarna enota tudi brez teme.
+  assert.match(label(render("MAT", "Potenčne vrste", "$e^{iz} = \\cos z + i\\sin z$"), "i"), /imaginarna/);
+  assert.equal(card(render("MAT", "Vektorji", "$\\vec a = a_x \\vec i + a_y \\vec j$"), "i"), null);
+});
+
+test("pregled 463/7: fakultetna lekcija iz fizike in kemije ima svoj predmet (ne tabelo MAT)", async () => {
+  const { lessonView } = await import("../server/textbook.js");
+  assert.equal(lessonView("UNI-ULFKKT-FIZ/delo-energija-in-gibalna-kolicina")?.subject, "FIZ");
+  assert.equal(lessonView("UNI-ULFKKT-KEMIJA/kisline-in-baze")?.subject, "KEM");
+  assert.match(label(render("FIZ", "Trenje", "$F_{tr} = k_{tr} F_n$"), "k_tr"), /koeficient trenja/);
+  assert.equal(card(render("MAT", "Trenje", "$F_{tr} = k_{tr} F_n$"), "k"), null, "v tabeli MAT k_tr ni smerni koeficient");
+});
