@@ -504,3 +504,45 @@ test("brez mikrotransakcij (j 2026-11-04): dokup samo paketi in samo polnoleten;
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM passes WHERE days = 30").get().n, 1, "nov 30-dnevni paket ne nastane");
   });
 });
+
+// Dve naročnini istega kupca (pregled B #490, M8): dogodek stare ne vzame dostopa, ki ga daje druga.
+const subState = (id, status) => ({ id, status, customer: "cus_k", items: { data: [{ price: { lookup_key: "evklid_1_month" } }] } });
+const subRow = (store, pid) => ({ ...store.db.prepare("SELECT sub_id, sub_status FROM parents WHERE id = ?").get(pid) });
+const setSub = (store, stripe, pid, id) => {
+  store.db.prepare("UPDATE parents SET sub_id = ?, sub_status = 'active', sub_plan = 'evklid_1_month', stripe_customer_id = 'cus_k' WHERE id = ?").run(id, pid);
+  stripe.state.subs[id] = subState(id, "active");
+};
+
+test("dogodek stare naročnine (preklic) ne prepiše trenutne veljavne naročnine", async () => {
+  await withServer(async ({ client, stripe, store, hook }) => {
+    const a = client();
+    const p = await registerVerified(a, stripe, "stara@x.si");
+    setSub(store, stripe, p.id, "sub_new");
+    stripe.state.subs.sub_old = subState("sub_old", "canceled");
+    for (const type of ["customer.subscription.deleted", "customer.subscription.updated"]) {
+      const r = await hook({ id: "e_" + type, type, data: { object: { id: "sub_old", customer: "cus_k", status: "canceled" } } });
+      assert.equal(r.status, 200);
+      assert.deepEqual(subRow(store, p.id), { sub_id: "sub_new", sub_status: "active" }, type);
+    }
+    // Nova plačana naročnina (nakup) pa trenutno še vedno zamenja.
+    stripe.state.subs.sub_3 = subState("sub_3", "active");
+    await hook({ id: "e3", type: "customer.subscription.created", data: { object: { id: "sub_3", customer: "cus_k", status: "active" } } });
+    assert.deepEqual(subRow(store, p.id), { sub_id: "sub_3", sub_status: "active" });
+  });
+});
+
+test("konec trenutne naročnine ob drugi plačani naročnini istega kupca: velja druga", async () => {
+  await withServer(async ({ client, stripe, store, hook }) => {
+    const a = client();
+    const p = await registerVerified(a, stripe, "dve@x.si");
+    setSub(store, stripe, p.id, "sub_new");
+    stripe.state.subs.sub_old = subState("sub_old", "active");
+    stripe.state.subs.sub_new.status = "canceled";
+    await hook({ id: "d1", type: "customer.subscription.deleted", data: { object: { id: "sub_new", customer: "cus_k", status: "canceled" } } });
+    assert.deepEqual(subRow(store, p.id), { sub_id: "sub_old", sub_status: "active" });
+    // Ko se konča še ta, dostopa ni več.
+    stripe.state.subs.sub_old.status = "canceled";
+    await hook({ id: "d2", type: "customer.subscription.deleted", data: { object: { id: "sub_old", customer: "cus_k", status: "canceled" } } });
+    assert.deepEqual(subRow(store, p.id), { sub_id: "sub_old", sub_status: "canceled" });
+  });
+});

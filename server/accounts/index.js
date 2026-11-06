@@ -1705,6 +1705,26 @@ export function mountAccounts(app, store, opts = {}) {
       log.error?.("[evklid] Stripe naročnina prezrta: račun ima veljavno naročnino", before.sub_provider, parentId);
       return;
     }
+    // Dogodek za drugo (staro) naročnino, ki ne velja več, ne prepiše trenutne veljavne (npr. skrbnik prekliče
+    // prejšnjo od dveh naročnin ali dogodek stare zamudi). Nova plačana naročnina pa trenutno zamenja (nakup).
+    if (before?.sub_id && sub.id !== before.sub_id && paidActive(before) && !PAID.has(sub.status)) {
+      log.error?.("[evklid] dogodek stare naročnine prezrt (velja druga)", parentId, sub.id, before.sub_id);
+      return;
+    }
+    // Trenutna naročnina se konča, kupec pa ima v Stripu še drugo plačano: velja ta (dve naročnini hkrati).
+    if (before?.sub_id === sub.id && !PAID.has(sub.status) && stripe.enabled && before.stripe_customer_id) {
+      let other = null;
+      try {
+        const list = await stripe.request("GET", "/subscriptions", { customer: before.stripe_customer_id, status: "all", limit: 10 });
+        other = (list?.data || []).find((s) => s?.id && s.id !== sub.id && (s.status === "active" || s.status === "trialing"));
+      } catch (err) {
+        log.error?.("[evklid] druge naročnine ni bilo mogoče preveriti:", err.message);
+      }
+      if (other) {
+        log.error?.("[evklid] naročnina končana, velja druga plačana naročnina istega kupca", parentId, sub.id, other.id);
+        return applySubscription(parentId, other);
+      }
+    }
     // Zamenjava paketa med veljavno naročnino: zapomnimo si stari paket za zajamčeni AI tega meseca (subGuarantee).
     const planKey = plan?.key || price.lookup_key || price.id || null;
     const fromG = before?.sub_plan && planGuarantee(planByKey(before.sub_plan));
