@@ -3629,7 +3629,7 @@
   "pn.photoRules": {
     "other": "照片里只应有题目，不要有人脸或姓名。我们会把它和 Evklid 识别出的文字一起保存。只有 Evklid 管理员能看到。我们保存 {n} 天，之后会自动删除。"
   },
-  "pn.photoAi": "和每次扫描一样，人工智能（Anthropic）会读取照片，让 Evklid 看懂题目。保存的副本我们不会发给任何人。",
+  "pn.photoAi": "和每次扫描一样，人工智能会读取照片，让 Evklid 看懂题目。保存的副本我们不会发给任何人。",
   "pn.photoSaved": "照片已保存",
   "pn.photoDelete": "删除照片",
   "pn.photoDeleted": "照片已删除。",

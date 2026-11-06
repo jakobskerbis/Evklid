@@ -3689,7 +3689,7 @@
   "pn.photoRules": {
     "other": "Na fotografiji neka bude samo zadatak, bez lica i imena. Spremamo je zajedno s tekstom koji je Evklid pročitao. Vidi ih samo administrator Evklida. Čuvamo ih {n} dana, zatim se same izbrišu."
   },
-  "pn.photoAi": "Kao kod svakog skeniranja, fotografiju pročita umjetna inteligencija (Anthropic), da Evklid razumije zadatak. Spremljenu kopiju ne šaljemo nikome.",
+  "pn.photoAi": "Kao kod svakog skeniranja, fotografiju pročita umjetna inteligencija, da Evklid razumije zadatak. Spremljenu kopiju ne šaljemo nikome.",
   "pn.photoSaved": "Fotografija je spremljena",
   "pn.photoDelete": "Izbriši fotografiju",
   "pn.photoDeleted": "Fotografija je izbrisana.",

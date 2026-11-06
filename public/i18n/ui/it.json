@@ -3658,7 +3658,7 @@
   "pn.photoRules": {
     "other": "Nella foto deve esserci solo l’esercizio, senza volti né nomi. La salviamo insieme al testo letto da Evklid. Li vede solo l’amministratore di Evklid. Li conserviamo per {n} giorni, poi si cancellano da soli."
   },
-  "pn.photoAi": "Come per ogni scansione, un’intelligenza artificiale (Anthropic) legge la foto perché Evklid capisca l’esercizio. La copia salvata non la inviamo a nessuno.",
+  "pn.photoAi": "Come per ogni scansione, un’intelligenza artificiale legge la foto perché Evklid capisca l’esercizio. La copia salvata non la inviamo a nessuno.",
   "pn.photoSaved": "Foto salvata",
   "pn.photoDelete": "Elimina la foto",
   "pn.photoDeleted": "La foto è stata eliminata.",

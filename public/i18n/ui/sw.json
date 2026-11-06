@@ -3655,7 +3655,7 @@
   "pn.photoRules": {
     "other": "Kwenye picha iwe swali tu, bila nyuso wala majina. Tunaihifadhi pamoja na maandishi ambayo Evklid ilisoma. Ni msimamizi wa Evklid pekee anayeviona. Tunavihifadhi kwa siku {n}, kisha vinafutwa vyenyewe."
   },
-  "pn.photoAi": "Kama kila uchanganuzi, akili bandia (Anthropic) husoma picha ili Evklid ielewe swali. Nakala iliyohifadhiwa hatumtumii mtu yeyote.",
+  "pn.photoAi": "Kama kila uchanganuzi, akili bandia husoma picha ili Evklid ielewe swali. Nakala iliyohifadhiwa hatumtumii mtu yeyote.",
   "pn.photoSaved": "Picha imehifadhiwa",
   "pn.photoDelete": "Futa picha",
   "pn.photoDeleted": "Picha imefutwa.",

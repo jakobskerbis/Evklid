@@ -3655,7 +3655,7 @@
   "pn.photoRules": {
     "other": "Fotoğrafta yalnızca soru olsun, yüz ya da isim olmasın. Onu Evklid’in okuduğu metinle birlikte kaydederiz. Onları yalnızca Evklid yöneticisi görür. Onları {n} gün saklarız, sonra kendiliğinden silinirler."
   },
-  "pn.photoAi": "Her taramada olduğu gibi, Evklid’in soruyu anlaması için fotoğrafı bir yapay zekâ (Anthropic) okur. Kaydedilen kopyayı kimseye göndermeyiz.",
+  "pn.photoAi": "Her taramada olduğu gibi, Evklid’in soruyu anlaması için fotoğrafı bir yapay zekâ okur. Kaydedilen kopyayı kimseye göndermeyiz.",
   "pn.photoSaved": "Fotoğraf kaydedildi",
   "pn.photoDelete": "Fotoğrafı sil",
   "pn.photoDeleted": "Fotoğraf silindi.",

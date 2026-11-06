@@ -3131,7 +3131,7 @@ export default {
   "pn.scanNotePh": "Kaj je prebral narobe?",
   "pn.photoSave": "Shrani fotografijo, da izboljšamo branje",
   "pn.photoRules": { one: "Na fotografiji naj bo samo naloga, brez obrazov in imen. Shranimo jo skupaj s prebranim besedilom. Vidi ju samo skrbnik Evklida. Hranimo ju {n} dan, nato se sama izbrišeta.", two: "Na fotografiji naj bo samo naloga, brez obrazov in imen. Shranimo jo skupaj s prebranim besedilom. Vidi ju samo skrbnik Evklida. Hranimo ju {n} dneva, nato se sama izbrišeta.", few: "Na fotografiji naj bo samo naloga, brez obrazov in imen. Shranimo jo skupaj s prebranim besedilom. Vidi ju samo skrbnik Evklida. Hranimo ju {n} dni, nato se sama izbrišeta.", other: "Na fotografiji naj bo samo naloga, brez obrazov in imen. Shranimo jo skupaj s prebranim besedilom. Vidi ju samo skrbnik Evklida. Hranimo ju {n} dni, nato se sama izbrišeta." },
-  "pn.photoAi": "Kot pri vsakem skeniranju fotografijo prebere umetna inteligenca (Anthropic), da Evklid razume nalogo. Shranjene kopije ne pošljemo nikomur.",
+  "pn.photoAi": "Kot pri vsakem skeniranju fotografijo prebere umetna inteligenca, da Evklid razume nalogo. Shranjene kopije ne pošljemo nikomur.",
   "pn.photoSaved": "Fotografija je shranjena",
   "pn.photoDelete": "Izbriši fotografijo",
   "pn.photoDeleted": "Fotografija je izbrisana.",

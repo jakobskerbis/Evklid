@@ -308,7 +308,7 @@ test("pilot: soglasje z jezikom in rokom, prepis samo s fotografijo, magični ba
     assert.equal(c.v, 2);
     assert.equal(c.lang, "de");
     assert.equal(c.days, 30);
-    assert.match(c.text, /prebere umetna inteligenca \(Anthropic\)/);
+    assert.match(c.text, /prebere umetna inteligenca/);
     assert.match(c.text, /Shranjene kopije ne pošljemo nikomur/);
     assert.ok(Math.abs(ph.d - 30) < 0.01, `rok ${ph.d}`);
     // Ponovna ocena s fotografijo obdrži novi prepis; izbris fotografije izbriše tudi prepis (sprožilec).
@@ -389,7 +389,7 @@ test("pilot: XP iz nalog šteje na profilu, v ligah ne; varnostna kopija je brez
 
 test("pilot: soglasje za fotografijo pove, da jo ob branju prebere ponudnik AI, shranjene kopije pa ne dobi", async () => {
   const fs = await import("node:fs");
-  assert.match(SL["pn.photoAi"], /Anthropic/);
+  assert.match(SL["pn.photoAi"], /prebere umetna inteligenca/);
   assert.doesNotMatch(JSON.stringify(SL["pn.photoRules"]), /ne pošljemo, tudi ne ponudniku/);
   const scan = fs.readFileSync(new URL("../public/scan/scan.js", import.meta.url), "utf8");
   assert.match(scan, /t\("pn\.photoAi"\)/);

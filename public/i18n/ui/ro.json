@@ -3691,7 +3691,7 @@
   "pn.photoRules": {
     "other": "În fotografie să fie doar problema, fără fețe sau nume. O salvăm împreună cu textul citit de Evklid. Le vede doar administratorul Evklid. Le păstrăm {n} zile, apoi se șterg singure."
   },
-  "pn.photoAi": "Ca la orice scanare, fotografia este citită de o inteligență artificială (Anthropic), ca Evklid să înțeleagă problema. Copia salvată nu o trimitem nimănui.",
+  "pn.photoAi": "Ca la orice scanare, fotografia este citită de o inteligență artificială, ca Evklid să înțeleagă problema. Copia salvată nu o trimitem nimănui.",
   "pn.photoSaved": "Fotografie salvată",
   "pn.photoDelete": "Șterge fotografia",
   "pn.photoDeleted": "Fotografia a fost ștearsă.",

@@ -47,7 +47,7 @@ export const photoDays = () => {
 };
 // Besedilo soglasja, kot ga shranimo ob fotografiji (dokaz, kaj je učenec potrdil).
 export const PHOTO_CONSENT_TEXT = (n = photoDays()) =>
-  `Shrani fotografijo, da izboljšamo branje. Na fotografiji naj bo samo naloga, brez obrazov in imen. Shranimo jo skupaj s prebranim besedilom. Vidi ju samo skrbnik Evklida. Hranimo ju ${n} ${n === 1 ? "dan" : n === 2 ? "dneva" : "dni"}, nato se sama izbrišeta. Kot pri vsakem skeniranju fotografijo prebere umetna inteligenca (Anthropic), da Evklid razume nalogo. Shranjene kopije ne pošljemo nikomur. Prej ju lahko izbrišeš pod »Pomagaj izboljšati Evklid«.`;
+  `Shrani fotografijo, da izboljšamo branje. Na fotografiji naj bo samo naloga, brez obrazov in imen. Shranimo jo skupaj s prebranim besedilom. Vidi ju samo skrbnik Evklida. Hranimo ju ${n} ${n === 1 ? "dan" : n === 2 ? "dneva" : "dni"}, nato se sama izbrišeta. Kot pri vsakem skeniranju fotografijo prebere umetna inteligenca, da Evklid razume nalogo. Shranjene kopije ne pošljemo nikomur. Prej ju lahko izbrišeš pod »Pomagaj izboljšati Evklid«.`;
 // Zapis soglasja: različica, jezik, v katerem ga je učenec videl, rok in slovensko besedilo te različice.
 export const consentRecord = (lang, n = photoDays()) => JSON.stringify({ v: CONSENT_VERSION, lang, days: n, text: PHOTO_CONSENT_TEXT(n) });
 

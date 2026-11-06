@@ -3629,7 +3629,7 @@
   "pn.photoRules": {
     "other": "Di foto hanya boleh ada soalnya, tanpa wajah atau nama. Kami menyimpannya bersama teks yang dibaca Evklid. Hanya admin Evklid yang melihatnya. Kami menyimpannya {n} hari, lalu terhapus otomatis."
   },
-  "pn.photoAi": "Seperti setiap pemindaian, AI (Anthropic) membaca foto agar Evklid memahami soalnya. Salinan yang disimpan tidak kami kirim ke siapa pun.",
+  "pn.photoAi": "Seperti setiap pemindaian, AI membaca foto agar Evklid memahami soalnya. Salinan yang disimpan tidak kami kirim ke siapa pun.",
   "pn.photoSaved": "Foto tersimpan",
   "pn.photoDelete": "Hapus foto",
   "pn.photoDeleted": "Foto sudah dihapus.",
