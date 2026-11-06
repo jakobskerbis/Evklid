@@ -1877,6 +1877,7 @@
   "lg.already": "Już jesteś w grupie „{name}”.",
   "lg.joined": "Dołączyłeś do grupy „{name}”.",
   "lg.created": "Grupa utworzona. Kod dla znajomych: {code}",
+  "lg.nameContact": "Nazwa nie może zawierać e-maila, numeru telefonu, linku ani profilu w mediach społecznościowych.",
   "lg.leaveConfirm": "Na pewno chcesz opuścić tę grupę?",
   "lg.pickNick": "Wybierz pseudonim",
   "lg.nickWhy": "Ze względów bezpieczeństwa nie możesz sam wpisać pseudonimu, więc inni nigdy nie widzą twojego imienia.",

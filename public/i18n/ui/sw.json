@@ -1855,6 +1855,7 @@
   "lg.already": "Tayari uko katika kikundi “{name}”.",
   "lg.joined": "Umejiunga na kikundi “{name}”.",
   "lg.created": "Kikundi kimeundwa. Msimbo kwa marafiki: {code}",
+  "lg.nameContact": "Jina lisiwe na barua pepe, namba ya simu, kiungo au akaunti ya mitandao ya kijamii.",
   "lg.leaveConfirm": "Una uhakika unataka kuondoka kwenye kikundi hiki?",
   "lg.pickNick": "Chagua jina la utani",
   "lg.nickWhy": "Kwa usalama huwezi kuandika jina lako la utani mwenyewe, kwa hivyo wengine hawaoni jina lako kamwe.",

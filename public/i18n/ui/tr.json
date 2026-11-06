@@ -1855,6 +1855,7 @@
   "lg.already": "Zaten “{name}” grubundasın.",
   "lg.joined": "“{name}” grubuna katıldın.",
   "lg.created": "Grup oluşturuldu. Arkadaşlar için kod: {code}",
+  "lg.nameContact": "Ad e-posta, telefon numarası, bağlantı veya sosyal medya profili içeremez.",
   "lg.leaveConfirm": "Bu gruptan gerçekten ayrılmak istiyor musun?",
   "lg.pickNick": "Bir takma ad seç",
   "lg.nickWhy": "Güvenlik için takma adını kendin yazamazsın; böylece başkaları adını asla görmez.",

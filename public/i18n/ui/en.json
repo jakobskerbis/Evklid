@@ -1855,6 +1855,7 @@
   "lg.already": "You are already in the group “{name}”.",
   "lg.joined": "You joined the group “{name}”.",
   "lg.created": "Group created. Code for friends: {code}",
+  "lg.nameContact": "The name must not contain an email address, phone number, link or social media profile.",
   "lg.leaveConfirm": "Do you really want to leave this group?",
   "lg.pickNick": "Choose a nickname",
   "lg.nickWhy": "For safety you can’t type your own nickname, so others never see your name.",

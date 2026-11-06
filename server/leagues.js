@@ -18,6 +18,7 @@ import crypto from "node:crypto";
 import { stageCode, stageCodeSql } from "../public/stopnja.js";
 import { ensureAvatarTables, publicAvatar } from "./avatar.js";
 import { AWARD_MIN } from "../public/zbirke.js";
+import { nameHasContact, NAME_CONTACT_ERROR, stripInvisible } from "../public/ime-skupine.js";
 
 export const TIERS = ["Bronasta", "Srebrna", "Zlata", "Safirna", "Rubinasta", "Smaragdna", "Diamantna"];
 export const LEAGUE = {
@@ -511,7 +512,8 @@ export class Leagues {
 // preverjanjem lastništva učenca; `req.parent` je prijavljeni račun.
 export function mountLeagues(app, store, { loadStudent }) {
   const leagues = new Leagues(store);
-  const cleanName = (v) => (typeof v === "string" ? v.replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim().slice(0, 40) : "");
+  // Brez nevidnih znakov (ime vidijo drugi otroci, public/ime-skupine.js).
+  const cleanName = (v) => (typeof v === "string" ? stripInvisible(v).replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim().slice(0, 40) : "");
   const teacher = (req, res) => {
     const cls = leagues.authTeacher(req.params.code, req.get("x-teacher-key"), req.parent?.id ?? null);
     if (!cls) res.status(403).json({ error: "Napačna koda ali ključ razreda." });
@@ -543,7 +545,9 @@ export function mountLeagues(app, store, { loadStudent }) {
   app.post("/api/students/:id/friend-groups", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
-    const out = leagues.createFriendsGroup(s.id, cleanName(req.body?.name) || "Prijatelji");
+    const name = cleanName(req.body?.name);
+    if (nameHasContact(name)) return res.status(400).json({ error: NAME_CONTACT_ERROR, code: "lg.nameContact" });
+    const out = leagues.createFriendsGroup(s.id, name || "Prijatelji");
     if (out.error) return res.status(400).json(out);
     res.status(201).json(out);
   });
@@ -556,6 +560,7 @@ export function mountLeagues(app, store, { loadStudent }) {
   app.post("/api/classes", (req, res) => {
     const name = cleanName(req.body?.name);
     if (!name) return res.status(400).json({ error: "Vpiši ime razreda, npr. 8.b." });
+    if (nameHasContact(name)) return res.status(400).json({ error: NAME_CONTACT_ERROR, code: "lg.nameContact" });
     res.status(201).json(leagues.createClass(name, req.parent?.id ?? null));
   });
   // Ko so računi vklopljeni, vidi učitelj svoje razrede z vsake naprave.

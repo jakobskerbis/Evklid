@@ -2276,6 +2276,7 @@ export default {
   "lg.already": "Že si v skupini »{name}«.",
   "lg.joined": "Pridružil si se skupini »{name}«.",
   "lg.created": "Skupina je ustvarjena. Koda za prijatelje: {code}",
+  "lg.nameContact": "Ime naj ne vsebuje e-naslova, telefona, povezave ali profila na omrežjih.",
   "lg.leaveConfirm": "Res želiš zapustiti to skupino?",
   "lg.pickNick": "Izberi vzdevek",
   "lg.nickWhy": "Zaradi varnosti vzdevek izbereš med predlogi. Tako drugi nikoli ne vidijo tvojega imena.",

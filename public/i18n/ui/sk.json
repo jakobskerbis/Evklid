@@ -1877,6 +1877,7 @@
   "lg.already": "Už si v skupine „{name}“.",
   "lg.joined": "Pripojil si sa k skupine „{name}“.",
   "lg.created": "Skupina je vytvorená. Kód pre kamarátov: {code}",
+  "lg.nameContact": "Názov nesmie obsahovať e-mail, telefón, odkaz ani profil na sociálnych sieťach.",
   "lg.leaveConfirm": "Naozaj chceš opustiť túto skupinu?",
   "lg.pickNick": "Vyber si prezývku",
   "lg.nickWhy": "Z bezpečnostných dôvodov si prezývku nemôžeš napísať sám, takže ostatní nikdy neuvidia tvoje meno.",

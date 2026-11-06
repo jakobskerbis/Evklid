@@ -3,6 +3,7 @@ import { icon } from "./icons.js";
 import { avatarSvg, itemOf, itemName, itemRarity, wear } from "./avatar.js";
 import { DRAW } from "./zbirke.js";
 import { t, currentLang, locale } from "./i18n.js";
+import { nameHasContact } from "./ime-skupine.js";
 import { quizCardHtml, playQuiz } from "./kviz.js";
 import { itemThumb, earnedWhere } from "./zbirke-view.js";
 const $ = (sel) => document.querySelector(sel);
@@ -14,7 +15,8 @@ const api = async (url, opts = {}) => {
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || t("lg.error", { status: res.status }));
+  // Napaka s ključem prevoda (npr. lg.nameContact): v jeziku učenca, ne v slovenščini strežnika.
+  if (!res.ok) throw new Error((data.code === "lg.nameContact" && t(data.code)) || data.error || t("lg.error", { status: res.status }));
   return data;
 };
 
@@ -205,7 +207,7 @@ export async function loadLeague(studentId) {
         <button class="primary" type="submit">${esc(t("lg.join"))}</button>
       </form>
       <form id="friends-form" class="row">
-        <input id="friends-name" placeholder="${esc(t("lg.groupPh"))}" aria-label="${esc(t("lg.groupPh"))}" maxlength="40">
+        <input id="friends-name" dir="auto" placeholder="${esc(t("lg.groupPh"))}" aria-label="${esc(t("lg.groupPh"))}" maxlength="40">
         <button type="submit" class="secondary">${icon("plus")}<span>${esc(t("lg.create"))}</span></button>
       </form>
       <p class="muted">${esc(t("lg.teacher"))} <a href="ucitelj.html" target="_blank">${esc(t("lg.teacherLink"))}</a></p>
@@ -236,6 +238,7 @@ export async function loadLeague(studentId) {
   });
   $("#friends-form").addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (nameHasContact($("#friends-name").value)) return toast(t("lg.nameContact"));
     try {
       const r = await api(`/api/students/${studentId}/friend-groups`, { method: "POST", body: { name: $("#friends-name").value } });
       toast(t("lg.created", { code: r.code }));

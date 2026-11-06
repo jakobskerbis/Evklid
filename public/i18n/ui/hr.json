@@ -1866,6 +1866,7 @@
   "lg.already": "Već si u skupini „{name}“.",
   "lg.joined": "Pridružio si se skupini „{name}“.",
   "lg.created": "Skupina je stvorena. Kod za prijatelje: {code}",
+  "lg.nameContact": "Ime ne smije sadržavati e-mail, telefon, poveznicu ili profil na društvenim mrežama.",
   "lg.leaveConfirm": "Želiš li stvarno napustiti ovu skupinu?",
   "lg.pickNick": "Odaberi nadimak",
   "lg.nickWhy": "Zbog sigurnosti ne možeš sam upisati nadimak, pa drugi nikad ne vide tvoje ime.",
