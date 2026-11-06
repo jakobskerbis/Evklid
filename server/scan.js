@@ -7,6 +7,7 @@
 import { getClient, isMockMode, quickParams, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { languagePrompt } from "./prompt.js";
+import { imageCallReserveUsd, callMaxUsd } from "./meje-ai.js";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
 // Branje matematike z rokopisa zahteva natančen model; ena fotografija je ~1500 žetonov.
@@ -166,17 +167,27 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [] }
   // preverjanje vidi le predlogo f(x) = …, zato ponovitve ne sproži (rešitev ostane označena kot nepreverjena).
   if (out.sol && !given.length && !check.verified && (check.reason === "wrong" || check.reason === "missing")) {
     const fb = check.reason === "missing" ? `x ≈ ${check.missing.slice(0, 6).map((m) => m.toFixed(4)).join(", ")} also satisfies the equation` : "substituting your result back does not give the original";
-    const again = await ask(fb);
-    usage.push(again.usage);
-    const c2 = again.sol ? verifyAi(text, again.sol) : { verified: false };
-    if (again.sol && (c2.verified || !out.sol)) {
-      out = again;
-      check = c2;
+    // Napaka ponovitve (529, povezava) ne sme odnesti plačanega prvega klica (pregled #462 L3): ostane prva rešitev.
+    let again = null;
+    try {
+      again = await ask(fb);
+    } catch (err) {
+      console.warn(`[evklid] reševanje: ponovitev ni uspela (${err?.message || err}), ostane prva rešitev`);
+    }
+    if (again) {
+      usage.push(again.usage);
+      const c2 = again.sol ? verifyAi(text, again.sol) : { verified: false };
+      if (again.sol && (c2.verified || !out.sol)) {
+        out = again;
+        check = c2;
+      }
     }
   }
   return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null } : null, usage, model: out.model };
 }
 
+// Navodila branja v žetonih za rezervo (žeton ≤ bajt, pregled #462 S7) + sporočilo in ovoj.
+const READ_PROMPT_TOKENS = Buffer.byteLength(READ_PROMPT, "utf8") + 500;
 export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, solveFn = solveWithAi }) {
   app.post("/api/students/:id/scan/read", async (req, res) => {
     const s = loadStudent(req, res);
@@ -185,6 +196,9 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     if (!m || m[2].length > MAX_IMAGE) return res.status(400).json({ error: "Slika manjka ali je prevelika." });
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
+    // Trda meja AI (server/meje-ai.js): najvišji strošek branja mora iti pod mejo profila.
+    const hold = usage?.guard ? usage.guard(s.id, imageCallReserveUsd(READ_MODEL(), 2000, 1, READ_PROMPT_TOKENS)) : null;
+    if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
       const out = await readFn({ imageBase64: m[2], mediaType: m[1] });
       if (out.mock) return res.json({ problems: [], mock: true });
@@ -193,6 +207,8 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     } catch (err) {
       console.error("[evklid] skeniranje:", err?.message || err);
       res.status(502).json({ error: errorText(err, "Branje fotografije trenutno ne deluje. Nalogo vpiši s tipkami.") });
+    } finally {
+      hold?.release();
     }
   });
 
@@ -209,6 +225,10 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     const given = cleanGiven(rawGiven);
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
+    // Do dva klica (ponovitev ob napačni rešitvi), vsak z navodili, nalogo in podatki ter do 8000 izhodnimi žetoni.
+    const input = 6000 + Buffer.byteLength(text + rawGiven.join(""), "utf8");
+    const hold = usage?.guard ? usage.guard(s.id, 2 * callMaxUsd(SOLVE_MODEL(), input, 8000)) : null;
+    if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
       const out = await solveFn({ text, goal, given, lang: s.settings?.language || "sl" });
       if (out.mock) return res.json({ solution: null, mock: true });
@@ -221,6 +241,8 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
       // sporočilo v jeziku učenca (scan.tutorDown), koda ostane v besedilu za iskanje napake.
       const unavailable = /^(400 ni dobroimetja|401|403|429|529)/.test(apiErrorCode(err) || "");
       res.status(unavailable ? 503 : 502).json({ error: errorText(err, "Reševanje trenutno ne deluje. Poskusi znova čez trenutek."), ...(unavailable ? { unavailable: true } : {}) });
+    } finally {
+      hold?.release();
     }
   });
 }

@@ -83,12 +83,10 @@ export class GuestQuota {
   }
 
   questionsToday(ids, net) {
+    // question_log (server/db.js): vprašanja ostanejo šteta tudi po izbrisu pogovora (vsi računi, tudi šolska licenca).
     const live = ids.length
       ? this.db
-          .prepare(
-            `SELECT COUNT(*) AS n FROM messages m JOIN conversations c ON c.id = m.conversation_id
-             WHERE c.student_id IN (${ids.map(() => "?").join(",")}) AND m.role = 'user' AND date(m.created_at) = date('now')`,
-          )
+          .prepare(`SELECT COALESCE(SUM(n),0) AS n FROM question_log WHERE student_id IN (${ids.map(() => "?").join(",")}) AND day = date('now')`)
           .get(...ids).n
       : 0;
     const gone = net ? this.db.prepare("SELECT COALESCE(SUM(questions),0) AS n FROM guest_spent WHERE net = ? AND day = date('now')").get(net).n : 0;
@@ -116,15 +114,9 @@ export class GuestQuota {
     if (q || usd) this.db.prepare("INSERT INTO guest_spent (net, day, questions, usd) VALUES (?, date('now'), ?, ?)").run(net, q, usd);
   }
 
-  // Pred izbrisom pogovora: današnja vprašanja v njem ostanejo šteta.
-  snapshotConversation(conversationId, studentId) {
-    const net = this.netOf(studentId);
-    if (!net) return;
-    const q = this.db
-      .prepare("SELECT COUNT(*) AS n FROM messages WHERE conversation_id = ? AND role = 'user' AND date(created_at) = date('now')")
-      .get(conversationId).n;
-    if (q) this.db.prepare("INSERT INTO guest_spent (net, day, questions, usd) VALUES (?, date('now'), ?, 0)").run(net, q);
-  }
+  // Pred izbrisom pogovora: vprašanja so že v question_log (izbris pogovora jih ne briše), tu ni kaj zapisati.
+  // Zapis v guest_spent bi jih štel dvakrat.
+  snapshotConversation() {}
 
   snapshotParent(parentId) {
     for (const r of this.db.prepare("SELECT id FROM students WHERE parent_id = ?").all(parentId)) this.snapshot(r.id);
