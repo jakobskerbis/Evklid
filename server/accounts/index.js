@@ -306,6 +306,15 @@ export function mountAccounts(app, store, opts = {}) {
         if (start < next) start = now < next ? prev.start : next;
       }
       if (!prev || prev.sub !== p.sub_id || prev.start !== start) kv.set(key, JSON.stringify({ sub: p.sub_id, start }));
+      // Obnovitev (ali konec preizkusa) pred invoice.paid: Stripe premakne konec obdobja takoj, račun pa je plačan šele
+      // čez uro (SEPA dneve, ali nikoli). Dokler za novo okno ni plačila, velja zadnje plačano okno (pregled #462
+      // H1/K3-1); naročnine brez kakršnega koli zapisa (pred to spremembo) ostanejo na ceniku.
+      if (paidPeriods.has(p.id, p.sub_id) && !paidPeriods.eurIn(p.id, p.sub_id, start, addMonthsUtc(start, 1)).rows) {
+        const last = paidPeriods.lastEnd(p.id, p.sub_id);
+        if (last > 0 && last <= start) {
+          for (let k = 0; k < 24 && start >= last; k++) start = addMonthsUtc(start, -1);
+        }
+      }
     }
     return { start, end: addMonthsUtc(start, 1) };
   }

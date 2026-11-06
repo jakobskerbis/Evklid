@@ -125,6 +125,10 @@ export function createPaidPeriods(kv) {
       if (hit) save(parentId, list);
       return hit || 1;
     },
+    // Konec zadnjega plačanega obdobja naročnine sub (ms) ali 0.
+    lastEnd(parentId, sub) {
+      return load(parentId).reduce((t, r) => (r.sub === sub ? Math.max(t, r.end) : t), 0);
+    },
     // Ali je za naročnino sub zapisano kakšno plačilo (sicer velja cenik, npr. naročnine pred to spremembo).
     has(parentId, sub) {
       return load(parentId).some((r) => r.sub === sub);
