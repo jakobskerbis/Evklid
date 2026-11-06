@@ -111,7 +111,7 @@ ORGANI = {
             # maščoba v žlebovih: stik zunanjih ploskev votlin (venčni in oba medprekatna žleba), ob venčnih žilah širša;
             # ob vejah na prosti steni prekatov le tanka sled (ne ob aorti, pljučnem deblu, pljučnih venah, lističih)
             maska=dict(zile=r"coronary (artery|sinus)|Coronary sinus|interventricular artery|Circumflex|cardiac vein|vein of left ventricle|branch of right coronary",
-                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0065, zlebZila=0.005, sled=0.3),
+                       tkiva=["miokard"], votline=r"^(Left|Right) (atrium|ventricle)$", zleb=0.0065, zlebZila=0.005, sled=0.2),
             recepti={
                 # miokard temnejši rjavkasto rdeč (žile izstopajo), vlažen a ne plastičen (hrap 0,38); maščoba izbočena
                 # rumena blazinica z režnjiči ~2,5 mm (mascaNasip + mascaPremik, kletka za daljše žarke peke)

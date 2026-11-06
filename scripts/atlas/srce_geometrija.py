@@ -202,9 +202,8 @@ def odebeli_steno(me, dodatek, rob=(0.004, 0.014), korakov=6):
     """Odebeli steno prekata (debela odprta lupina) navznoter: notranja ploskev (endokard) se premakne v votlino za
     `dodatek` metrov; zunanja ploskev (in s tem obris srca, venčne žile, maščoba) ostane. Ob obročih zaklopk (odprti
     robovi) se premik zmanjša na 0 (`rob` = od, do v metrih), da obroči in lističi ostanejo na mestu; v ozki votlini
-    (konica) je premik največ 35 % razdalje do nasprotne stene. Notranja ploskev = žarek po normali zadene isto mrežo
-    (votlina je zaprta), zunanja = žarek pobegne; razvrstitev zgladimo po sosedih (posamezni žarki skozi odprtine).
-    Vrne (premaknjenih oglišč, debelina prej v mm, mediana)."""
+    (konica) je premik največ 35 % razdalje do nasprotne stene. Razvrstitev notranja/zunanja ploskev (spodaj) zgladimo
+    po sosedih (posamezni žarki skozi odprtine). Vrne (premaknjenih oglišč, mediana debeline prej v mm)."""
     from mathutils.kdtree import KDTree
     bm = bmesh.new(); bm.from_mesh(me)
     bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
@@ -221,21 +220,21 @@ def odebeli_steno(me, dodatek, rob=(0.004, 0.014), korakov=6):
         h = tree.ray_cast(p + d * 2e-5, d, dl)
         return h[3] if h[0] is not None else None
 
-    # usmerjenost lupine: normale navzven, če večina žarkov po normali pobegne (sicer obrnemo predznak)
-    vzorec = bm.verts[:][:: max(1, n // 800)]
-    s = 1.0 if sum(zadetek(v.co, v.normal, 0.2) is None for v in vzorec) >= len(vzorec) / 2 else -1.0
+    # Smer skozi steno = krajši od žarkov po ±normali (stena je tanjša od votline), druga smer gleda v votlino.
+    # Notranja ploskev: žarek v votlino zadene nasprotno steno in točka pred steno je v zaprti votlini (≥ 6 od 8 žarkov
+    # zadene isto mrežo; vbočen del zunanje ploskve tega ne izpolni).
     smeri = [Vector(d).normalized() for d in ((1, 1, 1), (1, 1, -1), (1, -1, 1), (1, -1, -1), (-1, 1, 1), (-1, 1, -1), (-1, -1, 1), (-1, -1, -1))]
-    notri = np.zeros(n); votlina = np.full(n, 1.0); debel = []
+    notri = np.zeros(n); votlina = np.full(n, 1.0); debel = []; smer_v = [None] * n
     for v in bm.verts:
-        nn = v.normal * s
-        dv = zadetek(v.co, nn, 0.12)  # notranja: zadene nasprotno steno votline
-        dz = zadetek(v.co, -nn, 0.03)  # skozi steno: debelina
-        if dv is None or dz is None:
+        a_, b_ = zadetek(v.co, v.normal, 0.12), zadetek(v.co, -v.normal, 0.12)
+        if a_ is None or b_ is None:
             continue
-        # točka pred steno mora biti v zaprti votlini (ne v vbočenem delu zunanje ploskve): ≥ 6 od 8 žarkov zadene steno
+        nn, dv, dz = (v.normal, a_, b_) if a_ > b_ else (-v.normal, b_, a_)
+        if dz > 0.03 or dv < 1.5 * dz:
+            continue
         p = v.co + nn * min(dv / 2, 0.005)
         if sum(zadetek(p, d, 0.12) is not None for d in smeri) >= 6:
-            notri[v.index] = 1.0; votlina[v.index] = dv; debel.append(dz)
+            notri[v.index] = 1.0; votlina[v.index] = dv; debel.append(dz); smer_v[v.index] = nn.copy()
     e = np.array([(ed.verts[0].index, ed.verts[1].index) for ed in bm.edges], dtype=np.int64).reshape(-1, 2)
     st = np.maximum(np.bincount(e.ravel(), minlength=n), 1)
 
@@ -253,7 +252,11 @@ def odebeli_steno(me, dodatek, rob=(0.004, 0.014), korakov=6):
     w = gladi(w, korakov) * notri  # gladek prehod, zunanja ploskev ostane
     for v in bm.verts:
         if w[v.index] > 0:
-            v.co += v.normal * s * w[v.index]
+            nn = smer_v[v.index]
+            if nn is None:  # notranja šele po glajenju: predznak normale po sosedih
+                ref = sum((smer_v[u.index] for ed in v.link_edges for u in ed.verts if smer_v[u.index] is not None), Vector())
+                nn = v.normal if v.normal.dot(ref) >= 0 else -v.normal
+            v.co += nn * w[v.index]
     bm.to_mesh(me); bm.free()
     return int((w > 1e-5).sum()), float(np.median(debel) * 1000) if debel else 0.0
 

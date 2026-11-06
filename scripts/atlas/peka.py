@@ -8,8 +8,10 @@
 #   4. slike: baza (sRGB), normala, ORM (R = senca okolice, G = hrapavost, B = kovinskost 0), PNG brez izgub;
 #      organi.mjs jih stisne v WebP (baza q90, ORM q90, normala q97) in izvoz glTF jih zapiše kot baseColorTexture,
 #      normalTexture, occlusionTexture in metallicRoughnessTexture (ena slika ORM).
-# Recept tkiva (cfg tekstura.recepti[<tkivo>]): barva, barva2 (lise), lise (moč), maščoba (barva, moč, premik) po
-# maski »masca«, gube (premik, merilo), vlakna (premik, merilo), zilice (moč, barva), hrap, hrapMasca, sijaj.
+# Recept tkiva (cfg tekstura.recepti[<tkivo>]): barva, barva2 (lise), lise (moč), maščoba po maski (masca moč,
+# mascaBarva/mascaBarva2, mascaNasip = blazinica, mascaPremik = višina režnja, mascaMera = velikost režnja, mascaZleb =
+# barva žleba med režnji, mascaHrap), gube (premik, merilo), vlakna (premik, merilo), zilice (moč, barva), hrap,
+# notranja/notranjaHrap (endokard), kletka (razdalja žarkov peke, sicer tekstura.kletka).
 # Maske na ogliščih (barvni atribut »PEKA«: R = maščoba 0–1, G = odprtost 0 votlina … 1 zunaj) izračuna klicatelj
 # (maske()) pred razdelitvijo; razdelitev jih gladko prenese na visoko mrežo.
 import bpy, bmesh, math, os, time
@@ -191,7 +193,7 @@ def material_peke(tkivo, r, velikost):
         mc = mix(rng(sum_(0.03 * velikost, 2, 0.5, 9.1), 0.35, 0.7), r["mascaBarva"], r.get("mascaBarva2", r["mascaBarva"]))
         mb = N("ShaderNodeMix"); mb.data_type = "RGBA"; mb.blend_type = "MULTIPLY"; mb.inputs[0].default_value = 1.0
         L(mc, mb.inputs[6]); L(rng(sl.outputs[0], 0.0, 0.9, r.get("mascaZleb", 0.6), 1.0), mb.inputs[7])
-        mm = mul(rng(masca, 0.08, 0.5), r["masca"])
+        mm = mul(rng(masca, 0.15, 0.55), r["masca"])  # tanka sled ob vejah (R ≈ 0,2) ostane komaj vidna
         mm = mul(mm, rng(sum_(0.012 * velikost, 3, 0.6, 5.5), 0.25, 0.55, 0.6, 1.0))
         c = mix(mm, c, mb.outputs[2])
         hx = N("ShaderNodeMix"); hx.data_type = "FLOAT"; L(mm, hx.inputs[0]); L(hrap, hx.inputs[2]); hx.inputs[3].default_value = r["mascaHrap"]
@@ -235,10 +237,11 @@ def visoka(ime, me, tkivo, r, velikost, tmp):
             me3 = bpy.data.meshes.new_from_object(pom.evaluated_get(bpy.context.evaluated_depsgraph_get()))
             P1 = np.empty(n * 3); me3.vertices.foreach_get("co", P1); P1 = P1.reshape(-1, 3)
             st = pom.data; bpy.data.objects.remove(pom); bpy.data.meshes.remove(st); bpy.data.meshes.remove(me3); bpy.data.textures.remove(t)
+            bpy.context.view_layer.update()  # odstranjeni pomožni objekt ne sme ostati v seznamu plasti
             f1 = ((P1 - P0) * N0).sum(1)
             f1 = np.clip(f1 / max(np.percentile(f1, 97), 1e-6), 0, 1)
             lob = (1 - f1) ** 0.6  # zaobljen reženj: sredina 1, žleb med režnji 0
-            ww = np.clip((w - 0.08) / 0.6, 0, 1); ww = ww * ww * (3 - 2 * ww)
+            ww = np.clip((w - 0.15) / 0.5, 0, 1); ww = ww * ww * (3 - 2 * ww)
             P = P0 + N0 * (ww * velikost * (r["mascaNasip"] + r["mascaPremik"] * lob))[:, None]
             me2.vertices.foreach_set("co", P.ravel())
             la = me2.color_attributes.new("LOB", "FLOAT_COLOR", "POINT")
@@ -251,7 +254,8 @@ def visoka(ime, me, tkivo, r, velikost, tmp):
 
 
 def _izberi(objekti, aktiven):
-    for o in bpy.context.view_layer.objects: o.select_set(False)
+    for o in bpy.context.view_layer.objects:
+        if o is not None: o.select_set(False)
     for o in objekti: o.select_set(True)
     bpy.context.view_layer.objects.active = aktiven
 

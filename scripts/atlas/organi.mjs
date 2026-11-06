@@ -40,7 +40,8 @@ for (const organ of organi) {
       gt("webp", q, w, "--slots", "baseColorTexture", "--quality", "90", "--effort", "100");
       // ORM (senca okolice, hrapavost) je gladek podatek: q82 je na zaslonu enak q90 in ~30 % manjši (telefon ≤ 2 MB)
       gt("webp", w, w2, "--slots", "{occlusionTexture,metallicRoughnessTexture}", "--quality", "82", "--effort", "100");
-      gt("webp", w2, izhod, "--slots", "normalTexture", "--quality", "95", "--effort", "100");
+      // normalna mapa q95, telefon q92 (izbočena maščoba z režnjiči nosi več podrobnosti; telefon ostane ≤ 2 MB)
+      gt("webp", w2, izhod, "--slots", "normalTexture", "--quality", pripona ? "92" : "95", "--effort", "100");
       for (const f of [q, w, w2]) fs.rmSync(f, { force: true });
     }
     fs.rmSync(tmp, { force: true });
