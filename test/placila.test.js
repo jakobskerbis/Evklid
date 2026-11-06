@@ -19,7 +19,7 @@ const day = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10
 // Lažni Stripe + Resend. stripe.sessions / stripe.subs: kar vrneta GET /checkout/sessions/:id in /subscriptions/:id.
 function fakeStripe() {
   const calls = [];
-  const state = { sessions: {}, subs: {}, charges: {} };
+  const state = { sessions: {}, subs: {}, charges: {}, invoices: {} };
   let n = 0;
   const fetchFn = async (url, init = {}) => {
     const body = init.body ? (init.headers["Content-Type"]?.includes("json") ? JSON.parse(init.body) : Object.fromEntries(new URLSearchParams(init.body))) : null;
@@ -41,6 +41,8 @@ function fakeStripe() {
     if (p === "/subscriptions") return ok({ data: Object.values(state.subs) });
     const ch = /^\/charges\/(\w+)$/.exec(p);
     if (ch) return ok(state.charges[ch[1]] || {});
+    const inv = /^\/invoices\/(\w+)$/.exec(p);
+    if (inv) return ok(state.invoices[inv[1]] || {});
     return { ok: false, status: 404, json: async () => ({ error: { message: "ni" } }) };
   };
   return { calls, state, fetchFn };
@@ -502,5 +504,36 @@ test("brez mikrotransakcij (j 2026-11-04): dokup samo paketi in samo polnoleten;
     r = await dad(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", ...consent } });
     assert.equal(r.status, 410);
     assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM passes WHERE days = 30").get().n, 1, "nov 30-dnevni paket ne nastane");
+  });
+});
+
+// Spor pri enkratnem plačilu (dokup, paket, ki ga ni več v bazi, ker je bil profil izbrisan) ni spor pri naročnini:
+// naročnine, ki jo starš plačuje, ne prekličemo. Spor pri računu naročnine jo prekliče kot doslej.
+test("spor pri enkratnem plačilu ne prekliče naročnine; spor pri računu naročnine jo", async () => {
+  await withServer(async ({ client, stripe, store, hook }) => {
+    const a = client();
+    const parent = await registerVerified(a, stripe, "spor@enkratno.si");
+    store.db.prepare("UPDATE parents SET sub_id = 'sub_k', sub_status = 'active', sub_plan = 'evklid_1_month', stripe_customer_id = 'cus_k' WHERE id = ?").run(parent.id);
+    stripe.state.subs.sub_k = { id: "sub_k", status: "active", customer: "cus_k", items: { data: [{ price: { lookup_key: "evklid_1_month" } }] } };
+    const deleted = () => stripe.calls.filter((c) => c.method === "DELETE" && c.path.startsWith("/v1/subscriptions")).length;
+
+    // 1) Dokup, ki je bil že vrnjen (delno ali v celoti), nato spor pri istem plačilu.
+    store.db.prepare("INSERT INTO ai_credit_buys (parent_id, pack, amount, currency, credit_usd, status, payment_id) VALUES (?, 'k5', 500, 'EUR', 1, 'refunded', 'pi_c')").run(parent.id);
+    stripe.state.charges.ch_c = { id: "ch_c", customer: "cus_k", payment_intent: "pi_c", invoice: null };
+    assert.equal((await hook({ id: "evt_dc", type: "charge.dispute.created", data: { object: { payment_intent: "pi_c", charge: "ch_c" } } })).status, 200);
+    assert.equal(deleted(), 0, "spor pri dokupu je preklical naročnino");
+
+    // 2) Enkratno plačilo, ki ga v bazi ni več (paket izbrisanega profila: passes ON DELETE CASCADE).
+    stripe.state.charges.ch_p = { id: "ch_p", customer: "cus_k", payment_intent: "pi_p", invoice: null };
+    assert.equal((await hook({ id: "evt_dp", type: "charge.dispute.created", data: { object: { payment_intent: "pi_p", charge: "ch_p" } } })).status, 200);
+    assert.equal(deleted(), 0, "spor pri paketu izbrisanega profila je preklical naročnino");
+    assert.equal(store.db.prepare("SELECT sub_status FROM parents WHERE id = ?").get(parent.id).sub_status, "active");
+
+    // 3) Spor pri računu te naročnine: naročnina se prekliče.
+    stripe.state.charges.ch_s = { id: "ch_s", customer: "cus_k", payment_intent: "pi_s", invoice: "in_s" };
+    stripe.state.invoices.in_s = { id: "in_s", subscription: "sub_k" };
+    assert.equal((await hook({ id: "evt_ds", type: "charge.dispute.created", data: { object: { payment_intent: "pi_s", charge: "ch_s" } } })).status, 200);
+    assert.equal(deleted(), 1);
+    assert.equal(store.db.prepare("SELECT sub_status FROM parents WHERE id = ?").get(parent.id).sub_status, "canceled");
   });
 });

@@ -1925,7 +1925,13 @@ export function mountAccounts(app, store, opts = {}) {
         const p = parentByCustomer(charge.customer);
         const inv = charge.invoice ? await stripe.request("GET", `/invoices/${typeof charge.invoice === "string" ? charge.invoice : charge.invoice.id}`) : null;
         const disputedSub = typeof inv?.subscription === "string" ? inv.subscription : inv?.subscription?.id;
-        if (p?.sub_id && PAID.has(p.sub_status) && (p.sub_provider || "stripe") === "stripe" && (!disputedSub || disputedSub === p.sub_id)) {
+        // Plačilo brez računa naročnine je enkratno (dokup, ki je že vrnjen, paket izbrisanega profila …): naročnine, ki
+        // jo starš plačuje, ne prekličemo zaradi spora pri drugem nakupu; skrbnik ga reši v Stripu.
+        if (!disputedSub) {
+          log.error?.("[evklid] spor pri enkratnem plačilu, ki ga v bazi ni (naročnina ostane)", p?.id ?? null, obj.payment_intent || obj.charge);
+          break;
+        }
+        if (p?.sub_id && PAID.has(p.sub_status) && (p.sub_provider || "stripe") === "stripe" && disputedSub === p.sub_id) {
           const sub = await stripe.request("DELETE", `/subscriptions/${p.sub_id}`);
           await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } });
           log.error?.("[evklid] spor pri plačilu: naročnina preklicana", p.id);
