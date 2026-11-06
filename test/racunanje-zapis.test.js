@@ -95,10 +95,47 @@ test("P4: vodilna ničla (»0.500«, »-0.250«) je vedno decimalni zapis", () =
   assert.equal(kind({ type: "number", value: 2500 }, "2.500"), "correct");
 });
 
-test("P4: »2.500« pri zaokroževanju na dve decimalki dobi namig za zaokroževanje", () => {
+test("P4/N3: »2.500« pri zaokroževanju na manj kot 3 decimalke ne pohvali izračuna in ne razkrije rezultata", () => {
+  // 0 ali 1 decimalka: »2.500« skoraj gotovo ni decimalna pika, ampak pozabljena pretvorba (2500 m namesto 2,5 km)
+  for (const d of [0, 1]) {
+    const r = checkAnswer({ type: "number", value: 2.5, decimals: d }, "2.500");
+    assert.equal(r.kind, "wrong", `decimals ${d}`);
+    assert.equal(r.mistake?.code, "chk.magnitudeBig", `decimals ${d}`);
+    assert.equal(r.reveal, undefined);
+  }
+  // 2 decimalki: dvoumno (2500 ali 2,500 z decimalko preveč) – napačno, a brez namiga, ki bi bil lahko napačen
   const r = checkAnswer({ type: "number", value: 2.5, decimals: 2 }, "2.500");
-  assert.equal(r.kind, "rounding");
-  assert.equal(r.reveal, "2,50");
+  assert.equal(r.kind, "wrong");
+  assert.equal(r.mistake, undefined);
+  assert.equal(r.reveal, undefined);
+  // pri 3 decimalkah ostane decimalno branje
+  assert.equal(kind({ type: "number", value: 2.5, decimals: 3 }, "2.500"), "correct");
+  assert.equal(kind({ type: "number", value: 2.5004, decimals: 3 }, "2.500"), "correct");
+  assert.equal(kind({ type: "number", value: 2.5006, decimals: 3 }, "2.500"), "rounding");
+});
+
+test("N1: pika za tisočice v besedilu naloge – inštruktor ne dobi napačnega »WRONG«", () => {
+  assert.equal(presolve("Reši 2x = 1.000"), null);
+  assert.equal(presolve("Reši x - 1.200 = -600"), null);
+  assert.equal(presolve("Reši 2x + 3 = 5.003"), null);
+  assert.equal(claimNote("x = 500", presolve("Reši 2x = 1.000")), null);
+  // nedvoumni zapisi ostanejo
+  assert.equal(presolve("Reši 2x = 1.5").problems[0].answerTex, "x = \\frac{3}{4}");
+  assert.equal(presolve("Reši 8x = 0.125").problems[0].answerTex, "x = \\frac{1}{64}");
+  assert.match(claimNote("x = 1.234,5", presolve("Reši 2x = 2469")), /CORRECT/);
+});
+
+test("N2: število v indeksu ali potenci (log_2 8, sin^2 30) ni nejasen zapis", () => {
+  assert.equal(evaluate("log_2 8", {}).value, 3);
+  assert.ok(Math.abs(evaluate("log_10 100", {}).value - 2) < 1e-12);
+  assert.ok(Math.abs(evaluate("log_2 100", {}).value - Math.log2(100)) < 1e-12);
+  assert.ok(Number.isFinite(evaluate("sin^2 30", {}).value));
+  assert.ok(Math.abs(evaluate("log_2 1 000", {}).value - Math.log2(1000)) < 1e-12);
+  assert.ok(!unclearNumber("sin^2 30°") && !unclearNumber("log_2 8"));
+  const r = solve("sin^2 30°");
+  assert.ok(r.ok, "skener sin^2 30°");
+  // nejasni zapisi ostanejo nejasni
+  for (const x of ["12 34 + 1", "2 1/2 + 1", "12 345,678 9"]) assert.ok(unclearNumber(x), x);
 });
 
 test("K1: »x = 1.250« (tisočice s piko) ni »WRONG« v opombi inštruktorju", () => {
@@ -125,6 +162,18 @@ test("P5: velike črke pri enotah brez predpone (Min, Mol, M, M/S, M2, DM3) osta
   assert.equal(kind({ type: "number", value: 5, unit: "m²" }, "5 M2"), "correct");
   assert.equal(kind({ type: "number", value: 5, unit: "dm³" }, "5 DM3"), "correct");
   assert.equal(kind({ type: "number", value: 5, unit: "mmol" }, "5 Mmol"), "unit");
+});
+
+test("N4: zapis z vsemi velikimi (ali malimi) črkami pri enoti s predpono m/M ni napačna enota", () => {
+  assert.equal(kind({ type: "number", value: 5, unit: "mm" }, "5 MM"), "correct");
+  assert.equal(kind({ type: "number", value: 5, unit: "mg" }, "5 MG"), "correct");
+  assert.equal(kind({ type: "number", value: 5, unit: "mmol" }, "5 MMOL"), "correct");
+  assert.equal(kind({ type: "number", value: 5, unit: "MHz" }, "5 mhz"), "correct");
+  assert.equal(kind({ type: "number", value: 5, unit: "MJ" }, "5 mj"), "correct");
+  // če se preostanek enote ujema v velikosti črk, m/M še vedno šteje
+  assert.equal(kind({ type: "number", value: 5, unit: "mJ" }, "5 MJ"), "unit");
+  assert.equal(kind({ type: "number", value: 5, unit: "mm" }, "5 Mm"), "unit");
+  assert.equal(kind({ type: "number", value: 5, unit: "ms" }, "5 Ms"), "unit");
 });
 
 test("K1: skener in kalkulator ne ugibata pri nejasnem zapisu števila", () => {

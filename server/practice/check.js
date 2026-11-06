@@ -49,7 +49,10 @@ export function sameUnit(a, b) {
   for (let i = 0; i < x.length; i++) {
     if (x[i] === y[i] || !/m/i.test(x[i])) continue;
     const rest = x.slice(i).toLowerCase();
-    if (/^\p{L}/u.test(rest.slice(1)) && !/^m(?:in|ol)(?!\p{L})/u.test(rest)) return false;
+    if (!/^\p{L}/u.test(rest.slice(1)) || /^m(?:in|ol)(?!\p{L})/u.test(rest)) continue;
+    // Razlika m/M šteje le, če se preostanek enote ujema tudi v velikosti črk (mJ/MJ, mm/Mm).
+    // »MM«, »MG«, »mhz«: učenec ne pazi na velikost črk, zato zapis sprejmemo.
+    if (x.slice(0, i) + x.slice(i + 1) === y.slice(0, i) + y.slice(i + 1)) return false;
   }
   return true;
 }
@@ -103,19 +106,26 @@ function checkNumber(ans, input) {
   // angleščini, arabščini, urdujščini). Decimalno branje upoštevamo samo, kadar rezultat res ima tri
   // decimalke (zahtevano zaokroževanje ali točna vrednost, kot 12,345): sicer je »2.500« za 2,5 najverjetneje
   // pozabljena pretvorba enot (2500 m namesto 2,5 km) in učenec dobi namig o velikostnem redu.
-  // Pri zahtevanem zaokroževanju dobi namig za zaokroževanje (»2.500« pri dveh decimalkah).
-  if (res.kind !== "correct" && !ans.dot && threeDecimals(ans) && /^[+-]?[1-9]\d{0,2}\.\d{3}(?!\d)/.test(westernDigits(String(input).trim()).replace(/−/g, "-"))) {
+  // Pri zaokroževanju na 0 ali 1 decimalko »2.500« skoraj gotovo ni decimalna pika: namig o velikostnem redu.
+  // Pri dveh decimalkah je zapis dvoumen (2500 ali 2,500 z decimalko preveč): napačno, a brez namiga, ki bi
+  // lahko bil napačen (»izračun je pravilen« z razkritim rezultatom ali »1000-krat prevelik«).
+  const dotLike = res.kind !== "correct" && !ans.dot && /^[+-]?[1-9]\d{0,2}\.\d{3}(?!\d)/.test(westernDigits(String(input).trim()).replace(/−/g, "-"));
+  if (dotLike && threeDecimals(ans)) {
     const q = parseNumberWithUnit(input, { dot: true });
     const alt = q && checkParsed(ans, q);
     if (alt?.kind === "correct" || alt?.kind === "rounding") return alt;
+  } else if (dotLike && ans.decimals === 2 && res.kind === "wrong") {
+    const q = parseNumberWithUnit(input, { dot: true });
+    const alt = q && checkParsed(ans, q);
+    if (alt?.kind === "rounding") return { kind: "wrong" };
   }
   return res;
 }
 
-// Ima pravilni odgovor lahko tri decimalke? Da, kadar je zaokroževanje zahtevano ali kadar točna vrednost
-// potrebuje natanko tri decimalke (12,345, 0,125; ne pa 2,5 ali 2500).
+// Ima pravilni odgovor lahko tri decimalke? Da, kadar je zahtevano zaokroževanje na vsaj 3 decimalke ali kadar
+// točna vrednost potrebuje natanko tri decimalke (12,345, 0,125; ne pa 2,5 ali 2500).
 function threeDecimals(ans) {
-  if (ans.decimals !== undefined && ans.decimals !== null) return true;
+  if (ans.decimals !== undefined && ans.decimals !== null) return ans.decimals >= 3;
   const whole = (x) => Math.abs(x - Math.round(x)) <= 1e-9 * Math.max(1, Math.abs(x));
   return [ans.value, ...(ans.alsoAccept || [])].some((e) => Number.isFinite(e) && whole(e * 1000) && !whole(e * 100));
 }

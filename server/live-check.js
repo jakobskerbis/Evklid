@@ -90,6 +90,8 @@ function trySolve(cand, deriv) {
   // »1 000« je tisoč; presledek med števkami, ki ni zapis tisočic (»12 34«), ni jasen: raje nič kot napačen »preverjen« rezultat
   let c = joinThousands(cand.replace(/\s+in\s+(?=[^=]*=)/g, "; ").trim());
   if (digitGap(c)) return null;
+  // »2x = 1.000«: v Sloveniji je to tisoč, razčlenjevalnik pa bi bral 1,0 – dvoumno, zato brez »preverjenega« rezultata
+  if (/(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/.test(c)) return null;
   if (!mathOnly(c)) return null;
   if (/^\s*d\/d[a-z]/i.test(c)) deriv = true;
   const hasEq = c.includes("=");
