@@ -610,6 +610,7 @@ export class Usage {
     const keys = capsFn().map((c) => c.key);
     const self = this;
     let held = 0;
+    let row = null;
     const add = (usd) => {
       for (const k of keys) {
         const v = (self.inflight.get(k) || 0) + usd;
@@ -617,6 +618,7 @@ export class Usage {
         else self.inflight.delete(k);
       }
       held += usd;
+      if (studentId != null) self.persistHold(row, studentId, held, (id) => (row = id));
     };
     return {
       take(usd) {
@@ -636,6 +638,43 @@ export class Usage {
         return held;
       },
     };
+  }
+  // Rezervacija v bazi (ai_holds): ob ponovnem zagonu med klicem se strošek ne izgubi (pregled #462 S4).
+  persistHold(row, studentId, held, setRow) {
+    try {
+      if (held > 1e-12) {
+        if (row == null) setRow(Number(this.db.prepare("INSERT INTO ai_holds (student_id, usd) VALUES (?, ?)").run(studentId, held).lastInsertRowid));
+        else this.db.prepare("UPDATE ai_holds SET usd = ? WHERE id = ?").run(held, row);
+      } else if (row != null) {
+        this.db.prepare("DELETE FROM ai_holds WHERE id = ?").run(row);
+        setRow(null);
+      }
+    } catch {
+      // brez tabele (stara baza v testu): samo v pomnilniku
+    }
+  }
+  // Ob zagonu strežnika: rezervacije prejšnjega procesa (klic je morda tekel in bil plačan) se zapišejo kot poraba
+  // profila v višini rezerve (zgornja meja). En primerek strežnika (SQLite), zato so vse vrstice ob zagonu ostanki.
+  recoverHolds() {
+    try {
+      const rows = this.db.prepare("SELECT id, student_id, usd FROM ai_holds").all();
+      const col = (t, c) => this.db.prepare(`PRAGMA table_info(${t})`).all().some((x) => x.name === c);
+      const withParent = col("usage", "parent_id") && col("students", "parent_id");
+      for (const r of rows) {
+        if (r.student_id != null && r.usd > 0 && this.db.prepare("SELECT 1 FROM students WHERE id = ?").get(r.student_id)) {
+          if (withParent)
+            this.db
+              .prepare("INSERT INTO usage (student_id, model, kind, cost_usd, parent_id) VALUES (?, 'rezerva', 'prekinjeno', ?, (SELECT parent_id FROM students WHERE id = ?))")
+              .run(r.student_id, r.usd, r.student_id);
+          else this.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'rezerva', 'prekinjeno', ?)").run(r.student_id, r.usd);
+        }
+      }
+      this.db.prepare("DELETE FROM ai_holds").run();
+      if (rows.length) console.warn(`[evklid] ob zagonu zapisanih ${rows.length} rezervacij klicev AI iz prejšnjega procesa`);
+      return rows.length;
+    } catch {
+      return 0;
+    }
   }
   summary() {
     const month = "u.created_at >= date('now','start of month')";

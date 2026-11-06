@@ -118,3 +118,26 @@ test("A5: DDV po državi kupca in tečaji z rezervo (sveži 10 %, stalni 20 %)",
   assert.ok(Math.abs(P.eurPerUnitNow("INR") - P.EUR_PER_UNIT.INR * 0.8) < 1e-12, "starejši od 14 dni: stalni");
   P.setFxRates({}, 0);
 });
+
+test("S4: rezervacija klica je v bazi; ob ponovnem zagonu se ostanek zapiše kot poraba", async () => {
+  const { openDb } = await import("../server/db.js");
+  const { Usage } = await import("../server/usage.js");
+  const store = openDb(":memory:");
+  const s = store.createStudent("Ana");
+  const u = new Usage(store.db);
+  u.configure({ capsOf: () => [{ key: "x", usd: 5, spent: 0 }] });
+  const h = u.hold(s.id);
+  assert.ok(h.take(0.3));
+  assert.equal(store.db.prepare("SELECT usd FROM ai_holds").get().usd, 0.3);
+  h.settle(0.1);
+  assert.ok(Math.abs(store.db.prepare("SELECT usd FROM ai_holds").get().usd - 0.2) < 1e-12);
+  // Strežnik se ustavi med klicem: nov proces najde ostanek.
+  const again = new Usage(store.db);
+  assert.equal(again.recoverHolds(), 1);
+  assert.ok(Math.abs(again.monthTotal(s.id) - 0.2) < 1e-12, "zapisano kot poraba profila");
+  assert.equal(store.db.prepare("SELECT COUNT(*) n FROM ai_holds").get().n, 0);
+  const h2 = u.hold(s.id);
+  h2.take(0.1);
+  h2.release();
+  assert.equal(store.db.prepare("SELECT COUNT(*) n FROM ai_holds").get().n, 0, "sproščeno: brez vrstice");
+});

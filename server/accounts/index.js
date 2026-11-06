@@ -472,7 +472,7 @@ export function mountAccounts(app, store, opts = {}) {
     return p ? billing.passes.spentUsd(p) - passCapUsd(p) : null;
   }
   aiUsage.configure({ blockFor: aiBlockFor, creditOverOf: passCreditOver });
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, onLog: () => schools.clearCache() });
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, onLog: () => (schools.clearCache(), poolMemo.clear()) });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
@@ -568,12 +568,24 @@ export function mountAccounts(app, store, opts = {}) {
     return guests.monthUsd(scope.ids, scope.net) + (scope.net ? 0 : aiUsage.orphanSpent(owner));
   }
   // Poraba vseh profilov brez plačila (preizkus, koda, bonus) ta mesec, za skupni bazen (meje-ai.js nopayPoolUsd).
+  // Skupna bazena seštejeta porabo vseh profilov (pregled #462 A10: pri tisočih profilih tisoče poizvedb na klic):
+  // vsota se hrani do 30 s ali do naslednjega zapisa porabe (onLog spodaj), zato ostane meja trda.
+  const poolMemo = new Map();
+  const memo = (key, fn) => {
+    const hit = poolMemo.get(key);
+    if (hit && Date.now() - hit.at < 30_000) return hit.v;
+    const v = fn();
+    poolMemo.set(key, { v, at: Date.now() });
+    return v;
+  };
   function nopayPoolSpent() {
-    return monthUsdByStudent().filter((r) => r.id != null && subGuarantee(r.id)?.nopay).reduce((t, r) => t + r.usd, 0);
+    return memo("nopay", () => monthUsdByStudent().filter((r) => r.id != null && subGuarantee(r.id)?.nopay).reduce((t, r) => t + r.usd, 0));
   }
   function freePoolSpent() {
-    const gone = db.prepare("SELECT COALESCE(SUM(usd),0) AS usd FROM guest_spent WHERE day >= date('now','start of month')").get().usd;
-    return monthUsdByStudent().filter((r) => r.id != null && !aiPremiumFor(r.id)).reduce((t, r) => t + r.usd, gone);
+    return memo("free", () => {
+      const gone = db.prepare("SELECT COALESCE(SUM(usd),0) AS usd FROM guest_spent WHERE day >= date('now','start of month')").get().usd;
+      return monthUsdByStudent().filter((r) => r.id != null && !aiPremiumFor(r.id)).reduce((t, r) => t + r.usd, gone);
+    });
   }
   // Meja velja že, ko ne ostane prostora niti za najcenejši klic (trda meja, server/meje-ai.js).
   function freeBudgetInfo(studentId) {

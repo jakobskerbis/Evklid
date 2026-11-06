@@ -1098,13 +1098,13 @@ test("preizkus, koda in bonus: skupni bazen vseh računov brez plačila", async 
       const bor = kid("Bor", "OS", YEAR - 11);
       db.prepare("UPDATE parents SET trial_ends_at = ? WHERE id = ?").run(new Date(Date.now() + 3 * 86400000).toISOString(), pid);
       assert.ok(api.aiUsage.capsFor(ana).some((c) => c.key === "nopaypool"));
-      db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku-5-5', 'chat', 0.25)").run(bor);
+      api.aiUsage.log(bor, "claude-haiku-5-5", { output_tokens: 500_000 }, "chat"); // 0,25 $ (zapis počisti vsoto bazena)
       // Izčrpan bazen (pregled #462 L4): ne zaklene, profil dobi meje brezplačnega paketa.
       const keys = api.aiUsage.capsFor(ana).map((c) => c.key);
       assert.ok(!keys.includes("nopaypool") && keys.includes("freepool"), keys.join());
       assert.equal(api.aiUsage.hardBlock(ana), null);
       // Poraba nad bazenom šteje v skupno mejo brezplačnih (10 $): bazen ne zraste brez meje.
-      db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku-5-5', 'chat', 10)").run(bor);
+      api.aiUsage.log(bor, "claude-haiku-5-5", { output_tokens: 20_000_000 }, "chat"); // 10 $
       const free = api.aiUsage.capsFor(ana).find((c) => c.key === "freepool");
       assert.ok(free.spent >= 10, `nad bazenom: ${free.spent}`);
     });

@@ -230,6 +230,14 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
     );
   `);
   // Vprašanja inštruktorju na dan (dnevne meje): ostanejo šteta tudi po izbrisu pogovora ali prekinjenem odgovoru.
+  // Rezervacije klicev AI v teku (server/usage.js hold, pregled #462 S4): ob ponovnem zagonu med klicem bi se strošek
+  // sicer ne zapisal; ob zagonu se ostanek zapiše kot poraba (zgornja meja, recoverHolds).
+  db.exec(`CREATE TABLE IF NOT EXISTS ai_holds (
+      id INTEGER PRIMARY KEY,
+      student_id INTEGER,
+      usd REAL NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );`);
   // Migracija: nova tabela dobi današnja vprašanja iz obstoječih pogovorov, da se števec ob posodobitvi ne ponastavi.
   const hadQuestionLog = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'question_log'").get();
   db.exec(`CREATE TABLE IF NOT EXISTS question_log (
