@@ -3703,5 +3703,20 @@
   "a3.grp.jetrne-zile": "Jaterní cévy",
   "a3.grp.organeli": "Organely",
   "a3.grp.membrane": "Membrány",
-  "a3.grp.jedro-celice": "Jádro a jeho části"
+  "a3.grp.jedro-celice": "Jádro a jeho části",
+  "a3.grp.ovoj-celice": "Obal buňky",
+  "a3.grp.dedni-zapis": "Genetická informace",
+  "a3.grp.gibala": "Pohyb",
+  "a3.grp.mehurcki": "Vakuoly",
+  "a3.grp.stiki-celic": "Buněčné spoje",
+  "a3.grp.izrastki": "Výběžky",
+  "a3.grp.ovoj-aksona": "Obal axonu",
+  "a3.grp.zunanji-clenki": "Vnější segmenty",
+  "a3.grp.sarkomera": "Sarkomera",
+  "a3.grp.zrnca": "Granula",
+  "a3.grp.beljakovine-ovojnice": "Proteiny obalu",
+  "a3.grp.encimi": "Enzymy",
+  "a3.grp.ovoji-virusa": "Vrstvy viru",
+  "a3.grp.rep": "Ocas",
+  "a3.grp.gostitelj": "Hostitelská bakterie"
 }

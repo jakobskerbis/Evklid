@@ -43,6 +43,83 @@ export const SKUPINE = {
     { id: "organeli", deli: ["mitohondrij", "golgi", "er", "kloroplast", "ribosomi", "vakuola"], sinonimi: ["celični organeli", "organele"] },
     { id: "membrane", deli: ["membrana", "tonoplast"], sinonimi: ["ovojnice", "celične membrane"] },
     { id: "jedro-celice", deli: ["jedro", "jedrce", "kromatin"], sinonimi: ["celično jedro z deli", "deli jedra"] },
+    { id: "ovoj-celice", deli: ["celicna-stena", "membrana"], sinonimi: ["celični ovoj", "stena in membrana", "ovojnica celice"] },
+  ],
+  "celica-bakterijska": [
+    { id: "ovoj-celice", deli: ["kapsula", "celicna-stena", "membrana"], sinonimi: ["celični ovoj", "stena in membrana", "ovojnica celice"] },
+    { id: "dedni-zapis", deli: ["nukleoid", "plazmidi"], sinonimi: ["dedna snov", "genom", "DNK in RNK", "genski material"] },
+    { id: "gibala", deli: ["bicki", "bazalno-telo"], sinonimi: ["gibanje", "za gibanje", "deli za premikanje"] },
+  ],
+  "celica-ameba": [
+    { id: "mehurcki", deli: ["krcljivi-mehurcek", "prebavni-mehurcki"], sinonimi: ["vakuole", "krčljivi in prebavni mehurčki"] },
+  ],
+  "celica-paramecij": [
+    { id: "mehurcki", deli: ["krcljivi-mehurcek", "prebavni-mehurcki"], sinonimi: ["vakuole", "krčljivi in prebavni mehurčki"] },
+    { id: "jedro-celice", deli: ["makronukleus", "makronukleus-notranjost", "mikronukleus"], sinonimi: ["celično jedro z deli", "deli jedra"] },
+  ],
+  "celica-evglena": [
+    { id: "organeli", deli: ["kloroplasti", "krcljivi-mehurcek", "ocesna-pega", "svetlobno-cutilo"], sinonimi: ["celični organeli", "organele"] },
+    { id: "jedro-celice", deli: ["jedro", "jedrce"], sinonimi: ["celično jedro z deli", "deli jedra"] },
+  ],
+  "celica-casasta": [
+    { id: "organeli", deli: ["zrnati-er", "ribosomi", "golgi", "mitohondrij", "zrnca-sluzi"], sinonimi: ["celični organeli", "organele"] },
+  ],
+  "celica-epitelna": [
+    { id: "organeli", deli: ["mitohondrij", "zrnati-er", "ribosomi", "golgi"], sinonimi: ["celični organeli", "organele"] },
+    { id: "stiki-celic", deli: ["tesni-stiki", "dezmosomi"], sinonimi: ["medcelični stiki", "stiki med celicami"] },
+  ],
+  "celica-koreninski-lasek": [
+    { id: "organeli", deli: ["vakuola", "mitohondrij", "mesicki"], sinonimi: ["celični organeli", "organele"] },
+    { id: "ovoj-celice", deli: ["stena", "membrana"], sinonimi: ["celični ovoj", "stena in membrana", "ovojnica celice"] },
+    { id: "jedro-celice", deli: ["jedro", "jedrce"], sinonimi: ["celično jedro z deli", "deli jedra"] },
+  ],
+  "celica-kvasovka": [
+    { id: "organeli", deli: ["vakuola", "mitohondriji", "er", "ribosomi", "lipidne-kapljice"], sinonimi: ["celični organeli", "organele"] },
+    { id: "ovoj-celice", deli: ["celicna-stena", "membrana"], sinonimi: ["celični ovoj", "stena in membrana", "ovojnica celice"] },
+    { id: "jedro-celice", deli: ["jedro", "jedrce"], sinonimi: ["celično jedro z deli", "deli jedra"] },
+  ],
+  "celica-nevron": [
+    { id: "organeli", deli: ["nisslova-telesca", "mitohondriji"], sinonimi: ["celični organeli", "organele"] },
+    { id: "jedro-celice", deli: ["jedro", "nukleoplazma", "jedrce"], sinonimi: ["celično jedro z deli", "deli jedra"] },
+    { id: "izrastki", deli: ["dendriti", "akson", "koncne-razvejitve", "sinapticni-koncici"], sinonimi: ["nevriti", "dendriti in akson", "živčni izrastki"] },
+    { id: "ovoj-aksona", deli: ["mielinska-ovojnica", "schwannova-celica", "ranvierjev-zazemek"], sinonimi: ["mielin", "mielinski ovoj", "ovojnica aksona"] },
+  ],
+  "celica-palicica-cepek": [
+    { id: "zunanji-clenki", deli: ["zunanji-clenek-palicice", "diski-rodopsin", "zunanji-clenek-cepka", "gube-jodopsin"], sinonimi: ["vidni pigmenti", "rodopsin in jodopsin", "zunanji del čutnic"] },
+    { id: "jedro-celice", deli: ["jedro", "nukleoplazma"], sinonimi: ["celično jedro z deli", "deli jedra"] },
+  ],
+  "celica-palisadna": [
+    { id: "organeli", deli: ["kloroplast", "mitohondrij", "vakuola"], sinonimi: ["celični organeli", "organele"] },
+    { id: "ovoj-celice", deli: ["stena", "membrana"], sinonimi: ["celični ovoj", "stena in membrana", "ovojnica celice"] },
+    { id: "jedro-celice", deli: ["jedro", "jedrce"], sinonimi: ["celično jedro z deli", "deli jedra"] },
+  ],
+  "celica-skeletno-misicno-vlakno": [
+    { id: "sarkomera", deli: ["z-linija", "aktin", "miozin", "miozinske-glavice", "m-linija", "titin", "pas-a", "pas-i", "cona-h"], sinonimi: ["sarkomere", "deli sarkomere", "aktin in miozin", "progavost"] },
+    { id: "organeli", deli: ["mitohondriji", "sarkoplazemski-retikulum", "t-cevke"], sinonimi: ["celični organeli", "organele"] },
+  ],
+  "celica-srcna-misicna": [
+    { id: "jedro-celice", deli: ["jedro", "nukleoplazma"], sinonimi: ["celično jedro z deli", "deli jedra"] },
+    { id: "organeli", deli: ["mitohondriji", "miofibrile"], sinonimi: ["celični organeli", "organele"] },
+  ],
+  "celica-trombocit": [
+    { id: "zrnca", deli: ["alfa-zrnca", "gosta-zrnca"], sinonimi: ["granule", "zrnca trombocita"] },
+    { id: "organeli", deli: ["alfa-zrnca", "gosta-zrnca", "mitohondrij", "ocs"], sinonimi: ["celični organeli", "organele"] },
+  ],
+  "celica-zapiralka": [
+    { id: "organeli", deli: ["kloroplasti", "vakuola"], sinonimi: ["celični organeli", "organele"] },
+  ],
+  "virus-hiv": [
+    { id: "beljakovine-ovojnice", deli: ["gp120", "gp41"], sinonimi: ["glikoproteini", "beljakovine na površini", "konice"] },
+    { id: "encimi", deli: ["reverzna-transkriptaza", "integraza"], sinonimi: ["virusni encimi"] },
+    { id: "ovoji-virusa", deli: ["ovojnica", "matriks", "kapsida"], sinonimi: ["plasti virusa", "ovojnica in kapsida"] },
+  ],
+  "virus-sars-cov-2": [
+    { id: "beljakovine-ovojnice", deli: ["beljakovina-s", "beljakovina-m", "beljakovina-e"], sinonimi: ["beljakovine na površini", "konice", "strukturne beljakovine"] },
+    { id: "dedni-zapis", deli: ["rnk", "nukleokapsida"], sinonimi: ["dedna snov", "genom", "DNK in RNK", "genski material"] },
+  ],
+  "virus-bakteriofag-t4": [
+    { id: "rep", deli: ["vrat", "plasc", "cevka", "bazalna-plosca", "dolga-vlakna", "kratka-vlakna"], sinonimi: ["rep faga", "repna vlakna", "deli repa"] },
+    { id: "gostitelj", deli: ["stena-bakterije", "membrana-bakterije"], sinonimi: ["bakterija", "gostiteljska celica"] },
   ],
 };
 

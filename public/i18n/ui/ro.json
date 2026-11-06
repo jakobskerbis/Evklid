@@ -3675,5 +3675,20 @@
   "a3.grp.jetrne-zile": "Vase hepatice",
   "a3.grp.organeli": "Organite",
   "a3.grp.membrane": "Membrane",
-  "a3.grp.jedro-celice": "Nucleul și părțile lui"
+  "a3.grp.jedro-celice": "Nucleul și părțile lui",
+  "a3.grp.ovoj-celice": "Învelișul celulei",
+  "a3.grp.dedni-zapis": "Material genetic",
+  "a3.grp.gibala": "Locomoție",
+  "a3.grp.mehurcki": "Vacuole",
+  "a3.grp.stiki-celic": "Joncțiuni celulare",
+  "a3.grp.izrastki": "Prelungiri",
+  "a3.grp.ovoj-aksona": "Teaca axonului",
+  "a3.grp.zunanji-clenki": "Segmente externe",
+  "a3.grp.sarkomera": "Sarcomer",
+  "a3.grp.zrnca": "Granule",
+  "a3.grp.beljakovine-ovojnice": "Proteine ale învelișului",
+  "a3.grp.encimi": "Enzime",
+  "a3.grp.ovoji-virusa": "Straturile virusului",
+  "a3.grp.rep": "Coadă",
+  "a3.grp.gostitelj": "Bacterie gazdă"
 }

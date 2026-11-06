@@ -3613,5 +3613,20 @@
   "a3.grp.jetrne-zile": "肝臓の血管",
   "a3.grp.organeli": "細胞小器官",
   "a3.grp.membrane": "膜",
-  "a3.grp.jedro-celice": "核とその部分"
+  "a3.grp.jedro-celice": "核とその部分",
+  "a3.grp.ovoj-celice": "細胞の外被",
+  "a3.grp.dedni-zapis": "遺伝物質",
+  "a3.grp.gibala": "運動器官",
+  "a3.grp.mehurcki": "液胞",
+  "a3.grp.stiki-celic": "細胞間結合",
+  "a3.grp.izrastki": "突起",
+  "a3.grp.ovoj-aksona": "軸索の鞘",
+  "a3.grp.zunanji-clenki": "外節",
+  "a3.grp.sarkomera": "サルコメア",
+  "a3.grp.zrnca": "顆粒",
+  "a3.grp.beljakovine-ovojnice": "エンベロープタンパク質",
+  "a3.grp.encimi": "酵素",
+  "a3.grp.ovoji-virusa": "ウイルスの層",
+  "a3.grp.rep": "尾部",
+  "a3.grp.gostitelj": "宿主細菌"
 }

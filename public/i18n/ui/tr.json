@@ -3639,5 +3639,20 @@
   "a3.grp.jetrne-zile": "Karaciğer damarları",
   "a3.grp.organeli": "Organeller",
   "a3.grp.membrane": "Zarlar",
-  "a3.grp.jedro-celice": "Çekirdek ve kısımları"
+  "a3.grp.jedro-celice": "Çekirdek ve kısımları",
+  "a3.grp.ovoj-celice": "Hücre zarfı",
+  "a3.grp.dedni-zapis": "Kalıtım materyali",
+  "a3.grp.gibala": "Hareket yapıları",
+  "a3.grp.mehurcki": "Kofullar",
+  "a3.grp.stiki-celic": "Hücre bağlantıları",
+  "a3.grp.izrastki": "Uzantılar",
+  "a3.grp.ovoj-aksona": "Akson kılıfı",
+  "a3.grp.zunanji-clenki": "Dış segmentler",
+  "a3.grp.sarkomera": "Sarkomer",
+  "a3.grp.zrnca": "Granüller",
+  "a3.grp.beljakovine-ovojnice": "Zarf proteinleri",
+  "a3.grp.encimi": "Enzimler",
+  "a3.grp.ovoji-virusa": "Virüs katmanları",
+  "a3.grp.rep": "Kuyruk",
+  "a3.grp.gostitelj": "Konak bakteri"
 }

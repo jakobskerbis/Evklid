@@ -3613,5 +3613,20 @@
   "a3.grp.jetrne-zile": "肝血管",
   "a3.grp.organeli": "细胞器",
   "a3.grp.membrane": "膜",
-  "a3.grp.jedro-celice": "细胞核及其结构"
+  "a3.grp.jedro-celice": "细胞核及其结构",
+  "a3.grp.ovoj-celice": "细胞外被",
+  "a3.grp.dedni-zapis": "遗传物质",
+  "a3.grp.gibala": "运动结构",
+  "a3.grp.mehurcki": "液泡",
+  "a3.grp.stiki-celic": "细胞连接",
+  "a3.grp.izrastki": "突起",
+  "a3.grp.ovoj-aksona": "轴突鞘",
+  "a3.grp.zunanji-clenki": "外节",
+  "a3.grp.sarkomera": "肌节",
+  "a3.grp.zrnca": "颗粒",
+  "a3.grp.beljakovine-ovojnice": "包膜蛋白",
+  "a3.grp.encimi": "酶",
+  "a3.grp.ovoji-virusa": "病毒层",
+  "a3.grp.rep": "尾部",
+  "a3.grp.gostitelj": "宿主细菌"
 }

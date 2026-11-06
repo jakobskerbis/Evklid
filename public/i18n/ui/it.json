@@ -3642,5 +3642,20 @@
   "a3.grp.jetrne-zile": "Vasi epatici",
   "a3.grp.organeli": "Organuli",
   "a3.grp.membrane": "Membrane",
-  "a3.grp.jedro-celice": "Nucleo e sue parti"
+  "a3.grp.jedro-celice": "Nucleo e sue parti",
+  "a3.grp.ovoj-celice": "Involucro cellulare",
+  "a3.grp.dedni-zapis": "Materiale genetico",
+  "a3.grp.gibala": "Locomozione",
+  "a3.grp.mehurcki": "Vacuoli",
+  "a3.grp.stiki-celic": "Giunzioni cellulari",
+  "a3.grp.izrastki": "Prolungamenti",
+  "a3.grp.ovoj-aksona": "Guaina dell’assone",
+  "a3.grp.zunanji-clenki": "Segmenti esterni",
+  "a3.grp.sarkomera": "Sarcomero",
+  "a3.grp.zrnca": "Granuli",
+  "a3.grp.beljakovine-ovojnice": "Proteine dell’involucro",
+  "a3.grp.encimi": "Enzimi",
+  "a3.grp.ovoji-virusa": "Strati del virus",
+  "a3.grp.rep": "Coda",
+  "a3.grp.gostitelj": "Batterio ospite"
 }

@@ -3641,5 +3641,20 @@
   "a3.grp.jetrne-zile": "Lebergefäße",
   "a3.grp.organeli": "Organellen",
   "a3.grp.membrane": "Membranen",
-  "a3.grp.jedro-celice": "Zellkern mit Teilen"
+  "a3.grp.jedro-celice": "Zellkern mit Teilen",
+  "a3.grp.ovoj-celice": "Zellhülle",
+  "a3.grp.dedni-zapis": "Erbgut",
+  "a3.grp.gibala": "Fortbewegung",
+  "a3.grp.mehurcki": "Vakuolen",
+  "a3.grp.stiki-celic": "Zellverbindungen",
+  "a3.grp.izrastki": "Fortsätze",
+  "a3.grp.ovoj-aksona": "Axonhülle",
+  "a3.grp.zunanji-clenki": "Außensegmente",
+  "a3.grp.sarkomera": "Sarkomer",
+  "a3.grp.zrnca": "Granula",
+  "a3.grp.beljakovine-ovojnice": "Hüllproteine",
+  "a3.grp.encimi": "Enzyme",
+  "a3.grp.ovoji-virusa": "Virushüllen",
+  "a3.grp.rep": "Schwanz",
+  "a3.grp.gostitelj": "Wirtsbakterium"
 }

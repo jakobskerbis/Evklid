@@ -3673,5 +3673,20 @@
   "a3.grp.jetrne-zile": "Јетрини судови",
   "a3.grp.organeli": "Органеле",
   "a3.grp.membrane": "Мембране",
-  "a3.grp.jedro-celice": "Једро са деловима"
+  "a3.grp.jedro-celice": "Једро са деловима",
+  "a3.grp.ovoj-celice": "Омотач ћелије",
+  "a3.grp.dedni-zapis": "Генетски материјал",
+  "a3.grp.gibala": "Органеле за кретање",
+  "a3.grp.mehurcki": "Мехурићи",
+  "a3.grp.stiki-celic": "Ћелијске везе",
+  "a3.grp.izrastki": "Наставци",
+  "a3.grp.ovoj-aksona": "Омотач аксона",
+  "a3.grp.zunanji-clenki": "Спољашњи сегменти",
+  "a3.grp.sarkomera": "Саркомера",
+  "a3.grp.zrnca": "Зрнца",
+  "a3.grp.beljakovine-ovojnice": "Протеини омотача",
+  "a3.grp.encimi": "Ензими",
+  "a3.grp.ovoji-virusa": "Слојеви вируса",
+  "a3.grp.rep": "Реп",
+  "a3.grp.gostitelj": "Бактерија домаћин"
 }

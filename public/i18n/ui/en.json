@@ -3641,5 +3641,20 @@
   "a3.grp.jetrne-zile": "Hepatic vessels",
   "a3.grp.organeli": "Organelles",
   "a3.grp.membrane": "Membranes",
-  "a3.grp.jedro-celice": "Nucleus and its parts"
+  "a3.grp.jedro-celice": "Nucleus and its parts",
+  "a3.grp.ovoj-celice": "Cell envelope",
+  "a3.grp.dedni-zapis": "Genetic material",
+  "a3.grp.gibala": "Locomotion",
+  "a3.grp.mehurcki": "Vacuoles",
+  "a3.grp.stiki-celic": "Cell junctions",
+  "a3.grp.izrastki": "Processes",
+  "a3.grp.ovoj-aksona": "Axon sheath",
+  "a3.grp.zunanji-clenki": "Outer segments",
+  "a3.grp.sarkomera": "Sarcomere",
+  "a3.grp.zrnca": "Granules",
+  "a3.grp.beljakovine-ovojnice": "Envelope proteins",
+  "a3.grp.encimi": "Enzymes",
+  "a3.grp.ovoji-virusa": "Virus layers",
+  "a3.grp.rep": "Tail",
+  "a3.grp.gostitelj": "Host bacterium"
 }

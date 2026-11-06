@@ -13,8 +13,12 @@ test("skupine: vsak del obstaja v modelu, ime skupine v sl in vseh jezikih", () 
     const o = /^organ-(.+)$/.exec(model);
     if (o) ids = new Set(JSON.parse(fs.readFileSync(new URL(`organi-3d/${o[1]}.json`, koren), "utf8")).deli.map((d) => d.id));
     else {
-      const src = fs.readFileSync(new URL(`celice/${model.replace("celica-", "")}.js`, koren), "utf8");
-      ids = new Set([...src.matchAll(/del\("([a-z-]+)"/g)].map((m) => m[1]));
+      // datoteka modela po info.id (bakterija.js = celica-bakterijska); deli iz del("…") in { id: "…", ime: … }
+      const mapa = new URL("celice/", koren);
+      const f = fs.readdirSync(mapa).find((x) => new RegExp(`export const info = \\{\\s*id: "${model}"`).test(fs.readFileSync(new URL(x, mapa), "utf8")));
+      assert.ok(f, `model ${model}`);
+      const src = fs.readFileSync(new URL(f, mapa), "utf8");
+      ids = new Set([...src.matchAll(/del\("([a-z0-9-]+)"/g), ...src.matchAll(/\{ id: "([a-z0-9-]+)", ime:/g)].map((m) => m[1]));
     }
     for (const g of skupine) {
       assert.ok(g.deli.length > 1, `${model}/${g.id}: vsaj dva dela`);
@@ -33,4 +37,8 @@ test("skupine: mehko iskanje (sklanjatve, sinonimi), ne ujame imen delov", () =>
   assert.equal(najdiSkupino("organ-srce", "levi prekat"), null);
   assert.equal(najdiSkupino("celica-zivalska", "organeli"), "organeli");
   assert.equal(najdiSkupino("celica-zivalska", "Membranes", { membrane: ["Membranes"] }), "membrane");
+  assert.equal(najdiSkupino("celica-nevron", "mielin"), "ovoj-aksona");
+  assert.equal(najdiSkupino("celica-skeletno-misicno-vlakno", "sarkomere"), "sarkomera");
+  assert.equal(najdiSkupino("virus-hiv", "encimi"), "encimi");
+  assert.equal(najdiSkupino("virus-bakteriofag-t4", "rep faga"), "rep");
 });

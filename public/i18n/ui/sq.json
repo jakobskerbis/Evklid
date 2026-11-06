@@ -3641,5 +3641,20 @@
   "a3.grp.jetrne-zile": "Enët hepatike",
   "a3.grp.organeli": "Organelet",
   "a3.grp.membrane": "Membranat",
-  "a3.grp.jedro-celice": "Bërthama dhe pjesët e saj"
+  "a3.grp.jedro-celice": "Bërthama dhe pjesët e saj",
+  "a3.grp.ovoj-celice": "Mbështjellja e qelizës",
+  "a3.grp.dedni-zapis": "Materiali gjenetik",
+  "a3.grp.gibala": "Lëvizja",
+  "a3.grp.mehurcki": "Vakuolat",
+  "a3.grp.stiki-celic": "Lidhjet qelizore",
+  "a3.grp.izrastki": "Zgjatimet",
+  "a3.grp.ovoj-aksona": "Mbështjellja e aksonit",
+  "a3.grp.zunanji-clenki": "Segmentet e jashtme",
+  "a3.grp.sarkomera": "Sarkomera",
+  "a3.grp.zrnca": "Granulat",
+  "a3.grp.beljakovine-ovojnice": "Proteinat e mbështjellës",
+  "a3.grp.encimi": "Enzimat",
+  "a3.grp.ovoji-virusa": "Shtresat e virusit",
+  "a3.grp.rep": "Bishti",
+  "a3.grp.gostitelj": "Bakteria bujtëse"
 }

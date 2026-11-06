@@ -3709,5 +3709,20 @@
   "a3.grp.jetrne-zile": "Печінкові судини",
   "a3.grp.organeli": "Органели",
   "a3.grp.membrane": "Мембрани",
-  "a3.grp.jedro-celice": "Ядро з частинами"
+  "a3.grp.jedro-celice": "Ядро з частинами",
+  "a3.grp.ovoj-celice": "Оболонка клітини",
+  "a3.grp.dedni-zapis": "Генетичний матеріал",
+  "a3.grp.gibala": "Органели руху",
+  "a3.grp.mehurcki": "Вакуолі",
+  "a3.grp.stiki-celic": "Міжклітинні контакти",
+  "a3.grp.izrastki": "Відростки",
+  "a3.grp.ovoj-aksona": "Оболонка аксона",
+  "a3.grp.zunanji-clenki": "Зовнішні сегменти",
+  "a3.grp.sarkomera": "Саркомер",
+  "a3.grp.zrnca": "Гранули",
+  "a3.grp.beljakovine-ovojnice": "Білки оболонки",
+  "a3.grp.encimi": "Ферменти",
+  "a3.grp.ovoji-virusa": "Шари вірусу",
+  "a3.grp.rep": "Хвіст",
+  "a3.grp.gostitelj": "Бактерія-хазяїн"
 }

@@ -3709,5 +3709,20 @@
   "a3.grp.jetrne-zile": "Печёночные сосуды",
   "a3.grp.organeli": "Органеллы",
   "a3.grp.membrane": "Мембраны",
-  "a3.grp.jedro-celice": "Ядро и его части"
+  "a3.grp.jedro-celice": "Ядро и его части",
+  "a3.grp.ovoj-celice": "Оболочка клетки",
+  "a3.grp.dedni-zapis": "Генетический материал",
+  "a3.grp.gibala": "Органоиды движения",
+  "a3.grp.mehurcki": "Вакуоли",
+  "a3.grp.stiki-celic": "Межклеточные контакты",
+  "a3.grp.izrastki": "Отростки",
+  "a3.grp.ovoj-aksona": "Оболочка аксона",
+  "a3.grp.zunanji-clenki": "Наружные сегменты",
+  "a3.grp.sarkomera": "Саркомер",
+  "a3.grp.zrnca": "Гранулы",
+  "a3.grp.beljakovine-ovojnice": "Белки оболочки",
+  "a3.grp.encimi": "Ферменты",
+  "a3.grp.ovoji-virusa": "Слои вируса",
+  "a3.grp.rep": "Хвост",
+  "a3.grp.gostitelj": "Бактерия-хозяин"
 }

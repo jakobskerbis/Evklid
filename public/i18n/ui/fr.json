@@ -3642,5 +3642,20 @@
   "a3.grp.jetrne-zile": "Vaisseaux hépatiques",
   "a3.grp.organeli": "Organites",
   "a3.grp.membrane": "Membranes",
-  "a3.grp.jedro-celice": "Noyau et ses parties"
+  "a3.grp.jedro-celice": "Noyau et ses parties",
+  "a3.grp.ovoj-celice": "Enveloppe cellulaire",
+  "a3.grp.dedni-zapis": "Matériel génétique",
+  "a3.grp.gibala": "Locomotion",
+  "a3.grp.mehurcki": "Vacuoles",
+  "a3.grp.stiki-celic": "Jonctions cellulaires",
+  "a3.grp.izrastki": "Prolongements",
+  "a3.grp.ovoj-aksona": "Gaine de l’axone",
+  "a3.grp.zunanji-clenki": "Segments externes",
+  "a3.grp.sarkomera": "Sarcomère",
+  "a3.grp.zrnca": "Granules",
+  "a3.grp.beljakovine-ovojnice": "Protéines de l’enveloppe",
+  "a3.grp.encimi": "Enzymes",
+  "a3.grp.ovoji-virusa": "Couches du virus",
+  "a3.grp.rep": "Queue",
+  "a3.grp.gostitelj": "Bactérie hôte"
 }

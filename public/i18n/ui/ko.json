@@ -3613,5 +3613,20 @@
   "a3.grp.jetrne-zile": "간 혈관",
   "a3.grp.organeli": "세포 소기관",
   "a3.grp.membrane": "막",
-  "a3.grp.jedro-celice": "핵과 그 구성"
+  "a3.grp.jedro-celice": "핵과 그 구성",
+  "a3.grp.ovoj-celice": "세포 외피",
+  "a3.grp.dedni-zapis": "유전 물질",
+  "a3.grp.gibala": "운동 기관",
+  "a3.grp.mehurcki": "액포",
+  "a3.grp.stiki-celic": "세포 연접",
+  "a3.grp.izrastki": "돌기",
+  "a3.grp.ovoj-aksona": "축삭 싸개",
+  "a3.grp.zunanji-clenki": "바깥 분절",
+  "a3.grp.sarkomera": "근절",
+  "a3.grp.zrnca": "과립",
+  "a3.grp.beljakovine-ovojnice": "외피 단백질",
+  "a3.grp.encimi": "효소",
+  "a3.grp.ovoji-virusa": "바이러스 층",
+  "a3.grp.rep": "꼬리",
+  "a3.grp.gostitelj": "숙주 세균"
 }

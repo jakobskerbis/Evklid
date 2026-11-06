@@ -3639,5 +3639,20 @@
   "a3.grp.jetrne-zile": "Májerek",
   "a3.grp.organeli": "Sejtszervecskék",
   "a3.grp.membrane": "Membránok",
-  "a3.grp.jedro-celice": "Sejtmag részeivel"
+  "a3.grp.jedro-celice": "Sejtmag részeivel",
+  "a3.grp.ovoj-celice": "Sejtburok",
+  "a3.grp.dedni-zapis": "Örökítőanyag",
+  "a3.grp.gibala": "Mozgásszervecskék",
+  "a3.grp.mehurcki": "Vakuólumok",
+  "a3.grp.stiki-celic": "Sejtkapcsolatok",
+  "a3.grp.izrastki": "Nyúlványok",
+  "a3.grp.ovoj-aksona": "Axonhüvely",
+  "a3.grp.zunanji-clenki": "Külső szegmentumok",
+  "a3.grp.sarkomera": "Szarkomer",
+  "a3.grp.zrnca": "Szemcsék",
+  "a3.grp.beljakovine-ovojnice": "Burokfehérjék",
+  "a3.grp.encimi": "Enzimek",
+  "a3.grp.ovoji-virusa": "A vírus rétegei",
+  "a3.grp.rep": "Farok",
+  "a3.grp.gostitelj": "Gazdabaktérium"
 }

@@ -3642,5 +3642,20 @@
   "a3.grp.jetrne-zile": "Vasos hepáticos",
   "a3.grp.organeli": "Orgánulos",
   "a3.grp.membrane": "Membranas",
-  "a3.grp.jedro-celice": "Núcleo y sus partes"
+  "a3.grp.jedro-celice": "Núcleo y sus partes",
+  "a3.grp.ovoj-celice": "Envoltura celular",
+  "a3.grp.dedni-zapis": "Material genético",
+  "a3.grp.gibala": "Locomoción",
+  "a3.grp.mehurcki": "Vacuolas",
+  "a3.grp.stiki-celic": "Uniones celulares",
+  "a3.grp.izrastki": "Prolongaciones",
+  "a3.grp.ovoj-aksona": "Vaina del axón",
+  "a3.grp.zunanji-clenki": "Segmentos externos",
+  "a3.grp.sarkomera": "Sarcómero",
+  "a3.grp.zrnca": "Gránulos",
+  "a3.grp.beljakovine-ovojnice": "Proteínas de la envoltura",
+  "a3.grp.encimi": "Enzimas",
+  "a3.grp.ovoji-virusa": "Capas del virus",
+  "a3.grp.rep": "Cola",
+  "a3.grp.gostitelj": "Bacteria hospedadora"
 }
