@@ -268,6 +268,19 @@ export function createApp(store, opts = {}) {
   app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
+  // Glavna stran: brskalnik naj takoj prenese vse module prvega odprtja (Link: modulepreload). public/zagon.js
+  // jih izvede šele po prevodih; brez tega bi jih odkrival po plasteh šele potem (počasnejši prvi zagon).
+  let preload = null;
+  app.use((req, res, next) => {
+    if (req.method === "GET" && (req.path === "/" || req.path === "/index.html")) {
+      preload ??= startupFiles(publicDir)
+        .filter((u) => u.endsWith(".js") && !u.startsWith("/vendor/") && u !== "/theme.js")
+        .map((u) => `<${u}>; rel=modulepreload`)
+        .join(", ");
+      if (preload) res.set("Link", preload);
+    }
+    next();
+  });
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
     const statics = compressedStatic([

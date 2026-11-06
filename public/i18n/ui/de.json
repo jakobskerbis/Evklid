@@ -1622,6 +1622,7 @@
   "fx.change": "Änderung von: {what}",
   "fx.close": "Schließen",
   "fx.parts": "Dabei ist",
+  "fx.defined": "Im Text festgelegtes Zeichen",
   "ap.style": "Stil",
   "ap.styleCist": "Klar",
   "ap.styleCistText": "Ruhig und übersichtlich",

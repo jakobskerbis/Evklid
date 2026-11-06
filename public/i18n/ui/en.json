@@ -1622,6 +1622,7 @@
   "fx.change": "Change in: {what}",
   "fx.close": "Close",
   "fx.parts": "Where",
+  "fx.defined": "Symbol defined in the text",
   "ap.style": "Style",
   "ap.styleCist": "Clean",
   "ap.styleCistText": "Calm and clear",

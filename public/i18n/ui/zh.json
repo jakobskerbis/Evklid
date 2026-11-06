@@ -1615,6 +1615,7 @@
   "fx.change": "变化量:{what}",
   "fx.close": "关闭",
   "fx.parts": "其中",
+  "fx.defined": "文中定义的符号",
   "ap.style": "风格",
   "ap.styleCist": "简洁",
   "ap.styleCistText": "安静清晰",
