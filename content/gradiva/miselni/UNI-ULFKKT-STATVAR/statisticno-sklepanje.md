@@ -1,0 +1,24 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Standardna napaka
+  - $\sigma/\sqrt n$, ne $\sigma$
+  - štirikrat več meritev, pol ožje
+- Interval zaupanja
+  - postopek zajame parameter v $1 - \alpha$ primerov
+  - napaka: »parameter je z verjetnostjo 95 %«
+- Znan sigma
+  - $\bar x \pm z_{1-\alpha/2}\,\sigma/\sqrt n$
+  - $z_{0{,}975} = 1{,}960$
+- Studentov t
+  - neznan $\sigma$: $\bar x \pm t_{n-1}\,s/\sqrt n$
+  - debelejši repi pri majhnem $n$
+- Preizkus domneve
+  - $H_0$, $H_1$, testna statistika
+  - zavrni, če $p \leq \alpha$
+- Napake odločitve
+  - 1. vrste $\alpha$, 2. vrste $\beta$
+  - moč $1 - \beta$ raste z $n$
+- Dualnost
+  - $\mu_0$ zunaj intervala: zavrni $H_0$
