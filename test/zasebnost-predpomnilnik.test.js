@@ -87,3 +87,23 @@ test("učenec z urnikom ali testi: odgovor se ne shrani za druge in ne vzame shr
     assert.equal(calls(), 3, "učenec z urnikom ne dobi shranjenega odgovora");
   });
 });
+
+test("stari shranjeni odgovori (pred popravkom ključa) se ob zagonu enkrat izbrišejo", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const path = await import("node:path");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-cache-"));
+  const file = path.join(dir, "t.db");
+  let store = openDb(file);
+  store.db.prepare("DELETE FROM kv WHERE key = 'answer_cache_personal_purge'").run(); // baza pred popravkom
+  store.db.prepare("INSERT INTO answer_cache (key, text, verified) VALUES ('k', 'konj Bliska', 1)").run();
+  store.db.close();
+  store = openDb(file);
+  assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM answer_cache").get().n, 0);
+  store.db.prepare("INSERT INTO answer_cache (key, text, verified) VALUES ('k2', 'nov', 1)").run();
+  store.db.close();
+  store = openDb(file);
+  assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM answer_cache").get().n, 1, "samo enkrat");
+  store.db.close();
+  fs.rmSync(dir, { recursive: true, force: true });
+});
