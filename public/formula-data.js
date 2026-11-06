@@ -181,14 +181,14 @@ const MAT = {
   x_2: { ctx: QUADF, teme: KVAD, ne: "lagrang|rolle|cauchy|integral|odvod|zaporedj|povprečn", n: "druga rešitev (ničla)", en: "second solution (zero)", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
   "x_1,2": { ctx: QUADF, teme: KVAD, ne: "lagrang|rolle|cauchy|integral|odvod|zaporedj|povprečn", n: "rešitvi kvadratne enačbe", en: "solutions of the quadratic equation", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
   // k je tudi indeks (k-ti člen), celo število (x = π/2 + kπ), konstanta vzmeti; n tudi naravno število.
-  k: { ctx: "y\\s*=\\s*k\\s*x|k\\s*=\\s*\\\\frac\\{\\s*y", teme: PREMICA, brez: "\\^\\s*\\{[^}]*k|\\^\\s*-?\\s*k|\\\\ln\\s*k|k\\s*t\\b", ne: `reakcij|hitrostn|arrhenius|razpad|števec|stopnj|zaporedj|kombinator|binom|vsot|indukcij|period|trigonometr|${LIN_ENACBE}`, n: "smerni koeficient premice", en: "slope of the line", r: "k = \\frac{y_2 - y_1}{x_2 - x_1}" },
+  k: { ctx: "y\\s*=\\s*k\\s*x|k\\s*=\\s*\\\\frac\\{\\s*y", teme: PREMICA, brez: "\\^\\s*\\{[^}]*k|\\^\\s*-?\\s*k|\\\\ln\\s*k|k\\s*t\\b", ne: `reakcij|hitrostn|arrhenius|razpad|števec\\s+(?:je\\s+)?višj|zaporedj|kombinator|binom|vsot|indukcij|period|trigonometr|${LIN_ENACBE}`, n: "smerni koeficient premice", en: "slope of the line", r: "k = \\frac{y_2 - y_1}{x_2 - x_1}" },
   // n je začetna vrednost le, če je y = k x + n v isti formuli ali povedi (pov), ne vsak n v temi o premici
   // (»za vsak naravni n«, razmerje m : n pri Talesovem izreku).
   n: { ctx: "y\\s*=\\s*k\\s*x\\s*[+-]\\s*n", pov: "y\\s*=\\s*k\\s*x\\s*[+-]\\s*n\\b", ne: "zaporedj|kombinator|binom|vsot|indukcij|mnogokotnik|potenc|koren", n: "začetna vrednost (presečišče z osjo y)", en: "y-intercept", r: "y = k x + n" },
   p: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: STOZNICE, n: "abscisa temena T(p, q)", en: "x-coordinate of the vertex T(p, q)", r: "p = -\\frac{b}{2a}" },
   q: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", ne: STOZNICE, n: "ordinata temena T(p, q)", en: "y-coordinate of the vertex T(p, q)", r: "q = -\\frac{D}{4a}" },
   r: { ctx: CIRCLE, teme: KROG, brez: "\\\\int|\\\\sum|\\\\lim|\\\\sin|\\\\cos|\\\\tan", n: "polmer", en: "radius", r: "d = 2r" },
-  d: { ctx: `${CIRCLE}|d\\s*=\\s*2\\s*r`, teme: KROG, ne: "razdalj|oddaljen|sekant|tangent|mimobežn|diagonal|stranic|štirikotnik|trapez|pravokotnik|romb|deltoid|paralelogram", brez: "\\\\(?:o|i{0,2})int|\\\\frac\\{\\s*d|(?<![A-Za-z\\\\])d\\s*(?:[A-Za-z]|\\\\(?:varphi|vartheta|theta|phi|rho|tau|omega|lambda))(?![a-z])|\\\\mathrm\\s*\\{?\\s*d(?![a-zA-Z])", n: "premer", en: "diameter", r: "d = 2r" },
+  d: { ctx: `${CIRCLE}|d\\s*=\\s*2\\s*r`, teme: KROG, ne: "razdalj|oddaljen|sekant|tangent|mimobežn|diagonal|štirikotnik|trapez|romb|deltoid|paralelogram", brez: "\\\\(?:o|i{0,2})int|\\\\frac\\{\\s*d|(?<![A-Za-z\\\\])d\\s*(?:[A-Za-z]|\\\\(?:varphi|vartheta|theta|phi|rho|tau|omega|lambda))(?![a-z])|\\\\mathrm\\s*\\{?\\s*d(?![a-zA-Z])", n: "premer", en: "diameter", r: "d = 2r" },
   o: { ctx: "o\\s*=", teme: GEOM, oba: true, n: "obseg", en: "perimeter (circumference)", r: "o = 2\\pi r" },
   S: { zan: `(?<![\\w\\\\])S${NUM_UNIT}(?:[kdcm]?m\\^\\{?2)`, ctx: "S\\s*=", teme: `${GEOM}|integral`, oba: true, ne: "zaporedj|vsot|statist|verjetn|množic", n: "ploščina", en: "area" },
   // »Mečemo kocko«: P je verjetnost, ne površina (docs/pomen-crk.md).
@@ -616,7 +616,7 @@ const DEF_LEAD = /(?:^|[^\p{L}])(?:za|naj\s+bo(?:do|sta)?|označimo(?:\s+z)?|def
 function zaStartsClause(src, at) {
   const from = Math.max(0, at - 60);
   const head = (from === 0 ? "\n" : "") + src.slice(from, at);
-  return /(?:\n[ \t]*(?:[-*+][ \t]+|\d+[.)][ \t]*)?|[.:;,!?(…»«"])[\s*_]*za\s*$/iu.test(head);
+  return /(?:\n[ \t]*(?:[-*+][ \t]+|\d+[.)][ \t]*)?|[.:;,!?()…»«"])[\s*_]*za\s*$/iu.test(head);
 }
 const NAMED_LEAD =/(?:^|[^\p{L}])(?:kjer|pri\s+čemer)\s+(?:je|sta|so|pomeni|pomenita|pomenijo|označuje|označujeta)\s+(?=\$)/giu;
 // Na najvišji ravni (zunaj {…}) razdeli pri znaku.

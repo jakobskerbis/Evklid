@@ -260,4 +260,5 @@ test("kontrolni pregled 463: diferencial, štirikotnik, Evklid, koreni, Vieta, s
   assert.equal(definitionsIn("Za $H = G - F$ je $H' = 0$.")[0]?.keys[0], "H");
   assert.equal(definitionsIn("Odvod je 0, za $H = G - F$ pa velja $H' = 0$.")[0]?.keys[0], "H");
   assert.equal(definitionsIn("- Za $u = x^2$ dobimo …")[0]?.keys[0], "u");
+  assert.equal(definitionsIn("(c) Za $S = X_1 + X_2$ velja …")[0]?.keys[0], "S");
 });
