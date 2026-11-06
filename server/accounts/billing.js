@@ -8,7 +8,7 @@
 // - dnevna opravila: usklajevanje naročnin s Stripom, opomnik pred koncem kode in pred letno obnovitvijo.
 import express from "express";
 import { randomToken, sha256, Throttle } from "./auth.js";
-import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd, planGuarantee, vatRateFor, aiCapFromNetEur } from "./plans.js";
+import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd, planGuarantee, vatRateFor, eurVatFor, aiCapFromNetEur } from "./plans.js";
 import { BIRTH_MISSING_PAY } from "./age.js";
 import { Schedules, nowParts, cleanDate, TEST_KINDS } from "../schedule.js";
 import { cleanText } from "../settings.js";
@@ -703,7 +703,7 @@ export function mountBilling(app, ctx) {
       const startD = new Date(end);
       startD.setUTCMonth(startD.getUTCMonth() - months);
       const start = startD.getTime();
-      const g = planGuarantee(plan, p.country ? vatRateFor(p.country) : undefined);
+      const g = planGuarantee(plan, p.country ? (!plan.currency || plan.currency === "EUR" ? eurVatFor(p.country) : vatRateFor(p.country)) : undefined);
       const since = sqlTime(start);
       const spent = [...childIds(p.id)].reduce((t, id) => t + (aiUsage?.spentSince?.(id, since) || 0), 0) + (aiUsage?.orphanSpent?.(p.id, since) || 0);
       // Dejansko plačilo obdobja (promocijska koda, proracija, že vrnjeni del; pregled #462 A2), sicer cenik.

@@ -269,6 +269,19 @@ export function createApp(store, opts = {}) {
   app.use(sourceVisitCounter(store.db)); // obiski s povezav z oznako vira (server/rast.js)
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
+  // Glavna stran: brskalnik naj takoj prenese vse module prvega odprtja (Link: modulepreload). public/zagon.js
+  // jih izvede šele po prevodih; brez tega bi jih odkrival po plasteh šele potem (počasnejši prvi zagon).
+  let preload = null;
+  app.use((req, res, next) => {
+    if (req.method === "GET" && (req.path === "/" || req.path === "/index.html")) {
+      preload ??= startupFiles(publicDir)
+        .filter((u) => u.endsWith(".js") && !u.startsWith("/vendor/") && u !== "/theme.js")
+        .map((u) => `<${u}>; rel=modulepreload`)
+        .join(", ");
+      if (preload) res.set("Link", preload);
+    }
+    next();
+  });
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
     const statics = compressedStatic([
@@ -313,6 +326,7 @@ export function createApp(store, opts = {}) {
   const usage = opts.usage || accounts?.aiUsage || new Usage(store.db);
   // Rezervacije klicev, ki so tekli ob prejšnjem zaustavitvi strežnika, se zapišejo kot poraba (pregled #462 S4).
   usage.recoverHolds?.();
+  app.locals.usage = usage; // server/index.js: ob zaustavitvi počaka na klice v teku
   // Delitev mesečnega proračuna po profilih in dokupljeni kredit (z računi; server/proracun.js).
   // Zajamčeni delež naročnikov in poziv k dokupu (j 2026-11-01) morata veljati tudi tu, ne samo v Računu.
   if (accounts?.credits) usage.configure({ weightOf: accounts.shareWeightFor, ownerOf: accounts.ownerOf, credits: accounts.credits, freeOver: accounts.freeOver, guaranteeOf: accounts.guaranteeFor, topupPrompt: accounts.topupPrompt });

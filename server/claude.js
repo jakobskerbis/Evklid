@@ -59,6 +59,8 @@ export const PRICES = {
 };
 
 export function costUsd(model, u) {
+  // Seštevek krogov s strošnikom vsakega kroga (streamReply): ta velja.
+  if (Number.isFinite(u?.cost_usd_exact)) return u.cost_usd_exact;
   // API lahko vrne ime z datumom (»claude-haiku-5-5-20261015«): cena po začetku imena, sicer bi Haiku štel po ceni Opusa.
   const id = String(model || "");
   const key = Object.keys(PRICES).filter((k) => id === k || id.startsWith(`${k}-`)).sort((a, b) => b.length - a.length)[0];
@@ -219,20 +221,26 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
     let deltaBytes = 0;
     let thinkMs = 0;
     let thinkAt = 0;
+    let startAt = 0;
+    let firstBlockAt = 0;
     let final;
     try {
       for await (const event of stream) {
         if (event.type === "message_start") {
           live = { ...(event.message?.usage || {}) };
           liveModel = event.message?.model || model;
+          startAt = Date.now();
         } else if (event.type === "message_delta" && event.usage && live) {
           for (const [k, v] of Object.entries(event.usage)) if (typeof v === "number") live[k] = v;
           lastDelta = true;
         } else if (event.type === "content_block_start" && /thinking/.test(event.content_block?.type || "")) {
           thinkAt = Date.now();
+          firstBlockAt ||= thinkAt;
         } else if (event.type === "content_block_stop" && thinkAt) {
           thinkMs += Date.now() - thinkAt;
           thinkAt = 0;
+        } else if (event.type === "content_block_start") {
+          firstBlockAt ||= Date.now();
         } else if (event.type === "content_block_delta") {
           const d = event.delta || {};
           deltaBytes += Buffer.byteLength(String(d.text ?? d.thinking ?? d.partial_json ?? d.signature ?? ""), "utf8");
@@ -249,6 +257,8 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
       const roundMax = p.max_tokens || max_tokens;
       let partial = null;
       if (thinkAt) thinkMs += Date.now() - thinkAt;
+      // Razmišljanje pred prvim blokom (ali brez bloka) se v toku ne vidi (pregled #462 K3-6): čas od message_start.
+      if (p.thinking && startAt) thinkMs += (firstBlockAt || Date.now()) - startAt;
       // Izhod brez message_delta (j 2026-11-06 12:46): ob NAŠI prekinitvi (učenec zapre aplikacijo → res close →
       // controller.abort, server/app.js; povezava z API se takoj zapre in API neha pisati) štejemo dejansko napisano:
       // bajti vseh delt (žeton ≤ bajt) + 10 %; razmišljanje, ki ga tok ne pokaže v celoti (povzetek ali skrito), po
@@ -271,7 +281,10 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
       throw err;
     }
     const extra = fallbackExtraUsd(final.usage);
-    usage = addUsage(usage, extra ? { ...final.usage, extra_cost_usd: extra } : final.usage);
+    const roundUsage = extra ? { ...final.usage, extra_cost_usd: extra } : { ...final.usage };
+    // Strošek kroga posebej (pregled #462 K3-7): prag dolgega poziva Haikuja velja za vsak klic, ne za seštevek krogov.
+    roundUsage.cost_usd_exact = costUsd(final.model || model, roundUsage);
+    usage = addUsage(usage, roundUsage);
     stopReason = final.stop_reason;
     finalModel = final.model || model;
     content.push(...final.content);
@@ -303,6 +316,9 @@ export function addUsage(a, b) {
   if (!a) return { ...b };
   const out = { ...a };
   for (const k of ["input_tokens", "output_tokens", "cache_read_input_tokens", "cache_creation_input_tokens", "extra_cost_usd"]) out[k] = (a[k] || 0) + (b[k] || 0);
+  // Natančen strošek ostane le, če ga imata oba dela (delna poraba ob prekinitvi ga nima: velja seštevek, previdno).
+  if (Number.isFinite(a.cost_usd_exact) && Number.isFinite(b.cost_usd_exact)) out.cost_usd_exact = a.cost_usd_exact + b.cost_usd_exact;
+  else delete out.cost_usd_exact;
   // Razdelitev zapisov po času (5 min / 1 h) za pravilno ceno (costUsd).
   if (a.cache_creation || b.cache_creation) {
     out.cache_creation = {};
@@ -327,7 +343,8 @@ function lastUserText(messages) {
 
 function mockAnswer(userText) {
   const t = userText.toLowerCase();
-  if (/sistemsk|prompt|navodil|ignoriraj/.test(t)) {
+  // Poskus brez druge prošnje: ščit. Poskus z nalogo (račun, »reši«, »izračunaj« …): poskus prezri, naloga normalno (prompts/system_prompt.md, Varnostni ščit).
+  if (/sistemsk|prompt|navodil|ignoriraj/.test(t) && !/reši|resi|izračunaj|izracunaj|enačb|enacb|\d\s*[a-z]?\s*[+\-=·*/]/.test(t)) {
     return '»Žal ti teh informacij o svojem delovanju ne morem razkriti. 🛡️ Sem tvoj osebni AI inštruktor za naravoslovne predmete. Povej mi raje, katero nalogo rešuješ, da jo pogledava skupaj!«\n<<META subject=MAT topic="-" error=0 mode=A flag=injection done=0>>';
   }
   if (/kemij/.test(t)) {

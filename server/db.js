@@ -238,6 +238,19 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       usd REAL NOT NULL,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );`);
+  // Knjiga porabe AI šole ob zapisu (pregled #462 H7): poraba, ki je šla pod mejo šole, ostane v šoli tudi, ko učenec
+  // razred zapusti ali kupi osebni paket. Začetek knjige (kv) loči starejšo porabo, ki se šteje po članstvu.
+  const hadSchoolUse = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'ai_school_use'").get();
+  db.exec(`CREATE TABLE IF NOT EXISTS ai_school_use (
+      id INTEGER PRIMARY KEY,
+      school_id INTEGER NOT NULL,
+      student_id INTEGER,
+      usd REAL NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_school_use ON ai_school_use(school_id, created_at);
+    CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, value TEXT NOT NULL);`);
+  if (!hadSchoolUse) db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES ('ai_school_ledger_start', datetime('now'))").run();
   // Migracija: nova tabela dobi današnja vprašanja iz obstoječih pogovorov, da se števec ob posodobitvi ne ponastavi.
   const hadQuestionLog = !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'question_log'").get();
   db.exec(`CREATE TABLE IF NOT EXISTS question_log (

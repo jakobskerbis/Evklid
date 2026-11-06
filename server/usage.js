@@ -367,6 +367,8 @@ export class Usage {
   // Del stroška nad deležem učenca (ali nad skupnim proračunom) gre iz dokupljenega kredita računa.
   chargeCredit(studentId, cost) {
     if (!this.credits || studentId == null || !(cost > 0)) return;
+    // Lastnik (unlimitedOf) je brez meje: nič »nad mejo«, zato kredit ostane nedotaknjen (poraba se še zapiše).
+    if (this.unlimitedOf(studentId)) return;
     // Meja brezplačnega paketa ob kreditu ne velja (accounts/index.js), zato tam plača kredit ves strošek, tudi brez proračuna.
     const free = !!this.freeOver(studentId);
     const state = this.budgetState();
@@ -668,16 +670,16 @@ export class Usage {
   recoverHolds() {
     try {
       const rows = this.db.prepare("SELECT id, student_id, usd FROM ai_holds").all();
-      const col = (t, c) => this.db.prepare(`PRAGMA table_info(${t})`).all().some((x) => x.name === c);
-      const withParent = col("usage", "parent_id") && col("students", "parent_id");
       for (const r of rows) {
-        if (r.student_id != null && r.usd > 0 && this.db.prepare("SELECT 1 FROM students WHERE id = ?").get(r.student_id)) {
-          if (withParent)
-            this.db
-              .prepare("INSERT INTO usage (student_id, model, kind, cost_usd, parent_id) VALUES (?, 'rezerva', 'prekinjeno', ?, (SELECT parent_id FROM students WHERE id = ?))")
-              .run(r.student_id, r.usd, r.student_id);
-          else this.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'rezerva', 'prekinjeno', ?)").run(r.student_id, r.usd);
-        }
+        if (r.student_id == null || !(r.usd > 0) || !this.db.prepare("SELECT 1 FROM students WHERE id = ?").get(r.student_id)) continue;
+        // Kot usage.log (pregled #462 H4/K3-5): lastnik računa (ownerOf), del nad mejo iz kredita, onLog (bazeni, šola).
+        this.db
+          .prepare("INSERT INTO usage (student_id, model, kind, cost_usd, parent_id) VALUES (?, 'rezerva', 'prekinjeno', ?, ?)")
+          .run(r.student_id, r.usd, this.ownerOf(r.student_id) ?? null);
+        this.chargeCredit(r.student_id, r.usd);
+        try {
+          this.onLog?.(r.student_id, r.usd);
+        } catch {}
       }
       this.db.prepare("DELETE FROM ai_holds").run();
       if (rows.length) console.warn(`[evklid] ob zagonu zapisanih ${rows.length} rezervacij klicev AI iz prejšnjega procesa`);

@@ -24,14 +24,14 @@ const spend = (store, kid, usd, atMs) =>
 // L1: nadgradnja se meša po KOLEDARSKEM mesecu (plans.js upgradeMonthUsd), obdobje meje pa je obdobje naročnine.
 // Nadgradnja OŠ → Faks 1. v mesecu, 6 dni pred koncem obdobja: Stripe zaračuna razliko le za 6/31 obdobja,
 // meja pa je cela meja Faksa za vse obdobje.
-test("L1: nadgradnja tik pred koncem obdobja odpre celo mejo višjega paketa (plačano le nekaj dni razlike)", async () => {
+test("L1: nadgradnja tik pred koncem obdobja odpre celo mejo višjega paketa (plačano le nekaj dni razlike)", async (t) => {
   await withAccounts({}, async ({ call, store, kid }) => {
     const now = Date.now();
     const d = new Date(now);
     const monthStart = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1) + 60_000;
     const end = now + 1 * DAY;
     const start = end - 31 * DAY;
-    if (!(start < monthStart && monthStart < now)) return; // test je smiseln od 2. dne v mesecu do ~28.
+    if (!(start < monthStart && monthStart < now)) return t.skip("smiseln od 2. dne v mesecu do ~28."); // pregled A3 K3-8
     const pid = store.db.prepare("SELECT parent_id FROM students WHERE id = ?").get(kid.id).parent_id;
     store.db.prepare("UPDATE parents SET sub_status='active', sub_id='sub_x', sub_provider='stripe', sub_plan='evklid_faks_month', sub_seats=1, sub_period_end=? WHERE id=?").run(iso(end), pid);
     store.db.prepare("INSERT OR REPLACE INTO kv (key, value) VALUES (?, ?)").run(`ai_upgrade_${pid}`, JSON.stringify({ from: "evklid_1_month", usd: 1.7, at: monthStart, sub: "sub_x" }));

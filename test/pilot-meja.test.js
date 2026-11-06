@@ -125,3 +125,17 @@ test("poročilo marže: pilot in lastnik ločeno, ne v povprečju plačnikov", (
   assert.match(a.separate.text, /Pilot/);
   assert.equal(b.separate.text, null);
 });
+
+test("lastnik: kredit se ne porabi (chargeCredit kličeta zapis porabe in rezervacija ob zagonu)", async () => {
+  const { Usage } = await import("../server/usage.js");
+  await withAccounts({}, async ({ store, kid }) => {
+    const pid = store.db.prepare("SELECT parent_id FROM students WHERE id = ?").get(kid.id).parent_id;
+    for (const unlimited of [false, true]) {
+      const used = [];
+      const u = new Usage(store.db);
+      u.configure({ credits: { balance: () => 10, usedMonth: () => 0, use: (...a) => used.push(a) }, ownerOf: () => pid, freeOver: () => true, unlimitedOf: () => unlimited });
+      u.chargeCredit(kid.id, 0.5);
+      assert.equal(used.length, unlimited ? 0 : 1, `unlimited=${unlimited}`);
+    }
+  });
+});

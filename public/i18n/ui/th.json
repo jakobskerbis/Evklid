@@ -1615,6 +1615,7 @@
   "fx.change": "การเปลี่ยนแปลงของ: {what}",
   "fx.close": "ปิด",
   "fx.parts": "โดยที่",
+  "fx.defined": "สัญลักษณ์ที่กำหนดในข้อความ",
   "ap.style": "สไตล์",
   "ap.styleCist": "เรียบง่าย",
   "ap.styleCistText": "สงบและชัดเจน",

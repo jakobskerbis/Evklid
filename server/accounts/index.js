@@ -11,7 +11,7 @@ import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
 import { exportOtherTables } from "../zasebnost.js";
-import { aiCapFromNetEur, vatRateFor } from "./plans.js";
+import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
 import { isPilotParent, isOwnerParent, pilotEndMs } from "./pilot-meja.js";
 import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
@@ -287,7 +287,8 @@ export function mountAccounts(app, store, opts = {}) {
     // DDV po državi kupca (j 2026-11-06 12:53); neznana: najvišja na trgu paketa.
     const country = getParent(owner)?.country;
     const subPlan = planByKey(getParent(owner)?.sub_plan);
-    const g = (subPlan && planGuarantee(subPlan, country ? vatRateFor(country) : undefined)) || levelGuarantee(r.useLevel);
+    const vat = country ? (!subPlan?.currency || subPlan.currency === "EUR" ? eurVatFor(country) : vatRateFor(country)) : undefined;
+    const g = (subPlan && planGuarantee(subPlan, vat)) || levelGuarantee(r.useLevel);
     // Nadgradnja ta mesec (applySubscription): stari paket za pretekle dni, novi za preostale (plans.js upgradeMonthUsd).
     // Zapis velja samo za isto naročnino (id računa se po izbrisu lahko ponovno uporabi, nova naročnina začne znova).
     const up = JSON.parse(kv.get(`ai_upgrade_${owner}`) || "null");
@@ -330,6 +331,15 @@ export function mountAccounts(app, store, opts = {}) {
         if (start < next) start = now < next ? prev.start : next;
       }
       if (!prev || prev.sub !== p.sub_id || prev.start !== start) kv.set(key, JSON.stringify({ sub: p.sub_id, start }));
+      // Obnovitev (ali konec preizkusa) pred invoice.paid: Stripe premakne konec obdobja takoj, račun pa je plačan šele
+      // čez uro (SEPA dneve, ali nikoli). Dokler za novo okno ni plačila, velja zadnje plačano okno (pregled #462
+      // H1/K3-1); naročnine brez kakršnega koli zapisa (pred to spremembo) ostanejo na ceniku.
+      if (paidPeriods.has(p.id, p.sub_id) && !paidPeriods.eurIn(p.id, p.sub_id, start, addMonthsUtc(start, 1)).rows) {
+        const last = paidPeriods.lastEnd(p.id, p.sub_id);
+        if (last > 0 && last <= start) {
+          for (let k = 0; k < 24 && start >= last; k++) start = addMonthsUtc(start, -1);
+        }
+      }
     }
     return { start, end: addMonthsUtc(start, 1) };
   }
@@ -496,7 +506,23 @@ export function mountAccounts(app, store, opts = {}) {
     return p ? billing.passes.spentUsd(p) - passCapUsd(p) : null;
   }
   aiUsage.configure({ blockFor: aiBlockFor, creditOverOf: passCreditOver });
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, unlimitedOf: aiUnlimited, onLog: () => (schools.clearCache(), poolMemo.clear()) });
+  // Zapis porabe: predpomnilnika (šola, bazena) in knjiga šole – poraba, ki je šla pod mejo šole, ostane v šoli tudi,
+  // ko učenec razred zapusti (pregled #462 H7). Šola, katere meja velja (capsOf), je prva z mejo.
+  function schoolOnLog(studentId, cost) {
+    poolMemo.clear();
+    try {
+      if (studentId != null && cost > 0) {
+        schools.clearCache();
+        const r = rightsFor(studentId);
+        // Ali je šola imela prostor PRED tem zapisom (poraba sedanjih učencev že vsebuje ta strošek).
+        const s = !r.personal && r.school ? r.schools.find((x) => x.ai_month_usd > 0 && (x.ai_spent_usd || 0) - cost < x.ai_month_usd) : null;
+        if (s) schools.recordUse(s.school_id, studentId, cost);
+      }
+    } finally {
+      schools.clearCache();
+    }
+  }
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, unlimitedOf: aiUnlimited, onLog: schoolOnLog });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
