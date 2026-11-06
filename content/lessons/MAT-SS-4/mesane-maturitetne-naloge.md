@@ -67,7 +67,7 @@ V simulaciji spodaj (Zbirka simulacij za maturo) odpri Odvod in poišči točko,
 
 Košarkarica zadene prosti met z verjetnostjo $0{,}8$, meti so neodvisni. Izvede tri mete. Kolikšna je verjetnost, da vsaj enkrat zgreši?
 
-**Podatki:** $P(\text{zadetek}) = 0{,}8$, $3$ neodvisni meti
+**Podatki:** $P(\text{zadetek}) = 0{,}8$; $3$ neodvisni meti
 **Iščemo:** $P(\text{vsaj en zgrešen})$
 
 :::formula

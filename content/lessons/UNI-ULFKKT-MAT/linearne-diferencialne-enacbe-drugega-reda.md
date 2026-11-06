@@ -152,7 +152,7 @@ $m\ddot x + b\dot x + kx = 0$; pri $\lambda = \alpha \pm i\beta$ je $x = e^{\alp
 2. Karakteristična enačba: $\lambda^2 + 4\lambda + 13 = 0$, $D = 16 - 52 = -36$, $\lambda = \frac{-4 \pm 6i}{2} = -2 \pm 3i$.
 3. Splošna rešitev: $x = e^{-2t}(C_1\cos 3t + C_2\sin 3t)$; dušenje je podkritično.
 4. Iz $x(0) = C_1 = 0{,}02$.
-5. Odvod: $\dot x = e^{-2t}\big((-2C_1 + 3C_2)\cos 3t + (-2C_2 - 3C_1)\sin 3t\big)$, torej $\dot x(0) = -2C_1 + 3C_2 = -0{,}01$, $3C_2 = -0{,}01 + 0{,}04 = 0{,}03$, $C_2 = 0{,}01$.
+5. Odvod: $\dot x = e^{-2t}\big((-2C_1 + 3C_2)\cos 3t + (-2C_2 - 3C_1)\sin 3t\big)$, torej $\dot x(0) = -2C_1 + 3C_2 = -0{,}01$; $3C_2 = -0{,}01 + 0{,}04 = 0{,}03$; $C_2 = 0{,}01$.
 6. Nihajni čas: $T = \frac{2\pi}{3\,\mathrm{s^{-1}}} = 2{,}09\,\mathrm{s}$.
 7. Ovojnica $e^{-2t}$ se v času $T$ zmanjša za faktor $e^{-2 \cdot 2{,}094} = e^{-4{,}19} = 0{,}015$.
 8. Odgovor: $x(t) = e^{-2t}\big(0{,}02\cos 3t + 0{,}01\sin 3t\big)\,\mathrm{m}$; nihajni čas je $2{,}09\,\mathrm{s}$, po enem nihaju ovojnica pade na $1{,}5\,\%$ prejšnje vrednosti (dušenje je močno).

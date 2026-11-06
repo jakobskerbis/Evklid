@@ -234,7 +234,7 @@ I | jakost prepuščene svetlobe | | | $I_0$: jakost vpadne svetlobe
 | Faradayeva konstanta | $F = 96\,485\,\mathrm{C/mol}$ |
 | Planckova konstanta, hitrost svetlobe | $h = 6{,}626 \cdot 10^{-34}\,\mathrm{J\,s}$, $\; c = 2{,}998 \cdot 10^{8}\,\mathrm{m/s}$ |
 | Boltzmannova konstanta | $k_B = 1{,}381 \cdot 10^{-23}\,\mathrm{J/K}$ |
-| Molska prostornina | $V_m = 22{,}41\,\mathrm{L/mol}$ ($0\,^\circ\mathrm{C}$, $101{,}325\,\mathrm{kPa}$), $\; 24{,}79\,\mathrm{L/mol}$ ($25\,^\circ\mathrm{C}$, $100\,\mathrm{kPa}$) |
+| Molska prostornina | $V_m = 22{,}41\,\mathrm{L/mol}$ ($0\,^\circ\mathrm{C}$; $101{,}325\,\mathrm{kPa}$); $\; 24{,}79\,\mathrm{L/mol}$ ($25\,^\circ\mathrm{C}$; $100\,\mathrm{kPa}$) |
 | Ionski produkt vode | $K_w = 1{,}0 \cdot 10^{-14}$ ($25\,^\circ\mathrm{C}$) |
 | Standardni pogoji | $p^\circ = 100\,\mathrm{kPa}$, $\; T = 298{,}15\,\mathrm{K}$ |
 

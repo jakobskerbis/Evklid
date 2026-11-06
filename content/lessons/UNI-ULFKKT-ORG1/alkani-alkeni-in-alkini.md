@@ -250,7 +250,7 @@ Znati moraš povedati:
 **Rešitev:**
 
 1. Vrste vodikov: metilni skupini na C2 sta enakovredni, $6$ primarnih H (1-halo-2-metilbutan); C2 ima $1$ terciarni H (2-halo-2-metilbutan); C3 ima $2$ sekundarna H (2-halo-3-metilbutan); C4 ima $3$ primarne H (1-halo-3-metilbutan). Kontrola: $6 + 1 + 2 + 3 = 12$, kar ustreza $\mathrm{C_5H_{12}}$.
-2. Klor: $6 \cdot 1 = 6$, $1 \cdot 5 = 5$, $2 \cdot 3{,}8 = 7{,}6$, $3 \cdot 1 = 3$; vsota $6 + 5 + 7{,}6 + 3 = 21{,}6$.
+2. Klor: $6 \cdot 1 = 6$; $1 \cdot 5 = 5$; $2 \cdot 3{,}8 = 7{,}6$; $3 \cdot 1 = 3$. Vsota: $6 + 5 + 7{,}6 + 3 = 21{,}6$.
 3. Deleži pri kloru: $\dfrac{6}{21{,}6} = 0{,}278$, $\dfrac{5}{21{,}6} = 0{,}231$, $\dfrac{7{,}6}{21{,}6} = 0{,}352$, $\dfrac{3}{21{,}6} = 0{,}139$.
 4. Brom: $6 \cdot 1 = 6$, $1 \cdot 1600 = 1600$, $2 \cdot 82 = 164$, $3 \cdot 1 = 3$; vsota $6 + 1600 + 164 + 3 = 1773$.
 5. Deleži pri bromu: $\dfrac{1600}{1773} = 0{,}902$, $\dfrac{164}{1773} = 0{,}0925$, $\dfrac{6}{1773} = 0{,}0034$, $\dfrac{3}{1773} = 0{,}0017$.

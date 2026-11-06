@@ -140,7 +140,7 @@ Koliko različnih črt lahko izseva vodik, ko je elektron na $n = 4$?
 
 1. Izpiši nivoje: $E_4 = -0{,}85\,\mathrm{eV}$, $E_3 = -1{,}51\,\mathrm{eV}$, $E_2 = -3{,}40\,\mathrm{eV}$, $E_1 = -13{,}6\,\mathrm{eV}$.
 2. Naštej vse skoke navzdol. Elektron lahko skoči naravnost ali po stopnicah: $4 \to 3$, $4 \to 2$, $4 \to 1$, $3 \to 2$, $3 \to 1$, $2 \to 1$. To je šest črt.
-3. Izračunaj razlike: $0{,}66$, $2{,}55$, $12{,}75$, $1{,}89$, $12{,}09$ in $10{,}2\,\mathrm{eV}$.
+3. Izračunaj razlike: $0{,}66$; $2{,}55$; $12{,}75$; $1{,}89$; $12{,}09$ in $10{,}2\,\mathrm{eV}$.
 4. Vsako deli v $1240\,\mathrm{eV\,nm}$: približno $1880$, $486$, $97$, $656$, $103$ in $122\,\mathrm{nm}$.
 5. Razvrsti: vidni sta le $486\,\mathrm{nm}$ in $656\,\mathrm{nm}$. Črta pri $1880\,\mathrm{nm}$ je infrardeča, preostale tri so ultravijolične.
 

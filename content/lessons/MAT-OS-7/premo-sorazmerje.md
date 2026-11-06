@@ -21,7 +21,7 @@ Ko jo prepoznaš, iz enega znanega para izračunaš vse druge: razdaljo do vsake
 :::premisli
 Avtobus ima vozovnico za $1{,}50\,\text{€}$ na postajo, brez vstopnine. Napovej: ali za $10$ postaj plačaš dvakrat toliko kot za $5$? V čem se razlikuje od taksija?
 ---
-Da: $5$ postaj stane $7{,}50\,\text{€}$, $10$ postaj $15\,\text{€}$. Pri avtobusu ni začetnega zneska, zato $0$ postaj stane $0\,\text{€}$ in cena se res podvoji. Pri taksiju podvojitev prepreči vstopnina $3\,\text{€}$.
+Da: $5$ postaj stane $7{,}50\,\text{€}$; $10$ postaj $15\,\text{€}$. Pri avtobusu ni začetnega zneska, zato $0$ postaj stane $0\,\text{€}$ in cena se res podvoji. Pri taksiju podvojitev prepreči vstopnina $3\,\text{€}$.
 :::
 
 **Pravilo.** Dve količini sta **premo sorazmerni**, če velja: kolikokrat povečamo (ali zmanjšamo) eno, tolikokrat se poveča (ali zmanjša) druga. Rast sama ni dovolj. Rasti morata v istem razmerju.
@@ -70,7 +70,7 @@ Premo sorazmerje: $\dfrac{y}{x} = k$ je v vseh stolpcih enak, $y = k \cdot x$
 
 **Rešitev:**
 
-1. Količniki: $5 : 2 = 2{,}5$, $10 : 4 = 2{,}5$, $15 : 6 = 2{,}5$.
+1. Količniki: $5 : 2 = 2{,}5$; $10 : 4 = 2{,}5$; $15 : 6 = 2{,}5$.
 2. Vsi so enaki, zato je zveza premo sorazmerna in $k = 2{,}5$: $1\,\text{cm}$ pomeni $2{,}5\,\text{km}$.
 3. Za $10\,\text{cm}$: $2{,}5 \cdot 10 = 25$.
 

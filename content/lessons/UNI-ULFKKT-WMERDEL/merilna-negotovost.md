@@ -15,7 +15,7 @@ Tam je ocena negotovosti odločilna. Raven hrupa $84\,\mathrm{dB}$ ali $86\,\mat
 
 ## Razlaga
 
-**1. Oblak meritev na številski premici.** Trener isti posnetek teka petkrat izmeri z ročno štoparico. Dobi $11{,}32$, $11{,}18$, $11{,}25$, $11{,}41$ in $11{,}24\,\mathrm{s}$. Vrišimo jih na premico (en znak je $0{,}01\,\mathrm{s}$):
+**1. Oblak meritev na številski premici.** Trener isti posnetek teka petkrat izmeri z ročno štoparico. Dobi $11{,}32$; $11{,}18$; $11{,}25$; $11{,}41$ in $11{,}24\,\mathrm{s}$. Vrišimo jih na premico (en znak je $0{,}01\,\mathrm{s}$):
 
 ```
 11,1      11,2      11,3      11,4      11,5  t [s]
@@ -103,9 +103,9 @@ $U$ zaokrožimo na eno ali dve veljavni mesti, rezultat pa na isto decimalno mes
 
 ### Primer 1: ponovljivost ročne štoparice
 
-Trener petkrat izmeri čas istega teka na posnetku: $11{,}32$, $11{,}18$, $11{,}25$, $11{,}41$ in $11{,}24\,\mathrm{s}$. Določi povprečje, standardni odmik in negotovost povprečja.
+Trener petkrat izmeri čas istega teka na posnetku: $11{,}32$; $11{,}18$; $11{,}25$; $11{,}41$ in $11{,}24\,\mathrm{s}$. Določi povprečje, standardni odmik in negotovost povprečja.
 
-**Podatki:** $n = 5$; $x_i$: $11{,}32$, $11{,}18$, $11{,}25$, $11{,}41$, $11{,}24\,\mathrm{s}$
+**Podatki:** $n = 5$, $x_i$: $11{,}32$; $11{,}18$; $11{,}25$; $11{,}41$; $11{,}24\,\mathrm{s}$
 **Iščemo:** $\bar{x}$, $s$ in $u_A$
 
 :::formula
@@ -115,7 +115,7 @@ $\bar{x} = \dfrac{\sum x_i}{n}$, $\quad s = \sqrt{\dfrac{\sum (x_i - \bar{x})^2}
 **Rešitev:**
 
 1. Vsota je $56{,}40\,\mathrm{s}$, zato $\bar{x} = 56{,}40 / 5 = 11{,}28\,\mathrm{s}$.
-2. Odmiki od povprečja so $0{,}04$, $-0{,}10$, $-0{,}03$, $0{,}13$ in $-0{,}04\,\mathrm{s}$. Njihovi kvadrati dajo vsoto $0{,}031\,\mathrm{s^2}$.
+2. Odmiki od povprečja so $0{,}04$; $-0{,}10$; $-0{,}03$; $0{,}13$ in $-0{,}04\,\mathrm{s}$. Njihovi kvadrati dajo vsoto $0{,}031\,\mathrm{s^2}$.
 3. Delimo z $n - 1 = 4$, ker smo povprečje izračunali iz istih podatkov: $s = \sqrt{0{,}031 / 4} \approx 0{,}088\,\mathrm{s}$.
 4. Negotovost povprečja: $u_A = 0{,}088 / \sqrt{5} \approx 0{,}039\,\mathrm{s}$.
 5. Odgovor: povprečni čas je $11{,}28\,\mathrm{s}$, posamezna meritev raztrosi za približno $0{,}09\,\mathrm{s}$, standardna negotovost povprečja pa je približno $0{,}04\,\mathrm{s}$.
