@@ -191,3 +191,20 @@ test("pregled 463/7: fakultetna lekcija iz fizike in kemije ima svoj predmet (ne
   assert.match(label(render("FIZ", "Trenje", "$F_{tr} = k_{tr} F_n$"), "k_tr"), /koeficient trenja/);
   assert.equal(card(render("MAT", "Trenje", "$F_{tr} = k_{tr} F_n$"), "k"), null, "v tabeli MAT k_tr ni smerni koeficient");
 });
+
+test("pregled 463 (primerjava po popravkih): a ni koeficient v x = 2a; enota pove S in V; d in k v integralu/eksponentu", () => {
+  // Po temi sami so a, b, c koeficienti le v formuli brez drugih črk.
+  const kf = render("MAT", "Kvadratna funkcija", "Za $x = 2a$ je $f(x) = 4a^2$. Graf $f(x) = x^2$.");
+  assert.equal(card(kf, "a"), null, "a v x = 2a ni vodilni koeficient");
+  assert.match(label(render("MAT", "Kvadratna enačba", "Koeficienti so $a = 1$, $b = -5$ in $c = 6$."), "b"), /linearni/);
+  assert.match(label(render("MAT", "Kvadratna enačba", "Velja $a \\neq 0$."), "a"), /vodilni/);
+  // Kvadratna forma: b pri xy ni linearni koeficient.
+  assert.equal(card(render("MAT", "Kvadratne forme", "$ax^2+bxy+cy^2=d$"), "b"), null);
+  // Številka z enoto ploščine ali prostornine pove pomen tudi zunaj geometrije.
+  assert.match(label(render("MAT", "Potence z racionalnimi eksponenti", "Za $S = 1{,}5\\,\\mathrm{m^2}$ izračunaj maso."), "S"), /ploščina/);
+  assert.match(label(render("MAT", "Kemijsko ravnotežje", "Podatki: $V = 2{,}00\\,\\mathrm{L}$."), "V"), /prostornina/);
+  assert.equal(card(render("MAT", "Vrste kotov", "$S = 130^\\circ$"), "S"), null);
+  // d v \oint ... \mathrm d\vec l ni premer; k v eksponentu ni smerni koeficient (tudi ob besedi »premica«).
+  assert.equal(card(render("MAT", "Krožni tok", "Po krogu velja $\\oint \\vec H \\cdot \\mathrm d\\vec l = I$."), "d"), null);
+  assert.equal(card(render("MAT", "Taylorjeve vrste", "Premica pade pod nič, krivulja $c_0 e^{-kt}$ pa ne."), "k"), null);
+});

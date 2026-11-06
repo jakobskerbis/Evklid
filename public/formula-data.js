@@ -129,6 +129,8 @@ const KEM = {
 //   ne   – v tej temi, povedi ali besedilu bloka ima črka drug pomen: teme tu ne velja (ctx pa še vedno).
 //   brez – formula, v kateri črka nima tega pomena (dx v integralu ni premer).
 //   oba  – potrebna sta ctx in teme hkrati.
+//   zan  – formula sama zanesljivo pove pomen (S = 1,5 m², V = 2,0 L), tudi brez teme in pri oba.
+//   samo – po temi (brez ctx) velja le, če se formula ujema s tem vzorcem (a = 1, b = −5; ne x = 2a).
 // Vnos s ctx ali teme velja samo, ko se kontekst ujema; sicer črka ni klikljiva (raje nič kot napačno).
 // Pravila in seznam dvoumnih črk: docs/pomen-crk.md.
 const QUAD = "a\\s*x\\^|ax\\^|b\\^2\\s*-\\s*4\\s*a\\s*c";
@@ -138,7 +140,11 @@ const QUADF = `${QUAD}|\\\\pm\\s*\\\\sqrt\\s*\\{?\\s*(?:D|b)|\\\\frac\\{\\s*-\\s
 const KVAD = "kvadratn\\w*\\s+(?:enačb|funkcij|neenačb|polinom|trinom)|diskriminant|viet";
 // a, b, c niso koeficienti kvadratne enačbe pri elipsi/hiperboli (polosi, y = c/x) ali v zaporedju.
 const KVAD_NE = "elips|hiperbol|zaporedj|\\bvrst[aeio]?\\b";
+// Po temi sami so a, b, c koeficienti le v formuli brez drugih črk (»a = 1«, »a \\neq 0«), ne v »x = 2a«.
+const KOEF = "^(?:\\\\[a-zA-Z]+|[^a-zA-Z]|[abcD])*$";
 const CIRCLE = "\\\\pi";
+// Številka z enoto ploščine ali prostornine: S = 1,5 m², V = 2,00 L (pomen je jasen tudi zunaj geometrije).
+const NUM_UNIT = "\\s*=\\s*[\\d\\s{},.]+(?:\\\\[,;!: ])?\\s*(?:\\\\(?:mathrm|text|rm)\\s*\\{\\s*)?";
 // \b: »okrog« ni krog, »atmosfera« ni sfera (ASCII \b tu deluje, ker je pred korenom latinska črka ali nič).
 const KROG = "\\bkrog|krožnic|krožn|valj|stož|\\bsfer|\\bkrogl";
 const GEOM = `geometr|trikotnik|štirikotnik|pravokotnik|paralelogram|trapez|romb|deltoid|mnogokotnik|\\blik|ploščin|obseg|prostornin|površin|prizm|piramid|kock|kvader|\\bteles|\\btelo\\b|${KROG}`;
@@ -158,29 +164,29 @@ const MAT = {
     { ctx: "e\\^\\{\\s*-?\\s*i|(?:\\\\pm|[+-])\\s*i\\s*\\\\sin|\\\\pm\\s*i(?![\\w\\\\])|\\(\\s*x\\s*[-+]\\s*i\\s*\\)|i\\^\\{?2\\}?\\s*=\\s*-\\s*1", n: "imaginarna enota", en: "imaginary unit", r: "i^2 = -1" },
     { ctx: "i\\^2|\\d\\s*i\\b|[+-]\\s*i\\b", teme: `kompleksn|imaginarn|${KVAD}`, oba: true, n: "imaginarna enota", en: "imaginary unit", r: "i^2 = -1" },
   ],
-  a: { ctx: QUADF, teme: KVAD, ne: KVAD_NE, n: "vodilni koeficient (pri x²)", en: "leading coefficient (of x²)", r: "a x^2 + b x + c = 0", note: "a ≠ 0, sicer enačba ni kvadratna.", noteEn: "a ≠ 0, otherwise the equation is not quadratic." },
+  a: { ctx: QUADF, teme: KVAD, ne: KVAD_NE, samo: KOEF, n: "vodilni koeficient (pri x²)", en: "leading coefficient (of x²)", r: "a x^2 + b x + c = 0", note: "a ≠ 0, sicer enačba ni kvadratna.", noteEn: "a ≠ 0, otherwise the equation is not quadratic." },
   // f(x) = a x² + b: b je tam prosti člen, ne linearni koeficient (brez).
-  b: { ctx: QUADF, teme: KVAD, ne: KVAD_NE, brez: "x\\^\\{?2\\}?\\s*[+-]\\s*b\\s*(?![a-zA-Z\\\\(])", n: "linearni koeficient (pri x)", en: "linear coefficient (of x)", r: "x_1 + x_2 = -\\frac{b}{a}" },
-  c: { ctx: QUADF, teme: KVAD, ne: KVAD_NE, n: "prosti člen", en: "constant term", r: "x_1 \\cdot x_2 = \\frac{c}{a}" },
+  b: { ctx: QUADF, teme: KVAD, ne: KVAD_NE, samo: KOEF, brez: "x\\^\\{?2\\}?\\s*[+-]\\s*b\\s*(?![a-zA-Z\\\\(])|b\\s*xy", n: "linearni koeficient (pri x)", en: "linear coefficient (of x)", r: "x_1 + x_2 = -\\frac{b}{a}" },
+  c: { ctx: QUADF, teme: KVAD, ne: KVAD_NE, samo: KOEF, n: "prosti člen", en: "constant term", r: "x_1 \\cdot x_2 = \\frac{c}{a}" },
   D: { ctx: "b\\^2\\s*-\\s*4\\s*a\\s*c|b\\^\\{2\\}\\s*-\\s*4|\\\\sqrt\\s*\\{?\\s*D", teme: KVAD, n: "diskriminanta", en: "discriminant", r: "D = b^2 - 4ac", note: "D > 0: dve realni rešitvi · D = 0: ena · D < 0: nobene realne.", noteEn: "D > 0: two real solutions · D = 0: one · D < 0: none." },
   // x₁, x₂ sta tudi točki na intervalu (Lagrange, Rolle), člena zaporedja ali abscisi dveh točk premice.
   x_1: { ctx: QUADF, teme: KVAD, ne: "lagrang|rolle|cauchy|integral|odvod|zaporedj|povprečn", n: "prva rešitev (ničla)", en: "first solution (zero)", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
   x_2: { ctx: QUADF, teme: KVAD, ne: "lagrang|rolle|cauchy|integral|odvod|zaporedj|povprečn", n: "druga rešitev (ničla)", en: "second solution (zero)", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
   "x_1,2": { ctx: QUADF, teme: KVAD, ne: "lagrang|rolle|cauchy|integral|odvod|zaporedj|povprečn", n: "rešitvi kvadratne enačbe", en: "solutions of the quadratic equation", r: "x_{1,2} = \\frac{-b \\pm \\sqrt{D}}{2a}" },
   // k je tudi indeks (k-ti člen), celo število (x = π/2 + kπ), konstanta vzmeti; n tudi naravno število.
-  k: { ctx: "y\\s*=\\s*k\\s*x|k\\s*=\\s*\\\\frac\\{\\s*y", teme: PREMICA, ne: `zaporedj|kombinator|binom|vsot|indukcij|period|trigonometr|${LIN_ENACBE}`, n: "smerni koeficient premice", en: "slope of the line", r: "k = \\frac{y_2 - y_1}{x_2 - x_1}" },
+  k: { ctx: "y\\s*=\\s*k\\s*x|k\\s*=\\s*\\\\frac\\{\\s*y", teme: PREMICA, brez: "\\^\\s*\\{[^}]*k|\\^\\s*-?\\s*k", ne: `zaporedj|kombinator|binom|vsot|indukcij|period|trigonometr|${LIN_ENACBE}`, n: "smerni koeficient premice", en: "slope of the line", r: "k = \\frac{y_2 - y_1}{x_2 - x_1}" },
   // n je začetna vrednost le, če je y = k x + n v isti formuli ali povedi (pov), ne vsak n v temi o premici
   // (»za vsak naravni n«, razmerje m : n pri Talesovem izreku).
   n: { ctx: "y\\s*=\\s*k\\s*x\\s*[+-]\\s*n", pov: "y\\s*=\\s*k\\s*x\\s*[+-]\\s*n\\b", ne: "zaporedj|kombinator|binom|vsot|indukcij|mnogokotnik|potenc|koren", n: "začetna vrednost (presečišče z osjo y)", en: "y-intercept", r: "y = k x + n" },
   p: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", n: "abscisa temena T(p, q)", en: "x-coordinate of the vertex T(p, q)", r: "p = -\\frac{b}{2a}" },
   q: { ctx: "\\(\\s*x\\s*-\\s*p\\s*\\)", teme: "temensk|\\btemena\\b|\\bteme\\s+(?:parabol|t\\b|t\\()", n: "ordinata temena T(p, q)", en: "y-coordinate of the vertex T(p, q)", r: "q = -\\frac{D}{4a}" },
   r: { ctx: CIRCLE, teme: KROG, brez: "\\\\int|\\\\sum|\\\\lim|\\\\sin|\\\\cos|\\\\tan", n: "polmer", en: "radius", r: "d = 2r" },
-  d: { ctx: `${CIRCLE}|d\\s*=\\s*2\\s*r`, teme: KROG, ne: "razdalj|oddaljen|sekant|tangent|mimobežn", brez: "\\\\int|\\\\frac\\{\\s*d|\\bd\\s*[xyt]\\b|\\\\mathrm\\{d\\}", n: "premer", en: "diameter", r: "d = 2r" },
+  d: { ctx: `${CIRCLE}|d\\s*=\\s*2\\s*r`, teme: KROG, ne: "razdalj|oddaljen|sekant|tangent|mimobežn", brez: "\\\\o?int|\\\\frac\\{\\s*d|\\bd\\s*[xyt]\\b|\\\\mathrm\\s*\\{?\\s*d(?![a-zA-Z])", n: "premer", en: "diameter", r: "d = 2r" },
   o: { ctx: "o\\s*=", teme: GEOM, oba: true, n: "obseg", en: "perimeter (circumference)", r: "o = 2\\pi r" },
-  S: { ctx: "S\\s*=", teme: `${GEOM}|integral`, oba: true, ne: "zaporedj|vsot|statist|verjetn|množic", n: "ploščina", en: "area" },
+  S: { zan: `(?<![\\w\\\\])S${NUM_UNIT}(?:[kdcm]?m\\^\\{?2)`, ctx: "S\\s*=", teme: `${GEOM}|integral`, oba: true, ne: "zaporedj|vsot|statist|verjetn|množic", n: "ploščina", en: "area" },
   // »Mečemo kocko«: P je verjetnost, ne površina (docs/pomen-crk.md).
   P: { ctx: "P\\s*=", teme: "površin|prizm|piramid|kock|kvader|valj|stož|krogl|\\bteles|\\btelo\\b", oba: true, ne: "verjetn|dogod|meč", n: "površina telesa", en: "surface area" },
-  V: { ctx: "V\\s*=", teme: "prostornin|prizm|piramid|kock|kvader|valj|stož|krogl|\\bteles|\\btelo\\b|vrteni", oba: true, ne: "verjetn|dogod|meč", n: "prostornina", en: "volume" },
+  V: { zan: `(?<![\\w\\\\])V${NUM_UNIT}(?:[kdcm]?m\\^\\{?3|[mdc]?L\\b)`, ctx: "V\\s*=", teme: "prostornin|prizm|piramid|kock|kvader|valj|stož|krogl|\\bteles|\\btelo\\b|vrteni", oba: true, ne: "verjetn|dogod|meč", n: "prostornina", en: "volume" },
   v: { ctx: "S\\s*=|V\\s*=|v_[a-c]", teme: GEOM, oba: true, ne: "hitrost|vektor", n: "višina", en: "height" },
   a_n: { teme: ZAPOREDJE, ne: "polinom", n: "splošni (n-ti) člen zaporedja", en: "general (n-th) term of the sequence" },
   a_1: { ctx: "a_n|a_\\{n", teme: ZAPOREDJE, oba: true, ne: "polinom", n: "prvi člen zaporedja", en: "first term of the sequence" },
@@ -342,14 +348,15 @@ const re = (src, flags = "") => {
 const byFormula = (e, tex) => (!!e.ctx && re(e.ctx).test(tex)) || (!!e.pov && !!sentTex && re(e.pov).test(sentTex));
 function validIn(e, tex) {
   if (e.brez && re(e.brez).test(tex)) return false;
+  if (e.zan && re(e.zan).test(tex)) return true;
   const byCtx = byFormula(e, tex);
   // Tema (in poved) da pomen; besedilo celega bloka ga lahko le izključi (ne).
-  const byTopic = !!e.teme && !!tscope && re(e.teme, "iu").test(tscope) && !(e.ne && re(e.ne, "iu").test(scope));
+  const byTopic = !!e.teme && !!tscope && re(e.teme, "iu").test(tscope) && !(e.ne && re(e.ne, "iu").test(scope)) && (!e.samo || byCtx || re(e.samo).test(tex));
   if (e.oba) return (!e.ctx || byCtx) && (!e.teme || byTopic);
   if (e.ctx || e.teme || e.pov) return byCtx || byTopic;
   return !(e.ne && scope && re(e.ne, "iu").test(scope)); // privzeti pomen: le, če ga besedilo ne izključi
 }
-const strong = (e) => !!(e.ctx || e.teme || e.pov);
+const strong = (e) => !!(e.ctx || e.teme || e.pov || e.zan);
 function pickIndex(list, tex) {
   const k = list.findIndex((e) => validIn(e, tex));
   if (k >= 0 && strong(list[k])) return k;
