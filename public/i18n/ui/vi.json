@@ -3639,7 +3639,7 @@
   "pn.photoRules": {
     "other": "Trong ảnh chỉ nên có bài tập, không có khuôn mặt hay tên. Chúng mình lưu ảnh cùng với văn bản mà Evklid đã đọc. Chỉ quản trị viên Evklid xem được. Chúng mình giữ trong {n} ngày, sau đó tự động xóa."
   },
-  "pn.photoAi": "Như mọi lần quét, một AI đọc ảnh để Evklid hiểu bài tập. Bản đã lưu thì chúng mình không gửi cho ai.",
+  "pn.photoAi": "Như mọi lần quét, một AI đọc ảnh để Evklid hiểu bài tập. Bản đã lưu thì chúng mình không gửi cho ai. Bạn có thể xóa sớm hơn trong “Giúp Evklid tốt hơn”.",
   "pn.photoSaved": "Đã lưu ảnh",
   "pn.photoDelete": "Xóa ảnh",
   "pn.photoDeleted": "Đã xóa ảnh.",
@@ -3716,12 +3716,8 @@
   "pilot.n.removed": "Tài khoản không còn trong thử nghiệm.",
   "pilot.n.few": "Quá ít câu trả lời để hiển thị (ít nhất {n}).",
   "zb.fromPilot": "Vì đã giúp trong thử nghiệm",
-  "priv.noticeTitle": "Chúng mình đã cập nhật quy định về quyền riêng tư",
-  "priv.noticeText": "Giờ đây quy định nói rõ hơn những dữ liệu nào bạn có thể xuất và xóa, và chúng mình giữ chúng bao lâu. Chúng mình cũng thêm nhiệm vụ thử nghiệm và việc đo xem Evklid có giúp ích không. Bạn không cần làm gì cả.",
-  "priv.noticeRead": "Đọc quy định",
-  "priv.noticeOk": "Đồng ý",
   "pn.quizTitle": "Kiểm tra kiến thức",
-  "pn.quizText": "Sáu bài ngắn từ phần bạn đang học. 14 ngày sau làm lại một lần nữa, để xem Evklid có giúp bạn không. Không chấm điểm và không sao nếu bạn chưa biết điều gì đó.",
+  "pn.quizText": "Sáu bài ngắn từ phần bạn đang học. 14 ngày sau làm lại một lần nữa, để xem Evklid có giúp bạn không. Không chấm điểm và không sao nếu bạn chưa biết điều gì đó. Chúng mình lưu kết quả, quản trị viên chỉ thấy điểm trung bình của mọi người.",
   "pn.quizStart": "Bắt đầu kiểm tra",
   "pn.quizContinue": "Tiếp tục kiểm tra",
   "pn.quizPost": "Bắt đầu lần kiểm tra thứ hai",
@@ -3756,5 +3752,18 @@
   "pilot.n.quizCeiling": "Mức trần (lần đầu đúng hết, thêm bài khó hơn; tính riêng): {n}, cả hai lần {paired}. Trước {pre}, sau 14 ngày {post}, chênh lệch {diff} điểm phần trăm",
   "pilot.n.wtp": "Mức sẵn lòng trả tiền",
   "pilot.n.wtpPay": "Sẽ trả",
-  "pilot.n.wtpAmount": "Số tiền mỗi tháng"
+  "pilot.n.wtpAmount": "Số tiền mỗi tháng",
+  "starsi.privTitle": "Chúng tôi đã cập nhật quy định về quyền riêng tư",
+  "starsi.privText": "Giờ đây quy định nói rõ hơn những dữ liệu nào anh/chị có thể xuất và xóa, và chúng tôi giữ chúng bao lâu. Chúng tôi cũng thêm nhiệm vụ thử nghiệm và việc đo xem Evklid có giúp ích không. Anh/chị không cần làm gì cả.",
+  "starsi.privRead": "Đọc quy định",
+  "starsi.privPw": "Mật khẩu tài khoản",
+  "starsi.privPwNote": "Ẩn thông báo bằng mật khẩu tài khoản, để người khác trên thiết bị này không ẩn được.",
+  "starsi.privHide": "Ẩn thông báo",
+  "starsi.privHidden": "Đã ẩn thông báo.",
+  "starsi.wtpPwNote": "Gửi câu trả lời bằng mật khẩu tài khoản, để người khác trên thiết bị này không trả lời thay.",
+  "starsi.wtpPwNeed": "Vui lòng nhập mật khẩu tài khoản.",
+  "pilot.n.quizSkip": "Bài chỉ có “Không biết” (không tính vào trung bình): {n}",
+  "pilot.n.blocks": "Số tổng chỉ cập nhật sau {n} câu trả lời mới.",
+  "pilot.n.manage": "Tài khoản trong thử nghiệm",
+  "pilot.n.backSums": "Quay lại số tổng"
 }

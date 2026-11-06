@@ -3667,7 +3667,7 @@
   "pn.photoRules": {
     "other": "Auf dem Foto soll nur die Aufgabe sein, keine Gesichter oder Namen. Wir speichern es zusammen mit dem Text, den Evklid gelesen hat. Nur der Administrator von Evklid sieht beides. Wir bewahren es {n} Tage auf, dann wird es automatisch gelöscht."
   },
-  "pn.photoAi": "Wie bei jedem Scan liest eine KI das Foto, damit Evklid die Aufgabe versteht. Die gespeicherte Kopie schicken wir niemandem.",
+  "pn.photoAi": "Wie bei jedem Scan liest eine KI das Foto, damit Evklid die Aufgabe versteht. Die gespeicherte Kopie schicken wir niemandem. Du kannst beides vorher unter „Hilf, Evklid zu verbessern“ löschen.",
   "pn.photoSaved": "Foto gespeichert",
   "pn.photoDelete": "Foto löschen",
   "pn.photoDeleted": "Das Foto ist gelöscht.",
@@ -3744,12 +3744,8 @@
   "pilot.n.removed": "Das Konto ist nicht mehr im Pilot.",
   "pilot.n.few": "Zu wenige Antworten für eine Anzeige (mindestens {n}).",
   "zb.fromPilot": "Für die Hilfe im Pilot",
-  "priv.noticeTitle": "Wir haben die Datenschutzregeln aktualisiert",
-  "priv.noticeText": "Sie sagen jetzt genauer, welche Daten du exportieren und löschen kannst und wie lange wir sie aufbewahren. Neu sind auch die Pilotaufgaben und die Messung, ob Evklid hilft. Du musst nichts tun.",
-  "priv.noticeRead": "Regeln lesen",
-  "priv.noticeOk": "OK",
   "pn.quizTitle": "Wissenstest",
-  "pn.quizText": "Sechs kurze Aufgaben aus dem Stoff, den du lernst. In 14 Tagen noch einmal, um zu sehen, ob Evklid dir hilft. Es gibt keine Note, und es ist kein Problem, wenn du etwas nicht weißt.",
+  "pn.quizText": "Sechs kurze Aufgaben aus dem Stoff, den du lernst. In 14 Tagen noch einmal, um zu sehen, ob Evklid dir hilft. Es gibt keine Note, und es ist kein Problem, wenn du etwas nicht weißt. Wir speichern das Ergebnis, der Administrator sieht nur den Durchschnitt aller.",
   "pn.quizStart": "Test starten",
   "pn.quizContinue": "Test fortsetzen",
   "pn.quizPost": "Zweiten Test starten",
@@ -3784,5 +3780,18 @@
   "pilot.n.quizCeiling": "Decke (beim ersten Mal alles richtig, zusätzliche schwierigere Aufgaben; getrennt): {n}, beide Tests {paired}. Vorher {pre}, nach 14 Tagen {post}, Unterschied {diff} Prozentpunkte",
   "pilot.n.wtp": "Zahlungsbereitschaft",
   "pilot.n.wtpPay": "Würden zahlen",
-  "pilot.n.wtpAmount": "Betrag pro Monat"
+  "pilot.n.wtpAmount": "Betrag pro Monat",
+  "starsi.privTitle": "Wir haben die Datenschutzregeln aktualisiert",
+  "starsi.privText": "Sie sagen jetzt genauer, welche Daten Sie exportieren und löschen können und wie lange wir sie aufbewahren. Neu sind auch die Pilotaufgaben und die Messung, ob Evklid hilft. Sie müssen nichts tun.",
+  "starsi.privRead": "Regeln lesen",
+  "starsi.privPw": "Kontopasswort",
+  "starsi.privPwNote": "Blenden Sie den Hinweis mit dem Kontopasswort aus, damit ihn niemand anderes auf diesem Gerät ausblendet.",
+  "starsi.privHide": "Hinweis ausblenden",
+  "starsi.privHidden": "Der Hinweis ist ausgeblendet.",
+  "starsi.wtpPwNote": "Senden Sie die Antwort mit dem Kontopasswort, damit niemand anderes auf diesem Gerät antwortet.",
+  "starsi.wtpPwNeed": "Bitte geben Sie das Kontopasswort ein.",
+  "pilot.n.quizSkip": "Tests nur mit „Weiß ich nicht“ (nicht in Durchschnitten): {n}",
+  "pilot.n.blocks": "Summen werden erst nach {n} neuen Antworten aktualisiert.",
+  "pilot.n.manage": "Konten im Pilot",
+  "pilot.n.backSums": "Zurück zu den Summen"
 }

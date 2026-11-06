@@ -218,8 +218,10 @@ test("pilot: skrbnik doda člana po e-naslovu, drugi ne", async () => {
       assert.equal((await admin.call("/api/admin/pilot-naloge/clani", { method: "POST", body: { email: "clan@pilot.si" } })).status, 200);
       assert.equal((await m.call(`/api/students/${m.sid}/pilot`)).body.member, true);
       const r = (await admin.call("/api/admin/pilot-naloge")).body;
-      assert.deepEqual(r.accounts, ["clan@pilot.si"]);
+      assert.equal(r.accounts, undefined, "e-naslovi niso na isti strani kot vsote (pregled B3)");
       assert.equal(r.scans.length, SCAN_CONDITIONS.length);
+      assert.deepEqual((await admin.call("/api/admin/pilot-naloge/clani")).body.accounts, ["clan@pilot.si"]);
+      assert.equal((await m.call("/api/admin/pilot-naloge/clani")).status, 403);
       await admin.call("/api/admin/pilot-naloge/clani", { method: "POST", body: { email: "clan@pilot.si", on: false } });
       assert.equal((await m.call(`/api/students/${m.sid}/pilot`)).body.member, false);
     });
@@ -286,7 +288,7 @@ test("pilot: povzetek za jutranji pregled (scripts/pilot-naloge.js) brez imen in
   store.db.close?.();
   const out = execFileSync(process.execPath, ["scripts/pilot-naloge.js"], { env: { ...process.env, EVKLID_DB: file }, encoding: "utf8", cwd: new URL("..", import.meta.url).pathname });
   assert.match(out, /# Pilot: naloge članov/);
-  assert.match(out, /\| board \| 1 \| – \| – \|/); // ena ocena: pod pragom (MIN_GROUP) brez deleža
+  assert.match(out, /\| board \| < 3 \| – \| – \|/); // ena ocena: pod pragom (MIN_GROUP) brez deleža in brez natančnega števila
   assert.doesNotMatch(out, /Ana/);
   fs.rmSync(dir, { recursive: true, force: true });
 });
@@ -305,7 +307,7 @@ test("pilot: soglasje z jezikom in rokom, prepis samo s fotografijo, magični ba
     const ph = store.db.prepare("SELECT image, consent, expires_at, julianday(expires_at) - julianday(created_at) AS d FROM pilot_photos").get();
     assert.ok(!ph.image.startsWith("data:image/"));
     const c = JSON.parse(ph.consent);
-    assert.equal(c.v, 2);
+    assert.equal(c.v, 3);
     assert.equal(c.lang, "de");
     assert.equal(c.days, 30);
     assert.match(c.text, /prebere umetna inteligenca/);

@@ -3668,7 +3668,7 @@
   "pn.photoRules": {
     "other": "Sur la photo, il ne doit y avoir que l’exercice, sans visages ni noms. Nous l’enregistrons avec le texte lu par Evklid. Seul l’administrateur d’Evklid les voit. Nous les gardons {n} jours, puis ils s’effacent tout seuls."
   },
-  "pn.photoAi": "Comme pour chaque scan, une intelligence artificielle lit la photo pour qu’Evklid comprenne l’exercice. Nous n’envoyons la copie enregistrée à personne.",
+  "pn.photoAi": "Comme pour chaque scan, une intelligence artificielle lit la photo pour qu’Evklid comprenne l’exercice. Nous n’envoyons la copie enregistrée à personne. Tu peux les supprimer avant dans « Aide à améliorer Evklid ».",
   "pn.photoSaved": "Photo enregistrée",
   "pn.photoDelete": "Supprimer la photo",
   "pn.photoDeleted": "La photo est supprimée.",
@@ -3745,12 +3745,8 @@
   "pilot.n.removed": "Le compte n’est plus dans le pilote.",
   "pilot.n.few": "Trop peu de réponses pour les afficher (au moins {n}).",
   "zb.fromPilot": "Pour ton aide dans le pilote",
-  "priv.noticeTitle": "Nous avons mis à jour les règles de confidentialité",
-  "priv.noticeText": "Elles disent maintenant plus précisément quelles données tu peux exporter et supprimer et combien de temps nous les gardons. Nous avons aussi ajouté les tâches du pilote et la mesure de l’aide apportée par Evklid. Tu n’as rien à faire.",
-  "priv.noticeRead": "Lire les règles",
-  "priv.noticeOk": "D’accord",
   "pn.quizTitle": "Test de connaissances",
-  "pn.quizText": "Six exercices courts sur ce que tu apprends. Encore une fois dans 14 jours, pour voir si Evklid t’aide. Il n’y a pas de note, et ce n’est pas grave si tu ne sais pas quelque chose.",
+  "pn.quizText": "Six exercices courts sur ce que tu apprends. Encore une fois dans 14 jours, pour voir si Evklid t’aide. Il n’y a pas de note, et ce n’est pas grave si tu ne sais pas quelque chose. Nous enregistrons le résultat, et l’administrateur ne voit que la moyenne de tous.",
   "pn.quizStart": "Commencer le test",
   "pn.quizContinue": "Continuer le test",
   "pn.quizPost": "Commencer le deuxième test",
@@ -3785,5 +3781,18 @@
   "pilot.n.quizCeiling": "Plafond (tout juste la première fois, exercices supplémentaires plus difficiles ; à part) : {n}, deux tests {paired}. Avant {pre}, après 14 jours {post}, écart {diff} points de pourcentage",
   "pilot.n.wtp": "Disposition à payer",
   "pilot.n.wtpPay": "Paieraient",
-  "pilot.n.wtpAmount": "Montant par mois"
+  "pilot.n.wtpAmount": "Montant par mois",
+  "starsi.privTitle": "Nous avons mis à jour les règles de confidentialité",
+  "starsi.privText": "Elles disent maintenant plus précisément quelles données vous pouvez exporter et supprimer et combien de temps nous les gardons. Nous avons aussi ajouté les tâches du pilote et la mesure de l’aide apportée par Evklid. Vous n’avez rien à faire.",
+  "starsi.privRead": "Lire les règles",
+  "starsi.privPw": "Mot de passe du compte",
+  "starsi.privPwNote": "Masquez l’avis avec le mot de passe du compte, pour que personne d’autre ne le masque sur cet appareil.",
+  "starsi.privHide": "Masquer l’avis",
+  "starsi.privHidden": "L’avis est masqué.",
+  "starsi.wtpPwNote": "Envoyez la réponse avec le mot de passe du compte, pour que personne d’autre ne réponde sur cet appareil.",
+  "starsi.wtpPwNeed": "Saisissez le mot de passe du compte.",
+  "pilot.n.quizSkip": "Tests uniquement « Je ne sais pas » (hors moyennes) : {n}",
+  "pilot.n.blocks": "Les totaux ne se mettent à jour qu’après {n} nouvelles réponses.",
+  "pilot.n.manage": "Comptes du pilote",
+  "pilot.n.backSums": "Retour aux totaux"
 }

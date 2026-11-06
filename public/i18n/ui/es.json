@@ -3668,7 +3668,7 @@
   "pn.photoRules": {
     "other": "En la foto solo debe aparecer el ejercicio, sin caras ni nombres. La guardamos junto con el texto que leyó Evklid. Solo los ve el administrador de Evklid. Los guardamos {n} días y luego se borran solos."
   },
-  "pn.photoAi": "Como en cada escaneo, una inteligencia artificial lee la foto para que Evklid entienda el ejercicio. La copia guardada no se la enviamos a nadie.",
+  "pn.photoAi": "Como en cada escaneo, una inteligencia artificial lee la foto para que Evklid entienda el ejercicio. La copia guardada no se la enviamos a nadie. Puedes borrarlos antes en «Ayuda a mejorar Evklid».",
   "pn.photoSaved": "Foto guardada",
   "pn.photoDelete": "Borrar la foto",
   "pn.photoDeleted": "La foto está borrada.",
@@ -3745,12 +3745,8 @@
   "pilot.n.removed": "La cuenta ya no está en el piloto.",
   "pilot.n.few": "Muy pocas respuestas para mostrar (al menos {n}).",
   "zb.fromPilot": "Por ayudar en el piloto",
-  "priv.noticeTitle": "Hemos actualizado las normas de privacidad",
-  "priv.noticeText": "Ahora explican con más precisión qué datos puedes exportar y borrar y cuánto tiempo los guardamos. También añadimos las tareas del piloto y la medición de si Evklid ayuda. No tienes que hacer nada.",
-  "priv.noticeRead": "Leer las normas",
-  "priv.noticeOk": "De acuerdo",
   "pn.quizTitle": "Prueba de conocimientos",
-  "pn.quizText": "Seis ejercicios cortos del tema que estás aprendiendo. Dentro de 14 días, otra vez, para ver si Evklid te ayuda. No hay nota y no pasa nada si no sabes algo.",
+  "pn.quizText": "Seis ejercicios cortos del tema que estás aprendiendo. Dentro de 14 días, otra vez, para ver si Evklid te ayuda. No hay nota y no pasa nada si no sabes algo. Guardamos el resultado y el administrador solo ve la media de todos.",
   "pn.quizStart": "Empezar la prueba",
   "pn.quizContinue": "Seguir con la prueba",
   "pn.quizPost": "Empezar la segunda prueba",
@@ -3785,5 +3781,18 @@
   "pilot.n.quizCeiling": "Techo (todo bien la primera vez, ejercicios extra más difíciles; aparte): {n}, ambas pruebas {paired}. Antes {pre}, tras 14 días {post}, diferencia {diff} puntos porcentuales",
   "pilot.n.wtp": "Disposición a pagar",
   "pilot.n.wtpPay": "Pagarían",
-  "pilot.n.wtpAmount": "Importe al mes"
+  "pilot.n.wtpAmount": "Importe al mes",
+  "starsi.privTitle": "Hemos actualizado las normas de privacidad",
+  "starsi.privText": "Ahora explican con más precisión qué datos puede exportar y borrar y cuánto tiempo los guardamos. También añadimos las tareas del piloto y la medición de si Evklid ayuda. No tiene que hacer nada.",
+  "starsi.privRead": "Leer las normas",
+  "starsi.privPw": "Contraseña de la cuenta",
+  "starsi.privPwNote": "Oculte el aviso con la contraseña de la cuenta, para que nadie más lo oculte en este dispositivo.",
+  "starsi.privHide": "Ocultar aviso",
+  "starsi.privHidden": "El aviso está oculto.",
+  "starsi.wtpPwNote": "Envíe la respuesta con la contraseña de la cuenta, para que nadie más responda en este dispositivo.",
+  "starsi.wtpPwNeed": "Escriba la contraseña de la cuenta.",
+  "pilot.n.quizSkip": "Pruebas solo con «No lo sé» (fuera de las medias): {n}",
+  "pilot.n.blocks": "Los totales se actualizan solo tras {n} respuestas nuevas.",
+  "pilot.n.manage": "Cuentas en el piloto",
+  "pilot.n.backSums": "Volver a los totales"
 }

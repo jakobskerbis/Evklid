@@ -458,55 +458,7 @@ async function route() {
   if (!status.children) return renderAddChild(), false;
   authMode(false);
   adjustAppForAccounts();
-  // Politika zasebnosti se je spremenila: enkrat kratko obvestilo (samo imetniku na odklenjeni napravi), nikoli ne zaklene.
-  if (status.parent.privacy_notice && status.account_unlocked) privacyNotice();
   return true;
-}
-
-let privacyTimer = null;
-function privacyNotice(tries = 0) {
-  clearTimeout(privacyTimer);
-  // Ne čez uvodni ogled ali drugo okno: počakamo (največ nekaj minut), sicer ostane za naslednjo prijavo.
-  const busy = document.body.classList.contains("onboarding") || !$("#tour")?.hidden || !!document.querySelector("dialog[open]");
-  if (busy) {
-    if (tries < 40) privacyTimer = setTimeout(() => privacyNotice(tries + 1), 4000);
-    return;
-  }
-  privacyTimer = setTimeout(() => {
-    if (!status?.parent?.privacy_notice || document.querySelector("dialog[open]")) return privacyNotice(tries + 1);
-    let dlg = $("#privacy-notice");
-    if (!dlg) {
-      dlg = document.createElement("dialog");
-      dlg.id = "privacy-notice";
-      dlg.className = "install-sheet pn-notice";
-      dlg.setAttribute("aria-labelledby", "privacy-notice-title");
-      document.body.append(dlg);
-      const done = () => {
-        dlg.close();
-        if (status?.parent) status.parent.privacy_notice = null;
-        api("/api/account/privacy-seen", { method: "POST" }).catch(() => {});
-      };
-      dlg.addEventListener("cancel", (e) => {
-        e.preventDefault();
-        done();
-      });
-      dlg.addEventListener("click", (e) => {
-        if (e.target === dlg || e.target.closest("[data-priv-ok]")) done();
-        else if (e.target.closest("a[href]")) done(); // prebrano (povezava se odpre v novem zavihku)
-      });
-    }
-    dlg.innerHTML = `<div class="is-box" role="document">
-      <div class="is-head"><span class="pn-notice-ic">${icon("lock")}</span><h2 id="privacy-notice-title">${esc(t("priv.noticeTitle"))}</h2>
-        <button type="button" class="ghost icon-only" data-priv-ok aria-label="${esc(t("priv.noticeOk"))}" title="${esc(t("priv.noticeOk"))}">${icon("x")}</button></div>
-      <p>${esc(t("priv.noticeText"))}</p>
-      <div class="pn-notice-actions">
-        <a class="btn-secondary" href="/zasebnost.html" target="_blank" rel="noopener">${icon("external-link")}<span>${esc(t("priv.noticeRead"))}</span></a>
-        <button type="button" class="primary" data-priv-ok>${esc(t("priv.noticeOk"))}</button>
-      </div>
-    </div>`;
-    dlg.showModal();
-    $("[data-priv-ok].primary", dlg)?.focus();
-  }, tries ? 0 : 1500);
 }
 
 async function continueFlow() {
@@ -1483,6 +1435,47 @@ function renderGuestOff() {
   bindGuestForms(continueFlow);
 }
 
+// Politika zasebnosti se je spremenila po registraciji: pasica v zavihku Račun, dokler je imetnik ne skrije z geslom
+// računa (zaklep računa je privzeto izklopljen, zato je ne sme skriti otrok na starševi napravi; pregled B3).
+function privacyBanner(acc) {
+  if (!acc.parent.privacy_notice) return "";
+  return `<div class="card priv-banner" id="priv-banner" role="region" aria-labelledby="priv-title">
+    <h2 id="priv-title" class="with-icon">${icon("lock")}${esc(t("starsi.privTitle"))}</h2>
+    <p>${esc(t("starsi.privText"))}</p>
+    <p><a class="btn-secondary" href="/zasebnost.html" target="_blank" rel="noopener">${icon("external-link")}<span>${esc(t("starsi.privRead"))}</span></a></p>
+    <form class="form priv-form" novalidate>
+      <p class="muted small">${esc(t("starsi.privPwNote"))}</p>
+      <label for="priv-pw">${esc(t("starsi.privPw"))}</label>
+      <input id="priv-pw" type="password" autocomplete="current-password" required>
+      <p class="form-error" role="alert" hidden></p>
+      <button type="submit" class="secondary">${esc(t("starsi.privHide"))}</button>
+    </form>
+  </div>`;
+}
+
+function wirePrivacyBanner() {
+  const box = $("#priv-banner");
+  const form = box?.querySelector(".priv-form");
+  if (!form) return;
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const err = form.querySelector(".form-error");
+    const btn = form.querySelector("button");
+    btn.disabled = true;
+    try {
+      await api("/api/account/privacy-seen", { method: "POST", body: { password: $("#priv-pw").value } });
+      if (status?.parent) status.parent.privacy_notice = null;
+      box.remove();
+      toast(t("starsi.privHidden"), "check");
+    } catch (ex) {
+      err.textContent = ex.message;
+      err.hidden = false;
+      btn.disabled = false;
+      $("#priv-pw").focus();
+    }
+  });
+}
+
 export async function renderAccount() {
   const view = $("#view-account");
   let acc;
@@ -1502,6 +1495,7 @@ export async function renderAccount() {
   view.innerHTML = `
     <button type="button" class="ghost back me-back">${icon("arrow-left")}${esc(t("nav.me"))}</button>
     <h1>${esc(t("nav.account"))}</h1>
+    ${privacyBanner(acc)}
     <div class="kolone">
     <div class="card">
       <h2>${esc(t("mob.subscription"))}</h2>
@@ -1622,7 +1616,8 @@ export async function renderAccount() {
   });
   bindAdminCodes(acc);
   paintAccountPilot($(".child-list"), acc.children, { api, toast });
-  paintAccountWtp($("#pn-wtp"), acc.pilot_wtp, { api, toast }); // pilot: »Ali bi za Evklid plačali?« (enkrat) // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
+  paintAccountWtp($("#pn-wtp"), acc.pilot_wtp, { api, toast }); // pilot: »Ali bi za Evklid plačali?« (enkrat)
+  wirePrivacyBanner(); // starš vidi, ali je profil v pilotu in koliko fotografij je shranjenih
   bindGuarantee(acc, { api, toast, showError, refresh: renderAccount });
   renderCreditCard($("#credit-card"), { api });
   $("#gift-form")?.addEventListener("submit", async (e) => {

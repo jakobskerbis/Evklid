@@ -3665,7 +3665,7 @@
   "pn.photoRules": {
     "other": "A fotón csak a feladat legyen, arcok és nevek nélkül. A szöveggel együtt mentjük, amit az Evklid felismert. Csak az Evklid adminisztrátora látja őket. {n} napig őrizzük, utána maguktól törlődnek."
   },
-  "pn.photoAi": "Mint minden beolvasásnál, a fotót egy mesterséges intelligencia olvassa el, hogy az Evklid megértse a feladatot. A mentett másolatot senkinek nem küldjük el.",
+  "pn.photoAi": "Mint minden beolvasásnál, a fotót egy mesterséges intelligencia olvassa el, hogy az Evklid megértse a feladatot. A mentett másolatot senkinek nem küldjük el. Korábban is törölheted őket itt: „Segíts jobbá tenni az Evklidet”.",
   "pn.photoSaved": "A fénykép mentve",
   "pn.photoDelete": "Fénykép törlése",
   "pn.photoDeleted": "A fénykép törölve.",
@@ -3742,12 +3742,8 @@
   "pilot.n.removed": "A fiók már nincs a pilotban.",
   "pilot.n.few": "Túl kevés válasz a megjelenítéshez (legalább {n}).",
   "zb.fromPilot": "A pilotban nyújtott segítségért",
-  "priv.noticeTitle": "Frissítettük az adatvédelmi szabályokat",
-  "priv.noticeText": "Most pontosabban leírják, mely adataidat exportálhatod és törölheted, és meddig őrizzük őket. Hozzáadtuk a pilot feladatait és annak mérését is, hogy segít-e az Evklid. Neked nem kell semmit tenned.",
-  "priv.noticeRead": "Szabályok elolvasása",
-  "priv.noticeOk": "Rendben",
   "pn.quizTitle": "Tudásfelmérő",
-  "pn.quizText": "Hat rövid feladat abból, amit most tanulsz. 14 nap múlva még egyszer, hogy lássuk, segít-e az Evklid. Nincs osztályzat, és nem baj, ha valamit nem tudsz.",
+  "pn.quizText": "Hat rövid feladat abból, amit most tanulsz. 14 nap múlva még egyszer, hogy lássuk, segít-e az Evklid. Nincs osztályzat, és nem baj, ha valamit nem tudsz. Az eredményt elmentjük, az adminisztrátor csak mindenki átlagát látja.",
   "pn.quizStart": "Felmérő indítása",
   "pn.quizContinue": "Felmérő folytatása",
   "pn.quizPost": "Második felmérő indítása",
@@ -3782,5 +3778,18 @@
   "pilot.n.quizCeiling": "Plafon (elsőre minden helyes, további nehezebb feladatok; külön): {n}, mindkét felmérő {paired}. Előtte {pre}, 14 nap után {post}, különbség {diff} százalékpont",
   "pilot.n.wtp": "Fizetési hajlandóság",
   "pilot.n.wtpPay": "Fizetnének",
-  "pilot.n.wtpAmount": "Havi összeg"
+  "pilot.n.wtpAmount": "Havi összeg",
+  "starsi.privTitle": "Frissítettük az adatvédelmi szabályokat",
+  "starsi.privText": "Most pontosabban leírják, mely adatait exportálhatja és törölheti, és meddig őrizzük őket. Hozzáadtuk a pilot feladatait és annak mérését is, hogy segít-e az Evklid. Önnek nem kell semmit tennie.",
+  "starsi.privRead": "Szabályok elolvasása",
+  "starsi.privPw": "Fiókjelszó",
+  "starsi.privPwNote": "Az értesítést a fiók jelszavával rejtheti el, hogy más ne rejthesse el ezen az eszközön.",
+  "starsi.privHide": "Értesítés elrejtése",
+  "starsi.privHidden": "Az értesítés el van rejtve.",
+  "starsi.wtpPwNote": "A választ a fiók jelszavával küldheti el, hogy más ne válaszoljon ezen az eszközön.",
+  "starsi.wtpPwNeed": "Írja be a fiók jelszavát.",
+  "pilot.n.quizSkip": "Csak „Nem tudom” válaszos felmérők (nincsenek az átlagban): {n}",
+  "pilot.n.blocks": "Az összesítések csak {n} új válasz után frissülnek.",
+  "pilot.n.manage": "Fiókok a pilotban",
+  "pilot.n.backSums": "Vissza az összesítésekhez"
 }

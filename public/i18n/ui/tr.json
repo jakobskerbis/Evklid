@@ -3665,7 +3665,7 @@
   "pn.photoRules": {
     "other": "Fotoğrafta yalnızca soru olsun, yüz ya da isim olmasın. Onu Evklid’in okuduğu metinle birlikte kaydederiz. Onları yalnızca Evklid yöneticisi görür. Onları {n} gün saklarız, sonra kendiliğinden silinirler."
   },
-  "pn.photoAi": "Her taramada olduğu gibi, Evklid’in soruyu anlaması için fotoğrafı bir yapay zekâ okur. Kaydedilen kopyayı kimseye göndermeyiz.",
+  "pn.photoAi": "Her taramada olduğu gibi, Evklid’in soruyu anlaması için fotoğrafı bir yapay zekâ okur. Kaydedilen kopyayı kimseye göndermeyiz. Onları daha önce “Evklid’i geliştirmemize yardım et” bölümünden silebilirsin.",
   "pn.photoSaved": "Fotoğraf kaydedildi",
   "pn.photoDelete": "Fotoğrafı sil",
   "pn.photoDeleted": "Fotoğraf silindi.",
@@ -3742,12 +3742,8 @@
   "pilot.n.removed": "Hesap artık pilotta değil.",
   "pilot.n.few": "Gösterilecek kadar yanıt yok (en az {n}).",
   "zb.fromPilot": "Pilottaki yardımın için",
-  "priv.noticeTitle": "Gizlilik kurallarını güncelledik",
-  "priv.noticeText": "Artık hangi verileri dışa aktarıp silebileceğini ve onları ne kadar sakladığımızı daha açık anlatıyor. Pilot görevlerini ve Evklid’in yardımcı olup olmadığının ölçülmesini de ekledik. Bir şey yapmana gerek yok.",
-  "priv.noticeRead": "Kuralları oku",
-  "priv.noticeOk": "Tamam",
   "pn.quizTitle": "Bilgi testi",
-  "pn.quizText": "Öğrendiğin konudan altı kısa soru. 14 gün sonra bir kez daha, Evklid’in sana yardım edip etmediğini görmek için. Not yok ve bir şeyi bilmemen sorun değil.",
+  "pn.quizText": "Öğrendiğin konudan altı kısa soru. 14 gün sonra bir kez daha, Evklid’in sana yardım edip etmediğini görmek için. Not yok ve bir şeyi bilmemen sorun değil. Sonucu kaydederiz, yönetici yalnızca herkesin ortalamasını görür.",
   "pn.quizStart": "Teste başla",
   "pn.quizContinue": "Teste devam et",
   "pn.quizPost": "İkinci teste başla",
@@ -3782,5 +3778,18 @@
   "pilot.n.quizCeiling": "Tavan (ilk seferde hepsi doğru, ek zor sorular; ayrı): {n}, iki test {paired}. Önce {pre}, 14 gün sonra {post}, fark {diff} yüzde puan",
   "pilot.n.wtp": "Ödeme isteği",
   "pilot.n.wtpPay": "Öderlerdi",
-  "pilot.n.wtpAmount": "Aylık tutar"
+  "pilot.n.wtpAmount": "Aylık tutar",
+  "starsi.privTitle": "Gizlilik kurallarını güncelledik",
+  "starsi.privText": "Artık hangi verileri dışa aktarıp silebileceğinizi ve onları ne kadar sakladığımızı daha açık anlatıyor. Pilot görevlerini ve Evklid’in yardımcı olup olmadığının ölçülmesini de ekledik. Bir şey yapmanıza gerek yok.",
+  "starsi.privRead": "Kuralları okuyun",
+  "starsi.privPw": "Hesap şifresi",
+  "starsi.privPwNote": "Bildirimi hesap şifresiyle gizlersiniz; böylece bu cihazda başkası gizleyemez.",
+  "starsi.privHide": "Bildirimi gizle",
+  "starsi.privHidden": "Bildirim gizlendi.",
+  "starsi.wtpPwNote": "Yanıtı hesap şifresiyle gönderirsiniz; böylece bu cihazda başkası yanıt veremez.",
+  "starsi.wtpPwNeed": "Hesap şifresini girin.",
+  "pilot.n.quizSkip": "Yalnızca “Bilmiyorum” içeren testler (ortalamada değil): {n}",
+  "pilot.n.blocks": "Toplamlar yalnızca {n} yeni yanıttan sonra güncellenir.",
+  "pilot.n.manage": "Pilottaki hesaplar",
+  "pilot.n.backSums": "Toplamlara dön"
 }

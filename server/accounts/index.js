@@ -127,6 +127,19 @@ export function mountAccounts(app, store, opts = {}) {
   const emailThrottle = new Throttle(30, 3600000);
   const ipThrottle = new Throttle(100, 15 * 60000);
   const acrossThrottle = new Throttle(30, 3600000);
+  // Potrditev, da dejanje opravi imetnik računa (geslo računa ali nova prijava z Apple), ne kdo drug na napravi s
+  // sejo (zaklep računa je privzeto izklopljen): obvestilo o zasebnosti, vprašanje o plačilu, izbris fotografij pilota.
+  // Vrne true, false (napačno geslo) ali "throttled".
+  const confirmOwner = async (req) => {
+    const p = req.parent;
+    if (!p || p.is_guest) return false;
+    const key = `owner${p.id}`;
+    if (acrossThrottle.blocked(key)) return "throttled";
+    if (await verifyPassword(String(req.body?.password || ""), p.password_hash)) return true;
+    for (const fn of reauthHooks) if (await fn(req, p)) return true;
+    acrossThrottle.fail(key);
+    return false;
+  };
   const json = express.json({ limit: "100kb" });
   const log = opts.log || console;
   const promoCfg = opts.promo ?? promoConfig(env);
@@ -1088,9 +1101,13 @@ export function mountAccounts(app, store, opts = {}) {
   });
 
   // Obvestilo o spremenjeni politiki zasebnosti zaprto (»V redu« ali ×): ne pokaže se več do naslednje spremembe.
-  app.post("/api/account/privacy-seen", (req, res) => {
+  // Samo z geslom računa (pasica v zavihku Račun), da obvestila ne zapre otrok na starševi napravi.
+  app.post("/api/account/privacy-seen", json, async (req, res) => {
     const p = req.parent;
     if (!p) return res.status(401).json({ error: "Prijavi se.", login: true });
+    const ok = await confirmOwner(req);
+    if (ok === "throttled") return res.status(429).json({ error: "Preveč poskusov. Poskusi čez eno uro." });
+    if (!ok) return res.status(401).json({ error: "Napačno geslo.", password: true });
     db.prepare("UPDATE parents SET privacy_seen = ? WHERE id = ?").run(PRIVACY_VERSION, p.id);
     res.json({ parent: publicParent(getParent(p.id)) });
   });
@@ -2075,6 +2092,6 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
   const mobile = { db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
-  return { credits, paidPeriods, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
+  return { confirmOwner, profileLockedFor: (req, sid) => !!req.parent && profileLocked(req.parent, sid, req.deviceId), credits, paidPeriods, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

@@ -3639,7 +3639,7 @@
   "pn.photoRules": {
     "other": "照片里只应有题目，不要有人脸或姓名。我们会把它和 Evklid 识别出的文字一起保存。只有 Evklid 管理员能看到。我们保存 {n} 天，之后会自动删除。"
   },
-  "pn.photoAi": "和每次扫描一样，人工智能会读取照片，让 Evklid 看懂题目。保存的副本我们不会发给任何人。",
+  "pn.photoAi": "和每次扫描一样，人工智能会读取照片，让 Evklid 看懂题目。保存的副本我们不会发给任何人。你也可以提前在“帮助改进 Evklid”中删除。",
   "pn.photoSaved": "照片已保存",
   "pn.photoDelete": "删除照片",
   "pn.photoDeleted": "照片已删除。",
@@ -3716,12 +3716,8 @@
   "pilot.n.removed": "账户已不在试点中。",
   "pilot.n.few": "回答太少，无法显示（至少 {n} 个）。",
   "zb.fromPilot": "感谢你在试点中的帮助",
-  "priv.noticeTitle": "我们更新了隐私规则",
-  "priv.noticeText": "现在更准确地说明了你可以导出和删除哪些数据，以及我们保存多久。我们还加入了试点任务，以及衡量 Evklid 是否有帮助的内容。你不需要做任何事。",
-  "priv.noticeRead": "阅读规则",
-  "priv.noticeOk": "好的",
   "pn.quizTitle": "知识小测",
-  "pn.quizText": "从你正在学的内容中出六道短题。14 天后再做一次，看看 Evklid 是否帮到了你。不打分，有不会的也没关系。",
+  "pn.quizText": "从你正在学的内容中出六道短题。14 天后再做一次，看看 Evklid 是否帮到了你。不打分，有不会的也没关系。我们会保存结果，管理员只能看到所有人的平均值。",
   "pn.quizStart": "开始小测",
   "pn.quizContinue": "继续小测",
   "pn.quizPost": "开始第二次小测",
@@ -3756,5 +3752,18 @@
   "pilot.n.quizCeiling": "满分（第一次全对，加做更难的题；单独统计）：{n}，两次都做 {paired}。之前 {pre}，14 天后 {post}，相差 {diff} 个百分点",
   "pilot.n.wtp": "付费意愿",
   "pilot.n.wtpPay": "愿意付费",
-  "pilot.n.wtpAmount": "每月金额"
+  "pilot.n.wtpAmount": "每月金额",
+  "starsi.privTitle": "我们更新了隐私规则",
+  "starsi.privText": "现在更准确地说明了您可以导出和删除哪些数据，以及我们保存多久。我们还加入了试点任务，以及衡量 Evklid 是否有帮助的内容。您不需要做任何事。",
+  "starsi.privRead": "阅读规则",
+  "starsi.privPw": "账户密码",
+  "starsi.privPwNote": "用账户密码隐藏此通知，以免这台设备上的其他人把它隐藏。",
+  "starsi.privHide": "隐藏通知",
+  "starsi.privHidden": "通知已隐藏。",
+  "starsi.wtpPwNote": "用账户密码发送回答，以免这台设备上的其他人代为回答。",
+  "starsi.wtpPwNeed": "请输入账户密码。",
+  "pilot.n.quizSkip": "只选“不会”的小测（不计入平均）：{n}",
+  "pilot.n.blocks": "总数只在新增 {n} 个回答后才更新。",
+  "pilot.n.manage": "试点中的账户",
+  "pilot.n.backSums": "返回总数"
 }

@@ -187,3 +187,22 @@ export function allowanceEmail({ childName, stage, left, untilText, pool = false
     text: `${body} Več razlag dokupite v zavihku Račun: ${appUrl}`,
   };
 }
+
+// Enkratno obvestilo o spremenjeni politiki zasebnosti (scripts/obvestilo-zasebnost.js). Besedilo potrdi j, preden
+// se pošlje; skripta brez --poslji ničesar ne pošlje.
+export function privacyChangeEmail(policyUrl, dateText = "6. novembra 2026") {
+  const points = [
+    "Natančneje piše, katere podatke lahko izvozite in izbrišete ter koliko časa jih hranimo.",
+    "Za člane pilota smo dodali neobvezne naloge: oceno branja fotografij nalog, kratko anketo, kratek preizkus znanja na začetku in čez 14 dni ter vprašanje staršem, ali bi za Evklid plačali. Fotografijo naloge shranimo samo, če jo otrok, star vsaj 15 let, posebej označi, in jo hranimo največ 30 dni.",
+    "Skrbnik Evklida vidi samo skupna števila brez imen, in to šele, ko so odgovori vsaj trije.",
+  ];
+  const text = `Pozdravljeni,\n\n${dateText} smo posodobili pravila zasebnosti za Evklid. Glavne spremembe:\n\n${points.map((p) => `- ${p}`).join("\n")}\n\nNič vam ni treba narediti. Celotna pravila: ${policyUrl}\n\nEkipa Evklid`;
+  return {
+    subject: "Evklid: posodobili smo pravila zasebnosti",
+    text,
+    html: layout(
+      "Posodobili smo pravila zasebnosti",
+      `<p>${esc(dateText)} smo posodobili pravila zasebnosti za Evklid. Glavne spremembe:</p><ul>${points.map((p) => `<li>${esc(p)}</li>`).join("")}</ul><p>Nič vam ni treba narediti.</p>${button(policyUrl, "Preberite pravila")}`,
+    ),
+  };
+}

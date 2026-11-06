@@ -35,7 +35,7 @@ export function migratePilotImpact(db) {
       phase TEXT NOT NULL,           -- pre | post
       topic_id TEXT NOT NULL,
       items TEXT NOT NULL,           -- JSON [{ seed, level, topic? }] (topic: dodatna naloga iz druge teme)
-      answers TEXT NOT NULL,         -- JSON [1 | 0 | null] (null = še brez odgovora)
+      answers TEXT NOT NULL,         -- JSON [1 | 0 | -1 | null] (-1 = »Ne vem«, null = še brez odgovora)
       score INTEGER,                 -- pravilnih, ko je preizkus končan
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       finished_at TEXT,
@@ -145,35 +145,54 @@ export function wtpState(db, parent, { isMember, now = new Date() }) {
 }
 
 // ---------- skrbnik: vsote brez imen ----------
+// Vsote v paketih: iz prvih ⌊n/velikost⌋·velikost vrstic po vrsti vnosa (nove se pokažejo šele, ko jih je dovolj).
+export const block = (rows, size) => rows.slice(0, Math.floor(rows.length / size) * size);
+// Število pod pragom je »< prag« (0 ostane 0), da iz natančnega števila ne sledi, kdo je ravno odgovoril.
+export const shownN = (n, min) => (n > 0 && n < min ? `< ${min}` : n);
+// Pri plačilu je prag višji (j, 6. 11.): skrbnik pozna vse račune v pilotu.
+export const WTP_MIN = 5;
+
 export function impactReport(db, minGroup) {
   migratePilotImpact(db);
-  const few = (n) => n < minGroup;
-  const rows = db.prepare("SELECT student_id, phase, score, items, answers FROM pilot_quiz WHERE finished_at IS NOT NULL").all();
+  const rows = db.prepare("SELECT rowid, student_id, phase, score, items, answers, finished_at FROM pilot_quiz WHERE finished_at IS NOT NULL ORDER BY finished_at, rowid").all();
   const pct = (r) => r.score / Math.max(1, parse(r.answers, []).length);
   const avg = (xs) => Math.round((xs.reduce((s, x) => s + x, 0) / xs.length) * 1000) / 1000;
-  const postBy = new Map(rows.filter((r) => r.phase === "post").map((r) => [r.student_id, r]));
+  // »Ne vem« pri vseh nalogah (-1): preizkus ni meritev znanja, zato ni v povprečjih; prikaže se samo število.
+  const allSkip = (r) => parse(r.answers, []).every((a) => a === -1);
+  const valid = rows.filter((r) => !allSkip(r));
+  const postBy = new Map(valid.filter((r) => r.phase === "post").map((r) => [r.student_id, r]));
   // Pred in po samo pri istih učencih (sicer bi se primerjali različni ljudje). Strop (6/6 prvič, z dodatnimi težjimi
   // nalogami) posebej: drugače bi njihov visok začetek in drugačna sestava popačila povprečje ostalih.
   const group = (pre) => {
-    const pairs = pre.filter((r) => postBy.has(r.student_id)).map((r) => [pct(r), pct(postBy.get(r.student_id))]);
+    const shownPre = block(pre, minGroup);
+    const pairs = block(
+      pre.filter((r) => postBy.has(r.student_id)).sort((a, b) => postBy.get(a.student_id).rowid - postBy.get(b.student_id).rowid || 0),
+      minGroup,
+    ).map((r) => [pct(r), pct(postBy.get(r.student_id))]);
+    const nPaired = pre.filter((r) => postBy.has(r.student_id)).length;
     return {
-      nPre: pre.length,
-      nPaired: pairs.length,
-      pre: few(pre.length) ? null : avg(pre.map(pct)),
-      pairedPre: few(pairs.length) ? null : avg(pairs.map((p) => p[0])),
-      pairedPost: few(pairs.length) ? null : avg(pairs.map((p) => p[1])),
-      diff: few(pairs.length) ? null : avg(pairs.map((p) => p[1] - p[0])),
+      nPre: shownN(pre.length, minGroup),
+      nPaired: shownN(nPaired, minGroup),
+      shownPre: shownPre.length,
+      shownPaired: pairs.length,
+      pre: shownPre.length ? avg(shownPre.map(pct)) : null,
+      pairedPre: pairs.length ? avg(pairs.map((p) => p[0])) : null,
+      pairedPost: pairs.length ? avg(pairs.map((p) => p[1])) : null,
+      diff: pairs.length ? avg(pairs.map((p) => p[1] - p[0])) : null,
     };
   };
-  const pre = rows.filter((r) => r.phase === "pre");
-  const quiz = { ...group(pre.filter((r) => !isCeiling(r))), ceiling: group(pre.filter(isCeiling)) };
-  let wtp = { n: 0, pay: null, amount: null };
+  const pre = valid.filter((r) => r.phase === "pre");
+  const quiz = { ...group(pre.filter((r) => !isCeiling(r))), ceiling: group(pre.filter(isCeiling)), allSkip: rows.filter(allSkip).length };
+  let wtp = { n: 0, shown: 0, min: WTP_MIN, pay: null, amount: null };
   try {
-    const w = db.prepare("SELECT pay, amount FROM pilot_wtp").all();
+    const all = db.prepare("SELECT pay, amount FROM pilot_wtp ORDER BY created_at, parent_id").all();
+    const w = block(all, WTP_MIN);
     wtp = {
-      n: w.length,
-      pay: few(w.length) ? null : Object.fromEntries(WTP_PAY.map((k) => [k, w.filter((r) => r.pay === k).length])),
-      amount: few(w.length) ? null : Object.fromEntries(WTP_AMOUNT.map((k) => [k, w.filter((r) => r.amount === k).length])),
+      n: shownN(all.length, WTP_MIN),
+      shown: w.length,
+      min: WTP_MIN,
+      pay: w.length ? Object.fromEntries(WTP_PAY.map((k) => [k, w.filter((r) => r.pay === k).length])) : null,
+      amount: w.length ? Object.fromEntries(WTP_AMOUNT.map((k) => [k, w.filter((r) => r.amount === k).length])) : null,
     };
   } catch {}
   return { quiz, wtp };
@@ -181,7 +200,7 @@ export function impactReport(db, minGroup) {
 
 // ---------- API ----------
 // member(req, res) → učenec v pilotu ali null (odgovor je že poslan); reward(sid, item, xp) → dobljeni XP.
-export function mountPilotImpact(app, db, { member, reward, reply, topicFor, nextTopicFor = () => null, langFor, accounts, isMember }) {
+export function mountPilotImpact(app, db, { member, reward, reply, topicFor, nextTopicFor = () => null, langFor, accounts, isMember, confirmOwner = async () => false }) {
   migratePilotImpact(db);
 
   const publicQuiz = (row, lang) => {
@@ -253,7 +272,7 @@ export function mountPilotImpact(app, db, { member, reward, reply, topicFor, nex
       if (r.kind === "format" || r.kind === "unit") return res.status(422).json({ retry: true, code: r.code, params: r.params, message: r.message });
       ok = r.kind === "correct" || r.kind === "rounding" || r.kind === "simplify";
     }
-    answers[i] = ok ? 1 : 0;
+    answers[i] = b.skip === true ? -1 : ok ? 1 : 0; // -1 = »Ne vem« (šteje kot nepravilno, a ločeno od napačnega)
     let last = answers.every((a) => a != null);
     const score = answers.filter((a) => a === 1).length;
     let items = row.items;
@@ -275,8 +294,9 @@ export function mountPilotImpact(app, db, { member, reward, reply, topicFor, nex
     reply(res, s, gained, { run: publicQuiz(rowOf(db, s.id, b.phase), lang) });
   });
 
-  // Vprašanje o plačilu (Račun, samo lastnik računa): { pay, amount? }
-  app.post("/api/account/pilot-wtp", (req, res) => {
+  // Vprašanje o plačilu (Račun, samo lastnik računa, z geslom računa): { pay, amount?, password }
+  // Geslo: zaklep računa je privzeto izklopljen, zato bi odgovor sicer lahko oddal otrok na starševi napravi (B3).
+  app.post("/api/account/pilot-wtp", async (req, res) => {
     if (!accounts || !req.parent) return res.status(404).json({ error: "Ne obstaja." });
     const p = req.parent;
     const st = wtpState(db, p, { isMember });
@@ -288,6 +308,9 @@ export function mountPilotImpact(app, db, { member, reward, reply, topicFor, nex
     const needAmount = pay === "yes" || pay === "maybe";
     const amount = needAmount ? req.body?.amount : null;
     if (needAmount && !WTP_AMOUNT.includes(amount)) return res.status(400).json({ error: "Izberi znesek." });
+    const owner = await confirmOwner(req);
+    if (owner === "throttled") return res.status(429).json({ error: "Preveč poskusov. Poskusi čez eno uro." });
+    if (!owner) return res.status(401).json({ error: "Napačno geslo.", password: true });
     db.prepare("INSERT OR IGNORE INTO pilot_wtp (parent_id, pay, amount) VALUES (?, ?, ?)").run(p.id, pay, amount);
     res.json({ wtp: wtpState(db, p, { isMember }) });
   });

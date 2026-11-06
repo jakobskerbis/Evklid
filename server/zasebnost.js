@@ -3,7 +3,7 @@
 import { seal, unseal, isEncrypted, currentKeyId, encryptionOn, canOpen, blindIndex, warnIfNoKey } from "./crypto-polje.js";
 import { normCard } from "./flashcards.js";
 import { audit, ensureAuditTable } from "./dnevnik-dostopov.js";
-import { PHOTO_MAX_DAYS } from "./pilot-naloge.js";
+import { PHOTO_MAX_DAYS, dropFormerPhotos } from "./pilot-naloge.js";
 
 // Šifrirani stolpci. Nešifrirano ostane, kar SQL uporablja za iskanje ali je skupno vsem (glej dokument):
 // students.name (iskanje podvojenih), answer_cache (skupni, brez osebnih podatkov), knowledge_items (samo id-ji predmetov).
@@ -174,6 +174,10 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
         )
         .run(...(hasExp ? [t, `-${PHOTO_MAX_DAYS} days`, t] : [t, `-${PHOTO_MAX_DAYS} days`])).changes,
     );
+    // Bivši člani pilota (šoli je potekla licenca): fotografije najpozneje v enem dnevu.
+    try {
+      out.pilotFormer = dropFormerPhotos(db);
+    } catch {}
   }
   if (hasTable(db, "parent_sessions")) out.sessions = Number(db.prepare("DELETE FROM parent_sessions WHERE expires_at < ?").run(nowIso).changes);
   if (hasTable(db, "profile_unlocks")) out.unlocks = Number(db.prepare("DELETE FROM profile_unlocks WHERE expires_at < ?").run(now).changes);

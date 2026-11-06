@@ -122,8 +122,10 @@ const busy = () =>
   document.body.classList.contains("onboarding") || !$("#tour")?.hidden || !!document.querySelector("dialog[open]") || !!document.querySelector(".lock-card, .iq, .xp-cele-card");
 
 let noticeTimer = null;
+let noticeShown = false; // največ eno obvestilo na nalaganje strani (ostala počakajo na naslednje)
 function maybeNotice(tries = 0) {
   clearTimeout(noticeTimer);
+  if (noticeShown) return;
   const what = st?.intro ? "intro" : st?.surveyNotice ? "survey" : st?.quizNotice ? "quiz" : null;
   if (!what) return;
   // Ne čez uvodni ogled, vprašalnik zanimanj ali drugo okno: počakamo (največ nekaj minut).
@@ -135,7 +137,9 @@ function maybeNotice(tries = 0) {
 }
 
 function showNotice(what) {
+  if (noticeShown) return;
   if (!pilotState() || busy()) return maybeNotice(1);
+  noticeShown = true;
   let dlg = $("#pilot-notice");
   if (!dlg) {
     dlg = document.createElement("dialog");
@@ -180,7 +184,7 @@ function closeNotice(dlg, go) {
     D.showView("pilot");
     const to = { survey: "#pn-survey", quiz: "#pn-quiz" }[what];
     if (to) setTimeout(() => $(to)?.scrollIntoView({ block: "start", behavior: "smooth" }), 50);
-  } else if (st?.surveyNotice || st?.quizNotice) maybeNotice(1);
+  }
 }
 
 // ---------- zaslon »Pomagaj izboljšati Evklid« ----------
@@ -525,8 +529,9 @@ function impactHtml(im, { pc, few }) {
       <li>${esc(t("pilot.n.quizPaired", { n: q.nPaired, pre: pc(q.pairedPre), post: pc(q.pairedPost), diff }))}</li>
       <li>${esc(t("pilot.n.quizCeiling", { n: c.nPre ?? 0, paired: c.nPaired, pre: pc(c.pairedPre), post: pc(c.pairedPost), diff: cdiff }))}</li></ul>
     ${q.pairedPre == null ? `<p class="muted small">${few}</p>` : ""}
+    ${q.allSkip ? `<p class="muted small">${esc(t("pilot.n.quizSkip", { n: q.allSkip }))}</p>` : ""}
     <h3>${esc(t("pilot.n.wtp"))} (${w.n})</h3>
-    ${w.pay ? `<ul class="pilot-sum"><li>${esc(t("pilot.n.wtpPay"))}: ${esc(dist(w.pay, WTP_PAY))}</li><li>${esc(t("pilot.n.wtpAmount"))}: ${esc(dist(w.amount, WTP_AMOUNT))}</li></ul>` : `<p class="muted">${few}</p>`}`;
+    ${w.pay ? `<ul class="pilot-sum"><li>${esc(t("pilot.n.wtpPay"))}: ${esc(dist(w.pay, WTP_PAY))}</li><li>${esc(t("pilot.n.wtpAmount"))}: ${esc(dist(w.amount, WTP_AMOUNT))}</li></ul>` : `<p class="muted">${esc(t("pilot.n.few", { n: w.min ?? 5 }))}</p>`}`;
 }
 
 export async function renderPilotAdmin(box, { api, toast }) {
@@ -549,7 +554,7 @@ export async function renderPilotAdmin(box, { api, toast }) {
     <h3>${esc(t("pilot.n.scan"))}</h3>
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("pilot.n.cond")}${th("pilot.n.n")}${th("pilot.n.ok")}${th("pilot.n.rate")}</tr></thead>
       <tbody>${r.scans.map((s) => `<tr><td>${esc(cond(s.cond))}</td><td>${s.n}</td><td>${num(s.ok)}</td><td>${pc(s.rate)}</td></tr>`).join("")}</tbody></table></div>
-    <p class="muted small">${few}</p>
+    <p class="muted small">${few} ${esc(t("pilot.n.blocks", { n: r.minGroup ?? 3 }))}</p>
     <h3>${esc(t("pilot.n.feat"))}</h3>
     <div class="pilot-scroll"><table class="table pilot-table"><thead><tr>${th("pilot.n.feature")}${th("pilot.n.n")}${th("pilot.n.bad")}</tr></thead>
       <tbody>${r.features.map((f) => `<tr><td>${esc(feat(f.feature))}</td><td>${f.n}</td><td>${num(f.bad)}</td></tr>`).join("")}</tbody></table></div>
@@ -560,15 +565,30 @@ export async function renderPilotAdmin(box, { api, toast }) {
     ${r.notesHidden ? `<h3>${esc(t("pilot.n.notes"))}</h3><p class="muted">${few}</p>` : ""}
     ${r.notes.length ? `<h3>${esc(t("pilot.n.notes"))}</h3><ul class="pn-admin-notes">${r.notes.map((n) => `<li><small class="muted">${esc(n.kind === "scan" ? cond(n.what) : feat(n.what))} · ${esc(t(n.kind === "scan" ? (n.ok ? "pn.ok" : "pn.bad") : n.ok ? "pn.works" : "pn.broken"))}</small><br>${esc(n.note)}</li>`).join("")}</ul>` : ""}
     ${r.photoList.length ? `<h3>${esc(t("pilot.n.photosH"))}</h3><ul class="pn-admin-photos">${r.photoList.map((p) => `<li><a href="/api/admin/pilot-naloge/foto/${p.id}" target="_blank" rel="noopener">${icon("image")} ${esc(cond(p.cond))} · ${esc(t(p.ok ? "pn.ok" : "pn.bad"))}</a></li>`).join("")}</ul>` : ""}
-    ${r.canAdd ? `<h3>${esc(t("pilot.n.members"))}</h3>
-      <p class="muted small">${esc(t("pilot.n.schools"))}</p>
-      ${r.accounts.length ? `<ul class="pn-admin-acc">${r.accounts.map((e) => `<li><span>${esc(e)}</span><button type="button" class="ghost" data-pn-rm="${esc(e)}">${esc(t("pilot.n.remove"))}</button></li>`).join("")}</ul>` : ""}
-      <form class="pn-admin-add"><label for="pn-admin-email">${esc(t("pilot.n.email"))}</label><input id="pn-admin-email" type="email" autocomplete="off" required><button type="submit" class="primary">${esc(t("pilot.n.add"))}</button></form>` : ""}`;
+    ${r.canAdd ? `<button type="button" class="secondary" data-pn-members>${icon("users")}<span>${esc(t("pilot.n.manage"))}</span></button>` : ""}`;
+  box.querySelector("[data-pn-members]")?.addEventListener("click", () => renderPilotMembers(box, { api, toast }));
+}
+
+// Računi v pilotu: ločen pogled brez vsot (e-naslovi niso na isti strani kot porazdelitve; pregled B3).
+async function renderPilotMembers(box, { api, toast }) {
+  let r;
+  try {
+    r = await api("/api/admin/pilot-naloge/clani");
+  } catch (err) {
+    toast(err.message);
+    return;
+  }
+  box.innerHTML = `<button type="button" class="ghost back" data-pn-sums>${icon("arrow-left")}${esc(t("pilot.n.backSums"))}</button>
+    <h3>${esc(t("pilot.n.members"))}</h3>
+    <p class="muted small">${esc(t("pilot.n.schools"))}</p>
+    ${r.accounts.length ? `<ul class="pn-admin-acc">${r.accounts.map((e) => `<li><span>${esc(e)}</span><button type="button" class="ghost" data-pn-rm="${esc(e)}">${esc(t("pilot.n.remove"))}</button></li>`).join("")}</ul>` : ""}
+    <form class="pn-admin-add"><label for="pn-admin-email">${esc(t("pilot.n.email"))}</label><input id="pn-admin-email" type="email" autocomplete="off" required><button type="submit" class="primary">${esc(t("pilot.n.add"))}</button></form>`;
+  box.querySelector("[data-pn-sums]").addEventListener("click", () => renderPilotAdmin(box, { api, toast }));
   const set = async (email, on) => {
     try {
       await api("/api/admin/pilot-naloge/clani", { method: "POST", body: { email, on } });
       toast(t(on ? "pilot.n.added" : "pilot.n.removed"));
-      renderPilotAdmin(box, { api, toast });
+      renderPilotMembers(box, { api, toast });
     } catch (err) {
       toast(err.message);
     }
@@ -599,10 +619,18 @@ export function paintAccountWtp(el, wtp, { api, toast }) {
       <fieldset class="pn-q"><legend>${esc(t("starsi.wtpQ"))}</legend><div class="pn-choices">${WTP_PAY.map((k) => `<button type="button" data-wtp-pay="${k}" aria-pressed="${pick.pay === k}">${esc(t(WTP_KEY[k]))}</button>`).join("")}</div></fieldset>
       ${amount ? `<fieldset class="pn-q"><legend>${esc(t("starsi.wtpAmountQ"))}</legend><div class="pn-choices">${WTP_AMOUNT.map((k) => `<button type="button" data-wtp-amount="${k}" aria-pressed="${pick.amount === k}">${esc(t(WTP_KEY[k]))}</button>`).join("")}</div></fieldset>` : ""}
       <p class="muted small">${esc(t("starsi.wtpNote"))}</p>
+      <form class="form pn-wtp-pw" novalidate><label for="pn-wtp-pw">${esc(t("starsi.privPw"))}</label><input id="pn-wtp-pw" type="password" autocomplete="current-password" value="${esc(pick.password || "")}"><p class="muted small">${esc(t("starsi.wtpPwNote"))}</p></form>
       <p class="pn-err" role="alert" hidden></p>
       <button type="button" class="primary" data-wtp-send>${esc(t("starsi.wtpSend"))}</button>`;
   };
   paint();
+  el.addEventListener("input", (e) => {
+    if (e.target.id === "pn-wtp-pw") pick.password = e.target.value;
+  });
+  el.addEventListener("submit", (e) => {
+    e.preventDefault();
+    el.querySelector("[data-wtp-send]")?.click();
+  });
   el.addEventListener("click", async (e) => {
     const b = e.target.closest("button");
     if (!b || !el.contains(b)) return;
@@ -625,12 +653,25 @@ export function paintAccountWtp(el, wtp, { api, toast }) {
       err.hidden = false;
       return;
     }
+    if (!pick.password) {
+      const err = el.querySelector(".pn-err");
+      err.textContent = t("starsi.wtpPwNeed");
+      err.hidden = false;
+      return el.querySelector("#pn-wtp-pw")?.focus();
+    }
     b.disabled = true;
     try {
       await api("/api/account/pilot-wtp", { method: "POST", body: pick });
       el.innerHTML = `<p class="pn-status ok">${icon("circle-check")}${esc(t("starsi.wtpThanks"))}</p>`;
       toast(t("starsi.wtpThanks"), "check");
     } catch (err) {
+      if (err?.data?.password) {
+        const box = el.querySelector(".pn-err");
+        box.textContent = err.message;
+        box.hidden = false;
+        b.disabled = false;
+        return el.querySelector("#pn-wtp-pw")?.focus();
+      }
       toast(err?.message || t("off.noConnection"));
       b.disabled = false;
     }

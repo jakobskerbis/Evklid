@@ -16,4 +16,6 @@ if (!fs.existsSync(file)) {
 const r = pilotTasksReport(new DatabaseSync(file));
 // Seznam fotografij (id) potrebuje samo skrbniška stran; v jutranjem pregledu zadošča število.
 delete r.photoList;
+// Opombe (prosto besedilo otrok) samo na skrbniški strani, ne v jutranjem pregledu (tudi ne v --json).
+delete r.notes;
 console.log(process.argv.includes("--json") ? JSON.stringify(r, null, 2) : pilotTasksMarkdown(r));

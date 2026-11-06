@@ -1508,6 +1508,7 @@ export function createApp(store, opts = {}) {
     loadStudent,
     progress,
     accounts: !!accounts,
+    owner: accounts || null, // potrditev z geslom računa, zaklep profila (server/accounts/index.js)
     isLocalRequest,
     // Preizkus znanja (server/pilot-ucinek.js): tema, ki se jo bo učenec učil naslednjo (še ni začeta, sicer še ni
     // osvojena; nikoli osvojena), da ni na stropu (j, 6. 11.). Dodatne težje naloge ob 6/6: naslednja neosvojena tema.

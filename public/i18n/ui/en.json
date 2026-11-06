@@ -3667,7 +3667,7 @@
   "pn.photoRules": {
     "other": "Only the problem should be in the photo, no faces or names. We save it together with the text Evklid read. Only the Evklid administrator sees them. We keep them for {n} days, then they are deleted automatically."
   },
-  "pn.photoAi": "As with every scan, an AI reads the photo so Evklid understands the problem. We send the saved copy to no one.",
+  "pn.photoAi": "As with every scan, an AI reads the photo so Evklid understands the problem. We send the saved copy to no one. You can delete them earlier under “Help improve Evklid”.",
   "pn.photoSaved": "Photo saved",
   "pn.photoDelete": "Delete photo",
   "pn.photoDeleted": "The photo is deleted.",
@@ -3744,12 +3744,8 @@
   "pilot.n.removed": "The account is no longer in the pilot.",
   "pilot.n.few": "Too few answers to show (at least {n}).",
   "zb.fromPilot": "For helping in the pilot",
-  "priv.noticeTitle": "We updated the privacy rules",
-  "priv.noticeText": "They now say more precisely which data you can export and delete and how long we keep it. We also added the pilot tasks and measuring whether Evklid helps. You don't need to do anything.",
-  "priv.noticeRead": "Read the rules",
-  "priv.noticeOk": "OK",
   "pn.quizTitle": "Knowledge check",
-  "pn.quizText": "Six short problems from what you are learning. Once more in 14 days, to see whether Evklid helps you. There is no grade, and it's fine if you don't know something.",
+  "pn.quizText": "Six short problems from what you are learning. Once more in 14 days, to see whether Evklid helps you. There is no grade, and it's fine if you don't know something. We save the result, and the administrator sees only the average of everyone.",
   "pn.quizStart": "Start the check",
   "pn.quizContinue": "Continue the check",
   "pn.quizPost": "Start the second check",
@@ -3784,5 +3780,18 @@
   "pilot.n.quizCeiling": "Ceiling (all correct first time, extra harder problems; shown separately): {n}, both checks {paired}. Before {pre}, after 14 days {post}, difference {diff} percentage points",
   "pilot.n.wtp": "Willingness to pay",
   "pilot.n.wtpPay": "Would pay",
-  "pilot.n.wtpAmount": "Amount per month"
+  "pilot.n.wtpAmount": "Amount per month",
+  "starsi.privTitle": "We updated the privacy rules",
+  "starsi.privText": "They now say more precisely which data you can export and delete and how long we keep it. We also added the pilot tasks and measuring whether Evklid helps. You don't need to do anything.",
+  "starsi.privRead": "Read the rules",
+  "starsi.privPw": "Account password",
+  "starsi.privPwNote": "Hide the notice with the account password, so nobody else on this device hides it.",
+  "starsi.privHide": "Hide notice",
+  "starsi.privHidden": "The notice is hidden.",
+  "starsi.wtpPwNote": "Send your answer with the account password, so nobody else on this device answers.",
+  "starsi.wtpPwNeed": "Please enter the account password.",
+  "pilot.n.quizSkip": "Checks with only “I don't know” (not in averages): {n}",
+  "pilot.n.blocks": "Totals refresh only after {n} new answers.",
+  "pilot.n.manage": "Accounts in the pilot",
+  "pilot.n.backSums": "Back to totals"
 }

@@ -19,7 +19,7 @@ import { cleanText } from "./settings.js";
 import { schoolAccess } from "./schools.js";
 import { ensureKnowledgeTables } from "./zbirke.js";
 import { audit } from "./dnevnik-dostopov.js";
-import { quizState, wtpState, impactReport, mountPilotImpact } from "./pilot-ucinek.js";
+import { quizState, wtpState, impactReport, mountPilotImpact, block, shownN } from "./pilot-ucinek.js";
 
 export const SCAN_CONDITIONS = ["light", "dark", "tilted", "handwritten", "printed", "board", "screen", "crumpled", "many", "notation"];
 // Pet delov aplikacije za preizkus; »exams« (NPZ in matura) ima, kdor ima ta zavihek, drugi »3d«.
@@ -40,7 +40,8 @@ export const PHOTO_DAILY_MAX = 30;
 // Vsote in povprečja (anketa, deleži, opombe) pokažemo šele od toliko odgovorov naprej, da ne razkrijejo posameznika.
 export const MIN_GROUP = 3;
 export const PHOTO_MAX_DAYS = 30;
-export const CONSENT_VERSION = 2; // 2: jasno, da fotografijo ob branju prebere ponudnik AI (kot vsako skeniranje), shranjene kopije pa ne dobi
+export const CONSENT_VERSION = 3; // 3: stavek o izbrisu (preklicu) je zdaj viden tudi ob kljukici (pregled A3)
+// 2: jasno, da fotografijo ob branju prebere ponudnik AI (kot vsako skeniranje), shranjene kopije pa ne dobi
 const PROBLEMS_MAX = 5;
 export const photoDays = () => {
   const n = Number(process.env.EVKLID_PILOT_PHOTO_DAYS);
@@ -149,6 +150,16 @@ export function photoAllowed(db, studentId, now = new Date()) {
   }
 }
 
+// Bivši člani (šoli je potekla pilotna licenca, učenec je zapustil razred): fotografije izbrišemo pri dnevnem čiščenju
+// (zasebnost.js runRetention), torej najpozneje v enem dnevu. Ob odstranitvi računa iz pilota takoj (clani, spodaj).
+export function dropFormerPhotos(db) {
+  if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'pilot_photos'").get()) return 0;
+  const ids = db.prepare("SELECT DISTINCT student_id AS id FROM pilot_photos").all().map((r) => r.id).filter((id) => !pilotMember(db, id));
+  let n = 0;
+  for (const id of ids) n += Number(db.prepare("DELETE FROM pilot_photos WHERE student_id = ?").run(id).changes);
+  return n;
+}
+
 // Za Račun (starš): ali je profil v pilotu in koliko fotografij je shranjenih.
 // Vprašanje o plačilu v Računu (starš ali polnoleten imetnik računa, server/pilot-ucinek.js).
 export function pilotWtp(db, parent) {
@@ -233,59 +244,80 @@ const note = (v, name) => {
 
 // ---------- skrbnik: vsote brez imen (Račun → »Pilot: naloge članov«, scripts/pilot-naloge.js) ----------
 // Pod MIN_GROUP odgovori so deleži, povprečja in opombe null (UI: »Premalo odgovorov«), da ne razkrijejo posameznika.
+// Proti razlikovanju (pregled B3, j 6. 11.): vsote se računajo samo iz prvih ⌊n/3⌋·3 odgovorov po vrsti vnosa, zato se
+// spremenijo šele, ko pridejo vsaj 3 novi (iz dveh zaporednih poročil se odgovor enega ne da izračunati); število pod
+// pragom je »< 3«. E-naslovi članov niso na isti strani kot vsote (/api/admin/pilot-naloge/clani).
 export function pilotTasksReport(db) {
   migratePilotTasks(db);
   const few = (n) => n < MIN_GROUP;
-  const scanRows = db.prepare("SELECT cond, COUNT(*) AS n, SUM(ok) AS ok FROM pilot_scans GROUP BY cond").all();
-  const byCond = Object.fromEntries(scanRows.map((r) => [r.cond, r]));
+  const B = (rows) => block(rows, MIN_GROUP);
+  const N = (n) => shownN(n, MIN_GROUP);
+  const scanRows = db.prepare("SELECT id, cond, ok FROM pilot_scans ORDER BY id").all();
   const scans = SCAN_CONDITIONS.map((c) => {
-    const r = byCond[c] || { n: 0, ok: 0 };
-    return few(r.n) ? { cond: c, n: r.n, ok: null, rate: null } : { cond: c, n: r.n, ok: r.ok || 0, rate: (r.ok || 0) / r.n };
+    const all = scanRows.filter((r) => r.cond === c);
+    const b = B(all);
+    const ok = b.filter((r) => r.ok).length;
+    return b.length ? { cond: c, n: N(all.length), shown: b.length, ok, rate: ok / b.length } : { cond: c, n: N(all.length), shown: 0, ok: null, rate: null };
   });
-  const featRows = db.prepare("SELECT feature, COUNT(*) AS n, SUM(1 - ok) AS bad FROM pilot_features GROUP BY feature").all();
-  const byFeat = Object.fromEntries(featRows.map((r) => [r.feature, r]));
+  const featRows = db.prepare("SELECT id, feature, ok FROM pilot_features ORDER BY id").all();
   const features = FEATURES.map((f) => {
-    const n = byFeat[f]?.n || 0;
-    return { feature: f, n, bad: few(n) ? null : byFeat[f]?.bad || 0 };
+    const all = featRows.filter((r) => r.feature === f);
+    const b = B(all);
+    return { feature: f, n: N(all.length), shown: b.length, bad: b.length ? b.filter((r) => !r.ok).length : null };
   });
-  // Opombe brez imena in brez časa (vrstni red naključen po id-ju ne razkrije, kdo je pisal).
+  // Opombe brez imena in brez časa; tudi te v paketih po 3 (nova opomba se ne pokaže sama), nato urejene po besedilu.
   const open = (v) => unseal(v, null);
-  const notes = [
-    ...db.prepare("SELECT 'scan' AS kind, cond AS what, ok, note FROM pilot_scans WHERE note IS NOT NULL").all(),
-    ...db.prepare("SELECT 'feature' AS kind, feature AS what, ok, note FROM pilot_features WHERE note IS NOT NULL").all(),
+  const noteRows = [
+    ...db.prepare("SELECT 'scan' AS kind, id, cond AS what, ok, note FROM pilot_scans WHERE note IS NOT NULL").all(),
+    ...db.prepare("SELECT 'feature' AS kind, id + 1000000000 AS id, feature AS what, ok, note FROM pilot_features WHERE note IS NOT NULL").all(),
   ]
-    .map((r) => ({ kind: r.kind, what: r.what, ok: !!r.ok, note: open(r.note) }))
+    .map((r) => ({ id: r.id, kind: r.kind, what: r.what, ok: !!r.ok, note: open(r.note) }))
     .filter((r) => r.note)
+    .sort((a, b) => a.id - b.id);
+  const notes = B(noteRows)
+    .map(({ id, ...r }) => r)
     .sort((a, b) => a.kind.localeCompare(b.kind) || a.what.localeCompare(b.what) || a.note.localeCompare(b.note));
-  const answers = db.prepare("SELECT answers FROM pilot_survey").all().map((r) => {
+  const allAnswers = db.prepare("SELECT answers FROM pilot_survey ORDER BY created_at, student_id").all().map((r) => {
     try {
       return JSON.parse(r.answers);
     } catch {
       return {};
     }
   });
+  const answers = B(allAnswers);
   const avg = Object.fromEntries(
     SURVEY_SCALE.map((q) => {
       const v = answers.map((a) => a[q]).filter((x) => Number.isInteger(x));
-      return [q, !few(v.length) ? Math.round((v.reduce((s, x) => s + x, 0) / v.length) * 10) / 10 : null];
+      return [q, v.length ? Math.round((v.reduce((s, x) => s + x, 0) / v.length) * 10) / 10 : null];
     }),
   );
-  const improve = few(answers.length) ? null : Object.fromEntries(SURVEY_IMPROVE.map((k) => [k, answers.filter((a) => a.improve === k).length]));
+  const improve = answers.length ? Object.fromEntries(SURVEY_IMPROVE.map((k) => [k, answers.filter((a) => a.improve === k).length])) : null;
   // Samo trenutni člani (pilot_state ostane tudi po izstopu, zaradi izvoza in izbrisa).
   const members = db.prepare("SELECT student_id FROM pilot_state").all().filter((r) => pilotMember(db, r.student_id)).length;
   const photos = db.prepare("SELECT COUNT(*) AS n FROM pilot_photos").get().n;
   const photoList = db.prepare("SELECT p.scan_id AS id, s.cond, s.ok FROM pilot_photos p JOIN pilot_scans s ON s.id = p.scan_id ORDER BY s.cond, p.scan_id").all()
     .map((r) => ({ id: r.id, cond: r.cond, ok: !!r.ok }));
-  // Opombe šele, ko je v pilotu vsaj MIN_GROUP članov in vsaj toliko opomb.
-  const showNotes = !few(members) && !few(notes.length);
-  return { members, minGroup: MIN_GROUP, impact: impactReport(db, MIN_GROUP), scans, features, notes: showNotes ? notes : [], notesHidden: !showNotes && notes.length > 0, survey: { n: answers.length, avg, improve, hidden: few(answers.length) }, photos, photoList };
+  // Opombe šele, ko je v pilotu vsaj MIN_GROUP članov.
+  const showNotes = !few(members) && notes.length > 0;
+  return {
+    members,
+    minGroup: MIN_GROUP,
+    impact: impactReport(db, MIN_GROUP),
+    scans,
+    features,
+    notes: showNotes ? notes : [],
+    notesHidden: !showNotes && noteRows.length > 0,
+    survey: { n: N(allAnswers.length), shown: answers.length, avg, improve, hidden: !answers.length },
+    photos,
+    photoList,
+  };
 }
 
 // Povzetek za jutranji pregled (Markdown): samo števila, brez opomb in prostih besedil (te so na skrbniški strani).
 export function pilotTasksMarkdown(r) {
   const pc = (x) => (x == null ? "–" : `${Math.round(x * 100)} %`);
   const num = (x) => (x == null ? "–" : x);
-  const lines = [`# Pilot: naloge članov`, ``, `Člani v pilotu, ki so odprli naloge: ${r.members}. Shranjenih fotografij: ${r.photos}. Opomb: ${r.notes.length || (r.notesHidden ? `manj kot ${r.minGroup} prikazanih` : 0)}.`, `Deleži in povprečja so prikazani šele od ${r.minGroup} odgovorov naprej (–).`, ``, `## Branje po pogojih`, ``, `| Pogoj | Ocen | Prav | Delež |`, `|---|---|---|---|`];
+  const lines = [`# Pilot: naloge članov`, ``, `Člani v pilotu, ki so odprli naloge: ${r.members}. Shranjenih fotografij: ${r.photos}. Opomb: ${(r.notes || []).length || (r.notesHidden ? `manj kot ${r.minGroup} prikazanih` : 0)}.`, `Deleži in povprečja so prikazani šele od ${r.minGroup} odgovorov naprej (–) in se osvežijo šele po ${r.minGroup} novih (plačilo: po 5).`, ``, `## Branje po pogojih`, ``, `| Pogoj | Ocen | Prav | Delež |`, `|---|---|---|---|`];
   for (const s of r.scans) lines.push(`| ${s.cond} | ${s.n} | ${num(s.ok)} | ${pc(s.rate)} |`);
   lines.push(``, `## Deli aplikacije`, ``, `| Del | Ocen | Ne deluje |`, `|---|---|---|`);
   for (const f of r.features) lines.push(`| ${f.feature} | ${f.n} | ${num(f.bad)} |`);
@@ -297,6 +329,7 @@ export function pilotTasksMarkdown(r) {
   if (q) {
     lines.push(``, `## Preizkus znanja`, ``, `- začetni preizkus (brez stropa): ${q.nPre}, povprečje ${pc(q.pre)}`, `- oba preizkusa (isti učenci, brez stropa): ${q.nPaired}, prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${q.diff == null ? "–" : `${q.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(q.diff) * 100)} odstotnih točk`}`);
     const c = q.ceiling;
+    if (q.allSkip) lines.push(`- preizkusi samo z »Ne vem« (niso v povprečjih): ${q.allSkip}`);
     if (c) lines.push(`- strop (prvič 6/6, dodatne težje naloge; posebej): ${c.nPre}, oba preizkusa ${c.nPaired}, prej ${pc(c.pairedPre)}, po 14 dneh ${pc(c.pairedPost)}, razlika ${c.diff == null ? "–" : `${c.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(c.diff) * 100)} odstotnih točk`}`);
   }
   if (w) {
@@ -317,7 +350,7 @@ function isImage(dataUrl) {
 }
 
 // ---------- API ----------
-export function mountPilotTasks(app, store, { loadStudent, progress = null, accounts = false, isLocalRequest = () => false, topicFor = () => null, nextTopicFor = () => null }) {
+export function mountPilotTasks(app, store, { loadStudent, progress = null, accounts = false, isLocalRequest = () => false, topicFor = () => null, nextTopicFor = () => null, owner = null }) {
   const db = store.db;
   migratePilotTasks(db);
   const isAdmin = (req) => (accounts ? !!req.parent?.is_admin : isLocalRequest(req));
@@ -342,6 +375,7 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     langFor: (sid) => progress?.taskLang?.(sid) || "sl",
     accounts,
     isMember: (id) => !!pilotMember(db, id),
+    confirmOwner: owner?.confirmOwner || (async () => false),
   });
 
   app.get("/api/students/:id/pilot", (req, res) => {
@@ -430,12 +464,14 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     res.json({ ...pilotState(db, s.id), gained: 0, deleted: Number(n) });
   });
 
-  // Starš v Računu izbriše fotografije profila (pot mimo zaklepa profila: starš je lastnik, ne potrebuje odklepa).
+  // Starš v Računu izbriše fotografije profila. Samo imetnik (OWNER_ONLY v account-lock.js) in ne mimo gesla profila:
+  // brat na skupni napravi ne sme izbrisati sestrinih fotografij (preklic tujega soglasja, pregled B3).
   app.delete("/api/account/pilot-photos/:sid", (req, res) => {
     if (!accounts || !req.parent) return res.status(404).json({ error: "Ne obstaja." });
     const sid = /^\d{1,12}$/.test(req.params.sid) ? Number(req.params.sid) : NaN;
     const own = Number.isInteger(sid) && db.prepare("SELECT 1 FROM students WHERE id = ? AND parent_id = ?").get(sid, req.parent.id);
     if (!own) return res.status(404).json({ error: "Učenec ne obstaja." });
+    if (owner?.profileLockedFor?.(req, sid)) return res.status(423).json({ error: "Profil je zaklenjen. Najprej ga odkleni z njegovim geslom.", profile_locked: true });
     const n = db.prepare("DELETE FROM pilot_photos WHERE student_id = ?").run(sid).changes;
     audit(db, { req, parentId: req.parent.id, actor: "parent", action: "pilot_photos_delete", target: `student:${sid}` });
     res.json({ ...pilotSummary(db, sid), deleted: Number(n) });
@@ -491,10 +527,16 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
   // --- skrbnik ---
   app.get("/api/admin/pilot-naloge", (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: "Samo za skrbnika." });
-    const r = pilotTasksReport(db);
-    let accountsList = [];
-    if (accounts && hasParents(db) && hasCol(db, "parents", "pilot_at")) accountsList = db.prepare("SELECT email FROM parents WHERE pilot_at IS NOT NULL ORDER BY email").all().map((x) => x.email);
-    res.set("Cache-Control", "no-store").json({ ...r, accounts: accountsList, canAdd: !!accounts });
+    // Brez e-naslovov: ti so na ločeni strani (spodaj), da jih skrbnik ne vidi ob porazdelitvah (pregled B3).
+    res.set("Cache-Control", "no-store").json({ ...pilotTasksReport(db), canAdd: !!accounts });
+  });
+
+  // Seznam računov v pilotu (samo za dodajanje in odstranjevanje; brez vsot).
+  app.get("/api/admin/pilot-naloge/clani", (req, res) => {
+    if (!accounts) return res.status(404).json({ error: "Računi niso vklopljeni." });
+    if (!isAdmin(req)) return res.status(403).json({ error: "Samo za skrbnika." });
+    const list = hasParents(db) && hasCol(db, "parents", "pilot_at") ? db.prepare("SELECT email FROM parents WHERE pilot_at IS NOT NULL ORDER BY email").all().map((x) => x.email) : [];
+    res.set("Cache-Control", "no-store").json({ accounts: list });
   });
 
   // Skrbnik doda ali odstrani račun iz pilota: { email, on }

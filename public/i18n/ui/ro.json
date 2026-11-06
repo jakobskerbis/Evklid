@@ -3701,7 +3701,7 @@
   "pn.photoRules": {
     "other": "În fotografie să fie doar problema, fără fețe sau nume. O salvăm împreună cu textul citit de Evklid. Le vede doar administratorul Evklid. Le păstrăm {n} zile, apoi se șterg singure."
   },
-  "pn.photoAi": "Ca la orice scanare, fotografia este citită de o inteligență artificială, ca Evklid să înțeleagă problema. Copia salvată nu o trimitem nimănui.",
+  "pn.photoAi": "Ca la orice scanare, fotografia este citită de o inteligență artificială, ca Evklid să înțeleagă problema. Copia salvată nu o trimitem nimănui. Le poți șterge mai devreme la „Ajută la îmbunătățirea Evklid”.",
   "pn.photoSaved": "Fotografie salvată",
   "pn.photoDelete": "Șterge fotografia",
   "pn.photoDeleted": "Fotografia a fost ștearsă.",
@@ -3778,12 +3778,8 @@
   "pilot.n.removed": "Contul nu mai este în pilot.",
   "pilot.n.few": "Prea puține răspunsuri pentru afișare (cel puțin {n}).",
   "zb.fromPilot": "Pentru ajutorul în pilot",
-  "priv.noticeTitle": "Am actualizat regulile de confidențialitate",
-  "priv.noticeText": "Acum spun mai precis ce date poți exporta și șterge și cât timp le păstrăm. Am adăugat și sarcinile din pilot și măsurarea dacă Evklid ajută. Nu trebuie să faci nimic.",
-  "priv.noticeRead": "Citește regulile",
-  "priv.noticeOk": "Bine",
   "pn.quizTitle": "Test de cunoștințe",
-  "pn.quizText": "Șase probleme scurte din materia pe care o înveți. Peste 14 zile încă o dată, ca să vedem dacă Evklid te ajută. Nu se dă notă și nu e nimic dacă nu știi ceva.",
+  "pn.quizText": "Șase probleme scurte din materia pe care o înveți. Peste 14 zile încă o dată, ca să vedem dacă Evklid te ajută. Nu se dă notă și nu e nimic dacă nu știi ceva. Salvăm rezultatul, iar administratorul vede doar media tuturor.",
   "pn.quizStart": "Începe testul",
   "pn.quizContinue": "Continuă testul",
   "pn.quizPost": "Începe al doilea test",
@@ -3818,5 +3814,18 @@
   "pilot.n.quizCeiling": "Plafon (prima dată totul corect, probleme suplimentare mai grele; separat): {n}, ambele teste {paired}. Înainte {pre}, după 14 zile {post}, diferența {diff} puncte procentuale",
   "pilot.n.wtp": "Disponibilitatea de a plăti",
   "pilot.n.wtpPay": "Ar plăti",
-  "pilot.n.wtpAmount": "Suma pe lună"
+  "pilot.n.wtpAmount": "Suma pe lună",
+  "starsi.privTitle": "Am actualizat regulile de confidențialitate",
+  "starsi.privText": "Acum spun mai precis ce date puteți exporta și șterge și cât timp le păstrăm. Am adăugat și sarcinile din pilot și măsurarea dacă Evklid ajută. Nu trebuie să faceți nimic.",
+  "starsi.privRead": "Citiți regulile",
+  "starsi.privPw": "Parola contului",
+  "starsi.privPwNote": "Ascundeți anunțul cu parola contului, ca să nu-l ascundă altcineva pe acest dispozitiv.",
+  "starsi.privHide": "Ascunde anunțul",
+  "starsi.privHidden": "Anunțul este ascuns.",
+  "starsi.wtpPwNote": "Trimiteți răspunsul cu parola contului, ca să nu răspundă altcineva pe acest dispozitiv.",
+  "starsi.wtpPwNeed": "Introduceți parola contului.",
+  "pilot.n.quizSkip": "Teste doar cu „Nu știu” (nu intră în medii): {n}",
+  "pilot.n.blocks": "Totalurile se actualizează doar după {n} răspunsuri noi.",
+  "pilot.n.manage": "Conturi în pilot",
+  "pilot.n.backSums": "Înapoi la totaluri"
 }

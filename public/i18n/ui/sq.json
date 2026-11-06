@@ -3667,7 +3667,7 @@
   "pn.photoRules": {
     "other": "Në foto duhet të jetë vetëm detyra, pa fytyra dhe emra. E ruajmë bashkë me tekstin që lexoi Evklid. I sheh vetëm administratori i Evklid. I ruajmë {n} ditë, pastaj fshihen vetë."
   },
-  "pn.photoAi": "Si në çdo skanim, foton e lexon një inteligjencë artificiale, që Evklid ta kuptojë detyrën. Kopjen e ruajtur nuk ia dërgojmë askujt.",
+  "pn.photoAi": "Si në çdo skanim, foton e lexon një inteligjencë artificiale, që Evklid ta kuptojë detyrën. Kopjen e ruajtur nuk ia dërgojmë askujt. Mund t'i fshish më herët te «Ndihmo ta përmirësojmë Evklid».",
   "pn.photoSaved": "Fotografia u ruajt",
   "pn.photoDelete": "Fshi fotografinë",
   "pn.photoDeleted": "Fotografia u fshi.",
@@ -3744,12 +3744,8 @@
   "pilot.n.removed": "Llogaria nuk është më në pilot.",
   "pilot.n.few": "Shumë pak përgjigje për t’u shfaqur (të paktën {n}).",
   "zb.fromPilot": "Për ndihmën në pilot",
-  "priv.noticeTitle": "I përditësuam rregullat e privatësisë",
-  "priv.noticeText": "Tani shkruhet më saktë cilat të dhëna mund t'i eksportosh dhe t'i fshish dhe sa kohë i ruajmë. Shtuam edhe detyrat e pilotit dhe matjen nëse Evklid ndihmon. Nuk ke nevojë të bësh asgjë.",
-  "priv.noticeRead": "Lexo rregullat",
-  "priv.noticeOk": "Në rregull",
   "pn.quizTitle": "Test njohurish",
-  "pn.quizText": "Gjashtë detyra të shkurtra nga lënda që po mëson. Pas 14 ditësh edhe një herë, për të parë nëse Evklid të ndihmon. Nuk ka notë dhe s'ka problem nëse nuk di diçka.",
+  "pn.quizText": "Gjashtë detyra të shkurtra nga lënda që po mëson. Pas 14 ditësh edhe një herë, për të parë nëse Evklid të ndihmon. Nuk ka notë dhe s'ka problem nëse nuk di diçka. Rezultatin e ruajmë, kurse administratori sheh vetëm mesataren e të gjithëve.",
   "pn.quizStart": "Fillo testin",
   "pn.quizContinue": "Vazhdo testin",
   "pn.quizPost": "Fillo testin e dytë",
@@ -3784,5 +3780,18 @@
   "pilot.n.quizCeiling": "Tavani (herën e parë të gjitha saktë, detyra shtesë më të vështira; veçmas): {n}, të dy testet {paired}. Para {pre}, pas 14 ditësh {post}, ndryshimi {diff} pikë përqindjeje",
   "pilot.n.wtp": "Gatishmëria për të paguar",
   "pilot.n.wtpPay": "Do të paguanin",
-  "pilot.n.wtpAmount": "Shuma në muaj"
+  "pilot.n.wtpAmount": "Shuma në muaj",
+  "starsi.privTitle": "I përditësuam rregullat e privatësisë",
+  "starsi.privText": "Tani shkruhet më saktë cilat të dhëna mund t'i eksportoni dhe t'i fshini dhe sa kohë i ruajmë. Shtuam edhe detyrat e pilotit dhe matjen nëse Evklid ndihmon. Nuk keni nevojë të bëni asgjë.",
+  "starsi.privRead": "Lexoni rregullat",
+  "starsi.privPw": "Fjalëkalimi i llogarisë",
+  "starsi.privPwNote": "Njoftimin e fshehni me fjalëkalimin e llogarisë, që të mos e fshehë dikush tjetër në këtë pajisje.",
+  "starsi.privHide": "Fshih njoftimin",
+  "starsi.privHidden": "Njoftimi u fsheh.",
+  "starsi.wtpPwNote": "Përgjigjen e dërgoni me fjalëkalimin e llogarisë, që të mos përgjigjet dikush tjetër në këtë pajisje.",
+  "starsi.wtpPwNeed": "Shkruani fjalëkalimin e llogarisë.",
+  "pilot.n.quizSkip": "Teste vetëm me «Nuk e di» (jo në mesatare): {n}",
+  "pilot.n.blocks": "Shumat rifreskohen vetëm pas {n} përgjigjeve të reja.",
+  "pilot.n.manage": "Llogaritë në pilot",
+  "pilot.n.backSums": "Kthehu te shumat"
 }

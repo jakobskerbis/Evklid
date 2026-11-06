@@ -3672,7 +3672,7 @@
   "pn.photoRules": {
     "other": "Na foto deve estar só o exercício, sem rostos nem nomes. Guardamo-la juntamente com o texto que o Evklid leu. Só o administrador do Evklid os vê. Guardamo-los {n} dias e depois são apagados automaticamente."
   },
-  "pn.photoAi": "Como em cada digitalização, uma inteligência artificial lê a foto para o Evklid perceber o exercício. A cópia guardada não a enviamos a ninguém.",
+  "pn.photoAi": "Como em cada digitalização, uma inteligência artificial lê a foto para o Evklid perceber o exercício. A cópia guardada não a enviamos a ninguém. Podes apagá-los antes em «Ajuda a melhorar o Evklid».",
   "pn.photoSaved": "Fotografia guardada",
   "pn.photoDelete": "Apagar a fotografia",
   "pn.photoDeleted": "A fotografia foi apagada.",
@@ -3749,12 +3749,8 @@
   "pilot.n.removed": "A conta já não está no piloto.",
   "pilot.n.few": "Respostas a menos para mostrar (pelo menos {n}).",
   "zb.fromPilot": "Pela ajuda no piloto",
-  "priv.noticeTitle": "Atualizámos as regras de privacidade",
-  "priv.noticeText": "Agora dizem com mais precisão que dados podes exportar e apagar e durante quanto tempo os guardamos. Também acrescentámos as tarefas do piloto e a medição de se o Evklid ajuda. Não precisas de fazer nada.",
-  "priv.noticeRead": "Ler as regras",
-  "priv.noticeOk": "OK",
   "pn.quizTitle": "Teste de conhecimentos",
-  "pn.quizText": "Seis exercícios curtos da matéria que estás a aprender. Daqui a 14 dias, outra vez, para ver se o Evklid te ajuda. Não há nota e não faz mal se não souberes alguma coisa.",
+  "pn.quizText": "Seis exercícios curtos da matéria que estás a aprender. Daqui a 14 dias, outra vez, para ver se o Evklid te ajuda. Não há nota e não faz mal se não souberes alguma coisa. Guardamos o resultado e o administrador só vê a média de todos.",
   "pn.quizStart": "Começar o teste",
   "pn.quizContinue": "Continuar o teste",
   "pn.quizPost": "Começar o segundo teste",
@@ -3789,5 +3785,18 @@
   "pilot.n.quizCeiling": "Teto (tudo certo na primeira vez, exercícios extra mais difíceis; à parte): {n}, ambos os testes {paired}. Antes {pre}, após 14 dias {post}, diferença {diff} pontos percentuais",
   "pilot.n.wtp": "Disponibilidade para pagar",
   "pilot.n.wtpPay": "Pagariam",
-  "pilot.n.wtpAmount": "Valor por mês"
+  "pilot.n.wtpAmount": "Valor por mês",
+  "starsi.privTitle": "Atualizámos as regras de privacidade",
+  "starsi.privText": "Agora dizem com mais precisão que dados pode exportar e apagar e durante quanto tempo os guardamos. Também acrescentámos as tarefas do piloto e a medição de se o Evklid ajuda. Não precisa de fazer nada.",
+  "starsi.privRead": "Ler as regras",
+  "starsi.privPw": "Palavra-passe da conta",
+  "starsi.privPwNote": "Oculte o aviso com a palavra-passe da conta, para que ninguém mais o oculte neste dispositivo.",
+  "starsi.privHide": "Ocultar aviso",
+  "starsi.privHidden": "O aviso está oculto.",
+  "starsi.wtpPwNote": "Envie a resposta com a palavra-passe da conta, para que ninguém mais responda neste dispositivo.",
+  "starsi.wtpPwNeed": "Escreva a palavra-passe da conta.",
+  "pilot.n.quizSkip": "Testes só com «Não sei» (fora das médias): {n}",
+  "pilot.n.blocks": "Os totais só são atualizados após {n} respostas novas.",
+  "pilot.n.manage": "Contas no piloto",
+  "pilot.n.backSums": "Voltar aos totais"
 }

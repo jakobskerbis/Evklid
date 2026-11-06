@@ -3665,7 +3665,7 @@
   "pn.photoRules": {
     "other": "Kwenye picha iwe swali tu, bila nyuso wala majina. Tunaihifadhi pamoja na maandishi ambayo Evklid ilisoma. Ni msimamizi wa Evklid pekee anayeviona. Tunavihifadhi kwa siku {n}, kisha vinafutwa vyenyewe."
   },
-  "pn.photoAi": "Kama kila uchanganuzi, akili bandia husoma picha ili Evklid ielewe swali. Nakala iliyohifadhiwa hatumtumii mtu yeyote.",
+  "pn.photoAi": "Kama kila uchanganuzi, akili bandia husoma picha ili Evklid ielewe swali. Nakala iliyohifadhiwa hatumtumii mtu yeyote. Unaweza kuvifuta mapema katika “Saidia kuboresha Evklid”.",
   "pn.photoSaved": "Picha imehifadhiwa",
   "pn.photoDelete": "Futa picha",
   "pn.photoDeleted": "Picha imefutwa.",
@@ -3742,12 +3742,8 @@
   "pilot.n.removed": "Akaunti haiko tena kwenye majaribio.",
   "pilot.n.few": "Majibu ni machache mno kuonyeshwa (angalau {n}).",
   "zb.fromPilot": "Kwa msaada katika majaribio",
-  "priv.noticeTitle": "Tumesasisha sheria za faragha",
-  "priv.noticeText": "Sasa zinaeleza kwa usahihi zaidi data gani unaweza kuhamisha na kufuta na tunaihifadhi kwa muda gani. Pia tumeongeza kazi za majaribio na kupima kama Evklid inasaidia. Huhitaji kufanya chochote.",
-  "priv.noticeRead": "Soma sheria",
-  "priv.noticeOk": "Sawa",
   "pn.quizTitle": "Jaribio la maarifa",
-  "pn.quizText": "Maswali sita mafupi kutoka kwenye somo unalojifunza. Baada ya siku 14 mara nyingine, kuona kama Evklid inakusaidia. Hakuna alama, na si tatizo usipojua kitu.",
+  "pn.quizText": "Maswali sita mafupi kutoka kwenye somo unalojifunza. Baada ya siku 14 mara nyingine, kuona kama Evklid inakusaidia. Hakuna alama, na si tatizo usipojua kitu. Tunahifadhi matokeo, na msimamizi huona wastani wa wote tu.",
   "pn.quizStart": "Anza jaribio",
   "pn.quizContinue": "Endelea na jaribio",
   "pn.quizPost": "Anza jaribio la pili",
@@ -3782,5 +3778,18 @@
   "pilot.n.quizCeiling": "Kikomo (mara ya kwanza yote sahihi, maswali ya ziada magumu zaidi; kando): {n}, majaribio yote mawili {paired}. Kabla {pre}, baada ya siku 14 {post}, tofauti {diff} pointi za asilimia",
   "pilot.n.wtp": "Utayari wa kulipa",
   "pilot.n.wtpPay": "Wangelipa",
-  "pilot.n.wtpAmount": "Kiasi kwa mwezi"
+  "pilot.n.wtpAmount": "Kiasi kwa mwezi",
+  "starsi.privTitle": "Tumesasisha sheria za faragha",
+  "starsi.privText": "Sasa zinaeleza kwa usahihi zaidi data gani mnaweza kuhamisha na kufuta na tunaihifadhi kwa muda gani. Pia tumeongeza kazi za majaribio na kupima kama Evklid inasaidia. Hamhitaji kufanya chochote.",
+  "starsi.privRead": "Someni sheria",
+  "starsi.privPw": "Nenosiri la akaunti",
+  "starsi.privPwNote": "Ficheni tangazo kwa nenosiri la akaunti, ili mtu mwingine kwenye kifaa hiki asilifiche.",
+  "starsi.privHide": "Ficha tangazo",
+  "starsi.privHidden": "Tangazo limefichwa.",
+  "starsi.wtpPwNote": "Tumeni jibu kwa nenosiri la akaunti, ili mtu mwingine kwenye kifaa hiki asijibu.",
+  "starsi.wtpPwNeed": "Andikeni nenosiri la akaunti.",
+  "pilot.n.quizSkip": "Majaribio yenye “Sijui” pekee (hayamo kwenye wastani): {n}",
+  "pilot.n.blocks": "Jumla husasishwa tu baada ya majibu mapya {n}.",
+  "pilot.n.manage": "Akaunti katika majaribio",
+  "pilot.n.backSums": "Rudi kwenye jumla"
 }

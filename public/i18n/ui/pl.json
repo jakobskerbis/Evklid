@@ -3735,7 +3735,7 @@
   "pn.photoRules": {
     "other": "Na zdjęciu ma być tylko zadanie, bez twarzy i imion. Zapisujemy je razem z tekstem, który odczytał Evklid. Widzi je tylko administrator Evklidu. Przechowujemy je {n} dni, potem same się usuwają."
   },
-  "pn.photoAi": "Jak przy każdym skanowaniu zdjęcie odczytuje sztuczna inteligencja, żeby Evklid zrozumiał zadanie. Zapisanej kopii nikomu nie wysyłamy.",
+  "pn.photoAi": "Jak przy każdym skanowaniu zdjęcie odczytuje sztuczna inteligencja, żeby Evklid zrozumiał zadanie. Zapisanej kopii nikomu nie wysyłamy. Wcześniej możesz je usunąć w „Pomóż ulepszyć Evklid”.",
   "pn.photoSaved": "Zdjęcie zapisane",
   "pn.photoDelete": "Usuń zdjęcie",
   "pn.photoDeleted": "Zdjęcie jest usunięte.",
@@ -3812,12 +3812,8 @@
   "pilot.n.removed": "Konto nie jest już w pilotażu.",
   "pilot.n.few": "Za mało odpowiedzi, by je pokazać (co najmniej {n}).",
   "zb.fromPilot": "Za pomoc w pilotażu",
-  "priv.noticeTitle": "Zaktualizowaliśmy zasady prywatności",
-  "priv.noticeText": "Teraz dokładniej opisują, które dane możesz wyeksportować i usunąć oraz jak długo je przechowujemy. Dodaliśmy też zadania pilotażowe i pomiar, czy Evklid pomaga. Nie musisz nic robić.",
-  "priv.noticeRead": "Przeczytaj zasady",
-  "priv.noticeOk": "OK",
   "pn.quizTitle": "Sprawdzian wiedzy",
-  "pn.quizText": "Sześć krótkich zadań z materiału, którego się uczysz. Za 14 dni jeszcze raz, żeby zobaczyć, czy Evklid ci pomaga. Nie ma oceny i nic się nie stanie, jeśli czegoś nie wiesz.",
+  "pn.quizText": "Sześć krótkich zadań z materiału, którego się uczysz. Za 14 dni jeszcze raz, żeby zobaczyć, czy Evklid ci pomaga. Nie ma oceny i nic się nie stanie, jeśli czegoś nie wiesz. Wynik zapisujemy, a administrator widzi tylko średnią wszystkich.",
   "pn.quizStart": "Zacznij sprawdzian",
   "pn.quizContinue": "Kontynuuj sprawdzian",
   "pn.quizPost": "Zacznij drugi sprawdzian",
@@ -3852,5 +3848,18 @@
   "pilot.n.quizCeiling": "Sufit (za pierwszym razem wszystko dobrze, dodatkowe trudniejsze zadania; osobno): {n}, oba sprawdziany {paired}. Przed {pre}, po 14 dniach {post}, różnica {diff} punktów procentowych",
   "pilot.n.wtp": "Gotowość do zapłaty",
   "pilot.n.wtpPay": "Zapłaciliby",
-  "pilot.n.wtpAmount": "Kwota miesięcznie"
+  "pilot.n.wtpAmount": "Kwota miesięcznie",
+  "starsi.privTitle": "Zaktualizowaliśmy zasady prywatności",
+  "starsi.privText": "Teraz dokładniej opisują, które dane mogą Państwo wyeksportować i usunąć oraz jak długo je przechowujemy. Dodaliśmy też zadania pilotażowe i pomiar, czy Evklid pomaga. Nie muszą Państwo nic robić.",
+  "starsi.privRead": "Przeczytaj zasady",
+  "starsi.privPw": "Hasło konta",
+  "starsi.privPwNote": "Komunikat ukrywa się hasłem konta, żeby nie ukrył go ktoś inny na tym urządzeniu.",
+  "starsi.privHide": "Ukryj komunikat",
+  "starsi.privHidden": "Komunikat jest ukryty.",
+  "starsi.wtpPwNote": "Odpowiedź wysyła się z hasłem konta, żeby nie odpowiedział ktoś inny na tym urządzeniu.",
+  "starsi.wtpPwNeed": "Proszę wpisać hasło konta.",
+  "pilot.n.quizSkip": "Sprawdziany tylko z „Nie wiem” (poza średnimi): {n}",
+  "pilot.n.blocks": "Sumy odświeżają się dopiero po {n} nowych odpowiedziach.",
+  "pilot.n.manage": "Konta w pilotażu",
+  "pilot.n.backSums": "Wróć do sum"
 }

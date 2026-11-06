@@ -3729,7 +3729,7 @@
   "pn.photoRules": {
     "other": "Na fotce má být jen příklad, žádné obličeje ani jména. Uložíme ji spolu s textem, který Evklid přečetl. Vidí je jen správce Evklidu. Uchováme je {n} dní, pak se samy smažou."
   },
-  "pn.photoAi": "Jako u každého skenování fotku přečte umělá inteligence, aby Evklid příkladu rozuměl. Uloženou kopii nikomu neposíláme.",
+  "pn.photoAi": "Jako u každého skenování fotku přečte umělá inteligence, aby Evklid příkladu rozuměl. Uloženou kopii nikomu neposíláme. Dřív je můžeš smazat v části „Pomoz vylepšit Evklid“.",
   "pn.photoSaved": "Fotka je uložená",
   "pn.photoDelete": "Smazat fotku",
   "pn.photoDeleted": "Fotka je smazaná.",
@@ -3806,12 +3806,8 @@
   "pilot.n.removed": "Účet už není v pilotu.",
   "pilot.n.few": "Příliš málo odpovědí na zobrazení (aspoň {n}).",
   "zb.fromPilot": "Za pomoc v pilotu",
-  "priv.noticeTitle": "Aktualizovali jsme pravidla ochrany soukromí",
-  "priv.noticeText": "Teď přesněji píší, která data můžeš exportovat a smazat a jak dlouho je uchováváme. Přidali jsme také úkoly pro pilot a měření, jestli Evklid pomáhá. Nemusíš nic dělat.",
-  "priv.noticeRead": "Přečíst pravidla",
-  "priv.noticeOk": "Rozumím",
   "pn.quizTitle": "Test znalostí",
-  "pn.quizText": "Šest krátkých příkladů z látky, kterou se učíš. Za 14 dní ještě jednou, abychom viděli, jestli ti Evklid pomáhá. Není to na známku a nevadí, když něco nevíš.",
+  "pn.quizText": "Šest krátkých příkladů z látky, kterou se učíš. Za 14 dní ještě jednou, abychom viděli, jestli ti Evklid pomáhá. Není to na známku a nevadí, když něco nevíš. Výsledek uložíme, správce vidí jen průměr všech.",
   "pn.quizStart": "Začít test",
   "pn.quizContinue": "Pokračovat v testu",
   "pn.quizPost": "Začít druhý test",
@@ -3846,5 +3842,18 @@
   "pilot.n.quizCeiling": "Strop (poprvé vše správně, další těžší příklady; zvlášť): {n}, oba testy {paired}. Předtím {pre}, po 14 dnech {post}, rozdíl {diff} procentních bodů",
   "pilot.n.wtp": "Ochota platit",
   "pilot.n.wtpPay": "Zaplatili by",
-  "pilot.n.wtpAmount": "Částka měsíčně"
+  "pilot.n.wtpAmount": "Částka měsíčně",
+  "starsi.privTitle": "Aktualizovali jsme pravidla ochrany soukromí",
+  "starsi.privText": "Teď přesněji píší, která data můžete exportovat a smazat a jak dlouho je uchováváme. Přidali jsme také úkoly pro pilot a měření, jestli Evklid pomáhá. Nemusíte nic dělat.",
+  "starsi.privRead": "Přečtěte si pravidla",
+  "starsi.privPw": "Heslo účtu",
+  "starsi.privPwNote": "Oznámení skryjete heslem účtu, aby ho neskryl někdo jiný na tomto zařízení.",
+  "starsi.privHide": "Skrýt oznámení",
+  "starsi.privHidden": "Oznámení je skryté.",
+  "starsi.wtpPwNote": "Odpověď odešlete s heslem účtu, aby neodpověděl někdo jiný na tomto zařízení.",
+  "starsi.wtpPwNeed": "Zadejte heslo účtu.",
+  "pilot.n.quizSkip": "Testy jen s „Nevím“ (nejsou v průměrech): {n}",
+  "pilot.n.blocks": "Součty se obnoví až po {n} nových odpovědích.",
+  "pilot.n.manage": "Účty v pilotu",
+  "pilot.n.backSums": "Zpět na součty"
 }

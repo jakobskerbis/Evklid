@@ -3639,7 +3639,7 @@
   "pn.photoRules": {
     "other": "Di foto hanya boleh ada soalnya, tanpa wajah atau nama. Kami menyimpannya bersama teks yang dibaca Evklid. Hanya admin Evklid yang melihatnya. Kami menyimpannya {n} hari, lalu terhapus otomatis."
   },
-  "pn.photoAi": "Seperti setiap pemindaian, AI membaca foto agar Evklid memahami soalnya. Salinan yang disimpan tidak kami kirim ke siapa pun.",
+  "pn.photoAi": "Seperti setiap pemindaian, AI membaca foto agar Evklid memahami soalnya. Salinan yang disimpan tidak kami kirim ke siapa pun. Kamu bisa menghapusnya lebih awal di “Bantu tingkatkan Evklid”.",
   "pn.photoSaved": "Foto tersimpan",
   "pn.photoDelete": "Hapus foto",
   "pn.photoDeleted": "Foto sudah dihapus.",
@@ -3716,12 +3716,8 @@
   "pilot.n.removed": "Akun tidak lagi dalam uji coba.",
   "pilot.n.few": "Terlalu sedikit jawaban untuk ditampilkan (minimal {n}).",
   "zb.fromPilot": "Untuk bantuan dalam uji coba",
-  "priv.noticeTitle": "Kami memperbarui aturan privasi",
-  "priv.noticeText": "Sekarang dijelaskan lebih tepat data apa yang bisa kamu ekspor dan hapus serta berapa lama kami menyimpannya. Kami juga menambahkan tugas pilot dan pengukuran apakah Evklid membantu. Kamu tidak perlu melakukan apa pun.",
-  "priv.noticeRead": "Baca aturan",
-  "priv.noticeOk": "Oke",
   "pn.quizTitle": "Tes pengetahuan",
-  "pn.quizText": "Enam soal pendek dari materi yang sedang kamu pelajari. 14 hari lagi sekali lagi, untuk melihat apakah Evklid membantumu. Tidak ada nilai, dan tidak apa-apa kalau ada yang belum kamu tahu.",
+  "pn.quizText": "Enam soal pendek dari materi yang sedang kamu pelajari. 14 hari lagi sekali lagi, untuk melihat apakah Evklid membantumu. Tidak ada nilai, dan tidak apa-apa kalau ada yang belum kamu tahu. Kami menyimpan hasilnya, dan admin hanya melihat rata-rata semua.",
   "pn.quizStart": "Mulai tes",
   "pn.quizContinue": "Lanjutkan tes",
   "pn.quizPost": "Mulai tes kedua",
@@ -3756,5 +3752,18 @@
   "pilot.n.quizCeiling": "Plafon (pertama kali semua benar, soal tambahan lebih sulit; terpisah): {n}, kedua tes {paired}. Sebelum {pre}, setelah 14 hari {post}, selisih {diff} poin persentase",
   "pilot.n.wtp": "Kesediaan membayar",
   "pilot.n.wtpPay": "Mau membayar",
-  "pilot.n.wtpAmount": "Jumlah per bulan"
+  "pilot.n.wtpAmount": "Jumlah per bulan",
+  "starsi.privTitle": "Kami memperbarui aturan privasi",
+  "starsi.privText": "Sekarang dijelaskan lebih tepat data apa yang bisa Anda ekspor dan hapus serta berapa lama kami menyimpannya. Kami juga menambahkan tugas pilot dan pengukuran apakah Evklid membantu. Anda tidak perlu melakukan apa pun.",
+  "starsi.privRead": "Baca aturan",
+  "starsi.privPw": "Kata sandi akun",
+  "starsi.privPwNote": "Sembunyikan pemberitahuan dengan kata sandi akun, agar orang lain di perangkat ini tidak menyembunyikannya.",
+  "starsi.privHide": "Sembunyikan pemberitahuan",
+  "starsi.privHidden": "Pemberitahuan disembunyikan.",
+  "starsi.wtpPwNote": "Kirim jawaban dengan kata sandi akun, agar orang lain di perangkat ini tidak menjawab.",
+  "starsi.wtpPwNeed": "Masukkan kata sandi akun.",
+  "pilot.n.quizSkip": "Tes hanya dengan “Tidak tahu” (tidak dalam rata-rata): {n}",
+  "pilot.n.blocks": "Jumlah baru diperbarui setelah {n} jawaban baru.",
+  "pilot.n.manage": "Akun dalam pilot",
+  "pilot.n.backSums": "Kembali ke jumlah"
 }

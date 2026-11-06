@@ -141,7 +141,7 @@ test("preizkus znanja: skrbnik vidi povprečja šele od 3 učencev, pred in po s
   add(ids[1], "pre", 3);
   add(ids[1], "post", 3);
   let q = impactReport(db, 3).quiz;
-  assert.equal(q.nPre, 2);
+  assert.equal(q.nPre, "< 3");
   assert.equal(q.pre, null);
   assert.equal(q.diff, null);
   add(ids[2], "pre", 1);
@@ -149,7 +149,7 @@ test("preizkus znanja: skrbnik vidi povprečja šele od 3 učencev, pred in po s
   q = impactReport(db, 3).quiz;
   assert.equal(q.nPre, 4);
   assert.ok(q.pre > 0);
-  assert.equal(q.nPaired, 2);
+  assert.equal(q.nPaired, "< 3", "število pod pragom ni natančno");
   assert.equal(q.pairedPre, null, "pod pragom");
   add(ids[2], "post", 4);
   q = impactReport(db, 3).quiz;
@@ -160,6 +160,12 @@ test("preizkus znanja: skrbnik vidi povprečja šele od 3 učencev, pred in po s
   const md = pilotTasksMarkdown(pilotTasksReport(db));
   assert.match(md, /## Preizkus znanja/);
   assert.match(md, /razlika \+28 odstotnih točk/);
+  // Samo »Ne vem« (-1 pri vseh nalogah): ni v povprečjih, šteje se posebej.
+  const u5 = Number(db.prepare("INSERT INTO students (name, settings) VALUES ('U5', '{}')").run().lastInsertRowid);
+  db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, finished_at) VALUES (?, 'pre', 't', '[]', '[-1,-1,-1,-1,-1,-1]', 0, datetime('now'))").run(u5);
+  const q2 = impactReport(db, 3).quiz;
+  assert.equal(q2.allSkip, 1);
+  assert.equal(q2.nPre, 4, "preizkus samo z »Ne vem« ni štet med začetne");
 });
 
 // Račun z lastnim profilom (letnica rojstva `age` let nazaj), potrjen e-naslov, v pilotu.
@@ -187,10 +193,12 @@ test("plačilo: enkrat, 14 dni po začetku, samo polnoleten imetnik v pilotu, »
     assert.equal(acc.pilot_wtp.open, true);
     assert.equal((await a.call("/api/account/pilot-wtp", { method: "POST", body: { pay: "nekaj" } })).status, 400);
     assert.equal((await a.call("/api/account/pilot-wtp", { method: "POST", body: { pay: "yes" } })).status, 400, "pri Da tudi znesek");
-    const ok = await a.call("/api/account/pilot-wtp", { method: "POST", body: { pay: "yes", amount: "5to10" } });
+    assert.equal((await a.call("/api/account/pilot-wtp", { method: "POST", body: { pay: "yes", amount: "5to10" } })).status, 401, "brez gesla računa ne (otrok na starševi napravi)");
+    assert.equal((await a.call("/api/account/pilot-wtp", { method: "POST", body: { pay: "yes", amount: "5to10", password: "napak" } })).status, 401);
+    const ok = await a.call("/api/account/pilot-wtp", { method: "POST", body: { pay: "yes", amount: "5to10", password: "geslo1234" } });
     assert.equal(ok.status, 200, JSON.stringify(ok.body));
     assert.deepEqual(ok.body.wtp, { open: false, done: true });
-    assert.equal((await a.call("/api/account/pilot-wtp", { method: "POST", body: { pay: "no" } })).status, 409, "samo enkrat");
+    assert.equal((await a.call("/api/account/pilot-wtp", { method: "POST", body: { pay: "no", password: "geslo1234" } })).status, 409, "samo enkrat");
     assert.deepEqual({ ...db.prepare("SELECT pay, amount FROM pilot_wtp WHERE parent_id = ?").get(a.pid) }, { pay: "yes", amount: "5to10" });
     // Brez XP.
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM xp_events WHERE reason LIKE '%wtp%'").get().n, 0);
@@ -207,17 +215,19 @@ test("plačilo: enkrat, 14 dni po začetku, samo polnoleten imetnik v pilotu, »
     const n = await account(client, store, "ne@pilot.si", 40, false);
     assert.equal((await n.call("/api/account")).body.pilot_wtp, null);
 
-    // Skrbnik: porazdelitev šele od 3 odgovorov.
+    // Skrbnik: porazdelitev šele od 5 odgovorov (plačilo), število pod pragom »< 5«.
     assert.equal(impactReport(db, 3).wtp.pay, null);
-    for (const [i, pay] of [["b", "skip"], ["c", "maybe"]].entries()) {
+    assert.equal(impactReport(db, 3).wtp.n, "< 5");
+    for (const [i, pay] of [["b", "skip"], ["c", "maybe"], ["d", "no"], ["e", "no"]].entries()) {
       const x = await account(client, store, `${pay[0]}${i}@pilot.si`, 35);
       db.prepare("UPDATE parents SET pilot_at = datetime('now', '-15 days') WHERE id = ?").run(x.pid);
-      const body = pay[1] === "maybe" ? { pay: "maybe", amount: "skip" } : { pay: "skip" };
-      assert.equal((await x.call("/api/account/pilot-wtp", { method: "POST", body })).status, 200);
+      const body = pay[1] === "maybe" ? { pay: "maybe", amount: "skip" } : { pay: pay[1] };
+      assert.equal((await x.call("/api/account/pilot-wtp", { method: "POST", body: { ...body, password: "geslo1234" } })).status, 200);
+      if (i < 3) assert.equal(impactReport(db, 3).wtp.pay, null, "pod 5 ni porazdelitve");
     }
     const w = impactReport(db, 3).wtp;
-    assert.equal(w.n, 3);
-    assert.deepEqual(w.pay, { yes: 1, maybe: 1, no: 0, skip: 1 });
+    assert.equal(w.n, 5);
+    assert.deepEqual(w.pay, { yes: 1, maybe: 1, no: 2, skip: 1 });
     assert.equal(w.amount["5to10"], 1);
     assert.equal(db.prepare("SELECT amount FROM pilot_wtp WHERE pay = 'skip'").get().amount, null);
 
@@ -234,7 +244,11 @@ test("zasebnost: nova različica politike pokaže obvestilo enkrat, nov račun g
     assert.equal((await status()).privacy_notice, null, "nov račun je sprejel trenutno različico");
     store.db.prepare("UPDATE parents SET privacy_version = '2026-10-29' WHERE id = ?").run(a.pid);
     assert.equal((await status()).privacy_notice, PRIVACY_VERSION);
-    const r = await a.call("/api/account/privacy-seen", { method: "POST" });
+    // Skrije ga samo imetnik z geslom računa (pasica v Računu), ne kdo drug na napravi s sejo.
+    assert.equal((await a.call("/api/account/privacy-seen", { method: "POST" })).status, 401);
+    assert.equal((await a.call("/api/account/privacy-seen", { method: "POST", body: { password: "napak" } })).status, 401);
+    assert.equal((await status()).privacy_notice, PRIVACY_VERSION, "ostane, dokler ga imetnik ne potrdi");
+    const r = await a.call("/api/account/privacy-seen", { method: "POST", body: { password: "geslo1234" } });
     assert.equal(r.status, 200);
     assert.equal(r.body.parent.privacy_notice, null);
     assert.equal((await status()).privacy_notice, null);
@@ -242,7 +256,8 @@ test("zasebnost: nova različica politike pokaže obvestilo enkrat, nov račun g
   });
   assert.ok(ownerOnly("/account/privacy-seen", "POST"));
   assert.ok(ownerOnly("/account/pilot-wtp", "POST"));
-  for (const k of ["priv.noticeTitle", "priv.noticeText", "priv.noticeRead", "priv.noticeOk", "starsi.wtpSkip", "pn.quizTitle"]) assert.ok(SL[k], k);
+  for (const k of ["starsi.privTitle", "starsi.privText", "starsi.privRead", "starsi.privPw", "starsi.privHide", "starsi.wtpSkip", "pn.quizTitle"]) assert.ok(SL[k], k);
+  assert.match(SL["starsi.privText"], /Nič vam ni treba narediti\./);
   assert.equal(SL["starsi.wtpSkip"], "Raje ne povem");
 });
 
@@ -291,12 +306,14 @@ test("preizkus znanja brez stropa: naslednja neosvojena tema, 2/2/2 težavnost, 
       assert.deepEqual(post.map((x) => x.level), [...QUIZ_LEVELS, ...QUIZ_EXTRA]);
       assert.equal(post[QUIZ_LEVELS.length].topic, extra[0].topic);
       // Skrbnik: strop je posebej, ne v povprečju ostalih.
-      for (let i = 0; i < post.length; i++) await call(`/api/students/${a}/pilot/quiz/answer`, { method: "POST", body: { phase: "post", index: i, skip: true } });
+      const postRow = db.prepare("SELECT * FROM pilot_quiz WHERE student_id = ? AND phase = 'post'").get(a);
+      await call(`/api/students/${a}/pilot/quiz/answer`, { method: "POST", body: { phase: "post", index: 0, answer: rightAnswer(postRow, 0) } });
+      for (let i = 1; i < post.length; i++) await call(`/api/students/${a}/pilot/quiz/answer`, { method: "POST", body: { phase: "post", index: i, skip: true } });
       const q = impactReport(db, 1).quiz;
       assert.equal(q.ceiling.nPre, 1);
       assert.equal(q.ceiling.nPaired, 1);
       assert.equal(q.ceiling.pairedPre, Math.round((6 / 9) * 1000) / 1000);
-      assert.equal(q.ceiling.pairedPost, 0);
+      assert.equal(q.ceiling.pairedPost, Math.round((1 / 9) * 1000) / 1000);
       assert.equal(q.nPre, 0, "strop ni v začetnem povprečju");
       assert.match(pilotTasksMarkdown(pilotTasksReport(db)), /strop \(prvič 6\/6/);
     });
