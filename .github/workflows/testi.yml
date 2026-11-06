@@ -1,0 +1,85 @@
+# Testi ob vsakem PR in vsaki združitvi v main (j 2026-11-06: »Da, nastavi«).
+# Dva vzporedna posla: »testi« (npm test) in »preveri« (scripts/preveri-aplikacijo.cjs, klik skozi
+# vso aplikacijo na računalniku in telefonu). Oba v preizkusnem načinu (EVKLID_MOCK=1): brez pravih
+# ključev, brez klicev AI, Stripe ali e-pošte, brez .env. Ob napaki se naložijo dnevniki in posnetki
+# (Actions > zagon > Artifacts). Agenti berejo izid z
+#   gh api repos/jakobskerbis/evklid/commits/<sha>/check-runs
+# Repozitorij je javen: brez skrivnosti, samo pravica branja, nikoli pull_request_target,
+# akcije pripete na SHA (komentar = različica).
+name: Testi
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: testi-${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+env:
+  EVKLID_MOCK: "1"
+  EVKLID_NEWS: "0"
+  ANTHROPIC_API_KEY: ""
+  STRIPE_SECRET_KEY: ""
+  RESEND_API_KEY: ""
+  # Ista različica kot lokalno (scripts/preveri-aplikacijo.cjs in testi jo naložijo z require("playwright")).
+  PLAYWRIGHT_VERSION: "1.63.0"
+jobs:
+  testi:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Playwright (Chromium in WebKit za test iPada)
+        run: npm install --no-save --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit
+      - run: npx playwright install --with-deps chromium webkit
+      - name: npm test
+        run: npm test 2>&1 | tee test.log
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: testi-dnevnik
+          path: test.log
+          retention-days: 7
+
+  preveri:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Playwright (Chromium)
+        run: npm install --no-save --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium
+      - run: npx playwright install --with-deps chromium
+      - name: Preveri aplikacijo
+        run: node scripts/preveri-aplikacijo.cjs --posnetki posnetki 2>&1 | tee preveri.log
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: preveri-posnetki
+          path: |
+            preveri.log
+            posnetki/
+          retention-days: 7
+          if-no-files-found: ignore
