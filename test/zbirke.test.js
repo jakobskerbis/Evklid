@@ -36,7 +36,9 @@ test("zbirke: every item draws, every condition topic exists at the item's level
   // Kozmični in večni (j, 30. 10. 2026): nad mitičnimi, samo za največ XP ali iger, nikoli za kovance.
   for (const r of ["cosmic", "eternal"]) assert.ok(KNOWLEDGE.filter((x) => x.rarity === r).length >= 2 && KNOWLEDGE.filter((x) => x.rarity === r).every((x) => ["pot", "igre"].includes(x.collection)), r);
   // Zmage na lestvicah: samo značke, ena za vsako ligo, nobena se ne kupi.
-  const lige = KNOWLEDGE.filter((x) => x.collection === "lige");
+  // Skrita značka »Pilot« (server/pilot-naloge.js) ni zmaga na lestvici.
+  const lige = KNOWLEDGE.filter((x) => x.collection === "lige" && !x.hidden);
+  assert.deepEqual(KNOWLEDGE.filter((x) => x.hidden).map((x) => x.id), ["pilot"]);
   assert.ok(lige.length === 10 && lige.every((x) => x.slot === "badge" && x.need.league && x.earn && !x.price));
   // Liki iz iger: pogoj so igre (pravilni odgovori ali različne končane igre), redkost raste s pogojem.
   const igre = KNOWLEDGE.filter((x) => x.collection === "igre");

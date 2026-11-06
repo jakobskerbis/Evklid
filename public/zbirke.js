@@ -180,6 +180,8 @@ export const KNOWLEDGE = [
   { id: "win_week_podium", collection: "lige", slot: "badge", rarity: "rare", name: { sl: "Tedenske stopničke", en: "Weekly podium" }, need: { league: "weekPodium" } },
   { id: "win_month_podium", collection: "lige", slot: "badge", rarity: "epic", name: { sl: "Mesečne stopničke", en: "Monthly podium" }, need: { league: "monthPodium" } },
   { id: "win_month", collection: "lige", slot: "badge", rarity: "legendary", name: { sl: "Mesečni prvak", en: "Monthly champion" }, need: { league: "month" } },
+  // Značka »Pilot« (server/pilot-naloge.js): prva opravljena naloga za člane pilota. Kdor je nima, je ne vidi (hidden).
+  { id: "pilot", collection: "lige", slot: "badge", rarity: "epic", hidden: true, name: { sl: "Pilot", en: "Pilot" }, need: { pilot: true } },
   // Liki in predmeti iz iger: pravilni odgovori v igrah (games) ali število različnih uspešno končanih iger (cleared).
   ...[
     ["kind_cat", "kind", "common", { games: 20 }, "Mačka", "Cat"],
@@ -248,6 +250,8 @@ const BADGE = {
   win_week_podium: () =>
     `<g transform="translate(64 83)"><rect x="-11" y="-2" width="7" height="9" fill="#cbd5e1" stroke="${INK}" stroke-width="1.4"/><rect x="-3.5" y="-7" width="7" height="14" fill="#facc15" stroke="${INK}" stroke-width="1.4"/><rect x="4" y="0" width="7" height="7" fill="#d97706" stroke="${INK}" stroke-width="1.4"/><path d="M0-14l1.6 3.3 3.6.4-2.7 2.4.8 3.5-3.3-1.9-3.3 1.9.8-3.5-2.7-2.4 3.6-.4z" fill="#fde047" stroke="${INK}" stroke-width=".9" stroke-linejoin="round"/></g>`,
   win_month_podium: () => medal("#0ea5e9", "#e0f2fe", `<g fill="none" stroke="${INK}" stroke-width="1.3"><rect x="-4.5" y="-3.5" width="9" height="8" rx="1"/><path d="M-4.5-1h9"/></g><text y="3.6" font-size="4.2" font-weight="800" text-anchor="middle" font-family="system-ui,sans-serif" fill="${INK}">1–3</text>`),
+  pilot: () =>
+    `<g transform="translate(64 82)"><path d="M-7-14l4 9h6l4-9z" fill="#0ea5e9" stroke="${INK}" stroke-width="1.4" stroke-linejoin="round"/><circle r="9.5" fill="#ecfeff" stroke="${INK}" stroke-width="1.8"/><path d="M-6 1l12-6-4 11-2.6-3.8z" fill="#0ea5e9" stroke="${INK}" stroke-width="1.1" stroke-linejoin="round"/><path d="M-6 1l5.4 1.2L6-5" fill="none" stroke="${INK}" stroke-width="1"/></g>`,
   win_month: () =>
     `<g transform="translate(64 82)"><path d="M-9-11h18v4q0 9-9 10-9-1-9-10z" fill="#facc15" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/><path d="M-9-8h-3q0 6 4 7M9-8h3q0 6-4 7" fill="none" stroke="${INK}" stroke-width="1.4"/><path d="M-2 3h4v4h4v4h-12v-4h4z" fill="#ca8a04" stroke="${INK}" stroke-width="1.4" stroke-linejoin="round"/><path d="M0-9l1.4 2.8 3 .4-2.2 2 .6 3-2.8-1.5-2.8 1.5.6-3-2.2-2 3-.4z" fill="#fff"/></g>`,
   pot_dividers: () => `<g transform="translate(64 81)"><circle r="12" fill="#ede9fe" stroke="${INK}" stroke-width="1.8"/><path d="M-6 6a9 9 0 0 1 12 0" stroke="#a855f7" stroke-width="2" fill="none"/><path d="M0-8L-6 7M0-8L6 7" stroke="#334155" stroke-width="2.6" stroke-linecap="round"/><circle cy="-8" r="2.4" fill="#a855f7" stroke="${INK}" stroke-width="1"/><path d="M6 7l1 3" stroke="#334155" stroke-width="1.6"/></g>`,
