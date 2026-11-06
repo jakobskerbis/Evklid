@@ -424,8 +424,12 @@ async function renderLesson(topicId) {
   try {
     L = await ctx.api(`/api/students/${ctx.getStudent().id}/lesson?id=${encodeURIComponent(topicId)}`);
   } catch (err) {
-    tb.topicId = null;
-    return renderHome();
+    // Brez povezave: javna kopija že obiskane lekcije iz predpomnilnika (public/sw.js, samo besedilo).
+    L = err?.status ? null : await ctx.api(`/api/lesson?id=${encodeURIComponent(topicId)}`).catch(() => null);
+    if (!L) {
+      tb.topicId = null;
+      return renderHome();
+    }
   }
   current = { id: L.id, name: L.name };
   // Simboli v formulah po predmetu lekcije (FIZ-OS-9 → fizika, fakultetna tema → njen predmet), ne po
