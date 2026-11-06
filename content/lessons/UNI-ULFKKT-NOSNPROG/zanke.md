@@ -50,7 +50,7 @@ Rezultat lahko preverimo z matematiko: po $n$ odbojih je $h = 0{,}64^n$; iščem
 
 Telo se lahko izvede tudi nič-krat: če je pogoj že na začetku neresničen, Python blok preskoči. Če pa telo pogoja nikoli ne spremeni, dobimo **neskončno zanko**; program prekineš s Ctrl + C.
 
-**Kdaj se zanka konča.** Zanesljivo vemo, da se `while` konča, če najdemo **mero napredka**: celoštevilsko količino, ki je med izvajanjem nenegativna in se v vsakem obhodu zmanjša vsaj za $1$. Ker nenegativno celo število ne more padati neskončno dolgo, je obhodov končno mnogo. Pri žogici je to na primer število preostalih »razpolovitev« – manj formalno: `h` se v vsakem obhodu pomnoži z $0{,}64 < 1$ in zato pade pod vsako pozitivno mejo.
+**Kdaj se zanka konča.** Zanesljivo vemo, da se `while` konča, če najdemo **mero napredka**: celoštevilsko količino, ki je med izvajanjem nenegativna in se v vsakem obhodu zmanjša vsaj za $1$. Ker nenegativno celo število ne more padati neskončno dolgo, je obhodov končno mnogo. Pri žogici je to število obhodov, ki so še potrebni, da `h` pade pod $0{,}01$ (pred zanko $11$) – manj formalno: `h` se v vsakem obhodu pomnoži z $0{,}64 < 1$ in zato pade pod vsako pozitivno mejo.
 
 :::premisli
 V programu za žogico zamenjaš faktor `0.64` z `1.0` (popolnoma prožna žogica). Kaj se zgodi, ko program poženeš, in zakaj?
@@ -112,7 +112,7 @@ print(s)        # 5050
 
 **Dokaz pravilnosti.** Pred prvim obhodom je `s = 0`, vsota praznega zaporedja. Če po obhodu s $k - 1$ velja `s` $= 1 + \dots + (k - 1)$, po obhodu s $k$ velja `s` $= 1 + \dots + (k - 1) + k$. Po zadnjem obhodu ($k = 100$) je zato `s` $= 1 + \dots + 100 = 100 \cdot 101/2 = 5050$. $\square$ To je matematična indukcija, zapisana s programom.
 
-Pogosta pasti: začetna vrednost seštevalnika mora biti **pred** zanko; če `s = 0` napišeš v telo, se vsota v vsakem obhodu izbriše.
+Pogosta past: začetna vrednost seštevalnika mora biti **pred** zanko; če `s = 0` napišeš v telo, se vsota v vsakem obhodu izbriše.
 
 ### `break` in `continue`
 
@@ -242,7 +242,7 @@ print(odboji, pot, cas)
 3. Število odbojev: $0{,}64^n \cdot 2{,}0 \geq 0{,}001$ velja do $n = 17$ ($0{,}64^{17} \cdot 2{,}0 \approx 0{,}0010$), pri $n = 18$ je višina pod $1\,\mathrm{mm}$. Program izpiše `17`.
 4. Izpisana pot je približno $9{,}108\,\mathrm{m}$, čas približno $5{,}63\,\mathrm{s}$.
 5. Neskončna vrsta: $s_\infty = 2{,}0 \cdot 1{,}64/0{,}36\,\mathrm{m} \approx 9{,}111\,\mathrm{m}$; $t_\infty = 0{,}639 \cdot 1{,}8/0{,}2\,\mathrm{s} \approx 5{,}75\,\mathrm{s}$.
-6. Pot se ujema na tri mestne vrednosti, ker členi padajo kot $0{,}64^n$. Čas pa zaostane za okoli $0{,}12\,\mathrm{s}$: časovni členi padajo le kot $0{,}8^n$, zato je ostanek vrste večji.
+6. Pot se ujema na tri veljavna mesta, ker členi padajo kot $0{,}64^n$. Čas pa zaostane za okoli $0{,}12\,\mathrm{s}$: časovni členi padajo le kot $0{,}8^n$, zato je ostanek vrste večji.
 7. Odgovor: $17$ odbojev nad $1\,\mathrm{mm}$, pot okoli $9{,}11\,\mathrm{m}$, čas okoli $5{,}63\,\mathrm{s}$; neskončni odboji bi dali $9{,}111\,\mathrm{m}$ in $5{,}75\,\mathrm{s}$ – končen čas za neskončno odbojev.
 
 ### Primer 4 – zdaj ti

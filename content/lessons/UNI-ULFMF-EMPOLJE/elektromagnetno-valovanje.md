@@ -46,7 +46,7 @@ Enako dobimo za $\vec{B}$. To je **valovna enačba** s hitrostjo
 
 $$c = \frac{1}{\sqrt{\mu_0\varepsilon_0}} \approx 2{,}998 \cdot 10^8\,\mathrm{m/s}.$$
 
-Da je izračunana hitrost enaka izmerjeni hitrosti svetlobe, je bil odločilni dokaz, da je svetloba elektromagnetno valovanje. V snovi z relativno dielektričnostjo $\varepsilon_r$ in permeabilnostjo $\mu_r$ je hitrost $v = c/n$ z **lomnim količnikom** $n = \sqrt{\varepsilon_r\mu_r}$; za nemagnetne snovi $n \approx \sqrt{\varepsilon_r}$ (pri frekvenci svetlobe).
+Da je izračunana hitrost enaka izmerjeni hitrosti svetlobe, je bil odločilni dokaz, da je svetloba elektromagnetno valovanje. V snovi z relativno dielektričnostjo $\varepsilon_r$ in relativno permeabilnostjo $\mu_r$ je hitrost $v = c/n$ z **lomnim količnikom** $n = \sqrt{\varepsilon_r\mu_r}$; za nemagnetne snovi $n \approx \sqrt{\varepsilon_r}$ (pri frekvenci svetlobe).
 
 ### Ravni val
 
@@ -152,7 +152,7 @@ $I = \dfrac{P}{\pi d^2/4}$; $I = \tfrac{1}{2}\varepsilon_0cE_0^2$; $B_0 = \dfrac
 1. Prerez žarka: $\pi(1{,}0 \cdot 10^{-3}\,\mathrm{m})^2 \approx 3{,}14 \cdot 10^{-6}\,\mathrm{m^2}$.
 2. Intenziteta: $I = 5{,}0 \cdot 10^{-3}/3{,}14 \cdot 10^{-6}\,\mathrm{W/m^2} \approx 1590\,\mathrm{W/m^2}$, malo več od sončne.
 3. Amplituda iz $E_0 = \sqrt{2I/(\varepsilon_0c)}$: najprej $\varepsilon_0c \approx 8{,}854 \cdot 10^{-12} \cdot 2{,}998 \cdot 10^8 \approx 2{,}654 \cdot 10^{-3}\,\mathrm{A/V}$, nato $E_0 \approx \sqrt{3180/2{,}654 \cdot 10^{-3}}\,\mathrm{V/m} \approx 1100\,\mathrm{V/m}$.
-4. Magnetno polje: $B_0 = 1100/2{,}998 \cdot 10^8\,\mathrm{T} \approx 3{,}7 \cdot 10^{-6}\,\mathrm{T}$, okoli desetina Zemljinega polja.
+4. Magnetno polje: $B_0 = 1100/2{,}998 \cdot 10^8\,\mathrm{T} \approx 3{,}7 \cdot 10^{-6}\,\mathrm{T}$, manj od desetine Zemljinega polja (okoli $50\,\mathrm{\mu T}$).
 5. Tlak na črno ploskev: $p = 1590/2{,}998 \cdot 10^8\,\mathrm{Pa} \approx 5{,}3 \cdot 10^{-6}\,\mathrm{Pa}$.
 6. Odgovor: $I \approx 1{,}6\,\mathrm{kW/m^2}$, $E_0 \approx 1{,}1\,\mathrm{kV/m}$, $B_0 \approx 3{,}7\,\mathrm{\mu T}$, $p \approx 5{,}3\,\mathrm{\mu Pa}$. Kazalnik je nevaren za oko zaradi intenzitete, ne zaradi moči: leča ga zbere v še mnogo manjšo piko.
 
@@ -283,7 +283,7 @@ Iz robnih pogojev izpelji odbojnost pri pravokotnem vpadu na mejo dveh nemagnetn
 3. Iz obeh: $r = E_r/E_0 = (n_1 - n_2)/(n_1 + n_2)$; odbojnost $R = r^2$ (intenziteti sta v isti snovi, zato le kvadrat).
 4. Zrak–steklo: $R = (0{,}50/2{,}50)^2 = 0{,}040$; zrak–voda: $R = (0{,}33/2{,}33)^2 \approx 0{,}020$.
 5. Plošča: na vsaki površini gre skozi $96\,\%$, skupaj $0{,}96^2 \approx 0{,}922$, torej okoli $92\,\%$.
-6. Prevleka: odboja na obeh mejah prevleke se izničita, če sta enako močna in v protifazi. Enaka moč zahteva $n_p = \sqrt{n_1n_2} = \sqrt{1{,}50} \approx 1{,}22$; protifaza zahteva pot $2d = \lambda/(2n_p)$, torej $d = \lambda/(4n_p) \approx 550/(4 \cdot 1{,}22)\,\mathrm{nm} \approx 112\,\mathrm{nm}$.
+6. Prevleka: odboja na obeh mejah prevleke se izničita, če sta enako močna in v protifazi. Enaka moč zahteva $n_p = \sqrt{n_1n_2} = \sqrt{1{,}50} \approx 1{,}22$; protifaza zahteva (oba odboja dobita enak fazni skok $\pi$, ker $n$ na obeh mejah naraste) dodatno pot $2d = \lambda/(2n_p)$, torej $d = \lambda/(4n_p) \approx 550/(4 \cdot 1{,}22)\,\mathrm{nm} \approx 112\,\mathrm{nm}$.
 7. Odgovor: $R = 4{,}0\,\%$ za steklo, $2{,}0\,\%$ za vodo; plošča prepusti okoli $92\,\%$; prevleka z $n \approx 1{,}22$ in debelino okoli $112\,\mathrm{nm}$ (v praksi $\mathrm{MgF_2}$ z $n = 1{,}38$, ki odboj zmanjša na okoli $1\,\%$).
 
 ## Drugače: Z analogijo
@@ -298,7 +298,7 @@ Iz robnih pogojev izpelji odbojnost pri pravokotnem vpadu na mejo dveh nemagnetn
 
 **Optične komunikacije.** Svetloba v vlaknih ostane ujeta s totalnim odbojem; numerična apertura iz Primera 3 določi, kako natančno moramo poravnati laser z vlaknom. Fresnelove izgube na spojih zmanjšamo z gelom z enakim lomnim količnikom.
 
-**Optika in laboratorij.** Leče in objektivi imajo protiodbojne prevleke, sicer bi objektiv z desetimi površinami izgubil skoraj tretjino svetlobe. Laserji z Brewstrovimi okni oddajajo polarizirano svetlobo brez izgub na oknih. Fotodiode merijo intenziteto, nikoli neposredno $E_0$.
+**Optika in laboratorij.** Leče in objektivi imajo protiodbojne prevleke, sicer bi objektiv z desetimi površinami izgubil okoli tretjino svetlobe ($1 - 0{,}96^{10} \approx 0{,}34$). Laserji z Brewstrovimi okni oddajajo polarizirano svetlobo brez izgub na oknih. Fotodiode merijo intenziteto, nikoli neposredno $E_0$.
 
 **Vesolje in merjenje.** Tlak sevanja moti tirnice satelitov GPS in ga je treba upoštevati v računih tirnic. V optičnih pincetah fokusiran laserski žarek s tlakom sevanja in lomom drži mikrometrske kroglice ali celice in meri sile reda pikonewtonov.
 
@@ -382,7 +382,7 @@ I | gostota energijskega toka (intenziteta) | I = \frac{1}{2}\varepsilon_0cE_0^2
 \vec{j} | gostota električnega toka | | A/m^2
 V | prostor (prostornina) | | m^3
 \vec{A} | ploskev (vektor) | | m^2
-p | tlak sevanja | p = \frac{I}{c} | Pa | pri odboju nazaj 2I/c
+p | tlak sevanja | p = \frac{I}{c} | Pa | pri odboju nazaj $2I/c$
 P | moč | | W
 d | premer žarka | | m
 A | površina jadra | | m^2
@@ -398,5 +398,8 @@ R | odbojnost | R = \left(\frac{n_1 - n_2}{n_1 + n_2}\right)^2 | – | pri pravo
 \theta | vpadni kot na čelno ploskev vlakna | | °
 \theta_1 | kot žarka z osjo v jedru | | °
 r_s, r_p | amplitudna odbojna koeficienta za polarizaciji s in p | | –
-r | amplitudni odbojni koeficient | | – | R = r^2
+r | amplitudni odbojni koeficient | | – | $R = r^2$
+\vec{H}, H | magnetna poljska jakost | H = \frac{B}{\mu_0} | A/m | v nemagnetni snovi
+\varepsilon_r | relativna dielektričnost | | –
+\mu_r | relativna permeabilnost | | –
 :::

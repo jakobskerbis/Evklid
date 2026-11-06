@@ -111,7 +111,7 @@ V praksi je neodvisnost **predpostavka modela** (zaporedni meti, neodvisni vzorc
 :::premisli
 V laboratoriju sta dva neodvisna detektorja dima, vsak deluje z verjetnostjo $0{,}95$. Kolikšna je verjetnost, da ob požaru ne zazvoni noben? Zakaj se računa z množenjem, in kaj se zgodi z rezultatom, če oba napaja isti vod, ki odpove z verjetnostjo $0{,}01$?
 ---
-Neodvisna sta, zato $P(\text{noben}) = 0{,}05 \cdot 0{,}05 = 0{,}0025$. S skupnim vodom pa oba odpovesta že, ko odpove vod: verjetnost je vsaj $0{,}01$, štirikrat več. Skupni vzrok uniči neodvisnost.
+Neodvisna sta, zato $P(\text{noben}) = 0{,}05 \cdot 0{,}05 = 0{,}0025$. S skupnim vodom pa oba odpovesta že, ko odpove vod: verjetnost je vsaj $0{,}01$ (natančneje $0{,}01 + 0{,}99 \cdot 0{,}0025 \approx 0{,}0125$), petkrat več. Skupni vzrok uniči neodvisnost.
 :::
 
 ## Rešeni primeri
@@ -203,7 +203,7 @@ Heterozigot je $\{Aa, aA\}$, kar je v celoti v $B$; $P(A \cap B) = 2/4$. Torej $
 ## Pogoste napake
 
 - **Zamenjava $P(A \mid B)$ in $P(B \mid A)$.** »Test je $99\,\%$ natančen, torej sem bolan z $99\,\%$.« Občutljivost je $P(+ \mid D)$, zanima pa nas $P(D \mid +)$, ki je odvisna od prevalence.
-- **Vsota za nezdružljive tudi, ko dogodka nista nezdružljiva.** $P(A \cup B) = P(A) + P(B)$ velja le pri $A \cap B = \emptyset$; sicer odštej $P(A \cap B)$, sicer lahko dobiš verjetnost nad $1$.
+- **Vsota za nezdružljive tudi, ko dogodka nista nezdružljiva.** $P(A \cup B) = P(A) + P(B)$ velja le pri $A \cap B = \emptyset$; sicer odštej $P(A \cap B)$, drugače lahko dobiš verjetnost nad $1$.
 - **Nezdružljivo = neodvisno.** Ravno nasprotno: nezdružljiva dogodka s pozitivnima verjetnostma sta odvisna, saj eden izključi drugega.
 - **Napačen način štetja.** Pri izbiri epruvet vrstni red ne šteje ($\binom{n}{k}$), pri zaporedju DNA šteje in ponavljanje je dovoljeno ($n^k$). Pred štetjem si odgovori na obe vprašanji iz tabele.
 - **»Vsaj eden« z neposrednim seštevanjem.** Lažje in varneje je $1 - P(\text{noben})$.
@@ -232,12 +232,12 @@ Laboratorij dobi šaržo $20$ epruvet. Iz izkušenj ve, da je $90\,\%$ šarž »
 
 **Rešitev:**
 
-1. Hipotezi: $D$ (dobra, $P(D) = 0{,}9$) in $S$ (slaba, $P(S) = 0{,}1$); dogodek $E$: »med $4$ izbranimi je natanko $1$ kontaminirana«. Vseh izbir je $\binom{20}{4} = 4845$.
-2. (a) Dobra šarža: kontaminirano izberemo na $\binom{1}{1} = 1$ način, preostale tri izmed $19$ čistih na $\binom{19}{3} = 969$ načinov; $P(E \mid D) = 969/4845 = 0{,}2$.
-3. Slaba šarža: $\binom{5}{1}\binom{15}{3} = 5 \cdot 455 = 2275$; $P(E \mid S) = 2275/4845 \approx 0{,}470$.
+1. Hipotezi: $H_1$ (dobra, $P(H_1) = 0{,}9$) in $H_2$ (slaba, $P(H_2) = 0{,}1$); dogodek $E$: »med $4$ izbranimi je natanko $1$ kontaminirana«. Vseh izbir je $\binom{20}{4} = 4845$.
+2. (a) Dobra šarža: kontaminirano izberemo na $\binom{1}{1} = 1$ način, preostale tri izmed $19$ čistih na $\binom{19}{3} = 969$ načinov; $P(E \mid H_1) = 969/4845 = 0{,}2$.
+3. Slaba šarža: $\binom{5}{1}\binom{15}{3} = 5 \cdot 455 = 2275$; $P(E \mid H_2) = 2275/4845 \approx 0{,}470$.
 4. (b) Popolna verjetnost: $P(E) = 0{,}9 \cdot 0{,}2 + 0{,}1 \cdot 0{,}470 \approx 0{,}180 + 0{,}047 = 0{,}227$.
-5. Bayes: $P(S \mid E) = 0{,}047/0{,}227 \approx 0{,}207$. Ena najdena kontaminirana epruveta poveča verjetnost slabe šarže z $10\,\%$ na okoli $21\,\%$.
-6. (c) Ponovno uporabimo popolno verjetnost, zdaj z aposteriornima verjetnostma $P(D \mid E) \approx 0{,}793$ in $P(S \mid E) \approx 0{,}207$.
+5. Bayes: $P(H_2 \mid E) = 0{,}047/0{,}227 \approx 0{,}207$. Ena najdena kontaminirana epruveta poveča verjetnost slabe šarže z $10\,\%$ na okoli $21\,\%$.
+6. (c) Ponovno uporabimo popolno verjetnost, zdaj z aposteriornima verjetnostma $P(H_1 \mid E) \approx 0{,}793$ in $P(H_2 \mid E) \approx 0{,}207$.
 7. Če je šarža dobra, je bila edina kontaminirana že najdena: med preostalimi $16$ ni nobene, verjetnost $0$. Če je slaba, so med $16$ preostalimi še $4$ kontaminirane: verjetnost $4/16 = 0{,}25$.
 8. $P(\text{naslednja kontaminirana} \mid E) \approx 0{,}793 \cdot 0 + 0{,}207 \cdot 0{,}25 \approx 0{,}052$.
 9. Odgovor: (a) $0{,}20$ in $0{,}47$; (b) okoli $21\,\%$; (c) okoli $5{,}2\,\%$. Ključ je v koraku 6: po opazovanju moramo računati s posodobljenimi verjetnostmi hipotez, ne z apriornimi.
@@ -287,11 +287,11 @@ Pogojno verjetnost si predstavljaj z Vennovim diagramom: $\Omega$ je pravokotnik
 
 ## Drugače: Uporaba v stroki
 
-**Diagnostika.** Pozitivna napovedna vrednost testa, $P(D \mid +)$, je odvisna od prevalence. Isti test, ki je v specialistični ambulanti (kjer je bolnih pogosto več kot $10\,\%$) zelo zanesljiv, je v splošnem presejanju večinoma lažno pozitiven. Zato zdravstveni sistemi presejalne programe načrtujejo v dveh korakih.
+**Diagnostika.** Pozitivna napovedna vrednost testa, $P(D \mid +)$, je odvisna od prevalence. Isti test, ki je v specialistični ambulanti (kjer je bolnih pogosto več kot $10\,\%$) veliko bolj zanesljiv (pri prevalenci $10\,\%$ je $P(D \mid +) \approx 0{,}69$), je v splošnem presejanju večinoma lažno pozitiven. Zato zdravstveni sistemi presejalne programe načrtujejo v dveh korakih.
 
 **Genetika.** Mendlova pravila so klasična verjetnost na prostoru kombinacij alelov; pogojne verjetnosti (kot v Primeru 4) uporabljajo genetski svetovalci, ko izračunajo verjetnost, da je zdrav sorodnik prenašalec. Pri iskanju motivov v genomu kombinatorika pove, kolikokrat bi neko zaporedje pričakovali po naključju.
 
-**Varnost in zanesljivost.** Verjetnost odpovedi zaporedno vezanih komponent je $1 - \prod(1 - p_i)$, vzporedno vezanih (rezervnih) pa $\prod p_i$ – a le, če so odpovedi neodvisne. Analize drevesa napak v kemijski in jedrski industriji zato posebej iščejo **odpovedi s skupnim vzrokom**, ki to predpostavko kršijo.
+**Varnost in zanesljivost.** Verjetnost odpovedi zaporedno vezanih komponent je $1 - \prod(1 - p_i)$, vzporedno vezanih (rezervnih) pa $\prod p_i$, kjer je $p_i$ verjetnost odpovedi $i$-te komponente – a le, če so odpovedi neodvisne. Analize drevesa napak v kemijski in jedrski industriji zato posebej iščejo **odpovedi s skupnim vzrokom**, ki to predpostavko kršijo.
 
 ## Drugače: Korak za korakom s številkami
 
@@ -311,7 +311,7 @@ Laboratorij dobiva vzorce iz treh obratov: $50\,\%$ iz prvega, $30\,\%$ iz druge
 - Nezdružljiva dogodka s pozitivnima verjetnostma sta neodvisna.
 ~ Nezdružljivost pomeni, da eden izključuje drugega; podatek o $B$ zmanjša verjetnost $A$ na nič, zato sta odvisna.
 - Za vsak par dogodkov velja $P(A \mid B) = P(B \mid A)$.
-~ To velja le pri $P(A) = P(B)$; sicer se razlikujeta za faktor $P(A)/P(B)$.
+~ To velja le, če je $P(A) = P(B)$ ali $P(A \cap B) = 0$; sicer se razlikujeta za faktor $P(A)/P(B)$.
 + Če je $P(A \mid B) = P(A)$ in $P(B) > 0$, sta $A$ in $B$ neodvisna.
 > Iz $P(A \mid B) = P(A)$ sledi $P(A \cap B) = P(B)P(A \mid B) = P(A)P(B)$, kar je definicija neodvisnosti.
 

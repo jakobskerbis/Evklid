@@ -65,7 +65,7 @@ b[0] = 9;
 System.out.println(a[0]);   // 9
 ```
 
-Prireditev `b = a` ne prepiše vrednosti, ampak **sklic** (naslov tabele). Obe imeni kažeta na isti predal. Kopijo dobiš z `int[] c = a.clone();` ali `Arrays.copyOf(a, a.length)`. Isto velja za parametre metod: iz lekcije o funkcijah veš, da se argument skopira v parameter. Pri tabeli se skopira **sklic**, zato metoda, ki spremeni `a[i]`, spremeni tabelo klicatelja. Če pa parametru priredi novo tabelo (`a = new int[5]`), klicatelj tega ne vidi.
+Prireditev `b = a` ne prepiše vrednosti, ampak **sklic** (naslov tabele). Obe imeni kažeta na isto vrsto predalov. Kopijo dobiš z `int[] c = a.clone();` ali `Arrays.copyOf(a, a.length)`. Isto velja za parametre metod: iz lekcije o funkcijah veš, da se argument skopira v parameter. Pri tabeli se skopira **sklic**, zato metoda, ki spremeni `a[i]`, spremeni tabelo klicatelja. Če pa parametru priredi novo tabelo (`a = new int[5]`), klicatelj tega ne vidi.
 
 :::premisli
 Metoda `void ponastavi(int[] x) { x[0] = 0; x = new int[]{7, 7}; x[1] = 5; }` dobi tabelo `a = {4, 4}`. Kaj vsebuje `a` po klicu `ponastavi(a)`?
@@ -80,7 +80,7 @@ Večino nalog rešimo s štirimi vzorci, ki si jih velja zapomniti skupaj z njih
 - **Vsota.** Začetek `s = 0`; v obhodu `s += a[i]`. Invarianta: `s` je vsota `a[0..i]`.
 - **Največji.** Začetek `mi = 0`; v obhodu `if (a[i] > a[mi]) mi = i`. Invarianta: `a[mi]` je največji v `a[0..i]`.
 - **Štetje.** Začetek `c = 0`; v obhodu `if (pogoj) c++`. Invarianta: `c` šteje ustrezne v `a[0..i]`.
-- **Iskanje.** Začetek `k = -1`; v obhodu `if (a[i] == x) { k = i; break; }`. Invarianta: `x` ni v `a[0..i-1]`.
+- **Iskanje.** Začetek `k = -1`; v obhodu `if (a[i] == x) { k = i; break; }`. Invarianta (po obhodu brez `break`): `x` ni v `a[0..i]`.
 
 Pri iskanju največjega hranimo **indeks** (`mi`), ne le vrednosti: tako vemo tudi, kje je. Začetna vrednost `mi = 0` predpostavlja, da tabela ni prazna.
 
@@ -122,7 +122,7 @@ for (int i = 0; i < m.length; i++) {
 }
 ```
 
-**Vrstični zapis.** V pomnilniku (in v datotekah) je mreža pogosto shranjena kot ena dolga vrsta, vrstica za vrstico. Pri mreži z $s$ stolpci je element $(i, j)$ na mestu $i \cdot s + j$; v našem primeru je `m[1][2]` na mestu $1 \cdot 4 + 2 = 6$. Tako hranijo mreže tudi podnebni modeli in slikovne datoteke.
+**Vrstični zapis.** V pomnilniku (in v datotekah) je mreža pogosto shranjena kot ena dolga vrsta, vrstica za vrstico. Pri mreži z $s$ stolpci je element $(i, j)$ na mestu $i \cdot s + j$; v našem primeru je `m[1][2]` na mestu $1 \cdot 4 + 2 = 6$. Tako hranijo mreže tudi podnebni modeli in slikovne datoteke. Javanska `double[][]` tega ne naredi sama (vsaka vrstica je svoja tabela); vrstični zapis uporabiš, ko mrežo shraniš v eno tabelo `new double[v * s]`.
 
 :::premisli
 Kolikokrat se izvede notranje telo, ko obhodiš celotno tabelo `new double[3][4]`? In koliko, če obhodiš le zgornji trikotnik kvadratne tabele $n \times n$ (vsi $j \geq i$)?
@@ -147,11 +147,11 @@ Osnovne metode na primeru `v = "LJ;31.4;0.0"`:
 
 `substring(a, b)` vrne znake od indeksa $a$ do indeksa $b$, brez $b$.
 
-**Primerjava nizov.** `a == b` primerja sklica (ali je to isti objekt), `a.equals(b)` pa vsebino. Dva niza z enakimi znaki sta lahko različna objekta, zato vsebino **vedno** primerjaj z `equals`; abecedni vrstni red da `compareTo`.
+**Primerjava nizov.** `a == b` primerja sklica (ali je to isti objekt), `a.equals(b)` pa vsebino. Dva niza z enakimi znaki sta lahko različna objekta, zato vsebino **vedno** primerjaj z `equals`; vrstni red po kodah znakov da `compareTo` (zato `"ž"` pride za `"z"`, ne pred njim; to ni slovenska abeceda).
 
 **Znaki so števila.** `char` je v Javi celoštevilski tip, zato `'7' - '0'` da $7$, `(char)('a' + 1)` pa `'b'`. Pretvorbo celega niza v število opravita `Integer.parseInt` in `Double.parseDouble`.
 
-**Sestavljanje nizov.** Ker so nizi nespremenljivi, `s = s + c` v zanki vsakič ustvari nov niz in prepiše vse dosedanje znake – pri $n$ znakih okoli $n^2/2$ kopiranj. Za sestavljanje v zanki uporabi `StringBuilder` (`sb.append(c)`, na koncu `sb.toString()`).
+**Sestavljanje nizov.** Ker so nizi nespremenljivi, `s = s + c` v zanki vsakič ustvari nov niz in vanj skopira vse dosedanje znake – pri $n$ znakih okoli $n^2/2$ kopiranj. Za sestavljanje v zanki uporabi `StringBuilder` (`sb.append(c)`, na koncu `sb.toString()`).
 
 ## Rešeni primeri
 
@@ -399,7 +399,7 @@ Napiši metodo `obrni(double[] a)`, ki tabelo obrne **na mestu** (brez nove tabe
 2. Invarianta: po obhodu $i$ so na mestih $0, \dots, i$ in $n - 1 - i, \dots, n - 1$ že končne (zamenjane) vrednosti, sredina pa je nespremenjena.
 3. Po zadnjem obhodu ($i = \lfloor n/2\rfloor - 1$) je obdelanih $\lfloor n/2\rfloor$ parov. Pri sodem $n$ so to vsi elementi. Pri lihem ostane srednji element na indeksu $(n - 1)/2$, ki je sam sebi simetričen in mora ostati na mestu.
 4. Zamenjav je $\lfloor n/2\rfloor$ (pri $n = 7$ tri).
-5. Zanka do $n$: druga polovica obhodov bi vsak par zamenjal še enkrat in tabelo vrnil v prvotni vrstni red – program bi bil »pravilen« le za prazno tabelo.
+5. Zanka do $n$: druga polovica obhodov bi vsak par zamenjal še enkrat in tabelo vrnil v prvotni vrstni red – program bi bil »pravilen« le za tabele, ki se berejo enako z obeh strani (palindrome), npr. dolžine $0$ ali $1$.
 
 ## Drugače: Z analogijo
 

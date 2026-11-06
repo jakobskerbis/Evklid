@@ -13,7 +13,7 @@ Isto vprašanje si postaviš v vsakem fizikalnem praktikumu. Z nihalom dvanajstk
 
 ### Slika: kako niha vzorčno povprečje
 
-Predstavljaj si, da isti poskus (25 meritev nihala) ponoviš velikokrat in vsakič izračunaš povprečje $\bar x$. Povprečja ne bodo enaka; razporedijo se okoli prave vrednosti $\mu$ v zvonasti obliki. Iz lekcije o cenilkah veš, da je $E(\bar X) = \mu$ in $D(\bar X) = \sigma^2/n$, zato je standardni odklon povprečja
+Predstavljaj si, da isti poskus (25 meritev nihala) ponoviš velikokrat in vsakič izračunaš povprečje $\bar x$. Povprečja ne bodo enaka; razporedijo se okoli prave vrednosti $\mu$ v zvonasti obliki. Iz lekcije o pričakovani vrednosti in disperziji veš, da je $E(\bar X) = \mu$ in $D(\bar X) = \sigma^2/n$, zato je standardni odklon povprečja
 
 $$\sigma_{\bar X} = \frac{\sigma}{\sqrt n},$$
 
@@ -28,7 +28,7 @@ L = μ − 1,96·σ/√n
 U = μ + 1,96·σ/√n
 ```
 
-Če so meritve normalno porazdeljene, je $\bar X$ normalen; po centralnem limitnem izreku je približno normalen tudi pri drugih porazdelitvah, če je $n$ dovolj velik (praktično $n \gtrsim 30$). Med mejama $L$ in $U$ na skici, $\mu - 1{,}96\,\sigma/\sqrt n$ in $\mu + 1{,}96\,\sigma/\sqrt n$ pade $95\,\%$ povprečij.
+Če so meritve normalno porazdeljene, je $\bar X$ normalen; po centralnem limitnem izreku je približno normalen tudi pri drugih porazdelitvah, če je $n$ dovolj velik (praktično $n \gtrsim 30$). Med mejama $L$ in $U$ na skici, $\mu - 1{,}96\,\sigma/\sqrt n$ in $\mu + 1{,}96\,\sigma/\sqrt n$, pade $95\,\%$ povprečij.
 
 Zdaj obrnemo pogled. Če je $\bar x$ manj kot $1{,}96\,\sigma/\sqrt n$ od $\mu$, je tudi $\mu$ manj kot $1{,}96\,\sigma/\sqrt n$ od $\bar x$. Interval okoli **izmerjenega** povprečja zato v $95\,\%$ ponovitev zajame pravo vrednost. To je interval zaupanja.
 
@@ -306,7 +306,7 @@ Pet meritev upora: $99{,}6$; $100{,}4$; $100{,}1$; $99{,}8$ in $100{,}6\,\Omega$
 6. **Testna statistika:** $t = (100{,}1 - 100{,}0)/0{,}184 \approx 0{,}54$.
 7. **Odločitev:** $|t| = 0{,}54 < 2{,}776$, $H_0$ ne zavrnemo.
 8. **Interval:** $100{,}1 \pm 2{,}776 \cdot 0{,}184 \approx 100{,}1 \pm 0{,}51$, torej $[99{,}59; 100{,}61]\,\Omega$; vsebuje $100{,}0$, kar se ujema z odločitvijo.
-9. **Pomen:** podatki ne kažejo odstopanja, a interval je širok – z le petimi meritvami bi spregledali tudi odstopanje $0{,}4\,\Omega$.
+9. **Pomen:** podatki ne kažejo odstopanja, a interval je širok – z le petimi meritvami bi zlahka spregledali tudi odstopanje $0{,}4\,\Omega$ (to je le okoli $2{,}2$ standardni napaki, manj od kritične vrednosti $2{,}776$).
 
 ## Preveri se
 
