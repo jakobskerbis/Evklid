@@ -5,9 +5,9 @@
   "miokard": {
    "barva": "#93362f",
    "hrap": 0.34,
-   "lak": 0.22,
+   "lak": 0.12,
    "lakHrap": 0.65,
-   "sijaj": 0.18,
+   "sijaj": 0.1,
    "sijajBarva": "#9a3a30",
    "rob": 0.1,
    "robBarva": "#ff6a5a",
@@ -96,7 +96,7 @@
    "f": 80,
    "relief": 0.3,
    "rez": "#2f4b8c",
-   "odtenek": "#d0d6ea",
+   "odtenek": "#ffffff",
    "sijajHrap": 0.75,
    "spekular": 0.55
   },
@@ -114,7 +114,7 @@
    "f": 80,
    "relief": 0.3,
    "rez": "#d2c2bc",
-   "odtenek": "#d0d6ea",
+   "odtenek": "#ffffff",
    "sijajHrap": 0.75,
    "spekular": 0.55
   },
@@ -133,7 +133,8 @@
    "relief": 0.3,
    "rez": "#8a2840",
    "sijajHrap": 0.75,
-   "spekular": 0.55
+   "spekular": 0.55,
+   "odtenek": "#ffffff"
   },
   "aorta": {
    "barva": "#b8453c",
@@ -150,7 +151,8 @@
    "f": 80,
    "zrno": 0.05,
    "relief": 0.3,
-   "hrap": 0.58
+   "hrap": 0.58,
+   "odtenek": "#ffffff"
   },
   "vencna-arterija": {
    "barva": "#d3302a",
@@ -184,7 +186,8 @@
    "f": 80,
    "zrno": 0.05,
    "relief": 0.3,
-   "hrap": 0.45
+   "hrap": 0.45,
+   "odtenek": "#ffffff"
   },
   "prevodni": {
    "barva": "#d9b42a",

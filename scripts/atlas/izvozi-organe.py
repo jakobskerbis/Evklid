@@ -128,8 +128,8 @@ ORGANI = {
             recepti={
                 # miokard temnejši rjavkasto rdeč (žile izstopajo), vlažen a ne plastičen (hrap 0,38); maščoba izbočena
                 # rumena blazinica z režnjiči ~2,5 mm (mascaNasip + mascaPremik, kletka za daljše žarke peke)
-                "miokard": dict(barva=(0.26, 0.048, 0.036), barva2=(0.18, 0.034, 0.028), lise=0.45, hrap=0.5, gube=0.00016, gubeMera=0.004,
-                                vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.80, 0.56, 0.16), mascaBarva2=(0.86, 0.50, 0.14),
+                "miokard": dict(barva=(0.24, 0.07, 0.05), barva2=(0.17, 0.05, 0.036), lise=0.45, hrap=0.56, gube=0.00016, gubeMera=0.004,
+                                vlakna=0.00022, vlaknaMera=0.0016, masca=1.0, mascaBarva=(0.80, 0.64, 0.32), mascaBarva2=(0.84, 0.60, 0.28),
                                 mascaNasip=0.0010, mascaPremik=0.0016, mascaMera=0.011, mascaZleb=0.58, mascaHrap=0.52, kletka=0.009,
                                 zilice=0.0, notranja=(0.36, 0.09, 0.07), notranjaHrap=0.40),
                 "zaklopka": dict(barva=(0.83, 0.76, 0.64), barva2=(0.74, 0.60, 0.50), lise=0.4, hrap=0.36, gube=0.00006, gubeMera=0.002, razdeli=1),
@@ -141,12 +141,12 @@ ORGANI = {
                 # aorta in pljučno deblo: debela elastična stena, na preparatu smetanasto bela do rožnato siva (ne rdeča)
                 "aorta": dict(barva=(0.74, 0.58, 0.50), barva2=(0.66, 0.50, 0.44), lise=0.35, hrap=0.62, gube=0.00004, gubeMera=0.002, razdeli=1,
                               vzdolz=0.00009, vzdolzRazmik=0.0028, vasa=0.45, vasaBarva=(0.55, 0.22, 0.20)),
-                "pljucna": dict(barva=(0.68, 0.53, 0.50), barva2=(0.60, 0.46, 0.44), lise=0.35, hrap=0.62, gube=0.00004, gubeMera=0.002, razdeli=1,
+                "pljucna": dict(barva=(0.74, 0.58, 0.50), barva2=(0.66, 0.50, 0.44), lise=0.35, hrap=0.62, gube=0.00004, gubeMera=0.002, razdeli=1,
                                 vzdolz=0.00008, vzdolzRazmik=0.0028, vasa=0.4, vasaBarva=(0.50, 0.20, 0.22)),
-                "vena": dict(barva=(0.17, 0.11, 0.17), barva2=(0.13, 0.08, 0.13), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
+                "vena": dict(barva=(0.42, 0.27, 0.28), barva2=(0.36, 0.22, 0.24), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
                              vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.22, 0.05, 0.10)),
                 # pljučne vene: tanka stena, temno rdeče rjave (kri skozi steno), ne magenta (ocena n8)
-                "pljucna-vena": dict(barva=(0.30, 0.11, 0.12), barva2=(0.24, 0.08, 0.10), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
+                "pljucna-vena": dict(barva=(0.46, 0.28, 0.27), barva2=(0.40, 0.23, 0.23), lise=0.35, hrap=0.46, gube=0.00004, gubeMera=0.002, razdeli=1,
                                      vzdolz=0.00006, vzdolzRazmik=0.0024, vasa=0.25, vasaBarva=(0.45, 0.05, 0.08)),
                 # venčne arterije svetlo rdeče (izstopajo iz miokarda in maščobe), vene temno modrovijolične
                 "vencna-arterija": dict(barva=(0.62, 0.36, 0.30), barva2=(0.54, 0.28, 0.24), lise=0.25, hrap=0.5, gube=0.00003, gubeMera=0.0015, razdeli=1,
@@ -155,7 +155,7 @@ ORGANI = {
                 "vez": dict(barva=(0.62, 0.58, 0.53), barva2=(0.55, 0.50, 0.46), lise=0.25, hrap=0.78, gube=0.00003, gubeMera=0.0015, razdeli=1),
                 # prevodni sistem (shema): rumen kot v atlasih, rahlo svetleč
                 "prevodni": dict(barva=(0.78, 0.62, 0.10), barva2=(0.70, 0.52, 0.08), lise=0.15, hrap=0.4, gube=0.00002, gubeMera=0.0015, razdeli=1),
-                "vencna-vena": dict(barva=(0.14, 0.045, 0.14), barva2=(0.10, 0.035, 0.11), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
+                "vencna-vena": dict(barva=(0.36, 0.20, 0.22), barva2=(0.30, 0.16, 0.18), lise=0.25, hrap=0.42, gube=0.00003, gubeMera=0.0015, razdeli=1),
             },
         ),
         jedro=r"^(Right atrium|Right ventricle|Left atrium|Left ventricle)$",
@@ -1260,6 +1260,8 @@ def izvozi_naprej(organ, cfg, osnovni, tmp):
         vm = dict(cfg["_volumen"]); c_ = (ctr.x, ctr.z, -ctr.y)
         vm["lo"] = [round(vm["lo"][k] - c_[k], 5) for k in range(3)]
         porocilo["volumen"] = vm
+    if cfg.get("_ct"):  # oslonilne točke CT (glTF, središče organa 0): preverjanje debelin in reza
+        porocilo["ctTocke"] = {k: [round(float(v[0]) - ctr.x, 5), round(float(v[2]) - ctr.z, 5), round(-float(v[1]) + ctr.y, 5)] for k, v in cfg["_ct"]["L"].items()}
     with open(os.path.join(out, organ + ".vozlisca.json"), "w", encoding="utf-8") as f:
         json.dump(porocilo, f, ensure_ascii=False, indent=1)
 
