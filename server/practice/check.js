@@ -38,23 +38,30 @@ export function normUnit(u) {
   return unitForm(u).toLowerCase();
 }
 
-// Ista enota? Velikost črke večinoma ne spremeni pomena (l/L, °C/°c, km/h/Km/h, Hz/hz), pri m/M pa
-// spremeni predpono: ms ≠ Ms, mA ≠ MA, mJ ≠ MJ, mm ≠ Mm (razlika je milijardo-krat).
+// Ista enota? Velikost črke večinoma ne spremeni pomena (l/L, °C/°c, km/h/Km/h, Hz/hz, M/S, Min, Mol),
+// pri m/M kot predponi pa ga: ms ≠ Ms, mA ≠ MA, mJ ≠ MJ, mm ≠ Mm (razlika je milijardo-krat).
+// Predpona je m/M, ki mu sledi črka in ni začetek »min« ali »mol«; sam m (»M/S«, »M2«, »DM3«) je meter.
 export function sameUnit(a, b) {
   const x = unitForm(a);
   const y = unitForm(b);
   if (x === y) return true;
   if (x.toLowerCase() !== y.toLowerCase() || x.length !== y.length) return false;
-  for (let i = 0; i < x.length; i++) if (x[i] !== y[i] && /m/i.test(x[i])) return false;
+  for (let i = 0; i < x.length; i++) {
+    if (x[i] === y[i] || !/m/i.test(x[i])) continue;
+    const rest = x.slice(i).toLowerCase();
+    if (/^\p{L}/u.test(rest.slice(1)) && !/^m(?:in|ol)(?!\p{L})/u.test(rest)) return false;
+  }
   return true;
 }
 
-// Arabske in perzijske števke (٢٫٥, ۲٫۵) → 0–9, arabsko decimalno ločilo ٫ in vejica ، → vejica.
+// Arabske in perzijske števke (٢٫٥, ۲٫۵) → 0–9, arabsko decimalno ločilo ٫ in vejica ، → vejica,
+// arabsko ločilo tisočic ٬ (٢٬٥٠٠) → presledek.
 export function westernDigits(s) {
   return String(s)
     .replace(/[\u0660-\u0669]/g, (c) => String(c.charCodeAt(0) - 0x0660))
     .replace(/[\u06f0-\u06f9]/g, (c) => String(c.charCodeAt(0) - 0x06f0))
-    .replace(/[\u066b\u060c]/g, ",");
+    .replace(/[\u066b\u060c]/g, ",")
+    .replace(/\u066c/g, " ");
 }
 
 // Razčleni vnos, npr. "12,5 cm²", "−3", "1 200", "2.5m".
@@ -65,8 +72,9 @@ export function parseNumberWithUnit(input, { dot = false } = {}) {
   const m = s.match(/^([+-]?\s*(?:\d{1,3}(?:[ .]\d{3}(?!\d))+|\d+)?(?:[.,]\d+)?)\s*(.*)$/);
   if (!m || !/\d/.test(m[1])) return null;
   let num = m[1].replace(/\s/g, "");
-  // "1.200", "-1.200" in "1.200,5" s piko kot ločilom tisočic (natanko 3 števke po vsaki piki)
-  if (!dot && /^[+-]?\d{1,3}(\.\d{3})+(,\d+)?$/.test(num)) num = num.replace(/\./g, "");
+  // "1.200", "-1.200" in "1.200,5" s piko kot ločilom tisočic (natanko 3 števke po vsaki piki).
+  // Z vodilno ničlo (»0.500«, »-0.250«) je zapis vedno decimalen: tisočice se ne začnejo z 0.
+  if (!dot && /^[+-]?[1-9]\d{0,2}(\.\d{3})+(,\d+)?$/.test(num)) num = num.replace(/\./g, "");
   num = num.replace(",", ".");
   const value = Number(num);
   if (!Number.isFinite(value)) return null;
@@ -92,13 +100,24 @@ function checkNumber(ans, input) {
   if (!p) return { kind: "format", code: "chk.number", message: "Vpiši število (za decimalno ločilo lahko uporabiš vejico ali piko)." };
   const res = checkParsed(ans, p);
   // »2.500« je lahko 2500 (pika za tisočice) ali 2,5 s piko kot decimalnim ločilom (tipkovnica v
-  // angleščini, arabščini, urdujščini). Če je pravilno samo decimalno branje, štejemo pravilno.
-  if (res.kind !== "correct" && !ans.dot && /^[+-]?\d{1,3}\.\d{3}(?!\d)/.test(westernDigits(String(input).trim()).replace(/−/g, "-"))) {
+  // angleščini, arabščini, urdujščini). Decimalno branje upoštevamo samo, kadar rezultat res ima tri
+  // decimalke (zahtevano zaokroževanje ali točna vrednost, kot 12,345): sicer je »2.500« za 2,5 najverjetneje
+  // pozabljena pretvorba enot (2500 m namesto 2,5 km) in učenec dobi namig o velikostnem redu.
+  // Pri zahtevanem zaokroževanju dobi namig za zaokroževanje (»2.500« pri dveh decimalkah).
+  if (res.kind !== "correct" && !ans.dot && threeDecimals(ans) && /^[+-]?[1-9]\d{0,2}\.\d{3}(?!\d)/.test(westernDigits(String(input).trim()).replace(/−/g, "-"))) {
     const q = parseNumberWithUnit(input, { dot: true });
     const alt = q && checkParsed(ans, q);
-    if (alt?.kind === "correct") return alt;
+    if (alt?.kind === "correct" || alt?.kind === "rounding") return alt;
   }
   return res;
+}
+
+// Ima pravilni odgovor lahko tri decimalke? Da, kadar je zaokroževanje zahtevano ali kadar točna vrednost
+// potrebuje natanko tri decimalke (12,345, 0,125; ne pa 2,5 ali 2500).
+function threeDecimals(ans) {
+  if (ans.decimals !== undefined && ans.decimals !== null) return true;
+  const whole = (x) => Math.abs(x - Math.round(x)) <= 1e-9 * Math.max(1, Math.abs(x));
+  return [ans.value, ...(ans.alsoAccept || [])].some((e) => Number.isFinite(e) && whole(e * 1000) && !whole(e * 100));
 }
 
 function checkParsed(ans, p) {

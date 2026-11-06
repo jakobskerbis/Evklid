@@ -1,6 +1,6 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
-import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands } from "./math.js";
+import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, joinThousands, joinDotThousands, digitGap, twoDots } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
 const ANS_VAR = "A_ans"; // ime spremenljivke po razčlenitvi
@@ -59,6 +59,10 @@ function rewriteIntegrals(s) {
 export function prepare(text, { comma = true } = {}) {
   // »1 000 000/4«: presledek med skupinami po 3 števke je ločilo tisočic, ne množenje
   let s = joinThousands(String(text ?? "").trim());
+  // Nejasen zapis števila (»12 3456«, »1.2.3«) je napaka, ne tiho množenje (12 · 3456, 1,2 · 0,3).
+  if (digitGap(s)) throw new MathError("unexpected", { got: " " });
+  if (comma) s = joinDotThousands(s); // »1.234,5« = 1234,5
+  if (twoDots(s)) throw new MathError("unexpected", { got: "." });
   s = s.replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
   if (comma) s = s.replace(/(\d),(?=\d)/g, "$1.");
   s = s.replace(/;/g, ",");

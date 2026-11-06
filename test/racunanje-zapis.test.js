@@ -2,8 +2,8 @@
 // ulomki z negativnim imenovalcem in 0/n (D3), arabske števke (D4).
 import test from "node:test";
 import assert from "node:assert/strict";
-import { presolve, claimNote } from "../server/live-check.js";
-import { solve, prep, texToText } from "../public/scan/solvecore.js";
+import { presolve, claimNote, claimReadings } from "../server/live-check.js";
+import { solve, prep, texToText, unclearNumber } from "../public/scan/solvecore.js";
 import { evaluate } from "../public/graph/scicore.js";
 import { checkAnswer, sameUnit } from "../server/practice/check.js";
 
@@ -56,7 +56,7 @@ test("P5: velikost črke m/M loči predpono (mili ≠ mega)", () => {
   assert.equal(kind({ type: "number", value: 5, unit: "°C" }, "5 °c"), "correct");
   assert.equal(kind({ type: "number", value: 5, unit: "km/h" }, "5 Km/h"), "correct");
   assert.equal(kind({ type: "number", value: 5, unit: "Hz" }, "5 hz"), "correct");
-  assert.ok(sameUnit("m²", "m^2") && !sameUnit("m", "M"));
+  assert.ok(sameUnit("m²", "m^2") && !sameUnit("mm", "Mm"));
 });
 
 test("D3: ulomek z minusom v imenovalcu in 0/n", () => {
@@ -71,4 +71,77 @@ test("D4: arabske števke in decimalna ločila", () => {
   assert.equal(kind({ type: "number", value: 2.5 }, "٢٫٥"), "correct");
   assert.equal(kind({ type: "number", value: 25 }, "۲۵"), "correct");
   assert.equal(kind({ type: "fraction", num: 3, den: 4 }, "٣/٤"), "correct");
+});
+
+// Popravki pregleda PR #454
+
+test("P4: »2.500« za 2,5 brez decimalk je pozabljena pretvorba (namig o velikostnem redu)", () => {
+  const r = checkAnswer({ type: "number", value: 2.5 }, "2.500");
+  assert.equal(r.kind, "wrong");
+  assert.equal(r.mistake?.code, "chk.magnitudeBig");
+  assert.equal(checkAnswer({ type: "number", value: 2.5, unit: "km" }, "2.500 km").mistake?.code, "chk.magnitudeBig");
+  assert.equal(checkAnswer({ type: "number", value: 1.2, unit: "m" }, "1.200 m").mistake?.code, "chk.magnitudeBig");
+  // »2 500« in »2.500« dasta isti namig
+  assert.equal(checkAnswer({ type: "number", value: 2.5 }, "2 500").mistake?.code, "chk.magnitudeBig");
+  // točna vrednost s tremi decimalkami: pika je decimalna
+  assert.equal(kind({ type: "number", value: 12.345 }, "12.345"), "correct");
+  assert.equal(kind({ type: "number", value: 1.125 }, "1.125"), "correct");
+});
+
+test("P4: vodilna ničla (»0.500«, »-0.250«) je vedno decimalni zapis", () => {
+  assert.equal(kind({ type: "number", value: 0.5 }, "0.500"), "correct");
+  assert.equal(kind({ type: "number", value: -0.25 }, "-0.250"), "correct");
+  assert.equal(kind({ type: "number", value: 500 }, "0.500"), "wrong");
+  assert.equal(kind({ type: "number", value: 2500 }, "2.500"), "correct");
+});
+
+test("P4: »2.500« pri zaokroževanju na dve decimalki dobi namig za zaokroževanje", () => {
+  const r = checkAnswer({ type: "number", value: 2.5, decimals: 2 }, "2.500");
+  assert.equal(r.kind, "rounding");
+  assert.equal(r.reveal, "2,50");
+});
+
+test("K1: »x = 1.250« (tisočice s piko) ni »WRONG« v opombi inštruktorju", () => {
+  const p = presolve("Reši 2x + 3 = 2503");
+  assert.doesNotMatch(claimNote("x = 1.250", p) || "", /WRONG/);
+  assert.match(claimNote("x = 1.250", p), /CORRECT/);
+  assert.match(claimNote("x = 1251", p), /WRONG/);
+  // dvoumen napačen zapis: raje brez sodbe kot napačna sodba
+  assert.equal(claimNote("x = 1.251", p), null);
+  assert.match(claimNote("x = 1.25", presolve("Reši 2x + 3 = 5,5")), /CORRECT/);
+  assert.match(claimNote("x = 1.250.000", presolve("Reši 2x = 2500000")), /CORRECT/);
+  assert.match(claimNote("x = 1.234,5", presolve("Reši 2x = 2469")), /CORRECT/);
+  assert.match(claimNote("1.250", presolve("Koliko je 1000 + 200 + 50?")), /CORRECT/);
+  assert.deepEqual(claimReadings("1.250"), ["1.250", "1250"]);
+  assert.deepEqual(claimReadings("0.250"), ["0.250"]);
+  assert.deepEqual(claimReadings("1.250.000"), ["1250000"]);
+});
+
+test("P5: velike črke pri enotah brez predpone (Min, Mol, M, M/S, M2, DM3) ostanejo pravilne", () => {
+  assert.equal(kind({ type: "number", value: 5, unit: "min" }, "5 Min"), "correct");
+  assert.equal(kind({ type: "number", value: 5, unit: "mol" }, "5 Mol"), "correct");
+  assert.equal(kind({ type: "number", value: 5, unit: "m" }, "5 M"), "correct");
+  assert.equal(kind({ type: "number", value: 5, unit: "m/s" }, "5 M/S"), "correct");
+  assert.equal(kind({ type: "number", value: 5, unit: "m²" }, "5 M2"), "correct");
+  assert.equal(kind({ type: "number", value: 5, unit: "dm³" }, "5 DM3"), "correct");
+  assert.equal(kind({ type: "number", value: 5, unit: "mmol" }, "5 Mmol"), "unit");
+});
+
+test("K1: skener in kalkulator ne ugibata pri nejasnem zapisu števila", () => {
+  for (const x of ["12 345,678 9", "12 34 + 1", "2 1/2 + 1", "1.2.3 + 1"]) {
+    assert.ok(unclearNumber(x), x);
+    assert.equal(solve(x).ok, false, x);
+  }
+  assert.equal(evaluate("12 3456", {}).error?.code, "unexpected");
+  assert.equal(evaluate("1.2.3", {}).error?.code, "unexpected");
+  // pika za tisočice z decimalno vejico je nedvoumna
+  assert.equal(evaluate("1.234,5", {}).value, 1234.5);
+  assert.equal(evaluate("1.234.567,8", {}).value, 1234567.8);
+  assert.equal(solve("1.234,5 + 1").answer.tex, "1235{,}5");
+  assert.ok(!unclearNumber("12 345 + 1") && !unclearNumber("x^2 = 4"));
+});
+
+test("D4: arabsko ločilo tisočic ٬", () => {
+  assert.equal(kind({ type: "number", value: 2500 }, "٢٬٥٠٠"), "correct");
+  assert.equal(kind({ type: "number", value: 2500 }, "۲٬۵۰۰"), "correct");
 });

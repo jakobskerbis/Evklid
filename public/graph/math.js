@@ -184,6 +184,10 @@ export const joinThousands = (s) =>
   String(s ?? "").replace(/(?<![\d.,])\d{1,3}(?:[   ]\d{3})+(?!\d)/g, (m) => m.replace(/[   ]/g, ""));
 // Ostane presledek med dvema števkama (»12 34«, »1 0005«)? Zapis ni jasen.
 export const digitGap = (s) => /\d[ \t  ]+\d/.test(String(s ?? ""));
+// »1.234,5« (pika za tisočice, vejica za decimalke) je nedvoumno 1234,5: piki odstrani.
+export const joinDotThousands = (s) => String(s ?? "").replace(/(?<![\d.,])\d{1,3}(?:\.\d{3})+(?=,\d)/g, (m) => m.replace(/\./g, ""));
+// Dve piki v istem številu (»1.2.3«, »1.234.567«) brez decimalne vejice: zapis ni jasen.
+export const twoDots = (s) => /\d\.\d+\.\d/.test(String(s ?? ""));
 
 export function normalize(src) {
   return String(src ?? "")

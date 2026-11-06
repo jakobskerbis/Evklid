@@ -316,20 +316,32 @@ export const givesVerdict = (answer) => VERDICT_RE.test(String(answer || "").sli
 // Učenčeva vrednost neznanke ali rezultata (»x = 3«, »x1 = 2, x2 = -2«, golo število »11/12«).
 function claimValues(text, vars) {
   // »1 247«, »1\,247« je eno število (tisočice), ne 1 in 247
-  const t = joinThousands(String(text).replace(/\$/g, "").replace(/(\d)(?:\\[,;: ]|~|\{\\,\})(?=\d{3}(?!\d))/g, "$1 ")).replace(/\s*=\s*/g, "=");
+  // »1.234,5« (pika za tisočice, vejica za decimalke) je nedvoumen: 1234,5
+  const t = joinThousands(String(text).replace(/\$/g, "").replace(/(\d)(?:\\[,;: ]|~|\{\\,\})(?=\d{3}(?!\d))/g, "$1 "))
+    .replace(/(?<![\d.,])\d{1,3}(?:\.\d{3})+(?=,\d)/g, (m) => m.replace(/\./g, ""))
+    .replace(/\s*=\s*/g, "=");
   // Vrednost, ki ji sledi operator ali črka (»x = 6 - 3«, »x = 2x - 1«, »x = 12 : 4«), je vmesni korak, ne rezultat:
   // o njem sodi model. Pri večkratni navedbi iste neznanke šteje zadnja (»x = 6 … torej x = 3«).
   const byKey = new Map();
-  for (const m of t.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?(\d)\}?)?=([-+]?\s*(?:\d+(?:[.,]\d+)?(?:\/\d+)?|[.,]\d+))(?![\d\/\p{L}])(?![ \t]*[-+*/:·×÷^=(\\])/gu)) {
+  for (const m of t.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?(\d)\}?)?=([-+]?\s*(?:\d{1,3}(?:\.\d{3})+(?!\d)|\d+(?:[.,]\d+)?(?:\/\d+)?|[.,]\d+))(?![\d\/\p{L}]|[.,]\d)(?![ \t]*[-+*/:·×÷^=(\\])/gu)) {
     if (vars.includes(m[1])) byKey.set(m[1] + (m[2] || ""), { v: m[1], val: m[3].replace(/\s+/g, "") });
   }
   const out = [...byKey.values()];
   if (out.length) return out;
   // Golo število kot celotno sporočilo (»mislim da 58«): samo pri računu brez neznank. Pri enačbi je
   // lahko vmesni korak (»8« za 2x = 8), zato tam brez sodbe kode.
-  const bare = /^(?:[\p{L}\s,]{0,30}?)([-+]?\d+(?:[.,]\d+)?(?:\/\d+)?)\s*[.!]?$/u.exec(t);
+  const bare = /^(?:[\p{L}\s,]{0,30}?)([-+]?(?:\d{1,3}(?:\.\d{3})+|\d+(?:[.,]\d+)?(?:\/\d+)?))\s*[.!]?$/u.exec(t);
   if (bare && vars.length === 1 && vars[0] === "r") return [{ v: "r", val: bare[1] }];
   return out;
+}
+
+// Možna branja učenčeve vrednosti: »1.250« → 1.250 ali 1250, »1.250.000« → samo 1250000,
+// »0.250« → samo 0,250 (tisočice se ne začnejo z 0), drugo ostane, kot je.
+export function claimReadings(val) {
+  const v = String(val).replace(/\s+/g, "");
+  if (/^[-+]?[1-9]\d{0,2}(?:\.\d{3}){2,}$/.test(v)) return [v.replace(/\./g, "")];
+  if (/^[-+]?[1-9]\d{0,2}\.\d{3}$/.test(v)) return [v, v.replace(/\./g, "")];
+  return [v];
 }
 
 /**
@@ -346,18 +358,31 @@ export function claimNote(text, pre) {
   if (!claims.length) return null;
   let wrong = null;
   for (const c of claims) {
+    // »1.250« je lahko 1250 (pika za tisočice) ali 1,25 (decimalna pika): pravilno, če je pravilno katero koli
+    // branje; če ni nobeno, koda ne sodi (raje brez sodbe kot napačna sodba).
+    const vals = claimReadings(c.val);
     if (p.type === "arith") {
-      const x = num(c.val);
       const y = num(texToText(String(p.answerTex)));
-      if (x === null || y === null) return null;
-      const dec = /[.,](\d+)$/.exec(c.val)?.[1].length ?? 0;
+      if (y === null) return null;
+      const hit = vals.some((val) => {
+        const x = num(val);
+        const dec = /[.,](\d+)$/.exec(val)?.[1].length ?? 0;
+        return x !== null && Math.abs(x - y) <= (dec ? 1.01 * 10 ** -dec : 1e-9) * Math.max(1, Math.abs(y));
+      });
       // Drugačno število je lahko vmesni rezultat (»56« za 7 · 8 pri 7 · 8 + 2): o napaki sodi model, ne koda.
-      if (Math.abs(x - y) > (dec ? 1.01 * 10 ** -dec : 1e-9) * Math.max(1, Math.abs(y))) return null;
+      if (!hit) return null;
     } else {
       const sols = solverValues(p.answerTex);
-      const r = verifyAi(p.problem, { kind: "equation", variable: c.v, solutions: [c.val] });
-      if (r.reason === "parse") return null;
-      if (r.reason === "wrong" && !(sols.length && nearSolver({ v: c.v, val: c.val, approx: false }, sols))) wrong = `${c.v} = ${c.val}`;
+      let right = false;
+      for (const val of vals) {
+        const r = verifyAi(p.problem, { kind: "equation", variable: c.v, solutions: [val] });
+        if (r.reason === "parse") return null;
+        if (r.reason !== "wrong" || (sols.length && nearSolver({ v: c.v, val, approx: false }, sols))) right = true;
+      }
+      if (!right) {
+        if (vals.length > 1) return null;
+        wrong = `${c.v} = ${c.val}`;
+      }
     }
   }
   const task = p.type === "arith" ? `$${p.problemTex} = ${p.answer}$` : `$${p.problemTex}$ → $${p.answer}$`;
