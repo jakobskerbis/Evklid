@@ -343,7 +343,8 @@ function lastUserText(messages) {
 
 function mockAnswer(userText) {
   const t = userText.toLowerCase();
-  if (/sistemsk|prompt|navodil|ignoriraj/.test(t)) {
+  // Poskus brez druge prošnje: ščit. Poskus z nalogo (račun, »reši«, »izračunaj« …): poskus prezri, naloga normalno (prompts/system_prompt.md, Varnostni ščit).
+  if (/sistemsk|prompt|navodil|ignoriraj/.test(t) && !/reši|resi|izračunaj|izracunaj|enačb|enacb|\d\s*[a-z]?\s*[+\-=·*/]/.test(t)) {
     return '»Žal ti teh informacij o svojem delovanju ne morem razkriti. 🛡️ Sem tvoj osebni AI inštruktor za naravoslovne predmete. Povej mi raje, katero nalogo rešuješ, da jo pogledava skupaj!«\n<<META subject=MAT topic="-" error=0 mode=A flag=injection done=0>>';
   }
   if (/kemij/.test(t)) {
