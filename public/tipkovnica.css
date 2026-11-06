@@ -29,7 +29,7 @@
 /* zgodovinski slogi: plošča v barvi menija obdobja */
 :root[data-era] .tk { --tk-board: var(--menu, var(--surface-2)); --tk-ink: var(--menu-text, var(--text)); --tk-dim: color-mix(in srgb, var(--menu-muted, var(--muted)) 70%, var(--menu-text, var(--text))); --tk-fn: color-mix(in srgb, var(--menu, var(--surface-2)) 80%, var(--menu-text, var(--text)) 14%); border-top-color: var(--menu-border, var(--border)); }
 /* Enter na plošči v barvi menija: poudarek menija (v Hiši modrosti in Indiji je plošča temna kot poudarek okna) */
-:root[data-era] .tk-k.chg sub { font-size: 0.95rem; line-height: 1; margin: 0.45em 0 0 1px; vertical-align: baseline; }
+:root[data-era] .tk-k.chg sub { font-size: 0.9rem; line-height: 1; margin: 0.75em 0 0 1px; vertical-align: baseline; }
 .tk-k.go { background: var(--menu-accent, var(--accent)); color: var(--menu-accent-text, var(--accent-text)); box-shadow: 0 var(--press) 0 color-mix(in srgb, var(--menu-accent, var(--accent)) 60%, var(--text)); }
 /* temni zgodovinski slogi: okno in meni sta skoraj enake barve, tipke malo svetlejše od plošče */
 :root.dark[data-era] .tk { --tk-key: color-mix(in srgb, var(--surface) 90%, var(--text)); }
