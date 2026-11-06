@@ -645,3 +645,23 @@
   const auto = !!(c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || "")));
   if (saved === "1" || (saved === null && auto)) document.documentElement.classList.add("lite");
 })();
+
+// Pisava besedila izbranega sloga takoj (preload), ne šele ko brskalnik prebere CSS: besedilo se ne
+// preriše z drugo pisavo pozneje (brez premikov postavitve). Samo Čist/Igriv/Temen (zgodovinski slogi imajo
+// isto pisavo besedila kot Čist) in nikoli v lahkem načinu (tam spletne pisave sploh ni).
+(function () {
+  try {
+    const r = document.documentElement;
+    if (r.classList.contains("lite") || !document.head || !/^\/(index\.html)?$/.test(location.pathname)) return; // samo aplikacija
+    const pkg = { igriv: "nunito", temen: "ibm-plex-sans" }[r.dataset.style] || "instrument-sans";
+    for (const sub of ["latin", "latin-ext"]) {
+      const l = document.createElement("link");
+      l.rel = "preload";
+      l.as = "font";
+      l.type = "font/woff2";
+      l.crossOrigin = "anonymous";
+      l.href = `/vendor/${pkg}/files/${pkg}-${sub}-wght-normal.woff2`;
+      document.head.append(l);
+    }
+  } catch {}
+})();
