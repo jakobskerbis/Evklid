@@ -1615,6 +1615,7 @@
   "fx.change": "변화량: {what}",
   "fx.close": "닫기",
   "fx.parts": "여기서",
+  "fx.defined": "본문에서 정의한 기호",
   "ap.style": "스타일",
   "ap.styleCist": "깔끔함",
   "ap.styleCistText": "차분하고 보기 쉬움",
