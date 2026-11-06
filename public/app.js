@@ -9,7 +9,7 @@ import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
 hydrateIcons();
-import { initAccount, accountsOn, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
+import { initAccount, prefetchAccountStatus, accountsOn, openAddChild, logout, openProfileLock, renderAccount } from "./account.js";
 import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
@@ -4431,6 +4431,7 @@ initFullscreen();
 initFormulaInfo();
 
 (async () => {
+  prefetchAccountStatus(); // vzporedno s config (account.js)
   const cfg = await api("/api/config");
   $("#mock-banner").hidden = !cfg.mock;
   initTestNotice(cfg.test_notice, { showView });

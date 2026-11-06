@@ -263,7 +263,7 @@ export function createApp(store, opts = {}) {
   mountSolePage(app, store); // stran za šole /sole (cene iz server/schools.js, glej sole.js)
   mount3d(app, { csp: CSP, modules }); // 3D atlas /3d, three pod /vendor/three (pred stisnjenimi datotekami: svoja CSP)
   // Vstopna stran z vnaprejšnjim nalaganjem modulov (server/vstopna-stran.js): prvo odprtje brez slapa uvozov.
-  app.use(entryPage(publicDir));
+  if (process.env.EVKLID_MODULEPRELOAD !== "0") app.use(entryPage(publicDir)); // =0: navaden index.html (primerjava)
   // Lahki način: stisnjene datoteke in JSON (brotli/gzip) za počasne in drage mobilne povezave.
   if (process.env.EVKLID_COMPRESS !== "0") {
     const statics = compressedStatic([
