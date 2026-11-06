@@ -23,7 +23,17 @@ const SHELL = ["/", "/index.html"];
 // pokaže svoj zaslon »Ni povezave« (sicer: 400 brez glav ali kopija »/« na tem naslovu).
 const NO_CACHE = /^\/api\/(auth|billing|account|stripe|usage|mobile)/;
 // Javni API brez osebnih podatkov: samo ti odgovori gredo v predpomnilnik (vse ostalo samo omrežje).
-const PUBLIC_API = /^\/api\/(topic|paths|programs|references|formulas|textbook|exam-papers)(\/|$)/;
+const PUBLIC_API = /^\/api\/(topic|lesson|paths|programs|references|formulas|textbook|exam-papers)(\/|$)/;
+// Lekcija za učenca (osebna: test predznanja, paket) se ne shrani; ob ogledu shranimo javno kopijo iste lekcije
+// (/api/lesson?id=, brez učenčevih polj), da se obiskana lekcija bere tudi brez povezave (public/textbook.js).
+const STUDENT_LESSON = /^\/api\/students\/\d+\/lesson$/;
+async function storePublicLesson(id) {
+  const cache = await caches.open(API);
+  const url = `${self.location.origin}/api/lesson?id=${encodeURIComponent(id)}`;
+  if (await cache.match(url)) return;
+  const res = await fetch(url, { credentials: "same-origin" });
+  if (res.ok && !privateRes(res)) await cache.put(url, res);
+}
 // Odgovor, ki ga strežnik označi kot zaseben, se ne shrani (tudi na javni poti).
 const privateRes = (res) => /no-store|private/i.test(res.headers.get("cache-control") || "");
 const TIMEOUT = { static: 4000, api: 7000 };
@@ -155,6 +165,10 @@ self.addEventListener("fetch", (e) => {
   if (url.origin !== self.location.origin) return;
   if (url.pathname === "/sw.js" || url.pathname.startsWith("/healthz")) return;
   if (url.pathname.startsWith("/api/")) {
+    if (STUDENT_LESSON.test(url.pathname) && url.searchParams.get("id")) {
+      e.waitUntil(storePublicLesson(url.searchParams.get("id")).catch(() => null));
+      return;
+    }
     if (NO_CACHE.test(url.pathname) || !PUBLIC_API.test(url.pathname)) return;
     e.respondWith(networkFirst(req, API, TIMEOUT.api));
     return;

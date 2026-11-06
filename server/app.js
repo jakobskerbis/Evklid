@@ -172,7 +172,7 @@ export const PERMISSIONS_POLICY = [
   "xr-spatial-tracking=()",
 ].join(", ");
 // Javni podatki brez osebnih (učne poti, učbenik, formule): brskalnik jih sme hraniti in preveriti (ETag).
-const PUBLIC_API = /^\/api\/(paths|programs|formulas|references|textbook\/|topic|teacher\/topics|account\/prices)(\/|\?|$)/;
+const PUBLIC_API = /^\/api\/(paths|programs|formulas|references|textbook\/|topic|lesson|teacher\/topics|account\/prices)(\/|\?|$)/;
 
 function securityHeaders(app) {
   app.use(
@@ -986,6 +986,13 @@ export function createApp(store, opts = {}) {
     const toc = tocView(String(req.query.path || ""));
     if (!toc) return res.status(404).json({ error: "Učna pot ne obstaja." });
     res.json(toc);
+  });
+  // Lekcija brez učenčevih polj (besedilo je za vse): kopija za branje brez povezave (public/sw.js shrani to pot,
+  // osebne /api/students/:id/lesson pa ne, P7). Brez interaktivnega dela, ponudb in testa predznanja.
+  app.get("/api/lesson", (req, res) => {
+    const view = lessonView(String(req.query.id || ""));
+    if (!view) return res.status(404).json({ error: "Tema ne obstaja." });
+    res.json({ ...view, interactive: false, pretest_due: false, locked: { demo: view.demo?.title || null }, demos: [], demo: null, offline_copy: true });
   });
   // Lekcija za učenca. Interaktivni del (poskusi, simulacije, sprotno preverjanje)
   // je v plačljivem paketu in preizkusu; besedilo je za vse (tudi kot PDF).

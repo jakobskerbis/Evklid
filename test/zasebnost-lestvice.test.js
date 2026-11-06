@@ -151,3 +151,26 @@ test("GDPR: izbris profila prepiše kopijo mnenj v datoteki (brez ključa za ši
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("P7: javna lekcija /api/lesson nima učenčevih polj in se sme shraniti", async () => {
+  const store = openDb(":memory:");
+  const app = createApp(store, { scheduler: false });
+  const server = app.listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  try {
+    const s = store.createStudent("Ana", { level: "OS", grade: 8 });
+    const topic = new Progress(store).pathView(s.id, pathKeyFor(s.settings)).units.flatMap((u) => u.topics)[0].id;
+    const res = await fetch(`${base}/api/lesson?id=${encodeURIComponent(topic)}`);
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get("cache-control"), "no-cache");
+    const L = await res.json();
+    assert.equal(L.id, topic);
+    assert.equal(L.pretest_due, false);
+    assert.equal(L.interactive, false);
+    assert.ok(!("offers" in L));
+    assert.equal((await fetch(`${base}/api/lesson?id=ni-teme`)).status, 404);
+    assert.equal((await fetch(`${base}/api/students/${s.id}/lesson?id=${encodeURIComponent(topic)}`)).headers.get("cache-control"), "no-store");
+  } finally {
+    server.close();
+  }
+});
