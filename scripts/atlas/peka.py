@@ -6,7 +6,7 @@
 #      osnovna barva (EMIT iz materiala recepta) in hrapavost; nato senca okolice (AO z žarki, Cycles) na nizki mreži
 #      z vsemi vozlišči kot ovirami (»videz ray-tracinga«: kontaktne sence ob žilah, tetivah, v brazdah);
 #   4. slike: baza (sRGB), normala, ORM (R = senca okolice, G = hrapavost, B = kovinskost 0), PNG brez izgub;
-#      organi.mjs jih stisne v WebP (baza q90, ORM q90, normala q97) in izvoz glTF jih zapiše kot baseColorTexture,
+#      organi.mjs jih stisne v WebP (baza q90, ORM q82 / telefon q74, normala q95 / telefon q88) in izvoz glTF jih zapiše kot baseColorTexture,
 #      normalTexture, occlusionTexture in metallicRoughnessTexture (ena slika ORM).
 # Recept tkiva (cfg tekstura.recepti[<tkivo>]): barva, barva2 (lise), lise (moč), maščoba po maski (masca moč,
 # mascaBarva/mascaBarva2, mascaNasip = blazinica, mascaPremik = višina režnja, mascaMera = velikost režnja, mascaZleb =
@@ -16,7 +16,7 @@
 # adventicije v m), vzdolzRazmik (razmik gub v m), vasa/vasaBarva (vasa vasorum: drobne žilice, podolgovate vzdolž žile).
 # Maske na ogliščih (barvni atribut »PEKA«: R = maščoba 0–1, G = odprtost 0 votlina … 1 zunaj) izračuna klicatelj
 # (maske()) pred razdelitvijo; razdelitev jih gladko prenese na visoko mrežo.
-import bpy, bmesh, math, os, time
+import bpy, bmesh, math, os, re, time
 import numpy as np
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
@@ -618,6 +618,11 @@ if __name__ == "__main__":
     a = sys.argv[sys.argv.index("--") + 1:]
     niti = int(os.environ.get("PEKA_NITI", "2"))
     pot, korak, ost = a[0], a[1], a[2:]
+    # pot do delovne datoteke iz peci.py (<organ>[-telefon].delo.blend), ime organa samo male črke, števke in »-«
+    if not re.fullmatch(r"[a-z0-9-]+\.delo\.blend", os.path.basename(pot)):
+        raise SystemExit(f"neveljavna delovna datoteka: {pot!r}")
+    if korak == "zakljuci" and not (ost and ost[0].endswith(".glb") and os.path.dirname(os.path.abspath(ost[0])) == os.path.dirname(os.path.abspath(pot))):
+        raise SystemExit("zakljuci: GLB mora biti v isti mapi kot delovna datoteka")
     if korak == "povrsina": povrsina(pot, set(ost), niti)
     elif korak == "senca": senca(pot, set(ost), niti)
     elif korak == "zakljuci": zakljuci(pot, ost[0], niti)

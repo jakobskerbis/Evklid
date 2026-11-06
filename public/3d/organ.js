@@ -205,7 +205,9 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
     metalness: 0,
     clearcoat: t.lak ?? 0,
     clearcoatRoughness: t.lakHrap ?? 0.25,
-    sheen: visoka ? t.sijaj ?? 0 : (t.sijaj ?? 0) * 0.6,
+    // Telefon (kakovost nizka): manj sijaja; pri PBR še manj (tretjina), ker ima šibek telefon sicer skoraj enak
+    // fizikalni senčilnik kot računalnik (pregled kode #461).
+    sheen: visoka ? t.sijaj ?? 0 : (t.sijaj ?? 0) * (tex?.pbr ? 0.3 : 0.6),
     sheenColor: new THREE.Color(t.sijajBarva || t.barva || "#ffffff"),
     sheenRoughness: t.sijajHrap ?? 0.45,
     specularIntensity: t.spekular ?? 1,
@@ -246,7 +248,8 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
   if (tex?.normalMap && t.tekstura !== false) {
     m.normalMap = tex.normalMap;
     m.normalScale.copy(tex.normalScale).multiplyScalar(t.normala ?? 1);
-    if (m.clearcoat > 0) {
+    // Lak z normalno mapo samo na računalniku: telefon prihrani vzorčenje in izračun druge normale (lak je tam gladek).
+    if (m.clearcoat > 0 && (visoka || !pbr)) {
       m.clearcoatNormalMap = tex.normalMap;
       m.clearcoatNormalScale.copy(tex.normalScale).multiplyScalar((t.normala ?? 1) * 0.6);
     }
@@ -255,7 +258,9 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
   // S pečenimi teksturami so zrno, relief, lise, maščoba in senca že v slikah: senčilnik jih ne dodaja še enkrat.
   const zrno = pbr ? 0 : t.zrno ?? 0.08;
   const relief = pbr ? 0 : visoka ? t.relief ?? 0.5 : 0;
-  if (pbr) t = { ...t, lise: 0, lise2: 0, masca: 0, senca: 0, aoExp: t.aoExp ?? 1.6, ao: t.ao ?? 0.35 };
+  if (pbr) t = { ...t, lise: 0, lise2: 0, masca: 0, senca: 0, aoExp: t.aoExp ?? 1.6, ao: t.aoPbr ?? 0.35 };
+  // ↑ PBR: senca okolice je že v aoMap (Cycles) in v zaslonskem GTAO, zato barva oglišč COLOR_0 doda le šibko senco
+  // (`aoPbr`, privzeto 0,35); `ao` tkiva (0,8–0,9) velja samo za modele brez pečenih tekstur.
   const rob = t.rob ?? 0.12;
   const ao = t.ao ?? 0.85;
   m.onBeforeCompile = (sh) => {

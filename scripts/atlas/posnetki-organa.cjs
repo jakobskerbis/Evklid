@@ -20,7 +20,9 @@ const NAPRAVE = {
 
 (async () => {
   fs.mkdirSync(izhod, { recursive: true });
-  const srv = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], { cwd: root, env: { ...process.env, PORT, EVKLID_MOCK: "1" }, stdio: "ignore" });
+  // začasna baza: strežnik ne piše v data/evklid.db kopije, iz katere teče
+  const zacasna = fs.mkdtempSync(path.join(require("node:os").tmpdir(), "posnetki-organa-"));
+  const srv = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], { cwd: root, env: { ...process.env, PORT, EVKLID_MOCK: "1", EVKLID_DB: path.join(zacasna, "evklid.db") }, stdio: "ignore" });
   const base = `http://localhost:${PORT}`;
   for (let i = 0; i < 80; i++) {
     try {
@@ -126,5 +128,6 @@ const NAPRAVE = {
     fs.writeFileSync(path.join(izhod, `${oznaka}-meritve.json`), JSON.stringify(meritve, null, 1) + "\n");
     await b.close();
     srv.kill();
+    fs.rmSync(zacasna, { recursive: true, force: true });
   }
 })();
