@@ -1,6 +1,6 @@
 {
  "organ": "srce",
- "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; dodani sprednja lističa mitralne in trikuspidalne zaklopke s tetivami, sprednja-stranska papilarna mišica, septomarginalna in mesnate trabekule (lastno delo, scripts/atlas/srce_geometrija.py); pečene teksture scripts/atlas/peka.py",
+ "vir": "Z-Anatomy (CC BY-SA 4.0), na osnovi BodyParts3D; dodani lističi mitralne, trikuspidalne, aortne in pljučne zaklopke s tetivami, papilarne mišice, septomarginalna in mesnate trabekule (lastno delo, scripts/atlas/srce_geometrija.py), velike in venčne žile kot cevi s steno po središčnicah Z-Anatomy (lastno delo, scripts/atlas/srce_zile.py); pečene teksture scripts/atlas/peka.py",
  "tkiva": {
   "miokard": {
    "barva": "#93362f",
