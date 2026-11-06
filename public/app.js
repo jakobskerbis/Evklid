@@ -30,7 +30,7 @@ import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { splitFormulas, hasFormula } from "./vnos-formul.js";
 import { attachPrettify } from "./lepi-zapis.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
-import { offlineApi, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
+import { offlineApi, offlineBootApi, saveStudents, saveConfig, clearProfile, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback } from "./feedback.js";
 import { openAdminBug, deviceInfo, shownHtml } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
@@ -99,7 +99,8 @@ const whenIdle = (fn, timeout = 2000) => (window.requestIdleCallback ? requestId
 // Gradnja vnaprej (kalkulator, orodja) samo, ko se učenec ni dotaknil zaslona vsaj 0,8 s: dolga naloga ne zakasni tapa.
 const whenQuiet = (fn) => whenIdle(() => (Date.now() - lastInput < 800 ? setTimeout(() => whenQuiet(fn), 400) : fn()));
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
-const fromPack = (url, opts) => (state.student ? offlineApi(state.student.id, url, opts) : undefined);
+// Za zagon brez povezave še seznam profilov (osebni odgovori API niso v predpomnilniku, P7).
+const fromPack = (url, opts) => (state.student ? offlineApi(state.student.id, url, opts) : undefined) ?? offlineBootApi(url, opts);
 // Računalnik z Evklidom je ugasnjen ali okno ni odprto: ngrok ali Cloudflare vrneta
 // svojo napako. Takrat delamo kot brez povezave (vaje iz shranjenega paketa).
 // Napaka v JSON pride od našega strežnika (npr. 502, ko branje rokopisa ne uspe):
@@ -575,6 +576,7 @@ $("#me-head")?.addEventListener("click", () => {
 
 async function loadStudents(selectId) {
   state.students = await api("/api/students");
+  saveStudents(state.students);
   if (!state.students.length) {
     if (accountsOn()) return openAddChild(); // otroka doda starš s soglasjem
     state.students = [await onboard()];
@@ -1819,7 +1821,9 @@ $("#new-student-form").addEventListener("submit", async (e) => {
 
 $("#delete-student").addEventListener("click", async () => {
   if (!confirm(t("set.confirmDelete", { name: state.student.name }))) return;
-  await api(`/api/students/${state.student.id}`, { method: "DELETE" });
+  const gone = state.student.id;
+  await api(`/api/students/${gone}`, { method: "DELETE" });
+  clearProfile(gone); // podatki profila na tej napravi (paket vaj, skener, kalkulator …)
   localStorageSet("studentId", "");
   await loadStudents();
   fillSettingsForm();
@@ -4435,6 +4439,7 @@ initFormulaInfo();
 (async () => {
   prefetchAccountStatus(); // vzporedno s config (account.js)
   const cfg = await api("/api/config");
+  saveConfig(cfg); // za zagon brez povezave (brez skrbniških zastavic, public/offline.js)
   $("#mock-banner").hidden = !cfg.mock;
   initTestNotice(cfg.test_notice, { showView });
   $("#chat-off").hidden = !cfg.chat_off;

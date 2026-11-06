@@ -3,8 +3,10 @@
 // - datoteke aplikacije (.js, .css, slike …): takoj iz predpomnilnika, če jih je shranila ista različica
 //   aplikacije (APP spodaj, strežnik jo dopolni ob zagonu); sicer najprej omrežje. Tako se odprtje in vsak
 //   zaslon odpreta brez čakanja na omrežje, nova različica pa pride takoj, ko jo strežnik objavi,
-// - branje API: najprej omrežje (vedno najnovejši podatki), ob izpadu ali zelo počasni povezavi zadnja
-//   shranjena kopija (osebni API odgovori se nikoli ne strežejo, ne da bi najprej poskusili strežnik),
+// - javni API (učbenik, teme, poti, formule …): najprej omrežje (vedno najnovejša različica), ob izpadu
+//   ali zelo počasni povezavi zadnja shranjena kopija,
+// - osebni API (profili, pogovori, napredek, račun, šola …) se nikoli ne shrani (P7, zasebnost na skupnih
+//   računalnikih); vaje brez povezave imajo svoj paket (public/offline.js), ki se ob odjavi pobriše,
 // - 3D modeli (/3d/modeli/*.glb?v=…): najprej iz svojega predpomnilnika (MODELS), ki ostane tudi ob novi
 //   različici knjižnic; ?v= je zgoščena vrednost vsebine (server/tri-d.js), zato nov izvoz pride sam,
 //   stara kopija iste datoteke pa se ob tem pobriše,
@@ -20,13 +22,29 @@ const APP_FILE = /\.(?:m?js|css|svg|png|jpe?g|webp|avif|gif|woff2?)$/i; // stati
 const STAMP = "X-Evklid-App"; // glava v shranjeni kopiji: katera različica jo je shranila
 const STATIC = `${VERSION}-static`;
 const VENDOR = `${VERSION}-vendor`;
-const API = `${VERSION}-api`;
+// Samo javni odgovori API (enaki za vse uporabnike). Prej »-api« z vsemi odgovori: ob aktivaciji se pobriše.
+const API = `${VERSION}-api-javni`;
+const OLD_API = `${VERSION}-api`;
 const MODELS = "evklid-3d-v1"; // nova številka samo ob spremembi oblike shranjenih modelov
 const SHELL = ["/", "/index.html"];
 // API, ki ga ne shranjujemo (prijava, plačila, osebni podatki računa). /api/mobile/web (vstop v splet iz
 // aplikacije, server/mobile/web-session.js) gre mimo, da ostanejo glave aplikacije in brez povezave aplikacija
 // pokaže svoj zaslon »Ni povezave« (sicer: 400 brez glav ali kopija »/« na tem naslovu).
 const NO_CACHE = /^\/api\/(auth|billing|account|stripe|usage|mobile)/;
+// Javni API brez osebnih podatkov: samo ti odgovori gredo v predpomnilnik (vse ostalo samo omrežje).
+const PUBLIC_API = /^\/api\/(topic|lesson|paths|programs|references|formulas|textbook|exam-papers)(\/|$)/;
+// Lekcija za učenca (osebna: test predznanja, paket) se ne shrani; ob ogledu shranimo javno kopijo iste lekcije
+// (/api/lesson?id=, brez učenčevih polj), da se obiskana lekcija bere tudi brez povezave (public/textbook.js).
+const STUDENT_LESSON = /^\/api\/students\/\d+\/lesson$/;
+async function storePublicLesson(id) {
+  const cache = await caches.open(API);
+  const url = `${self.location.origin}/api/lesson?id=${encodeURIComponent(id)}`;
+  if (await cache.match(url)) return;
+  const res = await fetch(url, { credentials: "same-origin" });
+  if (res.ok && !privateRes(res)) await cache.put(url, res);
+}
+// Odgovor, ki ga strežnik označi kot zaseben, se ne shrani (tudi na javni poti).
+const privateRes = (res) => /no-store|private/i.test(res.headers.get("cache-control") || "");
 const TIMEOUT = { static: 4000, api: 7000 };
 
 self.addEventListener("install", (e) => {
@@ -38,9 +56,15 @@ self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((k) => !k.startsWith(VERSION) && k !== MODELS).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => (!k.startsWith(VERSION) && k !== MODELS) || k === OLD_API).map((k) => caches.delete(k))))
       .then(() => self.clients.claim()),
   );
+});
+
+// Odjava ali menjava računa (public/offline.js clearPrivate): pobriše vse predpomnilnike API.
+self.addEventListener("message", (e) => {
+  if (e.data?.type !== "clear-private") return;
+  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => /-api(-|$)/.test(k)).map((k) => caches.delete(k)))));
 });
 
 // Stran ob prvem obisku pošlje seznam že naloženih datotek, da jih shranimo za brez povezave.
@@ -110,7 +134,7 @@ async function networkFirst(req, cacheName, ms) {
   const cache = await caches.open(cacheName);
   const net = fetch(req).then((res) => {
     if (tunnelDown(res)) throw new Error("tunnel down");
-    if (res.ok && res.type === "basic") (cacheName === STATIC ? put(cache, req, res.clone()) : cache.put(req, res.clone())).catch(() => null);
+    if (res.ok && res.type === "basic" && !privateRes(res)) (cacheName === STATIC ? put(cache, req, res.clone()) : cache.put(req, res.clone())).catch(() => null);
     return res;
   });
   try {
@@ -171,7 +195,11 @@ self.addEventListener("fetch", (e) => {
   if (url.origin !== self.location.origin) return;
   if (url.pathname === "/sw.js" || url.pathname.startsWith("/healthz")) return;
   if (url.pathname.startsWith("/api/")) {
-    if (NO_CACHE.test(url.pathname)) return;
+    if (STUDENT_LESSON.test(url.pathname) && url.searchParams.get("id")) {
+      e.waitUntil(storePublicLesson(url.searchParams.get("id")).catch(() => null));
+      return;
+    }
+    if (NO_CACHE.test(url.pathname) || !PUBLIC_API.test(url.pathname)) return;
     e.respondWith(networkFirst(req, API, TIMEOUT.api));
     return;
   }

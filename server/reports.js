@@ -64,11 +64,44 @@ export function ensureReportsTable(db) {
   if (!cols.has("shown")) db.exec("ALTER TABLE message_reports ADD COLUMN shown TEXT");
 }
 
+// Odgovor za druge učence: ime učenca → {{IME}}, samo kot cela beseda in ne glede na velike črke (»Nik« v
+// »Nikoli« se ne zamenja, sicer bi naslednji učenec »Ana« prebral »Anaoli«). Če ime po zamenjavi še ostane
+// kot začetek besede (sklonjena oblika »Jakobu«, »Lanom«, »Ani« ali beseda, ki se z imenom začne), vrne null:
+// takega odgovora ne shranimo za druge učence, da ime ne pride do njih (P3). Enoznakovno ime ostane, kot je.
+const NAME_EDGE_L = "(?<![\\p{L}\\p{N}_])";
+const NAME_EDGE_R = "(?![\\p{L}\\p{N}_])";
+const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+export function genericAnswer(text, name = "") {
+  const n = String(name || "").trim();
+  if (n.length < 2) return text;
+  // Celo ime in posamezne besede imena (»Ana Marija« → tudi »Ana«, »Marija«).
+  const parts = [n, ...n.split(/\s+/).filter((w) => w.length >= 2 && w !== n)];
+  let out = String(text);
+  for (const p of parts) out = out.replace(new RegExp(`${NAME_EDGE_L}${escRe(p)}${NAME_EDGE_R}`, "giu"), "{{IME}}");
+  for (const p of parts) {
+    if (new RegExp(`${NAME_EDGE_L}${escRe(p)}\\p{L}`, "iu").test(out)) return null; // Jakob → Jakobu
+    const short = p.length <= 3;
+    // Osnova brez končnega samoglasnika s kratko končnico: Ana → Ani, Ano; Luka → Luki.
+    // Kratka imena (Mia, Tia, Ana): osnova je pogosta beseda (»mi«, »ti«), zato samo cele sklonjene oblike.
+    const stem = p.replace(/[aeiouy]$/iu, "");
+    if (stem !== p && stem.length >= 2) {
+      const tail = short ? "(?:e|i|o|u|jo|ji|je|ju)" : "\\p{L}{0,3}";
+      if (new RegExp(`${NAME_EDGE_L}${escRe(stem)}${tail}${NAME_EDGE_R}`, "iu").test(out)) return null;
+    }
+    // Premični e: Peter → Petru, Pavel → Pavlu, Aleksander → Aleksandru, Karel → Karlu.
+    const moving = p.replace(/e(\p{L})$/iu, "$1");
+    if (!short && moving !== p && moving.length >= 2 && new RegExp(`${NAME_EDGE_L}${escRe(moving)}\\p{L}{1,3}${NAME_EDGE_R}`, "iu").test(out)) return null;
+  }
+  return out;
+}
+
 // Odstrani odgovor iz predpomnilnika. Tam je shranjen z {{IME}} namesto imena učenca.
 export function purgeCachedAnswer(db, text, name = "") {
   if (!text) return 0;
-  const generic = name.length > 1 ? text.replaceAll(name, "{{IME}}") : text;
-  return Number(db.prepare("DELETE FROM answer_cache WHERE text IN (?, ?)").run(text, generic).changes || 0);
+  // Tudi ključ starih zapisov (pred P3 je bila zamenjava replaceAll, npr. »{{IME}}oli«), dokler ne potečejo.
+  const generic = genericAnswer(text, name) ?? text;
+  const legacy = name.length > 1 ? text.replaceAll(name, "{{IME}}") : text;
+  return Number(db.prepare("DELETE FROM answer_cache WHERE text IN (?, ?, ?)").run(text, generic, legacy).changes || 0);
 }
 
 export function listReports(db, limit = 200) {

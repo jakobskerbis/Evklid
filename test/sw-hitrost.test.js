@@ -77,7 +77,7 @@ test("nova različica aplikacije: stara kopija ni več sveža, gre na omrežje",
 
 test("API, strani strežnika in poizvedbe ostanejo najprej omrežje", async () => {
   const sw = loadSw("abc123");
-  for (const path of ["/api/progress", "/sole", "/3d/modeli/seznam.json", "/?ref=sola"]) {
+  for (const path of ["/api/formulas", "/sole", "/3d/modeli/seznam.json", "/?ref=sola"]) {
     const mode = path.startsWith("/api") || path.endsWith(".json") ? "cors" : "navigate";
     await sw.get(path, mode);
     await new Promise((r) => setTimeout(r, 10));
@@ -85,8 +85,9 @@ test("API, strani strežnika in poizvedbe ostanejo najprej omrežje", async () =
     await sw.get(path, mode);
     assert.deepEqual(sw.calls, [`${ORIGIN}${path}`], `${path} mora vsakič najprej na omrežje`);
   }
-  // prijava in plačila: SW se sploh ne vmeša
+  // prijava, plačila in osebni API (P7): SW se sploh ne vmeša, nič se ne shrani
   assert.equal(await sw.get("/api/auth/me", "cors"), null);
+  assert.equal(await sw.get("/api/progress", "cors"), null);
 });
 
 test("brez različice (APP prazen): datoteke aplikacije kot prej najprej omrežje", async () => {

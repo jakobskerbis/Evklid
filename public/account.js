@@ -8,6 +8,7 @@ import { consentFields, consentsOk, consentBody, linkBox, bindLinkBox } from "./
 import { renderCreditCard } from "./credit-card.js";
 import { renderAdminReports } from "./prijave.js";
 import { guaranteeBox, guaranteeLine, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
+import { clearPrivate, checkOwner, deviceData, endedSession, syncOffline } from "./offline.js";
 import { landingHtml } from "./pristajalna.js";
 import { currentSource } from "./vir.js";
 // Starševski račun: prijava, potrditev e-naslova, otroci s soglasjem, naročnina, priporočila.
@@ -264,9 +265,9 @@ export function openProfileLock(student, students = []) {
     // (sicer bi aplikacija iz shranjene kopije spet pokazala isto okno in gumb bi bil videti mrtev).
     const out = $(".lock-logout", box);
     submit(out, async () => {
+      await sendQueued();
       await logoutRequest();
-      store.set("studentId", null);
-      location.replace("/?odjava=1");
+      await finishLogout();
     });
   });
 }
@@ -309,6 +310,9 @@ export async function initAccount({ onReady }) {
   statusEarly = null;
   enabled = !!status.enabled;
   if (!enabled) return true;
+  // Seja je končana (odjava drugje, iztek, »odjavi druge naprave«): osebni podatki prejšnjega lastnika naprave
+  // se pobrišejo, preden si zapomnimo ključe iz te povezave (povabilo, koda). Brez povezave sem ne pridemo.
+  if (!status.logged_in) await endedSession();
   $("#account-tab").hidden = false;
   watchTakenProfiles();
   lockAccountOnLeave();
@@ -441,6 +445,9 @@ async function renderLanding() {
 }
 
 async function route() {
+  // Prijava v drug račun na tej napravi: osebni podatki prejšnjega se pobrišejo (public/offline.js, P7).
+  if (status.logged_in) await checkOwner(status.parent?.id ?? null);
+  else await endedSession(); // vsi načini konca seje (tudi med uporabo)
   if (!status.logged_in) {
     const mode = route.firstMode || hashMode() || (store.get(SEEN) ? "login" : null);
     // Prijava dobi svoj zapis (#prijava), da »Kaj je Evklid?« in nato Nazaj vrneta na prijavo.
@@ -1416,6 +1423,7 @@ function renderGuestAccount(view, acc) {
     if (!confirm(t("guest.deleteConfirm"))) return;
     try {
       await api("/api/account", { method: "DELETE", body: {} });
+      await clearPrivate();
       store.set("studentId", null);
       location.replace("/");
     } catch (err) {
@@ -1696,6 +1704,8 @@ export async function renderAccount() {
     if (!password) return;
     try {
       const data = await api("/api/account/export", { method: "POST", body: { password } });
+      // Podatki, ki so samo na tej napravi (zgodovina skenerja, neposlani odgovori vaj brez povezave).
+      data.device = deviceData((data.children || []).map((c) => c.id));
       const a = document.createElement("a");
       a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
       a.download = "evklid-podatki.json";
@@ -1712,6 +1722,7 @@ export async function renderAccount() {
     if (!password) return;
     try {
       await api("/api/account", { method: "DELETE", body: { password } });
+      await clearPrivate();
       store.set("studentId", null);
       location.reload();
     } catch (err) {
@@ -1726,13 +1737,38 @@ async function logoutRequest() {
   await Promise.race([api("/api/auth/logout", { method: "POST" }), timeout]);
 }
 
+// Pošlje neposlane odgovore vaj brez povezave vseh profilov na tej napravi (napaka ne ustavi odjave).
+// Največ 6 s (kot logoutRequest), da odjava ob počasni povezavi ne obvisi.
+async function sendQueued() {
+  const ids = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const m = /^evklid\.offline\.queue\.(\d+)$/.exec(localStorage.key(i));
+      if (m) ids.push(Number(m[1]));
+    }
+  } catch {}
+  if (!ids.length) return;
+  const send = (async () => {
+    for (const id of ids) await syncOffline(api, id).catch(() => null);
+  })();
+  await Promise.race([send, new Promise((r) => setTimeout(r, 6000))]);
+}
+
+// Po odjavi na strežniku: naprava se pobriše (P7) in stran se odpre na začetku.
+async function finishLogout() {
+  await clearPrivate(); // predpomnilnik API, paketi vaj, seznam profilov, zgodovina skenerja …
+  store.set("studentId", null);
+  location.replace("/?odjava=1");
+}
+
 export async function logout() {
   if (status?.parent?.guest && !confirm(t("guest.logoutConfirm"))) return;
+  // Neposlani odgovori vaj brez povezave gredo pred odjavo na strežnik (nato se pobrišejo z napravo).
+  await sendQueued();
   try {
     await logoutRequest();
   } catch (err) {
     if (unreachable(err)) return toast(t("lock.offline")); // brez strežnika odjava ni mogoča
   }
-  store.set("studentId", null);
-  location.replace("/?odjava=1");
+  await finishLogout();
 }
