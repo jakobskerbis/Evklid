@@ -391,8 +391,6 @@ export class Store {
     return this.getStudent(id);
   }
   deleteStudent(id) {
-    // Zaklenjena stopnja pilota (server/accounts/index.js pilotLevel): nov profil s ponovno uporabljenim id je ne podeduje.
-    this.db.prepare("DELETE FROM kv WHERE substr(key, 1, length(?)) = ?").run(`pilot_stopnja_s${id}_p`, `pilot_stopnja_s${id}_p`);
     return this.db.prepare("DELETE FROM students WHERE id = ?").run(id).changes > 0;
   }
 

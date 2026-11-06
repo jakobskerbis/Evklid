@@ -99,7 +99,7 @@ test("pilot po koncu in ne-pilot: običajna (brezplačna) meja", async () => {
   }
 });
 
-test("pilot: vsi profili računa (j 2026-11-06 17:0x), vsak s svojo mejo; brez potrjenega naslova nič", async () => {
+test("pilot: vsi profili računa (j 17:0x), z več profili skupen delež Družine (j 19:0x); brez potrjenega naslova nič", async () => {
   await withAccounts({ EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(10) }, async ({ call, store, kid }) => {
     // Drugi profil iz časa pred pilotom (npr. prej družinski paket): ustvarjanje novih profilov ostane po paketu.
     const pid = store.db.prepare("SELECT parent_id FROM students WHERE id = ?").get(kid.id).parent_id;
@@ -107,9 +107,14 @@ test("pilot: vsi profili računa (j 2026-11-06 17:0x), vsak s svojo mejo; brez p
     assert.equal((await call(`/api/students/${kid.id}/usage`)).body.guaranteed, true);
     const u2 = await call(`/api/students/${second.id}/usage`);
     assert.equal(u2.body.guaranteed, true, "tudi drugi profil: " + JSON.stringify(u2));
+    const { familyPlanFor, planGuarantee } = await import("../server/accounts/plans.js");
+    const fam = planGuarantee(familyPlanFor(false, "month"));
+    const u1 = (await call(`/api/students/${kid.id}/usage`)).body;
+    assert.equal(u1.pool, true, JSON.stringify(u1));
+    assert.equal(u1.explanations_month, explanationsFor(detailedShare(fam.usd)), "meja Družine (OŠ/SŠ)");
+    assert.equal((await ask(call, second.id, 1))[0].status, 200);
     spend(store, kid, 500);
-    assert.equal((await ask(call, kid.id, 1))[0].status, 429, "prvi nad mejo");
-    assert.equal((await ask(call, second.id, 1))[0].status, 200, "drugi ima svojo mejo");
+    assert.equal((await ask(call, second.id, 1))[0].status, 429, "skupen delež: poraba prvega ustavi tudi drugega");
     store.db.prepare("UPDATE parents SET email_verified_at = NULL").run();
     assert.notEqual((await call(`/api/students/${kid.id}/usage`)).body.guaranteed, true);
   });
@@ -223,14 +228,14 @@ test("pilot: do 4 profili med pilotom; po koncu ostanejo, novih ni nad paketom (
   });
 });
 
-test("GDPR (pregled A2): HMAC e-naslova, brisanje zapisov pilota po mesecu, ob koncu pilota in ob izbrisu profila", async () => {
+test("GDPR (pregled A2): HMAC e-naslova, brisanje zapisov pilota po mesecu, ob koncu pilota in ob izbrisu računa", async () => {
   const { createHash } = await import("node:crypto");
   const keys = (store, like) => store.db.prepare("SELECT key FROM kv WHERE key LIKE ?").all(like).map((r) => r.key);
   await withAccounts({ EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(10) }, async ({ call, store, kid }) => {
     await call(`/api/students/${kid.id}/usage`);
     assert.equal(keys(store, "pilot_stopnja_%").length, 1, "zaklep stopnje zapisan");
     assert.equal((await call(`/api/students/${kid.id}`, { method: "DELETE" })).status, 200);
-    assert.deepEqual(keys(store, "pilot_stopnja_%"), [], "izbris profila zbriše zaklep");
+    assert.equal(keys(store, "pilot_stopnja_%").length, 1, "zaklep je na računu (C1): izbris profila ga ne zbriše");
     const kid2 = (await call("/api/students", { method: "POST", body: { name: "Eva", birth_year: new Date().getFullYear() - 12, consent: true } })).body;
     spend(store, kid2, 1);
     await call(`/api/students/${kid2.id}/usage`);
@@ -244,14 +249,26 @@ test("GDPR (pregled A2): HMAC e-naslova, brisanje zapisov pilota po mesecu, ob k
   const { openDb } = await import("../server/db.js");
   const { createApp } = await import("../server/app.js");
   const month = new Date().toISOString().slice(0, 7);
-  for (const [end, left] of [[dayIso(10), ["pilot_prej_x_" + month, "pilot_stopnja_s1_p1_" + month]], [dayIso(-1), []]]) {
+  for (const [end, left] of [[dayIso(10), ["pilot_prej_x_" + month, "pilot_stopnja_p1_" + month]], [dayIso(-1), []]]) {
     const prev = process.env.EVKLID_PILOT_DO;
     process.env.EVKLID_PILOT_DO = end;
     const store = openDb(":memory:");
-    for (const k of ["pilot_prej_x_2020-01", "pilot_prej_x_" + month, "pilot_stopnja_s1_p1_2020-01", "pilot_stopnja_s1_p1_" + month, "drugo_2020-01"]) store.db.prepare("INSERT INTO kv (key, value) VALUES (?, '1')").run(k);
+    for (const k of ["pilot_prej_x_2020-01", "pilot_prej_x_" + month, "pilot_stopnja_p1_2020-01", "pilot_stopnja_p1_" + month, "drugo_2020-01"]) store.db.prepare("INSERT INTO kv (key, value) VALUES (?, '1')").run(k);
     createApp(store, { accounts: true, scheduler: false, resendKey: "re_x", log: { error() {} } });
     assert.deepEqual(keys(store, "pilot%").sort(), left.sort(), `konec ${end}`);
     assert.equal(keys(store, "drugo%").length, 1, "drugih zapisov ne briše");
     prev === undefined ? delete process.env.EVKLID_PILOT_DO : (process.env.EVKLID_PILOT_DO = prev);
+  }
+});
+
+test("pilot in lastnik: neposreden nakup paketa pred testom zavrnjen (pregled B2 C3)", async () => {
+  for (const env of [{ EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(10) }, { EVKLID_ADMIN_EMAILS: "meja@x.si" }, {}]) {
+    await withAccounts(env, async ({ call, kid }) => {
+      const r = await call("/api/billing/pass", { method: "POST", body: { student_id: kid.id, days: 7, test_date: dayIso(3), test_name: "Test" } });
+      if (Object.keys(env).length) {
+        assert.equal(r.status, 409, JSON.stringify({ env, r }));
+        assert.equal(r.body.pilot, true);
+      } else assert.notEqual(r.body?.pilot, true, "ne-pilot: brez te zavrnitve " + JSON.stringify(r));
+    }, { stripeKey: "sk_test_x" });
   }
 });

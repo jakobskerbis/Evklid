@@ -267,6 +267,9 @@ export function mountBilling(app, ctx) {
     if (!plan) return { status: 400, body: { error: "Neznan paket." } };
     // j 2026-10-30: paket se ponudi samo učencu brez aktivne naročnine na Evklid.
     if (paidActive(parent)) return { status: 409, body: { error: "Ta račun že ima naročnino, zato paket pred testom ni potreben.", subscription: true } };
+    // Pilot in lastnik (pregled #477 C3): paket med pilotom ne bi dal ničesar, lastnik je brez meje.
+    const why = offersFor(studentId)?.reason;
+    if (why === "pilot" || why === "owner") return { status: 409, body: { error: "Ta račun ima v pilotu poln paket, zato paket pred testom ni potreben.", pilot: true } };
     if (passes.latestFor(studentId)) return { status: 409, body: { error: "Ta profil že ima aktiven paket pred testom.", active: true } };
     if (currencyOf(req, parent) !== "EUR") return { status: 400, body: { error: "Paketi pred testom so zaenkrat na voljo samo v evrih." } };
     const date = cleanDate(body?.test_date);

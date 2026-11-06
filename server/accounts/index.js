@@ -202,26 +202,25 @@ export function mountAccounts(app, store, opts = {}) {
     return Date.parse(String(row.until).replace(" ", "T")) > Date.now() ? lvl : null;
   }
   // Zapisi pilota v kv (pregled #477 A2, GDPR): ključ se konča z mesecem (UTC, obdobje meje pilota usage.monthStart).
-  //   pilot_stopnja_s<profil>_p<račun>_<LLLL-MM>  zaklenjena stopnja profila (B2)
-  //   pilot_prej_<HMAC e-naslova>_<LLLL-MM>       poraba izbrisanih pilotnih računov istega naslova (B1)
+  //   pilot_stopnja_p<račun>_<LLLL-MM>       zaklenjena stopnja računa (B2, C1)
+  //   pilot_prej_<HMAC e-naslova>_<LLLL-MM>  poraba izbrisanih pilotnih računov istega naslova (B1)
   // Zapisi preteklih mesecev se brišejo ob zagonu in v opravilu na 30 min (purgePilotKv), po koncu pilota vsi.
   const monthKey = () => new Date().toISOString().slice(0, 7);
-  const levelKeyPrefix = (studentId) => `pilot_stopnja_s${studentId}_p`;
-  // Stopnja pilotnega profila v tem mesecu: prva, ki jo strežnik vidi v mesecu (začetek meseca ali nastanek profila).
-  // Menjava stopnje sredi meseca meje in stopenj ne dvigne (pregled #477 B2); naslednji mesec velja nova stopnja.
-  function pilotLevel(parentId, studentId) {
-    const key = `${levelKeyPrefix(studentId)}${parentId}_${monthKey()}`;
+  const levelKeyPrefix = (parentId) => `pilot_stopnja_p${parentId}_`;
+  // Zaklenjena stopnja pilotnega RAČUNA v tem mesecu (pregled #477 B2/C1): najvišja stopnja profilov računa ob prvem
+  // pogledu v mesecu. Menjava stopnje, izbris profila in nov profil višje stopnje sredi meseca meje in stopenj ne
+  // dvignejo (profil dobi največ to stopnjo); naslednji mesec velja nova.
+  function pilotLevel(parentId) {
+    const key = `${levelKeyPrefix(parentId)}${monthKey()}`;
     const saved = kv.get(key);
     if (saved) return saved;
-    const lvl = stopnja(store.getStudent(studentId)?.settings);
+    const levels = childIds(parentId).map((id) => stopnja(store.getStudent(id)?.settings));
+    const lvl = levels.reduce((top, l) => (rang(l) > rang(top) ? l : top), levels[0] || "OS");
     db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES (?, ?)").run(key, lvl);
     return kv.get(key) || lvl;
   }
-  // Ob izbrisu profila ali računa (pregled #477 A2): ponovno uporabljen id profila ne podeduje zaklenjene stopnje.
-  const clearPilotLevels = (studentIds) => {
-    const del = db.prepare("DELETE FROM kv WHERE substr(key, 1, length(?)) = ?");
-    for (const id of studentIds) del.run(levelKeyPrefix(id), levelKeyPrefix(id));
-  };
+  // Ob izbrisu računa (pregled #477 A2): ponovno uporabljen id računa ne podeduje zaklenjene stopnje.
+  const clearPilotLevels = (parentId) => db.prepare("DELETE FROM kv WHERE substr(key, 1, length(?)) = ?").run(levelKeyPrefix(parentId), levelKeyPrefix(parentId));
   // Pilot po e-naslovu (pregled #477 B1): izbris računa in nov račun z istim naslovom meje ne ponastavita. Ob izbrisu
   // pilotnega računa (sprožilec v schema.js porabi odvzame parent_id) se poraba računa v tem mesecu zapiše pod HMAC
   // e-naslova s strežniško skrivnostjo (crypto-polje.js auditSecret; brez skrivnosti iz seznama pilota ni razrešljiv)
@@ -267,12 +266,12 @@ export function mountAccounts(app, store, opts = {}) {
     const access = accessOf(parent);
     // Lastnik (j 2026-11-06, server/accounts/pilot-meja.js): vsi profili imajo poln paket, inštruktor brez meje
     // (aiUnlimited spodaj). Član pilota: do konca pilota VSI profili računa (j 2026-11-06 17:0x) kot plačan paket
-    // svoje stopnje, brezplačno; stopnja je zaklenjena na stopnjo profila na začetku meseca (pilotLevel, pregled #477
-    // B2), kot pri plačanem paketu ene stopnje. Prava plačana naročnina ostane naročnina (Stripe v preizkusni dobi še
+    // svoje stopnje (več profilov: Družina s skupnim deležem, j 19:0x), brezplačno; stopnja je zaklenjena na račun in
+    // mesec (pilotLevel, pregled #477 B2/C1), kot pri plačanem paketu. Prava plačana naročnina ostane naročnina (Stripe v preizkusni dobi še
     // ni plačilo, zato tam velja pilot).
     if (isOwnerParent(parent)) return { tier: "owner", until: null, level: null };
     if (isPilotParent(parent) && (access.tier !== "paid" || unpaidTier(parent))) {
-      return { tier: "pilot", until: new Date(pilotEndMs()).toISOString(), level: pilotLevel(parentId, studentId) };
+      return { tier: "pilot", until: new Date(pilotEndMs()).toISOString(), level: pilotLevel(parentId) };
     }
     // level: najvišja stopnja paketa (null = vse); grace: profil za en sedež, ki je prešel na višjo stopnjo,
     // jo ima odprto do naslednjega podaljšanja (tedaj velja nova cena, billing.js levelChanges).
@@ -339,8 +338,14 @@ export function mountAccounts(app, store, opts = {}) {
     if (!r.personal) return null;
     const owner = ownerOf(studentId);
     if (r.personalTier === "gift") return giftGuarantee(getParent(owner)?.gift_level, r.useLevel);
-    // Pilot: ista meja kot plačan paket stopnje brez znanega paketa (levelGuarantee); lastnik je brez meje (aiUnlimited).
-    if (r.personalTier === "pilot") return levelGuarantee(r.useLevel);
+    // Pilot (j 2026-11-06 19:0x): en profil = meja plačanega paketa stopnje (levelGuarantee); več profilov = meja
+    // ustrezne Družine s skupnim deležem (familyPlanFor po zaklenjeni stopnji računa, planGuarantee, pool), tako kot
+    // plačujoča družina. Lastnik je brez meje (aiUnlimited).
+    if (r.personalTier === "pilot") {
+      if (childIds(owner).length < 2) return levelGuarantee(r.useLevel);
+      const fam = familyPlanFor(r.openLevel === "FAKS", "month");
+      return fam ? { ...planGuarantee(fam), pool: true } : levelGuarantee(r.useLevel);
+    }
     if (NOPAY_USD[r.personalTier]) return nopayGuarantee(r.personalTier, owner);
     if (r.personalTier !== "paid") return null;
     // Naročnina v preizkusni dobi pri Stripu (trialing): plačila še ni bilo, zato do prvega plačanega računa velja meja
@@ -496,7 +501,9 @@ export function mountAccounts(app, store, opts = {}) {
     if (!subGuarantee(studentId)?.pool) return null;
     const owner = ownerOf(studentId);
     const access = accessOf(getParent(owner));
-    const ids = [...childIds(owner)].sort((a, b) => a - b).slice(0, access.seats || 1);
+    // Pilot: vsi profili računa (največ MAX_CHILDREN) v skupnem deležu Družine.
+    const seats = rightsFor(studentId).personalTier === "pilot" ? MAX_CHILDREN : access.seats || 1;
+    const ids = [...childIds(owner)].sort((a, b) => a - b).slice(0, seats);
     return ids.includes(studentId) ? ids : null;
   }
   // Trda meja AI (j 2026-11-06, server/meje-ai.js): meje profila brez zajamčenega paketa za server/usage.js hold.
@@ -1486,7 +1493,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
     guests.snapshotParent(p.id); // poraba gosta ostane šteta za omrežje
     recordPilotDeletion(p);
-    clearPilotLevels(childIds(p.id));
+    clearPilotLevels(p.id);
     db.prepare("DELETE FROM students WHERE parent_id = ?").run(p.id);
     db.prepare("DELETE FROM parents WHERE id = ?").run(p.id);
     // Dnevnik dostopov ostane brez povezave na izbrisani račun (brez e-naslova).
