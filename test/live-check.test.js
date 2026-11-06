@@ -13,9 +13,9 @@ function harness({ answers = [], fixes = [], reviews = [] } = {}) {
   const store = openDb(":memory:");
   const calls = [];
   const reviewCalls = [];
-  const streamFn = async ({ system, messages, mode, onText }) => {
+  const streamFn = async ({ system, messages, mode, onText, canRound }) => {
     const isFix = typeof system === "string" && system.startsWith("You fix one mistake");
-    calls.push({ system, messages, mode, isFix });
+    calls.push({ system, messages, mode, isFix, canRound });
     const text = isFix ? fixes.shift() ?? "OK" : (answers.shift() ?? "Odgovor.") + META;
     if (!isFix) onText(text);
     return { content: [{ type: "text", text }], text, stopReason: "end_turn", model: modeParams(mode).model, usage: { input_tokens: 100, output_tokens: 20 } };
@@ -288,6 +288,8 @@ test("verdict check: a wrong confirmation is never shown; the tutor answers agai
     assert.match(h.reviewCalls[0].system, /judged the student's last message/);
     assert.match(h.reviewCalls[0].messages[0].content, /STUDENT'S MESSAGE:\nna luni ni teže[\s\S]*TUTOR'S REPLY:\nTočno tako/);
     assert.equal(h.calls.length, 3, "prvi odgovor, drugi odgovor po pregledu (brez ločenega popravka)");
+    // Ponovni odgovor sme poklicati orodje: vsak dodaten krog gre skozi rezervo (trda meja AI, pregled #462).
+    assert.equal(typeof h.calls[2].canRound, "function");
     const note = h.calls[2].messages.at(-1).content.at(-1).text;
     assert.match(note, /<preverjen_racun>[\s\S]*weight on the Moon[\s\S]*answer again/);
     assert.doesNotMatch(r.sse, /Točno tako/, "napačna sodba ni prišla do učenca");

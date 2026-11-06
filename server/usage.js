@@ -3,6 +3,8 @@ import "./env.js";
 import { costUsd, MODEL_MID } from "./claude.js";
 import { BUDGET, MAX_BUDGET_USD, paceLevel, periodOf, budgetMode, fastMode } from "./proracun.js";
 import { explanationsFor, allowanceStage, detailedShare, freeStudentMonthlyUsd } from "./accounts/plans.js";
+import { callMaxUsd } from "./meje-ai.js";
+import { MODEL, MAX_TOKENS } from "./claude.js";
 
 const num = (k, d) => {
   const v = Number(process.env[k]);
@@ -29,6 +31,8 @@ export const LIMITS = {
   promoOpusMonthUsd: () => num("EVKLID_PROMO_OPUS_MONTH_USD", 0.3),
   alertRatio: 0.8,
   historyTurns: () => num("EVKLID_HISTORY_TURNS", 10),
+  // Fotografije v zgodovini: koliko zadnjih učenčevih sporočil obdrži sliko (server/usage.js staleImages).
+  historyImageTurns: () => num("EVKLID_HISTORY_IMAGE_TURNS", 1),
   // Zmogljivejši model dobi samo zadnje izmenjave (njegov predpomnilnik je ločen, vsak žeton je drag).
   deepHistoryTurns: () => num("EVKLID_DEEP_HISTORY_TURNS", 3),
   // Tekmovanja: privzeto hitri model z več razmisleka; 1 = vedno zmogljivejši model (prej).
@@ -55,14 +59,20 @@ export const NOTES = {
 };
 
 // Razlogi, zakaj inštruktor ne odgovori (blockInfo). Enako besedilo je v public/i18n/sl.js pod istim ključem.
+// topupPrompt: true (poziv k dokupu), "birth" (dokup šele po vpisu datuma rojstva) ali false → pripona kode zavrnitve.
+const tpSuffix = (tp) => (tp === "birth" ? "Birth" : tp ? "Topup" : "");
 export const BLOCK_TEXT = {
   "block.daily": "Današnja vprašanja za inštruktorja so porabljena ({n} na dan). Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
   "block.creditOut": "Inštruktor je za nekaj minut nedosegljiv (dobroimetje za AI je porabljeno). Vadnica in razlage tem delujejo naprej.",
-  "block.freeTailBirth": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
+  // Meja paketa teče po obdobju paketa (naročnina: od dneva plačila), ne po koledarskem mesecu (pregled #462).
+  "block.freeTailTopup": "V tem obdobju paketa si porabil vsa vprašanja za inštruktorja. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer z novim obdobjem paketa. Vadnica in razlage tem delujejo naprej.",
+  "block.freeTail": "V tem obdobju paketa si porabil vsa vprašanja za inštruktorja. Spet jih dobiš z novim obdobjem paketa. Vadnica in razlage tem delujejo naprej.",
+  "block.trialOut": "Vprašanja za inštruktorja v preizkusu so porabljena. Za nadaljevanje naj starš izbere naročnino v zavihku Račun. Vadnica in razlage tem delujejo naprej.",
+  "block.passOut": "Paket pred testom je porabljen. Nadaljuješ v brezplačnem paketu. Vadnica in razlage tem delujejo naprej.",
+  "block.longChat": "Ta pogovor je predolg za inštruktorja. Začni nov pogovor, pa lahko nadaljuješ.",
+  "block.freeTailBirth": "V tem obdobju paketa si porabil vsa vprašanja za inštruktorja. Spet jih dobiš z novim obdobjem paketa. Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
   "block.capOutBirth": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
   "block.shareOutBirth": "Ta mesec si porabil svoj del inštruktorja. Spet ga dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
-  "block.freeTailTopup": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
-  "block.freeTail": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
   "block.capOut": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej.",
   "block.shareOut": "Ta mesec si porabil svoj del inštruktorja. Spet ga dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
   "block.capOutTopup": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj. Vadnica in razlage tem delujejo naprej.",
@@ -103,12 +113,31 @@ export class Usage {
     this.topupPrompt = () => true;
     this.credits = null;
     this.shareCache = null;
+    // Trda meja AI (server/meje-ai.js): dodatne meje profila iz računov (brezplačni paket, šola, paket pred testom,
+    // kredit) kot [{ key, usd, spent, code }]; rezervacije klicev v teku po ključu meje.
+    this.capsOf = () => [];
+    this.totalOf = () => null;
+    this.minCall = null;
+    // Besedilo zavrnitve po kodi; računi dodajo namig (gost, starš) in kodo preizkusa (block.trialOut).
+    this.blockFor = (studentId, code) => ({ error: BLOCK_TEXT[code], code });
+    // Začetek obdobja meje zajamčenega paketa (ISO) ali null = koledarski mesec (j 2026-11-06, pregled #462).
+    this.periodOf = () => null;
+    this.onLog = null;
+    this.inflight = new Map();
   }
   // Računi (server/accounts/index.js): utež profila po paketu, lastnik računa in dokupljeni kredit.
   // freeOver: brezplačni profil je nad mejo brezplačnega paketa (s kreditom nadaljuje, ves strošek gre iz kredita).
   // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
   // poolOf: profili s skupnim deležem (Družina); poraba se tedaj šteje za vse skupaj.
-  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt } = {}) {
+  // totalOf: vrednost paketa (meja + brezplačni rep) v $ ali null; trda meja ni nikoli višja (capsFor).
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf } = {}) {
+    if (minCall) this.minCall = minCall;
+    if (blockFor) this.blockFor = blockFor;
+    if (creditOverOf) this.creditOverOf = creditOverOf;
+    if (capsOf) this.capsOf = capsOf;
+    if (totalOf) this.totalOf = totalOf;
+    if (periodOf) this.periodOf = periodOf;
+    if (onLog) this.onLog = onLog;
     if (weightOf) this.weightOf = weightOf;
     if (poolOf) this.poolOf = poolOf;
     if (topupPrompt) this.topupPrompt = topupPrompt;
@@ -217,7 +246,11 @@ export class Usage {
       // Družina: skupen delež, poraba vseh profilov skupaj. g je ves mesečni strošek AI paketa (ceiling, trda meja);
       // allowance = del za podrobne razlage (g / 1,15), od tam do meje hitri način (plans.js FAST_TAIL, detailedShare).
       const group = this.poolOf(studentId);
-      return { ...base, spent: this.groupSpent(studentId, group), group, pool: !!group, allowance: detailedShare(g), ceiling: g, guaranteed: true };
+      // Poraba šteje po obdobju paketa (naročnina: od začetka plačanega obdobja, ne koledarski mesec), brez porabe
+      // iz kredita; poraba izbrisanih profilov računa šteje (izbris in nov profil meje ne ponastavita).
+      const since = this.periodStart(studentId);
+      const spent = (group || [studentId]).reduce((t, id) => t + this.spentSince(id, since), 0) + this.orphanSpent(owner, since);
+      return { ...base, spent, group, pool: !!group, allowance: detailedShare(g), ceiling: g, guaranteed: true };
     }
     const pool = state.cap ? Math.max(0, state.cap - this.reservedUsd(studentId)) : 0;
     const allowance = pool ? (pool * weight) / Math.max(weight, this.totalWeight(studentId)) : 0;
@@ -243,7 +276,7 @@ export class Usage {
     return !!sb.guaranteed && sb.spent >= sb.ceiling - 1e-9 && sb.credit <= 0;
   }
   // Naročnik je nad mejo paketa porabil še brezplačni rep (kot brezplačni profil: freeStudentMonthlyUsd na profil,
-  // pri Družini za vse profile skupaj), brez kredita: inštruktor do 1. v mesecu ali do dokupa ne odgovarja.
+  // pri Družini za vse profile skupaj), brez kredita: inštruktor do novega obdobja paketa ali do dokupa ne odgovarja.
   overFreeTail(studentId, state = this.budgetState()) {
     const sb = this.studentBudget(studentId, state);
     return !!sb.guaranteed && sb.credit <= 0 && sb.spent >= sb.ceiling + freeStudentMonthlyUsd() * (sb.group?.length || 1) - 1e-9;
@@ -296,8 +329,8 @@ export class Usage {
     const cost = costUsd(model, usage || {});
     this.db
       .prepare(
-        `INSERT INTO usage (student_id, model, kind, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, cost_usd)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO usage (student_id, model, kind, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, cost_usd, parent_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         studentId,
@@ -308,6 +341,7 @@ export class Usage {
         usage?.cache_read_input_tokens || 0,
         usage?.cache_creation_input_tokens || 0,
         cost,
+        studentId == null ? null : this.ownerOf(studentId) ?? null,
       );
     this.creditOutAt = 0;
     if (this.lastCreditOut) {
@@ -315,6 +349,9 @@ export class Usage {
       this.kvSet("ai_credit_out_at", 0);
     }
     this.chargeCredit(studentId, cost);
+    try {
+      this.onLog?.(studentId, cost);
+    } catch {}
     const month = this.baseSpent();
     const budget = this.budget().total;
     if (budget && month >= budget * LIMITS.alertRatio && month - cost < budget * LIMITS.alertRatio) {
@@ -328,10 +365,19 @@ export class Usage {
     // Meja brezplačnega paketa ob kreditu ne velja (accounts/index.js), zato tam plača kredit ves strošek, tudi brez proračuna.
     const free = !!this.freeOver(studentId);
     const state = this.budgetState();
-    if (!state.cap && !free) return;
     const sb = this.studentBudget(studentId, state);
+    // Zajamčen paket in paket pred testom: kredit plača porabo nad mejo paketa TUDI brez proračuna (trda meja AI šteje
+    // kredit v mejo, zato se mora res porabiti; pregled #462). Paket: creditOverOf (accounts), zajamčen: nad podrobnim delom.
+    const passOver = free ? null : this.creditOverOf?.(studentId);
+    if (!state.cap && !free && !sb.guaranteed && passOver == null) return;
     if (!sb.owner || sb.credit <= 0) return;
-    const over = free ? cost : Math.max(sb.spent - sb.allowance, state.spent - state.cap, 0);
+    const over = free
+      ? cost
+      : passOver != null
+        ? Math.max(passOver, 0)
+        : sb.guaranteed
+          ? Math.max(sb.spent - sb.allowance, state.cap ? state.spent - state.cap : 0, 0)
+          : Math.max(sb.spent - sb.allowance, state.spent - state.cap, 0);
     const take = Math.min(cost, over, sb.credit);
     if (take > 0) this.credits.use(sb.owner, studentId, Math.round(take * 1e6) / 1e6);
   }
@@ -343,10 +389,10 @@ export class Usage {
     const q = `SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE created_at >= date('now','start of month')${studentId ? " AND student_id = ?" : ""}`;
     return studentId ? this.db.prepare(q).get(studentId).s : this.db.prepare(q).get().s;
   }
-  // Število odgovorov zmogljivejšega modela danes.
+  // Število odgovorov zmogljivejšega modela danes; prekinjeni odgovori štejejo (sicer bi prekinitev obšla dnevno mejo).
   deepToday(studentId, deepModel) {
     return this.db
-      .prepare("SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind = 'chat' AND model LIKE ? AND date(created_at) = date('now')")
+      .prepare("SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind IN ('chat', 'prekinjeno') AND model LIKE ? AND date(created_at) = date('now')")
       .get(studentId, `%${String(deepModel).replace(/^claude-/, "").split("-")[0]}%`).n;
   }
   // Ali je imetnik aktivacijske kode dosegel skrito omejitev Opusa (danes ali ta mesec).
@@ -429,13 +475,9 @@ export class Usage {
     const max = LIMITS.dailyQuestionsMax();
     return max ? Math.min(max, n) : n;
   }
+  // Vprašanja danes (server/db.js question_log): izbris pogovora jih ne zmanjša.
   questionsToday(studentId) {
-    return this.db
-      .prepare(
-        `SELECT COUNT(*) AS n FROM messages m JOIN conversations c ON c.id = m.conversation_id
-         WHERE c.student_id = ? AND m.role = 'user' AND date(m.created_at) = date('now')`,
-      )
-      .get(studentId).n;
+    return this.db.prepare("SELECT COALESCE(SUM(n),0) AS n FROM question_log WHERE student_id = ? AND day = date('now')").get(studentId).n;
   }
   // Vrne besedilo razloga, če je klepet trenutno onemogočen, sicer null.
   blockReason(studentId) {
@@ -448,23 +490,192 @@ export class Usage {
     if (daily && this.questionsToday(studentId) >= daily) {
       return { error: BLOCK_TEXT["block.daily"].replace("{n}", daily), code: "block.daily", params: { n: daily } };
     }
-    const out = (code) => ({ error: BLOCK_TEXT[code], code });
+    const out = (code) => this.blockFor(studentId, code);
     if (this.creditOut()) return out("block.creditOut");
     // Skupni proračun se deli po profilih (server/proracun.js); nad svojim delom učenec nadaljuje z dokupljenim kreditom.
     const state = this.budgetState();
     // topupPrompt: true (poziv k dokupu), "birth" (dokup šele po vpisu datuma rojstva) ali false.
-    const tail = (tp) => (tp === "birth" ? "Birth" : tp ? "Topup" : "");
+    const tail = tpSuffix;
     if (this.overFreeTail(studentId, state)) return out(`block.freeTail${tail(this.topupPrompt(studentId))}`);
     if (state.cap) {
-      if (!this.overShare(studentId, state)) return null;
+      if (!this.overShare(studentId, state)) {
+        const hard = this.hardBlock(studentId);
+        return hard ? out(hard) : null;
+      }
       // Pod 15 let ali ob ponudbi paketa pred testom brez poziva k dokupu (ponudbe.js, ena ponudba naenkrat).
       const capped = state.spent >= state.cap;
       return out(`${capped ? "block.capOut" : "block.shareOut"}${tail(this.topupPrompt(studentId))}`);
     }
+    // Trda meja (server/meje-ai.js): ni prostora niti za najcenejši klic.
+    const hard = this.hardBlock(studentId);
+    if (hard) return out(hard);
     const per = LIMITS.studentMonthlyUsd();
     // Naročnika mesečna meja ne ustavi: nad zajamčenim deležem odgovarja hitri model (dnevna meja vprašanj velja).
     if (per && !(this.guaranteeOf(studentId) > 0) && this.monthTotal(studentId) >= per) return out("block.monthLimit");
     return null;
+  }
+  // ---------- trda meja AI (j 2026-11-06, server/meje-ai.js) ----------
+  // Poraba izbrisanih profilov računa od since (privzeto ta mesec; student_id NULL, parent_id ostane).
+  orphanSpent(owner, since = this.monthStart()) {
+    if (owner == null) return 0;
+    const s = this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE parent_id = ? AND student_id IS NULL AND created_at >= ?").get(owner, since).s;
+    // Brez dela, ki ga je plačal kredit (pregled #462 S5: sicer dvojno štetje kot pri spentSince).
+    return Math.max(0, s - (this.credits?.orphanUsedSince?.(owner, since) || 0));
+  }
+  // Začetek tega meseca v obliki stolpca created_at (UTC).
+  monthStart() {
+    return this.db.prepare("SELECT datetime('now','start of month') AS d").get().d;
+  }
+  // Začetek obdobja meje profila v obliki created_at: obdobje paketa (periodOf) ali koledarski mesec.
+  periodStart(studentId) {
+    const iso = this.periodOf(studentId);
+    const t = iso ? Date.parse(iso) : NaN;
+    return Number.isFinite(t) ? new Date(t).toISOString().slice(0, 19).replace("T", " ") : this.monthStart();
+  }
+  // Poraba profila od since brez porabe iz dokupljenega kredita.
+  spentSince(studentId, since) {
+    const s = this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE student_id = ? AND created_at >= ?").get(studentId, since).s;
+    return Math.max(0, s - (this.credits?.usedSince?.(studentId, since) || 0));
+  }
+  // Meje, ki veljajo za naslednji klic profila: { key, usd, spent, code }. Naročnina, darilo, preizkus, koda in bonus:
+  // vsa vrednost paketa (meja + brezplačni rep) + dokupljeni kredit; ostalo iz računov (capsOf).
+  capsFor(studentId, state = this.budgetState()) {
+    const caps = [];
+    const sb = this.studentBudget(studentId, state);
+    if (sb.guaranteed) {
+      const n = sb.group?.length || 1;
+      caps.push({
+        key: sb.group ? `pool:${[...sb.group].sort((a, b) => a - b).join(",")}` : `s:${studentId}`,
+        usd: Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, this.totalOf(studentId) ?? Infinity) + Math.max(0, sb.credit || 0),
+        spent: sb.spent,
+        code: `block.freeTail${tpSuffix(this.topupPrompt(studentId))}`,
+      });
+    }
+    for (const c of [].concat(this.capsOf(studentId) || [])) if (c && Number.isFinite(c.usd)) caps.push(c);
+    return caps;
+  }
+  // Prostor do najbližje meje v $ (poraba in rezervacije klicev v teku odštete); Infinity brez meje (brez računov).
+  headroom(studentId, caps = this.capsFor(studentId)) {
+    let h = Infinity;
+    for (const c of caps) h = Math.min(h, c.usd - (c.spent || 0) - (this.inflight.get(c.key) || 0));
+    return h;
+  }
+  // Najcenejši klic (hitri model, kratek način, ~30k vhodnih žetonov): brez prostora zanj je inštruktor ustavljen.
+  // Strežnik (server/app.js) nastavi minCall na dejansko rezervo »lite« (sistemski prompt, orodja, kratko vprašanje).
+  minCallUsd() {
+    return Math.max(callMaxUsd(MODEL, 30_000, MAX_TOKENS.lite), this.minCall?.() || 0);
+  }
+  // Meja z najmanj prostora: { cap, room } (room = Infinity brez meja).
+  tightest(studentId, caps = this.capsFor(studentId)) {
+    let cap = null;
+    let room = Infinity;
+    for (const c of caps) {
+      const r = c.usd - (c.spent || 0) - (this.inflight.get(c.key) || 0);
+      if (r < room) [cap, room] = [c, r];
+    }
+    return { cap, room };
+  }
+  // Koda razloga, če meja ne dopušča niti najcenejšega klica, sicer null.
+  hardBlock(studentId) {
+    const caps = this.capsFor(studentId);
+    if (!caps.length) return null;
+    const need = this.minCallUsd();
+    const c = caps.find((x) => x.usd - (x.spent || 0) - (this.inflight.get(x.key) || 0) < need);
+    return c ? c.code || "block.monthLimit" : null;
+  }
+  // Ena rezervacija za en klic (skener, branje zapisa, urnik, anketa): hold ali null, če ne gre pod mejo.
+  guard(studentId, usd) {
+    const h = this.hold(studentId);
+    return h.take(usd) ? h : null;
+  }
+  // Strošek aplikacije (ne učenca) z dnevnim zneskom: npr. preverjanje odgovorov in kartic (server/verify.js
+  // VERIFY_DAILY_USD, j 2026-11-06). Rezervacija pod »danes porabljeno vrste kind + klici v teku ≤ dailyUsd«;
+  // dailyUsd < 0 = brez meje. Vrne hold ali null.
+  appHold(kind, dailyUsd, usd) {
+    const caps = () => (dailyUsd >= 0 ? [{ key: `app:${kind}`, usd: dailyUsd, spent: this.kindToday(kind) }] : []);
+    const h = this.hold(null, caps);
+    return h.take(usd) ? h : null;
+  }
+  // Odgovor 429, ko klic ne gre pod trdo mejo.
+  // Koda je koda meje, ki je vezala (najmanj prostora), z namigom računov (blockFor). freshUsd (klepet): rezerva
+  // najcenejšega odgovora v novem pogovoru; če je zanjo prostor, je kriv le dolg pogovor (block.longChat).
+  guardBlock(studentId, freshUsd = null) {
+    const { cap, room } = this.tightest(studentId);
+    const code = freshUsd != null && room >= freshUsd ? "block.longChat" : cap?.code || "block.monthLimit";
+    return { ...this.blockFor(studentId, code), limit: true };
+  }
+  // Rezervacija za klice ene zahteve: take(usd) rezervira, če gre pod vse meje profila (sicer false);
+  // settle(rezervirano) jo sprosti, ko je strošek zapisan; release() sprosti vse ob koncu zahteve.
+  // capsFn: meje, ki veljajo (privzeto meje profila); za strošek aplikacije npr. dnevni znesek preverjanja (appHold).
+  hold(studentId, capsFn = () => this.capsFor(studentId)) {
+    const keys = capsFn().map((c) => c.key);
+    const self = this;
+    let held = 0;
+    let row = null;
+    const add = (usd) => {
+      for (const k of keys) {
+        const v = (self.inflight.get(k) || 0) + usd;
+        if (v > 1e-12) self.inflight.set(k, v);
+        else self.inflight.delete(k);
+      }
+      held += usd;
+      if (studentId != null) self.persistHold(row, studentId, held, (id) => (row = id));
+    };
+    return {
+      take(usd) {
+        if (!(usd >= 0)) return false;
+        if (self.headroom(studentId, capsFn()) < usd) return false;
+        add(usd);
+        return true;
+      },
+      settle(usd) {
+        add(-Math.min(Math.max(0, usd), held));
+      },
+      release() {
+        if (held > 0) add(-held);
+        held = 0;
+      },
+      get held() {
+        return held;
+      },
+    };
+  }
+  // Rezervacija v bazi (ai_holds): ob ponovnem zagonu med klicem se strošek ne izgubi (pregled #462 S4).
+  persistHold(row, studentId, held, setRow) {
+    try {
+      if (held > 1e-12) {
+        if (row == null) setRow(Number(this.db.prepare("INSERT INTO ai_holds (student_id, usd) VALUES (?, ?)").run(studentId, held).lastInsertRowid));
+        else this.db.prepare("UPDATE ai_holds SET usd = ? WHERE id = ?").run(held, row);
+      } else if (row != null) {
+        this.db.prepare("DELETE FROM ai_holds WHERE id = ?").run(row);
+        setRow(null);
+      }
+    } catch {
+      // brez tabele (stara baza v testu): samo v pomnilniku
+    }
+  }
+  // Ob zagonu strežnika: rezervacije prejšnjega procesa (klic je morda tekel in bil plačan) se zapišejo kot poraba
+  // profila v višini rezerve (zgornja meja). En primerek strežnika (SQLite), zato so vse vrstice ob zagonu ostanki.
+  recoverHolds() {
+    try {
+      const rows = this.db.prepare("SELECT id, student_id, usd FROM ai_holds").all();
+      for (const r of rows) {
+        if (r.student_id == null || !(r.usd > 0) || !this.db.prepare("SELECT 1 FROM students WHERE id = ?").get(r.student_id)) continue;
+        // Kot usage.log (pregled #462 H4/K3-5): lastnik računa (ownerOf), del nad mejo iz kredita, onLog (bazeni, šola).
+        this.db
+          .prepare("INSERT INTO usage (student_id, model, kind, cost_usd, parent_id) VALUES (?, 'rezerva', 'prekinjeno', ?, ?)")
+          .run(r.student_id, r.usd, this.ownerOf(r.student_id) ?? null);
+        this.chargeCredit(r.student_id, r.usd);
+        try {
+          this.onLog?.(r.student_id, r.usd);
+        } catch {}
+      }
+      this.db.prepare("DELETE FROM ai_holds").run();
+      if (rows.length) console.warn(`[evklid] ob zagonu zapisanih ${rows.length} rezervacij klicev AI iz prejšnjega procesa`);
+      return rows.length;
+    } catch {
+      return 0;
+    }
   }
   summary() {
     const month = "u.created_at >= date('now','start of month')";
@@ -587,6 +798,36 @@ export function recentHistory(messages, turns = LIMITS.deepHistoryTurns()) {
   if (!turns) return messages;
   let out = messages.slice(-(turns * 2 - 1));
   while (out.length && out[0].role !== "user") out = out.slice(1);
+  return out;
+}
+
+// Starejše fotografije v zgodovini (j 2026-11-06, dolgi pogovori): slika bi šla modelu z vsakim
+// naslednjim sporočilom (branje predpomnilnika, ob premiku okna ali menjavi modela znova zapis, v rezervi
+// meje AI vsakič IMAGE_TOKENS). Sliko obdržijo samo zadnja `keep` učenčeva sporočila v zgodovini (privzeto 1:
+// »Razloži podrobneje« in takojšnje vprašanje o sliki jo še vidita); starejše dobijo kratko besedilo, nalogo
+// pa je inštruktor prepisal v odgovoru (»Prebral sem: …«, prompts/system_prompt.md). Odvisno le od položaja
+// od konca, zato se sporočilo spremeni enkrat in ostane enako – predpomnilnik se ne podira vsak krog.
+// Baza se ne spremeni (rok hrambe fotografij ureja server/zasebnost.js).
+export const OLD_IMAGE_TEXT = "[Fotografija iz tega sporočila ni več priložena. Nalogo s nje si prepisal v odgovoru na to sporočilo; če potrebuješ sliko (npr. skico), prosi učenca, naj jo pošlje znova.]";
+// Nadomestila slik (stara slika, izbrisana po roku hrambe, zavrnjena): niso učenčevo besedilo (pregled #462 A7:
+// sodba kode o nalogi s slike in vtipkanim besedilom je sicer izpadla, ko je slika postala stara).
+export const isImagePlaceholder = (text) => typeof text === "string" && (text === OLD_IMAGE_TEXT || /^\[Fotografija /.test(text));
+export function staleImages(messages, keep = LIMITS.historyImageTurns()) {
+  let users = 0;
+  const out = messages.slice();
+  for (let i = out.length - 1; i >= 0; i--) {
+    const m = out[i];
+    if (m.role !== "user") continue;
+    users++;
+    if (users <= keep || !Array.isArray(m.content) || !m.content.some((b) => b?.type === "image")) continue;
+    // En nadomestni blok na sporočilo (več slik → eno besedilo), besedilo učenca ostane.
+    const blocks = [];
+    for (const b of m.content) {
+      if (b?.type !== "image") blocks.push(b);
+      else if (!blocks.some((x) => x?.text === OLD_IMAGE_TEXT)) blocks.push({ type: "text", text: OLD_IMAGE_TEXT });
+    }
+    out[i] = { ...m, content: blocks };
+  }
   return out;
 }
 
