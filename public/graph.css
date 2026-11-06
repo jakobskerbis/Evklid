@@ -451,6 +451,10 @@ body.graph-open { overflow: hidden; }
 .fm-toc > button { flex: none; }
 .fm-body { display: flex; flex-direction: column; gap: 12px; }
 .fm-body .fm-sec { margin: 0; padding: 16px 20px; }
+/* Velik list (do ~7000 elementov): brskalnik izriše samo kartice blizu zaslona, ostale šele ob pomiku.
+   Prikaz lista po vrnitvi v Formule je tako takojšen (j 6. 11. 2026, +9). Velikost si zapomni (auto).
+   Prvi dve kartici se izrišeta vedno: sirina.js njune formule prilagodi pred prvo sliko (nič ne skoči). */
+.fm-body .fm-sec:nth-child(n + 3) { content-visibility: auto; contain-intrinsic-size: auto 640px; }
 .fm-sec h2 { font-size: 1.1rem; margin: 0 0 4px; }
 .fm-list { display: flex; flex-direction: column; }
 .fm-item { display: grid; grid-template-columns: minmax(120px, 32%) minmax(0, 1fr); gap: 4px 16px; padding: 10px 0; border-top: 1px solid var(--border); align-items: baseline; }

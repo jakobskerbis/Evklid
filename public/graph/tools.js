@@ -627,6 +627,10 @@ export function createFormulas(root, opts) {
   let book = null;
   let lastKey = null; // list, ki ga je nazadnje izbral reload() (predmet in stopnja učenca)
   const cache = {};
+  let loading = null; // list, ki se ravno prenaša
+  let gen = 0; // vsak nov show() prekine prejšnji izris po kosih (učenec je medtem izbral drug list)
+  // Izris po kosih (en razdelek naenkrat), da glavna nit ne obstane: tap na zaslonu med izrisom pride na vrsto takoj.
+  const kos = () => new Promise((r) => (globalThis.scheduler?.yield ? globalThis.scheduler.yield().then(r, r) : setTimeout(r, 0)));
   root.classList.add("fm");
   const seg = (cls, label, items) =>
     `<div class="seg ${cls}" role="tablist" aria-label="${esc(label)}">${items.map(([k, txt]) => `<button type="button" role="tab" data-k="${k}">${esc(txt)}</button>`).join("")}</div>`;
@@ -636,7 +640,8 @@ export function createFormulas(root, opts) {
 
   // Markdown zbirke razdelimo na kartice po naslovih; dvostolpčne tabele postanejo vrstice »ime + formula«,
   // da se na telefonu ime postavi nad formulo in se formula ne lomi sredi izraza.
-  function layout(html) {
+  // start: koliko kartic je v listu že izrisanih (oznake razdelkov za kazalo ostanejo enolične)
+  function layout(html, start = 0) {
     const src = document.createElement("div");
     src.innerHTML = html;
     const out = document.createElement("div");
@@ -645,7 +650,7 @@ export function createFormulas(root, opts) {
       sec = document.createElement("section");
       sec.className = "card fm-sec";
       if (h) {
-        sec.id = `fm-${book}-${out.children.length}`;
+        sec.id = `fm-${book}-${start + out.children.length}`;
         sec.append(h);
       }
       out.append(sec);
@@ -757,6 +762,7 @@ export function createFormulas(root, opts) {
   }
 
   async function show(b) {
+    const my = ++gen;
     book = BOOKS.includes(b) ? b : "MAT-OS";
     markActive();
     // Vsaka pot spodaj zamenja vsebino lista: skic, ki se še niso naložile, ne opazujemo več.
@@ -765,13 +771,15 @@ export function createFormulas(root, opts) {
     if (!(key in cache)) {
       body.innerHTML = `<p class="muted">${esc(t("common.loading"))}</p>`;
       toc.hidden = true;
+      loading = key;
       try {
         const r = await opts.api(`/api/formulas?book=${key}`);
         cache[key] = r?.md ? r : null;
       } catch {
         cache[key] = null;
       }
-      if (book !== key) return; // med nalaganjem je učenec izbral drug list
+      if (loading === key) loading = null;
+      if (book !== key || my !== gen) return; // med nalaganjem je učenec izbral drug list
     }
     if (!cache[book]) {
       body.innerHTML = `<div class="card"><p class="muted">${esc(t("sc.formNone"))}</p></div>`;
@@ -780,12 +788,21 @@ export function createFormulas(root, opts) {
     }
     const subject = book.split("-")[0];
     const parts = cache[book].sections || [{ md: cache[book].md, symbols: null }];
-    const html = parts.map((x) => (opts.withSymbols ? opts.withSymbols(subject, () => opts.renderRich(x.md), x.symbols) : opts.renderRich(x.md))).join("");
-    body.replaceChildren(...layout(html).children);
+    const render = (x) => (opts.withSymbols ? opts.withSymbols(subject, () => opts.renderRich(x.md), x.symbols) : opts.renderRich(x.md));
+    toc.hidden = true;
+    root.scrollTop = 0;
+    for (let i = 0; i < parts.length; i++) {
+      if (i) {
+        await kos();
+        if (my !== gen) return;
+      }
+      const kartice = layout(render(parts[i]), i ? body.children.length : 0).children;
+      if (i) body.append(...kartice);
+      else body.replaceChildren(...kartice);
+    }
     const secs = [...body.querySelectorAll(".fm-sec[id]")];
     toc.innerHTML = secs.map((x) => `<button type="button" data-sec="${x.id}">${esc(x.querySelector("h2").textContent)}</button>`).join("");
     toc.hidden = secs.length < 2;
-    root.scrollTop = 0;
     spy();
   }
 
@@ -827,7 +844,25 @@ export function createFormulas(root, opts) {
     const sec = c && body.querySelector(`#${c.dataset.sec}`);
     if (!sec) return;
     // kazalo je prilepljeno na vrh pomičnega okna, zato ciljamo tik podenj
-    root.scrollTo({ top: root.scrollTop + sec.getBoundingClientRect().top - root.getBoundingClientRect().top - toc.offsetHeight - 8, behavior: "smooth" });
+    const goal = () => root.scrollTop + sec.getBoundingClientRect().top - root.getBoundingClientRect().top - toc.offsetHeight - 8;
+    if (Math.abs(goal() - root.scrollTop) < 2) return;
+    root.scrollTo({ top: goal(), behavior: "smooth" });
+    // Kartice daleč od zaslona imajo do izrisa le ocenjeno višino (content-visibility v graph.css): po pomiku
+    // se ciljna kartica izriše s pravo višino, zato cilj po potrebi še popravimo (brez gladkega pomika).
+    const USER = ["wheel", "touchstart", "pointerdown", "keydown"];
+    const stop = () => {
+      clearTimeout(timer);
+      root.removeEventListener("scrollend", fix);
+      for (const e of USER) root.removeEventListener(e, stop);
+    };
+    const fix = () => {
+      stop();
+      const d = goal() - root.scrollTop;
+      if (Math.abs(d) > 2) root.scrollTo({ top: root.scrollTop + d });
+    };
+    const timer = setTimeout(fix, 1200); // brskalnik brez scrollend
+    root.addEventListener("scrollend", fix);
+    for (const e of USER) root.addEventListener(e, stop, { passive: true }); // učenec se sam pomika: ne popravljamo
   });
   return {
     root,
@@ -836,9 +871,16 @@ export function createFormulas(root, opts) {
     // učenec pustil (izbran list, mesto branja), in se ne izriše znova (takojšen preklop, j 6. 11. 2026).
     reload() {
       const k = opts.bookKey?.() || book;
-      if (k === lastKey && book && cache[book]) return;
+      if (k === lastKey && book && (cache[book] || loading === book)) return;
       lastKey = k;
       show(k);
+    },
+    // Ob nedejavnosti po odprtju kalkulatorja (app.js prebuildCalc): učenčev list se prenese in izriše v skrito
+    // orodje, zato je prvi tap na Formule takojšen. Če je učenec Formule medtem že odprl, ne naredi nič.
+    prepare() {
+      if (lastKey) return;
+      lastKey = opts.bookKey?.() || "MAT-OS";
+      return show(lastKey);
     },
     show,
   };

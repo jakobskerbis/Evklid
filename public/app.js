@@ -4088,6 +4088,13 @@ async function setCalcMode(mode) {
   }
   if (mode === "formulas" || mode === "tools") tool.reload();
   if (mode === "sci") tool.adapt?.();
+  // Velik razdelek (pripravljen list formul ima ~6000 elementov), ki še ni bil prikazan: najprej slika z izbranim
+  // gumbom (takojšen odziv na tap), razdelek v naslednji sliki (prva postavitev lista sicer zadrži odziv).
+  if (!calcShown.has(tool.root) && tool.root.getElementsByTagName("*").length > 2000) {
+    await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
+    if (calcMode !== mode) return;
+  }
+  calcShown.add(tool.root);
   showCalcRoot(calcSlot(), tool.root);
   tool.resize?.();
   prebuildCalc();
@@ -4117,6 +4124,7 @@ function prefetchNext() {
 }
 // Vsa odprta orodja ostanejo v pomnilniku in na strani (skrita): preklop Znanstveni/Grafični/Orodja/PSE/Formule
 // je takojšen in ohrani vnos, graf in izbiro (j 6. 11. 2026). Prikažemo izbrano, ostala skrijemo.
+const calcShown = new WeakSet(); // razdelki kalkulatorja, ki so bili že prikazani
 function showCalcRoot(slot, root) {
   if (root.parentElement !== slot) slot.append(root);
   for (const el of slot.children) el.hidden = el !== root;
@@ -4132,7 +4140,9 @@ function prebuildCalc() {
     if (!m) return;
     // Formule potrebujejo strežnik: v lahkem načinu jih naložimo šele ob tapu.
     if (m === "formulas" && document.documentElement.classList.contains("lite")) return next();
-    whenQuiet(() => Promise.resolve(calcTool(m)).catch(() => null).then(() => whenQuiet(next)));
+    // Formule: ob nedejavnosti še prenos in izris učenčevega lista v skrito orodje (ne ob varčevanju s podatki).
+    const prep = (tool) => (m === "formulas" && tool && !navigator.connection?.saveData ? new Promise((r) => whenQuiet(() => Promise.resolve(tool.prepare?.()).catch(() => null).then(r))) : null);
+    whenQuiet(() => Promise.resolve(calcTool(m)).then(prep).catch(() => null).then(() => whenQuiet(next)));
   };
   whenQuiet(next);
 }
