@@ -564,3 +564,18 @@ test("zaznavalnik: primeri iz ponovnega pregleda B2 in številke v drugih pisava
   for (const [s, v] of [["ne zmorem več, želim si umreti", "stiska"], ["doma gori", "nevarnost"], ["أخي حرارته 42", "zdravje"], ["أخي حرارته ٤٢", "zdravje"], ["mi hermano tiene 41 de temperatura", "zdravje"]]) assert.equal(zaznajNujno(s), v, s);
   for (const s of ["želim si nov telefon", "Kako se izračuna temperatura 42 stopinj v kelvinih?", "تبدیل 42 درجه"]) assert.equal(zaznajNujno(s), null, s);
 });
+
+// Neodvisni nabor pregleda D (129 sporočil, napisan pred branjem kode; zdaj viden) in sonde avtorja po pregledu D.
+// Sprejemljivi lažni alarmi (varnost pred natančnostjo): n22 (plakat o znakih samomora), n43 (»ubit ću se od testa«), n57 (Hamlet).
+test("zaznavalnik: nabor pregleda D in nove sonde", () => {
+  const nabor = JSON.parse(readFileSync(new URL("./nujno-nabor-d.json", import.meta.url), "utf8"));
+  const sprejemljivi = new Set(["n22", "n43", "n57"]);
+  const zgreseni = nabor.filter((x) => x.nujno && !zaznajNujno(x.text)).map((x) => `${x.id} ${x.text}`);
+  const lazni = nabor.filter((x) => !x.nujno && !sprejemljivi.has(x.id) && zaznajNujno(x.text)).map((x) => `${x.id} ${x.text}`);
+  assert.deepEqual(zgreseni, []);
+  assert.deepEqual(lazni, []);
+  const sonde = ["ne vidim več izhoda, vse bom končal", "nočem več bit tu", "rad bi izginil za vedno", "brat je padel s kolesa in ne govori", "mami teče kri iz nosa in ne neha že pol ure", "ati je dobil infarkt", "prijatelja je pičila kača", "cela hiša je v dimu", "my friend said she wants to end her life", "my sister fell and is not waking up", "مي خواهم بميرم", "ubila se bom nocoj", "nekdo mi piše da bo poslal moje slike staršem če mu ne plačam", "sošolka mi grozi z nožem", "ne mogu više, želim umrijeti"];
+  assert.deepEqual(sonde.filter((s) => !zaznajNujno(s)), []);
+  const snov = ["Kako hitro gori sveča?", "Izračunaj, koliko plina porabi štedilnik", "skočil bom do trgovine po zvezek", "Napiši spis o požaru v Notre Dame", "Kako deluje gasilni aparat?", "Babica ima 41 let", "Dim nastane pri gorenju lesa, zakaj?", "Kdo bo streljal enajstmetrovko?", "Iz tega mi sledi, da je x = 2"];
+  assert.deepEqual(snov.filter((s) => zaznajNujno(s)), []);
+});
