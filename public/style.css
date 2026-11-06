@@ -1059,6 +1059,8 @@ body.pad-open #view-topic { padding-bottom: calc(var(--pad-h, 0px) + 20px); }
 /* Okvir »Zapomni si« v odgovorih inštruktorja (Markdown citat) */
 .msg.assistant blockquote { margin: 10px 0; padding: 8px 12px; border-inline-start: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0; border-start-end-radius: 10px; border-end-end-radius: 10px; }
 .msg.assistant blockquote p { margin: 0.2em 0; }
+.fx-nb { white-space: nowrap; } /* formula in ločilo za njo se ne ločita (rich.js); znotraj formule se vrstica še sme prelomiti */
+.fx-nb .katex-html { white-space: normal; }
 
 /* ---------- spodnja vrstica (telefon in tablica na dotik) ---------- */
 .tabbar { display: none; }
@@ -1191,16 +1193,10 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .credit-pack:has(> input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 .credit-price { font-size: 1.1rem; font-weight: 800; line-height: 1.3; }
 .credit-conv { font-size: 0.88rem; color: var(--muted); line-height: 1.35; }
-.credit-custom { grid-template-columns: 8em minmax(0, 9em) minmax(0, 1fr); }
-.credit-amount { display: flex; align-items: center; gap: 6px; padding: 0 12px; min-height: 44px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-weight: 700; cursor: text; }
-.credit-amount:focus-within { border-color: var(--accent); }
-.credit-amount input { flex: 1; min-width: 0; width: 100%; border: 0; padding: 0; background: none; font-weight: 700; outline: none; text-align: end; }
-.credit-amount span { color: var(--muted); }
 @media (max-width: 560px) {
-  .credit-pack, .credit-custom { grid-template-columns: minmax(0, 1fr); gap: 2px; padding-inline: 14px 44px; }
+  .credit-pack { grid-template-columns: minmax(0, 1fr); gap: 2px; padding-inline: 14px 44px; }
   .credit-pack::after { inset-inline-end: 14px; }
   .credit-pack:has(> input:checked)::before { inset-inline-end: 18px; }
-  .credit-custom .credit-amount { margin: 6px 0 4px; }
 }
 /* Igra kot nagrada na koncu treninga (app.js rewardHtml, public/games/reward.js) */
 .reward-offer { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; margin: 16px auto 0; max-width: 520px; padding: 12px 14px; border: 2px dashed color-mix(in srgb, var(--accent) 45%, var(--border)); border-radius: var(--radius-sm, 12px); background: var(--accent-soft); text-align: start; }

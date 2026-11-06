@@ -100,14 +100,16 @@ test("cene po stopnjah (75 %): OŠ 9,99/99, SŠ 13,99/139, faks 19,99/199, Druž
   assert.equal(planFor(1, "month", "INR").level, null);
   assert.equal(planFor(2, "year", "INR").seats, 2);
   assert.deepEqual(SCHOOL_PLANS.map((p) => p.amount), [599, 4900]);
-  assert.deepEqual(PASSES.map((p) => [p.days, p.amount, p.aiUsd]), [[7, 549, 0.8], [14, 849, 1.5], [30, 1399, 2.9]]);
+  assert.deepEqual(PASSES.map((p) => [p.days, p.amount, p.aiUsd]), [[7, 549, 0.8], [14, 849, 1.5]]);
   assert.equal(freeStudentMonthlyUsd(), 0.2);
   assert.equal(freeMonthlyPoolUsd(), 10);
-  // Faks paketi pred testom: 6,99 / 11,49 / 19,99 € z mejo AI 1,1 / 2,3 / 4,5 $.
-  assert.deepEqual(FAKS_PASSES.map((p) => [p.days, p.amount, p.aiUsd]), [[7, 699, 1.1], [14, 1149, 2.3], [30, 1999, 4.5]]);
+  // Faks paketi pred testom: 6,99 / 11,49 € z mejo AI 1,1 / 2,3 $ (30-dnevnega ni več, j 2026-11-04).
+  assert.deepEqual(FAKS_PASSES.map((p) => [p.days, p.amount, p.aiUsd]), [[7, 699, 1.1], [14, 1149, 2.3]]);
   assert.equal(passByDays(14, "FAKS").amount, 1149);
   assert.equal(passByDays(14, "SS").amount, 849);
-  assert.equal(passByKey("evklid_pass_faks_30").level, "FAKS");
+  assert.equal(passByKey("evklid_pass_faks_14").level, "FAKS");
+  assert.equal(passByKey("evklid_pass_faks_30"), null);
+  assert.equal(passByDays(30, "SS"), null);
   // Darilna koda = letna cena stopnje.
   assert.deepEqual(GIFT_PRICES, { OS: 9900, SS: 13900, FAKS: 19900 });
   // Trgovine z aplikacijami: 2 € dražje kot splet.
@@ -592,7 +594,7 @@ test("ena ponudba: s ponudbo paketa pred testom račun ne ponudi dokupa; naročn
     db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z'").run();
     const offer = (await call(`/api/students/${ana}/pass-offer`)).body;
     assert.ok(offer.offer, JSON.stringify(offer));
-    assert.deepEqual(offer.passes.map((p) => p.amount), [699, 1149, 1999], "faks paketi");
+    assert.deepEqual(offer.passes.map((p) => p.amount), [699, 1149], "faks paketi");
     assert.equal(api.offerKindFor(ana), "pass");
     assert.deepEqual((await call("/api/billing/credit")).body.packs, [], "dokup se ne ponudi hkrati s paketom");
     subscribe("evklid_faks_month");

@@ -486,7 +486,7 @@ export function ustvariSceno(el, opts = {}) {
           .replace(/\}\s*$/, " gl_FragColor = vec4( gl_FragColor.rgb * evkA, evkA );\n}");
       }
       composer.addPass(izhod);
-      velikost();
+      velikost(true);
       aoVkljucen = true;
       narisi();
     } catch (err) {
@@ -500,12 +500,16 @@ export function ustvariSceno(el, opts = {}) {
     if (prej !== aoVkljucen) narisi();
   };
 
-  let w = 1;
+  let w = 0;
   let h = 1;
-  function velikost() {
+  // prisilno: nov composer ali ločljivost; sicer brez dela, če se velikost odra ni spremenila (posodobiVelikost ob izbiri)
+  function velikost(prisilno = false) {
     const r = el.getBoundingClientRect();
-    w = Math.max(1, Math.round(r.width));
-    h = Math.max(1, Math.round(r.height));
+    const nw = Math.max(1, Math.round(r.width));
+    const nh = Math.max(1, Math.round(r.height));
+    if (nw === w && nh === h && prisilno !== true) return;
+    w = nw;
+    h = nh;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -513,7 +517,7 @@ export function ustvariSceno(el, opts = {}) {
     composer?.setSize(w, h);
     narisi();
   }
-  const ro = new ResizeObserver(velikost);
+  const ro = new ResizeObserver(() => velikost());
   ro.observe(el);
   velikost();
 
@@ -892,7 +896,7 @@ export function ustvariSceno(el, opts = {}) {
           } else if (locljivost > 1) {
             locljivost = Math.max(1, locljivost - 0.25);
             renderer.setPixelRatio(locljivost);
-            velikost();
+            velikost(true);
           }
         }
       }
@@ -964,6 +968,11 @@ export function ustvariSceno(el, opts = {}) {
     get velikost() {
       return { w, h };
     },
+    // prelet kamere (poleti) še teče
+    get leti() {
+      return !!let_;
+    },
+    posodobiVelikost: () => velikost(), // takoj po spremembi postavitve (okno dela ob odru), pred kadriranjem
     unici,
   };
 }
