@@ -5,6 +5,7 @@ import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
 import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion } from "./i18n.js";
 import { systemForCountry, isRegional, SCHOOL_SYSTEMS } from "./regions.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref } from "./nujno.js";
 import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
@@ -1036,6 +1037,13 @@ async function send(text, { deep = false } = {}) {
   let userEl = null;
   let bubble = null;
   let pacer = null;
+  // Varnostni odgovor (public/nujno.js) največ enkrat na sporočilo: strežnik ali lokalni zaznavalnik.
+  let nujnoShown = false;
+  const showNujno = (n, opts) => {
+    if (nujnoShown || !n?.vrsta) return;
+    nujnoShown = true;
+    addNujno(n, opts);
+  };
   state.sending = true;
   $("#send").disabled = true;
   state.pacer?.skip();
@@ -1083,6 +1091,8 @@ async function send(text, { deep = false } = {}) {
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       bubble.remove();
+      // Zavrnitev (meja porabe, izklopljen klepet, strežnik ne odgovarja): najprej varnostni odgovor, če je nujno.
+      showNujno(err.nujno || lokalnoNujno(text), { meja: true });
       if (serverDown(res)) throw new Error(t("off.serverBusy"));
       if (err.chat_off) throw Object.assign(new Error(t("chat.off")), { chatOff: true });
       throw new Error(serverError(err, res.status));
@@ -1101,6 +1111,8 @@ async function send(text, { deep = false } = {}) {
         if (d.stage === "out") state.aiOut = true;
       },
       delta: (d) => pacer.push(d.text),
+      // Pod mejo: varnostni odgovor nad odgovorom inštruktorja (ga ne ustavi).
+      nujno: (d) => showNujno(d, { before: bubble }),
       cards: (d) => (cardsData = d),
       // Inštruktor je spremenil nastavitve (server/chat-settings.js).
       settings: (d) => {
@@ -1128,6 +1140,7 @@ async function send(text, { deep = false } = {}) {
         if (d.title) $("#chat-title").textContent = d.title;
       },
       error: (d) => {
+        showNujno(d.nujno || lokalnoNujno(text), { before: bubble, meja: true });
         bubble.classList.add("error");
         pacer.finish(d.error);
         pacer.skip();
@@ -1165,6 +1178,8 @@ async function send(text, { deep = false } = {}) {
     });
     await loadConversations();
   } catch (err) {
+    // Brez povezave ali prekinjen odgovor: lokalni zaznavalnik (strošek 0).
+    if (text) showNujno(lokalnoNujno(text), { meja: true });
     // Odgovor, prekinjen sredi izpisa: pokažemo, kar je prišlo, brez pike »piše« (prazen mehurček odstranimo).
     if (pacer) {
       pacer.finish();
@@ -1196,6 +1211,36 @@ async function send(text, { deep = false } = {}) {
     state.sending = false;
     $("#send").disabled = false;
   }
+}
+
+// --- varnostni odgovor (public/nujno.js, besedila potrdil j 6. 11.) ---
+// Lokalni zaznavalnik v brskalniku: brez povezave in kot rezerva, ko strežnik ne pošlje vrste.
+function lokalnoNujno(text) {
+  const vrsta = zaznajNujno(text);
+  return vrsta ? { vrsta, st: stevilke(state.student?.settings) } : null;
+}
+// Okno z varnostnim odgovorom: ni napaka, se zapre (×), inštruktorja ne ustavi. before: nad tem mehurčkom.
+// meja: učenec ni dobil odgovora inštruktorja (opomba, da se ne šteje med vprašanja).
+function addNujno(n, { before = null, meja = false } = {}) {
+  const box = $("#messages");
+  box.querySelector(".empty")?.remove();
+  const el = document.createElement("section");
+  el.className = `msg nujno-card nujno-${n.vrsta}`;
+  el.setAttribute("role", "alert");
+  el.setAttribute("aria-label", t("nujno.oznaka"));
+  const [head, ...rest] = vrstice(n.vrsta, n.st || stevilke(state.student?.settings));
+  const calls = klici(n.vrsta, n.st || stevilke(state.student?.settings)).filter(Boolean);
+  el.innerHTML =
+    `<button type="button" class="nujno-zapri" aria-label="${escapeHtml(t("nujno.zapri"))}">${icon("x")}</button>` +
+    `<h3>${escapeHtml(t(head[0], head[1]))}</h3>` +
+    rest.map(([k, p]) => `<p>${escapeHtml(t(k, p))}</p>`).join("") +
+    `<div class="nujno-klici">${calls.map((c) => `<a class="nujno-klic" href="${telHref(c)}">${icon("phone")} ${escapeHtml(t("nujno.klic", { n: c }))}</a>`).join("")}</div>` +
+    `<p class="nujno-opomba">${escapeHtml(t(meja ? "nujno.opomba" : "nujno.opombaKratka"))}</p>`;
+  el.querySelector(".nujno-zapri").addEventListener("click", () => el.remove());
+  if (before?.isConnected) box.insertBefore(el, before);
+  else box.appendChild(el);
+  el.scrollIntoView?.({ block: "nearest" });
+  return el;
 }
 
 // Odgovor inštruktorja ne gre v vidni del klepeta (telefon z odprto tipkovnico ali ploščo): pokažemo ga v oknu.
