@@ -93,6 +93,10 @@ export class Credits {
     const q = `SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE created_at >= date('now','start of month')${studentId ? " AND student_id = ?" : ""}`;
     return studentId ? this.db.prepare(q).get(studentId).s : this.db.prepare(q).get().s;
   }
+  // Poraba kredita profila od trenutka since (»YYYY-MM-DD HH:MM:SS«, UTC): obdobje naročnine ali paketa.
+  usedSince(studentId, since) {
+    return this.db.prepare("SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE student_id = ? AND created_at >= ?").get(studentId, since).s;
+  }
   use(parentId, studentId, usd) {
     if (!parentId || !(usd > 0)) return;
     this.db.prepare("INSERT INTO ai_credit_use (parent_id, student_id, usd) VALUES (?, ?, ?)").run(parentId, studentId, usd);

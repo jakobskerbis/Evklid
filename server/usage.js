@@ -105,6 +105,8 @@ export class Usage {
     // kredit) kot [{ key, usd, spent, code }]; rezervacije klicev v teku po ključu meje.
     this.capsOf = () => [];
     this.totalOf = () => null;
+    // Začetek obdobja meje zajamčenega paketa (ISO) ali null = koledarski mesec (j 2026-11-06, pregled #462).
+    this.periodOf = () => null;
     this.onLog = null;
     this.inflight = new Map();
   }
@@ -113,9 +115,10 @@ export class Usage {
   // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
   // poolOf: profili s skupnim deležem (Družina); poraba se tedaj šteje za vse skupaj.
   // totalOf: vrednost paketa (meja + brezplačni rep) v $ ali null; trda meja ni nikoli višja (capsFor).
-  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf } = {}) {
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf } = {}) {
     if (capsOf) this.capsOf = capsOf;
     if (totalOf) this.totalOf = totalOf;
+    if (periodOf) this.periodOf = periodOf;
     if (onLog) this.onLog = onLog;
     if (weightOf) this.weightOf = weightOf;
     if (poolOf) this.poolOf = poolOf;
@@ -225,8 +228,10 @@ export class Usage {
       // Družina: skupen delež, poraba vseh profilov skupaj. g je ves mesečni strošek AI paketa (ceiling, trda meja);
       // allowance = del za podrobne razlage (g / 1,15), od tam do meje hitri način (plans.js FAST_TAIL, detailedShare).
       const group = this.poolOf(studentId);
-      // Poraba izbrisanih profilov računa ta mesec šteje v paket (izbris in nov profil meje ne ponastavita).
-      const spent = this.groupSpent(studentId, group) + this.orphanSpent(owner);
+      // Poraba šteje po obdobju paketa (naročnina: od začetka plačanega obdobja, ne koledarski mesec), brez porabe
+      // iz kredita; poraba izbrisanih profilov računa šteje (izbris in nov profil meje ne ponastavita).
+      const since = this.periodStart(studentId);
+      const spent = (group || [studentId]).reduce((t, id) => t + this.spentSince(id, since), 0) + this.orphanSpent(owner, since);
       return { ...base, spent, group, pool: !!group, allowance: detailedShare(g), ceiling: g, guaranteed: true };
     }
     const pool = state.cap ? Math.max(0, state.cap - this.reservedUsd(studentId)) : 0;
@@ -482,10 +487,25 @@ export class Usage {
     return null;
   }
   // ---------- trda meja AI (j 2026-11-06, server/meje-ai.js) ----------
-  // Poraba izbrisanih profilov računa ta mesec (student_id NULL, parent_id ostane).
-  orphanSpent(owner) {
+  // Poraba izbrisanih profilov računa od since (privzeto ta mesec; student_id NULL, parent_id ostane).
+  orphanSpent(owner, since = this.monthStart()) {
     if (owner == null) return 0;
-    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE parent_id = ? AND student_id IS NULL AND created_at >= date('now','start of month')").get(owner).s;
+    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE parent_id = ? AND student_id IS NULL AND created_at >= ?").get(owner, since).s;
+  }
+  // Začetek tega meseca v obliki stolpca created_at (UTC).
+  monthStart() {
+    return this.db.prepare("SELECT datetime('now','start of month') AS d").get().d;
+  }
+  // Začetek obdobja meje profila v obliki created_at: obdobje paketa (periodOf) ali koledarski mesec.
+  periodStart(studentId) {
+    const iso = this.periodOf(studentId);
+    const t = iso ? Date.parse(iso) : NaN;
+    return Number.isFinite(t) ? new Date(t).toISOString().slice(0, 19).replace("T", " ") : this.monthStart();
+  }
+  // Poraba profila od since brez porabe iz dokupljenega kredita.
+  spentSince(studentId, since) {
+    const s = this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE student_id = ? AND created_at >= ?").get(studentId, since).s;
+    return Math.max(0, s - (this.credits?.usedSince?.(studentId, since) || 0));
   }
   // Meje, ki veljajo za naslednji klic profila: { key, usd, spent, code }. Naročnina, darilo, preizkus, koda in bonus:
   // vsa vrednost paketa (meja + brezplačni rep) + dokupljeni kredit; ostalo iz računov (capsOf).

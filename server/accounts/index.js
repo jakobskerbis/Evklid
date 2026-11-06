@@ -285,6 +285,54 @@ export function mountAccounts(app, store, opts = {}) {
     const t = accessFor({ ...parent, sub_status: null }).tier;
     return t === "free" ? "trial" : t;
   }
+  // Obdobje meje AI (pregled #462, VISOKO): meja velja za plačano obdobje, ne za koledarski mesec (sicer naročnina,
+  // sklenjena 28., dobi dve meji za eno plačilo). Naročnina, darilo in koda: mesečna okna, sidrana na konec obdobja
+  // (letni paket: 12 mesečnih oken); preizkus in bonus: ves paket eno okno. Neuspelo plačilo (past_due): Stripe že
+  // premakne konec obdobja, a novo okno se ne odpre (okno ob prvem neuspelem plačilu velja do plačila).
+  const DAY = 86400000;
+  function addMonthsUtc(t, k) {
+    const d = new Date(t);
+    const day = d.getUTCDate();
+    d.setUTCDate(1);
+    d.setUTCMonth(d.getUTCMonth() + k);
+    const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+    d.setUTCDate(Math.min(day, last));
+    return d.getTime();
+  }
+  // Začetek mesečnega okna, sidranega na endIso, ki vsebuje »now« (po koncu: zadnje okno, nikoli novo).
+  function monthWindowStart(endIso, now = Date.now()) {
+    const end = Date.parse(endIso || "");
+    if (!Number.isFinite(end)) return null;
+    for (let k = 1; k <= 240; k++) {
+      const start = addMonthsUtc(end, -k);
+      if (start <= now) return new Date(start).toISOString();
+    }
+    return null;
+  }
+  function aiPeriodStart(studentId) {
+    const r = rightsFor(studentId);
+    if (!r.personal) return null;
+    const p = getParent(ownerOf(studentId));
+    if (!p) return null;
+    const tier = r.personalTier === "paid" ? unpaidTier(p) || "paid" : r.personalTier;
+    const future = (iso) => Date.parse(iso || "") > Date.now();
+    switch (tier) {
+      case "paid": {
+        const failed = p.sub_status === "past_due" && Date.parse(p.past_due_since || "");
+        return monthWindowStart(p.sub_period_end, failed ? failed - DAY : Date.now());
+      }
+      case "gift":
+        return monthWindowStart(p.gift_until);
+      case "promo":
+        return monthWindowStart(p.promo_until);
+      case "trial":
+        return future(p.trial_ends_at) ? new Date(Date.parse(p.trial_ends_at) - TRIAL_DAYS * DAY).toISOString() : monthWindowStart(p.sub_period_end);
+      case "bonus":
+        return future(p.bonus_until) ? new Date(Date.parse(p.bonus_until) - REFERRAL_DAYS * DAY).toISOString() : null;
+      default:
+        return null;
+    }
+  }
   // Vrednost paketa (meja + brezplačni rep) v $: trda meja (server/usage.js capsFor), največ to.
   const guaranteeTotalFor = (studentId) => subGuarantee(studentId)?.total ?? null;
   // Meja paketa (brez brezplačnega repa, plans.js subscriptionCeiling); naročnik z mejo 0 ostane zajamčen (MIN_CEILING_USD).
@@ -333,7 +381,7 @@ export function mountAccounts(app, store, opts = {}) {
     if (pool) caps.push({ key: "freepool", usd: pool, spent: freePoolSpent(), code: "block.freePool" });
     return caps;
   }
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, poolOf: poolFor, capsOf, onLog: () => schools.clearCache() });
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, onLog: () => schools.clearCache() });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.

@@ -982,3 +982,34 @@ test("trialing (Stripe, še brez plačila): velja meja preizkusa ali kode, ne pl
     assert.ok(Math.abs(api.aiUsage.capsFor(ana)[0].usd - paid) < 1e-9);
   });
 });
+
+test("meja po obdobju naročnine, ne po koledarskem mesecu; past_due ne odpre nove meje; preizkus ena meja", async () => {
+  await withAccounts(async ({ db, api, kid, subscribe, pid }) => {
+    const ana = kid("Ana", "OS", YEAR - 12);
+    const ago = (days) => new Date(Date.now() - days * 86400000).toISOString().slice(0, 19).replace("T", " ");
+    const spendAt = (days, usd) => db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd, created_at) VALUES (?, 'claude-haiku-5-5', 'chat', ?, ?)").run(ana, usd, ago(days));
+    const spent = () => api.aiUsage.capsFor(ana)[0].spent;
+    // Mesečna naročnina, obdobje se konča čez 3 dni (začelo se je pred ~27–28 dnevi, morda v prejšnjem mesecu).
+    subscribe("evklid_1_month", new Date(Date.now() + 3 * 86400000).toISOString());
+    spendAt(40, 1); // pred obdobjem: ne šteje
+    spendAt(25, 0.3); // v obdobju (lahko v prejšnjem koledarskem mesecu): šteje
+    spendAt(1, 0.2);
+    assert.ok(Math.abs(spent() - 0.5) < 1e-9, `poraba v obdobju: ${spent()}`);
+    // Obnovitev ni uspela: Stripe je premaknil konec obdobja, a nova meja se ne odpre do plačila.
+    db.prepare("UPDATE parents SET sub_status = 'past_due', past_due_since = ?, sub_period_end = ? WHERE id = ?").run(new Date(Date.now() - 3600000).toISOString(), new Date(Date.now() + 29 * 86400000).toISOString(), pid);
+    spendAt(0, 0.1);
+    assert.ok(Math.abs(spent() - 0.6) < 1e-9, `past_due: staro okno (${spent()})`);
+    // Plačano: novo obdobje (od pred 1 dneva), stara poraba ne šteje.
+    db.prepare("UPDATE parents SET sub_status = 'active', past_due_since = NULL WHERE id = ?").run(pid);
+    assert.ok(spent() < 0.35, `novo obdobje: ${spent()}`);
+    // Letna naročnina: mesečna okna, sidrana na konec obdobja.
+    subscribe("evklid_1_year", new Date(Date.now() + (200 * 86400000)).toISOString());
+    assert.ok(spent() <= 0.3 + 1e-9 && spent() >= 0.1 - 1e-9, `letna: mesečno okno (${spent()})`);
+    // Preizkus: ena meja za ves preizkus (7 dni), tudi čez prelom meseca.
+    db.prepare("UPDATE parents SET sub_status = NULL, sub_plan = NULL, trial_ends_at = ? WHERE id = ?").run(new Date(Date.now() + 2 * 86400000).toISOString(), pid);
+    db.prepare("DELETE FROM usage").run();
+    spendAt(4.5, 0.2); // v preizkusu
+    spendAt(6, 0.3); // pred preizkusom
+    assert.ok(Math.abs(spent() - 0.2) < 1e-9, `preizkus: ${spent()}`);
+  });
+});
