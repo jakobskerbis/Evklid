@@ -55,8 +55,8 @@ test("disengaged student: own situation in the cached part, with choices, small 
   assert.doesNotMatch(dyn, /Nezainteresiran učenec/);
   const row = stat.split("\n").find((l) => l.startsWith("- **Nezainteresiran učenec**"));
   assert.ok(row, "razdelek je ena točka v seznamu situacij");
-  for (const re of [/dolgčas mi je/, /brez pridige in slabe vesti/, /izbiro/, /gumbe z izbirami namesto tipkanja/, /ne za račun in razlago/, /izziv ali igro/, /zanimanj/, /še 2 nalogi do konca teme/, /kratek odmor/, /kje bosta nadaljevala/, /Frustracija ob nalogi/, /Meje/, /Utrujenost/]) {
+  for (const re of [/dolgčas mi je/, /brez pridige in slabe vesti/, /izbiro/, /le za izbiro poti/, /ne za račun, izraz, korak, formulo ali razlago/, /Napreden učenec/, /izziv ali igro/, /zanimanj/, /še 2 nalogi do konca teme/, /kratek odmor/, /kje bosta nadaljevala/, /Frustracija ob nalogi/, /Meje/, /Utrujenost/, /kako je/]) {
     assert.match(row, re);
   }
-  assert.ok(row.length < 900, `točka naj ostane kratka (${row.length} znakov)`);
+  assert.ok(row.length < 1100, `točka naj ostane kratka (${row.length} znakov)`);
 });
