@@ -4095,6 +4095,13 @@ function prefetchNext() {
     () => import("./graph/tools.js"),
     () => import("./graph/calc.js"),
     () => import("./3d/modeli.js"),
+    // 3D pregledovalnik (stran /3d v okvirju) in three.js: samo v predpomnilnik service workerja, brez izvajanja,
+    // da se prvi model odpre brez čakanja na omrežje.
+    () =>
+      navigator.serviceWorker?.controller?.postMessage({
+        type: "precache",
+        urls: ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"],
+      }),
   ];
   const next = () => {
     const f = steps.shift();
