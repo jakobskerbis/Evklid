@@ -68,6 +68,8 @@ import { startPrivacyJobs, withoutImages, PHOTO_REJECTED_TEXT } from "./zasebnos
 import { startFxJobs } from "./tecaji.js";
 import { jeFaks, jeSs } from "../public/stopnja.js";
 import { startBackups } from "./kopije.js";
+import { nujnoPredZavrnitvijo, nujnoZa } from "./nujno.js";
+import { zaznajNujno } from "../public/nujno.js";
 import { startCloudBackups } from "./kopije-oblak.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -574,10 +576,19 @@ export function createApp(store, opts = {}) {
     }
     if (!text && !image) return res.status(400).json({ error: "Sporočilo je prazno." });
     // Stikalo za nujne primere (docs/krizni-nacrt.md): klepet izklopljen, Vadnica in lekcije delujejo.
-    if (chatOff()) return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true });
+    // Varnost pred mejo porabe (server/nujno.js, j 6. 11.): pred vsako zavrnitvijo lokalni zaznavalnik, nato kratek
+    // varnostni pregled z AI na strošek aplikacije; odjemalec pokaže potrjen varnostni odgovor (nujno).
+    const nujnoPred = () => nujnoPredZavrnitvijo({ text, student, usage, createFn: opts.varnostFn });
+    if (chatOff()) {
+      const nujno = await nujnoPred();
+      return res.status(503).json({ error: "Klepet z inštruktorjem je začasno izklopljen. Vaje, lekcije in igre delujejo.", chat_off: true, nujno: nujno || undefined });
+    }
     if (busy.has(conv.id)) return res.status(409).json({ error: "Počakaj, da Evklid odgovori." });
     const blocked = usage.blockInfo(student.id);
-    if (blocked) return res.status(429).json({ ...blocked, limit: true });
+    if (blocked) {
+      const nujno = await nujnoPred();
+      return res.status(429).json({ ...blocked, limit: true, nujno: nujno || undefined });
+    }
     busy.add(conv.id);
     // Napaka pred pretakanjem (npr. SQLITE_BUSY pri zapisu sporočila): Express 5 jo preda obdelovalcu napak (500).
     // Ob zaprtju takega odgovora sprostimo pogovor (busy) in rezervacijo, sicer bi ostala zasedena do ponovnega
@@ -726,6 +737,9 @@ export function createApp(store, opts = {}) {
       "X-Accel-Buffering": "no",
     });
     const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    // Pod mejo: lokalni zaznavalnik (strošek 0); varnostni odgovor se pokaže nad odgovorom inštruktorja (j 6. 11.).
+    const nujnoLokalno = nujnoZa(zaznajNujno(text), student.settings);
+    if (nujnoLokalno) send("nujno", nujnoLokalno);
 
     const controller = new AbortController();
     let finished = false;
@@ -1084,7 +1098,8 @@ export function createApp(store, opts = {}) {
       if (!controller.signal.aborted) {
         console.error("[evklid] napaka pri klicu modela:", err?.status ?? "", err?.message ?? err);
         if (/dobroimetja/.test(apiErrorCode(err) || "")) usage.markCreditOut();
-        send("error", { error: errorText(err) });
+        // Ob napaki AI ostane lokalni zaznavalnik (če varnostni odgovor še ni bil poslan).
+        send("error", { error: errorText(err), nujno: nujnoLokalno ? undefined : nujnoZa(zaznajNujno(text), student.settings) || undefined });
       }
       res.end();
     } finally {
