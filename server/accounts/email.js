@@ -103,6 +103,18 @@ export function resetEmail(url) {
   };
 }
 
+// Na račun je bila dodana prijava z Apple (server/mobile/apple-signin.js): vse druge naprave so odjavljene.
+export function appleLinkedEmail() {
+  return {
+    subject: "Prijava z Apple za Evklid",
+    html: layout(
+      "Dodana je prijava z Apple",
+      "<p>Na vaš račun Evklid je bila pravkar dodana prijava z Apple. Zaradi varnosti smo odjavili vse druge naprave.</p><p>Če tega niste naredili vi, takoj nastavite novo geslo s povezavo »Pozabljeno geslo« na strani za prijavo.</p>",
+    ),
+    text: "Na vaš račun Evklid je bila pravkar dodana prijava z Apple. Zaradi varnosti smo odjavili vse druge naprave. Če tega niste naredili vi, takoj nastavite novo geslo s povezavo »Pozabljeno geslo« na strani za prijavo.",
+  };
+}
+
 export function referralRewardEmail(appUrl) {
   return {
     subject: "Evklid: prislužili ste brezplačen mesec 🎁",

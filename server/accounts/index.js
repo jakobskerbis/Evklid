@@ -15,7 +15,7 @@ import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
 import { createPaidPeriods } from "../placila/placano.js";
 import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
-import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
+import { Mailer, verifyEmail, resetEmail, appleLinkedEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
 import { buildWeeklyReport, weekKey, isSendTime } from "./weekly.js";
 import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-reminder.js";
@@ -152,6 +152,28 @@ export function mountAccounts(app, store, opts = {}) {
     const keys = Object.keys(fields);
     db.prepare(`UPDATE parents SET ${keys.map((k) => `${k} = ?`).join(", ")} WHERE id = ?`).run(...keys.map((k) => fields[k]), id);
   };
+  // Dostop, ki ga ima lahko nekdo drug kot lastnik e-naslova (prevzem pred registracijo, pregled #492): vse seje,
+  // zaklep računa na napravah, žetoni potisnih obvestil (ime otroka na tujem telefonu), ključi razredov, ki jih je
+  // dobil ob ustvarjanju razreda, in zasedenost profilov na napravah. Tabele drugih modulov morda ne obstajajo.
+  function dropForeignAccess(parentId) {
+    sessions.destroyAll(parentId);
+    accountLocks.lockAll(parentId);
+    const run = (sql, ...args) => {
+      try {
+        db.prepare(sql).run(...args);
+      } catch (err) {
+        if (!/no such table/.test(String(err.message))) throw err;
+      }
+    };
+    run("DELETE FROM push_tokens WHERE parent_id = ?", parentId);
+    run("DELETE FROM profile_devices WHERE student_id IN (SELECT id FROM students WHERE parent_id = ?)", parentId);
+    try {
+      for (const c of db.prepare("SELECT id FROM classes WHERE owner_parent_id = ? AND kind = 'class'").all(parentId))
+        db.prepare("UPDATE classes SET teacher_key_hash = ? WHERE id = ?").run(sha256(randomToken()), c.id);
+    } catch (err) {
+      if (!/no such table|no such column/.test(String(err.message))) throw err;
+    }
+  }
 
   // Skrbnik po e-naslovu (EVKLID_ADMIN_EMAILS) šele po potrditvi e-naslova: sicer bi se kdorkoli registriral z njim.
   const isAdminEmail = (p) => !!p?.email_verified_at && adminEmails.includes(String(p.email).toLowerCase());
@@ -918,6 +940,16 @@ export function mountAccounts(app, store, opts = {}) {
       update(p.id, { is_admin: 1 });
       db.prepare("UPDATE students SET parent_id = ? WHERE parent_id IS NULL").run(p.id);
     }
+    // Povezavo je odprl nekdo brez seje tega računa (druga naprava ali lastnik naslova, ki se ni registriral): potrditev
+    // dokaže e-naslov, ne gesla. Geslo je lahko tujčevo (prevzem pred registracijo, pregled #492 B), zato ga zamenjamo
+    // z neuporabnim, odjavimo vse naprave in odpremo nastavitev novega gesla (kot ponastavitev, velja 1 uro).
+    if (req.parent?.id !== p.id && !full.is_guest && !String(full.password_hash || "").startsWith("none$")) {
+      const reset = randomToken();
+      update(p.id, { password_hash: unusablePasswordHash(), reset_token_hash: sha256(reset), reset_expires_at: isoIn(1 / 24) });
+      dropForeignAccess(p.id);
+      audit(db, { req, parentId: p.id, action: "verify_foreign_session" });
+      return res.redirect(`/?verified=1&reset=${reset}`);
+    }
     res.redirect("/?verified=1");
   });
 
@@ -1030,8 +1062,7 @@ export function mountAccounts(app, store, opts = {}) {
       reset_expires_at: null,
       email_verified_at: p.email_verified_at || new Date().toISOString(),
     });
-    accountLocks.lockAll(p.id);
-    sessions.destroyAll(p.id); // vse seje (tudi napadalčeve) so po novem geslu neveljavne
+    dropForeignAccess(p.id); // vse seje (tudi napadalčeve), obvestila na telefon in ključi razredov po novem geslu ne veljajo
     audit(db, { req, parentId: p.id, action: "password_reset" });
     accountLocks.unlock(p.id, req.deviceId);
     setSessionCookie(req, res, sessions.create(p.id));
@@ -2044,7 +2075,7 @@ export function mountAccounts(app, store, opts = {}) {
   }
 
   // Za mobilno aplikacijo (server/mobile): prijava z Apple, nakupi v trgovinah, obvestila.
-  const mobile = { db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
+  const mobile = { dropForeignAccess, sendMail, appleLinkedEmail, audit, privacyVersion: PRIVACY_VERSION, db, sessions, locks, accountLocks, devices, accountOpen: (p, deviceId) => !lockable(p) || (!!deviceId && accountLocks.isUnlocked(p.id, deviceId)), getParent, parentByEmail, publicParent, accountView, createParent, checkAge, childIds, children, accessOf, signupThrottle, addReauth: (fn) => reauthHooks.push(fn) };
   return { credits, paidPeriods, shareWeightFor, ownerOf, freeOver, guaranteeFor, aiWindowOf: (pid) => paidWindow(getParent(pid)), poolFor, dailyLimitFor, aiUsage, topupPrompt, topupButton, offerKindFor, sendWeeklyAll, sendGoalRemindersAll, maybeRewardReferral, stripe, mailer, premiumFor, aiPremiumFor, modelCapFor, offersFor, rightsFor, lessonInteractive, ladderFor, schools, guests, billing, mobile };
 }
 

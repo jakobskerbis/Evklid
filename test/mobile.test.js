@@ -659,7 +659,7 @@ test("Sign in with Apple on an unverified account: the old password and sessions
     const reg = await attacker("/api/auth/register", { body: { email: "zrtev@primer.si", password: "napadalec1", accept_privacy: true, birth_date: ADULT } });
     assert.equal(reg.status, 201, JSON.stringify(reg.body));
     assert.equal((await attacker("/api/account")).status, 200);
-    const r = await appClient()("/api/auth/apple", { body: { identity_token: identityToken({ sub: "apple.888", email: "zrtev@primer.si", email_verified: true }, NONCE), nonce: NONCE } });
+    const r = await appClient()("/api/auth/apple", { body: { identity_token: identityToken({ sub: "apple.888", email: "zrtev@primer.si", email_verified: true }, NONCE), nonce: NONCE, accept_privacy: true, birth_date: ADULT } });
     assert.equal(r.status, 200);
     assert.equal(r.body.parent.id, reg.body.parent.id);
     assert.notEqual((await attacker("/api/account")).status, 200, "napadalčeva seja še velja");
