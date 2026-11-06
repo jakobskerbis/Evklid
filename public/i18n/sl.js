@@ -2303,6 +2303,13 @@ export default {
   "tbk.hits": "Zadetki za »{q}«",
   "tbk.noHits": "Ni zadetkov za »{q}«. Poskusi z drugo besedo ali vprašaj inštruktorja.",
   "tbk.noBook": "Za ta predmet še ni učbenika.",
+  // Tema brez lekcije in razlage (public/textbook.js): prvi stavek + eden od štirih nadaljevanj glede na poskus in vaje.
+  "tbk.pending": "Lekcija za to temo še nastaja.",
+  "tbk.pendingDemoPractice": "Medtem si oglej poskus spodaj, reši nekaj nalog ali vprašaj inštruktorja, ki ti temo razloži po korakih.",
+  "tbk.pendingDemo": "Medtem si oglej poskus spodaj ali vprašaj inštruktorja, ki ti temo razloži po korakih.",
+  "tbk.pendingPractice": "Medtem reši nekaj nalog ali vprašaj inštruktorja, ki ti temo razloži po korakih.",
+  "tbk.pendingAsk": "Medtem ti inštruktor temo razloži po korakih.",
+  "tbk.askTopic": "Vprašaj inštruktorja o tej temi",
   // stran za prenos aplikacije (/prenesi, server/mobile/download.js)
   "dl.title": "Aplikacija za telefon in tablico",
   "dl.intro": "Evklid je na voljo kot aplikacija za Android in iPhone. Prijaviš se z istim računom kot na spletu, napredek ostane isti.",
@@ -2931,6 +2938,8 @@ export default {
   "block.freePool": "Brezplačna vprašanja za inštruktorja so ta mesec za vse porabljena. Vadnica in lekcije delujejo naprej neomejeno.",
   "block.hintGuest": "Za več vprašanj ustvari račun v zavihku Račun.",
   "block.hintParent": "Za več vprašanj naj starš izbere naročnino v zavihku Račun.",
+  // Polnoleten učenec (18+, npr. študent): naročnino izbere sam (server/accounts/index.js moreHintCode).
+  "block.hintAdult": "Za več vprašanj izberi naročnino v zavihku Račun.",
   "school.planNote": "Nižja cena za profil s šolsko licenco: šola že plača šolske predmete, Osebno doda vse ostale predmete in ravni, več vprašanj inštruktorju in podrobnejše razlage.",
   "pay.linkLabel": "Povezava za plačilo",
   "payp.passNote": "Enkratno plačilo, brez naročnine. Paket se sam izteče.",
