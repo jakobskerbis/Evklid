@@ -62,7 +62,7 @@ V izolaciji z $\varepsilon_r = 4$ je majhen zračni mehurček, sploščen pravok
 Večje, približno štirikrat: $D$ je zvezen, $\varepsilon_r$ zraka je $1$. Zrak se prebije pri okoli $3\,\mathrm{MV/m}$, veliko prej kot trdna izolacija. V mehurčku nastajajo **delne razelektritve**, ki izolacijo počasi razjedajo, dokler kabel ne odpove.
 :::
 
-**6. Vezave in povezovanje nabitih kondenzatorjev.** Vzporedno $C = C_1 + C_2$, zaporedno $\frac{1}{C} = \frac{1}{C_1} + \frac{1}{C_2}$ (dokaz iz elektrostatike). Dve zaporedno vezani kapacitivnosti sta **kapacitivni delilnik**: oba nosita isti $Q$, zato je napetost na prvem
+**6. Vezave in povezovanje nabitih kondenzatorjev.** Vzporedno $C = C_1 + C_2$, zaporedno $\frac{1}{C} = \frac{1}{C_1} + \frac{1}{C_2}$. Dokaz: vzporedna kondenzatorja imata isto napetost, naboja se seštejeta, $Q = C_1U + C_2U$; zaporedna nosita isti naboj (srednji otok je nevtralen), napetosti se seštejeta, $U = Q/C_1 + Q/C_2$. Dve zaporedno vezani kapacitivnosti sta **kapacitivni delilnik**: oba nosita isti $Q$, zato je napetost na prvem
 $$U_1 = U\frac{C_2}{C_1 + C_2}.$$
 Večja napetost je na *manjši* kapacitivnosti.
 

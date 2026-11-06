@@ -154,7 +154,7 @@ $\mu = \sqrt{n(n+2)}\,\mu_\mathrm{B}$; tetraeder: $\mathrm{LFSE} = (-0{,}6\,n_e 
 
 1. Oksidacijsko število: $-2 - 4 \cdot (-1) = +2$ v obeh; Ni je v 10. skupini, zato $10 - 2 = 8$ elektronov $d$.
 2. Imeni (anion, končnica -at): tetrakloridonikljat(II) in tetracianidonikljat(II).
-3. Iz $\mu$: $\sqrt{n(n+2)} = 2{,}8$ da $n = 2$, saj je $\sqrt{8} \approx 2{,}83$.
+3. Iz $\mu$: $\sqrt{n(n+2)} = 2{,}8$ da $n = 2$, saj je $\sqrt{8} \approx 2{,}83$. (Izmerjeni moment tetraedrskih kompleksov Ni(II) je zaradi orbitalnega prispevka višji, okoli $3{,}5$ do $4\,\mu_\mathrm{B}$; tudi to vrednost razložita le dva neparna elektrona, saj bi trije dali vsaj $3{,}87\,\mu_\mathrm{B}$ brez orbitalnega dela.)
 4. Tetraeder pri $d^8$: $e^4\,t_2^4$, v $t_2$ sta dva neparna elektrona. Kvadrat pri $d^8$: prazna $d_{x^2-y^2}$, nič neparnih. Torej je $[\mathrm{NiCl_4}]^{2-}$ tetraedrski, $[\mathrm{Ni(CN)_4}]^{2-}$ kvadratno planaren.
 5. To se ujema s spektrokemijsko vrsto: šibki in veliki ligandi $\mathrm{Cl^-}$ dajo tetraeder z majhnim razcepom, močni $\mathrm{CN^-}$ velik razcep, pri katerem se prazna $d_{x^2-y^2}$ izplača.
 6. LFSE: $(-0{,}6 \cdot 4 + 0{,}4 \cdot 4)\,\Delta_\mathrm{t} = -0{,}8\,\Delta_\mathrm{t} \approx -0{,}8 \cdot \frac{4}{9}\Delta_\mathrm{o} \approx -0{,}36\,\Delta_\mathrm{o}$.
@@ -225,7 +225,7 @@ Odgovori na vprašanje iz uvoda za $[\mathrm{PtCl_2(NH_3)_2}]$. (a) Poimenuj spo
 5. Plazma: $x = \frac{0{,}0030}{0{,}0030 + 0{,}100} \approx 0{,}029$, torej okoli $3\,\%$.
 6. Celica: $x = \frac{0{,}0030}{0{,}0030 + 0{,}004} \approx 0{,}43$, torej okoli $43\,\%$.
 7. Visok klorid v krvi zdravilo varuje pred zamenjavo; v celici nastane reaktivna akva oblika, iz katere se voda zlahka izpodrine z dušikom baze DNK.
-8. (e) Akva oblika se veže na atom N7 gvanina. *Cis* izomer z dvema sosednjima prostima mestoma (pod $90^\circ$) poveže dva sosednja gvanina na isti verigi in DNK ukrivi, kar celica težko popravi. *Trans* izomer ima prosti mesti pod $180^\circ$ in takega mostu med sosednjima gvaninoma ne more narediti.
+8. (e) Akva oblika se veže na atom N7 gvanina. *Cis* izomer z dvema sosednjima prostima mestoma (pod $90^\circ$) poveže dva sosednja gvanina na isti verigi in DNK ukrivi; celica takšno poškodbo slabo popravi. *Trans* izomer ima prosti mesti pod $180^\circ$ in takega mostu ne more narediti.
 9. Odgovor: diamindikloridoplatina(II), $d^8$, kvadratno planarna in diamagnetna; dva izomera (tetraeder bi imel enega); v plazmi je zamenjanih okoli $3\,\%$, v celici okoli $43\,\%$; zdravilo je *cis* izomer, ker le ta premosti sosednja gvanina.
 
 ### Naloga 2
@@ -285,7 +285,7 @@ Barvni krog pomaga pri barvi: kompleks z vrhom absorpcije v rumenem delu je vijo
 
 **Pravilo 18 elektronov.** Karbonilni kompleksi nizkovalentnih kovin so obstojni, kadar je vsota elektronov $d$ kovine in elektronov, ki jih podarijo ligandi, enaka $18$: $[\mathrm{Ni(CO)_4}]$ ima $10 + 4 \cdot 2 = 18$, $[\mathrm{Cr(CO)_6}]$ $6 + 6 \cdot 2 = 18$.
 
-**Trans učinek.** V kvadratnih kompleksih Pt(II) ligand pospeši zamenjavo liganda *trans* k sebi; vrstni red $\mathrm{CN^-} > \mathrm{Cl^-} > \mathrm{NH_3} > \mathrm{H_2O}$. Iz $[\mathrm{PtCl_4}]^{2-}$ z amoniakom zato nastane ravno *cis* izomer: drugi $\mathrm{NH_3}$ zamenja klorid *trans* k drugemu kloridu, ne k amoniaku. Na tem temelji sinteza cisplatina.
+**Trans učinek.** V kvadratnih kompleksih Pt(II) ligand pospeši zamenjavo liganda *trans* k sebi; vrstni red $\mathrm{CN^-} > \mathrm{Cl^-} > \mathrm{NH_3} > \mathrm{H_2O}$. Iz $[\mathrm{PtCl_4}]^{2-}$ z amoniakom zato nastane ravno *cis* izomer: drugi $\mathrm{NH_3}$ zamenja klorid *trans* k drugemu kloridu, ne k amoniaku. Na tem temelji industrijska sinteza cisplatina (v praksi prek $[\mathrm{PtI_4}]^{2-}$, ker ima jodid še močnejši trans učinek od klorida).
 
 ## Preveri se
 
