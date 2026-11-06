@@ -67,10 +67,19 @@ const NAPRAVE = {
       const nalaganje = (Date.now() - t0) / 1000;
       await cdp.send("Network.emulateNetworkConditions", { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
       await p.waitForTimeout(3000);
+      // Namig ob prvem ogledu nabora delov (pregledovalnik namigniDele): deli 3,2 s časa prizora zasijejo v svoji barvi.
+      // Swiftshader riše ~0,5 sličice/s (dt omejen na 0,1 s), zato bi sij trajal minuto: tap v prazen del odra ga ugasne.
+      const ugasniNamig = async () => {
+        await p.waitForTimeout(2500);
+        const c = await p.locator("canvas").first().boundingBox();
+        if (c) await p.mouse.click(c.x + 12, c.y + c.height - 12);
+        await p.waitForTimeout(500);
+      };
       const slikaj = async (pogled) => {
         await p.waitForTimeout(n.kakovost === "visoka" ? 6000 : 1800);
         await p.screenshot({ path: path.join(izhod, `${oznaka}-${ime}-${pogled}.png`), timeout: 180000 });
       };
+      await ugasniNamig();
       await slikaj("celota");
       // Vrtenje s tipkovnico na platnu (puščica = 10°, enako na telefonu in računalniku; vlečenje z miško na telefonu z
       // dotikom ne zavrti, zato je bil prejšnji »zadaj« sprednja stran). KOTI=1: 8 kotov okoli navpičnice (0°, 45°, …;
@@ -130,7 +139,7 @@ const NAPRAVE = {
       const stikalo = p.locator(".k3-stikalo", { hasText: "Prerez" }).locator(".switch").first();
       if (await stikalo.count()) {
         await stikalo.click();
-        await p.waitForTimeout(1200);
+        await ugasniNamig();
         await slikaj("prerez");
         const blizje = p.locator('[aria-label="Približaj"]').first();
         for (let i = 0; i < 2; i++) await blizje.click().catch(() => {});
