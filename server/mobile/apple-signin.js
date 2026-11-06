@@ -77,7 +77,8 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
       if (!birthIso) return;
       signupThrottle.fail(key);
       const name = [req.body?.given_name, req.body?.family_name].filter(Boolean).join(" ");
-      const { id } = createParent(req, { email: who.email, passwordHash: unusablePasswordHash(), name, birthIso, verified: true });
+      const { id } = createParent(req, { email: who.email, passwordHash: unusablePasswordHash(), name, birthIso, verified: !!who.emailVerified });
+      // Potrjen samo, kar je Apple potrdil (pregled #477 A: potrjen e-naslov odpre pilot in mejo lastnika).
       db.prepare("UPDATE parents SET apple_sub = ? WHERE id = ?").run(who.sub, id);
       p = getParent(id);
       created = true;

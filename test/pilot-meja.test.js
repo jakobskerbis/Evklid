@@ -99,14 +99,71 @@ test("pilot po koncu in ne-pilot: običajna (brezplačna) meja", async () => {
   }
 });
 
-test("pilot: samo prvi profil računa; pilot brez potrjenega naslova nič", async () => {
+test("pilot: vsi profili računa (j 2026-11-06 17:0x), vsak s svojo mejo; brez potrjenega naslova nič", async () => {
   await withAccounts({ EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(10) }, async ({ call, store, kid }) => {
-    const second = (await call("/api/students", { method: "POST", body: { name: "Eva", birth_year: new Date().getFullYear() - 12, consent: true } })).body;
+    // Drugi profil iz časa pred pilotom (npr. prej družinski paket): ustvarjanje novih profilov ostane po paketu.
+    const pid = store.db.prepare("SELECT parent_id FROM students WHERE id = ?").get(kid.id).parent_id;
+    const second = { id: Number(store.db.prepare("INSERT INTO students (name, settings, parent_id) VALUES ('Eva', ?, ?)").run(store.db.prepare("SELECT settings FROM students WHERE id = ?").get(kid.id).settings, pid).lastInsertRowid) };
     assert.equal((await call(`/api/students/${kid.id}/usage`)).body.guaranteed, true);
-    assert.notEqual((await call(`/api/students/${second.id}/usage`)).body.guaranteed, true);
+    const u2 = await call(`/api/students/${second.id}/usage`);
+    assert.equal(u2.body.guaranteed, true, "tudi drugi profil: " + JSON.stringify(u2));
+    spend(store, kid, 500);
+    assert.equal((await ask(call, kid.id, 1))[0].status, 429, "prvi nad mejo");
+    assert.equal((await ask(call, second.id, 1))[0].status, 200, "drugi ima svojo mejo");
     store.db.prepare("UPDATE parents SET email_verified_at = NULL").run();
     assert.notEqual((await call(`/api/students/${kid.id}/usage`)).body.guaranteed, true);
   });
+});
+
+test("pilot in lastnik: brez ponudb (paket pred testom, naročnina, dokup)", async () => {
+  for (const env of [{ EVKLID_PILOT_EMAILS: "meja@x.si", EVKLID_PILOT_DO: dayIso(10) }, { EVKLID_ADMIN_EMAILS: "meja@x.si" }]) {
+    await withAccounts(env, async ({ call, kid }) => {
+      const o = (await call(`/api/students/${kid.id}/level-up`)).body.offers;
+      assert.equal(o.show, false, JSON.stringify({ env, o }));
+    });
+  }
+  await withAccounts({ EVKLID_PILOT_EMAILS: "drug@x.si" }, async ({ call, kid }) => {
+    assert.equal((await call(`/api/students/${kid.id}/level-up`)).body.offers.show, true, "ne-pilot: ponudbe ostanejo");
+  });
+  {
+  }
+});
+
+test("datum konca: več kot eno leto naprej → privzeti", () => {
+  const now = Date.parse("2026-11-06T12:00:00Z");
+  assert.equal(pilotEndMs({ EVKLID_PILOT_DO: "2072-12-15" }, now), pilotEndMs({}, now));
+  assert.equal(new Date(pilotEndMs({ EVKLID_PILOT_DO: "2027-01-31" }, now)).toISOString(), "2027-01-31T23:00:00.000Z");
+});
+
+test("razvojna povezava za potrditev: nikoli za naslove pilota ali skrbnikov", async () => {
+  const { openDb } = await import("../server/db.js");
+  const { createApp } = await import("../server/app.js");
+  const prev = { a: process.env.EVKLID_PILOT_EMAILS, b: process.env.EVKLID_ADMIN_EMAILS };
+  process.env.EVKLID_PILOT_EMAILS = "pilot@x.si";
+  process.env.EVKLID_ADMIN_EMAILS = "lastnik@x.si";
+  const app = createApp(openDb(":memory:"), { accounts: true, scheduler: false, resendKey: "", log: { error() {} } });
+  const server = app.listen(0);
+  try {
+    const reg = async (email) => {
+      const r = await fetch(`http://127.0.0.1:${server.address().port}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: "geslo1234", accept_privacy: true, birth_date: "1985-04-12" }),
+      });
+      return { status: r.status, body: await r.json() };
+    };
+    const other = await reg("drug@x.si");
+    assert.equal(other.status, 201, JSON.stringify(other.body));
+    assert.ok(other.body.dev_verify_url, "lokalno brez pošte: povezava za običajen naslov");
+    for (const e of ["pilot@x.si", "LASTNIK@x.si"]) {
+      const r = await reg(e);
+      assert.equal(r.status, 201, JSON.stringify(r.body));
+      assert.equal(r.body.dev_verify_url, undefined, e);
+    }
+  } finally {
+    server.close();
+    for (const [k, v] of [["EVKLID_PILOT_EMAILS", prev.a], ["EVKLID_ADMIN_EMAILS", prev.b]]) v === undefined ? delete process.env[k] : (process.env[k] = v);
+  }
 });
 
 test("poročilo marže: pilot in lastnik ločeno, ne v povprečju plačnikov", () => {

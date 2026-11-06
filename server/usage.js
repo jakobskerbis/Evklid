@@ -125,6 +125,8 @@ export class Usage {
     // Lastnik (server/accounts/pilot-meja.js): brez meje inštruktorja (brez trde meje, dnevnih meja in zaustavitve
     // proračuna); poraba se še vedno zapiše (log).
     this.unlimitedOf = () => false;
+    // Poraba prejšnjih računov istega člana pilota (accounts/index.js pilotPriorSpent, pregled #477 B1).
+    this.priorSpentOf = () => 0;
     this.onLog = null;
     this.inflight = new Map();
   }
@@ -133,8 +135,9 @@ export class Usage {
   // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
   // poolOf: profili s skupnim deležem (Družina); poraba se tedaj šteje za vse skupaj.
   // totalOf: vrednost paketa (meja + brezplačni rep) v $ ali null; trda meja ni nikoli višja (capsFor).
-  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf, unlimitedOf } = {}) {
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf, periodOf, minCall, blockFor, creditOverOf, unlimitedOf, priorSpentOf } = {}) {
     if (unlimitedOf) this.unlimitedOf = unlimitedOf;
+    if (priorSpentOf) this.priorSpentOf = priorSpentOf;
     if (minCall) this.minCall = minCall;
     if (blockFor) this.blockFor = blockFor;
     if (creditOverOf) this.creditOverOf = creditOverOf;
@@ -253,7 +256,7 @@ export class Usage {
       // Poraba šteje po obdobju paketa (naročnina: od začetka plačanega obdobja, ne koledarski mesec), brez porabe
       // iz kredita; poraba izbrisanih profilov računa šteje (izbris in nov profil meje ne ponastavita).
       const since = this.periodStart(studentId);
-      const spent = (group || [studentId]).reduce((t, id) => t + this.spentSince(id, since), 0) + this.orphanSpent(owner, since);
+      const spent = (group || [studentId]).reduce((t, id) => t + this.spentSince(id, since), 0) + this.orphanSpent(owner, since) + (this.priorSpentOf(studentId, since) || 0);
       return { ...base, spent, group, pool: !!group, allowance: detailedShare(g), ceiling: g, guaranteed: true };
     }
     const pool = state.cap ? Math.max(0, state.cap - this.reservedUsd(studentId)) : 0;

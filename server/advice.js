@@ -77,9 +77,10 @@ export function pricingAdvice(db, sum, { now = new Date(), groupOf = () => null 
   const proj = active.map((s) => s.cost_usd * scale).sort((a, b) => a - b);
   const avgEur = proj.length ? (proj.reduce((a, x) => a + x, 0) / proj.length) * eur : 0;
   const p90Usd = proj.length ? proj[Math.min(proj.length - 1, Math.floor(proj.length * 0.9))] : 0;
-  const atHard = hard ? sum.students.filter((s) => s.cost_usd >= hard).length : 0;
+  // Samo plačniki in brezplačni (active), brez pilota in lastnika (pregled #477 B6), kot imenovalec active.length.
+  const atHard = hard ? active.filter((s) => s.cost_usd >= hard).length : 0;
   const nearHard = hard ? proj.filter((x) => x >= hard * 0.8).length : 0;
-  const atSoft = soft ? sum.students.filter((s) => s.cost_usd >= soft).length : 0;
+  const atSoft = soft ? active.filter((s) => s.cost_usd >= soft).length : 0;
   const profit = net - avgEur;
   const maxUsd = maxLimitUsd(price, eur);
 
