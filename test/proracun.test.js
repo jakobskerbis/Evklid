@@ -72,17 +72,17 @@ test("budget is shared by plan weight; over the share the account's bought credi
   spend(free, b);
   assert.match(u.blockReason(free), /dokupom porabe/);
   assert.equal(u.blockReason(paid), null);
-  // Dokup: 10 € → 2,28 $ kredita (pravilo 75 %); s kreditom gre naprej, strošek nad deležem gre iz kredita.
+  // Dokup: 10 € → 2,22 $ kredita (25 % plačila brez DDV); s kreditom gre naprej, strošek nad deležem gre iz kredita.
   const pack = CREDIT_PACKS.find((p) => p.id === "k10");
-  assert.equal(creditUsdFor(pack.amount), 2.28);
+  assert.equal(creditUsdFor(pack.amount), 2.22);
   const id = credits.create(2, pack);
   assert.equal(credits.balance(2), 0, "neplačan nakup ne velja");
   assert.ok(credits.activate(id, "pi_1"));
   assert.ok(!credits.activate(id, "pi_1"), "dvojna potrditev ne pripiše dvakrat");
-  assert.equal(credits.balance(2), 2.28);
+  assert.equal(credits.balance(2), 2.22);
   assert.equal(u.blockReason(free), null);
   u.log(free, "claude-haiku-5-5", { input_tokens: 1_000_000, output_tokens: 0 }); // 0,10 $
-  assert.ok(Math.abs(credits.balance(2) - 2.18) < 1e-6);
+  assert.ok(Math.abs(credits.balance(2) - 2.12) < 1e-6);
   assert.ok(u.budgetState().spent < 0.02 + b + 1e-9, "poraba iz kredita ne šteje v skupni proračun");
   // Vračilo plačila odvzame kredit.
   assert.ok(credits.refund("pi_1"));
@@ -142,8 +142,8 @@ test("daily question limit scales with the student's remaining share and the day
   assert.ok(credits.activate(credits.create(3, CREDIT_PACKS.find((p) => p.id === "k10")), "pi_m"));
   process.env.EVKLID_QUESTION_USD = "0.05";
   try {
-    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29) }), Math.floor(2.28 / 2 / 0.05));
-    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29), credit: 2.28 / 2 }), Math.floor(2.28 / 4 / 0.05), "kredit, deljen med dva otroka");
+    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29) }), Math.floor(2.22 / 2 / 0.05));
+    assert.equal(u.dailyLimit(c, { state: u.budgetState(), now: day(29), credit: 2.22 / 2 }), Math.floor(2.22 / 4 / 0.05), "kredit, deljen med dva otroka");
   } finally {
     delete process.env.EVKLID_QUESTION_USD;
   }
@@ -204,10 +204,10 @@ test("free plan over its own cap with bought credit: the whole cost comes from c
   assert.ok(credits.activate(credits.create(3, CREDIT_PACKS.find((p) => p.id === "k10")), "pi_2"));
   assert.equal(u.budget().cap, 0, "brez proračuna");
   u.log(free, "claude-haiku-5-5", { input_tokens: 1_000_000, output_tokens: 0 }); // 0,10 $, pod mejo
-  assert.equal(credits.balance(3), 2.28, "pod mejo brezplačnega paketa kredit ostane");
+  assert.equal(credits.balance(3), 2.22, "pod mejo brezplačnega paketa kredit ostane");
   over = true;
   u.log(free, "claude-haiku-5-5", { input_tokens: 1_000_000, output_tokens: 0 });
-  assert.ok(Math.abs(credits.balance(3) - 2.18) < 1e-6, "nad mejo gre ves strošek iz kredita");
+  assert.ok(Math.abs(credits.balance(3) - 2.12) < 1e-6, "nad mejo gre ves strošek iz kredita");
 });
 
 test("any amount from 5 € can be bought, without an upper limit beyond Stripe's per-payment maximum", async () => {

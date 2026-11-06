@@ -16,7 +16,7 @@ import { PRICES, modeParams, MODEL, MODEL_MID } from "./claude.js";
 import { SPLIT_MARKER } from "./prompt.js";
 import {
   PLANS, LEGACY_PLANS, SCHOOL_PLANS, REGIONAL_PRICES, plansFor, planGuarantee, planEurMonth, PASSES, FAKS_PASSES, passCapUsd,
-  giftFor, giftGuarantee, LEGACY_GIFT_CENTS, COST, freeStudentMonthlyUsd, freeMonthlyPoolUsd, TRIAL_DAYS,
+  giftFor, giftGuarantee, LEGACY_GIFT_CENTS, COST, freeStudentMonthlyUsd, freeMonthlyPoolUsd, TRIAL_DAYS, netOfVat,
 } from "./accounts/plans.js";
 import { STOPNJE } from "../public/stopnja.js";
 import { CREDIT_PACKS, creditUsdFor } from "./placila/krediti.js";
@@ -101,13 +101,15 @@ export const FALLBACK_MODES = { deep: ["mid", "think", "chat", "lite"], mid: ["t
 // ---------- tabela meja (docs/stroski-ai.md, opis PR, test/marza-ai.test.js) ----------
 const r2 = (x) => Math.round(x * 100) / 100;
 const eurOf = (cents) => cents / 100;
-// Vrstica: paket, plačilo v € (na obdobje meje), meja AI v $ (najslabši primer, vključno z rezervo), delež plačila.
+// Vrstica: paket, plačilo v € z DDV in brez (na obdobje meje), meja AI v $ (najslabši primer), delež plačila brez DDV.
+// Delež je od plačila BREZ DDV (j 2026-11-06, plans.js VAT_RATE).
 const row = (name, paidEur, capUsd, period = "mesec") => ({
   name,
   period,
   paidEur: r2(paidEur),
+  netEur: r2(netOfVat(paidEur)),
   capUsd: Math.round(capUsd * 1000) / 1000,
-  share: paidEur > 0 ? (capUsd * COST.eurPerUsd) / paidEur : null,
+  share: paidEur > 0 ? (capUsd * COST.eurPerUsd) / netOfVat(paidEur) : null,
 });
 export function aiCapRows() {
   const rows = [];

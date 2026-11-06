@@ -155,8 +155,8 @@ test("private space: teacher sees only assignment results and XP; licence seats;
     const acc = schoolAccess(db, kids[0].id);
     assert.equal(acc.schoolName, "OŠ Prule");
     assert.deepEqual(acc.grades, [7]);
-    // Meja skrbnika (20 $) nad 25 % plačila (1 mesto × 12 € / 12 × 0,25 / 0,92) se omeji (trda meja AI, j 2026-11-06).
-    assert.equal(acc.aiCapUsdMonth, 0.27);
+    // Meja skrbnika (20 $) nad 25 % plačila brez DDV (1 mesto × 12 € / 1,22 / 12 × 0,25 / 0,92) se omeji (j 2026-11-06).
+    assert.equal(acc.aiCapUsdMonth, 0.22);
     assert.equal(schoolAccess(db, kids[1].id), null, "drugi učenec nima mesta");
 
     // Učenec vidi svoje naloge in licenco; izvoz je vedno mogoč.
@@ -255,7 +255,7 @@ test("invalid input is 4xx; only the owner moves a class into a school; transfer
     // Brez meje AI v licenci velja privzeta (25 % mesečne cene na učenca); 0 = brez meje ostane 0.
     const normal = await addLic(sch.id, { plan: "school" });
     assert.equal(normal.status, 201);
-    assert.equal(normal.body.licence.aiCapUsdMonth, Math.round(((30 * 14) / 12 * 0.25 / 0.92) * 100) / 100);
+    assert.equal(normal.body.licence.aiCapUsdMonth, Math.floor(((30 * 14) / 1.22 / 12 * 0.25 / 0.92) * 100 + 1e-9) / 100);
     assert.equal(schoolAccess(db, id).aiCapUsdMonth, normal.body.licence.aiCapUsdMonth);
     assert.equal(db.prepare("SELECT ai_cap_usd_month AS c FROM school_licences WHERE id = ?").get(normal.body.id ?? 0)?.c ?? null, null, "v bazi ostane NULL");
     const tuja = db.prepare("SELECT ai_cap_usd_month AS c FROM school_licences WHERE school_id = ? ORDER BY id LIMIT 1").get(sb.id);

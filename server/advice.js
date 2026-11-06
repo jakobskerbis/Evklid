@@ -4,10 +4,10 @@
 
 import "./env.js";
 import { LIMITS, EUR_PER_USD } from "./usage.js";
-import { PLANS, LEVEL_PRICES, LEVEL_LABEL, guaranteeUsd } from "./accounts/plans.js";
+import { PLANS, LEVEL_PRICES, LEVEL_LABEL, guaranteeUsd, VAT_RATE } from "./accounts/plans.js";
 import { STOPNJE, stageCodeSql, STAGE_CODE } from "../public/stopnja.js";
 
-const VAT = 0.22; // DDV v Sloveniji
+const VAT = VAT_RATE; // DDV v Sloveniji (server/accounts/plans.js)
 const STRIPE = (eur) => eur * 0.015 + 0.25; // provizija za evropske kartice
 const TARGET_PROFIT_EUR = 6; // cilj: vsaj ~6 € na naročnino na mesec ostane nam
 const MIN_PROFIT_EUR = 4; // tudi učenec, ki porabi vso mejo, prinese vsaj toliko

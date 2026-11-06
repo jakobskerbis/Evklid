@@ -31,18 +31,18 @@ test("pilotna cena: odprta za prvih 10 šol, pilotna šola lahko podaljša", () 
   assert.match(solePage(), /Samo za prvih 10 šol/);
 });
 
-test("meja AI licence: 25 % mesečne cene na učenca, EVKLID_SCHOOL_AI_EUR jo nastavi na stalen znesek", () => {
+test("meja AI licence: 25 % mesečne cene brez DDV na učenca, EVKLID_SCHOOL_AI_EUR jo nastavi na stalen znesek", () => {
   delete process.env.EVKLID_SCHOOL_AI_EUR;
-  assert.equal(schoolAiEurPerStudent("pilot"), (SCHOOL_LICENCE_PRICES.pilot.eur / 12) * 0.25);
-  assert.equal(schoolAiEurPerStudent("school"), (SCHOOL_LICENCE_PRICES.school.eur / 12) * 0.25);
-  // 30 učencev × 0,25 € / 0,92 € za 1 $ = 8,15 $ na mesec za pilotno šolo.
-  assert.equal(defaultAiCapUsd({ seats: 30, plan: "pilot" }), 8.15);
+  assert.equal(schoolAiEurPerStudent("pilot"), (SCHOOL_LICENCE_PRICES.pilot.eur / 1.22 / 12) * 0.25);
+  assert.equal(schoolAiEurPerStudent("school"), (SCHOOL_LICENCE_PRICES.school.eur / 1.22 / 12) * 0.25);
+  // 30 učencev × 12 € / 1,22 / 12 × 0,25 / 0,92 € za 1 $ = 6,68 $ na mesec za pilotno šolo (navzdol na cent).
+  assert.equal(defaultAiCapUsd({ seats: 30, plan: "pilot" }), 6.68);
   // Stalen znesek pod 25 % velja; nad 25 % plačila se omeji (trda meja AI, j 2026-11-06).
   process.env.EVKLID_SCHOOL_AI_EUR = "0.2";
   try {
     assert.equal(defaultAiCapUsd({ seats: 30, plan: "pilot" }), 6.52);
     process.env.EVKLID_SCHOOL_AI_EUR = "0.5";
-    assert.equal(defaultAiCapUsd({ seats: 30, plan: "pilot" }), 8.15);
+    assert.equal(defaultAiCapUsd({ seats: 30, plan: "pilot" }), 6.68);
   } finally {
     delete process.env.EVKLID_SCHOOL_AI_EUR;
   }

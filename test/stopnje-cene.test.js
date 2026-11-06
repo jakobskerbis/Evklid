@@ -181,8 +181,9 @@ function usageSetup() {
 }
 
 test("poraba AI: zajamčeni deleži naročnikov imajo prednost pred brezplačnimi v proračunu", () => {
-  assert.deepEqual(["OS", "SS", "FAKS"].map((l) => guaranteeUsd(l)), [1.9, 2.9, 4.5]);
-  assert.deepEqual(["OS", "SS", "FAKS"].map((l) => guaranteeUsd(l, "year")), [1.7, 2.6, 3.8]);
+  // Faks in SŠ letno omejeni na 25 % cene brez DDV (trda meja AI, j 2026-11-06).
+  assert.deepEqual(["OS", "SS", "FAKS"].map((l) => guaranteeUsd(l)), [1.9, 2.9, 4.452]);
+  assert.deepEqual(["OS", "SS", "FAKS"].map((l) => guaranteeUsd(l, "year")), [1.7, 2.58, 3.693]);
   const { u, id, spend } = usageSetup();
   const sub = id("Naročnik");
   const free1 = id("Brez 1");
@@ -267,7 +268,7 @@ test("tedensko poročilo pokaže odstotek porabe; predlog za skrbnika po stopnja
   const none = buildWeeklyReport(store.db, { name: "Mama" }, [kid], { appUrl: "http://x/", unsubscribeUrl: "http://x/u" });
   assert.doesNotMatch(none.text, /porabljenih/);
   const adv = levelAdvice(store.db, []);
-  assert.deepEqual(adv.map((l) => [l.level, l.price_eur, l.guarantee_usd]), [["OS", 9.99, 1.9], ["SS", 13.99, 2.9], ["FAKS", 19.99, 4.5]]);
+  assert.deepEqual(adv.map((l) => [l.level, l.price_eur, l.guarantee_usd]), [["OS", 9.99, 1.9], ["SS", 13.99, 2.9], ["FAKS", 19.99, 4.452]]);
   assert.ok(adv.every((l) => l.worst_profit_eur > 4 && l.status === "keep"), "tudi naročnik, ki porabi ves delež, prinese vsaj 4 €");
 });
 
@@ -772,8 +773,8 @@ test("75 %: zajamčeni AI po paketih, skupen delež družine, regijske cene po p
   const g = (key) => planGuarantee(planByKey(key));
   // total = vrednost iz tabele (Predlog A), usd = meja paketa = total − brezplačni rep 0,2 $ na profil (Družina 4 profili).
   const tot = (key) => [g(key).total, g(key).usd];
-  assert.deepEqual(["evklid_1_month", "evklid_ss_month", "evklid_faks_month"].map(tot), [[1.9, 1.7], [2.9, 2.7], [4.5, 4.3]]);
-  assert.deepEqual(["evklid_1_year", "evklid_ss_year", "evklid_faks_year"].map(tot), [[1.7, 1.5], [2.6, 2.4], [3.8, 3.6]]);
+  assert.deepEqual(["evklid_1_month", "evklid_ss_month", "evklid_faks_month"].map(tot), [[1.9, 1.7], [2.9, 2.7], [4.452, 4.252]]);
+  assert.deepEqual(["evklid_1_year", "evklid_ss_year", "evklid_faks_year"].map(tot), [[1.7, 1.5], [2.58, 2.38], [3.693, 3.493]]);
   assert.deepEqual(g("evklid_druzina_month"), { usd: 2.4, total: 3.2, profiles: 4, pool: true });
   assert.deepEqual(g("evklid_druzina_year"), { usd: 1.8, total: 2.6, profiles: 4, pool: true });
   assert.deepEqual(g("evklid_druzina_student_month"), { usd: 4.7, total: 5.5, profiles: 4, pool: true });
@@ -832,7 +833,7 @@ test("75 %: zajamčeni AI po paketih, skupen delež družine, regijske cene po p
   assert.equal(regionalGuaranteeUsd(inr[0]), guaranteeFromPrice(399 * 0.0098));
   // Darilo = letna cena stopnje; dokup 75 % (kredit nima hitrega načina): 5 / 10 / 20 € → 1,00 / 2,28 / 4,83 $.
   assert.deepEqual(GIFT_PRICES, { OS: 9900, SS: 13900, FAKS: 19900 });
-  assert.deepEqual(CREDIT_PACKS.map((p) => creditUsdFor(p.amount)), [1, 2.28, 4.83]);
+  assert.deepEqual(CREDIT_PACKS.map((p) => creditUsdFor(p.amount)), [1, 2.22, 4.45]); // največ 25 % plačila brez DDV (j 2026-11-06)
   for (const c of [500, 1000, 2000, 12345]) assert.ok(((c / 100) * 0.985 - 0.25 - creditUsdFor(c) * 0.92) / (c / 100) >= 0.75 - 1e-9, `dokup ${c}`);
 });
 
@@ -870,7 +871,7 @@ test("Družina: en skupen delež za ves račun; obvestila in »še N razlag« za
     // Paket za en profil: delež po profilu.
     subscribe("evklid_ss_year");
     assert.equal(api.poolFor(bor), null);
-    assert.equal(api.guaranteeFor(ana), 2.4, "po plačanem paketu (SŠ letno 2,6 $ − rep 0,2 $)");
+    assert.equal(api.guaranteeFor(ana), 2.38, "po plačanem paketu (SŠ letno 2,58 $ − rep 0,2 $; 25 % brez DDV)");
   });
 });
 

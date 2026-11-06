@@ -34,16 +34,19 @@ export const PILOT_SCHOOLS_MAX = 10;
 // ai_cap_usd_month skrbnika) ne preseže 25 % cene, ki jo šola plača na učenca (price_eur licence, sicer cenik).
 const EUR_PER_USD = 0.92; // kot COST.eurPerUsd v server/accounts/plans.js
 const AI_SHARE = 0.25; // kot AI_MAX_SHARE v server/accounts/plans.js
+// 25 % od cene BREZ DDV (j 2026-11-06): kot VAT_RATE v server/accounts/plans.js. Status DDV šolskih cen še ni potrjen
+// (server/sole.js TODO), zato previdno: cena licence se šteje kot cena z DDV.
+const VAT = 0.22;
 // Cena na učenca na leto, ki jo šola plača: vpisana cena licence, sicer cena paketa iz cenika.
 export const licencePriceEur = (lic) => (Number(lic?.price_eur) > 0 ? Number(lic.price_eur) : SCHOOL_LICENCE_PRICES[lic?.plan]?.eur || SCHOOL_LICENCE_PRICES.school.eur);
 export function schoolAiEurPerStudent(plan, priceEur = null) {
-  const max = ((Number(priceEur) > 0 ? Number(priceEur) : SCHOOL_LICENCE_PRICES[plan]?.eur || SCHOOL_LICENCE_PRICES.school.eur) / 12) * AI_SHARE;
+  const max = ((Number(priceEur) > 0 ? Number(priceEur) : SCHOOL_LICENCE_PRICES[plan]?.eur || SCHOOL_LICENCE_PRICES.school.eur) / (1 + VAT) / 12) * AI_SHARE;
   const fixed = Number(process.env.EVKLID_SCHOOL_AI_EUR);
   if (process.env.EVKLID_SCHOOL_AI_EUR && Number.isFinite(fixed) && fixed >= 0) return Math.min(fixed, max);
   return max;
 }
 // Največja mesečna meja AI licence v $ (25 % plačila za vsa mesta), navzdol na cent.
-export const maxAiCapUsd = (lic) => Math.floor(((Number(lic.seats) || 0) * (licencePriceEur(lic) / 12) * AI_SHARE / EUR_PER_USD) * 100 + 1e-9) / 100;
+export const maxAiCapUsd = (lic) => Math.floor(((Number(lic.seats) || 0) * (licencePriceEur(lic) / (1 + VAT) / 12) * AI_SHARE / EUR_PER_USD) * 100 + 1e-9) / 100;
 export const defaultAiCapUsd = (lic) => Math.min(maxAiCapUsd(lic), Math.round(((Number(lic.seats) || 0) * schoolAiEurPerStudent(lic.plan, licencePriceEur(lic)) / EUR_PER_USD) * 100) / 100);
 // Meja licence: meja skrbnika ali privzeta, nikoli nad 25 % plačila.
 export const licenceAiCapUsd = (lic) => Math.min(maxAiCapUsd(lic), lic.ai_cap_usd_month ?? defaultAiCapUsd(lic));

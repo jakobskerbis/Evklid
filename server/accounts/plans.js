@@ -46,11 +46,16 @@ export const guaranteeFromPrice = (eurMonth, { months = 1, profiles = 1 } = {}) 
 
 // ---------- trda meja AI: največ 25 % plačila (j 2026-11-06 6:40, »marža vedno ≥ 75 %«) ----------
 // Strošek AI (vhod, izhod, predpomnilnik, skener, slike, ponovni poskusi, prekinjeni odgovori) ne sme preseči
-// 25 % tega, kar uporabnik plača, za noben paket. € v $ previdno z 0,92 € za 1 $ (višje od tečaja), navzdol na 0,001 $.
+// 25 % tega, kar uporabnik plača (brez DDV), za noben paket. € v $ previdno z 0,92 € za 1 $ (višje od tečaja), navzdol na 0,001 $.
 // Vsaka meja paketa spodaj (tudi nastavitve skrbnika in EVKLID_*) se z aiCapFromEur omeji navzgor; brezplačni
 // paketi (brezplačni, gost, preizkus, koda, bonus) imajo nizko stalno mejo (server/meje-ai.js).
+// j 2026-11-06 ~9:00: 25 % se računa od cene BREZ DDV. Cene so z DDV (22 % v Sloveniji); regijske cene in šolske
+// licence štejemo enako (previdno: nižja meja). Edino mesto za stopnjo DDV (tudi server/advice.js, schools.js).
+export const VAT_RATE = 0.22;
+export const netOfVat = (eur) => (Number(eur) || 0) / (1 + VAT_RATE);
 export const AI_MAX_SHARE = 0.25;
-export const aiCapFromEur = (eur) => Math.max(0, Math.floor(((Number(eur) || 0) * AI_MAX_SHARE) / COST.eurPerUsd * 1000 + 1e-9) / 1000);
+// eur = plačilo z DDV; meja = 25 % plačila brez DDV, v $ navzdol na 0,001 $.
+export const aiCapFromEur = (eur) => Math.max(0, Math.floor((netOfVat(eur) * AI_MAX_SHARE) / COST.eurPerUsd * 1000 + 1e-9) / 1000);
 const capTo = (usd, eur) => Math.min(Math.max(0, Number(usd) || 0), aiCapFromEur(eur));
 
 // Kratka oznaka stopnje v nazivu paketa (Stripe, zavihek Račun).
