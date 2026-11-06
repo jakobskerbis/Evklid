@@ -119,5 +119,11 @@ export function migrateAccounts(db) {
   if (!cols.includes("parent_id")) db.exec("ALTER TABLE students ADD COLUMN parent_id INTEGER REFERENCES parents(id) ON DELETE CASCADE");
   if (!cols.includes("birth_year")) db.exec("ALTER TABLE students ADD COLUMN birth_year INTEGER");
   db.exec("CREATE INDEX IF NOT EXISTS idx_students_parent ON students(parent_id)");
+  // Izbris računa: poraba ostane (skupni proračun), a ne več vezana na račun, katerega id se lahko ponovno uporabi.
+  if (db.prepare("PRAGMA table_info(usage)").all().some((c) => c.name === "parent_id")) {
+    db.exec(`CREATE TRIGGER IF NOT EXISTS usage_parent_detach AFTER DELETE ON parents BEGIN
+      UPDATE usage SET parent_id = NULL WHERE parent_id = OLD.id;
+    END;`);
+  }
   db.exec("CREATE INDEX IF NOT EXISTS idx_parents_guest_net ON parents(guest_net) WHERE is_guest = 1");
 }

@@ -30,13 +30,23 @@ export const SCHOOL_LICENCE_PRICES = {
 export const PILOT_SCHOOLS_MAX = 10;
 // Privzeta mesečna meja AI licence (j 2026-11-04): 25 % mesečne cene na učenca (cena na leto / 12), v $.
 // EVKLID_SCHOOL_AI_EUR (npr. 0.5) jo nastavi na stalen znesek v € na učenca. Licenca z ai_cap_usd_month ima svojo mejo.
+// Trda meja (j 2026-11-06 6:40, »marža vedno ≥ 75 %«): nobena meja licence (tudi EVKLID_SCHOOL_AI_EUR ali
+// ai_cap_usd_month skrbnika) ne preseže 25 % cene, ki jo šola plača na učenca (price_eur licence, sicer cenik).
 const EUR_PER_USD = 0.92; // kot COST.eurPerUsd v server/accounts/plans.js
-export function schoolAiEurPerStudent(plan) {
+const AI_SHARE = 0.25; // kot AI_MAX_SHARE v server/accounts/plans.js
+// Cena na učenca na leto, ki jo šola plača: vpisana cena licence, sicer cena paketa iz cenika.
+export const licencePriceEur = (lic) => (Number(lic?.price_eur) > 0 ? Number(lic.price_eur) : SCHOOL_LICENCE_PRICES[lic?.plan]?.eur || SCHOOL_LICENCE_PRICES.school.eur);
+export function schoolAiEurPerStudent(plan, priceEur = null) {
+  const max = ((Number(priceEur) > 0 ? Number(priceEur) : SCHOOL_LICENCE_PRICES[plan]?.eur || SCHOOL_LICENCE_PRICES.school.eur) / 12) * AI_SHARE;
   const fixed = Number(process.env.EVKLID_SCHOOL_AI_EUR);
-  if (process.env.EVKLID_SCHOOL_AI_EUR && Number.isFinite(fixed) && fixed >= 0) return fixed;
-  return ((SCHOOL_LICENCE_PRICES[plan]?.eur || SCHOOL_LICENCE_PRICES.school.eur) / 12) * 0.25;
+  if (process.env.EVKLID_SCHOOL_AI_EUR && Number.isFinite(fixed) && fixed >= 0) return Math.min(fixed, max);
+  return max;
 }
-export const defaultAiCapUsd = (lic) => Math.round(((Number(lic.seats) || 0) * schoolAiEurPerStudent(lic.plan) / EUR_PER_USD) * 100) / 100;
+// Največja mesečna meja AI licence v $ (25 % plačila za vsa mesta), navzdol na cent.
+export const maxAiCapUsd = (lic) => Math.floor(((Number(lic.seats) || 0) * (licencePriceEur(lic) / 12) * AI_SHARE / EUR_PER_USD) * 100 + 1e-9) / 100;
+export const defaultAiCapUsd = (lic) => Math.min(maxAiCapUsd(lic), Math.round(((Number(lic.seats) || 0) * schoolAiEurPerStudent(lic.plan, licencePriceEur(lic)) / EUR_PER_USD) * 100) / 100);
+// Meja licence: meja skrbnika ali privzeta, nikoli nad 25 % plačila.
+export const licenceAiCapUsd = (lic) => Math.min(maxAiCapUsd(lic), lic.ai_cap_usd_month ?? defaultAiCapUsd(lic));
 // Koliko šol ima pilotno licenco; ali ta šola (ali nova) še lahko dobi pilotno ceno.
 export function pilotSchoolIds(db) {
   if (!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_licences'").get()) return [];
@@ -183,7 +193,7 @@ export function schoolAccess(db, studentId, now = new Date()) {
       subjects: lic.subjects,
       grades: lic.grades,
       validUntil: lic.valid_until,
-      aiCapUsdMonth: lic.ai_cap_usd_month ?? defaultAiCapUsd(lic),
+      aiCapUsdMonth: licenceAiCapUsd(lic),
     };
   }
   return null;
@@ -310,7 +320,7 @@ export class Schools {
     return {
       students,
       licence: lic
-        ? { plan: lic.plan, seats: lic.seats, subjects: lic.subjects, grades: lic.grades, validUntil: lic.valid_until, aiCapUsdMonth: lic.ai_cap_usd_month ?? defaultAiCapUsd(lic) }
+        ? { plan: lic.plan, seats: lic.seats, subjects: lic.subjects, grades: lic.grades, validUntil: lic.valid_until, aiCapUsdMonth: licenceAiCapUsd(lic) }
         : null,
       next: next || null,
     };

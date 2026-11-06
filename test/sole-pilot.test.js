@@ -37,9 +37,12 @@ test("meja AI licence: 25 % mesečne cene na učenca, EVKLID_SCHOOL_AI_EUR jo na
   assert.equal(schoolAiEurPerStudent("school"), (SCHOOL_LICENCE_PRICES.school.eur / 12) * 0.25);
   // 30 učencev × 0,25 € / 0,92 € za 1 $ = 8,15 $ na mesec za pilotno šolo.
   assert.equal(defaultAiCapUsd({ seats: 30, plan: "pilot" }), 8.15);
-  process.env.EVKLID_SCHOOL_AI_EUR = "0.5";
+  // Stalen znesek pod 25 % velja; nad 25 % plačila se omeji (trda meja AI, j 2026-11-06).
+  process.env.EVKLID_SCHOOL_AI_EUR = "0.2";
   try {
-    assert.equal(defaultAiCapUsd({ seats: 30, plan: "pilot" }), 16.3);
+    assert.equal(defaultAiCapUsd({ seats: 30, plan: "pilot" }), 6.52);
+    process.env.EVKLID_SCHOOL_AI_EUR = "0.5";
+    assert.equal(defaultAiCapUsd({ seats: 30, plan: "pilot" }), 8.15);
   } finally {
     delete process.env.EVKLID_SCHOOL_AI_EUR;
   }

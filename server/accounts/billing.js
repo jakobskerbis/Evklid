@@ -8,7 +8,7 @@
 // - dnevna opravila: usklajevanje naročnin s Stripom, opomnik pred koncem kode in pred letno obnovitvijo.
 import express from "express";
 import { randomToken, sha256, Throttle } from "./auth.js";
-import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd } from "./plans.js";
+import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd } from "./plans.js";
 import { Schedules, nowParts, cleanDate, TEST_KINDS } from "../schedule.js";
 import { cleanText } from "../settings.js";
 import { ljNow } from "./goal-reminder.js";
@@ -235,7 +235,8 @@ export function mountBilling(app, ctx) {
   // Ali ima profil poln dostop iz paketa pred testom (dokler ni porabljena meja AI paketa).
   function passPremium(studentId) {
     const p = passes.activeFor(studentId);
-    return !!p && passes.spentUsd(p) < p.ai_usd;
+    // Meja paketa največ 25 % plačila (plans.js passCapUsd); rezervo za naslednji klic preveri server/usage.js.
+    return !!p && passes.spentUsd(p) < passCapUsd(p);
   }
 
   // Preverjanje nakupa paketa (za plačilo v aplikaciji in za povezavo za starše).

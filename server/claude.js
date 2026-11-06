@@ -136,7 +136,8 @@ const supportsFallback = (model) => !/haiku/.test(model);
  * Pretoči odgovor modela.
  * @returns {Promise<{content, text, stopReason, usage, model}>}
  */
-export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, signal, tools = null, onToolUse = null, quick = null }) {
+// canRound(round): pred vsakim dodatnim krogom orodij; false = brez novega klica (trda meja AI, server/meje-ai.js).
+export async function streamReply({ system, messages, deep = false, mode = deep ? "deep" : "chat", onText, signal, tools = null, onToolUse = null, quick = null, canRound = null }) {
   const { model, effort, max_tokens } = modeParams(mode);
   if (isMockMode()) return mockReply({ messages, onText, signal, model, onToolUse: tools?.length ? onToolUse : null });
 
@@ -177,6 +178,7 @@ export async function streamReply({ system, messages, deep = false, mode = deep 
   let toolCalls = 0;
   let msgs = messages;
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
+    if (round > 0 && canRound && !canRound(round)) break;
     const p = { ...params, messages: msgs };
     if (tools?.length && round === MAX_TOOL_ROUNDS) p.tool_choice = { type: "none" };
     let gap = text && !text.endsWith("\n") ? "\n\n" : "";
@@ -324,7 +326,7 @@ async function mockReply({ messages, onText, signal, model, onToolUse = null }) 
 // Branje rokopisa: učenec odgovor napiše s prstom ali miško, model ga prepiše.
 // Model NE preverja pravilnosti (to naredi koda), samo prebere zapisano.
 
-const OCR_MODEL = env("EVKLID_OCR_MODEL", MODEL);
+export const OCR_MODEL = env("EVKLID_OCR_MODEL", MODEL);
 
 export async function readHandwriting({ imageBase64, mediaType = "image/png", answerType = "number", unit = null }) {
   if (isMockMode()) return { text: null, mock: true, usage: null, model: OCR_MODEL };

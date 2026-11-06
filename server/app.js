@@ -10,8 +10,8 @@ import { buildSystemPrompt } from "./prompt.js";
 import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, stripMeta, stripLeadPhrase } from "./meta.js";
 import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
-import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams } from "./claude.js";
-import { Usage, LIMITS, NOTES, windowHistory, recentHistory } from "./usage.js";
+import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams, costUsd, OCR_MODEL } from "./claude.js";
+import { Usage, LIMITS, NOTES, BLOCK_TEXT, windowHistory, recentHistory } from "./usage.js";
 import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
 import { Progress } from "./progress.js";
@@ -46,7 +46,8 @@ import { compressedStatic, compressedJson } from "./compress.js";
 import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
 import { mountReports, chatOff, messageCode } from "./reports.js";
-import { verifyAnswer, codeCheck } from "./verify.js";
+import { verifyAnswer, codeCheck, VERIFY_MODELS } from "./verify.js";
+import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, FALLBACK_MODES } from "./meje-ai.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
 import { mountGames, notePathActivity } from "./games.js";
@@ -296,7 +297,9 @@ export function createApp(store, opts = {}) {
   const pendingSettings = new Map(); // pogovor → predlog spremembe šole/letnika, ki čaka na potrditev
   // »Vprašaj Evklida« iz Vadnice: pogovor -> naloga, da prvi odgovor sestavi koda.
   const helpTasks = new Map();
-  const usage = new Usage(store.db);
+  // Isti števec porabe kot računi (server/accounts/index.js): skupne meje, skupen delež družine (poolOf) in
+  // rezervacije klicev v teku (trda meja AI, server/meje-ai.js). opts.usage: testi.
+  const usage = opts.usage || accounts?.aiUsage || new Usage(store.db);
   // Delitev mesečnega proračuna po profilih in dokupljeni kredit (z računi; server/proracun.js).
   // Zajamčeni delež naročnikov in poziv k dokupu (j 2026-11-01) morata veljati tudi tu, ne samo v Računu.
   if (accounts?.credits) usage.configure({ weightOf: accounts.shareWeightFor, ownerOf: accounts.ownerOf, credits: accounts.credits, freeOver: accounts.freeOver, guaranteeOf: accounts.guaranteeFor, topupPrompt: accounts.topupPrompt });
@@ -312,6 +315,11 @@ export function createApp(store, opts = {}) {
   const liveFixOn = () => !!opts.streamFn || !isMockMode();
   const liveReviewOn = () => !!opts.reviewCreateFn || !isMockMode();
   const answerModelOf = (mode, deep) => (mode === "mid" ? MODEL_MID : deep ? MODEL_DEEP : MODEL);
+  // Rezervacija za preverjanje dveh modelov (server/verify.js) pod mejo učenca; null, če ni prostora.
+  const verifyHold = (studentId, txt) => {
+    const h = usage.hold(studentId);
+    return h.take(VERIFY_MODELS().reduce((t, m) => t + checkReserveUsd(m, txt), 0)) ? h : null;
+  };
   const settleLater = (promise, done) =>
     Promise.resolve(promise)
       .then((v) => done(!!v?.ok, v?.reason || ""), (e) => done(false, e?.message || "napaka"))
@@ -570,10 +578,26 @@ export function createApp(store, opts = {}) {
     const maxTier = !premium ? null : ladder && (!ladder.opus || ladder.promo) ? "mid" : "deep";
     // Z opombo (dnevna meja Opusa, mehka meja, brezplačni paket) ostane izbrani hitri model: opomba mora držati.
     const routed = chosen.note ? { mode: chosen.mode, boosted: false, saved: false } : usage.route(student.id, chosen.mode, { lite, maxTier });
-    const mode = routed.mode;
+    let mode = routed.mode;
     const note = chosen.note || (routed.saved ? NOTES.appBudget : null);
     // »mid« (Sonnet: šolska licenca, Osebno pred 3. prošnjo, aktivacijska koda) se obnaša kot podrobna razlaga, le z drugim modelom.
-    const deep = mode === "deep" || mode === "mid";
+    let deep = mode === "deep" || mode === "mid";
+
+    const weak = weaknessesForPrompt(store, student);
+    const results = studentResults(store, student.id, conv.path_topic);
+    // Pogovor o tekmovalni temi: inštruktor namiguje v slogu tekmovanj (model ostane isti).
+    const tekTopic = conv.path_topic && isCompetitionPath(getTopic(conv.path_topic)?.path);
+    const system = buildSystemPrompt({
+      settings: tekTopic ? { ...student.settings, track: "COMPETITION" } : student.settings,
+      weaknesses: weak,
+      results: results.text,
+      schedule: scheduleText(student),
+      studentName: student.name,
+      learningPath: conv.path_topic
+        ? [learningPathPrompt(conv.path_topic), examPrompt(getTopic(conv.path_topic)?.path), lessonSummaryForPrompt(conv.path_topic)].filter(Boolean).join("\n")
+        : "",
+      lite,
+    });
 
     const userContent = [];
     if (image) userContent.push({ type: "image", source: { type: "base64", media_type: image.media_type, data: image.data } });
@@ -591,13 +615,37 @@ export function createApp(store, opts = {}) {
     }
     if (lesson) userContent.push({ type: "text", text: lessonNote(lesson) });
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
+    // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
+    // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).
+    const prior = store.apiHistory(conv.id);
+    const reserveFor = (m) =>
+      replyReserveUsd({
+        mode: m,
+        system,
+        messages: [...((m === "deep" || m === "mid") && !routed.boosted ? recentHistory(prior) : windowHistory(prior)), { role: "user", content: userContent }],
+        tools: SETTINGS_TOOLS,
+        extraTokens: 2000, // skrite opombe (preverjen rezultat, sodba) in povzetek starejšega dela pogovora
+      });
+    const hold = usage.hold(student.id);
+    let mainReserve = reserveFor(mode);
+    if (!hold.take(mainReserve)) {
+      const alt = (FALLBACK_MODES[mode] || []).find((m) => hold.take((mainReserve = reserveFor(m))));
+      if (!alt) {
+        busy.delete(conv.id);
+        if (againStreak !== (conv.deep || 0)) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);
+        const code = usage.hardBlock(student.id) || "block.monthLimit";
+        return res.status(429).json({ error: BLOCK_TEXT[code], code, limit: true });
+      }
+      mode = alt;
+      deep = mode === "deep" || mode === "mid";
+    }
+    // Dodaten krog orodij (nastavitve iz klepeta) je nov klic: rezerva še enkrat, z izhodom prejšnjega kroga na vhodu.
+    const roundReserve = () => mainReserve + callMaxUsd(modeParams(mode).model, modeParams(mode).max_tokens + 2000, 0);
     const userMsgId = store.addMessage(conv.id, "user", userContent, text, !!image);
     // Dnevna meja vprašanj šteje tu (server/db.js question_log), ne po sporočilih: izbris pogovora je ne obide.
     store.logQuestion(student.id);
     const help = isFirst && !image ? helpTasks.get(conv.id) : null;
     if (help) helpTasks.delete(conv.id);
-    const weak = weaknessesForPrompt(store, student);
-    const results = studentResults(store, student.id, conv.path_topic);
     // Prošnja za spremembo nastavitev mora poklicati orodje, zato ne iz predpomnilnika odgovorov.
     const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
     if (conv.title === "Nov pogovor") {
@@ -637,19 +685,6 @@ export function createApp(store, opts = {}) {
     const onToolUse = settingsTools.onToolUse;
     onToolUse.hasPending = () => pendingSettings.has(conv.id);
     try {
-      // Pogovor o tekmovalni temi: inštruktor namiguje v slogu tekmovanj (model ostane isti).
-      const tekTopic = conv.path_topic && isCompetitionPath(getTopic(conv.path_topic)?.path);
-      const system = buildSystemPrompt({
-        settings: tekTopic ? { ...student.settings, track: "COMPETITION" } : student.settings,
-        weaknesses: weak,
-        results: results.text,
-        schedule: scheduleText(student),
-        studentName: student.name,
-        learningPath: conv.path_topic
-          ? [learningPathPrompt(conv.path_topic), examPrompt(getTopic(conv.path_topic)?.path), lessonSummaryForPrompt(conv.path_topic)].filter(Boolean).join("\n")
-          : "",
-        lite,
-      });
       // Prvi korak pri nalogi iz Vadnice sestavi koda (podatki, iskano, namig), brez klica modela.
       const hinted =
         help && !help.kind && help.text === text && student.settings.solving_mode !== "B" && (student.settings.language || "sl") === "sl"
@@ -674,7 +709,8 @@ export function createApp(store, opts = {}) {
       let history = shortDeep ? recentHistory(fullHistory) : windowHistory(fullHistory);
       // Odrezani starejši del dolgega pogovora: kratek povzetek pred oknom (server/povzetek.js).
       // V načinu brez API-ja (mock) ne, razen v testih z lastnim streamFn.
-      if (!shortDeep && !cached && !win && !hinted && (!isMockMode() || opts.streamFn)) {
+      const sumReserve = summaryReserveUsd(fullHistory);
+      if (!shortDeep && !cached && !win && !hinted && (!isMockMode() || opts.streamFn) && hold.take(sumReserve)) {
         history = await summarizedHistory({
           store,
           conversationId: conv.id,
@@ -684,6 +720,7 @@ export function createApp(store, opts = {}) {
           signal: controller.signal,
           log: (r) => r?.usage && usage.log(student.id, r.model || modeParams("lite").model, r.usage, "povzetek"),
         });
+        hold.settle(sumReserve);
       }
       // Učenčev rezultat ali trditev: sodbo inštruktorja preveri koda (naloga iz prvega sporočila) ali model,
       // preden učenec odgovor vidi (server/live-check.js, 4). Zato se tak odgovor ne pretaka sproti.
@@ -729,6 +766,7 @@ export function createApp(store, opts = {}) {
         mode,
         tools: SETTINGS_TOOLS,
         onToolUse,
+        canRound: () => hold.take(roundReserve()),
         signal: controller.signal,
         onText: (chunk) => {
           const out = filter.push(chunk);
@@ -737,18 +775,23 @@ export function createApp(store, opts = {}) {
       });
       // Odgovor je že plačan; zapiše se spodaj (»chat«) ali ob prekinitvi v catch (»prekinjeno«).
       if (!cached) unlogged = { model: first.model || answerModelOf(mode, deep), usage: first.usage };
+      // Rezervo odgovora zamenja njegov dejanski strošek (zapiše se spodaj); ostanek je prost za preverjanja.
+      hold.settle(Math.max(0, hold.held - (cached ? 0 : costUsd(first.model || answerModelOf(mode, deep), first.usage || {}))));
       if (controller.signal.aborted) throw new Error("aborted");
 
       let result = first;
       let { rest } = filter.end();
       let verdictChecked = false;
       let extraCost = 0;
-      if (claim && !codeVerdict && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used && liveReviewOn() && needsVerdictReview({ answer: stripMeta(result.text), lite, spentToday: () => usage.kindToday("sodba") })) {
+      const verdictReserve = checkReserveUsd(MODEL_MID, `${prevTutorText}${text}${result.text || ""}`);
+      if (claim && !codeVerdict && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used && liveReviewOn() && needsVerdictReview({ answer: stripMeta(result.text), lite, spentToday: () => usage.kindToday("sodba") }) && hold.take(verdictReserve)) {
         verdictChecked = true;
         try {
           const rv = await reviewVerdict({ context: prevTutorText, student: text, answer: stripMeta(result.text), createFn: opts.reviewCreateFn, usage, studentId: student.id });
           extraCost += rv.cost;
-          if (rv.reason) {
+          hold.settle(verdictReserve);
+          // Ponovni odgovor samo, če je zanj prostor pod mejo (sicer ostane prvi odgovor).
+          if (rv.reason && hold.take(mainReserve)) {
             // Napačna sodba: isti model odgovori še enkrat z ugotovitvijo preverjevalca v skriti opombi.
             const again2 = createStreamFilter();
             held.length = 0;
@@ -767,6 +810,7 @@ export function createApp(store, opts = {}) {
             });
             if (controller.signal.aborted) throw Object.assign(new Error("aborted"), { usage: r2.usage, model: r2.model });
             extraCost += usage.log(student.id, r2.model || answerModelOf(mode, deep), r2.usage, "popravek");
+            hold.settle(mainReserve);
             result = r2;
             rest = again2.end().rest;
           }
@@ -793,20 +837,25 @@ export function createApp(store, opts = {}) {
           !image && // pregledovalec slike naloge ne vidi
           !verdictChecked && // sodbo je model že pregledal
           liveReviewOn() &&
-          needsReview({ checked: found.checked, model: answerModel, lite, premium, risky, answerLength: plain.length, level: () => usage.budgetState().level, spentToday: () => usage.kindToday("preverjanje") })
+          needsReview({ checked: found.checked, model: answerModel, lite, premium, risky, answerLength: plain.length, level: () => usage.budgetState().level, spentToday: () => usage.kindToday("preverjanje") }) &&
+          hold.take(checkReserveUsd(MODEL_MID, text + plain))
         ) {
           try {
             const rv = await reviewAnswer({ question: text, answer: plain, createFn: opts.reviewCreateFn, usage, studentId: student.id });
             extraCost += rv.cost;
+            hold.settle(checkReserveUsd(MODEL_MID, text + plain));
             if (rv.reason) issue = `a reviewer reported: ${rv.reason}`;
           } catch (e) {
             if (!controller.signal.aborted) console.warn(`[evklid] sprotni pregled ni uspel: ${e?.message || e}`);
           }
         }
-        if (issue && liveFixOn()) {
+        // Popravek: kratek klic istega (ali cenejšega) modela; rezerva po najdražjem možnem načinu.
+        const fixReserve = callMaxUsd(modeParams(mode).model, Buffer.byteLength(plain + issue, "utf8") + 3000, modeParams(mode).max_tokens);
+        if (issue && liveFixOn() && hold.take(fixReserve)) {
           try {
             const c = await correction({ streamFn, mode, answer: plain, issue, language: student.settings.language || "sl", signal: controller.signal });
             extraCost += usage.log(student.id, c.model || modeParams(c.mode).model, c.usage || {}, "popravek");
+            hold.settle(fixReserve);
             if (c.block) {
               fix = c.block;
               send("delta", { text: fix });
@@ -852,11 +901,14 @@ export function createApp(store, opts = {}) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
         const generic = student.name.length > 1 ? result.text.replaceAll(student.name, "{{IME}}") : result.text;
         const plain = stripMeta(result.text);
-        if (!codeCheck(plain)) {
-          const live = verifyLive();
+        const live = verifyLive();
+        // Preverjanje dveh modelov gre v porabo učenca (trda meja AI); brez prostora se odgovor ne shrani za druge.
+        const vHold = live && !codeCheck(plain) ? verifyHold(student.id, text + plain) : null;
+        if (!codeCheck(plain) && (!live || vHold)) {
           store.db.prepare("INSERT OR REPLACE INTO answer_cache (key, text, verified) VALUES (?, ?, ?)").run(key, generic, live ? 0 : 1);
           if (live) {
-            settleLater(runVerify({ question: text, answer: plain }), (ok, reason) => {
+            settleLater(runVerify({ question: text, answer: plain, studentId: student.id }), (ok, reason) => {
+              vHold.release();
               if (ok) store.db.prepare("UPDATE answer_cache SET verified = 1 WHERE key = ? AND text = ?").run(key, generic);
               else {
                 store.db.prepare("DELETE FROM answer_cache WHERE key = ? AND text = ? AND verified = 0").run(key, generic);
@@ -879,8 +931,10 @@ export function createApp(store, opts = {}) {
       const parsedCards = result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? parseCards(result.text) : [];
       const cardsText = parsedCards.map((c) => `${c.front} → ${c.back}`).join("\n");
       const liveCards = verifyLive();
+      // Kartice so vidne šele po preverjanju; brez prostora pod mejo za preverjanje se ne shranijo.
+      const cHold = liveCards && parsedCards.length && !codeCheck(cardsText) ? verifyHold(student.id, text + cardsText) : null;
       const cards =
-        parsedCards.length && !codeCheck(cardsText)
+        parsedCards.length && !codeCheck(cardsText) && (!liveCards || cHold)
           ? store.cards.add(student.id, parsedCards, {
               conversationId: conv.id,
               topicId: conv.path_topic,
@@ -889,9 +943,11 @@ export function createApp(store, opts = {}) {
               verified: !liveCards,
             })
           : [];
+      if (cHold && !cards.length) cHold.release();
       if (cards.length && liveCards) {
         const ids = cards.map((c) => c.id);
-        settleLater(runVerify({ question: text, answer: cardsText, kind: "cards" }), (ok, reason) => {
+        settleLater(runVerify({ question: text, answer: cardsText, kind: "cards", studentId: student.id }), (ok, reason) => {
+          cHold.release();
           store.cards.settle(ids, ok);
           if (!ok) console.warn(`[evklid] kartice niso shranjene (${String(reason).slice(0, 120)})`);
         });
@@ -954,6 +1010,7 @@ export function createApp(store, opts = {}) {
       res.end();
     } finally {
       busy.delete(conv.id);
+      hold.release();
     }
   });
 
@@ -1302,6 +1359,9 @@ export function createApp(store, opts = {}) {
     if (!m || m[2].length > 2 * 1024 * 1024) return res.status(400).json({ error: "Slika zapisa manjka ali je prevelika." });
     const blocked = usage.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
+    // Trda meja AI (server/meje-ai.js): branje zapisa (slika, do 200 izhodnih žetonov) pod mejo profila.
+    const hold = usage.guard(s.id, callMaxUsd(OCR_MODEL, 2000 + 2000, 200));
+    if (!hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
       const a = t.payload.answer || {};
       const out = await readFn({ imageBase64: m[2], mediaType: m[1], answerType: a.type, unit: a.unit || null });
@@ -1311,6 +1371,8 @@ export function createApp(store, opts = {}) {
     } catch (err) {
       console.error("[evklid] branje rokopisa:", err?.message || err);
       res.status(502).json({ error: errorText(err, "Branje zapisa trenutno ne deluje. Odgovor vpiši s tipkami.") });
+    } finally {
+      hold.release();
     }
   });
   // »Vprašaj Evklida«: odpre pogovor z nalogo in učenčevim odgovorom.

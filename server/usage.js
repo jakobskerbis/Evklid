@@ -3,6 +3,8 @@ import "./env.js";
 import { costUsd, MODEL_MID } from "./claude.js";
 import { BUDGET, MAX_BUDGET_USD, paceLevel, periodOf, budgetMode, fastMode } from "./proracun.js";
 import { explanationsFor, allowanceStage, detailedShare, freeStudentMonthlyUsd } from "./accounts/plans.js";
+import { callMaxUsd } from "./meje-ai.js";
+import { MODEL, MAX_TOKENS } from "./claude.js";
 
 const num = (k, d) => {
   const v = Number(process.env[k]);
@@ -99,12 +101,19 @@ export class Usage {
     this.topupPrompt = () => true;
     this.credits = null;
     this.shareCache = null;
+    // Trda meja AI (server/meje-ai.js): dodatne meje profila iz računov (brezplačni paket, šola, paket pred testom,
+    // kredit) kot [{ key, usd, spent, code }]; rezervacije klicev v teku po ključu meje.
+    this.capsOf = () => [];
+    this.onLog = null;
+    this.inflight = new Map();
   }
   // Računi (server/accounts/index.js): utež profila po paketu, lastnik računa in dokupljeni kredit.
   // freeOver: brezplačni profil je nad mejo brezplačnega paketa (s kreditom nadaljuje, ves strošek gre iz kredita).
   // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
   // poolOf: profili s skupnim deležem (Družina); poraba se tedaj šteje za vse skupaj.
-  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt } = {}) {
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog } = {}) {
+    if (capsOf) this.capsOf = capsOf;
+    if (onLog) this.onLog = onLog;
     if (weightOf) this.weightOf = weightOf;
     if (poolOf) this.poolOf = poolOf;
     if (topupPrompt) this.topupPrompt = topupPrompt;
@@ -213,7 +222,9 @@ export class Usage {
       // Družina: skupen delež, poraba vseh profilov skupaj. g je ves mesečni strošek AI paketa (ceiling, trda meja);
       // allowance = del za podrobne razlage (g / 1,15), od tam do meje hitri način (plans.js FAST_TAIL, detailedShare).
       const group = this.poolOf(studentId);
-      return { ...base, spent: this.groupSpent(studentId, group), group, pool: !!group, allowance: detailedShare(g), ceiling: g, guaranteed: true };
+      // Poraba izbrisanih profilov računa ta mesec šteje v paket (izbris in nov profil meje ne ponastavita).
+      const spent = this.groupSpent(studentId, group) + this.orphanSpent(owner);
+      return { ...base, spent, group, pool: !!group, allowance: detailedShare(g), ceiling: g, guaranteed: true };
     }
     const pool = state.cap ? Math.max(0, state.cap - this.reservedUsd(studentId)) : 0;
     const allowance = pool ? (pool * weight) / Math.max(weight, this.totalWeight(studentId)) : 0;
@@ -292,8 +303,8 @@ export class Usage {
     const cost = costUsd(model, usage || {});
     this.db
       .prepare(
-        `INSERT INTO usage (student_id, model, kind, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, cost_usd)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO usage (student_id, model, kind, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, cost_usd, parent_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         studentId,
@@ -304,6 +315,7 @@ export class Usage {
         usage?.cache_read_input_tokens || 0,
         usage?.cache_creation_input_tokens || 0,
         cost,
+        studentId == null ? null : this.ownerOf(studentId) ?? null,
       );
     this.creditOutAt = 0;
     if (this.lastCreditOut) {
@@ -311,6 +323,9 @@ export class Usage {
       this.kvSet("ai_credit_out_at", 0);
     }
     this.chargeCredit(studentId, cost);
+    try {
+      this.onLog?.(studentId, cost);
+    } catch {}
     const month = this.baseSpent();
     const budget = this.budget().total;
     if (budget && month >= budget * LIMITS.alertRatio && month - cost < budget * LIMITS.alertRatio) {
@@ -446,16 +461,105 @@ export class Usage {
     const state = this.budgetState();
     if (this.overFreeTail(studentId, state)) return out(this.topupPrompt(studentId) ? "block.freeTailTopup" : "block.freeTail");
     if (state.cap) {
-      if (!this.overShare(studentId, state)) return null;
+      if (!this.overShare(studentId, state)) {
+        const hard = this.hardBlock(studentId);
+        return hard ? out(hard) : null;
+      }
       // Pod 15 let ali ob ponudbi paketa pred testom brez poziva k dokupu (ponudbe.js, ena ponudba naenkrat).
       const capped = state.spent >= state.cap;
       if (!this.topupPrompt(studentId)) return out(capped ? "block.capOut" : "block.shareOut");
       return out(capped ? "block.capOutTopup" : "block.shareOutTopup");
     }
+    // Trda meja (server/meje-ai.js): ni prostora niti za najcenejši klic.
+    const hard = this.hardBlock(studentId);
+    if (hard) return out(hard);
     const per = LIMITS.studentMonthlyUsd();
     // Naročnika mesečna meja ne ustavi: nad zajamčenim deležem odgovarja hitri model (dnevna meja vprašanj velja).
     if (per && !(this.guaranteeOf(studentId) > 0) && this.monthTotal(studentId) >= per) return out("block.monthLimit");
     return null;
+  }
+  // ---------- trda meja AI (j 2026-11-06, server/meje-ai.js) ----------
+  // Poraba izbrisanih profilov računa ta mesec (student_id NULL, parent_id ostane).
+  orphanSpent(owner) {
+    if (owner == null) return 0;
+    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE parent_id = ? AND student_id IS NULL AND created_at >= date('now','start of month')").get(owner).s;
+  }
+  // Meje, ki veljajo za naslednji klic profila: { key, usd, spent, code }. Naročnina, darilo, preizkus, koda in bonus:
+  // vsa vrednost paketa (meja + brezplačni rep) + dokupljeni kredit; ostalo iz računov (capsOf).
+  capsFor(studentId, state = this.budgetState()) {
+    const caps = [];
+    const sb = this.studentBudget(studentId, state);
+    if (sb.guaranteed) {
+      const n = sb.group?.length || 1;
+      caps.push({
+        key: sb.group ? `pool:${[...sb.group].sort((a, b) => a - b).join(",")}` : `s:${studentId}`,
+        usd: sb.ceiling + freeStudentMonthlyUsd() * n + Math.max(0, sb.credit || 0),
+        spent: sb.spent,
+        code: this.topupPrompt(studentId) ? "block.freeTailTopup" : "block.freeTail",
+      });
+    }
+    for (const c of [].concat(this.capsOf(studentId) || [])) if (c && Number.isFinite(c.usd)) caps.push(c);
+    return caps;
+  }
+  // Prostor do najbližje meje v $ (poraba in rezervacije klicev v teku odštete); Infinity brez meje (brez računov).
+  headroom(studentId, caps = this.capsFor(studentId)) {
+    let h = Infinity;
+    for (const c of caps) h = Math.min(h, c.usd - (c.spent || 0) - (this.inflight.get(c.key) || 0));
+    return h;
+  }
+  // Najcenejši klic (hitri model, kratek način, ~30k vhodnih žetonov): brez prostora zanj je inštruktor ustavljen.
+  minCallUsd() {
+    return callMaxUsd(MODEL, 30_000, MAX_TOKENS.lite);
+  }
+  // Koda razloga, če meja ne dopušča niti najcenejšega klica, sicer null.
+  hardBlock(studentId) {
+    const caps = this.capsFor(studentId);
+    if (!caps.length) return null;
+    const need = this.minCallUsd();
+    const c = caps.find((x) => x.usd - (x.spent || 0) - (this.inflight.get(x.key) || 0) < need);
+    return c ? c.code || "block.monthLimit" : null;
+  }
+  // Ena rezervacija za en klic (skener, branje zapisa, urnik, anketa): hold ali null, če ne gre pod mejo.
+  guard(studentId, usd) {
+    const h = this.hold(studentId);
+    return h.take(usd) ? h : null;
+  }
+  // Odgovor 429, ko klic ne gre pod trdo mejo.
+  guardBlock(studentId) {
+    const code = this.hardBlock(studentId) || "block.monthLimit";
+    return { error: BLOCK_TEXT[code], code, limit: true };
+  }
+  // Rezervacija za klice ene zahteve: take(usd) rezervira, če gre pod vse meje profila (sicer false);
+  // settle(rezervirano) jo sprosti, ko je strošek zapisan; release() sprosti vse ob koncu zahteve.
+  hold(studentId) {
+    const keys = this.capsFor(studentId).map((c) => c.key);
+    const self = this;
+    let held = 0;
+    const add = (usd) => {
+      for (const k of keys) {
+        const v = (self.inflight.get(k) || 0) + usd;
+        if (v > 1e-12) self.inflight.set(k, v);
+        else self.inflight.delete(k);
+      }
+      held += usd;
+    };
+    return {
+      take(usd) {
+        if (!(usd >= 0)) return false;
+        if (self.headroom(studentId) < usd) return false;
+        add(usd);
+        return true;
+      },
+      settle(usd) {
+        add(-Math.min(Math.max(0, usd), held));
+      },
+      release() {
+        if (held > 0) add(-held);
+      },
+      get held() {
+        return held;
+      },
+    };
   }
   summary() {
     const month = "u.created_at >= date('now','start of month')";

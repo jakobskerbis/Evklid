@@ -44,6 +44,15 @@ export const guaranteeFromPrice = (eurMonth, { months = 1, profiles = 1 } = {}) 
   return Math.max(0, Math.floor(usd * 10 + 1e-9) / 10);
 };
 
+// ---------- trda meja AI: največ 25 % plačila (j 2026-11-06 6:40, »marža vedno ≥ 75 %«) ----------
+// Strošek AI (vhod, izhod, predpomnilnik, skener, slike, ponovni poskusi, prekinjeni odgovori) ne sme preseči
+// 25 % tega, kar uporabnik plača, za noben paket. € v $ previdno z 0,92 € za 1 $ (višje od tečaja), navzdol na 0,001 $.
+// Vsaka meja paketa spodaj (tudi nastavitve skrbnika in EVKLID_*) se z aiCapFromEur omeji navzgor; brezplačni
+// paketi (brezplačni, gost, preizkus, koda, bonus) imajo nizko stalno mejo (server/meje-ai.js).
+export const AI_MAX_SHARE = 0.25;
+export const aiCapFromEur = (eur) => Math.max(0, Math.floor(((Number(eur) || 0) * AI_MAX_SHARE) / COST.eurPerUsd * 1000 + 1e-9) / 1000);
+const capTo = (usd, eur) => Math.min(Math.max(0, Number(usd) || 0), aiCapFromEur(eur));
+
 // Kratka oznaka stopnje v nazivu paketa (Stripe, zavihek Račun).
 export const LEVEL_LABEL = { OS: "OŠ", SS: "SŠ", FAKS: "Faks" };
 const LEVEL_KEY = { OS: "1", SS: "ss", FAKS: "faks" };
@@ -169,11 +178,19 @@ export function plansFor(currency = "EUR") {
 // Zajamčeni AI regijskega paketa na mesec (v $): pravilo 75 % iz cene v evrih (EUR_PER_UNIT). Paket za 2 otroka
 // ima en skupen delež (kot Družina) s strežnikom za 2 profila.
 export const regionalGuaranteeUsd = (plan) => {
-  const rate = EUR_PER_UNIT[plan?.currency];
-  if (!rate) return 0;
-  const major = plan.amount / (ZERO_DECIMAL.has(plan.currency) ? 1 : 100);
-  return guaranteeFromPrice((major * rate) / monthsOf(plan.interval), { months: monthsOf(plan.interval), profiles: plan.seats || 1 });
+  const eur = planEurMonth(plan);
+  if (!eur) return 0;
+  return guaranteeFromPrice(eur, { months: monthsOf(plan.interval), profiles: plan.seats || 1 });
 };
+// Mesečna cena paketa v € (letna / 12; regijske valute po EUR_PER_UNIT), 0 za neznano valuto.
+export function planEurMonth(plan) {
+  if (!plan) return 0;
+  const cur = plan.currency || "EUR";
+  const rate = cur === "EUR" ? 1 : EUR_PER_UNIT[cur];
+  if (!rate) return 0;
+  const major = plan.amount / (ZERO_DECIMAL.has(cur) ? 1 : 100);
+  return (major * rate) / monthsOf(plan.interval);
+}
 // ---------- Evklid Osebno za učence s šolsko licenco (j 2026-10-30, načrt »Šolska licenca in Osebno«) ----------
 // 5,99 € na mesec ali 49 € na šolsko leto za en profil z veljavno šolsko licenco (šola že plača šolske
 // predmete, Osebno doda vse ostalo). Samo v evrih. Ni v portalu za preklop paketa (glej stripe.js), da
@@ -279,11 +296,14 @@ export const FAST_TAIL = 0.15;
 // Del meje za podrobne razlage (zmogljivejši model); ostanek do meje je hitri način.
 export const detailedShare = (ceilingUsd) => (ceilingUsd || 0) / (1 + FAST_TAIL);
 // Zajamčeno za stopnjo; EVKLID_AI_GUARANTEE_<OS|SS|FAKS>_USD (za teste in skrbnika) velja za mesečno in letno.
+// Nastavitev skrbnika ne more preseči 25 % cene stopnje (aiCapFromEur).
 export const guaranteeUsd = (level, interval = "month") => {
+  const prices = LEVEL_PRICES[level] || LEVEL_PRICES.OS;
+  const eurMonth = interval === "year" ? prices.year / 100 / 12 : prices.month / 100;
   const v = Number(process.env[`EVKLID_AI_GUARANTEE_${level}_USD`]);
-  if (process.env[`EVKLID_AI_GUARANTEE_${level}_USD`] && Number.isFinite(v) && v >= 0) return v;
+  if (process.env[`EVKLID_AI_GUARANTEE_${level}_USD`] && Number.isFinite(v) && v >= 0) return capTo(v, eurMonth);
   const table = interval === "year" ? AI_GUARANTEE_YEAR_USD : AI_GUARANTEE_USD;
-  return table[level] ?? table.OS;
+  return capTo(table[level] ?? table.OS, eurMonth);
 };
 // Brezplačni rep (j 2026-11-04): nad mejo paketa naročnik dela kot brezplačni profil, z enako mesečno mejo
 // (freeStudentMonthlyUsd, 0,2 $ na profil; server/usage.js overFreeTail). Ta rep je vštet v vrednosti iz tabele:
@@ -296,6 +316,12 @@ const withTail = (total, profiles, pool) => ({ usd: subscriptionCeiling(total, p
 // profile paketa.
 export function planGuarantee(plan) {
   if (!plan) return null;
+  const g = planGuaranteeRaw(plan);
+  // Trda meja 25 %: vrednost iz tabele (meja + rep) nikoli nad 25 % cene paketa na mesec.
+  const max = aiCapFromEur(planEurMonth(plan));
+  return g.total > max ? withTail(max, g.profiles, g.pool) : g;
+}
+function planGuaranteeRaw(plan) {
   const seats = plan.seats || 1;
   if (plan.school) return withTail(SCHOOL_PLAN_AI_USD[plan.interval] ?? SCHOOL_PLAN_AI_USD.year, 1, false);
   if (plan.currency && plan.currency !== "EUR") return withTail(regionalGuaranteeUsd(plan), seats, seats > 1);
@@ -308,10 +334,13 @@ export function planGuarantee(plan) {
 // Darilna koda: zajamčeni AI kot letna naročnina stopnje (useLevel = stopnja profila, največ stopnja darila).
 // Stara darila brez stopnje (49 €, pred 2026-11-04) po pravilu 75 % iz cene 49 € na leto (≈ 0,6 $).
 export const LEGACY_GIFT_CENTS = 4900;
+// Trda meja 25 %: največ 25 % cene darila na mesec (letna cena stopnje darila / 12).
 export const giftGuarantee = (giftLevel, useLevel) =>
   STOPNJE.includes(giftLevel)
-    ? withTail(guaranteeUsd(useLevel, "year"), 1, false)
-    : withTail(guaranteeFromPrice(LEGACY_GIFT_CENTS / 100 / 12, { months: 12 }), 1, false);
+    ? withTail(capTo(guaranteeUsd(useLevel, "year"), giftFor(giftLevel).amount / 100 / 12), 1, false)
+    : withTail(capTo(guaranteeFromPrice(LEGACY_GIFT_CENTS / 100 / 12, { months: 12 }), LEGACY_GIFT_CENTS / 100 / 12), 1, false);
+// Meja AI paketa pred testom (ves čas paketa): shranjena ob nakupu (passes.ai_usd), največ 25 % plačila.
+export const passCapUsd = (pass) => capTo(pass?.ai_usd, (Number(pass?.amount) || 0) / 100);
 // Najmanjša meja naročnika: tudi paket z mejo 0 (majhna regijska cena) ostane »zajamčen« (hitri način, nato
 // brezplačni rep), ne pa brez meje po utežeh skupnega proračuna.
 export const MIN_CEILING_USD = 0.001;

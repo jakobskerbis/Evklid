@@ -213,6 +213,7 @@ test("free tier limits tutor questions; subscription via webhook lifts it", asyn
       assert.equal(portal.body.url, "https://billing.stripe.test/p");
     });
   } finally {
+    delete process.env.EVKLID_TRIAL_AI_USD;
     delete process.env.EVKLID_FREE_DAILY_QUESTIONS;
   }
 });
@@ -235,11 +236,17 @@ test("daily tutor questions: the plan's limit is the floor, the AI budget raises
       await registerVerified(trial, calls, "meja@preizkus.si");
       const first = await askAll(trial, 4);
       assert.deepEqual(first, [200, 200, 200, 429]);
-      // S proračunom (200 $, malo učencev): meja zraste do zgornje meje (tu 5); brezplačni paket ostane 2.
+      // S proračunom (200 $, malo učencev): preizkus ima nizko stalno mejo AI (server/meje-ai.js, j 2026-11-06), zato
+      // ostane stalna meja 3; z večjo mejo preizkusa meja zraste do zgornje meje (tu 5); brezplačni paket ostane 2.
       store.db.prepare("INSERT INTO kv (key, value) VALUES ('budget_base_usd', '200') ON CONFLICT(key) DO UPDATE SET value = excluded.value").run();
       const trial2 = client();
       await registerVerified(trial2, calls, "meja2@preizkus.si");
-      assert.deepEqual(await askAll(trial2, 6), [200, 200, 200, 200, 200, 429]);
+      assert.deepEqual(await askAll(trial2, 4), [200, 200, 200, 429]);
+      process.env.EVKLID_TRIAL_AI_USD = "50";
+      const trial2b = client();
+      await registerVerified(trial2b, calls, "meja2b@preizkus.si");
+      assert.deepEqual(await askAll(trial2b, 6), [200, 200, 200, 200, 200, 429]);
+      delete process.env.EVKLID_TRIAL_AI_USD;
       const free = client();
       const p = await registerVerified(free, calls, "meja@brezplacno.si");
       store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(p.id);
@@ -267,9 +274,9 @@ test("free tier stops at the monthly AI budget (all free students and per studen
       const kid = (await a("/api/students", { method: "POST", body: { name: "Tia", birth_year: YEAR - 10, consent: true } })).body;
       const conv = (await a(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
       const ask = (t) => a(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: t } });
-      store.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku', 'chat', 0.6)").run(kid.id);
-      // Med preizkusom meja brezplačnega paketa ne velja.
+      // Med preizkusom meja brezplačnega paketa ne velja (preizkus ima svojo mejo, server/meje-ai.js).
       assert.equal((await ask("prvo")).status, 200);
+      store.db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku', 'chat', 0.6)").run(kid.id);
       store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z'").run();
       const pool = await ask("drugo");
       assert.equal(pool.status, 429);

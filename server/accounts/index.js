@@ -10,7 +10,7 @@ import { audit, detachAudit } from "../dnevnik-dostopov.js";
 import { openMessage } from "../db.js";
 import { openReport } from "../reports.js";
 import { unseal } from "../crypto-polje.js";
-import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
+import { planByKey, planFor, plansFor, currencyForCountry, REGIONAL_DRAFT, monthlyAmount, accessFor, paidActive, isPremiumChild, isoIn, SCHOOL_PLANS, schoolPlanFor, isSchoolPlan, GIFT_PRICES, planLevel, opensLevel, guaranteeUsd, planGuarantee, giftGuarantee, subscriptionCeiling, MIN_CEILING_USD, upgradeMonthUsd, upgradeFromUsd, levelPlanFor, familyPlanFor, passLevel, monthlyOf, freeDailyQuestions, freeMonthlyPoolUsd, freeStudentMonthlyUsd, passCapUsd, TRIAL_DAYS, REFERRAL_DAYS, MAX_CHILDREN, PRIVACY_VERSION, GRACE_DAYS } from "./plans.js";
 import { Stripe, verifyWebhook } from "./stripe.js";
 import { Mailer, verifyEmail, resetEmail, referralRewardEmail, paymentFailedEmail, parentInviteEmail } from "./email.js";
 import { mountBilling, migrateBilling, publicPass, ADULT_TEXT, WITHDRAWAL_TEXT } from "./billing.js";
@@ -19,6 +19,7 @@ import { buildGoalReminder, reminderDays, isNoonTime, ljNow } from "./goal-remin
 import { Devices, deviceLabel, deviceWarnLimit } from "./devices.js";
 import { cleanText } from "../settings.js";
 import { Usage, BLOCK_TEXT } from "../usage.js";
+import { NOPAY_USD } from "../meje-ai.js";
 import { promoConfig, createPromo } from "./promo.js";
 import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE } from "./age.js";
 import { guestModeOn, guestNet, guestPerDay, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
@@ -255,6 +256,13 @@ export function mountAccounts(app, store, opts = {}) {
     if (!r.personal) return null;
     const owner = ownerOf(studentId);
     if (r.personalTier === "gift") return giftGuarantee(getParent(owner)?.gift_level, r.useLevel);
+    // Brez plačila (j 2026-11-06: trda meja AI): preizkus, aktivacijska koda, bonus in stari profili brez računa
+    // imajo nizko stalno mejo za ves račun (server/meje-ai.js NOPAY_USD), z brezplačnim repom kot naročnina.
+    if (NOPAY_USD[r.personalTier]) {
+      const n = owner ? Math.max(1, accessOf(getParent(owner)).seats || 1) : 1;
+      const total = NOPAY_USD[r.personalTier]();
+      return { usd: subscriptionCeiling(total, n), total, profiles: n, pool: !!owner };
+    }
     if (r.personalTier !== "paid") return null;
     const g = planGuarantee(planByKey(getParent(owner)?.sub_plan)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
     // Nadgradnja ta mesec (applySubscription): stari paket za pretekle dni, novi za preostale (plans.js upgradeMonthUsd).
@@ -276,7 +284,40 @@ export function mountAccounts(app, store, opts = {}) {
     const ids = [...childIds(owner)].sort((a, b) => a - b).slice(0, access.seats || 1);
     return ids.includes(studentId) ? ids : null;
   }
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, poolOf: poolFor });
+  // Trda meja AI (j 2026-11-06, server/meje-ai.js): meje profila brez zajamčenega paketa za server/usage.js hold.
+  // Paket pred testom: meja paketa (25 % plačila); šola: mesečna meja licence (25 % plačila); brezplačni paket in
+  // gost: meja na profil (omrežje) in skupna meja vseh brezplačnih; s kreditom brezplačni profil plača iz kredita.
+  function capsOf(studentId) {
+    const owner = ownerOf(studentId);
+    if (!owner) return [];
+    const r = rightsFor(studentId);
+    const credit = credits.balance(owner) || 0;
+    if (r.personal) {
+      if (r.personalTier !== "pass") return []; // zajamčeni paketi: server/usage.js capsFor
+      const p = billing?.passes.activeFor(studentId);
+      return p ? [{ key: `pass:${p.id}`, usd: passCapUsd(p) + credit, spent: billing.passes.spentUsd(p), code: "block.freeTail" }] : [];
+    }
+    if (r.school && !r.schoolAiOut) {
+      const s = r.schools.find((x) => x.ai_month_usd > 0 && (x.ai_spent_usd || 0) < x.ai_month_usd);
+      if (s) {
+        const cap = { key: `school:${s.school_id}`, usd: s.ai_month_usd, spent: s.ai_spent_usd || 0, code: "block.monthLimit" };
+        // Šola brez prostora za najcenejši klic velja kot porabljena: profil nadaljuje v brezplačnem paketu.
+        if (aiUsage.headroom(studentId, [cap]) >= aiUsage.minCallUsd()) return [cap];
+      } else if (r.schools.some((x) => !(x.ai_month_usd > 0))) return [];
+    }
+    if (credit > 0) return [{ key: `credit:${owner}`, usd: credit, spent: 0, code: "block.freeMonth" }];
+    return freeCaps(studentId, owner);
+  }
+  function freeCaps(studentId, owner = ownerOf(studentId)) {
+    const caps = [];
+    const scope = quotaScope(studentId);
+    const per = freeStudentMonthlyUsd();
+    if (per) caps.push({ key: scope.net ? `net:${scope.net}` : `s:${studentId}`, usd: per, spent: freeSpent(studentId, owner, scope), code: "block.freeMonth" });
+    const pool = freeMonthlyPoolUsd();
+    if (pool) caps.push({ key: "freepool", usd: pool, spent: freePoolSpent(), code: "block.freePool" });
+    return caps;
+  }
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, poolOf: poolFor, capsOf, onLog: () => schools.clearCache() });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.
@@ -365,14 +406,19 @@ export function mountAccounts(app, store, opts = {}) {
     return { error: hint ? `${text} ${BLOCK_TEXT[hint]}` : text, code, ...(params ? { params } : {}), ...(hint ? { hint } : {}) };
   }
 
-  function freeBudgetInfo(studentId) {
-    const rows = monthUsdByStudent();
-    const per = freeStudentMonthlyUsd();
-    const scope = quotaScope(studentId);
-    if (per && guests.monthUsd(scope.ids, scope.net) >= per) return freeBlock(studentId, "block.freeMonth");
-    const pool = freeMonthlyPoolUsd();
+  // Poraba brezplačnega profila ta mesec (gost: vse omrežje) in poraba izbrisanih profilov istega računa.
+  function freeSpent(studentId, owner = ownerOf(studentId), scope = quotaScope(studentId)) {
+    return guests.monthUsd(scope.ids, scope.net) + (scope.net ? 0 : aiUsage.orphanSpent(owner));
+  }
+  function freePoolSpent() {
     const gone = db.prepare("SELECT COALESCE(SUM(usd),0) AS usd FROM guest_spent WHERE day >= date('now','start of month')").get().usd;
-    if (pool && rows.filter((r) => !aiPremiumFor(r.id)).reduce((t, r) => t + r.usd, gone) >= pool) return freeBlock(studentId, "block.freePool");
+    return monthUsdByStudent().filter((r) => r.id != null && !aiPremiumFor(r.id)).reduce((t, r) => t + r.usd, gone);
+  }
+  // Meja velja že, ko ne ostane prostora niti za najcenejši klic (trda meja, server/meje-ai.js).
+  function freeBudgetInfo(studentId) {
+    const need = aiUsage.minCallUsd();
+    const room = (c) => c.usd - c.spent - (aiUsage.inflight.get(c.key) || 0);
+    for (const c of freeCaps(studentId)) if (room(c) < need) return freeBlock(studentId, c.code);
     return null;
   }
   function freeBudgetReason(studentId) {

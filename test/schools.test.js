@@ -155,7 +155,8 @@ test("private space: teacher sees only assignment results and XP; licence seats;
     const acc = schoolAccess(db, kids[0].id);
     assert.equal(acc.schoolName, "OŠ Prule");
     assert.deepEqual(acc.grades, [7]);
-    assert.equal(acc.aiCapUsdMonth, 20);
+    // Meja skrbnika (20 $) nad 25 % plačila (1 mesto × 12 € / 12 × 0,25 / 0,92) se omeji (trda meja AI, j 2026-11-06).
+    assert.equal(acc.aiCapUsdMonth, 0.27);
     assert.equal(schoolAccess(db, kids[1].id), null, "drugi učenec nima mesta");
 
     // Učenec vidi svoje naloge in licenco; izvoz je vedno mogoč.

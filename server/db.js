@@ -228,6 +228,14 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       SELECT c.student_id, date('now'), COUNT(*) FROM messages m JOIN conversations c ON c.id = m.conversation_id
       WHERE m.role = 'user' AND date(m.created_at) = date('now') GROUP BY c.student_id`);
   }
+  // Lastnik računa ob zapisu porabe (j 2026-11-06, trda meja AI): poraba izbrisanega profila (student_id NULL) ostane
+  // šteta za račun, da izbris in nov profil ne obideta meje paketa. Ob izbrisu računa se odklopi (accounts/schema.js).
+  const usageCols = db.prepare("PRAGMA table_info(usage)").all().map((c) => c.name);
+  if (!usageCols.includes("parent_id")) {
+    db.exec("ALTER TABLE usage ADD COLUMN parent_id INTEGER");
+    if (studentParentCol(db)) db.exec("UPDATE usage SET parent_id = (SELECT parent_id FROM students WHERE students.id = usage.student_id) WHERE student_id IS NOT NULL");
+  }
+  db.exec("CREATE INDEX IF NOT EXISTS idx_usage_parent ON usage(parent_id, created_at)");
   // Migracije za starejše baze
   const studentCols = db.prepare("PRAGMA table_info(students)").all().map((c) => c.name);
   // Kdaj je učenec nazadnje spremenil šolo ali letnik (za predlog prehoda na začetku šolskega leta).
@@ -475,4 +483,9 @@ export class Store {
       )
       .all(studentId, `-${days} days`);
   }
+}
+
+// Ali ima tabela students stolpec parent_id (računi; brez njih lokalno ni lastnika).
+function studentParentCol(db) {
+  return db.prepare("PRAGMA table_info(students)").all().some((c) => c.name === "parent_id");
 }

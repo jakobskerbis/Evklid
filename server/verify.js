@@ -69,7 +69,8 @@ export async function askModel(model, user, createFn, system = SYSTEM) {
  * Preveri odgovor trikrat. `kind`: "answer" (celoten odgovor) ali "cards" (kartice).
  * @returns {Promise<{ok: boolean, reason?: string, cost: number}>}
  */
-export async function verifyAnswer({ question, answer, kind = "answer", usage = null, createFn = null }) {
+// studentId: učenec, katerega odgovor se preverja; strošek gre v njegovo porabo (trda meja AI, server/meje-ai.js).
+export async function verifyAnswer({ question, answer, kind = "answer", usage = null, createFn = null, studentId = null }) {
   const code = codeCheck(answer);
   if (code) return { ok: false, reason: code, cost: 0 };
   // Brez API ključa (preizkusni način) so odgovori vnaprej pripravljeni in jih ni treba preverjati.
@@ -88,7 +89,7 @@ export async function verifyAnswer({ question, answer, kind = "answer", usage = 
     const results = settled.filter((s) => s.status === "fulfilled").map((s) => s.value);
     for (const r of results) {
       cost += costUsd(r.model, r.usage || {});
-      usage?.log(null, r.model, r.usage, "verify");
+      usage?.log(studentId ?? null, r.model, r.usage, "verify");
     }
     const failed = settled.find((s) => s.status === "rejected");
     if (failed) return { ok: false, reason: `preverjanje ni uspelo: ${failed.reason?.message || failed.reason}`, cost };
