@@ -1032,17 +1032,25 @@ async function send(text, { deep = false } = {}) {
   if (state.sending) return;
   const image = state.image;
   if (!text && !image) return;
-  // Izklopljen klepet (EVKLID_CHAT_OFF): nič ne pošljemo, vprašanje in fotografija ostaneta.
-  if (!$("#chat-off").hidden) return;
+  // Izklopljen klepet (EVKLID_CHAT_OFF): nič ne pošljemo, vprašanje in fotografija ostaneta. Varnostni
+  // odgovor pa se pokaže tudi zdaj (lokalni zaznavalnik, strošek 0; pregled A V3).
+  if (!$("#chat-off").hidden) {
+    const n = lokalnoNujno(text);
+    if (n) addNujno(n, { meja: true });
+    return;
+  }
   let userEl = null;
   let bubble = null;
   let pacer = null;
-  // Varnostni odgovor (public/nujno.js) največ enkrat na sporočilo: strežnik ali lokalni zaznavalnik.
-  let nujnoShown = false;
-  const showNujno = (n, opts) => {
-    if (nujnoShown || !n?.vrsta) return;
-    nujnoShown = true;
-    addNujno(n, opts);
+  // Varnostni odgovor (public/nujno.js) največ enkrat na sporočilo: lokalni zaznavalnik takoj ob pošiljanju,
+  // nato strežnik (AI pregled čez mejo). meja: učenec ni dobil odgovora → opomba »ne šteje se med vprašanja«.
+  let nujnoEl = null;
+  const showNujno = (n, opts = {}) => {
+    if (nujnoEl) {
+      if (opts.meja) nujnoEl.querySelector(".nujno-opomba").textContent = t("nujno.opomba");
+      return;
+    }
+    if (n?.vrsta) nujnoEl = addNujno(n, opts);
   };
   state.sending = true;
   $("#send").disabled = true;
@@ -1064,6 +1072,8 @@ async function send(text, { deep = false } = {}) {
 
     bubble = addMessage("assistant", "");
     bubble.classList.add("typing");
+    // Takoj, brez čakanja na strežnik (objava nove različice, počasen AI pregled): pregled A V4.
+    showNujno(lokalnoNujno(text), { before: bubble });
     const box = $("#messages");
     const paint = (shown) => {
       const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;

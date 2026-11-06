@@ -2,20 +2,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import {
-  zaznajNujno,
-  stevilke,
-  vrstice,
-  klici,
-  telHref,
-  normalize,
-} from "../public/nujno.js";
-import {
-  preberiVrsto,
-  varnostniPregled,
-  VAROVALKA,
-  NAVODILO,
-} from "../server/nujno.js";
+import { zaznajNujno, stevilke, vrstice, klici, telHref, normalize } from "../public/nujno.js";
+import { preberiVrsto, varnostniPregled, VAROVALKA, NAVODILO } from "../server/nujno.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import SL from "../public/i18n/sl.js";
@@ -107,9 +95,7 @@ const PRIMERI = [
 
 test(`zaznavalnik: ${PRIMERI.length} primerov (sl, hr, sr, bs, en in drugi)`, () => {
   assert.ok(PRIMERI.length >= 60);
-  const napake = PRIMERI.filter(([t, v]) => zaznajNujno(t) !== v).map(
-    ([t, v]) => `${JSON.stringify(t)}: ${zaznajNujno(t)} ≠ ${v}`,
-  );
+  const napake = PRIMERI.filter(([t, v]) => zaznajNujno(t) !== v).map(([t, v]) => `${JSON.stringify(t)}: ${zaznajNujno(t)} ≠ ${v}`);
   assert.deepEqual(napake, []);
 });
 
@@ -121,60 +107,28 @@ test("normalize: šumniki, cirilica in apostrofi", () => {
 
 test("številke: Slovenija, fakulteta, druga država", () => {
   const si = stevilke({});
-  assert.deepEqual(
-    [si.sos, si.policija, si.otroci, si.odrasli],
-    ["112", "113", "116 111", "116 123"],
-  );
+  assert.deepEqual([si.sos, si.policija, si.otroci, si.odrasli], ["112", "113", "116 111", "116 123"]);
   assert.deepEqual(klici("stiska", si), ["116 111", "116 123", "112"]);
-  assert.deepEqual(
-    klici("stiska", stevilke({ educational_track: "UNIVERZA" })),
-    ["116 123", "112"],
-  );
+  assert.deepEqual(klici("stiska", stevilke({ educational_track: "UNIVERZA" })), ["116 123", "112"]);
   const us = stevilke({ school_system: "US" });
   if (us.si === false) assert.equal(us.sos, "911");
   assert.equal(telHref("116 111"), "tel:116111");
 });
 
 test("vrstice: vse vrste imajo ključe v sl.js in v vseh 32 jezikih", () => {
-  const dirs = readdirSync(
-    new URL("../public/i18n/ui/", import.meta.url),
-  ).filter((f) => f.endsWith(".json"));
+  const dirs = readdirSync(new URL("../public/i18n/ui/", import.meta.url)).filter((f) => f.endsWith(".json"));
   assert.equal(dirs.length, 32);
-  const tables = dirs.map((f) => [
-    f,
-    JSON.parse(
-      readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8"),
-    ),
-  ]);
-  const keys = new Set([
-    "nujno.oznaka",
-    "nujno.zapri",
-    "nujno.klic",
-    "nujno.opomba",
-    "nujno.opombaKratka",
-    "nujno.stiska.drugje",
-    "nujno.nasilje.1b",
-  ]);
-  for (const st of [
-    stevilke({}),
-    stevilke({ educational_track: "UNIVERZA" }),
-    { si: false, sos: "911", pomoc: "988" },
-  ])
-    for (const v of ["zdravje", "stiska", "nasilje", "nevarnost"])
-      for (const [k] of vrstice(v, st)) keys.add(k);
+  const tables = dirs.map((f) => [f, JSON.parse(readFileSync(new URL(`../public/i18n/ui/${f}`, import.meta.url), "utf8"))]);
+  const keys = new Set(["nujno.oznaka", "nujno.zapri", "nujno.klic", "nujno.opomba", "nujno.opombaKratka", "nujno.stiska.drugje", "nujno.nasilje.1b"]);
+  for (const st of [stevilke({}), stevilke({ educational_track: "UNIVERZA" }), { si: false, sos: "911", pomoc: "988" }])
+    for (const v of ["zdravje", "stiska", "nasilje", "nevarnost"]) for (const [k] of vrstice(v, st)) keys.add(k);
   for (const k of keys) {
     assert.ok(SL[k], `sl: ${k}`);
     for (const [f, tb] of tables) assert.ok(tb[k], `${f}: ${k}`);
   }
   // Besedila, ki jih je potrdil j (kartica-nujno, 6. 11.)
-  assert.equal(
-    SL["nujno.zdravje.1"],
-    "Takoj pokliči {sos} ali povej odraslemu ob sebi, naj pokliče zdaj.",
-  );
-  assert.equal(
-    SL["nujno.stiska.tom"],
-    "Pokliči TOM telefon {otroci} (brezplačno, vsak dan 12–20).",
-  );
+  assert.equal(SL["nujno.zdravje.1"], "Takoj pokliči {sos} ali povej odraslemu ob sebi, naj pokliče zdaj.");
+  assert.equal(SL["nujno.stiska.tom"], "Pokliči TOM telefon {otroci} (brezplačno, vsak dan 12–20).");
 });
 
 test("varnostni pregled: odgovor modela → vrsta", () => {
@@ -189,58 +143,24 @@ test("varnostni pregled: odgovor modela → vrsta", () => {
 function fakeUsage() {
   const kv = new Map();
   const logs = [];
-  return {
-    kvGet: (k) => kv.get(k) ?? null,
-    kvSet: (k, v) => kv.set(k, String(v)),
-    log: (...a) => logs.push(a),
-    logs,
-  };
+  return { kvGet: (k) => kv.get(k) ?? null, kvSet: (k, v) => kv.set(k, String(v)), log: (...a) => logs.push(a), logs };
 }
 
 test("varnostni pregled: kratek klic, strošek aplikacije, varovalka na dan", async () => {
   const usage = fakeUsage();
   const bodies = [];
-  const createFn = async (b) => (
-    bodies.push(b),
-    {
-      content: [{ type: "text", text: "ZDRAVJE" }],
-      usage: { input_tokens: 200, output_tokens: 2 },
-      model: b.model,
-    }
-  );
-  assert.equal(
-    await varnostniPregled({
-      text: "brat je čuden in bled",
-      usage,
-      studentId: 7,
-      createFn,
-    }),
-    "zdravje",
-  );
+  const createFn = async (b) => (bodies.push(b), { content: [{ type: "text", text: "ZDRAVJE" }], usage: { input_tokens: 200, output_tokens: 2 }, model: b.model });
+  assert.equal(await varnostniPregled({ text: "brat je čuden in bled", usage, studentId: 7, createFn }), "zdravje");
   assert.equal(bodies[0].max_tokens, 150);
   assert.match(bodies[0].model, /haiku/);
   assert.equal(usage.logs[0][0], null); // ne šteje v mejo učenca
   assert.equal(usage.logs[0][3], "varnost");
-  for (let i = 1; i < VAROVALKA; i++)
-    await varnostniPregled({ text: "x", usage, studentId: 7, createFn });
+  for (let i = 1; i < VAROVALKA; i++) await varnostniPregled({ text: "x", usage, studentId: 7, createFn });
   assert.equal(bodies.length, VAROVALKA);
-  assert.equal(
-    await varnostniPregled({ text: "x", usage, studentId: 7, createFn }),
-    null,
-  );
+  assert.equal(await varnostniPregled({ text: "x", usage, studentId: 7, createFn }), null);
   assert.equal(bodies.length, VAROVALKA); // varovalka: brez klica
   // Drug učenec ima svojo varovalko; napaka API vrne null.
-  assert.equal(
-    await varnostniPregled({
-      text: "x",
-      usage,
-      studentId: 8,
-      createFn: async () => {
-        throw new Error("529");
-      },
-    }),
-    null,
-  );
+  assert.equal(await varnostniPregled({ text: "x", usage, studentId: 8, createFn: async () => { throw new Error("529"); } }), null);
 });
 
 // --- strežnik ---
@@ -257,16 +177,9 @@ async function withServer(opts, fn) {
   const server = app.listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
   const call = async (path, body) => {
-    const res = await fetch(base + path, {
-      method: body ? "POST" : "GET",
-      headers: { "Content-Type": "application/json" },
-      body: body ? JSON.stringify(body) : undefined,
-    });
+    const res = await fetch(base + path, { method: body ? "POST" : "GET", headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
     const type = res.headers.get("content-type") || "";
-    return {
-      status: res.status,
-      body: type.includes("json") ? await res.json() : await res.text(),
-    };
+    return { status: res.status, body: type.includes("json") ? await res.json() : await res.text() };
   };
   try {
     await fn({ call, store });
@@ -274,58 +187,35 @@ async function withServer(opts, fn) {
     server.close();
   }
 }
-const events = (sse) =>
-  sse
-    .split("\n\n")
-    .filter(Boolean)
-    .map((c) => ({
-      event: /^event: (.*)$/m.exec(c)[1],
-      data: JSON.parse(/^data: (.*)$/m.exec(c)[1]),
-    }));
-const META = '\n<<META subject=MAT topic="x" error=0 mode=A flag=none>>';
+const events = (sse) => sse.split("\n\n").filter(Boolean).map((c) => ({ event: /^event: (.*)$/m.exec(c)[1], data: JSON.parse(/^data: (.*)$/m.exec(c)[1]) }));
+const META = "\n<<META subject=MAT topic=\"x\" error=0 mode=A flag=none>>";
 
 test("strežnik: čez mejo vrne varnostni odgovor (lokalno brez AI, sicer kratek pregled)", async () => {
   const prev = process.env.EVKLID_DAILY_QUESTIONS;
   process.env.EVKLID_DAILY_QUESTIONS = "1";
   const calls = [];
-  const varnostFn = async (b) => (
-    calls.push(b),
-    {
-      content: [{ type: "text", text: "NASILJE" }],
-      usage: { input_tokens: 150, output_tokens: 2 },
-      model: b.model,
-    }
-  );
+  const varnostFn = async (b) => (calls.push(b), { content: [{ type: "text", text: "NASILJE" }], usage: { input_tokens: 150, output_tokens: 2 }, model: b.model });
   try {
-    await withServer(
-      { streamFn: fakeStream("Pozdravljen." + META), varnostFn },
-      async ({ call, store }) => {
-        const s = (await call("/api/students", { name: "Ana" })).body;
-        const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
-        await call(`/api/conversations/${c.id}/messages`, { text: "2 + 2" });
-        // Lokalni zaznavalnik: brez klica AI.
-        const r = await call(`/api/conversations/${c.id}/messages`, {
-          text: "Moj brat ima vročino 42",
-        });
-        assert.equal(r.status, 429);
-        assert.equal(r.body.limit, true);
-        assert.equal(r.body.nujno.vrsta, "zdravje");
-        assert.equal(r.body.nujno.st.sos, "112");
-        assert.equal(calls.length, 0);
-        // Lokalni ne ujame: kratek pregled, strošek z student_id NULL in vrsto »varnost«.
-        const r2 = await call(`/api/conversations/${c.id}/messages`, {
-          text: "stric me je čudno gledal in zaklenil vrata",
-        });
-        assert.equal(r2.status, 429);
-        assert.equal(r2.body.nujno.vrsta, "nasilje");
-        assert.equal(r2.body.nujno.ai, true);
-        assert.equal(calls.length, 1);
-        const row = store.db
-          .prepare("SELECT student_id, kind FROM usage WHERE kind = 'varnost'")
-          .get();
-        assert.deepEqual({ ...row }, { student_id: null, kind: "varnost" });
-      },
-    );
+    await withServer({ streamFn: fakeStream("Pozdravljen." + META), varnostFn }, async ({ call, store }) => {
+      const s = (await call("/api/students", { name: "Ana" })).body;
+      const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+      await call(`/api/conversations/${c.id}/messages`, { text: "2 + 2" });
+      // Lokalni zaznavalnik: brez klica AI.
+      const r = await call(`/api/conversations/${c.id}/messages`, { text: "Moj brat ima vročino 42" });
+      assert.equal(r.status, 429);
+      assert.equal(r.body.limit, true);
+      assert.equal(r.body.nujno.vrsta, "zdravje");
+      assert.equal(r.body.nujno.st.sos, "112");
+      assert.equal(calls.length, 0);
+      // Lokalni ne ujame: kratek pregled, strošek z student_id NULL in vrsto »varnost«.
+      const r2 = await call(`/api/conversations/${c.id}/messages`, { text: "stric me je čudno gledal in zaklenil vrata" });
+      assert.equal(r2.status, 429);
+      assert.equal(r2.body.nujno.vrsta, "nasilje");
+      assert.equal(r2.body.nujno.ai, true);
+      assert.equal(calls.length, 1);
+      const row = store.db.prepare("SELECT student_id, kind FROM usage WHERE kind = 'varnost'").get();
+      assert.deepEqual({ ...row }, { student_id: null, kind: "varnost" });
+    });
   } finally {
     if (prev === undefined) delete process.env.EVKLID_DAILY_QUESTIONS;
     else process.env.EVKLID_DAILY_QUESTIONS = prev;
@@ -333,43 +223,24 @@ test("strežnik: čez mejo vrne varnostni odgovor (lokalno brez AI, sicer kratek
 });
 
 test("strežnik: pod mejo varnostni odgovor pred odgovorom inštruktorja, ob napaki AI lokalno", async () => {
-  await withServer(
-    { streamFn: fakeStream("Razumem." + META) },
-    async ({ call }) => {
-      const s = (await call("/api/students", { name: "Bor" })).body;
-      const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
-      const ev = events(
-        (
-          await call(`/api/conversations/${c.id}/messages`, {
-            text: "oče me tepe",
-          })
-        ).body,
-      );
-      assert.equal(ev[0].event, "nujno");
-      assert.equal(ev[0].data.vrsta, "nasilje");
-      assert.equal(ev.at(-1).event, "done"); // inštruktor odgovori normalno
-      const navadno = events(
-        (await call(`/api/conversations/${c.id}/messages`, { text: "x² = 42" }))
-          .body,
-      );
-      assert.ok(!navadno.some((e) => e.event === "nujno"));
-    },
-  );
+  await withServer({ streamFn: fakeStream("Razumem." + META) }, async ({ call }) => {
+    const s = (await call("/api/students", { name: "Bor" })).body;
+    const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+    const ev = events((await call(`/api/conversations/${c.id}/messages`, { text: "oče me tepe" })).body);
+    assert.equal(ev[0].event, "nujno");
+    assert.equal(ev[0].data.vrsta, "nasilje");
+    assert.equal(ev.at(-1).event, "done"); // inštruktor odgovori normalno
+    const navadno = events((await call(`/api/conversations/${c.id}/messages`, { text: "x² = 42" })).body);
+    assert.ok(!navadno.some((e) => e.event === "nujno"));
+  });
   await withServer({ streamFn: fakeStream("", true) }, async ({ call }) => {
     const s = (await call("/api/students", { name: "Eva" })).body;
     const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
-    const ev = events(
-      (
-        await call(`/api/conversations/${c.id}/messages`, {
-          text: "v kuhinji diši po plinu",
-        })
-      ).body,
-    );
+    const ev = events((await call(`/api/conversations/${c.id}/messages`, { text: "v kuhinji diši po plinu" })).body);
     assert.equal(ev[0].event, "nujno");
     assert.equal(ev.at(-1).event, "error");
   });
 });
-
 // Neodvisna nabora iz pregledov PR #479 (A: priklic in lažni alarmi; C §5: snov, vrinjene besede, izsiljevanje)
 // in dodatni primeri avtorja. Zahteva pregleda: priklic ≥ 95 %, natančnost ≥ 90 %; tu morajo biti vsi pravilni.
 const PREGLED_NUJNI = [
@@ -528,94 +399,70 @@ const PREGLED_SNOV = [
   ["Napiši spis o poplavi v Sloveniji 2023", null],
   ["mi je dolgcas, zaigrajva igro", null],
   ...[
-    "Baker ne reagira s klorovodikovo kislino",
-    "Kako kri teče po žilah?",
-    "Grozi mi negativna ocena",
-    "grozi mi enka",
-    "Preti mi pad iz matematike",
-    "Prijeti mi jedinica",
-    "Тело тонет в воде",
-    "Benda tenggelam di air?",
-    "Matahari tenggelam",
-    "هل يغرق الجسم في الماء",
-    "Is there a break in the graph at x = 2?",
-    "Ahora me toca a mí",
-    "Mi tocca studiare",
-    "打我电话",
-    "化学反応が起きない",
-    "반응이 안 일어나요",
-    "Czy żarówka pali się?",
-    "Mă bate gândul să învăț",
-    "Die Flamme erstickt ohne Sauerstoff",
-    "To je otrava",
-    "An ambulance drives at 90 km/h",
-    "Kaj je oteklina?",
-    "Kaj je srčni napad pri biologiji?",
-    "Kako se je Sokrat zastrupil?",
-    "Kaj je poplava v geografiji?",
-    "Moj brat gre na plavanje",
-    "Mama je kupila modro majico",
-    "Kemija: požarni trikotnik",
-    "Kaj je pozar",
-    "Ali lahko pošlješ sliko grafa?",
-    "Objavi sliko ali pa jo pošlji učitelju",
-    "Mama ima 40 let",
-    "the gas law",
-    "Zakaj je morje modro",
+    "Baker ne reagira s klorovodikovo kislino", "Kako kri teče po žilah?", "Grozi mi negativna ocena", "grozi mi enka", "Preti mi pad iz matematike",
+    "Prijeti mi jedinica", "Тело тонет в воде", "Benda tenggelam di air?", "Matahari tenggelam", "هل يغرق الجسم في الماء",
+    "Is there a break in the graph at x = 2?", "Ahora me toca a mí", "Mi tocca studiare", "打我电话", "化学反応が起きない", "반응이 안 일어나요", "Czy żarówka pali się?",
+    "Mă bate gândul să învăț", "Die Flamme erstickt ohne Sauerstoff", "To je otrava", "An ambulance drives at 90 km/h", "Kaj je oteklina?",
+    "Kaj je srčni napad pri biologiji?", "Kako se je Sokrat zastrupil?", "Kaj je poplava v geografiji?", "Moj brat gre na plavanje",
+    "Mama je kupila modro majico", "Kemija: požarni trikotnik", "Kaj je pozar", "Ali lahko pošlješ sliko grafa?",
+    "Objavi sliko ali pa jo pošlji učitelju", "Mama ima 40 let", "the gas law", "Zakaj je morje modro",
   ].map((s) => [s, null]),
 ];
 const DODATNI_NUJNI = [
-  "ati me je včeraj spet pretepel",
-  "mami je padla po stopnicah in se ne odziva",
-  "sestrica je spila nekaj iz steklenice za čiščenje",
-  "brat je pogoltnil baterijo",
-  "prijateljica pravi da se bo ubila",
-  "mislim da se bom ubil",
-  "ne zdržim več, rad bi umrl",
-  "dedek ima 40,2 in se trese",
-  "smrdi kot plin v kopalnici",
-  "v kuhinji gori",
-  "oče grozi, da me bo pretepel",
-  "stric me sili da se slečem",
-  "my friend overdosed",
-  "i took too many pills",
-  "my dad beat me again",
-  "he keeps hitting me",
-  "my brother is unconscious",
-  "there is a fire in my house",
-  "brat se je utopil skoraj",
-  "mama ne diha",
-  "sestra ne more dihati",
-  "on me bije svaki dan",
-  "hoću da se ubijem",
-  "I am going to kill myself tonight",
-  "mom fell and wont respond",
+  "ati me je včeraj spet pretepel", "mami je padla po stopnicah in se ne odziva", "sestrica je spila nekaj iz steklenice za čiščenje",
+  "brat je pogoltnil baterijo", "prijateljica pravi da se bo ubila", "mislim da se bom ubil", "ne zdržim več, rad bi umrl",
+  "dedek ima 40,2 in se trese", "smrdi kot plin v kopalnici", "v kuhinji gori", "oče grozi, da me bo pretepel", "stric me sili da se slečem",
+  "my friend overdosed", "i took too many pills", "my dad beat me again", "he keeps hitting me", "my brother is unconscious",
+  "there is a fire in my house", "brat se je utopil skoraj", "mama ne diha", "sestra ne more dihati", "on me bije svaki dan", "hoću da se ubijem",
+  "I am going to kill myself tonight", "mom fell and wont respond",
 ];
 const DODATNI_SNOV = [
-  "Koliko kisika porabi gorenje?",
-  "Kaj je infarkt?",
-  "Kako se reže krivulja z ravnino?",
-  "Plin v jeklenki ima tlak 40 bar",
-  "Brat je dobil 5 iz matematike",
-  "Kaj se zgodi, ko kri ne strdi?",
-  "Razloži, zakaj ribe ne dihajo zraka",
-  "oče je rekel da moram vaditi",
-  "grozi nam nevihta",
-  "The baby elephant drinks milk",
-  "Kako dolgo živi muha?",
-  "Pošlji mi slike zvezkov ali pa jih objavi v skupini",
-  "Napiši pesem o ognju",
-  "Dojenček spi 16 ur na dan",
+  "Koliko kisika porabi gorenje?", "Kaj je infarkt?", "Kako se reže krivulja z ravnino?", "Plin v jeklenki ima tlak 40 bar",
+  "Brat je dobil 5 iz matematike", "Kaj se zgodi, ko kri ne strdi?", "Razloži, zakaj ribe ne dihajo zraka", "oče je rekel da moram vaditi",
+  "grozi nam nevihta", "The baby elephant drinks milk", "Kako dolgo živi muha?", "Pošlji mi slike zvezkov ali pa jih objavi v skupini",
+  "Napiši pesem o ognju", "Dojenček spi 16 ur na dan",
 ];
 
 test(`zaznavalnik, pregled A in C: ${PREGLED_NUJNI.length} nujnih, ${PREGLED_SNOV.length + DODATNI_SNOV.length} iz snovi`, () => {
-  const zgresen = PREGLED_NUJNI.filter(([s, v]) => zaznajNujno(s) !== v).map(
-    ([s, v]) => `${s} → ${zaznajNujno(s)} (${v})`,
-  );
+  const zgresen = PREGLED_NUJNI.filter(([s, v]) => zaznajNujno(s) !== v).map(([s, v]) => `${s} → ${zaznajNujno(s)} (${v})`);
   const dodatni = DODATNI_NUJNI.filter((s) => !zaznajNujno(s));
-  const lazni = [...PREGLED_SNOV.map(([s]) => s), ...DODATNI_SNOV]
-    .filter((s) => zaznajNujno(s))
-    .map((s) => `${s} → ${zaznajNujno(s)}`);
+  const lazni = [...PREGLED_SNOV.map(([s]) => s), ...DODATNI_SNOV].filter((s) => zaznajNujno(s)).map((s) => `${s} → ${zaznajNujno(s)}`);
   assert.deepEqual([...zgresen, ...dodatni], []);
   assert.deepEqual(lazni, []);
+});
+
+test("strežnik: izklopljen klepet (503) vrne varnostni odgovor; brez AI pregleda ob porabljenem dobroimetju", async () => {
+  const prev = process.env.EVKLID_CHAT_OFF;
+  process.env.EVKLID_CHAT_OFF = "1";
+  const calls = [];
+  const varnostFn = async (b) => (calls.push(b), { content: [{ type: "text", text: "STISKA" }], usage: { input_tokens: 150, output_tokens: 2 }, model: b.model });
+  try {
+    await withServer({ streamFn: fakeStream("x" + META), varnostFn }, async ({ call }) => {
+      const s = (await call("/api/students", { name: "Gost" })).body;
+      const c = (await call(`/api/students/${s.id}/conversations`, {})).body;
+      const r = await call(`/api/conversations/${c.id}/messages`, { text: "mama me spet tepe" });
+      assert.equal(r.status, 503);
+      assert.equal(r.body.chat_off, true);
+      assert.equal(r.body.nujno.vrsta, "nasilje");
+      assert.equal(calls.length, 0); // lokalno, brez AI
+      const r2 = await call(`/api/conversations/${c.id}/messages`, { text: "nekaj čudnega se dogaja" });
+      assert.equal(r2.body.nujno.vrsta, "stiska");
+      assert.equal(calls.length, 1);
+    });
+  } finally {
+    if (prev === undefined) delete process.env.EVKLID_CHAT_OFF;
+    else process.env.EVKLID_CHAT_OFF = prev;
+  }
+  // Dobroimetje porabljeno: klic bi zagotovo padel, ostane lokalni zaznavalnik.
+  const usage = { ...fakeUsage(), creditOut: () => true };
+  let klicev = 0;
+  assert.equal(await varnostniPregled({ text: "x", usage, studentId: 1, createFn: async () => (klicev++, {}) }), null);
+  assert.equal(klicev, 0);
+});
+
+test("varnostni pregled: privzeto Haiku, kratek rok brez ponovitev", () => {
+  const src = readFileSync(new URL("../server/nujno.js", import.meta.url), "utf8");
+  assert.match(src, /env\("EVKLID_VARNOST_MODEL", "claude-haiku-5-5"\)/);
+  assert.match(src, /timeout: ROK_MS, maxRetries: 0/);
+  assert.match(readFileSync(new URL("../public/app.js", import.meta.url), "utf8"), /if \(!\$\("#chat-off"\)\.hidden\) \{\n\s+const n = lokalnoNujno\(text\);/);
 });

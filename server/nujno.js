@@ -4,12 +4,15 @@
 //    varnostni pregled s Haikujem: model vrne samo vrsto (ZDRAVJE/STISKA/NASILJE/NEVARNOST/NE), besedilo
 //    odgovora je vedno potrjeno besedilo iz i18n (AI ne piše nasveta). Največ VAROVALKA pregledov na profil
 //    na dan; strošek se zapiše z student_id NULL in kind »varnost«: šteje v porabo aplikacije, ne v mejo učenca.
-import { getClient, isMockMode, quickParams, MODEL } from "./claude.js";
+import { getClient, isMockMode, quickParams } from "./claude.js";
 import { zaznajNujno, stevilke } from "../public/nujno.js";
 
 const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d : process.env[k]);
 export const VAROVALKA = Number(env("EVKLID_VARNOST_NA_DAN", 10));
-const MODEL_VARNOST = env("EVKLID_VARNOST_MODEL", MODEL);
+// Vedno najcenejši model (kartica: Haiku), tudi če je EVKLID_MODEL za inštruktorja večji (pregled A S1).
+export const MODEL_VARNOST = env("EVKLID_VARNOST_MODEL", "claude-haiku-5-5");
+// Učenec ob zavrnitvi ne sme čakati: kratek rok, brez ponovitev (pregled A V4).
+export const ROK_MS = 5000;
 
 export const NAVODILO =
   "Si varnostni filter aplikacije za učenje (otroci in mladi). Preberi sporočilo učenca. Odgovori samo z eno besedo: " +
@@ -30,6 +33,17 @@ export function preberiVrsto(raw) {
 const danes = () => new Date().toISOString().slice(0, 10);
 const kljuc = (studentId) => `varnost_${danes()}_${studentId}`;
 
+// Števci prejšnjih dni niso več potrebni (pregled A N2): ob prvem pregledu dneva izbrišemo starejše od včeraj.
+let pocisceno = "";
+function pocisti(usage) {
+  if (pocisceno === danes() || !usage.db) return;
+  pocisceno = danes();
+  const vceraj = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+  try {
+    usage.db.prepare("DELETE FROM kv WHERE key LIKE 'varnost\\_%' ESCAPE '\\' AND key < ?").run(`varnost_${vceraj}`);
+  } catch {}
+}
+
 export function pregledovDanes(usage, studentId) {
   return Number(usage.kvGet(kljuc(studentId))) || 0;
 }
@@ -41,10 +55,13 @@ export function pregledovDanes(usage, studentId) {
 export async function varnostniPregled({ text, usage, studentId, createFn = null }) {
   if (!text || !usage || studentId == null) return null;
   if (!createFn && isMockMode()) return null;
+  // Dobroimetje za AI porabljeno: klic bi zagotovo padel (pregled A V4).
+  if (usage.creditOut?.()) return null;
   if (pregledovDanes(usage, studentId) >= VAROVALKA) return null;
+  pocisti(usage);
   usage.kvSet(kljuc(studentId), pregledovDanes(usage, studentId) + 1);
   try {
-    const create = createFn || ((body) => getClient().messages.create(body));
+    const create = createFn || ((body) => getClient().messages.create(body, { timeout: ROK_MS, maxRetries: 0 }));
     const out = await create({
       model: MODEL_VARNOST,
       max_tokens: 150,
