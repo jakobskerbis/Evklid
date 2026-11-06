@@ -80,9 +80,17 @@ export function genericAnswer(text, name = "") {
   for (const p of parts) out = out.replace(new RegExp(`${NAME_EDGE_L}${escRe(p)}${NAME_EDGE_R}`, "giu"), "{{IME}}");
   for (const p of parts) {
     if (new RegExp(`${NAME_EDGE_L}${escRe(p)}\\p{L}`, "iu").test(out)) return null; // Jakob → Jakobu
+    const short = p.length <= 3;
     // Osnova brez končnega samoglasnika s kratko končnico: Ana → Ani, Ano; Luka → Luki.
+    // Kratka imena (Mia, Tia, Ana): osnova je pogosta beseda (»mi«, »ti«), zato samo cele sklonjene oblike.
     const stem = p.replace(/[aeiouy]$/iu, "");
-    if (stem !== p && stem.length >= 2 && new RegExp(`${NAME_EDGE_L}${escRe(stem)}\\p{L}{0,3}${NAME_EDGE_R}`, "iu").test(out)) return null;
+    if (stem !== p && stem.length >= 2) {
+      const tail = short ? "(?:e|i|o|u|jo|ji|je|ju)" : "\\p{L}{0,3}";
+      if (new RegExp(`${NAME_EDGE_L}${escRe(stem)}${tail}${NAME_EDGE_R}`, "iu").test(out)) return null;
+    }
+    // Premični e: Peter → Petru, Pavel → Pavlu, Aleksander → Aleksandru, Karel → Karlu.
+    const moving = p.replace(/e(\p{L})$/iu, "$1");
+    if (!short && moving !== p && moving.length >= 2 && new RegExp(`${NAME_EDGE_L}${escRe(moving)}\\p{L}{1,3}${NAME_EDGE_R}`, "iu").test(out)) return null;
   }
   return out;
 }

@@ -93,6 +93,21 @@ test("P3: sklonjeno ime (ali beseda, ki se z imenom začne) – odgovor se ne sh
   assert.equal(genericAnswer("Bravo, Lan! Plan je dober.", "Lan"), "Bravo, {{IME}}! Plan je dober.", "ime sredi besede ne ovira");
 });
 
+test("P3: premični e (Peter → Petru) – odgovor se ne shrani za druge", () => {
+  assert.equal(genericAnswer("Petru bom pomagal.", "Peter"), null, "Peter/Petru");
+  assert.equal(genericAnswer("Z Pavlom bova vadila.", "Pavel"), null, "Pavel/Pavlom");
+  assert.equal(genericAnswer("Pavlu predlagam vajo.", "Pavel"), null, "Pavel/Pavlu");
+  assert.equal(genericAnswer("Aleksandru bom razložil.", "Aleksander"), null, "Aleksander/Aleksandru");
+  assert.equal(genericAnswer("Karlu bom pokazal.", "Karel"), null, "Karel/Karlu");
+});
+
+test("P3: kratka imena – samo cele sklonjene oblike, ne pogoste besede (mi, ti)", () => {
+  assert.equal(genericAnswer("Bravo, Mia! Ti si dobra, mi pa pomagamo.", "Mia"), "Bravo, {{IME}}! Ti si dobra, mi pa pomagamo.", "»mi« in »ti« ne ovirata");
+  assert.equal(genericAnswer("Mii bom pomagal.", "Mia"), null, "Mia/Mii");
+  assert.equal(genericAnswer("Mio bom vprašal.", "Mia"), null, "Mia/Mio");
+  assert.equal(genericAnswer("Tii bom pomagal, ti pa mi.", "Tia"), null, "Tia/Tii");
+});
+
 test("P3: odgovor iz predpomnilnika nima imena prejšnjega učenca, sklonjeno ime se ne shrani", async () => {
   const store = openDb(":memory:");
   let reply = "";
