@@ -3654,5 +3654,7 @@
   "birth.confirm": "Vârsta după această dată: {age}. Este data nașterii persoanei care a creat contul? Mai târziu nu o poți schimba singur.",
   "birth.confirmYes": "Da, salvează",
   "birth.confirmNo": "Corectează",
-  "a3.teachColors": "Culori didactice"
+  "a3.teachColors": "Culori didactice",
+  "a3.levelUni": "Facultate",
+  "a3.moreAbout": "Mai multe despre asta"
 }

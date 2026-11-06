@@ -3618,5 +3618,7 @@
   "birth.confirm": "Umri kwa tarehe hii: {age}. Je, hii ni tarehe ya kuzaliwa ya mtu aliyefungua akaunti? Baadaye huwezi kuibadilisha mwenyewe.",
   "birth.confirmYes": "Ndiyo, hifadhi",
   "birth.confirmNo": "Rekebisha",
-  "a3.teachColors": "Rangi za kujifunza"
+  "a3.teachColors": "Rangi za kujifunza",
+  "a3.levelUni": "Chuo kikuu",
+  "a3.moreAbout": "Zaidi kuhusu hili"
 }

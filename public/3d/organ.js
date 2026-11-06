@@ -657,7 +657,7 @@ export async function zgradiOrgan(ime, ctx = {}) {
 
   // Deli: vsak del iz JSON z mrežami, ki jih ima ta model; točka iz JSON ali privzeta.
   // Skupina (»skupina« v delu): skupni del (npr. venčne arterije) obsega tudi mreže svojih posameznih delov (LAD, …),
-  // zato ga OŠ izbere kot celoto, študij pa še vsako žilo posebej (raven.js, »Več delov«).
+  // zato ga OŠ izbere kot celoto (tap), SŠ in študij pa vsako žilo posebej; vsi deli so na vseh ravneh v seznamu.
   const otroci = new Map();
   for (const d of podatki.deli || []) if (d.skupina) otroci.set(d.skupina, [...(otroci.get(d.skupina) || []), d.id]);
   const vsiDeli = (podatki.deli || [])
@@ -715,7 +715,8 @@ export async function zgradiOrgan(ime, ctx = {}) {
         tocka: tockaZa(x),
         skrijTocko: !tocke.has(x.d.id),
         povecava: x.d.povecava, // id modela za »Poglej pod povečavo« (npr. mrežnica → organ-mreznica)
-        raven: x.d.raven, // 1 OŠ, 2 SŠ, 3 študij (raven.js)
+        opisOs: x.d.opisOs, // razlaga po ravni (raven.js): OŠ preprosto, študij podrobneje
+        opisStudij: x.d.opisStudij,
         skupina: x.d.skupina,
       }));
   };

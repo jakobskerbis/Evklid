@@ -3652,5 +3652,7 @@
   "birth.confirm": "Dob prema ovom datumu: {age}. Je li ovo datum rođenja osobe koja je izradila račun? Kasnije ga ne možeš sam promijeniti.",
   "birth.confirmYes": "Da, spremi",
   "birth.confirmNo": "Ispravi",
-  "a3.teachColors": "Boje za učenje"
+  "a3.teachColors": "Boje za učenje",
+  "a3.levelUni": "Studij",
+  "a3.moreAbout": "Više o tome"
 }

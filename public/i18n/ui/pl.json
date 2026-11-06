@@ -3688,5 +3688,7 @@
   "birth.confirm": "Wiek według tej daty: {age}. Czy to data urodzenia osoby, która założyła konto? Później nie możesz jej sam zmienić.",
   "birth.confirmYes": "Tak, zapisz",
   "birth.confirmNo": "Popraw",
-  "a3.teachColors": "Kolory do nauki"
+  "a3.teachColors": "Kolory do nauki",
+  "a3.levelUni": "Studia",
+  "a3.moreAbout": "Więcej o tym"
 }

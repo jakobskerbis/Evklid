@@ -3620,5 +3620,7 @@
   "birth.confirm": "Mosha sipas kësaj date: {age}. A është kjo data e lindjes së personit që krijoi llogarinë? Më vonë nuk mund ta ndryshosh vetë.",
   "birth.confirmYes": "Po, ruaje",
   "birth.confirmNo": "Korrigjo",
-  "a3.teachColors": "Ngjyra mësimore"
+  "a3.teachColors": "Ngjyra mësimore",
+  "a3.levelUni": "Universitet",
+  "a3.moreAbout": "Më shumë për këtë"
 }

@@ -120,7 +120,10 @@ for (const { e, mod } of organi) {
       // skupinski del (npr. venčne arterije) je lahko brez lastnih vozlišč, če ima posamezne dele (»skupina«)
       const imaOtroke = p.deli.some((x) => x.skupina === d.id && x.vozlisca?.length);
       assert.ok(Array.isArray(d.vozlisca) && (d.vozlisca.length > 0 || imaOtroke), `${ime}/${d.id}: vozlisca`);
-      if (d.raven != null) assert.ok([1, 2, 3].includes(d.raven), `${ime}/${d.id}: raven 1, 2 ali 3`);
+      // razlaga po ravni (raven.js): OŠ kratko in preprosto, študij podrobneje; vsi deli so vidni na vseh ravneh
+      assert.equal(d.raven, undefined, `${ime}/${d.id}: deli se po ravni ne skrivajo (samo razlage)`);
+      if (d.opisOs != null) assert.ok(typeof d.opisOs === "string" && d.opisOs.length > 10 && d.opisOs.length <= 120, `${ime}/${d.id}: opisOs`);
+      if (d.opisStudij != null) assert.ok(typeof d.opisStudij === "string" && d.opisStudij.length > 20 && d.opisStudij.length <= 300, `${ime}/${d.id}: opisStudij`);
       if (d.skupina != null) assert.ok(p.deli.some((x) => x.id === d.skupina && !x.skupina), `${ime}/${d.id}: skupina ${d.skupina} ni del`);
       for (const v of d.vozlisca) {
         assert.ok(vozlisca.has(v), `${ime}/${d.id}: vozlišče ${v} ni v ${ime}.glb`);

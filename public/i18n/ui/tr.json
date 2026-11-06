@@ -3618,5 +3618,7 @@
   "birth.confirm": "Bu tarihe göre yaş: {age}. Bu, hesabı oluşturan kişinin doğum tarihi mi? Daha sonra kendin değiştiremezsin.",
   "birth.confirmYes": "Evet, kaydet",
   "birth.confirmNo": "Düzelt",
-  "a3.teachColors": "Öğretici renkler"
+  "a3.teachColors": "Öğretici renkler",
+  "a3.levelUni": "Üniversite",
+  "a3.moreAbout": "Daha fazlası"
 }

@@ -3625,5 +3625,7 @@
   "birth.confirm": "Idade segundo esta data: {age}. É a data de nascimento da pessoa que criou a conta? Mais tarde não a podes mudar sozinho.",
   "birth.confirmYes": "Sim, guardar",
   "birth.confirmNo": "Corrigir",
-  "a3.teachColors": "Cores didáticas"
+  "a3.teachColors": "Cores didáticas",
+  "a3.levelUni": "Universidade",
+  "a3.moreAbout": "Saber mais"
 }

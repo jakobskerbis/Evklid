@@ -3592,5 +3592,7 @@
   "birth.confirm": "依此日期計算的年齡：{age}。這是建立帳戶者的出生日期嗎？之後你無法自行修改。",
   "birth.confirmYes": "是，儲存",
   "birth.confirmNo": "修改",
-  "a3.teachColors": "教學配色"
+  "a3.teachColors": "教學配色",
+  "a3.levelUni": "大學",
+  "a3.moreAbout": "了解更多"
 }

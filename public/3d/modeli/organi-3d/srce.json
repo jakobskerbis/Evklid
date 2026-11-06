@@ -210,59 +210,65 @@
    "vozlisca": [
     "Right atrium"
    ],
-   "raven": 1,
-   "ucnaBarva": "#6b9cf0"
+   "ucnaBarva": "#6b9cf0",
+   "opisOs": "Sem priteče kri iz telesa. Ta kri je že oddala kisik.",
+   "opisStudij": "Stena 2–3 mm; gladki del (sinus venarum) iz zarodnega venskega sinusa, hrapavi del z glavničastimi mišicami. Ustja: zgornja in spodnja votla vena, venčni sinus; v steni sinusni vozel."
   },
   {
    "id": "mejni-greben",
    "ime": "Mejni greben",
    "la": "Crista terminalis",
-   "raven": 3,
    "barva": "#93c5fd",
    "opis": "Mišični greben na notranji steni desnega preddvora od ustja zgornje do ustja spodnje votle vene.",
    "vozlisca": [],
-   "skupina": "desni-preddvor"
+   "skupina": "desni-preddvor",
+   "opisOs": "Debelejša mišična črta v desnem preddvoru.",
+   "opisStudij": "Ločuje gladki del (sinus venarum) od hrapavega z mm. pectinati; na zunanji strani mu ustreza sulcus terminalis. Ob zgornjem koncu leži sinusni vozel."
   },
   {
    "id": "glavnicaste-misice",
    "ime": "Glavničaste mišice",
    "la": "Musculi pectinati",
-   "raven": 3,
    "barva": "#7dd3fc",
    "opis": "Vzporedni mišični grebeni od mejnega grebena naprej proti srčnemu ušesu.",
    "vozlisca": [],
-   "skupina": "desni-preddvor"
+   "skupina": "desni-preddvor",
+   "opisOs": "Mišične gubice na notranji steni preddvora, kot zobje glavnika.",
+   "opisStudij": "Vzporedni snopi od crista terminalis v hrapavi del desnega preddvora in v uho; v levem preddvoru so le v ušesu."
   },
   {
    "id": "ovalna-kotanja",
    "ime": "Ovalna kotanja z robom",
    "la": "Fossa ovalis, limbus fossae ovalis",
-   "raven": 3,
    "barva": "#e0f2fe",
    "opis": "Tanko dno medpreddvornega pretina, ostanek ovalne odprtine pred rojstvom; obdaja jo rob (limbus).",
    "vozlisca": [],
-   "skupina": "desni-preddvor"
+   "skupina": "desni-preddvor",
+   "opisOs": "Plitva jamica v steni med preddvoroma. Pred rojstvom je bila tu luknjica.",
+   "opisStudij": "Dno je ostanek septum primum, limbus ostanek septum secundum. Pri ~25 % odraslih ostane odprt foramen ovale (PFO), pot za paradoksno embolijo."
   },
   {
    "id": "zaklopki-ustij",
    "ime": "Zaklopki ustij",
    "la": "Valvula venae cavae inferioris, valvula sinus coronarii",
-   "raven": 3,
    "barva": "#f8fafc",
    "opis": "Polmesečasti gubi ob ustju spodnje votle vene (Eustahijeva) in venčnega sinusa (Tebezijeva).",
    "vozlisca": [],
-   "skupina": "desni-preddvor"
+   "skupina": "desni-preddvor",
+   "opisOs": "Majhni kožici ob ustjih dveh ven v desnem preddvoru.",
+   "opisStudij": "Valvula venae cavae inferioris (Eustachii) je pred rojstvom usmerjala kri iz spodnje votle vene skozi foramen ovale; valvula sinus coronarii (Thebesii) zapira ustje venčnega sinusa."
   },
   {
    "id": "desno-srcno-uho",
    "ime": "Desno srčno uho",
    "la": "Auricula dextra",
-   "raven": 2,
    "barva": "#60a5fa",
    "opis": "Izboklina desnega preddvora, ki prekriva koren aorte; od znotraj z glavničastimi mišicami.",
    "vozlisca": [],
    "skupina": "desni-preddvor",
-   "ucnaBarva": "#93b8f5"
+   "ucnaBarva": "#93b8f5",
+   "opisOs": "Majhen žepek desnega preddvora, ki leži ob aorti.",
+   "opisStudij": "Auricula dextra: trikotna izboklina s pectinati; v njej se pri atrijski fibrilaciji redkeje tvorijo strdki kot v levem ušesu."
   },
   {
    "id": "desni-prekat",
@@ -274,18 +280,20 @@
    "vozlisca": [
     "Right ventricle"
    ],
-   "raven": 1,
-   "ucnaBarva": "#3f74d9"
+   "ucnaBarva": "#3f74d9",
+   "opisOs": "Črpa kri v pljuča, kjer se napolni s kisikom.",
+   "opisStudij": "Stena 3–5 mm; dotočni del s trabeculae carneae in tremi papilarnimi mišicami, iztočni gladki conus arteriosus; tlak ~25/5 mmHg."
   },
   {
    "id": "conus-arteriosus",
    "ime": "Conus arteriosus",
    "la": "Conus arteriosus, crista supraventricularis",
-   "raven": 3,
    "barva": "#0ea5e9",
    "opis": "Gladki iztočni del desnega prekata pod pljučno zaklopko; od dotočnega ga loči nadprekatni greben.",
    "vozlisca": [],
-   "skupina": "desni-prekat"
+   "skupina": "desni-prekat",
+   "opisOs": "Gladek začetek poti iz desnega prekata proti pljučem.",
+   "opisStudij": "Infundibulum: gladkostenski iztočni trakt pod pljučno zaklopko; crista supraventricularis ga loči od dotočnega dela in trikuspidalnega ustja."
   },
   {
    "id": "levi-preddvor",
@@ -296,19 +304,21 @@
    "vozlisca": [
     "Left atrium"
    ],
-   "raven": 1,
-   "ucnaBarva": "#f2836f"
+   "ucnaBarva": "#f2836f",
+   "opisOs": "Sem priteče kri iz pljuč. Ta kri je polna kisika.",
+   "opisStudij": "Najbolj zadaj ležeča votlina srca; štiri pljučne vene, gladka stena, mišice le v ušesu. Za njim požiralnik (transezofagealni ultrazvok)."
   },
   {
    "id": "levo-srcno-uho",
    "ime": "Levo srčno uho",
    "la": "Auricula sinistra",
-   "raven": 2,
    "barva": "#fdba74",
    "opis": "Ozka izboklina levega preddvora ob levem robu pljučnega debla.",
    "vozlisca": [],
    "skupina": "levi-preddvor",
-   "ucnaBarva": "#f7a08f"
+   "ucnaBarva": "#f7a08f",
+   "opisOs": "Majhen žepek levega preddvora ob pljučnem deblu.",
+   "opisStudij": "Auricula sinistra: ozka, prstasta, s pectinati; najpogostejše mesto strdkov pri atrijski fibrilaciji."
   },
   {
    "id": "levi-prekat",
@@ -320,8 +330,9 @@
    "vozlisca": [
     "Left ventricle"
    ],
-   "raven": 1,
-   "ucnaBarva": "#d9483b"
+   "ucnaBarva": "#d9483b",
+   "opisOs": "Najmočnejši del srca: kri potisne v aorto in po vsem telesu.",
+   "opisStudij": "Stena 10–15 mm (≈ 3 × desni); dve papilarni mišici, fine trabekule ob konici; tlak ~120/10 mmHg, iztisni delež 55–70 %."
   },
   {
    "id": "aorta",
@@ -332,46 +343,50 @@
    "vozlisca": [
     "Aorta"
    ],
-   "raven": 1,
-   "ucnaBarva": "#e0242c"
+   "ucnaBarva": "#e0242c",
+   "opisOs": "Največja žila. Nese kri s kisikom iz srca v telo.",
+   "opisStudij": "Ascendentna (z venčnima arterijama v sinusih), lok s tremi vejami, descendentna torakalna; premer korena ~3 cm, stena elastičnega tipa."
   },
   {
    "id": "brahiocefalicno-deblo",
    "ime": "Brahiocefalično deblo",
    "la": "Truncus brachiocephalicus",
    "skupina": "aorta",
-   "raven": 2,
    "barva": "#fb7185",
    "opis": "Prva veja aortnega loka; razcepi se v desno podključnično arterijo in desno skupno karotido.",
    "vozlisca": [
     "Brachiocephalic trunk",
     "Right common carotid artery",
     "Right subclavian artery"
-   ]
+   ],
+   "opisOs": "Prva žila, ki se odcepi od aorte, za desno roko in glavo.",
+   "opisStudij": "Truncus brachiocephalicus, ~4–5 cm, Ø ~13 mm; za desnim sternoklavikularnim sklepom se razcepi v a. subclavia dextra in a. carotis communis dextra."
   },
   {
    "id": "leva-skupna-karotida",
    "ime": "Leva skupna karotida",
    "la": "Arteria carotis communis sinistra",
    "skupina": "aorta",
-   "raven": 2,
    "barva": "#f472b6",
    "opis": "Druga veja aortnega loka; oskrbuje levo stran glave in vratu.",
    "vozlisca": [
     "Left common carotid artery"
-   ]
+   ],
+   "opisOs": "Žila za levo stran glave in vratu.",
+   "opisStudij": "A. carotis communis sinistra izhaja neposredno iz loka; na višini zgornjega roba ščitastega hrustanca se razcepi v notranjo in zunanjo karotido."
   },
   {
    "id": "leva-podkljucnicna-arterija",
    "ime": "Leva podključnična arterija",
    "la": "Arteria subclavia sinistra",
    "skupina": "aorta",
-   "raven": 2,
    "barva": "#e879f9",
    "opis": "Tretja veja aortnega loka; oskrbuje levo roko, del vratu in prsni koš.",
    "vozlisca": [
     "Left subclavian artery"
-   ]
+   ],
+   "opisOs": "Žila za levo roko.",
+   "opisStudij": "A. subclavia sinistra, tretja veja loka; daje a. vertebralis, a. thoracica interna in truncus thyrocervicalis."
   },
   {
    "id": "pljucno-deblo",
@@ -382,21 +397,23 @@
    "vozlisca": [
     "Pulmonary trunk"
    ],
-   "raven": 1,
-   "ucnaBarva": "#2453c9"
+   "ucnaBarva": "#2453c9",
+   "opisOs": "Nese kri brez kisika iz srca proti pljučem.",
+   "opisStudij": "Truncus pulmonalis, ~5 cm, Ø ~3 cm; leži spredaj levo od aorte, razcepi se pod lokom (bifurcatio), z lokom ga veže lig. arteriosum."
   },
   {
    "id": "pljucne-arterije",
    "ime": "Desna pljučna arterija",
    "la": "Arteria pulmonalis dextra",
    "skupina": "pljucno-deblo",
-   "raven": 2,
    "barva": "#6366f1",
    "opis": "Od razcepa pljučnega debla gre pod aortnim lokom za zgornjo votlo veno do desnega pljučnega hilusa.",
    "vozlisca": [
     "Left pulmonary artery",
     "Right pulmonary artery"
-   ]
+   ],
+   "opisOs": "Žila, ki nese kri v desno pljučno krilo.",
+   "opisStudij": "A. pulmonalis dextra je daljša od leve; poteka za ascendentno aorto in zgornjo votlo veno, v hilusu se deli v veje za režnje."
   },
   {
    "id": "votli-veni",
@@ -408,30 +425,33 @@
     "Inferior vena cava (thoracic part)",
     "Superior vena cava"
    ],
-   "raven": 1,
-   "ucnaBarva": "#1d3a8f"
+   "ucnaBarva": "#1d3a8f",
+   "opisOs": "Veliki veni, ki pripeljeta kri iz telesa nazaj v srce.",
+   "opisStudij": "V. cava superior (iz brahiocefaličnih ven, sprejme v. azygos) in v. cava inferior (skozi prepono); obe brez zaklopk v ustju (Eustahijeva guba je ostanek)."
   },
   {
    "id": "v-azygos",
    "ime": "Vena azygos",
    "la": "Vena azygos",
-   "raven": 3,
    "barva": "#1e3a8a",
    "opis": "Zbira kri iz stene prsnega koša; nad desnim glavnim bronhom se od zadaj izlije v zgornjo votlo veno.",
    "vozlisca": [],
    "skupina": "votli-veni",
-   "ucnaBarva": "#1d3a8f"
+   "ucnaBarva": "#1d3a8f",
+   "opisOs": "Vena ob hrbtenici, ki se izlije v zgornjo votlo veno.",
+   "opisStudij": "Zbira interkostalne vene desno; lok nad desnim glavnim bronhom v zgornjo votlo veno. Obvod med zgornjo in spodnjo votlo veno."
   },
   {
    "id": "brahiocefalicni-veni",
    "ime": "Brahiocefalični veni",
    "la": "Venae brachiocephalicae",
-   "raven": 3,
    "barva": "#1d4ed8",
    "opis": "Leva in desna brahiocefalična vena se za desnim robom prsnice združita v zgornjo votlo veno.",
    "vozlisca": [],
    "skupina": "votli-veni",
-   "ucnaBarva": "#1d3a8f"
+   "ucnaBarva": "#1d3a8f",
+   "opisOs": "Veni iz glave in rok, ki se združita v zgornjo votlo veno.",
+   "opisStudij": "Leva (~6 cm) poteka poševno pred vejami aortnega loka, desna (~2,5 cm) navpično; združita se za 1. desnim rebrnim hrustancem."
   },
   {
    "id": "pljucne-vene",
@@ -445,8 +465,9 @@
     "Right inferior pulmonary vein",
     "Right superior pulmonary vein"
    ],
-   "raven": 1,
-   "ucnaBarva": "#ff5a6e"
+   "ucnaBarva": "#ff5a6e",
+   "opisOs": "Štiri vene, ki pripeljejo kri s kisikom iz pljuč v srce.",
+   "opisStudij": "Dve desni (za desnim preddvorom in zgornjo votlo veno) in dve levi; ustja brez zaklopk. Okoli ustij izolacija pri ablaciji atrijske fibrilacije."
   },
   {
    "id": "vencne-arterije",
@@ -455,80 +476,87 @@
    "barva": "#facc15",
    "opis": "Oskrbujejo srčno mišico s krvjo, ki ji prinaša kisik in hranila.",
    "vozlisca": [],
-   "raven": 1,
-   "ucnaBarva": "#ff2d2d"
+   "ucnaBarva": "#ff2d2d",
+   "opisOs": "Žile, ki hranijo samo srčno mišico.",
+   "opisStudij": "Leva in desna venčna arterija iz aortnih sinusov; prekrvitev v diastoli. Desna dominanca (zadnja medprekatna iz desne) pri ~70–80 %."
   },
   {
    "id": "leva-vencna-arterija",
    "ime": "Leva venčna arterija (deblo)",
    "la": "Arteria coronaria sinistra",
    "skupina": "vencne-arterije",
-   "raven": 3,
    "barva": "#fde047",
    "opis": "Kratko deblo iz levega aortnega sinusa; razcepi se v sprednjo medprekatno in cirkumfleksno arterijo.",
    "vozlisca": [
     "Left coronary artery"
-   ]
+   ],
+   "opisOs": "Začetek leve venčne arterije.",
+   "opisStudij": "Deblo (left main) 0,5–2 cm med pljučnim deblom in levim ušesom; zapora debla ogrozi večino levega prekata."
   },
   {
    "id": "sprednja-medprekatna-arterija",
    "ime": "Sprednja medprekatna veja",
    "la": "Ramus interventricularis anterior",
    "skupina": "vencne-arterije",
-   "raven": 3,
    "barva": "#facc15",
    "opis": "V sprednjem medprekatnem žlebu do konice; z diagonalnimi vejami oskrbuje sprednjo steno levega prekata.",
    "vozlisca": [
     "Anterior interventricular artery",
     "Diagonal branches of anterior interventricular artery"
-   ]
+   ],
+   "opisOs": "Žila po sprednji strani srca proti konici.",
+   "opisStudij": "Ramus interventricularis anterior (LAD): diagonalne veje na sprednjo steno, septalne v sprednji 2/3 pretina; najpogosteje zaprta pri infarktu."
   },
   {
    "id": "cirkumfleksna-arterija",
    "ime": "Obkrožna (cirkumfleksna) veja",
    "la": "Ramus circumflexus",
    "skupina": "vencne-arterije",
-   "raven": 3,
    "barva": "#eab308",
    "opis": "V levem venčnem žlebu okoli levega roba srca; oskrbuje stransko steno levega prekata.",
    "vozlisca": [
     "Circumflex artery of heart"
-   ]
+   ],
+   "opisOs": "Žila, ki obkroži levi rob srca.",
+   "opisStudij": "Ramus circumflexus v levem venčnem žlebu; obtuzne obrobne veje na stransko steno, pri ~40 % arterija sinusnega vozla."
   },
   {
    "id": "desna-vencna-arterija",
    "ime": "Desna venčna arterija",
    "la": "Arteria coronaria dextra",
    "skupina": "vencne-arterije",
-   "raven": 3,
    "barva": "#ca8a04",
    "opis": "Iz desnega aortnega sinusa po desnem venčnem žlebu; oskrbuje desni preddvor in desni prekat.",
    "vozlisca": [
     "Right coronary artery",
     "Right inferolateral branch of right coronary artery"
-   ]
+   ],
+   "opisOs": "Žila po desni strani srca.",
+   "opisStudij": "A. coronaria dextra: veja za conus, arterija sinusnega (~60 %) in AV-vozla, desna obrobna veja, pri desni dominanci zadnja medprekatna."
   },
   {
    "id": "zadnja-medprekatna-arterija",
    "ime": "Zadnja medprekatna arterija",
    "la": "Ramus interventricularis posterior",
    "skupina": "vencne-arterije",
-   "raven": 3,
    "barva": "#a16207",
    "opis": "Navadno veja desne venčne arterije; v zadnjem medprekatnem žlebu oskrbuje spodnjo steno srca.",
    "vozlisca": [
     "Posterior interventricular artery"
-   ]
+   ],
+   "opisOs": "Žila po spodnji strani srca proti konici.",
+   "opisStudij": "Ramus interventricularis posterior: zadnja 1/3 pretina in spodnja stena; izvor določa dominanco obtoka."
   },
   {
    "id": "obrobni-veji",
    "ime": "Obrobni veji",
    "la": "Rami marginales dexter et sinister",
-   "raven": 3,
    "barva": "#b45309",
    "opis": "Desna ob ostrem robu desnega prekata, leva (obtuzna) iz cirkumfleksne po stranski steni levega prekata.",
    "vozlisca": [],
-   "skupina": "vencne-arterije"
+   "skupina": "vencne-arterije",
+   "opisOs": "Žili ob robovih srca.",
+   "opisStudij": "Ramus marginalis dexter ob margo acutus desnega prekata, ramus marginalis sinister (obtuzna) iz cirkumfleksne ob margo obtusus."
   },
   {
    "id": "vencne-vene",
@@ -540,74 +568,81 @@
     "Inferior vein of left ventricle",
     "Inferior vein of left ventricle (//Posterior '')"
    ],
-   "raven": 2,
-   "ucnaBarva": "#5b4ee6"
+   "ucnaBarva": "#5b4ee6",
+   "opisOs": "Vene, ki odvajajo kri iz srčne mišice.",
+   "opisStudij": "Večina se zbere v sinus coronarius; vv. cordis anteriores in drobne vv. cordis minimae (Tebezijeve) se izlivajo neposredno v votline."
   },
   {
    "id": "vencni-sinus",
    "ime": "Venčni sinus",
    "la": "Sinus coronarius",
    "skupina": "vencne-vene",
-   "raven": 2,
    "barva": "#8b5cf6",
    "opis": "Široka vena v zadnjem venčnem žlebu; zbere kri srčnih ven in jo izlije v desni preddvor.",
    "vozlisca": [
     "Coronary sinus"
-   ]
+   ],
+   "opisOs": "Velika vena na zadnji strani srca, kamor se zberejo druge srčne vene.",
+   "opisStudij": "Sinus coronarius ~2–3 cm v zadnjem venčnem žlebu; ustje med spodnjo votlo veno in trikuspidalno zaklopko (Tebezijeva zaklopka), dostop za resinhronizacijske elektrode."
   },
   {
    "id": "velika-srcna-vena",
    "ime": "Velika srčna vena",
    "la": "Vena cordis magna",
    "skupina": "vencne-vene",
-   "raven": 3,
    "barva": "#7c3aed",
    "opis": "Spremlja sprednjo medprekatno arterijo in se po levem venčnem žlebu nadaljuje v venčni sinus.",
    "vozlisca": [
     "Great cardiac vein"
-   ]
+   ],
+   "opisOs": "Vena ob žili na sprednji strani srca.",
+   "opisStudij": "V. cordis magna spremlja LAD, nato cirkumfleksno arterijo; prehod v sinus označuje Vieussensova zaklopka in ustje v. obliqua."
   },
   {
    "id": "srednja-srcna-vena",
    "ime": "Srednja srčna vena",
    "la": "Vena cordis media",
    "skupina": "vencne-vene",
-   "raven": 3,
    "barva": "#6d28d9",
    "opis": "V zadnjem medprekatnem žlebu ob zadnji medprekatni arteriji; izlije se v venčni sinus.",
    "vozlisca": [
     "Middle cardiac vein"
-   ]
+   ],
+   "opisOs": "Vena na spodnji strani srca.",
+   "opisStudij": "V. cordis media v sulcus interventricularis posterior, izliva se blizu ustja venčnega sinusa."
   },
   {
    "id": "mala-srcna-vena",
    "ime": "Mala srčna vena",
    "la": "Vena cordis parva",
-   "raven": 3,
    "barva": "#4338ca",
    "opis": "V desnem venčnem žlebu ob desni venčni arteriji; izlije se v venčni sinus.",
    "vozlisca": [],
-   "skupina": "vencne-vene"
+   "skupina": "vencne-vene",
+   "opisOs": "Majhna vena na desni strani srca.",
+   "opisStudij": "V. cordis parva spremlja desno obrobno vejo in desno venčno arterijo; ni stalna."
   },
   {
    "id": "sprednje-srcne-vene",
    "ime": "Sprednje srčne vene",
    "la": "Venae cordis anteriores",
-   "raven": 3,
    "barva": "#3730a3",
    "opis": "Kratke vene s sprednje stene desnega prekata; čez desno venčno arterijo gredo naravnost v desni preddvor.",
    "vozlisca": [],
-   "skupina": "vencne-vene"
+   "skupina": "vencne-vene",
+   "opisOs": "Drobne vene, ki gredo naravnost v desni preddvor.",
+   "opisStudij": "Vv. cordis anteriores (2–4) odvajajo sprednjo steno desnega prekata mimo venčnega sinusa."
   },
   {
    "id": "posevna-vena-preddvora",
    "ime": "Poševna vena levega preddvora",
    "la": "Vena obliqua atrii sinistri",
-   "raven": 3,
    "barva": "#312e81",
    "opis": "Drobna vena po zadnji steni levega preddvora do venčnega sinusa; ostanek leve zgornje votle vene.",
    "vozlisca": [],
-   "skupina": "vencne-vene"
+   "skupina": "vencne-vene",
+   "opisOs": "Drobna vena na zadnji strani levega preddvora.",
+   "opisStudij": "V. obliqua atrii sinistri (Marshallova): ostanek leve zgornje votle vene; z vezjo Marshalla vir aritmij."
   },
   {
    "id": "papilarne-misice",
@@ -622,8 +657,9 @@
     "Inferior papillary muscle of right ventricle (lastno)",
     "Septal papillary muscle of right ventricle (lastno)"
    ],
-   "raven": 2,
-   "ucnaBarva": "#f472b6"
+   "ucnaBarva": "#f472b6",
+   "opisOs": "Mišični stebrički v prekatih, ki držijo zaklopke.",
+   "opisStudij": "Levi prekat: anterolateralna (dvojna prekrvitev) in posteromedialna (le ena arterija, pogosteje raztrgana pri infarktu); desni: sprednja, zadnja, septalna."
   },
   {
    "id": "trabekule",
@@ -636,8 +672,9 @@
     "Trabeculae carneae of left ventricle (lastno)",
     "Trabeculae carneae of right ventricle (lastno)"
    ],
-   "raven": 3,
-   "ucnaBarva": "#b07cf0"
+   "ucnaBarva": "#b07cf0",
+   "opisOs": "Mišične gubice na notranji steni prekatov.",
+   "opisStudij": "Trabeculae carneae: grebeni, mostički in papilarne mišice; septomarginalna trabekula nese desni krak prevodnega sistema do sprednje papilarne mišice."
   },
   {
    "id": "av-zaklopki",
@@ -655,8 +692,9 @@
     "Posterior leaflet of left atrioventricular valve",
     "Septal leaflet of right atrioventricular valve"
    ],
-   "raven": 1,
-   "ucnaBarva": "#f3ead2"
+   "ucnaBarva": "#f3ead2",
+   "opisOs": "Zaklopki med preddvoroma in prekatoma; kri spustita samo naprej.",
+   "opisStudij": "Trikuspidalna (sprednji, zadnji, septalni listič) in mitralna (sprednji aortni in zadnji); chordae tendineae z obeh papilarnih mišic na oba lističa preprečijo prolaps."
   },
   {
    "id": "aortna-zaklopka",
@@ -667,8 +705,9 @@
    "vozlisca": [
     "Semilunar cusps of aortic valve (lastno)"
    ],
-   "raven": 1,
-   "ucnaBarva": "#fde68a"
+   "ucnaBarva": "#fde68a",
+   "opisOs": "Zaklopka med levim prekatom in aorto. Kri ne more nazaj.",
+   "opisStudij": "Trije polmesečasti žepki (desni in levi venčni, nevenčni); nad desnim in levim sinusom ustji venčnih arterij."
   },
   {
    "id": "pljucna-zaklopka",
@@ -679,42 +718,46 @@
    "vozlisca": [
     "Semilunar cusps of pulmonary valve (lastno)"
    ],
-   "raven": 1,
-   "ucnaBarva": "#c7d2fe"
+   "ucnaBarva": "#c7d2fe",
+   "opisOs": "Zaklopka med desnim prekatom in pljučnim deblom. Kri ne more nazaj.",
+   "opisStudij": "Trije polmesečasti žepki (sprednji, desni, levi); najbolj spredaj in zgoraj ležeča zaklopka, avskultacija v 2. levem medrebrnem prostoru."
   },
   {
    "id": "arterijska-vez",
    "ime": "Arterijska vez",
    "la": "Ligamentum arteriosum",
-   "raven": 3,
    "barva": "#e5e7eb",
    "opis": "Vezivni trak med začetkom leve pljučne arterije in spodnjo stranjo aortnega loka; ostanek arterijskega voda.",
    "vozlisca": [
     "Ligamentum arteriosum"
    ],
-   "ucnaBarva": "#cbd5e1"
+   "ucnaBarva": "#cbd5e1",
+   "opisOs": "Majhen trak med aorto in pljučno arterijo. Pred rojstvom je bil to odprt vod.",
+   "opisStudij": "Lig. arteriosum je ostanek ductus arteriosus (Botalli); ob njem n. laryngeus recurrens sinister zavije pod lok."
   },
   {
    "id": "prevodni-sistem",
    "ime": "Prevodni sistem (shema)",
    "la": "Systema conducens cordis",
-   "raven": 2,
    "barva": "#fbbf24",
    "opis": "Shema: sinusni vozel, AV-vozel, Hisov snop in kraka po pretinu vodijo električni signal za utrip.",
    "vozlisca": [
     "Conducting system of heart (lastno)"
    ],
-   "ucnaBarva": "#facc15"
+   "ucnaBarva": "#facc15",
+   "opisOs": "Posebne mišične celice, ki dajejo srcu ritem.",
+   "opisStudij": "Sinusni vozel (60–100/min) → AV-vozel (zakasnitev ~0,1 s) → Hisov snop skozi fibrozni skelet → levi in desni krak → Purkinjeva vlakna."
   },
   {
    "id": "medprekatni-pretin",
    "ime": "Medprekatni pretin",
    "la": "Septum interventriculare",
-   "raven": 2,
    "barva": "#f97316",
    "opis": "Mišična stena med prekatoma (≈ 1 cm); tik pod aortnim obročem je tanek vezivni membranski del.",
    "vozlisca": [],
-   "ucnaBarva": "#f59e0b"
+   "ucnaBarva": "#f59e0b",
+   "opisOs": "Stena med levim in desnim prekatom.",
+   "opisStudij": "Pars muscularis ~1 cm in tanka pars membranacea pod nevenčnim in desnim žepkom aortne zaklopke; najpogostejše mesto prirojene okvare (VSD)."
   }
  ],
  "prerez": {

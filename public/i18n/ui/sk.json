@@ -3686,5 +3686,7 @@
   "birth.confirm": "Vek podľa tohto dátumu: {age}. Je to dátum narodenia osoby, ktorá účet vytvorila? Neskôr ho sám zmeniť nemôžeš.",
   "birth.confirmYes": "Áno, uložiť",
   "birth.confirmNo": "Opraviť",
-  "a3.teachColors": "Výučbové farby"
+  "a3.teachColors": "Výučbové farby",
+  "a3.levelUni": "Štúdium",
+  "a3.moreAbout": "Viac o tom"
 }

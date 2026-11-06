@@ -3620,5 +3620,7 @@
   "birth.confirm": "Alter laut diesem Datum: {age}. Ist das das Geburtsdatum der Person, die das Konto erstellt hat? Du kannst es später nicht selbst ändern.",
   "birth.confirmYes": "Ja, speichern",
   "birth.confirmNo": "Korrigieren",
-  "a3.teachColors": "Lernfarben"
+  "a3.teachColors": "Lernfarben",
+  "a3.levelUni": "Studium",
+  "a3.moreAbout": "Mehr dazu"
 }

@@ -3618,5 +3618,7 @@
   "birth.confirm": "Életkor e dátum szerint: {age}. Ez annak a személynek a születési dátuma, aki a fiókot létrehozta? Később magad nem tudod megváltoztatni.",
   "birth.confirmYes": "Igen, mentés",
   "birth.confirmNo": "Javítás",
-  "a3.teachColors": "Tanulási színek"
+  "a3.teachColors": "Tanulási színek",
+  "a3.levelUni": "Egyetem",
+  "a3.moreAbout": "Bővebben"
 }

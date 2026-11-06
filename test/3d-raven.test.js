@@ -1,7 +1,7 @@
-// Raven delov 3D modelov po profilu (public/3d/raven.js): OŠ 1, SŠ 2, študij 3, brez profila 2.
+// Raven razlage 3D modelov po profilu (public/3d/raven.js): OŠ 1, SŠ 2, študij 3, brez profila 2; deli vedno vsi.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { nastaviVirRavni, ravenProfila, naRavni } from "../public/3d/raven.js";
+import { nastaviVirRavni, ravenProfila, razlaga, imaRavni } from "../public/3d/raven.js";
 
 test("raven profila iz stopnje", () => {
   nastaviVirRavni(() => null);
@@ -18,10 +18,14 @@ test("raven profila iz stopnje", () => {
   assert.equal(ravenProfila(), 2);
 });
 
-test("del na ravni", () => {
-  assert.equal(naRavni({}, 1), true);
-  assert.equal(naRavni({ raven: 3 }, 2), false);
-  assert.equal(naRavni({ raven: 2 }, 2), true);
+test("razlaga po ravni: OŠ preprosto (latinsko v »Več o tem«), SŠ z latinskim, študij vse", () => {
+  const d = { ime: "Levi prekat", la: "Ventriculus sinister", opisOs: "Najmočnejši del srca.", opis: "Stisne kri v aorto.", opisStudij: "Stena 10–15 mm." };
+  assert.deepEqual(razlaga(d, 1), { opis: "Najmočnejši del srca.", la: null, vec: "Ventriculus sinister · Stisne kri v aorto. Stena 10–15 mm." });
+  assert.deepEqual(razlaga(d, 2), { opis: "Stisne kri v aorto.", la: "Ventriculus sinister", vec: "Stena 10–15 mm." });
+  assert.deepEqual(razlaga(d, 3), { opis: "Stisne kri v aorto. Stena 10–15 mm.", la: "Ventriculus sinister", vec: null });
+  assert.equal(razlaga({ opis: "Samo to." }, 1).opis, "Samo to.");
+  assert.equal(imaRavni([{ opis: "x" }]), false);
+  assert.equal(imaRavni([{ opis: "x", opisOs: "y" }]), true);
 });
 
 test("okvir 3D v »Uči se« dobi raven profila (ločen dokument brez profila)", async () => {

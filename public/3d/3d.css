@@ -155,7 +155,9 @@
   border: 1px solid var(--k3-rob); background: var(--k3-povrsina); cursor: pointer; font-size: 0.92rem; text-align: start;
 }
 .k3-del[aria-pressed="true"] { border-color: var(--k3-accent); background: var(--k3-accent-soft); }
-/* Raven delov »OŠ / SŠ / Vse« nad seznamom (public/3d/raven.js) */
+/* Raven razlage »OŠ / SŠ / Študij« nad seznamom delov (public/3d/raven.js); »Več o tem« v oknu dela */
+.k3-info-vec summary { min-height: 40px; display: flex; align-items: center; cursor: pointer; color: var(--k3-accent); font-weight: 600; }
+.k3-info-vec .k3-info-opis { margin-top: 4px; }
 .k3-raven { display: inline-flex; gap: 4px; padding: 3px; margin: 0 0 8px; border: 1px solid var(--k3-rob); border-radius: 999px; background: var(--k3-povrsina); }
 .k3-raven[hidden] { display: none; }
 .k3-raven-gumb { min-height: 40px; min-width: 52px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: inherit; font: inherit; font-size: 0.9rem; cursor: pointer; }

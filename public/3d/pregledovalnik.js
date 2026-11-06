@@ -6,7 +6,7 @@ import { THREE, ustvariSceno, kakovostNaprave, gibanje, poveziGumbVrtenja } from
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
-import { ravenProfila, naRavni } from "./raven.js";
+import { ravenProfila, razlaga, imaRavni } from "./raven.js";
 
 const mk = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -384,7 +384,6 @@ export function odpriModel(el, mod, opts = {}) {
     // kader vidnega modela pred skrivanjem ovojev: primerjava pokaže, ali se je vidni model opazno spremenil
     const prej = leti && model?.group ? kadrModela() : null;
     izbran = d ? d.id : null;
-    // del nad izbrano ravnjo (tap v prerezu, naslov): okno dela se odpre, seznam in raven ostaneta (pregled #461)
     ustaviNamigSij();
     obarvaj(d);
     skrijObdajajoce(d);
@@ -409,7 +408,9 @@ export function odpriModel(el, mod, opts = {}) {
     const naslov = mk("div", "k3-info-naslov");
     // stran /3d: h1 ime modela, h2 okno dela in »Deli«; v lekciji je okno pod naslovi lekcije (h3)
     naslov.append(mk(opts.stran ? "h2" : "h3", "k3-info-ime", d.ime));
-    if (d.la) naslov.append(mk("i", "k3-la", d.la)); // latinsko ime (organi, prerezi tkiv)
+    // razlaga po ravni (raven.js): OŠ preprosto, SŠ z latinskim imenom, študij še podrobneje; globlje v »Več o tem«
+    const rz = imaRavni(model?.deli) ? razlaga(d, raven) : { opis: d.opis, la: d.la, vec: null };
+    if (rz.la) naslov.append(mk("i", "k3-la", rz.la)); // latinsko ime (organi, prerezi tkiv)
     const x = mk("button", "k3-krog k3-info-zapri");
     x.type = "button";
     x.innerHTML = icon("x");
@@ -418,7 +419,12 @@ export function odpriModel(el, mod, opts = {}) {
     x.addEventListener("click", zapriInfo);
     glava.append(mk("i", "k3-pika"), naslov, x);
     infoEl.append(glava);
-    if (d.opis) infoEl.append(mk("p", "k3-info-opis", d.opis));
+    if (rz.opis) infoEl.append(mk("p", "k3-info-opis", rz.opis));
+    if (rz.vec) {
+      const vec = mk("details", "k3-info-vec");
+      vec.append(mk("summary", "", t("a3.moreAbout")), mk("p", "k3-info-opis", rz.vec));
+      infoEl.append(vec);
+    }
     // Del s `povecava: "<id modela>"` (docs/3d.md): gumb odpre povečan prikaz (stran /3d da opts.povecava).
     if (d.povecava && typeof opts.povecava === "function") {
       const b = mk("button", "k3-pill k3-povecava-gumb");
@@ -496,11 +502,10 @@ export function odpriModel(el, mod, opts = {}) {
     poleti(c, r);
   }
 
-  // Raven delov (raven.js): preklop »OŠ / SŠ / Vse« nad seznamom je vedno na voljo (ko ima model dele z ravnjo);
-  // začetna raven je raven profila, ob menjavi modela se vrne nanjo. Nič ni zaklenjeno.
+  // Raven razlage (raven.js): preklop »OŠ / SŠ / Študij« nad seznamom delov; vsi deli so vedno vidni, prilagodi se
+  // samo razlaga izbranega dela. Začetna raven je raven profila, ob menjavi modela se vrne nanjo.
   const ravenZacetna = Number(opts.raven) || ravenProfila();
   let raven = ravenZacetna;
-  const vSeznamu = (d) => naRavni(d, raven);
   const ravenEl = mk("div", "k3-raven");
   ravenEl.setAttribute("role", "group");
   ravenEl.setAttribute("aria-label", t("a3.detail"));
@@ -508,27 +513,26 @@ export function odpriModel(el, mod, opts = {}) {
     const seznam = Array.isArray(model?.deli) ? model.deli : [];
     zadnjiDeli = [...seznam];
     deliEl.replaceChildren();
-    const zRavnmi = seznam.some((d) => Number(d.raven) > 1);
+    const zRavnmi = imaRavni(seznam);
     ravenEl.replaceChildren();
     ravenEl.hidden = !zRavnmi;
     if (zRavnmi) {
-      for (const [k, oz] of [[1, "a3.levelOS"], [2, "a3.levelSS"], [3, "a3.levelAll"]]) {
+      for (const [k, oz] of [[1, "a3.levelOS"], [2, "a3.levelSS"], [3, "a3.levelUni"]]) {
         const g = mk("button", "k3-raven-gumb", t(oz));
         g.type = "button";
         g.setAttribute("aria-pressed", String(k === raven));
         g.addEventListener("click", () => {
           if (raven === k) return;
           raven = k;
-          if (izbran && !vSeznamu(seznam.find((d) => d.id === izbran) || {})) izberi(null, { leti: false });
-          deli();
-          ravenEl.querySelector('[aria-pressed="true"]')?.focus({ preventScroll: true });
+          ravenEl.querySelectorAll("button").forEach((x, i) => x.setAttribute("aria-pressed", String(i + 1 === raven)));
+          const d = seznam.find((x) => x.id === izbran);
+          if (d) pokaziInfo(d);
         });
         ravenEl.append(g);
       }
       if (ravenEl.parentNode !== deliEl.parentNode) deliEl.parentNode?.insertBefore(ravenEl, deliEl);
     }
     for (const d of seznam) {
-      if (!vSeznamu(d)) continue;
       const b = mk("button", "k3-del");
       b.type = "button";
       b.dataset.del = d.id;
@@ -540,7 +544,7 @@ export function odpriModel(el, mod, opts = {}) {
       b.addEventListener("click", () => izberi(d.id === izbran ? null : d.id));
       deliEl.append(b);
     }
-    const stevilo = seznam.filter(vSeznamu).length;
+    const stevilo = seznam.length;
     deliEl.hidden = !seznam.length;
     if (deliGlava) {
       deliGlava.hidden = !seznam.length;
@@ -831,9 +835,9 @@ export function odpriModel(el, mod, opts = {}) {
         if (!model?.group) return;
         const hit = kit.zadetki(ndc, [model.group])[0];
         if (!hit) return izberi(null);
-        // tap: najožji del, ki je v seznamu (posamezna žila pred skupino »Venčne arterije«, če je prikazana)
-        const zadeti = (model.deli || []).filter((x) => (x.meshes || []).some((m) => m === hit.object || m === hit.object.parent));
-        const d = zadeti.find((x) => x.skupina && vSeznamu(x)) || zadeti.find((x) => vSeznamu(x) && !x.skupina) || zadeti.find(vSeznamu) || zadeti[0];
+            const zadeti = (model.deli || []).filter((x) => (x.meshes || []).some((m) => m === hit.object || m === hit.object.parent));
+        // tap: OŠ izbere skupni del (npr. Venčne arterije), SŠ in študij najožji (posamezno žilo)
+        const d = raven <= 1 ? zadeti.find((x) => !x.skupina) || zadeti[0] : zadeti.find((x) => x.skupina) || zadeti[0];
         izberi(d?.id ?? null, { hit: { object: hit.object, instanceId: hit.instanceId ?? null, point: hit.point.clone() }, preklopi: true });
       });
       pocisti.push(

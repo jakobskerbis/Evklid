@@ -3620,5 +3620,7 @@
   "birth.confirm": "Age from this date: {age}. Is this the date of birth of the person who created the account? You cannot change it yourself later.",
   "birth.confirmYes": "Yes, save",
   "birth.confirmNo": "Correct it",
-  "a3.teachColors": "Teaching colours"
+  "a3.teachColors": "Teaching colours",
+  "a3.levelUni": "University",
+  "a3.moreAbout": "More about this"
 }
