@@ -217,9 +217,10 @@
    "barva": "#f43f5e",
    "opis": "Največja arterija; vodi s kisikom bogato kri iz levega prekata v telo.",
    "vozlisca": [
-    "Aortic arch",
-    "Ascending aorta",
-    "Thoracic aorta"
+    "Aorta",
+    "Brachiocephalic trunk",
+    "Left common carotid artery",
+    "Left subclavian artery"
    ]
   },
   {
@@ -229,8 +230,6 @@
    "barva": "#818cf8",
    "opis": "Razcepi se v pljučni arteriji, ki neseta kri brez kisika v pljuča.",
    "vozlisca": [
-    "Bifurcation of pulmonary trunk",
-    "Left pulmonary artery",
     "Pulmonary trunk",
     "Right pulmonary artery"
    ]
@@ -294,11 +293,11 @@
    "barva": "#f472b6",
    "opis": "Mišični stebrički v prekatih; prek tetiv držijo lističe jadrastih zaklopk, da se ne obrnejo v preddvor.",
    "vozlisca": [
-    "Anterior papillary muscle of right ventricle",
+    "Anterior papillary muscle of right ventricle (lastno)",
     "Anterolateral papillary muscle of left ventricle (lastno)",
-    "Inferior papillary muscle of left ventricle",
-    "Inferior papillary muscle of right ventricle",
-    "Septal papillary muscle of right ventricle"
+    "Inferior papillary muscle of left ventricle (lastno)",
+    "Inferior papillary muscle of right ventricle (lastno)",
+    "Septal papillary muscle of right ventricle (lastno)"
    ]
   },
   {
@@ -335,9 +334,7 @@
    "barva": "#fde68a",
    "opis": "Žepasta zaklopka na izhodu levega prekata; kri ne more nazaj iz aorte.",
    "vozlisca": [
-    "Left coronary leaflet",
-    "Non-coronary leaflet",
-    "Right coronary leaflet"
+    "Semilunar cusps of aortic valve (lastno)"
    ]
   },
   {
@@ -347,9 +344,7 @@
    "barva": "#c4b5fd",
    "opis": "Žepasta zaklopka na izhodu desnega prekata; kri ne more nazaj iz pljučnega debla.",
    "vozlisca": [
-    "Anterior semilunar leaflet of pulmonary valve",
-    "Left semilunar leaflet of pulmonary valve",
-    "Right semilunar leaflet of pulmonary valve"
+    "Semilunar cusps of pulmonary valve (lastno)"
    ]
   }
  ],
@@ -422,10 +417,10 @@
    }
   ]
  },
- "velikost": 0.2259,
+ "velikost": 0.2656,
  "trikotniki": {
-  "racunalnik": 170192,
-  "telefon": 60950
+  "racunalnik": 169992,
+  "telefon": 62687
  },
  "luci": [
   {

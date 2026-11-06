@@ -38,10 +38,10 @@ for (const organ of organi) {
       const w = path.join(src, `${organ}${pripona}.w.glb`);
       const w2 = path.join(src, `${organ}${pripona}.w2.glb`);
       gt("webp", q, w, "--slots", "baseColorTexture", "--quality", "90", "--effort", "100");
-      // ORM (senca okolice, hrapavost) je gladek podatek: q82 je na zaslonu enak q90 in ~30 % manjši (telefon ≤ 2 MB)
-      gt("webp", w, w2, "--slots", "{occlusionTexture,metallicRoughnessTexture}", "--quality", "82", "--effort", "100");
-      // normalna mapa q95, telefon q92 (izbočena maščoba z režnjiči nosi več podrobnosti; telefon ostane ≤ 2 MB)
-      gt("webp", w2, izhod, "--slots", "normalTexture", "--quality", pripona ? "92" : "95", "--effort", "100");
+      // ORM (senca okolice, hrapavost) je gladek podatek: q82 je na zaslonu enak q90 in ~30 % manjši, telefon q74 (≤ 2 MB)
+      gt("webp", w, w2, "--slots", "{occlusionTexture,metallicRoughnessTexture}", "--quality", pripona ? "74" : "82", "--effort", "100");
+      // normalna mapa q95, telefon q88 (žile kot geometrija: več UV otokov; telefon ostane ≤ 2 MB)
+      gt("webp", w2, izhod, "--slots", "normalTexture", "--quality", pripona ? "88" : "95", "--effort", "100");
       for (const f of [q, w, w2]) fs.rmSync(f, { force: true });
     }
     fs.rmSync(tmp, { force: true });
