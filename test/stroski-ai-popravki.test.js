@@ -235,3 +235,28 @@ test("napaka pred pretakanjem: pogovor in rezervacija se sprostita, vprašanje n
     server.close();
   }
 });
+
+test("429: dolg pogovor dobi »začni nov pogovor«; najcenejši klic = dejanska rezerva lite", async () => {
+  const streamFn = async ({ onText }) => {
+    onText("Ok." + META);
+    return { text: "Ok." + META, stopReason: "end_turn", model: "claude-haiku-5-5", usage: { input_tokens: 10, output_tokens: 10 } };
+  };
+  const { store, usage, server, post, s } = await capServer(0.012, streamFn);
+  try {
+    assert.ok(usage.minCallUsd() > 0.0066, `minCall ${usage.minCallUsd()}`);
+    const conv = await (await post(`/api/students/${s.id}/conversations`)).json();
+    for (let i = 0; i < 20; i++) store.addMessage(conv.id, i % 2 ? "assistant" : "user", [{ type: "text", text: `${"Dolgo besedilo o ulomkih. ".repeat(130)}${META}` }], "x");
+    const r = await post(`/api/conversations/${conv.id}/messages`, { text: "Še ena?" });
+    assert.equal(r.status, 429);
+    const b = await r.json();
+    assert.equal(b.code, "block.longChat");
+    assert.match(b.error, /nov pogovor/);
+    // Nov pogovor deluje.
+    const c2 = await (await post(`/api/students/${s.id}/conversations`)).json();
+    const r2 = await post(`/api/conversations/${c2.id}/messages`, { text: "Še ena?" });
+    assert.equal(r2.status, 200);
+    await r2.text();
+  } finally {
+    server.close();
+  }
+});

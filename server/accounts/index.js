@@ -356,10 +356,23 @@ export function mountAccounts(app, store, opts = {}) {
     if (!owner) return [];
     const r = rightsFor(studentId);
     const credit = credits.balance(owner) || 0;
+    // Kredit računa si delijo vsi profili: kdor ga sme uporabiti, ima tudi skupni ključ credit:<račun>, da hkratni
+    // klici dveh profilov kredita ne presežejo (pregled #462).
+    const creditCap = (room) => ({ key: `credit:${owner}`, usd: credit + Math.max(0, room), spent: 0, code: "block.freeMonth" });
     if (r.personal) {
-      if (r.personalTier !== "pass") return []; // zajamčeni paketi: server/usage.js capsFor
+      if (r.personalTier !== "pass") {
+        // Zajamčeni paketi: meja v server/usage.js capsFor; s kreditom še skupni ključ (kredit + preostanek paketa).
+        if (!(credit > 0)) return [];
+        const sb = aiUsage.studentBudget(studentId);
+        if (!sb.guaranteed) return [];
+        const n = sb.group?.length || 1;
+        const room = Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, guaranteeTotalFor(studentId) ?? Infinity) - sb.spent;
+        return [creditCap(room)];
+      }
+      // Paket pred testom: meja paketa brez kredita (kredit se porabi šele v brezplačnem paketu po koncu paketa),
+      // poraba brez dela iz kredita (Passes.spentUsd).
       const p = billing?.passes.activeFor(studentId);
-      return p ? [{ key: `pass:${p.id}`, usd: passCapUsd(p) + credit, spent: billing.passes.spentUsd(p), code: "block.freeTail" }] : [];
+      return p ? [{ key: `pass:${p.id}`, usd: passCapUsd(p), spent: billing.passes.spentUsd(p), code: "block.passOut" }] : [];
     }
     if (r.school && !r.schoolAiOut) {
       const s = r.schools.find((x) => x.ai_month_usd > 0 && (x.ai_spent_usd || 0) < x.ai_month_usd);
@@ -381,6 +394,21 @@ export function mountAccounts(app, store, opts = {}) {
     if (pool) caps.push({ key: "freepool", usd: pool, spent: freePoolSpent(), code: "block.freePool" });
     return caps;
   }
+  // Besedilo zavrnitve: preizkus in bonus → poziv k naročnini (ne »spet jih dobiš«); brezplačni paket z namigom.
+  function aiBlockFor(studentId, code) {
+    const g = subGuarantee(studentId);
+    if ((code === "block.freeTail" || code === "block.freeTailTopup") && (g?.nopay === "trial" || g?.nopay === "bonus")) code = "block.trialOut";
+    if (code === "block.freeMonth" || code === "block.freePool") return freeBlock(studentId, code);
+    return { error: BLOCK_TEXT[code], code };
+  }
+  // Paket pred testom: poraba nad mejo paketa (brez dela iz kredita), ki jo plača kredit; null brez paketa.
+  function passCreditOver(studentId) {
+    const r = rightsFor(studentId);
+    if (!r.personal || r.personalTier !== "pass") return null;
+    const p = billing?.passes.activeFor(studentId);
+    return p ? billing.passes.spentUsd(p) - passCapUsd(p) : null;
+  }
+  aiUsage.configure({ blockFor: aiBlockFor, creditOverOf: passCreditOver });
   aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, periodOf: aiPeriodStart, poolOf: poolFor, capsOf, onLog: () => schools.clearCache() });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je

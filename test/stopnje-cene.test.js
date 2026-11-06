@@ -9,6 +9,7 @@ import {
   PLANS,
   LEGACY_PLANS,
   PASSES,
+  passCapUsd,
   FAKS_PASSES,
   GIFT_PRICES,
   SCHOOL_PLANS,
@@ -212,9 +213,9 @@ test("poraba AI: zajamčeni deleži naročnikov imajo prednost pred brezplačnim
   assert.equal(modeParams(r.mode).model, modeParams("chat").model, "hitri model");
   assert.equal(r.fast, true);
   assert.equal(u.chooseMode(sub, { wantDeep: true }).mode, "think");
-  // Brezplačni rep porabljen (meja + 0,2 $ kot brezplačni profil): do 1. v mesecu ali do dokupa.
+  // Brezplačni rep porabljen (meja + 0,2 $ kot brezplačni profil): do novega obdobja paketa ali do dokupa.
   spend(sub, 0.09);
-  assert.match(u.blockReason(sub), /vsa vprašanja za inštruktorja v svojem paketu/);
+  assert.match(u.blockReason(sub), /V tem obdobju paketa si porabil vsa vprašanja za inštruktorja/);
   // Brezplačni nad svojim delom čaka do 1. v mesecu (s proračunom).
   spend(free1, 10);
   assert.match(u.blockReason(free1), /svoj del inštruktorja/);
@@ -891,7 +892,7 @@ test("trda meja: hitri način je znotraj zajamčenega AI (podrobno do meje / 1,1
     assert.equal(api.dailyLimitFor(sid), freeDaily(), "nad mejo kot brezplačni paket");
     assert.equal(u.blockReason(sid), null, "brezplačni rep");
     spend(0.2); // 1,90 $ = vrednost iz tabele: rep porabljen
-    assert.match(u.blockReason(sid), /1\. v mesecu/);
+    assert.match(u.blockReason(sid), /z novim obdobjem paketa/);
     // Dokupljen kredit odpre naprej.
     api.credits.activate(api.credits.create(api.ownerOf(sid), CREDIT_PACKS[0]), "pi_t");
     assert.equal(u.overCeiling(sid), false);
@@ -1011,5 +1012,59 @@ test("meja po obdobju naročnine, ne po koledarskem mesecu; past_due ne odpre no
     spendAt(4.5, 0.2); // v preizkusu
     spendAt(6, 0.3); // pred preizkusom
     assert.ok(Math.abs(spent() - 0.2) < 1e-9, `preizkus: ${spent()}`);
+  });
+});
+
+test("kredit: pri proračunu 0 se porabi nad mejo paketa; paket pred testom ga ne šteje dvakrat; skupni ključ kredita", async () => {
+  await withAccounts(async ({ db, api, kid, subscribe, pid }) => {
+    const ana = kid("Ana", "OS", YEAR - 12);
+    const bor = kid("Bor", "OS", YEAR - 11);
+    subscribe("evklid_1_month");
+    assert.equal(api.aiUsage.budget().cap, 0, "brez proračuna");
+    assert.ok(api.credits.activate(api.credits.create(pid, CREDIT_PACKS.find((p) => p.id === "k10")), "pi_k"));
+    const credit0 = api.credits.balance(pid);
+    // Naročnik in brezplačni sorojenec (en sedež) imata skupni ključ kredita.
+    const keys = (sid) => api.aiUsage.capsFor(sid).map((c) => c.key);
+    assert.ok(keys(ana).includes(`credit:${pid}`) && keys(bor).includes(`credit:${pid}`), `${keys(ana)} / ${keys(bor)}`);
+    // Naročnik porabi ves paket in še malo: del nad podrobnim delom plača kredit, tudi brez proračuna.
+    const g = planGuarantee(planByKey("evklid_1_month"));
+    api.aiUsage.log(ana, "claude-opus-5-5", { output_tokens: Math.round(((g.total + 0.2) * 1e6) / 20) });
+    assert.ok(api.credits.balance(pid) < credit0 - 0.2, `kredit porabljen: ${api.credits.balance(pid)} od ${credit0}`);
+    const cap = api.aiUsage.capsFor(ana)[0];
+    assert.ok(cap.usd - cap.spent <= api.credits.balance(pid) + g.total + 1e-9, "skupna poraba ≤ paket + kupljeni kredit");
+    // Paket pred testom: poraba iz kredita se od porabe paketa odšteje.
+    const pass = { student_id: bor, starts_at: new Date(Date.now() - 3600000).toISOString() };
+    db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'claude-haiku-5-5', 'chat', 0.5)").run(bor);
+    api.credits.use(pid, bor, 0.2);
+    assert.ok(Math.abs(api.billing.passes.spentUsd(pass) - 0.3) < 1e-9);
+  });
+});
+
+test("paket pred testom skoraj porabljen: profil preide v brezplačni paket; besedila 429 po meji, ki veže", async () => {
+  await withAccounts(async ({ db, api, kid, pid }) => {
+    const ana = kid("Ana", "OS", YEAR - 12);
+    db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(pid);
+    const plan = PASSES[0];
+    const id = api.billing.passes.create({ parentId: pid, studentId: ana, plan, testDate: new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 10) });
+    assert.ok(api.billing.passes.activate(id, "pi_pass"));
+    assert.equal(api.rightsFor(ana).personalTier, "pass");
+    const p = api.billing.passes.activeFor(ana);
+    // Ostane manj od najcenejšega klica: paket je porabljen, profil je v brezplačnem paketu (ne zaklenjen).
+    db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd, created_at) VALUES (?, 'claude-haiku-5-5', 'chat', ?, datetime('now','+1 second'))").run(ana, passCapUsd(p) - api.aiUsage.minCallUsd() / 2);
+    assert.notEqual(api.rightsFor(ana).personalTier, "pass");
+    assert.equal(api.aiPremiumFor(ana), false);
+    // Koda paketa pred testom ima svoje besedilo.
+    assert.match(api.aiUsage.blockFor(ana, "block.passOut").error, /Paket pred testom je porabljen/);
+    // Preizkus: poziv k naročnini namesto »spet jih dobiš«.
+    db.prepare("UPDATE parents SET trial_ends_at = ? WHERE id = ?").run(new Date(Date.now() + 3 * 86400000).toISOString(), pid);
+    db.prepare("UPDATE passes SET status = 'refunded'").run();
+    const b = api.aiUsage.blockFor(ana, "block.freeTail");
+    assert.equal(b.code, "block.trialOut");
+    assert.match(b.error, /naročnino/);
+    // Brezplačni paket: besedilo brezplačnega paketa (z namigom, kadar ga račun sme videti; accounts freeBlock).
+    db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z' WHERE id = ?").run(pid);
+    const fb = api.aiUsage.blockFor(ana, "block.freeMonth");
+    assert.equal(fb.code, "block.freeMonth");
+    assert.match(fb.error, /brezplačna vprašanja/);
   });
 });

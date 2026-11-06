@@ -183,9 +183,13 @@ export class Passes {
   end(id, status) {
     this.db.prepare("UPDATE passes SET status = ?, ends_at = ? WHERE id = ?").run(status, iso(Date.now()), id);
   }
-  // Poraba AI v času paketa (v dolarjih, kot zaračunava Claude API).
+  // Poraba AI v času paketa (v dolarjih, kot zaračunava Claude API), brez dela, ki ga je plačal dokupljeni kredit
+  // (sicer bi ga meja paketa štela dvakrat: v porabi in z manjšim stanjem kredita; pregled #462).
   spentUsd(pass) {
-    return this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE student_id = ? AND created_at >= datetime(?)").get(pass.student_id, pass.starts_at).s;
+    const all = this.db.prepare("SELECT COALESCE(SUM(cost_usd),0) AS s FROM usage WHERE student_id = ? AND created_at >= datetime(?)").get(pass.student_id, pass.starts_at).s;
+    const hasCredits = this.db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'ai_credit_use'").get();
+    const credit = hasCredits ? this.db.prepare("SELECT COALESCE(SUM(usd),0) AS s FROM ai_credit_use WHERE student_id = ? AND created_at >= datetime(?)").get(pass.student_id, pass.starts_at).s : 0;
+    return Math.max(0, all - credit);
   }
   expirePending(hours = 48) {
     return this.db.prepare("UPDATE passes SET status = 'expired' WHERE status = 'pending' AND created_at < datetime('now', ?)").run(`-${hours} hours`).changes;
@@ -235,8 +239,9 @@ export function mountBilling(app, ctx) {
   // Ali ima profil poln dostop iz paketa pred testom (dokler ni porabljena meja AI paketa).
   function passPremium(studentId) {
     const p = passes.activeFor(studentId);
-    // Meja paketa največ 25 % plačila (plans.js passCapUsd); rezervo za naslednji klic preveri server/usage.js.
-    return !!p && passes.spentUsd(p) < passCapUsd(p);
+    // Meja paketa največ 25 % plačila (plans.js passCapUsd). Brez prostora za najcenejši klic je paket porabljen:
+    // profil preide v brezplačni paket (kot šola), ne ostane zaklenjen z napačnim besedilom (pregled #462).
+    return !!p && passes.spentUsd(p) + (aiUsage?.minCallUsd?.() || 0) < passCapUsd(p);
   }
 
   // Preverjanje nakupa paketa (za plačilo v aplikaciji in za povezavo za starše).

@@ -11,7 +11,7 @@ import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, 
 import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
 import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams, costUsd, OCR_MODEL } from "./claude.js";
-import { Usage, LIMITS, NOTES, BLOCK_TEXT, windowHistory, recentHistory } from "./usage.js";
+import { Usage, LIMITS, NOTES, windowHistory, recentHistory } from "./usage.js";
 import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
 import { Progress } from "./progress.js";
@@ -318,6 +318,19 @@ export function createApp(store, opts = {}) {
   // Preverjanje odgovorov in kartic iz pogovora (server/verify.js, dva modela) plača APLIKACIJA iz skupnega dnevnega
   // zneska VERIFY_DAILY_USD, ne meja učenca (j 2026-11-06): koristi vsem, tudi brezplačni dobijo kartice.
   // Rezervacija (dva klica, najvišji strošek) gre pod dnevni znesek skupaj s preverjanji v teku; null, če ni prostora.
+  // Najcenejši klic (hardBlock, paket pred testom, šola): dejanska rezerva »lite« s sistemskim promptom in orodji za
+  // kratko vprašanje v novem pogovoru (pregled #462: prej 30.000 žetonov brez prompta, kar je bilo premalo).
+  let minLite = null;
+  usage.configure({
+    minCall: () =>
+      (minLite ??= replyReserveUsd({
+        mode: "lite",
+        system: buildSystemPrompt({ settings: { level: "OS", grade: 8 }, weaknesses: [], results: "", schedule: "", studentName: "Ana", learningPath: "", lite: true }),
+        messages: [{ role: "user", content: [{ type: "text", text: "Kako rešim to nalogo?" }] }],
+        tools: SETTINGS_TOOLS,
+        extraTokens: 2000,
+      })),
+  });
   const verifyHold = (txt) => usage.appHold("verify", VERIFY_DAILY_USD(), [...new Set(VERIFY_MODELS())].reduce((t, m) => t + checkReserveUsd(m, txt), 0));
   const settleLater = (promise, done) =>
     Promise.resolve(promise)
@@ -650,8 +663,9 @@ export function createApp(store, opts = {}) {
       if (!alt) {
         busy.delete(conv.id);
         if (againStreak !== (conv.deep || 0)) store.db.prepare("UPDATE conversations SET deep = ? WHERE id = ?").run(conv.deep || 0, conv.id);
-        const code = usage.hardBlock(student.id) || "block.monthLimit";
-        return res.status(429).json({ error: BLOCK_TEXT[code], code, limit: true });
+        // Koda meje, ki je vezala (z namigom); če bi šel najcenejši odgovor v novem pogovoru, je kriv dolg pogovor.
+        const fresh = replyReserveUsd({ mode: "lite", system, messages: [{ role: "user", content: userContent }], tools: SETTINGS_TOOLS, extraTokens: 2000 });
+        return res.status(429).json(usage.guardBlock(student.id, fresh));
       }
       mode = alt;
       deep = mode === "deep" || mode === "mid";
