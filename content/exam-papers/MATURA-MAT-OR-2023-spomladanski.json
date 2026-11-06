@@ -410,8 +410,8 @@
        "text": "Splošni člen aritmetičnega zaporedja je $a_n = a_1 + (n - 1)d = (a_1 - d) + d \\cdot n$. To je linearen izraz v $n$, v katerem je **koeficient pri $n$ ravno diferenca**. Pri $a_n = 12{,}4 - 0{,}8n$ je koeficient pri $n$ enak $-0{,}8$, zato $d = -0{,}8$.\n\nKer je $a_1 = 11{,}6$, je tudi\n$$a_{200} = a_1 + 199d = 11{,}6 + 199 \\cdot (-0{,}8) = 11{,}6 - 159{,}2 = -147{,}6.$$\nOba načina se ujemata."
       }
      ],
-     "scoring": "1 t. za $d = -0{,}8$, 1 t. za $a_{200} = -147{,}6$.",
-     "mistake": "Za diferenco vzameš prosti člen $12{,}4$ ali zapišeš $d = 0{,}8$ brez predznaka. Členi se zmanjšujejo ($11{,}6$, $10{,}8$, …), zato mora biti diferenca negativna."
+     "scoring": "1 t. za $d = -0{,}8$; 1 t. za $a_{200} = -147{,}6$.",
+     "mistake": "Za diferenco vzameš prosti člen $12{,}4$ ali zapišeš $d = 0{,}8$ brez predznaka. Členi se zmanjšujejo ($11{,}6$; $10{,}8$; …), zato mora biti diferenca negativna."
     }
    ]
   },
@@ -429,7 +429,7 @@
      "ways": [
       {
        "title": "Po korakih: vsota vseh ocen deljeno s številom potnikov",
-       "text": "**Podatki:** linija 1: $120$ potnikov, povprečje $3{,}8$; linija 6: $85$ potnikov, povprečje $4{,}3$; linija 18: $45$ potnikov, povprečje $3{,}1$.\n\n**Iščemo:** povprečno oceno vseh potnikov.\n\nPovprečje je vsota vseh ocen, deljena s številom ocen. Vsoto ocen ene linije dobimo kot (število potnikov) $\\cdot$ (povprečje):\n$$120 \\cdot 3{,}8 = 456, \\qquad 85 \\cdot 4{,}3 = 365{,}5, \\qquad 45 \\cdot 3{,}1 = 139{,}5.$$\nVseh ocen je skupaj $456 + 365{,}5 + 139{,}5 = 961$, potnikov pa $120 + 85 + 45 = 250$. Zato\n$$\\bar{x} = \\frac{961}{250} = 3{,}844 \\approx 3{,}8.$$"
+       "text": "**Podatki:** linija 1: $120$ potnikov, povprečje $3{,}8$; linija 6: $85$ potnikov, povprečje $4{,}3$; linija 18: $45$ potnikov, povprečje $3{,}1$.\n\n**Iščemo:** povprečno oceno vseh potnikov.\n\nPovprečje je vsota vseh ocen, deljena s številom ocen. Vsoto ocen ene linije dobimo kot (število potnikov) $\\cdot$ (povprečje):\n$$120 \\cdot 3{,}8 = 456; \\qquad 85 \\cdot 4{,}3 = 365{,}5; \\qquad 45 \\cdot 3{,}1 = 139{,}5.$$\nVseh ocen je skupaj $456 + 365{,}5 + 139{,}5 = 961$, potnikov pa $120 + 85 + 45 = 250$. Zato\n$$\\bar{x} = \\frac{961}{250} = 3{,}844 \\approx 3{,}8.$$"
       },
       {
        "title": "Drugače: tehtano povprečje z deleži",
@@ -811,7 +811,7 @@
        "text": "V trikotniku $ACD$ poznamo stranico $|CD| = 18{,}5\\,\\mathrm{m}$ in vse kote:\n- pri $A$: $\\alpha - \\beta = 41{,}3^\\circ - 35{,}8^\\circ = 5{,}5^\\circ$,\n- pri $D$: v pravokotnem trikotniku $ABD$ je $\\angle ADB = 90^\\circ - \\alpha = 48{,}7^\\circ$,\n- pri $C$: $180^\\circ - 5{,}5^\\circ - 48{,}7^\\circ = 125{,}8^\\circ$ (to je $90^\\circ + \\beta$).\n\nPo sinusnem izreku:\n$$|AD| = \\frac{|CD| \\cdot \\sin 125{,}8^\\circ}{\\sin 5{,}5^\\circ} \\approx \\frac{18{,}5 \\cdot 0{,}811064}{0{,}095846} \\approx 156{,}55\\,\\mathrm{m}.$$\nIz pravokotnega trikotnika $ABD$:\n$$h = |AD|\\sin\\alpha \\approx 156{,}55 \\cdot 0{,}660002 \\approx 103{,}3\\,\\mathrm{m}, \\qquad x = |AD|\\cos\\alpha \\approx 156{,}55 \\cdot 0{,}751264 \\approx 117{,}6\\,\\mathrm{m}.$$\nOba načina se ujemata."
       }
      ],
-     "scoring": "1 t. za zvezo v trikotniku $ABD$ ($\\tan\\alpha = \\frac{h}{x}$), 1 t. za zvezo v trikotniku $ABC$ ($\\tan\\beta = \\frac{h - 18{,}5}{x}$) ali za kote trikotnika $ACD$, 1 t. za enačbo z eno neznanko (ali sinusni izrek), 1 t. za izraženo neznanko (npr. $x = \\frac{18{,}5}{\\tan\\alpha - \\tan\\beta}$ ali $|AD| \\approx 156{,}55\\,\\mathrm{m}$), 1 t. za $|AB| \\approx 117{,}6\\,\\mathrm{m}$, 1 t. za pot do višine, 1 t. za $h \\approx 103{,}3\\,\\mathrm{m}$.",
+     "scoring": "1 t. za zvezo v trikotniku $ABD$ ($\\tan\\alpha = \\frac{h}{x}$); 1 t. za zvezo v trikotniku $ABC$ ($\\tan\\beta = \\frac{h - 18{,}5}{x}$) ali za kote trikotnika $ACD$; 1 t. za enačbo z eno neznanko (ali sinusni izrek); 1 t. za izraženo neznanko (npr. $x = \\frac{18{,}5}{\\tan\\alpha - \\tan\\beta}$ ali $|AD| \\approx 156{,}55\\,\\mathrm{m}$); 1 t. za $|AB| \\approx 117{,}6\\,\\mathrm{m}$; 1 t. za pot do višine; 1 t. za $h \\approx 103{,}3\\,\\mathrm{m}$.",
      "mistake": "Tangensa zaokrožiš na dve decimalki ($0{,}88 - 0{,}72 = 0{,}16$) in dobiš $x \\approx 115{,}6\\,\\mathrm{m}$ – razlika dveh skoraj enakih števil je zelo občutljiva na zaokroževanje, zato računaj z neokroženimi vrednostmi (ali z vsaj šestimi decimalkami). Napačno je tudi vzeti, da je $18{,}5\\,\\mathrm{m}$ cela višina, ali uporabiti kot $\\alpha - \\beta$ v pravokotnem trikotniku."
     }
    ]

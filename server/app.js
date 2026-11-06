@@ -45,7 +45,7 @@ import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, loc
 import { compressedStatic, compressedJson } from "./compress.js";
 import { startupFiles } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
-import { mountReports, chatOff, messageCode } from "./reports.js";
+import { mountReports, chatOff, messageCode, genericAnswer } from "./reports.js";
 import { verifyAnswer, codeCheck } from "./verify.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, insertFix, isClaim, claimNote, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask } from "./live-check.js";
 import { mountGraphs } from "./graphs.js";
@@ -172,7 +172,7 @@ export const PERMISSIONS_POLICY = [
   "xr-spatial-tracking=()",
 ].join(", ");
 // Javni podatki brez osebnih (učne poti, učbenik, formule): brskalnik jih sme hraniti in preveriti (ETag).
-const PUBLIC_API = /^\/api\/(paths|programs|formulas|references|textbook\/|topic|teacher\/topics|account\/prices)(\/|\?|$)/;
+const PUBLIC_API = /^\/api\/(paths|programs|formulas|references|textbook\/|topic|lesson|teacher\/topics|account\/prices)(\/|\?|$)/;
 
 function securityHeaders(app) {
   app.use(
@@ -215,6 +215,16 @@ export function createApp(store, opts = {}) {
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
     res.json({ id: INSTANCE, razlicica: version, aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null });
+  });
+  // Po izbrisu profila ali računa (GDPR čl. 17): kopije zunaj baze (npr. mnenja v JSON) se prepišejo brez njih.
+  const afterDelete = [];
+  app.use((req, res, next) => {
+    if (req.method === "DELETE" && /^\/api\/(students\/\d+|account)$/.test(req.path)) {
+      res.on("finish", () => {
+        if (res.statusCode < 300) for (const fn of afterDelete) fn();
+      });
+    }
+    next();
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
@@ -334,7 +344,8 @@ export function createApp(store, opts = {}) {
     return c;
   };
 
-  mountFeedback(app, store, { usage, file: opts.feedbackFile ?? null, createFn: opts.feedbackCreateFn });
+  const feedbackStore = mountFeedback(app, store, { usage, file: opts.feedbackFile ?? null, createFn: opts.feedbackCreateFn });
+  afterDelete.push(() => feedbackStore.writeFile());
   mountReports(app, store, {
     loadConversation,
     loadStudent,
@@ -842,9 +853,10 @@ export function createApp(store, opts = {}) {
       if (settingsTools.state.proposal) send("proposal", settingsTools.state.proposal);
       if (key && !cached && !fix && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
-        const generic = student.name.length > 1 ? result.text.replaceAll(student.name, "{{IME}}") : result.text;
+        // null: ime učenca je ostalo v sklonjeni obliki (»Jakobu«), zato se odgovor ne shrani za druge (P3).
+        const generic = genericAnswer(result.text, student.name);
         const plain = stripMeta(result.text);
-        if (!codeCheck(plain)) {
+        if (generic !== null && !codeCheck(plain)) {
           const live = verifyLive();
           store.db.prepare("INSERT OR REPLACE INTO answer_cache (key, text, verified) VALUES (?, ?, ?)").run(key, generic, live ? 0 : 1);
           if (live) {
@@ -975,6 +987,13 @@ export function createApp(store, opts = {}) {
     if (!toc) return res.status(404).json({ error: "Učna pot ne obstaja." });
     res.json(toc);
   });
+  // Lekcija brez učenčevih polj (besedilo je za vse): kopija za branje brez povezave (public/sw.js shrani to pot,
+  // osebne /api/students/:id/lesson pa ne, P7). Brez interaktivnega dela, ponudb in testa predznanja.
+  app.get("/api/lesson", (req, res) => {
+    const view = lessonView(String(req.query.id || ""));
+    if (!view) return res.status(404).json({ error: "Tema ne obstaja." });
+    res.json({ ...view, interactive: false, pretest_due: false, locked: { demo: view.demo?.title || null }, demos: [], demo: null, offline_copy: true });
+  });
   // Lekcija za učenca. Interaktivni del (poskusi, simulacije, sprotno preverjanje)
   // je v plačljivem paketu in preizkusu; besedilo je za vse (tudi kot PDF).
   app.get("/api/students/:id/lesson", (req, res) => {
@@ -1044,6 +1063,7 @@ export function createApp(store, opts = {}) {
     const key = getPath(String(req.query.path || "")) ? String(req.query.path) : pathKeyFor(s.settings);
     const pack = key && progress.offlinePack(s.id, key);
     if (!pack) return res.status(404).json({ error: "Za to raven še ni učne poti." });
+    if (pack.limited) return res.status(429).json({ error: "Danes je bilo prenesenih že dovolj paketov vaj. Poskusi jutri." });
     res.json({ ...pack, view: { ...pack.view, label: pathLabelFor(key, s.settings.school_system) } });
   });
   app.post("/api/students/:id/offline-sync", (req, res) => {

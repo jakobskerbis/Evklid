@@ -99,7 +99,7 @@ $n(\mathrm{HCl}) = n(\mathrm{NaOH}) = c(\mathrm{NaOH}) \cdot V_\mathrm{EP}$, $\q
 
 **Rešitev:**
 
-1. Volumne pretvorimo v litre: $18{,}40\,\mathrm{mL} = 0{,}01840\,\mathrm{L}$, $20{,}00\,\mathrm{mL} = 0{,}02000\,\mathrm{L}$.
+1. Volumne pretvorimo v litre: $18{,}40\,\mathrm{mL} = 0{,}01840\,\mathrm{L}$; $20{,}00\,\mathrm{mL} = 0{,}02000\,\mathrm{L}$.
 2. Množina NaOH: $0{,}1000 \cdot 0{,}01840 = 0{,}001840\,\mathrm{mol}$. Toliko je tudi HCl, ker reagirata v razmerju $1 : 1$.
 3. $c(\mathrm{HCl}) = 0{,}001840 / 0{,}02000 = 0{,}09200\,\mathrm{mol/L}$.
 4. Odgovor: razredčeni vzorec vsebuje $0{,}09200\,\mathrm{mol/L}$ HCl (štiri značilne števke, kot podatki).

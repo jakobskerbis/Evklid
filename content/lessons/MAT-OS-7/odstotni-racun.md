@@ -246,7 +246,7 @@ Vedno: zgoraj zapiši, kaj je $100\,\%$, nato pojdi na $1\,\%$ in od tam na iska
 + $60\,\text{€}$
 - $38{,}40\,\text{€}$
 ~ Popust si odštel še enkrat. Iščeš ceno pred popustom, ki je višja od $48\,\text{€}$.
-> $48\,\text{€}$ je $80\,\%$ prvotne cene. $1\,\%$ je $48 : 80 = 0{,}6\,\text{€}$, $100\,\%$ je $60\,\text{€}$. Preizkus: $60 \cdot 0{,}8 = 48$.
+> $48\,\text{€}$ je $80\,\%$ prvotne cene. $1\,\%$ je $48 : 80 = 0{,}6\,\text{€}$; $100\,\%$ je $60\,\text{€}$. Preizkus: $60 \cdot 0{,}8 = 48$.
 
 :::simboli
 d | delež | d = o \cdot \frac{p}{100} | | del osnove

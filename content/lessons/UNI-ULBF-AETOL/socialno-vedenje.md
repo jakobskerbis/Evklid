@@ -121,7 +121,7 @@ $r_{\text{sestra}} = 0{,}5 \cdot 1 + 0{,}5 \cdot 0{,}5$, točke $= r \cdot \text
 
 V resnici kolonija ne vzgaja le sester, ampak tudi brate (samce za parjenje). Delavka lahko vzgoji $4$ sestre in $4$ brate ($r_{\text{brat}} = 0{,}25$) ali pa sama $8$ potomcev ($r = 0{,}5$ za vsakega). Kaj se ji bolj izplača?
 
-**Podatki:** $4$ sestre z $r = 0{,}75$, $4$ bratje z $r = 0{,}25$, $8$ lastnih potomcev z $r = 0{,}5$
+**Podatki:** $4$ sestre z $r = 0{,}75$; $4$ bratje z $r = 0{,}25$; $8$ lastnih potomcev z $r = 0{,}5$
 **Iščemo:** primerjavo »genskih točk«
 
 :::formula

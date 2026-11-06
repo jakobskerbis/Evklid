@@ -49,7 +49,7 @@ $$K = \frac{[\mathrm{C}]^c \cdot [\mathrm{D}]^d}{[\mathrm{A}]^a \cdot [\mathrm{B
 
 Produkti so v števcu, reaktanti v imenovalcu, stehiometrijski koeficienti postanejo eksponenti. Velik $K$ (na primer $10^5$) pomeni, da so v ravnotežju skoraj sami produkti; majhen $K$ (na primer $10^{-5}$), da reakcija komaj steče. $K$ se spremeni le, če spremenimo temperaturo.
 
-**Kaj, če ravnotežje zmotimo?** Vrnimo se k prvemu poskusu v ravnotežju ($0{,}20$, $0{,}20$, $1{,}60$) in dodajmo vodik, da $c(\mathrm{H_2})$ naraste na $0{,}40\,\mathrm{mol/L}$. Razmerje je v tistem trenutku le
+**Kaj, če ravnotežje zmotimo?** Vrnimo se k prvemu poskusu v ravnotežju ($0{,}20$; $0{,}20$; $1{,}60$) in dodajmo vodik, da $c(\mathrm{H_2})$ naraste na $0{,}40\,\mathrm{mol/L}$. Razmerje je v tistem trenutku le
 
 $$\frac{1{,}60^2}{0{,}40 \cdot 0{,}20} = 32$$
 

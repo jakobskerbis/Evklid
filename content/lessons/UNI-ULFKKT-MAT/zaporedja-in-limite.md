@@ -228,7 +228,7 @@ Natančno navedi izrek o sendviču in ga dokaži. Nato dokaži: če je $(a_n)$ o
 
 ## Drugače: Na sliki
 
-Člene zaporedja nariši kot točke $(n, a_n)$ v ravnini. Za $a_n = \frac{2n + 1}{n + 3}$ dobiš točke $(1;\ 0{,}75)$, $(2;\ 1)$, $(3;\ 1{,}17)$, $(10;\ 1{,}62)$, ki se od spodaj približujejo vodoravni premici $y = 2$. Okoli te premice nariši pas širine $2\varepsilon$. Definicija limite pravi: ne glede na to, kako ozek pas izbereš, od nekega $N$ naprej vse točke ležijo v pasu.
+Člene zaporedja nariši kot točke $(n, a_n)$ v ravnini. Za $a_n = \frac{2n + 1}{n + 3}$ dobiš točke $(1;\ 0{,}75)$; $(2;\ 1)$; $(3;\ 1{,}17)$; $(10;\ 1{,}62)$, ki se od spodaj približujejo vodoravni premici $y = 2$. Okoli te premice nariši pas širine $2\varepsilon$. Definicija limite pravi: ne glede na to, kako ozek pas izbereš, od nekega $N$ naprej vse točke ležijo v pasu.
 
 Drugi način je številska premica: člene označi na osi. Pri konvergentnem zaporedju se točke kopičijo ob $L$. Pri $(-1)^n$ pa skačejo med dvema točkama, $-1$ in $1$, in se ne zberejo pri nobeni.
 
@@ -240,7 +240,7 @@ Rekurzivno zaporedje $a_{n+1} = \sqrt{2 + a_n}$ si predstavljaj kot »pajkovo mr
 
 **Iterativni izračun ravnotežja.** Koncentracijo $x = [\mathrm{H_3O^+}]$ v $0{,}10\,\mathrm{M}$ ocetni kislini ($K_a = 1{,}8 \cdot 10^{-5}$) laboratorijski programi računajo z iteracijo $x_{n+1} = \sqrt{K_a(c - x_n)}$ (preurejena zveza $K_a = \frac{x^2}{c - x}$), $x_0 = 0$: $x_1 \approx 1{,}342 \cdot 10^{-3}$, $x_2 \approx 1{,}333 \cdot 10^{-3}\,\mathrm{M}$, $\mathrm{pH} \approx 2{,}88$. Program limite ne pozna, zato ustavi računanje, ko je $|x_{n+1} - x_n|$ pod predpisano mejo: to je praktični približek Cauchyjevega pogoja (sama majhna razlika zaporednih členov konvergence še ne zagotavlja).
 
-**Farmakokinetika.** Bolnik vsakih $12\,\mathrm{h}$ vzame $100\,\mathrm{mg}$ zdravila, med odmerkoma telo izloči polovico. Količina takoj po odmerku je $a_1 = 100\,\mathrm{mg}$, $a_{n+1} = 0{,}5 a_n + 100\,\mathrm{mg}$: $100$, $150$, $175$, $187{,}5$ ... Limita iz $L = 0{,}5L + 100$ je $L = 200\,\mathrm{mg}$, **stacionarno stanje**, po katerem farmakologi določijo odmerek.
+**Farmakokinetika.** Bolnik vsakih $12\,\mathrm{h}$ vzame $100\,\mathrm{mg}$ zdravila, med odmerkoma telo izloči polovico. Količina takoj po odmerku je $a_1 = 100\,\mathrm{mg}$, $a_{n+1} = 0{,}5 a_n + 100\,\mathrm{mg}$: $100$; $150$; $175$; $187{,}5$ ... Limita iz $L = 0{,}5L + 100$ je $L = 200\,\mathrm{mg}$, **stacionarno stanje**, po katerem farmakologi določijo odmerek.
 
 ## Drugače: Korak za korakom s številkami
 

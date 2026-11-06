@@ -104,7 +104,7 @@ $n = \dfrac{M}{M_0}$
 
 ### Primer 2: dve povprečji
 
-Vzorec polimera za lupino kovčka ima tri razrede verig. Molski deleži so $0{,}2$ pri $10\,000\,\mathrm{g/mol}$, $0{,}5$ pri $30\,000\,\mathrm{g/mol}$ in $0{,}3$ pri $50\,000\,\mathrm{g/mol}$. Izračunaj $M_n$, $M_w$ in indeks polidisperznosti.
+Vzorec polimera za lupino kovčka ima tri razrede verig. Molski deleži so $0{,}2$ pri $10\,000\,\mathrm{g/mol}$; $0{,}5$ pri $30\,000\,\mathrm{g/mol}$ in $0{,}3$ pri $50\,000\,\mathrm{g/mol}$. Izračunaj $M_n$, $M_w$ in indeks polidisperznosti.
 
 **Podatki:** $x_1 = 0{,}2$, $M_1 = 10\,000\,\mathrm{g/mol}$; $x_2 = 0{,}5$, $M_2 = 30\,000\,\mathrm{g/mol}$; $x_3 = 0{,}3$, $M_3 = 50\,000\,\mathrm{g/mol}$
 **Iščemo:** $M_n$, $M_w$ in $M_w/M_n$

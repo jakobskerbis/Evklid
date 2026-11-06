@@ -22,7 +22,7 @@ $$Z_\mathrm{eff} = Z - S,$$
 kjer je $S$ konstanta senčenja. Elektroni v isti lupini se med seboj senčijo slabo, notranji elektroni pa dobro. Oceno da **Slaterjevo pravilo** za elektron $ns$ ali $np$: vsak drug elektron v isti lupini $n$ prispeva k $S$ po $0{,}35$ (v $1s$ po $0{,}30$), vsak elektron v lupini $n - 1$ po $0{,}85$, vsak elektron v lupinah $n - 2$ in nižje pa po $1{,}00$. Iz tega sledi:
 
 - **vzdolž periode** (od leve proti desni, v blokih $s$ in $p$) $Z$ zraste za $1$, $S$ pa le za $0{,}35$ (en elektron več v isti lupini), zato $Z_\mathrm{eff}$ na vsakem koraku zraste za $1 - 0{,}35 = 0{,}65$: izrazito **narašča**,
-- **navzdol po skupini** $Z_\mathrm{eff}$ za zunanje elektrone ostane približno enak (za Li, Na in K po Slaterju $1{,}30$, $2{,}20$ in $2{,}20$), se pa poveča $n$, zato so zunanji elektroni dlje od jedra.
+- **navzdol po skupini** $Z_\mathrm{eff}$ za zunanje elektrone ostane približno enak (za Li, Na in K po Slaterju $1{,}30$; $2{,}20$ in $2{,}20$), se pa poveča $n$, zato so zunanji elektroni dlje od jedra.
 
 Skoraj vse periodične lastnosti sledijo iz teh dveh dejstev.
 

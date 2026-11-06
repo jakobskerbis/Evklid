@@ -159,7 +159,7 @@ Dermatologinja Maja dobi na oddelek pacienta z opeklino nenavadne oblike. Ravnil
 
 Najprej poskusi šteti kvadratke, pa se hitro zaplete: kaj s tistimi, ki so pokriti le do tretjine? Zato spremeni načrt. Okoli trikotnika s svinčnikom nariše najmanjši pravokotnik po črtah mreže, $5$ kvadratkov širok in $4$ visok, torej $20$ kvadratkov.
 
-Med trikotnikom in pravokotnikom ostanejo trije pravokotni trikotniki, vsak v svojem kotu. Za vsakega ve, da je pol pravokotnika: $2{,}5$, $4$ in $4{,}5$ kvadratka. Skupaj $11$. Ostane $20 - 11 = 9$. V kartoteko zapiše $9\,\text{cm}^2$, ne da bi štela en sam delni kvadratek.
+Med trikotnikom in pravokotnikom ostanejo trije pravokotni trikotniki, vsak v svojem kotu. Za vsakega ve, da je pol pravokotnika: $2{,}5$; $4$ in $4{,}5$ kvadratka. Skupaj $11$. Ostane $20 - 11 = 9$. V kartoteko zapiše $9\,\text{cm}^2$, ne da bi štela en sam delni kvadratek.
 
 ## Drugače: Korak za korakom s številkami
 

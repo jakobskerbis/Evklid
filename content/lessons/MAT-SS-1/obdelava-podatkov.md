@@ -249,7 +249,7 @@ torej »povprečje kvadratov minus kvadrat povprečja«. Preizkus za podatke $2,
 + Ker nekaj zelo visokih plač potegne povprečje navzgor, mediane pa skoraj ne premakne.
 > Pri devetih plačah po $1\,000\,\text{€}$ in eni po $11\,000\,\text{€}$ je povprečje $2\,000\,\text{€}$, mediana pa $1\,000\,\text{€}$, kar bolje opiše običajnega delavca.
 
-? Petkrat so izmerili, kako dolgo je bila vesoljska postaja ISS vidna na nebu: $5{,}8$, $6{,}0$, $6{,}1$, $5{,}9$ in $6{,}2$ minute. Oceni brez natančnega računa: kateri standardni odklon je najbolj verjeten?
+? Petkrat so izmerili, kako dolgo je bila vesoljska postaja ISS vidna na nebu: $5{,}8$; $6{,}0$; $6{,}1$; $5{,}9$ in $6{,}2$ minute. Oceni brez natančnega računa: kateri standardni odklon je najbolj verjeten?
 - $0\,\text{min}$
 ~ $\sigma = 0$ velja le, če so vsi podatki enaki. Tu niso.
 - $0{,}02\,\text{min}$
