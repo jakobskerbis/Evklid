@@ -3287,6 +3287,8 @@
   "a3.prevModel": "Iliyotangulia",
   "a3.nextModel": "Inayofuata",
   "a3.position": "{i} kati ya {n}",
+  "a3.noNucleus": "Seli hii haina kiini.",
+  "a3.partMissing": "Modeli hii haina sehemu “{ime}”.",
   "a3.fullscreen": "Skrini nzima",
   "a3.exitFullscreen": "Toka skrini nzima",
   "a3.about": "Maelezo",

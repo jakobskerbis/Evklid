@@ -10,6 +10,8 @@ const glavni = document.getElementById("k3-glavni");
 const vAplikaciji = !!window.ReactNativeWebView;
 let aktivno = null;
 let zaporedje = 0;
+// Del, izbran v modelu, iz katerega gremo s puščico ‹ › (pregledovalnik ga v naslednjem modelu izbere, če ga ima).
+let prenosDela = null;
 
 const mk = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -387,6 +389,7 @@ async function model(id, param, moj) {
       a.addEventListener("click", (e) => {
         if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
         e.preventDefault();
+        prenosDela = document.querySelector(".k3-pregled")?.k3Pregled?.izbraniDel?.() || null;
         history.replaceState(history.state, "", a.getAttribute("href"));
         usmeri();
       });
@@ -427,7 +430,9 @@ async function model(id, param, moj) {
     else history.pushState({ k3Iz: "povecava" }, "", `#${encodeURIComponent(cilj)}`);
     usmeri();
   };
-  return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, zgodovina: true });
+  const prenos = prenosDela;
+  prenosDela = null;
+  return odpriModel(mount, mod, { zacetek: param, stran: true, povecava, zgodovina: true, prenos });
 }
 
 async function usmeri() {

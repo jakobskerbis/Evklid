@@ -3287,6 +3287,8 @@
   "a3.prevModel": "پچھلا",
   "a3.nextModel": "اگلا",
   "a3.position": "{n} میں سے {i}",
+  "a3.noNucleus": "اس خلیے میں مرکزہ نہیں ہے۔",
+  "a3.partMissing": "اس ماڈل میں ”{ime}“ حصہ نہیں ہے۔",
   "a3.fullscreen": "پوری اسکرین",
   "a3.exitFullscreen": "پوری اسکرین سے باہر",
   "a3.about": "تفصیل",

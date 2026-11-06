@@ -3289,6 +3289,8 @@
   "a3.prevModel": "I mëparshmi",
   "a3.nextModel": "Tjetri",
   "a3.position": "{i} nga {n}",
+  "a3.noNucleus": "Kjo qelizë nuk ka bërthamë.",
+  "a3.partMissing": "Ky model nuk ka pjesën „{ime}“.",
   "a3.fullscreen": "Ekran i plotë",
   "a3.exitFullscreen": "Dil nga ekrani i plotë",
   "a3.about": "Përshkrimi",

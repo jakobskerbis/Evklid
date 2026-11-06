@@ -3344,6 +3344,8 @@ export default {
   "a3.prevModel": "Prejšnji",
   "a3.nextModel": "Naslednji",
   "a3.position": "{i} od {n}",
+  "a3.noNucleus": "Ta celica nima jedra.",
+  "a3.partMissing": "Ta model nima dela ‘{ime}’.",
   "a3.fullscreen": "Čez cel zaslon",
   "a3.exitFullscreen": "Izhod iz celega zaslona",
   "a3.about": "Opis",

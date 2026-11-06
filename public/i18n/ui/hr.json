@@ -3317,6 +3317,8 @@
   "a3.prevModel": "Prethodni",
   "a3.nextModel": "Sljedeći",
   "a3.position": "{i} od {n}",
+  "a3.noNucleus": "Ova stanica nema jezgru.",
+  "a3.partMissing": "Ovaj model nema dio „{ime}”.",
   "a3.fullscreen": "Cijeli zaslon",
   "a3.exitFullscreen": "Zatvori cijeli zaslon",
   "a3.about": "Opis",

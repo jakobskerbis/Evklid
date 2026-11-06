@@ -62,7 +62,11 @@
 .k3-info-opis { margin: 0; color: var(--k3-besedilo); line-height: 1.5; font-size: 0.95rem; unicode-bidi: plaintext; }
 .k3 .k3-info .k3-povecava-gumb { align-self: flex-start; min-height: 40px; padding: 0 14px; font-size: 0.9rem; }
 .k3-info .k3-povecava-gumb svg { width: 18px; height: 18px; flex: none; }
-@media (prefers-reduced-motion: reduce) { .k3-info { animation: none; } }
+/* Obvestilo, ko novo stanje izbranega dela nima (»Ta celica nima jedra.«): na mestu okna v plošči, nikoli čez model. */
+.k3-obvestilo { order: -1; flex-shrink: 0; margin: 0; padding: 10px 14px; border-radius: 14px; background: var(--k3-povrsina);
+  border: 1px solid var(--k3-rob); color: var(--k3-besedilo); font-size: 0.95rem; line-height: 1.4; animation: k3-pojav 0.18s both; }
+.k3-obvestilo[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { .k3-info, .k3-obvestilo { animation: none; } }
 /* model.povzetek() (npr. V in P pri telesih): levo zgoraj na odru, ostane viden tudi med vlečenjem drsnika */
 .k3-povzetek { position: absolute; top: 12px; left: 12px; z-index: 2; max-width: calc(100% - 210px); padding: 6px 12px; border-radius: 14px;
   background: var(--k3-steklo); border: 1px solid var(--k3-rob); color: var(--k3-besedilo); font-weight: 600; font-size: 0.92rem;

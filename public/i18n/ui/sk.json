@@ -3347,6 +3347,8 @@
   "a3.prevModel": "Predchádzajúci",
   "a3.nextModel": "Ďalší",
   "a3.position": "{i} z {n}",
+  "a3.noNucleus": "Táto bunka nemá jadro.",
+  "a3.partMissing": "Tento model nemá časť „{ime}“.",
   "a3.fullscreen": "Celá obrazovka",
   "a3.exitFullscreen": "Ukončiť celú obrazovku",
   "a3.about": "Popis",

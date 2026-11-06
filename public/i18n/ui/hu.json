@@ -3287,6 +3287,8 @@
   "a3.prevModel": "Előző",
   "a3.nextModel": "Következő",
   "a3.position": "{i} / {n}",
+  "a3.noNucleus": "Ennek a sejtnek nincs sejtmagja.",
+  "a3.partMissing": "Ebben a modellben nincs „{ime}” rész.",
   "a3.fullscreen": "Teljes képernyő",
   "a3.exitFullscreen": "Kilépés a teljes képernyőből",
   "a3.about": "Leírás",

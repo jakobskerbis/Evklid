@@ -3262,6 +3262,8 @@
   "a3.prevModel": "ก่อนหน้า",
   "a3.nextModel": "ถัดไป",
   "a3.position": "{i} จาก {n}",
+  "a3.noNucleus": "เซลล์นี้ไม่มีนิวเคลียส",
+  "a3.partMissing": "แบบจำลองนี้ไม่มีส่วน “{ime}”",
   "a3.fullscreen": "เต็มหน้าจอ",
   "a3.exitFullscreen": "ออกจากเต็มหน้าจอ",
   "a3.about": "คำอธิบาย",

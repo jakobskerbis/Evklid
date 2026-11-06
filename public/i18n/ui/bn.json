@@ -3287,6 +3287,8 @@
   "a3.prevModel": "আগেরটি",
   "a3.nextModel": "পরেরটি",
   "a3.position": "{n}-এর মধ্যে {i}",
+  "a3.noNucleus": "এই কোষের কোনো নিউক্লিয়াস নেই।",
+  "a3.partMissing": "এই মডেলে „{ime}“ অংশটি নেই।",
   "a3.fullscreen": "পূর্ণ স্ক্রিন",
   "a3.exitFullscreen": "পূর্ণ স্ক্রিন থেকে বের হও",
   "a3.about": "বিবরণ",

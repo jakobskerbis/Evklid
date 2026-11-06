@@ -42,3 +42,6 @@ export function obvestiloManjka(prej, info = {}) {
   if (celica && kljuciDela(prej).has("jedro")) return ["a3.noNucleus", {}];
   return ["a3.partMissing", { ime: prej?.ime || "" }];
 }
+
+/** Besedilo okna dela (ime, latinsko ime, opis, barva, povečava): enako besedilo → okna ni treba znova narisati. */
+export const besediloDela = (d) => (d ? [d.ime, d.la, d.opis, d.barva, d.povecava].map((x) => x ?? "").join("\u0001") : "");

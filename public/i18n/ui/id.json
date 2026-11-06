@@ -3262,6 +3262,8 @@
   "a3.prevModel": "Sebelumnya",
   "a3.nextModel": "Berikutnya",
   "a3.position": "{i} dari {n}",
+  "a3.noNucleus": "Sel ini tidak memiliki inti sel.",
+  "a3.partMissing": "Model ini tidak memiliki bagian “{ime}”.",
   "a3.fullscreen": "Layar penuh",
   "a3.exitFullscreen": "Keluar dari layar penuh",
   "a3.about": "Deskripsi",
