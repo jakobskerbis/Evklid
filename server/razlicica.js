@@ -36,3 +36,24 @@ export function vendorVersion() {
   });
   return crypto.createHash("sha256").update(v.join("|")).digest("hex").slice(0, 8);
 }
+
+// Različica datotek aplikacije za service worker (public/sw.js APP): commit in prstni odtis mape public/
+// (pot, velikost in čas spremembe vsake datoteke). Ob objavi ali spremembi katere koli datoteke je nova,
+// zato telefon shranjenih kopij ne uporabi več in vsako datoteko prenese znova (takojšnje odpiranje iz
+// predpomnilnika samo za isto različico, j 6. 11. 2026). Izračun ob zagonu strežnika (~600 datotek, nekaj ms).
+export function staticVersion(dir = path.join(root, "public")) {
+  const h = crypto.createHash("sha256").update(appVersion());
+  const walk = (d) => {
+    let list = [];
+    try { list = fs.readdirSync(d, { withFileTypes: true }); } catch { return; }
+    for (const e of list.sort((a, b) => (a.name < b.name ? -1 : 1))) {
+      const f = path.join(d, e.name);
+      if (e.isDirectory()) walk(f);
+      else if (e.isFile()) {
+        try { const st = fs.statSync(f); h.update(`${path.relative(dir, f)}|${st.size}|${Math.round(st.mtimeMs)}\n`); } catch {}
+      }
+    }
+  };
+  walk(dir);
+  return h.digest("hex").slice(0, 12);
+}

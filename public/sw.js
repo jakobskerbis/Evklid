@@ -1,14 +1,23 @@
 // Service worker: aplikacija se odpre tudi brez povezave in ponovno ne prenaša knjižnic.
 // - knjižnice in pisave (/vendor/): najprej iz predpomnilnika (se ne spreminjajo),
-// - ostale datoteke in branje API: najprej omrežje (vedno najnovejša različica), ob
-//   izpadu ali zelo počasni povezavi zadnja shranjena kopija,
+// - datoteke aplikacije (.js, .css, slike …): takoj iz predpomnilnika, če jih je shranila ista različica
+//   aplikacije (APP spodaj, strežnik jo dopolni ob zagonu); sicer najprej omrežje. Tako se odprtje in vsak
+//   zaslon odpreta brez čakanja na omrežje, nova različica pa pride takoj, ko jo strežnik objavi,
+// - branje API: najprej omrežje (vedno najnovejši podatki), ob izpadu ali zelo počasni povezavi zadnja
+//   shranjena kopija (osebni API odgovori se nikoli ne strežejo, ne da bi najprej poskusili strežnik),
 // - 3D modeli (/3d/modeli/*.glb?v=…): najprej iz svojega predpomnilnika (MODELS), ki ostane tudi ob novi
 //   različici knjižnic; ?v= je zgoščena vrednost vsebine (server/tri-d.js), zato nov izvoz pride sam,
 //   stara kopija iste datoteke pa se ob tem pobriše,
 // - pošiljanje (POST …) gre vedno na strežnik; vaje brez povezave ureja public/offline.js.
 // Strežnik ime spodaj dopolni z različico knjižnic (server/razlicica.js): ob novi knjižnici se
-// stari predpomnilnik pobriše. Nove datoteke aplikacije pridejo same (najprej omrežje).
+// stari predpomnilnik pobriše. Nove datoteke aplikacije pridejo same: nova različica (APP) pomeni,
+// da nobena shranjena kopija ni več »sveža«, zato gre vsaka najprej na omrežje in se shrani znova.
 const VERSION = "evklid-v1";
+// Različica datotek aplikacije (server/razlicica.js staticVersion: commit + prstni odtis mape public/).
+// Prazna (npr. sw.js brez strežnika): datoteke aplikacije gredo kot prej najprej na omrežje.
+const APP = "";
+const APP_FILE = /\.(?:m?js|css|svg|png|jpe?g|webp|avif|gif|woff2?)$/i; // statične datoteke iz public/
+const STAMP = "X-Evklid-App"; // glava v shranjeni kopiji: katera različica jo je shranila
 const STATIC = `${VERSION}-static`;
 const VENDOR = `${VERSION}-vendor`;
 const API = `${VERSION}-api`;
@@ -21,7 +30,7 @@ const NO_CACHE = /^\/api\/(auth|billing|account|stripe|usage|mobile)/;
 const TIMEOUT = { static: 4000, api: 7000 };
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(STATIC).then((c) => c.addAll(SHELL)).catch(() => null));
+  e.waitUntil(caches.open(STATIC).then((c) => Promise.all(SHELL.map((u) => fetch(u).then((res) => put(c, u, res))))).catch(() => null));
   self.skipWaiting();
 });
 
@@ -48,10 +57,12 @@ self.addEventListener("message", (e) => {
   e.waitUntil(
     Promise.all(
       same.map(async (u) => {
-        const cache = await caches.open(new URL(u, self.location.origin).pathname.startsWith("/vendor/") ? VENDOR : STATIC);
-        if (await cache.match(u)) return;
+        const statics = await caches.open(STATIC);
+        const cache = new URL(u, self.location.origin).pathname.startsWith("/vendor/") ? await caches.open(VENDOR) : statics;
+        const hit = await cache.match(u);
+        if (hit && (cache !== statics || fresh(hit))) return;
         const res = await fetch(u).catch(() => null);
-        if (res?.ok) await cache.put(u, res);
+        if (res?.ok) await put(cache, u, res);
       }),
     ),
   );
@@ -83,12 +94,23 @@ function withTimeout(promise, ms) {
   });
 }
 
+// Shranjena kopija datoteke aplikacije z oznako različice, ki jo je shranila (glava STAMP).
+// Odgovor, ki je nastal s preusmeritvijo, shranimo kot nov odgovor (brskalnik sicer zavrne preusmerjen
+// odgovor za navigacijo).
+async function put(cache, req, res) {
+  if (!res?.ok) return;
+  const headers = new Headers(res.headers);
+  headers.set(STAMP, APP);
+  await cache.put(req, new Response(await res.blob(), { status: res.status, statusText: res.statusText, headers }));
+}
+const fresh = (hit) => !!APP && hit?.headers.get(STAMP) === APP;
+
 // Najprej omrežje; uspešen odgovor shranimo, ob napaki ali izteku časa vrnemo shranjenega.
 async function networkFirst(req, cacheName, ms) {
   const cache = await caches.open(cacheName);
   const net = fetch(req).then((res) => {
     if (tunnelDown(res)) throw new Error("tunnel down");
-    if (res.ok && res.type === "basic") cache.put(req, res.clone()).catch(() => null);
+    if (res.ok && res.type === "basic") (cacheName === STATIC ? put(cache, req, res.clone()) : cache.put(req, res.clone())).catch(() => null);
     return res;
   });
   try {
@@ -106,6 +128,14 @@ async function networkFirst(req, cacheName, ms) {
       });
     }
   }
+}
+
+// Datoteka aplikacije: kopija iste različice takoj (brez omrežja), sicer najprej omrežje.
+async function appFile(req) {
+  const cache = await caches.open(STATIC);
+  const hit = await cache.match(req);
+  if (fresh(hit)) return hit;
+  return networkFirst(req, STATIC, TIMEOUT.static);
 }
 
 async function cacheFirst(req) {
@@ -151,6 +181,13 @@ self.addEventListener("fetch", (e) => {
   }
   if (url.pathname.startsWith("/vendor/")) {
     e.respondWith(cacheFirst(req));
+    return;
+  }
+  // Takoj iz predpomnilnika samo statične datoteke aplikacije in vstopna stran brez poizvedbe; strani, ki
+  // jih sestavi strežnik (/sole, /ucbenik/…, /prenesi, seznami .json, manifest), ostanejo najprej omrežje.
+  const entry = (url.pathname === "/" || url.pathname === "/index.html") && !url.search;
+  if (entry || (APP_FILE.test(url.pathname) && req.mode !== "navigate")) {
+    e.respondWith(appFile(req));
     return;
   }
   e.respondWith(networkFirst(req, STATIC, TIMEOUT.static));

@@ -109,7 +109,9 @@ test("strežnik pove različico in zasedenost; service worker dobi različico kn
     assert.equal((await (await fetch(`${base}/healthz/stanje`)).json()).aktivni, 0);
     const sw = await fetch(`${base}/sw.js`);
     assert.match(sw.headers.get("content-type"), /javascript/);
-    assert.match(await sw.text(), /const VERSION = "evklid-v1-[0-9a-f]{8}";/);
+    const src = await sw.text();
+    assert.match(src, /const VERSION = "evklid-v1-[0-9a-f]{8}";/);
+    assert.match(src, /const APP = "[0-9a-f]{12}";/); // različica datotek aplikacije (takojšnje odpiranje)
   } finally {
     server.close();
   }

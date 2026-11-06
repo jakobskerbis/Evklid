@@ -59,7 +59,7 @@ import { mountWebApp } from "./webapp.js";
 import { Schedules, scheduleView, schedulePrompt, syncTestPlan } from "./schedule.js";
 import { mountSchedule } from "./schedule-api.js";
 import { mountScan } from "./scan.js";
-import { appVersion, vendorVersion } from "./razlicica.js";
+import { appVersion, vendorVersion, staticVersion } from "./razlicica.js";
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { mount3d } from "./tri-d.js";
@@ -247,7 +247,11 @@ export function createApp(store, opts = {}) {
   const modules = path.join(here, "..", "node_modules");
   const publicDir = path.join(here, "..", "public");
   // Service worker z različico knjižnic v imenu predpomnilnika (glej server/razlicica.js).
-  const swSource = fs.readFileSync(path.join(publicDir, "sw.js"), "utf8").replace('"evklid-v1"', `"evklid-v1-${vendorVersion()}"`);
+  // in z različico datotek aplikacije (APP): kopije iste različice se odprejo takoj, brez omrežja.
+  const swSource = fs
+    .readFileSync(path.join(publicDir, "sw.js"), "utf8")
+    .replace('"evklid-v1"', `"evklid-v1-${vendorVersion()}"`)
+    .replace('const APP = "";', `const APP = "${staticVersion(publicDir)}";`);
   app.get("/sw.js", (_req, res) => {
     res.set("Cache-Control", "no-cache");
     res.type("text/javascript").send(swSource);
