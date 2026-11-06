@@ -38,7 +38,9 @@ async function api(url, opts = {}) {
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw Object.assign(new Error(data.error || `Napaka ${res.status}`), { data, status: res.status });
+  // Plačilo brez datuma rojstva (star račun, »Pozneje«): prevedeno sporočilo namesto slovenskega s strežnika.
+  const msg = data.birth_missing ? t("birth.payMissing") : data.error;
+  if (!res.ok) throw Object.assign(new Error(msg || `Napaka ${res.status}`), { data, status: res.status });
   return data;
 }
 
@@ -443,7 +445,8 @@ async function route() {
   if (status.parent.guest && !status.guest_mode) return renderGuestOff(), false;
   if (!status.parent.verified && !status.parent.guest) return renderVerify(), false;
   // Star račun brez datuma rojstva: ob prijavi ga enkrat vprašamo (z razlago in »Pozneje«), nikoli ne zaklenemo.
-  if (status.parent.need_birth) return renderBirth(), false;
+  // Samo na odklenjeni napravi: na zaklenjeni (otrok na starševi napravi) zaslon preskočimo, vprašanje ostane za pozneje.
+  if (status.parent.need_birth && status.account_unlocked) return renderBirth(), false;
   if (!status.children) return renderAddChild(), false;
   authMode(false);
   adjustAppForAccounts();
@@ -495,7 +498,7 @@ function renderLogin(mode = "login") {
       <label>E-naslov <input name="email" type="email" required autocomplete="email"></label>
       <label>Geslo <input name="password" type="password" required minlength="8" autocomplete="${mode === "login" ? "current-password" : "new-password"}"></label>
       ${mode === "register" ? `
-        <label>Tvoj datum rojstva <input name="birth_date" type="date" required min="1900-01-01" max="${new Date().toISOString().slice(0, 10)}" autocomplete="bday"></label>
+        <label>Tvoj datum rojstva <input name="birth_date" type="date" required min="1900-01-01" max="${localToday()}" autocomplete="bday"></label>
         <label>Aktivacijska koda (neobvezno) <input name="promo_code" maxlength="40" autocapitalize="characters" value="${esc(koda)}"></label>
         <label>Koda priporočila (neobvezno) <input name="referral_code" maxlength="12" value="${esc(ref)}"></label>
         <label class="check"><input type="checkbox" name="accept_privacy" required>
@@ -659,27 +662,56 @@ function renderReset(token) {
 
 // ---------- datum rojstva (stari računi) ----------
 
+// Današnji datum v lokalnem času naprave (LLLL-MM-DD); toISOString bi okoli polnoči dal včerajšnji dan (UTC).
+function localToday(d = new Date()) {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+// Dopolnjena leta za datum LLLL-MM-DD (za potrditev pred shranjevanjem; strežnik računa sam).
+function yearsSince(ymd, d = new Date()) {
+  const [y, m, day] = String(ymd).split("-").map(Number);
+  return d.getFullYear() - y - (d.getMonth() + 1 < m || (d.getMonth() + 1 === m && d.getDate() < day) ? 1 : 0);
+}
+
 // Obrazec za datum rojstva imetnika računa: zaslon ob prijavi (later = gumb »Pozneje«) in kartica v zavihku Račun.
 function birthFormHtml(later) {
-  const max = new Date().toISOString().slice(0, 10);
+  const max = localToday();
   return `<form class="birth-form form" novalidate>
       <label>${esc(t("birth.label"))} <input name="birth_date" type="date" required min="1900-01-01" max="${max}" autocomplete="bday"></label>
       <p class="muted">${esc(t("birth.whose"))}</p>
       <p class="form-error" role="alert" hidden></p>
-      <div class="form-actions">
+      <div class="form-actions" data-step="enter">
         <button class="primary" type="submit">${esc(t("birth.save"))}</button>
         ${later ? `<button type="button" data-later>${esc(t("birth.later"))}</button>` : ""}
+      </div>
+      <div class="birth-confirm" data-step="confirm" hidden>
+        <p role="status" data-confirm-text></p>
+        <div class="form-actions">
+          <button class="primary" type="button" data-confirm>${esc(t("birth.confirmYes"))}</button>
+          <button type="button" data-back>${esc(t("birth.confirmNo"))}</button>
+        </div>
       </div>
     </form>`;
 }
 
-// onDone(r): r je odgovor strežnika ({ parent, under_age?, min_age? }).
+// onDone(r): r je odgovor strežnika ({ parent, under_age?, min_age? }). Pred shranjevanjem potrditev z izračunano
+// starostjo (napačnega datuma uporabnik ne more popraviti sam). 409 (datum je medtem vpisan v drugi seji): tok gre naprej.
 function bindBirthForm(form, onDone) {
+  const enter = form.querySelector('[data-step="enter"]');
+  const confirm = form.querySelector('[data-step="confirm"]');
+  const step = (c) => {
+    enter.hidden = c;
+    confirm.hidden = !c;
+    form.birth_date.disabled = c;
+  };
   const send = async (body, btn) => {
     btn.disabled = true;
     try {
       onDone(await api("/api/account/birth-date", { method: "POST", body }));
     } catch (err) {
+      if (err.status === 409 && err.data?.parent) return onDone({ parent: err.data.parent, taken: true });
+      step(false);
       showError(form, err.data?.birth_date ? { message: t("birth.enter") } : err);
     } finally {
       btn.disabled = false;
@@ -687,8 +719,18 @@ function bindBirthForm(form, onDone) {
   };
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    if (!form.birth_date.value) return showError(form, { message: t("birth.enter") });
-    send({ birth_date: form.birth_date.value }, form.querySelector('[type="submit"]'));
+    const v = form.birth_date.value;
+    const age = v ? yearsSince(v) : NaN;
+    if (!v || !(age >= 5 && age <= 120)) return showError(form, { message: t("birth.enter") });
+    errorBox(form).hidden = true;
+    form.querySelector("[data-confirm-text]").textContent = t("birth.confirm", { age });
+    step(true);
+    form.querySelector("[data-confirm]").focus();
+  });
+  form.querySelector("[data-confirm]").addEventListener("click", (e) => send({ birth_date: form.birth_date.value }, e.currentTarget));
+  form.querySelector("[data-back]").addEventListener("click", () => {
+    step(false);
+    form.birth_date.focus();
   });
   form.querySelector("[data-later]")?.addEventListener("click", (e) => send({ later: true }, e.currentTarget));
 }
@@ -905,6 +947,7 @@ function planText(acc) {
 function upgradeBox(acc) {
   const up = acc.upgrade;
   if (!up?.options?.length || acc.parent.minor) return "";
+  if (acc.parent.birth_missing) return `<div class="plan-upgrade"><p class="muted">${esc(t("birth.payMissing"))}</p></div>`;
   return `<div class="plan-upgrade"><p><b>${esc(t("up.title"))}</b><br><span class="muted">${esc(t("up.text"))}</span></p>
     <div class="form-actions">${up.options.map((o) => `<button type="button" class="secondary" data-upgrade="${esc(o.key)}">${esc(t("up.btn", { name: planName(o) }))} · ${money(o.amount, o.currency)} ${esc(t(o.interval === "year" ? "mob.perYear" : "mob.perMonth"))}</button>`).join("")}</div></div>`;
 }
@@ -948,9 +991,11 @@ function plansPicker(acc) {
       ${acc.parent.minor
         ? `<p class="muted">${esc(t("pay.minorNote"))}</p>
            <button class="secondary" type="button" id="plan-link">${esc(t("pay.askParent"))}</button><div id="plan-link-out"></div>`
-        : `${consentFields()}
+        : acc.parent.birth_missing
+          ? `<p class="muted">${esc(t("birth.payMissing"))}</p>`
+          : `${consentFields()}
            <button class="primary" type="submit">${esc(t("pay.continue"))}</button>`}
-      ${acc.parent.minor ? "" : `<p class="muted">${esc(t("pay.secureCancel"))}${acc.access.tier === "trial" ? ` ${esc(t("pay.trialKept"))}` : ""}</p>`}
+      ${acc.parent.minor || acc.parent.birth_missing ? "" : `<p class="muted">${esc(t("pay.secureCancel"))}${acc.access.tier === "trial" ? ` ${esc(t("pay.trialKept"))}` : ""}</p>`}
       </div>
     </form>`;
 }
@@ -977,7 +1022,7 @@ const planBody = (v) => {
 
 // Darilna koda: polnoletna oseba kupi eno leto za en profil izbrane stopnje (letna cena stopnje: 99 / 139 / 199 €).
 function giftBox(acc) {
-  if (!acc.billing || acc.parent.minor || acc.parent.guest) return "";
+  if (!acc.billing || acc.parent.minor || acc.parent.guest || acc.parent.birth_missing) return "";
   const list = (acc.gifts || [])
     .map((g) => `<li>${g.code ? `<b dir="ltr">${esc(g.code)}</b> <button type="button" data-gift-copy="${esc(g.code)}" aria-label="${esc(t("gift.copy"))} ${esc(g.code)}">${esc(t("gift.copy"))}</button>` : ""} <span class="pill${g.redeemed ? " ok" : ""}">${esc(t(g.status !== "paid" ? "gift.refunded" : g.redeemed ? "gift.used" : "gift.unused"))}</span></li>`)
     .join("");
@@ -1271,7 +1316,7 @@ function upgradeForm() {
       <label>${esc(t("guest.name"))} <input name="name" maxlength="60" autocomplete="name"></label>
       <label>${esc(t("guest.email"))} <input name="email" type="email" required autocomplete="email"></label>
       <label>${esc(t("guest.password"))} <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
-      <label>${esc(t("guest.birth"))} <input name="birth_date" type="date" required min="1900-01-01" max="${new Date().toISOString().slice(0, 10)}" autocomplete="bday"></label>
+      <label>${esc(t("guest.birth"))} <input name="birth_date" type="date" required min="1900-01-01" max="${localToday()}" autocomplete="bday"></label>
       <label class="check"><input type="checkbox" name="accept_privacy" required>
         <span>${esc(t("guest.accept"))} <a href="/zasebnost.html" target="_blank">${esc(t("guest.privacy"))}</a></span></label>
       <p class="form-error" hidden></p>
@@ -1621,7 +1666,7 @@ export async function renderAccount() {
       status.parent = r.parent;
       if (r.under_age) birthCard.innerHTML = `<h2>${esc(t("birth.label"))}</h2>${underAgeHtml(r.min_age)}`;
       else {
-        toast(t("birth.saved"));
+        if (!r.taken) toast(t("birth.saved"));
         renderAccount();
       }
     });

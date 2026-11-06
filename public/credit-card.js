@@ -30,7 +30,7 @@ export async function renderCreditCard(el, { api }) {
         <span class="credit-conv">${esc(t("credit.est", { n: p.conversations }))}</span></label>`,
     )
     .join("");
-  const canPay = d.billing && !d.minor && d.packs.length;
+  const canPay = d.billing && !d.minor && !d.birth_missing && d.packs.length;
   el.innerHTML = `
     <form class="card credit-card" novalidate>
       <h2>${icon("zap")} ${esc(t("credit.title"))}</h2>
@@ -39,7 +39,9 @@ export async function renderCreditCard(el, { api }) {
       ${
         !d.billing
           ? `<p class="muted">${esc(t("credit.off"))}</p>`
-          : d.minor
+          : d.birth_missing
+            ? `<p class="muted">${esc(t("birth.payMissing"))}</p>`
+            : d.minor
             ? `<p class="muted">${esc(t("credit.minor"))}</p>`
             : `<fieldset class="credit-packs"><legend class="sr-only">${esc(t("credit.title"))}</legend>${packs}</fieldset>
       <p class="muted">${esc(t("credit.note"))}</p>`

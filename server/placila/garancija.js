@@ -120,7 +120,7 @@ export function mountGuarantee(app, ctx) {
     if (!g) {
       const stripeSub = paidActive(p) && (p.sub_provider || "stripe") === "stripe" && !!p.stripe_customer_id && String(p.sub_id || "").startsWith("sub_");
       const kids = childIds(p.id).filter((id) => levelOf(id) !== "FAKS");
-      return { terms: GUARANTEE, subjects: GUARANTEE_SUBJECTS, can_enroll: stripeSub && kids.length > 0, students: kids };
+      return { terms: GUARANTEE, subjects: GUARANTEE_SUBJECTS, can_enroll: !birthMissing(p) && stripeSub && kids.length > 0, students: kids };
     }
     if (g.parent_id !== p.id) return { terms: GUARANTEE, used: true }; // že porabljena na drugem računu iste družine
     const s = stateOf(g);

@@ -57,7 +57,8 @@ export async function renderPassOffer(el, { api, studentId, toast }) {
       <p>${esc(t("pass.text", { name: o.test.name, date: fmtDay(o.test.date) }))}</p>
       <fieldset class="pass-options"><legend class="sr-only">${esc(t("pass.title"))}</legend>${options}</fieldset>
       <p class="muted">${esc(t("pass.note"))}</p>
-      ${o.pay_link ? "" : `<div class="form-actions"><button type="button" class="primary" data-pass-now aria-expanded="false">${esc(t("pay.payNow"))}</button></div>`}
+      ${o.birth_missing ? `<p class="muted">${esc(t("birth.payMissing"))}</p>` : ""}
+      ${o.pay_link || o.birth_missing ? "" : `<div class="form-actions"><button type="button" class="primary" data-pass-now aria-expanded="false">${esc(t("pay.payNow"))}</button></div>`}
       <details class="pass-parent">
         <summary>${esc(t("pay.parentOptions"))}</summary>
         <button type="button" class="secondary" data-pass-link>${esc(t("pay.askParent"))}</button>

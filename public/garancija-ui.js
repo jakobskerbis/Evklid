@@ -79,7 +79,7 @@ export function podariBox(acc) {
   if (!s) return "";
   const counter = `<p class="podari-count">${esc(t("pod.counter", { months: s.donated_months + s.evklid_months, used: s.in_use_months }))}</p>`;
   const buy =
-    acc.billing && !acc.parent.minor && !acc.parent.guest
+    acc.billing && !acc.parent.minor && !acc.parent.guest && !acc.parent.birth_missing
       ? `<details><summary>${esc(t("pod.buy", { price: fmtEur(s.month_price) }))}</summary>
         <form id="podari-form" class="form" novalidate>
           <label class="check pay-consent"><input type="checkbox" name="adult" required><span>${esc(t("pod.adult"))}</span></label>

@@ -58,9 +58,9 @@ export const NOTES = {
 export const BLOCK_TEXT = {
   "block.daily": "Današnja vprašanja za inštruktorja so porabljena ({n} na dan). Jutri jih spet dobiš. Do takrat lahko neomejeno vadiš v Vadnici.",
   "block.creditOut": "Inštruktor je za nekaj minut nedosegljiv (dobroimetje za AI je porabljeno). Vadnica in razlage tem delujejo naprej.",
-  "block.freeTailBirth": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Za dokup porabe najprej vpiši datum rojstva v zavihku Račun, sicer jih spet dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
-  "block.capOutBirth": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Za dokup porabe najprej vpiši datum rojstva v zavihku Račun. Vadnica in razlage tem delujejo naprej.",
-  "block.shareOutBirth": "Ta mesec si porabil svoj del inštruktorja. Za dokup porabe najprej vpiši datum rojstva v zavihku Račun, sicer ga spet dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
+  "block.freeTailBirth": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
+  "block.capOutBirth": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
+  "block.shareOutBirth": "Ta mesec si porabil svoj del inštruktorja. Spet ga dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej. Za dokup porabe mora imetnik računa najprej vpisati datum rojstva v zavihku Račun.",
   "block.freeTailTopup": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Z dokupom porabe v zavihku Račun lahko nadaljuješ takoj, sicer 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
   "block.freeTail": "Ta mesec si porabil vsa vprašanja za inštruktorja v svojem paketu. Spet jih dobiš 1. v mesecu. Vadnica in razlage tem delujejo naprej.",
   "block.capOut": "Inštruktor ta mesec ni več na voljo (dosežen je mesečni proračun). Vadnica in razlage tem delujejo naprej.",
