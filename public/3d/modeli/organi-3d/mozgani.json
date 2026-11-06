@@ -145,7 +145,9 @@
    "la": "Lobus frontalis",
    "povecava": "celica-nevron",
    "barva": "#ff7a6b",
+   "opisOs": "Sprednji del možganov. Z njim razmišljamo in se odločamo.",
    "opis": "Z njim premišljujemo, se odločamo, govorimo in zavestno premikamo mišice.",
+   "opisStudij": "Gyrus precentralis (primarna motorična skorja, Brodmann 4), premotorična skorja, Brocovo področje (44, 45, govorno središče na dominantni strani) in prefrontalna skorja (izvršilne funkcije, osebnost). Od temenskega ga loči sulcus centralis, od senčnega sulcus lateralis.",
    "vozlisca": [
     "Frontal lobe (MRI).l",
     "Frontal lobe (MRI).r"
@@ -164,7 +166,9 @@
    "la": "Lobus parietalis",
    "povecava": "celica-nevron",
    "barva": "#f2b84b",
+   "opisOs": "Del možganov na vrhu glave. Čuti dotik, toploto in bolečino.",
    "opis": "Sprejema občutke dotika, toplote in bolečine ter ve, kje so deli telesa.",
+   "opisStudij": "Gyrus postcentralis (primarna somatosenzorična skorja, 3, 1, 2) s somatotopičnim homunkulom; gyrus supramarginalis in angularis (branje, računanje). Okvara desnega temenskega režnja povzroči neglekt leve strani.",
    "vozlisca": [
     "Parietal lobe (MRI).l",
     "Parietal lobe (MRI).r"
@@ -183,7 +187,9 @@
    "la": "Lobus temporalis",
    "povecava": "celica-nevron",
    "barva": "#6e9bff",
+   "opisOs": "Del možganov ob sencih. Z njim slišimo in razumemo govor.",
    "opis": "Tu so središča za sluh in razumevanje govora; pomaga tudi pri spominu.",
+   "opisStudij": "Gyri temporales transversi (Heschl, primarna slušna skorja, 41), Wernickejevo področje (22, razumevanje govora), medialno hipokampus in amigdala (spomin, strah). Od čelnega režnja ga loči sulcus lateralis.",
    "vozlisca": [
     "Temporal lobe (MRI).l",
     "Temporal lobe (MRI).r"
@@ -202,7 +208,9 @@
    "la": "Lobus occipitalis",
    "povecava": "celica-nevron",
    "barva": "#c084fc",
+   "opisOs": "Zadnji del možganov. Z njim vidimo.",
    "opis": "Obdeluje, kar vidimo: oblike, barve, razdalje in gibanje.",
+   "opisStudij": "Primarna vidna skorja (V1, area striata, 17) ob sulcus calcarinus z Gennarijevo progo; okrog asociacijska vidna skorja (18, 19). Vidna pot: dorzalni tok (kje, gibanje) proti temenskemu, ventralni (kaj, obrazi) proti senčnemu režnju.",
    "vozlisca": [
     "Occipital lobe (MRI).l",
     "Occipital lobe (MRI).r"
@@ -221,7 +229,9 @@
    "la": "Lobus limbicus",
    "povecava": "celica-nevron",
    "barva": "#f472b6",
+   "opisOs": "Del možganov za čustva in spomin.",
    "opis": "Pas skorje na notranji strani poloble okoli žuljevega telesa (s pasasto vijugo); sodeluje pri čustvih, pozornosti in spominu.",
+   "opisStudij": "Gyrus cinguli in gyrus parahippocampalis (z isthmus gyri cinguli); s hipokampusom, amigdalo, fornixom in mamilarnimi telesci tvori limbični sistem. Papezov krog: hipokampus – fornix – corpus mamillare – sprednji talamus – gyrus cinguli – hipokampus.",
    "vozlisca": [
     "Limbic lobe (MRI).l",
     "Limbic lobe (MRI).r"
@@ -240,7 +250,9 @@
    "la": "Insula",
    "povecava": "celica-nevron",
    "barva": "#fb923c",
+   "opisOs": "Skrit del možganov globoko v stranski brazdi.",
    "opis": "Skrit je globoko v stranski brazdi; sodeluje pri okusu in občutkih iz notranjosti telesa.",
+   "opisStudij": "Pokrivajo ga opercula čelnega, temenskega in senčnega režnja; okus (primarna okusna skorja), interocepcija (srčni utrip, dihanje), gnus, bolečina. Pod njim claustrum, capsula extrema in externa ter putamen; prehranjuje ga a. cerebri media.",
    "vozlisca": [
     "Insula (MRI).l",
     "Insula (MRI).r"
@@ -251,7 +263,9 @@
    "ime": "Mali možgani",
    "la": "Cerebellum",
    "barva": "#5ccb91",
+   "opisOs": "Mali možgani zadaj spodaj. Pomagajo pri ravnotežju in gladkih gibih.",
    "opis": "Usklajujejo gibe in skrbijo za ravnotežje, da so gibi natančni in gladki.",
+   "opisStudij": "Vermis in hemisferi; trije režnji (anterior, posterior, flocculonodularis); skorja s Purkinjejevimi celicami, globoka jedra (dentatus, emboliformis, globosus, fastigii). S deblom ga vežejo trije pari pedunculi cerebellares. Okvara: ataksija na isti strani, intencijski tremor, dismetrija.",
    "vozlisca": [
     "Anterior quadrangular lobule.l",
     "Anterior quadrangular lobule.r",
@@ -303,7 +317,9 @@
    "ime": "Možgansko deblo",
    "la": "Truncus encephali",
    "barva": "#2dd4bf",
+   "opisOs": "Del, ki poveže možgane s hrbtenjačo. Sam skrbi za dihanje in utrip.",
    "opis": "Povezuje možgane s hrbtenjačo in samodejno uravnava dihanje, srčni utrip in požiranje.",
+   "opisStudij": "Srednji možgani, most in podaljšana hrbtenjača; jedra možganskih živcev III–XII, retikularna formacija (budnost), središča za dihanje in krvni obtok, poti (piramidna proga, lemniscus medialis). Križanje piramid na meji s hrbtenjačo.",
    "vozlisca": [
     "Base of peduncle.l",
     "Base of peduncle.r",
@@ -340,7 +356,9 @@
    "ime": "Žuljevo telo",
    "la": "Corpus callosum",
    "barva": "#e8ecf3",
+   "opisOs": "Most iz vlaken med levo in desno polovico možganov.",
    "opis": "Debel snop živčnih vlaken, po katerem si leva in desna polobla izmenjujeta sporočila. Pod njim sta obok (fornix) in sprednja komisura.",
+   "opisStudij": "Največja komisura (okoli 200 milijonov aksonov): rostrum, genu, truncus, splenium. Pod njim septum pellucidum in fornix. Po kalozotomiji se pokaže »razcepljeni možgani« (Sperry).",
    "vozlisca": [
     "Anterior commissure",
     "Corpus callosum",
@@ -361,7 +379,9 @@
    "ime": "Talamus",
    "la": "Thalamus",
    "barva": "#facc15",
+   "opisOs": "Postaja sredi možganov, skozi katero gredo sporočila čutil.",
    "opis": "Prehodna postaja, skozi katero gredo skoraj vsa sporočila čutil na poti do skorje.",
+   "opisStudij": "Parno jajčasto jedro diencefalona ob tretjem ventriklu; jedra: VPL/VPM (tip), corpus geniculatum laterale (vid) in mediale (sluh), VL/VA (motorika), sprednje (Papezov krog), pulvinar. Vonj gre v skorjo mimo talamusa. Adhesio interthalamica pri 70–80 % ljudi.",
    "vozlisca": [
     "Habenula",
     "Lateral geniculate body.l",
@@ -384,7 +404,9 @@
    "ime": "Hipotalamus",
    "la": "Hypothalamus",
    "barva": "#fda4af",
+   "opisOs": "Majhen del možganov, ki uravnava toploto, lakoto in žejo.",
    "opis": "Uravnava telesno temperaturo, lakoto in žejo ter s hormoni vodi hipofizo.",
+   "opisStudij": "Pod talamusom ob dnu tretjega ventrikla; jedra: supraopticus in paraventricularis (ADH, oksitocin v nevrohipofizo), suprachiasmaticus (cirkadiani ritem), arcuatus (sproščajoči hormoni po portalnem obtoku v adenohipofizo), mamilarna telesca.",
    "vozlisca": [
     "Hypothalamus",
     "Mamillary body.l",
@@ -403,7 +425,9 @@
    "ime": "Križišče vidnih živcev",
    "la": "Chiasma opticum",
    "barva": "#fde68a",
+   "opisOs": "Mesto, kjer se vidna živca obeh očes srečata.",
    "opis": "Tu se del vlaken iz obeh očes prekriža, zato vsaka polobla z obema očesoma vidi nasprotno polovico vidnega polja.",
+   "opisStudij": "Prekrižajo se vlakna nosnih polovic mrežnic (okoli 53 %); za križiščem tractus opticus do corpus geniculatum laterale. Pritisk tumorja hipofize od spodaj povzroči bitemporalno hemianopsijo.",
    "vozlisca": [
     "Optic chiasm.l",
     "Optic chiasm.r"

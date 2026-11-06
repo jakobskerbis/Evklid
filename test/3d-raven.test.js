@@ -34,3 +34,29 @@ test("okvir 3D v »Uči se« dobi raven profila (ločen dokument brez profila)",
   assert.match(src, /import \{ ravenProfila \} from "\.\/3d\/raven\.js"/);
   assert.match(src, /\/3d\?vgrajeno=1&raven=\$\{ravenProfila\(\)\}/);
 });
+
+test("vsi organi: vsak del ima razlago za OŠ, SŠ in študij (deli se po ravni ne skrivajo)", async () => {
+  const fs = await import("node:fs");
+  const mapa = new URL("../public/3d/modeli/organi-3d/", import.meta.url);
+  const organi = fs.readdirSync(mapa).filter((f) => f.endsWith(".json") && !f.includes("vozlisca"));
+  assert.ok(organi.length >= 6);
+  for (const f of organi) {
+    const p = JSON.parse(fs.readFileSync(new URL(f, mapa), "utf8"));
+    if (!p.deli?.length) continue;
+    assert.ok(imaRavni(p.deli), f);
+    for (const d of p.deli) {
+      assert.ok(d.opisOs && d.opis && d.opisStudij, `${f}: ${d.id}`);
+      assert.ok(d.opisOs.length <= d.opis.length + 40, `${f}: ${d.id} OŠ naj bo kratko`);
+    }
+  }
+});
+
+test("atlas: vsi deli vidni na vseh ravneh, raven iz profila, razlaga in barvni način iz skupnih modulov", async () => {
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(new URL("../public/3d/atlas.js", import.meta.url), "utf8");
+  assert.doesNotMatch(src, /r\.raven > raven/);
+  assert.match(src, /let raven = ravenProfila\(\)/);
+  assert.match(src, /razlaga\(/);
+  assert.match(src, /nastaviBarvniNacin\(/);
+  assert.match(src, /a3\.levelUni/);
+});

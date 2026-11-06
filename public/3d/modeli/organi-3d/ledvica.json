@@ -133,7 +133,9 @@
    "ime": "Ledvična ovojnica",
    "la": "Capsula fibrosa",
    "barva": "#c08a7a",
+   "opisOs": "Tanka plast, ki ovija ledvico.",
    "opis": "Tanka, čvrsta vezivna plast, ki obdaja ledvico in jo varuje.",
+   "opisStudij": "Capsula fibrosa se pri zdravi ledvici lahko odlušči; zunaj nje sta capsula adiposa (perirenalna maščoba) in fascia renalis (Gerota), ki obdaja tudi nadledvično žlezo.",
    "vozlisca": [
     "kidney_capsule_L (HRA)"
    ]
@@ -144,7 +146,9 @@
    "ime": "Ledvična skorja",
    "la": "Cortex renalis",
    "barva": "#f08060",
+   "opisOs": "Zunanji del ledvice. Tu se kri čisti.",
    "opis": "Zunanja plast z ledvičnimi telesci, kjer se iz krvi precedi primarni seč.",
+   "opisStudij": "V skorji so ledvična telesca (glomerul in Bowmanova kapsula, okoli milijon nefronov na ledvico), proksimalne in distalne zvite cevke; columnae renales segajo med piramide. Glomerulna filtracija obeh ledvic je okoli 120 ml/min (180 l/dan).",
    "vozlisca": [
     "outer_cortex_of_kidney_L (HRA)",
     "renal_column_L (HRA)"
@@ -156,7 +160,9 @@
    "ime": "Ledvične piramide (sredica)",
    "la": "Pyramides renales",
    "barva": "#e04050",
+   "opisOs": "Notranji del ledvice s cevkami, po katerih teče seč.",
    "opis": "Progaste piramide sredice s cevkami, ki seč zgostijo in ga vodijo k papilam.",
+   "opisStudij": "8–18 piramid; v njih Henlejeve zanke, vasa recta in zbiralca. Protitočni mehanizem ustvari hipertonično intersticijsko tekočino (do okoli 1200 mOsm/kg), da ADH lahko zgosti seč. Piramida s pripadajočo skorjo je ledvični reženj.",
    "vozlisca": [
     "renal_pyramid_L_a (HRA)",
     "renal_pyramid_L_b (HRA)",
@@ -174,7 +180,9 @@
    "ime": "Ledvične papile",
    "la": "Papillae renales",
    "barva": "#f0b0a0",
+   "opisOs": "Konice, iz katerih kaplja seč.",
    "opis": "Vrhovi piramid, iz katerih kaplja seč v ledvične čašice.",
+   "opisStudij": "Na vrhu papile se odpirajo papilarni vodi (ductus papillares, Bellinijevi) v area cribrosa; vsako papilo objema mala čašica. Pri papilarni nekrozi (analgetiki, sladkorna bolezen) odmrejo.",
    "vozlisca": [
     "renal_papilla_L_a (HRA)",
     "renal_papilla_L_b (HRA)",
@@ -195,14 +203,18 @@
    "ime": "Ledvični meh in čašice",
    "la": "Pelvis renalis, calices renales",
    "barva": "#f2d060",
-   "opis": "Čašice objemajo papile in zbirajo seč, ki se steka v ledvični meh in naprej v sečevod."
+   "opisOs": "Votlina, ki zbira seč in ga pošlje naprej.",
+   "opis": "Čašice objemajo papile in zbirajo seč, ki se steka v ledvični meh in naprej v sečevod.",
+   "opisStudij": "7–13 malih čašic se združi v 2–3 velike, te v pelvis renalis; leži v sinus renalis, njegov del zunaj hilusa preide v sečevod na pieloureteričnem prehodu, prvi ozki točki za ledvične kamne."
   },
   {
    "id": "secevod",
    "ime": "Sečevod",
    "la": "Ureter",
    "barva": "#e8d8b0",
+   "opisOs": "Cevka, ki pelje seč iz ledvice v mehur.",
    "opis": "Mišična cev, ki seč iz ledvičnega meha s krčenjem potiska v sečni mehur.",
+   "opisStudij": "Dolg 25–30 cm, premer 3–5 mm; peristaltika 1–5 valov na minuto. Ožine: pieloureterični prehod, križanje z iliakalnimi žilami, prehod skozi steno mehurja (ventilni mehanizem proti refluksu). Pri ženskah ga križa a. uterina (»voda pod mostom«).",
    "vozlisca": [
     "Ureter.l"
    ]
@@ -212,7 +224,9 @@
    "ime": "Ledvična arterija",
    "la": "Arteria renalis",
    "barva": "#ff5a5a",
+   "opisOs": "Žila, ki prinese kri v ledvico.",
    "opis": "Pripelje kri iz aorte; skozi ledvici steče okoli petina vse krvi iz srca.",
+   "opisStudij": "Izhaja iz aorte v višini L1–L2; desna je daljša in poteka za spodnjo votlo veno. Pred hilusom se deli v segmentne arterije (končne arterije, brez anastomoz), naprej interlobarne, arkuatne, interlobularne in vas afferens. Pretok obeh ledvic okoli 1,1 l/min (20 % minutnega volumna).",
    "vozlisca": [
     "Anterior branch of renal artery.l",
     "Left renal artery",
@@ -224,7 +238,9 @@
    "ime": "Ledvična vena",
    "la": "Vena renalis",
    "barva": "#6e9bff",
+   "opisOs": "Žila, ki odvede kri iz ledvice.",
    "opis": "Odvede prečiščeno kri iz ledvice v spodnjo votlo veno.",
+   "opisStudij": "Leži pred arterijo; leva je daljša, poteka pred aorto pod a. mesenterica superior (sindrom hrestača) in sprejme levo gonadno ter nadledvično veno; zato je levostranska varikokela pogostejša.",
    "vozlisca": [
     "Left renal vein"
    ]
@@ -234,7 +250,9 @@
    "ime": "Nadledvična žleza",
    "la": "Glandula suprarenalis",
    "barva": "#ffb84a",
+   "opisOs": "Majhna žleza na vrhu ledvice. Ob strahu izloči adrenalin.",
    "opis": "Žleza z notranjim izločanjem na vrhu ledvice; izloča adrenalin in kortizol.",
+   "opisStudij": "Skorja: zona glomerulosa (aldosteron), fasciculata (kortizol), reticularis (androgeni); sredica iz celic nevralnega grebena (adrenalin, noradrenalin). Desna je piramidasta, leva polmesečasta; tri arterije, ena vena (desna v spodnjo votlo veno, leva v ledvično).",
    "vozlisca": [
     "Suprarenal gland.l"
    ]

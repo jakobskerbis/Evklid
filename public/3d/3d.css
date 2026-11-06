@@ -360,6 +360,9 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .a3-oznaka { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; padding: 3px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); }
 .a3-oznaka::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--barva); }
 .a3-opis { margin: 10px 0 0; line-height: 1.5; }
+.a3-vec { margin: 6px 0 0; }
+.a3-vec summary { min-height: 40px; display: flex; align-items: center; cursor: pointer; color: var(--k3-accent); font-weight: 600; }
+.a3-vec p { margin: 4px 0 0; line-height: 1.5; }
 .a3-akcije { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 
 .a3-nalaganje { position: absolute; z-index: 4; left: 50%; top: 52%; translate: -50% -50%; width: min(420px, calc(100% - 48px)); padding: 22px 24px; border-radius: 22px; border: 1px solid var(--k3-rob); background: var(--k3-steklo); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); text-align: center; }

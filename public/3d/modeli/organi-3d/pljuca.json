@@ -121,7 +121,9 @@
    "ime": "Zgornji reženj desnih pljuč",
    "la": "Lobus superior pulmonis dextri",
    "barva": "#ff9a8a",
+   "opisOs": "Zgornji del desnih pljuč.",
    "opis": "Najvišji od treh režnjev desnih pljuč; sega nad ključnico.",
+   "opisStudij": "Segmenti apicalis, posterius, anterius (S1–S3); od srednjega ga loči vodoravna špranja (fissura horizontalis) v višini 4. rebra. Vrh sega 2–3 cm nad ključnico, zato ga lahko poškodujemo pri vbodu v vrat (pnevmotoraks).",
    "vozlisca": [
     "Superior lobe of right lung"
    ]
@@ -132,7 +134,9 @@
    "ime": "Srednji reženj desnih pljuč",
    "la": "Lobus medius pulmonis dextri",
    "barva": "#ffc06a",
+   "opisOs": "Srednji del desnih pljuč. Ima ga samo desna stran.",
    "opis": "Najmanjši reženj, ki ga imajo samo desna pljuča; leži spredaj ob srcu.",
+   "opisStudij": "Segmenta laterale in mediale (S4, S5); leži ob srcu, zato njegova pljučnica zabriše desni rob srca na rentgenski sliki. Ozek bronhus srednjega režnja je nagnjen k zapori (sindrom srednjega režnja).",
    "vozlisca": [
     "Middle lobe of right lung"
    ]
@@ -143,7 +147,9 @@
    "ime": "Spodnji reženj desnih pljuč",
    "la": "Lobus inferior pulmonis dextri",
    "barva": "#f472b6",
+   "opisOs": "Spodnji del desnih pljuč, leži na preponi.",
    "opis": "Velik reženj zadaj in spodaj, ki leži na trebušni preponi.",
+   "opisStudij": "Segmenti S6 (superius) in bazalni S7–S10; od zgornjega in srednjega ga loči poševna špranja. Desni glavni bronh je bolj navpičen in širši, zato vdihnjeni tujki najpogosteje zaidejo sem.",
    "vozlisca": [
     "Inferior lobe of right lung"
    ]
@@ -154,7 +160,9 @@
    "ime": "Zgornji reženj levih pljuč",
    "la": "Lobus superior pulmonis sinistri",
    "barva": "#a78bfa",
+   "opisOs": "Zgornji del levih pljuč. Ima vdolbino za srce.",
    "opis": "Ima vdolbino za srce in jeziček (lingulo), ki ustreza srednjemu režnju desno.",
+   "opisStudij": "Segmenti apicoposterius, anterius in lingularna (lingula superior, inferior); incisura cardiaca in lingula ustrezata srednjemu režnju desno. Leva pljuča so manjša (okoli 45 % prostornine) zaradi srca.",
    "vozlisca": [
     "Superior lobe of left lung"
    ]
@@ -165,7 +173,9 @@
    "ime": "Spodnji reženj levih pljuč",
    "la": "Lobus inferior pulmonis sinistri",
    "barva": "#60a5fa",
+   "opisOs": "Spodnji del levih pljuč.",
    "opis": "Spodnji in zadnji reženj levih pljuč; od zgornjega ga loči poševna pljučna špranja.",
+   "opisStudij": "Segmenti S6 in bazalni (S7 pogosto združen z S8: anteromedialis); od zgornjega ga loči fissura obliqua. Na medialni strani vtis descendentne aorte.",
    "vozlisca": [
     "Inferior lobe of left lung"
    ]
@@ -175,7 +185,9 @@
    "ime": "Sapnik",
    "la": "Trachea",
    "barva": "#f2e6c8",
+   "opisOs": "Cev, po kateri gre zrak v pljuča.",
    "opis": "Cev s hrustančnimi obroči v obliki črke C, ki vodi zrak iz grla do pljuč.",
+   "opisStudij": "Dolg 10–12 cm, 16–20 hrustančnih obročev oblike C, zadaj m. trachealis; od C6 do razcepa (carina) v višini T4–T5 (Louisov kot). Sluznica: večvrstni migetalčni epitel z vrčastimi celicami (mukociliarno čiščenje).",
    "vozlisca": [
     "Trachea"
    ]
@@ -185,7 +197,9 @@
    "ime": "Bronhiji",
    "la": "Bronchi",
    "barva": "#fff3d6",
+   "opisOs": "Cevke, ki se kot veje drevesa razcepijo po pljučih.",
    "opis": "Sapnik se razcepi v dva glavna bronhija, ki se v pljučih razvejita kot drevo.",
+   "opisStudij": "Glavni, lobarni (desno 3, levo 2), segmentni bronhi; okoli 23 generacij do alveolov. Hrustanec se izgubi v bronhiolih (premer pod 1 mm), terminalni bronhioli so konec prevodnega dela, respiratorni bronhioli začetek dihalnega.",
    "vozlisca": [
     "(Anteromedial basal segmental bronchus of left lung)",
     "Anterior basal segmental bronchus of left lung (BVIII)",
@@ -222,7 +236,9 @@
    "ime": "Pljučne arterije",
    "la": "Arteriae pulmonales",
    "barva": "#6e9bff",
+   "opisOs": "Žile, ki pripeljejo kri brez kisika v pljuča.",
    "opis": "Pripeljejo kri z malo kisika iz desnega prekata srca v pljuča.",
+   "opisStudij": "Truncus pulmonalis se pod aortnim lokom razcepi v desno (za ascendentno aorto in zgornjo votlo veno) in levo pljučno arterijo; spremljajo bronhe do segmentov. Nizek tlak (okoli 25/10 mmHg); pri hipoksiji se zožijo (Euler-Liljestrandov refleks).",
    "vozlisca": [
     "Anterior basal segmental artery of left lung",
     "Anterior basal segmental artery of right lung",
@@ -256,7 +272,9 @@
    "ime": "Pljučne vene",
    "la": "Venae pulmonales",
    "barva": "#ff5a5a",
+   "opisOs": "Žile, ki odvedejo kri s kisikom iz pljuč v srce.",
    "opis": "Odvedejo s kisikom bogato kri iz pljuč v levi preddvor srca.",
+   "opisStudij": "Običajno štiri (zgornja in spodnja na vsaki strani) v levi preddvor; potekajo med segmenti (intersegmentno), ne ob bronhih. Mišični rokavi ob ustjih so izvor atrijske fibrilacije (izolacija pljučnih ven).",
    "vozlisca": [
     "Anterior vein of left lung",
     "Anterior vein of right lung",

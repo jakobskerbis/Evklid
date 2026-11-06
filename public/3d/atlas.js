@@ -12,6 +12,8 @@ import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
 import { vgrajeno, starsu } from "./vgrajeno.js";
+import { ravenProfila, razlaga } from "./raven.js";
+import { barvniNacin, nastaviBarvniNacin, ucnaBarvaTkiva } from "./barve.js";
 
 export const SLOJI = [
   { id: "koza", ikona: "user", barva: "#e5b79e" },
@@ -274,7 +276,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   const skriteSkupine = new Set();
   let samo = null; // Set id-jev ali null
   let izbran = null;
-  let raven = 3;
+  // Raven razlage (j, 6. 11. 14:37): vsi deli so vidni na vseh ravneh, raven menja samo besedila in težavnost kviza.
+  let raven = ravenProfila();
+  let ucne = barvniNacin(raven === 1 ? "ucne" : "naravne") === "ucne";
   let spol = "m";
   let razmik = 0;
   let prerez = { on: false, os: "y", poz: 0.5 };
@@ -629,8 +633,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
         const gid = bm.addGeometry(k.g);
         const inst = bm.addInstance(gid);
         bm.setMatrixAt(inst, k.m0);
-        bm.setColorAt(inst, k.barva);
-        const del = { row: k.row, batch: bm, inst, geo: k.g, m0: k.m0, m: k.m0.clone(), razred: k.razred, barva: k.barva, sloj: sloj.id };
+        const barvaU = new THREE.Color(ucnaBarvaTkiva(k.razred, k.row));
+        const del = { row: k.row, batch: bm, inst, geo: k.g, m0: k.m0, m: k.m0.clone(), razred: k.razred, barva: ucne ? barvaU : k.barva, barvaN: k.barva, barvaU, sloj: sloj.id };
+        bm.setColorAt(inst, del.barva);
         bm.userData[inst] = del;
         deli.set(k.row.id, del);
         sloj.deli.push(del);
@@ -700,7 +705,6 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (!s?.viden) return false;
     if (del.sloj === "zenski" && (spol !== "z" || !sloji.get("organi").viden)) return false;
     if (spol === "z" && r.mosko) return false;
-    if (r.raven > raven) return false;
     if (skrit.has(r.id)) return false;
     if (r.ovojnica && !ovojnice && !(samo && samo.has(r.id))) return false;
     if (samo && !samo.has(r.id)) return false;
@@ -889,8 +893,17 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     x.addEventListener("click", zapriKartico);
     vrhK.append(naslov, x);
     kartica.append(pot, vrhK);
-    if (r.la) kartica.append(mk("p", "a3-latinsko", r.la));
-    if (r.im?.opis && jezik === "sl") kartica.append(mk("p", "a3-opis", r.im.opis));
+    // Razlaga po ravni (raven.js): OŠ preprosto, latinsko ime in globlje pod »Več o tem«; SŠ z latinskim; študij vse.
+    // Opisi atlasa so samo slovenski (atlas-imena.json), latinsko ime velja v vseh jezikih.
+    const sl = jezik === "sl";
+    const rz = razlaga({ opis: sl ? r.im?.opis : "", opisOs: sl ? r.im?.opisOs : "", opisStudij: sl ? r.im?.opisStudij : "", la: r.la }, raven);
+    if (rz.la) kartica.append(mk("p", "a3-latinsko", rz.la));
+    if (rz.opis) kartica.append(mk("p", "a3-opis", rz.opis));
+    if (rz.vec) {
+      const vec = mk("details", "a3-vec");
+      vec.append(mk("summary", "", t("a3.moreAbout")), mk("p", "", rz.vec));
+      kartica.append(vec);
+    }
     const akcije = mk("div", "a3-akcije");
     const bSkrij = gumb("a3-pill a3-mali", `${icon("eye-off")}<span>${t("a3.hide")}</span>`);
     bSkrij.addEventListener("click", () => {
@@ -955,6 +968,19 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   let lebdiPremik = false;
   let lebdiCas = 0;
   const _barva = new THREE.Color();
+  // Barvni način: vsak del ima naravno (barvaN) in učno barvo (barvaU); preklop prebarva vse naložene dele.
+  function uporabiBarve() {
+    for (const d of deli.values()) {
+      d.barva = ucne ? d.barvaU : d.barvaN;
+      if (d.row.id !== lebdiId) d.batch.setColorAt(d.inst, d.barva);
+    }
+    if (izbran && deli.has(izbran)) {
+      const d = deli.get(izbran);
+      sij.material.color.copy(d.barva);
+      sij.material.emissive.copy(d.barva).multiplyScalar(0.06);
+    }
+    kit.narisi();
+  }
   function oznaciLebdenje(id) {
     if (id === lebdiId) return;
     if (lebdiId && deli.has(lebdiId)) {
@@ -1080,7 +1106,6 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (r.ovojnica) ovojnice = true;
     for (const k of r.kljuci) skriteSkupine.delete(k);
     if (samo && !samo.has(id)) samo = null;
-    if (r.raven > raven) raven = 3;
     await naloziSloj(s.id);
     uporabiVidnost();
     osveziPlasti();
@@ -1372,13 +1397,29 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     renTxt.append(mk("span", "", t("a3.xray")), mk("small", "", t("a3.xrayHint")));
     ren.append(renTxt, renSw);
     box.append(ren);
+    // Naravne / Učne barve (skupni barvni način vseh 3D modelov, barve.js).
+    const uc = mk("div", "a3-stikalo-vrsta a3-blok a3-ucne");
+    const ucSw = mk("button", "switch");
+    ucSw.type = "button";
+    ucSw.setAttribute("role", "switch");
+    ucSw.setAttribute("aria-checked", String(ucne));
+    ucSw.setAttribute("aria-label", t("a3.teachColors"));
+    ucSw.addEventListener("click", () => {
+      ucne = nastaviBarvniNacin(ucne ? "naravne" : "ucne") === "ucne";
+      ucSw.setAttribute("aria-checked", String(ucne));
+      uporabiBarve();
+    });
+    const ucTxt = mk("span", "a3-stikalo-txt");
+    ucTxt.append(mk("span", "", t("a3.teachColors")));
+    uc.append(ucTxt, ucSw);
+    box.append(uc);
     // Podrobnost.
     const pod = mk("div", "a3-blok");
     pod.append(
       mk("span", "a3-oznaka-polja", t("a3.detail")),
-      seg(t("a3.detail"), [[1, t("a3.levelOS")], [2, t("a3.levelSS")], [3, t("a3.levelAll")]], raven, (k) => {
+      seg(t("a3.detail"), [[1, t("a3.levelOS")], [2, t("a3.levelSS")], [3, t("a3.levelUni")]], raven, (k) => {
         raven = k;
-        uporabiVidnost();
+        if (izbran && deli.has(izbran)) pokaziKartico(deli.get(izbran).row);
       }),
     );
     box.append(pod);

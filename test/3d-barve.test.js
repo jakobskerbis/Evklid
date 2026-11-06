@@ -27,3 +27,15 @@ test("srce: vsak del ima učno barvo (sam ali prek skupine); arterije rdeče, ve
   for (const id of ["aorta", "vencne-arterije", "pljucne-vene"]) { const [r, , b] = rgb(ucnaBarva(poId.get(id), poId)); assert.ok(r > b * 1.5, id); }
   for (const id of ["votli-veni", "pljucno-deblo", "vencne-vene"]) { const [r, , b] = rgb(ucnaBarva(poId.get(id), poId)); assert.ok(b > r * 1.5, id); }
 });
+
+test("atlas: učne barve po tkivu (arterije rdeče, vene modre, organi različni odtenki)", async () => {
+  const { ucnaBarvaTkiva } = await import("../public/3d/barve.js");
+  assert.equal(ucnaBarvaTkiva("zila", { material: "Artery-2", sistem: "zile" }), "#e0242c");
+  assert.equal(ucnaBarvaTkiva("zila", { material: "Vein", sistem: "zile" }), "#2a5fd6");
+  assert.equal(ucnaBarvaTkiva("zivec", { material: "Nerve-3", sistem: "zivcevje" }), "#f2c400");
+  const a = ucnaBarvaTkiva("vlazno", { sistem: "organi", ime: "Liver" });
+  const b = ucnaBarvaTkiva("vlazno", { sistem: "organi", ime: "Stomach" });
+  assert.match(a, /^hsl\(/);
+  assert.notEqual(a, b);
+  assert.equal(ucnaBarvaTkiva("vlazno", { sistem: "organi", ime: "Kidney.l" }), ucnaBarvaTkiva("vlazno", { sistem: "organi", ime: "Kidney.r" }));
+});
