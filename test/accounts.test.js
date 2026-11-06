@@ -264,6 +264,39 @@ test("daily tutor questions: the plan's limit is the floor, the AI budget raises
   }
 });
 
+test("limit hint by age: a parent picks the plan for under 18, an adult student picks it alone", async () => {
+  process.env.EVKLID_FREE_DAILY_QUESTIONS = "1";
+  try {
+    await withServer(async ({ client, calls, store }) => {
+      const ymd = (age) => `${YEAR - age}-01-01`;
+      const blockedFor = async (email, birth, kidBody) => {
+        const a = client();
+        await registerVerified(a, calls, email, { birth_date: birth });
+        const kid = (await a("/api/students", { method: "POST", body: kidBody })).body;
+        store.db.prepare("UPDATE parents SET trial_ends_at = '2020-01-01T00:00:00Z'").run();
+        const conv = (await a(`/api/students/${kid.id}/conversations`, { method: "POST" })).body;
+        const ask = (t) => a(`/api/conversations/${conv.id}/messages`, { method: "POST", body: { text: t } });
+        assert.equal((await ask("prvo")).status, 200);
+        const r = await ask("drugo");
+        assert.equal(r.status, 429);
+        assert.equal(r.body.limit, true);
+        return r.body;
+      };
+      // Študent (npr. FKKT, 1. letnik, 19 let) z lastnim profilom: naročnino izbere sam.
+      const adult = await blockedFor("student@primer.si", ymd(19), { name: "Jakob", birth_year: YEAR - 19, self: true, consent: true });
+      assert.equal(adult.hint, "block.hintAdult");
+      assert.match(adult.error, /izberi naročnino v zavihku Račun/);
+      assert.doesNotMatch(adult.error, /starš/);
+      // Dijak (16) na računu staršev: naj starš izbere naročnino.
+      const teen = await blockedFor("mama@primer.si", ADULT, { name: "Lara", birth_year: YEAR - 16, consent: true });
+      assert.equal(teen.hint, "block.hintParent");
+      assert.match(teen.error, /naj starš izbere naročnino/);
+    });
+  } finally {
+    delete process.env.EVKLID_FREE_DAILY_QUESTIONS;
+  }
+});
+
 test("free tier stops at the monthly AI budget (all free students and per student)", async () => {
   process.env.EVKLID_FREE_POOL_USD = "0.5";
   process.env.EVKLID_FREE_STUDENT_USD = "0";

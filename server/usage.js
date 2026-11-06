@@ -84,6 +84,7 @@ export const BLOCK_TEXT = {
   "block.freePool": "Brezplačna vprašanja za inštruktorja so ta mesec za vse porabljena. Vadnica in lekcije delujejo naprej neomejeno.",
   "block.hintGuest": "Za več vprašanj ustvari račun v zavihku Račun.",
   "block.hintParent": "Za več vprašanj naj starš izbere naročnino v zavihku Račun.",
+  "block.hintAdult": "Za več vprašanj izberi naročnino v zavihku Račun.",
 };
 
 // Kako dolgo po napaki »ni dobroimetja« inštruktor ne kliče API-ja (en neuspel klic na 10 minut).

@@ -605,7 +605,10 @@ export function mountAccounts(app, store, opts = {}) {
     return o.show && o.prices && !schools.membership(studentId)?.inSchool;
   };
   // Namig, kako do več vprašanj: ključ i18n (block.hint*) ali null; odjemalec ga doda razlogu (public/app.js serverError).
-  const moreHintCode = (studentId) => (guests.netOf(studentId) ? "block.hintGuest" : upsell(studentId) ? "block.hintParent" : null);
+  // Mlajši od 18: naj starš izbere naročnino; polnoleten (npr. študent) jo izbere sam. Brez znane starosti ponudbe
+  // s ceno ni (ponudbe.js), zato tudi namiga ne.
+  const moreHintCode = (studentId) =>
+    guests.netOf(studentId) ? "block.hintGuest" : upsell(studentId) ? ((ageOfStudent(studentId) ?? 0) >= 18 ? "block.hintAdult" : "block.hintParent") : null;
   // Odgovor 429 za brezplačni paket: { error, code, params?, hint? }; error je slovenska rezerva (razlog + namig).
   function freeBlock(studentId, code, params) {
     const hint = moreHintCode(studentId);
