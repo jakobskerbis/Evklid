@@ -237,6 +237,10 @@ function materialTkiva(t, visoka, ravnine, tex = null, merilo = 1) {
       m.aoMapIntensity = t.aoTekstura ?? 1;
       m.roughnessMap = tex.orm; // G: hrapavost (maščoba bolj mat, endokard in zaklopke bolj sijoči)
       m.roughness = t.hrapMnozilnik ?? 1;
+      // Vlažna plast (lak) sledi isti hrapavosti (three bere G): maščoba ostane mat, endokard sije; `lakHrap` je pri
+      // PBR množilnik. Šibek lak z mehkejšim odsevom in zmanjšan zrcalni odboj podlage: vlažno, ne plastično.
+      m.clearcoatRoughnessMap = tex.orm;
+      m.clearcoatRoughness = t.lakHrap ?? 0.6;
     }
   }
   if (tex?.normalMap && t.tekstura !== false) {
