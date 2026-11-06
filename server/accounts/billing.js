@@ -487,6 +487,7 @@ export function mountBilling(app, ctx) {
     if (needStripe(res)) return;
     const p = req.parent;
     if (p.is_guest) return res.status(403).json({ error: "Najprej ustvari račun." });
+    if (birthMissing(p)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (linkThrottle.blocked(`link${p.id}`)) return res.status(429).json({ error: "Preveč povezav v kratkem času. Poskusi čez eno uro." });
     const open = db.prepare("SELECT COUNT(*) AS n FROM pay_links WHERE parent_id = ? AND done_at IS NULL AND expires_at > ?").get(p.id, iso(Date.now())).n;
     if (open >= 5) return res.status(429).json({ error: "Odprtih je že 5 povezav za plačilo. Počakaj, da starš plača ali da povezave potečejo." });
@@ -584,6 +585,8 @@ export function mountBilling(app, ctx) {
     if (!consented(req.body)) return res.status(400).json(consentError);
     const parent = getParent(l.parent_id);
     if (!parent) return res.status(404).json({ error: "Povezava za plačilo ne obstaja ali je potekla. Prosite za novo.", expired: true });
+    // Imetnik povezave brez datuma rojstva: zaprto vsako plačilo (j 2026-11-06), tudi prek že izdane povezave.
+    if (birthMissing(parent)) return res.status(403).json(BIRTH_MISSING_PAY);
     if (linkView(l).paid) return res.status(409).json({ error: "To je že plačano. Hvala!", paid: true });
     const base = baseUrl(req);
     const back = `${base}/placaj.html?t=${encodeURIComponent(req.params.token)}`;

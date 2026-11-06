@@ -302,6 +302,7 @@ test("brez datuma rojstva (»Pozneje«) ni mogoče plačati ničesar; sporočilo
         ["/api/billing/pass", { student_id: 1, days: 7, adult: true, withdrawal: true }],
         ["/api/billing/credit", { pack: "p10", adult: true, withdrawal: true }],
         ["/api/billing/gift", { adult: true, withdrawal: true }],
+        ["/api/billing/pay-link", { kind: "sub", seats: 1, interval: "month" }],
         ["/api/billing/podari", { adult: true, understand: true }],
         ["/api/guarantee/enroll", {}],
       ]) {
@@ -318,6 +319,23 @@ test("brez datuma rojstva (»Pozneje«) ni mogoče plačati ničesar; sporočilo
       assert.equal((await a("/api/account/birth-date", { method: "POST", body: { birth_date: ymd(40) } })).status, 200);
       const co = await a("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "month", adult: true, withdrawal: true } });
       assert.notEqual(co.body.birth_missing, true);
+    },
+    { stripeKey: "sk_test_x", webhookSecret: "whsec_x" },
+  );
+});
+
+test("povezava za plačilo: imetnik brez datuma rojstva je ne more ustvariti, že izdana povezava pa ne gre do plačila", async () => {
+  await withServer(
+    async ({ client, store }) => {
+      const a = client();
+      assert.equal((await register(a, "povezava@primer.si", { birth_date: ymd(40) })).status, 201);
+      const made = await a("/api/billing/pay-link", { method: "POST", body: { kind: "sub", seats: 1, interval: "month" } });
+      assert.equal(made.status, 201, JSON.stringify(made.body));
+      const token = String(made.body.url).split("t=").pop();
+      store.db.prepare("UPDATE parents SET birth_date = NULL, birth_asked_at = NULL WHERE email = ?").run("povezava@primer.si");
+      const r = await client()(`/api/pay/${token}/checkout`, { method: "POST", body: { email: "oce@primer.si", adult: true, withdrawal: true } });
+      assert.equal(r.status, 403, JSON.stringify(r.body));
+      assert.equal(r.body.birth_missing, true);
     },
     { stripeKey: "sk_test_x", webhookSecret: "whsec_x" },
   );

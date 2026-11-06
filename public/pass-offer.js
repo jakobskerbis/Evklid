@@ -59,10 +59,10 @@ export async function renderPassOffer(el, { api, studentId, toast }) {
       <p class="muted">${esc(t("pass.note"))}</p>
       ${o.birth_missing ? `<p class="muted">${esc(t("birth.payMissing"))}</p>` : ""}
       ${o.pay_link || o.birth_missing ? "" : `<div class="form-actions"><button type="button" class="primary" data-pass-now aria-expanded="false">${esc(t("pay.payNow"))}</button></div>`}
-      <details class="pass-parent">
+      ${o.birth_missing ? "" : `<details class="pass-parent">
         <summary>${esc(t("pay.parentOptions"))}</summary>
         <button type="button" class="secondary" data-pass-link>${esc(t("pay.askParent"))}</button>
-      </details>
+      </details>`}
       <div class="pass-link-out"></div>
       <div class="pass-pay" hidden>
         ${consentFields()}
@@ -78,7 +78,7 @@ export async function renderPassOffer(el, { api, studentId, toast }) {
     err.hidden = false;
   };
   const body = () => ({ student_id: studentId, days: Number(form.days.value), test_date: o.test.date, test_name: o.test.name });
-  form.querySelector("[data-pass-link]").addEventListener("click", async (e) => {
+  form.querySelector("[data-pass-link]")?.addEventListener("click", async (e) => {
     err.hidden = true;
     e.target.disabled = true;
     try {
