@@ -57,6 +57,7 @@ import { Avatars, mountAvatar } from "./avatar.js";
 import { Knowledge, mountKnowledge } from "./zbirke.js";
 import { mountCorner } from "./corner.js";
 import { mountWebApp } from "./webapp.js";
+import { DEFAULT_GOAL } from "../public/goal-data.js";
 import { Schedules, scheduleView, schedulePrompt, syncTestPlan } from "./schedule.js";
 import { mountSchedule } from "./schedule-api.js";
 import { mountScan } from "./scan.js";
@@ -94,6 +95,13 @@ function cacheKey(text, settings, mode, lite = false, pathTopic = null, weak = [
   if (lite) parts.push("lite");
   // Zahtevnost po rezultatih učenca (osnovna je privzeta, da shranjeni odgovori ostanejo veljavni).
   if (tier && tier !== "osnovna") parts.push(`zahtevnost:${tier}`);
+  // Osebni podatki iz prompta (zanimanja in lastno zanimanje iz kotička, cilj, šibke točke): inštruktor iz njih
+  // vzame primere, zato odgovor dobi le učenec z enakimi (test/zasebnost-predpomnilnik.test.js). Prazno ključa ne spremeni.
+  const interests = [...(settings.interests || [])].map(String).sort();
+  const own = String(settings.interest_custom || "").trim().toLowerCase();
+  if (interests.length || own) parts.push(`zan:${interests.join(",")}|${own}`);
+  if ((settings.goal && settings.goal !== DEFAULT_GOAL) || settings.goal_date) parts.push(`cilj:${settings.goal || ""}|${settings.goal_date || ""}`);
+  if (!pathTopic && weak.length) parts.push(`sibko:${weak.join(",")}`);
   return crypto.createHash("sha256").update(parts.join("|")).digest("hex");
 }
 
@@ -714,7 +722,12 @@ export function createApp(store, opts = {}) {
     const help = isFirst && !image ? helpTasks.get(conv.id) : null;
     if (help) helpTasks.delete(conv.id);
     // Prošnja za spremembo nastavitev mora poklicati orodje, zato ne iz predpomnilnika odgovorov.
-    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
+    // Z vnesenim urnikom ali testi odgovor lahko omeni dneve in teste tega učenca: ne shrani in ne vzemi shranjenega.
+    const hasSchedule = (() => {
+      const d = schedules.get(student.id);
+      return !!(d && (d.lessons?.length || d.events?.length));
+    })();
+    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !hasSchedule && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
     if (conv.title === "Nov pogovor") {
       store.renameConversation(conv.id, cleanText(text, 50) || "Naloga s fotografije");
     }
