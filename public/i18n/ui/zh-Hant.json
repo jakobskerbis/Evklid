@@ -2355,6 +2355,8 @@
   "mob.appleFailed": "使用 Apple 登入失敗，請再試一次。",
   "mob.appleNewTitle": "新帳戶",
   "mob.appleNewText": "你還沒有使用這個 Apple ID 的帳戶。請輸入出生日期，我們會為你建立帳戶。",
+  "mob.appleExistingTitle": "帳戶已存在",
+  "mob.appleExistingText": "已有使用此電子郵件的帳戶，但該地址從未確認。我們會將它連結到你的 Apple ID 並加以保護：舊密碼和其他裝置上的登入將失效。請輸入你的出生日期。",
   "mob.birthDate": "出生日期",
   "mob.birthWhy": "我們需要出生日期，才能判斷這個帳戶是否需要家長同意。",
   "mob.day": "日",

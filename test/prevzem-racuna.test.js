@@ -126,9 +126,13 @@ test("3 victim clicks the unsolicited verify link, then Sign in with Apple: atta
   await withServer(async ({ appClient, register, webClient }) => {
     const attacker = appClient();
     const reg = await register(attacker);
-    const v = await webClient()(new URL(reg.body.dev_verify_url).pathname + new URL(reg.body.dev_verify_url).search);
+    const victimWeb = webClient();
+    const v = await victimWeb(new URL(reg.body.dev_verify_url).pathname + new URL(reg.body.dev_verify_url).search);
     assert.equal(v.status, 302);
-    assert.match(String(v.headers.get("location")), /verified=1/);
+    // Brez seje GET ne spremeni ničesar; žrtev na strani izbere »Tega računa nisem ustvaril«.
+    assert.match(String(v.headers.get("location")), /\?verify=/);
+    const token = new URL(reg.body.dev_verify_url).searchParams.get("token");
+    assert.equal((await victimWeb("/api/auth/verify", { body: { token, not_mine: true } })).status, 200);
     assert.equal((await appClient()("/api/auth/apple", apple({ sub: "apple.v", email: VICTIM, email_verified: true }))).status, 200);
     assert.equal((await attacker("/api/account")).status, 401, "napadalčeva seja še velja na računu, ki ga zdaj uporablja žrtev");
     assert.equal((await appClient()("/api/auth/login", { body: { email: VICTIM, password: "napadalec1" } })).status, 401, "napadalčevo geslo še odpre račun");
@@ -199,12 +203,13 @@ test("6a Apple token with email_verified=false never links an existing account (
   });
 });
 
-// 6b. Non-verifying IdP: nov račun z Applovim nepotrjenim naslovom ne sme biti označen kot potrjen.
-test("6b new account from an Apple token with email_verified=false is not marked verified", async () => {
+// 6b. Non-verifying IdP: z Applovim nepotrjenim naslovom računa sploh ne ustvarimo (pregled #492 B P2-1).
+test("6b Apple token with email_verified=false creates no account", async () => {
   await withServer(async ({ appClient, db }) => {
     const r = await appClient()("/api/auth/apple", apple({ sub: "apple.y", email: "nepotrjen@primer.si", email_verified: "false" }, { accept_privacy: true, birth_date: ADULT }));
-    assert.equal(r.status, 201, JSON.stringify(r.body));
-    assert.equal(db.prepare("SELECT email_verified_at FROM parents WHERE id = ?").get(r.body.parent.id).email_verified_at, null);
+    assert.equal(r.status, 400, JSON.stringify(r.body));
+    assert.equal(r.body.no_email, true);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM parents WHERE email = ?").get("nepotrjen@primer.si").n, 0);
   });
 });
 
@@ -251,7 +256,7 @@ test("password reset drops push tokens", async () => {
 });
 
 // Potrditev iz tuje seje: nastavitev novega gesla, staro geslo in seje ne veljajo; potrditev v isti seji ohrani geslo.
-test("verify link: from a foreign session leads to a new password; from the account's own session keeps it", async () => {
+test("verify link: without the account session GET changes nothing and not_mine leads to a new password; own session keeps it", async () => {
   await withServer(async ({ webClient, register }) => {
     const own = webClient();
     const reg = await register(own, "lastna@primer.si", "lastnik12345");
@@ -263,12 +268,14 @@ test("verify link: from a foreign session leads to a new password; from the acco
     const attacker = webClient();
     const reg2 = await register(attacker);
     const u2 = new URL(reg2.body.dev_verify_url);
-    const v2 = await webClient()(u2.pathname + u2.search);
-    const loc = String(v2.headers.get("location"));
-    assert.match(loc, /verified=1&reset=/);
+    const victim = webClient();
+    const v2 = await victim(u2.pathname + u2.search);
+    assert.equal(v2.headers.get("location"), `/?verify=${u2.searchParams.get("token")}`);
+    assert.equal((await attacker("/api/account")).status, 200, "GET brez seje ne spremeni ničesar");
+    const nm = await victim("/api/auth/verify", { body: { token: u2.searchParams.get("token"), not_mine: true } });
     assert.equal((await attacker("/api/account")).status, 401);
     assert.equal((await webClient()("/api/auth/login", { body: { email: VICTIM, password: "napadalec1" } })).status, 401);
-    const token = new URLSearchParams(loc.split("?")[1]).get("reset");
+    const token = nm.body.reset;
     assert.equal((await webClient()("/api/auth/reset", { body: { token, password: "zrtvino-geslo" } })).status, 200);
   });
 });

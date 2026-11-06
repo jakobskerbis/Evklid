@@ -328,6 +328,7 @@ export async function initAccount({ onReady }) {
     store.set(AGE_BLOCK, null);
   }
   const reset = q.get("reset");
+  const verifyToken = q.get("verify");
   const verified = q.get("verified");
   const billing = q.get("billing");
   const sessionId = q.get("session_id");
@@ -337,6 +338,10 @@ export async function initAccount({ onReady }) {
 
   if (reset) {
     renderReset(reset);
+    return false;
+  }
+  if (verifyToken) {
+    renderVerify(verifyToken);
     return false;
   }
   if (billing && status.logged_in) {
@@ -643,6 +648,47 @@ function renderForgot() {
       }</div>`;
     } catch (err) {
       showError(e.target, err);
+    }
+  });
+}
+
+// Povezava za potrditev e-naslova, odprta brez seje tega računa (drug brskalnik, Safari po registraciji v aplikaciji):
+// strežnik ničesar ne spremeni, dokler lastnik ne vpiše gesla ali pove, da računa ni ustvaril (pregled #492 B).
+function renderVerify(token) {
+  shell(`
+    <h1>Potrdi e-naslov</h1>
+    <form id="auth-form" class="card form">
+      <p>Za potrditev vpiši geslo, ki si ga izbral ob registraciji.</p>
+      <label>Geslo <input name="password" type="password" required autocomplete="current-password"></label>
+      <p class="form-error" role="alert" hidden></p>
+      <button class="primary" type="submit">Potrdi e-naslov</button>
+    </form>
+    <div class="card">
+      <p>Tega računa nisi ustvaril ali ne poznaš gesla? Račun zaščitimo: dosedanje geslo in prijave na vseh napravah ne bodo več veljale, ti pa nastaviš novo geslo.</p>
+      <button id="verify-not-mine" type="button">Tega računa nisem ustvaril / ne poznam gesla</button>
+    </div>`);
+  $("#auth-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try {
+      await api("/api/auth/verify", { method: "POST", body: { token, password: e.target.password.value } });
+      toast("E-naslov je potrjen ✓");
+      await continueFlow();
+    } catch (err) {
+      showError(e.target, err);
+    }
+  });
+  $("#verify-not-mine").addEventListener("click", async (e) => {
+    e.target.disabled = true;
+    try {
+      const r = await api("/api/auth/verify", { method: "POST", body: { token, not_mine: true } });
+      if (r.reset) renderReset(r.reset);
+      else {
+        toast("E-naslov je potrjen ✓");
+        await continueFlow();
+      }
+    } catch (err) {
+      e.target.disabled = false;
+      showError($("#auth-form"), err);
     }
   });
 }

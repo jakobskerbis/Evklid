@@ -924,33 +924,81 @@ export function mountAccounts(app, store, opts = {}) {
     return { moved: ids.length };
   }
 
-  app.get("/api/auth/verify", (req, res) => {
-    const token = String(req.query.token || "");
-    const p = token && db.prepare("SELECT id FROM parents WHERE verify_token_hash = ?").get(sha256(token));
-    if (!p) return res.redirect("/?verified=0");
+  // Potrditev e-naslova: gost zapusti kvoto omrežja, skrbnik prevzame učence iz časa pred računi.
+  function confirmEmail(parentId) {
     // Nekdanji gost: s potrditvijo zapusti kvoto omrežja in dobi 7-dnevni preizkus. Poraba gosta ostane šteta za
     // omrežje (guest_spent), zapisana, dokler je račun še na omrežju (pred potrditvijo; pregled #462).
-    const before = getParent(p.id);
-    if (before.guest_net && !before.is_guest && !before.email_verified_at) guests.snapshotParent(p.id);
-    update(p.id, { email_verified_at: new Date().toISOString(), verify_token_hash: null });
-    const full = getParent(p.id);
-    if (full.guest_net && !full.is_guest) update(p.id, { guest_net: null, trial_ends_at: full.trial_ends_at || isoIn(TRIAL_DAYS) });
+    const before = getParent(parentId);
+    if (before.guest_net && !before.is_guest && !before.email_verified_at) guests.snapshotParent(parentId);
+    update(parentId, { email_verified_at: new Date().toISOString(), verify_token_hash: null });
+    const full = getParent(parentId);
+    if (full.guest_net && !full.is_guest) update(parentId, { guest_net: null, trial_ends_at: full.trial_ends_at || isoIn(TRIAL_DAYS) });
     // Skrbnik (potrjen e-naslov iz EVKLID_ADMIN_EMAILS) prevzame učence iz časa pred računi.
     if (isAdminEmail(full)) {
-      update(p.id, { is_admin: 1 });
-      db.prepare("UPDATE students SET parent_id = ? WHERE parent_id IS NULL").run(p.id);
+      update(parentId, { is_admin: 1 });
+      db.prepare("UPDATE students SET parent_id = ? WHERE parent_id IS NULL").run(parentId);
     }
-    // Povezavo je odprl nekdo brez seje tega računa (druga naprava ali lastnik naslova, ki se ni registriral): potrditev
-    // dokaže e-naslov, ne gesla. Geslo je lahko tujčevo (prevzem pred registracijo, pregled #492 B), zato ga zamenjamo
-    // z neuporabnim, odjavimo vse naprave in odpremo nastavitev novega gesla (kot ponastavitev, velja 1 uro).
-    if (req.parent?.id !== p.id && !full.is_guest && !String(full.password_hash || "").startsWith("none$")) {
+  }
+  const byVerifyToken = (token) => (token ? db.prepare("SELECT * FROM parents WHERE verify_token_hash = ?").get(sha256(token)) : null);
+
+  // GET (povezava iz e-pošte) ne spremeni ničesar, razen iz seje tega računa: povezavo odprejo tudi pregledovalniki
+  // povezav v e-pošti (Microsoft Safe Links, Mimecast) in Safari brez seje mobilne aplikacije (pregled #492 B, P1-1).
+  // Brez seje stran vpraša za geslo računa ali »tega računa nisem ustvaril« (POST spodaj).
+  app.get("/api/auth/verify", (req, res) => {
+    const token = String(req.query.token || "");
+    const p = byVerifyToken(token);
+    if (!p) return res.redirect("/?verified=0");
+    // Že potrjen račun (npr. s ponastavitvijo gesla): stara povezava samo počisti žeton.
+    if (p.email_verified_at) {
+      update(p.id, { verify_token_hash: null });
+      return res.redirect("/?verified=1");
+    }
+    if (req.parent?.id === p.id || p.is_guest || String(p.password_hash || "").startsWith("none$")) {
+      confirmEmail(p.id);
+      return res.redirect("/?verified=1");
+    }
+    res.redirect(`/?verify=${encodeURIComponent(token)}`);
+  });
+
+  // { token, password }: geslo računa dokaže, da je račun ustvaril lastnik naslova; seje ostanejo.
+  // { token, not_mine: true }: lastnik naslova računa ni ustvaril ali gesla ne pozna. Geslo je lahko tujčevo (prevzem
+  // pred registracijo, pregled #492 B), zato ga zamenjamo z neuporabnim, odjavimo vse naprave in vrnemo žeton za novo
+  // geslo (kot ponastavitev, velja 1 uro).
+  app.post("/api/auth/verify", json, async (req, res) => {
+    const token = String(req.body?.token || "");
+    const p = byVerifyToken(token);
+    if (!p) return res.status(400).json({ error: "Povezava za potrditev ni veljavna ali je že uporabljena." });
+    if (p.email_verified_at) {
+      update(p.id, { verify_token_hash: null });
+      return res.json({ ok: true });
+    }
+    if (req.body?.not_mine === true) {
+      confirmEmail(p.id);
       const reset = randomToken();
       update(p.id, { password_hash: unusablePasswordHash(), reset_token_hash: sha256(reset), reset_expires_at: isoIn(1 / 24) });
       dropForeignAccess(p.id);
       audit(db, { req, parentId: p.id, action: "verify_foreign_session" });
-      return res.redirect(`/?verified=1&reset=${reset}`);
+      return res.json({ ok: true, reset });
     }
-    res.redirect("/?verified=1");
+    const email = String(p.email).toLowerCase();
+    if (emailThrottle.blocked(email) || ipThrottle.blocked(req.ip)) return res.status(429).json({ error: "Preveč poskusov. Poskusi čez 15 minut." });
+    const ok = await verifyPassword(String(req.body?.password || ""), p.password_hash);
+    // Med čakanjem na scrypt se je geslo ali žeton lahko zamenjal.
+    const same = ok && db.prepare("SELECT 1 FROM parents WHERE id = ? AND password_hash = ? AND verify_token_hash = ?").get(p.id, p.password_hash, p.verify_token_hash);
+    if (!same) {
+      emailThrottle.fail(email);
+      ipThrottle.fail(req.ip);
+      audit(db, { req, parentId: p.id, action: "verify_password_fail", ok: false });
+      return res.status(401).json({ error: "Napačno geslo." });
+    }
+    confirmEmail(p.id);
+    audit(db, { req, parentId: p.id, action: "verify_password" });
+    // Geslo in dostop do e-pošte: kot prijava (Safari po registraciji v aplikaciji je potem tudi prijavljen).
+    if (!req.parent) {
+      accountLocks.unlock(p.id, req.deviceId);
+      setSessionCookie(req, res, sessions.create(p.id));
+    }
+    res.json({ ok: true });
   });
 
   app.post("/api/auth/resend-verification", async (req, res) => {
@@ -1061,7 +1109,11 @@ export function mountAccounts(app, store, opts = {}) {
       reset_token_hash: null,
       reset_expires_at: null,
       email_verified_at: p.email_verified_at || new Date().toISOString(),
+      verify_token_hash: null, // stara povezava za potrditev po ponastavitvi ne velja več (pregled #492 B, P2-2)
     });
+    // Apple ID, povezan z računom, ko naslov še ni bil potrjen, ni nujno lastnikov (pregled #492 B, P2-1). Stolpec
+    // obstaja samo s prijavo z Apple (server/mobile/apple-signin.js).
+    if (!p.email_verified_at && p.apple_sub) update(p.id, { apple_sub: null });
     dropForeignAccess(p.id); // vse seje (tudi napadalčeve), obvestila na telefon in ključi razredov po novem geslu ne veljajo
     audit(db, { req, parentId: p.id, action: "password_reset" });
     accountLocks.unlock(p.id, req.deviceId);

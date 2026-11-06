@@ -2369,6 +2369,8 @@
   "mob.appleFailed": "Identifikimi me Apple nuk u krye. Provo përsëri.",
   "mob.appleNewTitle": "Llogari e re",
   "mob.appleNewText": "Me këtë Apple ID nuk ke ende llogari. Shkruaj datën e lindjes që ta krijojmë.",
+  "mob.appleExistingTitle": "Llogaria ekziston tashmë",
+  "mob.appleExistingText": "Ekziston tashmë një llogari me këtë email, por adresa nuk është konfirmuar kurrë. Do ta lidhim me Apple ID-në tënde dhe do ta mbrojmë: fjalëkalimi i vjetër dhe hyrjet në pajisje të tjera nuk do të vlejnë më. Shkruaj datëlindjen.",
   "mob.birthDate": "Data e lindjes",
   "mob.birthWhy": "Datën e lindjes na duhet për të ditur nëse llogaria ka nevojë për pëlqimin e prindërve.",
   "mob.day": "Dita",

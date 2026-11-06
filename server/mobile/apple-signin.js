@@ -39,7 +39,8 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
   const { db, sessions, getParent, parentByEmail, publicParent, createParent, checkAge, signupThrottle } = ctx;
   const dropForeignAccess = ctx.dropForeignAccess || ((id) => sessions.destroyAll(id));
   const audit = ctx.audit || (() => {});
-  // Omejitev poskusov na IP (vsak poskus lahko sproži prenos Applovih ključev, pregled #492 A P3-5).
+  // Omejitev neuspelih poskusov na omrežje (netKey: IPv6 /64; neveljaven žeton lahko sproži prenos Applovih ključev,
+  // pregled #492 A P3-5). Uspešne prijave in drugi korak (need_signup) se ne štejejo (CGNAT mobilnih operaterjev, B P3-3).
   const appleThrottle = new Throttle(30, 15 * 60000);
   const env = opts.env || process.env;
   const log = opts.log || console;
@@ -51,33 +52,38 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
     verifyAppleIdentityToken(token, { audiences, nonce: rawNonce ? sha256hex(rawNonce) : null, fetchFn, keys: opts.appleKeys || null });
 
   app.post("/api/auth/apple", json, async (req, res) => {
-    if (!isLocalRequest(req) && appleThrottle.blocked(req.ip)) return res.status(429).json({ error: "Preveč poskusov. Poskusi čez 15 minut." });
-    appleThrottle.fail(req.ip);
+    const net = netKey(req.ip);
+    if (!isLocalRequest(req) && appleThrottle.blocked(net)) return res.status(429).json({ error: "Preveč poskusov. Poskusi čez 15 minut." });
     const rawNonce = text(req.body?.nonce);
-    if (rawNonce.length < 16) return res.status(400).json({ error: "Manjka enkratni niz." });
+    if (rawNonce.length < 16) {
+      appleThrottle.fail(net);
+      return res.status(400).json({ error: "Manjka enkratni niz." });
+    }
     let who;
     try {
       who = await verify(req.body?.identity_token, rawNonce);
     } catch (err) {
+      appleThrottle.fail(net);
       if (err instanceof AppleSignatureError) return res.status(401).json({ error: "Prijava z Apple ni uspela. Poskusi znova." });
       log.error?.("[evklid] prijava z Apple:", err.message);
       return res.status(502).json({ error: "Apple se ne odziva. Poskusi znova čez nekaj minut." });
     }
     // Nov račun ali nepotrjen obstoječ: ista pravila kot registracija (strinjanje, starost, omejitev novih računov na omrežje).
     // Vrne datum rojstva ali null (odgovor je že poslan).
-    const signup = () => {
+    // existing: račun že obstaja (povezava nepotrjenega), zato se ne šteje v mejo novih računov omrežja (pregled #492 B P3-2).
+    const signup = (existing = false) => {
       if (req.body?.accept_privacy !== true) {
-        res.status(400).json({ error: "Za nov račun potrebujemo še datum rojstva in strinjanje z obvestilom o zasebnosti.", need_signup: true });
+        res.status(400).json({ error: "Za nov račun potrebujemo še datum rojstva in strinjanje z obvestilom o zasebnosti.", need_signup: true, ...(existing ? { existing: true } : {}) });
         return null;
       }
       const key = netKey(req.ip);
-      if (!isLocalRequest(req) && signupThrottle.blocked(key)) {
+      if (!existing && !isLocalRequest(req) && signupThrottle.blocked(key)) {
         res.status(429).json({ error: "S tega omrežja je danes ustvarjenih že preveč računov. Poskusi jutri." });
         return null;
       }
       const birthIso = checkAge(req, res);
       if (!birthIso) return null;
-      signupThrottle.fail(key);
+      if (!existing) signupThrottle.fail(key);
       return birthIso;
     };
     const name = [req.body?.given_name, req.body?.family_name].filter(Boolean).join(" ").slice(0, 60);
@@ -92,7 +98,7 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
           // Nepotrjen e-naslov: račun je ustvaril nekdo, ki naslova ni dokazal (lahko tujec pred lastnikom). Z njim ravnamo
           // kot z novim: lastnik da svoje soglasje in datum rojstva (starost se preveri znova), priporočitelj in ime tujca
           // odpadeta, geslo, žetoni, seje, obvestila na telefon in ključi razredov ne veljajo več (pregled #492 A, B).
-          const birthIso = signup();
+          const birthIso = signup(true);
           if (!birthIso) return;
           db.prepare(
             `UPDATE parents SET password_hash = ?, verify_token_hash = NULL, reset_token_hash = NULL, reset_expires_at = NULL,
@@ -106,18 +112,20 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
           if (ctx.sendMail && ctx.appleLinkedEmail) Promise.resolve(ctx.sendMail(byEmail.email, ctx.appleLinkedEmail())).catch(() => {});
           audit(db, { req, parentId: byEmail.id, action: "apple_link" });
         }
-        db.prepare("UPDATE parents SET apple_sub = ?, email_verified_at = COALESCE(email_verified_at, ?) WHERE id = ?").run(who.sub, new Date().toISOString(), byEmail.id);
+        db.prepare("UPDATE parents SET apple_sub = ?, email_verified_at = COALESCE(email_verified_at, ?), verify_token_hash = NULL WHERE id = ?").run(who.sub, new Date().toISOString(), byEmail.id);
         p = getParent(byEmail.id);
       }
     }
     if (!p) {
       if (!who.email) return res.status(400).json({ error: "Apple ni poslal e-naslova. Ustvari račun z e-naslovom in geslom.", no_email: true });
+      // Naslova, ki ga Apple ni potrdil, ne vzamemo: račun s tujim naslovom in napadalčevim Apple ID (pregled #492 B P2-1).
+      if (!who.emailVerified) return res.status(400).json({ error: "Apple ni potrdil e-naslova. Ustvari račun z e-naslovom in geslom.", no_email: true });
       // Naslov je že zaseden (npr. Apple ga ni potrdil, zato računa nismo povezali): prijava z geslom.
       if (parentByEmail(who.email)) return res.status(409).json({ error: "Račun s tem e-naslovom že obstaja. Prijavi se z e-naslovom in geslom.", exists: true });
       const birthIso = signup();
       if (!birthIso) return;
-      // Potrjen samo, če ga je potrdil Apple (pregled #492 P3-4).
-      const { id } = createParent(req, { email: who.email, passwordHash: unusablePasswordHash(), name, birthIso, verified: !!who.emailVerified });
+      // Apple je naslov potrdil (zgoraj).
+      const { id } = createParent(req, { email: who.email, passwordHash: unusablePasswordHash(), name, birthIso, verified: true });
       db.prepare("UPDATE parents SET apple_sub = ? WHERE id = ?").run(who.sub, id);
       p = getParent(id);
       created = true;

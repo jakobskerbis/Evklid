@@ -2370,6 +2370,8 @@
   "mob.appleFailed": "L’accesso con Apple non è riuscito. Riprova.",
   "mob.appleNewTitle": "Nuovo account",
   "mob.appleNewText": "Con questo Apple ID non hai ancora un account. Inserisci la tua data di nascita per crearlo.",
+  "mob.appleExistingTitle": "L'account esiste già",
+  "mob.appleExistingText": "Esiste già un account con questa email, ma l'indirizzo non è mai stato confermato. Lo colleghiamo al tuo ID Apple e lo proteggiamo: la vecchia password e gli accessi su altri dispositivi non saranno più validi. Inserisci la tua data di nascita.",
   "mob.birthDate": "Data di nascita",
   "mob.birthWhy": "Ci serve la tua data di nascita per sapere se l’account richiede il consenso dei genitori.",
   "mob.day": "Giorno",

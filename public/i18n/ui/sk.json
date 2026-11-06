@@ -2409,6 +2409,8 @@
   "mob.appleFailed": "Prihlásenie cez Apple sa nepodarilo. Skús to znova.",
   "mob.appleNewTitle": "Nový účet",
   "mob.appleNewText": "S týmto Apple ID ešte nemáš účet. Zadaj dátum narodenia, aby sme ho mohli vytvoriť.",
+  "mob.appleExistingTitle": "Účet už existuje",
+  "mob.appleExistingText": "Účet s týmto e-mailom už existuje, ale adresa nebola nikdy potvrdená. Prepojíme ho s tvojím Apple ID a zabezpečíme: staré heslo a prihlásenia na iných zariadeniach prestanú platiť. Zadaj dátum narodenia.",
   "mob.birthDate": "Dátum narodenia",
   "mob.birthWhy": "Dátum narodenia potrebujeme, aby sme vedeli, či účet vyžaduje súhlas rodičov.",
   "mob.day": "Deň",
