@@ -1692,7 +1692,9 @@ export function mountAccounts(app, store, opts = {}) {
     }
   });
 
-  async function applySubscription(parentId, sub) {
+  // opts.noFallback: brez prehoda na drugo naročnino (garancija: vrnjena so vsa plačila); opts.retry: napaka seznama
+  // naročnin se vrže naprej (webhook odgovori 500 in Stripe dogodek pošlje znova); opts.adopt: notranji prehod.
+  async function applySubscription(parentId, sub, opts = {}) {
     const item = sub.items?.data?.[0];
     const price = item?.price || {};
     const plan = planByKey(price.lookup_key);
@@ -1705,24 +1707,34 @@ export function mountAccounts(app, store, opts = {}) {
       log.error?.("[evklid] Stripe naročnina prezrta: račun ima veljavno naročnino", before.sub_provider, parentId);
       return;
     }
-    // Dogodek za drugo (staro) naročnino, ki ne velja več, ne prepiše trenutne veljavne (npr. skrbnik prekliče
-    // prejšnjo od dveh naročnin ali dogodek stare zamudi). Nova plačana naročnina pa trenutno zamenja (nakup).
-    if (before?.sub_id && sub.id !== before.sub_id && paidActive(before) && !PAID.has(sub.status)) {
-      log.error?.("[evklid] dogodek stare naročnine prezrt (velja druga)", parentId, sub.id, before.sub_id);
-      return;
+    // Dve naročnini istega kupca (dvojni nakup, zamujen dogodek, pregledi #490 B, #497 A in B). Trenutna ostane, dokler
+    // velja; druga postane trenutna samo, če je active/trialing (nikoli past_due, incomplete ali preklicana) in:
+    // trenutna ni več active/trialing (npr. past_due v odlogu) ali je druga višji paket (nakup višje stopnje). Obnova
+    // druge naročnine istega ali nižjega paketa tako ne preklaplja trenutne.
+    const good = (s) => s?.status === "active" || s?.status === "trialing";
+    const rank = (s) => monthlyOf(planByKey(s?.items?.data?.[0]?.price?.lookup_key))?.amount ?? 0;
+    const curRank = monthlyOf(planByKey(before?.sub_plan))?.amount ?? 0;
+    if (!opts.adopt && before?.sub_id && sub.id !== before.sub_id && paidActive(before)) {
+      const curGood = before.sub_status === "active" || before.sub_status === "trialing";
+      if (!good(sub) || (curGood && rank(sub) <= curRank)) {
+        log.error?.("[evklid] dogodek druge naročnine prezrt (velja trenutna)", parentId, sub.id, sub.status, before.sub_id);
+        return;
+      }
     }
-    // Trenutna naročnina se konča, kupec pa ima v Stripu še drugo plačano: velja ta (dve naročnini hkrati).
-    if (before?.sub_id === sub.id && !PAID.has(sub.status) && stripe.enabled && before.stripe_customer_id) {
+    // Trenutna ni več active/trialing (konec, unpaid, past_due), kupec pa ima v Stripu drugo active/trialing: velja ta
+    // (najvišji paket). Napaka seznama: iz webhooka 500 (ponovna dostava), drugje kot doslej.
+    if (!opts.noFallback && before?.sub_id === sub.id && !good(sub) && stripe.enabled && before.stripe_customer_id) {
       let other = null;
       try {
         const list = await stripe.request("GET", "/subscriptions", { customer: before.stripe_customer_id, status: "all", limit: 10 });
-        other = (list?.data || []).find((s) => s?.id && s.id !== sub.id && (s.status === "active" || s.status === "trialing"));
+        other = (list?.data || []).filter((s) => s?.id && s.id !== sub.id && good(s)).sort((x, y) => rank(y) - rank(x))[0] || null;
       } catch (err) {
         log.error?.("[evklid] druge naročnine ni bilo mogoče preveriti:", err.message);
+        if (opts.retry) throw err;
       }
       if (other) {
-        log.error?.("[evklid] naročnina končana, velja druga plačana naročnina istega kupca", parentId, sub.id, other.id);
-        return applySubscription(parentId, other);
+        log.error?.("[evklid] trenutna naročnina ne velja več, velja druga plačana naročnina istega kupca", parentId, sub.id, other.id);
+        return applySubscription(parentId, other, { adopt: true });
       }
     }
     // Zamenjava paketa med veljavno naročnino: zapomnimo si stari paket za zajamčeni AI tega meseca (subGuarantee).
@@ -1752,8 +1764,11 @@ export function mountAccounts(app, store, opts = {}) {
     if (!p.stripe_customer_id) return;
     const list = await stripe.request("GET", "/subscriptions", { customer: p.stripe_customer_id, status: "all", limit: 10 });
     const subs = list.data || [];
-    const best = subs.find((s) => PAID.has(s.status)) || subs.sort((a, b) => b.created - a.created)[0];
-    if (best) await applySubscription(p.id, best);
+    // Najprej active/trialing z najvišjim paketom (ne past_due pred aktivno, pregled #497 B P3-2), nato past_due, nato najnovejša.
+    const rank = (s) => monthlyOf(planByKey(s?.items?.data?.[0]?.price?.lookup_key))?.amount ?? 0;
+    const good = subs.filter((s) => s.status === "active" || s.status === "trialing").sort((a, b) => rank(b) - rank(a));
+    const best = good[0] || subs.find((s) => PAID.has(s.status)) || [...subs].sort((a, b) => b.created - a.created)[0];
+    if (best) await applySubscription(p.id, best, { adopt: true });
   }
 
   app.post("/api/billing/sync", async (req, res) => {
@@ -1837,9 +1852,15 @@ export function mountAccounts(app, store, opts = {}) {
   gifts = mountGifts(app, { db, stripe, json, log, getParent, ensureCustomer, baseUrl, isMinor, birthMissing, recordConsent: billing.recordConsent, paidActive });
   podari = mountPodari(app, { db, stripe, json, log, ensureCustomer, baseUrl, isMinor, birthMissing });
   // Garancija: ob vračilu se naročnina takoj prekliče (profili preidejo na brezplačni paket).
+  // Vračilo zajame vsa plačila naročnin kupca (garancija.js refundAll), zato prekličemo vse njegove veljavne naročnine
+  // (dvojni nakup) in ne preidemo na drugo (pregled #497 B, N8). Napaka seznama ustavi vračilo (skrbnik poskusi znova).
   async function cancelSubscription(p) {
+    const list = p.stripe_customer_id ? await stripe.request("GET", "/subscriptions", { customer: p.stripe_customer_id, status: "all", limit: 100 }) : null;
+    for (const s of list?.data || []) {
+      if (s?.id && s.id !== p.sub_id && PAID.has(s.status)) await stripe.request("DELETE", `/subscriptions/${s.id}`);
+    }
     const sub = await stripe.request("DELETE", `/subscriptions/${p.sub_id}`);
-    await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } });
+    await applySubscription(p.id, sub?.id ? sub : { ...p, id: p.sub_id, status: "canceled", items: { data: [{ price: { lookup_key: p.sub_plan } }] } }, { noFallback: true });
   }
   guarantee = mountGuarantee(app, { db, stripe, json, log, getParent, childIds, levelOf, paidActive, isMinor, birthMissing, cancelSubscription, addonOf: podari.addonOf });
 
@@ -1892,7 +1913,7 @@ export function mountAccounts(app, store, opts = {}) {
       case "customer.subscription.updated":
       case "customer.subscription.deleted": {
         const p = parentFor();
-        if (p) await applySubscription(p.id, await freshSubscription(obj));
+        if (p) await applySubscription(p.id, await freshSubscription(obj), { retry: true });
         break;
       }
       case "invoice.paid": {
