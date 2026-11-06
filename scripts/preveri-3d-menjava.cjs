@@ -8,10 +8,11 @@
 // Kristali: vsak kristal z izbrano »Osnovno celico« na vsakega naslednjega (opis = novi kristal) in vsi deli bcc → led.
 // Celice, organi, molekule, telesa, grafi, polja, procesi: prvi del, nato vse izbire (do 4 možnosti), stikala in gumbi.
 // Puščici ‹ ›: jedro iz živalske celice v naslednjo celico; jedro v celico brez jedra (eritrocit) → obvestilo.
-// Atlas: izbran del ostane ali se kartica zapre ob preklopu Moško/Žensko.
+// Lekcija (sim.js, brez plošče /3d): osnovna celica in atomi Fe ob menjavi bcc → led.
+// Atlas: stegnenica ostane ob preklopu Moško → Žensko; prostata se zapre z obvestilom »Ta model nima dela ‘…’.«.
 // Uporaba:
 //   node scripts/preveri-3d-menjava.cjs                 vse
-//   node scripts/preveri-3d-menjava.cjs kristali        le kristali (ali id modela, »puscice«, »atlas«)
+//   node scripts/preveri-3d-menjava.cjs kristali        le kristali (ali id modela, »puscice«, »lekcija«, »atlas«)
 //   node scripts/preveri-3d-menjava.cjs --posnetek=pot.png   samo posnetek telefona: bcc + Osnovna celica → Led Ih
 //   EVKLID_KOREN=/pot/do/kopije node scripts/...        streže drugo kopijo aplikacije (posnetek »prej«)
 const { spawn } = require("node:child_process");
@@ -31,7 +32,7 @@ const arg = process.argv.slice(2);
 const posnetek = arg.find((a) => a.startsWith("--posnetek="))?.slice(11);
 const izbrani = arg.filter((a) => !a.startsWith("-"));
 const SPLOSNI = ["celica-zivalska", "celica-rastlinska", "celica-bakterija", "organ-srce", "molekule", "atom", "telesa", "graf-ploskev", "elektricno-polje", "mitoza", "soncni-sistem"];
-const VSI = ["kristali", ...SPLOSNI, "puscice", "atlas"];
+const VSI = ["kristali", ...SPLOSNI, "puscice", "lekcija", "atlas"];
 const NALOGE = izbrani.length ? izbrani : VSI;
 const NAPRAVE = [
   ["telefon", { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1 }],
@@ -77,11 +78,12 @@ const STANJE = `async () => {
   const info = host.querySelector(".k3-info"), obv = host.querySelector(".k3-obvestilo");
   const id = host.querySelector('[data-del][aria-pressed="true"]')?.dataset.del || null;
   const d = (api.model.deli || []).find((x) => x.id === id) || null;
-  // poudarek: vsaj ena mreža izbranega dela ima kopijo materiala s sijem v barvi dela
+  // poudarek (public/3d/poudarek.js): vsaj ena mreža izbranega dela je v vrsti »spredaj« (renderOrder ≥ 1000), torej
+  // narisana nad prosojnimi ostalimi; stare mreže prejšnjega stanja so iz modela odstranjene
   let sij = null;
   if (d) {
-    const b = new THREE.Color(d.barva || "#6E9BFF");
-    sij = (d.meshes || []).some((m) => [].concat(m?.material || []).some((x) => x.emissive && x.emissive.equals(b) && x.emissiveIntensity > 0.8));
+    sij = false;
+    for (const m of d.meshes || []) m?.traverse?.((o) => { if ((o.isMesh || o.isLine) && !o.userData?.k3Sij && o.renderOrder >= 1000) sij = true; });
   }
   return {
     izven: n ? zunaj / n : 0,
@@ -235,26 +237,80 @@ async function puscice(p, nm) {
 }
 
 async function atlas(p, nm) {
-  await p.goto(`${base}/3d#atlas?izberi=Femur.r`, { waitUntil: "load" });
   const kartica = async () => p.evaluate(() => {
     const k = document.querySelector(".a3-kartica");
-    return k && !k.hidden && k.getClientRects().length ? k.textContent : null;
+    return k && !k.hidden && k.getClientRects().length ? k.querySelector("h2")?.textContent || k.textContent : null;
   });
-  const konec = Date.now() + 240000;
-  let pred = null;
-  while (Date.now() < konec && !(pred = await kartica())) await p.waitForTimeout(500);
+  const namig = () => p.evaluate(() => {
+    const n = document.querySelector(".a3-namig");
+    return n ? { besedilo: n.textContent, obvestilo: n.classList.contains("a3-obvestilo"), vidno: !!n.getClientRects().length && getComputedStyle(n).display !== "none" } : null;
+  });
+  // preklop telesa v nastavitvah pogleda (gumb .a3-nast odpre list z »Moško/Žensko«)
+  const spol = async (ime) => {
+    let g = p.locator(".a3 button", { hasText: new RegExp(`^${ime}$`) });
+    if (!(await g.count())) await klikni(p.locator(".a3 .a3-nast").first());
+    g = p.locator(".a3 button", { hasText: new RegExp(`^${ime}$`) });
+    for (let i = 0; i < 20 && !(await g.count()); i++) await p.waitForTimeout(250);
+    if (!(await g.count())) return false;
+    await klikni(g.first());
+    return true;
+  };
+  const odpriDel = async (id) => {
+    await p.goto("about:blank");
+    await p.goto(`${base}/3d#atlas?izberi=${id}`, { waitUntil: "load" });
+    const konec = Date.now() + 240000;
+    let k = null;
+    while (Date.now() < konec && !(k = await kartica())) await p.waitForTimeout(500);
+    return k;
+  };
+  // 1) stegnenica je v obeh telesih: kartica ostane z istim delom
+  const pred = await odpriDel("Femur.r");
   if (!pred) return napake.push(`${nm} atlas: kartica se ni odprla`);
-  // preklop telesa (nastavitve): izbran del ostane z enakim besedilom (opis vrstice se ne spreminja) ali se zapre
-  const gumb = p.locator(".a3 button", { hasText: /^Žensko$/ });
-  if (!(await gumb.count())) {
-    const odpriNast = p.locator(".a3 [data-nastavitve], .a3 button[aria-label='Nastavitve']");
-    if (await odpriNast.count()) await klikni(odpriNast.first());
-  }
-  if (!(await gumb.count())) return log(`${nm} atlas: preklop Moško/Žensko ni na voljo (preskočeno)`);
-  await klikni(gumb.first());
+  if (!(await spol("Žensko"))) return napake.push(`${nm} atlas: preklopa Moško/Žensko ni`);
   await p.waitForTimeout(3000);
   const po = await kartica();
-  if (po && po !== pred) napake.push(`${nm} atlas: kartica po preklopu kaže drugo besedilo`);
+  if (po !== pred) napake.push(`${nm} atlas: stegnenica po preklopu na Žensko »${po}« namesto »${pred}«`);
+  // 2) prostata je le v moškem telesu: kartica se zapre, ob modelu »Ta model nima dela ‘…’.«
+  const prostata = await odpriDel("Prostate.001");
+  if (!prostata) return napake.push(`${nm} atlas: kartica prostate se ni odprla`);
+  await p.keyboard.press("Escape").catch(() => {}); // zapre morebiten odprt list (kartica ostane)
+  if (!(await spol("Žensko"))) return napake.push(`${nm} atlas: preklopa Moško/Žensko ni (prostata)`);
+  let n = null;
+  for (let i = 0; i < 20; i++) {
+    n = await namig();
+    if (n?.obvestilo) break;
+    await p.waitForTimeout(150);
+  }
+  if (await kartica()) napake.push(`${nm} atlas: kartica prostate ostane odprta v ženskem telesu`);
+  if (!n?.obvestilo || !/^Ta model nima dela ‘.+’\.$/.test(n.besedilo)) napake.push(`${nm} atlas: ni obvestila »Ta model nima dela ‘…’.« (${n?.besedilo})`);
+}
+
+// Pregledovalnik v lekciji (public/3d/sim.js, brez plošče strani /3d): osnovna celica bcc → led, opis novega kristala.
+async function lekcija(p, nm) {
+  await p.goto("about:blank");
+  await p.goto(base + "/zasebnost.html", { waitUntil: "load" });
+  await p.evaluate(async () => {
+    document.head.insertAdjacentHTML("beforeend", ["style.css", "ui.css", "textbook.css"].map((h) => `<link rel="stylesheet" href="/${h}">`).join(""));
+    document.body.innerHTML = '<div id="box" style="padding:16px"></div>';
+    const { mountSim } = await import("/sim/index.js");
+    await mountSim("3d-kristali", document.getElementById("box"), { zacetek: { mreza: "bcc" } });
+  });
+  let s = await pocakaj(p, (x) => x.izven <= MEJA, 60000);
+  if (!s || s.nalaga) return napake.push(`${nm} lekcija: model se ni naložil`);
+  await izberiMoznost(p, "bcc");
+  await izberiDel(p, "celica");
+  await izberiMoznost(p, "led");
+  s = await pocakaj(p, (x) => (x.opis || "").includes("4 molekule H₂O") && x.izven <= MEJA);
+  preveriStanje(`${nm} lekcija kristali bcc→led/celica`, s, { prejId: "celica" });
+  if (!(s?.okno?.opis || "").includes("4 molekule H₂O")) napake.push(`${nm} lekcija: opis celice »${s?.okno?.opis}« ni za led`);
+  await izberiMoznost(p, "bcc");
+  await pocakaj(p, (x) => x.izven <= MEJA && (x.opis || "").includes("2 atoma Fe"));
+  await izberiDel(p, "fe");
+  await izberiMoznost(p, "led");
+  s = await pocakaj(p, (x) => x.izven <= MEJA && (x.obvestilo || x.obvestiloBilo));
+  const b = s?.obvestilo?.besedilo || s?.obvestiloBilo || "";
+  if (!/^Ta model nima dela ‘.+’\.$/.test(b)) napake.push(`${nm} lekcija: atomi Fe pri ledu brez obvestila »Ta model nima dela ‘…’.« (${b})`);
+  preveriStanje(`${nm} lekcija kristali bcc→led/fe`, s, { prejId: "fe" });
 }
 
 async function slikaj(p, pot) {
@@ -302,6 +358,7 @@ const base = `http://localhost:${port}`;
           if (naloga === "kristali") await kristali(p, nm);
           else if (naloga === "puscice") await puscice(p, nm);
           else if (naloga === "atlas") await atlas(p, nm);
+          else if (naloga === "lekcija") await lekcija(p, nm);
           else await splosni(p, nm, naloga);
         } catch (e) {
           napake.push(`${nm} ${naloga}: ${e.message.split("\n")[0].slice(0, 200)}`);

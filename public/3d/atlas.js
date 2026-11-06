@@ -8,6 +8,7 @@ import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "/vendor/three/examples/jsm/libs/meshopt_decoder.module.js";
 import { tkivo, ustvariMaterial } from "./tkiva.js";
 import { zgodovinaIzbire } from "./izbira.js";
+import { najdiIstiDel, obvestiloManjka } from "./isti-del.js";
 import { DUH_ALFA, DUH_SIVO, TRAJANJE as TRAJANJE_DUHA, najboljsaSmer, kandidatiSmeri } from "./poudarek.js";
 import { seznamDatotek, mapaTelesaNaprave } from "./modeli.js";
 import { normalizirajViri } from "./pogodba.js";
@@ -713,7 +714,10 @@ export async function odpriAtlas(el, { zapri = null, zgodovina: zZgodovino = fal
   }
   let ovojnice = false; // fascije pokažemo, ko jih uporabnik izbere v iskanju ali Brskaj
   let stVidnih = 0;
-  function uporabiVidnost() {
+  // obvesti: menjava stanja s strani uporabnika (Moško/Žensko, podrobnost, plasti, skupine; j, 6. 11.): izbrani del,
+  // ki v novem stanju ni viden, zamenja isti del (isti-del.js: id, latinsko ime), sicer se kartica zapre in v vrstici
+  // namiga ob modelu (nikoli čez) se za 4 s pokaže »Ta model nima dela ‘X’.«
+  function uporabiVidnost({ obvesti = false } = {}) {
     if (sloji.has("zenski")) sloji.get("zenski").viden = spol === "z";
     let n = 0;
     for (const d of deli.values()) {
@@ -725,9 +729,31 @@ export async function odpriAtlas(el, { zapri = null, zgodovina: zZgodovino = fal
     stevec.textContent = t("a3.visible", { n });
     stevec.classList.toggle("on", !!(samo || skrit.size || skriteSkupine.size));
     btnVse.hidden = !(samo || skrit.size || skriteSkupine.size);
-    if (izbran && deli.has(izbran) && !viden(deli.get(izbran))) izberi(null);
+    if (izbran && deli.has(izbran) && !viden(deli.get(izbran))) {
+      const r = deli.get(izbran).row;
+      izberi(null);
+      if (obvesti) {
+        const vidni = [...deli.values()].filter(viden).map((d) => ({ id: d.row.id, la: d.row.la }));
+        const isti = najdiIstiDel(vidni, { id: r.id, la: r.la });
+        if (isti) izberi(isti.id);
+        else pokaziObvestilo(r);
+      }
+    }
     vidiAO();
     kit.narisi();
+  }
+
+  let obvestiloCas = 0;
+  function pokaziObvestilo(r) {
+    const [k, par] = obvestiloManjka({ id: r.id, ime: r.prikaz }, {});
+    namig.textContent = t(k, par);
+    namig.classList.add("a3-obvestilo");
+    statusEl.textContent = namig.textContent;
+    clearTimeout(obvestiloCas);
+    obvestiloCas = setTimeout(() => {
+      namig.classList.remove("a3-obvestilo");
+      namig.textContent = t(typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches ? "a3.hintMouse" : "a3.hint");
+    }, 4000);
   }
 
   // Razmikanje: od središča plasti (skupine ostanejo skupaj) in znotraj skupine, gladko ob drsniku.
@@ -1209,7 +1235,7 @@ export async function odpriAtlas(el, { zapri = null, zgodovina: zZgodovino = fal
     s.napaka = false;
     osveziPlasti();
     if (on && !s.nalozen) await naloziSloj(id);
-    uporabiVidnost();
+    uporabiVidnost({ obvesti: true });
     osveziPlasti();
     if (id === "koza") vidiAO();
   }
@@ -1286,7 +1312,7 @@ export async function odpriAtlas(el, { zapri = null, zgodovina: zZgodovino = fal
           if (skriteSkupine.has(k)) skriteSkupine.delete(k);
           else skriteSkupine.add(k);
           if (!sloji.get(v.sloj).viden) await preklopiSloj(v.sloj, true);
-          uporabiVidnost();
+          uporabiVidnost({ obvesti: true });
         }
         osveziOko();
       });
@@ -1352,7 +1378,7 @@ export async function odpriAtlas(el, { zapri = null, zgodovina: zZgodovino = fal
       seg(t("a3.body"), [["m", t("a3.male")], ["z", t("a3.female")]], spol, async (k) => {
         spol = k;
         if (k === "z" && sloji.has("zenski")) await naloziSloj("zenski");
-        uporabiVidnost();
+        uporabiVidnost({ obvesti: true });
       }),
     );
     // Razmakni strukture.
@@ -1445,7 +1471,7 @@ export async function odpriAtlas(el, { zapri = null, zgodovina: zZgodovino = fal
       mk("span", "a3-oznaka-polja", t("a3.detail")),
       seg(t("a3.detail"), [[1, t("a3.levelOS")], [2, t("a3.levelSS")], [3, t("a3.levelAll")]], raven, (k) => {
         raven = k;
-        uporabiVidnost();
+        uporabiVidnost({ obvesti: true });
       }),
     );
     box.append(pod);
@@ -1793,6 +1819,7 @@ export async function odpriAtlas(el, { zapri = null, zgodovina: zZgodovino = fal
     },
     unici() {
       zgodovinaDela.unici();
+      clearTimeout(obvestiloCas);
       roKartica.disconnect();
       moKartica.disconnect();
       document.removeEventListener("keydown", naTipko);

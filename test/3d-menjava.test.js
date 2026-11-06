@@ -114,3 +114,25 @@ test("pregledovalnik: ena skupna funkcija ob menjavi, kader po izbiri/stikalu/gu
   assert.match(stran, /izbraniDel\?\.\(\)/);
   assert.match(stran, /prenos \}\)/);
 });
+
+test("atlas: menjava stanja (Moško/Žensko, podrobnost, plasti) ohrani isti del ali pokaže obvestilo ob modelu", () => {
+  const src = fs.readFileSync(path.join(ROOT, "public/3d/atlas.js"), "utf8");
+  assert.match(src, /import \{ najdiIstiDel, obvestiloManjka \} from "\.\/isti-del\.js"/, "skupna isti-del.js, brez podvajanja");
+  const vid = src.slice(src.indexOf("function uporabiVidnost("), src.indexOf("let obvestiloCas"));
+  assert.match(vid, /najdiIstiDel\(vidni, \{ id: r\.id, la: r\.la \}\)/, "isti del med vidnimi");
+  assert.match(vid, /else pokaziObvestilo\(r\)/, "sicer obvestilo");
+  for (const re of [/spol = k;[\s\S]{0,140}uporabiVidnost\(\{ obvesti: true \}\)/, /raven = k;\s*uporabiVidnost\(\{ obvesti: true \}\)/]) assert.match(src, re);
+  // obvestilo v vrstici namiga (ob modelu, nikoli čez), besedilo iz i18n
+  assert.match(src, /namig\.textContent = t\(k, par\)/);
+  // »Skrij« (uporabnik sam skrije del) ne obvešča
+  assert.match(src, /skrit\.add\(r\.id\);\s*izberi\(null\);\s*uporabiVidnost\(\);/);
+});
+
+test("pregledovalnik v lekciji in na strani /3d: ista pot (obMenjavi), obvestilo v plošči, brskalniški preizkus vseh vrst", () => {
+  const sim = fs.readFileSync(path.join(ROOT, "public/3d/sim.js"), "utf8");
+  assert.match(sim, /odpriModel\(box, mod/, "lekcija uporablja isti pregledovalnik");
+  const pr = fs.readFileSync(path.join(ROOT, "public/3d/pregledovalnik.js"), "utf8");
+  assert.match(pr, /spodaj\.append\(infoEl, obvestiloEl, nadzorEl, deliEl\)/, "obvestilo v plošči ob modelu");
+  const sk = fs.readFileSync(path.join(ROOT, "scripts/preveri-3d-menjava.cjs"), "utf8");
+  for (const n of ["kristali", "puscice", "lekcija", "atlas"]) assert.match(sk, new RegExp(`"${n}"`), n);
+});

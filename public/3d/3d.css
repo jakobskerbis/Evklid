@@ -335,6 +335,8 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .a3-dno > * { pointer-events: auto; }
 .a3-namig-vrsta { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 18px; border-radius: 22px; border: 1px solid var(--k3-rob); background: var(--k3-steklo); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .a3-namig { flex: 1; margin: 0; color: var(--k3-muted); font-size: 0.92rem; line-height: 1.35; }
+/* obvestilo ob menjavi stanja (»Ta model nima dela ‘X’.«) začasno v vrstici namiga, ob modelu, nikoli čez */
+.a3-namig.a3-obvestilo { color: var(--k3-besedilo); }
 .a3-nast { flex: none; }
 .a3-kartica, .a3-kviz { padding: 14px 16px 16px; border-radius: 22px; border: 1px solid var(--k3-rob); background: var(--k3-steklo); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4); max-height: 46vh; overflow: auto; animation: a3-gor 0.22s ease-out; }
 @keyframes a3-gor { from { transform: translateY(10px); opacity: 0; } }
