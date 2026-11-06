@@ -1449,6 +1449,7 @@ test("account unlock: wrong passwords from many networks hit the account-wide li
     for (let i = 0; i < 30; i++) assert.equal((await tryFrom(`10.0.${Math.floor(i / 3)}.1`)).status, 401);
     const r = await tryFrom("10.9.9.9");
     assert.equal(r.status, 429, "po 30 napačnih poskusih z različnih omrežij odklep še ugiba");
+    assert.match(r.body.error, /eno uro ali se odjavi in znova prijavi/, "sporočilo pove pravo okno in izhod");
     assert.equal((await tryFrom("10.9.9.10", "geslo1234")).status, 429);
   }, { accountLock: true });
 });

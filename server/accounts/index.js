@@ -126,6 +126,8 @@ export function mountAccounts(app, store, opts = {}) {
   const emailThrottle = new Throttle(30, 3600000);
   const ipThrottle = new Throttle(100, 15 * 60000);
   const acrossThrottle = new Throttle(30, 3600000);
+  // Meja za ves račun (acct<id>: odklep, izvoz, geslo profila) velja eno uro; prijava z geslom računa napravo odklene.
+  const ACCT_BLOCKED = "Preveč napačnih poskusov. Poskusi čez eno uro ali se odjavi in znova prijavi z geslom računa.";
   const json = express.json({ limit: "100kb" });
   const log = opts.log || console;
   const promoCfg = opts.promo ?? promoConfig(env);
@@ -1090,7 +1092,8 @@ export function mountAccounts(app, store, opts = {}) {
     if (!lockable(p)) return res.json({ ok: true });
     const key = `${p.id}|${req.ip}`;
     // Tudi meja za ves račun (acct<id>, kot izvoz in geslo profila): z menjavo omrežja se gesla ne da ugibati brez konca.
-    if (accountThrottle.blocked(key) || acrossThrottle.blocked(`acct${p.id}`)) return res.status(429).json({ error: "Preveč napačnih poskusov. Poskusi čez 15 minut." });
+    if (accountThrottle.blocked(key)) return res.status(429).json({ error: "Preveč napačnih poskusov. Poskusi čez 15 minut." });
+    if (acrossThrottle.blocked(`acct${p.id}`)) return res.status(429).json({ error: ACCT_BLOCKED });
     const ok = await verifyPassword(String(req.body?.password || ""), p.password_hash);
     if (!ok) {
       accountThrottle.fail(key);
@@ -1248,7 +1251,8 @@ export function mountAccounts(app, store, opts = {}) {
   app.post("/api/account/export", json, async (req, res) => {
     const p = req.parent;
     const key = `export${p.id}|${req.ip}`;
-    if (throttle.blocked(key) || acrossThrottle.blocked(`acct${p.id}`)) return res.status(429).json({ error: "Preveč poskusov. Poskusi čez 15 minut." });
+    if (throttle.blocked(key)) return res.status(429).json({ error: "Preveč poskusov. Poskusi čez 15 minut." });
+    if (acrossThrottle.blocked(`acct${p.id}`)) return res.status(429).json({ error: ACCT_BLOCKED });
     if (!p.is_guest && !(await verifyPassword(String(req.body?.password || ""), p.password_hash))) {
       throttle.fail(key);
       acrossThrottle.fail(`acct${p.id}`);
@@ -1466,7 +1470,8 @@ export function mountAccounts(app, store, opts = {}) {
     const id = Number(req.body?.student_id);
     if (!Number.isInteger(id) || ownerOf(id) !== p.id) return res.status(404).json({ error: "Učenec ne obstaja." });
     const key = `acct${p.id}|${req.ip}`;
-    if (profileThrottle.blocked(key) || acrossThrottle.blocked(`acct${p.id}`)) return res.status(429).json({ error: "Preveč napačnih poskusov. Poskusi čez 15 minut." });
+    if (profileThrottle.blocked(key)) return res.status(429).json({ error: "Preveč napačnih poskusov. Poskusi čez 15 minut." });
+    if (acrossThrottle.blocked(`acct${p.id}`)) return res.status(429).json({ error: ACCT_BLOCKED });
     const auth = String(req.body?.auth ?? "");
     if (!(await verifyPassword(auth, p.password_hash)) && !(await locks.verify(id, auth))) {
       profileThrottle.fail(key);
