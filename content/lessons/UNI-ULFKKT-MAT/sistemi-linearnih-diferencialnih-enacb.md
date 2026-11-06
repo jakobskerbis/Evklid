@@ -135,7 +135,7 @@ $\dot{\vec{x}} = A\vec{x}$ z lastnimi vrednostmi $-k_1$, $-k_2$, $0$; vrh: $\dot
 4. Rešitev: $a = a_0e^{-k_1t}$, $b = \frac{k_1a_0}{k_1 - k_2}\left(e^{-k_2t} - e^{-k_1t}\right)$, $c = a_0 - a - b$ (vsota se ohranja).
 5. Vrh: $\dot b = 0$ da $k_2e^{-k_2t} = k_1e^{-k_1t}$, torej $t_{\max} = \frac{\ln(k_1/k_2)}{k_1 - k_2} = \frac{\ln 4}{0{,}15}\,\mathrm{min} \approx 9{,}24\,\mathrm{min}$.
 6. Izraz je simetričen: zamenjava $k_1 \leftrightarrow k_2$ zamenja predznak števca in imenovalca, $t_{\max}$ ostane enak. Spremeni pa se faktor $\frac{k_1}{k_1 - k_2}$ pred oklepajem, zato se vrh zniža za faktor $k_2/k_1 = \frac{1}{4}$.
-7. Vrednost vrha: $b_{\max} = \frac{0{,}20}{0{,}15}\left(e^{-0{,}4621} - e^{-1{,}8484}\right)\,\mathrm{mol/L} \approx 0{,}630\,\mathrm{mol/L}$.
+7. Vrednost vrha (s $\frac{k_1}{k_1 - k_2} = \frac{4}{3}$): $b_{\max} = \frac{4}{3}\left(e^{-0{,}4621} - e^{-1{,}8484}\right)\,\mathrm{mol/L} \approx 0{,}630\,\mathrm{mol/L}$.
 8. Ob $10\,\mathrm{min}$: $a = e^{-2} \approx 0{,}135$, $b = \frac{4}{3}(e^{-0{,}5} - e^{-2}) \approx 0{,}628$, $c \approx 1 - 0{,}135 - 0{,}628 = 0{,}237\,\mathrm{mol/L}$.
 9. Odgovor: vrh B je ob $9{,}2\,\mathrm{min}$ z $0{,}63\,\mathrm{mol/L}$; ob $10\,\mathrm{min}$ je $a \approx 0{,}135$, $b \approx 0{,}628$ in $c \approx 0{,}237\,\mathrm{mol/L}$. Pri zamenjanih konstantah bi bil vrh ob istem času, a le $0{,}16\,\mathrm{mol/L}$, zato za določitev konstant potrebujemo tudi višino vrha ali krivuljo $a(t)$.
 
