@@ -3596,5 +3596,19 @@
   "open.formulas": "Përmbledhje formulash",
   "open.graph": "Grafik",
   "open.inCalc": "Hape në makinë llogaritëse",
-  "open.sketch": "Skicë"
+  "open.sketch": "Skicë",
+  "birth.title": "Edhe një e dhënë: data jote e lindjes",
+  "birth.why": "Tani e tutje çdo llogari ka datën e lindjes së mbajtësit. Prej saj dimë kush mund të paguajë ose të japë pëlqimin vetë dhe kur duhet ta bëjë një prind. E pyesim vetëm një herë.",
+  "birth.whose": "Shkruaj datën e lindjes së personit që e krijoi këtë llogari. Nëse është llogaria e prindërve të tu, le ta shkruajë një prind. Më vonë nuk mund të ndryshohet.",
+  "birth.label": "Data e lindjes",
+  "birth.save": "Ruaj",
+  "birth.later": "Më vonë",
+  "birth.laterNote": "Edhe pa datën mund të vazhdosh të mësosh, vetëm biseda shtesë me tutorin nuk mund të blihen. Datën mund ta shkruash më vonë te skeda Llogaria.",
+  "birth.missing": "Shkruaj datën tënde të lindjes. Me të kontrollojmë nëse mund ta krijosh llogarinë vetë apo e krijon një prind.",
+  "birth.enter": "Shkruaj një datë të vlefshme lindjeje.",
+  "birth.underAge": "Faleminderit. Meqë je më i ri ose më e re se {age} vjeç, për llogarinë tënde duhet të japë pëlqimin një prind ose kujdestar. Tregoji faqen për prindërit, ku shkruhet çfarë është ky aplikacion dhe cilat të dhëna ruajmë.",
+  "birth.parents": "Faqja për prindërit",
+  "birth.next": "Vazhdo",
+  "birth.accountRow": "Data e lindjes së mbajtësit të llogarisë ende nuk është shkruar. Pa të nuk mund të blihen biseda shtesë me tutorin.",
+  "birth.saved": "Data e lindjes u ruajt."
 }

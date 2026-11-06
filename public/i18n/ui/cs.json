@@ -3658,5 +3658,19 @@
   "open.formulas": "Sbírka vzorců",
   "open.graph": "Graf",
   "open.inCalc": "Otevřít v kalkulačce",
-  "open.sketch": "Náčrt"
+  "open.sketch": "Náčrt",
+  "birth.title": "Ještě jeden údaj: tvé datum narození",
+  "birth.why": "Od teď má každý účet zadané datum narození majitele. Podle něj víme, kdo může sám platit nebo dát souhlas a kdy to musí udělat rodič. Ptáme se jen jednou.",
+  "birth.whose": "Zadej datum narození osoby, která tento účet vytvořila. Pokud je to účet tvých rodičů, ať ho zadá rodič. Později ho nelze změnit.",
+  "birth.label": "Datum narození",
+  "birth.save": "Uložit",
+  "birth.later": "Později",
+  "birth.laterNote": "I bez data se můžeš dál učit, jen nelze dokoupit další rozhovory s lektorem. Datum můžeš zadat později na kartě Účet.",
+  "birth.missing": "Zadej své datum narození. Podle něj ověříme, jestli si účet můžeš vytvořit sám, nebo ho má vytvořit rodič.",
+  "birth.enter": "Zadej platné datum narození.",
+  "birth.underAge": "Děkujeme. Protože ti je méně než {age} let, musí k tvému účtu dát souhlas rodič nebo zákonný zástupce. Ukaž mu stránku pro rodiče, kde je napsáno, co je tato aplikace a jaké údaje uchováváme.",
+  "birth.parents": "Stránka pro rodiče",
+  "birth.next": "Pokračovat",
+  "birth.accountRow": "Datum narození majitele účtu ještě není zadané. Bez něj nelze dokoupit další rozhovory s lektorem.",
+  "birth.saved": "Datum narození je uloženo."
 }

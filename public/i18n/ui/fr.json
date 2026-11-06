@@ -3597,5 +3597,19 @@
   "open.formulas": "Formulaire",
   "open.graph": "Graphique",
   "open.inCalc": "Ouvrir dans la calculatrice",
-  "open.sketch": "Schéma"
+  "open.sketch": "Schéma",
+  "birth.title": "Encore une information : ta date de naissance",
+  "birth.why": "Désormais, chaque compte indique la date de naissance de son titulaire. Elle nous dit qui peut payer ou donner son consentement seul et quand un parent doit le faire. Nous ne le demandons qu'une fois.",
+  "birth.whose": "Saisis la date de naissance de la personne qui a créé ce compte. Si c'est le compte de tes parents, laisse un parent la saisir. Elle ne pourra plus être modifiée.",
+  "birth.label": "Date de naissance",
+  "birth.save": "Enregistrer",
+  "birth.later": "Plus tard",
+  "birth.laterNote": "Tu peux continuer à apprendre sans elle ; seules les conversations supplémentaires avec le tuteur ne peuvent pas être achetées. Tu pourras la saisir plus tard dans l'onglet Compte.",
+  "birth.missing": "Saisis ta date de naissance. Elle nous permet de vérifier si tu peux créer le compte toi-même ou si un parent doit le créer.",
+  "birth.enter": "Saisis une date de naissance valide.",
+  "birth.underAge": "Merci. Comme tu as moins de {age} ans, un parent ou un tuteur légal doit donner son consentement pour ton compte. Montre-lui la page pour les parents, qui explique ce qu'est cette application et quelles données nous conservons.",
+  "birth.parents": "Page pour les parents",
+  "birth.next": "Continuer",
+  "birth.accountRow": "La date de naissance du titulaire du compte n'est pas encore saisie. Sans elle, les conversations supplémentaires avec le tuteur ne peuvent pas être achetées.",
+  "birth.saved": "Date de naissance enregistrée."
 }

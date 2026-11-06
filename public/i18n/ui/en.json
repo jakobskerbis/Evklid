@@ -3596,5 +3596,19 @@
   "open.formulas": "Formula sheet",
   "open.graph": "Graph",
   "open.inCalc": "Open in calculator",
-  "open.sketch": "Sketch"
+  "open.sketch": "Sketch",
+  "birth.title": "One more thing: your date of birth",
+  "birth.why": "From now on every account has the holder's date of birth. It tells us who can pay or give consent themselves and when a parent has to do it. We only ask once.",
+  "birth.whose": "Enter the date of birth of the person who created this account. If it is your parents' account, let a parent enter it. It cannot be changed later.",
+  "birth.label": "Date of birth",
+  "birth.save": "Save",
+  "birth.later": "Later",
+  "birth.laterNote": "You can keep learning without it; only extra tutor conversations cannot be bought. You can enter the date later in the Account tab.",
+  "birth.missing": "Enter your date of birth. We use it to check whether you can create the account yourself or a parent should create it.",
+  "birth.enter": "Enter a valid date of birth.",
+  "birth.underAge": "Thank you. Because you are younger than {age}, a parent or guardian has to consent for your account. Show them the page for parents, which explains what this app is and what data we keep.",
+  "birth.parents": "Page for parents",
+  "birth.next": "Continue",
+  "birth.accountRow": "The account holder's date of birth has not been entered yet. Without it, extra tutor conversations cannot be bought.",
+  "birth.saved": "Date of birth saved."
 }

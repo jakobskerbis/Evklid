@@ -3596,5 +3596,19 @@
   "open.formulas": "Formelsammlung",
   "open.graph": "Graph",
   "open.inCalc": "Im Rechner öffnen",
-  "open.sketch": "Skizze"
+  "open.sketch": "Skizze",
+  "birth.title": "Noch eine Angabe: dein Geburtsdatum",
+  "birth.why": "Ab jetzt hat jedes Konto das Geburtsdatum der Kontoinhaberin oder des Kontoinhabers. Daran sehen wir, wer selbst bezahlen oder einwilligen kann und wann das ein Elternteil tun muss. Wir fragen nur einmal.",
+  "birth.whose": "Gib das Geburtsdatum der Person ein, die dieses Konto erstellt hat. Wenn es das Konto deiner Eltern ist, soll ein Elternteil es eingeben. Es lässt sich später nicht ändern.",
+  "birth.label": "Geburtsdatum",
+  "birth.save": "Speichern",
+  "birth.later": "Später",
+  "birth.laterNote": "Du kannst auch ohne Datum weiterlernen, nur zusätzliche Gespräche mit dem Tutor können nicht gekauft werden. Du kannst das Datum später im Tab Konto eingeben.",
+  "birth.missing": "Gib dein Geburtsdatum ein. Damit prüfen wir, ob du das Konto selbst erstellen kannst oder ein Elternteil es erstellt.",
+  "birth.enter": "Gib ein gültiges Geburtsdatum ein.",
+  "birth.underAge": "Danke. Weil du jünger als {age} Jahre bist, muss ein Elternteil oder eine sorgeberechtigte Person für dein Konto einwilligen. Zeig ihnen die Seite für Eltern; dort steht, was diese App ist und welche Daten wir speichern.",
+  "birth.parents": "Seite für Eltern",
+  "birth.next": "Weiter",
+  "birth.accountRow": "Das Geburtsdatum der Kontoinhaberin oder des Kontoinhabers fehlt noch. Ohne es können keine zusätzlichen Gespräche mit dem Tutor gekauft werden.",
+  "birth.saved": "Geburtsdatum gespeichert."
 }

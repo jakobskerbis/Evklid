@@ -3628,5 +3628,19 @@
   "open.formulas": "Zbirka formula",
   "open.graph": "Graf",
   "open.inCalc": "Otvori u kalkulatoru",
-  "open.sketch": "Skica"
+  "open.sketch": "Skica",
+  "birth.title": "Još jedan podatak: tvoj datum rođenja",
+  "birth.why": "Od sada svaki račun ima upisan datum rođenja vlasnika. Po njemu znamo ko može sam platiti ili dati saglasnost, a kada to mora uraditi roditelj. Pitamo samo jednom.",
+  "birth.whose": "Upiši datum rođenja osobe koja je otvorila ovaj račun. Ako je to račun tvojih roditelja, neka ga upiše roditelj. Kasnije se ne može promijeniti.",
+  "birth.label": "Datum rođenja",
+  "birth.save": "Sačuvaj",
+  "birth.later": "Kasnije",
+  "birth.laterNote": "I bez datuma možeš nastaviti učiti, samo se ne mogu dokupiti dodatni razgovori s instruktorom. Datum možeš upisati kasnije u kartici Račun.",
+  "birth.missing": "Upiši svoj datum rođenja. Po njemu provjeravamo možeš li sam otvoriti račun ili ga otvara roditelj.",
+  "birth.enter": "Upiši ispravan datum rođenja.",
+  "birth.underAge": "Hvala. Pošto imaš manje od {age} godina, za tvoj račun saglasnost mora dati roditelj ili staratelj. Pokaži mu stranicu za roditelje, gdje piše šta je ova aplikacija i koje podatke čuvamo.",
+  "birth.parents": "Stranica za roditelje",
+  "birth.next": "Dalje",
+  "birth.accountRow": "Datum rođenja vlasnika računa još nije upisan. Bez njega se ne mogu dokupiti dodatni razgovori s instruktorom.",
+  "birth.saved": "Datum rođenja je sačuvan."
 }

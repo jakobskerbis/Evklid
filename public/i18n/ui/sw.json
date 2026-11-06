@@ -3594,5 +3594,19 @@
   "open.formulas": "Mkusanyiko wa fomula",
   "open.graph": "Grafu",
   "open.inCalc": "Fungua kwenye kikokotoo",
-  "open.sketch": "Mchoro"
+  "open.sketch": "Mchoro",
+  "birth.title": "Taarifa moja zaidi: tarehe yako ya kuzaliwa",
+  "birth.why": "Kuanzia sasa kila akaunti ina tarehe ya kuzaliwa ya mwenye akaunti. Kwayo tunajua nani anaweza kulipa au kutoa idhini mwenyewe na lini mzazi anapaswa kufanya hivyo. Tunauliza mara moja tu.",
+  "birth.whose": "Andika tarehe ya kuzaliwa ya mtu aliyefungua akaunti hii. Ikiwa ni akaunti ya wazazi wako, mwache mzazi aiandike. Haiwezi kubadilishwa baadaye.",
+  "birth.label": "Tarehe ya kuzaliwa",
+  "birth.save": "Hifadhi",
+  "birth.later": "Baadaye",
+  "birth.laterNote": "Unaweza kuendelea kujifunza bila hiyo; ila mazungumzo ya ziada na mwalimu hayawezi kununuliwa. Unaweza kuandika tarehe baadaye kwenye kichupo cha Akaunti.",
+  "birth.missing": "Andika tarehe yako ya kuzaliwa. Kwayo tunaangalia kama unaweza kufungua akaunti mwenyewe au mzazi anapaswa kuifungua.",
+  "birth.enter": "Andika tarehe sahihi ya kuzaliwa.",
+  "birth.underAge": "Asante. Kwa kuwa una umri chini ya miaka {age}, mzazi au mlezi lazima atoe idhini kwa akaunti yako. Mwonyeshe ukurasa wa wazazi, unaoeleza programu hii ni nini na data gani tunahifadhi.",
+  "birth.parents": "Ukurasa wa wazazi",
+  "birth.next": "Endelea",
+  "birth.accountRow": "Tarehe ya kuzaliwa ya mwenye akaunti bado haijaandikwa. Bila hiyo mazungumzo ya ziada na mwalimu hayawezi kununuliwa.",
+  "birth.saved": "Tarehe ya kuzaliwa imehifadhiwa."
 }

@@ -3664,5 +3664,19 @@
   "open.formulas": "Zbiór wzorów",
   "open.graph": "Wykres",
   "open.inCalc": "Otwórz w kalkulatorze",
-  "open.sketch": "Szkic"
+  "open.sketch": "Szkic",
+  "birth.title": "Jeszcze jedna informacja: twoja data urodzenia",
+  "birth.why": "Od teraz każde konto ma wpisaną datę urodzenia właściciela. Dzięki niej wiemy, kto może sam zapłacić lub wyrazić zgodę, a kiedy musi to zrobić rodzic. Pytamy tylko raz.",
+  "birth.whose": "Wpisz datę urodzenia osoby, która założyła to konto. Jeśli to konto twoich rodziców, niech wpisze ją rodzic. Później nie można jej zmienić.",
+  "birth.label": "Data urodzenia",
+  "birth.save": "Zapisz",
+  "birth.later": "Później",
+  "birth.laterNote": "Bez daty też możesz się dalej uczyć, nie można tylko dokupić dodatkowych rozmów z korepetytorem. Datę możesz wpisać później w karcie Konto.",
+  "birth.missing": "Wpisz swoją datę urodzenia. Dzięki niej sprawdzamy, czy możesz sam założyć konto, czy powinien je założyć rodzic.",
+  "birth.enter": "Wpisz prawidłową datę urodzenia.",
+  "birth.underAge": "Dziękujemy. Ponieważ masz mniej niż {age} lat, zgodę na twoje konto musi wyrazić rodzic lub opiekun. Pokaż mu stronę dla rodziców, gdzie jest napisane, czym jest ta aplikacja i jakie dane przechowujemy.",
+  "birth.parents": "Strona dla rodziców",
+  "birth.next": "Dalej",
+  "birth.accountRow": "Data urodzenia właściciela konta nie została jeszcze wpisana. Bez niej nie można dokupić dodatkowych rozmów z korepetytorem.",
+  "birth.saved": "Data urodzenia została zapisana."
 }

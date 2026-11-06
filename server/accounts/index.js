@@ -162,6 +162,9 @@ export function mountAccounts(app, store, opts = {}) {
     name: p.name,
     minor: isMinor(p),
     birth_year: p.birth_date ? Number(p.birth_date.slice(0, 4)) : null,
+    // Star račun brez datuma rojstva: aplikacija ga ob prijavi enkrat vpraša (need_birth), pozneje v zavihku Račun.
+    birth_missing: !p.is_guest && !p.birth_date,
+    need_birth: !p.is_guest && !p.birth_date && !p.birth_asked_at,
     verified: !!p.email_verified_at,
     is_admin: !!p.is_admin || isAdminEmail(p),
     weekly_email: !!p.weekly_email,
@@ -516,12 +519,14 @@ export function mountAccounts(app, store, opts = {}) {
     return { email, password, birthIso };
   }
 
+  const BIRTH_MISSING = "Vpiši svoj datum rojstva. Z njim preverimo, ali lahko račun ustvariš sam ali ga ustvari starš.";
+
   // Preverjanje starosti: mlajši od starosti digitalne privolitve dobijo povezavo za starše.
   // Vrne datum rojstva (YYYY-MM-DD) ali null (odgovor je že poslan). Tudi za prijavo z Apple (server/mobile).
   function checkAge(req, res) {
     const birth = parseBirthDate(req.body?.birth_date);
     const age = birth ? ageOn(birth) : null;
-    if (age === null || age < 0 || age > 120) return res.status(400).json({ error: "Vpiši datum rojstva.", birth_date: true }), null;
+    if (age === null || age < 0 || age > 120) return res.status(400).json({ error: BIRTH_MISSING, birth_date: true }), null;
     const cf = String(req.headers["cf-ipcountry"] || "").toUpperCase();
     const minAge = minAgeOf(cf, req.body?.country);
     const blockedBefore = readCookie(req, AGE_COOKIE) === "1" || LEGACY_AGE_COOKIES.some((c) => readCookie(req, c) === "1");
@@ -802,6 +807,28 @@ export function mountAccounts(app, store, opts = {}) {
   });
 
   // Odklep računa na tej napravi z geslom računa (zavihek Račun, nov ali izbrisan profil).
+  // Star račun brez datuma rojstva ga vpiše enkrat (ob prijavi ali v zavihku Račun) ali izbere »Pozneje«.
+  // Vpisanega datuma ni mogoče spremeniti (sicer bi se mladoletni naredil polnoletnega). Datuma ne beležimo v dnevnik.
+  // Mlajši od starosti digitalne privolitve (SI: 15, age.js): datum se shrani (plačila gredo prek staršev, isMinor),
+  // odgovor pa ima under_age, da aplikacija pokaže pot do soglasja staršev kot pri registraciji.
+  app.post("/api/account/birth-date", json, (req, res) => {
+    const p = req.parent;
+    if (!p) return res.status(401).json({ error: "Prijavi se.", login: true });
+    if (p.is_guest) return res.status(400).json({ error: "Najprej ustvari račun.", guest: true });
+    if (p.birth_date) return res.status(409).json({ error: "Datum rojstva je že vpisan." });
+    if (req.body?.later === true) {
+      update(p.id, { birth_asked_at: new Date().toISOString() });
+      return res.json({ parent: publicParent(getParent(p.id)) });
+    }
+    const birth = parseBirthDate(req.body?.birth_date);
+    const age = birth ? ageOn(birth) : null;
+    if (age === null || age < 0 || age > 120) return res.status(400).json({ error: "Vpiši pravi datum rojstva.", birth_date: true });
+    const iso = `${birth.y}-${String(birth.m).padStart(2, "0")}-${String(birth.d).padStart(2, "0")}`;
+    update(p.id, { birth_date: iso, birth_asked_at: new Date().toISOString() });
+    const minAge = minAgeOf(p.country, String(req.headers["cf-ipcountry"] || ""));
+    res.json({ parent: publicParent(getParent(p.id)), ...(age < minAge ? { under_age: true, min_age: minAge } : {}) });
+  });
+
   app.post("/api/account/unlock", json, async (req, res) => {
     const p = req.parent;
     if (!lockable(p)) return res.json({ ok: true });

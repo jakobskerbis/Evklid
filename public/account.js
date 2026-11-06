@@ -442,6 +442,8 @@ async function route() {
   // Uporaba brez računa je izklopljena: gost lahko samo ustvari račun in obdrži napredek.
   if (status.parent.guest && !status.guest_mode) return renderGuestOff(), false;
   if (!status.parent.verified && !status.parent.guest) return renderVerify(), false;
+  // Star račun brez datuma rojstva: ob prijavi ga enkrat vprašamo (z razlago in »Pozneje«), nikoli ne zaklenemo.
+  if (status.parent.need_birth) return renderBirth(), false;
   if (!status.children) return renderAddChild(), false;
   authMode(false);
   adjustAppForAccounts();
@@ -531,6 +533,7 @@ function renderLogin(mode = "login") {
         store.set(AGE_BLOCK, String(Date.now()));
         return renderAskParent(err.data.min_age);
       }
+      if (err.data?.birth_date) err = { message: t("birth.missing") };
       showError(f, err);
     }
   });
@@ -651,6 +654,65 @@ function renderReset(token) {
     } catch (err) {
       showError(e.target, err);
     }
+  });
+}
+
+// ---------- datum rojstva (stari računi) ----------
+
+// Obrazec za datum rojstva imetnika računa: zaslon ob prijavi (later = gumb »Pozneje«) in kartica v zavihku Račun.
+function birthFormHtml(later) {
+  const max = new Date().toISOString().slice(0, 10);
+  return `<form class="birth-form form" novalidate>
+      <label>${esc(t("birth.label"))} <input name="birth_date" type="date" required min="1900-01-01" max="${max}" autocomplete="bday"></label>
+      <p class="muted">${esc(t("birth.whose"))}</p>
+      <p class="form-error" role="alert" hidden></p>
+      <div class="form-actions">
+        <button class="primary" type="submit">${esc(t("birth.save"))}</button>
+        ${later ? `<button type="button" data-later>${esc(t("birth.later"))}</button>` : ""}
+      </div>
+    </form>`;
+}
+
+// onDone(r): r je odgovor strežnika ({ parent, under_age?, min_age? }).
+function bindBirthForm(form, onDone) {
+  const send = async (body, btn) => {
+    btn.disabled = true;
+    try {
+      onDone(await api("/api/account/birth-date", { method: "POST", body }));
+    } catch (err) {
+      showError(form, err.data?.birth_date ? { message: t("birth.enter") } : err);
+    } finally {
+      btn.disabled = false;
+    }
+  };
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!form.birth_date.value) return showError(form, { message: t("birth.enter") });
+    send({ birth_date: form.birth_date.value }, form.querySelector('[type="submit"]'));
+  });
+  form.querySelector("[data-later]")?.addEventListener("click", (e) => send({ later: true }, e.currentTarget));
+}
+
+// Mlajši od starosti digitalne privolitve: datum je shranjen, za soglasje pa velja pot prek staršev kot pri registraciji.
+const underAgeHtml = (minAge) => `<div class="birth-under" role="status">
+      <p>${esc(t("birth.underAge", { age: minAge }))}</p>
+      <p><a href="/starsi.html" target="_blank">${esc(t("birth.parents"))}</a></p>
+    </div>`;
+
+function renderBirth() {
+  shell(`
+    <h1>${esc(t("birth.title"))}</h1>
+    <p class="muted">${esc(t("birth.why"))}</p>
+    <div class="card">${birthFormHtml(true)}</div>
+    <p class="muted">${esc(t("birth.laterNote"))}</p>`);
+  bindBirthForm($("#view-auth .birth-form"), (r) => {
+    status.parent = r.parent;
+    if (!r.under_age) return continueFlow();
+    shell(`
+      <h1>${esc(t("birth.title"))}</h1>
+      <div class="card">${underAgeHtml(r.min_age)}</div>
+      <div class="form-actions"><button class="primary" type="button" id="birth-next">${esc(t("birth.next"))}</button></div>`);
+    $("#birth-next").addEventListener("click", continueFlow);
   });
 }
 
@@ -1380,6 +1442,11 @@ export async function renderAccount() {
           : `<p class="muted">${esc(t("acct.profiles", { n: acc.max_children }))}${acc.max_children === 1 ? ` ${esc(t("acct.secondChild"))}` : ""}</p>`}
       <p class="muted">Vsak profil je lahko hkrati odprt samo na eni napravi. Profil zamenjaš (izbrišeš v zavihku Nastavitve in dodaš novega) največ enkrat na 30 dni.</p>
     </div>
+    ${acc.parent.birth_missing ? `<div class="card" id="birth-card">
+      <h2>${esc(t("birth.label"))}</h2>
+      <p>${esc(t("birth.accountRow"))}</p>
+      ${birthFormHtml(false)}
+    </div>` : ""}
     <div id="credit-card"></div>
 
     <div class="card">
@@ -1548,6 +1615,16 @@ export async function renderAccount() {
     }
   });
   $("#weekly-toggle").addEventListener("change", (e) => api("/api/account", { method: "PUT", body: { weekly_email: e.target.checked } }));
+  const birthCard = $("#birth-card");
+  if (birthCard)
+    bindBirthForm(birthCard.querySelector(".birth-form"), (r) => {
+      status.parent = r.parent;
+      if (r.under_age) birthCard.innerHTML = `<h2>${esc(t("birth.label"))}</h2>${underAgeHtml(r.min_age)}`;
+      else {
+        toast(t("birth.saved"));
+        renderAccount();
+      }
+    });
   $("#weekly-send").addEventListener("click", async () => {
     try {
       const r = await api("/api/account/weekly-report/send", { method: "POST" });

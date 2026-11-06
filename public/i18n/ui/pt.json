@@ -3601,5 +3601,19 @@
   "open.formulas": "Formulário",
   "open.graph": "Gráfico",
   "open.inCalc": "Abrir na calculadora",
-  "open.sketch": "Esboço"
+  "open.sketch": "Esboço",
+  "birth.title": "Só mais um dado: a tua data de nascimento",
+  "birth.why": "A partir de agora, cada conta tem a data de nascimento do titular. Com ela sabemos quem pode pagar ou dar consentimento sozinho e quando isso tem de ser feito por um dos pais. Só perguntamos uma vez.",
+  "birth.whose": "Escreve a data de nascimento da pessoa que criou esta conta. Se for a conta dos teus pais, deixa um deles escrevê-la. Depois não pode ser alterada.",
+  "birth.label": "Data de nascimento",
+  "birth.save": "Guardar",
+  "birth.later": "Mais tarde",
+  "birth.laterNote": "Podes continuar a aprender sem ela; só não é possível comprar conversas extra com o tutor. Podes escrever a data mais tarde no separador Conta.",
+  "birth.missing": "Escreve a tua data de nascimento. Com ela verificamos se podes criar a conta sozinho ou se deve ser um dos pais a criá-la.",
+  "birth.enter": "Escreve uma data de nascimento válida.",
+  "birth.underAge": "Obrigado. Como tens menos de {age} anos, um dos pais ou um tutor tem de dar consentimento para a tua conta. Mostra-lhe a página para pais, onde se explica o que é esta aplicação e que dados guardamos.",
+  "birth.parents": "Página para pais",
+  "birth.next": "Continuar",
+  "birth.accountRow": "A data de nascimento do titular da conta ainda não foi escrita. Sem ela não é possível comprar conversas extra com o tutor.",
+  "birth.saved": "Data de nascimento guardada."
 }

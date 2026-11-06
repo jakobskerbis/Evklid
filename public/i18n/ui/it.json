@@ -3597,5 +3597,19 @@
   "open.formulas": "Formulario",
   "open.graph": "Grafico",
   "open.inCalc": "Apri nella calcolatrice",
-  "open.sketch": "Schizzo"
+  "open.sketch": "Schizzo",
+  "birth.title": "Ancora un dato: la tua data di nascita",
+  "birth.why": "D'ora in poi ogni account ha la data di nascita del titolare. Ci dice chi può pagare o dare il consenso da solo e quando deve farlo un genitore. Lo chiediamo una sola volta.",
+  "birth.whose": "Inserisci la data di nascita della persona che ha creato questo account. Se è l'account dei tuoi genitori, lascia che la inserisca un genitore. Non si potrà modificare in seguito.",
+  "birth.label": "Data di nascita",
+  "birth.save": "Salva",
+  "birth.later": "Più tardi",
+  "birth.laterNote": "Puoi continuare a studiare anche senza, ma non potrai acquistare conversazioni extra con il tutor. Puoi inserire la data più tardi nella scheda Account.",
+  "birth.missing": "Inserisci la tua data di nascita. Serve per verificare se puoi creare l'account da solo o se deve crearlo un genitore.",
+  "birth.enter": "Inserisci una data di nascita valida.",
+  "birth.underAge": "Grazie. Poiché hai meno di {age} anni, per il tuo account deve dare il consenso un genitore o tutore. Mostragli la pagina per i genitori, dove è spiegato cos'è questa app e quali dati conserviamo.",
+  "birth.parents": "Pagina per i genitori",
+  "birth.next": "Avanti",
+  "birth.accountRow": "La data di nascita del titolare dell'account non è ancora stata inserita. Senza di essa non si possono acquistare conversazioni extra con il tutor.",
+  "birth.saved": "Data di nascita salvata."
 }

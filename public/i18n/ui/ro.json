@@ -3630,5 +3630,19 @@
   "open.formulas": "Culegere de formule",
   "open.graph": "Grafic",
   "open.inCalc": "Deschide în calculator",
-  "open.sketch": "Schiță"
+  "open.sketch": "Schiță",
+  "birth.title": "Încă o informație: data ta de naștere",
+  "birth.why": "De acum, fiecare cont are data de naștere a titularului. Din ea știm cine poate plăti sau își poate da singur acordul și când trebuie să facă asta un părinte. Întrebăm o singură dată.",
+  "birth.whose": "Scrie data de naștere a persoanei care a creat acest cont. Dacă este contul părinților tăi, lasă un părinte să o scrie. Nu mai poate fi schimbată ulterior.",
+  "birth.label": "Data nașterii",
+  "birth.save": "Salvează",
+  "birth.later": "Mai târziu",
+  "birth.laterNote": "Poți învăța mai departe și fără ea; doar conversațiile suplimentare cu tutorele nu pot fi cumpărate. Poți scrie data mai târziu în fila Cont.",
+  "birth.missing": "Scrie data ta de naștere. Cu ea verificăm dacă poți crea singur contul sau trebuie să-l creeze un părinte.",
+  "birth.enter": "Scrie o dată de naștere validă.",
+  "birth.underAge": "Mulțumim. Pentru că ai mai puțin de {age} ani, un părinte sau tutore trebuie să-și dea acordul pentru contul tău. Arată-i pagina pentru părinți, unde scrie ce este această aplicație și ce date păstrăm.",
+  "birth.parents": "Pagina pentru părinți",
+  "birth.next": "Continuă",
+  "birth.accountRow": "Data de naștere a titularului contului nu a fost încă scrisă. Fără ea nu se pot cumpăra conversații suplimentare cu tutorele.",
+  "birth.saved": "Data nașterii a fost salvată."
 }

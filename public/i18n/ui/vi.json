@@ -3568,5 +3568,19 @@
   "open.formulas": "Bảng công thức",
   "open.graph": "Đồ thị",
   "open.inCalc": "Mở trong máy tính",
-  "open.sketch": "Phác thảo"
+  "open.sketch": "Phác thảo",
+  "birth.title": "Thêm một thông tin: ngày sinh của bạn",
+  "birth.why": "Từ nay mỗi tài khoản đều có ngày sinh của chủ tài khoản. Nhờ đó chúng tôi biết ai có thể tự thanh toán hoặc tự đồng ý, và khi nào việc đó phải do cha mẹ làm. Chúng tôi chỉ hỏi một lần.",
+  "birth.whose": "Nhập ngày sinh của người đã tạo tài khoản này. Nếu đây là tài khoản của cha mẹ bạn, hãy để cha hoặc mẹ nhập. Sau này không thể thay đổi.",
+  "birth.label": "Ngày sinh",
+  "birth.save": "Lưu",
+  "birth.later": "Để sau",
+  "birth.laterNote": "Không có ngày sinh bạn vẫn có thể tiếp tục học, chỉ không mua thêm được các cuộc trò chuyện với gia sư. Bạn có thể nhập ngày sau trong thẻ Tài khoản.",
+  "birth.missing": "Nhập ngày sinh của bạn. Chúng tôi dùng nó để kiểm tra bạn có thể tự tạo tài khoản hay cha mẹ phải tạo.",
+  "birth.enter": "Nhập ngày sinh hợp lệ.",
+  "birth.underAge": "Cảm ơn bạn. Vì bạn chưa đủ {age} tuổi, cha mẹ hoặc người giám hộ phải đồng ý cho tài khoản của bạn. Hãy cho họ xem trang dành cho cha mẹ, nơi giải thích ứng dụng này là gì và chúng tôi lưu những dữ liệu nào.",
+  "birth.parents": "Trang dành cho cha mẹ",
+  "birth.next": "Tiếp tục",
+  "birth.accountRow": "Chưa nhập ngày sinh của chủ tài khoản. Nếu không có, không thể mua thêm các cuộc trò chuyện với gia sư.",
+  "birth.saved": "Đã lưu ngày sinh."
 }

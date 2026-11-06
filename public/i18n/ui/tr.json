@@ -3594,5 +3594,19 @@
   "open.formulas": "Formül listesi",
   "open.graph": "Grafik",
   "open.inCalc": "Hesap makinesinde aç",
-  "open.sketch": "Taslak"
+  "open.sketch": "Taslak",
+  "birth.title": "Bir bilgi daha: doğum tarihin",
+  "birth.why": "Bundan sonra her hesapta hesap sahibinin doğum tarihi bulunur. Böylece kimin kendi başına ödeme yapabileceğini veya onay verebileceğini, ne zaman bunu bir ebeveynin yapması gerektiğini biliriz. Yalnızca bir kez soruyoruz.",
+  "birth.whose": "Bu hesabı oluşturan kişinin doğum tarihini gir. Bu, ailenin hesabıysa tarihi bir ebeveyn girsin. Daha sonra değiştirilemez.",
+  "birth.label": "Doğum tarihi",
+  "birth.save": "Kaydet",
+  "birth.later": "Daha sonra",
+  "birth.laterNote": "Tarih olmadan da öğrenmeye devam edebilirsin; yalnızca öğretmenle ek sohbet satın alınamaz. Tarihi daha sonra Hesap sekmesinden girebilirsin.",
+  "birth.missing": "Doğum tarihini gir. Hesabı kendin mi açabileceğini yoksa bir ebeveynin mi açması gerektiğini bununla kontrol ediyoruz.",
+  "birth.enter": "Geçerli bir doğum tarihi gir.",
+  "birth.underAge": "Teşekkürler. {age} yaşından küçük olduğun için hesabına bir ebeveyn veya vasi onay vermelidir. Ona ebeveynler için sayfayı göster; orada bu uygulamanın ne olduğu ve hangi verileri sakladığımız yazıyor.",
+  "birth.parents": "Ebeveynler için sayfa",
+  "birth.next": "Devam",
+  "birth.accountRow": "Hesap sahibinin doğum tarihi henüz girilmedi. Bu olmadan öğretmenle ek sohbet satın alınamaz.",
+  "birth.saved": "Doğum tarihi kaydedildi."
 }

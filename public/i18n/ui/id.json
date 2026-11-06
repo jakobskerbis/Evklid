@@ -3568,5 +3568,19 @@
   "open.formulas": "Kumpulan rumus",
   "open.graph": "Grafik",
   "open.inCalc": "Buka di kalkulator",
-  "open.sketch": "Sketsa"
+  "open.sketch": "Sketsa",
+  "birth.title": "Satu hal lagi: tanggal lahirmu",
+  "birth.why": "Mulai sekarang setiap akun mencantumkan tanggal lahir pemiliknya. Dari situ kami tahu siapa yang boleh membayar atau memberi persetujuan sendiri dan kapan orang tua yang harus melakukannya. Kami hanya bertanya sekali.",
+  "birth.whose": "Masukkan tanggal lahir orang yang membuat akun ini. Jika ini akun orang tuamu, biarkan orang tua yang memasukkannya. Nanti tidak bisa diubah.",
+  "birth.label": "Tanggal lahir",
+  "birth.save": "Simpan",
+  "birth.later": "Nanti",
+  "birth.laterNote": "Kamu tetap bisa belajar tanpa itu, hanya percakapan tambahan dengan tutor yang tidak bisa dibeli. Tanggal bisa kamu masukkan nanti di tab Akun.",
+  "birth.missing": "Masukkan tanggal lahirmu. Dengan itu kami memeriksa apakah kamu bisa membuat akun sendiri atau orang tua yang harus membuatnya.",
+  "birth.enter": "Masukkan tanggal lahir yang benar.",
+  "birth.underAge": "Terima kasih. Karena usiamu di bawah {age} tahun, orang tua atau wali harus memberi persetujuan untuk akunmu. Tunjukkan kepada mereka halaman untuk orang tua, yang menjelaskan apa aplikasi ini dan data apa yang kami simpan.",
+  "birth.parents": "Halaman untuk orang tua",
+  "birth.next": "Lanjut",
+  "birth.accountRow": "Tanggal lahir pemilik akun belum dimasukkan. Tanpa itu, percakapan tambahan dengan tutor tidak bisa dibeli.",
+  "birth.saved": "Tanggal lahir tersimpan."
 }
