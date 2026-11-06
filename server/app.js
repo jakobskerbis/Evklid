@@ -1499,15 +1499,27 @@ export function createApp(store, opts = {}) {
   const leagues = mountLeagues(app, store, { loadStudent });
   mountSchools(app, store, { loadStudent, leagues, accounts: !!accounts }); // šole, učitelji, licence, razredne naloge
   mountPilot(app, store, { accounts: !!accounts, isLocalRequest }); // merjenje v pilotu (skrbnik)
+  // Teme poti učenca z vajami, po vrsti (ahead: sklop še ni na vrsti).
+  const pilotPathTopics = (s) => {
+    const v = progress.pathView(s.id, pathKeyFor(s.settings));
+    return v ? v.units.flatMap((u) => u.topics.map((t) => ({ id: t.id, status: t.status, practice: t.practice, ahead: !!u.ahead }))).filter((t) => t.practice) : [];
+  };
   mountPilotTasks(app, store, {
     loadStudent,
     progress,
     accounts: !!accounts,
     isLocalRequest,
-    // Preizkus znanja (server/pilot-ucinek.js): tema, ki se je učenec zdaj uči na svoji poti.
+    // Preizkus znanja (server/pilot-ucinek.js): tema, ki se jo bo učenec učil naslednjo (še ni začeta, sicer še ni
+    // osvojena; nikoli osvojena), da ni na stropu (j, 6. 11.). Dodatne težje naloge ob 6/6: naslednja neosvojena tema.
     topicFor: (s) => {
-      const t = progress.currentTopic(s.id, pathKeyFor(s.settings));
-      return t?.practice ? t.id : null;
+      const ts = pilotPathTopics(s);
+      const open = ts.filter((t) => !t.ahead && t.status !== "mastered");
+      return (open.find((t) => t.status === "new") || open[0] || ts.find((t) => t.status !== "mastered"))?.id ?? null;
+    },
+    nextTopicFor: (s, id) => {
+      const ts = pilotPathTopics(s);
+      const i = ts.findIndex((t) => t.id === id);
+      return i < 0 ? null : (ts.slice(i + 1).find((t) => t.status !== "mastered")?.id ?? null);
     },
   }); // naloge za člane pilota (Jaz → Pomagaj izboljšati Evklid)
   // Rast in vračanje (skrbnik): viri, prva naloga, vrnitev po 1 in 7 dneh; profili skrbnika se ne štejejo.

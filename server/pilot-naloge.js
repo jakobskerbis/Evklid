@@ -295,7 +295,9 @@ export function pilotTasksMarkdown(r) {
   const q = r.impact?.quiz;
   const w = r.impact?.wtp;
   if (q) {
-    lines.push(``, `## Preizkus znanja`, ``, `- začetni preizkus: ${q.nPre}, povprečje ${pc(q.pre)}`, `- oba preizkusa (isti učenci): ${q.nPaired}, prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${q.diff == null ? "–" : `${q.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(q.diff) * 100)} odstotnih točk`}`);
+    lines.push(``, `## Preizkus znanja`, ``, `- začetni preizkus (brez stropa): ${q.nPre}, povprečje ${pc(q.pre)}`, `- oba preizkusa (isti učenci, brez stropa): ${q.nPaired}, prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${q.diff == null ? "–" : `${q.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(q.diff) * 100)} odstotnih točk`}`);
+    const c = q.ceiling;
+    if (c) lines.push(`- strop (prvič 6/6, dodatne težje naloge; posebej): ${c.nPre}, oba preizkusa ${c.nPaired}, prej ${pc(c.pairedPre)}, po 14 dneh ${pc(c.pairedPost)}, razlika ${c.diff == null ? "–" : `${c.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(c.diff) * 100)} odstotnih točk`}`);
   }
   if (w) {
     const dist = (o) => (o ? Object.entries(o).filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", ") || "–" : "–");
@@ -315,7 +317,7 @@ function isImage(dataUrl) {
 }
 
 // ---------- API ----------
-export function mountPilotTasks(app, store, { loadStudent, progress = null, accounts = false, isLocalRequest = () => false, topicFor = () => null }) {
+export function mountPilotTasks(app, store, { loadStudent, progress = null, accounts = false, isLocalRequest = () => false, topicFor = () => null, nextTopicFor = () => null }) {
   const db = store.db;
   migratePilotTasks(db);
   const isAdmin = (req) => (accounts ? !!req.parent?.is_admin : isLocalRequest(req));
@@ -336,6 +338,7 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     reply,
     reward: (sid, item) => reward(db, progress, sid, item, XP.quiz),
     topicFor,
+    nextTopicFor,
     langFor: (sid) => progress?.taskLang?.(sid) || "sl",
     accounts,
     isMember: (id) => !!pilotMember(db, id),

@@ -9,7 +9,7 @@ import { createApp } from "../server/app.js";
 import { generateTask } from "../server/practice/index.js";
 import { checkAnswer } from "../server/practice/check.js";
 import { pilotTasksReport, pilotTasksMarkdown, XP, TOTAL, SCAN_CONDITIONS, FEATURES_SHOWN } from "../server/pilot-naloge.js";
-import { QUIZ_LEVELS, QUIZ_GAP_DAYS, impactReport } from "../server/pilot-ucinek.js";
+import { QUIZ_LEVELS, QUIZ_EXTRA, QUIZ_GAP_DAYS, impactReport } from "../server/pilot-ucinek.js";
 import { PRIVACY_VERSION } from "../server/accounts/plans.js";
 import { ownerOnly } from "../server/accounts/account-lock.js";
 import SL from "../public/i18n/sl.js";
@@ -244,4 +244,63 @@ test("zasebnost: nova različica politike pokaže obvestilo enkrat, nov račun g
   assert.ok(ownerOnly("/account/pilot-wtp", "POST"));
   for (const k of ["priv.noticeTitle", "priv.noticeText", "priv.noticeRead", "priv.noticeOk", "starsi.wtpSkip", "pn.quizTitle"]) assert.ok(SL[k], k);
   assert.equal(SL["starsi.wtpSkip"], "Raje ne povem");
+});
+
+test("preizkus znanja brez stropa: naslednja neosvojena tema, 2/2/2 težavnost, ob 6/6 še 3 težje, strop posebej pri skrbniku", async () => {
+  process.env.EVKLID_PILOT_VSI = "1";
+  try {
+    await withServer({}, async ({ client, store }) => {
+      const db = store.db;
+      const call = client();
+      const mk = async (name) => (await call("/api/students", { method: "POST", body: { name, settings: { curriculum_level: "8. razred" } } })).body.id;
+      const start = async (sid, phase = "pre") => call(`/api/students/${sid}/pilot/quiz`, { method: "POST", body: { phase } });
+      assert.deepEqual(QUIZ_LEVELS, [1, 1, 2, 2, 3, 3], "2 lažji, 2 srednji, 2 težji");
+      // Osvojena tema ni izbrana: drugi učenec ima prvo izbrano temo osvojeno.
+      const a = await mk("A");
+      await start(a);
+      const t0 = db.prepare("SELECT topic_id FROM pilot_quiz WHERE student_id = ?").get(a).topic_id;
+      const b = await mk("B");
+      db.prepare("INSERT INTO topic_state (student_id, topic_id, status, mastered_at) VALUES (?, ?, 'mastered', datetime('now'))").run(b, t0);
+      db.prepare("INSERT INTO topic_state (student_id, topic_id, status) VALUES (?, 'x/učim-se', 'learning')").run(b);
+      await start(b);
+      const tb = db.prepare("SELECT topic_id FROM pilot_quiz WHERE student_id = ?").get(b).topic_id;
+      assert.notEqual(tb, t0, "osvojena tema ni v preizkusu");
+      assert.notEqual(db.prepare("SELECT status FROM topic_state WHERE student_id = ? AND topic_id = ?").get(b, tb)?.status, "mastered");
+
+      // Strop: vseh 6 pravilno → še 3 težje (raven 3), XP šele po zadnji.
+      const pre = db.prepare("SELECT * FROM pilot_quiz WHERE student_id = ? AND phase = 'pre'").get(a);
+      let out;
+      for (let i = 0; i < QUIZ_LEVELS.length; i++) out = await call(`/api/students/${a}/pilot/quiz/answer`, { method: "POST", body: { phase: "pre", index: i, answer: rightAnswer(pre, i) } });
+      assert.equal(out.status, 200, JSON.stringify(out.body));
+      assert.equal(out.body.run.done, false);
+      assert.equal(out.body.run.total, QUIZ_LEVELS.length + QUIZ_EXTRA.length);
+      assert.equal(out.body.run.harder, true);
+      assert.equal(out.body.gained, 0);
+      const ext = db.prepare("SELECT * FROM pilot_quiz WHERE student_id = ? AND phase = 'pre'").get(a);
+      const extra = JSON.parse(ext.items).slice(QUIZ_LEVELS.length);
+      assert.deepEqual(extra.map((x) => x.level), QUIZ_EXTRA);
+      assert.ok(extra.every((x) => x.topic), "dodatne naloge imajo svojo temo (naslednja na poti)");
+      for (let i = QUIZ_LEVELS.length; i < QUIZ_LEVELS.length + QUIZ_EXTRA.length; i++) out = await call(`/api/students/${a}/pilot/quiz/answer`, { method: "POST", body: { phase: "pre", index: i, skip: true } });
+      assert.equal(out.body.run.done, true);
+      assert.equal(out.body.run.score, QUIZ_LEVELS.length);
+      assert.equal(out.body.gained, XP.quiz);
+      // Drugi preizkus: ista sestava, tudi dodatne težje naloge iz iste teme kot prvič.
+      db.prepare(`UPDATE pilot_quiz SET finished_at = datetime('now', '-${QUIZ_GAP_DAYS} days', '-1 minute') WHERE student_id = ?`).run(a);
+      assert.equal((await start(a, "post")).body.run.total, QUIZ_LEVELS.length + QUIZ_EXTRA.length);
+      const post = JSON.parse(db.prepare("SELECT items FROM pilot_quiz WHERE student_id = ? AND phase = 'post'").get(a).items);
+      assert.deepEqual(post.map((x) => x.level), [...QUIZ_LEVELS, ...QUIZ_EXTRA]);
+      assert.equal(post[QUIZ_LEVELS.length].topic, extra[0].topic);
+      // Skrbnik: strop je posebej, ne v povprečju ostalih.
+      for (let i = 0; i < post.length; i++) await call(`/api/students/${a}/pilot/quiz/answer`, { method: "POST", body: { phase: "post", index: i, skip: true } });
+      const q = impactReport(db, 1).quiz;
+      assert.equal(q.ceiling.nPre, 1);
+      assert.equal(q.ceiling.nPaired, 1);
+      assert.equal(q.ceiling.pairedPre, Math.round((6 / 9) * 1000) / 1000);
+      assert.equal(q.ceiling.pairedPost, 0);
+      assert.equal(q.nPre, 0, "strop ni v začetnem povprečju");
+      assert.match(pilotTasksMarkdown(pilotTasksReport(db)), /strop \(prvič 6\/6/);
+    });
+  } finally {
+    delete process.env.EVKLID_PILOT_VSI;
+  }
 });

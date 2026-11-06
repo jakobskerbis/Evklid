@@ -296,7 +296,9 @@ function quizCard(s) {
       tk.answerType === "choice"
         ? `<div class="choices${tk.options.some((o) => String(o).length > 20) ? " one-col" : ""}">${tk.options.map((o, i) => `<button type="button" class="choice" data-pn="quiz-choice" data-i="${i}">${D.choiceHtml?.(tk, o) ?? esc(o)}</button>`).join("")}</div>`
         : `<form class="answer-row pn-quiz-form"><label class="sr-only" for="pn-quiz-in">${esc(ph)}</label><input id="pn-quiz-in" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${tk.answerType === "number" && !tk.unit ? "decimal" : "text"}" placeholder="${esc(ph)}"><button type="button" class="primary" data-pn="quiz-send">${esc(t("pn.quizSend"))}</button></form>`;
-    body = `<p class="muted small" aria-live="polite">${esc(t("pn.quizCount", { i: quiz.data.index + 1, n: quiz.data.total }))}</p>
+    // Prvič vse pravilno: strežnik doda tri težje naloge (brez tega bi bil drugi preizkus na stropu).
+    const harder = quiz.phase === "pre" && quiz.data.harder ? `<p class="pn-status ok" role="status">${icon("sparkles")}${esc(t("pn.quizHarder"))}</p>` : "";
+    body = `${harder}<p class="muted small" aria-live="polite">${esc(t("pn.quizCount", { i: quiz.data.index + 1, n: quiz.data.total }))}</p>
       <div class="task-text"${tk.textLang ? ` lang="${tk.textLang}"` : ""}>${D.renderRich ? D.renderRich(tk.text) : esc(tk.text)}</div>
       ${input}
       <p class="pn-err" role="alert" hidden></p>
@@ -516,9 +518,12 @@ function impactHtml(im, { pc, few }) {
   const w = im.wtp;
   const diff = q.diff == null ? "–" : `${q.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(q.diff) * 100)}`;
   const dist = (o, keys) => keys.filter((k) => o?.[k]).map((k) => `${t(WTP_KEY[k])} ${o[k]}`).join(", ") || "–";
+  const c = q.ceiling || { nPaired: 0 };
+  const cdiff = c.diff == null ? "–" : `${c.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(c.diff) * 100)}`;
   return `<h3>${esc(t("pilot.n.quiz"))}</h3>
     <ul class="pilot-sum"><li>${esc(t("pilot.n.quizPre", { n: q.nPre, avg: pc(q.pre) }))}</li>
-      <li>${esc(t("pilot.n.quizPaired", { n: q.nPaired, pre: pc(q.pairedPre), post: pc(q.pairedPost), diff }))}</li></ul>
+      <li>${esc(t("pilot.n.quizPaired", { n: q.nPaired, pre: pc(q.pairedPre), post: pc(q.pairedPost), diff }))}</li>
+      <li>${esc(t("pilot.n.quizCeiling", { n: c.nPre ?? 0, paired: c.nPaired, pre: pc(c.pairedPre), post: pc(c.pairedPost), diff: cdiff }))}</li></ul>
     ${q.pairedPre == null ? `<p class="muted small">${few}</p>` : ""}
     <h3>${esc(t("pilot.n.wtp"))} (${w.n})</h3>
     ${w.pay ? `<ul class="pilot-sum"><li>${esc(t("pilot.n.wtpPay"))}: ${esc(dist(w.pay, WTP_PAY))}</li><li>${esc(t("pilot.n.wtpAmount"))}: ${esc(dist(w.amount, WTP_AMOUNT))}</li></ul>` : `<p class="muted">${few}</p>`}`;

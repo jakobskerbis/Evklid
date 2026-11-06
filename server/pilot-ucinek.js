@@ -1,8 +1,11 @@
 // Merjenje učinka v pilotu (j, 6. 11. 16:0x): kratek preizkus znanja na začetku in čez 14 dni ter vprašanje za starše
 // (in polnoletne imetnike računa), ali bi za Evklid plačali. Del »Pomagaj izboljšati Evklid« (server/pilot-naloge.js).
 //
-// Preizkus znanja: 6 nalog iz obstoječih generatorjev vadnice (server/practice), iz teme, ki se je učenec zdaj uči na
-// svoji poti (po razredu), ravni 1, 1, 2, 2, 2, 3. Čez 14 dni ISTA tema in iste ravni, a nove naloge (druga semena).
+// Preizkus znanja: 6 nalog iz obstoječih generatorjev vadnice (server/practice), iz teme, ki se jo bo učenec učil
+// NASLEDNJO na svoji poti (še ni začeta, sicer še ni osvojena; nikoli osvojena), 2 lažji, 2 srednji, 2 težji (j, 6. 11.).
+// Kdor prvič reši vseh 6, takoj dobi še 3 težje naloge (raven 3 iz naslednje teme na poti, sicer iz iste) – brez tega
+// bi bil na stropu in napredka ne bi videli. Čez 14 dni ISTA sestava (z dodatnimi nalogami, če jih je imel), nove
+// naloge (druga semena). Skrbnik vidi primere s stropom (6/6 prvič) posebej, da ne popačijo povprečij.
 // Oceni koda (checkAnswer kot v kvizu), brez AI. En odgovor na nalogo, »Ne vem« šteje kot napačno. XP samo za
 // opravljen preizkus (enkrat na fazo), nikoli za rezultat; izid ne vpliva na napredek, ravni ali lige.
 //
@@ -16,7 +19,8 @@ import { generateTask, publicTask } from "./practice/index.js";
 import { checkAnswer } from "./practice/check.js";
 import { ageOn, ADULT_AGE } from "./accounts/age.js";
 
-export const QUIZ_LEVELS = [1, 1, 2, 2, 2, 3];
+export const QUIZ_LEVELS = [1, 1, 2, 2, 3, 3];
+export const QUIZ_EXTRA = [3, 3, 3]; // ob 6/6 v prvem preizkusu
 export const QUIZ_GAP_DAYS = 14;
 export const WTP_AFTER_DAYS = 14;
 export const WTP_PAY = ["yes", "maybe", "no", "skip"];
@@ -30,7 +34,7 @@ export function migratePilotImpact(db) {
       student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
       phase TEXT NOT NULL,           -- pre | post
       topic_id TEXT NOT NULL,
-      items TEXT NOT NULL,           -- JSON [{ seed, level }]
+      items TEXT NOT NULL,           -- JSON [{ seed, level, topic? }] (topic: dodatna naloga iz druge teme)
       answers TEXT NOT NULL,         -- JSON [1 | 0 | null] (null = še brez odgovora)
       score INTEGER,                 -- pravilnih, ko je preizkus končan
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -64,14 +68,14 @@ const rowOf = (db, sid, phase) => db.prepare("SELECT * FROM pilot_quiz WHERE stu
 // Naloga preizkusa iz semena (ista naloga ob vsakem klicu).
 const taskOf = (row, i, lang) => {
   const it = parse(row.items, [])[i];
-  return it ? generateTask(row.topic_id, it.level, it.seed, lang) : null;
+  return it ? generateTask(it.topic || row.topic_id, it.level, it.seed, lang) : null;
 };
 
 // Semena za nalogo, ki jo vmesnik pokaže v enem polju ali z gumbi, brez slike in brez ponovitve besedila.
-function pickItems(topicId, lang, rand = () => Math.floor(Math.random() * 2 ** 31)) {
+function pickItems(topicId, lang, levels = QUIZ_LEVELS, { tag = false, rand = () => Math.floor(Math.random() * 2 ** 31) } = {}) {
   const seen = new Set();
   const items = [];
-  for (const level of QUIZ_LEVELS) {
+  for (const level of levels) {
     let found = null;
     for (let k = 0; k < 40 && !found; k++) {
       const seed = rand();
@@ -83,7 +87,7 @@ function pickItems(topicId, lang, rand = () => Math.floor(Math.random() * 2 ** 3
       }
       if (!t || t.figure || !ANSWER_TYPES.includes(t.answer?.type) || seen.has(t.text)) continue;
       seen.add(t.text);
-      found = { seed, level };
+      found = tag ? { seed, level, topic: topicId } : { seed, level };
     }
     if (!found) return null;
     items.push(found);
@@ -91,11 +95,15 @@ function pickItems(topicId, lang, rand = () => Math.floor(Math.random() * 2 ** 3
   return items;
 }
 
+// Dodatne naloge (ob 6/6): iz naslednje teme, sicer iz iste; vrne null, če jih ni mogoče sestaviti.
+const extraItems = (topicId, nextId, lang) => (nextId && pickItems(nextId, lang, QUIZ_EXTRA, { tag: true })) || pickItems(topicId, lang, QUIZ_EXTRA, { tag: true });
+const isCeiling = (row) => parse(row.items, []).length > QUIZ_LEVELS.length;
+
 const phaseView = (row) => {
   if (!row) return { started: false, done: false };
   const answers = parse(row.answers, []);
   const done = row.finished_at != null;
-  return { started: true, done, index: answers.filter((a) => a != null).length, total: answers.length, ...(done ? { score: row.score } : {}) };
+  return { started: true, done, index: answers.filter((a) => a != null).length, total: answers.length, harder: isCeiling(row), ...(done ? { score: row.score } : {}) };
 };
 
 /** Stanje preizkusa za zaslon »Pomagaj izboljšati Evklid«. */
@@ -140,21 +148,25 @@ export function wtpState(db, parent, { isMember, now = new Date() }) {
 export function impactReport(db, minGroup) {
   migratePilotImpact(db);
   const few = (n) => n < minGroup;
-  const rows = db.prepare("SELECT student_id, phase, score, answers FROM pilot_quiz WHERE finished_at IS NOT NULL").all();
+  const rows = db.prepare("SELECT student_id, phase, score, items, answers FROM pilot_quiz WHERE finished_at IS NOT NULL").all();
   const pct = (r) => r.score / Math.max(1, parse(r.answers, []).length);
-  const pre = rows.filter((r) => r.phase === "pre");
-  const postBy = new Map(rows.filter((r) => r.phase === "post").map((r) => [r.student_id, r]));
-  const pairs = pre.filter((r) => postBy.has(r.student_id)).map((r) => [pct(r), pct(postBy.get(r.student_id))]);
   const avg = (xs) => Math.round((xs.reduce((s, x) => s + x, 0) / xs.length) * 1000) / 1000;
-  const quiz = {
-    nPre: pre.length,
-    nPaired: pairs.length,
-    pre: few(pre.length) ? null : avg(pre.map(pct)),
-    // Pred in po samo pri istih učencih (sicer bi se primerjali različni ljudje).
-    pairedPre: few(pairs.length) ? null : avg(pairs.map((p) => p[0])),
-    pairedPost: few(pairs.length) ? null : avg(pairs.map((p) => p[1])),
-    diff: few(pairs.length) ? null : avg(pairs.map((p) => p[1] - p[0])),
+  const postBy = new Map(rows.filter((r) => r.phase === "post").map((r) => [r.student_id, r]));
+  // Pred in po samo pri istih učencih (sicer bi se primerjali različni ljudje). Strop (6/6 prvič, z dodatnimi težjimi
+  // nalogami) posebej: drugače bi njihov visok začetek in drugačna sestava popačila povprečje ostalih.
+  const group = (pre) => {
+    const pairs = pre.filter((r) => postBy.has(r.student_id)).map((r) => [pct(r), pct(postBy.get(r.student_id))]);
+    return {
+      nPre: pre.length,
+      nPaired: pairs.length,
+      pre: few(pre.length) ? null : avg(pre.map(pct)),
+      pairedPre: few(pairs.length) ? null : avg(pairs.map((p) => p[0])),
+      pairedPost: few(pairs.length) ? null : avg(pairs.map((p) => p[1])),
+      diff: few(pairs.length) ? null : avg(pairs.map((p) => p[1] - p[0])),
+    };
   };
+  const pre = rows.filter((r) => r.phase === "pre");
+  const quiz = { ...group(pre.filter((r) => !isCeiling(r))), ceiling: group(pre.filter(isCeiling)) };
   let wtp = { n: 0, pay: null, amount: null };
   try {
     const w = db.prepare("SELECT pay, amount FROM pilot_wtp").all();
@@ -169,7 +181,7 @@ export function impactReport(db, minGroup) {
 
 // ---------- API ----------
 // member(req, res) → učenec v pilotu ali null (odgovor je že poslan); reward(sid, item, xp) → dobljeni XP.
-export function mountPilotImpact(app, db, { member, reward, reply, topicFor, langFor, accounts, isMember }) {
+export function mountPilotImpact(app, db, { member, reward, reply, topicFor, nextTopicFor = () => null, langFor, accounts, isMember }) {
   migratePilotImpact(db);
 
   const publicQuiz = (row, lang) => {
@@ -189,12 +201,21 @@ export function mountPilotImpact(app, db, { member, reward, reply, topicFor, lan
     let row = rowOf(db, s.id, phase);
     if (!row) {
       let topic;
+      let items;
       if (phase === "post") {
         const st = quizState(db, s.id);
         if (!st.postOpen) return res.status(409).json({ error: "Drugi preizkus še ni odprt." });
-        topic = rowOf(db, s.id, "pre").topic_id; // ista tema kot na začetku
-      } else topic = topicFor(s);
-      const items = topic ? pickItems(topic, lang) : null;
+        const pre = rowOf(db, s.id, "pre");
+        topic = pre.topic_id; // ista tema kot na začetku
+        // Ista sestava kot prvič: kdor je imel dodatne težje naloge, jih ima tudi zdaj (iz iste teme kot takrat).
+        const extraTopic = parse(pre.items, [])[QUIZ_LEVELS.length]?.topic;
+        const base = pickItems(topic, lang);
+        const extra = extraTopic ? pickItems(extraTopic, lang, QUIZ_EXTRA, { tag: true }) : [];
+        items = base && extra ? [...base, ...extra] : null;
+      } else {
+        topic = topicFor(s);
+        items = topic ? pickItems(topic, lang) : null;
+      }
       if (!items) return res.status(409).json({ error: "Za tvojo pot preizkusa še ni.", unavailable: true });
       db.prepare("INSERT OR IGNORE INTO pilot_quiz (student_id, phase, topic_id, items, answers) VALUES (?, ?, ?, ?, ?)").run(
         s.id,
@@ -233,11 +254,21 @@ export function mountPilotImpact(app, db, { member, reward, reply, topicFor, lan
       ok = r.kind === "correct" || r.kind === "rounding" || r.kind === "simplify";
     }
     answers[i] = ok ? 1 : 0;
-    const last = answers.every((a) => a != null);
+    let last = answers.every((a) => a != null);
     const score = answers.filter((a) => a === 1).length;
+    let items = row.items;
+    // Strop: prvi preizkus brez napake → takoj še 3 težje naloge (enkrat), da drugi preizkus lahko pokaže napredek.
+    if (last && b.phase === "pre" && answers.length === QUIZ_LEVELS.length && score === QUIZ_LEVELS.length) {
+      const extra = extraItems(row.topic_id, nextTopicFor(s, row.topic_id), lang);
+      if (extra) {
+        items = JSON.stringify([...parse(row.items, []), ...extra]);
+        answers.push(...extra.map(() => null));
+        last = false;
+      }
+    }
     const n = db
-      .prepare(`UPDATE pilot_quiz SET answers = ?${last ? ", score = ?, finished_at = datetime('now')" : ""} WHERE student_id = ? AND phase = ? AND answers = ?`)
-      .run(...[JSON.stringify(answers), ...(last ? [score] : []), s.id, b.phase, row.answers]).changes;
+      .prepare(`UPDATE pilot_quiz SET items = ?, answers = ?${last ? ", score = ?, finished_at = datetime('now')" : ""} WHERE student_id = ? AND phase = ? AND answers = ?`)
+      .run(...[items, JSON.stringify(answers), ...(last ? [score] : []), s.id, b.phase, row.answers]).changes;
     if (!n) return res.status(409).json({ error: "Ta naloga je že zaključena." });
     // XP samo za opravljen preizkus, enkrat na fazo (ne za rezultat).
     const gained = last ? reward(s.id, `quiz:${b.phase}`) : 0;
