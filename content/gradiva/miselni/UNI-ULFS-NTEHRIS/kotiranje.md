@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vsaka mera enkrat
+  - zaprta veriga si nasprotuje
+  - odvečna mera pomožna, v oklepaju
+- Elementi kote
+  - pomožna kotirna črta, kotirna črta
+  - omejilo, kotno število
+  - napaka: kotiranje do nevidnega roba
+- Simboli
+  - $\varnothing$, $R$, $S\varnothing$, $\square$
+  - posnetje $1 \times 45^\circ$
+- Funkcijske mere
+  - kotiramo neposredno od baze
+- Sistemi kotiranja
+  - verižno: odstopanja se seštevajo
+  - vzporedno od baze, naraščajoče
+  - koordinatno za CNC
+- Kotiranje kotov
+  - lok s središčem v temenu
+  - $1^\circ = 60'$, $1' = 60''$
+- Konus
+  - $C = \frac{D - d}{L}$, zapis $1 : 10$
+  - $\tan\frac{\alpha}{2} = \frac{D - d}{2L}$
