@@ -3651,7 +3651,5 @@
   "birth.payMissing": "Упиши датум рођења у картици Налог.",
   "birth.confirm": "Старост према овом датуму: {age}. Да ли је ово датум рођења особе која је направила налог? Касније не можеш сам да га промениш.",
   "birth.confirmYes": "Да, сачувај",
-  "birth.confirmNo": "Исправи",
-  "a3.moreParts": "Više delova ({n})",
-  "a3.fewerParts": "Manje delova"
+  "birth.confirmNo": "Исправи"
 }

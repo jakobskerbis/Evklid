@@ -384,10 +384,7 @@ export function odpriModel(el, mod, opts = {}) {
     // kader vidnega modela pred skrivanjem ovojev: primerjava pokaže, ali se je vidni model opazno spremenil
     const prej = leti && model?.group ? kadrModela() : null;
     izbran = d ? d.id : null;
-    if (d && !vSeznamu(d)) {
-      vsiDeli = true; // del iz naslova ali modela, ki je pod »Več delov«: razdelek se odpre
-      deli();
-    }
+    // del nad izbrano ravnjo (tap v prerezu, naslov): okno dela se odpre, seznam in raven ostaneta (pregled #461)
     ustaviNamigSij();
     obarvaj(d);
     skrijObdajajoce(d);
@@ -499,15 +496,37 @@ export function odpriModel(el, mod, opts = {}) {
     poleti(c, r);
   }
 
-  // Raven delov (raven.js): zahtevnejši deli (npr. posamezne venčne žile za OŠ) so pod gumbom »Več delov«.
-  const raven = Number(opts.raven) || ravenProfila();
-  let vsiDeli = false;
-  const vSeznamu = (d) => vsiDeli || naRavni(d, raven);
+  // Raven delov (raven.js): preklop »OŠ / SŠ / Vse« nad seznamom je vedno na voljo (ko ima model dele z ravnjo);
+  // začetna raven je raven profila, ob menjavi modela se vrne nanjo. Nič ni zaklenjeno.
+  const ravenZacetna = Number(opts.raven) || ravenProfila();
+  let raven = ravenZacetna;
+  const vSeznamu = (d) => naRavni(d, raven);
+  const ravenEl = mk("div", "k3-raven");
+  ravenEl.setAttribute("role", "group");
+  ravenEl.setAttribute("aria-label", t("a3.detail"));
   function deli() {
     const seznam = Array.isArray(model?.deli) ? model.deli : [];
     zadnjiDeli = [...seznam];
     deliEl.replaceChildren();
-    const skritih = seznam.filter((d) => !naRavni(d, raven)).length;
+    const zRavnmi = seznam.some((d) => Number(d.raven) > 1);
+    ravenEl.replaceChildren();
+    ravenEl.hidden = !zRavnmi;
+    if (zRavnmi) {
+      for (const [k, oz] of [[1, "a3.levelOS"], [2, "a3.levelSS"], [3, "a3.levelAll"]]) {
+        const g = mk("button", "k3-raven-gumb", t(oz));
+        g.type = "button";
+        g.setAttribute("aria-pressed", String(k === raven));
+        g.addEventListener("click", () => {
+          if (raven === k) return;
+          raven = k;
+          if (izbran && !vSeznamu(seznam.find((d) => d.id === izbran) || {})) izberi(null, { leti: false });
+          deli();
+          ravenEl.querySelector('[aria-pressed="true"]')?.focus({ preventScroll: true });
+        });
+        ravenEl.append(g);
+      }
+      if (ravenEl.parentNode !== deliEl.parentNode) deliEl.parentNode?.insertBefore(ravenEl, deliEl);
+    }
     for (const d of seznam) {
       if (!vSeznamu(d)) continue;
       const b = mk("button", "k3-del");
@@ -520,19 +539,6 @@ export function odpriModel(el, mod, opts = {}) {
       if (d.opis) b.title = d.opis;
       b.addEventListener("click", () => izberi(d.id === izbran ? null : d.id));
       deliEl.append(b);
-    }
-    if (skritih) {
-      const vec = mk("button", "k3-del k3-del-vec");
-      vec.type = "button";
-      vec.setAttribute("aria-expanded", String(vsiDeli));
-      vec.append(mk("span", "", vsiDeli ? t("a3.fewerParts") : t("a3.moreParts", { n: skritih })));
-      vec.addEventListener("click", () => {
-        vsiDeli = !vsiDeli;
-        if (!vsiDeli && izbran && !vSeznamu(seznam.find((d) => d.id === izbran))) izberi(null, { leti: false });
-        deli();
-        deliEl.querySelector(".k3-del-vec")?.focus({ preventScroll: true });
-      });
-      deliEl.append(vec);
     }
     const stevilo = seznam.filter(vSeznamu).length;
     deliEl.hidden = !seznam.length;
@@ -1029,6 +1035,7 @@ export function odpriModel(el, mod, opts = {}) {
     nastaviTek(typeof model.korak === "function" && kit.gibanje);
     cas = 0;
     nadzor();
+    if (!ponastavi) raven = ravenZacetna; // nov model: raven profila (pregled #461)
     deli();
     merilo();
     pokaziInfo(null);

@@ -3619,7 +3619,5 @@
   "birth.payMissing": "Enter your date of birth in the Account tab.",
   "birth.confirm": "Age from this date: {age}. Is this the date of birth of the person who created the account? You cannot change it yourself later.",
   "birth.confirmYes": "Yes, save",
-  "birth.confirmNo": "Correct it",
-  "a3.moreParts": "More parts ({n})",
-  "a3.fewerParts": "Fewer parts"
+  "birth.confirmNo": "Correct it"
 }

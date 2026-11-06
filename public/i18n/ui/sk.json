@@ -3685,7 +3685,5 @@
   "birth.payMissing": "Zadaj dátum narodenia na karte Účet.",
   "birth.confirm": "Vek podľa tohto dátumu: {age}. Je to dátum narodenia osoby, ktorá účet vytvorila? Neskôr ho sám zmeniť nemôžeš.",
   "birth.confirmYes": "Áno, uložiť",
-  "birth.confirmNo": "Opraviť",
-  "a3.moreParts": "Viac častí ({n})",
-  "a3.fewerParts": "Menej častí"
+  "birth.confirmNo": "Opraviť"
 }

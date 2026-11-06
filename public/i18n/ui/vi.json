@@ -3591,7 +3591,5 @@
   "birth.payMissing": "Hãy nhập ngày sinh trong thẻ Tài khoản.",
   "birth.confirm": "Tuổi theo ngày này: {age}. Đây có phải ngày sinh của người đã tạo tài khoản không? Sau này bạn không thể tự thay đổi.",
   "birth.confirmYes": "Đúng, lưu",
-  "birth.confirmNo": "Sửa lại",
-  "a3.moreParts": "Thêm bộ phận ({n})",
-  "a3.fewerParts": "Ít bộ phận hơn"
+  "birth.confirmNo": "Sửa lại"
 }

@@ -3591,7 +3591,5 @@
   "birth.payMissing": "「アカウント」タブで生年月日を入力してください。",
   "birth.confirm": "この日付による年齢：{age}。これはアカウントを作成した人の生年月日ですか？あとから自分で変更することはできません。",
   "birth.confirmYes": "はい、保存",
-  "birth.confirmNo": "修正する",
-  "a3.moreParts": "その他の部位（{n}）",
-  "a3.fewerParts": "部位を減らす"
+  "birth.confirmNo": "修正する"
 }

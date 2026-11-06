@@ -189,7 +189,8 @@ export function ustvariSceno(el, opts = {}) {
   async function nastaviOkolje(ime, { jakost = null, zasuk = 0 } = {}) {
     const moja = ++okoljeZahteva;
     if (!ime) {
-      okoljeModela = null;
+      // tekstura HDR ostane v predpomnilniku kita (sprosti jo unici): ob vrnitvi na model brez nove PMREM in brez
+      // osirotelega cilja risanja v pomnilniku GPU (pregled #461)
       scene.environment = luciVklop ? okolje : null;
       scene.environmentIntensity = opts.okolje ?? 0.72;
       scene.environmentRotation.set(0, 0, 0);

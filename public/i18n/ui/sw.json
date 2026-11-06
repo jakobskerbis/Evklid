@@ -3617,7 +3617,5 @@
   "birth.payMissing": "Andika tarehe yako ya kuzaliwa kwenye kichupo cha Akaunti.",
   "birth.confirm": "Umri kwa tarehe hii: {age}. Je, hii ni tarehe ya kuzaliwa ya mtu aliyefungua akaunti? Baadaye huwezi kuibadilisha mwenyewe.",
   "birth.confirmYes": "Ndiyo, hifadhi",
-  "birth.confirmNo": "Rekebisha",
-  "a3.moreParts": "Sehemu zaidi ({n})",
-  "a3.fewerParts": "Sehemu chache"
+  "birth.confirmNo": "Rekebisha"
 }

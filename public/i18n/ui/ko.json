@@ -3591,7 +3591,5 @@
   "birth.payMissing": "계정 탭에서 생년월일을 입력하세요.",
   "birth.confirm": "이 날짜 기준 나이: {age}. 계정을 만든 사람의 생년월일이 맞나요? 나중에 직접 변경할 수 없습니다.",
   "birth.confirmYes": "네, 저장",
-  "birth.confirmNo": "고치기",
-  "a3.moreParts": "더 많은 부분 ({n})",
-  "a3.fewerParts": "부분 줄이기"
+  "birth.confirmNo": "고치기"
 }

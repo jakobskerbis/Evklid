@@ -3591,7 +3591,5 @@
   "birth.payMissing": "Masukkan tanggal lahirmu di tab Akun.",
   "birth.confirm": "Usia menurut tanggal ini: {age}. Apakah ini tanggal lahir orang yang membuat akun? Nanti kamu tidak bisa mengubahnya sendiri.",
   "birth.confirmYes": "Ya, simpan",
-  "birth.confirmNo": "Perbaiki",
-  "a3.moreParts": "Bagian lain ({n})",
-  "a3.fewerParts": "Lebih sedikit bagian"
+  "birth.confirmNo": "Perbaiki"
 }

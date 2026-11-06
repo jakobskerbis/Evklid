@@ -155,8 +155,11 @@
   border: 1px solid var(--k3-rob); background: var(--k3-povrsina); cursor: pointer; font-size: 0.92rem; text-align: start;
 }
 .k3-del[aria-pressed="true"] { border-color: var(--k3-accent); background: var(--k3-accent-soft); }
-/* »Več delov«: zahtevnejši deli za raven profila (public/3d/raven.js) */
-.k3-del-vec { border-style: dashed; color: var(--k3-accent); font-weight: 600; }
+/* Raven delov »OŠ / SŠ / Vse« nad seznamom (public/3d/raven.js) */
+.k3-raven { display: inline-flex; gap: 4px; padding: 3px; margin: 0 0 8px; border: 1px solid var(--k3-rob); border-radius: 999px; background: var(--k3-povrsina); }
+.k3-raven[hidden] { display: none; }
+.k3-raven-gumb { min-height: 40px; min-width: 52px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: inherit; font: inherit; font-size: 0.9rem; cursor: pointer; }
+.k3-raven-gumb[aria-pressed="true"] { background: var(--k3-accent-soft); color: var(--k3-accent); font-weight: 600; }
 .k3-pika { width: 10px; height: 10px; border-radius: 50%; background: var(--barva); flex: none; }
 
 /* ---------- stran /3d ---------- */

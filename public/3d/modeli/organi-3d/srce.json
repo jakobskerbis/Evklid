@@ -353,7 +353,7 @@
   },
   {
    "id": "sprednja-medprekatna-arterija",
-   "ime": "Sprednja medprekatna arterija",
+   "ime": "Sprednja medprekatna veja",
    "la": "Ramus interventricularis anterior",
    "skupina": "vencne-arterije",
    "raven": 3,
@@ -366,7 +366,7 @@
   },
   {
    "id": "cirkumfleksna-arterija",
-   "ime": "Cirkumfleksna arterija",
+   "ime": "Obkrožna (cirkumfleksna) veja",
    "la": "Ramus circumflexus",
    "skupina": "vencne-arterije",
    "raven": 3,
@@ -428,7 +428,7 @@
   {
    "id": "velika-srcna-vena",
    "ime": "Velika srčna vena",
-   "la": "Vena cardiaca magna",
+   "la": "Vena cordis magna",
    "skupina": "vencne-vene",
    "raven": 3,
    "barva": "#7c3aed",
@@ -440,7 +440,7 @@
   {
    "id": "srednja-srcna-vena",
    "ime": "Srednja srčna vena",
-   "la": "Vena cardiaca media",
+   "la": "Vena cordis media",
    "skupina": "vencne-vene",
    "raven": 3,
    "barva": "#6d28d9",
@@ -504,7 +504,7 @@
    "vozlisca": [
     "Semilunar cusps of aortic valve (lastno)"
    ],
-   "raven": 2
+   "raven": 1
   },
   {
    "id": "pljucna-zaklopka",
@@ -515,7 +515,7 @@
    "vozlisca": [
     "Semilunar cusps of pulmonary valve (lastno)"
    ],
-   "raven": 2
+   "raven": 1
   },
   {
    "id": "arterijska-vez",
@@ -523,7 +523,7 @@
    "la": "Ligamentum arteriosum",
    "raven": 3,
    "barva": "#e5e7eb",
-   "opis": "Vezivni trak med pljučnim deblom in aortnim lokom; ostanek voda, ki je pred rojstvom vodil kri mimo pljuč.",
+   "opis": "Vezivni trak med začetkom leve pljučne arterije in spodnjo stranjo aortnega loka; ostanek arterijskega voda.",
    "vozlisca": [
     "Ligamentum arteriosum"
    ]

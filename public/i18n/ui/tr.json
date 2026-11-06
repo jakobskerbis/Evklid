@@ -3617,7 +3617,5 @@
   "birth.payMissing": "Doğum tarihini Hesap sekmesinden gir.",
   "birth.confirm": "Bu tarihe göre yaş: {age}. Bu, hesabı oluşturan kişinin doğum tarihi mi? Daha sonra kendin değiştiremezsin.",
   "birth.confirmYes": "Evet, kaydet",
-  "birth.confirmNo": "Düzelt",
-  "a3.moreParts": "Daha fazla parça ({n})",
-  "a3.fewerParts": "Daha az parça"
+  "birth.confirmNo": "Düzelt"
 }

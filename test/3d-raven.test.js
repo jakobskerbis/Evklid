@@ -23,3 +23,10 @@ test("del na ravni", () => {
   assert.equal(naRavni({ raven: 3 }, 2), false);
   assert.equal(naRavni({ raven: 2 }, 2), true);
 });
+
+test("okvir 3D v »Uči se« dobi raven profila (ločen dokument brez profila)", async () => {
+  const fs = await import("node:fs");
+  const src = fs.readFileSync(new URL("../public/uci-se.js", import.meta.url), "utf8");
+  assert.match(src, /import \{ ravenProfila \} from "\.\/3d\/raven\.js"/);
+  assert.match(src, /\/3d\?vgrajeno=1&raven=\$\{ravenProfila\(\)\}/);
+});
