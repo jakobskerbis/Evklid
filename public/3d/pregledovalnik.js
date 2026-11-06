@@ -549,7 +549,7 @@ export function odpriModel(el, mod, opts = {}) {
   }
 
   // Legenda s pravimi merami ob modelu (ne čez; j 6. 11.): model.mere = [{ ime, vrednost }] (npr. organ <o>.json
-  // »mere«). Na plošči pod opisom modela; OŠ vidi prvi dve, ostale pod »Več o tem«, SŠ in študij vse.
+  // »mere«). Na plošči pod opisom modela; OŠ vidi prvi dve, SŠ štiri, ostale pod »Več o tem«, študij vse.
   let mereEl = null;
   const mere = () => {
     mereEl?.remove();
@@ -563,7 +563,7 @@ export function odpriModel(el, mod, opts = {}) {
       for (const x of xs) dl.append(mk("dt", "", x.ime), mk("dd", "", x.vrednost));
       return dl;
     };
-    const vidne = raven <= 1 ? seznam.slice(0, 2) : seznam;
+    const vidne = seznam.slice(0, raven <= 1 ? 2 : raven === 2 ? 4 : seznam.length);
     mereEl.append(vrstice(vidne));
     if (vidne.length < seznam.length) {
       const vec = mk("details", "k3-info-vec");

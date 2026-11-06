@@ -581,6 +581,8 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 @media (max-width: 480px) {
   .k3-stran-pregled .k3-orodja { gap: 6px; top: 10px; right: 10px; }
   .k3-stran-pregled .k3-orodja .k3-krog { width: 40px; height: 40px; min-height: 40px; }
+  /* telefon: stikala (Učne barve, Prerez) pod vrsto gumbov, sicer prekrijejo »Oddalji« in »Vrti« */
+  .k3-organ.k3-stran-pregled .k3-nadzor { top: 58px; left: 10px; }
   .k3-namig { max-width: calc(100% - 32px); bottom: 10px; }
   .k3-namig-viden .k3-merilo { bottom: 62px; }
 }
