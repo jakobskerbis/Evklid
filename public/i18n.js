@@ -1,6 +1,8 @@
 // Jezik vmesnika: t("ključ", { spremenljivke }) in prevod statičnih napisov v strani (data-i18n).
 // Izbrani jezik je shranjen na napravi in v profilu učenca (inštruktor odgovarja v njem).
-// Modul počaka na prevode (top-level await), zato lahko ostali moduli t() kličejo že ob nalaganju.
+// Prevodi se naložijo ob uvozu; `ready` se izpolni, ko so naloženi. Strani zaženejo svoje module šele
+// po tem (public/zagon.js), zato lahko ti t() kličejo že ob nalaganju. Brez top-level await: Safari ima
+// z njim napako, ko modul uvaža več modulov hkrati (WebKit 242740, aplikacija na iPadu se ni izrisala).
 import SL from "./i18n/sl.js";
 import { DEFAULT_LANGUAGE, LANGUAGES, isLanguage, langInfo, uiChain, UI_LANGUAGES, detectLanguage, homeLanguage } from "./i18n/languages.js";
 
@@ -66,7 +68,7 @@ let timeZone = "";
 try {
   timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
 } catch {}
-await load(stored() || homeLanguage(detected.code, timeZone));
+export const ready = load(stored() || homeLanguage(detected.code, timeZone)).then(() => applyI18n());
 
 export const currentLang = () => lang;
 // Regija (ISO 3166, npr. "BR") velja, ko je izbrani jezik tisti, ki ga je zaznala naprava.
@@ -122,7 +124,9 @@ export function setLanguage(code, { reload = true } = {}) {
     localStorage.setItem(KEY, code);
   } catch {}
   if (stored() !== code) return false;
-  if (reload && code !== lang) location.reload();
+  // Nov slovar najprej v predpomnilnik, da se stran po ponovnem nalaganju odpre hitro in v novem jeziku;
+  // na počasni povezavi čakamo največ 1,5 s.
+  if (reload && code !== lang) Promise.race([fetchDict(code), new Promise((ok) => setTimeout(ok, 1500))]).finally(() => location.reload());
   return true;
 }
 
@@ -143,4 +147,3 @@ export function languageOptions(selected = lang) {
     .join("");
 }
 
-applyI18n();
