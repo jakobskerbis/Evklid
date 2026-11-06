@@ -958,3 +958,27 @@ test("trgovina: naročnina za en profil odpre višjo stopnjo profila samo do kon
     assert.equal(api.rightsFor(sid).openLevel, "SS");
   });
 });
+
+// --- trda meja AI: popravki po pregledih PR #462 ---
+test("trialing (Stripe, še brez plačila): velja meja preizkusa ali kode, ne plačanega paketa; več sedežev skupaj 0,5 $", async () => {
+  await withAccounts(async ({ db, api, kid, subscribe, pid }) => {
+    const ana = kid("Ana", "OS", YEAR - 12);
+    const bor = kid("Bor", "SS", YEAR - 16);
+    kid("Cene", "OS", YEAR - 10);
+    subscribe("evklid_druzina_month");
+    const paid = api.aiUsage.capsFor(ana)[0].usd;
+    // Plačana Družina (3 profili): meja paketa + rep 3 × 0,2 $, največ vrednost paketa.
+    assert.ok(paid > 2 && paid <= planGuarantee(planByKey("evklid_druzina_month")).total + 1e-9, `plačana: ${paid} $`);
+    // Preizkus pri Stripu med aktivacijsko kodo: plačila še ni.
+    db.prepare("UPDATE parents SET sub_status = 'trialing', promo_until = ? WHERE id = ?").run(new Date(Date.now() + 200 * 86400000).toISOString(), pid);
+    const caps = api.aiUsage.capsFor(ana);
+    assert.ok(caps[0].usd <= 0.5 + 1e-9, `meja kode za ves račun, ne Družina (${caps[0].usd} $)`);
+    assert.equal(caps[0].key, api.aiUsage.capsFor(bor)[0].key, "en skupen bazen za vse sedeže");
+    // Brez kode (Stripe preizkus): meja preizkusa.
+    db.prepare("UPDATE parents SET promo_until = NULL WHERE id = ?").run(pid);
+    assert.ok(api.aiUsage.capsFor(ana)[0].usd <= 0.5 + 1e-9);
+    // Prvi plačan račun (active): meja paketa.
+    db.prepare("UPDATE parents SET sub_status = 'active' WHERE id = ?").run(pid);
+    assert.ok(Math.abs(api.aiUsage.capsFor(ana)[0].usd - paid) < 1e-9);
+  });
+});

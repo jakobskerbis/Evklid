@@ -256,14 +256,13 @@ export function mountAccounts(app, store, opts = {}) {
     if (!r.personal) return null;
     const owner = ownerOf(studentId);
     if (r.personalTier === "gift") return giftGuarantee(getParent(owner)?.gift_level, r.useLevel);
-    // Brez plačila (j 2026-11-06: trda meja AI): preizkus, aktivacijska koda, bonus in stari profili brez računa
-    // imajo nizko stalno mejo za ves račun (server/meje-ai.js NOPAY_USD), z brezplačnim repom kot naročnina.
-    if (NOPAY_USD[r.personalTier]) {
-      const n = owner ? Math.max(1, accessOf(getParent(owner)).seats || 1) : 1;
-      const total = NOPAY_USD[r.personalTier]();
-      return { usd: subscriptionCeiling(total, n), total, profiles: n, pool: !!owner };
-    }
+    if (NOPAY_USD[r.personalTier]) return nopayGuarantee(r.personalTier, owner);
     if (r.personalTier !== "paid") return null;
+    // Naročnina v preizkusni dobi pri Stripu (trialing): plačila še ni bilo, zato do prvega plačanega računa velja meja
+    // paketa, ki dejansko teče (preizkus, koda, darilo ali bonus), ne meja plačanega paketa (pregled #462, KRITIČNO).
+    const under = unpaidTier(getParent(owner));
+    if (under === "gift") return giftGuarantee(getParent(owner)?.gift_level, r.useLevel);
+    if (under) return nopayGuarantee(under, owner);
     const g = planGuarantee(planByKey(getParent(owner)?.sub_plan)) || { usd: subscriptionCeiling(guaranteeUsd(r.useLevel)), pool: false };
     // Nadgradnja ta mesec (applySubscription): stari paket za pretekle dni, novi za preostale (plans.js upgradeMonthUsd).
     // Zapis velja samo za isto naročnino (id računa se po izbrisu lahko ponovno uporabi, nova naročnina začne znova).
@@ -271,6 +270,23 @@ export function mountAccounts(app, store, opts = {}) {
     const was = up && up.sub && up.sub === getParent(owner)?.sub_id ? (up.usd ?? planGuarantee(planByKey(up.from))?.usd) : null;
     return was != null ? { ...g, usd: upgradeMonthUsd(was || 0, g.usd || 0, up.at) } : g;
   }
+  // Brez plačila (j 2026-11-06: trda meja AI): preizkus, aktivacijska koda, bonus in stari profili brez računa imajo nizko
+  // stalno mejo za ves račun (server/meje-ai.js NOPAY_USD). Brezplačni rep je ZNOTRAJ te meje (total), tudi pri več
+  // sedežih (pregled #462: 3 sedeži so dali 0,001 $ + 3 × 0,2 $ namesto 0,5 $).
+  function nopayGuarantee(tier, owner) {
+    const n = owner ? Math.max(1, accessOf(getParent(owner)).seats || 1) : 1;
+    const total = NOPAY_USD[tier]();
+    return { usd: subscriptionCeiling(total, n), total, profiles: n, pool: !!owner, nopay: tier };
+  }
+  // Paket, ki teče pod naročnino v preizkusni dobi (trialing, še brez plačanega računa): promo, trial, gift ali bonus.
+  // Preizkus pri Stripu brez drugega paketa (npr. potekel) šteje kot preizkus. null = naročnina je plačana.
+  function unpaidTier(parent) {
+    if (parent?.sub_status !== "trialing") return null;
+    const t = accessFor({ ...parent, sub_status: null }).tier;
+    return t === "free" ? "trial" : t;
+  }
+  // Vrednost paketa (meja + brezplačni rep) v $: trda meja (server/usage.js capsFor), največ to.
+  const guaranteeTotalFor = (studentId) => subGuarantee(studentId)?.total ?? null;
   // Meja paketa (brez brezplačnega repa, plans.js subscriptionCeiling); naročnik z mejo 0 ostane zajamčen (MIN_CEILING_USD).
   const guaranteeFor = (studentId) => {
     const g = subGuarantee(studentId);
@@ -317,7 +333,7 @@ export function mountAccounts(app, store, opts = {}) {
     if (pool) caps.push({ key: "freepool", usd: pool, spent: freePoolSpent(), code: "block.freePool" });
     return caps;
   }
-  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, poolOf: poolFor, capsOf, onLog: () => schools.clearCache() });
+  aiUsage.configure({ weightOf: shareWeightFor, ownerOf, credits, freeOver, guaranteeOf: guaranteeFor, totalOf: guaranteeTotalFor, poolOf: poolFor, capsOf, onLog: () => schools.clearCache() });
 
   // Dnevna meja vprašanj plačljivega ali šolskega profila: stalna meja iz pravic (Osebno 60 + šola 15) je
   // spodnja meja, s proračunom AI zraste (server/usage.js dailyLimit). Kredit računa se deli med otroke.

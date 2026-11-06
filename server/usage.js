@@ -104,6 +104,7 @@ export class Usage {
     // Trda meja AI (server/meje-ai.js): dodatne meje profila iz računov (brezplačni paket, šola, paket pred testom,
     // kredit) kot [{ key, usd, spent, code }]; rezervacije klicev v teku po ključu meje.
     this.capsOf = () => [];
+    this.totalOf = () => null;
     this.onLog = null;
     this.inflight = new Map();
   }
@@ -111,8 +112,10 @@ export class Usage {
   // freeOver: brezplačni profil je nad mejo brezplačnega paketa (s kreditom nadaljuje, ves strošek gre iz kredita).
   // guaranteeOf: zajamčena mesečna poraba naročnika (j 2026-11-01); ima prednost pred deleži brezplačnih.
   // poolOf: profili s skupnim deležem (Družina); poraba se tedaj šteje za vse skupaj.
-  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog } = {}) {
+  // totalOf: vrednost paketa (meja + brezplačni rep) v $ ali null; trda meja ni nikoli višja (capsFor).
+  configure({ weightOf, ownerOf, credits, freeOver, guaranteeOf, poolOf, topupPrompt, capsOf, onLog, totalOf } = {}) {
     if (capsOf) this.capsOf = capsOf;
+    if (totalOf) this.totalOf = totalOf;
     if (onLog) this.onLog = onLog;
     if (weightOf) this.weightOf = weightOf;
     if (poolOf) this.poolOf = poolOf;
@@ -493,7 +496,7 @@ export class Usage {
       const n = sb.group?.length || 1;
       caps.push({
         key: sb.group ? `pool:${[...sb.group].sort((a, b) => a - b).join(",")}` : `s:${studentId}`,
-        usd: sb.ceiling + freeStudentMonthlyUsd() * n + Math.max(0, sb.credit || 0),
+        usd: Math.min(sb.ceiling + freeStudentMonthlyUsd() * n, this.totalOf(studentId) ?? Infinity) + Math.max(0, sb.credit || 0),
         spent: sb.spent,
         code: this.topupPrompt(studentId) ? "block.freeTailTopup" : "block.freeTail",
       });
