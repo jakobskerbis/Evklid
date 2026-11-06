@@ -23,7 +23,7 @@ $$P(A) = \frac{|A|}{|\Omega|},$$
 
 število ugodnih izidov deljeno s številom vseh.
 
-Splošneje verjetnost opišejo **Kolmogorovi aksiomi**: $P(A) \geq 0$, $P(\Omega) = 1$ in za nezdružljive dogodke ($A \cap B = \emptyset$) $P(A \cup B) = P(A) + P(B)$. Klasična definicija jih izpolnjuje. Iz aksiomov sledita pravili, ki ju stalno uporabljamo:
+Splošneje verjetnost opišejo **Kolmogorovi aksiomi**: $P(A) \geq 0$, $P(\Omega) = 1$ in za nezdružljive dogodke ($A \cap B = \emptyset$) $P(A \cup B) = P(A) + P(B)$ (natančneje: verjetnost unije števno mnogo paroma nezdružljivih dogodkov je vsota njihovih verjetnosti). Klasična definicija jih izpolnjuje. Iz aksiomov sledita pravili, ki ju stalno uporabljamo:
 
 - **nasprotni dogodek**: $P(A^c) = 1 - P(A)$, ker sta $A$ in $A^c$ nezdružljiva in skupaj dasta $\Omega$;
 - **vsota poljubnih dogodkov**:
@@ -182,22 +182,22 @@ $P(+) = P(D)P(+ \mid D) + P(D^c)P(+ \mid D^c)$; $P(D \mid +) = \dfrac{P(D)P(+ \m
 Starša sta heterozigota $Aa$ za recesivno lastnost; alel $A$ je dominanten. Otrok ima dominanten fenotip (ni izrazil recesivne lastnosti). Kolikšna je verjetnost, da je heterozigot? Aleli se dedujejo neodvisno in enako verjetno.
 
 **Podatki:** starša $Aa \times Aa$; vsak starš prenese $A$ ali $a$ z verjetnostjo $1/2$, neodvisno; otrok ima dominanten fenotip
-**Iščemo:** $P(Aa \mid \text{dominanten fenotip})$
+**Iščemo:** $P(E \mid B)$, kjer je $E$ dogodek »otrok je heterozigot« in $B$ »dominanten fenotip«
 
 :::formula
-$P(A \mid B) = \dfrac{P(A \cap B)}{P(B)}$
+$P(E \mid B) = \dfrac{P(E \cap B)}{P(B)}$
 :::
 
 **Rešitev:**
 
 1. Prostor izidov (alel od matere, alel od očeta): $\{AA, Aa, aA, aa\}$, vsi z verjetnostjo $1/4$.
 2. Dominanten fenotip: $B = \{AA, Aa, aA\}$, $P(B) = 3/4$.
-3. Zdaj ti: določi $A \cap B$ in izračunaj pogojno verjetnost.
+3. Zdaj ti: določi $E \cap B$ in izračunaj pogojno verjetnost. (Dogodek ne imenujemo $A$, ker je $A$ tu ime alela.)
 
 :::premisli
 Kolikšna je verjetnost, da je otrok heterozigot?
 ---
-Heterozigot je $\{Aa, aA\}$, kar je v celoti v $B$; $P(A \cap B) = 2/4$. Torej $P = (2/4)/(3/4) = 2/3$. Brez podatka o fenotipu bi bila $1/2$: pogoj izloči izid $aa$ in skrči prostor izidov.
+Heterozigot je $E = \{Aa, aA\}$, kar je v celoti v $B$; $P(E \cap B) = 2/4$. Torej $P = (2/4)/(3/4) = 2/3$. Brez podatka o fenotipu bi bila $1/2$: pogoj izloči izid $aa$ in skrči prostor izidov.
 :::
 
 ## Pogoste napake
@@ -256,15 +256,15 @@ Natančno definiraj pogojno verjetnost in dokaži formulo o popolni verjetnosti 
 
 ### Naloga 3
 
-Dvakrat vržemo pošten kovanec. Naj bo $A$ »prvi met je cifra«, $B$ »drugi met je cifra« in $C$ »oba meta sta enaka«. Pokaži, da so dogodki paroma neodvisni, niso pa neodvisni vsi trije. Kaj to pomeni za modele zanesljivosti, ki preverijo le pare komponent?
+Dvakrat vržemo pošten kovanec. Naj bo $A$ »prvi met je cifra«, $B$ »drugi met je cifra« in $E$ »oba meta sta enaka«. Pokaži, da so dogodki paroma neodvisni, niso pa neodvisni vsi trije. Kaj to pomeni za modele zanesljivosti, ki preverijo le pare komponent?
 
 **Rešitev:**
 
 1. $\Omega = \{CC, CG, GC, GG\}$ ($C$ cifra, $G$ grb), vsi izidi z verjetnostjo $1/4$.
-2. $A = \{CC, CG\}$, $B = \{CC, GC\}$, $C = \{CC, GG\}$; vsak ima verjetnost $1/2$.
-3. Pari: $A \cap B = \{CC\}$, $A \cap C = \{CC\}$, $B \cap C = \{CC\}$, vsak z verjetnostjo $1/4 = \tfrac12 \cdot \tfrac12$. Paroma so neodvisni.
-4. Vsi trije: $A \cap B \cap C = \{CC\}$ z verjetnostjo $1/4$, produkt pa je $1/8$. Neodvisnost vseh treh ne velja.
-5. Razlog: če vemo $A$ in $B$, je $C$ gotov; dva dogodka skupaj določita tretjega.
+2. $A = \{CC, CG\}$, $B = \{CC, GC\}$, $E = \{CC, GG\}$; vsak ima verjetnost $1/2$.
+3. Pari: $A \cap B = \{CC\}$, $A \cap E = \{CC\}$, $B \cap E = \{CC\}$, vsak z verjetnostjo $1/4 = \tfrac12 \cdot \tfrac12$. Paroma so neodvisni.
+4. Vsi trije: $A \cap B \cap E = \{CC\}$ z verjetnostjo $1/4$, produkt pa je $1/8$. Neodvisnost vseh treh ne velja.
+5. Razlog: če vemo $A$ in $B$, je $E$ gotov; dva dogodka skupaj določita tretjega.
 6. Pomen: preverjanje neodvisnosti po parih ne zadošča; pri sistemih s tremi ali več komponentami mora produktno pravilo veljati za vse podmnožice, sicer verjetnost hkratne odpovedi napačno ocenimo.
 
 ## Drugače: Na sliki
@@ -350,6 +350,7 @@ Laboratorij dobiva vzorce iz treh obratov: $50\,\%$ iz prvega, $30\,\%$ iz druge
 :::simboli
 \Omega | prostor izidov | | –
 A, B | dogodka | | –
+E | dogodek v nalogi (heterozigot, »oba meta enaka«, »natanko ena kontaminirana«) | | –
 P | verjetnost | | – | pri enako verjetnih izidih delež ugodnih izidov
 n | število elementov (možnosti) | | –
 k | število izbranih elementov | | –

@@ -13,7 +13,7 @@ Isto vprašanje si postaviš v vsakem fizikalnem praktikumu. Z nihalom dvanajstk
 
 ### Slika: kako niha vzorčno povprečje
 
-Predstavljaj si, da isti poskus (25 meritev nihala) ponoviš velikokrat in vsakič izračunaš povprečje $\bar x$. Povprečja ne bodo enaka; razporedijo se okoli prave vrednosti $\mu$ v zvonasti obliki. Iz lekcije o pričakovani vrednosti in disperziji veš, da je $E(\bar X) = \mu$ in $D(\bar X) = \sigma^2/n$, zato je standardni odklon povprečja
+Predstavljaj si, da isti poskus (25 meritev nihala) ponoviš velikokrat in vsakič izračunaš povprečje $\bar x$. Povprečja ne bodo enaka; razporedijo se okoli prave vrednosti $\mu$ v zvonasti obliki. Iz lekcije o pričakovani vrednosti in disperziji veš, da je za neodvisne meritve $E(\bar X) = \mu$ in $D(\bar X) = \sigma^2/n$, zato je standardni odklon povprečja
 
 $$\sigma_{\bar X} = \frac{\sigma}{\sqrt n},$$
 
@@ -50,7 +50,7 @@ Naj bo $z_{1-\alpha/2}$ kvantil standardne normalne porazdelitve ($\Phi(z_{1-\al
 
 $$\bar X - z_{1-\alpha/2}\frac{\sigma}{\sqrt n} \leq \mu \leq \bar X + z_{1-\alpha/2}\frac{\sigma}{\sqrt n}.$$
 
-**Neznan $\sigma$: Studentova porazdelitev.** Navadno $\sigma$ ne poznamo in ga nadomestimo z vzorčnim standardnim odklonom $s$ (z delitvijo z $n - 1$).
+**Neznan $\sigma$: Studentova porazdelitev.** Navadno $\sigma$ ne poznamo in ga nadomestimo z vzorčnim standardnim odklonom $s$ (z delitvijo z $n - 1$; zakaj ravno z $n - 1$, pokaže lekcija o cenilkah).
 
 **Izrek (Gosset).** Naj bodo $X_1, \dots, X_n$ neodvisne in porazdeljene po $N(\mu, \sigma)$. Potem ima
 
@@ -64,13 +64,16 @@ $$\bar x \pm t_{n-1,\,1-\alpha/2}\,\frac{s}{\sqrt n}.$$
 
 Nekaj kvantilov za $95\,\%$ zaupanje:
 
-| $n - 1$ | $5$ | $7$ | $11$ | $\infty$ |
-|---|---|---|---|---|
-| $t_{n-1;\,0{,}975}$ | $2{,}571$ | $2{,}365$ | $2{,}201$ | $1{,}960$ |
+| $n - 1$ | $t_{n-1;\,0{,}975}$ |
+|---|---|
+| $5$ | $2{,}571$ |
+| $7$ | $2{,}365$ |
+| $11$ | $2{,}201$ |
+| $\infty$ | $1{,}960$ |
 
 Pri šestih meritvah ($n - 1 = 5$) je interval zaradi $t$ za okoli $31\,\%$ širši, kot bi bil z $z$. To je Gossetov popravek.
 
-**Delež.** Za delež $p$ (izkoristek detektorja, delež okvarjenih kosov) iz $k$ uspehov v $n$ poskusih je $\hat p = k/n$ in pri velikem $n$ približno
+**Delež.** Za delež $p$ (izkoristek detektorja, delež okvarjenih kosov) iz $k$ uspehov v $n$ poskusih je $\hat p = k/n$ in pri velikem $n$ (praktično $n\hat p \geq 10$ in $n(1 - \hat p) \geq 10$) približno
 
 $$\hat p \pm z_{1-\alpha/2}\sqrt{\frac{\hat p(1 - \hat p)}{n}}.$$
 
@@ -142,7 +145,7 @@ $\bar x \pm z_{1-\alpha/2}\,\dfrac{\sigma}{\sqrt n}$
 1. Standardna napaka: $\sigma/\sqrt n = 0{,}050/5\,\mathrm{m/s^2} = 0{,}010\,\mathrm{m/s^2}$.
 2. Polovična širina: $1{,}960 \cdot 0{,}010\,\mathrm{m/s^2} \approx 0{,}020\,\mathrm{m/s^2}$.
 3. Interval: $9{,}790 \pm 0{,}020$, torej $[9{,}770; 9{,}810]\,\mathrm{m/s^2}$.
-4. Odgovor: $95\,\%$ interval zaupanja za $g$ je $[9{,}770; 9{,}810]\,\mathrm{m/s^2}$. Tabelna vrednost $9{,}81\,\mathrm{m/s^2}$ je ravno na zgornji meji.
+4. Odgovor: $95\,\%$ interval zaupanja za $g$ je $[9{,}770; 9{,}810]\,\mathrm{m/s^2}$. Tabelna vrednost $9{,}81\,\mathrm{m/s^2}$ je tik nad zgornjo mejo (nezaokroženo $9{,}8096\,\mathrm{m/s^2}$), zato bi jo dvostranski test pri $\alpha = 0{,}05$ ravno še zavrnil ($z = -2{,}0$).
 
 ### Primer 2
 

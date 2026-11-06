@@ -284,7 +284,7 @@ Iz robnih pogojev izpelji odbojnost pri pravokotnem vpadu na mejo dveh nemagnetn
 4. Zrak–steklo: $R = (0{,}50/2{,}50)^2 = 0{,}040$; zrak–voda: $R = (0{,}33/2{,}33)^2 \approx 0{,}020$.
 5. Plošča: na vsaki površini gre skozi $96\,\%$, skupaj $0{,}96^2 \approx 0{,}922$, torej okoli $92\,\%$.
 6. Prevleka: odboja na obeh mejah prevleke se izničita, če sta enako močna in v protifazi. Enaka moč zahteva $n_p = \sqrt{n_1n_2} = \sqrt{1{,}50} \approx 1{,}22$; protifaza zahteva (oba odboja dobita enak fazni skok $\pi$, ker $n$ na obeh mejah naraste) dodatno pot $2d = \lambda/(2n_p)$, torej $d = \lambda/(4n_p) \approx 550/(4 \cdot 1{,}22)\,\mathrm{nm} \approx 112\,\mathrm{nm}$.
-7. Odgovor: $R = 4{,}0\,\%$ za steklo, $2{,}0\,\%$ za vodo; plošča prepusti okoli $92\,\%$; prevleka z $n \approx 1{,}22$ in debelino okoli $112\,\mathrm{nm}$ (v praksi $\mathrm{MgF_2}$ z $n = 1{,}38$, ki odboj zmanjša na okoli $1\,\%$).
+7. Odgovor: $R = 4{,}0\,\%$ za steklo, $2{,}0\,\%$ za vodo; plošča prepusti okoli $92\,\%$; prevleka z $n \approx 1{,}22$ in debelino okoli $112\,\mathrm{nm}$ (v praksi $\mathrm{MgF_2}$ z $n = 1{,}38$, ki odboj zmanjša na okoli $1{,}4\,\%$).
 
 ## Drugače: Z analogijo
 
@@ -298,7 +298,7 @@ Iz robnih pogojev izpelji odbojnost pri pravokotnem vpadu na mejo dveh nemagnetn
 
 **Optične komunikacije.** Svetloba v vlaknih ostane ujeta s totalnim odbojem; numerična apertura iz Primera 3 določi, kako natančno moramo poravnati laser z vlaknom. Fresnelove izgube na spojih zmanjšamo z gelom z enakim lomnim količnikom.
 
-**Optika in laboratorij.** Leče in objektivi imajo protiodbojne prevleke, sicer bi objektiv z desetimi površinami izgubil okoli tretjino svetlobe ($1 - 0{,}96^{10} \approx 0{,}34$). Laserji z Brewstrovimi okni oddajajo polarizirano svetlobo brez izgub na oknih. Fotodiode merijo intenziteto, nikoli neposredno $E_0$.
+**Optika in laboratorij.** Leče in objektivi imajo protiodbojne prevleke, sicer bi objektiv z desetimi površinami izgubil dobro tretjino svetlobe ($1 - 0{,}96^{10} \approx 0{,}34$). Laserji z Brewstrovimi okni oddajajo polarizirano svetlobo brez izgub na oknih. Fotodiode merijo intenziteto, nikoli neposredno $E_0$.
 
 **Vesolje in merjenje.** Tlak sevanja moti tirnice satelitov GPS in ga je treba upoštevati v računih tirnic. V optičnih pincetah fokusiran laserski žarek s tlakom sevanja in lomom drži mikrometrske kroglice ali celice in meri sile reda pikonewtonov.
 

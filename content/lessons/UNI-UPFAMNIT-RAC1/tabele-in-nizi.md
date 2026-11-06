@@ -122,7 +122,7 @@ for (int i = 0; i < m.length; i++) {
 }
 ```
 
-**Vrstični zapis.** V pomnilniku (in v datotekah) je mreža pogosto shranjena kot ena dolga vrsta, vrstica za vrstico. Pri mreži z $s$ stolpci je element $(i, j)$ na mestu $i \cdot s + j$; v našem primeru je `m[1][2]` na mestu $1 \cdot 4 + 2 = 6$. Tako hranijo mreže tudi podnebni modeli in slikovne datoteke. Javanska `double[][]` tega ne naredi sama (vsaka vrstica je svoja tabela); vrstični zapis uporabiš, ko mrežo shraniš v eno tabelo `new double[v * s]`.
+**Vrstični zapis.** V pomnilniku (in v datotekah) je mreža pogosto shranjena kot ena dolga vrsta, vrstica za vrstico. Pri mreži z $s$ stolpci je element $(i, j)$ na mestu $i \cdot s + j$; v našem primeru je `m[1][2]` na mestu $1 \cdot 4 + 2 = 6$. Tako hranijo mreže tudi podnebni modeli in slikovne datoteke. Javanska `double[][]` vrstic ne hrani nujno skupaj (vsaka vrstica je svoja tabela); kdor želi en neprekinjen blok, vzame `double[]` dolžine $v \cdot s$ in indeks $i \cdot s + j$.
 
 :::premisli
 Kolikokrat se izvede notranje telo, ko obhodiš celotno tabelo `new double[3][4]`? In koliko, če obhodiš le zgornji trikotnik kvadratne tabele $n \times n$ (vsi $j \geq i$)?
@@ -360,7 +360,7 @@ static double[][] zgladi(double[][] g) {
 
 ### Naloga 2
 
-Kaj izpiše spodnji program? Za vsako vrstico izpisa utemelji, kaj se zgodi v pomnilniku.
+Kaj izpiše spodnji program (prvi del stoji v metodi `main`, `spremeni` je metoda istega razreda)? Za vsako vrstico izpisa utemelji, kaj se zgodi v pomnilniku.
 
 ```java
 int[] a = {1, 2, 3};
@@ -399,7 +399,7 @@ Napiši metodo `obrni(double[] a)`, ki tabelo obrne **na mestu** (brez nove tabe
 2. Invarianta: po obhodu $i$ so na mestih $0, \dots, i$ in $n - 1 - i, \dots, n - 1$ že končne (zamenjane) vrednosti, sredina pa je nespremenjena.
 3. Po zadnjem obhodu ($i = \lfloor n/2\rfloor - 1$) je obdelanih $\lfloor n/2\rfloor$ parov. Pri sodem $n$ so to vsi elementi. Pri lihem ostane srednji element na indeksu $(n - 1)/2$, ki je sam sebi simetričen in mora ostati na mestu.
 4. Zamenjav je $\lfloor n/2\rfloor$ (pri $n = 7$ tri).
-5. Zanka do $n$: druga polovica obhodov bi vsak par zamenjal še enkrat in tabelo vrnil v prvotni vrstni red – program bi bil »pravilen« le za tabele, ki se berejo enako z obeh strani (palindrome), npr. dolžine $0$ ali $1$.
+5. Zanka do $n$: druga polovica obhodov bi vsak par zamenjal še enkrat in tabelo vrnil v prvotni vrstni red – program bi bil »pravilen« le za tabele, ki so same sebi obrnjene (dolžine $0$ ali $1$ ali simetrične, npr. $\{1, 2, 1\}$).
 
 ## Drugače: Z analogijo
 

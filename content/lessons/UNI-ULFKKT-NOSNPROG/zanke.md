@@ -24,16 +24,16 @@ while h >= 0.01:
 print(n, h)
 ```
 
-Program izpiše `11 0.0073786976294838`. Kaj se je zgodilo, pokaže **sledilna tabela** – stanje spremenljivk po vsakem obhodu:
+Program izpiše `11 0.007378697629483823`. Kaj se je zgodilo, pokaže **sledilna tabela** – stanje spremenljivk po vsakem obhodu:
 
-| obhod | `h` pred | pogoj | `h` po | `n` po |
-|---|---|---|---|---|
-| 1 | $1{,}0$ | `True` | $0{,}64$ | $1$ |
-| 2 | $0{,}64$ | `True` | $0{,}4096$ | $2$ |
-| 3 | $0{,}4096$ | `True` | $0{,}2621$ | $3$ |
-| … | … | … | … | … |
-| 11 | $0{,}0115$ | `True` | $0{,}0074$ | $11$ |
-| – | $0{,}0074$ | `False` | konec | |
+| obhod | `h` pred → pogoj | `h` po | `n` po |
+|---|---|---|---|
+| 1 | $1{,}0$ → `True` | $0{,}64$ | $1$ |
+| 2 | $0{,}64$ → `True` | $0{,}4096$ | $2$ |
+| 3 | $0{,}4096$ → `True` | $0{,}2621$ | $3$ |
+| … | … | … | … |
+| 11 | $0{,}0115$ → `True` | $0{,}0074$ | $11$ |
+| – | $0{,}0074$ → `False` | konec | $11$ |
 
 Iz primera razberemo štiri stvari, ki veljajo za vsako zanko `while`:
 
@@ -50,7 +50,7 @@ Rezultat lahko preverimo z matematiko: po $n$ odbojih je $h = 0{,}64^n$; iščem
 
 Telo se lahko izvede tudi nič-krat: če je pogoj že na začetku neresničen, Python blok preskoči. Če pa telo pogoja nikoli ne spremeni, dobimo **neskončno zanko**; program prekineš s Ctrl + C.
 
-**Kdaj se zanka konča.** Zanesljivo vemo, da se `while` konča, če najdemo **mero napredka**: celoštevilsko količino, ki je med izvajanjem nenegativna in se v vsakem obhodu zmanjša vsaj za $1$. Ker nenegativno celo število ne more padati neskončno dolgo, je obhodov končno mnogo. Pri žogici je to število obhodov, ki so še potrebni, da `h` pade pod $0{,}01$ (pred zanko $11$) – manj formalno: `h` se v vsakem obhodu pomnoži z $0{,}64 < 1$ in zato pade pod vsako pozitivno mejo.
+**Kdaj se zanka konča.** Zanesljivo vemo, da se `while` konča, če najdemo **mero napredka**: celoštevilsko količino, ki je med izvajanjem nenegativna in se v vsakem obhodu zmanjša vsaj za $1$. Ker nenegativno celo število ne more padati neskončno dolgo, je obhodov končno mnogo. Pri žogici je to na primer število množenj z $0{,}64$, ki še manjkajo, da `h` pade pod $0{,}01$ (pred zanko $11$) – manj formalno: `h` se v vsakem obhodu pomnoži z $0{,}64 < 1$ in zato pade pod vsako pozitivno mejo.
 
 :::premisli
 V programu za žogico zamenjaš faktor `0.64` z `1.0` (popolnoma prožna žogica). Kaj se zgodi, ko program poženeš, in zakaj?
