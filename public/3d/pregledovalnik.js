@@ -7,7 +7,7 @@ import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
 import { ravenProfila, razlaga, imaRavni } from "./raven.js";
-import { SKUPINE, najdiSkupino, delPoImenu } from "./skupine.js";
+import { SKUPINE, zacetnaIzbira } from "./skupine.js";
 import { najdiOvoje, okvir } from "./ovoji.js";
 
 const mk = (tag, cls, text) => {
@@ -339,7 +339,9 @@ export function odpriModel(el, mod, opts = {}) {
         const clani = deli.filter((d) => g.deli.includes(d.id));
         const meshes = [...new Set(clani.flatMap((d) => d.meshes || []))];
         const ime = t(`a3.grp.${g.id}`);
-        return { id: PRED + g.id, skupinaDelov: true, ime, barva: "#6E9BFF", meshes, opis: clani.map((d) => d.ime).join(", "), clani };
+        // razlaga skupine po ravni (skupine.js opisOs/opis/opisStudij, pregled #461 C P2-2), pod njo seznam članov
+        const seznam = clani.map((d) => d.ime).join(", ");
+        return { id: PRED + g.id, skupinaDelov: true, ime, barva: "#6E9BFF", meshes, opis: g.opis || seznam, opisOs: g.opisOs, opisStudij: g.opisStudij, seznam: g.opis ? seznam : "", smer: g.smer, clani };
       })
       .filter((g) => g.clani.length > 1 && g.meshes.length);
   }
@@ -395,6 +397,7 @@ export function odpriModel(el, mod, opts = {}) {
     glava.append(mk("i", "k3-pika"), naslov, x);
     infoEl.append(glava);
     if (rz.opis) infoEl.append(mk("p", "k3-info-opis", rz.opis));
+    if (d.seznam) infoEl.append(mk("p", "k3-info-clani", d.seznam)); // člani skupine pod razlago
     if (rz.vec) {
       const vec = mk("details", "k3-info-vec");
       vec.append(mk("summary", "", t("a3.moreAbout")), mk("p", "k3-info-opis", rz.vec));
@@ -461,6 +464,7 @@ export function odpriModel(el, mod, opts = {}) {
     const b = okvirDela(d, new THREE.Box3());
     const s = b.isEmpty() ? null : b.getBoundingSphere(new THREE.Sphere());
     const drug = drugKader(prej, [mc, mr]);
+    if (d.smer && s) return poleti(s.center, Math.max(s.radius, 0.35 * mr), { smer: new THREE.Vector3(...d.smer) }); // skupina z lastno smerjo
     const povsemIzven = !vidnaKrogla(THREE, kit.camera, mc, mr) || (s && !vidnaKrogla(THREE, kit.camera, s.center, s.radius));
     if (!drug && !povsemIzven) {
       if (uporabnikovKader()) return;
@@ -502,6 +506,7 @@ export function odpriModel(el, mod, opts = {}) {
           ravenEl.querySelectorAll("button").forEach((x, i) => x.setAttribute("aria-pressed", String(i + 1 === raven)));
           const d = najdiDel(izbran);
           if (d) pokaziInfo(d);
+          mere();
         });
         ravenEl.append(g);
       }
@@ -543,6 +548,33 @@ export function odpriModel(el, mod, opts = {}) {
     if (!izbran) requestAnimationFrame(() => !unicen && namigniDele());
   }
 
+  // Legenda s pravimi merami ob modelu (ne čez; j 6. 11.): model.mere = [{ ime, vrednost }] (npr. organ <o>.json
+  // »mere«). Na plošči pod opisom modela; OŠ vidi prvi dve, ostale pod »Več o tem«, SŠ in študij vse.
+  let mereEl = null;
+  const mere = () => {
+    mereEl?.remove();
+    mereEl = null;
+    const seznam = Array.isArray(model?.mere) ? model.mere.filter((x) => x && x.ime && x.vrednost) : [];
+    if (!seznam.length) return;
+    mereEl = mk("section", "k3-mere");
+    mereEl.append(mk("h2", "k3-mere-glava", t("a3.measures")));
+    const vrstice = (xs) => {
+      const dl = mk("dl", "k3-mere-seznam");
+      for (const x of xs) dl.append(mk("dt", "", x.ime), mk("dd", "", x.vrednost));
+      return dl;
+    };
+    const vidne = raven <= 1 ? seznam.slice(0, 2) : seznam;
+    mereEl.append(vrstice(vidne));
+    if (vidne.length < seznam.length) {
+      const vec = mk("details", "k3-info-vec");
+      vec.append(mk("summary", "", t("a3.moreAbout")), vrstice(seznam.slice(vidne.length)));
+      mereEl.append(vec);
+    }
+    if (oModelu) {
+      oModelu.append(mereEl);
+      oModelu.hidden = false;
+    } else spodaj.insertBefore(mereEl, deliEl);
+  };
   const merilo = () => {
     const m = model && "merilo" in model && model.merilo !== undefined ? (typeof model.merilo === "function" ? model.merilo() : model.merilo) : info.merilo;
     kit.nastaviMerilo(m || null, 2);
@@ -1031,6 +1063,7 @@ export function odpriModel(el, mod, opts = {}) {
     if (!ponastavi) raven = ravenZacetna; // nov model: raven profila (pregled #461)
     deli();
     merilo();
+    mere();
     pokaziInfo(null);
     podrobnostiGumb();
     if (typeof model.ao === "function") kit.nastaviAO(model.ao() !== false);
@@ -1047,17 +1080,12 @@ export function odpriModel(el, mod, opts = {}) {
     kit.narisi();
     // Del iz naslova (»#organ-srce?del=levi prekat«, gumb inštruktorja public/odpri.js): po id-ju ali imenu.
     if (zacetek.del && !ponastavi) {
-      const want = fold(zacetek.del);
-      const vsi = Array.isArray(model.deli) ? model.deli : [];
-      const poImenu = delPoImenu(vsi, zacetek.del); // tudi »membrana« → Celična membrana (ime dela pred skupino)
-      const d = vsi.find((x) => x.id === zacetek.del || fold(x.ime) === want) || vsi.find((x) => x.id === poImenu) || vsi.find((x) => fold(x.ime).startsWith(want) || want.startsWith(fold(x.ime)));
-      // ni dela s tem imenom: skupina (»zaklopke«, »organeli« …; id iz strežnika ali besede, tudi v jeziku vmesnika)
-      const g = d ? null : String(zacetek.del).startsWith(PRED) ? zacetek.del : najdiSkupino(info.id, zacetek.del, Object.fromEntries((SKUPINE[info.id] || []).map((x) => [x.id, [t(`a3.grp.${x.id}`)]])));
-      const cilj = d ? d.id : g ? (g.startsWith(PRED) ? g : PRED + g) : null;
+      // del (tudi »membrana« → Celična membrana, sinonimi »mitralna zaklopka«) pred skupino (»zaklopke«, »organeli« …;
+      // id iz strežnika ali besede, tudi v jeziku vmesnika): skupine.js zacetnaIzbira
+      const cilj = zacetnaIzbira(info.id, model.deli, zacetek.del, Object.fromEntries((SKUPINE[info.id] || []).map((x) => [x.id, [t(`a3.grp.${x.id}`)]])));
       if (cilj) requestAnimationFrame(() => !unicen && model === m && izberi(cilj, { pomakni: false }));
     }
   }
-  const fold = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
 
   zgradiVse(false);
   const api = {

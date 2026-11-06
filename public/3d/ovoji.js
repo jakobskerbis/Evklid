@@ -1,6 +1,6 @@
 // Ovoji in stene okoli izbranega dela 3D modela (j, 4. 11. in 6. 11.): kaj pregledovalnik skrije, da se izbrani del ali
 // skupina vidi. Brez uvozov (THREE poda klicatelj), zato teče tudi v Node (test/3d-ovoji.test.js).
-//  1. Ovoj: večji del, ki ga zadenejo vsi šest žarki od zunaj (±x, ±y, ±z) proti središču izbranega (celična stena,
+//  1. Ovoj: večji del, ki ga zadene vseh šest žarkov od zunaj (±x, ±y, ±z) proti središču izbranega (celična stena,
 //     membrana, ovojnica …; tudi skrit »pokrov« izreza sklene lupino). Razpršeni deli (ribosomi) tega ne izpolnijo.
 //  2. Skupina (»skupina-<id>«, npr. Zaklopke, Organeli): vidni so samo člani (pregled #461 B2-N3: v skupinskem pogledu
 //     naj ne ostanejo trabekule, vene ali vez okoli zaklopk). Vse druge mreže skrijemo; brez žarkov, zato je tap poceni

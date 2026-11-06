@@ -567,5 +567,31 @@
    "moc": 0.5,
    "barva": "#ffe0d8"
   }
+ ],
+ "mere": [
+  {
+   "ime": "Premer zrkla",
+   "vrednost": "≈ 24 mm"
+  },
+  {
+   "ime": "Masa zrkla",
+   "vrednost": "≈ 7,5 g"
+  },
+  {
+   "ime": "Premer roženice",
+   "vrednost": "≈ 11,5 mm"
+  },
+  {
+   "ime": "Debelina roženice",
+   "vrednost": "≈ 0,55 mm sredi"
+  },
+  {
+   "ime": "Leča",
+   "vrednost": "≈ 9–10 mm premera, ≈ 4 mm debela"
+  },
+  {
+   "ime": "Lomnost očesa",
+   "vrednost": "≈ 60 dioptrij (roženica ≈ 43)"
+  }
  ]
 }

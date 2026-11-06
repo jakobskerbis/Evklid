@@ -350,5 +350,31 @@
    "moc": 0.6,
    "barva": "#ffd6cc"
   }
+ ],
+ "mere": [
+  {
+   "ime": "Velikost",
+   "vrednost": "≈ 10–12 cm × 5–7 cm × 3 cm"
+  },
+  {
+   "ime": "Masa",
+   "vrednost": "≈ 120–170 g"
+  },
+  {
+   "ime": "Debelina skorje",
+   "vrednost": "≈ 1 cm"
+  },
+  {
+   "ime": "Nefronov",
+   "vrednost": "≈ 1 milijon v vsaki ledvici"
+  },
+  {
+   "ime": "Sečevod",
+   "vrednost": "≈ 25–30 cm"
+  },
+  {
+   "ime": "Glomerulna filtracija",
+   "vrednost": "≈ 120 ml/min (obe ledvici)"
+  }
  ]
 }

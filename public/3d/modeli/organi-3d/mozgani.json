@@ -545,5 +545,27 @@
    "moc": 0.55,
    "barva": "#ffd6cc"
   }
+ ],
+ "mere": [
+  {
+   "ime": "Masa",
+   "vrednost": "≈ 1,2–1,4 kg"
+  },
+  {
+   "ime": "Velikost",
+   "vrednost": "≈ 17 × 14 × 9 cm"
+  },
+  {
+   "ime": "Debelina skorje",
+   "vrednost": "2–4 mm"
+  },
+  {
+   "ime": "Nevronov",
+   "vrednost": "≈ 86 milijard"
+  },
+  {
+   "ime": "Delež mase telesa",
+   "vrednost": "≈ 2 %, porabijo ≈ 20 % kisika"
+  }
  ]
 }

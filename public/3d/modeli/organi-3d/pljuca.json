@@ -397,5 +397,31 @@
    "moc": 0.6,
    "barva": "#ffd6cc"
   }
+ ],
+ "mere": [
+  {
+   "ime": "Masa",
+   "vrednost": "desna ≈ 620 g, leva ≈ 560 g"
+  },
+  {
+   "ime": "Skupna prostornina",
+   "vrednost": "≈ 6 l (največji vdih)"
+  },
+  {
+   "ime": "Dihalna površina",
+   "vrednost": "≈ 70 m²"
+  },
+  {
+   "ime": "Pljučnih mešičkov",
+   "vrednost": "≈ 300–500 milijonov"
+  },
+  {
+   "ime": "Sapnik",
+   "vrednost": "≈ 11 cm dolg, ≈ 2 cm širok"
+  },
+  {
+   "ime": "Pregrada zrak–kri",
+   "vrednost": "≈ 0,2–0,6 µm"
+  }
  ]
 }

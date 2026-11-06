@@ -19,12 +19,12 @@
    "liseBarva": "#ffb0a0",
    "masca": 0.6,
    "mascaBarva": "#e7c46e",
-   "rez": "#8a3029",
+   "rez": "#6b261d",
    "senca": 0.35,
    "sencaBarva": "#4a1512",
    "mascaZunaj": true,
    "mascaF": 90,
-   "rezVlakna": 520,
+   "rezVlakna": 350,
    "odtenek": "#d9c3be",
    "sijajHrap": 0.7,
    "spekular": 0.7
@@ -44,6 +44,23 @@
    "dvostransko": true,
    "sijajHrap": 0.6,
    "spekular": 0.75
+  },
+  "zep": {
+   "barva": "#eadfcc",
+   "hrap": 0.36,
+   "lak": 0.45,
+   "lakHrap": 0.6,
+   "sijaj": 0.35,
+   "sijajBarva": "#ffffff",
+   "rob": 0.1,
+   "robBarva": "#fff2e0",
+   "ao": 0.8,
+   "zrno": 0.05,
+   "f": 90,
+   "dvostransko": true,
+   "sijajHrap": 0.6,
+   "spekular": 0.75,
+   "tekstura": false
   },
   "arterija": {
    "barva": "#c4312e",
@@ -266,7 +283,7 @@
    ],
    "skupina": "desni-preddvor",
    "opisOs": "Majhni gubici ob ustjih dveh ven v desnem preddvoru.",
-   "opisStudij": "Valvula venae cavae inferioris (Eustachii) je pred rojstvom usmerjala kri iz spodnje votle vene skozi foramen ovale; valvula sinus coronarii (Thebesii) zapira ustje venčnega sinusa."
+   "opisStudij": "Valvula venae cavae inferioris (Eustachii) je pred rojstvom usmerjala kri iz spodnje votle vene skozi foramen ovale; valvula sinus coronarii (Thebesii) deloma prekriva ustje venčnega sinusa."
   },
   {
    "id": "desno-srcno-uho",
@@ -409,6 +426,10 @@
    "id": "pljucno-deblo",
    "ime": "Pljučno deblo",
    "la": "Truncus pulmonalis",
+   "sinonimi": [
+    "leva pljučna arterija",
+    "arteria pulmonalis sinistra"
+   ],
    "barva": "#818cf8",
    "opis": "Iz desnega prekata nese kri brez kisika; pod aortnim lokom se razcepi, levo se nadaljuje v levo pljučno arterijo.",
    "vozlisca": [
@@ -555,7 +576,7 @@
     "Sinoatrial nodal branch of right coronary artery"
    ],
    "opisOs": "Žila po desni strani srca.",
-   "opisStudij": "A. coronaria dextra: veja za conus, arterija sinusnega (~60 %) in AV-vozla, desna obrobna veja, pri desni dominanci zadnja medprekatna."
+   "opisStudij": "A. coronaria dextra: veja za conus, arterija sinusnega (~60 %) in AV-vozla (~80–90 %), desna obrobna veja, pri desni dominanci zadnja medprekatna."
   },
   {
    "id": "zadnja-medprekatna-arterija",
@@ -595,12 +616,15 @@
    ],
    "ucnaBarva": "#5b4ee6",
    "opisOs": "Vene, ki odvajajo kri iz srčne mišice.",
-   "opisStudij": "Večina se zbere v sinus coronarius; vv. cordis anteriores in drobne vv. cordis minimae (Tebezijeve) se izlivajo neposredno v votline."
+   "opisStudij": "Večina se zbere v sinus coronarius (v. cordis magna, media, parva in v. ventriculi sinistri posterior – zadnja vena levega prekata); vv. cordis anteriores in drobne vv. cordis minimae (Tebezijeve) se izlivajo neposredno v votline."
   },
   {
    "id": "vencni-sinus",
    "ime": "Venčni sinus",
    "la": "Sinus coronarius",
+   "sinonimi": [
+    "koronarni sinus"
+   ],
    "skupina": "vencne-vene",
    "barva": "#8b5cf6",
    "opis": "Široka vena v zadnjem venčnem žlebu; zbere kri srčnih ven in jo izlije v desni preddvor.",
@@ -711,6 +735,16 @@
    "id": "av-zaklopki",
    "ime": "Jadrasti zaklopki",
    "la": "Valvae atrioventriculares",
+   "sinonimi": [
+    "mitralna zaklopka",
+    "trikuspidalna zaklopka",
+    "dvolistna zaklopka",
+    "trolistna zaklopka",
+    "tetive",
+    "chordae tendineae",
+    "valva mitralis",
+    "valva tricuspidalis"
+   ],
    "barva": "#e8ecf3",
    "opis": "Trolistna na desni in dvolistna (mitralna) na levi; tetive jih držijo, ko se prekata stisneta.",
    "vozlisca": [
@@ -725,12 +759,15 @@
    ],
    "ucnaBarva": "#f3ead2",
    "opisOs": "Zaklopki med preddvoroma in prekatoma; kri spustita samo naprej.",
-   "opisStudij": "Trikuspidalna (sprednji, zadnji, septalni listič) in mitralna (sprednji aortni in zadnji); chordae tendineae z obeh papilarnih mišic na oba lističa preprečijo prolaps."
+   "opisStudij": "Trikuspidalna (sprednji, zadnji, septalni listič) in mitralna (sprednji aortni in zadnji); chordae tendineae preprečijo prolaps (pri mitralni z obeh papilarnih mišic na oba lističa, pri trikuspidalni s treh mišic)."
   },
   {
    "id": "aortna-zaklopka",
    "ime": "Aortna zaklopka",
    "la": "Valva aortae",
+   "sinonimi": [
+    "aortna valvula"
+   ],
    "barva": "#fde68a",
    "opis": "Žepasta zaklopka na izhodu levega prekata; kri ne more nazaj iz aorte.",
    "vozlisca": [
@@ -744,6 +781,9 @@
    "id": "pljucna-zaklopka",
    "ime": "Pljučna zaklopka",
    "la": "Valva trunci pulmonalis",
+   "sinonimi": [
+    "pulmonalna zaklopka"
+   ],
    "barva": "#c4b5fd",
    "opis": "Žepasta zaklopka na izhodu desnega prekata; kri ne more nazaj iz pljučnega debla.",
    "vozlisca": [
@@ -770,6 +810,14 @@
    "id": "prevodni-sistem",
    "ime": "Prevodni sistem (shema)",
    "la": "Systema conducens cordis",
+   "sinonimi": [
+    "sinusni vozel",
+    "sinoatrijski vozel",
+    "AV-vozel",
+    "atrioventrikularni vozel",
+    "Hisov snop",
+    "Purkinjejeva vlakna"
+   ],
    "barva": "#fbbf24",
    "opis": "Shema: sinusni vozel, AV-vozel, Hisov snop in kraka po pretinu vodijo električni signal za utrip.",
    "vozlisca": [
@@ -783,6 +831,9 @@
    "id": "medprekatni-pretin",
    "ime": "Medprekatni pretin",
    "la": "Septum interventriculare",
+   "sinonimi": [
+    "septum"
+   ],
    "barva": "#f97316",
    "opis": "Mišična stena med prekatoma (≈ 1 cm); tik pod aortnim obročem je tanek vezivni membranski del.",
    "vozlisca": [
@@ -806,13 +857,21 @@
    }
   ],
   "brezPokrova": [
-   "trabekule",
-   "papilarne-misice",
    "prevodni-sistem",
    "mejni-greben",
    "glavnicaste-misice",
    "conus-arteriosus"
-  ]
+  ],
+  "temnenje": {
+   "razdalja": 0.03,
+   "moc": 0.6,
+   "odprtost": true,
+   "endokard": "#d9a596",
+   "endokardMoc": 0.55,
+   "endokardTkiva": [
+    "miokard"
+   ]
+  }
  },
  "pogledi": {
   "celota": {
@@ -853,8 +912,21 @@
     "leva-podkljucnicna-arterija",
     "arterijska-vez",
     "v-azygos",
-    "brahiocefalicni-veni"
-   ]
+    "brahiocefalicni-veni",
+    "pljucno-deblo",
+    "pljucne-vene"
+   ],
+   "tkiva": {
+    "miokard": {
+     "lak": 0.7
+    },
+    "zaklopka": {
+     "svetlost": 1.05
+    },
+    "zep": {
+     "svetlost": 1.05
+    }
+   }
   }
  },
  "podrobnosti": {
@@ -907,5 +979,39 @@
    "barva": "#ffd6cc"
   }
  ],
- "pbr": true
+ "pbr": true,
+ "mere": [
+  {
+   "ime": "Velikost",
+   "vrednost": "približno kot pest: ≈ 12 cm od baze do konice"
+  },
+  {
+   "ime": "Masa",
+   "vrednost": "≈ 250–350 g"
+  },
+  {
+   "ime": "Širina in debelina",
+   "vrednost": "≈ 8–9 cm in ≈ 6 cm"
+  },
+  {
+   "ime": "Stena levega prekata",
+   "vrednost": "10–15 mm"
+  },
+  {
+   "ime": "Stena desnega prekata",
+   "vrednost": "3–5 mm"
+  },
+  {
+   "ime": "Medprekatni pretin",
+   "vrednost": "≈ 10 mm"
+  },
+  {
+   "ime": "Stena preddvorov",
+   "vrednost": "≈ 2 mm"
+  },
+  {
+   "ime": "Premer korena aorte",
+   "vrednost": "≈ 3 cm"
+  }
+ ]
 }

@@ -3324,6 +3324,7 @@ export default {
   "a3.parts": "Deli",
   "a3.teachColors": "Učne barve",
   "a3.levelUni": "Študij",
+  "a3.measures": "Prave mere",
   "a3.moreAbout": "Več o tem",
   "a3.grp.zaklopke": "Zaklopke",
   "a3.grp.preddvora": "Preddvora",

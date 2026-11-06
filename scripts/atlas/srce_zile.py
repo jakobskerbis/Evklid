@@ -133,6 +133,9 @@ class _Osi:
         return fa
 
 
+_SAV = None  # točka (središče srca): šiv valjastega UV (k = 0) obrnemo proti njej, na skrito stran cevi (pregled #461 B2-5)
+
+
 def _okvirji(P):
     n = len(P)
     T = [(P[min(i + 1, n - 1)] - P[max(i - 1, 0)]).normalized() for i in range(n)]
@@ -140,6 +143,11 @@ def _okvirji(P):
     for t in T:
         ref = (ref - t * ref.dot(t)).normalized()
         out.append((t, ref, t.cross(ref)))
+    if _SAV is not None and n > 1:
+        t, a, b = out[n // 2]; d = _SAV - P[n // 2]
+        if (d - t * d.dot(t)).length > 1e-6:
+            f = math.atan2(d.dot(b), d.dot(a)); c, si = math.cos(f), math.sin(f)
+            out = [(t, (a * c + b * si).normalized(), t.cross((a * c + b * si).normalized())) for t, a, b in out]
     return out
 
 
@@ -508,6 +516,8 @@ def srce_zile(osnovni, cfg, tmp):
     nove = []
     srce = [r for r in osnovni if re.search(r"^(Left|Right) (atrium|ventricle)$", r[0])]
     c_srca = sum((Vector(v.co) for r in srce for v in r[1].vertices), Vector()) / max(sum(len(r[1].vertices) for r in srce), 1)
+    global _SAV
+    _SAV = c_srca.copy()
     t_srce = _bvh_vrstic(srce)
 
     def vrstica(ime, z, tkivo, del_, starsi):
@@ -778,16 +788,20 @@ def srce_zile(osnovni, cfg, tmp):
             zgornja = "superior" in ime
             smer = (b - a).normalized()
             smer = (smer + Vector((stran * 0.9, 0.5, 0.22 if zgornja else -0.04))).normalized()
-            zun = a + smer * 0.02
+            # zunaj perikarda vene zavijejo proti hilusu: zgornji navzgor in nazaj, spodnji vodoravno in nazaj; dolžine
+            # in premeri se razlikujejo (zgornji ≈ 2,2 cm, Ø 13,5 mm; spodnji ≈ 1,7 cm, Ø 12 mm; pregled #461 B2-8)
+            dl_v = (0.022 if zgornja else 0.017) * (1.08 if stran < 0 else 1.0)
+            zun = a + smer * dl_v + Vector((stran * 0.003, 0.006, 0.007 if zgornja else -0.002))
+            konec = (smer + Vector((stran * 0.35, 0.45, 0.35 if zgornja else 0.05))).normalized()
             # pot: od zunanjega konca proti preddvoru (cilj = točka a), zavije v steno
-            P = bezier_pot(zun + smer * 0.004, -smer, a.lerp(c_la, 0.35), (c_la - a), 16)
+            P = bezier_pot(zun + konec * 0.004, -konec, a.lerp(c_la, 0.35), (c_la - a), 18)
             rv_ = 0.0068 if zgornja else 0.006  # Ø ≈ 13,5 / 12 mm (zgornji večji)
             R = [rv_] * len(P)
             P, R = v_steno(P, R, la, 0.0004)
             L = _dolzine(P)[-1]
-            if L < 0.02:  # žarek je zadel steno zgodaj (štrclj): prosti konec podaljšamo navzven na ≥ 2 cm
+            if L < dl_v:  # žarek je zadel steno zgodaj (štrclj): prosti konec podaljšamo navzven
                 d0 = (P[0] - P[1]).normalized()
-                P = [P[0] + d0 * (0.02 - L) * (1 - i / 6) for i in range(6)] + P; R = [R[0]] * 6 + R
+                P = [P[0] + d0 * (dl_v - L) * (1 - i / 6) for i in range(6)] + P; R = [R[0]] * 6 + R
             P, R = P[::-1], R[::-1]
             P, R = prevzorci(P, R, lambda r: 0.0022)
             Lv = _dolzine(P)  # ustje lijakasto: prvih 7 mm (ob preddvoru) do 1,35 r

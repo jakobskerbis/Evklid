@@ -316,5 +316,31 @@
    "moc": 0.6,
    "barva": "#ffd6cc"
   }
+ ],
+ "mere": [
+  {
+   "ime": "Masa",
+   "vrednost": "≈ 1,4–1,6 kg (največji notranji organ)"
+  },
+  {
+   "ime": "Širina",
+   "vrednost": "≈ 20–22 cm"
+  },
+  {
+   "ime": "Višina desnega režnja",
+   "vrednost": "≈ 15–17 cm"
+  },
+  {
+   "ime": "Debelina spredaj–zadaj",
+   "vrednost": "≈ 10–12 cm"
+  },
+  {
+   "ime": "Žolčnik",
+   "vrednost": "≈ 7–10 cm, 30–50 ml"
+  },
+  {
+   "ime": "Pretok krvi",
+   "vrednost": "≈ 1,5 l/min (75 % portalna vena)"
+  }
  ]
 }

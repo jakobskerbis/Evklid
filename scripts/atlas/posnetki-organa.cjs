@@ -80,7 +80,8 @@ const NAPRAVE = {
         await p.screenshot({ path: path.join(izhod, `${oznaka}-${ime}-${pogled}.png`), timeout: 180000 });
       };
       await ugasniNamig();
-      await slikaj("celota");
+      const samoPrerez = !!process.env.SAMO_PREREZ; // SAMO_PREREZ=1: samo prerez (hitro preverjanje reza)
+      if (!samoPrerez) await slikaj("celota");
       // Vrtenje s tipkovnico na platnu (puščica = 10°, enako na telefonu in računalniku; vlečenje z miško na telefonu z
       // dotikom ne zavrti, zato je bil prejšnji »zadaj« sprednja stran). KOTI=1: 8 kotov okoli navpičnice (0°, 45°, …;
       // lihi koti ±5°, ker je korak 10°) ter od zgoraj in spodaj; ZILE=1: bližnji posnetki žil spredaj in zadaj.
@@ -94,7 +95,7 @@ const NAPRAVE = {
         for (let i = 0; i < n; i++) await p.keyboard.press(tipka);
         await p.waitForTimeout(700);
       };
-      if (process.env.KOTI) {
+      if (process.env.KOTI && !samoPrerez) {
         let kot = 0;
         for (let k = 1; k < 8; k++) {
           const cilj = Math.round((k * 45) / 10);
@@ -110,10 +111,12 @@ const NAPRAVE = {
         await slikaj("odspodaj");
         await ponastavi();
       }
-      await tipke("ArrowLeft", 18);
-      await slikaj("zadaj");
-      await ponastavi();
-      if (process.env.ZILE) {
+      if (!samoPrerez) {
+        await tipke("ArrowLeft", 18);
+        await slikaj("zadaj");
+        await ponastavi();
+      }
+      if (process.env.ZILE && !samoPrerez) {
         const blizje = p.locator('[aria-label="Približaj"]').first();
         for (let i = 0; i < 3; i++) await blizje.click().catch(() => {});
         await slikaj("zile-spredaj");
@@ -122,14 +125,14 @@ const NAPRAVE = {
         await ponastavi();
       }
       // UCNE=1: učne barve (celota); SKUPINA=<ime>: izbira skupine delov (npr. Zaklopke) z osvetlitvijo
-      if (process.env.SKUPINA) {
+      if (process.env.SKUPINA && !samoPrerez) {
         await p.locator(".k3-del-skupina", { hasText: process.env.SKUPINA }).first().click().catch(() => {});
         await p.waitForTimeout(1500);
         await slikaj(`skupina-${process.env.SKUPINA.toLowerCase()}`);
         await p.locator(".k3-del-skupina", { hasText: process.env.SKUPINA }).first().click().catch(() => {});
         await ponastavi();
       }
-      if (process.env.UCNE) {
+      if (process.env.UCNE && !samoPrerez) {
         await p.locator(".k3-stikalo", { hasText: "Učne barve" }).locator(".switch").first().click().catch(() => {});
         await p.waitForTimeout(1200);
         await slikaj("ucne-celota");
