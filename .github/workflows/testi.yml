@@ -58,7 +58,7 @@ jobs:
       # Namestitev z omejitvijo časa in 3 poskusi: apt (sistemske knjižnice za brskalnike) se je že zataknil
       # sredi prenosa z ogledala in požrl 40 min. Brskalniki so v predpomnilniku, apt ostane vedno.
       - name: Namestitev brskalnikov (omejitev časa + ponovitev)
-        timeout-minutes: 14
+        timeout-minutes: 20
         run: |
           sudo tee /etc/apt/apt.conf.d/99ci >/dev/null <<'APT'
           Acquire::Retries "3";
@@ -66,8 +66,12 @@ jobs:
           Acquire::https::Timeout "30";
           APT
           for poskus in 1 2 3; do
-            if timeout -k 10 4m npx playwright install --with-deps chromium webkit; then exit 0; fi
-            echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (4 min)"
+            if timeout -k 10 5m npx playwright install --with-deps chromium webkit; then exit 0; fi
+            echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (5 min)"
+            # timeout ubije npx, apt pa teče naprej in drži zaklep: ubij ga, prenesene pakete obdrži (naslednji poskus nadaljuje).
+            sudo pkill -9 -f 'apt-get|apt |dpkg' || true
+            sleep 2
+            sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock
             sudo dpkg --configure -a || true
             sleep 5
           done
@@ -129,7 +133,7 @@ jobs:
       # Namestitev z omejitvijo časa in 3 poskusi: apt (sistemske knjižnice za brskalnike) se je že zataknil
       # sredi prenosa z ogledala in požrl 40 min. Brskalniki so v predpomnilniku, apt ostane vedno.
       - name: Namestitev brskalnikov (omejitev časa + ponovitev)
-        timeout-minutes: 14
+        timeout-minutes: 20
         run: |
           sudo tee /etc/apt/apt.conf.d/99ci >/dev/null <<'APT'
           Acquire::Retries "3";
@@ -137,8 +141,12 @@ jobs:
           Acquire::https::Timeout "30";
           APT
           for poskus in 1 2 3; do
-            if timeout -k 10 4m npx playwright install --with-deps chromium; then exit 0; fi
-            echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (4 min)"
+            if timeout -k 10 5m npx playwright install --with-deps chromium; then exit 0; fi
+            echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (5 min)"
+            # timeout ubije npx, apt pa teče naprej in drži zaklep: ubij ga, prenesene pakete obdrži (naslednji poskus nadaljuje).
+            sudo pkill -9 -f 'apt-get|apt |dpkg' || true
+            sleep 2
+            sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock
             sudo dpkg --configure -a || true
             sleep 5
           done
