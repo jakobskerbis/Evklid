@@ -30,6 +30,7 @@ MEJA = int(os.environ.get("PEKA_MEJA_MB", "2600"))
 PROSTO = int(os.environ.get("PEKA_PROSTO_MB", "3000"))
 BLENDER = os.environ.get("PEKA_BLENDER")
 NADZOR = os.path.exists("/proc/meminfo")
+UTF8 = "import sys\nfor s in (sys.stdout, sys.stderr): s.reconfigure(encoding='utf-8', errors='replace')"
 DNEVNIK = os.path.join(surova, f"{organ}.peka.log")
 
 
@@ -60,8 +61,8 @@ def rss_mb(pid):
 
 def ukaz(skripta, argumenti):
     """Ukaz za en korak: Blender (PEKA_BLENDER, brez okna, izhodna koda 1 ob napaki v skripti) ali Python z bpy."""
-    if BLENDER:
-        return [BLENDER, "-b", "--factory-startup", "--python-exit-code", "1", "--python", skripta, "--"] + argumenti
+    if BLENDER:  # izpis v UTF-8 (Windows sicer cp1252: »č« v print bi ustavil korak)
+        return [BLENDER, "-b", "--factory-startup", "--python-exit-code", "1", "--python-expr", UTF8, "--python", skripta, "--"] + argumenti
     return [sys.executable, skripta, "--"] + argumenti
 
 
