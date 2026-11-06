@@ -14,6 +14,8 @@
 #view-graph[hidden] { display: none !important; }
 #view-graph .me-back { margin: 6px 10px 0; align-self: flex-start; }
 .graph-slot { flex: 1; min-height: 0; display: flex; }
+/* Vsa odprta orodja kalkulatorja ostanejo v pomnilniku, vidno je samo izbrano (app.js showCalcRoot). */
+.graph-slot > [hidden], .go-body > [hidden] { display: none !important; }
 
 .gc {
   --gc-panel: 380px;
@@ -609,8 +611,8 @@ button.sol-c:hover, button.sol-c:focus-visible, .sol-c.sel { border-color: var(-
 /* Na telefonu znanstveni kalkulator skrije zgornjo vrstico (ostaneta ← in spodnji zavihki), da ostane prostor za zgodovino. */
 @media (max-width: 760px) {
   /* Ne, ko je kalkulator v spodnjem listu (public/okna.js): zgornja vrstica ostane. */
-  body:has(#view-graph:not([hidden], .in-okno) #graph-slot > .sc) .topbar,
-  body:has(#view-graph:not([hidden], .in-okno) #graph-slot > .sc) #mock-banner, body:has(#view-graph:not([hidden], .in-okno) #graph-slot > .sc) #test-notice { display: none !important; }
+  body:has(#view-graph:not([hidden], .in-okno) #graph-slot > .sc:not([hidden])) .topbar,
+  body:has(#view-graph:not([hidden], .in-okno) #graph-slot > .sc:not([hidden])) #mock-banner, body:has(#view-graph:not([hidden], .in-okno) #graph-slot > .sc:not([hidden])) #test-notice { display: none !important; }
   .sc-key { min-height: 40px; }
   .sc-key.n { min-height: 44px; }
   .sc-parts { display: flex; flex-wrap: wrap; justify-content: flex-end; column-gap: 14px; }

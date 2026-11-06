@@ -625,6 +625,7 @@ export function createFormulas(root, opts) {
   const LVL = { OS: "lp.os", SS: "lp.ss", UNI: "lp.uni" };
   const BOOKS = SUBJ.flatMap((s) => Object.keys(LVL).map((l) => `${s}-${l}`));
   let book = null;
+  let lastKey = null; // list, ki ga je nazadnje izbral reload() (predmet in stopnja učenca)
   const cache = {};
   root.classList.add("fm");
   const seg = (cls, label, items) =>
@@ -831,8 +832,13 @@ export function createFormulas(root, opts) {
   return {
     root,
     resize() {}, // širino formul ob spremembi okna ureja sirina.js
+    // Ob vsakem odprtju: list za trenutni predmet in stopnjo. Če se ta nista spremenila, list ostane, kakor ga je
+    // učenec pustil (izbran list, mesto branja), in se ne izriše znova (takojšen preklop, j 6. 11. 2026).
     reload() {
-      show(opts.bookKey?.() || book);
+      const k = opts.bookKey?.() || book;
+      if (k === lastKey && book && cache[book]) return;
+      lastKey = k;
+      show(k);
     },
     show,
   };

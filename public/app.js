@@ -94,6 +94,8 @@ import { GUIDE } from "./vodic.js";
 import { initOpen, addOpen, simOverlayOpen, closeSimOverlay } from "./odpri.js";
 
 const $ = (sel) => document.querySelector(sel);
+// Delo ob nedejavnosti glavne niti (priprava naslednjih zaslonov), da ne zakasni dotikov.
+const whenIdle = (fn, timeout = 2000) => (window.requestIdleCallback ? requestIdleCallback(() => fn(), { timeout }) : setTimeout(fn, 200));
 // Brez povezave odgovori vadnica iz shranjenega paketa nalog (public/offline.js).
 const fromPack = (url, opts) => (state.student ? offlineApi(state.student.id, url, opts) : undefined);
 // Računalnik z Evklidom je ugasnjen ali okno ni odprto: ngrok ali Cloudflare vrneta
@@ -3965,7 +3967,10 @@ function calcSlot() {
 }
 
 function graphCalc() {
-  calcP ||= import("./graph/calc.js").then(({ createCalculator }) => {
+  calcP ||= import("./graph/calc.js").catch((e) => {
+    calcP = null; // neuspel prenos (brez povezave): naslednji dotik poskusi znova
+    throw e;
+  }).then(({ createCalculator }) => {
     const host = document.createElement("div");
     host.id = "graph-host";
     queueMicrotask(() => makeSplitter(host, splitOpts("gc")));
@@ -4011,7 +4016,10 @@ async function insertIntoCalc(text, o) {
 }
 function calcTool(mode) {
   if (mode === "graph") return graphCalc();
-  calcTools[mode] ||= (mode === "sci" ? import("./graph/sci.js") : import("./graph/tools.js")).then((m) => {
+  calcTools[mode] ||= (mode === "sci" ? import("./graph/sci.js") : import("./graph/tools.js")).catch((e) => {
+    delete calcTools[mode]; // neuspel prenos (brez povezave): naslednji dotik poskusi znova
+    throw e;
+  }).then((m) => {
     const host = document.createElement("div");
     if (mode === "sci") queueMicrotask(() => makeSplitter(host, splitOpts("sc")));
     const base = { t, icon, locale, onInsert: insertIntoCalc };
@@ -4060,10 +4068,46 @@ async function setCalcMode(mode) {
   }
   if (mode === "formulas" || mode === "tools") tool.reload();
   if (mode === "sci") tool.adapt?.();
-  const slot = calcSlot();
-  if (tool.root.parentElement !== slot) slot.replaceChildren(tool.root);
+  showCalcRoot(calcSlot(), tool.root);
   tool.resize?.();
+  prebuildCalc();
   return tool;
+}
+function prefetchNext() {
+  if (navigator.connection?.saveData || document.documentElement.classList.contains("lite") || !state.student) return;
+  const steps = [
+    () => calcTool(calcMode === "formulas" ? "sci" : calcMode),
+    () => import("./graph/sci.js"),
+    () => import("./graph/tools.js"),
+    () => import("./graph/calc.js"),
+    () => import("./3d/modeli.js"),
+  ];
+  const next = () => {
+    const f = steps.shift();
+    if (f) Promise.resolve().then(f).catch(() => null).then(() => whenIdle(next));
+  };
+  next();
+}
+// Vsa odprta orodja ostanejo v pomnilniku in na strani (skrita): preklop Znanstveni/Grafični/Orodja/PSE/Formule
+// je takojšen in ohrani vnos, graf in izbiro (j 6. 11. 2026). Prikažemo izbrano, ostala skrijemo.
+function showCalcRoot(slot, root) {
+  if (root.parentElement !== slot) slot.append(root);
+  for (const el of slot.children) el.hidden = el !== root;
+}
+// Ko je kalkulator odprt, se ob nedejavnosti pripravijo še ostala orodja (eno za drugim), da je tudi prvi preklop takojšen.
+let calcPrebuilt = false;
+function prebuildCalc() {
+  if (calcPrebuilt) return;
+  calcPrebuilt = true;
+  const rest = CALC_MODES.filter((m) => !calcTools[m] && !(m === "graph" && calcP));
+  const next = () => {
+    const m = rest.shift();
+    if (!m) return;
+    // Formule potrebujejo strežnik: v lahkem načinu jih naložimo šele ob tapu.
+    if (m === "formulas" && document.documentElement.classList.contains("lite")) return next();
+    whenIdle(() => Promise.resolve(calcTool(m)).catch(() => null).then(() => whenIdle(next)));
+  };
+  whenIdle(next);
 }
 document.querySelectorAll(".calc-modes").forEach((seg) =>
   seg.addEventListener("click", (e) => {
@@ -4380,6 +4424,9 @@ initFormulaInfo();
     if ((state.student && !gamesOn(state.student.settings)) || navigator.connection?.saveData) return;
     loadGames().catch(() => {});
   }), 3000);
+  // Takojšnje odpiranje (j 6. 11. 2026): ob nedejavnosti po odprtju se pripravijo verjetni naslednji zasloni.
+  // Kalkulator (zadnje uporabljeno orodje) se zgradi v pomnilniku, moduli ostalih orodij in 3D sveta se le prenesejo.
+  setTimeout(() => whenIdle(prefetchNext), 2500);
   // Dotik zavihka Igre (ali vrstice v »Jaz«) začne nalaganje že pred klikom.
   document.addEventListener("pointerdown", (e) => {
     if (!gamesMod && e.target.closest?.('[data-view="games"], [data-go="games"]')) loadGames().catch(() => {});
