@@ -179,3 +179,13 @@ test("B3: DDV pri plačilu v evrih je največ od Slovenije in države kupca (LU 
   const [r] = invoiceRows({ currency: "eur", lines: { data: [{ amount: 1220, period: { start: 0, end: 86400 } }] } }, { country: "LU" });
   assert.ok(Math.abs(r.eur - 10) < 1e-9, "LU: kot Slovenija 22 %");
 });
+
+test("K3-7: dolga cena Haikuja po klicu, ne po seštevku krogov orodij", async () => {
+  const { costUsd, addUsage } = await import("../server/claude.js");
+  const round = { input_tokens: 40_000, output_tokens: 1000 };
+  const one = { ...round, cost_usd_exact: costUsd("claude-haiku-5-5", round) };
+  const sum = addUsage(addUsage(addUsage(null, one), one), one);
+  assert.ok(Math.abs(costUsd("claude-haiku-5-5", sum) - 3 * costUsd("claude-haiku-5-5", round)) < 1e-12, "trije krogi po 40k: osnovna cena");
+  const partial = addUsage(sum, { input_tokens: 40_000, output_tokens: 6000 }); // prekinjen krog brez natančnega stroška
+  assert.equal(partial.cost_usd_exact, undefined, "delna poraba: seštevek (previdno)");
+});
