@@ -52,11 +52,25 @@ export const guaranteeFromPrice = (eurMonth, { months = 1, profiles = 1 } = {}) 
 // j 2026-11-06 ~9:00: 25 % se računa od cene BREZ DDV. Cene so z DDV (22 % v Sloveniji); regijske cene in šolske
 // licence štejemo enako (previdno: nižja meja). Edino mesto za stopnjo DDV (tudi server/advice.js, schools.js).
 export const VAT_RATE = 0.22;
-export const netOfVat = (eur) => (Number(eur) || 0) / (1 + VAT_RATE);
+// DDV po državi kupca (j 2026-11-06 12:53; pri prodaji potrošnikom v EU velja stopnja države kupca, OSS). Splošne
+// stopnje 2026 (potrdi računovodja). Zunaj EU: stopnja DDV/GST na digitalne storitve, zaokroženo navzgor (previdno),
+// tudi če je Evklid tam ne obračuna. Neznana država: najvišja stopnja (VAT_MAX).
+export const VAT_RATES = {
+  AT: 0.2, BE: 0.21, BG: 0.2, HR: 0.25, CY: 0.19, CZ: 0.21, DK: 0.25, EE: 0.24, FI: 0.255, FR: 0.2, DE: 0.19, GR: 0.24,
+  HU: 0.27, IE: 0.23, IT: 0.22, LV: 0.21, LT: 0.21, LU: 0.17, MT: 0.18, NL: 0.21, PL: 0.23, PT: 0.23, RO: 0.21, SK: 0.23,
+  SI: 0.22, ES: 0.21, SE: 0.25,
+  IN: 0.18, PK: 0.2, BD: 0.15, NG: 0.075, GH: 0.22, KE: 0.16, ZA: 0.15, EG: 0.14, PH: 0.12, ID: 0.12, VN: 0.1,
+  SN: 0.18, CI: 0.18, ML: 0.18, BF: 0.18, NE: 0.19, BJ: 0.18, TG: 0.18, GW: 0.19,
+};
+export const VAT_MAX = 0.27;
+export const vatRateFor = (country) => VAT_RATES[String(country || "").toUpperCase()] ?? VAT_MAX;
+export const netOfVat = (eur, vat = VAT_RATE) => (Number(eur) || 0) / (1 + vat);
 export const AI_MAX_SHARE = 0.25;
-// eur = plačilo z DDV; meja = 25 % plačila brez DDV, v $ navzdol na 0,001 $.
-export const aiCapFromEur = (eur) => Math.max(0, Math.floor((netOfVat(eur) * AI_MAX_SHARE) / COST.eurPerUsd * 1000 + 1e-9) / 1000);
-const capTo = (usd, eur) => Math.min(Math.max(0, Number(usd) || 0), aiCapFromEur(eur));
+// eur = plačilo z DDV; meja = 25 % plačila brez DDV (stopnja vat), v $ navzdol na 0,001 $.
+export const aiCapFromEur = (eur, vat = VAT_RATE) => aiCapFromNetEur(netOfVat(eur, vat));
+// Meja iz plačila brez DDV (dejansko plačilo obdobja, server/placila/placano.js).
+export const aiCapFromNetEur = (netEur) => Math.max(0, Math.floor(((Number(netEur) || 0) * AI_MAX_SHARE) / COST.eurPerUsd * 1000 + 1e-9) / 1000);
+const capTo = (usd, eur, vat = VAT_RATE) => Math.min(Math.max(0, Number(usd) || 0), aiCapFromEur(eur, vat));
 
 // Kratka oznaka stopnje v nazivu paketa (Stripe, zavihek Račun).
 export const LEVEL_LABEL = { OS: "OŠ", SS: "SŠ", FAKS: "Faks" };
@@ -148,6 +162,25 @@ export const EUR_PER_UNIT = {
   XOF: 0.0015244, // vezan na evro: 1 € = 655,957 XOF
   USD: 0.85,
 };
+// Tečaji za mejo AI (j 2026-11-06 12:53): tedensko osveženi iz odprtega vira brez ključa (server/tecaji.js) z rezervo
+// 10 %; brez svežih (starejši od 14 dni ali vir ne deluje) stalni EUR_PER_UNIT z rezervo 20 %. XOF je vezan na evro
+// (brez rezerve). Rezerva tečaja ni namenjena DDV (ta je zgoraj, po državi).
+export const FX_RESERVE = 0.1;
+export const FX_FIXED_RESERVE = 0.2;
+export const FX_MAX_AGE_MS = 14 * 86400000;
+let fx = { rates: {}, at: 0 };
+export function setFxRates(rates, at = Date.now()) {
+  fx = { rates: { ...(rates || {}) }, at: Number(at) || 0 };
+}
+export const fxState = () => ({ ...fx, fresh: Date.now() - fx.at <= FX_MAX_AGE_MS });
+// € za eno enoto valute za izračun meje (z rezervo); 0 za neznano valuto.
+export function eurPerUnitNow(cur, now = Date.now()) {
+  if (cur === "EUR") return 1;
+  if (cur === "XOF") return EUR_PER_UNIT.XOF;
+  const live = Number(fx.rates[cur]);
+  if (live > 0 && now - fx.at <= FX_MAX_AGE_MS) return live * (1 - FX_RESERVE);
+  return (EUR_PER_UNIT[cur] || 0) * (1 - FX_FIXED_RESERVE);
+}
 // Valute brez decimalk v Stripu (znesek je v celih enotah).
 const ZERO_DECIMAL = new Set(["VND", "XOF", "XAF", "UGX", "RWF", "JPY", "KRW", "GNF", "MGA"]);
 const SHAPE = [
@@ -191,7 +224,7 @@ export const regionalGuaranteeUsd = (plan) => {
 export function planEurMonth(plan) {
   if (!plan) return 0;
   const cur = plan.currency || "EUR";
-  const rate = cur === "EUR" ? 1 : EUR_PER_UNIT[cur];
+  const rate = eurPerUnitNow(cur);
   if (!rate) return 0;
   const major = plan.amount / (ZERO_DECIMAL.has(cur) ? 1 : 100);
   return (major * rate) / monthsOf(plan.interval);
@@ -320,11 +353,18 @@ const withTail = (total, profiles, pool) => ({ usd: subscriptionCeiling(total, p
 // Zajamčeni AI paketa: { usd, total, profiles, pool } ali null (neznan paket). usd = meja paketa (podrobni del in
 // hitri način, server/usage.js), total = vrednost iz tabele (meja + brezplačni rep), pool = en skupen delež za vse
 // profile paketa.
-export function planGuarantee(plan) {
+// Stopnja DDV za paket brez znane države kupca: najvišja na trgu paketa (evri: vsa EU, VAT_MAX; regijska valuta:
+// najvišja med državami te valute).
+export const marketVat = (plan) => {
+  const r = plan?.currency && plan.currency !== "EUR" ? REGIONAL_PRICES[plan.currency] : null;
+  return r ? Math.max(...r.countries.map(vatRateFor)) : VAT_MAX;
+};
+// vat: stopnja DDV države kupca (server/accounts/index.js subGuarantee), sicer najvišja na trgu paketa.
+export function planGuarantee(plan, vat = marketVat(plan)) {
   if (!plan) return null;
   const g = planGuaranteeRaw(plan);
-  // Trda meja 25 %: vrednost iz tabele (meja + rep) nikoli nad 25 % cene paketa na mesec.
-  const max = aiCapFromEur(planEurMonth(plan));
+  // Trda meja 25 %: vrednost iz tabele (meja + rep) nikoli nad 25 % cene paketa na mesec brez DDV.
+  const max = aiCapFromEur(planEurMonth(plan), vat);
   return g.total > max ? withTail(max, g.profiles, g.pool) : g;
 }
 function planGuaranteeRaw(plan) {
@@ -340,13 +380,15 @@ function planGuaranteeRaw(plan) {
 // Darilna koda: zajamčeni AI kot letna naročnina stopnje (useLevel = stopnja profila, največ stopnja darila).
 // Stara darila brez stopnje (49 €, pred 2026-11-04) po pravilu 75 % iz cene 49 € na leto (≈ 0,6 $).
 export const LEGACY_GIFT_CENTS = 4900;
-// Trda meja 25 %: največ 25 % cene darila na mesec (letna cena stopnje darila / 12).
+// Trda meja 25 %: največ 25 % cene darila na mesec (letna cena stopnje darila / 12) brez DDV; kupec darila ni
+// znan, zato najvišja stopnja (VAT_MAX).
 export const giftGuarantee = (giftLevel, useLevel) =>
   STOPNJE.includes(giftLevel)
-    ? withTail(capTo(guaranteeUsd(useLevel, "year"), giftFor(giftLevel).amount / 100 / 12), 1, false)
-    : withTail(capTo(guaranteeFromPrice(LEGACY_GIFT_CENTS / 100 / 12, { months: 12 }), LEGACY_GIFT_CENTS / 100 / 12), 1, false);
+    ? withTail(capTo(guaranteeUsd(useLevel, "year"), giftFor(giftLevel).amount / 100 / 12, VAT_MAX), 1, false)
+    : withTail(capTo(guaranteeFromPrice(LEGACY_GIFT_CENTS / 100 / 12, { months: 12 }), LEGACY_GIFT_CENTS / 100 / 12, VAT_MAX), 1, false);
 // Meja AI paketa pred testom (ves čas paketa): shranjena ob nakupu (passes.ai_usd), največ 25 % plačila.
-export const passCapUsd = (pass) => capTo(pass?.ai_usd, (Number(pass?.amount) || 0) / 100);
+// Kupec iz katere koli države EU: najvišja stopnja DDV (VAT_MAX).
+export const passCapUsd = (pass) => capTo(pass?.ai_usd, (Number(pass?.amount) || 0) / 100, VAT_MAX);
 // Najmanjša meja naročnika: tudi paket z mejo 0 (majhna regijska cena) ostane »zajamčen« (hitri način, nato
 // brezplačni rep), ne pa brez meje po utežeh skupnega proračuna.
 export const MIN_CEILING_USD = 0.001;

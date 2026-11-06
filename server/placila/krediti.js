@@ -5,7 +5,7 @@
 // Učenec in starš vidita samo ~število razlag oziroma pogovorov, nikoli € ali $. Kredit je vezan na račun
 // (starša ali polnoletnega učenca) in velja za vse njegove profile, dokler ga ne porabijo; ne poteče ob koncu meseca.
 import "../env.js";
-import { COST, aiCapFromEur } from "../accounts/plans.js";
+import { COST, aiCapFromEur, VAT_MAX } from "../accounts/plans.js";
 
 const num = (k, d) => {
   const v = Number(process.env[k]);
@@ -39,7 +39,7 @@ export function conversationsFor(usd) {
 // Trda meja AI (j 2026-11-06): največ 25 % plačila brez DDV (plans.js aiCapFromEur): 5 € → 1,00 $, 10 € → 2,22 $,
 // 20 € → 4,45 $ (prej 2,28 in 4,83 $ po pravilu 75 % od cene z DDV).
 export const creditUsdFor = (amountCents) =>
-  Math.floor(Math.min(aiCapFromEur(amountCents / 100), Math.max(0, (((amountCents / 100) * creditShare() - COST.stripeFixedEur) / COST.eurPerUsd))) * 100 + 1e-9) / 100;
+  Math.floor(Math.min(aiCapFromEur(amountCents / 100, VAT_MAX), Math.max(0, (((amountCents / 100) * creditShare() - COST.stripeFixedEur) / COST.eurPerUsd))) * 100 + 1e-9) / 100;
 
 export function migrateCredits(db) {
   db.exec(`

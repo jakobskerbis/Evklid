@@ -8,7 +8,7 @@
 // - dnevna opravila: usklajevanje naročnin s Stripom, opomnik pred koncem kode in pred letno obnovitvijo.
 import express from "express";
 import { randomToken, sha256, Throttle } from "./auth.js";
-import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd, planGuarantee } from "./plans.js";
+import { passesFor, passByDays, passByKey, passForDaysLeft, paidActive, planFor, planByKey, isPremiumChild, GRACE_DAYS, currencyDecimals, schoolPlanFor, isSchoolPlan, planLevel, levelPlanFor, familyPlanFor, LEVEL_LABEL, explanationsFor, guaranteeUsd, passCapUsd, planGuarantee, vatRateFor, aiCapFromNetEur } from "./plans.js";
 import { BIRTH_MISSING_PAY } from "./age.js";
 import { Schedules, nowParts, cleanDate, TEST_KINDS } from "../schedule.js";
 import { cleanText } from "../settings.js";
@@ -226,7 +226,7 @@ export function nextTest(schedules, studentId, now = new Date()) {
 }
 
 export function mountBilling(app, ctx) {
-  const { credits = null, db, store, stripe, log, json, getParent, update, childIds, ownerOf, ensureCustomer, accessOf, baseUrl, sendMail, currencyOf, isMinor, birthMissing = () => false, applySubscription, syncCustomer, promo, kv, offersFor = () => ({ show: true, prices: true }), hasSchoolChild = () => false, levelOf = () => "OS", planForParent = null, aiUsage = null, ageOf = () => null } = ctx;
+  const { credits = null, db, store, stripe, log, json, getParent, update, childIds, ownerOf, ensureCustomer, accessOf, baseUrl, sendMail, currencyOf, isMinor, birthMissing = () => false, applySubscription, syncCustomer, promo, kv, offersFor = () => ({ show: true, prices: true }), hasSchoolChild = () => false, levelOf = () => "OS", planForParent = null, aiUsage = null, ageOf = () => null, paidPeriods = null } = ctx;
   // Paket naročnine za račun: stopnja profila (en profil) ali Družina (glej index.js planForAccount).
   const subPlan = (p, seats, interval, currency) => (planForParent ? planForParent(p.id, seats, interval, currency) : planFor(seats, interval, currency));
   migrateBilling(db);
@@ -703,16 +703,30 @@ export function mountBilling(app, ctx) {
       const startD = new Date(end);
       startD.setUTCMonth(startD.getUTCMonth() - months);
       const start = startD.getTime();
-      const g = planGuarantee(plan);
+      const g = planGuarantee(plan, p.country ? vatRateFor(p.country) : undefined);
       const since = sqlTime(start);
       const spent = [...childIds(p.id)].reduce((t, id) => t + (aiUsage?.spentSince?.(id, since) || 0), 0) + (aiUsage?.orphanSpent?.(p.id, since) || 0);
-      const r = withdrawalRefundCents({ paidCents: plan.amount, startMs: start, endMs: end, nowMs: now, aiCapUsd: (g?.total || 0) * months, aiSpentUsd: spent });
-      out.subscription = { plan: plan.key, paid_cents: plan.amount, currency: plan.currency || "EUR", refund_cents: r.cents, time_left: r.timeLeft, ai_left: r.aiLeft, within_14_days: now - start <= WITHDRAWAL_DAYS * 86400000 };
+      // Dejansko plačilo obdobja (promocijska koda, proracija, že vrnjeni del; pregled #462 A2), sicer cenik.
+      const real = p.sub_id && paidPeriods ? paidPeriods.centsIn(p.id, p.sub_id, start, end) : null;
+      const paidCents = real?.currency ? real.cents : plan.amount;
+      // Meja AI obdobja tudi iz dejanskega plačila: 25 % plačila brez DDV, največ vrednost paketa.
+      const capFromPaid = real?.currency ? aiCapFromNetEur(paidPeriods.eurIn(p.id, p.sub_id, start, end).eur) : Infinity;
+      const r = withdrawalRefundCents({ paidCents, startMs: start, endMs: end, nowMs: now, aiCapUsd: Math.min((g?.total || 0) * months, capFromPaid), aiSpentUsd: spent });
+      out.subscription = { plan: plan.key, paid_cents: paidCents, currency: real?.currency || plan.currency || "EUR", refund_cents: r.cents, time_left: r.timeLeft, ai_left: r.aiLeft, within_14_days: now - start <= WITHDRAWAL_DAYS * 86400000 };
     }
     for (const ps of db.prepare("SELECT * FROM passes WHERE parent_id = ? AND status = 'active'").all(p.id)) {
       const start = Date.parse(ps.starts_at);
       const r = withdrawalRefundCents({ paidCents: ps.amount, startMs: start, endMs: Date.parse(ps.ends_at), nowMs: now, aiCapUsd: passCapUsd(ps), aiSpentUsd: passes.spentUsd(ps) });
       out.passes.push({ id: ps.id, paid_cents: ps.amount, refund_cents: r.cents, time_left: r.timeLeft, ai_left: r.aiLeft, within_14_days: now - start <= WITHDRAWAL_DAYS * 86400000 });
+    }
+    // Dokup: vrne se največ neporabljeni del (pregled #462 S1: credits.refund odvzame ves paket, porabljen AI ostane
+    // plačan). Delež neporabljenega je za ves račun (preostanek / vsi aktivni paketi), previdno za vsak paket.
+    out.credits = [];
+    if (credits) {
+      const active = credits.list(p.id).filter((c) => c.status === "active");
+      const total = active.reduce((t, c) => t + c.credit_usd, 0);
+      const left = total > 0 ? Math.min(1, credits.balance(p.id) / total) : 0;
+      for (const c of active) out.credits.push({ id: c.id, paid_cents: c.amount, credit_usd: c.credit_usd, refund_cents: Math.floor(c.amount * left), ai_left: left });
     }
     audit(db, { req, parentId: req.parent?.id, actor: "admin", action: "withdrawal_view", target: `parent:${p.id}` });
     res.json(out);

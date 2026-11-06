@@ -7,7 +7,7 @@ import { createApp } from "../server/app.js";
 import { Usage } from "../server/usage.js";
 import { costUsd, modeParams } from "../server/claude.js";
 import { aiCapRows, nopayRows, callMaxUsd, replyReserveUsd, systemTokens, messageTokens, priceOf, FALLBACK_MODES } from "../server/meje-ai.js";
-import { planGuarantee, planByKey, PLANS, COST, guaranteeUsd, aiCapFromEur, passCapUsd, giftGuarantee, VAT_RATE } from "../server/accounts/plans.js";
+import { planGuarantee, planByKey, PLANS, COST, guaranteeUsd, aiCapFromEur, passCapUsd, giftGuarantee, VAT_RATE, VAT_MAX } from "../server/accounts/plans.js";
 import { creditUsdFor } from "../server/placila/krediti.js";
 import { licenceAiCapUsd, defaultAiCapUsd, maxAiCapUsd } from "../server/schools.js";
 
@@ -64,7 +64,8 @@ test("nastavitve skrbnika ne morejo preseči 25 % plačila", () => {
   assert.equal(maxAiCapUsd({ seats: 30, plan: "pilot", price_eur: 0 }), 6);
   assert.equal(licenceAiCapUsd({ seats: 30, plan: "school", price_eur: 0, ai_cap_usd_month: 10000 }), 6);
   // Paket pred testom: shranjena meja nad 25 % plačila se omeji.
-  assert.equal(passCapUsd({ ai_usd: 50, amount: 549 }), aiCapFromEur(5.49));
+  // Kupec iz katere koli države EU: najvišja stopnja DDV (j 2026-11-06 12:53, OSS).
+  assert.equal(passCapUsd({ ai_usd: 50, amount: 549 }), aiCapFromEur(5.49, VAT_MAX));
   // Darilna koda: največ 25 % letne cene / 12.
   assert.ok(giftGuarantee("OS", "OS").total * COST.eurPerUsd <= (99 / 12) * 0.25 + 1e-9);
 });

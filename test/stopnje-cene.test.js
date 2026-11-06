@@ -40,6 +40,9 @@ import {
   passLevel,
   upgradeMonthUsd,
   upgradeFromUsd,
+  VAT_RATE,
+  VAT_MAX,
+  aiCapFromEur,
 } from "../server/accounts/plans.js";
 import { STORE_PRICES_EUR, STORE_PRODUCTS } from "../server/mobile/store-billing.js";
 import { rights, lessonInteractive } from "../server/placila/pravice.js";
@@ -97,7 +100,9 @@ test("cene po stopnjah (75 %): OŠ 9,99/99, SŠ 13,99/139, faks 19,99/199, Druž
   // Nespremenjeno: regijske cene (ena cena za vse stopnje), Osebno ob šolski licenci, brezplačno 0,2 $.
   // Izjema (j 2026-11-04): letni paket za 2 otroka v INR, BDT, IDR malo dražji, da ima zajamčeni AI nad 0.
   assert.deepEqual(REGIONAL_PRICES.INR.prices, [399, 3499, 649, 5699]);
-  for (const c of ["INR", "BDT", "IDR"]) assert.ok(planGuarantee(planFor(2, "year", c)).usd > 0, c);
+  // Z rezervo tečaja (j 2026-11-06 12:53: 20 % brez svežih tečajev) in DDV države je meja teh paketov 0; ostane
+  // del brezplačnega repa (kartica za j: cena ali sprejmi).
+  for (const c of ["INR", "BDT", "IDR"]) assert.ok(planGuarantee(planFor(2, "year", c)).total > 0, c);
   assert.equal(planFor(1, "month", "INR").level, null);
   assert.equal(planFor(2, "year", "INR").seats, 2);
   assert.deepEqual(SCHOOL_PLANS.map((p) => p.amount), [599, 4900]);
@@ -776,7 +781,10 @@ test("e-pošta staršu pri 80 %, tudi ko mejo prestopi strošek zunaj odgovora (
 
 // --- cene z najmanj 75 % dobička (j 2026-11-04, »Predlog A«) ---
 test("75 %: zajamčeni AI po paketih, skupen delež družine, regijske cene po pravilu, darilo in dokup", () => {
-  const g = (key) => planGuarantee(planByKey(key));
+  // Kupec v Sloveniji (DDV 22 %); neznana država ali drugje v EU: stopnja države (HU 27 % → nižja meja).
+  const g = (key) => planGuarantee(planByKey(key), VAT_RATE);
+  assert.ok(planGuarantee(planByKey("evklid_faks_month"), VAT_MAX).total < g("evklid_faks_month").total);
+  assert.equal(planGuarantee(planByKey("evklid_faks_month")).total, planGuarantee(planByKey("evklid_faks_month"), VAT_MAX).total, "brez države: najvišja");
   // total = vrednost iz tabele (Predlog A), usd = meja paketa = total − brezplačni rep 0,2 $ na profil (Družina 4 profili).
   const tot = (key) => [g(key).total, g(key).usd];
   assert.deepEqual(["evklid_1_month", "evklid_ss_month", "evklid_faks_month"].map(tot), [[1.9, 1.7], [2.9, 2.7], [4.452, 4.252]]);
@@ -823,7 +831,8 @@ test("75 %: zajamčeni AI po paketih, skupen delež družine, regijske cene po p
   for (const p of [...PASSES, ...FAKS_PASSES]) assert.ok(worstProfit(p.amount / 100, p.aiUsd) >= 0.75, `${p.key}: ${worstProfit(p.amount / 100, p.aiUsd)}`);
   // Darilo = letna cena stopnje, eno plačilo, zajamčeni AI kot letna naročnina stopnje (accounts/index.js subGuarantee).
   for (const l of ["OS", "SS", "FAKS"]) {
-    assert.equal(giftGuarantee(l, l).total, guaranteeUsd(l, "year"));
+    // Kupec darila ni znan: največ 25 % brez DDV po najvišji stopnji (VAT_MAX).
+    assert.equal(giftGuarantee(l, l).total, Math.min(guaranteeUsd(l, "year"), aiCapFromEur(GIFT_PRICES[l] / 100 / 12, VAT_MAX)));
     const gp = worstProfit(GIFT_PRICES[l] / 100 / 12, worstAi(giftGuarantee(l, l)), { months: 12 });
     assert.ok(gp >= 0.75, `darilo ${l}: ${gp}`);
   }
@@ -836,10 +845,11 @@ test("75 %: zajamčeni AI po paketih, skupen delež družine, regijske cene po p
   assert.equal(guaranteeFromPrice(269 / 12, { months: 12, profiles: 4 }), 4.3, "Družina s študentom letno");
   assert.equal(guaranteeFromPrice(1), 0, "nikoli negativno");
   const inr = plansFor("INR");
-  assert.equal(regionalGuaranteeUsd(inr[0]), guaranteeFromPrice(399 * 0.0098));
+  // Stalni tečaj z rezervo 20 % (brez svežih tečajev, j 2026-11-06 12:53).
+  assert.equal(regionalGuaranteeUsd(inr[0]), guaranteeFromPrice(399 * 0.0098 * 0.8));
   // Darilo = letna cena stopnje; dokup 75 % (kredit nima hitrega načina): 5 / 10 / 20 € → 1,00 / 2,28 / 4,83 $.
   assert.deepEqual(GIFT_PRICES, { OS: 9900, SS: 13900, FAKS: 19900 });
-  assert.deepEqual(CREDIT_PACKS.map((p) => creditUsdFor(p.amount)), [1, 2.22, 4.45]); // največ 25 % plačila brez DDV (j 2026-11-06)
+  assert.deepEqual(CREDIT_PACKS.map((p) => creditUsdFor(p.amount)), [1, 2.13, 4.27]); // največ 25 % plačila brez DDV po najvišji stopnji EU (27 %)
   for (const c of [500, 1000, 2000, 12345]) assert.ok(((c / 100) * 0.985 - 0.25 - creditUsdFor(c) * 0.92) / (c / 100) >= 0.75 - 1e-9, `dokup ${c}`);
 });
 
@@ -877,7 +887,9 @@ test("Družina: en skupen delež za ves račun; obvestila in »še N razlag« za
     // Paket za en profil: delež po profilu.
     subscribe("evklid_ss_year");
     assert.equal(api.poolFor(bor), null);
-    assert.equal(api.guaranteeFor(ana), 2.38, "po plačanem paketu (SŠ letno 2,58 $ − rep 0,2 $; 25 % brez DDV)");
+    // Po plačanem paketu: SŠ letno, 25 % brez DDV; država kupca ni znana → najvišja stopnja (27 %).
+    assert.equal(api.guaranteeFor(ana), planGuarantee(planByKey("evklid_ss_year")).usd);
+    assert.ok(api.guaranteeFor(ana) < 2.38);
   });
 });
 
@@ -1123,5 +1135,28 @@ test("odstop v 14 dneh: vračilo sorazmerno porabi (manjše od deleža časa in 
     assert.ok(Math.abs(r.ai_left - 0.5) < 0.01, JSON.stringify(r));
     assert.equal(r.refund_cents, Math.floor(999 * Math.min(r.time_left, r.ai_left)));
     assert.ok(r.refund_cents <= 500 && r.within_14_days);
+  });
+});
+
+test("A2: promocijska koda Stripa – meja iz plačanega obdobja; 100 % popust = meja brez plačila (j 2026-11-06 12:53)", async () => {
+  await withAccounts(async ({ db, api, kid, subscribe, pid }) => {
+    const ana = kid("Ana", "FAKS", YEAR - 20);
+    const endMs = Date.now() + 20 * 86400000;
+    subscribe("evklid_faks_month", new Date(endMs).toISOString());
+    db.prepare("UPDATE parents SET country = 'SI' WHERE id = ?").run(pid);
+    const cap = () => api.aiUsage.capsFor(ana);
+    const full = planGuarantee(planByKey("evklid_faks_month"), VAT_RATE).total;
+    assert.ok(Math.abs(cap()[0].usd - full) < 1e-9, `cenik brez zapisa: ${cap()[0].usd}`);
+    const startMs = new Date(endMs).setUTCMonth(new Date(endMs).getUTCMonth() - 1);
+    const inv = (id, discount) => ({ id, subscription: "sub_a", currency: "eur", lines: { data: [{ amount: 1999, period: { start: Math.floor(startMs / 1000), end: Math.floor(endMs / 1000) }, discount_amounts: [{ amount: discount }] }] } });
+    api.paidPeriods.record(pid, inv("in_1", 999), { country: "SI" }); // kupon: plačano 10 €
+    const half = aiCapFromEur(10, VAT_RATE);
+    assert.ok(cap()[0].usd <= half + 0.002, `kupon 50 %: ${cap()[0].usd} ≤ ${half}`);
+    api.paidPeriods.record(pid, inv("in_1", 1999), { country: "SI" }); // kupon 100 %
+    assert.ok(cap().some((c) => c.key === "nopaypool"), cap().map((c) => c.key).join());
+    // Vračilo (odstop): vrnjeni del ne šteje več.
+    api.paidPeriods.record(pid, inv("in_1", 0), { country: "SI" });
+    api.paidPeriods.refund(pid, "in_1", 0.9);
+    assert.ok(cap()[0].usd <= aiCapFromEur(2, VAT_RATE) + 0.002, `po vračilu 90 %: ${cap()[0].usd}`);
   });
 });

@@ -69,3 +69,52 @@ test("S6: zavrnjen poskus pred nadomestnim modelom je plačan posebej; rezerva S
   const one = replyReserveUsd({ mode: "deep", system: "s", messages: msgs, fallback: false });
   assert.ok(Math.abs(2 * one - replyReserveUsd({ mode: "deep", system: "s", messages: msgs })) < 1e-12, "brez nadomestnega modela rezerva enega klica");
 });
+
+// Račun naročnine Stripe (invoice.paid) z vrsticami in obdobjem.
+const invoice = (id, lines, extra = {}) => ({ id, subscription: "sub_p", currency: "eur", lines: { data: lines }, ...extra });
+const line = (amount, startMs, endMs, extra = {}) => ({ amount, period: { start: Math.floor(startMs / 1000), end: Math.floor(endMs / 1000) }, ...extra });
+
+test("A2: dejansko plačilo obdobja – vrstice brez DDV in popustov, proracije po času, vračilo", async () => {
+  const { invoiceRows, createPaidPeriods } = await import("../server/placila/placano.js");
+  const DAYMS = 86400000;
+  const t0 = Date.UTC(2026, 10, 1);
+  // 9,99 € z DDV v Sloveniji, brez Stripe Tax: brez DDV 8,19 €.
+  const [r] = invoiceRows(invoice("in_1", [line(999, t0, t0 + 30 * DAYMS)]), { country: "SI" });
+  assert.ok(Math.abs(r.eur - 9.99 / 1.22) < 1e-9);
+  // Stripe Tax (vključen v ceno) in popust 50 %.
+  const [t] = invoiceRows(invoice("in_2", [line(999, t0, t0 + 30 * DAYMS, { discount_amounts: [{ amount: 500 }], tax_amounts: [{ amount: 90, inclusive: true }] })]));
+  assert.ok(Math.abs(t.eur - 4.09) < 1e-9 && t.cents === 499);
+  const store = new Map();
+  const kv = { get: (k) => store.get(k) ?? null, set: (k, v) => store.set(k, v) };
+  const pp = createPaidPeriods(kv);
+  pp.record(1, invoice("in_a", [line(999, t0, t0 + 30 * DAYMS)]), { country: "SI" });
+  // Proracija nadgradnje za zadnjih 6 dni (+10 € × 6/30) in preklop nazaj (negativna proracija za iste dni).
+  pp.record(1, invoice("in_b", [line(200, t0 + 24 * DAYMS, t0 + 30 * DAYMS)]), { country: "SI" });
+  const win = (a, b) => pp.eurIn(1, "sub_p", t0 + a * DAYMS, t0 + b * DAYMS).eur;
+  assert.ok(Math.abs(win(0, 30) - (9.99 + 2) / 1.22) < 1e-9);
+  assert.ok(Math.abs(win(0, 15) - 9.99 / 1.22 / 2) < 1e-9, "po času");
+  pp.record(1, invoice("in_c", [line(-200, t0 + 24 * DAYMS, t0 + 30 * DAYMS)]), { country: "SI" });
+  assert.ok(Math.abs(win(0, 30) - 9.99 / 1.22) < 1e-9, "negativna proracija odšteje");
+  pp.refund(1, "in_a", 0.5);
+  assert.ok(Math.abs(win(0, 30) - 9.99 / 1.22 / 2) < 1e-9, "polovično vračilo");
+  assert.equal(pp.eurIn(1, "sub_x", t0, t0 + 30 * DAYMS).rows, 0, "druga naročnina: ni zapisa");
+});
+
+test("A5: DDV po državi kupca in tečaji z rezervo (sveži 10 %, stalni 20 %)", async () => {
+  const P = await import("../server/accounts/plans.js");
+  const { parseFx } = await import("../server/tecaji.js");
+  assert.equal(P.vatRateFor("HU"), 0.27);
+  assert.equal(P.vatRateFor("SI"), 0.22);
+  assert.equal(P.vatRateFor("XX"), P.VAT_MAX, "neznana država: najvišja");
+  assert.ok(P.aiCapFromEur(19.99, 0.27) < P.aiCapFromEur(19.99, 0.22));
+  P.setFxRates({}, 0);
+  assert.ok(Math.abs(P.eurPerUnitNow("INR") - P.EUR_PER_UNIT.INR * 0.8) < 1e-12, "brez svežih: stalni − 20 %");
+  P.setFxRates(parseFx({ eur: { inr: 100, ngn: 5000, kes: 1e9 } }), Date.now());
+  assert.ok(Math.abs(P.eurPerUnitNow("INR") - 0.01 * 0.9) < 1e-12, "sveži − 10 %");
+  assert.ok(Math.abs(P.eurPerUnitNow("NGN") - 0.0002 * 0.9) < 1e-12, "šibkejša valuta velja");
+  assert.ok(Math.abs(P.eurPerUnitNow("KES") - P.EUR_PER_UNIT.KES * 0.8) < 1e-12, "napačen podatek zavrnjen");
+  assert.equal(P.eurPerUnitNow("XOF"), P.EUR_PER_UNIT.XOF, "vezan na evro");
+  P.setFxRates({}, Date.now() - 15 * 86400000);
+  assert.ok(Math.abs(P.eurPerUnitNow("INR") - P.EUR_PER_UNIT.INR * 0.8) < 1e-12, "starejši od 14 dni: stalni");
+  P.setFxRates({}, 0);
+});
