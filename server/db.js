@@ -288,8 +288,8 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Stari shranjeni odgovori niso bili preverjeni, zato ostanejo skriti (privzeto 0); stare kartice ostanejo.
   const cacheCols = db.prepare("PRAGMA table_info(answer_cache)").all().map((c) => c.name);
   if (!cacheCols.includes("verified")) db.exec("ALTER TABLE answer_cache ADD COLUMN verified INTEGER NOT NULL DEFAULT 0");
-  // Enkrat: shranjeni odgovori iz časa, ko ključ ni poznal zanimanj, cilja in urnika (#484), lahko nosijo
-  // podatke drugega otroka. Izbrišemo jih; odgovori nastanejo znova.
+  // Enkrat: shranjeni odgovori izpred #484 lahko nosijo zanimanja, cilj, urnik, rezultate ali ime (brez strešic,
+  // v drugi pisavi) drugega otroka. Izbrišemo jih; odgovori nastanejo znova.
   if (db.prepare("INSERT OR IGNORE INTO kv (key, value) VALUES ('answer_cache_personal_purge', datetime('now'))").run().changes) {
     db.exec("DELETE FROM answer_cache");
   }

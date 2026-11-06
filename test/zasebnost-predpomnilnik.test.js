@@ -65,14 +65,16 @@ test("brez osebnih podatkov se odgovor še vedno ponovno uporabi (strošek)", as
   });
 });
 
-test("enaka zanimanja: odgovor se ponovno uporabi; drugačna: ne", async () => {
+test("z zanimanji ali ciljem se odgovor ne shrani za druge in ne vzame shranjenega (tudi brez preverjanja)", async () => {
   await withServer(async ({ call, calls }) => {
     await ask(call, { interests: ["space"] }, "Ana");
     await ask(call, { interests: ["space"] }, "Bor");
-    assert.equal(calls(), 1);
-    const c = await ask(call, { interests: ["robots"] }, "Cene");
-    assert.equal(calls(), 2);
+    assert.equal(calls(), 2, "enaka zanimanja: vsak dobi svoj odgovor");
+    const c = await ask(call, {}, "Cene");
+    assert.equal(calls(), 3, "odgovor z zanimanji ni v predpomnilniku");
     assert.doesNotMatch(c, /vesolje/);
+    await ask(call, { goal: "matura", goal_date: "2099-05-05" }, "Dora");
+    assert.equal(calls(), 4, "s ciljem ne vzame shranjenega");
   });
 });
 

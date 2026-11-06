@@ -76,6 +76,14 @@ const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_IMAGE_B64 = 7 * 1024 * 1024; // ~5 MB slike
 const MAX_TEXT = 6000;
 const ANSWER_CACHE = process.env.EVKLID_ANSWER_CACHE !== "0";
+// Jezik pogovora v nelatinični pisavi (ru, uk, ar, el, hi, zh …); neznano ali prazno = slovenščina (latinica).
+function nonLatinScript(code) {
+  try {
+    return !!code && new Intl.Locale(code).maximize().script !== "Latn";
+  } catch {
+    return false;
+  }
+}
 
 // Ključ za ponovno uporabo odgovora: isto prvo vprašanje pri istih nastavitvah.
 // mode: način klica (chat/lite/think/deep); pathTopic: tema učne poti (npr. »Začniva s temo …«).
@@ -95,13 +103,6 @@ function cacheKey(text, settings, mode, lite = false, pathTopic = null, weak = [
   if (lite) parts.push("lite");
   // Zahtevnost po rezultatih učenca (osnovna je privzeta, da shranjeni odgovori ostanejo veljavni).
   if (tier && tier !== "osnovna") parts.push(`zahtevnost:${tier}`);
-  // Osebni podatki iz prompta (zanimanja in lastno zanimanje iz kotička, cilj, šibke točke): inštruktor iz njih
-  // vzame primere, zato odgovor dobi le učenec z enakimi (test/zasebnost-predpomnilnik.test.js). Prazno ključa ne spremeni.
-  const interests = [...(settings.interests || [])].map(String).sort();
-  const own = String(settings.interest_custom || "").trim().toLowerCase();
-  if (interests.length || own) parts.push(`zan:${interests.join(",")}|${own}`);
-  if ((settings.goal && settings.goal !== DEFAULT_GOAL) || settings.goal_date) parts.push(`cilj:${settings.goal || ""}|${settings.goal_date || ""}`);
-  if (!pathTopic && weak.length) parts.push(`sibko:${weak.join(",")}`);
   return crypto.createHash("sha256").update(parts.join("|")).digest("hex");
 }
 
@@ -376,6 +377,23 @@ export function createApp(store, opts = {}) {
   // Urnik učenca (server/schedule.js): ure, testi; gre v prompt in v Pripravo na test.
   const schedules = new Schedules(store.db);
   const scheduleText = (s) => schedulePrompt(scheduleView(schedules.get(s.id), s.settings));
+  // Ali prompt učenca nosi osebne podatke, ki jih ključ predpomnilnika ne pozna (pregled #484 B). Šibke točke pri temi
+  // učne poti so v ključu (cacheKey), v prostem pogovoru ne. Jezik z nelatinično pisavo: model ime prečrka (»Зала«),
+  // genericAnswer ga ne najde, zato tak odgovor ni skupen.
+  const hasPersonalPrompt = (s, pathTopic, weak, results) => {
+    const st = s.settings || {};
+    const d = schedules.get(s.id);
+    return (
+      !!(d && (d.lessons?.length || d.events?.length)) ||
+      !!(st.interests || []).length ||
+      !!String(st.interest_custom || "").trim() ||
+      (!!st.goal && st.goal !== DEFAULT_GOAL) ||
+      !!st.goal_date ||
+      (!pathTopic && weak.length > 0) ||
+      !!results.personal ||
+      nonLatinScript(st.language)
+    );
+  };
 
   const intParam = (v) => (/^\d+$/.test(v) ? Number(v) : NaN);
   const loadStudent = (req, res) => {
@@ -722,12 +740,10 @@ export function createApp(store, opts = {}) {
     const help = isFirst && !image ? helpTasks.get(conv.id) : null;
     if (help) helpTasks.delete(conv.id);
     // Prošnja za spremembo nastavitev mora poklicati orodje, zato ne iz predpomnilnika odgovorov.
-    // Z vnesenim urnikom ali testi odgovor lahko omeni dneve in teste tega učenca: ne shrani in ne vzemi shranjenega.
-    const hasSchedule = (() => {
-      const d = schedules.get(student.id);
-      return !!(d && (d.lessons?.length || d.events?.length));
-    })();
-    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !hasSchedule && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
+    // Skupni predpomnilnik samo za odgovor brez osebnih podatkov v promptu (test/zasebnost-predpomnilnik*.test.js):
+    // inštruktor primere vzame iz zanimanj, pozna cilj, urnik s testi, šibke točke in rezultate. Kdor jih ima, odgovora
+    // ne shrani za druge (tudi brez dvojnega preverjanja, ki ga plača aplikacija) in ne vzame shranjenega.
+    const key = ANSWER_CACHE && isFirst && !image && !help && !paperNote && !hasPersonalPrompt(student, conv.path_topic, weak, results) && !looksLikeSettings(text) ? cacheKey(text, student.settings, mode, lite, conv.path_topic, weak, results.tier) : null;
     if (conv.title === "Nov pogovor") {
       store.renameConversation(conv.id, cleanText(text, 50) || "Naloga s fotografije");
     }
