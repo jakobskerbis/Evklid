@@ -221,6 +221,7 @@ export function mountPilotImpact(app, db, { member, reward, reply, topicFor, lan
     if (b.index !== i) return res.status(409).json({ error: "Ta naloga je že zaključena." });
     const lang = langFor(s.id);
     const task = taskOf(row, i, lang);
+    if (!task) return res.status(409).json({ error: "Ta naloga ni več na voljo." });
     let ok = false;
     if (b.skip !== true) {
       const input = typeof b.answer === "string" || typeof b.answer === "number" ? String(b.answer).slice(0, 200) : "";
