@@ -169,15 +169,18 @@ def papilarna(bm, dno, vrh, polmer, stena=None):
     for zamik in (pravo, -pravo * 0.5 + tretje * 0.87, -pravo * 0.5 - tretje * 0.87):  # 3 glave (Netter: 2–3)
         a = dno.lerp(vrh, 0.62)
         tocke = [a.lerp(vrh, i / 7) + zamik * (i / 7) ** 1.3 for i in range(8)]
-        cev(bm, tocke, [polmer * (0.66 - 0.36 * i / 7) for i in range(8)], seg=10)
+        cev(bm, tocke, [polmer * (0.66 - 0.54 * (i / 7) ** 1.4) for i in range(8)], seg=10)  # glava se zoži v vrh tetiv
         glave.append(tocke[-1])
     return glave
 
 
-def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, do=1.0, odmik=0.05, epi=None, mosticki=0.12):
+def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, do=1.0, odmik=-0.35, epi=None, mosticki=0.0, pretin=None):
     """Mesnate trabekule: grebeni in mostički po notranji steni prekata (na steno pritisnjene cevi, ki sledijo površini).
     Začetke izberemo z žarki iz votline (prvi zadetek = notranja stena), smer je pretežno vzdolž dolge osi s šumom;
-    od/do = delež razdalje od baze (0) do konice (1), kjer trabekule rastejo (gostejše proti konici)."""
+    od/do = delež razdalje od baze (0) do konice (1), kjer trabekule rastejo (gostejše proti konici).
+    Pregled #461 B2: grebeni so napol v steni (odmik < 0), sploščeni in na koncih zoženi v steno (brez ravno odrezanih
+    valjev v prerezu), brez prosto visečih mostičkov; pretin (središče drugega prekata) v zgornjih dveh tretjinah ostane
+    gladek (prerez pretina = enotna mišica)."""
     baza, konica = sredisce, sredisce + os_
     L = os_.length; e = os_.normalized()
     narejenih = 0; poskusov = 0
@@ -196,6 +199,8 @@ def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, 
             loc, _, fi, dd = epi[0].find_nearest(p, 0.004)
             if loc is not None and (dd < 0.0025 or (p - loc).dot(epi[1][fi]) > -0.0025):
                 continue
+        if pretin is not None and h < 0.7 and d.dot((pretin - sred).normalized()) > 0.45:
+            continue  # septalna stran zgoraj: gladka
         if n.dot(d) > 0:
             n = -n  # normala proti votlini
         smer = (e * rnd.choice((1, -1)) + (a * math.cos(f + 1.6) + b * math.sin(f + 1.6)) * rnd.uniform(-0.8, 0.8)).normalized()
@@ -226,7 +231,7 @@ def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, 
             m = len(tocke)
             for i in range(m):
                 tocke[i] = tocke[i] + n * r * 1.6 * math.sin(math.pi * i / (m - 1))
-        polm = [r * (0.75 + 0.25 * math.sin(math.pi * i / (len(tocke) - 1))) for i in range(len(tocke))]
+        polm = [r * (0.2 + 0.8 * max(0.0, math.sin(math.pi * i / (len(tocke) - 1))) ** 0.7) for i in range(len(tocke))]  # konca v steno
         # sploščen greben (širši ob steni kot visok): prerez elipsa 1 : 0,55 v smeri normale stene
         zac = len(bm.verts)
         cev(bm, tocke, polm, seg=7)
@@ -234,7 +239,7 @@ def trabekule(bm, stena, sredisce, os_, rnd, stevilo, polmer, dolzina, od=0.35, 
         for v in bm.verts[zac:]:
             i = min(range(len(tocke)), key=lambda j: (tocke[j] - v.co).length_squared)
             q = v.co - tocke[i]
-            v.co = v.co - normale[i] * q.dot(normale[i]) * 0.45
+            v.co = v.co - normale[i] * q.dot(normale[i]) * 0.62
         narejenih += 1
     return narejenih
 
@@ -525,9 +530,10 @@ def srce_dodatki(osnovni, cfg, tmp):
         bm.free()
     # --- mesnate trabekule: levi prekat drobnejše (ob konici), desni grobe
     # Netter/Sobotta: grebeni in mostički, zraščeni s steno; levi prekat finejši (gostejši proti konici), desni grobi
-    for ime, me, obroc, konica, n, r, dl in (("left", lv, mitralni, konica_l, 60, 0.0012, 0.022), ("right", rv, trik, konica_d, 36, 0.0017, 0.026)):
+    for ime, me, obroc, konica, n, r, dl, dr in (("left", lv, mitralni, konica_l, 44, 0.0013, 0.022, rv), ("right", rv, trik, konica_d, 28, 0.0018, 0.026, lv)):
         bm = bmesh.new()
-        st = trabekule(bm, _bvh(me), obroc[0] + (konica - obroc[0]) * 0.12, (konica - obroc[0]) * 0.92, rnd, n, r, dl, epi=epi)
+        st = trabekule(bm, _bvh(me), obroc[0] + (konica - obroc[0]) * 0.12, (konica - obroc[0]) * 0.92, rnd, n, r, dl, epi=epi,
+                       pretin=Vector(_tocke(dr).mean(0)))
         vrstice.append([f"Trabeculae carneae of {ime} ventricle (lastno)", _novo(bm, "trab-" + ime), "miokard", "trabekule",
                         f"Trabeculae carneae of {ime} ventricle (lastno) / {ime.title()} ventricle / Heart.g"])
         print(f"[organi] srce: trabekule {ime}: {st}")
