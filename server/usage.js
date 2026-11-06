@@ -31,6 +31,8 @@ export const LIMITS = {
   promoOpusMonthUsd: () => num("EVKLID_PROMO_OPUS_MONTH_USD", 0.3),
   alertRatio: 0.8,
   historyTurns: () => num("EVKLID_HISTORY_TURNS", 10),
+  // Fotografije v zgodovini: koliko zadnjih učenčevih sporočil obdrži sliko (server/usage.js staleImages).
+  historyImageTurns: () => num("EVKLID_HISTORY_IMAGE_TURNS", 1),
   // Zmogljivejši model dobi samo zadnje izmenjave (njegov predpomnilnik je ločen, vsak žeton je drag).
   deepHistoryTurns: () => num("EVKLID_DEEP_HISTORY_TURNS", 3),
   // Tekmovanja: privzeto hitri model z več razmisleka; 1 = vedno zmogljivejši model (prej).
@@ -754,6 +756,33 @@ export function recentHistory(messages, turns = LIMITS.deepHistoryTurns()) {
   if (!turns) return messages;
   let out = messages.slice(-(turns * 2 - 1));
   while (out.length && out[0].role !== "user") out = out.slice(1);
+  return out;
+}
+
+// Starejše fotografije v zgodovini (j 2026-11-06, dolgi pogovori): slika bi šla modelu z vsakim
+// naslednjim sporočilom (branje predpomnilnika, ob premiku okna ali menjavi modela znova zapis, v rezervi
+// meje AI vsakič IMAGE_TOKENS). Sliko obdržijo samo zadnja `keep` učenčeva sporočila v zgodovini (privzeto 1:
+// »Razloži podrobneje« in takojšnje vprašanje o sliki jo še vidita); starejše dobijo kratko besedilo, nalogo
+// pa je inštruktor prepisal v odgovoru (»Prebral sem: …«, prompts/system_prompt.md). Odvisno le od položaja
+// od konca, zato se sporočilo spremeni enkrat in ostane enako – predpomnilnik se ne podira vsak krog.
+// Baza se ne spremeni (rok hrambe fotografij ureja server/zasebnost.js).
+export const OLD_IMAGE_TEXT = "[Fotografija iz tega sporočila ni več priložena. Nalogo s nje si prepisal v odgovoru na to sporočilo; če potrebuješ sliko (npr. skico), prosi učenca, naj jo pošlje znova.]";
+export function staleImages(messages, keep = LIMITS.historyImageTurns()) {
+  let users = 0;
+  const out = messages.slice();
+  for (let i = out.length - 1; i >= 0; i--) {
+    const m = out[i];
+    if (m.role !== "user") continue;
+    users++;
+    if (users <= keep || !Array.isArray(m.content) || !m.content.some((b) => b?.type === "image")) continue;
+    // En nadomestni blok na sporočilo (več slik → eno besedilo), besedilo učenca ostane.
+    const blocks = [];
+    for (const b of m.content) {
+      if (b?.type !== "image") blocks.push(b);
+      else if (!blocks.some((x) => x?.text === OLD_IMAGE_TEXT)) blocks.push({ type: "text", text: OLD_IMAGE_TEXT });
+    }
+    out[i] = { ...m, content: blocks };
+  }
   return out;
 }
 

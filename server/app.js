@@ -11,7 +11,7 @@ import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, 
 import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
 import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams, costUsd, OCR_MODEL } from "./claude.js";
-import { Usage, LIMITS, NOTES, windowHistory, recentHistory } from "./usage.js";
+import { Usage, LIMITS, NOTES, windowHistory, recentHistory, staleImages } from "./usage.js";
 import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
 import { Progress } from "./progress.js";
@@ -658,7 +658,7 @@ export function createApp(store, opts = {}) {
     userContent.push({ type: "text", text: text || "(Pošiljam fotografijo naloge.)" });
     // Trda meja AI (j 2026-11-06, server/meje-ai.js): najvišji strošek odgovora (rezerva) mora iti pod mejo profila
     // skupaj s klici v teku; sicer cenejši način, brez prostora niti zanj pa 429 (strošek nikoli čez 25 % plačila).
-    const prior = store.apiHistory(conv.id);
+    const prior = staleImages(store.apiHistory(conv.id));
     const reserveFor = (m) =>
       replyReserveUsd({
         mode: m,
@@ -748,7 +748,8 @@ export function createApp(store, opts = {}) {
       if (note) send("delta", { text: note });
       // Naloga, ki jo reši naš preverjeni reševalnik: model dobi pravilen rezultat v skriti opombi.
       const pre = liveCheckOn() && !cached && !image && !win && !hinted ? presolve(text, { first: isFirst }) : null;
-      const fullHistory = store.apiHistory(conv.id);
+      // Zgodovina tu že vsebuje trenutno sporočilo (shranjeno zgoraj), zato +1: njegova slika ostane vedno.
+      const fullHistory = staleImages(store.apiHistory(conv.id), LIMITS.historyImageTurns() + 1);
       const shortDeep = deep && !routed.boosted;
       let history = shortDeep ? recentHistory(fullHistory) : windowHistory(fullHistory);
       // Odrezani starejši del dolgega pogovora: kratek povzetek pred oknom (server/povzetek.js).
