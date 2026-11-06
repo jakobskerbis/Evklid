@@ -42,7 +42,7 @@ export function modelList() {
   const podrocja = PODROCJA.filter((p) => fs.existsSync(path.join(modelsDir, p, "index.js")));
   // Viri področij (public/3d/modeli/<podrocje>/viri.json): »Viri in licence« jih združi z public/3d/viri.json.
   const viri = PODROCJA.filter((p) => fs.existsSync(path.join(modelsDir, p, "viri.json")));
-  // Sličice za kartice zbirke (public/3d/slicice/<id>.webp, scripts/3d-slicice.cjs): stran pokaže samo obstoječe.
+  // Sličice za kartice zbirke (public/3d/slicice/<id>.webp, scripts/3d/slicice.cjs): stran pokaže samo obstoječe.
   let slicice = [];
   try {
     slicice = fs.readdirSync(slicDir).filter((f) => f.endsWith(".webp")).map((f) => f.slice(0, -5)).sort();

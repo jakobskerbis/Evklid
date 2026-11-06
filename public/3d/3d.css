@@ -243,7 +243,7 @@ body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(
 .k3-kartica:hover { border-color: #3a4760; }
 .k3-kartica:hover .k3-slicica img { transform: scale(1.04); }
 .k3-kartica:focus-visible { outline-offset: 3px; }
-/* Sličica: posnetek modela na odru (scripts/3d-slicice.cjs), sicer ikona področja. */
+/* Sličica: posnetek modela na odru (scripts/3d/slicice.cjs), sicer ikona področja. */
 .k3-slicica {
   position: relative; display: grid; place-items: center; aspect-ratio: 8 / 5; overflow: hidden; color: var(--k3-accent);
   background-color: var(--k3-oder);

@@ -1,6 +1,6 @@
 // Sličice modelov za kartice zbirke /3d (public/3d/slicice/<id>.webp, docs/3d.md »Sličice«): vsak model iz kode se
 // odpre na strani /3d brez vmesnika (samo oder s prosojnim ozadjem), posnetek se v brskalniku stisne v WebP.
-// Zagon: node scripts/3d-slicice.cjs [id …]   (brez id: vsi modeli; --manjkajoce: samo tisti brez sličice)
+// Zagon: node scripts/3d/slicice.cjs [id …]   (brez id: vsi modeli; --manjkajoce: samo tisti brez sličice)
 // Potrebuje Playwright s Chromiumom (programsko risanje swiftshader); zažene strežnik na vratih 3997.
 const { spawn } = require("node:child_process");
 const fs = require("node:fs");
@@ -10,7 +10,7 @@ const { chromium } = require("playwright");
 const PORT = 3997;
 const SIRINA = 560; // 8 : 5 kot .k3-slicica; kartica je široka do 236 px, zato je dovolj tudi za zaslone 2×
 const VISINA = 350;
-const root = path.join(__dirname, "..");
+const root = path.join(__dirname, "..", "..");
 const izhod = path.join(root, "public", "3d", "slicice");
 
 // Na odru ostane samo model: brez glave, plošče, gumbov, točk, oznak, merila, namiga in barve odra.
@@ -67,7 +67,10 @@ const CSS = `
         c.width = img.naturalWidth;
         c.height = img.naturalHeight;
         c.getContext("2d").drawImage(img, 0, 0);
-        return c.toDataURL("image/webp", 0.8);
+        // Kakovost se zniža, dokler sličica ne gre pod mejo (25 KB).
+        let k = 0.8, d = c.toDataURL("image/webp", k);
+        while (d.length * 0.75 > 25 * 1024 && k > 0.3) d = c.toDataURL("image/webp", (k -= 0.1));
+        return d;
       }, `data:image/png;base64,${png.toString("base64")}`);
       const buf = Buffer.from(webp.split(",")[1], "base64");
       fs.writeFileSync(path.join(izhod, `${id}.webp`), buf);

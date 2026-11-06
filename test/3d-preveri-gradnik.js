@@ -15,7 +15,7 @@ export const IMA_THREE = !!THREE;
 const MODELI = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../public/3d/modeli");
 
 // Node has no canvas: a 2D context that accepts every call, so builders may draw textures in code.
-function namestiPlatno() {
+export function namestiPlatno() {
   if (globalThis.document?.createElement) return;
   const kontekst = (w, h) => new Proxy({}, {
     get(t, k) {

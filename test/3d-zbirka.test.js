@@ -41,10 +41,10 @@ test("every thumbnail belongs to a model, is a small WebP and is listed by the s
   for (const f of slike) {
     assert.match(f, /\.webp$/, `${f}: only .webp in public/3d/slicice`);
     const id = f.slice(0, -5);
-    assert.ok(ids.has(id), `${f}: no model with id ${id} (rerun node scripts/3d-slicice.cjs or delete it)`);
+    assert.ok(ids.has(id), `${f}: no model with id ${id} (rerun node scripts/3d/slicice.cjs or delete it)`);
     const buf = fs.readFileSync(path.join(SLICICE, f));
     assert.equal(buf.subarray(8, 12).toString("ascii"), "WEBP", `${f}: not a WebP file`);
-    assert.ok(buf.length <= 60 * 1024, `${f}: ${(buf.length / 1024).toFixed(0)} KB > 60 KB`);
+    assert.ok(buf.length <= 25 * 1024, `${f}: ${(buf.length / 1024).toFixed(0)} KB > 25 KB`);
   }
   assert.deepEqual(modelList().slicice, slike.map((f) => f.slice(0, -5)).sort());
 });
