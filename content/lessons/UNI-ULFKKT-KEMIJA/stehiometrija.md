@@ -75,7 +75,7 @@ Več produkta, kot ga dopušča omejujoči reaktant, ne more nastati, zato izkor
 
 1. iz masnih deležev (ali mas) izračunaj **množine** elementov, npr. na $100\,\mathrm{g}$ spojine,
 2. vse množine deli z najmanjšo,
-3. če razmerja niso cela, jih pomnoži z majhnim celim številom ($1{,}5 \to \cdot 2$, $1{,}33 \to \cdot 3$),
+3. če razmerja niso cela, jih pomnoži z majhnim celim številom ($1{,}5 \to \cdot 2$; $1{,}33 \to \cdot 3$),
 4. molekulsko formulo dobiš iz molske mase: $k = M(\text{spojine})/M(\text{empirične formule})$.
 
 Pri **sežigni analizi** organske spojine ves ogljik preide v $\mathrm{CO_2}$, ves vodik v $\mathrm{H_2O}$. Iz mas teh produktov izračunamo maso C in H, kisik pa dobimo kot razliko do mase vzorca. Pogoji: sežig je popoln, vzorec je čist in vsebuje le C, H in O (drugače moramo druge elemente določiti posebej); ker je del kisika v produktih prišel iz zraka, kisika iz produktov ne računamo. Iz same sežigne analize dobimo le empirično formulo, za molekulsko potrebujemo še neodvisno izmerjeno molsko maso, npr. iz gostote pare ($M = mRT/(pV)$) ali masne spektrometrije.

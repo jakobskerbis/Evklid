@@ -271,7 +271,7 @@ Opazi, da je kvadratna enačba za $t$ le vmesni korak. Dokler ne izračunaš $x$
 ~ To bi veljalo, če bi žoga ob vsakem odboju izgubila stalnih $0{,}5\,\mathrm{m}$. Višina se razpolavlja, ne zmanjšuje za stalno razliko.
 + po $3.$ odboju
 - po $4.$ odboju
-~ Števila $4$, $2$, $1$, $0{,}5$ so štiri, a prvo je začetna višina, ne odboj. Razpolovitve so le tri.
+~ Števila $4$; $2$; $1$; $0{,}5$ so štiri, a prvo je začetna višina, ne odboj. Razpolovitve so le tri.
 > Enačba $4 \cdot \left(\frac{1}{2}\right)^n = 0{,}5$ da $\left(\frac{1}{2}\right)^n = \frac{1}{8} = \left(\frac{1}{2}\right)^3$, zato je $n = 3$.
 
 :::simboli

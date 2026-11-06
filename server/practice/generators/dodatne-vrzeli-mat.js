@@ -589,11 +589,13 @@ export const DODATNE_VRZELI_MAT = [
       if (level === 2 || (level === 3 && k === 0)) {
         const xA = r.int(-8, 8), yA = r.int(-8, 8), xS = r.int(-6, 6) + (level === 3 ? 0.5 * r.pick([0, 1]) : 0), yS = r.int(-6, 6), ax = r.pick(["x", "y"]);
         const [a, s] = ax === "x" ? [xA, xS] : [yA, yS];
+        // Z decimalno koordinato ločimo s podpičjem vse točke naloge, da je zapis enoten (»S(3,5; −1)«, »A(−7; 8)«).
+        const sep = Number.isInteger(xS) ? ", " : "; ";
         return T(
-          `Točka $S(${tx(xS)}, ${yS})$ je razpolovišče daljice $AB$, kjer je $${pt("A", xA, yA)}$. Izračunaj ${ax === "x" ? "absciso" : "ordinato"} točke $B$.`,
+          `Točka $S(${tx(xS)}${sep}${yS})$ je razpolovišče daljice $AB$, kjer je $A(${xA}${sep}${yA})$. Izračunaj ${ax === "x" ? "absciso" : "ordinato"} točke $B$.`,
           num(2 * s - a, "", null, [M((a + s) / 2, "To je razpolovišče daljice AS, ne točka B."), M(s - a, "Točka B je od S oddaljena toliko kot A: B = 2S − A."), M(2 * s + a, "Koordinato točke A odšteješ: x_B = 2x_S − x_A.")]),
           "Iz obrazca za razpolovišče izrazi koordinato drugega krajišča.",
-          [`S = (${tx(xS)}, ${yS})`, `A = (${xA}, ${yA})`], [`${ax}_B`],
+          [`S = (${tx(xS)}${sep}${yS})`, `A = (${xA}${sep}${yA})`], [`${ax}_B`],
           `${ax}_S = \\dfrac{${ax}_A + ${ax}_B}{2} \\Rightarrow ${ax}_B = 2${ax}_S - ${ax}_A`,
           [`$${ax}_B = 2 \\cdot ${par(s).replace(".", "{,}")} - ${par(a)} = ${tx(2 * s - a)}$`, `Preizkus: $\\dfrac{${a} + ${par(2 * s - a).replace(".", "{,}")}}{2} = ${tx(s)}$`],
         );

@@ -35,7 +35,7 @@ V programu bi to zapisali tako:
 double itmAna = 60 / (1.65 * 1.65);
 ```
 
-Za Bora ($80\,\text{kg}$, $1{,}80\,\text{m}$) prepišemo isto vrstico z drugimi števili in dobimo $24{,}69$. Za tisoč pacientov bi imeli tisoč skoraj enakih vrstic.
+Za Bora ($80\,\text{kg}$; $1{,}80\,\text{m}$) prepišemo isto vrstico z drugimi števili in dobimo $24{,}69$. Za tisoč pacientov bi imeli tisoč skoraj enakih vrstic.
 
 **2. Posplošimo.** Med obema vrsticama se spreminjata le masa in višina. Ti dve vrednosti poimenujemo, račun pa zapišemo enkrat:
 

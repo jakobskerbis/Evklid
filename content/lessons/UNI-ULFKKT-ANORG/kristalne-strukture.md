@@ -193,7 +193,7 @@ Znati moraš povedati:
 
 - definicije kristalne mreže, baze, osnovne celice, mrežnega parametra, $Z$ in koordinacijskega števila;
 - zveze med $a$ in $r$ za sc, bcc, fcc z izpeljavo (po kateri premici se krogle dotikajo) ter izpeljavo $f$ in $\rho = ZM/(N_\mathrm{A}a^3)$;
-- pravilo razmerja polmerov s predpostavkami in izpeljavo mej $0{,}225$, $0{,}414$, $0{,}732$;
+- pravilo razmerja polmerov s predpostavkami in izpeljavo mej $0{,}225$; $0{,}414$; $0{,}732$;
 - število oktaedrskih in tetraedrskih lukenj v fcc ter strukturi NaCl in CsCl (zakaj CsCl ni bcc);
 - Braggov zakon z izpeljavo in $d_{hkl} = a/\sqrt{h^2+k^2+l^2}$.
 

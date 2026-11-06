@@ -40,7 +40,7 @@ $0{,}7^6 \approx 0{,}118$, torej približno $12\,\%$. Šest metrov ne vpije vse 
 
 $$A = -\log_{10} T = \log_{10}\frac{I_0}{I}$$
 
-Za plasti iz tabele dobimo $A = 0{,}155$, $0{,}310$ in $0{,}465$. Absorbance se pri zaporednih plasteh **seštevajo**, zato absorbanca raste premo sorazmerno z debelino.
+Za plasti iz tabele dobimo $A = 0{,}155$; $0{,}310$ in $0{,}465$. Absorbance se pri zaporednih plasteh **seštevajo**, zato absorbanca raste premo sorazmerno z debelino.
 
 *Hiter preizkus:* $T = 0{,}10$. Koliko je $A$? (Odgovor: $1{,}0$.)
 
@@ -111,9 +111,9 @@ $c = \dfrac{A}{\varepsilon\, b}$, nato $\gamma = c \cdot M$
 
 ### Primer 3 (težji): cink v potoku pod rudnikom
 
-Cink v potoku določamo z AAS pri $213{,}9\,\mathrm{nm}$. Standardi $0{,}20$, $0{,}40$ in $0{,}60\,\mathrm{mg/L}$ dajo absorbance $0{,}088$, $0{,}176$ in $0{,}264$. Vzorec je bil premočan, zato smo $5{,}00\,\mathrm{mL}$ vode razredčili na $50{,}0\,\mathrm{mL}$. Razredčeni vzorec ima $A = 0{,}143$. Koliko cinka je v potoku? Vzorec iz drugega dela potoka po enaki razredčitvi da $A = 0{,}350$. Kako ga pravilno izmeriš in kolikšno razredčitev izbereš?
+Cink v potoku določamo z AAS pri $213{,}9\,\mathrm{nm}$. Standardi $0{,}20$; $0{,}40$ in $0{,}60\,\mathrm{mg/L}$ dajo absorbance $0{,}088$; $0{,}176$ in $0{,}264$. Vzorec je bil premočan, zato smo $5{,}00\,\mathrm{mL}$ vode razredčili na $50{,}0\,\mathrm{mL}$. Razredčeni vzorec ima $A = 0{,}143$. Koliko cinka je v potoku? Vzorec iz drugega dela potoka po enaki razredčitvi da $A = 0{,}350$. Kako ga pravilno izmeriš in kolikšno razredčitev izbereš?
 
-**Podatki:** standardi $(0{,}20;\,0{,}088)$, $(0{,}40;\,0{,}176)$, $(0{,}60;\,0{,}264)$ v $\mathrm{mg/L}$ in enotah $A$; $V_1 = 5{,}00\,\mathrm{mL}$, $V_2 = 50{,}0\,\mathrm{mL}$, $A_{\mathrm{vz}} = 0{,}143$; drugi vzorec $A = 0{,}350$
+**Podatki:** standardi $(0{,}20;\,0{,}088)$; $(0{,}40;\,0{,}176)$; $(0{,}60;\,0{,}264)$ v $\mathrm{mg/L}$ in enotah $A$; $V_1 = 5{,}00\,\mathrm{mL}$, $V_2 = 50{,}0\,\mathrm{mL}$, $A_{\mathrm{vz}} = 0{,}143$; drugi vzorec $A = 0{,}350$
 **Iščemo:** masno koncentracijo cinka v potoku $\gamma_0$; primerno razredčitev drugega vzorca
 
 :::formula

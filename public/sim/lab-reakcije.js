@@ -271,7 +271,7 @@ export function labHitrost(el, opts = {}) {
     ],
     tryText: OS
       ? "Primerjaj marmor v koščkih in v prahu: kdaj bučka hitreje izgublja maso? Nato razkroji vodikov peroksid brez katalizatorja, z MnO₂, s surovim in s kuhanim krompirjem. Pri katerem nastaja kisik najhitreje? Kaj se zgodi s tlečo trsko?"
-      : "Izmeri izgubo mase marmorja v 0,5, 1 in 2 mol/L HCl in iz začetnih hitrosti določi red reakcije glede na kislino. Pri tiosulfatu izmeri čas izginotja križa pri petih koncentracijah in dveh temperaturah: je 1/t sorazmeren s c in kolikokrat se hitrost poveča pri 10 °C višji temperaturi?",
+      : "Izmeri izgubo mase marmorja v 0,5; 1 in 2 mol/L HCl in iz začetnih hitrosti določi red reakcije glede na kislino. Pri tiosulfatu izmeri čas izginotja križa pri petih koncentracijah in dveh temperaturah: je 1/t sorazmeren s c in kolikokrat se hitrost poveča pri 10 °C višji temperaturi?",
   });
   el.classList.add("lab");
 
@@ -1069,7 +1069,7 @@ export function labPlamenska(el, opts = {}) {
         log,
       )),
       h("h4", { class: "lab-h" }, "Preglednica"), table, calc, qBox,
-      notes(POENOSTAVITVE_REAKCIJE.plamenska, "Valovne dolžine črt: NIST Atomic Spectra Database (zrak): Li 670,78; Na 588,995 in 589,592; K 766,49, 769,90, 404,41; Ca 422,67; Sr 460,73; Ba 553,55; Cu 510,55, 515,32, 521,82 nm. Molekulski pasovi CaOH, SrOH, BaCl, CuCl: Pearse in Gaydon (ocena vrhov). Barva iz CIE 1931 (Wyman in sod. 2013) v sRGB. Ocene: jakosti, hlapnost, prepustnost kobaltovega stekla."),
+      notes(POENOSTAVITVE_REAKCIJE.plamenska, "Valovne dolžine črt: NIST Atomic Spectra Database (zrak), v nm. Li: 670,78. Na: 588,995 in 589,592. K: 766,49; 769,90 in 404,41. Ca: 422,67. Sr: 460,73. Ba: 553,55. Cu: 510,55; 515,32 in 521,82. Molekulski pasovi CaOH, SrOH, BaCl, CuCl: Pearse in Gaydon (ocena vrhov). Barva iz CIE 1931 (Wyman in sod. 2013) v sRGB. Ocene: jakosti, hlapnost, prepustnost kobaltovega stekla."),
     ],
     tryText: OS
       ? "Odpri zračno odprtino, očisti zanko in preizkusi vseh sedem soli. Zapiši barvo plamena za vsak element. Nato ugotovi, kateri ion je v neznanih vzorcih. Pri enem je skrit tudi kalij: poglej skozi modro steklo."
