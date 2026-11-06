@@ -217,3 +217,38 @@ test("pilot: prijava napake v aplikaciji (zastavica v klepetu) samo za skrbnika 
     server.close();
   }
 });
+
+test("pilot: odjemalec pošlje fotografijo samo ob kljukici in samo, kjer jo smemo ponuditi", async () => {
+  const fs = await import("node:fs");
+  const read = (p) => fs.readFileSync(new URL(`../public/${p}`, import.meta.url), "utf8");
+  const scan = read("scan/scan.js");
+  assert.match(scan, /image: consent \? S\.shot : undefined/);
+  assert.match(scan, /\$\{photo \? `<label class="pn-consent">/); // kljukica samo, ko photo.allowed
+  assert.match(read("pilot-naloge.js"), /if \(consent && image && s\.photo\.allowed\)/);
+  // Značka »Pilot« je skrita vsem, ki je nimajo (zbirke in deljena kartica).
+  const { KNOWLEDGE } = await import("../public/zbirke.js");
+  const { shareCardModel } = await import("../public/deli-kartico.js");
+  assert.equal(KNOWLEDGE.find((x) => x.id === "pilot")?.hidden, true);
+  const of = (items) => shareCardModel({ items }).collections.find((c) => c.id === "lige").of;
+  assert.equal(of([{ id: "pilot" }]), of([]) + 1);
+});
+
+test("pilot: povzetek za jutranji pregled (scripts/pilot-naloge.js) brez imen in e-naslovov", async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const path = await import("node:path");
+  const { execFileSync } = await import("node:child_process");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pilot-"));
+  const file = path.join(dir, "t.db");
+  const store = openDb(file);
+  store.db.prepare("INSERT INTO students (id, name, settings) VALUES (1, 'Ana', '{}')").run();
+  const { migratePilotTasks } = await import("../server/pilot-naloge.js");
+  migratePilotTasks(store.db);
+  store.db.exec("INSERT INTO pilot_state (student_id) VALUES (1); INSERT INTO pilot_scans (student_id, cond, ok) VALUES (1, 'board', 0)");
+  store.db.close?.();
+  const out = execFileSync(process.execPath, ["scripts/pilot-naloge.js"], { env: { ...process.env, EVKLID_DB: file }, encoding: "utf8", cwd: new URL("..", import.meta.url).pathname });
+  assert.match(out, /# Pilot: naloge članov/);
+  assert.match(out, /\| board \| 1 \| 0 \| 0 % \|/);
+  assert.doesNotMatch(out, /Ana/);
+  fs.rmSync(dir, { recursive: true, force: true });
+});
