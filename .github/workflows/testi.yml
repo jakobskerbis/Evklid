@@ -28,34 +28,60 @@ env:
   RESEND_API_KEY: ""
   # Ista različica kot lokalno (scripts/preveri-aplikacijo.cjs in testi jo naložijo z require("playwright")).
   PLAYWRIGHT_VERSION: "1.63.0"
+  # Zatikajoč se test pade po 10 min z imenom (merjeno na datoteko in na test) (najdaljši zdaj ~2,3 min; testi z lastnim »timeout« ga preglasijo),
+  # --test-force-exit pa konča proces, ki ga odprt brskalnik sicer drži živega.
+  TEST_ZASTAVICE: "--test-timeout=600000 --test-force-exit"
 jobs:
   testi:
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 5
         with:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        timeout-minutes: 5
         with:
           node-version: 22
           cache: npm
       - run: npm ci --no-audit --no-fund
+        timeout-minutes: 10
       - name: Playwright (Chromium in WebKit za test iPada)
+        timeout-minutes: 5
         run: npm install --no-save --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        timeout-minutes: 5
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium-webkit
-      - run: npx playwright install --with-deps chromium webkit
+      # Namestitev z omejitvijo časa in 3 poskusi: apt (sistemske knjižnice za brskalnike) se je že zataknil
+      # sredi prenosa z ogledala in požrl 40 min. Brskalniki so v predpomnilniku, apt ostane vedno.
+      - name: Namestitev brskalnikov (omejitev časa + ponovitev)
+        timeout-minutes: 14
+        run: |
+          sudo tee /etc/apt/apt.conf.d/99ci >/dev/null <<'APT'
+          Acquire::Retries "3";
+          Acquire::http::Timeout "30";
+          Acquire::https::Timeout "30";
+          APT
+          for poskus in 1 2 3; do
+            if timeout -k 10 4m npx playwright install --with-deps chromium webkit; then exit 0; fi
+            echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (4 min)"
+            sudo dpkg --configure -a || true
+            sleep 5
+          done
+          echo "::error::Namestitev brskalnikov ni uspela v 3 poskusih"
+          exit 1
       # Nestabilni testi: največ 1 ponovitev, samo za datoteke, ki so padle (največ 3). Ponovitev je vidna:
       # opozorilo (annotations_count > 0 v check-runs), vrstica v povzetku zagona, izhod ponovljeno=true in
       # naložen dnevnik. Več padlih datotek = prava napaka, brez ponovitve.
       - name: npm test
         id: npmtest
+        timeout-minutes: 30
         run: |
           set +e
-          npm test 2>&1 | tee test.log
+          node --disable-warning=ExperimentalWarning --test $TEST_ZASTAVICE test/*.test.js 2>&1 | tee test.log
           status=${PIPESTATUS[0]}
           if [ "$status" -ne 0 ]; then
             files=$(grep -A8 -E '^\s*not ok' test.log | sed -n -E "s#.*location: '.*/(test/[^/:']+\.test\.js):.*#\1#p" | sort -u)
@@ -64,13 +90,14 @@ jobs:
               echo "::warning::Ponovitev (1x) padlih testov: $(echo $files)"
               echo "ponovljeno=true" >> "$GITHUB_OUTPUT"
               echo "**Nestabilno – ponovljeno 1x:** $(echo $files). Dnevnik: artefakt testi-dnevnik." >> "$GITHUB_STEP_SUMMARY"
-              node --disable-warning=ExperimentalWarning --test $files 2>&1 | tee -a test.log
+              node --disable-warning=ExperimentalWarning --test $TEST_ZASTAVICE $files 2>&1 | tee -a test.log
               status=${PIPESTATUS[0]}
             fi
           fi
           exit "$status"
       - if: failure() || steps.npmtest.outputs.ponovljeno == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        timeout-minutes: 5
         with:
           name: testi-dnevnik
           path: test.log
@@ -81,24 +108,48 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 5
         with:
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        timeout-minutes: 5
         with:
           node-version: 22
           cache: npm
       - run: npm ci --no-audit --no-fund
+        timeout-minutes: 10
       - name: Playwright (Chromium)
+        timeout-minutes: 5
         run: npm install --no-save --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION"
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        timeout-minutes: 5
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium
-      - run: npx playwright install --with-deps chromium
+      # Namestitev z omejitvijo časa in 3 poskusi: apt (sistemske knjižnice za brskalnike) se je že zataknil
+      # sredi prenosa z ogledala in požrl 40 min. Brskalniki so v predpomnilniku, apt ostane vedno.
+      - name: Namestitev brskalnikov (omejitev časa + ponovitev)
+        timeout-minutes: 14
+        run: |
+          sudo tee /etc/apt/apt.conf.d/99ci >/dev/null <<'APT'
+          Acquire::Retries "3";
+          Acquire::http::Timeout "30";
+          Acquire::https::Timeout "30";
+          APT
+          for poskus in 1 2 3; do
+            if timeout -k 10 4m npx playwright install --with-deps chromium; then exit 0; fi
+            echo "::warning::Namestitev brskalnikov: poskus $poskus ni uspel ali je potekel (4 min)"
+            sudo dpkg --configure -a || true
+            sleep 5
+          done
+          echo "::error::Namestitev brskalnikov ni uspela v 3 poskusih"
+          exit 1
       - name: Preveri aplikacijo
+        timeout-minutes: 25
         run: node scripts/preveri-aplikacijo.cjs --posnetki posnetki 2>&1 | tee preveri.log
       - if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        timeout-minutes: 5
         with:
           name: preveri-posnetki
           path: |
