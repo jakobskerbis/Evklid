@@ -209,7 +209,7 @@ export function mountAccounts(app, store, opts = {}) {
   const levelKeyPrefix = (parentId) => `pilot_stopnja_p${parentId}_`;
   // Zaklenjena stopnja pilotnega RAČUNA v tem mesecu (pregled #477 B2/C1): najvišja stopnja profilov računa ob prvem
   // pogledu v mesecu. Menjava stopnje, izbris profila in nov profil višje stopnje sredi meseca meje in stopenj ne
-  // dvignejo (profil dobi največ to stopnjo); naslednji mesec velja nova.
+  // dvignejo (profil dobi največ to stopnjo); naslednji mesec velja nova. Potrdil j 2026-11-06 19:5x.
   function pilotLevel(parentId) {
     const key = `${levelKeyPrefix(parentId)}${monthKey()}`;
     const saved = kv.get(key);
