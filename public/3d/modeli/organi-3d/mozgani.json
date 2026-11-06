@@ -319,7 +319,7 @@
    "barva": "#2dd4bf",
    "opisOs": "Del, ki poveže možgane s hrbtenjačo. Sam skrbi za dihanje in utrip.",
    "opis": "Povezuje možgane s hrbtenjačo in samodejno uravnava dihanje, srčni utrip in požiranje.",
-   "opisStudij": "Srednji možgani, most in podaljšana hrbtenjača; jedra možganskih živcev III–XII, retikularna formacija (budnost), središča za dihanje in krvni obtok, poti (piramidna proga, lemniscus medialis). Križanje piramid na meji s hrbtenjačo.",
+   "opisStudij": "Srednji možgani, most in podaljšana hrbtenjača; jedra možganskih živcev III–XII (spinalni del XI je v vratni hrbtenjači), retikularna formacija (budnost), središča za dihanje in krvni obtok, poti (piramidna proga, lemniscus medialis). Križanje piramid na meji s hrbtenjačo.",
    "vozlisca": [
     "Base of peduncle.l",
     "Base of peduncle.r",
@@ -357,7 +357,7 @@
    "la": "Corpus callosum",
    "barva": "#e8ecf3",
    "opisOs": "Most iz vlaken med levo in desno polovico možganov.",
-   "opis": "Debel snop živčnih vlaken, po katerem si leva in desna polobla izmenjujeta sporočila. Pod njim sta obok (fornix) in sprednja komisura.",
+   "opis": "Debel snop živčnih vlaken, po katerem si leva in desna polobla izmenjujeta sporočila. Pod njim je obok (fornix), spredaj spodaj pa sprednja komisura.",
    "opisStudij": "Največja komisura (okoli 200 milijonov aksonov): rostrum, genu, truncus, splenium. Pod njim septum pellucidum in fornix. Po kalozotomiji se pokaže »razcepljeni možgani« (Sperry).",
    "vozlisca": [
     "Anterior commissure",
@@ -425,7 +425,7 @@
    "ime": "Križišče vidnih živcev",
    "la": "Chiasma opticum",
    "barva": "#fde68a",
-   "opisOs": "Mesto, kjer se vidna živca obeh očes srečata.",
+   "opisOs": "Mesto, kjer se vidna živca srečata in se del vlaken prekriža.",
    "opis": "Tu se del vlaken iz obeh očes prekriža, zato vsaka polobla z obema očesoma vidi nasprotno polovico vidnega polja.",
    "opisStudij": "Prekrižajo se vlakna nosnih polovic mrežnic (okoli 53 %); za križiščem tractus opticus do corpus geniculatum laterale. Pritisk tumorja hipofize od spodaj povzroči bitemporalno hemianopsijo.",
    "vozlisca": [

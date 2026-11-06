@@ -321,7 +321,7 @@ export function odpriModel(el, mod, opts = {}) {
     for (const [o, maska] of skrite) o.layers.mask = maska;
     skrite.clear();
     if (!d || !model?.deli || (info.predmet || "BIO") !== "BIO" || !model.group) return;
-    for (const o of najdiOvoje(THREE, d, model.deli, model.group, { kamera: kit?.camera?.position })) {
+    for (const o of najdiOvoje(THREE, d, model.deli, model.group)) {
       skrite.set(o, o.layers.mask);
       o.layers.set(SKRITA_PLAST);
     }

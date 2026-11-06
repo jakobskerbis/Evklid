@@ -35,22 +35,13 @@ test("en del: skrije samo ovoj, ki ga obdaja z vseh strani", () => {
   assert.ok(!skrij.has(s.zila));
 });
 
-test("skupina: skrije obe steni pred člani, majhno žilo pusti, hitro", () => {
+test("skupina: vidni so samo člani (stene, žila in ovoj skriti), hitro", () => {
   const s = prizor();
   const g = { id: "skupina-x", skupinaDelov: true, meshes: [s.a, s.b], clani: [s.deli[0], s.deli[1]] };
   const t0 = performance.now();
   const skrij = najdiOvoje(THREE, g, s.deli, s.group);
   const ms = performance.now() - t0;
-  assert.ok(skrij.has(s.levaStena) && skrij.has(s.desnaStena) && skrij.has(s.membrana));
-  assert.ok(!skrij.has(s.zila), "žila na steni ostane");
+  for (const m of [s.levaStena, s.desnaStena, s.membrana, s.zila]) assert.ok(skrij.has(m));
   assert.ok(!skrij.has(s.a) && !skrij.has(s.b), "člani ostanejo");
-  assert.ok(ms < 200, `${ms.toFixed(1)} ms`);
-});
-
-test("skupina s kamero: žarki iz smeri pogleda skrijejo steno spredaj, majhna žila ostane", () => {
-  const s = prizor();
-  const g = { id: "skupina-x", skupinaDelov: true, meshes: [s.a, s.b], clani: [s.deli[0], s.deli[1]] };
-  const skrij = najdiOvoje(THREE, g, s.deli, s.group, { kamera: new THREE.Vector3(0, 0, 10) });
-  assert.ok(skrij.has(s.levaStena) && skrij.has(s.desnaStena));
-  assert.ok(!skrij.has(s.zila));
+  assert.ok(ms < 50, `${ms.toFixed(1)} ms`);
 });
