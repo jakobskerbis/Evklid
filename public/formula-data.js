@@ -87,7 +87,7 @@ const FIZ = {
   c: [
     { ctx: "\\\\Delta\\s*T|Q\\s*=", n: "specifična toplota", en: "specific heat capacity", r: "c = \\frac{Q}{m\\,\\Delta T}", u: "J/(kg K)" },
     // c je tudi rob kvadra in specifična toplota (c_p): hitrost svetlobe le pri svetlobi in valovanju.
-    { ctx: `c\\s*=\\s*\\\\lambda|\\\\lambda${MUL}(?:\\\\nu|f\\b)|m${MUL}c\\^|h${MUL}c\\b|\\\\frac\\{\\s*c\\s*\\}\\{\\s*(?:\\\\lambda|n|v)`, teme: "svetlob|valovan|elektromagnet|foton|relativ|optik|\\blom|zvok|interferenc|uklon|spekt", ne: "kvader|kvadr|specifičn|vlažn", n: "hitrost svetlobe (valovanja)", en: "speed of light (of a wave)", r: "c \\approx 3\\cdot 10^{8}\\,\\mathrm{m/s}", u: "m/s" },
+    { ctx: `c\\s*=\\s*\\\\lambda|\\\\lambda${MUL}(?:\\\\nu|f\\b)|m${MUL}c\\^|h${MUL}c\\b|\\\\frac\\{\\s*c\\s*\\}\\{\\s*(?:\\\\lambda|n|v)`, teme: "svetlob|valovan|elektromagnet|foton|relativ|optik|\\blom|zvok|interferenc|uklon|spekt", ne: "kvader|kvadr", n: "hitrost svetlobe (valovanja)", en: "speed of light (of a wave)", r: "c \\approx 3\\cdot 10^{8}\\,\\mathrm{m/s}", u: "m/s" },
   ],
   // k je tudi Boltzmannova konstanta, valovno število, koeficient trenja; x tudi lega (koordinata).
   k: { ctx: `F\\s*=\\s*-?\\s*k${MUL}(?:\\\\Delta\\s*)?x|\\\\frac\\{\\s*k${MUL}x`, teme: "vzmet|prožn|nihal|nihanj|raztez", n: "prožnostni koeficient (konstanta vzmeti)", en: "spring constant", r: "F = k\\,x", u: "N/m" },
@@ -127,7 +127,7 @@ const KEM = {
   // np² v elektronski konfiguraciji je orbitala p.
   p: { brez: `${DELEC}|[n\\d]\\s*p\\s*\\^`, n: "tlak", en: "pressure", r: "p\\,V = n\\,R\\,T", u: "kPa" },
   T: { n: "temperatura (absolutna)", en: "(absolute) temperature", r: "T = t + 273{,}15", u: "K" },
-  R: { ctx: `R${MUL}T|R\\s*(?:=|\\\\approx)\\s*8`, teme: "plin|termodinam|ravnotežj|entalpij|entropij|gibbs|nernst|arrhenius|elektrokem", n: "splošna plinska konstanta", en: "gas constant", r: "R \\approx 8{,}314\\,\\mathrm{J/(mol\\,K)}", u: "J/(mol K)" },
+  R: { ctx: `R${MUL}T|R\\s*(?:=|\\\\approx)\\s*8|/\\s*R\\b|\\}\\{\\s*R\\s*\\}`, teme: "plin|termodinam|ravnotežj|entalpij|entropij|gibbs|nernst|arrhenius|elektrokem", n: "splošna plinska konstanta", en: "gas constant", r: "R \\approx 8{,}314\\,\\mathrm{J/(mol\\,K)}", u: "J/(mol K)" },
   K_c: { n: "konstanta ravnotežja (s koncentracijami)", en: "equilibrium constant (concentrations)" },
   K_p: { n: "konstanta ravnotežja (s tlaki)", en: "equilibrium constant (pressures)" },
   K_a: { n: "konstanta kisline", en: "acid dissociation constant", r: "K_a = \\frac{[\\mathrm{H_3O^+}][\\mathrm{A^-}]}{[\\mathrm{HA}]}" },
@@ -154,6 +154,7 @@ Object.assign(BIO, {
   c: { ...KEM.c, ctx: `c${NUM_UNIT}(?:m|μ)?mol|c\\s*=\\s*\\\\frac\\{\\s*n` },
   V: { ...KEM.V, ctx: `V${NUM_UNIT}(?:[mμd]?L|[cdm]?m\\^)` },
   T: { ...KEM.T, ctx: `T${NUM_UNIT}K\\b|T\\s*=\\s*t\\s*\\+` },
+  G: { ...KEM.G, ctx: "\\\\Delta\\s*(?:_\\{?\\\\?\\w*\\}?\\s*)?G" },
   t: [T_CELZIJ, { ...FIZ.t[1], ctx: `t${NUM_UNIT}(?:s|min|h|dan|dni|let|ur[aei]?)\\b` }],
 });
 

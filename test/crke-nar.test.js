@@ -89,3 +89,9 @@ test("pravilni pomeni ostanejo: n v kemiji, a z indeksom, čas v biologiji", () 
   has("FIZ", "Newtonovi zakoni", "Velja $a_2 = F/m_2$.", "a", /pospešek/);
   has("BIO", "Organski sistemi živali", "Čas je $t = 1\\,\\mathrm{dan}$.", "t", /čas/);
 });
+
+test("ΔG v biologiji, R v naklonu, hitrost zvoka", () => {
+  has("BIO", "Mikrobni metabolizem", "Velja $\\Delta G = -n F \\Delta E$.", "G", /Gibbs/);
+  has("KEM", "Kemijsko ravnotežje", "Naklon premice je $-\\Delta_\\mathrm{r}H^\\circ/R$.", "R", /plinska konstanta/);
+  has("FIZ", "Valovanje", "Pri specifični toploti … je hitrost zvoka $c = \\sqrt{\\kappa p/\\rho}$.", "c", /hitrost/);
+});
