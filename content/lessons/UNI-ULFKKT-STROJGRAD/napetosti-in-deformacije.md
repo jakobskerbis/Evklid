@@ -62,6 +62,8 @@ $$\Delta L = \frac{F L_0}{E A}.$$
 
 To je točno vzorec iz meritev; iz njih bi dobili $E = F L_0/(A\,\Delta L) = 200\,\mathrm{GPa}$. Zmnožek $EA$ je **osna togost** prereza. Če se sila ali prerez spreminjata vzdolž palice, palico razdelimo na kratke dele $\mathrm{d}x$ in seštejemo: $\Delta L = \int_0^{L_0} \frac{N(x)}{E A(x)}\,\mathrm{d}x$, kjer je $N(x)$ osna sila v prerezu $x$.
 
+**Dva materiala v istem prerezu.** Kadar silo $F$ skupaj nosita dva toga povezana dela iz različnih snovi (jeklo v betonu, cev z jedrom), sama ravnotežna enačba $N_1 + N_2 = F$ ne pove, kako se sila razdeli. Ker sta dela sprijeta, imata isto deformacijo $\varepsilon$; s Hookovim zakonom je $N_i = E_iA_i\,\varepsilon$, torej $F = \varepsilon\,(E_1A_1 + E_2A_2)$. Sila se razdeli v razmerju osnih togosti $E_iA_i$, razmerje napetosti pa je $\sigma_1/\sigma_2 = E_1/E_2$. Splošni postopek za take statično nedoločene primere obravnava lekcija o osni obremenitvi.
+
 **Toplotna deformacija.** Deformacijo povzroči tudi sprememba temperature, $\varepsilon_T = \alpha\,\Delta T$ ($\alpha$ je temperaturni razteznostni koeficient); kaj se zgodi, ko je palica vpeta in se ne more raztegniti, obravnava lekcija o osni obremenitvi.
 
 :::premisli
@@ -237,7 +239,8 @@ Znati moraš povedati:
 - Hookov zakon s pogojem veljavnosti in izpeljavo $\Delta L = FL_0/(EA)$;
 - potek nateznega preizkusa, značilne točke diagrama $\sigma$–$\varepsilon$ ter razliko med duktilnim in krhkim materialom;
 - kako iz meritev nateznega preizkusa izračunaš $E$, $R_e$, $R_m$, raztezek po pretrgu in kontrakcijo;
-- definicijo dopustne napetosti in zakaj je merilo pri jeklu $R_e$, pri krhkih materialih pa $R_m$.
+- definicijo dopustne napetosti in zakaj je merilo pri jeklu $R_e$, pri krhkih materialih pa $R_m$;
+- kako se sila razdeli med dva sprijeta materiala (enaka deformacija, razmerje togosti $E_iA_i$).
 
 ### Naloga 1
 
@@ -309,7 +312,7 @@ Jeklena žica premera $2{,}0\,\mathrm{mm}$ in dolžine $3{,}0\,\mathrm{m}$ nosi 
 
 **Dimenzioniranje.** Natezne palice, vijaki, vrvi dvigal in obešala imajo predpisane varnostne faktorje: vrvi za dvigala ljudi mnogo večje kot jeklene konstrukcije, ker obrabe in sunkov ni mogoče natančno predvideti. Pri vijakih se trdnostni razred (npr. $8.8$) neposredno nanaša na natezni preizkus: prva številka pomeni $R_m \approx 800\,\mathrm{MPa}$, zmnožek obeh števk krat deset pa mejo tečenja, okoli $640\,\mathrm{MPa}$.
 
-**Biomateriali in tkiva.** Implantati (kolčne proteze, vijaki za kosti) morajo biti dovolj trdni, a njihov $E$ naj bo čim bližje kosti; pretoga proteza prevzame obremenitev, kost okoli nje pa zaradi premajhne napetosti slabi. Natezne preizkuse izvajajo tudi na kitah, vezeh in šivalnih nitih; pri tkivih rezultat poročamo za določeno hitrost obremenjevanja, ker so viskoelastična.
+**Pregledi in varnost obratovanja.** Pri rednih pregledih dvižnih naprav, obešal in nateznih palic v obratih merijo preostale premere in iščejo trajne raztezke: korozija zmanjša prerez in poveča napetost (glej zadnje vprašanje Preveri se), trajni raztezek pa pomeni, da je bila presežena meja tečenja in je element treba zamenjati. Zato duktilen element, ki pred pretrgom vidno teče, velja za varnejšega od krhkega.
 
 **Gradbena praksa.** Na gradbišču natezni preizkus armaturnih palic preveri, ali je dobavljeno jeklo ustrezno; beton pa preizkušajo s tlačnim preizkusom kock ali valjev, ker je v nategu krhek in ga v računih praviloma zanemarimo.
 

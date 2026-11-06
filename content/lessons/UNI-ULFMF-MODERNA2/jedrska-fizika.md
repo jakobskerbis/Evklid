@@ -25,7 +25,7 @@ $$E_u = (1\,\mathrm{u})\,c^2 = 931{,}494\,\mathrm{MeV}.$$
 
 $$W_v = \left[Z\,m(^1\mathrm{H}) + N\,m_n - m(^A\mathrm{X})\right]c^2.$$
 
-V formuli so **atomske** mase (iz tabel), $m(^1\mathrm{H}) = 1{,}007825\,\mathrm{u}$ in $m_n = 1{,}008665\,\mathrm{u}$. Atomske mase lahko vstavimo, ker se mase $Z$ elektronov na obeh straneh odštejejo (vezavno energijo elektronov, nekaj $\mathrm{eV}$ do $\mathrm{keV}$, zanemarimo).
+V formuli so **atomske** mase (iz tabel), $m(^1\mathrm{H}) = 1{,}007825\,\mathrm{u}$ in $m_n = 1{,}008665\,\mathrm{u}$. Atomske mase lahko vstavimo, ker se mase $Z$ elektronov na obeh straneh odštejejo (skupno vezavno energijo elektronov, od $13{,}6\,\mathrm{eV}$ pri vodiku do okoli $0{,}8\,\mathrm{MeV}$ pri uranu, zanemarimo: je več kot tisočkrat manjša od $W_v$).
 
 Izračunajmo $W_v$ in **vezavno energijo na nukleon** $W_v/A$ za nekaj jeder:
 
@@ -107,7 +107,7 @@ $$R(t) = R_0\,e^{-\lambda t}.$$
 
 Iz $R = \lambda N$ sledi pomembna posledica: pri enaki aktivnosti ima izotop z daljšim razpolovnim časom **več** jeder. Zato je ${}^{238}\mathrm{U}$ z $t_{1/2} \approx 4{,}5 \cdot 10^9$ let v kamninah prisoten v velikih količinah, a ima majhno aktivnost na gram, ${}^{18}\mathrm{F}$ z $t_{1/2} \approx 110\,\mathrm{min}$ pa ima že v nanogramih aktivnost, primerno za slikanje.
 
-Razpolovni časi izotopov, ki jih pogosto srečaš v biologiji in medicini:
+Razpolovni časi izotopov, ki jih pogosto srečaš v medicinski fiziki, biologiji in datiranju:
 
 | izotop | razpad | $t_{1/2}$ | uporaba |
 |---|---|---|---|
@@ -254,7 +254,7 @@ Natančno navedi predpostavke, iz katerih sledi zakon radioaktivnega razpada, in
 2. Izpeljava: $\mathrm{d}N = -\lambda N\,\mathrm{d}t$, $\int_{N_0}^{N}\mathrm{d}N'/N' = -\lambda\int_0^t\mathrm{d}t'$, torej $N = N_0e^{-\lambda t}$.
 3. Življenjski čas: v intervalu $[t, t + \mathrm{d}t]$ razpade $\lambda N_0e^{-\lambda t}\,\mathrm{d}t$ jeder, vsako je živelo $t$. Povprečje: $\tau = \frac{1}{N_0}\int_0^\infty t\,\lambda N_0e^{-\lambda t}\,\mathrm{d}t = \lambda\int_0^\infty te^{-\lambda t}\,\mathrm{d}t = \lambda \cdot \frac{1}{\lambda^2} = \frac{1}{\lambda}$ (integral po delih).
 4. Iz $t_{1/2} = \ln 2/\lambda$ sledi $\tau = t_{1/2}/\ln 2 \approx 1{,}44\,t_{1/2}$.
-5. Segrevanje: $\lambda$ določajo jedrski procesi z energijami $\mathrm{MeV}$, toplotne energije so le okoli $0{,}03\,\mathrm{eV}$, zato se $t_{1/2}$ ne spremeni (redke izjeme pri zajetju elektrona so pod $1\,\%$).
+5. Segrevanje: $\lambda$ določajo jedrski procesi z energijami $\mathrm{MeV}$, toplotne energije so le okoli $0{,}03\,\mathrm{eV}$, zato se $t_{1/2}$ ne spremeni. Edina merljiva izjema je zajetje elektrona: gostota elektronov ob jedru je odvisna od kemijske vezi, zato se $t_{1/2}$ npr. pri ${}^7\mathrm{Be}$ v različnih spojinah razlikuje za manj kot $1\,\%$.
 6. Delitev: $\lambda$ je lastnost jedra, ne vzorca; vsaka polovica ima isti $t_{1/2}$ in pol manjšo aktivnost.
 
 ### Naloga 3

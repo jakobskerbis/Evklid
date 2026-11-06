@@ -288,11 +288,11 @@ Prostoležeči nosilec dolžine $5{,}0\,\mathrm{m}$ ima v $A$ nepomično členka
 
 ## Drugače: Uporaba v stroki
 
+**Varnost na gradbišču.** Pri odrih, opažih in podpiranju izkopov reakcije določijo, koliko sile prevzamejo podložke, sidra in tla. Konzolna zaščitna ograja ali lovilna mreža mora prevzeti moment vpetja, ki raste z ročico udarca. Avtodvigalo je v ravnotežju, dokler rezultanta teže in bremena pada znotraj podpornih nog; ko se breme oddalji, se reakcija na nogah na nasprotni strani od bremena zmanjšuje proti nič – to je meja prevrnitve.
+
 **Hidrotehnika in okolje.** Brvi in merilni mostovi čez vodotoke so pogosto prostoležeči, ker pomična podpora na enem bregu dovoli raztezanje zaradi temperature; sicer bi se v nosilcu pojavile velike sile (statično nedoločena podpora). Merilne roke in nadstreški so konzole ali nosilci z vrvjo, za njihova sidra pa je merodajen moment vpetja.
 
 **Podnebje in obtežbe.** Projektant po standardih za vplive na konstrukcije upošteva sneg in veter tudi nesimetrično: nanos snega na eni strani strehe (kot v Primeru 4) da večjo reakcijo v eni podpori, kot bi jo dala enakomerna obtežba. S podnebnimi spremembami se spreminjajo tudi karakteristične obtežbe s snegom in vetrom, zato se pri prenovah reakcije podpor preverjajo znova.
-
-**Varnost na gradbišču.** Pri odrih, opažih in podpiranju izkopov reakcije določijo, koliko sile prevzamejo podložke, sidra in tla. Konzolna zaščitna ograja ali lovilna mreža mora prevzeti moment vpetja, ki raste z ročico udarca. Avtodvigalo je v ravnotežju, dokler rezultanta teže in bremena pada znotraj podpornih nog; ko se breme oddalji, se reakcija na nogah na nasprotni strani od bremena zmanjšuje proti nič – to je meja prevrnitve.
 
 ## Drugače: Korak za korakom s številkami
 

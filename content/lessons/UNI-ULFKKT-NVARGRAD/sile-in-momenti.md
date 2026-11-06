@@ -21,7 +21,7 @@ $$F_x = F\cos\alpha, \qquad F_y = F\sin\alpha.$$
 
 $$\vec{F}_R = \sum_i \vec{F}_i, \qquad F_{Rx} = \sum_i F_{ix}, \quad F_{Ry} = \sum_i F_{iy}.$$
 
-Velikost je $F_R = \sqrt{F_{Rx}^2 + F_{Ry}^2}$, smer pa določa $\tan\alpha_R = F_{Ry}/F_{Rx}$ (kvadrant izberemo po predznakih komponent). Za delec, kjer so vse sile sočasne, je to vse, kar potrebujemo: delec miruje natanko tedaj, ko je $\vec{F}_R = 0$.
+Velikost je $F_R = \sqrt{F_{Rx}^2 + F_{Ry}^2}$, smer pa določa $\tan\alpha_R = F_{Ry}/F_{Rx}$ (kvadrant izberemo po predznakih komponent). Za delec, kjer so vse sile sočasne, je to vse, kar potrebujemo: delec, ki miruje, ostane v mirovanju natanko tedaj, ko je $\vec{F}_R = 0$.
 
 ### Kaj je pri togem telesu drugače
 
@@ -321,11 +321,11 @@ Izvirni sistem, redukcija na $A$ in ena sama sila opisujejo **isto obremenitev t
 
 ## Drugače: Uporaba v stroki
 
-**Biomehanika in fizioterapija.** Sklepi so osi, mišice in teža pa sile z majhnimi ali velikimi ročicami. Ker so mišične ročice kratke (biceps okoli $4\,\mathrm{cm}$, kolenske iztegovalke prek pogačice okoli $5\,\mathrm{cm}$), so sile v kitah in sklepih večkratnik teže bremena. Zato fizioterapevt pri rehabilitaciji spreminja ročico (lega uteži, kot sklepa), ne le maso uteži, ergonomska navodila pa zahtevajo, da breme dvignemo blizu telesa: ista masa pri pol manjši ročici pomeni pol manjši moment v ledvenem delu hrbtenice.
-
-**Ortodontija.** Zob se pod točkovno silo nagne, ker sila nima nosilke skozi središče upora. Z dvojico, ki jo da upognjena ali zasukana žica, ortodont nadzira razmerje moment/sila in s tem, ali se zob nagne, premakne vzporedno ali zasuka koren.
-
 **Gradbišče.** Avtodvigalo ima omejevalnik bremenskega momenta: dovoljeno breme ni podano s silo, ampak z momentom glede na točko prevrnitve, zato je pri bolj iztegnjeni roki manjše. Momentni ključ za vijake jeklenih spojev zagotovi predpisani moment privijanja v $\mathrm{N\,m}$, iz katerega izhaja sila prednapetja vijaka. Projektant obtežbe po standardih za vplive na konstrukcije (lastna teža, sneg, veter) najprej zapiše kot porazdeljene obtežbe in jih za ravnotežne račune nadomesti z rezultantami.
+
+**Zaščitne ograje in sidrišča.** Vodoravna sila na zgornjo letev začasne zaščitne ograje ali na lovilno vrv ima glede na sidrišče v plošči ročico, enako višini ograje. Sidro zato ne prevzame le sile, ampak tudi moment »sila krat višina« (vzporedni premik sile), in prav ta moment iztrga slabo pritrjene stojke iz roba plošče.
+
+**Ergonomija ročnega dela.** Sklepi so osi, mišice in teža bremena pa sile z zelo različnimi ročicami. Ker so mišične ročice kratke (biceps okoli $4\,\mathrm{cm}$), so sile v kitah in hrbtenici večkratnik teže bremena. Zato varnostna navodila za ročno prenašanje bremen zahtevajo, da breme dvignemo blizu telesa: ista masa pri pol manjši ročici pomeni pol manjši moment v ledvenem delu hrbtenice.
 
 ## Drugače: Z analogijo
 
