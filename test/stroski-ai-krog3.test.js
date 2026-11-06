@@ -109,13 +109,13 @@ test("A5: DDV po državi kupca in tečaji z rezervo (sveži 10 %, stalni 20 %)",
   assert.ok(P.aiCapFromEur(19.99, 0.27) < P.aiCapFromEur(19.99, 0.22));
   P.setFxRates({}, 0);
   assert.ok(Math.abs(P.eurPerUnitNow("INR") - P.EUR_PER_UNIT.INR * 0.8) < 1e-12, "brez svežih: stalni − 20 %");
-  P.setFxRates(parseFx({ eur: { inr: 100, ngn: 5000, kes: 1e9 } }), Date.now());
+  P.setFxRates(parseFx({ date: new Date().toISOString().slice(0, 10), eur: { inr: 100, ngn: 5000, kes: 1e9 } }), Date.now());
   assert.ok(Math.abs(P.eurPerUnitNow("INR") - 0.01 * 0.9) < 1e-12, "sveži − 10 %");
   assert.ok(Math.abs(P.eurPerUnitNow("NGN") - 0.0002 * 0.9) < 1e-12, "šibkejša valuta velja");
   assert.ok(Math.abs(P.eurPerUnitNow("KES") - P.EUR_PER_UNIT.KES * 0.8) < 1e-12, "napačen podatek zavrnjen");
   assert.equal(P.eurPerUnitNow("XOF"), P.EUR_PER_UNIT.XOF, "vezan na evro");
-  P.setFxRates({}, Date.now() - 15 * 86400000);
-  assert.ok(Math.abs(P.eurPerUnitNow("INR") - P.EUR_PER_UNIT.INR * 0.8) < 1e-12, "starejši od 14 dni: stalni");
+  P.setFxRates({ INR: 0.01 }, Date.now() - 9 * 86400000);
+  assert.ok(Math.abs(P.eurPerUnitNow("INR") - P.EUR_PER_UNIT.INR * 0.8) < 1e-12, "podatki starejši od 8 dni: stalni");
   P.setFxRates({}, 0);
 });
 
@@ -140,4 +140,32 @@ test("S4: rezervacija klica je v bazi; ob ponovnem zagonu se ostanek zapiše kot
   h2.take(0.1);
   h2.release();
   assert.equal(store.db.prepare("SELECT COUNT(*) n FROM ai_holds").get().n, 0, "sproščeno: brez vrstice");
+});
+
+test("K3-4: osvežitev tečajev – pripeta različica po datumu, rezervni naslov, časovna omejitev, svežost po datumu podatkov", async () => {
+  const P = await import("../server/accounts/plans.js");
+  const { refreshFx, fxUrls } = await import("../server/tecaji.js");
+  const urls = [];
+  const rows = new Map();
+  const db = { prepare: () => ({ run: (k, v) => rows.set(k, v), get: () => null }) };
+  const today = new Date().toISOString().slice(0, 10);
+  const fetchFn = async (url, init) => {
+    urls.push(url);
+    assert.ok(init.signal, "časovna omejitev");
+    if (urls.length === 1) return { ok: false, status: 503 };
+    return { ok: true, text: async () => JSON.stringify({ date: today, eur: { inr: 1 / (P.EUR_PER_UNIT.INR * 1.05) } }) };
+  };
+  try {
+    assert.ok(fxUrls()[0].includes("@20") && !fxUrls()[0].includes("@latest"), "pripeta različica");
+    const r = await refreshFx(db, { fetchFn, log: { warn() {} } });
+    assert.equal(urls.length, 2, "rezervni naslov");
+    assert.ok(r.INR > 0 && Math.abs(P.eurPerUnitNow("INR") - P.EUR_PER_UNIT.INR * 1.05 * 0.9) < 1e-12);
+    assert.ok(JSON.parse(rows.get("fx_eur")).at <= Date.now());
+    // Prevelika okrepitev (+20 %) zavrnjena: stalni tečaj.
+    P.setFxRates({}, 0);
+    const up = await refreshFx(db, { fetchFn: async () => ({ ok: true, json: async () => ({ date: today, eur: { inr: 1 / (P.EUR_PER_UNIT.INR * 1.2) } }) }), log: { warn() {} } });
+    assert.equal(up, null);
+  } finally {
+    P.setFxRates({}, 0);
+  }
 });

@@ -163,11 +163,11 @@ export const EUR_PER_UNIT = {
   USD: 0.85,
 };
 // Tečaji za mejo AI (j 2026-11-06 12:53): tedensko osveženi iz odprtega vira brez ključa (server/tecaji.js) z rezervo
-// 10 %; brez svežih (starejši od 14 dni ali vir ne deluje) stalni EUR_PER_UNIT z rezervo 20 %. XOF je vezan na evro
+// 10 %; brez svežih (datum podatkov starejši od 8 dni ali vir ne deluje) stalni EUR_PER_UNIT z rezervo 20 %. XOF je vezan na evro
 // (brez rezerve). Rezerva tečaja ni namenjena DDV (ta je zgoraj, po državi).
 export const FX_RESERVE = 0.1;
 export const FX_FIXED_RESERVE = 0.2;
-export const FX_MAX_AGE_MS = 14 * 86400000;
+export const FX_MAX_AGE_MS = 8 * 86400000;
 let fx = { rates: {}, at: 0 };
 export function setFxRates(rates, at = Date.now()) {
   fx = { rates: { ...(rates || {}) }, at: Number(at) || 0 };
