@@ -67,9 +67,8 @@ test("vidnaKrogla: povsem izven kadra le, ko krogla ne seka vidnega polja", { sk
 test("pregledovalnik: kamera ne oddalji kadra, ki ga je povečal uporabnik; kopije materialov se sprostijo", () => {
   const src = fs.readFileSync(path.join(ROOT, "public/3d/pregledovalnik.js"), "utf8");
   assert.match(src, /uporabnikovKader\(\)/, "izbira upošteva uporabnikov kader");
-  assert.match(src, /x\.dispose\(\)/, "obarvaj sprosti kopije materialov");
   const unici = src.slice(src.indexOf("unici() {"));
-  assert.match(unici, /ustaviNamigSij\(\);\s*obarvaj\(null\)/, "unici pospravi sij in kopije");
+  assert.match(unici, /ustaviNamigSij\(\);\s*narisiObris\(null\);\s*poudarek\.pocisti\(\)/, "unici pospravi sij, obris in kopije");
 });
 
 test("pregledovalnik: brez barvnih točk in oznak čez model, okno dela v plošči", () => {

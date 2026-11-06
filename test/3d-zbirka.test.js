@@ -165,13 +165,11 @@ test("tap ignores hidden meshes (hidden membrane cover no longer catches every t
   assert.match(src, /for \(let x = o; x; x = x\.parent\) if \(!x\.visible\) return false;/);
 });
 
-test("selecting a part hides the parts around it (wall, membrane, envelope) and restores them on deselect", () => {
+test("selecting a part highlights it and turns every other part transparent (poudarek.js), restored on deselect and rebuild", () => {
   const src = fs.readFileSync(path.join(D3, "pregledovalnik.js"), "utf8");
-  assert.match(src, /obarvaj\(d\);\s*skrijObdajajoce\(d\);/);
-  assert.match(src, /for \(const \[o, maska\] of skrite\) o\.layers\.mask = maska;/, "restore first");
-  assert.match(src, /SMERI\.every\(/, "all six rays from outside must hit the shell");
-  assert.match(src, /prostornina\(okvirDela\(p, bP\)\) < vS \* 1\.25/, "the shell is bigger than the selected part");
-  assert.match(src, /\(info\.predmet \|\| "BIO"\) !== "BIO"\) return;/, "biology only");
-  assert.match(src, /obarvaj\(null\);[^\n]*\n\s*skrijObdajajoce\(null\);/, "restored before a rebuild");
-  assert.match(src, /o\.layers\.set\(SKRITA_PLAST\)/);
+  assert.match(src, /poudari\(d\);/);
+  assert.match(src, /poudarek\.uporabi\(model\.group, izbrane/);
+  assert.match(src, /poudarek\.izklopi\(/, "deselect fades back");
+  assert.match(src, /narisiObris\(null\);\s*poudarek\.pocisti\(\); \/\/ izvirni materiali nazaj/, "restored before a rebuild");
+  assert.ok(!/skrijObdajajoce/.test(src), "enclosing parts are ghosted, not hidden");
 });

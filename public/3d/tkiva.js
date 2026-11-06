@@ -136,7 +136,7 @@ export function tkivo(row) {
 
 // Skupni dodatek senčilnikom: podrobnost površine (prostorski šum), zapečena okluzija, prosojnost za zatemnitev in
 // rentgen (rob se ob rentgenu poudari kot steklo). uAlfa: 1 = običajno; uRob: 0 … 1 (rentgen); uSvetlost: 1 = običajno,
-// manj = zatemnjeno (ostali deli, ko je en izbran); uObroba: modra obroba izbranega dela.
+// manj = zatemnjeno (ostali deli, ko je en izbran); uObroba: modra obroba izbranega dela; uSiv: 0 … 1 razbarvanje (poudarek).
 const GLSL_SUM = `
 float evkHash(vec3 p){ p = fract(p * 0.3183099 + vec3(0.1,0.2,0.3)); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
 float evkSum(vec3 x){ vec3 i = floor(x); vec3 f = fract(x); f = f*f*(3.0-2.0*f);
@@ -172,7 +172,7 @@ export function ustvariMaterial(razred, kakovost, skupno) {
     m.opacity = r.prosojno;
     m.depthWrite = false;
   }
-  const uniforms = { uAlfa: skupno.uAlfa, uRob: skupno.uRob, uSvetlost: skupno.uSvetlost, uObroba: skupno.uObroba || { value: 0 } };
+  const uniforms = { uAlfa: skupno.uAlfa, uRob: skupno.uRob, uSvetlost: skupno.uSvetlost, uObroba: skupno.uObroba || { value: 0 }, uSiv: skupno.uSiv || { value: 0 } };
   const d = r.d || null;
   // Telefon: samo ena oktava barvne zrnatosti pri kosti in mišici (kot prej); računalnik: vse z reliefom.
   const zrno = d && (visoka || razred === "kost" || razred === "misica");
@@ -209,7 +209,7 @@ export function ustvariMaterial(razred, kakovost, skupno) {
         vEvkPos = ( modelMatrix * evkP ).xyz;`,
       );
     sh.fragmentShader = sh.fragmentShader
-      .replace("#include <common>", `#include <common>\nvarying vec3 vEvkPos;\nvarying float vEvkAO;\nuniform float uAlfa;\nuniform float uRob;\nuniform float uSvetlost;\nuniform float uObroba;\n${GLSL_SUM}`)
+      .replace("#include <common>", `#include <common>\nvarying vec3 vEvkPos;\nvarying float vEvkAO;\nuniform float uAlfa;\nuniform float uRob;\nuniform float uSvetlost;\nuniform float uObroba;\nuniform float uSiv;\n${GLSL_SUM}`)
       .replace(
         "#include <color_fragment>",
         `#include <color_fragment>
@@ -258,6 +258,7 @@ export function ustvariMaterial(razred, kakovost, skupno) {
         ${d?.s && visoka ? `outgoingLight += diffuseColor.rgb * ${fl(d.s)} * pow(evkFr, 1.6) * vEvkAO; // mehka presevnost na robu` : ""}
         ${r.robna ? "diffuseColor.a *= 0.14 + 0.86 * pow(evkFr, 2.0); // tanka ovojnica: prozorna od spredaj, mlečna ob robu" : ""}
         outgoingLight *= uSvetlost;
+        outgoingLight = mix(outgoingLight, vec3(dot(outgoingLight, vec3(0.2126, 0.7152, 0.0722))), uSiv); // poudarek: ostali skoraj sivi
         outgoingLight += vec3(0.43, 0.61, 1.0) * pow(evkFr, 2.4) * uObroba;
         outgoingLight = mix(outgoingLight, outgoingLight * 0.35 + vec3(0.42, 0.6, 0.95) * pow(evkFr, 1.6) * 0.9, uRob);
         diffuseColor.a *= mix(uAlfa, 1.0, uRob * pow(evkFr, 2.2) * 0.85);

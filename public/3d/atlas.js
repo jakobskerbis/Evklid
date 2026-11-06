@@ -7,6 +7,7 @@ import { THREE, ustvariSceno, kakovostNaprave, poveziGumbVrtenja } from "./scena
 import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "/vendor/three/examples/jsm/libs/meshopt_decoder.module.js";
 import { tkivo, ustvariMaterial } from "./tkiva.js";
+import { DUH_ALFA, DUH_SIVO, TRAJANJE as TRAJANJE_DUHA, najboljsaSmer, kandidatiSmeri } from "./poudarek.js";
 import { seznamDatotek, mapaTelesaNaprave } from "./modeli.js";
 import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
@@ -280,7 +281,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   let prerez = { on: false, os: "y", poz: 0.5 };
   let rentgen = false;
   let kvizStanje = null;
-  const skupno = { uAlfa: { value: 1 }, uRob: { value: 0 }, uSvetlost: { value: 1 } };
+  // uSiv: razbarvanje ostalih delov, ko je en izbran (poudarek, j 6. 11.)
+  const skupno = { uAlfa: { value: 1 }, uRob: { value: 0 }, uSvetlost: { value: 1 }, uSiv: { value: 0 } };
+  const duh = { p: 0, cilj: 0 }; // 0 = brez poudarka, 1 = ostali deli prosojni
   const materiali = new Map(); // razred → material (vsi BatchedMesh tega razreda)
   const svetSkupno = { uAlfa: { value: 1 }, uRob: { value: 0 }, uSvetlost: { value: 1 }, uObroba: { value: 0.35 } };
   const materialiSij = new Map();
@@ -397,7 +400,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     uPx.value = (2 * Math.tan(THREE.MathUtils.degToRad(kit.camera.fov / 2))) / Math.max(1, kit.velikost.h);
     return false;
   });
-  const vidiAO = () => kit.nastaviAO(kakovost === "visoka" && !rentgen && !prerez.on && !izbran && !sloji.get("koza").viden);
+  const vidiAO = () => kit.nastaviAO(kakovost === "visoka" && !rentgen && !prerez.on && !izbran && duh.p === 0 && !sloji.get("koza").viden);
 
   // Začetni kader: celo telo v prostem delu odra pod glavo (telefon: lobanja ni pod vrstico orodij), kot poletiK.
   function ponastaviPogled(trajanje = 0.7) {
@@ -751,29 +754,49 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   }
   const sredisceDela = (d) => odmik(d.row, razmik, new THREE.Vector3()).add(new THREE.Vector3(...d.row.c));
 
-  // Material za vse sloje: prosojnost (rentgen), zatemnitev, prerez (obe strani ploskev, da se vidi notranjost).
-  const svetlostOstalih = () => (izbran && !rentgen ? 0.3 : 1);
+  // Material za vse sloje: prosojnost (rentgen, poudarek), prerez (obe strani ploskev, da se vidi notranjost).
+  // Poudarek izbranega dela (j, 6. 11.): ostali deli mehko (~0,35 s) postanejo prosojni (DUH_ALFA), brez pisanja v
+  // globino in skoraj sivi, da obliko telesa še slutiš; izbrani del (sij) je v polni motnosti in se nariše za njimi
+  // (vrsta prosojnih, renderOrder 2), obris v barvi poudarka še za njim. Zmanjšano gibanje: brez prehoda.
+  const svetlostOstalih = () => 1 - 0.15 * duh.p;
+  function uniformeDuha() {
+    skupno.uAlfa.value = rentgen ? 0.06 : 1 - (1 - DUH_ALFA) * duh.p;
+    skupno.uSiv.value = DUH_SIVO * duh.p;
+    skupno.uSvetlost.value = svetlostOstalih();
+  }
+  kit.naKorak((dt) => {
+    if (duh.p === duh.cilj) return false;
+    duh.p = kit.gibanje ? Math.max(0, Math.min(1, duh.p + (duh.cilj > duh.p ? 1 : -1) * (dt / TRAJANJE_DUHA))) : duh.cilj;
+    if (duh.p === 0) uporabiMateriale(); // spet neprosojno (in zaslonska senca)
+    else uniformeDuha();
+    return true;
+  });
   function uporabiMateriale() {
     const ravnine = prerez.on ? [ravnina] : null;
+    // izbrani del, ki je povsem v odrezanem delu, ostane viden (prerez zanj ne velja)
+    const d = izbran ? deli.get(izbran) : null;
+    const rezSij = d && ravnine && odrezan(d) ? null : ravnine;
     for (const o of obrisi) {
-      if ((o.material.clippingPlanes?.length || 0) !== (ravnine?.length || 0)) {
-        o.material.clippingPlanes = ravnine;
+      if ((o.material.clippingPlanes?.length || 0) !== (rezSij?.length || 0)) {
+        o.material.clippingPlanes = rezSij;
         o.material.needsUpdate = true;
       }
     }
     skupno.uRob.value = rentgen ? 1 : 0;
-    skupno.uAlfa.value = rentgen ? 0.06 : 1;
-    skupno.uSvetlost.value = svetlostOstalih();
+    uniformeDuha();
+    const duhovi = duh.p > 0 || !!izbran;
     for (const m of [...materiali.values(), ...materialiSij.values()]) {
       const osnova = m.userData.osnovaProsojnost;
       const jeSij = m.userData.sij;
-      const prosojen = (rentgen && !jeSij) || osnova < 1;
+      const prosojen = jeSij || ((rentgen || duhovi) && !jeSij) || osnova < 1;
+      const globina = jeSij || !prosojen;
       const strani = prerez.on || m.userData.dvostransko ? THREE.DoubleSide : THREE.FrontSide;
-      if (m.transparent !== prosojen || m.side !== strani || (m.clippingPlanes?.length || 0) !== (ravnine?.length || 0)) {
+      const rez = jeSij ? rezSij : ravnine;
+      if (m.transparent !== prosojen || m.depthWrite !== globina || m.side !== strani || (m.clippingPlanes?.length || 0) !== (rez?.length || 0)) {
         m.transparent = prosojen;
-        m.depthWrite = !prosojen;
+        m.depthWrite = globina;
         m.side = strani;
-        m.clippingPlanes = ravnine;
+        m.clippingPlanes = rez;
         m.needsUpdate = true;
       }
       if (!jeSij) m.opacity = osnova;
@@ -781,6 +804,11 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     for (const s of sloji.values()) for (const bm of s.skupine) bm.sortObjects = bm.material.transparent;
     vidiAO();
     kit.narisi();
+  }
+  function odrezan(d) {
+    const c = sredisceDela(d);
+    const r = d.row.r * 0.5;
+    return ravnina.distanceToPoint(c) < -r;
   }
   function uporabiPrerez() {
     const os = prerez.os;
@@ -798,15 +826,46 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       const m = ustvariMaterial(razred, kakovost, svetSkupno);
       m.userData.sij = true;
       m.emissiveIntensity = 1; // emissive = barva dela × 0,06 (izberi): izbrani del rahlo zažari v svoji barvi
-      if (m.transparent) {
-        m.transparent = false;
-        m.opacity = 1;
-        m.depthWrite = true;
-      }
+      // v vrsti prosojnih za duhovi (renderOrder 2), a v polni motnosti in s pisanjem globine
+      m.transparent = true;
+      m.opacity = 1;
+      m.depthWrite = true;
       m.userData.osnovaProsojnost = 1;
       materialiSij.set(razred, m);
     }
     return materialiSij.get(razred);
+  }
+
+  // Smer pogleda na izbrani del (j, 6. 11.): s strani, kjer je med delom in kamero najmanj drugih vidnih struktur
+  // (krogle iz atlas-strukture.json, majhne štejejo manj; ledvica v trebušni votlini: od zadaj). Atlas ostane pokončen.
+  function smerZaDel(d) {
+    const c = sredisceDela(d);
+    const ovire = [];
+    for (const x of deli.values()) {
+      if (x === d || !viden(x)) continue;
+      const r = x.row.r * 0.5;
+      if (r < 0.004) continue;
+      const o = sredisceDela(x);
+      ovire.push(o.x, o.y, o.z, r);
+    }
+    const trenutna = kit.camera.position.clone().sub(kit.controls.target);
+    trenutna.y = Math.max(-0.3, Math.min(0.5, trenutna.normalize().y));
+    return najboljsaSmer(THREE, {
+      tocke: [c],
+      trenutna,
+      kandidati: kandidatiSmeri(THREE, { pokoncno: true }),
+      ovire: (p, s) => {
+        let n = 0;
+        for (let i = 0; i < ovire.length; i += 4) {
+          const ox = ovire[i] - p.x, oy = ovire[i + 1] - p.y, oz = ovire[i + 2] - p.z, r = ovire[i + 3];
+          const t = ox * s.x + oy * s.y + oz * s.z;
+          if (t <= 0) continue; // za delom
+          const d2 = ox * ox + oy * oy + oz * oz - t * t;
+          if (d2 < r * r) n += Math.min(1, r / 0.03);
+        }
+        return n;
+      },
+    });
   }
 
   function izberi(id, { leti = true, tiho = false } = {}) {
@@ -816,6 +875,8 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
       const d = deli.get(prej);
       d.batch.setVisibleAt(d.inst, viden(d));
     }
+    duh.cilj = izbran ? 1 : 0;
+    if (!kit.gibanje) duh.p = duh.cilj;
     if (!izbran) {
       sij.visible = false;
       kartica.hidden = true;
@@ -839,7 +900,7 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
     if (!tiho) pokaziKartico(d.row);
     statusEl.textContent = tiho ? "" : d.row.prikaz;
     uskladiKartico();
-    if (leti) poletiK(sredisceDela(d), Math.max(0.03, d.row.r * 0.55));
+    if (leti) poletiK(sredisceDela(d), Math.max(0.03, d.row.r * 0.55), { smer: smerZaDel(d), trajanje: 0.5 });
   }
 
   // Prelet do dela tako, da je del na sredini prostega dela odra (med glavo in kvizom ali namigom, ki ležita na odru;
@@ -930,8 +991,9 @@ export async function odpriAtlas(el, { zapri = null } = {}) {
   // Tap na model: izbira (ali odgovor v kvizu »Najdi strukturo«).
   const vidniObjekti = () => [...[...sloji.values()].flatMap((s) => (s.viden ? s.skupine : [])), ...(sij.visible ? [sij] : [])];
   function zadetek(ndc) {
-    const hits = kit.zadetki(ndc, vidniObjekti(), (h) => !prerez.on || ravnina.distanceToPoint(h.point) >= 0);
-    const h = hits[0];
+    const hits = kit.zadetki(ndc, vidniObjekti(), (h) => !prerez.on || (h.object === sij && !sij.material.clippingPlanes?.length) || ravnina.distanceToPoint(h.point) >= 0);
+    // izbrani del je narisan nad prosojnimi ostalimi: tap nanj (tudi za prosojnim delom) je tap na izbrani del
+    const h = (sij.visible && hits.find((x) => x.object === sij)) || hits[0];
     if (!h) return null;
     if (h.object === sij) return izbran;
     return h.object.userData[h.batchId]?.row.id || null;

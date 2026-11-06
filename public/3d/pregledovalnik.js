@@ -4,6 +4,7 @@
 // in pogon simulacij »3d-<id>« v lekcijah (public/3d/sim.js).
 import { THREE, ustvariSceno, kakovostNaprave, gibanje, poveziGumbVrtenja } from "./scena.js";
 import { obsegVidnega, vKadru, vidnaKrogla } from "./kader.js";
+import { ustvariPoudarek, povsemOdrezan, najboljsaSmer, kandidatiSmeri, oviraZarki, VRSTNI_RED } from "./poudarek.js";
 import { t } from "/i18n.js";
 import { icon } from "/icons.js";
 
@@ -134,10 +135,11 @@ export function odpriModel(el, mod, opts = {}) {
     kit?.narisi();
   }
 
-  // Izbrani del zasije v svoji barvi na vseh svojih mrežah, torej na vseh primerkih iste vrste (vsi mitohondriji so ena
-  // InstancedMesh). Kopije materialov (ob preklicu ali drugi izbiri sproščene), izvirniki ostanejo. Manjši deli dobijo
-  // še tanek obris v barvi poudarka (kot v atlasu): sij v lastni barvi je na svetlih ozkih delih (aksonema) komaj viden.
-  const sij = new Map(); // mesh → { izv: izvirni material, kopija: material ali seznam kopij }
+  // Poudarek izbranega dela (j, 6. 11., public/3d/poudarek.js): izbrani del v polni motnosti z rahlim sijem ob robu v
+  // barvi svoje pike, narisan nad ostalimi; vsi ostali deli prosojni in skoraj sivi (obliko še slutiš). Kopije materialov
+  // nastanejo ob prvi izbiri in ostanejo do nove gradnje ali zaprtja modela (preklop med deli ne klonira). Manjši deli
+  // dobijo še tanek obris v barvi pike (kot v atlasu): sij na svetlih ozkih delih (aksonema) je sam komaj viden.
+  const poudarek = ustvariPoudarek(THREE);
   const obrisi = []; // prekrivne mreže obrisa (userData.k3Sij: ne štejejo v kader, tap jih ne zadene)
   const uPx = { value: 0.002 };
   let matObrisa = null;
@@ -160,26 +162,32 @@ export function odpriModel(el, mod, opts = {}) {
     m.customProgramCacheKey = () => "k3-obris";
     return (matObrisa = m);
   }
-  function narisiObris(d) {
-    for (const o of obrisi.splice(0)) o.removeFromParent();
+  function narisiObris(d, odrezan) {
+    for (const o of obrisi.splice(0)) {
+      o.removeFromParent();
+      if (o.userData.k3Obris) o.material.dispose();
+    }
     if (!d || !model?.group) return;
     const vel = obsegVidnega(THREE, model.group).getSize(new THREE.Vector3()).length();
     const b = okvirDela(d, new THREE.Box3());
     // veliki deli (membrana, stena) so pogosto odprte lupine: obris bi obarval njihovo notranjost
     if (b.isEmpty() || b.getSize(new THREE.Vector3()).length() > vel * 0.6) return;
     uPx.value = (2 * Math.tan(THREE.MathUtils.degToRad(kit.camera.fov / 2))) / Math.max(1, kit.velikost.h);
+    materialObrisa().color.set(d.barva || "#6E9BFF");
     for (const m of d.meshes || []) {
       if (!m?.isMesh || !m.geometry?.attributes?.normal) continue;
-      const izv = Array.isArray(m.material) ? m.material[0] : m.material;
+      const iz = poudarek.izvirnik(m);
+      const izv = Array.isArray(iz) ? iz[0] : iz;
       if (!izv || izv.transparent || izv.side !== THREE.FrontSide) continue;
-      const mat = izv.clippingPlanes?.length ? Object.assign(materialObrisa().clone(), { clippingPlanes: izv.clippingPlanes }) : materialObrisa();
+      const rez = !odrezan && izv.clippingPlanes?.length;
+      const mat = rez ? Object.assign(materialObrisa().clone(), { clippingPlanes: izv.clippingPlanes }) : materialObrisa();
       if (mat !== matObrisa) Object.assign(mat, { onBeforeCompile: matObrisa.onBeforeCompile, customProgramCacheKey: () => "k3-obris-rez" });
       const o = m.isInstancedMesh ? new THREE.InstancedMesh(m.geometry, mat, m.count) : new THREE.Mesh(m.geometry, mat);
       if (m.isInstancedMesh) o.instanceMatrix = m.instanceMatrix;
       o.userData.k3Sij = true;
       o.userData.k3Obris = mat !== matObrisa;
       o.raycast = () => {};
-      o.renderOrder = 9;
+      o.renderOrder = VRSTNI_RED * 2; // za izbranim delom (ta je za duhovi)
       o.frustumCulled = false;
       o.onBeforeRender = () => {
         if (m.isInstancedMesh) o.count = m.count;
@@ -189,31 +197,33 @@ export function odpriModel(el, mod, opts = {}) {
       obrisi.push(o);
     }
   }
-  function obarvaj(d) {
-    for (const o of obrisi) if (o.userData.k3Obris) o.material.dispose();
-    narisiObris(null);
-    for (const [m, { izv, kopija }] of sij) {
-      if (m.material === kopija) m.material = izv; // model je material medtem morda zamenjal sam
-      for (const x of Array.isArray(kopija) ? kopija : [kopija]) x.dispose();
-    }
-    sij.clear();
-    if (!d) return;
-    const barva = new THREE.Color(d.barva || "#6E9BFF");
+  // Izbrani del povsem v odrezanem delu prereza (npr. izbran s seznama): zanj prerez ne velja, da ostane viden.
+  function delOdrezan(d) {
+    const b = okvirDela(d, new THREE.Box3());
     for (const m of d.meshes || []) {
-      if (!m?.material || sij.has(m)) continue;
-      const kopije = (Array.isArray(m.material) ? m.material : [m.material]).map((x) => {
-        const c = x.clone();
-        if (c.emissive) {
-          c.emissive = barva.clone();
-          c.emissiveIntensity = 0.85;
-        }
-        return c;
-      });
-      const kopija = Array.isArray(m.material) ? kopije : kopije[0];
-      sij.set(m, { izv: m.material, kopija });
-      m.material = kopija;
+      const iz = poudarek.izvirnik(m);
+      const izv = Array.isArray(iz) ? iz[0] : iz;
+      if (izv?.clippingPlanes?.length) return povsemOdrezan(THREE, b, izv.clippingPlanes, !!izv.clipIntersection);
     }
-    narisiObris(d);
+    return false;
+  }
+  // d = izbrani del ali null (preklic: mehek prehod nazaj, kopije ostanejo za naslednjo izbiro).
+  function poudari(d) {
+    if (!d || !model?.group) {
+      narisiObris(null);
+      poudarek.izklopi(kit?.gibanje);
+      if (kit && model?.ao) kit.nastaviAO(model.ao() !== false);
+      else kit?.nastaviAO(true);
+      kit?.narisi();
+      return;
+    }
+    const izbrane = new Set();
+    for (const m of d.meshes || []) m?.traverse((o) => !o.userData?.k3Sij && izbrane.add(o));
+    const odrezan = delOdrezan(d);
+    poudarek.uporabi(model.group, izbrane, { barva: d.barva || "#6E9BFF", odrezan, gibanje: kit.gibanje });
+    narisiObris(d, odrezan);
+    kit.nastaviAO(false); // vse je v vrsti prosojnih: zaslonska senca bi le stala
+    kit.narisi();
   }
 
   // Namig, kaj je klikljivo (namesto barvnih krogcev čez model): ob prvem ogledu nabora delov po en primerek vsakega dela
@@ -304,16 +314,6 @@ export function odpriModel(el, mod, opts = {}) {
     return true;
   }
 
-  // Izbrani del: deli, ki ga res obdajajo (celična stena, membrana, ovojnica ...), postanejo nevidni, da se izbrani
-  // vidi (j, 4. 11.). »Obdaja« = vseh šest žarkov od zunaj (±x, ±y, ±z) proti središču izbranega zadene ploskev tega
-  // dela (tudi skrit pokrov izreza), preden pride do središča; razpršeni deli (ribosomi, silnice, pasovi, vijačnica DNK) tega ne izpolnijo.
-  // Ovoj mora biti tudi večji od izbranega. Skrijemo s plastjo 31, ki je kamera in tap ne vidita; model sam še naprej
-  // upravlja `visible`. Samo biologija (celice, virusi, organi): pri fiziki, kemiji in matematiki so »ovoji« (silnice,
-  // lupine, telesa) snov učenja.
-  const SKRITA_PLAST = 31;
-  const skrite = new Map(); // object → izvirna maska plasti
-  const _rc = new THREE.Raycaster();
-  const SMERI = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].map((v) => new THREE.Vector3(...v));
   function okvirDela(d, box) {
     box.makeEmpty();
     for (const m of d.meshes || []) {
@@ -327,44 +327,6 @@ export function odpriModel(el, mod, opts = {}) {
     }
     return box;
   }
-  const prostornina = (b) => {
-    const v = b.getSize(new THREE.Vector3());
-    return Math.max(v.x, 1e-6) * Math.max(v.y, 1e-6) * Math.max(v.z, 1e-6);
-  };
-  function skrijObdajajoce(d) {
-    for (const [o, maska] of skrite) o.layers.mask = maska;
-    skrite.clear();
-    if (!d || !model?.deli || (info.predmet || "BIO") !== "BIO") return;
-    const izbrane = new Set();
-    for (const m of d.meshes || []) m?.traverse((o) => izbrane.add(o));
-    const bS = okvirDela(d, new THREE.Box3());
-    if (bS.isEmpty() || !model.group) return;
-    const c = bS.getCenter(new THREE.Vector3());
-    const vS = prostornina(bS);
-    const bP = new THREE.Box3();
-    const R = new THREE.Box3().setFromObject(model.group).getBoundingSphere(new THREE.Sphere()).radius * 2 + 1;
-    const izvor = new THREE.Vector3();
-    for (const p of model.deli) {
-      if (p === d || !p.meshes?.length) continue;
-      if (prostornina(okvirDela(p, bP)) < vS * 1.25) continue; // ovoj je večji od izbranega
-      const mreze = [];
-      // tudi skrite mreže dela: skrit »pokrov« izreza sklene lupino (celica, HIV), da jo žarek iz izreza zadene
-      for (const m of p.meshes) m?.traverse((o) => { if (o.isMesh && !izbrane.has(o)) mreze.push(o); });
-      if (!mreze.length) continue;
-      const obdaja = SMERI.every((s) => {
-        _rc.set(izvor.copy(c).addScaledVector(s, R), s.clone().negate());
-        _rc.far = R;
-        return _rc.intersectObjects(mreze, false).length > 0;
-      });
-      if (!obdaja) continue;
-      for (const o of mreze) {
-        if (skrite.has(o)) continue;
-        skrite.set(o, o.layers.mask);
-        o.layers.set(SKRITA_PLAST);
-      }
-    }
-  }
-
   // hit = { object, instanceId, point } iz tapa (null iz seznama delov); model.izberi lahko vrne drug del (npr. element
   // v InstancedMesh). preklopi: ponoven tap na izbrani del izbiro prekliče. pomakni: false = del iz naslova ob odprtju
   // (plošča in stran se ne premakneta).
@@ -380,18 +342,15 @@ export function odpriModel(el, mod, opts = {}) {
     }
     if (preklopi && cilj && cilj === izbran) cilj = null;
     const d = (model?.deli || []).find((x) => x.id === cilj) || null;
-    // kader vidnega modela pred skrivanjem ovojev: primerjava pokaže, ali se je vidni model opazno spremenil
-    const prej = leti && model?.group ? kadrModela() : null;
+    const prej = izbran;
     izbran = d ? d.id : null;
     ustaviNamigSij();
-    obarvaj(d);
-    skrijObdajajoce(d);
-    kit.narisi();
+    poudari(d);
     deliEl.querySelectorAll("[data-del]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.del === izbran)));
     pokaziInfo(d, { izTapa: !!hit, pomakni });
-    if (!prej) return;
-    if (d) kadrirajIzbiro(d, prej);
-    else kadrirajPogled(prej); // preklic, ki je ovoj (membrano, steno) spet pokazal: znova cel model
+    if (!leti || !model?.group) return;
+    if (d) kadrirajIzbiro(d);
+    else if (prej) kadrirajPreklic(); // vse nazaj: cel model v kadru
   }
 
   // Okno izbranega dela v plošči: barvna pika, ime, latinsko ime, opis, »Poglej pod povečavo«, ×.
@@ -472,26 +431,77 @@ export function odpriModel(el, mod, opts = {}) {
     if (!drug && vidnaKrogla(THREE, kit.camera, mc, mr) && (uporabnikovKader() || vKadru(THREE, kit.camera, mc, mr, 1.02))) return;
     poleti(mc, mr, { trajanje: 0.6 });
   }
-  function kadrirajIzbiro(d, prej) {
+  // Izbira dela (j, 6. 11.): kamera se mehko (~0,5 s) obrne s strani, kjer del najbolj vidimo (najmanj drugih ploskev
+  // med delom in kamero, poudarek.js najboljsaSmer), in približa, da je del cel v kadru z nekaj okolice. Okno dela je v
+  // plošči ob odru (telefon: pod njim), zato najprej preberemo novo velikost odra. Zmanjšano gibanje: brez animacije.
+  const TRAJANJE_IZBIRE = 0.5;
+  function tockeDela(d, s) {
+    const out = [s.center.clone()];
+    const mm = new THREE.Matrix4(), v = new THREE.Vector3();
+    for (const m of d.meshes || []) {
+      if (!m?.isMesh || !vidnaVeja(m) || out.length >= 6) continue;
+      m.updateWorldMatrix(true, false);
+      if (m.isInstancedMesh) {
+        // do tri primerke, najbližje središču dela
+        const st = [];
+        for (let i = 0; i < m.count; i++) {
+          m.getMatrixAt(i, mm);
+          st.push([v.setFromMatrixPosition(mm).applyMatrix4(m.matrixWorld).distanceToSquared(s.center), i]);
+        }
+        st.sort((a, b) => a[0] - b[0]);
+        for (const [, i] of st.slice(0, 3)) {
+          m.getMatrixAt(i, mm);
+          out.push(new THREE.Vector3().setFromMatrixPosition(mm).applyMatrix4(m.matrixWorld));
+        }
+      } else {
+        const g = m.geometry;
+        if (!g.boundingSphere) g.computeBoundingSphere();
+        out.push(g.boundingSphere.center.clone().applyMatrix4(m.matrixWorld));
+      }
+    }
+    return out.slice(0, 6);
+  }
+  function smerZaDel(d, s) {
+    const trenutna = kit.camera.position.clone().sub(kit.controls.target);
+    if (trenutna.lengthSq() < 1e-12) trenutna.set(0, 0, 1);
+    const izbrane = new Set();
+    for (const m of d.meshes || []) m?.traverse((o) => izbrane.add(o));
+    const ovire = [];
+    model.group.traverse((o) => {
+      if (!o.isMesh || izbrane.has(o) || o.userData?.k3Sij || o.userData?.pokrov || !vidnaVeja(o)) return;
+      const iz = poudarek.izvirnik(o);
+      const m = Array.isArray(iz) ? iz[0] : iz;
+      if (!m || m.visible === false || (m.transparent && (m.opacity ?? 1) < 0.15)) return;
+      ovire.push(o);
+    });
+    if (!ovire.length) return trenutna.normalize();
+    const vel = obsegVidnega(THREE, model.group).getSize(new THREE.Vector3()).length();
+    // del, ki obsega skoraj ves model (membrana, stena): smer ostane
+    if (s.radius * 2 > vel * 0.6) return trenutna.normalize();
+    return najboljsaSmer(THREE, { tocke: tockeDela(d, s), trenutna, kandidati: kandidatiSmeri(THREE), ovire: oviraZarki(THREE, ovire) });
+  }
+  function kadrirajIzbiro(d) {
     kit.posodobiVelikost?.();
     const [mc, mr] = kadrModela();
     const b = okvirDela(d, new THREE.Box3());
-    const s = b.isEmpty() ? null : b.getBoundingSphere(new THREE.Sphere());
-    const drug = drugKader(prej, [mc, mr]);
-    const povsemIzven = !vidnaKrogla(THREE, kit.camera, mc, mr) || (s && !vidnaKrogla(THREE, kit.camera, s.center, s.radius));
-    if (!drug && !povsemIzven) {
-      if (uporabnikovKader()) return;
-      const delOk = !s || vKadru(THREE, kit.camera, s.center, s.radius, 0.96);
-      if (delOk && vKadru(THREE, kit.camera, mc, mr, 1.02)) return;
+    if (b.isEmpty()) return;
+    const s = b.getBoundingSphere(new THREE.Sphere());
+    let smer;
+    try {
+      smer = smerZaDel(d, s);
+    } catch (err) {
+      console.error("3D smer", err);
+      smer = null;
     }
-    // del, ki sega čez kader modela (npr. bronhiol ob pljučnih mešičkih): krogla, ki objame model in del
-    let c = mc, r = mr;
-    const dd = s ? s.center.distanceTo(mc) : 0;
-    if (s && dd + s.radius > mr) {
-      r = (mr + dd + s.radius) / 2;
-      c = mc.clone().lerp(s.center, dd > 1e-9 ? (r - mr) / dd : 0);
-    }
-    poleti(c, r);
+    // del z nekaj okolice, a nikoli dlje od kadra celega modela in ne tako blizu, da ga ne bi prepoznal
+    const r = Math.min(mr, Math.max(s.radius * 1.25, mr * 0.35));
+    const c = r >= mr * 0.999 && s.radius * 1.25 >= mr ? mc.clone().lerp(s.center, 0.5) : s.center;
+    poleti(c, r, { smer, trajanje: TRAJANJE_IZBIRE });
+  }
+  function kadrirajPreklic() {
+    kit.posodobiVelikost?.();
+    const [mc, mr] = kadrModela();
+    poleti(mc, mr, { trajanje: TRAJANJE_IZBIRE });
   }
 
   function deli() {
@@ -517,7 +527,7 @@ export function odpriModel(el, mod, opts = {}) {
     }
     // Brez barvnih krogcev čez model (j, 5. 11.): kaj je klikljivo, pokaže sij delov ob prvem ogledu (namigniDele).
     if (izbran && !seznam.some((d) => d.id === izbran)) izberi(null, { leti: false });
-    else if (izbran) skrijObdajajoce(seznam.find((d) => d.id === izbran)); // nova faza: drugi ovoji
+    else if (izbran) poudari(seznam.find((d) => d.id === izbran)); // nova faza: nove mreže dobijo poudarek
     // nov nabor delov (odprtje, drug pogled, faza): po kadriranju (naslednja sličica) en primerek vsakega dela zasije
     if (!izbran) requestAnimationFrame(() => !unicen && namigniDele());
   }
@@ -786,8 +796,8 @@ export function odpriModel(el, mod, opts = {}) {
     izbran = null;
     ustaviNamigSij();
     if (kit) pokaziInfo(null);
-    obarvaj(null); // izvirni materiali nazaj, kopije sproščene
-    skrijObdajajoce(null);
+    narisiObris(null);
+    poudarek.pocisti(); // izvirni materiali nazaj, kopije sproščene
     try {
       model?.dispose?.();
     } catch {}
@@ -798,15 +808,18 @@ export function odpriModel(el, mod, opts = {}) {
       oder.append(orodja, povzetekEl);
       kit.naTap((ndc) => {
         if (!model?.group) return;
-        const hit = kit.zadetki(ndc, [model.group])[0];
+        const vsi = kit.zadetki(ndc, [model.group]);
+        const delZa = (h) => (model.deli || []).find((x) => (x.meshes || []).some((m) => m === h.object || m === h.object.parent));
+        // izbrani del je narisan nad prosojnimi ostalimi: tap nanj (tudi za prosojnim delom) izbiro prekliče
+        const hit = (izbran && vsi.find((h) => delZa(h)?.id === izbran)) || vsi[0];
         if (!hit) return izberi(null);
-        const d = (model.deli || []).find((x) => (x.meshes || []).some((m) => m === hit.object || m === hit.object.parent));
+        const d = delZa(hit);
         izberi(d?.id ?? null, { hit: { object: hit.object, instanceId: hit.instanceId ?? null, point: hit.point.clone() }, preklopi: true });
       });
       pocisti.push(
         kit.naKorak((dt) => {
           cas += dt;
-          const sije = korakNamigSija(dt);
+          const sije = Boolean(korakNamigSija(dt) | poudarek.korak(dt, kit.gibanje));
           if (casIzpisa += dt, casIzpisa > 0.25) {
             casIzpisa = 0;
             // deli je lahko getter, ki se spreminja s fazo: ob spremembi znova zgradimo seznam in točke.
@@ -1041,7 +1054,8 @@ export function odpriModel(el, mod, opts = {}) {
       for (const f of pocisti) f();
       unicen = true;
       ustaviNamigSij();
-      obarvaj(null);
+      narisiObris(null);
+      poudarek.pocisti();
       matObrisa?.dispose();
       try {
         model?.dispose?.();
