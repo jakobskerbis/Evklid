@@ -550,12 +550,12 @@ export function odpriModel(el, mod, opts = {}) {
   // Menjava stanja z odprtim delom (j, 6. 11.: kristal, različica, pogled, faza, drug model s puščicama ‹ ›): isti del
   // (isti-del.js: id, latinsko ime, sinonimi) ostane izbran, poudarjen na novih mrežah in okno pokaže njegov novi opis;
   // če ga novo stanje nima, se okno zapre (ob uporabnikovi menjavi s kratkim obvestilom ob modelu).
-  function obMenjavi(seznam, prej) {
-    if (!izbran || !prej) return;
-    const d = najdiIstiDel(seznam, prej);
+  function obMenjavi(seznam, prejDel) {
+    if (!izbran || !prejDel) return;
+    const d = najdiIstiDel(seznam, prejDel);
     if (!d) {
       izberi(null, { leti: false });
-      if (menjavaUporabnika) pokaziObvestilo(prej);
+      if (menjavaUporabnika) pokaziObvestilo(prejDel);
       return;
     }
     const fokus = infoEl.contains(document.activeElement);

@@ -88,7 +88,7 @@ export const MREZE = [
     vrste: { mg: vrsta("Magnezijevi atomi", "Mg", "#8ad44a", 160, 62, "Atomi magnezija v plasteh, kjer vsak leži v vdolbini med tremi atomi plasti pod njim.") },
     baza: [[1 / 3, 2 / 3, 0.25], [2 / 3, 1 / 3, 0.75]].map((p) => ["mg", ...p]),
     vezi: [["mg", "mg"]], koord: { sredina: "mg", sosedi: "mg", polieder: "antikubooktaeder" }, enote: (n) => `${n} atoma Mg`,
-    vCelici: "sta 2 atoma Mg; to je primitivna celica, v šeststrani prizmi, ki jo sestavljajo tri take celice, pa je 6 atomov Mg",
+    vCelici: "sta 2 atoma Mg (primitivna celica); v šesterokotni prizmi, ki jo sestavljajo tri take celice, je 6 atomov Mg",
     vezOpis: "Palčke kažejo najbližje sosede; kovinska vez ni med parom atomov, ampak jo tvorijo prosti elektroni med vsemi ioni.",
   },
   {
@@ -482,7 +482,7 @@ export function zgradi(THREE, ctx = {}) {
     const { M } = stanjeIzpis;
     const st2 = stetjeVCelici(M);
     const fe = enoteVCelici(M);
-    return st2.map((x) => `${M.vrste[x.v].kratko}: ${x.zapis.replace(/\./g, ",")}`).join(" · ") + ` → ${M.enote(fe)}` + (M.led ? " (vodiki niso šteti)" : "") + (M.id === "hcp" ? " (primitivna celica; v šeststrani prizmi 6 atomov)" : "");
+    return st2.map((x) => `${M.vrste[x.v].kratko}: ${x.zapis.replace(/\./g, ",")}`).join(" · ") + ` → ${M.enote(fe)}` + (M.led ? " (vodiki niso šteti)" : "") + (M.id === "hcp" ? " (primitivna celica; v šesterokotni prizmi 6 atomov)" : "");
   };
   m.nadzor = [
     { tip: "izbira", id: "mreza", oznaka: "Kristal", vrednost: st.mreza,

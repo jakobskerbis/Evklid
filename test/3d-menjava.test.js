@@ -55,7 +55,7 @@ test("isti del: celica brez jedra (eritrocit, bakterija) → »Ta celica nima je
 test("obvestili v vseh 33 jezikih, {ime} povsod", () => {
   const slSrc = fs.readFileSync(path.join(ROOT, "public/i18n/sl.js"), "utf8");
   assert.match(slSrc, /"a3\.noNucleus": "Ta celica nima jedra\."/);
-  assert.match(slSrc, /"a3\.partMissing": "Ta model nima dela »\{ime\}«\."/);
+  assert.match(slSrc, /"a3\.partMissing": "Ta model nima dela ‘\{ime\}’\."/);
   const dir = path.join(ROOT, "public/i18n/ui");
   const jeziki = fs.readdirSync(dir).filter((f) => f.endsWith(".json"));
   assert.equal(jeziki.length, 32);
@@ -90,10 +90,10 @@ test("kristali: ob menjavi kristala ima osnovna celica opis novega kristala (št
     assert.equal(st.length, 2);
     assert.equal(st[0].vsota, st[1].vsota, id);
   }
-  // hcp: primitivna celica 2, šeststrana prizma (3 celice) 6
+  // hcp: primitivna celica 2, šesterokotna prizma (3 celice) 6
   const hcp = K.MREZE.find((x) => x.id === "hcp");
   assert.match(hcp.vCelici, /primitivna celica/);
-  assert.match(hcp.vCelici, /6 atomov Mg/);
+  assert.match(hcp.vCelici, /šesterokotni prizmi.*6 atomov Mg/);
   assert.equal(3 * K.enoteVCelici(hcp), 6);
   // del, ki ga novi kristal nima (atomi Fe pri ledu), se ne ujema
   nad("mreza").ob("bcc");
