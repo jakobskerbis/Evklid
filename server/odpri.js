@@ -248,7 +248,7 @@ function imenaDelov(id) {
     const m = /^organ-(.+)$/.exec(id || "");
     if (m) {
       const j = JSON.parse(fs.readFileSync(path.join(here, "..", "public", "3d", "modeli", "organi-3d", `${m[1]}.json`), "utf8"));
-      out = (j.deli || []).map((d) => ({ id: d.id, ime: d.ime, la: d.la }));
+      out = (j.deli || []).map((d) => ({ id: d.id, ime: d.ime, la: d.la, sinonimi: d.sinonimi }));
     } else {
       const mapa = path.join(here, "..", "public", "3d", "modeli", "celice");
       const re = new RegExp(`export const info = \\{\\s*id: "${String(id).replace(/[^a-z0-9-]/g, "")}"`);

@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { SKUPINE, najdiSkupino } from "../public/3d/skupine.js";
+import { SKUPINE, najdiSkupino, delPoImenu, zacetnaIzbira } from "../public/3d/skupine.js";
 import sl from "../public/i18n/sl.js";
 
 const koren = new URL("../public/3d/modeli/", import.meta.url);
@@ -44,3 +44,42 @@ test("skupine: mehko iskanje (sklanjatve, sinonimi), ne ujame imen delov", () =>
 });
 
 // Skrivanje sten ob izbiri skupine: vedenje v test/3d-ovoji.test.js (public/3d/ovoji.js).
+
+// Pregled #461 C P2-1: imena delov od inštruktorja (<<ODPRI 3d="srce" del="…">>) in iz ?del= (skupine.js delPoImenu)
+const srce = JSON.parse(fs.readFileSync(new URL("organi-3d/srce.json", koren), "utf8")).deli;
+const zivalska = (() => {
+  const src = fs.readFileSync(new URL("celice/zivalska.js", koren), "utf8");
+  return [...src.matchAll(/del\("([a-z0-9-]+)", "([^"]+)"/g)].map((m) => ({ id: m[1], ime: m[2] }));
+})();
+test("delPoImenu: sinonimi, osnove besed, ena beseda samo pri enem delu", () => {
+  for (const [q, id] of [
+    ["mitralna zaklopka", "av-zaklopki"],
+    ["trikuspidalna zaklopka", "av-zaklopki"],
+    ["tetive", "av-zaklopki"],
+    ["sinusni vozel", "prevodni-sistem"],
+    ["AV-vozel", "prevodni-sistem"],
+    ["leva pljučna arterija", "pljucno-deblo"],
+    ["venčna arterija", "vencne-arterije"],
+    ["pljučna vena", "pljucne-vene"],
+    ["levi prekat", "levi-prekat"],
+    ["Ventriculus sinister", "levi-prekat"],
+    ["aorta", "aorta"],
+    ["vena", null],
+    ["arterija", null],
+    ["preddvora", null],
+    ["prekat", null],
+  ]) assert.equal(delPoImenu(srce, q), id, q);
+  assert.equal(delPoImenu(zivalska, "celično jedro"), "jedro");
+  assert.equal(delPoImenu(zivalska, "membrana"), "membrana");
+  assert.equal(delPoImenu([], "x"), null);
+});
+
+test("zacetnaIzbira: del pred skupino, id skupine s strežnika, začetek imena", () => {
+  assert.equal(zacetnaIzbira("organ-srce", srce, "mitralna zaklopka"), "av-zaklopki");
+  assert.equal(zacetnaIzbira("organ-srce", srce, "zaklopke"), "skupina-zaklopke");
+  assert.equal(zacetnaIzbira("organ-srce", srce, "skupina-prekata"), "skupina-prekata");
+  assert.equal(zacetnaIzbira("organ-srce", srce, "levi-prekat"), "levi-prekat");
+  assert.equal(zacetnaIzbira("organ-srce", srce, "Valves", { zaklopke: ["Valves"] }), "skupina-zaklopke");
+  assert.equal(zacetnaIzbira("celica-zivalska", zivalska, "celično jedro"), "jedro");
+  assert.equal(zacetnaIzbira("organ-srce", srce, "nekaj čisto drugega"), null);
+});
