@@ -30,7 +30,7 @@ import { TUTOR_CHIPS } from "./tipkovnica-data.js";
 import { splitFormulas, hasFormula } from "./vnos-formul.js";
 import { attachPrettify } from "./lepi-zapis.js";
 import { renderSuggestion, renderWelcome, stageUp } from "./level-up.js";
-import { offlineApi, offlineBootApi, saveStudents, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
+import { offlineApi, offlineBootApi, saveStudents, saveConfig, clearProfile, refreshPack, syncOffline, packTaskCount, pendingCount } from "./offline.js";
 import { initFeedback, showFeedback } from "./feedback.js";
 import { openAdminBug, deviceInfo, shownHtml } from "./prijave.js";
 import { initInstall, installSheetOpen, closeInstallSheet } from "./install.js";
@@ -1803,7 +1803,9 @@ $("#new-student-form").addEventListener("submit", async (e) => {
 
 $("#delete-student").addEventListener("click", async () => {
   if (!confirm(t("set.confirmDelete", { name: state.student.name }))) return;
-  await api(`/api/students/${state.student.id}`, { method: "DELETE" });
+  const gone = state.student.id;
+  await api(`/api/students/${gone}`, { method: "DELETE" });
+  clearProfile(gone); // podatki profila na tej napravi (paket vaj, skener, kalkulator …)
   localStorageSet("studentId", "");
   await loadStudents();
   fillSettingsForm();
@@ -4369,6 +4371,7 @@ initFormulaInfo();
 
 (async () => {
   const cfg = await api("/api/config");
+  saveConfig(cfg); // za zagon brez povezave (brez skrbniških zastavic, public/offline.js)
   $("#mock-banner").hidden = !cfg.mock;
   initTestNotice(cfg.test_notice, { showView });
   $("#chat-off").hidden = !cfg.chat_off;
