@@ -31,6 +31,11 @@ export const RETENTION = {
   pushLogDays: 90,
   // Račun, ki e-naslova ni potrdil v toliko dneh in nima profilov, plačil ali seje, se izbriše.
   unverifiedDays: 30,
+  // Naročila šol (school_orders: ime, e-naslov in telefon kontaktne osebe) od zadnje spremembe (updated_at).
+  // ROKA ODLOČI j (iskalec napak N3; predlog: brez pogodbe 2 leti = 730 dni, s pogodbo 10 let = 3653 dni
+  // kot računovodska listina); null = ne briši (stanje pred odločitvijo).
+  schoolOrderOpenDays: null,
+  schoolOrderWonDays: null,
   // Potekle seje in odklepi profilov se izbrišejo takoj (niso več veljavni).
 };
 
@@ -164,6 +169,12 @@ export function runRetention(db, { now = Date.now(), log = console } = {}) {
   if (hasTable(db, "push_log")) {
     // period se začne z datumom (YYYY-MM-DD:učenec).
     out.pushLog = Number(db.prepare("DELETE FROM push_log WHERE period GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]*' AND substr(period, 1, 10) < ?").run(ago(RETENTION.pushLogDays).slice(0, 10)).changes);
+  }
+  if (hasTable(db, "school_orders")) {
+    // Sklenjeno: status »won« ali šola z licenco iz naročila (school_id); ostalo je povpraševanje brez pogodbe.
+    const won = "(status = 'won' OR school_id IS NOT NULL)";
+    const del = (cond, d) => (d ? Number(db.prepare(`DELETE FROM school_orders WHERE ${cond} AND updated_at < ?`).run(ago(d)).changes) : 0);
+    out.schoolOrders = del(`NOT ${won}`, RETENTION.schoolOrderOpenDays) + del(won, RETENTION.schoolOrderWonDays);
   }
   ensureAuditTable(db);
   out.audit = Number(db.prepare("DELETE FROM audit_log WHERE at < ?").run(ago(RETENTION.auditDays)).changes);
