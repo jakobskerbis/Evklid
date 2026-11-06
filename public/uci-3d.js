@@ -151,7 +151,7 @@ export async function render3d(box, { mine = "", open }) {
     if (!zadetki.length) pokaziPrazno(q);
   }
   function pokaziPrazno(q) {
-    prazno.replaceChildren(mk("b", "", t("a3.uci.none")), mk("p", "muted", q ? t("a3.noModels", { q }) : ""));
+    prazno.replaceChildren(mk("b", "", t("a3.noModels", { q })));
     const pred = mk("div", "u3-predlogi");
     pred.append(mk("span", "muted", t("a3.uci.try")));
     for (const id of ["atlas", "celica-zivalska", "organ-srce", "telesa"]) {

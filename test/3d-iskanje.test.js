@@ -64,13 +64,13 @@ test("Nadaljuj: zadnji odprti model, ki še obstaja; pokvarjen ali prazen zapis 
 });
 
 test("besedila nove mreže so v slovenščini (ostalih 32 jezikov preveri i18n.test.js)", () => {
-  for (const k of ["search", "atlas", "continue", "part", "none", "try", "showAll"]) assert.ok(SL[`a3.uci.${k}`], k);
+  for (const k of ["search", "atlas", "continue", "part", "try", "showAll"]) assert.ok(SL[`a3.uci.${k}`], k);
 });
 
 test("mreža: sticky vrh, 2/3/4/5 stolpcev, spodnji odmik za plavajoči gumb, gumbi ≥ 40 px, sličice brez WebGL", () => {
   const css = fs.readFileSync(new URL("../public/uci.css", import.meta.url), "utf8");
   const js = fs.readFileSync(new URL("../public/uci-3d.js", import.meta.url), "utf8");
-  assert.match(css, /\.u3-vrh \{\s*position: sticky; top: 0;/);
+  assert.match(css, /\.u3-vrh \{\s*position: sticky; top: -18px;/);
   for (const n of [2, 3, 4, 5]) assert.match(css, new RegExp(`repeat\\(${n}, minmax\\(0, 1fr\\)\\)`));
   assert.match(css, /\.u3-mreza \{[^}]*padding: 0 0 96px/);
   assert.match(css, /\.u3-cip \{[^}]*min-height: 40px/);

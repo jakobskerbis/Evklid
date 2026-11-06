@@ -146,6 +146,7 @@ async function show3d() {
     const { render3d } = await import("./uci-3d.js");
     await render3d(box, { mine, open: open3d });
     hub = { key };
+    D?.onTab?.("3d"); // mreža je zdaj v strani: mehurček inštruktorja se premakne tik nad spodnjo vrstico
   } catch {
     box.innerHTML = `<p class="muted">${esc(t("a3.loadError"))}</p>`;
   }

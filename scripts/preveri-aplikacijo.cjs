@@ -1343,9 +1343,19 @@ async function uciPhone(p) {
     const over = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     if (over > 1) throw new Error(`Uči se → ${v}: vodoravno drsenje (${over} px)`);
   }
-  await expectVisible(p, "#view-3d .uci-3d-card", "kartice 3D sveta", 8000);
+  await expectVisible(p, "#view-3d .u3-p", "ploščice 3D sveta", 8000);
+  // Mreža slik: 2 ploščici v vrsti na telefonu, iskanje po delu modela in čip filtrirata, plavajoči gumb ne prekrije ploščic.
+  const stolpci = await p.evaluate(() => new Set([...document.querySelectorAll("#view-3d .u3-ploscica")].map((l) => Math.round(l.getBoundingClientRect().left))).size);
+  if (stolpci !== 2) throw new Error(`3D svet na telefonu: ${stolpci} stolpcev namesto 2`);
   await screen(p, "uci-3d");
-  await click(p, "#view-3d .uci-3d-card", { wait: 300 });
+  await p.fill("#view-3d .u3-iskanje input", "mitohondrij");
+  await expectVisible(p, '#view-3d .u3-p[href^="/3d#celica-zivalska?del="]', "zadetek po delu modela", 8000);
+  await screen(p, "uci-3d-iskanje");
+  await p.fill("#view-3d .u3-iskanje input", "");
+  await click(p, '#view-3d .u3-cip[data-p="celice"]', { wait: 200 });
+  await screen(p, "uci-3d-celice");
+  await click(p, '#view-3d .u3-cip[data-p="vse"]', { wait: 200 });
+  await click(p, "#view-3d .u3-p", { wait: 300 });
   // Okvir je istega izvora in si deli glavno nit: gradnja prizora (swiftshader) lahko za nekaj sekund ustavi strani.
   await p.locator(".uci-3d-full iframe").waitFor({ state: "attached", timeout: 20000 }).catch(async () => {
     throw new Error(`3D se ni odprl čez cel zaslon (${await p.evaluate(() => document.querySelectorAll(".uci-3d-full").length)} okvirjev)`);

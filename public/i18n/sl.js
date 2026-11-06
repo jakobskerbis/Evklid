@@ -3343,7 +3343,6 @@ export default {
   "a3.uci.atlas": "Atlas",
   "a3.uci.continue": "Nadaljuj",
   "a3.uci.part": "Del",
-  "a3.uci.none": "Ni zadetkov",
   "a3.uci.try": "Poskusi:",
   "a3.uci.showAll": "Pokaži vse",
   "a3.scrollLeft": "Pomakni levo",
