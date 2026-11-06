@@ -400,7 +400,7 @@ test("calculator page for the app works without login and loads only the calcula
     assert.equal(res.status, 200);
     assert.match(res.headers.get("content-type"), /text\/html/);
     const page = await res.text();
-    assert.match(page, /<script type="module" src="kalkulator\.js"><\/script>/);
+    assert.match(page, /<script type="module" src="zagon\.js" data-moduli="kalkulator\.js"><\/script>/);
     assert.doesNotMatch(page, /src="app\.js"|<script>/); // brez celotne aplikacije in brez vrinjenih skript (CSP)
     assert.match(res.headers.get("content-security-policy"), /script-src 'self'/);
     for (const f of ["kalkulator.js", "kalkulator-nastavi.js", "graph/sci.js", "graph/calc.js", "graph/tools.js"]) assert.equal((await fetch(`${base}/${f}`)).status, 200, f);
