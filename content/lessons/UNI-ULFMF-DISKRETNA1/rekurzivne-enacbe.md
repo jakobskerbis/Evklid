@@ -220,7 +220,7 @@ Vremenski zapis za zaporedje $n$ dni ima vsak dan eno od treh oznak: sončno, ob
 3. (b) $p(r) = r^2 - 2r - 2$, korena $r_{1,2} = 1 \pm \sqrt3$. $w_n = \alpha(1 + \sqrt3)^n + \beta(1 - \sqrt3)^n$.
 4. Iz $w_0 = 1$: $\alpha + \beta = 1$. Iz $w_1 = 3$: $(\alpha + \beta) + \sqrt3(\alpha - \beta) = 3$, torej $\alpha - \beta = 2/\sqrt3$. Sledi $\alpha = \dfrac{3 + 2\sqrt3}{6} \approx 1{,}077$, $\beta = \dfrac{3 - 2\sqrt3}{6} \approx -0{,}077$.
 5. (c) Iz $W(x) - 2xW(x) - 2x^2W(x) = w_0 + (w_1 - 2w_0)x = 1 + x$ dobimo $W(x) = \dfrac{1 + x}{1 - 2x - 2x^2}$; imenovalec je $(1 - r_1x)(1 - r_2x)$.
-6. (d) Z rekurzijo: $1, 3, 8, 22, 60, 164, 448, 1224, 3344, 9136, 24\,960$, torej $w_{10} = 24\,960$ (formula da isto). Vseh zapisov je $3^{10} = 59\,049$, delež $24\,960/59\,049 \approx 0{,}423$.
+6. (d) Z rekurzijo: $1, 3, 8, 22, 60, 164$, nato $448, 1224, 3344, 9136, 24\,960$, torej $w_{10} = 24\,960$ (formula da isto). Vseh zapisov je $3^{10} = 59\,049$, delež $24\,960/59\,049 \approx 0{,}423$.
 7. Odgovor: $w_n = 2w_{n-1} + 2w_{n-2}$, $w_n = \frac{3 + 2\sqrt3}{6}(1 + \sqrt3)^n + \frac{3 - 2\sqrt3}{6}(1 - \sqrt3)^n$, $W(x) = \frac{1 + x}{1 - 2x - 2x^2}$; dopustnih je okoli $42\,\%$ zapisov za $10$ dni. Delež pada proti $0$, ker je $1 + \sqrt3 \approx 2{,}73 < 3$.
 
 ### Naloga 2

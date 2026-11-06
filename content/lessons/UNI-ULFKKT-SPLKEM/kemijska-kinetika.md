@@ -129,9 +129,9 @@ $v = -\dfrac{1}{2}\dfrac{\Delta[\mathrm{N_2O_5}]}{\Delta t} = \dfrac{1}{4}\dfrac
 
 ### Primer 2
 
-Za reakcijo $\mathrm{A} + \mathrm{B} \to \mathrm{P}$ so izmerili začetne hitrosti:
+Za reakcijo $\mathrm{A} + \mathrm{B} \to \mathrm{P}$ so izmerili začetne hitrosti (koncentracije v $\mathrm{mol/L}$, hitrosti v $\mathrm{mol\,L^{-1}\,s^{-1}}$):
 
-| $[\mathrm{A}]_0$ / (mol/L) | $[\mathrm{B}]_0$ / (mol/L) | $v_0$ / (mol L⁻¹ s⁻¹) |
+| $[\mathrm{A}]_0$ | $[\mathrm{B}]_0$ | $v_0$ |
 |---|---|---|
 | $0{,}10$ | $0{,}10$ | $2{,}0 \cdot 10^{-4}$ |
 | $0{,}20$ | $0{,}10$ | $8{,}0 \cdot 10^{-4}$ |
