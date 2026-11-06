@@ -63,6 +63,12 @@ export function mountAppleSignIn(app, ctx, opts = {}) {
       // Obstoječ račun z istim (pri Applu potrjenim) e-naslovom: poveževa ga s prijavo z Apple.
       const byEmail = parentByEmail(who.email);
       if (byEmail && !byEmail.is_guest && !byEmail.apple_sub) {
+        // Nepotrjen e-naslov: geslo je nastavil nekdo, ki naslova ni dokazal (lahko tujec pred lastnikom). Pred povezavo
+        // geslo, žetone in vse seje razveljavimo, sicer bi tujec z njim odprl račun lastnika (prevzem pred registracijo).
+        if (!byEmail.email_verified_at) {
+          db.prepare("UPDATE parents SET password_hash = ?, verify_token_hash = NULL, reset_token_hash = NULL, reset_expires_at = NULL WHERE id = ?").run(unusablePasswordHash(), byEmail.id);
+          sessions.destroyAll(byEmail.id);
+        }
         db.prepare("UPDATE parents SET apple_sub = ?, email_verified_at = COALESCE(email_verified_at, ?) WHERE id = ?").run(who.sub, new Date().toISOString(), byEmail.id);
         p = getParent(byEmail.id);
       }
