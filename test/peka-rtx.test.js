@@ -29,7 +29,14 @@ test("viri.json: vsak vhod ima https izvor, SHA-256 in licenco; Blender je ista 
   const bat = beri(path.join(RTX, "peci.bat"));
   assert.ok(bat.includes(`set "BSHA=${v.blender.sha256}"`), "peci.bat: SHA-256 Blenderja");
   assert.ok(bat.includes(`set "BURL=${v.blender.url}"`), "peci.bat: URL Blenderja");
-  assert.ok(bat.includes("KONČANO") && bat.includes("pause") && bat.includes("chcp 65001"));
+  assert.ok(bat.includes("KONČANO") && bat.includes("pause") && bat.includes('chcp.com" 65001'));
+  // sistemski programi po polni poti (ne curl.bat ali tar.exe iz mape paketa)
+  for (const ukaz of ["curl", "tar", "powershell", "chcp"]) {
+    for (const v of bat.split(/\r?\n/).filter((v) => !/^\s*(rem|echo)\b/i.test(v) && new RegExp(`(^|[\\s"(])${ukaz}(\\.exe|\\.com)?\\s`, "i").test(v))) {
+      assert.match(v, new RegExp(`\\\\${ukaz}(\\.exe|\\.com)"`, "i"), `peci.bat: ${ukaz} po polni poti: ${v}`);
+    }
+  }
+  assert.ok(!/'%TU%/.test(bat), "PowerShell: pot prek okolja, ne v narekovajih");
   assert.match(beri(path.join(ROOT, ".gitattributes")), /^\*\.bat text eol=crlf$/m);
 });
 
@@ -98,9 +105,26 @@ r.append(g["manifest_napaka"](n, "t1"))
 def naloga(t):
     open(g["NALOGA"], "w").write(t); return list(g["beri_nalogo"]())
 r += [naloga('{"id": "n1", "organi": ["mozgani"], "koda": "t1"}'), naloga('{"id": "../x", "organi": ["srce"]}')[1],
-      naloga('{"id": "n2", "organi": ["srce; del"]}')[1], naloga("ni json")[1]]
+      naloga('{"id": "n2", "organi": ["srce; del"]}')[1], naloga("ni json")[1],
+      naloga('{"id": "n2\\\\n", "organi": ["srce"]}')[1], naloga("[" * 100000)[1], naloga('["seznam"]')[1]]
+# zamenjava: __pycache__ iz koda-nova se ne prenese; neuspelo drugo preimenovanje vrne staro kodo
+os.makedirs(os.path.join(n, "__pycache__")); open(os.path.join(n, "__pycache__", "peka.cpython-311.pyc"), "w").write("x")
+os.remove(os.path.join(n, "zlo.py")); open(os.path.join(n, "peci.py"), "w").write(open(os.path.join(k, "peci.py")).read())
+stara = g["zamenjaj_kodo"]("t1")
+r.append([os.path.isdir(stara), os.path.exists(os.path.join(k, "__pycache__")), g["manifest_napaka"](k)])
+pravi = os.rename
+def slab(a, b):
+    if a.endswith("-zacasna"): raise PermissionError("zaklenjeno")
+    pravi(a, b)
+g["os"].rename = slab; g["time"].sleep = lambda s: None
+try:
+    g["zamenjaj_kodo"]("t1"); r.append("ni napake")
+except SystemExit as e:
+    r.append([e.sporocilo, g["manifest_napaka"](k)])
+g["os"].rename = pravi
 print(json.dumps(r, ensure_ascii=False))`], { encoding: "utf8" });
-    const [ok, okNova, drugaRazl, sha, odvecna, naloga, slabId, slabOrgan, niJson] = JSON.parse(out.trim().split("\n").pop());
+    const [ok, okNova, drugaRazl, sha, odvecna, naloga, slabId, slabOrgan, niJson, novaVrstica, globoko, seznam, zamenjava, vrnjena] =
+      JSON.parse(out.trim().split("\n").pop());
     assert.equal(ok, null);
     assert.equal(okNova, null);
     assert.match(drugaRazl, /različico 't1'/);
@@ -110,6 +134,12 @@ print(json.dumps(r, ensure_ascii=False))`], { encoding: "utf8" });
     assert.match(slabId, /id sme imeti/);
     assert.match(slabOrgan, /organi morajo biti/);
     assert.match(niJson, /ni veljaven JSON/);
+    assert.match(novaVrstica, /id sme imeti/, "fullmatch: »n2\\n« ni veljaven id");
+    assert.match(globoko, /RecursionError/, "globoko gnezden JSON ne podre zanke");
+    assert.match(seznam, /ni veljaven JSON/);
+    assert.deepEqual(zamenjava, [true, false, null], "zamenjava brez __pycache__, nova koda ustreza manifestu");
+    assert.match(vrnjena[0], /stara koda vrnjena/);
+    assert.equal(vrnjena[1], null, "po neuspeli zamenjavi je koda/ cela");
   } finally {
     fs.rmSync(cilj, { recursive: true, force: true });
   }

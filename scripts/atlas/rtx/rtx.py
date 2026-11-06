@@ -19,7 +19,9 @@
 # (čakam/teče/končano/napaka/zavrnjeno), naloga, organi, časi, kartica, koraki (trajanje iz <organ>.peka.log), napake,
 # utrip (čas zadnjega pregleda), zgodovina. Računalnik ne zaspi, dokler je okno odprto (zaslon sme ugasniti).
 # --enkrat: brez čakanja (samo prvi zagon). RTX_DOVOLI_CPU=1: SAMO za preizkus na strežniku brez kartice (CPU).
-import hashlib, json, os, re, shutil, subprocess, sys, time, zipfile
+import hashlib, json, os, re, shutil, subprocess, sys, threading, time, zipfile
+
+sys.dont_write_bytecode = True  # brez __pycache__: izvaja se samo preverjena .py (manifest)
 
 KODA = os.path.dirname(os.path.abspath(__file__))
 KOREN = os.path.dirname(KODA)
@@ -50,8 +52,39 @@ NALOGA = os.path.join(KOREN, "naloga.txt")
 STANJE = os.path.join(KOREN, "stanje.json")
 KODA_NOVA = os.path.join(KOREN, "koda-nova")
 OBVEZNE = ("rtx.py", "viri.json", "peci.py", "peka.py", "izvozi-organe.py")
-IME_DATOTEKE = re.compile(r"^[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*\.(py|json)$")
-ID = re.compile(r"^[A-Za-z0-9_-]{1,40}$")
+IME_DATOTEKE = re.compile(r"[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*\.(?:py|json)")  # vedno fullmatch (brez »\n« na koncu)
+ID = re.compile(r"[A-Za-z0-9_-]{1,40}")
+ORGAN = re.compile(r"[a-z0-9-]{1,30}")  # kot peci.py
+PROSTOR_GB = float(os.environ.get("RTX_PROSTOR_GB", "5"))  # najmanj prostega na disku pred nalogo
+UTRIP_S = float(os.environ.get("RTX_UTRIP", "60"))  # osvežitev stanje.json med peko
+_ZAPIS = threading.Lock()
+
+
+def sistemski(ime):
+    """Sistemski program po polni poti (Windows: System32, ne mapa paketa), sicer iz PATH; None, če ga ni."""
+    if os.name == "nt":
+        pot = os.path.join(os.environ.get("SystemRoot", r"C:\Windows"), "System32", ime + ".exe")
+        return pot if os.path.exists(pot) else None
+    return shutil.which(ime)
+
+
+def nova_pot(osnova):
+    """<osnova>-<čas>, ki še ne obstaja (dve zamenjavi v isti sekundi)."""
+    pot = osnova + "-" + time.strftime("%Y%m%d-%H%M%S"); i = 1
+    while os.path.exists(pot):
+        i += 1; pot = osnova + "-" + time.strftime("%Y%m%d-%H%M%S") + f"-{i}"
+    return pot
+
+
+def ponovi(fn, *arg, krat=10):
+    """Windows: protivirusni program ali indeksiranje drži datoteko za kratek čas → nekajkrat poskusi znova."""
+    for i in range(krat):
+        try:
+            return fn(*arg)
+        except OSError:
+            if i == krat - 1:
+                raise
+            time.sleep(1)
 
 
 def pisi(s):
@@ -83,7 +116,7 @@ def sha256(pot):
 def prenesi(url, pot):
     """curl (Windows 10/11 ga ima) z nadaljevanjem prenosa, sicer urllib."""
     zacasna = pot + ".prenos"
-    curl = shutil.which("curl")
+    curl = sistemski("curl")
     if curl:
         r = subprocess.call([curl, "-L", "--fail", "--retry", "5", "--retry-delay", "5", "-C", "-", "-o", zacasna, url])
         if r not in (0, 33):  # 33: strežnik ne podpira nadaljevanja
@@ -178,11 +211,11 @@ def manifest_napaka(mapa, razlicica=None):
         with open(pot, encoding="utf-8") as f:
             m = json.load(f)
         dat = m["datoteke"]
-    except (ValueError, KeyError, TypeError) as e:
-        return f"manifest.json ni veljaven ({e})"
+    except Exception as e:
+        return f"manifest.json ni veljaven ({type(e).__name__}: {e})"
     if razlicica is not None and m.get("razlicica") != razlicica:
         return f"manifest.json ima različico {m.get('razlicica')!r}, naloga zahteva {razlicica!r}"
-    if not isinstance(dat, dict) or any(not IME_DATOTEKE.match(str(k)) for k in dat):
+    if not isinstance(dat, dict) or any(not IME_DATOTEKE.fullmatch(str(k)) for k in dat):
         return "manifest.json: dovoljena so samo imena *.py in *.json brez poti"
     manjka = [k for k in OBVEZNE if k not in dat]
     if manjka:
@@ -196,34 +229,62 @@ def manifest_napaka(mapa, razlicica=None):
     return None
 
 
+def razlicica_kode():
+    try:
+        with open(os.path.join(KODA, "manifest.json"), encoding="utf-8") as f:
+            return json.load(f).get("razlicica")
+    except Exception:
+        return None
+
+
 def zamenjaj_kodo(razlicica):
-    """koda-nova/ → koda/ (stara ostane kot koda-stara-<čas>/), samo če koda-nova ustreza manifestu."""
+    """koda-nova/ → koda/ samo, če koda-nova ustreza manifestu; stara ostane kot koda-stara-<čas>/ (vrne njeno pot).
+    Če druga preimenovanje ne uspe, vrne staro kodo nazaj (koda/ nikoli ne ostane prazna)."""
     razlog = manifest_napaka(KODA_NOVA, razlicica) if os.path.isdir(KODA_NOVA) else "ni mape koda-nova"
     if razlog:
         napaka(f"nova koda zavrnjena: {razlog}")
     zacasna = KODA + "-zacasna"
     shutil.rmtree(zacasna, ignore_errors=True)
-    shutil.copytree(KODA_NOVA, zacasna)
+    shutil.copytree(KODA_NOVA, zacasna, ignore=shutil.ignore_patterns("__pycache__"))
     razlog = manifest_napaka(zacasna, razlicica)  # kopija še enkrat (prenos med kopiranjem)
     if razlog:
         shutil.rmtree(zacasna, ignore_errors=True)
         napaka(f"nova koda zavrnjena po kopiranju: {razlog}")
-    os.rename(KODA, KODA + "-stara-" + time.strftime("%Y%m%d-%H%M%S"))
-    os.rename(zacasna, KODA)
+    stara = nova_pot(KODA + "-stara")
+    try:
+        ponovi(os.rename, KODA, stara)
+    except OSError as e:
+        shutil.rmtree(zacasna, ignore_errors=True)
+        napaka(f"nova koda zavrnjena: koda/ ni mogoče preimenovati ({e})")
+    try:
+        ponovi(os.rename, zacasna, KODA)
+    except OSError as e:
+        ponovi(os.rename, stara, KODA)
+        napaka(f"nova koda zavrnjena: zamenjava ni uspela, stara koda vrnjena ({e})")
     pisi(f"koda zamenjana: različica {razlicica}")
+    return stara
+
+
+def vrni_kodo(stara, razlog):
+    """Nova koda ne deluje: koda/ → koda-slaba-<čas>/, stara nazaj v koda/."""
+    slaba = nova_pot(KODA + "-slaba")
+    ponovi(os.rename, KODA, slaba)
+    ponovi(os.rename, stara, KODA)
+    pisi(f"NAPAKA: nova koda ne deluje ({razlog}); vrnjena prejšnja, slaba je v {os.path.basename(slaba)}")
 
 
 class Peka:
     """Blender, naprava in vhodi (enkrat na proces), nato peka organov."""
 
     def __init__(self):
-        with open(os.path.join(KODA, "viri.json"), encoding="utf-8") as f:
-            self.viri = json.load(f)
         self.pripravljeno = False
+        self.trenutni = None  # (organ, peka.log) med peko: utrip bere korake sproti
 
     def pripravi(self):
         if self.pripravljeno:
             return
+        with open(os.path.join(KODA, "viri.json"), encoding="utf-8") as f:
+            self.viri = json.load(f)
         if not BLENDER or not os.path.exists(BLENDER):
             napaka(f"ni Blenderja ({BLENDER})")
         razl, naprave = preveri_napravo()
@@ -250,7 +311,7 @@ class Peka:
         t0 = time.time()
         surova = os.path.join(IZHOD, ime_mape); os.makedirs(surova, exist_ok=True)
         dela = [os.path.join(surova, f"{organ}{p}.delo.blend.json") for p in ("", "-telefon")]
-        ukaz = [sys.executable, os.path.join(ATLAS, "peci.py"), surova, organ]
+        ukaz = [sys.executable, "-X", "utf8", os.path.join(ATLAS, "peci.py"), surova, organ]
         if not all(os.path.exists(d) for d in dela):
             for f in os.listdir(surova):  # nedokončana priprava: začni na čisto
                 if ".delo.blend" in f:
@@ -258,7 +319,11 @@ class Peka:
             ukaz += ["--priprava", self.startup, "--mri", os.path.join(VHODI, "mri"), "--hra", os.path.join(VHODI, "hra")]
         env = dict(os.environ, PEKA_NAPRAVA=self.nap, PEKA_BLENDER=BLENDER, PEKA_NITI=str(os.cpu_count() or 4))
         pisi(f"{organ}: peka na {self.nap} …")
-        r = subprocess.call(ukaz, env=env)
+        self.trenutni = (organ, os.path.join(surova, f"{organ}.peka.log"))
+        try:
+            r = subprocess.call(ukaz, env=env)
+        finally:
+            self.trenutni = None
         koraki = koraki_iz_dnevnika(os.path.join(surova, f"{organ}.peka.log"))
         if r:
             napaka(f"{organ}: peka ni uspela (glej izhod/{ime_mape}/{organ}.blender.log)")
@@ -297,22 +362,43 @@ def beri_stanje():
 
 
 def pisi_stanje(st):
-    st["utrip"] = cas()
-    zac = STANJE + ".zacasna"
-    with open(zac, "w", encoding="utf-8") as f:
-        json.dump(st, f, ensure_ascii=False, indent=1)
-    for _ in range(10):  # Windows: bralec ima lahko datoteko odprto
+    """Atomsko (začasna datoteka + replace); kliče jo glavna nit in nit utripa, zato pod ključavnico."""
+    with _ZAPIS:
+        st["utrip"] = cas()
+        besedilo = json.dumps(st, ensure_ascii=False, indent=1)
+        zac = STANJE + ".zacasna"
+        with open(zac, "w", encoding="utf-8") as f:
+            f.write(besedilo)
+        for _ in range(10):  # Windows: bralec ima lahko datoteko odprto
+            try:
+                os.replace(zac, STANJE); return
+            except PermissionError:
+                time.sleep(1)
+
+
+def utrip(peka, st, konec):
+    """Nit: med dolgo peko vsakih UTRIP_S s osveži utrip in korake trenutnega organa (Claude loči »teče« od »visi«)."""
+    while not konec.wait(UTRIP_S):
         try:
-            os.replace(zac, STANJE); return
-        except PermissionError:
-            time.sleep(1)
+            t = peka.trenutni
+            if t:
+                st["koraki"][t[0]] = koraki_iz_dnevnika(t[1])
+            pisi_stanje(st)
+        except Exception:
+            pass
 
 
 def opravi(peka, st, nid, organi, preveri_kodo):
     """Ena naloga: organi v izhod/<organ>-<id>/ (prvi zagon: izhod/<organ>/). Nikoli ne vrže izjeme."""
     st.update(stanje="teče", naloga=nid, organi=organi, zacetek=cas(), konec=None, koraki={}, napake=[], caka=False)
     pisi_stanje(st)
+    konec = threading.Event()
+    threading.Thread(target=utrip, args=(peka, st, konec), daemon=True).start()
     try:
+        shutil.rmtree(os.path.join(KODA, "__pycache__"), ignore_errors=True)
+        prosto = shutil.disk_usage(KOREN).free / 1e9
+        if prosto < PROSTOR_GB:
+            napaka(f"na disku je le {prosto:.1f} GB prostora (potrebno vsaj {PROSTOR_GB:g} GB); izbriši stare mape v izhod/")
         if preveri_kodo:
             razlog = manifest_napaka(KODA)
             if razlog:
@@ -330,75 +416,106 @@ def opravi(peka, st, nid, organi, preveri_kodo):
         st["napake"].append(f"{type(e).__name__}: {e}")
         st["stanje"] = "napaka"
         pisi(f"NAPAKA: {type(e).__name__}: {e}")
+    finally:
+        konec.set()
     st["konec"] = cas()
-    st.setdefault("zgodovina", []).append({k: st.get(k) for k in ("naloga", "organi", "stanje", "zacetek", "konec", "napake")})
-    st["zgodovina"] = st["zgodovina"][-30:]
+    zgodovina(st)
     pisi_stanje(st)
     return st["stanje"]
 
 
+def zgodovina(st):
+    st.setdefault("zgodovina", []).append({k: st.get(k) for k in ("naloga", "organi", "stanje", "zacetek", "konec", "napake")})
+    st["zgodovina"] = st["zgodovina"][-30:]
+
+
+def zavrni(st, nid, organi, razlog):
+    st.update(stanje="zavrnjeno", naloga=nid, organi=organi, napake=[razlog], zacetek=cas(), konec=cas())
+    zgodovina(st)
+    pisi(f"NAPAKA: {razlog}")
+
+
 def beri_nalogo():
-    """naloga.txt → (id, organi, koda) ali (None, razlog) ob neveljavni nalogi; (None, None), če je ni."""
+    """naloga.txt → (id, organi, koda); ob neveljavni nalogi (id ali None, razlog, None); (None, None, None), če je ni."""
     if not os.path.exists(NALOGA):
         return None, None, None
     try:
         with open(NALOGA, encoding="utf-8-sig") as f:
             n = json.load(f)
         nid, organi, koda = n["id"], n["organi"], n.get("koda")
-    except (OSError, ValueError, KeyError, TypeError) as e:
-        return None, f"naloga.txt ni veljaven JSON z »id« in »organi« ({e})", None
-    if not isinstance(nid, str) or not ID.match(nid):
+    except Exception as e:  # tudi RecursionError (globoko gnezden JSON) ali napačen tip
+        return None, f"naloga.txt ni veljaven JSON z »id« in »organi« ({type(e).__name__})", None
+    if not isinstance(nid, str) or not ID.fullmatch(nid):
         return None, "naloga.txt: id sme imeti le črke, številke, - in _ (do 40 znakov)", None
-    if not isinstance(organi, list) or not organi or not all(isinstance(o, str) and re.match(r"^[a-z_]{1,30}$", o) for o in organi):
-        return nid, "naloga.txt: organi morajo biti seznam imen (male črke)", None
-    if koda is not None and (not isinstance(koda, str) or not ID.match(koda)):
+    if not isinstance(organi, list) or not organi or not all(isinstance(o, str) and ORGAN.fullmatch(o) for o in organi):
+        return nid, "naloga.txt: organi morajo biti seznam imen (male črke, številke in -)", None
+    if koda is not None and (not isinstance(koda, str) or not ID.fullmatch(koda)):
         return nid, "naloga.txt: koda (različica) sme imeti le črke, številke, - in _", None
     return nid, organi, koda
 
 
+def obdelane_naloge(st):
+    return {z.get("naloga") for z in st.get("zgodovina", []) if z.get("stanje") != "teče"}
+
+
 def cakaj(peka, st):
-    """Vsakih PREMOR s pogleda naloga.txt; nov id → naloga. Ne konča (okno ostane odprto)."""
-    obdelane = {z.get("naloga") for z in st.get("zgodovina", []) if z.get("stanje") != "teče"}
+    """Vsakih PREMOR s pogleda naloga.txt; nov id → naloga. Ne konča nikoli (vsaka izjema se zapiše, nato premor)."""
+    obdelane = obdelane_naloge(st)
     zadnja_napaka = None
     print("\n  ČAKAM NA NALOGO (to okno pusti odprto)\n", flush=True)
     while True:
-        nid, organi, koda = beri_nalogo()
-        if nid is None and isinstance(organi, str):  # neveljavna naloga brez id
-            if organi != zadnja_napaka:
-                zadnja_napaka = organi
-                st.update(stanje="zavrnjeno", napake=[organi]); pisi(f"NAPAKA: {organi}")
-        elif nid is not None and nid not in obdelane:
-            obdelane.add(nid)
-            if isinstance(organi, str):
-                st.update(stanje="zavrnjeno", naloga=nid, napake=[organi], konec=cas()); pisi(f"NAPAKA: {organi}")
-                st.setdefault("zgodovina", []).append({"naloga": nid, "stanje": "zavrnjeno", "napake": [organi], "konec": st["konec"]})
-            else:
+        try:
+            nid, organi, koda = beri_nalogo()
+            if nid is None and isinstance(organi, str):  # neveljavna naloga brez id
+                if organi != zadnja_napaka:
+                    zadnja_napaka = organi
+                    st.update(stanje="zavrnjeno", napake=[organi]); pisi(f"NAPAKA: {organi}")
+            elif nid is not None and nid not in obdelane:
+                obdelane.add(nid)
+                if isinstance(organi, str):
+                    zavrni(st, nid, None, organi)
+                    continue
                 pisi(f"nova naloga {nid}: {', '.join(organi)}" + (f" (koda {koda})" if koda else ""))
-                if koda:
+                if koda and koda != razlicica_kode():
                     try:
-                        zamenjaj_kodo(koda)
+                        stara = zamenjaj_kodo(koda)
                     except Napaka as e:
-                        st.update(stanje="zavrnjeno", naloga=nid, organi=organi, napake=[e.sporocilo], konec=cas())
-                        st.setdefault("zgodovina", []).append({"naloga": nid, "stanje": "zavrnjeno", "napake": [e.sporocilo], "konec": st["konec"]})
-                        pisi_stanje(st)
+                        zavrni(st, nid, organi, e.sporocilo)
                         continue
-                    # nova rtx.py (lahko drugačna): zaženemo jo za to nalogo in čakanje; ta proces le počaka nanjo
+                    # nova rtx.py nadaljuje to nalogo in čakanje; ta proces počaka nanjo. Ker nova nikoli ne konča
+                    # sama od sebe, vsak njen konec pomeni napako: vrnemo staro kodo in čakamo naprej tu.
                     pisi_stanje(dict(st, stanje="teče", naloga=nid, organi=organi, zacetek=cas(), caka=False))
                     r = subprocess.call([sys.executable, "-X", "utf8", os.path.join(KODA, "rtx.py"), "--blender", BLENDER or "",
                                          "--nadaljuj", nid])
-                    raise SystemExit(r)
+                    vrni_kodo(stara, f"rtx.py različice {koda} je končala z izhodom {r}")
+                    st = beri_stanje()
+                    obdelane = obdelane_naloge(st) | {nid}
+                    if st.get("naloga") == nid and st.get("stanje") == "teče":
+                        st.update(stanje="napaka", konec=cas()); st.setdefault("napake", []).append(f"nova koda je končala z izhodom {r}")
+                        zgodovina(st)
+                    st.setdefault("napake", []).append(f"koda {koda} vrnjena na prejšnjo (izhod {r})")
+                    continue
                 znani = organi_v_kodi()
                 slabi = [o for o in organi if o not in znani]
                 if slabi:
-                    st.update(stanje="zavrnjeno", naloga=nid, organi=organi, napake=[f"neznani organi: {', '.join(slabi)}"], konec=cas())
-                    pisi(f"NAPAKA: neznani organi {slabi}")
+                    zavrni(st, nid, organi, f"neznani organi: {', '.join(slabi)}")
                 else:
                     opravi(peka, st, nid, organi, preveri_kodo=True)
                 print("\n  ČAKAM NA NALOGO (to okno pusti odprto)\n", flush=True)
-        st.setdefault("stanje", "čakam")  # stanje zadnje naloge ostane; »caka« pove, da program čaka na novo
-        st["caka"] = True
-        pisi_stanje(st)
-        time.sleep(PREMOR)
+        except (Exception, SystemExit) as e:  # zanka ne sme umreti, dokler j ni doma
+            try:
+                sporocilo = getattr(e, "sporocilo", None) or f"{type(e).__name__}: {e}"
+                st.update(stanje="napaka", napake=[sporocilo]); pisi(f"NAPAKA (čakam naprej): {sporocilo}")
+            except Exception:
+                pass
+        finally:
+            try:
+                st.setdefault("stanje", "čakam")  # stanje zadnje naloge ostane; »caka« pove, da program čaka na novo
+                st["caka"] = True
+                pisi_stanje(st)
+            except Exception:
+                pass
+            time.sleep(PREMOR)
 
 
 _KLJUC = None
@@ -421,11 +538,11 @@ def zakleni():
 
 
 def main():
-    with open(os.path.join(KODA, "viri.json"), encoding="utf-8") as f:
-        viri = json.load(f)
-    znani = organi_v_kodi()
     nadaljuj = _zastava("--nadaljuj")
     if NACRT:
+        with open(os.path.join(KODA, "viri.json"), encoding="utf-8") as f:
+            viri = json.load(f)
+        znani = organi_v_kodi()
         organi = izberi_organe(znani)
         manjka = [v["ime"] for v in viri["vhodi"] if not os.path.exists(os.path.join(VHODI, v["mapa"], v.get("razpakiraj", v)["ime"]))]
         print(json.dumps({"organi": organi, "znani": znani, "manjka": manjka, "blender": viri["blender"]["razlicica"]}, ensure_ascii=False))
@@ -434,29 +551,36 @@ def main():
         import ctypes
         ctypes.windll.kernel32.SetThreadExecutionState(0x80000000 | 0x00000001)
     if not nadaljuj:
-        zakleni()
-    peka = Peka()
+        zakleni()  # pri --nadaljuj ključavnico drži proces, ki je zamenjal kodo
     st = beri_stanje()
-    if nadaljuj:  # po zamenjavi kode: naloga, zaradi katere je bila zamenjana
-        nid, organi, _ = beri_nalogo()
-        if nid == nadaljuj and isinstance(organi, list):
-            slabi = [o for o in organi if o not in znani]
-            if slabi:
-                st.update(stanje="zavrnjeno", naloga=nid, organi=organi, napake=[f"neznani organi: {', '.join(slabi)}"], konec=cas())
-                st.setdefault("zgodovina", []).append({"naloga": nid, "stanje": "zavrnjeno", "napake": st["napake"], "konec": st["konec"]})
-            else:
-                opravi(peka, st, nid, organi, preveri_kodo=True)
-    else:
-        try:
-            organi = izberi_organe(znani)
-        except Napaka as e:
-            organi = []; st.update(stanje="napaka", napake=[e.sporocilo])
-        if organi:
-            pisi(f"začetek: organi {', '.join(organi)}")
-            opravi(peka, st, "prvi", organi, preveri_kodo=False)  # paket, ki ga je zagnal j sam
-        if ENKRAT:
-            pisi_stanje(st)
-            raise SystemExit(0 if st.get("stanje") == "končano" else 1)
+    peka = None
+    try:
+        peka = Peka()
+        znani = organi_v_kodi()
+        if nadaljuj:  # po zamenjavi kode: naloga, zaradi katere je bila zamenjana
+            nid, organi, _ = beri_nalogo()
+            if nid == nadaljuj and isinstance(organi, list):
+                slabi = [o for o in organi if o not in znani]
+                if slabi:
+                    zavrni(st, nid, organi, f"neznani organi: {', '.join(slabi)}")
+                else:
+                    opravi(peka, st, nid, organi, preveri_kodo=True)
+        else:
+            try:
+                organi = izberi_organe(znani)
+            except Napaka as e:
+                organi = []; st.update(stanje="napaka", napake=[e.sporocilo])
+            if organi:
+                pisi(f"začetek: organi {', '.join(organi)}")
+                opravi(peka, st, "prvi", organi, preveri_kodo=False)  # paket, ki ga je zagnal j sam
+            if ENKRAT:
+                pisi_stanje(st)
+                raise SystemExit(0 if st.get("stanje") == "končano" else 1)
+    except (Exception, Napaka) as e:  # tudi ob napaki ob zagonu čakamo naprej (j ni doma)
+        sporocilo = getattr(e, "sporocilo", None) or f"{type(e).__name__}: {e}"
+        st.update(stanje="napaka", napake=[sporocilo]); pisi(f"NAPAKA: {sporocilo}")
+    if peka is None:
+        peka = Peka()
     pisi("vse končano; čakam na naloge")
     cakaj(peka, st)
 

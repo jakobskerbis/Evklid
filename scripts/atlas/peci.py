@@ -14,6 +14,8 @@
 # Nato: node scripts/atlas/organi.mjs <surova mapa> <organ> (WebP, kvantizacija, vpis v public/3d/modeli/organi-3d/).
 import hashlib, json, os, re, subprocess, sys, time
 
+sys.dont_write_bytecode = True
+
 TU = os.path.dirname(os.path.abspath(__file__))
 a = sys.argv[1:]
 surova, organ = a[0], a[1]
@@ -33,7 +35,8 @@ MEJA = int(os.environ.get("PEKA_MEJA_MB", "2600"))
 PROSTO = int(os.environ.get("PEKA_PROSTO_MB", "3000"))
 BLENDER = os.environ.get("PEKA_BLENDER")
 NADZOR = os.path.exists("/proc/meminfo")
-UTF8 = "import sys\nfor s in (sys.stdout, sys.stderr): s.reconfigure(encoding='utf-8', errors='replace')"
+UTF8 = ("import sys\nsys.dont_write_bytecode = True\n"  # brez __pycache__ (Blender ne bere okolja PYTHON*)
+        "for s in (sys.stdout, sys.stderr): s.reconfigure(encoding='utf-8', errors='replace')")
 DNEVNIK = os.path.join(surova, f"{organ}.peka.log")
 
 

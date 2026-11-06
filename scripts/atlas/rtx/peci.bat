@@ -1,6 +1,8 @@
 @echo off
-chcp 65001 >nul
+"%SystemRoot%\System32\chcp.com" 65001 >nul
 setlocal EnableExtensions
+rem sistemski programi po polni poti (ne iz te mape)
+set "S32=%SystemRoot%\System32"
 rem Peka 3D organov Evklida na grafični kartici Nvidia (scripts/atlas/rtx/). Dvoklik zadostuje.
 rem Najde Blender 5.2 (nameščen ali prenosna kopija v mapi blender\; če ga ni, ga prenese z blender.org in preveri),
 rem nato koda\rtx.py prenese vhode, speče organe iz organi.txt in piše dnevnik.txt v to mapo.
@@ -24,14 +26,15 @@ if defined BLENDER goto imam
 
 echo  Blender %RAZL% ni nameščen: prenašam ga z blender.org (okoli 400 MB) ...
 if not exist "%TU%blender" mkdir "%TU%blender"
-curl -L --fail --retry 5 -C - -o "%TU%blender\%BZIP%" "%BURL%"
+"%S32%\curl.exe" -L --fail --retry 5 -C - -o "%TU%blender\%BZIP%" "%BURL%"
 if errorlevel 1 if not errorlevel 34 if errorlevel 33 goto preveri
 if errorlevel 1 goto napaka_prenos
 :preveri
-powershell -NoProfile -ExecutionPolicy Bypass -Command "if ((Get-FileHash -Algorithm SHA256 -LiteralPath '%TU%blender\%BZIP%').Hash -ne '%BSHA%') { exit 1 }"
+set "BPOT=%TU%blender\%BZIP%"
+"%S32%\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command "if ((Get-FileHash -Algorithm SHA256 -LiteralPath $env:BPOT).Hash -ne $env:BSHA) { exit 1 }"
 if errorlevel 1 goto napaka_sha
 echo  Blender preverjen (SHA-256). Razpakiram ...
-tar -xf "%TU%blender\%BZIP%" -C "%TU%blender"
+"%S32%\tar.exe" -xf "%TU%blender\%BZIP%" -C "%TU%blender"
 if errorlevel 1 goto napaka_razpakiraj
 del "%TU%blender\%BZIP%"
 set "BLENDER=%BMAPA%\blender.exe"
